@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine thmGetParaInit(j_mater)
+subroutine thmGetParaInit(j_mater, compor_)
 !
 use THM_type
 use THM_module
@@ -28,9 +28,10 @@ implicit none
 #include "asterc/r8prem.h"
 #include "asterfort/rcvala.h"
 #include "asterfort/utmess.h"
+#include "asterfort/thmGetParaBehaviour.h"
 !
-!
-    integer, intent(in) :: j_mater
+integer, intent(in) :: j_mater
+character(len=16), optional, intent(in) :: compor_(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -40,17 +41,21 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  j_mater      : coded material address
+! In  j_mater        : coded material address
+! In  compor         : name of comportment definition (field)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: l_temp_init, l_pre2_init
+    integer :: nume_thmc, nume_init
     integer, parameter :: nb_para   =  5
     integer :: icodre(nb_para)
     real(kind=8) :: para_vale(nb_para)
     character(len=16), parameter :: para_name(nb_para) = (/ 'TEMP     ', 'PRE1     ',&
                                                             'PRE2     ', 'PORO     ',&
                                                             'PRES_VAPE'/)
+    real(kind=8) :: para_vale2(1)
+    integer :: icodre2(1)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -102,6 +107,20 @@ implicit none
     if (ds_thm%ds_elem%l_dof_ther) then
         if (.not. l_temp_init) then
             call utmess('F', 'THM2_5')
+        endif
+    endif
+!
+! - Check: compatibility coupling law with initial parameters
+!
+    if (present(compor_)) then
+        call thmGetParaBehaviour(compor_, nume_thmc_ = nume_thmc)
+        call rcvala(j_mater, ' '       , 'THM_INIT',&
+                    0      , ' '       , [0.d0]    ,&
+                    1      , 'COMP_THM', para_vale2,&
+                    icodre2, 1)
+        nume_init = nint(para_vale2(1))
+        if (nume_init .ne. nume_thmc) then
+            call utmess('F', 'THM1_34')
         endif
     endif
 !

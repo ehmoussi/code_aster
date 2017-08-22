@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
+! aslint: disable=W1504,W1306
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
 subroutine xasshm(nno, npg, npi, ipoids, ivf,&
@@ -24,7 +24,7 @@ subroutine xasshm(nno, npg, npi, ipoids, ivf,&
                   defgem, defgep, drds, drdsr, dsde,&
                   b, dfdi, dfdi2, r, sigbar,&
                   c, ck, cs, matuu, vectu,&
-                  rinstm, rinstp, option, imate, mecani,&
+                  rinstm, rinstp, option, j_mater, mecani,&
                   press1, press2, tempe, dimdef, dimcon,&
                   dimuel, nbvari, nddls, nddlm, nmec,&
                   np1, ndim, compor, axi, modint,&
@@ -54,10 +54,11 @@ implicit none
 #include "asterfort/thmGetParaBehaviour.h"
 #include "asterfort/thmGetBehaviour.h"
 #include "asterfort/thmGetParaCoupling.h"
+#include "asterfort/thmGetParaInit.h"
     integer :: dimmat, npg, dimuel
 !     DIMENSION DE LA MATRICE DE RIGIDITE DIMMAT=NDDLS*NNOP
 !    parameter    (dimmat=8*5)
-    integer :: npi, ipoids, ivf, idfde, imate, dimdef, dimcon, nnop
+    integer :: npi, ipoids, ivf, idfde, j_mater, dimdef, dimcon, nnop
     integer :: nbvari, nddls, nddlm, nmec, np1, ndim, codret
     integer :: mecani(5), press1(7), press2(7), tempe(5)
     integer :: yamec, yap1, nfiss, nfh, jfisno
@@ -69,13 +70,11 @@ implicit none
     real(kind=8) :: matuu(dimuel*dimuel), matri(dimmat, dimmat)
     real(kind=8) :: rinstp, rinstm, vectu(dimuel)
     real(kind=8) :: defgem(dimdef), defgep(dimdef)
-    real(kind=8) :: dt, ta, ta1, rthmc(1)
+    real(kind=8) :: dt, ta, ta1
     real(kind=8) :: angmas(3)
     aster_logical :: axi
-    integer :: codmes(1)
     character(len=3) :: modint
-    character(len=16) :: option, compor(*), thmc, loi
-    character(len=24) :: valk(2)
+    character(len=16) :: option, compor(*), thmc
 !
 ! DECLARATION POUR XFEM
     integer :: nnops, nnopm
@@ -125,7 +124,6 @@ implicit none
 ! =====================================================================
 ! IN  GEOM    : COORDONNEES DES NOEUDS
 ! IN  OPTION  : OPTION DE CALCUL
-! IN  IMATE   : MATERIAU CODE
 ! IN  COMPOR  : COMPORTEMENT
 ! IN  CRIT    : CRITERES DE CONVERGENCE LOCAUX + THETA
 ! IN  DEPLP   : DEPLACEMENT A L INSTANT PLUS
@@ -142,14 +140,9 @@ implicit none
 ! OUT VECTU   : FORCES NODALES (RAPH_MECA ET FULL_MECA)
 !......................................................................
 !
-    if (nddls*nnop .gt. dimmat) then
-        call utmess('F', 'ALGORITH_33')
-    endif
-!
-    if (dimuel .gt. dimmat) then
-        call utmess('F', 'ALGORITH_33')
-    endif
-!
+    ASSERT(nddls*nnop .le. dimmat)
+    ASSERT(dimuel .le. dimmat)
+
 !     ON RECUPERE A PARTIR DE L'ELEMENT QUADRATIQUE L'ELEMENT LINEAIRE
 !     ASSOCIE POUR L'HYDRAULIQUE (POUR XFEM)
 !
@@ -183,27 +176,25 @@ implicit none
 ! =====================================================================
 ! --- INITIALISATION --------------------------------------------------
 ! =====================================================================
-    do 201 i = 1, dimenr
-        c(i) = 1.d0
-        cs(i) = 1.d0
-201 continue 
+    c(1:dimenr)  = 1.d0
+    cs(1:dimenr) = 1.d0
 ! =====================================================================
 ! --- SI INTEGRATION REDUITE, ON MET A 0 CERTAINS COEFFICIENTS --------
 ! =====================================================================
     if (modint .eq. 'RED') then
         if (yamec .eq. 1) then
-            do 203 i = 1, ndim
+            do i = 1, ndim
                 cs(addeme-1+i) = 0.d0
-203         continue
-            do 213 i = 1, 6
+            end do
+            do i = 1, 6
                 cs(addeme-1+ndim+i) = 0.d0
-213         continue
+            end do
         endif
         if (yap1 .eq. 1) then
             c(addep1) = 0.d0
-            do 204 i = 1, ndim
+            do i = 1, ndim
                 cs(addep1-1+1+i) = 0.d0
-204         continue
+            end do
         endif
     endif
 ! ======================================================================
@@ -212,28 +203,19 @@ implicit none
 ! --- INITIALISATION DE VECTU, MATUU A 0 SUIVANT OPTION ----------------
 ! ======================================================================
     if (option(1:9) .ne. 'RIGI_MECA') then
-        do 1 i = 1, dimuel
+        do i = 1, dimuel
             vectu(i)=0.d0
-  1     continue
+        end do
     endif
 ! ======================================================================
 ! --- INITIALISATION DF(MATUU) ET MATRI --------------------------------
 ! ======================================================================
     if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
-        do 3 i = 1, dimuel*dimuel
+        do i = 1, dimuel*dimuel
             matuu(i)=0.d0
-  3     continue
-!
+        end do
         call matini(dimmat, dimmat, 0.d0, matri)
-!
     endif
-! ======================================================================
-! --- VERIFICATION DE LA LOI DE COUPLAGE UTILISEE ----------------------
-! ======================================================================
-    loi = ' '
-    call rcvala(imate, ' ', 'THM_INIT', 0, ' ',&
-                [0.d0], 1, 'COMP_THM', rthmc(1), codmes,&
-                1)
 ! 
 ! - Get behaviours parameters from COMPOR field
 !
@@ -246,16 +228,11 @@ implicit none
 ! - Get parameters for coupling
 !
     temp = 0.d0
-    call thmGetParaCoupling(imate, temp)
+    call thmGetParaCoupling(j_mater, temp)
 !
-    if ((rthmc(1)-1.0d0) .lt. r8prem()) then
-        loi = 'LIQU_SATU'
-    endif
-    if (thmc .ne. loi) then
-        valk(1) = loi
-        valk(2) = thmc
-        call utmess('F', 'ALGORITH_34', nk=2, valk=valk)
-    endif
+! - Get initial parameters (THM_INIT)
+!
+    call thmGetParaInit(j_mater, compor)
 !
 !     RECUPERATION DE LA CONNECTIVITÃ~I FISSURE - DDL HEAVISIDES
 !     ATTENTION !!! FISNO PEUT ETRE SURDIMENTIONNÃ~I
@@ -385,7 +362,7 @@ implicit none
                 congem(i) = contm(npi*(ise-1)*dimcon+(kpi-1)*dimcon+i)
                 congep(i) = contp(npi*(ise-1)*dimcon+(kpi-1)*dimcon+i)
             end do
-            call xequhm(imate, option, ta, ta1, ndim,&
+            call xequhm(j_mater, option, ta, ta1, ndim,&
                         compor, kpi, npg, dimenr, enrmec,&
                         dimdef, dimcon, nbvari, defgem, congem,&
                         vintm, defgep, congep,&

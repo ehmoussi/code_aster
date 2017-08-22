@@ -17,11 +17,11 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
 !
-subroutine thmMecaSpecial(option , meca     , thmc  ,&
-                          yate   , yap1     , yap2  ,&
-                          p1     , dp1      , p2    , dp2   , satur, tbiot,&
-                          j_mater, ndim     , typmod, carcri, &
-                          addeme , adcome   , addep1, addep2,&
+subroutine thmMecaSpecial(option , meca     , nume_thmc,&
+                          yate   , yap1     , yap2     ,&
+                          p1     , dp1      , p2       , dp2   , satur, tbiot,&
+                          j_mater, ndim     , typmod   , carcri,&
+                          addeme , adcome   , addep1   , addep2,&
                           dimdef , dimcon   ,&
                           defgem , deps     ,&
                           congem , vintm    ,&
@@ -41,9 +41,9 @@ implicit none
 #include "asterfort/dsipdp.h"
 #include "asterfort/lchbr2.h"
 !
-character(len=16), intent(in) :: option, meca, thmc
+character(len=16), intent(in) :: option, meca
 integer, intent(in) :: yate, yap1, yap2
-integer, intent(in) :: j_mater
+integer, intent(in) :: j_mater, nume_thmc
 real(kind=8), intent(in) :: p1, dp1, p2, dp2, satur, tbiot(6)
 character(len=8), intent(in) :: typmod(2)
 real(kind=8), intent(in) :: carcri(*)
@@ -67,7 +67,7 @@ integer, intent(out) :: retcom
 !
 ! In  option           : option to compute
 ! In  meca             : mechanical law for THM
-! In  thmc             : coupling law for THM
+! In  nume_thmc        : index of coupling law for THM
 ! In  yate             : 1 if thermic dof
 ! In  yap1             : 1 if first pressure dof
 ! In  yap2             : 1 if second pressure dof
@@ -185,7 +185,7 @@ integer, intent(out) :: retcom
         endif
     elseif (meca .eq. 'HOEK_BROWN_TOT') then
 ! ----- Preparation for HOEK_BROWN_TOT
-        call dsipdp(thmc,&
+        call dsipdp(nume_thmc,&
                     adcome, addep1, addep2  ,&
                     dimcon, dimdef, dsde    ,&
                     dspdp1, dspdp2, l_dspdp2)

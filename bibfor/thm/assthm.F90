@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+! person_in_charge: sylvie.granet at edf.fr
+!
 subroutine assthm(nno, nnos, nnom, npg, npi,&
                   ipoids, ipoid2, ivf, ivf2, idfde,&
                   idfde2, geom, crit, deplm, deplp,&
@@ -23,7 +25,7 @@ subroutine assthm(nno, nnos, nnom, npg, npi,&
                   defgep, drds, drdsr, dsde, b,&
                   dfdi, dfdi2, r, sigbar, c,&
                   ck, cs, matuu, vectu, rinstm,&
-                  rinstp, option, imate, mecani, press1,&
+                  rinstp, option, j_mater, mecani, press1,&
                   press2, tempe, dimdef, dimcon, dimuel,&
                   nbvari, nddls, nddlm, nmec, np1,&
                   np2, ndim, compor, typmod, axi,&
@@ -36,24 +38,22 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterc/r8prem.h"
+#include "asterfort/assert.h"
 #include "asterfort/cabthm.h"
 #include "asterfort/equthm.h"
 #include "asterfort/equthp.h"
 #include "asterfort/lceqvn.h"
 #include "asterfort/matini.h"
 #include "asterfort/pmathm.h"
-#include "asterfort/rcvala.h"
 #include "asterfort/utmess.h"
 #include "asterfort/nvithm.h"
 #include "asterfort/thmGetBehaviour.h"
 #include "asterfort/Behaviour_type.h"
-!
-! aslint: disable=W1504
-! person_in_charge: sylvie.granet at edf.fr
+#include "asterfort/thmGetParaInit.h"
 !
     integer :: dimmat, npg, ipoid2, ivf2, idfde2, dimuel, nnom
     parameter    (dimmat=120)
-    integer :: nno, nnos, npi, ipoids, ivf, idfde, imate, dimdef, dimcon
+    integer :: nno, nnos, npi, ipoids, ivf, idfde, j_mater, dimdef, dimcon
     integer :: nbvari, nddls, nddlm, nmec, np1, np2, ndim, codret
     integer :: mecani(5), press1(7), press2(7), tempe(5)
     integer :: yamec, yap1, yap2, yate
@@ -71,15 +71,13 @@ implicit none
     real(kind=8) :: drds(dimdef+1, dimcon), drdsr(dimdef, dimcon)
     real(kind=8) :: dsde(dimcon, dimdef), b(dimdef, dimuel)
     real(kind=8) :: r(dimdef+1), sigbar(dimdef), c(dimdef)
-    real(kind=8) :: dt, ta, ta1, rthmc(1), ck(dimdef), cs(dimdef)
+    real(kind=8) :: dt, ta, ta1, ck(dimdef), cs(dimdef)
     real(kind=8) :: angmas(3)
     real(kind=8) :: work1(dimcon, dimuel), work2(dimdef, dimuel)
     aster_logical :: axi, perman
-    integer :: codmes(1)
     character(len=3) :: modint
     character(len=8) :: typmod(2)
-    character(len=16) :: option, compor(*), loi
-    character(len=24) :: valk(2)
+    character(len=16) :: option, compor(*)
     character(len=16) :: meca, thmc, ther, hydr
     integer :: nvit , nvih, nvic, nvim
     integer :: advihy, advico, advime, advith
@@ -189,13 +187,8 @@ implicit none
 ! OUT VECTU   : FORCES NODALES (RAPH_MECA ET FULL_MECA)
 !......................................................................
 !
-    if (nddls*nno .gt. dimmat) then
-        call utmess('F', 'ALGORITH_33')
-    endif
-!
-    if (dimuel .gt. dimmat) then
-        call utmess('F', 'ALGORITH_33')
-    endif
+    ASSERT(nddls*nno .le. dimmat)
+    ASSERT(dimuel .le. dimmat)
 ! ======================================================================
 ! --- MISE AU POINT POUR LES VARIABLES INTERNES ------------------------
 ! --- DEFINITION DES POINTEURS POUR LES DIFFERENTES RELATIONS DE -------
@@ -209,6 +202,10 @@ implicit none
 ! - Get parameters for coupling
 !
     call thmGetBehaviour(compor)
+!
+! - Get initial parameters (THM_INIT)
+!
+    call thmGetParaInit(j_mater, compor)
 !
 ! =====================================================================
 ! --- DETERMINATION DES VARIABLES CARACTERISANT LE MILIEU -------------
@@ -298,35 +295,6 @@ implicit none
         end do
         call matini(dimmat, dimmat, 0.d0, matri)
     endif
-! ======================================================================
-! --- CALCUL POUR CHAQUE POINT D'INTEGRATION: BOUCLE SUR KPI -----------
-! ======================================================================
-    loi = ' '
-    call rcvala(imate, ' ', 'THM_INIT', 0, ' ',&
-                [0.d0], 1, 'COMP_THM', rthmc(1), codmes,&
-                1)
-    if ((rthmc(1)-1.0d0) .lt. r8prem()) then
-        loi = 'LIQU_SATU'
-    else if ((rthmc(1)-2.0d0).lt.r8prem()) then
-        loi = 'GAZ'
-    else if ((rthmc(1)-3.0d0).lt.r8prem()) then
-        loi = 'LIQU_VAPE'
-    else if ((rthmc(1)-4.0d0).lt.r8prem()) then
-        loi = 'LIQU_VAPE_GAZ'
-    else if ((rthmc(1)-5.0d0).lt.r8prem()) then
-        loi = 'LIQU_GAZ'
-    else if ((rthmc(1)-6.0d0).lt.r8prem()) then
-        loi = 'LIQU_GAZ_ATM'
-    else if ((rthmc(1)-9.0d0).lt.r8prem()) then
-        loi = 'LIQU_AD_GAZ_VAPE'
-    else if ((rthmc(1)-10.0d0).lt.r8prem()) then
-        loi = 'LIQU_AD_GAZ'
-    endif
-    if (ds_thm%ds_behaviour%rela_thmc .ne. loi) then
-        valk(1) = loi
-        valk(2) = ds_thm%ds_behaviour%rela_thmc
-        call utmess('F', 'ALGORITH_34', nk=2, valk=valk)
-    endif
 ! =====================================================================
 ! --- BOUCLE SUR LES POINTS D'INTEGRATION -----------------------------
 ! =====================================================================
@@ -361,7 +329,7 @@ implicit none
 ! --- ET DE LEURS DERIVEES ---------------------------------------------
 ! ======================================================================
         if (perman) then
-            call equthp(imate, option, ndim, compor, typmod,&
+            call equthp(j_mater, option, ndim, compor, typmod,&
                         kpi, npg, dimdef, dimcon, nbvari,&
                         defgem, contm((kpi-1)*dimcon+1), varim((kpi-1)*nbvari+1), defgep,&
                         contp((kpi-1)*dimcon+1), varip((kpi-1)*nbvari+1), mecani, press1, press2,&
@@ -370,7 +338,7 @@ implicit none
                         thmc, ther, hydr,&
                         advihy, advico, vihrho, vicphi, vicpvp, vicsat)
         else
-            call equthm(imate, option, ta, ta1, ndim,&
+            call equthm(j_mater, option, ta, ta1, ndim,&
                         compor, typmod, kpi, npg, dimdef,&
                         dimcon, nbvari, defgem, contm((kpi-1)* dimcon+1),&
                         varim((kpi-1)*nbvari+1), defgep, contp((kpi-1)* dimcon+1),&

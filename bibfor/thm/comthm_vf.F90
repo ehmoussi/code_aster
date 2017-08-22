@@ -173,7 +173,7 @@ integer, intent(in) :: vicsat
 !
 ! - Update unknowns
 !
-    call kitdec(kpi   , imate  , ndim  , &
+    call kitdec(kpi   , ndim   ,&
                 yachai, yamec  , yate  , yap1  , yap2,&
                 defgem, defgep ,&
                 addeme, addep1 , addep2, addete,&

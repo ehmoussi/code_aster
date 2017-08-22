@@ -15,12 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
-!
-! aslint: disable=W1504
 !
 interface 
     subroutine assthm(nno, nnos, nnom, npg, npi,&
@@ -30,7 +27,7 @@ interface
                       defgep, drds, drdsr, dsde, b,&
                       dfdi, dfdi2, r, sigbar, c,&
                       ck, cs, matuu, vectu, rinstm,&
-                      rinstp, option, imate, mecani, press1,&
+                      rinstp, option, j_mater, mecani, press1,&
                       press2, tempe, dimdef, dimcon, dimuel,&
                       nbvari, nddls, nddlm, nmec, np1,&
                       np2, ndim, compor, typmod, axi,&
@@ -77,7 +74,7 @@ interface
         real(kind=8) :: rinstm
         real(kind=8) :: rinstp
         character(len=16) :: option
-        integer :: imate
+        integer :: j_mater
         integer :: mecani(5)
         integer :: press1(7)
         integer :: press2(7)
