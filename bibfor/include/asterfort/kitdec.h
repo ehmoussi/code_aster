@@ -15,15 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
-! aslint: disable=W1504
-!
 interface 
-    subroutine kitdec(kpi   , j_mater, ndim  ,&
+    subroutine kitdec(kpi   , ndim   ,&
                       yachai, yamec  , yate  , yap1  , yap2,&
                       defgem, defgep ,&
                       addeme, addep1 , addep2, addete,&
@@ -33,7 +30,6 @@ interface
                       p2    , dp2    , grap2 ,&
                       retcom)
         integer, intent(in) :: kpi
-        integer, intent(in) :: j_mater
         integer, intent(in) :: ndim
         aster_logical, intent(out) :: yachai
         integer, intent(in) :: yamec

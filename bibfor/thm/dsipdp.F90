@@ -16,17 +16,20 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine dsipdp(thmc,&
+subroutine dsipdp(nume_thmc,&
                   adcome, addep1, addep2  ,&
                   dimcon, dimdef, dsde    ,&
                   dspdp1, dspdp2, l_dspdp2)
+!
+use THM_type
+use THM_module
 !
 implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 !
-character(len=16), intent(in) :: thmc
+integer, intent(in) :: nume_thmc
 integer, intent(in) :: adcome, addep1, addep2
 integer, intent(in) :: dimdef, dimcon
 real(kind=8), intent(in) :: dsde(dimcon, dimdef)
@@ -41,7 +44,7 @@ aster_logical, intent(out) :: l_dspdp2
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  thmc             : coupling law for THM
+! In  nume_thmc        : index of coupling law for THM
 ! In  dimdef           : dimension of generalized strains vector
 ! In  dimcon           : dimension of generalized stresses vector
 ! In  adcome           : adress of mechanic stress in generalized stresses vector
@@ -58,36 +61,21 @@ aster_logical, intent(out) :: l_dspdp2
     dspdp2   = 0.d0
     l_dspdp2 = ASTER_FALSE
 !
-    if (thmc .eq. 'LIQU_SATU') then
-        dspdp1   = dspdp1+dsde(adcome+6,addep1)
-        dspdp2   = 0.d0
-        l_dspdp2 = ASTER_FALSE
-    else if (thmc.eq.'GAZ') then
-        dspdp1   = 0.d0
-        dspdp2   = dspdp2+dsde(adcome+6,addep1)
-        l_dspdp2 = ASTER_TRUE
-    else if (thmc.eq.'LIQU_VAPE') then
-        dspdp1   = dspdp1+dsde(adcome+6,addep1)
-        dspdp2   = 0.d0
-        l_dspdp2 = ASTER_FALSE
-    else if (thmc.eq.'LIQU_VAPE_GAZ') then
-        dspdp1   = dspdp1+dsde(adcome+6,addep1)
-        dspdp2   = dspdp2+dsde(adcome+6,addep2)
-        l_dspdp2 = ASTER_TRUE
-    else if (thmc.eq.'LIQU_GAZ') then
+    if (ds_thm%ds_behaviour%nb_pres .eq. 1) then
+        if (nume_thmc .eq. 2) then
+            dspdp1   = 0.d0
+            dspdp2   = dspdp2+dsde(adcome+6,addep1)
+            l_dspdp2 = ASTER_TRUE
+        else
+            dspdp1   = dspdp1+dsde(adcome+6,addep1)
+            dspdp2   = 0.d0
+            l_dspdp2 = ASTER_FALSE
+        endif
+    endif
+    if (ds_thm%ds_behaviour%nb_pres .eq. 2) then
         dspdp1   = dspdp1+dsde(adcome+6,addep1)
         dspdp2   = dspdp2+dsde(adcome+6,addep2)
         l_dspdp2 = ASTER_TRUE
-    else if (thmc.eq.'LIQU_GAZ_ATM') then
-        dspdp1   = dspdp1+dsde(adcome+6,addep1)
-        dspdp2   = 0.d0
-        l_dspdp2 = ASTER_FALSE
-    else if (thmc.eq.'LIQU_AD_GAZ_VAPE') then
-        dspdp1   = dspdp1+dsde(adcome+6,addep1)
-        dspdp2   = dspdp2+dsde(adcome+6,addep2)
-        l_dspdp2 = ASTER_TRUE
-    else
-        ASSERT(ASTER_FALSE)
     endif
 !
 end subroutine

@@ -20,7 +20,7 @@
 subroutine assesu(nno, nnos, nface, geom, crit,&
                   deplm, deplp, congem, congep, vintm,&
                   vintp, defgem, defgep, dsde, matuu,&
-                  vectu, rinstm, rinstp, option, imate,&
+                  vectu, rinstm, rinstp, option, j_mater,&
                   mecani, press1, press2, tempe, dimdef,&
                   dimcon, dimuel, nbvari, ndim, compor,&
                   typmod, typvf, axi, perman)
@@ -42,10 +42,11 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/vfcfks.h"
 #include "asterfort/thmGetBehaviour.h"
+#include "asterfort/thmGetParaInit.h"
     integer, parameter :: maxfa=6
 !
     integer :: nno, nnos, nface
-    integer :: imate, dimdef, dimcon, dimuel
+    integer :: j_mater, dimdef, dimcon, dimuel
     integer :: mecani(5), press1(7), press2(7), tempe(5)
     integer :: nbvari, ndim, typvf
     real(kind=8) :: geom(ndim, nno), crit(*)
@@ -109,14 +110,11 @@ implicit none
     integer :: ipg, retcom, fa, i, j
 !
     real(kind=8) :: pesa(3), kintvf(6)
-    real(kind=8) :: rthmc(1)
     real(kind=8) :: valcen(14, 6), valfac(maxfa, 14, 6)
 !
     aster_logical :: tange, cont, bool
 !
-    integer :: codmes(1), kpg, spt
-    character(len=8) :: fami, poum
-    character(len=16) :: thmc, loi, meca, ther, hydr
+    character(len=16) :: thmc, meca, ther, hydr
     character(len=24) :: valk(2)
 !
 ! ==============================================
@@ -316,18 +314,6 @@ implicit none
     yate = tempe(1)
     addete = tempe(2)
     adcote = tempe(3)
-! ====================================================================
-! --- CALCUL DE CONSTANTES TEMPORELLES -------------------------------
-! ====================================================================
-!
-    loi = ' '
-    fami='FPG1'
-    kpg=1
-    spt=1
-    poum='+'
-    call rcvalb(fami, kpg, spt, poum, imate,&
-                ' ', 'THM_INIT', 0, ' ', [0.d0],&
-                1, 'COMP_THM', rthmc, codmes, 1)
 ! ======================================================================
 ! --- MISE AU POINT POUR LES VARIABLES INTERNES ------------------------
 ! --- DEFINITION DES POINTEURS POUR LES DIFFERENTES RELATIONS DE -------
@@ -337,32 +323,14 @@ implicit none
                 nvim, nvit, nvih, nvic, advime,&
                 advith, advihy, advico, vihrho, vicphi,&
                 vicpvp, vicsat, vicpr1, vicpr2)
-    if ((rthmc(1)-1.0d0) .lt. r8prem()) then
-        loi = 'LIQU_SATU'
-    else if ((rthmc(1)-2.0d0).lt.r8prem()) then
-        loi = 'GAZ'
-    else if ((rthmc(1)-3.0d0).lt.r8prem()) then
-        loi = 'LIQU_VAPE'
-    else if ((rthmc(1)-4.0d0).lt.r8prem()) then
-        loi = 'LIQU_VAPE_GAZ'
-    else if ((rthmc(1)-5.0d0).lt.r8prem()) then
-        loi = 'LIQU_GAZ'
-    else if ((rthmc(1)-6.0d0).lt.r8prem()) then
-        loi = 'LIQU_GAZ_ATM'
-    else if ((rthmc(1)-9.0d0).lt.r8prem()) then
-        loi = 'LIQU_AD_GAZ_VAPE'
-    else if ((rthmc(1)-10.0d0).lt.r8prem()) then
-        loi = 'LIQU_AD_GAZ'
-    endif
-    if (thmc .ne. loi) then
-        valk(1) = loi
-        valk(2) = thmc
-        call utmess('F', 'ALGORITH_34', nk=2, valk=valk)
-    endif
 !
 ! - Get parameters for coupling
 !
     call thmGetBehaviour(compor)
+!
+! - Get initial parameters (THM_INIT)
+!
+    call thmGetParaInit(j_mater, compor)
 ! ====================================================================
 ! DECLARATION DE DEUX LOGIQUES POUR SAVOIR CE QUE L ON DOIT CALCULER
 ! TANGE => CALCUL OPERATEUR TANGENT => MATUU
@@ -477,7 +445,7 @@ implicit none
         end do
     end do
     call comthm_vf(option, perman, 0, valfac,&
-                valcen, imate, typmod, compor, crit,&
+                valcen, j_mater, typmod, compor, crit,&
                 rinstm, rinstp, ndim, dimdef, dimcon,&
                 nbvari, yamec, yap1, yap2, yate,&
                 addeme, adcome, addep1, adcp11, adcp12,&
@@ -518,7 +486,7 @@ implicit none
             end do
         end do
         call comthm_vf(option, perman, fa, valfac,&
-                    valcen, imate, typmod, compor, crit,&
+                    valcen, j_mater, typmod, compor, crit,&
                     rinstm, rinstp, ndim, dimdef, dimcon,&
                     nbvari, yamec, yap1, yap2, yate,&
                     addeme, adcome, addep1, adcp11, adcp12,&

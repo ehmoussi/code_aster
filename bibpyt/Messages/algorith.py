@@ -49,17 +49,6 @@ cata_msg = {
   si vous avez activé l'option INITIAL dans NUME_DDL_GENE faites de même ici !
 """),
 
-    33 : _(u"""
-Calcul des options en mécanique des milieux poreux avec couplage THM
-Ce message est un message d'erreur développeur.
-Contactez le support technique.
-"""),
-
-    34 : _(u"""
- il y a incohérence entre :
-    la loi de couplage de DEFI_MATERIAU : %(k1)s
- et la loi de couplage de STAT_NON_LINE : %(k2)s
-"""),
 
     35 : _(u"""
  les champs " %(k1)s " et " %(k2)s " n'ont pas le même domaine de définition.

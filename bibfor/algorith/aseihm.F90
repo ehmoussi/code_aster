@@ -33,6 +33,7 @@ implicit none
 #include "asterfort/coeihm.h"
 #include "asterfort/matthm.h"
 #include "asterfort/thmGetBehaviour.h"
+#include "asterfort/thmGetParaInit.h"
 !......................................................................
 !
 !     BUT:  CALCUL DU VECTEUR FORCES INTERNES ELEMENTAIRE, DES
@@ -120,6 +121,10 @@ implicit none
 ! - Get parameters for coupling
 !
     call thmGetBehaviour(compor)
+!
+! - Get initial parameters (THM_INIT)
+!
+    call thmGetParaInit(imate, compor)
 !
 ! =====================================================================
 ! --- DETERMINATION DES VARIABLES CARACTERISANT LE MILIEU ET OPTION ---

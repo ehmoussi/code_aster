@@ -18,7 +18,7 @@
 ! aslint: disable=W1504
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine kitdec(kpi   , j_mater, ndim  , &
+subroutine kitdec(kpi   , ndim  , &
                   yachai, yamec  , yate  , yap1  , yap2,&
                   defgem, defgep ,&
                   addeme, addep1 , addep2, addete,&
@@ -32,36 +32,33 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/calcva.h"
-#include "asterfort/thmGetParaInit.h"
 !
-
-    integer, intent(in) :: kpi
-    integer, intent(in) :: j_mater
-    integer, intent(in) :: ndim
-    aster_logical, intent(out) :: yachai
-    integer, intent(in) :: yamec
-    integer, intent(in) :: yate
-    integer, intent(in) :: yap1
-    integer, intent(in) :: yap2
-    real(kind=8), intent(in) :: defgem(*)
-    real(kind=8), intent(in) :: defgep(*)
-    integer, intent(in) :: addeme
-    integer, intent(in) :: addep1
-    integer, intent(in) :: addep2
-    integer, intent(in) :: addete
-    real(kind=8), intent(out) :: depsv
-    real(kind=8), intent(out) :: epsv
-    real(kind=8), intent(out) :: deps(6)
-    real(kind=8), intent(out) :: t
-    real(kind=8), intent(out) :: dt
-    real(kind=8), intent(out) :: grat(ndim)
-    real(kind=8), intent(out) :: p1
-    real(kind=8), intent(out) :: dp1
-    real(kind=8), intent(out) :: grap1(ndim)
-    real(kind=8), intent(out) :: p2
-    real(kind=8), intent(out) :: dp2
-    real(kind=8), intent(out) :: grap2(ndim)
-    integer, intent(out) :: retcom
+integer, intent(in) :: kpi
+integer, intent(in) :: ndim
+aster_logical, intent(out) :: yachai
+integer, intent(in) :: yamec
+integer, intent(in) :: yate
+integer, intent(in) :: yap1
+integer, intent(in) :: yap2
+real(kind=8), intent(in) :: defgem(*)
+real(kind=8), intent(in) :: defgep(*)
+integer, intent(in) :: addeme
+integer, intent(in) :: addep1
+integer, intent(in) :: addep2
+integer, intent(in) :: addete
+real(kind=8), intent(out) :: depsv
+real(kind=8), intent(out) :: epsv
+real(kind=8), intent(out) :: deps(6)
+real(kind=8), intent(out) :: t
+real(kind=8), intent(out) :: dt
+real(kind=8), intent(out) :: grat(ndim)
+real(kind=8), intent(out) :: p1
+real(kind=8), intent(out) :: dp1
+real(kind=8), intent(out) :: grap1(ndim)
+real(kind=8), intent(out) :: p2
+real(kind=8), intent(out) :: dp2
+real(kind=8), intent(out) :: grap2(ndim)
+integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,7 +68,6 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  j_mater      : coded material address
 ! In  kpi          : current Gauss point
 ! In  ndim         : dimension of space (2 or 3)
 ! Out yachai       : .true. if weak coupled (mechanic/hydraulic)
@@ -100,13 +96,6 @@ implicit none
 ! Out retcom       : 1 if error, 0 otherwise
 !
 ! --------------------------------------------------------------------------------------------------
-!
-!
-! - Get initial parameters (THM_INIT)
-!
-    call thmGetParaInit(j_mater)
-!
-! - Update unknowns
 !
     call calcva(kpi   , ndim  , &
                 yachai, yamec , yate   , yap1  , yap2,&

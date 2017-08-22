@@ -223,7 +223,7 @@ implicit none
 ! ======================================================================
 ! --- RECUPERATION DES DONNEES INITIALES -------------------------------
 ! ======================================================================
-    call kitdec(kpi, imate, ndim-1,&
+    call kitdec(kpi, ndim-1,&
                 yachai, 0, yate, yap1, yap2,&
                 defgem, defgep,&
                 addeme, addep1, addep2, addete, &

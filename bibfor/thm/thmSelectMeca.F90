@@ -108,8 +108,8 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=16) :: meca, thmc, compor_meca(NB_COMP_MAXI)
-    integer :: nvimec, numlc, i, j
+    character(len=16) :: meca, compor_meca(NB_COMP_MAXI)
+    integer :: nvimec, numlc, i, j, nume_thmc
     real(kind=8) :: dsdeme(6, 6), alpha0, ther_meca(6)
     aster_logical :: l_matrix
     integer :: ndt, ndi
@@ -129,9 +129,10 @@ integer, intent(out) :: retcom
 ! - Get mechanical behaviour
 !
     call thmGetParaBehaviour(compor,&
-                             meca_      = meca, thmc_ = thmc,&
-                             nvim_      = nvimec,&
-                             nume_meca_ = numlc)
+                             meca_      = meca     ,&
+                             nvim_      = nvimec   ,&
+                             nume_meca_ = numlc    ,&
+                             nume_thmc_ = nume_thmc)
 !
 ! - Check porosity
 !
@@ -141,11 +142,11 @@ integer, intent(out) :: retcom
 !
     if (numlc .eq. 0) then
 ! ----- Special behaviours
-        call thmMecaSpecial(option , meca     , thmc  ,&
-                            yate   , yap1     , yap2  ,&
-                            p1     , dp1      , p2    , dp2   , satur, tbiot,&
-                            j_mater, ndim     , typmod, carcri, &
-                            addeme , adcome   , addep1, addep2,&
+        call thmMecaSpecial(option , meca     , nume_thmc,&
+                            yate   , yap1     , yap2     ,&
+                            p1     , dp1      , p2       , dp2   , satur, tbiot,&
+                            j_mater, ndim     , typmod   , carcri, &
+                            addeme , adcome   , addep1   , addep2,&
                             dimdef , dimcon   ,&
                             defgem , deps     ,&
                             congem , vintm    ,&

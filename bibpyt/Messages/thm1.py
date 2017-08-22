@@ -38,6 +38,9 @@ On ne peut pas utiliser ELAS_ORTH en 2D, il faut utiliser ELAS_ISTR.
 On ne peut pas utiliser ELAS_ISTR en 3D, il faut utiliser ELAS_ORTH.
 """),
 
+    34 : _(u"""
+ Les conditions initiales de DEFI_MATERIAU (THM_INIT) ne sont pas compatibles avec la loi de couplage choisie dans STAT_NON_LINE.
+"""),
 
     35 : _(u"""
 La loi de couplage <%(k1)s> n'est pas compatible avec la modélisation choisie <%(k2)s>.

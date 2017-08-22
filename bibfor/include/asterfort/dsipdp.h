@@ -19,11 +19,11 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine dsipdp(thmc,&
+    subroutine dsipdp(nume_thmc,&
                       adcome, addep1, addep2  ,&
                       dimcon, dimdef, dsde    ,&
                       dspdp1, dspdp2, l_dspdp2)
-        character(len=16), intent(in) :: thmc
+        integer, intent(in) :: nume_thmc
         integer, intent(in) :: adcome, addep1, addep2
         integer, intent(in) :: dimdef, dimcon
         real(kind=8), intent(in) :: dsde(dimcon, dimdef)

@@ -15,11 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface 
-    subroutine thmGetParaInit(j_mater)
+    subroutine thmGetParaInit(j_mater, compor_)
         integer, intent(in) :: j_mater
+        character(len=16), optional, intent(in) :: compor_(*)
     end subroutine thmGetParaInit
 end interface 
