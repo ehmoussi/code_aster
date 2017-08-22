@@ -133,6 +133,12 @@ class MEPASE2(Element):
                      ),
             para_out=((SP.PMATUUR, MMATUUR), ),
         ),
+        
+        OP.RIGI_MECA_ELAS(te=553,
+            para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
+                     ),
+            para_out=((SP.PMATUUR, MMATUUR), ),
+        ),
 
         OP.TOU_INI_ELGA(te=99,
             para_out=((OP.TOU_INI_ELGA.PGEOM_R, EGGEOP_R), ),
