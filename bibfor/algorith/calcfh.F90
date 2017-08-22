@@ -36,6 +36,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/hmderp.h"
 #include "asterfort/utmess.h"
+#include "asterfort/calcfh_gazp.h"
 #include "asterfort/calcfh_lisa.h"
 !
 ! ======================================================================
@@ -143,7 +144,16 @@ implicit none
                          congep, dsde  )
         goto 999
     endif
-
+    if (thmc .eq. 'GAZ') then
+        call calcfh_gazp(option, perman , ndim,&
+                         dimdef, dimcon ,&
+                         yamec , yate   ,&
+                         addep1, adcp11 , addeme, addete,&
+                         t     , p1     , grap1 ,&
+                         rho11 , pesa   , tperm ,&
+                         congep, dsde)
+        goto 999
+    endif
     dgpvp1(:)=0.d0
     dgpvp2(:)=0.d0
     dgpvt(:) =0.d0
@@ -224,10 +234,7 @@ implicit none
     endif
 !
     if (thmc .eq. 'GAZ') then
-        krel1 = 1.d0
-        dkrel1 = 0.d0
-        visco = viscg
-        dvisco = dviscg
+        ASSERT(ASTER_FALSE)
     endif
 !
     if (thmc .eq. 'LIQU_GAZ_ATM') then

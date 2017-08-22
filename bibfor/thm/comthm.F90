@@ -272,7 +272,7 @@ integer, intent(in) :: vicsat
                     dimcon, yamec, yap1, yap2, addete,&
                     addeme, addep1, addep2, adcote, congep,&
                     dsde, t, grat, phi, pvp,&
-                    rgaz, tbiot, satur, dsatur, lambp,&
+                    tbiot, satur, dsatur, lambp,&
                     dlambp, lambs, dlambs, tlambt, tdlamt,&
                     mamovg, tlamct, rho11, h11, h12,&
                     angl_naut)
