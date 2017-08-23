@@ -334,7 +334,7 @@ integer, intent(in) :: vicsat
                     dsde, t, grat, phi, pvp,&
                     tbiot, satur, dsatur, lambp,&
                     dlambp, lambs, dlambs, tlambt, tdlamt,&
-                    mamovg, tlamct, rho11, h11, h12,&
+                    tlamct, rho11, h11, h12,&
                     angl_naut)
         if (retcom .ne. 0) then
             goto 999

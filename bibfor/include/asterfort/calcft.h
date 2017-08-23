@@ -24,7 +24,7 @@ interface
                       dsde, t, grat, phi, pvp,&
                       tbiot, sat, dsatp1, lambp,&
                       dlambp, lambs, dlambs, tlambt, tdlamt,&
-                      mamolv, tlamct, rho11, h11, h12,&
+                      tlamct, rho11, h11, h12,&
                       angmas)
         integer :: dimcon
         integer :: dimdef
@@ -55,7 +55,6 @@ interface
         real(kind=8) :: dlambs
         real(kind=8) :: tlambt(ndim, ndim)
         real(kind=8) :: tdlamt(ndim, ndim)
-        real(kind=8) :: mamolv
         real(kind=8) :: tlamct(ndim, ndim)
         real(kind=8) :: rho11
         real(kind=8) :: h11
