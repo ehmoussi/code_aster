@@ -28,7 +28,8 @@ subroutine calcfh(option, perman, thmc, ndim, dimdef,&
                   krel2, dkr2s, dkr2p, fick, dfickt,&
                   dfickg, fickad, dfadt, kh, cliq,&
                   alpliq, viscl, dviscl, mamolg, viscg,&
-                  dviscg, mamolv)
+                  dviscg, mamolv,&
+                  j_mater ,hydr, satur)
 !
 implicit none
 !
@@ -38,6 +39,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/calcfh_gazp.h"
 #include "asterfort/calcfh_lisa.h"
+#include "asterfort/calcfh_liva.h"
 !
 ! ======================================================================
 ! ROUTINE CALC_FLUX_HYDRO
@@ -59,7 +61,7 @@ implicit none
 !
     integer :: ndim, dimdef, dimcon, yamec, yate, adcp22
     integer :: addeme, addep1, addep2, addete, adcp11, adcp12, adcp21
-    integer :: bdcp11
+    integer :: bdcp11, j_mater
     real(kind=8) :: congep(1:dimcon)
     real(kind=8) :: dsde(1:dimcon, 1:dimdef), p1, grap1(3), p2, t
     real(kind=8) :: grap2(3), grat(3), pvp, pad, h11, h12, rho11
@@ -68,8 +70,8 @@ implicit none
     real(kind=8) :: dfickt, dfickg, cliq, alpliq
     real(kind=8) :: fickad, dfadt
     real(kind=8) :: viscl, dviscl, viscg, dviscg
-    real(kind=8) :: mamolg, mamolv
-    character(len=16) :: option, thmc
+    real(kind=8) :: mamolg, mamolv, satur
+    character(len=16) :: option, thmc, hydr
     aster_logical :: perman
     real(kind=8) :: zero
     parameter    (zero=0.d0)
@@ -152,6 +154,18 @@ implicit none
                          t     , p1     , grap1 ,&
                          rho11 , pesa   , tperm ,&
                          congep, dsde)
+        goto 999
+    endif
+    if (thmc .eq. 'LIQU_VAPE') then
+        call calcfh_liva(option, hydr  , ndim, j_mater,&
+                         dimdef, dimcon,&
+                         yamec , yate  ,&
+                         addep1, adcp11, adcp12, addeme, addete,&
+                         t     , p2    , pvp,&
+                         grap1 , grat  ,&
+                         rho11 , h11   , h12    ,&
+                         satur , dsatp1, pesa   , tperm,&
+                         congep, dsde  )
         goto 999
     endif
     dgpvp1(:)=0.d0

@@ -30,14 +30,14 @@ interface
                       krel2, dkr2s, dkr2p, fick, dfickt,&
                       dfickg, fickad, dfadt, kh, cliq,&
                       alpliq, viscl, dviscl, mamolg, viscg,&
-                      dviscg, mamolv)
-        integer, parameter :: maxfa=6
+                      dviscg, mamolv,&
+                      j_mater,hydr, satur)
         integer :: dimcon
         integer :: dimdef
-        integer :: ndim
+        integer :: ndim, j_mater
         character(len=16) :: option
         aster_logical :: perman
-        character(len=16) :: thmc
+        character(len=16) :: thmc, hydr
         integer :: yamec
         integer :: yate
         integer :: addep1
@@ -61,7 +61,7 @@ interface
         real(kind=8) :: rho11
         real(kind=8) :: h11
         real(kind=8) :: h12
-        real(kind=8) :: r
+        real(kind=8) :: r, satur
         real(kind=8) :: dsatp1
         real(kind=8) :: pesa(3)
         real(kind=8) :: tperm(ndim, ndim)

@@ -317,7 +317,8 @@ implicit none
                     permgz, dperms, dpermp, fick, dfickt,&
                     dfickg, fickad, dfadt, kh, unsurk,&
                     alpha, viscl, dviscl, mamolg, viscg,&
-                    dviscg, mamovg)
+                    dviscg, mamovg,&
+                    imate,hydr, satur)
 !
         if (retcom .ne. 0) then
             goto 999

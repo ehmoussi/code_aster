@@ -24,7 +24,7 @@ subroutine calcft(option, thmc, imate, ndim, dimdef,&
                   dsde, t, grat, phi, pvp,&
                   tbiot, sat, dsatp1, lambp,&
                   dlambp, lambs, dlambs, tlambt, tdlamt,&
-                  mamolv, tlamct, rho11, h11, h12,&
+                  tlamct, rho11, h11, h12,&
                   angmas)
 ! ======================================================================
 ! ======================================================================
@@ -46,7 +46,7 @@ implicit none
     integer :: yamec, yap1, yap2
     integer :: addete, addeme, addep1, addep2, adcote
     real(kind=8) :: congep(1:dimcon)
-    real(kind=8) :: dsde(1:dimcon, 1:dimdef), mamolv
+    real(kind=8) :: dsde(1:dimcon, 1:dimdef)
     integer :: i, j, k
     real(kind=8) :: t, grat(3), phi, sat, dsatp1, pvp
     real(kind=8) :: rgaz, tbiot(6), biot(3, 3)
@@ -59,7 +59,7 @@ implicit none
     real(kind=8) :: alphfi, cs, kron(ndim, ndim)
     real(kind=8) :: lamdt1(ndim, ndim), lamdt2(ndim, ndim)
     real(kind=8) :: lamdt3(ndim, ndim)
-    real(kind=8) :: lamdt4(ndim, ndim), lamdt5(ndim, ndim)
+    real(kind=8) :: lamdt4(ndim, ndim), lamdt5(ndim, ndim), mamolv
     character(len=16) :: option, thmc
 ! =====================================================================
 ! --- DEFINITION DU SYMBOLE DE KRONECKER ------------------------------
@@ -121,6 +121,7 @@ implicit none
 !           LAMDT5 : DLAMB / DT
 ! =====================================================================
     if (thmc .eq. 'LIQU_VAPE') then
+        mamolv = ds_thm%ds_material%steam%mass_mol
         rho12=mamolv*pvp/rgaz/t
         do i = 1, ndim
             do j = 1, ndim
