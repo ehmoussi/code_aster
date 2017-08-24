@@ -175,12 +175,12 @@ real(kind=8), intent(out) :: gravity(3)
 !        dviscg = ds_thm%ds_material%gaz%dvisc_dtemp
 !        mamolg = ds_thm%ds_material%gaz%mass_mol
     else if (thmc.eq.'LIQU_GAZ_ATM') then
-        call thmEvalPermLiquGaz(hydr  , j_mater , satur, p2, t,&
-                                permli, dperml)
-        unsurk = ds_thm%ds_material%liquid%unsurk
-        alpha  = ds_thm%ds_material%liquid%alpha
-        viscl  = ds_thm%ds_material%liquid%visc
-        dviscl = ds_thm%ds_material%liquid%dvisc_dtemp
+!        call thmEvalPermLiquGaz(hydr  , j_mater , satur, p2, t,&
+!                                permli, dperml)
+!        unsurk = ds_thm%ds_material%liquid%unsurk
+!        alpha  = ds_thm%ds_material%liquid%alpha
+!        viscl  = ds_thm%ds_material%liquid%visc
+!        dviscl = ds_thm%ds_material%liquid%dvisc_dtemp
     endif
 !
 ! - Evaluate thermal conductivity
