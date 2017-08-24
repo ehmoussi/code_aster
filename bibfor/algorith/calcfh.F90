@@ -42,6 +42,7 @@ implicit none
 #include "asterfort/calcfh_liva.h"
 #include "asterfort/calcfh_lvag.h"
 #include "asterfort/calcfh_liga.h"
+#include "asterfort/calcfh_lgat.h"
 !
 ! ======================================================================
 ! ROUTINE CALC_FLUX_HYDRO
@@ -196,6 +197,19 @@ implicit none
                          congep, dsde)
         goto 999
     endif
+    if (thmc .eq. 'LIQU_GAZ_ATM') then
+        call calcfh_lgat(option, perman , hydr  , ndim  , j_mater,&
+                         dimdef, dimcon ,&
+                         yamec , yate   ,&
+                         addep1, adcp11 ,&
+                         addeme, addete ,&
+                         t     , p2     ,&
+                         grap1 , & 
+                         rho11 , &
+                         satur , dsatp1 , pesa , tperm,&
+                         congep, dsde)
+        goto 999
+    endif
     dgpvp1(:)=0.d0
     dgpvp2(:)=0.d0
     dgpvt(:) =0.d0
@@ -280,10 +294,7 @@ implicit none
     endif
 !
     if (thmc .eq. 'LIQU_GAZ_ATM') then
-        visco = viscl
-        dvisco = dviscl
-        krel1 = permli
-        dkrel1 = dperml*dsatp1
+        ASSERT(ASTER_FALSE)
     endif
 !
     if ((thmc.eq.'LIQU_VAPE_GAZ') .or. (thmc.eq.'LIQU_AD_GAZ_VAPE') .or.&
@@ -498,10 +509,7 @@ implicit none
             ASSERT(ASTER_FALSE)
         endif
         if (thmc .eq. 'LIQU_GAZ_ATM') then
-            dr11p1=-rho11*cliq
-            if (yate .eq. 1) then
-                dr11t=-3.d0*alpliq*rho11
-            endif
+            ASSERT(ASTER_FALSE)
         endif
         if (thmc .eq. 'GAZ') then
             dr11p1=rho11/p1
@@ -717,12 +725,7 @@ implicit none
         if (((thmc.eq.'LIQU_SATU').or.(thmc.eq.'GAZ')) .or. (thmc.eq.'LIQU_GAZ_ATM')) then
             do i = 1, ndim
                 if (thmc .eq. 'LIQU_GAZ_ATM') then
-                    congep(bdcp11+i)=0.d0
-                    do j = 1, ndim
-                        congep(bdcp11+i)=congep(bdcp11+i)+rho11*&
-                        lambd1(1) *tperm(i,j)*(grap1(j)+rho11*&
-                        pesa(j))
-                    end do
+                    ASSERT(ASTER_FALSE)
                 else
                     congep(bdcp11+i)=0.d0
                     do j = 1, ndim
@@ -800,22 +803,7 @@ implicit none
         if ((thmc.eq.'LIQU_SATU') .or. (thmc.eq.'GAZ') .or. ( thmc.eq.'LIQU_GAZ_ATM')) then
             do i = 1, ndim
                 if (thmc .eq. 'LIQU_GAZ_ATM') then
-                    do j = 1, ndim
-                        dsde(bdcp11+i,addep1)=dsde(bdcp11+i,&
-                        addep1) +dr11p1*lambd1(1)*tperm(i,j)*&
-                        (grap1(j)+rho11*pesa(j))
-!
-                        dsde(bdcp11+i,addep1)=dsde(bdcp11+i,&
-                        addep1) +rho11*lambd1(3)*tperm(i,j)*&
-                        (grap1(j)+rho11*pesa(j))
-!
-                        dsde(bdcp11+i,addep1)=dsde(bdcp11+i,&
-                        addep1) +rho11*lambd1(1)*tperm(i,j)*(&
-                        dr11p1*pesa(j))
-!
-                        dsde(bdcp11+i,addep1+j)=dsde(bdcp11+i,&
-                        addep1+j) +rho11*lambd1(1)*tperm(i,j)
-                    end do
+                    ASSERT(ASTER_FALSE)
                 else
                     do j = 1, ndim
                         dsde(bdcp11+i,addep1)=dsde(bdcp11+i,&
@@ -837,12 +825,7 @@ implicit none
                 if (yamec .eq. 1) then
                     do j = 1, 3
                         if (thmc .eq. 'LIQU_GAZ_ATM') then
-                            do k = 1, ndim
-                                dsde(bdcp11+i,addeme+ndim-1+i)=&
-                                dsde(bdcp11+i,addeme+ndim-1+i)&
-                                +rho11*lambd1(2)*tperm(i,k)*&
-                                (grap1(k)+rho11*pesa(k))
-                            end do
+                            ASSERT(ASTER_FALSE)
                         else
                             do k = 1, ndim
                                 dsde(bdcp11+i,addeme+ndim-1+i)=&
@@ -855,19 +838,7 @@ implicit none
                 endif
                 if (yate .eq. 1) then
                     if (thmc .eq. 'LIQU_GAZ_ATM') then
-                        do j = 1, ndim
-                            dsde(adcp11+i,addete)=dsde(adcp11+i,&
-                            addete) +dr11t*lambd1(1)*tperm(i,j)*&
-                            (grap1(j)+rho11*pesa(j))
-!
-                            dsde(adcp11+i,addete)=dsde(adcp11+i,&
-                            addete) +rho11*lambd1(5)*tperm(i,j)&
-                            *(grap1(j)+rho11*pesa(j))
-!
-                            dsde(adcp11+i,addete)=dsde(adcp11+i,&
-                            addete) +rho11*lambd1(1)*tperm(i,j)*(&
-                            dr11t*pesa(j))
-                        end do
+                        ASSERT(ASTER_FALSE)
                     else
                         do j = 1, ndim
                             dsde(adcp11+i,addete)=dsde(adcp11+i,&
