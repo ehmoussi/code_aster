@@ -41,6 +41,7 @@ implicit none
 #include "asterfort/calcfh_lisa.h"
 #include "asterfort/calcfh_liva.h"
 #include "asterfort/calcfh_lvag.h"
+#include "asterfort/calcfh_liga.h"
 !
 ! ======================================================================
 ! ROUTINE CALC_FLUX_HYDRO
@@ -178,6 +179,19 @@ implicit none
                          t     , p2    , pvp    ,&
                          grat  , grap1 , grap2  ,& 
                          rho11 , h11   , h12    ,&
+                         satur , dsatp1, pesa   , tperm,&
+                         congep, dsde)
+        goto 999
+    endif
+    if (thmc .eq. 'LIQU_GAZ') then
+        call calcfh_liga(option, hydr  , ndim  , j_mater,&
+                         dimdef, dimcon,&
+                         yamec , yate  ,&
+                         addep1, addep2, adcp11 , adcp21 ,&
+                         addeme, addete, &
+                         t     , p2    , &
+                         grap1 , grap2  ,& 
+                         rho11 , &
                          satur , dsatp1, pesa   , tperm,&
                          congep, dsde)
         goto 999
@@ -368,12 +382,7 @@ implicit none
         end do
     endif
     if (thmc .eq. 'LIQU_GAZ') then
-        rho21=mamolg*p2/r/t
-        rho12=0.d0
-        dr12p1=0.d0
-        dr12p2=0.d0
-        dr12t=0.d0
-        cvp=0.d0
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! ***********************************************************
@@ -501,12 +510,7 @@ implicit none
             endif
         endif
         if (thmc .eq. 'LIQU_GAZ') then
-            dr11p1=-rho11*cliq
-            dr11p2= rho11*cliq
-            dr11t=-3.d0*alpliq*rho11
-            dr21p1= 0.d0
-            dr21p2= rho21/p2
-            dr21t=-rho21/t
+            ASSERT(ASTER_FALSE)
         endif
         if (thmc .eq. 'LIQU_VAPE_GAZ') then
             ASSERT(ASTER_FALSE)
@@ -787,17 +791,7 @@ implicit none
             end do
         endif
         if (thmc .eq. 'LIQU_GAZ') then
-            do i = 1, ndim
-                congep(adcp11+i)= 0.d0
-                congep(adcp21+i)= 0.d0
-                do j = 1, ndim
-                    congep(adcp11+i)=congep(adcp11+i)+rho11*&
-                    lambd1(1)*tperm(i,j) *(-grap2(j)+grap1(j)+&
-                    rho11*pesa(j))
-                    congep(adcp21+i)=congep(adcp21+i)+rho21*&
-                    lambd2(1)*tperm(i,j) *(-grap2(j)+rho21*pesa(j))
-                end do
-            end do
+            ASSERT(ASTER_FALSE)
         endif
     endif
 !
