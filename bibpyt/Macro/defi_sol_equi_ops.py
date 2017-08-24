@@ -30,6 +30,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
     from Utilitai.Utmess import UTMESS
     from Utilitai.Table import Table
     from math import log, sqrt, floor, pi, sin
+    from numpy import sqrt as nqsrt
     import numpy as np
 
   #--------------------------------------------------------------------------------
@@ -129,28 +130,43 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
     ltranin = 'NON'
     llcara = 'NON'
     #ldevi = 'NON'
+
+    # type de modelisation : 2D ou 3D
+    dime = "2D"
+    if "FONC_SIGNAL_X" in args:
+        if args['FONC_SIGNAL_X']!=None  :
+            dime = "3D"
+
+    if dime == "2D":
+        name_dime = ("",)
+        num_dime = 1
+    elif dime == "3D":
+        name_dime = ("X","Y","Z")
+        dire_dime = ("DX","DY","DZ")
+        num_dime = 3
+
     ldevi = args['TOUT_CHAM']
     if args['CHARGEMENT'] == 'ONDE_PLANE':
-      #ldevi = 'OUI'
+      liaison="OUI"
       if args['LIAISON'] == 'PERIODIQUE':
         lliaison = 'OUI'
       elif args['LIAISON'] == 'SANS':
         lliaison = 'NON'
 
-
-# Possibilite d utiliser des masses penalisées :
-# lmassp ='OUI' ou 'NON'
-      if args['UNITE_TRAN_INIT'] != None :
-        #ldevi = 'OUI'
-        ltranin = 'OUI'
-        input = 'RA'
-        lliaison = 'NON'
-        if args['MASS_PENA'] != None:
-          lmassp = 'OUI'
-# Possibilite d utiliser une longueur caracteristique :
-# llcara ='OUI' ou 'NON'
-        if args['LONG_CARA'] != None :
-          llcara = 'OUI'
+        # Possibilite d utiliser des masses penalisées :
+        # lmassp ='OUI' ou 'NON'
+      if dime == "2D":
+          if args['UNITE_TRAN_INIT'] != None :
+            #ldevi = 'OUI'
+            ltranin = 'OUI'
+            input = 'RA'
+            lliaison = 'NON'
+            if args['MASS_PENA'] != None:
+              lmassp = 'OUI'
+        # Possibilite d utiliser une longueur caracteristique :
+        # llcara ='OUI' ou 'NON'
+            if args['LONG_CARA'] != None :
+              llcara = 'OUI'
 
 # Possibilite de faire une verification en temporel avec coeff Rayleigh :
 # veriftmp ='OUI' ou 'NON'
@@ -175,8 +191,13 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 
 # Groupes de mailles et maillage
     mail0 = args['MAILLAGE']
-    grma_droit = args['GROUP_MA_DROITE']
-    grma_gauch = args['GROUP_MA_GAUCHE']
+    if dime == "2D":
+        grma_droit = args['GROUP_MA_DROITE']
+        grma_gauch = args['GROUP_MA_GAUCHE']
+    
+    if dime == "3D":
+        grma_tot = args['GROUP_MA_LIGNE']
+
     grma_subst = args['GROUP_MA_SUBSTR']
     grma_colon = args['GROUP_MA_COL']
     #if args['GROUP_MA_LATE'] != None:
@@ -217,14 +238,17 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
         utabdsp = args['UNITE_RESU_DSP']
 
 # Parametres FFT ### TRES IMPORTANT ###
+    fonc_acce=[None]*num_dime
+    __fonc_acce=[None]*num_dime
+    __AHX = [None]*num_dime
     if ltranin == 'OUI' :
       utranin = args['UNITE_TRAN_INIT']
-      __fonc_acce=LIRE_FONCTION(UNITE=utranin,NOM_PARA='INST',
+      __fonc_acce[0]=LIRE_FONCTION(UNITE=utranin,NOM_PARA='INST',
                INTERPOL = 'LIN',PROL_DROITE = 'CONSTANT',
                INDIC_PARA=[1,1],INDIC_RESU=[1,3],
                    );
 
-      tt, vale_s = __fonc_acce.Valeurs()
+      tt, vale_s = __fonc_acce[0].Valeurs()
       dt = tt[1] - tt[0]
       nbdt = len(vale_s)
       tfin = tt[nbdt - 1]
@@ -253,12 +277,12 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                         PROL_GAUCHE='CONSTANT',                        
                          );
 
-      __fonc_acce = DEFI_FONCTION(ABSCISSE = fr, ORDONNEE = np.sqrt(vale_s) ,
+      __fonc_acce[0] = DEFI_FONCTION(ABSCISSE = fr, ORDONNEE = np.sqrt(vale_s) ,
                         PROL_DROITE='CONSTANT', NOM_PARA  = 'FREQ',
                         PROL_GAUCHE='CONSTANT',                        
                          );
 
-      __AHX  = CALC_FONCTION(COMB_C=_F(FONCTION=__fonc_acce, COEF_C = 1.+0.j), 
+      __AHX[0]  = CALC_FONCTION(COMB_C=_F(FONCTION=__fonc_acce[0], COEF_C = 1.+0.j), 
                        NOM_PARA='FREQ',);
 
 
@@ -275,15 +299,25 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 
 ####
     else :
-      fonc_acce = args['FONC_SIGNAL']
-      __fonc_acce = CALC_FONCTION(COMB=(
-                       _F(FONCTION=fonc_acce, COEF=1.0),
-                             ),
-                        PROL_DROITE='CONSTANT',
-                        PROL_GAUCHE='CONSTANT',                        
-                         );
+      if dime == "2D":
+          fonc_acce[0] = args['FONC_SIGNAL']
+          __fonc_acce[0] = CALC_FONCTION(COMB=(
+                   _F(FONCTION=fonc_acce[0], COEF=1.0),
+                         ),
+                    PROL_DROITE='CONSTANT',
+                    PROL_GAUCHE='CONSTANT',                        
+                     );
+      elif dime == "3D":  
+          for n in xrange(num_dime):
+              fonc_acce[n] = args['FONC_SIGNAL_'+name_dime[n]]
+              __fonc_acce[n] = CALC_FONCTION(COMB=(
+                   _F(FONCTION=fonc_acce[n], COEF=1.0),
+                         ),
+                    PROL_DROITE='CONSTANT',
+                    PROL_GAUCHE='CONSTANT',                        
+                     );
 
-      tt, vale_s = __fonc_acce.Valeurs()
+      tt, vale_s = __fonc_acce[0].Valeurs()
       dt = tt[1] - tt[0]
       nbdt = len(vale_s)
       tfin = tt[nbdt - 1]
@@ -359,22 +393,35 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 #
     ifsax = []
     a = 1
+    __ACCEX = [None]*num_dime
+    __SAX = [None]*num_dime
+    __ACCEX0 = [None]*num_dime
+    __ACCEX0H = [None]*num_dime
+    __VITEX = [None]*num_dime
+    __SAX = [None]*num_dime
 ### Option DSP
     if args.has_key('DSP')  :
 
       if args['LIST_FREQ_SPEC_OSCI'] != None:
-        __SAX = CALC_FONCTION(
+        __SAX[0] = CALC_FONCTION(
           SPEC_OSCI=_F(FONCTION= __fonc_dsp, NATURE_FONC     ='DSP',DUREE=TSM ,
                        METHODE='RICE', NATURE = 'ACCE', 
                        AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
       else:
-        __SAX = CALC_FONCTION(
+        __SAX[0] = CALC_FONCTION(
           SPEC_OSCI=_F(FONCTION= __fonc_dsp, NATURE_FONC     ='DSP', DUREE = TSM, 
                        METHODE ='RICE', NATURE = 'ACCE', 
                        AMOR_REDUIT=0.05, NORME=9.81))
       ifsax.append(
           _F(FONCTION=__SAX, MARQUEUR=0, LEGENDE='SAXi_' + str(a)),)
 
+      if input == 'CL' :
+            __VITEX[0] = DEFI_FONCTION(ABSCISSE = fr[1:], ORDONNEE = 1./np.array(fr[1:]),
+                        PROL_DROITE='CONSTANT', NOM_PARA  = 'FREQ',
+                        PROL_GAUCHE='CONSTANT',                        
+                         );
+      if input == 'RA' :
+            __VITEX[0] = CALC_FONCTION(COMB=( _F(FONCTION=__VHX, COEF=1. ),),);
 
 
     else:
@@ -382,85 +429,76 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 #sinon
 
 # for a in range (1,nbacc+1):
-
-      __ACCEX = CALC_FONCTION(LIST_PARA=__linst,
+      for n in xrange(num_dime):
+        __ACCEX[n] = CALC_FONCTION(LIST_PARA=__linst,
                             PROL_DROITE='CONSTANT',
                             PROL_GAUCHE='CONSTANT', 
-          COMB=_F(FONCTION=__fonc_acce, COEF=coefu * coefzpa))
+          COMB=_F(FONCTION=__fonc_acce[n], COEF=coefu * coefzpa))
 
-      if args['LIST_FREQ_SPEC_OSCI'] != None:
-        __SAX = CALC_FONCTION(
-          SPEC_OSCI=_F(FONCTION=__ACCEX,AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
-      else:
-        __SAX = CALC_FONCTION(
-          SPEC_OSCI=_F(FONCTION=__ACCEX, AMOR_REDUIT=0.05, NORME=9.81))
-      ifsax.append(
-          _F(FONCTION=__SAX, MARQUEUR=0, LEGENDE='SAXi_' + str(a)),)
+
+        if args['LIST_FREQ_SPEC_OSCI'] != None:
+          __SAX[n] = CALC_FONCTION(
+            SPEC_OSCI=_F(FONCTION=__ACCEX[n],AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
+        else:
+          __SAX[n] = CALC_FONCTION(
+            SPEC_OSCI=_F(FONCTION=__ACCEX[n], AMOR_REDUIT=0.05, NORME=9.81))
+        ifsax.append(
+            _F(FONCTION=__SAX[n], MARQUEUR=0, LEGENDE='SAXi_' + str(a)),)
 
 # On calcule la FFT
-      __AHX = CALC_FONCTION(FFT=_F(FONCTION=__ACCEX, METHODE='COMPLET',))
+
+        __AHX[n] = CALC_FONCTION(FFT=_F(FONCTION=__ACCEX[n], METHODE='COMPLET',))
 
 
-
-    __ASPEFCI = DEFI_FONCTION ( NOM_PARA='FREQ', 
-                          VALE_C=(
-            0.0    ,  1.0,  0.0,
-            df     ,  1.0,  0.0,
-            fmaxc   ,  1.0,  0.0,
-            fmaxc+df  ,  0.0,  0.0,
-                  ),
-           PROL_DROITE      =  'CONSTANT' ,
-           PROL_GAUCHE     =  'CONSTANT' ,
-    )
+        __ASPEFCI = DEFI_FONCTION ( NOM_PARA='FREQ', 
+                              VALE_C=(
+                0.0    ,  1.0,  0.0,
+                df     ,  1.0,  0.0,
+                fmaxc   ,  1.0,  0.0,
+                fmaxc+df  ,  0.0,  0.0,
+                      ),
+               PROL_DROITE      =  'CONSTANT' ,
+               PROL_GAUCHE     =  'CONSTANT' ,
+        )
    
-    __ACI01F = DEFI_INTE_SPEC ( DIMENSION= 1,
-                  PAR_FONCTION =_F( NUME_ORDRE_I = 1,
-                                    NUME_ORDRE_J = 1,
-                                    FONCTION  =  __ASPEFCI ,),
-                   INFO= 1,
-                              )
+        __ACI01F = DEFI_INTE_SPEC ( DIMENSION= 1,
+                      PAR_FONCTION =_F( NUME_ORDRE_I = 1,
+                                        NUME_ORDRE_J = 1,
+                                        FONCTION  =  __ASPEFCI ,),
+                       INFO= 1,
+                                  )
                               
 
-    __VCIF01X = GENE_FONC_ALEA ( INTE_SPEC =  __ACI01F,
-                             DUREE_TIRAGE   = tfin+dt ,
-                             FREQ_INIT=0.,
-                             FREQ_FIN=fmax,
-                             NB_TIRAGE=1,
-                             INFO= 1
-                              )
+        __VCIF01X = GENE_FONC_ALEA ( INTE_SPEC =  __ACI01F,
+                                 DUREE_TIRAGE   = tfin+dt ,
+                                 FREQ_INIT=0.,
+                                 FREQ_FIN=fmax,
+                                 NB_TIRAGE=1,
+                                 INFO= 1
+                                  )
 
 
-    __FCI01FX = RECU_FONCTION(INTE_SPEC=__VCIF01X ,
-                     NUME_ORDRE = 1,
-                     INTERPOL='LIN',
-                     PROL_DROITE='CONSTANT',
-                     PROL_GAUCHE='CONSTANT',
-                    )
+        __FCI01FX = RECU_FONCTION(INTE_SPEC=__VCIF01X ,
+                         NUME_ORDRE = 1,
+                         INTERPOL='LIN',
+                         PROL_DROITE='CONSTANT',
+                         PROL_GAUCHE='CONSTANT',
+                        )
 
-    __ACCEX0 = CALC_FONCTION(COMB=(
-                       _F(FONCTION=__FCI01FX, COEF=1.0/sqrt(2.0*pi*fmax) ),
-                             ),
-                        LIST_PARA=__linst,
-                        PROL_DROITE='CONSTANT',
-                        PROL_GAUCHE='CONSTANT',                        
-                         );
-                            
-    __ACCEX0H = CALC_FONCTION(FFT=_F(FONCTION=__ACCEX0, METHODE='COMPLET',))
+        __ACCEX0[n] = CALC_FONCTION(COMB=(
+                           _F(FONCTION=__FCI01FX, COEF=1.0/sqrt(2.0*pi*fmax) ),
+                                 ),
+                            LIST_PARA=__linst,
+                            PROL_DROITE='CONSTANT',
+                            PROL_GAUCHE='CONSTANT',                        
+                             );
 
+        __ACCEX0H[n] = CALC_FONCTION(FFT=_F(FONCTION=__ACCEX0[n], METHODE='COMPLET',))
 
-    if 'DSP' not in args  :
-      if input == 'CL' :
-        __VITEX = CALC_FONCTION(INTEGRE=_F(FONCTION=__ACCEX0, ))
-      if input == 'RA' :
-        __VITEX = CALC_FONCTION(INTEGRE=_F(FONCTION=__ACCEX, ))
-    else:
-      if input == 'CL' :
-         __VITEX = DEFI_FONCTION(ABSCISSE = fr[1:], ORDONNEE = 1./np.array(fr[1:]),
-                        PROL_DROITE='CONSTANT', NOM_PARA  = 'FREQ',
-                        PROL_GAUCHE='CONSTANT',                        
-                         );
-      if input == 'RA' :
-        __VITEX = CALC_FONCTION(COMB=( _F(FONCTION=__VHX, COEF=1. ),),);
+        if input == 'CL' :
+            __VITEX[n] = CALC_FONCTION(INTEGRE=_F(FONCTION=__ACCEX0[n], ))
+        if input == 'RA' :
+            __VITEX[n] = CALC_FONCTION(INTEGRE=_F(FONCTION=__ACCEX[n], ))
 
 #
 # DEBUT DE LA BOUCLE       #
@@ -632,39 +670,50 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
         # nombre de sous-couches par couche enfoncee        
         nsco = args['NB_RECEPTEUR']
 
-    if args['NOM_CMP'] == 'DY':
-       nmaxit = 2
+    if dime == "2D":
+        if args['NOM_CMP'] == 'DY':
+            nmaxit = 2
 
 # Lecture du maillage
     if args['MAILLAGE'] != None:
-      __mailla = CREA_MAILLAGE(MAILLAGE=mail0,
+      if dime == "2D":
+          __mailla = CREA_MAILLAGE(MAILLAGE=mail0,
+                                 CREA_POI1=(
+                                 _F(NOM_GROUP_MA='PCOL',
+                                    GROUP_MA=grma_colon,),
+                                 _F(NOM_GROUP_MA='PLATE',
+                                    GROUP_MA=(grma_droit,grma_gauch,),),
+                                 ),
+                                 )
+
+          __mailla = DEFI_GROUP(reuse=__mailla,
+                              MAILLAGE=__mailla,
+                              CREA_GROUP_NO=_F(GROUP_MA=(grma_droit,),),
+                              )
+
+          #if args['GROUP_MA_LATE'] == None:
+          #  __mailla = DEFI_GROUP(reuse=__mailla,
+          #                    MAILLAGE=__mailla,
+          #                    CREA_GROUP_MA=_F(NOM=grma_late, UNION=(grma_droit,grma_gauch,),),
+          #                    )
+
+          __mailla = DEFI_GROUP(reuse=__mailla,
+                              MAILLAGE=__mailla,
+                              CREA_GROUP_NO=_F(GROUP_MA=(grma_gauch,),),
+                              )
+
+          __mailla = DEFI_GROUP(reuse=__mailla,
+                              MAILLAGE=__mailla,
+                              CREA_GROUP_NO=_F(GROUP_MA=('PLATE',),),
+                              )
+      elif dime == "3D":
+          __mailla = CREA_MAILLAGE(MAILLAGE=mail0,
                              CREA_POI1=(
                              _F(NOM_GROUP_MA='PCOL',
-                                GROUP_MA=grma_colon,),
-                             _F(NOM_GROUP_MA='PLATE',
-                                GROUP_MA=(grma_droit,grma_gauch,),),
-                             ),
-                             )
-
-      __mailla = DEFI_GROUP(reuse=__mailla,
-                          MAILLAGE=__mailla,
-                          CREA_GROUP_NO=_F(GROUP_MA=(grma_droit,),),
-                          )
-      #if args['GROUP_MA_LATE'] == None:
-      #  __mailla = DEFI_GROUP(reuse=__mailla,
-      #                    MAILLAGE=__mailla,
-      #                    CREA_GROUP_MA=_F(NOM=grma_late, UNION=(grma_droit,grma_gauch,),),
-      #                    )
-
-      __mailla = DEFI_GROUP(reuse=__mailla,
-                          MAILLAGE=__mailla,
-                          CREA_GROUP_NO=_F(GROUP_MA=(grma_gauch,),),
-                          )
-      __mailla = DEFI_GROUP(reuse=__mailla,
-                          MAILLAGE=__mailla,
-                          CREA_GROUP_NO=_F(GROUP_MA=('PLATE',),),
-                          )
+                                GROUP_MA=grma_colon,),),
+                         )
     else:
+      #maillage automatique uniquement en 2D
       text = ('NCOU=' + str(NCOU))
       aster.affiche('MESSAGE', text)
       NCOUB=NCOU+1
@@ -793,6 +842,8 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                           CREA_GROUP_NO=_F(GROUP_MA=('PLATE',),),
                            )
       UL.EtatInit()
+
+    # cas uniquement en 2D pour l'instant
     if ltranin == 'OUI' :
       NPC = NCOU+3 
       l_para = []
@@ -854,29 +905,30 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 
     #IMPR_RESU(RESU=_F(MAILLAGE=__mailla,));
     if lliaison == 'OUI':
-      __mailla=MODI_MAILLAGE(reuse =__mailla,
-                MAILLAGE=__mailla,
-                ORIE_PEAU_2D=_F(GROUP_MA=grma_subst,GROUP_MA_SURF=grma_colon,),
-                );
-      __MODELE = AFFE_MODELE(MAILLAGE=__mailla,
-                           AFFE=(
-                           _F(GROUP_MA=grma_colon, PHENOMENE='MECANIQUE',
-                              MODELISATION='D_PLAN',),
-                           _F(GROUP_MA=grma_subst, PHENOMENE='MECANIQUE',
-                              MODELISATION='D_PLAN_ABSO',),
-                           ),)
+        if dime == "2D":
+          __mailla=MODI_MAILLAGE(reuse =__mailla,
+                    MAILLAGE=__mailla,
+                    ORIE_PEAU_2D=_F(GROUP_MA=grma_subst,GROUP_MA_SURF=grma_colon,),
+                    );
+          __MODELE = AFFE_MODELE(MAILLAGE=__mailla,
+                               AFFE=(
+                               _F(GROUP_MA=grma_colon, PHENOMENE='MECANIQUE',
+                                  MODELISATION='D_PLAN',),
+                               _F(GROUP_MA=grma_subst, PHENOMENE='MECANIQUE',
+                                  MODELISATION='D_PLAN_ABSO',),
+                               ),)
 
-# Conditions de periodicite: relation d'egalite entre les deplacements
-# des noeuds des bords droit et gauche du modele
-      __CON_LIM = AFFE_CHAR_MECA(MODELE=__MODELE,
-                               LIAISON_GROUP=
-                              (_F(GROUP_NO_1=grma_gauch,
-                                  GROUP_NO_2=grma_droit,
-                                  DDL_1=('DX',),
-                                  DDL_2=('DX',),
-                                  COEF_MULT_1=1.,
-                                  COEF_MULT_2=-1.,
-                                  COEF_IMPO=0.,),
+    # Conditions de periodicite: relation d'egalite entre les deplacements
+    # des noeuds des bords droit et gauche du modele
+          __CON_LIM = AFFE_CHAR_MECA(MODELE=__MODELE,
+                                   LIAISON_GROUP=
+                                  (_F(GROUP_NO_1=grma_gauch,
+                                      GROUP_NO_2=grma_droit,
+                                      DDL_1=('DX',),
+                                      DDL_2=('DX',),
+                                      COEF_MULT_1=1.,
+                                      COEF_MULT_2=-1.,
+                                      COEF_IMPO=0.,),
                                   _F(GROUP_NO_1=grma_gauch,
                                      GROUP_NO_2=grma_droit,
                                      DDL_1=('DY',),
@@ -884,40 +936,64 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                                      COEF_MULT_1 = 1.,
                                      COEF_MULT_2 = -1.,
                                      COEF_IMPO = 0.,),
-                               ),
-                               )
+                                   ),
+                                 )
+        else:
+          __mailla=MODI_MAILLAGE(reuse =__mailla,
+                    MAILLAGE=__mailla,
+                    ORIE_PEAU_3D=_F(GROUP_MA=grma_subst,GROUP_MA_VOLU=grma_colon,),
+                    );
+
+          __MODELE = AFFE_MODELE(MAILLAGE=__mailla,
+                               AFFE=(
+                               _F(GROUP_MA=grma_colon, PHENOMENE='MECANIQUE',
+                                  MODELISATION='3D',),
+                               _F(GROUP_MA=grma_subst, PHENOMENE='MECANIQUE',
+                                  MODELISATION='3D_ABSO',),
+                               _F(GROUP_MA=grma_tot,
+                                  PHENOMENE='MECANIQUE',
+                                  MODELISATION='DIS_T',),
+                               ),)
+
+          __CARELE = AFFE_CARA_ELEM( MODELE=__MODELE,
+                          DISCRET=(_F(GROUP_MA = grma_tot,
+                                      CARA     = 'K_T_D_L',
+                                      REPERE = 'GLOBAL',
+                                      VALE     = (1.E15,1.E15,1E15,),
+                                     ),),)
+
     else:
-      __mailla=MODI_MAILLAGE(reuse =__mailla,
+    # uniquement en 2D
+        __mailla=MODI_MAILLAGE(reuse =__mailla,
                 MAILLAGE=__mailla,
                 ORIE_PEAU_2D=_F(GROUP_MA=(grma_subst,grma_gauch,grma_droit),GROUP_MA_SURF=grma_colon,),
                 );
-      if lmassp == 'OUI':
-        __MODELE = AFFE_MODELE(MAILLAGE=__mailla,
-                           AFFE=(
-                           _F(GROUP_MA=grma_colon, PHENOMENE='MECANIQUE',
-                              MODELISATION='D_PLAN',),
-                           _F(GROUP_MA='PLATE', PHENOMENE='MECANIQUE',
-                              MODELISATION='2D_DIS_T',),
-                           _F(GROUP_MA=(grma_subst,grma_gauch,grma_droit), PHENOMENE='MECANIQUE',
-                              MODELISATION='D_PLAN_ABSO',),
-                           ),)
-
-        __ELEM=AFFE_CARA_ELEM(MODELE=__MODELE,
+        if lmassp == 'OUI':
+            __MODELE = AFFE_MODELE(MAILLAGE=__mailla,
+                               AFFE=(
+                               _F(GROUP_MA=grma_colon, PHENOMENE='MECANIQUE',
+                                  MODELISATION='D_PLAN',),
+                               _F(GROUP_MA='PLATE', PHENOMENE='MECANIQUE',
+                                  MODELISATION='2D_DIS_T',),
+                               _F(GROUP_MA=(grma_subst,grma_gauch,grma_droit), PHENOMENE='MECANIQUE',
+                                  MODELISATION='D_PLAN_ABSO',),
+                               ),)
+            __ELEM=AFFE_CARA_ELEM(MODELE=__MODELE,
                     DISCRET=(
                              _F(GROUP_MA='PLATE',
                                     REPERE='GLOBAL',
                                     CARA='M_T_D_N',
                                     VALE=args['MASS_PENA']),
                             ),        
-                    );
-      else:
-        __MODELE = AFFE_MODELE(MAILLAGE=__mailla,
-                           AFFE=(
-                           _F(GROUP_MA=grma_colon, PHENOMENE='MECANIQUE',
-                              MODELISATION='D_PLAN',),
-                           _F(GROUP_MA=(grma_subst,grma_gauch,grma_droit), PHENOMENE='MECANIQUE',
-                              MODELISATION='D_PLAN_ABSO',),
-                           ),)
+                    );            
+        else:
+            __MODELE = AFFE_MODELE(MAILLAGE=__mailla,
+                               AFFE=(
+                               _F(GROUP_MA=grma_colon, PHENOMENE='MECANIQUE',
+                                  MODELISATION='D_PLAN',),
+                               _F(GROUP_MA=(grma_subst,grma_gauch,grma_droit), PHENOMENE='MECANIQUE',
+                                  MODELISATION='D_PLAN_ABSO',),
+                               ),)
 
     # On genere la liste initiale pour Emax AH ratio G/Gmax et des profondeurs
     E = [[]] * nmaxit
@@ -1103,28 +1179,52 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                                    )
         if lliaison == 'OUI':
             # MATRICE DE RIGIDITE ELEMENTAIRE
+          if dime == "2D":
 
-          __RIGI_ELH = CALC_MATR_ELEM(OPTION='RIGI_MECA',
-                                    MODELE=__MODELE, CHAM_MATER=__CHAMPMAH, CHARGE=__CON_LIM,)
-            # Amor meca hyst pour colonne
+              __RIGI_ELH = CALC_MATR_ELEM(OPTION='RIGI_MECA',
+                                        MODELE=__MODELE, CHAM_MATER=__CHAMPMAH, CHARGE=__CON_LIM,)
+                # Amor meca hyst pour colonne
 
-          __RIGH_ELH = CALC_MATR_ELEM(OPTION='RIGI_MECA_HYST',
-                                    MODELE=__MODELE, CHAM_MATER=__CHAMPMAH, RIGI_MECA=__RIGI_ELH, CHARGE=__CON_LIM,)
-            # MATRICE DE MASSE ELEMENTAIRE
+              __RIGH_ELH = CALC_MATR_ELEM(OPTION='RIGI_MECA_HYST',
+                                        MODELE=__MODELE, CHAM_MATER=__CHAMPMAH, RIGI_MECA=__RIGI_ELH, CHARGE=__CON_LIM,)
+                # MATRICE DE MASSE ELEMENTAIRE
 
-          __MASS_ELH = CALC_MATR_ELEM(OPTION='MASS_MECA',
-                                    MODELE=__MODELE,
-                                    CHAM_MATER=__CHAMPMAH,
-                                    CHARGE=__CON_LIM,)
-            # MATRICE D AMORTISSEMENT ELEMENTAIRE (pour prise en compte
-            # amortissement frontiere absorbante)
+              __MASS_ELH = CALC_MATR_ELEM(OPTION='MASS_MECA',
+                                        MODELE=__MODELE,
+                                        CHAM_MATER=__CHAMPMAH,
+                                        CHARGE=__CON_LIM,)
+                # MATRICE D AMORTISSEMENT ELEMENTAIRE (pour prise en compte
+                # amortissement frontiere absorbante)
 
-          __AMOR_ELH = CALC_MATR_ELEM(OPTION='AMOR_MECA',
-                                    MODELE=__MODELE,
-                                    CHAM_MATER=__CHAMPMAH,
-                                    RIGI_MECA=__RIGI_ELH,
-                                    MASS_MECA=__MASS_ELH,
-                                    CHARGE=__CON_LIM,)
+              __AMOR_ELH = CALC_MATR_ELEM(OPTION='AMOR_MECA',
+                                        MODELE=__MODELE,
+                                        CHAM_MATER=__CHAMPMAH,
+                                        RIGI_MECA=__RIGI_ELH,
+                                        MASS_MECA=__MASS_ELH,
+                                        CHARGE=__CON_LIM,)
+          if dime == "3D":
+              __RIGI_ELH = CALC_MATR_ELEM(OPTION='RIGI_MECA',
+                                        MODELE=__MODELE, CHAM_MATER=__CHAMPMAH, CARA_ELEM=__CARELE)
+                # Amor meca hyst pour colonne
+
+              __RIGH_ELH = CALC_MATR_ELEM(OPTION='RIGI_MECA_HYST',
+                                        MODELE=__MODELE, CHAM_MATER=__CHAMPMAH, RIGI_MECA=__RIGI_ELH, CARA_ELEM=__CARELE)
+                # MATRICE DE MASSE ELEMENTAIRE
+
+              __MASS_ELH = CALC_MATR_ELEM(OPTION='MASS_MECA',
+                                        MODELE=__MODELE,
+                                        CHAM_MATER=__CHAMPMAH,
+                                        CARA_ELEM=__CARELE)
+                # MATRICE D AMORTISSEMENT ELEMENTAIRE (pour prise en compte
+                # amortissement frontiere absorbante)
+
+              __AMOR_ELH = CALC_MATR_ELEM(OPTION='AMOR_MECA',
+                                        MODELE=__MODELE,
+                                        CHAM_MATER=__CHAMPMAH,
+                                        RIGI_MECA=__RIGI_ELH,
+                                        MASS_MECA=__MASS_ELH,
+                                        CARA_ELEM=__CARELE)
+
         else:
           if lmassp == 'OUI':
             # MATRICE DE RIGIDITE ELEMENTAIRE
@@ -1189,91 +1289,138 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
         __AMORTIH = ASSE_MATRICE(MATR_ELEM=__AMOR_ELH, NUME_DDL=__NUMEDDL,)
 
             # Chargement sismique monoappui sur la base du modele
-        if args['NOM_CMP'] == 'DX':
-          __VECASX = CALC_CHAR_SEISME(
-            MATR_MASS=__MASSEH, DIRECTION=(1., 0., 0.,), MONO_APPUI='OUI')
-          if lliaison == 'OUI':
-            __ONDEX=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
-                ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
-                TYPE_ONDE = 'S',
-                DIST=-1.0*__TMAT['Y', NCOU + 1],
-                FONC_SIGNAL = __VITEX, GROUP_MA=grma_subst)
-                     );
-          else:
-            if ltranin == 'OUI' :
-              if lmassp == 'OUI' :
-                __ONDEX=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
-                  ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
-                  TYPE_ONDE = 'S',
-                  DIST=-1.0*__TMAT['Y', NCOU + 1], #DIST_REFLECHI=0.,
-                  FONC_SIGNAL = __VITEX, GROUP_MA=(grma_subst,))
-                      );
-                __FSEISMX=AFFE_CHAR_MECA_F(MODELE=__MODELE,
-                  FORCE_NODALE=(_F(GROUP_NO='PLATE',FX=__NSEISMX,),),
-                      );
+        __ONDEX = [None]*num_dime
+        if dime == "2D": 
+            if args['NOM_CMP'] == 'DX':
+              __VECASX = CALC_CHAR_SEISME(
+                MATR_MASS=__MASSEH, DIRECTION=(1., 0., 0.,), MONO_APPUI='OUI')
+              if lliaison == 'OUI':
+                __ONDEX[0]=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
+                    ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
+                    TYPE_ONDE = 'S',
+                    DIST=-1.0*__TMAT['Y', NCOU + 1],
+                    FONC_SIGNAL = __VITEX[0], GROUP_MA=grma_subst)
+                         );
               else:
-                __FSEISMX=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
-                  ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
-                  TYPE_ONDE = 'S',
-                  DEPL_IMPO=__FONCDX,
-                  FONC_SIGNAL = __FONCVX, GROUP_MA=(grma_gauch,grma_droit))
-                      );
-                __ONDEX=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
-                ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
-                TYPE_ONDE = 'S',
-                DIST=-1.0*__TMAT['Y', NCOU + 1],
-                FONC_SIGNAL = __VITEX, GROUP_MA=grma_subst)
-                     );
+                if ltranin == 'OUI' :
+                  if lmassp == 'OUI' :
+                    __ONDEX[0]=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
+                      ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
+                      TYPE_ONDE = 'S',
+                      DIST=-1.0*__TMAT['Y', NCOU + 1], #DIST_REFLECHI=0.,
+                      FONC_SIGNAL = __VITEX[0], GROUP_MA=(grma_subst,))
+                          );
+                    __FSEISMX=AFFE_CHAR_MECA_F(MODELE=__MODELE,
+                      FORCE_NODALE=(_F(GROUP_NO='PLATE',FX=__NSEISMX,),),
+                          );
+                  else:
+                    __FSEISMX=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
+                      ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
+                      TYPE_ONDE = 'S',
+                      DEPL_IMPO=__FONCDX,
+                      FONC_SIGNAL = __FONCVX, GROUP_MA=(grma_gauch,grma_droit))
+                          );
+                    __ONDEX[0]=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
+                    ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
+                    TYPE_ONDE = 'S',
+                    DIST=-1.0*__TMAT['Y', NCOU + 1],
+                    FONC_SIGNAL = __VITEX[0], GROUP_MA=grma_subst)
+                         );
+                else:
+                  __ONDEX[0]=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
+                    ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
+                    TYPE_ONDE = 'S',
+                    DIST=-1.0*__TMAT['Y', NCOU + 1], DIST_REFLECHI=0.,
+                    FONC_SIGNAL = __VITEX[0], GROUP_MA=(grma_subst,grma_gauch,grma_droit))
+                         );
             else:
-              __ONDEX=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
-                ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
-                TYPE_ONDE = 'S',
-                DIST=-1.0*__TMAT['Y', NCOU + 1], DIST_REFLECHI=0.,
-                FONC_SIGNAL = __VITEX, GROUP_MA=(grma_subst,grma_gauch,grma_droit))
-                     );
-
+              __VECASX = CALC_CHAR_SEISME(
+                MATR_MASS=__MASSEH, DIRECTION=(0., 1., 0.,), MONO_APPUI='OUI')
+              if lliaison == 'OUI':
+                __ONDEX[0]=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
+                    ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
+                    TYPE_ONDE = 'P',
+                    DIST=-1.0*__TMAT['Y', NCOU + 1],
+                    FONC_SIGNAL = __VITEX[0], GROUP_MA=grma_subst)
+                         );
+              else:
+                if ltranin == 'OUI' :
+                  if lmassp == 'OUI' :
+                    __ONDEX[0]=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
+                      ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
+                      TYPE_ONDE = 'P',
+                      DIST=-1.0*__TMAT['Y', NCOU + 1], #DIST_REFLECHI=0.,
+                      FONC_SIGNAL = __VITEX[0], GROUP_MA=(grma_subst,))
+                          );
+                    __FSEISMX=AFFE_CHAR_MECA_F(MODELE=__MODELE,
+                      FORCE_NODALE=(_F(GROUP_NO='PLATE',FY=__NSEISMX,),),
+                          );
+                  else:
+                    __FSEISMX=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
+                      ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
+                      TYPE_ONDE = 'P',
+                      DEPL_IMPO=__FONCDX,
+                      FONC_SIGNAL = __FONCVX, GROUP_MA=(grma_gauch,grma_droit))
+                          );
+                    __ONDEX[0]=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
+                    ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
+                    TYPE_ONDE = 'P',
+                    DIST=-1.0*__TMAT['Y', NCOU + 1],
+                    FONC_SIGNAL = __VITEX[0], GROUP_MA=grma_subst)
+                         );
+                else:
+                  __ONDEX[0]=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
+                    ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
+                    TYPE_ONDE = 'P',
+                    DIST=-1.0*__TMAT['Y', NCOU + 1], DIST_REFLECHI=0.,
+                    FONC_SIGNAL = __VITEX[0], GROUP_MA=(grma_subst,grma_gauch,grma_droit))
+                         );
+        # modèle 3D
         else:
-          __VECASX = CALC_CHAR_SEISME(
-            MATR_MASS=__MASSEH, DIRECTION=(0., 1., 0.,), MONO_APPUI='OUI')
-          if lliaison == 'OUI':
-            __ONDEX=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
-                ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
-                TYPE_ONDE = 'P',
-                DIST=-1.0*__TMAT['Y', NCOU + 1],
-                FONC_SIGNAL = __VITEX, GROUP_MA=grma_subst));
-          else:
-            if ltranin == 'OUI' :
-              if lmassp == 'OUI' :
-                __ONDEX=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
-                  ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
-                  TYPE_ONDE = 'P',
-                  DIST=-1.0*__TMAT['Y', NCOU + 1], #DIST_REFLECHI=0.,
-                  FONC_SIGNAL = __VITEX, GROUP_MA=(grma_subst,))
-                      );
-                __FSEISMX=AFFE_CHAR_MECA_F(MODELE=__MODELE,
-                  FORCE_NODALE=(_F(GROUP_NO='PLATE',FY=__NSEISMX,),),
-                      );
-              else:
-                __FSEISMX=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
-                  ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
-                  TYPE_ONDE = 'P',
-                  DEPL_IMPO=__FONCDX,
-                  FONC_SIGNAL = __FONCVX, GROUP_MA=(grma_gauch,grma_droit))
-                      );
-                __ONDEX=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
-                ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
-                TYPE_ONDE = 'P',
-                DIST=-1.0*__TMAT['Y', NCOU + 1],
-                FONC_SIGNAL = __VITEX, GROUP_MA=grma_subst)
-                     );
+            __VECASX = CALC_CHAR_SEISME(
+                MATR_MASS=__MASSEH, DIRECTION=(1., 0., 0.), MONO_APPUI='OUI')
+            __VECASY = CALC_CHAR_SEISME(
+                MATR_MASS=__MASSEH, DIRECTION=(0., 1., 0.), MONO_APPUI='OUI')
+            __VECASZ = CALC_CHAR_SEISME(
+                MATR_MASS=__MASSEH, DIRECTION=(0., 0., 1.), MONO_APPUI='OUI')
+            if lliaison == 'OUI':
+                __ONDEX[1]=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
+                    ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
+                                    TYPE_ONDE = 'P',
+                                    DIST=-1.0*__TMAT['Y', NCOU + 1],
+                                    FONC_SIGNAL = __VITEX[1], GROUP_MA=grma_subst),);
+                __ONDEX[0]=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
+                    ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
+                                    TYPE_ONDE = 'SH',
+                                    DIST=-1.0*__TMAT['Y', NCOU + 1],
+                                    FONC_SIGNAL = __VITEX[0], GROUP_MA=grma_subst),);
+                __ONDEX[2]=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
+                    ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
+                                    TYPE_ONDE = 'SV',
+                                    DIST=-1.0*__TMAT['Y', NCOU + 1],
+                                    FONC_SIGNAL = __VITEX[2], GROUP_MA=grma_subst),);
             else:
-              __ONDEX=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
-                ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
-                TYPE_ONDE = 'P',
-                DIST=-1.0*__TMAT['Y', NCOU + 1], DIST_REFLECHI=0.,
-                FONC_SIGNAL = __VITEX, GROUP_MA=(grma_subst,grma_gauch,grma_droit))
-                     );
-
+                __ONDEX[1]=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
+                    ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
+                                    TYPE_ONDE = 'P',
+                                    DIST=-1.0*__TMAT['Y', NCOU + 1], 
+                                    DIST_REFLECHI=0.,
+                                    FONC_SIGNAL = __VITEX[1], 
+                                    GROUP_MA=(grma_subst,grma_gauch,grma_droit)),);
+                __ONDEX[0]=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
+                    ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
+                                    TYPE_ONDE = 'SH',
+                                    DIST=-1.0*__TMAT['Y', NCOU + 1], 
+                                    DIST_REFLECHI=0.,
+                                    FONC_SIGNAL = __VITEX[0], 
+                                    GROUP_MA=(grma_subst,grma_gauch,grma_droit)),);
+                __ONDEX[2]=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
+                    ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
+                                    TYPE_ONDE = 'SV',
+                                    DIST=-1.0*__TMAT['Y', NCOU + 1], 
+                                    DIST_REFLECHI=0.,
+                                    FONC_SIGNAL = __VITEX[2], 
+                                    GROUP_MA=(grma_subst,grma_gauch,grma_droit)),);
             #
             # CALCUL HARMONIQUE SUR BASE PHYSIQUE #
             #
@@ -1283,15 +1430,22 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
         if args['CHARGEMENT'] == 'ONDE_PLANE':
           for k in range(1,nbdt+1):
             if ltranin == 'OUI' :
+            #cas non traité en 3D pour l'instant
               if lmassp == 'OUI':
                 __VECTEL1=CALC_VECT_ELEM(INST=(k-1)*dt, OPTION='CHAR_MECA', CARA_ELEM=__ELEM, 
-                                       CHAM_MATER=__CHAMPMAH, CHARGE=(__ONDEX,__FSEISMX))
+                                       CHAM_MATER=__CHAMPMAH, CHARGE=(__ONDEX[0],__FSEISMX))
               else:
                 __VECTEL1=CALC_VECT_ELEM(INST=(k-1)*dt, OPTION='CHAR_MECA',
-                                       CHAM_MATER=__CHAMPMAH, CHARGE=(__ONDEX,__FSEISMX))
+                                       CHAM_MATER=__CHAMPMAH, CHARGE=(__ONDEX[0],__FSEISMX))
  
             else: 
-              __VECTEL1=CALC_VECT_ELEM(INST=(k-1)*dt, OPTION='CHAR_MECA', CHAM_MATER=__CHAMPMAH, CHARGE=__ONDEX)
+                if dime == "2D":
+                    __VECTEL1=CALC_VECT_ELEM(INST=(k-1)*dt, OPTION='CHAR_MECA', CHAM_MATER=__CHAMPMAH, CHARGE=__ONDEX[0])
+                else:
+                    __VECTEL1=CALC_VECT_ELEM(INST=(k-1)*dt, 
+                                            OPTION='CHAR_MECA', 
+                                            CHAM_MATER=__CHAMPMAH, 
+                                            CHARGE=(__ONDEX[0],__ONDEX[1],__ONDEX[2]),)
 
             __VECA1=ASSE_VECTEUR(VECT_ELEM=__VECTEL1, NUME_DDL=__NUMEDDL)
 
@@ -1309,7 +1463,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                   MATR_MASS=__MASSEH,
                   NOM_CHAM='DEPL',
                   AFFE=(_F(CHAM_GD=__VECA1,INST=(k-1)*dt,),),);
-              DETRUIRE(INFO=1, CONCEPT=_F(NOM=(__VECTEL1, __VECA1)));
+              DETRUIRE(INFO=1,CONCEPT=_F(NOM=(__VECTEL1,__VECA1)));
   
           __CHAONF = REST_SPEC_TEMP( RESULTAT = __CHA_ON ,
                           METHODE = 'PROL_ZERO' ,
@@ -1400,41 +1554,82 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
             # On excite la base de la colonne avec un bruit blanc
 ######## cas classique et DSP
         else:
-          if args['LIST_FREQ'] != None:
-            __DYNHARM = DYNA_VIBRA    (TYPE_CALCUL='HARM', BASE_CALCUL='PHYS',
-                                   MODELE=__MODELE,
-                                   CHAM_MATER=__CHAMPMAH,
-                                   MATR_MASS=__MASSEH,
-                                   MATR_RIGI=__RIGIHYST,
-                                   MATR_AMOR=__AMORTIH,
-                                   LIST_FREQ=args['LIST_FREQ'],
-                                   EXCIT=(
-                                   _F(VECT_ASSE=__VECASX, FONC_MULT=__UN,),
-                                   ),
-                                   SOLVEUR=_F(RENUM='METIS',
-                                              STOP_SINGULIER='OUI',
-                                              METHODE='MUMPS',
-                                              NPREC=17,
-                                              ),
-                                   )
+          if dime == "2D":
+              if args['LIST_FREQ'] != None:
+                __DYNHARM = DYNA_VIBRA    (TYPE_CALCUL='HARM', BASE_CALCUL='PHYS',
+                                       MODELE=__MODELE,
+                                       CHAM_MATER=__CHAMPMAH,
+                                       MATR_MASS=__MASSEH,
+                                       MATR_RIGI=__RIGIHYST,
+                                       MATR_AMOR=__AMORTIH,
+                                       LIST_FREQ=args['LIST_FREQ'],
+                                       EXCIT=(
+                                       _F(VECT_ASSE=__VECASX, FONC_MULT=__UN,),
+                                       ),
+                                       SOLVEUR=_F(RENUM='METIS',
+                                                  STOP_SINGULIER='OUI',
+                                                  METHODE='MUMPS',
+                                                  NPREC=17,
+                                                  ),
+                                       )
 
+              else:
+                __DYNHARM = DYNA_VIBRA    (TYPE_CALCUL='HARM', BASE_CALCUL='PHYS',
+                                       MODELE=__MODELE,
+                                       CHAM_MATER=__CHAMPMAH,
+                                       MATR_MASS=__MASSEH,
+                                       MATR_RIGI=__RIGIHYST,
+                                       MATR_AMOR=__AMORTIH,
+                                       LIST_FREQ=__lfreqc,
+                                       EXCIT=(
+                                       _F(VECT_ASSE=__VECASX, FONC_MULT=__UN,),
+                                       ),
+                                       SOLVEUR=_F(RENUM='METIS',
+                                                  STOP_SINGULIER='OUI',
+                                                  METHODE='MUMPS',
+                                                  NPREC=17,
+                                                  ),
+                                       )
           else:
-            __DYNHARM = DYNA_VIBRA    (TYPE_CALCUL='HARM', BASE_CALCUL='PHYS',
-                                   MODELE=__MODELE,
-                                   CHAM_MATER=__CHAMPMAH,
-                                   MATR_MASS=__MASSEH,
-                                   MATR_RIGI=__RIGIHYST,
-                                   MATR_AMOR=__AMORTIH,
-                                   LIST_FREQ=__lfreqc,
-                                   EXCIT=(
-                                   _F(VECT_ASSE=__VECASX, FONC_MULT=__UN,),
-                                   ),
-                                   SOLVEUR=_F(RENUM='METIS',
-                                              STOP_SINGULIER='OUI',
-                                              METHODE='MUMPS',
-                                              NPREC=17,
-                                              ),
-                                   )
+              if args['LIST_FREQ'] != None:
+                __DYNHARM = DYNA_VIBRA    (TYPE_CALCUL='HARM', BASE_CALCUL='PHYS',
+                                       MODELE=__MODELE,
+                                       CHAM_MATER=__CHAMPMAH,
+                                       MATR_MASS=__MASSEH,
+                                       MATR_RIGI=__RIGIHYST,
+                                       MATR_AMOR=__AMORTIH,
+                                       LIST_FREQ=args['LIST_FREQ'],
+                                       EXCIT=(
+                                       _F(VECT_ASSE=__VECASX, FONC_MULT=__UN,),
+                                       _F(VECT_ASSE=__VECASY, FONC_MULT=__UN,),
+                                       _F(VECT_ASSE=__VECASZ, FONC_MULT=__UN,),
+                                       ),
+                                       SOLVEUR=_F(RENUM='METIS',
+                                                  STOP_SINGULIER='OUI',
+                                                  METHODE='MUMPS',
+                                                  NPREC=17,
+                                                  ),
+                                       )
+
+              else:
+                __DYNHARM = DYNA_VIBRA    (TYPE_CALCUL='HARM', BASE_CALCUL='PHYS',
+                                       MODELE=__MODELE,
+                                       CHAM_MATER=__CHAMPMAH,
+                                       MATR_MASS=__MASSEH,
+                                       MATR_RIGI=__RIGIHYST,
+                                       MATR_AMOR=__AMORTIH,
+                                       LIST_FREQ=__lfreqc,
+                                       EXCIT=(
+                                       _F(VECT_ASSE=__VECASX, FONC_MULT=__UN,),
+                                       _F(VECT_ASSE=__VECASY, FONC_MULT=__UN,),
+                                       _F(VECT_ASSE=__VECASZ, FONC_MULT=__UN,),
+                                       ),
+                                       SOLVEUR=_F(RENUM='METIS',
+                                                  STOP_SINGULIER='OUI',
+                                                  METHODE='MUMPS',
+                                                  NPREC=17,
+                                                  ),
+                                       )
 
             #
             #
@@ -1470,336 +1665,448 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
             #
 
             # On recupere le signal en Champ Libre (CL) et au substratum (Bore
-            # Hole) 
+            # Hole)
 
-        __AHuXrCL = RECU_FONCTION(RESULTAT=__DYNHARM,
-                                  NOM_CHAM='ACCE',
-                                  NOM_CMP=args['NOM_CMP'],
-                                  GROUP_NO='PN0',
-                                  INTERPOL='LIN',
-                                  PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',)
+        __AHuXrCL = [None]*num_dime
+        __AHuXrBH  = [None]*num_dime
+        __mAHuXrCL = [None]*num_dime
+        __mAHuXrBH = [None]*num_dime
+        __formFDT = [None]*num_dime
+        __formFDT2 = [None]*num_dime
+        if dime == "2D":
+            __AHuXrCL[0] = RECU_FONCTION(RESULTAT=__DYNHARM,
+                                      NOM_CHAM='ACCE',
+                                      NOM_CMP=args['NOM_CMP'],
+                                      GROUP_NO='PN0',
+                                      INTERPOL='LIN',
+                                      PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',)
 
-        __AHuXrBH = RECU_FONCTION(RESULTAT=__DYNHARM,
-                                  NOM_CHAM='ACCE',
-                                  NOM_CMP=args['NOM_CMP'],
-                                  GROUP_NO='PNRA',
-                                  INTERPOL='LIN',
-                                  PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',)
+            __AHuXrBH[0] = RECU_FONCTION(RESULTAT=__DYNHARM,
+                                      NOM_CHAM='ACCE',
+                                      NOM_CMP=args['NOM_CMP'],
+                                      GROUP_NO='PNRA',
+                                      INTERPOL='LIN',
+                                      PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',)
 
-        __mAHuXrCL = CALC_FONCTION(
-            EXTRACTION=_F(FONCTION=__AHuXrCL, PARTIE='MODULE'))
-        __mAHuXrBH = CALC_FONCTION(
-            EXTRACTION=_F(FONCTION=__AHuXrBH, PARTIE='MODULE'))
-
-            #
-            # Definition de la fonction de transfert entre RA et CL 
-            #
-
-        self.update_const_context(
-            {'FILTRE': __FILTRE, 'AHuXrCL': __AHuXrCL, 'AHuXrBH': __AHuXrBH, 'AHX': __AHX, 'ACCEX0H': __ACCEX0H})
-        if args['CHARGEMENT'] == 'MONO_APPUI':
-          __formFDT = FORMULE(
+            __mAHuXrCL[0] = CALC_FONCTION(
+                EXTRACTION=_F(FONCTION=__AHuXrCL[0], PARTIE='MODULE'))
+            __mAHuXrBH[0] = CALC_FONCTION(
+                EXTRACTION=_F(FONCTION=__AHuXrBH[0], PARTIE='MODULE'))
+            self.update_const_context(
+            {'FILTRE': __FILTRE, 'AHuXrCL': __AHuXrCL[0], 'AHuXrBH': __AHuXrBH[0], 'AHX': __AHX[0], 'ACCEX0H': __ACCEX0H[0]})
+            if args['CHARGEMENT'] == 'MONO_APPUI':
+                __formFDT[0] = FORMULE(
               NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*(1.+0.j )/(1.+0.j + AHuXrCL(FREQ))')
-          __formFDT2 = FORMULE(
+                __formFDT2[0] = FORMULE(
               NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*(1.+0.j + AHuXrCL(FREQ))/(1.+0.j + AHuXrBH(FREQ))')
+            else:
+                __formFDT[0] = FORMULE(
+                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHX(FREQ)/AHuXrCL(FREQ)')
+                __formFDT2[0] = FORMULE(
+                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHuXrCL(FREQ)/ACCEX0H(FREQ)')
+
         else:
-          __formFDT = FORMULE(
-            NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHX(FREQ)/AHuXrCL(FREQ)')
+            for n in xrange(num_dime):
+                __AHuXrCL[n] = RECU_FONCTION(RESULTAT=__DYNHARM,
+                                          NOM_CHAM='ACCE',
+                                          NOM_CMP=dire_dime[n],
+                                          GROUP_NO='PN0',
+                                          INTERPOL='LIN',
+                                          PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',)
 
-          __formFDT2 = FORMULE(
-            NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHuXrCL(FREQ)/ACCEX0H(FREQ)')
+                __AHuXrBH[n] = RECU_FONCTION(RESULTAT=__DYNHARM,
+                                          NOM_CHAM='ACCE',
+                                          NOM_CMP=dire_dime[n],
+                                          GROUP_NO='PNRA',
+                                          INTERPOL='LIN',
+                                          PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',)
+                __mAHuXrCL[n] = CALC_FONCTION(
+                    EXTRACTION=_F(FONCTION=__AHuXrCL[n], PARTIE='MODULE'))
+                __mAHuXrBH[n] = CALC_FONCTION(
+                    EXTRACTION=_F(FONCTION=__AHuXrBH[n], PARTIE='MODULE'))
+    
+            self.update_const_context(
+            {'FILTRE': __FILTRE, 'AHuXrCL0': __AHuXrCL[0], 'AHuXrCL1': __AHuXrCL[1],'AHuXrCL2': __AHuXrCL[2],
+            'AHuXrBH0': __AHuXrBH[0], 'AHuXrBH1': __AHuXrBH[1], 'AHuXrBH2': __AHuXrBH[2],
+            'AHX0': __AHX[0], 'AHX1': __AHX[1],'AHX2': __AHX[2], 
+            'ACCEX0H0': __ACCEX0H[0], 'ACCEX0H1': __ACCEX0H[1], 'ACCEX0H2': __ACCEX0H[2]}
+            )
+            if args['CHARGEMENT'] == 'MONO_APPUI':
+                __formFDT[0] = FORMULE(
+                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*(1.+0.j )/(1.+0.j + AHuXrCL0(FREQ))')
+                __formFDT2[0] = FORMULE(
+                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*(1.+0.j + AHuXrCL0(FREQ))/(1.+0.j + AHuXrBH0(FREQ))')
 
-        __FDT_RACL = CALC_FONC_INTERP(NOM_PARA='FREQ',
-                                      LIST_PARA=__lfreq,
-                                      FONCTION=__formFDT,
-                                      PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',)
+                __formFDT[1] = FORMULE(
+                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*(1.+0.j )/(1.+0.j + AHuXrCL1(FREQ))')
+                __formFDT2[1] = FORMULE(
+                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*(1.+0.j + AHuXrCL1(FREQ))/(1.+0.j + AHuXrBH1(FREQ))')
 
-        __FDT_CLBH = CALC_FONC_INTERP(NOM_PARA='FREQ',
-                                      LIST_PARA=__lfreq,
-                                      FONCTION=__formFDT2,
-                                      PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',)
+                __formFDT[2] = FORMULE(
+                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*(1.+0.j )/(1.+0.j + AHuXrCL2(FREQ))')
+                __formFDT2[2] = FORMULE(
+                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*(1.+0.j + AHuXrCL2(FREQ))/(1.+0.j + AHuXrBH2(FREQ))')
+            else:
+                __formFDT[0] = FORMULE(
+                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHX0(FREQ)/AHuXrCL0(FREQ)')
+                __formFDT2[0] = FORMULE(
+                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHuXrCL0(FREQ)/ACCEX0H0(FREQ)')
 
-        __mFDTRACL = CALC_FONCTION(
-            EXTRACTION=_F(FONCTION=__FDT_RACL, PARTIE='MODULE'))
-        __mFDTCLBH = CALC_FONCTION(
-            EXTRACTION=_F(FONCTION=__FDT_CLBH, PARTIE='MODULE'))
+                __formFDT[1] = FORMULE(
+                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHX1(FREQ)/AHuXrCL1(FREQ)')
+                __formFDT2[1] = FORMULE(
+                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHuXrCL1(FREQ)/ACCEX0H1(FREQ)')
+
+                __formFDT[2] = FORMULE(
+                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHX2(FREQ)/AHuXrCL2(FREQ)')
+                __formFDT2[2] = FORMULE(
+                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHuXrCL2(FREQ)/ACCEX0H2(FREQ)')
+
+
+            #
+            # Definition de la fonction de transfert entre RA et CL #
+            #
+
+        __FDT_RACL = [None]*num_dime
+        __FDT_CLBH = [None]*num_dime
+        __mFDTRACL = [None]*num_dime
+        __mFDTCLBH = [None]*num_dime
+        __AHX_RA = [None]*num_dime
+        __AX_RAf = [None]*num_dime
+        __AX_RA = [None]*num_dime
+        __SAX_RA = [None]*num_dime
+        __AHXrCL = [None]*num_dime
+        __AHXrBH = [None]*num_dime
+        __AXrCL = [None]*num_dime
+        __AXrBH = [None]*num_dime
+        __AX_CL = [None]*num_dime
+        __AX_BH = [None]*num_dime
+        __SAX_CL = [None]*num_dime
+        __SAX_BH = [None]*num_dime
+        __ftvCL = [None]*num_dime
+        __ftvRA = [None]*num_dime
+        __ftdCL = [None]*num_dime
+        __ftdRA = [None]*num_dime
+        __vCLh = [None]*num_dime
+        __dCLh = [None]*num_dime
+        __vRAh = [None]*num_dime
+        __dRAh = [None]*num_dime
+        __VX_CL = [None]*num_dime
+        __DX_CL = [None]*num_dime
+        __VX_RA = [None]*num_dime
+        __DX_RA = [None]*num_dime
+        __VX_BH = [None]*num_dime
+        __DX_BH = [None]*num_dime
+
+        for n in xrange(num_dime):
+            __FDT_RACL[n] = CALC_FONC_INTERP(NOM_PARA='FREQ',
+                                          LIST_PARA=__lfreq,
+                                          FONCTION=__formFDT[n],
+                                          PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',)
+
+            __FDT_CLBH[n] = CALC_FONC_INTERP(NOM_PARA='FREQ',
+                                          LIST_PARA=__lfreq,
+                                          FONCTION=__formFDT2[n],
+                                          PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',)
+            IMPR_FONCTION(UNITE=6,
+                          FORMAT='TABLEAU',
+                          TITRE='Fonctions de Transfert entre CL et RA et Module des FFT',
+                          COURBE=(_F(FONCTION=__FDT_RACL[n]),))
+
+            __mFDTRACL[n] = CALC_FONCTION(
+                EXTRACTION=_F(FONCTION=__FDT_RACL[n], PARTIE='MODULE'))
+            __mFDTCLBH[n] = CALC_FONCTION(
+                EXTRACTION=_F(FONCTION=__FDT_CLBH[n], PARTIE='MODULE'))
 
             #
             # Definition de l accelerogramme au Rocher Affleurant   #
             #
 
 
-        if 'DSP'  in args:
-          if input == 'CL':
-            if args['CHARGEMENT'] == 'MONO_APPUI':
-              __AHX_RA = CALC_FONCTION(
-                  MULT=(_F(FONCTION= __AHX,), _F(FONCTION=__FDT_RACL,), ), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+            if 'DSP'  in args:
+              if input == 'CL':
+                if args['CHARGEMENT'] == 'MONO_APPUI':
+                  __AHX_RA[n] = CALC_FONCTION(
+                      MULT=(_F(FONCTION= __AHX[n],), _F(FONCTION=__FDT_RACL[n],), ), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                else:
+                  __AHX_RA[n] = CALC_FONCTION(
+                      MULT=(_F(FONCTION= __ACCEX0H[n],), _F(FONCTION=__FDT_RACL[n],), ), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+              elif input == 'RA':
+                  __AHX_RA[n]  = CALC_FONCTION(COMB_C=_F(FONCTION=__AHX[n], COEF_R = 1.), LIST_PARA=__lfreq,   NOM_PARA='FREQ',);
+
+
             else:
-              __AHX_RA = CALC_FONCTION(
-                  MULT=(_F(FONCTION= __ACCEX0H,), _F(FONCTION=__FDT_RACL,), ), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-          elif input == 'RA':
-              __AHX_RA  = CALC_FONCTION(COMB_C=_F(FONCTION=__AHX, COEF_R = 1.), LIST_PARA=__lfreq,   NOM_PARA='FREQ',);
+
+                if input == 'CL':
+                  if args['CHARGEMENT'] == 'MONO_APPUI':
+                    __AHX_RA[n] = CALC_FONCTION(
+                        MULT=(_F(FONCTION= __AHX[n],), _F(FONCTION=__FDT_RACL[n],), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                  else:
+                    __AHX_RA[n] = CALC_FONCTION(
+                        MULT=(_F(FONCTION= __ACCEX0H[n],), _F(FONCTION=__FDT_RACL[n],), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+
+                if input == 'RA':
+                    __AHX_RA[n] = CALC_FONCTION(
+                        MULT=(_F(FONCTION=__AHX[n],), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
 
 
-        else:
 
-          if input == 'CL':
-            if args['CHARGEMENT'] == 'MONO_APPUI':
-              __AHX_RA = CALC_FONCTION(
-                  MULT=(_F(FONCTION= __AHX,), _F(FONCTION=__FDT_RACL,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+
+           #IMPR_FONCTION(COURBE=(_F(FONCTION=__AHX_RA),)) 
+             # Calcul des accelerogrammes et spectres de sol au RA 
+            if 'DSP' not in args:
+                __AX_RAf[n] = CALC_FONCTION(FFT=_F(FONCTION=__AHX_RA[n],
+                                                METHODE='COMPLET',
+                                                SYME='NON',),PROL_DROITE='CONSTANT',
+                                         )
+                __AX_RA[n] = CALC_FONCTION(
+                    COMB=_F(FONCTION=__AX_RAf[n], COEF=1.), LIST_PARA=__linst,
+                    INTERPOL='LIN',
+                    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT', )
+                DETRUIRE(CONCEPT=_F(NOM=__AX_RAf[n],))
+            #IMPR_FONCTION(COURBE=(_F(FONCTION=__AX_RA),))
+            
+                if args['LIST_FREQ_SPEC_OSCI'] != None:
+                  __SAX_RA[n] = CALC_FONCTION(
+                    SPEC_OSCI=_F(FONCTION=__AX_RA[n],AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
+                else:
+                  __SAX_RA[n] = CALC_FONCTION(
+                    SPEC_OSCI=_F(FONCTION=__AX_RA[n], AMOR_REDUIT=0.05, NORME=9.81))
+           # Calcul des accelerogrammes et spectres de sol au RA pour DSP#      
             else:
-              __AHX_RA = CALC_FONCTION(
-                  MULT=(_F(FONCTION= __ACCEX0H,), _F(FONCTION=__FDT_RACL,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-          if input == 'RA':
-            __AHX_RA = CALC_FONCTION(
-                MULT=(_F(FONCTION=__AHX,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+
+              __AHX_RAf = CALC_FONCTION(EXTRACTION =_F(FONCTION=__AHX_RA[n], PARTIE='MODULE'), )
+              __PAX_RA = CALC_FONCTION(
+                PUISSANCE=_F(FONCTION=__AHX_RAf, EXPOSANT = 2.,), 
+                PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT', )
+              DETRUIRE(CONCEPT=_F(NOM= __AHX_RAf,))
+
+              if args['LIST_FREQ_SPEC_OSCI'] != None:
+                __SAX_RA[n] = CALC_FONCTION(
+                  SPEC_OSCI=_F(FONCTION= __PAX_RA, NATURE_FONC ='DSP', DUREE = TSM, 
+                           METHODE ='RICE', NATURE = 'ACCE', LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],
+                           AMOR_REDUIT=0.05, NORME=9.81))
+              else:
+                __SAX_RA[n] = CALC_FONCTION(
+                  SPEC_OSCI=_F(FONCTION= __PAX_RA, NATURE_FONC ='DSP', DUREE = TSM, 
+                           METHODE ='RICE', NATURE = 'ACCE', 
+                           AMOR_REDUIT=0.05, NORME=9.81))
 
 
+                # Calcul des accelerogrammes et spectres de sol en CL et BH
+            if args['CHARGEMENT'] == 'MONO_APPUI':
+              __AHXrCL[n] = CALC_FONCTION(
+                 MULT=(_F(FONCTION=__AHX_RA[n],), _F(FONCTION=__AHuXrCL[n],), _F(FONCTION=__FILTRE,)),
+                 LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+              __AHXrBH[n] = CALC_FONCTION(
+                 MULT=(_F(FONCTION=__AHX_RA[n],), _F(FONCTION=__AHuXrBH[n],), _F(FONCTION=__FILTRE,)),
+                 LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+            else:
+              if input == 'CL':
+                __AHXrCL[n] = CALC_FONCTION(
+                  MULT=(_F(FONCTION=__AHX[n]), _F(FONCTION=__FILTRE,)),
+                  LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                __AHXrBH[n] = CALC_FONCTION(
+                   MULT=(_F(FONCTION=__FDT_RACL[n],), _F(FONCTION=__AHuXrBH[n],), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+              if input == 'RA':
+                __AHXrCL[n] = CALC_FONCTION(
+                  MULT=(_F(FONCTION=__AHuXrCL[n]), _F(FONCTION=__FILTRE,)),
+                  LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                __AHXrBH[n] = CALC_FONCTION(
+                  MULT=(_F(FONCTION=__AHuXrBH[n]), _F(FONCTION=__FILTRE,)),
+                  LIST_PARA=__lfreq, NOM_PARA='FREQ',)
 
+            #MODIF POUR DSP: on reste en domaine fréquentiel
+            if 'DSP' in args:
+              __AHX_CL = CALC_FONCTION(
+                COMB_C=(_F(FONCTION=__AHXrCL[n], COEF_R=1.,), _F(FONCTION=__AHX_RA[n], COEF_R=1.,),), LIST_PARA=__lfreq,)
+              __AHX_BH = CALC_FONCTION(
+                COMB_C=(_F(FONCTION=__AHXrBH[n], COEF_R=1.,), _F(FONCTION=__AHX_RA[n], COEF_R=1.,),), LIST_PARA=__lfreq,)
 
-       #IMPR_FONCTION(COURBE=(_F(FONCTION=__AHX_RA),)) 
-         # Calcul des accelerogrammes et spectres de sol au RA 
-        if 'DSP' not in args:
-          __AX_RAf = CALC_FONCTION(FFT=_F(FONCTION=__AHX_RA,
-                                        METHODE='COMPLET',
-                                        SYME='NON',),PROL_DROITE='CONSTANT', )
-          __AX_RA = CALC_FONCTION(
-            COMB=_F(FONCTION=__AX_RAf, COEF=1.), LIST_PARA=__linst,
-            INTERPOL='LIN',
-            PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT', )
+              __AHXCLf = CALC_FONCTION(EXTRACTION =_F(FONCTION=__AHX_CL, PARTIE='MODULE'), )
+              __PAX_CL = CALC_FONCTION(PUISSANCE=_F(FONCTION=__AHXCLf, EXPOSANT = 2.,), 
+                                    PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT', )
 
-          DETRUIRE(CONCEPT=_F(NOM=__AX_RAf,))
-        #IMPR_FONCTION(COURBE=(_F(FONCTION=__AX_RA),))        
-          if args['LIST_FREQ_SPEC_OSCI'] != None:
-            __SAX_RA = CALC_FONCTION(
-               SPEC_OSCI=_F(FONCTION=__AX_RA,AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
-          else:
-            __SAX_RA = CALC_FONCTION(
-              SPEC_OSCI=_F(FONCTION=__AX_RA, AMOR_REDUIT=0.05, NORME=9.81))
-       # Calcul des accelerogrammes et spectres de sol au RA pour DSP#      
-        else:
+              __AHXBHf = CALC_FONCTION( EXTRACTION=_F(FONCTION=__AHX_BH, PARTIE='MODULE'), )
+              __PAX_BH = CALC_FONCTION( PUISSANCE=_F(FONCTION=__AHXBHf, EXPOSANT = 2.,), 
+                            PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT', )
 
-          __AHX_RAf = CALC_FONCTION(EXTRACTION =_F(FONCTION=__AHX_RA, PARTIE='MODULE'), )
-          __PAX_RA = CALC_FONCTION(
-            PUISSANCE=_F(FONCTION=__AHX_RAf, EXPOSANT = 2.,), 
-            PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT', )
-          DETRUIRE(CONCEPT=_F(NOM= __AHX_RAf,))
+              DETRUIRE(CONCEPT=_F(NOM= (__AHXCLf, __AHXBHf), ),)
 
-          if args['LIST_FREQ_SPEC_OSCI'] != None:
-            __SAX_RA = CALC_FONCTION(
-              SPEC_OSCI=_F(FONCTION= __PAX_RA, NATURE_FONC ='DSP', DUREE = TSM, 
-                       METHODE ='RICE', NATURE = 'ACCE', LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],
-                       AMOR_REDUIT=0.05, NORME=9.81))
-          else:
-            __SAX_RA = CALC_FONCTION(
-              SPEC_OSCI=_F(FONCTION= __PAX_RA, NATURE_FONC ='DSP', DUREE = TSM, 
-                       METHODE ='RICE', NATURE = 'ACCE', 
-                       AMOR_REDUIT=0.05, NORME=9.81))
+            else:
+                __AXrCL[n] = CALC_FONCTION(
+                    FFT=_F(FONCTION=__AHXrCL[n], METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
+                __AXrBH[n] = CALC_FONCTION(
+                    FFT=_F(FONCTION=__AHXrBH[n], METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
 
+                if args['CHARGEMENT'] == 'MONO_APPUI':
+                  __AX_CL[n] = CALC_FONCTION(
+                    COMB=(_F(FONCTION=__AXrCL[n], COEF=1.,), _F(FONCTION=__AX_RA[n], COEF=1.,),), LIST_PARA=__linst,)
+                  __AX_BH[n] = CALC_FONCTION(
+                    COMB=(_F(FONCTION=__AXrBH[n], COEF=1.,), _F(FONCTION=__AX_RA[n], COEF=1.,),), LIST_PARA=__linst,)
+                else:
+                  __AX_CL[n] = CALC_FONCTION(
+                    COMB=(_F(FONCTION=__AXrCL[n], COEF=1.,), ), LIST_PARA=__linst,)
+                  __AX_BH[n] = CALC_FONCTION(
+                    COMB=(_F(FONCTION=__AXrBH[n], COEF=1.,), ), LIST_PARA=__linst,)
 
-            # Calcul des accelerogrammes et spectres de sol en CL et BH
-        if args['CHARGEMENT'] == 'MONO_APPUI':
-            __AHXrCL = CALC_FONCTION(
-             MULT=(_F(FONCTION=__AHX_RA,), _F(FONCTION=__AHuXrCL,), _F(FONCTION=__FILTRE,)),
-             LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-            __AHXrBH = CALC_FONCTION(
-             MULT=(_F(FONCTION=__AHX_RA,), _F(FONCTION=__AHuXrBH,), _F(FONCTION=__FILTRE,)),
-             LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-        else:
-            if input == 'CL':
-              __AHXrCL = CALC_FONCTION(
-              MULT=(_F(FONCTION=__AHX), _F(FONCTION=__FILTRE,)),
-              LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-              __AHXrBH = CALC_FONCTION(
-               MULT=(_F(FONCTION=__FDT_RACL,), _F(FONCTION=__AHuXrBH,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-            if input == 'RA':
-              __AHXrCL = CALC_FONCTION(
-              MULT=(_F(FONCTION=__AHuXrCL), _F(FONCTION=__FILTRE,)),
-              LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-              __AHXrBH = CALC_FONCTION(
-              MULT=(_F(FONCTION=__AHuXrBH), _F(FONCTION=__FILTRE,)),
-              LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+            #MODIF POR DSP: calcul des DSP puis SRO
+            if 'DSP' in args:
 
-        #MODIF POUR DSP: on reste en domaine fréquentiel
-        if 'DSP' in args:
-          __AHX_CL = CALC_FONCTION(
-            COMB_C=(_F(FONCTION=__AHXrCL, COEF_R=1.,), _F(FONCTION=__AHX_RA, COEF_R=1.,),), LIST_PARA=__lfreq,)
-          __AHX_BH = CALC_FONCTION(
-            COMB_C=(_F(FONCTION=__AHXrBH, COEF_R=1.,), _F(FONCTION=__AHX_RA, COEF_R=1.,),), LIST_PARA=__lfreq,)
+              if args['LIST_FREQ_SPEC_OSCI'] != None:
 
-          __AHXCLf = CALC_FONCTION(EXTRACTION =_F(FONCTION=__AHX_CL, PARTIE='MODULE'), )
-          __PAX_CL = CALC_FONCTION(PUISSANCE=_F(FONCTION=__AHXCLf, EXPOSANT = 2.,), 
-                                PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT', )
+                __SAX_CL[n] = CALC_FONCTION(
+                   SPEC_OSCI=_F(FONCTION=__PAX_CL, NATURE_FONC ='DSP', DUREE = TSM, 
+                             METHODE ='RICE', NATURE = 'ACCE',
+                             AMOR_REDUIT=0.05, LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))    
+                __SAX_BH[n] = CALC_FONCTION(
+                   SPEC_OSCI=_F(FONCTION=__PAX_BH,NATURE_FONC ='DSP', DUREE = TSM,
+                             METHODE ='RICE', NATURE = 'ACCE',
+                             AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))        
+              else:        
+                __SAX_CL[n] = CALC_FONCTION(
+                   SPEC_OSCI=_F(FONCTION=__PAX_CL, NATURE_FONC ='DSP', DUREE = TSM, 
+                             METHODE ='RICE', NATURE = 'ACCE', AMOR_REDUIT=0.05,NORME=9.81))    
+                __SAX_BH[n] = CALC_FONCTION(
+                   SPEC_OSCI=_F(FONCTION=__PAX_BH,NATURE_FONC ='DSP', DUREE = TSM,
+                             METHODE ='RICE', NATURE = 'ACCE',  AMOR_REDUIT=0.05,NORME=9.81))   
+            else: 
 
-          __AHXBHf = CALC_FONCTION( EXTRACTION=_F(FONCTION=__AHX_BH, PARTIE='MODULE'), )
-          __PAX_BH = CALC_FONCTION( PUISSANCE=_F(FONCTION=__AHXBHf, EXPOSANT = 2.,), 
-                        PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT', )
-
-          DETRUIRE(CONCEPT=_F(NOM= (__AHXCLf, __AHXBHf), ),)
-
-        else:
-          __AXrCL = CALC_FONCTION(
-             FFT=_F(FONCTION=__AHXrCL, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
-          __AXrBH = CALC_FONCTION(
-             FFT=_F(FONCTION=__AHXrBH, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
-          if args['CHARGEMENT'] == 'MONO_APPUI':
-            __AX_CL = CALC_FONCTION(
-              COMB=(_F(FONCTION=__AXrCL, COEF=1.,), _F(FONCTION=__AX_RA, COEF=1.,),), LIST_PARA=__linst,)
-            __AX_BH = CALC_FONCTION(
-              COMB=(_F(FONCTION=__AXrBH, COEF=1.,), _F(FONCTION=__AX_RA, COEF=1.,),), LIST_PARA=__linst,)
-          else:
-            __AX_CL = CALC_FONCTION(
-              COMB=(_F(FONCTION=__AXrCL, COEF=1.,), ), LIST_PARA=__linst,)
-            __AX_BH = CALC_FONCTION(
-              COMB=(_F(FONCTION=__AXrBH, COEF=1.,), ), LIST_PARA=__linst,)
-
-        #MODIF POR DSP: calcul des DSP puis SRO
-        if 'DSP' in args:
-
-          if args['LIST_FREQ_SPEC_OSCI'] != None:
-
-            __SAX_CL = CALC_FONCTION(
-               SPEC_OSCI=_F(FONCTION=__PAX_CL, NATURE_FONC ='DSP', DUREE = TSM, 
-                         METHODE ='RICE', NATURE = 'ACCE',
-                         AMOR_REDUIT=0.05, LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))    
-            __SAX_BH = CALC_FONCTION(
-               SPEC_OSCI=_F(FONCTION=__PAX_BH,NATURE_FONC ='DSP', DUREE = TSM,
-                         METHODE ='RICE', NATURE = 'ACCE',
-                         AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))        
-          else:        
-            __SAX_CL = CALC_FONCTION(
-               SPEC_OSCI=_F(FONCTION=__PAX_CL, NATURE_FONC ='DSP', DUREE = TSM, 
-                         METHODE ='RICE', NATURE = 'ACCE', AMOR_REDUIT=0.05,NORME=9.81))    
-            __SAX_BH = CALC_FONCTION(
-               SPEC_OSCI=_F(FONCTION=__PAX_BH,NATURE_FONC ='DSP', DUREE = TSM,
-                         METHODE ='RICE', NATURE = 'ACCE',  AMOR_REDUIT=0.05,NORME=9.81))   
-        else: 
-
-          if args['LIST_FREQ_SPEC_OSCI'] != None:
-            __SAX_CL = CALC_FONCTION(
-               SPEC_OSCI=_F(FONCTION=__AX_CL,AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))    
-            __SAX_BH = CALC_FONCTION(
-              SPEC_OSCI=_F(FONCTION=__AX_BH,AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))        
-          else:        
-            __SAX_CL = CALC_FONCTION(
-               SPEC_OSCI=_F(FONCTION=__AX_CL, AMOR_REDUIT=0.05, NORME=9.81))
-            __SAX_BH = CALC_FONCTION(
-               SPEC_OSCI=_F(FONCTION=__AX_BH, AMOR_REDUIT=0.05, NORME=9.81))
+                if args['LIST_FREQ_SPEC_OSCI'] != None:
+                  __SAX_CL[n] = CALC_FONCTION(
+                    SPEC_OSCI=_F(FONCTION=__AX_CL[n],AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))    
+                  __SAX_BH[n] = CALC_FONCTION(
+                    SPEC_OSCI=_F(FONCTION=__AX_BH[n],AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))        
+                else:        
+                  __SAX_CL[n] = CALC_FONCTION(
+                    SPEC_OSCI=_F(FONCTION=__AX_CL[n], AMOR_REDUIT=0.05, NORME=9.81))
+                  __SAX_BH[n] = CALC_FONCTION(
+                    SPEC_OSCI=_F(FONCTION=__AX_BH[n], AMOR_REDUIT=0.05, NORME=9.81))
 
 
 #On prend: DSP ldevi = NON # RIEN A FAIRE ICI
 
-        if ldevi == 'OUI':
+            if ldevi == 'OUI':
 
-          __ftvCL = RECU_FONCTION(
-                GROUP_NO=('PN0'), RESULTAT=__DYNHARM, NOM_CHAM='VITE', NOM_CMP=args['NOM_CMP'], INTERPOL='LIN',
-                          PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
-          __ftvRA = RECU_FONCTION(
-                GROUP_NO=('PNRA'), RESULTAT=__DYNHARM, NOM_CHAM='VITE', NOM_CMP=args['NOM_CMP'], INTERPOL='LIN',
-                          PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
-          __ftdCL = RECU_FONCTION(
-                GROUP_NO=('PN0'), RESULTAT=__DYNHARM, NOM_CHAM='DEPL', NOM_CMP=args['NOM_CMP'], INTERPOL='LIN',
-                          PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
-          __ftdRA = RECU_FONCTION(
-                GROUP_NO=('PNRA'), RESULTAT=__DYNHARM, NOM_CHAM='DEPL', NOM_CMP=args['NOM_CMP'], INTERPOL='LIN',
-                          PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
+              if dime == "2D":
+                  __ftvCL[n] = RECU_FONCTION(
+                          GROUP_NO=('PN0'), RESULTAT=__DYNHARM, NOM_CHAM='VITE', NOM_CMP=args['NOM_CMP'], INTERPOL='LIN',
+                                    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
+                  __ftvRA[n] = RECU_FONCTION(
+                          GROUP_NO=('PNRA'), RESULTAT=__DYNHARM, NOM_CHAM='VITE', NOM_CMP=args['NOM_CMP'], INTERPOL='LIN',
+                                    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
+                  __ftdCL[n] = RECU_FONCTION(
+                          GROUP_NO=('PN0'), RESULTAT=__DYNHARM, NOM_CHAM='DEPL', NOM_CMP=args['NOM_CMP'], INTERPOL='LIN',
+                                    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
+                  __ftdRA[n] = RECU_FONCTION(
+                          GROUP_NO=('PNRA'), RESULTAT=__DYNHARM, NOM_CHAM='DEPL', NOM_CMP=args['NOM_CMP'], INTERPOL='LIN',
+                                    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
+              else:
+                  __ftvCL[n] = RECU_FONCTION(
+                          GROUP_NO=('PN0'), RESULTAT=__DYNHARM, NOM_CHAM='VITE', NOM_CMP=dire_dime[n], INTERPOL='LIN',
+                                    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
+                  __ftvRA[n] = RECU_FONCTION(
+                          GROUP_NO=('PNRA'), RESULTAT=__DYNHARM, NOM_CHAM='VITE', NOM_CMP=dire_dime[n], INTERPOL='LIN',
+                                    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
+                  __ftdCL[n] = RECU_FONCTION(
+                          GROUP_NO=('PN0'), RESULTAT=__DYNHARM, NOM_CHAM='DEPL', NOM_CMP=dire_dime[n], INTERPOL='LIN',
+                                    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
+                  __ftdRA[n] = RECU_FONCTION(
+                          GROUP_NO=('PNRA'), RESULTAT=__DYNHARM, NOM_CHAM='DEPL', NOM_CMP=dire_dime[n], INTERPOL='LIN',
+                                    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
 
-          if args['CHARGEMENT'] == 'ONDE_PLANE':
-            if input == 'CL':
-                __vCLh = CALC_FONCTION(
-                  MULT=(_F(FONCTION=__FDT_RACL,), _F(FONCTION=__ftvCL,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-                __dCLh = CALC_FONCTION(
-                  MULT=(_F(FONCTION=__FDT_RACL,), _F(FONCTION=__ftdCL,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-                __vRAh = CALC_FONCTION(
-                  MULT=(_F(FONCTION=__FDT_RACL,), _F(FONCTION=__ftvRA,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-                __dRAh = CALC_FONCTION(
-                  MULT=(_F(FONCTION=__FDT_RACL,), _F(FONCTION=__ftdRA,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-            if input == 'RA':
-                __vCLh = CALC_FONCTION(
-                  MULT=(_F(FONCTION=__ftvCL,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-                __dCLh = CALC_FONCTION(
-                  MULT=(_F(FONCTION=__ftdCL,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-                __vRAh = CALC_FONCTION(
-                  MULT=(_F(FONCTION=__ftvRA,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-                __dRAh = CALC_FONCTION(
-                  MULT=(_F(FONCTION=__ftdRA,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-          else:
-              __vCLh = CALC_FONCTION(
-                MULT=(_F(FONCTION=__AHX_RA,), _F(FONCTION=__ftvCL,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-              __dCLh = CALC_FONCTION(
-                MULT=(_F(FONCTION=__AHX_RA,), _F(FONCTION=__ftdCL,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-              __vRAh = CALC_FONCTION(
-                MULT=(_F(FONCTION=__AHX_RA,), _F(FONCTION=__ftvRA,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-              __dRAh = CALC_FONCTION(
-                MULT=(_F(FONCTION=__AHX_RA,), _F(FONCTION=__ftdRA,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-        
+              if args['CHARGEMENT'] == 'ONDE_PLANE':
+                 if input == 'CL':
+                      __vCLh[n] = CALC_FONCTION(
+                        MULT=(_F(FONCTION=__FDT_RACL[n],), _F(FONCTION=__ftvCL[n],), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                      __dCLh[n] = CALC_FONCTION(
+                        MULT=(_F(FONCTION=__FDT_RACL[n],), _F(FONCTION=__ftdCL[n],), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                      __vRAh[n] = CALC_FONCTION(
+                        MULT=(_F(FONCTION=__FDT_RACL[n],), _F(FONCTION=__ftvRA[n],), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                      __dRAh[n] = CALC_FONCTION(
+                        MULT=(_F(FONCTION=__FDT_RACL[n],), _F(FONCTION=__ftdRA[n],), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                 if input == 'RA':
+                      __vCLh[n] = CALC_FONCTION(
+                        MULT=(_F(FONCTION=__ftvCL[n],), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                      __dCLh[n] = CALC_FONCTION(
+                        MULT=(_F(FONCTION=__ftdCL[n],), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                      __vRAh[n] = CALC_FONCTION(
+                        MULT=(_F(FONCTION=__ftvRA[n],), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                      __dRAh[n] = CALC_FONCTION(
+                        MULT=(_F(FONCTION=__ftdRA[n],), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+              else:
+                    __vCLh[n] = CALC_FONCTION(
+                      MULT=(_F(FONCTION=__AHX_RA[n],), _F(FONCTION=__ftvCL[n],), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                    __dCLh[n] = CALC_FONCTION(
+                      MULT=(_F(FONCTION=__AHX_RA[n],), _F(FONCTION=__ftdCL[n],), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                    __vRAh[n] = CALC_FONCTION(
+                      MULT=(_F(FONCTION=__AHX_RA[n],), _F(FONCTION=__ftvRA[n],), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                    __dRAh[n] = CALC_FONCTION(
+                      MULT=(_F(FONCTION=__AHX_RA[n],), _F(FONCTION=__ftdRA[n],), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+              
+
+              __VX_CL[n] = CALC_FONCTION(INTEGRE=_F(FONCTION=__AX_CL[n],),   
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+         
+              __deplx0=CALC_FONCTION(INTEGRE=_F(FONCTION=__VX_CL[n],),   
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+              self.update_const_context(
+                      {'deplx0': __deplx0, 'tfin': tfin})
+              __deplxF=FORMULE(NOM_PARA='INST',
+                                  VALE='deplx0(INST)-(INST*deplx0(tfin)/tfin)')
+
+              __DX_CL[n]=CALC_FONC_INTERP(FONCTION=__deplxF, NOM_PARA = 'INST',
+                              PROL_DROITE='CONSTANT',
+                              PROL_GAUCHE='CONSTANT',
+                              LIST_PARA=__linst);
+                          
+              DETRUIRE(CONCEPT=_F(NOM=(__deplx0,__deplxF)));
+
+              __VX_RA[n] = CALC_FONCTION(INTEGRE=_F(FONCTION=__AX_RA[n],),   
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+             
+              __deplx0=CALC_FONCTION(INTEGRE=_F(FONCTION=__VX_RA[n],),   
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+              self.update_const_context(
+                  {'deplx0': __deplx0, 'tfin': tfin})
+
+              __deplxF=FORMULE(NOM_PARA='INST',
+                  VALE='deplx0(INST)-(INST*deplx0(tfin)/tfin)')
+
+              __DX_RA[n]=CALC_FONC_INTERP(FONCTION=__deplxF, NOM_PARA = 'INST',
+                              PROL_DROITE='CONSTANT',
+                              PROL_GAUCHE='CONSTANT',
+                              LIST_PARA=__linst);
+                              
+              DETRUIRE(CONCEPT=_F(NOM=(__deplx0,__deplxF)));
+
+              __VX_BH[n] = CALC_FONCTION(INTEGRE=_F(FONCTION=__AX_BH[n],),   
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+             
+              __deplx0=CALC_FONCTION(INTEGRE=_F(FONCTION=__VX_BH[n],),   
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+              self.update_const_context(
+                  {'deplx0': __deplx0, 'tfin': tfin})
+
+              __deplxF=FORMULE(NOM_PARA='INST',
+                  VALE='deplx0(INST)-(INST*deplx0(tfin)/tfin)')
 
 
-          __VX_CL = CALC_FONCTION(INTEGRE=_F(FONCTION=__AX_CL,),   
-                 PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
-   
-          __deplx0=CALC_FONCTION(INTEGRE=_F(FONCTION=__VX_CL,),   
-                 PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+              __DX_BH[n]=CALC_FONC_INTERP(FONCTION=__deplxF, NOM_PARA = 'INST',
+                              PROL_DROITE='CONSTANT',
+                              PROL_GAUCHE='CONSTANT',
+                              LIST_PARA=__linst);
+                              
+              DETRUIRE(CONCEPT=_F(NOM=(__deplx0,__deplxF)));
 
-          self.update_const_context(
-                {'deplx0': __deplx0, 'tfin': tfin})
-
-          __deplxF=FORMULE(NOM_PARA='INST',
-              VALE='deplx0(INST)-(INST*deplx0(tfin)/tfin)')
-
-          __DX_CL=CALC_FONC_INTERP(FONCTION=__deplxF, NOM_PARA = 'INST',
-                        PROL_DROITE='CONSTANT',
-                        PROL_GAUCHE='CONSTANT',
-                        LIST_PARA=__linst);
-                        
-          DETRUIRE(CONCEPT=_F(NOM=(__deplx0,__deplxF)));
-
-          __VX_RA = CALC_FONCTION(INTEGRE=_F(FONCTION=__AX_RA,),   
-                 PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
-   
-          __deplx0=CALC_FONCTION(INTEGRE=_F(FONCTION=__VX_RA,),   
-               PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
-          self.update_const_context(
-              {'deplx0': __deplx0, 'tfin': tfin})
-
-          __deplxF=FORMULE(NOM_PARA='INST',
-            VALE='deplx0(INST)-(INST*deplx0(tfin)/tfin)')
-
-
-          __DX_RA=CALC_FONC_INTERP(FONCTION=__deplxF, NOM_PARA = 'INST',
-                        PROL_DROITE='CONSTANT',
-                        PROL_GAUCHE='CONSTANT',
-                        LIST_PARA=__linst);
-                        
-          DETRUIRE(CONCEPT=_F(NOM=(__deplx0,__deplxF)));
-
-          __VX_BH = CALC_FONCTION(INTEGRE=_F(FONCTION=__AX_BH,),   
-               PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
-   
-          __deplx0=CALC_FONCTION(INTEGRE=_F(FONCTION=__VX_BH,),   
-               PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
-          self.update_const_context(
-              {'deplx0': __deplx0, 'tfin': tfin})
-
-          __deplxF=FORMULE(NOM_PARA='INST',
-            VALE='deplx0(INST)-(INST*deplx0(tfin)/tfin)')
-
-
-          __DX_BH=CALC_FONC_INTERP(FONCTION=__deplxF, NOM_PARA = 'INST',
-                        PROL_DROITE='CONSTANT',
-                        PROL_GAUCHE='CONSTANT',
-                        LIST_PARA=__linst);
-                        
-          DETRUIRE(CONCEPT=_F(NOM=(__deplx0,__deplxF)));
-
-          #__VX_CL = CALC_FONCTION(
-          #        FFT=_F(FONCTION=__vCLh, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
-          #__VX_RA = CALC_FONCTION(
-          #        FFT=_F(FONCTION=__vRAh, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
-          #__DX_CL = CALC_FONCTION(
-          #        FFT=_F(FONCTION=__dCLh, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
-          #__DX_RA = CALC_FONCTION(
-          #        FFT=_F(FONCTION=__dRAh, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
+              #__VX_CL = CALC_FONCTION(
+              #        FFT=_F(FONCTION=__vCLh, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
+              #__VX_RA = CALC_FONCTION(
+              #        FFT=_F(FONCTION=__vRAh, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
+              #__DX_CL = CALC_FONCTION(
+              #        FFT=_F(FONCTION=__dCLh, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
+              #__DX_RA = CALC_FONCTION(
+              #        FFT=_F(FONCTION=__dRAh, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
 
         # Calcul des contraintes et deformations dans tous les elements de
         # la colonne
@@ -1851,20 +2158,15 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                            'EPSI_NOEU',
                            ),
           )
-            # Boucle de postraitement
+        # Boucle de postraitement
 
-        __axa = [None] * (NCOU + 1)
-        __paxa = [None] * (NCOU + 1)
-        if ldevi == 'OUI':
-          __vix = [None] * (NCOU + 1)
-          __dex = [None] * (NCOU + 1)
-        __epxy = [None] * (NCOU + 1)
-        __gam = [None] * (NCOU + 1)
-        __tau = [None] * (NCOU + 1)
+        maccx = [None] * num_dime
 
-        lmaccx = []
         gamax = []
+        gamax.append(0)
 
+        maccxcl = [None] * num_dime
+       
         # POUR DSP LE MAX SE CALCULE PAR LE FACTEUR DE PIC
 
         if 'DSP' in args:
@@ -1876,26 +2178,57 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 
           __accxcla = POST_DYNA_ALEA( INTERSPECTRE=_F( INTE_SPEC = __DSP_CL,  
                              NUME_ORDRE_I = 1, NUME_ORDRE_J = 1,   DUREE = TSM, ) ,)
-          maccxcl = __accxcla.EXTR_TABLE().MAX_MOY[0] / 9.81
-          DETRUIRE(CONCEPT=_F(NOM=(__DSP_CL)), INFO = 1)
+          maccxcl[0] = __accxcla.EXTR_TABLE().MAX_MOY[0] / 9.81
+          DETRUIRE(CONCEPT=_F(NOM=(__DSP_CL,__accxcla)), INFO = 1)
 
         else: 
-          __accxcla = CALC_FONCTION(ABS=_F(FONCTION=__AX_CL, ))
-          maccxcl = max(__accxcla.Ordo()) / 9.81
+          for n in xrange(num_dime):
+            __accxcla = CALC_FONCTION(ABS=_F(FONCTION=__AX_CL[n]))
+            maccxcl[n] = max(__accxcla.Ordo()) / 9.81
+            DETRUIRE(CONCEPT=_F(NOM=(__accxcla)), INFO = 1)
 
-        DETRUIRE(CONCEPT=_F(NOM=(__accxcla,)), INFO = 1)
-        lmaccx.append(maccxcl)
-
-
-
-        gamax.append(0)
-        __axa.append(0)
-        __paxa.append(0)
-        if ldevi == 'OUI':
-          __vix.append(0)
-          __dex.append(0)
-        __epxy.append(0)
-        __tau.append(0)
+        if dime == "2D":
+            __axa = [None] * (NCOU + 1)
+            __paxa = [None] * (NCOU + 1)
+            if ldevi=='OUI':
+              __vix = [None] * (NCOU + 1)
+              __dex = [None] * (NCOU + 1)
+            __epxy = [None] * (NCOU + 1)
+            __gam = [None] * (NCOU + 1)
+            __tau = [None] * (NCOU + 1)
+            __axa.append(0)
+            if ldevi=='OUI':
+              __vix.append(0)
+              __dex.append(0)
+            __epxy.append(0)
+            __tau.append(0)
+            lmaccx = []
+            lmaccx.append(maccxcl[0])
+            
+        elif dime == "3D":
+            __axa = [None] * num_dime
+            if ldevi=='OUI':
+              __vix = [None] * num_dime
+              __dex = [None] * num_dime
+            __axaX = [None] * (NCOU + 1)
+            __axaY = [None] * (NCOU + 1)
+            __axaZ = [None] * (NCOU + 1)
+            if ldevi=='OUI':
+              __vixX = [None] * (NCOU + 1)
+              __vixY = [None] * (NCOU + 1)
+              __vixZ = [None] * (NCOU + 1)
+              __dexX = [None] * (NCOU + 1)
+              __dexY = [None] * (NCOU + 1)
+              __dexZ = [None] * (NCOU + 1)
+            __epxy = [None] * (NCOU + 1)
+            __gam = [None] * (NCOU + 1)
+            __tau = [None] * (NCOU + 1)
+            lmaccxX = []
+            lmaccxY = []
+            lmaccxZ = []
+            lmaccxX.append(maccxcl[0])
+            lmaccxY.append(maccxcl[1])
+            lmaccxZ.append(maccxcl[2])
 
         for k in range(1, NCOU + 1):
             if iter == 0:
@@ -1913,191 +2246,398 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                                       POSITION='INIT'),
                                       )
 
-            __fthr = RECU_FONCTION(
-                GROUP_NO=('PN' + str(k)), RESULTAT=__DYNHARM, NOM_CHAM='ACCE', NOM_CMP=args['NOM_CMP'], INTERPOL='LIN',
-                          PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
-            if args['CHARGEMENT'] == 'ONDE_PLANE':
-              if input == 'CL':
-                __axhr = CALC_FONCTION(
-                  MULT=(_F(FONCTION=__FDT_RACL,), _F(FONCTION=__fthr,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-              if input == 'RA':
-                __axhr = CALC_FONCTION(
-                  MULT=(_F(FONCTION=__fthr,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)              
-            else:
-              __axhr = CALC_FONCTION(
-                MULT=(_F(FONCTION=__AHX_RA,), _F(FONCTION=__fthr,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+            if dime =="2D" : 
+                __fthr = RECU_FONCTION(
+                    GROUP_NO=('PN' + str(k)), RESULTAT=__DYNHARM, NOM_CHAM='ACCE', NOM_CMP=args['NOM_CMP'], INTERPOL='LIN',
+                              PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
+                if args['CHARGEMENT'] == 'ONDE_PLANE':
+                  if input == 'CL':
+                    __axhr = CALC_FONCTION(
+                      MULT=(_F(FONCTION=__FDT_RACL[0],), _F(FONCTION=__fthr,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                  if input == 'RA':
+                    __axhr = CALC_FONCTION(
+                      MULT=(_F(FONCTION=__fthr,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)              
+                else:
+                  __axhr = CALC_FONCTION(
+                    MULT=(_F(FONCTION=__AHX_RA[0],), _F(FONCTION=__fthr,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
 
-            if 'DSP' not in args:
-              __axr = CALC_FONCTION(
-                FFT=_F(FONCTION=__axhr, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
+                if 'DSP' not in args:
+                  __axr = CALC_FONCTION(
+                    FFT=_F(FONCTION=__axhr, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
 
-            if args['CHARGEMENT'] == 'ONDE_PLANE':
-              __axa[k] = CALC_FONCTION(
-                COMB=(_F(FONCTION=__axr, COEF=1.,),), LIST_PARA=__linst,)
-            else:
-              if 'DSP' in args:
-                __axa[k] = CALC_FONCTION(
-                  COMB_C=(_F(FONCTION=__axhr, COEF_R=1.,), _F(FONCTION=__AHX_RA, COEF_R=1.,),), LIST_PARA=__lfreq,)
-              else:
-                __axa[k] = CALC_FONCTION(
-                 COMB=(_F(FONCTION=__axr, COEF=1.,), _F(FONCTION=__AX_RA, COEF=1.,),), LIST_PARA=__linst,)
-            
-            if ldevi == 'OUI':
-              __ftvi = RECU_FONCTION(
-                GROUP_NO=('PN' + str(k)), RESULTAT=__DYNHARM, NOM_CHAM='VITE', NOM_CMP=args['NOM_CMP'], INTERPOL='LIN',
-                          PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
-              __ftde = RECU_FONCTION(
-                GROUP_NO=('PN' + str(k)), RESULTAT=__DYNHARM, NOM_CHAM='DEPL', NOM_CMP=args['NOM_CMP'], INTERPOL='LIN',
-                          PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
-              if args['CHARGEMENT'] == 'ONDE_PLANE':
-                if input == 'CL':
-                  __vih = CALC_FONCTION(
-                    MULT=(_F(FONCTION=__FDT_RACL,), _F(FONCTION=__ftvi,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-                  __deh = CALC_FONCTION(
-                    MULT=(_F(FONCTION=__FDT_RACL,), _F(FONCTION=__ftde,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-                if input == 'RA':
-                  __vih = CALC_FONCTION(
-                    MULT=(_F(FONCTION=__ftvi,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-                  __deh = CALC_FONCTION(
-                    MULT=(_F(FONCTION=__ftde,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-              else:
-                __vih = CALC_FONCTION(
-                  MULT=(_F(FONCTION=__AHX_RA,), _F(FONCTION=__ftvi,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-                __deh = CALC_FONCTION(
-                  MULT=(_F(FONCTION=__AHX_RA,), _F(FONCTION=__ftde,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                if args['CHARGEMENT'] == 'ONDE_PLANE':
+                  __axa[k] = CALC_FONCTION(
+                    COMB=(_F(FONCTION=__axr, COEF=1.,),), LIST_PARA=__linst,)
+                else:
+                  if 'DSP' in args:
+                    __axa[k] = CALC_FONCTION(
+                      COMB_C=(_F(FONCTION=__axhr, COEF_R=1.,), _F(FONCTION=__AHX_RA[0], COEF_R=1.,),), LIST_PARA=__lfreq,)
+                  else:
+                    __axa[k] = CALC_FONCTION(
+                     COMB=(_F(FONCTION=__axr, COEF=1.,), _F(FONCTION=__AX_RA[0], COEF=1.,),), LIST_PARA=__linst,)
+                
+                if ldevi == 'OUI':
+                  __ftvi = RECU_FONCTION(
+                    GROUP_NO=('PN' + str(k)), RESULTAT=__DYNHARM, NOM_CHAM='VITE', NOM_CMP=args['NOM_CMP'], INTERPOL='LIN',
+                              PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
+                  __ftde = RECU_FONCTION(
+                    GROUP_NO=('PN' + str(k)), RESULTAT=__DYNHARM, NOM_CHAM='DEPL', NOM_CMP=args['NOM_CMP'], INTERPOL='LIN',
+                              PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
+                  if args['CHARGEMENT'] == 'ONDE_PLANE':
+                    if input == 'CL':
+                      __vih = CALC_FONCTION(
+                        MULT=(_F(FONCTION=__FDT_RACL[0],), _F(FONCTION=__ftvi,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                      __deh = CALC_FONCTION(
+                        MULT=(_F(FONCTION=__FDT_RACL[0],), _F(FONCTION=__ftde,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                    if input == 'RA':
+                      __vih = CALC_FONCTION(
+                        MULT=(_F(FONCTION=__ftvi,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                      __deh = CALC_FONCTION(
+                        MULT=(_F(FONCTION=__ftde,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                  else:
+                    __vih = CALC_FONCTION(
+                      MULT=(_F(FONCTION=__AHX_RA[0],), _F(FONCTION=__ftvi,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                    __deh = CALC_FONCTION(
+                      MULT=(_F(FONCTION=__AHX_RA[0],), _F(FONCTION=__ftde,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
 
-              #__vix[k] = CALC_FONCTION(
-              #    FFT=_F(FONCTION=__vih, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
+                  #__vix[k] = CALC_FONCTION(
+                  #    FFT=_F(FONCTION=__vih, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
 
-              #__dex[k] = CALC_FONCTION(
-              #    FFT=_F(FONCTION=__deh, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
-            
-              __vix[k] = CALC_FONCTION(INTEGRE=_F(FONCTION=__axa[k],),   
-                 PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
-   
-              __deplx0=CALC_FONCTION(INTEGRE=_F(FONCTION=__vix[k],),   
-                 PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+                  #__dex[k] = CALC_FONCTION(
+                  #    FFT=_F(FONCTION=__deh, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
+                
+                  __vix[k] = CALC_FONCTION(INTEGRE=_F(FONCTION=__axa[k],),   
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+       
+                  __deplx0=CALC_FONCTION(INTEGRE=_F(FONCTION=__vix[k],),   
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
 
-              self.update_const_context(
-                  {'deplx0': __deplx0, 'tfin': tfin})
+                  self.update_const_context(
+                      {'deplx0': __deplx0, 'tfin': tfin})
 
-              __deplxF=FORMULE(NOM_PARA='INST',
-                     VALE='deplx0(INST)-(INST*deplx0(tfin)/tfin)')
+                  __deplxF=FORMULE(NOM_PARA='INST',
+                         VALE='deplx0(INST)-(INST*deplx0(tfin)/tfin)')
 
-              __dex[k]=CALC_FONC_INTERP(FONCTION=__deplxF, NOM_PARA = 'INST',
-                        PROL_DROITE='CONSTANT',
-                        PROL_GAUCHE='CONSTANT',
-                        LIST_PARA=__linst);
+                  __dex[k]=CALC_FONC_INTERP(FONCTION=__deplxF, NOM_PARA = 'INST',
+                            PROL_DROITE='CONSTANT',
+                            PROL_GAUCHE='CONSTANT',
+                            LIST_PARA=__linst);
 
-            __ftep = RECU_FONCTION(
+                __ftep = RECU_FONCTION(
+                    GROUP_MA=__TMAT['M', k], RESULTAT=__DYNHARM, NOM_CHAM='EPSI_ELGA', POINT=1, NOM_CMP='EPXY', INTERPOL='LIN',
+                    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
+                if args['CHARGEMENT'] == 'ONDE_PLANE':
+                  if input == 'CL':
+                    __eph = CALC_FONCTION(
+                      MULT=(_F(FONCTION=__FDT_RACL[0],), _F(FONCTION=__ftep,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                  if input == 'RA':
+                    __eph = CALC_FONCTION(
+                      MULT=(_F(FONCTION=__ftep,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                else:
+                  __eph = CALC_FONCTION(
+                    MULT=(_F(FONCTION=__AHX_RA[0],), _F(FONCTION=__ftep,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+
+
+                if 'DSP' not in args:
+                  __epxy[k] = CALC_FONCTION(
+                     FFT=_F(FONCTION=__eph, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
+                # Calcul de la distorsion : gamma = 2*epxy ; tau = sixy
+                  __gam[k] = CALC_FONCTION(LIST_PARA=__linst,
+                            COMB=(_F(FONCTION=__epxy[k], COEF=(2),),)  ,) 
+                else:
+                  __gam[k] = CALC_FONCTION( LIST_PARA=__lfreq,
+                          COMB_C=(_F(FONCTION=__eph, COEF_R=(2),), )    ,) 
+                   
+                if formulation == 'LYSMER':
+                  f2Getoil = E[iter][k] / (1+ __TMAT['NU',k]) * (1.-AH[iter][k]*AH[iter][k]/2 + (AH[iter][k]*sqrt(1-AH[iter][k]*AH[iter][k]/4))*1.j) ;
+                else: 
+                  f2Getoil = (E[iter][k] / (1+ __TMAT['NU',k]) ) * (1.+ (AH[iter][k])*1.j);
+
+                __tauh = CALC_FONCTION(COMB_C=_F(FONCTION=__eph,COEF_C = f2Getoil),LIST_PARA=__lfreq,NOM_PARA='FREQ',);
+                
+                __tau[k] = CALC_FONCTION(FFT=_F(FONCTION=__tauh,METHODE='COMPLET',SYME='NON',),PROL_DROITE='CONSTANT',);
+
+                # Calcul des max
+                if 'DSP' in args:
+
+                  __axaf = CALC_FONCTION( EXTRACTION=_F(FONCTION= __axa[k],PARTIE='MODULE' ), )
+
+                  __paxa[k] = CALC_FONCTION(
+                      PUISSANCE=_F(FONCTION=__axaf, EXPOSANT = 2.,), 
+                       PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT', )
+
+                  __DSP = DEFI_INTE_SPEC ( DIMENSION= 1,
+                      PAR_FONCTION =_F( NUME_ORDRE_I = 1,
+                                        NUME_ORDRE_J = 1,
+                           FONCTION  =  __paxa[k] ,),)
+
+                  __accxa = POST_DYNA_ALEA( INTERSPECTRE=_F( INTE_SPEC = __DSP,  
+                         NUME_ORDRE_I = 1, NUME_ORDRE_J = 1,    DUREE = TSM, ) ,)
+                  maccx = __accxa.EXTR_TABLE().MAX_MOY[0] 
+                  DETRUIRE(CONCEPT=_F(NOM=(  __DSP,)), INFO = 1)
+
+                  __gamf = CALC_FONCTION( EXTRACTION=_F(FONCTION= __gam[k], PARTIE='MODULE'), )
+
+                  __pgam = CALC_FONCTION(
+                      PUISSANCE=_F(FONCTION=__gamf, EXPOSANT = 2.,), 
+                       PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT', )
+
+                  __DSP = DEFI_INTE_SPEC ( DIMENSION= 1,
+                       PAR_FONCTION =_F( NUME_ORDRE_I = 1,
+                                        NUME_ORDRE_J = 1,
+                                        FONCTION  =  __pgam ,), )
+
+                  __gama = POST_DYNA_ALEA( INTERSPECTRE=_F( INTE_SPEC = __DSP,  
+                              NUME_ORDRE_I = 1, NUME_ORDRE_J = 1,  DUREE = TSM, ) ,)
+                  mgam = __gama.EXTR_TABLE().MAX_MOY[0] 
+                  DETRUIRE(CONCEPT=_F(NOM=(  __DSP, __pgam )), INFO = 1)
+
+                else:
+                  __accxa = CALC_FONCTION(ABS=_F(FONCTION=__axa[k]))
+                  __gama = CALC_FONCTION(ABS=_F(FONCTION=__gam[k]))
+                  maccx = max(__accxa.Ordo())
+                  mgam = max(__gama.Ordo())
+
+                lmaccx.append(maccx / 9.81)
+                gamax.append(mgam)
+
+
+                if ldevi == 'OUI':
+                  DETRUIRE(CONCEPT=_F(NOM=(__accxa, __gama,
+                                         __axhr, __axr, __eph,
+                                         __vih, __deh,
+                                         __ftep, __fthr,
+                                         __ftvi, __ftde,
+                                         )), INFO = 1)
+                elif 'DSP' in args:
+                  DETRUIRE(CONCEPT=_F(NOM=(__accxa, __axaf,  __gama,__gamf,
+                                         __axhr,  __eph, __ftep, __fthr,
+                                         )), INFO = 1)
+
+                else:
+                  DETRUIRE(CONCEPT=_F(NOM=(__accxa, __gama,
+                                         __axhr, __axr, __eph,
+                                         __ftep, __fthr,
+                                         )), INFO = 1)
+
+
+            elif dime == "3D":
+                for n in xrange(num_dime):
+                    __fthr = RECU_FONCTION(
+                            GROUP_NO=('PN' + str(k)), RESULTAT=__DYNHARM, NOM_CHAM='ACCE', NOM_CMP=dire_dime[n], INTERPOL='LIN',
+                                      PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
+                    if args['CHARGEMENT'] == 'ONDE_PLANE':
+                      if input == 'CL':
+                        __axhr = CALC_FONCTION(
+                          MULT=(_F(FONCTION=__FDT_RACL[n],), _F(FONCTION=__fthr,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                      if input == 'RA':
+                        __axhr = CALC_FONCTION(
+                          MULT=(_F(FONCTION=__fthr,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)              
+                    else:
+                      __axhr = CALC_FONCTION(
+                        MULT=(_F(FONCTION=__AHX_RA[n],), _F(FONCTION=__fthr,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+
+                    __axr = CALC_FONCTION(
+                        FFT=_F(FONCTION=__axhr, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
+
+                    if args['CHARGEMENT'] == 'ONDE_PLANE':
+                      __axa[n] = CALC_FONCTION(
+                        COMB=(_F(FONCTION=__axr, COEF=1.,),), LIST_PARA=__linst,)
+                    else:
+                      __axa[n] = CALC_FONCTION(
+                        COMB=(_F(FONCTION=__axr, COEF=1.,), _F(FONCTION=__AX_RA[n], COEF=1.,),), LIST_PARA=__linst,)
+
+                    __accxa = CALC_FONCTION(ABS=_F(FONCTION=__axa[n]))
+                    maccx[n] = max(__accxa.Ordo())
+                    DETRUIRE(CONCEPT=_F(NOM=(__accxa,
+                             __axhr, __axr,
+                             )), INFO = 1)
+
+                    if ldevi == 'OUI':
+                      __ftvi = RECU_FONCTION(
+                          GROUP_NO=('PN' + str(k)), RESULTAT=__DYNHARM, NOM_CHAM='VITE', NOM_CMP=dire_dime[n], INTERPOL='LIN',
+                                    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
+                      if args['CHARGEMENT'] == 'ONDE_PLANE':
+                        if input == 'CL':
+                          __vih = CALC_FONCTION(
+                            MULT=(_F(FONCTION=__FDT_RACL[n],), _F(FONCTION=__ftvi,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                        if input == 'RA':
+                          __vih = CALC_FONCTION(
+                            MULT=(_F(FONCTION=__ftvi,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                      else:
+                        __vih = CALC_FONCTION(
+                          MULT=(_F(FONCTION=__AHX_RA[n],), _F(FONCTION=__ftvi,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+
+                      #__vix[k] = CALC_FONCTION(
+                      #    FFT=_F(FONCTION=__vih, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
+
+                      __ftde = RECU_FONCTION(
+                          GROUP_NO=('PN' + str(k)), RESULTAT=__DYNHARM, NOM_CHAM='DEPL', NOM_CMP=dire_dime[n], INTERPOL='LIN',
+                                    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
+                      if args['CHARGEMENT'] == 'ONDE_PLANE':
+                        if input == 'CL':
+                          __deh = CALC_FONCTION(
+                            MULT=(_F(FONCTION=__FDT_RACL[n],), _F(FONCTION=__ftde,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                        if input == 'RA':
+                          __deh = CALC_FONCTION(
+                            MULT=(_F(FONCTION=__ftde,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                      else:
+                        __deh = CALC_FONCTION(
+                          MULT=(_F(FONCTION=__AHX_RA[n],), _F(FONCTION=__ftde,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+
+                      #__dex[k] = CALC_FONCTION(
+                      #    FFT=_F(FONCTION=__deh, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
+                      
+                      __vix[n] = CALC_FONCTION(INTEGRE=_F(FONCTION=__axa[n],),   
+                         PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+             
+                      __deplx0=CALC_FONCTION(INTEGRE=_F(FONCTION=__vix[n],),   
+                         PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+
+                      self.update_const_context(
+                          {'deplx0': __deplx0, 'tfin': tfin})
+
+                      __deplxF=FORMULE(NOM_PARA='INST',
+                               VALE='deplx0(INST)-(INST*deplx0(tfin)/tfin)')
+
+                      __dex[n]=CALC_FONC_INTERP(FONCTION=__deplxF, NOM_PARA = 'INST',
+                                  PROL_DROITE='CONSTANT',
+                                  PROL_GAUCHE='CONSTANT',
+                                  LIST_PARA=__linst);
+
+                      DETRUIRE(CONCEPT=_F(NOM=(
+                                       __vih, __deh,
+                                       __fthr,
+                                       __ftvi, __ftde,
+                                       )), INFO = 1)
+
+                __axaX[k] = __axa[0]
+                __axaY[k] = __axa[1]
+                __axaZ[k] = __axa[2]
+                if ldevi == 'OUI':
+                  __vixX[k] = __vix[0]
+                  __vixY[k] = __vix[1]
+                  __vixZ[k] = __vix[2]
+                  __dexX[k] = __dex[0]
+                  __dexY[k] = __dex[1]
+                  __dexZ[k] = __dex[2]
+
+                __ftepYY = RECU_FONCTION(
+                GROUP_MA=__TMAT['M', k], RESULTAT=__DYNHARM, NOM_CHAM='EPSI_ELGA', POINT=1, NOM_CMP='EPYY', INTERPOL='LIN',
+                PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
+                __ftepXY = RECU_FONCTION(
                 GROUP_MA=__TMAT['M', k], RESULTAT=__DYNHARM, NOM_CHAM='EPSI_ELGA', POINT=1, NOM_CMP='EPXY', INTERPOL='LIN',
                 PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
-            if args['CHARGEMENT'] == 'ONDE_PLANE':
-              if input == 'CL':
+                __ftepYZ = RECU_FONCTION(
+                GROUP_MA=__TMAT['M', k], RESULTAT=__DYNHARM, NOM_CHAM='EPSI_ELGA', POINT=1, NOM_CMP='EPYZ', INTERPOL='LIN',
+                PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
+
+                #onde P (YY) : signal Y, n=1
+                #onde SV (XY) : signal X, n=0
+                #onde SH (YZ): signal Z, n=2 
+                if args['CHARGEMENT'] == 'ONDE_PLANE':
+                  if input == 'CL':
+                    __ephYY = CALC_FONCTION(
+                      MULT=(_F(FONCTION=__FDT_RACL[1],), _F(FONCTION=__ftepYY,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                    __ephXY = CALC_FONCTION(
+                      MULT=(_F(FONCTION=__FDT_RACL[0],), _F(FONCTION=__ftepXY,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                    __ephYZ = CALC_FONCTION(
+                      MULT=(_F(FONCTION=__FDT_RACL[2],), _F(FONCTION=__ftepYZ,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                  if input == 'RA':
+                    __ephYY = CALC_FONCTION(
+                      MULT=(_F(FONCTION=__ftepYY,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                    __ephXY = CALC_FONCTION(
+                      MULT=(_F(FONCTION=__ftepXY,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                    __ephYZ = CALC_FONCTION(
+                      MULT=(_F(FONCTION=__ftepYZ,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                else:
+                  __ephYY = CALC_FONCTION(
+                    MULT=(_F(FONCTION=__AHX_RA[1],), _F(FONCTION=__ftepYY,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                  __ephXY = CALC_FONCTION(
+                    MULT=(_F(FONCTION=__AHX_RA[0],), _F(FONCTION=__ftepXY,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                  __ephYZ = CALC_FONCTION(
+                    MULT=(_F(FONCTION=__AHX_RA[2],), _F(FONCTION=__ftepYZ,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+
+
+                __ephYYt = CALC_FONCTION(
+                    FFT=_F(FONCTION=__ephYY, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
+                __ephXYt = CALC_FONCTION(
+                    FFT=_F(FONCTION=__ephXY, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
+                __ephYZt = CALC_FONCTION(
+                    FFT=_F(FONCTION=__ephYZ, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
+
+                self.update_const_context(
+                 {'ephYYt': __ephYYt, 'ephXYt': __ephXYt, 
+                 'ephYZt': __ephYZt}
+                 )
+
+                __ephdF = FORMULE(
+                 NOM_PARA='INST', VALE="sqrt(ephYYt(INST)*ephYYt(INST)+3*ephXYt(INST)*ephXYt(INST)+3*ephYZt(INST)*ephYZt(INST))")
+                __ephdF = FORMULE(
+                 NOM_PARA='INST', VALE="sqrt(3*ephXYt(INST)*ephXYt(INST))")
+
+                __epxy[k] = CALC_FONC_INTERP(NOM_PARA='INST',
+                               LIST_PARA=__linst,
+                               FONCTION=__ephdF,
+                               PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',)
+
                 __eph = CALC_FONCTION(
-                  MULT=(_F(FONCTION=__FDT_RACL,), _F(FONCTION=__ftep,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-              if input == 'RA':
-                __eph = CALC_FONCTION(
-                  MULT=(_F(FONCTION=__ftep,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-            else:
-              __eph = CALC_FONCTION(
-                MULT=(_F(FONCTION=__AHX_RA,), _F(FONCTION=__ftep,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                    FFT=_F(FONCTION=__epxy[k], METHODE='COMPLET',),PROL_DROITE='CONSTANT',)
 
+                DETRUIRE(CONCEPT=_F(NOM=(__ephYYt, __ephXYt,
+                                          __ephYZt, __ephdF,
+                          )), INFO = 1)
 
-            if 'DSP' not in args:
-              __epxy[k] = CALC_FONCTION(
-                 FFT=_F(FONCTION=__eph, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
-            # Calcul de la distorsion : gamma = 2*epxy ; tau = sixy
-              __gam[k] = CALC_FONCTION(LIST_PARA=__linst,
-                        COMB=(_F(FONCTION=__epxy[k], COEF=(2),),)  ,) 
-            else:
-              __gam[k] = CALC_FONCTION( LIST_PARA=__lfreq,
-                      COMB_C=(_F(FONCTION=__eph, COEF_R=(2),), )    ,) 
-               
-            if formulation == 'LYSMER':
-              f2Getoil = E[iter][k] / (1+ __TMAT['NU',k]) * (1.-AH[iter][k]*AH[iter][k]/2 + (AH[iter][k]*sqrt(1-AH[iter][k]*AH[iter][k]/4))*1.j) ;
-            else: 
-              f2Getoil = (E[iter][k] / (1+ __TMAT['NU',k]) ) * (1.+ (AH[iter][k])*1.j);
+               #coef = (2/3)*np.sqrt(3)
+                __gam[k] = CALC_FONCTION(
+                    LIST_PARA=__linst, COMB=(_F(FONCTION=__epxy[k], COEF=((2./3.)*1.7320508075688772),),
+                                             ),)
 
-            __tauh = CALC_FONCTION(COMB_C=_F(FONCTION=__eph,COEF_C = f2Getoil),LIST_PARA=__lfreq,NOM_PARA='FREQ',);
-            
-            __tau[k] = CALC_FONCTION(FFT=_F(FONCTION=__tauh,METHODE='COMPLET',SYME='NON',),PROL_DROITE='CONSTANT',);
+                # coef = (1/3)*np.sqrt(3)
+                if formulation == 'LYSMER':
+                  f2Getoil = 0.57735026918962573*E[iter][k] / (1+ __TMAT['NU',k]) * (1.-AH[iter][k]*AH[iter][k]/2 + (AH[iter][k]*sqrt(1-AH[iter][k]*AH[iter][k]/4))*1.j) ;
+                else: 
+                  f2Getoil = 0.57735026918962573*(E[iter][k] / (1+ __TMAT['NU',k]) ) * (1.+ (AH[iter][k])*1.j);
 
-            # Calcul des max
-            if 'DSP' in args:
+                __qh = CALC_FONCTION(COMB_C=_F(FONCTION=__eph,COEF_C = f2Getoil),LIST_PARA=__lfreq,NOM_PARA='FREQ',);
+                
+                __tau[k] = CALC_FONCTION(FFT=_F(FONCTION=__qh,METHODE='COMPLET',SYME='NON',),PROL_DROITE='CONSTANT',);
 
-              __axaf = CALC_FONCTION( EXTRACTION=_F(FONCTION= __axa[k],PARTIE='MODULE' ), )
+                __gama = CALC_FONCTION(ABS=_F(FONCTION=__gam[k]))
+                mgam = max(__gama.Ordo())
 
-              __paxa[k] = CALC_FONCTION(
-                  PUISSANCE=_F(FONCTION=__axaf, EXPOSANT = 2.,), 
-                   PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT', )
+                lmaccxX.append(maccx[0] / 9.81)
+                lmaccxY.append(maccx[1] / 9.81)
+                lmaccxZ.append(maccx[2] / 9.81)
+                gamax.append(mgam)
 
-              __DSP = DEFI_INTE_SPEC ( DIMENSION= 1,
-                  PAR_FONCTION =_F( NUME_ORDRE_I = 1,
-                                    NUME_ORDRE_J = 1,
-                       FONCTION  =  __paxa[k] ,),)
-
-              __accxa = POST_DYNA_ALEA( INTERSPECTRE=_F( INTE_SPEC = __DSP,  
-                     NUME_ORDRE_I = 1, NUME_ORDRE_J = 1,    DUREE = TSM, ) ,)
-              maccx = __accxa.EXTR_TABLE().MAX_MOY[0] 
-              DETRUIRE(CONCEPT=_F(NOM=(  __DSP,)), INFO = 1)
-
-              __gamf = CALC_FONCTION( EXTRACTION=_F(FONCTION= __gam[k], PARTIE='MODULE'), )
-
-              __pgam = CALC_FONCTION(
-                  PUISSANCE=_F(FONCTION=__gamf, EXPOSANT = 2.,), 
-                   PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT', )
-
-              __DSP = DEFI_INTE_SPEC ( DIMENSION= 1,
-                   PAR_FONCTION =_F( NUME_ORDRE_I = 1,
-                                    NUME_ORDRE_J = 1,
-                                    FONCTION  =  __pgam ,), )
-
-              __gama = POST_DYNA_ALEA( INTERSPECTRE=_F( INTE_SPEC = __DSP,  
-                          NUME_ORDRE_I = 1, NUME_ORDRE_J = 1,  DUREE = TSM, ) ,)
-              mgam = __gama.EXTR_TABLE().MAX_MOY[0] 
-              DETRUIRE(CONCEPT=_F(NOM=(  __DSP, __pgam )), INFO = 1)
-
-            else:
-              __accxa = CALC_FONCTION(ABS=_F(FONCTION=__axa[k]))
-              __gama = CALC_FONCTION(ABS=_F(FONCTION=__gam[k]))
-              maccx = max(__accxa.Ordo())
-              mgam = max(__gama.Ordo())
-
-            lmaccx.append(maccx / 9.81)
-            gamax.append(mgam)
-
-
-
-
-
-            if ldevi == 'OUI':
-              DETRUIRE(CONCEPT=_F(NOM=(__accxa, __gama,
-                                     __axhr, __axr, __eph,
-                                     __vih, __deh,
-                                     __ftep, __fthr,
-                                     __ftvi, __ftde,
-                                     )), INFO = 1)
-            elif 'DSP' in args:
-              DETRUIRE(CONCEPT=_F(NOM=(__accxa, __axaf,  __gama,__gamf,
-                                     __axhr,  __eph, __ftep, __fthr,
-                                     )), INFO = 1)
-
-            else:
-              DETRUIRE(CONCEPT=_F(NOM=(__accxa, __gama,
-                                     __axhr, __axr, __eph,
-                                     __ftep, __fthr,
-                                     )), INFO = 1)
+                DETRUIRE(CONCEPT=_F(NOM=(__gama,
+                                         __eph,
+                                         __qh,
+                                         __ephYY,__ephYZ,__ephXY,
+                                         __ftepYY,__ftepYZ,__ftepXY,
+                                         )), INFO = 1)
 
         # construction des profils
-
-        __paccx = DEFI_FONCTION(NOM_PARA='Y', NOM_RESU='accxmax',
-                                ORDONNEE=tuple(lmaccx),
-                                ABSCISSE=tuple(lprof,))
+        __paccx = [None] * num_dime
+        if dime == "2D": 
+            __paccx[0] = DEFI_FONCTION(NOM_PARA='Y', NOM_RESU='accxmax',
+                                    ORDONNEE=tuple(lmaccx),
+                                    ABSCISSE=tuple(lprof,))
+        elif dime == "3D":
+            __paccx[0] = DEFI_FONCTION(NOM_PARA='Y', NOM_RESU='accmax' + name_dime[0],
+                                        ORDONNEE=tuple(lmaccxX),
+                                        ABSCISSE=tuple(lprof,))
+            __paccx[1] = DEFI_FONCTION(NOM_PARA='Y', NOM_RESU='accmax' + name_dime[1],
+                                        ORDONNEE=tuple(lmaccxY),
+                                        ABSCISSE=tuple(lprof,))
+            __paccx[2] = DEFI_FONCTION(NOM_PARA='Y', NOM_RESU='accmax' + name_dime[2],
+                                        ORDONNEE=tuple(lmaccxZ),
+                                        ABSCISSE=tuple(lprof,))
 
         __pgamax = DEFI_FONCTION(NOM_PARA='Y', NOM_RESU='gamma_max',
-                                 ORDONNEE=tuple(gamax),
-                                 ABSCISSE=tuple(lprof,))
+                                     ORDONNEE=tuple(gamax),
+                                     ABSCISSE=tuple(lprof,))
 
         # Lecture sur les courbes G/Gmax et D
         ind = []
@@ -2186,33 +2726,45 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                 DETRUIRE(CONCEPT=_F(NOM=(
                     __NUMEDDL, __RIGIHYST, __RIGH_ELH, __RIGIDITE,
                     __SOLHSUBS, __CHAMPMAH, __RIGI_ELH, __MASS_ELH, __MASSEH, __AMOR_ELH, __AMORTIH,
-                    __VECASX, __ONDEX, __DYNHARM,
-                    __formFDT, __FDT_RACL, __mFDTRACL,
-                    __formFDT2, __FDT_CLBH, __mFDTCLBH,
-                    __AHuXrCL, __AHuXrBH, __mAHuXrCL, __mAHuXrBH,
-                    __AHX_RA,  __PAX_RA,   __SAX_CL, __PAX_CL,
-                    __AHXrBH, __SAX_BH, __PAX_BH,
-                    __paccx, __pgamax,
+                    __VECASX, __DYNHARM,
+                    __PAX_RA, __PAX_CL,
+                    __PAX_BH,
+                    __pgamax,
                     __rGnew, __rGold,
                     __Enew, __AHnew, __TEnew, __TAHnew,
+                ),), INFO = 1)
+                for n in xrange(num_dime):
+                    DETRUIRE(CONCEPT=_F(NOM=(
+                    __ONDEX[n],
+                    __formFDT[n], __FDT_RACL[n], __mFDTRACL[n],
+                    __formFDT2[n], __FDT_CLBH[n], __mFDTCLBH[n],
+                    __AHuXrCL[n], __AHuXrBH[n], __mAHuXrCL[n], __mAHuXrBH[n],
+                    __AHX_RA[n], __SAX_RA[n],
+                    __AHXrCL[n], __SAX_CL[n],
+                    __paccx[n],
                 ),), INFO = 1)
 
               else:
                 DETRUIRE(CONCEPT=_F(NOM=(
                     __NUMEDDL, __RIGIHYST, __RIGH_ELH, __RIGIDITE,
                     __SOLHSUBS, __CHAMPMAH, __RIGI_ELH, __MASS_ELH, __MASSEH, __AMOR_ELH, __AMORTIH,
-                    __VECASX, __ONDEX, __DYNHARM,
-                    __formFDT, __FDT_RACL, __mFDTRACL,
-                    __formFDT2, __FDT_CLBH, __mFDTCLBH,
-                    __AHuXrCL, __AHuXrBH, __mAHuXrCL, __mAHuXrBH,
-                    __AHX_RA, __AX_RA, __SAX_RA,
-                    __AX_CL, __AHXrCL, __AXrCL, __SAX_CL,
-                    __AX_BH, __AHXrBH, __AXrBH, __SAX_BH,
-                    __paccx, __pgamax,
+                    __VECASX, __DYNHARM,
+                    __pgamax,
                     __rGnew, __rGold,
                     __Enew, __AHnew, __TEnew, __TAHnew,
                   ),), INFO = 1)
 
+                for n in xrange(num_dime):
+                    DETRUIRE(CONCEPT=_F(NOM=(
+                    __ONDEX[n],
+                    __formFDT[n], __FDT_RACL[n], __mFDTRACL[n],
+                    __formFDT2[n], __FDT_CLBH[n], __mFDTCLBH[n],
+                    __AHuXrCL[n], __AHuXrBH[n], __mAHuXrCL[n], __mAHuXrBH[n],
+                    __AHX_RA[n], __AX_RA[n], __SAX_RA[n],
+                    __AX_CL[n], __AHXrCL[n], __AXrCL[n], __SAX_CL[n],
+                    __AX_BH[n], __AHXrBH[n], __AXrBH[n], __SAX_BH[n],
+                    __paccx[n],
+                ),), INFO = 1)
 
               if args['CHARGEMENT'] == 'ONDE_PLANE':
                 DETRUIRE(CONCEPT=_F(NOM=(
@@ -2221,10 +2773,19 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                   ),), INFO = 1)
 
               for k in range(1, NCOU + 1):
-                 DETRUIRE( CONCEPT=_F(NOM=(__SOLH[k], __axa[k],__tau[k], __gam[k] ),), )
-                 if 'DSP' not in args:
-                   DETRUIRE( CONCEPT=_F(NOM=( __epxy[k],  ),), )
+                    DETRUIRE(
+                        CONCEPT=_F(NOM=(__SOLH[k], __gam[k], __tau[k]),), INFO = 1)
+                    if 'DSP' not in args:
+                        DETRUIRE( CONCEPT=_F(NOM=( __epxy[k],  ),), )
 
+              if dime == "2D":
+                for k in range(1, NCOU + 1):
+                    DETRUIRE(
+                        CONCEPT=_F(NOM=(__axa[k] ),), INFO = 1)
+              elif dime == "3D":
+                for k in xrange(num_dime):
+                    DETRUIRE(
+                        CONCEPT=_F(NOM=(__axa[k],  ),), INFO = 1)
 
         if deltaE < tole:
             etat = 'fin'
@@ -2233,7 +2794,12 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 
             __tabred = CREA_TABLE(FONCTION=_F(FONCTION=__rGold),)
             __tabgam = CREA_TABLE(FONCTION=_F(FONCTION=__pgamax),)
-            __tabacc = CREA_TABLE(FONCTION=_F(FONCTION=__paccx),)
+            if dime == "2D":
+                __tabacc = CREA_TABLE(FONCTION=_F(FONCTION=__paccx[0]),)
+            elif dime == "3D":
+                __tabaccX = CREA_TABLE(FONCTION=_F(FONCTION=__paccx[0]),)
+                __tabaccY = CREA_TABLE(FONCTION=_F(FONCTION=__paccx[1]),)
+                __tabaccZ = CREA_TABLE(FONCTION=_F(FONCTION=__paccx[2]),)
             self.update_const_context(
                 {'ca': ca, 'aamult': aamult, 'abmult': abmult})
             __fAB = FORMULE(NOM_PARA=('AHfin'), VALE = 'ca*abmult*AHfin')
@@ -2243,29 +2809,63 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
             __fGf = FORMULE(NOM_PARA=('Efin','NU'), VALE = 'Efin/(2.0*(1+NU))')
             __fVSf = FORMULE(NOM_PARA=('Efin','NU','RHO'), VALE = 'sqrt(Efin/(2.0*(1+NU)*RHO))')
             __fVPf = FORMULE(NOM_PARA=('Efin','NU','RHO'), VALE = 'sqrt(Efin*(1-NU)/((1-2.0*NU)*(1+NU)*RHO))')
-            __TMAT = CALC_TABLE(reuse=__TMAT, TABLE=__TMAT,
-                                ACTION=(
-                                _F(OPERATION='COMB',
-                                   TABLE=__tabred, NOM_PARA='Y'),
-                                _F(OPERATION='COMB',
-                                   TABLE=__tabgam, NOM_PARA='Y'),
+
+            if dime == "2D":
+                __TMAT = CALC_TABLE(reuse=__TMAT, TABLE=__TMAT,
+                                    ACTION=(
                                     _F(OPERATION='COMB',
-                                       TABLE=__tabacc, NOM_PARA='Y'),
-                                    _F(OPERATION='RENOMME', NOM_PARA=(
-                                      ('E' + str(iter - 1)), 'Efin'),),
-                                    _F(OPERATION='RENOMME', NOM_PARA=(
-                                      ('AH' + str(iter - 1)), 'AHfin'),),
-                                    _F(OPERATION = 'OPER',
-                                       FORMULE=__fAA, NOM_PARA = 'AAfin',),
-                                    _F(OPERATION = 'OPER',
-                                       FORMULE=__fAB, NOM_PARA = 'ABfin',),
-                                    _F(OPERATION = 'OPER',
-                                       FORMULE=__fGf, NOM_PARA = 'Gfin',),
-                                    _F(OPERATION = 'OPER',
-                                       FORMULE=__fVSf, NOM_PARA = 'VSfin',),
-                                    _F(OPERATION = 'OPER',
-                                       FORMULE=__fVPf, NOM_PARA = 'VPfin',),
-                                ))
+                                       TABLE=__tabred, NOM_PARA='Y'),
+                                    _F(OPERATION='COMB',
+                                       TABLE=__tabgam, NOM_PARA='Y'),
+                                        _F(OPERATION='COMB',
+                                           TABLE=__tabacc, NOM_PARA='Y'),
+                                        _F(OPERATION='RENOMME', NOM_PARA=(
+                                          ('E' + str(iter - 1)), 'Efin'),),
+                                        _F(OPERATION='RENOMME', NOM_PARA=(
+                                          ('AH' + str(iter - 1)), 'AHfin'),),
+                                        _F(OPERATION = 'OPER',
+                                           FORMULE=__fAA, NOM_PARA = 'AAfin',),
+                                        _F(OPERATION = 'OPER',
+                                           FORMULE=__fAB, NOM_PARA = 'ABfin',),
+                                        _F(OPERATION = 'OPER',
+                                           FORMULE=__fGf, NOM_PARA = 'Gfin',),
+                                        _F(OPERATION = 'OPER',
+                                           FORMULE=__fVSf, NOM_PARA = 'VSfin',),
+                                        _F(OPERATION = 'OPER',
+                                           FORMULE=__fVPf, NOM_PARA = 'VPfin',),
+                                    ))
+                DETRUIRE(
+                CONCEPT=_F(NOM=(__tabacc),))
+            elif dime == "3D":
+                __TMAT = CALC_TABLE(reuse=__TMAT, TABLE=__TMAT,
+                                    ACTION=(
+                                    _F(OPERATION='COMB',
+                                       TABLE=__tabred, NOM_PARA='Y'),
+                                    _F(OPERATION='COMB',
+                                       TABLE=__tabgam, NOM_PARA='Y'),
+                                        _F(OPERATION='COMB',
+                                           TABLE=__tabaccX, NOM_PARA='Y'),
+                                        _F(OPERATION='COMB',
+                                           TABLE=__tabaccY, NOM_PARA='Y'),
+                                        _F(OPERATION='COMB',
+                                           TABLE=__tabaccZ, NOM_PARA='Y'),
+                                        _F(OPERATION='RENOMME', NOM_PARA=(
+                                          ('E' + str(iter - 1)), 'Efin'),),
+                                        _F(OPERATION='RENOMME', NOM_PARA=(
+                                          ('AH' + str(iter - 1)), 'AHfin'),),
+                                        _F(OPERATION = 'OPER',
+                                           FORMULE=__fAA, NOM_PARA = 'AAfin',),
+                                        _F(OPERATION = 'OPER',
+                                           FORMULE=__fAB, NOM_PARA = 'ABfin',),
+                                        _F(OPERATION = 'OPER',
+                                           FORMULE=__fGf, NOM_PARA = 'Gfin',),
+                                        _F(OPERATION = 'OPER',
+                                           FORMULE=__fVSf, NOM_PARA = 'VSfin',),
+                                        _F(OPERATION = 'OPER',
+                                           FORMULE=__fVPf, NOM_PARA = 'VPfin',),
+                                    ))
+                DETRUIRE(
+                CONCEPT=_F(NOM=(__tabaccX,__tabaccY,__tabaccZ,),))
 
             if iter == 1 :
               __TMAT = CALC_TABLE(reuse=__TMAT, TABLE=__TMAT,
@@ -2277,52 +2877,64 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                                 ))
                                 
             DETRUIRE(
-                CONCEPT=_F(NOM=(__tabred, __tabgam, __tabacc, __fAA, __fAB),))
+                CONCEPT=_F(NOM=(__tabred, __tabgam, __fAA, __fAB),))
             # Recuperation des historiques d acceleration et deformation dans
             # chaque couche
+
+            if dime == "2D":
+                __SPEC = [None] * (NCOU + 1)
+            elif dime == "3D":
+                __SPECX = [None] * (NCOU + 1)
+                __SPECY = [None] * (NCOU + 1)
+                __SPECZ = [None] * (NCOU + 1)
 
             __SPEC = [None] * (NCOU + 1)
             if v == 1:
                 if s == 1:
                     if a == 1:
-                        if 'DSP' not in args:
-                          __tabaccx = CREA_TABLE(
-                              FONCTION=_F(FONCTION=__AX_CL, PARA=('INST', 'AX_CL')),)
-                          __tabAXRA = CREA_TABLE(
-                            FONCTION=_F(FONCTION=__AX_RA, PARA=('INST', 'AX_RA')),)
-                          __tabaccx = CALC_TABLE(TABLE=__tabaccx, reuse=__tabaccx,
-                                    ACTION=_F(OPERATION='COMB', TABLE=__tabAXRA, NOM_PARA='INST'),)
-                        else:
-                          __tabaccx = CREA_TABLE(
-                              FONCTION=_F(FONCTION=__PAX_CL, PARA=('FREQ', 'AX_CL')),)
-                          __tabAXRA = CREA_TABLE(
-                            FONCTION=_F(FONCTION=__PAX_RA, PARA=('FREQ', 'AX_RA')),)
-                          __tabaccx = CALC_TABLE(TABLE=__tabaccx, reuse=__tabaccx,
-                                    ACTION=_F(OPERATION='COMB', TABLE=__tabAXRA, NOM_PARA='FREQ'),)
+                        __tabaccx = [None] * num_dime
+                        __tabvitx = [None] * num_dime
+                        __tabdepx = [None] * num_dime
+                        __tabadec = [None] * num_dime
+                        for n in xrange(num_dime):
+                            if 'DSP' not in args:
+                                __tabaccx[n] = CREA_TABLE(
+                                    FONCTION=_F(FONCTION=__AX_CL[n], PARA=('INST', 'AX_CL'+name_dime[n])),)
+                                __tabAXRA = CREA_TABLE(
+                                    FONCTION=_F(FONCTION=__AX_RA[n], PARA=('INST', 'AX_RA'+name_dime[n])),)
+                                __tabaccx[n] = CALC_TABLE(TABLE=__tabaccx[n], reuse=__tabaccx[n],
+                                            ACTION=_F(OPERATION='COMB', TABLE=__tabAXRA, NOM_PARA='INST'),)
+                            else:
+                              __tabaccx[n] = CREA_TABLE(
+                                  FONCTION=_F(FONCTION=__PAX_CL, PARA=('FREQ', 'AX_CL'+name_dime[n])),)
+                              __tabAXRA= CREA_TABLE(
+                                FONCTION=_F(FONCTION=__PAX_RA, PARA=('FREQ', 'AX_RA'+name_dime[n])),)
+                              __tabaccx[n] = CALC_TABLE(TABLE=__tabaccx[n], reuse=__tabaccx[n],
+                                        ACTION=_F(OPERATION='COMB', TABLE=__tabAXRA, NOM_PARA='FREQ'),)
 
-                        if ldevi == 'OUI':
-                          __tabvitx = CREA_TABLE(
-                            FONCTION=_F(FONCTION=__VX_CL, PARA=(PARATAB, 'VX_CL')),)
-                          __tabVXRA = CREA_TABLE(
-                            FONCTION=_F(FONCTION=__VX_RA, PARA=(PARATAB, 'VX_RA')),)
-                          __tabvitx = CALC_TABLE(TABLE=__tabvitx, reuse=__tabvitx,
-                                    ACTION=_F(OPERATION='COMB', TABLE=__tabVXRA, NOM_PARA='INST'),)
-                          __tabdepx = CREA_TABLE(
-                            FONCTION=_F(FONCTION=__DX_CL, PARA=(PARATAB, 'DX_CL')),)
-                          __tabDXRA = CREA_TABLE(
-                            FONCTION=_F(FONCTION=__DX_RA, PARA=(PARATAB, 'DX_RA')),)
-                          __tabdepx = CALC_TABLE(TABLE=__tabdepx, reuse=__tabdepx,
-                                    ACTION=_F(OPERATION='COMB', TABLE=__tabDXRA, NOM_PARA= PARATAB),)
+                            if ldevi == 'OUI':
+                              __tabvitx[n] = CREA_TABLE(
+                                FONCTION=_F(FONCTION=__VX_CL[n], PARA=(PARATAB, 'VX_CL'+name_dime[n])),)
+                              __tabVXRA = CREA_TABLE(
+                                FONCTION=_F(FONCTION=__VX_RA[n], PARA=(PARATAB, 'VX_RA'+name_dime[n])),)
+                              __tabvitx[n] = CALC_TABLE(TABLE=__tabvitx[n], reuse=__tabvitx[n],
+                                        ACTION=_F(OPERATION='COMB', TABLE=__tabVXRA, NOM_PARA=PARATAB),)
+                              __tabdepx[n] = CREA_TABLE(
+                                FONCTION=_F(FONCTION=__DX_CL[n], PARA=(PARATAB, 'DX_CL'+name_dime[n])),)
+                              __tabDXRA = CREA_TABLE(
+                                FONCTION=_F(FONCTION=__DX_RA[n], PARA=(PARATAB, 'DX_RA'+name_dime[n])),)
+                              __tabdepx[n] = CALC_TABLE(TABLE=__tabdepx[n], reuse=__tabdepx[n],
+                                        ACTION=_F(OPERATION='COMB', TABLE=__tabDXRA, NOM_PARA= PARATAB),)
 
-                        __tabadec = CALC_TABLE(TABLE=__tabaccx,
-                                               ACTION=(
-                                               _F(OPERATION='COMB',
-                                                  TABLE=__tabAXRA, NOM_PARA=PARATAB),
-                                               _F(OPERATION='RENOMME', NOM_PARA=(
-                                                  'AX_CL', 'CL' + legendeT),),
+                            __tabadec[n] = CALC_TABLE(TABLE=__tabaccx[n],
+                                                   ACTION=(
+                                                   _F(OPERATION='COMB',
+                                                      TABLE=__tabAXRA, NOM_PARA=PARATAB),
                                                    _F(OPERATION='RENOMME', NOM_PARA=(
-                                                      'AX_RA', 'RA' + legendeT),),
-                                               ))
+                                                      'AX_CL' + name_dime[n], 'CL' + name_dime[n] + legendeT),),
+                                                       _F(OPERATION='RENOMME', NOM_PARA=(
+                                                          'AX_RA' + name_dime[n], 'RA' + name_dime[n] + legendeT),),
+                                                   ))
 
             if ldevi == 'OUI':
              DETRUIRE(CONCEPT=_F(NOM=(__tabAXRA,__tabVXRA,__tabDXRA,),))
@@ -2334,159 +2946,299 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                         FONCTION=_F(FONCTION=__gam[k], PARA=(PARATAB, 'GAM' + str(k))))                     
                     __tabtau = CREA_TABLE(
                         FONCTION=_F(FONCTION=__tau[k], PARA=(PARATAB, 'TAU' + str(k))))
-                    __tabatmp = CREA_TABLE(
-                        FONCTION=_F(FONCTION=__axa[k], PARA=(PARATAB, 'ACCE' + str(k))))
-                    __tabaccx = CALC_TABLE(TABLE=__tabaccx, reuse=__tabaccx,
-                                  ACTION=_F(OPERATION='COMB', TABLE=__tabatmp, NOM_PARA= PARATAB),)
+
+                    if dime == "2D":
+                        __tabatmp = CREA_TABLE(
+                            FONCTION=_F(FONCTION=__axa[k], PARA=(PARATAB, 'ACCE' + str(k))))
+                        __tabaccx[0] = CALC_TABLE(TABLE=__tabaccx[0], reuse=__tabaccx[0],
+                                               ACTION=_F(OPERATION='COMB', TABLE=__tabatmp, NOM_PARA=PARATAB),)
+                        if ldevi == 'OUI':
+                          __tabvtmp = CREA_TABLE(
+                              FONCTION=_F(FONCTION=__vix[k], PARA=(PARATAB, 'VITE' + str(k))))
+                          __tabvitx[0] = CALC_TABLE(TABLE=__tabvitx[0], reuse=__tabvitx[0],
+                                                 ACTION=_F(OPERATION='COMB', TABLE=__tabvtmp, NOM_PARA=PARATAB),)
+                          __tabdtmp = CREA_TABLE(
+                              FONCTION=_F(FONCTION=__dex[k], PARA=(PARATAB, 'DEPL' + str(k))))
+                          __tabdepx[0] = CALC_TABLE(TABLE=__tabdepx[0], reuse=__tabdepx[0],
+                                                 ACTION=_F(OPERATION='COMB', TABLE=__tabdtmp, NOM_PARA=PARATAB),)
+
+                        if 'DSP' in args:
+                          if args['LIST_FREQ_SPEC_OSCI'] != None:
+                            __SPEC[k] = CALC_FONCTION(
+                                SPEC_OSCI=_F(FONCTION=__paxa[k], AMOR_REDUIT=0.05,
+                                LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))  
+                          else:
+                            __SPEC[k] = CALC_FONCTION(
+                                SPEC_OSCI=_F(FONCTION=__paxa[k], AMOR_REDUIT=0.05,  NORME=9.81))  
+                        else: 
+                          if args['LIST_FREQ_SPEC_OSCI'] != None:
+                            __SPEC[k] = CALC_FONCTION(
+                                SPEC_OSCI=_F(FONCTION=__axa[k],AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
+                          else:
+                            __SPEC[k] = CALC_FONCTION(
+                                SPEC_OSCI=_F(FONCTION=__axa[k], AMOR_REDUIT=0.05, NORME=9.81))
+
+                        if ldevi == 'OUI':
+                          DETRUIRE(CONCEPT=_F(NOM=(__tabatmp,__tabvtmp,__tabdtmp,),))
+                        else:
+                          DETRUIRE(CONCEPT=_F(NOM=(__tabatmp,),))
+
+                    elif dime == "3D":
+                        __tabatmp = CREA_TABLE(
+                            FONCTION=_F(FONCTION=__axaX[k], PARA=(PARATAB, 'ACCE' + str(k)+name_dime[0])))
+                        __tabaccx[0] = CALC_TABLE(TABLE=__tabaccx[0], reuse=__tabaccx[0],
+                                               ACTION=_F(OPERATION='COMB', TABLE=__tabatmp, NOM_PARA=PARATAB),)
+                        DETRUIRE(CONCEPT=_F(NOM=(__tabatmp,),))
+                        __tabatmp = CREA_TABLE(
+                            FONCTION=_F(FONCTION=__axaY[k], PARA=(PARATAB, 'ACCE' + str(k)+name_dime[1])))
+                        __tabaccx[1] = CALC_TABLE(TABLE=__tabaccx[1], reuse=__tabaccx[1],
+                                               ACTION=_F(OPERATION='COMB', TABLE=__tabatmp, NOM_PARA=PARATAB),)
+                        DETRUIRE(CONCEPT=_F(NOM=(__tabatmp,),))
+                        __tabatmp = CREA_TABLE(
+                            FONCTION=_F(FONCTION=__axaZ[k], PARA=(PARATAB, 'ACCE' + str(k)+name_dime[2])))
+                        __tabaccx[2] = CALC_TABLE(TABLE=__tabaccx[2], reuse=__tabaccx[2],
+                                               ACTION=_F(OPERATION='COMB', TABLE=__tabatmp, NOM_PARA=PARATAB),)
+                        DETRUIRE(CONCEPT=_F(NOM=(__tabatmp,),))
+
+                        if ldevi == 'OUI':
+                          __tabvtmp = CREA_TABLE(
+                              FONCTION=_F(FONCTION=__vixX[k], PARA=(PARATAB, 'VITE' + str(k)+name_dime[0])))
+                          __tabvitx[0] = CALC_TABLE(TABLE=__tabvitx[0], reuse=__tabvitx[0],
+                                                 ACTION=_F(OPERATION='COMB', TABLE=__tabvtmp, NOM_PARA=PARATAB),)
+                          DETRUIRE(CONCEPT=_F(NOM=(__tabvtmp),))
+                          __tabvtmp = CREA_TABLE(
+                              FONCTION=_F(FONCTION=__vixY[k], PARA=(PARATAB, 'VITE' + str(k)+name_dime[1])))
+                          __tabvitx[1] = CALC_TABLE(TABLE=__tabvitx[1], reuse=__tabvitx[1],
+                                                 ACTION=_F(OPERATION='COMB', TABLE=__tabvtmp, NOM_PARA=PARATAB),)
+                          DETRUIRE(CONCEPT=_F(NOM=(__tabvtmp),))
+                          __tabvtmp = CREA_TABLE(
+                              FONCTION=_F(FONCTION=__vixZ[k], PARA=(PARATAB, 'VITE' + str(k)+name_dime[2])))
+                          __tabvitx[2] = CALC_TABLE(TABLE=__tabvitx[2], reuse=__tabvitx[2],
+                                                 ACTION=_F(OPERATION='COMB', TABLE=__tabvtmp, NOM_PARA=PARATAB),)
+                          DETRUIRE(CONCEPT=_F(NOM=(__tabvtmp),))
 
 
-                    if ldevi == 'OUI':
-                      __tabvtmp = CREA_TABLE(
-                        FONCTION=_F(FONCTION=__vix[k], PARA=('INST', 'VITE' + str(k))))
-                      __tabvitx = CALC_TABLE(TABLE=__tabvitx, reuse=__tabvitx,
-                                           ACTION=_F(OPERATION='COMB', TABLE=__tabvtmp, NOM_PARA='INST'),)
-                      __tabdtmp = CREA_TABLE(
-                        FONCTION=_F(FONCTION=__dex[k], PARA=('INST', 'DEPL' + str(k))))
-                      __tabdepx = CALC_TABLE(TABLE=__tabdepx, reuse=__tabdepx,
-                                           ACTION=_F(OPERATION='COMB', TABLE=__tabdtmp, NOM_PARA='INST'),)
+                          __tabdtmp = CREA_TABLE(
+                              FONCTION=_F(FONCTION=__dexX[k], PARA=(PARATAB, 'DEPL' + str(k)+name_dime[0])))
+                          __tabdepx[0] = CALC_TABLE(TABLE=__tabdepx[0], reuse=__tabdepx[0],
+                                                 ACTION=_F(OPERATION='COMB', TABLE=__tabdtmp, NOM_PARA=PARATAB),)
+                          DETRUIRE(CONCEPT=_F(NOM=(__tabdtmp,),))
+                          __tabdtmp = CREA_TABLE(
+                              FONCTION=_F(FONCTION=__dexY[k], PARA=(PARATAB, 'DEPL' + str(k)+name_dime[1])))
+                          __tabdepx[1] = CALC_TABLE(TABLE=__tabdepx[1], reuse=__tabdepx[1],
+                                                 ACTION=_F(OPERATION='COMB', TABLE=__tabdtmp, NOM_PARA=PARATAB),)
+                          DETRUIRE(CONCEPT=_F(NOM=(__tabdtmp,),))
+                          __tabdtmp = CREA_TABLE(
+                              FONCTION=_F(FONCTION=__dexZ[k], PARA=(PARATAB, 'DEPL' + str(k)+name_dime[2])))
+                          __tabdepx[2] = CALC_TABLE(TABLE=__tabdepx[2], reuse=__tabdepx[2],
+                                                 ACTION=_F(OPERATION='COMB', TABLE=__tabdtmp, NOM_PARA=PARATAB),)
+                          DETRUIRE(CONCEPT=_F(NOM=(__tabdtmp,),))
 
-# ------------------------ -----------------------------------------------------------------------------------
-                    if 'DSP' in args:
-                      if args['LIST_FREQ_SPEC_OSCI'] != None:
-                        __SPEC[k] = CALC_FONCTION(
-                            SPEC_OSCI=_F(FONCTION=__paxa[k], AMOR_REDUIT=0.05,
-                            LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))  
-                      else:
-                        __SPEC[k] = CALC_FONCTION(
-                            SPEC_OSCI=_F(FONCTION=__paxa[k], AMOR_REDUIT=0.05,  NORME=9.81))  
-                    else: 
-                      if args['LIST_FREQ_SPEC_OSCI'] != None:
-                        __SPEC[k] = CALC_FONCTION(
-                            SPEC_OSCI=_F(FONCTION=__axa[k],AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
-                      else:
-                        __SPEC[k] = CALC_FONCTION(
-                            SPEC_OSCI=_F(FONCTION=__axa[k], AMOR_REDUIT=0.05, NORME=9.81))
 
-                    if ldevi == 'OUI':
-                      DETRUIRE(CONCEPT=_F(NOM=(__tabatmp,__tabvtmp,__tabdtmp,),))
-                    else:
-                      DETRUIRE(CONCEPT=_F(NOM=(__tabatmp,),))
-
+                        if args['LIST_FREQ_SPEC_OSCI'] != None:
+                              __SPECX[k] = CALC_FONCTION(
+                                SPEC_OSCI=_F(FONCTION=__axaX[k],AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
+                              __SPECY[k] = CALC_FONCTION(
+                                SPEC_OSCI=_F(FONCTION=__axaY[k],AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
+                              __SPECZ[k] = CALC_FONCTION(
+                                SPEC_OSCI=_F(FONCTION=__axaZ[k],AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
+                        else:
+                              __SPECX[k] = CALC_FONCTION(
+                                SPEC_OSCI=_F(FONCTION=__axaX[k], AMOR_REDUIT=0.05, NORME=9.81))
+                              __SPECY[k] = CALC_FONCTION(
+                                SPEC_OSCI=_F(FONCTION=__axaY[k], AMOR_REDUIT=0.05, NORME=9.81))
+                              __SPECZ[k] = CALC_FONCTION(
+                                SPEC_OSCI=_F(FONCTION=__axaZ[k], AMOR_REDUIT=0.05, NORME=9.81))
 
                 else:
-                    __tabatmp = CREA_TABLE(
-                        FONCTION=_F(FONCTION=__axa[k], PARA=(PARATAB, 'ACCE' + str(k))))
-                    if ldevi == 'OUI':
-                      __tabvtmp = CREA_TABLE(
-                        FONCTION=_F(FONCTION=__vix[k], PARA=('INST', 'VITE' + str(k))))
-                      __tabdtmp = CREA_TABLE(
-                        FONCTION=_F(FONCTION=__dex[k], PARA=('INST', 'DEPL' + str(k))))
 
                     __tabgtmp = CREA_TABLE(
                         FONCTION=_F(FONCTION=__gam[k], PARA=(PARATAB, 'GAM' + str(k))))
                     __tabttmp = CREA_TABLE(
                         FONCTION=_F(FONCTION=__tau[k], PARA=(PARATAB, 'TAU' + str(k))))
-
-                    if 'DSP' in args:
-                      if args['LIST_FREQ_SPEC_OSCI'] != None:
-                        __SPEC[k] = CALC_FONCTION(
-                            SPEC_OSCI=_F(FONCTION=__paxa[k], AMOR_REDUIT=0.05,
-                            LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))  
-                      else:
-                        __SPEC[k] = CALC_FONCTION(
-                            SPEC_OSCI=_F(FONCTION=__paxa[k], AMOR_REDUIT=0.05,  NORME=9.81))  
-                    else: 
-                      if args['LIST_FREQ_SPEC_OSCI'] != None:
-                        __SPEC[k] = CALC_FONCTION(
-                          SPEC_OSCI=_F(FONCTION=__axa[k],AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
-                      else:
-                        __SPEC[k] = CALC_FONCTION(
-                          SPEC_OSCI=_F(FONCTION=__axa[k], AMOR_REDUIT=0.05, NORME=9.81))
-
-                    __tabaccx = CALC_TABLE(
-                        reuse=__tabaccx, TABLE=__tabaccx,
-                        ACTION=_F(OPERATION='COMB', TABLE=__tabatmp, NOM_PARA=PARATAB))
-
-                    if ldevi == 'OUI':
-                      __tabvitx = CALC_TABLE(TABLE=__tabvitx, reuse=__tabvitx,
-                                           ACTION=_F(OPERATION='COMB', TABLE=__tabvtmp, NOM_PARA='INST'),)
-                      __tabdepx = CALC_TABLE(TABLE=__tabdepx, reuse=__tabdepx,
-                                           ACTION=_F(OPERATION='COMB', TABLE=__tabdtmp, NOM_PARA='INST'),)
-
                     __tabgam = CALC_TABLE(reuse=__tabgam, TABLE=__tabgam,
                                           ACTION=_F(OPERATION='COMB', TABLE=__tabgtmp, NOM_PARA=PARATAB))
                     __tabtau = CALC_TABLE(reuse=__tabtau, TABLE=__tabtau,
                                           ACTION=_F(OPERATION='COMB', TABLE=__tabttmp, NOM_PARA=PARATAB))
-                    if ldevi == 'OUI':
-                      DETRUIRE(CONCEPT=_F(NOM=(__tabatmp, __tabgtmp, __tabttmp, __tabvtmp, __tabdtmp,),))
-                    else:
-                      DETRUIRE(CONCEPT=_F(NOM=(__tabatmp, __tabgtmp, __tabttmp,),))
+                    DETRUIRE(CONCEPT=_F(NOM=(__tabgtmp, __tabttmp,),))
 
-            if 'DSP' not in args:
+                    if dime == "2D":
 
-              __tabAXBH = CREA_TABLE(
-                            FONCTION=_F(FONCTION=__AX_BH, PARA=('INST', 'AX_BH')),)
-              __tabaccx = CALC_TABLE(TABLE=__tabaccx, reuse=__tabaccx,
-                            ACTION=_F(OPERATION='COMB', TABLE=__tabAXBH, NOM_PARA='INST'),)
-            else: 
-              __tabAXBH = CREA_TABLE(
+                        __tabatmp = CREA_TABLE(
+                            FONCTION=_F(FONCTION=__axa[k], PARA=(PARATAB, 'ACCE' + str(k))))
+                        if ldevi == 'OUI':
+                          __tabvtmp = CREA_TABLE(
+                              FONCTION=_F(FONCTION=__vix[k], PARA=(PARATAB, 'VITE' + str(k))))
+                          __tabdtmp = CREA_TABLE(
+                              FONCTION=_F(FONCTION=__dex[k], PARA=(PARATAB, 'DEPL' + str(k))))
+
+                        __tabaccx[0] = CALC_TABLE(reuse=__tabaccx[0], TABLE=__tabaccx[0],
+                                                ACTION=_F(OPERATION='COMB', TABLE=__tabatmp, NOM_PARA=PARATAB))
+                        if ldevi == 'OUI':
+                          __tabvitx[0] = CALC_TABLE(TABLE=__tabvitx[0], reuse=__tabvitx[0],
+                                                 ACTION=_F(OPERATION='COMB', TABLE=__tabvtmp, NOM_PARA=PARATAB),)
+                          __tabdepx[0] = CALC_TABLE(TABLE=__tabdepx[0], reuse=__tabdepx[0],
+                                                 ACTION=_F(OPERATION='COMB', TABLE=__tabdtmp, NOM_PARA=PARATAB),)
+                        if ldevi == 'OUI':
+                          DETRUIRE(CONCEPT=_F(NOM=(__tabatmp, __tabgtmp, __tabttmp, __tabvtmp, __tabdtmp,),))
+                        else:
+                          DETRUIRE(CONCEPT=_F(NOM=(__tabatmp, __tabgtmp, __tabttmp,),))
+
+                        if 'DSP' in args:
+                          if args['LIST_FREQ_SPEC_OSCI'] != None:
+                            __SPEC[k] = CALC_FONCTION(
+                                SPEC_OSCI=_F(FONCTION=__paxa[k], AMOR_REDUIT=0.05,
+                                LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))  
+                          else:
+                            __SPEC[k] = CALC_FONCTION(
+                                SPEC_OSCI=_F(FONCTION=__paxa[k], AMOR_REDUIT=0.05,  NORME=9.81))  
+                        else: 
+                          if args['LIST_FREQ_SPEC_OSCI'] != None:
+                            __SPEC[k] = CALC_FONCTION(
+                              SPEC_OSCI=_F(FONCTION=__axa[k],AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
+                          else:
+                            __SPEC[k] = CALC_FONCTION(
+                              SPEC_OSCI=_F(FONCTION=__axa[k], AMOR_REDUIT=0.05, NORME=9.81))
+
+
+                    elif dime == "3D":
+                    
+                        __tabatmp = CREA_TABLE(
+                            FONCTION=_F(FONCTION=__axaX[k], PARA=(PARATAB, 'ACCE' + str(k)+name_dime[0])))
+                        __tabaccx[0] = CALC_TABLE(
+                            reuse=__tabaccx[0], TABLE=__tabaccx[0],
+                            ACTION=_F(OPERATION='COMB', TABLE=__tabatmp, NOM_PARA=PARATAB))
+                        DETRUIRE(CONCEPT=_F(NOM=(__tabatmp,),))
+                        __tabatmp = CREA_TABLE(
+                            FONCTION=_F(FONCTION=__axaY[k], PARA=(PARATAB, 'ACCE' + str(k)+name_dime[1])))
+                        __tabaccx[1] = CALC_TABLE(
+                            reuse=__tabaccx[1], TABLE=__tabaccx[1],
+                            ACTION=_F(OPERATION='COMB', TABLE=__tabatmp, NOM_PARA=PARATAB))
+                        DETRUIRE(CONCEPT=_F(NOM=(__tabatmp,),))
+                        __tabatmp = CREA_TABLE(
+                            FONCTION=_F(FONCTION=__axaZ[k], PARA=(PARATAB, 'ACCE' + str(k)+name_dime[2])))
+                        __tabaccx[2] = CALC_TABLE(
+                            reuse=__tabaccx[2], TABLE=__tabaccx[2],
+                            ACTION=_F(OPERATION='COMB', TABLE=__tabatmp, NOM_PARA=PARATAB))
+                        DETRUIRE(CONCEPT=_F(NOM=(__tabatmp,),))
+                        if ldevi == 'OUI':
+                          __tabvtmp = CREA_TABLE(
+                              FONCTION=_F(FONCTION=__vixX[k], PARA=(PARATAB, 'VITE' + str(k)+name_dime[0])))
+                          __tabvitx[0] = CALC_TABLE(TABLE=__tabvitx[0], reuse=__tabvitx[0],
+                                                 ACTION=_F(OPERATION='COMB', TABLE=__tabvtmp, NOM_PARA=PARATAB),)
+                          DETRUIRE(CONCEPT=_F(NOM=(__tabvtmp,),))
+                          __tabvtmp = CREA_TABLE(
+                              FONCTION=_F(FONCTION=__vixY[k], PARA=(PARATAB, 'VITE' + str(k)+name_dime[1])))
+                          __tabvitx[1] = CALC_TABLE(TABLE=__tabvitx[1], reuse=__tabvitx[1],
+                                                 ACTION=_F(OPERATION='COMB', TABLE=__tabvtmp, NOM_PARA=PARATAB),)
+                          DETRUIRE(CONCEPT=_F(NOM=(__tabvtmp,),))
+                          __tabvtmp = CREA_TABLE(
+                              FONCTION=_F(FONCTION=__vixZ[k], PARA=(PARATAB, 'VITE' + str(k)+name_dime[2])))
+                          __tabvitx[2] = CALC_TABLE(TABLE=__tabvitx[2], reuse=__tabvitx[2],
+                                                 ACTION=_F(OPERATION='COMB', TABLE=__tabvtmp, NOM_PARA=PARATAB),)
+                          DETRUIRE(CONCEPT=_F(NOM=(__tabvtmp,),))
+
+                          __tabdtmp = CREA_TABLE(
+                              FONCTION=_F(FONCTION=__dexX[k], PARA=(PARATAB, 'DEPL' + str(k)+name_dime[0])))
+                          __tabdepx[0] = CALC_TABLE(TABLE=__tabdepx[0], reuse=__tabdepx[0],
+                                                 ACTION=_F(OPERATION='COMB', TABLE=__tabdtmp, NOM_PARA=PARATAB),)
+                          DETRUIRE(CONCEPT=_F(NOM=(__tabdtmp,),))
+                          __tabdtmp = CREA_TABLE(
+                              FONCTION=_F(FONCTION=__dexY[k], PARA=(PARATAB, 'DEPL' + str(k)+name_dime[1])))
+                          __tabdepx[1] = CALC_TABLE(TABLE=__tabdepx[1], reuse=__tabdepx[1],
+                                                 ACTION=_F(OPERATION='COMB', TABLE=__tabdtmp, NOM_PARA=PARATAB),)
+                          DETRUIRE(CONCEPT=_F(NOM=(__tabdtmp,),))
+                          __tabdtmp = CREA_TABLE(
+                              FONCTION=_F(FONCTION=__dexZ[k], PARA=(PARATAB, 'DEPL' + str(k)+name_dime[2])))
+                          __tabdepx[2] = CALC_TABLE(TABLE=__tabdepx[2], reuse=__tabdepx[2],
+                                                 ACTION=_F(OPERATION='COMB', TABLE=__tabdtmp, NOM_PARA=PARATAB),)
+
+                        if args['LIST_FREQ_SPEC_OSCI'] != None:
+                          __SPECX[k] = CALC_FONCTION(
+                            SPEC_OSCI=_F(FONCTION=__axaX[k],AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
+                          __SPECY[k] = CALC_FONCTION(
+                            SPEC_OSCI=_F(FONCTION=__axaY[k],AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
+                          __SPECZ[k] = CALC_FONCTION(
+                            SPEC_OSCI=_F(FONCTION=__axaZ[k],AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
+                        else:
+                          __SPECX[k] = CALC_FONCTION(
+                            SPEC_OSCI=_F(FONCTION=__axaX[k], AMOR_REDUIT=0.05, NORME=9.81))
+                          __SPECY[k] = CALC_FONCTION(
+                            SPEC_OSCI=_F(FONCTION=__axaY[k], AMOR_REDUIT=0.05, NORME=9.81))
+                          __SPECZ[k] = CALC_FONCTION(
+                            SPEC_OSCI=_F(FONCTION=__axaZ[k], AMOR_REDUIT=0.05, NORME=9.81))
+
+            for n in xrange(num_dime):
+              if 'DSP' not in args:
+                __tabAXBH = CREA_TABLE(
+                                FONCTION=_F(FONCTION=__AX_BH[n], PARA=('INST', 'AX_BH'+name_dime[n])),)
+                __tabaccx[n] = CALC_TABLE(TABLE=__tabaccx[n], reuse=__tabaccx[n],
+                                ACTION=_F(OPERATION='COMB', TABLE=__tabAXBH, NOM_PARA='INST'),)
+              else: 
+                __tabAXBH = CREA_TABLE(
                             FONCTION=_F(FONCTION=__PAX_BH, PARA=('FREQ', 'AX_BH')),)
-              __tabaccx = CALC_TABLE(TABLE=__tabaccx, reuse=__tabaccx,
+                __tabaccx[n] = CALC_TABLE(TABLE=__tabaccx[n], reuse=__tabaccx[n],
                             ACTION=_F(OPERATION='COMB', TABLE=__tabAXBH, NOM_PARA='FREQ'),)
+              if ldevi == 'OUI':
+                  __tabVXBH = CREA_TABLE(
+                                  FONCTION=_F(FONCTION=__VX_BH[n], PARA=('INST', 'VX_BH'+name_dime[n])),)
+                  __tabvitx[n] = CALC_TABLE(TABLE=__tabvitx[n], reuse=__tabvitx[n],
+                                  ACTION=_F(OPERATION='COMB', TABLE=__tabVXBH, NOM_PARA='INST'),)
+                  __tabDXBH = CREA_TABLE(
+                                  FONCTION=_F(FONCTION=__DX_BH[n], PARA=('INST', 'DX_BH'+name_dime[n])),)
+                  __tabdepx[n] = CALC_TABLE(TABLE=__tabdepx[n], reuse=__tabdepx[n],
+                                  ACTION=_F(OPERATION='COMB', TABLE=__tabDXBH, NOM_PARA='INST'),)
 
-            if ldevi == 'OUI':
-              __tabVXBH = CREA_TABLE(
-                            FONCTION=_F(FONCTION=__VX_BH, PARA=('INST', 'VX_BH')),)
-              __tabvitx = CALC_TABLE(TABLE=__tabvitx, reuse=__tabvitx,
-                            ACTION=_F(OPERATION='COMB', TABLE=__tabVXBH, NOM_PARA='INST'),)
-              __tabDXBH = CREA_TABLE(
-                            FONCTION=_F(FONCTION=__DX_BH, PARA=('INST', 'DX_BH')),)
-              __tabdepx = CALC_TABLE(TABLE=__tabdepx, reuse=__tabdepx,
-                            ACTION=_F(OPERATION='COMB', TABLE=__tabDXBH, NOM_PARA='INST'),)
-              DETRUIRE(CONCEPT=_F(NOM=(__tabAXBH,__tabVXBH,__tabDXBH,),))
-
-            else:
-              DETRUIRE(CONCEPT=_F(NOM=(__tabAXBH,),))
-            IMPR_FONCTION(UNITE=6,
+                  DETRUIRE(CONCEPT=_F(NOM=(__tabAXBH,__tabVXBH,__tabDXBH,),))
+              else:
+                  DETRUIRE(CONCEPT=_F(NOM=(__tabAXBH,),))
+      
+              IMPR_FONCTION(UNITE=10, # revenir sur 6 après 
                           FORMAT='TABLEAU',
                           TITRE='Fonctions de Transfert entre CL et RA et Module des FFT',
                           COURBE=(
-                          _F(FONCTION=__mFDTRACL, MARQUEUR=0.,
-                             LEGENDE='FdT RA/CL' + legende + 'deltaE =' + str(deltaE),),
-                          _F(FONCTION=__mFDTCLBH, MARQUEUR=0.,
-                             LEGENDE='FdT CL/BH' + legende + 'deltaE =' + str(deltaE),),
+                          _F(FONCTION=__FDT_RACL[n], MARQUEUR=0.,
+                             LEGENDE='FdT RA/CL' +  name_dime[n] +legende + 'deltaE =' + str(deltaE),),
+                          _F(FONCTION=__FDT_CLBH[n], MARQUEUR=0.,
+                             LEGENDE='FdT CL/BH' +  name_dime[n] + legende + 'deltaE =' + str(deltaE),),
                           ))
 
             if veriftmp == 'NON':
 
-                IMPR_FONCTION(UNITE=8,
-                              FORMAT='TABLEAU',
-                              TITRE='Spectre CL et RA - input =' + input,
-                              COURBE=(
-                              _F(FONCTION=__SAX_CL, MARQUEUR=0.,
-                                 LEGENDE='SAX_CL' + legende + 'deltaE =' + str(deltaE),),
-                              _F(FONCTION=__SAX_RA, MARQUEUR=0.,
-                                 LEGENDE='SAX_RA' + legende + 'deltaE =' + str(deltaE),),
-                              ))
+                for n in xrange(num_dime):
 
-            IMPR_TABLE(UNITE=utabresu, TABLE=__TMAT, SEPARATEUR=args['SEPARATEUR'],
-                       TITRE=('Resultats du calcul lineaire equivalent pour le sol' + str(s) + 'avec E=' + str(cvar) + '*E0 \
-               Les valeurs max sont calculees au 1er Point de Gauss de la couche definie par sa cote inferieure Y'),
-                       )
+                    IMPR_FONCTION(UNITE=8,
+                                  FORMAT='TABLEAU',
+                                  TITRE='Spectre CL et RA - input =' + input,
+                                  COURBE=(
+                                  _F(FONCTION=__SAX_CL[n], MARQUEUR=0.,
+                                     LEGENDE='SAX_CL' + name_dime[n] + legende + 'deltaE =' + str(deltaE),),
+                                  _F(FONCTION=__SAX_RA[n], MARQUEUR=0.,
+                                     LEGENDE='SAX_RA' + name_dime[n] + legende + 'deltaE =' + str(deltaE),),
+                                  ))
 
-            IMPR_TABLE(UNITE=utabtran, TABLE=__tabaccx,
-                       TITRE=('Resultats du calcul lineaire equivalent pour le sol' + str(s) + 'avec E=' + str(cvar) + '*E0 \
-               Les acce max sont calculees a la base de la couche definie par sa cote inferieure Y'),
-                       )
-            if ldevi == 'OUI':
-              IMPR_TABLE(UNITE=utabtran, TABLE=__tabvitx,
-                       TITRE=('Resultats du calcul lineaire equivalent pour le sol' + str(s) + 'avec E=' + str(cvar) + '*E0 \
-               Les vitesses sont calculees a la base de la couche definie par sa cote inferieure Y'),
-                       )
-              IMPR_TABLE(UNITE=utabtran, TABLE=__tabdepx,
-                       TITRE=('Resultats du calcul lineaire equivalent pour le sol' + str(s) + 'avec E=' + str(cvar) + '*E0 \
-               Les deplacements sont calcules a la base de la couche definie par sa cote inferieure Y'),
-                       )
+            IMPR_TABLE(UNITE=utabresu, TABLE=__TMAT, SEPARATEUR=args['SEPARATEUR'],FORMAT_R='E12.6',
+                           TITRE=('Resultats du calcul lineaire equivalent pour le sol' + str(s) + 'avec E=' + str(cvar) + '*E0 \
+                   Les valeurs max sont calculees au 1er Point de Gauss de la couche definie par sa cote inferieure Y'),
+                           )
+
+            for n in xrange(num_dime):    
+
+
+                IMPR_TABLE(UNITE=utabtran, TABLE=__tabaccx[n],
+                           TITRE=('Resultats du calcul lineaire equivalent pour le sol' + str(s) + 'avec E=' + str(cvar) + '*E0 \
+                   Les acce max sont calculees a la base de la couche definie par sa cote inferieure Y'),
+                           )
+                if ldevi == 'OUI':
+                  IMPR_TABLE(UNITE=utabtran, TABLE=__tabvitx[n],
+                             TITRE=('Resultats du calcul lineaire equivalent pour le sol' + str(s) + 'avec E=' + str(cvar) + '*E0 \
+                     Les vitesses sont calculees a la base de la couche definie par sa cote inferieure Y'),
+                             )
+                  IMPR_TABLE(UNITE=utabtran, TABLE=__tabdepx[n],
+                             TITRE=('Resultats du calcul lineaire equivalent pour le sol' + str(s) + 'avec E=' + str(cvar) + '*E0 \
+                     Les deplacements sont calcules a la base de la couche definie par sa cote inferieure Y'),
+                     )
+
 
             IMPR_TABLE(UNITE=utabtran, TABLE=__tabgam,
                        TITRE=('Resultats du calcul lineaire equivalent pour le sol' + str(s) + 'avec E=' + str(cvar) + '*E0 \
@@ -2496,51 +3248,102 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
             IMPR_TABLE(UNITE=utabtran, TABLE=__tabtau,
                        TITRE=('Resultats du calcul lineaire equivalent pour le sol' + str(s) + 'avec E=' + str(cvar) + '*E0 \
                Les valeurs max sont calculees au 1er Point de Gauss de la couche definie par sa cote inferieure Y'),
-                       )                       
+                       )                   
 
-            ifspec = []
+            if dime == "2D":                      
+                ifspec = []
 
-            ifspec.append(
-                _F(FONCTION=__SAX_CL, MARQUEUR=0, LEGENDE='SAX_CL' + legende + 'deltaE =' + str(deltaE)),)
-            ifspec.append(
-                _F(FONCTION=__SAX_RA, MARQUEUR=0, LEGENDE='SAX_RA' + legende + 'deltaE =' + str(deltaE)),)
-
-            for d in range(1, NCOU + 1):
                 ifspec.append(
-                    _F(FONCTION=__SPEC[d], MARQUEUR=0, LEGENDE='SAX_' + str(d) + legende + 'deltaE =' + str(deltaE)),)
+                    _F(FONCTION=__SAX_CL[0], MARQUEUR=0, LEGENDE='SAX_CL' + legende + 'deltaE =' + str(deltaE)),)
+                ifspec.append(
+                    _F(FONCTION=__SAX_RA[0], MARQUEUR=0, LEGENDE='SAX_RA' + legende + 'deltaE =' + str(deltaE)),)
 
-            ifspec.append(
-                _F(FONCTION=__SAX_BH, MARQUEUR=0, LEGENDE='SAX_BH' + legende + 'deltaE =' + str(deltaE)),)
+                for d in range(1, NCOU + 1):
+                    ifspec.append(
+                        _F(FONCTION=__SPEC[d], MARQUEUR=0, LEGENDE='SAX_' + str(d) + legende + 'deltaE =' + str(deltaE)),)
 
-            IMPR_FONCTION(UNITE=utabspec,
-                          FORMAT='TABLEAU',
-                          SOUS_TITRE=titre,
-                          TITRE='Spectres CL et RA et ppt - input =' + input,
-                          COURBE=(ifspec
-                                  ))
-            if 'DSP' in args:
-              ifdsp = []
+                ifspec.append(
+                        _F(FONCTION=__SAX_BH[0], MARQUEUR=0, LEGENDE='SAX_BH' + legende + 'deltaE =' + str(deltaE)),)
 
-              ifdsp.append(
-                  _F(FONCTION=__PAX_CL, MARQUEUR=0, LEGENDE='DSP_CL' + legende + 'deltaE =' + str(deltaE)),)
-              ifdsp.append(
-                  _F(FONCTION=__PAX_RA, MARQUEUR=0, LEGENDE='DSP_RA' + legende + 'deltaE =' + str(deltaE)),)
+                IMPR_FONCTION(UNITE=utabspec,
+                              FORMAT='TABLEAU',
+                              SOUS_TITRE=titre,
+                              TITRE='Spectres CL et RA et ppt - input =' + input,
+                              COURBE=(ifspec
+                                      ))
+                if 'DSP' in args:
+                  ifdsp = []
 
-#              for d in range(1, NCOU + 1):
- ##               ifdsp.append(
- #                   _F(FONCTION=__SPEC[d], MARQUEUR=0, LEGENDE='PAX_' + str(d) + legende + 'deltaE =' + str(deltaE)),)
+                  ifdsp.append(
+                      _F(FONCTION=__PAX_CL, MARQUEUR=0, LEGENDE='DSP_CL' + legende + 'deltaE =' + str(deltaE)),)
+                  ifdsp.append(
+                      _F(FONCTION=__PAX_RA, MARQUEUR=0, LEGENDE='DSP_RA' + legende + 'deltaE =' + str(deltaE)),)
 
-              ifdsp.append(
-                _F(FONCTION=__PAX_BH, MARQUEUR=0, LEGENDE='DSP_BH' + legende + 'deltaE =' + str(deltaE)),)
+    #              for d in range(1, NCOU + 1):
+     ##               ifdsp.append(
+     #                   _F(FONCTION=__SPEC[d], MARQUEUR=0, LEGENDE='PAX_' + str(d) + legende + 'deltaE =' + str(deltaE)),)
 
-              IMPR_FONCTION(UNITE=utabdsp,
-                          FORMAT='TABLEAU',
-                          SOUS_TITRE=titre,
-                          TITRE='DSP CL et RA et ppt - input =' + input,
-                          COURBE=(ifdsp
-                                  ))
+                  ifdsp.append(
+                    _F(FONCTION=__PAX_BH, MARQUEUR=0, LEGENDE='DSP_BH' + legende + 'deltaE =' + str(deltaE)),)
+
+                  IMPR_FONCTION(UNITE=utabdsp,
+                              FORMAT='TABLEAU',
+                              SOUS_TITRE=titre,
+                              TITRE='DSP CL et RA et ppt - input =' + input,
+                              COURBE=(ifdsp
+                                      ))
+            elif dime == "3D":
+                ifspecX = []
+                ifspecY = []
+                ifspecZ = []
+
+                ifspecX.append(
+                    _F(FONCTION=__SAX_CL[0], MARQUEUR=0, LEGENDE='SAX_CL' + name_dime[0] + legende + 'deltaE =' + str(deltaE)),)
+                ifspecX.append(
+                    _F(FONCTION=__SAX_RA[0], MARQUEUR=0, LEGENDE='SAX_RA' + name_dime[0] + legende + 'deltaE =' + str(deltaE)),)
+                ifspecY.append(
+                    _F(FONCTION=__SAX_CL[1], MARQUEUR=0, LEGENDE='SAX_CL' + name_dime[1] + legende + 'deltaE =' + str(deltaE)),)
+                ifspecY.append(
+                    _F(FONCTION=__SAX_RA[1], MARQUEUR=0, LEGENDE='SAX_RA' + name_dime[1] + legende + 'deltaE =' + str(deltaE)),)
+                ifspecZ.append(
+                    _F(FONCTION=__SAX_CL[2], MARQUEUR=0, LEGENDE='SAX_CL' + name_dime[2] + legende + 'deltaE =' + str(deltaE)),)
+                ifspecZ.append(
+                    _F(FONCTION=__SAX_RA[2], MARQUEUR=0, LEGENDE='SAX_RA' + name_dime[2] + legende + 'deltaE =' + str(deltaE)),)
+
+                for d in range(1, NCOU + 1):
+                    ifspecX.append(
+                        _F(FONCTION=__SPECX[d], MARQUEUR=0, LEGENDE='SAX_' + str(d) + name_dime[0] + legende + 'deltaE =' + str(deltaE)),)
+                    ifspecY.append(
+                        _F(FONCTION=__SPECY[d], MARQUEUR=0, LEGENDE='SAX_' + str(d) + name_dime[1] + legende + 'deltaE =' + str(deltaE)),)
+                    ifspecZ.append(
+                        _F(FONCTION=__SPECZ[d], MARQUEUR=0, LEGENDE='SAX_' + str(d) + name_dime[2] + legende + 'deltaE =' + str(deltaE)),)
 
 
+                ifspecX.append(
+                    _F(FONCTION=__SAX_BH[0], MARQUEUR=0, LEGENDE='SAX_BH' + name_dime[0] + legende + 'deltaE =' + str(deltaE)),)
+                ifspecY.append(
+                    _F(FONCTION=__SAX_BH[1], MARQUEUR=0, LEGENDE='SAX_BH' + name_dime[1] +legende + 'deltaE =' + str(deltaE)),)
+                ifspecZ.append(
+                    _F(FONCTION=__SAX_BH[2], MARQUEUR=0, LEGENDE='SAX_BH' + name_dime[2] +legende + 'deltaE =' + str(deltaE)),)
+
+                IMPR_FONCTION(UNITE=utabspec,
+                              FORMAT='TABLEAU',
+                              SOUS_TITRE=titre,
+                              TITRE='Spectres CL et RA et ppt - input =' + input + 'direction ' + dire_dime[0],
+                              COURBE=(ifspecX
+                                      ))
+                IMPR_FONCTION(UNITE=utabspec,
+                              FORMAT='TABLEAU',
+                              SOUS_TITRE=titre,
+                              TITRE='Spectres CL et RA et ppt - input =' + input + 'direction ' + dire_dime[1],
+                              COURBE=(ifspecY
+                                      ))
+                IMPR_FONCTION(UNITE=utabspec,
+                              FORMAT='TABLEAU',
+                              SOUS_TITRE=titre,
+                              TITRE='Spectres CL et RA et ppt - input =' + input + 'direction ' + dire_dime[2],
+                              COURBE=(ifspecZ
+                                      ))
 
             # Destruction de tous les concepts pour permettre une utilisation
             # en INCLUDE dans boucle
@@ -2677,53 +3480,64 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                 for k in range(1, NCOU + 2):
                     DETRUIRE(CONCEPT=_F(NOM=SOLR[k],), INFO=1)
 
-            if ldevi == 'OUI':
-              DETRUIRE(CONCEPT=_F(NOM=(__tabdepx, __tabvitx,),), INFO = 1)
+            DETRUIRE(CONCEPT=_F(NOM=(
+                            __NUMEDDL,
+                            __RIGIHYST, __RIGH_ELH,
+                            __SOLHSUBS, __CHAMPMAH, __RIGI_ELH, __MASS_ELH, __MASSEH,
+                            __AMOR_ELH, __AMORTIH,
+                            __VECASX,
+                            __DYNHARM,
+                            __pgamax, __rGnew, __rGold,
+                            __Enew, __AHnew,
+                            __tabgam,
+                            ),), INFO = 1)
+            for n in xrange(num_dime):
+                if ldevi == 'OUI':
+                    DETRUIRE(CONCEPT=_F(NOM=(__tabdepx[n], __tabvitx[n],),), INFO = 1)
+                if 'DSP' in args:
+                    DETRUIRE(CONCEPT=_F(NOM=(
+                                    __formFDT[n], __FDT_RACL[n], __mFDTRACL[n],
+                                    __formFDT2[n], __FDT_CLBH[n], __mFDTCLBH[n],
+                                    __AHuXrCL[n], __AHuXrBH[n], __mAHuXrCL[n], __mAHuXrBH[n],
+                                    __AHX_RA[n], __SAX_RA[n],
+                                    __AHXrCL[n], __SAX_CL[n],
+                                    __paccx[n],
+                                    __tabaccx[n],
+                                    ),), INFO = 1)
+                else:
+                    DETRUIRE(CONCEPT=_F(NOM=(
+                                    __formFDT[n], __FDT_RACL[n], __mFDTRACL[n],
+                                    __formFDT2[n], __FDT_CLBH[n], __mFDTCLBH[n],
+                                    __AHuXrCL[n], __AHuXrBH[n], __mAHuXrCL[n], __mAHuXrBH[n],
+                                    __AHX_RA[n], __AX_RA[n], __SAX_RA[n],
+                                    __AX_CL[n], __AHXrCL[n], __AXrCL[n], __SAX_CL[n],
+                                    __paccx[n],
+                                    __tabaccx[n],
+                                    ),), INFO = 1)
 
-            if 'DSP' in args:
-              DETRUIRE(CONCEPT=_F(NOM=(
-                                __NUMEDDL,
-                                __RIGIHYST, __RIGH_ELH,
-                                __SOLHSUBS, __CHAMPMAH, __RIGI_ELH, __MASS_ELH, __MASSEH,
-                                __AMOR_ELH, __AMORTIH,
-                                __VECASX,
-                                __DYNHARM,
-                                __formFDT, __FDT_RACL, __mFDTRACL,
-                                __formFDT2, __FDT_CLBH, __mFDTCLBH,
-                                __AHuXrCL, __AHuXrBH, __mAHuXrCL, __mAHuXrBH,
-                                __AHX_RA,  __SAX_RA,
-                                __AHXrCL, __SAX_CL,
-                                __paccx, __pgamax, __rGnew, __rGold,
-                                __Enew, __AHnew,
-                                __tabaccx, __tabgam,
-                                ),), INFO = 1)
-            else:
-              DETRUIRE(CONCEPT=_F(NOM=(
-                                __NUMEDDL,
-                                __RIGIHYST, __RIGH_ELH,
-                                __SOLHSUBS, __CHAMPMAH, __RIGI_ELH, __MASS_ELH, __MASSEH,
-                                __AMOR_ELH, __AMORTIH,
-                                __VECASX,
-                                __DYNHARM,
-                                __formFDT, __FDT_RACL, __mFDTRACL,
-                                __formFDT2, __FDT_CLBH, __mFDTCLBH,
-                                __AHuXrCL, __AHuXrBH, __mAHuXrCL, __mAHuXrBH,
-                                __AHX_RA, __AX_RA, __SAX_RA,
-                                __AX_CL, __AHXrCL, __AXrCL, __SAX_CL,
-                                __paccx, __pgamax, __rGnew, __rGold,
-                                __Enew, __AHnew,
-                                __tabaccx, __tabgam,
-                                ),), INFO = 1)
 
             for k in range(1, NCOU + 1):
-              if ldevi == 'OUI':
-                DETRUIRE(
-                    CONCEPT=_F(NOM=(__SPEC[k], __axa[k], __vix[k], __dex[k], __epxy[k], __gam[k],)), INFO = 1)
-              else:
-                DETRUIRE(
-                    CONCEPT=_F(NOM=(__SPEC[k], __axa[k], __gam[k],)), INFO = 1)
-                if 'DSP' not in args:
-                  DETRUIRE( CONCEPT=_F(NOM=(__epxy[k], )), INFO = 1)
+                    DETRUIRE(
+                        CONCEPT=_F(NOM=(__gam[k], __tau[k]),), INFO = 1)
+            if dime == "2D":
+                for k in range(1, NCOU + 1):
+                    if ldevi == 'OUI':
+                      DETRUIRE(
+                        CONCEPT=_F(NOM=(__vix[k], __dex[k], ),), INFO = 1)
+                    DETRUIRE(
+                            CONCEPT=_F(NOM=(__SPEC[k],__axa[k]),), INFO = 1)
+                    if 'DSP' not in args:
+                        DETRUIRE( CONCEPT=_F(NOM=(__epxy[k], )), INFO = 1)
+            elif dime == "3D":
+                for k in range(1, NCOU + 1):
+                    DETRUIRE(
+                        CONCEPT=_F(NOM=(__epxy[k],),), INFO = 1)
+                for k in xrange(num_dime):
+                    if ldevi == 'OUI':
+                      DETRUIRE(
+                        CONCEPT=_F(NOM=(__vix[k], __dex[k], ),), INFO = 1)
+                    DETRUIRE(
+                        CONCEPT=_F(NOM=(__axa[k],),), INFO = 1)
 
             for k in range(1, NCOU + 2):
                 DETRUIRE(CONCEPT=_F(NOM=__SOLH[k],), INFO=1)
@@ -2907,7 +3721,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
     DETRUIRE(CONCEPT=_F(NOM=__TMAT), INFO=1)
     IMPR_RESU(RESU=_F(MAILLAGE=__mailla,),FORMAT='ASTER',UNITE=8);
 
-    IMPR_TABLE(TABLE=__tabadec,
+    IMPR_TABLE(TABLE=__tabadec[0],
                TITRE=('Resultats du calcul lineaire equivalent pour les differents accelero \
      Les acce max sont calculees a la base de la couche definie par sa cote inferieure Y'),
                )
