@@ -193,7 +193,7 @@ integer, intent(in) :: nume_thmc
                     sat, retcom, tbiot,&
                     angmas, deps)
 ! ======================================================================
-! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_AD_GAZ_VAPE ---------------
+! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_AD_GAZ ---------------
 ! ======================================================================
     case (10)
         call thmCpl010(yachai, option, hydr,&

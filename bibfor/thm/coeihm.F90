@@ -281,10 +281,10 @@ implicit none
 ! ======================================================================
 ! --- CALCUL DES FLUX HYDRAULIQUES -------------------------------------
 ! ======================================================================
-    fick = 0.d0
-    dfickt = 0.d0
-    dfickg = 0.d0
-    dperml = 0.d0
+!    fick = 0.d0
+!    dfickt = 0.d0
+!    dfickg = 0.d0
+!    dperml = 0.d0
 !
 !
 ! CREATION D'UN TENSEUR ISOTROPE POUR LA PERMEABILITE LONGTUDINALE
