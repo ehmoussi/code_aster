@@ -474,13 +474,13 @@ implicit none
 !
 ! CALCUL DES DERIVEES PARTIELLES PREMIERES ET SECONDES
 !
-        call hmderp(yate, yavp, t, r, kh,&
-                    pvp, pad, rho11, rho12, h11,&
-                    h12, cliq, alpliq, dp11p1, dp11p2,&
-                    dp11t, dp12p1, dp12p2, dp12t, dp21p1,&
-                    dp21p2, dp21t, dp22p1, dp22p2, dp22t,&
-                    dp1pp1, dp2pp1, dtpp1, dp1pp2, dp2pp2,&
-                    dtpp2, dp1pt, dp2pt, dtpt)
+!        call hmderp(yate, yavp, t, r, kh,&
+!                    pvp, pad, rho11, rho12, h11,&
+!                    h12, cliq, alpliq, dp11p1, dp11p2,&
+!                    dp11t, dp12p1, dp12p2, dp12t, dp21p1,&
+!                    dp21p2, dp21t, dp22p1, dp22p2, dp22t,&
+!                    dp1pp1, dp2pp1, dtpp1, dp1pp2, dp2pp2,&
+!                    dtpp2, dp1pt, dp2pt, dtpt)
     endif
 ! ***********************************************************
 ! CALCUL DES MASSES VOLUMIQUES, PRESSION D'AIR DISSOUS,
@@ -497,13 +497,13 @@ implicit none
 !
 ! CALCUL DES DERIVEES PARTIELLES PREMIERES ET SECONDES
 !
-        call hmderp(yate, yavp, t, r, kh,&
-                    pvp, pad, rho11, rho12, h11,&
-                    h12, cliq, alpliq, dp11p1, dp11p2,&
-                    dp11t, dp12p1, dp12p2, dp12t, dp21p1,&
-                    dp21p2, dp21t, dp22p1, dp22p2, dp22t,&
-                    dp1pp1, dp2pp1, dtpp1, dp1pp2, dp2pp2,&
-                    dtpp2, dp1pt, dp2pt, dtpt)
+!        call hmderp(yate, yavp, t, r, kh,&
+!                    pvp, pad, rho11, rho12, h11,&
+!                    h12, cliq, alpliq, dp11p1, dp11p2,&
+!                    dp11t, dp12p1, dp12p2, dp12t, dp21p1,&
+!                    dp21p2, dp21t, dp22p1, dp22p2, dp22t,&
+!                    dp1pp1, dp2pp1, dtpp1, dp1pp2, dp2pp2,&
+!                    dtpp2, dp1pt, dp2pt, dtpt)
     endif
 !
 ! *********************************************************************
