@@ -217,6 +217,28 @@ class MEFL_PENTA6(MEFL_HEXA20):
 
 
 #------------------------------------------------------------
+class MEFL_PYRAM13(MEFL_HEXA20):
+    """Please document this element"""
+    meshType = MT.PYRAM13
+    elrefe =(
+            ElrefeLoc(MT.P13, gauss = ('RIGI=FPG27','FPG1=FPG1',), mater=('FPG1',),),
+            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9',),),
+            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG6',),),
+        )
+
+
+#------------------------------------------------------------
+class MEFL_PYRAM5(MEFL_HEXA20):
+    """Please document this element"""
+    meshType = MT.PYRAM5
+    elrefe =(
+            ElrefeLoc(MT.PY5, gauss = ('RIGI=FPG5','FPG1=FPG1',), mater=('FPG1',),),
+            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4',),),
+            ElrefeLoc(MT.TR3, gauss = ('RIGI=COT3',),),
+        )
+
+
+#------------------------------------------------------------
 class MEFL_TETRA10(MEFL_HEXA20):
     """Please document this element"""
     meshType = MT.TETRA10

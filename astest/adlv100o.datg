@@ -1,0 +1,69 @@
+# Importations et initialisations
+import salome
+salome.salome_init()
+theStudy = salome.myStudy
+
+# GEOM
+import GEOM as G
+from salome.geom import geomBuilder
+g = geomBuilder.New(theStudy)
+
+# SMESH
+import SMESH as S
+import SALOMEDS
+from salome.smesh import smeshBuilder
+from salome.StdMeshers import StdMeshersBuilder
+s = smeshBuilder.New(theStudy)
+
+# MESH
+NodeID=[]
+VolID=[]
+FaceID=[]
+Maillage = s.Mesh()
+# Les noeuds du maillage regle
+for i in range(7): # 7 noeuds selon X
+  for j in range(3): # 3 noeuds selon Y
+    for k in range(3): # 3 noeuds selon Z
+      NodeID.append(Maillage.AddNode(0.025*i, 0.025*j, 0.025*k))
+# Les 8 noeuds milieu des cube pour creer les pyramides pour les elements fluide
+for i in range(2):
+  for j in range(2):
+    for k in range(2):
+      NodeID.append(Maillage.AddNode(0.0125 + 0.025*i, 0.0125 + 0.025*j, 0.0125 + 0.025*k))
+# Les Pyramides pour la partie fluide
+inc = 0
+for i in range(2):
+  for j in range(2):
+    for k in range(2):
+      inc = inc + 1
+      cste = 9*i+3*j+k
+      VolID.append(Maillage.AddVolume([1+cste, 2+cste, 5+cste, 4+cste, NodeID[-9+inc]]))
+      VolID.append(Maillage.AddVolume([13+cste, 14+cste, 11+cste, 10+cste, NodeID[-9+inc]]))
+      VolID.append(Maillage.AddVolume([10+cste, 11+cste, 2+cste, 1+cste, NodeID[-9+inc]]))
+      VolID.append(Maillage.AddVolume([4+cste, 5+cste, 14+cste, 13+cste, NodeID[-9+inc]]))
+      VolID.append(Maillage.AddVolume([1+cste, 4+cste, 13+cste, 10+cste, NodeID[-9+inc]]))
+      VolID.append(Maillage.AddVolume([11+cste, 14+cste, 5+cste, 2+cste, NodeID[-9+inc]]))
+# Les cubes pour le reste
+for i in range(4):
+  for j in range(2):
+    for k in range(2):
+      cste = 18 + 9*i + 3*j + k
+      VolID.append(Maillage.AddVolume([1+cste, 2+cste, 5+cste, 4+cste, 10+cste, 11+cste, 14+cste, 13+cste]))
+# Les faces pour les interfaces au niveau du piston
+for i in range(2):
+  for j in range(2):
+    for k in range(2):
+      cste = 18 + 9*i + 3*j + k
+      FaceID.append(Maillage.AddFace([1+cste, 2+cste, 5+cste, 4+cste]))
+# les groupes
+NOEUSURF = Maillage.MakeGroupByIds("NOEUSURF", S.NODE, [1+i for i in range(9)])
+NOEUPIST = Maillage.MakeGroupByIds("NOEUPIST", S.NODE, [19+i for i in range(18)])
+COUPAIR = Maillage.MakeGroupByIds("COUPAIR", S.FACE, [FaceID[4+i] for i in range(4)])
+COUPEAU = Maillage.MakeGroupByIds("COUPEAU", S.FACE, [FaceID[i] for i in range(4)])
+HEXAAIR = Maillage.MakeGroupByIds("HEXAAIR", S.VOLUME, [VolID[-12+i] for i in range(12)])
+HEXAPIST = Maillage.MakeGroupByIds("HEXAPIST", S.VOLUME, [VolID[-16+i] for i in range(4)])
+PYRAEAU = Maillage.MakeGroupByIds("PYRAEAU", S.VOLUME, [VolID[i] for i in range(48)])
+
+
+
+

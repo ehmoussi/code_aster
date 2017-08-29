@@ -1,0 +1,117 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+#      PISTON COUPLE A UNE COLONNE DE FLUIDE
+#              CAS TEST ADLV100O ELEMENTS FLUIDE PYRA5
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'),
+      RESERVE_CPU=_F(VALE=60))
+
+MAYA=LIRE_MAILLAGE(FORMAT='MED', )
+
+EAU=DEFI_MATERIAU( FLUIDE=_F( RHO = 1000.,  CELE_R = 1400.))
+
+AIR=DEFI_MATERIAU( FLUIDE=_F( RHO = 1.2,    CELE_R = 340.))
+
+ACIER=DEFI_MATERIAU( ELAS=_F( RHO = 7800.,  NU = 0.3,  E = 2.E+11))
+
+CHAMPMAT=AFFE_MATERIAU(  MAILLAGE=MAYA,AFFE=(
+                       _F( GROUP_MA = ('PYRAEAU',  'COUPEAU',),  MATER = EAU),
+                       _F( GROUP_MA = ('HEXAAIR',  'COUPAIR',),  MATER = AIR),
+                       _F( GROUP_MA = 'HEXAPIST',           MATER = ACIER))
+                            )
+
+COLONNE=AFFE_MODELE( MAILLAGE=MAYA,  AFFE=(
+                     _F( GROUP_MA = ('PYRAEAU',  'HEXAAIR',),
+                       MODELISATION = '3D_FLUIDE',  PHENOMENE = 'MECANIQUE'),
+                     _F( GROUP_MA = ('COUPEAU',  'COUPAIR',),
+                       MODELISATION = 'FLUI_STRU',  PHENOMENE = 'MECANIQUE'),
+                     _F( GROUP_MA = 'HEXAPIST',
+                       MODELISATION = '3D',         PHENOMENE = 'MECANIQUE'))
+                          )
+
+SURFLIBR=AFFE_CHAR_MECA( MODELE=COLONNE,
+                    DDL_IMPO=_F( GROUP_NO = 'NOEUSURF',  PRES = 0.,  PHI = 0.))
+
+GUIDAGE=AFFE_CHAR_MECA( MODELE=COLONNE,
+                    DDL_IMPO=_F( GROUP_NO = 'NOEUPIST',  DY = 0.,  DZ = 0.))
+
+MATELE_K=CALC_MATR_ELEM( MODELE=COLONNE,
+                              CHAM_MATER=CHAMPMAT,  OPTION='RIGI_MECA',
+                              CHARGE=(SURFLIBR,  GUIDAGE,))
+
+MATELE_M=CALC_MATR_ELEM( MODELE=COLONNE,
+                              CHAM_MATER=CHAMPMAT,  OPTION='MASS_MECA',
+                              CHARGE=(SURFLIBR, GUIDAGE,))
+
+NUM=NUME_DDL( MATR_RIGI=MATELE_K)
+
+MATASK=ASSE_MATRICE(MATR_ELEM=MATELE_K,NUME_DDL=NUM)
+
+MATASM=ASSE_MATRICE(MATR_ELEM=MATELE_M,NUME_DDL=NUM)
+
+MODES=CALC_MODES( OPTION='AJUSTE',
+                  MATR_RIGI=MATASK,
+                  MATR_MASS=MATASM,
+                  CALC_FREQ=_F( FREQ = (10., 20.) )
+                 )
+
+
+MASSES=POST_ELEM( MODELE=COLONNE,
+                  CHAM_MATER=CHAMPMAT,
+                  MASS_INER=_F(TOUT = 'OUI')
+                     )
+
+TEST_TABLE(
+           VALE_CALC=0.61272499999999996,
+           NOM_PARA='MASSE',
+           TABLE=MASSES,)
+
+TEST_TABLE(
+           VALE_CALC=0.054868109999999998,
+           NOM_PARA='CDG_X',
+           TABLE=MASSES,)
+
+TEST_TABLE(
+           VALE_CALC=2.55302083E-4,
+           NOM_PARA='IX_G',
+           TABLE=MASSES,)
+
+TEST_TABLE(
+           VALE_CALC=3.1984386000000003E-4,
+           NOM_PARA='IY_G',
+           TABLE=MASSES,)
+
+TEST_TABLE(
+           VALE_CALC=3.1984386000000003E-4,
+           NOM_PARA='IZ_G',
+           TABLE=MASSES,)
+
+TEST_RESU(RESU=_F(NUME_ORDRE=1,
+                  PARA='FREQ',
+                  RESULTAT=MODES,
+                  VALE_CALC=13.8277013416,
+                  VALE_REFE=13.8285,
+                  REFERENCE='ANALYTIQUE',
+                  CRITERE='RELATIF',
+                  PRECISION=5.0E-3,),
+          )
+
+
+FIN()
