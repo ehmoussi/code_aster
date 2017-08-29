@@ -470,4 +470,9 @@ Le nombre de coefficients d'élargissement est différent du nombre de nappes ou
     77 : _(u"""
 La fréquence fournie %(k1)s n'appartient pas à la liste des fréquences initiales du spectre.
 """),
+
+    78 : _(u"""
+Le déplacement maximal %(r1)f souhaité est trop elevé ou trop petit. Le déplacement spectral à la fréquence %(r2)f vaut %(r3)f. On ne peut pas prolonger.
+"""),
+
 }

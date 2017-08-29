@@ -254,10 +254,55 @@ class CalcFonction_COMPOSE(CalcFonctionOper):
         self.resu = fo1[fo2]
         self.resu.para['NOM_PARA'] = fo2.para['NOM_PARA']
 
+class CalcFonction_PROL_SPEC_OSCI(CalcFonctionOper):
+    """PROL_SPEC_OSCI """
+    def _run(self):
+        """ run PROL_SPEC_OSCI """
+        kw = self.kw
+        f_in = self._lf[0]
+        dmax  = kw['DEPL_MAX']
+        vale_freq = self._lf[0].vale_x
+        vale_sro_acce = self._lf[0].vale_y / kw['NORME']
+        vale_sro_depl = vale_sro_acce * vale_freq**(-2)
+        f_min = vale_freq[0]
+        assert f_min > 0.0
+        d_fmin = vale_sro_depl[0]    
+        pente = ( d_fmin - vale_sro_depl[1])/(f_min-vale_freq[1])
+        freq_dmax = f_min + (dmax - d_fmin)/pente
+
+        if d_fmin < dmax:
+            if freq_dmax < 0.00 : 
+                dc = d_fmin - pente * f_min
+                UTMESS('F','FONCT0_78', valr=[dmax, 0.0, dc])
+            elif pente > 0.00:
+                UTMESS('F','FONCT0_78', valr=[dmax, f_min, d_fmin])
+            else : 
+                pass
+        elif d_fmin > dmax:
+            if pente < 0.00:
+                dc = d_fmin - pente * f_min
+                UTMESS('F','FONCT0_78', valr=[dmax, f_min, d_fmin])
+            elif freq_dmax < 0.00 :
+                dc = d_fmin - pente * f_min
+                UTMESS('F','FONCT0_78', valr=[dmax, 0.0, dc])
+            else :
+                pass
+
+        vale_sro_depl = list(vale_sro_depl)
+        vale_freq = list(vale_freq)
+        vale_sro_depl.insert(0,dmax)
+        vale_freq.insert(0,freq_dmax) 
+        vale_sro_depl.insert(0,dmax)
+        vale_freq.insert(0, 0.0)     
+        sro_prol_acce = NP.array(vale_sro_depl) * NP.array(vale_freq)**(2) * kw['NORME']
+        para = f_in.para.copy()
+
+        self.resu = t_fonction(vale_freq, sro_prol_acce, para)
+
 class CalcFonction_CORR_ACCE(CalcFonctionOper):
     """CORR_ACCE"""
     def _run(self):
-        """CORR_ACCE"""
+        """ run CORR_ACCE"""
         f_in = self._lf[0]
         kw = self.kw
         para = f_in.para.copy()
@@ -395,7 +440,7 @@ class CalcFonction_INTERPOL_FFT(CalcFonctionOper):
         self.resu.vale_x = self.resu.vale_x + t0
 
         # dt fin reel
-        dt_fin = self.resu.vale_x[1]-self.resu.vale_x[0]
+        dt_fin = self.resu.vale_x[1] - self.resu.vale_x[0]
 
         # normalisation
         coef_norm = dt_init/dt_fin
@@ -531,6 +576,9 @@ class CalcFonction_MULT(CalcFonctionOper):
         # take the parameters of the first function
         self.resu.para = self._lf[0].para.copy()
         self._use_list_para()
+
+
+
 
 class CalcFonction_PUISSANCE(CalcFonctionOper):
     """Compute f^n"""
