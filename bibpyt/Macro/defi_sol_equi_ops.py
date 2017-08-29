@@ -672,7 +672,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 
     if dime == "2D":
         if args['NOM_CMP'] == 'DY':
-            nmaxit = 2
+            nmaxit = 1
 
 # Lecture du maillage
     if args['MAILLAGE'] != None:
@@ -996,13 +996,10 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                                ),)
 
     # On genere la liste initiale pour Emax AH ratio G/Gmax et des profondeurs
-    E = [[]] * nmaxit
-    AH = [[]] * nmaxit
-    rat = [[]] * nmaxit
+    E = [[]] * (nmaxit+1)
+    AH = [[]] * (nmaxit+1)
+    rat = [[]] * (nmaxit+1)
 
-    #E[0] = [] * (NCOU + 1)
-    #AH[0] = [] * (NCOU + 1)
-    #rat[0] = [] * (NCOU + 1)
     E[0] = [] * (NCOU + 2)
     AH[0] = [] * (NCOU + 2)
     rat[0] = [] * (NCOU + 2)
@@ -2700,7 +2697,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                                 ABSCISSE=tuple(lprof,))
 
         if deltaE > tole:
-            if iter == (nmaxit - 1):
+            if iter == nmaxit:
 
                 etat = 'fin'
 
