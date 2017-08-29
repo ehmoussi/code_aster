@@ -24,7 +24,7 @@ from code_aster.Cata.Commons import *
 
 
 def calc_fonction_prod(self, DERIVE, EXTRACTION, INTEGRE, INVERSE, COMB, COMB_C, MULT,
-                       ENVELOPPE, FRACTILE, SPEC_OSCI, ASSE, FFT, COMPOSE, CORR_ACCE, COHERENCE,
+                       ENVELOPPE, FRACTILE, PROL_SPEC_OSCI, SPEC_OSCI, ASSE, FFT, COMPOSE, CORR_ACCE, COHERENCE,
                        PUISSANCE, LISS_ENVELOP, ABS, REGR_POLYNOMIALE, DSP, MOYENNE,
                        INTERPOL_FFT, **args):
 
@@ -53,6 +53,7 @@ def calc_fonction_prod(self, DERIVE, EXTRACTION, INTEGRE, INVERSE, COMB, COMB_C,
    if (FRACTILE    != None): return AsType(FRACTILE[0] ['FONCTION'])
    if (MOYENNE    != None): return AsType(MOYENNE[0] ['FONCTION'])
    if (EXTRACTION  != None): return fonction_sdaster
+   if (PROL_SPEC_OSCI   != None): return fonction_sdaster
    if (SPEC_OSCI   != None): return nappe_sdaster
    if (DSP         != None): return fonction_sdaster
    if (COMPOSE     != None): return fonction_sdaster
@@ -84,7 +85,7 @@ CALC_FONCTION=MACRO(nom="CALC_FONCTION",
                     reentrant='n',
          regles=(UN_PARMI('DERIVE', 'INTEGRE', 'SPEC_OSCI', 'DSP', 'FFT', 'CORR_ACCE',
                           'COMB', 'COMB_C', 'MULT', 'ASSE', 'INVERSE', 'ABS',
-                          'ENVELOPPE', 'COMPOSE', 'EXTRACTION', 'PUISSANCE',
+                          'ENVELOPPE', 'COMPOSE', 'EXTRACTION', 'PUISSANCE', 'PROL_SPEC_OSCI',
                           'LISS_ENVELOP', 'FRACTILE', 'REGR_POLYNOMIALE', 'MOYENNE', 'COHERENCE','INTERPOL_FFT',),),
          FFT             =FACT(statut='f',fr=tr("Transformée de Fourier ou de son inverse"),
            FONCTION        =SIMP(statut='o',typ=(fonction_sdaster,fonction_c) ),
@@ -126,6 +127,11 @@ CALC_FONCTION=MACRO(nom="CALC_FONCTION",
          REGR_POLYNOMIALE = FACT(statut='f',fr=tr("Régression polynomiale d'une fonction"),
            FONCTION        =SIMP(statut='o',typ=fonction_sdaster),
            DEGRE           =SIMP(statut='o',typ='I'),
+         ),
+        PROL_SPEC_OSCI  = FACT(statut='f',fr=tr("Prolonger un Spectre d'oscillateur par DEPL_MAX"), 
+           FONCTION     = SIMP(statut='o',typ=fonction_sdaster,fr=tr("Spectre d'oscillateur" ),),
+           NORME        = SIMP(statut='o', typ='R',fr=tr("Valeur de la norme du spectre d oscillateur")),
+           DEPL_MAX     = SIMP(statut='o',typ='R', val_min=0., fr=tr("Deplacement maximal pour la prolongation" ) ),
          ),
         SPEC_OSCI       =FACT(statut='f',fr=tr("Spectre d'oscillateur"),
            METHODE         =SIMP(statut='f',typ='TXM',defaut="NIGAM",into=("NIGAM","HARMO","RICE") ),
