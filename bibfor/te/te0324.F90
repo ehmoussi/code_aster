@@ -104,7 +104,12 @@ subroutine te0324(option, nomte)
                 0)
     if (icodre(1) .eq. 0) then
         ljfr = .true.
-    endif 
+    endif
+    do i = 2, 4
+       if (icodre(i) .ne. 0) then
+         valres(i) = 0.d0
+       endif
+    end do 
 !
 !
     call tecach('ONO', 'PGEOMER', 'L', iret, nval=5,&
