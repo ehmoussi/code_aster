@@ -75,6 +75,9 @@ integer, intent(in) :: j_mater
             call utmess('F', 'THM1_94')
         endif
     endif
+!
+! - For storing coefficient
+!
     call rcvala(j_mater, ' '      , 'THM_DIFFU',&
                 0      , ' '      , [0.d0]     ,&
                 nb_para, para_name, para_vale  , icodre,&

@@ -18,7 +18,7 @@
 ! aslint: disable=W1504,W1306
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine calcft(option, thmc, imate, ndim, dimdef,&
+subroutine calcft(option, thmc, ndim, dimdef,&
                   dimcon, yamec, yap1, yap2, addete,&
                   addeme, addep1, addep2, adcote, congep,&
                   dsde, t, grat, phi, pvp,&
@@ -42,7 +42,7 @@ implicit none
 #include "asterfort/dilata.h"
 #include "asterfort/matini.h"
 #include "asterfort/unsmfi.h"
-    integer :: ndim, dimdef, dimcon, imate
+    integer :: ndim, dimdef, dimcon
     integer :: yamec, yap1, yap2
     integer :: addete, addeme, addep1, addep2, adcote
     real(kind=8) :: congep(1:dimcon)
@@ -98,7 +98,7 @@ implicit none
 ! =====================================================================
     if (yamec .eq. 1) then
         call dilata(angmas, phi, tbiot, alphfi)
-        call unsmfi(imate, phi, t, tbiot, cs)
+        call unsmfi(phi, tbiot, cs)
     else
 ! =====================================================================
 ! --- EN ABSENCE DE MECA ALPHA0 = 0 et 1/KS = 0 -----------------------

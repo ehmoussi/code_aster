@@ -16,8 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine inithm(imate, yachai, yamec, phi0, em,&
-                  cs0, tbiot, temp, epsv, depsv,&
+subroutine inithm(yachai, yamec, phi0, em,&
+                  cs0, tbiot, epsv, depsv,&
                   epsvm, angmas, mdal, dalal,&
                   alphfi, cbiot, unsks, alpha0)
 !
@@ -36,8 +36,7 @@ implicit none
 #include "asterfort/THM_type.h"
 !
 aster_logical :: yachai
-integer :: imate, yamec, i
-real(kind=8), intent(in) :: temp
+integer :: yamec, i
 real(kind=8), intent(out) :: cs0
 real(kind=8), intent(out) :: alphfi
 real(kind=8) :: phi0, em, tbiot(6), epsvm, epsv, depsv
@@ -60,7 +59,7 @@ real(kind=8), parameter :: eps = 1.d-21
 ! =====================================================================
 ! --- CALCUL DES GRANDEURS MECANIQUES DANS LE CAS GENERAL -------------
 ! =====================================================================
-        call unsmfi(imate, phi0, temp, tbiot, cs0)
+        call unsmfi(phi0, tbiot, cs0)
         call dilata(angmas, phi0, tbiot, alphfi)
 !
 ! ----- Compute thermic quantities

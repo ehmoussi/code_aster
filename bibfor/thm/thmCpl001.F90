@@ -149,8 +149,8 @@ real(kind=8), intent(in) :: temp
 ! --- RECUPERATION DES COEFFICIENTS MECANIQUES ------------------------
 ! =====================================================================
 !
-    call inithm(imate, yachai, yamec, phi0, em,&
-                cs, tbiot, temp, epsv, depsv,&
+    call inithm(yachai, yamec, phi0, em,&
+                cs, tbiot, epsv, depsv,&
                 epsvm, angmas, mdal, dalal,&
                 alphfi, cbiot, unsks, alpha0)
 !
@@ -205,7 +205,7 @@ real(kind=8), intent(in) :: temp
 ! =====================================================================
     if (yamec .eq. 1) then
         call dilata(angmas, phi, tbiot, alphfi)
-        call unsmfi(imate, phi, temp, tbiot, cs)
+        call unsmfi(phi, tbiot, cs)
     endif
 ! **********************************************************************
 ! *** LES CONTRAINTES GENERALISEES *************************************

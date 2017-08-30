@@ -164,8 +164,8 @@ real(kind=8), intent(in) :: temp
 ! =====================================================================
 ! --- RECUPERATION DES COEFFICIENTS MECANIQUES ------------------------
 ! =====================================================================
-    call inithm(imate, yachai, yamec, phi0, em,&
-                cs, tbiot, temp, epsv, depsv,&
+    call inithm(yachai, yamec, phi0, em,&
+                cs, tbiot, epsv, depsv,&
                 epsvm, angmas, mdal, dalal,&
                 alphfi, cbiot, unsks, alpha0)
 ! *********************************************************************

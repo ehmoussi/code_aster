@@ -16,21 +16,18 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine unsmfi(j_mater, phi, temp, tbiot, cs)
+subroutine unsmfi(phi, tbiot, cs)
 !
 use THM_type
 use THM_module
 !
 implicit none
 !
-#include "asterfort/rcvala.h"
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
 #include "asterfort/THM_type.h"
 !
-integer, intent(in) :: j_mater
 real(kind=8), intent(in) :: phi
-real(kind=8), intent(in) :: temp
 real(kind=8), intent(in) :: tbiot(6)
 real(kind=8), intent(out) :: cs
 !
@@ -42,22 +39,16 @@ real(kind=8), intent(out) :: cs
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  j_mater          : coded material address
 ! In  phi              : current porosity
 ! In  tbiot            : tensor of Biot
-! In  temp             : current temperature
 ! Out cs               : Biot modulus of solid matrix
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: nelas3=3
-    real(kind=8) :: val1(nelas3)
     real(kind=8) :: s(6, 6)
     real(kind=8) :: young1, young3, nu12, nu21, nu13, nu31, nu32, nu23, g13
     real(kind=8) :: youngs, biot1, biot3, delta, young2, g12, m33
     real(kind=8) :: k0
-    character(len=8), parameter :: ncra3(nelas3) = (/'BIOT_L','BIOT_N','BIOT_T'/)
-    integer :: icodr3(nelas3)
     integer :: i, j
     real(kind=8), parameter :: kron(6)  = (/1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/)
     real(kind=8) :: skron(6)
@@ -69,6 +60,7 @@ real(kind=8), intent(out) :: cs
 !
     skron(:) = 0.d0
     cs       = 0.d0
+    s(:,:)   = 0.d0
 !
     if (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ISOT) then
         youngs = ds_thm%ds_material%elas%e
@@ -83,11 +75,8 @@ real(kind=8), intent(out) :: cs
             nu13   = ds_thm%ds_material%elas%nu_ln
             g13    = ds_thm%ds_material%elas%g_ln
             nu31   = nu13*young3/young1
-            call rcvala(j_mater, ' ', 'THM_DIFFU', 0, ' ',&
-                        [temp], 2, ncra3(1), val1(1), icodr3,&
-                        0)
-            biot1 = val1(1)
-            biot3 = val1(2)
+            biot1  = ds_thm%ds_material%biot%l
+            biot3  = ds_thm%ds_material%biot%n
             nus = 0.3d0
             m11 = young1*(young3-young1*nu13*nu13)/((1.d0+nu12)*&
                     (young3-young3*nu12-2.d0*young1*nu13*nu13))
@@ -113,14 +102,9 @@ real(kind=8), intent(out) :: cs
             nu13   = ds_thm%ds_material%elas%nu_ln
             nu23   = ds_thm%ds_material%elas%nu_tn
             g12    = ds_thm%ds_material%elas%g_lt
-
-            call rcvala(j_mater, ' ', 'THM_DIFFU', 0, ' ',&
-                        [temp], 3, ncra3(1), val1(1), icodr3,&
-                        0)
-            biot1 = val1(1)
-            biot3 = val1(2)
-!
-            nus = 0.3d0
+            biot1  = ds_thm%ds_material%biot%l
+            biot3  = ds_thm%ds_material%biot%n
+            nus  = 0.3d0
             nu21 = nu12*young2/young1
             nu31 = nu13*young3/young1
             nu32 = nu23*young3/young2
@@ -143,17 +127,8 @@ real(kind=8), intent(out) :: cs
         else
             ASSERT(.false.)
         endif
-!
-        youngs=ks*(3.d0*(1.d0-2.d0*nus))
-!
-! CALCUL DE LA MATRICE DE SOUPLESSE DE LA MATRICE SOLIDE
-!
-        do i = 1, 6
-            do j = 1, 6
-                s(i,j)=0.d0
-            end do
-        end do
-!
+! ----- Inverse of rigidity matrix
+        youngs = ks*(3.d0*(1.d0-2.d0*nus))
         s(1,1)=1.d0/youngs
         s(2,2)=1.d0/youngs
         s(3,3)=1.d0/youngs
@@ -166,9 +141,7 @@ real(kind=8), intent(out) :: cs
         s(4,4)=2.d0*(1.d0+nus)/youngs
         s(5,5)=2.d0*(1.d0+nus)/youngs
         s(6,6)=2.d0*(1.d0+nus)/youngs
-!
-! CALCUL DU MODULE DE BIOT DANS LE CAS ISOTROPE TRANSVERSE
-!
+! ----- Compute Biot modulus
         cs=0.d0
         do i = 1, 6
             do j = 1, 6
