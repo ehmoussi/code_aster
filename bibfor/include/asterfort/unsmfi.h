@@ -17,10 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface 
-    subroutine unsmfi(j_mater, phi, temp, tbiot, cs)
-        integer, intent(in) :: j_mater
+    subroutine unsmfi(phi, tbiot, cs)
         real(kind=8), intent(in) :: phi
-        real(kind=8), intent(in) :: temp
         real(kind=8), intent(in) :: tbiot(6)
         real(kind=8), intent(out) :: cs
     end subroutine unsmfi

@@ -19,18 +19,16 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine inithm(imate, yachai, yamec, phi0, em,&
-                      cs0, tbiot, temp, epsv, depsv,&
+    subroutine inithm(yachai, yamec, phi0, em,&
+                      cs0, tbiot, epsv, depsv,&
                       epsvm, angmas, mdal, dalal,&
                       alphfi, cbiot, unsks, alpha0)
-        integer :: imate
         aster_logical :: yachai
         integer :: yamec
         real(kind=8) :: phi0
         real(kind=8) :: em
         real(kind=8), intent(out) :: cs0
         real(kind=8) :: tbiot(6)
-        real(kind=8), intent(in) :: temp
         real(kind=8) :: epsv
         real(kind=8) :: depsv
         real(kind=8) :: epsvm

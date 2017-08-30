@@ -340,7 +340,7 @@ integer, intent(in) :: vicsat
 ! --- CALCUL DU FLUX THERMIQUE UNIQUEMENT SI YATE = 1 ------------------
 ! ======================================================================
     if (ds_thm%ds_elem%l_dof_ther) then
-        call calcft(option, thmc, imate, ndim, dimdef,&
+        call calcft(option, thmc, ndim, dimdef,&
                     dimcon, yamec, yap1, yap2, addete,&
                     addeme, addep1, addep2, adcote, congep,&
                     dsde, t, grat, phi, pvp,&

@@ -253,10 +253,6 @@ integer, intent(in) :: vicsat
 ! - Compute pesa
 !
     call thmEvalGravity(imate, instap, pesa)
-!
-! - (re)-compute Biot tensor
-!
-    call tebiot(angl_naut, tbiot)
 
 ! ======================================================================
 ! --- CALCUL DES FLUX HYDRAULIQUES UNIQUEMENT SI YAP1 = 1 --------------
@@ -281,7 +277,7 @@ integer, intent(in) :: vicsat
 ! --- CALCUL DU FLUX THERMIQUE UNIQUEMENT SI YATE = 1 ------------------
 ! ======================================================================
     if (yate .eq. 1) then
-        call calcft(option, thmc, imate, ndim, dimdef,&
+        call calcft(option, thmc, ndim, dimdef,&
                     dimcon, yamec, yap1, yap2, addete,&
                     addeme, addep1, addep2, adcote, congep,&
                     dsde, t, grat, phi, pvp,&

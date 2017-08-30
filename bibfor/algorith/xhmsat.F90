@@ -19,12 +19,12 @@
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
 subroutine xhmsat(yachai, option, ther,&
-                  imate, ndim, dimenr,&
+                  ndim, dimenr,&
                   dimcon, nbvari, yamec, addeme,&
                   adcome, advihy, advico, vihrho, vicphi,&
                   addep1, adcp11, congem, congep, vintm,&
                   vintp, dsde, epsv, depsv, &
-                  dp1, t, phi, rho11,&
+                  dp1, phi, rho11,&
                   satur, retcom, tbiot, angl_naut,&
                   yaenrh, adenhy, nfh)
 !
@@ -60,12 +60,12 @@ implicit none
 !                       = 3 SIZZ NON NUL (DEBORST) ON CONTINUE A ITERER
 ! ======================================================================
 !
-    integer :: ndim, dimcon, nbvari, imate, yamec
+    integer :: ndim, dimcon, nbvari, yamec
     integer :: adcome, adcp11, vihrho, vicphi, nfh
     integer :: addeme, addep1, advihy, advico, retcom
     real(kind=8) :: congem(dimcon), congep(dimcon)
     real(kind=8) :: vintm(nbvari), vintp(nbvari)
-    real(kind=8) :: epsv, depsv, dp1, t, dt
+    real(kind=8) :: epsv, depsv, dp1, dt
     real(kind=8) :: phi, rho11, rac2
     real(kind=8) :: angl_naut(3)
     character(len=16) :: option, ther
@@ -135,8 +135,8 @@ implicit none
 ! --- RECUPERATION DES COEFFICIENTS MECANIQUES ------------------------
 ! =====================================================================
 !
-    call inithm(imate, yachai, yamec, phi0, bid,&
-                cs, tbiot, t, epsv, depsv,&
+    call inithm(yachai, yamec, phi0, bid,&
+                cs, tbiot, epsv, depsv,&
                 epsvm, angl_naut, mdal, dalal,&
                 alphfi, cbiot, unsks, alpha0)
 ! *********************************************************************
@@ -181,7 +181,7 @@ implicit none
 ! =====================================================================
     if (yamec .eq. 1) then
         call dilata(angl_naut, phi, tbiot, alphfi)
-        call unsmfi(imate, phi, t, tbiot, cs)
+        call unsmfi(phi, tbiot, cs)
     endif
 ! **********************************************************************
 ! *** LES CONTRAINTES GENERALISEES *************************************

@@ -24,6 +24,7 @@ use THM_module
 implicit none
 !
 #include "asterf_types.h"
+#include "asterc/r8nnem.h"
 #include "asterfort/rcvala.h"
 #include "asterfort/THM_type.h"
 !
@@ -33,7 +34,7 @@ integer, intent(in) :: j_mater
 !
 ! THM
 !
-! Get Biot parameters (for porosity evolution) (THM_DIFFU)
+! Get Biot resumeters (for porosity evolution) (THM_DIFFU)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -41,29 +42,29 @@ integer, intent(in) :: j_mater
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: nb_para =  4
-    integer :: icodre(nb_para)
-    real(kind=8) :: para_vale(nb_para)
-    character(len=16), parameter :: para_name(nb_para) = (/'BIOT_COEF', 'BIOT_L   ',&
+    integer, parameter :: nb_resu =  4
+    integer :: icodre(nb_resu)
+    real(kind=8) :: resu_vale(nb_resu)
+    character(len=16), parameter :: resu_name(nb_resu) = (/'BIOT_COEF', 'BIOT_L   ',&
                                                            'BIOT_N   ', 'BIOT_T   '/)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-
+    resu_vale(:) = r8nnem()
 !
-! - Read parameters
+! - Read resumeters
 !
     call rcvala(j_mater, ' '      , 'THM_DIFFU',&
                 0      , ' '      , [0.d0]     ,&
-                nb_para, para_name, para_vale  ,&
+                nb_resu, resu_name, resu_vale  ,&
                 icodre , 0        , nan='OUI')
 !
-! - Set parameters
+! - Set resumeters
 !
-    ds_thm%ds_material%biot%coef = para_vale(1)
-    ds_thm%ds_material%biot%l    = para_vale(2)
-    ds_thm%ds_material%biot%n    = para_vale(3)
-    ds_thm%ds_material%biot%t    = para_vale(4)
+    ds_thm%ds_material%biot%coef = resu_vale(1)
+    ds_thm%ds_material%biot%l    = resu_vale(2)
+    ds_thm%ds_material%biot%n    = resu_vale(3)
+    ds_thm%ds_material%biot%t    = resu_vale(4)
 !
 ! - Type
 !
@@ -75,14 +76,6 @@ integer, intent(in) :: j_mater
         else
             ds_thm%ds_material%biot%type = BIOT_TYPE_ISTR
         endif
-    endif
-!
-! - Debug
-!
-    !WRITE(6,*) 'BIOT: ',ds_thm%ds_material%biot%type,&
-    !ds_thm%ds_material%biot%coef,&
-    !ds_thm%ds_material%biot%l   ,&
-    !ds_thm%ds_material%biot%n   ,&
-    !ds_thm%ds_material%biot%t   
+    endif 
 !
 end subroutine

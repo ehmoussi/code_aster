@@ -21,12 +21,12 @@
 !
 interface 
     subroutine xhmsat(yachai, option, ther,&
-                      imate, ndim, dimenr,&
+                      ndim, dimenr,&
                       dimcon, nbvari, yamec, addeme,&
                       adcome, advihy, advico, vihrho, vicphi,&
                       addep1, adcp11, congem, congep, vintm,&
                       vintp, dsde, epsv, depsv,&
-                      dp1, t, phi, rho11,&
+                      dp1, phi, rho11,&
                       satur, retcom, tbiot,&
                       angl_naut, yaenrh, adenhy, nfh)
         integer :: nbvari
@@ -35,7 +35,6 @@ interface
         aster_logical :: yachai
         character(len=16) :: option
         character(len=16) :: ther
-        integer :: imate
         integer :: ndim
         integer :: yamec
         integer :: addeme
@@ -54,7 +53,6 @@ interface
         real(kind=8) :: epsv
         real(kind=8) :: depsv
         real(kind=8) :: dp1
-        real(kind=8) :: t
         real(kind=8) :: phi
         real(kind=8) :: rho11
         real(kind=8) :: satur
