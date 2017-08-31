@@ -38,7 +38,7 @@ implicit none
 #include "asterfort/thmGetPermeabilityTensor.h"
 #include "asterfort/thmEvalGravity.h"
 #include "asterfort/thmEvalConductivity.h"
-#include "asterfort/thmEvalSatuFinal.h"
+!#include "asterfort/thmEvalSatuFinal.h"
 #include "asterfort/thmEvalPermLiquGaz.h"
 #include "asterfort/thmEvalFickSteam.h"
 #include "asterfort/thmEvalFickAir.h"
@@ -85,8 +85,8 @@ real(kind=8), intent(out) :: gravity(3)
 ! --------------------------------------------------------------------------------------------------
 !
     retcom=0
-    call thmEvalSatuFinal(hydr , j_mater , p1    ,&
-                          satur, dsatur, retcom)
+!    call thmEvalSatuFinal(hydr , j_mater , p1    ,&
+!                          satur, dsatur, retcom)
     if (thmc .eq. 'LIQU_SATU') then
 !        unsurk = ds_thm%ds_material%liquid%unsurk
 !        alpha  = ds_thm%ds_material%liquid%alpha

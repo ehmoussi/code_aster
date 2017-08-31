@@ -31,7 +31,6 @@ implicit none
     
 #include "jeveux.h"
 #include "asterfort/elrefe_info.h"
-#include "asterfort/thmlec.h"
 #include "asterfort/matini.h"
 #include "asterfort/vecini.h"
 #include "asterfort/xfract.h"

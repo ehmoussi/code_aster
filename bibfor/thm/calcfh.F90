@@ -1,0 +1,191 @@
+! --------------------------------------------------------------------
+! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! This file is part of code_aster.
+!
+! code_aster is free software: you can redistribute it and/or modify
+! it under the terms of the GNU General Public License as published by
+! the Free Software Foundation, either version 3 of the License, or
+! (at your option) any later version.
+!
+! code_aster is distributed in the hope that it will be useful,
+! but WITHOUT ANY WARRANTY; without even the implied warranty of
+! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+! GNU General Public License for more details.
+!
+! You should have received a copy of the GNU General Public License
+! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+! --------------------------------------------------------------------
+! person_in_charge: sylvie.granet at edf.fr
+! aslint: disable=W1504
+!
+subroutine calcfh(nume_thmc, &
+                  option   , perman, hydr   , ndim  , j_mater,&
+                  dimdef   , dimcon,&
+                  yamec    , yate  ,&
+                  addep1   , addep2,&
+                  adcp11   , adcp12, adcp21 , adcp22,&
+                  addeme   , addete, &
+                  t        , p1    , p2     , pvp   , pad,&
+                  grat     , grap1 , grap2  ,& 
+                  rho11    , h11   , h12    ,&
+                  satur    , dsatur, gravity, tperm,&
+                  congep   , dsde)
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/assert.h"
+#include "asterfort/calcfh_gazp.h"
+#include "asterfort/calcfh_lisa.h"
+#include "asterfort/calcfh_liva.h"
+#include "asterfort/calcfh_lvag.h"
+#include "asterfort/calcfh_liga.h"
+#include "asterfort/calcfh_lgat.h"
+#include "asterfort/calcfh_lvga.h"
+#include "asterfort/calcfh_ladg.h"
+!
+character(len=16), intent(in) :: option, hydr
+aster_logical, intent(in) :: perman
+integer, intent(in) :: j_mater, nume_thmc
+integer, intent(in) :: ndim, dimdef, dimcon, yamec, yate
+integer, intent(in) :: addeme, addep1, addep2, addete, adcp11, adcp12, adcp21, adcp22
+real(kind=8), intent(in) :: rho11, satur, dsatur
+real(kind=8), intent(in) :: grat(3), grap1(3), grap2(3)
+real(kind=8), intent(in) :: t, p1, p2, pvp, pad
+real(kind=8), intent(in) :: gravity(3), tperm(ndim, ndim)
+real(kind=8), intent(in) :: h11, h12
+real(kind=8), intent(inout) :: congep(1:dimcon)
+real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! THM
+!
+! Compute flux and stress for hydraulic
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  option           : option to compute
+! In  perman           : .flag. for no-transient problem
+! In  hydr             : type of hydraulic law
+! In  nume_thmc        : index of coupling law for THM
+! In  ndim             : dimension of space (2 or 3)
+! In  j_mater          : coded material address
+! In  dimdef           : dimension of generalized strains vector
+! In  dimcon           : dimension of generalized stresses vector
+! In  yamec            : flag for mechanic (1 of dof exist)
+! In  yate             : flag for thermic (1 of dof exist)
+! In  addep1           : adress of first hydraulic dof in vector and matrix (gene. quantities)
+! In  addep2           : adress of second hydraulic dof in vector and matrix (gene. quantities)
+! In  adcp11           : adress of first component in vector of gen. stress for first phase 
+! In  adcp12           : adress of first component in vector of gen. stress for second phase
+! In  adcp21           : adress of second component in vector of gen. stress for first phase
+! In  adcp22           : adress of second component in vector of gen. stress for second phase
+! In  addeme           : adress of mechanic dof in vector and matrix (generalized quantities)
+! In  addete           : adress of thermic dof in vector and matrix (generalized quantities)
+! In  t                : temperature - At end of current step
+! In  p1               : first pressure - At end of current step
+! In  p2               : second pressure - At end of current step
+! In  pvp              : steam pressure
+! In  pad              : dissolved air pressure
+! In  grat             : gradient of temperature
+! In  grap1            : gradient of first pressure
+! In  grap2            : gradient of second pressure
+! In  rho11            : current volumic mass of liquid
+! In  h11              : enthalpy of first pressure and first phase
+! In  h12              : enthalpy of first pressure and second phase
+! In  satur            : saturation
+! In  dsatur           : derivative of saturation (/pc)
+! In  gravity          : gravity
+! In  tperm            : permeability tensor
+! IO  congep           : generalized stresses - At end of current step
+! IO  dsde             : derivative matrix
+!
+! --------------------------------------------------------------------------------------------------
+!
+    select case (nume_thmc)
+    case (1)
+        call calcfh_lisa(option, perman, ndim,&
+                         dimdef, dimcon,&
+                         yamec , yate  ,&
+                         addep1, adcp11, addeme , addete,&
+                         grap1 , rho11 , gravity, tperm ,&
+                         congep, dsde  )
+    case (2)
+        call calcfh_gazp(option, perman , ndim,&
+                         dimdef, dimcon ,&
+                         yamec , yate   ,&
+                         addep1, adcp11 , addeme, addete,&
+                         t     , p1     , grap1 ,&
+                         rho11 , gravity, tperm ,&
+                         congep, dsde)
+    case (3)
+        call calcfh_liva(option, hydr  , ndim, j_mater,&
+                         dimdef, dimcon,&
+                         yamec , yate  ,&
+                         addep1, adcp11, adcp12, addeme, addete,&
+                         t     , p2    , pvp,&
+                         grap1 , grat  ,&
+                         rho11 , h11   , h12    ,&
+                         satur , dsatur, gravity, tperm,&
+                         congep, dsde  )
+    case (4)
+        call calcfh_lvag(option, perman, hydr   , ndim  , j_mater,&
+                         dimdef, dimcon,&
+                         yamec , yate  ,&
+                         addep1, addep2, adcp11 , adcp12, adcp21 ,&
+                         addeme, addete, &
+                         t     , p2    , pvp    ,&
+                         grat  , grap1 , grap2  ,& 
+                         rho11 , h11   , h12    ,&
+                         satur , dsatur, gravity, tperm,&
+                         congep, dsde)
+    case (5)
+        call calcfh_liga(option, hydr  , ndim  , j_mater,&
+                         dimdef, dimcon,&
+                         yamec , yate  ,&
+                         addep1, addep2, adcp11 , adcp21 ,&
+                         addeme, addete, &
+                         t     , p2    , &
+                         grap1 , grap2  ,& 
+                         rho11 , &
+                         satur , dsatur, gravity, tperm,&
+                         congep, dsde)
+    case (6)
+        call calcfh_lgat(option, perman , hydr  , ndim  , j_mater,&
+                         dimdef, dimcon ,&
+                         yamec , yate   ,&
+                         addep1, adcp11 ,&
+                         addeme, addete ,&
+                         t     , p2     ,&
+                         grap1 , & 
+                         rho11 , &
+                         satur , dsatur , gravity , tperm,&
+                         congep, dsde)
+    case (9)
+        call calcfh_lvga(option, perman, hydr   , ndim  , j_mater,&
+                         dimdef, dimcon,&
+                         yamec , yate  ,&
+                         addep1, addep2, adcp11 , adcp12, adcp21 , adcp22,&
+                         addeme, addete, &
+                         t     , p1    , p2     , pvp   , pad,&
+                         grat  , grap1 , grap2  ,& 
+                         rho11 , h11   , h12    ,&
+                         satur , dsatur, gravity, tperm,&
+                         congep, dsde)
+    case (10)
+        call calcfh_ladg(option, perman, hydr   , ndim  , j_mater,&
+                         dimdef, dimcon,&
+                         yamec , yate  ,&
+                         addep1, addep2, adcp11 , adcp12, adcp21 , adcp22,&
+                         addeme, addete, &
+                         t     , p1    , p2     , pvp   , pad,&
+                         grat  , grap1 , grap2  ,& 
+                         rho11 , h11   , h12    ,&
+                         satur , dsatur, gravity, tperm,&
+                         congep, dsde)
+    case default
+        ASSERT(ASTER_FALSE)
+    end select
+!
+end subroutine

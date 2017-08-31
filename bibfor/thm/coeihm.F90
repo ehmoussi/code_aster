@@ -38,12 +38,14 @@ implicit none
 #include "asterfort/coeime.h"
 #include "asterfort/kitdec.h"
 #include "asterfort/nvithm.h"
-#include "asterfort/thmlec.h"
 #include "asterfort/utmess.h"
 #include "asterfort/thmGetParaBiot.h"
 #include "asterfort/thmGetParaHydr.h"
 #include "asterfort/tebiot.h"
 #include "asterfort/thmGetParaBehaviour.h"
+#include "asterfort/thmEvalSatuFinal.h"
+#include "asterfort/thmEvalConductivity.h"
+#include "asterfort/thmEvalGravity.h"
 !
     integer :: dimdef, dimcon, npg, kpi, npi, ndim
     integer :: nbvari, yamec, yate, yap1, yap2, imate
@@ -70,12 +72,10 @@ implicit none
     real(kind=8) :: depsv, epsv, deps(6)
     real(kind=8) :: t, p1, p2, dt, dp1, dp2, grat(3), grap1(3), grap2(3)
     real(kind=8) :: pvp, pad, h11, h12, kh, rho11, phi
-    real(kind=8) :: sat, tbiot(6), rgaz, satur, dsatur, pesa(3)
-    real(kind=8) :: tperm(ndim, ndim), permli, dperml, permgz, dperms, dpermp
-    real(kind=8) :: lambp, dlambp, unsurk, alpha, lambs, dlambs, viscl, dfickg
-    real(kind=8) :: dviscl, mamolg, tlambt(ndim, ndim), tdlamt(ndim, ndim)
-    real(kind=8) :: mamovg, fickad, dfadt, tlamct(ndim, ndim), dfickt, dviscg
-    real(kind=8) :: klint(ndim-1, ndim-1), fick, viscg
+    real(kind=8) :: tperm(ndim, ndim), sat, tbiot(6), satur, dsatur, pesa(3)
+    real(kind=8) :: lambp, dlambp, lambs, dlambs, viscl , viscg
+    real(kind=8) :: tlambt(ndim, ndim), tdlamt(ndim, ndim)
+    real(kind=8) :: tlamct(ndim, ndim)
     real(kind=8) :: dsde(dimcon, dimdef)
     real(kind=8) :: tlint, ouvh, deltat, unsurn
     real(kind=8) :: angl_naut(3)
@@ -149,33 +149,16 @@ implicit none
 ! OUT RETCOM: RETOUR LOI DE COPORTEMENT
 ! =====================================================================
 !
-! ======================================================================
-! --- INITIALISATION ---------------------------------------------------
-! ======================================================================
-    retcom = 0
-    deltat = instap-instam
-!
+    retcom     = 0
+    deltat     = instap-instam
+    tperm(:,:) = 0.d0
     if (resi) then
-        do i = 1, nbvari
-            varip(i)=0.d0
-        end do
-        do i = 1, dimcon
-            sigp(i)=0.d0
-        end do
+        varip(1:nbvari) = 0.d0
+        sigp(1:dimcon)  = 0.d0
     endif
-!
     if (rigi) then
-        do i = 1, dimdef
-            do j = 1, dimcon
-                dsde(j,i)=0.d0
-            end do
-        end do
-!
-        do i = 1, dimdef
-            do j = 1, dimdef
-                drde(i,j)=0.d0
-            end do
-        end do
+        dsde(1:dimcon,1:dimdef) = 0.d0
+        drde(1:dimdef,1:dimdef) = 0.d0
     endif
 ! ======================================================================
 ! --- MISE AU POINT POUR LES VARIABLES INTERNES ------------------------
@@ -262,59 +245,57 @@ implicit none
     if (retcom .ne. 0) then
         goto 999
     endif
-! ======================================================================
-! --- RECUPERATION DES DONNEES MATERIAU FINALES ------------------------
-! ======================================================================
-    call thmlec(imate, thmc, hydr, ther,&
-                t, p1, p2, phi, varip(1),&
-                pvp, pad, rgaz, tbiot, satur,&
-                dsatur, pesa, tperm, permli, dperml,&
-                permgz, dperms, dpermp, fick, dfickt,&
-                dfickg, lambp, dlambp, unsurk, alpha,&
-                lambs, dlambs, viscl, dviscl, mamolg,&
-                tlambt, tdlamt, viscg, dviscg, mamovg,&
-                fickad, dfadt, tlamct, instap,&
-                angl_naut, ndim-1)
+!
+! - Evaluation of final saturation
+!
+    call thmEvalSatuFinal(hydr , imate, p1    ,&
+                          satur, dsatur , retcom)
+!
+! - Evaluate thermal conductivity
+!
+    call thmEvalConductivity(angl_naut, ndim  , imate , &
+                             satur    , phi   , &
+                             lambs    , dlambs, lambp , dlambp,&
+                             tlambt   , tlamct, tdlamt)
+!
+! - Compute gravity
+!
+    call thmEvalGravity(imate, instap, pesa)
+!
+! - (re)-compute Biot tensor
+!
+    call tebiot(angl_naut, tbiot)
+!
+! - Get parameters
+!
     viscl  = ds_thm%ds_material%liquid%visc
     viscg  = ds_thm%ds_material%gaz%visc
 
 ! ======================================================================
 ! --- CALCUL DES FLUX HYDRAULIQUES -------------------------------------
 ! ======================================================================
-!    fick = 0.d0
-!    dfickt = 0.d0
-!    dfickg = 0.d0
-!    dperml = 0.d0
-!
+
 !
 ! CREATION D'UN TENSEUR ISOTROPE POUR LA PERMEABILITE LONGTUDINALE
 ! POUR LE CALCUL DANS CALCF
 !
-!
     do i = 1, ndim-1
-        do j = 1, ndim-1
-            klint(i,j)=0.d0
-        end do
-    end do
-!
-    do i = 1, ndim-1
-        klint(i,i)=tlint
+        tperm(i,i) = tlint
     end do
 !
     if (yap1 .eq. 1) then
-        call calcfh(option, perman, thmc, ndim-1, dimdef,&
-                    dimcon, yamec, yate, addep1, addep2,&
-                    adcp11, adcp12, adcp21, adcp22, addeme,&
-                    addete, sigp, dsde, p1, p2,&
-                    grap1, grap2, t, grat, pvp,&
-                    pad, rho11, h11, h12, rgaz,&
-                    dsatur, pesa, klint, permli, dperml,&
-                    permgz, dperms, dpermp, fick, dfickt,&
-                    dfickg, fickad, dfadt, kh, unsurk,&
-                    alpha, viscl, dviscl, mamolg, viscg,&
-                    dviscg, mamovg,&
-                    imate,hydr, satur)
-!
+        call calcfh(nume_thmc, &
+                    option   , perman, hydr   , ndim  , imate,&
+                    dimdef   , dimcon,&
+                    yamec    , yate  ,&
+                    addep1   , addep2,&
+                    adcp11   , adcp12, adcp21 , adcp22,&
+                    addeme   , addete, &
+                    t        , p1    , p2     , pvp   , pad,&
+                    grat     , grap1 , grap2  ,& 
+                    rho11    , h11   , h12    ,&
+                    satur    , dsatur, pesa   , tperm,&
+                    sigp     , dsde)
         if (retcom .ne. 0) then
             goto 999
         endif
