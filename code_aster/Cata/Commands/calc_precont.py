@@ -39,6 +39,7 @@ CALC_PRECONT=MACRO(nom="CALC_PRECONT",
          INCREMENT        =C_INCREMENT('MECANIQUE'),
          RECH_LINEAIRE    =C_RECH_LINEAIRE(),
          CONVERGENCE      =C_CONVERGENCE(),
+         ARCHIVAGE       =C_ARCHIVAGE(),
 #-------------------------------------------------------------------
          ETAT_INIT       =C_ETAT_INIT('STAT_NON_LINE','f'),
 #-------------------------------------------------------------------
