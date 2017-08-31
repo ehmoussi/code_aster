@@ -15,6 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+! person_in_charge: daniele.colombo at ifpen.fr
 ! aslint: disable=W1504
 !
 subroutine xmathm(ndim,&
@@ -23,16 +24,15 @@ subroutine xmathm(ndim,&
                   dffc, rho11, gradpf, mmat,&
                   dsidep, p, r, jheavn, ncompn, ifiss,&
                   nfiss, nfh, ifa, jheafa, ncomph)
-
-    implicit none
-    
+!
+implicit none
+!   
 #include "asterfort/xmmatc.h"
 #include "asterfort/xmmatb.h"
 #include "asterfort/xmmatu.h"
-#include "asterfort/xmmata.h"
-#include "asterfort/thmlec.h"  
+#include "asterfort/xmmata.h" 
  
-! person_in_charge: daniele.colombo at ifpen.fr
+
 ! ======================================================================
 !
 ! ROUTINE MODELE HM-XFEM (CAS DE LA FRACTURE)

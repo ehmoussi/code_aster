@@ -43,7 +43,6 @@ implicit none
 #include "asterfort/thmSelectMeca.h"
 #include "asterfort/kitdec.h"
 #include "asterfort/nvithm.h"
-#include "asterfort/thmlec.h"
 #include "asterfort/thmGetParaBiot.h"
 #include "asterfort/thmGetParaElas.h"
 #include "asterfort/thmGetParaTher.h"
@@ -51,6 +50,10 @@ implicit none
 #include "asterfort/thmMatrHooke.h"
 #include "asterfort/tebiot.h"
 #include "asterfort/thmGetParaBehaviour.h"
+#include "asterfort/thmEvalSatuFinal.h"
+#include "asterfort/thmGetPermeabilityTensor.h"
+#include "asterfort/thmEvalGravity.h"
+#include "asterfort/thmEvalConductivity.h"
 !
 character(len=16), intent(in) :: thmc
 character(len=16), intent(in) :: ther
@@ -264,19 +267,35 @@ integer, intent(in) :: vicsat
             goto 999
         endif
     endif
-! ======================================================================
-! --- RECUPERATION DES DONNEES MATERIAU FINALES ------------------------
-! ======================================================================
-    call thmlec(imate, thmc, hydr, ther,&
-                t, p1, p2, phi, vintp(1),&
-                pvp, pad, rgaz, tbiot, satur,&
-                dsatur, pesa, tperm, permli, dperml,&
-                permgz, dperms, dpermp, fick, dfickt,&
-                dfickg, lambp, dlambp, unsurk, alpha,&
-                lambs, dlambs, viscl, dviscl, mamolg,&
-                tlambt, tdlamt, viscg, dviscg, mamolv,&
-                fickad, dfadt, tlamct, instap,&
-                angl_naut, ndim)
+!
+! - Evaluation of final saturation
+!
+    call thmEvalSatuFinal(hydr , imate , p1    ,&
+                          satur, dsatur, retcom)
+!
+! - Evaluate thermal conductivity
+!
+    call thmEvalConductivity(angl_naut, ndim  , imate, &
+                             satur    , phi   , &
+                             lambs    , dlambs, lambp , dlambp,&
+                             tlambt   , tlamct, tdlamt)
+
+!
+! - Get permeability tensor
+!
+    call thmGetPermeabilityTensor(ndim , angl_naut, imate, phi, vintp(1),&
+                                  tperm)
+!
+! - Compute pesa
+!
+    call thmEvalGravity(imate, instap, pesa)
+!
+! - (re)-compute Biot tensor
+!
+    call tebiot(angl_naut, tbiot)
+!
+! - Get parameters
+!
     unsurk = ds_thm%ds_material%liquid%unsurk
     alpha  = ds_thm%ds_material%liquid%alpha
     viscl  = ds_thm%ds_material%liquid%visc

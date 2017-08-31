@@ -43,7 +43,6 @@ implicit none
 #include "asterfort/thmSelectMeca.h"
 #include "asterfort/kitdec.h"
 #include "asterfort/nvithm.h"
-#include "asterfort/thmlec.h"
 #include "asterfort/thmGetParaBiot.h"
 #include "asterfort/thmGetParaElas.h"
 #include "asterfort/thmGetParaTher.h"
@@ -51,6 +50,10 @@ implicit none
 #include "asterfort/thmMatrHooke.h"
 #include "asterfort/tebiot.h"
 #include "asterfort/thmGetParaBehaviour.h"
+#include "asterfort/thmEvalSatuFinal.h"
+#include "asterfort/thmGetPermeabilityTensor.h"
+#include "asterfort/thmEvalGravity.h"
+#include "asterfort/thmEvalConductivity.h"
 !
 character(len=16), intent(in) :: thmc
 character(len=16), intent(in) :: ther
@@ -137,13 +140,11 @@ integer, intent(in) :: vicsat
 ! ======================================================================
     real(kind=8) :: p1, dp1, grap1(3), p2, dp2, grap2(3), t, dt, grat(3)
     real(kind=8) :: phi, pvp, pad, h11, h12, rho11, epsv, deps(6), depsv
-    real(kind=8) :: sat, mamolv
-    real(kind=8) :: rgaz, tbiot(6), satur, dsatur, pesa(3)
-    real(kind=8) :: tperm(ndim, ndim), permli, dperml, permgz, dperms, dpermp
-    real(kind=8) :: dfickt, dfickg, lambp, dlambp, unsurk, fick
-    real(kind=8) :: lambs, dlambs, viscl, dviscl
-    real(kind=8) :: viscg, dviscg, mamolg
-    real(kind=8) :: fickad, dfadt, kh, alpha
+    real(kind=8) :: sat
+    real(kind=8) :: tbiot(6), satur, dsatur, pesa(3)
+    real(kind=8) :: tperm(ndim, ndim)
+    real(kind=8) :: lambp, dlambp, lambs, dlambs
+    real(kind=8) :: kh
     real(kind=8) :: tlambt(ndim, ndim), tlamct(ndim, ndim), tdlamt(ndim, ndim)
     real(kind=8) :: angl_naut(3)
     integer :: nume_thmc
@@ -231,36 +232,49 @@ integer, intent(in) :: vicsat
             goto 999
         endif
     endif
-! ======================================================================
-! --- RECUPERATION DES DONNEES MATERIAU FINALES ------------------------
-! ======================================================================
-    call thmlec(imate, thmc, hydr, ther,&
-                t, p1, p2, phi, vintp(1),&
-                pvp, pad, rgaz, tbiot, satur,&
-                dsatur, pesa, tperm, permli, dperml,&
-                permgz, dperms, dpermp, fick, dfickt,&
-                dfickg, lambp, dlambp, unsurk, alpha,&
-                lambs, dlambs, viscl, dviscl, mamolg,&
-                tlambt, tdlamt, viscg, dviscg, mamolv,&
-                fickad, dfadt, tlamct, instap,&
-                angl_naut, ndim)
+!
+! - Evaluation of final saturation
+!
+    call thmEvalSatuFinal(hydr , imate , p1    ,&
+                          satur, dsatur, retcom)
+!
+! - Evaluate thermal conductivity
+!
+    call thmEvalConductivity(angl_naut, ndim  , imate, &
+                             satur    , phi   , &
+                             lambs    , dlambs, lambp , dlambp,&
+                             tlambt   , tlamct, tdlamt)
+
+!
+! - Get permeability tensor
+!
+    call thmGetPermeabilityTensor(ndim , angl_naut, imate, phi, vintp(1),&
+                                  tperm)
+!
+! - Compute pesa
+!
+    call thmEvalGravity(imate, instap, pesa)
+!
+! - (re)-compute Biot tensor
+!
+    call tebiot(angl_naut, tbiot)
 
 ! ======================================================================
 ! --- CALCUL DES FLUX HYDRAULIQUES UNIQUEMENT SI YAP1 = 1 --------------
 ! ======================================================================
     if (yap1 .eq. 1) then
-        call calcfh(option, perman, thmc, ndim, dimdef,&
-                    dimcon, yamec, yate, addep1, addep2,&
-                    adcp11, adcp12, adcp21, adcp22, addeme,&
-                    addete, congep, dsde, p1, p2,&
-                    grap1, grap2, t, grat, pvp,&
-                    pad, rho11, h11, h12, rgaz,&
-                    dsatur, pesa, tperm, permli, dperml,&
-                    permgz, dperms, dpermp, fick, dfickt,&
-                    dfickg, fickad, dfadt, kh, unsurk,&
-                    alpha, viscl, dviscl, mamolg, viscg,&
-                    dviscg, mamolv,&
-                    imate ,hydr, satur)
+        call calcfh(nume_thmc, &
+                    option   , perman, hydr   , ndim  , imate,&
+                    dimdef   , dimcon,&
+                    yamec    , yate  ,&
+                    addep1   , addep2,&
+                    adcp11   , adcp12, adcp21 , adcp22,&
+                    addeme   , addete, &
+                    t        , p1    , p2     , pvp   , pad,&
+                    grat     , grap1 , grap2  ,& 
+                    rho11    , h11   , h12    ,&
+                    satur    , dsatur, pesa   , tperm,&
+                    congep   , dsde)
         if (retcom .ne. 0) then
             goto 999
         endif

@@ -20,69 +20,29 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine calcfh(option, perman, thmc, ndim, dimdef,&
-                      dimcon, yamec, yate, addep1, addep2,&
-                      adcp11, adcp12, adcp21, adcp22, addeme,&
-                      addete, congep, dsde, p1, p2,&
-                      grap1, grap2, t, grat, pvp,&
-                      pad, rho11, h11, h12, r,&
-                      dsatp1, pesa, tperm, permli, dperml,&
-                      krel2, dkr2s, dkr2p, fick, dfickt,&
-                      dfickg, fickad, dfadt, kh, cliq,&
-                      alpliq, viscl, dviscl, mamolg, viscg,&
-                      dviscg, mamolv,&
-                      j_mater,hydr, satur)
-        integer :: dimcon
-        integer :: dimdef
-        integer :: ndim, j_mater
-        character(len=16) :: option
-        aster_logical :: perman
-        character(len=16) :: thmc, hydr
-        integer :: yamec
-        integer :: yate
-        integer :: addep1
-        integer :: addep2
-        integer :: adcp11
-        integer :: adcp12
-        integer :: adcp21
-        integer :: adcp22
-        integer :: addeme
-        integer :: addete
-        real(kind=8) :: congep(1:dimcon)
-        real(kind=8) :: dsde(1:dimcon, 1:dimdef)
-        real(kind=8) :: p1
-        real(kind=8) :: p2
-        real(kind=8) :: grap1(3)
-        real(kind=8) :: grap2(3)
-        real(kind=8) :: t
-        real(kind=8) :: grat(3)
-        real(kind=8) :: pvp
-        real(kind=8) :: pad
-        real(kind=8) :: rho11
-        real(kind=8) :: h11
-        real(kind=8) :: h12
-        real(kind=8) :: r, satur
-        real(kind=8) :: dsatp1
-        real(kind=8) :: pesa(3)
-        real(kind=8) :: tperm(ndim, ndim)
-        real(kind=8) :: permli
-        real(kind=8) :: dperml
-        real(kind=8) :: krel2
-        real(kind=8) :: dkr2s
-        real(kind=8) :: dkr2p
-        real(kind=8) :: fick
-        real(kind=8) :: dfickt
-        real(kind=8) :: dfickg
-        real(kind=8) :: fickad
-        real(kind=8) :: dfadt
-        real(kind=8) :: kh
-        real(kind=8) :: cliq
-        real(kind=8) :: alpliq
-        real(kind=8) :: viscl
-        real(kind=8) :: dviscl
-        real(kind=8) :: mamolg
-        real(kind=8) :: viscg
-        real(kind=8) :: dviscg
-        real(kind=8) :: mamolv
+    subroutine calcfh(nume_thmc, &
+                      option   , perman, hydr   , ndim  , j_mater,&
+                      dimdef   , dimcon,&
+                      yamec    , yate  ,&
+                      addep1   , addep2,&
+                      adcp11   , adcp12, adcp21 , adcp22,&
+                      addeme   , addete, &
+                      t        , p1    , p2     , pvp   , pad,&
+                      grat     , grap1 , grap2  ,& 
+                      rho11    , h11   , h12    ,&
+                      satur    , dsatur, gravity, tperm,&
+                      congep   , dsde)
+        character(len=16), intent(in) :: option, hydr
+        aster_logical, intent(in) :: perman
+        integer, intent(in) :: j_mater, nume_thmc
+        integer, intent(in) :: ndim, dimdef, dimcon, yamec, yate
+        integer, intent(in) :: addeme, addep1, addep2, addete, adcp11, adcp12, adcp21, adcp22
+        real(kind=8), intent(in) :: rho11, satur, dsatur
+        real(kind=8), intent(in) :: grat(3), grap1(3), grap2(3)
+        real(kind=8), intent(in) :: t, p1, p2, pvp, pad
+        real(kind=8), intent(in) :: gravity(3), tperm(ndim, ndim)
+        real(kind=8), intent(in) :: h11, h12
+        real(kind=8), intent(inout) :: congep(1:dimcon)
+        real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
     end subroutine calcfh
 end interface 
