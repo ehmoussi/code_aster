@@ -118,7 +118,8 @@ CHARMEX=AFFE_CHAR_MECA(MODELE=MODELE,
                        PESANTEUR=_F(GRAVITE=10.0,
                                     DIRECTION=(-1.0,0.0,0.0),),);
 
-LINST=DEFI_LIST_REEL(VALE=(0.0,1.0),);
+LINSTa=DEFI_LIST_REEL(VALE=(0.0, 0.5, 0.6, 1.0),);
+LINST=DEFI_LIST_REEL(VALE=(0.0, 1.0),);
 
 EVOLNOLI=CALC_PRECONT( CHAM_MATER=CHMATER,
                        MODELE=MODELE,
@@ -127,7 +128,8 @@ EVOLNOLI=CALC_PRECONT( CHAM_MATER=CHMATER,
                        COMPORTEMENT=_F(TOUT='OUI',
                                     RELATION='ELAS',
                                     DEFORMATION='PETIT',),
-                       INCREMENT=_F(LIST_INST=LINST,),
+                       INCREMENT=_F(LIST_INST=LINSTa,),
+                       ARCHIVAGE=_F(LIST_INST=LINST),
                        CARA_ELEM=CARAELEM,
                        SOLVEUR=_F(METHODE='MULT_FRONT',),
                        EXCIT=(
@@ -158,6 +160,8 @@ EVOLNO2=CALC_PRECONT(CHAM_MATER=CHMATER,
                                 ),),
                        CABLE_BP=( CABLEPR ,),
                       INFO=1,);
+
+
 
 EVOLNO2=CALC_CHAMP(reuse =EVOLNO2,
                    FORCE='REAC_NODA',
@@ -229,7 +233,7 @@ EVOLNOLI=CALC_CHAMP(reuse=EVOLNOLI,
                    RESULTAT=EVOLNOLI,
                     DEFORMATION=('EPSI_ELNO'))
 
-TEST_RESU(RESU=_F(NUME_ORDRE=2,
+TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   REFERENCE='ANALYTIQUE',
                   RESULTAT=EVOLNOLI,
                   NOM_CHAM='EPSI_ELNO',

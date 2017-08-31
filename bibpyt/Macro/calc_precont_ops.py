@@ -48,7 +48,7 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
                      CABLE_BP, CABLE_BP_INACTIF,
                      COMPORTEMENT, ETAT_INIT, METHODE, ENERGIE,
                      RECH_LINEAIRE, CONVERGENCE, INCREMENT, SOLVEUR,
-                     INFO, TITRE, **args):
+                     INFO, TITRE, ARCHIVAGE, **args):
     """
        Ecriture de la macro CALC_PRECONT
     """
@@ -479,16 +479,11 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
             CONVERGENCE=dConvergence,
             RECH_LINEAIRE=dRech_lin,
             SOLVEUR=dSolveur,
-            ARCHIVAGE=_F(INST=__TINT),
+            ARCHIVAGE=ARCHIVAGE,
             INFO=INFO,
             TITRE=TITRE,
             EXCIT=dExcit1,
             **motscle4)
-
-        # Recuperation du dernier numero d'ordre pour pouvoir  l'écraser dans
-        # RES
-        __dico2 = RES.LIST_VARI_ACCES()
-        __no = __dico2['NUME_ORDRE'][-1]
 
         #-----------------------------------------------------------------------
         # 2.2 Troisieme etape : on remet la tension dans les cables
@@ -508,12 +503,10 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
                             INCREMENT=_F(LIST_INST=__LST,
                                          PRECISION=__prec),
                             METHODE=METHODE,
-                            #                     NEWTON =dNewton,
-                            #                     IMPLEX=dImplex,
-
                             RECH_LINEAIRE=dRech_lin,
                             CONVERGENCE=dConvergence,
                             SOLVEUR=dSolveur,
+                            ARCHIVAGE=ARCHIVAGE,
                             INFO=INFO,
                             TITRE=TITRE,
                             EXCIT=dExcit2,
@@ -814,6 +807,7 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
                                 CONVERGENCE=CONVERGENCE,
                                 RECH_LINEAIRE=RECH_LINEAIRE,
                                 SOLVEUR=SOLVEUR,
+                                ARCHIVAGE=ARCHIVAGE,
                                 INFO=INFO,
                                 TITRE=TITRE,
                                 EXCIT=dExcit1a,
@@ -833,6 +827,7 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
                                 CONVERGENCE=CONVERGENCE,
                                 RECH_LINEAIRE=RECH_LINEAIRE,
                                 SOLVEUR=SOLVEUR,
+                                ARCHIVAGE=ARCHIVAGE,
                                 INFO=INFO,
                                 TITRE=TITRE,
                                 EXCIT=dExcit1b,)
@@ -850,6 +845,7 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
                                 CONVERGENCE=CONVERGENCE,
                                 RECH_LINEAIRE=RECH_LINEAIRE,
                                 SOLVEUR=SOLVEUR,
+                                ARCHIVAGE=ARCHIVAGE,
                                 INFO=INFO,
                                 TITRE=TITRE,
                                 EXCIT=dExcit1,
@@ -872,6 +868,7 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
                                 CONVERGENCE=CONVERGENCE,
                                 RECH_LINEAIRE=RECH_LINEAIRE,
                                 SOLVEUR=SOLVEUR,
+                                ARCHIVAGE=ARCHIVAGE,
                                 INFO=INFO,
                                 TITRE=TITRE,
                                 EXCIT=dExcit2,
