@@ -1,0 +1,51 @@
+# coding=utf-8
+# ======================================================================
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
+# THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
+# IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
+# THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
+# (AT YOUR OPTION) ANY LATER VERSION.
+#
+# THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
+# WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
+# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
+# GENERAL PUBLIC LICENSE FOR MORE DETAILS.
+#
+# YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
+# ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
+#    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
+# ======================================================================
+# person_in_charge: adrien.guilloux at edf.fr
+
+
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+IMPR_ACCE_SEISME=MACRO(nom="IMPR_ACCE_SEISME",
+                   op=OPS('Macro.impr_acce_seisme_ops.impr_acce_seisme_ops'),
+                   reentrant='n',
+                   fr=tr("Impression et visualisation, post-traitement de séisme"),
+                   regles=(ENSEMBLE('FREQ_MIN','FREQ_MAX')), 
+         TABLE         =SIMP(statut='o',typ=table_sdaster),
+         TITRE         =SIMP(statut='o',typ='TXM',),
+         
+         NOCI_REFE     =FACT(statut='f',max='**',
+             regles=(AU_MOINS_UN('AMAX','VMAX','DMAX','INTE_ARIAS','DUREE_PHASE_FORTE','VITE_ABSO_CUMU','ACCE_SUR_VITE')),
+             AMAX          =SIMP(statut='f',typ='R', min=3, max=3, fr=tr("Valeur moyenne et intervalle de confiance") ),
+             VMAX          =SIMP(statut='f',typ='R', min=3, max=3, fr=tr("Valeur moyenne et intervalle de confiance") ),
+             DMAX          =SIMP(statut='f',typ='R', min=3, max=3, fr=tr("Valeur moyenne et intervalle de confiance") ),
+             INTE_ARIAS    =SIMP(statut='f',typ='R', min=3, max=3, fr=tr("Valeur moyenne et intervalle de confiance") ),
+             DUREE_PHASE_FORTE =SIMP(statut='f',typ='R', min=3, max=3, fr=tr("Valeur moyenne et intervalle de confiance") ),
+             VITE_ABSO_CUMU    =SIMP(statut='f',typ='R', min=3, max=3, fr=tr("Valeur moyenne et intervalle de confiance") ),
+             ACCE_SUR_VITE     =SIMP(statut='f',typ='R', min=3, max=3, fr=tr("Valeur moyenne et intervalle de confiance") ),
+         ),
+         
+         DUREE   = SIMP(statut='f',typ='R',),
+         SPEC_OSCI     =SIMP(statut='o',typ=(fonction_sdaster),),
+         SPEC_1_SIGMA    =SIMP(statut='f',typ=(fonction_sdaster),),
+         LIST_FREQ       =SIMP(statut='f',typ=listr8_sdaster ),
+         FREQ_MIN        =SIMP(statut='f',typ='R'),
+         FREQ_MAX        =SIMP(statut='f',typ='R',),
+         RATIO_HV        =SIMP(statut='f',typ='R',  val_min=0.0,  fr=tr("Ratio H/V pour le spectre vertical")),
+)
