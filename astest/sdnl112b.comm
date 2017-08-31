@@ -143,7 +143,7 @@ MATRR=ASSE_MATRICE(  MATR_ELEM=MELR,  NUME_DDL=NUM   )
 MATRM=ASSE_MATRICE(  MATR_ELEM=MELM,  NUME_DDL=NUM   )
 
 MODES=CALC_MODES(MATR_RIGI=MATRR,
-                 OPTION='BANDE',SOLVEUR=_F(RENUM='MDA'),
+                 OPTION='BANDE',
                  CALC_FREQ=_F(FREQ=( 1.000000,200.000000,),
                               ),
                  MATR_MASS=MATRM,

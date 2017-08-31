@@ -351,6 +351,7 @@ try:
                                       ),
                          OPTION='AJUSTE',
                          MATR_RIGI=K_ASSE,
+                         SOLVEUR=_F(NPREC=9),
                          #VERI_MODE=_F(  SEUIL = 1.E-7)
                          MATR_MASS=M_ASSE,
                          )

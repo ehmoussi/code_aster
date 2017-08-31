@@ -290,7 +290,6 @@ REPONSE=STAT_NON_LINE( MODELE     = MO,
                                         LIST_INST = L_INST,),
                       NEWTON      = _F( MATRICE   = 'TANGENTE',
                                         REAC_ITER = 1     ),
-                      SOLVEUR     = _F( RENUM     = 'MDA',),
                       CONVERGENCE = _F( RESI_GLOB_RELA = 1.E-6,
                                         ITER_GLOB_MAXI = 20)
                      )

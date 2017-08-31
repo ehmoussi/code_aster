@@ -360,6 +360,7 @@ RESDEF=CALC_MODES(MATR_RIGI=RIGGEN,
 
 RESDEF2=CALC_MODES(MATR_RIGI=RIGGEN,
                    OPTION='BANDE',
+                   SOLVEUR=_F(METHODE='MULT_FRONT'),
                    CALC_FREQ=_F(FREQ=(10.,30.,70.),
                                 ),
                    MATR_MASS=MASDEF2,
