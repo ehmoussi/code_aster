@@ -204,7 +204,7 @@ def C_SOLVEUR( COMMAND, BASE=None ) :  #COMMUN#
    if (_ldlt):
       _defaut = "LDLT"
    else:
-      _defaut = "MULT_FRONT"
+      _defaut = "MUMPS"
 
    if _type == 'SD':
       _into = ("MULT_FRONT", "LDLT", "MUMPS", )

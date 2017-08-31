@@ -121,8 +121,10 @@ MATM=ASSE_MATRICE(
 #
 MODES=CALC_MODES(MATR_RIGI=MATK,
                  OPTION='AJUSTE',
-                 CALC_FREQ=_F(FREQ=(10.,20.,),
-                              ),
+                 CALC_FREQ=_F(FREQ=(10.,20.,),),
+# MATRICE DE TRAVAIL DETECTEE COMME SINGULIERE, DONC ON RELACHE
+# LE CRITERE DE DETECTION DE SINGULARITE
+                 SOLVEUR=_F(NPREC=9),
                  MATR_MASS=MATM,
                  )
 

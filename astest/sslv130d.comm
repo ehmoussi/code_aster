@@ -85,7 +85,7 @@ EVOL=STAT_NON_LINE(MODELE=MO,
                    COMPORTEMENT=_F(RELATION='ELAS',),
                    INCREMENT=_F(LIST_INST=L_INST1,),
                    NEWTON=_F(REAC_ITER=1,),
-                   SOLVEUR=_F(RENUM='MD',),);
+                   );
 
 EVOL=CALC_CHAMP(reuse=EVOL,RESULTAT=EVOL,CRITERES=('SIEQ_ELNO','EPEQ_ELNO'),DEFORMATION=('EPSI_ELNO'),CONTRAINTE=('SIGM_ELNO'))
 
@@ -433,7 +433,7 @@ EVOL2=STAT_NON_LINE(MODELE=MO,
                     COMPORTEMENT=_F(RELATION='ELAS',),
                     INCREMENT=_F(LIST_INST=L_INST1,),
                     NEWTON=_F(REAC_ITER=1,),
-                    SOLVEUR=_F(RENUM='MD',),);
+                    );
 
 EVOL2=CALC_CHAMP(reuse=EVOL2,RESULTAT=EVOL2,CRITERES=('SIEQ_ELNO','EPEQ_ELNO'),DEFORMATION=('EPSI_ELNO'),CONTRAINTE=('SIGM_ELNO'))
 
@@ -892,7 +892,7 @@ EVOLUP=STAT_NON_LINE(MODELE=MOUP,
                      COMPORTEMENT=_F(RELATION='ELAS',),
                      INCREMENT=_F(LIST_INST=L_INST1,),
                      NEWTON=_F(REAC_ITER=1,),
-                     SOLVEUR=_F(RENUM='MD',),);
+                     );
 
 EVOLUP=CALC_CHAMP(reuse=EVOLUP,RESULTAT=EVOLUP,CRITERES=('SIEQ_ELNO','EPEQ_ELNO'),DEFORMATION=('EPSI_ELNO'),CONTRAINTE=('SIGM_ELNO'))
 
@@ -1251,7 +1251,7 @@ EVOLUPL=STAT_NON_LINE(MODELE=MOUPL,
                      COMPORTEMENT=_F(RELATION='ELAS',),
                      INCREMENT=_F(LIST_INST=L_INST1,),
                      NEWTON=_F(REAC_ITER=1,),
-                     SOLVEUR=_F(RENUM='MD',),);
+                     );
 
 EVOLUPL=CALC_CHAMP(reuse=EVOLUPL,RESULTAT=EVOLUPL,CRITERES=('SIEQ_ELNO','EPEQ_ELNO'),DEFORMATION=('EPSI_ELNO'),CONTRAINTE=('SIGM_ELNO'))
 

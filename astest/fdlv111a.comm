@@ -125,6 +125,7 @@ DYN=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                                   FONC_MULT = FONC),
                          INCREMENT=_F( LIST_INST = TEMPLI),
 #                        ARCHIVAGE=_F(  LIST_ARCH = INTLI),
+                         SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                          SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
                         )
 
@@ -185,7 +186,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=2.18901893511,
+           VALE_CALC=2.18903053315,
            NOM_PARA='ENER_CIN',
            TABLE=ENER1,
            TOLE_MACHINE=1.E-5,                 # TODO TOLE_MACHINE
@@ -194,7 +195,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=0.135112849806,
+           VALE_CALC=0.135116065095,
            NOM_PARA='ENER_TOT',
            TABLE=ENER1,
            TOLE_MACHINE=3.E-5,                 # TODO TOLE_MACHINE
@@ -242,7 +243,7 @@ TRAVAIL = POST_ELEM(
   )
 
 TEST_TABLE(
-           VALE_CALC=0.135112850092,
+           VALE_CALC=0.135116064829,
            TOLE_MACHINE=3.E-5,                 # TODO TOLE_MACHINE
            NOM_PARA='TRAV_REEL',
            TABLE=TRAVAIL,
