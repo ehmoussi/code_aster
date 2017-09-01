@@ -614,12 +614,14 @@ INTERRE3=REST_SPEC_PHYS(         MODE_MECA=FREQ3,
 
 REP1=RECU_FONCTION(    INTE_SPEC=INTERRE1,
                             NOEUD_I = 'PB25',
+                            NOEUD_J = 'PB25',
                             NOM_CMP_I = 'DY',
                       )
 
 REP3=RECU_FONCTION(    INTE_SPEC=INTERRE3,
                             NOEUD_I = 'PB25',
                             NOM_CMP_I = 'DY',
+                            NOM_CMP_J = 'DY',
                       )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=3.691346679570,
