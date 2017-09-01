@@ -291,7 +291,8 @@ REPONSE=STAT_NON_LINE( MODELE     = MO,
                       NEWTON      = _F( MATRICE   = 'TANGENTE',
                                         REAC_ITER = 1     ),
                       CONVERGENCE = _F( RESI_GLOB_RELA = 1.E-6,
-                                        ITER_GLOB_MAXI = 20)
+                                        ITER_GLOB_MAXI = 20),
+                      SOLVEUR=_F(METHODE='MULT_FRONT',RENUM='MDA'),                                   
                      )
 
 REPONSE=CALC_CHAMP(reuse=REPONSE,RESULTAT=REPONSE,PRECISION=1.E-10,CONTRAINTE=('SIGM_ELNO'),VARI_INTERNE=('VARI_ELNO'))

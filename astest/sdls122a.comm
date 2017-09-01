@@ -457,8 +457,10 @@ MODGLO=REST_SOUS_STRUC(RESU_GENE=RESGEN,
                        TOUT_CHAM='OUI')
 
 #-- CALCUL DES TRAVAUX ET DES CORRECTIONS ASSOCIEES
+ELIML='NON'
 CALC_ENR=CALC_CORR_SSD(MODELE_GENE=MODEGE,
                      RESU_GENE=RESGEN,
+                     SOLVEUR=_F(ELIM_LAGR=ELIML),
                      SHIFT=1.,
                      UNITE=6),
 
@@ -655,6 +657,7 @@ RESGEN2=CALC_MODES(MATR_RIGI=K_G2,
 #-- CALCUL DES INDICATEURS DE QUALITE
 INDIC=CALC_CORR_SSD(MODELE_GENE=MODEGE2,
                      RESU_GENE=RESGEN2,
+                     SOLVEUR=_F(ELIM_LAGR=ELIML),
                      SHIFT=1.,
                      UNITE=6),
 

@@ -472,10 +472,8 @@ RESH=DEFI_BASE_REDUITE(OPERATION='GLOUTON',
                        COEF_R   = 1.0,
                        NB_MODE  = 3,
 
-                       SOLVEUR=_F(RENUM='METIS',
-                               STOP_SINGULIER='OUI',
-                               ELIM_LAGR='NON',
-                               NPREC=8,
+                       SOLVEUR=_F(RENUM='METIS',STOP_SINGULIER='OUI',
+                               ELIM_LAGR='NON',NPREC=8,
                                METHODE='MULT_FRONT',),
                       );
 

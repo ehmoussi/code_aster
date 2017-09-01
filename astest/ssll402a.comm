@@ -83,11 +83,12 @@ CHARG2=AFFE_CHAR_MECA(          MODELE=MO,FORCE_NODALE=(
                         )
 
 #
-MEST1=MECA_STATIQUE(        MODELE=MO,
+MEST1=MECA_STATIQUE(      MODELE=MO,
                           CHAM_MATER=CHMAT,
-                           CARA_ELEM=CAREL,EXCIT=(
+                          SOLVEUR=_F(POSTTRAITEMENTS='MINI',),
+                          CARA_ELEM=CAREL,EXCIT=(
                                _F( CHARGE = CHARG1),
-                                     _F( CHARGE = CHARG2))
+                               _F( CHARGE = CHARG2))
                       )
 
 MEST1=CALC_CHAMP(reuse=MEST1,RESULTAT=MEST1,CONTRAINTE=('EFGE_ELNO','SIPM_ELNO', 'EFGE_NOEU',))

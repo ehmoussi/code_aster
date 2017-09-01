@@ -607,6 +607,7 @@ CHAR_SE2=AFFE_CHAR_MECA(MODELE=BICHOC,
 
 MODE_BIC=CALC_MODES(MATR_RIGI=RIGI_BIC,
                     OPTION='BANDE',
+                    SOLVEUR=_F(ELIM_LAGR='NON'),
                     CALC_FREQ=_F(FREQ=(1.,30.,),
                                  ),
                     MATR_MASS=MASS_BIC,

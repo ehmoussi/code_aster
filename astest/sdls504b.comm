@@ -101,7 +101,7 @@ CHARGE=AFFE_CHAR_MECA(         MODELE=MOEL,
 #                        RESOLUTION
 #---------------------------------------------------------------------
 #
-RES=MECA_STATIQUE(      MODELE=MOEL,
+RES=MECA_STATIQUE(      MODELE=MOEL, SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                       CHAM_MATER=CHAM_MAT,
                        CARA_ELEM=CAEL,EXCIT=(
                            _F( CHARGE = CON_LI,  ),

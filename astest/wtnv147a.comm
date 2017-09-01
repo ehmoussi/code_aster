@@ -195,6 +195,7 @@ UTOT1=STAT_NON_LINE(MODELE      = MODELEK,
                                     ),
                     INCREMENT   = _F(LIST_INST = LI,),
                     CONTACT =  CTXFEM,
+                    SOLVEUR=_F(NPREC=-1),
                    )
 
 # -------------------------------------------------------------   

@@ -137,6 +137,7 @@ MA_AS_M1=ASSE_MATRICE(   MATR_ELEM=MA_EL_M1,   NUME_DDL=NUM1)
 MODE1=CALC_MODES( OPTION='AJUSTE',
                   MATR_RIGI=MA_AS_R1,
                   MATR_MASS=MA_AS_M1,
+                  SOLVEUR_MODAL=_F(NMAX_ITER_INV=50,PREC_INV=1.E-06),
                   CALC_FREQ=_F( FREQ = (5.,500.),
                                 NMAX_FREQ = 10)
                  )

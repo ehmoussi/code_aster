@@ -70,6 +70,7 @@ CHARG31=AFFE_CHAR_MECA(MODELE=MODMEC31,
 
 RESU31=MECA_STATIQUE(MODELE=MODMEC31,
                     CHAM_MATER=CHMAT31,
+                    SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                     EXCIT=_F(CHARGE=CHARG31,),
                     );
 
@@ -196,6 +197,7 @@ CHARG32=AFFE_CHAR_MECA(MODELE=MODMEC32,
 
 RESU32=MECA_STATIQUE(MODELE=MODMEC32,
                     CHAM_MATER=CHMAT32,
+                    SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                     EXCIT=_F(CHARGE=CHARG32,),
                     );
 

@@ -102,6 +102,7 @@ CHARGE=AFFE_CHAR_MECA(         MODELE=MOEL,
 #
 RES=MECA_STATIQUE(      MODELE=MOEL,
                       CHAM_MATER=CHAM_MAT,
+                      SOLVEUR=_F(METHODE='MULT_FRONT'),
                        CARA_ELEM=CAEL,EXCIT=(
                            _F( CHARGE = CON_LI,  ),
                            _F( CHARGE = CHARGE,  )),
@@ -178,6 +179,7 @@ RESULT1=CALC_MODES(MATR_RIGI=MAS_RI_M,
                                      ),
                    VERI_MODE=_F(STOP_ERREUR='NON'), # Reponse provisoire suite Issue25191
                    AMELIORATION='OUI',
+                   SOLVEUR=_F(METHODE='MULT_FRONT'),
                    TYPE_RESU='MODE_FLAMB',
                    )
 #

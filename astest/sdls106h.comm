@@ -68,21 +68,25 @@ ASSEMBLAGE(MODELE=MODELE,
 
 
 # CALCUL DES MODES EN DEUX BANDES
+SOLVEURL='MULT_FRONT'
 MODES_1=CALC_MODES(MATR_RIGI=MATASSR,
                    MATR_MASS=MATASSM,
                    OPTION='BANDE',
+                    SOLVEUR=_F(METHODE=SOLVEURL),
                    CALC_FREQ=_F(FREQ=( 0.,40.), ),
                    )
 
 MODES_2=CALC_MODES(MATR_RIGI=MATASSR,
                    MATR_MASS=MATASSM,
                    OPTION='BANDE',
+                    SOLVEUR=_F(METHODE=SOLVEURL),
                    CALC_FREQ=_F(FREQ=( 40.,100.), ),
                    AMELIORATION='NON',
                    )
 MODES_2a=CALC_MODES(MATR_RIGI=MATASSR,
                     MATR_MASS=MATASSM,
                     OPTION='BANDE',
+                    SOLVEUR=_F(METHODE=SOLVEURL),
                     CALC_FREQ=_F(FREQ=( 40.,100.), ),
                     AMELIORATION='OUI',
                     )

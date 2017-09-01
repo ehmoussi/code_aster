@@ -109,6 +109,7 @@ CHARG2_R=AFFE_CHAR_MECA(MODELE=MO,
 MEST1=MECA_STATIQUE(MODELE=MO,
                     CHAM_MATER=CHMAT,
                     CARA_ELEM=CAREL,
+                    SOLVEUR=_F(POSTTRAITEMENTS='MINI',),
                     EXCIT=(_F(CHARGE=CHARG1,),
                            _F(CHARGE=CHARG2_F,),),);
 #
@@ -123,6 +124,7 @@ MEST1=CALC_CHAMP(reuse=MEST1,CONTRAINTE=('EFGE_ELNO','SIPM_ELNO','EFGE_NOEU'),RE
 MEST2=MECA_STATIQUE(MODELE=MO,
                     CHAM_MATER=CHMAT,
                     CARA_ELEM=CAREL,
+                    SOLVEUR=_F(POSTTRAITEMENTS='MINI',),
                     EXCIT=(_F(CHARGE=CHARG1,),
                            _F(CHARGE=CHARG2_R,),),);
 #

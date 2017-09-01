@@ -84,13 +84,16 @@ ASSEMBLAGE(MODELE=MODELE,
 
 # LISTE DISCRETISE TRES FINEMENT POUR RESPECTER
 # LE RAPPORT TAILLE DE MAILLE VITESSE DE L ONDE DE COMPRESSION
-
+SOLVEURL='MULT_FRONT'
+#SOLVEURL='LDLT'
+#SOLVEURL='MUMPS'
 DYNATRAF=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                         MODELE=MODELE,
                         CHAM_MATER=CHMAT,
                         CARA_ELEM=CARAC,
                         MATR_MASS=MASSE,
                         MATR_RIGI=RIGID,
+                        SOLVEUR=_F(METHODE=SOLVEURL),
                         SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
                         EXCIT=(_F(CHARGE=CHARFX,),
                                _F(CHARGE=CL,),),
@@ -114,6 +117,7 @@ DYNANOLI=DYNA_NON_LINE(
                 SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',
                                FORMULATION='DEPLACEMENT',),
                 MODELE=MODELE,
+                SOLVEUR=_F(METHODE=SOLVEURL),
                 CARA_ELEM = CARAC,
                 CHAM_MATER=CHMAT,
                 EXCIT=(_F(CHARGE=CHARFX,),
@@ -318,6 +322,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=20,
 
 MODE_DX=CALC_MODES(MATR_RIGI=RIGID,
                    OPTION='PROCHE',
+                   SOLVEUR=_F(METHODE=SOLVEURL),
                    CALC_FREQ=_F(FREQ=(1263.497,3790.49,6317.484,8844.4477,11371.473,),
                                 ),
                    MATR_MASS=MASSE,

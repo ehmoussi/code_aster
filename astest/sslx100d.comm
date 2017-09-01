@@ -55,6 +55,7 @@ CHME=AFFE_CHAR_MECA(MODELE=MO,
  
 RES=MECA_STATIQUE(MODELE=MO,
                   CHAM_MATER=CHMA,
+                  SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                   CARA_ELEM  = CARELEM,
                   EXCIT=_F(CHARGE=CHME,),);
 
@@ -141,6 +142,7 @@ CHME2=AFFE_CHAR_MECA(MODELE=MO,
 RES2=MECA_STATIQUE(MODELE=MO,
                   CHAM_MATER=CHMA,
                   CARA_ELEM  = CARELEM,
+                  SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                   EXCIT=_F(CHARGE=CHME2,),);
 
 DEP2=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
