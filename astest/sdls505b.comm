@@ -79,7 +79,7 @@ CHARGE=AFFE_CHAR_MECA(MODELE=MOEL,
 #                        RESOLUTION
 #---------------------------------------------------------------------
 
-RES=MECA_STATIQUE(    MODELE=MOEL,
+RES=MECA_STATIQUE(    MODELE=MOEL,SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                       CHAM_MATER=CHAM_MAT,
                       CARA_ELEM=CAEL,EXCIT=(
                            _F( CHARGE = CON_LI,  ),
@@ -147,7 +147,7 @@ MODE_1=CREA_CHAMP(RESULTAT=RES_NORM, OPERATION='EXTR', TYPE_CHAM='NOEU_DEPL_R',
 
 TEST_RESU(CHAM_NO=(
                    _F(NOEUD='NO180', NOM_CMP='DX', CHAM_GD=MODE_1,
-                      VALE_CALC=0.100261011748,  TOLE_MACHINE=3.e-6, # voir ci-dessus
+                      VALE_CALC=0.100260862908,  TOLE_MACHINE=3.e-6, # voir ci-dessus
                       ),
                    _F(NOEUD='NO180', NOM_CMP='DY', CHAM_GD=MODE_1,
                       VALE_CALC=-0.661765539826 ,

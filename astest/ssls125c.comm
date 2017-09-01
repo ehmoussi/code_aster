@@ -83,6 +83,7 @@ MATASS_1=ASSE_MATRICE(MATR_ELEM=MATR, NUME_DDL=NU)
 
 RESU=MECA_STATIQUE(MODELE=MODMECA,
                    CHAM_MATER=CHM,
+                   SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                    EXCIT=_F(CHARGE=CHARGT,),
                   );
 

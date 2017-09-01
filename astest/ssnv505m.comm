@@ -232,6 +232,7 @@ CHCON2= DEFI_CONTACT(MODELE         = MODE,
 
 UCON=STAT_NON_LINE(MODELE=MODE,
                 CHAM_MATER=CM,
+                SOLVEUR=_F(NPREC=9),
                 CARA_ELEM=CHAMPCAR,
                 EXCIT=(_F(CHARGE=COND_LIM,),
                        _F(CHARGE=CH1,

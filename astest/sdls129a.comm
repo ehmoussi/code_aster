@@ -184,8 +184,8 @@ SQUEL=DEFI_SQUELETTE(MODELE_GENE=MODGEN,
 
 MOGS=CALC_MODES(MATR_RIGI=KGEN,
                 MATR_MASS=MGEN,
-                OPTION='CENTRE',
-                CALC_FREQ=_F(NMAX_FREQ=10,FREQ=25.),
+                OPTION='CENTRE',SOLVEUR=_F(NPREC=11),
+                CALC_FREQ=_F(NMAX_FREQ=10,FREQ=25.0),
                 VERI_MODE=_F(STOP_ERREUR='NON',
                                    STURM='NON',),
                 INFO=1,);        

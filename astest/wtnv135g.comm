@@ -188,6 +188,7 @@ EVOL_TH = DEFI_FONCTION(NOM_PARA = 'INST',
 # ===================================================================================
 U1 = STAT_NON_LINE(MODELE = MODELE,
                    CHAM_MATER = CHMAT,
+                   SOLVEUR=_F(METHODE='MULT_FRONT',RENUM='MD'),
                    EXCIT = (_F(CHARGE = PR_LATE,
                                FONC_MULT = EVOL_HYD,),
                             _F(CHARGE = PR_V,
@@ -244,6 +245,7 @@ EVOL_DEV = DEFI_FONCTION(NOM_PARA = 'INST',
 # ::: RESOLUTION PHASE 2 : CHARGEMENT DEV. ------------------------------------------
 # ===================================================================================
 U2 = STAT_NON_LINE(MODELE = MODELE,
+                   SOLVEUR=_F(METHODE='MULT_FRONT',RENUM='METIS'),
                    CHAM_MATER = CHMAT,
                    EXCIT = (_F(CHARGE = PR_LATE,
                                FONC_MULT = EVOL_HYD,),

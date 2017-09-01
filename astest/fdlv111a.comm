@@ -125,8 +125,9 @@ DYN=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                                   FONC_MULT = FONC),
                          INCREMENT=_F( LIST_INST = TEMPLI),
 #                        ARCHIVAGE=_F(  LIST_ARCH = INTLI),
-                         SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                          SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
+                         SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
+                  
                         )
 
 # --- TEST SUR LES ENERGIES ---------------------------------------------------
@@ -325,7 +326,7 @@ DYNA=DYNA_NON_LINE(     MODELE=MODELE,   CHAM_MATER=CHAMPMAT,
                         CONVERGENCE=_F( RESI_GLOB_RELA = 1.E-9),
                           COMPORTEMENT=_F( RELATION = 'ELAS',
                                   TOUT = 'OUI'),
-#                         SOLVEUR=_F( STOP_SINGULIER = 'NON'),
+                         SOLVEUR=_F( STOP_SINGULIER = 'NON'),
                          NEWTON=_F(  MATRICE = 'ELASTIQUE',
                                  REAC_INCR = 0,
                                  REAC_ITER = 0),

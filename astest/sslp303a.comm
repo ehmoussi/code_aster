@@ -95,6 +95,7 @@ CHARGT=AFFE_CHAR_MECA(MODELE=MODELE,
 
 DEF=MECA_STATIQUE(MODELE=MODELE,
                   CHAM_MATER=CHMAT,
+                  SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                   EXCIT=_F(CHARGE=CHARGT,),
                   INFO=1,);
 

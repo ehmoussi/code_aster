@@ -180,6 +180,7 @@ UCON=STAT_NON_LINE(MODELE=MODE,
                 NEWTON=_F(REAC_ITER=1,),
                 # on diminue la valeur de RESI_GLOB_RELA pour eviter les "TOLE MACHINE" (issue24538) :
                 CONVERGENCE=_F(ITER_GLOB_MAXI=20,RESI_GLOB_RELA=1.e-7,),
+                SOLVEUR=_F(METHODE='MULT_FRONT',RENUM='MDA'),
                 INFO=1,);
 
 UCON=CALC_CHAMP(reuse =UCON,
@@ -287,6 +288,7 @@ UESCL=STAT_NON_LINE(MODELE=MODE,
                 NEWTON=_F(REAC_ITER=1,),
                 # on diminue la valeur de RESI_GLOB_RELA pour eviter les "TOLE MACHINE" (issue24538) :
                 CONVERGENCE=_F(ITER_GLOB_MAXI=50,RESI_GLOB_RELA=1.e-7,),
+                SOLVEUR=_F(METHODE='MULT_FRONT',RENUM='MD'),
                 INFO=1,);
 
 UESCL=CALC_CHAMP(reuse =UESCL,

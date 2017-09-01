@@ -53,7 +53,7 @@ ROTA=AFFE_CHAR_MECA(MODELE=MO,
 # CALCUL DES CONTRAINTES STATIQUES
 #
 RES_STAT=MECA_STATIQUE(MODELE=MO,
-               CHAM_MATER=CM,
+               CHAM_MATER=CM,SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                   EXCIT=(_F(CHARGE = CH,),
                          _F(CHARGE = ROTA, ) ),
                         );

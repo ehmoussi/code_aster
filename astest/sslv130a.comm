@@ -84,6 +84,7 @@ EVOL=STAT_NON_LINE(MODELE=MO,
                    COMPORTEMENT=_F(RELATION='ELAS',),
                    INCREMENT=_F(LIST_INST=INSTANTS,),
                    NEWTON=_F(REAC_ITER=1,),
+                   SOLVEUR=_F(METHODE='MULT_FRONT',RENUM='MD'),
                    );
 
 EVOL=CALC_CHAMP(reuse=EVOL,RESULTAT=EVOL,CRITERES=('SIEQ_ELNO','EPEQ_ELNO'),DEFORMATION=('EPSI_ELNO'),CONTRAINTE=('SIGM_ELNO'))
@@ -452,6 +453,7 @@ EVOL2=STAT_NON_LINE(MODELE=MO,
                     COMPORTEMENT=_F(RELATION='ELAS',),
                     INCREMENT=_F(LIST_INST=INSTANTS,),
                     NEWTON=_F(REAC_ITER=1,),
+                    SOLVEUR=_F(METHODE='MULT_FRONT',RENUM='MDA'),
                     );
 
 IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=EVOL2,
@@ -864,6 +866,7 @@ EVOLUP=STAT_NON_LINE(MODELE=MOUP,
                    COMPORTEMENT=_F(RELATION='ELAS',),
                    INCREMENT=_F(LIST_INST=INSTANTS,),
                    NEWTON=_F(REAC_ITER=1,),
+                   SOLVEUR=_F(METHODE='MULT_FRONT',RENUM='METIS'),
                    );
 
 EVOLUP=CALC_CHAMP(reuse=EVOLUP,RESULTAT=EVOLUP,CRITERES=('SIEQ_ELNO','EPEQ_ELNO'),DEFORMATION=('EPSI_ELNO'),CONTRAINTE=('SIGM_ELNO'))
@@ -1232,6 +1235,7 @@ EVOLOS=STAT_NON_LINE(MODELE=MOOS,
                                     SIGM_REFE=60.,
                                     EPSI_REFE=1.E-4,
                                     PI_REFE=1.E-4,),
+                     SOLVEUR=_F(METHODE='MULT_FRONT',RENUM='MD'),                     
                      );
 
 EVOLOS=CALC_CHAMP(reuse=EVOLOS,RESULTAT=EVOLOS,CRITERES=('SIEQ_ELNO','EPEQ_ELNO'),DEFORMATION=('EPSI_ELNO'),CONTRAINTE=('SIGM_ELNO'))

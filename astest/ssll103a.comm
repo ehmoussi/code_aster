@@ -364,10 +364,8 @@ RIGASG_4=ASSE_MATRICE(MATR_ELEM=RIGELG_4,NUME_DDL=NU)
 MOD_4=CALC_MODES(MATR_RIGI=RIGAS,
                  TYPE_RESU='MODE_FLAMB',
                  MATR_RIGI_GEOM=RIGASG_4,
-                 CALC_CHAR_CRIT=_F(NMAX_CHAR_CRIT=4,
-                                   ),
-                 SOLVEUR_MODAL=_F(DIM_SOUS_ESPACE=20,
-                                  ),
+                 CALC_CHAR_CRIT=_F(NMAX_CHAR_CRIT=4,),
+                 SOLVEUR_MODAL=_F(DIM_SOUS_ESPACE=20,),
                  AMELIORATION='OUI',
                  )
 

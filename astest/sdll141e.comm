@@ -155,8 +155,7 @@ MODEG=CALC_MODES(MATR_RIGI=RIGIDITE,
                               ),
                  MATR_AMOR=GYOM,
                  MATR_MASS=MASSE,
-                 SOLVEUR_MODAL=_F(METHODE='SORENSEN',
-                                  ),
+                 SOLVEUR_MODAL=_F(COEF_DIM_ESPACE=4),
                  )
 
 
