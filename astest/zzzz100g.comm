@@ -1,0 +1,50 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# person_in_charge: mathieu.courtois at edf.fr
+
+import pickle
+import numpy as NP
+
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI',),
+      IGNORE_ALARM='UTILITAI3_37')
+
+vale_x = NP.arange(5.)
+vale_y = NP.arange(5.) * 2
+
+def function(X):
+    NP.interp(X, vale_x, vale_y)
+
+
+form = FORMULE(NOM_PARA='X', VALE='function(X)')
+
+
+# form = FORMULE(NOM_PARA='X', VALE='function(X)',
+#                DATA=pickle.dumps(obj1, obj2...))
+
+TEST_FONCTION(VALEUR=_F(VALE_CALC=5.,
+                        VALE_REFE=5.,
+                        VALE_PARA=2.5,
+                        REFERENCE='ANALYTIQUE',
+                        NOM_PARA='X',
+                        FONCTION=form,),
+              )
+
+FIN();
