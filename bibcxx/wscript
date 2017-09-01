@@ -28,8 +28,8 @@ def configure(self):
     self.load('compiler_cxx')
     self.check_cxx_compiler_flags()
     self.check_bibcxx_depends()
-    cxxpath = self.path.get_src().abspath()
-    self.env.append_value('INCLUDES', cxxpath)
+    incpath = osp.join(self.path.get_src().abspath(), 'include')
+    self.env.append_value('INCLUDES', incpath)
 
 def build(self):
     env = self.all_envs[self.variant]

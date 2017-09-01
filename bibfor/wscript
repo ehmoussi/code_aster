@@ -21,16 +21,16 @@ from functools import partial
 
 from waflib import Configure, Utils, Logs, Errors
 
+import os.path as osp
 import sys
 
 def options(self):
     self.load('compiler_fc')
 
 def configure(self):
-    for incpath in ('bibfor/include', ):
-        paths = self.srcnode.ant_glob(incpath, src=True, dir=True)
-        paths = [d.abspath() for d in paths]
-        self.env.append_value('INCLUDES', paths)
+    incpath = osp.join(self.path.get_src().abspath(), 'include')
+    self.env.append_value('INCLUDES', incpath)
+
     if self.get_define('HAVE_MUMPS'):
         vers = eval(self.get_define('ASTER_MUMPS_VERSION'))
         suffix = self.options.parallel and '_mpi' or ''
