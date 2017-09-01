@@ -145,6 +145,7 @@ for ind in range(3):
     if vale_i[ind] == vale_j[ind] :
         REP0=RECU_FONCTION(    INTE_SPEC=SPPROJ,
                                 NUME_ORDRE_I=vale_i[ind],
+                                NUME_ORDRE_J=vale_i[ind],
                       )
         TEST_FONCTION(VALEUR=_F(VALE_CALC=vale_reg[ind],
                                 VALE_REFE=vale_refe[ind],
