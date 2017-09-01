@@ -163,7 +163,7 @@ real(kind=8), intent(in) :: temp
                         dp1, dp2, signe, satur, cs,&
                         tbiot, cbiot, unsks, alpha0, &
                         phi, phim, retcom )
-        else if (yamec .eq. 2) then
+        else if (ds_thm%ds_elem%l_jhms) then
             phi = vintp(advico+vicphi)
         endif
 ! =====================================================================

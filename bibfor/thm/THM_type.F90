@@ -48,6 +48,8 @@ implicit none
         aster_logical :: l_weak_coupling
         real(kind=8) :: divu_prev
         real(kind=8) :: divu_curr
+! ----- Flag for *JHMS elements
+        aster_logical :: l_jhms 
     end type THM_Element
 
 ! - Behaviour

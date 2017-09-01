@@ -73,6 +73,7 @@ subroutine thmModuleInit()
     ds_thm%ds_elem%l_dof_hydr2            = ASTER_FALSE
     ds_thm%ds_elem%nb_phase(1:2)          = 0
     ds_thm%ds_elem%l_weak_coupling        = ASTER_FALSE
+    ds_thm%ds_elem%l_jhms                 = ASTER_FALSE
 !   Material parameters (porosity)
     ds_thm%ds_material%biot%type          = BIOT_TYPE_ISOT
     ds_thm%ds_material%biot%coef          = r8nnem()

@@ -24,6 +24,9 @@ subroutine caeihm(nomte, axi, perman, mecani, press1,&
                   jgano1, iu, ip, ipf, iq,&
                   inte_type)
 !
+use THM_type
+use THM_module
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -33,11 +36,13 @@ implicit none
 #include "asterfort/lteatt.h"
 #include "asterfort/thmGetParaIntegration.h"
 !
-    character(len=3), intent(out) :: inte_type
+character(len=3), intent(out) :: inte_type
 !
-! ======================================================================
-! --- BUT : PREPARATION DU CALCUL SUR UN ELEMENT DE JOINT HM -----------
-! ======================================================================
+! --------------------------------------------------------------------------------------------------
+!
+! PREPARATION DU CALCUL SUR UN ELEMENT DE JOINT HM
+!
+! --------------------------------------------------------------------------------------------------
 !
 ! IN NOMTE   : NOM DU TYPE D'ELEMENT
 ! IN AXI     : AXI ?
@@ -67,7 +72,8 @@ implicit none
 ! OUT IQ     : DECALAGE D'INDICE POUR ACCEDER AUX DDL DE LAGRANGE HYDRO
 ! OUT MODINT : MODE D'INTEGRATION
 !
-
+! --------------------------------------------------------------------------------------------------
+!
     aster_logical :: axi, perman
     integer :: mecani(8), press1(9), press2(9), tempe(5), dimuel
     integer :: ndim, nnos, nno1, nno2, ntrou
@@ -81,9 +87,8 @@ implicit none
     integer, parameter :: f4q8(2) = (/4,3/)
     character(len=8) :: lielrf(10)
     character(len=16) :: nomte
-
 !
-! --- INITIALISATIONS --------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     perman= .false.
     ndim=2
@@ -93,6 +98,11 @@ implicit none
 ! ======================================================================
     call greihm(perman, ndim, mecani, press1, press2,&
                 tempe, dimdef, dimcon)
+
+!
+! - Flag for *JHMS elements
+!
+    ds_thm%ds_elem%l_jhms = ASTER_TRUE
 !
 ! - Get type of integration
 !
@@ -147,5 +157,4 @@ implicit none
         iq(1,2,1)=iu(2,3)+1
     endif
 !
-! ======================================================================
 end subroutine
