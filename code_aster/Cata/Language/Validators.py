@@ -33,7 +33,7 @@ class Validator(object):
 
     def __repr__(self):
         """Simple representation"""
-        return "%s( %r )" % (self.__class__, self.args)
+        return "%s %r " % (self.__class__.__name__, self.args)
 
     def check(self, values):
         """Check values"""
@@ -101,18 +101,17 @@ class OrVal(Validator):
     def check(self, values):
         """Check values"""
         values = force_list(values)
-        for value in values:
-            ok = False
-            err = []
-            for i in self.args:
-                try:
-                    i.check(value)
-                except ValueError as exc:
-                    err.append(str(exc))
-                else:
-                    ok = True
-            if not ok:
-                raise ValueError("No validator is valid: {0}".format(err))
+        ok = False
+        err = []
+        for i in self.args:
+            try:
+                i.check(values)
+            except ValueError as exc:
+                err.append(str(exc))
+            else:
+                ok = True
+        if not ok:
+            raise ValueError("Validator 'OR' is invalid: {0}".format(err))
 
 
 def ordlist_predicate(a, b, reverse):
@@ -174,8 +173,7 @@ class Together(Validator):
         """Check values"""
         missing = set(self.args[0]).difference(force_list(values))
         if missing and len(missing) != len(self.args[0]):
-            raise ValueError("Missing values: {0}"
-                             .format([str(i) for i in missing]))
+            raise ValueError("Missing values: {0}".format(_lstr(missing)))
 
 
 class Absent(Validator):
@@ -193,8 +191,7 @@ class Absent(Validator):
         """Check values"""
         invalid = set(self.args[0]).intersection(force_list(values))
         if invalid:
-            raise ValueError("Unauthorized values: {0}"
-                             .format([str(i) for i in invalid]))
+            raise ValueError("Unexpected values: {0}".format(_lstr(invalid)))
 
 
 class Compulsory(Validator):
@@ -213,8 +210,8 @@ class Compulsory(Validator):
         """Check values"""
         missing = set(self.args[0]).difference(force_list(values))
         if missing:
-            raise ValueError("Missing values: {0}"
-                             .format([str(i) for i in missing]))
+            raise ValueError("Required values: {0}, missing {1}"
+                             .format(_lstr(*self.args), _lstr(missing)))
 
 
 class NotEqualTo(Validator):
@@ -237,3 +234,7 @@ class NotEqualTo(Validator):
             if val == ref:
                 raise ValueError("Unauthorized value: {0[0]}"
                                  .format(self.args))
+
+
+def _lstr(list_):
+    return [str(i) for i in list_]

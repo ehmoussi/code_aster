@@ -140,6 +140,11 @@ class SyntaxCheckerVisitor(object):
         self._parent_context.append(keywords)
         self._visitComposite(step, keywords)
         self._parent_context.pop()
+        try:
+            step.get_type_sd_prod(**keywords)
+        except:
+            raise TypeError('Cannot type result of the command {}'
+                            .format(step.name))
 
     def visitBloc(self, step, userDict=None):
         """Visit a Bloc object"""
@@ -208,6 +213,9 @@ class SyntaxCheckerVisitor(object):
                 continue
             if hasattr(i, "evaluation"):
                 i = i.evaluation
+                # for lists and tuples, take the first element
+                if type(i) in (list, tuple) and i:
+                    i = i[0]
             # if a Variable is not yet evaluated
             if i is None:
                 continue
@@ -285,14 +293,13 @@ class SyntaxCheckerVisitor(object):
 
         # loop on occurrences filled by the user
         for userOcc in userDict:
-            # check rules
-            if step.rules != None:
-                for rule in step.rules:
-                    self._stack.append(rule)
-                    rule.check(userOcc)
-                    self._stack.pop()
-            # check that the required keywords are provided by the user
             ctxt = self._parent_context[-1] if self._parent_context else {}
+            # check rules
+            for rule in step.getRules(userOcc, ctxt):
+                self._stack.append(rule)
+                rule.check(userOcc)
+                self._stack.pop()
+            # check that the required keywords are provided by the user
             step.checkMandatory(userOcc, self._stack, ctxt)
             # loop on keywords provided by the user
             for key, value in userOcc.iteritems():

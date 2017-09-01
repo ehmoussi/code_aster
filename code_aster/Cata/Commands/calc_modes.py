@@ -37,7 +37,7 @@ def calc_modes_prod( self, TYPE_RESU, **args) :
    if (vale_rigi== None) : # si MATR_RIGI non renseigné
       # on retourne un type fictif pour que le plantage aie lieu dans la lecture du catalogue
       return ASSD
-   vale_amor = args['MATR_AMOR']
+   vale_amor = args.get('MATR_AMOR')
    if ( (AsType(vale_rigi) in (matr_asse_depl_r, matr_asse_depl_c)) & (AsType(vale_mass) in (matr_asse_gene_r, matr_asse_gene_c)) ) :
       raise AsException("Matrices d'entrée de types différents : physique / généralisée.")
    if (AsType(vale_amor)== matr_asse_depl_r) : return mode_meca_c
