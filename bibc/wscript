@@ -46,7 +46,9 @@ def configure(self):
         # http://stackoverflow.com/questions/21279036/what-is-clangs-equivalent-to-rdynamic-gcc-flag
         self.env.append_unique('LINKFLAGS', ['-Wl,-export_dynamic'])
 
-    self.env.append_unique('INCLUDES', ['include/'])
+    incpath = osp.join(self.path.get_src().abspath(), 'include')
+    self.env.append_value('INCLUDES', incpath)
+
     if opts.embed_all or opts.embed_aster:
         self.env.append_value('ASTER_EMBEDS', ['bibc'])
     if 'ifort' in self.env.FC_NAME.lower():
