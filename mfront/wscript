@@ -198,8 +198,9 @@ def check_cxx11_abi(self):
     import ctypes
     # LD_LIBRARY_PATH is not reread now.
     # So 'libname' must not have dependencies out of initial LD_LIBRARY_PATH.
-    libname = "./libTFELException.so"
-    symbol = "exception"
+    # Use http://demangler.com/ to demangle names
+    libname = "./libTFELUtilities.so"
+    symbol = "replace_all"
     prev = os.getcwdu()
     os.chdir(osp.join(self.env.TFELHOME[0], "lib"))
     lib = ctypes.cdll.LoadLibrary(libname)
