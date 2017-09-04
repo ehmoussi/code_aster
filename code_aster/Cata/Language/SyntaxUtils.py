@@ -44,6 +44,8 @@ def mixedcopy(obj):
     elif isinstance(obj, dict):
         new = obj.__class__([(i, mixedcopy(obj[i])) for i in obj])
     else:
+        if hasattr(obj, 'evaluation'):
+            obj = obj.evaluation
         new = obj
     return new
 
