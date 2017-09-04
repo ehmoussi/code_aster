@@ -119,17 +119,17 @@ subroutine vpecst(ifm, typres, omgmin, omgmax, nbfre1,&
                     call utmess('I', 'ALGELINE6_29')
                 endif
                 if (nbfreq .eq. 0) then
-                    valr(1)=omgmin
-                    valr(2)=omgmax
+                    valr(1)= - omgmax
+                    valr(2)= - omgmin
                     vali(1)=1
                     call utmess('I', 'ALGELINE6_30', si=vali(1), nr=2, valr=valr)
                 else if (omgmin .eq. 0.d0) then
-                    valr(1)=omgmax
+                    valr(1)=-omgmax
                     vali(1)=nbfreq
                     call utmess('I', 'ALGELINE6_31', si=vali(1), sr=valr(1))
                 else
-                    valr(1)=omgmin
-                    valr(2)=omgmax
+                    valr(1)=-omgmax
+                    valr(2)=-omgmin
                     vali(1)=1
                     vali(2)=nbfreq
                     call utmess('I', 'ALGELINE6_32', ni=2, vali=vali, nr=2,&
@@ -161,8 +161,8 @@ subroutine vpecst(ifm, typres, omgmin, omgmax, nbfre1,&
                     write(ifm,950)
                     call utmess('I', 'ALGELINE6_28')
                 endif
-                valr(1)=omgmin
-                valr(2)=omgmax
+                valr(1)=-omgmax
+                valr(2)=-omgmin
                 vali(1)=ibande
                 if (nbfreq .eq. 0) then
                     call utmess('I', 'ALGELINE6_30', si=vali(1), nr=2, valr=valr)

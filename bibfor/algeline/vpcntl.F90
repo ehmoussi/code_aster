@@ -145,10 +145,10 @@ subroutine vpcntl(cty, mode, option, omemin, omemax,&
                     valr (2) = freqom(omemax)
                     call utmess(cty, 'ALGELINE5_20', nr=2, valr=valr)
                 else
-                    valr (1) = charge(ifreq)
+                    valr (1) = - charge(ifreq)
                     call utmess(cty//'+', 'ALGELINE5_17', sr=valr(1))
-                    valr (1) = omemin
-                    valr (2) = omemax
+                    valr (1) = - omemax
+                    valr (2) = - omemin
                     call utmess(cty, 'ALGELINE5_20', nr=2, valr=valr)
                 endif
             endif
@@ -184,8 +184,8 @@ subroutine vpcntl(cty, mode, option, omemin, omemax,&
                 call utmess(cty//'+', 'ALGELINE5_24', ni=2, vali=vali, nr=2,&
                             valr=valr)
             else
-                valr (1) = vpinf
-                valr (2) = vpmax
+                valr (1) = -vpmax
+                valr (2) = -vpinf
                 vali (1) = nfreqt
                 vali (2) = nfreq
                 call utmess(cty//'+', 'ALGELINE5_25', ni=2, vali=vali, nr=2,&
@@ -199,8 +199,8 @@ subroutine vpcntl(cty, mode, option, omemin, omemax,&
                     valr (2) = freqom(vpmax)
                     call utmess('I', 'ALGELINE6_23', si=nfreqt, nr=2, valr=valr)
                 else
-                    valr (1) = vpinf
-                    valr (2) = vpmax
+                    valr (1) = -vpmax
+                    valr (2) = -vpinf
                     call utmess('I', 'ALGELINE6_24', si=nfreqt, nr=2, valr=valr)
                 endif
             endif

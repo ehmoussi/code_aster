@@ -369,7 +369,7 @@ RESU=DYNA_NON_LINE(MODELE=MODELE,
                    RECH_LINEAIRE=_F(),
                    CRIT_STAB=_F(RIGI_GEOM='NON',
                                 DDL_EXCLUS=('PHI','PRES','DH',),
-                                MODI_RIGI='OUI',NB_FREQ = 1,),
+                                MODI_RIGI='OUI',NB_MODE = 1,),
                    );
 #
 RESUST=DYNA_NON_LINE(MODELE=MODELEST,
@@ -481,21 +481,21 @@ TEST_RESU(RESU=_F(INST=2.0,
 #
 #  La charge critique avec et sans fluide doit rester la meme :
 #
-valstab = 2.477264942149
+valstab = -2.477264942149
 #
 TEST_RESU(RESU=(_F(PARA='CHAR_CRIT',
                    INST=0.40000000000000002,
                    REFERENCE='AUTRE_ASTER',
                    RESULTAT=RESU,
-                   VALE_CALC=2.47726505977,
-                   VALE_REFE=2.4772649421490001,
+                   VALE_CALC=-2.47726505977,
+                   VALE_REFE=valstab,
                    PRECISION=9.9999999999999995E-07,),
                 _F(PARA='CHAR_CRIT',
                    INST=0.40000000000000002,
                    REFERENCE='AUTRE_ASTER',
                    RESULTAT=RESUST,
-                   VALE_CALC=2.47726520279,
-                   VALE_REFE=2.4772649421490001,
+                   VALE_CALC=-2.47726520279,
+                   VALE_REFE=valstab,
                    PRECISION=9.9999999999999995E-07,),
                 ),
           )

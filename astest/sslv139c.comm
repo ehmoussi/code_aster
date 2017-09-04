@@ -123,14 +123,14 @@ MODE_1 =CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                    OPERATION='EXTR',
                    RESULTAT=RES_NORM,
                    NOM_CHAM='DEPL',
-                   NUME_ORDRE=1,);
+                   NUME_ORDRE=10,);
 
 TEST_RESU(RESU=_F(PARA='CHAR_CRIT',
-                  NUME_MODE=1,
+                  NUME_MODE=10,
                   REFERENCE='ANALYTIQUE',
                   RESULTAT=RES_NORM,
-                  VALE_CALC=8.694299662626E+05,
-                  VALE_REFE=8.493509396E5,
+                  VALE_CALC=-8.694299662626E+05,
+                  VALE_REFE=-8.493509396E5,
                   TOLE_MACHINE=1.E-5,           # TODO TOLE_MACHINE
                   PRECISION=0.025,),)
 

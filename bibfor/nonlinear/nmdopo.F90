@@ -222,7 +222,7 @@ implicit none
 !
 ! ----- NOMBRE DE FREQUENCES
 !
-        call getvis(motfac, 'NB_FREQ', iocc=iocc, scal=nfreq, nbret=iret,&
+        call getvis(motfac, 'NB_MODE', iocc=iocc, scal=nfreq, nbret=iret,&
                     isdefault=iarg)
         call nmecsd('POST_TRAITEMENT', sdpost, 'NB_FREQ_FLAMB', nfreq, r8bid,&
                     k24bid)

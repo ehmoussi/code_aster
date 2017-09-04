@@ -146,10 +146,12 @@ MODE_PG=CALC_MODES(VERI_MODE=_F(STOP_ERREUR='NON',
 
 TA_FREQ = RECU_TABLE( CO=MODE_PG,
                       NOM_PARA='CHAR_CRIT')
+                      
+
 FO_FREQ = RECU_FONCTION( TABLE=TA_FREQ,
                          PARA_X='NUME_ORDRE',
                          PARA_Y='CHAR_CRIT')
-f = FO_FREQ.Valeurs()[1][0] # extraction de la valeur propre contenue dans MODE_PG2
+f = - FO_FREQ.Valeurs()[1][0] # extraction de la valeur propre contenue dans MODE_PG2
 from math import pi, sqrt
 f_max_systeme = 1. / (2*pi*sqrt(f) ) # conversion en valeur physique.
 # Cette valeur est la reference pour la modelisation SDLL14d.
@@ -185,7 +187,7 @@ TEST_RESU(RESU=(
                    PARA = 'CHAR_CRIT',
                    CRITERE = 'RELATIF',
                    NUME_ORDRE = 1,
-                   VALE_CALC=2.71935702793E-13),
+                   VALE_CALC=- 2.71935702793E-13),
                 _F(RESULTAT = MODE_PG2,
                    PARA = 'FREQ',
                    CRITERE = 'RELATIF',

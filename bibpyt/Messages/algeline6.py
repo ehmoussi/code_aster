@@ -192,7 +192,7 @@ cata_msg = {
     30: _(u"""  Il n'y a pas de charge critique dans la bande numéro %(i1)d de bornes (%(r1)10.3E ,%(r2)10.3E )
 """),
 
-    31: _(u"""  Nombre de charges critiques inférieures à %(r1)10.3e Hz : %(i1)d
+    31: _(u"""  Nombre de charges critiques supérieures à %(r1)10.3e Hz : %(i1)d
 """),
 
     32: _(u"""  Nombre de charges critiques dans la bande numéro %(i1)d de bornes (%(r1)10.3E ,%(r2)10.3E ) : %(i2)d

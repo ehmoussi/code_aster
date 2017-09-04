@@ -105,7 +105,7 @@ STAT_NON_LINE=OPER(nom="STAT_NON_LINE",op=70,sd_prod=evol_noli,
          AFFICHAGE       =C_AFFICHAGE(),
 #-------------------------------------------------------------------
          CRIT_STAB      =FACT(statut='f',min=1,max=1,
-           NB_FREQ         =SIMP(statut='f',typ='I',max=1,val_min=1,defaut=3),
+           NB_MODE         =SIMP(statut='f',typ='I',max=1,val_min=1,defaut=3),
            COEF_DIM_ESPACE =SIMP(statut='f',typ='I',max=1,val_min=2,defaut=5),
            RIGI_GEOM    =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON")),
            MODI_RIGI    =SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON")),

@@ -82,7 +82,7 @@ EVOL   = STAT_NON_LINE( MODELE     = MO,
                                      ),
                         CRIT_STAB  = _F( TYPE           ='STABILITE',
                                          RIGI_GEOM      = 'NON',
-                                         NB_FREQ        = 1,
+                                         NB_MODE        = 1,
                                          DDL_STAB       = ('DX','DY')
                                         ),
                         COMPORTEMENT  = _F( TOUT           = 'OUI',

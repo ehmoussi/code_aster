@@ -397,6 +397,18 @@ subroutine op0044()
         call getvr8('CALC_'//typevp, typevp, iocc=1, nbval=ncrit, vect=zr(lborne),&
                     nbret=l)
     endif
+    
+!   passage de charges critiques à fréquences
+    if (typres.eq.'MODE_FLAMB') then
+        do ifreq = 1, ncrit/2
+            rbid = zr(lborne-1+ifreq)
+            zr(lborne-1+ifreq) = - zr(lborne+ncrit-ifreq)
+            zr(lborne+ncrit-ifreq) = - rbid
+        enddo
+        if (ncrit - ncrit/2 * 2 .eq.1)then
+            zr(lborne+ncrit/2) = - zr(lborne+ncrit/2)
+        endif
+    endif
 !
 !     --- LISTE DES AMORTISSEMENTS (CAS QUADRATIQUE) ---
     if ((nfreqr .ne. 0) .and. (namorr.ne.0)) then

@@ -75,15 +75,15 @@ MODE1=CALC_MODES( OPTION='BANDE',
                   MATR_RIGI=RIGI,
                   MATR_RIGI_GEOM=RGEO1,
                   TYPE_RESU='MODE_FLAMB',
-                  CALC_CHAR_CRIT=_F( CHAR_CRIT = (0.063, 2.47) ,)
+                  CALC_CHAR_CRIT=_F( CHAR_CRIT = (-2.47, -0.063) ,)
                  )
 
 
 TEST_RESU(RESU=_F(PARA='CHAR_CRIT',
                   NUME_MODE=1,
                   RESULTAT=MODE1,
-                  VALE_CALC=1.090064344,
-                  VALE_REFE=1.0880000000000001,
+                  VALE_CALC=-1.090064344,
+                  VALE_REFE=-1.0880000000000001,
                   REFERENCE='NON_DEFINI',
                   PRECISION=1.E-2,),
           )
@@ -112,15 +112,15 @@ MODE2=CALC_MODES( OPTION='BANDE',
                   MATR_RIGI=RIGI,
                   MATR_RIGI_GEOM=RGEO2,
                   TYPE_RESU='MODE_FLAMB',
-                  CALC_CHAR_CRIT=_F( CHAR_CRIT = (0.063, 2.47) ,)
+                  CALC_CHAR_CRIT=_F( CHAR_CRIT = (-2.47, -0.063) ,)
                  )
 
 
 TEST_RESU(RESU=_F(PARA='CHAR_CRIT',
-                  NUME_MODE=1,
+                  NUME_MODE=2,
                   RESULTAT=MODE2,
-                  VALE_CALC=0.681323581,
-                  VALE_REFE=0.68000000000000005,
+                  VALE_CALC=-0.681323581,
+                  VALE_REFE=-0.68000000000000005,
                   REFERENCE='NON_DEFINI',
                   PRECISION=1.E-2,),
           )
