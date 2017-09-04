@@ -242,7 +242,14 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
                 endif
             endif
         endif
-    endif 
+    endif
+    
+    if (typres(1:9) .ne. 'DYNAMIQUE') then
+        rbid = omemin
+        omemin=-omemax
+        omemax=-rbid
+    endif
+    
 !
 ! --- DETERMINATION D'INFO POUR LE TEST DE STURM ET LES POSITIONS
 !     MODALES + CONSTRUCTION DE LA MATRICE DYNAMIQUE/ SA FACTORISEE

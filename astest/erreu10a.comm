@@ -100,7 +100,7 @@ try :
                   INCREMENT=_F(LIST_INST=list2,),
                   NEWTON=_F(MATRICE='TANGENTE',),
                   SOLVEUR=_F(METHODE='LDLT'),
-                  CRIT_STAB=_F(CHAR_CRIT=(-2., 0.),SIGNE='POSITIF_NEGATIF',),
+                  CRIT_STAB=_F(CHAR_CRIT=(0., 2.),SIGNE='POSITIF_NEGATIF',),
                   );
 except aster.error,err:
    print fmt_raison % str(err)
@@ -121,8 +121,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            )
 
 #
-#  On teste avec l'arret sur valeur de charge critique -1 :
-#  sous CRIT_STAB on met SIGNE = 'NEGATIF'
+#  On teste avec l'arret sur valeur de charge critique 1 :
+#  sous CRIT_STAB on met SIGNE = 'POSITIF'
 #
 is_ok = 0
 try :
@@ -137,7 +137,7 @@ try :
                   INCREMENT=_F(LIST_INST=list2,),
                   NEWTON=_F(MATRICE='TANGENTE',),
                   SOLVEUR=_F(METHODE='LDLT'),
-                  CRIT_STAB=_F(CHAR_CRIT=(-2., 0.),SIGNE='NEGATIF',),
+                  CRIT_STAB=_F(CHAR_CRIT=(0., 2.),SIGNE='POSITIF',),
                   );
 except aster.error,err:
    print fmt_raison % str(err)
@@ -161,7 +161,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 #
 #  On teste avec l'absence d'arret sur valeur de charge critique -1 :
-#  sous CRIT_STAB on met SIGNE = 'POSITIF'
+#  sous CRIT_STAB on met SIGNE = 'NEGATIF'
 #
 is_ok = 0
 try :
@@ -176,7 +176,7 @@ try :
                   INCREMENT=_F(LIST_INST=list2,),
                   NEWTON=_F(MATRICE='TANGENTE',),
                   SOLVEUR=_F(METHODE='LDLT'),
-                  CRIT_STAB=_F(CHAR_CRIT=(-2., 0.),SIGNE='POSITIF',),
+                  CRIT_STAB=_F(CHAR_CRIT=(0., 2.),SIGNE='NEGATIF',),
                   );
 except aster.error,err:
    print fmt_raison % str(err)

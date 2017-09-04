@@ -83,8 +83,8 @@ subroutine vpbosc(typres, nbmode, nbvect, omeshi, valpro,&
             valr(2) = freqom(vpmax)
             call utmess('I', 'ALGELINE6_16', nr=2, valr=valr)
         else
-            valr(1) = vpinf
-            valr(2) = vpmax
+            valr(1) = -vpmax
+            valr(2) = -vpinf
             call utmess('I', 'ALGELINE6_17', nr=2, valr=valr)
         endif
     endif

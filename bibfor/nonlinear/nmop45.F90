@@ -96,7 +96,7 @@ subroutine nmop45(matrig, matgeo, defo, option, nfreq,&
     integer :: ifm, niv, nbddl, un
     character(len=1) :: ktyp
     real(kind=8) :: alpha, tolsor, undf, omemin, omemax, omeshi, omecor, precdc
-    real(kind=8) :: vpinf, precsh, vpmax, csta, det(2)
+    real(kind=8) :: vpinf, precsh, vpmax, csta, det(2), omebid
     complex(kind=8) :: cbid
     character(len=8) :: knega, method, chaine
     character(len=16) :: typcon, typres, typco2, k16bid
@@ -229,6 +229,13 @@ subroutine nmop45(matrig, matgeo, defo, option, nfreq,&
     call mtdscr(matopa)
     call jeveuo(matopa(1:19)//'.&INT', 'E', lmatra)
 !        RECHERCHE DU NOMBRE DE CHAR_CRIT DANS LINTERVALEE OMEMIN,OMEMAX
+    
+    if (mod45 .eq. 'FLAM') then
+        omebid = omemin 
+        omemin = - omemax
+        omemax = - omebid
+    endif
+    
     if (option .eq. 'BANDE') then
         call vpfopr(option, typres, lmasse, lraide, lmatra,&
                     omemin, omemax, omeshi, nfreq, npiv2,&
@@ -249,6 +256,12 @@ subroutine nmop45(matrig, matgeo, defo, option, nfreq,&
                     omecor, precsh, nbrss, nblagr, solveu,&
                     det, idet)
         npivot=npiv2(1)
+    endif
+    
+    if (mod45 .eq. 'FLAM') then
+        omebid = omemin 
+        omemin = - omemax
+        omemax = - omebid
     endif
 !
 !     ------------------------------------------------------------------
@@ -467,12 +480,22 @@ subroutine nmop45(matrig, matgeo, defo, option, nfreq,&
 !
     mfreq = nconv
     if (option .eq. 'BANDE') then
+        if (mod45 .eq. 'FLAM') then
+            omebid = omemin 
+            omemin = - omemax
+            omemax = - omebid
+        endif
         do ifreq = mfreq - 1, 0, -1
             if (zr(lresur+mxresf+ifreq) .gt. omemax .or. zr(lresur+ mxresf+ifreq) .lt.&
                 omemin) then
                 nconv = nconv - 1
             endif
         end do
+        if (mod45 .eq. 'FLAM') then
+            omebid = omemin 
+            omemin = - omemax
+            omemax = - omebid
+        endif
         if (mfreq .ne. nconv) then
             call utmess('I', 'ALGELINE2_17')
         endif

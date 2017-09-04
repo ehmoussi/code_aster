@@ -132,8 +132,8 @@ TEST_RESU(RESU=_F(PARA='CHAR_CRIT',
                   NUME_MODE=1,
                   REFERENCE='SOURCE_EXTERNE',
                   RESULTAT=MOD_1,
-                  VALE_CALC=-1.2399263895562,
-                  VALE_REFE=-1.275226,
+                  VALE_CALC=1.2399263895562,
+                  VALE_REFE=1.275226,
                   PRECISION=0.03,),
           )
 

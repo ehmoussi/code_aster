@@ -73,7 +73,7 @@ RGEO1=ASSE_MATRICE(  MATR_ELEM=RGEOEL1,  NUME_DDL=NUMEDDL )
 MODE1=CALC_MODES(MATR_RIGI=RIGI,
                  OPTION='BANDE',
                  MATR_RIGI_GEOM=RGEO1,
-                 CALC_CHAR_CRIT=_F(CHAR_CRIT=(0.063,2.47,),
+                 CALC_CHAR_CRIT=_F(CHAR_CRIT=(-2.47, -0.063),
                                    ),
                  TYPE_RESU='MODE_FLAMB',
                  )
@@ -82,8 +82,8 @@ MODE1=CALC_MODES(MATR_RIGI=RIGI,
 TEST_RESU(RESU=_F(PARA='CHAR_CRIT',
                   NUME_MODE=1,
                   RESULTAT=MODE1,
-                  VALE_CALC=1.090062537,
-                  VALE_REFE=1.0880000000000001,
+                  VALE_CALC=-1.090062537,
+                  VALE_REFE=-1.0880000000000001,
                   REFERENCE='NON_DEFINI',
                   PRECISION=1.E-2,),
           )
@@ -111,17 +111,17 @@ RGEO2=ASSE_MATRICE(  MATR_ELEM=RGEOEL2,  NUME_DDL=NUMEDDL )
 MODE2=CALC_MODES(MATR_RIGI=RIGI,
                  OPTION='BANDE',
                  MATR_RIGI_GEOM=RGEO2,
-                 CALC_CHAR_CRIT=_F(CHAR_CRIT=(0.063,2.47,),
+                 CALC_CHAR_CRIT=_F(CHAR_CRIT=(-2.47, -0.063),
                                    ),
                  TYPE_RESU='MODE_FLAMB',
                  )
 
 
 TEST_RESU(RESU=_F(PARA='CHAR_CRIT',
-                  NUME_MODE=1,
+                  NUME_MODE=2,
                   RESULTAT=MODE2,
-                  VALE_CALC=0.681322145,
-                  VALE_REFE=0.68000000000000005,
+                  VALE_CALC=-0.681322145,
+                  VALE_REFE=-0.68000000000000005,
                   REFERENCE='NON_DEFINI',
                   PRECISION=1.E-2,),
           )

@@ -65,6 +65,13 @@ subroutine vpfopr(option, typres, lmasse, lraide, ldynam,&
 !                            NUMERO DE LA BANDE CONSIDEREE
 !                         OUTPUT:NPIVOT(2)=NPIVOT OMEMAX.
 !           ='STURMLNP' ... IDEM + COMM POUR MACRO //
+!     OPTION='STURMLNS' --> OUTPUT: NBFREQ + OMEMIN/MAX +
+!                         AFFICHAGES DEDIE VPECST + NPIVOT(2)
+!                         INPUT: INTENDANCE + OMEMIN/MAX +
+!                         NPIVOT(2)=NPIVOT OMEMAX ET NPIVOT(1)=
+!                            NUMERO DE LA BANDE CONSIDEREE
+!                         OUTPUT:NPIVOT(1)=NPIVOT OMEMIN.
+!           ='STURMLNQ' ... IDEM + COMM POUR MACRO //
 !
 !     POUR ETAPE PRETRAITEMENT DE MODE_ITER_INV (AJUSTE/SEPARE)
 !     OPTION='STURMAD' --> OUTPUT: NBFREQ + OMEMIN/MAX +
@@ -141,9 +148,11 @@ subroutine vpfopr(option, typres, lmasse, lraide, ldynam,&
         (option.ne.'PLUS_PETITE') .and. (option.ne.'TOUT') .and. (option.ne.'STURM') .and.&
         (option.ne.'STURML1') .and. (option.ne.'STURML1P') .and. (option.ne.'STURML10')&
         .and. (option.ne.'STURML11') .and. (option.ne.'STURMLN') .and.&
-        (option.ne.'STURMLNP') .and. (option.ne.'STURMAD')) then
+        (option.ne.'STURMLNP') .and. (option.ne.'STURMAD').and. (option.ne.'STURMLNS')&
+        .and. (option.ne.'STURMLNQ')) then
         ASSERT(.false.)
     endif
+    
     det(1)=-9999.d0
     det(2)=-9999.d0
     idet(1)=-9999
@@ -152,6 +161,9 @@ subroutine vpfopr(option, typres, lmasse, lraide, ldynam,&
     if (option(1:7) .ne. 'STURMLN') then
         npivot(1)=-9999
         npivot(2)=-9999
+    elseif ((option .eq. 'STURMLNS') .or. (option .eq. 'STURMLNQ') ) then
+        ibande=npivot(1)
+        npivot(1)=-9999
     else
         ibande=npivot(2)
         npivot(2)=-9999
@@ -239,7 +251,7 @@ subroutine vpfopr(option, typres, lmasse, lraide, ldynam,&
             if (ldyna) then
                 call utmess('I', 'ALGELINE6_42', sr=freqom(omeshi))
             else
-                call utmess('I', 'ALGELINE6_43', sr=omeshi)
+                call utmess('I', 'ALGELINE6_43', sr=-omeshi)
             endif
         endif
 !
@@ -253,8 +265,7 @@ subroutine vpfopr(option, typres, lmasse, lraide, ldynam,&
         omgmin=omemin
         if ((option.eq.'STURMLN') .or. (option.eq.'STURMLNP')) then
             nbfmin=npivot(1)
-            else if ((option.ne.'BANDEA').and.(option.ne.'STURML11'))&
-        then
+        else if ((option.ne.'BANDEA').and.(option.ne.'STURML11')) then
             nbessa=0
             prec=precsh
  21         continue
@@ -301,11 +312,17 @@ subroutine vpfopr(option, typres, lmasse, lraide, ldynam,&
         endif
         omemin=omgmin
         if (omemin .ge. omemax) then
-            call utmess('F', 'ALGELINE3_85')
+            if (ldyna) then
+                call utmess('F', 'ALGELINE3_85')
+            else
+                call utmess('F', 'ALGELINE3_86')
+            endif
         endif
 !
         omgmax=omemax
-        if ((option.ne.'BANDEA') .and. (option.ne.'STURML10')) then
+        if ((option.eq.'STURMLNS').or. (option.eq.'STURMLNQ')) then
+            nbfmax=npivot(2)
+        elseif ((option.ne.'BANDEA') .and. (option.ne.'STURML10')) then
             nbessa=0
             prec=precsh
  22         continue
@@ -358,7 +375,7 @@ subroutine vpfopr(option, typres, lmasse, lraide, ldynam,&
 !     ------------------------------------------------------------------
 !     --- COMMUNICATION DES PIVOTS POUR LE BON CALCUL DE STURM
         if ((option.eq.'STURML1P') .or. (option.eq.'STURMLNP') .or. (option.eq.'STURML10')&
-            .or. (option.eq.'STURML11')) then
+            .or. (option.eq.'STURML11').or. (option.eq.'STURMLNQ')) then
             call asmpi_comm('GET_WORLD', mpicow)
             call asmpi_comm('GET', mpicou)
             ASSERT(mpicou .ne. mpicow)
@@ -380,7 +397,7 @@ subroutine vpfopr(option, typres, lmasse, lraide, ldynam,&
                 ASSERT(frecou .eq. 1)
                 if (rangl .eq. 0) zi(jk24c+1)=nbfmax
 !
-            else if (option.eq.'STURMLNP') then
+            else if ((option.eq.'STURMLNP') .or. (option.eq.'STURMLNQ')) then
                 ASSERT(frecou .gt. 1)
                 if (rangl .eq. 0) zi(jk24c+frecou)=nbfmax
 !
@@ -395,7 +412,7 @@ subroutine vpfopr(option, typres, lmasse, lraide, ldynam,&
 !
             call asmpi_comm_vect('MPI_SUM', 'I', nbval=nbrow+1, vi=zi(jk24c))
 !
-            if (option .eq. 'STURMLNP') then
+            if ((option.eq.'STURMLNP') .or. (option.eq.'STURMLNQ')) then
                 nbfmin=zi(jk24c+frecou-1)
                 else if ((option.eq.'STURML10').or.(option.eq.'STURML11'))&
             then
@@ -429,7 +446,7 @@ subroutine vpfopr(option, typres, lmasse, lraide, ldynam,&
 !     --- SEULS CERTAINS PROCS REMONTENT LES OUTPUTS SINON LA COMM
 !     --- EN FIN DE OP0032 VA CUMULER DES INFOS REDONDANTES.
         if ((option.eq.'STURML1P') .or. (option.eq.'STURMLNP') .or. (option.eq.'STURML10')&
-            .or. (option.eq.'STURML11')) then
+            .or. (option.eq.'STURML11') .or. (option.eq.'STURMLNQ')) then
             if (rangl .ne. 0) then
                 omemin=0.d0
                 omemax=0.d0
@@ -505,11 +522,11 @@ subroutine vpfopr(option, typres, lmasse, lraide, ldynam,&
                     call utmess('I', 'ALGELINE6_42', sr=freqom(omeshi))
                 endif
             else
-                valr(1)=omgmin
-                valr(2)=omgmax
+                valr(1)=-omgmax
+                valr(2)=-omgmin
                 call utmess('I', 'ALGELINE6_94', nr=2, valr=valr)
                 if (option(1:5) .eq. 'BANDE') then
-                    call utmess('I', 'ALGELINE6_43', sr=omeshi)
+                    call utmess('I', 'ALGELINE6_43', sr=-omeshi)
                 endif
             endif
         endif
@@ -573,7 +590,7 @@ subroutine vpfopr(option, typres, lmasse, lraide, ldynam,&
             if (ldyna) then
                 call utmess('I', 'ALGELINE6_42', sr=freqom(omeshi))
             else
-                call utmess('I', 'ALGELINE6_43', sr=omeshi)
+                call utmess('I', 'ALGELINE6_43', sr=-omeshi)
             endif
         endif
 !
