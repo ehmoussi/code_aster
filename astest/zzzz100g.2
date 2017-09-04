@@ -18,24 +18,42 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois at edf.fr
-import os
-os.rename('fort.2', 'macro_test.py')
+import pickle
+import numpy as NP
 
-from macro_test import MACRO_TEST
-
-
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
-      DEBUG=_F(SDVERI='OUI',), PAR_LOT='NON')
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
 
 
-form = MACRO_TEST(VALE = 3.)
+def user_func(X, vx, vy):
+    return NP.interp(X, vx, vy)
 
-TEST_FONCTION(VALEUR=_F(VALE_CALC=15.,
-                        VALE_REFE=15.,
-                        VALE_PARA=2.5,
-                        REFERENCE='ANALYTIQUE',
-                        NOM_PARA='X',
-                        FONCTION=form,),
-              )
 
-FIN()
+def macro_test_ops(self, VALE, **kwargs):
+    """Macro de test."""
+    from code_aster.Cata.Commands import FORMULE
+
+    ier = 0
+    self.set_icmd(1)
+    self.DeclareOut('result', self.sd)
+
+    vale_x = NP.arange(5.)
+    vale_y = NP.arange(5.) * 2
+    data = {'user_func': user_func,
+            'vale_x': vale_x,
+            'vale_y': vale_y * VALE}
+
+    result = FORMULE(NOM_PARA='X', VALE='user_func(X, vale_x, vale_y)')
+    result.set_context(pickle.dumps(data))
+
+    return ier
+
+
+MACRO_TEST=FORM(nom="MACRO_TEST",
+                op=macro_test_ops,
+                sd_prod=formule,
+                fr=tr("Macro de test"),
+    regles = (UN_PARMI('VALE', 'VALE_C',),),
+    VALE     = SIMP(statut='o', typ='R'),
+)
