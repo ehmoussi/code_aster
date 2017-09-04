@@ -6,3 +6,4 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm zzzz100g.comm D 1
+F libr zzzz100g.2 D 2
