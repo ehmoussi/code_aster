@@ -130,6 +130,7 @@ MODES=CALC_MODES(MATR_RIGI=RIGIASSE,
                  MATR_MASS=MASSASSE,
                  CALC_FREQ=_F(NMAX_FREQ=3,
                               ),
+                 SOLVEUR_MODAL=_F(COEF_DIM_ESPACE=4),
                  )
 
 
