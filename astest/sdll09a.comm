@@ -614,6 +614,7 @@ MODE1=CALC_MODES(MATR_RIGI=MATASSR1,
                  OPTION='AJUSTE',
                  CALC_FREQ=_F(FREQ=( 53.,1150.,),
                               ),
+                 SOLVEUR=_F(METHODE='MULT_FRONT'),
                  MATR_MASS=MATASSM1,
                  )
 
@@ -622,6 +623,7 @@ MODE1=CALC_MODES(MATR_RIGI=MATASSR1,
 
 MODE2=CALC_MODES(MATR_RIGI=MATASSR2,
                  OPTION='AJUSTE',
+                 SOLVEUR=_F(METHODE='MULT_FRONT'),
                  CALC_FREQ=_F(FREQ=( 53.,1150.,),
                               ),
                  MATR_MASS=MATASSM2,
