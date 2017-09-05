@@ -2,6 +2,9 @@
 # coding: utf-8
 
 import code_aster
+from code_aster.Supervis import setExecutionParameter
+
+setExecutionParameter('memory', 2000.)
 test = code_aster.TestCase()
 
 # Creation du maillage
