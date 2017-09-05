@@ -39,10 +39,6 @@ class ExtendedDataStructure(injector, DataStructure):
     ptr_class_sdj = None
     ptr_sdj = None
 
-    @staticmethod
-    def accessible():
-        return True
-
     @property
     def sdj(self):
         """Return the DataStructure catalog."""
@@ -54,3 +50,12 @@ class ExtendedDataStructure(injector, DataStructure):
                 self.ptr_class_sdj = import_object(cata_sdj)
             self.ptr_sdj = self.ptr_class_sdj(nomj=self.getName())
         return self.ptr_sdj
+
+    # transitional functions - to remove later
+    @staticmethod
+    def accessible():
+        return True
+
+    @property
+    def nom(self):
+        return self.getName()

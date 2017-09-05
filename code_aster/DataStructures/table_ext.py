@@ -19,111 +19,125 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
+from libaster import Table
 import aster
 
 
-def table_getitem(self, key):
-    """Retourne la valeur d'une cellule de la table.
-    Exemple : TAB['INST', 1] retourne la 1ère valeur de la colonne 'INST'."""
-    from Utilitai.Utmess import UTMESS
-    if not self.accessible():
-        raise AsException("Erreur dans table.__getitem__ en PAR_LOT='OUI'")
-    assert len(key) == 2
-    para, numlign = key
-    tabnom = self.sdj.TBLP.get()
-    try:
-        i = tabnom.index('%-24s' % para)
-        resu = aster.getvectjev(tabnom[i + 2])
-        exist = aster.getvectjev(tabnom[i + 3])
-        assert resu is not None
-        assert exist is not None
-        assert exist[numlign - 1] != 0
-        res = resu[numlign - 1]
-    except (IndexError, AssertionError):
-        # pour __getitem__, il est plus logique de retourner KeyError.
-        raise KeyError
-    return res
+class injector(object):
+    class __metaclass__(Table.__class__):
+        def __init__(self, name, bases, dict):
+            for b in bases:
+                if type(b) not in (self, type):
+                    for k,v in dict.items():
+                        setattr(b,k,v)
+            return type.__init__(self, name, bases, dict)
 
-def TITRE(self):
-    """Retourne le titre d'une table Aster
-    (Utile pour récupérer le titre et uniquement le titre d'une table dont
-    on souhaite manipuler la dérivée).
-    """
-    if not self.accessible():
-        raise AsException("Erreur dans table.TITRE en PAR_LOT='OUI'")
-    #titj = aster.getvectjev('%-19s.TITR' % self.get_name())
-    titj = self.sdj.TITR.get()
-    if titj != None:
-        titr = '\n'.join(titj)
-    else:
-        titr = ''
-    return titr
 
-def get_nom_para(self):
-    """Produit une liste des noms des colonnes
-    """
-    if not self.accessible():
-        raise AsException("Erreur dans table.get_nom_para en PAR_LOT='OUI'")
-    l_name = []
-    shape = self.sdj.TBNP.get()
-    desc  = self.sdj.TBLP.get()
-    for n in range(shape[0]):
-        nom = desc[4*n]
-        l_name.append( nom.strip() )
-    return l_name
+# inject some methods in the point foo
+class ExtendedTable(injector, Table):
+    cata_sdj = "SD.sd_table.sd_table"
 
-def EXTR_TABLE(self, para=None) :
-    """Produit un objet Table à partir du contenu d'une table Aster.
-    On peut limiter aux paramètres listés dans 'para'.
-    """
-    def Nonefy(l1,l2) :
-        if l2 == 0:
-            return None
+    def __getitem__(self, key):
+        """Retourne la valeur d'une cellule de la table.
+        Exemple : TAB['INST', 1] retourne la 1ère valeur de la colonne 'INST'."""
+        if not self.accessible():
+            raise RuntimeError("Erreur dans table.__getitem__ en PAR_LOT='OUI'")
+        assert len(key) == 2
+        para, numlign = key
+        tabnom = self.sdj.TBLP.get()
+        try:
+            i = tabnom.index('%-24s' % para)
+            resu = aster.getvectjev(tabnom[i + 2])
+            exist = aster.getvectjev(tabnom[i + 3])
+            assert resu is not None
+            assert exist is not None
+            assert exist[numlign - 1] != 0
+            res = resu[numlign - 1]
+        except (IndexError, AssertionError):
+            # pour __getitem__, il est plus logique de retourner KeyError.
+            raise KeyError
+        return res
+
+    def TITRE(self):
+        """Retourne le titre d'une table Aster
+        (Utile pour récupérer le titre et uniquement le titre d'une table dont
+        on souhaite manipuler la dérivée).
+        """
+        if not self.accessible():
+            raise RuntimeError("Erreur dans table.TITRE en PAR_LOT='OUI'")
+        #titj = aster.getvectjev('%-19s.TITR' % self.get_name())
+        titj = self.sdj.TITR.get()
+        if titj != None:
+            titr = '\n'.join(titj)
         else:
-            return l1
-    if not self.accessible():
-        raise AsException("Erreur dans table.EXTR_TABLE en PAR_LOT='OUI'")
-    from Utilitai.Table import Table
-    # titre
-    titr = self.TITRE()
-    # récupération des paramètres
-    #v_tblp = aster.getvectjev('%-19s.TBLP' % self.get_name())
-    v_tblp = self.sdj.TBLP.get()
-    if v_tblp == None:
-        # retourne une table vide
-        return Table(titr=titr, nom=self.nom)
-    tabnom=list(v_tblp)
-    nparam=len(tabnom)/4
-    lparam=[tabnom[4*i:4*i+4] for i in range(nparam)]
-    # restriction aux paramètres demandés
-    if para is not None:
-        if type(para) not in (list, tuple):
-            para = [para, ]
-        para = [p.strip() for p in para]
-        restr = []
-        for ip in lparam:
-            if ip[0].strip() in para:
-                restr.append(ip)
-        lparam = restr
-    dval={}
-    # liste des paramètres et des types
-    lpar=[]
-    ltyp=[]
-    for i in lparam :
-        value=list(aster.getvectjev(i[2]))
-        exist=aster.getvectjev(i[3])
-        dval[i[0].strip()] = map(Nonefy, value, exist)
-        lpar.append(i[0].strip())
-        ltyp.append(i[1].strip())
-    n=len(dval[lpar[0]])
-    # contenu : liste de dict
-    lisdic=[]
-    for i in range(n) :
-        d={}
-        for p in lpar:
-           d[p]=dval[p][i]
-        lisdic.append(d)
-    return Table(lisdic, lpar, ltyp, titr, self.nom)
+            titr = ''
+        return titr
+
+    def get_nom_para(self):
+        """Produit une liste des noms des colonnes
+        """
+        if not self.accessible():
+            raise RuntimeError("Erreur dans table.get_nom_para en PAR_LOT='OUI'")
+        l_name = []
+        shape = self.sdj.TBNP.get()
+        desc  = self.sdj.TBLP.get()
+        for n in range(shape[0]):
+            nom = desc[4*n]
+            l_name.append( nom.strip() )
+        return l_name
+
+    def EXTR_TABLE(self, para=None) :
+        """Produit un objet Table à partir du contenu d'une table Aster.
+        On peut limiter aux paramètres listés dans 'para'.
+        """
+        def Nonefy(l1,l2) :
+            if l2 == 0:
+                return None
+            else:
+                return l1
+        if not self.accessible():
+            raise RuntimeError("Erreur dans table.EXTR_TABLE en PAR_LOT='OUI'")
+        from Utilitai.Table import Table
+        # titre
+        titr = self.TITRE()
+        # récupération des paramètres
+        #v_tblp = aster.getvectjev('%-19s.TBLP' % self.get_name())
+        v_tblp = self.sdj.TBLP.get()
+        if v_tblp == None:
+            # retourne une table vide
+            return Table(titr=titr, nom=self.nom)
+        tabnom=list(v_tblp)
+        nparam=len(tabnom)/4
+        lparam=[tabnom[4*i:4*i+4] for i in range(nparam)]
+        # restriction aux paramètres demandés
+        if para is not None:
+            if type(para) not in (list, tuple):
+                para = [para, ]
+            para = [p.strip() for p in para]
+            restr = []
+            for ip in lparam:
+                if ip[0].strip() in para:
+                    restr.append(ip)
+            lparam = restr
+        dval={}
+        # liste des paramètres et des types
+        lpar=[]
+        ltyp=[]
+        for i in lparam :
+            value=list(aster.getvectjev(i[2]))
+            exist=aster.getvectjev(i[3])
+            dval[i[0].strip()] = map(Nonefy, value, exist)
+            lpar.append(i[0].strip())
+            ltyp.append(i[1].strip())
+        n=len(dval[lpar[0]])
+        # contenu : liste de dict
+        lisdic=[]
+        for i in range(n) :
+            d={}
+            for p in lpar:
+               d[p]=dval[p][i]
+            lisdic.append(d)
+        return Table(lisdic, lpar, ltyp, titr, self.nom)
 
 
 # class table_fonction(table_sdaster):
