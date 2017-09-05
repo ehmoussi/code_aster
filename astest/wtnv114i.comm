@@ -154,7 +154,7 @@ CHARHO=AFFE_CHAR_MECA(   MODELE=MODELEK,
 
 RESU0=STAT_NON_LINE(
                 MODELE=MODELEK,
-                CHAM_MATER=CHMAT0,
+                CHAM_MATER=CHMAT0,SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                 EXCIT=(
                              _F(
                 CHARGE = CHARHO),
