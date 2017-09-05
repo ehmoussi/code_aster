@@ -19,17 +19,19 @@
 
 # person_in_charge: natacha.bereux@edf.fr
 
+from code_aster import Commands, GeneralizedResultsContainer
+from code_aster.Cata import checkSyntax
 from code_aster.RunManager.AsterFortran import python_execop
 from code_aster.Supervis.libCommandSyntax import CommandSyntax
-from code_aster import GeneralizedResultsContainer
 
 
 def PROJ_MESU_MODAL(**curDict):
-""" Projeter des mesures expérimentales sur un modèle numérique en dynamique."""
-    checkCommandSyntax( Commands.PROJ_MESU_MODAL, kwargs )
+    """Projeter des mesures expérimentales sur un modèle numérique en dynamique."""
+    checkSyntax( Commands.PROJ_MESU_MODAL, kwargs )
+
     mesure = kwargs["MESURE"]
-# TODO tester si on a un concept dyna_trans ou dyna_harmo 
-# si dyna_trans  
+# TODO tester si on a un concept dyna_trans ou dyna_harmo
+# si dyna_trans
     returnGeneResult = TransientGeneralizedResultsContainer.create()
     name = returnGeneResult.getName()
     type = returnGeneResult.getType()

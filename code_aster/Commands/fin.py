@@ -19,9 +19,6 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.Cata import Commands
-from code_aster.Cata.SyntaxChecker import checkCommandSyntax
-
 
 def FIN( **kwargs ):
     """Cloture des bases et fin de l'exécution'"""
