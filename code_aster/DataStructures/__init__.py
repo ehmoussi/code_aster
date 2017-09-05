@@ -24,13 +24,8 @@ This module imports BoostPython DataStructures and extends them with pure
 Python functions.
 """
 
-import libaster
 from libaster import *
 
-# extend DataStructure using a metaclass
-from .generic_ext import ExtendedDataStructure
-from .table_ext import table_getitem
-
-
-Table.cata_sdj = "SD.sd_table.sd_table"
-Table.__getitem__ = table_getitem
+# extend DataStructures using metaclasses
+import generic_ext
+import table_ext
