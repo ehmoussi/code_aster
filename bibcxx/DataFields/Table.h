@@ -71,7 +71,7 @@ public:
      * @param name Nom Jeveux du champ aux noeuds
      */
     TableInstance( const std::string& name ) throw( std::runtime_error ):
-        DataStructure( name, "CHAM_NO" ),
+        DataStructure( name, "TABLE" ),
         _memoryLocation( JeveuxVectorChar8( getName() + ".TBBA" ) ),
         _description( JeveuxVectorLong( getName() + ".TBNP" ) ),
         _parameterDescription( JeveuxVectorChar24( getName() + ".TBLP" ) )
@@ -83,7 +83,7 @@ public:
     /**
      * @brief Constructeur
      */
-    TableInstance(): DataStructure( getNewResultObjectName(), "CHAM_NO" ),
+    TableInstance(): DataStructure( getNewResultObjectName(), "TABLE" ),
                      _memoryLocation( JeveuxVectorChar8( getName() + "           .TBBA" ) ),
                      _description( JeveuxVectorLong( getName() + "           .TBNP" ) ),
                      _parameterDescription( JeveuxVectorChar24( getName() + "           .TBLP" ) )
