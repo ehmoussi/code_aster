@@ -31,7 +31,6 @@ import sys
 # pour utilisation dans eficas
 try:
     import aster
-    from Utilitai.Utmess import UTMESS
 except:
     pass
 
@@ -169,6 +168,7 @@ class JeveuxExists(JeveuxAttr):
         pass
 
     def __get__(self, obj, klass):
+        import aster
         if obj is None:
             return self
         nomj = obj.nomj()
@@ -182,6 +182,7 @@ class JeveuxExists(JeveuxAttr):
 class JeveuxIntAttr(JeveuxAttr):
 
     def __get__(self, obj, klass):
+        import aster
         if obj is None:
             return self
         nomj = obj.nomj()
@@ -196,6 +197,7 @@ class JeveuxIntAttr(JeveuxAttr):
 class JeveuxStrAttr(JeveuxAttr):
 
     def __get__(self, obj, klass):
+        import aster
         if obj is None:
             return self
         nomj = obj.nomj()
@@ -236,6 +238,7 @@ class OJB(AsBase):
             setattr(self, _name, attrs[name])
 
     def get(self):
+        import aster
         nomj = self.nomj()
         if aster.jeveux_exists(nomj):
             obj_simple = aster.jeveux_getattr(nomj, 'XOUS')[1].strip() == 'S'
@@ -248,6 +251,7 @@ class OJB(AsBase):
 
     def changeJeveuxValues(self, nbval, indices, reel, imag, num = 1):
         """Modify values of existing data structures"""
+        import aster
         nomj = self.nomj()
         if aster.jeveux_exists(nomj):
             obj_simple = aster.jeveux_getattr(nomj, 'XOUS')[1].strip() == 'S'
