@@ -19,31 +19,18 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
-# discourage import *
-__all__ = []
+"""
+This module imports BoostPython DataStructures and extends them with pure
+Python functions.
+"""
 
-from .Supervis import executionParameter
-from .RunManager import Initializer
+import libaster
+from libaster import *
 
-# commands must be registered by libCommandSyntax before calling DEBUT.
-from .Cata import Commands
-from .Supervis import libCommandSyntax
-libCommandSyntax.commandsRegister(Commands.commandStore)
+# extend DataStructure using a metaclass
+from .generic_ext import ExtendedDataStructure
+from .table_ext import table_getitem
 
-executionParameter.parse_args()
 
-from .Supervis import libFile
-
-# automatic startup
-if executionParameter.get_option('autostart'):
-    Initializer.init( executionParameter.get_option('buildelem'))
-
-# import datastructures
-from .DataStructures import *
-
-# import general purpose functions
-from .RunManager.saving import saveObjects
-from .Utilities import TestCase
-
-# each package is responsible to export only the relevant objects
-from .LinearAlgebra import *
+Table.cata_sdj = "SD.sd_table.sd_table"
+Table.__getitem__ = table_getitem

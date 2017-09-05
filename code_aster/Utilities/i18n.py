@@ -28,9 +28,8 @@ import os.path as osp
 import gettext
 import locale
 
-from Noyau.N_utils import Singleton
-from Noyau.N_types import force_list
-from strfunc import get_encoding
+from .base_utils import force_list, Singleton
+from .strfunc import get_encoding
 
 
 def get_language():

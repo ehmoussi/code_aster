@@ -6,8 +6,9 @@ This package adds the support of macro-commands.
 
 import sys
 
-from code_aster.Cata import Commands, checkSyntax
-from code_aster.Cata.SyntaxUtils import debug_message2
+from ..Cata import Commands, checkSyntax
+from ..Cata.SyntaxUtils import debug_message2
+from ..Utilities import import_object
 
 
 class ExecuteMacro(object):
@@ -46,36 +47,3 @@ class ExecuteMacro(object):
     def set_icmd(self, _):
         """Does nothing, kept for compatibility."""
         return
-
-
-def import_object(uri):
-    """Load and return a python object (class, function...).
-    Its `uri` looks like "mainpkg.subpkg.module.object", this means
-    that "mainpkg.subpkg.module" is imported and "object" is
-    the object to return.
-
-    Arguments:
-        uri (str): Path to the object to import.
-
-    Returns:
-        object: Imported object.
-    """
-    path = uri.split('.')
-    modname = '.'.join(path[:-1])
-    if len(modname) == 0:
-        raise ImportError("invalid uri: {0}".format(uri))
-    mod = obj = '?'
-    objname = path[-1]
-    try:
-        __import__(modname)
-        mod = sys.modules[modname]
-    except ImportError as err:
-        raise ImportError("can not import module : {0} ({1})"
-                          .format(modname, str(err)))
-    try:
-        obj = getattr(mod, objname)
-    except AttributeError as err:
-        raise AttributeError("object ({0}) not found in module {1!r}. "
-                             "Module content is: {2}"
-                             .format(objname, modname, tuple(dir(mod))))
-    return obj

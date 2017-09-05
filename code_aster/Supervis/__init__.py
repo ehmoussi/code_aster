@@ -18,7 +18,8 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 # install i18n function
-from Execution import i18n
+from ..Utilities.i18n import localization
+localization.install()
 
 from .libExecutionParameter import (
     executionParameter, setExecutionParameter,
