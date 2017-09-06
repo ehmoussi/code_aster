@@ -1,7 +1,7 @@
 # coding: utf-8
 
 """
-This package adds the support of macro-commands.
+This module adds the support of macro-commands.
 """
 
 import sys
