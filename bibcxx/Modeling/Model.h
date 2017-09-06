@@ -38,17 +38,17 @@
 #include "Utilities/SyntaxDictionary.h"
 
 /**
- * @enum ModelSiplitingMethod
+ * @enum ModelSplitingMethod
  * @brief Methodes de partitionnement du modèle
  * @author Nicolas Sellenet
  */
-enum ModelSiplitingMethod { Centralized, SubDomain, GroupOfElementsSplit };
-const int nbModelSiplitingMethod = 3;
+enum ModelSplitingMethod { Centralized, SubDomain, GroupOfElementsSplit };
+const int nbModelSplitingMethod = 3;
 /**
- * @var ModelSiplitingMethodNames
+ * @var ModelSplitingMethodNames
  * @brief Nom Aster des differents partitionnement
  */
-extern const char* const ModelSiplitingMethodNames[nbModelSiplitingMethod];
+extern const char* const ModelSplitingMethodNames[nbModelSplitingMethod];
 
 /**
  * @enum GraphPartitioner
@@ -95,7 +95,7 @@ class ModelInstance: public DataStructure
         /** @brief Maillage sur lequel repose la modelisation */
         BaseMeshPtr          _supportBaseMesh;
         /** @brief Méthode de parallélisation du modèle */
-        ModelSiplitingMethod _splitMethod;
+        ModelSplitingMethod _splitMethod;
         /** @brief Graph partitioning */
         GraphPartitioner     _graphPartitioner;
         /** @brief Booleen indiquant si la sd a deja ete remplie */
@@ -194,7 +194,7 @@ class ModelInstance: public DataStructure
         /**
          * @brief Definition de la methode de partition
          */
-        void setSplittingMethod( ModelSiplitingMethod split, GraphPartitioner partitioner )
+        void setSplittingMethod( ModelSplitingMethod split, GraphPartitioner partitioner )
         {
             _splitMethod = split;
             _graphPartitioner = partitioner;
@@ -203,9 +203,25 @@ class ModelInstance: public DataStructure
         /**
          * @brief Definition de la methode de partition
          */
-        void setSplittingMethod( ModelSiplitingMethod split )
+        void setSplittingMethod( ModelSplitingMethod split )
         {
             _splitMethod = split;
+        };
+
+        /**
+         * @brief Obtention de la methode de partition
+         */
+        ModelSplitingMethod getSplittingMethod( )
+        {
+            return _splitMethod ;
+        };
+
+        /**
+         * @brief Obtention de la methode du partitioner
+         */
+        GraphPartitioner getGraphPartitioner( )
+        {
+            return _graphPartitioner ;
         };
 
         /**

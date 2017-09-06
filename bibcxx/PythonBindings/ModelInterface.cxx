@@ -29,22 +29,29 @@ void exportModelToPython()
 {
     using namespace boost::python;
 
-//     enum_< ModelSiplitingMethod >( "ModelSiplitingMethod" )
-//         .value( "Centralized", Centralized )
-//         .value( "SubDomain", SubDomain )
-//         .value( "GroupOfElements", GroupOfElements )
-//         ;
-// 
-//     enum_< GraphPartitioner >( "GraphPartitioner" )
-//         .value( "Scotch", ScotchPartitioner )
-//         .value( "Metis", MetisPartitioner )
-//         ;
+     enum_< ModelSplitingMethod >( "ModelSplitingMethod" )
+         .value( "Centralized", Centralized )
+         .value( "SubDomain", SubDomain )
+         .value( "GroupOfElements", GroupOfElementsSplit )
+         ;
+
+     enum_< GraphPartitioner >( "GraphPartitioner" )
+         .value( "Scotch", ScotchPartitioner )
+         .value( "Metis", MetisPartitioner )
+         ;
 
     bool (ModelInstance::*c1)(MeshPtr&) =
             &ModelInstance::setSupportMesh;
+
+    void (ModelInstance::*split1)(ModelSplitingMethod) =
+            &ModelInstance::setSplittingMethod;
+
+    void (ModelInstance::*split2)(ModelSplitingMethod, GraphPartitioner) =
+            &ModelInstance::setSplittingMethod;
 #ifdef _USE_MPI
     bool (ModelInstance::*c2)(ParallelMeshPtr&) =
             &ModelInstance::setSupportMesh;
+
 #endif /* _USE_MPI */
 
     class_< ModelInstance, ModelInstance::ModelPtr,
@@ -56,7 +63,11 @@ void exportModelToPython()
         .def( "addModelingOnGroupOfNodes", &ModelInstance::addModelingOnGroupOfNodes )
         .def( "build", &ModelInstance::build )
         .def( "getSupportMesh", &ModelInstance::getSupportMesh )
+        .def( "getSplittingMethod", &ModelInstance::getSplittingMethod )
+        .def( "getGraphPartitioner", &ModelInstance::getGraphPartitioner )
         .def( "setSupportMesh", c1 )
+        .def( "setSplittingMethod", split1 )
+        .def( "setSplittingMethod", split2 )
 #ifdef _USE_MPI
         .def( "setSupportMesh", c2 )
 #endif /* _USE_MPI */

@@ -32,6 +32,12 @@ test.assertEqual( model.getType(), "MODELE" )
 model.setSupportMesh(mesh)
 model.addModelingOnAllMesh(code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
 
+model.setSplittingMethod(code_aster.ModelSplitingMethod.GroupOfElements)
+test.assertEqual(model.getSplittingMethod(),code_aster.ModelSplitingMethod.GroupOfElements)
+
+model.setSplittingMethod(code_aster.ModelSplitingMethod.Centralized)
+test.assertEqual(model.getSplittingMethod(),code_aster.ModelSplitingMethod.Centralized)
+
 model.build()
 
 # Definition du modele Aster
