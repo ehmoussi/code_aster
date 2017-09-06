@@ -40,6 +40,9 @@ CCARCRI  = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
           'TSAMPL','TSRETOUR','POSTITER','LC_EXT[3]','MODECALC',
           'ALPHA','LC_EXT2[2]',))
 
+ECHGREP = LocatedComponents(phys=PHY.CHGREPER, type='ELEM',
+                            components=('NATCHG', 'CMAT[9]',))
+
 
 NDEPLAC  = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',
     components=('DX','DY','DZ',))
@@ -352,6 +355,16 @@ class MEMBTR3(Element):
                      (SP.PREFCO, EREFCO),),
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
+        
+        OP.REPERE_LOCAL(te=134,
+                        para_in=((SP.PCACOQU, CCACOQU), (SP.PGEOMER, NGEOMER),
+                                 ),
+                        para_out=(
+                        (OP.REPERE_LOCAL.PMATPASS, ECHGREP), (
+                            SP.PREPLO1, LC.CGEOM3D),
+                        (SP.PREPLO2, LC.CGEOM3D), (SP.PREPLO3, LC.CGEOM3D),
+                        ),
+                        ),
 
         OP.RIGI_MECA(te=435,
             para_in=((SP.PCACOQU, CCACOQU), (SP.PGEOMER, NGEOMER),
