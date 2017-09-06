@@ -38,8 +38,8 @@ from .Supervis import libFile
 if executionParameter.get_option('autostart'):
     Initializer.init( executionParameter.get_option('buildelem'))
 
-# import datastructures
-from .DataStructures import *
+# import datastructures enriched by pure python extensions
+from .Extensions import *
 
 # import general purpose functions
 from .RunManager.saving import saveObjects
