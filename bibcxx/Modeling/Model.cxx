@@ -31,7 +31,7 @@
 
 #include "RunManager/CommandSyntaxCython.h"
 
-const char* const ModelSiplitingMethodNames[nbModelSiplitingMethod] = { "CENTRALISE",
+const char* const ModelSplitingMethodNames[nbModelSplitingMethod] = { "CENTRALISE",
                                                                         "SOUS_DOMAINE",
                                                                         "GROUP_ELEM" };
 const char* const GraphPartitionerNames[nbGraphPartitioner] = { "SCOTCH", "METIS" };
@@ -112,7 +112,14 @@ bool ModelInstance::build() throw ( std::runtime_error )
     {
         ListSyntaxMapContainer listeDISTRIBUTION;
         SyntaxMapContainer dict2;
-        dict2.container["METHODE"] = ModelSiplitingMethodNames[ (int)Centralized ];
+        dict2.container["METHODE"] = ModelSplitingMethodNames[ (int)Centralized ];
+        listeDISTRIBUTION.push_back( dict2 );
+        dict.container["DISTRIBUTION"] = listeDISTRIBUTION;
+    } else {
+        ListSyntaxMapContainer listeDISTRIBUTION;
+        SyntaxMapContainer dict2;
+        dict2.container["METHODE"] = ModelSplitingMethodNames[ (int)getSplittingMethod() ];
+        dict2.container["PARTITIONNEUR"] = GraphPartitionerNames[ (int)getGraphPartitioner() ];
         listeDISTRIBUTION.push_back( dict2 );
         dict.container["DISTRIBUTION"] = listeDISTRIBUTION;
     }
