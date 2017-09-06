@@ -215,6 +215,13 @@ class MEEI_HEXA20(Element):
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
 
+        OP.REPERE_LOCAL(te=133,
+            para_in=((SP.PCAMASS, CCAMASS), (SP.PGEOMER, NGEOMER),
+                     ),
+            para_out=((SP.PREPLO1, LC.CGEOM3D), (SP.PREPLO2, LC.CGEOM3D),
+                     (SP.PREPLO3, LC.CGEOM3D), ),
+        ),
+
         OP.RIGI_MECA_ELAS(te=360,
             para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, CCARCRI),
                      (OP.RIGI_MECA_ELAS.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_ELAS.PCONTMR, ECONTPG),

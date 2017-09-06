@@ -21,7 +21,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),);
 
 # MODELISATIONS COQUES ET GRILLES LINEAIRES
 
-# Pour varifier que l'on peut lire et ecrire des noms de groupe de plus 8 caracteres :
+# Pour vérifier que l'on peut lire et ecrire des noms de groupe de plus 8 caracteres :
 MA1=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=20)
 IMPR_RESU(RESU=_F(MAILLAGE=MA1),UNITE=21,FORMAT='ASTER',PROC0='NON',)
 DEFI_FICHIER(UNITE=21, ACTION='LIBERER')
@@ -57,6 +57,10 @@ MODELE=AFFE_MODELE( MAILLAGE=MAILLAGE,
                               PHENOMENE = 'MECANIQUE',
                               MODELISATION = 'GRILLE_MEMBRANE'
                             ),
+                          _F( MAILLE = ('MEMB4',),
+                              PHENOMENE = 'MECANIQUE',
+                              MODELISATION = 'MEMBRANE'
+                            ),
                          ),
                   )
 
@@ -68,7 +72,6 @@ CARAELEM=AFFE_CARA_ELEM(
                       MODELE=MODELE,
                        COQUE=(_F(  GROUP_MA='GROUP_MA_COQUE',
                                    EPAIS = 0.1,
-                                   #VECTEUR=(0.0,1.0,1.0),
                                    ANGL_REP=(45.0,-45.0),
                                 ),
                                ),
@@ -76,6 +79,10 @@ CARAELEM=AFFE_CARA_ELEM(
                                    SECTION = 0.1,
                                    ANGL_REP=(45.0,-45.0),
                                 ),
+                       MEMBRANE=_F(MAILLE = 'MEMB4',
+                                   ANGL_REP=(45.0,-45.0),
+                                   EPAIS = 0.1,
+                                )
                          )
 
 
@@ -123,6 +130,10 @@ REPLO_3 = LIRE_CHAMP(
                       NOM_MED     = 'CARAELEM.REPLO_3',
                       NOM_CMP_IDEM='OUI',
                      )
+
+
+
+
 
 # VECTEUR x local
 TEST_RESU(CHAM_ELEM=(_F(
@@ -208,6 +219,16 @@ TEST_RESU(CHAM_ELEM=(_F(
                       _F(
                         CHAM_GD = REPLO_1,
                         MAILLE='GREX4',
+                        POINT= 1,
+                        NOM_CMP = 'Z',
+                        VALE_CALC=0.707106781186E0,
+                        VALE_REFE=0.707106781186E0,
+                        REFERENCE = 'ANALYTIQUE',
+                        PRECISION = 1.E-8
+                       ),
+                      _F(
+                        CHAM_GD = REPLO_1,
+                        MAILLE='MEMB4',
                         POINT= 1,
                         NOM_CMP = 'Z',
                         VALE_CALC=0.707106781186E0,
