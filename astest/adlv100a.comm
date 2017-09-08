@@ -69,6 +69,7 @@ MATASM=ASSE_MATRICE(MATR_ELEM=MATELE_M,NUME_DDL=NUM)
 MODES=CALC_MODES( OPTION='AJUSTE',
                   MATR_RIGI=MATASK,
                   MATR_MASS=MATASM,
+                  SOLVEUR_MODAL=_F(PREC_AJUSTE=1.E-4,PREC_INV=1.E-07),
                   CALC_FREQ=_F( FREQ = (10., 20.) )
                  )
 

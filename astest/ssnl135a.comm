@@ -603,7 +603,7 @@ MEKEFOR0=STAT_NON_LINE(MODELE=MO,
 
 MEKEFOR=STAT_NON_LINE(MODELE=MO,
                       CHAM_MATER=CHMAT,
-                      CARA_ELEM=CAREL,
+                      CARA_ELEM=CAREL,SOLVEUR=_F(NPREC=9),
                       ETAT_INIT=_F(EVOL_NOLI=MEKEFOR0),
                       EXCIT=(_F(CHARGE=LIAISON,),
                              _F(CHARGE=DEPLT,),
