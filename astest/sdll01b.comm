@@ -122,7 +122,7 @@ MATASSM2=ASSE_MATRICE(MATR_ELEM=MELM2,NUME_DDL=NUM2)
 #                      CALCUL MODAL
 #--------------------------------------------------------------------
 
-MODE1=CALC_MODES( OPTION='AJUSTE',
+MODE1=CALC_MODES( OPTION='AJUSTE',SOLVEUR=_F(METHODE='MULT_FRONT'),
                   MATR_RIGI=MATASSR1,
                   MATR_MASS=MATASSM1,
                   CALC_FREQ=_F( FREQ = ( 430., 4500.) )
@@ -181,7 +181,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
           )
 
 MODE2=CALC_MODES(MATR_RIGI=MATASSR2,
-                 OPTION='AJUSTE',
+                 OPTION='AJUSTE',SOLVEUR=_F(METHODE='MULT_FRONT'),
                  CALC_FREQ=_F(FREQ=( 380.,3300.,),
                               ),
                  MATR_MASS=MATASSM2,

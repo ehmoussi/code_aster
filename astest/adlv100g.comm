@@ -120,6 +120,7 @@ MATM=ASSE_MATRICE(
 #
 MODES=CALC_MODES(MATR_RIGI=MATK,
                  OPTION='AJUSTE',
+                 SOLVEUR_MODAL=_F(PREC_AJUSTE=1.E-6,NMAX_ITER_INV=200,PREC_INV=1.E-9),
                  CALC_FREQ=_F(FREQ=(10.,20.,),
                               ),
                  MATR_MASS=MATM,

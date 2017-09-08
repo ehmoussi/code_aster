@@ -154,6 +154,7 @@ MASS_E=ASSE_MATRICE(  MATR_ELEM=MEMAME_E,
 #
 MODES_E=CALC_MODES(MATR_RIGI=RAID_E,
                    OPTION='BANDE',
+                   SOLVEUR=_F(METHODE='MULT_FRONT'),
                    CALC_FREQ=_F(FREQ=(1.,80.,),
                                 ),
                    MATR_MASS=MASS_E,
@@ -181,12 +182,14 @@ LINT2=DEFI_INTERF_DYNA(   NUME_DDL=NUMDDL_E,
 #  CALCUL DE LA BASE MODALE DES SOUS-STRUCTURES
 #
 #
-BAMO1=DEFI_BASE_MODALE( CLASSIQUE=_F( INTERF_DYNA = LINT1,
+BAMO1=DEFI_BASE_MODALE(  SOLVEUR=_F(METHODE='MULT_FRONT'),
+                         CLASSIQUE=_F( INTERF_DYNA = LINT1,
                                         MODE_MECA = MODES_E,
                                         NMAX_MODE = 2))
 
 #
-BAMO2=DEFI_BASE_MODALE( CLASSIQUE=_F( INTERF_DYNA = LINT2,
+BAMO2=DEFI_BASE_MODALE(   SOLVEUR=_F(METHODE='MULT_FRONT'),
+                          CLASSIQUE=_F( INTERF_DYNA = LINT2,
                                         MODE_MECA = MODES_E,
                                         NMAX_MODE = 2))
 
@@ -239,7 +242,8 @@ RIGGEN=ASSE_MATR_GENE(  NUME_DDL_GENE=NUMEGE,
 #
 # CALCUL DE LA MATRICE DE MASSE AJOUTEE SUR MODELE GENERALISE
 #
-MATRAJ=CALC_MATR_AJOU(  MODELE_FLUIDE=FLUIDE,
+MATRAJ=CALC_MATR_AJOU(SOLVEUR=_F(METHODE='MULT_FRONT'),
+                 MODELE_FLUIDE=FLUIDE,
                  MODELE_INTERFACE=INTERFAC,
                  OPTION='MASS_AJOU',
                   CHARGE=CHARGE_F,
@@ -250,7 +254,8 @@ MATRAJ=CALC_MATR_AJOU(  MODELE_FLUIDE=FLUIDE,
 # CALCUL DE LA MATRICE DE MASSE AJOUTEE SUR MODELE GENERALISE
 # SANS DEFORMEES STATIQUES
 
-MATRAJ2=CALC_MATR_AJOU(  MODELE_FLUIDE=FLUIDE,
+MATRAJ2=CALC_MATR_AJOU(SOLVEUR=_F(METHODE='MULT_FRONT'),
+                 MODELE_FLUIDE=FLUIDE,
                  MODELE_INTERFACE=INTERFAC,
                  OPTION='MASS_AJOU',
                  AVEC_MODE_STAT='NON',
@@ -262,7 +267,8 @@ MATRAJ2=CALC_MATR_AJOU(  MODELE_FLUIDE=FLUIDE,
 #NOUVELLE METHODE AVEC MACRO_MATR_AJOU
 
 
-MACRO_MATR_AJOU(MAILLAGE=MAILLA,
+MACRO_MATR_AJOU(SOLVEUR=_F(METHODE='MULT_FRONT'),
+                  MAILLAGE=MAILLA,
                   GROUP_MA_FLUIDE='LIQUIDE',
                   GROUP_MA_INTERF='INTERFAC',
                   FLUIDE=_F( RHO = 1000.),
@@ -277,7 +283,8 @@ MACRO_MATR_AJOU(MAILLAGE=MAILLA,
 #NOUVELLE METHODE AVEC MACRO_MATR_AJOU SANS DEFORMEES STATIQUES
 
 
-MACRO_MATR_AJOU(MAILLAGE=MAILLA,
+MACRO_MATR_AJOU(SOLVEUR=_F(METHODE='MULT_FRONT'),
+                  MAILLAGE=MAILLA,
                   GROUP_MA_FLUIDE='LIQUIDE',
                   GROUP_MA_INTERF='INTERFAC',
                   FLUIDE=_F( RHO = 1000.),
@@ -329,6 +336,7 @@ RESGEN=CALC_MODES(MATR_RIGI=RIGGEN,
                   CALC_FREQ=_F(FREQ=(2.,70.,),
                                ),
                   MATR_MASS=MASTOT,
+                  SOLVEUR=_F(METHODE='MULT_FRONT'),
                   )
 
 
@@ -338,7 +346,9 @@ RESGEN2=CALC_MODES(MATR_RIGI=RIGGEN,
                    OPTION='BANDE',
                    CALC_FREQ=_F(FREQ=(2.,70.,),
                                 ),
+                                
                    MATR_MASS=MASTOT2,
+                   SOLVEUR=_F(METHODE='MULT_FRONT'),
                    )
 
 
@@ -352,6 +362,7 @@ RESDEF=CALC_MODES(MATR_RIGI=RIGGEN,
                   CALC_FREQ=_F(FREQ=(2.,70.,),
                                ),
                   MATR_MASS=MASDEF,
+                  SOLVEUR=_F(METHODE='MULT_FRONT'),
                   )
 
 
