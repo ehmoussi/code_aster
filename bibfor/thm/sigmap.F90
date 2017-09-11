@@ -33,15 +33,15 @@ real(kind=8), intent(out) :: sigmp(6)
 !
 ! THM
 !
-! Derivative of pressure part of stress by capillary pressure
+! Compute mechanical stress from pressures
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  signe            : sign for saturation
 ! In  tbiot            : tensor of Biot
 ! In  satur            : value of saturation
-! In  dp1              : increment of first pressure
-! In  dp2              : increment of second pressure
+! In  dp1              : increment of capillary pressure
+! In  dp2              : increment of gaz pressure
 ! Out sigmp            : stress component for pressure
 !
 ! --------------------------------------------------------------------------------------------------

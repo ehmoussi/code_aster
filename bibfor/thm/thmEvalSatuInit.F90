@@ -47,8 +47,8 @@ integer, intent(out) :: retcom
 !
 ! In  hydr         : type of hydraulic law
 ! In  j_mater      : coded material address
-! In  p1m          : first pressure at beginning of step
-! In  p1           : current first pressure
+! In  p1m          : capillary pressure - At beginning of step
+! In  p1           : capillary pressure - At end of current step
 ! Out satm         : saturation at beginning of step
 ! Out satur        : saturation
 ! Out dsatur       : derivative of saturation (/pc)
