@@ -187,19 +187,20 @@ real(kind=8), intent(in) :: temp
                         phi0  , dp1   , dp2 , signe, satur,&
                         em    , phi   , phim)
         endif
-! =====================================================================
-! --- CALCUL DE LA VARIABLE INTERNE DE MASSE VOLUMIQUE DU FLUIDE ------
-! --- SELON FORMULE DOCR ----------------------------------------------
-! =====================================================================
+! ----- Compute volumic mass for water
         if (yate .eq. 1) then
-            call virhol(nbvari, vintm, vintp, advihy, vihrho,&
-                        rho110, dp1, dp2, dpad, cliq,&
-                        dt, alpliq, signe, rho11, rho11m,&
+            call virhol(nbvari, vintm , vintp ,&
+                        advihy, vihrho,&
+                        dt    , dp1   , dp2   , dpad,& 
+                        cliq  , alpliq, signe ,&
+                        rho110, rho11 , rho11m,&
                         retcom)
         else
-            call virhol(nbvari, vintm, vintp, advihy, vihrho,&
-                        rho110, dp1, dp2, dpad, cliq,&
-                        dt, 0.d0, signe, rho11, rho11m,&
+            call virhol(nbvari, vintm , vintp ,&
+                        advihy, vihrho,&
+                        dt    , dp1   , dp2   , dpad,& 
+                        cliq  , 0.d0  , signe ,&
+                        rho110, rho11 , rho11m,&
                         retcom)
         endif
 ! =====================================================================
