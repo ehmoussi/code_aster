@@ -711,12 +711,15 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, UNITE_MAILLAGE, LIGN_COUPE,
             mcORDR['LIST_ORDRE'] = args['LIST_ORDRE']
         elif args['INST'] != None:
             mcORDR['INST'] = args['INST']
-        elif args['INST'] != None:
-            mcORDR['INST'] = args['INST']
+            mcORDR['CRITERE'] = args['CRITERE']
+            mcORDR['PRECISION'] = args['PRECISION']
         elif args['LIST_INST'] != None:
             mcORDR['LIST_INST'] = args['LIST_INST']
+            mcORDR['CRITERE'] = args['CRITERE']
+            mcORDR['PRECISION'] = args['PRECISION']
         else:
             mcORDR['TOUT_ORDRE'] = 'OUI'
+
 
         nomresu = RESULTAT.nom
         type_resu = AsType(RESULTAT).__name__
@@ -863,7 +866,7 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, UNITE_MAILLAGE, LIGN_COUPE,
 
             __mailla = DEFI_GROUP(reuse=__mailla, MAILLAGE=__mailla,
                                   DETR_GROUP_NO=_F(NOM=str(m['GROUP_MA'])),
-                                  CREA_GROUP_NO=_F(OPTION='NOEUD_ORDO', NOM=str(m['GROUP_MA']), 
+                                  CREA_GROUP_NO=_F(OPTION='NOEUD_ORDO', NOM=str(m['GROUP_MA']),
                                                    GROUP_MA=m['GROUP_MA'], ORIGINE='SANS', **argsup))
 
             collgrno = aster.getcolljev(__mailla.nom.ljust(8) + '.GROUPENO')
@@ -925,8 +928,8 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, UNITE_MAILLAGE, LIGN_COUPE,
                                       MODELISATION='PLAN',),)
 
     motscles = {}
+    motscles.update(mcORDR)
     motscles['VIS_A_VIS'] = []
-    motscles[mcORDR.keys()[0]] = mcORDR.values()[0]
     if args['VIS_A_VIS'] != None:
         for v in args['VIS_A_VIS']:
             if v['GROUP_MA_1'] != None:
@@ -1088,6 +1091,9 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, UNITE_MAILLAGE, LIGN_COUPE,
     if 'NOEUD' in dictab.para:
         del dictab['NOEUD']
     dprod = dictab.dict_CREA_TABLE()
+    # Remove TITRE key from the dictionary so that the newly created table uses
+    # the user-given concept name in its title
+    dprod.pop('TITRE')
 
     nomres = CREA_TABLE(**dprod)
 

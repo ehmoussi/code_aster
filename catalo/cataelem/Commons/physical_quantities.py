@@ -128,8 +128,8 @@ CACOQU   = PhysicalQuantity(type='R',
                  la direction perpendiculaire au plan tangent de l'element
        EXCENT  : excentrement du feuillet moyen
        INERTIE : prise en compte de l'inertie de rotation
-       TENS    : (réservé aux membranes) application d'une contrainte 
-                 initiale pour faire converger à la première iteration. 
+       TENS    : (réservé aux membranes) application d'une contrainte
+                 initiale pour faire converger à la première iteration.
                  Elle disparait aux increments suivants
 """)
 
@@ -718,7 +718,7 @@ list_cmp_depl=(
   'H2Y',        'H2Z',        'H2PRE1',     'H3X',        'H3Y',        'H3Z',
   'H3PRE1',     'H4X',        'H4Y',        'H4Z',        'LAGR',       'K1',
   'K2',         'K3',         'PRE_FLU',
-  'LAG_FLI',    'LAG_FLS',    'LAGS_C',     'LAGS_F[2]',  'LAG2_C',     'LAG2_F[2]',  
+  'LAG_FLI',    'LAG_FLS',    'LAGS_C',     'LAGS_F[2]',  'LAG2_C',     'LAG2_F[2]',
   'LAG3_C',     'LAG3_F[2]',  'PR2_FLU',    'LA2_FLI',    'LA2_FLS',
   'D1X',        'D1Y',        'D1Z',        'D2X',        'D2Y',        'D2Z',
   'D3X',        'D3Y',        'D3Z',
@@ -1701,7 +1701,7 @@ GEOM_R   = PhysicalQuantity(type='R',
        X : coordonnee suivant OX
        Y : coordonnee suivant OY
        Z : coordonnee suivant OZ (0. Si le modele est 2D)
-       W :
+       W : weight of the point when used in a numerical quadrature
 """)
 
 
