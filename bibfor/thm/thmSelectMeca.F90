@@ -69,12 +69,12 @@ integer, intent(out) :: retcom
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  yate             : 1 if thermic dof
-! In  yap1             : 1 if first pressure dof
-! In  yap2             : 1 if second pressure dof
-! In  p1               : first pressure - At end of current step
-! In  dp1              : increment of first pressure
-! In  p2               : first pressure - At end of current step
-! In  dp2              : increment of first pressure
+! In  yap1             : 1 if capillary pressure dof
+! In  yap2             : 1 if gaz pressure dof
+! In  p1               : capillary pressure - At end of current step
+! In  dp1              : increment of capillary pressure
+! In  p2               : gaz pressure - At end of current step
+! In  dp2              : increment of gaz pressure
 ! In  satur            : saturation
 ! In  tbiot            : tensor of Biot
 ! In  option           : option to compute

@@ -47,7 +47,7 @@ real(kind=8), optional, intent(out) :: krg_, dkrg_dsatur_, dkrg_dp2_
 ! In  j_mater          : coded material address
 ! In  satur            : saturation
 ! In  temp             : temperature
-! In  p2               : second pressure (gaz)
+! In  p2               : gaz pressure - At end of current step
 ! Out krl              : value of kr(liquid)
 ! Out dkrl_dsatur      : value of d(kr(liquid))/dSatur
 ! Out krg              : value of kr(gaz)

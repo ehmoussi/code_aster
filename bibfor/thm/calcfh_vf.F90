@@ -55,13 +55,13 @@ real(kind=8), intent(inout) :: valfac(6, 14, 6)
 ! In  j_mater          : coded material address
 ! In  ifa              : index of current face
 ! In  t                : temperature - At end of current step
-! In  p1               : first pressure - At end of current step
-! In  p2               : second pressure - At end of current step
+! In  p1               : capillary pressure - At end of current step
+! In  p2               : gaz pressure - At end of current step
 ! In  pvp              : steam pressure
 ! In  pad              : dissolved air pressure
 ! In  rho11            : current volumic mass of liquid
-! In  h11              : enthalpy of first pressure and first phase
-! In  h12              : enthalpy of first pressure and second phase
+! In  h11              : enthalpy of capillary pressure and first phase
+! In  h12              : enthalpy of capillary pressure and second phase
 ! In  satur            : saturation
 ! In  dsatur           : derivative of saturation (/pc)
 ! IO  valfac           : values at faces

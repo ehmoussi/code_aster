@@ -54,8 +54,8 @@ real(kind=8), intent(out) :: phim
 ! In  advico           : index of first internal state variable for coupling law 
 ! In  vicphi           : index of internal state variable for porosity
 ! In  phi0             : initial porosity (THM_INIT)
-! In  dp1              : increment of first pressure
-! In  dp2              : increment of second pressure
+! In  dp1              : increment of capillary pressure
+! In  dp2              : increment of gaz pressure
 ! In  signe            : sign for saturation
 ! In  satur            : value of saturation
 ! In  em               : storage coefficient
