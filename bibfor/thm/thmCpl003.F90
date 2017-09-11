@@ -171,18 +171,20 @@ real(kind=8), intent(in) :: temp
 ! *** LES VARIABLES INTERNES ******************************************
 ! *********************************************************************
     if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
-! =====================================================================
-! --- EN LIQU_VAPE CALCUL DE RHO11, DES ENTHALPIES DE PVP ET RHOVP ----
-! =====================================================================
+! ----- Compute volumic mass for water
         if (yate .eq. 1) then
-            call virhol(nbvari, vintm, vintp, advihy, vihrho,&
-                        rho110, dp1, dp2, dpad, cliq,&
-                        dt, alpliq, signe, rho11, rho11m,&
+            call virhol(nbvari, vintm , vintp ,&
+                        advihy, vihrho,&
+                        dt    , dp1   , dp2   , dpad,& 
+                        cliq  , alpliq, signe ,&
+                        rho110, rho11 , rho11m,&
                         retcom)
         else
-            call virhol(nbvari, vintm, vintp, advihy, vihrho,&
-                        rho110, dp1, dp2, dpad, cliq,&
-                        dt, 0.d0, signe, rho11, rho11m,&
+            call virhol(nbvari, vintm , vintp ,&
+                        advihy, vihrho,&
+                        dt    , dp1   , dp2   , dpad,& 
+                        cliq  , 0.d0  , signe ,&
+                        rho110, rho11 , rho11m,&
                         retcom)
         endif
 ! =====================================================================
