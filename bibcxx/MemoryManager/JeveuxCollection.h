@@ -103,7 +103,13 @@ public:
     {
         long taille = size, ibid = 0;
 
-        CALL_JUCROC_WRAP( _collectionName.c_str(), _nameOfObject.c_str(),
+        std::string nameOfObject( "" );
+        if( _nameOfObject != "" )
+            nameOfObject = _nameOfObject;
+        else
+            ibid = _numberInCollection;
+
+        CALL_JUCROC_WRAP( _collectionName.c_str(), nameOfObject.c_str(),
                           &ibid, &taille, (void*)(&_valuePtr) );
         return true;
     };
@@ -127,6 +133,14 @@ public:
     };
 
     /** @brief Get size of collection object */
+    void setValues( const ValueType& toCopy ) throw( std::runtime_error )
+    {
+        if( size() != 1 )
+            throw std::runtime_error( "Sizes do not match" );
+        _valuePtr[ 0 ] = toCopy;
+    };
+
+    /** @brief Get size of collection object */
     int size() const
     {
         const char* collName = _collectionName.c_str();
@@ -140,6 +154,21 @@ public:
         return (int)valTmp;
     };
 };
+
+/**
+ * @enum JeveuxCollectionAccessType
+ */
+enum JeveuxCollectionAccessType { Numbered, Named };
+
+/**
+ * @enum JeveuxCollectionMemoryStorageType
+ */
+enum JeveuxCollectionMemoryStorageType { Sparse, Contiguous };
+
+/**
+ * @enum JeveuxCollectionObjectSizes
+ */
+enum JeveuxCollectionObjectSizes { Constant, Variable };
 
 /**
  * @struct AllowedNamePointerType
@@ -195,6 +224,54 @@ private:
      */
     PointerType                                        _nameMap;
 
+    /**
+     * @brief Allocation
+     */
+    bool genericAllocation( JeveuxMemory mem, int size,
+                            JeveuxCollectionAccessType access = Named,
+                            JeveuxCollectionMemoryStorageType storage = Sparse,
+                            JeveuxCollectionObjectSizes objectSizes = Variable,
+                            const std::string& name = "",
+                            int totalSize = 0 )
+        throw( std::runtime_error )
+    {
+        long taille = size;
+        _size = size;
+        std::string strJeveuxBase( "V" );
+        if ( mem == Permanent ) strJeveuxBase = "G";
+        const int intType = AllowedJeveuxType< ValueType >::numTypeJeveux;
+        std::string carac( strJeveuxBase + " V " + JeveuxTypesNames[intType] );
+
+        std::string typeColl1( "NO" );
+        if( access == Numbered )
+        {
+            typeColl1 = "NU";
+        }
+        else
+        {
+            _isNamed = true;
+            typeColl1 = typeColl1 + " " + name;
+        }
+
+        std::string typeColl2( "DISPERSE" );
+        if( storage == Contiguous ) typeColl2 = "CONTIG";
+        std::string typeColl3( "VARIABLE" );
+        if( objectSizes == Constant ) typeColl3 = "CONSTANT";
+
+        CALL_JECREC( _name.c_str(), carac.c_str(), typeColl1.c_str(),
+                     typeColl2.c_str(), typeColl3.c_str(), &taille );
+        _isEmpty = false;
+        if( storage == Contiguous )
+        {
+            if( totalSize <= 0 )
+                throw std::runtime_error( "Total size of a contiguous collection must be grower than 0" );
+            std::string strParam( "LONT" );
+            taille = totalSize;
+            CALL_JEECRA_WRAP( _name.c_str(), strParam.c_str(), &taille );
+        }
+        return true;
+    };
+
 public:
     /**
      * @brief Constructeur dans le cas où PointerType n'a pas d'importance
@@ -223,35 +300,87 @@ public:
     ~JeveuxCollectionInstance()
     {
         // pas d'objet maître "distinct" pour une collection
-        _name = "";
+//         _name = "";
     };
 
     /**
      * @brief Allocation
+     * @param mem memory allocation
+     * @param size number of objets in collection
+     * @param access type of access
+     * @param objectSizes size of objects (constant or variable)
      */
     template< typename T1 = PointerType, typename = IsNotSame< T1, int > >
-    bool allocate( JeveuxMemory mem, int size ) throw( std::runtime_error )
+    typename std::enable_if< ! std::is_same< T1, int >::value, bool >::type
+    allocate( JeveuxMemory mem, int size,
+              JeveuxCollectionObjectSizes objectSizes = Variable )
+        throw( std::runtime_error )
     {
         if( ! _nameMap->exists() )
             _nameMap->allocate( mem, size );
         if( _nameMap->size() != size )
             throw std::runtime_error( "Sizes do not match" );
 
-        long taille = size;
-        _size = size;
-        std::string strJeveuxBase( "V" );
-        if ( mem == Permanent ) strJeveuxBase = "G";
-        const int intType = AllowedJeveuxType< ValueType >::numTypeJeveux;
-        std::string carac( strJeveuxBase + " V " + JeveuxTypesNames[intType] );
-        std::string typeColl1( "NO " + _nameMap->getName() );
-        std::string typeColl2( "DISPERSE" );
-        std::string typeColl3( "VARIABLE" );
+        return genericAllocation( mem, size, Named, Sparse, objectSizes, _nameMap->getName() );
+    };
 
-        CALL_JECREC( _name.c_str(), carac.c_str(), typeColl1.c_str(),
-                     typeColl2.c_str(), typeColl3.c_str(), &taille );
-        _isEmpty = false;
-        _isNamed = true;
-        return true;
+    /**
+     * @brief Allocation
+     * @param mem memory allocation
+     * @param size number of objets in collection
+     * @param totalSize total size of the collection
+     * @param objectSizes size of objects (constant or variable)
+     */
+    template< typename T1 = PointerType, typename = IsNotSame< T1, int > >
+    typename std::enable_if< ! std::is_same< T1, int >::value, bool >::type
+    allocateContiguous( JeveuxMemory mem, int size, int totalSize,
+                        JeveuxCollectionObjectSizes objectSizes = Variable )
+        throw( std::runtime_error )
+    {
+        if( ! _nameMap->exists() )
+            _nameMap->allocate( mem, size );
+        if( _nameMap->size() != size )
+            throw std::runtime_error( "Sizes do not match" );
+
+        return genericAllocation( mem, size, Named, Contiguous, objectSizes,
+                                  _nameMap->getName(), totalSize );
+    };
+
+    /**
+     * @brief Allocation
+     * @param mem memory allocation
+     * @param size number of objets in collection
+     * @param access type of access
+     * @param objectSizes size of objects (constant or variable)
+     */
+    template< typename T1 = PointerType, typename = IsSame< T1, int > >
+    typename std::enable_if< std::is_same< T1, int >::value, bool >::type
+    allocate( JeveuxMemory mem, int size,
+              JeveuxCollectionAccessType access = Named,
+              JeveuxCollectionObjectSizes objectSizes = Variable )
+        throw( std::runtime_error )
+    {
+        return genericAllocation( mem, size, access, Sparse, objectSizes,
+                                  "" );
+    };
+
+    /**
+     * @brief Allocation
+     * @param mem memory allocation
+     * @param size number of objets in collection
+     * @param totalSize total size of the collection
+     * @param access type of access
+     * @param objectSizes size of objects (constant or variable)
+     */
+    template< typename T1 = PointerType, typename = IsSame< T1, int > >
+    typename std::enable_if< std::is_same< T1, int >::value, bool >::type
+    allocateContiguous( JeveuxMemory mem, int size, int totalSize,
+              JeveuxCollectionAccessType access = Named,
+              JeveuxCollectionObjectSizes objectSizes = Variable )
+        throw( std::runtime_error )
+    {
+        return genericAllocation( mem, size, access, Contiguous, objectSizes,
+                                  "", totalSize );
     };
 
     /**
@@ -265,6 +394,19 @@ public:
         _mapNumObject[ std::string( trim( name.c_str() ) ) ] = _listObjects.size();
         _listObjects.push_back( JeveuxCollObjValType( _name.c_str(), _listObjects.size() + 1,
                                                       name.c_str() ) );
+        _listObjects[ _listObjects.size() - 1 ].allocate( size );
+        return true;
+    };
+
+    /**
+     * @brief Allocation of one object at the end of a existing collection
+     */
+    bool allocateObject( const int& size )
+        throw( std::runtime_error )
+    {
+        if( _listObjects.size() == _size )
+            throw std::runtime_error( "Out of collection bound" );
+        _listObjects.push_back( JeveuxCollObjValType( _name.c_str(), _listObjects.size() + 1 ) );
         _listObjects[ _listObjects.size() - 1 ].allocate( size );
         return true;
     };
@@ -295,6 +437,18 @@ public:
     };
 
     const JeveuxCollectionObject< ValueType >& getObject( const int& position ) const
+        throw( std::runtime_error )
+    {
+        if( _isEmpty )
+            throw std::runtime_error( "Collection not build" );
+
+        if( position >= _listObjects.size() )
+            throw std::runtime_error( "Out of collection bound" );
+
+        return _listObjects[position];
+    };
+
+    JeveuxCollectionObject< ValueType >& getObject( const int& position )
         throw( std::runtime_error )
     {
         if( _isEmpty )
@@ -462,6 +616,11 @@ public:
     const JeveuxCollectionTypePtr& operator->() const
     {
         return _jeveuxCollectionPtr;
+    };
+
+    JeveuxCollectionInstance< ValueType, PointerType >& operator*(void) const
+    {
+        return *_jeveuxCollectionPtr;
     };
 
     bool isEmpty() const

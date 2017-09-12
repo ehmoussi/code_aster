@@ -161,6 +161,7 @@ public:
     /**
      * @brief Addition d'un champ aux noeuds
      * @return renvoit true si l'addition s'est bien deroulée, false sinon
+     * @todo ajouter une vérification sur la structure des champs
      */
     bool addFieldOnNodes( FieldOnNodesInstance< ValueType >& tmp )
     {

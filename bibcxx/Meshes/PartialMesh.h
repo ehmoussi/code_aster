@@ -33,6 +33,7 @@
 
 #include "astercxx.h"
 #include "definition.h"
+#include "Meshes/Mesh.h"
 #include "Meshes/ParallelMesh.h"
 
 /**
@@ -40,28 +41,16 @@
  * @brief Cette classe decrit un maillage partiel reconstruit a partir d'une liste de groupe de noeuds
  * @author Nicolas Sellenet
  */
-class PartialMeshInstance: public DataStructure
+class PartialMeshInstance: public BaseMeshInstance
 {
 private:
     typedef JeveuxCollection< long, JeveuxBidirectionalMapChar24 > JeveuxCollectionLongNamePtr;
-    /** @brief Objet Jeveux '.DIME' */
-    JeveuxVectorLong             _dimensionInformations;
-    /** @brief Pointeur de nom Jeveux '.NOMNOE' */
-    JeveuxBidirectionalMapChar8  _nameOfNodes;
-    /** @brief Champ aux noeuds '.COORDO' */
-    MeshCoordinatesFieldPtr      _coordinates;
-    /** @brief Pointeur de nom Jeveux '.PTRNOMNOE' */
-    JeveuxBidirectionalMapChar24 _nameOfGrpNodes;
-    /** @brief Collection Jeveux '.GROUPENO' */
-     JeveuxCollectionLongNamePtr _groupsOfNodes;
-    /** @brief Collection Je     veux '.CONNEX' */
-    JeveuxCollectionLong         _connectivity;
-    /** @brief Pointeur de nom Jeveux '.NOMMAIL' */
-    JeveuxBidirectionalMapChar8  _nameOfElements;
-    /** @brief Objet Jeveux '.TYPMAIL' */
-    JeveuxVectorLong             _elementsType;
-    /** @brief Booleen indiquant si le maillage est vide */
-    bool                         _isEmpty;
+    /** @brief id of node in local numbering */
+    JeveuxVectorLong _localNumbering;
+    /** @brief id of node in global numbering */
+    JeveuxVectorLong _globalNumbering;
+    /** @brief number of owner proc for each nodes */
+    JeveuxVectorLong _owner;
 
 public:
     /**
@@ -83,6 +72,12 @@ public:
         return PartialMeshPtr( new PartialMeshInstance( a, b ) );
     };
 };
+
+/**
+ * @typedef PartialMeshPtr
+ * @brief Pointeur intelligent vers un PartialMeshInstance
+ */
+typedef boost::shared_ptr< PartialMeshInstance > PartialMeshPtr;
 
 #endif /* PARTIALMESH_H_ */
 

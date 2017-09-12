@@ -30,8 +30,6 @@ subroutine op9999()
 #include "asterc/jdcset.h"
 #include "asterfort/assert.h"
 #include "asterfort/fin999.h"
-#include "asterfort/getvis.h"
-#include "asterfort/getvtx.h"
 #include "asterfort/iunifi.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetc.h"
@@ -63,18 +61,18 @@ subroutine op9999()
 !-----------------------------------------------------------------------
 !
     call jemarq()
-    info = 1
+    info = 0
 
     call asmpi_info(rank=mrank, size=msize)
     nbrank = to_aster_int(mrank)
 !       
 !   --- PROC0 = 'OUI' pour effectuer les ecritures uniquement sur le processeur de rang 0 ---
 !       si PROC0 = 'NON' on force nbrank=0 
-    call getvtx(' ', 'PROC0', scal=proc, nbret=nproc)
+    proc = 'OUI'
     if ( proc .eq. 'NON' ) then 
       nbrank = 0 
-    endif   
-    call getvis(' ', 'STATUT', scal=iret)
+    endif
+    iret = 0
     bool = iret == ST_ER .or. iret == ST_OK .or. iret == ST_ER_PR0 .or. &
            iret == ST_ER_OTH .or. iret == ST_UN_OTH .or. iret == ST_EXCEPT
     ASSERT(bool)
@@ -86,11 +84,11 @@ subroutine op9999()
 !
 ! --- ecriture des informations sur le contenu de chaque sd_resultat :
 !
-    call getvtx(' ', 'INFO_RESU', scal=infr)
+    infr = 'NON'
     if (infr.eq.'OUI') then
         ifm = 0
         fchier = ' '
-        call getvis(' ', 'UNITE', scal=ifm)
+        ifm = 6
         if (.not. ulexis( ifm )) then
             call ulopen(ifm, ' ', fchier, 'NEW', 'O')
         endif
@@ -123,13 +121,14 @@ subroutine op9999()
 !
 ! --- RETASSAGE EVENTUEL DE LA GLOBALE
 !
-      call getvtx(' ', 'RETASSAGE', scal=ouinon)
+      ouinon = 'NON'
       if (ouinon .eq. 'OUI') call jetass('G')
 !
 ! --- SAUVEGARDE DE LA GLOBALE AU FORMAT HDF
 !
       fhdf = 'NON'
-      call getvtx(' ', 'FORMAT_HDF', scal=fhdf, nbret=nfhdf)
+      fhdf = 'NON'
+      nfhdf = 1
       if (nfhdf .gt. 0) then
         if (fhdf .eq. 'OUI') then
             if (ouinon .eq. 'OUI') then
@@ -174,7 +173,7 @@ subroutine op9999()
 !
 ! --- IMPRESSION DES STATISTIQUES ( AVANT CLOTURE DE JEVEUX )
 !
-      call utmess('I', 'SUPERVIS2_97')
+      !call utmess('I', 'SUPERVIS2_97')
       if (iunerr .gt. 0) write(iunerr, *) '<I> <FIN> ARRET NORMAL DANS "FIN" PAR APPEL A "JEFINI".'
       if (iunres .gt. 0) write(iunres, *) '<I> <FIN> ARRET NORMAL DANS "FIN" PAR APPEL A "JEFINI".'
     endif  

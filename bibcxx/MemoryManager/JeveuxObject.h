@@ -71,7 +71,9 @@ public:
     ~JeveuxObjectInstance()
     {
         if ( _name != "" )
+        {
             CALL_JEDETR(  _name.c_str() );
+        }
     };
 
     bool exists() const

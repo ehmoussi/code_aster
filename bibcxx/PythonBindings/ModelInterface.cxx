@@ -51,7 +51,8 @@ void exportModelToPython()
 #ifdef _USE_MPI
     bool (ModelInstance::*c2)(ParallelMeshPtr&) =
             &ModelInstance::setSupportMesh;
-
+    bool (ModelInstance::*c3)(PartialMeshPtr&) =
+            &ModelInstance::setSupportMesh;
 #endif /* _USE_MPI */
 
     class_< ModelInstance, ModelInstance::ModelPtr,
@@ -70,6 +71,7 @@ void exportModelToPython()
         .def( "setSplittingMethod", split2 )
 #ifdef _USE_MPI
         .def( "setSupportMesh", c2 )
+        .def( "setSupportMesh", c3 )
 #endif /* _USE_MPI */
     ;
 };

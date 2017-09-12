@@ -30,6 +30,7 @@ implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8vide.h"
+#include "asterfort/cnoadd.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"

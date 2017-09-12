@@ -21,20 +21,20 @@
 
 from code_aster.RunManager.AsterFortran import python_execop
 from code_aster.Supervis.libCommandSyntax import CommandSyntax
-from code_aster import GenericMechanicalLoad
+from code_aster import Mesh
 
 
-def AFFE_CHAR_MECA(**curDict):
-    returnLoad = GenericMechanicalLoad.create()
-    name = returnLoad.getName()
-    type = returnLoad.getType()
-    returnLoad.setSupportModel(curDict["MODELE"])
-    syntax = CommandSyntax("AFFE_CHAR_MECA")
+def CREA_MAILLAGE(**curDict):
+    toReturn = Mesh.create()
+    name = toReturn.getName()
+    type = toReturn.getType()
 
+    syntax = CommandSyntax("CREA_MAILLAGE")
     syntax.setResult(name, type)
-
     syntax.define(curDict)
-    numOp = 7
+
+    numOp = 167
     python_execop(numOp)
     syntax.free()
-    return returnLoad
+
+    return toReturn

@@ -18,6 +18,6 @@
 interface
     subroutine lrmjoi_wrap(nomu, nofimd)
         character(len=8) :: nomu
-        character(len=64) :: nofimd
+        character(len=*) :: nofimd
     end subroutine lrmjoi_wrap
 end interface
