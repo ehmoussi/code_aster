@@ -163,15 +163,17 @@ real(kind=8), intent(in) :: temp
 ! *********************************************************************
     if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA') .or.&
         (option.eq.'FORC_NODA')) then
-! =====================================================================
-! --- CALCUL DE LA VARIABLE INTERNE DE POROSITE SELON FORMULE DOCR ----
-! =====================================================================
+! ----- Compute porosity and save in internal state variable
         if (yamec .eq. 1) then
-            call viporo(nbvari, vintm, vintp, advico, vicphi,&
-                        phi0, deps, depsv, alphfi, dt,&
-                        dp1, dp2, signe, satur, cs,&
-                        tbiot, cbiot, unsks, alpha0, &
-                        phi, phim, retcom )
+            call viporo(nbvari,&
+                        advico, vicphi,&
+                        dt    , dp1   , dp2   ,&
+                        deps  , depsv ,&
+                        signe , satur , unsks , phi0,&
+                        cs    , tbiot , cbiot ,&
+                        alpha0, alphfi,&
+                        vintm , vintp ,&
+                        phi   , phim  , retcom)
         endif
 ! ----- Compute porosity with storage coefficient
         if (l_emmag) then

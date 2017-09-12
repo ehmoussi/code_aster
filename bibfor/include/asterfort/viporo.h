@@ -15,34 +15,28 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+! aslint: disable=W1504
 !
 interface 
-    subroutine viporo(nbvari, vintm, vintp, advico, vicphi,&
-                      phi0, deps, depsv, alphfi, dt,&
-                      dp1, dp2, signe, sat, cs0,&
-                      tbiot, cbiot, unsks, alpha0,&
-                      phi, phim, retcom)
+    subroutine viporo(nbvari,&
+                      advico, vicphi,&
+                      dtemp , dp1   , dp2   ,&
+                      deps  , depsv ,&
+                      signe , satur , unsks , phi0,&
+                      cs0   , tbiot , cbiot ,&
+                      alpha0, alphfi,&
+                      vintm , vintp ,&
+                      phi   , phim  , retcom)
         integer, intent(in) :: nbvari
+        integer, intent(in) :: advico, vicphi
+        real(kind=8), intent(in) :: dtemp, dp1, dp2
+        real(kind=8), intent(in) :: deps(6), depsv
+        real(kind=8), intent(in) :: signe, satur, unsks, phi0
+        real(kind=8), intent(in) :: cs0, tbiot(6), cbiot
+        real(kind=8), intent(in) :: alpha0, alphfi
         real(kind=8), intent(in) :: vintm(nbvari)
         real(kind=8), intent(inout) :: vintp(nbvari)
-        integer, intent(in) :: advico
-        integer, intent(in) :: vicphi
-        real(kind=8), intent(in) :: phi0
-        real(kind=8), intent(in) :: deps(6)
-        real(kind=8), intent(in) :: depsv
-        real(kind=8), intent(in) :: alphfi
-        real(kind=8), intent(in) :: dt
-        real(kind=8), intent(in) :: dp1
-        real(kind=8), intent(in) :: dp2
-        real(kind=8), intent(in) :: signe
-        real(kind=8), intent(in) :: sat
-        real(kind=8), intent(in) :: cs0
-        real(kind=8), intent(in) :: tbiot(6)
-        real(kind=8), intent(in) :: cbiot
-        real(kind=8), intent(in) :: unsks
-        real(kind=8), intent(in) :: alpha0
-        real(kind=8), intent(out) :: phi
-        real(kind=8), intent(out) :: phim
+        real(kind=8), intent(out) :: phi, phim
         integer, intent(out) :: retcom
     end subroutine viporo
 end interface 
