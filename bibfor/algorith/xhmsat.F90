@@ -143,15 +143,17 @@ implicit none
 ! *********************************************************************
     if ((option.eq.'RAPH_MECA') .or. (option.eq.'FORC_NODA') .or.&
         (option(1:9).eq.'FULL_MECA')) then
-! =====================================================================
-! --- CALCUL DE LA VARIABLE INTERNE DE POROSITE SELON FORMULE DOCR ----
-! =====================================================================
+! ----- Compute porosity and save it in internal state variables
         if ((yamec.eq.1) .or. yachai) then
-            call viporo(nbvari, vintm, vintp, advico, vicphi,&
-                        phi0, deps, depsv, alphfi, dt,&
-                        dp1, dp2, signe, satur, cs,&
-                        tbiot, cbiot, unsks, alpha0, &
-                        phi, phim, retcom )
+            call viporo(nbvari,&
+                        advico, vicphi,&
+                        dt    , dp1   , dp2   ,&
+                        deps  , depsv ,&
+                        signe , satur , unsks , phi0,&
+                        cs    , tbiot , cbiot ,&
+                        alpha0, alphfi,&
+                        vintm , vintp ,&
+                        phi   , phim  , retcom)
         endif
 ! ----- Compute volumic mass for water
         if (yate .eq. 1) then

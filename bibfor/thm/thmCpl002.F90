@@ -147,11 +147,15 @@ real(kind=8), intent(in) :: temp
 !
     if ((option(1:9).eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
         if ((yamec.eq.1) .or. l_emmag) then
-            call viporo(nbvari, vintm, vintp, advico, vicphi,&
-                        phi0, deps, depsv, alphfi, dt,&
-                        dp1, dp2, signe, satur, cs,&
-                        tbiot, cbiot, unsks, alpha0, &
-                        phi, phim, retcom )
+            call viporo(nbvari,&
+                        advico, vicphi,&
+                        dt    , dp1   , dp2   ,&
+                        deps  , depsv ,&
+                        signe , satur , unsks , phi0,&
+                        cs    , tbiot , cbiot ,&
+                        alpha0, alphfi,&
+                        vintm , vintp ,&
+                        phi   , phim  , retcom)
         else if (ds_thm%ds_elem%l_jhms) then
             phi = vintp(advico+vicphi)
         endif
