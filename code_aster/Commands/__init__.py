@@ -1,14 +1,14 @@
 # code_aster.Commands compatibility package
 
-__all__ = ['_F',             'AFFE_CARA_ELEM', 'AFFE_CHAR_CINE', 'AFFE_CHAR_MECA', 'AFFE_MATERIAU',
-           'AFFE_MODELE',    'ASSE_MATRICE',   'ASSE_MATR_GENE', 'ASSE_VECT_GENE', 'CALC_MATR_ELEM',
-           'COMB_FOURIER',   'CREA_CHAMP',     'CREA_RESU',      'CREA_TABLE',     'DEFI_COMPOR',
-           'DEFI_FISS_XFEM', 'DEFI_FLUI_STRU', 'DEFI_FONC_FLUI', 'DEFI_FONCTION',  'DEFI_FOND_FISS',
-           'DEFI_GEOM_FIBRE','DEFI_GRILLE',    'DEFI_GROUP',     'DEFI_INTE_SPEC', 'DEFI_INTERF_DYNA',
-           'DEFI_LIST_REEL', 'DEFI_MATERIAU',  'DEFI_MODELE_GENE','DEFI_NAPPE',    'DEFI_SQUELETTE',
-           'DEFI_SPEC_TURB', 'LIRE_MAILLAGE',  'MACR_ELEM_DYNA', 'MACR_ELEM_STAT', 'MECA_STATIQUE',
-           'MODE_STATIQUE',  'MODI_MAILLAGE',  'NUME_DDL',       'NUME_DDL_GENE',  'PROJ_CHAMP',
-           'DEBUT', 'FIN', 'STAT_NON_LINE'
+__all__ = ['_F',               'AFFE_CARA_ELEM', 'AFFE_CHAR_CINE', 'AFFE_CHAR_MECA', 'AFFE_MATERIAU',
+           'AFFE_MODELE',      'ASSE_MATRICE',   'ASSE_MATR_GENE', 'ASSE_VECT_GENE', 'CALC_MATR_ELEM',
+           'COMB_FOURIER',     'CREA_CHAMP',     'CREA_MAILLAGE',  'CREA_RESU',      'CREA_TABLE',
+           'DEFI_COMPOR',      'DEFI_FISS_XFEM', 'DEFI_FLUI_STRU', 'DEFI_FONC_FLUI', 'DEFI_FONCTION',
+           'DEFI_FOND_FISS',   'DEFI_GEOM_FIBRE','DEFI_GRILLE',    'DEFI_GROUP',     'DEFI_INTE_SPEC',
+           'DEFI_INTERF_DYNA', 'DEFI_LIST_REEL', 'DEFI_MATERIAU',  'DEFI_MODELE_GENE','DEFI_NAPPE',
+           'DEFI_SQUELETTE',   'DEFI_SPEC_TURB', 'LIRE_MAILLAGE',  'MACR_ELEM_DYNA', 'MACR_ELEM_STAT',
+           'MECA_STATIQUE',    'MODE_STATIQUE',  'MODI_MAILLAGE',  'NUME_DDL',       'NUME_DDL_GENE',
+           'PROJ_CHAMP',       'STAT_NON_LINE',  'DEBUT',          'FIN',     
           ]
 
 from code_aster.Cata.Language.Syntax import _F
@@ -26,6 +26,7 @@ from code_aster.Commands.asse_vect_gene import ASSE_VECT_GENE
 from code_aster.Commands.calc_matr_elem import CALC_MATR_ELEM
 from code_aster.Commands.comb_fourier import COMB_FOURIER
 from code_aster.Commands.crea_champ import CREA_CHAMP
+from code_aster.Commands.crea_maillage import CREA_MAILLAGE
 from code_aster.Commands.crea_resu import CREA_RESU
 from code_aster.Commands.crea_table import CREA_TABLE
 from code_aster.Commands.defi_compor import DEFI_COMPOR

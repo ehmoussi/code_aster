@@ -21,6 +21,6 @@
 !
 interface
     subroutine cnoadd(chno,chnop)
-      character*(*) chno,chnop
-    end subroutine ischar_iden
+        character*(*) chno,chnop
+    end subroutine cnoadd
 end interface

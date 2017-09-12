@@ -31,6 +31,7 @@
 #include "DataStructures/DataStructure.h"
 #include "Meshes/Mesh.h"
 #include "Meshes/ParallelMesh.h"
+#include "Meshes/PartialMesh.h"
 #include "Modeling/ElementaryModeling.h"
 #include <map>
 
@@ -94,6 +95,11 @@ class ModelInstance: public DataStructure
         listOfModsAndGrps    _modelisations;
         /** @brief Maillage sur lequel repose la modelisation */
         BaseMeshPtr          _supportBaseMesh;
+        /**
+         * @brief Maillage sur lequel repose la modelisation
+         * @todo a supprimer en templatisant Model etc.
+         */
+        PartialMeshPtr       _supportPartialMesh;
         /** @brief Méthode de parallélisation du modèle */
         ModelSplitingMethod _splitMethod;
         /** @brief Graph partitioning */
@@ -182,6 +188,13 @@ class ModelInstance: public DataStructure
             return _supportBaseMesh;
         };
 
+        PartialMeshPtr getPartialMesh() throw ( std::runtime_error )
+        {
+            if ( ( ! _supportPartialMesh ) || _supportPartialMesh->isEmpty() )
+                throw std::runtime_error( "Support mesh of current model is empty" );
+            return _supportPartialMesh;
+        };
+
         /**
          * @brief Methode permettant de savoir si le modele est vide
          * @return true si le modele est vide
@@ -246,6 +259,21 @@ class ModelInstance: public DataStructure
             if ( currentMesh->isEmpty() )
                 throw std::runtime_error( "Mesh is empty" );
             _supportBaseMesh = currentMesh;
+            return true;
+        };
+#endif /* _USE_MPI */
+
+        /**
+         * @brief Definition du maillage support
+         * @param currentMesh objet PartialMeshPtr sur lequel le modele reposera
+         */
+#ifdef _USE_MPI
+        bool setSupportMesh( PartialMeshPtr& currentMesh ) throw ( std::runtime_error )
+        {
+            if ( currentMesh->isEmpty() )
+                throw std::runtime_error( "Mesh is empty" );
+            _supportBaseMesh = currentMesh;
+            _supportPartialMesh = currentMesh;
             return true;
         };
 #endif /* _USE_MPI */

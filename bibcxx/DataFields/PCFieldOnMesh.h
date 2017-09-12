@@ -34,7 +34,89 @@
 #include "MemoryManager/JeveuxCollection.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Meshes/Mesh.h"
+#include "Modeling/FiniteElementDescriptor.h"
 #include "aster_fort.h"
+
+/**
+ * @class PCFieldZone Piecewise Constant (PC) Field Zone
+ * @author Natacha Bereux
+ */
+template< class ValueType >
+class PCFieldZone
+{
+public:
+    enum LocalizationType { AllMesh, AllDelayedElements, GroupOfElements,
+                            ListOfElements, ListOfDelayedElements };
+
+private:
+    MeshPtr                    _mesh;
+    FiniteElementDescriptorPtr _ligrel;
+    LocalizationType           _localisation;
+    GroupOfElementsPtr         _grp;
+    VectorInt                  _indexes;
+
+public:
+    PCFieldZone( MeshPtr mesh ): _mesh( mesh ),
+                                 _localisation( AllMesh )
+    {};
+
+    PCFieldZone( FiniteElementDescriptorPtr ligrel ): _ligrel( ligrel ),
+                                                      _localisation( AllDelayedElements )
+    {};
+
+    PCFieldZone( MeshPtr mesh, GroupOfElementsPtr grp ): _mesh( mesh ),
+                                                         _localisation( GroupOfElements ),
+                                                         _grp( grp )
+    {};
+
+    PCFieldZone( MeshPtr mesh, const VectorInt& indexes ): _mesh( mesh ),
+                                                           _localisation( ListOfElements ),
+                                                           _indexes( indexes )
+    {};
+
+    PCFieldZone( FiniteElementDescriptorPtr ligrel, const VectorInt& indexes ):
+        _ligrel( ligrel ),
+        _localisation( ListOfDelayedElements ),
+        _indexes( indexes )
+    {};
+
+    MeshPtr getMesh() const throw( std::runtime_error )
+    {
+        if( _localisation != AllMesh and _localisation != GroupOfElements
+            and _localisation != ListOfElements )
+            throw std::runtime_error( "Zone not on a mesh" );
+        return _mesh;
+    };
+
+    FiniteElementDescriptorPtr getFiniteElementDescriptor() const
+        throw( std::runtime_error )
+    {
+        if( _localisation != AllDelayedElements and _localisation != ListOfDelayedElements )
+            throw std::runtime_error( "Zone not on a FiniteElementDescriptor" );
+        return _ligrel;
+    };
+
+    LocalizationType getLocalizationType() const
+    {
+        return _localisation;
+    };
+
+    GroupOfElementsPtr getSupportGroup() const
+        throw( std::runtime_error )
+    {
+        if( _localisation != GroupOfElements )
+            throw std::runtime_error( "Zone not on a group of elements" );
+        return _grp;
+    };
+
+    const VectorInt& getListOfElements() const
+        throw( std::runtime_error )
+    {
+        if( _localisation != ListOfElements and _localisation != ListOfDelayedElements )
+            throw std::runtime_error( "Zone not on a group of elements" );
+        return _indexes;
+    };
+};
 
 /**
  * @class PCFieldOnMeshInstance Piecewise Constant (PC) Field on Mesh template
@@ -66,10 +148,10 @@ class PCFieldOnMeshInstance: public DataStructure
         JeveuxVector< ValueType > _valuesListTmp;
 
     private:
-        void fortranAddValues( const long code, const std::string grp, const std::string mode,
-                               const long nma, const JeveuxVectorLong limanu,
-                               const std::string ligrel, JeveuxVectorChar8& component,
-                               JeveuxVector< ValueType > values ) const
+        void fortranAddValues( const long& code, const std::string& grp, const std::string& mode,
+                               const long& nma, const JeveuxVectorLong& limanu,
+                               const std::string& ligrel, const JeveuxVectorChar8& component,
+                               JeveuxVector< ValueType >& values )
             throw ( std::runtime_error )
         {
             bool test = _componentNames->updateValuePointer();
@@ -101,7 +183,7 @@ class PCFieldOnMeshInstance: public DataStructure
             }
         };
 
-        void fortranAllocate( const std::string base, const std::string quantity ) const
+        void fortranAllocate( const std::string base, const std::string quantity )
             throw ( std::runtime_error )
         {
             try
@@ -191,6 +273,15 @@ class PCFieldOnMeshInstance: public DataStructure
         };
 
         /**
+         * @brief Get number of zone in PCFieldOnMesh
+         */
+        int getSize()
+        {
+            _descriptor->updateValuePointer();
+            return (*_descriptor)[2];
+        };
+
+        /**
          * @brief Définition du maillage sous-jacent
          * @param currentMesh objet Mesh sur lequel le modele reposera
          * @return renvoit true si la définition s'est bien deroulee, false sinon
@@ -211,7 +302,8 @@ class PCFieldOnMeshInstance: public DataStructure
          * @return renvoit true si l'ajout s'est bien deroulee, false sinon
          * @todo Ajouter la possibilite de donner un ligrel (n'existe pas encore)
          */
-        bool setValueOnAllMesh( JeveuxVectorChar8& component, JeveuxVector< ValueType > values,
+        bool setValueOnAllMesh( const JeveuxVectorChar8& component,
+                                const JeveuxVector< ValueType >& values,
                                 std::string ligrel = " " )
             throw ( std::runtime_error )
         {
@@ -239,8 +331,9 @@ class PCFieldOnMeshInstance: public DataStructure
          * @return renvoit true si l'ajout s'est bien deroulee, false sinon
          * @todo Ajouter la possibilite de donner un ligrel (n'existe pas encore)
          */
-        bool setValueOnGroupOfElements( JeveuxVectorChar8& component, JeveuxVector< ValueType > values,
-                                        GroupOfElements grp, std::string ligrel = " " )
+        bool setValueOnGroupOfElements( const JeveuxVectorChar8& component,
+                                        const JeveuxVector< ValueType >& values,
+                                        const GroupOfElements& grp, std::string ligrel = " " )
             throw ( std::runtime_error )
         {
             if ( _supportMesh.use_count() == 0 || _supportMesh->isEmpty() )

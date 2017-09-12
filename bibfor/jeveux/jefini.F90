@@ -114,7 +114,7 @@ subroutine jefini(cond,arg_rank)
 !     -------------  LIBERATION FICHIER --------------------------------
     if (kcond .ne. 'ERREUR  ') then
         if (rank.eq.0) then
-            info = 1
+            info = 0
             do i = 1, nbfic
                 if (classe(i:i) .ne. ' ') then
                     call jelibf(staou, classe(i:i), info)

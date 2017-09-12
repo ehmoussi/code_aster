@@ -34,6 +34,9 @@ executionParameter.parse_args()
 
 from code_aster.Supervis import libFile
 
+import libaster
+from libaster import *
+
 # automatic startup
 if executionParameter.get_option('autostart'):
     Initializer.init( executionParameter.get_option('buildelem'))
@@ -41,9 +44,6 @@ if executionParameter.get_option('autostart'):
 # import general purpose functions
 from .RunManager.saving import saveObjects
 from .Utilities import TestCase
-
-import libaster
-from libaster import *
 
 # import datastructures, physical quantities and constants
 # each package is responsible to export only the relevant objects
