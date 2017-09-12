@@ -1476,7 +1476,7 @@ def macr_adap_mail_ops(self,
                 motscfa["RESU"] = _F(INFO_MAILLAGE=infomail, **motscsi)
 #
                 IMPR_RESU(INFO=infocomm,
-                          FORMAT='MED', UNITE=unite_fichier_aster_vers_homard,
+                          FORMAT='MED', UNITE=unite_fichier_aster_vers_homard, PROC0='NON',
                           **motscfa)
 #
 # 4.3. Le(s) champ(s)
@@ -1529,7 +1529,7 @@ def macr_adap_mail_ops(self,
 # 4.3.2.2. Appel de la commande Aster
 #
             IMPR_RESU(INFO=infocomm,
-                      FORMAT='MED', UNITE=unite_fichier_aster_vers_homard,
+                      FORMAT='MED', UNITE=unite_fichier_aster_vers_homard, PROC0='NON',
                       **motscfa)
 #
 #====================================================================
