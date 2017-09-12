@@ -127,7 +127,7 @@ M_ASSE=ASSE_MATRICE(    MATR_ELEM=M_ELEM,
 
 
 MODE1=CALC_MODES(MATR_RIGI=K_ASSE,
-                 OPTION='AJUSTE',
+                 OPTION='AJUSTE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                  CALC_FREQ=_F(NMAX_FREQ=6,
                               FREQ=( 0.5,3.,),
                               ),
@@ -190,7 +190,7 @@ TEST_RESU(RESU=(_F(PARA='FREQ',
 
 
 MODE2=CALC_MODES(MATR_RIGI=K_ASSE,
-                 OPTION='SEPARE',
+                 OPTION='SEPARE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                  CALC_FREQ=_F(NMAX_FREQ=6,
                               FREQ=( 0.5,3.,),
                               ),

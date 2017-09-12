@@ -103,7 +103,7 @@ MATASSM1=ASSE_MATRICE(MATR_ELEM=MELM1,NUME_DDL=NUM1)
 # *****CALCUL DE MODES PROPRES ET IMPRESSION FORMAT IDEAS*************#
 #*********************************************************************#
 
-FREQ1=CALC_MODES( OPTION='AJUSTE',
+FREQ1=CALC_MODES( OPTION='AJUSTE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                   MATR_RIGI=MATASSR1,
                   MATR_MASS=MATASSM1,
                   CALC_FREQ=_F( FREQ = (0.1, 3000.),

@@ -179,7 +179,7 @@ FONCTIO1=DEFI_FONCTION(  NOM_PARA='INST',  NOM_RESU='ALPHA',
 #-----------------------------------------------------------------
 #
 MODES=CALC_MODES(MATR_RIGI=MATRRIGI,
-                 OPTION='AJUSTE',
+                 OPTION='AJUSTE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                  CALC_FREQ=_F(FREQ=( 5.,10.,15.,20.,24.,27.,30.,32.,),
                               ),
                  MATR_MASS=MATRMASS,

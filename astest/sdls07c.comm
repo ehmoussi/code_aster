@@ -69,7 +69,7 @@ MODVIB=CALC_MODES(MATR_RIGI=RIGASS,
 
 
 MODITI=CALC_MODES(MATR_RIGI=RIGASS,
-                  OPTION='AJUSTE',SOLVEUR=_F(METHODE='MULT_FRONT'),
+                  OPTION='AJUSTE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                   CALC_FREQ=_F(NMAX_FREQ=12,
                                FREQ=(220.,540.,),
                                ),

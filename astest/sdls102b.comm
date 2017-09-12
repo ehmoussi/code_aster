@@ -62,7 +62,7 @@ ASSEMBLAGE(   MODELE=MO,           CARA_ELEM=CARELEM,
 #                CALCUL MODAL
 
 MODE=CALC_MODES(MATR_RIGI=MATASSR1,
-                OPTION='AJUSTE',SOLVEUR=_F(METHODE='MULT_FRONT'),
+                OPTION='AJUSTE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                 CALC_FREQ=_F(FREQ=(80.,570.,),
                              ),
                 MATR_MASS=MATASSM1,

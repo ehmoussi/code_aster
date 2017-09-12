@@ -249,7 +249,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=11,
                   ),
           )
 
-FREQ_INV=CALC_MODES( OPTION='AJUSTE',
+FREQ_INV=CALC_MODES( OPTION='AJUSTE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                      MATR_RIGI=MATASSR1,
                      MATR_MASS=MATASSM1,
                      CALC_FREQ=_F( FREQ=(0.,6000.) ,),
