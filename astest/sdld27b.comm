@@ -108,7 +108,7 @@ MATASSC=ASSE_MATRICE(  MATR_ELEM=MELC,  NUME_DDL=NUM  )
 
 # --------------------------------------------------------------------
 MODE_QUA=CALC_MODES(MATR_RIGI=MATASSR,
-                    OPTION='AJUSTE',SOLVEUR=_F(METHODE='MULT_FRONT'),
+                    OPTION='AJUSTE', SOLVEUR=_F(METHODE='MULT_FRONT'),
 
                     CALC_FREQ=_F(FREQ=(5.,45.,),
                                  ),

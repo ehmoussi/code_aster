@@ -175,12 +175,10 @@ IMPR_TABLE(TABLE=MASSIN,);
 # --------------------------------------------------------------------
 
 FREQ=CALC_MODES(MATR_RIGI=MATASSR,
-                OPTION='AJUSTE',
+                OPTION='AJUSTE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                 CALC_FREQ=_F(FREQ=(5.,10.,15.,20.,24.,27.,30.,32.,),),
                 MATR_MASS=MATASSM,
                 SOLVEUR_MODAL=_F(OPTION_INV='DIRECT',),
-# APPEL EN DUR A MF OU LFLT. PB AVEC MUMPS A INVESTIGUER.
-                SOLVEUR=_F(METHODE='MULT_FRONT'),
                 )
 
 FREQ=NORM_MODE(reuse =FREQ,

@@ -311,6 +311,7 @@ subroutine op0044()
     call jeveuo(solveu//'.SLVK', 'L', vk24=slvk)
     call jeveuo(solveu//'.SLVI', 'L', islvi)
     metres=slvk(1)
+    if (metres(1:5).eq.'MUMPS') call utmess('F', 'ALGELINE5_72')
     if ((metres(1:4).ne.'LDLT') .and. (metres(1:10).ne.'MULT_FRONT') .and.&
         (metres(1:5).ne.'MUMPS')) then
         call utmess('F', 'ALGELINE5_71')

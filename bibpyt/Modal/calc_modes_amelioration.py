@@ -146,7 +146,7 @@ def calc_modes_amelioration(self, modes, TYPE_RESU,
         solveur.pop('OPTION')
     if solveur.has_key('FREQ'):      # because FREQ can be a keyword with a 'global' position
         solveur.pop('FREQ')
-    #motcles['SOLVEUR']=_F(**solveur) # if this line is commented,
+    motcles['SOLVEUR']=_F(**solveur) # if this line is commented,
                                       # one will use the default keywords for SOLVEUR
     
     

@@ -379,14 +379,14 @@ MASSEXY=ASSE_MATRICE(
 
 #52.01 MODE_MECA
 MODPOUX=CALC_MODES(MATR_RIGI=RIGIDXX,
-                   OPTION='AJUSTE',
+                   OPTION='AJUSTE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                    CALC_FREQ=_F(FREQ=(0.,300.,),
                                 ),
                    MATR_MASS=MASSEXX,
                    )
 
 MODPOUY=CALC_MODES(MATR_RIGI=RIGIDXY,
-                   OPTION='AJUSTE',
+                   OPTION='AJUSTE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                    CALC_FREQ=_F(FREQ=(0.,300.,),
                                 ),
                    MATR_MASS=MASSEXY,

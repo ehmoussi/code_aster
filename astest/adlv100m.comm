@@ -120,7 +120,7 @@ MATM=ASSE_MATRICE(
 # CALCUL DES MODES
 #
 MODES=CALC_MODES(MATR_RIGI=MATK,
-                 OPTION='AJUSTE',
+                 OPTION='AJUSTE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                  CALC_FREQ=_F(FREQ=(10.,20.,),
                               ),
     SOLVEUR_MODAL=_F(PREC_AJUSTE=1.E-4,PREC_INV=1.E-07),

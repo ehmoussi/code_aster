@@ -396,6 +396,13 @@ Commande FACTORISER :
     changer de solveur linéaire : sous le mot-clé facteur SOLVEUR,
     utiliser 'MULT_FRONT' ou 'MUMPS'.
 """),
+   72: _(u"""
+    Par précaution, cette fonctionnalité est pour l'instant interdite avec le solveur linéaire MUMPS.
+
+    Conseil :
+    Changer de solveur linéaire : sous le mot-clé facteur SOLVEUR,
+    poser METHODE='MULT_FRONT'.
+"""),
 
     73: _(u"""
     On a besoin d'effectuer un calcul de déterminant.

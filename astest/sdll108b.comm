@@ -92,7 +92,7 @@ MODE_STA=CALC_CHAMP(reuse=MODE_STA,  RESULTAT=MODE_STA,
                    FORCE='REAC_NODA',)
 
 MODE_MEC=CALC_MODES(MATR_RIGI=RIGIDITE,
-                    OPTION='PROCHE',
+                    OPTION='PROCHE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                     CALC_FREQ=_F(FREQ=( 110.91,115.53,136.01,213.71,417.76,435.23,464.56,557.86,822.59,847.91,979.29,992.80,1022.58,1041.03,1057.81,1089.93,1093.98,1108.82,),
                                  ),
                     MATR_MASS=MASSE,
