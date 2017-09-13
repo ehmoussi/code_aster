@@ -135,6 +135,30 @@ class MECGSEG3(Element):
             para_out=((SP.PEPCON3, ECONTPG), ),
         ),
 
+        OP.CHAR_MECA_HYDR_R(te=312,
+                            para_in=(
+                            (SP.PMATERC, LC.CMATERC), (
+                            OP.CHAR_MECA_HYDR_R.PVARCPR, LC.ZVARCPG),
+                            ),
+                            para_out=((SP.PVECTUR, MVECTUR), ),
+                            ),
+        
+        OP.CHAR_MECA_SECH_R(te=312,
+                            para_in=(
+                            (SP.PMATERC, LC.CMATERC), (
+                            OP.CHAR_MECA_HYDR_R.PVARCPR, LC.ZVARCPG),
+                            ),
+                            para_out=((SP.PVECTUR, MVECTUR), ),
+                            ),
+        
+        OP.CHAR_MECA_TEMP_R(te=312,
+                            para_in=(
+                            (SP.PMATERC, LC.CMATERC), (
+                            OP.CHAR_MECA_HYDR_R.PVARCPR, LC.ZVARCPG),
+                            ),
+                            para_out=((SP.PVECTUR, MVECTUR), ),
+                            ),
+        
         OP.CHAR_MECA_PESA_R(te=345,
             para_in=((SP.PCAGNBA, LC.CCAGNBA), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), (SP.PPESANR, LC.CPESANR),
