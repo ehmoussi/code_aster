@@ -22,7 +22,7 @@ subroutine dtmforc_decr(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
 !
 ! person_in_charge: hassan.berro at edf.fr
 !
-! dtmforc_decr : Calculates a "discrete model with isotropic behavior's" 
+! dtmforc_decr : Calculates a "discrete model with isotropic behavior's"
 !                force at the current step (t)
 !
 !       nl_ind           : nonlinearity index (for sd_nl access)
@@ -72,7 +72,7 @@ subroutine dtmforc_decr(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
     real(kind=8)      :: cosg, depglo(3), vitglo(3), deploc(6), vitloc(6)
     real(kind=8)      :: dvitlo(3), flocal(3), errmax, fgloba(3), y0(5)
     real(kind=8)      :: dy0(5), ldcpar(2), resu(10)
-    character(len=8)  :: sd_dtm, sd_nl, monmot, obst_typ
+    character(len=8)  :: sd_dtm, sd_nl, monmot, obst_typ, ldccar(1)
     character(len=19) :: nomres
 !
     integer         , pointer :: vindx (:)  => null()
@@ -169,7 +169,7 @@ subroutine dtmforc_decr(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
             call tophys_ms(dplmod, psidel, coevit, vite, vitglo)
         else
             call tophys(dplmod, depl, depglo)
-            call tophys(dplmod, vite, vitglo)        
+            call tophys(dplmod, vite, vitglo)
         endif
 
     !   --- Conversion of these vectors to the local basis
@@ -182,7 +182,7 @@ subroutine dtmforc_decr(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
         do i = 1, 3
             dvitlo(i) = vitloc(i) - vitloc(3+i)
         end do
-    else 
+    else
         do i = 1, 3
             dvitlo(i) = vitloc(i)
         end do
@@ -191,10 +191,10 @@ subroutine dtmforc_decr(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
 !   -------------------------------------------------------------------------------------
 
 !   --- Non linear behaviour along the local x-axis
-    
+
 !       System equations     : 1      2       3     4       5
 !                       yy   : force  Up      U     puiss   ip
-    
+
 !   --- Internal variables   : 1      2       3     4       5
 !                       vari : force  Up      U     puiss   ip
 !
@@ -213,38 +213,38 @@ subroutine dtmforc_decr(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
         do i = 1, 5
             resu(i) = y0(i)
         end do
-    else 
+    else
 !       --- Physical (behavior) parameters
         call nlget(sd_nl, _DISC_ISOT_DX0, iocc=nl_ind, rscal=ldcpar(1), buffer=buffnl)
         call nlget(sd_nl, _DISC_ISOT_DX , iocc=nl_ind, rscal=ldcpar(2), buffer=buffnl)
         call nlget(sd_nl, _NL_FUNC_DEF  , iocc=nl_ind, vi=ldcfct      , buffer=buffnl)
-    
+
 !       --- Numerical parameters
         call nlget(sd_nl, _MAX_INTE   , iocc=nl_ind, iscal=nbdecp, buffer=buffnl)
         call nlget(sd_nl, _RES_INTE   , iocc=nl_ind, rscal=errmax, buffer=buffnl)
-    
+
 !       --- Velocity (along the local x-axis)
         dy0(1:5) = 0.d0
         dy0(3) = -dvitlo(1)
     
 !       --- Runge-Kutta 5/4 integration from t -> t+dt
         iret = 0
-        call rk5adp(5, ldcpar, ldcfct, time, step, nbdecp,&
+        call rk5adp(5, ldcpar, ldcfct, ldccar, time, step, nbdecp,&
                     errmax, y0, dy0, disc_isotr, resu, iret)
         if ( iret.ne.0 ) then
             call utmess('A', 'DISCRETS_42',si=nbdecp, sr=errmax)
         endif
     end if
-   
+
 !   --- Retrieve the axial force (along the local x-axis)
     flocal(1:3) = 0.d0
     flocal(1)   = resu(1)
-    
+
 !   --- Conversion to the global (physical) reference
     call locglo(flocal, sina, cosa, sinb, cosb,&
                 sing, cosg, fgloba)
-    
-!   --- Generalized force on the first node  
+
+!   --- Generalized force on the first node
     call togene(dplmod1, fgloba, fext)
 !   --- Generalized force on the second node
     if (nbno.eq.2) then
@@ -254,7 +254,7 @@ subroutine dtmforc_decr(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
 !   -------------------------------------------------------------------------------------------
 !   --- Internal variables, storage
     if (step.gt.0.d0) then
-!    
+!
         finish = vindx(nl_ind+1)
         ASSERT((finish-start).eq.NBVARINT_DECR)
 
@@ -267,7 +267,7 @@ subroutine dtmforc_decr(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
         vint(start+3 ) = deploc(4)
         vint(start+4 ) = deploc(5)
         vint(start+5 ) = deploc(6)
-        
+
 !       --- Axial deformation velocity
         vint(start+6 ) = dvitlo(1)
 

@@ -18,30 +18,16 @@
 
 !
 !
+#include "asterf_types.h"
+!
 interface
-    subroutine nmiclb(fami, kpg, ksp, option, compor,&
-                      imate, xlong0, aire, tmoins, tplus,&
-                      dlong0, effnom, vim, effnop, vip,&
-                      klv, fono, epsm, crildc, codret)
-        character(len=*) :: fami
-        integer :: kpg
-        integer :: ksp
-        character(len=16) :: option
-        character(len=16) :: compor(*)
-        integer :: imate
-        real(kind=8) :: xlong0
-        real(kind=8) :: aire
-        real(kind=8) :: tmoins
-        real(kind=8) :: tplus
-        real(kind=8) :: dlong0
-        real(kind=8) :: effnom
-        real(kind=8) :: vim(*)
-        real(kind=8) :: effnop
-        real(kind=8) :: vip(*)
-        real(kind=8) :: klv(21)
-        real(kind=8) :: fono(6)
-        real(kind=8) :: epsm
-        real(kind=8) :: crildc(3)
-        integer :: codret
-    end subroutine nmiclb
+    subroutine relax_cable(ppr, ppi, ppc, yy0, dy0, dyy, decoup)
+        real(kind=8)     :: ppr(*)
+        integer          :: ppi(*)
+        character(len=*) :: ppc(*)
+        real(kind=8)     :: yy0(*)
+        real(kind=8)     :: dy0(*)
+        real(kind=8)     :: dyy(*)
+        aster_logical    :: decoup
+    end subroutine relax_cable
 end interface

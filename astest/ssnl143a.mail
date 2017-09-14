@@ -1,0 +1,26 @@
+%
+COOR_3D
+N1     0.0     0.0     0.0
+N2     1.0     0.0     0.0
+FINSF
+%
+SEG2
+SG1    N1   N2
+FINSF
+%
+GROUP_NO
+GPT1
+N1
+FINSF
+%
+GROUP_NO
+GPT2
+N2
+FINSF
+%
+GROUP_MA
+BARRE
+SG1
+FINSF
+%
+FIN

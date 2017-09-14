@@ -22,7 +22,7 @@ subroutine dtmforc_dvis(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
 !
 ! person_in_charge: hassan.berro at edf.fr
 !
-! dtmforc_dvis : Calculates the Generalized Zener discret element's force 
+! dtmforc_dvis : Calculates the Generalized Zener discret element's force
 !                at the current step (t)
 !
 !       nl_ind           : nonlinearity index (for sd_nl access)
@@ -73,6 +73,7 @@ subroutine dtmforc_dvis(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
     real(kind=8)      :: dvitlo(3), flocal(3), errmax, fgloba(3), y0(4)
     real(kind=8)      :: dy0(4), ldcpar(5), resu(8)
     integer           :: ldcpai(1)
+    character(len=8)  :: ldcpac(1)
     character(len=8)  :: sd_dtm, sd_nl, monmot, obst_typ
     character(len=19) :: nomres
 !
@@ -168,7 +169,7 @@ subroutine dtmforc_dvis(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
             call tophys_ms(dplmod, psidel, coevit, vite, vitglo)
         else
             call tophys(dplmod, depl, depglo)
-            call tophys(dplmod, vite, vitglo)        
+            call tophys(dplmod, vite, vitglo)
         endif
 
     !   --- Conversion of these vectors to the local basis
@@ -180,7 +181,7 @@ subroutine dtmforc_dvis(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
         do i = 1, 3
             dvitlo(i) = vitloc(i) - vitloc(3+i)
         end do
-    else 
+    else
         do i = 1, 3
             dvitlo(i) = vitloc(i)
         end do
@@ -209,7 +210,7 @@ subroutine dtmforc_dvis(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
         do i = 1, 4
             resu(i) = y0(i)
         end do
-    else 
+    else
 
 !       --- Physical (behavior) parameters
         call nlget(sd_nl, _DISVISC_K1 , iocc=nl_ind, rscal=ldcpar(1), buffer=buffnl)
@@ -217,34 +218,34 @@ subroutine dtmforc_dvis(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
         call nlget(sd_nl, _DISVISC_K3 , iocc=nl_ind, rscal=ldcpar(3), buffer=buffnl)
         call nlget(sd_nl, _DISVISC_C  , iocc=nl_ind, rscal=ldcpar(4), buffer=buffnl)
         call nlget(sd_nl, _DISVISC_A  , iocc=nl_ind, rscal=ldcpar(5), buffer=buffnl)
-    
+
 !       --- Numerical parameters
         call nlget(sd_nl, _MAX_INTE   , iocc=nl_ind, iscal=nbdecp   , buffer=buffnl)
         call nlget(sd_nl, _RES_INTE   , iocc=nl_ind, rscal=errmax   , buffer=buffnl)
-    
+
 !       --- Velocity (along the local x-axis)
         dy0(1:4) = 0.d0
         dy0(3) = -dvitlo(1)
-    
+
 !       --- Runge-Kutta 5/4 integration from t -> t+dt
         iret = 0
-        call rk5adp(4, ldcpar, ldcpai, time, step, nbdecp,&
+        call rk5adp(4, ldcpar, ldcpai, ldcpac, time, step, nbdecp,&
                     errmax, y0, dy0, zengen, resu, iret)
         if ( iret.ne.0 ) then
             call utmess('A', 'DISCRETS_42',si=nbdecp, sr=errmax)
         endif
    end if
-    
-    
+
+
 !   --- Retrieve the axial force (along the local x-axis)
     flocal(1:3) = 0.d0
     flocal(1)   = resu(1)
-    
+
 !   --- Conversion to the global (physical) reference
     call locglo(flocal, sina, cosa, sinb, cosb,&
                 sing, cosg, fgloba)
-    
-!   --- Generalized force on the first node  
+
+!   --- Generalized force on the first node
     call togene(dplmod1, fgloba, fext)
 !   --- Generalized force on the second node
     if (nbno.eq.2) then
@@ -254,7 +255,7 @@ subroutine dtmforc_dvis(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
 !   -------------------------------------------------------------------------------------------
 !   --- Internal variables, storage
     if (step.gt.0.d0) then
-!    
+!
         finish = vindx(nl_ind+1)
         ASSERT((finish-start).eq.NBVARINT_DVIS)
 
@@ -267,7 +268,7 @@ subroutine dtmforc_dvis(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
         vint(start+3 ) = deploc(4)
         vint(start+4 ) = deploc(5)
         vint(start+5 ) = deploc(6)
-        
+
 !       --- Axial deformation velocity
         vint(start+6 ) = dvitlo(1)
 

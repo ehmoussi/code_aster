@@ -1,0 +1,177 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'))
+
+import math
+# Le temps en Heure
+Heure   = 1.0
+Jour    = 24.0*Heure
+Mois    = 30.4375*Jour
+Annee   = 12.0*Mois
+
+# Définition des caractéristiques matériaux
+Young     = 190000.0*1.0E+06   # [Pa]
+fprg      =   1800.0*1.0E+06   # [Pa]
+LongBarre =      1.0           # [m]
+#
+RayonBarre = 10.0E-03
+Section = math.pi*pow(RayonBarre,2)
+
+# Paramètres (k1=8.0E-03, k2=1.25)  4000.0*Heure, début précis
+kecoul = 1.45558790406
+necoul = 6.10743489945
+necrou = 1.33140738573
+becrou = 47893.0394375
+cecrou = 32941.1476218
+
+Temper=DEFI_FONCTION(
+    NOM_PARA='TEMP',
+    VALE=(  0.0,  20.0,
+           10.0,  40.0,),
+    PROL_DROITE='CONSTANT',
+    PROL_GAUCHE='CONSTANT'
+)
+
+
+mail=LIRE_MAILLAGE(FORMAT='ASTER',UNITE=20)
+
+model=AFFE_MODELE(
+    MAILLAGE=mail,
+    AFFE=_F(PHENOMENE='MECANIQUE',GROUP_MA='BARRE',MODELISATION='BARRE',),
+)
+
+carael=AFFE_CARA_ELEM(
+   MODELE=model,
+   BARRE=_F(GROUP_MA=('BARRE'), SECTION='CERCLE',
+             CARA=('R',), VALE=(RayonBarre),),
+)
+
+depl1 = 0.75034*fprg*LongBarre/Young
+
+depla=DEFI_FONCTION(
+    NOM_PARA='INST',
+    VALE=(
+        0.0,                    0.0,
+        1.0*Heure,              depl1,
+        1.0*Annee,              depl1,
+    ),
+    PROL_GAUCHE='CONSTANT',
+    PROL_DROITE='LINEAIRE',
+)
+
+Depimp=AFFE_CHAR_MECA_F(
+    MODELE=model,
+    DDL_IMPO=_F(GROUP_NO='GPT2', DX=depla,),
+)
+
+Bloc=AFFE_CHAR_MECA(
+    MODELE=model,
+    DDL_IMPO=(
+        _F(GROUP_NO='GPT1', DX=0.0, DY=0.0, DZ=0.0,),
+        _F(GROUP_NO='GPT2', DY=0.0, DZ=0.0,),
+    ),
+)
+
+
+L_inst=DEFI_LIST_REEL(
+    DEBUT=0.0,
+    INTERVALLE=(
+        _F(JUSQU_A=        Heure, NOMBRE=4),
+        _F(JUSQU_A=    5.0*Heure, NOMBRE=40),
+        _F(JUSQU_A=   10.0*Heure, NOMBRE=20),
+        _F(JUSQU_A=  100.0*Heure, PAS=  2.0*Heure),
+        _F(JUSQU_A=  500.0*Heure, PAS=  4.0*Heure),
+        _F(JUSQU_A= 1000.0*Heure, PAS= 10.0*Heure),
+        _F(JUSQU_A= 4000.0*Heure, PAS=100.0*Heure),
+    ),
+)
+inst_fin= 4000.0*Heure
+
+Linst=DEFI_LIST_INST(
+   METHODE='MANUEL',
+   DEFI_LIST=_F( LIST_INST =  L_inst, ),
+   ECHEC=_F(
+      EVENEMENT       = 'ERREUR',
+      ACTION          = 'DECOUPE',
+      SUBD_METHODE    = 'MANUEL',
+      SUBD_PAS        = 4,
+      SUBD_PAS_MINI   = 1.0E-10,
+      SUBD_NIVEAU     = 5,
+   ),
+)
+
+
+Acier= DEFI_MATERIAU(INFO=1,
+    ELAS=_F(E=Young, NU=0.10 ),
+    RELAX_ACIER =_F(
+        F_PRG  = fprg,
+        ECOU_K = kecoul,
+        ECOU_N = necoul,
+        ECRO_N = necrou,
+        ECRO_B = becrou,
+        ECRO_C = cecrou,
+    ),
+)
+
+Mater=AFFE_MATERIAU(
+    MAILLAGE=mail,
+    AFFE=_F(GROUP_MA='BARRE', MATER=Acier,),
+)
+
+stnl1=STAT_NON_LINE(
+    MODELE=model,
+    CHAM_MATER=Mater,
+    CARA_ELEM=carael,
+    EXCIT=(
+        _F(CHARGE=Bloc,),
+        _F(CHARGE=Depimp,),
+    ),
+    COMPORTEMENT=_F(GROUP_MA='BARRE', RELATION='RELAX_ACIER'),
+    INCREMENT=_F(LIST_INST=Linst,INST_FIN=inst_fin),
+    NEWTON=_F(MATRICE='TANGENTE',REAC_ITER=1),
+    CONVERGENCE=_F(RESI_GLOB_RELA=1.0E-5, ITER_GLOB_MAXI=10,),
+)
+
+SIEF1 =RECU_FONCTION(
+    RESULTAT=stnl1, NOM_CHAM='SIEF_ELGA', NOM_CMP='N',  GROUP_MA='BARRE', POINT=1,
+    NOM_RESU='SIEF1')
+
+TEST_FONCTION(
+    VALEUR=_F(FONCTION=SIEF1, NOM_PARA='INST', VALE_PARA = 5.0*Heure,
+              VALE_CALC=4.2110297E+05, VALE_REFE=4.211026966969e+05, REFERENCE='ANALYTIQUE')
+)
+TEST_FONCTION(
+    VALEUR=_F(FONCTION=SIEF1, NOM_PARA='INST', VALE_PARA = 100.0*Heure,
+              VALE_CALC=4.1861986E+05, VALE_REFE=4.186171284954e+05, REFERENCE='ANALYTIQUE')
+)
+TEST_FONCTION(
+    VALEUR=_F(FONCTION=SIEF1, NOM_PARA='INST', VALE_PARA = 500.0*Heure,
+              VALE_CALC=4.1666895E+05, VALE_REFE=4.166692747106e+05, REFERENCE='ANALYTIQUE')
+)
+TEST_FONCTION(
+    VALEUR=_F(FONCTION=SIEF1, NOM_PARA='INST', VALE_PARA = 1000.0*Heure,
+              VALE_CALC=4.1562963E+05, VALE_REFE=4.156342991477e+05, REFERENCE='ANALYTIQUE')
+)
+TEST_FONCTION(
+    VALEUR=_F(FONCTION=SIEF1, NOM_PARA='INST', VALE_PARA = 4000.0*Heure,
+              VALE_CALC=4.1312886E+05, VALE_REFE=4.131153415526e+05, REFERENCE='ANALYTIQUE')
+)
+
+FIN()
