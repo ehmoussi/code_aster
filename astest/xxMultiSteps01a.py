@@ -9,7 +9,7 @@ import code_aster
 
 test = code_aster.TestCase()
 
-fsin = code_aster.Function()
+fsin = code_aster.Function.create()
 fsin.setParameterName("INST")
 fsin.setResultName("TEMP")
 

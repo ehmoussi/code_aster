@@ -1,3 +1,8 @@
+
+#include "astercxx.h"
+
+#ifdef _USE_MPI
+
 #ifndef PARALLELMECHANICALLOAD_H_
 #define PARALLELMECHANICALLOAD_H_
 
@@ -66,3 +71,5 @@ typedef boost::shared_ptr< ParallelMechanicalLoadInstance > ParallelMechanicalLo
 
 
 #endif /* PARALLELMECHANICALLOAD_H_ */
+
+#endif /* _USE_MPI */

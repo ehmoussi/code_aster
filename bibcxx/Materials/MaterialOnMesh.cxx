@@ -32,14 +32,25 @@
 #include "RunManager/CommandSyntaxCython.h"
 
 
-MaterialOnMeshInstance::MaterialOnMeshInstance():
+MaterialOnMeshInstance::MaterialOnMeshInstance( const MeshPtr& mesh ):
+                                _supportMesh( mesh ),
                                 DataStructure( getNewResultObjectName(), "CHAM_MATER" ),
-                                _listOfMaterials( PCFieldOnMeshPtrChar8(
-                                    new PCFieldOnMeshInstanceChar8( getName() + ".CHAMP_MAT " ) ) ),
-                                _listOfTemperatures( PCFieldOnMeshPtrDouble(
-                                    new PCFieldOnMeshInstanceDouble( getName() + ".TEMPE_REF " ) ) ),
-                                _supportMesh( MeshPtr() )
+                                _listOfMaterials( PCFieldOnMeshChar8Ptr(
+                                    new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
+                                _listOfTemperatures( PCFieldOnMeshDoublePtr(
+                                    new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) )
 {};
+
+#ifdef _USE_MPI
+MaterialOnMeshInstance::MaterialOnMeshInstance( const ParallelMeshPtr& mesh ):
+                                _supportMesh( mesh ),
+                                DataStructure( getNewResultObjectName(), "CHAM_MATER" ),
+                                _listOfMaterials( PCFieldOnMeshChar8Ptr(
+                                    new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
+                                _listOfTemperatures( PCFieldOnMeshDoublePtr(
+                                    new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) )
+{};
+#endif /* _USE_MPI */
 
 SyntaxMapContainer MaterialOnMeshInstance::getCppCommandKeywords() throw ( std::runtime_error )
 {

@@ -24,40 +24,47 @@ from code_aster.Cata import Commands
 from code_aster.Cata.SyntaxChecker import checkCommandSyntax
 
 
-def _addMaterial( materOnMesh, fkw ):
-    kwTout = fkw.get( "TOUT" )
-    kwGrMa = fkw.get( "GROUP_MA" )
+def _addMaterial(materOnMesh, fkw):
+    kwTout = fkw.get("TOUT")
+    kwGrMa = fkw.get("GROUP_MA")
     mater = fkw[ "MATER" ]
 
     for mater_i in mater:
         if kwTout != None:
-            materOnMesh.addMaterialOnAllMesh( mater_i )
+            materOnMesh.addMaterialOnAllMesh(mater_i)
         elif kwGrMa != None:
-            materOnMesh.addMaterialOnGroupOfElements( mater_i, kwGrMa )
+            if type(kwGrMa) == list:
+                for grp in kwGrMa:
+                    materOnMesh.addMaterialOnGroupOfElements(mater_i, grp)
+            else:
+                materOnMesh.addMaterialOnGroupOfElements(mater_i, kwGrMa)
         else:
             assert False
 
 
-def AFFE_MATERIAU( **kwargs ):
+def AFFE_MATERIAU(**kwargs):
     """Opérateur d'affection d'un matériau"""
-    checkCommandSyntax( Commands.AFFE_MATERIAU, kwargs )
+    checkCommandSyntax(Commands.AFFE_MATERIAU, kwargs)
 
-    materOnMesh = MaterialOnMesh.create()
+    mesh = None
+    if kwargs.has_key("MAILLAGE"):
+        mesh = kwargs["MAILLAGE"]
+    else:
+        try:
+            mesh = kwargs["MODELE"].getSupportMesh()
+        except:
+            raise NameError("A Mesh or a Model is required")
+    materOnMesh = MaterialOnMesh.create(mesh)
 
-    if kwargs.get( "MODELE" ) != None:
-        raise NameError( "A Mesh is required, not a Model (not yet implemented)" )
-
-    materOnMesh.setSupportMesh( kwargs[ "MAILLAGE" ] )
-
-    if kwargs.get( "AFFE_COMPOR" ) != None or kwargs.get( "AFFE_VARC" ) != None:
-        raise NameError( "AFFE_COMPOR or AFFE_VARC not yet implemented" )
+    if kwargs.get("AFFE_COMPOR") != None or kwargs.get("AFFE_VARC") != None:
+        raise NameError("AFFE_COMPOR or AFFE_VARC not yet implemented")
 
     fkw = kwargs[ "AFFE" ]
-    if type( fkw ) == dict:
-        _addMaterial( materOnMesh, fkw )
-    elif type( fkw ) in (list, tuple):
+    if type(fkw) == dict:
+        _addMaterial(materOnMesh, fkw)
+    elif type(fkw) in (list, tuple):
         for curDict in fkw:
-            _addMaterial( materOnMesh,curDict  )
+            _addMaterial(materOnMesh,curDict )
     else:
         assert False, fkw
 

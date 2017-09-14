@@ -52,6 +52,7 @@ subroutine cresol(solveu, basz)
     integer :: zslvk, zslvr, zslvi
     integer :: istop, nsolve, ibid, nprec, islvk, islvr, islvi, n1
     real(kind=8) :: epsmat
+    character(len=1) :: base
     character(len=3) :: mixpre, kellag
     character(len=8) :: kstop, modele, kxfem
     character(len=16) :: method, nomsol
@@ -60,6 +61,11 @@ subroutine cresol(solveu, basz)
 ! ----------------------------------------------------------------------
 !
     call jemarq()
+    if( present(basz) ) then
+        base = basz
+    else
+        base = 'V'
+    endif
 !
 ! --- INITS. GLOBALES (CAR MOT-CLES OPTIONNELS)
     nomsol='SOLVEUR'
@@ -132,9 +138,9 @@ subroutine cresol(solveu, basz)
     zslvk = sdsolv('ZSLVK')
     zslvr = sdsolv('ZSLVR')
     zslvi = sdsolv('ZSLVI')
-    call wkvect(solveu//'.SLVK', basz//' V K24', zslvk, islvk)
-    call wkvect(solveu//'.SLVR', basz//' V R', zslvr, islvr)
-    call wkvect(solveu//'.SLVI', basz//' V I', zslvi, islvi)
+    call wkvect(solveu//'.SLVK', base//' V K24', zslvk, islvk)
+    call wkvect(solveu//'.SLVR', base//' V R', zslvr, islvr)
+    call wkvect(solveu//'.SLVI', base//' V I', zslvi, islvi)
 !
 ! ------------------------------------------------------
 ! --- LECTURE MOT-CLE ET REMPLISSAGE DE LA SD_SOLVEUR PROPRE A CHAQUE

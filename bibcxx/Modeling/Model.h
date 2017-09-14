@@ -99,7 +99,9 @@ class ModelInstance: public DataStructure
          * @brief Maillage sur lequel repose la modelisation
          * @todo a supprimer en templatisant Model etc.
          */
+#ifdef _USE_MPI
         PartialMeshPtr       _supportPartialMesh;
+#endif /* _USE_MPI */
         /** @brief Méthode de parallélisation du modèle */
         ModelSplitingMethod _splitMethod;
         /** @brief Graph partitioning */
@@ -188,12 +190,14 @@ class ModelInstance: public DataStructure
             return _supportBaseMesh;
         };
 
+#ifdef _USE_MPI
         PartialMeshPtr getPartialMesh() throw ( std::runtime_error )
         {
             if ( ( ! _supportPartialMesh ) || _supportPartialMesh->isEmpty() )
                 throw std::runtime_error( "Support mesh of current model is empty" );
             return _supportPartialMesh;
         };
+#endif /* _USE_MPI */
 
         /**
          * @brief Methode permettant de savoir si le modele est vide

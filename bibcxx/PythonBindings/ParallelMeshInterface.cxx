@@ -28,7 +28,6 @@
 
 #ifdef _USE_MPI
 
-#include "PythonBindings/SharedPtrUtilities.h"
 #include <boost/python.hpp>
 
 void exportParallelMeshToPython()

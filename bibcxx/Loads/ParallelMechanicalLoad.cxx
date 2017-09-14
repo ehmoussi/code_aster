@@ -23,10 +23,18 @@
 
 #include "Loads/ParallelMechanicalLoad.h"
 
+#ifdef _USE_MPI
+
 ParallelMechanicalLoadInstance::ParallelMechanicalLoadInstance( GenericMechanicalLoadPtr& load ):
-                    GenericMechanicalLoadInstance()
+                    GenericMechanicalLoadInstance( load->getSupportModel() )
 {
     const auto& mesh = load->getSupportModel()->getPartialMesh();
     const auto& mecaLoad = load->getMechanicalLoadDescription();
     std::cout << "Size "  << mecaLoad._cimpo->getSize() << std::endl;
+//     for( int pos; pos < mecaLoad._cimpo->getSize(); ++pos )
+//     {
+//         
+//     }
 };
+
+#endif /* _USE_MPI */

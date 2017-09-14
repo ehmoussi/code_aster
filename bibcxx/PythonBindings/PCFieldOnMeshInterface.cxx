@@ -30,9 +30,9 @@
 void exportPCFieldOnMeshToPython()
 {
     using namespace boost::python;
-    class_< PCFieldOnMeshInstanceDouble, PCFieldOnMeshPtrDouble,
+    class_< PCFieldOnMeshDoubleInstance, PCFieldOnMeshDoublePtr,
             bases< DataStructure > >("PCFieldOnMeshDouble", no_init)
-        .def( "create", &PCFieldOnMeshInstanceDouble::create )
+        .def( "create", &PCFieldOnMeshDoubleInstance::create )
         .staticmethod( "create" )
     ;
 };

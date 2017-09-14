@@ -50,6 +50,7 @@ struct WrapMultFront
     static const LinearSolverEnum solverType = MultFront;
     static const std::set< Renumbering > setOfAllowedRenumbering;
     static const bool isHPCCompliant = false;
+    static const Renumbering defaultRenumbering = Metis;
 };
 
 /**
@@ -61,6 +62,7 @@ struct WrapLdlt
     static const LinearSolverEnum solverType = Ldlt;
     static const std::set< Renumbering > setOfAllowedRenumbering;
     static const bool isHPCCompliant = false;
+    static const Renumbering defaultRenumbering = RCMK;
 };
 
 /**
@@ -72,6 +74,7 @@ struct WrapMumps
     static const LinearSolverEnum solverType = Mumps;
     static const std::set< Renumbering > setOfAllowedRenumbering;
     static const bool isHPCCompliant = false;
+    static const Renumbering defaultRenumbering = Auto;
 };
 
 /**
@@ -83,6 +86,7 @@ struct WrapPetsc
     static const LinearSolverEnum solverType = Petsc;
     static const std::set< Renumbering > setOfAllowedRenumbering;
     static const bool isHPCCompliant = true;
+    static const Renumbering defaultRenumbering = Sans;
 };
 
 /**
@@ -94,6 +98,7 @@ struct WrapGcpc
     static const LinearSolverEnum solverType = Gcpc;
     static const std::set< Renumbering > setOfAllowedRenumbering;
     static const bool isHPCCompliant = false;
+    static const Renumbering defaultRenumbering = Sans;
 };
 
 /**
@@ -509,6 +514,11 @@ class BaseLinearSolverInstance: public DataStructure
             _precondResidual = residual;
         };
 
+        void setRenumbering( Renumbering reum )
+        {
+            _renumber = reum;
+        };
+
         void setSolverResidual( double residual )
         {
             _residual = residual;
@@ -549,7 +559,7 @@ public:
     /**
      * @brief Constructeur
      */
-    static LinearSolverPtr create( const Renumbering currentRenumber )
+    static LinearSolverPtr create( const Renumbering currentRenumber = linSolvWrap::defaultRenumbering )
     {
         return LinearSolverPtr( new LinearSolverInstance< linSolvWrap >( currentRenumber ) );
     };

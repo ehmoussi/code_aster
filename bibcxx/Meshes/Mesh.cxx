@@ -87,28 +87,26 @@ bool MeshInstance::addGroupOfNodesFromNodes( const std::string& name, const Vect
 bool BaseMeshInstance::readMeshFile( const std::string& fileName, const std::string& format )
     throw ( std::runtime_error )
 {
-    LogicalUnitFileCython file1( fileName, Binary, Old );
-
-    CommandSyntaxCython cmdSt( "LIRE_MAILLAGE" );
-    cmdSt.setResult( getResultObjectName(), "MAILLAGE" );
+    FileTypeCython type = Ascii;
+    if( format == "MED" ) type = Binary;
+    LogicalUnitFileCython file1( fileName, type, Old );
 
     SyntaxMapContainer syntax;
-    syntax.container[ "FORMAT" ] = format;
 
     if( format == "GIBI" || format == "GMSH" )
     {
         const std::string tmpFileName = getTemporaryFileName( "." );
         // Fichier temporaire
-        LogicalUnitFileCython file2( tmpFileName, Binary, New );
+        LogicalUnitFileCython file2( tmpFileName, Ascii, Append );
         std::string preCmd = "PRE_" + format;
         ASTERINTEGER op2 = 47;
         if( format == "GIBI" ) op2 = 49;
 
-        CommandSyntaxCython cmdSt2( preCmd );
+        CommandSyntaxCython* cmdSt2 = new CommandSyntaxCython( preCmd );
         SyntaxMapContainer syntax2;
         syntax2.container[ "UNITE_" + format ] = file1.getLogicalUnit();
         syntax2.container[ "UNITE_MAILLAGE" ] = file2.getLogicalUnit();
-        cmdSt2.define( syntax2 );
+        cmdSt2->define( syntax2 );
 
         try
         {
@@ -118,23 +116,44 @@ bool BaseMeshInstance::readMeshFile( const std::string& fileName, const std::str
         {
             throw;
         }
+        delete cmdSt2;
+        syntax.container[ "FORMAT" ] = "ASTER";
         syntax.container[ "UNITE" ] = file2.getLogicalUnit();
+
+        CommandSyntaxCython cmdSt( "LIRE_MAILLAGE" );
+        cmdSt.setResult( getResultObjectName(), "MAILLAGE" );
+
+        cmdSt.define( syntax );
+
+        try
+        {
+            ASTERINTEGER op = 1;
+            CALL_EXECOP( &op );
+        }
+        catch( ... )
+        {
+            throw;
+        }
     }
     else
     {
+        syntax.container[ "FORMAT" ] = format;
         syntax.container[ "UNITE" ] = file1.getLogicalUnit();
-    }
 
-    cmdSt.define( syntax );
+        CommandSyntaxCython cmdSt( "LIRE_MAILLAGE" );
+        cmdSt.setResult( getResultObjectName(), "MAILLAGE" );
 
-    try
-    {
-        ASTERINTEGER op = 1;
-        CALL_EXECOP( &op );
-    }
-    catch( ... )
-    {
-        throw;
+        cmdSt.define( syntax );
+
+        try
+        {
+            ASTERINTEGER op = 1;
+            CALL_EXECOP( &op );
+        }
+        catch( ... )
+        {
+            throw;
+        }
     }
     _isEmpty = false;
 

@@ -33,6 +33,7 @@
 #include "DataFields/Table.h"
 #include "Loads/ListOfLinearRelations.h"
 #include "DataFields/PCFieldOnMesh.h"
+#include "Meshes/Mesh.h"
 
 /**
  * @class PrestressingCableDefinitionInstance
@@ -43,8 +44,9 @@
 class PrestressingCableDefinitionInstance: public DataStructure
 {
 private:
+    MeshPtr                        _mesh;
     /** @brief Carte '.CHME.SIGIN' */
-    PCFieldOnMeshPtrDouble         _sigin;
+    PCFieldOnMeshDoublePtr         _sigin;
     /** @brief Table 'CABLEBP' */
     TablePtr                       _cableBP;
     /** @brief Table 'CABLEGL' */
@@ -52,7 +54,7 @@ private:
     /** @brief Table '.LIRELA' */
     ListOfLinearRelationsDoublePtr _lirela;
     /** @brief Booleen indiquant si la sd a deja ete remplie */
-    bool                   _isEmpty;
+    bool                           _isEmpty;
 
 public:
     /**
@@ -64,7 +66,7 @@ public:
     /**
      * @brief Constructeur
      */
-    PrestressingCableDefinitionInstance();
+    PrestressingCableDefinitionInstance( const MeshPtr& );
 
     /**
      * @brief Methode permettant de savoir si l'objet est vide

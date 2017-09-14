@@ -24,6 +24,8 @@
 #include "PythonBindings/ParallelMechanicalLoadInterface.h"
 #include <boost/python.hpp>
 
+#ifdef _USE_MPI
+
 void exportParallelMechanicalLoadToPython()
 {
     using namespace boost::python;
@@ -35,3 +37,5 @@ void exportParallelMechanicalLoadToPython()
         .staticmethod( "create" )
     ;
 };
+
+#endif /* _USE_MPI */

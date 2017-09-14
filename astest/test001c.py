@@ -4,13 +4,13 @@ import code_aster
 test = code_aster.TestCase()
 
 # Creation du maillage
-monMaillage = code_aster.Mesh()
+monMaillage = code_aster.Mesh.create()
 
 # test de relecture d'un fichier Gmsh
 monMaillage.readGmshFile("ssnv187a.msh")
 
 # test du format Gibi
-mtest = code_aster.Mesh()
+mtest = code_aster.Mesh.create()
 mtest.readGibiFile("zzzz364a.mgib")
 
 coord = monMaillage.getCoordinates()
@@ -23,9 +23,9 @@ with test.assertRaises(TypeError):
     coord[3] = 5.0
 
 # Definition du modele Aster
-monModel = code_aster.Model()
+monModel = code_aster.Model.create()
 monModel.setSupportMesh(monMaillage)
-monModel.addModelingOnAllMesh(code_aster.Mechanics, code_aster.Tridimensional)
+monModel.addModelingOnAllMesh(code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
 
 # delete monMaillage and check that the C++ object still exists because
 # referenced by the model object

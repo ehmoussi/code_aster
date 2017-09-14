@@ -42,9 +42,9 @@ class LogicalUnitFileCython
 {
     private:
         /** @brief Nom de la commande */
-        const std::string _fileName;
+        std::string _fileName;
         /** @brief Booleen pour savoir si un fichier est utilisable */
-        const bool _isUsable;
+        bool _isUsable;
 
     public:
         /**
