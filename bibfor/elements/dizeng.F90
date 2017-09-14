@@ -78,8 +78,9 @@ subroutine dizeng(option, nomte, ndim, nbt, nno,&
     integer :: nbpara
 !   SOUPL_1  RAIDE_2  SOUPL_3  RAID_VISQ   PUIS_VISQ
     parameter  (nbpara=5)
-    real(kind=8) :: ldcpar(nbpara)
-    integer      :: ldcpai(1)
+    real(kind=8)     :: ldcpar(nbpara)
+    integer          :: ldcpai(1)
+    character(len=8) :: ldcpac(1)
     real(kind=8) :: temps0, temps1, dtemps
 !   équations du système : sigma, epsivis, epsi, puiss
     integer :: nbequa, nbdecp
@@ -219,7 +220,7 @@ subroutine dizeng(option, nomte, ndim, nbt, nno,&
 !   récupération des variables internes : epsivis  puiss  tangente
     y0(2) = zr(ivarim+1)
     y0(4) = zr(ivarim+2)
-    call rk5adp(nbequa, ldcpar, ldcpai, temps0, dtemps, nbdecp,&
+    call rk5adp(nbequa, ldcpar, ldcpai, ldcpac, temps0, dtemps, nbdecp,&
                 errmax, y0, dy0, zengen, resu, iret)
 !   resu(1:nbeq)            : variables intégrées
 !   resu(nbeq+1:2*nbeq)     : d(resu)/d(t) a t+dt
@@ -237,29 +238,29 @@ subroutine dizeng(option, nomte, ndim, nbt, nno,&
 800  continue
 !
     if (nomte .eq. 'MECA_DIS_TR_L') then
-        klv(1) = raidex
-        klv(28) = raidex
+        klv(1)  =  raidex
+        klv(28) =  raidex
         klv(22) = -raidex
     else if (nomte.eq.'MECA_DIS_TR_N') then
-        klv(1) = raidex
+        klv(1)  = raidex
     else if (nomte.eq.'MECA_DIS_T_L') then
-        klv(1) = raidex
-        klv(10) = raidex
-        klv(7) = -raidex
+        klv(1)  =  raidex
+        klv(10) =  raidex
+        klv(7)  = -raidex
     else if (nomte.eq.'MECA_DIS_T_N') then
-        klv(1) = raidex
+        klv(1)  =  raidex
     else if (nomte.eq.'MECA_2D_DIS_T_L') then
-        klv(1) = raidex
-        klv(6) = raidex
-        klv(4) = -raidex
+        klv(1)  =  raidex
+        klv(6)  =  raidex
+        klv(4)  = -raidex
     else if (nomte.eq.'MECA_2D_DIS_T_N') then
-        klv(1) = raidex
+        klv(1)  =  raidex
     else if (nomte.eq.'MECA_2D_DIS_TR_L') then
-        klv(1) = raidex
-        klv(10) = raidex
-        klv(7) = -raidex
+        klv(1)  =  raidex
+        klv(10) =  raidex
+        klv(7)  = -raidex
     else if (nomte.eq.'MECA_2D_DIS_TR_N') then
-        klv(1) = raidex
+        klv(1)  =  raidex
     endif
 !   actualisation de la matrice quasi-tangente
     if (option .eq. 'FULL_MECA' .or. option .eq. 'RIGI_MECA_TANG') then
@@ -284,21 +285,21 @@ subroutine dizeng(option, nomte, ndim, nbt, nno,&
         if (nno .eq. 1) then
             do ii = 1, nc
                 zr(icontp-1+ii) = fl(ii) + zr(icontm-1+ii)
-                fl(ii) = fl(ii) + zr(icontm-1+ii)
+                fl(ii)          = fl(ii) + zr(icontm-1+ii)
             enddo
             zr(icontp) = resu(1)
-            fl(1) = resu(1)
+            fl(1)      = resu(1)
         else if (nno.eq.2) then
             do ii = 1, nc
-                zr(icontp-1+ii) = -fl(ii) + zr(icontm-1+ii)
-                zr(icontp-1+ii+nc) = fl(ii+nc) + zr(icontm-1+ii+nc)
-                fl(ii) = fl(ii) - zr(icontm-1+ii)
-                fl(ii+nc) = fl(ii+nc) + zr(icontm-1+ii+nc)
+                zr(icontp-1+ii)    = -fl(ii)    + zr(icontm-1+ii)
+                zr(icontp-1+ii+nc) =  fl(ii+nc) + zr(icontm-1+ii+nc)
+                fl(ii)             = fl(ii)     - zr(icontm-1+ii)
+                fl(ii+nc)          = fl(ii+nc)  + zr(icontm-1+ii+nc)
             enddo
-            zr(icontp) = resu(1)
+            zr(icontp)    = resu(1)
             zr(icontp+nc) = resu(1)
-            fl(1) = -resu(1)
-            fl(1+nc) = resu(1)
+            fl(1)    = -resu(1)
+            fl(1+nc) =  resu(1)
         endif
 !       forces nodales aux noeuds 1 et 2 (repère global)
         if (nc .ne. 2) then
@@ -308,12 +309,12 @@ subroutine dizeng(option, nomte, ndim, nbt, nno,&
         endif
 !       mise à jour des variables internes : sigma  epsivis  puiss tangente
         call jevech('PVARIPR', 'E', ivarip)
-        zr(ivarip) = resu(1)
+        zr(ivarip)   = resu(1)
         zr(ivarip+1) = resu(2)
         zr(ivarip+2) = resu(4)
         zr(ivarip+3) = raidex
         if (nno .eq. 2) then
-            zr(ivarip+4) = resu(1)
+            zr(ivarip+4)   = resu(1)
             zr(ivarip+4+1) = resu(2)
             zr(ivarip+4+2) = resu(4)
             zr(ivarip+4+3) = raidex

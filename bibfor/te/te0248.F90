@@ -40,20 +40,16 @@ subroutine te0248(optioz, nomtez)
     character(len=16) :: option, nomte
     character(len=*) :: optioz, nomtez
 !
-!     CALCUL DES OPTIONS FULL_MECA, RAPH_MECA, RIGI_MECA_TANG
-!     ET RIGI_MECA_IMPLEX POUR COMPORTEMENTS LINEAIRES ET NON LINEAIRES
-!     DES ELEMENTS DE BARRE 'MECA_BARRE'
+! --------------------------------------------------------------------------------------------------
 !
-! ----------------------------------------------------------------------
+!     CALCUL DES OPTIONS FULL_MECA, RAPH_MECA, RIGI_MECA_TANG, RIGI_MECA_IMPLEX
+!
+!     POUR COMPORTEMENTS LINEAIRES ET NON LINÉAIRES DES ÉLÉMENTS DE BARRE 'MECA_BARRE'
+!
+! --------------------------------------------------------------------------------------------------
 ! IN  : OPTION : NOM DE L'OPTION A CALCULER (K16)
-! IN  : NOMTE  : NOM DU TYPE_ELEMENT (K16)
-! ----------------------------------------------------------------------
-!
-!
-!
-!
-!
-! *************** DECLARATION DES VARIABLES LOCALES ********************
+! IN  : NOMTE  : NOM DU TYPE ÉLÉMENT (K16)
+! --------------------------------------------------------------------------------------------------
 !
     integer :: neq, nbt, nvamax, imate, igeom, iorie, isect, iinstm, ivarmp
     integer :: iinstp, ideplm, ideplp, icontm, ivarim, icompo
@@ -63,14 +59,13 @@ subroutine te0248(optioz, nomtez)
     character(len=4) :: fami
     character(len=16) :: valkm(3)
 !
-!   CONSTANTES POUR INTO MENEGOTTO
-!
+!   constantes pour PINTO_MENEGOTTO
     integer :: ncstpm, codret
     parameter (ncstpm=13)
     real(kind=8) :: cstpm(ncstpm)
 !
     real(kind=8) :: e, epsm
-    real(kind=8) :: a, xlong0, xlongm, sigy, dsde
+    real(kind=8) :: aire, xlong0, xlongm, sigy, dsde
     real(kind=8) :: pgl(3, 3)
     real(kind=8) :: dul(neq), uml(neq), dlong
     real(kind=8) :: klv(nbt), vip(nvamax), vim(nvamax)
@@ -81,20 +76,16 @@ subroutine te0248(optioz, nomtez)
     real(kind=8) :: angmas(3)
     integer :: i
 !
-!
-!
     aster_logical :: vecteu
 !
-! *********** FIN DES DECLARATIONS DES VARIABLES LOCALES ***************
-!
+! --------------------------------------------------------------------------------------------------
 !
     option = optioz
     nomte = nomtez
     codret=0
     fami = 'RIGI'
 !
-! --- PARAMETRES EN ENTREE
-!
+!   Paramètres en entrée
     call jevech('PMATERC', 'L', imate)
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PCAORIE', 'L', iorie)
@@ -102,11 +93,9 @@ subroutine te0248(optioz, nomtez)
     call jevech('PINSTMR', 'L', iinstm)
     call jevech('PINSTPR', 'L', iinstp)
 !
-!
-! ---- LA PRESENCE DU CHAMP DE DEPLACEMENT A L INSTANT T+
-! ---- DEVRAIT ETRE CONDITIONNE  PAR L OPTION (AVEC RIGI_MECA_TANG
-! ---- CA N A PAS DE SENS).
-! ---- CEPENDANT CE CHAMP EST INITIALISE A 0 PAR LA ROUTINE NMMATR.
+!   La présence du champ de déplacement a l'instant t+ devrait être conditionnée par l'option
+!   (mais avec RIGI_MECA_TANG cela n'a pas de sens).
+!   Cependant ce champ est initialisé à 0 par la routine nmmatr.
     call jevech('PDEPLMR', 'L', ideplm)
     call jevech('PDEPLPR', 'L', ideplp)
     call jevech('PCONTMR', 'L', icontm)
@@ -114,21 +103,18 @@ subroutine te0248(optioz, nomtez)
     call jevech('PCOMPOR', 'L', icompo)
     call jevech('PCARCRI', 'L', icarcr)
 !
-    if ((option.eq. 'FULL_MECA_ELAS' .or. option.eq.'RIGI_MECA_ELAS') .and. zk16(icompo)&
-        .ne. 'ELAS') then
+    if ( (option.eq. 'FULL_MECA_ELAS' .or. option.eq.'RIGI_MECA_ELAS') .and. &
+         (zk16(icompo) .ne. 'ELAS') ) then
         valkm(1) = option
         valkm(2) = zk16(icompo)
         valkm(3) = nomte
         call utmess('F', 'ELEMENTS3_2', nk=3, valk=valkm)
     endif
 !
-! --- ANGLE DU MOT_CLEF MASSIF (AFFE_CARA_ELEM)
-! --- INITIALISE A R8NNEM (ON NE S'EN SERT PAS)
+!   Angle du mot clef MASSIF de AFFE_CARA_ELEM, initialisé à r8nnem (on ne s'en sert pas)
     call r8inir(3, r8nnem(), angmas, 1)
 !
-! --- PARAMETRES EN SORTIE
-!
-!
+!   Paramètres en sortie
     if (option(1:10) .eq. 'RIGI_MECA_') then
         call jevech('PMATUUR', 'E', imatuu)
         ivarip = ivarim
@@ -148,29 +134,26 @@ subroutine te0248(optioz, nomtez)
         call jevech('PCONTXR', 'E', icontp)
     endif
 !
-! --- RECUPERATION DE LA SECTION DE LA BARRE
-!
-    a = zr(isect)
+!   Récupération de la section de la barre
+    aire = zr(isect)
     nno = 2
     nc = 3
 !
-! --- RECUPERATION DES ORIENTATIONS BETA,GAMMA
-! --- ET CALCUL DES MATRICES DE CHANGEMENT DE REPERE
-!
+!   Récupération des orientations bêta,gamma et calcul des matrices de changement de repère
     if (zk16(icompo+2) (6:10) .eq. '_REAC') then
         if (nomte .eq. 'MECA_BARRE') then
-            do 10 i = 1, 3
-                w(i) = zr(igeom-1+i) + zr(ideplm-1+i) + zr(ideplp-1+i)
+            do i = 1, 3
+                w(i)   = zr(igeom-1+i) + zr(ideplm-1+i) + zr(ideplp-1+i)
                 w(i+3) = zr(igeom+2+i) + zr(ideplm+2+i) + zr(ideplp+2+ i)
-                xd(i) = w(i+3) - w(i)
- 10         continue
+                xd(i)  = w(i+3) - w(i)
+            enddo
         else if (nomte.eq.'MECA_2D_BARRE') then
-            w(1) = zr(igeom-1+1) + zr(ideplm-1+1) + zr(ideplp-1+1)
-            w(2) = zr(igeom-1+2) + zr(ideplm-1+2) + zr(ideplp-1+2)
-            w(3) = 0.d0
-            w(4) = zr(igeom-1+3) + zr(ideplm-1+3) + zr(ideplp-1+3)
-            w(5) = zr(igeom-1+4) + zr(ideplm-1+4) + zr(ideplp-1+4)
-            w(6) = 0.d0
+            w(1)  = zr(igeom-1+1) + zr(ideplm-1+1) + zr(ideplp-1+1)
+            w(2)  = zr(igeom-1+2) + zr(ideplm-1+2) + zr(ideplp-1+2)
+            w(3)  = 0.d0
+            w(4)  = zr(igeom-1+3) + zr(ideplm-1+3) + zr(ideplp-1+3)
+            w(5)  = zr(igeom-1+4) + zr(ideplm-1+4) + zr(ideplp-1+4)
+            w(6)  = 0.d0
             xd(1) = w(4) - w(1)
             xd(2) = w(5) - w(2)
             xd(3) = 0.d0
@@ -180,18 +163,18 @@ subroutine te0248(optioz, nomtez)
         call matrot(ang1, pgl)
     else
         if (nomte .eq. 'MECA_BARRE') then
-            do 20 i = 1, 3
-                w(i) = zr(igeom-1+i)
+            do i = 1, 3
+                w(i)   = zr(igeom-1+i)
                 w(i+3) = zr(igeom+2+i)
-                xd(i) = w(i+3) - w(i)
- 20         continue
+                xd(i)  = w(i+3) - w(i)
+            enddo
         else if (nomte.eq.'MECA_2D_BARRE') then
-            w(1) = zr(igeom-1+1)
-            w(2) = zr(igeom-1+2)
-            w(3) = 0.d0
-            w(4) = zr(igeom-1+3)
-            w(5) = zr(igeom-1+4)
-            w(6) = 0.d0
+            w(1)  = zr(igeom-1+1)
+            w(2)  = zr(igeom-1+2)
+            w(3)  = 0.d0
+            w(4)  = zr(igeom-1+3)
+            w(5)  = zr(igeom-1+4)
+            w(6)  = 0.d0
             xd(1) = w(4) - w(1)
             xd(2) = w(5) - w(2)
             xd(3) = 0.d0
@@ -206,18 +189,12 @@ subroutine te0248(optioz, nomtez)
         call utmess('F', 'ELEMENTS3_62')
     endif
 !
-!
-! --- INCREMENT DE DEPLACEMENT EN REPERE LOCAL
-! CORRECTION CHAVANT : DUL = INCREMENT ENTRE INSTANT
-! PLUS ET INSTANT MOINS
-! ---    DUL  ENTRE LE REPOS ET LE DERNIER ETAT CONVERGE
-! --- INCREMENT D'ALLONGEMENT DLONG
-!
+!   Incrément de déplacement en repère local
     if (nomte .eq. 'MECA_BARRE') then
-        do 30 i = 1, 6
+        do i = 1, 6
             deplm(i) = zr(ideplm+i-1)
             deplp(i) = zr(ideplp+i-1)
- 30     continue
+        enddo
     else if (nomte.eq.'MECA_2D_BARRE') then
         deplm(1) = zr(ideplm)
         deplm(2) = zr(ideplm+1)
@@ -232,36 +209,27 @@ subroutine te0248(optioz, nomtez)
         deplp(4) = zr(ideplp+2)
         deplp(5) = zr(ideplp+3)
         deplp(6) = 0.d0
-!
     endif
 !
     call utpvgl(nno, nc, pgl, deplm, uml)
     call utpvgl(nno, nc, pgl, deplp, dul)
 !
     dlong = dul(4) - dul(1)
-!
     xlongm = xlong0 + uml(4) - uml(1)
-!
-!
-!
-! --- RECUPERATION
-! ---     DE L'EFFORT NORMAL PRECEDENT MOYEN EFFNOM POUR L'ELEMENT
+!   Récupération de l'effort normal précédent moyen effnom pour l'élément
     effnom = zr(icontm)
 !
-!
-! --- RELATION DE COMPORTEMENT
-!
-!     ---------------------------------------------------
-    if (zk16(icompo) .eq. 'ELAS' .or. zk16(icompo) .eq. 'VMIS_ISOT_LINE' .or. zk16(icompo)&
-        .eq. 'VMIS_ISOT_TRAC' .or. zk16(icompo) .eq. 'CORR_ACIER' .or. zk16(icompo) .eq.&
-        'VMIS_CINE_LINE') then
-!     ---------------------------------------------------
-!
-! --- RECUPERATION DES CARACTERISTIQUES DU MATERIAU
-!
+!   RELATION DE COMPORTEMENT
+    if ( (zk16(icompo) .eq. 'ELAS') .or. &
+         (zk16(icompo) .eq. 'VMIS_ISOT_LINE') .or. &
+         (zk16(icompo) .eq. 'VMIS_ISOT_TRAC') .or. &
+         (zk16(icompo) .eq. 'CORR_ACIER') .or. &
+         (zk16(icompo) .eq. 'VMIS_CINE_LINE') .or. &
+         (zk16(icompo) .eq. 'RELAX_ACIER') ) then
+!       Récupération des caractéristiques du matériau
         epsm = (uml(4)-uml(1))/xlong0
         call nmiclb(fami, 1, 1, option, zk16(icompo),&
-                    zi(imate), xlong0, a, zr(iinstm), zr(iinstp),&
+                    zi(imate), xlong0, aire, zr(iinstm), zr(iinstp),&
                     dlong, effnom, zr(ivarim), effnop, zr(ivarip),&
                     klv, fono, epsm, zr(icarcr), codret)
 !
@@ -279,17 +247,13 @@ subroutine te0248(optioz, nomtez)
             call utpvlg(nno, nc, pgl, fono, vectu)
         endif
 !
-!     ---------------------------------------------------
     else if (zk16(icompo).eq.'VMIS_ASYM_LINE') then
-!     ---------------------------------------------------
-!
-!        RECUPERATION DES CARACTERISTIQUES DU MATERIAU
-!
+!       Récupération des caractéristiques du matériau
         call nmmaba(zi(imate), zk16(icompo), e, dsde, sigy,&
                     ncstpm, cstpm)
 !
         call nmasym(fami, 1, 1, zi(imate), option,&
-                    xlong0, a, zr(iinstm), zr( iinstp), dlong,&
+                    xlong0, aire, zr(iinstm), zr( iinstp), dlong,&
                     effnom, zr(ivarim), zr(icontp), zr(ivarip), klv,&
                     fono)
 !
@@ -302,12 +266,8 @@ subroutine te0248(optioz, nomtez)
             call utpvlg(nno, nc, pgl, fono, vectu)
         endif
 !
-!     ---------------------------------------------------
     else if (zk16(icompo).eq.'PINTO_MENEGOTTO') then
-!     ---------------------------------------------------
-!
-!        RECUPERATION DES CARACTERISTIQUES DU MATERIAU
-!
+!       Récupération des caractéristiques du matériau
         call nmmaba(zi(imate), zk16(icompo), e, dsde, sigy,&
                     ncstpm, cstpm)
 !
@@ -320,7 +280,7 @@ subroutine te0248(optioz, nomtez)
         vim(7) = zr(ivarim+6)
         vim(8) = zr(ivarim+7)
         call nmpime(fami, 1, 1, zi(imate), option,&
-                    xlong0, a, xlongm, dlong, ncstpm,&
+                    xlong0, aire, xlongm, dlong, ncstpm,&
                     cstpm, vim, effnom, vip, effnop,&
                     klv, fono)
 !
@@ -331,7 +291,7 @@ subroutine te0248(optioz, nomtez)
             if (option(1:9) .eq. 'FULL_MECA') then
                 call utpslg(nno, nc, pgl, klv, matuu)
             endif
-            zr(ivarip) = vip(1)
+            zr(ivarip)   = vip(1)
             zr(ivarip+1) = vip(2)
             zr(ivarip+2) = vip(3)
             zr(ivarip+3) = vip(4)
@@ -342,14 +302,11 @@ subroutine te0248(optioz, nomtez)
             call utpvlg(nno, nc, pgl, fono, vectu)
         endif
 !
-!     ------------
     else
-!     ------------
-!
+!       Double DEBORST : risque d'impact sur les performances d'intégration de la loi
         call r8inir(neq, 0.d0, fono, 1)
         call r8inir(nbt, 0.d0, klv, 1)
         vecteu = ( (option(1:9).eq.'FULL_MECA') .or. (option(1:9) .eq.'RAPH_MECA') )
-!
 !
         call jevech('PCOMPOR', 'L', icompo)
         if ((zk16(icompo-1+5)(1:7).ne.'DEBORST') .and. (zk16(icompo)(1: 4).ne.'SANS')) then
@@ -358,7 +315,7 @@ subroutine te0248(optioz, nomtez)
             call utmess('F', 'ALGORITH6_81', nk=2, valk=valkm)
         else
 !
-            sigx=effnom/a
+            sigx=effnom/aire
             epsx=(uml(4)-uml(1))/xlong0
             depx=dlong/xlong0
 !
@@ -375,28 +332,19 @@ subroutine te0248(optioz, nomtez)
                         sigxp, etan, codret)
 !
             if (vecteu) then
-!
-! ---          STOCKAGE DE L'EFFORT NORMAL
-                zr(icontp) = sigxp*a
-!
-!
-! ---          CALCUL DES FORCES NODALES
-!
-                fono(1) = -sigxp*a
-                fono(4) = sigxp*a
-!
+!               stockage de l'effort normal
+                zr(icontp) = sigxp*aire
+!               calcul des forces nodales
+                fono(1) = -sigxp*aire
+                fono(4) = sigxp*aire
             endif
-!
-! ---       CALCUL DE LA MATRICE TANGENTE
-!
+!           calcul de la matrice tangente
             klv(1) = etan
             klv(7) = -etan
             klv(10) = etan
-!
         endif
 !
-! ---  PASSAGE DE KLV ET FONO DU REPERE LOCAL AU REPERE GLOBAL
-!
+!       passage de klv et fono du repère local au repère global
         if (option(1:10) .eq. 'RIGI_MECA_') then
             call utpslg(nno, nc, pgl, klv, matuu)
         else
@@ -406,20 +354,18 @@ subroutine te0248(optioz, nomtez)
             call utpvlg(nno, nc, pgl, fono, vectu)
         endif
 !
-!     ----------
     endif
-!     ----------
 !
     if (nomte .eq. 'MECA_BARRE') then
         if ((option(1:10).eq.'RIGI_MECA_') .or. (option(1:9) .eq.'FULL_MECA')) then
-            do 70 i = 1, 21
+            do i = 1, 21
                 zr(imatuu+i-1) = matuu(i)
- 70         continue
+            enddo
         endif
         if (option(1:10) .ne. 'RIGI_MECA_') then
-            do 80 i = 1, 6
+            do i = 1, 6
                 zr(ivectu+i-1) = vectu(i)
- 80         continue
+            enddo
         endif
 !
     else if (nomte.eq.'MECA_2D_BARRE') then

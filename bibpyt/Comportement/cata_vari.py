@@ -521,6 +521,7 @@ DICT_NOM_VARI = {
     "SVE4": _(u"contraintes effectives de traction dues au chargement extérieur"),
     "SVE5": _(u"contraintes effectives de traction dues au chargement extérieur"),
     "SVE6": _(u"contraintes effectives de traction dues au chargement extérieur"),
+    "TANGENTE": _(u"Tangente au comportement"),
     "TAUW": _(u"taux de chargement local de Weibull"),
     "TEMP": _(u"température"),
     "TEMP_MAX": _(u"température maximum"),

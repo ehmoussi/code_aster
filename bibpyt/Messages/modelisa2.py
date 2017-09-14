@@ -176,6 +176,22 @@ Contactez le support technique.
  deux mailles POI1 interdit
 """),
 
+    45: _(u"""
+Loi de comportement RELAX_ACIER :
+Vous avez un matériau avec le comportement %(k1)s et RELAX_1000=%(r1)f
+Si vous avez utilisé la commande DEFI_CABLE_BP, il faut que TYPE_RELAX='SANS' ou RELAX_1000=0.0
+pour ne pas prendre en compte 2 fois la relaxation.
+"""),
+
+    46: _(u"""
+Loi de comportement RELAX_ACIER :
+Pour prendre en compte la relaxation, F_PRG est obligatoire. Ce paramètre peut-être donné à l'aide de la
+commande DEFI_MATERIAU soit par :
+  - RELAX_ACIER / F_PRG : réel ou fonction pouvant dépendre de la température
+  - BPEL_ACIER  / F_PRG : réel
+  - ETCC_ACIER  / F_PRG : réel
+"""),
+
     47: _(u"""
 Opérateur DEFI_CABLE_BP:
   Vous avez indiqué TYPE_RELAX='SANS' et donné RELAX_1000 = %(r1)f.

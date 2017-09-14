@@ -182,6 +182,7 @@ def C_RELATION( COMMAND ):
                                         "NORTON_HOFF",
                                         "PINTO_MENEGOTTO",
                                         "POLYCRISTAL",
+                                        "RELAX_ACIER",
                                         "RGI_BETON",
                                         "ROUSSELIER",
                                         "ROUSS_PR",

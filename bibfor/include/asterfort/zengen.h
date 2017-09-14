@@ -21,12 +21,13 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine zengen(ppr, ppi, yy0, dy0, dyy, decoup)
-        real(kind=8) :: ppr(*)
-        integer      :: ppi(*)
-        real(kind=8) :: yy0(*)
-        real(kind=8) :: dy0(*)
-        real(kind=8) :: dyy(*)
-        aster_logical :: decoup
+    subroutine zengen(ppr, ppi, ppc, yy0, dy0, dyy, decoup)
+        real(kind=8)     :: ppr(*)
+        integer          :: ppi(*)
+        character(len=*) :: ppc(*)
+        real(kind=8)     :: yy0(*)
+        real(kind=8)     :: dy0(*)
+        real(kind=8)     :: dyy(*)
+        aster_logical    :: decoup
     end subroutine zengen
 end interface

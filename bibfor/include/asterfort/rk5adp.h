@@ -21,28 +21,30 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine rk5adp(nbeq, param_real, param_int, t0, dt0, nbmax,&
-                      errmax, y0, dy0, rk5fct, resu, iret)
-        integer      :: nbeq
-        real(kind=8) :: param_real(*)
-        integer      :: param_int(*)
-        real(kind=8) :: t0
-        real(kind=8) :: dt0
-        integer      :: nbmax
-        real(kind=8) :: errmax
-        real(kind=8) :: y0(nbeq)
-        real(kind=8) :: dy0(nbeq)
-        real(kind=8) :: resu(2*nbeq)
-        integer      :: iret
+    subroutine rk5adp(nbeq, param_real, param_int, param_car, t0, dt0, &
+                      nbmax, errmax, y0, dy0, rk5fct, resu, iret)
+        integer          :: nbeq
+        real(kind=8)     :: param_real(*)
+        integer          :: param_int(*)
+        character(len=*) :: param_car(*)
+        real(kind=8)     :: t0
+        real(kind=8)     :: dt0
+        integer          :: nbmax
+        real(kind=8)     :: errmax
+        real(kind=8)     :: y0(nbeq)
+        real(kind=8)     :: dy0(nbeq)
+        real(kind=8)     :: resu(2*nbeq)
+        integer          :: iret
 !
         interface
-            subroutine rk5fct(ppr, ppi, yy0, dy0, dyy, decoup)
-                real(kind=8) :: ppr(*)
-                integer      :: ppi(*)
-                real(kind=8) :: yy0(*)
-                real(kind=8) :: dy0(*)
-                real(kind=8) :: dyy(*)
-                aster_logical :: decoup
+            subroutine rk5fct(ppr, ppi, ppc, yy0, dy0, dyy, decoup)
+                real(kind=8)     :: ppr(*)
+                integer          :: ppi(*)
+                character(len=*) :: ppc(*)
+                real(kind=8)     :: yy0(*)
+                real(kind=8)     :: dy0(*)
+                real(kind=8)     :: dyy(*)
+                aster_logical    :: decoup
             end subroutine rk5fct
         end interface
 !

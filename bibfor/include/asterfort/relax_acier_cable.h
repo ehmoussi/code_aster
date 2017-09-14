@@ -19,29 +19,22 @@
 !
 !
 interface
-    subroutine nmiclb(fami, kpg, ksp, option, compor,&
-                      imate, xlong0, aire, tmoins, tplus,&
-                      dlong0, effnom, vim, effnop, vip,&
-                      klv, fono, epsm, crildc, codret)
-        character(len=*) :: fami
-        integer :: kpg
-        integer :: ksp
+    subroutine relax_acier_cable(fami, kpg, ksp, imate, sigm, epsm, deps, vim, option,&
+                  materi, sigp, vip, dsde)
+        character(len=*)  :: fami
+        character(len=*)  :: materi
+        integer           :: kpg
+        integer           :: ksp
+        integer           :: imate
+        real(kind=8)      :: sigm
+        real(kind=8)      :: epsm
+        real(kind=8)      :: deps
+        real(kind=8)      :: vim(*)
+        real(kind=8)      :: sigp
+        real(kind=8)      :: vip(*)
+        real(kind=8)      :: dsde
         character(len=16) :: option
-        character(len=16) :: compor(*)
-        integer :: imate
-        real(kind=8) :: xlong0
-        real(kind=8) :: aire
-        real(kind=8) :: tmoins
-        real(kind=8) :: tplus
-        real(kind=8) :: dlong0
-        real(kind=8) :: effnom
-        real(kind=8) :: vim(*)
-        real(kind=8) :: effnop
-        real(kind=8) :: vip(*)
-        real(kind=8) :: klv(21)
-        real(kind=8) :: fono(6)
-        real(kind=8) :: epsm
-        real(kind=8) :: crildc(3)
-        integer :: codret
-    end subroutine nmiclb
+    end subroutine relax_acier_cable
 end interface
+
+
