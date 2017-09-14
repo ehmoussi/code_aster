@@ -92,12 +92,7 @@ class FunctionInstance: public DataStructure
         * @type  interpolation string
         * @todo checking
         */
-        void setInterpolation( const std::string type )
-        {
-            if( !_property->isAllocated() )
-                propertyAllocate();
-            (*_property)[1] = type.c_str();
-        }
+        void setInterpolation( const std::string type ) throw ( std::runtime_error );
 
         /**
         * @brief Definition of the type of extrapolation
@@ -105,12 +100,7 @@ class FunctionInstance: public DataStructure
         * @type  extrapolation string
         * @todo checking
         */
-        void setExtrapolation( const std::string type )
-        {
-            if( !_property->isAllocated() )
-                propertyAllocate();
-            (*_property)[4] = type.c_str();
-        }
+        void setExtrapolation( const std::string type ) throw ( std::runtime_error );
 
         /**
         * @brief Assign the values of the function
@@ -120,6 +110,16 @@ class FunctionInstance: public DataStructure
         * @type  ord vector of double
         */
         void setValues( const VectorDouble &absc, const VectorDouble &ord ) throw ( std::runtime_error );
+
+        /**
+        * @brief Return the values of the function as an unidimensional vector
+        */
+        std::vector<double> getValues() const
+        {
+            const double* ptr = getDataPtr();
+            std::vector<double> vect( ptr, ptr + _value->size() );
+            return vect;
+        }
 
         /**
         * @brief Return a pointer to the vector of data

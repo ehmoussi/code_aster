@@ -33,7 +33,6 @@ class injector(object):
             return type.__init__(self, name, bases, dict)
 
 
-# inject some methods in the point foo
 class ExtendedDataStructure(injector, DataStructure):
     cata_sdj = None
     ptr_class_sdj = None

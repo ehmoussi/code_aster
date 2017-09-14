@@ -33,7 +33,6 @@ class injector(object):
             return type.__init__(self, name, bases, dict)
 
 
-# inject some methods in the point foo
 class ExtendedTable(injector, Table):
     cata_sdj = "SD.sd_table.sd_table"
 

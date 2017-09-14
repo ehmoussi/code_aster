@@ -42,5 +42,6 @@ void exportFunctionToPython()
         .def( "setValues", &FunctionInstance::setValues )
         .def( "size", &FunctionInstance::size )
         .def( "getProperties", &FunctionInstance::getProperties )
+        .def( "getValues", &FunctionInstance::getValues )
     ;
 };

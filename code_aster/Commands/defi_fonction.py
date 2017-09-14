@@ -78,5 +78,5 @@ def DEFI_FONCTION( **kwargs ):
     func.setResultName( NOM_RESU )
     func.setInterpolation( INTERPOL )
     func.setExtrapolation( PROL_GAUCHE[0] + PROL_DROITE[0] )
-    func.setValues( list(absc), list(ordo) )
+    func.setValues( absc, ordo )
     return func

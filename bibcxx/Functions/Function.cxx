@@ -42,3 +42,41 @@ void FunctionInstance::setValues( const VectorDouble &absc, const VectorDouble &
         ++idx;
     }
 }
+
+void FunctionInstance::setInterpolation( const std::string type ) throw ( std::runtime_error )
+{
+    std::string interp;
+    if( !_property->isAllocated() )
+        propertyAllocate();
+
+    if ( type.length() != 7 )
+        throw std::runtime_error("Function: interpolation must be 7 characters long.");
+
+    interp = type.substr(0, 3);
+    if ( interp != "LIN" && interp != "LOG" && interp != "NON" )
+        throw std::runtime_error("Function: invalid interpolation for abscissa.");
+
+    interp = type.substr(4, 3);
+    if ( interp != "LIN" && interp != "LOG" && interp != "NON" )
+        throw std::runtime_error("Function: invalid interpolation for ordinates.");
+
+    (*_property)[1] = type.c_str();
+}
+
+void FunctionInstance::setExtrapolation( const std::string type ) throw ( std::runtime_error )
+{
+    if( !_property->isAllocated() )
+        propertyAllocate();
+
+    if ( type.length() != 2 )
+        throw std::runtime_error("Function: interpolation must be 2 characters long.");
+
+    std::string auth("CELI");
+    if ( auth.find(type[0]) == std::string::npos )
+        throw std::runtime_error("Function: invalid extrapolation for abscissa.");
+
+    if ( auth.find(type[1]) == std::string::npos )
+        throw std::runtime_error("Function: invalid extrapolation for ordinates.");
+
+    (*_property)[4] = type.c_str();
+}

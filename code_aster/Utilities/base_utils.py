@@ -23,7 +23,10 @@
 This modules gives some basic utilities.
 """
 
+from functools import wraps
 import sys
+
+import numpy
 
 
 def import_object(uri):
@@ -67,8 +70,30 @@ def force_list(obj):
     return list(obj)
 
 
-class Singleton(object):
+def ndarray_to_list(obj):
+    """Convert an object to a list if it is a `numpy.ndarray` or keep it
+    unchanged otherwise.
 
+    Arguments:
+        obj (misc): Object to convert.
+
+    Returns:
+        misc: Object unchanged or a list.
+    """
+    return list(obj) if isinstance(obj, numpy.ndarray) else obj
+
+
+def accept_ndarray(func):
+    """Decorator that automatically converts numpy arrays to lists."""
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        """Wrapper"""
+        args = [ndarray_to_list(i) for i in args]
+        return func(*args, **kwargs)
+    return wrapper
+
+
+class Singleton(object):
     """Singleton implementation in python."""
     # add _singleton_id attribute to the class to be independant of import
     # path used
