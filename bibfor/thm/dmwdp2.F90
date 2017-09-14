@@ -15,25 +15,43 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-function dmwdp2(rho11, sat, phi, cs, cliq,&
-                dp11p2, emmag, em)
-    implicit none
-#include "asterf_types.h"
-    real(kind=8) :: rho11, sat, phi, cs, cliq, dp11p2, dmwdp2
-    real(kind=8) :: em
-    real(kind=8) :: dphip2
-    aster_logical :: emmag
-! ======================================================================
 !
-! --- CALCUL DE LA DERIVEE DE L APPORT MASSIQUE DE L EAU PAR RAPPORT ---
-! --- A LA PRESSION DE GAZ ---------------------------------------------
-! ======================================================================
-    if (emmag) then
-        dphip2 = em
-        dmwdp2 = rho11 *(phi*dphip2+phi*cliq*dp11p2)
+function dmwdp2(rho11 , satur  , phi, cs, cliq,&
+                dp11p2, l_emmag, em)
+!
+implicit none
+!
+#include "asterf_types.h"
+!
+real(kind=8), intent(in) :: rho11, phi, satur
+real(kind=8), intent(in) :: cs, cliq, dp11p2, em
+aster_logical, intent(in) :: l_emmag
+real(kind=8) :: dmwdp2
+!
+! --------------------------------------------------------------------------------------------------
+!
+! THM
+!
+! Derivative of quantity of mass by gaz pressure - Liquid part
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  rho11            : volumic mass of liquid
+! In  phi              : porosity
+! In  satur            : saturation
+! In  cs               : Biot modulus of solid matrix
+! In  cliq             : value of 1/K for liquid
+! In  dp11p2           : derivative of liquid pressure by gaz pressure
+! In  l_emmag          : .true. if use storage coefficient
+! In  em               : storage coefficient
+! Out dmwdp2           : derivative of quantity of mass by gaz pressure - Liquid part
+!
+! --------------------------------------------------------------------------------------------------
+!
+    if (l_emmag) then
+        dmwdp2 = rho11*(phi*em+phi*cliq*dp11p2)
     else
-        dmwdp2 = rho11*sat*(phi*cliq*dp11p2+cs)
+        dmwdp2 = rho11*satur*(phi*cliq*dp11p2+cs)
     endif
-! ======================================================================
+!
 end function
