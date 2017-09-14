@@ -50,7 +50,7 @@ DEFI_SOL_EQUI = MACRO(nom="DEFI_SOL_EQUI",
       TOUT_CHAM     =SIMP(statut='f',typ='TXM',into=("OUI","NON",),defaut="OUI"),
       # Unite d entree de table de signaux
       UNITE_TRAN_INIT =SIMP(statut='f', typ=UnitType(), inout='in',),
-      LIAISON       =SIMP(statut='f',typ='TXM',into=("PERIODIQUE","SANS",)),
+      LIAISON       =SIMP(statut='f',typ='TXM',into=("PERIODIQUE","SANS",),),
       MASS_PENA       =SIMP(statut='f',typ='R',
                            fr=tr("valeur ponctuelle de masse penalisee") ),
       LONG_CARA       =SIMP(statut='f',typ='R',
