@@ -27,5 +27,6 @@ Python functions.
 from libaster import *
 
 # extend DataStructures using metaclasses
-from .generic_ext import DataStructure
+from .datastructure_ext import DataStructure
+from .function_ext import Function
 from .table_ext import Table
