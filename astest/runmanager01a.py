@@ -8,11 +8,11 @@ from code_aster.RunManager.Initializer import finalize
 
 test = code_aster.TestCase()
 
-test.assertEqual( EP.get('hostname'), platform.node())
-test.assertEqual( EP.get('tpmax'), 86400)
+test.assertEqual( executionParameter.get_option('hostname'), platform.node())
+test.assertEqual( executionParameter.get_option('tpmax'), 86400)
 
 executionParameter.set_option('tpmax', 60.)
-test.assertEqual( EP.get('tpmax'), 60)
+test.assertEqual( executionParameter.get_option('tpmax'), 60)
 
 
 finalize()
