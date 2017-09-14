@@ -42,8 +42,10 @@ class ExtendedTable(injector, Table):
         Exemple : TAB['INST', 1] retourne la 1ère valeur de la colonne 'INST'."""
         if not self.accessible():
             raise RuntimeError("Erreur dans table.__getitem__ en PAR_LOT='OUI'")
-        assert len(key) == 2
-        para, numlign = key
+        try:
+            para, numlign = key
+        except (TypeError, ValueError):
+            raise RuntimeError("Table.__getitem__ takes exactly 2 arguments.")
         tabnom = self.sdj.TBLP.get()
         try:
             i = tabnom.index('%-24s' % para)
@@ -53,7 +55,7 @@ class ExtendedTable(injector, Table):
             assert exist is not None
             assert exist[numlign - 1] != 0
             res = resu[numlign - 1]
-        except (IndexError, AssertionError):
+        except (ValueError, IndexError, AssertionError):
             # pour __getitem__, il est plus logique de retourner KeyError.
             raise KeyError
         return res
