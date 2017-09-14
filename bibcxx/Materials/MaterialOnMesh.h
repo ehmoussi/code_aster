@@ -30,6 +30,7 @@
 #include "astercxx.h"
 #include "DataStructures/DataStructure.h"
 #include "Modeling/Model.h"
+#include "Meshes/Mesh.h"
 #include "Materials/Material.h"
 #include "DataFields/PCFieldOnMesh.h"
 #include "Meshes/ParallelMesh.h"
@@ -53,14 +54,14 @@ class MaterialOnMeshInstance: public DataStructure
         /** @typedef Definition d'un iterateur sur listOfMatsAndGrps */
         typedef listOfMatsAndGrps::iterator listOfMatsAndGrpsIter;
 
-        /** @brief Carte '.CHAMP_MAT' */
-        PCFieldOnMeshPtrChar8  _listOfMaterials;
-        /** @brief Carte '.TEMPE_REF' */
-        PCFieldOnMeshPtrDouble _listOfTemperatures;
-        /** @brief Liste contenant les materiaux ajoutes par l'utilisateur */
-        listOfMatsAndGrps      _materialsOnMeshEntity;
         /** @brief Maillage sur lequel repose la sd_cham_mater */
         BaseMeshPtr            _supportMesh;
+        /** @brief Carte '.CHAMP_MAT' */
+        PCFieldOnMeshChar8Ptr  _listOfMaterials;
+        /** @brief Carte '.TEMPE_REF' */
+        PCFieldOnMeshDoublePtr _listOfTemperatures;
+        /** @brief Liste contenant les materiaux ajoutes par l'utilisateur */
+        listOfMatsAndGrps      _materialsOnMeshEntity;
 
         /**
          * @brief Return a SyntaxMapContainer to emulate the command keywords
@@ -78,7 +79,14 @@ class MaterialOnMeshInstance: public DataStructure
         /**
          * @brief Constructeur
          */
-        MaterialOnMeshInstance();
+        MaterialOnMeshInstance( const MeshPtr& );
+
+#ifdef _USE_MPI
+        /**
+         * @brief Constructeur
+         */
+        MaterialOnMeshInstance( const ParallelMeshPtr& );
+#endif /* _USE_MPI */
 
         /**
          * @brief Ajout d'un materiau sur tout le maillage
@@ -87,7 +95,7 @@ class MaterialOnMeshInstance: public DataStructure
         void addMaterialOnAllMesh( MaterialPtr& curMater )
         {
             _materialsOnMeshEntity.push_back( listOfMatsAndGrpsValue( curMater,
-                                                MeshEntityPtr( new AllMeshEntities() ) ) );
+                                              MeshEntityPtr( new AllMeshEntities() ) ) );
         };
 
         /**
@@ -103,7 +111,7 @@ class MaterialOnMeshInstance: public DataStructure
                 throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
             _materialsOnMeshEntity.push_back( listOfMatsAndGrpsValue( curMater,
-                                                MeshEntityPtr( new GroupOfElements(nameOfGroup) ) ) );
+                                              MeshEntityPtr( new GroupOfElements(nameOfGroup) ) ) );
         };
 
         /**
@@ -123,32 +131,6 @@ class MaterialOnMeshInstance: public DataStructure
          * @return booleen indiquant que la construction s'est bien deroulee
          */
         bool build_deprecated() throw ( std::runtime_error );
-
-        /**
-         * @brief Definition du maillage support
-         * @param currentMesh objet MeshPtr sur lequel le materiau reposera
-         */
-        bool setSupportMesh( MeshPtr& currentMesh ) throw ( std::runtime_error )
-        {
-            if ( currentMesh->isEmpty() )
-                throw std::runtime_error( "Mesh is empty" );
-            _supportMesh = currentMesh;
-            return true;
-        };
-
-#ifdef _USE_MPI
-        /**
-         * @brief Definition du maillage support
-         * @param currentMesh objet ParallelMeshPtr sur lequel le materiau reposera
-         */
-        bool setSupportMesh( ParallelMeshPtr& currentMesh ) throw ( std::runtime_error )
-        {
-            if ( currentMesh->isEmpty() )
-                throw std::runtime_error( "Mesh is empty" );
-            _supportMesh = currentMesh;
-            return true;
-        };
-#endif /* _USE_MPI */
 
         /**
          * @brief Obtenir le maillage support

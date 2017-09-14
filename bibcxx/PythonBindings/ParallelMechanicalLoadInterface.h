@@ -1,3 +1,8 @@
+
+#include "astercxx.h"
+
+#ifdef _USE_MPI
+
 #ifndef PARALLELMECHANICALLOADINTERFACE_H_
 #define PARALLELMECHANICALLOADINTERFACE_H_
 
@@ -30,3 +35,5 @@
 void exportParallelMechanicalLoadToPython();
 
 #endif /* PARALLELMECHANICALLOADINTERFACE_H_ */
+
+#endif /* _USE_MPI */

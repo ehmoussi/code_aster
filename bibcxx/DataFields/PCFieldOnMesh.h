@@ -41,7 +41,6 @@
  * @class PCFieldZone Piecewise Constant (PC) Field Zone
  * @author Natacha Bereux
  */
-template< class ValueType >
 class PCFieldZone
 {
 public:
@@ -49,14 +48,14 @@ public:
                             ListOfElements, ListOfDelayedElements };
 
 private:
-    MeshPtr                    _mesh;
+    BaseMeshPtr                _mesh;
     FiniteElementDescriptorPtr _ligrel;
     LocalizationType           _localisation;
     GroupOfElementsPtr         _grp;
     VectorInt                  _indexes;
 
 public:
-    PCFieldZone( MeshPtr mesh ): _mesh( mesh ),
+    PCFieldZone( BaseMeshPtr mesh ): _mesh( mesh ),
                                  _localisation( AllMesh )
     {};
 
@@ -64,12 +63,12 @@ public:
                                                       _localisation( AllDelayedElements )
     {};
 
-    PCFieldZone( MeshPtr mesh, GroupOfElementsPtr grp ): _mesh( mesh ),
+    PCFieldZone( BaseMeshPtr mesh, GroupOfElementsPtr grp ): _mesh( mesh ),
                                                          _localisation( GroupOfElements ),
                                                          _grp( grp )
     {};
 
-    PCFieldZone( MeshPtr mesh, const VectorInt& indexes ): _mesh( mesh ),
+    PCFieldZone( BaseMeshPtr mesh, const VectorInt& indexes ): _mesh( mesh ),
                                                            _localisation( ListOfElements ),
                                                            _indexes( indexes )
     {};
@@ -80,7 +79,7 @@ public:
         _indexes( indexes )
     {};
 
-    MeshPtr getMesh() const throw( std::runtime_error )
+    BaseMeshPtr getMesh() const throw( std::runtime_error )
     {
         if( _localisation != AllMesh and _localisation != GroupOfElements
             and _localisation != ListOfElements )
@@ -129,23 +128,25 @@ class PCFieldOnMeshInstance: public DataStructure
 {
     private:
         /** @brief Vecteur Jeveux '.NOMA' */
-        JeveuxVectorChar8         _meshName;
+        JeveuxVectorChar8          _meshName;
         /** @brief Vecteur Jeveux '.DESC' */
-        JeveuxVectorLong          _descriptor;
+        JeveuxVectorLong           _descriptor;
         /** @brief Vecteur Jeveux '.NOLI' */
-        JeveuxVectorChar24        _nameOfLigrels;
+        JeveuxVectorChar24         _nameOfLigrels;
         /** @brief Collection  '.LIMA' */
-        JeveuxCollectionLong      _listOfMeshElements;
+        JeveuxCollectionLong       _listOfMeshElements;
         /** @brief Vecteur Jeveux '.VALE' */
-        JeveuxVector< ValueType > _valuesList;
+        JeveuxVector< ValueType >  _valuesList;
         /** @brief Maillage sous-jacent */
-        MeshPtr                   _supportMesh;
+        BaseMeshPtr                _supportMesh;
+        /** @brief Maillage sous-jacent */
+        FiniteElementDescriptorPtr _FEDesc;
         /** @brief La carte est-elle allouée ? */
-        bool                      _isAllocated;
+        bool                       _isAllocated;
         /** @brief Objet temporaire '.NCMP' */
-        JeveuxVectorChar8         _componentNames;
+        JeveuxVectorChar8          _componentNames;
         /** @brief Objet temporaire '.VALV' */
-        JeveuxVector< ValueType > _valuesListTmp;
+        JeveuxVector< ValueType >  _valuesListTmp;
 
     private:
         void fortranAddValues( const long& code, const std::string& grp, const std::string& mode,
@@ -199,34 +200,37 @@ class PCFieldOnMeshInstance: public DataStructure
 
     public:
         /**
-         * @typedef PCFieldOnMeshPtr
+         * @typedef PCFieldOnBaseMeshPtr
          * @brief Pointeur intelligent vers un PCFieldOnMesh
          */
-        typedef boost::shared_ptr< PCFieldOnMeshInstance > PCFieldOnMeshPtr;
+        typedef boost::shared_ptr< PCFieldOnMeshInstance > PCFieldOnBaseMeshPtr;
 
         /**
          * @brief Constructeur
          */
-        static PCFieldOnMeshPtr create()
+        static PCFieldOnBaseMeshPtr create( const BaseMeshPtr& mesh )
         {
-            return PCFieldOnMeshPtr( new PCFieldOnMeshInstance );
+            return PCFieldOnBaseMeshPtr( new PCFieldOnMeshInstance( getNewResultObjectName(),
+                                                                    mesh ) );
         };
 
         /**
          * @brief Constructeur
          * @param name Nom Jeveux de la carte
+         * @param mesh Maillage support
          */
-        PCFieldOnMeshInstance( std::string name ):
-                                            DataStructure( name, "CART_" ),
-                                            _meshName( JeveuxVectorChar8( name + ".NOMA" ) ),
-                                            _descriptor( JeveuxVectorLong( name + ".DESC" ) ),
-                                            _nameOfLigrels( JeveuxVectorChar24( name + ".NOLI" ) ),
-                                            _listOfMeshElements( JeveuxCollectionLong( name + ".LIMA" ) ),
-                                            _valuesList( JeveuxVector<ValueType>( name + ".VALE" ) ),
-                                            _supportMesh( MeshPtr() ),
-                                            _isAllocated( false ),
-                                            _componentNames( name + ".NCMP" ),
-                                            _valuesListTmp( name + ".VALV" )
+        PCFieldOnMeshInstance( const std::string& name, const BaseMeshPtr& mesh ):
+            DataStructure( name, "CART_" ),
+            _meshName( JeveuxVectorChar8( name + ".NOMA" ) ),
+            _descriptor( JeveuxVectorLong( name + ".DESC" ) ),
+            _nameOfLigrels( JeveuxVectorChar24( name + ".NOLI" ) ),
+            _listOfMeshElements( JeveuxCollectionLong( name + ".LIMA" ) ),
+            _valuesList( JeveuxVector<ValueType>( name + ".VALE" ) ),
+            _supportMesh( mesh ),
+            _FEDesc( FiniteElementDescriptorPtr() ),
+            _isAllocated( false ),
+            _componentNames( name + ".NCMP" ),
+            _valuesListTmp( name + ".VALV" )
         {
             assert( name.size() == 19 );
         };
@@ -234,18 +238,65 @@ class PCFieldOnMeshInstance: public DataStructure
         /**
          * @brief Constructeur
          * @param name Nom Jeveux de la carte
+         * @param ligrel Ligrel support
          */
-        PCFieldOnMeshInstance( const JeveuxMemory memType = Permanent ):
-                                            DataStructure( "CART_", memType, 19 ),
-                                            _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
-                                            _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
-                                            _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
-                                            _listOfMeshElements( JeveuxCollectionLong( getName() + ".LIMA" ) ),
-                                            _valuesList( JeveuxVector<ValueType>( getName() + ".VALE" ) ),
-                                            _supportMesh( MeshPtr() ),
-                                            _isAllocated( false ),
-                                            _componentNames( getName() + ".NCMP" ),
-                                            _valuesListTmp( getName() + ".VALV" )
+        PCFieldOnMeshInstance( std::string name,
+                               const FiniteElementDescriptorPtr& ligrel ):
+            DataStructure( name, "CART_" ),
+            _meshName( JeveuxVectorChar8( name + ".NOMA" ) ),
+            _descriptor( JeveuxVectorLong( name + ".DESC" ) ),
+            _nameOfLigrels( JeveuxVectorChar24( name + ".NOLI" ) ),
+            _listOfMeshElements( JeveuxCollectionLong( name + ".LIMA" ) ),
+            _valuesList( JeveuxVector<ValueType>( name + ".VALE" ) ),
+            _supportMesh( BaseMeshPtr() ),
+            _FEDesc( ligrel ),
+            _isAllocated( false ),
+            _componentNames( name + ".NCMP" ),
+            _valuesListTmp( name + ".VALV" )
+        {
+            assert( name.size() == 19 );
+        };
+
+        /**
+         * @brief Constructeur
+         * @param mesh Maillage support
+         * @param name Nom Jeveux de la carte
+         */
+        PCFieldOnMeshInstance( const BaseMeshPtr& mesh, 
+                               const JeveuxMemory memType = Permanent ):
+            DataStructure( "CART_", memType, 19 ),
+            _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
+            _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
+            _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
+            _listOfMeshElements( JeveuxCollectionLong( getName() + ".LIMA" ) ),
+            _valuesList( JeveuxVector<ValueType>( getName() + ".VALE" ) ),
+            _supportMesh( mesh ),
+            _FEDesc( FiniteElementDescriptorPtr() ),
+            _isAllocated( false ),
+            _componentNames( getName() + ".NCMP" ),
+            _valuesListTmp( getName() + ".VALV" )
+        {
+            assert( getName().size() == 19 );
+        };
+
+        /**
+         * @brief Constructeur
+         * @param ligrel Ligrel support
+         * @param name Nom Jeveux de la carte
+         */
+        PCFieldOnMeshInstance( const FiniteElementDescriptorPtr& ligrel,
+                               const JeveuxMemory memType = Permanent ):
+            DataStructure( "CART_", memType, 19 ),
+            _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
+            _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
+            _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
+            _listOfMeshElements( JeveuxCollectionLong( getName() + ".LIMA" ) ),
+            _valuesList( JeveuxVector<ValueType>( getName() + ".VALE" ) ),
+            _supportMesh( BaseMeshPtr() ),
+            _FEDesc( ligrel ),
+            _isAllocated( false ),
+            _componentNames( getName() + ".NCMP" ),
+            _valuesListTmp( getName() + ".VALV" )
         {
             assert( getName().size() == 19 );
         };
@@ -275,10 +326,32 @@ class PCFieldOnMeshInstance: public DataStructure
         /**
          * @brief Get number of zone in PCFieldOnMesh
          */
-        int getSize()
+        int getSize() const
         {
             _descriptor->updateValuePointer();
             return (*_descriptor)[2];
+        };
+
+        /**
+         * @brief Get zone description
+         */
+        PCFieldZone getZoneDescription( const int& position ) const
+            throw( std::runtime_error )
+        {
+            _descriptor->updateValuePointer();
+            if( position >= (*_descriptor)[2] )
+                throw std::runtime_error( "Out of PCFieldOnMesh bound" );
+
+            long code = (*_descriptor)[3 + 2*position];
+            if( code == 1 )
+                return PCFieldZone( _supportMesh );
+            else if( code == -1 )
+                return PCFieldZone( _FEDesc );
+//             else if( code == 2 )
+//             else if( code == 3 )
+//             else if( code == -3 )
+            else
+                throw std::runtime_error( "Error in PCFieldOnMesh" );
         };
 
         /**
@@ -286,7 +359,7 @@ class PCFieldOnMeshInstance: public DataStructure
          * @param currentMesh objet Mesh sur lequel le modele reposera
          * @return renvoit true si la définition s'est bien deroulee, false sinon
          */
-        bool setSupportMesh( MeshPtr& currentMesh ) throw ( std::runtime_error )
+        bool setSupportMesh( BaseMeshPtr& currentMesh ) throw ( std::runtime_error )
         {
             if ( currentMesh->isEmpty() )
                 throw std::runtime_error( "Mesh is empty" );
@@ -368,44 +441,44 @@ class PCFieldOnMeshInstance: public DataStructure
         };
 };
 
-/** @typedef PCFieldOnMeshInstanceDouble Instance d'une carte de double */
-typedef PCFieldOnMeshInstance< double > PCFieldOnMeshInstanceDouble;
-/** @typedef PCFieldOnMeshInstanceDouble Instance d'une carte de double */
-typedef PCFieldOnMeshInstance< long > PCFieldOnMeshInstanceLong;
+/** @typedef PCFieldOnMeshDoubleInstance Instance d'une carte de double */
+typedef PCFieldOnMeshInstance< double > PCFieldOnMeshDoubleInstance;
+/** @typedef PCFieldOnMeshLongInstance Instance d'une carte de long */
+typedef PCFieldOnMeshInstance< long > PCFieldOnMeshLongInstance;
 /** @typedef PCFieldOnMeshComplexInstance Instance d'une carte de complexe */
 typedef PCFieldOnMeshInstance< DoubleComplex > PCFieldOnMeshComplexInstance;
-/** @typedef PCFieldOnMeshInstanceDouble Instance d'une carte de char*8 */
-typedef PCFieldOnMeshInstance< JeveuxChar8 > PCFieldOnMeshInstanceChar8;
-/** @typedef PCFieldOnMeshInstanceDouble Instance d'une carte de char*16 */
-typedef PCFieldOnMeshInstance< JeveuxChar8 > PCFieldOnMeshInstanceChar16;
+/** @typedef PCFieldOnMeshChar8Instance Instance d'une carte de char*8 */
+typedef PCFieldOnMeshInstance< JeveuxChar8 > PCFieldOnMeshChar8Instance;
+/** @typedef PCFieldOnMeshChar16Instance Instance d'une carte de char*16 */
+typedef PCFieldOnMeshInstance< JeveuxChar8 > PCFieldOnMeshChar16Instance;
 
 /**
- * @typedef PCFieldOnMeshPtrDouble
+ * @typedef PCFieldOnBaseMeshPtrDouble
  * @brief   Definition d'une carte de double
  */
-typedef boost::shared_ptr< PCFieldOnMeshInstanceDouble > PCFieldOnMeshPtrDouble;
+typedef boost::shared_ptr< PCFieldOnMeshDoubleInstance > PCFieldOnMeshDoublePtr;
 
 /**
  * @typedef PCFieldOnMeshLongPtr
  * @brief   Definition d'une carte de double
  */
-typedef boost::shared_ptr< PCFieldOnMeshInstanceLong > PCFieldOnMeshLongPtr;
+typedef boost::shared_ptr< PCFieldOnMeshLongInstance > PCFieldOnMeshLongPtr;
 
 /**
- * @typedef PCFieldOnMeshPtrComplex
+ * @typedef PCFieldOnBaseMeshPtrComplex
  * @brief   Definition d'une carte de complexe
  */
 typedef boost::shared_ptr< PCFieldOnMeshComplexInstance > PCFieldOnMeshComplexPtr;
 
 /**
- * @typedef PCFieldOnMeshPtrChar8 Definition d'une carte de char[8]
+ * @typedef PCFieldOnBaseMeshPtrChar8 Definition d'une carte de char[8]
  * @brief Pointeur intelligent vers un PCFieldOnMeshInstance
  */
-typedef boost::shared_ptr< PCFieldOnMeshInstanceChar8 > PCFieldOnMeshPtrChar8;
+typedef boost::shared_ptr< PCFieldOnMeshChar8Instance > PCFieldOnMeshChar8Ptr;
 
 /**
- * @typedef PCFieldOnMeshPtrChar16 Definition d'une carte de char[16]
+ * @typedef PCFieldOnBaseMeshPtrChar16 Definition d'une carte de char[16]
  * @brief Pointeur intelligent vers un PCFieldOnMeshInstance
  */
-typedef boost::shared_ptr< PCFieldOnMeshInstanceChar16 > PCFieldOnMeshPtrChar16;
+typedef boost::shared_ptr< PCFieldOnMeshChar16Instance > PCFieldOnMeshChar16Ptr;
 #endif /* PCFIELDONMESH_H_ */

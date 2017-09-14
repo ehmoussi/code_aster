@@ -33,8 +33,7 @@ acier = code_aster.Material.create()
 acier.addMaterialBehaviour(materElas)
 acier.build()
 
-affeMat = code_aster.MaterialOnMesh.create()
-affeMat.setSupportMesh(secteur)
+affeMat = code_aster.MaterialOnMesh.create(secteur)
 affeMat.addMaterialOnAllMesh(acier)
 affeMat.build()
 

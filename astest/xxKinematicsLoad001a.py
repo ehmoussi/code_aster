@@ -7,7 +7,7 @@ from code_aster.Commands import *
 
 test = code_aster.TestCase()
 
-mail1 = code_aster.Mesh()
+mail1 = code_aster.Mesh.create()
 
 # Relecture du fichier MED
 mail1.readMedFile("fort.20")

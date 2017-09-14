@@ -26,6 +26,17 @@
 #include "PythonBindings/LinearSolverInterface.h"
 #include <boost/python.hpp>
 
+BOOST_PYTHON_FUNCTION_OVERLOADS(MultFrontSolvercreate,
+                                MultFrontSolverInstance::create, 0, 1)
+BOOST_PYTHON_FUNCTION_OVERLOADS(LdltSolvercreate,
+                                LdltSolverInstance::create, 0, 1)
+BOOST_PYTHON_FUNCTION_OVERLOADS(MumpsSolvercreate,
+                                MumpsSolverInstance::create, 0, 1)
+BOOST_PYTHON_FUNCTION_OVERLOADS(PetscSolvercreate,
+                                PetscSolverInstance::create, 0, 1)
+BOOST_PYTHON_FUNCTION_OVERLOADS(GcpcSolvercreate,
+                                GcpcSolverInstance::create, 0, 1)
+
 void exportLinearSolverToPython()
 {
     using namespace boost::python;
@@ -122,31 +133,36 @@ void exportLinearSolverToPython()
 
     class_< MultFrontSolverInstance, MultFrontSolverPtr,
             bases< BaseLinearSolverInstance > > ( "MultFrontSolver", no_init )
-        .def( "create", &MultFrontSolverInstance::create )
+        .def( "create", &MultFrontSolverInstance::create,
+              MultFrontSolvercreate() )
         .staticmethod( "create" )
     ;
 
     class_< LdltSolverInstance, LdltSolverPtr,
             bases< BaseLinearSolverInstance > > ( "LdltSolver", no_init )
-        .def( "create", &LdltSolverInstance::create )
+        .def( "create", &LdltSolverInstance::create,
+              LdltSolvercreate() )
         .staticmethod( "create" )
     ;
 
     class_< MumpsSolverInstance, MumpsSolverPtr,
             bases< BaseLinearSolverInstance > > ( "MumpsSolver", no_init )
-        .def( "create", &MumpsSolverInstance::create )
+        .def( "create", &MumpsSolverInstance::create,
+              MumpsSolvercreate() )
         .staticmethod( "create" )
     ;
 
     class_< PetscSolverInstance, PetscSolverPtr,
             bases< BaseLinearSolverInstance > > ( "PetscSolver", no_init )
-        .def( "create", &PetscSolverInstance::create )
+        .def( "create", &PetscSolverInstance::create,
+              PetscSolvercreate() )
         .staticmethod( "create" )
     ;
 
     class_< GcpcSolverInstance, GcpcSolverPtr,
             bases< BaseLinearSolverInstance > > ( "GcpcSolver", no_init )
-        .def( "create", &GcpcSolverInstance::create )
+        .def( "create", &GcpcSolverInstance::create,
+              GcpcSolvercreate() )
         .staticmethod( "create" )
     ;
 };

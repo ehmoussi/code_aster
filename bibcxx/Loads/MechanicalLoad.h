@@ -264,6 +264,10 @@ class GenericMechanicalLoadInstance: public DataStructure
 public:
         struct MecaLoad
         {
+            /** @brief Modèle support */
+            ModelPtr                    _supportModel;
+            /** @brief support mesh */
+            BaseMeshPtr                 _mesh;
             /** @brief Vecteur Jeveux '.TEMPE.TEMP' */
             JeveuxVectorChar8           _temperatureField;
             /** @brief Vecteur Jeveux '.MODEL.NOMO' */
@@ -277,83 +281,82 @@ public:
             /** @brief Vecteur Jeveux '.LIGRE' */
             FiniteElementDescriptorPtr  _FEDesc;
             /** @brief Carte '.CIMPO' */
-            PCFieldOnMeshPtrDouble      _cimpo;
+            PCFieldOnMeshDoublePtr      _cimpo;
             /** @brief Carte '.CMULT' */
-            PCFieldOnMeshPtrDouble      _cmult;
+            PCFieldOnMeshDoublePtr      _cmult;
             /** @brief Carte '.DPGEN' */
-            PCFieldOnMeshPtrDouble      _dpgen;
+            PCFieldOnMeshDoublePtr      _dpgen;
             /** @brief Carte '.EPSIN' */
-            PCFieldOnMeshPtrDouble      _epsin;
+            PCFieldOnMeshDoublePtr      _epsin;
             /** @brief Carte '.F1D2D' */
-            PCFieldOnMeshPtrDouble      _f1d2d;
+            PCFieldOnMeshDoublePtr      _f1d2d;
             /** @brief Carte '.F1D3D' */
-            PCFieldOnMeshPtrDouble      _f1d3d;
+            PCFieldOnMeshDoublePtr      _f1d3d;
             /** @brief Carte '.F2D3D' */
-            PCFieldOnMeshPtrDouble      _f2d3d;
+            PCFieldOnMeshDoublePtr      _f2d3d;
             /** @brief Carte '.FCO2D' */
-            PCFieldOnMeshPtrDouble      _fco2d;
+            PCFieldOnMeshDoublePtr      _fco2d;
             /** @brief Carte '.FCO3D' */
-            PCFieldOnMeshPtrDouble      _fco3d;
+            PCFieldOnMeshDoublePtr      _fco3d;
             /** @brief Carte '.FELEC' */
-            PCFieldOnMeshPtrDouble      _felec;
+            PCFieldOnMeshDoublePtr      _felec;
             /** @brief Carte '.FL101' */
-            PCFieldOnMeshPtrDouble      _fl101;
+            PCFieldOnMeshDoublePtr      _fl101;
             /** @brief Carte '.FL102' */
-            PCFieldOnMeshPtrDouble      _fl102;
+            PCFieldOnMeshDoublePtr      _fl102;
             /** @brief Carte '.FORNO' */
-            PCFieldOnMeshPtrDouble      _forno;
+            PCFieldOnMeshDoublePtr      _forno;
             /** @brief Carte '.IMPE' */
-            PCFieldOnMeshPtrDouble      _impe;
+            PCFieldOnMeshDoublePtr      _impe;
             /** @brief Carte '.PESAN' */
-            PCFieldOnMeshPtrDouble      _pesan;
+            PCFieldOnMeshDoublePtr      _pesan;
             /** @brief Carte '.PRESS' */
-            PCFieldOnMeshPtrDouble      _press;
+            PCFieldOnMeshDoublePtr      _press;
             /** @brief Carte '.ROTAT' */
-            PCFieldOnMeshPtrDouble      _rotat;
+            PCFieldOnMeshDoublePtr      _rotat;
             /** @brief Carte '.SIGIN' */
-            PCFieldOnMeshPtrDouble      _sigin;
+            PCFieldOnMeshDoublePtr      _sigin;
             /** @brief Carte '.SIINT' */
-            PCFieldOnMeshPtrDouble      _siint;
+            PCFieldOnMeshDoublePtr      _siint;
             /** @brief Carte '.VNOR' */
-            PCFieldOnMeshPtrDouble      _vnor;
+            PCFieldOnMeshDoublePtr      _vnor;
             /** @brief Carte '.ONDPL' */
-            PCFieldOnMeshPtrDouble      _ondpl;
+            PCFieldOnMeshDoublePtr      _ondpl;
             /** @brief Carte '.ONDPR' */
-            PCFieldOnMeshPtrDouble      _ondpr;
-            /** @brief Modèle support */
-            ModelPtr                    _supportModel;
+            PCFieldOnMeshDoublePtr      _ondpr;
 
             /** @brief Constructeur */
-            MecaLoad( const std::string& name ):
+            MecaLoad( const std::string& name, const ModelPtr& currentModel ):
+                _supportModel( currentModel ),
+                _mesh( _supportModel->getSupportMesh() ),
                 _temperatureField( name + ".TEMPE.TEMP" ),
                 _modelName( name + ".MODEL.NOMO" ),
                 _nameOfAssemblyVector( name + ".VEASS" ),
                 _veiss( name + ".VEISS" ),
                 _evolChar( name + ".EVOL.CHAR" ),
                 _FEDesc( new FiniteElementDescriptorInstance( name + ".LIGRE" ) ),
-                _cimpo( new PCFieldOnMeshInstanceDouble( name + ".CIMPO" ) ),
-                _cmult( new PCFieldOnMeshInstanceDouble( name + ".CMULT" ) ),
-                _dpgen( new PCFieldOnMeshInstanceDouble( name + ".DPGEN" ) ),
-                _epsin( new PCFieldOnMeshInstanceDouble( name + ".EPSIN" ) ),
-                _f1d2d( new PCFieldOnMeshInstanceDouble( name + ".F1D2D" ) ),
-                _f1d3d( new PCFieldOnMeshInstanceDouble( name + ".F1D3D" ) ),
-                _f2d3d( new PCFieldOnMeshInstanceDouble( name + ".F2D3D" ) ),
-                _fco2d( new PCFieldOnMeshInstanceDouble( name + ".FCO2D" ) ),
-                _fco3d( new PCFieldOnMeshInstanceDouble( name + ".FCO3D" ) ),
-                _felec( new PCFieldOnMeshInstanceDouble( name + ".FELEC" ) ),
-                _fl101( new PCFieldOnMeshInstanceDouble( name + ".FL101" ) ),
-                _fl102( new PCFieldOnMeshInstanceDouble( name + ".FL102" ) ),
-                _forno( new PCFieldOnMeshInstanceDouble( name + ".FORNO" ) ),
-                _impe( new PCFieldOnMeshInstanceDouble( name + ".IMPE" ) ),
-                _pesan( new PCFieldOnMeshInstanceDouble( name + ".PESAN" ) ),
-                _press( new PCFieldOnMeshInstanceDouble( name + ".PRESS" ) ),
-                _rotat( new PCFieldOnMeshInstanceDouble( name + ".ROTAT" ) ),
-                _sigin( new PCFieldOnMeshInstanceDouble( name + ".SIGIN" ) ),
-                _siint( new PCFieldOnMeshInstanceDouble( name + ".SIINT" ) ),
-                _vnor( new PCFieldOnMeshInstanceDouble( name + ".VNOR" ) ),
-                _ondpl( new PCFieldOnMeshInstanceDouble( name + ".ONDPL" ) ),
-                _ondpr( new PCFieldOnMeshInstanceDouble( name + ".ONDPR" ) ),
-                _supportModel( ModelPtr() )
+                _cimpo( new PCFieldOnMeshDoubleInstance( name + ".CIMPO", _FEDesc ) ),
+                _cmult( new PCFieldOnMeshDoubleInstance( name + ".CMULT", _FEDesc ) ),
+                _dpgen( new PCFieldOnMeshDoubleInstance( name + ".DPGEN", _FEDesc ) ),
+                _epsin( new PCFieldOnMeshDoubleInstance( name + ".EPSIN", _FEDesc ) ),
+                _f1d2d( new PCFieldOnMeshDoubleInstance( name + ".F1D2D", _FEDesc ) ),
+                _f1d3d( new PCFieldOnMeshDoubleInstance( name + ".F1D3D", _FEDesc ) ),
+                _f2d3d( new PCFieldOnMeshDoubleInstance( name + ".F2D3D", _FEDesc ) ),
+                _fco2d( new PCFieldOnMeshDoubleInstance( name + ".FCO2D", _FEDesc ) ),
+                _fco3d( new PCFieldOnMeshDoubleInstance( name + ".FCO3D", _FEDesc ) ),
+                _felec( new PCFieldOnMeshDoubleInstance( name + ".FELEC", _FEDesc ) ),
+                _fl101( new PCFieldOnMeshDoubleInstance( name + ".FL101", _FEDesc ) ),
+                _fl102( new PCFieldOnMeshDoubleInstance( name + ".FL102", _FEDesc ) ),
+                _forno( new PCFieldOnMeshDoubleInstance( name + ".FORNO", _FEDesc ) ),
+                _impe( new PCFieldOnMeshDoubleInstance( name + ".IMPE", _FEDesc ) ),
+                _pesan( new PCFieldOnMeshDoubleInstance( name + ".PESAN", _FEDesc ) ),
+                _press( new PCFieldOnMeshDoubleInstance( name + ".PRESS", _FEDesc ) ),
+                _rotat( new PCFieldOnMeshDoubleInstance( name + ".ROTAT", _FEDesc ) ),
+                _sigin( new PCFieldOnMeshDoubleInstance( name + ".SIGIN", _FEDesc ) ),
+                _siint( new PCFieldOnMeshDoubleInstance( name + ".SIINT", _FEDesc ) ),
+                _vnor( new PCFieldOnMeshDoubleInstance( name + ".VNOR", _FEDesc ) ),
+                _ondpl( new PCFieldOnMeshDoubleInstance( name + ".ONDPL", _FEDesc ) ),
+                _ondpr( new PCFieldOnMeshDoubleInstance( name + ".ONDPR", _FEDesc ) )
             {};
         };
 
@@ -387,17 +390,17 @@ public:
         /**
          * @brief Constructeur
          */
-        static GenericMechanicalLoadPtr create()
+        static GenericMechanicalLoadPtr create( const ModelPtr& model )
         {
-            return GenericMechanicalLoadPtr( new GenericMechanicalLoadInstance );
+            return GenericMechanicalLoadPtr( new GenericMechanicalLoadInstance( model ) );
         };
 
         /**
          * @brief Constructor
          */
-        GenericMechanicalLoadInstance():
+        GenericMechanicalLoadInstance( const ModelPtr& currentModel ):
                         DataStructure( getNewResultObjectName(), "CHAR_MECA" ),
-                        _mecaLoad( getName() + ".CHME" ),
+                        _mecaLoad( getName() + ".CHME", currentModel ),
                         _type( getName() + ".TYPE" ),
                         _lisma01( getName() + ".LISMA01" ),
                         _lisma02( getName() + ".LISMA02" ),
@@ -429,18 +432,6 @@ public:
             if ( ( ! _mecaLoad._supportModel ) || _mecaLoad._supportModel->isEmpty() )
                 throw std::runtime_error( "Support mesh of current model is empty" );
             return _mecaLoad._supportModel;
-        };
-
-        /**
-         * @brief Define the support model
-         * @param currentMesh objet Model sur lequel la charge reposera
-         */
-        bool setSupportModel( ModelPtr& currentModel ) throw ( std::runtime_error )
-        {
-            if( currentModel->getSupportMesh()->isParallel() )
-                throw std::runtime_error( "Mechanical loads not allowed in ParallelMesh mode" );
-            _mecaLoad._supportModel = currentModel;
-            return true;
         };
 
         virtual bool build()
@@ -479,15 +470,16 @@ class MechanicalLoadInstance: public GenericMechanicalLoadInstance
     /**
      * @brief Constructeur
      */
-    static MechanicalLoadPtr create()
+    static MechanicalLoadPtr create( const ModelPtr& model )
     {
-        return MechanicalLoadPtr( new MechanicalLoadInstance );
+        return MechanicalLoadPtr( new MechanicalLoadInstance( model ) );
     };
 
     /**
      * @brief Constructor
      */
-    MechanicalLoadInstance(): GenericMechanicalLoadInstance()
+    MechanicalLoadInstance( const ModelPtr& model ):
+        GenericMechanicalLoadInstance(model)
     {};
 
     /**

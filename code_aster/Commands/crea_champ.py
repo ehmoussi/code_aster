@@ -28,7 +28,14 @@ from code_aster import FieldOnNodesDouble
 def CREA_CHAMP(**curDict):
     returnField = None
     if curDict["TYPE_CHAM"][:5] == "CART_" and curDict["TYPE_CHAM"][10:] == "R":
-        returnField = PCFieldOnMeshDouble.create()
+        mesh = None
+        if curDict.has_key("MAILLAGE"):
+            mesh = curDict["MAILLAGE"]
+        else:
+            if not curDict.has_key("MODELE"):
+                raise NameError("A mesh or a model is required")
+            mesh = curDict["MODELE"].getSupportMesh()
+        returnField = PCFieldOnMeshDouble.create(mesh)
     elif curDict["TYPE_CHAM"][:5] == "NOEU_" and curDict["TYPE_CHAM"][10:] == "R":
         returnField = FieldOnNodesDouble.create()
     else:

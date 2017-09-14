@@ -3,7 +3,7 @@
 import code_aster
 from code_aster.Commands import *
 
-POUTRE=code_aster.Mesh()
+POUTRE=code_aster.Mesh.create()
 POUTRE.readAsterMeshFile("sdll117a.mail")
 
 POUTRE=MODI_MAILLAGE(MAILLAGE=POUTRE,ABSC_CURV=_F(NOEUD_ORIG='N001',TOUT='OUI'))

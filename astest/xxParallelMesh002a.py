@@ -16,8 +16,7 @@ MATER=DEFI_MATERIAU(ELAS=_F(E=10000.0,
                             RHO=1.0,),
                             );
                             
-affectMat = code_aster.MaterialOnMesh.create()
-affectMat.setSupportMesh(MAIL)
+affectMat = code_aster.MaterialOnMesh.create(MAIL)
 affectMat.addMaterialOnAllMesh(MATER)
 affectMat.build()
 

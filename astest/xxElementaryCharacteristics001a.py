@@ -3,8 +3,8 @@
 import code_aster
 from code_aster.Commands import *
 
-MA=code_aster.Mesh()
-MA.readAsterMeshFile("xxElementaryCharacteristics.mail")
+MA=code_aster.Mesh.create()
+MA.readAsterMeshFile("xxElementaryCharacteristics001a.mail")
 
 BETON=DEFI_MATERIAU(ELAS=_F(E = 1.E9,NU = 0.3,),)
 

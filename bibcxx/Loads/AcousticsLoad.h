@@ -121,6 +121,7 @@ class AcousticsLoadInstance: public DataStructure
 {
 private:
     ModelPtr                                    _supportModel;
+    BaseMeshPtr                                 _mesh;
     std::vector< ImposedComplexPressurePtr >    _pressure;
     std::vector< ImposedComplexNormalSpeedPtr > _speed;
     std::vector< ComplexImpedancePtr >          _impedance;
@@ -146,19 +147,25 @@ public:
     /**
      * @brief Constructeur
      */
-    static AcousticsLoadPtr create()
+    static AcousticsLoadPtr create( const ModelPtr& model )
     {
-        return AcousticsLoadPtr( new AcousticsLoadInstance );
+        return AcousticsLoadPtr( new AcousticsLoadInstance( model ) );
     };
 
-    AcousticsLoadInstance():
+    AcousticsLoadInstance( const ModelPtr& model ):
         DataStructure( getNewResultObjectName(), "CHAR_ACOU" ),
+        _supportModel( model ),
+        _mesh( model->getSupportMesh() ),
         _modelName( JeveuxVectorChar8( getName() + ".CHAC.MODEL.NOMO" ) ),
         _type( JeveuxVectorChar8( getName() + ".TYPE" ) ),
-        _imposedValues( PCFieldOnMeshComplexPtr( new PCFieldOnMeshComplexInstance( getName()+ ".CHAC.CIMPO" ) ) ),
-        _multiplier( PCFieldOnMeshComplexPtr( new PCFieldOnMeshComplexInstance( getName()+ ".CHAC.CMULT" ) ) ),
-        _impedanceValues( PCFieldOnMeshComplexPtr( new PCFieldOnMeshComplexInstance( getName()+ ".CHAC.IMPED" ) ) ),
-        _speedValues( PCFieldOnMeshComplexPtr( new PCFieldOnMeshComplexInstance( getName()+ ".CHAC.VITFA" ) ) )
+        _imposedValues( PCFieldOnMeshComplexPtr(
+            new PCFieldOnMeshComplexInstance( getName()+ ".CHAC.CIMPO", _mesh ) ) ),
+        _multiplier( PCFieldOnMeshComplexPtr(
+            new PCFieldOnMeshComplexInstance( getName()+ ".CHAC.CMULT", _mesh ) ) ),
+        _impedanceValues( PCFieldOnMeshComplexPtr(
+            new PCFieldOnMeshComplexInstance( getName()+ ".CHAC.IMPED", _mesh ) ) ),
+        _speedValues( PCFieldOnMeshComplexPtr(
+            new PCFieldOnMeshComplexInstance( getName()+ ".CHAC.VITFA", _mesh ) ) )
     {
         _toCapyConverter.add( new CapyConvertibleValue< ModelPtr >
                                                       ( true, "MODELE", _supportModel, true ) );
@@ -249,18 +256,6 @@ public:
     };
 
     bool build();
-
-    /**
-     * @brief Definition du modele support
-     * @param currentMesh objet Model sur lequel la charge reposera
-     */
-    bool setSupportModel( ModelPtr& currentModel )
-    {
-        if ( currentModel->isEmpty() )
-            throw std::runtime_error( "Model is empty" );
-        _supportModel = currentModel;
-        return true;
-    };
 };
 
 typedef boost::shared_ptr< AcousticsLoadInstance > AcousticsLoadPtr;

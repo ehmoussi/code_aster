@@ -32,7 +32,7 @@ void exportPrestressingCableDefinitionToPython()
     class_< PrestressingCableDefinitionInstance,
             PrestressingCableDefinitionInstance::PrestressingCableDefinitionPtr,
             bases< DataStructure > > ( "PrestressingCableDefinition", no_init )
-        .def( "create", &createSharedPtr< PrestressingCableDefinitionInstance > )
+        .def( "create", &createSharedPtr< PrestressingCableDefinitionInstance, const MeshPtr& > )
         .staticmethod( "create" )
     ;
 };
