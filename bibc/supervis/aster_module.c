@@ -45,6 +45,7 @@ __PYX_EXTERN_C DL_IMPORT(int) listeMotCleSimpleFromMotCleFacteur(char *, int, in
 __PYX_EXTERN_C DL_IMPORT(void) getfac_(char *, long *, unsigned int);
 __PYX_EXTERN_C DL_IMPORT(int) existsCommandFactorAndSimpleKeyword(char *, int, char *);
 __PYX_EXTERN_C DL_IMPORT(char) **getCommandKeywordValueString(char *, int, char *, int *);
+__PYX_EXTERN_C DL_IMPORT(long) *getCommandKeywordStringLength(char *, int, char *, int, int *);
 __PYX_EXTERN_C DL_IMPORT(double) *getCommandKeywordValueDouble(char *, int, char *, int *);
 __PYX_EXTERN_C DL_IMPORT(double) *getCommandKeywordValueComplex(char *, int, char *, int *);
 __PYX_EXTERN_C DL_IMPORT(long) *getCommandKeywordValueInt(char *, int, char *, int *);
@@ -165,44 +166,49 @@ void DEFSSPPPPP(GETLTX,getltx,_IN char *motfac,_IN STRING_SIZE lfac,
                               _OUT ASTERINTEGER *isval, _OUT ASTERINTEGER *nbval )
 {
         /*
-        Procedure : getltx_ (appelee par le fortran sous le nom GETLTX)
+        Equivalent de `getCommandKeywordStringLength`.
+        Entrees :
+          le nom d'un mot cle facteur : motfac (string)
+          le nom d'un mot cle simple : motcle (string)
+          le numero de l occurence du mot cle facteur : iocc (entier)
+          la taille maximale souhaitée : taille (entier)
+          le nombre max de valeur à analyser : mxval (entier)
+        Retourne :
+          le tableau des longueurs des chaines : isval (tableau d'entiers)
+          le nombre de valeurs effectivement retournees : nbval (entier)
+             si pas de valeur nbval = 0
+             si plus de valeur que mxval nbval < 0 et valeur abs = nbre valeurs
+             si moins de valeurs que mxval nbval > 0 et egal au nombre retourne
         */
-    //fprintf(fileOut, "GETLTX\n");
-    ASTERINTEGER ier=SIGABRT;
-    CALL_ASABRT( &ier );
-    /* TODO */
-
-        PyObject *res = (PyObject*)0 ;
-        PyObject *tup = (PyObject*)0 ;
-        char *mfc     = (char*)0 ;
-        char *mcs     = (char*)0 ;
-        int ok        = 0 ;
-        int nval      = 0 ;
-        int ioc       = 0 ;
-
-        mfc = MakeCStrFromFStr(motfac,lfac);
-                                                     DEBUG_ASSERT(mfc!=(char*)0);
-        mcs = MakeCStrFromFStr(motcle,lcle);
-                                                     DEBUG_ASSERT(mcs!=(char*)0);
-        ioc=(int)*iocc ;
-        ioc=ioc-1 ;
-        res=PyObject_CallMethod(get_sh_etape(), "getltx", "ssiii",
-                                mfc, mcs, ioc, (int)*mxval, (int)*taille);
-
-        /*  si le retour est NULL : exception Python a transferer
-            normalement a l appelant mais FORTRAN ??? */
-        if (res == NULL)MYABORT("erreur dans la partie Python");
-
-        ok = PyArg_ParseTuple(res,"iO",&nval,&tup);
-        if (!ok)MYABORT("erreur dans la partie Python");
-
-        *nbval = (ASTERINTEGER)nval;
-        if( nval < 0 ) nval=(int)*mxval;
-        convert(nval,tup,isval);
-        Py_DECREF(res);                /*  decrement sur le refcount du retour */
-        FreeStr(mfc);
-        FreeStr(mcs);
-        return ;
+        char* tmp = MakeCStrFromFStr(motfac, lfac);
+        char* tmp2 = MakeCStrFromFStr(motcle, lcle);
+        if ( existsCommandFactorAndSimpleKeyword(tmp, (int)*iocc - 1, tmp2) == 0 )
+            {
+            *nbval = 0;
+            }
+        else
+        {
+            long* retour = NULL;
+            int nbVal = 0;
+            retour = getCommandKeywordStringLength(tmp, (int)*iocc - 1, tmp2,
+                                                   (int)*taille, &nbVal);
+            *nbval = nbVal;
+            if ( (*nbval) > (*mxval) )
+            {
+                *nbval = -(*nbval);
+    }
+            else
+            {
+                int i;
+                for ( i = 0; i < *nbval; ++i )
+                {
+                    isval[i] = (ASTERINTEGER)retour[i];
+                }
+                free(retour);
+            }
+        }
+        FreeStr(tmp);
+        FreeStr(tmp2);
 }
 
 
@@ -564,7 +570,6 @@ void DEFSSPPPPP(GETVIS_WRAP,getvis_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         */
     char* tmp = MakeCStrFromFStr(motfac, lfac);
     char* tmp2 = MakeCStrFromFStr(motcle, lcle);
-    //fprintf(fileOut, "GETVIS_WRAP '%s' '%s' %d %d\n", tmp, tmp2, (int)*iocc - 1, (int)*mxval);
     if ( existsCommandFactorAndSimpleKeyword(tmp, (int)*iocc - 1, tmp2) == 0 )
         {
         *nbval = 0;
@@ -602,11 +607,10 @@ void DEFSSPPPSP(GETVTX_WRAP,getvtx_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
                            _INOUT char *txval,_IN STRING_SIZE ltx,_OUT ASTERINTEGER *nbval)
 {
         /*
-          Procedure GETVTX pour le FORTRAN : emule le fonctionnement
-          de la procedure equivalente ASTER
+          Equivalent de `getCommandKeywordValueString`.
           Entrees :
             le nom d un mot cle facteur : motfac (string)
-            le nom d un mot cle simple ou sous mot cle : motcle (string)
+            le nom d un mot cle simple : motcle (string)
             le numero de l occurence du mot cle facteur : iocc (entier)
             le numero de l argument demande (obsolete =1): iarg (entier)
             le nombre max de valeur attendues dans val : mxval (entier)
