@@ -1,7 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
-#
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
 # This file is part of Code_Aster.
 #
 # Code_Aster is free software: you can redistribute it and/or modify
@@ -17,152 +16,159 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from cython.operator cimport dereference as deref
+import tempfile
+from itertools import ifilter
 
-from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
 from code_aster.Supervis.libCommandSyntax import getCurrentCommand, setCurrentCommand
-
 from code_aster.Supervis.libCommandSyntax import _F
 
-from libcpp.string cimport string
-import tempfile
 
-cdef char* FileTypeName[3]
-FileTypeName[0] = "ASCII"
-FileTypeName[1] = "BINARY"
-FileTypeName[2] = "LIBRE"
+class FileType(object):
+    """Enumeration for file type."""
+    Ascii = 0
+    Binary = 1
+    Free = 2
 
-cdef char* FileAccessName[3]
-FileAccessName[0] = "NEW"
-FileAccessName[1] = "APPEND"
-FileAccessName[2] = "OLD"
-
-
-cdef class LogicalUnitManager:
-
-    """This class manages the associations between the filenames and the
-    logical units"""
-
-    def __cinit__( self ):
-        """Constructor"""
-        # 1-18 considered as reserved
-        self._freeLogicalUnit = set( range( 19, 100 ) )
-        self._usedLogicalUnit = set()
-
-    cdef int getFreeLogicalUnit( self ) except? 0:
-        """Return a free logical unit"""
-        cdef int unit = 0
-        if len( self._freeLogicalUnit ) == 0:
-            raise ValueError( "No more free logical unit" )
-        unit = self._freeLogicalUnit.pop()
-        self._usedLogicalUnit.add( unit )
-        return unit
-
-    cdef bint releaseLogicalUnit( self, const int unitToRelease ) except? False:
-        """Release a logical unit"""
-        "Unable to free this logical unit"
-        cdef bint ok = False
-        try:
-            self._usedLogicalUnit.remove( unitToRelease )
-        except KeyError:
-            msg = "Unable to free the logical unit {}".format( unitToRelease )
-            raise KeyError( msg )
-        self._freeLogicalUnit.add( unitToRelease )
-        return True
-
-# global "singleton" instance
-cdef LogicalUnitManager logicalUnitManager
-logicalUnitManager = LogicalUnitManager()
+    @staticmethod
+    def name(value):
+        """Return type as string."""
+        return {
+            0: "ASCII",
+            1: "BINARY",
+            2: "LIBRE",
+        }[value]
 
 
-cdef class LogicalUnitFile:
+class FileAccess(object):
+    """Enumeration for file access."""
+    New = 0
+    Append = 1
+    Old = 2
 
+    @staticmethod
+    def name(value):
+        """Return type as string."""
+        return {
+            0: "NEW",
+            1: "APPEND",
+            2: "OLD",
+        }[value]
+
+
+class LogicalUnitFile(object):
     """This class defines a file associated to a fortran logical unit"""
 
-    def __cinit__( self, name, type, access ):
+    _free_number = range(19, 100)
+    _used_unit = {}
+
+    def __init__( self, name, typ=FileType.Ascii, access=FileAccess.New ):
         """
         The constructor currently calls DEFI_FICHIER to reserve a logical unit
-        @param fileName Path to the file
-        @param type Type of file (Ascii, Binary, Free)
+        @param filename Path to the file
+        @param typ Type of file (Ascii, Binary, Free)
         @param access Type of access (New, Append, Old)
         """
-        self._fileName = name
-        self._type = type
-        self._access = access
-        self._logicalUnit = logicalUnitManager.getFreeLogicalUnit()
-        self._numOp26 = 26
+        self._logicalUnit = self._get_free_number()
+        self._filename = name or 'fort.{}'.format(name)
+        self._register(self)
 
         previous = getCurrentCommand()
         setCurrentCommand( None )
         syntax = CommandSyntax( "DEFI_FICHIER" )
         syntax.define( _F( ACTION="ASSOCIER",
                            UNITE=self._logicalUnit,
-                           FICHIER=self._fileName,
-                           TYPE=FileTypeName[ self._type ],
-                           ACCES=FileAccessName[ self._access ],
+                           FICHIER=self._filename,
+                           TYPE=FileType.name(typ),
+                           ACCES=FileAccess.name(access),
                          )
                      )
-        libaster.opsexe_( &self._numOp26 )
+        cdef INTEGER numOp = 26
+        libaster.opsexe_( &numOp )
         syntax.free()
         setCurrentCommand( previous )
 
-    def __dealloc__( self ):
-        """Destructor
-        Call DEFI_FICHIER to release the logical unit"""
-        logicalUnitManager.releaseLogicalUnit( self._logicalUnit )
-
+    def __del__( self ):
+        """Destructor: call DEFI_FICHIER to release the logical unit."""
         previous = getCurrentCommand()
         setCurrentCommand( None )
         syntax = CommandSyntax( "DEFI_FICHIER" )
         syntax.define( _F( ACTION="LIBERER",
-                           UNITE=self._logicalUnit,
-                           FICHIER=self._fileName,
+                           UNITE=self.unit,
+                           FICHIER=self.filename,
                          )
                      )
-        libaster.opsexe_( &self._numOp26 )
+        cdef INTEGER numOp = 26
+        libaster.opsexe_( &numOp )
         syntax.free()
         setCurrentCommand( previous )
 
-    cpdef int getLogicalUnit( self ):
-        """Return the logical unit associated to this file"""
+        self._free_number.append(self.unit)
+
+    @property
+    def unit( self ):
+        """Attributes that holds the logical unit associated to this file"""
         return self._logicalUnit
 
+    @property
+    def filename( self ):
+        """Attributes that holds the file name"""
+        return self._filename
 
-# for unittests and Python usage
-class FileType:
-    Ascii = 0
-    Binary = 1
-    Free = 2
+    @classmethod
+    def from_name(cls, filename):
+        """Return the logical unit associated to a unit number."""
+        def _predicate(item):
+            return item[1] == filename
 
+        try:
+            unit = ifilter(_predicate, cls._used_unit.items())[0]
+        except StopIteration:
+            unit = -1
+        return cls.from_number(unit)
 
-class FileAccess:
-    New = 0
-    Append = 1
-    Old = 2
+    @classmethod
+    def from_number(cls, unit):
+        """Return the logical unit associated to a unit number."""
+        return cls._used_unit.get(unit)
 
+    @classmethod
+    def _register(cls, logicalUnit):
+        """Register a logical unit with its file name."""
+        print "DEBUG: register unit", logicalUnit.unit
+        cls._used_unit[logicalUnit.unit] = logicalUnit
 
-class _TestLogicalUnitManager:
+    @classmethod
+    def release_from_number(cls, unitToRelease):
+        """Release a logical unit"""
+        print "DEBUG: release unit", unitToRelease
+        try:
+            del cls._used_unit[unitToRelease]
+        except KeyError:
+            msg = "Unable to free the logical unit {}".format(unitToRelease)
+            raise KeyError(msg)
 
-    @staticmethod
-    def getFreeLogicalUnit():
-        return logicalUnitManager.getFreeLogicalUnit()
+    @classmethod
+    def release_from_name(cls, filename):
+        """Release a logical unit by file name"""
+        unit = cls.from_name(filename)
+        if not unit:
+            msg = "file {!r} not asspociated".format(filename)
+            raise KeyError(msg)
+        cls.release_from_number(unit)
 
-    @staticmethod
-    def releaseLogicalUnit( unit ):
-        return logicalUnitManager.releaseLogicalUnit( unit )
+    @classmethod
+    def _get_free_number(cls):
+        """Return the next free unit."""
+        if not cls._free_number:
+            raise ValueError("No more free logical unit")
+        return cls._free_number.pop()
 
-cppFileDict = {}
 
 cdef public void newLogicalUnitFile( const char* name, const int type, const int access ):
-    global cppFileDict
-    pyName = <bytes> name
-    tmp = LogicalUnitFile( pyName, type, access )
-    cppFileDict[ pyName ] = tmp
+    LogicalUnitFile( name, type, access )
 
 cdef public void deleteLogicalUnitFile( const char* name ):
-    global cppFileDict
-    pyName = <bytes> name
-    cppFileDict.pop( pyName )
+    LogicalUnitFile.release_from_name(name)
 
 cdef public int getFileLogicalUnit( const char* name ):
     global cppFileDict
