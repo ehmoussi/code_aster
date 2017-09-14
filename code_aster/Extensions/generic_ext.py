@@ -28,8 +28,8 @@ class injector(object):
         def __init__(self, name, bases, dict):
             for b in bases:
                 if type(b) not in (self, type):
-                    for k,v in dict.items():
-                        setattr(b,k,v)
+                    for k, v in dict.items():
+                        setattr(b, k, v)
             return type.__init__(self, name, bases, dict)
 
 

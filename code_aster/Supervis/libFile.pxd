@@ -17,28 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
+from cython.operator cimport dereference as deref
+from libcpp.string cimport string
+
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
 
-
-cdef class LogicalUnitManager:
-
-    cdef object _freeLogicalUnit
-    cdef object _usedLogicalUnit
-
-    cdef int getFreeLogicalUnit( self ) except? 0
-
-    cdef bint releaseLogicalUnit( self, const int unitToRelease ) except? False
-
-cdef LogicalUnitManager logicalUnitManager
-
-
-cdef class LogicalUnitFile:
-
-    cdef                _fileName
-    cdef unsigned int   _type
-    cdef unsigned int   _access
-    cdef int            _logicalUnit
-    cdef INTEGER        _numOp26
-
-    cpdef int getLogicalUnit( self )
+from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
