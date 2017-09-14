@@ -111,7 +111,7 @@ class ExtendedTable(injector, Table):
         lparam=[tabnom[4*i:4*i+4] for i in range(nparam)]
         # restriction aux paramètres demandés
         if para is not None:
-            if type(para) not in (list, tuple):
+            if not isinstance(para, (list, tuple)):
                 para = [para, ]
             para = [p.strip() for p in para]
             restr = []

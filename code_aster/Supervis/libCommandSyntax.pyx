@@ -139,7 +139,7 @@ cdef class CommandSyntax:
         logger.debug( "factor keyword %r: %r", factName, dictDef )
         if dictDef is None:
             return None
-        if type( dictDef ) is dict:
+        if isinstance(dictDef, dict):
             dictDef = [dictDef, ]
         return dictDef
 
@@ -160,7 +160,7 @@ cdef class CommandSyntax:
             dictDef = self._getFactorKeywordOccurrence( factName, occurrence )
             if not dictDef:
                 dictDef = {}
-        assert type(dictDef) is dict, "syntax not defined"
+        assert isinstance(dictDef, dict), "syntax not defined"
         return dictDef
 
     cpdef int getFactorKeywordNbOcc( self, factName ):
@@ -177,7 +177,7 @@ cdef class CommandSyntax:
         """Tell if the couple ( factor keyword, simple keyword ) exists"""
         dictDef = self._getDefinition( factName, occurrence )
         value = dictDef.get( simpName, None )
-        if value is None or type( value ) is dict:
+        if value is None or isinstance(value, dict):
             return 0
         return 1
 
@@ -186,7 +186,7 @@ cdef class CommandSyntax:
         if not self.existsFactorAndSimpleKeyword( factName, occurrence, simpName ):
             return []
         value = self._getDefinition( factName, occurrence )[simpName]
-        if type( value ) not in (list, tuple):
+        if not isinstance(value, (list, tuple)):
             value = [value, ]
         logger.debug( "getValue: %r", value )
         return value
@@ -290,16 +290,16 @@ cdef public int listeMotCleSimpleFromMotCleFacteur(
             continue
         keywords.append(key)
         value2 = value
-        if type( value ) == list or  type( value ) == tuple:
+        if isinstance(value, (list, tuple)):
             value2 = value[0]
 
-        if type( value2 ) == str:
+        if isinstance(value2, (str, unicode)):
             typ = "TX"
-        elif type( value2 ) == float:
+        elif isinstance(value2, float):
             typ = "R8"
-        elif type( value2 ) == complex:
+        elif isinstance(value2, complex):
             typ = "C8"
-        elif type( value2 ) == int:
+        elif isinstance(value2, (int, long)):
             typ ="IS"
         else:
             raise TypeError( "Unexpected type: {!r}".format(type(value)) )
@@ -344,7 +344,7 @@ cdef public char** getCommandKeywordValueString(
     if currentCommand is None:
         raise ValueError( "there is no active command" )
     value = currentCommand.getValue( factName, occurrence, simpName )
-    if len( value ) > 0 and type( value[0] ) not in ( str, unicode ):
+    if len( value ) > 0 and not isinstance(value[0], (str, unicode)):
         try:
             value2 = []
             for i in range( len( value ) ):
@@ -398,7 +398,7 @@ cdef public long* getCommandKeywordValueInt(
     if currentCommand is None:
         raise ValueError( "there is no active command" )
     value = currentCommand.getValue( factName, occurrence, simpName )
-    if len( value ) > 0 and type( value[0] ) not in ( int, long ):
+    if len( value ) > 0 and not isinstance(value[0], (int, long)):
         raise TypeError( "integer expected, got %s" % type( value[0] ) )
     cdef long* longArray = libBaseUtils.to_clong_array( value )
     size[0] = len( value )

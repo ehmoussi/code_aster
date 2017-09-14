@@ -106,7 +106,7 @@ class ExecutionParameter:
             value = get_program_path(re.sub('^prog:', '', option))
         else:
             value = self._args.get(option, default)
-        if type(value) in (str, unicode):
+        if isinstance(value, (str, unicode)):
             value = convert(value)
         logger.debug("return for {0!r}: {1} {2}"
                      .format(option, value, type(value)))
