@@ -55,7 +55,17 @@ from .Validators import (
     Together,
 )
 
-_F = dict
+class _F(dict):
+    """Wrapper to add transitional methods to emulate old *MCCOMPO* objects"""
+
+    def cree_dict_valeurs(self, *args, **kwargs):
+        return self
+
+    @property
+    def mc_liste(self):
+        return self.keys()
+
+
 __builtin__._F = _F
 
 

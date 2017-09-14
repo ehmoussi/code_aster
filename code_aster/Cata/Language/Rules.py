@@ -49,7 +49,7 @@ class Rule(object):
 
     def check(self, dictSyntax):
         """Check the rule"""
-        if type(dictSyntax) != dict:
+        if not isinstance(dictSyntax, dict):
             raise TypeError("'dict' is expected")
 
     def _firstExists(self, dictSyntax):
