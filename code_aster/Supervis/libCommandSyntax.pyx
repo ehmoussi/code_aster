@@ -337,6 +337,28 @@ cdef public int existsCommandFactorAndSimpleKeyword(
     return currentCommand.existsFactorAndSimpleKeyword( factName, occurrence,
                                                         simpName )
 
+
+def _check_strings(factName, simpName, value):
+    """Check that keyword values are strings.
+
+    Arguments:
+        value (str): Values extracted from a keyword.
+
+    Returns:
+        list[str]: String values or names for DataStructure objects.
+    """
+    if len(value) > 0 and not isinstance(value[0], (str, unicode)):
+        try:
+            value2 = []
+            for i in range(len(value)):
+                value2.append(value[i].getName())
+            value = value2
+        except AttributeError:
+            raise TypeError("string expected for {0}/{1}, got {2}"
+                            .format(factName, simpName, type(value[0])))
+    return value
+
+
 cdef public char** getCommandKeywordValueString(
         char* factName, int occurrence,
         char* simpName, int* size ) except *:
@@ -344,17 +366,26 @@ cdef public char** getCommandKeywordValueString(
     if currentCommand is None:
         raise ValueError( "there is no active command" )
     value = currentCommand.getValue( factName, occurrence, simpName )
-    if len( value ) > 0 and not isinstance(value[0], (str, unicode)):
-        try:
-            value2 = []
-            for i in range( len( value ) ):
-                value2.append(value[i].getName())
-            value = value2
-        except:
-            raise TypeError( "string expected for %r/%r, got %s" % ( factName, simpName, type(value[0]) ) )
+    value = _check_strings(factName, simpName, value)
+
     cdef char** strArray = libBaseUtils.to_cstring_array( value )
     size[0] = len( value )
     return strArray
+
+
+cdef public long* getCommandKeywordStringLength(
+        char* factName, int occurrence,
+        char* simpName, int lenmax, int* size ) except *:
+    """Wrapper function to return length of strings"""
+    if currentCommand is None:
+        raise ValueError( "there is no active command" )
+    value = currentCommand.getValue( factName, occurrence, simpName )
+    value = _check_strings(factName, simpName, value)
+    length = [min(len(i), lenmax) for i in value]
+
+    cdef long* longArray = libBaseUtils.to_clong_array(length)
+    size[0] = len(length)
+    return longArray
 
 
 cdef public double* getCommandKeywordValueDouble(
