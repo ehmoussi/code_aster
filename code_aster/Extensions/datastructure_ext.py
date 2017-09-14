@@ -56,6 +56,9 @@ class ExtendedDataStructure(injector, DataStructure):
     def accessible():
         return True
 
+    def get_name(self):
+        return self.getName()
+
     @property
     def nom(self):
         return self.getName()
