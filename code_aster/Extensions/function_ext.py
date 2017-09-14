@@ -19,8 +19,12 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
+import numpy as NP
+
 from libaster import Function
 import aster
+
+from ..Utilities import accept_ndarray
 
 
 class injector(object):
@@ -33,9 +37,32 @@ class injector(object):
             return type.__init__(self, name, bases, dict)
 
 
-# inject some methods in the point foo
 class ExtendedFunction(injector, Function):
     cata_sdj = "SD.sd_fonction.sd_fonction_aster"
+
+    setValues = accept_ndarray(Function.setValues)
+
+    def abs(self):
+        """Return the absolute value of the function.
+
+        Returns:
+            (Function): Absolute value of the function.
+        """
+        new = Function.create()
+        absc, ordo = self.Valeurs()
+        new.setValues(absc, NP.abs(ordo))
+        return new
+
+    def getValuesAsArray(self):
+        """Return the values of the function as a `numpy.array` of shape (N, 2).
+
+        Returns:
+            numpy.array: Array containing the values.
+        """
+        size = self.size()
+        values = NP.array(self.getValues())
+        values.shape = (size, 2)
+        return values
 
     def convert(self, arg='real'):
         """
@@ -53,37 +80,8 @@ class ExtendedFunction(injector, Function):
         """
         Retourne deux listes de valeurs : abscisses et ordonnees
         """
-        from Utilitai.Utmess import UTMESS
-        if self.accessible():
-            vale = '%-19s.VALE' % self.get_name()
-            lbl = self.sdj.VALE.get()
-            if lbl == None:
-                UTMESS('F', 'SDVERI_2', valk=[vale])
-            lbl = list(lbl)
-            dim = len(lbl) / 2
-            lx = lbl[0:dim]
-            ly = lbl[dim:2 * dim]
-        elif hasattr(self, 'etape') and self.etape.nom == 'DEFI_FONCTION':
-            if self.etape['VALE'] is not None:
-                lbl = list(self.etape['VALE'])
-                dim = len(lbl)
-                lx = [lbl[i] for i in range(0, dim, 2)]
-                ly = [lbl[i] for i in range(1, dim, 2)]
-            elif self.etape['VALE_PARA'] is not None:
-                lx = self.etape['VALE_PARA'].Valeurs()
-                ly = self.etape['VALE_FONC'].Valeurs()
-            elif self.etape['ABSCISSE'] is not None:
-                lx = self.etape['ABSCISSE']
-                ly = self.etape['ORDONNEE']
-            else:
-                raise AsException("Erreur (fonction.Valeurs) : ne fonctionne en "
-                                  "PAR_LOT='OUI' que sur des fonctions produites "
-                                  "par DEFI_FONCTION dans le jdc courant.")
-        else:
-            raise AsException("Erreur (fonction.Valeurs) : ne fonctionne en "
-                              "PAR_LOT='OUI' que sur des fonctions produites "
-                              "par DEFI_FONCTION dans le jdc courant.")
-        return [lx, ly]
+        values = self.getValuesAsArray()
+        return values[:, 0], values[:, 1]
 
     def Absc(self):
         """Retourne la liste des abscisses"""
@@ -96,10 +94,10 @@ class ExtendedFunction(injector, Function):
     def __call__(self, val, tol=1.e-6):
         """Evaluate a function at 'val'. If provided, 'tol' is a relative
         tolerance to match an abscissa value."""
-        # Pour EFICAS : substitution de l'instance de classe
-        # parametre par sa valeur
-        if isinstance(val, ASSD):
+        try:
             val = val.valeur
+        except AttributeError:
+            val = float(val)
         __ff = self.convert()
         return __ff(val, tol=tol)
 
