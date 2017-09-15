@@ -44,7 +44,7 @@ class ExecuteMacro(object):
         import code_aster.Commands as COMMANDS
         return getattr(COMMANDS, name, None)
 
-    @deprecated
+    @deprecated(False)
     def set_icmd(self, _):
         """Does nothing, kept for compatibility."""
         return

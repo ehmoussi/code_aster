@@ -27,20 +27,31 @@ from functools import wraps
 from warnings import simplefilter, warn
 
 
-def deprecated(func):
+def deprecated(replaced=True):
     """Decorator to mark a function as deprecated.
 
     It will do nothing at the beginning of the transitional phase.
     Then, it will warn about deprecated functions. And finally, it will raise
     an error to remove all of them.
+
+    Arguments:
+        replaced (bool): Tell if the decorated function will be replaced
+            or if it will be just removed (default: *True*, replaced).
     """
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        """Wrapper"""
-        # phase 1: does nothing but keep in mind that it will be removed.
-        # phase 2: warn about deprecated functions.
-        warn("This feature has a new implementation, {0!r} will be "
-             "removed in future.".format(func.__name__),
-             DeprecationWarning, stacklevel=2)
-        return func(*args, **kwargs)
-    return wrapper
+    def deprecated_decorator(func):
+        """Raw decorator"""
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            """Wrapper"""
+            # phase 1: does nothing but keep in mind that it will be removed.
+            # phase 2: warn about deprecated functions.
+            msg = ("This feature is obsoleted, {0!r} will be "
+                   "removed in the future.")
+            if replaced:
+                msg = ("This feature has a new implementation, {0!r} will be "
+                       "removed in the future.")
+            warn(msg.format(func.__name__),
+                 DeprecationWarning, stacklevel=2)
+            return func(*args, **kwargs)
+        return wrapper
+    return deprecated_decorator
