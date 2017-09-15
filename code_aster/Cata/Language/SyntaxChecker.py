@@ -244,7 +244,7 @@ class SyntaxCheckerVisitor(object):
             if not isValidType(i, validType):
                 step._context(i)
                 raise TypeError('Unexpected type: {0}, expecting: {1}'
-                    .format(type(i), validType))
+                                .format(type(i), validType))
             # into
             if step.definition.has_key("into"):
                 if i not in step.definition["into"]:
@@ -253,10 +253,10 @@ class SyntaxCheckerVisitor(object):
             # val_min/val_max
             if valMax != None and i > valMax:
                 raise ValueError('Value must be smaller than {0}, {1} is not'
-                    .format(valMax, i))
+                                 .format(valMax, i))
             if valMin != None and i < valMin:
                 raise ValueError('Value must be bigger than {0}, {1} is not'
-                    .format(valMin, i))
+                                 .format(valMin, i))
 
         # call validators
         for valid in force_list(step.definition.get('validators', [])):

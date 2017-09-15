@@ -19,8 +19,8 @@
 
 # person_in_charge: natacha.bereux@edf.fr
 
-from code_aster import Commands, GeneralizedResultsContainer
-from code_aster.Cata import checkSyntax
+from code_aster import GeneralizedResultsContainer
+from code_aster.Cata import Commands, checkSyntax
 from code_aster.RunManager.AsterFortran import python_execop
 from code_aster.Supervis.libCommandSyntax import CommandSyntax
 
