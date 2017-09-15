@@ -68,10 +68,17 @@ class DataStructure(object):
 
 def AsType(obj):
     """Return the type of `obj`"""
-    # AsterStudy Command objects
+    # AsterStudy Command objects: return the underlying DataStructure
     if hasattr(obj, "gettype"):
         try:
             return obj.gettype()
+        except:
+            return
+    # BoostPython objects: return a name to find the DataStructure class
+    elif hasattr(obj, "getType"):
+        try:
+            typn = obj.getType().lower()
+            return globals().get(typn + "_sdaster") or globals().get(typn)
         except:
             return
     elif isinstance(obj, (list, tuple)) and len(obj) > 0:
