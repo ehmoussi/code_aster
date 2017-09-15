@@ -21,10 +21,14 @@
 from code_aster.Cata import Commands, checkSyntax
 from code_aster.RunManager.AsterFortran import python_execop
 from code_aster.Supervis.libCommandSyntax import CommandSyntax
+from code_aster.Utilities import compat_listr8
+from code_aster import Function
 
 
 def CALC_FONC_INTERP(**kwargs):
     """Interpolate functions and formulas."""
+    compat_listr8(kwargs, None, "LIST_PARA", "VALE_PARA")
+    compat_listr8(kwargs, None, "LIST_PARA_FONC", "VALE_PARA_FONC")
     checkSyntax(Commands.CALC_FONC_INTERP, kwargs)
 
     result = Function.create()
