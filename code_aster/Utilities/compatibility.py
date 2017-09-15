@@ -26,6 +26,8 @@ This modules will help for transitional features.
 from functools import wraps
 from warnings import simplefilter, warn
 
+from .base_utils import ndarray_to_list
+
 
 def deprecated(replaced=True):
     """Decorator to mark a function as deprecated.
@@ -55,3 +57,29 @@ def deprecated(replaced=True):
             return func(*args, **kwargs)
         return wrapper
     return deprecated_decorator
+
+
+def compat_listr8(kwargs, factor_keyword, list_keyword, float_keyword):
+    """Pass values given to a keyword that expects a *listr8* to the similar
+    keyword that takes a list of floats, eventually under a factor keyword.
+
+    Arguments:
+        kwargs (dict): Dict of keywords passed to a command, changed in place.
+        factor_keyword (str): Name of the factor keyword or an empty string if
+            the keywords are at the top level.
+        list_keyword (str): Name of the keyword that needs a *listr8*.
+        float_keyword (str): Name of the keyword that takes a list of floats.
+    """
+    if factor_keyword and factor_keyword.strip():
+        if not kwargs.has_key(factor_keyword):
+            return
+        fact = kwargs[factor_keyword]
+        if not isinstance(fact, (list, tuple)):
+            fact = [fact]
+        for occ in fact:
+            compat_listr8(occ, None, list_keyword, float_keyword)
+    else:
+        try:
+            kwargs[float_keyword] = ndarray_to_list(kwargs.pop(list_keyword))
+        except KeyError:
+            pass
