@@ -33,10 +33,9 @@ def CALC_FONC_INTERP(**kwargs):
 
     result = Function.create()
     name = result.getName()
+
     syntax = CommandSyntax("CALC_FONC_INTERP")
-
     syntax.setResult(name, "FONCTION")
-
     syntax.define(kwargs)
     numOp = 134
     python_execop(numOp)
