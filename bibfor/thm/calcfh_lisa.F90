@@ -19,7 +19,6 @@
 !
 subroutine calcfh_lisa(option, perman, ndim,&
                        dimdef, dimcon,&
-                       yamec , yate  ,&
                        addep1, adcp11, addeme , addete,&
                        grap1 , rho11 , gravity, tperm ,&
                        congep, dsde  )
@@ -34,7 +33,7 @@ implicit none
 !
 character(len=16), intent(in) :: option
 aster_logical, intent(in) :: perman
-integer, intent(in) :: ndim, dimdef, dimcon, yamec, yate
+integer, intent(in) :: ndim, dimdef, dimcon
 integer, intent(in) :: addeme, addep1, addete, adcp11
 real(kind=8), intent(in) :: rho11, grap1(3)
 real(kind=8), intent(in) :: gravity(3), tperm(ndim, ndim)
@@ -54,14 +53,12 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 ! In  ndim             : dimension of space (2 or 3)
 ! In  dimdef           : dimension of generalized strains vector
 ! In  dimcon           : dimension of generalized stresses vector
-! In  yamec            : flag for mechanic (1 of dof exist)
-! In  yate             : flag for thermic (1 of dof exist)
-! In  addeme           : adress of mechanic dof in vector and matrix (generalized quantities)
-! In  addep1           : adress of first hydraulic dof in vector and matrix (generalized quantities)
-! In  addete           : adress of thermic dof in vector and matrix (generalized quantities)
-! In  adcp11           : adress of first component in vector of gen. stress for first phase 
-! In  grap1            : gradient of first pressure
-! In  rho11            : current volumic mass of liquid
+! In  addeme           : adress of mechanic dof in vector of generalized strains
+! In  addete           : adress of thermic dof in vector of generalized strains
+! In  addep1           : adress of first hydraulic dof in vector of generalized strains
+! In  adcp11           : adress of first hydraulic/first component dof in vector of gene. stresses
+! In  grap1            : gradient of capillary pressure
+! In  rho11            : volumic mass for liquid
 ! In  gravity          : gravity
 ! In  tperm            : permeability tensor
 ! IO  congep           : generalized stresses - At end of current step
@@ -110,7 +107,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
     if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
         dr11p1=rho11*cliq
-        if (yate .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_ther) then
             dr11t=-3.d0*alpliq*rho11
         endif
     endif
@@ -141,7 +138,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
                 dsde(bdcp11+i,addep1+j) = dsde(bdcp11+i,addep1+j) -&
                                           rho11*lambd1(1)*tperm(i,j)
             end do
-            if (yamec .eq. 1) then
+            if (ds_thm%ds_elem%l_dof_meca) then
                 do j = 1, 3
                     do k = 1, ndim
                         dsde(bdcp11+i,addeme+ndim-1+i) = dsde(bdcp11+i,addeme+ndim-1+i) +&
@@ -150,7 +147,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
                     end do
                 end do
             endif
-            if (yate .eq. 1) then
+            if (ds_thm%ds_elem%l_dof_ther) then
                 do j = 1, ndim
                     dsde(adcp11+i,addete) = dsde(adcp11+i,addete) +&
                                             dr11t*lambd1(1)*tperm(i,j)*(-grap1(j)+rho11*gravity(j))

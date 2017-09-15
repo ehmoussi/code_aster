@@ -23,7 +23,7 @@ subroutine equthm(imate, option, ta, ta1, ndim,&
                   press2, tempe, crit, rinstm, rinstp,&
                   dt, r, drds, dsde, retcom,&
                   angmas,&
-                  thmc, ther, hydr, &
+                  thmc, hydr, &
                   advihy, advico, vihrho, vicphi, vicpvp, vicsat)
 ! ======================================================================
 !
@@ -142,7 +142,6 @@ subroutine equthm(imate, option, ta, ta1, ndim,&
 #include "asterfort/vecini.h"
 
     character(len=16), intent(in) :: thmc
-    character(len=16), intent(in) :: ther
     character(len=16), intent(in) :: hydr
     integer, intent(in) :: advihy
     integer, intent(in) :: advico
@@ -245,7 +244,7 @@ subroutine equthm(imate, option, ta, ta1, ndim,&
                 defgem, defgep, congem, congep, vintm,&
                 vintp, dsde, pesa, retcom, kpi,&
                 npg, angmas,&
-                thmc, ther, hydr,&
+                thmc, hydr,&
                 advihy, advico, vihrho, vicphi, vicpvp, vicsat)
     if (retcom .ne. 0) then
         goto 999

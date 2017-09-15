@@ -110,7 +110,7 @@ implicit none
     real(kind=8) :: matuu(dimuel*dimuel)
 !
 ! - VARIABLES LOCALES
-    integer :: yamec, yap1, yap2, yate, addeme, adcome, addep1, addep2, addete
+    integer :: yap1, yap2, yate, addeme, adcome, addep1, addep2, addete
     integer :: adcp11, adcp12, adcp21, adcp22, adcote, adcop1, adcop2
     integer :: i, j, m, k, km, kpi, nbpha1, nbpha2, addlh1
     real(kind=8) :: q(dimdef, dimuel), res(dimdef), drde(dimdef, dimdef), wi
@@ -129,7 +129,6 @@ implicit none
 ! =====================================================================
 ! --- DETERMINATION DES VARIABLES CARACTERISANT LE MILIEU ET OPTION ---
 ! =====================================================================
-    yamec = mecani(1)
     addeme = mecani(2)
     adcome = mecani(3)
     yap1 = press1(1)
@@ -198,7 +197,7 @@ implicit none
 !
         call coeihm(option, perman, resi, rigi, imate,&
                     compor, instam, instap, nomail,&
-                    ndim, dimdef, dimcon, nbvari, yamec,&
+                    ndim, dimdef, dimcon, nbvari,&
                     yap1, yap2, yate, addeme, adcome,&
                     addep1, adcp11, adcp12, addlh1, adcop1,&
                     addep2, adcp21, adcp22, addete, adcote,&

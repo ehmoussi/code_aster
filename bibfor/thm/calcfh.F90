@@ -21,7 +21,6 @@
 subroutine calcfh(nume_thmc, &
                   option   , perman, hydr   , ndim  , j_mater,&
                   dimdef   , dimcon,&
-                  yamec    , yate  ,&
                   addep1   , addep2,&
                   adcp11   , adcp12, adcp21 , adcp22,&
                   addeme   , addete, &
@@ -47,7 +46,7 @@ implicit none
 character(len=16), intent(in) :: option, hydr
 aster_logical, intent(in) :: perman
 integer, intent(in) :: j_mater, nume_thmc
-integer, intent(in) :: ndim, dimdef, dimcon, yamec, yate
+integer, intent(in) :: ndim, dimdef, dimcon
 integer, intent(in) :: addeme, addep1, addep2, addete, adcp11, adcp12, adcp21, adcp22
 real(kind=8), intent(in) :: rho11, satur, dsatur
 real(kind=8), intent(in) :: grat(3), grap1(3), grap2(3)
@@ -73,27 +72,25 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 ! In  j_mater          : coded material address
 ! In  dimdef           : dimension of generalized strains vector
 ! In  dimcon           : dimension of generalized stresses vector
-! In  yamec            : flag for mechanic (1 of dof exist)
-! In  yate             : flag for thermic (1 of dof exist)
-! In  addep1           : adress of first hydraulic dof in vector and matrix (gene. quantities)
-! In  addep2           : adress of second hydraulic dof in vector and matrix (gene. quantities)
-! In  adcp11           : adress of first component in vector of gen. stress for first phase 
-! In  adcp12           : adress of first component in vector of gen. stress for second phase
-! In  adcp21           : adress of second component in vector of gen. stress for first phase
-! In  adcp22           : adress of second component in vector of gen. stress for second phase
-! In  addeme           : adress of mechanic dof in vector and matrix (generalized quantities)
-! In  addete           : adress of thermic dof in vector and matrix (generalized quantities)
+! In  addeme           : adress of mechanic dof in vector of generalized strains
+! In  addete           : adress of thermic dof in vector of generalized strains
+! In  addep1           : adress of first hydraulic dof in vector of generalized strains
+! In  addep2           : adress of second hydraulic dof in vector of generalized strains
+! In  adcp11           : adress of first hydraulic/first component dof in vector of gene. stresses
+! In  adcp12           : adress of first hydraulic/second component dof in vector of gene. stresses
+! In  adcp21           : adress of second hydraulic/first component dof in vector of gene. stresses
+! In  adcp22           : adress of second hydraulic/second component dof in vector of gene. stresses
 ! In  t                : temperature - At end of current step
-! In  p1               : first pressure - At end of current step
-! In  p2               : second pressure - At end of current step
+! In  p1               : capillary pressure - At end of current step
+! In  p2               : gaz pressure - At end of current step
 ! In  pvp              : steam pressure
 ! In  pad              : dissolved air pressure
 ! In  grat             : gradient of temperature
-! In  grap1            : gradient of first pressure
-! In  grap2            : gradient of second pressure
-! In  rho11            : current volumic mass of liquid
-! In  h11              : enthalpy of first pressure and first phase
-! In  h12              : enthalpy of first pressure and second phase
+! In  grap1            : gradient of capillary pressure
+! In  grap2            : gradient of gaz pressure
+! In  rho11            : volumic mass for liquid
+! In  h11              : enthalpy of liquid
+! In  h12              : enthalpy of steam
 ! In  satur            : saturation
 ! In  dsatur           : derivative of saturation (/pc)
 ! In  gravity          : gravity
@@ -107,14 +104,12 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
     case (1)
         call calcfh_lisa(option, perman, ndim,&
                          dimdef, dimcon,&
-                         yamec , yate  ,&
                          addep1, adcp11, addeme , addete,&
                          grap1 , rho11 , gravity, tperm ,&
                          congep, dsde  )
     case (2)
         call calcfh_gazp(option, perman , ndim,&
                          dimdef, dimcon ,&
-                         yamec , yate   ,&
                          addep1, adcp11 , addeme, addete,&
                          t     , p1     , grap1 ,&
                          rho11 , gravity, tperm ,&
@@ -122,7 +117,6 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
     case (3)
         call calcfh_liva(option, hydr  , ndim, j_mater,&
                          dimdef, dimcon,&
-                         yamec , yate  ,&
                          addep1, adcp11, adcp12, addeme, addete,&
                          t     , p2    , pvp,&
                          grap1 , grat  ,&
@@ -132,7 +126,6 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
     case (4)
         call calcfh_lvag(option, perman, hydr   , ndim  , j_mater,&
                          dimdef, dimcon,&
-                         yamec , yate  ,&
                          addep1, addep2, adcp11 , adcp12, adcp21 ,&
                          addeme, addete, &
                          t     , p2    , pvp    ,&
@@ -143,7 +136,6 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
     case (5)
         call calcfh_liga(option, hydr  , ndim  , j_mater,&
                          dimdef, dimcon,&
-                         yamec , yate  ,&
                          addep1, addep2, adcp11 , adcp21 ,&
                          addeme, addete, &
                          t     , p2    , &
@@ -154,7 +146,6 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
     case (6)
         call calcfh_lgat(option, perman , hydr  , ndim  , j_mater,&
                          dimdef, dimcon ,&
-                         yamec , yate   ,&
                          addep1, adcp11 ,&
                          addeme, addete ,&
                          t     , p2     ,&
@@ -165,7 +156,6 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
     case (9)
         call calcfh_lvga(option, perman, hydr   , ndim  , j_mater,&
                          dimdef, dimcon,&
-                         yamec , yate  ,&
                          addep1, addep2, adcp11 , adcp12, adcp21 , adcp22,&
                          addeme, addete, &
                          t     , p1    , p2     , pvp   , pad,&
@@ -176,7 +166,6 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
     case (10)
         call calcfh_ladg(option, perman, hydr   , ndim  , j_mater,&
                          dimdef, dimcon,&
-                         yamec , yate  ,&
                          addep1, addep2, adcp11 , adcp12, adcp21 , adcp22,&
                          addeme, addete, &
                          t     , p1    , p2     , pvp   , pad,&

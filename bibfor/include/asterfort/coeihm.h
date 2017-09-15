@@ -22,7 +22,7 @@
 interface 
     subroutine coeihm(option, perman, resi, rigi, imate,&
                       compor, instam, instap, nomail,&
-                      ndim, dimdef, dimcon, nbvari, yamec,&
+                      ndim, dimdef, dimcon, nbvari,&
                       yap1, yap2, yate, &
                       addeme, adcome, addep1, adcp11, adcp12,&
                       addlh1, adcop1, addep2, adcp21, adcp22,&
@@ -42,7 +42,6 @@ interface
         real(kind=8) :: instam
         real(kind=8) :: instap
         character(len=8) :: nomail
-        integer :: yamec
         integer :: yap1
         integer :: yap2
         integer :: yate

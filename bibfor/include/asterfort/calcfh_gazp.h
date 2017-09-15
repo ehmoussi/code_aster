@@ -21,14 +21,13 @@
 interface 
     subroutine calcfh_gazp(option, perman , ndim,&
                            dimdef, dimcon ,&
-                           yamec , yate   ,&
                            addep1, adcp11 , addeme, addete,&
                            t     , p1     , grap1 ,&
                            rho11 , gravity, tperm ,&
                            congep, dsde)
         character(len=16), intent(in) :: option
         aster_logical, intent(in) :: perman
-        integer, intent(in) :: ndim, dimdef, dimcon, yamec, yate
+        integer, intent(in) :: ndim, dimdef, dimcon
         integer, intent(in) :: addeme, addep1, addete, adcp11
         real(kind=8), intent(in) :: rho11, grap1(3), t, p1
         real(kind=8), intent(in) :: gravity(3), tperm(ndim, ndim)
