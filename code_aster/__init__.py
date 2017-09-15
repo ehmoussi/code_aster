@@ -22,6 +22,10 @@
 # discourage import *
 __all__ = []
 
+# install i18n function as soon as possible
+from .Utilities.i18n import localization
+localization.install()
+
 from .Supervis import executionParameter
 from .RunManager import Initializer
 

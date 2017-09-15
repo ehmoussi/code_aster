@@ -18,8 +18,8 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 # person_in_charge: nicolas.sellenet@edf.fr
-from code_aster import Commands, Table
-from code_aster.Cata import checkSyntax
+from code_aster import Table
+from code_aster.Cata import Commands, checkSyntax
 from code_aster.RunManager.AsterFortran import python_execop
 from code_aster.Supervis.libCommandSyntax import CommandSyntax
 
