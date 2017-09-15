@@ -20,7 +20,7 @@
 # person_in_charge: mathieu.courtois@edf.fr
 
 from libaster import DataStructure
-from ..Utilities import import_object
+from ..Utilities import deprecated, import_object
 
 
 class injector(object):
@@ -52,12 +52,15 @@ class ExtendedDataStructure(injector, DataStructure):
 
     # transitional functions - to remove later
     @staticmethod
+    @deprecated
     def accessible():
         return True
 
+    @deprecated
     def get_name(self):
         return self.getName()
 
     @property
+    @deprecated
     def nom(self):
         return self.getName()

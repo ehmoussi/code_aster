@@ -11,6 +11,7 @@ from code_aster.Commands.affe_modele import AFFE_MODELE
 from code_aster.Commands.asse_matrice import ASSE_MATRICE
 from code_aster.Commands.asse_matr_gene import ASSE_MATR_GENE
 from code_aster.Commands.asse_vect_gene import ASSE_VECT_GENE
+from code_aster.Commands.calc_fonc_interp import CALC_FONC_INTERP
 from code_aster.Commands.calc_matr_elem import CALC_MATR_ELEM
 from code_aster.Commands.comb_fourier import COMB_FOURIER
 from code_aster.Commands.crea_champ import CREA_CHAMP
