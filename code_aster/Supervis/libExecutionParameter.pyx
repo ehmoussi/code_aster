@@ -25,6 +25,7 @@ import os.path as osp
 import platform
 import re
 import sys
+import warnings
 
 from Execution.strfunc import convert
 import aster_pkginfo
@@ -63,6 +64,8 @@ class ExecutionParameter:
 
         self._args['repmat'] = '.'
         self._args['repdex'] = '.'
+
+        self._args['deprecated'] = 0
         self._computed()
 
     def _computed(self):
@@ -175,9 +178,17 @@ class ExecutionParameter:
             action='store', metavar='DIR', default='.',
             help="directory of external datas (geometrical datas or properties...)")
 
+        parser.add_argument('--deprecated',
+            action='store_const', const=1, default=0,
+            help="turn on deprecation warnings")
+
         args, ignored = parser.parse_known_args(argv or sys.argv)
         if args.debug:
             setlevel()
+        if args.deprecated:
+            # disabled by default in python2.7
+            warnings.simplefilter('default')
+
         logger.debug("Ignored arguments: %r", ignored)
         logger.debug("Read options: %r", vars(args))
 

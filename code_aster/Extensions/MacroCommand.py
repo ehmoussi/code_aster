@@ -8,7 +8,7 @@ import sys
 
 from ..Cata import Commands, checkSyntax
 from ..Cata.SyntaxUtils import debug_message2
-from ..Utilities import import_object
+from ..Utilities import deprecated, import_object
 
 
 class ExecuteMacro(object):
@@ -44,6 +44,7 @@ class ExecuteMacro(object):
         import code_aster.Commands as COMMANDS
         return getattr(COMMANDS, name, None)
 
+    @deprecated
     def set_icmd(self, _):
         """Does nothing, kept for compatibility."""
         return
