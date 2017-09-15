@@ -20,7 +20,7 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine hmderp(yate  , yavp  , t    ,&
+    subroutine hmderp(yavp  , t    ,&
                       pvp   , pad   ,&
                       rho11 , rho12 , h11  , h12,&
                       dp11p1, dp11p2, dp11t,&
@@ -30,7 +30,6 @@ interface
                       dp1pp1, dp2pp1, dtpp1,&
                       dp1pp2, dp2pp2, dtpp2,&
                       dp1pt , dp2pt , dtpt)
-        integer, intent(in) :: yate
         aster_logical, intent(in) :: yavp
         real(kind=8), intent(in) :: t, pvp, pad
         real(kind=8), intent(in) :: rho11, rho12, h11, h12

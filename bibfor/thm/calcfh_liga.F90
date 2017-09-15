@@ -20,7 +20,6 @@
 !
 subroutine calcfh_liga(option, hydr  , ndim  , j_mater,&
                        dimdef, dimcon,&
-                       yamec , yate  ,&
                        addep1, addep2, adcp11, adcp21 ,&
                        addeme, addete,&
                        t     , p2    ,&
@@ -42,7 +41,7 @@ implicit none
 !
 character(len=16), intent(in) :: option, hydr
 integer, intent(in) :: j_mater
-integer, intent(in) :: ndim, dimdef, dimcon, yamec, yate
+integer, intent(in) :: ndim, dimdef, dimcon
 integer, intent(in) :: addeme, addep1, addep2, addete, adcp11, adcp21
 real(kind=8), intent(in) :: rho11, satur, dsatur
 real(kind=8), intent(in) :: grap1(3), grap2(3)
@@ -59,29 +58,22 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! For this model:
-!
-! p2 : p_gaz - p_liquid
-! pvp: p_steam
-!
 ! In  option           : option to compute
 ! In  hydr             : type of hydraulic law
 ! In  ndim             : dimension of space (2 or 3)
 ! In  j_mater          : coded material address
 ! In  dimdef           : dimension of generalized strains vector
 ! In  dimcon           : dimension of generalized stresses vector
-! In  yamec            : flag for mechanic (1 of dof exist)
-! In  yate             : flag for thermic (1 of dof exist)
-! In  addep1           : adress of first hydraulic dof in vector and matrix (gene. quantities)
-! In  addep2           : adress of second hydraulic dof in vector and matrix (gene. quantities)
-! In  adcp11           : adress of first component in vector of gen. stress for first phase
-! In  adcp21           : adress of second component in vector of gen. stress for first phase
-! In  addeme           : adress of mechanic dof in vector and matrix (generalized quantities)
-! In  addete           : adress of thermic dof in vector and matrix (generalized quantities)
+! In  addeme           : adress of mechanic dof in vector of generalized strains
+! In  addete           : adress of thermic dof in vector of generalized strains
+! In  addep1           : adress of first hydraulic dof in vector of generalized strains
+! In  addep2           : adress of second hydraulic dof in vector of generalized strains
+! In  adcp11           : adress of first hydraulic/first component dof in vector of gene. stresses
+! In  adcp21           : adress of second hydraulic/first component dof in vector of gene. stresses
 ! In  t                : temperature - At end of current step
-! In  p2               : second pressure - At end of current step
-! In  grap1            : gradient of first pressure
-! In  grap2            : gradient of second pressure
+! In  p2               : gaz pressure - At end of current step
+! In  grap1            : gradient of capillary pressure
+! In  grap2            : gradient of gaz pressure
 ! In  rho11            : current volumic mass of liquid
 ! In  satur            : saturation
 ! In  dsatur           : derivative of saturation (/pc)
@@ -211,7 +203,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
                 dsde(adcp21+i,addep2+j) = dsde(adcp21+i,addep2+j)-&
                     rho21*lambd2(1)*tperm(i,j)
             end do
-            if (yamec .eq. 1) then
+            if (ds_thm%ds_elem%l_dof_meca) then
                 do j = 1, 3
                     do k = 1, ndim
                         dsde(adcp11+i,addeme+ndim-1+j) = dsde(adcp11+i,addeme+ndim-1+j)+&
@@ -223,7 +215,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
                     end do                     
                 end do
             endif
-            if (yate .eq. 1) then
+            if (ds_thm%ds_elem%l_dof_ther) then
                 do j = 1, ndim
                     dsde(adcp11+i,addete) = dsde(adcp11+i,addete)+&
                         dr11t*lambd1(1)*tperm(i,j)*(-grap2(j)+grap1(j)+rho11*gravity(j))

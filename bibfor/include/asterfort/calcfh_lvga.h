@@ -22,7 +22,6 @@
 interface 
     subroutine calcfh_lvga(option, perman, hydr  , ndim  , j_mater,&
                            dimdef, dimcon,&
-                           yamec , yate  ,&
                            addep1, addep2, adcp11 , adcp12, adcp21 , adcp22,&
                            addeme, addete, &
                            t     , p1    , p2     , pvp   , pad,&
@@ -33,7 +32,7 @@ interface
         character(len=16), intent(in) :: option, hydr
         aster_logical, intent(in) :: perman
         integer, intent(in) :: j_mater
-        integer, intent(in) :: ndim, dimdef, dimcon, yamec, yate
+        integer, intent(in) :: ndim, dimdef, dimcon
         integer, intent(in) :: addeme, addep1, addep2, addete, adcp11, adcp12, adcp21, adcp22
         real(kind=8), intent(in) :: rho11, satur, dsatur
         real(kind=8), intent(in) :: grat(3), grap1(3), grap2(3)

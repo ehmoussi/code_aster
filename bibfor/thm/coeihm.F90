@@ -19,7 +19,7 @@
 !
 subroutine coeihm(option, perman, resi, rigi, imate,&
                   compor, instam, instap, nomail,&
-                  ndim, dimdef, dimcon, nbvari, yamec,&
+                  ndim, dimdef, dimcon, nbvari, &
                   yap1, yap2, yate, addeme, adcome,&
                   addep1, adcp11, adcp12, addlh1, adcop1,&
                   addep2, adcp21, adcp22, addete, adcote,&
@@ -48,7 +48,7 @@ implicit none
 #include "asterfort/thmEvalGravity.h"
 !
     integer :: dimdef, dimcon, npg, kpi, npi, ndim
-    integer :: nbvari, yamec, yate, yap1, yap2, imate
+    integer :: nbvari, yate, yap1, yap2, imate
     integer :: addeme, addep1, addep2, addete, adcop1, addlh1
     integer :: adcome, adcp11, adcp12, adcp21, adcp22, adcote
 !
@@ -287,7 +287,6 @@ implicit none
         call calcfh(nume_thmc, &
                     option   , perman, hydr   , ndim  , imate,&
                     dimdef   , dimcon,&
-                    yamec    , yate  ,&
                     addep1   , addep2,&
                     adcp11   , adcp12, adcp21 , adcp22,&
                     addeme   , addete, &

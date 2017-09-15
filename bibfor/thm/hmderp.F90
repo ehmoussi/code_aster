@@ -18,7 +18,7 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504
 !
-subroutine hmderp(yate  , yavp  , t    ,&
+subroutine hmderp(yavp  , t     ,&
                   pvp   , pad   ,&
                   rho11 , rho12 , h11  , h12,&
                   dp11p1, dp11p2, dp11t,&
@@ -36,7 +36,6 @@ implicit none
 !
 #include "asterf_types.h"
 !
-integer, intent(in) :: yate
 aster_logical, intent(in) :: yavp
 real(kind=8), intent(in) :: t, pvp, pad
 real(kind=8), intent(in) :: rho11, rho12, h11, h12
@@ -56,15 +55,14 @@ real(kind=8), intent(out) :: dp1pt(2), dp2pt(2), dtpt(2)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  yate             : flag for thermic (1 of dof exist)
 ! In  yavp             : flag for steam
 ! In  t                : temperature - At end of current step
 ! In  pvp              : steam pressure
 ! In  pad              : dissolved air pressure
 ! In  rho11            : current volumic mass of liquid
-! In  rho12            : current volumic mass of ...
-! In  h11              : enthalpy of first pressure and first phase
-! In  h12              : enthalpy of first pressure and second phase
+! In  rho12            : current volumic mass of steam
+! In  h11              : enthalpy of liquid
+! In  h12              : enthalpy of steam
 ! Out dp11p1           : derivative of P11 by P1
 ! Out dp11p2           : derivative of P11 by P2
 ! Out dp11t            : derivative of P11 by T
@@ -135,7 +133,7 @@ real(kind=8), intent(out) :: dp1pt(2), dp2pt(2), dtpt(2)
         dp21p2 = 1.d0 - dp12p2
         dp22p1 = -1.d0- dp11p1
         dp22p2 = 1.d0- dp11p2
-        if ((yate.eq.1)) then
+        if (ds_thm%ds_elem%l_dof_ther) then
             l = (h12-h11)
             dp11t = (-l*rgaz*rho12/kh+pad/t)/ ((rho12*rgaz*t/rho11/kh)-1)
             dp12t = (-l*rho11+pad)/t*dp12p1
@@ -144,7 +142,7 @@ real(kind=8), intent(out) :: dp1pt(2), dp2pt(2), dtpt(2)
         endif
         a1 = rgaz*t/kh - rho11/rho12
         a2 = rho11/rho12*(rgaz*t/kh - 1)
-        if (yate.eq.1) then
+        if (ds_thm%ds_elem%l_dof_ther) then
             a3 = dp12t/pvp-1/t-cliq*dp22t-3*alpliq
             a4 = -dp12t/pvp+1/t+cliq*dp22t-3*alpliq
         else
@@ -159,7 +157,7 @@ real(kind=8), intent(out) :: dp1pt(2), dp2pt(2), dtpt(2)
         dp2pp1(1) = -rho11/rho12/a1/a1*(dp12p2/pvp-cliq*dp11p2)
         dp1pp1(2) = rgaz*t/kh*rho11/rho12/a1/a1*(dp12p1/pvp-cliq*dp11p1)
         dp2pp1(2) = rgaz*t/kh*rho11/rho12/a1/a1*(dp12p2/pvp-cliq*dp11p2)
-        if (yate.eq.1) then
+        if (ds_thm%ds_elem%l_dof_ther) then
             dtpp2(1) = rgaz/a1/kh - (rgaz*t/kh-1)/a1/a1*(rgaz/kh-a4*rho11/ rho12)
             dtpp1(1) = -1.d0/a1/a1*(rgaz/kh-rho11/rho12*a4)
             dtpp2(2) = rgaz/a1/kh*rho11/rho12 +&
@@ -195,7 +193,7 @@ real(kind=8), intent(out) :: dp1pt(2), dp2pt(2), dtpt(2)
         dp21p2 = 1.d0 - dp12p2
         dp22p1 = -1.d0- dp11p1
         dp22p2 = 1.d0- dp11p2
-        if ((yate.eq.1)) then
+        if (ds_thm%ds_elem%l_dof_ther) then
             l = (h12-h11)
             dp11t = (-l*rgaz*rho12/kh+pad/t)*rho11*kh/ (rho12*rgaz*t-rho11* kh)
             dp12t = zero

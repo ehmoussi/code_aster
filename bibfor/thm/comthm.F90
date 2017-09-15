@@ -27,7 +27,7 @@ subroutine comthm(option, perman, &
                   defgem, defgep, congem, congep, vintm,&
                   vintp, dsde, pesa, retcom, kpi,&
                   npg, angl_naut,&
-                  thmc, ther, hydr,&
+                  thmc, hydr,&
                   advihy, advico, vihrho, vicphi, vicpvp, vicsat)
 
 !
@@ -56,7 +56,6 @@ implicit none
 #include "asterfort/thmEvalConductivity.h"
 !
 character(len=16), intent(in) :: thmc
-character(len=16), intent(in) :: ther
 character(len=16), intent(in) :: hydr
 integer, intent(in) :: advihy
 integer, intent(in) :: advico
@@ -266,7 +265,6 @@ integer, intent(in) :: vicsat
         call calcfh(nume_thmc, &
                     option   , perman, hydr   , ndim  , imate,&
                     dimdef   , dimcon,&
-                    yamec    , yate  ,&
                     addep1   , addep2,&
                     adcp11   , adcp12, adcp21 , adcp22,&
                     addeme   , addete, &

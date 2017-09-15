@@ -22,7 +22,6 @@
 interface 
     subroutine calcfh_liga(option, hydr  , ndim  , j_mater,&
                            dimdef, dimcon,&
-                           yamec , yate  ,&
                            addep1, addep2, adcp11, adcp21 ,&
                            addeme, addete,&
                            t     , p2    ,&
@@ -32,7 +31,7 @@ interface
                            congep, dsde)
         character(len=16), intent(in) :: option, hydr
         integer, intent(in) :: j_mater
-        integer, intent(in) :: ndim, dimdef, dimcon, yamec, yate
+        integer, intent(in) :: ndim, dimdef, dimcon
         integer, intent(in) :: addeme, addep1, addep2, addete, adcp11, adcp21
         real(kind=8), intent(in) :: rho11, satur, dsatur
         real(kind=8), intent(in) :: grap1(3), grap2(3)

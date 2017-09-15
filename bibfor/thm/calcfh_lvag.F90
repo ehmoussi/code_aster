@@ -20,7 +20,6 @@
 !
 subroutine calcfh_lvag(option, perman, hydr  , ndim  , j_mater,&
                        dimdef, dimcon,&
-                       yamec , yate  ,&
                        addep1, addep2, adcp11, adcp12, adcp21 ,&
                        addeme, addete, &
                        t     , p2    , pvp    ,&
@@ -43,7 +42,7 @@ implicit none
 character(len=16), intent(in) :: option, hydr
 aster_logical, intent(in) :: perman
 integer, intent(in) :: j_mater
-integer, intent(in) :: ndim, dimdef, dimcon, yamec, yate
+integer, intent(in) :: ndim, dimdef, dimcon
 integer, intent(in) :: addeme, addep1, addep2, addete, adcp11, adcp12, adcp21
 real(kind=8), intent(in) :: rho11, satur, dsatur
 real(kind=8), intent(in) :: grat(3), grap1(3), grap2(3)
@@ -61,11 +60,6 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! For this model:
-!
-! p2 : p_steam - p_liquid
-! pvp: p_steam
-!
 ! In  option           : option to compute
 ! In  perman           : .flag. for no-transient problem
 ! In  hydr             : type of hydraulic law
@@ -73,24 +67,23 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 ! In  j_mater          : coded material address
 ! In  dimdef           : dimension of generalized strains vector
 ! In  dimcon           : dimension of generalized stresses vector
-! In  yamec            : flag for mechanic (1 of dof exist)
-! In  yate             : flag for thermic (1 of dof exist)
-! In  addep1           : adress of first hydraulic dof in vector and matrix (gene. quantities)
-! In  addep2           : adress of second hydraulic dof in vector and matrix (gene. quantities)
-! In  adcp11           : adress of first component in vector of gen. stress for first phase 
-! In  adcp12           : adress of first component in vector of gen. stress for second phase
-! In  adcp21           : adress of second component in vector of gen. stress for first phase
-! In  addeme           : adress of mechanic dof in vector and matrix (generalized quantities)
-! In  addete           : adress of thermic dof in vector and matrix (generalized quantities)
+! In  addeme           : adress of mechanic dof in vector of generalized strains
+! In  addete           : adress of thermic dof in vector of generalized strains
+! In  addep1           : adress of first hydraulic dof in vector of generalized strains
+! In  addep2           : adress of second hydraulic dof in vector of generalized strains
+! In  adcp11           : adress of first hydraulic/first component dof in vector of gene. stresses
+! In  adcp12           : adress of first hydraulic/second component dof in vector of gene. stresses
+! In  adcp21           : adress of second hydraulic/first component dof in vector of gene. stresses
+! In  adcp22           : adress of second hydraulic/second component dof in vector of gene. stresses
 ! In  t                : temperature - At end of current step
-! In  p2               : second pressure - At end of current step
+! In  p2               : gaz pressure - At end of current step
 ! In  pvp              : steam pressure
 ! In  grat             : gradient of temperature
-! In  grap1            : gradient of first pressure
-! In  grap2            : gradient of second pressure
-! In  rho11            : current volumic mass of liquid
-! In  h11              : enthalpy of first pressure and first phase
-! In  h12              : enthalpy of first pressure and second phase
+! In  grap1            : gradient of capillary pressure
+! In  grap2            : gradient of gaz pressure
+! In  rho11            : volumic mass for liquid
+! In  h11              : enthalpy of liquid
+! In  h12              : enthalpy of steam
 ! In  satur            : saturation
 ! In  dsatur           : derivative of saturation (/pc)
 ! In  gravity          : gravity
@@ -228,7 +221,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
     do i = 1, ndim
         gp(i) = rho12/rho11*(grap2(i)-grap1(i))
-        if (yate .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_ther) then
             gp(i) = gp(i)+rho12*(h12-h11)/t*grat(i)
         endif
         gc(i) = gp(i)/p2-pvp/p2/p2*grap2(i)
@@ -236,12 +229,12 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
     if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
         dp12p1 = -rho12/rho11
         dp12p2 = rho12/rho11
-        if (yate .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_ther) then
             dp12t = rho12*(h12-h11)/t
         endif
         dcvp1 = dp12p1/p2
         dcvp2 = dp12p2/p2-pvp/p2/p2
-        if (yate .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_ther) then
             dcvt = dp12t/p2
         endif
     endif
@@ -255,7 +248,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
         dr12p2 = rho12/pvp*dp12p2
         dr21p1 = masrt*(-dp12p1)
         dr21p2 = masrt*(1.d0-dp12p2)
-        if (yate .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_ther) then
             dr11t = -3.d0*alpliq*rho11
             dr12t = rho12*(dp12t/pvp-1.d0/t)
             dr21t = -masrt*dp12t-rho21/t
@@ -277,7 +270,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
             dgpvp1(i) = dgpvp1(i)-(grap2(i)-grap1(i))*rho12/rho11/rho11*dr11p1
             dgpvp2(i) = (grap2(i)-grap1(i))/rho11*dr12p2
             dgpvp2(i) = dgpvp2(i)-(grap2(i)-grap1(i))*rho12/rho11/rho11*dr11p2
-            if (yate .eq. 1) then
+            if (ds_thm%ds_elem%l_dof_ther) then
                 dgpvp1(i) = dgpvp1(i)+dauxp1*grat(i)
                 dgpvp2(i) = dgpvp2(i)+dauxp2*grat(i)
                 dgpvt(i)  = (grap2(i)-grap1(i))/rho11*dr12t+dauxt*grat(i)
@@ -285,7 +278,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
             endif
             dgpgp1(1) = -rho12/rho11
             dgpgp2(1) = rho12/rho11
-            if (yate .eq. 1) then
+            if (ds_thm%ds_elem%l_dof_ther) then
                 dgpgt(1)=rho12*(h12-h11)/t
             endif
 ! --------- GRADCVP - Derivative
@@ -293,12 +286,12 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
             dgcvp2(i) = dgpvp2(i)/p2-gp(i)/p2/p2-&
                         grap2(i)/p2/p2*dp12p2 +&
                         2.d0*pvp*grap2(i)/p2/p2/p2
-            if (yate .eq. 1) then
+            if (ds_thm%ds_elem%l_dof_ther) then
                 dgcvt(i) = dgpvt(i)/p2-grap2(i)/p2/p2*dp12t
             endif
             dgcgp1(1) = dgpgp1(1)/p2
             dgcgp2(1) = dgpgp2(1)/p2-pvp/p2/p2
-            if (yate .eq. 1) then
+            if (ds_thm%ds_elem%l_dof_ther) then
                 dgcgt(1) = dgpgt(1)/p2
             endif
         end do
@@ -426,7 +419,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
             end do
             dsde(adcp21+i,addep2+i) = dsde(adcp21+i,addep2+i)+&
                 rho21*cvp*fv(1)*dgcgp2(1)          
-            if (yamec .eq. 1) then
+            if (ds_thm%ds_elem%l_dof_meca) then
                 do j = 1, 3
                     do k = 1, ndim
                         dsde(adcp11+i,addeme+ndim-1+j)=&
@@ -449,7 +442,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
                         rho21*cvp*fv(2)*gc(i)   
                 end do
             endif
-            if (yate .eq. 1) then
+            if (ds_thm%ds_elem%l_dof_ther) then
                 do j = 1, ndim
                     dsde(adcp11+i,addete) = dsde(adcp11+i,addete) +&
                         dr11t*lambd1(1)*tperm(i,j)*(-grap2(j)+grap1(j)+rho11*gravity(j))

@@ -21,7 +21,6 @@
 interface 
     subroutine calcfh_liva(option, hydr  , ndim, j_mater,&
                            dimdef, dimcon,&
-                           yamec , yate  ,&
                            addep1, adcp11, adcp12, addeme, addete,&
                            t     , p2    , pvp,&
                            grap1 , grat  ,&
@@ -29,7 +28,7 @@ interface
                            satur , dsatur, gravity, tperm,&
                            congep, dsde  )
         character(len=16), intent(in) :: option, hydr
-        integer, intent(in) :: ndim, dimdef, dimcon, yamec, yate, j_mater
+        integer, intent(in) :: ndim, dimdef, dimcon, j_mater
         integer, intent(in) :: addeme, addep1, addete, adcp11, adcp12
         real(kind=8), intent(in) :: rho11, satur, dsatur
         real(kind=8), intent(in) :: grat(3), grap1(3)
