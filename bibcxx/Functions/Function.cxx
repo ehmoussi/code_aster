@@ -21,9 +21,9 @@ FunctionInstance::FunctionInstance() :
 {
 }
 
-void FunctionInstance::setValues( const VectorDouble &absc, const VectorDouble &ord ) throw ( std::runtime_error )
+void FunctionInstance::setValues( const VectorDouble &absc, const VectorDouble &ordo ) throw ( std::runtime_error )
 {
-    if ( absc.size() != ord.size() )
+    if ( absc.size() != ordo.size() )
         throw std::runtime_error( "Function: length of abscissa and ordinates must be equal" );
 
     // Create Jeveux vector ".VALE"
@@ -32,13 +32,12 @@ void FunctionInstance::setValues( const VectorDouble &absc, const VectorDouble &
 
     // Loop on the points
     VectorDouble::const_iterator abscIt = absc.begin();
-    VectorDouble::const_iterator ordIt = ord.begin();
+    VectorDouble::const_iterator ordoIt = ordo.begin();
     int idx = 0;
-    for ( ; abscIt != absc.end(); ++abscIt, ++ordIt )
+    for ( ; abscIt != absc.end(); ++abscIt, ++ordoIt )
     {
         (*_value)[idx] = *abscIt;
-        ++idx;
-        (*_value)[idx] = *ordIt;
+        (*_value)[nbpts + idx] = *ordoIt;
         ++idx;
     }
 }

@@ -61,8 +61,8 @@ class ExtendedFunction(injector, Function):
         """
         size = self.size()
         values = NP.array(self.getValues())
-        values.shape = (size, 2)
-        return values
+        values.shape = (2, size)
+        return values.transpose()
 
     def convert(self, arg='real'):
         """

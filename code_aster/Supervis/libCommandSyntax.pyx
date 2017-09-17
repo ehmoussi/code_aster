@@ -19,10 +19,11 @@
 
 from cpython.ref cimport PyObject
 
-from code_aster.Supervis.logger import logger
-from code_aster.Supervis.libBaseUtils import to_cstr
-from code_aster.Supervis cimport libBaseUtils
-from code_aster.Supervis.libBaseUtils cimport copyToFStr, to_fstring_array
+from ..Utilities import ndarray_to_list
+from .logger import logger
+from .libBaseUtils import to_cstr
+cimport libBaseUtils
+from .libBaseUtils cimport copyToFStr, to_fstring_array
 
 
 cdef class ResultNaming:
@@ -186,6 +187,7 @@ cdef class CommandSyntax:
         if not self.existsFactorAndSimpleKeyword( factName, occurrence, simpName ):
             return []
         value = self._getDefinition( factName, occurrence )[simpName]
+        value = ndarray_to_list(value)
         if not isinstance(value, (list, tuple)):
             value = [value, ]
         logger.debug( "getValue: %r", value )
