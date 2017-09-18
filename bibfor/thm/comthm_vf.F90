@@ -27,7 +27,7 @@ subroutine comthm_vf(option, perman, ifa, valfac,&
                   defgem, defgep, congem, congep, vintm,&
                   vintp, dsde, pesa, retcom, kpi,&
                   npg, angl_naut,&
-                  thmc, ther, hydr,&
+                  thmc, hydr,&
                   advihy, advico, vihrho, vicphi, vicpvp, vicsat)
 
 !
@@ -56,7 +56,6 @@ implicit none
 #include "asterfort/thmEvalConductivity.h"
 !
 character(len=16), intent(in) :: thmc
-character(len=16), intent(in) :: ther
 character(len=16), intent(in) :: hydr
 integer, intent(in) :: advihy
 integer, intent(in) :: advico
@@ -159,12 +158,12 @@ integer, intent(in) :: vicsat
     real(kind=8) :: p1, dp1, grap1(3), p2, dp2, grap2(3), t, dt, grat(3)
     real(kind=8) :: phi, pvp, pad, h11, h12, rho11, epsv, deps(6), depsv
     real(kind=8) :: sat, mamolv
-    real(kind=8) :: rgaz, tbiot(6), satur, dsatur, pesa(3)
-    real(kind=8) :: tperm(ndim, ndim), permli, dperml, permgz, dperms, dpermp
-    real(kind=8) :: dfickt, dfickg, lambp, dlambp, unsurk, fick
+    real(kind=8) :: tbiot(6), satur, dsatur, pesa(3)
+    real(kind=8) :: tperm(ndim, ndim)
+    real(kind=8) :: lambp, dlambp, unsurk
     real(kind=8) :: lambs, dlambs, viscl, dviscl
     real(kind=8) :: viscg, dviscg, mamolg
-    real(kind=8) :: fickad, dfadt, kh, alpha
+    real(kind=8) :: kh, alpha
     real(kind=8) :: tlambt(ndim, ndim), tlamct(ndim, ndim), tdlamt(ndim, ndim)
     real(kind=8) :: deltat
     real(kind=8) :: angl_naut(3)
@@ -279,7 +278,6 @@ integer, intent(in) :: vicsat
                              satur    , phi   , &
                              lambs    , dlambs, lambp , dlambp,&
                              tlambt   , tlamct, tdlamt)
-
 !
 ! - Get permeability tensor
 !
@@ -328,19 +326,12 @@ integer, intent(in) :: vicsat
 ! --- CALCUL DES FLUX HYDRAULIQUES UNIQUEMENT SI YAP1 = 1 --------------
 ! ======================================================================
     if (yap1 .eq. 1) then
-!
-        call calcfh_vf(option, perman, thmc, ndim, dimdef,&
-                    dimcon, yate, addep1, addep2,&
-                    adcp11, adcp12,&
-                    addete, dsde, p1, p2,&
-                    grap1, t, grat, pvp,&
-                    pad, rho11, h11, h12, rgaz,&
-                    dsatur, permli, dperml,&
-                    permgz, dperms, dpermp, fick, dfickt,&
-                    dfickg, fickad, dfadt, kh, unsurk,&
-                    alpha, viscl, dviscl, mamolg, viscg,&
-                    dviscg, mamolv, ifa,&
-                    valfac, valcen)
+        call calcfh_vf(nume_thmc,&
+                       option, hydr  , imate, ifa,&
+                       t     , p1    , p2   , pvp, pad,&
+                       rho11 , h11   , h12  ,&
+                       satur , dsatur, & 
+                       valfac, valcen)
         if (retcom .ne. 0) then
             goto 999
         endif
@@ -348,7 +339,7 @@ integer, intent(in) :: vicsat
 ! ======================================================================
 ! --- CALCUL DU FLUX THERMIQUE UNIQUEMENT SI YATE = 1 ------------------
 ! ======================================================================
-    if (yate .eq. 1) then
+    if (ds_thm%ds_elem%l_dof_ther) then
         call calcft(option, thmc, imate, ndim, dimdef,&
                     dimcon, yamec, yap1, yap2, addete,&
                     addeme, addep1, addep2, adcote, congep,&

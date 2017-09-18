@@ -42,9 +42,7 @@ Le type de voisinage %(k1)s est inconnu.
     7 : _(u"""
 Le type de voisinage %(k1)s a une longueur %(i1)i trop grande
 """),
-    8 : _(u"""
-La loi de comportement  %(k1)s est inconnu
-"""),
+
     9 : _(u"""
 Le type de modélisation volumes finis  %(i1)i  est inconnu.
 Ce message est un message d'erreur développeur.
