@@ -18,16 +18,17 @@
 ! aslint: disable=W1504
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine hmliga(yachai, option, hydr,&
+subroutine thmCpl010(yachai, option, hydr,&
                   imate, ndim, dimdef, dimcon, nbvari,&
                   yamec, yate, addeme, adcome, advihy,&
-                  advico, vihrho, vicphi, vicsat, addep1,&
-                  adcp11, addep2, adcp21, addete, adcote,&
-                  congem, congep, vintm, vintp, dsde,&
-                  deps, epsv, depsv, p1, p2,&
-                  dp1, dp2, temp, dt, phi,&
-                  rho11, satur, retcom,&
-                  tbiot, angmas)
+                  advico, vihrho, vicphi, vicpvp, vicsat,&
+                  addep1, adcp11, adcp12, addep2, adcp21,&
+                  adcp22, addete, adcote, congem, congep,&
+                  vintm, vintp, dsde, epsv, depsv,&
+                  p1, p2, dp1, dp2, temp,&
+                  dt, phi, padp, h11, h12,&
+                  kh, rho11, satur, retcom,&
+                  tbiot, angmas, deps)
 !
 use THM_type
 use THM_module
@@ -39,17 +40,23 @@ implicit none
 #include "asterfort/calor.h"
 #include "asterfort/capaca.h"
 #include "asterfort/dhdt.h"
-#include "asterfort/dhwdp1.h"
-#include "asterfort/dhwdp2.h"
+#include "asterfort/dhw2dt.h"
+#include "asterfort/dhw2p1.h"
+#include "asterfort/dhw2p2.h"
 #include "asterfort/dilata.h"
 #include "asterfort/dileau.h"
 #include "asterfort/dilgaz.h"
+#include "asterfort/dmadp1.h"
+#include "asterfort/dmadp2.h"
+#include "asterfort/dmadt.h"
+#include "asterfort/dmasdt.h"
 #include "asterfort/dmasp1.h"
 #include "asterfort/dmasp2.h"
 #include "asterfort/dmdepv.h"
 #include "asterfort/dmwdp1.h"
 #include "asterfort/dmwdp2.h"
 #include "asterfort/dmwdt.h"
+#include "asterfort/dpladg.h"
 #include "asterfort/dqdeps.h"
 #include "asterfort/dqdp.h"
 #include "asterfort/dqdt.h"
@@ -58,6 +65,8 @@ implicit none
 #include "asterfort/enteau.h"
 #include "asterfort/entgaz.h"
 #include "asterfort/inithm.h"
+#include "asterfort/majpad.h"
+#include "asterfort/majpas.h"
 #include "asterfort/masvol.h"
 #include "asterfort/sigmap.h"
 #include "asterfort/unsmfi.h"
@@ -68,25 +77,29 @@ implicit none
 #include "asterfort/thmEvalSatuInit.h"
 !
 real(kind=8), intent(in) :: temp
-! ======================================================================
-! ROUTINE HMLIGA : CETTE ROUTINE CALCULE LES CONTRAINTES GENERALISEES
+!
+! **********************************************************************
+! ROUTINE HMLADG : CETTE ROUTINE CALCULE LES CONTRAINTES GENERALISE
 !   ET LA MATRICE TANGENTE DES GRANDEURS COUPLEES, A SAVOIR CELLES QUI
 !   NE SONT PAS DES GRANDEURS DE MECANIQUE PURE OU DES FLUX PURS
-!   DANS LE CAS OU THMC = 'LIQU_GAZ'
-! ======================================================================
+!   DANS LE CAS OU THMC = 'LIQU_AD_GAZ'
+! **********************************************************************
 ! OUT RETCOM : RETOUR LOI DE COMPORTEMENT
 ! COMMENTAIRE DE NMCONV :
 !                       = 0 OK
 !                       = 1 ECHEC DANS L'INTEGRATION : PAS DE RESULTATS
 !                       = 3 SIZZ NON NUL (DEBORST) ON CONTINUE A ITERER
+!  VARIABLES IN / OUT
 ! ======================================================================
 !
-    integer :: ndim, dimdef, dimcon, nbvari, imate, yamec, yate, retcom
-    integer :: adcome, adcp11, adcp21, adcote, addeme, addep1, addep2
-    integer :: addete, advihy, advico, vihrho, vicphi, vicsat
+    integer :: ndim, dimdef, dimcon, nbvari, imate, yamec
+    integer :: yate, retcom, adcome, adcp11, adcp12, advihy, advico
+    integer :: vihrho, vicphi, vicpvp, vicsat
+    integer :: adcp21, adcp22, adcote, addeme, addep1, addep2, addete
     real(kind=8) :: congem(dimcon), congep(dimcon), vintm(nbvari)
     real(kind=8) :: vintp(nbvari), dsde(dimcon, dimdef), epsv, depsv
-    real(kind=8) :: p1, dp1, p2, dp2, dt, phi, rho11, phi0
+    real(kind=8) :: p1, dp1, p2, dp2, dt, phi, padp, h11, h12
+    real(kind=8) :: rho11, phi0, kh
     real(kind=8) :: angmas(3)
     character(len=16) :: option, hydr
     aster_logical :: yachai
@@ -94,19 +107,25 @@ real(kind=8), intent(in) :: temp
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
     integer :: i
-    real(kind=8) :: saturm, epsvm, phim, rho11m, rho21m, rho110
-    real(kind=8) :: tbiot(6), cs, alpliq, cliq
-    real(kind=8) :: cp11, cp21, satur, dsatur_dp1, mamolg, rho21, em
-    real(kind=8) :: r, rho0, csigm, alp11, alp12, alp21
-    real(kind=8) :: mdal(6), dalal, alphfi, cbiot, unsks, alpha0
+    real(kind=8) :: saturm, epsvm, phim, rho11m, rho21m, rho22m
+    real(kind=8) :: tbiot(6), cs, alpliq, cliq, rho110
+    real(kind=8) :: cp11, cp12, cp21, satur, dsatur_dp1, mamolg
+    real(kind=8) :: r, rho0, coeps, csigm, alp11, alp12, alp21
+    real(kind=8) :: dp11t, dp11p1, dp11p2
+    real(kind=8) :: dp21t, dp21p1, dp21p2
+    real(kind=8) :: rho12, rho21, cp22
+    real(kind=8) :: padm, rho22, em, cbiot, unsks, alpha0
+    real(kind=8) :: mdal(6), dalal, alphfi, deps(6)
     aster_logical :: emmag
 ! ======================================================================
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
-    real(kind=8) :: signe, m11m, m21m, coeps, rho12, rho22, dpad, cp12, cp22
-    real(kind=8) :: dsdp1(6), dsdp2(6), deps(6)
-    real(kind=8) :: dmdeps(6), p1m
-    real(kind=8) :: sigmp(6), dqeps(6)
+    real(kind=8) :: signe, dpad, pas
+    real(kind=8) :: m11m, m21m, m22m
+    real(kind=8) :: dsdp1(6), dsdp2(6)
+    real(kind=8) :: dqeps(6)
+    real(kind=8) :: sigmp(6), dmdeps(6), p1m
+    real(kind=8), parameter :: zero = 0.d0
     real(kind=8), parameter :: eps = 1.d-21
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
 !
@@ -116,7 +135,7 @@ real(kind=8), intent(in) :: temp
 !
 ! - Compute pressures
 !
-    p1m    = p1-dp1
+    p1m  = p1-dp1
 !
 ! - Get material parameters
 !
@@ -129,6 +148,8 @@ real(kind=8), intent(in) :: temp
     cp11   = ds_thm%ds_material%liquid%cp
     mamolg = ds_thm%ds_material%gaz%mass_mol
     cp21   = ds_thm%ds_material%gaz%cp
+    kh     = ds_thm%ds_material%ad%coef_henry
+    cp22   = ds_thm%ds_material%ad%cp
 !
 ! - Evaluation of initial saturation
 !
@@ -137,29 +158,23 @@ real(kind=8), intent(in) :: temp
                          retcom)
 
 ! ======================================================================
-! --- POUR EVITER DES PB AVEC OPTIMISEUR ON MET UNE VALEUR DANS CES ----
-! --- VARIABES POUR QU ELLES AIENT UNE VALEUR MEME DANS LES CAS OU -----
-! --- ELLES NE SONT THEOTIQUEMENT PAS UTILISEES ------------------------
+! --- INITIALISATIONS --------------------------------------------------
 ! ======================================================================
+!    LA VARIABLE INTERNE DE PRESSION DE VAPEUR EST 0
+    vintp(advico+vicpvp) = zero
     emmag = .false.
-!
-    cp12 = 0.0d0
-    cp22 = 0.0d0
     alp11 = 0.0d0
     alp12 = 0.0d0
     alp21 = 0.0d0
-    rho12 = 0.0d0
-    rho21 = 0.0d0
-    rho22 = 0.0d0
     signe = 1.0d0
-    dpad = 0.0d0
-    retcom = 0
     m11m = congem(adcp11)
     m21m = congem(adcp21)
+    m22m = congem(adcp22)
     rho11 = vintm(advihy+vihrho) + rho110
     rho11m = vintm(advihy+vihrho) + rho110
     phi = vintm(advico+vicphi) + phi0
     phim = vintm(advico+vicphi) + phi0
+    retcom = 0
 ! =====================================================================
 ! --- RECUPERATION DES COEFFICIENTS MECANIQUES ------------------------
 ! =====================================================================
@@ -193,6 +208,12 @@ real(kind=8), intent(in) :: temp
                         em, phi, phim, retcom)
         endif
 ! =====================================================================
+! --- MISE A JOUR DE LA PRESSION D AIR DISSOUS SELON FORMULE DOCR -----
+! =====================================================================
+        call majpad(p2, zero, r, temp, kh,&
+                    dp2, zero, dt, padp, padm,&
+                    dpad)
+! =====================================================================
 ! --- CALCUL DE LA VARIABLE INTERNE DE MASSE VOLUMIQUE DU FLUIDE ------
 ! --- SELON FORMULE DOCR ----------------------------------------------
 ! =====================================================================
@@ -211,12 +232,19 @@ real(kind=8), intent(in) :: temp
 ! --- RECUPERATION DE LA VARIABLE INTERNE DE SATURATION ---------------
 ! =====================================================================
         call visatu(nbvari, vintp, advico, vicsat, satur)
+    else
+! =====================================================================
+! --- MISE A JOUR DE LA PRESSION D AIR DISSOUS SELON FORMULE DOCR -----
+! =====================================================================
+        call majpad(p2, zero, r, temp, kh,&
+                    dp2, zero, dt, padp, padm,&
+                    dpad)
+    endif
 ! =====================================================================
 ! --- PROBLEME DANS LE CALCUL DES VARIABLES INTERNES ? ----------------
 ! =====================================================================
-        if (retcom .ne. 0) then
-            goto 30
-        endif
+    if (retcom .ne. 0) then
+        goto 30
     endif
 ! =====================================================================
 ! --- ACTUALISATION DE CS ET ALPHFI -----------------------------------
@@ -233,8 +261,12 @@ real(kind=8), intent(in) :: temp
 ! ----------------------------------- AIR SEC --------------------------
 ! ----------------------------------- AIR DISSOUS ----------------------
 ! ======================================================================
+    rho12 = zero
     rho21 = masvol(mamolg,p2 ,r,temp)
     rho21m = masvol(mamolg,p2-dp2,r,temp-dt)
+    rho22 = masvol(mamolg,padp ,r,temp)
+    rho22m = masvol(mamolg,padm ,r,temp-dt)
+    pas = majpas(p2,zero)
 ! =====================================================================
 ! --- CALCULS UNIQUEMENT SI PRESENCE DE THERMIQUE ---------------------
 ! =====================================================================
@@ -243,8 +275,10 @@ real(kind=8), intent(in) :: temp
 ! --- CALCUL DES COEFFICIENTS DE DILATATIONS ALPHA SELON FORMULE DOCR -
 ! =====================================================================
         alp11 = dileau(satur,phi,alphfi,alpliq)
-        alp12 = dilgaz(satur,phi,alphfi,temp)
+        alp12 = zero
         alp21 = dilgaz(satur,phi,alphfi,temp)
+        h11 = congem(adcp11+ndim+1)
+        h12 = congem(adcp12+ndim+1)
 ! ======================================================================
 ! --- CALCUL DE LA CAPACITE CALORIFIQUE SELON FORMULE DOCR -------------
 ! ======================================================================
@@ -262,9 +296,13 @@ real(kind=8), intent(in) :: temp
 ! --- CALCUL DES ENTHALPIES SELON FORMULE DOCR -------------------------
 ! ======================================================================
         if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
-            congep(adcp11+ndim+1) = congep(adcp11+ndim+1) + &
+            congep(adcp11+ndim+1) = congep(adcp11+ndim+1) +&
                                     enteau(dt, alpliq,temp,rho11,dp2,dp1,dpad,signe,cp11)
+            congep(adcp12+ndim+1) = zero
             congep(adcp21+ndim+1) = congep(adcp21+ndim+1) + entgaz(dt, cp21)
+            congep(adcp22+ndim+1) = congep(adcp22+ndim+1) + entgaz(dt, cp22)
+            h11 = congep(adcp11+ndim+1)
+            h12 = congep(adcp12+ndim+1)
 ! ======================================================================
 ! --- CALCUL DE LA CHALEUR REDUITE Q' SELON FORMULE DOCR ---------------
 ! ======================================================================
@@ -280,7 +318,8 @@ real(kind=8), intent(in) :: temp
 ! --- CALCUL DES CONTRAINTES DE PRESSIONS ------------------------------
 ! ======================================================================
         if (yamec .eq. 1) then
-            call sigmap(satur, signe, tbiot, dp2, dp1, sigmp)
+            call sigmap(satur, signe, tbiot,&
+                        dp2, dp1, sigmp)
             do i = 1, 3
                 congep(adcome+6+i-1)=congep(adcome+6+i-1)+sigmp(i)
             end do
@@ -292,7 +331,9 @@ real(kind=8), intent(in) :: temp
 ! --- CALCUL DES APPORTS MASSIQUES SELON FORMULE DOCR ------------------
 ! ======================================================================
         congep(adcp11) = appmas(m11m,phi,phim,satur,saturm,rho11, rho11m, epsv,epsvm)
+        congep(adcp12) = zero
         congep(adcp21) = appmas(m21m,phi,phim,1.d0-satur, 1.d0-saturm, rho21,rho21m,epsv,epsvm)
+        congep(adcp22) = appmas(m22m,phi,phim,satur,saturm,rho22, rho22m, epsv,epsvm)
     endif
 !
 ! **********************************************************************
@@ -303,6 +344,10 @@ real(kind=8), intent(in) :: temp
 ! --- UNIQUEMENT POUR LES OPTIONS RIGI_MECA ET FULL_MECA ---------------
 ! ======================================================================
     if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+        call dpladg(yate, rho11, rho12, r, temp,&
+                    kh, congem, dimcon, adcp11, ndim,&
+                    padp, dp11p1, dp11p2, dp21p1, dp21p2,&
+                    dp11t, dp21t)
         if (yamec .eq. 1) then
 ! ======================================================================
 ! --- CALCUL UNIQUEMENT EN PRESENCE DE MECANIQUE -----------------------
@@ -328,8 +373,13 @@ real(kind=8), intent(in) :: temp
                 dsde(adcp11,addeme+ndim-1+i) = dsde(adcp11,addeme+ ndim-1+i) + dmdeps(i)
             end do
             do i = 1, 6
-                call dmdepv(rho21, 1.0d0-satur, tbiot, dmdeps)
+                call dmdepv(rho21, 1.d0-satur, tbiot, dmdeps)
+                dsde(adcp12,addeme+ndim-1+i) =zero
                 dsde(adcp21,addeme+ndim-1+i) = dsde(adcp21,addeme+ ndim-1+i) + dmdeps(i)
+            end do
+            do i = 1, 6
+                call dmdepv(rho22, satur, tbiot, dmdeps)
+                dsde(adcp22,addeme+ndim-1+i) = dsde(adcp22,addeme+ ndim-1+i) + dmdeps(i)
             end do
         endif
         if (yate .eq. 1) then
@@ -338,18 +388,28 @@ real(kind=8), intent(in) :: temp
 ! ======================================================================
 ! --- CALCUL DES DERIVEES DES ENTHALPIES -------------------------------
 ! ======================================================================
-            dsde(adcp11+ndim+1,addep2) = dsde(adcp11+ndim+1,addep2) + &
-                                         dhwdp2(alpliq,temp,rho11)
+            dsde(adcp11+ndim+1,addep2) = dsde(adcp11+ndim+1,addep2) +&
+                                         dhw2p2(dp11p2,alpliq,temp,rho11)
             dsde(adcp11+ndim+1,addep1) = dsde(adcp11+ndim+1,addep1) + &
-                                         dhwdp1(signe,alpliq,temp,rho11)
-            dsde(adcp11+ndim+1,addete) = dsde(adcp11+ndim+1,addete) + dhdt(cp11)
-            dsde(adcp21+ndim+1,addete) = dsde(adcp21+ndim+1,addete) + dhdt(cp21)
+                                         dhw2p1(signe,dp11p1,alpliq,temp,rho11)
+            dsde(adcp11+ndim+1,addete) = dsde(adcp11+ndim+1,addete) + &
+                                         dhw2dt(dp11t,alpliq,temp,rho11,cp11)
+            dsde(adcp12+ndim+1,addete) = zero
+            dsde(adcp21+ndim+1,addete) = dsde(adcp21+ndim+1,addete) + &
+                                         dhdt(cp21)
+            dsde(adcp22+ndim+1,addete) = dsde(adcp22+ndim+1,addete) + &
+                                         dhdt(cp22)
 ! ======================================================================
 ! --- CALCUL DES DERIVEES DES APPORTS MASSIQUES ------------------------
 ! --- UNIQUEMENT POUR LA PARTIR THERMIQUE ------------------------------
 ! ======================================================================
-            dsde(adcp11,addete) = dsde(adcp11,addete) + dmwdt(rho11, phi,satur,cliq,0.d0,alp11)
-            dsde(adcp21,addete) = dsde(adcp21,addete) + dmwdt(rho21, phi,satur,cliq,0.d0,alp21)
+            dsde(adcp11,addete) = dsde(adcp11,addete) + &
+                                  dmwdt(rho11, phi,satur,cliq,dp11t,alp11)
+            dsde(adcp22,addete) = dsde(adcp22,addete) + &
+                                  dmadt(rho22, satur,phi,mamolg,dp21t,kh,alphfi)
+            dsde(adcp12,addete) = zero
+            dsde(adcp21,addete) = dsde(adcp21,addete) + &
+                                  dmasdt(rho12, rho21,satur,phi,pas,h11,h12,temp,alp21)
 ! ======================================================================
 ! --- CALCUL DE LA DERIVEE DE LA CHALEUR REDUITE Q' --------------------
 ! ======================================================================
@@ -372,15 +432,21 @@ real(kind=8), intent(in) :: temp
 ! --- POUR LES AUTRES CAS ----------------------------------------------
 ! ======================================================================
         dsde(adcp11,addep1) = dsde(adcp11,addep1) +&
-                              dmwdp1(rho11, signe,satur,dsatur_dp1,phi,cs,cliq,1.d0, emmag,em)
+                              dmwdp1(rho11, signe,satur,dsatur_dp1,phi,cs,cliq,-dp11p1, emmag,em)
         dsde(adcp11,addep2) = dsde(adcp11,addep2) +&
-                              dmwdp2(rho11,satur, phi,cs,cliq,1.d0, emmag,em)
+                              dmwdp2(rho11,satur, phi,cs,cliq,dp11p2, emmag,em)
+        dsde(adcp22,addep1) = dsde(adcp22,addep1) +&
+                              dmadp1(rho22,satur, dsatur_dp1,phi,cs,mamolg,kh,dp21p1, emmag,em)
+        dsde(adcp22,addep2) = dsde(adcp22,addep2) +&
+                              dmadp2(rho22,satur, phi,cs,mamolg,kh,dp21p2, emmag,em)
+        dsde(adcp12,addep1) = zero
+        dsde(adcp12,addep2) = zero
         dsde(adcp21,addep1) = dsde(adcp21,addep1) +&
-                              dmasp1(rho11, 0.d0,rho21,satur,dsatur_dp1,phi,cs,1.d0, emmag,em)
+                              dmasp1(rho11, rho12,rho21,satur,dsatur_dp1,phi,cs,p2, emmag,em)
         dsde(adcp21,addep2) = dsde(adcp21,addep2) +&
-                              dmasp2(rho11, 0.d0,rho21,satur,phi,cs,p2, emmag,em)
+                              dmasp2(rho11, rho12,rho21,satur,phi,cs,pas, emmag,em)
     endif
-! =====================================================================
+! ======================================================================
  30 continue
-! =====================================================================
+! ======================================================================
 end subroutine

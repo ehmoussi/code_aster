@@ -20,20 +20,19 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine hmlisa(perman, yachai, option,&
-                      hydr, imate, ndim, dimdef,&
-                      dimcon, nbvari, yamec, yate, addeme,&
-                      adcome, advihy, advico, vihrho, vicphi,&
-                      addep1, adcp11, addete, adcote, congem,&
-                      congep, vintm, vintp, dsde, epsv,&
-                      depsv, p1, dp1, temp, dt,&
-                      phi, rho11, satur, retcom,&
+    subroutine thmCpl006(yachai, option, hydr,&
+                      imate, ndim, dimdef, dimcon, nbvari,&
+                      yamec, yate, addeme, adcome, advihy,&
+                      advico, vihrho, vicphi, vicsat, addep1,&
+                      adcp11, addete, adcote, congem, congep,&
+                      vintm, vintp, dsde, epsv, depsv,&
+                      p1, dp1, temp, dt, phi,&
+                      rho11, satur, retcom,&
                       tbiot, angmas, deps)
         integer :: nbvari
         integer :: dimcon
         integer :: dimdef
         integer :: ndim
-        aster_logical :: perman
         aster_logical :: yachai
         character(len=16) :: option
         character(len=16) :: hydr
@@ -46,6 +45,7 @@ interface
         integer :: advico
         integer :: vihrho
         integer :: vicphi
+        integer :: vicsat
         integer :: addep1
         integer :: adcp11
         integer :: addete
@@ -68,5 +68,5 @@ interface
         real(kind=8) :: tbiot(6)
         real(kind=8) :: angmas(3)
         real(kind=8) :: deps(6)
-    end subroutine hmlisa
+    end subroutine thmCpl006
 end interface 

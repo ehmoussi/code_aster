@@ -18,7 +18,7 @@
 ! aslint: disable=W1504
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine hmgazp(yachai, option,&
+subroutine thmCpl002(yachai, option,&
                   hydr, imate, ndim, dimdef, dimcon,&
                   nbvari, yamec, yate, addeme, adcome,&
                   advico, vicphi, addep1, adcp11, addete,&

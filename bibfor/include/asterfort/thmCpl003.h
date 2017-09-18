@@ -20,7 +20,7 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine hmliva(yachai, option, hydr,&
+    subroutine thmCpl003(yachai, option, hydr,&
                       imate, ndim, dimdef, dimcon, nbvari,&
                       yamec, yate, advihy,&
                       advico, vihrho, vicphi, vicpvp, vicsat,&
@@ -72,5 +72,5 @@ interface
         real(kind=8) :: tbiot(6)
         real(kind=8) :: angmas(3)
         real(kind=8) :: deps(6)
-    end subroutine hmliva
+    end subroutine thmCpl003
 end interface 
