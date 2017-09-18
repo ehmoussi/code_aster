@@ -173,11 +173,11 @@ RESULT0=CALC_MODES(MATR_RIGI=MAS_RI_M,
                    )
 
 RESULT1=CALC_MODES(MATR_RIGI=MAS_RI_M,
-                   OPTION='BANDE',
+                   OPTION='BANDE',INFO=1,
                    MATR_RIGI_GEOM=MAS_RI_G,
                    CALC_CHAR_CRIT=_F(CHAR_CRIT=(-6.,1.E+06),
                                      ),
-                   VERI_MODE=_F(STOP_ERREUR='NON'), # Reponse provisoire suite Issue25191
+                   VERI_MODE=_F(SEUIL=5.E-08),
                    AMELIORATION='OUI',
                    SOLVEUR=_F(METHODE='MULT_FRONT'),
                    TYPE_RESU='MODE_FLAMB',

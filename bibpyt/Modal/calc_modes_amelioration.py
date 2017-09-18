@@ -152,7 +152,12 @@ def calc_modes_amelioration(self, modes, TYPE_RESU,
     
     #################################################################
     # read the keyword VERI_MODE
-    motcles['VERI_MODE'] = _F(STOP_ERREUR = VERI_MODE['STOP_ERREUR'],
+#    motcles['VERI_MODE'] = _F(STOP_ERREUR = VERI_MODE['STOP_ERREUR'],
+#                              )
+    motcles['VERI_MODE'] = _F(STOP_ERREUR=VERI_MODE['STOP_ERREUR'],
+                              SEUIL=VERI_MODE['SEUIL'],
+                              STURM=VERI_MODE['STURM'],
+                              PREC_SHIFT=VERI_MODE['PREC_SHIFT']
                               )
     #################################################################
     if TITRE != None:

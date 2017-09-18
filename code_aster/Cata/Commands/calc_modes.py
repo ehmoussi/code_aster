@@ -401,6 +401,8 @@ CALC_MODES=MACRO(nom="CALC_MODES",
              STOP_ERREUR =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),
              SEUIL       =SIMP(statut='f',typ='R',val_min=0.E+0,defaut=1.e-2,
                                        fr=tr("Valeur limite admise pour l'erreur a posteriori des modes")),
+             PREC_SHIFT  =SIMP(statut='f',typ='R',defaut= 5.E-3,val_min=0.E+0 ),
+             STURM       =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),
            ), #fin mcf_veri_mode
          ),# fin b_veri_mode_inv
 
