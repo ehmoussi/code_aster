@@ -19,7 +19,7 @@
 
 from cpython.ref cimport PyObject
 
-from ..Utilities import ndarray_to_list
+from ..Utilities import force_list
 from .logger import logger
 from .libBaseUtils import to_cstr
 cimport libBaseUtils
@@ -187,9 +187,7 @@ cdef class CommandSyntax:
         if not self.existsFactorAndSimpleKeyword( factName, occurrence, simpName ):
             return []
         value = self._getDefinition( factName, occurrence )[simpName]
-        value = ndarray_to_list(value)
-        if not isinstance(value, (list, tuple)):
-            value = [value, ]
+        value = force_list(value)
         logger.debug( "getValue: %r", value )
         return value
 
