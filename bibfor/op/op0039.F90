@@ -78,6 +78,12 @@ subroutine op0039()
     call getvtx(' ', 'PROC0', scal=proc, nbret=nproc)
     if ( proc .eq. 'NON' ) then 
       nbrank = 0 
+    else 
+      call getfac('CONCEPT', nocc)
+      if ( nocc .gt. 0 ) then 
+         if ( nbrank .gt. 0 ) call utmess ('A', 'PREPOST_1')
+         nbrank = 0
+      endif
     endif   
 !
     if ( nbrank .eq. 0 ) then 
@@ -187,6 +193,9 @@ subroutine op0039()
       end do
 !
 !     -- IMPRESSION DES CARTES DE DONNEES DE CHAM_MATER,  ... :
+      if ( proc .eq. 'OUI' ) then 
+         nbrank = 0 
+      endif   
       call w039ca(ifi, form)
 !
 !

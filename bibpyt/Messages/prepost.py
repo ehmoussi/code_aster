@@ -21,6 +21,16 @@
 
 cata_msg = {
 
+    1 : _(u"""
+
+Attention :
+  Vous avez demandé de limiter l'impression au processeur 0 (PROC0='OUI' valeur par défaut), 
+  mais il n'est pas possible d'effectuer l'impression d'un CONCEPT uniquement sur le processeur 0.
+  Cette impression sera effectuée sur tous les processeurs.
+
+"""),
+
+
     2 : _(u"""
 
 Attention :
