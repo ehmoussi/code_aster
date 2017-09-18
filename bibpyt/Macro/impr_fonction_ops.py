@@ -78,7 +78,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
     for Ci in COURBE:
         iocc += 1
         dC = Ci.cree_dict_valeurs(Ci.mc_liste)
-        if dC.has_key('LIST_PARA') and dC['LIST_PARA'] != None and i0 == 0:
+        if dC.get('LIST_PARA') and i0 == 0:
             i0 = iocc
         for mc in dC.keys():
             if dC[mc] == None:
@@ -118,7 +118,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
             __linter = DEFI_LIST_REEL(VALE=linterp)
         if INFO == 2:
             aster.affiche('MESSAGE', ' Interpolation globale sur la liste :')
-            aster.affiche('MESSAGE', pprint.pformat(__linter.Valeurs()))
+            aster.affiche('MESSAGE', pprint.pformat(__linter))
 
     #----------------------------------------------
     # 1. Récupération des valeurs des N courbes sous forme
@@ -236,7 +236,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                             # on verifie que la bonne exception a ete levee
                             assert err.id_message == "FONCT0_9", 'unexpected id : %s' % err.id_message
                             continue
-                lval = list(__ftmp.Valeurs())
+                lval = __ftmp.Valeurs()
                 lx = lval[0]
                 lr = lval[1]
                 if isinstance(obj, (fonction_c, formule_c)) and dCi.get('PARTIE') == 'IMAG':
@@ -372,28 +372,28 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
 
     # 2.0. Surcharge des propriétés du graphique et des axes
     # (bloc quasiment identique dans Table)
-    if args['TITRE'] != None:
+    if args.get('TITRE'):
         graph.Titre = args['TITRE']
-    if args['SOUS_TITRE'] != None:
+    if args.get('SOUS_TITRE'):
         graph.SousTitre = args['SOUS_TITRE']
     if FORMAT in ('XMGRACE', 'AGRAF','LISS_ENVELOP'):
-        if args['BORNE_X'] != None:
+        if args.get('BORNE_X'):
             graph.Min_X = args['BORNE_X'][0]
             graph.Max_X = args['BORNE_X'][1]
-        if args['BORNE_Y'] != None:
+        if args.get('BORNE_Y'):
             graph.Min_Y = args['BORNE_Y'][0]
             graph.Max_Y = args['BORNE_Y'][1]
-        if args['LEGENDE_X'] != None:
+        if args.get('LEGENDE_X'):
             graph.Legende_X = args['LEGENDE_X']
-        if args['LEGENDE_Y'] != None:
+        if args.get('LEGENDE_Y'):
             graph.Legende_Y = args['LEGENDE_Y']
-        if args['ECHELLE_X'] != None:
+        if args.get('ECHELLE_X'):
             graph.Echelle_X = args['ECHELLE_X']
-        if args['ECHELLE_Y'] != None:
+        if args.get('ECHELLE_Y'):
             graph.Echelle_Y = args['ECHELLE_Y']
-        if args['GRILLE_X'] != None:
+        if args.get('GRILLE_X'):
             graph.Grille_X = args['GRILLE_X']
-        if args['GRILLE_Y'] != None:
+        if args.get('GRILLE_Y'):
             graph.Grille_Y = args['GRILLE_Y']
 
     kargs = {
@@ -433,7 +433,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
         UTMESS('S', 'FONCT0_8', valk=FORMAT)
 
     # Traiter le cas des UL réservées
-    if args['UNITE'] and args['UNITE'] in ul_reserve:
+    if args['UNITE'] in ul_reserve:
         UL.Etat(args['UNITE'], etat='F')
     if FORMAT == 'AGRAF' and args['UNITE_DIGR'] != args['UNITE'] \
             and args['UNITE_DIGR'] in ul_reserve:
@@ -441,8 +441,5 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
 
     # 2.4. On trace !
     graph.Trace(**kargs)
-
-    # 99. Traiter le cas des UL réservées
-    UL.EtatInit()
 
     return ier
