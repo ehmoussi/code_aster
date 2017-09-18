@@ -40,6 +40,7 @@ implicit none
 #include "asterfort/calcfh_gazp.h"
 #include "asterfort/calcfh_lisa.h"
 #include "asterfort/calcfh_liva.h"
+#include "asterfort/calcfh_lvag.h"
 !
 ! ======================================================================
 ! ROUTINE CALC_FLUX_HYDRO
@@ -166,6 +167,19 @@ implicit none
                          rho11 , h11   , h12    ,&
                          satur , dsatp1, pesa   , tperm,&
                          congep, dsde  )
+        goto 999
+    endif
+    if (thmc .eq. 'LIQU_VAPE_GAZ') then
+        call calcfh_lvag(option, perman, hydr   , ndim  , j_mater,&
+                         dimdef, dimcon,&
+                         yamec , yate  ,&
+                         addep1, addep2, adcp11 , adcp12, adcp21 ,&
+                         addeme, addete, &
+                         t     , p2    , pvp    ,&
+                         grat  , grap1 , grap2  ,& 
+                         rho11 , h11   , h12    ,&
+                         satur , dsatp1, pesa   , tperm,&
+                         congep, dsde)
         goto 999
     endif
     dgpvp1(:)=0.d0
@@ -343,17 +357,7 @@ implicit none
 !
 !
     if ((thmc.eq.'LIQU_VAPE_GAZ')) then
-        rho12=mamolv*pvp/r/t
-        rho21=mamolg*(p2-pvp)/r/t
-        masrt=mamolg/r/t
-        cvp=pvp/p2
-        do i = 1, ndim
-            gp(i)=rho12/rho11*(grap2(i)-grap1(i))
-            if (yate .eq. 1) then
-                gp(i)=gp(i)+rho12*(h12-h11)/t*grat(i)
-            endif
-            gc(i)=gp(i)/p2-pvp/p2/p2*grap2(i)
-        end do
+        ASSERT(ASTER_FALSE)
     endif
     if (thmc .eq. 'LIQU_VAPE') then
         do i = 1, ndim
@@ -452,16 +456,7 @@ implicit none
 !
     if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
         if (thmc .eq. 'LIQU_VAPE_GAZ') then
-            dp12p1=-rho12/rho11
-            dp12p2=rho12/rho11
-            if (yate .eq. 1) then
-                dp12t=rho12*(h12-h11)/t
-            endif
-            dcvp1=dp12p1/p2
-            dcvp2=dp12p2/p2-pvp/p2/p2
-            if (yate .eq. 1) then
-                dcvt=dp12t/p2
-            endif
+            ASSERT(ASTER_FALSE)
         endif
 !
         if (thmc .eq. 'LIQU_AD_GAZ_VAPE') then
@@ -514,72 +509,7 @@ implicit none
             dr21t=-rho21/t
         endif
         if (thmc .eq. 'LIQU_VAPE_GAZ') then
-            dr11p1=-rho11*cliq
-            dr11p2= rho11*cliq
-!
-            dr12p1=rho12/pvp*dp12p1
-            dr12p2=rho12/pvp*dp12p2
-!
-            dr21p1=masrt*(-dp12p1)
-            dr21p2=masrt*(1.d0-dp12p2)
-!
-!
-            if (yate .eq. 1) then
-                dr11t=-3.d0*alpliq*rho11
-                dr12t=rho12*(dp12t/pvp-1.d0/t)
-                dr21t=-masrt*dp12t-rho21/t
-! ======================================================================
-! TERME AUXILIAIRE
-! ======================================================================
-!
-                dauxp1=(h12-h11)/t*dr12p1 +rho12/t*(dsde(adcp12+ndim+&
-                1,addep1) -dsde(adcp11+ndim+1,addep1))
-                dauxp2=(h12-h11)/t*dr12p2 +rho12/t*(dsde(adcp12+ndim+&
-                1,addep2) -dsde(adcp11+ndim+1,addep2))
-                dauxt=(h12-h11)/t*dr12t +rho12/t*(dsde(adcp12+ndim+1,&
-                addete)- dsde(adcp11+ndim+1,addete))- rho12*(h12-h11)/&
-                t/t
-            endif
-!
-!
-! **********************************************************************
-! CALCUL DES DERIVEES DE GRADPVP ET GRADCVP
-!
-            do i = 1, ndim
-                dgpvp1(i)=(grap2(i)-grap1(i))/rho11*dr12p1
-                dgpvp1(i)=dgpvp1(i)-(grap2(i)-grap1(i)) *rho12/&
-                rho11/rho11*dr11p1
-                dgpvp2(i)=(grap2(i)-grap1(i))/rho11*dr12p2
-                dgpvp2(i)=dgpvp2(i)-(grap2(i)-grap1(i)) *rho12/&
-                rho11/rho11*dr11p2
-                if (yate .eq. 1) then
-                    dgpvp1(i)=dgpvp1(i)+dauxp1*grat(i)
-                    dgpvp2(i)=dgpvp2(i)+dauxp2*grat(i)
-                    dgpvt(i)=(grap2(i)-grap1(i))/rho11*dr12t&
-                    +dauxt*grat(i)
-                    dgpvt(i)=dgpvt(i)-(grap2(i)-grap1(i))*&
-                    rho12/rho11/rho11*dr11t
-                endif
-                dgpgp1(1)=-rho12/rho11
-                dgpgp2(1)=rho12/rho11
-                if (yate .eq. 1) then
-                    dgpgt(1)=rho12*(h12-h11)/t
-                endif
-! **********************************************************************
-! DERIVEES DE GRADCVP
-!
-                dgcvp1(i)=dgpvp1(i)/p2 -grap2(i)/p2/p2*dp12p1
-                dgcvp2(i)=dgpvp2(i)/p2 -gp(i)/p2/p2-grap2(i)/p2/&
-                p2*dp12p2 +2.d0*pvp*grap2(i)/p2/p2/p2
-                if (yate .eq. 1) then
-                    dgcvt(i)=dgpvt(i)/p2 -grap2(i)/p2/p2*dp12t
-                endif
-                dgcgp1(1)=dgpgp1(1)/p2
-                dgcgp2(1)=dgpgp2(1)/p2-pvp/p2/p2
-                if (yate .eq. 1) then
-                    dgcgt(1)=dgpgt(1)/p2
-                endif
-            end do
+            ASSERT(ASTER_FALSE)
         endif
 !
         if (thmc .eq. 'LIQU_VAPE') then
@@ -800,22 +730,7 @@ implicit none
             end do
         endif
         if (thmc .eq. 'LIQU_VAPE_GAZ') then
-            do i = 1, ndim
-                congep(adcp11+i)= 0.d0
-                congep(adcp12+i)= 0.d0
-                congep(adcp21+i)= 0.d0
-                do j = 1, ndim
-                    congep(adcp11+i)=congep(adcp11+i)+rho11*&
-                    lambd1(1)*tperm(i,j) *(-grap2(j)+grap1(j)+&
-                    rho11*pesa(j))
-                    congep(adcp12+i)=congep(adcp12+i)+rho12*&
-                    lambd2(1)*tperm(i,j) *(-grap2(j)+(rho12+rho21)&
-                    *pesa(j)) -rho12*(1.d0-cvp)*fv(1)*gc(i)
-                    congep(adcp21+i)=congep(adcp21+i)+rho21*&
-                    lambd2(1)*tperm(i,j) *(-grap2(j)+(rho12+rho21)&
-                    *pesa(j)) +rho21*cvp*fv(1)*gc(i)
-                end do
-            end do
+            ASSERT(ASTER_FALSE)
         endif
         if (thmc .eq. 'LIQU_AD_GAZ_VAPE') then
             do i = 1, ndim

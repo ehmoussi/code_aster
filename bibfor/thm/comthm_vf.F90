@@ -155,7 +155,7 @@ integer, intent(in) :: vicsat
 ! ======================================================================
     real(kind=8) :: p1, dp1, grap1(3), p2, dp2, grap2(3), t, dt, grat(3)
     real(kind=8) :: phi, pvp, pad, h11, h12, rho11, epsv, deps(6), depsv
-    real(kind=8) :: sat, mamovg
+    real(kind=8) :: sat, mamolv
     real(kind=8) :: rgaz, tbiot(6), satur, dsatur, pesa(3)
     real(kind=8) :: tperm(ndim, ndim), permli, dperml, permgz, dperms, dpermp
     real(kind=8) :: dfickt, dfickg, lambp, dlambp, unsurk, fick
@@ -274,7 +274,7 @@ integer, intent(in) :: vicsat
                 permgz, dperms, dpermp, fick, dfickt,&
                 dfickg, lambp, dlambp, unsurk, alpha,&
                 lambs, dlambs, viscl, dviscl, mamolg,&
-                tlambt, tdlamt, viscg, dviscg, mamovg,&
+                tlambt, tdlamt, viscg, dviscg, mamolv,&
                 fickad, dfadt, tlamct, instap,&
                 angl_naut, ndim)
     unsurk = ds_thm%ds_material%liquid%unsurk
@@ -283,6 +283,8 @@ integer, intent(in) :: vicsat
     dviscl = ds_thm%ds_material%liquid%dvisc_dtemp
     viscg  = ds_thm%ds_material%gaz%visc
     dviscg = ds_thm%ds_material%gaz%dvisc_dtemp
+    mamolv = ds_thm%ds_material%steam%mass_mol
+    mamolg = ds_thm%ds_material%gaz%mass_mol
 !
 ! CONDUCTIVITES EN VF
 !
@@ -318,7 +320,7 @@ integer, intent(in) :: vicsat
                     permgz, dperms, dpermp, fick, dfickt,&
                     dfickg, fickad, dfadt, kh, unsurk,&
                     alpha, viscl, dviscl, mamolg, viscg,&
-                    dviscg, mamovg, ifa,&
+                    dviscg, mamolv, ifa,&
                     valfac, valcen)
         if (retcom .ne. 0) then
             goto 999
