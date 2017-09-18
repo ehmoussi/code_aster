@@ -33,6 +33,8 @@ from Utilitai.Utmess import UTMESS
 
 import aster_core
 
+from code_aster.Utilities import value_is_sequence
+
 
 if not sys.modules.has_key('Table'):
     try:
@@ -228,11 +230,12 @@ class Graph(object):
         nbc = len(Val)   # nombre de colonnes : 2 ou 3
 
         # verifications : "if not (conditions requises)"
-        if not (2 <= nbc <= 3 and
-           type(Val[0]) in (types.ListType, types.TupleType) and
-           type(Val[1]) in (types.ListType, types.TupleType) and
-           (nbc == 2 or type(Val[2]) in (types.ListType, types.TupleType)) and
-           len(Val[0]) == len(Val[1]) and (nbc == 2 or len(Val[0]) == len(Val[2]))):
+        if not (2 <= nbc <= 3 and value_is_sequence(Val[0])
+                and value_is_sequence(Val[1]) and
+                (nbc == 2 or value_is_sequence(Val[2])) and
+                 len(Val[0]) == len(Val[1]) and
+                 (nbc == 2 or len(Val[0]) == len(Val[2]))
+               ):
             UTMESS('F', 'GRAPH0_1', valk='Val')
 
         if len(Lab) != nbc:

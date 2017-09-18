@@ -19,8 +19,8 @@
 import tempfile
 from itertools import ifilter
 
-from code_aster.Supervis.libCommandSyntax import getCurrentCommand, setCurrentCommand
-from code_aster.Supervis.libCommandSyntax import _F
+from .libCommandSyntax import _F, getCurrentCommand, setCurrentCommand
+from .logger import logger
 
 
 class FileType(object):
@@ -134,25 +134,25 @@ class LogicalUnitFile(object):
     @classmethod
     def _register(cls, logicalUnit):
         """Register a logical unit with its file name."""
-        print "DEBUG: register unit", logicalUnit.unit
+        logger.debug("libFile: register unit {0}".format(logicalUnit.unit))
         cls._used_unit[logicalUnit.unit] = logicalUnit
 
     @classmethod
     def release_from_number(cls, unitToRelease):
         """Release a logical unit"""
-        print "DEBUG: release unit", unitToRelease
+        logger.debug("libFile: release unit {0}".format(unitToRelease))
         try:
             del cls._used_unit[unitToRelease]
         except KeyError:
-            msg = "Unable to free the logical unit {}".format(unitToRelease)
-            raise KeyError(msg)
+            # was not register from Python
+            pass
 
     @classmethod
     def release_from_name(cls, filename):
         """Release a logical unit by file name"""
         unit = cls.from_name(filename)
         if not unit:
-            msg = "file {!r} not asspociated".format(filename)
+            msg = "file {!r} not associated".format(filename)
             raise KeyError(msg)
         cls.release_from_number(unit)
 
