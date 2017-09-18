@@ -116,6 +116,7 @@ class FunctionInstance: public DataStructure
         */
         std::vector<double> getValues() const
         {
+            _value->updateValuePointer();
             const double* ptr = getDataPtr();
             std::vector<double> vect( ptr, ptr + _value->size() );
             return vect;
@@ -143,6 +144,7 @@ class FunctionInstance: public DataStructure
         */
         std::vector< std::string > getProperties() const
         {
+            _property->updateValuePointer();
             std::vector< std::string > prop;
             for ( int i = 0; i < 6; ++i )
             {
