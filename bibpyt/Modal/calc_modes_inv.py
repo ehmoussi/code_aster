@@ -21,7 +21,7 @@
 
 
 def calc_modes_inv(self, TYPE_RESU, OPTION, SOLVEUR_MODAL,
-                   SOLVEUR, VERI_MODE, INFO, TITRE, **args):
+                   SOLVEUR, VERI_MODE, stop_erreur, INFO, TITRE, **args):
     """
        Macro-command CALC_MODES, case of the inverse iterations method
     """
@@ -99,8 +99,10 @@ def calc_modes_inv(self, TYPE_RESU, OPTION, SOLVEUR_MODAL,
 
     #
     # read the keyword VERI_MODE
-    motcles['VERI_MODE'] = _F(STOP_ERREUR=VERI_MODE['STOP_ERREUR'],
+    motcles['VERI_MODE'] = _F(STOP_ERREUR=stop_erreur,
                               SEUIL=VERI_MODE['SEUIL'],
+                              STURM=VERI_MODE['STURM'],
+                              PREC_SHIFT=VERI_MODE['PREC_SHIFT']
                               )
 
     #

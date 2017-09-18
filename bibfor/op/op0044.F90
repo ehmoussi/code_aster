@@ -101,12 +101,13 @@ subroutine op0044()
 !
     real(kind=8) :: tolsep, tolaju, tolv, fcorig, omecor, precsh, omeg, det1
     real(kind=8) :: det2, fr, am, zam(3), zfr(3), seuil, fmin, fmax, omgmin
-    real(kind=8) :: omgmax, rbid, depi, undf, raux1, raux2, det(2)
+    real(kind=8) :: omgmax, rbid, depi, undf, raux1, raux2, det(2), raux, precdc
     character(len=1) :: ctyp, typer
     character(len=8) :: optiov, modes, knega
     character(len=9) :: typevp
     character(len=14) :: matra, matrb, matrc
-    character(len=16) :: nomcmd, typcon, optiom, optiof, optior, typres, k16bid, compex
+    character(len=16) :: nomcmd, typcon, optiom, optiof, optior, typres, k16bid,&
+                         compex, sturm
     character(len=19) :: masse, raide, amor, dynam, numedd, solveu
     character(len=24) :: cborne, work(5), camor, cfreq, nopara(nbpara), metres
     character(len=24) :: valk(2)
@@ -192,7 +193,7 @@ subroutine op0044()
         call getvid(' ', matrc, scal=amor, nbret=lamor)
     endif
 !
-!     ON NE SAIT TRAITER QUE LE CAS DE LA MATRICE DE RAIDEUR REELLE
+!     ON NE SAIT TRAITER ICI QUE LE CAS DES MATRICES REELLES SYMETRIQUES
     ktyp='R'
 !
 !     --- COMPATIBILITE DES MODES (DONNEES ALTEREES) ---
@@ -771,6 +772,35 @@ subroutine op0044()
     lmat(2) = lmasse
     lmat(3) = 0
 !
+    call getvr8('VERI_MODE', 'PREC_SHIFT', iocc=1, scal=precdc, nbret=lmf)
+    ASSERT(lmf.eq.1)
+    call getvtx('VERI_MODE', 'STURM', iocc=1, scal=sturm, nbret=lmf)
+    ASSERT(lmf.eq.1)
+
+! --- GEP SYMETRIQUE REEL STD, ON VA RETESTER QUE LES VALEURS PROPRES
+!     - RESTENT DANS UNE BANDE
+!     - VERIFIENT LE CRITERE DE STURM
+!   SI STURM='OUI'. TRES UTILES POUR APPEL VIA AMELIORATION='OUI'
+    if ((lamor .eq. 0).and.(sturm(1:3).eq.'OUI')) then
+        optiov='BANDE'
+        lmat(3) = ldynam
+        fmin = zr(lresur+mxresf)
+        fmax = zr(lresur+mxresf)
+        do ifreq = 0, nbmod-1
+            raux=zr(lresur+mxresf+ifreq)
+            if (raux .lt. fmin) fmin = raux
+            if (raux .gt. fmax) fmax = raux
+        enddo
+        if (abs(fmax) .le. omecor) then
+            fmax=omecor
+        endif
+        if (abs(fmin) .le. omecor) then
+            fmin=-omecor
+        endif
+        fmin = fmin * (1.d0 - sign(precdc,fmin))
+        fmax = fmax * (1.d0 + sign(precdc,fmax))
+    endif
+!
 ! --- ON PASSE DANS LE MODE "VALIDATION DU CONCEPT EN CAS D'ERREUR"
     call onerrf('EXCEPTION+VALID', k16bid, ibid)
 !
@@ -780,9 +810,7 @@ subroutine op0044()
                 zr(lresur+3*mxresf), zr(lresur+mxresf), typres, nblagr, solveu,&
                 nbrss, precsh)
 !
-    call getvtx('VERI_MODE', 'STOP_ERREUR', iocc=1, scal=optiov, nbret=lmf)
-!
-    if ((optiov.eq.'OUI') .and. (ierx.ne.0)) then
+    if ((ctyp.eq.'E') .and. (ierx.ne.0)) then
         call utmess('Z', 'ALGELINE2_74', num_except=33)
     endif
 !

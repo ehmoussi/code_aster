@@ -47,6 +47,14 @@ def calc_modes_ops(self, TYPE_RESU, OPTION,
     l_multi_bandes = False # logical indicating if the computation is performed
                            # for DYNAMICAL modes on several bands
 
+    # to prepare the work of AMELIORATION='OUI'
+    stop_erreur= None
+    if AMELIORATION=='OUI':
+        stop_erreur='NON'
+    else:
+        stop_erreur=VERI_MODE['STOP_ERREUR']
+
+
     if (TYPE_RESU == 'DYNAMIQUE'):
 
         if (OPTION == 'BANDE'):
@@ -55,25 +63,24 @@ def calc_modes_ops(self, TYPE_RESU, OPTION,
                 # modes computation over several frequency bands,
                 # with optional parallelization of the bands
                 modes = calc_modes_multi_bandes(self, SOLVEUR_MODAL, SOLVEUR,
-                                                      VERI_MODE, INFO, TITRE, **args)
+                                                VERI_MODE, stop_erreur, INFO, TITRE, **args)
 
     if not l_multi_bandes:
         if OPTION in ('PLUS_PETITE', 'PLUS_GRANDE', 'CENTRE', 'BANDE', 'TOUT'):
             # call the MODE_ITER_SIMULT command
             modes = calc_modes_simult(self, TYPE_RESU, OPTION, SOLVEUR_MODAL,
-                                            SOLVEUR, VERI_MODE, INFO, TITRE, **args)
+                                      SOLVEUR, VERI_MODE, stop_erreur, INFO, TITRE, **args)
 
         elif OPTION in ('SEPARE', 'AJUSTE', 'PROCHE'):
             # call the MODE_ITER_INV command
             modes = calc_modes_inv(self, TYPE_RESU, OPTION, SOLVEUR_MODAL,
-                                         SOLVEUR, VERI_MODE, INFO, TITRE, **args)
-
+                                   SOLVEUR, VERI_MODE, stop_erreur, INFO, TITRE, **args)
 
     if AMELIORATION=='OUI':
         # after a 1st modal computation, achieve a 2nd computation with MODE_ITER_INV
         # and option 'PROCHE' to refine the modes
         modes = calc_modes_amelioration(self, modes, TYPE_RESU, SOLVEUR_MODAL,
-                                              SOLVEUR, VERI_MODE, INFO, TITRE, **args)
+                                        SOLVEUR, VERI_MODE, INFO, TITRE, **args)
 
 
 

@@ -21,7 +21,7 @@
 
 
 def calc_modes_simult(self, TYPE_RESU, OPTION, SOLVEUR_MODAL,
-                      SOLVEUR, VERI_MODE, INFO, TITRE, **args):
+                      SOLVEUR, VERI_MODE, stop_erreur, INFO, TITRE, **args):
     """
        Macro-command CALC_MODES, case of the simultaneous iterations method
     """
@@ -161,7 +161,7 @@ def calc_modes_simult(self, TYPE_RESU, OPTION, SOLVEUR_MODAL,
         # for MODE_ITER_SIMULT, value for STURM can be only OUI or NON. Other
         # values are equivalent to OUI
         sturm = 'OUI'
-    motcles['VERI_MODE'] = _F(STOP_ERREUR=VERI_MODE['STOP_ERREUR'],
+    motcles['VERI_MODE'] = _F(STOP_ERREUR=stop_erreur,
                               SEUIL=VERI_MODE['SEUIL'],
                               STURM=sturm,
                               PREC_SHIFT=VERI_MODE['PREC_SHIFT']

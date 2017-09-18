@@ -26,7 +26,7 @@ from code_aster.Cata.DataStructure import matr_asse_depl_r
 
 
 def calc_modes_multi_bandes( self, SOLVEUR_MODAL, SOLVEUR,
-                                   VERI_MODE, INFO, TITRE, **args):
+                                   VERI_MODE, stop_erreur, INFO, TITRE, **args):
     """
        Macro-command CALC_MODES, case of the simultaneous iterations method
        over several frequency bands, with optional parallelization.
@@ -223,7 +223,7 @@ def calc_modes_multi_bandes( self, SOLVEUR_MODAL, SOLVEUR,
             else:
                 motveri = 'NON'
 
-            motscit['VERI_MODE'] = _F(STOP_ERREUR=VERI_MODE['STOP_ERREUR'],
+            motscit['VERI_MODE'] = _F(STOP_ERREUR=stop_erreur,
                                       SEUIL=VERI_MODE['SEUIL'],
                                       STURM=motveri,
                                       PREC_SHIFT=VERI_MODE['PREC_SHIFT'])
@@ -383,10 +383,10 @@ def calc_modes_multi_bandes( self, SOLVEUR_MODAL, SOLVEUR,
                 aster.affiche('MESSAGE', 72 * '-')
             else:
                 # Message similaire a ALGELINE5_24 pour le FORTRAN
-                if (VERI_MODE['STOP_ERREUR'] == 'OUI'):
+                if (stop_erreur == 'OUI'):
                     UTMESS('F', 'MODAL_5', valr=(
                         freq_ini, freq_fin, precshift), vali=(nbmodesg, nbmodeth))
-                elif (VERI_MODE['STOP_ERREUR'] == 'NON'):
+                elif (stop_erreur == 'NON'):
                     UTMESS('A', 'MODAL_5', valr=(
                         freq_ini, freq_fin, precshift), vali=(nbmodesg, nbmodeth))
                 else:
