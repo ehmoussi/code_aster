@@ -26,7 +26,7 @@ This modules will help for transitional features.
 from functools import wraps
 from warnings import simplefilter, warn
 
-from .base_utils import ndarray_to_list
+from .base_utils import array_to_list
 
 
 def deprecated(replaced=True):
@@ -80,6 +80,6 @@ def compat_listr8(kwargs, factor_keyword, list_keyword, float_keyword):
             compat_listr8(occ, None, list_keyword, float_keyword)
     else:
         try:
-            kwargs[float_keyword] = ndarray_to_list(kwargs.pop(list_keyword))
+            kwargs[float_keyword] = array_to_list(kwargs.pop(list_keyword))
         except KeyError:
             pass

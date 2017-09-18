@@ -24,10 +24,11 @@ Code_Aster Syntax Utilities
 List of utilities for syntax objects.
 """
 
-import os
-from functools import partial
+from array import array
 from collections import OrderedDict
+from functools import partial
 import math
+import os
 
 import numpy
 
@@ -63,14 +64,14 @@ def remove_none(obj):
                 remove_none(obj[key])
 
 def force_list(values):
-    """Ensure `values` is a list or tuple."""
+    """Ensure `values` is iterable (list, tuple, array...)."""
     if not value_is_sequence(values):
         values = [values]
     return values
 
 def value_is_sequence(value):
     """Tell if *value* is a valid object if max > 1."""
-    return type(value) in (list, tuple, numpy.ndarray)
+    return type(value) in (list, tuple, array, numpy.ndarray)
 
 # same function exist in asterstudy.datamodel.aster_parser
 def old_complex(value):

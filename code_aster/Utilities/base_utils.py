@@ -23,6 +23,7 @@
 This modules gives some basic utilities.
 """
 
+from array import array
 from functools import wraps
 import sys
 
@@ -61,17 +62,18 @@ def import_object(uri):
                              .format(objname, modname, tuple(dir(mod))))
     return obj
 
+def force_list(values):
+    """Ensure `values` is iterable (list, tuple, array...)."""
+    if not value_is_sequence(values):
+        values = [values]
+    return values
 
-def force_list(obj):
-    """Return `obj` if it's an instance of list or tuple, [obj,] otherwise.
-    """
-    if not isinstance(obj, (list, tuple)):
-        obj = [obj, ]
-    return list(obj)
+def value_is_sequence(value):
+    """Tell if *value* is a valid object if max > 1."""
+    return type(value) in (list, tuple, array, numpy.ndarray)
 
-
-def ndarray_to_list(obj):
-    """Convert an object to a list if it is a `numpy.ndarray` or keep it
+def array_to_list(obj):
+    """Convert an object to a list if possible (using `tolist()`) or keep it
     unchanged otherwise.
 
     Arguments:
@@ -80,15 +82,20 @@ def ndarray_to_list(obj):
     Returns:
         misc: Object unchanged or a list.
     """
-    return list(obj) if isinstance(obj, numpy.ndarray) else obj
+    try:
+        return obj.tolist()
+    except AttributeError:
+        return obj
 
+def accept_array(func):
+    """Decorator that automatically converts numpy arrays to lists.
 
-def accept_ndarray(func):
-    """Decorator that automatically converts numpy arrays to lists."""
+    Needed to pass an array as argument to a boost method. 
+    """
     @wraps(func)
     def wrapper(*args, **kwargs):
         """Wrapper"""
-        args = [ndarray_to_list(i) for i in args]
+        args = [array_to_list(i) for i in args]
         return func(*args, **kwargs)
     return wrapper
 

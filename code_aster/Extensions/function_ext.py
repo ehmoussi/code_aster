@@ -24,7 +24,7 @@ import numpy as NP
 from libaster import Function
 import aster
 
-from ..Utilities import accept_ndarray
+from ..Utilities import accept_array
 
 
 class injector(object):
@@ -40,7 +40,7 @@ class injector(object):
 class ExtendedFunction(injector, Function):
     cata_sdj = "SD.sd_fonction.sd_fonction_aster"
 
-    setValues = accept_ndarray(Function.setValues)
+    setValues = accept_array(Function.setValues)
 
     def abs(self):
         """Return the absolute value of the function.
