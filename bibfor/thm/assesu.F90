@@ -453,7 +453,7 @@ implicit none
                 defgem, defgep, congem, congep, vintm(1, 1),&
                 vintp(1, 1), dsde, pesa, retcom, 1,&
                 1, angbid,&
-                thmc, ther, hydr,&
+                thmc, hydr,&
                 advihy, advico, vihrho, vicphi, vicpvp, vicsat)
     if (retcom .ne. 0) then
         call utmess('F', 'COMPOR1_9')
@@ -494,7 +494,7 @@ implicit none
                     defgem, defgep, congem, congep, vintm(1, fa+1),&
                     vintp(1, fa+1), dsde, pesa, retcom, 1,&
                     1, angbid,&
-                    thmc, ther, hydr,&
+                    thmc, hydr,&
                     advihy, advico, vihrho, vicphi, vicpvp, vicsat)
         if (retcom .ne. 0) then
             call utmess('F', 'COMPOR1_9')

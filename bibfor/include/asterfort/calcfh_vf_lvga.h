@@ -17,13 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface 
-    subroutine calcfh_vf(nume_thmc,&
-                         option   , hydr  , j_mater, ifa,&
-                         t        , p1    , p2     , pvp, pad ,&
-                         rho11    , h11   , h12    ,&
-                         satur    , dsatur, & 
-                         valfac   , valcen)
-        integer, intent(in) :: nume_thmc
+    subroutine calcfh_vf_lvga(option, hydr  , j_mater, ifa,&
+                              t     , p1    , p2     , pvp, pad ,&
+                              rho11 , h11   , h12    ,&
+                              satur , dsatur, & 
+                              valfac, valcen)
         character(len=16), intent(in) :: option, hydr
         integer, intent(in) :: j_mater
         integer, intent(in) :: ifa
@@ -32,5 +30,5 @@ interface
         real(kind=8), intent(in) :: satur, dsatur
         real(kind=8), intent(inout) :: valcen(14, 6)
         real(kind=8), intent(inout) :: valfac(6, 14, 6)
-    end subroutine calcfh_vf
+    end subroutine calcfh_vf_lvga
 end interface 
