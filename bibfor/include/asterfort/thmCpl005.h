@@ -20,15 +20,14 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine hmlvag(yachai, option, hydr,&
+    subroutine thmCpl005(yachai, option, hydr,&
                       imate, ndim, dimdef, dimcon, nbvari,&
                       yamec, yate, addeme, adcome, advihy,&
-                      advico, vihrho, vicphi, vicpvp, vicsat,&
-                      addep1, adcp11, adcp12, addep2, adcp21,&
-                      addete, adcote, congem, congep, vintm,&
-                      vintp, dsde, deps, epsv, depsv,&
-                      p1, p2, dp1, dp2, temp,&
-                      dt, phi, pvp, h11, h12,&
+                      advico, vihrho, vicphi, vicsat, addep1,&
+                      adcp11, addep2, adcp21, addete, adcote,&
+                      congem, congep, vintm, vintp, dsde,&
+                      deps, epsv, depsv, p1, p2,&
+                      dp1, dp2, temp, dt, phi,&
                       rho11, satur, retcom,&
                       tbiot, angmas)
         integer :: nbvari
@@ -47,11 +46,9 @@ interface
         integer :: advico
         integer :: vihrho
         integer :: vicphi
-        integer :: vicpvp
         integer :: vicsat
         integer :: addep1
         integer :: adcp11
-        integer :: adcp12
         integer :: addep2
         integer :: adcp21
         integer :: addete
@@ -71,13 +68,10 @@ interface
         real(kind=8), intent(in) :: temp
         real(kind=8) :: dt
         real(kind=8) :: phi
-        real(kind=8) :: pvp
-        real(kind=8) :: h11
-        real(kind=8) :: h12
         real(kind=8) :: rho11
         real(kind=8) :: satur
         integer :: retcom
         real(kind=8) :: tbiot(6)
         real(kind=8) :: angmas(3)
-    end subroutine hmlvag
+    end subroutine thmCpl005
 end interface 

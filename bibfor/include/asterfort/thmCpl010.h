@@ -20,16 +20,17 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine hmliga(yachai, option, hydr,&
+    subroutine thmCpl010(yachai, option, hydr,&
                       imate, ndim, dimdef, dimcon, nbvari,&
                       yamec, yate, addeme, adcome, advihy,&
-                      advico, vihrho, vicphi, vicsat, addep1,&
-                      adcp11, addep2, adcp21, addete, adcote,&
-                      congem, congep, vintm, vintp, dsde,&
-                      deps, epsv, depsv, p1, p2,&
-                      dp1, dp2, temp, dt, phi,&
-                      rho11, satur, retcom,&
-                      tbiot, angmas)
+                      advico, vihrho, vicphi, vicpvp, vicsat,&
+                      addep1, adcp11, adcp12, addep2, adcp21,&
+                      adcp22, addete, adcote, congem, congep,&
+                      vintm, vintp, dsde, epsv, depsv,&
+                      p1, p2, dp1, dp2, temp,&
+                      dt, phi, padp, h11, h12,&
+                      kh, rho11, satur, retcom,&
+                      tbiot, angmas, deps)
         integer :: nbvari
         integer :: dimcon
         integer :: dimdef
@@ -46,11 +47,14 @@ interface
         integer :: advico
         integer :: vihrho
         integer :: vicphi
+        integer :: vicpvp
         integer :: vicsat
         integer :: addep1
         integer :: adcp11
+        integer :: adcp12
         integer :: addep2
         integer :: adcp21
+        integer :: adcp22
         integer :: addete
         integer :: adcote
         real(kind=8) :: congem(dimcon)
@@ -58,7 +62,6 @@ interface
         real(kind=8) :: vintm(nbvari)
         real(kind=8) :: vintp(nbvari)
         real(kind=8) :: dsde(dimcon, dimdef)
-        real(kind=8) :: deps(6)
         real(kind=8) :: epsv
         real(kind=8) :: depsv
         real(kind=8) :: p1
@@ -68,10 +71,15 @@ interface
         real(kind=8), intent(in) :: temp
         real(kind=8) :: dt
         real(kind=8) :: phi
+        real(kind=8) :: padp
+        real(kind=8) :: h11
+        real(kind=8) :: h12
+        real(kind=8) :: kh
         real(kind=8) :: rho11
         real(kind=8) :: satur
         integer :: retcom
         real(kind=8) :: tbiot(6)
         real(kind=8) :: angmas(3)
-    end subroutine hmliga
+        real(kind=8) :: deps(6)
+    end subroutine thmCpl010
 end interface 
