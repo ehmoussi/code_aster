@@ -452,8 +452,10 @@ Commande FACTORISER :
     77 : _(u"""
 Conseils :
 Si vous utilisez METHODE='SORENSEN' ou 'TRI_DIAG' ou 'JACOBI', vous pouvez améliorer cette norme :
- - en augmentant la valeur de COEF_DIM_ESPACE (la valeur par défaut est 4 pour 'TRI_DIAG' et 2 pour 'SORENSEN' et 'JACOBI'),
- - en réduisant le nombre de valeurs propres recherchées (%(k1)s ou taille de la BANDE).
+ - Si la dimension de l'espace réduit est inférieure à (nombre de degrés de liberté actifs - 2), augmenter la valeur de 
+   COEF_DIM_ESPACE (la valeur par défaut est 4 pour 'TRI_DIAG' et 2 pour 'SORENSEN' et 'JACOBI').
+ - Découper le calcul en plusieurs appels de manière à réduire le nombre de modes propres recherchés simultanément
+   (%(k1)s ou taille de la BANDE).
 """),
 
     78 : _(u"""
