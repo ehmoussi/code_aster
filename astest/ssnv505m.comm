@@ -225,6 +225,7 @@ CHCON2= DEFI_CONTACT(MODELE         = MODE,
                               DIST_ESCL      = F_DIST_E,
                               COEF_PENA_CONT = 1.E8,
                               COEF_PENA_FROT = 1.E8,
+                              ADAPTATION='NON',
                              ),
                           ),
                    );

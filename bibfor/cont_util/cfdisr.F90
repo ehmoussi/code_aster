@@ -73,6 +73,8 @@ implicit none
         cfdisr = mminfr(sdcont_defi, 'ALARME_JEU')
     else if (question.eq.'PROJ_NEWT_RESI') then
         cfdisr = 1d-4
+    else if (question.eq.'PENE_MAXI') then
+     cfdisr = v_sdcont_paracr(6)
     else
         write(6,*) 'QUESTION: ',question
         ASSERT(.false.)

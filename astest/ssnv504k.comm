@@ -129,6 +129,7 @@ CONTACT  = DEFI_CONTACT(MODELE         = MO,
                              GROUP_MA_ESCL ='FIL_MAI2',
                             ALGO_CONT = 'PENALISATION',
                             COEF_PENA_CONT = 1.E4,
+                            ADAPTATION='NON'
                              ),
                           ),
                    );
