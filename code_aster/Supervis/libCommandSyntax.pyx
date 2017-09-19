@@ -236,10 +236,6 @@ cdef public void debugPrintCommandSyntax():
     currentCommand.debugPrint()
 
 
-# For convenience of writing
-_F = dict
-
-
 cdef public string getNewResultObjectName():
     """Return a new result name
     The first one is "0       ", then "1       ", etc.

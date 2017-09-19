@@ -97,7 +97,10 @@ class LogicalUnitFileCython
         {
             if( !_isUsable )
                 throw std::runtime_error( "File not initialized" );
-            return getNumberOfLogicalUnitFile( _fileName.c_str() );
+            int unit = getNumberOfLogicalUnitFile( _fileName.c_str() );
+            if ( unit < 0 )
+                throw std::runtime_error("can not get logical unit number");
+            return unit;
         };
 };
 

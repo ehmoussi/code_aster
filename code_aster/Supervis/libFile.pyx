@@ -19,7 +19,8 @@
 import tempfile
 from itertools import ifilter
 
-from .libCommandSyntax import _F, getCurrentCommand, setCurrentCommand
+from ..Cata.Syntax import _F
+from .libCommandSyntax import getCurrentCommand, setCurrentCommand
 from .logger import logger
 
 
@@ -85,11 +86,6 @@ class LogicalUnitFile(object):
         self._filename = filename
         self._register(self)
         self.register(self._logicalUnit, filename, action, typ, access)
-
-    def __del__( self ):
-        """Destructor: call DEFI_FICHIER to release the logical unit."""
-        self.register(self.unit, self.filename, Action.Close)
-        self._free_number.append(self.unit)
 
     @classmethod
     def open(cls, filename, typ=FileType.Ascii, access=FileAccess.New):
@@ -191,7 +187,8 @@ class LogicalUnitFile(object):
             return item[1].filename == filename
 
         try:
-            unit = ifilter(_predicate, cls._used_unit.items())[0]
+            item = ifilter(_predicate, cls._used_unit.items()).next()
+            unit = item[0]
         except StopIteration:
             unit = -1
         return cls.from_number(unit)
@@ -223,11 +220,14 @@ class LogicalUnitFile(object):
             unit (int): Number of logical unit to release.
         """
         logger.debug("libFile: release unit {0}".format(unit))
-        try:
-            del cls._used_unit[unit]
-        except KeyError:
+        logicalUnit = cls.from_number(unit)
+        if not logicalUnit:
             msg = "Unable to free the logical unit {}".format(unit)
             raise KeyError(msg)
+
+        cls.register(unit, logicalUnit.filename, Action.Close)
+        cls._free_number.append(unit)
+        del cls._used_unit[unit]
 
     @classmethod
     def release_from_name(cls, filename):
@@ -236,11 +236,12 @@ class LogicalUnitFile(object):
         Arguments:
             filename (str): Filename of the logical unit to release.
         """
+        logger.debug("libFile: release {0!r}".format(filename))
         logicalUnit = cls.from_name(filename)
         if not logicalUnit:
             msg = "file {!r} not associated".format(filename)
             raise KeyError(msg)
-        cls.release_from_number(logicalUnit)
+        cls.release_from_number(logicalUnit.unit)
 
     @classmethod
     def _get_free_number(cls):
@@ -274,18 +275,18 @@ class ReservedUnitUsed(object):
 
 
 cdef public void openLogicalUnitFile(const char* name, const int type,
-                                     const int access ):
+                                     const int access ) except *:
     LogicalUnitFile.open(name, type, access)
 
-cdef public void releaseLogicalUnitFile(const char* name):
+cdef public void releaseLogicalUnitFile(const char* name) except *:
     LogicalUnitFile.release_from_name(name)
 
-cdef public int getNumberOfLogicalUnitFile(const char* name):
-    pyName = <bytes> name
-    logicalUnit = LogicalUnitFile.from_name(pyName)
+cdef public int getNumberOfLogicalUnitFile(const char* name) except -1:
+    logicalUnit = LogicalUnitFile.from_name(name)
+    if not logicalUnit:
+        return -1
     return logicalUnit.unit
 
-cdef public string getTemporaryFileName(const char* dir):
-    dirPython = <bytes> dir
-    cdef string tmpfile = tempfile.NamedTemporaryFile(dir=dirPython).name
+cdef public string getTemporaryFileName(const char* directory) except *:
+    cdef string tmpfile = tempfile.NamedTemporaryFile(dir=directory).name
     return tmpfile
