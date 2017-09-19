@@ -21,11 +21,9 @@
 # -----------------------------------------------------
 
 
-os.system("mfront --obuild BurgerAgeing.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so BurgerAgeing.so")
-
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=39)
 
 M=LIRE_MAILLAGE(FORMAT='MED', )
 
@@ -227,7 +225,7 @@ UREF28=STAT_NON_LINE( MODELE=MO,
                  ),
                    COMPORTEMENT=_F(RELATION='MFRONT',
                                 NOM_ROUTINE='asterburgerageing',
-                                LIBRAIRIE='BurgerAgeing.so',
+                                UNITE_LIBRAIRIE=39,
                                 RESI_INTE_MAXI=1e-11,
                                 VERI_BORNE='MESSAGE',
                                   ),
@@ -250,7 +248,7 @@ UREF29=STAT_NON_LINE( MODELE=MO,
                  ),
                    COMPORTEMENT=_F(RELATION='MFRONT',
                                 NOM_ROUTINE='asterburgerageing',
-                                LIBRAIRIE='BurgerAgeing.so',
+                                UNITE_LIBRAIRIE=39,
                                 RESI_INTE_MAXI=1e-11,
                                 VERI_BORNE='SANS',
                                   ),

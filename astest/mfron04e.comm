@@ -24,10 +24,8 @@ IMPR_MACRO='OUI',
 )
 # SDVERI='NON' car la verification est trop couteuse en CPU
 
-import os
 
-os.system("mfront --obuild AnisoLemaitre.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so AnisoLemaitre.so")
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=39)
 
 # def des materiaux
 MATA = [None]*2
@@ -174,7 +172,7 @@ for i in range(Ncal):
 
                 COMPORTEMENT=_F(RELATION='MFRONT',
                                 NOM_ROUTINE='asteranisolemaitre',
-                                LIBRAIRIE='AnisoLemaitre.so',
+                                UNITE_LIBRAIRIE=39,
                                 RESI_INTE_MAXI=1e-10,
                         ),
 

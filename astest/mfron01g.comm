@@ -21,10 +21,8 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='NON'),IMPR_MACRO='OUI')
 
-import os
 
-os.system("mfront --obuild PlasticityTH.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so PlasticityTH.so")
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=40)
 
 
 #......................................................................
@@ -88,7 +86,7 @@ L_INST=DEFI_LIST_REEL(
 RESU1=SIMU_POINT_MAT(INFO=2,
                 COMPORTEMENT=_F(RELATION='MFRONT',
                                 NOM_ROUTINE='asterplasticityth',
-                                LIBRAIRIE='PlasticityTH.so',
+                                UNITE_LIBRAIRIE=40,
                                     ),
                    NEWTON=_F(MATRICE='TANGENTE',REAC_ITER=1,),
                    MATER      = MATER,

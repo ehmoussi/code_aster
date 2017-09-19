@@ -1,7 +1,7 @@
 // fichier de données pour mtest avec comportement BurgerAgeing.mfront
 // données similaires a burag01a : fluage a 28 jours
 
-@Behaviour<aster> 'src/libAsterBehaviour.so' 'asterburgerageing';
+@Behaviour<aster> './fort.39' 'asterburgerageing';
 @MaterialProperty<constant> 'young' 31000. ;
 @MaterialProperty<constant> 'nu'    0.2 ;
 @MaterialProperty<constant> 'KRS'   1.956e+5 ;

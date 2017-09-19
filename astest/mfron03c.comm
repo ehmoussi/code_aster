@@ -21,10 +21,8 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
-import os
 
-os.system("mfront --obuild MonoCrystal_CFC.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so MonoCrystal_CFC.so")
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=39)
 
 MAIL=LIRE_MAILLAGE(FORMAT='MED',);
 
@@ -251,7 +249,7 @@ MFRONT=STAT_NON_LINE(MODELE=MO,
                           ),
                     COMPORTEMENT=_F(RELATION='MFRONT',
                                     NOM_ROUTINE='astermonocrystal_cfc',
-                                    LIBRAIRIE='MonoCrystal_CFC.so',
+                                    UNITE_LIBRAIRIE=39,
                                     RESI_INTE_MAXI=1e-11,
                                     ITER_INTE_MAXI=100,
                                             ),

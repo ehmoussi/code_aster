@@ -30,10 +30,8 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
 import numpy as NP
 from numpy.linalg import norm
 
-import os
 
-os.system("mfront --obuild MonoDDCFC_Irra.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so MonoDDCFC_Irra.so")
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=40)
 
 
 # MATERIAU DEFINI POUR LE COMPORTEMENT  DD_CFC. Unites : MPa, mm, N
@@ -230,7 +228,7 @@ IMPLMF=SIMU_POINT_MAT(INFO=1,
                       MASSIF=_F(ANGL_EULER=angles),
                       COMPORTEMENT=_F(RELATION='MFRONT',
                                       NOM_ROUTINE='astermonoddcfc_irra',
-                                      LIBRAIRIE='MonoDDCFC_Irra.so',
+                                      UNITE_LIBRAIRIE=40,
                                       RESI_INTE_MAXI=1e-12,
                                       ITER_INTE_MAXI=100,
                                             ),

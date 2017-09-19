@@ -26,7 +26,6 @@
 # Validation basée sur EPZZ et V7 (variables internes MFront) en testant
 # le maximum de la différence relative entre Code_Aster et MFront
 
-import os
 #from numpy import*
 import numpy as NP
 from numpy.linalg import norm
@@ -41,10 +40,8 @@ assert os.path.isfile("fort.30")
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
-import os
 
-os.system("mfront --obuild MonoCrystalDDCFC.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so MonoCrystalDDCFC.so")
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=40)
 
 reaciter=1
 info=1
@@ -238,7 +235,7 @@ RES2=SIMU_POINT_MAT( INFO=info,
                      MATER=MATF,
                      COMPORTEMENT=_F(RELATION='MFRONT',
                                      NOM_ROUTINE='astermonocrystalddcfc',
-                                     LIBRAIRIE='MonoCrystalDDCFC.so',
+                                     UNITE_LIBRAIRIE=40,
                                      RESI_INTE_MAXI=1e-10,
                                             ),
                       MASSIF=_F(ANGL_EULER=(phi1,phi,phi2)),
