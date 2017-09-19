@@ -21,8 +21,9 @@
 
 import numpy as np
 
-from code_aster import Function
-from code_aster.Cata import Commands, checkSyntax
+from ..Cata import Commands, checkSyntax
+from ..Extensions import Function
+from ..Utilities import compat_listr8
 
 
 funcParameterNames = (
@@ -35,6 +36,8 @@ funcParameterNames = (
 
 def DEFI_FONCTION( **kwargs ):
     """Définit une fonction réelle ou complexe d'une variable réelle"""
+    compat_listr8(kwargs, None, "VALE_PARA", "ABSCISSE")
+    compat_listr8(kwargs, None, "VALE_FONC", "ORDONNEE")
     checkSyntax(Commands.DEFI_FONCTION, kwargs)
 
     NOM_PARA = kwargs['NOM_PARA']
@@ -42,16 +45,13 @@ def DEFI_FONCTION( **kwargs ):
     # default values
     NOM_RESU = kwargs.get("NOM_RESU", "TOUTRESU")
     ABSCISSE = kwargs.get("ABSCISSE")
-    VALE_PARA = kwargs.get("VALE_PARA")
     VALE = kwargs.get("VALE")
     VALE_C = kwargs.get("VALE_C")
     # switch
+    assert not (kwargs.get("VALE_PARA") or kwargs.get("VALE_FONC"))
     if ABSCISSE is not None:
         absc = np.array(ABSCISSE)
         ordo = np.array(kwargs["ORDONNEE"])
-    elif VALE_PARA is not None:
-        absc = np.array(VALE_PARA)
-        ordo = np.array(kwargs["VALE_FONC"])
     elif VALE is not None:
         values = np.array(VALE)
         values = values.reshape( ( values.size / 2, 2 ) )

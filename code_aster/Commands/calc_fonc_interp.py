@@ -18,11 +18,11 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 # person_in_charge: mathieu.courtois@edf.fr
-from code_aster.Cata import Commands, checkSyntax
-from code_aster.RunManager.AsterFortran import python_execop
-from code_aster.Supervis.libCommandSyntax import CommandSyntax
-from code_aster.Utilities import compat_listr8
-from code_aster import Function
+from ..Cata import Commands, checkSyntax
+from ..Extensions import Function
+from ..RunManager.AsterFortran import python_execop
+from ..Supervis.libCommandSyntax import CommandSyntax
+from ..Utilities import compat_listr8
 
 
 def CALC_FONC_INTERP(**kwargs):
