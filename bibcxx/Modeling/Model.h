@@ -31,6 +31,7 @@
 #include "DataStructures/DataStructure.h"
 #include "Meshes/Mesh.h"
 #include "Meshes/ParallelMesh.h"
+#include "Meshes/PartialMesh.h"
 #include "Modeling/ElementaryModeling.h"
 #include <map>
 
@@ -38,17 +39,17 @@
 #include "Utilities/SyntaxDictionary.h"
 
 /**
- * @enum ModelSiplitingMethod
+ * @enum ModelSplitingMethod
  * @brief Methodes de partitionnement du modèle
  * @author Nicolas Sellenet
  */
-enum ModelSiplitingMethod { Centralized, SubDomain, GroupOfElementsSplit };
-const int nbModelSiplitingMethod = 3;
+enum ModelSplitingMethod { Centralized, SubDomain, GroupOfElementsSplit };
+const int nbModelSplitingMethod = 3;
 /**
- * @var ModelSiplitingMethodNames
+ * @var ModelSplitingMethodNames
  * @brief Nom Aster des differents partitionnement
  */
-extern const char* const ModelSiplitingMethodNames[nbModelSiplitingMethod];
+extern const char* const ModelSplitingMethodNames[nbModelSplitingMethod];
 
 /**
  * @enum GraphPartitioner
@@ -94,8 +95,15 @@ class ModelInstance: public DataStructure
         listOfModsAndGrps    _modelisations;
         /** @brief Maillage sur lequel repose la modelisation */
         BaseMeshPtr          _supportBaseMesh;
+        /**
+         * @brief Maillage sur lequel repose la modelisation
+         * @todo a supprimer en templatisant Model etc.
+         */
+#ifdef _USE_MPI
+        PartialMeshPtr       _supportPartialMesh;
+#endif /* _USE_MPI */
         /** @brief Méthode de parallélisation du modèle */
-        ModelSiplitingMethod _splitMethod;
+        ModelSplitingMethod _splitMethod;
         /** @brief Graph partitioning */
         GraphPartitioner     _graphPartitioner;
         /** @brief Booleen indiquant si la sd a deja ete remplie */
@@ -182,6 +190,15 @@ class ModelInstance: public DataStructure
             return _supportBaseMesh;
         };
 
+#ifdef _USE_MPI
+        PartialMeshPtr getPartialMesh() throw ( std::runtime_error )
+        {
+            if ( ( ! _supportPartialMesh ) || _supportPartialMesh->isEmpty() )
+                throw std::runtime_error( "Support mesh of current model is empty" );
+            return _supportPartialMesh;
+        };
+#endif /* _USE_MPI */
+
         /**
          * @brief Methode permettant de savoir si le modele est vide
          * @return true si le modele est vide
@@ -194,7 +211,7 @@ class ModelInstance: public DataStructure
         /**
          * @brief Definition de la methode de partition
          */
-        void setSplittingMethod( ModelSiplitingMethod split, GraphPartitioner partitioner )
+        void setSplittingMethod( ModelSplitingMethod split, GraphPartitioner partitioner )
         {
             _splitMethod = split;
             _graphPartitioner = partitioner;
@@ -203,9 +220,25 @@ class ModelInstance: public DataStructure
         /**
          * @brief Definition de la methode de partition
          */
-        void setSplittingMethod( ModelSiplitingMethod split )
+        void setSplittingMethod( ModelSplitingMethod split )
         {
             _splitMethod = split;
+        };
+
+        /**
+         * @brief Obtention de la methode de partition
+         */
+        ModelSplitingMethod getSplittingMethod( )
+        {
+            return _splitMethod ;
+        };
+
+        /**
+         * @brief Obtention de la methode du partitioner
+         */
+        GraphPartitioner getGraphPartitioner( )
+        {
+            return _graphPartitioner ;
         };
 
         /**
@@ -230,6 +263,21 @@ class ModelInstance: public DataStructure
             if ( currentMesh->isEmpty() )
                 throw std::runtime_error( "Mesh is empty" );
             _supportBaseMesh = currentMesh;
+            return true;
+        };
+#endif /* _USE_MPI */
+
+        /**
+         * @brief Definition du maillage support
+         * @param currentMesh objet PartialMeshPtr sur lequel le modele reposera
+         */
+#ifdef _USE_MPI
+        bool setSupportMesh( PartialMeshPtr& currentMesh ) throw ( std::runtime_error )
+        {
+            if ( currentMesh->isEmpty() )
+                throw std::runtime_error( "Mesh is empty" );
+            _supportBaseMesh = currentMesh;
+            _supportPartialMesh = currentMesh;
             return true;
         };
 #endif /* _USE_MPI */

@@ -25,7 +25,8 @@ from code_aster import ElementaryCharacteristics
 
 
 def AFFE_CARA_ELEM(**curDict):
-    returnCaraElem = ElementaryCharacteristics.create()
+    model = curDict["MODELE"]
+    returnCaraElem = ElementaryCharacteristics.create( model )
     name = returnCaraElem.getName()
     type = returnCaraElem.getType()
     syntax = CommandSyntax("AFFE_CARA_ELEM")

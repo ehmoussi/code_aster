@@ -27,9 +27,10 @@
 
 #include "Modeling/PrestressingCableDefinition.h"
 
-PrestressingCableDefinitionInstance::PrestressingCableDefinitionInstance():
+PrestressingCableDefinitionInstance::PrestressingCableDefinitionInstance( const MeshPtr& mesh ):
     DataStructure( getNewResultObjectName(), "CABL_PRECONT" ),
-    _sigin( new PCFieldOnMeshInstanceDouble( getName() + ".CHME.SIGIN" ) ),
+    _mesh( mesh ),
+    _sigin( new PCFieldOnMeshDoubleInstance( getName() + ".CHME.SIGIN", mesh ) ),
     _cableBP( new TableInstance( getName() + "CABLEBP    " ) ),
     _cableGL( new TableInstance( getName() + "CABLEGL    " ) ),
     _lirela( new ListOfLinearRelationsDouble( getName() + ".LIRELA    " ) ),

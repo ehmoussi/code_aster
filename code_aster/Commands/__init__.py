@@ -15,6 +15,7 @@ from code_aster.Commands.calc_fonc_interp import CALC_FONC_INTERP
 from code_aster.Commands.calc_matr_elem import CALC_MATR_ELEM
 from code_aster.Commands.comb_fourier import COMB_FOURIER
 from code_aster.Commands.crea_champ import CREA_CHAMP
+from code_aster.Commands.crea_maillage import CREA_MAILLAGE
 from code_aster.Commands.crea_resu import CREA_RESU
 from code_aster.Commands.crea_table import CREA_TABLE
 from code_aster.Commands.defi_compor import DEFI_COMPOR

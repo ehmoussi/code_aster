@@ -28,8 +28,7 @@ materElas = code_aster.ElasMaterialBehaviour.create()
 materElas.setDoubleValue( "E", YOUNG )
 materElas.setDoubleValue( "Nu", POISSON )
 
-acier = code_aster.Material.create()
-acier.addMaterialBehaviour(materElas)
+acier = code_aster.Material.create(materElas)
 acier.build()
 
 affectMat = code_aster.MaterialOnMesh.create()

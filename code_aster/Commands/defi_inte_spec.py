@@ -25,7 +25,7 @@ from code_aster import InterspectralMatrix
 
 
 def DEFI_INTE_SPEC(**curDict):
-    returnMatrix = InterspectralMatrix()
+    returnMatrix = InterspectralMatrix.create()
     name = returnMatrix.getName()
     type = returnMatrix.getType()
     syntax = CommandSyntax("DEFI_INTE_SPEC")

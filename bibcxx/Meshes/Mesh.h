@@ -103,6 +103,7 @@ public:
      */
     MeshCoordinatesFieldPtr getCoordinates() const
     {
+        _coordinates->updateValuePointers();
         return _coordinates;
     };
 

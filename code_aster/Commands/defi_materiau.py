@@ -30,7 +30,9 @@ def _byKeyword():
     """Build the list of all objects of the given type"""
     objects = {}
     for name in dir(code_aster.libaster):
-        obj = getattr(code_aster, name)
+        obj = None
+        try: obj = getattr(code_aster, name)
+        except: pass
         if name == "GeneralMaterialBehaviour" or type(obj) is type:
             continue
         try:

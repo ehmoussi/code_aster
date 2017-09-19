@@ -62,9 +62,9 @@ class JeveuxBidirectionalMapInstance: public JeveuxObjectInstance,
 
         /**
          * @brief Ajout d'un élément
-         * @param mem Mémoire d'allocation
-         * @param size Taille
-         * @return vrai en cas d'allocation
+         * @param position position of element to add
+         * @param toAdd value to add
+         * @return true if adding is ok
          */
         bool add( const int& position, const ValueType& toAdd )
         {

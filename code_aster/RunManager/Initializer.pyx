@@ -28,21 +28,21 @@ from code_aster.RunManager.loading import loadObjects
 
 def finalize():
     """Finalize Code_Aster execution"""
-    if libaster.get_sh_jeveux_status() != 1:
-        return
-    syntax = CommandSyntax( "FIN" )
-    syntax.define( _F( INFO_RESU="NON" ) )
-    cdef INTEGER numOp = 9999
-    libaster.execop_( &numOp )
-    libaster.register_sh_jeveux_status( 0 )
-    syntax.free()
+    #if libaster.get_sh_jeveux_status() != 1:
+        #return
+    #syntax = CommandSyntax( "FIN" )
+    #syntax.define( _F( INFO_RESU="NON" ) )
+    #cdef INTEGER numOp = 9999
+    #libaster.execop_( &numOp )
+    #libaster.register_sh_jeveux_status( 0 )
+    #syntax.free()
 
 
 def init( int mode ):
     """Initialize Code_Aster & its memory manager"""
     # TODO: what future for aster modules?
     # At least: aster_mpi_init, exceptions, med module...
-    libaster.initAsterModules()
+    #libaster.initAsterModules()
 
     # _aster_core must be initialized
     import aster_core
@@ -73,7 +73,7 @@ def init( int mode ):
         loadObjects(level=2)
 
     syntax.free()
-    atexit.register( finalize )
+    #atexit.register( finalize )
 
 
 def cataBuilder():

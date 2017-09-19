@@ -20,9 +20,29 @@
 # person_in_charge: guillaume.drouet@edf.fr
 
 from code_aster import StaticModeInterf, StaticModePseudo, StaticModeForc, StaticModeDepl
-from code_aster import MultFrontSolver, LdltSolver, MumpsSolver, PetscSolver, GcpcSolver
+from code_aster import MultFrontSolver, LdltSolver, MumpsSolver, PetscSolver, GcpcSolver, Renumbering
 from code_aster.Cata import Commands, checkSyntax
 from code_aster import getGlossary
+
+def buildSolverObject(dictSolver):
+    """
+    .. todo:: Rajouter les autres mots-clés
+    """
+    solver=None
+    if dictSolver == None:
+        solver = MultFrontSolver.create()
+    else:
+        if dictSolver["METHODE"] == "MULT_FRONT":
+            solver = MultFrontSolver.create()
+        elif dictSolver["METHODE"] == "MUMPS":
+            solver = MumpsSolver.create()
+        elif dictSolver["METHODE"] == "LDLT":
+            solver = LdltSolver.create()
+        elif dictSolver["METHODE"] == "PETSC":
+            solver = PetscSolver.create()
+        elif dictSolver["METHODE"] == "GCPC":
+            solver = GcpcSolver.create()
+    return solver
 
 
 def MODE_STATIQUE( **kwargs ):
@@ -48,7 +68,7 @@ def MODE_STATIQUE( **kwargs ):
         if kwtout != None:
             mode_stat.setAllLoc()
         if kwGroupNo != None:
-            mode_stat.WantedGrno(kwGroupNo)
+            mode_stat.WantedGrno(list(kwGroupNo))
         # Exactly one ("TOUT_CMP", "AVEC_CMP", "SANS CMP")
         kwtoutcmp = fkw_mstat.get( "TOUT_CMP" )
         kwcmpad   = fkw_mstat.get( "AVEC_CMP" )
@@ -56,11 +76,11 @@ def MODE_STATIQUE( **kwargs ):
         if kwtoutcmp != None:
             mode_stat.setAllCmp()
         if kwcmpad != None:
-            mode_stat.Wantedcmp(kwcmpad)
+            mode_stat.Wantedcmp(list(kwcmpad))
         elif kwcmple != None:
-            mode_stat.Unwantedcmp(kwcmple)
-        solver=LinearSolver.create();
+            mode_stat.Unwantedcmp(list(kwcmple))
         fkw_solver = kwargs.get( "SOLVEUR" )
+        solver = buildSolverObject(fkw_solver)
         if fkw_solver != None:
             print(NotImplementedError("Not yet implemented: '{0}' is ignored".format("SOLVEUR")))
         mode_stat.setLinearSolver(solver)
@@ -86,11 +106,11 @@ def MODE_STATIQUE( **kwargs ):
         if kwtoutcmp != None:
             force_noda.setAllCmp()
         elif kwcmpad != None:
-            force_noda.Wantedcmp(kwcmpad)
+            force_noda.Wantedcmp(list(kwcmpad))
         elif kwcmple != None:
-            force_noda.Unwantedcmp(kwcmple)
-        solver=LinearSolver.create();
+            force_noda.Unwantedcmp(list(kwcmple))
         fkw_solver = kwargs.get( "SOLVEUR" )
+        solver = buildSolverObject(fkw_solver)
         if fkw_solver != None:
             print(NotImplementedError("Not yet implemented: '{0}' is ignored".format("SOLVEUR")))
         force_noda.setLinearSolver(solver)
@@ -111,7 +131,7 @@ def MODE_STATIQUE( **kwargs ):
         elif kwDir != None:
             kwdirname = fkw_psdo.get( "NOM_DIR" )
             pseudo_mod.setDirname(kwdirname)
-            pseudo_mod.WantedDir(kwDir)
+            pseudo_mod.WantedDir(list(kwDir))
         elif kwAxe != None:
             pseudo_mod.Wanted_axe(kwAxe)
         # Bloc (TOUT=OUI or "GROUP_NO" != None)
@@ -123,11 +143,11 @@ def MODE_STATIQUE( **kwargs ):
             if kwtoutcmp!=None:
                 pseudo_mod.setAllCmp()
             elif kwcmpad != None:
-                pseudo_mod.Wantedcmp(kwcmpad)
+                pseudo_mod.Wantedcmp(list(kwcmpad))
             elif kwcmple != None:
-                pseudo_mod.Unwantedcmp(kwcmple)
-        solver=LinearSolver.create();
+                pseudo_mod.Unwantedcmp(list(kwcmple))
         fkw_solver = kwargs.get( "SOLVEUR" )
+        solver = buildSolverObject(fkw_solver)
         if fkw_solver != None:
             print(NotImplementedError("Not yet implemented: '{0}' is ignored".format("SOLVEUR")))
         pseudo_mod.setLinearSolver(solver)
@@ -152,15 +172,15 @@ def MODE_STATIQUE( **kwargs ):
         if kwtoutcmp != None:
             mode_interf.setAllCmp()
         elif kwcmpad != None:
-            mode_interf.Wantedcmp(kwcmpad)
+            mode_interf.Wantedcmp(list(kwcmpad))
         elif kwcmple != None:
-            mode_interf.Unwantedcmp(kwcmple)
+            mode_interf.Unwantedcmp(list(kwcmple))
         kwnbmod = fkw_interf.get("NBMOD")
         mode_interf.setNbmod(kwnbmod)
         kwshift = fkw_interf.get("SHIFT")
         mode_interf.setShift(kwshift)
-        solver=LinearSolver.create();
         fkw_solver = kwargs.get( "SOLVEUR" )
+        solver = buildSolverObject(fkw_solver)
         if fkw_solver != None:
             print(NotImplementedError("Not yet implemented: '{0}' is ignored".format("SOLVEUR")))
         mode_interf.setLinearSolver(solver)

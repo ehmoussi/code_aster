@@ -1,6 +1,6 @@
 /**
- * @file ParallelMeshInterface.cxx
- * @brief Interface python de ParallelMesh
+ * @file ParallelMechanicalLoad.cxx
+ * @brief Implementation de ParallelMechanicalLoad
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,24 +21,20 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: nicolas.sellenet at edf.fr */
-
-#include "PythonBindings/ParallelMeshInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "Loads/ParallelMechanicalLoad.h"
 
 #ifdef _USE_MPI
 
-#include <boost/python.hpp>
-
-void exportParallelMeshToPython()
+ParallelMechanicalLoadInstance::ParallelMechanicalLoadInstance( GenericMechanicalLoadPtr& load ):
+                    GenericMechanicalLoadInstance( load->getSupportModel() )
 {
-    using namespace boost::python;
-    class_< ParallelMeshInstance, ParallelMeshInstance::ParallelMeshPtr,
-            bases< BaseMeshInstance > >( "ParallelMesh", no_init )
-        .def( "create", &createSharedPtr< ParallelMeshInstance > )
-        .staticmethod( "create" )
-        .def( "readMedFile", &ParallelMeshInstance::readMedFile )
-    ;
+    const auto& mesh = load->getSupportModel()->getPartialMesh();
+    const auto& mecaLoad = load->getMechanicalLoadDescription();
+    std::cout << "Size "  << mecaLoad._cimpo->getSize() << std::endl;
+//     for( int pos; pos < mecaLoad._cimpo->getSize(); ++pos )
+//     {
+//         
+//     }
 };
 
 #endif /* _USE_MPI */

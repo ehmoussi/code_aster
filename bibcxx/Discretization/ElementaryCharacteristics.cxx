@@ -28,7 +28,22 @@
 #include "Python.h"
 #include "Discretization/ElementaryCharacteristics.h"
 
-ElementaryCharacteristicsInstance::ElementaryCharacteristicsInstance():
+ElementaryCharacteristicsInstance::ElementaryCharacteristicsInstance( const ModelPtr& model ):
     DataStructure( getNewResultObjectName(), "CARA_ELEM" ),
+    _model( model ),
+    _mesh( model->getSupportMesh() ),
+    _numberOfSubpoints( new PCFieldOnMeshLongInstance( getName() + ".CANBSP", _mesh ) ),
+    _curveBeam( new PCFieldOnMeshDoubleInstance( getName() + ".CARARCPO", _mesh ) ),
+    _cable( new PCFieldOnMeshDoubleInstance( getName() + ".CARCABLE", _mesh ) ),
+    _shell( new PCFieldOnMeshDoubleInstance( getName() + ".CARCOQUE", _mesh ) ),
+    _dumping( new PCFieldOnMeshDoubleInstance( getName() + ".CARDISCA", _mesh ) ),
+    _rigidity( new PCFieldOnMeshDoubleInstance( getName() + ".CARDISCK", _mesh ) ),
+    _mass( new PCFieldOnMeshDoubleInstance( getName() + ".CARDISCM", _mesh ) ),
+    _bar( new PCFieldOnMeshDoubleInstance( getName() + ".CARGENBA", _mesh ) ),
+    _beamSection( new PCFieldOnMeshDoubleInstance( getName() + ".CARGENPO", _mesh ) ),
+    _beamGeometry( new PCFieldOnMeshDoubleInstance( getName() + ".CARGEOPO", _mesh ) ),
+    _orthotropicBasis( new PCFieldOnMeshDoubleInstance( getName() + ".CARMASSI", _mesh ) ),
+    _localBasis( new PCFieldOnMeshDoubleInstance( getName() + ".CARORIEN", _mesh ) ),
+    _beamCharacteristics( new PCFieldOnMeshDoubleInstance( getName() + ".CARPOUFL", _mesh ) ),
     _isEmpty( true )
 {};

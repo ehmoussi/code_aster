@@ -30,6 +30,7 @@
 #include "definition.h"
 #include "DataStructures/DataStructure.h"
 #include "DataFields/PCFieldOnMesh.h"
+#include "Modeling/Model.h"
 
 /**
  * @class ElementaryCharacteristicsInstance
@@ -39,32 +40,36 @@
 class ElementaryCharacteristicsInstance: public DataStructure
 {
 private:
+    /** @brief Support model */
+    ModelPtr               _model;
+    /** @brief Support mesh */
+    BaseMeshPtr            _mesh;
     /** @brief Objet Jeveux '.CANBSP' */
-    PCFieldOnMeshLongPtr   _nummberOfSubpoints;
+    PCFieldOnMeshLongPtr   _numberOfSubpoints;
     /** @brief Objet Jeveux '.CARARCPO' */
-    PCFieldOnMeshPtrDouble _curveBeam;
+    PCFieldOnMeshDoublePtr _curveBeam;
     /** @brief Objet Jeveux '.CARCABLE' */
-    PCFieldOnMeshPtrDouble _cable;
+    PCFieldOnMeshDoublePtr _cable;
     /** @brief Objet Jeveux '.CARCOQUE' */
-    PCFieldOnMeshPtrDouble _shell;
+    PCFieldOnMeshDoublePtr _shell;
     /** @brief Objet Jeveux '.CARDISCA' */
-    PCFieldOnMeshPtrDouble _dumping;
+    PCFieldOnMeshDoublePtr _dumping;
     /** @brief Objet Jeveux '.CARDISCK' */
-    PCFieldOnMeshPtrDouble _rigidity;
+    PCFieldOnMeshDoublePtr _rigidity;
     /** @brief Objet Jeveux '.CARDISCM' */
-    PCFieldOnMeshPtrDouble _mass;
+    PCFieldOnMeshDoublePtr _mass;
     /** @brief Objet Jeveux '.CARGENBA' */
-    PCFieldOnMeshPtrDouble _bar;
+    PCFieldOnMeshDoublePtr _bar;
     /** @brief Objet Jeveux '.CARGENPO' */
-    PCFieldOnMeshPtrDouble _beamSection;
+    PCFieldOnMeshDoublePtr _beamSection;
     /** @brief Objet Jeveux '.CARGEOPO' */
-    PCFieldOnMeshPtrDouble _beamGeometry;
+    PCFieldOnMeshDoublePtr _beamGeometry;
     /** @brief Objet Jeveux '.CARMASSI' */
-    PCFieldOnMeshPtrDouble _orthotropicBasis;
+    PCFieldOnMeshDoublePtr _orthotropicBasis;
     /** @brief Objet Jeveux '.CARORIEN' */
-    PCFieldOnMeshPtrDouble _localBasis;
+    PCFieldOnMeshDoublePtr _localBasis;
     /** @brief Objet Jeveux '.CARPOUFL' */
-    PCFieldOnMeshPtrDouble _beamCharacteristics;
+    PCFieldOnMeshDoublePtr _beamCharacteristics;
 
     /** @brief Booleen indiquant si le maillage est vide */
     bool                   _isEmpty;
@@ -79,15 +84,15 @@ public:
     /**
      * @brief Constructeur
      */
-    static ElementaryCharacteristicsPtr create()
+    static ElementaryCharacteristicsPtr create( const ModelPtr& model )
     {
-        return ElementaryCharacteristicsPtr( new ElementaryCharacteristicsInstance );
+        return ElementaryCharacteristicsPtr( new ElementaryCharacteristicsInstance( model ) );
     };
 
     /**
      * @brief Constructeur
      */
-    ElementaryCharacteristicsInstance();
+    ElementaryCharacteristicsInstance( const ModelPtr& model );
 
     /**
      * @brief Destructeur

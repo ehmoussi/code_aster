@@ -21,25 +21,17 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: nicolas.sellenet at edf.fr */
-
 #include "Meshes/PartialMesh.h"
 #include "ParallelUtilities/MPIInfos.h"
+#include "aster_fort.h"
 
 #ifdef _USE_MPI
 
 PartialMeshInstance::PartialMeshInstance( ParallelMeshPtr& mesh, const VectorString& toFind ):
-                        DataStructure( getNewResultObjectName(), "MAILLAGE_PARTIEL" ),
-                        _dimensionInformations( getName() + ".DIME      " ),
-                        _nameOfNodes( getName() + ".NOMNOE    " ),
-                        _coordinates( new MeshCoordinatesFieldInstance( getName() + ".COORDO    " ) ),
-                        _nameOfGrpNodes( JeveuxBidirectionalMapChar24( getName() + ".PTRNOMNOE " ) ),
-                        _groupsOfNodes( JeveuxCollectionLongNamePtr( getName() + ".GROUPENO  ",
-                                                                     _nameOfGrpNodes ) ),
-                        _connectivity( getName() + ".CONNEX    " ),
-                        _nameOfElements( getName() + ".NOMMAI    " ),
-                        _elementsType( getName() + ".TYPMAIL   " ),
-                        _isEmpty( false )
+                        BaseMeshInstance( "MAILLAGE_PARTIEL" ),
+                        _localNumbering( getName() + ".LOCAL" ),
+                        _globalNumbering( getName() + ".GLOBAL" ),
+                        _owner( getName() + ".POSSESSEUR" )
 {
     aster_comm_t* commWorld = aster_get_comm_world();
 
@@ -52,7 +44,7 @@ PartialMeshInstance::PartialMeshInstance( ParallelMeshPtr& mesh, const VectorStr
     VectorLong toSend;
     typedef std::map< std::string, VectorLong > MapStringVecInt;
     MapStringVecInt myMap, gatheredMap;
-    int count = 0;
+    int count = 1;
     for( const auto& nameOfGrp : toFind )
     {
         if( mesh->hasLocalGroupOfNodes( nameOfGrp ) )
@@ -91,8 +83,9 @@ PartialMeshInstance::PartialMeshInstance( ParallelMeshPtr& mesh, const VectorStr
         coords.push_back( (*meshCoords)[ nodeNum*3 ] );
         coords.push_back( (*meshCoords)[ nodeNum*3 + 1 ] );
         coords.push_back( (*meshCoords)[ nodeNum*3 + 2 ] );
-        numbering.push_back( nodeNum );
+        numbering.push_back( nodeNum + 1 );
         numbering.push_back( (*globalNum)[ nodeNum ] );
+        numbering.push_back( rank );
     }
     VectorDouble completeCoords;
     VectorLong completeMatchingNumbering;
@@ -156,6 +149,17 @@ PartialMeshInstance::PartialMeshInstance( ParallelMeshPtr& mesh, const VectorStr
     }
 
     nbNodes = completeCoords.size()/3;
+
+    _localNumbering->allocate( Permanent, nbNodes );
+    _globalNumbering->allocate( Permanent, nbNodes );
+    _owner->allocate( Permanent, nbNodes );
+    for( int i = 0; i < nbNodes; ++i )
+    {
+        (*_localNumbering)[i] = completeMatchingNumbering[3*i];
+        (*_globalNumbering)[i] = completeMatchingNumbering[3*i+1];
+        (*_owner)[i] = completeMatchingNumbering[3*i+2];
+    }
+
     *_coordinates->getFieldDescriptor() = *mesh->getCoordinates()->getFieldDescriptor();
     *_coordinates->getFieldReference() = *mesh->getCoordinates()->getFieldReference();
     auto values = _coordinates->getFieldValues();
@@ -165,6 +169,7 @@ PartialMeshInstance::PartialMeshInstance( ParallelMeshPtr& mesh, const VectorStr
         (*values)[ position ] = completeCoords[ position ];
     _dimensionInformations->allocate( Permanent, 6 );
     (*_dimensionInformations)[0] = nbNodes;
+    (*_dimensionInformations)[2] = nbNodes;
     _nameOfNodes->allocate( Permanent, nbNodes );
     for( int position = 1; position <= nbNodes; ++position )
         _nameOfNodes->add( position, std::string( "N" + std::to_string( position ) ) );
@@ -176,6 +181,19 @@ PartialMeshInstance::PartialMeshInstance( ParallelMeshPtr& mesh, const VectorStr
         _groupsOfNodes->allocateObjectByName( nameOfGrp, toCopy.size() );
         _groupsOfNodes->getObjectFromName( nameOfGrp ).setValues( toCopy );
     }
+
+    _nameOfElements->allocate( Permanent, nbNodes );
+    _elementsType->allocate( Permanent, nbNodes );
+    _connectivity->allocateContiguous( Permanent, nbNodes, nbNodes, Numbered );
+    for( int position = 1; position <= nbNodes; ++position )
+    {
+        _nameOfElements->add( position, std::string( "M" + std::to_string( position ) ) );
+        _connectivity->allocateObject( 1 );
+        _connectivity->getObject( position - 1 ).setValues( position );
+        (*_elementsType)[ position-1 ] = 1;
+    }
+    CALL_CARGEO( getName().c_str() );
+    _isEmpty = false;
 };
 
 #endif /* _USE_MPI */

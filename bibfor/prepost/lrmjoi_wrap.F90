@@ -40,7 +40,8 @@ subroutine lrmjoi_wrap(nomu, nofimd)
 #include "asterfort/wkvect.h"
 !
     character(len=8) :: nomu
-    character(len=64) :: nofimd, nomamd
+    character(len=*) :: nofimd
+    character(len=64) :: nomamd
 !
     character(len=24) :: cooval, coodsc, cooref, grpnoe, grpmai, connex
     character(len=24) :: titre, nommai, nomnoe, typmai, adapma, gpptnn, gpptnm
@@ -77,7 +78,7 @@ subroutine lrmjoi_wrap(nomu, nofimd)
 !
     call as_mfiope(fid, nofimd, edlect, codret)
     if (codret .ne. 0) then
-        valk(1) = nofimd(1:32)
+        valk(1) = nofimd
         valk(2) = nomamd
         vali(1) = codret
         call utmess('A', 'MODELISA9_51', nk=2, valk=valk, si=vali(1))

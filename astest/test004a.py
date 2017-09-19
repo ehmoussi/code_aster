@@ -24,8 +24,7 @@ acier.addMaterialBehaviour(materElas)
 acier.build()
 acier.debugPrint(6)
 
-affectMat = code_aster.MaterialOnMesh.create()
-affectMat.setSupportMesh( monMaillage )
+affectMat = code_aster.MaterialOnMesh.create(monMaillage)
 affectMat.addMaterialOnAllMesh( acier )
 affectMat.build()
 
@@ -38,8 +37,7 @@ charMeca1.build()
 
 imposedPres1 = code_aster.PressureDouble.create()
 imposedPres1.setValue( code_aster.PhysicalQuantityComponent.Pres, 1000. )
-charMeca2 = code_aster.DistributedPressureDouble.create()
-charMeca2.setSupportModel( monModel )
+charMeca2 = code_aster.DistributedPressureDouble.create(monModel)
 charMeca2.setValue( imposedPres1, "Haut" )
 charMeca2.build()
 

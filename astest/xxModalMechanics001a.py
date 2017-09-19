@@ -13,7 +13,7 @@ MAT=DEFI_MATERIAU(ELAS = _F(RHO = 7.8E03,
                             AMOR_ALPHA = 1.6E-5,
                             AMOR_BETA = 16.,),)
 
-MAYA=code_aster.Mesh()
+MAYA=code_aster.Mesh.create()
 MAYA.readMedFile('xxModalMechanics001a.med')
 MAYA.addGroupOfNodesFromNodes("N26", ["N26"])
 
@@ -26,38 +26,33 @@ POVOL=AFFE_MODELE(MAILLAGE = MAYA,
                           MODELISATION = '3D',
                           PHENOMENE = 'MECANIQUE',),)
 
-imposedPres1 = code_aster.PressureDouble()
+imposedPres1 = code_aster.PressureDouble.create()
 imposedPres1.setValue( code_aster.Loads.Pres, 500000. )
-PRESSION = code_aster.DistributedPressureDouble()
-PRESSION.setSupportModel( POVOL )
+PRESSION = code_aster.DistributedPressureDouble.create(POVOL)
 PRESSION.setValue( imposedPres1, "PRESSION" )
 PRESSION.build()
 
-imposedDof1 = code_aster.DisplacementDouble()
+imposedDof1 = code_aster.DisplacementDouble.create()
 imposedDof1.setValue( code_aster.Loads.Dy, 0.0 )
-CharMeca1 = code_aster.ImposedDisplacementDouble()
-CharMeca1.setSupportModel( POVOL )
+CharMeca1 = code_aster.ImposedDisplacementDouble.create(POVOL)
 CharMeca1.setValue( imposedDof1, "COND1" )
 CharMeca1.build()
 
-imposedDof2 = code_aster.DisplacementDouble()
+imposedDof2 = code_aster.DisplacementDouble.create()
 imposedDof2.setValue( code_aster.Loads.Dz, 0.0 )
-CharMeca2 = code_aster.ImposedDisplacementDouble()
-CharMeca2.setSupportModel( POVOL )
+CharMeca2 = code_aster.ImposedDisplacementDouble.create(POVOL)
 CharMeca2.setValue( imposedDof1, "CONDZG" )
 CharMeca2.build()
 
-imposedDof3 = code_aster.DisplacementDouble()
+imposedDof3 = code_aster.DisplacementDouble.create()
 imposedDof3.setValue( code_aster.Loads.Dx, 0.0 )
-CharMeca3 = code_aster.ImposedDisplacementDouble()
-CharMeca3.setSupportModel( POVOL )
+CharMeca3 = code_aster.ImposedDisplacementDouble.create(POVOL)
 CharMeca3.setValue( imposedDof1, "N26" )
 CharMeca3.build()
 
-imposedDof4 = code_aster.DisplacementDouble()
+imposedDof4 = code_aster.DisplacementDouble.create()
 imposedDof4.setValue( code_aster.Loads.Dx, 0.0 )
-CharMeca4 = code_aster.ImposedDisplacementDouble()
-CharMeca4.setSupportModel( POVOL )
+CharMeca4 = code_aster.ImposedDisplacementDouble.create(POVOL)
 CharMeca4.setValue( imposedDof1, "DROITE" )
 CharMeca4.build()
 
