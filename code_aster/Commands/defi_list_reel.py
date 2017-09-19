@@ -21,7 +21,7 @@
 
 import numpy as np
 
-from code_aster.Cata import Commands, checkSyntax
+from ..Cata import Commands, checkSyntax
 
 
 def DEFI_LIST_REEL( **kwargs ):
