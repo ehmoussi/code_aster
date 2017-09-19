@@ -17,15 +17,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-import os.path as osp
 from functools import wraps
-import unittest
+import os.path as osp
 import re
-from unittest.util import safe_repr
+import unittest
 import unittest.case as case
+from unittest.util import safe_repr
 
-
-RESULT_FILE = "fort.8"
 
 # keep possible usage out of code_aster
 try:
@@ -132,29 +130,6 @@ class TestCase( unittest.TestCase ):
         writeInMess(fmt.format(funcTest, msg))
         writeInResu(fmt.format(funcTest, msg))
 
-    @addSuccess
-    def assertTrue(self, expr, msg=None):
-        """Check that the expression is true."""
-        super(TestCase, self).assertTrue(expr, msg)
-
-    @addSuccess
-    def assertEqual(self, first, second, msg=None):
-        super(TestCase, self).assertEqual(first, second, msg)
-
-    @addSuccess
-    def assertIsNone(self, obj, msg=None):
-        """Check that the object is None."""
-        super(TestCase, self).assertIsNone(obj, msg)
-
-    @addSuccess
-    def assertIsNotNone(self, obj, msg=None):
-        """Check that the object is not None."""
-        super(TestCase, self).assertIsNotNone(obj, msg)
-
-    @addSuccess
-    def assertAlmostEqual(self, first, second, places=7, msg=None, delta=None):
-        super(TestCase, self).assertAlmostEqual(first, second, places, msg, delta)
-
     # just use a derivated context class
     def assertRaises(self, excClass, callableObj=None, *args, **kwargs):
         """Fail unless an exception of class excClass is raised"""
@@ -172,3 +147,38 @@ class TestCase( unittest.TestCase ):
             return context
         with context:
             callable_obj(*args, **kwargs)
+
+
+def _add_assert_methods(cls):
+    for meth in  ['assertAlmostEqual',
+                  'assertDictContainsSubset',
+                  'assertDictEqual',
+                  'assertEqual',
+                  'assertFalse',
+                  'assertGreater',
+                  'assertGreaterEqual',
+                  'assertIn',
+                  'assertIs',
+                  'assertIsInstance',
+                  'assertIsNone',
+                  'assertIsNot',
+                  'assertIsNotNone',
+                  'assertItemsEqual',
+                  'assertLess',
+                  'assertLessEqual',
+                  'assertListEqual',
+                  'assertMultiLineEqual',
+                  'assertNotAlmostEqual',
+                  'assertNotEqual',
+                  'assertNotIn',
+                  'assertNotIsInstance',
+                  'assertNotRegexpMatches',
+                  'assertRegexpMatches',
+                  'assertSequenceEqual',
+                  'assertSetEqual',
+                  'assertTrue',
+                  'assertTupleEqual']:
+        setattr(cls, meth, addSuccess(getattr(unittest.TestCase, meth)))
+
+_add_assert_methods(TestCase)
+del _add_assert_methods
