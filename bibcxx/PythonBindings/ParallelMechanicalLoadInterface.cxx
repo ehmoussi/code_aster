@@ -1,6 +1,6 @@
 /**
- * @file ParallelMeshInterface.cxx
- * @brief Interface python de ParallelMesh
+ * @file ParallelMechanicalLoadInterface.cxx
+ * @brief Interface python de ParallelMechanicalLoad
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,23 +21,20 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: nicolas.sellenet at edf.fr */
-
-#include "PythonBindings/ParallelMeshInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/ParallelMechanicalLoadInterface.h"
+#include <boost/python.hpp>
 
 #ifdef _USE_MPI
 
-#include <boost/python.hpp>
-
-void exportParallelMeshToPython()
+void exportParallelMechanicalLoadToPython()
 {
     using namespace boost::python;
-    class_< ParallelMeshInstance, ParallelMeshInstance::ParallelMeshPtr,
-            bases< BaseMeshInstance > >( "ParallelMesh", no_init )
-        .def( "create", &createSharedPtr< ParallelMeshInstance > )
+
+    class_< ParallelMechanicalLoadInstance,
+            ParallelMechanicalLoadInstance::ParallelMechanicalLoadPtr,
+            bases< GenericMechanicalLoadInstance > > ( "ParallelMechanicalLoad", no_init )
+        .def( "create", &ParallelMechanicalLoadInstance::create )
         .staticmethod( "create" )
-        .def( "readMedFile", &ParallelMeshInstance::readMedFile )
     ;
 };
 

@@ -50,7 +50,6 @@ void exportMechanicalLoadToPython()
             bases< DataStructure > > ( "GenericMechanicalLoad", no_init )
         .def( "create", &GenericMechanicalLoadInstance::create )
         .staticmethod( "create" )
-        .def( "setSupportModel", &GenericMechanicalLoadInstance::setSupportModel )
     ;
 
     class_< NodalForceDoubleInstance,

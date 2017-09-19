@@ -23,6 +23,63 @@
 
 #include "PythonBindings/UnitaryThermalLoadInterface.h"
 #include <boost/python.hpp>
+#include <boost/python/overloads.hpp>
+
+BOOST_PYTHON_FUNCTION_OVERLOADS(DoubleImposedTemperaturecreate,
+                                DoubleImposedTemperatureInstance::create, 0, 1)
+
+BOOST_PYTHON_FUNCTION_OVERLOADS(DoubleDistributedFlowcreate,
+                                DoubleDistributedFlowInstance::create, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(DistributedFlowsetNormalFlow,
+                                       DoubleDistributedFlowInstance::setNormalFlow, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(DistributedFlowsetLowerNormalFlow,
+                                       DoubleDistributedFlowInstance::setLowerNormalFlow, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(DistributedFlowsetUpperNormalFlow,
+                                       DoubleDistributedFlowInstance::setUpperNormalFlow, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(DistributedFlowsetFlowXYZ,
+                                       DoubleDistributedFlowInstance::setFlowXYZ, 0, 3)
+
+BOOST_PYTHON_FUNCTION_OVERLOADS(DoubleNonLinearFlowcreate,
+                                DoubleNonLinearFlowInstance::create, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(DoubleNonLinearFlowsetFlow,
+                                       DoubleNonLinearFlowInstance::setFlow, 0, 1)
+
+BOOST_PYTHON_FUNCTION_OVERLOADS(DoubleExchangecreate, DoubleExchangeInstance::create, 0, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(DoubleExchangesetExchangeCoefficient,
+                                       DoubleExchangeInstance::setExchangeCoefficient, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(DoubleExchangesetExternalTemperature,
+                                       DoubleExchangeInstance::setExternalTemperature, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(DoubleExchangesetExchangeCoefficientInfSup,
+                                       DoubleExchangeInstance::setExchangeCoefficientInfSup, 0, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(DoubleExchangesetExternalTemperatureInfSup,
+                                       DoubleExchangeInstance::setExternalTemperatureInfSup, 0, 2)
+
+BOOST_PYTHON_FUNCTION_OVERLOADS(DoubleExchangeWallcreate, DoubleExchangeWallInstance::create, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(DoubleExchangeWallsetExchangeCoefficient,
+                                       DoubleExchangeWallInstance::setExchangeCoefficient, 0, 1)
+
+BOOST_PYTHON_FUNCTION_OVERLOADS(DoubleSourcecreate, DoubleSourceInstance::create, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(DoubleSourcesetSource,
+                                       DoubleSourceInstance::setSource, 0, 1)
+
+BOOST_PYTHON_FUNCTION_OVERLOADS(DoubleNonLinearSourcecreate,
+                                DoubleNonLinearSourceInstance::create, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(DoubleNonLinearSourcesetSource,
+                                       DoubleNonLinearSourceInstance::setSource, 0, 1)
+
+BOOST_PYTHON_FUNCTION_OVERLOADS(DoubleThermalRadiationcreate,
+                                DoubleThermalRadiationInstance::create, 0, 3)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(DoubleThermalRadiationsetExternalTemperature,
+                                       DoubleThermalRadiationInstance::setExternalTemperature, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(DoubleThermalRadiationsetEpsilon,
+                                       DoubleThermalRadiationInstance::setEpsilon, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(DoubleThermalRadiationsetSigma,
+                                       DoubleThermalRadiationInstance::setSigma, 0, 1)
+
+BOOST_PYTHON_FUNCTION_OVERLOADS(DoubleThermalGradientcreate,
+                                DoubleThermalGradientInstance::create, 0, 3)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(DoubleThermalGradientsetFlowXYZ,
+                                       DoubleThermalGradientInstance::setFlowXYZ, 0, 3)
 
 void exportUnitaryThermalLoadToPython()
 {
@@ -34,71 +91,111 @@ void exportUnitaryThermalLoadToPython()
 
     class_< DoubleImposedTemperatureInstance, DoubleImposedTemperaturePtr,
             bases< UnitaryThermalLoadInstance > > ( "DoubleImposedTemperature", no_init )
-        .def( "create", &DoubleImposedTemperatureInstance::create )
+        .def( "create", &DoubleImposedTemperatureInstance::create,
+              DoubleImposedTemperaturecreate() )
         .staticmethod( "create" )
         .def( "addGroupOfNodes", &DoubleImposedTemperatureInstance::addGroupOfNodes )
     ;
 
     class_< DoubleDistributedFlowInstance, DoubleDistributedFlowPtr,
             bases< UnitaryThermalLoadInstance > > ( "DoubleDistributedFlow", no_init )
-        .def( "create", &DoubleDistributedFlowInstance::create )
+        .def( "create", &DoubleDistributedFlowInstance::create,
+              DoubleDistributedFlowcreate() )
         .staticmethod( "create" )
         .def( "addGroupOfElements", &DoubleDistributedFlowInstance::addGroupOfElements )
-        .def( "setNormalFlow", &DoubleDistributedFlowInstance::setNormalFlow )
-        .def( "setLowerNormalFlow", &DoubleDistributedFlowInstance::setLowerNormalFlow )
-        .def( "setUpperNormalFlow", &DoubleDistributedFlowInstance::setUpperNormalFlow )
-        .def( "setFlowXYZ", &DoubleDistributedFlowInstance::setFlowXYZ )
+        .def( "setNormalFlow", &DoubleDistributedFlowInstance::setNormalFlow,
+              DistributedFlowsetNormalFlow() )
+        .def( "setLowerNormalFlow", &DoubleDistributedFlowInstance::setLowerNormalFlow,
+              DistributedFlowsetLowerNormalFlow() )
+        .def( "setUpperNormalFlow", &DoubleDistributedFlowInstance::setUpperNormalFlow,
+              DistributedFlowsetUpperNormalFlow() )
+        .def( "setFlowXYZ", &DoubleDistributedFlowInstance::setFlowXYZ, 
+              DistributedFlowsetFlowXYZ() )
     ;
 
     class_< DoubleNonLinearFlowInstance, DoubleNonLinearFlowPtr,
             bases< UnitaryThermalLoadInstance > > ( "DoubleNonLinearFlow", no_init )
-        .def( "create", &DoubleNonLinearFlowInstance::create )
+        .def( "create", &DoubleNonLinearFlowInstance::create,
+              DoubleNonLinearFlowcreate() )
         .staticmethod( "create" )
         .def( "addGroupOfElements", &DoubleNonLinearFlowInstance::addGroupOfElements )
-        .def( "setFlow", &DoubleNonLinearFlowInstance::setFlow )
+        .def( "setFlow", &DoubleNonLinearFlowInstance::setFlow,
+              DoubleNonLinearFlowsetFlow() )
     ;
 
     class_< DoubleExchangeInstance, DoubleExchangePtr,
             bases< UnitaryThermalLoadInstance > > ( "DoubleExchange", no_init )
-        .def( "create", &UnitaryThermalLoadInstance::create )
+        .def( "create", &DoubleExchangeInstance::create, DoubleExchangecreate() )
         .staticmethod( "create" )
         .def( "addGroupOfElements", &DoubleExchangeInstance::addGroupOfElements )
         .def( "setExchangeCoefficient",
-              &DoubleExchangeInstance::setExchangeCoefficient )
+              &DoubleExchangeInstance::setExchangeCoefficient,
+              DoubleExchangesetExchangeCoefficient() )
         .def( "setExternalTemperature",
-              &DoubleExchangeInstance::setExternalTemperature )
+              &DoubleExchangeInstance::setExternalTemperature,
+              DoubleExchangesetExternalTemperature() )
         .def( "setExchangeCoefficientInfSup",
-              &DoubleExchangeInstance::setExchangeCoefficientInfSup )
+              &DoubleExchangeInstance::setExchangeCoefficientInfSup,
+              DoubleExchangesetExchangeCoefficientInfSup() )
         .def( "setExternalTemperatureInfSup",
-              &DoubleExchangeInstance::setExternalTemperatureInfSup )
+              &DoubleExchangeInstance::setExternalTemperatureInfSup,
+              DoubleExchangesetExternalTemperatureInfSup() )
     ;
 
     class_< DoubleExchangeWallInstance, DoubleExchangeWallPtr,
             bases< UnitaryThermalLoadInstance > > ( "DoubleExchangeWall", no_init )
-        .def( "create", &DoubleExchangeWallInstance::create )
+        .def( "create", &DoubleExchangeWallInstance::create,
+              DoubleExchangeWallcreate() )
         .staticmethod( "create" )
         .def( "addGroupOfElements", &DoubleExchangeWallInstance::addGroupOfElements )
         .def( "setExchangeCoefficient",
-              &DoubleExchangeWallInstance::setExchangeCoefficient )
+              &DoubleExchangeWallInstance::setExchangeCoefficient,
+              DoubleExchangeWallsetExchangeCoefficient() )
         .def( "setTranslation", &DoubleExchangeWallInstance::setTranslation )
+    ;
+
+    class_< DoubleSourceInstance, DoubleSourcePtr,
+            bases< UnitaryThermalLoadInstance > > ( "DoubleSource", no_init )
+        .def( "create", &DoubleSourceInstance::create,
+              DoubleSourcecreate() )
+        .staticmethod( "create" )
+        .def( "addGroupOfElements", &DoubleSourceInstance::addGroupOfElements )
+        .def( "setSource", &DoubleSourceInstance::setSource,
+              DoubleSourcesetSource() )
+    ;
+
+    class_< DoubleNonLinearSourceInstance, DoubleNonLinearSourcePtr,
+            bases< UnitaryThermalLoadInstance > > ( "DoubleNonLinearSource", no_init )
+        .def( "create", &DoubleNonLinearSourceInstance::create,
+              DoubleNonLinearSourcecreate() )
+        .staticmethod( "create" )
+        .def( "addGroupOfElements", &DoubleNonLinearSourceInstance::addGroupOfElements )
+        .def( "setSource", &DoubleNonLinearSourceInstance::setSource,
+              DoubleNonLinearSourcesetSource() )
     ;
 
     class_< DoubleThermalRadiationInstance, DoubleThermalRadiationPtr,
             bases< UnitaryThermalLoadInstance > > ( "DoubleThermalRadiation", no_init )
-        .def( "create", &DoubleThermalRadiationInstance::create )
+        .def( "create", &DoubleThermalRadiationInstance::create,
+              DoubleThermalRadiationcreate() )
         .staticmethod( "create" )
         .def( "addGroupOfElements", &DoubleThermalRadiationInstance::addGroupOfElements )
         .def( "setExternalTemperature",
-              &DoubleThermalRadiationInstance::setExternalTemperature )
-        .def( "setEpsilon", &DoubleThermalRadiationInstance::setEpsilon )
-        .def( "setSigma", &DoubleThermalRadiationInstance::setSigma )
+              &DoubleThermalRadiationInstance::setExternalTemperature,
+              DoubleThermalRadiationsetExternalTemperature() )
+        .def( "setEpsilon", &DoubleThermalRadiationInstance::setEpsilon,
+              DoubleThermalRadiationsetEpsilon() )
+        .def( "setSigma", &DoubleThermalRadiationInstance::setSigma,
+              DoubleThermalRadiationsetSigma() )
     ;
 
     class_< DoubleThermalGradientInstance, DoubleThermalGradientPtr,
             bases< UnitaryThermalLoadInstance > > ( "DoubleThermalGradient", no_init )
-        .def( "create", &DoubleThermalGradientInstance::create )
+        .def( "create", &DoubleThermalGradientInstance::create,
+              DoubleThermalGradientcreate() )
         .staticmethod( "create" )
         .def( "addGroupOfElements", &DoubleThermalGradientInstance::addGroupOfElements )
-        .def( "setFlowXYZ", &DoubleThermalGradientInstance::setFlowXYZ )
+        .def( "setFlowXYZ", &DoubleThermalGradientInstance::setFlowXYZ,
+              DoubleThermalGradientsetFlowXYZ() )
     ;
 };

@@ -50,6 +50,5 @@ void exportAcousticsLoadToPython()
         .def( "addUniformConnectionOnGroupsOfNodes",
               &AcousticsLoadInstance::addUniformConnectionOnGroupsOfNodes )
         .def( "build", &AcousticsLoadInstance::build )
-        .def( "setSupportModel", &AcousticsLoadInstance::setSupportModel )
     ;
 };

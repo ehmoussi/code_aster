@@ -29,7 +29,8 @@ void exportCrackTipToPython()
 {
     using namespace boost::python;
 
-    class_< CrackTipInstance, CrackTipInstance::CrackTipPtr > ( "CrackTip", no_init )
+    class_< CrackTipInstance, CrackTipInstance::CrackTipPtr,
+            bases< DataStructure > > ( "CrackTip", no_init )
         .def( "create", &createSharedPtr< CrackTipInstance > )
         .staticmethod( "create" )
     ;

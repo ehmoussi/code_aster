@@ -4,7 +4,7 @@ from code_aster.Commands import *
 
 test = code_aster.TestCase()
 
-MA = code_aster.Mesh()
+MA = code_aster.Mesh.create()
 MA.readMedFile("zzzz314a.mmed")
 
 FISS0=DEFI_FOND_FISS(MAILLAGE=MA,

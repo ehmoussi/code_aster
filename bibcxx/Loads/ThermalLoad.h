@@ -76,7 +76,8 @@ public:
     /**
      * @brief Constructeur
      */
-    ThermalLoadInstance() ;
+    ThermalLoadInstance();
+
     /**
      * @brief Ajout d'une valeur acoustique imposee sur un groupe de mailles
      * @param nameOfGroup Nom du groupe sur lequel imposer la valeur

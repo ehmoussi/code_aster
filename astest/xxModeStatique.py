@@ -9,116 +9,105 @@ from code_aster.Commands import *
 
 test = code_aster.TestCase()
 
-monMaillage = code_aster.Mesh()
+monMaillage = code_aster.Mesh.create()
 monMaillage.readMedFile("test001f.mmed")
 
 
-monModel = code_aster.Model()
+monModel = code_aster.Model.create()
 monModel.setSupportMesh(monMaillage)
-monModel.addModelingOnAllMesh(code_aster.Mechanics, code_aster.Tridimensional)
+monModel.addModelingOnAllMesh(code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
 monModel.build()
 
 
 YOUNG = 200000.0
 POISSON = 0.3
 
-materElas = code_aster.MaterialBehaviour.ElasMaterialBehaviour()
+materElas = code_aster.ElasMaterialBehaviour.create()
 materElas.setDoubleValue("E", YOUNG)
 materElas.setDoubleValue("Nu", POISSON)
 
 
-acier = code_aster.Material()
+acier = code_aster.Material.create()
 acier.addMaterialBehaviour(materElas)
 acier.build()
 
-affeMat = code_aster.MaterialOnMesh()
-affeMat.setSupportMesh(monMaillage)
+affeMat = code_aster.MaterialOnMesh.create(monMaillage)
 affeMat.addMaterialOnAllMesh(acier)
 affeMat.build()
 
-imposedDof1 = code_aster.DisplacementDouble()
-imposedDof1.setValue(code_aster.Loads.Dx, 0.0)
-imposedDof1.setValue(code_aster.Loads.Dy, 0.0)
-imposedDof1.setValue(code_aster.Loads.Dz, 0.0)
+imposedDof1 = code_aster.DisplacementDouble.create()
+imposedDof1.setValue(code_aster.PhysicalQuantityComponent.Dx, 0.0)
+imposedDof1.setValue(code_aster.PhysicalQuantityComponent.Dy, 0.0)
+imposedDof1.setValue(code_aster.PhysicalQuantityComponent.Dz, 0.0)
 
-CharMeca1 = code_aster.ImposedDisplacementDouble()
-CharMeca1.setSupportModel(monModel)
+CharMeca1 = code_aster.ImposedDisplacementDouble.create(monModel)
 CharMeca1.setValue(imposedDof1, "Bas")
 CharMeca1.build()
 
-imposedPres1 = code_aster.PressureDouble()
-imposedPres1.setValue(code_aster.Loads.Pres, 1000.)
+imposedPres1 = code_aster.PressureDouble.create()
+imposedPres1.setValue(code_aster.PhysicalQuantityComponent.Pres, 1000.)
 
-CharMeca2 = code_aster.DistributedPressureDouble()
-CharMeca2.setSupportModel(monModel)
+CharMeca2 = code_aster.DistributedPressureDouble.create(monModel)
 CharMeca2.setValue(imposedPres1, "Haut")
 CharMeca2.build()
 
-matr_elemK = code_aster.ElementaryMatrix()
-matr_elemK.setSupportModel(monModel)
-matr_elemK.setMaterialOnMesh(affeMat)
-matr_elemK.addMechanicalLoad(CharMeca1)
-matr_elemK.addMechanicalLoad(CharMeca2)
-matr_elemK.computeMechanicalRigidity()
+study = code_aster.StudyDescription.create(monModel, affeMat)
+study.addMechanicalLoad(CharMeca1)
+study.addMechanicalLoad(CharMeca2)
+dProblem = code_aster.DiscreteProblem.create(study)
 
-matr_elemM = code_aster.ElementaryMatrix()
-matr_elemM.setSupportModel(monModel)
-matr_elemM.setMaterialOnMesh(affeMat)
-matr_elemM.addMechanicalLoad(CharMeca1)
-matr_elemM.addMechanicalLoad(CharMeca2)
-matr_elemM.computeMechanicalMass()
+matr_elemK = dProblem.computeMechanicalRigidityMatrix()
+matr_elemM = dProblem.computeMechanicalMassMatrix()
 
 
-monSolver = code_aster.MumpsSolver( code_aster.LinearAlgebra.Metis )
+monSolver = code_aster.MumpsSolver.create( code_aster.Renumbering.Metis )
 
 
-numeDDLK = code_aster.DOFNumbering()
+numeDDLK = code_aster.DOFNumbering.create()
 numeDDLK.setElementaryMatrix(matr_elemK)
-numeDDLK.setLinearSolver(monSolver)
 numeDDLK.computeNumerotation()
 
-numeDDLM = code_aster.DOFNumbering()
+numeDDLM = code_aster.DOFNumbering.create()
 numeDDLM.setElementaryMatrix(matr_elemM)
-numeDDLM.setLinearSolver(monSolver)
 numeDDLM.computeNumerotation()
 
 
-matrAsseK = code_aster.AssemblyMatrixDouble()
+matrAsseK = code_aster.AssemblyMatrixDouble.create()
 matrAsseK.setElementaryMatrix(matr_elemK)
 matrAsseK.setDOFNumbering(numeDDLK)
 matrAsseK.build()
 
-matrAsseM = code_aster.AssemblyMatrixDouble()
+matrAsseM = code_aster.AssemblyMatrixDouble.create()
 matrAsseM.setElementaryMatrix(matr_elemM)
 matrAsseM.setDOFNumbering(numeDDLK)
 matrAsseM.build()
 
 print "mode_statique python debut"
 
-mode_stat1 = code_aster.StaticModeDepl()
+mode_stat1 = code_aster.StaticModeDepl.create()
 mode_stat1.setStiffMatrix(matrAsseK)
 mode_stat1.setLinearSolver(monSolver)
 mode_stat1.setAllLoc()
-mode_stat1.Wantedcmp(('DX', 'DY'))
+mode_stat1.Wantedcmp(['DX', 'DY'])
 resu = mode_stat1.execute()
 
 
-mode_stat2 = code_aster.StaticModeForc()
+mode_stat2 = code_aster.StaticModeForc.create()
 mode_stat2.setStiffMatrix(matrAsseK)
 mode_stat2.setAllLoc()
 mode_stat2.setLinearSolver(monSolver)
-mode_stat2.Wantedcmp(('DX',))
+mode_stat2.Wantedcmp(['DX',])
 mode_stat2.execute()
 
-mode_stat3 = code_aster.StaticModePseudo()
+mode_stat3 = code_aster.StaticModePseudo.create()
 mode_stat3.setStiffMatrix(matrAsseK)
 mode_stat3.setMassMatrix(matrAsseM)
 mode_stat3.setAllLoc()
 mode_stat3.setLinearSolver(monSolver)
-mode_stat3.WantedAxe(('X', 'Y', 'Z'))
+mode_stat3.WantedAxe(['X', 'Y', 'Z'])
 mode_stat3.execute()
 
-mode_stat4 = code_aster.StaticModeInterf()
+mode_stat4 = code_aster.StaticModeInterf.create()
 mode_stat4.setStiffMatrix(matrAsseK)
 mode_stat4.setMassMatrix(matrAsseM)
 mode_stat4.setAllLoc()

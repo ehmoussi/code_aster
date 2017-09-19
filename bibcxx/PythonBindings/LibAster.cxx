@@ -99,6 +99,7 @@
 #include "PythonBindings/CppToFortranGlossaryInterface.h"
 #include "PythonBindings/ParallelMeshInterface.h"
 #include "PythonBindings/ParallelDOFNumberingInterface.h"
+#include "PythonBindings/ParallelMechanicalLoadInterface.h"
 #include "PythonBindings/MPIInfosInterface.h"
 #include "PythonBindings/CyclicSymmetryModeInterface.h"
 #include "PythonBindings/GeneralizedResultsContainerInterface.h"
@@ -106,8 +107,35 @@
 
 using namespace boost::python;
 
+#include "shared_vars.h"
+#include "aster_init.h"
+struct LibAsterInitializer
+{
+    LibAsterInitializer()
+    {
+        initAsterModules();
+    };
+
+    ~LibAsterInitializer()
+    {
+        int a = get_sh_jeveux_status();
+        if( a != 1 )
+            return;
+        ASTERINTEGER op = 9999;
+        CALL_EXECOP( &op );
+        register_sh_jeveux_status( 0 );
+    };
+};
+
 BOOST_PYTHON_MODULE(libaster)
 {
+    boost::shared_ptr< LibAsterInitializer > libGuard( new LibAsterInitializer() );
+
+    class_< LibAsterInitializer, boost::shared_ptr< LibAsterInitializer >,
+            boost::noncopyable >("LibAsterInitializer", no_init);
+
+    scope().attr("__libguard") = libGuard;
+
     exportVectorUtilitiesToPython();
     exportDataStructureToPython();
     exportMeshToPython();
@@ -186,6 +214,7 @@ BOOST_PYTHON_MODULE(libaster)
 #ifdef _USE_MPI
     exportParallelMeshToPython();
     exportParallelDOFNumberingToPython();
+    exportParallelMechanicalLoadToPython();
     exportMPIInfosToPython();
 #endif /* _USE_MPI */
 

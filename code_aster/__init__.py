@@ -38,6 +38,10 @@ executionParameter.parse_args()
 
 from .Supervis import libFile
 
+# CHECK MERGE
+#import libaster
+#from libaster import *
+
 # automatic startup
 if executionParameter.get_option('autostart'):
     Initializer.init( executionParameter.get_option('buildelem'))

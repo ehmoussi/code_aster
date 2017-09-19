@@ -4,7 +4,7 @@ from code_aster.Commands import *
 
 test = code_aster.TestCase()
 
-box = code_aster.Mesh()
+box = code_aster.Mesh.create()
 box.readMedFile("zzzz282a.mmed")
 
 grille=DEFI_GRILLE(MAILLAGE=box)

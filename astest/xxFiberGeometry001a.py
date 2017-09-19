@@ -4,8 +4,9 @@ from code_aster.Commands import *
 
 test = code_aster.TestCase()
 
-MASEC1 = code_aster.Mesh()
+MASEC1 = code_aster.Mesh.create()
 MASEC1.readGibiFile("zzzz330a.18")
+MASEC1.debugPrint()
 
 exc_ref=0.023148148
 

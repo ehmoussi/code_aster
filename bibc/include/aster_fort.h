@@ -313,6 +313,9 @@ void DEFSSS(CELCES,celces, const char*, STRING_SIZE, const char*, STRING_SIZE,
 #define CALL_LRMJOI_WRAP(a, b) CALLSS(LRMJOI_WRAP, lrmjoi_wrap, a, b)
 void DEFSS(LRMJOI_WRAP,lrmjoi_wrap, const char*, STRING_SIZE, const char*, STRING_SIZE);
 
+#define CALL_CARGEO(a) CALLS(CARGEO, cargeo, a)
+void DEFS(CARGEO,cargeo, const char*, STRING_SIZE);
+
 #define CALL_RELIEM(a, b, c, d, e, f, g, h, i, j) \
     CALLSSSSPPSSSP(RELIEM, reliem, a, b, c, d, e, f, g, h, i, j)
 void DEFSSSSPPSSSP(RELIEM,reliem, const char*, STRING_SIZE, const char*, STRING_SIZE,
