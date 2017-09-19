@@ -55,3 +55,5 @@ TEST = DEFI_COMPOR(MONOCRISTAL=_F(MATER=MATER,
 
 # Test trivial
 test.assertTrue( True )
+
+test.printSummary()

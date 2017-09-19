@@ -90,7 +90,7 @@ def array_to_list(obj):
 def accept_array(func):
     """Decorator that automatically converts numpy arrays to lists.
 
-    Needed to pass an array as argument to a boost method. 
+    Needed to pass an array as argument to a boost method.
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -98,6 +98,13 @@ def accept_array(func):
         args = [array_to_list(i) for i in args]
         return func(*args, **kwargs)
     return wrapper
+
+
+def objects_from_context(dict_objects, filter_type, ignore_names=[]):
+    """Build the list of all objects of the given type"""
+    objects = dict([(name, obj) for name, obj in dict_objects.items()
+                    if isinstance(obj, filter_type) and not name in ignore_names])
+    return objects
 
 
 class Singleton(object):

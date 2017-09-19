@@ -24,9 +24,13 @@ This module imports BoostPython DataStructures and extends them with pure
 Python functions.
 """
 
+from ..Utilities import objects_from_context
+
 from libaster import *
 
 # extend DataStructures using metaclasses
 from .datastructure_ext import DataStructure
 from .function_ext import Function
 from .table_ext import Table
+
+ALL_DS = objects_from_context(globals(), DataStructure)

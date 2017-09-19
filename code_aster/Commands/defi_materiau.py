@@ -22,24 +22,22 @@
 import types
 
 import code_aster
-from code_aster import Material
-from code_aster.Cata import Commands, checkSyntax
+from ..Cata import Commands, checkSyntax
+from ..Extensions import ALL_DS, Material
 
 
 def _byKeyword():
-    """Build the list of all objects of the given type"""
+    """Build a dict of all behaviours subclasses, indexed by keyword.
+
+    Returns:
+        dict: Behaviour classes by keyword in DEFI_MATERIAU.
+    """
     objects = {}
-    for name in dir(code_aster.libaster):
-        obj = None
-        try: obj = getattr(code_aster, name)
-        except: pass
-        if name == "GeneralMaterialBehaviour" or type(obj) is type:
+    for name, obj in ALL_DS.items():
+        if not issubclass(obj, GeneralMaterialBehaviour):
             continue
-        try:
-            if issubclass(obj, code_aster.GeneralMaterialBehaviour):
-                keyword = obj.create().getAsterName()
-                objects[keyword] = obj
-        except: pass
+        key = obj.create().getAsterName()
+        objects[key] = obj
     return objects
 
 
@@ -70,5 +68,4 @@ def DEFI_MATERIAU( **kwargs ):
         mater.addMaterialBehaviour( matBehav )
 
     mater.build()
-
     return mater
