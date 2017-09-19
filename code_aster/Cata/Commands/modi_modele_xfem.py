@@ -24,7 +24,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 
-MODI_MODELE_XFEM=OPER(nom="MODI_MODELE_XFEM",op= 113,sd_prod=modele_sdaster,docu="U4.44.12-e",reentrant='f',
+MODI_MODELE_XFEM=OPER(nom="MODI_MODELE_XFEM",op= 113,sd_prod=modele_sdaster,docu="U4.44.12-e",reentrant='n',
                            fr=tr("Engendrer ou enrichir une structure de donnees en affectant les cham_gd associes"),
 
     regles = (UN_PARMI('FISSURE','MODELE_THER')),
