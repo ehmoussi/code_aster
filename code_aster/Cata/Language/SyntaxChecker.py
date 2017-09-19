@@ -276,9 +276,9 @@ class SyntaxCheckerVisitor(object):
             # the keyword does not exist and it should have been checked by
             # its parent
             return
-        if type(userDict) == dict:
+        if isinstance(userDict, dict):
             userDict = [userDict]
-        elif type(userDict) in (list, tuple):
+        elif isinstance(userDict, (list, tuple)):
             pass
         else:
             raise TypeError("Type 'dict' or 'tuple' is expected")
@@ -330,7 +330,7 @@ def checkCommandSyntax(command, keywords, printSyntax=False, add_default=True):
     from pprint import pformat
     if not hasattr(checkCommandSyntax, "_cmd_counter"):
         checkCommandSyntax._cmd_counter = 0
-    if type(keywords) != dict:
+    if not isinstance(keywords, dict):
         raise TypeError("'dict' object is expected")
     if printSyntax:
         checkCommandSyntax._cmd_counter += 1
