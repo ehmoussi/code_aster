@@ -32,16 +32,18 @@ def DEFI_LIST_REEL( **kwargs ):
     if vale is not None:
         values = np.array(vale)
     else:
-        factkw = kwargs['INTERVALLE']
         start = kwargs['DEBUT']
-        stop = factkw['JUSQU_A']
-        step = factkw.get('PAS')
-        if step is None:
-            step = ( stop - start ) / factkw['NOMBRE']
-        if step > stop - start:
-            raise ValueError("PAS is greater than the interval")
-        values = np.arange(1. * start, stop, step)
-        if abs( stop - values[-1] ) < 1.e-3 * step:
-            values = values[:-1]
+        values = np.array([])
+        for factkw in kwargs['INTERVALLE']:
+            stop = factkw['JUSQU_A']
+            step = factkw.get('PAS')
+            if step is None:
+                step = ( stop - start ) / factkw['NOMBRE']
+            if step > stop - start:
+                raise ValueError("PAS is greater than the interval")
+            values = np.concatenate( (values, np.arange(start, stop, step)) )
+            if abs( stop - values[-1] ) < 1.e-3 * step:
+                values = values[:-1]
+            start = stop
         values = np.concatenate( ( values, np.array([stop]) ) )
     return values
