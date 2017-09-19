@@ -24,6 +24,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
+#include "asterfort/mcomce.h"
 #include "asterfort/cfmmvd.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/detrsd.h"
@@ -83,6 +84,10 @@ implicit none
     integer :: ztabf
     character(len=24) :: sdcont_tabfin
     real(kind=8), pointer :: v_sdcont_tabfin(:) => null()
+    integer  ::  elem_mast_nume,elem_mast_nbno,coor_nume
+    character(len=8) :: elem_mast_type
+    character(len=19) :: oldgeo
+    real(kind=8) :: elem_mast_coor(27),lenght_master_elem
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -119,6 +124,10 @@ implicit none
     armini = armin(mesh)
     epsint = 1.d-6*armini
     ds_contact%arete_min = armini
+!
+! - Initial Geometric coordinates
+!
+    oldgeo = mesh//'.COORDO'
 !
 ! - Preparation for SEUIL_INIT
 !
@@ -181,6 +190,30 @@ implicit none
 ! --------- Loop on integration points
 !
             do i_poin_elem = 1, nb_poin_elem
+!
+! ------------- Current master element
+!
+                elem_mast_nume = nint(v_sdcont_tabfin(ztabf*(i_cont_poin-1)+3))
+!
+! --------- Get coordinates of master element
+!
+                call mcomce(mesh          , oldgeo, elem_mast_nume, elem_mast_coor, elem_mast_type,&
+                            elem_mast_nbno)
+    ! Compute the minima lenght of the master element in the current zone
+                do coor_nume = 0,21,3                    
+                    lenght_master_elem = sqrt(                                            &
+                                abs((elem_mast_coor(coor_nume+3+1)-elem_mast_coor(coor_nume  +1)))**2.d0 +&
+                                abs((elem_mast_coor(coor_nume+4+1)-elem_mast_coor(coor_nume+1+1)))**2.d0 +&
+                                abs((elem_mast_coor(coor_nume+5+1)-elem_mast_coor(coor_nume+2+1)))**2.d0 &
+                                 )
+                    
+                    if ((coor_nume .eq. 0) .and. (lenght_master_elem .gt. 0.d0)) then
+                        ds_contact%arete_min = lenght_master_elem 
+                    elseif ((lenght_master_elem .lt. ds_contact%arete_min) &
+                        .and. (coor_nume .gt. 3) .and.(lenght_master_elem .gt. 0.d0)) then
+                        ds_contact%arete_min = lenght_master_elem 
+                    endif
+                enddo
 !
 ! ------------- Get pairing info
 !
