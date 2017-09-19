@@ -9,7 +9,8 @@ from code_aster.RunManager.Initializer import finalize
 test = code_aster.TestCase()
 
 test.assertEqual( executionParameter.get_option('hostname'), platform.node())
-test.assertEqual( executionParameter.get_option('tpmax'), 86400)
+# because of multiplicative factor running testcases
+test.assertGreaterEqual( executionParameter.get_option('tpmax'), 123)
 
 executionParameter.set_option('tpmax', 60.)
 test.assertEqual( executionParameter.get_option('tpmax'), 60)
