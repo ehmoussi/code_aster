@@ -26,10 +26,8 @@
 
 DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'))
 
-import os
 
-os.system("mfront --obuild Chaboche.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so Chaboche.so")
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=39)
 
 MAIL_B=LIRE_MAILLAGE(FORMAT='MED',VERI_MAIL=_F(VERIF='OUI'), )
 MAIL_B=DEFI_GROUP(reuse =MAIL_B,
@@ -115,7 +113,7 @@ RESULTAT=STAT_NON_LINE(     MODELE=MOD_B,
 
                             COMPORTEMENT=_F( RELATION = 'MFRONT',
                                              NOM_ROUTINE='asterchaboche',
-                                             LIBRAIRIE='Chaboche.so',
+                                             UNITE_LIBRAIRIE=39,
                                              RESI_INTE_MAXI=1.E-12,
                                              ALGO_CPLAN='ANALYTIQUE',
                                                 ),

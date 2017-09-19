@@ -6,5 +6,5 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm mfron01g.comm D 1
-F nom  PlasticityTH.mfront   D 0
-F nom  Plasticity_Sy.mfront   D 0
+F libr PlasticityTH.mfront   D 38
+F nom  Plasticity_Sy.mfront  D 0

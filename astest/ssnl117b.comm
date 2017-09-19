@@ -20,12 +20,11 @@
 # person_in_charge: jean-luc.flejou at edf.fr
 # GEOMETRIE PROCHE DU CPP N4
 
-os.system("mfront --obuild Plasticity.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so Plasticity.so")
-
 from Contrib.macro_rota_globale import MACR_ROTA_GLOBALE
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ), DEBUG=_F(SDVERI='OUI'))
+
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=39)
 
 MOMENTMZ=1.
 
@@ -156,7 +155,7 @@ U1=STAT_NON_LINE( MODELE=MO,
                          _F( GROUP_MA = 'BC',
                              RELATION = 'MFRONT', 
                              NOM_ROUTINE = 'asterplasticity',
-                             LIBRAIRIE='Plasticity.so',
+                             UNITE_LIBRAIRIE=39,
                              RESI_INTE_MAXI = 1.E-6,
                              ITER_CPLAN_MAXI=3 ),
                          _F( GROUP_MA = ( 'AB',  'CD',),

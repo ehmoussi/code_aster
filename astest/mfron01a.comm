@@ -21,10 +21,8 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
-import os
 
-os.system("mfront --obuild Chaboche.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so Chaboche.so")
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=39)
 
 
 C1_I=187.*341.
@@ -132,7 +130,7 @@ TEST_TABLE(FILTRE=_F(NOM_PARA='INST',VALE=1.435),
 SOLMF=SIMU_POINT_MAT( MATER=MATF,
                 COMPORTEMENT=_F(RELATION='MFRONT',
                                 NOM_ROUTINE='asterchaboche',
-                                LIBRAIRIE='Chaboche.so',
+                                UNITE_LIBRAIRIE=39,
                                 RESI_INTE_MAXI=1e-12,),
                 INCREMENT=_F(  LIST_INST = LSUB),
                 NEWTON=_F(REAC_ITER = 1, ),

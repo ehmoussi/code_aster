@@ -23,12 +23,9 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
-import os
 
-os.system("mfront --obuild Plasticity.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so Plasticity.so")
-os.system("mfront --obuild SimoMieheVmis.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so SimoMieheVmis.so")
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=40)
+CREA_LIB_MFRONT(UNITE_MFRONT=39,UNITE_LIBRAIRIE=41)
 
 
 MA=LIRE_MAILLAGE(FORMAT="ASTER",)
@@ -117,7 +114,7 @@ LOGMF=STAT_NON_LINE( MODELE=MO,
                             TYPE_CHARGE = 'DIDI')),
                 COMPORTEMENT=_F(RELATION='MFRONT',
                                 NOM_ROUTINE='asterplasticity',
-                                LIBRAIRIE='Plasticity.so',
+                                UNITE_LIBRAIRIE=40,
                                 RESI_INTE_MAXI=1.e-8,
                                 DEFORMATION='GDEF_LOG',
                         ),
@@ -278,7 +275,7 @@ SMF=STAT_NON_LINE( MODELE=MO,INFO=2,
                             TYPE_CHARGE = 'DIDI')),
                 COMPORTEMENT=_F(RELATION='MFRONT',
                                 NOM_ROUTINE='astersimomiehevmis',
-                                LIBRAIRIE='SimoMieheVmis.so',
+                                UNITE_LIBRAIRIE=41,
                                 RESI_INTE_MAXI=1e-11,
                                 DEFORMATION='SIMO_MIEHE',
                             ),
