@@ -25,9 +25,9 @@
  */
 
 /** @brief Déclarations des fonctions cython */
-__PYX_EXTERN_C DL_IMPORT(void) newLogicalUnitFile(const char *, const int, const int);
-__PYX_EXTERN_C DL_IMPORT(void) deleteLogicalUnitFile(const char *);
-__PYX_EXTERN_C DL_IMPORT(int) getFileLogicalUnit(const char *);
+__PYX_EXTERN_C DL_IMPORT(void) openLogicalUnitFile(const char *, const int, const int);
+__PYX_EXTERN_C DL_IMPORT(void) releaseLogicalUnitFile(const char *);
+__PYX_EXTERN_C DL_IMPORT(int) getNumberOfLogicalUnitFile(const char *);
 __PYX_EXTERN_C DL_IMPORT(std::string) getTemporaryFileName(const char *);
 
 enum FileTypeCython { Ascii, Binary, Free };
@@ -69,7 +69,7 @@ class LogicalUnitFileCython
             _fileName( name ),
             _isUsable( true )
         {
-            newLogicalUnitFile( name.c_str(), type, access );
+            openLogicalUnitFile( name.c_str(), type, access );
         };
 
         /**
@@ -77,7 +77,7 @@ class LogicalUnitFileCython
          */
         ~LogicalUnitFileCython()
         {
-            if( _isUsable ) deleteLogicalUnitFile( _fileName.c_str() );
+            if( _isUsable ) releaseLogicalUnitFile( _fileName.c_str() );
         };
 
         /**
@@ -97,7 +97,7 @@ class LogicalUnitFileCython
         {
             if( !_isUsable )
                 throw std::runtime_error( "File not initialized" );
-            return getFileLogicalUnit( _fileName.c_str() );
+            return getNumberOfLogicalUnitFile( _fileName.c_str() );
         };
 };
 

@@ -23,7 +23,7 @@ import types
 
 import aster
 
-from code_aster.Supervis.libFile import FileAccess, FileType, LogicalUnitFile
+from code_aster.Supervis import LogicalUnitFile
 
 
 class UniteAster:
@@ -36,7 +36,7 @@ class UniteAster:
         """Réserve/associe et retourne une unité libre en y associant, s'il est
         fourni, le fichier 'nom'.
         """
-        logical_unit = LF.LogicalUnitFile(nom)
+        logical_unit = LogicalUnitFile.new_free(nom)
         return logical_unit.unit
 
     def Nom(self, ul):
@@ -81,4 +81,6 @@ class UniteAster:
         Remet l'unité 'ul' dans son état initial.
         Si 'ul' est omis, toutes les unités sont remises dans leur état initial.
         """
-        raise NotImplementedError("'EtatInit' is not supported anymore.")
+        raise NotImplementedError("'EtatInit' is not supported anymore, use "
+                                  "'libFile.ReservedUnitUsed' context manager "
+                                  "instead.")
