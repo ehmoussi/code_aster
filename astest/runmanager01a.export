@@ -1,4 +1,4 @@
-P time_limit 86400
+P time_limit 123
 P memory_limit 128
 P ncpus 1
 P mpi_nbcpu 1
