@@ -19,11 +19,11 @@
 
 import atexit
 
-from code_aster.Supervis.logger import logger
-from code_aster.Supervis.libExecutionParameter import executionParameter
-from code_aster.Supervis.libCommandSyntax import _F
-from code_aster.RunManager.Pickling import Pickler
-from code_aster.RunManager.loading import loadObjects
+from ..Cata.Syntax import _F
+from ..Supervis.logger import logger
+from ..Supervis.libExecutionParameter import executionParameter
+from .Pickling import Pickler
+from .loading import loadObjects
 
 
 def finalize():
