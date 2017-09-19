@@ -29,10 +29,13 @@ RESULT_FILE = "fort.8"
 
 # keep possible usage out of code_aster
 try:
-    from Deprecated import writeInResu
+    from Deprecated import writeInMess, writeInResu
 except ImportError:
-    def writeInResu(text):
+    def writeInMess(text):
         print(text)
+
+    def writeInResu(text):
+        pass
 
 
 # TODO add more test methods
@@ -126,6 +129,7 @@ class TestCase( unittest.TestCase ):
         else:
             self._failure += 1
             fmt = "NOOK {0:>16} failed: {1}"
+        writeInMess(fmt.format(funcTest, msg))
         writeInResu(fmt.format(funcTest, msg))
 
     @addSuccess
