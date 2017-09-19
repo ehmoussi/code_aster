@@ -23,6 +23,8 @@ from .libCommandSyntax import _F, getCurrentCommand, setCurrentCommand
 from .logger import logger
 
 
+RESERVED_UNIT = (6, 8, 9)
+
 class FileType(object):
     """Enumeration for file type."""
     Ascii = 0
@@ -55,70 +57,138 @@ class FileAccess(object):
         }[value]
 
 
+class Action(object):
+    """Enumeration for action."""
+    Open = 0
+    Register = 1
+    Close = 2
+
+    @staticmethod
+    def name(value):
+        """Return type as string."""
+        return {
+            0: "ASSOCIER",
+            1: "RESERVER",
+            2: "LIBERER",
+        }[value]
+
+
 class LogicalUnitFile(object):
     """This class defines a file associated to a fortran logical unit"""
 
     _free_number = range(19, 100)
+    # keep in memory: {unit_number: LogicalUnitFile objects}
     _used_unit = {}
 
-    def __init__( self, name, typ=FileType.Ascii, access=FileAccess.New ):
-        """
-        The constructor currently calls DEFI_FICHIER to reserve a logical unit
-        @param filename Path to the file
-        @param typ Type of file (Ascii, Binary, Free)
-        @param access Type of access (New, Append, Old)
-        """
-        self._logicalUnit = self._get_free_number()
-        self._filename = name or 'fort.{}'.format(name)
+    def __init__(self, unit, filename, action, typ, access):
+        self._logicalUnit = unit
+        self._filename = filename
         self._register(self)
-
-        previous = getCurrentCommand()
-        setCurrentCommand( None )
-        syntax = CommandSyntax( "DEFI_FICHIER" )
-        syntax.define( _F( ACTION="ASSOCIER",
-                           UNITE=self._logicalUnit,
-                           FICHIER=self._filename,
-                           TYPE=FileType.name(typ),
-                           ACCES=FileAccess.name(access),
-                         )
-                     )
-        cdef INTEGER numOp = 26
-        libaster.opsexe_( &numOp )
-        syntax.free()
-        setCurrentCommand( previous )
+        self.register(self._logicalUnit, filename, action, typ, access)
 
     def __del__( self ):
         """Destructor: call DEFI_FICHIER to release the logical unit."""
-        previous = getCurrentCommand()
-        setCurrentCommand( None )
-        syntax = CommandSyntax( "DEFI_FICHIER" )
-        syntax.define( _F( ACTION="LIBERER",
-                           UNITE=self.unit,
-                           FICHIER=self.filename,
-                         )
-                     )
-        cdef INTEGER numOp = 26
-        libaster.opsexe_( &numOp )
-        syntax.free()
-        setCurrentCommand( previous )
-
+        self.register(self.unit, self.filename, Action.Close)
         self._free_number.append(self.unit)
 
+    @classmethod
+    def open(cls, filename, typ=FileType.Ascii, access=FileAccess.New):
+        """Open a *LogicalUnitFile* by name to be available in fortran.
+
+        Arguments:
+            filename (str): Path of the file.
+            typ (FileType): Type of the file.
+            access (FileAccess): Type of access.
+
+        Returns:
+            LogicalUnitFile: New logical unit.
+        """
+        unit = cls._get_free_number()
+        return cls(unit, filename, Action.Open, typ, access)
+
+    @classmethod
+    def new_free(cls, filename):
+        """Factory that returns a new free *LogicalUnitFile* for the given name.
+
+        Arguments:
+            filename (str): Path of the file. If empty, it will be automatically
+                named using the unit number.
+
+        Returns:
+            LogicalUnitFile: New logical unit.
+        """
+        unit = cls._get_free_number()
+        return cls(unit, filename, Action.Register)
+
+    @staticmethod
+    def register(unit, filename, action,
+                 typ=FileType.Ascii, access=FileAccess.New):
+        """Register a logical unit to the fortran manager.
+
+        Arguments:
+            unit (int): Logical unit number.
+            filename (str): Path of the file. *None* or empty means to be named
+                automatically 'fort.<unit>'.
+            action (Action): Type of action for registering.
+            typ (FileType): Type of the file.
+            access (FileAccess): Type of access.
+        """
+        kwargs = _F(ACTION=Action.name(action),
+                    UNITE=unit)
+        if action == Action.Open:
+            if filename:
+                kwargs['FICHIER'] = filename
+            kwargs['TYPE'] = FileType.name(typ)
+            kwargs['ACCES'] = FileAccess.name(access)
+            if typ != FileType.Ascii and access == FileAccess.Append:
+                raise ValueError("'Append' access is only valid with "
+                                 "type 'Ascii'.")
+
+        previous = getCurrentCommand()
+        setCurrentCommand(None)
+        syntax = CommandSyntax("DEFI_FICHIER")
+        syntax.define(kwargs)
+        cdef INTEGER numOp = 26
+        libaster.opsexe_(&numOp)
+        syntax.free()
+        setCurrentCommand(previous)
+
     @property
-    def unit( self ):
+    def unit(self):
         """Attributes that holds the logical unit associated to this file"""
         return self._logicalUnit
 
     @property
-    def filename( self ):
+    def filename(self):
         """Attributes that holds the file name"""
         return self._filename
 
     @classmethod
+    def filename_from_unit(cls, unit):
+        """Return the filename associated to a unit number.
+
+        Arguments:
+            unit (int): Number of a logical unit.
+
+        Returns:
+            str: Filename of the logical unit or 'fort.<unit>' if unknown.
+        """
+        logicalUnit = cls.from_number(unit)
+        return logicalUnit.filename if logicalUnit else "fort.{0}".format(unit)
+
+    @classmethod
     def from_name(cls, filename):
-        """Return the logical unit associated to a unit number."""
+        """Return the logical unit associated to a unit number.
+
+        Arguments:
+            filename (str): Filename to search in the registered files.
+
+        Returns:
+            LogicalUnitFile: Object corresponding to the given filename. *None*
+                otherwise.
+        """
         def _predicate(item):
-            return item[1] == filename
+            return item[1].filename == filename
 
         try:
             unit = ifilter(_predicate, cls._used_unit.items())[0]
@@ -128,33 +198,49 @@ class LogicalUnitFile(object):
 
     @classmethod
     def from_number(cls, unit):
-        """Return the logical unit associated to a unit number."""
+        """Return the logical unit associated to a unit number.
+
+        Arguments:
+            unit (int): Number of a logical unit.
+
+        Returns:
+            LogicalUnitFile: Registered objects for this number. *None*
+                otherwise.
+        """
         return cls._used_unit.get(unit)
 
     @classmethod
     def _register(cls, logicalUnit):
-        """Register a logical unit with its file name."""
+        """Register a logical unit."""
         logger.debug("libFile: register unit {0}".format(logicalUnit.unit))
         cls._used_unit[logicalUnit.unit] = logicalUnit
 
     @classmethod
-    def release_from_number(cls, unitToRelease):
-        """Release a logical unit"""
-        logger.debug("libFile: release unit {0}".format(unitToRelease))
+    def release_from_number(cls, unit):
+        """Release a logical unit from its number.
+
+        Arguments:
+            unit (int): Number of logical unit to release.
+        """
+        logger.debug("libFile: release unit {0}".format(unit))
         try:
-            del cls._used_unit[unitToRelease]
+            del cls._used_unit[unit]
         except KeyError:
-            # was not register from Python
-            pass
+            msg = "Unable to free the logical unit {}".format(unit)
+            raise KeyError(msg)
 
     @classmethod
     def release_from_name(cls, filename):
-        """Release a logical unit by file name"""
-        unit = cls.from_name(filename)
-        if not unit:
+        """Release a logical unit by file name.
+
+        Arguments:
+            filename (str): Filename of the logical unit to release.
+        """
+        logicalUnit = cls.from_name(filename)
+        if not logicalUnit:
             msg = "file {!r} not associated".format(filename)
             raise KeyError(msg)
-        cls.release_from_number(unit)
+        cls.release_from_number(logicalUnit)
 
     @classmethod
     def _get_free_number(cls):
@@ -164,19 +250,42 @@ class LogicalUnitFile(object):
         return cls._free_number.pop()
 
 
-cdef public void newLogicalUnitFile( const char* name, const int type, const int access ):
-    LogicalUnitFile( name, type, access )
+class ReservedUnitUsed(object):
+    """Context manager for usage of reserved logical units.
 
-cdef public void deleteLogicalUnitFile( const char* name ):
+    These units are released when entering the context and register again
+    on exit.
+
+    Arguments:
+        units (int, [int...]): One or more unit to manage.
+    """
+
+    def __init__(self, *units):
+        self._units = [i for i in units if i in RESERVED_UNIT]
+
+    def __enter__(self):
+        for unit in self._units:
+            LogicalUnitFile.register(unit, None, Action.Close)
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        for unit in self._units:
+            LogicalUnitFile.register(unit, None, Action.Open,
+                                     FileType.Ascii, FileAccess.Append)
+
+
+cdef public void openLogicalUnitFile(const char* name, const int type,
+                                     const int access ):
+    LogicalUnitFile.open(name, type, access)
+
+cdef public void releaseLogicalUnitFile(const char* name):
     LogicalUnitFile.release_from_name(name)
 
-cdef public int getFileLogicalUnit( const char* name ):
-    global cppFileDict
+cdef public int getNumberOfLogicalUnitFile(const char* name):
     pyName = <bytes> name
-    returnInt = cppFileDict[ pyName ].getLogicalUnit()
-    return returnInt
+    logicalUnit = LogicalUnitFile.from_name(pyName)
+    return logicalUnit.unit
 
-cdef public string getTemporaryFileName( const char* dir ):
+cdef public string getTemporaryFileName(const char* dir):
     dirPython = <bytes> dir
-    cdef string tmpfile = tempfile.NamedTemporaryFile( dir = dirPython ).name
+    cdef string tmpfile = tempfile.NamedTemporaryFile(dir=dirPython).name
     return tmpfile

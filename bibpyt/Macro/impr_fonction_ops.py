@@ -36,9 +36,9 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
     from code_aster.Cata.Syntax import _F
     from code_aster.Cata.DataStructure import (nappe_sdaster, fonction_c,
                                                formule, formule_c)
+    from code_aster.Supervis import LogicalUnitFile, ReservedUnitUsed
     from Utilitai import Graph
     from Utilitai.Utmess import UTMESS
-    from Utilitai.UniteAster import UniteAster
 
     ier = 0
     # La macro compte pour 1 dans la numerotation des commandes
@@ -51,14 +51,10 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
 
     #----------------------------------------------
     # 0. Traitement des arguments, initialisations
-    # unité logique des fichiers réservés
-    ul_reserve = (8,)
-    UL = UniteAster()
-
     # 0.1. Fichier
     nomfich = None
     if args['UNITE'] and args['UNITE'] != 6:
-        nomfich = UL.Nom(args['UNITE'])
+        nomfich = LogicalUnitFile.filename_from_unit(args['UNITE'])
         if INFO == 2:
             aster.affiche('MESSAGE', ' Nom du fichier :' + nomfich)
     if nomfich and os.path.exists(nomfich) and os.stat(nomfich).st_size != 0:
@@ -416,7 +412,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
     elif FORMAT == 'AGRAF':
         nomdigr = None
         if args['UNITE_DIGR'] != 6:
-            nomdigr = UL.Nom(args['UNITE_DIGR'])
+            nomdigr = LogicalUnitFile.filename_from_unit(args['UNITE'])
         kargs['FICHIER'] = [nomfich, nomdigr]
         kargs['dform'] = {'formR': '%12.5E'}
 
@@ -432,14 +428,8 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
     else:
         UTMESS('S', 'FONCT0_8', valk=FORMAT)
 
-    # Traiter le cas des UL réservées
-    if args['UNITE'] in ul_reserve:
-        UL.Etat(args['UNITE'], etat='F')
-    if FORMAT == 'AGRAF' and args['UNITE_DIGR'] != args['UNITE'] \
-            and args['UNITE_DIGR'] in ul_reserve:
-        UL.Etat(args['UNITE_DIGR'], etat='F')
-
     # 2.4. On trace !
-    graph.Trace(**kargs)
+    with ReservedUnitUsed(args['UNITE'], args.get('UNITE_DIGR')):
+            graph.Trace(**kargs)
 
     return ier

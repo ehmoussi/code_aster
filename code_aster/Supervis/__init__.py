@@ -18,6 +18,7 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 from .libExecutionParameter import executionParameter, setExecutionParameter
+from .libFile import LogicalUnitFile, ReservedUnitUsed
 
 # to init global objects
 import libFortranUtils
