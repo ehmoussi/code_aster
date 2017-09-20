@@ -253,10 +253,7 @@ subroutine te0531(option,nomte)
                             c1 = 1.d0/e
 !
                             icomp3 = idsig+nbcmp*nbsp*(ipg-1)+nbcmp*(ksp-1)-1
-!
-                            do i = 1, nbcmp
-                                sigma(i) = zr(icomp3 + i)
-                            enddo
+                            
 !                           soustraction des deformations elastiques
                             zr(icomp + 1) = zr(icomp + 1) - c1* zr(icomp3 + 1)
                         endif
