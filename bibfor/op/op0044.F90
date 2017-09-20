@@ -100,14 +100,15 @@ subroutine op0044()
     integer :: nfreqb, mxresf, ndim, nparr, neq, islvi, jrefa
 !
     real(kind=8) :: tolsep, tolaju, tolv, fcorig, omecor, precsh, omeg, det1
-    real(kind=8) :: det2, fr, am, zam(3), zfr(3), seuil, fmin, fmax, omgmin
-    real(kind=8) :: omgmax, rbid, depi, undf, raux1, raux2, det(2), raux, precdc
+    real(kind=8) :: det2, fr, am, zam(3), zfr(3), seuil, vpinf, vpmax, omgmin
+    real(kind=8) :: omgmax, rbid, depi, undf, raux1, raux2, det(2), precdc
+    real(kind=8) :: omemin, omemax
     character(len=1) :: ctyp, typer
     character(len=8) :: optiov, modes, knega
     character(len=9) :: typevp
     character(len=14) :: matra, matrb, matrc
-    character(len=16) :: nomcmd, typcon, optiom, optiof, optior, typres, k16bid,&
-                         compex, sturm
+    character(len=16) :: nomcmd, typcon, optiom, optiof, optior, typres
+    character(len=16) :: k16bid, compex, sturm
     character(len=19) :: masse, raide, amor, dynam, numedd, solveu
     character(len=24) :: cborne, work(5), camor, cfreq, nopara(nbpara), metres
     character(len=24) :: valk(2)
@@ -224,11 +225,6 @@ subroutine op0044()
     call getvis('CALC_'//typevp, 'NMAX_ITER_AJUSTE', iocc=1, scal=nitaju, nbret=l)
     call getvr8('CALC_'//typevp, 'SEUIL_'//typevp, iocc=1, scal=fcorig, nbret=l)
     call getvr8('CALC_'//typevp, 'PREC_SHIFT', iocc=1, scal=precsh, nbret=l)
-    if (typres .eq. 'DYNAMIQUE') then
-        omecor = omega2(fcorig)
-    else
-        omecor = fcorig
-    endif
 !
 !     --- RECUPERATION DES ARGUMENTS POUR LE CALCUL DES MODES ---
     call getvr8('CALC_MODE', 'PREC', iocc=1, scal=tolv, nbret=l)
@@ -450,7 +446,27 @@ subroutine op0044()
     call vpddl(raide, masse, neq, nblagr, nbcine,&
                neqact, zi(lddl), zi(lprod), ierd)
     if (ierd .ne. 0) goto 999
-!
+
+! --- PREPARATION TEST DE STURM DE POSTVERIFICATION (CAR MODIF EN PLACE DES ALGOS)
+! --- ON PREND LES MEMES BORNES QUE POUR MODE_ITER_SIMULT, ON NE CORRIGE PAS PAR
+! --- LES NOUVELLES BORNES DU PAQUET DE NOUVELLES VALEURS CALCULEES.
+! --- USAGE FOCALISE SUR AMELIORATION='OUI'
+    if (typres.eq.'DYNAMIQUE') then
+      vpinf  = zr(lborne)
+      vpmax  = zr(lborne+nbmod-1)
+    else
+      vpinf  = -zr(lborne+nbmod-1)
+      vpmax  = -zr(lborne)
+    endif
+    if (typres .eq. 'DYNAMIQUE') then
+       omecor = omega2(fcorig)
+       vpinf = omega2(vpinf)
+       vpmax = omega2(vpmax)
+    else
+       omecor = fcorig
+    endif
+    if (abs(vpinf) .le. omecor) vpinf=-omecor
+    if (abs(vpmax) .le. omecor) vpmax=omecor
 !     ==================================================================
 !
 !     ----------------- CALCUL DES VALEURS PROPRES ---------------------
@@ -778,35 +794,24 @@ subroutine op0044()
     ASSERT(lmf.eq.1)
 
 ! --- GEP SYMETRIQUE REEL STD, ON VA RETESTER QUE LES VALEURS PROPRES
-!     - RESTENT DANS UNE BANDE
-!     - VERIFIENT LE CRITERE DE STURM
+!     VERIFIENT LE CRITERE DE STURM ET RESTENT DANS LA BANDE
 !   SI STURM='OUI'. TRES UTILES POUR APPEL VIA AMELIORATION='OUI'
     if ((lamor .eq. 0).and.(sturm(1:3).eq.'OUI')) then
-        optiov='BANDE'
-        lmat(3) = ldynam
-        fmin = zr(lresur+mxresf)
-        fmax = zr(lresur+mxresf)
-        do ifreq = 0, nbmod-1
-            raux=zr(lresur+mxresf+ifreq)
-            if (raux .lt. fmin) fmin = raux
-            if (raux .gt. fmax) fmax = raux
-        enddo
-        if (abs(fmax) .le. omecor) then
-            fmax=omecor
-        endif
-        if (abs(fmin) .le. omecor) then
-            fmin=-omecor
-        endif
-        fmin = fmin * (1.d0 - sign(precdc,fmin))
-        fmax = fmax * (1.d0 + sign(precdc,fmax))
+      optiov='BANDE'
+      lmat(3) = ldynam
+! -- LE DECALAGE VIA PRECDC EST FAIT EN INTERNE VPCNTL POUR OMEMIN/MAX
+      omemin = vpinf
+      omemax = vpmax
+      vpinf = vpinf * (1.d0 - sign(precdc,vpinf))
+      vpmax = vpmax * (1.d0 + sign(precdc,vpmax))
     endif
 !
 ! --- ON PASSE DANS LE MODE "VALIDATION DU CONCEPT EN CAS D'ERREUR"
     call onerrf('EXCEPTION+VALID', k16bid, ibid)
 !
-    call vpcntl(ctyp, modes, optiov, fmin, fmax,&
+    call vpcntl(ctyp, modes, optiov, omemin, omemax,&
                 seuil, nbmod, zi(lresui), lmat, omecor,&
-                rbid, ierx, fmin, fmax, zr(lresur),&
+                precdc, ierx, vpinf, vpmax, zr(lresur),&
                 zr(lresur+3*mxresf), zr(lresur+mxresf), typres, nblagr, solveu,&
                 nbrss, precsh)
 !

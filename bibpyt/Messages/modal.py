@@ -240,14 +240,4 @@ Opérateur CALC_MODES:
       C'est généralement très rapide (surtout en parallèle) et cela fournit des informations
       concrètes pour ensuite paramétrer un découpage homogène et réaliste.
 """),
-   23: _(u"""
-Opérateur CALC_MODES:
-  Vous avez activé le mot-clé AMELIORATION. De ce fait, si une des vérifications du calcul modal initial
-  échoue, cela ne va conduire qu'à une ALARME (on affecte en interne VERI_MODE/STOP_ERREUR='NON').
-  Seules les vérifications opérées à l'issue de la procédure d'amélioration peuvent conduire à
-  une erreur (si vous n'avez pas posé initialement VERI_MODE/STOP_ERREUR='NON').
-
-  Conseil:
-    * Surveiller les alarmes à l'issue du calcul modal intermédiaire (résidu, test de Sturm...).
-"""),
 }

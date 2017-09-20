@@ -115,8 +115,9 @@ Contactez le support technique.
 """),
 
     26: _(u"""
- Ce problème peut apparaître lorsqu'il y a des modes multiples (structure avec symétries)
- ou une forte densité modale.
+ Ce problème peut apparaître lorsqu'il y a des modes multiples (structure avec symétries),
+ une forte densité modale ou si vous avez juste choisi d'affiner quelques modes parmis un groupe
+ de modes (options PROCHE, SEPARE ou AJUSTE).
 """),
 
     27: _(u"""

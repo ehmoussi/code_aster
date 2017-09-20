@@ -115,7 +115,7 @@ MODE_ITER_INV=OPER(nom="MODE_ITER_INV",op=  44,sd_prod=mode_iter_inv_prod
            SEUIL           =SIMP(statut='f',typ='R',defaut= 1.E-2,val_min=0.E+0,
                                  fr=tr("Valeur limite admise pour l ereur a posteriori des modes")  ),
            PREC_SHIFT      =SIMP(statut='f',typ='R',defaut= 5.E-3,val_min=0.E+0 ),
-           STURM           =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),
+           STURM           =SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON") ),
          ),
          INFO            =SIMP(statut='f',typ='I',defaut= 1,into=( 1 , 2) ),
          TITRE           =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**'),

@@ -127,6 +127,7 @@ subroutine vpcntl(cty, mode, option, omemin, omemax,&
         zmax = (1.d0 + sign(precdc,omemax)) * omemax
         zmin = (1.d0 - sign(precdc,omemin)) * omemin
         if (abs(omemin) .le. omecor) zmin = - omecor
+
         do 210 ifreq = 1, nfreq
             if (typres .eq. 'DYNAMIQUE') then
                 omega = omega2(freq(ifreq))
@@ -141,14 +142,14 @@ subroutine vpcntl(cty, mode, option, omemin, omemax,&
                 if (typres .eq. 'DYNAMIQUE') then
                     valr (1) = freq(ifreq)
                     call utmess(cty//'+', 'ALGELINE5_16', sr=valr(1))
-                    valr (1) = freqom(omemin)
-                    valr (2) = freqom(omemax)
+                    valr (1) = freqom(zmin)
+                    valr (2) = freqom(zmax)
                     call utmess(cty, 'ALGELINE5_20', nr=2, valr=valr)
                 else
                     valr (1) = - charge(ifreq)
                     call utmess(cty//'+', 'ALGELINE5_17', sr=valr(1))
-                    valr (1) = - omemax
-                    valr (2) = - omemin
+                    valr (1) = - zmax
+                    valr (2) = - zmin
                     call utmess(cty, 'ALGELINE5_20', nr=2, valr=valr)
                 endif
             endif
