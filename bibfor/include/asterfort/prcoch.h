@@ -21,8 +21,8 @@
 interface
     subroutine prcoch(noche8, nochs8, nocmp, ktype, itopo,&
                       ngroup, group)
-        character(len=8), intent(in) :: noche8
-        character(len=8), intent(in) :: nochs8
+        character(len=*), intent(in) :: noche8
+        character(len=*), intent(in) :: nochs8
         character(len=8), intent(in) :: nocmp
         character(len=8), intent(in) :: ktype
         integer, intent(in) :: itopo
