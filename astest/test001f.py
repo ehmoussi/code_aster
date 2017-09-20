@@ -104,6 +104,9 @@ matrAsse.setElementaryMatrix( matr_elem )
 matrAsse.setDOFNumbering( numeDDL )
 matrAsse.build()
 
+x=matrAsse.EXTR_MATR(sparse=True)
+test.assertTrue( 'numpy' in str(type(x[0])) )
+
 try:
     import petsc4py
 except ImportError:

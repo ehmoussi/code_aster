@@ -32,5 +32,6 @@ from libaster import *
 from .datastructure_ext import DataStructure
 from .function_ext import Function
 from .table_ext import Table
+from .assemblymatrix_ext import AssemblyMatrixDouble
 
 ALL_DS = objects_from_context(globals(), DataStructure)
