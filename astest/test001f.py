@@ -120,10 +120,15 @@ matrAsse.factorization()
 test.assertEqual( matrAsse.getType(), "MATR_ASSE_DEPL_R" )
 
 resu = monSolver.solveDoubleLinearSystem( matrAsse, retour )
+
+y=resu.EXTR_COMP()
+test.assertEqual( len(y.valeurs), 81 )
+
 resu2 = resu.exportToSimpleFieldOnNodes()
 resu2.updateValuePointers()
 test.assertAlmostEqual(resu2.getValue(5, 3), 0.000757555469653289)
 
 resu.printMedFile( "fort.med" )
+
 
 test.printSummary()
