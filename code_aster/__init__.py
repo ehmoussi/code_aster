@@ -23,7 +23,7 @@
 __all__ = []
 
 # install i18n function as soon as possible
-from .Utilities.i18n import localization
+from .Utilities import localization
 localization.install()
 
 from .Supervis import executionParameter
@@ -37,10 +37,6 @@ libCommandSyntax.commandsRegister(Commands.commandStore)
 executionParameter.parse_args()
 
 from .Supervis import libFile
-
-# CHECK MERGE
-#import libaster
-#from libaster import *
 
 # automatic startup
 if executionParameter.get_option('autostart'):

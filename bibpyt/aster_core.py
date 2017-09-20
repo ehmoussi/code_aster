@@ -122,7 +122,7 @@ def _print_alarm():
 def _print_header():
     """Appelé par entete.F90 pour afficher des informations sur
     la machine."""
-    from code_aster.Utilities.i18n import localization
+    from code_aster.Utilities import localization
     from Utilitai.Utmess import UTMESS
     import numpy
     lang_settings = '%s (%s)' % localization.get_current_settings()

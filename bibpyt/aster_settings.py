@@ -41,8 +41,7 @@ import aster_pkginfo
 import aster
 import aster_core
 
-from Execution.i18n import localization
-from Execution.strfunc import convert
+from code_aster.Utilities import localization, convert
 
 
 def check_value(option, opt, value, parser):

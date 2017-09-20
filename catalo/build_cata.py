@@ -25,14 +25,21 @@ This script build an .ojb file that contains the overall information
 included in all catalogs.
 """
 
+import __builtin__
 import os
 import os.path as osp
 import shutil
 
+# avoid importing code_aster because not required during this phase
+def translate(string):
+    """Install a fake translation function."""
+    return string
+
+__builtin__._ = translate
+
 
 def build(target, debug, *args):
     """Create the jeveux object of the catalog"""
-    from Execution.i18n import localization
     from Utilitai.as_timer import ASTER_TIMER
     from cataelem.elem import CataElem
     from cataelem.Tools.build_jeveux import impr_cata
