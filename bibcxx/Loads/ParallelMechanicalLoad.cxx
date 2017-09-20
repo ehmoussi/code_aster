@@ -31,10 +31,19 @@ ParallelMechanicalLoadInstance::ParallelMechanicalLoadInstance( GenericMechanica
     const auto& mesh = load->getSupportModel()->getPartialMesh();
     const auto& mecaLoad = load->getMechanicalLoadDescription();
     std::cout << "Size "  << mecaLoad._cimpo->getSize() << std::endl;
-//     for( int pos; pos < mecaLoad._cimpo->getSize(); ++pos )
-//     {
-//         
-//     }
+    const auto& pcField = *(mecaLoad._cimpo);
+    for( int pos = 0; pos < pcField.getSize(); ++pos )
+    {
+        const auto& zone = pcField.getZoneDescription( pos );
+        std::cout << "Localization " << zone.getLocalizationType() << std::endl;
+        if( zone.getLocalizationType() == PCFieldZone::ListOfDelayedElements )
+        {
+            for( auto& val : zone.getListOfElements() )
+                std::cout << val << std::endl;
+        }
+        else
+            continue;
+    }
 };
 
 #endif /* _USE_MPI */

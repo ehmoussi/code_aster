@@ -120,6 +120,15 @@ public:
     };
 
     /**
+     * @brief Get all the names of group of elements
+     * @return JeveuxBidirectionalMapChar24 _nameOfGrpElements
+     */
+    const JeveuxBidirectionalMapChar24& getGroupOfNodesNames() const
+    {
+        return _nameOfGrpElements;
+    };
+
+    /**
      * @brief Recuperation du nombre de noeuds
      */
     int getNumberOfNodes() const

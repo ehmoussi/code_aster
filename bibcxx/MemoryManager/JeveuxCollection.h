@@ -62,40 +62,6 @@ private:
     /** @brief Pointeur vers le vecteur Jeveux */
     long        _size;
 
-public:
-    /**
-     * @brief Constructeur
-     * @param collectionName Nom de collection
-     * @param number Numero de l'objet dans la collection
-     * @param ptr Pointeur vers le vecteur Jeveux
-     */
-    JeveuxCollectionObject( const std::string& collectionName, const int& number,
-                            ValueType* ptr = NULL ): _collectionName(collectionName),
-                                                     _numberInCollection(number),
-                                                     _nameOfObject(""),
-                                                     _valuePtr(ptr), _size( -1 )
-    {};
-
-    /**
-     * @brief Constructeur
-     * @param collectionName Nom de collection
-     * @param number Numero de l'objet dans la collection
-     * @param objectName Nom de l'objet de collection
-     * @param ptr Pointeur vers le vecteur Jeveux
-     */
-    JeveuxCollectionObject( const std::string& collectionName, const int& number,
-                            const std::string& objectName,
-                            ValueType* ptr = NULL ): _collectionName(collectionName),
-                                                     _numberInCollection(number),
-                                                     _nameOfObject(objectName),
-                                                     _valuePtr(ptr), _size( -1 )
-    {};
-
-    inline const ValueType &operator[]( int i ) const
-    {
-        return _valuePtr[i];
-    };
-
     /**
      * @brief Allocation
      */
@@ -114,12 +80,96 @@ public:
         return true;
     };
 
+public:
+    /**
+     * @brief Constructeur
+     * @param collectionName Nom de collection
+     * @param number Numero de l'objet dans la collection
+     * @param objectName Nom de l'objet de collection
+     */
+    JeveuxCollectionObject( const std::string& collectionName, const int& number,
+                            bool isNamed ):
+        _collectionName( collectionName ),
+        _numberInCollection( number ),
+        _nameOfObject( "" ),
+        _valuePtr( nullptr ), _size( -1 )
+    {
+        const char* tmp = "L";
+        long iret=number;
+        const char* charName = collectionName.c_str();
+        char* charval = MakeBlankFStr(32);
+        CALL_JEXNUM( charval, charName, &iret );
+        CALL_JEEXIN( charval, &iret);
+        if( iret == 0 )
+            throw std::runtime_error( "Error in collection object " + collectionName );
+        char* collectionObjectName = MakeBlankFStr(32);
+        if( isNamed )
+        {
+            CALL_JENUNO( charval, collectionObjectName );
+            _nameOfObject = trim( std::string( collectionObjectName ) );
+        }
+        CALL_JEVEUOC( charval, tmp, (void*)(&_valuePtr) );
+        FreeStr( charval );
+
+        const char* collName = _collectionName.c_str();
+        char* charJeveuxName = MakeBlankFStr(32);
+        long num = _numberInCollection;
+        CALL_JEXNUM( charJeveuxName, collName, &num );
+        long valTmp;
+        JeveuxChar8 param( "LONMAX" );
+        charval = MakeBlankFStr(32);
+        CALL_JELIRA( charJeveuxName, param.c_str(), &valTmp, charval );
+        _size = valTmp;
+        FreeStr( charval );
+        FreeStr( collectionObjectName );
+    };
+    /**
+     * @brief Constructeur
+     * @param collectionName Nom de collection
+     * @param number Numero de l'objet dans la collection
+     */
+    JeveuxCollectionObject( const std::string& collectionName, const int& number,
+                            const int& size ):
+        _collectionName( collectionName ),
+        _numberInCollection( number ),
+        _nameOfObject( "" ),
+        _valuePtr( nullptr ), _size( size )
+    {
+        allocate( size );
+    };
+
+    /**
+     * @brief Constructeur
+     * @param collectionName Nom de collection
+     * @param number Numero de l'objet dans la collection
+     * @param objectName Nom de l'objet de collection
+     */
+    JeveuxCollectionObject( const std::string& collectionName, const int& number,
+                            const std::string& objectName, const int& size ):
+        _collectionName( collectionName ),
+        _numberInCollection( number ),
+        _nameOfObject( trim( objectName ) ),
+        _valuePtr( nullptr), _size( size )
+    {
+        allocate( size );
+    };
+
+    inline const ValueType &operator[]( int i ) const
+    {
+        return _valuePtr[i];
+    };
+
     JeveuxChar32 getName() const
     {
         return JeveuxChar32( _nameOfObject.c_str() );
     };
 
-    /** @brief Get size of collection object */
+    const std::string& getStringName() const
+    {
+        return _nameOfObject;
+    };
+
+    /** @brief Set values of collection object */
     void setValues( const std::vector< ValueType >& toCopy ) throw( std::runtime_error )
     {
         if( toCopy.size() != size() )
@@ -132,7 +182,7 @@ public:
         }
     };
 
-    /** @brief Get size of collection object */
+    /** @brief Set values of collection object */
     void setValues( const ValueType& toCopy ) throw( std::runtime_error )
     {
         if( size() != 1 )
@@ -143,15 +193,19 @@ public:
     /** @brief Get size of collection object */
     int size() const
     {
-        const char* collName = _collectionName.c_str();
-        char* charJeveuxName = MakeBlankFStr(32);
-        long num = _numberInCollection;
-        CALL_JEXNUM( charJeveuxName, collName, &num );
-        long valTmp;
-        JeveuxChar8 param( "LONMAX" );
-        char* charval = MakeBlankFStr(32);
-        CALL_JELIRA( charJeveuxName, param.c_str(), &valTmp, charval );
-        return (int)valTmp;
+        return _size;
+    };
+
+    /** @brief Convert to std::vector */
+    std::vector< ValueType > toVector() const
+        throw( std::runtime_error )
+    {
+        if( _valuePtr == nullptr )
+            throw std::runtime_error( "Pointer is null" );
+        std::vector< ValueType > toReturn;
+        for( int i = 0; i < size(); ++i )
+            toReturn.push_back( _valuePtr[i] );
+        return toReturn;
     };
 };
 
@@ -298,10 +352,7 @@ public:
     {};
 
     ~JeveuxCollectionInstance()
-    {
-        // pas d'objet maître "distinct" pour une collection
-//         _name = "";
-    };
+    {};
 
     /**
      * @brief Allocation
@@ -391,10 +442,10 @@ public:
     {
         if( _listObjects.size() == _size )
             throw std::runtime_error( "Out of collection bound" );
+
         _mapNumObject[ std::string( trim( name.c_str() ) ) ] = _listObjects.size();
-        _listObjects.push_back( JeveuxCollObjValType( _name.c_str(), _listObjects.size() + 1,
-                                                      name.c_str() ) );
-        _listObjects[ _listObjects.size() - 1 ].allocate( size );
+        _listObjects.push_back( JeveuxCollObjValType( _name, _listObjects.size() + 1,
+                                                      name.c_str(), size ) );
         return true;
     };
 
@@ -406,8 +457,9 @@ public:
     {
         if( _listObjects.size() == _size )
             throw std::runtime_error( "Out of collection bound" );
-        _listObjects.push_back( JeveuxCollObjValType( _name.c_str(), _listObjects.size() + 1 ) );
-        _listObjects[ _listObjects.size() - 1 ].allocate( size );
+
+        _listObjects.push_back( JeveuxCollObjValType( _name, _listObjects.size() + 1,
+                                                      size ) );
         return true;
     };
 
@@ -442,10 +494,10 @@ public:
         if( _isEmpty )
             throw std::runtime_error( "Collection not build" );
 
-        if( position >= _listObjects.size() )
+        if( position > _listObjects.size() )
             throw std::runtime_error( "Out of collection bound" );
 
-        return _listObjects[position];
+        return _listObjects[position-1];
     };
 
     JeveuxCollectionObject< ValueType >& getObject( const int& position )
@@ -454,10 +506,10 @@ public:
         if( _isEmpty )
             throw std::runtime_error( "Collection not build" );
 
-        if( position >= _listObjects.size() )
+        if( position > _listObjects.size() )
             throw std::runtime_error( "Out of collection bound" );
 
-        return _listObjects[position];
+        return _listObjects[position-1];
     };
 
     const JeveuxCollectionObject< ValueType >& getObjectFromName( const std::string& name ) const
@@ -469,7 +521,7 @@ public:
         if( ! _isNamed )
             throw std::runtime_error( "Collection " + _name + " is not named" );
 
-        const auto& curIter = _mapNumObject.find( name );
+        const auto& curIter = _mapNumObject.find( trim( name ) );
         if( curIter == _mapNumObject.end() )
             throw std::runtime_error( "Name not in collection" );
 
@@ -485,7 +537,7 @@ public:
         if( ! _isNamed )
             throw std::runtime_error( "Collection " + _name + " is not named" );
 
-        const auto& curIter = _mapNumObject.find( name );
+        const auto& curIter = _mapNumObject.find( trim( name ) );
         if( curIter == _mapNumObject.end() )
             throw std::runtime_error( "Name not in collection" );
 
@@ -502,6 +554,7 @@ public:
 template< class ValueType, class PointerType >
 bool JeveuxCollectionInstance< ValueType, PointerType >::buildFromJeveux()
 {
+    if( ! _isEmpty ) return false;
     _listObjects.clear();
     long nbColObj, valTmp;
     const char* charName = _name.c_str();
@@ -520,31 +573,13 @@ bool JeveuxCollectionInstance< ValueType, PointerType >::buildFromJeveux()
 
     if ( resu == "NO" ) _isNamed = true;
 
-    const char* tmp = "L";
-    charval = MakeBlankFStr(32);
-    char* collectionObjectName = MakeBlankFStr(32);
     for ( long i = 1; i <= nbColObj; ++i )
     {
-        ValueType* valuePtr;
-        CALL_JEXNUM( charval, charName, &i );
-        CALL_JEEXIN( charval, &iret);
-        if( iret == 0 ) continue;
+        _listObjects.push_back( JeveuxCollObjValType( _name, i, _isNamed ) );
         if ( _isNamed )
-            CALL_JENUNO( charval, collectionObjectName );
-        CALL_JEVEUOC( charval, tmp, (void*)(&valuePtr) );
-        if ( _isNamed )
-        {
-            _listObjects.push_back( JeveuxCollObjValType( charName, i,
-                                                          collectionObjectName, valuePtr ) );
-            _mapNumObject[ std::string( trim( collectionObjectName ) ) ] = i-1;
-        }
-        else
-        {
-            _listObjects.push_back( JeveuxCollObjValType( charName, i, valuePtr ) );
-        }
+            _mapNumObject[ trim( _listObjects[ _listObjects.size()-1 ].getStringName() ) ] = i-1;
     }
     FreeStr( charval );
-    FreeStr( collectionObjectName );
     _isEmpty = false;
     return true;
 };

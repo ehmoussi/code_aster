@@ -52,11 +52,11 @@ private:
     FiniteElementDescriptorPtr _ligrel;
     LocalizationType           _localisation;
     GroupOfElementsPtr         _grp;
-    VectorInt                  _indexes;
+    VectorLong                 _indexes;
 
 public:
     PCFieldZone( BaseMeshPtr mesh ): _mesh( mesh ),
-                                 _localisation( AllMesh )
+                                     _localisation( AllMesh )
     {};
 
     PCFieldZone( FiniteElementDescriptorPtr ligrel ): _ligrel( ligrel ),
@@ -64,16 +64,16 @@ public:
     {};
 
     PCFieldZone( BaseMeshPtr mesh, GroupOfElementsPtr grp ): _mesh( mesh ),
-                                                         _localisation( GroupOfElements ),
-                                                         _grp( grp )
+                                                             _localisation( GroupOfElements ),
+                                                             _grp( grp )
     {};
 
-    PCFieldZone( BaseMeshPtr mesh, const VectorInt& indexes ): _mesh( mesh ),
-                                                           _localisation( ListOfElements ),
-                                                           _indexes( indexes )
+    PCFieldZone( BaseMeshPtr mesh, const VectorLong& indexes ): _mesh( mesh ),
+                                                               _localisation( ListOfElements ),
+                                                               _indexes( indexes )
     {};
 
-    PCFieldZone( FiniteElementDescriptorPtr ligrel, const VectorInt& indexes ):
+    PCFieldZone( FiniteElementDescriptorPtr ligrel, const VectorLong& indexes ):
         _ligrel( ligrel ),
         _localisation( ListOfDelayedElements ),
         _indexes( indexes )
@@ -108,7 +108,7 @@ public:
         return _grp;
     };
 
-    const VectorInt& getListOfElements() const
+    const VectorLong& getListOfElements() const
         throw( std::runtime_error )
     {
         if( _localisation != ListOfElements and _localisation != ListOfDelayedElements )
@@ -139,7 +139,7 @@ class PCFieldOnMeshInstance: public DataStructure
         JeveuxVector< ValueType >  _valuesList;
         /** @brief Maillage sous-jacent */
         BaseMeshPtr                _supportMesh;
-        /** @brief Maillage sous-jacent */
+        /** @brief Ligrel */
         FiniteElementDescriptorPtr _FEDesc;
         /** @brief La carte est-elle allouée ? */
         bool                       _isAllocated;
@@ -342,14 +342,27 @@ class PCFieldOnMeshInstance: public DataStructure
             if( position >= (*_descriptor)[2] )
                 throw std::runtime_error( "Out of PCFieldOnMesh bound" );
 
-            long code = (*_descriptor)[3 + 2*position];
+            long code = (*_descriptor)[ 3 + 2*position ];
             if( code == 1 )
                 return PCFieldZone( _supportMesh );
             else if( code == -1 )
                 return PCFieldZone( _FEDesc );
-//             else if( code == 2 )
+            else if( code == 2 )
+            {
+                const auto numGrp = (*_descriptor)[ 4 + 2*position ];
+                const auto& map = _supportMesh->getGroupOfNodesNames();
+                const auto name = map->findStringOfElement( numGrp );
+                return PCFieldZone( _supportMesh, 
+                                    GroupOfElementsPtr( new GroupOfElements( name ) ) );
+            }
 //             else if( code == 3 )
-//             else if( code == -3 )
+            else if( code == -3 )
+            {
+                const auto numGrp = (*_descriptor)[ 4 + 2*position ];
+                _listOfMeshElements->buildFromJeveux();
+                const auto& object = _listOfMeshElements->getObject( numGrp );
+                return PCFieldZone( _FEDesc, object.toVector() );
+            }
             else
                 throw std::runtime_error( "Error in PCFieldOnMesh" );
         };

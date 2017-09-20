@@ -102,11 +102,11 @@ bool BaseMeshInstance::readMeshFile( const std::string& fileName, const std::str
         ASTERINTEGER op2 = 47;
         if( format == "GIBI" ) op2 = 49;
 
-        CommandSyntaxCython* cmdSt2 = new CommandSyntaxCython( preCmd );
+        CommandSyntaxCython cmdSt( preCmd );
         SyntaxMapContainer syntax2;
         syntax2.container[ "UNITE_" + format ] = file1.getLogicalUnit();
         syntax2.container[ "UNITE_MAILLAGE" ] = file2.getLogicalUnit();
-        cmdSt2->define( syntax2 );
+        cmdSt.define( syntax2 );
 
         try
         {
@@ -116,11 +116,11 @@ bool BaseMeshInstance::readMeshFile( const std::string& fileName, const std::str
         {
             throw;
         }
-        delete cmdSt2;
+//         delete cmdSt2;
         syntax.container[ "FORMAT" ] = "ASTER";
         syntax.container[ "UNITE" ] = file2.getLogicalUnit();
 
-        CommandSyntaxCython cmdSt( "LIRE_MAILLAGE" );
+        cmdSt = CommandSyntaxCython( "LIRE_MAILLAGE" );
         cmdSt.setResult( getResultObjectName(), "MAILLAGE" );
 
         cmdSt.define( syntax );
