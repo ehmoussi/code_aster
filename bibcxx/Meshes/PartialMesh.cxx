@@ -189,7 +189,7 @@ PartialMeshInstance::PartialMeshInstance( ParallelMeshPtr& mesh, const VectorStr
     {
         _nameOfElements->add( position, std::string( "M" + std::to_string( position ) ) );
         _connectivity->allocateObject( 1 );
-        _connectivity->getObject( position - 1 ).setValues( position );
+        _connectivity->getObject( position ).setValues( position );
         (*_elementsType)[ position-1 ] = 1;
     }
     CALL_CARGEO( getName().c_str() );

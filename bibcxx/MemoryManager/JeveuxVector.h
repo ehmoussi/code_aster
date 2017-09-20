@@ -89,7 +89,7 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
          * @param i Indice dans le tableau Jeveux
          * @return la valeur du tableau Jeveux a la position i
          */
-        inline const ValueType &operator[]( int i ) const
+        inline const ValueType &operator[]( const int& i ) const
         {
             return _valuePtr[i];
         };
@@ -99,7 +99,7 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
          * @param i Indice dans le tableau Jeveux
          * @return la valeur du tableau Jeveux a la position i
          */
-        inline ValueType &operator[]( int i )
+        inline ValueType &operator[]( const int& i )
         {
             return _valuePtr[i];
         };

@@ -6,7 +6,7 @@
  * @brief Fichier entete permettant de decrire un bout de fichier de commande Aster
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -27,20 +27,6 @@
 #include "Utilities/SyntaxDictionary.h"
 #include "Utilities/CapyConvertibleValue.h"
 
-/** @brief Déclarations des fonctions cython */
-__PYX_EXTERN_C DL_IMPORT(void) newCommandSyntax(const char *);
-__PYX_EXTERN_C DL_IMPORT(void) deleteCommandSyntax(void);
-__PYX_EXTERN_C DL_IMPORT(void) setResultCommandSyntax(const char *, const char *);
-__PYX_EXTERN_C DL_IMPORT(void) defineCommandSyntax(PyObject *);
-__PYX_EXTERN_C DL_IMPORT(void) debugPrintCommandSyntax(void);
-// __PYX_EXTERN_C DL_IMPORT(int) testCythonException(void);
-// 
-// static void testCythonException2() throw( std::runtime_error )
-// {
-//     int retour = testCythonException();
-//     if( retour == -1 )
-//         throw std::runtime_error( "Cython error" );
-// };
 
 /**
  * @class CommandSyntaxCython
@@ -51,60 +37,45 @@ class CommandSyntaxCython
 {
     private:
         /** @brief Nom de la commande */
-        const std::string _commandName;
+        std::string _commandName;
         /** @brief Dictionnaire python contenant la syntaxe de la commande */
-        PyObject*         _dictCommand;
+        PyObject*   _dictCommand;
+        bool        _existCS;
 
     public:
         /**
          * @brief Constructeur
          * @param name Nom de la commande
          */
-        CommandSyntaxCython( const std::string name ): _commandName( name ), _dictCommand( NULL )
-        {
-            newCommandSyntax( name.c_str() );
-        };
+        CommandSyntaxCython( const std::string name );
+
+        CommandSyntaxCython& operator=( const CommandSyntaxCython& toCopy );
 
         /**
          * @brief Destructeur
          */
-        ~CommandSyntaxCython()
-        {
-            if ( _dictCommand != NULL )
-                Py_DECREF( _dictCommand );
-            _dictCommand = NULL;
-            deleteCommandSyntax();
-        };
+        ~CommandSyntaxCython();
 
         /**
          * @brief Impression de debug
          */
-        void debugPrint( void ) const
-        {
-            debugPrintCommandSyntax();
-        };
+        void debugPrint( void ) const;
 
         /**
          * @brief Fonction permettant de definir la syntax
          * @param syntax Objet de type SyntaxMapContainer
          */
-        void define( SyntaxMapContainer& syntax )
-        {
-            _dictCommand = syntax.convertToPythonDictionnary();
-            Py_INCREF( _dictCommand );
-            defineCommandSyntax( _dictCommand );
-        };
+        void define( SyntaxMapContainer& syntax ) throw( std::runtime_error );
 
         /**
          * @brief Fonction permettant de definir la syntax
          * @param syntax Objet de type CapyConvertibleSyntax
          */
-        void define( const CapyConvertibleSyntax& syntax )
+        void define( const CapyConvertibleSyntax& syntax );
+
+        const std::string& getName() const
         {
-            SyntaxMapContainer test = syntax.toSyntaxMapContainer();
-            _dictCommand = test.convertToPythonDictionnary();
-            Py_INCREF( _dictCommand );
-            defineCommandSyntax( _dictCommand );
+            return _commandName;
         };
 
         /**
@@ -112,10 +83,7 @@ class CommandSyntaxCython
          * @param resultName std::string contenant le nom du résultat
          * @param typeSd std::string contenant le nom de la commande
          */
-        void setResult( const std::string resultName, const std::string typeSd ) const
-        {
-            setResultCommandSyntax( resultName.c_str(), typeSd.c_str() );
-        };
+        void setResult( const std::string resultName, const std::string typeSd );
 };
 
 #endif /* COMMANDSYNTAXCYTHON_H_ */
