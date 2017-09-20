@@ -188,6 +188,10 @@ integer, intent(in) :: vicsat
         goto 999
     endif
 !
+! - Get hydraulic parameters
+!
+    call thmGetParaHydr(hydr, imate)
+!
 ! - Get Biot parameters (for porosity evolution)
 !
     call thmGetParaBiot(imate)
@@ -202,10 +206,6 @@ integer, intent(in) :: vicsat
         call thmGetParaElas(imate, kpi, t, ndim)
         call thmMatrHooke(angl_naut)
     endif
-!
-! - Get hydraulic parameters
-!
-    call thmGetParaHydr(hydr, imate)
 !
 ! - Get thermic parameters
 !

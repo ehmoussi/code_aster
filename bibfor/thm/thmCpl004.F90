@@ -18,7 +18,7 @@
 ! aslint: disable=W1504
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine thmCpl004(yachai, option, hydr,&
+subroutine thmCpl004(option, hydr,&
                   imate, ndim, dimdef, dimcon, nbvari,&
                   yamec, yate, addeme, adcome, advihy,&
                   advico, vihrho, vicphi, vicpvp, vicsat,&
@@ -28,7 +28,7 @@ subroutine thmCpl004(yachai, option, hydr,&
                   p1, p2, dp1, dp2, temp,&
                   dt, phi, pvp, h11, h12,&
                   rho11, satur, retcom,&
-                  tbiot, angmas)
+                  tbiot, angl_naut)
 !
 use THM_type
 use THM_module
@@ -96,9 +96,8 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: congem(dimcon), congep(dimcon), vintm(nbvari), pvp0
     real(kind=8) :: vintp(nbvari), dsde(dimcon, dimdef), epsv, depsv
     real(kind=8) :: p1, dp1, p2, dp2, dt, phi, pvp, h11, h12, rho11, phi0
-    real(kind=8) :: angmas(3)
+    real(kind=8) :: angl_naut(3)
     character(len=16) :: option, hydr
-    aster_logical :: yachai
     integer :: i
     real(kind=8) :: saturm, epsvm, phim, rho11m, rho12m, rho21m, pvpm
     real(kind=8) :: rho110, tbiot(6), cs, alpliq, cliq, rho12
@@ -163,13 +162,13 @@ real(kind=8), intent(in) :: temp
     phim = vintm(advico+vicphi) + phi0
     rho11 = vintm(advihy+vihrho) + rho110
     rho11m = vintm(advihy+vihrho) + rho110
-! =====================================================================
-! --- RECUPERATION DES COEFFICIENTS MECANIQUES ------------------------
-! =====================================================================
-    call inithm(yachai, yamec, phi0, em,&
-                cs, tbiot, epsv, depsv,&
-                epsvm, angmas, mdal, dalal,&
-                alphfi, cbiot, unsks, alpha0)
+!
+! - Prepare initial parameters for coupling law
+!
+    call inithm(angl_naut, tbiot , phi0 ,&
+                epsv     , depsv ,&
+                epsvm    , cs    , mdal , dalal,&
+                alpha0   , alphfi, cbiot, unsks)
 ! *********************************************************************
 ! *** LES VARIABLES INTERNES ******************************************
 ! *********************************************************************
@@ -241,7 +240,7 @@ real(kind=8), intent(in) :: temp
 ! --- ACTUALISATION DE CS ET ALPHFI -----------------------------------
 ! =====================================================================
     if (yamec .eq. 1) then
-        call dilata(angmas, phi, tbiot, alphfi)
+        call dilata(angl_naut, phi, tbiot, alphfi)
         call unsmfi(phi, tbiot, cs)
     endif
 ! **********************************************************************

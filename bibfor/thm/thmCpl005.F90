@@ -18,7 +18,7 @@
 ! aslint: disable=W1504
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine thmCpl005(yachai, option, hydr,&
+subroutine thmCpl005(option, hydr,&
                   imate, ndim, dimdef, dimcon, nbvari,&
                   yamec, yate, addeme, adcome, advihy,&
                   advico, vihrho, vicphi, vicsat, addep1,&
@@ -27,7 +27,7 @@ subroutine thmCpl005(yachai, option, hydr,&
                   deps, epsv, depsv, p1, p2,&
                   dp1, dp2, temp, dt, phi,&
                   rho11, satur, retcom,&
-                  tbiot, angmas)
+                  tbiot, angl_naut)
 !
 use THM_type
 use THM_module
@@ -87,9 +87,8 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: congem(dimcon), congep(dimcon), vintm(nbvari)
     real(kind=8) :: vintp(nbvari), dsde(dimcon, dimdef), epsv, depsv
     real(kind=8) :: p1, dp1, p2, dp2, dt, phi, rho11, phi0
-    real(kind=8) :: angmas(3)
+    real(kind=8) :: angl_naut(3)
     character(len=16) :: option, hydr
-    aster_logical :: yachai
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
@@ -158,13 +157,13 @@ real(kind=8), intent(in) :: temp
     rho11m = vintm(advihy+vihrho) + rho110
     phi = vintm(advico+vicphi) + phi0
     phim = vintm(advico+vicphi) + phi0
-! =====================================================================
-! --- RECUPERATION DES COEFFICIENTS MECANIQUES ------------------------
-! =====================================================================
-    call inithm(yachai, yamec, phi0, em,&
-                cs, tbiot, epsv, depsv,&
-                epsvm, angmas, mdal, dalal,&
-                alphfi, cbiot, unsks, alpha0)
+!
+! - Prepare initial parameters for coupling law
+!
+    call inithm(angl_naut, tbiot , phi0 ,&
+                epsv     , depsv ,&
+                epsvm    , cs    , mdal , dalal,&
+                alpha0   , alphfi, cbiot, unsks)
 !
 ! *********************************************************************
 ! *** LES VARIABLES INTERNES ******************************************
@@ -218,7 +217,7 @@ real(kind=8), intent(in) :: temp
 ! --- ACTUALISATION DE CS ET ALPHFI -----------------------------------
 ! =====================================================================
     if (yamec .eq. 1) then
-        call dilata(angmas, phi, tbiot, alphfi)
+        call dilata(angl_naut, phi, tbiot, alphfi)
         call unsmfi(phi, tbiot, cs)
     endif
 ! **********************************************************************

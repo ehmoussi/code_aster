@@ -20,7 +20,7 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine thmCpl004(yachai, option, hydr,&
+    subroutine thmCpl004(option, hydr,&
                       imate, ndim, dimdef, dimcon, nbvari,&
                       yamec, yate, addeme, adcome, advihy,&
                       advico, vihrho, vicphi, vicpvp, vicsat,&
@@ -30,12 +30,11 @@ interface
                       p1, p2, dp1, dp2, temp,&
                       dt, phi, pvp, h11, h12,&
                       rho11, satur, retcom,&
-                      tbiot, angmas)
+                      tbiot, angl_naut)
         integer :: nbvari
         integer :: dimcon
         integer :: dimdef
         integer :: ndim
-        aster_logical :: yachai
         character(len=16) :: option
         character(len=16) :: hydr
         integer :: imate
@@ -78,6 +77,6 @@ interface
         real(kind=8) :: satur
         integer :: retcom
         real(kind=8) :: tbiot(6)
-        real(kind=8) :: angmas(3)
+        real(kind=8) :: angl_naut(3)
     end subroutine thmCpl004
 end interface 

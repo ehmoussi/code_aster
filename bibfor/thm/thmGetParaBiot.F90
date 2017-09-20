@@ -47,6 +47,8 @@ integer, intent(in) :: j_mater
     real(kind=8) :: resu_vale(nb_resu)
     character(len=16), parameter :: resu_name(nb_resu) = (/'BIOT_COEF', 'BIOT_L   ',&
                                                            'BIOT_N   ', 'BIOT_T   '/)
+    real(kind=8) :: emmag, phi0
+    real(kind=8), parameter :: eps = 1.d-21
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -76,6 +78,19 @@ integer, intent(in) :: j_mater
         else
             ds_thm%ds_material%biot%type = BIOT_TYPE_ISTR
         endif
-    endif 
+    endif
+!
+! - If small storage coefficient
+!
+    if (ds_thm%ds_material%hydr%l_emmag) then
+        emmag = ds_thm%ds_material%hydr%emmag
+        phi0  = ds_thm%ds_parainit%poro_init
+        if (emmag .lt. eps) then
+            ds_thm%ds_material%biot%coef = phi0
+            ds_thm%ds_material%biot%l    = phi0
+            ds_thm%ds_material%biot%t    = phi0
+            ds_thm%ds_material%biot%t    = phi0
+        endif
+    endif
 !
 end subroutine

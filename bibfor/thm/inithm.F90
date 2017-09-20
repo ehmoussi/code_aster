@@ -16,10 +16,10 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine inithm(yachai, yamec, phi0, em,&
-                  cs0, tbiot, epsv, depsv,&
-                  epsvm, angmas, mdal, dalal,&
-                  alphfi, cbiot, unsks, alpha0)
+subroutine inithm(angl_naut, tbiot , phi0 ,&
+                  epsv     , depsv ,&
+                  epsvm    , cs0   , mdal , dalal,&
+                  alpha0   , alphfi, cbiot, unsks)
 !
 use THM_type
 use THM_module
@@ -35,19 +35,61 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/THM_type.h"
 !
-aster_logical :: yachai
-integer :: yamec, i
+real(kind=8), intent(in) :: angl_naut(3)
+real(kind=8), intent(in) :: tbiot(6)
+real(kind=8), intent(in) :: phi0
+real(kind=8), intent(in) :: epsv, depsv
+real(kind=8), intent(out) :: epsvm
 real(kind=8), intent(out) :: cs0
-real(kind=8), intent(out) :: alphfi
-real(kind=8) :: phi0, em, tbiot(6), epsvm, epsv, depsv
-real(kind=8) :: angmas(3), dalal, mdal(6), young, nu
-real(kind=8) :: cbiot, unsks, alpha0, k0
-real(kind=8), parameter :: eps = 1.d-21
+real(kind=8), intent(out) :: dalal, mdal(6)
+real(kind=8), intent(out) :: alphfi, alpha0
+real(kind=8), intent(out) :: cbiot, unsks
 !
-! =====================================================================
-! --- SI PRESENCE DE MECANIQUE OU DE CHAINAGE -------------------------
-! =====================================================================
-    if ((yamec .eq. 1) .or. yachai) then
+! --------------------------------------------------------------------------------------------------
+!
+! THM
+!
+! Prepare initial parameters for coupling law
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  angl_naut        : nautical angles
+!                        (1) Alpha - clockwise around Z0
+!                        (2) Beta  - counterclockwise around Y1
+!                        (1) Gamma - clockwise around X
+! In  tbiot            : Biot tensor
+! In  phi0             : initial porosity
+! In  epsv             : current volumic strain
+! In  depsv            : increment of volumic strain
+! Out epsvm            : previous volumic strain
+! Out cs0              : initial Biot modulus of solid matrix
+! Out alphfi           : initial differential thermal expansion ratio
+! Out alpha0           : initial thermal expansion
+! Out unsks            : inverse of bulk modulus (solid matrix)
+! Out cbiot            : Biot coefficient for isotropic case
+! Out mdal             : product [Elas] {alpha}
+! Out dalal            : product <alpha> [Elas] {alpha}
+!
+! --------------------------------------------------------------------------------------------------
+!
+    real(kind=8) :: young, nu, k0, emmag
+    real(kind=8), parameter :: eps = 1.d-21
+!
+! --------------------------------------------------------------------------------------------------
+!
+    cbiot   = 0.d0
+    alphfi  = 0.d0
+    cs0     = 0.d0
+    dalal   = 0.d0
+    alpha0  = 0.d0
+    unsks   = 0.d0
+    mdal(:) = 0.d0
+!
+! - Get parameters
+!
+    emmag = ds_thm%ds_material%hydr%emmag
+    if (ds_thm%ds_elem%l_dof_meca .or. ds_thm%ds_elem%l_weak_coupling) then
+! ----- Compute inverse of bulk modulus (solid matrix)
         if (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ISOT) then
             young  = ds_thm%ds_material%elas%e
             nu     = ds_thm%ds_material%elas%nu
@@ -56,81 +98,32 @@ real(kind=8), parameter :: eps = 1.d-21
             k0     = young / 3.d0 / (1.d0-2.d0*nu)
             unsks  = (1.d0-cbiot) / k0
         endif
-! =====================================================================
-! --- CALCUL DES GRANDEURS MECANIQUES DANS LE CAS GENERAL -------------
-! =====================================================================
-        call unsmfi(phi0, tbiot, cs0)
-        call dilata(angmas, phi0, tbiot, alphfi)
-!
-! ----- Compute thermic quantities
-!
-        call thmTherElas(angmas, mdal, dalal)
-!
-! =====================================================================
-! --- SI ABSENCE DE MECANIQUE -----------------------------------------
-! =====================================================================
+        if (.not.ds_thm%ds_elem%l_jhms) then
+! --------- Compute Biot modulus
+            call unsmfi(phi0, tbiot, cs0)
+! --------- Compute differential thermal expansion ratio
+            call dilata(angl_naut, phi0, tbiot, alphfi)
+! --------- Compute thermic quantities
+            call thmTherElas(angl_naut, mdal, dalal)
+        endif
     else
         if (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ISOT) then
-! =====================================================================
-! --- CALCUL CAS ISOTROPE ---------------------------------------------
-! =====================================================================
-            alphfi = 0.d0
-            cs0 = em
-            dalal = 0.d0
-            alpha0 = 0.0d0
-            unsks = em
-            do i = 1, 6
-                mdal(i) = 0.d0
-            end do
-            if (em .lt. eps) then
+            cs0   = emmag
+            unsks = emmag
+            if (emmag .lt. eps) then
                 cbiot = phi0
-                ds_thm%ds_material%biot%coef = phi0
-                ds_thm%ds_material%biot%l    = phi0
-                ds_thm%ds_material%biot%t    = phi0
-                ds_thm%ds_material%biot%t    = phi0
-                call tebiot(angmas, tbiot)
             endif
         else if (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ISTR) then
-! =====================================================================
-! --- CALCUL CAS ISOTROPE TRANSVERSE-----------------------------------
-! =====================================================================
-            alphfi = 0.0d0
-            cs0 = em
-            dalal = 0.d0
-            do i = 1, 6
-                mdal(i) = 0.d0
-            end do
-            if (em .lt. eps) then
-                ds_thm%ds_material%biot%coef = phi0
-                ds_thm%ds_material%biot%l    = phi0
-                ds_thm%ds_material%biot%t    = phi0
-                ds_thm%ds_material%biot%t    = phi0
-                call tebiot(angmas, tbiot)
-            endif
+            cs0   = emmag
         else if (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ORTH) then
-! =====================================================================
-! --- CALCUL CAS ORTHO 2D-----------------------------------
-! =====================================================================
-            alphfi = 0.0d0
-            cs0 = em
-            dalal = 0.d0
-            do i = 1, 6
-                mdal(i) = 0.d0
-            end do
-            if (em .lt. eps) then
-                ds_thm%ds_material%biot%coef = phi0
-                ds_thm%ds_material%biot%l    = phi0
-                ds_thm%ds_material%biot%t    = phi0
-                ds_thm%ds_material%biot%t    = phi0
-                call tebiot(angmas, tbiot)
-            endif
+            cs0   = emmag
         else
             ASSERT(.false.)
         endif
     endif
-! =====================================================================
-! --- CALCUL EPSV AU TEMPS MOINS --------------------------------------
-! =====================================================================
+!
+! - Previous volumic strain
+!
     epsvm = epsv - depsv
-! =====================================================================
+!
 end subroutine

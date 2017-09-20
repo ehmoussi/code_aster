@@ -18,14 +18,14 @@
 ! aslint: disable=W1504
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine thmCpl002(yachai, option,&
+subroutine thmCpl002(option,&
                   hydr, imate, ndim, dimdef, dimcon,&
                   nbvari, yamec, yate, addeme, adcome,&
                   advico, vicphi, addep1, adcp11, addete,&
                   adcote, congem, congep, vintm, vintp,&
                   dsde, epsv, depsv, p1, dp1,&
                   temp, dt, phi, rho11, &
-                  satur, retcom, tbiot, angmas,&
+                  satur, retcom, tbiot, angl_naut,&
                   deps)
 !
 use THM_type
@@ -53,7 +53,6 @@ implicit none
 #include "asterfort/sigmap.h"
 #include "asterfort/unsmfi.h"
 #include "asterfort/viporo.h"
-#include "asterfort/thmEvalSatuInit.h"
 !
 real(kind=8), intent(in) :: temp
     integer :: ndim, dimdef, dimcon, nbvari, imate, yamec, yate
@@ -63,88 +62,90 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: vintm(nbvari), vintp(nbvari)
     real(kind=8) :: dsde(dimcon, dimdef), epsv, depsv, p1, dp1, dt
     real(kind=8) :: phi, rho11
-    real(kind=8) :: angmas(3)
+    real(kind=8) :: angl_naut(3)
     character(len=16) :: option, hydr
-    aster_logical :: yachai
-! ======================================================================
-! --- VARIABLES LOCALES ------------------------------------------------
-! ======================================================================
+!
+! --------------------------------------------------------------------------------------------------
+!
     integer :: i
     real(kind=8) :: epsvm, phim
     real(kind=8) :: tbiot(6), cs, cp12, satur, mamolg
     real(kind=8) :: mdal(6), dalal, alphfi, cbiot, unsks, alpha0
-    real(kind=8) :: r, rho0, csigm, alp11, em, p1m, dsatur
+    real(kind=8) :: rgaz, rho0, csigm, alp11, em, p1m, dsatur
     real(kind=8) :: deps(6)
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
     aster_logical :: l_emmag
     real(kind=8) :: saturm
     real(kind=8) :: dsdp2(6)
     real(kind=8) :: signe, dp2, cliq, coeps, rho12, alp21, rho21, rho21m
-    real(kind=8) :: cp21, p2, satm, rho22, cp11, cp22, m11m, dmdeps(6)
+    real(kind=8) :: cp21, p2, rho22, cp11, cp22, m11m, dmdeps(6)
     real(kind=8) :: dqeps(6)
     real(kind=8) :: sigmp(6), phi0
-
+!
+! --------------------------------------------------------------------------------------------------
+!
+    retcom = 0
+    signe  = 1.d0
+    satur  = 0.d0
+    saturm = 0.d0
+    alp11  = 0.d0
+    rho11  = 0.d0
+    rho21  = 0.d0
+    rho22  = 0.d0
+    cp11   = 0.d0
+    cp12   = 0.d0
+    cp22   = 0.d0
+    cliq   = 0.d0
+!
+! - Pressures: invert DP2 = DP1 and P2 = P1
+!
+    p2     = p1
+    dp2    = dp1
+    p1m    = 0.d0
+    dp1    = 0.d0   
 !
 ! - Get material parameters
 !
-    phi0   = ds_thm%ds_parainit%poro_init
-    r      = ds_thm%ds_material%solid%r_gaz
+    rgaz   = ds_thm%ds_material%solid%r_gaz
     rho0   = ds_thm%ds_material%solid%rho
     csigm  = ds_thm%ds_material%solid%cp
     mamolg = ds_thm%ds_material%gaz%mass_mol
     cp21   = ds_thm%ds_material%gaz%cp
 !
-! - Evaluation of initial saturation
-!
-    p1m = 0.d0
-    call thmEvalSatuInit(hydr  , imate, p1m   , p1,&
-                         saturm, satur, dsatur, retcom)
-!
 ! - Storage coefficient
 !
     l_emmag = ds_thm%ds_material%hydr%l_emmag
     em      = ds_thm%ds_material%hydr%emmag
-
-! ======================================================================
-! --- POUR EVITER DES PB AVEC OPTIMISEUR ON MET UNE VALEUR DANS CES ----
-! --- VARIABES POUR QU ELLES AIENT UNE VALEUR MEME DANS LES CAS OU -----
-! --- ELLES NE SONT THEOTIQUEMENT PAS UTILISEES ------------------------
-! =====================================================================
-! --- ON INVERSE POSE DP2 = DP1 ET DP1 = 0 POUR CONFOMITE A LA FORMULE-
-! =====================================================================
-    retcom = 0
-    signe = 1.0d0
-    p2 = p1
-    dp2 = dp1
-    dp1 = 0.0d0
-    satur = 0.0d0
-    satm = 0.0d0
-    alp11 = 0.0d0
-    rho11 = 0.0d0
-    rho21 = 0.0d0
-    rho22 = 0.0d0
-    cp11 = 0.0d0
-    cp12 = 0.0d0
-    cp22 = 0.0d0
-    cliq = 0.0d0
+!
+! - Get initial parameters
+!
+    phi0 = ds_thm%ds_parainit%poro_init
+!
+! - Get mass
+!
     m11m = congem(adcp11)
+!
+! - Compute porosity
+!
     phi = vintm(advico+vicphi) + phi0
     phim = vintm(advico+vicphi) + phi0
-! =====================================================================
-! --- RECUPERATION DES COEFFICIENTS MECANIQUES ------------------------
-! =====================================================================
-    call inithm(yachai, yamec, phi0, em,&
-                cs, tbiot, epsv, depsv,&
-                epsvm, angmas, mdal, dalal,&
-                alphfi, cbiot, unsks, alpha0)
 !
-! *********************************************************************
-! *** LES VARIABLES INTERNES ******************************************
-! *********************************************************************
+! - Evaluation of initial saturation
+!
+    satur  = 0.d0
+    saturm = 0.d0
+    dsatur = 1.d0
+!
+! - Prepare initial parameters for coupling law
+!
+    call inithm(angl_naut, tbiot , phi0 ,&
+                epsv     , depsv ,&
+                epsvm    , cs    , mdal , dalal,&
+                alpha0   , alphfi, cbiot, unsks)
+! 
+! - Compute porosity and save in internal state variable
+!
     if ((option(1:9).eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
-! =====================================================================
-! --- CALCUL DE LA VARIABLE INTERNE DE POROSITE SELON FORMULE DOCR ----
-! =====================================================================
         if ((yamec.eq.1) .or. l_emmag) then
             call viporo(nbvari, vintm, vintp, advico, vicphi,&
                         phi0, deps, depsv, alphfi, dt,&
@@ -154,33 +155,34 @@ real(kind=8), intent(in) :: temp
         else if (ds_thm%ds_elem%l_jhms) then
             phi = vintp(advico+vicphi)
         endif
-! =====================================================================
-! --- PROBLEME DANS LE CALCUL DES VARIABLES INTERNES ? ----------------
-! =====================================================================
         if (retcom .ne. 0) then
             goto 30
         endif
     endif
-! =====================================================================
-! --- ACTUALISATION DE CS ET ALPHFI -----------------------------------
-! =====================================================================
+!
+! - Compute differential thermal expansion ratio
+!
     if (yamec .eq. 1) then
-        call dilata(angmas, phi, tbiot, alphfi)
+        call dilata(angl_naut, phi, tbiot, alphfi)
+    endif
+!
+! - Update Biot modulus
+!
+    if (yamec .eq. 1) then
         call unsmfi(phi, tbiot, cs)
     endif
-! =====================================================================
-! --- CALCUL DE LA MASSE VOLUMIQUE DU GAZ AUX INSTANT PLUS ET MOINS ---
-! =====================================================================
-    rho21  = masvol(mamolg, p2    , r, temp)
-    rho21m = masvol(mamolg, p2-dp2, r, temp-dt)
 !
-! =====================================================================
-! --- CALCULS UNIQUEMENT SI PRESENCE DE THERMIQUE ---------------------
-! =====================================================================
+! - Compute volumic mass of gaz
+!
+    rho21  = masvol(mamolg, p2    , rgaz, temp)
+    rho21m = masvol(mamolg, p2-dp2, rgaz, temp-dt)
+!
+! - Thermic
+!
     if (yate .eq. 1) then
-! =====================================================================
-! --- CALCUL DES COEFFICIENTS DE DILATATIONS ALPHA SELON FORMULE DOCR -
-! =====================================================================
+!
+! ----- Update differential thermal expansion ratio for gaz
+!
         alp21 = dilgaz(satur,phi,alphfi,temp)
 ! ======================================================================
 ! --- CALCUL DE LA CAPACITE CALORIFIQUE SELON FORMULE DOCR -------------
@@ -227,7 +229,7 @@ real(kind=8), intent(in) :: temp
 ! ======================================================================
 ! --- CALCUL DES APPORTS MASSIQUES SELON FORMULE DOCR ------------------
 ! ======================================================================
-        congep(adcp11) = appmas(m11m,phi,phim,1.0d0-satur, 1.0d0-satm, rho21,rho21m,epsv,epsvm)
+        congep(adcp11) = appmas(m11m,phi,phim,1.0d0-satur, 1.0d0-saturm, rho21,rho21m,epsv,epsvm)
     endif
 !
 ! **********************************************************************

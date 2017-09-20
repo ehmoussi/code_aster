@@ -18,7 +18,7 @@
 ! aslint: disable=W1504
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine thmCpl006(yachai, option, hydr,&
+subroutine thmCpl006(option, hydr,&
                   imate, ndim, dimdef, dimcon, nbvari,&
                   yamec, yate, addeme, adcome, advihy,&
                   advico, vihrho, vicphi, vicsat, addep1,&
@@ -26,7 +26,7 @@ subroutine thmCpl006(yachai, option, hydr,&
                   vintm, vintp, dsde, epsv, depsv,&
                   p1, dp1, temp, dt, phi,&
                   rho11, satur, retcom,&
-                  tbiot, angmas, deps)
+                  tbiot, angl_naut, deps)
 !
 use THM_type
 use THM_module
@@ -79,9 +79,9 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: congem(dimcon), congep(dimcon), vintm(nbvari)
     real(kind=8) :: vintp(nbvari), dsde(dimcon, dimdef), epsv, depsv
     real(kind=8) :: p1, dp1, dt, phi, rho11, phi0
-    real(kind=8) :: angmas(3)
+    real(kind=8) :: angl_naut(3)
     character(len=16) :: option, hydr
-    aster_logical :: yachai
+
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
@@ -97,6 +97,20 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: dsdp1(6), sigmp(6)
     real(kind=8) :: dmdeps(6), cp22
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
+
+
+    cp12 = 0.0d0
+    cp21 = 0.0d0
+    cp22 = 0.0d0
+    alp11 = 0.0d0
+    alp12 = 0.0d0
+    rho12 = 0.0d0
+    rho21 = 0.0d0
+    rho22 = 0.0d0
+    signe = 1.0d0
+    dp2 = 0.0d0
+    dpad = 0.0d0
+    retcom = 0
 !
 ! - Get initial parameters
 !
@@ -130,28 +144,19 @@ real(kind=8), intent(in) :: temp
 ! --- VARIABES POUR QU ELLES AIENT UNE VALEUR MEME DANS LES CAS OU -----
 ! --- ELLES NE SONT THEOTIQUEMENT PAS UTILISEES ------------------------
 ! ======================================================================
-    cp12 = 0.0d0
-    cp21 = 0.0d0
-    cp22 = 0.0d0
-    alp11 = 0.0d0
-    alp12 = 0.0d0
-    rho12 = 0.0d0
-    rho21 = 0.0d0
-    rho22 = 0.0d0
-    signe = 1.0d0
-    dp2 = 0.0d0
-    dpad = 0.0d0
-    retcom = 0
+
     m11m = congem(adcp11)
     rho11 = vintm(advihy+vihrho) + rho110
     rho11m = vintm(advihy+vihrho) + rho110
     phi = vintm(advico+vicphi) + phi0
     phim = vintm(advico+vicphi) + phi0
 !
-    call inithm(yachai, yamec, phi0, em,&
-                cs, tbiot, epsv, depsv,&
-                epsvm, angmas, mdal, dalal,&
-                alphfi, cbiot, unsks, alpha0)
+! - Prepare initial parameters for coupling law
+!
+    call inithm(angl_naut, tbiot , phi0 ,&
+                epsv     , depsv ,&
+                epsvm    , cs    , mdal , dalal,&
+                alpha0   , alphfi, cbiot, unsks)
 !
 ! *********************************************************************
 ! *** LES VARIABLES INTERNES ******************************************
@@ -205,7 +210,7 @@ real(kind=8), intent(in) :: temp
 ! --- ACTUALISATION DE CS ET ALPHFI -----------------------------------
 ! =====================================================================
     if (yamec .eq. 1) then
-        call dilata(angmas, phi, tbiot, alphfi)
+        call dilata(angl_naut, phi, tbiot, alphfi)
         call unsmfi(phi, tbiot, cs)
     endif
 ! **********************************************************************

@@ -26,7 +26,7 @@ subroutine thmCpl001(perman, yachai, option,&
                   congep, vintm, vintp, dsde, epsv,&
                   depsv, p1, dp1, temp, dt,&
                   phi, rho11, satur, retcom,&
-                  tbiot, angmas, deps)
+                  tbiot, angl_naut, deps)
 !
 use THM_type
 use THM_module
@@ -81,7 +81,7 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: vintm(nbvari), vintp(nbvari)
     real(kind=8) :: dsde(dimcon, dimdef), epsv, depsv, p1, dp1, dt
     real(kind=8) :: phi, rho11, phi0
-    real(kind=8) :: angmas(3)
+    real(kind=8) :: angl_naut(3)
     character(len=16) :: option, hydr
     aster_logical :: perman, yachai
 ! ======================================================================
@@ -145,14 +145,13 @@ real(kind=8), intent(in) :: temp
     rho11m = vintm(advihy+vihrho) + rho110
     phi = vintm(advico+vicphi) + phi0
     phim = vintm(advico+vicphi) + phi0
-! =====================================================================
-! --- RECUPERATION DES COEFFICIENTS MECANIQUES ------------------------
-! =====================================================================
 !
-    call inithm(yachai, yamec, phi0, em,&
-                cs, tbiot, epsv, depsv,&
-                epsvm, angmas, mdal, dalal,&
-                alphfi, cbiot, unsks, alpha0)
+! - Prepare initial parameters for coupling law
+!
+    call inithm(angl_naut, tbiot , phi0 ,&
+                epsv     , depsv ,&
+                epsvm    , cs    , mdal , dalal,&
+                alpha0   , alphfi, cbiot, unsks)
 !
 ! *********************************************************************
 ! *** LES VARIABLES INTERNES ******************************************
@@ -204,7 +203,7 @@ real(kind=8), intent(in) :: temp
 ! --- ACTUALISATION DE CS ET ALPHFI -----------------------------------
 ! =====================================================================
     if (yamec .eq. 1) then
-        call dilata(angmas, phi, tbiot, alphfi)
+        call dilata(angl_naut, phi, tbiot, alphfi)
         call unsmfi(phi, tbiot, cs)
     endif
 ! **********************************************************************
