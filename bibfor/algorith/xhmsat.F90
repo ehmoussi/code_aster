@@ -131,14 +131,13 @@ implicit none
     rho11m = vintm(advihy+vihrho) + rho110
     phi = vintm(advico+vicphi) + phi0
     phim = vintm(advico+vicphi) + phi0
-! =====================================================================
-! --- RECUPERATION DES COEFFICIENTS MECANIQUES ------------------------
-! =====================================================================
 !
-    call inithm(yachai, yamec, phi0, bid,&
-                cs, tbiot, epsv, depsv,&
-                epsvm, angl_naut, mdal, dalal,&
-                alphfi, cbiot, unsks, alpha0)
+! - Prepare initial parameters for coupling law
+!
+    call inithm(angl_naut, tbiot , phi0 ,&
+                epsv     , depsv ,&
+                epsvm    , cs    , mdal , dalal,&
+                alpha0   , alphfi, cbiot, unsks)
 ! *********************************************************************
 ! *** LES VARIABLES INTERNES ******************************************
 ! *********************************************************************

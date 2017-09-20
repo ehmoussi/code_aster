@@ -161,6 +161,21 @@ implicit none
         drde(1:dimdef,1:dimdef) = 0.d0
     endif
 ! ======================================================================
+! --- RECUPERATION DES DONNEES INITIALES -------------------------------
+! ======================================================================
+    call kitdec(kpi, ndim-1,&
+                yachai, 0, yate, yap1, yap2,&
+                defgem, defgep,&
+                addeme, addep1, addep2, addete, &
+                depsv , epsv, deps,&
+                t     , dt, grat,&
+                p1    , dp1    , grap1 ,&
+                p2    , dp2    , grap2 ,&
+                retcom)
+!
+    epsv = 0.d0
+    depsv = 0.d0
+! ======================================================================
 ! --- MISE AU POINT POUR LES VARIABLES INTERNES ------------------------
 ! --- DEFINITION DES POINTEURS POUR LES DIFFERENTES RELATIONS DE -------
 ! --- COMPORTEMENTS ET POUR LES DIFFERENTES COMPOSANTES ----------------
@@ -170,6 +185,10 @@ implicit none
                 advith, advihy, advico, vihrho, vicphi,&
                 vicpvp, vicsat, vicpr1, vicpr2)
 !
+! - Get hydraulic parameters
+!
+    call thmGetParaHydr(hydr, imate)
+!
 ! - Get Biot parameters (for porosity evolution)
 !
     call thmGetParaBiot(imate)
@@ -178,10 +197,6 @@ implicit none
 !
     angl_naut(:) = 0.d0
     call tebiot(angl_naut, tbiot)
-!
-! - Get hydraulic parameters
-!
-    call thmGetParaHydr(hydr, imate)
 !
 ! - TEST LOI DE COMPORTEMENT
 !
@@ -203,21 +218,6 @@ implicit none
     if (retcom .ne. 0) then
         goto 999
     endif
-! ======================================================================
-! --- RECUPERATION DES DONNEES INITIALES -------------------------------
-! ======================================================================
-    call kitdec(kpi, ndim-1,&
-                yachai, 0, yate, yap1, yap2,&
-                defgem, defgep,&
-                addeme, addep1, addep2, addete, &
-                depsv , epsv, deps,&
-                t     , dt, grat,&
-                p1    , dp1    , grap1 ,&
-                p2    , dp2    , grap2 ,&
-                retcom)
-!
-    epsv = 0.d0
-    depsv = 0.d0
 !
 ! - For JHMS element => initial porosity is non-sense
 !

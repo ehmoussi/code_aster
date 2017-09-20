@@ -18,16 +18,16 @@
 ! aslint: disable=W1504
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine thmCpl003(yachai, option, hydr,&
+subroutine thmCpl003(option, hydr,&
                   imate, ndim, dimdef, dimcon, nbvari,&
-                  yamec, yate, advihy,&
+                  yate, advihy,&
                   advico, vihrho, vicphi, vicpvp, vicsat,&
                   addep1, adcp11, adcp12, addete, adcote,&
                   congem, congep, vintm, vintp, dsde,&
                   epsv, depsv, p1, dp1, temp,&
                   dt, phi, pvp, h11, h12,&
                   rho11, satur, retcom,&
-                  tbiot, angmas, deps)
+                  tbiot, angl_naut, deps)
 !
 use THM_type
 use THM_module
@@ -80,7 +80,7 @@ real(kind=8), intent(in) :: temp
 !                       = 3 SIZZ NON NUL (DEBORST) ON CONTINUE A ITERER
 ! ======================================================================
 !
-    integer :: ndim, dimdef, dimcon, nbvari, imate, yamec, yate, retcom
+    integer :: ndim, dimdef, dimcon, nbvari, imate, yate, retcom
     integer :: adcp11, adcp12, adcote, addep1, addete
     integer :: advihy, advico, vihrho, vicphi, vicpvp, vicsat
     real(kind=8) :: congem(dimcon), congep(dimcon)
@@ -89,9 +89,8 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: epsv, depsv, p1, dp1, dt
     real(kind=8) :: phi, pvp, h11, h12, rho11
     real(kind=8) :: phi0, pvp0
-    real(kind=8) :: ums, phids, angmas(3)
+    real(kind=8) :: ums, phids, angl_naut(3)
     character(len=16) :: option, hydr
-    aster_logical :: yachai
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
@@ -161,13 +160,13 @@ real(kind=8), intent(in) :: temp
     h12 = congem(adcp12+ndim+1)
     m11m = congem(adcp11)
     m12m = congem(adcp12)
-! =====================================================================
-! --- RECUPERATION DES COEFFICIENTS MECANIQUES ------------------------
-! =====================================================================
-    call inithm(yachai, yamec, phi0, em,&
-                cs, tbiot, epsv, depsv,&
-                epsvm, angmas, mdal, dalal,&
-                alphfi, cbiot, unsks, alpha0)
+!
+! - Prepare initial parameters for coupling law
+!
+    call inithm(angl_naut, tbiot , phi0 ,&
+                epsv     , depsv ,&
+                epsvm    , cs    , mdal , dalal,&
+                alpha0   , alphfi, cbiot, unsks)
 ! *********************************************************************
 ! *** LES VARIABLES INTERNES ******************************************
 ! *********************************************************************

@@ -16,28 +16,19 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-#include "asterf_types.h"
-!
 interface 
-    subroutine inithm(yachai, yamec, phi0, em,&
-                      cs0, tbiot, epsv, depsv,&
-                      epsvm, angmas, mdal, dalal,&
-                      alphfi, cbiot, unsks, alpha0)
-        aster_logical :: yachai
-        integer :: yamec
-        real(kind=8) :: phi0
-        real(kind=8) :: em
+    subroutine inithm(angl_naut, tbiot , phi0 ,&
+                      epsv     , depsv ,&
+                      epsvm    , cs0   , mdal , dalal,&
+                      alpha0   , alphfi, cbiot, unsks)
+        real(kind=8), intent(in) :: angl_naut(3)
+        real(kind=8), intent(in) :: tbiot(6)
+        real(kind=8), intent(in) :: phi0
+        real(kind=8), intent(in) :: epsv, depsv
+        real(kind=8), intent(out) :: epsvm
         real(kind=8), intent(out) :: cs0
-        real(kind=8) :: tbiot(6)
-        real(kind=8) :: epsv
-        real(kind=8) :: depsv
-        real(kind=8) :: epsvm
-        real(kind=8) :: angmas(3)
-        real(kind=8) :: mdal(6)
-        real(kind=8) :: dalal
-        real(kind=8), intent(out) :: alphfi
-        real(kind=8) :: cbiot
-        real(kind=8) :: unsks
-        real(kind=8) :: alpha0
+        real(kind=8), intent(out) :: dalal, mdal(6)
+        real(kind=8), intent(out) :: alphfi, alpha0
+        real(kind=8), intent(out) :: cbiot, unsks
     end subroutine inithm
 end interface 

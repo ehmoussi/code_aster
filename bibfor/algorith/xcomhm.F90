@@ -147,6 +147,10 @@ implicit none
         goto 900
     endif
 !
+! - Get hydraulic parameters
+!
+    call thmGetParaHydr(hydr, imate)
+!
 ! - Get Biot parameters (for porosity evolution)
 !
     call thmGetParaBiot(imate)
@@ -159,10 +163,6 @@ implicit none
 !
     call thmGetParaElas(imate, kpi, t, ndim)
     call thmMatrHooke(angl_naut)
-!
-! - Get hydraulic parameters
-!
-    call thmGetParaHydr(hydr, imate)
 !
 ! - Get thermic parameters
 !

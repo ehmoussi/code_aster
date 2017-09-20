@@ -17,23 +17,20 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
 !
-#include "asterf_types.h"
-!
 interface 
-    subroutine thmCpl002(yachai, option,&
+    subroutine thmCpl002(option,&
                       hydr, imate, ndim, dimdef, dimcon,&
                       nbvari, yamec, yate, addeme, adcome,&
                       advico, vicphi, addep1, adcp11, addete,&
                       adcote, congem, congep, vintm, vintp,&
                       dsde, epsv, depsv, p1, dp1,&
                       temp, dt, phi, rho11, &
-                      satur, retcom, tbiot, angmas,&
+                      satur, retcom, tbiot, angl_naut,&
                       deps)
         integer :: nbvari
         integer :: dimcon
         integer :: dimdef
         integer :: ndim
-        aster_logical :: yachai
         character(len=16) :: option
         character(len=16) :: hydr
         integer :: imate
@@ -63,7 +60,7 @@ interface
         real(kind=8) :: satur
         integer :: retcom
         real(kind=8) :: tbiot(6)
-        real(kind=8) :: angmas(3)
+        real(kind=8) :: angl_naut(3)
         real(kind=8) :: deps(6)
     end subroutine thmCpl002
 end interface 

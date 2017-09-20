@@ -28,7 +28,7 @@ interface
                       congep, vintm, vintp, dsde, epsv,&
                       depsv, p1, dp1, temp, dt,&
                       phi, rho11, satur, retcom,&
-                      tbiot, angmas, deps)
+                      tbiot, angl_naut, deps)
         integer :: nbvari
         integer :: dimcon
         integer :: dimdef
@@ -66,7 +66,7 @@ interface
         real(kind=8) :: satur
         integer :: retcom
         real(kind=8) :: tbiot(6)
-        real(kind=8) :: angmas(3)
+        real(kind=8) :: angl_naut(3)
         real(kind=8) :: deps(6)
     end subroutine thmCpl001
 end interface 
