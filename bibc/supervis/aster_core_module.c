@@ -141,7 +141,7 @@ double get_tpmax()
     double tpmax;
     if ( _cache_tpmax < 0 ) {
         // tpmax =  asterc_getopt_double("tpmax", &iret);
-        tpmax = 1000.;
+        tpmax = 100000.;
         fprintf(fileOut, "get_tpmax: valeur fixe = %f\n", tpmax);
         if ( iret == 0 ) {
             _cache_tpmax = tpmax;
