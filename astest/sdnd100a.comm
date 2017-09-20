@@ -102,9 +102,9 @@ VECTASS=ASSE_VECTEUR(   VECT_ELEM=VECTEL1,  NUME_DDL=NUMEROTA)
 
 #
 MODES=CALC_MODES( MATR_RIGI=MATRRIGI,
-                  MATR_MASS=MATRMASS,
+                  MATR_MASS=MATRMASS,VERI_MODE=_F(STURM='OUI'),
                   OPTION='PROCHE', SOLVEUR=_F(METHODE='MULT_FRONT'),
-                  CALC_FREQ=_F( FREQ = (15.,),
+                  CALC_FREQ=_F( FREQ = (15.9,),
                                 NMAX_FREQ = 1 )
                  )
 
