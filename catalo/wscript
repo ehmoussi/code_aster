@@ -42,6 +42,7 @@ def build(self):
           target = 'elem.1',
              env = env,
             vars = ['CATALO_CMD'],
+             use = ['bibpyt', 'code_aster_py'],
     install_path = self.options.destdir + env.ASTERLIBDIR,
     )
 
