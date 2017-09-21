@@ -15,16 +15,33 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-function dqdp(signe, alpha, temp)
+!
+function dhwdp1(signe, alpliq, temp, rho11)
+!
+use THM_type
+use THM_module
 !
 implicit none
 !
-real(kind=8), intent(in) :: temp
-real(kind=8) :: signe, alpha, dqdp
-! --- CALCUL DE LA DERIVEE DE LA CHALEUR PAR RAPPORT AUX PRESSIONS -----
-! --- SI LA MODELISATION N EST PAS LIQU_VAPE ---------------------------
-! ======================================================================
-    dqdp = 3.d0*signe*alpha*temp
-! ======================================================================
+real(kind=8), intent(in) :: temp, signe, alpliq, rho11
+real(kind=8) :: dhwdp1
+!
+! --------------------------------------------------------------------------------------------------
+!
+! THM
+!
+! Derivative of enthalpy of liquid by capillary pressure
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  signe            : sign for saturation
+! In  alpliq           : value of thermic dilatation for liquid
+! In  temp             : temperature
+! In  rho11            : volumic mass of liquid
+! Out dhwdp1           : derivative of enthalpy of liquid by capillary pressure
+!
+! --------------------------------------------------------------------------------------------------
+!
+    dhwdp1 = -signe*(1.d0-3.d0*alpliq*temp)/rho11
+!
 end function

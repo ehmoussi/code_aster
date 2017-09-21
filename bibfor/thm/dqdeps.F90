@@ -15,31 +15,38 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-function calor(mdal, temp, dt, deps, dp1,&
-               dp2, signe, alp11, alp12, coeps,&
-               ndim)
+!
+subroutine dqdeps(mdal, temp, dqeps)
+!
 implicit none
 !
-integer :: i, ndim
-real(kind=8), intent(in) :: temp
-real(kind=8) :: dt, deps(6), dp1, dp2, alp11, alp12, signe, coeps
-real(kind=8) :: calor, mdal(6), calome
-! --- CALCUL DE LA CHALEUR REDUITE Q' SELON FORMULE DOCR ---------------
-! ======================================================================
+real(kind=8), intent(in) :: mdal(6), temp
+real(kind=8) :: dqeps(6)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! THM
+!
+! Derivative of "reduced" heat Q' by mechanical strains
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  mdal             : product [Elas] {alpha}
+! In  temp             : temperature
+! Out dqdeps           : derivative of "reduced" heat Q' by pressure
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: i
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
 !
-    calome = 0.d0
+! --------------------------------------------------------------------------------------------------
 !
-    do i = 1, ndim
-        calome=calome+mdal(i)*deps(i)*(temp-dt/2.d0)
+    do i = 1, 3
+        dqeps(i) = mdal(i)*temp
     end do
-    do i = ndim+1, 2*ndim
-        calome=calome+mdal(i)*deps(i)*(temp-dt/2.d0)*rac2
+    do i = 4, 6
+        dqeps(i) = mdal(i)*temp*rac2
     end do
-    calor = calome +&
-            3.d0*alp11*(temp-dt/2.d0)*signe*dp1 -&
-            3.d0*(alp11+alp12)*(temp-dt/2.d0)*dp2 +&
-            coeps*dt
-! ======================================================================
-end function
+!
+end subroutine

@@ -16,43 +16,49 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine dspdp1(signe, tbiot, satur, dsdp1)
+function enteau(dtemp, alpha, temp, rho  ,&
+                dp2  , dp1  , dpad, signe,&
+                cp)
 !
 use THM_type
 use THM_module
 !
 implicit none
 !
-#include "asterf_types.h"
+#include "asterfort/assert.h"
 !
-real(kind=8), intent(in) :: signe, tbiot(6), satur
-real(kind=8), intent(out) :: dsdp1(6)
+real(kind=8), intent(in) :: dtemp
+real(kind=8), intent(in) :: alpha
+real(kind=8), intent(in) :: temp
+real(kind=8), intent(in) :: rho
+real(kind=8), intent(in) :: dp1
+real(kind=8), intent(in) :: dp2
+real(kind=8), intent(in) :: dpad
+real(kind=8), intent(in) :: signe
+real(kind=8), intent(in) :: cp
+real(kind=8) :: enteau
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! THM
 !
-! Derivative of _pressure part_ of stresses by capillary pressure
+! Compute enthalpy of liquid
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  dtemp            : increment of temperature
+! In  alpha            : value of thermic dilatation for liquid
+! In  temp             : temperature
+! In  rho              : volumic mass of liquid
+! In  dp1              : increment of capillary pressure
+! In  dp2              : increment of gaz pressure
+! In  dpad             : increment of dissolved air pressure
 ! In  signe            : sign for saturation
-! In  tbiot            : tensor of Biot
-! In  satur            : value of saturation
-! Out dsdp1            : derivative of pressure part of stress by capillary pressure
+! In  cp               : specific heat capacity of liquid
+! Out enteau           : enthalpy of liquid
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i
+    enteau = cp*dtemp+(1.d0-3.d0*alpha*temp)/rho*(dp2-signe*dp1-dpad)
 !
-! --------------------------------------------------------------------------------------------------
-!
-    do i = 1, 6
-        if (ds_thm%ds_behaviour%l_stress_bishop) then
-            dsdp1(i) = signe*tbiot(i)*satur
-        else
-            dsdp1(i) = 0.d0
-        endif
-    end do
-!
-end subroutine
+end function

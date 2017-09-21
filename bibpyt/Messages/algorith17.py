@@ -140,12 +140,6 @@ cata_msg = {
   compte dans les calculs postérieurs.
 """),
 
-    39 : _(u"""
-  Attention on sort momentanément du domaine admissible car porosité négative sur la maille %(k1)s
-"""),
-    40 : _(u"""
-   Attention on sort momentanément du domaine admissible car chaleur spécifique négative sur la maille %(k1)s
-"""),
     41 : _(u"""
    Le type de résultat %(k1)s (mot clé TYPE_RESU) n'est pas autorisé pour le mot clé facteur %(k2)s (mot clé OPERATION)
 """),

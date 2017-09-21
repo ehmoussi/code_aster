@@ -15,12 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     function dqdt(coeps)
-        real(kind=8) :: coeps
+        real(kind=8), intent(in) :: coeps
         real(kind=8) :: dqdt
     end function dqdt
 end interface

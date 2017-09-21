@@ -15,17 +15,27 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-function enteau(dt, alpliq, temp, rho11, dp2,&
-                dp1, dpad, signe, cp)
+!
+function dhdt(cp)
 !
 implicit none
 !
-real(kind=8), intent(in) :: temp
+real(kind=8), intent(in) :: cp
+real(kind=8) :: dhdt
 !
-real(kind=8) :: dt, alpliq, rho11, dp2, dp1, dpad, cp, signe, enteau
-! --- CALCUL DE L ENTHALPIE DE L EAU SELON DOCR ------------------------
-! ======================================================================
-    enteau=cp*dt+(1.d0-3.d0*alpliq*temp)/rho11*(dp2-signe*dp1-dpad)
-! ======================================================================
+! --------------------------------------------------------------------------------------------------
+!
+! THM
+!
+! Derivative of enthalpy by temperature
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  cp               : specific heat capacity
+! Out dhdt             : derivative of enthalpy by temperature
+!
+! --------------------------------------------------------------------------------------------------
+!
+    dhdt = cp
+!
 end function

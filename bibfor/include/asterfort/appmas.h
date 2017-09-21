@@ -15,21 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    function appmas(apmam, phi, phim, fsat, fsatm,&
-                    rho, rhom, epsv, epsvm)
-        real(kind=8) :: apmam
-        real(kind=8) :: phi
-        real(kind=8) :: phim
-        real(kind=8) :: fsat
-        real(kind=8) :: fsatm
-        real(kind=8) :: rho
-        real(kind=8) :: rhom
-        real(kind=8) :: epsv
-        real(kind=8) :: epsvm
+    function appmas(appmasm,&
+                    phi    , phim  ,&
+                    satur  , saturm,&
+                    rho    , rhom  ,&
+                    epsv   , epsvm)
+        real(kind=8), intent(in) :: appmasm
+        real(kind=8), intent(in) :: phi, phim
+        real(kind=8), intent(in) :: satur, saturm
+        real(kind=8), intent(in) :: rho, rhom
+        real(kind=8), intent(in) :: epsv, epsvm
         real(kind=8) :: appmas
     end function appmas
 end interface

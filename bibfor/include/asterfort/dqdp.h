@@ -18,9 +18,7 @@
 !
 interface
     function dqdp(signe, alpha, temp)
-        real(kind=8) :: signe
-        real(kind=8) :: alpha
-        real(kind=8), intent(in) :: temp
+        real(kind=8), intent(in) :: temp, signe, alpha
         real(kind=8) :: dqdp
     end function dqdp
 end interface
