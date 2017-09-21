@@ -343,10 +343,14 @@ real(kind=8), intent(in) :: temp
 ! --- UNIQUEMENT POUR LES OPTIONS RIGI_MECA ET FULL_MECA ---------------
 ! ======================================================================
     if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
-        call dpladg(yate, rho11, rho12, r, temp,&
-                    kh, congem, dimcon, adcp11, ndim,&
-                    padp, dp11p1, dp11p2, dp21p1, dp21p2,&
-                    dp11t, dp21t)
+! ----- Compute partial derivatives for 'LIQU_AD_GAZ'
+        call dpladg(ndim  , dimcon,&
+                    r     , kh    ,&
+                    congem, adcp11,&
+                    temp  , padp  ,&
+                    dp11p1, dp11p2,&
+                    dp21p1, dp21p2,&
+                    dp11t , dp21t)
         if (yamec .eq. 1) then
 ! ======================================================================
 ! --- CALCUL UNIQUEMENT EN PRESENCE DE MECANIQUE -----------------------
