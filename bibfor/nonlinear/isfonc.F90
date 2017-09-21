@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 function isfonc(list_func_acti, func_name_z)
 !
 implicit none
@@ -23,11 +24,9 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    aster_logical :: isfonc
-    integer, intent(in) :: list_func_acti(*)
-    character(len=*), intent(in) :: func_name_z
+aster_logical :: isfonc
+integer, intent(in) :: list_func_acti(*)
+character(len=*), intent(in) :: func_name_z
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -110,7 +109,7 @@ implicit none
 !       HROM               :  hyper-reduced order model
 !       HROM_CORR_EF       :  hyper-reduced order model with EF correction
 !
-! DERNIER NUMERO UTILISE: 65
+! DERNIER NUMERO UTILISE: 66
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -233,7 +232,7 @@ implicit none
     else if (func_name.eq.'HROM') then
         isfonc = list_func_acti(62).eq.1
     else if (func_name.eq.'HROM_CORR_EF') then
-        isfonc = list_func_acti(65).eq.1
+        isfonc = list_func_acti(66).eq.1
     else if (func_name.eq.'ENERGIE') then
         isfonc = list_func_acti(50).eq.1
     else if (func_name.eq.'PROJ_MODAL') then
