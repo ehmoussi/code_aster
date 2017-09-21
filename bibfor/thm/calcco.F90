@@ -18,18 +18,18 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504
 !
-subroutine calcco(option, yachai, perman, nume_thmc,&
+subroutine calcco(option, perman, nume_thmc,&
                   hydr, imate, ndim, dimdef,&
                   dimcon, nbvari, yamec, yate, addeme,&
                   adcome, advihy, advico, addep1, adcp11,&
                   adcp12, addep2, adcp21, adcp22, addete,&
                   adcote, congem, congep, vintm, vintp,&
                   dsde, deps, epsv, depsv, p1,&
-                  p2, dp1, dp2, temp, dt,&
+                  p2, dp1, dp2, temp, dtemp,&
                   phi, pvp, pad, h11, h12,&
-                  kh, rho11, sat,&
+                  kh, rho11, satur,&
                   retcom, tbiot, vihrho, vicphi,&
-                  vicpvp, vicsat, angmas)
+                  vicpvp, vicsat, angl_naut)
 !
 implicit none
 !
@@ -45,68 +45,115 @@ implicit none
 #include "asterfort/thmCpl006.h"
 #include "asterfort/thmGetParaCoupling.h"
 !
-real(kind=8), intent(in) :: temp
 integer, intent(in) :: nume_thmc
+aster_logical, intent(in) :: perman
+character(len=16), intent(in) :: option
+real(kind=8), intent(in) :: angl_naut(3)
+integer, intent(in) :: ndim, nbvari
+integer, intent(in) :: dimdef, dimcon
+integer, intent(in) :: adcome, adcote, adcp11 
+integer, intent(in) :: addeme, addete, addep1
+integer, intent(in) :: advico, advihy, vihrho, vicphi
+real(kind=8), intent(in) :: temp
+real(kind=8), intent(in) :: dtemp, dp1
+real(kind=8), intent(in) :: epsv, depsv, deps(6), tbiot(6)
+real(kind=8), intent(in) :: congem(dimcon)
+real(kind=8), intent(inout) :: congep(dimcon)
+real(kind=8), intent(in) :: vintm(nbvari)
+real(kind=8), intent(inout) :: vintp(nbvari)
+real(kind=8), intent(inout) :: dsde(dimcon, dimdef)
+real(kind=8), intent(out) :: phi, rho11, satur
+integer, intent(out) :: retcom
+
+integer :: yamec, yate, imate
+integer :: adcp12, adcp21, adcp22
+integer :: addep2
+integer :: vicpvp, vicsat
+real(kind=8) :: p1, p2, dp2
+real(kind=8) :: pvp, pad, h11, h12, kh
+character(len=16) :: hydr
 !
+! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE CALCCO : CETTE ROUTINE CALCULE LES CONTRAINTES GENERALISEES
-!   ET LA MATRICE TANGENTE DES GRANDEURS COUPLEES, A SAVOIR CELLES QUI
-!   NE SONT PAS DES GRANDEURS DE MECANIQUE PURE OU DES FLUX PURS
-!   ELLE RENVOIE POUR CELA A DIFFERENTES ROUTINES SUIVANT
-!   LA VALEUR DE THMC
-! **********************************************************************
-! OUT RETCOM : RETOUR LOI DE COMPORTEMENT
-! COMMENTAIRE DE NMCONV :
-!                       = 0 OK
-!                       = 1 ECHEC DANS L'INTEGRATION : PAS DE RESULTAT
-!                       = 3 SIZZ NON NUL (DEBORST) ON CONTINUE A ITERER
-! ======================================================================
+! THM
 !
-    integer :: ndim, dimdef, dimcon, nbvari, imate
-    integer :: yamec, yate
-    integer :: adcome, adcp11, bdcp11, adcp12, adcp21, adcp22, adcote
-    integer :: addeme, addep1, addep2, addete, retcom
-    integer :: advihy, advico, vihrho, vicphi, vicpvp, vicsat
-    real(kind=8) :: congem(dimcon), congep(dimcon)
-    real(kind=8) :: vintm(nbvari), vintp(nbvari)
-    real(kind=8) :: dsde(dimcon, dimdef), epsv, depsv, p1, dp1, p2, dp2, dt
-    real(kind=8) :: phi, pvp, pad, h11, h12, kh, rho11
-    real(kind=8) :: sat, angmas(3)
-    character(len=16) :: option, hydr
-    aster_logical :: perman, yachai
-! ======================================================================
-! --- VARIABLES LOCALES POUR BARCELONE-------------------------------
-! ======================================================================
-    real(kind=8) :: deps(6), tbiot(6)
+! Compute generalized stresses and matrix for coupled quantities
 !
-! INITIALISATION ADRESSE SELON QUE LA PARTIE THH EST TRANSITOIRE OU NON
+! --------------------------------------------------------------------------------------------------
+!
+! In  option           : option to compute
+! In  perman           : .true. for no-transient problem
+! In  angl_naut        : nautical angles
+!                        (1) Alpha - clockwise around Z0
+!                        (2) Beta  - counterclockwise around Y1
+!                        (1) Gamma - clockwise around X
+! In  ndim             : dimension of space (2 or 3)
+! In  nbvari           : total number of internal state variables
+! In  dimdef           : dimension of generalized strains vector
+! In  dimcon           : dimension of generalized stresses vector
+! In  adcome           : adress of mechanic components in generalized stresses vector
+! In  adcote           : adress of thermic components in generalized stresses vector
+! In  adcp11           : adress of first component and first phase in generalized stresses vector
+! In  addeme           : adress of mechanic components in generalized strains vector
+! In  addete           : adress of thermic components in generalized strains vector
+! In  addep1           : adress of capillary pressure in generalized strains vector
+! In  advico           : index of first internal state variable for coupling law
+! In  advihy           : index of internal state variable for hydraulic law 
+! In  vihrho           : index of internal state variable for volumic mass of liquid
+! In  vicphi           : index of internal state variable for porosity
+! In  temp             : temperature at end of current time step
+! In  dtemp            : increment of temperature
+! In  dp1              : increment of capillary pressure
+! In  deps             : increment of mechanical strains vector
+! In  epsv             : current volumic strain
+! In  depsv            : increment of volumic strain
+! In  tbiot            : Biot tensor
+! In  congem           : generalized stresses - At begin of current step
+! IO  congep           : generalized stresses - At end of current step
+! In  vintm            : internal state variables - At begin of current step
+! IO  vintp            : internal state variables - At end of current step
+! IO  dsde             : derivative matrix
+! Out phi              : porosity
+! Out rho11            : volumic mass for liquid
+! Out satur            : saturation
+! Out retcom           : return code for error
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: bdcp11
+!
+! --------------------------------------------------------------------------------------------------
+!
     if (perman) then
         bdcp11 = adcp11 - 1
     else
         bdcp11 = adcp11
     endif
 !
-! - Get paremeters for coupling
+! - Get parameters for coupling
 !
     call thmGetParaCoupling(imate, temp)
 !
 ! - Compute
 !
     select case (nume_thmc)
-
-! ======================================================================
-! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_SATU ----------------------
-! ======================================================================
+!
     case (1)
-        call thmCpl001(perman, yachai, option,&
-                    hydr, imate, ndim, dimdef,&
-                    dimcon, nbvari, yamec, yate, addeme,&
-                    adcome, advihy, advico, vihrho, vicphi,&
-                    addep1, bdcp11, addete, adcote, congem,&
-                    congep, vintm, vintp, dsde, epsv,&
-                    depsv, p1, dp1, temp, dt,&
-                    phi, rho11, sat, retcom,&
-                    tbiot, angmas, deps)
+! ----- LIQU_SATU
+        call thmCpl001(perman, option, angl_naut,&
+                       ndim  , nbvari, &
+                       dimdef, dimcon,&
+                       adcome, adcote, bdcp11,& 
+                       addeme, addete, addep1,&
+                       advico, advihy, vihrho, vicphi,&
+                       temp  ,&
+                       dtemp , dp1   ,&
+                       deps  , epsv  , depsv,&
+                       tbiot ,&
+                       phi   , rho11 , satur,&
+                       congem, congep,&
+                       vintm , vintp , dsde,&
+                       retcom)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE GAZ ----------------------------
 ! ======================================================================
@@ -117,8 +164,8 @@ integer, intent(in) :: nume_thmc
                     advico, vicphi, addep1, bdcp11, addete,&
                     adcote, congem, congep, vintm, vintp,&
                     dsde, epsv, depsv, p1, dp1,&
-                    temp, dt, phi, rho11, &
-                    sat, retcom, tbiot,  angmas,&
+                    temp, dtemp, phi, rho11, &
+                    satur, retcom, tbiot,  angl_naut,&
                     deps)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_VAPE ----------------------
@@ -131,9 +178,9 @@ integer, intent(in) :: nume_thmc
                     addep1, bdcp11, adcp12, addete, adcote,&
                     congem, congep, vintm, vintp, dsde,&
                     epsv, depsv, p1, dp1, temp,&
-                    dt, phi, pvp, h11, h12,&
-                    rho11, sat, retcom,&
-                    tbiot, angmas, deps)
+                    dtemp, phi, pvp, h11, h12,&
+                    rho11, satur, retcom,&
+                    tbiot, angl_naut, deps)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_VAPE_GAZ ------------------
 ! ======================================================================
@@ -146,9 +193,9 @@ integer, intent(in) :: nume_thmc
                     addete, adcote, congem, congep, vintm,&
                     vintp, dsde, deps, epsv, depsv,&
                     p1, p2, dp1, dp2, temp,&
-                    dt, phi, pvp, h11, h12,&
-                    rho11, sat, retcom,&
-                    tbiot, angmas)
+                    dtemp, phi, pvp, h11, h12,&
+                    rho11, satur, retcom,&
+                    tbiot, angl_naut)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_GAZ -----------------------
 ! ======================================================================
@@ -160,9 +207,9 @@ integer, intent(in) :: nume_thmc
                     bdcp11, addep2, adcp21, addete, adcote,&
                     congem, congep, vintm, vintp, dsde,&
                     deps, epsv, depsv, p1, p2,&
-                    dp1, dp2, temp, dt, phi,&
-                    rho11, sat, retcom,&
-                    tbiot, angmas)
+                    dp1, dp2, temp, dtemp, phi,&
+                    rho11, satur, retcom,&
+                    tbiot, angl_naut)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_GAZ_ATM -------------------
 ! ======================================================================
@@ -173,9 +220,9 @@ integer, intent(in) :: nume_thmc
                     advico, vihrho, vicphi, vicsat, addep1,&
                     bdcp11, addete, adcote, congem, congep,&
                     vintm, vintp, dsde, epsv, depsv,&
-                    p1, dp1, temp, dt, phi,&
-                    rho11, sat, retcom,&
-                    tbiot, angmas, deps)
+                    p1, dp1, temp, dtemp, phi,&
+                    rho11, satur, retcom,&
+                    tbiot, angl_naut, deps)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_AD_GAZ_VAPE ---------------
 ! ======================================================================
@@ -188,10 +235,10 @@ integer, intent(in) :: nume_thmc
                     adcp22, addete, adcote, congem, congep,&
                     vintm, vintp, dsde, epsv, depsv,&
                     p1, p2, dp1, dp2, temp,&
-                    dt, phi, pad, pvp, h11,&
+                    dtemp, phi, pad, pvp, h11,&
                     h12, kh, rho11, &
-                    sat, retcom, tbiot,&
-                    angmas, deps)
+                    satur, retcom, tbiot,&
+                    angl_naut, deps)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_AD_GAZ ---------------
 ! ======================================================================
@@ -204,9 +251,9 @@ integer, intent(in) :: nume_thmc
                     adcp22, addete, adcote, congem, congep,&
                     vintm, vintp, dsde, epsv, depsv,&
                     p1, p2, dp1, dp2, temp,&
-                    dt, phi, pad, h11, h12,&
-                    kh, rho11,sat, retcom,&
-                    tbiot, angmas, deps)
+                    dtemp, phi, pad, h11, h12,&
+                    kh, rho11,satur, retcom,&
+                    tbiot, angl_naut, deps)
     case default
         ASSERT(ASTER_FALSE)
     end select
