@@ -20,7 +20,7 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine coeihm(option, perman, resi, rigi, imate,&
+    subroutine coeihm(option, l_steady, resi, rigi, j_mater,&
                       compor, instam, instap, nomail,&
                       ndim, dimdef, dimcon, nbvari,&
                       yap1, yap2, yate, &
@@ -34,10 +34,10 @@ interface
         integer :: dimdef
         integer :: ndim
         character(len=16) :: option
-        aster_logical :: perman
+        aster_logical :: l_steady
         aster_logical :: resi
         aster_logical :: rigi
-        integer :: imate
+        integer :: j_mater
         character(len=16) :: compor(*)
         real(kind=8) :: instam
         real(kind=8) :: instap

@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1306,W1504
 !
-subroutine coeihm(option, perman, resi, rigi, imate,&
+subroutine coeihm(option, l_steady, resi, rigi, j_mater,&
                   compor, instam, instap, nomail,&
                   ndim, dimdef, dimcon, nbvari, &
                   yap1, yap2, yate, addeme, adcome,&
@@ -48,7 +48,7 @@ implicit none
 #include "asterfort/thmEvalGravity.h"
 !
     integer :: dimdef, dimcon, npg, kpi, npi, ndim
-    integer :: nbvari, yate, yap1, yap2, imate
+    integer :: nbvari, yate, yap1, yap2, j_mater
     integer :: addeme, addep1, addep2, addete, adcop1, addlh1
     integer :: adcome, adcp11, adcp12, adcp21, adcp22, adcote
 !
@@ -57,7 +57,7 @@ implicit none
     real(kind=8) :: sigm(dimcon)
     character(len=8) :: nomail
     character(len=16) :: option, compor(*)
-    aster_logical :: perman, resi, rigi
+    aster_logical :: l_steady, resi, rigi
 !
 ! - VARIABLES SORTIE
     integer :: retcom
@@ -96,7 +96,7 @@ implicit none
 !.......................................................................
 ! =====================================================================
 ! IN OPTION : OPTION DE CALCUL
-! IN PERMAN : PERMANENT ?
+! IN l_steady : l_steadyENT ?
 ! IN RESI   : FULL_MECA OU RAPH_MECA ?
 ! IN RIGI   : FULL_MECA OU RIGI_MECA ?
 ! IN IMATE  : MATERIAU CODE
@@ -187,11 +187,11 @@ implicit none
 !
 ! - Get hydraulic parameters
 !
-    call thmGetParaHydr(hydr, imate)
+    call thmGetParaHydr(hydr, j_mater)
 !
 ! - Get Biot parameters (for porosity evolution)
 !
-    call thmGetParaBiot(imate)
+    call thmGetParaBiot(j_mater)
 !
 ! - Compute Biot tensor
 !
@@ -207,7 +207,7 @@ implicit none
 ! ======================================================================
 ! --- CALCULS MECA -----------------------------------------------------
 ! ======================================================================
-    call coeime(meca, imate, nomail, option, resi,&
+    call coeime(meca, j_mater, nomail, option, resi,&
                 rigi, ndim, dimdef, dimcon, yap1,&
                 yap2, yate, addeme, addep1, addep2,&
                 nbvari, advime, advico, npg, npi,&
@@ -222,45 +222,48 @@ implicit none
 ! - For JHMS element => initial porosity is non-sense
 !
     ds_thm%ds_parainit%poro_init = 0.d0
-
-! ======================================================================
-! --- CALCUL DES RESIDUS ET DES MATRICES TANGENTES ---------------------
-! ======================================================================
+!
+! - Compute generalized stresses and matrix for coupled quantities
 !
     call thmGetParaBehaviour(compor,&
                              nume_thmc_ = nume_thmc)
-    call calcco(option, perman, nume_thmc,&
-                hydr, imate, ndim-1, dimdef,&
-                dimcon, nbvari, 2, yate, addeme,&
-                adcome, advihy, advico, addep1, adcp11,&
-                adcp12, addep2, adcp21, adcp22, addete,&
-                adcote, sigm, sigp, varim, varip,&
-                dsde, deps, epsv, depsv, p1,&
-                p2, dp1, dp2, t, dt,&
-                phi, pvp, pad, h11, h12,&
-                rho11, sat,&
-                retcom, tbiot, vihrho, vicphi,&
-                vicpvp, vicsat, angl_naut)
-!
+    call calcco(l_steady, nume_thmc,&
+                option  , angl_naut,&
+                hydr    , j_mater  ,&
+                ndim-1  , nbvari   ,&
+                dimdef  , dimcon   ,&
+                adcome  , adcote   , adcp11, adcp12, adcp21, adcp22,&
+                addeme  , addete   , addep1, addep2,&
+                advico  , advihy   ,&
+                vihrho  , vicphi   , vicpvp, vicsat,&
+                t       , p1       , p2    ,&
+                dt      , dp1      , dp2   ,&
+                deps    , epsv     , depsv ,&
+                tbiot   ,&
+                phi     , rho11    , satur ,&
+                pad     , pvp      , h11   , h12   ,&
+                sigm    , sigp     ,&
+                varim   , varip    , dsde  ,& 
+                retcom)
     if (retcom .ne. 0) then
         goto 999
     endif
 !
 ! - Evaluation of final saturation
 !
-    call thmEvalSatuFinal(hydr , imate, p1    ,&
+    call thmEvalSatuFinal(hydr , j_mater, p1    ,&
                           satur, dsatur , retcom)
 !
 ! - Evaluate thermal conductivity
 !
-    call thmEvalConductivity(angl_naut, ndim  , imate , &
+    call thmEvalConductivity(angl_naut, ndim  , j_mater , &
                              satur    , phi   , &
                              lambs    , dlambs, lambp , dlambp,&
                              tlambt   , tlamct, tdlamt)
 !
 ! - Compute gravity
 !
-    call thmEvalGravity(imate, instap, pesa)
+    call thmEvalGravity(j_mater, instap, pesa)
 !
 ! - (re)-compute Biot tensor
 !
@@ -285,7 +288,7 @@ implicit none
 !
     if (yap1 .eq. 1) then
         call calcfh(nume_thmc, &
-                    option   , perman, hydr   , ndim  , imate,&
+                    option   , l_steady, hydr   , ndim  , j_mater,&
                     dimdef   , dimcon,&
                     addep1   , addep2,&
                     adcp11   , adcp12, adcp21 , adcp22,&
@@ -293,7 +296,7 @@ implicit none
                     t        , p1    , p2     , pvp   , pad,&
                     grat     , grap1 , grap2  ,& 
                     rho11    , h11   , h12    ,&
-                    satur    , dsatur, pesa   , tperm,&
+                    sat      , dsatur, pesa   , tperm,&
                     sigp     , dsde)
         if (retcom .ne. 0) then
             goto 999
