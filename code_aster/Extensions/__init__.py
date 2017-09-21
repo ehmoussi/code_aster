@@ -34,5 +34,6 @@ from .function_ext import Function
 from .table_ext import Table
 from .assemblymatrix_ext import AssemblyMatrixDouble
 from .fieldonnodes_ext import FieldOnNodesDouble
+from .fieldonelements_ext import FieldOnElementsDouble
 
 ALL_DS = objects_from_context(globals(), DataStructure)

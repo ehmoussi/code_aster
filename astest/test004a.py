@@ -78,7 +78,8 @@ statNonLine.setLoadStepManager( timeList )
 # Run the nonlinear analysis
 resu = statNonLine.execute()
 #resu.debugPrint( 6 )
-
+a=resu.getRealFieldOnElements('SIEF_ELGA',1)
+#z=a.EXTR_COMP()
 # at least it pass here!
 test.assertTrue( True )
 test.printSummary()
