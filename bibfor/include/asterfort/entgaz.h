@@ -15,13 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    function entgaz(dt, cp)
-        real(kind=8) :: dt
-        real(kind=8) :: cp
+    function entgaz(dtemp, cp)
+        real(kind=8), intent(in) :: dtemp, cp
         real(kind=8) :: entgaz
     end function entgaz
 end interface

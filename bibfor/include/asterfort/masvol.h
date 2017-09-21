@@ -17,11 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    function masvol(mamol, p, r, temp)
-        real(kind=8) :: mamol
-        real(kind=8) :: p
-        real(kind=8) :: r
-        real(kind=8), intent(in) :: temp
+    function masvol(mamol, pres, rgaz, temp)
+        real(kind=8), intent(in) :: mamol, pres, rgaz, temp
         real(kind=8) :: masvol
     end function masvol
 end interface

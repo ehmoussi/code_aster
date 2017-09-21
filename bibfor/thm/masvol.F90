@@ -15,24 +15,30 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-function dmasp2(rho11, rho12, rho21, sat, phi,&
-                cs, pas, emmag, em)
-    implicit none
-#include "asterf_types.h"
-    real(kind=8) :: rho11, rho12, rho21, sat, phi, cs, pas, dmasp2
-    real(kind=8) :: em, dphip2
-    aster_logical :: emmag
-! ======================================================================
 !
-! --- CALCUL DE LA DERIVEE DE L APPORT MASSIQUE D AIR SEC PAR RAPPORT --
-! --- A LA PRESSION DE GAZ ---------------------------------------------
-! ======================================================================
-    if (emmag) then
-        dphip2 = em
-        dmasp2 = rho21*((1.d0-sat)*dphip2 + phi*(1.d0-sat)*(rho11- rho12)/rho11/pas)
-    else
-        dmasp2 = rho21*((1.d0-sat)*cs + phi*(1.d0-sat)*(rho11-rho12)/ rho11/pas)
-    endif
-! ======================================================================
+function masvol(mamol, pres, rgaz, temp)
+!
+implicit none
+!
+real(kind=8), intent(in) :: mamol, pres, rgaz, temp
+real(kind=8) :: masvol
+!
+! --------------------------------------------------------------------------------------------------
+!
+! THM
+!
+! Compute volumic mass of gaz
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  mamol            : molar mass of gaz
+! In  pres             : pressure of gaz
+! In  rgaz             : perfect gaz constant
+! In  temp             : temperature
+! Out masvol           : volumic mass of gaz
+!
+! --------------------------------------------------------------------------------------------------
+!
+    masvol = mamol * pres / rgaz / temp
+!
 end function

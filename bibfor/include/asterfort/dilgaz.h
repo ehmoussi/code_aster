@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface 
-    function dilgaz(sat, phi, alphfi, temp)
-        real(kind=8) :: sat
-        real(kind=8) :: phi
-        real(kind=8) :: alphfi
+    function dilgaz(satur, phi, alphfi, temp)
+        real(kind=8), intent(in) :: satur
+        real(kind=8), intent(in) :: phi
+        real(kind=8), intent(in) :: alphfi
         real(kind=8), intent(in) :: temp
         real(kind=8) :: dilgaz
     end function dilgaz

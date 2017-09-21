@@ -16,15 +16,36 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-function masvol(mamol, p, r, temp)
+function dilgaz(satur, phi, alphfi, temp)
+!
+use THM_type
+use THM_module
 !
 implicit none
 !
-real(kind=8), intent(in) :: temp
+#include "asterfort/assert.h"
 !
-    real(kind=8) :: mamol, p, r, masvol
-! --- CALCUL DES MASSES VOLUMIQUES DE PRESSION -------------------------
-! ======================================================================
-    masvol = mamol * p / r / temp
-! ======================================================================
+real(kind=8), intent(in) :: satur
+real(kind=8), intent(in) :: phi
+real(kind=8), intent(in) :: alphfi
+real(kind=8), intent(in) :: temp
+real(kind=8) :: dilgaz
+!
+! --------------------------------------------------------------------------------------------------
+!
+! THM
+!
+! Compute thermal expansion of gaz
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  satur            : saturation
+! In  phi              : porosity
+! In  alphfi           : differential thermal expansion ratio
+! Out dilgaz           : thermal expansion of gaz
+!
+! --------------------------------------------------------------------------------------------------
+!
+    dilgaz = (1.d0-satur)*alphfi+phi*(1.d0-satur)/3.d0/temp
+!
 end function
