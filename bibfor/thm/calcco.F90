@@ -204,21 +204,26 @@ character(len=16) :: hydr
                        congem, congep   ,&       
                        vintm , vintp    , dsde  ,& 
                        retcom)
-! ======================================================================
-! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_VAPE_GAZ ------------------
-! ======================================================================
+
     case (4)
-        call thmCpl004(option, hydr,&
-                    imate, ndim, dimdef, dimcon, nbvari,&
-                    yamec, yate, addeme, adcome, advihy,&
-                    advico, vihrho, vicphi, vicpvp, vicsat,&
-                    addep1, bdcp11, adcp12, addep2, adcp21,&
-                    addete, adcote, congem, congep, vintm,&
-                    vintp, dsde, deps, epsv, depsv,&
-                    p1, p2, dp1, dp2, temp,&
-                    dtemp, phi, pvp, h11, h12,&
-                    rho11, satur, retcom,&
-                    tbiot, angl_naut)
+! ----- LIQU_VAPE_GAZ
+        call thmCpl004(option, angl_naut,&
+                       hydr  , imate    ,&
+                       ndim  , nbvari   ,&
+                       dimdef, dimcon   ,&
+                       adcome, adcote   , adcp11, adcp12, adcp21,&
+                       addeme, addete   , addep1, addep2,& 
+                       advico, advihy   ,&
+                       vihrho, vicphi   , vicpvp, vicsat,&
+                       temp  , p1       , p2    ,&
+                       dtemp , dp1      , dp2   ,&
+                       deps  , epsv     , depsv ,&
+                       tbiot ,&
+                       phi   , rho11    , satur ,&
+                       pvp   , h11      , h12   ,&
+                       congem, congep   ,&
+                       vintm , vintp    , dsde  ,&
+                       retcom)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_GAZ -----------------------
 ! ======================================================================
