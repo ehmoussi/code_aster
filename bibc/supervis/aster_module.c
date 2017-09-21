@@ -839,7 +839,6 @@ PyObject *args;
         PyObject *list;
         int inval=0;
         ASTERINTEGER nval;
-        int long_nomcham=8;
         int long_nomgrp=24;
         int itopo;
         ASTERINTEGER topo;
@@ -847,10 +846,10 @@ PyObject *args;
         if (!PyArg_ParseTuple(args, "ssssiO:prepcompcham",
                               &nomce,&nomcs,&nomcmp,&ktype,&itopo,&list)) return NULL;
 
-        Fce = MakeFStrFromCStr(nomce, 8);
-        Fcs = MakeFStrFromCStr(nomcs, 8);
-        Fcm = MakeFStrFromCStr(nomcmp, 8);
-        Fty = MakeFStrFromCStr(ktype, 8);
+        Fce = MakeFStrFromCStr(nomce, 19);
+        Fcs = MakeFStrFromCStr(nomcs, 19);
+        Fcm = MakeFStrFromCStr(nomcmp, 19);
+        Fty = MakeFStrFromCStr(ktype, 19);
         inval=PyList_Size(list);
         nval=(ASTERINTEGER)inval;
         topo=(ASTERINTEGER)itopo;
