@@ -15,12 +15,34 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-function entgaz(dt, cp)
-    implicit      none
-    real(kind=8) :: dt, cp, entgaz
-! --- CALCUL DES ENTHALPIES DE GAZ -------------------------------------
-! ======================================================================
-    entgaz=cp*dt
-! ======================================================================
+!
+function entgaz(dtemp, cp)
+!
+use THM_type
+use THM_module
+!
+implicit none
+!
+#include "asterfort/assert.h"
+!
+real(kind=8), intent(in) :: dtemp, cp
+real(kind=8) :: entgaz
+!
+! --------------------------------------------------------------------------------------------------
+!
+! THM
+!
+! Compute enthalpy of gaz
+!
+! --------------------------------------------------------------------------------------------------
+!
+!
+! In  dtemp            : increment of temperature
+! In  cp               : specific heat capacity of gaz
+! Out entgaz           : enthalpy of gaz
+!
+! --------------------------------------------------------------------------------------------------
+!
+    entgaz = cp*dtemp
+!
 end function
