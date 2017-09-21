@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmfonc(ds_conv  , ds_algopara    , solver   , model     , ds_contact    ,&
                   list_load, sdnume         , sddyna   , sdcriq    , mate          ,&
                   ds_inout , ds_constitutive, ds_energy, ds_algorom, list_func_acti)
@@ -46,23 +47,21 @@ implicit none
 #include "asterfort/ndynlo.h"
 #include "asterfort/nmlssv.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Conv), intent(in) :: ds_conv
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    character(len=19), intent(in) :: solver
-    character(len=24), intent(in) :: model
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    character(len=19), intent(in) :: list_load
-    character(len=19), intent(in) :: sdnume
-    character(len=19), intent(in) :: sddyna
-    character(len=24), intent(in) :: sdcriq
-    character(len=24), intent(in) :: mate
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    type(NL_DS_Energy), intent(in) :: ds_energy
-    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
-    integer, intent(inout) :: list_func_acti(*)
+type(NL_DS_Conv), intent(in) :: ds_conv
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+character(len=19), intent(in) :: solver
+character(len=24), intent(in) :: model
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=19), intent(in) :: list_load
+character(len=19), intent(in) :: sdnume
+character(len=19), intent(in) :: sddyna
+character(len=24), intent(in) :: sdcriq
+character(len=24), intent(in) :: mate
+type(NL_DS_InOut), intent(in) :: ds_inout
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_Energy), intent(in) :: ds_energy
+type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+integer, intent(inout) :: list_func_acti(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -377,7 +376,7 @@ implicit none
         if (ds_algorom%l_hrom) then
             list_func_acti(62) = 1
             if (ds_algorom%l_hrom_corref) then
-                list_func_acti(65) = 1
+                list_func_acti(66) = 1
                 list_func_acti(34) = 1
             endif
         endif
@@ -397,7 +396,12 @@ implicit none
 ! - THM ?
 !
     call dismoi('EXI_THM', model, 'MODELE', repk=repk)
-    if (repk .eq. 'OUI') list_func_acti(37) = 1
+    if (repk .eq. 'OUI') then
+        list_func_acti(37) = 1
+    endif
+!
+! - THM + XFEM/CONTACT
+!
     if (l_cont .and. (repk .eq. 'OUI')) then
         list_func_acti(65) = 1
     endif 
