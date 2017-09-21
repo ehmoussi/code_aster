@@ -18,18 +18,24 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504
 !
-subroutine calcco(option, perman, nume_thmc,&
-                  hydr, imate, ndim, dimdef,&
-                  dimcon, nbvari, yamec, yate, addeme,&
-                  adcome, advihy, advico, addep1, adcp11,&
-                  adcp12, addep2, adcp21, adcp22, addete,&
-                  adcote, congem, congep, vintm, vintp,&
-                  dsde, deps, epsv, depsv, p1,&
-                  p2, dp1, dp2, temp, dtemp,&
-                  phi, pvp, pad, h11, h12,&
-                  rho11, satur,&
-                  retcom, tbiot, vihrho, vicphi,&
-                  vicpvp, vicsat, angl_naut)
+subroutine calcco(l_steady, nume_thmc,&
+                  option  , angl_naut,&
+                  hydr    , j_mater  ,&
+                  ndim    , nbvari   ,&
+                  dimdef  , dimcon   ,&
+                  adcome  , adcote   , adcp11, adcp12, adcp21, adcp22,&
+                  addeme  , addete   , addep1, addep2,&
+                  advico  , advihy   ,&
+                  vihrho  , vicphi   , vicpvp, vicsat,&
+                  temp    , p1       , p2    ,&
+                  dtemp   , dp1      , dp2   ,&
+                  deps    , epsv     , depsv ,&
+                  tbiot   ,&
+                  phi     , rho11    , satur ,&
+                  pad     , pvp      , h11   , h12   ,&
+                  congem  , congep   ,&
+                  vintm   , vintp    , dsde  ,& 
+                  retcom)
 !
 use THM_type
 use THM_module
@@ -48,34 +54,27 @@ implicit none
 #include "asterfort/thmCpl006.h"
 #include "asterfort/thmGetParaCoupling.h"
 !
+aster_logical, intent(in) :: l_steady
 integer, intent(in) :: nume_thmc
-aster_logical, intent(in) :: perman
-character(len=16), intent(in) :: option
+character(len=16), intent(in) :: option, hydr
 real(kind=8), intent(in) :: angl_naut(3)
-integer, intent(in) :: ndim, nbvari
+integer, intent(in) :: j_mater, ndim, nbvari
 integer, intent(in) :: dimdef, dimcon
-integer, intent(in) :: adcome, adcote, adcp11 
-integer, intent(in) :: addeme, addete, addep1
-integer, intent(in) :: advico, advihy, vihrho, vicphi
-real(kind=8), intent(in) :: temp
-real(kind=8), intent(in) :: dtemp, dp1
+integer, intent(in) :: adcome, adcote, adcp11, adcp12, adcp21, adcp22
+integer, intent(in) :: addeme, addete, addep1, addep2
+integer, intent(in) :: advihy, advico
+integer, intent(in) :: vihrho, vicphi, vicpvp, vicsat
+real(kind=8), intent(in) :: temp, p1, p2
+real(kind=8), intent(in) :: dtemp, dp1, dp2
 real(kind=8), intent(in) :: epsv, depsv, deps(6), tbiot(6)
+real(kind=8), intent(out) :: phi, rho11, satur
+real(kind=8), intent(out) :: pad, pvp, h11, h12
 real(kind=8), intent(in) :: congem(dimcon)
 real(kind=8), intent(inout) :: congep(dimcon)
 real(kind=8), intent(in) :: vintm(nbvari)
 real(kind=8), intent(inout) :: vintp(nbvari)
 real(kind=8), intent(inout) :: dsde(dimcon, dimdef)
-real(kind=8), intent(out) :: phi, rho11, satur
-real(kind=8), intent(out) :: pvp, h11, h12
-integer, intent(out) :: retcom
-
-integer :: yamec, yate, imate
-integer :: adcp12, adcp21, adcp22
-integer :: addep2
-integer :: vicpvp, vicsat
-real(kind=8) :: p1, p2, dp2
-real(kind=8) :: pad
-character(len=16) :: hydr
+integer, intent(out)  :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -86,11 +85,13 @@ character(len=16) :: hydr
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  option           : option to compute
-! In  perman           : .true. for no-transient problem
+! In  l_steady         : .true. for no-transient problem
 ! In  angl_naut        : nautical angles
 !                        (1) Alpha - clockwise around Z0
 !                        (2) Beta  - counterclockwise around Y1
 !                        (1) Gamma - clockwise around X
+! In  hydr             : type of hydraulic law
+! In  j_mater          : coded material address
 ! In  ndim             : dimension of space (2 or 3)
 ! In  nbvari           : total number of internal state variables
 ! In  dimdef           : dimension of generalized strains vector
@@ -98,31 +99,41 @@ character(len=16) :: hydr
 ! In  adcome           : adress of mechanic components in generalized stresses vector
 ! In  adcote           : adress of thermic components in generalized stresses vector
 ! In  adcp11           : adress of first component and first phase in generalized stresses vector
+! In  adcp12           : adress of first component and second phase in generalized stresses vector
+! In  adcp21           : adress of second component and first phase in generalized stresses vector
+! In  adcp22           : adress of second component and second phase in generalized stresses vector
 ! In  addeme           : adress of mechanic components in generalized strains vector
 ! In  addete           : adress of thermic components in generalized strains vector
 ! In  addep1           : adress of capillary pressure in generalized strains vector
+! In  addep2           : adress of gaz pressure in generalized strains vector
 ! In  advico           : index of first internal state variable for coupling law
 ! In  advihy           : index of internal state variable for hydraulic law 
 ! In  vihrho           : index of internal state variable for volumic mass of liquid
 ! In  vicphi           : index of internal state variable for porosity
+! In  vicpvp           : index of internal state variable for pressure of steam
+! In  vicsat           : index of internal state variable for saturation
 ! In  temp             : temperature at end of current time step
+! In  p1               : capillary pressure at end of current time step
+! In  p2               : gaz pressure at end of current time step
 ! In  dtemp            : increment of temperature
 ! In  dp1              : increment of capillary pressure
+! In  dp2              : increment of gaz pressure
 ! In  deps             : increment of mechanical strains vector
 ! In  epsv             : current volumic strain
 ! In  depsv            : increment of volumic strain
 ! In  tbiot            : Biot tensor
+! Out phi              : porosity
+! Out rho11            : volumic mass for liquid
+! Out satur            : saturation
+! Out pad              : dissolved air pressure
+! Out pvp              : steam pressure
+! Out h11              : enthalpy of liquid
+! Out h12              : enthalpy of steam
 ! In  congem           : generalized stresses - At begin of current step
 ! IO  congep           : generalized stresses - At end of current step
 ! In  vintm            : internal state variables - At begin of current step
 ! IO  vintp            : internal state variables - At end of current step
 ! IO  dsde             : derivative matrix
-! Out h11              : enthalpy of liquid
-! Out h12              : enthalpy of steam
-! Out pvp              : steam pressure
-! Out phi              : porosity
-! Out rho11            : volumic mass for liquid
-! Out satur            : saturation
 ! Out retcom           : return code for error
 !
 ! --------------------------------------------------------------------------------------------------
@@ -139,7 +150,7 @@ character(len=16) :: hydr
     h12    = 0.d0
     retcom = 0
 !
-    if (perman) then
+    if (l_steady) then
         bdcp11 = adcp11 - 1
     else
         bdcp11 = adcp11
@@ -147,7 +158,7 @@ character(len=16) :: hydr
 !
 ! - Get parameters for coupling
 !
-    call thmGetParaCoupling(imate, temp)
+    call thmGetParaCoupling(j_mater, temp)
 !
 ! - Compute
 !
@@ -155,19 +166,19 @@ character(len=16) :: hydr
 !
     case (1)
 ! ----- LIQU_SATU
-        call thmCpl001(perman, option, angl_naut,&
-                       ndim  , nbvari, &
-                       dimdef, dimcon,&
-                       adcome, adcote, bdcp11,& 
-                       addeme, addete, addep1,&
-                       advico, advihy, vihrho, vicphi,&
-                       temp  ,&
-                       dtemp , dp1   ,&
-                       deps  , epsv  , depsv,&
-                       tbiot ,&
-                       phi   , rho11 , satur,&
-                       congem, congep,&
-                       vintm , vintp , dsde,&
+        call thmCpl001(l_steady, option, angl_naut,&
+                       ndim    , nbvari, &
+                       dimdef  , dimcon,&
+                       adcome  , adcote, bdcp11,& 
+                       addeme  , addete, addep1,&
+                       advico  , advihy, vihrho, vicphi,&
+                       temp    ,&
+                       dtemp   , dp1   ,&
+                       deps    , epsv  , depsv,&
+                       tbiot   ,&
+                       phi     , rho11 , satur,&
+                       congem  , congep,&
+                       vintm   , vintp , dsde,&
                        retcom)
 
     case (2)
@@ -191,7 +202,7 @@ character(len=16) :: hydr
     case (3)
 ! ----- LIQU_VAPE
         call thmCpl003(option, angl_naut,&
-                       hydr  , imate    ,&
+                       hydr  , j_mater  ,&
                        ndim  , nbvari   ,&
                        dimdef, dimcon   ,&
                        adcote, adcp11   , adcp12, & 
@@ -211,7 +222,7 @@ character(len=16) :: hydr
     case (4)
 ! ----- LIQU_VAPE_GAZ
         call thmCpl004(option, angl_naut,&
-                       hydr  , imate    ,&
+                       hydr  , j_mater  ,&
                        ndim  , nbvari   ,&
                        dimdef, dimcon   ,&
                        adcome, adcote   , adcp11, adcp12, adcp21,&
@@ -231,7 +242,7 @@ character(len=16) :: hydr
     case (5)
 ! ----- LIQU_GAZ
         call thmCpl005(option, angl_naut,&
-                       hydr  , imate    ,&
+                       hydr  , j_mater  ,&
                        ndim  , nbvari   ,&
                        dimdef, dimcon   ,&
                        adcome, adcote   , adcp11, adcp21,&
@@ -250,7 +261,7 @@ character(len=16) :: hydr
     case (6)
 ! ----- LIQU_GAZ_ATM
         call thmCpl006(option, angl_naut,&
-                       hydr  , imate    ,&
+                       hydr  , j_mater  ,&
                        ndim  , nbvari   ,&
                        dimdef, dimcon   ,&
                        adcome, adcote   , adcp11,&
@@ -269,7 +280,7 @@ character(len=16) :: hydr
     case (9)
 ! ----- LIQU_AD_GAZ_VAPE
         call thmCpl009(option   , angl_naut,&
-                       hydr     , imate    ,&
+                       hydr     , j_mater  ,&
                        ndim     , nbvari   ,&
                        dimdef   , dimcon   ,&
                        adcome   , adcote   , adcp11, adcp12, adcp21, adcp22,&
@@ -289,7 +300,7 @@ character(len=16) :: hydr
     case (10)
 ! ----- LIQU_AD_GAZ
         call thmCpl010(option   , angl_naut,&
-                       hydr     , imate    ,&
+                       hydr     , j_mater  ,&
                        ndim     , nbvari   ,&
                        dimdef   , dimcon   ,&
                        adcome   , adcote   , adcp11, adcp12, adcp21, adcp22,&
@@ -309,4 +320,5 @@ character(len=16) :: hydr
     case default
         ASSERT(ASTER_FALSE)
     end select
+!
 end subroutine

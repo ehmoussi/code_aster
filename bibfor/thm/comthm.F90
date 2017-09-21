@@ -18,8 +18,8 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504, W1306
 !
-subroutine comthm(option, perman, &
-                  imate, typmod, compor, carcri,&
+subroutine comthm(option, l_steady, &
+                  j_mater, typmod, compor, carcri,&
                   instam, instap, ndim, dimdef, dimcon,&
                   nbvari, yamec, yap1, yap2, yate,&
                   addeme, adcome, addep1, adcp11, adcp12,&
@@ -88,7 +88,7 @@ integer, intent(in) :: vicsat
 !                                 N = NOMBRE DE PALIERS
 ! ======================================================================
 ! IN OPTION : OPTION DE CALCUL
-! IN PERMAN : TRUE SI PERMANENT
+! IN l_steady : TRUE SI l_steadyENT
 ! IN COMPOR : COMPORTEMENT
 ! IN IMATE  : MATERIAU CODE
 ! IN NDIM   : DIMENSION DE L'ESPACE
@@ -125,7 +125,7 @@ integer, intent(in) :: vicsat
 !
     aster_logical :: yachai
     integer :: retcom, kpi, npg
-    integer :: ndim, dimdef, dimcon, nbvari, imate, yamec, yap1
+    integer :: ndim, dimdef, dimcon, nbvari, j_mater, yamec, yap1
     integer :: yap2, yate, addeme, addep1, addep2, addete
     integer :: adcome, adcp11, adcp12, adcp21, adcp22, adcote
     real(kind=8) :: defgem(1:dimdef), defgep(1:dimdef), congep(1:dimcon)
@@ -133,13 +133,12 @@ integer, intent(in) :: vicsat
     real(kind=8) :: dsde(1:dimcon, 1:dimdef), carcri(*), instam, instap
     character(len=8) :: typmod(2)
     character(len=16) :: compor(*), option
-    aster_logical :: perman
+    aster_logical :: l_steady
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
     real(kind=8) :: p1, dp1, grap1(3), p2, dp2, grap2(3), t, dt, grat(3)
     real(kind=8) :: phi, pvp, pad, h11, h12, rho11, epsv, deps(6), depsv
-    real(kind=8) :: sat
     real(kind=8) :: tbiot(6), satur, dsatur, pesa(3)
     real(kind=8) :: tperm(ndim, ndim)
     real(kind=8) :: lambp, dlambp, lambs, dlambs
@@ -168,11 +167,11 @@ integer, intent(in) :: vicsat
 !
 ! - Get hydraulic parameters
 !
-    call thmGetParaHydr(hydr, imate)
+    call thmGetParaHydr(hydr, j_mater)
 !
 ! - Get Biot parameters (for porosity evolution)
 !
-    call thmGetParaBiot(imate)
+    call thmGetParaBiot(j_mater)
 !
 ! - Compute Biot tensor
 !
@@ -181,31 +180,36 @@ integer, intent(in) :: vicsat
 ! - Get elastic parameters
 !
     if (ds_thm%ds_elem%l_dof_meca .or. ds_thm%ds_elem%l_weak_coupling) then
-        call thmGetParaElas(imate, kpi, t, ndim)
+        call thmGetParaElas(j_mater, kpi, t, ndim)
         call thmMatrHooke(angl_naut)
     endif
 !
 ! - Get thermic parameters
 !
-    call thmGetParaTher(imate, kpi, t)
+    call thmGetParaTher(j_mater, kpi, t)
 !
-! - Compute coupling law
+! - Compute generalized stresses and matrix for coupled quantities
 !
     call thmGetParaBehaviour(compor,&
                              nume_thmc_ = nume_thmc)
-    call calcco(option, perman, nume_thmc,&
-                hydr, imate, ndim, dimdef,&
-                dimcon, nbvari, yamec, yate, addeme,&
-                adcome, advihy, advico, addep1, adcp11,&
-                adcp12, addep2, adcp21, adcp22, addete,&
-                adcote, congem, congep, vintm, vintp,&
-                dsde, deps, epsv, depsv, p1,&
-                p2, dp1, dp2, t, dt,&
-                phi, pvp, pad, h11, h12,&
-                rho11, sat,&
-                retcom, tbiot, vihrho, vicphi,&
-                vicpvp, vicsat, angl_naut)              
-!
+    call calcco(l_steady, nume_thmc,&
+                option  , angl_naut,&
+                hydr    , j_mater  ,&
+                ndim    , nbvari   ,&
+                dimdef  , dimcon   ,&
+                adcome  , adcote   , adcp11, adcp12, adcp21, adcp22,&
+                addeme  , addete   , addep1, addep2,&
+                advico  , advihy   ,&
+                vihrho  , vicphi   , vicpvp, vicsat,&
+                t       , p1       , p2    ,&
+                dt      , dp1      , dp2   ,&
+                deps    , epsv     , depsv ,&
+                tbiot   ,&
+                phi     , rho11    , satur ,&
+                pad     , pvp      , h11   , h12   ,&
+                congem  , congep   ,&
+                vintm   , vintp    , dsde  ,& 
+                retcom)
     if (retcom .ne. 0) then
         goto 999
     endif
@@ -217,8 +221,8 @@ integer, intent(in) :: vicsat
 ! ======================================================================
     if (yamec .eq. 1 .and. kpi .le. npg) then
         call thmSelectMeca(yate  , yap1   , yap2  ,&
-                           p1    , dp1    , p2    , dp2   , sat      , tbiot,&
-                           option, imate  , ndim  , typmod, angl_naut,&
+                           p1    , dp1    , p2    , dp2   , satur   , tbiot,&
+                           option, j_mater  , ndim  , typmod, angl_naut,&
                            compor, carcri , instam, instap, dt       ,&
                            addeme, addete , adcome, addep1, addep2   ,&
                            dimdef, dimcon ,&
@@ -233,12 +237,12 @@ integer, intent(in) :: vicsat
 !
 ! - Evaluation of final saturation
 !
-    call thmEvalSatuFinal(hydr , imate , p1    ,&
+    call thmEvalSatuFinal(hydr , j_mater , p1    ,&
                           satur, dsatur, retcom)
 !
 ! - Evaluate thermal conductivity
 !
-    call thmEvalConductivity(angl_naut, ndim  , imate, &
+    call thmEvalConductivity(angl_naut, ndim  , j_mater, &
                              satur    , phi   , &
                              lambs    , dlambs, lambp , dlambp,&
                              tlambt   , tlamct, tdlamt)
@@ -246,19 +250,19 @@ integer, intent(in) :: vicsat
 !
 ! - Get permeability tensor
 !
-    call thmGetPermeabilityTensor(ndim , angl_naut, imate, phi, vintp(1),&
+    call thmGetPermeabilityTensor(ndim , angl_naut, j_mater, phi, vintp(1),&
                                   tperm)
 !
 ! - Compute pesa
 !
-    call thmEvalGravity(imate, instap, pesa)
+    call thmEvalGravity(j_mater, instap, pesa)
 
 ! ======================================================================
 ! --- CALCUL DES FLUX HYDRAULIQUES UNIQUEMENT SI YAP1 = 1 --------------
 ! ======================================================================
     if (yap1 .eq. 1) then
         call calcfh(nume_thmc, &
-                    option   , perman, hydr   , ndim  , imate,&
+                    option   , l_steady, hydr   , ndim  , j_mater,&
                     dimdef   , dimcon,&
                     addep1   , addep2,&
                     adcp11   , adcp12, adcp21 , adcp22,&
