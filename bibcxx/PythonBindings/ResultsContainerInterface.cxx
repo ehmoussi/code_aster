@@ -34,6 +34,7 @@ void exportResultsContainerToPython()
         .def( "create", &createSharedPtr< ResultsContainerInstance > )
         .staticmethod( "create" )
         .def( "getRealFieldOnNodes", &ResultsContainerInstance::getRealFieldOnNodes )
+        .def( "getRealFieldOnElements", &ResultsContainerInstance::getRealFieldOnElements )
         .def( "printMedFile", &ResultsContainerInstance::printMedFile )
     ;
 };
