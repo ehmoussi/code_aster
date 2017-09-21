@@ -243,19 +243,25 @@ character(len=16) :: hydr
                        congem, congep   ,&
                        vintm , vintp    , dsde  ,&
                        retcom)
-! ======================================================================
-! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_GAZ_ATM -------------------
-! ======================================================================
+
     case (6)
-        call thmCpl006(option, hydr,&
-                    imate, ndim, dimdef, dimcon, nbvari,&
-                    yamec, yate, addeme, adcome, advihy,&
-                    advico, vihrho, vicphi, vicsat, addep1,&
-                    bdcp11, addete, adcote, congem, congep,&
-                    vintm, vintp, dsde, epsv, depsv,&
-                    p1, dp1, temp, dtemp, phi,&
-                    rho11, satur, retcom,&
-                    tbiot, angl_naut, deps)
+! ----- LIQU_GAZ_ATM
+        call thmCpl006(option, angl_naut,&
+                       hydr  , imate    ,&
+                       ndim  , nbvari   ,&
+                       dimdef, dimcon   ,&
+                       adcome, adcote   , adcp11,&
+                       addeme, addete   , addep1,&
+                       advico, advihy   ,&
+                       vihrho, vicphi   , vicsat,&
+                       temp  , p1       ,&
+                       dtemp , dp1      ,&
+                       deps  , epsv     , depsv ,&
+                       tbiot ,&
+                       phi   , rho11    , satur ,&
+                       congem, congep   ,&
+                       vintm , vintp    , dsde  ,&
+                       retcom)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_AD_GAZ_VAPE ---------------
 ! ======================================================================
