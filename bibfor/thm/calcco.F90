@@ -154,19 +154,23 @@ character(len=16) :: hydr
                        congem, congep,&
                        vintm , vintp , dsde,&
                        retcom)
-! ======================================================================
-! --- CAS D'UNE LOI DE COUPLAGE DE TYPE GAZ ----------------------------
-! ======================================================================
+
     case (2)
-        call thmCpl002(option,&
-                    hydr, imate, ndim, dimdef, dimcon,&
-                    nbvari, yamec, yate, addeme, adcome,&
-                    advico, vicphi, addep1, bdcp11, addete,&
-                    adcote, congem, congep, vintm, vintp,&
-                    dsde, epsv, depsv, p1, dp1,&
-                    temp, dtemp, phi, rho11, &
-                    satur, retcom, tbiot,  angl_naut,&
-                    deps)
+        call thmCpl002(option, angl_naut,&
+                       ndim  , nbvari, &
+                       dimdef, dimcon,&
+                       adcome, adcote, adcp11,& 
+                       addeme, addete, addep1,&
+                       advico,&
+                       vicphi,&
+                       temp  , p1    ,&
+                       dtemp , dp1   ,&
+                       deps  , epsv  , depsv,&
+                       tbiot ,&
+                       phi   , rho11 , satur,&
+                       congem, congep,&
+                       vintm , vintp , dsde,&
+                       retcom)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_VAPE ----------------------
 ! ======================================================================
