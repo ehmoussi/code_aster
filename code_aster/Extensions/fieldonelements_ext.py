@@ -36,7 +36,7 @@ class injector(object):
 class ExtendedFieldOnElementsDouble(injector, FieldOnElementsDouble):
    cata_sdj = "SD.sd_champ.sd_cham_elem_class"
 
-   def EXTR_COMP(self,comp=' ',lgma=[],topo=0) :
+   def EXTR_COMP(self,comp,lgma=[],topo=0) :
       """ retourne les valeurs de la composante comp du champ sur la liste
         de groupes de mailles lgma avec eventuellement l'info de la
         topologie si topo>0. Si lgma est une liste vide, c'est equivalent

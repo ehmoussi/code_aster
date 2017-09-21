@@ -75,11 +75,19 @@ timeList.addErrorManager( error1 )
 timeList.build()
 #timeList.debugPrint( 6 )
 statNonLine.setLoadStepManager( timeList )
+
 # Run the nonlinear analysis
 resu = statNonLine.execute()
 #resu.debugPrint( 6 )
-a=resu.getRealFieldOnElements('SIEF_ELGA',1)
-#z=a.EXTR_COMP()
+
+u=resu.getRealFieldOnNodes('DEPL',1)
+z=u.EXTR_COMP()
+test.assertEqual(len(z.valeurs),81)
+
+sixx=resu.getRealFieldOnElements('SIEF_ELGA',1)
+z=sixx.EXTR_COMP('SIXX')
+test.assertEqual(len(z.valeurs),64)
+
 # at least it pass here!
 test.assertTrue( True )
 test.printSummary()
