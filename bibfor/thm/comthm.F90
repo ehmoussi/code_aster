@@ -194,7 +194,7 @@ integer, intent(in) :: vicsat
 !
     call thmGetParaBehaviour(compor,&
                              nume_thmc_ = nume_thmc)
-    call calcco(option, yachai, perman, nume_thmc,&
+    call calcco(option, perman, nume_thmc,&
                 hydr, imate, ndim, dimdef,&
                 dimcon, nbvari, yamec, yate, addeme,&
                 adcome, advihy, advico, addep1, adcp11,&
