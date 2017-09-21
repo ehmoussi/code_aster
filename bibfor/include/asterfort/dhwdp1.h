@@ -18,10 +18,7 @@
 !
 interface
     function dhwdp1(signe, alpliq, temp, rho11)
-        real(kind=8) :: signe
-        real(kind=8) :: alpliq
-        real(kind=8), intent(in) :: temp
-        real(kind=8) :: rho11
+        real(kind=8), intent(in) :: temp, signe, alpliq, rho11
         real(kind=8) :: dhwdp1
     end function dhwdp1
 end interface

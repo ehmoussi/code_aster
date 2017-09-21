@@ -33,7 +33,7 @@ real(kind=8), intent(out) :: sigmp(6)
 !
 ! THM
 !
-! Compute mechanical stress from pressures
+! Compute mechanical stresses from pressures
 !
 ! --------------------------------------------------------------------------------------------------
 !

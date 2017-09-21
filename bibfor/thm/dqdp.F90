@@ -16,24 +16,28 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine dmdepv(rho, fsat, tbiot, dmdeps)
-
-! ======================================================================
+function dqdp(signe, alpha, temp)
 !
-! --- CALCUL DES DERIVEES DES APPORTS MASSIQUES PAR RAPPORT A LA -------
-! --- DEFORMATION VOLUMIQUE --------------------------------------------
-! ======================================================================
-    implicit none
+implicit none
 !
-    integer :: i
-    real(kind=8) :: rho, fsat, tbiot(6), dmdeps(6)
-    real(kind=8) :: rac2
-    rac2=sqrt(2.d0)
-    do 10 i = 1, 3
-        dmdeps(i) = rho*tbiot(i)*fsat
-10  end do
-    do 20 i = 4, 6
-        dmdeps(i) = rho*tbiot(i)*fsat*rac2
-20  end do
-! ======================================================================
-end subroutine
+real(kind=8), intent(in) :: temp, signe, alpha
+real(kind=8) :: dqdp
+!
+! --------------------------------------------------------------------------------------------------
+!
+! THM
+!
+! Derivative of "reduced" heat Q' by pressure
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  signe            : sign for saturation
+! In  alpha            : thermic dilatation
+! In  temp             : temperature
+! Out dqdp             : derivative of "reduced" heat Q' by pressure
+!
+! --------------------------------------------------------------------------------------------------
+!
+    dqdp = 3.d0*signe*alpha*temp
+!
+end function

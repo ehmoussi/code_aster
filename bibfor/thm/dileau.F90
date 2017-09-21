@@ -16,43 +16,37 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine dspdp1(signe, tbiot, satur, dsdp1)
+function dileau(satur, phi, alphfi, alpliq)
 !
 use THM_type
 use THM_module
 !
 implicit none
 !
-#include "asterf_types.h"
+#include "asterfort/assert.h"
 !
-real(kind=8), intent(in) :: signe, tbiot(6), satur
-real(kind=8), intent(out) :: dsdp1(6)
+real(kind=8), intent(in) :: satur
+real(kind=8), intent(in) :: phi
+real(kind=8), intent(in) :: alpliq
+real(kind=8), intent(in) :: alphfi
+real(kind=8) :: dileau
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! THM
 !
-! Derivative of _pressure part_ of stresses by capillary pressure
+! Compute thermal expansion of liquid
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  signe            : sign for saturation
-! In  tbiot            : tensor of Biot
-! In  satur            : value of saturation
-! Out dsdp1            : derivative of pressure part of stress by capillary pressure
+! In  satur            : saturation
+! In  phi              : porosity
+! In  alphfi           : differential thermal expansion ratio
+! In  alpliq           : value of themic dilatation for liquid
+! Out dileau           : thermal expansion of liquid
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i
+    dileau = satur*alphfi+alpliq*phi*satur
 !
-! --------------------------------------------------------------------------------------------------
-!
-    do i = 1, 6
-        if (ds_thm%ds_behaviour%l_stress_bishop) then
-            dsdp1(i) = signe*tbiot(i)*satur
-        else
-            dsdp1(i) = 0.d0
-        endif
-    end do
-!
-end subroutine
+end function

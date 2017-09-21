@@ -18,8 +18,7 @@
 !
 interface 
     subroutine dqdeps(mdal, temp, dqeps)
-        real(kind=8) :: mdal(6)
-        real(kind=8), intent(in) :: temp
+        real(kind=8), intent(in) :: mdal(6), temp
         real(kind=8) :: dqeps(6)
     end subroutine dqdeps
 end interface 

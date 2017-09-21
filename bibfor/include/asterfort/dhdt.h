@@ -15,12 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     function dhdt(cp)
-        real(kind=8) :: cp
+        real(kind=8), intent(in) :: cp
         real(kind=8) :: dhdt
     end function dhdt
 end interface

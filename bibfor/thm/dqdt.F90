@@ -15,12 +15,27 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-function dhdt(cp)
-    implicit      none
-    real(kind=8) :: cp, dhdt
-! --- CALCUL DE LA DERIVEE HW PAR RAPPORT A LA TEMPERATURE -------------
-! ======================================================================
-    dhdt = cp
-! ======================================================================
+!
+function dqdt(coeps)
+!
+implicit none
+!
+real(kind=8), intent(in) :: coeps
+real(kind=8) :: dqdt
+!
+! --------------------------------------------------------------------------------------------------
+!
+! THM
+!
+! Derivative of "reduced" heat Q' by temperature
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  coeps            : specific heat capacity
+! Out dqdt             : derivative of "reduced" heat Q' by temperature
+!
+! --------------------------------------------------------------------------------------------------
+!
+    dqdt = coeps
+!
 end function

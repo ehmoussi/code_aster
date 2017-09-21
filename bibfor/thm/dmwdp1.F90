@@ -16,43 +16,49 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine dspdp1(signe, tbiot, satur, dsdp1)
-!
-use THM_type
-use THM_module
+function dmwdp1(rho11, signe, satur , dsatur , phi,&
+                cs   , cliq , dp11p1, l_emmag, em )
 !
 implicit none
 !
 #include "asterf_types.h"
 !
-real(kind=8), intent(in) :: signe, tbiot(6), satur
-real(kind=8), intent(out) :: dsdp1(6)
+real(kind=8), intent(in) :: rho11, signe, phi, satur, dsatur
+real(kind=8), intent(in) :: cs, cliq, dp11p1, em
+aster_logical, intent(in) :: l_emmag
+real(kind=8) :: dmwdp1
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! THM
 !
-! Derivative of _pressure part_ of stresses by capillary pressure
+! Derivative of quantity of mass of liquid by capillary pressure
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  rho11            : volumic mass of liquid
 ! In  signe            : sign for saturation
-! In  tbiot            : tensor of Biot
-! In  satur            : value of saturation
-! Out dsdp1            : derivative of pressure part of stress by capillary pressure
+! In  phi              : porosity
+! In  satur            : saturation
+! In  dsatur           : derivative of saturation by capillary pressure
+! In  cs               : Biot modulus of solid matrix
+! In  cliq             : value of 1/K for liquid
+! In  dp11p1           : derivative of liquid pressure by capillary pressure
+! In  l_emmag          : .true. if use storage coefficient
+! In  em               : storage coefficient
+! Out dmwdp1           : derivative of quantity of mass of liquid by capillary pressure
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i
+    real(kind=8) :: dphip1
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    do i = 1, 6
-        if (ds_thm%ds_behaviour%l_stress_bishop) then
-            dsdp1(i) = signe*tbiot(i)*satur
-        else
-            dsdp1(i) = 0.d0
-        endif
-    end do
+    if (l_emmag) then
+        dphip1 = - satur*signe*em
+        dmwdp1 = rho11*(satur*dphip1+signe*dsatur*phi- signe*satur*phi*cliq*dp11p1)
+    else
+        dmwdp1 = rho11*signe*(dsatur*phi - satur*phi*cliq*dp11p1 - satur*satur*cs)
+    endif
 !
-end subroutine
+end function

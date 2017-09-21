@@ -15,24 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface 
-    function dmwdp1(rho11, signe, sat, dsatp1, phi,&
-                    cs, cliq, dp11p1, emmag, em)
-        real(kind=8) :: rho11
-        real(kind=8) :: signe
-        real(kind=8) :: sat
-        real(kind=8) :: dsatp1
-        real(kind=8) :: phi
-        real(kind=8) :: cs
-        real(kind=8) :: cliq
-        real(kind=8) :: dp11p1
-        aster_logical :: emmag
-        real(kind=8) :: em
-        real(kind=8) :: dmwdp1_0
+    function dmwdp1(rho11, signe, satur , dsatur , phi,&
+                    cs   , cliq , dp11p1, l_emmag, em )
+        real(kind=8), intent(in) :: rho11, signe, phi, satur, dsatur
+        real(kind=8), intent(in) :: cs, cliq, dp11p1, em
+        aster_logical, intent(in) :: l_emmag
+        real(kind=8) :: dmwdp1
     end function dmwdp1
 end interface 
