@@ -15,15 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine visatu(nbvari, vintp, advico, vicsat, sat)
-        integer :: nbvari
-        real(kind=8) :: vintp(nbvari)
-        integer :: advico
-        integer :: vicsat
-        real(kind=8) :: sat
+    subroutine visatu(nbvari, vintp, advico, vicsat, satur)
+        integer, intent(in) :: nbvari
+        real(kind=8), intent(inout) :: vintp(nbvari)
+        integer, intent(in) :: advico
+        integer, intent(in) :: vicsat
+        real(kind=8), intent(in) :: satur
     end subroutine visatu
 end interface
