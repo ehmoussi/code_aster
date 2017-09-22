@@ -22,12 +22,26 @@ implicit none
 !
 #include "asterfort/dhwdp1.h"
 !
-real(kind=8), intent(in) :: temp
+real(kind=8), intent(in) :: temp, signe, dp11p1, alpliq, rho11
+real(kind=8) :: dhw2p1
 !
-real(kind=8) :: signe, dp11p1, alpliq, rho11, dhw2p1
-! --- CALCUL DE LA DERIVEE HW PAR RAPPORT A P1 DANS LE CAS -------------
-! --- LIQU_AD_GAZ_VAPE -------------------------------------------------
-! ======================================================================
-    dhw2p1 = dp11p1 * dhwdp1(signe,alpliq,temp,rho11)
-! ======================================================================
+! --------------------------------------------------------------------------------------------------
+!
+! THM
+!
+! Derivative of enthalpy of liquid by capillary pressure - For LIQU_AD_GAZ_VAPE
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  signe            : sign for saturation
+! In  dp11p1           : partial derivative of liquid pressure by capillary pressure
+! In  alpliq           : value of thermic dilatation for liquid
+! In  temp             : temperature
+! In  rho11            : volumic mass of liquid
+! Out dhw2p1           : derivative of enthalpy of liquid by capillary pressure (LIQU_AD_GAZ_VAPE)
+!
+! --------------------------------------------------------------------------------------------------
+!
+    dhw2p1 = dp11p1 * dhwdp1(signe, alpliq, temp, rho11)
+!
 end function

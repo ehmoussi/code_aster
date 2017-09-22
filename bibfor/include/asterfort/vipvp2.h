@@ -17,27 +17,25 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine vipvp2(nbvari, vintm, vintp, advico, vicpvp,&
-                      pvp0, pvp1, p2, dp2, temp,&
-                      dt, kh, mamolv, r, rho11m,&
-                      pvp, pvpm, retcom)
-        integer :: nbvari
-        real(kind=8) :: vintm(nbvari)
-        real(kind=8) :: vintp(nbvari)
-        integer :: advico
-        integer :: vicpvp
-        real(kind=8) :: pvp0
-        real(kind=8) :: pvp1
-        real(kind=8) :: p2
-        real(kind=8) :: dp2
-        real(kind=8), intent(in) :: temp
-        real(kind=8) :: dt
-        real(kind=8) :: kh
-        real(kind=8) :: mamolv
-        real(kind=8) :: r
-        real(kind=8) :: rho11m
-        real(kind=8) :: pvp
-        real(kind=8) :: pvpm
-        integer :: retcom
+    subroutine vipvp2(nbvari,&
+                      advico, vicpvp,&
+                      mamolv, rgaz  , rho11 , kh,&
+                      pvp1  ,&
+                      temp  , p2    ,&
+                      dtemp , dp2   ,&
+                      pvp0  , pvpm  , pvp   ,&
+                      vintm , vintp ,&
+                      retcom)
+        integer, intent(in) :: nbvari
+        integer, intent(in) :: advico, vicpvp
+        real(kind=8), intent(in) :: mamolv, rgaz, rho11, kh
+        real(kind=8), intent(in) :: pvp1
+        real(kind=8), intent(in) :: temp, p2
+        real(kind=8), intent(in) :: dtemp, dp2
+        real(kind=8), intent(in) :: pvp0
+        real(kind=8), intent(out) :: pvpm, pvp
+        real(kind=8), intent(in) :: vintm(nbvari)
+        real(kind=8), intent(out) :: vintp(nbvari)
+        integer, intent(out)  :: retcom
     end subroutine vipvp2
 end interface

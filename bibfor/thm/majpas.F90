@@ -18,7 +18,7 @@
 !
 function majpas(p2, pvp)
 !
-    implicit      none
+implicit none
 !
 real(kind=8), intent(in) :: p2, pvp
 real(kind=8) :: majpas

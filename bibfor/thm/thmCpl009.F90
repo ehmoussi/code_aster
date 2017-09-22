@@ -123,7 +123,7 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: padm, rho22, em, alpha0
     real(kind=8) :: deps(6), mdal(6), dalal, alphfi, cbiot, unsks
     aster_logical :: l_emmag
-    real(kind=8) :: signe, pvp1, pvp1m, dpad, pas
+    real(kind=8) :: signe, pvp1, dpad, pas
     real(kind=8) :: m11m, m12m, m21m, m22m
     real(kind=8) :: dmdeps(6), dsdp1(6)
     real(kind=8) :: pinf, sigmp(6)
@@ -214,45 +214,38 @@ real(kind=8), intent(in) :: temp
                         phi0  , dp1   , dp2 , signe, satur,&
                         em    , phi   , phim)
         endif
-! =====================================================================
-! --- CALCUL DE LA PRESSION DE VAPEUR TILDE SELON FORMULE DOCR --------
-! --- ETAPE INTERMEDIAIRE AU CALCUL DE LA VARIABLE INTERNE ------------
-! --- NB : CE CALCUL SE FAIT AVEC LA MASSE VOLUMIQUE DU FLUIDE --------
-! ---    : A L INSTANT MOINS ------------------------------------------
-! =====================================================================
+! ----- Compute intermediary steam pressure (with dissolved air)
         pinf = r8maem()
-        if (yate .eq. 1) then
-            call vipvpt(nbvari, vintm, vintp, advico, vicpvp,&
-                        dimcon, pinf, congem, adcp11, adcp12,&
-                        ndim, pvp0, dp1, dp2, temp,&
-                        dt, mamolv, r, rho11m, kh,&
-                        signe, cp11, cp12, yate, pvp1,&
-                        pvp1m, retcom)
-        else
-            call vipvpt(nbvari, vintm, vintp, advico, vicpvp,&
-                        dimcon, pinf, congem, adcp11, adcp12,&
-                        ndim, pvp0, dp1, dp2, temp,&
-                        dt, mamolv, r, rho11m, kh,&
-                        signe, 0.d0, cp12, yate, pvp1,&
-                        pvp1m, retcom)
-        endif
+        call vipvpt(ndim  , nbvari, dimcon,&
+                    adcp11, adcp12,&
+                    advico, vicpvp,&
+                    congem,&
+                    cp11  , cp12  , kh    ,&
+                    mamolv, r     , rho11m, signe ,&    
+                    temp  , pinf  ,&
+                    dt    , dp1   , dp2   ,&
+                    pvp0  , pvp1  ,&
+                    vintm , vintp ,&
+                    retcom)
         if (retcom .ne. 0) then
             goto 30
         endif
-! =====================================================================
-! --- CALCUL DE LA VARIABLE INTERNE DE PRESSION DE VAPEUR -------------
-! --- SELON FORMULE DOCR ----------------------------------------------
-! =====================================================================
-        call vipvp2(nbvari, vintm, vintp, advico, vicpvp,&
-                    pvp0, pvp1, p2, dp2, temp,&
-                    dt, kh, mamolv, r, rho11m,&
-                    pvp, pvpm, retcom)
-! =====================================================================
-! --- MISE A JOUR DE LA PRESSION D AIR DISSOUS SELON FORMULE DOCR -----
-! =====================================================================
-        call majpad(p2, pvp, r, temp, kh,&
-                    dp2, pvpm, dt, padp, padm,&
-                    dpad)
+! ----- Compute steam pressure (with dissolved air)
+        call vipvp2(nbvari,&
+                    advico, vicpvp,&
+                    mamolv, r  , rho11m, kh,&
+                    pvp1  ,&
+                    temp  , p2    ,&
+                    dt    , dp2   ,&
+                    pvp0  , pvpm  , pvp   ,&
+                    vintm , vintp ,&
+                    retcom)
+! ----- Update "dissolved" air pressure
+        call majpad(r    , kh  ,&
+                    temp , p2  ,&
+                    dt   , dp2 ,&
+                    pvpm , pvp ,&
+                    padm , padp, dpad)
 ! ----- Compute volumic mass for water
         if (yate .eq. 1) then
             call virhol(nbvari, vintm , vintp ,&
@@ -277,9 +270,12 @@ real(kind=8), intent(in) :: temp
 ! =====================================================================
 ! --- MISE A JOUR DE LA PRESSION D AIR DISSOUS SELON FORMULE DOCR -----
 ! =====================================================================
-        call majpad(p2, pvp, r, temp, kh,&
-                    dp2, pvpm, dt, padp, padm,&
-                    dpad)
+! ----- Update "dissolved" air pressure
+        call majpad(r    , kh  ,&
+                    temp , p2  ,&
+                    dt   , dp2 ,&
+                    pvpm , pvp ,&
+                    padm , padp, dpad)
     endif
 ! =====================================================================
 ! --- PROBLEME DANS LE CALCUL DES VARIABLES INTERNES ? ----------------
@@ -384,11 +380,15 @@ real(kind=8), intent(in) :: temp
 ! --- UNIQUEMENT POUR LES OPTIONS RIGI_MECA ET FULL_MECA ---------------
 ! ======================================================================
     if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
-        call dplvga(yate, rho11, rho12, r, temp,&
-                    kh, congem, dimcon, adcp11, adcp12,&
-                    ndim, padp, dp11p1, dp11p2, dp12p1,&
-                    dp12p2, dp21p1, dp21p2, dp11t, dp12t,&
-                    dp21t)
+! ----- Compute partial derivatives
+        call dplvga(ndim  , dimcon,&
+                    rho11 , rho12 , r     , kh,&
+                    congem, adcp11, adcp12,&
+                    temp  , padp  ,&
+                    dp11p1, dp11p2,&
+                    dp12p1, dp12p2,&
+                    dp21p1, dp21p2,&
+                    dp11t , dp12t , dp21t)
         if (yamec .eq. 1) then
 ! ======================================================================
 ! --- CALCUL UNIQUEMENT EN PRESENCE DE MECANIQUE -----------------------

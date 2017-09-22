@@ -337,13 +337,6 @@ Cet état initial ne sera pas pris en compte.
    Séchage moins %(r2)f  Séchage plus %(r3)f   W0 %(r4)f
 """),
 
-    65 : _(u"""
-   Attention, la pression d'air dissous devient
-   négative à la maille %(k1)s.
-Ce message est un message d'erreur développeur.
-Contactez le support technique.
-"""),
-
     67 : _(u"""
 Dans la définition du matériau RUPT_DUCT les coefficients de forme de la loi CZM_TRA_MIX doivent vérifier : COEF_EXTR <= COEF_PLAS
 """),
