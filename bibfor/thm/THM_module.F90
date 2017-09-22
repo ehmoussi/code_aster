@@ -121,6 +121,7 @@ subroutine thmModuleInit()
     ds_thm%ds_material%hydr%smax          = r8nnem()
     ds_thm%ds_material%hydr%satuma        = r8nnem()
     ds_thm%ds_material%hydr%emmag         = r8nnem()
+    ds_thm%ds_material%hydr%l_emmag       = ASTER_FALSE
 !   Material parameters (gaz)
     ds_thm%ds_material%l_gaz              = ASTER_FALSE
     ds_thm%ds_material%gaz%mass_mol       = r8nnem()

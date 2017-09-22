@@ -47,8 +47,7 @@ ou une modélisation THM
 """),
 
     5 : _(u"""
-Il n'est pas possible de faire du chaînage avec un coefficient d'emmagasinement
-non nul.
+Il n'est pas possible de faire du chaînage avec un coefficient d'emmagasinement non nul.
 """),
 
     6 : _(u"""

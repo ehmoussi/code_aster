@@ -29,8 +29,6 @@ MODELISA = 'D_PLAN_HMS'
 #=============================================================
 #                     donnees
 #=============================================================
-# Le coefficient d'emmag n'est pas pris en compte ici car il y a de la meca
-EMMAG=1.E-10
 UN_SUR_K= 0
 
 
@@ -126,7 +124,6 @@ ELAS_ORTH=_F(E_L=5.E8,E_T=5.E8,E_N=5.E8,
 
    THM_DIFFU=_F(
             R_GAZ      = 8.315,
-            EMMAG      = EMMAG,
             RHO        = 1.,
             BIOT_T=1.0,
             BIOT_L=1.0,
@@ -290,7 +287,7 @@ FLUXND = POST_ELEM(RESULTAT   = cal1,
               TYPE_MAILLE='1D'))
 
 TEST_TABLE(VALE_REFE=-2.0E-10,
-           VALE_CALC=-1.998649403053E-10 ,
+           VALE_CALC=-2.0E-10,
            PRECISION=1.E-3,
            REFERENCE='ANALYTIQUE',
            NOM_PARA='INTE_FH11',
@@ -305,7 +302,7 @@ FLUXNM = POST_ELEM(RESULTAT   = cal1,
               TYPE_MAILLE='1D'))
 
 TEST_TABLE(VALE_REFE=-2.0E-10,
-           VALE_CALC=-1.9999945530506E-10,
+           VALE_CALC=-2.0E-10,
            PRECISION=1.E-3,
            REFERENCE='ANALYTIQUE',
            NOM_PARA='INTE_FH11',
@@ -320,7 +317,7 @@ FLUXNG = POST_ELEM(RESULTAT   = cal1,
               TYPE_MAILLE='1D'))
 
 TEST_TABLE(VALE_REFE=2.0E-10,
-           VALE_CALC=2.0013560999989E-10,
+           VALE_CALC=2.0E-10,
            PRECISION=1.E-3,
            REFERENCE='ANALYTIQUE',
            NOM_PARA='INTE_FH11',

@@ -75,27 +75,15 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: mdal(6), dalal, alphfi, cbiot, unsks, alpha0
     real(kind=8) :: r, rho0, csigm, alp11, em, p1m, dsatur
     real(kind=8) :: deps(6)
-    real(kind=8), parameter :: eps = 1.d-21
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
-    aster_logical :: emmag
-! ======================================================================
-! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
-! ======================================================================
+    aster_logical :: l_emmag
     real(kind=8) :: saturm
     real(kind=8) :: dsdp2(6)
     real(kind=8) :: signe, dp2, cliq, coeps, rho12, alp21, rho21, rho21m
     real(kind=8) :: cp21, p2, satm, rho22, cp11, cp22, m11m, dmdeps(6)
     real(kind=8) :: dqeps(6)
     real(kind=8) :: sigmp(6), phi0
-!
-! =====================================================================
-! --- BUT : RECUPERER LES DONNEES MATERIAUX THM -----------------------
-! --- DANS LE CALCUL ON LAISSE LES INDICES 11 POUR LE STOCKAGE DES ----
-! --- VARIABLES. EN REVANCHE POUR UNE MEILLEURE COMPREHENSION PAR -----
-! --- RAPPORT A LA DOC R7.01.11 ON NOTE LES INDICES 21 POUR LES -------
-! --- VARIABLES DE CALCUL ---------------------------------------------
-! =====================================================================
-    emmag = .false.
+
 !
 ! - Get material parameters
 !
@@ -110,8 +98,12 @@ real(kind=8), intent(in) :: temp
 !
     p1m = 0.d0
     call thmEvalSatuInit(hydr  , imate, p1m   , p1,&
-                         saturm, satur, dsatur, em,&
-                         retcom)
+                         saturm, satur, dsatur, retcom)
+!
+! - Storage coefficient
+!
+    l_emmag = ds_thm%ds_material%hydr%l_emmag
+    em      = ds_thm%ds_material%hydr%emmag
 
 ! ======================================================================
 ! --- POUR EVITER DES PB AVEC OPTIMISEUR ON MET UNE VALEUR DANS CES ----
@@ -141,10 +133,6 @@ real(kind=8), intent(in) :: temp
 ! =====================================================================
 ! --- RECUPERATION DES COEFFICIENTS MECANIQUES ------------------------
 ! =====================================================================
-    if ((em.gt.eps) .and. (yamec.eq.0)) then
-        emmag = .true.
-    endif
-!
     call inithm(imate, yachai, yamec, phi0, em,&
                 cs, tbiot, temp, epsv, depsv,&
                 epsvm, angmas, mdal, dalal,&
@@ -157,7 +145,7 @@ real(kind=8), intent(in) :: temp
 ! =====================================================================
 ! --- CALCUL DE LA VARIABLE INTERNE DE POROSITE SELON FORMULE DOCR ----
 ! =====================================================================
-        if ((yamec.eq.1) .or. emmag) then
+        if ((yamec.eq.1) .or. l_emmag) then
             call viporo(nbvari, vintm, vintp, advico, vicphi,&
                         phi0, deps, depsv, alphfi, dt,&
                         dp1, dp2, signe, satur, cs,&
@@ -302,7 +290,7 @@ real(kind=8), intent(in) :: temp
 ! --- POUR LES AUTRES CAS ----------------------------------------------
 ! ======================================================================
         dsde(adcp11,addep1) = dsde(adcp11,addep1) +&
-                              dmasp2(1.0d0,0.0d0,rho21,satur,phi,cs,p2,emmag,em)
+                              dmasp2(1.d0,0.d0,rho21,satur,phi,cs,p2,l_emmag,em)
     endif
 ! =====================================================================
 ! --- MISE A JOUR DES VARIABLES P1 ET DP1 POUR CONFOMITE AUX FORMULES -

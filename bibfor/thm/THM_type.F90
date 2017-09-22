@@ -124,6 +124,7 @@ implicit none
         real(kind=8) :: smax
         real(kind=8) :: satuma
         real(kind=8) :: emmag
+        aster_logical :: l_emmag
     end type THM_Hydr
 
 ! - Gaz parameters

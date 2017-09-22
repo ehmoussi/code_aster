@@ -94,12 +94,8 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: rho12, rho21, rho22, cp12, cp21, cp22, coeps, dsatp1
     real(kind=8) :: m11m, satm, mdal(6), dalal, alphfi, cbiot, unsks
     real(kind=8) :: deps(6)
-    real(kind=8), parameter :: eps = 1.d-21
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
-    aster_logical :: emmag
-! ======================================================================
-! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
-! ======================================================================
+    aster_logical :: l_emmag
     real(kind=8) :: saturm, dsatur_dp1
     real(kind=8) :: dp2, signe, p1m
     real(kind=8) :: dmdeps(6), dsdp1(6), sigmp(6)
@@ -119,13 +115,16 @@ real(kind=8), intent(in) :: temp
 !
     p1m = 0.d0
     call thmEvalSatuInit(hydr  , imate, p1m       , p1,&
-                         saturm, satur, dsatur_dp1, em,&
-                         retcom)
-
+                         saturm, satur, dsatur_dp1, retcom)
+!
+! - Storage coefficient
+!
+    l_emmag = ds_thm%ds_material%hydr%l_emmag
+    em      = ds_thm%ds_material%hydr%emmag
 ! ======================================================================
 ! --- INITIALISATIONS --------------------------------------------------
 ! ======================================================================
-    emmag = .false.
+
     rho12 = 0.0d0
     rho21 = 0.0d0
     rho22 = 0.0d0
@@ -149,13 +148,6 @@ real(kind=8), intent(in) :: temp
 ! =====================================================================
 ! --- RECUPERATION DES COEFFICIENTS MECANIQUES ------------------------
 ! =====================================================================
-    if (em .gt. eps) then
-        emmag = .true.
-    endif
-!
-    if (emmag .and. yachai) then
-        call utmess('F', 'CHAINAGE_5')
-    endif
 !
     call inithm(imate, yachai, yamec, phi0, em,&
                 cs, tbiot, temp, epsv, depsv,&
@@ -179,10 +171,12 @@ real(kind=8), intent(in) :: temp
         else if (ds_thm%ds_elem%l_jhms) then
             phi = vintp(advico+vicphi)
         endif
-        if (emmag) then
-            call viemma(nbvari, vintm, vintp, advico, vicphi,&
-                        phi0, dp1, dp2, signe, satur,&
-                        em, phi, phim, retcom)
+! ----- Compute porosity with storage coefficient
+        if (l_emmag) then
+            call viemma(nbvari, vintm, vintp,&
+                        advico, vicphi,&
+                        phi0  , dp1   , dp2 , signe, satur,&
+                        em    , phi   , phim)
         endif
 ! =====================================================================
 ! --- CALCUL DE LA VARIABLE INTERNE DE MASSE VOLUMIQUE DU FLUIDE ------
@@ -352,7 +346,7 @@ real(kind=8), intent(in) :: temp
 ! ======================================================================
         if (.not. perman) then
             dsde(adcp11,addep1) = dsde(adcp11,addep1) +&
-                                  dmwdp1(rho11,signe,satur,dsatp1,phi,cs,cliq,1.d0,emmag,em)
+                                  dmwdp1(rho11,signe,satur,dsatp1,phi,cs,cliq,1.d0,l_emmag,em)
         endif
     endif
 ! ======================================================================

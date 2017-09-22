@@ -28,9 +28,8 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/rcvala.h"
 !
-!
-    character(len=16), intent(in) :: hydr
-    integer, intent(in) :: j_mater
+character(len=16), intent(in) :: hydr
+integer, intent(in) :: j_mater
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -80,6 +79,15 @@ implicit none
                 0      , ' '      , [0.d0]     ,&
                 nb_para, para_name, para_vale  , icodre,&
                 0      , nan='NON')
+    if (icodre(1) .eq. 0) then
+        ds_thm%ds_material%hydr%l_emmag = ASTER_TRUE
+        if (ds_thm%ds_elem%l_dof_meca) then
+            call utmess('F', 'THM1_5')
+        endif
+        if (ds_thm%ds_elem%l_weak_coupling) then
+            call utmess('F', 'CHAINAGE_5')
+        endif
+    endif
     ds_thm%ds_material%hydr%emmag = para_vale(1)
 !
 end subroutine

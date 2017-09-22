@@ -38,6 +38,10 @@ On ne peut pas utiliser ELAS_ORTH en 2D, il faut utiliser ELAS_ISTR.
 On ne peut pas utiliser ELAS_ISTR en 3D, il faut utiliser ELAS_ORTH.
 """),
 
+    5 : _(u"""
+Le coefficient d'emmagasinement EMMAG n'est pas utilisable avec un couplage mécanique.
+"""),
+
     34 : _(u"""
  Les conditions initiales de DEFI_MATERIAU (THM_INIT) ne sont pas compatibles avec la loi de couplage choisie dans STAT_NON_LINE.
 """),
