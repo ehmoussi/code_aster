@@ -46,7 +46,8 @@ BaseMeshInstance::BaseMeshInstance( const std::string& type ):
                         _nameOfGrpElements( JeveuxBidirectionalMapChar24( getName() + ".PTRNOMMAI " ) ),
                         _groupsOfElements( JeveuxCollectionLongNamePtr( getName() + ".GROUPEMA  ",
                                                                         _nameOfGrpElements ) ),
-                        _isEmpty( true )
+                        _isEmpty( true ),
+                        _explorer( ConnectivityMeshExplorer( _connectivity, _elementsType ) )
 {
     assert(getName().size() == 8);
 };

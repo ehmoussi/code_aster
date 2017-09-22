@@ -35,7 +35,8 @@ FiniteElementDescriptorInstance::FiniteElementDescriptorInstance( const std::str
                     _dofOfDelayedNumberedConstraintNodes( getName() + ".PRNS" ),
                     _delayedNodesNumbering( getName() + ".LGNS" ),
                     _superElementsDescriptor( getName() + ".SSSA" ),
-                    _nameOfNeighborhoodStructure( getName() + ".NVGE" )
+                    _nameOfNeighborhoodStructure( getName() + ".NVGE" ),
+                    _explorer( ConnectivityDelayedElementsExplorer( _delayedNumberedConstraintElementsDescriptor ) )
 {
     if( getName().size() != 19 )
         throw std::runtime_error( "Naming problem" );

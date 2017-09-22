@@ -494,7 +494,7 @@ public:
         if( _isEmpty )
             throw std::runtime_error( "Collection not build" );
 
-        if( position > _listObjects.size() )
+        if( position > _listObjects.size() || position <= 0 )
             throw std::runtime_error( "Out of collection bound" );
 
         return _listObjects[position-1];
@@ -506,7 +506,7 @@ public:
         if( _isEmpty )
             throw std::runtime_error( "Collection not build" );
 
-        if( position > _listObjects.size() )
+        if( position > _listObjects.size() || position <= 0 )
             throw std::runtime_error( "Out of collection bound" );
 
         return _listObjects[position-1];

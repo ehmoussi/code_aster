@@ -31,27 +31,99 @@
 
 class MeshElement
 {
-    const long* _listOfNodes;
-    const int   _nbNodes;
-    const long  _type;
+    const long* const _listOfNodes;
+    const long        _nbNodes;
+    const long        _type;
 
 public:
-    MeshElement( const long* listOfNodes, const int& nbNodes, const long& type ):
+    MeshElement( const long* const listOfNodes, const long& nbNodes, const long& type ):
         _listOfNodes( listOfNodes ),
         _nbNodes( nbNodes ),
         _type( type )
     {};
+
+    const long& getNumberOfNodes() const
+    {
+        return _nbNodes;
+    };
+
+    struct const_iterator
+    {
+        const long* positionInList;
+
+        inline const_iterator(): positionInList( nullptr )
+        {};
+
+        inline const_iterator( const long* curList ):
+            positionInList( curList )
+        {};
+
+        inline const_iterator( const const_iterator& iter ):
+            positionInList( iter.positionInList )
+        {};
+
+        inline const_iterator& operator=( const const_iterator& testIter )
+        {
+            positionInList = testIter.positionInList;
+            return *this;
+        };
+
+        inline const_iterator& operator++()
+        {
+            ++positionInList;
+            return *this;
+        };
+
+        inline bool operator==( const const_iterator& testIter ) const
+        {
+            if ( testIter.positionInList != positionInList ) return false;
+            return true;
+        };
+
+        inline bool operator!=( const const_iterator& testIter ) const
+        {
+            if ( testIter.positionInList != positionInList ) return true;
+            return false;
+        };
+
+        inline const long& operator->() const
+        {
+            return *positionInList;
+        };
+
+        inline const long& operator*() const
+        {
+            return *positionInList;
+        };
+    };
+
+    /**
+     * @brief 
+     */
+    const_iterator begin() const
+    {
+        return const_iterator( _listOfNodes );
+    };
+
+    /**
+     * @brief 
+     * @todo revoir le fonctionnement du end car il peut provoquer de segfault
+     */
+    const_iterator end() const
+    {
+        return const_iterator( &_listOfNodes[ _nbNodes ] );
+    };
 };
 
 class ElementBuilderFromConnectivity
 {
 private:
-    JeveuxCollectionLong& _connect;
-    JeveuxVectorLong&     _type;
+    const JeveuxCollectionLong _connect;
+    const JeveuxVectorLong     _type;
 
 public:
-    ElementBuilderFromConnectivity( JeveuxCollectionLong& connect,
-                                    JeveuxVectorLong& type ):
+    ElementBuilderFromConnectivity( const JeveuxCollectionLong& connect,
+                                    const JeveuxVectorLong& type ):
         _connect( connect ),
         _type( type )
     {
@@ -62,11 +134,54 @@ public:
     MeshElement getElement( const int& pos ) const
         throw( std::runtime_error )
     {
-        const auto& obj = _connect->getObject( pos );
+        const int size2 = _connect->size();
+        if( size2 <= 0 )
+            throw std::runtime_error ( "Connectivity not available" );
+
+        if( pos > size2 || pos < 0 )
+            return MeshElement( nullptr, 0, -1 );
+        const auto& obj = _connect->getObject( pos + 1 );
         const auto size = obj.size();
-        int pos2 = pos;
-        const long type = (*_type)[ pos2 ];
+        const long type = (*_type)[ pos ];
         return MeshElement( &obj.operator[]( 0 ), size, type );
+    };
+
+    int size() const throw( std::runtime_error )
+    {
+        return _type->size();
+    };
+};
+
+class ElementBuilderFromFiniteElementDescriptor
+{
+private:
+    const JeveuxCollectionLong _connectAndType;
+
+public:
+    ElementBuilderFromFiniteElementDescriptor( const JeveuxCollectionLong& connect ):
+        _connectAndType( connect )
+    {
+        _connectAndType->buildFromJeveux();
+    };
+
+    MeshElement getElement( const int& pos ) const
+        throw( std::runtime_error )
+    {
+        const int size2 = _connectAndType->size();
+        if( size2 <= 0 )
+            throw std::runtime_error ( "Connectivity not available" );
+
+        if( pos > size2 || pos < 0 )
+            return MeshElement( nullptr, 0, -1 );
+        const auto& obj = _connectAndType->getObject( pos + 1 );
+        const auto size = obj.size() - 1;
+        const long type = obj[ size ];
+        return MeshElement( &obj.operator[]( 0 ), size, type );
+    };
+
+    int size() const throw( std::runtime_error )
+    {
+        return _connectAndType->size();
     };
 };
 
@@ -79,13 +194,14 @@ template< class ElemBuilder, typename... Args >
 class MeshExplorer
 {
 private:
+    const ElemBuilder _builder;
 
 public:
     /**
      * @brief Constructeur
      */
     MeshExplorer( const Args... a ):
-        ElemBuilder( a... )
+        _builder( a... )
     {};
 
     /**
@@ -93,6 +209,75 @@ public:
      */
     ~MeshExplorer()
     {};
+
+    struct const_iterator
+    {
+        int                position;
+        const ElemBuilder& builder;
+
+        inline const_iterator( const ElemBuilder& test ): position( 0 ), builder( test )
+        {};
+
+        inline const_iterator( int memoryPosition, const ElemBuilder& test ):
+            position( memoryPosition ), builder( test )
+        {};
+
+        inline const_iterator( const const_iterator& iter ):
+            position( iter.position ), builder( iter.builder )
+        {};
+
+        inline const_iterator& operator=( const const_iterator& testIter )
+        {
+            position = testIter.position;
+            builder = testIter.builder;
+            return *this;
+        };
+
+        inline const_iterator& operator++()
+        {
+            ++position;
+            return *this;
+        };
+
+        inline bool operator==( const const_iterator& testIter ) const
+        {
+            if ( testIter.position != position ) return false;
+            return true;
+        };
+
+        inline bool operator!=( const const_iterator& testIter ) const
+        {
+            if ( testIter.position != position ) return true;
+            return false;
+        };
+
+        inline MeshElement operator->() const
+        {
+            return builder.getElement( position );
+        };
+
+        inline MeshElement operator*() const
+        {
+            return builder.getElement( position );
+        };
+    };
+
+    /**
+     * @brief 
+     */
+    const_iterator begin() const
+    {
+        return const_iterator( 0, _builder );
+    };
+
+    /**
+     * @brief 
+     * @todo revoir le fonctionnement du end car il peut provoquer de segfault
+     */
+    const_iterator end() const
+    {
+        return const_iterator( _builder.size(), _builder );
+    };
 };
 
 #endif /* MESHEXPLORER_H_ */

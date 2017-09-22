@@ -28,6 +28,7 @@
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
+#include "Meshes/MeshExplorer.h"
 
 /**
  * @class FiniteElementDescriptorInstance
@@ -36,27 +37,33 @@
  */
 class FiniteElementDescriptorInstance: public DataStructure
 {
+public:
+    typedef MeshExplorer< ElementBuilderFromFiniteElementDescriptor,
+                          const JeveuxCollectionLong& > ConnectivityDelayedElementsExplorer;
+
 protected:
     /** @brief Vecteur Jeveux '.NBNO' */
-    JeveuxVectorLong     _numberOfDelayedNumberedConstraintNodes;
+    JeveuxVectorLong                          _numberOfDelayedNumberedConstraintNodes;
     /** @brief Vecteur Jeveux '.LGRF' */
-    JeveuxVectorChar8    _parameters;
+    JeveuxVectorChar8                         _parameters;
     /** @brief Vecteur Jeveux '.PRNM' */
-    JeveuxVectorLong     _dofDescriptor;
+    JeveuxVectorLong                          _dofDescriptor;
     /** @brief Collection '.LIEL' */
-    JeveuxCollectionLong _listOfGroupOfElements;
+    JeveuxCollectionLong                      _listOfGroupOfElements;
     /** @brief Vecteur Jeveux '.REPE' */
-    JeveuxVectorLong     _groupOfElementsNumberByElement;
+    JeveuxVectorLong                          _groupOfElementsNumberByElement;
     /** @brief Collection '.NEMA' */
-    JeveuxCollectionLong _delayedNumberedConstraintElementsDescriptor;
+    JeveuxCollectionLong                      _delayedNumberedConstraintElementsDescriptor;
     /** @brief Vecteur Jeveux '.PRNS' */
-    JeveuxVectorLong     _dofOfDelayedNumberedConstraintNodes;
+    JeveuxVectorLong                          _dofOfDelayedNumberedConstraintNodes;
     /** @brief Vecteur Jeveux '.LGNS' */
-    JeveuxVectorLong     _delayedNodesNumbering;
+    JeveuxVectorLong                          _delayedNodesNumbering;
     /** @brief Vecteur Jeveux '.SSSA' */
-    JeveuxVectorLong     _superElementsDescriptor;
+    JeveuxVectorLong                          _superElementsDescriptor;
     /** @brief Vecteur Jeveux '.NVGE' */
-    JeveuxVectorChar16   _nameOfNeighborhoodStructure;
+    JeveuxVectorChar16                        _nameOfNeighborhoodStructure;
+    /** @brief Object to allow loop over connectivity of delayed numbered elements */
+    const ConnectivityDelayedElementsExplorer _explorer;
 
 public:
     /**
@@ -64,6 +71,12 @@ public:
      */
     FiniteElementDescriptorInstance( const std::string& name,
                                      const JeveuxMemory memType = Permanent );
+
+    const ConnectivityDelayedElementsExplorer& getDelayedElementsExplorer() const
+    {
+        _delayedNumberedConstraintElementsDescriptor->buildFromJeveux();
+        return _explorer;
+    };
 
     /**
      * @typedef FiniteElementDescriptorPtr
