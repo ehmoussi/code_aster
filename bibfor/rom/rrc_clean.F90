@@ -42,6 +42,9 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 ! --------------------------------------------------------------------------------------------------
 !
     AS_DEALLOCATE(vi = ds_para%v_equa_ridp)
-    AS_DEALLOCATE(vi = ds_para%v_equa_ridd)
+    if (ds_para%l_prev_dual) then
+        AS_DEALLOCATE(vi = ds_para%v_equa_ridd)
+        AS_DEALLOCATE(vi = ds_para%v_equa_ridi)
+    endif
 !
 end subroutine

@@ -110,8 +110,8 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 ! - Reduced coordinates: Gappy POD if necessary 
 !
     if (l_corr_ef) then
-        call romEvalGappyPOD(ds_para%ds_empi_rid, result_rom, nb_store, v_prim_rid,&
-                             v_cohr)
+        call romEvalGappyPOD(ds_para, result_rom, nb_store, v_prim_rid,&
+                             v_cohr , 0)
     else
         call jeveuo(ds_para%coor_redu, 'L', vr = v_cohr)
     endif

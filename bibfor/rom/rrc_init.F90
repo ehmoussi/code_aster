@@ -29,6 +29,7 @@ implicit none
 #include "asterfort/ltnotb.h"
 #include "asterfort/tbexve.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/jexnom.h"
 #include "asterfort/rs_get_liststore.h"
 #include "asterfort/rscrsd.h"
 #include "asterfort/rrc_info.h"
@@ -37,6 +38,7 @@ implicit none
 #include "asterfort/jelira.h"
 #include "asterfort/select_dof_3.h"
 #include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
 !
 type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 !
@@ -58,9 +60,12 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
     integer :: nbval, nb_store
     integer :: nb_equa_dual, nb_cmp_dual, nb_equa_ridd
     integer :: nb_equa_prim, nb_cmp_prim, nb_equa_ridp
+    integer :: nb_node_grno, i_cmp, i_node, i_eq, noeq = 0, nord = 0
     aster_logical :: l_prev_dual
-    character(len=8) :: result_rom
+    character(len=8) :: result_rom, mesh
     character(len=24) :: field
+    integer, pointer  :: v_grno(:) => null()
+    integer, pointer  :: v_int_dual(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -77,6 +82,7 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
     nb_cmp_dual  = ds_para%ds_empi_dual%nb_cmp
     nb_equa_prim = ds_para%ds_empi_prim%nb_equa
     nb_cmp_prim  = ds_para%ds_empi_prim%nb_cmp
+    mesh         = ds_para%ds_empi_dual%mesh
 !
 ! - Get table for reduced coordinates
 !
@@ -131,6 +137,29 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
         call jelira(field(1:19)//'.VALE', 'LONMAX', nb_equa_ridd)
         call select_dof_3(field, nb_cmp_dual, ds_para%v_equa_ridd)
         ds_para%nb_equa_ridd = nb_equa_ridd
+        AS_ALLOCATE(vi = ds_para%v_equa_ridi, size = nb_equa_ridd)
+        call jelira(jexnom(mesh//'.GROUPENO',ds_para%grnode_int), 'LONUTI', nb_node_grno)
+        call jeveuo(jexnom(mesh//'.GROUPENO',ds_para%grnode_int), 'L'     , vi = v_grno)
+        AS_ALLOCATE(vi = v_int_dual, size = nb_equa_dual)
+        do i_node = 1, nb_node_grno
+            do i_cmp = 1, nb_cmp_dual
+                v_int_dual(i_cmp+nb_cmp_dual*(v_grno(i_node)-1)) = 1
+            enddo
+        enddo
+        do i_eq = 1, nb_equa_dual
+            if (ds_para%v_equa_ridd(i_eq) .ne. 0) then
+                nord = nord + 1
+                if (v_int_dual(i_eq) .eq. 0) then
+                    noeq = noeq + 1
+                    ds_para%v_equa_ridd(i_eq) = noeq
+                    ds_para%v_equa_ridi(nord) = noeq
+                else
+                    ds_para%v_equa_ridd(i_eq) = 0
+                endif
+            endif
+        enddo
+        ds_para%nb_equa_ridi = nb_equa_ridd - nb_node_grno*nb_cmp_dual
+        AS_DEALLOCATE(vi = v_int_dual)
     endif
 !
 ! - Print parameters

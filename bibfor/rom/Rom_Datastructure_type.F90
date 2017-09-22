@@ -112,6 +112,11 @@ implicit none
         character(len=24) :: coor_redu
 ! ----- Flag for dual prevision
         aster_logical     :: l_prev_dual
+! ----- Name of GROUP_NO of interface
+        character(len=24) :: grnode_int
+! ----- Access to equation in RID (dual) and out of interface
+        integer           :: nb_equa_ridi
+        integer, pointer  :: v_equa_ridi(:)
 ! ----- Access to equation in RID (dual)
         integer           :: nb_equa_ridd
         integer, pointer  :: v_equa_ridd(:)

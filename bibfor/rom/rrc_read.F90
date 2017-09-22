@@ -51,6 +51,7 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
     character(len=8)  :: base_prim = ' ', base_dual = ' ', base_rid = ' '
     character(len=8)  :: result_dom = ' ', result_rom = ' ', model_dom = ' '
     character(len=16) :: k16bid = ' ', answer
+    character(len=24) :: grnode_int
     aster_logical :: l_prev_dual, l_corr_ef
 !
 ! --------------------------------------------------------------------------------------------------
@@ -79,6 +80,7 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
     if (l_prev_dual) then
         call getvid(' ', 'BASE_DUAL', scal = base_dual)
         call romBaseRead(base_dual, empi_dual)
+        call getvtx(' ', 'GROUP_NO_INTERF', scal = grnode_int)
     endif
 !
 ! - Correction by finite element
@@ -108,6 +110,7 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
     ds_para%model_dom     = model_dom
     ds_para%ds_empi_prim  = empi_prim
     ds_para%ds_empi_dual  = empi_dual
+    ds_para%grnode_int    = grnode_int
     ds_para%l_prev_dual   = l_prev_dual
     ds_para%l_corr_ef     = l_corr_ef
     ds_para%ds_empi_rid   = empi_rid 
