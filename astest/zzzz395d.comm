@@ -158,6 +158,39 @@ TEST_RESU(RESU=(
                 ),
           );
 
+
+TEST_RESU(RESU=(
+                _F(RESULTAT=thnl,
+                   INST= 1.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N7',
+                   NOM_CMP='TEMP',
+                   VALE_CALC=29.90499961,
+                   ),
+                _F(RESULTAT=thnl,
+                   INST= 4.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N7',
+                   NOM_CMP='TEMP',
+                   VALE_CALC=139.458066818,
+                   ),
+                _F(RESULTAT=thnl,
+                   INST= 7.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N7',
+                   NOM_CMP='TEMP',
+                   VALE_CALC=567.040457129,
+                   ),
+                _F(RESULTAT=thnl,
+                   INST= 10.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N7',
+                   NOM_CMP='TEMP',
+                   VALE_CALC=999.12502482,
+                   ),
+                ),
+          );
+
 # Define HROM
 
 
@@ -261,6 +294,36 @@ TEST_RESU(RESU=(
                    VALE_REFE=999.349943608,
                    REFERENCE='AUTRE_ASTER',
                    PRECISION=5.E-6,
+                   ),
+                ),
+          );
+
+####################################################################################################
+#
+# Reconstruction du résultat complet par Gappy-POD
+#
+####################################################################################################
+
+
+# Gappy-POD (reconstruction tout le domaine)
+reduR = REST_REDUIT_COMPLET(
+    MODELE           = model,
+    RESULTAT_REDUIT  = redu, 
+    BASE_PRIMAL      = base_p,
+    REST_DUAL        = 'NON',
+    INFO             = 2,)
+
+
+TEST_RESU(RESU=(
+                _F(RESULTAT=reduR,
+                   INST= 10.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N7',
+                   NOM_CMP='TEMP',
+                   VALE_REFE=999.12502482,
+                   VALE_CALC=996.343251646,
+                   REFERENCE='AUTRE_ASTER',
+                   PRECISION=0.003,
                    ),
                 ),
           );

@@ -151,7 +151,6 @@ character(len=19), intent(in) :: vect_solu
 ! - Solve system
 !    
     call mgauss('NFSP', v_matr_rom, v_vect_rom, nb_mode, nb_mode, 1, det, iret)
-    call jeveuo(gamma, 'E', vr = v_gamma)
     v_gamma = v_gamma + v_vect_rom
 !
 ! - Project in physical space
