@@ -27,9 +27,12 @@ subroutine calcco(option, perman, nume_thmc,&
                   dsde, deps, epsv, depsv, p1,&
                   p2, dp1, dp2, temp, dtemp,&
                   phi, pvp, pad, h11, h12,&
-                  kh, rho11, satur,&
+                  rho11, satur,&
                   retcom, tbiot, vihrho, vicphi,&
                   vicpvp, vicsat, angl_naut)
+!
+use THM_type
+use THM_module
 !
 implicit none
 !
@@ -71,7 +74,7 @@ integer :: adcp12, adcp21, adcp22
 integer :: addep2
 integer :: vicpvp, vicsat
 real(kind=8) :: p1, p2, dp2
-real(kind=8) :: pad, kh
+real(kind=8) :: pad
 character(len=16) :: hydr
 !
 ! --------------------------------------------------------------------------------------------------
@@ -125,6 +128,7 @@ character(len=16) :: hydr
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: bdcp11
+    real(kind=8) :: kh
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -262,26 +266,31 @@ character(len=16) :: hydr
                        congem, congep   ,&
                        vintm , vintp    , dsde  ,&
                        retcom)
-! ======================================================================
-! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_AD_GAZ_VAPE ---------------
-! ======================================================================
+
     case (9)
-        call thmCpl009(option, hydr,&
-                    imate, ndim, dimdef, dimcon, nbvari,&
-                    yamec, yate, addeme, adcome, advihy,&
-                    advico, vihrho, vicphi, vicpvp, vicsat,&
-                    addep1, bdcp11, adcp12, addep2, adcp21,&
-                    adcp22, addete, adcote, congem, congep,&
-                    vintm, vintp, dsde, epsv, depsv,&
-                    p1, p2, dp1, dp2, temp,&
-                    dtemp, phi, pad, pvp, h11,&
-                    h12, kh, rho11, &
-                    satur, retcom, tbiot,&
-                    angl_naut, deps)
+! ----- LIQU_AD_GAZ_VAPE
+        call thmCpl009(option   , angl_naut,&
+                       hydr     , imate    ,&
+                       ndim     , nbvari   ,&
+                       dimdef   , dimcon   ,&
+                       adcome   , adcote   , adcp11, adcp12, adcp21, adcp22,&
+                       addeme   , addete   , addep1, addep2,&
+                       advico   , advihy   ,&
+                       vihrho   , vicphi   , vicpvp, vicsat,&
+                       temp     , p1       , p2    ,&
+                       dtemp    , dp1      , dp2   ,&
+                       deps     , epsv     , depsv ,&
+                       tbiot    ,&
+                       phi      , rho11    , satur ,&
+                       pad      , pvp      , h11   , h12   ,&
+                       congem   , congep   ,&
+                       vintm    , vintp    , dsde  ,&
+                       retcom)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_AD_GAZ ---------------
 ! ======================================================================
     case (10)
+        kh     = ds_thm%ds_material%ad%coef_henry
         call thmCpl010(option, hydr,&
                     imate, ndim, dimdef, dimcon, nbvari,&
                     yamec, yate, addeme, adcome, advihy,&

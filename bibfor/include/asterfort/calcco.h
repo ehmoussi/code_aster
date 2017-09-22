@@ -29,7 +29,7 @@ interface
                       dsde, deps, epsv, depsv, p1,&
                       p2, dp1, dp2, temp, dtemp,&
                       phi, pvp, pad, h11, h12,&
-                      kh, rho11, satur,&
+                      rho11, satur,&
                       retcom, tbiot, vihrho, vicphi,&
                       vicpvp, vicsat, angl_naut)
         integer, intent(in) :: nume_thmc
@@ -58,7 +58,7 @@ interface
         integer :: addep2
         integer :: vicpvp, vicsat, imate
         real(kind=8) :: p1, p2, dp2
-        real(kind=8) :: pad, kh
+        real(kind=8) :: pad
         character(len=16) :: hydr
     end subroutine calcco
 end interface 

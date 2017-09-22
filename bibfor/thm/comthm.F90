@@ -143,7 +143,6 @@ integer, intent(in) :: vicsat
     real(kind=8) :: tbiot(6), satur, dsatur, pesa(3)
     real(kind=8) :: tperm(ndim, ndim)
     real(kind=8) :: lambp, dlambp, lambs, dlambs
-    real(kind=8) :: kh
     real(kind=8) :: tlambt(ndim, ndim), tlamct(ndim, ndim), tdlamt(ndim, ndim)
     real(kind=8) :: angl_naut(3)
     integer :: nume_thmc
@@ -203,7 +202,7 @@ integer, intent(in) :: vicsat
                 dsde, deps, epsv, depsv, p1,&
                 p2, dp1, dp2, t, dt,&
                 phi, pvp, pad, h11, h12,&
-                kh, rho11, sat,&
+                rho11, sat,&
                 retcom, tbiot, vihrho, vicphi,&
                 vicpvp, vicsat, angl_naut)              
 !
