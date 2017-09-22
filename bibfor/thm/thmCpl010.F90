@@ -205,12 +205,12 @@ real(kind=8), intent(in) :: temp
                         phi0  , dp1   , dp2 , signe, satur,&
                         em    , phi   , phim)
         endif
-! =====================================================================
-! --- MISE A JOUR DE LA PRESSION D AIR DISSOUS SELON FORMULE DOCR -----
-! =====================================================================
-        call majpad(p2, zero, r, temp, kh,&
-                    dp2, zero, dt, padp, padm,&
-                    dpad)
+! ----- Update "dissolved" air pressure
+        call majpad(r    , kh  ,&
+                    temp , p2  ,&
+                    dt   , dp2 ,&
+                    zero , zero,&
+                    padm , padp, dpad)
 ! ----- Compute volumic mass for water
         if (yate .eq. 1) then
             call virhol(nbvari, vintm , vintp ,&
@@ -232,12 +232,12 @@ real(kind=8), intent(in) :: temp
 ! =====================================================================
         call visatu(nbvari, vintp, advico, vicsat, satur)
     else
-! =====================================================================
-! --- MISE A JOUR DE LA PRESSION D AIR DISSOUS SELON FORMULE DOCR -----
-! =====================================================================
-        call majpad(p2, zero, r, temp, kh,&
-                    dp2, zero, dt, padp, padm,&
-                    dpad)
+! ----- Update "dissolved" air pressure
+        call majpad(r    , kh  ,&
+                    temp , p2  ,&
+                    dt   , dp2 ,&
+                    zero , zero,&
+                    padm , padp, dpad)
     endif
 ! =====================================================================
 ! --- PROBLEME DANS LE CALCUL DES VARIABLES INTERNES ? ----------------

@@ -18,10 +18,7 @@
 !
 interface
     function dhw2p2(dp11p2, alpliq, temp, rho11)
-        real(kind=8) :: dp11p2
-        real(kind=8) :: alpliq
-        real(kind=8), intent(in) :: temp
-        real(kind=8) :: rho11
+        real(kind=8), intent(in) :: temp, dp11p2, alpliq, rho11
         real(kind=8) :: dhw2p2
     end function dhw2p2
 end interface

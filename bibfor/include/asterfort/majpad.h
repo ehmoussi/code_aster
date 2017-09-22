@@ -17,19 +17,15 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine majpad(p2, pvp, r, temp, kh,&
-                      dp2, pvpm, dt, padp, padm,&
-                      dpad)
-        real(kind=8) :: p2
-        real(kind=8) :: pvp
-        real(kind=8) :: r
-        real(kind=8), intent(in) :: temp
-        real(kind=8) :: kh
-        real(kind=8) :: dp2
-        real(kind=8) :: pvpm
-        real(kind=8) :: dt
-        real(kind=8) :: padp
-        real(kind=8) :: padm
-        real(kind=8) :: dpad
+    subroutine majpad(rgaz , kh  ,&
+                      temp , p2  ,&
+                      dtemp, dp2 ,&
+                      pvpm , pvp ,&
+                      padm , padp, dpad)
+        real(kind=8), intent(in) :: rgaz, kh
+        real(kind=8), intent(in) :: temp, p2
+        real(kind=8), intent(in) :: dtemp, dp2
+        real(kind=8), intent(in) :: pvpm, pvp
+        real(kind=8), intent(out) :: padm, padp, dpad
     end subroutine majpad
 end interface

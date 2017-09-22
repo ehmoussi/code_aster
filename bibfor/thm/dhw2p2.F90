@@ -15,17 +15,32 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 function dhw2p2(dp11p2, alpliq, temp, rho11)
 !
 implicit none
 !
-real(kind=8), intent(in) :: temp
 #include "asterfort/dhwdp2.h"
-    real(kind=8) :: dp11p2, alpliq, rho11, dhw2p2
-! --- CALCUL DE LA DERIVEE HW PAR RAPPORT A P2 DANS LE CAS -------------
-! --- LIQU_AD_GAZ_VAPE -------------------------------------------------
-! ======================================================================
-    dhw2p2 = dp11p2 * dhwdp2(alpliq,temp,rho11)
-! ======================================================================
+!
+real(kind=8), intent(in) :: temp, dp11p2, alpliq, rho11
+real(kind=8) :: dhw2p2
+!
+! --------------------------------------------------------------------------------------------------
+!
+! THM
+!
+! Derivative of enthalpy of liquid by gaz pressure - For LIQU_AD_GAZ_VAPE
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  dp11p2           : partial derivative of liquid pressure by gaz pressure
+! In  alpliq           : value of thermic dilatation for liquid
+! In  temp             : temperature
+! In  rho11            : volumic mass of liquid
+! Out dhw2p2           : derivative of enthalpy of liquid by gaz pressure (LIQU_AD_GAZ_VAPE)
+!
+! --------------------------------------------------------------------------------------------------
+!
+    dhw2p2 = dp11p2 * dhwdp2(alpliq, temp, rho11)
+!
 end function
