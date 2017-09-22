@@ -89,6 +89,8 @@ MODES_2a=CALC_MODES(MATR_RIGI=MATASSR,
                     SOLVEUR=_F(METHODE=SOLVEURL),
                     CALC_FREQ=_F(FREQ=( 40.,100.), ),
                     AMELIORATION='OUI',
+# SEUIL ARTIFICIELLEMENT TRES PETIT POUR RENDRE EFFECTIVE L'AMELIORATION
+                    VERI_MODE=_F(SEUIL=1.E-11),
                     )
 
 #
