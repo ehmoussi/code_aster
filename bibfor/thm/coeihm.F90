@@ -71,7 +71,7 @@ implicit none
     integer :: vicpr1, vicpr2
     real(kind=8) :: depsv, epsv, deps(6)
     real(kind=8) :: t, p1, p2, dt, dp1, dp2, grat(3), grap1(3), grap2(3)
-    real(kind=8) :: pvp, pad, h11, h12, kh, rho11, phi
+    real(kind=8) :: pvp, pad, h11, h12, rho11, phi
     real(kind=8) :: tperm(ndim, ndim), sat, tbiot(6), satur, dsatur, pesa(3)
     real(kind=8) :: lambp, dlambp, lambs, dlambs, viscl , viscg
     real(kind=8) :: tlambt(ndim, ndim), tdlamt(ndim, ndim)
@@ -238,7 +238,7 @@ implicit none
                 dsde, deps, epsv, depsv, p1,&
                 p2, dp1, dp2, t, dt,&
                 phi, pvp, pad, h11, h12,&
-                kh, rho11, sat,&
+                rho11, sat,&
                 retcom, tbiot, vihrho, vicphi,&
                 vicpvp, vicsat, angl_naut)
 !
