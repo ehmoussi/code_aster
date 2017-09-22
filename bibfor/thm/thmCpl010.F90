@@ -116,17 +116,13 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: rho12, rho21, cp22
     real(kind=8) :: padm, rho22, em, cbiot, unsks, alpha0
     real(kind=8) :: mdal(6), dalal, alphfi, deps(6)
-    aster_logical :: emmag
-! ======================================================================
-! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
-! ======================================================================
+    aster_logical :: l_emmag
     real(kind=8) :: signe, dpad, pas
     real(kind=8) :: m11m, m21m, m22m
     real(kind=8) :: dsdp1(6), dsdp2(6)
     real(kind=8) :: dqeps(6)
     real(kind=8) :: sigmp(6), dmdeps(6), p1m
     real(kind=8), parameter :: zero = 0.d0
-    real(kind=8), parameter :: eps = 1.d-21
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
 !
 ! - Get initial parameters
@@ -153,16 +149,19 @@ real(kind=8), intent(in) :: temp
 !
 ! - Evaluation of initial saturation
 !
-    call thmEvalSatuInit(hydr  , imate, p1m       , p1,&
-                         saturm, satur, dsatur_dp1, em,&
-                         retcom)
+    call thmEvalSatuInit(hydr  , imate, p1m       , p1    ,&
+                         saturm, satur, dsatur_dp1, retcom)
+!
+! - Storage coefficient
+!
+    l_emmag = ds_thm%ds_material%hydr%l_emmag
+    em      = ds_thm%ds_material%hydr%emmag
 
 ! ======================================================================
 ! --- INITIALISATIONS --------------------------------------------------
 ! ======================================================================
 !    LA VARIABLE INTERNE DE PRESSION DE VAPEUR EST 0
     vintp(advico+vicpvp) = zero
-    emmag = .false.
     alp11 = 0.0d0
     alp12 = 0.0d0
     alp21 = 0.0d0
@@ -178,10 +177,6 @@ real(kind=8), intent(in) :: temp
 ! =====================================================================
 ! --- RECUPERATION DES COEFFICIENTS MECANIQUES ------------------------
 ! =====================================================================
-    if ((em.gt.eps) .and. (yamec.eq.0)) then
-        emmag = .true.
-    endif
-!
     call inithm(imate, yachai, yamec, phi0, em,&
                 cs, tbiot, temp, epsv, depsv,&
                 epsvm, angmas, mdal, dalal,&
@@ -202,10 +197,12 @@ real(kind=8), intent(in) :: temp
                         tbiot, cbiot, unsks, alpha0, &
                         phi, phim, retcom )
         endif
-        if (emmag) then
-            call viemma(nbvari, vintm, vintp, advico, vicphi,&
-                        phi0, dp1, dp2, signe, satur,&
-                        em, phi, phim, retcom)
+! ----- Compute porosity with storage coefficient
+        if (l_emmag) then
+            call viemma(nbvari, vintm, vintp,&
+                        advico, vicphi,&
+                        phi0  , dp1   , dp2 , signe, satur,&
+                        em    , phi   , phim)
         endif
 ! =====================================================================
 ! --- MISE A JOUR DE LA PRESSION D AIR DISSOUS SELON FORMULE DOCR -----
@@ -432,19 +429,19 @@ real(kind=8), intent(in) :: temp
 ! --- POUR LES AUTRES CAS ----------------------------------------------
 ! ======================================================================
         dsde(adcp11,addep1) = dsde(adcp11,addep1) +&
-                              dmwdp1(rho11, signe,satur,dsatur_dp1,phi,cs,cliq,-dp11p1, emmag,em)
+                              dmwdp1(rho11, signe,satur,dsatur_dp1,phi,cs,cliq,-dp11p1, l_emmag,em)
         dsde(adcp11,addep2) = dsde(adcp11,addep2) +&
-                              dmwdp2(rho11,satur, phi,cs,cliq,dp11p2, emmag,em)
+                              dmwdp2(rho11,satur, phi,cs,cliq,dp11p2, l_emmag,em)
         dsde(adcp22,addep1) = dsde(adcp22,addep1) +&
-                              dmadp1(rho22,satur, dsatur_dp1,phi,cs,mamolg,kh,dp21p1, emmag,em)
+                              dmadp1(rho22,satur, dsatur_dp1,phi,cs,mamolg,kh,dp21p1, l_emmag,em)
         dsde(adcp22,addep2) = dsde(adcp22,addep2) +&
-                              dmadp2(rho22,satur, phi,cs,mamolg,kh,dp21p2, emmag,em)
+                              dmadp2(rho22,satur, phi,cs,mamolg,kh,dp21p2, l_emmag,em)
         dsde(adcp12,addep1) = zero
         dsde(adcp12,addep2) = zero
         dsde(adcp21,addep1) = dsde(adcp21,addep1) +&
-                              dmasp1(rho11, rho12,rho21,satur,dsatur_dp1,phi,cs,p2, emmag,em)
+                              dmasp1(rho11, rho12,rho21,satur,dsatur_dp1,phi,cs,p2, l_emmag,em)
         dsde(adcp21,addep2) = dsde(adcp21,addep2) +&
-                              dmasp2(rho11, rho12,rho21,satur,phi,cs,pas, emmag,em)
+                              dmasp2(rho11, rho12,rho21,satur,phi,cs,pas, l_emmag,em)
     endif
 ! ======================================================================
  30 continue

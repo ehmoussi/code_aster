@@ -17,8 +17,7 @@
 ! --------------------------------------------------------------------
 !
 subroutine thmEvalSatuInit(hydr  , j_mater, p1m   , p1   ,&
-                           satm  , satur  , dsatur, emmag,&
-                           retcom)
+                           satm  , satur  , dsatur, retcom)
 !
 use THM_type
 use THM_module
@@ -35,7 +34,7 @@ implicit none
 character(len=16), intent(in) :: hydr
 integer, intent(in) :: j_mater
 real(kind=8), intent(in) :: p1m, p1
-real(kind=8), intent(out) :: satm, satur, dsatur, emmag
+real(kind=8), intent(out) :: satm, satur, dsatur
 integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
@@ -53,7 +52,6 @@ integer, intent(out) :: retcom
 ! Out satm         : saturation at beginning of step
 ! Out satur        : saturation
 ! Out dsatur       : derivative of saturation (/pc)
-! Out emmag        : storage coefficient
 ! Out retcom       : return code for error
 !                     2 - If saturation doesn't belon to ]0,1[
 !
@@ -69,7 +67,6 @@ integer, intent(out) :: retcom
     satm         = 0.d0
     satur        = 0.d0
     dsatur       = 0.d0
-    emmag        = 0.d0
     retcom       = 0
     para_vale(:) = 0.d0
     if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
@@ -119,6 +116,5 @@ integer, intent(out) :: retcom
         satur = 1.d0
         ASSERT(ds_thm%ds_behaviour%satur_type .eq. SATURATED)
     endif
-    emmag = ds_thm%ds_material%hydr%emmag
 !
 end subroutine

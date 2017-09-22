@@ -99,15 +99,11 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: cp11, cp21, satur, dsatur_dp1, mamolg, rho21, em
     real(kind=8) :: r, rho0, csigm, alp11, alp12, alp21
     real(kind=8) :: mdal(6), dalal, alphfi, cbiot, unsks, alpha0
-    aster_logical :: emmag
-! ======================================================================
-! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
-! ======================================================================
+    aster_logical :: l_emmag
     real(kind=8) :: signe, m11m, m21m, coeps, rho12, rho22, dpad, cp12, cp22
     real(kind=8) :: dsdp1(6), dsdp2(6), deps(6)
     real(kind=8) :: dmdeps(6), p1m
     real(kind=8) :: sigmp(6), dqeps(6)
-    real(kind=8), parameter :: eps = 1.d-21
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
 !
 ! - Get initial parameters
@@ -132,17 +128,19 @@ real(kind=8), intent(in) :: temp
 !
 ! - Evaluation of initial saturation
 !
-    call thmEvalSatuInit(hydr  , imate, p1m       , p1,&
-                         saturm, satur, dsatur_dp1, em,&
-                         retcom)
+    call thmEvalSatuInit(hydr  , imate, p1m       , p1    ,&
+                         saturm, satur, dsatur_dp1, retcom)
+!
+! - Storage coefficient
+!
+    l_emmag = ds_thm%ds_material%hydr%l_emmag
+    em      = ds_thm%ds_material%hydr%emmag
 
 ! ======================================================================
 ! --- POUR EVITER DES PB AVEC OPTIMISEUR ON MET UNE VALEUR DANS CES ----
 ! --- VARIABES POUR QU ELLES AIENT UNE VALEUR MEME DANS LES CAS OU -----
 ! --- ELLES NE SONT THEOTIQUEMENT PAS UTILISEES ------------------------
 ! ======================================================================
-    emmag = .false.
-!
     cp12 = 0.0d0
     cp22 = 0.0d0
     alp11 = 0.0d0
@@ -163,10 +161,6 @@ real(kind=8), intent(in) :: temp
 ! =====================================================================
 ! --- RECUPERATION DES COEFFICIENTS MECANIQUES ------------------------
 ! =====================================================================
-    if ((em.gt.eps) .and. (yamec.eq.0)) then
-        emmag = .true.
-    endif
-!
     call inithm(imate, yachai, yamec, phi0, em,&
                 cs, tbiot, temp, epsv, depsv,&
                 epsvm, angmas, mdal, dalal,&
@@ -187,10 +181,12 @@ real(kind=8), intent(in) :: temp
                         tbiot, cbiot, unsks, alpha0, &
                         phi, phim, retcom )
         endif
-        if (emmag) then
-            call viemma(nbvari, vintm, vintp, advico, vicphi,&
-                        phi0, dp1, dp2, signe, satur,&
-                        em, phi, phim, retcom)
+! ----- Compute porosity with storage coefficient
+        if (l_emmag) then
+            call viemma(nbvari, vintm, vintp,&
+                        advico, vicphi,&
+                        phi0  , dp1   , dp2 , signe, satur,&
+                        em    , phi   , phim)
         endif
 ! =====================================================================
 ! --- CALCUL DE LA VARIABLE INTERNE DE MASSE VOLUMIQUE DU FLUIDE ------
@@ -372,13 +368,13 @@ real(kind=8), intent(in) :: temp
 ! --- POUR LES AUTRES CAS ----------------------------------------------
 ! ======================================================================
         dsde(adcp11,addep1) = dsde(adcp11,addep1) +&
-                              dmwdp1(rho11, signe,satur,dsatur_dp1,phi,cs,cliq,1.d0, emmag,em)
+                              dmwdp1(rho11, signe,satur,dsatur_dp1,phi,cs,cliq,1.d0, l_emmag,em)
         dsde(adcp11,addep2) = dsde(adcp11,addep2) +&
-                              dmwdp2(rho11,satur, phi,cs,cliq,1.d0, emmag,em)
+                              dmwdp2(rho11,satur, phi,cs,cliq,1.d0, l_emmag,em)
         dsde(adcp21,addep1) = dsde(adcp21,addep1) +&
-                              dmasp1(rho11, 0.d0,rho21,satur,dsatur_dp1,phi,cs,1.d0, emmag,em)
+                              dmasp1(rho11, 0.d0,rho21,satur,dsatur_dp1,phi,cs,1.d0, l_emmag,em)
         dsde(adcp21,addep2) = dsde(adcp21,addep2) +&
-                              dmasp2(rho11, 0.d0,rho21,satur,phi,cs,p2, emmag,em)
+                              dmasp2(rho11, 0.d0,rho21,satur,phi,cs,p2, l_emmag,em)
     endif
 ! =====================================================================
  30 continue
