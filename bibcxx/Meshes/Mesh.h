@@ -32,6 +32,7 @@
 #include "MemoryManager/JeveuxBidirectionalMap.h"
 #include "DataFields/MeshCoordinatesField.h"
 #include "Meshes/MeshEntities.h"
+#include "Meshes/MeshExplorer.h"
 #include "RunManager/LogicalUnitManagerCython.h"
 #include <assert.h>
 
@@ -42,30 +43,36 @@
  */
 class BaseMeshInstance: public DataStructure
 {
+public:
+    typedef MeshExplorer< ElementBuilderFromConnectivity,
+                          const JeveuxCollectionLong&,
+                          const JeveuxVectorLong& > ConnectivityMeshExplorer;
 protected:
     typedef JeveuxCollection< long, JeveuxBidirectionalMapChar24 > JeveuxCollectionLongNamePtr;
     /** @brief Objet Jeveux '.DIME' */
-    JeveuxVectorLong             _dimensionInformations;
+    JeveuxVectorLong               _dimensionInformations;
     /** @brief Pointeur de nom Jeveux '.NOMNOE' */
-    JeveuxBidirectionalMapChar8  _nameOfNodes;
+    JeveuxBidirectionalMapChar8    _nameOfNodes;
     /** @brief Champ aux noeuds '.COORDO' */
-    MeshCoordinatesFieldPtr      _coordinates;
+    MeshCoordinatesFieldPtr        _coordinates;
     /** @brief Pointeur de nom Jeveux '.PTRNOMNOE' */
-    JeveuxBidirectionalMapChar24 _nameOfGrpNodes;
+    JeveuxBidirectionalMapChar24   _nameOfGrpNodes;
     /** @brief Collection Jeveux '.GROUPENO' */
-    JeveuxCollectionLongNamePtr  _groupsOfNodes;
+    JeveuxCollectionLongNamePtr    _groupsOfNodes;
     /** @brief Collection Jeveux '.CONNEX' */
-    JeveuxCollectionLong         _connectivity;
+    JeveuxCollectionLong           _connectivity;
     /** @brief Pointeur de nom Jeveux '.NOMMAIL' */
-    JeveuxBidirectionalMapChar8  _nameOfElements;
+    JeveuxBidirectionalMapChar8    _nameOfElements;
     /** @brief Objet Jeveux '.TYPMAIL' */
-    JeveuxVectorLong             _elementsType;
+    JeveuxVectorLong               _elementsType;
     /** @brief Pointeur de nom Jeveux '.PTRNOMMAI' */
-    JeveuxBidirectionalMapChar24 _nameOfGrpElements;
+    JeveuxBidirectionalMapChar24   _nameOfGrpElements;
     /** @brief Objet Jeveux '.GROUPEMA' */
-    JeveuxCollectionLongNamePtr  _groupsOfElements;
+    JeveuxCollectionLongNamePtr    _groupsOfElements;
     /** @brief Booleen indiquant si le maillage est vide */
-    bool                         _isEmpty;
+    bool                           _isEmpty;
+    /** @brief Object to allow loop over connectivity */
+    const ConnectivityMeshExplorer _explorer;
 
     /**
      * @brief Read a Aster Mesh file
@@ -95,6 +102,14 @@ public:
 #ifdef __DEBUG_GC__
         std::cout << "Mesh.destr: " << this->getName() << std::endl;
 #endif
+    };
+
+    /**
+     * @brief Get the connectivity
+     */
+    const ConnectivityMeshExplorer& getConnectivityExplorer() const
+    {
+        return _explorer;
     };
 
     /**

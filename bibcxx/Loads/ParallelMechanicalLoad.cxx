@@ -22,6 +22,7 @@
  */
 
 #include "Loads/ParallelMechanicalLoad.h"
+#include "Meshes/MeshExplorer.h"
 
 #ifdef _USE_MPI
 
@@ -32,6 +33,16 @@ ParallelMechanicalLoadInstance::ParallelMechanicalLoadInstance( GenericMechanica
     const auto& mecaLoad = load->getMechanicalLoadDescription();
     std::cout << "Size "  << mecaLoad._cimpo->getSize() << std::endl;
     const auto& pcField = *(mecaLoad._cimpo);
+
+    for( const auto b : mesh->getConnectivityExplorer() )
+        for( const auto d : b )
+            std::cout << "Noeuds " << d << std::endl;
+
+    const auto FEDesc = pcField.getZoneDescription(1).getFiniteElementDescriptor();
+    for( const auto b : FEDesc->getDelayedElementsExplorer() )
+        for( const auto d : b )
+            std::cout << "Noeuds2 " << d << std::endl;
+
     for( int pos = 0; pos < pcField.getSize(); ++pos )
     {
         const auto& zone = pcField.getZoneDescription( pos );

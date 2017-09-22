@@ -87,7 +87,7 @@ public:
         return _mesh;
     };
 
-    FiniteElementDescriptorPtr getFiniteElementDescriptor() const
+    const FiniteElementDescriptorPtr& getFiniteElementDescriptor() const
         throw( std::runtime_error )
     {
         if( _localisation != AllDelayedElements and _localisation != ListOfDelayedElements )
