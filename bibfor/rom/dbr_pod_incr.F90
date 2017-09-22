@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine dbr_pod_incr(l_reuse, nb_mode_maxi, ds_empi, ds_para_pod,&
                         q, s, v, nb_mode, nb_snap_redu)
 !
@@ -44,17 +45,15 @@ implicit none
 #include "blas/dgesv.h"
 #include "blas/dgesvd.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    aster_logical, intent(in) :: l_reuse
-    integer, intent(in) :: nb_mode_maxi
-    type(ROM_DS_Empi), intent(inout) :: ds_empi
-    type(ROM_DS_ParaDBR_POD) , intent(in) :: ds_para_pod
-    real(kind=8), pointer, intent(inout) :: q(:)
-    real(kind=8), pointer, intent(out)   :: s(:)
-    real(kind=8), pointer, intent(out)   :: v(:)
-    integer, intent(out) :: nb_mode
-    integer, intent(out) :: nb_snap_redu
+aster_logical, intent(in) :: l_reuse
+integer, intent(in) :: nb_mode_maxi
+type(ROM_DS_Empi), intent(inout) :: ds_empi
+type(ROM_DS_ParaDBR_POD) , intent(in) :: ds_para_pod
+real(kind=8), pointer, intent(inout) :: q(:)
+real(kind=8), pointer, intent(out)   :: s(:)
+real(kind=8), pointer, intent(out)   :: v(:)
+integer, intent(out) :: nb_mode
+integer, intent(out) :: nb_snap_redu
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -124,7 +123,10 @@ implicit none
     AS_ALLOCATE(vr = rt, size = nb_equa)
     if (l_reuse) then
         call romBaseRead(base, ds_empi)
-        call ltnotb(base, 'COOR_REDUIT', tabl_name_r)
+        call ltnotb(base, 'COOR_REDUIT', tabl_name_r, iret)
+        if (iret .gt. 0) then
+            call utmess('F', 'ROM7_24', sk = base)
+        endif
         call tbexve(tabl_name_r, 'COOR_REDUIT', '&&COORHR', 'V', nbval, typval)
         call jeveuo('&&COORHR', 'E', vr = v_gm)
         AS_ALLOCATE(vr = vt, size = nb_equa*(nb_snap+ds_empi%nb_mode))
