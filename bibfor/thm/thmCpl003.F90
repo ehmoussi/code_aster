@@ -89,7 +89,7 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: epsv, depsv, p1, dp1, dt
     real(kind=8) :: phi, pvp, h11, h12, rho11
     real(kind=8) :: phi0, pvp0
-    real(kind=8) :: ums, phids, angl_naut(3)
+    real(kind=8) :: phids, angl_naut(3)
     character(len=16) :: option, hydr
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
@@ -100,7 +100,7 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: r, rho0, csigm, alp11, alp12, rho12, alpha0
     real(kind=8) :: deps(6), mdal(6), dalal, alphfi, cbiot, unsks
     aster_logical :: l_emmag
-    real(kind=8) :: m11m, m12m, coeps, pinf, dp2, cp21, cp22, rho21
+    real(kind=8) :: m11m, m12m, coeps, p2, dp2, cp21, cp22, rho21
     real(kind=8) :: rho22, dpad, signe, p1m
 !
 ! - Get initial parameters
@@ -146,6 +146,7 @@ real(kind=8), intent(in) :: temp
     dpvpt = 0.0d0
     signe = -1.0d0
     dp2 = 0.0d0
+    p2 = r8maem()
     dpad = 0.0d0
     rho21 = 0.0d0
     rho22 = 0.0d0
@@ -187,25 +188,20 @@ real(kind=8), intent(in) :: temp
                         rho110, rho11 , rho11m,&
                         retcom)
         endif
-! =====================================================================
-! --- EN LIQU_VAPE CALCUL DE RHO11, DES ENTHALPIES DE PVP ET RHOVP ----
-! =====================================================================
-        pinf = r8maem()
-        if (yate .eq. 1) then
-            call vipvp1(nbvari, vintm, vintp, advico, vicpvp,&
-                        dimcon, pinf, congem, adcp11, adcp12,&
-                        ndim, pvp0, dp1, dp2, temp,&
-                        dt, mamolv, r, rho11, signe,&
-                        cp11, cp12, yate, pvp, pvpm,&
-                        retcom)
-        else
-            call vipvp1(nbvari, vintm, vintp, advico, vicpvp,&
-                        dimcon, pinf, congem, adcp11, adcp12,&
-                        ndim, pvp0, dp1, dp2, temp,&
-                        dt, mamolv, r, rho11, signe,&
-                        0.d0, cp12, yate, pvp, pvpm,&
-                        retcom)
-        endif
+!
+! ----- Compute steam pressure (no dissolved air)
+!
+        call vipvp1(ndim  , nbvari,&
+                    dimcon,&
+                    adcp11, adcp12, advico, vicpvp,&
+                    congem, &
+                    cp11  , cp12  ,&
+                    mamolv, r     , rho11 , signe ,&
+                    temp  , p2    ,&
+                    dt    , dp1   , dp2   ,&
+                    pvp0  , pvpm  , pvp   ,&
+                    vintm , vintp ,&
+                    retcom)
 ! =====================================================================
 ! --- PROBLEME DANS LE CALCUL DES VARIABLES INTERNES ? ----------------
 ! =====================================================================
@@ -252,7 +248,6 @@ real(kind=8), intent(in) :: temp
 ! =====================================================================
 ! --- QUELQUES INITIALISATIONS ----------------------------------------
 ! =====================================================================
-    ums = 1.d0 - satur
     phids = phi*dsatur_dp1
 ! **********************************************************************
 ! *** LES CONTRAINTES GENERALISEES *************************************
@@ -363,7 +358,7 @@ real(kind=8), intent(in) :: temp
             dsde(adcp11,addete) = dsde(adcp11,addete) +&
                                   dmwdt2(rho11, alp11,phids,satur,cs,dpvpt)
             dsde(adcp12,addete) = dsde(adcp12,addete) +&
-                                  dmvpd2(rho12, alp12,dpvpt,phi,ums,pvp,phids,cs)
+                                  dmvpd2(rho12, alp12,dpvpt,phi,satur,pvp,phids,cs)
 ! ======================================================================
 ! --- CALCUL DE LA DERIVEE DE LA CHALEUR REDUITE Q' --------------------
 ! ======================================================================
@@ -384,7 +379,7 @@ real(kind=8), intent(in) :: temp
         dsde(adcp11,addep1) = dsde(adcp11,addep1) +&
                               dmwp1v(rho11, phids,satur,cs,dpvpl,phi,cliq)
         dsde(adcp12,addep1) = dsde(adcp12,addep1) +&
-                              dmvpp1(rho11, rho12,phids,ums,cs,dpvpl,satur,phi,pvp)
+                              dmvpp1(rho11, rho12,phids,cs,dpvpl,satur,phi,pvp)
     endif
 ! =====================================================================
  30 continue

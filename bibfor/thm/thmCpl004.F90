@@ -209,25 +209,21 @@ real(kind=8), intent(in) :: temp
                         rho110, rho11 , rho11m,&
                         retcom)
         endif
-! =====================================================================
-! --- CALCUL DE LA VARIABLE INTERNE DE PRESSION DE VAPEUR -------------
-! --- SELON FORMULE DOCR ----------------------------------------------
-! =====================================================================
-        if (yate .eq. 1) then
-            call vipvp1(nbvari, vintm, vintp, advico, vicpvp,&
-                        dimcon, p2, congem, adcp11, adcp12,&
-                        ndim, pvp0, dp1, dp2, temp,&
-                        dt, mamolv, r, rho11, signe,&
-                        cp11, cp12, yate, pvp, pvpm,&
-                        retcom)
-        else
-            call vipvp1(nbvari, vintm, vintp, advico, vicpvp,&
-                        dimcon, p2, congem, adcp11, adcp12,&
-                        ndim, pvp0, dp1, dp2, temp,&
-                        dt, mamolv, r, rho11, signe,&
-                        0.d0, cp12, yate, pvp, pvpm,&
-                        retcom)
-        endif
+!
+! ----- Compute steam pressure (no dissolved air)
+!
+        call vipvp1(ndim  , nbvari,&
+                    dimcon,&
+                    adcp11, adcp12, advico, vicpvp,&
+                    congem, &
+                    cp11  , cp12  ,&
+                    mamolv, r     , rho11 , signe ,&
+                    temp  , p2    ,&
+                    dt    , dp1   , dp2   ,&
+                    pvp0  , pvpm  , pvp   ,&
+                    vintm , vintp ,&
+                    retcom)
+
 ! =====================================================================
 ! --- RECUPERATION DE LA VARIABLE INTERNE DE SATURATION ---------------
 ! =====================================================================

@@ -62,8 +62,8 @@ integer, intent(out) :: retcom
 ! In  alpliq           : value of themic dilatation for liquid
 ! In  signe            : sign for saturation
 ! In  rho110           : initial volumic mass for liquid
-! In  rho11m           : volumic mass for liquid at beginning of current time step
-! In  rho11            : volumic mass for liquid at end of current time step
+! Out rho11m           : volumic mass for liquid at beginning of current time step
+! Out rho11            : volumic mass for liquid at end of current time step
 ! Out retcom           : error code 
 !                         0 - everything is OK
 !
