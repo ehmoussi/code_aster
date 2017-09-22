@@ -74,9 +74,12 @@ type(ROM_DS_ParaRRC), intent(out) :: ds_para
     ds_para%model_rom     = ' '
     ds_para%result_rom    = ' '
     ds_para%result_dom    = ' '
+    ds_para%grnode_int    = ' '
     ds_para%ds_empi_prim  = empi_prim
     ds_para%ds_empi_dual  = empi_dual
     ds_para%l_prev_dual   = .false._1
+    ds_para%nb_equa_ridi  = 0
+    ds_para%v_equa_ridi   => null()
     ds_para%nb_equa_ridd  = 0
     ds_para%v_equa_ridd   => null()
     ds_para%nb_equa_ridp  = 0

@@ -54,7 +54,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_mode, nb_equa, nb_equa_ridd, nb_cmp, nb_store
+    integer :: nb_mode, nb_equa, nb_equa_ridi, nb_cmp, nb_store
     integer :: iret, i_mode, i_equa, i_store, nume_store
     character(len=8) :: result_rom, result_dom
     real(kind=8), pointer :: v_dual(:) => null()
@@ -79,7 +79,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
     nb_cmp       = ds_para%ds_empi_dual%nb_cmp
     result_rom   = ds_para%result_rom
     result_dom   = ds_para%result_dom
-    nb_equa_ridd = ds_para%nb_equa_ridd
+    nb_equa_ridi = ds_para%nb_equa_ridi
 !
 ! - Create [PHI] matrix for dual base
 !
@@ -87,11 +87,11 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! - Reduce [PHI] matrix on RID
 !
-    AS_ALLOCATE(vr = v_dual_rom, size = nb_equa_ridd*nb_mode)
+    AS_ALLOCATE(vr = v_dual_rom, size = nb_equa_ridi*nb_mode)
     do i_mode = 1, nb_mode
         do i_equa = 1, nb_equa
             if (ds_para%v_equa_ridd(i_equa) .ne. 0) then
-                v_dual_rom(ds_para%v_equa_ridd(i_equa)+nb_equa_ridd*(i_mode-1)) = &
+                v_dual_rom(ds_para%v_equa_ridd(i_equa)+nb_equa_ridi*(i_mode-1)) = &
                   v_dual(i_equa+nb_equa*(i_mode-1))
             endif 
         end do
@@ -99,8 +99,8 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! - Gappy POD 
 !
-    call romEvalGappyPOD(ds_para%ds_empi_dual, result_rom, nb_store, v_dual_rom,&
-                         v_cohr)
+    call romEvalGappyPOD(ds_para, result_rom, nb_store, v_dual_rom,&
+                         v_cohr , 1)
 !
 ! - Initial state
 !
