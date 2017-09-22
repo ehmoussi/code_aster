@@ -90,6 +90,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     real(kind=8), pointer :: v_cnvabu(:) => null()
     real(kind=8), pointer :: v_cndirp(:) => null()
     real(kind=8), pointer :: v_cnresi(:) => null()
+    real(kind=8), pointer :: v_gamma(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -162,6 +163,10 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 ! ----- Solve linear system
 !
         if (ds_algorom%l_rom .and. ds_algorom%phase .eq. 'HROM') then
+            call jeveuo(ds_algorom%gamma, 'E', vr = v_gamma)
+            do k = 1, ds_algorom%ds_empi%nb_mode
+                v_gamma (k) = 0.d0
+            enddo
             call copisd('CHAMP_GD', 'V', temp_prev, chsol)
             call romAlgoNLSystemSolve(matass, cn2mbr, ds_algorom, chsol)
         else if (ds_algorom%l_rom .and. ds_algorom%phase .eq. 'CORR_EF') then
@@ -191,6 +196,10 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 ! ----- Solve linear system
 !
         if (ds_algorom%l_rom .and. ds_algorom%phase .eq. 'HROM') then
+            call jeveuo(ds_algorom%gamma, 'E', vr = v_gamma)
+            do k = 1, ds_algorom%ds_empi%nb_mode
+                v_gamma (k) = 0.d0
+            enddo
             call copisd('CHAMP_GD', 'V', temp_prev, chsol)
             call romAlgoNLSystemSolve(matass, cn2mbr, ds_algorom, chsol)
         else if (ds_algorom%l_rom .and. ds_algorom%phase .eq. 'CORR_EF') then
