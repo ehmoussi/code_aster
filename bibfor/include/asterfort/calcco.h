@@ -50,6 +50,7 @@ interface
         real(kind=8), intent(inout) :: vintp(nbvari)
         real(kind=8), intent(inout) :: dsde(dimcon, dimdef)
         real(kind=8), intent(out) :: phi, rho11, satur
+        real(kind=8), intent(out) :: pvp, h11, h12
         integer, intent(out) :: retcom
 
         integer :: yamec, yate
@@ -57,7 +58,7 @@ interface
         integer :: addep2
         integer :: vicpvp, vicsat, imate
         real(kind=8) :: p1, p2, dp2
-        real(kind=8) :: pvp, pad, h11, h12, kh
+        real(kind=8) :: pad, kh
         character(len=16) :: hydr
     end subroutine calcco
 end interface 

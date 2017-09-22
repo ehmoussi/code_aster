@@ -18,55 +18,42 @@
 ! aslint: disable=W1504
 !
 interface 
-    subroutine thmCpl003(option, hydr,&
-                      imate, ndim, dimdef, dimcon, nbvari,&
-                      yate, advihy,&
-                      advico, vihrho, vicphi, vicpvp, vicsat,&
-                      addep1, adcp11, adcp12, addete, adcote,&
-                      congem, congep, vintm, vintp, dsde,&
-                      epsv, depsv, p1, dp1, temp,&
-                      dt, phi, pvp, h11, h12,&
-                      rho11, satur, retcom,&
-                      tbiot, angl_naut, deps)
-        integer :: nbvari
-        integer :: dimcon
-        integer :: dimdef
-        integer :: ndim
-        character(len=16) :: option
-        character(len=16) :: hydr
-        integer :: imate
-        integer :: yate
-        integer :: advihy
-        integer :: advico
-        integer :: vihrho
-        integer :: vicphi
-        integer :: vicpvp
-        integer :: vicsat
-        integer :: addep1
-        integer :: adcp11
-        integer :: adcp12
-        integer :: addete
-        integer :: adcote
-        real(kind=8) :: congem(dimcon)
-        real(kind=8) :: congep(dimcon)
-        real(kind=8) :: vintm(nbvari)
-        real(kind=8) :: vintp(nbvari)
-        real(kind=8) :: dsde(dimcon, dimdef)
-        real(kind=8) :: epsv
-        real(kind=8) :: depsv
-        real(kind=8) :: p1
-        real(kind=8) :: dp1
-        real(kind=8), intent(in) :: temp
-        real(kind=8) :: dt
-        real(kind=8) :: phi
-        real(kind=8) :: pvp
-        real(kind=8) :: h11
-        real(kind=8) :: h12
-        real(kind=8) :: rho11
-        real(kind=8) :: satur
-        integer :: retcom
-        real(kind=8) :: tbiot(6)
-        real(kind=8) :: angl_naut(3)
-        real(kind=8) :: deps(6)
+    subroutine thmCpl003(option, angl_naut,&
+                      hydr  , j_mater  ,&
+                      ndim  , nbvari   ,&
+                      dimdef, dimcon   ,&
+                      adcote, adcp11   , adcp12, & 
+                      addete, addep1   , &
+                      advico, advihy   ,&
+                      vihrho, vicphi   , vicpvp, vicsat,&
+                      temp  , p1       ,&
+                      dtemp , dp1      ,&
+                      deps  , epsv     , depsv ,&
+                      tbiot ,&
+                      phi   , rho11    , satur ,&
+                      pvp   , h11      , h12   ,&
+                      congem, congep   ,&       
+                      vintm , vintp    , dsde,& 
+                      retcom)
+        character(len=16), intent(in) :: option
+        real(kind=8), intent(in) :: angl_naut(3)
+        character(len=16), intent(in) :: hydr
+        integer, intent(in) :: j_mater, ndim, nbvari
+        integer, intent(in) :: dimdef, dimcon
+        integer, intent(in) :: adcote, adcp11, adcp12
+        integer, intent(in) :: addep1, addete
+        integer, intent(in) :: advihy, advico
+        integer, intent(in) :: vihrho, vicphi, vicpvp, vicsat
+        real(kind=8), intent(in) :: temp, p1
+        real(kind=8), intent(in) :: dtemp, dp1
+        real(kind=8), intent(in) :: epsv, depsv, deps(6), tbiot(6)
+        real(kind=8), intent(out) :: phi, rho11, satur
+        real(kind=8), intent(out) :: pvp, h11, h12
+        real(kind=8), intent(in) :: congem(dimcon)
+        real(kind=8), intent(inout) :: congep(dimcon)
+        real(kind=8), intent(in) :: vintm(nbvari)
+        real(kind=8), intent(inout) :: vintp(nbvari)
+        real(kind=8), intent(inout) :: dsde(dimcon, dimdef)
+        integer, intent(out)  :: retcom
     end subroutine thmCpl003
 end interface 
