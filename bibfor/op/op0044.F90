@@ -451,13 +451,8 @@ subroutine op0044()
 ! --- ON PREND LES MEMES BORNES QUE POUR MODE_ITER_SIMULT, ON NE CORRIGE PAS PAR
 ! --- LES NOUVELLES BORNES DU PAQUET DE NOUVELLES VALEURS CALCULEES.
 ! --- USAGE FOCALISE SUR AMELIORATION='OUI'
-    if (typres.eq.'DYNAMIQUE') then
-      vpinf  = zr(lborne)
-      vpmax  = zr(lborne+nbmod-1)
-    else
-      vpinf  = -zr(lborne+nbmod-1)
-      vpmax  = -zr(lborne)
-    endif
+    vpinf  = zr(lborne)
+    vpmax  = zr(lborne+nbmod-1)
     if (typres .eq. 'DYNAMIQUE') then
        omecor = omega2(fcorig)
        vpinf = omega2(vpinf)
@@ -800,6 +795,9 @@ subroutine op0044()
       optiov='BANDE'
       lmat(3) = ldynam
 ! -- LE DECALAGE VIA PRECDC EST FAIT EN INTERNE VPCNTL POUR OMEMIN/MAX
+! -- ON NOURRIT VPCNTL AVEC LES VALEURS DE TRAVAIL DES VALEURS PROPRES:
+! -- (2*PI*LAMBDA)**2 SI DYNAMIQUE, -LAMBDA SI MODE_FLAMB AVEC LAMBDA UNE
+! -- VALEUR DE BORNE SAISIE PAR L'UTILISATEUR
       omemin = vpinf
       omemax = vpmax
       vpinf = vpinf * (1.d0 - sign(precdc,vpinf))
