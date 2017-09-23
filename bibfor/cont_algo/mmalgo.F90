@@ -418,9 +418,10 @@ implicit none
             endif
        ! cas ALGO_CONT=PENALISATION, ALGO_FROT=STANDARD
        ! On fixe un statut adherent en cas de fortes interpenetration
-       if (.not. l_pena_frot .and. l_pena_cont .and. indi_cont_curr .eq. 1) then 
-           if (dist_cont_curr .gt. dist_max .and. indi_frot_curr .eq. 0.) then 
-               v_sdcont_cychis(60*(i_cont_poin-1)+5)  = 1
+       if ((.not. l_pena_frot .and. l_pena_cont ).and. indi_cont_curr .eq. 1) then 
+           if (dist_cont_curr .gt. dist_max .and. indi_frot_curr .eq. 0.&
+                .and. (norm2(dist_frot_curr) .lt. 0.01*dist_max)) then 
+               v_sdcont_cychis(60*(i_cont_poin-1)+5)  = 2
            endif
        endif
        
