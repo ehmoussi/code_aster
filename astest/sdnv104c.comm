@@ -116,6 +116,12 @@ CTACC = DEFI_CONTACT(MODELE         = MODE,
                               GROUP_MA_MAIT='LMAI',
                               GROUP_MA_ESCL='LESC',
                               COULOMB = 0.3,
+                              ALGO_CONT='PENALISATION',
+                              ALGO_FROT='STANDARD',
+                              ADAPTATION="ADAPT_COEF",
+                              #COEF_PENA_FROT=1.E6,
+                              #COEF_PENA_CONT=1.E6,
+                              PENE_MAXI=1.E-5,
                                    ),
                    )
 

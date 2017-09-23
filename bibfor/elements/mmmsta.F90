@@ -131,7 +131,7 @@ subroutine mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
                     tau1, tau2, ladhe, rese, nrese)
         if (indadhe .eq. 1 .and. l_previous) ladhe = .true. 
 ! On est en penalisatio  ou en algo_cont=penalisation, algo_frot=standard/penalisation
-        if (indadhe2 .eq. 1 ) ladhe = .true. 
+        if (indadhe2 .eq. 2 ) ladhe = .true. 
 
     endif
 !
