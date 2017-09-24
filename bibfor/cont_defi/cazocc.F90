@@ -165,6 +165,7 @@ implicit none
 
 
     call getvtx(keywf, 'ALGO_CONT', iocc=i_zone, scal=s_algo_cont)
+    write (6,*) "algo_cont",s_algo_cont,s_algo_frot
     if (s_algo_cont .eq. 'STANDARD') then
         call getvr8(keywf, 'COEF_CONT', iocc=i_zone, scal=coef_augm_cont)
         algo_cont = 1.d0
@@ -210,13 +211,13 @@ implicit none
         else
             ASSERT(.false.)
         endif
-        if (s_algo_cont .ne. s_algo_frot) then
-            if (s_algo_cont .eq. 'STANDARD' .and.&
-                s_algo_frot .eq. 'PENALISATION') then 
-            else 
-                call utmess('F', 'CONTACT_89')
-            endif
-        endif
+!        if (s_algo_cont .ne. s_algo_frot) then
+!            if (s_algo_cont .eq. 'STANDARD' .and.&
+!                s_algo_frot .eq. 'PENALISATION') then 
+!            else 
+!                call utmess('F', 'CONTACT_89')
+!            endif
+!        endif
     else
         coef_frot = 0.d0
         algo_frot = 0.d0
@@ -243,13 +244,13 @@ implicit none
 !
 ! - Check
 !
-    if (l_frot .and. (s_algo_cont.ne.s_algo_frot)) then
-        if (s_algo_cont .eq. 'STANDARD' .and.&
-            s_algo_frot .eq. 'PENALISATION') then 
-        else 
-            call utmess('F', 'CONTACT_89')
-        endif
-    endif
+!    if (l_frot .and. (s_algo_cont.ne.s_algo_frot)) then
+!        if (s_algo_cont .eq. 'STANDARD' .and.&
+!            s_algo_frot .eq. 'PENALISATION') then 
+!        else 
+!            call utmess('F', 'CONTACT_89')
+!        endif
+!    endif
     if ((s_algo_cont.eq.'PENALISATION') .and. l_newt_geom) then
         call utmess('A', 'CONTACT_21')
     endif

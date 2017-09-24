@@ -51,6 +51,7 @@ implicit none
 #include "asterfort/mminfi.h"
 #include "asterfort/mminfl.h"
 #include "asterfort/mminfm.h"
+#include "asterfort/mminfr.h"
 #include "asterfort/mmstaf.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/mmfield_prep.h"
@@ -109,9 +110,9 @@ implicit none
     character(len=19) :: chdepd
     aster_logical :: l_glis
     aster_logical :: l_glis_init, l_veri, l_exis_glis, loop_cont_conv, l_loop_cont
-    aster_logical :: l_frot_zone, l_pena_frot, l_frot
+    aster_logical :: l_frot_zone, l_pena_frot, l_frot,l_pena_cont
     integer :: loop_geom_count, loop_fric_count, loop_cont_count
-    integer :: type_adap
+    integer :: type_adap,coor_nume
     character(len=24) :: sdcont_cychis, sdcont_cyccoe, sdcont_cyceta
     real(kind=8), pointer :: v_sdcont_cychis(:) => null()
     real(kind=8), pointer :: v_sdcont_cyccoe(:) => null()
@@ -120,6 +121,9 @@ implicit none
     real(kind=8), pointer :: v_sdcont_tabfin(:) => null()
     real(kind=8), pointer :: v_sdcont_jsupco(:) => null()
     real(kind=8), pointer :: v_sdcont_apjeu(:) => null()
+    character(len=24) :: sdcont_pene
+    real, pointer :: v_sdcont_pene(:) => null()
+    real(kind=8)  :: vale_pene
     aster_logical :: l_coef_adap
 !
 ! --------------------------------------------------------------------------------------------------
@@ -168,6 +172,8 @@ implicit none
 ! - Get current time
 !
     time_curr = diinst(sddisc, nume_inst)
+    ds_contact%time_curr = time_curr
+
 !
 ! - Geometric update
 !
@@ -210,6 +216,8 @@ implicit none
         jdecme       = mminfi(ds_contact%sdcont_defi,'JDECME'         , i_zone)
         l_frot_zone  = mminfl(ds_contact%sdcont_defi,'FROTTEMENT_ZONE', i_zone)
         l_pena_frot  = mminfl(ds_contact%sdcont_defi,'ALGO_FROT_PENA' , i_zone)
+        l_pena_cont  = mminfl(ds_contact%sdcont_defi,'ALGO_CONT_PENA' , i_zone)
+        vale_pene  = mminfr(ds_contact%sdcont_defi,'PENE_MAXI' , i_zone)
 !
 ! ----- No computation: no contact point
 !
@@ -356,7 +364,8 @@ implicit none
                             l_glis_init, type_adap, i_zone, i_cont_poin, &
                             indi_cont_eval, indi_frot_eval, gap,  lagr_cont_poin,&
                        gap_user_frot, pres_frot, v_sdcont_cychis, v_sdcont_cyccoe, v_sdcont_cyceta,&
-                        indi_cont_curr,indi_frot_curr, loop_cont_vali, loop_cont_conv)
+                        indi_cont_curr,indi_frot_curr, loop_cont_vali, loop_cont_conv,l_pena_frot,l_pena_cont,&
+                         vale_pene)
 !
  19             continue
 !

@@ -150,13 +150,13 @@ implicit none
 !
 ! - Projection of gap increment on tangent plane
 !
-    if (.not.lpenaf) then
+!    if (.not.lpenaf) then
         do idim1 = 1, ndim
             do idim2 = 1, ndim
                 dist_frot(idim1) = mprojt(idim1,idim2)*dist_total(idim2)+dist_frot(idim1)
             end do
         end do
-    endif
+!    endif
 !
 ! - Friction "pressure"
 !

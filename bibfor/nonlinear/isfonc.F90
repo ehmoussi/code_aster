@@ -69,6 +69,7 @@ character(len=*), intent(in) :: func_name_z
 !                             CONTACT
 !       GEOM_NEWTON        :  NEWTON GENERALISE POUR LE CONTACT CONTINU
 !                             GEOMETRIE
+!       EXIS_PENA          :  AT LEAST ONE CONTACT ZONE IS ACTIVATED ON PENALISATION
 !       CONT_ALL_VERIF     :  CONTACT SANS CALCUL SUR TOUTES LES ZONES
 !       LIAISON_UNILATER   :  LIAISON UNILATERALE
 !       ELT_CONTACT        :  ELEMENTS DE CONTACT (CONTINU/XFEM)
@@ -161,6 +162,8 @@ character(len=*), intent(in) :: func_name_z
         isfonc = list_func_acti(34).eq.1
     else if (func_name.eq.'GEOM_NEWTON') then
         isfonc = list_func_acti(55).eq.1
+    else if (func_name.eq.'EXIS_PENA') then
+        isfonc = list_func_acti(66).eq.1
     else if (func_name.eq.'FROT_NEWTON') then
         isfonc = list_func_acti(47).eq.1
     else if (func_name.eq.'CONT_NEWTON') then

@@ -79,6 +79,14 @@ implicit none
         cfdisl = cfdisi(sdcont_defi,'EXIS_XFEM_CZM').eq.1
     else if (question .eq.'EXIS_PENA') then
         cfdisl = cfdisi(sdcont_defi,'EXIS_PENA').eq.1
+    else if (question .eq.'EXIS_ADAP') then
+        cfdisl = ((cfdisi(sdcont_defi,'TYPE_ADAPT').eq.1) .or. &
+                  (cfdisi(sdcont_defi,'TYPE_ADAPT').eq.2) .or. &
+                  (cfdisi(sdcont_defi,'TYPE_ADAPT').eq.3) .or. &
+                  (cfdisi(sdcont_defi,'TYPE_ADAPT').eq.5) .or. &
+                  (cfdisi(sdcont_defi,'TYPE_ADAPT').eq.6) .or. &
+                  (cfdisi(sdcont_defi,'TYPE_ADAPT').eq.7)      &
+                 )
     else if (question .eq.'ALL_VERIF') then
         cfdisl = cfdisi(sdcont_defi,'ALL_VERIF').eq.1
     else if (question .eq.'EXIS_VERIF') then
