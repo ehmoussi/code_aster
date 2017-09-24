@@ -115,7 +115,7 @@ implicit none
                 do i_cyc =1,60 
                     p_sdcont_cychis(60*(i_cont_poin-1) + i_cyc) = 0
                 enddo
-                coef_init = p_sdcont_cychis(60*(i_cont_poin-1) + 2) 
+                coef_init = p_sdcont_cyccoe(6*(zone_index-1)+1) 
                 if (nint(ds_contact%update_init_coefficient) .eq. 1) &
                     coef_init = ds_contact%estimated_coefficient
                 do i_cyc =1,4 
