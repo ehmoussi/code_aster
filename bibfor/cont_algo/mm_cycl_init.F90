@@ -60,7 +60,7 @@ implicit none
     integer :: zone_index, nb_cont_zone
     integer :: slave_elt_index, slave_elt_nb, slave_elt_shift, slave_elt_num
     integer :: slave_pt_index, slave_pt_nb
-    real(kind=8) :: coef_cont, coef_frot
+    real(kind=8) :: coef_cont, coef_frot, coef_init
     aster_logical :: lveri
 !
 ! --------------------------------------------------------------------------------------------------
@@ -115,10 +115,13 @@ implicit none
                 do i_cyc =1,60 
                     p_sdcont_cychis(60*(i_cont_poin-1) + i_cyc) = 0
                 enddo
+                coef_init = p_sdcont_cychis(60*(i_cont_poin-1) + 2) 
+                if (nint(ds_contact%update_init_coefficient) .eq. 1) &
+                    coef_init = ds_contact%estimated_coefficient
                 do i_cyc =1,4 
                     p_sdcont_cyceta(4*(i_cont_poin-1) + i_cyc) = -1
                 enddo
-                p_sdcont_cychis(60*(i_cont_poin-1)+2) = coef_cont
+                p_sdcont_cychis(60*(i_cont_poin-1)+2) = coef_init
                 p_sdcont_cychis(60*(i_cont_poin-1)+6) = coef_frot
                 p_sdcont_cychis(60*(i_cont_poin-1)+60) = zone_index
                 p_sdcont_cychis(60*(i_cont_poin-1)+59) = 1.0

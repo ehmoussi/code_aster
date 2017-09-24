@@ -120,8 +120,8 @@ CTACC = DEFI_CONTACT(MODELE         = MODE,
                               ALGO_FROT='STANDARD',
                               ADAPTATION="ADAPT_COEF",
                               #COEF_PENA_FROT=1.E6,
-                              #COEF_PENA_CONT=1.E6,
-                              PENE_MAXI=1.E-5,
+                              COEF_PENA_CONT=1.E6,
+                              #PENE_MAXI=1.E-5,
                                    ),
                    )
 
