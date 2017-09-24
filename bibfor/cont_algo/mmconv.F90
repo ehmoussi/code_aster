@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine mmconv(noma , ds_contact, valinc, solalg, vfrot,&
-                  nfrot, vgeom     , ngeom)
+                  nfrot, vgeom     , ngeom, vpene)
 !
 use NonLin_Datastructure_type
 !
@@ -31,17 +31,20 @@ implicit none
 #include "asterfort/mmmcrg.h"
 #include "asterfort/mmreas.h"
 #include "asterfort/mreacg.h"
+#include "asterfort/mm_pene_loop.h"
 #include "asterfort/nmchex.h"
+#include "asterfort/mmbouc.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
     character(len=8), intent(in) :: noma
-    type(NL_DS_Contact), intent(in) :: ds_contact
+    type(NL_DS_Contact), intent(inout) :: ds_contact
     character(len=19), intent(in) :: valinc(*)
     character(len=19), intent(in) :: solalg(*)
     real(kind=8), intent(out) :: vfrot
     character(len=16), intent(out) :: nfrot
     real(kind=8), intent(out) :: vgeom
+    real(kind=8), intent(out) :: vpene
     character(len=16), intent(out) :: ngeom
 !
 ! ----------------------------------------------------------------------
@@ -64,8 +67,10 @@ implicit none
 ! ----------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=19) :: depplu, depmoi, ddepla
-    aster_logical :: lnewtf, lnewtg
+    character(len=19) :: depplu, depmoi, ddepla,depdel
+    aster_logical :: lnewtf, lnewtg,lnewtc,loop_cont_dive,l_exis_pena
+    real(kind=8) :: time_curr
+
 !
 ! ----------------------------------------------------------------------
 !
@@ -83,11 +88,16 @@ implicit none
     call nmchex(valinc, 'VALINC', 'DEPMOI', depmoi)
     call nmchex(valinc, 'VALINC', 'DEPPLU', depplu)
     call nmchex(solalg, 'SOLALG', 'DDEPLA', ddepla)
+    call nmchex(solalg, 'SOLALG', 'DEPDEL', depdel)
 !
 ! --- FONCTIONNALITES ACTIVEES
 !
     lnewtf = cfdisl(ds_contact%sdcont_defi,'FROT_NEWTON')
     lnewtg = cfdisl(ds_contact%sdcont_defi,'GEOM_NEWTON')
+    lnewtc = cfdisl(ds_contact%sdcont_defi,'CONT_NEWTON')
+    l_exis_pena       = cfdisl(ds_contact%sdcont_defi,'EXIS_PENA')
+    time_curr = ds_contact%time_curr
+
 !
 ! - Print
 !
@@ -120,5 +130,30 @@ implicit none
 !
         call mmmcrg(noma, ddepla, depplu, ngeom, vgeom)
     endif
+    
+    if (l_exis_pena) then 
+        if (lnewtc) then
+        !   Cas de newton generalise pour le contact
+        !   on remet a jour vpene a chaque iteration 
+            call mm_pene_loop(noma  , depplu, ddepla, ds_contact)
+            vpene = ds_contact%calculated_penetration
+        else 
+        !   Cas de point fixe pour le contact
+        !   on ne remet pas a jour vpene a chaque iteration 
+            call mmbouc(ds_contact, 'Cont', 'Is_Divergence',loop_state_=loop_cont_dive)
+            if (loop_cont_dive) then 
+                vpene = 1.d-300
+            else
+                call mm_pene_loop(noma  , depplu, ddepla, ds_contact)
+                vpene = ds_contact%calculated_penetration
+            endif
+            
+        endif
+    endif
+!    L'adaptation n'a pas fonctionne : On fait des iterations supplementaires
+!    if (ds_contact%iteration_newton .gt. ds_contact%it_adapt_maxi-6) &
+!     ds_contact%continue_pene=1.0 --> voir dans mm_pene_loop
+
+
 !
 end subroutine

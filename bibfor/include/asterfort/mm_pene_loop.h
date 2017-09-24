@@ -18,18 +18,15 @@
 
 !
 !
+#include "asterf_types.h"
+!
 interface
-    subroutine mmconv(noma , ds_contact, valinc, solalg, vfrot,&
-                      nfrot, vgeom     , ngeom, vpene)
+    subroutine mm_pene_loop(mesh  , &
+                disp_curr, disp_cumu_inst, ds_contact)
         use NonLin_Datastructure_type
-        character(len=8), intent(in) :: noma
-        type(NL_DS_Contact), intent(in) :: ds_contact
-        character(len=19), intent(in) :: valinc(*)
-        character(len=19), intent(in) :: solalg(*)
-        real(kind=8), intent(out) :: vfrot
-        character(len=16), intent(out) :: nfrot
-        real(kind=8), intent(out) :: vgeom
-        real(kind=8), intent(out) :: vpene
-        character(len=16), intent(out) :: ngeom
-    end subroutine mmconv
+        character(len=8), intent(in) :: mesh
+        character(len=19), intent(in) :: disp_curr
+        character(len=19), intent(in) :: disp_cumu_inst
+        type(NL_DS_Contact), intent(inout) :: ds_contact
+    end subroutine mm_pene_loop
 end interface

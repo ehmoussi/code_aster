@@ -44,7 +44,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: nb_cols_defi = 29
+    integer, parameter :: nb_cols_defi = 30
     integer, parameter :: nb_cols_dof_defi = 9
     integer :: ifm, niv
     integer :: i_col, i_cols_dof
@@ -62,7 +62,7 @@ implicit none
                   'CTCD_NBIT','CONT_NEWT','FROT_NEWT',&
                   'GEOM_NEWT','CTCC_CYCL','BOUC_VALE',&
                   'BOUC_NOEU','FROT_NOEU','GEOM_NOEU',&
-                  'ITER_TIME'/)
+                  'PENE_MAXI','ITER_TIME'/)
 !
     character(len=16), parameter :: cols_title_1(nb_cols_defi) = (/&
               '   INCREMENT    ','     CALCUL     ','     CONTACT    ','     CONTACT    ',&
@@ -74,7 +74,7 @@ implicit none
               '     CONTACT    ','     CONTACT    ','     CONTACT    ',&
               '     CONTACT    ','     CONTACT    ','     CONTACT    ',&
               '     CONTACT    ','     CONTACT    ','     CONTACT    ',&
-              '     NEWTON     '/)
+              '     CONTACT    ','     NEWTON     '/)
     character(len=16), parameter :: cols_title_2(nb_cols_defi) = (/&
               '    INSTANT     ','      HYPER     ','    BCL. GEOM.  ','    BCL. FROT.  ',&
               '    BCL. CONT.  ','    ITERATION   ','     RELATIF    ',&
@@ -85,7 +85,7 @@ implicit none
               '    DISCRET     ','   NEWTON GENE  ','   NEWTON GENE  ',&
               '   NEWTON GENE  ','      INFOS     ','     CRITERE    ',&
               '     CRITERE    ','   NEWTON GENE  ','   NEWTON GENE  ',&
-              '  TEMPS CALCUL  '/)
+              '  PENETRATION   ','  TEMPS CALCUL  '/)
     character(len=16), parameter :: cols_title_3(nb_cols_defi) = (/&
               '                ','      REDUIT    ','    ITERATION   ','    ITERATION   ',&
               '    ITERATION   ','                ',' RESI_GLOB_RELA ',&
@@ -96,7 +96,7 @@ implicit none
               '    NB. ITER    ','   VARI. CONT.  ','   CRIT. FROT.  ',&
               '   CRIT. GEOM.  ','    CYCLAGES    ','    VALEUR      ',&
               '    MAX. LIEU   ',' LIEU MAX FROT. ',' LIEU MAX GEOM. ',&
-              '    VALEUR      '/)
+              '                ','    VALEUR      '/)
 !
     character(len=1), parameter :: cols_type(nb_cols_defi) = (/&
                   'R','K','I','I',&
@@ -108,7 +108,7 @@ implicit none
                   'I','I','R',&
                   'R','I','R',&
                   'K','K','K',&
-                  'R'/)
+                  'R','R'/)
 !
 ! --------------------------------------------------------------------------------------------------
 !

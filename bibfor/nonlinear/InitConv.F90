@@ -55,9 +55,10 @@ implicit none
 !
     integer :: ifm, niv
     character(len=24) :: sdcont_defi
-    real (kind=8) :: resi_glob_rela, resi_frot, resi_geom
+    real (kind=8) :: resi_glob_rela, resi_frot, resi_geom,pene_maxi_user
     integer :: iret
     aster_logical :: l_newt_frot, l_newt_geom, l_resi_user, l_rela, l_maxi, l_refe, l_comp
+    aster_logical :: l_pena_cont
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -114,6 +115,7 @@ implicit none
 !
         l_newt_frot = isfonc(list_func_acti,'FROT_NEWTON')
         l_newt_geom = isfonc(list_func_acti,'GEOM_NEWTON')
+        l_pena_cont = isfonc(list_func_acti,'EXIS_PENA')
 !
 ! ----- Activation of contact residuals for generalized Newton
 !
@@ -127,6 +129,14 @@ implicit none
             call SetResi(ds_conv   , type_ = 'RESI_GEOM', user_para_ = resi_geom,&
                          l_resi_test_ = .true._1)
         endif
+        if (l_pena_cont) then 
+            pene_maxi_user = cfdisr(sdcont_defi, 'PENE_MAXI')
+            ! Attention ce parametre est multiplie par la plus petite maille de la zone maitre courante
+            ! dans mmalgo
+            call SetResi(ds_conv   , type_ = 'RESI_PENE', user_para_ = pene_maxi_user,&
+                         l_resi_test_ = .true._1)
+        endif
+
     endif
 !
 ! - For line search

@@ -60,6 +60,7 @@ implicit none
     aster_logical :: l_loop_cont, l_loop_frot, l_loop_geom, l_cont_all_verif
     aster_logical :: l_newt_frot, l_newt_cont, l_newt_geom
     aster_logical :: l_info_resi, l_info_time, l_csv
+    aster_logical :: l_pena_cont
     character(len=1) :: indsui
     character(len=24) :: col_name
     character(len=512) :: sep_line
@@ -101,6 +102,7 @@ implicit none
     l_comp_rela      = isfonc(list_func_acti,'RESI_COMP')
     l_cont_all_verif = isfonc(list_func_acti,'CONT_ALL_VERIF')
     l_hrom           = isfonc(list_func_acti,'HROM')
+    l_pena_cont      = isfonc(list_func_acti,'EXIS_PENA')
 !
 ! - No cols activated
 !
@@ -185,6 +187,10 @@ implicit none
     endif
     if (l_newt_cont) then
         call SetTableColumn(table_cvg, name_ = 'CONT_NEWT', flag_acti_ = .true._1)
+    endif
+    
+    if (l_pena_cont) then
+        call SetTableColumn(table_cvg, name_ = 'PENE_MAXI', flag_acti_ = .true._1)
     endif
 !
 ! - Contact (fixed points)

@@ -408,12 +408,11 @@ implicit none
                         coef_tmp =coef_tmp*(abs(dist_cont_curr)/dist_max)*100
                         call bussetta_algorithm(dist_cont_curr, dist_cont_prev,dist_max, coef_bussetta) 
                         if (coef_bussetta .lt. coef_tmp) coef_bussetta = coef_tmp
+                        ! On approche de la fin des iterations de Newton mais penetration pas satisfait
+                        ! Le calcul du coefficient n'est pas satisfaisant on l'augmente
+                        if (ds_contact%continue_pene .eq. 1.) coef_bussetta = coef_bussetta*10
+                        
                         v_sdcont_cychis(60*(i_cont_poin-1)+2) = coef_bussetta
-                        if (ds_contact%iteration_newton .gt. ds_contact%it_adapt_maxi-2) then
-                             if (dist_cont_curr .gt. dist_max) then
-                                 mmcvca = .true._1
-                             endif
-                         endif
                     endif
             endif
        ! cas ALGO_CONT=PENALISATION, ALGO_FROT=STANDARD
