@@ -60,11 +60,11 @@ implicit none
 ! ----- Number of active columns
         integer                :: nb_cols
 ! ----- Maximum number of columns in table
-        integer                :: nb_cols_maxi = 38
+        integer                :: nb_cols_maxi = 39
 ! ----- List of columns in table
-        type(NL_DS_Column)     :: cols(38)
+        type(NL_DS_Column)     :: cols(39)
 ! ----- List of _active_ columns in table
-        aster_logical          :: l_cols_acti(38)
+        aster_logical          :: l_cols_acti(39)
 ! ----- Total width of table
         integer                :: width
 ! ----- eNumber of lines for title
@@ -81,10 +81,10 @@ implicit none
         integer                :: nb_para_real
         integer                :: nb_para_cplx
         integer                :: nb_para_strg
-        character(len=24)      :: list_para(38)
-        character(len=3)       :: type_para(38)
+        character(len=24)      :: list_para(39)
+        character(len=3)       :: type_para(39)
 ! ----- Index to values
-        integer                :: indx_vale(38)
+        integer                :: indx_vale(39)
     end type NL_DS_Table
 !
 ! - Type: print
@@ -125,9 +125,9 @@ implicit none
 ! 
     type NL_DS_Conv
         integer :: nb_resi
-        integer :: nb_resi_maxi = 6
-        type(NL_DS_Resi)     :: list_resi(6)
-        aster_logical        :: l_resi_test(6)
+        integer :: nb_resi_maxi = 7
+        type(NL_DS_Resi)     :: list_resi(7)
+        aster_logical        :: l_resi_test(7)
         integer :: nb_refe
         integer :: nb_refe_maxi = 11
         type(NL_DS_RefeResi) :: list_refe(11)
@@ -135,6 +135,7 @@ implicit none
         integer :: iter_glob_maxi
         integer :: iter_glob_elas
         aster_logical :: l_stop
+        aster_logical :: l_stop_pene
         aster_logical :: l_iter_elas
         real(kind=8)  :: swap_trig
         real(kind=8)  :: line_sear_coef
@@ -294,6 +295,7 @@ implicit none
 ! ----- Geometric loop control
         real(kind=8)      :: geom_maxi
         real(kind=8)      :: arete_min
+        real(kind=8)      :: arete_max=0.0
 ! ----- Get-off indicator
         aster_logical     :: l_getoff
 ! ----- First geometric loop
@@ -308,6 +310,7 @@ implicit none
         real(kind=8)      :: estimated_coefficient = 100.0
         real(kind=8)      :: update_init_coefficient = 0.0
         real(kind=8)      :: calculated_penetration  = 1.0
+        real(kind=8)      :: continue_pene  = 0.0
         real(kind=8)      :: time_curr  = -1.0
 
     end type NL_DS_Contact

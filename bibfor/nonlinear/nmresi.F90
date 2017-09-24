@@ -121,6 +121,7 @@ implicit none
     integer :: irela=0, imaxi=0, iresi=0, irefe=0, ichar=0, icomp=0
     aster_logical :: lndepl=.false._1, lpilo=.false._1
     real(kind=8) :: resi_glob_rela, resi_glob_maxi
+    real(kind=8) :: vpene
     character(len=16) :: nfrot=' ', ngeom=' '
     character(len=24) :: sdnuco=' '
     integer :: jnuco=0
@@ -354,14 +355,15 @@ implicit none
 !
     if (l_cont_cont .or. l_cont_lac) then
         call mmconv(noma , ds_contact, valinc, solalg, vfrot,&
-                    nfrot, vgeom     , ngeom)
+                    nfrot, vgeom     , ngeom, vpene)
+        if (ds_contact%continue_pene .eq. 1) ds_conv%l_stop_pene = .false._1
     endif
 !
 ! - Save informations about residuals into convergence datastructure
 !
     call nmimre_dof(numedd, ds_conv, vrela, vmaxi, vrefe, &
                     vcomp , vfrot  , vgeom, irela, imaxi, &
-                    irefe , noddlm , icomp, nfrot, ngeom)
+                    irefe , noddlm , icomp, nfrot, ngeom, vpene)
 !
 ! - Set value of residuals informations in convergence table
 !

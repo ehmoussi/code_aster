@@ -58,7 +58,7 @@ implicit none
 !
 ! - Checks
 !
-    nb_resi = 6
+    nb_resi = 7
     ds_conv%nb_resi = nb_resi
     ASSERT(nb_resi.le.ds_conv%nb_resi_maxi)
     nb_refe = 11
@@ -73,6 +73,7 @@ implicit none
     ds_conv%list_resi(4)%type = 'RESI_COMP_RELA'
     ds_conv%list_resi(5)%type = 'RESI_FROT'
     ds_conv%list_resi(6)%type = 'RESI_GEOM'
+    ds_conv%list_resi(7)%type = 'RESI_PENE'
 !
 ! - Set name of columns in convergence table (for values)
 !
@@ -82,6 +83,7 @@ implicit none
     ds_conv%list_resi(4)%col_name = 'RESI_COMP'
     ds_conv%list_resi(5)%col_name = 'FROT_NEWT'
     ds_conv%list_resi(6)%col_name = 'GEOM_NEWT'
+    ds_conv%list_resi(7)%col_name = 'PENE_MAXI'
 !
 ! - Set name of columns in convergence table (for locus)
 !
@@ -91,6 +93,7 @@ implicit none
     ds_conv%list_resi(4)%col_name_locus = 'COMP_NOEU'
     ds_conv%list_resi(5)%col_name_locus = 'FROT_NOEU'
     ds_conv%list_resi(6)%col_name_locus = 'GEOM_NOEU'
+    ds_conv%list_resi(7)%col_name_locus = '         '
 !
 ! - Set event for divergence
 !
@@ -100,6 +103,7 @@ implicit none
     ds_conv%list_resi(4)%event_type = 'DIVE_COMP'
     ds_conv%list_resi(5)%event_type = 'DIVE_FROT'
     ds_conv%list_resi(6)%event_type = 'DIVE_GEOM'
+    ds_conv%list_resi(7)%event_type = 'DIVE_PENE'
 !
 ! - Initializations for all residuals
 !
@@ -144,6 +148,7 @@ implicit none
     ds_conv%iter_glob_maxi   = 0
     ds_conv%iter_glob_elas   = 0
     ds_conv%l_stop           = .true._1
+    ds_conv%l_stop_pene      = .true._1
     ds_conv%l_iter_elas      = .false._1
 !
 ! - Parameters for automatic swap of convergence criterias

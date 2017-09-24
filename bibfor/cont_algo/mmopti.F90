@@ -124,6 +124,7 @@ implicit none
     armini = armin(mesh)
     epsint = 1.d-6*armini
     ds_contact%arete_min = armini
+    ds_contact%arete_max = armini
 !
 ! - Initial Geometric coordinates
 !
@@ -210,8 +211,11 @@ implicit none
                     if ((coor_nume .eq. 0) .and. (lenght_master_elem .gt. 0.d0)) then
                         ds_contact%arete_min = lenght_master_elem 
                     elseif ((lenght_master_elem .lt. ds_contact%arete_min) &
-                        .and. (coor_nume .gt. 3) .and.(lenght_master_elem .gt. 0.d0)) then
+                        .and. (coor_nume .ge. 3) .and.(lenght_master_elem .gt. 0.d0)) then
                         ds_contact%arete_min = lenght_master_elem 
+                    elseif ((lenght_master_elem .gt. ds_contact%arete_max) &
+                        .and. (coor_nume .ge. 3) .and.(lenght_master_elem .gt. 0.d0)) then
+                        ds_contact%arete_max = lenght_master_elem 
                     endif
                 enddo
 !

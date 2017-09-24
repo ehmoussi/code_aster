@@ -48,6 +48,21 @@ cata_msg = {
     ARRET=NON donc poursuite du calcul sans avoir eu convergence.
 """),
 
+    38 : _(u"""
+    DEFI_CONTACT/ALGO_CONT=PENALISATION/ADAPTATION=PENE_MAXI. On arrive pas à adapter le coefficient de pénalisation de sorte à satisfaire le critère de pénétration maximum. Le rapport entre la pénétration maximale calculée et  la plus petite arete 
+    dans la zone de contact maître est :  %(r1)f.  
+    
+    Conseils :
+    - Soit changer de mode adaptatif de pénalisation : DEFI_CONTACT/ALGO_CONT=PENALISATION/ADAPTATION=NON avec COEF_PENA_CONT <= %(r3)f
+    - Soit diminuer le pas de temps. Le nouveau pas de temps doit être <= %(r1)f fois le pas de temps courant. 
+    - Soit décider de continuer le calcul en relançant votre calcul avec PENE_MAXI proche de la valeur de la plus petite arete de maillage de la zone de contact. 
+    
+    Pour info : 
+    - La plus petite arete de la zone maître est  %(r2)f.
+    - La plus grande arete de la zone maître est  %(r4)f.
+    
+"""),
+
     67 : _(u"""
  Le code %(i1)d retourné lors de l'intégration de la loi de comportement n'est pas traité.
 """),

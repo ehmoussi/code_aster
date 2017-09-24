@@ -16,54 +16,57 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine nmimre(ds_conv, ds_print)
+subroutine mm_pene_crsd(ds_contact)
 !
 use NonLin_Datastructure_type
 !
 implicit none
 !
-#include "asterf_types.h"
-#include "asterfort/assert.h"
-#include "asterfort/nmimck.h"
-#include "asterfort/nmimcr.h"
+#include "asterfort/cfdisi.h"
+#include "asterfort/jedema.h"
+#include "asterfort/jemarq.h"
+#include "asterfort/wkvect.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    type(NL_DS_Conv), intent(in) :: ds_conv
-    type(NL_DS_Print), intent(inout) :: ds_print
+    type(NL_DS_Contact), intent(in) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! MECA_NON_LINE - Print management
+! Contact - Solve - Manage the penetration wit penalization method
 !
-! Set value of residuals informations in convergence table
-!
-! --------------------------------------------------------------------------------------------------
-!
-! In  ds_conv          : datastructure for convergence management
-! IO  ds_print         : datastructure for printing parameters
+! Creating data structures
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i_resi, nb_resi
-    real(kind=8) :: vale_calc
-    character(len=16) :: locus_calc
-    character(len=24) :: col_name, col_name_locus
+! In  ds_contact       : datastructure for contact management
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    nb_resi = ds_conv%nb_resi
+    integer :: nb_cont_poin, nb_cont_zone
+    character(len=24) :: sdcont_pene
+    real(kind=8), pointer :: p_sdcont_pene(:) => null()
 !
-! - Loop on residuals
+! --------------------------------------------------------------------------------------------------
 !
-    do i_resi = 1, nb_resi
-        vale_calc       = ds_conv%list_resi(i_resi)%vale_calc
-        locus_calc      = ds_conv%list_resi(i_resi)%locus_calc
-        col_name        = ds_conv%list_resi(i_resi)%col_name
-        col_name_locus  = ds_conv%list_resi(i_resi)%col_name_locus
-        call nmimcr(ds_print, col_name      , vale_calc , l_affe = .true._1)
-        if (i_resi .ne. 7) &
-             call nmimck(ds_print, col_name_locus, locus_calc, l_affe = .true._1)
-    end do
+    call jemarq()
 !
+! - Initializations
+!
+    nb_cont_poin = cfdisi(ds_contact%sdcont_defi,'NTPC' )
+    nb_cont_zone  = cfdisi(ds_contact%sdcont_defi,'NZOCO' )
+!
+! - Pentration saving 
+!
+    sdcont_pene = ds_contact%sdcont_solv(1:14)//'.PENETR'
+
+!
+! - Creating penetration management objects
+!
+!   p_sdcont_pene_zone : 1 --> store the computed penetration (=0. if standard methods)
+!   p_sdcont_pene_zone : 2 --> store the current zone for print in convergence table (=0 if standard)
+!   see mmopti for initialization
+    call wkvect(sdcont_pene, 'V V R', nb_cont_poin, vr = p_sdcont_pene)
+!
+    call jedema()
 end subroutine
