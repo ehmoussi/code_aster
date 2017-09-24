@@ -205,6 +205,7 @@ implicit none
     iterat = 0
     nbiter = nbiter + 1
     ds_contact%iteration_newton = iterat
+    ds_contact%it_adapt_maxi = ds_conv%iter_glob_maxi
 !
 ! --- GESTION DEBUT DE BOUCLE POINTS FIXES
 !

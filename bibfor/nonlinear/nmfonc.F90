@@ -94,7 +94,7 @@ integer, intent(inout) :: list_func_acti(*)
     integer :: nocc, iret, nb_subs_stat, nb_load_subs
     integer :: i_cont_form
     aster_logical :: l_deborst, l_frot, l_dis_choc, l_all_verif, l_refe, l_comp, l_post_incr
-    aster_logical :: l_loop_geom, l_loop_frot, l_loop_cont
+    aster_logical :: l_loop_geom, l_loop_frot, l_loop_cont,l_pena
     integer :: ixfem, i_buckl, i_vibr_mode, i_stab
     aster_logical :: l_load_undead, l_load_laplace, l_load_elim, l_load_didi
     character(len=8) :: k8bid, repk
@@ -280,6 +280,13 @@ integer, intent(inout) :: list_func_acti(*)
             if (l_newt_frot) list_func_acti(47) = 1
             if (l_newt_cont) list_func_acti(53) = 1
             if (l_newt_geom) list_func_acti(55) = 1
+        endif
+    endif
+! At least one contact zone has penalisation method
+    if (l_cont) then
+        if (i_cont_form .eq. 2 .or. i_cont_form .eq. 5 ) then
+            l_pena = cfdisl(ds_contact%sdcont_defi,'EXIS_PENA')
+            if (l_pena) list_func_acti(66) = 1
         endif
     endif
 !

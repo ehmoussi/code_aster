@@ -153,9 +153,22 @@ implicit none
             zr(vale_indx-1+11) = v_sdcont_tabfin(ztabf*(i_cont_poin-1)+15)
             zr(vale_indx-1+12) = v_sdcont_tabfin(ztabf*(i_cont_poin-1)+23)
             zr(vale_indx-1+13) = v_sdcont_tabfin(ztabf*(i_cont_poin-1)+17)
+!            if (ds_contact%iteration_newton .ge. 3) &
+!                zr(vale_indx-1+13) = v_sdcont_cychis(60*(i_cont_poin-1)+3)
             zr(vale_indx-1+14) = v_sdcont_jsupco(i_cont_poin)
             zr(vale_indx-1+15) = i_algo_cont
             zr(vale_indx-1+16) = v_sdcont_cychis(60*(i_cont_poin-1)+2)
+                if (i_cont_poin .eq. 1) & 
+                    write (6,*) "coef mmchml", zr(vale_indx-1+16)
+!            A la premiere iteration on ne passe pas par mmalgo
+!            On prend directement la valeur de coef*_cont venant de nmprma
+            if (nint(ds_contact%update_init_coefficient) .eq. 1 .and. &
+                ds_contact%iteration_newton .le. 1 )  then 
+                zr(vale_indx-1+16) = max(ds_contact%estimated_coefficient,&
+                                        zr(vale_indx-1+16) )
+                if (i_algo_cont .ne. 3) zr(vale_indx-1+16) = zr(vale_indx-1+16)*1.d-6
+                v_sdcont_cychis(60*(i_cont_poin-1)+2) = zr(vale_indx-1+16)
+             endif
             zr(vale_indx-1+17) = i_reso_fric
             zr(vale_indx-1+25) = i_reso_geom
             zr(vale_indx-1+18) = i_algo_fric
@@ -202,7 +215,10 @@ implicit none
             zr(vale_indx-1+45) = v_sdcont_cychis(60*(i_cont_poin-1)+51)
             !mode robuste frottement
             zr(vale_indx-1+46) = v_sdcont_cychis(60*(i_cont_poin-1)+52)
-            
+            !mode adaptatif : frottement penalise            
+            zr(vale_indx-1+47) = v_sdcont_cychis(60*(i_cont_poin-1)+5)
+                if (i_cont_poin .eq. 1) & 
+                    write (6,*) "vale_adhe_impose mmchml", zr(vale_indx-1+47)
         enddo
         nt_liel = nt_liel + nb_liel
     enddo

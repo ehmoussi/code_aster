@@ -287,6 +287,7 @@ implicit none
         integer           :: nb_loop_maxi = 3
         integer           :: iteration_newton = 0
         integer           :: it_cycl_maxi = 0
+        integer           :: it_adapt_maxi = 0
         type(NL_DS_Loop)  :: loop(3)
 ! ----- Flag for (re) numbering
         aster_logical     :: l_renumber
@@ -303,6 +304,12 @@ implicit none
         integer           :: nt_patch
 ! ----- Total number of contact pairs
         integer           :: nb_cont_pair
+! ----- Automatic update of penalised coefficient
+        real(kind=8)      :: estimated_coefficient = 100.0
+        real(kind=8)      :: update_init_coefficient = 0.0
+        real(kind=8)      :: calculated_penetration  = 1.0
+        real(kind=8)      :: time_curr  = -1.0
+
     end type NL_DS_Contact
 !
 ! - Type: timer management

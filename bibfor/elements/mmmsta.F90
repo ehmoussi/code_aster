@@ -30,7 +30,7 @@ subroutine mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
 !
     integer :: ndim
     real(kind=8) :: dlagrf(2), djeut(3)
-    aster_logical :: loptf, lpenaf, leltf, l_previous
+    aster_logical :: loptf, lpenaf, leltf, l_previous,lpenac
     real(kind=8) :: tau1(3), tau2(3)
     aster_logical :: lcont, ladhe
     real(kind=8) :: rese(3), nrese, lambda
@@ -66,7 +66,8 @@ subroutine mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
 !
     integer :: jpcf
     integer :: indco
-    integer :: indadhe
+    integer :: indadhe,indadhe2
+    integer :: ialgoc,ialgof
 !
 ! ----------------------------------------------------------------------
 !
@@ -75,6 +76,8 @@ subroutine mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
 !
     lcont = .false.
     ladhe = .false.
+    lpenac = .false.
+    lpenaf = .false.
     nrese = 0.d0
     rese(1) = 0.d0
     rese(2) = 0.d0
@@ -83,12 +86,22 @@ subroutine mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
 ! --- RECUPERATION DES STATUTS
 !
     call jevech('PCONFR', 'L', jpcf)
+    ialgoc = nint(zr(jpcf-1+15))
+    ialgof = nint(zr(jpcf-1+18))
     if (l_previous) then 
         indco = nint(zr(jpcf-1+27))
         indadhe = nint(zr(jpcf-1+44))
+        indadhe2 = nint(zr(jpcf-1+47))
     else 
-        indco = nint(zr(jpcf-1+12))   
+        indco = nint(zr(jpcf-1+12))
+        indadhe2 = nint(zr(jpcf-1+47))   
     endif
+    
+    lpenac = (ialgoc.eq.3) .or. &
+              nint(zr(jpcf-1+45)) .eq. 4
+              
+    lpenaf = (ialgof.eq.3) .or. &
+             nint(zr(jpcf-1+46)) .eq. 4
 !
 ! --- STATUT DU CONTACT
 !
@@ -117,6 +130,9 @@ subroutine mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
         call mmtrpr(ndim, lpenaf, djeut, dlagrf, coefaf,&
                     tau1, tau2, ladhe, rese, nrese)
         if (indadhe .eq. 1 .and. l_previous) ladhe = .true. 
+! On est en penalisatio  ou en algo_cont=penalisation, algo_frot=standard/penalisation
+        if (indadhe2 .eq. 1 ) ladhe = .true. 
+
     endif
 !
 !

@@ -40,12 +40,14 @@ implicit none
 #include "asterfort/nmcmat.h"
 #include "asterfort/nmimck.h"
 #include "asterfort/nmmatr.h"
+#include "asterfort/echmat.h"
 #include "asterfort/nmrenu.h"
 #include "asterfort/nmrinc.h"
 #include "asterfort/nmtime.h"
 #include "asterfort/nmxmat.h"
 #include "asterfort/preres.h"
 #include "asterfort/mtdscr.h"
+#include "asterfort/cfdisl.h"
 #include "asterfort/romAlgoNLCorrEFMatrixModify.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
@@ -68,6 +70,8 @@ implicit none
     type(NL_DS_Contact), intent(inout) :: ds_contact
     character(len=19) :: maprec, matass
     integer :: faccvg, ldccvg
+    real(kind=8) ::  minmat, maxmat,exponent_val
+    real(kind=8) ::  cpt_fin, cpt_init
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -129,6 +133,7 @@ implicit none
     character(len=6) :: list_matr_type(20)
     character(len=16) :: list_calc_opti(20), list_asse_opti(20)
     aster_logical :: list_l_asse(20), list_l_calc(20)
+    aster_logical :: l_contact_adapt,l_cont_cont
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -254,7 +259,36 @@ implicit none
         call nmimck(ds_print, 'MATR_ASSE', metpre, .true._1)
     else
         call nmimck(ds_print, 'MATR_ASSE', ' '   , .false._1)
+    endif 
+    l_cont_cont         = isfonc(fonact,'CONT_CONTINU')
+    if (l_cont_cont) then
+    !   -- Avant la factorisation et pour le cas ou il y a du contact continu avec adaptation de coefficient
+    !   -- On cherche le coefficient optimal pour eviter une possible singularite de matrice
+    !   -- La valeur est estimee une seule fois a la premiere prediction du premier pas de temps pour l'etape de calcul
+    !   -- Cette valeur estimee est passee directement a mmchml_c sans passer par mmalgo car 
+    !   -- a la premiere iteration on ne passe pas par mmalgo
+        l_contact_adapt = cfdisl(ds_contact%sdcont_defi,'EXIS_ADAP')
+        if ((nint(ds_contact%update_init_coefficient) .eq. 0) .and. l_contact_adapt) then 
+            call echmat(matass, .false._1, minmat, maxmat) 
+            if (abs(log(minmat)) .ne. 0.0) then 
+            
+                if (abs(log(maxmat))/abs(log(minmat)) .lt. 4.0) then 
+                        ds_contact%estimated_coefficient = 10**(abs(log(maxmat))/3.0)
+                    ds_contact%update_init_coefficient = 1.0
+                else
+                    exponent_val = min(abs(log(minmat)),abs(log(maxmat)))/10
+                    ds_contact%estimated_coefficient = 10**(exponent_val)*ds_contact%arete_min
+                    ds_contact%update_init_coefficient = 1.0
+                endif
+            else 
+               ds_contact%estimated_coefficient = 1.d14*ds_contact%arete_min
+                    ds_contact%update_init_coefficient = 1.0
+            endif
+            write (6,*) "min,max,coef estime", minmat,maxmat,ds_contact%estimated_coefficient
+        endif
     endif
+!
+
 !
 ! --- FACTORISATION DE LA MATRICE ASSEMBLEE GLOBALE
 !
