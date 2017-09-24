@@ -48,6 +48,8 @@ implicit none
 #include "asterfort/preres.h"
 #include "asterfort/mtdscr.h"
 #include "asterfort/cfdisl.h"
+#include "asterfort/sdmpic.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/romAlgoNLCorrEFMatrixModify.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
@@ -134,6 +136,7 @@ implicit none
     character(len=16) :: list_calc_opti(20), list_asse_opti(20)
     aster_logical :: list_l_asse(20), list_l_calc(20)
     aster_logical :: l_contact_adapt,l_cont_cont
+    character(len=8) ::  kmpic1
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -269,6 +272,10 @@ implicit none
     !   -- a la premiere iteration on ne passe pas par mmalgo
         l_contact_adapt = cfdisl(ds_contact%sdcont_defi,'EXIS_ADAP')
         if ((nint(ds_contact%update_init_coefficient) .eq. 0) .and. l_contact_adapt) then 
+            call dismoi('MPI_COMPLET', matass, 'MATR_ASSE', repk=kmpic1)
+            if (kmpic1 .eq. 'NON') then 
+                call sdmpic('MATR_ASSE', matass)
+            endif
             call echmat(matass, .false._1, minmat, maxmat) 
             if (abs(log(minmat)) .ne. 0.0) then 
             

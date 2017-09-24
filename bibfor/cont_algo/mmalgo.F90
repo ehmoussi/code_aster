@@ -112,8 +112,8 @@ implicit none
     integer :: i_reso_frot=0
 !    real(kind=8) :: coef_bussetta=0.0, dist_max, coef_tmp
     real(kind=8) ::  coef_tmp,laug_frot_norm
-    real(kind=8) ::  racine,racine1,racine2,racinesup
-    real(kind=8) ::  a,b,c,discriminant
+!    real(kind=8) ::  racine,racine1,racine2,racinesup
+!    real(kind=8) ::  a,b,c,discriminant
     
 
 
@@ -425,33 +425,46 @@ implicit none
        endif
        
        ! cas ALGO_CONT=PENALISATION, ALGO_FROT=PENALISATION
-!        if ( indi_cont_curr .eq. 1 .and. l_pena_frot .and. l_pena_cont) then       
+!        if ( indi_cont_curr .eq. 1 .and. l_pena_frot .and. l_pena_cont) then   
+!           if (dist_cont_curr .gt. dist_max .and. indi_frot_curr .eq. 0.&
+!                .and. (norm2(dist_frot_curr) .lt. 1.d-6*dist_max)) then 
+!               v_sdcont_cychis(60*(i_cont_poin-1)+5)  = 2
+
+!cas 1 : Forte interpenetrations : statut = adherent + recherche du coef_frot_curr optimale
+!        Statut doit etre adherent :
+!        (Lamba+r*dt).(Lambda+r*dt) < 1
+!         On aboutit a une equation du 2nd degre : 
+!         Lambda.Lambda+2r*Lambda.dt+r2*dt.dt < 1
+!         Discriminant = (2Lambda.dt)**2 - 4(dt.dt)(Lambda*Lambda)
+!         Si Discriminant < 0 Alors c'est le pire cas  qui puisse arriver
+!         On ne fait rien. On laisse l'algorithme de Newton se débrouiller.
+!         Si Discriminant > 0  Alors
+!         Pour que l'inequation soit verifiee alors il faut prendre une valeur 
+!         legerement inferieure a la racine superieure. coef_frot_curr peut devenir negatif
+!         Dans ce dernier cas, cela veut dire qu'on a calculer un glissement dans une mauvaise
+!         direction tangentielle : coef_frot_curr*dist_frot_curr
+!                a = proscal(3,dist_frot_curr,dist_frot_curr)
+!                b = 2*proscal(3,pres_frot_curr,dist_frot_curr)
+!                c = proscal(3,pres_frot_curr,pres_frot_curr)
+!                discriminant = b**2 -4.0*a*c
+!                if (discriminant .gt. 0.0d0) then
+!                    racine1 = (-b - sqrt(discriminant))/(2*a)
+!                    racine2 = (-b + sqrt(discriminant))/(2*a)
+!                    racinesup =racine2 
+!                    if (racine1 .gt. racine2) racinesup = racine1 
+!                else
+!                    racinesup = ds_contact%estimated_coefficient**0.2
+!                endif               
                 
-!!cas 1 : Forte interpenetrations : statut = adherent + recherche du coef_frot_curr optimale
-!!        Statut doit etre adherent :
-!!        (Lamba+r*dt).(Lambda+r*dt) < 1
-!!         On aboutit a une equation du 2nd degre : 
-!!         Lambda.Lambda+2r*Lambda.dt+r2*dt.dt < 1
-!!         Discriminant = (2Lambda.dt)**2 - 4(dt.dt)(Lambda*Lambda)
-!!         Si Discriminant < 0 Alors c'est le pire cas  qui puisse arriver
-!!         On ne fait rien. On laisse l'algorithme de Newton se débrouiller.
-!!         Si Discriminant > 0  Alors
-!!         Pour que l'inequation soit verifiee alors il faut prendre une valeur 
-!!         legerement inferieure a la racine superieure. coef_frot_curr peut devenir negatif
-!!         Dans ce dernier cas, cela veut dire qu'on a calculer un glissement dans une mauvaise
-!!         direction tangentielle : coef_frot_curr*dist_frot_curr
-!!            a = proscal(3,dist_frot_curr,dist_frot_curr)
-!!            b = 2*proscal(3,pres_frot_curr,dist_frot_curr)
-!!            c = proscal(3,pres_frot_curr,pres_frot_curr)
-!!            discriminant = b**2 -4.0*a*c
-!!            if (discriminant .gt. 0.0d0) then
-!!                racine1 = (-b - sqrt(discriminant))/(2*a)
-!!                racine2 = (-b + sqrt(discriminant))/(2*a)
-!!                racinesup =racine2 
-!!                if (racine1 .gt. racine2) racinesup = racine1 
-!!            else
-!!                racinesup = ds_contact%estimated_coefficient**0.2
-!!            endif
+!                if (racinesup .gt. 0.0) then 
+!                    coef_frot_curr = 0.99*racinesup
+!                else
+!                    coef_frot_curr = coef_frot_curr*norm2(dist_frot_curr) / dist_max 
+!                endif
+!                if (i_cont_poin .eq. 1) &
+!                   write (6,*) "coef_frott gliss",coef_frot_curr, i_cont_poin  
+!            endif    
+                
                 
 !            if (indi_frot_curr .eq. 1 .and. norm2(dist_frot_curr) .gt. 1.d-6*dist_max) then
 !               v_sdcont_cychis(60*(i_cont_poin-1)+5)  = 1
