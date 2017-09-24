@@ -277,6 +277,7 @@ implicit none
                 call sdmpic('MATR_ASSE', matass)
             endif
             call echmat(matass, .false._1, minmat, maxmat) 
+            ds_contact%max_coefficient = maxmat
             if (abs(log(minmat)) .ne. 0.0) then 
             
                 if (abs(log(maxmat))/abs(log(minmat)) .lt. 4.0) then 

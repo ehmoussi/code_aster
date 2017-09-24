@@ -411,7 +411,8 @@ implicit none
                         ! On approche de la fin des iterations de Newton mais penetration pas satisfait
                         ! Le calcul du coefficient n'est pas satisfaisant on l'augmente
                         if (ds_contact%continue_pene .eq. 1.) coef_bussetta = coef_bussetta*10
-                        
+                        if (coef_bussetta .gt. ds_contact%max_coefficient)  &
+                            coef_bussetta =ds_contact%max_coefficient*0.1
                         v_sdcont_cychis(60*(i_cont_poin-1)+2) = coef_bussetta
                     endif
             endif

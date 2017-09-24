@@ -308,6 +308,7 @@ implicit none
         integer           :: nb_cont_pair
 ! ----- Automatic update of penalised coefficient
         real(kind=8)      :: estimated_coefficient = 100.0
+        real(kind=8)      :: max_coefficient = 100.0
         real(kind=8)      :: update_init_coefficient = 0.0
         real(kind=8)      :: calculated_penetration  = 1.0
         real(kind=8)      :: continue_pene  = 0.0
