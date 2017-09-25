@@ -508,5 +508,11 @@ character(len=19), intent(in) :: cnsper
         call utmess('A', 'CONTACT3_98')
     endif
 !
+! - Alarm for COLLISION
+!
+    if (nint(ds_contact%critere_penetration) .eq. 1) then
+        call utmess('A', 'CONTACT3_99', nr=2,valr=[ds_contact%arete_min,ds_contact%arete_max])
+    endif
+!
     call jedema()
 end subroutine

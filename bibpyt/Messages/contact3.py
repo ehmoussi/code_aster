@@ -211,5 +211,15 @@ Contact et détection de collision.
        - changer la valeur de SUBD_INST
 """),
 
+    99 : _(u"""
+    DEFI_CONTACT/ALGO_CONT=PENALISATION/ADAPTATION=PENE_MAXI.
+    Le critère de pénétration PENE_MAXI semble lâche.  Pour info : 
+        - La plus petite arete de la zone maître est  %(r1).2e.
+        - La plus grande arete de la zone maître est  %(r2).2e.
+    -> Risque & Conseil :
+       Vous risquez d'avoir des résultats inattendus. Vérifiez bien le niveau d'interpénétration en post-traitement. 
+       S'il y a trop d'interpénétrations, il faudrait relancer le calcul avec PENE_MAXI <= %(r1).2e.
+"""),
+
 
 }
