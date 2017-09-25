@@ -31,7 +31,7 @@ interface
                   vale_pene)
 
         use NonLin_Datastructure_type
-        type(NL_DS_Contact), intent(in) :: ds_contact
+        type(NL_DS_Contact), intent(inout) :: ds_contact
         aster_logical, intent(in) :: l_loop_cont
         aster_logical, intent(in) :: l_frot_zone
         aster_logical, intent(in) :: l_glis_init

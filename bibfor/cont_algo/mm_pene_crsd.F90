@@ -64,7 +64,8 @@ implicit none
 ! - Creating penetration management objects
 !
 !   p_sdcont_pene_zone : 1 --> store the computed penetration (=0. if standard methods)
-!   p_sdcont_pene_zone : 2 --> store the current zone for print in convergence table (=0 if standard)
+!   p_sdcont_pene_zone : 2 --> store the current zone for print in 
+!   convergence table (=0 if standard)
 !   see mmopti for initialization
     call wkvect(sdcont_pene, 'V V R', nb_cont_poin, vr = p_sdcont_pene)
 !

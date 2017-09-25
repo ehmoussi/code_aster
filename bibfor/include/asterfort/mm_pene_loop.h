@@ -21,12 +21,8 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine mm_pene_loop(mesh  , &
-                disp_curr, disp_cumu_inst, ds_contact)
+    subroutine mm_pene_loop(ds_contact)
         use NonLin_Datastructure_type
-        character(len=8), intent(in) :: mesh
-        character(len=19), intent(in) :: disp_curr
-        character(len=19), intent(in) :: disp_cumu_inst
         type(NL_DS_Contact), intent(inout) :: ds_contact
     end subroutine mm_pene_loop
 end interface

@@ -112,7 +112,7 @@ implicit none
     aster_logical :: l_glis_init, l_veri, l_exis_glis, loop_cont_conv, l_loop_cont
     aster_logical :: l_frot_zone, l_pena_frot, l_frot,l_pena_cont
     integer :: loop_geom_count, loop_fric_count, loop_cont_count
-    integer :: type_adap,coor_nume
+    integer :: type_adap
     character(len=24) :: sdcont_cychis, sdcont_cyccoe, sdcont_cyceta
     real(kind=8), pointer :: v_sdcont_cychis(:) => null()
     real(kind=8), pointer :: v_sdcont_cyccoe(:) => null()
@@ -121,8 +121,6 @@ implicit none
     real(kind=8), pointer :: v_sdcont_tabfin(:) => null()
     real(kind=8), pointer :: v_sdcont_jsupco(:) => null()
     real(kind=8), pointer :: v_sdcont_apjeu(:) => null()
-    character(len=24) :: sdcont_pene
-    real, pointer :: v_sdcont_pene(:) => null()
     real(kind=8)  :: vale_pene
     aster_logical :: l_coef_adap
 !
@@ -351,7 +349,7 @@ implicit none
 ! ------------- Evaluate friction status
 !
                 if (l_frot_zone) then
-                    call mmstaf(mesh, model_ndim, chdepd, coef_frot, l_pena_frot,&
+                    call mmstaf(mesh, model_ndim, chdepd, coef_frot, &
                           elem_slav_nume, elem_slav_type, elem_slav_nbno, elem_mast_nume, ksipc1,&
                                 ksipc2, ksipr1, ksipr2, lagr_fro1_node, lagr_fro2_node,&
                                 tau1, tau2, norm, pres_frot, gap_user_frot,&
@@ -363,9 +361,9 @@ implicit none
                 call mmalgo(ds_contact, l_loop_cont, l_frot_zone, &
                             l_glis_init, type_adap, i_zone, i_cont_poin, &
                             indi_cont_eval, indi_frot_eval, gap,  lagr_cont_poin,&
-                       gap_user_frot, pres_frot, v_sdcont_cychis, v_sdcont_cyccoe, v_sdcont_cyceta,&
-                        indi_cont_curr,indi_frot_curr, loop_cont_vali, loop_cont_conv,l_pena_frot,l_pena_cont,&
-                         vale_pene)
+                            gap_user_frot, pres_frot, v_sdcont_cychis, v_sdcont_cyccoe, &
+                            v_sdcont_cyceta,indi_cont_curr,indi_frot_curr, loop_cont_vali,&
+                            loop_cont_conv,l_pena_frot,l_pena_cont, vale_pene)
 !
  19             continue
 !

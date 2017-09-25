@@ -131,7 +131,8 @@ implicit none
         endif
         if (l_pena_cont) then 
             pene_maxi_user = cfdisr(sdcont_defi, 'PENE_MAXI')
-            ! Attention ce parametre est multiplie par la plus petite maille de la zone maitre courante
+            ! Attention ce parametre est multiplie par la plus petite maille de la zone maitre 
+            !courante
             ! dans mmalgo
             call SetResi(ds_conv   , type_ = 'RESI_PENE', user_para_ = pene_maxi_user,&
                          l_resi_test_ = .true._1)

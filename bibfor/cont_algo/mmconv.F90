@@ -135,7 +135,7 @@ implicit none
         if (lnewtc) then
         !   Cas de newton generalise pour le contact
         !   on remet a jour vpene a chaque iteration 
-            call mm_pene_loop(noma  , depplu, ddepla, ds_contact)
+            call mm_pene_loop(ds_contact)
             vpene = ds_contact%calculated_penetration
         else 
         !   Cas de point fixe pour le contact
@@ -144,7 +144,7 @@ implicit none
             if (loop_cont_dive) then 
                 vpene = 1.d-300
             else
-                call mm_pene_loop(noma  , depplu, ddepla, ds_contact)
+                call mm_pene_loop(ds_contact)
                 vpene = ds_contact%calculated_penetration
             endif
             

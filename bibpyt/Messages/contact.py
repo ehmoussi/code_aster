@@ -130,11 +130,11 @@ avec des mailles affectées d'une modélisation 3D.
 N'utilisez pas REAC_INCR=0 avec le frottement.
 """),
 
-    89 : _(u"""
-Contact méthode continue.
-On ne peut avoir des modélisations différentes entre contact et frottement (pénalisation ou lagrangien augmenté) différents sur la même zone.
-Il faut avoir la même option pour ALGO_CONT et ALGO_FROT.
-"""),
+    #89 : _(u"""
+#Contact méthode continue.
+#On ne peut avoir des modélisations différentes entre contact et frottement (pénalisation ou lagrangien augmenté) différents sur la même zone.
+#Il faut avoir la même option pour ALGO_CONT et ALGO_FROT.
+#"""),
 
     93 : _(u"""
 Contact méthode sans résolution.

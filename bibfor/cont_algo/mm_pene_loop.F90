@@ -16,8 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine mm_pene_loop(mesh,&
-                        disp_curr, disp_cumu_inst, ds_contact)
+subroutine mm_pene_loop(ds_contact)
 !
 use NonLin_Datastructure_type
 !
@@ -52,17 +51,12 @@ implicit none
 #include "asterfort/mminfl.h"
 #include "asterfort/mminfr.h"
 #include "asterfort/mminfm.h"
-#include "asterfort/mmstaf.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/mmfield_prep.h"
 #include "asterfort/mreacg.h"
 !
 ! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 !
-    character(len=8), intent(in) :: mesh
-    
-    character(len=19), intent(in) :: disp_curr
-    character(len=19), intent(in) :: disp_cumu_inst
     type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
@@ -86,30 +80,17 @@ implicit none
 !
     integer :: ztabf
     integer :: ifm, niv
-    integer :: jdecme, elem_slav_indx, elem_slav_nume, elem_mast_nume
-    integer :: indi_cont_curr, indi_cont_prev, indi_frot_prev, indi_frot_curr
+    integer :: jdecme, elem_slav_indx
+    integer :: indi_cont_curr
     integer :: i_zone, i_elem_slav, i_cont_poin, i_poin_elem
     integer :: model_ndim, nb_cont_zone, loop_cont_vali
-    integer :: elem_slav_nbno, nb_poin_elem, nb_elem_slav
-    integer :: indi_cont_eval, indi_frot_eval
-    integer :: indi_cont_init, indi_frot_init
-    real(kind=8) :: ksipr1, ksipr2, ksipc1, ksipc2
-    real(kind=8) :: norm(3), tau1(3), tau2(3)
-    real(kind=8) :: lagr_cont_node(9), lagr_fro1_node(9), lagr_fro2_node(9)
-    real(kind=8) :: elem_slav_coor(27)
-    real(kind=8) :: lagr_cont_poin
-    real(kind=8) :: gap,  gap_user
-    real(kind=8) :: pres_frot(3), gap_user_frot(3)
-    real(kind=8) :: coef_cont, coef_frot, loop_cont_vale
-    character(len=8) :: elem_slav_type
-    character(len=19) :: cnscon, cnsfr1, cnsfr2
-    character(len=19) :: oldgeo, newgeo
-    character(len=19) :: chdepd
+    integer ::  nb_poin_elem, nb_elem_slav
+    real(kind=8) :: gap
     real(kind=8) :: time_curr
     aster_logical :: l_glis
-    aster_logical :: l_glis_init, l_veri, l_exis_glis, loop_cont_conv, l_loop_cont
+    aster_logical :: l_veri, l_exis_glis, loop_cont_conv, l_loop_cont
     aster_logical :: l_frot_zone, l_pena_frot, l_frot,l_pena_cont
-    integer :: loop_geom_count, loop_fric_count, loop_cont_count
+    
     integer :: type_adap, continue_calcul
     character(len=24) :: sdcont_cychis, sdcont_cyccoe, sdcont_cyceta
     real(kind=8), pointer :: v_sdcont_cychis(:) => null()
@@ -121,7 +102,6 @@ implicit none
     real(kind=8), pointer :: v_sdcont_apjeu(:) => null()
     character(len=24) :: sdcont_pene
     real(kind=8), pointer :: v_sdcont_pene(:) => null()
-    aster_logical :: l_coef_adap
     real(kind=8) ::  dist_max,vale_pene
 !
 ! --------------------------------------------------------------------------------------------------
@@ -218,7 +198,7 @@ implicit none
 ! ------------- Get informations from cychis
 !
                 gap            = v_sdcont_apjeu(i_cont_poin)
-                indi_cont_curr = v_sdcont_tabfin(ztabf*(i_cont_poin-1)+23)
+                indi_cont_curr = nint(v_sdcont_tabfin(ztabf*(i_cont_poin-1)+23))
 !
 ! Information for convergence : PENE_MAXI
                     dist_max      = vale_pene*ds_contact%arete_min
@@ -226,10 +206,13 @@ implicit none
                         v_sdcont_pene((i_cont_poin-1)+1)  = abs(gap)
                         ! On cherche le max des penetrations
                         if (i_cont_poin .gt. 1 ) then 
-                            if (v_sdcont_pene((i_cont_poin-1)+1) .gt. v_sdcont_pene((i_cont_poin-1)+1-1)) then 
-                                ds_contact%calculated_penetration = v_sdcont_pene((i_cont_poin-1)+1)
+                            if (v_sdcont_pene((i_cont_poin-1)+1) .gt. &
+                                v_sdcont_pene((i_cont_poin-1)+1-1)) then 
+                                ds_contact%calculated_penetration =&
+                                        v_sdcont_pene((i_cont_poin-1)+1)
                             else
-                                ds_contact%calculated_penetration = v_sdcont_pene((i_cont_poin-1)+1-1)
+                                ds_contact%calculated_penetration =&
+                                        v_sdcont_pene((i_cont_poin-1)+1-1)
                             endif
                         else
                             ds_contact%calculated_penetration = v_sdcont_pene((i_cont_poin-1)+1)

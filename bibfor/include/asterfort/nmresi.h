@@ -27,7 +27,7 @@ interface
         use Rom_Datastructure_type
         character(len=8) :: noma
         character(len=24) :: numedd
-        type(NL_DS_Contact), intent(in) :: ds_contact
+        type(NL_DS_Contact), intent(inout) :: ds_contact
         type(NL_DS_Conv), intent(inout) :: ds_conv
         character(len=24) :: mate
         character(len=19) :: sdnume

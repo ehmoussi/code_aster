@@ -56,7 +56,7 @@ implicit none
 !
     character(len=8) :: noma
     character(len=24) :: numedd
-    type(NL_DS_Contact), intent(in) :: ds_contact
+    type(NL_DS_Contact), intent(inout) :: ds_contact
     type(NL_DS_Conv), intent(inout) :: ds_conv
     type(NL_DS_Print), intent(inout) :: ds_print
     character(len=24) :: mate
@@ -356,7 +356,7 @@ implicit none
     if (l_cont_cont .or. l_cont_lac) then
         call mmconv(noma , ds_contact, valinc, solalg, vfrot,&
                     nfrot, vgeom     , ngeom, vpene)
-        if (ds_contact%continue_pene .eq. 1) ds_conv%l_stop_pene = .false._1
+        if (nint(ds_contact%continue_pene) .eq. 1) ds_conv%l_stop_pene = .false._1
     endif
 !
 ! - Save informations about residuals into convergence datastructure

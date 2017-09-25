@@ -85,7 +85,7 @@ implicit none
     integer :: ztabf
     character(len=24) :: sdcont_tabfin
     real(kind=8), pointer :: v_sdcont_tabfin(:) => null()
-    integer  ::  elem_mast_nume,elem_mast_nbno,coor_nume
+    integer  ::  elem_mast_nume,elem_mast_nbno
     character(len=8) :: elem_mast_type
     character(len=19) :: oldgeo
     real(kind=8) :: elem_mast_coor(27),lenght_master_elem,lenght_master_elem_init,milieu(3)
@@ -246,7 +246,8 @@ implicit none
                 ! Si longueur non nulle pour le premier point alors on a trouve la valeur initiale
                 ! de segment non nulle
                 ! Sinon on passe au point_elem suivant
-                if (nint(lenght_master_elem_init) .eq. -1) lenght_master_elem_init = lenght_master_elem
+                if (nint(lenght_master_elem_init) .eq. -1) &
+                    lenght_master_elem_init = lenght_master_elem
                 if ( (lenght_master_elem_init .le. 0.0d0 )) then 
                     lenght_master_elem_init = -1
                 elseif (i_poin_elem .ge. 2 .and. nint(lenght_master_elem_init) .ne. -1) then 
