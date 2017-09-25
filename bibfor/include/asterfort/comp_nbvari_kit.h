@@ -15,16 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine comp_nbvari_kit(kit_comp  , defo_comp   , type_model2, nb_vari_rela ,&
-                               l_kit_meta, l_kit_thm   , l_kit_ddi  , l_kit_cg     ,&
-                               nb_vari   , nb_vari_comp, nume_comp  , l_meca_mfront)
+    subroutine comp_nbvari_kit(kit_comp  , defo_comp   , nb_vari_rela,&
+                               l_kit_meta, l_kit_thm   , l_kit_ddi   , l_kit_cg     ,&
+                               nb_vari   , nb_vari_comp, nume_comp   , l_meca_mfront)
         character(len=16), intent(in) :: kit_comp(4)
         character(len=16), intent(in) :: defo_comp
-        character(len=16), intent(in) :: type_model2
         integer, intent(in) :: nb_vari_rela
         aster_logical, intent(in) :: l_kit_meta
         aster_logical, intent(in) :: l_kit_thm

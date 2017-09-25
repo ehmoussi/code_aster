@@ -295,6 +295,25 @@ implicit none
         call calcExternalStateVariable5(fami, kpg, ksp, imate)
     endif
 !
+! - Prepare index of behaviour law
+!
+    if (typmod(2) .eq. 'GDVARINO') then
+        numlc = numlc + 3000
+    endif
+    if (typmod(2) .eq. 'GRADSIGM') then
+        numlc = numlc + 4000
+    endif
+    if (typmod(2) .eq. 'GRADEPSI') then
+        numlc = numlc + 5000
+    endif
+    if (typmod(2) .eq. 'GRADVARI') then
+        numlc = numlc + 6000
+    endif
+    if (typmod(2) .eq. 'EJ_HYME' .or. typmod(2) .eq. 'ELEMDISC' .or.&
+        typmod(2) .eq. 'ELEMJOIN'.or. typmod(2) .eq. 'INTERFAC') then
+        numlc = numlc + 7000
+    endif
+!
 ! --------------------------------------------------------------------------------------------------
 !
 

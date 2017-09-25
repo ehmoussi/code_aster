@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1403
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine comp_meca_init(ds_compor)
 !
 use NonLin_Datastructure_type
@@ -24,10 +26,7 @@ implicit none
 !
 #include "asterc/getfac.h"
 !
-! aslint: disable=W1403
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Compor), intent(out) :: ds_compor
+type(NL_DS_Compor), intent(out) :: ds_compor
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -51,6 +50,5 @@ implicit none
     ds_compor%nb_vari         = 0
     ds_compor%nb_vari_comp(:) = 0
     ds_compor%nume_comp(:)    = 0
-    ds_compor%type_model2     = 'VIDE'
 !
 end subroutine
