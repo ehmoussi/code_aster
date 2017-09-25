@@ -73,10 +73,10 @@ integer, intent(out) :: retcom
 ! In  rgaz             : perfect gaz constant
 ! In  signe            : sign for saturation
 ! In  temp             : temperature at end of current time step
-! In  p2               : second pressure at end of current time step
+! In  p2               : gaz pressure at end of current time step
 ! In  dtemp            : increment of temperature
-! In  dp1              : increment of first pressure
-! In  dp2              : increment of second pressure
+! In  dp1              : increment of capillary pressure
+! In  dp2              : increment of gaz pressure
 ! In  pvp0             : initial pressure for steam
 ! Out pvpm             : pressure for steam at beginning of current time step
 ! Out pvp              : pressure for steam at end of current time step

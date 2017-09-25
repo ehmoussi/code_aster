@@ -17,16 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface
-    function dmvpdt(rho12, sat, phi, h11, h12,&
-                    pvp, temp, alp12)
-        real(kind=8) :: rho12
-        real(kind=8) :: sat
-        real(kind=8) :: phi
-        real(kind=8) :: h11
-        real(kind=8) :: h12
-        real(kind=8) :: pvp
-        real(kind=8), intent(in) :: temp
-        real(kind=8) :: alp12
+    function dmvpdt(rho12, alp12, h11, h12,&
+                    satur, phi  , &
+                    pvp  , temp)
+        real(kind=8), intent(in) :: rho12, alp12, h11, h12
+        real(kind=8), intent(in) :: satur, phi
+        real(kind=8), intent(in) :: pvp, temp
         real(kind=8) :: dmvpdt
     end function dmvpdt
 end interface

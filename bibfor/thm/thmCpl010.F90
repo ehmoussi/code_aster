@@ -408,7 +408,9 @@ real(kind=8), intent(in) :: temp
                                   dmadt(rho22, satur,phi,mamolg,dp21t,kh,alphfi)
             dsde(adcp12,addete) = zero
             dsde(adcp21,addete) = dsde(adcp21,addete) + &
-                                  dmasdt(rho12, rho21,satur,phi,pas,h11,h12,temp,alp21)
+                                  dmasdt(rho12, rho21, alp21, h11, h12, &
+                                         satur, phi  ,&
+                                         pas  , temp )
 ! ======================================================================
 ! --- CALCUL DE LA DERIVEE DE LA CHALEUR REDUITE Q' --------------------
 ! ======================================================================
