@@ -15,24 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface 
-    function dmasp1(rho11, rho12, rho21, sat, dsatp1,&
-                    phi, cs, pas, emmag, em)
-        real(kind=8) :: rho11
-        real(kind=8) :: rho12
-        real(kind=8) :: rho21
-        real(kind=8) :: sat
-        real(kind=8) :: dsatp1
-        real(kind=8) :: phi
-        real(kind=8) :: cs
-        real(kind=8) :: pas
-        aster_logical :: emmag
-        real(kind=8) :: em
-        real(kind=8) :: dmasp1_0
+    function dmasp1(rho11, rho12 , rho21,&
+                    satur, dsatur,&
+                    phi  , cs    , pas  , l_emmag, em)
+        real(kind=8), intent(in) :: rho11, rho12, rho21
+        real(kind=8), intent(in) :: satur, dsatur
+        real(kind=8), intent(in) :: phi, cs, pas, em
+        aster_logical, intent(in) :: l_emmag
+        real(kind=8) :: dmasp1
     end function dmasp1
 end interface 

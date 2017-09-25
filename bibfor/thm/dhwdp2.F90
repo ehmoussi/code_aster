@@ -15,18 +15,32 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-function dmasdt(rho12, rho21, sat, phi, pas,&
-                h11, h12, temp, alp21)
+!
+function dhwdp2(alpliq, temp, rho11)
+!
+use THM_type
+use THM_module
 !
 implicit none
 !
-real(kind=8), intent(in) :: temp
-! 
-real(kind=8) :: rho12, rho21, sat, phi, pas, h11, h12, alp21, dmasdt
-! --- CALCUL DE LA DERIVEE DE L APPORT MASSIQUE DE L AIR SEC PAR -------
-! --- RAPPORT A LA TEMPERATURE -----------------------------------------
-! ======================================================================
-    dmasdt = -rho21*(rho12*phi*(1.d0-sat)*(h12-h11)/pas/temp+3.d0*alp21)
-! ======================================================================
+real(kind=8), intent(in) :: temp, alpliq, rho11
+real(kind=8) :: dhwdp2
+!
+! --------------------------------------------------------------------------------------------------
+!
+! THM
+!
+! Derivative of enthalpy of liquid by gaz pressure
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  alpliq           : value of thermic dilatation for liquid
+! In  temp             : temperature
+! In  rho11            : volumic mass of liquid
+! Out dhwdp2           : derivative of enthalpy of liquid by gaz pressure
+!
+! --------------------------------------------------------------------------------------------------
+!
+    dhwdp2 = (1.d0-3.d0*alpliq*temp)/rho11
+!
 end function
