@@ -18,7 +18,6 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine ddi_kit_nvar(rela_flua     , rela_plas     , rela_cpla   , rela_coup   ,&
-                        type_model2   ,&
                         nb_vari_flua  , nb_vari_plas  , nb_vari_cpla, nb_vari_coup,&
                         nume_comp_plas, nume_comp_flua)
 !
@@ -29,17 +28,16 @@ implicit none
 #include "asterc/lcinfo.h"
 #include "asterc/lcdiscard.h"
 !
-    character(len=16), intent(in) :: rela_flua
-    character(len=16), intent(in) :: rela_plas
-    character(len=16), intent(in) :: rela_cpla
-    character(len=16), intent(in) :: rela_coup
-    character(len=16), intent(in) :: type_model2
-    integer, intent(out) :: nb_vari_flua
-    integer, intent(out) :: nb_vari_plas
-    integer, intent(out) :: nb_vari_cpla
-    integer, intent(out) :: nb_vari_coup
-    integer, intent(out) :: nume_comp_plas
-    integer, intent(out) :: nume_comp_flua
+character(len=16), intent(in) :: rela_flua
+character(len=16), intent(in) :: rela_plas
+character(len=16), intent(in) :: rela_cpla
+character(len=16), intent(in) :: rela_coup
+integer, intent(out) :: nb_vari_flua
+integer, intent(out) :: nb_vari_plas
+integer, intent(out) :: nb_vari_cpla
+integer, intent(out) :: nb_vari_coup
+integer, intent(out) :: nume_comp_plas
+integer, intent(out) :: nume_comp_flua
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,7 +51,6 @@ implicit none
 ! In  rela_plas        : relation for plasticity
 ! In  rela_cpla        : relation for plane stress (GLRC)
 ! In  rela_coup        : relation for coupling (GLRC)
-! In  type_model2      : type of modelization (TYPMOD2)
 ! Out nb_vari_flua     : number of internal variables for creeping
 ! Out nb_vari_plas     : number of internal variables for plasticity
 ! Out nb_vari_cpla     : number of internal variables for plane stress
@@ -64,8 +61,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=16) :: rela_py
-    character(len=16) :: comp_elem(2)
-    integer :: ibid
+    integer :: ibid, ibid2
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -79,17 +75,6 @@ implicit none
         call lccree(1, rela_flua, rela_py)
         call lcinfo(rela_py, nume_comp_flua, nb_vari_flua, ibid)
         call lcdiscard(rela_py)
-        if (type_model2 .eq. 'GRADEPSI') then
-            comp_elem(1) = rela_flua
-            comp_elem(2) = type_model2 
-            call lccree(2, comp_elem, rela_py)
-            call lcinfo(rela_py, nume_comp_flua, nb_vari_flua, ibid)
-            call lcdiscard(rela_py)
-        else
-            call lccree(1, rela_flua, rela_py)
-            call lcinfo(rela_py, nume_comp_flua, nb_vari_flua, ibid)
-            call lcdiscard(rela_py)
-        endif
     endif
     if (rela_plas .ne. ' ') then
         call lccree(1, rela_plas, rela_py)
@@ -98,12 +83,12 @@ implicit none
     endif
     if (rela_cpla .ne. ' ') then
         call lccree(1, rela_cpla, rela_py)
-        call lcinfo(rela_py, ibid, nb_vari_cpla, ibid)
+        call lcinfo(rela_py, ibid, nb_vari_cpla, ibid2)
         call lcdiscard(rela_py)
     endif
     if (rela_coup .ne. ' ') then
         call lccree(1, rela_coup, rela_py)
-        call lcinfo(rela_py, ibid, nb_vari_coup, ibid)
+        call lcinfo(rela_py, ibid, nb_vari_coup, ibid2)
         call lcdiscard(rela_py)
     endif
 !

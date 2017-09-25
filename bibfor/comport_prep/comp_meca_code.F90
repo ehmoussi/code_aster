@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine comp_meca_code(rela_comp_   , defo_comp_   , type_cpla_   , kit_comp_    ,&
-                          meca_comp_   , post_iter_   , l_implex_    , type_model2_ ,&
+                          meca_comp_   , post_iter_   , l_implex_    ,&
                           comp_code_py_, rela_code_py_, defo_code_py_, meta_code_py_,&
                           meca_code_py_)
 !
@@ -35,7 +35,6 @@ character(len=16), optional, intent(in) :: kit_comp_(4)
 character(len=16), optional, intent(in) :: meca_comp_
 character(len=16), optional, intent(in) :: post_iter_
 aster_logical, optional, intent(in) :: l_implex_
-character(len=16), optional, intent(in) :: type_model2_
 character(len=16), optional, intent(out) :: comp_code_py_
 character(len=16), optional, intent(out) :: rela_code_py_
 character(len=16), optional, intent(out) :: defo_code_py_
@@ -57,7 +56,6 @@ character(len=16), optional, intent(out) :: meca_code_py_
 ! In  meca_comp        : relation for mechanical part
 ! In  post_iter        : type of post_treatment
 ! In  l_implex         : .true. if IMPLEX method
-! In  type_model2      : type of modelization (TYPMOD2)
 ! Out comp_code_py     : composite coded comportment (coding in Python)
 ! Out rela_code_py     : coded comportment for RELATION (coding in Python)
 ! Out defo_code_py     : coded comportment for DEFORMATION (coding in Python)
@@ -71,7 +69,7 @@ character(len=16), optional, intent(out) :: meca_code_py_
     character(len=16) :: comp_elem(20), rela_meta
     character(len=16) :: meta_code_py, rela_code_py, defo_code_py, meca_code_py, comp_code_py
     aster_logical :: l_kit_meta, l_kit_thm, l_implex
-    character(len=16) :: post_iter, type_model2
+    character(len=16) :: post_iter
     character(len=16) :: rela_comp, defo_comp, kit_comp(4), type_cpla, meca_comp
 !
 ! --------------------------------------------------------------------------------------------------
@@ -103,10 +101,6 @@ character(len=16), optional, intent(out) :: meca_code_py_
     l_implex  = .false.
     if (present(l_implex_)) then
         l_implex = l_implex_
-    endif
-    type_model2 = 'VIDE'
-    if (present(type_model2_)) then
-        type_model2 = type_model2_
     endif
 !
     nb_comp_elem    = 0
@@ -150,11 +144,6 @@ character(len=16), optional, intent(out) :: meca_code_py_
         nb_comp_elem = nb_comp_elem + 1
         comp_elem(nb_comp_elem) = 'IMPLEX'
     endif
-!
-! - Modelization
-!
-    nb_comp_elem = nb_comp_elem + 1
-    comp_elem(nb_comp_elem) = type_model2
 !
 ! - Coding metallurgy comportment
 !

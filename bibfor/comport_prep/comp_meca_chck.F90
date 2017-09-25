@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine comp_meca_chck(model         , mesh          , full_elem_s, l_etat_init,&
                           ds_compor_prep,&
                           l_auto_elas   , l_auto_deborst, l_comp_erre)
@@ -46,16 +47,14 @@ implicit none
 #include "asterf_mpi.h"
 #endif
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: model
-    character(len=8), intent(in) :: mesh
-    character(len=19), intent(in) :: full_elem_s
-    aster_logical, intent(in) :: l_etat_init
-    type(NL_DS_ComporPrep), intent(inout) :: ds_compor_prep
-    aster_logical, intent(out) :: l_auto_elas
-    aster_logical, intent(out) :: l_auto_deborst
-    aster_logical, intent(out) :: l_comp_erre
+character(len=8), intent(in) :: model
+character(len=8), intent(in) :: mesh
+character(len=19), intent(in) :: full_elem_s
+aster_logical, intent(in) :: l_etat_init
+type(NL_DS_ComporPrep), intent(inout) :: ds_compor_prep
+aster_logical, intent(out) :: l_auto_elas
+aster_logical, intent(out) :: l_auto_deborst
+aster_logical, intent(out) :: l_comp_erre
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -80,7 +79,7 @@ implicit none
     character(len=24) :: list_elem_affe
     aster_logical :: l_affe_all
     integer :: nb_elem_affe
-    character(len=16) :: texte(2), type_model2
+    character(len=16) :: texte(2)
     character(len=16) :: defo_comp, rela_comp, rela_thmc, type_cpla
     character(len=16) :: rela_comp_py, defo_comp_py
     integer :: iret
@@ -175,8 +174,7 @@ implicit none
 !
         call nmdovd(model         , l_affe_all  , l_auto_deborst,&
                     list_elem_affe, nb_elem_affe, full_elem_s   ,&
-                    defo_comp     , defo_comp_py, type_model2)
-        ds_compor_prep%v_comp(i_comp)%type_model2 = type_model2
+                    defo_comp     , defo_comp_py)
 !
 ! ----- Check if COQUE_3D+GROT_GDEP is activated
 !

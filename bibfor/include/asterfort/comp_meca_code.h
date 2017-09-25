@@ -20,7 +20,7 @@
 !
 interface
     subroutine comp_meca_code(rela_comp_   , defo_comp_   , type_cpla_   , kit_comp_    ,&
-                              meca_comp_   , post_iter_   , l_implex_    , type_model2_ ,&
+                              meca_comp_   , post_iter_   , l_implex_    , &
                               comp_code_py_, rela_code_py_, defo_code_py_, meta_code_py_,&
                               meca_code_py_)
         character(len=16), optional, intent(in) :: rela_comp_
@@ -30,7 +30,6 @@ interface
         character(len=16), optional, intent(in) :: meca_comp_
         character(len=16), optional, intent(in) :: post_iter_
         aster_logical, optional, intent(in) :: l_implex_
-        character(len=16), optional, intent(in) :: type_model2_
         character(len=16), optional, intent(out) :: comp_code_py_
         character(len=16), optional, intent(out) :: rela_code_py_
         character(len=16), optional, intent(out) :: defo_code_py_

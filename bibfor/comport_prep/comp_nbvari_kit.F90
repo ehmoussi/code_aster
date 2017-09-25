@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine comp_nbvari_kit(kit_comp  , defo_comp   , type_model2, nb_vari_rela ,&
-                           l_kit_meta, l_kit_thm   , l_kit_ddi  , l_kit_cg     ,&
-                           nb_vari   , nb_vari_comp, nume_comp  , l_meca_mfront)
+subroutine comp_nbvari_kit(kit_comp  , defo_comp   , nb_vari_rela,&
+                           l_kit_meta, l_kit_thm   , l_kit_ddi   , l_kit_cg     ,&
+                           nb_vari   , nb_vari_comp, nume_comp   , l_meca_mfront)
 !
 implicit none
 !
@@ -33,7 +33,6 @@ implicit none
 !
 character(len=16), intent(in) :: kit_comp(4)
 character(len=16), intent(in) :: defo_comp
-character(len=16), intent(in) :: type_model2
 integer, intent(in) :: nb_vari_rela
 aster_logical, intent(in) :: l_kit_meta
 aster_logical, intent(in) :: l_kit_thm
@@ -54,7 +53,6 @@ aster_logical, intent(out) :: l_meca_mfront
 !
 ! In  kit_comp         : KIT comportment
 ! In  defo_comp        : DEFORMATION comportment
-! In  type_model2      : type of modelization (TYPMOD2)
 ! In  nb_vari_rela     : number of internal variables for RELATION
 ! In  l_kit_meta       : .true. if kit metallurgy
 ! In  l_kit_thm        : .true. if kit THM
@@ -130,7 +128,6 @@ aster_logical, intent(out) :: l_meca_mfront
         rela_cpla = kit_comp(3)
         rela_coup = kit_comp(4)
         call ddi_kit_nvar(rela_flua     , rela_plas   , rela_cpla   , rela_coup   ,&
-                          type_model2   ,&
                           nb_vari_flua  , nb_vari_plas, nb_vari_cpla, nb_vari_coup,&
                           nume_comp_plas, nume_comp_flua)
         nb_vari_comp(1) = nb_vari_flua

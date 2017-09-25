@@ -59,7 +59,7 @@ character(len=8), intent(in), optional :: model
     character(len=16) :: keywordfact
     integer :: i_comp, nb_comp, model_dim, iret
     character(len=16) :: defo_comp, rela_comp, type_cpla, mult_comp, type_comp
-    character(len=16) :: post_iter, model_mfront, type_model2
+    character(len=16) :: post_iter, model_mfront
     character(len=16) :: kit_comp(4)
     character(len=255) :: libr_name, subr_name
     integer :: unit_comp, nb_vari_umat
@@ -97,7 +97,6 @@ character(len=8), intent(in), optional :: model
         libr_name      = ' '
         post_iter      = ' '
         kit_comp(1:4)  = 'VIDE'
-        type_model2    = 'VIDE'
 !
 ! ----- Get RELATION from command file
 !
@@ -154,7 +153,6 @@ character(len=8), intent(in), optional :: model
         ds_compor_prep%v_comp(i_comp)%kit_comp(:)    = kit_comp(:)
         ds_compor_prep%v_comp(i_comp)%mult_comp      = mult_comp
         ds_compor_prep%v_comp(i_comp)%post_iter      = post_iter
-        ds_compor_prep%v_comp(i_comp)%type_model2    = type_model2
     end do
 !
 end subroutine

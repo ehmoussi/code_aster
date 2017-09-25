@@ -15,16 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 module NonLin_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-!
-! person_in_charge: mickael.abbas at edf.fr
-!
-
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -413,7 +410,6 @@ implicit none
         integer           :: nb_vari
         integer           :: nb_vari_comp(4)
         integer           :: nume_comp(4)
-        character(len=16) :: type_model2
     end type NL_DS_Compor
 !
 ! - Type: for preparation of comportment
