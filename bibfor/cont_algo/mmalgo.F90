@@ -45,6 +45,8 @@ implicit none
     aster_logical, intent(in) :: l_loop_cont
     aster_logical, intent(in) :: l_frot_zone
     aster_logical, intent(in) :: l_glis_init
+    aster_logical, intent(in) :: l_pena_frot
+    aster_logical, intent(in) :: l_pena_cont
     integer, intent(in) :: type_adap
     integer, intent(in) :: i_cont_poin
     integer, intent(in) :: zone_index
@@ -107,11 +109,10 @@ implicit none
     real(kind=8) :: coef_opt=0.0,pres_cont(2)=0.0, dist_cont(2)=0.0
     real(kind=8) :: coef_bussetta=0.0, dist_max
     real(kind=8), intent(in) :: vale_pene
-    aster_logical :: l_pena_frot,l_pena_cont
     integer      ::  i_algo_cont=0
     integer :: i_reso_frot=0
 !    real(kind=8) :: coef_bussetta=0.0, dist_max, coef_tmp
-    real(kind=8) ::  coef_tmp,laug_frot_norm
+    real(kind=8) ::  coef_tmp
 !    real(kind=8) ::  racine,racine1,racine2,racinesup
 !    real(kind=8) ::  a,b,c,discriminant
     
@@ -414,25 +415,25 @@ implicit none
             ! Traitement de fortes interpenetrations         
             if (indi_cont_curr .eq. 1 .and. l_pena_cont) then            
                     
-                    if (dist_cont_curr .gt. dist_max) then 
-                        coef_tmp =coef_tmp*(abs(dist_cont_curr)/dist_max)*100
-                        call bussetta_algorithm(dist_cont_curr, dist_cont_prev,dist_max, coef_bussetta) 
-                        if (coef_bussetta .lt. coef_tmp) coef_bussetta = coef_tmp
-                        ! On approche de la fin des iterations de Newton mais penetration pas satisfait
-                        ! Le calcul du coefficient n'est pas satisfaisant on l'augmente
-                        if (ds_contact%continue_pene .eq. 1.) coef_bussetta = coef_bussetta*10
-                        if (coef_bussetta .gt. ds_contact%max_coefficient)  then
-                            coef_bussetta = coef_bussetta *0.1
-                        ! critere trop severe
-                            ds_contact%critere_penetration = 2.0
-                        endif
-                        v_sdcont_cychis(60*(i_cont_poin-1)+2) = coef_bussetta
+                if (dist_cont_curr .gt. dist_max) then 
+                    coef_tmp =coef_tmp*(abs(dist_cont_curr)/dist_max)*100
+                    call bussetta_algorithm(dist_cont_curr, dist_cont_prev,dist_max, coef_bussetta)
+                    if (coef_bussetta .lt. coef_tmp) coef_bussetta = coef_tmp
+                    ! On approche de la fin des iterations de Newton mais penetration pas satisfait
+                    ! Le calcul du coefficient n'est pas satisfaisant on l'augmente
+                    if (nint(ds_contact%continue_pene) .eq. 1.) coef_bussetta = coef_bussetta*10
+                    if (coef_bussetta .gt. ds_contact%max_coefficient)  then
+                        coef_bussetta = coef_bussetta *0.1
+                    ! critere trop severe
+                        ds_contact%critere_penetration = 2.0
                     endif
+                    v_sdcont_cychis(60*(i_cont_poin-1)+2) = coef_bussetta
+                endif
             endif
        ! cas ALGO_CONT=PENALISATION, ALGO_FROT=STANDARD
        ! On fixe un statut adherent en cas de fortes interpenetration
        if ((.not. l_pena_frot .and. l_pena_cont ).and. indi_cont_curr .eq. 1) then 
-           if (dist_cont_curr .gt. dist_max .and. indi_frot_curr .eq. 0.&
+           if ((dist_cont_curr .gt. dist_max) .and. (indi_frot_curr .eq. 0.)&
                 .and. (norm2(dist_frot_curr) .lt. 0.01*dist_max)) then 
                v_sdcont_cychis(60*(i_cont_poin-1)+5)  = 2
            endif

@@ -158,8 +158,8 @@ implicit none
             zr(vale_indx-1+14) = v_sdcont_jsupco(i_cont_poin)
             zr(vale_indx-1+15) = i_algo_cont
             zr(vale_indx-1+16) = v_sdcont_cychis(60*(i_cont_poin-1)+2)
-                if (i_cont_poin .eq. 1) & 
-                    write (6,*) "coef mmchml", zr(vale_indx-1+16)
+!                if (i_cont_poin .eq. 1) & 
+!                    write (6,*) "coef mmchml", zr(vale_indx-1+16)
 !            A la premiere iteration on ne passe pas par mmalgo
 !            On prend directement la valeur de coef*_cont venant de nmprma
             if (nint(ds_contact%update_init_coefficient) .eq. 1 .and. &
@@ -217,8 +217,8 @@ implicit none
             zr(vale_indx-1+46) = v_sdcont_cychis(60*(i_cont_poin-1)+52)
             !mode adaptatif : frottement penalise            
             zr(vale_indx-1+47) = v_sdcont_cychis(60*(i_cont_poin-1)+5)
-                if (i_cont_poin .eq. 1) & 
-                    write (6,*) "vale_adhe_impose mmchml", zr(vale_indx-1+47)
+!                if (i_cont_poin .eq. 1) & 
+!                    write (6,*) "vale_adhe_impose mmchml", zr(vale_indx-1+47)
         enddo
         nt_liel = nt_liel + nb_liel
     enddo

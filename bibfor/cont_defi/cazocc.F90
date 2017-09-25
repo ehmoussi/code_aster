@@ -67,7 +67,7 @@ implicit none
     real(kind=8) :: algo_cont, algo_frot
     real(kind=8) :: type_inte, cont_init, seuil_auto
     integer :: inte_order
-    integer :: isdefault=-3,nbret=-3,niv, ifm
+    integer :: nbret=-3,niv, ifm
     aster_logical :: l_inte_node, l_frot, l_node_excl, l_frot_excl, l_dire_excl_frot
     aster_logical :: l_gliss, l_newt_geom, l_newt_cont
     integer :: zcmcf, zexcl
@@ -167,7 +167,7 @@ implicit none
 
 
     call getvtx(keywf, 'ALGO_CONT', iocc=i_zone, scal=s_algo_cont)
-    write (6,*) "algo_cont",s_algo_cont,s_algo_frot
+!    write (6,*) "algo_cont",s_algo_cont,s_algo_frot
     if (s_algo_cont .eq. 'STANDARD') then
         call getvr8(keywf, 'COEF_CONT', iocc=i_zone, scal=coef_augm_cont)
         algo_cont = 1.d0
@@ -181,7 +181,7 @@ implicit none
         elseif (adaptation .eq. 'ADAPT_COEF' .or. adaptation .eq. 'TOUT' ) then 
             ! L'utilisateur peut ne pas renseigner pene_maxi
             call getvr8(keywf, 'PENE_MAXI', iocc=i_zone, scal=pene_maxi,nbret=nbret) 
-            write (6,*) "nbret=",nbret
+!            write (6,*) "nbret=",nbret
             if (nbret .le. 0) then 
                 pene_maxi = -1
                 call infniv(ifm, niv)
@@ -388,7 +388,7 @@ implicit none
         !                    PARACI = 1
         !                    SI PENALISATION CONTACT COEF_CONT ADAPTE SELON BUSSETTA
         !                    PARACI = 2
-        ! CONTACT PENALISE ACTIF  FROTTEMENT TRESCA OU NEWTON OU SANS : COEF_CONT ADAPTE SELON BUSSETTA
+        ! CONTACT PENALISE ACTIF FROTTEMENT TRESCA/NEWTON OU SANS : COEF_CONT ADAPTE SELON BUSSETTA
         !                    PARACI = 3
         ! CONTACT STANDARD ACTIF FROTTEMENT TRESCA ACTIF  : ON NE FAIT RIEN
         !                    PARACI = 0

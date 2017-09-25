@@ -73,7 +73,6 @@ implicit none
     character(len=19) :: maprec, matass
     integer :: faccvg, ldccvg
     real(kind=8) ::  minmat, maxmat,exponent_val
-    real(kind=8) ::  cpt_fin, cpt_init
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -265,9 +264,11 @@ implicit none
     endif 
     l_cont_cont         = isfonc(fonact,'CONT_CONTINU')
     if (l_cont_cont) then
-    !   -- Avant la factorisation et pour le cas ou il y a du contact continu avec adaptation de coefficient
+    !   -- Avant la factorisation et pour le cas ou il y a du contact continu avec adaptation de
+    !      coefficient
     !   -- On cherche le coefficient optimal pour eviter une possible singularite de matrice
-    !   -- La valeur est estimee une seule fois a la premiere prediction du premier pas de temps pour l'etape de calcul
+    !   -- La valeur est estimee une seule fois a la premiere prediction du premier pas de 
+    !      temps pour l'etape de calcul
     !   -- Cette valeur estimee est passee directement a mmchml_c sans passer par mmalgo car 
     !   -- a la premiere iteration on ne passe pas par mmalgo
         l_contact_adapt = cfdisl(ds_contact%sdcont_defi,'EXIS_ADAP')
@@ -292,7 +293,7 @@ implicit none
                ds_contact%estimated_coefficient = 1.d14*ds_contact%arete_min
                     ds_contact%update_init_coefficient = 1.0
             endif
-            write (6,*) "min,max,coef estime", minmat,maxmat,ds_contact%estimated_coefficient
+!            write (6,*) "min,max,coef estime", minmat,maxmat,ds_contact%estimated_coefficient
         endif
     endif
 !
