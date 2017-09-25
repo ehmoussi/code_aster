@@ -55,9 +55,9 @@ cata_msg = {
     Conseils :
     - Soit changer de mode adaptatif de pénalisation : DEFI_CONTACT/ALGO_CONT=PENALISATION/ADAPTATION=NON avec COEF_PENA_CONT <= %(r3).2e
     - Soit diminuer le pas de temps. 
-    - Soit décider de continuer le calcul en relançant votre calcul avec PENE_MAXI en fonction du maillage dans la zone de contact.  Pour info : 
-        - La plus petite arete de toutes les zones maîtres est  %(r2).2e.
-        - La plus grande arete de toutes les zones maîtres est  %(r4).2e.
+    - Soit décider de continuer le calcul en relançant votre calcul avec PENE_MAXI en fonction du maillage dans la zone de contact.  Pour information : 
+        - La plus petite arête de toutes les zones maîtres est  %(r2).2e.
+        - La plus grande arête de toutes les zones maîtres est  %(r4).2e.
     
 """),
 
@@ -66,9 +66,9 @@ cata_msg = {
     
     Conseils :
     - Soit changer de mode adaptatif de pénalisation : DEFI_CONTACT/ALGO_CONT=PENALISATION/ADAPTATION=NON avec COEF_PENA_CONT <= %(r3).2e
-    - Soit relancer votre calcul avec PENE_MAXI en fonction du maillage dans la zone de contact.  Pour info : 
-        - La plus petite arete de toutes les zones maîtres est  %(r2).2e.
-        - La plus grande arete de toutes les zones maîtres  %(r4).2e.
+    - Soit relancer votre calcul avec PENE_MAXI en fonction du maillage dans la zone de contact.  Pour information : 
+        - La plus petite arête de toutes les zones maîtres est  %(r2).2e.
+        - La plus grande arête de toutes les zones maîtres  %(r4).2e.
     
 """),
 
