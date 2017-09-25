@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -23,7 +23,7 @@ import types
 
 import code_aster
 from ..Cata import Commands, checkSyntax
-from ..Extensions import ALL_DS, Material
+from ..Extensions import Material, GeneralMaterialBehaviour
 
 
 def _byKeyword():
@@ -32,8 +32,11 @@ def _byKeyword():
     Returns:
         dict: Behaviour classes by keyword in DEFI_MATERIAU.
     """
+    import code_aster.Extensions as all_types
     objects = {}
-    for name, obj in ALL_DS.items():
+    for name, obj in all_types.__dict__.items():
+        if not isinstance(obj, type):
+            continue
         if not issubclass(obj, GeneralMaterialBehaviour):
             continue
         key = obj.create().getAsterName()
@@ -49,7 +52,7 @@ def DEFI_MATERIAU( **kwargs ):
     mater = Material.create()
     for fkwName, fkw in kwargs.iteritems():
         # only see factor keyword
-        if type( fkw ) is not dict:
+        if not isinstance(fkw, dict):
             continue
         klass = classByName.get(fkwName)
         if not klass:
