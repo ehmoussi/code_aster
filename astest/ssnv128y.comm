@@ -88,7 +88,7 @@ CHA1=DEFI_CONTACT(MODELE=MO,
                          #COEF_PENA_CONT=1.E14,#1.E+5,
                          COEF_PENA_FROT=1.E7,#1.E+1,
                          ADAPTATION = 'ADAPT_COEF',
-                         PENE_MAXI=1.E-2,
+                         #PENE_MAXI=1.E-4,
                  ),);
 CHA2=AFFE_CHAR_MECA(MODELE=MO,
                     DDL_IMPO=(_F(GROUP_NO = 'NENCA',  DX = 0., DY = 0., DZ=0.),

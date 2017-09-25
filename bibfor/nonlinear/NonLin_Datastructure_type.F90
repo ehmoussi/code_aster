@@ -311,6 +311,7 @@ implicit none
         real(kind=8)      :: max_coefficient = 100.0
         real(kind=8)      :: update_init_coefficient = 0.0
         real(kind=8)      :: calculated_penetration  = 1.0
+        real(kind=8)      :: critere_penetration  = 0.0
         real(kind=8)      :: continue_pene  = 0.0
         real(kind=8)      :: time_curr  = -1.0
 

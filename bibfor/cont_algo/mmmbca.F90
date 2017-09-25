@@ -217,7 +217,7 @@ implicit none
         l_frot_zone  = mminfl(ds_contact%sdcont_defi,'FROTTEMENT_ZONE', i_zone)
         l_pena_frot  = mminfl(ds_contact%sdcont_defi,'ALGO_FROT_PENA' , i_zone)
         l_pena_cont  = mminfl(ds_contact%sdcont_defi,'ALGO_CONT_PENA' , i_zone)
-        vale_pene  = mminfr(ds_contact%sdcont_defi,'PENE_MAXI' , i_zone)
+        vale_pene    = mminfr(ds_contact%sdcont_defi,'PENE_MAXI' , i_zone)
 !
 ! ----- No computation: no contact point
 !

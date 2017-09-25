@@ -308,6 +308,8 @@ implicit none
 ! - Stop Newton iterations
 !
     call nmleeb(sderro, 'NEWT', etnewt)
+    write (6,*) "etnewt",etnewt
+    
     if (etnewt .ne. 'CONT') then
         goto 330
     endif

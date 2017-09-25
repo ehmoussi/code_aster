@@ -49,17 +49,26 @@ cata_msg = {
 """),
 
     38 : _(u"""
-    DEFI_CONTACT/ALGO_CONT=PENALISATION/ADAPTATION=PENE_MAXI. On arrive pas à adapter le coefficient de pénalisation de sorte à satisfaire le critère de pénétration maximum. Le rapport entre la pénétration maximale calculée et  la plus petite arete 
-    dans la zone de contact maître est :  %(r1)f.  
+    DEFI_CONTACT/ALGO_CONT=PENALISATION/ADAPTATION=ADAPT_COEF ou TOUT. On n'arrive pas à adapter le coefficient de pénalisation de sorte à satisfaire le critère de pénétration maximum. Le rapport entre la pénétration maximale calculée et  la plus petite arête 
+    dans la zone de contact maître est :  %(r1).2e.  
     
     Conseils :
-    - Soit changer de mode adaptatif de pénalisation : DEFI_CONTACT/ALGO_CONT=PENALISATION/ADAPTATION=NON avec COEF_PENA_CONT <= %(r3)f
-    - Soit diminuer le pas de temps. Le nouveau pas de temps doit être <= %(r1)f fois le pas de temps courant. 
-    - Soit décider de continuer le calcul en relançant votre calcul avec PENE_MAXI proche de la valeur de la plus petite arete de maillage de la zone de contact. 
+    - Soit changer de mode adaptatif de pénalisation : DEFI_CONTACT/ALGO_CONT=PENALISATION/ADAPTATION=NON avec COEF_PENA_CONT <= %(r3).2e
+    - Soit diminuer le pas de temps. 
+    - Soit décider de continuer le calcul en relançant votre calcul avec PENE_MAXI en fonction du maillage dans la zone de contact.  Pour info : 
+        - La plus petite arete de toutes les zones maîtres est  %(r2).2e.
+        - La plus grande arete de toutes les zones maîtres est  %(r4).2e.
     
-    Pour info : 
-    - La plus petite arete de la zone maître est  %(r2)f.
-    - La plus grande arete de la zone maître est  %(r4)f.
+"""),
+
+    39 : _(u"""
+    DEFI_CONTACT/ALGO_CONT=PENALISATION/ADAPTATION=ADAPT_COEF ou TOUT. Il est possible que vous demandez un critère trop sévère pour la pénétration. La valeur de coefficient de pénalisation adaptée prend des valeurs inattendues.  
+    
+    Conseils :
+    - Soit changer de mode adaptatif de pénalisation : DEFI_CONTACT/ALGO_CONT=PENALISATION/ADAPTATION=NON avec COEF_PENA_CONT <= %(r3).2e
+    - Soit relancer votre calcul avec PENE_MAXI en fonction du maillage dans la zone de contact.  Pour info : 
+        - La plus petite arete de toutes les zones maîtres est  %(r2).2e.
+        - La plus grande arete de toutes les zones maîtres  %(r4).2e.
     
 """),
 

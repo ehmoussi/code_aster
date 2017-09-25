@@ -383,13 +383,13 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
                                                            COEF_PENA_CONT  =SIMP(statut='o',typ='R'),
                                                            #COEF_PENA_CONT  =SIMP(statut='f',typ='R',defaut=100.0E+0),
                                                            #ADAPTATION      =SIMP(statut='f',typ='TXM',defaut="ADAPT_COEF", into=("ADAPT_COEF","CYCLAGE","TOUT","NON"),),
-                                                           PENE_MAXI  =SIMP(statut='f',typ='R',defaut=1.0E-2),
+                                                           #PENE_MAXI  =SIMP(statut='f',typ='R'),
                                           ),
 
                                           b_cont_pena_adapt=BLOC(condition = """(equal_to("ALGO_CONT", 'PENALISATION') and equal_to("ADAPTATION", 'ADAPT_COEF')) or (equal_to("ALGO_CONT", 'PENALISATION') and equal_to("ADAPTATION", 'TOUT'))  """, fr=tr("Paramètres de la méthode pénalisée"),
                                                            #COEF_PENA_CONT  =SIMP(statut='o',typ='R'),
-                                                           COEF_PENA_CONT  =SIMP(statut='f',typ='R',defaut=100.0E+0),
-                                                           PENE_MAXI  =SIMP(statut='f',typ='R',defaut=1.0E-2),
+                                                           COEF_PENA_CONT  =SIMP(statut='f',typ='R',),
+                                                           PENE_MAXI  =SIMP(statut='f',typ='R',val_min=0.),
                                           ),
 
 # --- Pairing options (for standard slave/master)
@@ -530,13 +530,13 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
                                                            COEF_PENA_CONT  =SIMP(statut='o',typ='R'),
                                                            #COEF_PENA_CONT  =SIMP(statut='f',typ='R',defaut=100.0E+0),
                                                            #ADAPTATION      =SIMP(statut='f',typ='TXM',defaut="ADAPT_COEF", into=("ADAPT_COEF","CYCLAGE","TOUT","NON"),),
-                                                           PENE_MAXI  =SIMP(statut='f',typ='R',defaut=1.0E-2),
+                                                           PENE_MAXI  =SIMP(statut='f',typ='R',val_min=0.),
                                           ),
 
                                           b_cont_pena_adapt=BLOC(condition = """(equal_to("ALGO_CONT", 'PENALISATION') and equal_to("ADAPTATION", 'ADAPT_COEF')) or (equal_to("ALGO_CONT", 'PENALISATION') and equal_to("ADAPTATION", 'TOUT'))  """, fr=tr("Paramètres de la méthode pénalisée"),
                                                            #COEF_PENA_CONT  =SIMP(statut='o',typ='R'),
-                                                           COEF_PENA_CONT  =SIMP(statut='f',typ='R',defaut=100.0E+0),
-                                                           PENE_MAXI  =SIMP(statut='f',typ='R',defaut=1.0E-2),
+                                                           COEF_PENA_CONT  =SIMP(statut='f',typ='R',),
+                                                           PENE_MAXI  =SIMP(statut='f',typ='R',val_min=0.),
                                           ),
 # --- Pairing options (for standard slave/master)
                                           b_pair_std=BLOC(condition = """equal_to("ALGO_CONT", 'STANDARD') or equal_to("ALGO_CONT", 'PENALISATION') """,

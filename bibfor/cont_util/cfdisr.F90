@@ -75,6 +75,7 @@ implicit none
         cfdisr = 1d-4
     else if (question.eq.'PENE_MAXI') then
      cfdisr = v_sdcont_paracr(6)
+     if (nint(cfdisr) .eq. -1) cfdisr = 1.d-2
     else
         write(6,*) 'QUESTION: ',question
         ASSERT(.false.)

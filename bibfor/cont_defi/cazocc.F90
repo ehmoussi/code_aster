@@ -30,6 +30,7 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/mminfl.h"
 #include "asterfort/utmess.h"
+#include "asterfort/infniv.h"
 #include "asterc/r8prem.h"
 !
 ! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
@@ -66,6 +67,7 @@ implicit none
     real(kind=8) :: algo_cont, algo_frot
     real(kind=8) :: type_inte, cont_init, seuil_auto
     integer :: inte_order
+    integer :: isdefault=-3,nbret=-3,niv, ifm
     aster_logical :: l_inte_node, l_frot, l_node_excl, l_frot_excl, l_dire_excl_frot
     aster_logical :: l_gliss, l_newt_geom, l_newt_cont
     integer :: zcmcf, zexcl
@@ -172,10 +174,21 @@ implicit none
         coef_cont = coef_augm_cont
         pene_maxi = 1.d15
     else if (s_algo_cont .eq. 'PENALISATION') then
-        call getvr8(keywf, 'COEF_PENA_CONT', iocc=i_zone, scal=coef_pena_cont)
-        call getvr8(keywf, 'PENE_MAXI', iocc=i_zone, scal=pene_maxi)
         call getvtx(keywf, 'ADAPTATION', iocc=i_zone, scal=adaptation)
-        if (adaptation .eq. 'NON') pene_maxi = 1.d15
+        if (adaptation .eq. 'NON' .or. adaptation .eq. 'CYCLAGE' ) then         
+            call getvr8(keywf, 'COEF_PENA_CONT', iocc=i_zone, scal=coef_pena_cont)
+            pene_maxi = 1.d15
+        elseif (adaptation .eq. 'ADAPT_COEF' .or. adaptation .eq. 'TOUT' ) then 
+            ! L'utilisateur peut ne pas renseigner pene_maxi
+            call getvr8(keywf, 'PENE_MAXI', iocc=i_zone, scal=pene_maxi,nbret=nbret) 
+            write (6,*) "nbret=",nbret
+            if (nbret .le. 0) then 
+                pene_maxi = -1
+                call infniv(ifm, niv)
+                if(niv .ge. 2) call utmess('I', 'CONTACT_21')
+            endif               
+            coef_pena_cont = 1.d2    
+        endif
         algo_cont = 3.d0
         coef_cont = coef_pena_cont
     else if (s_algo_cont .eq. 'LAC') then
@@ -251,9 +264,9 @@ implicit none
 !            call utmess('F', 'CONTACT_89')
 !        endif
 !    endif
-    if ((s_algo_cont.eq.'PENALISATION') .and. l_newt_geom) then
-        call utmess('A', 'CONTACT_21')
-    endif
+!    if ((s_algo_cont.eq.'PENALISATION') .and. l_newt_geom) then
+!        call utmess('A', 'CONTACT_21')
+!    endif
     if (l_newt_geom .and. (.not.l_newt_cont)) then
         call utmess('F', 'CONTACT_20')
     endif

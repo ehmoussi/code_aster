@@ -41,7 +41,7 @@ implicit none
 ! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 ! aslint: disable=W1504
 !
-    type(NL_DS_Contact), intent(in) :: ds_contact
+    type(NL_DS_Contact), intent(inout) :: ds_contact
     aster_logical, intent(in) :: l_loop_cont
     aster_logical, intent(in) :: l_frot_zone
     aster_logical, intent(in) :: l_glis_init
@@ -394,7 +394,17 @@ implicit none
         
             coef_bussetta = v_sdcont_cychis(60*(i_cont_poin-1)+2)
             coef_tmp = v_sdcont_cychis(60*(i_cont_poin-1)+2)
-            dist_max = vale_pene*ds_contact%arete_min
+            
+            if (nint(vale_pene) .eq. -1) then 
+            ! Mode relatif 
+                dist_max = 1.d-2*ds_contact%arete_min
+            else
+            ! Mode absolu
+                dist_max = vale_pene
+                ! critere trop lache
+                if (dist_max .gt. ds_contact%arete_min) &
+                    ds_contact%critere_penetration = 1.0
+            endif
             
             mmcvca = mmcvca .and. (ctcsta .eq. 0)
             call bussetta_algorithm(dist_cont_curr, dist_cont_prev,dist_max, coef_bussetta)
@@ -412,9 +422,9 @@ implicit none
                         ! Le calcul du coefficient n'est pas satisfaisant on l'augmente
                         if (ds_contact%continue_pene .eq. 1.) coef_bussetta = coef_bussetta*10
                         if (coef_bussetta .gt. ds_contact%max_coefficient)  then
-                            write (6,*) "coefbusseta avant", coef_bussetta
                             coef_bussetta = coef_bussetta *0.1
-                            write (6,*) "coefbusseta apres", coef_bussetta
+                        ! critere trop severe
+                            ds_contact%critere_penetration = 2.0
                         endif
                         v_sdcont_cychis(60*(i_cont_poin-1)+2) = coef_bussetta
                     endif
