@@ -396,7 +396,7 @@ implicit none
                 if (l_newt_fr) then 
                     v_sdcont_paraci(20) = 1
                     if (s_algo_cont .eq. 'PENALISATION')  v_sdcont_paraci(20) = 2
-                elseif (s_algo_cont .eq. 'PENALISATION' .and. .not. l_frot  ) then 
+                elseif (s_algo_cont .eq. 'PENALISATION'  ) then 
                     v_sdcont_paraci(20) = 3
                 else
                     v_sdcont_paraci(20) = 0 
@@ -427,7 +427,7 @@ implicit none
                 if (l_newt_fr) then 
                     v_sdcont_paraci(20) = 1+4
                     if (s_algo_cont .eq. 'PENALISATION')  v_sdcont_paraci(20) = 2+4
-                else if (s_algo_cont .eq. 'PENALISATION' .and. .not. l_frot) then 
+                else if (s_algo_cont .eq. 'PENALISATION' ) then 
                     v_sdcont_paraci(20) = 3+4
                 else
                     v_sdcont_paraci(20) = 0+4            
