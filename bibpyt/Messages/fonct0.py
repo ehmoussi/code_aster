@@ -472,7 +472,7 @@ La fréquence fournie %(k1)s n'appartient pas à la liste des fréquences initia
 """),
 
     78 : _(u"""
-Le déplacement maximal %(r1)f souhaité est trop elevé ou trop petit. Le déplacement spectral à la fréquence %(r2)f vaut %(r3)f. On ne peut pas prolonger.
+Le déplacement maximal %(r1)f souhaité est trop élevé ou trop petit. Le déplacement spectral à la fréquence %(r2)f vaut %(r3)f. On ne peut pas prolonger.
 """),
 
 }
