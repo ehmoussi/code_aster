@@ -242,25 +242,29 @@ implicit none
                                  )  
                  endif
                  
-                ! On cherche a initialiser lenght_master_elem_init
-                ! Si longueur non nulle pour le premier point alors on a trouve la valeur initiale
-                ! de segment non nulle
-                ! Sinon on passe au point_elem suivant
-                if (nint(lenght_master_elem_init) .eq. -1) &
+                ! On cherche a initialiser lenght_master_elem_init,ds_contact%arete_min,max
+                ! avec la premiere arete non nulle de la zone maitre
+                ! La valeur initiale est la longueur de la premiere maille maitre de longueur 
+                ! non nulle.                
+                if (lenght_master_elem_init .eq. -1) then
                     lenght_master_elem_init = lenght_master_elem
+                    ds_contact%arete_min = lenght_master_elem_init
+                    ds_contact%arete_max = lenght_master_elem_init
+                endif
+                    
                 if ( (lenght_master_elem_init .le. 0.0d0 )) then 
                     lenght_master_elem_init = -1
-                elseif (i_poin_elem .ge. 2 .and. nint(lenght_master_elem_init) .ne. -1) then 
-                    if ( (lenght_master_elem .le. lenght_master_elem_init)  ) then
+                elseif (i_poin_elem .ge. 2 .and. lenght_master_elem_init .ne. -1) then 
+                    if ( (lenght_master_elem .lt. ds_contact%arete_min)  ) then
                         ds_contact%arete_min = lenght_master_elem 
                     endif
-                    if ( (lenght_master_elem .ge. lenght_master_elem_init)  ) then
+                    if ( (lenght_master_elem .gt. ds_contact%arete_max)  ) then
                         ds_contact%arete_max = lenght_master_elem 
                     endif
                  
                 endif
                 
-                write (6,*) "armin,armax",ds_contact%arete_min,ds_contact%arete_max
+!                write (6,*) "armin,armax",ds_contact%arete_min,ds_contact%arete_max
                  
 !
 ! ------------- Get pairing info

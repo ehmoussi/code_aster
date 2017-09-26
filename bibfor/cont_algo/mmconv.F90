@@ -143,6 +143,7 @@ implicit none
             call mmbouc(ds_contact, 'Cont', 'Is_Divergence',loop_state_=loop_cont_dive)
             if (loop_cont_dive) then 
                 vpene = 1.d-300
+                ds_contact%critere_penetration = 3.0
             else
                 call mm_pene_loop(ds_contact)
                 vpene = ds_contact%calculated_penetration

@@ -198,6 +198,11 @@ Contact.
        pas d'interpénétrations.
 """),
 
+    97 : _(u"""
+    DEFI_CONTACT/ALGO_CONT=PENALISATION/ADAPTATION=PENE_MAXI.
+    Vous êtes dans un cas de contact multi-zones et vous avez demandé un traitement adaptatif pour la pénalisation dans au moins une zone. Or la zone avec traitement adaptatif pénalisée n'est pas encore rentrée en contact.
+    Le critère de pénétration n'a donc pas de sens et est fixé à 1.d-300. 
+"""),
     98 : _(u"""
 Contact et détection de collision.
     Le contact semble "rasant", c'est-à-dire que le jeu est nul mais que la pression de contact est quasiment
@@ -216,8 +221,8 @@ Contact et détection de collision.
     Le critère de pénétration PENE_MAXI semble lâche.  Pour information : 
         - La plus petite arête de la zone maître est  %(r1).2e.
         - La plus grande arête de la zone maître est  %(r2).2e.
-    -> Risque & Conseil :
-       Vous risquez d'avoir des résultats inattendus. Vérifiez bien le niveau d'interpénétration en post-traitement. 
+    -> Risque & Conseils :
+       Vous risquez d'avoir des résultats inattendus. Vérifiez que le niveau d'interpénétration dans le tableau de convergence est bien inférieure à la plus petite arête. 
        S'il y a trop d'interpénétrations, il faudrait relancer le calcul avec PENE_MAXI <= %(r1).2e.
 """),
 
