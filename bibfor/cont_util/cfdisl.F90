@@ -80,6 +80,7 @@ implicit none
     else if (question .eq.'EXIS_PENA') then
         cfdisl = cfdisi(sdcont_defi,'EXIS_PENA').eq.1
     else if (question .eq.'EXIS_ADAP') then
+!        write (6,*) "cfdisi type_adap",cfdisi(sdcont_defi,'TYPE_ADAPT')
         cfdisl = ((cfdisi(sdcont_defi,'TYPE_ADAPT').eq.1) .or. &
                   (cfdisi(sdcont_defi,'TYPE_ADAPT').eq.2) .or. &
                   (cfdisi(sdcont_defi,'TYPE_ADAPT').eq.3) .or. &

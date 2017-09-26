@@ -272,6 +272,8 @@ implicit none
     !   -- Cette valeur estimee est passee directement a mmchml_c sans passer par mmalgo car 
     !   -- a la premiere iteration on ne passe pas par mmalgo
         l_contact_adapt = cfdisl(ds_contact%sdcont_defi,'EXIS_ADAP')
+!            write (6,*) "l_contact_adapt", &
+!                l_contact_adapt,ds_contact%update_init_coefficient
         if ((nint(ds_contact%update_init_coefficient) .eq. 0) .and. l_contact_adapt) then 
             call dismoi('MPI_COMPLET', matass, 'MATR_ASSE', repk=kmpic1)
             if (kmpic1 .eq. 'NON') then 
@@ -286,14 +288,15 @@ implicit none
                     ds_contact%update_init_coefficient = 1.0
                 else
                     exponent_val = min(abs(log(minmat)),abs(log(maxmat)))/10
-                    ds_contact%estimated_coefficient = 10**(exponent_val)*ds_contact%arete_min
+                    ds_contact%estimated_coefficient = 10**(exponent_val)
                     ds_contact%update_init_coefficient = 1.0
                 endif
             else 
-               ds_contact%estimated_coefficient = 1.d14*ds_contact%arete_min
+               ds_contact%estimated_coefficient = 1.d16*ds_contact%arete_min
                     ds_contact%update_init_coefficient = 1.0
             endif
-!            write (6,*) "min,max,coef estime", minmat,maxmat,ds_contact%estimated_coefficient
+!            write (6,*) "min,max,coef estime,abs(log(maxmat))/abs(log(minmat))", &
+!                minmat,maxmat,ds_contact%estimated_coefficient,abs(log(maxmat))/abs(log(minmat))
         endif
     endif
 !
