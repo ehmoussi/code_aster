@@ -37,9 +37,9 @@ implicit none
 ! ----- Type of FE: element where dof DX, DY, DZ exist
         aster_logical :: l_dof_meca
 ! ----- Type of FE: element where dof PRE1 exist
-        aster_logical :: l_dof_hydr1
+        aster_logical :: l_dof_pre1
 ! ----- Type of FE: element where dof PRE2 exist
-        aster_logical :: l_dof_hydr2
+        aster_logical :: l_dof_pre2
 ! ----- Type of FE: element where dof PRE1 and PRE2 exist
         aster_logical :: l_dof_hydr
 ! ----- Type of FE: number of phasis for each fluid

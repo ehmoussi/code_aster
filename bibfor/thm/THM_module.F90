@@ -69,8 +69,8 @@ subroutine thmModuleInit()
 !   Type of FE: which dof on element ?
     ds_thm%ds_elem%l_dof_ther             = ASTER_FALSE
     ds_thm%ds_elem%l_dof_meca             = ASTER_FALSE
-    ds_thm%ds_elem%l_dof_hydr1            = ASTER_FALSE
-    ds_thm%ds_elem%l_dof_hydr2            = ASTER_FALSE
+    ds_thm%ds_elem%l_dof_pre1             = ASTER_FALSE
+    ds_thm%ds_elem%l_dof_pre2             = ASTER_FALSE
     ds_thm%ds_elem%nb_phase(1:2)          = 0
     ds_thm%ds_elem%l_weak_coupling        = ASTER_FALSE
     ds_thm%ds_elem%l_jhms                 = ASTER_FALSE
