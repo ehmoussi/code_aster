@@ -295,8 +295,8 @@ implicit none
                ds_contact%estimated_coefficient = 1.d16*ds_contact%arete_min
                     ds_contact%update_init_coefficient = 1.0
             endif
-!            write (6,*) "min,max,coef estime,abs(log(maxmat))/abs(log(minmat))", &
-!                minmat,maxmat,ds_contact%estimated_coefficient,abs(log(maxmat))/abs(log(minmat))
+            write (6,*) "min,max,coef estime,abs(log(maxmat))/abs(log(minmat))", &
+                minmat,maxmat,ds_contact%estimated_coefficient,abs(log(maxmat))/abs(log(minmat))
         endif
     endif
 !
