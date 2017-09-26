@@ -27,14 +27,13 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
 !
-!
-    aster_logical, intent(in) :: l_steady
-    aster_logical, intent(in) :: l_vf
-    integer, intent(in)  :: ndim
-    integer, intent(out) :: mecani(5)
-    integer, intent(out) :: press1(7)
-    integer, intent(out) :: press2(7)
-    integer, intent(out) :: tempe(5)
+aster_logical, intent(in) :: l_steady
+aster_logical, intent(in) :: l_vf
+integer, intent(in)  :: ndim
+integer, intent(out) :: mecani(5)
+integer, intent(out) :: press1(7)
+integer, intent(out) :: press2(7)
+integer, intent(out) :: tempe(5)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -88,10 +87,10 @@ implicit none
     if (ds_thm%ds_elem%l_dof_ther) then
         tempe(1)  = 1 
     endif
-    if (ds_thm%ds_elem%l_dof_hydr1) then
+    if (ds_thm%ds_elem%l_dof_pre1) then
         press1(1) = 1
     endif
-    if (ds_thm%ds_elem%l_dof_hydr2) then
+    if (ds_thm%ds_elem%l_dof_pre2) then
         press2(1) = 1
     endif
     press1(2) = ds_thm%ds_elem%nb_phase(1)
