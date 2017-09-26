@@ -45,7 +45,7 @@ charMeca2.build()
 
 # Define the nonlinear method that will be used
 monSolver = code_aster.PetscSolver.create( code_aster.Renumbering.Sans )
-monSolver.setPreconditioning(code_aster.Preconditioning.Ml)
+monSolver.setPreconditioning(code_aster.Preconditioning.Gamg)
 
 # Define a nonlinear Analysis
 temps = [0., 0.5, 1.]
@@ -62,7 +62,7 @@ timeList.build()
 
 fMult = code_aster.Function.create()
 fMult.setParameterName("INST")
-fMult.setValues([0.,0.], [1.,1.])
+fMult.setValues([0.,1.], [0.,1.])
 #fMult.debugPrint( 6 )
 
 resu=STAT_NON_LINE( MODELE=monModel,
