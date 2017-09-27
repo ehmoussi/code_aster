@@ -25,13 +25,13 @@ interface
                       idfde2, geom, crit, deplm, deplp,&
                       contm, contp, varim, varip, defgem,&
                       defgep, drds, drdsr, dsde, b,&
-                      dfdi, dfdi2, r, sigbar, c,&
-                      ck, cs, matuu, vectu, rinstm,&
+                      dfdi, dfdi2, r, sigbar, &
+                      matuu, vectu, rinstm,&
                       rinstp, option, j_mater, mecani, press1,&
                       press2, tempe, dimdef, dimcon, dimuel,&
                       nbvari, nddls, nddlm, nmec, np1,&
                       np2, ndim, compor, typmod, axi,&
-                      perman, modint, codret, angmas, work1, work2)
+                      perman, inte_type, codret, angmas, work1, work2)
         integer :: ndim
         integer :: nbvari
         integer :: dimuel
@@ -66,9 +66,6 @@ interface
         real(kind=8) :: dfdi2(nnos, 3)
         real(kind=8) :: r(dimdef+1)
         real(kind=8) :: sigbar(dimdef)
-        real(kind=8) :: c(dimdef)
-        real(kind=8) :: ck(dimdef)
-        real(kind=8) :: cs(dimdef)
         real(kind=8) :: matuu(dimuel*dimuel)
         real(kind=8) :: vectu(dimuel)
         real(kind=8) :: rinstm
@@ -88,7 +85,7 @@ interface
         character(len=8) :: typmod(2)
         aster_logical :: axi
         aster_logical :: perman
-        character(len=3) :: modint
+        character(len=3), intent(in) :: inte_type
         integer :: codret
         real(kind=8) :: angmas(3)
         real(kind=8) :: work1(dimcon, dimuel)

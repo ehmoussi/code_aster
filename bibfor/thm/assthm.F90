@@ -23,13 +23,13 @@ subroutine assthm(nno, nnos, nnom, npg, npi,&
                   idfde2, geom, crit, deplm, deplp,&
                   contm, contp, varim, varip, defgem,&
                   defgep, drds, drdsr, dsde, b,&
-                  dfdi, dfdi2, r, sigbar, c,&
-                  ck, cs, matuu, vectu, rinstm,&
+                  dfdi, dfdi2, r, sigbar, &
+                  matuu, vectu, rinstm,&
                   rinstp, option, j_mater, mecani, press1,&
                   press2, tempe, dimdef, dimcon, dimuel,&
                   nbvari, nddls, nddlm, nmec, np1,&
                   np2, ndim, compor, typmod, axi,&
-                  perman, modint, codret, angmas, work1, work2)
+                  perman, inte_type, codret, angmas, work1, work2)
 !
 use THM_type
 use THM_module
@@ -50,6 +50,7 @@ implicit none
 #include "asterfort/thmGetBehaviour.h"
 #include "asterfort/Behaviour_type.h"
 #include "asterfort/thmGetParaInit.h"
+#include "asterfort/thmSelectMatrix.h"
 !
     integer :: dimmat, npg, ipoid2, ivf2, idfde2, dimuel, nnom
     parameter    (dimmat=120)
@@ -66,16 +67,16 @@ implicit none
     real(kind=8) :: contm(dimcon*npi), contp(dimcon*npi)
     real(kind=8) :: varim(nbvari*npi), varip(nbvari*npi)
     real(kind=8) :: matuu(dimuel*dimuel), matri(dimmat, dimmat)
-    real(kind=8) :: rinstp, rinstm, a(2), as(2), ak(2), vectu(dimuel)
+    real(kind=8) :: rinstp, rinstm, vectu(dimuel)
     real(kind=8) :: defgem(dimdef), defgep(dimdef)
     real(kind=8) :: drds(dimdef+1, dimcon), drdsr(dimdef, dimcon)
     real(kind=8) :: dsde(dimcon, dimdef), b(dimdef, dimuel)
-    real(kind=8) :: r(dimdef+1), sigbar(dimdef), c(dimdef)
-    real(kind=8) :: dt, ta, ta1, ck(dimdef), cs(dimdef)
+    real(kind=8) :: r(dimdef+1), sigbar(dimdef)
+    real(kind=8) :: dt, ta, ta1
     real(kind=8) :: angmas(3)
     real(kind=8) :: work1(dimcon, dimuel), work2(dimdef, dimuel)
     aster_logical :: axi, perman
-    character(len=3) :: modint
+character(len=3), intent(in) :: inte_type
     character(len=8) :: typmod(2)
     character(len=16) :: option, compor(*)
     character(len=16) :: meca, thmc, ther, hydr
@@ -185,7 +186,13 @@ implicit none
 ! OUT VARIP   : VARIABLES INTERNES
 ! OUT MATUU   : MATRICE DE RIGIDITE PROFIL (RIGI_MECA_TANG ET FULL_MECA)
 ! OUT VECTU   : FORCES NODALES (RAPH_MECA ET FULL_MECA)
-!......................................................................
+!
+! --------------------------------------------------------------------------------------------------
+!
+    real(kind=8) :: a(2), as(2), ak(2)
+    real(kind=8) :: c(21), ck(21), cs(21)
+!
+! --------------------------------------------------------------------------------------------------
 !
     ASSERT(nddls*nno .le. dimmat)
     ASSERT(dimuel .le. dimmat)
@@ -224,60 +231,14 @@ implicit none
     dt = rinstp-rinstm
     ta= crit(4)
     ta1 = 1.d0-ta
-! =====================================================================
-! --- CREATION DES MATRICES DE SELECTION ------------------------------
-! --- (MATRICES DIAGONALES) C,D,F,CS,DS,FS ----------------------------
-! --- CREATION DE L'OPERATEUR A, AS -----------------------------------
-! --- CES MATRICES SELECTIONNENT LES COMPOSANTES UTILES POUR ----------
-! --- POUR CHAQUE TYPE DE POINT D'INTEGRATION -------------------------
-! =====================================================================
-! --- POUR LES METHODES CLASSIQUE ET LUMPEE ---------------------------
-! --- A,C,D,F NE COMPORTENT QUE DES 1 ---------------------------------
-! =====================================================================
-! --- INITIALISATION --------------------------------------------------
-! =====================================================================
-    do i = 1, dimdef
-        c(i) = 1.d0
-        cs(i) = 1.d0
-    end do
-    a(1)= 1.d0
-    a(2)= 1.d0
-    as(1) = 1.d0
-    as(2) = 1.d0
-! =====================================================================
-! --- SI INTEGRATION REDUITE, ON MET A 0 CERTAINS COEFFICIENTS --------
-! =====================================================================
-    if (modint .eq. 'RED') then
-        if (yamec .eq. 1) then
-            do i = 1, ndim
-                cs(addeme-1+i) = 0.d0
-            end do
-            do i = 1, 6
-                cs(addeme-1+ndim+i) = 0.d0
-            end do
-        endif
-        if (yap1 .eq. 1) then
-            c(addep1) = 0.d0
-            do i = 1, ndim
-                cs(addep1-1+1+i) = 0.d0
-            end do
-        endif
-        if (yap2 .eq. 1) then
-            c(addep2) = 0.d0
-            do i = 1, ndim
-                cs(addep2-1+1+i) = 0.d0
-            end do
-        endif
-        if (yate .eq. 1) then
-            a(2) = 0.d0
-            as(1) = 0.d0
-            do i = 1, ndim
-                cs(addete-1+1+i) = 0.d0
-            end do
-        endif
-    endif
-! ======================================================================
-! --- FIN CALCUL C,D,F -------------------------------------------------
+!
+! - Create matrix for selection of dof
+!
+    call thmSelectMatrix(ndim  , dimdef, inte_type,&
+                         addeme, addete, addep1   , addep2,&
+                         a     , as    ,&
+                         c     , cs    )
+!
 ! ======================================================================
 ! --- INITIALISATION DE VECTU, MATUU A 0 SUIVANT OPTION ----------------
 ! ======================================================================
