@@ -67,7 +67,7 @@ character(len=16), intent(in) :: option
     real(kind=8) :: defgep(21), defgem(21)
     real(kind=8) :: dfdi(20, 3), dfdi2(20, 3), b(21, 120)
     real(kind=8) :: drds(22, 31+5), drdsr(21, 31+5), dsde(31+5, 21)
-    real(kind=8) :: r(22), sigbar(21), c(21), ck(21), cs(21)
+    real(kind=8) :: r(22), sigbar(21)
     real(kind=8) :: work1(31+5, 120), work2(21, 120)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -83,9 +83,6 @@ character(len=16), intent(in) :: option
     dsde(:,:)  = 0.d0
     r(:)       = 0.d0
     sigbar(:)  = 0.d0
-    c(:)       = 0.d0
-    ck(:)      = 0.d0
-    cs(:)      = 0.d0
     work1(:,:) = 0.d0
     work2(:,:) = 0.d0
 !
@@ -163,8 +160,8 @@ character(len=16), intent(in) :: option
                 jv_dfunc2, zr(jv_geom), zr(jv_carcri), zr(jv_dispm), zr(jv_disp),&
                 zr(jv_sigmm), zr(jv_sigm), zr(jv_varim), zr(jv_vari), defgem,&
                 defgep, drds, drdsr, dsde, b,&
-                dfdi, dfdi2, r, sigbar, c,&
-                ck, cs, zr(jv_matr), zr(jv_vect), zr(jv_instm),&
+                dfdi, dfdi2, r, sigbar, &
+                zr(jv_matr), zr(jv_vect), zr(jv_instm),&
                 zr(jv_instp), option, zi( jv_mater), mecani, press1,&
                 press2, tempe, dimdef, dimcon, dimuel,&
                 nbvari, nddls, nddlm, nddl_meca, nddl_p1,&
