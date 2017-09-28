@@ -2,9 +2,8 @@
 # coding: utf-8
 
 import code_aster
-from code_aster.Supervis import setExecutionParameter
 
-setExecutionParameter('memory', 2000.)
+code_aster.init('--memory=2000.')
 test = code_aster.TestCase()
 
 # Creation du maillage
@@ -13,7 +12,6 @@ test.assertEqual( mesh.getType(), 'MAILLAGE' )
 
 # Relecture du fichier MED
 mesh.readMedFile("test001a.mmed")
-# mesh.readMEDFile("epicu01b.mail.med")
 
 #help(mesh)
 
