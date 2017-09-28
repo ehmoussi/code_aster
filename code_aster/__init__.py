@@ -31,24 +31,10 @@ from .Commands.debut import init
 # from .Utilities import localization
 # localization.install()
 #
-# from .Supervis import executionParameter
-# from .RunManager import Initializer
-#
 # # commands must be registered by libCommandSyntax before calling DEBUT.
 # from .Cata import Commands
 # from .Supervis import libCommandSyntax
 # libCommandSyntax.commandsRegister(Commands.commandStore)
-#
-# executionParameter.parse_args()
-#
-# from .Supervis import libFile
-#
-# # automatic startup
-# if executionParameter.get_option('autostart'):
-#     Initializer.init( executionParameter.get_option('buildelem'))
-#
-# # import datastructures enriched by pure python extensions
-# from .Extensions import *
 #
 # # import general purpose functions
 # from .RunManager.saving import saveObjects

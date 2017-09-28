@@ -23,6 +23,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include <cstdio>
 #include "astercxx.h"
 
 // emulate_LIRE_MAILLAGE_MED.h is auto-generated and requires Mesh.h and Python.h
@@ -95,7 +96,10 @@ bool BaseMeshInstance::readMeshFile( const std::string& fileName, const std::str
 
     if( format == "GIBI" || format == "GMSH" )
     {
-        const std::string tmpFileName = getTemporaryFileName( "." );
+        char name2[L_tmpnam];
+        std::tmpnam(name2);
+        const std::string tmpFileName(name2);
+
         // Fichier temporaire
         LogicalUnitFileCython file2( tmpFileName, Ascii, Append );
         std::string preCmd = "PRE_" + format;

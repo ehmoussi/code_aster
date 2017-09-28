@@ -36,7 +36,7 @@ class CommandSyntax:
             command (*CommandSyntax*): *CommandSyntax* to register.
         """
         cls._currentCommand = command
-        # TODO register the object with `register_sh_etape()`
+        # TODO register the object with `register_sh_etape()`: done by aster_oper
 
     @classmethod
     def getCurrentCommand(cls):

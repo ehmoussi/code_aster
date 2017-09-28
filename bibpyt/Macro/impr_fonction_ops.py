@@ -36,7 +36,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
     from code_aster.Cata.Syntax import _F
     from code_aster.Cata.DataStructure import (nappe_sdaster, fonction_c,
                                                formule, formule_c)
-    from code_aster.Supervis import LogicalUnitFile, ReservedUnitUsed
+    from code_aster.RunManager import LogicalUnitFile, ReservedUnitUsed
     from Utilitai import Graph
     from Utilitai.Utmess import UTMESS
 
