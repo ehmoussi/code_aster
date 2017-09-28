@@ -25,6 +25,9 @@ from waflib import TaskGen, Logs, Utils, Errors, Task, Context
 
 
 def build(self):
+    Logs.warn("Build of catalo skipped!")
+    return
+
     env = self.all_envs[self.variant].derive()
     if self.variant == "debug":
         env.OPTDEBUG = '-g'

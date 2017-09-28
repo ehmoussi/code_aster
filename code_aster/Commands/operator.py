@@ -19,14 +19,13 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
-"""
-This module gives common utilities.
-"""
+from ..Cata.Commands import commandStore
+from ..Cata.Syntax import Operator, Procedure
+from .ExecuteCommand import ExecuteCommand
 
-from .Tester import TestCase
-
-from .base_utils import (accept_array, array_to_list, force_list, import_object,
-                         objects_from_context, Singleton, value_is_sequence)
-from .compatibility import compat_listr8, deprecated
-from .i18n import localization
-from .strfunc import convert, from_unicode, get_encoding, to_unicode
+def define_operators(store):
+    """Add definition of operators to the given store."""
+    for name, command in commandStore.items():
+        if not isinstance(command, (Operator, Procedure)):
+            continue
+        store[name] = ExecuteCommand(name)

@@ -27,7 +27,7 @@ class injector(object):
     class __metaclass__(DataStructure.__class__):
         def __init__(self, name, bases, dict):
             for b in bases:
-                if type(b) not in (self, type):
+                if issubclass(b, DataStructure):
                     for k, v in dict.items():
                         setattr(b, k, v)
             return type.__init__(self, name, bases, dict)

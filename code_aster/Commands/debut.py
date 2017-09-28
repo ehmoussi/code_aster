@@ -1,0 +1,86 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# person_in_charge: mathieu.courtois@edf.fr
+
+import aster
+import aster_core
+import aster_settings
+from Comportement import catalc
+
+from ..Supervis import CommandSyntax, logger
+from ..Utilities import import_object
+
+from .ExecuteCommand import ExecuteCommand
+
+from ..Supervis.logger import setlevel
+
+
+class Starter(ExecuteCommand):
+    """Define the command DEBUT."""
+
+    settings = _is_initialized = None
+
+    @classmethod
+    def init(cls, argv):
+        """Initialization of class attributes."""
+        # TODO catalc in settings?! => in executionParameter
+        cls.settings = aster_settings.getargs(argv)
+        cls.settings.catalc = catalc
+        setlevel()
+        aster_core.register(cls.settings)
+        aster.init(0)
+        cls._is_initialized = True
+
+    def __call__(self, **keywords):
+        """Run the macro-command.
+
+        Arguments:
+            keywords (dict): User keywords
+        """
+        if Starter._is_initialized:
+            return
+        self.init()
+        super(Starter, self).__call__(**keywords)
+
+    def exec_(self, **kwargs):
+        """Execute the command.
+
+        Arguments:
+            kwargs (dict): User's keywords.
+
+        Returns:
+            None: The command has no result.
+        """
+        logger.info("Starting DEBUT...")
+        syntax = CommandSyntax(self.name, self._cata)
+        syntax.define(kwargs)
+        # ops.build_debut
+        aster.debut(syntax)
+        syntax.free()
+
+        return None
+
+
+DEBUT = Starter("DEBUT")
+
+def init(argv=None):
+    """Initialize code_aster."""
+    DEBUT.init(argv)
+    DEBUT.exec_()
