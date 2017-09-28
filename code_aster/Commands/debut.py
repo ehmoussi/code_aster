@@ -23,6 +23,7 @@ import aster
 import aster_core
 from Comportement import catalc
 
+from ..RunManager import LogicalUnitFile
 from ..Supervis import CommandSyntax, ExecutionParameter, logger
 from ..Utilities import import_object
 
@@ -43,6 +44,7 @@ class Starter(ExecuteCommand):
         cls.settings = ExecutionParameter()
         cls.settings.parse_args(argv)
         cls.settings.catalc = catalc
+        cls.settings.logical_unit = LogicalUnitFile
         setlevel()
         aster_core.register(cls.settings)
         aster.init(0)

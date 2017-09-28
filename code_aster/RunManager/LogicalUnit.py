@@ -20,8 +20,7 @@ import tempfile
 from itertools import ifilter
 
 from ..Cata.Syntax import _F
-from .libCommandSyntax import getCurrentCommand, setCurrentCommand
-from .logger import logger
+from ..Supervis.logger import logger
 
 
 RESERVED_UNIT = (6, 8, 9)
@@ -140,14 +139,8 @@ class LogicalUnitFile(object):
                 raise ValueError("'Append' access is only valid with "
                                  "type 'Ascii'.")
 
-        previous = getCurrentCommand()
-        setCurrentCommand(None)
-        syntax = CommandSyntax("DEFI_FICHIER")
-        syntax.define(kwargs)
-        cdef INTEGER numOp = 26
-        libaster.opsexe_(&numOp)
-        syntax.free()
-        setCurrentCommand(previous)
+        from ..Commands import DEFI_FICHIER
+        DEFI_FICHIER(**kwargs)
 
     @property
     def unit(self):
@@ -209,7 +202,7 @@ class LogicalUnitFile(object):
     @classmethod
     def _register(cls, logicalUnit):
         """Register a logical unit."""
-        logger.debug("libFile: register unit {0}".format(logicalUnit.unit))
+        logger.debug("LogicalUnit: register unit {0}".format(logicalUnit.unit))
         cls._used_unit[logicalUnit.unit] = logicalUnit
 
     @classmethod
@@ -219,7 +212,7 @@ class LogicalUnitFile(object):
         Arguments:
             unit (int): Number of logical unit to release.
         """
-        logger.debug("libFile: release unit {0}".format(unit))
+        logger.debug("LogicalUnit: release unit {0}".format(unit))
         logicalUnit = cls.from_number(unit)
         if not logicalUnit:
             msg = "Unable to free the logical unit {}".format(unit)
@@ -236,7 +229,7 @@ class LogicalUnitFile(object):
         Arguments:
             filename (str): Filename of the logical unit to release.
         """
-        logger.debug("libFile: release {0!r}".format(filename))
+        logger.debug("LogicalUnit: release {0!r}".format(filename))
         logicalUnit = cls.from_name(filename)
         if not logicalUnit:
             msg = "file {!r} not associated".format(filename)
@@ -272,21 +265,3 @@ class ReservedUnitUsed(object):
         for unit in self._units:
             LogicalUnitFile.register(unit, None, Action.Open,
                                      FileType.Ascii, FileAccess.Append)
-
-
-cdef public void openLogicalUnitFile(const char* name, const int type,
-                                     const int access ) except *:
-    LogicalUnitFile.open(name, type, access)
-
-cdef public void releaseLogicalUnitFile(const char* name) except *:
-    LogicalUnitFile.release_from_name(name)
-
-cdef public int getNumberOfLogicalUnitFile(const char* name) except -1:
-    logicalUnit = LogicalUnitFile.from_name(name)
-    if not logicalUnit:
-        return -1
-    return logicalUnit.unit
-
-cdef public string getTemporaryFileName(const char* directory) except *:
-    cdef string tmpfile = tempfile.NamedTemporaryFile(dir=directory).name
-    return tmpfile

@@ -40,6 +40,8 @@ class ExecutionParameter(Singleton):
     the method `set_option()`.
     """
     _singleton_id = 'Supervis.ExecutionParameter'
+    _args = None
+    _catalc = _unit = None
 
     def __init__(self):
         """Initialization of attributes"""
@@ -198,6 +200,27 @@ class ExecutionParameter(Singleton):
     def sub_tpmax(self, tsub):
         """Reduce the cpu time limit of `tsub`."""
         self.set_option('tpmax', self.get_option('tpmax') - tsub)
+
+    # register objects callable from libaster
+    @property
+    def catalc(self):
+        """Attribute that holds the catalog of behavior."""
+        return self._catalc
+
+    @catalc.setter
+    def catalc(self, catalc):
+        """Setter of `behavior_catalog`."""
+        self._catalc = catalc
+
+    @property
+    def logical_unit(self):
+        """Attribute that holds the catalog of behavior."""
+        return self._unit
+
+    @logical_unit.setter
+    def logical_unit(self, logical_unit):
+        """Setter of `behavior_catalog`."""
+        self._unit = logical_unit
 
 
 def get_program_path(program):

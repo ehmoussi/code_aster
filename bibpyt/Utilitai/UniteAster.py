@@ -23,7 +23,7 @@ import types
 
 import aster
 
-from code_aster.Supervis import LogicalUnitFile
+from code_aster.RunManager import LogicalUnitFile
 
 
 class UniteAster:
@@ -82,5 +82,5 @@ class UniteAster:
         Si 'ul' est omis, toutes les unités sont remises dans leur état initial.
         """
         raise NotImplementedError("'EtatInit' is not supported anymore, use "
-                                  "'libFile.ReservedUnitUsed' context manager "
-                                  "instead.")
+                                  "'LogicalUnit.ReservedUnitUsed' context "
+                                  "manager instead.")

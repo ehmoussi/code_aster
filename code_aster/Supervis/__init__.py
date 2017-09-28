@@ -17,10 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from .libFile import LogicalUnitFile, ReservedUnitUsed
+# person_in_charge: mathieu.courtois@edf.fr
 
-# to init global objects
-import libFortranUtils
+"""
+This module supports basics to give access to Commands from code_aster
+objects.
+"""
 
 from .CommandSyntax import CommandSyntax
 from .ExecutionParameter import ExecutionParameter
