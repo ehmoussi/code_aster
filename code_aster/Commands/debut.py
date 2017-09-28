@@ -21,10 +21,9 @@
 
 import aster
 import aster_core
-import aster_settings
 from Comportement import catalc
 
-from ..Supervis import CommandSyntax, logger
+from ..Supervis import CommandSyntax, ExecutionParameter, logger
 from ..Utilities import import_object
 
 from .ExecuteCommand import ExecuteCommand
@@ -41,7 +40,8 @@ class Starter(ExecuteCommand):
     def init(cls, argv):
         """Initialization of class attributes."""
         # TODO catalc in settings?! => in executionParameter
-        cls.settings = aster_settings.getargs(argv)
+        cls.settings = ExecutionParameter()
+        cls.settings.parse_args(argv)
         cls.settings.catalc = catalc
         setlevel()
         aster_core.register(cls.settings)
@@ -56,7 +56,7 @@ class Starter(ExecuteCommand):
         """
         if Starter._is_initialized:
             return
-        self.init()
+        self.init(None)
         super(Starter, self).__call__(**keywords)
 
     def exec_(self, **kwargs):
@@ -71,7 +71,6 @@ class Starter(ExecuteCommand):
         logger.info("Starting DEBUT...")
         syntax = CommandSyntax(self.name, self._cata)
         syntax.define(kwargs)
-        # ops.build_debut
         aster.debut(syntax)
         syntax.free()
 
@@ -80,7 +79,13 @@ class Starter(ExecuteCommand):
 
 DEBUT = Starter("DEBUT")
 
-def init(argv=None):
-    """Initialize code_aster."""
+def init(argv=None, **kwargs):
+    """Initialize code_aster as `DEBUT` command does + command line options.
+
+    Arguments:
+        argv (list): List of command line arguments.
+    """
+    if Starter._is_initialized:
+        return
     DEBUT.init(argv)
-    DEBUT.exec_()
+    DEBUT.exec_(**kwargs)

@@ -151,7 +151,7 @@ subroutine jedebu(nbfi, mxzon, idb)
 ! -----------------  ENVIRONNEMENT MACHINE -----------------------------
     do k=1,n
        lfic(k) = lofiem()
-    end do   
+    end do
     call gtoptr('maxbase', val, iret)
     if (val .le. 0 .or. iret .ne. 0) then
         mfic = mofiem()

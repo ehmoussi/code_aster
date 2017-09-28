@@ -257,6 +257,12 @@ double asterc_getopt_double(_IN char *option, _OUT int *iret)
     if ( PyFloat_Check(res) ) {
         value = PyFloat_AsDouble(res);
         *iret = 0;
+    } else if ( PyInt_Check(res) ) {
+        value = (double)PyInt_AsLong(res);
+        *iret = 0;
+    } else if ( PyLong_Check(res) ) {
+        value = (double)PyLong_AsLong(res);
+        *iret = 0;
     }
     Py_DECREF(res);
     return value;

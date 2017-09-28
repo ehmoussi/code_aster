@@ -23,7 +23,7 @@ from .logger import logger
 
 class ResultNaming(Singleton):
     """This class manages the names of the jeveux objects"""
-    _singleton_id = "CommandSyntax.ResultNaming"
+    _singleton_id = "Supervis.ResultNaming"
 
     def __init__( self ):
         """Initialize the counter"""
