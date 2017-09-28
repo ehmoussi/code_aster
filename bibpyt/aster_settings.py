@@ -81,9 +81,11 @@ class CoreOptions(object):
                  "(in Mw, prefer use --memory option)")
         parser.add_option(
             '--memory', dest='memory', type='float', action='store',
+            default=2048,
             help="maximum size of the memory taken by the execution (in MB)")
         parser.add_option(
             '--tpmax', dest='tpmax', type='float', action='store',
+            default=3600,
             help="limit of the time of the execution (in seconds)")
         parser.add_option(
             '--numthreads', dest='numthreads', type='int', action='store', default=1,

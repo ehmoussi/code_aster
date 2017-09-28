@@ -345,6 +345,10 @@ class MCCOMPO(N_OBJECT.OBJECT):
             value = default
         return value
 
+    def __contains__(self, key):
+        """Dit si le mot-clé *key* est défini."""
+        return self.get(key) is not None
+
     def get_child(self, name, restreint='non'):
         """
             Retourne le fils de self de nom name ou None s'il n'existe pas
