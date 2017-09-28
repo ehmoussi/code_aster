@@ -121,8 +121,7 @@ struct LibAsterInitializer
         int a = get_sh_jeveux_status();
         if( a != 1 )
             return;
-        ASTERINTEGER op = 9999;
-        CALL_EXECOP( &op );
+        CALL_OP9999();
         register_sh_jeveux_status( 0 );
     };
 };

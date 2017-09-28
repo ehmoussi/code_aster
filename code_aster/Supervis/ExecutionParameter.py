@@ -1,23 +1,23 @@
-# coding: utf-8
-
-# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
 #
-# This file is part of Code_Aster.
-#
-# Code_Aster is free software: you can redistribute it and/or modify
+# code_aster is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 2 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Code_Aster is distributed in the hope that it will be useful,
+# code_aster is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
 
-from libc.stdio cimport stdout, setvbuf, _IOLBF
+# person_in_charge: mathieu.courtois at edf.fr
 
 import json
 import os
@@ -27,20 +27,19 @@ import re
 import sys
 import warnings
 
-from Execution.strfunc import convert
 import aster_pkginfo
 
-from code_aster.Supervis.logger import logger, setlevel
-from code_aster.Supervis.libBaseUtils import to_cstr
-from code_aster.Supervis.libBaseUtils cimport copyToFStr
+from ..Utilities import convert, Singleton
+from .logger import logger, setlevel
 
 
-class ExecutionParameter:
+class ExecutionParameter(Singleton):
     """This class stores and provides the execution parameters.
 
     The execution parameters are defined by reading the command line or using
     the method `set_option()`.
     """
+    _singleton_id = 'Supervis.ExecutionParameter'
 
     def __init__(self):
         """Initialization of attributes"""
@@ -157,9 +156,9 @@ class ExecutionParameter:
             help="turn on running mode for testcase")
 
         parser.add_argument('--memory',
-            action='store', type=float, default=1000,
+            action='store', type=float, default=2048,
             help="memory limit in MB used for code_aster objects "
-                 "(default: 1000 MB)")
+                 "(default: 2048 MB)")
         parser.add_argument('--tpmax',
             action='store', type=float, default=86400,
             help="time limit of the execution in seconds (default: 1 day)")
@@ -196,17 +195,11 @@ class ExecutionParameter:
         for opt, value in vars(args).items():
             self.set_option(opt, value)
 
-        # replace "suivi_batch" option that was always enabled
-        unbuffered_stdout()
+    def sub_tpmax(self, tsub):
+        """Reduce the cpu time limit of `tsub`."""
+        self.set_option('tpmax', self.get_option('tpmax') - tsub)
 
 
-def unbuffered_stdout():
-    """Force stdout to be line buffered."""
-    setvbuf(stdout, NULL, _IOLBF, 0)
-
-
-# extract from aster_settings (that can not be imported here because of
-# imports of aster, aster_core...)
 def get_program_path(program):
     """Return the path to *program* as stored by 'waf configure'.
 
@@ -222,36 +215,3 @@ def get_program_path(program):
 
     programs = get_program_path._cache
     return programs.get(program, program)
-
-
-# global instance
-executionParameter = ExecutionParameter()
-
-def setExecutionParameter(option, value):
-    """Static function to set parameters from the user command file"""
-    global executionParameter
-    executionParameter.set_option(option, value)
-
-cdef public long getParameterLong(char* option):
-    """Request the value of an execution parameter of type 'int'"""
-    global executionParameter
-    value = executionParameter.get_option(option) or 0
-    return value
-
-cdef public double getParameterDouble(char* option):
-    """Request the value of an execution parameter of type 'double'"""
-    global executionParameter
-    value = executionParameter.get_option(option) or 0.
-    return value
-
-cdef public void gtoptk_(char* option, char* valk, long* iret,
-                          unsigned int larg, unsigned int lvalk):
-    """Request the value of an execution parameter of type 'string'"""
-    global executionParameter
-    arg = to_cstr(option, larg)
-    value = executionParameter.get_option(arg)
-    if value is None:
-        iret[0] = 4
-    else:
-        copyToFStr(valk, value, lvalk)
-        iret[0] = 0

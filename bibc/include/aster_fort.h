@@ -81,6 +81,9 @@ extern void DEFP(EXECOP,execop, ASTERINTEGER*);
 #define CALL_OPSEXE(a)  CALLP(OPSEXE,opsexe,a)
 extern void DEFP(OPSEXE,opsexe, ASTERINTEGER*) ;
 
+#define CALL_OP9999() CALL0(OP9999,op9999)
+extern void DEF0(OP9999,op9999);
+
 #define CALL_IMPERS() CALL0(IMPERS,impers)
 extern void DEF0(IMPERS,impers);
 
@@ -156,7 +159,8 @@ void DEFSSPPP(JUCROC_WRAP, jucroc_wrap, const char *, STRING_SIZE, const char *,
                               ASTERINTEGER*, ASTERINTEGER*, void* );
 
 #define CALL_JEECRA_WRAP(a, b, c) CALLSSP(JEECRA_WRAP, jeecra_wrap, a, b, c)
-void DEFSSP(JEECRA_WRAP, jeecra_wrap, const char *, STRING_SIZE, const char *, STRING_SIZE, ASTERINTEGER*);
+void DEFSSP(JEECRA_WRAP, jeecra_wrap, const char *, STRING_SIZE,
+            const char *, STRING_SIZE, ASTERINTEGER*);
 
 #define CALL_JECROC(a) CALLS(JECROC, jecroc, a)
 void DEFS(JECROC, jecroc, const char *, STRING_SIZE);
@@ -287,7 +291,8 @@ void DEFSSSS(ASASVE,asasve, const char*, STRING_SIZE, const char*, STRING_SIZE,
 
 #define CALL_ASCOVA(a, b, c, d, e, f, g) CALLSSSSPSS(ASCOVA, ascova, a, b, c, d, e, f, g)
 void DEFSSSSPSS(ASCOVA,ascova, const char*, STRING_SIZE, const char*, STRING_SIZE,
-                               const char*, STRING_SIZE, const char*, STRING_SIZE, const ASTERDOUBLE*,
+                               const char*, STRING_SIZE, const char*, STRING_SIZE,
+                               const ASTERDOUBLE*,
                                const char*, STRING_SIZE, const char*, STRING_SIZE );
 
 #define CALL_ASCAVC(a, b, c, d, e, f) CALLSSSSPS(ASCAVC, ascavc, a, b, c, d, e, f)

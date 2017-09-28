@@ -25,9 +25,6 @@ from waflib import TaskGen, Logs, Utils, Errors, Task, Context
 
 
 def build(self):
-    Logs.warn("Build of catalo skipped!")
-    return
-
     env = self.all_envs[self.variant].derive()
     if self.variant == "debug":
         env.OPTDEBUG = '-g'
@@ -103,8 +100,11 @@ def build_cata_ele(self, ojb, install_path):
     # generate the command file
     comm = bldnode.make_node('fort.1')
     content = os.linesep.join([
-        "from code_aster.RunManager.Initializer import cataBuilder",
-        "cataBuilder()",
+        "from code_aster.Commands import DEBUT, MAJ_CATA, FIN",
+        "DEBUT(CATALOGUE=_F(FICHIER='CATAELEM', UNITE=4), ",
+        "      ERREUR=_F(ERREUR_F='ABORT'), PAR_LOT='NON')",
+        "MAJ_CATA(ELEMENT=_F())",
+        "FIN()", ""
     ])
     comm.write(content, 'w')
 
