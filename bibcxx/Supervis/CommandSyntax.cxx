@@ -1,5 +1,5 @@
 /**
- * @file CommandSyntaxCython.cxx
+ * @file CommandSyntax.cxx
  * @brief Implementation of API to CommandSyntax Python object.
  * @section LICENCE
  * Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
@@ -24,12 +24,12 @@
 #include "Python.h"
 #include "aster.h"
 
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
 #include "Utilities/SyntaxDictionary.h"
 #include "Utilities/CapyConvertibleValue.h"
 
 
-CommandSyntaxCython::CommandSyntaxCython(const std::string name):
+CommandSyntax::CommandSyntax(const std::string name):
     _commandName(name)
 {
     PyObject *klass = GetJdcAttr((char *)"syntax");
@@ -41,7 +41,7 @@ CommandSyntaxCython::CommandSyntaxCython(const std::string name):
 }
 
 
-CommandSyntaxCython::~CommandSyntaxCython()
+CommandSyntax::~CommandSyntax()
 {
     PyObject *res = PyObject_CallMethod(_pySyntax, (char *)"free", NULL);
     if (res == NULL)
@@ -53,14 +53,14 @@ CommandSyntaxCython::~CommandSyntaxCython()
 }
 
 
-void CommandSyntaxCython::debugPrint() const
+void CommandSyntax::debugPrint() const
 {
     PyObject *res = PyObject_CallMethod(_pySyntax, (char *)"__repr__", NULL);
     Py_XDECREF(res);
 }
 
 
-void CommandSyntaxCython::define(SyntaxMapContainer& syntax)
+void CommandSyntax::define(SyntaxMapContainer& syntax)
 {
     PyObject *keywords = syntax.convertToPythonDictionnary();
     PyObject *res = PyObject_CallMethod(_pySyntax, (char *)"define",
@@ -71,14 +71,14 @@ void CommandSyntaxCython::define(SyntaxMapContainer& syntax)
 }
 
 
-void CommandSyntaxCython::define(const CapyConvertibleSyntax& syntax)
+void CommandSyntax::define(const CapyConvertibleSyntax& syntax)
 {
     SyntaxMapContainer container = syntax.toSyntaxMapContainer();
     define(container);
 }
 
 
-void CommandSyntaxCython::setResult(const std::string resultName,
+void CommandSyntax::setResult(const std::string resultName,
                                     const std::string typeSd ) const
 {
     PyObject *res = PyObject_CallMethod(_pySyntax, (char *)"setResult",

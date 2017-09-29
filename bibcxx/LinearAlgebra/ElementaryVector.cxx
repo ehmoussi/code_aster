@@ -25,7 +25,7 @@
 #include "astercxx.h"
 
 #include "LinearAlgebra/ElementaryVector.h"
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
 
 ElementaryVectorInstance::ElementaryVectorInstance( const JeveuxMemory memType ):
                 DataStructure( "VECT_ELEM", memType ),
@@ -55,7 +55,7 @@ FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const BaseDOFNum
        qui est construit par CORICH (tableau de correspondance resuelem <-> charge) */
     // Il n'est pas nécessaire de faire le ménage c'est ASCOVA qui s'en occupe
     _listOfLoads->build();
-    CommandSyntaxCython cmdSt( "ASSE_VECT_ELEM" );
+    CommandSyntax cmdSt( "ASSE_VECT_ELEM" );
     cmdSt.setResult( getName(), getType() );
     SyntaxMapContainer dict;
     dict.container[ "OPTION" ] = "CHAR_MECA";

@@ -26,7 +26,7 @@
 #include "astercxx.h"
 
 #include "LinearAlgebra/LinearSolver.h"
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
 
 const std::set< Renumbering > WrapMultFront::setOfAllowedRenumbering( MultFrontRenumbering,
                                                                  MultFrontRenumbering + nbRenumberingMultFront );
@@ -59,7 +59,7 @@ bool BaseLinearSolverInstance::build()
     newName.resize( 19, ' ' );
 
     // Definition du bout de fichier de commande pour SOLVEUR
-    CommandSyntaxCython cmdSt( "SOLVEUR" );
+    CommandSyntax cmdSt( "SOLVEUR" );
     cmdSt.setResult( getName(), getType() );
 
     SyntaxMapContainer dict;
@@ -88,7 +88,7 @@ bool BaseLinearSolverInstance::matrixFactorization( AssemblyMatrixDoublePtr curr
     const std::string matass = currentMatrix->getName();
 
     // AMUMPT appel getres
-    CommandSyntaxCython cmdSt( "AUTRE" );
+    CommandSyntax cmdSt( "AUTRE" );
     cmdSt.setResult( "AUCUN", "AUCUN" );
 
     CALL_MATRIX_FACTOR( solverName.c_str(), base.c_str(), &cret, matpre.c_str(),
@@ -109,7 +109,7 @@ FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystemMatrixRHS
     FieldOnNodesDoublePtr returnField( new FieldOnNodesDoubleInstance( newName ) );
 
     // Definition du bout de fichier de commande correspondant a RESOUDRE
-    CommandSyntaxCython cmdSt( "RESOUDRE" );
+    CommandSyntax cmdSt( "RESOUDRE" );
     cmdSt.setResult( newName, "CHAM_NO" );
 
     SyntaxMapContainer dict;

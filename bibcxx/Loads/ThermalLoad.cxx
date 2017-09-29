@@ -26,7 +26,7 @@
 #include "astercxx.h"
 
 #include "Loads/ThermalLoad.h"
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
 
 ThermalLoadInstance::ThermalLoadInstance():
                     DataStructure( getNewResultObjectName(), "CHAR_THER" ),

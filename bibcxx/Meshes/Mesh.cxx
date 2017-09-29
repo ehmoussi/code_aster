@@ -29,7 +29,7 @@
 #include "Python.h"
 #include "Meshes/Mesh.h"
 #include "Utilities/CapyConvertibleValue.h"
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
 #include "RunManager/LogicalUnitManagerCython.h"
 
 BaseMeshInstance::BaseMeshInstance( const std::string& type ):
@@ -54,7 +54,7 @@ BaseMeshInstance::BaseMeshInstance( const std::string& type ):
 bool MeshInstance::addGroupOfNodesFromNodes( const std::string& name, const VectorString& vec )
     throw( std::runtime_error )
 {
-    CommandSyntaxCython cmdSt( "DEFI_GROUP" );
+    CommandSyntax cmdSt( "DEFI_GROUP" );
     cmdSt.setResult( getResultObjectName(), "MAILLAGE" );
 
     CapyConvertibleContainer toCapyConverter;
@@ -101,7 +101,7 @@ bool BaseMeshInstance::readMeshFile( const std::string& fileName, const std::str
         ASTERINTEGER op2 = 47;
         if( format == "GIBI" ) op2 = 49;
 
-        CommandSyntaxCython* cmdSt2 = new CommandSyntaxCython( preCmd );
+        CommandSyntax* cmdSt2 = new CommandSyntax( preCmd );
         SyntaxMapContainer syntax2;
         syntax2.container[ "UNITE_" + format ] = file1.getLogicalUnit();
         syntax2.container[ "UNITE_MAILLAGE" ] = file2.getLogicalUnit();
@@ -119,7 +119,7 @@ bool BaseMeshInstance::readMeshFile( const std::string& fileName, const std::str
         syntax.container[ "FORMAT" ] = "ASTER";
         syntax.container[ "UNITE" ] = file2.getLogicalUnit();
 
-        CommandSyntaxCython cmdSt( "LIRE_MAILLAGE" );
+        CommandSyntax cmdSt( "LIRE_MAILLAGE" );
         cmdSt.setResult( getResultObjectName(), "MAILLAGE" );
 
         cmdSt.define( syntax );
@@ -139,7 +139,7 @@ bool BaseMeshInstance::readMeshFile( const std::string& fileName, const std::str
         syntax.container[ "FORMAT" ] = format;
         syntax.container[ "UNITE" ] = file1.getLogicalUnit();
 
-        CommandSyntaxCython cmdSt( "LIRE_MAILLAGE" );
+        CommandSyntax cmdSt( "LIRE_MAILLAGE" );
         cmdSt.setResult( getResultObjectName(), "MAILLAGE" );
 
         cmdSt.define( syntax );

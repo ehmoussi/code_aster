@@ -25,7 +25,7 @@
 #include "astercxx.h"
 
 #include "LinearAlgebra/ElementaryMatrix.h"
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
 
 ElementaryMatrixInstance::ElementaryMatrixInstance( const JeveuxMemory memType ):
                 DataStructure( "MATR_ELEM", memType ),

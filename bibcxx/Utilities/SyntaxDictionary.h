@@ -112,13 +112,13 @@ protected:
         * @brief Convertisseur du conteneur en dictionnaire python
         * @return un dict python contenant la syntaxe valorisable par l'objet CommandSyntax
         * @todo Probleme de refcounting : ajouter un objet wrapper qui se chargera de la destruction
-        * @todo seul CommandSyntaxCython et le cython devrait pouvoir appeler cette fonction ?
+        * @todo seul CommandSyntax et le cython devrait pouvoir appeler cette fonction ?
         * @todo ajouter un const pour this
         */
     PyObject* convertToPythonDictionnary( PyObject* returnDict = NULL ) const;
 
 private:
-    friend class CommandSyntaxCython;
+    friend class CommandSyntax;
     friend class MaterialOnMeshInstance;
     friend SyntaxMapContainer operator+( const SyntaxMapContainer&, const SyntaxMapContainer& );
 };

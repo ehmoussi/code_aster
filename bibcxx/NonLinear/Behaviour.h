@@ -32,7 +32,7 @@
 #include "Meshes/MeshEntities.h"
 #include "NonLinear/AllowedBehaviour.h"
 #include "Modeling/Model.h"
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
 #include "Utilities/GenericParameter.h"
 
 

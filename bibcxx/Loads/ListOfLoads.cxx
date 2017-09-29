@@ -26,7 +26,7 @@
 #include "astercxx.h"
 
 #include "Loads/ListOfLoads.h"
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
 
 ListOfLoadsInstance::ListOfLoadsInstance( const JeveuxMemory memType ):
                     DataStructure( "L_CHARGES", memType ),
@@ -41,7 +41,7 @@ bool ListOfLoadsInstance::build() throw ( std::runtime_error )
     if ( ! _isEmpty )
         return true;
 //     ResultsContainerPtr resultC( new ResultsContainerInstance ( std::string( "EVOL_ELAS" ) ) );
-    CommandSyntaxCython cmdSt( "MECA_STATIQUE" );
+    CommandSyntax cmdSt( "MECA_STATIQUE" );
 //     cmdSt.setResult( resultC->getName(), resultC->getType() );
     SyntaxMapContainer dict;
     ListSyntaxMapContainer listeExcit;

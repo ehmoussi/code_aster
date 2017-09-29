@@ -27,7 +27,7 @@
 
 bool GenericModalBasisInstance::build() throw( std::runtime_error )
 {
-    CommandSyntaxCython cmdSt( "DEFI_BASE_MODALE" );
+    CommandSyntax cmdSt( "DEFI_BASE_MODALE" );
     cmdSt.setResult( getName(), "MODE_MECA" );
 
     CapyConvertibleSyntax syntax;

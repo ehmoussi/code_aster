@@ -29,7 +29,7 @@
 
 #include "Materials/MaterialOnMesh.h"
 #include "Utilities/SyntaxDictionary.h"
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
 
 
 MaterialOnMeshInstance::MaterialOnMeshInstance( const MeshPtr& mesh ):
@@ -97,7 +97,7 @@ PyObject* MaterialOnMeshInstance::getCommandKeywords() throw ( std::runtime_erro
 
 bool MaterialOnMeshInstance::build() throw ( std::runtime_error )
 {
-    auto syntax = CommandSyntaxCython( "AFFE_MATERIAU" );
+    auto syntax = CommandSyntax( "AFFE_MATERIAU" );
     syntax.setResult( getName(), getType() );
     auto keywords = getCppCommandKeywords();
     syntax.define( keywords );

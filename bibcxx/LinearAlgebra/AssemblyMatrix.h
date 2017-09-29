@@ -37,7 +37,7 @@
 #include "MemoryManager/JeveuxCollection.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "Loads/ListOfLoads.h"
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
 #ifdef _HAVE_PETSC4PY
 #if _HAVE_PETSC4PY == 1
 #include <petscmat.h>
@@ -301,7 +301,7 @@ bool AssemblyMatrixInstance< ValueType >::factorization() throw ( std::runtime_e
     if ( _isEmpty )
         throw std::runtime_error( "Assembly matrix is empty" );
 
-    CommandSyntaxCython cmdSt( "FACTORISER" );
+    CommandSyntax cmdSt( "FACTORISER" );
     cmdSt.setResult( getName(), getType() );
 
     SyntaxMapContainer dict;
