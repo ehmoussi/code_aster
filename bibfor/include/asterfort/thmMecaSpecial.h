@@ -19,7 +19,6 @@
 !
 interface
     subroutine thmMecaSpecial(option , meca     , nume_thmc,&
-                              yate   , yap1     , yap2     ,&
                               p1     , dp1      , p2       , dp2   , satur, tbiot,&
                               j_mater, ndim     , typmod   , carcri,&
                               addeme , adcome   , addep1   , addep2,&
@@ -29,7 +28,6 @@ interface
                               congep , vintp    ,&
                               dsde   , ther_meca, retcom)
         character(len=16), intent(in) :: option, meca
-        integer, intent(in) :: yate, yap1, yap2
         integer, intent(in) :: j_mater, nume_thmc
         real(kind=8), intent(in) :: p1, dp1, p2, dp2, satur, tbiot(6)
         character(len=8), intent(in) :: typmod(2)

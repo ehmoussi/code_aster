@@ -18,8 +18,7 @@
 ! aslint: disable=W1504
 !
 interface 
-    subroutine thmSelectMeca(yate  , yap1     , yap2  ,&
-                             p1    , dp1      , p2    , dp2   , satur    , tbiot,&
+    subroutine thmSelectMeca(p1    , dp1      , p2    , dp2   , satur    , tbiot,&
                              option, j_mater  , ndim  , typmod, angl_naut,&
                              compor, carcri   , instam, instap, dtemp    ,&
                              addeme, addete   , adcome, addep1, addep2,&
@@ -28,7 +27,6 @@ interface
                              congem, vintm    ,&
                              congep, vintp    ,&
                              dsde  , retcom)
-        integer, intent(in) :: yate, yap1, yap2
         integer, intent(in) :: j_mater
         character(len=16), intent(in) :: option, compor(*)
         real(kind=8), intent(in) :: p1, dp1, p2, dp2, satur, tbiot(6)

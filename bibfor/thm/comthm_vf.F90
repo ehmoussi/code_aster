@@ -19,17 +19,16 @@
 ! aslint: disable=W1504, W1306
 !
 subroutine comthm_vf(option, l_steady, ifa, valfac,&
-                  valcen, j_mater, typmod, compor, carcri,&
-                  instam, instap, ndim, dimdef, dimcon,&
-                  nbvari, yamec, yap1, yap2, yate,&
-                  addeme, adcome, addep1, adcp11, adcp12,&
-                  addep2, adcp21, adcp22, addete, adcote,&
-                  defgem, defgep, congem, congep, vintm,&
-                  vintp, dsde, pesa, retcom, kpi,&
-                  npg, angl_naut,&
-                  thmc, hydr,&
-                  advihy, advico, vihrho, vicphi, vicpvp, vicsat)
-
+                     valcen, j_mater, typmod, compor, carcri,&
+                     instam, instap, ndim, dimdef, dimcon,&
+                     nbvari, yamec, yap1, yap2, yate,&
+                     addeme, adcome, addep1, adcp11, adcp12,&
+                     addep2, adcp21, adcp22, addete, adcote,&
+                     defgem, defgep, congem, congep, vintm,&
+                     vintp, dsde, pesa, retcom, kpi,&
+                     npg, angl_naut,&
+                     thmc, hydr,&
+                     advihy, advico, vihrho, vicphi, vicpvp, vicsat)
 !
 use THM_type
 use THM_module
@@ -257,9 +256,8 @@ integer, intent(in) :: vicsat
 !  C'EST A DIRE SI KPI<NPG
 ! ======================================================================
     if (ds_thm%ds_elem%l_dof_meca .and. kpi .le. npg) then
-        call thmSelectMeca(yate  , yap1   , yap2  ,&
-                           p1    , dp1    , p2    , dp2   , satur, tbiot,&
-                           option, j_mater  , ndim  , typmod, angl_naut,&
+        call thmSelectMeca(p1    , dp1    , p2    , dp2   , satur, tbiot,&
+                           option, j_mater, ndim  , typmod, angl_naut,&
                            compor, carcri , instam, instap, dt       ,&
                            addeme, addete , adcome, addep1, addep2   ,&
                            dimdef, dimcon ,&

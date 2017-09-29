@@ -17,8 +17,7 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
 !
-subroutine thmSelectMeca(yate  , yap1   , yap2  ,&
-                         p1    , dp1      , p2    , dp2   , satur    , tbiot,&
+subroutine thmSelectMeca(p1    , dp1      , p2    , dp2   , satur    , tbiot,&
                          option, j_mater, ndim  , typmod, angl_naut,&
                          compor, carcri , instam, instap, dtemp    ,&
                          addeme, addete   , adcome, addep1, addep2,&
@@ -43,7 +42,6 @@ implicit none
 #include "asterfort/thmGetParaBehaviour.h"
 #include "asterfort/thmMecaSpecial.h"
 !
-integer, intent(in) :: yate, yap1, yap2
 integer, intent(in) :: j_mater
 character(len=16), intent(in) :: option, compor(*)
 real(kind=8), intent(in) :: p1, dp1, p2, dp2, satur, tbiot(6)
@@ -68,9 +66,6 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  yate             : 1 if thermic dof
-! In  yap1             : 1 if capillary pressure dof
-! In  yap2             : 1 if gaz pressure dof
 ! In  p1               : capillary pressure - At end of current step
 ! In  dp1              : increment of capillary pressure
 ! In  p2               : gaz pressure - At end of current step
@@ -143,7 +138,6 @@ integer, intent(out) :: retcom
     if (numlc .eq. 0) then
 ! ----- Special behaviours
         call thmMecaSpecial(option , meca     , nume_thmc,&
-                            yate   , yap1     , yap2     ,&
                             p1     , dp1      , p2       , dp2   , satur, tbiot,&
                             j_mater, ndim     , typmod   , carcri, &
                             addeme , adcome   , addep1   , addep2,&
@@ -156,7 +150,7 @@ integer, intent(out) :: retcom
     elseif (numlc .eq. 1) then
 ! ----- Elasticity
         ASSERT(meca .eq. 'ELAS')
-        call thmMecaElas(yate  , option, angl_naut, dtemp,&
+        call thmMecaElas(option, angl_naut, dtemp,&
                          adcome, dimcon,&
                          deps  , congep, dsdeme, ther_meca)
 
@@ -179,7 +173,7 @@ integer, intent(out) :: retcom
                     congep     , vintp  ,&
                     dsdeme     , retcom )
 ! ----- Compute thermic dilatation
-        if (yate .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_ther) then
             do i = 1, 3
                 ther_meca(i) = -alpha0*(&
                                 dsde(adcome-1+i,addeme+ndim-1+1)+&
@@ -203,7 +197,7 @@ integer, intent(out) :: retcom
 ! - Add thermic (dilatation) matrix
 !
     if (l_matrix) then
-        if (yate .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_ther) then
             do i = 1, 6
                 dsde(adcome-1+i,addete) = dsde(adcome-1+i,addete) -&
                                           ther_meca(i)

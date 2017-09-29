@@ -18,7 +18,6 @@
 ! aslint: disable=W1504
 !
 subroutine thmMecaSpecial(option , meca     , nume_thmc,&
-                          yate   , yap1     , yap2     ,&
                           p1     , dp1      , p2       , dp2   , satur, tbiot,&
                           j_mater, ndim     , typmod   , carcri,&
                           addeme , adcome   , addep1   , addep2,&
@@ -42,7 +41,6 @@ implicit none
 #include "asterfort/lchbr2.h"
 !
 character(len=16), intent(in) :: option, meca
-integer, intent(in) :: yate, yap1, yap2
 integer, intent(in) :: j_mater, nume_thmc
 real(kind=8), intent(in) :: p1, dp1, p2, dp2, satur, tbiot(6)
 character(len=8), intent(in) :: typmod(2)
@@ -68,9 +66,6 @@ integer, intent(out) :: retcom
 ! In  option           : option to compute
 ! In  meca             : mechanical law for THM
 ! In  nume_thmc        : index of coupling law for THM
-! In  yate             : 1 if thermic dof
-! In  yap1             : 1 if capillary pressure dof
-! In  yap2             : 1 if gaz pressure dof
 ! In  p1               : capillary pressure - At end of current step
 ! In  dp1              : increment of capillary pressure
 ! In  p2               : gaz pressure - At end of current step
@@ -93,7 +88,7 @@ integer, intent(out) :: retcom
 ! In  vintm            : internal state variables - At begin of current step
 ! IO  congep           : generalized stresses - At end of current step
 ! IO  vintp            : internal state variables - At end of current step
-! IO  dsde             : derivative matrix
+! IO  dsde             : derivative matrix stress/strain (behaviour only)
 ! Out ther_meca        : product [Elas] {alpha}
 ! Out retcom           : return code
 !
@@ -140,7 +135,7 @@ integer, intent(out) :: retcom
             end do
         endif
 ! ----- Compute thermic dilatation
-        if (yate .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_ther) then
             do i = 1, 3
                 ther_meca(i) = -alpha0*(&
                                 dsde(adcome-1+i,addeme+ndim-1+1)+&
@@ -168,14 +163,14 @@ integer, intent(out) :: retcom
         endif
 ! ----- Add p2 matrix
         if (l_matrix) then
-            if (yap2 .ge. 1) then
+            if (ds_thm%ds_elem%l_dof_pre2) then
                 do i = 1, 2*ndim
                     dsde(adcome+i-1,addep2) = dsde(adcome+i-1,addep2) + dsidp2(i)
                 end do
             endif
         endif
 ! ----- Compute thermic dilatation
-        if (yate .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_ther) then
             do i = 1, 3
                 ther_meca(i) = -alpha0*(&
                                 dsde(adcome-1+i,addeme+ndim-1+1)+&
@@ -198,7 +193,7 @@ integer, intent(out) :: retcom
                     dsdeme        , dsidp1             , dsidp2 , retcom)
         if (l_matrix) then
             do i = 1, 2*ndim
-                if (yap1 .ge. 1) then
+                if (ds_thm%ds_elem%l_dof_pre1) then
                     dsde(adcome+i-1,addep1) = dsde(adcome+i-1,addep1) + dsidp1(i)
                 endif
                 if (l_dspdp2) then
@@ -211,7 +206,7 @@ integer, intent(out) :: retcom
             end do
         endif
 ! ----- Compute thermic dilatation
-        if (yate .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_ther) then
             do i = 1, 3
                 ther_meca(i) = -alpha0*(&
                                 dsde(adcome-1+i,addeme+ndim-1+1)+&

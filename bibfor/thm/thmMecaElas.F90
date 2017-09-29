@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine thmMecaElas(yate  , option, angl_naut, dtemp,&
+subroutine thmMecaElas(option, angl_naut, dtemp,&
                        adcome, dimcon,&
                        deps  , congep, dsdeme, ther_meca)
 !
@@ -30,7 +30,6 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/thmTherElas.h"
 !
-integer, intent(in) :: yate
 character(len=16), intent(in) :: option
 real(kind=8), intent(in) :: dtemp
 integer, intent(in) :: dimcon, adcome
@@ -48,7 +47,6 @@ real(kind=8), intent(out) :: ther_meca(6)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  yate             : 1 if thermic dof
 ! In  option           : option to compute
 ! In  typmod           : type of modelization (TYPMOD2)
 ! In  angl_naut        : nautical angles
@@ -60,7 +58,7 @@ real(kind=8), intent(out) :: ther_meca(6)
 ! In  dimcon           : dimension of generalized stresses vector
 ! In  deps             : increment of mechanic strains
 ! IO  congep           : generalized stresses - At end of current step
-! Out dsdeme           : derivative of sigma/stress for mechanics
+! Out dsdeme           : derivative matrix stress/strain for mechanics
 ! Out ther_elas        : product [Elas] {alpha}
 !
 ! --------------------------------------------------------------------------------------------------
@@ -129,7 +127,7 @@ real(kind=8), intent(out) :: ther_meca(6)
 !
 ! - For thermic (dilatation)
 !
-    if (yate .eq. 1) then
+    if (ds_thm%ds_elem%l_dof_ther) then
         if (l_stress) then
             do i = 1, 6
                 congep(adcome+i-1) = congep(adcome+i-1)-ther_meca(i)*dtemp

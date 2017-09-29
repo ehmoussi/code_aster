@@ -220,9 +220,8 @@ integer, intent(in) :: vicsat
 !  C'EST A DIRE SI KPI<NPG
 ! ======================================================================
     if (ds_thm%ds_elem%l_dof_meca .and. kpi .le. npg) then
-        call thmSelectMeca(yate  , yap1   , yap2  ,&
-                           p1    , dp1    , p2    , dp2   , satur   , tbiot,&
-                           option, j_mater  , ndim  , typmod, angl_naut,&
+        call thmSelectMeca(p1    , dp1    , p2    , dp2   , satur   , tbiot,&
+                           option, j_mater, ndim  , typmod, angl_naut,&
                            compor, carcri , instam, instap, dt       ,&
                            addeme, addete , adcome, addep1, addep2   ,&
                            dimdef, dimcon ,&
