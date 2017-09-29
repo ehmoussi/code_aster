@@ -28,7 +28,6 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/jevech.h"
 #include "asterfort/thmGetElemInfo.h"
-#include "asterfort/thmGetParaPhysic.h"
 #include "asterfort/thmGetElemDime.h"
 #include "asterfort/epsthm.h"
 #include "asterfort/thmGetElemRefe.h"
@@ -46,7 +45,6 @@ implicit none
 !
     character(len=8) :: elrefe, elref2
     integer :: addeme, addep1, addep2, addete
-    integer :: yamec, yate, yap1, yap2
     integer :: ipg, i_cmp
     integer :: jv_geom, jv_disp, jv_strain
     real(kind=8) :: epsm(6, 27)
@@ -99,11 +97,12 @@ implicit none
     ASSERT(npi .le. 27)
     ASSERT(nno .le. 20)
 !
-! - Get parameters for physics
+! - Address in generalized strains vector
 !
-    call thmGetParaPhysic(mecani, press1, press2, tempe ,&
-                          yamec , addeme, yate  , addete,&
-                          yap1  , addep1, yap2  , addep2)
+    addeme = mecani(2)
+    addete = tempe(2)
+    addep1 = press1(3)
+    addep2 = press2(3)
 !
 ! - Get dimensions about element
 !
