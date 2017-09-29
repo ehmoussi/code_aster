@@ -26,7 +26,7 @@
 #include "astercxx.h"
 
 #include "Modeling/XfemCrack.h"
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
 
 #include "Modeling/CrackShape.h"
 
@@ -70,7 +70,7 @@ XfemCrackInstance::XfemCrackInstance(MeshPtr supportMesh):
 
 bool XfemCrackInstance::build() throw( std::runtime_error )
 {
-    CommandSyntaxCython cmdSt( "DEFI_FISS_XFEM" );
+    CommandSyntax cmdSt( "DEFI_FISS_XFEM" );
     cmdSt.setResult( getResultObjectName(), "FISS_XFEM" );
 
     SyntaxMapContainer dict;
@@ -203,7 +203,7 @@ bool XfemCrackInstance::build() throw( std::runtime_error )
 
 ModelPtr XfemCrackInstance::enrichModelWithXfem( ModelPtr &baseModel ) throw ( std::runtime_error )
 {
-    CommandSyntaxCython cmdSt( "MODI_MODELE_XFEM" );
+    CommandSyntax cmdSt( "MODI_MODELE_XFEM" );
 
     // Create empty model and get its name
     ModelPtr newModelPtr(new ModelInstance());

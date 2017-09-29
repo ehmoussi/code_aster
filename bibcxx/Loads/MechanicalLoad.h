@@ -34,7 +34,7 @@
 #include "Modeling/FiniteElementDescriptor.h"
 #include "DataFields/PCFieldOnMesh.h"
 
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
 
 /**
  * @enum LoadEnum
@@ -534,7 +534,7 @@ class MechanicalLoadInstance: public GenericMechanicalLoadInstance
     bool build() throw ( std::runtime_error )
     {
         //std::cout << " build " << std::endl; 
-        CommandSyntaxCython cmdSt( "AFFE_CHAR_MECA" );
+        CommandSyntax cmdSt( "AFFE_CHAR_MECA" );
         cmdSt.setResult( getResultObjectName(), "CHAR_MECA" );
 
         SyntaxMapContainer dict;

@@ -22,7 +22,7 @@
  */
 
 #include "Loads/AcousticsLoad.h"
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
 
 const char SANS_GROUP_MA[] = "SANS_GROUP_MA";
 const char SANS_GROUP_NO[] = "SANS_GROUP_NO";
@@ -32,7 +32,7 @@ bool AcousticsLoadInstance::build()
     if ( ! _supportModel )
         throw std::runtime_error( "Support Model not set" );
 
-    CommandSyntaxCython cmdSt( "AFFE_CHAR_ACOU" );
+    CommandSyntax cmdSt( "AFFE_CHAR_ACOU" );
     cmdSt.setResult( getResultObjectName(), "CHAR_ACOU" );
 
     CapyConvertibleSyntax syntax;

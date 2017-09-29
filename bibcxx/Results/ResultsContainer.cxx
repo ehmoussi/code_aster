@@ -27,7 +27,7 @@
 
 #include "Results/ResultsContainer.h"
 #include "RunManager/LogicalUnitManagerCython.h"
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
 #include "Utilities/Tools.h"
 
 bool ResultsContainerInstance::allocate( int nbRanks ) throw ( std::runtime_error )
@@ -184,7 +184,7 @@ bool ResultsContainerInstance::printMedFile( const std::string fileName ) const
 {
     LogicalUnitFileCython a( fileName, Binary, New );
     int retour = a.getLogicalUnit();
-    CommandSyntaxCython cmdSt( "IMPR_RESU" );
+    CommandSyntax cmdSt( "IMPR_RESU" );
 
     SyntaxMapContainer dict;
     dict.container[ "FORMAT" ] = "MED";

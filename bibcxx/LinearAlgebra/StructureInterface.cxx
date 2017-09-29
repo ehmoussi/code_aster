@@ -33,7 +33,7 @@ const std::vector< std::string > allInterfaceTypeNames = { "MNEAL", "CRAIGB",
 
 bool StructureInterfaceInstance::build() throw( std::runtime_error )
 {
-    CommandSyntaxCython cmdSt( "DEFI_INTERF_DYNA" );
+    CommandSyntax cmdSt( "DEFI_INTERF_DYNA" );
     cmdSt.setResult( getName(), "INTERF_DYNA_CLAS" );
 
     CapyConvertibleSyntax syntax;

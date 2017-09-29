@@ -29,7 +29,7 @@
 #include "Modeling/Model.h"
 #include "Interactions/ContactZone.h"
 #include "DataStructures/DataStructure.h"
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
 
 /**
  * @enum FrictionEnum
@@ -726,7 +726,7 @@ bool ContactDefinition< formulation >::build() throw ( std::runtime_error )
     if ( ! _model )
         throw std::runtime_error( "Support Model not set" );
 
-    CommandSyntaxCython cmdSt( "DEFI_CONTACT" );
+    CommandSyntax cmdSt( "DEFI_CONTACT" );
     cmdSt.setResult( getResultObjectName(), "CONTACT" );
 
     CapyConvertibleSyntax syntax;

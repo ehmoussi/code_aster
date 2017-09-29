@@ -22,13 +22,13 @@
  */
 
 #include "Studies/TimeStepManager.h"
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 void TimeStepManagerInstance::build() throw ( std::runtime_error )
 {
-    CommandSyntaxCython cmdSt( "DEFI_LIST_INST" );
+    CommandSyntax cmdSt( "DEFI_LIST_INST" );
     cmdSt.setResult( getResultObjectName(), "LIST_INST" );
 
     SyntaxMapContainer dict;

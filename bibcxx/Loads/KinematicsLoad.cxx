@@ -26,7 +26,7 @@
 #include "astercxx.h"
 
 #include "Loads/KinematicsLoad.h"
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
 
 KinematicsLoadInstance::KinematicsLoadInstance():
                     DataStructure( getNewResultObjectName(), "CHAR_CINE" ),
@@ -44,7 +44,7 @@ bool KinematicsLoadInstance::build() throw ( std::runtime_error )
     else
         throw std::runtime_error( "KinematicsLoad empty" );
     setType( typSd );
-    CommandSyntaxCython cmdSt( "AFFE_CHAR_CINE" );
+    CommandSyntax cmdSt( "AFFE_CHAR_CINE" );
     cmdSt.setResult( getResultObjectName(), typSd );
 
     SyntaxMapContainer dict;

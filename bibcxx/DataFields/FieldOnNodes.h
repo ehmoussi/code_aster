@@ -241,7 +241,7 @@ bool FieldOnNodesInstance< ValueType >::printMedFile( const std::string fileName
 {
     LogicalUnitFileCython a( fileName, Binary, New );
     int retour = a.getLogicalUnit();
-    CommandSyntaxCython cmdSt( "IMPR_RESU" );
+    CommandSyntax cmdSt( "IMPR_RESU" );
 
     SyntaxMapContainer dict;
     dict.container[ "FORMAT" ] = "MED";

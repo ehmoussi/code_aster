@@ -29,7 +29,7 @@
 #include "Modeling/Model.h"
 #include <typeinfo>
 
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
 
 const char* const ModelSplitingMethodNames[nbModelSplitingMethod] = { "CENTRALISE",
                                                                         "SOUS_DOMAINE",
@@ -84,7 +84,7 @@ SyntaxMapContainer ModelInstance::buildModelingsSyntaxMapContainer() const
 bool ModelInstance::buildWithSyntax( SyntaxMapContainer& dict )
     throw ( std::runtime_error )
 {
-    CommandSyntaxCython cmdSt( "AFFE_MODELE" );
+    CommandSyntax cmdSt( "AFFE_MODELE" );
     cmdSt.setResult( getResultObjectName(), "MODELE" );
     cmdSt.define( dict );
 

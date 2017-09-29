@@ -1,9 +1,9 @@
-#ifndef COMMANDSYNTAXCYTHON_H_
-#define COMMANDSYNTAXCYTHON_H_
+#ifndef COMMANDSYNTAX_H_
+#define COMMANDSYNTAX_H_
 
 /**
- * @file CommandSyntaxCython.h
- * @brief Fichier entete permettant de decrire un bout de fichier de commande Aster
+ * @file CommandSyntax.h
+ * @brief Implementation of API to CommandSyntax Python object.
  * @section LICENCE
  * Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
  * This file is part of code_aster.
@@ -33,10 +33,10 @@
 extern "C" PyObject* GetJdcAttr(_IN char *);
 
 /**
- * @class CommandSyntaxCython
- * @brief This class is a mirror of class CommandSyntax in cython
+ * @class CommandSyntax
+ * @brief Implementation of API to CommandSyntax Python object.
  */
-class CommandSyntaxCython
+class CommandSyntax
 {
     private:
         /** @brief The command name. */
@@ -49,12 +49,12 @@ class CommandSyntaxCython
          * @brief Constructeur
          * @param name Nom de la commande
          */
-        CommandSyntaxCython(const std::string name);
+        CommandSyntax(const std::string name);
 
         /**
          * @brief Destructeur
          */
-        ~CommandSyntaxCython();
+        ~CommandSyntax();
 
         /**
          * @brief Impression de debug
@@ -82,4 +82,4 @@ class CommandSyntaxCython
                        const std::string typeSd) const;
 };
 
-#endif /* COMMANDSYNTAXCYTHON_H_ */
+#endif /* COMMANDSYNTAX_H_ */

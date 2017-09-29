@@ -23,7 +23,7 @@
 #include "astercxx.h"
 
 #include "Discretization/DOFNumbering.h"
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
 
 BaseDOFNumberingInstance::BaseDOFNumberingInstance( const std::string& type,
                                                     const JeveuxMemory memType ):
@@ -68,7 +68,7 @@ bool BaseDOFNumberingInstance::computeNumerotation() throw ( std::runtime_error 
     }
     else if ( ! _supportMatrix.use_count() == 0 )
     {
-        CommandSyntaxCython cmdSt( "NUME_DDL" );
+        CommandSyntax cmdSt( "NUME_DDL" );
         cmdSt.setResult( getName(), getType() );
 
         SyntaxMapContainer dict;

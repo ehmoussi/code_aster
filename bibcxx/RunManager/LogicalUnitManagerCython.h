@@ -1,8 +1,8 @@
-#ifndef LOGICALUNITMANAGERCYTHON_H_
-#define LOGICALUNITMANAGERCYTHON_H_
+#ifndef LOGICALUNITMANAGER_H_
+#define LOGICALUNITMANAGER_H_
 
 /**
- * @file CommandSyntaxCython.h
+ * @file LogicalUnitManagerCython.h
  * @brief Fichier entete permettant de decrire un fichier sur unité logique
  * @author Nicolas Sellenet
  * @section LICENCE
@@ -32,7 +32,7 @@ enum FileAccessCython { New, Append, Old };
 
 /**
  * @class LogicalUnitFileCython
- * @brief This class is a mirror of class LogicalUnitFile in cython
+ * @brief This class is a mirror of class LogicalUnitFile in Python.
  * @author Nicolas Sellenet
  */
 class LogicalUnitFileCython
@@ -101,4 +101,4 @@ class LogicalUnitFileCython
         };
 };
 
-#endif /* LOGICALUNITMANAGERCYTHON_H_ */
+#endif /* LOGICALUNITMANAGER_H_ */
