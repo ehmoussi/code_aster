@@ -45,6 +45,21 @@ class CommandSyntax
         PyObject *_pySyntax;
 
     public:
+        /** @brief CommandSyntax Python class object, cached. */
+        static PyObject *pyClass;
+
+        /**
+         * @brief Static member that returns a new result name.
+         * @return Name for the new object.
+         */
+        static std::string getNewResultName();
+
+        /**
+         * @brief Static member that returns the current result name.
+         * @return Name for the current object that is being created.
+         */
+        static std::string getResultName();
+
         /**
          * @brief Constructeur
          * @param name Nom de la commande

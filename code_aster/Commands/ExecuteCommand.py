@@ -108,7 +108,7 @@ class ExecuteCommand(object):
         sd_name = get_name(self.name)
         if not sd_name:
             # use an automatic naming
-            sd_name = CommandSyntax.getNewResultObjectName()
+            sd_name = CommandSyntax.getNewResultName()
         return sd_name
 
     def check_jeveux(self):
