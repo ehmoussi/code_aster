@@ -45,7 +45,7 @@ bool KinematicsLoadInstance::build() throw ( std::runtime_error )
         throw std::runtime_error( "KinematicsLoad empty" );
     setType( typSd );
     CommandSyntax cmdSt( "AFFE_CHAR_CINE" );
-    cmdSt.setResult( getResultObjectName(), typSd );
+    cmdSt.setResult( CommandSyntax::getCurrentName(), typSd );
 
     SyntaxMapContainer dict;
     if ( ! _supportModel )

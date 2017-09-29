@@ -29,7 +29,7 @@
 void TimeStepManagerInstance::build() throw ( std::runtime_error )
 {
     CommandSyntax cmdSt( "DEFI_LIST_INST" );
-    cmdSt.setResult( getResultObjectName(), "LIST_INST" );
+    cmdSt.setResult( CommandSyntax::getCurrentName(), "LIST_INST" );
 
     SyntaxMapContainer dict;
 

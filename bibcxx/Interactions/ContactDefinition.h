@@ -727,7 +727,7 @@ bool ContactDefinition< formulation >::build() throw ( std::runtime_error )
         throw std::runtime_error( "Support Model not set" );
 
     CommandSyntax cmdSt( "DEFI_CONTACT" );
-    cmdSt.setResult( getResultObjectName(), "CONTACT" );
+    cmdSt.setResult( CommandSyntax::getCurrentName(), "CONTACT" );
 
     CapyConvertibleSyntax syntax;
     syntax.setSimpleKeywordValues( _toCapyConverter );

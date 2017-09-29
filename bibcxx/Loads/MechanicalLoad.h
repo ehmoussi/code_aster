@@ -535,7 +535,7 @@ class MechanicalLoadInstance: public GenericMechanicalLoadInstance
     {
         //std::cout << " build " << std::endl; 
         CommandSyntax cmdSt( "AFFE_CHAR_MECA" );
-        cmdSt.setResult( getResultObjectName(), "CHAR_MECA" );
+        cmdSt.setResult( CommandSyntax::getCurrentName(), "CHAR_MECA" );
 
         SyntaxMapContainer dict;
         if ( ! _mecaLoad._supportModel )
