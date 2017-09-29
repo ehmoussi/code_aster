@@ -15,16 +15,26 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1306,W1504
+!
 subroutine erhmv2(axi, perman, deltat, dimdep, dimdef,&
                   nmec, np1, np2, ndim, nno,&
                   nnos, nnom, npg, nddls, nddlm,&
                   dimuel, ipoids, ivf, idfde, ipoid2,&
-                  ivf2, idfde2, geom, fovo, deplp,&
+                  ivf2, idfde2, elem_coor, fovo, deplp,&
                   deplm, sielnp, sielnm, nbcmp, biot,&
                   unsurm, fpx, fpy, frx, fry,&
-                  yamec, addeme, yap1, addep1, yap2,&
-                  addep2, yate, addete, tm2h1v)
+                  addeme, addep1,&
+                  addep2, addete, tm2h1v)
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterc/r8miem.h"
+#include "asterfort/cabthm.h"
+#include "asterfort/utmess.h"
+!
+! --------------------------------------------------------------------------------------------------
 !
 !  ERREUR EN HYDRO-MECANIQUE - TERME VOLUMIQUE - DIMENSION 2
 !  **        *     *                 *                     *
@@ -33,17 +43,16 @@ subroutine erhmv2(axi, perman, deltat, dimdep, dimdef,&
 !      HYDRAULIQUE DE L'ESTIMATEUR D'ERREUR EN RESIDU POUR LES
 !      MODELISATIONS HM SATUREES
 !
-! ENTREE :
-! -------
+! --------------------------------------------------------------------------------------------------
 !
 ! IN AXI     : AXISYMETRIQUE OU NON ?
 ! IN PERMAN  : PERMANENT OU NON ?
 ! IN DELTAT  : PAS DE TEMPS (SI INSTATIONNAIRE)
 ! IN DIMDEP  : DIMENSION DES DEPLACEMENTS
 ! IN DIMDEF  : DIMENSION DES DEFORMATIONS GENERALISEES ELEMENTAIRES
-! IN NMEC    : = NDIM SI YAMEC, 0 SINON
-! IN NP1     : = 1 SI YAP1, 0 SINON
-! IN NP2     : = 1 SI YAP2, 0 SINON
+! IN NMEC    : = NDIM si mécanique, 0 sinon
+! IN NP1     : = 1 si pression capillaire, 0 sinon
+! IN NP2     : = 1 si pression gaz, 0 sinon
 ! IN NDIM    : DIMENSION DE L'ESPACE
 ! IN NNO     : NOMBRE DE NOEUDS DE L'ELEMENT
 ! IN NNOS    : NOMBRE DE NOEUDS SOMMETS DE L'ELEMENT
@@ -87,26 +96,18 @@ subroutine erhmv2(axi, perman, deltat, dimdep, dimdef,&
 !  2. TDEVOM : RESIDU DE LA DERIVEE TEMPORELLE DE LA MECA
 !  3. TSIVOH : RESIDU DE L'HYDRAULIQUE
 !
-!   -------------------------------------------------------------------
-! aslint: disable=W1306,W1504
-    implicit none
+! --------------------------------------------------------------------------------------------------
 !
-! DECLARATION PARAMETRES D'APPELS
-!
-#include "asterf_types.h"
-#include "asterc/r8miem.h"
-#include "asterfort/cabthm.h"
-#include "asterfort/utmess.h"
     aster_logical :: axi, perman
     integer :: dimuel
     integer :: ndim, nno, nnos, nnom, dimdep, dimdef, nmec, np1, np2
     integer :: nbcmp, npg, nddls, nddlm, ipoids, ivf, idfde
     integer :: ipoid2, ivf2, idfde2
-    integer :: yamec, addeme, yate, addete, yap1, addep1, yap2, addep2
+    integer :: addeme, addete, addep1, addep2
     real(kind=8) :: deltat, biot, unsurm
     real(kind=8) :: deplp(nno*dimdep), deplm(nno*dimdep)
     real(kind=8) :: fovo(ndim)
-    real(kind=8) :: geom(ndim, nno)
+    real(kind=8) :: elem_coor(ndim, nno)
     real(kind=8) :: fpx, fpy
     real(kind=8) :: frx(9), fry(9)
     real(kind=8) :: sielnp(140), sielnm(140)
@@ -128,37 +129,32 @@ subroutine erhmv2(axi, perman, deltat, dimdep, dimdef,&
     real(kind=8) :: divup, divum, ter11, ter12
     integer :: ipi, kpi, nn, ii, iaux, jaux
 !
-! =====================================================================
-! 1. INITIALISATION
-! =====================================================================
+! --------------------------------------------------------------------------------------------------
 !
-    ovfl = r8miem()
-!
-    do 10 ii = 1, 3
-!
-        tm2h1v(ii) = 0.d0
-!
- 10 end do
+    ovfl      = r8miem()
+    tm2h1v(:) = 0.d0
 !
 ! =====================================================================
 ! 2. ------ BOUCLE SUR LES POINTS DE GAUSS ---------------------------
 ! =====================================================================
 !
-    do 20 , ipi = 1,npg
+    do ipi = 1,npg
 !
-    kpi = ipi
-!
-! =====================================================================
-! 2.1. --- CALCUL DE LA MATRICE B AU POINT D'INTEGRATION --------------
-! =====================================================================
-!
-    call cabthm(nddls, nddlm, nno, nnos, nnom,&
-                dimuel, dimdef, ndim, kpi, ipoids,&
-                ipoid2, ivf, ivf2, idfde, idfde2,&
-                dfdi, dfdi2, geom, poids, poids2,&
-                b, nmec, yamec, addeme, yap1,&
-                addep1, yap2, addep2, yate, addete,&
-                np1, np2, axi)
+        kpi = ipi
+! ----- Compute [B] matrix for generalized strains
+        call cabthm(axi      , ndim   ,&
+                    nddls    , nddlm ,&
+                    nmec     , np1   , np2    ,&
+                    nno      , nnos  , nnom   ,&
+                    dimuel   , dimdef, kpi    ,&
+                    addeme   , addete, addep1 , addep2,&
+                    elem_coor     ,&
+                    ipoids   , ipoid2,&
+                    ivf      , ivf2  ,&
+                    idfde    , idfde2,&
+                    dfdi     , dfdi2 ,&
+                    poids    , poids2,&
+                    b        )
 !
 ! =====================================================================
 ! 2.2. ------ RECHERCHE DU GRADIENT DE LA PRESSION AU POINT DE GAUSS --
@@ -185,28 +181,23 @@ subroutine erhmv2(axi, perman, deltat, dimdep, dimdef,&
 !    POSITIONS 3, 7 ET 11 (P11, P12 ET P13). CQFD.
 ! =====================================================================
 !
-    grapxp = 0.d0
-    grapyp = 0.d0
+        grapxp = 0.d0
+        grapyp = 0.d0
 !
-    grapxm = 0.d0
-    grapym = 0.d0
+        grapxm = 0.d0
+        grapym = 0.d0
 !
-    iaux = ndim + 1
-    jaux = nnos*dimdep
+        iaux = ndim + 1
+        jaux = nnos*dimdep
 !
-    do 30 , nn = iaux, jaux, dimdep
-!
-    grapxp = grapxp + b(addep1+1,nn)*deplp(nn)
-    grapyp = grapyp + b(addep1+2,nn)*deplp(nn)
-!
-    if (.not. perman) then
-!
-        grapxm = grapxm + b(addep1+1,nn)*deplm(nn)
-        grapym = grapym + b(addep1+2,nn)*deplm(nn)
-!
-    endif
-!
- 30 continue
+        do nn = iaux, jaux, dimdep
+            grapxp = grapxp + b(addep1+1,nn)*deplp(nn)
+            grapyp = grapyp + b(addep1+2,nn)*deplp(nn)
+            if (.not. perman) then
+                grapxm = grapxm + b(addep1+1,nn)*deplm(nn)
+                grapym = grapym + b(addep1+2,nn)*deplm(nn)
+            endif
+        end do
 !
 ! =====================================================================
 ! 2.3. --------- CALCUL DE LA DIVERGENCE DES CONTRAINTES MECANIQUES ---
@@ -216,56 +207,45 @@ subroutine erhmv2(axi, perman, deltat, dimdep, dimdef,&
 !    LES VALEURS AUX NOEUDS SONT DANS SIELNP
 ! =====================================================================
 !
-    dsxxxp = 0.d0
-    dsxyyp = 0.d0
-    dsxyxp = 0.d0
-    dsyyyp = 0.d0
+        dsxxxp = 0.d0
+        dsxyyp = 0.d0
+        dsxyxp = 0.d0
+        dsyyyp = 0.d0
 !
-    dsxxxm = 0.d0
-    dsxyym = 0.d0
-    dsxyxm = 0.d0
-    dsyyym = 0.d0
+        dsxxxm = 0.d0
+        dsxyym = 0.d0
+        dsxyxm = 0.d0
+        dsyyym = 0.d0
 !
-    do 40 , ii = 1 , nno
-!
-    iaux = nbcmp*(ii-1)
-!
-    sigxxp = sielnp(iaux+1)
-    sigyyp = sielnp(iaux+2)
-    sigxyp = sielnp(iaux+4)
-!
-    dsxxxp = dsxxxp + sigxxp * dfdi(ii,1)
-    dsxyyp = dsxyyp + sigxyp * dfdi(ii,2)
-    dsyyyp = dsyyyp + sigyyp * dfdi(ii,2)
-    dsxyxp = dsxyxp + sigxyp * dfdi(ii,1)
-!
-    if (.not. perman) then
-!
-        sigxxm = sielnm(iaux+1)
-        sigyym = sielnm(iaux+2)
-        sigxym = sielnm(iaux+4)
-!
-        dsxxxm = dsxxxm + sigxxm * dfdi(ii,1)
-        dsxyym = dsxyym + sigxym * dfdi(ii,2)
-        dsyyym = dsyyym + sigyym * dfdi(ii,2)
-        dsxyxm = dsxyxm + sigxym * dfdi(ii,1)
-!
-    endif
-!
- 40 continue
+        do ii = 1 , nno
+            iaux = nbcmp*(ii-1)
+            sigxxp = sielnp(iaux+1)
+            sigyyp = sielnp(iaux+2)
+            sigxyp = sielnp(iaux+4)
+            dsxxxp = dsxxxp + sigxxp * dfdi(ii,1)
+            dsxyyp = dsxyyp + sigxyp * dfdi(ii,2)
+            dsyyyp = dsyyyp + sigyyp * dfdi(ii,2)
+            dsxyxp = dsxyxp + sigxyp * dfdi(ii,1)
+            if (.not. perman) then
+                sigxxm = sielnm(iaux+1)
+                sigyym = sielnm(iaux+2)
+                sigxym = sielnm(iaux+4)
+                dsxxxm = dsxxxm + sigxxm * dfdi(ii,1)
+                dsxyym = dsxyym + sigxym * dfdi(ii,2)
+                dsyyym = dsyyym + sigyym * dfdi(ii,2)
+                dsxyxm = dsxyxm + sigxym * dfdi(ii,1)
+            endif
+        end do
 !
 ! LA DIVERGENCE DU TENSEUR DES CONTRAINTES EST UN VECTEUR
 ! DE COMPOSANTES :
 !
-    dsxp = dsxxxp + dsxyyp
-    dsyp = dsxyxp + dsyyyp
-!
-    if (.not. perman) then
-!
-        dsxm = dsxxxm + dsxyym
-        dsym = dsxyxm + dsyyym
-!
-    endif
+        dsxp = dsxxxp + dsxyyp
+        dsyp = dsxyxp + dsyyyp
+        if (.not. perman) then
+            dsxm = dsxxxm + dsxyym
+            dsym = dsxyxm + dsyyym
+        endif
 !
 ! =====================================================================
 ! 2.4. ------ ASSEMBLAGE DES 3 TERMES : -------------------------------
@@ -274,18 +254,14 @@ subroutine erhmv2(axi, perman, deltat, dimdep, dimdef,&
 !           GRADIENT DE PRESSION
 ! =====================================================================
 !
-    forx = fovo(1) + fpx + frx(kpi)
-    fory = fovo(2) + fpy + fry(kpi)
-!
-    tm2h1v(1) = tm2h1v(1) + poids* ( ( forx + dsxp - biot * grapxp )**2 + ( fory + dsyp - biot * &
-                &grapyp )**2 )
-!
-    if (.not. perman) then
-!
-        tm2h1v(2) = tm2h1v(2) + poids* ( ( dsxp - dsxm - biot * ( grapxp - grapxm ))**2 + ( dsyp &
-                    &- dsym - biot * ( grapyp - grapym ))**2 )
-!
-    endif
+        forx = fovo(1) + fpx + frx(kpi)
+        fory = fovo(2) + fpy + fry(kpi)
+        tm2h1v(1) = tm2h1v(1) + poids* ( ( forx + dsxp - biot * grapxp )**2 +&
+                                         ( fory + dsyp - biot * grapyp )**2 )
+        if (.not. perman) then
+            tm2h1v(2) = tm2h1v(2) + poids* ( ( dsxp - dsxm - biot * ( grapxp - grapxm ))**2 +&
+                                             ( dsyp - dsym - biot * ( grapyp - grapym ))**2 )
+        endif
 !
 ! =====================================================================
 ! 2.5. TERME VOLUMIQUE DE L'HYDRAULIQUE (CF DOC R)
@@ -305,59 +281,40 @@ subroutine erhmv2(axi, perman, deltat, dimdep, dimdef,&
 !        HYDRAULIQUE NE SONT PAS CALCULES.
 ! =====================================================================
 !
-    if (.not. perman) then
-!
-        divuxp = 0.d0
-        divuyp = 0.d0
-        divuxm = 0.d0
-        divuym = 0.d0
-!
-        do 50 , ii = 1 , nno
-!
-        if (ii .le. nnos) then
-            iaux = dimdep*(ii-1)
-        else
-            iaux = (dimdep-1)*ii + nnos - 2
+        if (.not. perman) then
+            divuxp = 0.d0
+            divuyp = 0.d0
+            divuxm = 0.d0
+            divuym = 0.d0
+            do ii = 1 , nno
+                if (ii .le. nnos) then
+                    iaux = dimdep*(ii-1)
+                else
+                    iaux = (dimdep-1)*ii + nnos - 2
+                endif
+                divuxp = divuxp + deplp(iaux+1) * dfdi(ii,1)
+                divuyp = divuyp + deplp(iaux+2) * dfdi(ii,2)
+                divuxm = divuxm + deplm(iaux+1) * dfdi(ii,1)
+                divuym = divuym + deplm(iaux+2) * dfdi(ii,2)
+            end do
+            divup = divuxp + divuyp
+            divum = divuxm + divuym
+            pressp = 0.d0
+            pressm = 0.d0
+            iaux = ndim + 1
+            jaux = nnos*dimdep
+            do nn = iaux, jaux, dimdep
+                pressp = pressp + b(addep1,nn) * deplp(nn)
+                pressm = pressm + b(addep1,nn) * deplm(nn)
+            end do
+            if (deltat .gt. ovfl) then
+                ter11 = biot * ( divup - divum )/deltat
+                ter12 = unsurm * ( pressp - pressm )/deltat
+                tm2h1v(3) = tm2h1v(3) + poids2 * ( ter11 + ter12 )**2
+            else
+                call utmess('F', 'INDICATEUR_31')
+            endif
         endif
-!
-        divuxp = divuxp + deplp(iaux+1) * dfdi(ii,1)
-        divuyp = divuyp + deplp(iaux+2) * dfdi(ii,2)
-        divuxm = divuxm + deplm(iaux+1) * dfdi(ii,1)
-        divuym = divuym + deplm(iaux+2) * dfdi(ii,2)
-!
- 50     continue
-!
-        divup = divuxp + divuyp
-        divum = divuxm + divuym
-!
-        pressp = 0.d0
-        pressm = 0.d0
-!
-        iaux = ndim + 1
-        jaux = nnos*dimdep
-!
-        do 60 , nn = iaux, jaux, dimdep
-!
-        pressp = pressp + b(addep1,nn) * deplp(nn)
-        pressm = pressm + b(addep1,nn) * deplm(nn)
-!
- 60     continue
-!
-        if (deltat .gt. ovfl) then
-!
-            ter11 = biot * ( divup - divum )/deltat
-            ter12 = unsurm * ( pressp - pressm )/deltat
-!
-            tm2h1v(3) = tm2h1v(3) + poids2 * ( ter11 + ter12 )**2
-        else
-            call utmess('F', 'INDICATEUR_31')
-        endif
-!
-    endif
-!
-!
-    20 end do
-!
-! FIN BOUCLE SUR LES POINTS DE GAUSS
+    end do
 !
 end subroutine

@@ -15,9 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine epsthm(l_axi    , ndim     ,& 
-                  yamec    , yap1     , yap2    , yate     ,&
+! aslint: disable=W1504,W1306
+!
+subroutine epsthm(l_axi    , ndim     ,&
                   addeme   , addep1   , addep2  , addete   ,&
                   nno      , nnos     , nnom    , &
                   dimuel   , dimdef   , nddls   , nddlm    ,&
@@ -27,6 +27,9 @@ subroutine epsthm(l_axi    , ndim     ,&
                   jv_func  , jv_func2 , jv_dfunc, jv_dfunc2,&
                   epsm)
 !
+use THM_type
+use THM_module
+!
 implicit none
 !
 #include "jeveux.h"
@@ -34,22 +37,19 @@ implicit none
 #include "asterfort/cabthm.h"
 #include "asterfort/assert.h"
 !
-! aslint: disable=W1504
-!
-    aster_logical, intent(in) :: l_axi
-    integer, intent(in) :: ndim
-    integer, intent(in) :: yamec, yap1, yap2, yate
-    integer, intent(in) :: addeme, addep1, addep2, addete
-    integer, intent(in) :: nno, nnos, nnom
-    integer, intent(in) :: dimuel, dimdef
-    integer, intent(in) :: nddls, nddlm
-    integer, intent(in) :: nddl_meca, nddl_p1, nddl_p2
-    integer, intent(in) :: npi
-    real(kind=8), intent(in) :: elem_coor(ndim, nno)
-    real(kind=8), intent(in) :: disp(*)
-    integer, intent(in) :: jv_poids, jv_poids2
-    integer, intent(in) :: jv_func, jv_func2, jv_dfunc, jv_dfunc2
-    real(kind=8), intent(out) :: epsm(6,27)
+aster_logical, intent(in) :: l_axi
+integer, intent(in) :: ndim
+integer, intent(in) :: addeme, addep1, addep2, addete
+integer, intent(in) :: nno, nnos, nnom
+integer, intent(in) :: dimuel, dimdef
+integer, intent(in) :: nddls, nddlm
+integer, intent(in) :: nddl_meca, nddl_p1, nddl_p2
+integer, intent(in) :: npi
+real(kind=8), intent(in) :: elem_coor(ndim, nno)
+real(kind=8), intent(in) :: disp(*)
+integer, intent(in) :: jv_poids, jv_poids2
+integer, intent(in) :: jv_func, jv_func2, jv_dfunc, jv_dfunc2
+real(kind=8), intent(out) :: epsm(6,27)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -61,10 +61,6 @@ implicit none
 !
 ! In  l_axi        : flag is axisymmetric model
 ! In  ndim         : dimension of element (2 ou 3)
-! In  yamec        : flag for mechanic (1 of dof exist)
-! In  yap1         : flag for first hydraulic (1 of dof exist)
-! In  yap2         : flag for second hydraulic (1 of dof exist)
-! In  yate         : flag for thermic (1 of dof exist)
 ! In  addeme       : adress of mechanic dof in vector and matrix (generalized quantities)
 ! In  addep1       : adress of first hydraulic dof in vector and matrix (generalized quantities)
 ! In  addep2       : adress of second hydraulic dof in vector and matrix (generalized quantities)
@@ -107,16 +103,21 @@ implicit none
 !
     do kpi = 1 , npi
 ! ----- Compute [B] matrix for generalized strains
-        call cabthm(nddls, nddlm, nno, nnos, nnom,&
-                    dimuel, dimdef, ndim, kpi,&
-                    jv_poids, jv_poids2,&
-                    jv_func, jv_func2, jv_dfunc, jv_dfunc2,&
-                    dfdi, dfdi2, elem_coor, poids, poids2,&
-                    b, nddl_meca, yamec, addeme, yap1,&
-                    addep1, yap2, addep2, yate, addete,&
-                    nddl_p1, nddl_p2, l_axi)
+        call cabthm(l_axi    , ndim     ,&
+                    nddls    , nddlm    ,&
+                    nddl_meca, nddl_p1  , nddl_p2,&
+                    nno      , nnos     , nnom   ,&
+                    dimuel   , dimdef   , kpi    ,&
+                    addeme   , addete   , addep1 , addep2,&
+                    elem_coor,&
+                    jv_poids , jv_poids2,&
+                    jv_func  , jv_func2 ,&
+                    jv_dfunc , jv_dfunc2,&
+                    dfdi     , dfdi2    ,&
+                    poids    , poids2   ,&
+                    b        )
 ! ----- Compute strains
-        if (yamec .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_meca) then
             do i_cmp = 1 , 6
                 epsm(i_cmp, kpi) = 0.d0
                 do i_dim = 1, dimuel
