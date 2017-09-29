@@ -79,7 +79,7 @@ integer, intent(in) :: jv_func, jv_func2
 integer, intent(in) :: jv_dfunc, jv_dfunc2
 real(kind=8), intent(in) :: elem_coor(ndim, nno)
 real(kind=8), intent(in) :: dispm(dimuel), dispp(dimuel)
-real(kind=8), intent(in) :: congem(dimcon*npi)
+real(kind=8), intent(inout) :: congem(dimcon*npi)
 real(kind=8), intent(inout) :: congep(dimcon*npi)
 real(kind=8), intent(in) :: vintm(nbvari*npi)
 real(kind=8), intent(inout) :: vintp(nbvari*npi)
@@ -92,7 +92,7 @@ integer, intent(out) :: codret
 !
 ! THM - Compute
 !
-! Compute non-linear options
+! Compute non-linear options - General assembling for all physics
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -133,7 +133,7 @@ integer, intent(out) :: codret
 ! In  elem_coor        : coordinates of node for current element
 ! In  dispm            : displacements - At begin of current step
 ! In  dispp            : displacements - At end of current step
-! In  congem           : generalized stresses - At begin of current step
+! IO  congem           : generalized stresses - At begin of current step
 ! IO  congep           : generalized stresses - At end of current step
 ! In  vintm            : internal state variables - At begin of current step
 ! IO  vintp            : internal state variables - At end of current step
@@ -145,7 +145,7 @@ integer, intent(out) :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    real(kind=8) :: dt, ta, ta1
+    real(kind=8) :: time_incr, parm_theta
     integer :: kpi, ipi
     integer :: i, j, n, k, kji
     character(len=16) :: meca, thmc, ther, hydr
@@ -200,9 +200,8 @@ integer, intent(out) :: codret
 !
 ! - Time parameters
 !
-    dt  = time_curr-time_prev
-    ta  = carcri(4)
-    ta1 = 1.d0-ta
+    time_incr  = time_curr-time_prev
+    parm_theta = carcri(4)
 !
 ! - Create matrix for selection of dof
 !
@@ -248,26 +247,39 @@ integer, intent(out) :: codret
                 defgep(i)=defgep(i)+b(i,n)*dispp(n)
             end do
         end do
-! ----- Compute generalized stresses and derivatives
+! ----- Compute generalized stresses and derivatives at current Gauss point
         if (l_steady) then
-            call equthp(j_mater, option, ndim, compor, typmod,&
-                        kpi, npg, dimdef, dimcon, nbvari,&
-                        defgem, congem((kpi-1)*dimcon+1), vintm((kpi-1)*nbvari+1), defgep,&
-                        congep((kpi-1)*dimcon+1), vintp((kpi-1)*nbvari+1), mecani, press1, press2,&
-                        tempe, carcri, time_prev, time_curr, r,&
-                        drds, dsde, codret, angl_naut,&
-                        thmc, hydr,&
-                        advihy, advico, vihrho, vicphi, vicpvp, vicsat)
+            call equthp(option   , j_mater  ,&
+                        typmod   , angl_naut,&
+                        ndim     , nbvari   ,&
+                        kpi      , npg      ,&
+                        dimdef   , dimcon   ,&
+                        mecani   , press1   , press2, tempe ,&
+                        compor   , carcri   ,&
+                        thmc     , hydr     ,&
+                        advihy   , advico   ,&
+                        vihrho   , vicphi   , vicpvp, vicsat,&
+                        defgem   , defgep   ,&
+                        congem((kpi-1)*dimcon+1), congep((kpi-1)*dimcon+1),&
+                        vintm((kpi-1)*nbvari+1) , vintp((kpi-1)*nbvari+1) ,&
+                        time_prev, time_curr,&
+                        r        , drds     , dsde  , codret)
         else
-            call equthm(j_mater, option, ta, ta1, ndim,&
-                        compor, typmod, kpi, npg, dimdef,&
-                        dimcon, nbvari, defgem, congem((kpi-1)* dimcon+1),&
-                        vintm((kpi-1)*nbvari+1), defgep, congep((kpi-1)* dimcon+1),&
-                        vintp((kpi-1)*nbvari+1), mecani, press1, press2, tempe,&
-                        carcri, time_prev, time_curr, dt, r,&
-                        drds, dsde, codret, angl_naut,&
-                        thmc, hydr,&
-                        advihy, advico, vihrho, vicphi, vicpvp, vicsat)
+            call equthm(option   , j_mater  ,&
+                        typmod   , angl_naut, parm_theta,&
+                        ndim     , nbvari   ,&
+                        kpi      , npg      ,&
+                        dimdef   , dimcon   ,&
+                        mecani   , press1   , press2, tempe, &
+                        compor   , carcri   ,&
+                        thmc     , hydr     ,&
+                        advihy   , advico   ,&
+                        vihrho   , vicphi   , vicpvp, vicsat,&
+                        defgem   , defgep   ,&
+                        congem((kpi-1)* dimcon+1), congep((kpi-1)* dimcon+1),&
+                        vintm((kpi-1)*nbvari+1)  , vintp((kpi-1)*nbvari+1)  ,&
+                        time_prev, time_curr, time_incr ,&
+                        r        , drds     , dsde  , codret)
 ! --------- For selective integrations => move Gauss points to nodes
             if (ds_thm%ds_elem%l_dof_meca) then
                 if (kpi .gt. npg) then
