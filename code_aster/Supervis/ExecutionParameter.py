@@ -38,10 +38,18 @@ class ExecutionParameter(Singleton):
 
     The execution parameters are defined by reading the command line or using
     the method `set_option()`.
+
+    Attributes:
+        _args (dict): Command line arguments and execution parameters.
+        _catalc (*CataLoiComportement*): Object that gives access to the
+            catalog of behaviors.
+        _unit (*LogicalUnitFile*): Class that manages the logical units.
+        _syntax (*CommandSyntax*): Class that passes user keywords up to
+            Fortran operator.
     """
     _singleton_id = 'Supervis.ExecutionParameter'
     _args = None
-    _catalc = _unit = None
+    _catalc = _unit = _syntax = None
 
     def __init__(self):
         """Initialization of attributes"""
@@ -209,18 +217,28 @@ class ExecutionParameter(Singleton):
 
     @catalc.setter
     def catalc(self, catalc):
-        """Setter of `behavior_catalog`."""
+        """Setter of `_catalc`."""
         self._catalc = catalc
 
     @property
     def logical_unit(self):
-        """Attribute that holds the catalog of behavior."""
+        """Attribute that holds the logical units manager."""
         return self._unit
 
     @logical_unit.setter
-    def logical_unit(self, logical_unit):
-        """Setter of `behavior_catalog`."""
-        self._unit = logical_unit
+    def logical_unit(self, klass):
+        """Setter of `_unit`."""
+        self._unit = klass
+
+    @property
+    def syntax(self):
+        """Attribute that holds the command syntax class."""
+        return self._syntax
+
+    @syntax.setter
+    def syntax(self, klass):
+        """Setter of `_syntax`."""
+        self._syntax = klass
 
 
 def get_program_path(program):
