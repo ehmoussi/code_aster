@@ -50,7 +50,7 @@ class CommandSyntax:
     def __init__(self, name="unNamed", cata=None):
         """Create a new command"""
         self._name = name
-        # FIXME: remove unused attributes
+        # TODO: remove unused attributes
         self._resultName = " "
         self._resultType = " "
         self._definition = None
@@ -63,6 +63,10 @@ class CommandSyntax:
         assert currentCommand is None, \
             "CommandSyntax {} must be freed".format( currentCommand.getName() )
         self.setCurrentCommand(self)
+        # TODO: remove cata argument (not easy to fill in C++)
+        if not cata:
+            from ..Cata import Commands
+            cata = getattr(Commands, name)
         self._commandCata = cata
 
     def free( self ):
