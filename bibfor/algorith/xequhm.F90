@@ -15,6 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+! aslint: disable=W1504
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
 subroutine xequhm(imate, option, ta, ta1, ndim,&
@@ -24,6 +25,9 @@ subroutine xequhm(imate, option, ta, ta1, ndim,&
                   mecani, press1, press2, tempe,&
                   rinstp, dt, r, drds,&
                   dsde, retcom, angmas, enrhyd, nfh)
+!
+use THM_type
+use THM_module
 !
 implicit none
 !
@@ -62,9 +66,9 @@ implicit none
 
     integer :: imate, ndim, nbvari, kpi, npg, dimdef, dimcon, retcom
     integer :: mecani(5), press1(7), press2(7), tempe(5)
-    integer :: yamec, addeme, adcome, yate, addete, i, j
-    integer :: yap1, nbpha1, addep1, adcp11, nfh
-    integer :: yap2, nbpha2, addep2
+    integer :: addeme, adcome, addete, i, j
+    integer :: nbpha1, addep1, adcp11, nfh
+    integer :: nbpha2, addep2
     real(kind=8) :: defgem(dimdef), defgep(dimdef), congem(dimcon)
     real(kind=8) :: congep(dimcon), vintm(nbvari), vintp(nbvari)
     real(kind=8) :: pesa(3), dt, rinstp
@@ -83,17 +87,13 @@ implicit none
 ! --- INITIALISATIONS DES VARIABLES DEFINISSANT LE PROBLEME ------------
 ! ======================================================================
     rac2 = sqrt(deux)
-    yamec = mecani(1)
     addeme = mecani(2)
     adcome = mecani(3)
-    yap1 = press1(1)
     nbpha1 = press1(2)
     addep1 = press1(3)
     adcp11 = press1(4)
-    yap2 = press2(1)
     nbpha2 = press2(2)
     addep2 = press2(3)
-    yate = tempe(1)
     addete = tempe(2)
 !
     yaenrm = enrmec(1)
@@ -108,7 +108,7 @@ implicit none
 ! --- COMME PAR LA SUITE ON TRAVAILLE AVEC SQRT(2)*SXY -------
 ! --- ON COMMENCE PAR MODIFIER LES CONGEM EN CONSEQUENCE -----
 ! ============================================================
-    if (yamec .eq. 1) then
+    if (ds_thm%ds_elem%l_dof_meca) then
         do i = 4, 6
             congem(adcome+i-1)= congem(adcome+i-1)*rac2
             congem(adcome+6+i-1)= congem(adcome+6+i-1)*rac2
@@ -136,7 +136,6 @@ implicit none
 !
     call xcomhm(option, imate, compor, rinstp, &
                 ndim, dimdef, dimcon, nbvari, &
-                yamec, yap1, yap2, yate,&
                 addeme, adcome, addep1, adcp11,&
                 addep2, addete, defgem, &
                 defgep, congem, congep, vintm,&
@@ -145,7 +144,7 @@ implicit none
                 angmas, yaenrh, adenhy, nfh)
 !
     if (retcom .ne. 0) then
-        goto 900
+        goto 99
     endif
 ! ======================================================================
 ! --- CALCUL DE LA CONTRAINTE VIRTUELLE R ------------------------------
@@ -154,7 +153,7 @@ implicit none
 ! ======================================================================
 ! --- SI PRESENCE DE MECANIQUE -----------------------------------------
 ! ======================================================================
-        if (yamec .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_meca) then
             do i = 1, 6
                 r(addeme+ndim+i-1) = r(addeme+ndim+i-1) +congep(adcome-1+i)
             end do
@@ -163,7 +162,7 @@ implicit none
                 r(addeme+ndim-1+i) = r(addeme+ndim-1+i)+congep(adcome+6+i-1)
             end do
 !
-            if (yap1 .eq. 1) then
+            if (ds_thm%ds_elem%l_dof_pre1) then
                 do i = 1, ndim
                     r(addeme+i-1) = r(addeme+i-1) - pesa(i)*congep(adcp11)
                 end do
@@ -172,7 +171,7 @@ implicit none
 ! ======================================================================
 ! --- SI PRESENCE DE PRESS1 --------------------------------------------
 ! ======================================================================
-        if (yap1 .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_pre1) then
 !
             r(addep1)=r(addep1)-congep(adcp11)+congem(adcp11)
 !
@@ -184,8 +183,8 @@ implicit none
 ! --- SI PRESENCE DE MECANIQUE AVEC XFEM -------------------------------
 ! ======================================================================
         if (yaenrm .eq. 1) then
-            if (yamec .eq. 1) then
-                if (yap1 .eq. 1) then
+            if (ds_thm%ds_elem%l_dof_meca) then
+                if (ds_thm%ds_elem%l_dof_pre1) then
                     do ifh = 1, nfh
                         do i = 1, ndim
                             r(adenme+i-1+(ifh-1)*(ndim+1))=&
@@ -199,7 +198,7 @@ implicit none
 ! --- SI PRESENCE DE PRESS1 AVEC XFEM ----------------------------------
 ! ======================================================================
          if(yaenrh.eq.1) then
-            if(yap1.eq.1) then
+            if(ds_thm%ds_elem%l_dof_pre1) then
                do ifh = 1, nfh
                   r(adenhy+(ifh-1)*(ndim+1))=&
                         r(adenhy+(ifh-1)*(ndim+1))-congep(adcp11)+congem(adcp11)
@@ -214,7 +213,7 @@ implicit none
 ! ======================================================================
 ! --- SI PRESENCE DE MECANIQUE -----------------------------------------
 ! ======================================================================
-        if (yamec .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_meca) then
             do i = 1, 6
                 drds(addeme+ndim-1+i,adcome+i-1)= drds(addeme+ndim-1+i,adcome+i-1)+1.d0
             end do
@@ -226,8 +225,8 @@ implicit none
 ! ======================================================================
 ! --- SI PRESENCE DE PRESS1 --------------------------------------------
 ! ======================================================================
-        if (yap1 .eq. 1) then
-            if (yamec .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_pre1) then
+            if (ds_thm%ds_elem%l_dof_meca) then
                 do i = 1, ndim
                     drds(addeme+i-1,adcp11)= drds(addeme+i-1,adcp11)-pesa(i)
                 end do
@@ -242,9 +241,9 @@ implicit none
 ! ======================================================================
 ! --- SI PRESENCE DE PRESS1 AVEC XFEM ----------------------------------
 ! ======================================================================
-        if ((yap1.eq.1).and.(yaenrh.eq.1)) then
+        if ((ds_thm%ds_elem%l_dof_pre1).and.(yaenrh.eq.1)) then
             do ifh = 1, nfh
-                if ((yamec.eq.1).and.(yaenrm.eq.1)) then
+                if ((ds_thm%ds_elem%l_dof_meca).and.(yaenrm.eq.1)) then
                     do i = 1, ndim
                         drds(adenme+i-1+(ifh-1)*(ndim+1),adcp11)=&
                             drds(adenme +i-1+(ifh-1)*(ndim+1),adcp11)-pesa(i)
@@ -262,7 +261,8 @@ implicit none
 ! --- ET COMME  ON A TRAVAILLE AVEC SQRT(2)*SXY ------------------------
 ! --- ON MODIFIE LES CONGEP EN CONSEQUENCE -----------------------------
 ! ======================================================================
-    if ((yamec.eq.1) .and. ((option .eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA'))) then
+    if ((ds_thm%ds_elem%l_dof_meca) .and.&
+        ((option .eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA'))) then
         do i = 4, 6
             congep(adcome+i-1)= congep(adcome+i-1)/rac2
             congep(adcome+6+i-1)= congep(adcome+6+i-1)/rac2
@@ -271,6 +271,6 @@ implicit none
         end do
     endif
 ! ======================================================================
-900 continue
+99  continue
 ! ======================================================================
 end subroutine

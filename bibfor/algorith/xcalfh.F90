@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
-subroutine xcalfh(option, thmc, ndim, dimcon, yamec,&
+subroutine xcalfh(option, thmc, ndim, dimcon,&
                   addep1, adcp11, addeme, congep, dsde,&
                   grap1, rho11, pesa, tperm, &
                   dimenr,&
@@ -35,7 +35,7 @@ implicit none
 ! HYDRAULIQUES AU POINT DE GAUSS CONSIDERE
 ! ======================================================================
 !
-    integer :: ndim, dimcon, yamec, nfh
+    integer :: ndim, dimcon, nfh
     integer :: addeme, addep1, adcp11, adenhy
     integer :: bdcp11, dimenr
     real(kind=8) :: congep(1:dimcon)
@@ -95,66 +95,60 @@ implicit none
 !
     if ((option(1:9).eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
         if (thmc .eq. 'LIQU_SATU') then
-            do 102 i = 1, ndim
-                        congep(bdcp11+i)=0.d0
-                        do 622 j = 1, ndim
-                            congep(bdcp11+i)=congep(bdcp11+i)+rho11*&
-                            lambd1(1) *tperm(i,j)*(-grap1(j)+rho11*&
-                            pesa(j))
-622                    continue
-102              continue
+            do i = 1, ndim
+                congep(bdcp11+i)=0.d0
+                do j = 1, ndim
+                    congep(bdcp11+i) = congep(bdcp11+i)+&
+                                       rho11*lambd1(1) *tperm(i,j)*(-grap1(j)+rho11*pesa(j))
+                end do
+            end do
         endif
     endif
 !
     if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
         if (thmc .eq. 'LIQU_SATU') then
-               do 108 i=1,ndim
-                    do 682 j = 1, ndim
-                        dsde(bdcp11+i,addep1)=dsde(bdcp11+i,&
-                        addep1) +dr11p1*lambd1(1)*tperm(i,j)*&
-                        (-grap1(j)+rho11*pesa(j))
-!
-                        dsde(bdcp11+i,addep1)=dsde(bdcp11+i,&
-                        addep1) +rho11*lambd1(3)*tperm(i,j)*&
-                        (-grap1(j)+rho11*pesa(j))
-!
-                        dsde(bdcp11+i,addep1)=dsde(bdcp11+i,&
-                        addep1) +rho11*lambd1(1)*tperm(i,j)*(&
-                        dr11p1*pesa(j))
-!
-                        dsde(bdcp11+i,addep1+j)=dsde(bdcp11+i,&
-                        addep1+j) -rho11*lambd1(1)*tperm(i,j)
-682                continue
-                   if (yamec .eq. 1) then
-                        do 107 j=1, 3
-                            do 672 k = 1, ndim 
-                                dsde(bdcp11+i,addeme+ndim-1+i)=&
-                                dsde(bdcp11+i,addeme+ndim-1+i)&
-                                +rho11*lambd1(2)*tperm(i,k)&
-                                *(-grap1(k)+rho11*pesa(k))
-672                        continue
-107                    continue
-                   endif
-108            continue
+            do i=1,ndim
+                do j = 1, ndim
+                    dsde(bdcp11+i,addep1) = dsde(bdcp11+i,addep1) +&
+                                            dr11p1*lambd1(1)*tperm(i,j)*(-grap1(j)+rho11*pesa(j))
+                    dsde(bdcp11+i,addep1) = dsde(bdcp11+i, addep1) +&
+                                            rho11*lambd1(3)*tperm(i,j)*(-grap1(j)+rho11*pesa(j))
+                    dsde(bdcp11+i,addep1) = dsde(bdcp11+i,addep1) +&
+                                            rho11*lambd1(1)*tperm(i,j)*(dr11p1*pesa(j))
+                    dsde(bdcp11+i,addep1+j) = dsde(bdcp11+i,addep1+j)-&
+                                              rho11*lambd1(1)*tperm(i,j)
+                end do
+                if (ds_thm%ds_elem%l_dof_meca) then
+                    do j=1, 3
+                        do k = 1, ndim 
+                            dsde(bdcp11+i,addeme+ndim-1+i) = dsde(bdcp11+i,addeme+ndim-1+i)+&
+                                         rho11*lambd1(2)*tperm(i,k)*(-grap1(k)+rho11*pesa(k))
+                        end do
+                    end do
+               endif
+            end do
         endif
     endif
 ! ======================================================================
 ! CALCUL DES FLUX HYDRAULIQUES POUR XFEM
 !
-        if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
-            if (thmc .eq. 'LIQU_SATU') then
-               do 109 i = 1, ndim
-                  do ifh = 1, nfh
-                     do 209 j = 1, ndim
-                         dsde(bdcp11+i,adenhy+(ifh-1)*(ndim+1))=dsde(bdcp11+i,adenhy+&
-                         (ifh-1)*(ndim+1))+dr11p1*lambd1(1)*(-grap1(j)+rho11*pesa(j))*tperm(i,j)
-                         dsde(bdcp11+i,adenhy+(ifh-1)*(ndim+1))=dsde(bdcp11+i,adenhy+&
-                         (ifh-1)*(ndim+1))+rho11*lambd1(3)*(-grap1(j)+rho11*pesa(j))*tperm(i,j)
-                         dsde(bdcp11+i,adenhy+(ifh-1)*(ndim+1))=dsde(bdcp11+i,adenhy+&
-                         (ifh-1)*(ndim+1))+rho11*lambd1(1)*(dr11p1*pesa(j))*tperm(i,j)
-209                  continue
-                  end do
-109            continue
-            endif
+    if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
+        if (thmc .eq. 'LIQU_SATU') then
+            do i = 1, ndim
+                do ifh = 1, nfh
+                    do j = 1, ndim
+                        dsde(bdcp11+i,adenhy+(ifh-1)*(ndim+1)) = &
+                            dsde(bdcp11+i,adenhy+(ifh-1)*(ndim+1))+&
+                            dr11p1*lambd1(1)*(-grap1(j)+rho11*pesa(j))*tperm(i,j)
+                        dsde(bdcp11+i,adenhy+(ifh-1)*(ndim+1)) =&
+                            dsde(bdcp11+i,adenhy+(ifh-1)*(ndim+1))+&
+                            rho11*lambd1(3)*(-grap1(j)+rho11*pesa(j))*tperm(i,j)
+                        dsde(bdcp11+i,adenhy+(ifh-1)*(ndim+1)) =&
+                            dsde(bdcp11+i,adenhy+(ifh-1)*(ndim+1))+&
+                            rho11*lambd1(1)*(dr11p1*pesa(j))*tperm(i,j)
+                    end do
+                end do
+            end do
         endif
+    endif
 end subroutine

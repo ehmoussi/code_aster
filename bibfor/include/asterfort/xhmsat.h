@@ -20,9 +20,9 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine xhmsat(yachai, option, ther,&
+    subroutine xhmsat(option,&
                       ndim, dimenr,&
-                      dimcon, nbvari, yamec, addeme,&
+                      dimcon, nbvari, addeme,&
                       adcome, advihy, advico, vihrho, vicphi,&
                       addep1, adcp11, congem, congep, vintm,&
                       vintp, dsde, epsv, depsv,&
@@ -32,11 +32,8 @@ interface
         integer :: nbvari
         integer :: dimcon
         integer :: dimenr
-        aster_logical :: yachai
         character(len=16) :: option
-        character(len=16) :: ther
         integer :: ndim
-        integer :: yamec
         integer :: addeme
         integer :: adcome
         integer :: advihy

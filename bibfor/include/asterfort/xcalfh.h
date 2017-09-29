@@ -17,17 +17,16 @@
 ! --------------------------------------------------------------------
 !
 interface 
-    subroutine xcalfh(option, thmc, ndim, dimcon, yamec,&
+    subroutine xcalfh(option, thmc, ndim, dimcon,&
                       addep1, adcp11, addeme, congep, dsde,&
                       grap1, rho11, pesa, tperm, &
-                       dimenr,&
+                      dimenr,&
                       adenhy, nfh)
         integer :: dimenr
         integer :: dimcon
         character(len=16) :: option
         character(len=16) :: thmc
         integer :: ndim
-        integer :: yamec
         integer :: addep1
         integer :: adcp11
         integer :: addeme

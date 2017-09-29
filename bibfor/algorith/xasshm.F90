@@ -33,6 +33,9 @@ subroutine xasshm(nno, npg, npi, ipoids, ivf,&
                   jpmilt, jheavn, angmas,dimmat, enrhyd,&
                   nfiss, nfh, jfisno, work1, work2)
 !
+use THM_type
+use THM_module
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -56,12 +59,10 @@ implicit none
 #include "asterfort/thmGetParaCoupling.h"
 #include "asterfort/thmGetParaInit.h"
     integer :: dimmat, npg, dimuel
-!     DIMENSION DE LA MATRICE DE RIGIDITE DIMMAT=NDDLS*NNOP
-!    parameter    (dimmat=8*5)
     integer :: npi, ipoids, ivf, idfde, j_mater, dimdef, dimcon, nnop
     integer :: nbvari, nddls, nddlm, nmec, np1, ndim, codret
     integer :: mecani(5), press1(7), press2(7), tempe(5)
-    integer :: yamec, yap1, nfiss, nfh, jfisno
+    integer ::  nfiss, nfh, jfisno
     integer :: addeme, addep1, ii, jj, in, jheavn
     integer :: kpi, ipi
     integer :: i, j, n, k, kji, nvim, nbcomp
@@ -151,9 +152,7 @@ implicit none
 ! =====================================================================
 ! --- DETERMINATION DES VARIABLES CARACTERISANT LE MILIEU -------------
 ! =====================================================================
-    yamec = mecani(1)
     addeme = mecani(2)
-    yap1 = press1(1)
     addep1 = press1(3)
     yaenrm = enrmec(1)
     adenme = enrmec(2)
@@ -182,7 +181,7 @@ implicit none
 ! --- SI INTEGRATION REDUITE, ON MET A 0 CERTAINS COEFFICIENTS --------
 ! =====================================================================
     if (modint .eq. 'RED') then
-        if (yamec .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_meca) then
             do i = 1, ndim
                 cs(addeme-1+i) = 0.d0
             end do
@@ -190,7 +189,7 @@ implicit none
                 cs(addeme-1+ndim+i) = 0.d0
             end do
         endif
-        if (yap1 .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_pre1) then
             c(addep1) = 0.d0
             do i = 1, ndim
                 cs(addep1-1+1+i) = 0.d0
@@ -266,26 +265,23 @@ implicit none
     enddo
 !
 !     BOUCLE D'INTEGRATION SUR LES NSE SOUS-ELEMENTS
-    do 510 ise = 1, nse
+    do ise = 1, nse
 !
 !     BOUCLE SUR LES 4/3 SOMMETS DU SOUS-TETRA/TRIA
-        do 511 in = 1, nno
+        do in = 1, nno
             ino=cnset(nno*(ise-1)+in)
-            do 512 j = 1, ndim
+            do j = 1, ndim
                 if (ino .lt. 1000) then
                     coorse(ndim*(in-1)+j)=zr(igeom-1+ndim*(ino-1)+j)
                 else if (ino.gt.1000 .and. ino.lt.2000) then
-                    coorse(ndim*(in-1)+j)=zr(jpintt-1+ndim*(ino-1000-&
-                    1)+j)
+                    coorse(ndim*(in-1)+j)=zr(jpintt-1+ndim*(ino-1000-1)+j)
                 else if (ino.gt.2000 .and. ino.lt.3000) then
-                    coorse(ndim*(in-1)+j)=zr(jpmilt-1+ndim*(ino-2000-&
-                    1)+j)
+                    coorse(ndim*(in-1)+j)=zr(jpmilt-1+ndim*(ino-2000-1)+j)
                 else if (ino.gt.3000) then
-                    coorse(ndim*(in-1)+j)=zr(jpmilt-1+ndim*(ino-3000-&
-                    1)+j)
+                    coorse(ndim*(in-1)+j)=zr(jpmilt-1+ndim*(ino-3000-1)+j)
                 endif
-512         continue
-511     continue
+            end do
+        end do
 !
 !     FONCTION HEAVYSIDE CSTE POUR CHAQUE FISSURE SUR LE SS-ELT
         call tecach('OOO', 'PHEAVTO', 'L', iret, nval=7,&
@@ -297,17 +293,17 @@ implicit none
 ! =====================================================================
 ! --- BOUCLE SUR LES POINTS D'INTEGRATION -----------------------------
 ! =====================================================================
-        do 10 ipi = 1, npi
+        do ipi = 1, npi
             kpi = ipi
 !
 !     COORDONNÉES DU PT DE GAUSS DANS LE REPÈRE RÉEL : XG
             call vecini(ndim, 0.d0, xg)
-            do 621 j = 1, ndim
-                do 611 in = 1, nno
+            do j = 1, ndim
+                do in = 1, nno
                     xg(j)=xg(j)+zr(ivf-1+nno*(ipi-1)+in)* coorse(ndim*&
                     (in-1)+j)
-611             continue
-621         continue
+                end do
+            end do
 !
 !     XG -> XE (DANS LE REPERE DE l'ELREFPe ET VALEURS DES FF EN XE
             call vecini(ndim, 0.d0, xe)
@@ -326,22 +322,22 @@ implicit none
 ! =====================================================================
             call xcabhm(nddls, nddlm, nnop, nnops, nnopm,&
                         dimuel, ndim, kpi, ff, ff2,&
-                        dfdi, dfdi2, b, nmec, yamec,&
-                        addeme, yap1, addep1, np1, axi,&
+                        dfdi, dfdi2, b, nmec, &
+                        addeme, addep1, np1, axi,&
                         ivf, ipoids, idfde, poids, coorse,&
                         nno, geom, yaenrm, adenme, dimenr,&
                         he, heavn, yaenrh, adenhy, nfiss, nfh)
 ! =====================================================================
 ! --- CALCUL INTERMEDIAIRE POUR LES DEF GENERALISEES AVEC XFEM --------
 ! =====================================================================
-            do 108 i = 1, dimenr
+            do i = 1, dimenr
                 degem1(i)=0.d0
                 degep1(i)=0.d0
-                do 109 n = 1, dimuel
+                do n = 1, dimuel
                     degem1(i)=degem1(i)+b(i,n)*deplm(n)
                     degep1(i)=degep1(i)+b(i,n)*deplp(n)
-109             continue
-108         continue
+                end do
+            end do
 ! =====================================================================
 ! --- CALCUL DES DEFORMATIONS GENERALISEES ----------------------------
 ! =====================================================================
@@ -394,19 +390,19 @@ implicit none
 ! ======================================================================
             if (mecani(1) .eq. 1) then
                 if (kpi .gt. npg) then
-                    do 110 i = 1, 6
+                    do i = 1, 6
                         contp((kpi-1)*dimcon+i)=contp((kpi-npg-1)*&
                         dimcon+i)
-110                 continue
+                    end do
                     nbcomp = 9 + 7
                     read (compor(nbcomp+4),'(I16)') nvim
-                    do 112 i = 1, nvim
+                    do i = 1, nvim
                         varip((kpi-1)*nbvari+i) = varip((kpi-npg-1)* nbvari+i)
-112                 continue
+                    end do
                 endif
             endif
             if (codret .ne. 0) then
-                goto 900
+                goto 99
             endif
 ! ======================================================================
 ! --- CONTRIBUTION DU POINT D'INTEGRATION KPI A LA MATRICE TANGENTE ET -
@@ -427,11 +423,11 @@ implicit none
 ! --- CALCUL DE MATUU (MATRI) ------------------------------------------
 ! ======================================================================
             if (option(1:9) .eq. 'RIGI_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
-                do 199 i = 1, dimenr
-                    do 198 j = 1, dimcon
+                do i = 1, dimenr
+                    do j = 1, dimcon
                         drdsr(i,j)=drds(i,j)
-198                 continue
-199             continue
+                    end do
+                end do
 ! ======================================================================
 ! --- ON ASSEMBLE: DF=BT.CK.DRDSR.DSDE.B.POIDS -------------------------
 ! ======================================================================
@@ -444,35 +440,33 @@ implicit none
 ! --- ON SELECTIONNE LES COMPOSANTES UTILES DE R POUR CE PI ------------
 ! ======================================================================
             if ((option(1:9).eq.'FULL_MECA' .or. option(1:9) .eq.'RAPH_MECA')) then
-                do 20 i = 1, dimenr
+                do i = 1, dimenr
                     sigbar(i) = ck(i)*r(i)
- 20             continue
+                end do
 ! ======================================================================
 ! --- ON ASSEMBLE R=BT.SIGBAR.POIDS ------------------------------------
 ! ======================================================================
-                do 117 i = 1, dimuel
-                    do 118 k = 1, dimenr
+                do i = 1, dimuel
+                    do k = 1, dimenr
                         vectu(i)=vectu(i)+b(k,i)*sigbar(k)*poids
-118                 continue
-117             continue
+                    end do
+                end do
             endif
- 10     continue
+        end do
 ! ======================================================================
 ! --- SORTIE DE BOUCLE SUR LES POINTS D'INTEGRATION --------------------
 ! ======================================================================
-! 888           CONTINUE
-!
         if (option(1:9) .eq. 'RIGI_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
             kji=1
-            do 115 ii = 1, dimuel
-                do 116 jj = 1, dimuel
+            do ii = 1, dimuel
+                do jj = 1, dimuel
                     matuu(kji) = matri(ii,jj)
                     kji= kji + 1
-116             continue
-115         continue
+                end do
+            end do
         endif
 ! ======================================================================
-900     continue
+99      continue
 ! ======================================================================
-510 continue
+    end do
 end subroutine

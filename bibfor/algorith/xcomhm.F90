@@ -20,7 +20,6 @@
 !
 subroutine xcomhm(option, imate, compor,instap,&
                   ndim, dimdef, dimcon,nbvari,&
-                  yamec, yap1, yap2, yate,&
                   addeme, adcome, addep1, adcp11,&
                   addep2, addete, defgem,&
                   defgep, congem, congep, vintm,&
@@ -34,7 +33,7 @@ use THM_module
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/kitdec.h"
+#include "asterfort/calcva.h"
 #include "asterfort/nvithm.h"
 #include "asterfort/xcalfh.h"
 #include "asterfort/xcalme.h"
@@ -62,10 +61,6 @@ implicit none
 ! IN DIMCON : DIMENSION DU TABLEAU DES CONTRAINTES GENERALISEES
 !             AU POINT DE GAUSS CONSIDERE
 ! IN NBVARI : NOMBRE TOTAL DE VARIABLES INTERNES AU POINT DE GAUSS
-! IN YAMEC  : =1 S'IL Y A UNE EQUATION DE DEFORMATION MECANIQUE
-! IN YAP1   : =1 S'IL Y A UNE EQUATION DE PRESSION DE FLUIDE
-! IN YAP2   : =1 S'IL Y A UNE DEUXIEME EQUATION DE PRESSION DE FLUIDE
-! IN YATE   : =1 S'IL YA UNE EQUATION THERMIQUE
 ! IN ADDEME : ADRESSE DES DEFORMATIONS MECANIQUES
 ! IN ADDEP1 : ADRESSE DES DEFORMATIONS CORRESPONDANT A LA PRESSION 1
 ! IN ADDEP2 : ADRESSE DES DEFORMATIONS CORRESPONDANT A LA PRESSION 2
@@ -91,11 +86,9 @@ implicit none
 ! VARIABLES IN / OUT
 ! ======================================================================
 
-
-    aster_logical :: yachai
     integer :: retcom, kpi, npg, vicpr1, vicpr2, nfh
-    integer :: ndim, dimdef, dimcon, nbvari, imate, yamec, yap1
-    integer :: yap2, yate, addeme, addep1, addep2, addete
+    integer :: ndim, dimdef, dimcon, nbvari, imate
+    integer :: addeme, addep1, addep2, addete
     integer :: adcome, adcp11
     real(kind=8) :: defgem(1:dimdef), defgep(1:dimdef), congep(1:dimcon)
     real(kind=8) :: congem(1:dimcon), vintm(1:nbvari), vintp(1:nbvari)
@@ -134,17 +127,16 @@ implicit none
 !
 ! - Update unknowns
 !
-    call kitdec(kpi   , ndim  , &
-                yachai, yamec  , yate  , yap1  , yap2,&
-                defgem, defgep ,&
-                addeme, addep1 , addep2, addete,&
-                depsv , epsv   , deps  ,&
-                t     , dt     , grat  ,&
-                p1    , dp1    , grap1 ,&
-                p2    , dp2    , grap2 ,&
+    call calcva(kpi   , ndim  ,&
+                defgem, defgep,&
+                addeme, addep1, addep2   , addete,&
+                depsv , epsv  , deps     ,&
+                t     , dt    , grat  ,&
+                p1    , dp1   , grap1 ,&
+                p2    , dp2   , grap2 ,&
                 retcom)
     if (retcom .ne. 0) then
-        goto 900
+        goto 99
     endif
 !
 ! - Get hydraulic parameters
@@ -171,9 +163,9 @@ implicit none
 ! ======================================================================
 ! --- CALCUL DES RESIDUS ET DES MATRICES TANGENTES ---------------------
 ! ======================================================================
-    call xhmsat(yachai, option, ther,&
+    call xhmsat(option,&
                 ndim, dimenr,&
-                dimcon, nbvari, yamec, addeme,&
+                dimcon, nbvari, addeme,&
                 adcome, advihy, advico, vihrho, vicphi,&
                 addep1, adcp11, congem, congep, vintm,&
                 vintp, dsde, epsv, depsv,&
@@ -181,19 +173,19 @@ implicit none
                 sat, retcom, tbiot,&
                 angl_naut, yaenrh, adenhy, nfh)
     if (retcom .ne. 0) then
-        goto 900
+        goto 99
     endif
 ! ======================================================================
-! --- CALCUL DES GRANDEURS MECANIQUES PURES UNIQUEMENT SI YAMEC = 1 -
-! ET SI ON EST SUR UN POINT DE GAUSS (POUR L'INTEGRATION REDUITE)
+! --- CALCUL DES GRANDEURS MECANIQUES PURES
+! SI ON EST SUR UN POINT DE GAUSS (POUR L'INTEGRATION REDUITE)
 !  C'EST A DIRE SI KPI<NPG
 ! ======================================================================
-    if (yamec .eq. 1 .and. kpi .le. npg) then
+    if (ds_thm%ds_elem%l_dof_meca .and. kpi .le. npg) then
         call xcalme(option, meca, ndim, dimenr,&
                     dimcon, addeme, adcome, congep,&
                     dsde, deps, angl_naut)
         if (retcom .ne. 0) then
-            goto 900
+            goto 99
         endif
     endif
 !
@@ -206,19 +198,19 @@ implicit none
 !
     call thmEvalGravity(imate, instap, pesa)
 ! ======================================================================
-! --- CALCUL DES FLUX HYDRAULIQUES UNIQUEMENT SI YAP1 = 1 --------------
+! --- CALCUL DES FLUX HYDRAULIQUES UNIQUEMENT
 ! ======================================================================
-    if ((yap1.eq.1).and.(yaenrh.eq.1)) then
-        call xcalfh(option, thmc, ndim, dimcon, yamec,&
+    if ((ds_thm%ds_elem%l_dof_pre1).and.(yaenrh.eq.1)) then
+        call xcalfh(option, thmc, ndim, dimcon,&
                     addep1, adcp11, addeme, congep, dsde,&
                     grap1, rho11, pesa, tperm, &
                     dimenr,&
                     adenhy, nfh)
         if (retcom .ne. 0) then
-            goto 900
+            goto 99
         endif
     endif
 ! ======================================================================
-900 continue
+99 continue
 ! ======================================================================
 end subroutine

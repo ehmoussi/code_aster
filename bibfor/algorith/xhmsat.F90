@@ -18,9 +18,9 @@
 ! aslint: disable=W1504
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
-subroutine xhmsat(yachai, option, ther,&
+subroutine xhmsat(option, &
                   ndim, dimenr,&
-                  dimcon, nbvari, yamec, addeme,&
+                  dimcon, nbvari, addeme,&
                   adcome, advihy, advico, vihrho, vicphi,&
                   addep1, adcp11, congem, congep, vintm,&
                   vintp, dsde, epsv, depsv, &
@@ -47,7 +47,6 @@ implicit none
 #include "asterfort/virhol.h"
 #include "asterfort/tebiot.h"
 !
-! person_in_charge: daniele.colombo at ifpen.fr
 ! ROUTINE HMLISA : CETTE ROUTINE CALCULE LES CONTRAINTES GENERALISEES
 !   ET LA MATRICE TANGENTE DES GRANDEURS COUPLEES, A SAVOIR CELLES QUI
 !   NE SONT PAS DES GRANDEURS DE MECANIQUE PURE OU DES FLUX PURS
@@ -60,16 +59,15 @@ implicit none
 !                       = 3 SIZZ NON NUL (DEBORST) ON CONTINUE A ITERER
 ! ======================================================================
 !
-    integer :: ndim, dimcon, nbvari, yamec
+    integer :: ndim, dimcon, nbvari
     integer :: adcome, adcp11, vihrho, vicphi, nfh
     integer :: addeme, addep1, advihy, advico, retcom
     real(kind=8) :: congem(dimcon), congep(dimcon)
     real(kind=8) :: vintm(nbvari), vintp(nbvari)
     real(kind=8) :: epsv, depsv, dp1, dt
-    real(kind=8) :: phi, rho11, rac2
+    real(kind=8) :: phi, rho11
     real(kind=8) :: angl_naut(3)
-    character(len=16) :: option, ther
-    aster_logical :: yachai
+    character(len=16) :: option
 !
 ! DECLARATION POUR XFEM
     integer :: dimenr
@@ -77,13 +75,14 @@ implicit none
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
-    integer :: i, yaenrh, adenhy, ifh, yate
+    integer :: i, yaenrh, adenhy, ifh
     real(kind=8) :: epsvm, phim, rho11m, rho110
     real(kind=8) :: tbiot(6), cs, alpha0, alpliq, cliq, satur
     real(kind=8) :: bid, dpad
     real(kind=8) :: dsatur_dp1
     real(kind=8) :: m11m, saturm, mdal(6), dalal, alphfi, cbiot, unsks
     real(kind=8) :: deps(6)
+    real(kind=8), parameter :: rac2 = sqrt(2.d0)
 ! ======================================================================
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
@@ -91,16 +90,7 @@ implicit none
     real(kind=8) :: dmdeps(6), dsdp1(6), sigmp(6)
 !
     aster_logical :: emmag
-!
-! =====================================================================
-! --- BUT : RECUPERER LES DONNEES MATERIAUX THM -----------------------
-! =====================================================================
-!
-    rac2 = sqrt(2.d0)
-    yate = 0
-    if (ther .ne. 'VIDE') then
-        yate = 1
-    endif
+
 !
 ! - Get material parameters
 !
@@ -144,7 +134,7 @@ implicit none
     if ((option.eq.'RAPH_MECA') .or. (option.eq.'FORC_NODA') .or.&
         (option(1:9).eq.'FULL_MECA')) then
 ! ----- Compute porosity and save it in internal state variables
-        if ((yamec.eq.1) .or. yachai) then
+        if (ds_thm%ds_elem%l_dof_meca) then
             call viporo(nbvari,&
                         advico, vicphi,&
                         dt    , dp1   , dp2   ,&
@@ -156,7 +146,7 @@ implicit none
                         phi   , phim  , retcom)
         endif
 ! ----- Compute volumic mass for water
-        if (yate .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_ther) then
             call virhol(nbvari, vintm , vintp ,&
                         advihy, vihrho,&
                         dt    , dp1   , dp2   , dpad,& 
@@ -181,7 +171,7 @@ implicit none
 ! =====================================================================
 ! --- ACTUALISATION DE CS ET ALPHFI -----------------------------------
 ! =====================================================================
-    if (yamec .eq. 1) then
+    if (ds_thm%ds_elem%l_dof_meca) then
         call dilata(angl_naut, phi, tbiot, alphfi)
         call unsmfi(phi, tbiot, cs)
     endif
@@ -195,7 +185,7 @@ implicit none
 ! ======================================================================
 ! --- CALCUL DES CONTRAINTES DE PRESSIONS ------------------------------
 ! ======================================================================
-        if (yamec .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_meca) then
             call sigmap(satur, signe, tbiot, dp2, dp1, sigmp)
             do i = 1, 3
                 congep(adcome+6+i-1)=congep(adcome+6+i-1)+sigmp(i)
@@ -217,7 +207,7 @@ implicit none
 ! --- UNIQUEMENT POUR LES OPTIONS RIGI_MECA ET FULL_MECA ---------------
 ! ======================================================================
     if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
-        if (yamec .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_meca) then
 ! ======================================================================
 ! --- CALCUL DES DERIVEES DE SIGMAP ------------------------------------
 ! ======================================================================
