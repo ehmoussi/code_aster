@@ -23,7 +23,7 @@ interface
     subroutine comthm_vf(option, l_steady, ifa, valfac,&
                       valcen, j_mater, typmod, compor, carcri,&
                       instam, instap, ndim, dimdef, dimcon,&
-                      nbvari, yamec, yap1, yap2, yate,&
+                      nbvari,&
                       addeme, adcome, addep1, adcp11, adcp12,&
                       addep2, adcp21, adcp22, addete, adcote,&
                       defgem, defgep, congem, congep, vintm,&
@@ -47,10 +47,6 @@ interface
         real(kind=8) :: carcri(*)
         real(kind=8) :: instam
         real(kind=8) :: instap
-        integer :: yamec
-        integer :: yap1
-        integer :: yap2
-        integer :: yate
         integer :: addeme
         integer :: adcome
         integer :: addep1

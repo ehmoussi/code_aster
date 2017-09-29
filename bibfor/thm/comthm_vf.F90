@@ -21,7 +21,7 @@
 subroutine comthm_vf(option, l_steady, ifa, valfac,&
                      valcen, j_mater, typmod, compor, carcri,&
                      instam, instap, ndim, dimdef, dimcon,&
-                     nbvari, yamec, yap1, yap2, yate,&
+                     nbvari, &
                      addeme, adcome, addep1, adcp11, adcp12,&
                      addep2, adcp21, adcp22, addete, adcote,&
                      defgem, defgep, congem, congep, vintm,&
@@ -40,7 +40,7 @@ implicit none
 #include "asterfort/calcfh_vf.h"
 #include "asterfort/calcft.h"
 #include "asterfort/thmSelectMeca.h"
-#include "asterfort/kitdec.h"
+#include "asterfort/calcva.h"
 #include "asterfort/nvithm.h"
 #include "asterfort/thmGetParaBiot.h"
 #include "asterfort/thmGetParaElas.h"
@@ -102,10 +102,6 @@ integer, intent(in) :: vicsat
 ! IN DIMCON : DIMENSION DU TABLEAU DES CONTRAINTES GENERALISEES
 !             AU POINT DE GAUSS CONSIDERE
 ! IN NBVARI : NOMBRE TOTAL DE VARIABLES INTERNES AU POINT DE GAUSS
-! IN YAMEC  : =1 S'IL Y A UNE EQUATION DE DEFORMATION MECANIQUE
-! IN YAP1   : =1 S'IL Y A UNE EQUATION DE PRESSION DE FLUIDE
-! IN YAP2   : =1 S'IL Y A UNE DEUXIEME EQUATION DE PRESSION DE FLUIDE
-! IN YATE   : =1 S'IL YA UNE EQUATION THERMIQUE
 ! IN ADDEME : ADRESSE DES DEFORMATIONS MECANIQUES
 ! IN ADDEP1 : ADRESSE DES DEFORMATIONS CORRESPONDANT A LA PRESSION 1
 ! IN ADDEP2 : ADRESSE DES DEFORMATIONS CORRESPONDANT A LA PRESSION 2
@@ -128,7 +124,6 @@ integer, intent(in) :: vicsat
 !
 ! OUT RETCOM : RETOUR LOI DE COMPORTEMENT
 !
-    aster_logical :: yachai
     real(kind=8) :: valcen(14, 6)
     integer :: maxfa
     parameter     (maxfa=6)
@@ -141,8 +136,8 @@ integer, intent(in) :: vicsat
     parameter     (kxx=1,kyy=2,kzz=3,kxy=4,kyz=5,kzx=6)
     parameter     (eau=1,air=2)
     integer :: retcom, kpi, npg
-    integer :: ndim, dimdef, dimcon, nbvari, j_mater, yamec, yap1
-    integer :: yap2, yate, addeme, addep1, addep2, addete
+    integer :: ndim, dimdef, dimcon, nbvari, j_mater
+    integer :: addeme, addep1, addep2, addete
     integer :: adcome, adcp11, adcp12, adcp21, adcp22, adcote
     real(kind=8) :: defgem(1:dimdef), defgep(1:dimdef), congep(1:dimcon)
     real(kind=8) :: congem(1:dimcon), vintm(1:nbvari), vintp(1:nbvari)
@@ -174,11 +169,10 @@ integer, intent(in) :: vicsat
 !
 ! - Update unknowns
 !
-    call kitdec(kpi   , ndim   ,&
-                yachai, yamec  , yate  , yap1  , yap2,&
-                defgem, defgep ,&
-                addeme, addep1 , addep2, addete,&
-                depsv , epsv   , deps  ,&
+    call calcva(kpi   , ndim  ,&
+                defgem, defgep,&
+                addeme, addep1, addep2   , addete,&
+                depsv , epsv  , deps     ,&
                 t     , dt     , grat  ,&
                 p1    , dp1    , grap1 ,&
                 p2    , dp2    , grap2 ,&
@@ -251,13 +245,13 @@ integer, intent(in) :: vicsat
     endif
 !
 ! ======================================================================
-! --- CALCUL DES GRANDEURS MECANIQUES PURES UNIQUEMENT SI YAMEC = 1 -
-! ET SI ON EST SUR UN POINT DE GAUSS (POUR L'INTEGRATION REDUITE)
+! --- CALCUL DES GRANDEURS MECANIQUES PURES 
+!SI ON EST SUR UN POINT DE GAUSS (POUR L'INTEGRATION REDUITE)
 !  C'EST A DIRE SI KPI<NPG
 ! ======================================================================
     if (ds_thm%ds_elem%l_dof_meca .and. kpi .le. npg) then
         call thmSelectMeca(p1    , dp1    , p2    , dp2   , satur, tbiot,&
-                           option, j_mater, ndim  , typmod, angl_naut,&
+                           option, j_mater  , ndim  , typmod, angl_naut,&
                            compor, carcri , instam, instap, dt       ,&
                            addeme, addete , adcome, addep1, addep2   ,&
                            dimdef, dimcon ,&
@@ -326,7 +320,7 @@ integer, intent(in) :: vicsat
         endif
     endif
 ! ======================================================================
-! --- CALCUL DES FLUX HYDRAULIQUES UNIQUEMENT SI YAP1 = 1 --------------
+! --- CALCUL DES FLUX HYDRAULIQUES 
 ! ======================================================================
     if (ds_thm%ds_elem%l_dof_pre1) then
         call calcfh_vf(nume_thmc,&
@@ -340,7 +334,7 @@ integer, intent(in) :: vicsat
         endif
     endif
 ! ======================================================================
-! --- CALCUL DU FLUX THERMIQUE UNIQUEMENT SI YATE = 1 ------------------
+! --- CALCUL DU FLUX THERMIQUE 
 ! ======================================================================
     if (ds_thm%ds_elem%l_dof_ther) then
         call calcft(option, thmc, ndim, dimdef,&
