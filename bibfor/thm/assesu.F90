@@ -25,6 +25,9 @@ subroutine assesu(nno, nnos, nface, geom, crit,&
                   dimcon, dimuel, nbvari, ndim, compor,&
                   typmod, typvf, axi, perman)
 !
+use THM_type
+use THM_module
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -101,7 +104,6 @@ implicit none
     integer :: maxdim
     parameter (maxdim=3)
 !
-    integer :: yamec, yap1, yap2, yate
     integer :: addeme, addep1, addep2, addete, adcome, adcp11, adcp12, adcp21
     integer :: adcp22, adcote
     integer :: nvim, nvit, nvih, nvic
@@ -109,7 +111,7 @@ implicit none
     integer :: vihrho, vicphi, vicpvp, vicsat, vicpr1, vicpr2
     integer :: ipg, retcom, fa, i, j
 !
-    real(kind=8) :: pesa(3), kintvf(6)
+    real(kind=8) :: gravity(3), kintvf(6)
     real(kind=8) :: valcen(14, 6), valfac(maxfa, 14, 6)
 !
     aster_logical :: tange, cont, bool
@@ -300,18 +302,14 @@ implicit none
 ! ====================================================================
 ! --- DETERMINATION DES VARIABLES CARACTERISANT LE MILIEU ------------
 ! ====================================================================
-    yamec = mecani(1)
     addeme = mecani(2)
     adcome = mecani(3)
-    yap1 = press1(1)
     addep1 = press1(3)
     adcp11 = press1(4)
     adcp12 = press1(5)
-    yap2 = press2(1)
     addep2 = press2(3)
     adcp21 = press2(4)
     adcp22 = press2(5)
-    yate = tempe(1)
     addete = tempe(2)
     adcote = tempe(3)
 ! ======================================================================
@@ -416,14 +414,14 @@ implicit none
 ! LES GRADIENTS SONT MIS A ZERO CAR ON NE SAIT PAS LES CALCULER
 ! A CE NIVEAU EN VF4
 ! ================================================================
-    if (yap1 .eq. 1) then
+    if (ds_thm%ds_elem%l_dof_pre1) then
         defgem(addep1)= deplm(iadp1k)
         defgep(addep1)= deplp(iadp1k)
         do i = 1, ndim
             defgem(addep1+i)=0.d0
             defgep(addep1+i)=0.d0
         end do
-        if (yap2 .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_pre2) then
             defgem(addep2)= deplm(iadp2k)
             defgep(addep2)= deplp(iadp2k)
             do i = 1, ndim
@@ -447,11 +445,11 @@ implicit none
     call comthm_vf(option, perman, 0, valfac,&
                 valcen, j_mater, typmod, compor, crit,&
                 rinstm, rinstp, ndim, dimdef, dimcon,&
-                nbvari, yamec, yap1, yap2, yate,&
+                nbvari,&
                 addeme, adcome, addep1, adcp11, adcp12,&
                 addep2, adcp21, adcp22, addete, adcote,&
                 defgem, defgep, congem, congep, vintm(1, 1),&
-                vintp(1, 1), dsde, pesa, retcom, 1,&
+                vintp(1, 1), dsde, gravity, retcom, 1,&
                 1, angbid,&
                 thmc, hydr,&
                 advihy, advico, vihrho, vicphi, vicpvp, vicsat)
@@ -459,14 +457,14 @@ implicit none
         call utmess('F', 'COMPOR1_9')
     endif
     do fa = 1, nface
-        if (yap1 .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_pre1) then
             defgem(addep1)= deplm(iadp1(fa))
             defgep(addep1)= deplp(iadp1(fa))
             do i = 1, ndim
                 defgem(addep1+i)=0.d0
                 defgep(addep1+i)=0.d0
             end do
-            if (yap2 .eq. 1) then
+            if (ds_thm%ds_elem%l_dof_pre2) then
                 defgem(addep2)= deplm(iadp2(fa))
                 defgep(addep2)= deplp(iadp2(fa))
                 do i = 1, ndim
@@ -488,11 +486,11 @@ implicit none
         call comthm_vf(option, perman, fa, valfac,&
                     valcen, j_mater, typmod, compor, crit,&
                     rinstm, rinstp, ndim, dimdef, dimcon,&
-                    nbvari, yamec, yap1, yap2, yate,&
+                    nbvari,&
                     addeme, adcome, addep1, adcp11, adcp12,&
                     addep2, adcp21, adcp22, addete, adcote,&
                     defgem, defgep, congem, congep, vintm(1, fa+1),&
-                    vintp(1, fa+1), dsde, pesa, retcom, 1,&
+                    vintp(1, fa+1), dsde, gravity, retcom, 1,&
                     1, angbid,&
                     thmc, hydr,&
                     advihy, advico, vihrho, vicphi, vicpvp, vicsat)
@@ -632,22 +630,22 @@ implicit none
 !=========================================
     call vfcfks(.true._1, tange, maxfa, nface, cvp,&
                 dcvp1, dcvp2, cvpf, dcvp1f, dcvp2f,&
-                d, pesa, zero, zero, zero,&
+                d, gravity, zero, zero, zero,&
                 xg, xface, maxdim, ndim, ftgks,&
                 ftgks1, ftgks2)
     call vfcfks(.true._1, tange, maxfa, nface, cad,&
                 dcad1, dcad2, cadf, dcad1f, dcad2f,&
-                d, pesa, zero, zero, zero,&
+                d, gravity, zero, zero, zero,&
                 xg, xface, maxdim, ndim, fclks,&
                 fclks1, fclks2)
     call vfcfks(.true._1, tange, maxfa, nface, pwp,&
                 dpwp1, dpwp2, pwpf, dpwp1f, dpwp2f,&
-                c, pesa, rhol, drhol1, drhol2,&
+                c, gravity, rhol, drhol1, drhol2,&
                 xg, xface, maxdim, ndim, flks,&
                 dflks1, dflks2)
     call vfcfks(.true._1, tange, maxfa, nface, pgp,&
                 dpgp1, dpgp2, pgpf, dpgp1f, dpgp2f,&
-                c, pesa, rhog, drhog1, drhog2,&
+                c, gravity, rhog, drhog1, drhog2,&
                 xg, xface, maxdim, ndim, fgks,&
                 dfgks1, dfgks2)
     do ifa = 1, nface
@@ -802,10 +800,8 @@ implicit none
         congep(adcp12+1,1)= fluvps
         congep(adcp21+1,1)= fluass
         congep(adcp22+1,1)= fluads
-        vectu(adcm1)= vectu(adcm1)+congep(adcp11+1,1) +congep(adcp12+&
-        1,1)
-        vectu(adcm2)= vectu(adcm2)+congep(adcp21+1,1) +congep(adcp22+&
-        1,1)
+        vectu(adcm1)= vectu(adcm1)+congep(adcp11+1,1) +congep(adcp12+1,1)
+        vectu(adcm2)= vectu(adcm2)+congep(adcp21+1,1) +congep(adcp22+1,1)
     endif
     if (tange) then
 ! *******************************************************************
@@ -817,17 +813,10 @@ implicit none
 !           | FAS1S + FAD1S |
 !           | FAS2S + FAD2S |
 ! *******************************************************************
-        matuu(zzadma(0,adcm1,iadp1k))= matuu(zzadma(0,adcm1,iadp1k))+&
-        fw1s(1)+fvp1s(1)
-!
-        matuu(zzadma(0,adcm1,iadp2k))= matuu(zzadma(0,adcm1,iadp2k))+&
-        fw2s(1)+fvp2s(1)
-!
-        matuu(zzadma(0,adcm2,iadp1k))= matuu(zzadma(0,adcm2,iadp1k))+&
-        fas1s(1)+fad1s(1)
-!
-        matuu(zzadma(0,adcm2,iadp2k))= matuu(zzadma(0,adcm2,iadp2k))+&
-        fas2s(1)+fad2s(1)
+        matuu(zzadma(0,adcm1,iadp1k))= matuu(zzadma(0,adcm1,iadp1k))+fw1s(1)+fvp1s(1)
+        matuu(zzadma(0,adcm1,iadp2k))= matuu(zzadma(0,adcm1,iadp2k))+fw2s(1)+fvp2s(1)
+        matuu(zzadma(0,adcm2,iadp1k))= matuu(zzadma(0,adcm2,iadp1k))+fas1s(1)+fad1s(1)
+        matuu(zzadma(0,adcm2,iadp2k))= matuu(zzadma(0,adcm2,iadp2k))+fas2s(1)+fad2s(1)
         do ifa = 1, nface
 !
 ! *******************************************************************
@@ -841,13 +830,10 @@ implicit none
 ! *******************************************************************
             matuu(zzadma(0,adcm1,iadp1(ifa)))= matuu(zzadma(0,adcm1,iadp1(ifa))) +&
                 fw1s(ifa+1)+fvp1s(ifa+1)
-!
             matuu(zzadma(0,adcm1,iadp2(ifa)))= matuu(zzadma(0,adcm1,iadp2(ifa))) +&
                 fw2s(ifa+1)+fvp2s(ifa+1)
-!
             matuu(zzadma(0,adcm2,iadp1(ifa)))= matuu(zzadma(0,adcm2,iadp1(ifa))) +&
                 fas1s(ifa+1)+fad1s(ifa+1)
-!
             matuu(zzadma(0,adcm2,iadp2(ifa)))= matuu(zzadma(0,adcm2,iadp2(ifa))) +&
                 fas2s(ifa+1)+fad2s(ifa+1)
 ! *******************************************************************
@@ -860,13 +846,10 @@ implicit none
 ! *****************************************************************
             matuu(zzadma(0,adcf1(ifa),iadp1k))= matuu(zzadma(0,adcf1(ifa),iadp1k)) +&
                 fm1ws(1,ifa)+fm1vps(1,ifa)
-!
             matuu(zzadma(0,adcf1(ifa),iadp2k))= matuu(zzadma(0,adcf1(ifa),iadp2k)) +&
                 fm2ws(1,ifa)+fm2vps(1,ifa)
-!
             matuu(zzadma(0,adcf2(ifa),iadp1k))= matuu(zzadma(0,adcf2(ifa),iadp1k)) +&
                 fm1ass(1,ifa)+fm1ads(1,ifa)
-!
             matuu(zzadma(0,adcf2(ifa),iadp2k))= matuu(zzadma(0,adcf2(ifa),iadp2k)) +&
                 fm2ass(1,ifa)+fm2ads(1,ifa)
 ! *******************************************************************
@@ -880,17 +863,12 @@ implicit none
             do jfa = 1, nface
                 matuu(zzadma(0,adcf1(ifa),iadp1(jfa)))= matuu(zzadma(0,adcf1(ifa),iadp1(jfa))) +&
                     fm1ws(jfa+1,ifa)+fm1vps(jfa+1,ifa)
-!
                 matuu(zzadma(0,adcf1(ifa),iadp2(jfa)))= matuu(zzadma(0,adcf1(ifa),iadp2(jfa))) +&
-                    fm2ws(jfa+1,ifa)+fm2vps(&
-                jfa+1,ifa)
-!
+                    fm2ws(jfa+1,ifa)+fm2vps(jfa+1,ifa)
                 matuu(zzadma(0,adcf2(ifa),iadp1(jfa)))= matuu(zzadma(0,adcf2(ifa),iadp1(jfa))) +&
                     fm1ass(jfa+1,ifa)+fm1ads(jfa+1,ifa)
-!
                 matuu(zzadma(0,adcf2(ifa),iadp2(jfa)))= matuu(zzadma(0,adcf2(ifa),iadp2(jfa))) +&
-                    fm2ass(jfa+1,ifa)+fm2ads(&
-                jfa+1,ifa)
+                    fm2ass(jfa+1,ifa)+fm2ads(jfa+1,ifa)
             end do
         end do
     endif
