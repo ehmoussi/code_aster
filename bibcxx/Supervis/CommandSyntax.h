@@ -57,6 +57,11 @@ class CommandSyntax
         ~CommandSyntax();
 
         /**
+         * @brief Function to manually release the command currently executed.
+         */
+        void free();
+
+        /**
          * @brief Impression de debug
          */
         void debugPrint() const;

@@ -23,6 +23,7 @@
 
 #include "Python.h"
 #include "aster.h"
+#include "shared_vars.h"
 
 #include "Supervis/CommandSyntax.h"
 #include "Utilities/SyntaxDictionary.h"
@@ -37,12 +38,23 @@ CommandSyntax::CommandSyntax(const std::string name):
     if (_pySyntax == NULL)
         throw std::runtime_error("Error during `CommandSyntax.__init__`.");
     Py_INCREF(_pySyntax);
+    register_sh_etape(append_etape(_pySyntax));
     Py_XDECREF(klass);
 }
 
 
 CommandSyntax::~CommandSyntax()
 {
+    free();
+}
+
+
+void CommandSyntax::free()
+{
+    // already freed?
+    if (! _pySyntax)
+        return;
+    register_sh_etape(pop_etape());
     PyObject *res = PyObject_CallMethod(_pySyntax, (char *)"free", NULL);
     if (res == NULL)
         throw std::runtime_error("Error calling `CommandSyntax.free`.");
