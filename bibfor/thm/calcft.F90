@@ -19,19 +19,14 @@
 ! person_in_charge: sylvie.granet at edf.fr
 !
 subroutine calcft(option, thmc, ndim, dimdef,&
-                  dimcon, yamec, yap1, yap2, addete,&
+                  dimcon, addete,&
                   addeme, addep1, addep2, adcote, congep,&
                   dsde, t, grat, phi, pvp,&
                   tbiot, sat, dsatp1, lambp,&
                   dlambp, lambs, dlambs, tlambt, tdlamt,&
                   tlamct, rho11, h11, h12,&
                   angmas)
-! ======================================================================
-! ======================================================================
 
-! ROUTINE CALC_FLUX_THERM ----------------------------------------------
-! CALCULE LES CONTRAINTES GENERALISEES ET LA MATRICE TANGENTE DES FLUX -
-! ======================================================================
 
 !
 use THM_type
@@ -42,8 +37,13 @@ implicit none
 #include "asterfort/dilata.h"
 #include "asterfort/matini.h"
 #include "asterfort/unsmfi.h"
+! ======================================================================
+! ======================================================================
+
+! ROUTINE CALC_FLUX_THERM ----------------------------------------------
+! CALCULE LES CONTRAINTES GENERALISEES ET LA MATRICE TANGENTE DES FLUX -
+! ======================================================================
     integer :: ndim, dimdef, dimcon
-    integer :: yamec, yap1, yap2
     integer :: addete, addeme, addep1, addep2, adcote
     real(kind=8) :: congep(1:dimcon)
     real(kind=8) :: dsde(1:dimcon, 1:dimdef)
@@ -96,7 +96,7 @@ implicit none
 ! =====================================================================
 ! --- RECUPERATION DES COEFFICIENTS MECANIQUES ALPHAFI ET CS-----------
 ! =====================================================================
-    if (yamec .eq. 1) then
+    if (ds_thm%ds_elem%l_dof_meca) then
         call dilata(angmas, phi, tbiot, alphfi)
         call unsmfi(phi, tbiot, cs)
     else
@@ -166,7 +166,7 @@ implicit none
                 dsde(adcote+i,addete)=dsde(adcote+i,addete)- lamdt5(i,&
                 j)*grat(j)
             end do
-            if (yamec .eq. 1) then
+            if (ds_thm%ds_elem%l_dof_meca) then
                 do j = 1, 6
                     do k = 1, ndim
                         dsde(adcote+i,addeme+ndim-1+j)= dsde(adcote+i,&
@@ -174,12 +174,12 @@ implicit none
                     end do
                 end do
             endif
-            if (yap1 .eq. 1) then
+            if (ds_thm%ds_elem%l_dof_pre1) then
                 do j = 1, ndim
                     dsde(adcote+i,addep1)=dsde(adcote+i,addep1)&
                     - lamdt3(i,j)*grat(j)
                 end do
-                if (yap2 .eq. 1) then
+                if (ds_thm%ds_elem%l_dof_pre2) then
                     do j = 1, ndim
                         dsde(adcote+i,addep2)=dsde(adcote+i,addep2)&
                         -lamdt4(i,j)*grat(j)
