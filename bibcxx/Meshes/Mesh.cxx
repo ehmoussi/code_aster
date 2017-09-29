@@ -33,7 +33,7 @@
 #include "RunManager/LogicalUnitManagerCython.h"
 
 BaseMeshInstance::BaseMeshInstance( const std::string& type ):
-                        DataStructure( getNewResultObjectName(), type ),
+                        DataStructure( CommandSyntax::getNewResultName(), type ),
                         _dimensionInformations( JeveuxVectorLong( getName() + ".DIME      " ) ),
                         _nameOfNodes( JeveuxBidirectionalMapChar8( getName() + ".NOMNOE    " ) ),
                         _coordinates( new MeshCoordinatesFieldInstance( getName() + ".COORDO    " ) ),
@@ -55,7 +55,7 @@ bool MeshInstance::addGroupOfNodesFromNodes( const std::string& name, const Vect
     throw( std::runtime_error )
 {
     CommandSyntax cmdSt( "DEFI_GROUP" );
-    cmdSt.setResult( getResultObjectName(), "MAILLAGE" );
+    cmdSt.setResult( CommandSyntax::getCurrentName(), "MAILLAGE" );
 
     CapyConvertibleContainer toCapyConverter;
     toCapyConverter.add( new CapyConvertibleValue< std::string >
@@ -120,7 +120,7 @@ bool BaseMeshInstance::readMeshFile( const std::string& fileName, const std::str
         syntax.container[ "UNITE" ] = file2.getLogicalUnit();
 
         CommandSyntax cmdSt( "LIRE_MAILLAGE" );
-        cmdSt.setResult( getResultObjectName(), "MAILLAGE" );
+        cmdSt.setResult( CommandSyntax::getCurrentName(), "MAILLAGE" );
 
         cmdSt.define( syntax );
 
@@ -140,7 +140,7 @@ bool BaseMeshInstance::readMeshFile( const std::string& fileName, const std::str
         syntax.container[ "UNITE" ] = file1.getLogicalUnit();
 
         CommandSyntax cmdSt( "LIRE_MAILLAGE" );
-        cmdSt.setResult( getResultObjectName(), "MAILLAGE" );
+        cmdSt.setResult( CommandSyntax::getCurrentName(), "MAILLAGE" );
 
         cmdSt.define( syntax );
 

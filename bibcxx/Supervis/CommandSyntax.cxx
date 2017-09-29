@@ -32,12 +32,16 @@
 
 PyObject *CommandSyntax::pyClass = NULL;
 
-std::string CommandSyntax::getNewResultName()
+void _check_pyClass()
 {
-    if (! CommandSyntax::pyClass) {
+    if (CommandSyntax::pyClass == NULL) {
         CommandSyntax::pyClass = GetJdcAttr((char *)"syntax");
     }
+}
 
+std::string CommandSyntax::getNewResultName()
+{
+    _check_pyClass();
     PyObject *res = PyObject_CallMethod(CommandSyntax::pyClass,
                                         (char *)"getNewResultName", NULL);
     if (res == NULL || ! PyString_Check(res)) {
@@ -49,17 +53,14 @@ std::string CommandSyntax::getNewResultName()
     return name;
 }
 
-std::string CommandSyntax::getResultName()
+std::string CommandSyntax::getCurrentName()
 {
-    if (! CommandSyntax::pyClass) {
-        CommandSyntax::pyClass = GetJdcAttr((char *)"syntax");
-    }
-
+    _check_pyClass();
     PyObject *res = PyObject_CallMethod(CommandSyntax::pyClass,
-                                        (char *)"getResultName", NULL);
+                                        (char *)"getCurrentName", NULL);
     if (res == NULL || ! PyString_Check(res)) {
         throw std::runtime_error(
-            "Error calling `CommandSyntax.getResultName`.");
+            "Error calling `CommandSyntax.getCurrentName`.");
     }
 
     std::string name(PyString_AsString(res));
@@ -70,9 +71,7 @@ std::string CommandSyntax::getResultName()
 CommandSyntax::CommandSyntax(const std::string name):
     _commandName(name)
 {
-    if (!CommandSyntax::pyClass) {
-        CommandSyntax::pyClass = GetJdcAttr((char *)"syntax");
-    }
+    _check_pyClass();
 
     _pySyntax = PyObject_CallFunction(CommandSyntax::pyClass,
                                       (char *)"s", (char *)(name.c_str()));
@@ -94,8 +93,9 @@ CommandSyntax::~CommandSyntax()
 void CommandSyntax::free()
 {
     // already freed?
-    if (! _pySyntax)
+    if (_pySyntax == NULL) {
         return;
+    }
     register_sh_etape(pop_etape());
     PyObject *res = PyObject_CallMethod(_pySyntax, (char *)"free", NULL);
     if (res == NULL) {
