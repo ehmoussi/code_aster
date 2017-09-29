@@ -21,18 +21,18 @@
 !
 interface 
     subroutine calcfh(nume_thmc, &
-                      option   , perman, hydr   , ndim  , j_mater,&
-                      dimdef   , dimcon,&
-                      addep1   , addep2,&
-                      adcp11   , adcp12, adcp21 , adcp22,&
-                      addeme   , addete, &
-                      t        , p1    , p2     , pvp   , pad,&
-                      grat     , grap1 , grap2  ,& 
-                      rho11    , h11   , h12    ,&
-                      satur    , dsatur, gravity, tperm,&
+                      option   , l_steady, hydr   , ndim  , j_mater,&
+                      dimdef   , dimcon  ,&
+                      addep1   , addep2  ,&
+                      adcp11   , adcp12  , adcp21 , adcp22,&
+                      addeme   , addete  , &
+                      t        , p1      , p2     , pvp   , pad,&
+                      grat     , grap1   , grap2  ,& 
+                      rho11    , h11     , h12    ,&
+                      satur    , dsatur  , gravity, tperm,&
                       congep   , dsde)
         character(len=16), intent(in) :: option, hydr
-        aster_logical, intent(in) :: perman
+        aster_logical, intent(in) :: l_steady
         integer, intent(in) :: j_mater, nume_thmc
         integer, intent(in) :: ndim, dimdef, dimcon
         integer, intent(in) :: addeme, addep1, addep2, addete, adcp11, adcp12, adcp21, adcp22

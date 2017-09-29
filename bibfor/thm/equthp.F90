@@ -111,7 +111,6 @@ integer, intent(out) :: retcom
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: i
-    integer :: yamec, yate, yap1, yap2
     integer :: addeme, addete, addep1, addep2
     integer :: adcp11, adcp12, adcp21, adcp22
     integer :: adcome, adcote
@@ -144,13 +143,6 @@ integer, intent(out) :: retcom
     adcp21 = press2(4)
     adcp22 = press2(5)
 !
-! - Flag for physics
-!
-    yamec  = mecani(1)
-    yap1   = press1(1)
-    yap2   = press2(1)
-    yate   = tempe(1)
-!
 ! - Add sqrt(2) for stresses
 !
     if (ds_thm%ds_elem%l_dof_meca) then
@@ -169,17 +161,23 @@ integer, intent(out) :: retcom
 !
 ! - Compute generalized stresses and derivatives at current Gauss point
 !
-    call comthm(option, l_steady,&
-                j_mater, typmod, compor, carcri,&
-                time_prev, time_curr, ndim, dimdef, dimcon,&
-                nbvari, yamec, yap1, yap2, yate,&
-                addeme, adcome, addep1, adcp11, adcp12,&
-                addep2, adcp21, adcp22, addete, adcote,&
-                defgem, defgep, congem, congep, vintm,&
-                vintp, dsde, gravity, retcom, kpi,&
-                npg, angl_naut,&
-                thmc, hydr,&
-                advihy, advico, vihrho, vicphi, vicpvp, vicsat)
+    call comthm(l_steady ,&
+                option   , j_mater  ,&
+                typmod   , angl_naut,&
+                thmc     , hydr     ,&     
+                ndim     , nbvari   ,&
+                dimdef   , dimcon   ,&
+                adcome   , adcote   , adcp11  , adcp12, adcp21, adcp22,&
+                addeme   , addete   , addep1  , addep2,&
+                advico   , advihy   ,&
+                vihrho   , vicphi   , vicpvp  , vicsat,&
+                kpi      , npg      ,&
+                compor   , carcri   ,&
+                defgem   , defgep   ,& 
+                congem   , congep   ,& 
+                vintm    , vintp    ,& 
+                time_prev, time_curr,&
+                dsde     , gravity  , retcom)
     if (retcom .ne. 0) then
         goto 99
     endif

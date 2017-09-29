@@ -19,15 +19,15 @@
 ! aslint: disable=W1504
 !
 subroutine calcfh(nume_thmc, &
-                  option   , perman, hydr   , ndim  , j_mater,&
-                  dimdef   , dimcon,&
-                  addep1   , addep2,&
-                  adcp11   , adcp12, adcp21 , adcp22,&
-                  addeme   , addete, &
-                  t        , p1    , p2     , pvp   , pad,&
-                  grat     , grap1 , grap2  ,& 
-                  rho11    , h11   , h12    ,&
-                  satur    , dsatur, gravity, tperm,&
+                  option   , l_steady, hydr   , ndim  , j_mater,&
+                  dimdef   , dimcon  ,&
+                  addep1   , addep2  ,&
+                  adcp11   , adcp12  , adcp21 , adcp22,&
+                  addeme   , addete  , &
+                  t        , p1      , p2     , pvp   , pad,&
+                  grat     , grap1   , grap2  ,& 
+                  rho11    , h11     , h12    ,&
+                  satur    , dsatur  , gravity, tperm,&
                   congep   , dsde)
 !
 implicit none
@@ -44,7 +44,7 @@ implicit none
 #include "asterfort/calcfh_ladg.h"
 !
 character(len=16), intent(in) :: option, hydr
-aster_logical, intent(in) :: perman
+aster_logical, intent(in) :: l_steady
 integer, intent(in) :: j_mater, nume_thmc
 integer, intent(in) :: ndim, dimdef, dimcon
 integer, intent(in) :: addeme, addep1, addep2, addete, adcp11, adcp12, adcp21, adcp22
@@ -65,7 +65,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  option           : option to compute
-! In  perman           : .flag. for no-transient problem
+! In  l_steady           : .flag. for no-transient problem
 ! In  hydr             : type of hydraulic law
 ! In  nume_thmc        : index of coupling law for THM
 ! In  ndim             : dimension of space (2 or 3)
@@ -102,13 +102,13 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
     select case (nume_thmc)
     case (1)
-        call calcfh_lisa(option, perman, ndim,&
+        call calcfh_lisa(option, l_steady, ndim,&
                          dimdef, dimcon,&
                          addep1, adcp11, addeme , addete,&
                          grap1 , rho11 , gravity, tperm ,&
                          congep, dsde  )
     case (2)
-        call calcfh_gazp(option, perman , ndim,&
+        call calcfh_gazp(option, l_steady , ndim,&
                          dimdef, dimcon ,&
                          addep1, adcp11 , addeme, addete,&
                          t     , p1     , grap1 ,&
@@ -124,7 +124,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
                          satur , dsatur, gravity, tperm,&
                          congep, dsde  )
     case (4)
-        call calcfh_lvag(option, perman, hydr   , ndim  , j_mater,&
+        call calcfh_lvag(option, l_steady, hydr   , ndim  , j_mater,&
                          dimdef, dimcon,&
                          addep1, addep2, adcp11 , adcp12, adcp21 ,&
                          addeme, addete, &
@@ -144,7 +144,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
                          satur , dsatur, gravity, tperm,&
                          congep, dsde)
     case (6)
-        call calcfh_lgat(option, perman , hydr  , ndim  , j_mater,&
+        call calcfh_lgat(option, l_steady , hydr  , ndim  , j_mater,&
                          dimdef, dimcon ,&
                          addep1, adcp11 ,&
                          addeme, addete ,&
@@ -154,7 +154,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
                          satur , dsatur , gravity , tperm,&
                          congep, dsde)
     case (9)
-        call calcfh_lvga(option, perman, hydr   , ndim  , j_mater,&
+        call calcfh_lvga(option, l_steady, hydr   , ndim  , j_mater,&
                          dimdef, dimcon,&
                          addep1, addep2, adcp11 , adcp12, adcp21 , adcp22,&
                          addeme, addete, &
@@ -164,7 +164,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
                          satur , dsatur, gravity, tperm,&
                          congep, dsde)
     case (10)
-        call calcfh_ladg(option, perman, hydr   , ndim  , j_mater,&
+        call calcfh_ladg(option, l_steady, hydr   , ndim  , j_mater,&
                          dimdef, dimcon,&
                          addep1, addep2, adcp11 , adcp12, adcp21 , adcp22,&
                          addeme, addete, &
