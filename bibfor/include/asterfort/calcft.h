@@ -19,7 +19,7 @@
 !
 interface 
     subroutine calcft(option, thmc, ndim, dimdef,&
-                      dimcon, yamec, yap1, yap2, addete,&
+                      dimcon, addete,&
                       addeme, addep1, addep2, adcote, congep,&
                       dsde, t, grat, phi, pvp,&
                       tbiot, sat, dsatp1, lambp,&
@@ -31,9 +31,6 @@ interface
         integer :: ndim
         character(len=16) :: option
         character(len=16) :: thmc
-        integer :: yamec
-        integer :: yap1
-        integer :: yap2
         integer :: addete
         integer :: addeme
         integer :: addep1

@@ -162,7 +162,7 @@ integer, intent(in) :: vicsat
                 p2    , dp2    , grap2 ,&
                 retcom)
     if (retcom .ne. 0) then
-        goto 999
+        goto 99
     endif
 !
 ! - Get hydraulic parameters
@@ -211,7 +211,7 @@ integer, intent(in) :: vicsat
                 vintm   , vintp    , dsde  ,& 
                 retcom)
     if (retcom .ne. 0) then
-        goto 999
+        goto 99
     endif
 !
 ! ======================================================================
@@ -219,7 +219,7 @@ integer, intent(in) :: vicsat
 ! ET SI ON EST SUR UN POINT DE GAUSS (POUR L'INTEGRATION REDUITE)
 !  C'EST A DIRE SI KPI<NPG
 ! ======================================================================
-    if (yamec .eq. 1 .and. kpi .le. npg) then
+    if (ds_thm%ds_elem%l_dof_meca .and. kpi .le. npg) then
         call thmSelectMeca(yate  , yap1   , yap2  ,&
                            p1    , dp1    , p2    , dp2   , satur   , tbiot,&
                            option, j_mater  , ndim  , typmod, angl_naut,&
@@ -231,7 +231,7 @@ integer, intent(in) :: vicsat
                            congep, vintp  ,&
                            dsde  , retcom)
         if (retcom .ne. 0) then
-            goto 999
+            goto 99
         endif
     endif
 !
@@ -260,7 +260,7 @@ integer, intent(in) :: vicsat
 ! ======================================================================
 ! --- CALCUL DES FLUX HYDRAULIQUES UNIQUEMENT SI YAP1 = 1 --------------
 ! ======================================================================
-    if (yap1 .eq. 1) then
+    if (ds_thm%ds_elem%l_dof_pre1) then
         call calcfh(nume_thmc, &
                     option   , l_steady, hydr   , ndim  , j_mater,&
                     dimdef   , dimcon,&
@@ -273,15 +273,15 @@ integer, intent(in) :: vicsat
                     satur    , dsatur, pesa   , tperm,&
                     congep   , dsde)
         if (retcom .ne. 0) then
-            goto 999
+            goto 99
         endif
     endif
 ! ======================================================================
 ! --- CALCUL DU FLUX THERMIQUE UNIQUEMENT SI YATE = 1 ------------------
 ! ======================================================================
-    if (yate .eq. 1) then
+    if (ds_thm%ds_elem%l_dof_ther) then
         call calcft(option, thmc, ndim, dimdef,&
-                    dimcon, yamec, yap1, yap2, addete,&
+                    dimcon, addete,&
                     addeme, addep1, addep2, adcote, congep,&
                     dsde, t, grat, phi, pvp,&
                     tbiot, satur, dsatur, lambp,&
@@ -289,10 +289,10 @@ integer, intent(in) :: vicsat
                     tlamct, rho11, h11, h12,&
                     angl_naut)
         if (retcom .ne. 0) then
-            goto 999
+            goto 99
         endif
     endif
 ! ======================================================================
-999 continue
+99  continue
 ! ======================================================================
 end subroutine
