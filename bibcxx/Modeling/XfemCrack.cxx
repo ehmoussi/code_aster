@@ -32,7 +32,7 @@
 
 XfemCrackInstance::XfemCrackInstance(MeshPtr supportMesh):
     DataStructure( getNewResultObjectName(), "FISS_XFEM" ),
-    _jeveuxName( getResultObjectName() ),
+    _jeveuxName( CommandSyntax::getCurrentName() ),
     _supportMesh(supportMesh),
     _auxiliaryGrid(MeshPtr()),
     _existingCrackWithGrid(XfemCrackPtr()),
@@ -71,7 +71,7 @@ XfemCrackInstance::XfemCrackInstance(MeshPtr supportMesh):
 bool XfemCrackInstance::build() throw( std::runtime_error )
 {
     CommandSyntax cmdSt( "DEFI_FISS_XFEM" );
-    cmdSt.setResult( getResultObjectName(), "FISS_XFEM" );
+    cmdSt.setResult( CommandSyntax::getCurrentName(), "FISS_XFEM" );
 
     SyntaxMapContainer dict;
 

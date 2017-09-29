@@ -33,7 +33,7 @@ bool AcousticsLoadInstance::build()
         throw std::runtime_error( "Support Model not set" );
 
     CommandSyntax cmdSt( "AFFE_CHAR_ACOU" );
-    cmdSt.setResult( getResultObjectName(), "CHAR_ACOU" );
+    cmdSt.setResult( CommandSyntax::getCurrentName(), "CHAR_ACOU" );
 
     CapyConvertibleSyntax syntax;
     syntax.setSimpleKeywordValues( _toCapyConverter );

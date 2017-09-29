@@ -85,7 +85,7 @@ bool ModelInstance::buildWithSyntax( SyntaxMapContainer& dict )
     throw ( std::runtime_error )
 {
     CommandSyntax cmdSt( "AFFE_MODELE" );
-    cmdSt.setResult( getResultObjectName(), "MODELE" );
+    cmdSt.setResult( CommandSyntax::getCurrentName(), "MODELE" );
     cmdSt.define( dict );
 
     // Maintenant que le fichier de commande est pret, on appelle OP0018
