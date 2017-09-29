@@ -15,27 +15,29 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine fonoda(jv_mater, ndim  , l_steady, fnoevo,&
                   mecani  , press1, press2  , tempe ,&
                   dimdef  , dimcon, dt      , congem,&
                   r)
 !
+use THM_type
+use THM_module
+!
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/rcvalb.h"
+#include "asterfort/thmEvalGravity.h"
 !
-!
-    integer, intent(in) :: jv_mater
-    integer, intent(in) :: ndim
-    aster_logical, intent(in) :: fnoevo
-    aster_logical, intent(in) :: l_steady
-    integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
-    integer, intent(in) :: dimdef, dimcon
-    real(kind=8), intent(in) :: dt
-    real(kind=8), intent(inout) :: congem(dimcon)
-    real(kind=8), intent(out) :: r(dimdef+1)
+integer, intent(in) :: jv_mater
+integer, intent(in) :: ndim
+aster_logical, intent(in) :: fnoevo
+aster_logical, intent(in) :: l_steady
+integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
+integer, intent(in) :: dimdef, dimcon
+real(kind=8), intent(in) :: dt
+real(kind=8), intent(inout) :: congem(dimcon)
+real(kind=8), intent(out) :: r(dimdef+1)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -62,38 +64,25 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: yamec, yap1, yap2, yate
     integer :: nbpha1, nbpha2
     integer :: addeme, addete, addep1, addep2
     integer :: adcome, adcote, adcp11, adcp12, adcp21, adcp22
     integer :: i_dim
-    real(kind=8) :: rac2
-    integer, parameter :: nb_para = 3
-    real(kind=8) :: para_vale(nb_para), pesa(3)
-    integer :: icodre(nb_para)
-    character(len=8), parameter :: para_name(nb_para) = (/ 'PESA_X','PESA_Y','PESA_Z' /)
+    real(kind=8), parameter :: rac2 = sqrt(2.d0)
+    real(kind=8) :: gravity(3)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    rac2 = sqrt(2.d0)
+    r(1:dimdef+1) = 0.d0
 !
-! - Get gravity
+! - Compute gravity
 !
-    call rcvalb('FPG1', 1, 1, '+', jv_mater,&
-                ' ', 'THM_DIFFU', 0, ' ', [0.d0],&
-                nb_para, para_name, para_vale, icodre, 1)
-    pesa(1) = para_vale(1)
-    pesa(2) = para_vale(2)
-    pesa(3) = para_vale(3)
+    call thmEvalGravity(jv_mater, 0.d0, gravity)
 !
 ! - Get active physics
 !
-    yamec  = mecani(1)
-    yap1   = press1(1)
     nbpha1 = press1(2)
-    yap2   = press2(1)
     nbpha2 = press2(2)
-    yate   = tempe(1)
 !
 ! - Get adresses in generalized vectors
 !
@@ -118,7 +107,7 @@ implicit none
 !
 ! - Transforms stress with sqrt(2)
 !
-    if (yamec .eq. 1) then
+    if (ds_thm%ds_elem%l_dof_meca) then
         do i_dim = 4, 6
             congem(adcome+6+i_dim-1) = congem(adcome+6+i_dim-1)*rac2
             congem(adcome+i_dim-1)   = congem(adcome+i_dim-1)*rac2
@@ -127,7 +116,7 @@ implicit none
 !
 ! - Compute residual {R}
 !
-    if (yamec .eq. 1) then
+    if (ds_thm%ds_elem%l_dof_meca) then
 ! ----- {R} from mechanic
         do i_dim = 1, 6
             r(addeme+ndim+i_dim-1) = r(addeme+ndim+i_dim-1)+congem(adcome-1+i_dim)
@@ -136,24 +125,24 @@ implicit none
             r(addeme+ndim-1+i_dim) = r(addeme+ndim-1+i_dim)+congem(adcome+6+i_dim-1)
         end do
 ! ----- {R} from hydraulic (first)
-        if (yap1 .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_pre1) then
             do i_dim = 1, ndim
-                r(addeme+i_dim-1) = r(addeme+i_dim-1) - pesa(i_dim)*congem(adcp11)
+                r(addeme+i_dim-1) = r(addeme+i_dim-1) - gravity(i_dim)*congem(adcp11)
             end do
             if (nbpha1 .gt. 1) then
                 do i_dim = 1, ndim
-                    r(addeme+i_dim-1) = r(addeme+i_dim-1)- pesa(i_dim)*congem(adcp12)
+                    r(addeme+i_dim-1) = r(addeme+i_dim-1)- gravity(i_dim)*congem(adcp12)
                 end do
             endif
         endif
 ! ----- {R} from hydraulic (second)
-        if (yap2 .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_pre2) then
             do i_dim = 1, ndim
-                r(addeme+i_dim-1) = r(addeme+i_dim-1)- pesa(i_dim)*congem(adcp21)
+                r(addeme+i_dim-1) = r(addeme+i_dim-1)- gravity(i_dim)*congem(adcp21)
             end do
             if (nbpha2 .gt. 1) then
                 do i_dim = 1, ndim
-                    r(addeme+i_dim-1) = r(addeme+i_dim-1)- pesa(i_dim)*congem(adcp22)
+                    r(addeme+i_dim-1) = r(addeme+i_dim-1)- gravity(i_dim)*congem(adcp22)
                 end do
             endif
         endif
@@ -161,7 +150,7 @@ implicit none
 ! - For transient terms
     if (fnoevo) then
 ! ----- {R(t)} from hydraulic (first)
-        if (yap1 .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_pre1) then
             do i_dim = 1, ndim
                 r(addep1+i_dim) = r(addep1+i_dim)+dt*congem(adcp11+i_dim)
             end do
@@ -170,13 +159,13 @@ implicit none
                     r(addep1+i_dim) = r(addep1+i_dim)+dt*congem(adcp12+i_dim)
                 end do
             endif
-            if (yate .eq. 1) then
+            if (ds_thm%ds_elem%l_dof_ther) then
                 do i_dim = 1, ndim
-                    r(addete) = r(addete)+dt*congem(adcp11+i_dim)*pesa(i_dim)
+                    r(addete) = r(addete)+dt*congem(adcp11+i_dim)*gravity(i_dim)
                 end do
                 if (nbpha1 .gt. 1) then
                     do i_dim = 1, ndim
-                        r(addete)=r(addete) +dt*congem(adcp12+i_dim)*pesa(i_dim)
+                        r(addete)=r(addete) +dt*congem(adcp12+i_dim)*gravity(i_dim)
                     end do
                 endif
                 do i_dim = 1, ndim
@@ -193,7 +182,7 @@ implicit none
             endif
         endif
 ! ----- {R(t)} from hydraulic (second)
-        if (yap2 .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_pre2) then
             do i_dim = 1, ndim
                 r(addep2+i_dim) = r(addep2+i_dim)+dt*congem(adcp21+i_dim)
             end do
@@ -202,13 +191,13 @@ implicit none
                     r(addep2+i_dim) = r(addep2+i_dim)+dt*congem(adcp22+i_dim)
                 end do
             endif
-            if (yate .eq. 1) then
+            if (ds_thm%ds_elem%l_dof_ther) then
                 do i_dim = 1, ndim
-                    r(addete) = r(addete)+dt*congem(adcp21+i_dim)*pesa(i_dim)
+                    r(addete) = r(addete)+dt*congem(adcp21+i_dim)*gravity(i_dim)
                 end do
                 if (nbpha2 .gt. 1) then
                     do i_dim = 1, ndim
-                        r(addete) = r(addete)+dt*congem(adcp22+i_dim)*pesa(i_dim)
+                        r(addete) = r(addete)+dt*congem(adcp22+i_dim)*gravity(i_dim)
                     end do
                 endif
                 do i_dim = 1, ndim
@@ -224,7 +213,7 @@ implicit none
             endif
         endif
 ! ----- {R(t)} from thermic
-        if (yate .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_ther) then
             do i_dim = 1, ndim
                 r(addete+i_dim) = r(addete+i_dim)+dt*congem(adcote+i_dim)
             end do
