@@ -20,7 +20,7 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from code_aster.RunManager.AsterFortran import python_execop
-from code_aster.Supervis.libCommandSyntax import CommandSyntax
+from ..Supervis import CommandSyntax
 from code_aster import GeneralizedDOFNumbering
 
 

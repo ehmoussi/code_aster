@@ -21,7 +21,7 @@
 from code_aster import Table
 from code_aster.Cata import Commands, checkSyntax
 from code_aster.RunManager.AsterFortran import python_execop
-from code_aster.Supervis.libCommandSyntax import CommandSyntax
+from ..Supervis import CommandSyntax
 
 
 def CREA_TABLE(**kwargs):
