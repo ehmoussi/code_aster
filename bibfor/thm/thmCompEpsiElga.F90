@@ -44,9 +44,6 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-!
-! --------------------------------------------------------------------------------------------------
-!
     character(len=8) :: elrefe, elref2
     integer :: addeme, addep1, addep2, addete
     integer :: yamec, yate, yap1, yap2
@@ -124,8 +121,7 @@ implicit none
 !
 ! - Compute strains
 !
-    call epsthm(l_axi    , ndim       ,& 
-                yamec    , yap1       , yap2    , yate     ,&
+    call epsthm(l_axi    , ndim       ,&
                 addeme   , addep1     , addep2  , addete   ,&
                 nno      , nnos       , nnom    , &
                 dimuel   , dimdef     , nddls   , nddlm    ,&

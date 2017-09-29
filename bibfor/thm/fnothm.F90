@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: sylvie.granet at edf.fr
+! aslint: disable=W1504
+!
 subroutine fnothm(jv_mater , ndim     , l_axi    , l_steady , fnoevo ,&
                   mecani   , press1   , press2   , tempe    ,&
                   nno      , nnos     , nnom     , npi      , npg    ,&
@@ -32,28 +34,25 @@ implicit none
 #include "asterfort/cabthm.h"
 #include "asterfort/fonoda.h"
 !
-! person_in_charge: sylvie.granet at edf.fr
-! aslint: disable=W1504
-!
-    integer, intent(in) :: jv_mater
-    integer, intent(in) :: ndim
-    aster_logical, intent(in) :: l_axi
-    aster_logical, intent(in) :: l_steady
-    aster_logical, intent(in) :: fnoevo
-    integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
-    integer, intent(in) :: nno, nnos, nnom
-    integer, intent(in) :: npi, npg
-    real(kind=8) :: elem_coor(ndim, nno)
-    real(kind=8), intent(in) :: deltat
-    integer, intent(in) :: dimuel, dimdef, dimcon
-    integer, intent(in) :: jv_poids, jv_poids2
-    integer, intent(in) :: jv_func, jv_func2, jv_dfunc, jv_dfunc2
-    integer, intent(in) :: nddls, nddlm
-    integer, intent(in) :: nddl_meca, nddl_p1, nddl_p2
-    real(kind=8), intent(inout) :: congem(1:npi*dimcon)
-    real(kind=8), intent(inout) :: b(dimdef, dimuel)
-    real(kind=8), intent(inout) :: r(1:dimdef+1)
-    real(kind=8), intent(out) :: vectu(dimuel)
+integer, intent(in) :: jv_mater
+integer, intent(in) :: ndim
+aster_logical, intent(in) :: l_axi
+aster_logical, intent(in) :: l_steady
+aster_logical, intent(in) :: fnoevo
+integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
+integer, intent(in) :: nno, nnos, nnom
+integer, intent(in) :: npi, npg
+real(kind=8) :: elem_coor(ndim, nno)
+real(kind=8), intent(in) :: deltat
+integer, intent(in) :: dimuel, dimdef, dimcon
+integer, intent(in) :: jv_poids, jv_poids2
+integer, intent(in) :: jv_func, jv_func2, jv_dfunc, jv_dfunc2
+integer, intent(in) :: nddls, nddlm
+integer, intent(in) :: nddl_meca, nddl_p1, nddl_p2
+real(kind=8), intent(inout) :: congem(1:npi*dimcon)
+real(kind=8), intent(inout) :: b(dimdef, dimuel)
+real(kind=8), intent(inout) :: r(1:dimdef+1)
+real(kind=8), intent(out) :: vectu(dimuel)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -104,7 +103,6 @@ implicit none
     integer :: kpi, i, n
     real(kind=8) :: dt
     real(kind=8) :: dfdi(20, 3), dfdi2(20, 3), poids, poids2
-    integer :: yamec, yate, yap1, yap2
     integer :: addeme, addete, addep1, addep2
 !
 ! --------------------------------------------------------------------------------------------------
@@ -113,13 +111,6 @@ implicit none
     ASSERT(ndim .le. 3)
     ASSERT(npi  .le. 27)
     vectu(1:dimuel) = 0.d0
-!
-! - Get active physics
-!
-    yamec  = mecani(1)
-    yap1   = press1(1)
-    yap2   = press2(1)
-    yate   = tempe(1)
 !
 ! - Get adresses in generalized vectors
 !
@@ -141,14 +132,19 @@ implicit none
     do kpi = 1, npg
         r(1:dimdef+1) = 0.d0
 ! ----- Compute [B] matrix for generalized strains
-        call cabthm(nddls, nddlm, nno, nnos, nnom,&
-                    dimuel, dimdef, ndim, kpi,&
-                    jv_poids, jv_poids2,&
-                    jv_func, jv_func2, jv_dfunc, jv_dfunc2,&
-                    dfdi, dfdi2, elem_coor, poids, poids2,&
-                    b, nddl_meca, yamec, addeme, yap1,&
-                    addep1, yap2, addep2, yate, addete,&
-                    nddl_p1, nddl_p2, l_axi)
+        call cabthm(l_axi    , ndim     ,&
+                    nddls    , nddlm    ,&
+                    nddl_meca, nddl_p1  , nddl_p2,&
+                    nno      , nnos     , nnom   ,&
+                    dimuel   , dimdef   , kpi    ,&
+                    addeme   , addete   , addep1 , addep2,&
+                    elem_coor,&
+                    jv_poids , jv_poids2,&
+                    jv_func  , jv_func2 ,&
+                    jv_dfunc , jv_dfunc2,&
+                    dfdi     , dfdi2    ,&
+                    poids    , poids2   ,&
+                    b        )
 ! ----- Compute stress vector {R} 
         call fonoda(jv_mater, ndim  , l_steady, fnoevo,&
                     mecani  , press1, press2  , tempe,&

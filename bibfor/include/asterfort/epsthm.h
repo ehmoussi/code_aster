@@ -15,16 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
-! aslint: disable=W1504
-!
 interface
-    subroutine epsthm(l_axi    , ndim     ,& 
-                      yamec    , yap1     , yap2    , yate     ,&
+    subroutine epsthm(l_axi    , ndim     ,&
                       addeme   , addep1   , addep2  , addete   ,&
                       nno      , nnos     , nnom    , &
                       dimuel   , dimdef   , nddls   , nddlm    ,&
@@ -35,7 +31,6 @@ interface
                       epsm)
         aster_logical, intent(in) :: l_axi
         integer, intent(in) :: ndim
-        integer, intent(in) :: yamec, yap1, yap2, yate
         integer, intent(in) :: addeme, addep1, addep2, addete
         integer, intent(in) :: nno, nnos, nnom
         integer, intent(in) :: dimuel, dimdef

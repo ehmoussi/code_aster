@@ -19,16 +19,16 @@
 ! person_in_charge: sylvie.granet at edf.fr
 !
 subroutine assthm(nno, nnos, nnom, npg, npi,&
-                  ipoids, ipoid2, ivf, ivf2, idfde,&
-                  idfde2, geom, crit, deplm, deplp,&
+                  jv_poids, jv_poids2, jv_func, jv_func2, jv_dfunc,&
+                  jv_dfunc2, elem_coor, crit, deplm, deplp,&
                   contm, contp, varim, varip, defgem,&
                   defgep, drds, drdsr, dsde, b,&
                   dfdi, dfdi2, r, sigbar, &
                   matuu, vectu, rinstm,&
                   rinstp, option, j_mater, mecani, press1,&
                   press2, tempe, dimdef, dimcon, dimuel,&
-                  nbvari, nddls, nddlm, nmec, np1,&
-                  np2, ndim, compor, typmod, axi,&
+                  nbvari, nddls, nddlm, nddl_meca, nddl_p1,&
+                  nddl_p2, ndim, compor, typmod, axi,&
                   perman, inte_type, codret, angmas, work1, work2)
 !
 use THM_type
@@ -52,17 +52,23 @@ implicit none
 #include "asterfort/thmGetParaInit.h"
 #include "asterfort/thmSelectMatrix.h"
 !
-    integer :: dimmat, npg, ipoid2, ivf2, idfde2, dimuel, nnom
+    integer :: dimmat, npg, dimuel, nnom
     parameter    (dimmat=120)
-    integer :: nno, nnos, npi, ipoids, ivf, idfde, j_mater, dimdef, dimcon
-    integer :: nbvari, nddls, nddlm, nmec, np1, np2, ndim, codret
+    integer :: nno, nnos, npi, j_mater, dimdef, dimcon
+    integer :: nbvari, nddls, nddlm, ndim, codret
+integer, intent(in) :: nddl_meca, nddl_p1, nddl_p2
+integer, intent(in) :: jv_poids, jv_poids2
+integer, intent(in) :: jv_func, jv_func2
+integer, intent(in) :: jv_dfunc, jv_dfunc2
     integer :: mecani(5), press1(7), press2(7), tempe(5)
     integer :: yamec, yap1, yap2, yate
     integer :: addeme, addep1, addep2, addete, ii, jj
     integer :: kpi, ipi
     integer :: i, j, n, k, kji
     real(kind=8) :: dfdi(nno, 3), dfdi2(nnos, 3)
-    real(kind=8) :: geom(ndim, nno), crit(*), poids, poids2
+real(kind=8) :: crit(*)
+real(kind=8), intent(in) :: elem_coor(ndim, nno)
+    real(kind=8) ::poids, poids2
     real(kind=8) :: deplp(dimuel), deplm(dimuel)
     real(kind=8) :: contm(dimcon*npi), contp(dimcon*npi)
     real(kind=8) :: varim(nbvari*npi), varip(nbvari*npi)
@@ -256,21 +262,25 @@ character(len=3), intent(in) :: inte_type
         end do
         call matini(dimmat, dimmat, 0.d0, matri)
     endif
-! =====================================================================
-! --- BOUCLE SUR LES POINTS D'INTEGRATION -----------------------------
-! =====================================================================
+!
+! - Loop on integration points
+!
     do ipi = 1, npi
         kpi = ipi
-! =====================================================================
-! --- CALCUL DE LA MATRICE B AU POINT D'INTEGRATION -------------------
-! =====================================================================
-        call cabthm(nddls, nddlm, nno, nnos, nnom,&
-                    dimuel, dimdef, ndim, kpi, ipoids,&
-                    ipoid2, ivf, ivf2, idfde, idfde2,&
-                    dfdi, dfdi2, geom, poids, poids2,&
-                    b, nmec, yamec, addeme, yap1,&
-                    addep1, yap2, addep2, yate, addete,&
-                    np1, np2, axi)
+! ----- Compute [B] matrix for generalized strains
+        call cabthm(axi      , ndim     ,&
+                    nddls    , nddlm    ,&
+                    nddl_meca, nddl_p1  , nddl_p2,&
+                    nno      , nnos     , nnom   ,&
+                    dimuel   , dimdef   , kpi    ,&
+                    addeme   , addete   , addep1 , addep2,&
+                    elem_coor,&
+                    jv_poids , jv_poids2,&
+                    jv_func  , jv_func2 ,&
+                    jv_dfunc , jv_dfunc2,&
+                    dfdi     , dfdi2    ,&
+                    poids    , poids2   ,&
+                    b        )
 ! =====================================================================
 ! --- CALCUL DES DEFORMATIONS GENERALISEES E=BU -----------------------
 ! =====================================================================

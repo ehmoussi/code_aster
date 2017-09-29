@@ -15,30 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine te0497(option, nomte)
 ! person_in_charge: josselin.delmas at edf.fr
-!-----------------------------------------------------------------------
-!    - FONCTION REALISEE:  CALCUL DE L'ESTIMATEUR D'ERREUR EN RESIDU
-!      SUR UN ELEMENT ISOPARAMETRIQUE 2D, VIA L'OPTION 'ERME_ELEM'
-!      POUR LES MODELISATIONS HM SATUREES
-!   -------------------------------------------------------------------
 !
-! REMARQUE : LES PROGRAMMES SUIVANTS DOIVENT RESTER TRES SIMILAIRES
-!            TE0368, TE0375, TE0377, TE0378, TE0382, TE0497
+subroutine te0497(option, nomte)
 !
-!   -------------------------------------------------------------------
-!     ASTER INFORMATIONS :
-!       03/07/06 (SM): CREATION EN S'INSPIRANT DE TE0003.F ET DE
-!                      TE0377.F .
-!                      CALCUL INDICATEURS EN STATIONNAIRE
-!       01/05/07 (SM): ADIMENSIONNEMENT DES INDICATEURS EN
-!                      STATIONNAIRE .
-!----------------------------------------------------------------------
-! CORPS DU PROGRAMME
-    implicit none
-! aslint: disable=W0104
-! DECLARATION PARAMETRES D'APPELS
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8miem.h"
@@ -62,9 +44,25 @@ subroutine te0497(option, nomte)
 #include "asterfort/utjac.h"
 #include "asterfort/utmess.h"
 !
-    character(len=16) :: option, nomte
+character(len=16), intent(in) :: option, nomte
 !
-! DECLARATION VARIABLES LOCALES
+!-----------------------------------------------------------------------
+!    - FONCTION REALISEE:  CALCUL DE L'ESTIMATEUR D'ERREUR EN RESIDU
+!      SUR UN ELEMENT ISOPARAMETRIQUE 2D, VIA L'OPTION 'ERME_ELEM'
+!      POUR LES MODELISATIONS HM SATUREES
+!   -------------------------------------------------------------------
+!
+! REMARQUE : LES PROGRAMMES SUIVANTS DOIVENT RESTER TRES SIMILAIRES
+!            TE0368, TE0375, TE0377, TE0378, TE0382, TE0497
+!
+!   -------------------------------------------------------------------
+!     ASTER INFORMATIONS :
+!       03/07/06 (SM): CREATION EN S'INSPIRANT DE TE0003.F ET DE
+!                      TE0377.F .
+!                      CALCUL INDICATEURS EN STATIONNAIRE
+!       01/05/07 (SM): ADIMENSIONNEMENT DES INDICATEURS EN
+!                      STATIONNAIRE .
+!----------------------------------------------------------------------
 !
     integer :: ifm, niv, typvf
     integer :: ibid, iaux, iret, itab(7)
@@ -76,15 +74,15 @@ subroutine te0497(option, nomte)
     integer :: ipoid2, ivf2, idfde2
     integer :: nbcmp, ipg, ifa, tyv, nbs, kpg, spt
     integer :: isienp, isienm, ideplp, ideplm, jkp, nbna
-    integer :: iagd, iatyma, typ, iacmp
+    integer :: iagd, iatyma, typ, iacmp, ibid2, ibid3, ibid4
     integer :: iade2, iava2, iaptm2, igd2, ncmpm2
     integer :: iade3, iava3, iaptm3, igd3, ncmpm3
     integer :: igrdca, dimdep, dimdef, dimcon
     integer :: nmec, npi, np1, np2, nnom, nddls, nddlm
     integer :: mecani(5), press1(7), press2(7), tempe(5), dimuel
-    integer :: adsip, yamec, addeme, adcome, yate, addete
-    integer :: yap1, addep1, adcp11
-    integer :: yap2, addep2, ii, noe(9, 6, 4)
+    integer :: adsip, addeme, adcome, addete
+    integer :: addep1, adcp11
+    integer :: addep2, ii, noe(9, 6, 4)
 !
     real(kind=8) :: ovfl
     real(kind=8) :: r8bid3(2)
@@ -140,7 +138,6 @@ subroutine te0497(option, nomte)
 !
 ! ----------------------------------------------------------------------
     100 format(a,' :',(6(1x,1pe17.10)))
-! 2000 FORMAT(A,10I8)
 ! ----------------------------------------------------------------------
 ! 1 -------------- GESTION DES DONNEES ---------------------------------
 ! ----------------------------------------------------------------------
@@ -162,22 +159,18 @@ subroutine te0497(option, nomte)
                 tempe, dimdep, dimdef, dimcon, nmec,&
                 np1, np2, ndim, nno, nnos,&
                 nnom, ibid, npi, npg, nddls,&
-                nddlm, ibid, ibid, dimuel, ipoids,&
+                nddlm, ibid2, ibid3, dimuel, ipoids,&
                 ivf, idfde, ipoid2, ivf2, idfde2,&
-                ibid, jgano)
+                ibid4, jgano)
 !
 ! =====================================================================
 ! B. --- DETERMINATION DES VARIABLES CARACTERISANT LE MILIEU ----------
 ! =====================================================================
-    yamec = mecani(1)
     addeme = mecani(2)
     adcome = mecani(3)
-    yap1 = press1(1)
     addep1 = press1(3)
     adcp11 = press1(4)
-    yap2 = press2(1)
     addep2 = press2(3)
-    yate = tempe(1)
     addete = tempe(2)
     adsip = adcp11-adcome-5
 !
@@ -499,8 +492,8 @@ subroutine te0497(option, nomte)
                 ivf2, idfde2, zr(igeom), fovo, zr(ideplp),&
                 zr(ideplm), zr(isienp), zr(isienm), nbcmp, biot,&
                 unsurm, fpx, fpy, frx, fry,&
-                yamec, addeme, yap1, addep1, yap2,&
-                addep2, yate, addete, tm2h1v)
+                addeme, addep1,&
+                addep2, addete, tm2h1v)
 !
 ! ON ADIMENSIONNE LES INDICATEURS VOLUMIQUES
 !
@@ -508,12 +501,9 @@ subroutine te0497(option, nomte)
     tsivom = hk**2 * admec * tm2h1v(1)
 !
     if (.not. perman) then
-!
         tdevom = hk**2 * admec * tm2h1v(2)
-!
         adv1h = cyoung*unsurk*admec
         tsivoh = deltat * hk**2 * adv1h * tm2h1v(3)
-!
     endif
 !
 !------------------------------------------------------------------
