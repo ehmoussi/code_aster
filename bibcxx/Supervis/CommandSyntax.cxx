@@ -30,16 +30,58 @@
 #include "Utilities/CapyConvertibleValue.h"
 
 
+PyObject *CommandSyntax::pyClass = NULL;
+
+std::string CommandSyntax::getNewResultName()
+{
+    if (! CommandSyntax::pyClass) {
+        CommandSyntax::pyClass = GetJdcAttr((char *)"syntax");
+    }
+
+    PyObject *res = PyObject_CallMethod(CommandSyntax::pyClass,
+                                        (char *)"getNewResultName", NULL);
+    if (res == NULL || ! PyString_Check(res)) {
+        throw std::runtime_error(
+            "Error calling `CommandSyntax.getNewResultName`.");
+    }
+
+    std::string name(PyString_AsString(res));
+    return name;
+}
+
+std::string CommandSyntax::getResultName()
+{
+    if (! CommandSyntax::pyClass) {
+        CommandSyntax::pyClass = GetJdcAttr((char *)"syntax");
+    }
+
+    PyObject *res = PyObject_CallMethod(CommandSyntax::pyClass,
+                                        (char *)"getResultName", NULL);
+    if (res == NULL || ! PyString_Check(res)) {
+        throw std::runtime_error(
+            "Error calling `CommandSyntax.getResultName`.");
+    }
+
+    std::string name(PyString_AsString(res));
+    return name;
+}
+
+
 CommandSyntax::CommandSyntax(const std::string name):
     _commandName(name)
 {
-    PyObject *klass = GetJdcAttr((char *)"syntax");
-    _pySyntax = PyObject_CallFunction(klass, (char *)"s", (char *)(name.c_str()));
-    if (_pySyntax == NULL)
+    if (!CommandSyntax::pyClass) {
+        CommandSyntax::pyClass = GetJdcAttr((char *)"syntax");
+    }
+
+    _pySyntax = PyObject_CallFunction(CommandSyntax::pyClass,
+                                      (char *)"s", (char *)(name.c_str()));
+    if (_pySyntax == NULL) {
         throw std::runtime_error("Error during `CommandSyntax.__init__`.");
+    }
+
     Py_INCREF(_pySyntax);
     register_sh_etape(append_etape(_pySyntax));
-    Py_XDECREF(klass);
 }
 
 
@@ -56,8 +98,9 @@ void CommandSyntax::free()
         return;
     register_sh_etape(pop_etape());
     PyObject *res = PyObject_CallMethod(_pySyntax, (char *)"free", NULL);
-    if (res == NULL)
+    if (res == NULL) {
         throw std::runtime_error("Error calling `CommandSyntax.free`.");
+    }
 
     Py_XDECREF(res);
     Py_XDECREF(_pySyntax);
@@ -77,8 +120,9 @@ void CommandSyntax::define(SyntaxMapContainer& syntax)
     PyObject *keywords = syntax.convertToPythonDictionnary();
     PyObject *res = PyObject_CallMethod(_pySyntax, (char *)"define",
                                         (char *)"O", keywords);
-    if (res == NULL)
+    if (res == NULL) {
         throw std::runtime_error("Error calling `CommandSyntax.define`.");
+    }
     Py_XDECREF(res);
 }
 
@@ -97,7 +141,8 @@ void CommandSyntax::setResult(const std::string resultName,
                                         (char *)"ss",
                                         (char *)resultName.c_str(),
                                         (char *)typeSd.c_str());
-    if (res == NULL)
+    if (res == NULL) {
         throw std::runtime_error("Error calling `CommandSyntax.setResult`.");
+    }
     Py_XDECREF(res);
 }

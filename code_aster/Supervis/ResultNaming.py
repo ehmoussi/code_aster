@@ -32,20 +32,20 @@ class ResultNaming(Singleton):
         # and because the hexadecimal system is used to give a name to a given sd
         self._maxNumberOfAsterObjects = 4294967295
 
-    def getNewResultObjectName( self ):
+    def getNewResultName( self ):
         """Return a new result name
         The first one is "0       ", then "1       ", etc.
         @return String of 8 characters containing the new name
         """
         self._numberOfAsterObjects += 1
-        return self.getResultObjectName()
+        return self.getResultName()
 
-    def getResultObjectName( self ):
+    def getResultName( self ):
         """Return the name of the result created by the current command
         @return String of 8 characters containing the name
         """
         name = "{:<8x}".format( self._numberOfAsterObjects )
-        logger.debug("getResultObjectName returns {0!r}".format(name))
+        logger.debug("getResultName returns {0!r}".format(name))
         return name
 
     def initCounter( self, start ):

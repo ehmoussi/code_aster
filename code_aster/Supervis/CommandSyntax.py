@@ -52,7 +52,7 @@ class CommandSyntax:
         return cls._currentCommand
 
     @classmethod
-    def getNewResultObjectName(cls):
+    def getNewResultName(cls):
         """Return a new result name.
 
         The first one is "0       ", then "1       ", etc.
@@ -60,10 +60,10 @@ class CommandSyntax:
         Returns:
             str: String of 8 characters containing the new name.
         """
-        return cls.result_naming.getNewResultObjectName()
+        return cls.result_naming.getNewResultName()
 
     @classmethod
-    def getResultObjectName(cls):
+    def getResultName(cls):
         """Return a the current result name.
 
         This is the name of the object that is being created.
@@ -71,7 +71,7 @@ class CommandSyntax:
         Returns:
             str: String of 8 characters containing the current name.
         """
-        return cls.result_naming.getResultObjectName()
+        return cls.result_naming.getResultName()
 
 
     def __init__(self, name="unNamed", cata=None):
