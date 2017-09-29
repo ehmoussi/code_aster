@@ -17,28 +17,9 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: mathieu.courtois at edf.fr
+# person_in_charge: mathieu.courtois@edf.fr
 
-# discourage import *
-__all__ = []
+from .ExecuteCommand import ExecuteCommandOps
 
-# import datastructures enriched by pure python extensions
-from .Extensions import *
 
-from .Commands.debut import init
-
-# # install i18n function as soon as possible
-# from .Utilities import localization
-# localization.install()
-#
-# # commands must be registered by libCommandSyntax before calling DEBUT.
-# from .Cata import Commands
-# from .Supervis import libCommandSyntax
-# libCommandSyntax.commandsRegister(Commands.commandStore)
-#
-# # import general purpose functions
-# from .RunManager.saving import saveObjects
-from .Utilities import TestCase
-#
-# # each package is responsible to export only the relevant objects
-# from .LinearAlgebra import *
+DEFI_FICHIER = ExecuteCommandOps("DEFI_FICHIER", 26)

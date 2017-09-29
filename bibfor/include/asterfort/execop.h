@@ -16,10 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-!
-!
 interface
-    subroutine execop( nuoper )
-        integer, intent(in) :: nuoper
+    subroutine execop( num )
+        integer, intent(in), optional :: num
     end subroutine execop
 end interface

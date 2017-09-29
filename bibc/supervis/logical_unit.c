@@ -75,16 +75,22 @@ int getNumberOfLogicalUnitFile(const char* name)
     /*
      * Return the number of the logical unit associated to a filename.
      */
-    PyObject *pylu, *res;
+    PyObject *pylu, *res, *unit;
     int number;
 
     pylu = GetJdcAttr("logical_unit");
-    res = PyObject_CallMethod(pylu, "getNumberOfLogicalUnitFile", "s", name);
+    res = PyObject_CallMethod(pylu, "from_name", "s", name);
     if (res == NULL) {
         MYABORT("Error calling `LogicalUnitFile.getNumberOfLogicalUnitFile`.");
     }
-    number = (int)PyInt_AsLong(res);
+    unit = PyObject_GetAttrString(res, "unit");
+    if (PyInt_Check(unit)) {
+        number = (int)PyInt_AsLong(unit);
+    } else {
+        number = -1;
+    }
 
+    Py_XDECREF(unit);
     Py_XDECREF(res);
     Py_XDECREF(pylu);
     return number;
