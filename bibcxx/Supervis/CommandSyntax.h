@@ -58,7 +58,7 @@ class CommandSyntax
          * @brief Static member that returns the current result name.
          * @return Name for the current object that is being created.
          */
-        static std::string getResultName();
+        static std::string getCurrentName();
 
         /**
          * @brief Constructeur

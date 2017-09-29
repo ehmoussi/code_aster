@@ -38,14 +38,14 @@ class ResultNaming(Singleton):
         @return String of 8 characters containing the new name
         """
         self._numberOfAsterObjects += 1
-        return self.getResultName()
+        return self.getCurrentName()
 
-    def getResultName( self ):
+    def getCurrentName( self ):
         """Return the name of the result created by the current command
         @return String of 8 characters containing the name
         """
         name = "{:<8x}".format( self._numberOfAsterObjects )
-        logger.debug("getResultName returns {0!r}".format(name))
+        logger.debug("getCurrentName returns {0!r}".format(name))
         return name
 
     def initCounter( self, start ):
