@@ -45,7 +45,7 @@ class ResultNaming(Singleton):
         @return String of 8 characters containing the name
         """
         name = "{:<8x}".format( self._numberOfAsterObjects )
-        logger.debug( "getResultObjectName returns %r", name )
+        logger.debug("getResultObjectName returns {0!r}".format(name))
         return name
 
     def initCounter( self, start ):
@@ -55,5 +55,3 @@ class ResultNaming(Singleton):
     def getLastId( self ):
         """Return the id of the last created objects"""
         return self._numberOfAsterObjects
-
-result_naming = ResultNaming()

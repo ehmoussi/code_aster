@@ -21,7 +21,7 @@
 from ..Cata import Commands, checkSyntax
 from ..Extensions import Function
 from ..RunManager.AsterFortran import python_execop
-from ..Supervis.libCommandSyntax import CommandSyntax
+from ..Supervis import CommandSyntax
 from ..Utilities import compat_listr8
 
 

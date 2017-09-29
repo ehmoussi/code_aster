@@ -26,7 +26,7 @@ import sys
 import aster
 
 from ..Cata import Commands, checkSyntax
-from ..Supervis import CommandSyntax, logger, result_naming
+from ..Supervis import CommandSyntax, logger
 
 
 class ExecuteCommand(object):
@@ -108,7 +108,7 @@ class ExecuteCommand(object):
         sd_name = get_name(self.name)
         if not sd_name:
             # use an automatic naming
-            sd_name = result_naming.getNewResultObjectName()
+            sd_name = CommandSyntax.getNewResultObjectName()
         return sd_name
 
     def check_jeveux(self):
