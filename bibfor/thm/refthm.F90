@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine refthm(jv_mater , ndim     , l_axi    , l_steady , fnoevo ,&
                   mecani   , press1   , press2   , tempe    ,&
                   nno      , nnos     , nnom     , npi      , npg    ,&
@@ -24,6 +25,9 @@ subroutine refthm(jv_mater , ndim     , l_axi    , l_steady , fnoevo ,&
                   jv_func  , jv_func2 , jv_dfunc , jv_dfunc2,&
                   nddls    , nddlm    , nddl_meca, nddl_p1  , nddl_p2,&
                   b        , r        , vectu )
+!
+use THM_type
+use THM_module
 !
 implicit none
 !
@@ -37,26 +41,24 @@ implicit none
 #include "asterfort/utmess.h"
 #include "blas/daxpy.h"
 !
-! aslint: disable=W1504
-!
-    integer, intent(in) :: jv_mater
-    integer, intent(in) :: ndim
-    aster_logical, intent(in) :: l_axi
-    aster_logical, intent(in) :: l_steady
-    aster_logical, intent(in) :: fnoevo
-    integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
-    integer, intent(in) :: nno, nnos, nnom
-    integer, intent(in) :: npi, npg
-    real(kind=8) :: elem_coor(ndim, nno)
-    real(kind=8), intent(in) :: dt
-    integer, intent(in) :: dimuel, dimdef, dimcon
-    integer, intent(in) :: jv_poids, jv_poids2
-    integer, intent(in) :: jv_func, jv_func2, jv_dfunc, jv_dfunc2
-    integer, intent(in) :: nddls, nddlm
-    integer, intent(in) :: nddl_meca, nddl_p1, nddl_p2
-    real(kind=8), intent(out) :: b(dimdef, dimuel)
-    real(kind=8), intent(out) :: r(1:dimdef+1)
-    real(kind=8), intent(out) :: vectu(dimuel)
+integer, intent(in) :: jv_mater
+integer, intent(in) :: ndim
+aster_logical, intent(in) :: l_axi
+aster_logical, intent(in) :: l_steady
+aster_logical, intent(in) :: fnoevo
+integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
+integer, intent(in) :: nno, nnos, nnom
+integer, intent(in) :: npi, npg
+real(kind=8) :: elem_coor(ndim, nno)
+real(kind=8), intent(in) :: dt
+integer, intent(in) :: dimuel, dimdef, dimcon
+integer, intent(in) :: jv_poids, jv_poids2
+integer, intent(in) :: jv_func, jv_func2, jv_dfunc, jv_dfunc2
+integer, intent(in) :: nddls, nddlm
+integer, intent(in) :: nddl_meca, nddl_p1, nddl_p2
+real(kind=8), intent(out) :: b(dimdef, dimuel)
+real(kind=8), intent(out) :: r(1:dimdef+1)
+real(kind=8), intent(out) :: vectu(dimuel)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -120,22 +122,22 @@ implicit none
 !
 ! - Check which *_REFE exist 
 !
-    if (mecani(1) .ne. 0) then
+    if (ds_thm%ds_elem%l_dof_meca) then
         call terefe('SIGM_REFE', 'THM', vale_refe)
         indx_vale_refe = 1
         list_vale_refe(indx_vale_refe) = vale_refe
     endif
-    if (press1(1) .ne. 0) then
+    if (ds_thm%ds_elem%l_dof_pre1) then
         call terefe('FLUX_HYD1_REFE', 'THM', vale_refe)
         indx_vale_refe = 2
         list_vale_refe(indx_vale_refe) = vale_refe
     endif
-    if (press2(1) .ne. 0) then
+    if (ds_thm%ds_elem%l_dof_pre2) then
         call terefe('FLUX_HYD2_REFE', 'THM', vale_refe)
         indx_vale_refe = 3
         list_vale_refe(indx_vale_refe) = vale_refe
     endif
-    if (tempe(1) .ne. 0) then
+    if (ds_thm%ds_elem%l_dof_ther) then
         call terefe('FLUX_THER_REFE', 'THM', vale_refe)
         indx_vale_refe = 4
         list_vale_refe(indx_vale_refe) = vale_refe
