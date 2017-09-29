@@ -15,26 +15,28 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504,W1306
+!
 subroutine coeime(meca, imate, nomail, option, resi,&
-                  rigi, ndim, dimdef, dimcon, yap1,&
-                  yap2, yate, addeme, addep1, addep2,&
+                  rigi, ndim, dimdef, dimcon,&
+                  addeme, addep1,&
                   nbvari, advime, advico, npg, npi,&
                   defgep, defgem, sigm, sigp, varim,&
                   varip, ouvh, tlint, drde, kpi,&
                   vicphi, unsurn, retcom)
-! aslint: disable=W1504
 !
-    implicit none
+use THM_type
+use THM_module
 !
-! VARIABLES D'ENTREE
+implicit none
+!
 #include "asterf_types.h"
 #include "asterfort/lcejex.h"
 #include "asterfort/lcejli.h"
 #include "asterfort/lcjohm.h"
 #include "asterfort/rcvalb.h"
-    integer :: imate, ndim, dimcon, addeme, addep1, addep2, npg, kpi, npi
-    integer :: retcom, dimdef, yap1, yap2, yate, advime, nbvari, advico, vicphi
+    integer :: imate, ndim, dimcon, addeme, addep1, npg, kpi, npi
+    integer :: retcom, dimdef, advime, nbvari, advico, vicphi
     real(kind=8) :: defgem(dimdef), defgep(dimdef), sigm(dimcon), varim(nbvari)
     character(len=8) :: nomail
     character(len=16) :: meca, option
@@ -65,12 +67,8 @@ subroutine coeime(meca, imate, nomail, option, resi,&
 ! IN NDIM   : DIMENSION ESPACE
 ! IN DIMDEF : DIMENSION DEFORMATION GENERALISEE
 ! IN DIMCON : DIMENSION VECTEUR CONTRAINTES GENERALISEES
-! IN YAP1   : SI =1 PRESENCE CONSTITUTANT 1
-! IN YAP2   : SI =1 PRESENCE CONSTITUTANT 2
-! IN YATE   : SI =1 THERMIQUE
 ! IN ADDEME : ADRESSE DES DEFORMATIONS MECANIQUES
 ! IN ADDEP1 : ADRESSE DES DEFORMATIONS PRESSION 1
-! IN ADDEP2 : ADRESSE DES DEFORMATIONS PRESSION 2
 ! IN NBVARI : NOMBRE DE VARIABLES INTERNES
 ! IN ADVIME : ADRESSE DES VI MECANIQUES
 ! IN ADVICO : ADRESSE DES VI DE COUPLAGE
@@ -112,12 +110,12 @@ subroutine coeime(meca, imate, nomail, option, resi,&
         tlint = ouvh**2/12.d0
         if (resi) then
             varip(advime)=tlint
-            if (yap1 .eq. 1) then
+            if (ds_thm%ds_elem%l_dof_pre1) then
                 sigp(1+ndim)=-defgep(addep1)
             endif
         endif
         if ((rigi) .and. (kpi .le. npg)) then
-            if (yap1 .eq. 1) then
+            if (ds_thm%ds_elem%l_dof_pre1) then
                 drde(addeme,addep1)=-1.d0
             endif
         endif
@@ -128,9 +126,9 @@ subroutine coeime(meca, imate, nomail, option, resi,&
 ! ====================================================================
     if (meca .eq. 'CZM_LIN_REG') then
 !
-        do 10 i = 1, ndim
+        do i = 1, ndim
             da(i) = defgep(i) - defgem(i)
- 10     continue
+        end do
 !
 ! - INTEGRATION DE LA LOI DE COMPORTEMENT MECANIQUE
 !
@@ -140,7 +138,7 @@ subroutine coeime(meca, imate, nomail, option, resi,&
 !
 ! - RECUPERATION DES PARAMETRES DE COUPLAGE POUR LA POINTE DE FISSURE
 !
-        if (varip(advime) .eq. 2) then
+        if (nint(varip(advime)) .eq. 2) then
             unsurn=0.d0
         else
             call rcvalb(fami, kpg, spt, poum, imate,&
@@ -154,13 +152,13 @@ subroutine coeime(meca, imate, nomail, option, resi,&
 !
         if (rigi) then
             if (kpi .le. npg) then
-                do 20 i = 1, ndim
-                    do 21 j = 1, ndim
+                do i = 1, ndim
+                    do j = 1, ndim
                         drde(i,j)=dsidep(i,j)
- 21                 continue
- 20             continue
-                if ((yap1 .eq. 1) .and.&
-                    ((varip(advime+2) .eq. 1) .or.(varip(advime+2).eq. 2) )) then
+                    end do
+                end do
+                if ((ds_thm%ds_elem%l_dof_pre1) .and.&
+                    ((nint(varip(advime+2)) .eq. 1) .or.(nint(varip(advime+2)).eq. 2) )) then
                     drde(1,addep1)=-1.d0
                 endif
             endif
@@ -178,7 +176,8 @@ subroutine coeime(meca, imate, nomail, option, resi,&
 ! - CALCUL DES TERMES MECA ET DE COUPLAGE DU VECTEUR FORCES INTERNES
 !
         if (resi) then
-            if ((yap1 .eq. 1) .and. ((varip(advime+2) .eq. 1) .or.( varip(advime+2).eq. 2))) then
+            if ((ds_thm%ds_elem%l_dof_pre1) .and.&
+                 ((nint(varip(advime+2)) .eq. 1) .or.( nint(varip(advime+2)).eq. 2))) then
                 sigp(1+ndim)=-defgep(addep1)
             endif
 ! - CALCUL DE L'OUVERTURE HYDRO ET DE LA PERMEABILITE
@@ -198,10 +197,9 @@ subroutine coeime(meca, imate, nomail, option, resi,&
 ! ====================================================================
 !
     if (meca .eq. 'CZM_EXP_REG') then
-!
-        do 40 i = 1, ndim
+        do i = 1, ndim
             da(i) = defgep(i) - defgem(i)
- 40     continue
+        end do
 !
 ! - INTEGRATION DE LA LOI DE COMPORTEMENT MECANIQUE
 !
@@ -221,12 +219,12 @@ subroutine coeime(meca, imate, nomail, option, resi,&
 !
         if (rigi) then
             if (kpi .le. npg) then
-                do 120 i = 1, ndim
-                    do 121 j = 1, ndim
+                do i = 1, ndim
+                    do j = 1, ndim
                         drde(i,j)=dsidep(i,j)
-121                 continue
-120             continue
-                if ((yap1 .eq. 1) .and. (varip(advime+2) .eq. 1)) then
+                    end do
+                end do
+                if ((ds_thm%ds_elem%l_dof_pre1) .and. (nint(varip(advime+2)) .eq. 1)) then
                     drde(1,addep1)=-1.d0
                 endif
             endif
@@ -235,7 +233,7 @@ subroutine coeime(meca, imate, nomail, option, resi,&
             endif
 ! - CALCUL DE L'OUVERTURE HYDRO ET DE LA PERMEABILITE
             ouvh=varim(advico+vicphi)
-            if (varim(3) .eq. 0) then
+            if (nint(varim(3)) .eq. 0) then
                 ouvh=ouvfic
             endif
             tlint=ouvh**2/12
@@ -244,13 +242,13 @@ subroutine coeime(meca, imate, nomail, option, resi,&
 ! - CALCUL DES TERMES MECA ET DE COUPLAGE DU VECTEUR FORCES INTERNES
 !
         if (resi) then
-            if ((yap1 .eq. 1) .and. (varip(advime+2) .eq. 1)) then
+            if ((ds_thm%ds_elem%l_dof_pre1) .and. (nint(varip(advime+2)) .eq. 1)) then
                 sigp(1+ndim)=-defgep(addep1)
             endif
 ! - CALCUL DE L'OUVERTURE HYDRO ET DE LA PERMEABILITE
             varip(advico+vicphi)=defgep(1)
             ouvh=varip(advico+vicphi)
-            if (varip(3) .eq. 0) then
+            if (nint(varip(3)) .eq. 0) then
 ! - SI FISSURE FERMEE ALORS ON DONNE UNE OUVERTURE HYDRO FICTIVE
                 ouvh=ouvfic
             endif
@@ -258,6 +256,5 @@ subroutine coeime(meca, imate, nomail, option, resi,&
             varip(advico+vicphi)=defgep(1)+defgep(addep1)*unsurn
         endif
     endif
-!
 !
 end subroutine

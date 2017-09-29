@@ -15,8 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
@@ -25,7 +24,7 @@ interface
                       npi, npg, wref, iu, ip,&
                       ipf, iq, vff1, vff2, dffr2,&
                       geom, ang, congem, r, vectu,&
-                      mecani, press1, press2, tempe, dimdef,&
+                      mecani, press1, press2, dimdef,&
                       dimcon, dimuel, ndim, axi)
         integer :: ndim
         integer :: dimuel
@@ -54,7 +53,6 @@ interface
         integer :: mecani(8)
         integer :: press1(9)
         integer :: press2(9)
-        integer :: tempe(5)
         aster_logical :: axi
     end subroutine fneihm
 end interface

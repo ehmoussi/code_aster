@@ -20,7 +20,7 @@
 subroutine coeihm(option, l_steady, resi, rigi, j_mater,&
                   compor, instam, instap, nomail,&
                   ndim, dimdef, dimcon, nbvari, &
-                  yap1, yap2, yate, addeme, adcome,&
+                  addeme, adcome,&
                   addep1, adcp11, adcp12, addlh1, adcop1,&
                   addep2, adcp21, adcp22, addete, adcote,&
                   defgem, defgep, kpi, npg, npi,&
@@ -36,7 +36,7 @@ implicit none
 #include "asterfort/calcco.h"
 #include "asterfort/calcfh.h"
 #include "asterfort/coeime.h"
-#include "asterfort/kitdec.h"
+#include "asterfort/calcva.h"
 #include "asterfort/nvithm.h"
 #include "asterfort/utmess.h"
 #include "asterfort/thmGetParaBiot.h"
@@ -48,7 +48,7 @@ implicit none
 #include "asterfort/thmEvalGravity.h"
 !
     integer :: dimdef, dimcon, npg, kpi, npi, ndim
-    integer :: nbvari, yate, yap1, yap2, j_mater
+    integer :: nbvari,j_mater
     integer :: addeme, addep1, addep2, addete, adcop1, addlh1
     integer :: adcome, adcp11, adcp12, adcp21, adcp22, adcote
 !
@@ -80,7 +80,6 @@ implicit none
     real(kind=8) :: tlint, ouvh, deltat, unsurn
     real(kind=8) :: angl_naut(3)
     character(len=16) :: meca, thmc, ther, hydr
-    aster_logical :: yachai
     integer :: nume_thmc
 !
 ! =====================================================================
@@ -111,10 +110,6 @@ implicit none
 ! IN DIMCON : DIMENSION DU TABLEAU DES CONTRAINTES GENERALISEES
 !             AU POINT DE GAUSS CONSIDERE
 ! IN NBVARI :
-! IN YAMEC  : =1 S'IL Y A UNE EQUATION DE DEFORMATION MECANIQUE
-! IN YAP1   : =1 S'IL Y A UNE EQUATION DE PRESSION DE FLUIDE
-! IN YAP2   : =1 S'IL Y A UNE DEUXIEME EQUATION DE PRESSION DE FLUIDE
-! IN YATE   : =1 S'IL YA UNE EQUATION THERMIQUE
 ! IN ADDEME : ADRESSE DES DEFORMATIONS MECANIQUES
 ! IN ADDEP1 : ADRESSE DES DEFORMATIONS CORRESPONDANT A LA PRESSION 1
 ! IN ADDEP2 : ADRESSE DES DEFORMATIONS CORRESPONDANT A LA PRESSION 2
@@ -160,14 +155,13 @@ implicit none
         dsde(1:dimcon,1:dimdef) = 0.d0
         drde(1:dimdef,1:dimdef) = 0.d0
     endif
-! ======================================================================
-! --- RECUPERATION DES DONNEES INITIALES -------------------------------
-! ======================================================================
-    call kitdec(kpi, ndim-1,&
-                yachai, 0, yate, yap1, yap2,&
+!
+! - Update unknowns
+!
+    call calcva(kpi   , ndim-1,&
                 defgem, defgep,&
-                addeme, addep1, addep2, addete, &
-                depsv , epsv, deps,&
+                addeme, addep1, addep2   , addete,&
+                depsv , epsv  , deps     ,&
                 t     , dt, grat,&
                 p1    , dp1    , grap1 ,&
                 p2    , dp2    , grap2 ,&
@@ -208,15 +202,15 @@ implicit none
 ! --- CALCULS MECA -----------------------------------------------------
 ! ======================================================================
     call coeime(meca, j_mater, nomail, option, resi,&
-                rigi, ndim, dimdef, dimcon, yap1,&
-                yap2, yate, addeme, addep1, addep2,&
+                rigi, ndim, dimdef, dimcon, &
+                addeme, addep1, &
                 nbvari, advime, advico, npg, npi,&
                 defgep, defgem, sigm, sigp, varim,&
                 varip, ouvh, tlint, drde, kpi,&
                 vicphi, unsurn, retcom)
 !
     if (retcom .ne. 0) then
-        goto 999
+        goto 99
     endif
 !
 ! - For JHMS element => initial porosity is non-sense
@@ -246,7 +240,7 @@ implicit none
                 varim   , varip    , dsde  ,& 
                 retcom)
     if (retcom .ne. 0) then
-        goto 999
+        goto 99
     endif
 !
 ! - Evaluation of final saturation
@@ -286,7 +280,7 @@ implicit none
         tperm(i,i) = tlint
     end do
 !
-    if (yap1 .eq. 1) then
+    if (ds_thm%ds_elem%l_dof_pre1) then
         call calcfh(nume_thmc, &
                     option   , l_steady, hydr   , ndim  , j_mater,&
                     dimdef   , dimcon,&
@@ -299,7 +293,7 @@ implicit none
                     sat      , dsatur, pesa   , tperm,&
                     sigp     , dsde)
         if (retcom .ne. 0) then
-            goto 999
+            goto 99
         endif
     endif
 ! ======================================================================
@@ -307,7 +301,7 @@ implicit none
 ! ======================================================================
     if (resi) then
 ! - COMPOSANTES CONSTITUANT 1
-        if (yap1 .eq. 1) then
+        if (ds_thm%ds_elem%l_dof_pre1) then
             sigp(adcp11+1) = ouvh*sigp(adcp11+1)
             do f = 1, 2
                 sigp(adcop1+f-1) = defgep(addlh1+1+f)
@@ -329,7 +323,7 @@ implicit none
             res(1) = res(1)+sigp(ndim+1)
 !
 ! - COMPOSANTES CONSTITUANT 1
-            if (yap1 .eq. 1) then
+            if (ds_thm%ds_elem%l_dof_pre1) then
                 res(addep1) = deltat*(sigp(adcop1)+sigp(adcop1+1))
                 do j = 1, ndim-1
                     res(addep1+j) = deltat*sigp(adcp11+j)
@@ -346,7 +340,7 @@ implicit none
         if ((kpi .gt. npg) .or. (npi .eq. npg)) then
 !
 ! - COMPOSANTES CONSTITUANT 1
-            if (yap1 .eq. 1) then
+            if (ds_thm%ds_elem%l_dof_pre1) then
                 res(addep1) = res(addep1) - sigp(adcp11)
                 res(addep1) = res(addep1) + sigm(adcp11)
             endif
@@ -366,7 +360,7 @@ implicit none
 !
 ! - LIGNES CORRESPONDANT AUX TERMES HYDRAULIQUES
 !
-            if (yap1 .eq. 1) then
+            if (ds_thm%ds_elem%l_dof_pre1) then
                 do f = 1, 2
                     drde(addep1,addlh1+1+f)= deltat
 !
@@ -378,17 +372,17 @@ implicit none
                 do i = 1, ndim-1
                     do j = 1, ndim-1
                         if (thmc .eq. 'GAZ') then
-                            drde(addep1+i,1) = drde(addep1+i,1) +deltat*3.d0*tlint*rho11/viscg*(-&
-                                               &grap1(i)+ rho11*pesa(i))
+                            drde(addep1+i,1) = drde(addep1+i,1) +&
+                                deltat*3.d0*tlint*rho11/viscg*(-grap1(i)+ rho11*pesa(i))
                         endif
                         if (thmc .eq. 'LIQU_SATU') then
-                            drde(addep1+i,1) = drde(addep1+i,1) +deltat*3.d0*tlint*rho11/viscl*(-&
-                                               &grap1(i)+ rho11*pesa(i))
+                            drde(addep1+i,1) = drde(addep1+i,1) +&
+                                deltat*3.d0*tlint*rho11/viscl*(-grap1(i)+ rho11*pesa(i))
                         endif
-                        drde(addep1+i,addep1)= drde(addep1+i,addep1)&
-                        +deltat*ouvh*dsde(adcp11+j,addep1)
-                        drde(addep1+i,addep1+j) = drde(addep1+i, addep1+j) + deltat*ouvh*dsde(adc&
-                                                  &p11+i,addep1+ j)
+                        drde(addep1+i,addep1)= drde(addep1+i,addep1)+&
+                            deltat*ouvh*dsde(adcp11+j,addep1)
+                        drde(addep1+i,addep1+j) = drde(addep1+i, addep1+j) +&
+                            deltat*ouvh*dsde(adcp11+i,addep1+j)
                     end do
                 end do
             endif
@@ -399,13 +393,13 @@ implicit none
 ! ======================================================================
         if ((kpi .gt. npg) .or. (npi .eq. npg)) then
 !
-            if (yap1 .eq. 1) then
+            if (ds_thm%ds_elem%l_dof_pre1) then
                 drde(addep1,addeme) = drde(addep1,addeme) - rho11
                 drde(addep1,addep1) = rho11*drde(addep1,addep1) + dsde(adcp11,addep1)
             endif
         endif
     endif
 ! ======================================================================
-999 continue
+99  continue
 ! ======================================================================
 end subroutine

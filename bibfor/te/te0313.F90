@@ -250,7 +250,7 @@ implicit none
                     npi, npg, zr(ipoids), iu, ip,&
                     ipf, iq, zr(ivf1), zr(ivf2), zr(idf2),&
                     zr(igeom), ang, zr( icontm), r, zr(ivectu),&
-                    mecani, press1, press2, tempe, dimdef,&
+                    mecani, press1, press2, dimdef,&
                     dimcon, dimuel, ndim, axi)
 !
     endif

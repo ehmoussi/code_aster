@@ -15,15 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
     subroutine matthm(ndim, axi, nno1, nno2, dimuel,&
                       dimdef, iu, ip, ipf, iq,&
-                      yap1, yap2, yate, addep1, addep2,&
+                      addep1,&
                       addlh1, vff1, vff2, dffr2, wref,&
                       geom, ang, wi, q)
         integer :: dimdef
@@ -36,11 +34,7 @@ interface
         integer :: ip(2, 9)
         integer :: ipf(2, 2, 9)
         integer :: iq(2, 2, 9)
-        integer :: yap1
-        integer :: yap2
-        integer :: yate
         integer :: addep1
-        integer :: addep2
         integer :: addlh1
         real(kind=8) :: vff1(nno1)
         real(kind=8) :: vff2(nno2)
