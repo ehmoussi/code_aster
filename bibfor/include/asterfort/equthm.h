@@ -18,53 +18,41 @@
 ! aslint: disable=W1504
 !
 interface 
-    subroutine equthm(imate, option, ta, ta1, ndim,&
-                      compor, typmod, kpi, npg, dimdef,&
-                      dimcon, nbvari, defgem, congem, vintm,&
-                      defgep, congep, vintp, mecani, press1,&
-                      press2, tempe, crit, rinstm, rinstp,&
-                      dt, r, drds, dsde, retcom,&
-                      angmas,&
-                thmc, hydr,&
-                advihy, advico, vihrho, vicphi, vicpvp, vicsat)
-        integer :: nbvari
-        integer :: dimcon
-        integer :: dimdef
-        integer :: imate
-        character(len=16) :: option
-        real(kind=8) :: ta
-        real(kind=8) :: ta1
-        integer :: ndim
-        character(len=16) :: compor(*)
-        character(len=8) :: typmod(2)
-        integer :: kpi
-        integer :: npg
-        real(kind=8) :: defgem(1:dimdef)
-        real(kind=8) :: congem(1:dimcon)
-        real(kind=8) :: vintm(1:nbvari)
-        real(kind=8) :: defgep(1:dimdef)
-        real(kind=8) :: congep(1:dimcon)
-        real(kind=8) :: vintp(1:nbvari)
-        integer :: mecani(5)
-        integer :: press1(7)
-        integer :: press2(7)
-        integer :: tempe(5)
-        real(kind=8) :: crit(*)
-        real(kind=8) :: rinstm
-        real(kind=8) :: rinstp
-        real(kind=8) :: dt
-        real(kind=8) :: r(1:dimdef+1)
-        real(kind=8) :: drds(1:dimdef+1, 1:dimcon)
-        real(kind=8) :: dsde(1:dimcon, 1:dimdef)
-        integer :: retcom
-        real(kind=8) :: angmas(3)
-        character(len=16), intent(in) :: thmc
-        character(len=16), intent(in) :: hydr
-        integer, intent(in) :: advihy
-        integer, intent(in) :: advico
-        integer, intent(in) :: vihrho
-        integer, intent(in) :: vicphi
-        integer, intent(in) :: vicpvp
-        integer, intent(in) :: vicsat
+    subroutine equthm(option   , j_mater  ,&
+                      typmod   , angl_naut, parm_theta,&
+                      ndim     , nbvari   ,&
+                      kpi      , npg      ,&
+                      dimdef   , dimcon   ,&
+                      mecani   , press1   , press2    , tempe, &
+                      compor   , carcri   ,&
+                      thmc     , hydr     ,&
+                      advihy   , advico   ,&
+                      vihrho   , vicphi   , vicpvp    , vicsat,&
+                      defgem   , defgep   ,&
+                      congem   , congep   ,&
+                      vintm    , vintp    ,&
+                      time_prev, time_curr, time_incr ,&
+                      r        , drds     , dsde      , retcom)
+        character(len=16), intent(in) :: option
+        integer, intent(in) :: j_mater
+        character(len=8), intent(in) :: typmod(2)
+        real(kind=8), intent(in)  :: angl_naut(3), parm_theta
+        integer, intent(in) :: ndim, nbvari
+        integer, intent(in) :: npg, kpi
+        integer, intent(in) :: dimdef, dimcon
+        integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
+        character(len=16), intent(in)  :: compor(*)
+        real(kind=8), intent(in) :: carcri(*)
+        character(len=16), intent(in) :: thmc, hydr
+        integer, intent(in) :: advihy, advico
+        integer, intent(in) :: vihrho, vicphi, vicpvp, vicsat
+        real(kind=8), intent(in) :: defgem(dimdef), defgep(dimdef)
+        real(kind=8), intent(inout) :: congem(dimcon), congep(dimcon)
+        real(kind=8), intent(in) :: vintm(nbvari)
+        real(kind=8), intent(inout) :: vintp(nbvari)
+        real(kind=8), intent(in) :: time_prev, time_curr, time_incr
+        real(kind=8), intent(out) :: r(dimdef+1)
+        real(kind=8), intent(out) :: drds(dimdef+1, dimcon), dsde(dimcon, dimdef)
+        integer, intent(out) :: retcom
     end subroutine equthm
 end interface 

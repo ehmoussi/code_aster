@@ -58,7 +58,7 @@ interface
         integer, intent(in) :: jv_dfunc, jv_dfunc2
         real(kind=8), intent(in) :: elem_coor(ndim, nno)
         real(kind=8), intent(in) :: dispm(dimuel), dispp(dimuel)
-        real(kind=8), intent(in) :: congem(dimcon*npi)
+        real(kind=8), intent(inout) :: congem(dimcon*npi)
         real(kind=8), intent(inout) :: congep(dimcon*npi)
         real(kind=8), intent(in) :: vintm(nbvari*npi)
         real(kind=8), intent(inout) :: vintp(nbvari*npi)
