@@ -20,7 +20,6 @@
 interface 
     subroutine xcomhm(option, imate, compor, instap,&
                       ndim, dimdef, dimcon, nbvari,&
-                      yamec, yap1, yap2, yate,&
                       addeme, adcome, addep1, adcp11,&
                       addep2, addete, defgem,&
                       defgep, congem, congep, vintm,&
@@ -36,10 +35,6 @@ interface
         integer :: imate
         character(len=16) :: compor(*)
         real(kind=8) :: instap
-        integer :: yamec
-        integer :: yap1
-        integer :: yap2
-        integer :: yate
         integer :: addeme
         integer :: adcome
         integer :: addep1
