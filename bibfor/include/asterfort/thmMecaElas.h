@@ -17,10 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface 
-    subroutine thmMecaElas(yate  , option, angl_naut, dtemp,&
+    subroutine thmMecaElas(option, angl_naut, dtemp,&
                            adcome, dimcon,&
                            deps  , congep, dsdeme, ther_meca)
-        integer, intent(in) :: yate
         character(len=16), intent(in) :: option
         real(kind=8), intent(in) :: dtemp
         integer, intent(in) :: dimcon, adcome
