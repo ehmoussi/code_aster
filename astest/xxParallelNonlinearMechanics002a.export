@@ -6,4 +6,4 @@ P mpi_nbnoeud 1
 P testlist asterxx verification parallel
 
 F comm xxParallelNonlinearMechanics002a.py D 1
-R nom  xxParallelNonlinearMechanics002a D 0
+R nom  xxParallelNonlinearMechanics001a D 0
