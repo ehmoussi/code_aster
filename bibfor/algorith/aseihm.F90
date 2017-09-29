@@ -110,9 +110,9 @@ implicit none
     real(kind=8) :: matuu(dimuel*dimuel)
 !
 ! - VARIABLES LOCALES
-    integer :: yap1, yap2, yate, addeme, adcome, addep1, addep2, addete
-    integer :: adcp11, adcp12, adcp21, adcp22, adcote, adcop1, adcop2
-    integer :: i, j, m, k, km, kpi, nbpha1, nbpha2, addlh1
+    integer :: addeme, adcome, addep1, addep2, addete
+    integer :: adcp11, adcp12, adcp21, adcp22, adcote, adcop1
+    integer :: i, j, m, k, km, kpi, addlh1
     real(kind=8) :: q(dimdef, dimuel), res(dimdef), drde(dimdef, dimdef), wi
     real(kind=8) :: defgem(dimdef), defgep(dimdef), matri
     aster_logical :: resi, rigi
@@ -131,20 +131,14 @@ implicit none
 ! =====================================================================
     addeme = mecani(2)
     adcome = mecani(3)
-    yap1 = press1(1)
-    nbpha1 = press1(2)
     addep1 = press1(3)
     addlh1 = press1(4)
     adcp11 = press1(5)
     adcp12 = press1(6)
     adcop1 = press1(7)
-    yap2 = press2(1)
-    nbpha2 = press2(2)
     addep2 = press2(3)
     adcp21 = press2(4)
     adcp22 = press2(5)
-    adcop2 = press2(6)
-    yate = tempe(1)
     addete = tempe(2)
     adcote = tempe(3)
 !
@@ -174,7 +168,7 @@ implicit none
 !
         call matthm(ndim, axi, nno1, nno2, dimuel,&
                     dimdef, iu, ip, ipf, iq,&
-                    yap1, yap2, yate, addep1, addep2,&
+                    addep1,&
                     addlh1, vff1(1, kpi), vff2(1, kpi), dffr2(1, 1, kpi), wref(kpi),&
                     geom, ang, wi, q)
 !
@@ -198,7 +192,7 @@ implicit none
         call coeihm(option, perman, resi, rigi, imate,&
                     compor, instam, instap, nomail,&
                     ndim, dimdef, dimcon, nbvari,&
-                    yap1, yap2, yate, addeme, adcome,&
+                    addeme, adcome,&
                     addep1, adcp11, adcp12, addlh1, adcop1,&
                     addep2, adcp21, adcp22, addete, adcote,&
                     defgem, defgep, kpi, npg, npi,&
