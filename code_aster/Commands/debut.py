@@ -81,7 +81,7 @@ class Starter(ExecuteCommand):
 
 DEBUT = Starter("DEBUT")
 
-def init(argv=None, **kwargs):
+def init(*argv, **kwargs):
     """Initialize code_aster as `DEBUT` command does + command line options.
 
     Arguments:

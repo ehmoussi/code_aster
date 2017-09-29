@@ -37,6 +37,14 @@ class ExecuteCommand(object):
         self._cata = getattr(Commands, command_name)
         self._op = self._cata.definition['op']
 
+    def _call_oper(self, syntax):
+        """Call fortran operator.
+
+        Arguments:
+            syntax (*CommandSyntax*): Syntax description with user keywords.
+        """
+        return aster.oper(syntax, 0)
+
     @property
     def name(self):
         """Returns the command name."""
@@ -83,7 +91,7 @@ class ExecuteCommand(object):
             result.setName(result_name)
         syntax.setResult(result_name, type_name)
 
-        aster.oper(syntax, 0)
+        self._call_oper(syntax)
         syntax.free()
         return result
 
@@ -109,3 +117,21 @@ class ExecuteCommand(object):
         if not aster.jeveux_status():
             raise RuntimeError("code_aster memory manager is not started. "
                                "No command can be executed.")
+
+
+class ExecuteCommandOps(ExecuteCommand):
+    """This implements an executor of commands that use an
+     `opsXXX` subroutine."""
+
+    def __init__(self, command_name, ops):
+        """Initialization"""
+        super(ExecuteCommandOps, self).__init__(command_name)
+        self._op = ops
+
+    def _call_oper(self, syntax):
+        """Call fortran operator.
+
+        Arguments:
+            syntax (*CommandSyntax*): Syntax description with user keywords.
+        """
+        return aster.opsexe(syntax, self._op)

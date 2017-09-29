@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine execop()
+subroutine execop(num)
 use superv_module, only: superv_before, superv_after
     implicit none
 !     EXECUTION DE LA COMMANDE
@@ -33,6 +33,8 @@ use superv_module, only: superv_before, superv_after
 #include "asterfort/sigusr.h"
 #include "asterfort/utmess.h"
 #include "asterfort/uttcpg.h"
+    integer, intent(in), optional :: num
+!
     integer :: nivuti, nivpgm, unite
     common /inf001/ nivuti,nivpgm,unite
 !
@@ -40,7 +42,11 @@ use superv_module, only: superv_before, superv_after
     real(kind=8) :: tpres
 !     ------------------------------------------------------------------
 !
-    call gcecdu(nuoper)
+    if (present(num)) then
+        nuoper = num
+    else
+        call gcecdu(nuoper)
+    endif
 !
     if (nuoper .eq. 9999) then
         call op9999()

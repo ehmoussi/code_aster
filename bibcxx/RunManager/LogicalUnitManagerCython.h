@@ -24,11 +24,8 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/** @brief Déclarations des fonctions cython */
-__PYX_EXTERN_C DL_IMPORT(void) openLogicalUnitFile(const char *, const int, const int);
-__PYX_EXTERN_C DL_IMPORT(void) releaseLogicalUnitFile(const char *);
-__PYX_EXTERN_C DL_IMPORT(int) getNumberOfLogicalUnitFile(const char *);
-__PYX_EXTERN_C DL_IMPORT(std::string) getTemporaryFileName(const char *);
+// TODO: Refactor LogicalUnit.py in C++
+#include "logical_unit.h"
 
 enum FileTypeCython { Ascii, Binary, Free };
 enum FileAccessCython { New, Append, Old };
@@ -41,7 +38,7 @@ enum FileAccessCython { New, Append, Old };
 class LogicalUnitFileCython
 {
     private:
-        /** @brief Nom de la commande */
+        /** @brief Nom du fichier */
         std::string _fileName;
         /** @brief Booleen pour savoir si un fichier est utilisable */
         bool _isUsable;

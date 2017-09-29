@@ -202,7 +202,8 @@ class LogicalUnitFile(object):
     @classmethod
     def _register(cls, logicalUnit):
         """Register a logical unit."""
-        logger.debug("LogicalUnit: register unit {0}".format(logicalUnit.unit))
+        logger.debug("LogicalUnit: register unit {0}, name {1!r}"
+                     .format(logicalUnit.unit, logicalUnit.filename))
         cls._used_unit[logicalUnit.unit] = logicalUnit
 
     @classmethod

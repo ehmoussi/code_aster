@@ -265,8 +265,6 @@ class CommandSyntax:
         Return:
             int: Number of the fortran operator subroutine.
         """
-        op = self._commandCata.definition['op']
-        logger.debug("getoper: {0} {1}".format(op, type(op)))
         return self._commandCata.definition['op']
 
     def gettyp(self, typaster):

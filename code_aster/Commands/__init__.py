@@ -18,6 +18,7 @@
 # --------------------------------------------------------------------
 
 from .debut import DEBUT
+from .defi_fichier import DEFI_FICHIER
 
 from .operator import define_operators
 define_operators(globals())
