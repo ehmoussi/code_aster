@@ -104,6 +104,7 @@
 #include "PythonBindings/CyclicSymmetryModeInterface.h"
 #include "PythonBindings/GeneralizedResultsContainerInterface.h"
 #include "PythonBindings/PartialMeshInterface.h"
+#include "PythonBindings/ResultNamingInterface.h"
 
 using namespace boost::python;
 
@@ -218,4 +219,5 @@ BOOST_PYTHON_MODULE(libaster)
 #endif /* _USE_MPI */
 
     exportPartialMeshToPython();
+    exportResultNamingToPython();
 };
