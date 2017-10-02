@@ -33,7 +33,7 @@ from ..Utilities import convert, Singleton
 from .logger import logger, setlevel
 
 
-class ExecutionParameter(Singleton):
+class ExecutionParameter(object):
     """This class stores and provides the execution parameters.
 
     The execution parameters are defined by reading the command line or using
@@ -47,6 +47,7 @@ class ExecutionParameter(Singleton):
         _syntax (*CommandSyntax*): Class that passes user keywords up to
             Fortran operator.
     """
+    __metaclass__ = Singleton
     _singleton_id = 'Supervis.ExecutionParameter'
     _args = None
     _catalc = _unit = _syntax = None
