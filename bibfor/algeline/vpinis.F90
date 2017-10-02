@@ -26,7 +26,6 @@ subroutine vpinis(eigsol)
     implicit none
 
 #include "jeveux.h"
-#include "asterc/isnnem.h"
 #include "asterc/r8vide.h"
 #include "asterfort/assert.h"
 #include "asterfort/jedema.h"
@@ -36,11 +35,7 @@ subroutine vpinis(eigsol)
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/omega2.h"
-#include "asterfort/vecini.h"
-#include "asterfort/vecink.h"
-#include "asterfort/vecint.h"
-#include "asterfort/wkvect.h"
-
+#include "asterfort/vpcres.h"
 !
 ! --- INPUT
 !
@@ -54,17 +49,16 @@ subroutine vpinis(eigsol)
 !
 ! --- VARIABLES LOCALES
 !
-    integer           :: eislvi, eislvk, eislvr, iret, ibuff, itemax, nbborn, nborto, nbrss
-    integer           :: nbvect, nbvec2, nfreq, nitv, nperm, maxitr, indf
+    integer           :: iret, ibuff, itemax, nbborn, nborto, nbrss
+    integer           :: nbvect, nbvec2, nfreq, nitv, nperm, maxitr
     real(kind=8)      :: alpha, fcorig, omecor, precsh, precdc, prorto, prsudg, seuil, undf
-    real(kind=8)      :: tol, toldyn, tolsor
+    real(kind=8)      :: tol, toldyn, tolsor, vectf(2)
     character(len=1)  :: appr
     character(len=8)  :: arret, method
     character(len=9)  :: typevp
     character(len=14) :: matra, matrb, matrc
     character(len=16) :: optiof, modrig, stoper, sturm, typeqz, typres
     character(len=19) :: amor, k19b, masse, tabmod, raide
-    character(len=24) :: kzero
 
 !
 ! -----------------------
@@ -75,18 +69,9 @@ subroutine vpinis(eigsol)
 ! --- INITS.
     call jemarq()
     undf=r8vide()
-    indf=isnnem()
-    kzero=' '
 
-! --- CREATION DE LA SD
-    call wkvect(eigsol//'.ESVK', 'V V K24', 20, eislvk)
-    call wkvect(eigsol//'.ESVR', 'V V R', 15, eislvr)
-    call wkvect(eigsol//'.ESVI', 'V V I', 15, eislvi)
-    call vecink(20,kzero,zk24(eislvk))
-    call vecini(15, undf,zr(eislvr))
-    call vecint(15,indf,zi(eislvi))
 
-! --- PARAMETRES COMMUNS A TOUS LES SOLVEURS MODAUX
+! --- LECTURE DES PARAMETRES COMMUNS A TOUS LES SOLVEURS MODAUX
 
 ! --  TYPE_RESU
     typres=''
@@ -159,11 +144,13 @@ subroutine vpinis(eigsol)
     endif
 
 ! -- LISTES DES FREQUENCES/CHARGES CRITIQUES OU TABLE_ASTER
+    vectf(1)=undf
+    vectf(2)=undf
     call getvr8('CALC_'//typevp, typevp, iocc=1, nbval=0, nbret=iret)
     if (iret.lt.0) then
         nbborn=-iret
         ASSERT((nbborn.eq.1).or.(nbborn.eq.2))
-        call getvr8('CALC_'//typevp, typevp, iocc=1, nbval=nbborn, vect=zr(eislvr), nbret=iret)
+        call getvr8('CALC_'//typevp, typevp, iocc=1, nbval=nbborn, vect=vectf, nbret=iret)
         ASSERT(iret.eq.nbborn)
     else
         nbborn=0
@@ -260,80 +247,11 @@ subroutine vpinis(eigsol)
     call getvtx(' ', 'STOP_BANDE_VIDE', scal=arret, nbret=iret)
     ASSERT(iret.eq.1)
 
-! --- REMPLISSAGE DE LA SD
-
-! --  PARAMETRES K24 GENERAUX
-    zk24(eislvk-1+1)=trim(typres)
-    zk24(eislvk-1+2)=trim(raide)
-    zk24(eislvk-1+3)=trim(masse)
-    zk24(eislvk-1+4)=trim(amor)
-    zk24(eislvk-1+5)=trim(optiof)
-    zk24(eislvk-1+6)=trim(method)
-    zk24(eislvk-1+7)=trim(modrig)
-    zk24(eislvk-1+8)=trim(arret)
-    zk24(eislvk-1+9)=trim(tabmod)
-    zk24(eislvk-1+10)=trim(stoper)
-    zk24(eislvk-1+11)=trim(sturm)
-
-! --  PARAMETRES K24 LIES AUX SOLVEURS MODAUX
-    zk24(eislvk-1+16)=trim(appr)
-    select case(method)
-    case('TRI_DIAG')
-    case ('JACOBI')
-    case ('SORENSEN')
-    case ('QZ')
-        zk24(eislvk-1+17)=trim(typeqz)
-    case default
-        ASSERT(.false.)
-    end select
-
-! --  PARAMETRES ENTIERS GENERAUX
-    zi(eislvi-1+1)=nfreq
-    zi(eislvi-1+2)=nbvect
-    zi(eislvi-1+3)=nbvec2
-    zi(eislvi-1+4)=nbrss
-    zi(eislvi-1+5)=nbborn
-
-! -- PARAMETRES ENTIERS LIES AUX SOLVEURS MODAUX
-    select case(method)
-    case('TRI_DIAG')
-        zi(eislvi-1+11)=nborto
-        zi(eislvi-1+12)=nitv
-    case ('JACOBI')
-        zi(eislvi-1+11)=itemax
-        zi(eislvi-1+12)=nperm
-    case ('SORENSEN')
-        zi(eislvi-1+11)=maxitr
-    case ('QZ')
-    case default
-        ASSERT(.false.)
-    end select
-
-! --  PARAMETRES REELS GENERAUX
-! --  POUR MEMOIRE: UNE OU DEUX PREMIERES VALEURS DEJA AFFECTEES PAR GETVR8 PRECEDENT
-!   zr(eislvr-1+1)=freq1
-!   zr(eislvr-1+2)=freq2
-    zr(eislvr-1+3)=precsh
-    zr(eislvr-1+4)=omecor
-    zr(eislvr-1+5)=precdc
-    zr(eislvr-1+6)=seuil
-
-! --  PARAMETRES REELS LIES AUX SOLVEURS MODAUX
-    select case(method)
-    case('TRI_DIAG')
-        zr(eislvr-1+11)=prorto
-        zr(eislvr-1+12)=prsudg
-    case ('JACOBI')
-        zr(eislvr-1+11)=tol
-        zr(eislvr-1+12)=toldyn
-    case ('SORENSEN')
-        zr(eislvr-1+11)=tolsor
-        zr(eislvr-1+12)=alpha
-    case ('QZ')
-    case default
-        ASSERT(.false.)
-    end select
-    
+! --- CREATION ET REMPLISSAGE DE LA SD
+    call vpcres(eigsol, typres, raide, masse, amor, optiof, method, modrig, arret, tabmod,&
+                  stoper, sturm, appr, typeqz, nfreq, nbvect, nbvec2, nbrss, nbborn, nborto,&
+                  nitv, itemax, nperm, maxitr, vectf, precsh, omecor, precdc, seuil,&
+                  prorto, prsudg, tol, toldyn, tolsor, alpha)    
     call jedema()
 !
 !     FIN DE VPINIS
