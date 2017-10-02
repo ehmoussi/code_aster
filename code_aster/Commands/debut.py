@@ -40,12 +40,12 @@ class Starter(ExecuteCommand):
     @classmethod
     def init(cls, argv):
         """Initialization of class attributes."""
+        setlevel()
         cls.params = ExecutionParameter()
         cls.params.parse_args(argv)
         cls.params.catalc = catalc
         cls.params.logical_unit = LogicalUnitFile
         cls.params.syntax = CommandSyntax
-        setlevel()
         aster_core.register(cls.params)
         aster.init(0)
         cls._is_initialized = True
