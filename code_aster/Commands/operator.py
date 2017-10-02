@@ -26,6 +26,8 @@ from .ExecuteCommand import ExecuteCommand
 def define_operators(store):
     """Add definition of operators to the given store."""
     for name, command in commandStore.items():
+        if store.has_key(name):
+            continue
         if not isinstance(command, (Operator, Procedure)):
             continue
         store[name] = ExecuteCommand(name)
