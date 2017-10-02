@@ -193,7 +193,7 @@ class CommandSyntax:
     def getvid(self, factName, simpName, occurrence, maxval):
         """Wrapper function to return a list of results."""
         value = self.getValue( factName, occurrence, simpName )
-        value = [i.getName() for i in value]
+        value = [i.getName()if hasattr(i, 'getName') else i for i in value]
         value = tuple(value)
         size = len(value)
         if size > maxval:
