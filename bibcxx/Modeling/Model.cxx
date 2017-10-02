@@ -30,13 +30,14 @@
 #include <typeinfo>
 
 #include "Supervis/CommandSyntax.h"
+#include "Supervis/ResultNaming.h"
 
 const char* const ModelSplitingMethodNames[nbModelSplitingMethod] = { "CENTRALISE",
                                                                         "SOUS_DOMAINE",
                                                                         "GROUP_ELEM" };
 const char* const GraphPartitionerNames[nbGraphPartitioner] = { "SCOTCH", "METIS" };
 
-ModelInstance::ModelInstance(): DataStructure( getNewResultObjectName(), "MODELE" ),
+ModelInstance::ModelInstance(): DataStructure( ResultNaming::getNewResultName(), "MODELE" ),
                                 _typeOfElements( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
                                 _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
                                 _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ),
@@ -85,7 +86,7 @@ bool ModelInstance::buildWithSyntax( SyntaxMapContainer& dict )
     throw ( std::runtime_error )
 {
     CommandSyntax cmdSt( "AFFE_MODELE" );
-    cmdSt.setResult( CommandSyntax::getCurrentName(), "MODELE" );
+    cmdSt.setResult( ResultNaming::getCurrentName(), "MODELE" );
     cmdSt.define( dict );
 
     // Maintenant que le fichier de commande est pret, on appelle OP0018

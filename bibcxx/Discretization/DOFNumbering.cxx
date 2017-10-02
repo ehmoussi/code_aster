@@ -24,10 +24,11 @@
 
 #include "Discretization/DOFNumbering.h"
 #include "Supervis/CommandSyntax.h"
+#include "Supervis/ResultNaming.h"
 
 BaseDOFNumberingInstance::BaseDOFNumberingInstance( const std::string& type,
                                                     const JeveuxMemory memType ):
-            DataStructure( getNewResultObjectName(), type, memType ),
+            DataStructure( ResultNaming::getNewResultName(), type, memType ),
             _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + "      .NSLV" ) ),
             _globalNumbering( new GlobalEquationNumberingInstance( getName() + "      .NUME" ) ),
             _localNumbering( new LocalEquationNumberingInstance( getName() + "      .NUML" ) ),

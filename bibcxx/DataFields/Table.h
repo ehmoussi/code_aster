@@ -33,6 +33,7 @@
 
 #include "MemoryManager/JeveuxVector.h"
 #include "DataStructures/DataStructure.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class TableInstance
@@ -83,7 +84,7 @@ public:
     /**
      * @brief Constructeur
      */
-    TableInstance(): DataStructure( getNewResultObjectName(), "TABLE" ),
+    TableInstance(): DataStructure( ResultNaming::getNewResultName(), "TABLE" ),
                      _memoryLocation( JeveuxVectorChar8( getName() + "           .TBBA" ) ),
                      _description( JeveuxVectorLong( getName() + "           .TBNP" ) ),
                      _parameterDescription( JeveuxVectorChar24( getName() + "           .TBLP" ) )

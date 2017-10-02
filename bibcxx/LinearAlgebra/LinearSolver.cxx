@@ -27,6 +27,7 @@
 
 #include "LinearAlgebra/LinearSolver.h"
 #include "Supervis/CommandSyntax.h"
+#include "Supervis/ResultNaming.h"
 
 const std::set< Renumbering > WrapMultFront::setOfAllowedRenumbering( MultFrontRenumbering,
                                                                  MultFrontRenumbering + nbRenumberingMultFront );
@@ -50,7 +51,7 @@ ListSyntaxMapContainer BaseLinearSolverInstance::buildListSyntax()
     ListSyntaxMapContainer listeSolver;
     SyntaxMapContainer dict1 = buildSyntaxMapFromParamList( _listOfParameters );
     listeSolver.push_back( dict1 );
-    return listeSolver; 
+    return listeSolver;
 };
 
 bool BaseLinearSolverInstance::build()
@@ -63,7 +64,7 @@ bool BaseLinearSolverInstance::build()
     cmdSt.setResult( getName(), getType() );
 
     SyntaxMapContainer dict;
-    ListSyntaxMapContainer listeSolver = this->buildListSyntax(); 
+    ListSyntaxMapContainer listeSolver = this->buildListSyntax();
 
     dict.container[ "SOLVEUR" ] = listeSolver;
     cmdSt.define( dict );
@@ -104,7 +105,7 @@ FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystemMatrixRHS
 {
     if( ! currentMatrix->_isFactorized )
         throw std::runtime_error( "Matrix not factorized" );
-    std::string newName( getNewResultObjectName() );
+    std::string newName( ResultNaming::getNewResultName() );
     newName.resize( 19, ' ' );
     FieldOnNodesDoublePtr returnField( new FieldOnNodesDoubleInstance( newName ) );
 

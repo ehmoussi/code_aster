@@ -6,6 +6,7 @@
 
 #include "astercxx.h"
 #include "Functions/Function.h"
+#include "Supervis/ResultNaming.h"
 
 
 FunctionInstance::FunctionInstance( const std::string jeveuxName ):
@@ -17,7 +18,7 @@ FunctionInstance::FunctionInstance( const std::string jeveuxName ):
 }
 
 FunctionInstance::FunctionInstance() :
-    FunctionInstance::FunctionInstance( getNewResultObjectName() )
+    FunctionInstance::FunctionInstance( ResultNaming::getNewResultName() )
 {
 }
 

@@ -36,6 +36,7 @@
 #include "DataFields/FieldOnElements.h"
 #include "Discretization/DOFNumbering.h"
 #include "Discretization/ParallelDOFNumbering.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class ResultsContainerInstance
@@ -93,7 +94,7 @@ public:
      * @brief Constructeur
      */
     ResultsContainerInstance( const std::string resuTyp = "???" ):
-            DataStructure( getNewResultObjectName(), resuTyp ),
+            DataStructure( ResultNaming::getNewResultName(), resuTyp ),
             _symbolicNamesOfFields( JeveuxBidirectionalMapChar16( getName() + "           .DESC" ) ),
             _namesOfFields( JeveuxCollectionChar24( getName() + "           .TACH" ) ),
             _accessVariables( JeveuxBidirectionalMapChar16( getName() + "           .NOVA" ) ),

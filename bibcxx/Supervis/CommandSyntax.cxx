@@ -39,34 +39,6 @@ void _check_pyClass()
     }
 }
 
-std::string CommandSyntax::getNewResultName()
-{
-    _check_pyClass();
-    PyObject *res = PyObject_CallMethod(CommandSyntax::pyClass,
-                                        (char *)"getNewResultName", NULL);
-    if (res == NULL || ! PyString_Check(res)) {
-        throw std::runtime_error(
-            "Error calling `CommandSyntax.getNewResultName`.");
-    }
-
-    std::string name(PyString_AsString(res));
-    return name;
-}
-
-std::string CommandSyntax::getCurrentName()
-{
-    _check_pyClass();
-    PyObject *res = PyObject_CallMethod(CommandSyntax::pyClass,
-                                        (char *)"getCurrentName", NULL);
-    if (res == NULL || ! PyString_Check(res)) {
-        throw std::runtime_error(
-            "Error calling `CommandSyntax.getCurrentName`.");
-    }
-
-    std::string name(PyString_AsString(res));
-    return name;
-}
-
 
 CommandSyntax::CommandSyntax(const std::string name):
     _commandName(name)
