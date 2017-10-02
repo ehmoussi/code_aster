@@ -8,6 +8,7 @@
 import code_aster
 from code_aster.Commands import *
 
+code_aster.init()
 
 test = code_aster.TestCase()
 
@@ -39,11 +40,11 @@ affeMat.build()
 
 charCine = code_aster.KinematicsLoad.create()
 charCine.setSupportModel(modele)
-charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dx, 
+charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dx,
                                         0., ["ENCAS","AXE","Droite","Gauche"])
-charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dy, 
+charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dy,
                                         0., ["ENCAS","AXE","Droite","Gauche"])
-charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dz, 
+charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dz,
                                         0., ["ENCAS","AXE","Droite","Gauche"])
 charCine.build()
 
@@ -76,4 +77,3 @@ structInterf.addInterface( "droite_interf", code_aster.InterfaceType.CraigBampto
 structInterf.addInterface( "Gauche_interf", code_aster.InterfaceType.CraigBampton,
                        ["Gauche"] )
 #structInterf.build()
-

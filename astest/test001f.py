@@ -3,6 +3,7 @@
 
 import code_aster
 
+code_aster.init()
 
 test = code_aster.TestCase()
 

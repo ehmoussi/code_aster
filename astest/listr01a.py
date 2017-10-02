@@ -5,6 +5,7 @@ import numpy as np
 import code_aster
 from code_aster.Commands import DEFI_LIST_REEL
 
+code_aster.init()
 
 test = code_aster.TestCase()
 

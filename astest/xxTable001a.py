@@ -3,6 +3,8 @@
 import code_aster
 from code_aster.Commands import *
 
+code_aster.init()
+
 table1 = [0, 1, 2,]
 table2 = ["00", "01", "02",]
 

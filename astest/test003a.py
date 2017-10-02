@@ -6,6 +6,8 @@
 import code_aster
 import numpy as np
 
+code_aster.init()
+
 test=code_aster.TestCase()
 
 # Creation of the mesh

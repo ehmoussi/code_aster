@@ -2,6 +2,8 @@
 # coding: utf-8
 
 import code_aster
+code_aster.init()
+
 test = code_aster.TestCase()
 
 # Creation du maillage

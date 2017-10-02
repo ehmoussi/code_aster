@@ -2,6 +2,9 @@
 # coding: utf-8
 
 import code_aster
+
+code_aster.init()
+
 test = code_aster.TestCase()
 
 monMaillage = code_aster.Mesh.create()
@@ -70,7 +73,7 @@ timeList.addErrorManager( error1 )
 #timeList.addErrorManager( error2 )
 timeList.build()
 #timeList.debugPrint( 6 )
-statNonLine1.setLoadStepManager( timeList ) 
+statNonLine1.setLoadStepManager( timeList )
 # Run the nonlinear analysis
 resu = statNonLine1.execute()
 #resu.debugPrint( 6 )
@@ -99,7 +102,7 @@ action1.setAutomatic( False )
 error1.setAction( action1 )
 timeList.addErrorManager( error1 )
 timeList.build()
-statNonLine2.setLoadStepManager( timeList ) 
+statNonLine2.setLoadStepManager( timeList )
 #statNonLine2.execute()
 
 # at least it pass here!
