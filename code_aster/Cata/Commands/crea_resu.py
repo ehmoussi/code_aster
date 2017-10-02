@@ -126,7 +126,8 @@ CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,reentrant='f',
          #-------------------------------------
          b_evol_char =BLOC(condition = """equal_to("OPERATION", 'AFFE') and equal_to("TYPE_RESU", 'EVOL_CHAR')""",
              NOM_CHAM     =SIMP(statut='o',typ='TXM',validators=NoRepeat(),into=("PRES","FORC_NODA",
-                                    "FSUR_2D","FSUR_3D","FVOL_2D","FVOL_3D","VITE_VENT","T_EXT","COEF_H")),
+                                    "FSUR_2D","FSUR_3D","FVOL_2D","FVOL_3D","VITE_VENT","T_EXT","COEF_H",
+                                    "FLUN")),
              COMPORTEMENT     =C_COMPORTEMENT(),
          ), # fin bloc b_evol_char
          

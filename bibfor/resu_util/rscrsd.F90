@@ -348,7 +348,7 @@ subroutine rscrsd(base, nomsd, typesd, nbordr)
 !     ------------------------------------------------------------------
     else if (types2.eq.'EVOL_CHAR') then
 !
-        nbcham=9
+        nbcham=10
         call jeecra(noms2//'.DESC', 'NOMMAX', nbcham)
         call jeecra(noms2//'.DESC', 'DOCU', cval='EVCH')
         call jecroc(jexnom(noms2//'.DESC', 'FORC_NODA'))
@@ -360,6 +360,7 @@ subroutine rscrsd(base, nomsd, typesd, nbordr)
         call jecroc(jexnom(noms2//'.DESC', 'VITE_VENT'))
         call jecroc(jexnom(noms2//'.DESC', 'T_EXT'))
         call jecroc(jexnom(noms2//'.DESC', 'COEF_H'))
+        call jecroc(jexnom(noms2//'.DESC', 'FLUN'))
 
         goto 99
 !
