@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from functools import wraps
+from functools import partial, wraps
 import os.path as osp
 import re
 import unittest
@@ -27,8 +27,11 @@ from unittest.util import safe_repr
 
 # keep possible usage out of code_aster
 try:
-    from Deprecated import writeInMess, writeInResu
+    import aster
+    writeInMess = partial(aster.affiche, 'MESSAGE')
+    writeInResu = partial(aster.affiche, 'RESULTAT')
 except ImportError:
+    raise
     def writeInMess(text):
         print(text)
 

@@ -16,8 +16,9 @@ from code_aster.Supervis.ExecutionParameter import ExecutionParameter
 params = ExecutionParameter()
 
 test.assertEqual( params.get_option('hostname'), platform.node())
-# because of multiplicative factor running testcases
-test.assertGreaterEqual( params.get_option('tpmax'), 123)
+# GreaterEqual because of multiplicative factor running testcases
+# timelimit = 123. - 10% (default time saved)
+test.assertGreaterEqual( params.get_option('tpmax'), 123 * 0.9)
 
 params.set_option('tpmax', 60.)
 test.assertEqual( params.get_option('tpmax'), 60)
