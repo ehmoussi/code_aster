@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -36,10 +36,9 @@ except ImportError:
         pass
 
 
-# TODO add more test methods
 # TODO use the logger object
 # TODO tell the RunManager to increase the exit status in case of failure
-#      (throug the logger) ?
+#      (through the logger) ?
 
 
 def addSuccess(method):
