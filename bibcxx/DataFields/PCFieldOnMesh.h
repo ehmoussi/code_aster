@@ -44,33 +44,36 @@
 class PCFieldZone
 {
 public:
-    enum LocalizationType { AllMesh, AllDelayedElements, GroupOfElements,
+    enum LocalizationType { AllMesh, AllDelayedElements, OnGroupOfElements,
                             ListOfElements, ListOfDelayedElements };
 
 private:
     BaseMeshPtr                _mesh;
     FiniteElementDescriptorPtr _ligrel;
-    LocalizationType           _localisation;
+    const LocalizationType     _localisation;
     GroupOfElementsPtr         _grp;
     VectorLong                 _indexes;
 
 public:
     PCFieldZone( BaseMeshPtr mesh ): _mesh( mesh ),
-                                     _localisation( AllMesh )
+                                     _localisation( AllMesh ),
+                                     _grp( new GroupOfElements( "" ) )
     {};
 
     PCFieldZone( FiniteElementDescriptorPtr ligrel ): _ligrel( ligrel ),
-                                                      _localisation( AllDelayedElements )
+                                                      _localisation( AllDelayedElements ),
+                                                      _grp( new GroupOfElements( "" ) )
     {};
 
     PCFieldZone( BaseMeshPtr mesh, GroupOfElementsPtr grp ): _mesh( mesh ),
-                                                             _localisation( GroupOfElements ),
+                                                             _localisation( OnGroupOfElements ),
                                                              _grp( grp )
     {};
 
     PCFieldZone( BaseMeshPtr mesh, const VectorLong& indexes ): _mesh( mesh ),
-                                                               _localisation( ListOfElements ),
-                                                               _indexes( indexes )
+                                                                _localisation( ListOfElements ),
+                                                                _grp( new GroupOfElements( "" ) ),
+                                                                _indexes( indexes )
     {};
 
     PCFieldZone( FiniteElementDescriptorPtr ligrel, const VectorLong& indexes ):
@@ -81,7 +84,7 @@ public:
 
     BaseMeshPtr getMesh() const throw( std::runtime_error )
     {
-        if( _localisation != AllMesh and _localisation != GroupOfElements
+        if( _localisation != AllMesh and _localisation != OnGroupOfElements
             and _localisation != ListOfElements )
             throw std::runtime_error( "Zone not on a mesh" );
         return _mesh;
@@ -101,18 +104,12 @@ public:
     };
 
     GroupOfElementsPtr getSupportGroup() const
-        throw( std::runtime_error )
     {
-        if( _localisation != GroupOfElements )
-            throw std::runtime_error( "Zone not on a group of elements" );
         return _grp;
     };
 
     const VectorLong& getListOfElements() const
-        throw( std::runtime_error )
     {
-        if( _localisation != ListOfElements and _localisation != ListOfDelayedElements )
-            throw std::runtime_error( "Zone not on a group of elements" );
         return _indexes;
     };
 };
@@ -151,10 +148,12 @@ class PCFieldOnMeshInstance: public DataStructure
     private:
         void fortranAddValues( const long& code, const std::string& grp, const std::string& mode,
                                const long& nma, const JeveuxVectorLong& limanu,
-                               const std::string& ligrel, const JeveuxVectorChar8& component,
+                               const JeveuxVectorChar8& component,
                                JeveuxVector< ValueType >& values )
             throw ( std::runtime_error )
         {
+            if( ( code == -1 || code == -3 ) && ! _FEDesc )
+                throw std::runtime_error( "Build of PCFieldOnMesh impossible, FiniteElementDescriptor is missing" );
             bool test = _componentNames->updateValuePointer();
             test = test && _valuesListTmp->updateValuePointer();
             if ( ! test )
@@ -176,7 +175,7 @@ class PCFieldOnMeshInstance: public DataStructure
             try
             {
                 CALL_NOCARTC( getName().c_str(), &code, &tVerif1, grp.c_str(), mode.c_str(),
-                              &nma, limano.c_str(), &( *limanu )[0], ligrel.c_str() );
+                              &nma, limano.c_str(), &( *limanu )[0], _FEDesc->getName().c_str() );
             }
             catch( ... )
             {
@@ -324,15 +323,6 @@ class PCFieldOnMeshInstance: public DataStructure
         };
 
         /**
-         * @brief Get number of zone in PCFieldOnMesh
-         */
-        int getSize() const
-        {
-            _descriptor->updateValuePointer();
-            return (*_descriptor)[2];
-        };
-
-        /**
          * @brief Get zone description
          */
         PCFieldZone getZoneDescription( const int& position ) const
@@ -355,7 +345,13 @@ class PCFieldOnMeshInstance: public DataStructure
                 return PCFieldZone( _supportMesh, 
                                     GroupOfElementsPtr( new GroupOfElements( name ) ) );
             }
-//             else if( code == 3 )
+            else if( code == 3 )
+            {
+                const auto numGrp = (*_descriptor)[ 4 + 2*position ];
+                _listOfMeshElements->buildFromJeveux();
+                const auto& object = _listOfMeshElements->getObject( numGrp );
+                return PCFieldZone( _supportMesh, object.toVector() );
+            }
             else if( code == -3 )
             {
                 const auto numGrp = (*_descriptor)[ 4 + 2*position ];
@@ -368,35 +364,17 @@ class PCFieldOnMeshInstance: public DataStructure
         };
 
         /**
-         * @brief Définition du maillage sous-jacent
-         * @param currentMesh objet Mesh sur lequel le modele reposera
-         * @return renvoit true si la définition s'est bien deroulee, false sinon
-         */
-        bool setSupportMesh( BaseMeshPtr& currentMesh ) throw ( std::runtime_error )
-        {
-            if ( currentMesh->isEmpty() )
-                throw std::runtime_error( "Mesh is empty" );
-            _supportMesh = currentMesh;
-            return true;
-        };
-
-        /**
          * @brief Fixer une valeur sur tout le maillage
          * @param component JeveuxVectorChar8 contenant le nom des composantes à fixer
          * @param values JeveuxVector< ValueType > contenant les valeurs
-         * @param ligrel TEMPORAIRE
          * @return renvoit true si l'ajout s'est bien deroulee, false sinon
-         * @todo Ajouter la possibilite de donner un ligrel (n'existe pas encore)
          */
         bool setValueOnAllMesh( const JeveuxVectorChar8& component,
-                                const JeveuxVector< ValueType >& values,
-                                std::string ligrel = " " )
+                                const JeveuxVector< ValueType >& values )
             throw ( std::runtime_error )
         {
             if ( _supportMesh.use_count() == 0 || _supportMesh->isEmpty() )
                 throw std::runtime_error( "Mesh is empty" );
-            if ( ligrel != " " )
-                throw std::runtime_error( "Build a PCFieldOnMeshInstance with a ligrel not yet available" );
 
             const long code = 1;
             const std::string grp( " " );
@@ -404,7 +382,7 @@ class PCFieldOnMeshInstance: public DataStructure
             const long nbMa = 0;
             JeveuxVectorLong limanu( "empty" );
             limanu->allocate( Temporary, 1 );
-            fortranAddValues( code, grp, mode, nbMa, limanu, ligrel, component, values );
+            fortranAddValues( code, grp, mode, nbMa, limanu, component, values );
             return true;
         };
 
@@ -413,19 +391,42 @@ class PCFieldOnMeshInstance: public DataStructure
          * @param component JeveuxVectorChar8 contenant le nom des composantes à fixer
          * @param values JeveuxVector< ValueType > contenant les valeurs
          * @param grp Groupe de mailles
-         * @param ligrel TEMPORAIRE
          * @return renvoit true si l'ajout s'est bien deroulee, false sinon
-         * @todo Ajouter la possibilite de donner un ligrel (n'existe pas encore)
          */
-        bool setValueOnGroupOfElements( const JeveuxVectorChar8& component,
-                                        const JeveuxVector< ValueType >& values,
-                                        const GroupOfElements& grp, std::string ligrel = " " )
+        bool setValueOnListOfDelayedElements( const JeveuxVectorChar8& component,
+                                              const JeveuxVector< ValueType >& values,
+                                              const VectorLong& grp )
             throw ( std::runtime_error )
         {
             if ( _supportMesh.use_count() == 0 || _supportMesh->isEmpty() )
                 throw std::runtime_error( "Mesh is empty" );
-            if ( ligrel != " " )
-                throw std::runtime_error( "Build a PCFieldOnMeshInstance with a ligrel not yet available" );
+
+            const long code = -3;
+            const std::string grp2( " " );
+            const std::string mode( " " );
+            const long nbMa = 0;
+            JeveuxVectorLong limanu( "&&TEMPORARY" );
+            limanu->allocate( Temporary, grp.size() );
+            for( long pos = 0; pos < grp.size(); ++pos )
+                (*limanu)[pos] = grp[pos];
+            fortranAddValues( code, grp2, mode, nbMa, limanu, component, values );
+            return true;
+        };
+
+        /**
+         * @brief Fixer une valeur sur un groupe de mailles
+         * @param component JeveuxVectorChar8 contenant le nom des composantes à fixer
+         * @param values JeveuxVector< ValueType > contenant les valeurs
+         * @param grp Groupe de mailles
+         * @return renvoit true si l'ajout s'est bien deroulee, false sinon
+         */
+        bool setValueOnGroupOfElements( const JeveuxVectorChar8& component,
+                                        const JeveuxVector< ValueType >& values,
+                                        const GroupOfElements& grp )
+            throw ( std::runtime_error )
+        {
+            if ( _supportMesh.use_count() == 0 || _supportMesh->isEmpty() )
+                throw std::runtime_error( "Mesh is empty" );
             if ( ! _supportMesh->hasGroupOfElements( grp.getName() ) )
                 throw std::runtime_error( "Group " + grp.getName() + " not in mesh" );
 
@@ -434,8 +435,17 @@ class PCFieldOnMeshInstance: public DataStructure
             const long nbMa = 0;
             JeveuxVectorLong limanu( "empty" );
             limanu->allocate( Temporary, 1 );
-            fortranAddValues( code, grp.getName(), mode, nbMa, limanu, ligrel, component, values );
+            fortranAddValues( code, grp.getName(), mode, nbMa, limanu, component, values );
             return true;
+        };
+
+        /**
+         * @brief Get number of zone in PCFieldOnMesh
+         */
+        int size() const
+        {
+            _descriptor->updateValuePointer();
+            return (*_descriptor)[2];
         };
 
         /**

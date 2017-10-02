@@ -37,10 +37,11 @@ Glossary::Glossary()
         _strToInt[ curName ] = i;
     }
 
-    for( int i = 0; i < nbComponent; ++i )
+    int i = 0;
+    for( const auto& component : ComponentNames )
     {
-        const std::string curName( ComponentNames[i] );
-        _strToInt[ curName ] = i;
+        _strToInt[ component.second ] = i;
+        ++i;
     }
 
     for( int i = 0; i < nbSolvers; ++i )

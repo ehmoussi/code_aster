@@ -655,7 +655,7 @@ public:
     {
         _value = value;
         _fieldName.setValue( fieldName );
-        _component = ComponentNames[ component ];
+        _component = ComponentNames.find(component)->second;
     };
 };
 

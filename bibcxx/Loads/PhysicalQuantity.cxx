@@ -25,17 +25,34 @@
 
 #include "Loads/PhysicalQuantity.h"
 #include "boost/range/irange.hpp"
+#include <algorithm>
 
 const char* PhysicalQuantityNames[nbPhysicalQuantities] = { "", "", "", "", "DEPL", "PRES", "TEMP", "IMPE", "VNOR", "", "" };
 
-const char* ComponentNames[nbComponent] = { "DX", "DY", "DZ", "DRX", "DRY", "DRZ", "TEMP", "TEMP_MIL", "PRES", "FX", "FY", "FZ", "MX", "MY","MZ",
- "N", "VY", "VZ", "MT", "MFY", "MFZ", "F1", "F2", "F3", "MF1", "MF2", "IMPE", "VNOR", "FLUN", "FLUN_HYDR1", "FLUN_HYDR2"};
+const std::map< PhysicalQuantityComponent, std::string > ComponentNames = {
+    { Dx, "DX" }, { Dy, "DY" }, { Dz, "DZ" }, { Drx, "DRX" }, { Dry, "DRY" }, { Drz, "DRZ" },
+    { Temp, "TEMP" }, { MiddleTemp, "TEMP_MIL" }, { Pres, "PRES" }, { Fx, "FX" }, { Fy, "FY" },
+    { Fz, "FZ" }, { Mx, "MX" }, { My, "MY" }, { Mz, "MZ" }, { N, "N" }, { Vy, "VY" },
+    { Vz, "VZ" }, { Mt, "MT" }, { Mfy, "MFY" }, { Mfz, "MFZ" }, { F1, "F1" }, { F2, "F2" },
+    { F3, "F3" }, { Mf1, "MF1" }, { Mf2, "MF2" }, { Impe, "IMPE" }, { Vnor, "VNOR" },
+    { Flun, "FLUN" }, { FlunHydr1, "FLUN_HYDR1" }, { FlunHydr2, "FLUN_HYDR2" },
+};
+
+const std::string& value(const std::pair<PhysicalQuantityComponent,
+                                         std::string>& keyValue)
+{
+    return keyValue.second;
+};
+
+const int nbComponent = ComponentNames.size();
 
 auto rangeComp = boost::irange(0, nbComponent);
 const std::vector<int> numbers(rangeComp.begin(), rangeComp.end());
-
 const VectorComponent allComponents( (const VectorComponent&)numbers );
-const VectorString allComponentsNames( ComponentNames, ComponentNames + nbComponent );
+
+// VectorString values( ComponentNames.size() );
+// transform( ComponentNames.begin(), ComponentNames.end(), values.begin(), value );
+// const VectorString allComponentsNames( values );
 
 /* Init const data */
 

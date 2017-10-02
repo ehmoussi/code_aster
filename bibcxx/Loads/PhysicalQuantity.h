@@ -29,6 +29,8 @@
 #include <set>
 #include <stdexcept> 
 #include <string>
+#include <iterator>
+
 #include "astercxx.h"
 
 #include "Utilities/CapyConvertibleValue.h"
@@ -52,18 +54,23 @@ extern const char* PhysicalQuantityNames[nbPhysicalQuantities];
  * @enum PhysicalQuantityComponent 
  * @brief Inventory of components of the physical quantities listed in PhysicalQuantityEnum 
  */
-enum PhysicalQuantityComponent { Dx, Dy, Dz, Drx, Dry, Drz, Temp, MiddleTemp, Pres, Fx, Fy, Fz, Mx, My, Mz, N, Vy, Vz, Mt, Mfy, Mfz, F1, F2, F3, Mf1, Mf2, Impe, Vnor, Flun, FlunHydr1, FlunHydr2 };
+enum PhysicalQuantityComponent { Dx, Dy, Dz, Drx, Dry, Drz, Temp, MiddleTemp, Pres,
+    Fx, Fy, Fz, Mx, My, Mz, N, Vy, Vz, Mt, Mfy, Mfz, F1, F2, F3, Mf1, Mf2,
+    Impe, Vnor, Flun, FlunHydr1, FlunHydr2 };
 
-const int nbComponent = 31; 
+extern const int nbComponent; 
 /**
 * @def ComponentNames
 * @brief Aster names of the components of the physical quantities
 */
-extern const char* ComponentNames[nbComponent];
+extern const std::map< PhysicalQuantityComponent, std::string > ComponentNames;
 
 typedef std::vector< PhysicalQuantityComponent > VectorComponent;
 extern const VectorComponent allComponents;
-extern const VectorString allComponentsNames;
+// extern const VectorString allComponentsNames;
+
+const std::string& value(const std::pair<PhysicalQuantityComponent,
+                                         std::string>& keyValue);
 
 /**
 * @class PhysicalQuantityTraits
@@ -405,7 +412,6 @@ class PhysicalQuantityInstance
     * @function hasComponent
     * @brief test if a component is authorized for the physical quantity
     */
-    
     static bool hasComponent( PhysicalQuantityComponent comp )
     {
         if ( Traits::components.find( comp ) == Traits::components.end() ) return false;
@@ -428,8 +434,9 @@ class PhysicalQuantityInstance
             _compAndVal.insert( CompAndVal( comp, val ) ); 
         }
         _values.push_back( val );
+        std::string name =  ComponentNames.find(comp)->second;
         _toCapyConverter.add( new CapyConvertibleValue< QuantityType >
-                                                      ( false, ComponentNames[ (int)comp ],
+                                                      ( false, name,
                                                         _values[ _values.size()-1 ], true ) );
     }
 
@@ -444,13 +451,13 @@ class PhysicalQuantityInstance
         for (std::set<PhysicalQuantityComponent>::iterator it(Traits::components.begin());
              it!=Traits::components.end(); it++)
         {
-            std::cout << ComponentNames[*it] << " , " ;
+            std::cout << ComponentNames.find(*it)->second << " , " ;
         }
         std::cout << std::endl; 
         for ( typename MapOfCompAndVal::const_iterator it(_compAndVal.begin());
               it!= _compAndVal.end(); it++)
         {
-            std::cout << ComponentNames[it->first] << " : " << it->second << std::endl; 
+            std::cout << ComponentNames.find(it->first)->second << " : " << it->second << std::endl; 
         }
     };
 

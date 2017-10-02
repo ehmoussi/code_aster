@@ -22,21 +22,23 @@
  */
 
 #include "Modeling/FiniteElementDescriptor.h"
+#include <algorithm>
 
 FiniteElementDescriptorInstance::FiniteElementDescriptorInstance( const std::string& name,
                                                                   const JeveuxMemory memType ):
-                    DataStructure( name, "LIGREL", memType ),
-                    _numberOfDelayedNumberedConstraintNodes( getName() + ".NBNO" ),
-                    _parameters( getName() + ".LGRF" ),
-                    _dofDescriptor( getName() + ".PRNM" ),
-                    _listOfGroupOfElements( getName() + ".LIEL" ),
-                    _groupOfElementsNumberByElement( getName() + ".REPE" ),
-                    _delayedNumberedConstraintElementsDescriptor( getName() + ".NEMA" ),
-                    _dofOfDelayedNumberedConstraintNodes( getName() + ".PRNS" ),
-                    _delayedNodesNumbering( getName() + ".LGNS" ),
-                    _superElementsDescriptor( getName() + ".SSSA" ),
-                    _nameOfNeighborhoodStructure( getName() + ".NVGE" ),
-                    _explorer( ConnectivityDelayedElementsExplorer( _delayedNumberedConstraintElementsDescriptor ) )
+    DataStructure( name, "LIGREL", memType ),
+    _numberOfDelayedNumberedConstraintNodes( getName() + ".NBNO" ),
+    _parameters( getName() + ".LGRF" ),
+    _dofDescriptor( getName() + ".PRNM" ),
+    _listOfGroupOfElements( getName() + ".LIEL" ),
+    _groupOfElementsNumberByElement( getName() + ".REPE" ),
+    _delayedNumberedConstraintElementsDescriptor( getName() + ".NEMA" ),
+    _dofOfDelayedNumberedConstraintNodes( getName() + ".PRNS" ),
+    _delayedNodesNumbering( getName() + ".LGNS" ),
+    _superElementsDescriptor( getName() + ".SSSA" ),
+    _nameOfNeighborhoodStructure( getName() + ".NVGE" ),
+    _explorer( ConnectivityDelayedElementsExplorer( _delayedNumberedConstraintElementsDescriptor ) ),
+    _explorer2( ConnectivityDelayedElementsExplorer( _listOfGroupOfElements ) )
 {
     if( getName().size() != 19 )
         throw std::runtime_error( "Naming problem" );

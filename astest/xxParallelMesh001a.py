@@ -38,8 +38,7 @@ acier.addMaterialBehaviour(elas)
 acier.build()
 acier.debugPrint(8)
 
-affectMat = code_aster.MaterialOnMesh.create()
-affectMat.setSupportMesh(pMesh)
+affectMat = code_aster.MaterialOnMesh.create(pMesh)
 
 testMesh2 = affectMat.getSupportMesh()
 test.assertEqual(testMesh2.getType(), "MAILLAGE_P")

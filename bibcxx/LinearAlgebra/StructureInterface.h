@@ -92,9 +92,11 @@ private:
             _container.add( new CapyConvertibleValue< VectorOfGroupOfNodesPtr >
                                     ( true, "GROUP_NO", _groupsOfNodes, true ) );
 
+            VectorString values( ComponentNames.size() );
+            transform( ComponentNames.begin(), ComponentNames.end(), values.begin(), value );
             _container.add( new CapyConvertibleValue< VectorComponent >
                                     ( true, "MASQUE", _components,
-                                      allComponents, allComponentsNames, true ) );
+                                      allComponents, values, true ) );
         };
     };
 
