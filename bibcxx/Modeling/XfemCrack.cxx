@@ -27,12 +27,13 @@
 
 #include "Modeling/XfemCrack.h"
 #include "Supervis/CommandSyntax.h"
+#include "Supervis/ResultNaming.h"
 
 #include "Modeling/CrackShape.h"
 
 XfemCrackInstance::XfemCrackInstance(MeshPtr supportMesh):
-    DataStructure( getNewResultObjectName(), "FISS_XFEM" ),
-    _jeveuxName( CommandSyntax::getCurrentName() ),
+    DataStructure( ResultNaming::getNewResultName(), "FISS_XFEM" ),
+    _jeveuxName( ResultNaming::getCurrentName() ),
     _supportMesh(supportMesh),
     _auxiliaryGrid(MeshPtr()),
     _existingCrackWithGrid(XfemCrackPtr()),
@@ -71,7 +72,7 @@ XfemCrackInstance::XfemCrackInstance(MeshPtr supportMesh):
 bool XfemCrackInstance::build() throw( std::runtime_error )
 {
     CommandSyntax cmdSt( "DEFI_FISS_XFEM" );
-    cmdSt.setResult( CommandSyntax::getCurrentName(), "FISS_XFEM" );
+    cmdSt.setResult( ResultNaming::getCurrentName(), "FISS_XFEM" );
 
     SyntaxMapContainer dict;
 
@@ -195,9 +196,9 @@ bool XfemCrackInstance::build() throw( std::runtime_error )
     } catch( ... ) {
         throw;
     }
-    
-    
-    
+
+
+
     return true;
 };
 
@@ -237,4 +238,3 @@ ModelPtr XfemCrackInstance::enrichModelWithXfem( ModelPtr &baseModel ) throw ( s
     return newModelPtr;
 
 };
-

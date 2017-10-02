@@ -30,6 +30,7 @@
 #include "Interactions/ContactZone.h"
 #include "DataStructures/DataStructure.h"
 #include "Supervis/CommandSyntax.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @enum FrictionEnum
@@ -207,7 +208,7 @@ private:
                                                         allGeometricResolutionAlgorithmNames ) );
         _reacGeom = AutoUpdate;
         _toCapyConverter.add( new CapyConvertibleValue< GeometricUpdateEnum >
-                                                      ( false, "REAC_GEOM", 
+                                                      ( false, "REAC_GEOM",
                                                         _reacGeom,
                                                         allGeometricUpdate, allGeometricUpdateNames ) );
         if ( formulation != Xfem )
@@ -301,17 +302,17 @@ public:
     /**
      * @brief Constructeur
      */
-    ContactDefinition(): DataStructure( getNewResultObjectName(), "CONTACT" ),
+    ContactDefinition(): DataStructure( ResultNaming::getNewResultName(), "CONTACT" ),
                          _isEmpty( true ),
                          _formulation( formulation ),
                          _friction( WithoutFriction )
     {
         _toCapyConverter.add( new CapyConvertibleValue< ContactFormulationEnum >
-                                                      ( true, "FORMULATION", 
+                                                      ( true, "FORMULATION",
                                                         _formulation, allContactFormulation,
                                                         allContactFormulationNames ) );
         _toCapyConverter.add( new CapyConvertibleValue< FrictionEnum >
-                                                      ( true, "FROTTEMENT", 
+                                                      ( true, "FROTTEMENT",
                                                         _friction, allFrictionParameters,
                                                         allFrictionParametersNames ) );
         _toCapyConverter.add( new CapyConvertibleValue< ModelPtr >
@@ -727,7 +728,7 @@ bool ContactDefinition< formulation >::build() throw ( std::runtime_error )
         throw std::runtime_error( "Support Model not set" );
 
     CommandSyntax cmdSt( "DEFI_CONTACT" );
-    cmdSt.setResult( CommandSyntax::getCurrentName(), "CONTACT" );
+    cmdSt.setResult( ResultNaming::getCurrentName(), "CONTACT" );
 
     CapyConvertibleSyntax syntax;
     syntax.setSimpleKeywordValues( _toCapyConverter );

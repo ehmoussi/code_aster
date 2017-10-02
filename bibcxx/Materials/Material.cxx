@@ -25,11 +25,12 @@
 
 #include "astercxx.h"
 
-#include "Supervis/CommandSyntax.h"
+#include "Supervis/ResultNaming.h"
 #include "Materials/Material.h"
+#include "Supervis/ResultNaming.h"
 
-MaterialInstance::MaterialInstance(): DataStructure( getNewResultObjectName(), "MATER" ),
-                    _jeveuxName( CommandSyntax::getCurrentName() ),
+MaterialInstance::MaterialInstance(): DataStructure( ResultNaming::getNewResultName(), "MATER" ),
+                    _jeveuxName( ResultNaming::getCurrentName() ),
                     _materialBehaviourNames( JeveuxVectorChar32( _jeveuxName + ".MATERIAU.NOMRC " ) ),
                     _nbMaterialBehaviour( 0 )
 {};

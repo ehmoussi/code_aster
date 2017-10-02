@@ -30,11 +30,12 @@
 #include "Materials/MaterialOnMesh.h"
 #include "Utilities/SyntaxDictionary.h"
 #include "Supervis/CommandSyntax.h"
+#include "Supervis/ResultNaming.h"
 
 
 MaterialOnMeshInstance::MaterialOnMeshInstance( const MeshPtr& mesh ):
                                 _supportMesh( mesh ),
-                                DataStructure( getNewResultObjectName(), "CHAM_MATER" ),
+                                DataStructure( ResultNaming::getNewResultName(), "CHAM_MATER" ),
                                 _listOfMaterials( PCFieldOnMeshChar8Ptr(
                                     new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
                                 _listOfTemperatures( PCFieldOnMeshDoublePtr(
@@ -44,7 +45,7 @@ MaterialOnMeshInstance::MaterialOnMeshInstance( const MeshPtr& mesh ):
 #ifdef _USE_MPI
 MaterialOnMeshInstance::MaterialOnMeshInstance( const ParallelMeshPtr& mesh ):
                                 _supportMesh( mesh ),
-                                DataStructure( getNewResultObjectName(), "CHAM_MATER" ),
+                                DataStructure( ResultNaming::getNewResultName(), "CHAM_MATER" ),
                                 _listOfMaterials( PCFieldOnMeshChar8Ptr(
                                     new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
                                 _listOfTemperatures( PCFieldOnMeshDoublePtr(

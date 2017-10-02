@@ -27,9 +27,10 @@
 
 #include "Loads/KinematicsLoad.h"
 #include "Supervis/CommandSyntax.h"
+#include "Supervis/ResultNaming.h"
 
 KinematicsLoadInstance::KinematicsLoadInstance():
-                    DataStructure( getNewResultObjectName(), "CHAR_CINE" ),
+                    DataStructure( ResultNaming::getNewResultName(), "CHAR_CINE" ),
                     _supportModel( ModelPtr() ),
                     _isEmpty( true )
 {};
@@ -45,7 +46,7 @@ bool KinematicsLoadInstance::build() throw ( std::runtime_error )
         throw std::runtime_error( "KinematicsLoad empty" );
     setType( typSd );
     CommandSyntax cmdSt( "AFFE_CHAR_CINE" );
-    cmdSt.setResult( CommandSyntax::getCurrentName(), typSd );
+    cmdSt.setResult( ResultNaming::getCurrentName(), typSd );
 
     SyntaxMapContainer dict;
     if ( ! _supportModel )

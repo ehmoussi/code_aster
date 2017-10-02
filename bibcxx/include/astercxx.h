@@ -46,8 +46,6 @@ extern "C"
 
 #include "Python.h"
 
-#include "code_aster/Supervis/libCommandSyntax.h"
-
 } // extern "C"
 #endif
 

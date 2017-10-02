@@ -23,6 +23,7 @@
 
 #include "Loads/AcousticsLoad.h"
 #include "Supervis/CommandSyntax.h"
+#include "Supervis/ResultNaming.h"
 
 const char SANS_GROUP_MA[] = "SANS_GROUP_MA";
 const char SANS_GROUP_NO[] = "SANS_GROUP_NO";
@@ -33,7 +34,7 @@ bool AcousticsLoadInstance::build()
         throw std::runtime_error( "Support Model not set" );
 
     CommandSyntax cmdSt( "AFFE_CHAR_ACOU" );
-    cmdSt.setResult( CommandSyntax::getCurrentName(), "CHAR_ACOU" );
+    cmdSt.setResult( ResultNaming::getCurrentName(), "CHAR_ACOU" );
 
     CapyConvertibleSyntax syntax;
     syntax.setSimpleKeywordValues( _toCapyConverter );

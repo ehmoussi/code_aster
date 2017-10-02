@@ -23,13 +23,14 @@
 
 #include "Studies/TimeStepManager.h"
 #include "Supervis/CommandSyntax.h"
+#include "Supervis/ResultNaming.h"
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 void TimeStepManagerInstance::build() throw ( std::runtime_error )
 {
     CommandSyntax cmdSt( "DEFI_LIST_INST" );
-    cmdSt.setResult( CommandSyntax::getCurrentName(), "LIST_INST" );
+    cmdSt.setResult( ResultNaming::getCurrentName(), "LIST_INST" );
 
     SyntaxMapContainer dict;
 

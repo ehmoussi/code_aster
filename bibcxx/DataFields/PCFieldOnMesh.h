@@ -36,6 +36,7 @@
 #include "Meshes/Mesh.h"
 #include "Modeling/FiniteElementDescriptor.h"
 #include "aster_fort.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class PCFieldZone Piecewise Constant (PC) Field Zone
@@ -210,7 +211,7 @@ class PCFieldOnMeshInstance: public DataStructure
          */
         static PCFieldOnBaseMeshPtr create( const BaseMeshPtr& mesh )
         {
-            return PCFieldOnBaseMeshPtr( new PCFieldOnMeshInstance( getNewResultObjectName(),
+            return PCFieldOnBaseMeshPtr( new PCFieldOnMeshInstance( ResultNaming::getNewResultName(),
                                                                     mesh ) );
         };
 
@@ -262,7 +263,7 @@ class PCFieldOnMeshInstance: public DataStructure
          * @param mesh Maillage support
          * @param name Nom Jeveux de la carte
          */
-        PCFieldOnMeshInstance( const BaseMeshPtr& mesh, 
+        PCFieldOnMeshInstance( const BaseMeshPtr& mesh,
                                const JeveuxMemory memType = Permanent ):
             DataStructure( "CART_", memType, 19 ),
             _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
