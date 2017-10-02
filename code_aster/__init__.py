@@ -22,6 +22,9 @@
 # discourage import *
 __all__ = []
 
+# import libaster to call initAsterModules
+import libaster
+
 # import datastructures enriched by pure python extensions
 from .Extensions import *
 
@@ -30,11 +33,6 @@ from .Commands.debut import init
 # # install i18n function as soon as possible
 # from .Utilities import localization
 # localization.install()
-#
-# # commands must be registered by libCommandSyntax before calling DEBUT.
-# from .Cata import Commands
-# from .Supervis import libCommandSyntax
-# libCommandSyntax.commandsRegister(Commands.commandStore)
 #
 # # import general purpose functions
 # from .RunManager.saving import saveObjects
