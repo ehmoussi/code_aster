@@ -19,8 +19,8 @@
 
 import inspect
 
-from code_aster.RunManager.Pickling import Pickler
-from code_aster.Supervis.logger import logger
+from ..Supervis.logger import logger
+from .Pickling import Pickler
 
 
 def saveObjects(level=1, delete=True):

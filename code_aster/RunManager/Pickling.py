@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -22,10 +22,10 @@ import types
 import traceback
 import os.path as osp
 
-from code_aster.Supervis.logger import logger
-from code_aster.Supervis.libCommandSyntax cimport resultNaming
+from libaster import ResultNaming
 
-from libaster import DataStructure
+from ..Extensions import DataStructure
+from ..Supervis.logger import logger
 
 
 class Pickler(object):
@@ -77,6 +77,7 @@ class Pickler(object):
                 self._ctxt[name] = None
         # add management objects on the stack
         cPickle.dump( objList, pick, -1 )
+        raise NotImplementedError("resultNaming.getLastId")
         cPickle.dump( resultNaming.getLastId(), pick, -1 )
         pick.close()
 
@@ -99,6 +100,7 @@ class Pickler(object):
         assert len(objects) == len(objList), (objects, objList)
         for name, obj in zip( objList, objects ):
             self._ctxt[name] = obj
+        raise NotImplementedError("resultNaming.initCounter")
         resultNaming.initCounter( lastId )
 
 
