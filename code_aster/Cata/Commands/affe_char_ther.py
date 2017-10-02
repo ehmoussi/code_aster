@@ -30,7 +30,7 @@ AFFE_CHAR_THER=OPER(nom="AFFE_CHAR_THER",op=34,sd_prod=char_ther
                           'ECHANGE_PAROI','PRE_GRAD_TEMP','LIAISON_DDL','LIAISON_GROUP',
                           'LIAISON_UNIF','LIAISON_CHAMNO','RAYONNEMENT','LIAISON_MAIL' ),),
          MODELE          =SIMP(statut='o',typ=(modele_sdaster) ),
-         EVOL_CHAR       =SIMP(statut='f',fr=tr("Champ d'échange thermique issu d'un autre calcul"),
+         EVOL_CHAR       =SIMP(statut='f',fr=tr("Champ d'échange thermique ou de flux issu d'un autre calcul"),
                                typ=evol_char,min=1,max=1),
 
 
