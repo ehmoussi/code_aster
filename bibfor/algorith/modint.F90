@@ -59,8 +59,10 @@ subroutine modint(ssami, raiint, nddlin, nbmod, shift,&
 !
 !-- VARIABLES EN ENTREES / SORTIE
 #include "jeveux.h"
+#include "asterc/isnnem.h"
 #include "asterc/getran.h"
 #include "asterc/matfpe.h"
+#include "asterc/r8vide.h"
 #include "asterfort/assert.h"
 #include "asterfort/codent.h"
 #include "asterfort/detrsd.h"
@@ -77,6 +79,7 @@ subroutine modint(ssami, raiint, nddlin, nbmod, shift,&
 #include "asterfort/jexnum.h"
 #include "asterfort/infniv.h"
 #include "asterfort/nmop45.h"
+#include "asterfort/omega2.h"
 #include "asterfort/mrmult.h"
 #include "asterfort/mtcmbl.h"
 #include "asterfort/mtdefs.h"
@@ -84,6 +87,7 @@ subroutine modint(ssami, raiint, nddlin, nbmod, shift,&
 #include "asterfort/preres.h"
 #include "asterfort/resoud.h"
 #include "asterfort/utmess.h"
+#include "asterfort/vpcres.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/rsadpa.h"
 #include "asterfort/as_deallocate.h"
@@ -91,48 +95,52 @@ subroutine modint(ssami, raiint, nddlin, nbmod, shift,&
 #include "blas/ddot.h"
 #include "blas/dgeev.h"
 #include "blas/dggev.h"
-    integer :: nddlin, nbmod, nnoint, neq, switch,jfreq
-    real(kind=8) :: shift
+    integer           :: nddlin, nbmod, nnoint, neq, switch,jfreq
+    real(kind=8)      :: shift
+    character(len=6)  :: k6bid
+    character(len=8)  :: modes
     character(len=19) :: masse, raide, ssami, raiint
     character(len=24) :: coint, noddli, matmod, vefreq
-    character(len=8)  :: modes
-    character(len=6)  :: k6bid
-    character(len=24) :: dummy1,dummy3
-    character(len=16) :: nmopt
+
 
 
 !
 !-- VARIABLES DE LA ROUTINE
-    integer :: lmatmo, i1, j1, k1, m1, lmakry, nsekry,nsekry2,nsekry3
-    integer ::       lmatk, lmatm, lmapro
-    integer :: lkpro,  lmatrm, lmatrk, lwork
-    integer ::   limped,   lmatma, iret
-    integer :: nbvect, ibid,   no, nbsst, lindin, coeff, lvp
-    integer :: ifm,niv,mode_symetrique
-    integer(kind=4) :: info
-    real(kind=8) :: temp, pi, rbid, norm, lambda, comlin(2), swork(1), max
-    real(kind=8) ::  bande(2), freq1,freq2
+    real(kind=8) :: pi
     parameter    (pi=3.141592653589793238462643d0)
+
+    integer :: lmatmo, i1, j1, k1, m1, lmakry, nsekry,nsekry2,nsekry3
+    integer :: lmatk, lmatm, lmapro, nbrss, lkpro, lmatrm, lmatrk, lwork
+    integer :: limped, lmatma, iret, nbvect, ibid, no, nbsst, lindin, coeff, lvp
+    integer :: ifm,niv,mode_symetrique, maxitr, nbborn, nbvec2, defo, nddle, nsta
+    integer(kind=4) :: info
+    real(kind=8) :: temp, rbid, norm, lambda, comlin(2), swork(1), max, omecor
+    real(kind=8) :: bande(2), freq1, freq2, alpha, tolsor, precsh, fcorig, precdc
+    real(kind=8) :: mval, normx, valx, avalx, r8bid
     complex(kind=8) :: cbid
-    character(len=1) :: listyp(2)
-    character(len=19) :: lismat(2), imped, solveu, nume91, nume, prno
-    character(len=24) :: valk
+    character(len=1)  :: listyp(2), k1bid
+    character(len=4)  :: mod45
+    character(len=8)  :: k8bid, method, sdstab
+    character(len=16) :: typres, k16bid, optiof
+    character(len=19) :: lismat(2), imped, solveu, nume91, nume, prno, eigsol, k19bid
+    character(len=19) :: raide2, masse2
+    character(len=24) :: valk, k24bid
+
+    integer, pointer :: v_ind_lag(:) => null()
+    integer, pointer :: delg(:) => null()
+    integer, pointer :: ddl_actif_int(:) => null()
+    integer, pointer :: v_ind_f_pro(:) => null()
     real(kind=8), pointer :: matr_mod_red(:) => null()
     real(kind=8), pointer :: matr_work_dggev(:) => null()
     real(kind=8), pointer :: vect_alphai(:) => null()
     real(kind=8), pointer :: vect_alphar(:) => null()
     real(kind=8), pointer :: vect_beta(:) => null()
     real(kind=8), pointer :: v_f_pro(:) => null()
-    integer, pointer :: v_ind_f_pro(:) => null()
     real(kind=8), pointer :: vale(:) => null()
-    integer, pointer :: v_ind_lag(:) => null()
-    integer, pointer :: delg(:) => null()
-    integer, pointer :: ddl_actif_int(:) => null()
-    real(kind=8) :: mval,normx,valx,avalx
-    cbid = dcmplx(0.d0, 0.d0)
 !
 !-- DEBUT --C
 !
+    cbid = dcmplx(0.d0, 0.d0)
     call jemarq()
     call infniv(ifm, niv)
 !
@@ -217,15 +225,66 @@ subroutine modint(ssami, raiint, nddlin, nbmod, shift,&
 !--
 !-- Appel a nmop45 pour le calcul des modes du modele d'interface
 !--
+
+!
+! --- CREATION DE LA SD EIGENSOLVER PARAMETRANT LE CALCUL MODAL
+! --- UN GEP SYM REEL RESOLU VIA SORENSEN
+!
+! BANDE MODALE EN DUR
     bande(1)=0.d0
     bande(2)=1.d0
-    nmopt='PLUS_PETITE'
     modes='&&MODEST'
-    dummy1='&&DUMY1'
-    dummy3='&&DUMMY3'
-    call nmop45(imped, ssami, 0, nmopt, nsekry2,&
-                  2, bande, 'VIBR', dummy1, 0,&
-                  modes, '&&DUMMY2', dummy3, 0)
+    eigsol='&&MODINT.EIGSOL'
+!
+    k1bid=''
+    k8bid=''
+    k16bid=''
+    k19bid=''
+    k24bid=''
+    ibid=isnnem()
+    r8bid=r8vide()
+    typres = 'DYNAMIQUE'
+    method = 'SORENSEN'
+! MATR_A
+    raide2=imped
+! MATR_B
+    masse2=ssami
+! OPTION MODALE EN DUR
+    optiof='PLUS_PETITE'
+! DIM_SOUS_ESPACE EN DUR
+    nbvect=0
+! COEF_SOUS_ESPACE EN DUR
+    nbvec2=2
+! NMAX_ITER_SHIFT EN DUR
+    nbrss = 5
+! PARA_ORTHO_SOREN EN DUR
+    alpha = 0.717d0
+! NMAX_ITER_SOREN EN DUR
+    maxitr = 200
+! PREC_SOREN EN DUR
+    tolsor = 0.d0
+! CALC_FREQ/FLAMB/PREC_SHIFT EN DUR
+    precsh = 5.d-2
+! SEUIL_FREQ/CRIT EN DUR
+    fcorig = 1.d-2
+! VERI_MODE/PREC_SHIFT EN DUR
+    precdc = 5.d-2
+    omecor = omega2(fcorig)
+    nbborn=1
+    call vpcres(eigsol, typres, raide2, masse2, k19bid, optiof, method, k16bid, k8bid, k19bid,&
+                k16bid, k16bid, k1bid, k16bid, nsekry2, nbvect, nbvec2, nbrss, nbborn, ibid,&
+                ibid, ibid, ibid, maxitr, bande, precsh, omecor, precdc, r8bid,&
+                r8bid, r8bid, r8bid, r8bid, tolsor, alpha)
+!
+! --- CALCUL MODAL PROPREMENT DIT
+!
+    defo=0
+    mod45='VIBR'
+    nddle=0
+    sdstab='&&DUMMY2'
+    nsta=0
+    call nmop45(eigsol, defo, mod45, k24bid, nddle, modes, sdstab, k24bid, nsta)
+
 !   -- on examine les modes calcules pour savoir ou tronquer sans couper
 !      un sous-espace propre en 2 :
     nsekry3=0

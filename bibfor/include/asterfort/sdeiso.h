@@ -19,16 +19,8 @@
 !
 !
 interface
-    subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes,&
-                      modes2, ddlsta, nsta)                    
-        character(len=19) :: eigsol
-        integer           :: defo
-        character(len=4)  :: mod45
-        character(len=24) :: ddlexc
-        integer           :: nddle
-        character(len=8)  :: modes
-        character(len=8)  :: modes2
-        character(len=24) :: ddlsta
-        integer           :: nsta
-    end subroutine nmop45
+    function sdeiso(vect)
+        character(len=5) :: vect
+        integer :: sdeiso
+    end function sdeiso
 end interface

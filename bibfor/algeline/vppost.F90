@@ -252,8 +252,8 @@ subroutine vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
     endif
 !
 ! -- NETTOYAGE DES OBJETS JEVEUX GLOBAUX DE L'OPERATEUR DE LA BASE VOLATILE
-    call jedetr(solveu)
-    call jedetr(eigsol)
+    call detrsd('SOLVEUR',solveu)
+    call detrsd('EIGENSOLVER',eigsol)
     call jedetr(vecblo)
     call jedetr(veclag)
     call jedetr(vecrer)

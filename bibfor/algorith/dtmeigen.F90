@@ -25,6 +25,8 @@ subroutine dtmeigen(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
 !            implicit treatment of non linearities
 !
 #include "jeveux.h"
+#include "asterc/isnnem.h"
+#include "asterc/r8vide.h"
 #include "asterfort/crsmos.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/dtmcase_coder.h"
@@ -45,11 +47,13 @@ subroutine dtmeigen(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
 #include "asterfort/mrmult.h"
 #include "asterfort/mtdscr.h"
 #include "asterfort/nmop45.h"
+#include "asterfort/omega2.h"
 #include "asterfort/nummo1.h"
 #include "asterfort/prmama.h"
 #include "asterfort/rsorac.h"
 #include "asterfort/utimsd.h"
 #include "asterfort/utmess.h"
+#include "asterfort/vpcres.h"
 #include "asterfort/vprecu.h"
 #include "asterfort/vpnorm.h"
 #include "asterfort/wkvect.h"
@@ -67,16 +71,18 @@ subroutine dtmeigen(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
     integer, pointer              :: buffint(:)
 !
 !   -0.2- Local variables
-    integer               :: nbmode, i, j, count, jrefa, nbnoli
-    integer               :: jdesc, lmatm, lmatk, lmatc, jbase
-    integer               :: ibid, nlcase, iret, fsichoc, info, ifm
-    real(kind=8)          :: time
+    integer               :: nbmode, i, j, count, jrefa, nbnoli, nbvect, nbvec2, nbrss, maxitr
+    integer               :: jdesc, lmatm, lmatk, lmatc, jbase, defo, nddle, nsta
+    integer               :: ibid, nlcase, iret, fsichoc, info, ifm, nbborn
+    real(kind=8)          :: time, bande(2), r8bid, alpha, tolsor, precsh, omecor, precdc, fcorig
+    character(len=1)      :: k1bid
+    character(len=4)      :: mod45
     character(len=7)      :: casek7, case0k7
-    character(len=8)      :: sd_dtm, sd_int, modmec, typrof, modes
+    character(len=8)      :: sd_dtm, sd_int, modmec, typrof, modes, method, sdstab, k8bid
     character(len=14)     :: nugene, nopara(9)
-    character(len=16)     :: option
-    character(len=19)     :: matmass, matrigi, matamor
-    character(len=24)     :: stomor, solver, base_jv, kvali, kvalr, kvalk, add_jv
+    character(len=16)     :: optiof, typres, k16bid
+    character(len=19)     :: matmass, matrigi, matamor, raide2, masse2, eigsol, k19bid
+    character(len=24)     :: stomor, solver, base_jv, kvali, kvalr, kvalk, add_jv, k24bid
 !
     real(kind=8), pointer :: base(:)    => null()
     real(kind=8), pointer :: mat_v(:)   => null()
@@ -268,14 +274,61 @@ subroutine dtmeigen(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
         call utmess('I', 'DYNAMIQUE_94', sr=time)
 !
 !       2 - Call nmop45, calculate a new basis, normalize with respect to the mass
-
-!       2.1 - Mode calculation, using nmop45 and the preceding matrices as input
-        modes = '&&DTMMOD'
-        option = 'PLUS_PETITE'
-        call nmop45(matrigi, matmass, 0, option, nbmode,&
-                    2, [0.d0, 0.d0], 'VIBR', zk24(1), 0,&
-                    modes, '&&DUMMY ', zk24(1), 0)
-
+!
+!       2.0 - Initialize data structure eigsol to prepare the nmop45 computation
+! BANDE MODALE EN DUR
+        bande(1)=0.d0
+        bande(2)=0.d0
+        modes='&&DTMMOD'
+        eigsol='&&MODINT.EIGSOL'
+!
+        k1bid=''
+        k8bid=''
+        k16bid=''
+        k19bid=''
+        k24bid=''
+        ibid=isnnem()
+        r8bid=r8vide()
+        typres = 'DYNAMIQUE'
+        method = 'SORENSEN'
+! MATR_A
+        raide2=matrigi
+! MATR_B
+        masse2=matmass
+! OPTION MODALE EN DUR
+        optiof='PLUS_PETITE'
+! DIM_SOUS_ESPACE EN DUR
+        nbvect=0
+! COEF_SOUS_ESPACE EN DUR 
+        nbvec2=2
+! NMAX_ITER_SHIFT EN DUR
+        nbrss = 5
+! PARA_ORTHO_SOREN EN DUR       
+        alpha = 0.717d0
+! NMAX_ITER_SOREN EN DUR
+        maxitr = 200
+! PREC_SOREN EN DUR
+        tolsor = 0.d0
+! CALC_FREQ/FLAMB/PREC_SHIFT EN DUR
+        precsh = 5.d-2
+! SEUIL_FREQ/CRIT EN DUR
+        fcorig = 1.d-2
+        omecor = omega2(fcorig)
+! VERI_MODE/PREC_SHIFT EN DUR
+        precdc = 5.d-2
+        nbborn=1
+        call vpcres(eigsol, typres, raide2, masse2, k19bid, optiof, method, k16bid, k8bid,&
+                    k19bid, k16bid, k16bid, k1bid, k16bid, nbmode, nbvect, nbvec2, nbrss,&
+                    nbborn, ibid, ibid, ibid, ibid, maxitr, bande, precsh, omecor, precdc,&
+                    r8bid, r8bid, r8bid, r8bid, r8bid, tolsor, alpha)
+        
+!       2.1 - Mode calculation
+        defo=0
+        mod45='VIBR'
+        nddle=0
+        sdstab='&&DUMMY'
+        nsta=0
+        call nmop45(eigsol, defo, mod45, k24bid, nddle, modes, sdstab, k24bid, nsta)
 
 !       2.2 - Mode normalising using MASS_GENE option
 

@@ -29,6 +29,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
+#include "asterc/isnnem.h"
 #include "asterc/r8maem.h"
 #include "asterc/r8vide.h"
 #include "asterfort/assert.h"
@@ -44,28 +45,25 @@ implicit none
 #include "asterfort/nmflma.h"
 #include "asterfort/nmlesd.h"
 #include "asterfort/nmop45.h"
+#include "asterfort/omega2.h"
 #include "asterfort/rsadpa.h"
 #include "asterfort/rsexch.h"
 #include "asterfort/utmess.h"
+#include "asterfort/vpcres.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-    integer :: numins
+    integer :: numins, fonact(*)
     type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    character(len=16) :: option
-    character(len=19) :: meelem(*)
     type(NL_DS_Contact), intent(in) :: ds_contact
     type(NL_DS_Measure), intent(inout) :: ds_measure
     type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=24) :: sderro
-    character(len=19) :: lischa, sddisc, sddyna, sdpost
+    character(len=16) :: option
+    character(len=19) :: lischa, sddisc, sddyna, sdpost, meelem(*)
+    character(len=19) :: veelem(*), measse(*), solalg(*), valinc(*)
+    character(len=24) :: mate, comref, sderro
     character(len=24) :: modele, numedd, numfix, carele
-    character(len=19) :: veelem(*), measse(*)
-    character(len=19) :: solalg(*), valinc(*)
-    character(len=24) :: mate
-    character(len=24) :: comref
-    integer :: fonact(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -104,18 +102,16 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: linsta
-    integer :: nfreq, nfreqc
-    integer :: i, ljeveu, ibid, iret
-    integer :: defo, ldccvg, numord
-    integer :: nddle, nsta, ljeve2, cdsp
-    real(kind=8) :: bande(2), r8bid
-    real(kind=8) :: freqm, freqv, freqa, freqr
-    real(kind=8) :: csta
-    character(len=4) :: mod45
-    character(len=8) :: sdmode, sdstab
-    character(len=16) :: optmod, varacc, typmat, modrig
-    character(len=19) :: matgeo, matas2, vecmod, champ
-    character(len=19) :: champ2, vecmo2
+    integer :: nfreq, nfreqc, nbrss, maxitr, nbborn, i, ljeveu, ibid, iret
+    integer :: defo, ldccvg, numord, nddle, nsta, ljeve2, cdsp, nbvec2, nbvect
+    real(kind=8) :: bande(2), r8bid, alpha, tolsor, precsh, fcorig, precdc, omecor, freqm, freqv
+    real(kind=8) :: freqa, freqr, csta
+    character(len=1)  :: k1bid
+    character(len=4)  :: mod45
+    character(len=8)  :: sdmode, sdstab, method, k8bid
+    character(len=16) :: optmod, varacc, typmat, modrig, typres, k16bid, optiof
+    character(len=19) :: matgeo, matas2, vecmod, champ, k19bid, champ2, vecmo2, eigsol
+    character(len=19) :: raide, masse
     character(len=24) :: k24bid, ddlexc, ddlsta
 !
 ! --------------------------------------------------------------------------------------------------
@@ -156,9 +152,62 @@ implicit none
 !  QUI EST LE NB DE FREQ TROUVEES PAR L'ALGO DANS NMOP45
 !
     nfreqc = nfreq
-    call nmop45(matas2, matgeo, defo, optmod, nfreqc,&
-                cdsp, bande, mod45, ddlexc, nddle,&
-                sdmode, sdstab, ddlsta, nsta)
+    
+!
+! --- CREATION DE LA SD EIGENSOLVER PARAMETRANT LE CALCUL MODAL
+! --- UN GEP SYM REEL RESOLU VIA SORENSEN
+!
+    eigsol='&&NMFLAM.EIGSOL'
+    k1bid=''
+    k8bid=''
+    k16bid=''
+    k19bid=''
+    ibid=isnnem()
+    r8bid=r8vide()
+    if (mod45 .eq. 'VIBR') then
+        typres = 'DYNAMIQUE'
+    else
+        typres = 'MODE_FLAMB'
+    endif
+    method = 'SORENSEN'
+! MATR_A
+    raide=matas2
+! MATR_B
+    masse=matgeo
+! OPTION MODALE
+    optiof=optmod
+! DIM_SOUS_ESPACE EN DUR
+    nbvect=0
+! COEF_SOUS_ESPACE
+    nbvec2=cdsp
+! NMAX_ITER_SHIFT EN DUR
+    nbrss = 5
+! PARA_ORTHO_SOREN EN DUR
+    alpha = 0.717d0
+! NMAX_ITER_SOREN EN DUR
+    maxitr = 200
+! PREC_SOREN EN DUR
+    tolsor = 0.d0
+! CALC_FREQ/FLAMB/PREC_SHIFT EN DUR
+    precsh = 5.d-2
+! SEUIL_FREQ/CRIT EN DUR
+    fcorig = 1.d-2
+! VERI_MODE/PREC_SHIFT EN DUR
+    precdc = 5.d-2
+    if (typres(1:9) .eq. 'DYNAMIQUE') omecor = omega2(fcorig)
+    if (option(1:5).eq.'BANDE') then
+      nbborn=2
+    else
+      nbborn=1
+    endif
+    call vpcres(eigsol, typres, raide, masse, k19bid, optiof, method, k16bid, k8bid, k19bid,&
+                k16bid, k16bid, k1bid, k16bid, nfreqc, nbvect, nbvec2, nbrss, nbborn, ibid,&
+                ibid, ibid, ibid, maxitr, bande, precsh, omecor, precdc, r8bid,&
+                r8bid, r8bid, r8bid, r8bid, tolsor, alpha)
+!
+! --- CALCUL MODAL PROPREMENT DIT
+!
+    call nmop45(eigsol, defo, mod45, ddlexc, nddle, sdmode, sdstab, ddlsta, nsta)
     if (nfreqc .eq. 0) then
         freqr = r8vide()
         numord = -1

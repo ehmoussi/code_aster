@@ -16,15 +16,16 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine nmop45(matrig, matgeo, defo, option, nfreq,&
-                  cdsp, bande, mod45, ddlexc, nddle,&
-                  modes, modes2, ddlsta, nsta)
+subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nsta)
 !
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/isnnem.h"
 #include "asterc/r8vide.h"
+#include "asterfort/assert.h"
+#include "asterfort/as_deallocate.h"
+#include "asterfort/as_allocate.h"
 #include "asterfort/codent.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/dismoi.h"
@@ -40,11 +41,16 @@ subroutine nmop45(matrig, matgeo, defo, option, nfreq,&
 #include "asterfort/mtdscr.h"
 #include "asterfort/omega2.h"
 #include "asterfort/rectfr.h"
+#include "asterfort/sdeiso.h"
 #include "asterfort/utmess.h"
+#include "asterfort/vecini.h"
+#include "asterfort/vecink.h"
+#include "asterfort/vecint.h"
 #include "asterfort/vpbost.h"
 #include "asterfort/vpcrea.h"
 #include "asterfort/vpddl.h"
 #include "asterfort/vpfopr.h"
+#include "asterfort/vplecs.h"
 #include "asterfort/vpordi.h"
 #include "asterfort/vpordo.h"
 #include "asterfort/vppara.h"
@@ -53,15 +59,11 @@ subroutine nmop45(matrig, matgeo, defo, option, nfreq,&
 #include "asterfort/vpwecf.h"
 #include "asterfort/vrrefe.h"
 #include "asterfort/wkvect.h"
-#include "asterfort/as_deallocate.h"
-#include "asterfort/as_allocate.h"
-    character(len=4) :: mod45
-    character(len=19) :: matrig, matgeo
-    integer :: defo, nfreq, cdsp
-    character(len=16) :: option
-    real(kind=8) :: bande(2)
-    character(len=8) :: modes, modes2
-    integer :: nddle, nsta
+!
+    integer           :: defo, nddle, nsta
+    character(len=4)  :: mod45
+    character(len=8)  :: modes, modes2
+    character(len=19) :: eigensol
     character(len=24) :: ddlexc, ddlsta
 !
 ! ======================================================================
@@ -74,44 +76,55 @@ subroutine nmop45(matrig, matgeo, defo, option, nfreq,&
 !
 !          LES MATRICES (K) ET (M) SONT REELLES SYMETRIQUES
 !          LES VALEURS PROPRES ET DES VECTEURS PROPRES SONT REELS
-!
-!     ------------------------------------------------------------------
-!     APPLICATION DE LA METHODE DE LANCZOS (VARIANTE DE NEUMANN-PIPANO)
-!     POUR CONSTRUIRE UNE MATRICE TRIDIAGONALE D'ORDRE REDUIT DE MEME
-!     VALEURS PROPRES QUE LE PROBLEME INITIAL (EVENTUELLEMENT DECALE)
-!
-!
-!
+!          PERIMETRE ACTUEL: GEP SYMETRIQUE REEL
+!-----------------------------------------------------------------------
+!   IN : EIGSOL : SD EIGENSOLVER CONTENANT LES PARAMETRES DU PB MODAL
+!   IN : DEFO   : TYPE DE DEFORMATIONS
+!                0            PETITES DEFORMATIONS (MATR. GEOM.)
+!                1            GRANDES DEFORMATIONS (PAS DE MATR. GEOM.)                  
+!   IN : MOD45  : TYPE DE CALCUL AU SENS NMOP45: VIBR OU FLAM
+!   IN : DDLEXC : OBJET JEVEUX VECTEUR POSITION DES DDLS BLOQUES
+!   IN : NDDLE  : TAILLE DE CE VECTEUR
+!   IN : MODES  : NOM UTILISATEUR DU CONCEPT MODAL PRODUIT
+!   IN : MODES2 : NOM UTILISATEUR D'UN SECOND CONCEPT MODAL PRODUIT (SI
+!                 ANALYSE DE STABILITE (NSTA.NE.0)
+!   IN : DDLSTA : OBJET JEVEUX VECTEUR DES DDLS DE STABILITE A EXCLURE
+!                 DU PB MODAL
+!   IN : NSTA   : TAILLE DE CE VECTEUR
+!-----------------------------------------------------------------------
 !
 !
     integer :: nbpari, nbparr, nbpark, mxddl, nbpara
     parameter (nbpari=8,nbparr=16,nbpark=3,nbpara=27)
     parameter (mxddl=1)
-    integer :: indf, imet, i, ieq, iret, ier1, ibid, ierd, ifreq
-    integer :: lamor, lmasse, lresur, lworkd, laux, lraide
-    integer :: lworkl, lworkv, lprod, lddl, eddl, eddl2
-    integer :: lmatra, lonwl, ityp, iordre, nbvec2, icoef, jexx, jest
+!
+    integer :: indf, imet, i, ieq, iret, ier1, ibid, ierd, ifreq, nbborn
+    integer :: lamor, lmasse, lresur, lworkd, laux, lraide, nfreq
+    integer :: lworkl, lworkv, lprod, lddl, eddl, eddl2, nbddl2, redem
+    integer :: lmatra, lonwl, ityp, iordre, nbvec2, icoef, jexx, jest, cdsp
     integer :: npivot, nbvect, priram(8), maxitr, neqact, mfreq, nparr, nbcine
-    integer :: nbrss, mxresf, nblagr, nconv, npiv2(2)
-    integer :: ifm, niv, nbddl, un
-    character(len=1) :: ktyp
+    integer :: nbrss, mxresf, nblagr, nconv, npiv2(2), ldsor, neq, idet(2)
+    integer :: ifm, niv, nbddl, un, zslvk, zslvr, zslvi, eislvk, eislvr, eislvi
     real(kind=8) :: alpha, tolsor, undf, omemin, omemax, omeshi, omecor, precdc
-    real(kind=8) :: vpinf, precsh, vpmax, csta, det(2), omebid
+    real(kind=8) :: vpinf, precsh, vpmax, csta, det(2), omebid, r8bid, fcorig
     complex(kind=8) :: cbid
-    character(len=8) :: knega, method, chaine
-    character(len=16) :: typcon, typres, typco2, k16bid
-    character(len=19) :: matopa, numedd, solveu
-    integer :: ldsor, neq, idet(2)
-    integer :: nbddl2, redem
+    character(len=1) :: ktyp, k1bid
+    character(len=8) :: knega, method, chaine, k8bid, k9bid
+    character(len=14) ::k14bid
+    character(len=16) :: typcon, typres, typco2, k16bid, option
+    character(len=19) :: matopa, numedd, solveu, eigsol, k19bid, matgeo, matrig
     character(len=24) :: nopara(nbpara), metres
-    aster_logical :: flage, lbid
-    real(kind=8), pointer :: resid(:) => null()
+    aster_logical :: flage, lbid, lc, lkr, lns
+
+!
     integer, pointer :: resu_i(:) => null()
-    character(len=24), pointer :: resu_k(:) => null()
-    aster_logical, pointer :: select(:) => null()
+    real(kind=8), pointer :: resid(:) => null()
     real(kind=8), pointer :: vect_propre(:) => null()
     real(kind=8), pointer :: vect_stabil(:) => null()
+    character(len=24), pointer :: resu_k(:) => null()
     character(len=24), pointer :: slvk(:) => null()
+    aster_logical, pointer :: select(:) => null()
+!
 !     ------------------------------------------------------------------
     data  nopara /&
      &  'NUME_MODE'       , 'ITER_QR'         , 'ITER_BATHE'      ,&
@@ -125,34 +138,35 @@ subroutine nmop45(matrig, matgeo, defo, option, nfreq,&
      &  'FACT_PARTICI_DX' , 'FACT_PARTICI_DY' , 'FACT_PARTICI_DZ' ,&
      &  'MASS_EFFE_UN_DX' , 'MASS_EFFE_UN_DY' , 'MASS_EFFE_UN_DZ' /
 !     ------------------------------------------------------------------
-!
-!
-!
-! ----------------------------------------------------------------------
-!
+
     call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
+
 !
-! --- INITIALISATIONS
+! --- LECTURE DES DONNEES DE EIGSOL
 !
+    call vplecs(eigsol, ibid, maxitr, nbborn, ibid,&
+                ibid, cdsp, ibid, nbrss, nfreq,&
+                ibid, alpha, omecor, omemin, omemax,&
+                precdc, precsh, r8bid, r8bid, r8bid,&
+                r8bid, r8bid, tolsor, k1bid, k8bid,&
+                method, k9bid, k14bid, k14bid, k14bid,&
+                k16bid, option, k16bid, k16bid, k16bid,&
+                typres, k19bid, matgeo, matrig, k19bid,&
+                lc, lkr, lns, lbid, lbid)
+
+! DIVERS
     cbid=(0.d0,0.d0)
-    omecor = omega2(1.d-2)
     un=1
-    precsh = 5.d-2
-    precdc = 5.d-2
+ 
     flage = .false.
     undf = r8vide()
     indf = isnnem()
-    method = 'SORENSEN'
-    typres = 'MODE_FLAMB'
-    if (mod45 .eq. 'VIBR') typres = 'DYNAMIQUE'
-    nbrss = 5
     nconv = nfreq
-    nbvect = cdsp*nfreq
     nbvec2 = 0
     lamor = 0
-    omemin = bande(1)
-    omemax = bande(2)
+    nbvect = cdsp*nfreq
+
 !
 ! --- RECUPERATION DU RESULTAT
 !
@@ -167,7 +181,7 @@ subroutine nmop45(matrig, matgeo, defo, option, nfreq,&
 !     --- RECUPERATION DE LA NUMEROTATION DE LA MATRICE DE RAIDEUR ---
     call dismoi('NOM_NUME_DDL', matrig, 'MATR_ASSE', repk=numedd)
 !
-!     --- COMPATIBILITE DES MODES (DONNEES ALTEREES) ---s
+!     --- COMPATIBILITE DES MODES (DONNEES ALTEREES) ---
 !
 !------------------a remettre------------------------------
 !
@@ -364,9 +378,6 @@ subroutine nmop45(matrig, matgeo, defo, option, nfreq,&
 !     -------  CALCUL DES VALEURS PROPRES ET VECTEURS PROPRES   --------
 !     ------------------------------------------------------------------
 !
-    alpha = 0.717d0
-    maxitr = 200
-    tolsor = 0.d0
 !
     if (niv .eq. 2) then
         priram(1) = 2
@@ -544,6 +555,7 @@ subroutine nmop45(matrig, matgeo, defo, option, nfreq,&
     AS_DEALLOCATE(vr=vect_stabil)
     AS_DEALLOCATE(vl=select)
     AS_DEALLOCATE(vr=resid)
+    call detrsd('EIGENSOLVER',eigsol)
     call jedetr('&&NMOP45.VECT.WORKD')
     call jedetr('&&NMOP45.VECT.WORKL')
     call jedetr('&&NMOP45.VECT.WORKV')
