@@ -1,6 +1,6 @@
 /**
- * @file ParallelMechanicalLoadInterface.cxx
- * @brief Interface python de ParallelMechanicalLoad
+ * @file PhysicalQuantityManager.cxx
+ * @brief Implementation de PhysicalQuantityManager
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -20,22 +20,3 @@
  *   You should have received a copy of the GNU General Public License
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#include "PythonBindings/ParallelMechanicalLoadInterface.h"
-#include <boost/python.hpp>
-
-#ifdef _USE_MPI
-
-void exportParallelMechanicalLoadToPython()
-{
-    using namespace boost::python;
-
-    class_< ParallelMechanicalLoadInstance,
-            ParallelMechanicalLoadInstance::ParallelMechanicalLoadPtr,
-            bases< DataStructure > > ( "ParallelMechanicalLoad", no_init )
-        .def( "create", &ParallelMechanicalLoadInstance::create )
-        .staticmethod( "create" )
-    ;
-};
-
-#endif /* _USE_MPI */

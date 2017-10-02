@@ -64,6 +64,8 @@ protected:
     JeveuxVectorChar16                        _nameOfNeighborhoodStructure;
     /** @brief Object to allow loop over connectivity of delayed numbered elements */
     const ConnectivityDelayedElementsExplorer _explorer;
+    /** @brief Object to allow loop over list of group of elements */
+    const ConnectivityDelayedElementsExplorer _explorer2;
 
 public:
     /**
@@ -72,17 +74,47 @@ public:
     FiniteElementDescriptorInstance( const std::string& name,
                                      const JeveuxMemory memType = Permanent );
 
+    /**
+     * @typedef FiniteElementDescriptorPtr
+     * @brief Pointeur intelligent vers un FiniteElementDescriptor
+     */
+    typedef boost::shared_ptr< FiniteElementDescriptorInstance > FiniteElementDescriptorPtr;
+
     const ConnectivityDelayedElementsExplorer& getDelayedElementsExplorer() const
     {
         _delayedNumberedConstraintElementsDescriptor->buildFromJeveux();
         return _explorer;
     };
 
-    /**
-     * @typedef FiniteElementDescriptorPtr
-     * @brief Pointeur intelligent vers un FiniteElementDescriptor
-     */
-    typedef boost::shared_ptr< FiniteElementDescriptorInstance > FiniteElementDescriptorPtr;
+    const JeveuxVectorLong& getDelayedNodesComponentDescriptor() const
+    {
+        _dofOfDelayedNumberedConstraintNodes->updateValuePointer();
+        return _dofOfDelayedNumberedConstraintNodes;
+    };
+
+    const JeveuxVectorLong& getDelayedNodesNumbering() const
+    {
+        _delayedNodesNumbering->updateValuePointer();
+        return _delayedNodesNumbering;
+    };
+
+    const ConnectivityDelayedElementsExplorer& getListOfGroupOfElements() const
+    {
+        _listOfGroupOfElements->buildFromJeveux();
+        return _explorer2;
+    };
+
+    long getNumberOfDelayedNodes() const
+    {
+        _numberOfDelayedNumberedConstraintNodes->updateValuePointer();
+        return (*_numberOfDelayedNumberedConstraintNodes)[0];
+    };
+
+    const JeveuxVectorLong& getPhysicalNodesComponentDescriptor() const
+    {
+        _dofDescriptor->updateValuePointer();
+        return _dofDescriptor;
+    };
 };
 
 /**
@@ -90,12 +122,5 @@ public:
  * @brief Pointeur intelligent vers un FiniteElementDescriptorInstance
  */
 typedef boost::shared_ptr< FiniteElementDescriptorInstance > FiniteElementDescriptorPtr;
-
-/**
- * @typedef FiniteElementDescriptor
- * @brief Pointeur intelligent vers un FiniteElementDescriptorInstance
- */
-typedef boost::shared_ptr< FiniteElementDescriptorInstance > FiniteElementDescriptorPtr;
-
 
 #endif /* FINITEELEMENTDESCRIPTOR_H_ */

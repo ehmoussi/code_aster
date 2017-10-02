@@ -58,13 +58,14 @@ class UnitaryLoad
          * @param curCoord Coordonnee de la grandeur sur laquelle on impose le chargement
          * @param value Valeur du chargement
          */
-        UnitaryLoad( MeshEntityPtr supportMeshEntity, PhysicalQuantityComponent curCoord, ValueType value ) throw ( std::runtime_error ):
+        UnitaryLoad( MeshEntityPtr supportMeshEntity, PhysicalQuantityComponent curCoord,
+                     ValueType value ) throw ( std::runtime_error ):
             _supportMeshEntity( supportMeshEntity ),
             _loadCoordinate( curCoord ),
             _value( value )
         {
             if ( ! PhysicalQuantityType::hasComponent( curCoord ) )
-                throw std::runtime_error( std::string ( ComponentNames[ (int) curCoord ] ) +
+                throw std::runtime_error( ComponentNames.find( curCoord )->second +
                                           " not allowed" );
         };
 
@@ -74,7 +75,7 @@ class UnitaryLoad
          */
         const std::string getAsterCoordinateName() const
         {
-            return std::string( ComponentNames[ (int) _loadCoordinate ] );
+            return std::string( ComponentNames.find(_loadCoordinate)->second );
         };
 
         /**

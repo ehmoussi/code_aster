@@ -31,12 +31,15 @@
 
 class MeshElement
 {
+    const long        _elemNum;
     const long* const _listOfNodes;
     const long        _nbNodes;
     const long        _type;
 
 public:
-    MeshElement( const long* const listOfNodes, const long& nbNodes, const long& type ):
+    MeshElement( const long& num, const long* const listOfNodes,
+                 const long& nbNodes, const long& type ):
+        _elemNum( num ),
         _listOfNodes( listOfNodes ),
         _nbNodes( nbNodes ),
         _type( type )
@@ -47,12 +50,19 @@ public:
         return _nbNodes;
     };
 
+    const long& getElementNumber() const
+    {
+        return _elemNum;
+    };
+
+    const long& getType() const
+    {
+        return _type;
+    };
+
     struct const_iterator
     {
         const long* positionInList;
-
-        inline const_iterator(): positionInList( nullptr )
-        {};
 
         inline const_iterator( const long* curList ):
             positionInList( curList )
@@ -139,11 +149,11 @@ public:
             throw std::runtime_error ( "Connectivity not available" );
 
         if( pos > size2 || pos < 0 )
-            return MeshElement( nullptr, 0, -1 );
+            return MeshElement( 0, nullptr, 0, -1 );
         const auto& obj = _connect->getObject( pos + 1 );
         const auto size = obj.size();
         const long type = (*_type)[ pos ];
-        return MeshElement( &obj.operator[]( 0 ), size, type );
+        return MeshElement( pos+1, &obj.operator[]( 0 ), size, type );
     };
 
     int size() const throw( std::runtime_error )
@@ -172,11 +182,11 @@ public:
             throw std::runtime_error ( "Connectivity not available" );
 
         if( pos > size2 || pos < 0 )
-            return MeshElement( nullptr, 0, -1 );
+            return MeshElement( 0, nullptr, 0, -1 );
         const auto& obj = _connectAndType->getObject( pos + 1 );
         const auto size = obj.size() - 1;
         const long type = obj[ size ];
-        return MeshElement( &obj.operator[]( 0 ), size, type );
+        return MeshElement( pos+1, &obj.operator[]( 0 ), size, type );
     };
 
     int size() const throw( std::runtime_error )
@@ -214,9 +224,6 @@ public:
     {
         int                position;
         const ElemBuilder& builder;
-
-        inline const_iterator( const ElemBuilder& test ): position( 0 ), builder( test )
-        {};
 
         inline const_iterator( int memoryPosition, const ElemBuilder& test ):
             position( memoryPosition ), builder( test )
@@ -262,6 +269,11 @@ public:
         };
     };
 
+    inline MeshElement operator[]( int i ) const
+    {
+        return _builder.getElement(i-1);
+    };
+
     /**
      * @brief 
      */
@@ -277,6 +289,14 @@ public:
     const_iterator end() const
     {
         return const_iterator( _builder.size(), _builder );
+    };
+
+    /**
+     * @brief Size of the explorer
+     */
+    long size() const
+    {
+        return _builder.size();
     };
 };
 

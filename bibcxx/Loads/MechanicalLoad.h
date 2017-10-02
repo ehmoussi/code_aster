@@ -549,8 +549,8 @@ class MechanicalLoadInstance: public GenericMechanicalLoadInstance
               curIter != comp_val.end(); 
               ++curIter )
         {
-            dict2.container[ComponentNames[curIter-> first] ] = curIter->second ;
-            std::cout << ComponentNames[curIter-> first] << "   " << curIter->second << std::endl;
+            const auto& tmp = ComponentNames.find(curIter-> first);
+            dict2.container[tmp->second] = curIter->second;
         }
         /* Caractéristiques du MeshEntity */
         if ( _supportMeshEntity->getType() == AllMeshEntitiesType )

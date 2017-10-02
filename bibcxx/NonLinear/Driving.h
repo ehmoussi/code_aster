@@ -46,7 +46,6 @@ extern const std::vector< std::string > allDrivingTypeNames;
  * Components defining the degree of freedom on which we act 
 */
 extern const std::vector< PhysicalQuantityComponent > allDisplacementComponent;
-extern const std::vector< std::string > allDisplacementComponentNames;
 
 
 /**
@@ -116,9 +115,13 @@ public:
                                                       ( false, "COEF_MULT", _coefMult, true ) );
        _toCapyConverter.add( new CapyConvertibleValue< DataStructurePtr >
                                                       ( false, "FISSURE", (DataStructurePtr&)_crack, false ) );
+        VectorString allNames( nbDisplacementComponents );
+        transform( ComponentNames.begin(),
+                   ComponentNames.find((PhysicalQuantityComponent)nbDisplacementComponents),
+                   allNames.begin(), value );
        _toCapyConverter.add( new CapyConvertibleValue< PhysicalQuantityComponent> 
                                                       ( false, "NON_CMP", _component, allDisplacementComponent, 
-                                                      allDisplacementComponentNames , false ) );
+                                                        allNames, false ) );
        _toCapyConverter.add( new CapyConvertibleValue< double >
                                                       ( false, "ETA_PILO_MIN", _etaMin, false ) );
        _toCapyConverter.add( new CapyConvertibleValue< double >

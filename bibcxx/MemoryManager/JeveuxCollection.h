@@ -149,9 +149,78 @@ public:
         _collectionName( collectionName ),
         _numberInCollection( number ),
         _nameOfObject( trim( objectName ) ),
-        _valuePtr( nullptr), _size( size )
+        _valuePtr( nullptr ), _size( size )
     {
         allocate( size );
+    };
+
+    struct const_iterator
+    {
+        int              position;
+        const ValueType& valuePtr;
+
+        inline const_iterator( int memoryPosition,
+                               const ValueType& val ):
+            position( memoryPosition ),
+            valuePtr( val )
+        {};
+
+        inline const_iterator( const const_iterator& iter ):
+            position( iter.position ),
+            valuePtr( iter.valuePtr )
+        {};
+
+        inline const_iterator& operator=( const const_iterator& testIter )
+        {
+            position = testIter.position;
+            valuePtr = testIter.valuePtr;
+            return *this;
+        };
+
+        inline const_iterator& operator++()
+        {
+            ++position;
+            return *this;
+        };
+
+        inline bool operator==( const const_iterator& testIter ) const
+        {
+            if ( testIter.position != position ) return false;
+            return true;
+        };
+
+        inline bool operator!=( const const_iterator& testIter ) const
+        {
+            if ( testIter.position != position ) return true;
+            return false;
+        };
+
+        inline const ValueType& operator->() const
+        {
+            return (&valuePtr)[ position ];
+        };
+
+        inline const ValueType& operator*() const
+        {
+            return (&valuePtr)[ position ];
+        };
+    };
+
+    /**
+     * @brief 
+     */
+    const_iterator begin() const
+    {
+        return const_iterator( 0, *_valuePtr );
+    };
+
+    /**
+     * @brief 
+     * @todo revoir le fonctionnement du end car il peut provoquer de segfault
+     */
+    const_iterator end() const
+    {
+        return const_iterator( _size, *_valuePtr );
     };
 
     inline const ValueType &operator[]( int i ) const
@@ -264,14 +333,14 @@ private:
     typedef std::map< std::string, int > mapStrInt;
 
     /** @brief La collection est-elle vide ? */
-    bool                                               _isEmpty;
+    bool                                _isEmpty;
     /** @brief La collection est-elle nommée ? */
-    bool                                               _isNamed;
+    bool                                _isNamed;
     /** @brief Listes de objets de collection */
-    std::vector< JeveuxCollectionObject< ValueType > > _listObjects;
+    std::vector< JeveuxCollObjValType > _listObjects;
     /** @brief Correspondance nom/numéro */
-    mapStrInt                                          _mapNumObject;
-    int                                                _size;
+    mapStrInt                           _mapNumObject;
+    int                                 _size;
     /**
      * @brief Pointeur vers un JeveuxBidirectionalMap
      * @todo int par defaut : pas terrible
@@ -353,6 +422,75 @@ public:
 
     ~JeveuxCollectionInstance()
     {};
+
+    struct const_iterator
+    {
+        int position;
+        const std::vector< JeveuxCollObjValType >& values;
+
+        inline const_iterator( int memoryPosition,
+                               const std::vector< JeveuxCollObjValType >& vec ):
+            position( memoryPosition ),
+            values( vec )
+        {};
+
+        inline const_iterator( const const_iterator& iter ):
+            position( iter.position ),
+            values( iter.values )
+        {};
+
+        inline const_iterator& operator=( const const_iterator& testIter )
+        {
+            position = testIter.position;
+            values = testIter.values;
+            return *this;
+        };
+
+        inline const_iterator& operator++()
+        {
+            ++position;
+            return *this;
+        };
+
+        inline bool operator==( const const_iterator& testIter ) const
+        {
+            if ( testIter.position != position ) return false;
+            return true;
+        };
+
+        inline bool operator!=( const const_iterator& testIter ) const
+        {
+            if ( testIter.position != position ) return true;
+            return false;
+        };
+
+        inline const JeveuxCollObjValType& operator->() const
+        {
+            return values[ position ];
+        };
+
+        inline const JeveuxCollObjValType& operator*() const
+        {
+            return values[ position ];
+        };
+    };
+
+    /**
+     * @brief 
+     */
+    const_iterator begin() const
+    {
+        return const_iterator( 0, _listObjects );
+    };
+
+    /**
+     * @brief 
+     * @todo revoir le fonctionnement du end car il peut provoquer de segfault
+     */
+    const_iterator end() const
+    {
+        return const_iterator( _size, _listObjects );
+    };
 
     /**
      * @brief Allocation
@@ -483,12 +621,12 @@ public:
      */
     std::vector< JeveuxChar32 > getObjectNames() const;
 
-    const std::vector< JeveuxCollectionObject< ValueType > >& getVectorOfObjects() const
+    const std::vector< JeveuxCollObjValType >& getVectorOfObjects() const
     {
         return _listObjects;
     };
 
-    const JeveuxCollectionObject< ValueType >& getObject( const int& position ) const
+    const JeveuxCollObjValType& getObject( const int& position ) const
         throw( std::runtime_error )
     {
         if( _isEmpty )
@@ -500,7 +638,7 @@ public:
         return _listObjects[position-1];
     };
 
-    JeveuxCollectionObject< ValueType >& getObject( const int& position )
+    JeveuxCollObjValType& getObject( const int& position )
         throw( std::runtime_error )
     {
         if( _isEmpty )
@@ -512,7 +650,7 @@ public:
         return _listObjects[position-1];
     };
 
-    const JeveuxCollectionObject< ValueType >& getObjectFromName( const std::string& name ) const
+    const JeveuxCollObjValType& getObjectFromName( const std::string& name ) const
         throw( std::runtime_error )
     {
         if( _isEmpty )
@@ -528,7 +666,7 @@ public:
         return _listObjects[ curIter->second ];
     };
 
-    JeveuxCollectionObject< ValueType >& getObjectFromName( const std::string& name )
+    JeveuxCollObjValType& getObjectFromName( const std::string& name )
         throw( std::runtime_error )
     {
         if( _isEmpty )

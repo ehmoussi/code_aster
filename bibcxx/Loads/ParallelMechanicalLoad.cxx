@@ -23,38 +23,34 @@
 
 #include "Loads/ParallelMechanicalLoad.h"
 #include "Meshes/MeshExplorer.h"
+#include "ParallelUtilities/MPIInfos.h"
 
 #ifdef _USE_MPI
 
-ParallelMechanicalLoadInstance::ParallelMechanicalLoadInstance( GenericMechanicalLoadPtr& load ):
-                    GenericMechanicalLoadInstance( load->getSupportModel() )
+ParallelMechanicalLoadInstance::ParallelMechanicalLoadInstance( const GenericMechanicalLoadPtr& load,
+                                                                const ModelPtr& model ):
+    DataStructure( getNewResultObjectName(), "CHAR_MECA" ),
+    _FEDesc( ParallelFiniteElementDescriptorPtr() ),
+    _cimpo( new PCFieldOnMeshDoubleInstance( getName() + ".CHME.CIMPO", _FEDesc ) ),
+    _cmult( new PCFieldOnMeshDoubleInstance( getName() + ".CHME.CMULT", _FEDesc ) )
 {
     const auto& mesh = load->getSupportModel()->getPartialMesh();
-    const auto& mecaLoad = load->getMechanicalLoadDescription();
-    std::cout << "Size "  << mecaLoad._cimpo->getSize() << std::endl;
-    const auto& pcField = *(mecaLoad._cimpo);
+    const auto& pcField = *(load->getMechanicalLoadDescription()._cimpo);
 
-    for( const auto b : mesh->getConnectivityExplorer() )
-        for( const auto d : b )
-            std::cout << "Noeuds " << d << std::endl;
-
-    const auto FEDesc = pcField.getZoneDescription(1).getFiniteElementDescriptor();
-    for( const auto b : FEDesc->getDelayedElementsExplorer() )
-        for( const auto d : b )
-            std::cout << "Noeuds2 " << d << std::endl;
-
-    for( int pos = 0; pos < pcField.getSize(); ++pos )
+    std::string savedName( "" );
+    for( int pos = 0; pos < pcField.size(); ++pos )
     {
-        const auto& zone = pcField.getZoneDescription( pos );
-        std::cout << "Localization " << zone.getLocalizationType() << std::endl;
-        if( zone.getLocalizationType() == PCFieldZone::ListOfDelayedElements )
-        {
-            for( auto& val : zone.getListOfElements() )
-                std::cout << val << std::endl;
-        }
-        else
-            continue;
+        const auto& zone = pcField.getZoneDescription( pos ).getFiniteElementDescriptor();
+        if( zone->getName() != "" && savedName == "" )
+            savedName = zone->getName();
+        if( zone->getName() != savedName )
+            throw std::runtime_error( "Different FiniteElementDescriptor in one PCFieldOnMesh is not allowed" );
+        savedName = zone->getName();
     }
+    const auto FEDesc = pcField.getZoneDescription(1).getFiniteElementDescriptor();
+    _FEDesc = ParallelFiniteElementDescriptorPtr
+                ( new ParallelFiniteElementDescriptorInstance( getName() + ".CHME.LIGRE",
+                                                               FEDesc, mesh, model ) );
 };
 
 #endif /* _USE_MPI */

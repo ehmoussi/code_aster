@@ -31,4 +31,3 @@ const std::vector<SelectionCriterionEnum> allSelectionCriterion = { SmallestDisp
 const std::vector< std::string > allSelectionCriterionNames = { "NORM_INCR_DEPL", "ANGL_INCR_DEPL", "RESIDU", "MIXTE"}; 
 
 const std::vector< PhysicalQuantityComponent > allDisplacementComponent (std::begin(DisplacementComponents), std::end(DisplacementComponents));
-const std::vector< std::string > allDisplacementComponentNames ( ComponentNames, ComponentNames + nbDisplacementComponents); 

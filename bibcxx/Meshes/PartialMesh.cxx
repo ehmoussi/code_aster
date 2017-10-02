@@ -27,8 +27,10 @@
 
 #ifdef _USE_MPI
 
-PartialMeshInstance::PartialMeshInstance( ParallelMeshPtr& mesh, const VectorString& toFind ):
+PartialMeshInstance::PartialMeshInstance( const ParallelMeshPtr& mesh,
+                                          const VectorString& toFind ):
                         BaseMeshInstance( "MAILLAGE_PARTIEL" ),
+                        _pMesh( mesh ),
                         _localNumbering( getName() + ".LOCAL" ),
                         _globalNumbering( getName() + ".GLOBAL" ),
                         _owner( getName() + ".POSSESSEUR" )

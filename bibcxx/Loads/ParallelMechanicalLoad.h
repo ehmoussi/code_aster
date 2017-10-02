@@ -29,8 +29,10 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "astercxx.h"
+#include "DataStructures/DataStructure.h"
+#include "DataFields/PCFieldOnMesh.h"
 #include "Modeling/Model.h"
+#include "Modeling/ParallelFiniteElementDescriptor.h"
 #include "Loads/MechanicalLoad.h"
 
 /**
@@ -38,15 +40,24 @@
  * @brief Classe definissant une charge dualisée parallèle
  * @author Nicolas Sellenet
  */
-class ParallelMechanicalLoadInstance: public GenericMechanicalLoadInstance
+class ParallelMechanicalLoadInstance: public DataStructure
 {
 protected:
+    /** @brief Modèle support */
+    ModelPtr                           _supportModel;
+    /** @brief Vecteur Jeveux '.LIGRE' */
+    ParallelFiniteElementDescriptorPtr _FEDesc;
+    /** @brief Carte '.CIMPO' */
+    PCFieldOnMeshDoublePtr             _cimpo;
+    /** @brief Carte '.CMULT' */
+    PCFieldOnMeshDoublePtr             _cmult;
 
 public:
     /**
      * @brief Constructeur
      */
-    ParallelMechanicalLoadInstance( GenericMechanicalLoadPtr& load );
+    ParallelMechanicalLoadInstance( const GenericMechanicalLoadPtr& load,
+                                    const ModelPtr& model );
 
     /**
      * @typedef ParallelMechanicalLoadPtr
@@ -57,9 +68,10 @@ public:
     /**
      * @brief Constructeur
      */
-    static ParallelMechanicalLoadPtr create( GenericMechanicalLoadPtr& load )
+    static ParallelMechanicalLoadPtr create( const GenericMechanicalLoadPtr& load,
+                                             const ModelPtr& model )
     {
-        return ParallelMechanicalLoadPtr( new ParallelMechanicalLoadInstance( load ) );
+        return ParallelMechanicalLoadPtr( new ParallelMechanicalLoadInstance( load, model ) );
     };
 };
 
@@ -68,7 +80,6 @@ public:
  * @brief Pointeur intelligent vers un ParallelMechanicalLoadInstance
  */
 typedef boost::shared_ptr< ParallelMechanicalLoadInstance > ParallelMechanicalLoadPtr;
-
 
 #endif /* PARALLELMECHANICALLOAD_H_ */
 

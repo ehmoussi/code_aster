@@ -100,9 +100,11 @@ public:
     void setValue( const VectorComponent& values )
     {
         _values = values;
+        VectorString allNames( ComponentNames.size() );
+        transform( ComponentNames.begin(), ComponentNames.end(), allNames.begin(), value );
         _toCapyConverter.add( new CapyConvertibleValue< VectorComponent >
                                                       ( true, "DDL", _values,
-                                                        allComponents, allComponentsNames,
+                                                        allComponents, allNames,
                                                         true ) );
     };
 

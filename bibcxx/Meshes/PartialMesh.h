@@ -45,6 +45,8 @@ class PartialMeshInstance: public BaseMeshInstance
 {
 private:
     typedef JeveuxCollection< long, JeveuxBidirectionalMapChar24 > JeveuxCollectionLongNamePtr;
+    /** @brief Base ParallelMesh */
+    ParallelMeshPtr  _pMesh;
     /** @brief id of node in local numbering */
     JeveuxVectorLong _localNumbering;
     /** @brief id of node in global numbering */
@@ -62,14 +64,34 @@ public:
     /**
      * @brief Constructeur
      */
-    PartialMeshInstance( ParallelMeshPtr&, const VectorString& );
+    PartialMeshInstance( const ParallelMeshPtr&, const VectorString& );
 
     /**
      * @brief Constructeur
      */
-    static PartialMeshPtr create( ParallelMeshPtr& a, const VectorString& b )
+    static PartialMeshPtr create( const ParallelMeshPtr& a, const VectorString& b )
     {
         return PartialMeshPtr( new PartialMeshInstance( a, b ) );
+    };
+
+    const JeveuxVectorLong& getGlobalNumbering() const
+    {
+        return _globalNumbering;
+    };
+
+    const JeveuxVectorLong& getLocalNumbering() const
+    {
+        return _localNumbering;
+    };
+
+    const JeveuxVectorLong& getOwner() const
+    {
+        return _owner;
+    };
+
+    const ParallelMeshPtr& getParallelMesh() const
+    {
+        return _pMesh;
     };
 };
 
