@@ -107,14 +107,14 @@ def objects_from_context(dict_objects, filter_type, ignore_names=[]):
     return objects
 
 
-class Singleton(object):
-    """Singleton implementation in python."""
-    # add _singleton_id attribute to the class to be independant of import
+class Singleton(type):
+    """Singleton implementation in python (Metaclass)."""
+    # add _singleton_id attribute to the subclasses to be independant of import
     # path used
     __inst = {}
 
-    def __new__(cls, *args, **kargs):
+    def __call__(cls, *args, **kws):
         cls_id = getattr(cls, '_singleton_id', cls)
-        if Singleton.__inst.get(cls_id) is None:
-            Singleton.__inst[cls_id] = object.__new__(cls)
-        return Singleton.__inst[cls_id]
+        if cls_id not in cls.__inst:
+            cls.__inst[cls_id] = super(Singleton, cls).__call__(*args, **kws)
+        return cls.__inst[cls_id]
