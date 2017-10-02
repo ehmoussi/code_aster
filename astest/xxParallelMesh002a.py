@@ -1,9 +1,11 @@
+#!/usr/bin/python
+# coding: utf-8
 
-import code_aster
+import numpy as N
 import code_aster
 from code_aster.Commands import *
 
-import numpy as N
+code_aster.init()
 
 test = code_aster.TestCase()
 
@@ -15,7 +17,7 @@ MATER=DEFI_MATERIAU(ELAS=_F(E=10000.0,
                             NU=0.,
                             RHO=1.0,),
                             );
-                            
+
 affectMat = code_aster.MaterialOnMesh.create(MAIL)
 affectMat.addMaterialOnAllMesh(MATER)
 affectMat.build()

@@ -3,6 +3,8 @@
 import code_aster
 from code_aster.Commands import *
 
+code_aster.init()
+
 test = code_aster.TestCase()
 
 tab = CREA_TABLE(LISTE=_F(PARA='X', LISTE_I=(1, 2, 3)),

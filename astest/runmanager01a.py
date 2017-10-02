@@ -1,24 +1,28 @@
 #!/usr/bin/python
+# coding: utf-8
 
 import platform
 import code_aster
+from code_aster.Commands import *
 
-from code_aster.Supervis import executionParameter
-from code_aster.RunManager.Initializer import finalize
+code_aster.init()
 
 test = code_aster.TestCase()
 
-test.assertEqual( executionParameter.get_option('hostname'), platform.node())
+# calling DEBUT/init another time must not fail
+DEBUT()
+
+from code_aster.Supervis.ExecutionParameter import ExecutionParameter
+params = ExecutionParameter()
+
+test.assertEqual( params.get_option('hostname'), platform.node())
 # because of multiplicative factor running testcases
-test.assertGreaterEqual( executionParameter.get_option('tpmax'), 123)
+test.assertGreaterEqual( params.get_option('tpmax'), 123)
 
-executionParameter.set_option('tpmax', 60.)
-test.assertEqual( executionParameter.get_option('tpmax'), 60)
+params.set_option('tpmax', 60.)
+test.assertEqual( params.get_option('tpmax'), 60)
 
-
-finalize()
-
-# a second call (or the call atexit) must not fail
-finalize()
+# FIN does nothing: done when libaster is lost
+FIN()
 
 test.printSummary()

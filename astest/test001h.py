@@ -4,6 +4,9 @@
 # check the manual start using the '--no-start' option
 
 import code_aster
+
+code_aster.init()
+
 test = code_aster.TestCase()
 
 from code_aster import executionParameter

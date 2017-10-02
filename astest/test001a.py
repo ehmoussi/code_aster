@@ -3,7 +3,7 @@
 
 import code_aster
 
-code_aster.init('--memory=2000.')
+code_aster.init()
 test = code_aster.TestCase()
 
 # Creation du maillage

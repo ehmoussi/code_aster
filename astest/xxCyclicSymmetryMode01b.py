@@ -1,14 +1,14 @@
 #!/usr/bin/python
-
 # coding: utf-8
 
 # Cas-test issu de sdlv134a
 # Validation de la sous-structuration cyclique
-# Legacy syntax 
+# Legacy syntax
 
 import code_aster
 from code_aster.Commands import *
 
+code_aster.init()
 
 test = code_aster.TestCase()
 
@@ -77,7 +77,7 @@ LINT=DEFI_INTERF_DYNA(   NUME_DDL=NUMEROTA,INTERFACE=(
                                         TYPE = 'CRAIGB',
                                         GROUP_NO = 'Gauche',))
                               )
-# 
+#
 #MODES=CALC_MODES( MATR_RIGI=MATRRIGI,
 #                  MATR_MASS=MATRMASS,
 #                  CALC_FREQ=_F( NMAX_FREQ = 15))
