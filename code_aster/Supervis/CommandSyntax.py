@@ -19,7 +19,6 @@
 
 from ..Utilities import force_list
 from .logger import logger
-from .ResultNaming import ResultNaming
 
 
 class CommandSyntax:
@@ -28,7 +27,6 @@ class CommandSyntax:
     """
 
     _currentCommand = None
-    result_naming = ResultNaming()
 
     @classmethod
     def setCurrentCommand(cls, command):
@@ -50,28 +48,6 @@ class CommandSyntax:
             *CommandSyntax*: Current registered *CommandSyntax*.
         """
         return cls._currentCommand
-
-    @classmethod
-    def getNewResultName(cls):
-        """Return a new result name.
-
-        The first one is "0       ", then "1       ", etc.
-
-        Returns:
-            str: String of 8 characters containing the new name.
-        """
-        return cls.result_naming.getNewResultName()
-
-    @classmethod
-    def getCurrentName(cls):
-        """Return a the current result name.
-
-        This is the name of the object that is being created.
-
-        Returns:
-            str: String of 8 characters containing the current name.
-        """
-        return cls.result_naming.getCurrentName()
 
 
     def __init__(self, name="unNamed", cata=None):

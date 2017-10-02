@@ -24,6 +24,7 @@ This module adds the support of macro-commands.
 import sys
 
 import aster
+from libaster import ResultNaming
 
 from ..Cata import Commands, checkSyntax
 from ..Supervis import CommandSyntax, logger
@@ -108,7 +109,7 @@ class ExecuteCommand(object):
         sd_name = get_name(self.name)
         if not sd_name:
             # use an automatic naming
-            sd_name = CommandSyntax.getNewResultName()
+            sd_name = ResultNaming.getNewResultName()
         return sd_name
 
     def check_jeveux(self):
