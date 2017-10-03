@@ -17,7 +17,9 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from ..Utilities import force_list, is_complex, is_float, is_int, is_str
+from ..Extensions import DataStructure
+from ..Utilities import (force_list, is_complex, is_float, is_int, is_str,
+                         value_is_sequence)
 from .typeaster import typeaster
 from .logger import logger
 
@@ -458,20 +460,28 @@ class CommandSyntax:
             maxval (int): Maximum number of values returned.
 
         Returns:
-            list[str]: List of the names of simple keywords.
+            list[str]: List of the names of simple keywords, alphabetically
+                sorted.
             list[str]: List of type names of the keywords.
         """
         userkw = self._getDefinition(factName, occurrence)
         if not userkw:
             return (), ()
         logger.debug("getmjm: user keywords: {0}".format(userkw))
-        catadef = self._getCataDefinition(factName)
+        catadef = self._getCataDefinition(factName).simple_keywords
+        lkeywords = sorted(userkw.keys())
         kws, types = [], []
-        for kw, obj in userkw.items():
+        for kw in lkeywords:
+            obj = userkw[kw]
             if obj is None:
+                continue
+            # ignore factor keyword: legacy getmjm returned typ='MCList'
+            if not catadef.has_key(kw):
                 continue
             kws.append(kw)
             typ = typeaster(catadef[kw].definition['typ'])
+            if value_is_sequence(obj) and not is_complex(obj):
+                obj = obj[0]
             if is_complex(obj) and typ == 'C8':
                 pass
             elif is_float(obj) and typ in ('R8', 'C8'):
@@ -483,7 +493,7 @@ class CommandSyntax:
             elif isinstance(obj, DataStructure):
                 typ = obj.getType()
             else:
-                raise TypeError("unsupported type: {0!r} <{1}>"
+                raise TypeError("unsupported type: {0!r} {1}"
                                 .format(obj, type(obj)))
             types.append(typ)
         return kws, types
