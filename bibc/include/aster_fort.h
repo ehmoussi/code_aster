@@ -316,6 +316,12 @@ void DEFSS(LRMJOI_WRAP,lrmjoi_wrap, const char*, STRING_SIZE, const char*, STRIN
 #define CALL_CARGEO(a) CALLS(CARGEO, cargeo, a)
 void DEFS(CARGEO,cargeo, const char*, STRING_SIZE);
 
+#define CALL_NBEC(a) CALLP(NBEC, nbec, a)
+ASTERINTEGER DEFP(NBEC,nbec, const ASTERINTEGER* const);
+
+#define CALL_ISDECO(a, b, c) CALLPPP(ISDECO, isdeco, a, b, c)
+void DEFPPP(ISDECO,isdeco, ASTERINTEGER*, ASTERINTEGER*, ASTERINTEGER*);
+
 #define CALL_RELIEM(a, b, c, d, e, f, g, h, i, j) \
     CALLSSSSPPSSSP(RELIEM, reliem, a, b, c, d, e, f, g, h, i, j)
 void DEFSSSSPPSSSP(RELIEM,reliem, const char*, STRING_SIZE, const char*, STRING_SIZE,

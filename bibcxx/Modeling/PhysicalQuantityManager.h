@@ -25,6 +25,7 @@
  */
 
 #include "astercxx.h"
+#include "MemoryManager/JeveuxCollection.h"
 
 template< typename T >
 class Singleton
@@ -37,29 +38,24 @@ public:
     }
 };
 
-class OnlyOne : public Singleton<OnlyOne>
-{
-    // constructeurs/destructeur de OnlyOne accessibles au Singleton
-    friend class Singleton<OnlyOne>; 
-    //...définir ici le reste de l'interface
-};
-
 /**
  * @class PhysicalQuantityManager
- * @brief Class to manage catalogue interactions
+ * @brief Class to manage "catalogue" interactions
  * @author Nicolas Sellenet
  */
 class PhysicalQuantityManager: public Singleton< PhysicalQuantityManager >
 {
 private:
-    PhysicalQuantityManager()
-    {};
+    const JeveuxCollectionChar8 _nameOfCmp;
+
+    PhysicalQuantityManager();
 
 public:
     friend class Singleton< PhysicalQuantityManager >;
 
-    int getNumberOfEncodedInteger( long quantityNumber );
-    
+    const JeveuxCollectionObjectChar8& getComponentNames( const long& quantityNumber ) const;
+
+    long getNumberOfEncodedInteger( const long& quantityNumber ) const;
 };
 
 #endif /* PHYSICALQUANTITYMANAGER_H_ */
