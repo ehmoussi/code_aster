@@ -43,13 +43,6 @@ Le type de voisinage %(k1)s est inconnu.
 Le type de voisinage %(k1)s a une longueur %(i1)i trop grande
 """),
 
-    9 : _(u"""
-Le type de modélisation volumes finis  %(i1)i  est inconnu.
-Ce message est un message d'erreur développeur.
-Contactez le support technique.
-
-"""),
-
     11 : _(u"""
 L'option  %(k1)s est inconnue
 """),

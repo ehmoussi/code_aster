@@ -69,7 +69,7 @@ subroutine te0500(option, nomte)
     integer :: ndim, nno
 !
     integer :: ipi, kpi, iaux, npg, igeom, jgano, imate, ierre, igrdca, iret, isigap, isigam
-    integer :: itab(7), nbcmp, typvf, ibid
+    integer :: itab(7), nbcmp, ibid, ibid2, ibid3, ibid4
     integer :: dimdep, dimdef, dimcon
     integer :: ipoids, ivf, idfde, ipoid2, ivf2, idfde2
     integer :: nmec, npi, np1, np2, nnos, nnom, nddls, nddlm
@@ -113,14 +113,14 @@ subroutine te0500(option, nomte)
 ! =====================================================================
     ibid = 0
     vf = .false.
-    call caethm(laxi, perman, vf, typvf,&
+    call caethm(laxi, perman, vf, &
                 typmod, modint, mecani, press1, press2,&
                 tempe, dimdep, dimdef, dimcon, nmec,&
                 np1, np2, ndim, nno, nnos,&
                 nnom, ibid, npi, npg, nddls,&
-                nddlm, ibid, ibid, dimuel, ipoids,&
+                nddlm, ibid2, ibid3, dimuel, ipoids,&
                 ivf, idfde, ipoid2, ivf2, idfde2,&
-                ibid, jgano)
+                ibid4, jgano)
 ! =====================================================================
 ! 2. RECUPERATION DES PARAMETRES TEMPORELS
 ! =====================================================================

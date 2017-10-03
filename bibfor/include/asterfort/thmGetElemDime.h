@@ -15,22 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
-! aslint: disable=W1504
-!
 interface
-    subroutine thmGetElemDime(l_vf     , type_vf,&
+    subroutine thmGetElemDime(l_vf     ,&
                               ndim     , nnos   , nnom  , nface,&
                               mecani   , press1 , press2 , tempe ,&
                               nddls    , nddlm  , nddlk  , nddlfa,&
                               nddl_meca, nddl_p1, nddl_p2,&
                               dimdep   , dimdef , dimcon , dimuel)
         aster_logical, intent(in) :: l_vf
-        integer, intent(in) :: type_vf
         integer, intent(in) :: ndim, nnos, nnom, nface
         integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
         integer, intent(out) :: nddls, nddlm, nddlk, nddlfa

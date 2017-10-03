@@ -15,8 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine thmGetElemDime(l_vf     , type_vf,&
+!
+subroutine thmGetElemDime(l_vf     ,&
                           ndim     , nnos   , nnom  , nface,&
                           mecani   , press1 , press2 , tempe ,&
                           nddls    , nddlm  , nddlk  , nddlfa,&
@@ -30,15 +30,12 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/thmGetGeneDime.h"
 !
-! aslint: disable=W1504
-! 
-    aster_logical, intent(in) :: l_vf
-    integer, intent(in) :: type_vf
-    integer, intent(in) :: ndim, nnos, nnom, nface
-    integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
-    integer, intent(out) :: nddls, nddlm, nddlk, nddlfa
-    integer, intent(out) :: nddl_meca, nddl_p1, nddl_p2
-    integer, intent(out) :: dimdep, dimdef, dimcon, dimuel
+aster_logical, intent(in) :: l_vf
+integer, intent(in) :: ndim, nnos, nnom, nface
+integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
+integer, intent(out) :: nddls, nddlm, nddlk, nddlfa
+integer, intent(out) :: nddl_meca, nddl_p1, nddl_p2
+integer, intent(out) :: dimdep, dimdef, dimcon, dimuel
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -49,7 +46,6 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  l_vf             : flag for finite volume
-! In  type_vf          : type for finite volume
 ! In  mecani           : parameters for mechanic
 ! In  press1           : parameters for hydraulic (capillary pressure)
 ! In  press2           : parameters for hydraulic (gaz pressure)
@@ -99,7 +95,6 @@ implicit none
 ! - Count dof
 !
     if (l_vf) then
-        ASSERT(type_vf.eq.3) 
         nddls  = 0
         nddlfa = press1(1) + press2(1) + tempe(1)
         nddlm  = 0

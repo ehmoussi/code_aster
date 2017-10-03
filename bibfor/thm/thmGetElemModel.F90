@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine thmGetElemModel(l_axi_, l_vf_, type_vf_, l_steady_, ndim_, type_elem_)
+subroutine thmGetElemModel(l_axi_, l_vf_, l_steady_, ndim_, type_elem_)
 !
 use THM_type
 use THM_module
@@ -30,7 +30,7 @@ implicit none
 #include "asterfort/utmess.h"
 !
 aster_logical, optional, intent(out) :: l_axi_, l_steady_, l_vf_
-integer, optional, intent(out) :: ndim_, type_vf_
+integer, optional, intent(out) :: ndim_
 character(len=8), optional, intent(out) :: type_elem_(2)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -43,7 +43,6 @@ character(len=8), optional, intent(out) :: type_elem_(2)
 !
 ! Out l_axi            : flag is axisymmetric model
 ! Out l_vf             : flag for finite volume
-! Out type_vf          : type for finite volume
 ! Out l_steady         : .true. for steady state
 ! Out ndim             : dimension of element (2 ou 3)
 ! Out type_elem        : type of element
@@ -53,14 +52,13 @@ character(len=8), optional, intent(out) :: type_elem_(2)
     integer :: iret1, iret2
     real(kind=8) :: r8bid
     aster_logical :: l_axi, l_steady, l_vf
-    integer :: ndim, type_vf
+    integer :: ndim
     character(len=8) :: type_elem(2)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     l_axi        = .false.
     ndim         = 0
-    type_vf      = 0
     type_elem(:) = ' '
     l_steady     = .false.
     l_vf         = .false.
@@ -118,9 +116,6 @@ character(len=8), optional, intent(out) :: type_elem_(2)
 ! - Finite volume
 !
     l_vf = lteatt('TYPMOD3','SUSHI')
-    if (l_vf) then
-        type_vf = 3
-    endif
 !
 ! - Copy
 !
@@ -129,9 +124,6 @@ character(len=8), optional, intent(out) :: type_elem_(2)
     endif
     if (present(l_vf_)) then
         l_vf_  = l_vf
-    endif
-    if (present(type_vf_)) then
-        type_vf_ = type_vf
     endif
     if (present(l_steady_)) then
         l_steady_ = l_steady

@@ -23,7 +23,7 @@ subroutine assesu(nno, nnos, nface, geom, crit,&
                   vectu, rinstm, rinstp, option, j_mater,&
                   mecani, press1, press2, tempe, dimdef,&
                   dimcon, dimuel, nbvari, ndim, compor,&
-                  typmod, typvf, axi, perman)
+                  typmod, axi, perman)
 !
 use THM_type
 use THM_module
@@ -51,7 +51,7 @@ implicit none
     integer :: nno, nnos, nface
     integer :: j_mater, dimdef, dimcon, dimuel
     integer :: mecani(5), press1(7), press2(7), tempe(5)
-    integer :: nbvari, ndim, typvf
+    integer :: nbvari, ndim
     real(kind=8) :: geom(ndim, nno), crit(*)
     real(kind=8) :: deplp(dimuel), deplm(dimuel)
     real(kind=8) :: congem(dimcon, maxfa+1), congep(dimcon, maxfa+1)
@@ -78,7 +78,6 @@ implicit none
 ! IN NDDLM NB DE DDL SUR LES MILIEUX DE FACE OU D ARETE UNIQUEMT EN EF
 ! IN NDDLFA NB DE DDL SUR LES FACE DE DIMENSION DIM-1 NE SERT QU EN VF
 ! IN NDDLK NB DE DDL AU CENTRE
-! TYPVF     TYPE DE VF : 3 = SUDA (SUC ET SUDM ONT ETE SUPPRIMES)
 ! IN NDIM DIMENSION DE L'ESPACE
 ! IN DIMUEL NB DE DDL TOTAL DE L'ELEMENT
 ! IN DIMCON DIMENSION DES CONTRAINTES GENERALISEES ELEMENTAIRES
@@ -287,10 +286,6 @@ implicit none
     do idim = 1, ndim
         xg(idim)=geom(idim,nno)
     end do
-! ==============================
-!   SI TYPVF=3 ALORS DECENTRE (SEUL SCHEMA RESTANT)
-! ==============================
-    if (typvf .ne. 3) call utmess('F', 'VOLUFINI_9', si=typvf)
 
     bool = (option(1:9).eq.'RIGI_MECA' ) .or. (option(1:9).eq.'RAPH_MECA' ) .or.&
            (option(1:9).eq.'FULL_MECA' )
@@ -473,7 +468,7 @@ implicit none
                 end do
             endif
         else
-            call utmess('F', 'VOLUFINI_9', si=typvf)
+            ASSERT(ASTER_FALSE)
         endif
 ! ===============================================
 ! ==== INITIALISATION DE DSDE ================

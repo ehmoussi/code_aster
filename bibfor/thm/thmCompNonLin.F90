@@ -55,7 +55,6 @@ character(len=16), intent(in) :: option
     integer :: jv_mater, jv_instm, jv_instp, jv_dispm
     integer :: jv_dispp, jv_compor, jv_carcri, jv_varip, jv_sigmp
     aster_logical :: l_axi, l_steady, l_vf
-    integer :: type_vf
     character(len=3) :: inte_type
     integer :: mecani(5), press1(7), press2(7), tempe(5)
     integer :: dimdep, dimdef, dimcon, dimuel
@@ -72,7 +71,7 @@ character(len=16), intent(in) :: option
 ! - Get parameters
 !
     ibid = 0
-    call caethm(l_axi, l_steady, l_vf, type_vf,&
+    call caethm(l_axi, l_steady, l_vf,&
                 typmod, inte_type, mecani, press1, press2,&
                 tempe, dimdep, dimdef, dimcon, nddl_meca,&
                 nddl_p1, nddl_p2, ndim, nno, nnos,&

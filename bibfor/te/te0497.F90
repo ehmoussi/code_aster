@@ -64,7 +64,7 @@ character(len=16), intent(in) :: option, nomte
 !                      STATIONNAIRE .
 !----------------------------------------------------------------------
 !
-    integer :: ifm, niv, typvf
+    integer :: ifm, niv
     integer :: ibid, iaux, iret, itab(7)
     integer :: igeom
     integer :: ierr, ivois
@@ -154,7 +154,7 @@ character(len=16), intent(in) :: option, nomte
 ! =====================================================================
     ibid = 0
     vf = .false.
-    call caethm(laxi, perman, vf, typvf,&
+    call caethm(laxi, perman, vf, &
                 typmod, modint, mecani, press1, press2,&
                 tempe, dimdep, dimdef, dimcon, nmec,&
                 np1, np2, ndim, nno, nnos,&

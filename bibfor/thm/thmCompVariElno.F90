@@ -47,7 +47,6 @@ implicit none
     integer :: jv_gano, jv_compo, jv_varielga, jv_varielno
     integer :: ncmp, nvim
     aster_logical :: l_axi, l_vf, l_steady
-    integer :: type_vf
     character(len=3) :: inte_type
     integer :: ndim
 !
@@ -57,7 +56,7 @@ implicit none
 !
 ! - Get model of finite element
 !
-    call thmGetElemModel(l_axi, l_vf, type_vf, l_steady, ndim)
+    call thmGetElemModel(l_axi, l_vf, l_steady, ndim)
 !
 ! - Get type of integration
 !
