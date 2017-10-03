@@ -15,14 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine thmGetParaIntegration(l_vf, inte_type)
+    subroutine thmGetElemIntegration(l_vf, inte_type)
         aster_logical, intent(in) :: l_vf
-        character(len=3), intent(out)  :: inte_type
-    end subroutine thmGetParaIntegration
+        character(len=3), intent(out) :: inte_type
+    end subroutine thmGetElemIntegration
 end interface

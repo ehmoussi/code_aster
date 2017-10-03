@@ -32,24 +32,24 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/thmGetGene.h"
 #include "asterfort/itgthm.h"
-#include "asterfort/thmGetParaIntegration.h"
+#include "asterfort/thmGetElemIntegration.h"
 #include "asterfort/thmGetElemModel.h"
 #include "asterfort/thmGetElemDime.h"
 !
-    aster_logical, intent(out) :: l_axi, l_steady, l_vf
-    integer, intent(out) :: ndim
-    integer, intent(out) :: mecani(5), press1(7), press2(7), tempe(5)
-    integer, intent(out) :: type_vf
-    character(len=3), intent(out) :: inte_type
-    integer, intent(out) :: dimdep, dimdef, dimcon, dimuel
-    integer, intent(out) :: nddl_meca, nddl_p1, nddl_p2
-    integer, intent(out) :: nno, nnos, nnom, nface
-    integer, intent(out) :: npi, npi2, npg
-    integer, intent(out) :: nddls, nddlm, nddlfa, nddlk
-    integer, intent(out) :: jv_poids, jv_poids2
-    integer, intent(out) :: jv_func, jv_dfunc, jv_func2, jv_dfunc2
-    integer, intent(out) :: jv_gano
-    character(len=8), intent(out) :: type_elem(2)
+aster_logical, intent(out) :: l_axi, l_steady, l_vf
+integer, intent(out) :: ndim
+integer, intent(out) :: mecani(5), press1(7), press2(7), tempe(5)
+integer, intent(out) :: type_vf
+character(len=3), intent(out) :: inte_type
+integer, intent(out) :: dimdep, dimdef, dimcon, dimuel
+integer, intent(out) :: nddl_meca, nddl_p1, nddl_p2
+integer, intent(out) :: nno, nnos, nnom, nface
+integer, intent(out) :: npi, npi2, npg
+integer, intent(out) :: nddls, nddlm, nddlfa, nddlk
+integer, intent(out) :: jv_poids, jv_poids2
+integer, intent(out) :: jv_func, jv_dfunc, jv_func2, jv_dfunc2
+integer, intent(out) :: jv_gano
+character(len=8), intent(out) :: type_elem(2)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -109,7 +109,7 @@ implicit none
 !
 ! - Get type of integration
 !
-    call thmGetParaIntegration(l_vf, inte_type)     
+    call thmGetElemIntegration(l_vf, inte_type)     
 !
 ! - Get generalized coordinates
 !

@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
 !
-subroutine caeihm(nomte, axi, perman, mecani, press1,&
+subroutine caeihm(nomte, l_axi, l_steady, mecani, press1,&
                   press2, tempe, dimdef, dimcon, ndim,&
                   nno1, nno2, npi, npg, dimuel,&
                   iw, ivf1, idf1, ivf2, idf2,&
@@ -34,7 +34,7 @@ implicit none
 #include "asterfort/elrefe_info.h"
 #include "asterfort/greihm.h"
 #include "asterfort/lteatt.h"
-#include "asterfort/thmGetParaIntegration.h"
+#include "asterfort/thmGetElemIntegration.h"
 !
 character(len=3), intent(out) :: inte_type
 !
@@ -74,7 +74,7 @@ character(len=3), intent(out) :: inte_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: axi, perman
+    aster_logical :: l_axi, l_steady, l_vf
     integer :: mecani(8), press1(9), press2(9), tempe(5), dimuel
     integer :: ndim, nnos, nno1, nno2, ntrou
     integer :: dimdef, dimcon
@@ -90,13 +90,14 @@ character(len=3), intent(out) :: inte_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    perman= .false.
-    ndim=2
-    axi=.false.
+    l_steady = ASTER_FALSE
+    ndim     = 2
+    l_axi    = ASTER_FALSE
+    l_vf     = ASTER_FALSE
 ! ======================================================================
 ! --- INITIALISATION DES GRANDEURS GENERALISEES SELON MODELISATION -----
 ! ======================================================================
-    call greihm(perman, ndim, mecani, press1, press2,&
+    call greihm(l_steady, ndim, mecani, press1, press2,&
                 tempe, dimdef, dimcon)
 
 !
@@ -106,10 +107,10 @@ character(len=3), intent(out) :: inte_type
 !
 ! - Get type of integration
 !
-    call thmGetParaIntegration(l_vf = .false._1, inte_type = inte_type)
+    call thmGetElemIntegration(l_vf, inte_type = inte_type)
 !
     if (lteatt('AXIS','OUI')) then
-        axi = .true.
+        l_axi = .true.
     endif
 ! ======================================================================
 ! --- ADAPTATION AU MODE D'INTEGRATION ---------------------------------
