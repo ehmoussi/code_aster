@@ -28,6 +28,7 @@ from libaster import ResultNaming
 
 from ..Cata import Commands, checkSyntax
 from ..Supervis import cata2datastructure, CommandSyntax, logger
+from ..Utilities import deprecated, import_object
 
 
 class ExecuteCommand(object):
@@ -136,3 +137,35 @@ class ExecuteCommandOps(ExecuteCommand):
             syntax (*CommandSyntax*): Syntax description with user keywords.
         """
         return aster.opsexe(syntax, self._op)
+
+
+class ExecuteMacro(ExecuteCommand):
+    """This implements an executor of *legacy* macro-commands."""
+
+    def __init__(self, command_name):
+        """Initialization"""
+        super(ExecuteMacro, self).__init__(command_name)
+        self._op = import_object(self._op)
+
+    def exec_(self, **keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+
+        Returns:
+            misc: Result of the Command, *None* if it returns no result.
+        """
+        logger.debug("Starting {0}...".format(self.name))
+        return self._op(self, **keywords)
+
+    # create a sub-object?
+    def get_cmd(self, name):
+        """Return a command."""
+        from .. import Commands
+        return getattr(Commands, name, None)
+
+    @deprecated(False)
+    def set_icmd(self, _):
+        """Does nothing, kept for compatibility."""
+        return
