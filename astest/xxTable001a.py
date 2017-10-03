@@ -27,4 +27,10 @@ tab = TAB.EXTR_TABLE()
 test.assertSequenceEqual(tab.NOM_NUM.values(),
                          ['{0:<24}'.format(i) for i in table2])
 
+TAB2 = CALC_TABLE(TABLE=TAB,
+                  ACTION=_F(OPERATION='FILTRE',
+                            NOM_PARA='NUMERO',
+                            VALE_I=1),
+                  INFO=2)
+
 test.printSummary()

@@ -20,14 +20,20 @@
 # person_in_charge: mathieu.courtois@edf.fr
 
 from ..Cata.Commands import commandStore
-from ..Cata.Syntax import Operator, Procedure
-from .ExecuteCommand import ExecuteCommand
+from ..Cata.Syntax import Macro, Operator, Procedure
+from .ExecuteCommand import ExecuteCommand, ExecuteMacro
+
+
+UNSUPPORTED = ('FORMULE', )
 
 def define_operators(store):
     """Add definition of operators to the given store."""
     for name, command in commandStore.items():
         if store.has_key(name):
             continue
-        if not isinstance(command, (Operator, Procedure)):
+        if name in UNSUPPORTED:
             continue
-        store[name] = ExecuteCommand(name)
+        if isinstance(command, (Operator, Procedure)):
+            store[name] = ExecuteCommand(name)
+        elif isinstance(command, Macro):
+            store[name] = ExecuteMacro(name)

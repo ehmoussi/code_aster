@@ -19,10 +19,10 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
-from code_aster.Extensions.MacroCommand import ExecuteMacro
-
-
-# please keep alphabetical order
-ASSEMBLAGE = ExecuteMacro("ASSEMBLAGE")
-DEBUT = ExecuteMacro("DEBUT")
-IMPR_FONCTION = ExecuteMacro("IMPR_FONCTION")
+# from code_aster.Extensions.MacroCommand import ExecuteMacro
+#
+#
+# # please keep alphabetical order
+# ASSEMBLAGE = ExecuteMacro("ASSEMBLAGE")
+# DEBUT = ExecuteMacro("DEBUT")
+# IMPR_FONCTION = ExecuteMacro("IMPR_FONCTION")
