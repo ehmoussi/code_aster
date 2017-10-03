@@ -22,7 +22,7 @@ subroutine assthm(option   , j_mater  ,&
                   l_axi    , l_steady ,&
                   typmod   , inte_type, angl_naut,&
                   ndim     , nbvari   ,&
-                  nno      , nnos     , nnom     ,&
+                  nno      , nnos     ,&
                   npg      , npi      ,&
                   nddls    , nddlm    , nddl_meca, nddl_p1, nddl_p2, &
                   dimdef   , dimcon   , dimuel   ,&
@@ -67,7 +67,7 @@ character(len=8), intent(in) :: typmod(2)
 character(len=3), intent(in) :: inte_type
 real(kind=8), intent(in)  :: angl_naut(3)
 integer, intent(in) :: nbvari, ndim
-integer, intent(in) :: nno, nnos, nnom
+integer, intent(in) :: nno, nnos
 integer, intent(in) :: npg, npi
 integer, intent(in) :: nddls, nddlm, nddl_meca, nddl_p1, nddl_p2
 integer, intent(in) :: dimuel, dimdef, dimcon
@@ -107,7 +107,6 @@ integer, intent(out) :: codret
 ! In  nbvari           : total number of internal state variables
 ! In  nno              : total number of nodes
 ! In  nnos             : number of nodes (not middle ones)
-! In  nnom             : number of nodes (middle ones)
 ! In  npg              : number of Gauss points
 ! In  npi              : number of Gauss points for linear
 ! In  nddls            : number of dof at nodes (not middle ones)
@@ -228,7 +227,7 @@ integer, intent(out) :: codret
         call cabthm(l_axi    , ndim     ,&
                     nddls    , nddlm    ,&
                     nddl_meca, nddl_p1  , nddl_p2,&
-                    nno      , nnos     , nnom   ,&
+                    nno      , nnos     ,&
                     dimuel   , dimdef   , kpi    ,&
                     addeme   , addete   , addep1 , addep2,&
                     elem_coor,&

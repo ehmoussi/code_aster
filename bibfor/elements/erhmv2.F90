@@ -19,7 +19,7 @@
 !
 subroutine erhmv2(axi, perman, deltat, dimdep, dimdef,&
                   nmec, np1, np2, ndim, nno,&
-                  nnos, nnom, npg, nddls, nddlm,&
+                  nnos, npg, nddls, nddlm,&
                   dimuel, ipoids, ivf, idfde, ipoid2,&
                   ivf2, idfde2, elem_coor, fovo, deplp,&
                   deplm, sielnp, sielnm, nbcmp, biot,&
@@ -56,7 +56,6 @@ implicit none
 ! IN NDIM    : DIMENSION DE L'ESPACE
 ! IN NNO     : NOMBRE DE NOEUDS DE L'ELEMENT
 ! IN NNOS    : NOMBRE DE NOEUDS SOMMETS DE L'ELEMENT
-! IN NNOM    : NOMBRE DE NOEUDS MILIEUX DE L'ELEMENT
 ! IN NPG     : NB DE POINTS DE GAUSS    POUR CLASSIQUE(=NPI)
 !                    SOMMETS            POUR LUMPEE   (=NPI=NNOS)
 !                    POINTS DE GAUSS    POUR REDUITE  (<NPI)
@@ -100,7 +99,7 @@ implicit none
 !
     aster_logical :: axi, perman
     integer :: dimuel
-    integer :: ndim, nno, nnos, nnom, dimdep, dimdef, nmec, np1, np2
+    integer :: ndim, nno, nnos, dimdep, dimdef, nmec, np1, np2
     integer :: nbcmp, npg, nddls, nddlm, ipoids, ivf, idfde
     integer :: ipoid2, ivf2, idfde2
     integer :: addeme, addete, addep1, addep2
@@ -145,7 +144,7 @@ implicit none
         call cabthm(axi      , ndim   ,&
                     nddls    , nddlm ,&
                     nmec     , np1   , np2    ,&
-                    nno      , nnos  , nnom   ,&
+                    nno      , nnos  , &
                     dimuel   , dimdef, kpi    ,&
                     addeme   , addete, addep1 , addep2,&
                     elem_coor     ,&

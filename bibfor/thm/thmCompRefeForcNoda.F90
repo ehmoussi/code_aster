@@ -121,7 +121,7 @@ implicit none
 !
     call refthm(zi(jv_mater), ndim     , l_axi    , l_steady , fnoevo ,&
                 mecani     , press1   , press2   , tempe    ,&
-                nno        , nnos     , nnom     , npi      , npg    ,&
+                nno        , nnos     , npi      , npg    ,&
                 zr(jv_geom), dt       , dimdef   , dimcon   , dimuel ,&
                 jv_poids   , jv_poids2,&
                 jv_func    , jv_func2 , jv_dfunc , jv_dfunc2,&

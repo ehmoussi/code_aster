@@ -24,7 +24,7 @@ interface
                       type_elem, inte_type, mecani, press1, press2,&
                       tempe, dimdep, dimdef, dimcon, nddl_meca,&
                       nddl_p1, nddl_p2, ndim, nno, nnos,&
-                      nnom, nface, npi, npg, nddls,&
+                      nface, npi, npg, nddls,&
                       nddlm, nddlfa, nddlk, dimuel, jv_poids,&
                       jv_func, jv_dfunc, jv_poids2, jv_func2, jv_dfunc2,&
                       npi2, jv_gano)
@@ -34,7 +34,7 @@ interface
         character(len=3), intent(out) :: inte_type
         integer, intent(out) :: dimdep, dimdef, dimcon, dimuel
         integer, intent(out) :: nddl_meca, nddl_p1, nddl_p2
-        integer, intent(out) :: nno, nnos, nnom, nface
+        integer, intent(out) :: nno, nnos, nface
         integer, intent(out) :: npi, npi2, npg
         integer, intent(out) :: nddls, nddlm, nddlfa, nddlk
         integer, intent(out) :: jv_poids, jv_poids2

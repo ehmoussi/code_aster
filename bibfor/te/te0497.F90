@@ -78,7 +78,7 @@ character(len=16), intent(in) :: option, nomte
     integer :: iade2, iava2, iaptm2, igd2, ncmpm2
     integer :: iade3, iava3, iaptm3, igd3, ncmpm3
     integer :: igrdca, dimdep, dimdef, dimcon
-    integer :: nmec, npi, np1, np2, nnom, nddls, nddlm
+    integer :: nmec, npi, np1, np2, nddls, nddlm
     integer :: mecani(5), press1(7), press2(7), tempe(5), dimuel
     integer :: adsip, addeme, adcome, addete
     integer :: addep1, adcp11
@@ -158,7 +158,7 @@ character(len=16), intent(in) :: option, nomte
                 typmod, modint, mecani, press1, press2,&
                 tempe, dimdep, dimdef, dimcon, nmec,&
                 np1, np2, ndim, nno, nnos,&
-                nnom, ibid, npi, npg, nddls,&
+                ibid, npi, npg, nddls,&
                 nddlm, ibid2, ibid3, dimuel, ipoids,&
                 ivf, idfde, ipoid2, ivf2, idfde2,&
                 ibid4, jgano)
@@ -487,7 +487,7 @@ character(len=16), intent(in) :: option, nomte
 !
     call erhmv2(laxi, perman, deltat, dimdep, dimdef,&
                 nmec, np1, np2, ndim, nno,&
-                nnos, nnom, npg, nddls, nddlm,&
+                nnos, npg, nddls, nddlm,&
                 dimuel, ipoids, ivf, idfde, ipoid2,&
                 ivf2, idfde2, zr(igeom), fovo, zr(ideplp),&
                 zr(ideplm), zr(isienp), zr(isienm), nbcmp, biot,&

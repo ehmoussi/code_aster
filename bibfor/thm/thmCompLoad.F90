@@ -39,7 +39,7 @@ implicit none
 !
 ! THM - Compute
 !
-! Loads
+! Volumic loads
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -67,6 +67,7 @@ implicit none
 ! - Get model of finite element
 !
     call thmGetElemModel(l_axi, l_vf, l_steady, ndim)
+    ASSERT(.not. l_vf)
 !
 ! - Get type of integration
 !
@@ -103,7 +104,7 @@ implicit none
 ! - Compute loads
 !
     call thmevc(option  , nomte  , l_axi   ,&
-                nno     , nnom   , nnos    ,&
+                nno     , nnos   ,&
                 npg     , nddls  , nddlm   ,&
                 jv_poids, jv_func, jv_dfunc)
 !

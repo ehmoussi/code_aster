@@ -19,7 +19,7 @@
 !
 subroutine refthm(jv_mater , ndim     , l_axi    , l_steady , fnoevo ,&
                   mecani   , press1   , press2   , tempe    ,&
-                  nno      , nnos     , nnom     , npi      , npg    ,&
+                  nno      , nnos     , npi      , npg      ,&
                   elem_coor, dt       , dimdef   , dimcon   , dimuel ,&
                   jv_poids , jv_poids2,&
                   jv_func  , jv_func2 , jv_dfunc , jv_dfunc2,&
@@ -47,7 +47,7 @@ aster_logical, intent(in) :: l_axi
 aster_logical, intent(in) :: l_steady
 aster_logical, intent(in) :: fnoevo
 integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
-integer, intent(in) :: nno, nnos, nnom
+integer, intent(in) :: nno, nnos
 integer, intent(in) :: npi, npg
 real(kind=8) :: elem_coor(ndim, nno)
 real(kind=8), intent(in) :: dt
@@ -79,7 +79,6 @@ real(kind=8), intent(out) :: vectu(dimuel)
 ! In  tempe        : parameters for thermic
 ! In  nno          : number of nodes (all)
 ! In  nnos         : number of nodes (not middle ones)
-! In  nnom         : number of nodes (middle ones)
 ! In  npi          : number of Gauss points for linear 
 ! In  npg          : number of Gauss points
 ! In  elem_coor    : coordinates of nodes for current element
@@ -176,7 +175,7 @@ real(kind=8), intent(out) :: vectu(dimuel)
                 sigtm(i_dim+dimcon*(kpi-1)) = vale_refe
                 call fnothm(jv_mater , ndim     , l_axi    , l_steady , fnoevo ,&
                             mecani   , press1   , press2   , tempe    ,&
-                            nno      , nnos     , nnom     , npi      , npg    ,&
+                            nno      , nnos     , npi      , npg      ,&
                             elem_coor, dt       , dimdef   , dimcon   , dimuel ,&
                             jv_poids , jv_poids2,&
                             jv_func  , jv_func2 , jv_dfunc , jv_dfunc2,&

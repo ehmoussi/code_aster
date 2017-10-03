@@ -15,17 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
-!
-! aslint: disable=W1504
 !
 interface 
     subroutine refthm(jv_mater , ndim     , l_axi    , l_steady , fnoevo ,&
                       mecani   , press1   , press2   , tempe    ,&
-                      nno      , nnos     , nnom     , npi      , npg    ,&
+                      nno      , nnos     , npi      , npg      ,&
                       elem_coor, dt       , dimdef   , dimcon   , dimuel ,&
                       jv_poids , jv_poids2,&
                       jv_func  , jv_func2 , jv_dfunc , jv_dfunc2,&
@@ -37,7 +34,7 @@ interface
         aster_logical, intent(in) :: l_steady
         aster_logical, intent(in) :: fnoevo
         integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
-        integer, intent(in) :: nno, nnos, nnom
+        integer, intent(in) :: nno, nnos
         integer, intent(in) :: npi, npg
         real(kind=8) :: elem_coor(ndim, nno)
         real(kind=8), intent(in) :: dt

@@ -51,7 +51,7 @@ implicit none
     integer :: mecani(5), press1(7), press2(7), tempe(5), dimuel
     integer :: dimdep, dimdef, dimcon, nbvari, nddls, nddlm, nddlfa, nddlk
     integer :: nmec, np1, np2, nnos
-    integer :: nnom, nface
+    integer :: nface
 !     REMARQUE : CES DIMENSIONS DOIVENT ETRE LES MEMES QUE DANS TE0492
     real(kind=8) :: defgep(21), defgem(21)
     integer :: nconma, ndefma
@@ -85,7 +85,6 @@ implicit none
 ! NNOS      NB DE NOEUDS SOMMETS DE L'ELEMENT
 ! OUT
 !     NFACE  NB DE FACES AU SENS BORD DE DIM DIM-1 NE SERT QU EN VF
-!     NNOM   NB DE NOEUDS MILIEUX DE FACE OU D ARRETE NE SERT QU EN EF
 !
 ! NDDLS     NB DE DDL SUR LES SOMMETS
 ! OUT
@@ -124,7 +123,7 @@ implicit none
                 typmod, modint, mecani, press1, press2,&
                 tempe, dimdep, dimdef, dimcon, nmec,&
                 np1, np2, ndim, nno, nnos,&
-                nnom, nface, npi, npg, nddls,&
+                nface, npi, npg, nddls,&
                 nddlm, nddlfa, nddlk, dimuel, ipoids,&
                 ivf, idfde, ipoid2, ivf2, idfde2,&
                 npi2, jgano)

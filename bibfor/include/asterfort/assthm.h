@@ -24,7 +24,7 @@ interface
                       l_axi    , l_steady ,&
                       typmod   , inte_type, angl_naut,&
                       ndim     , nbvari   ,&
-                      nno      , nnos     , nnom     ,&
+                      nno      , nnos     ,&
                       npg      , npi      ,&
                       nddls    , nddlm    , nddl_meca, nddl_p1, nddl_p2, &
                       dimdef   , dimcon   , dimuel   ,&
@@ -46,7 +46,7 @@ interface
         character(len=3), intent(in) :: inte_type
         real(kind=8), intent(in)  :: angl_naut(3)
         integer, intent(in) :: nbvari, ndim
-        integer, intent(in) :: nno, nnos, nnom
+        integer, intent(in) :: nno, nnos
         integer, intent(in) :: npg, npi
         integer, intent(in) :: nddls, nddlm, nddl_meca, nddl_p1, nddl_p2
         integer, intent(in) :: dimuel, dimdef, dimcon

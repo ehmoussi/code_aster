@@ -23,7 +23,7 @@ interface
     subroutine cabthm(l_axi    , ndim     ,&
                       nddls    , nddlm    ,&
                       nddl_meca, nddl_p1  , nddl_p2,&
-                      nno      , nnos     , nnom   ,&
+                      nno      , nnos     , &
                       dimuel   , dimdef   , kpi    ,&
                       addeme   , addete   , addep1 , addep2,&
                       elem_coor,&
@@ -36,7 +36,7 @@ interface
         aster_logical, intent(in) :: l_axi
         integer, intent(in) :: ndim, nddls, nddlm
         integer, intent(in) :: nddl_meca, nddl_p1, nddl_p2
-        integer, intent(in) :: nno, nnos, nnom
+        integer, intent(in) :: nno, nnos
         integer, intent(in) :: dimuel, dimdef, kpi
         integer, intent(in) :: addeme, addete, addep1, addep2
         real(kind=8), intent(in) :: elem_coor(ndim, nno)
