@@ -29,6 +29,8 @@
 #include "astercxx.h"
 
 #include "DataStructures/DataStructure.h"
+#include "Modeling/Model.h"
+#include "Materials/MaterialOnMesh.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "MemoryManager/JeveuxBidirectionalMap.h"
@@ -108,6 +110,24 @@ public:
      * @return true si l'allocation s'est bien passée
      */
     bool allocate( int nbRanks ) throw ( std::runtime_error );
+
+    /**
+     * @brief Add model
+     * @param rank
+     */
+    void addModel( const ModelPtr&, int rank ) throw ( std::runtime_error );
+
+    /**
+     * @brief Add model
+     * @param rank
+     */
+    void addMaterialOnMesh( const MaterialOnMeshPtr&, int rank ) throw ( std::runtime_error );
+
+    /**
+     * @brief Add model
+     * @param rank
+     */
+    void addTimeValue( double, int rank ) throw ( std::runtime_error );
 
     /**
      * @brief Construire une sd_resultat à partir d'objet produit dans le Fortran

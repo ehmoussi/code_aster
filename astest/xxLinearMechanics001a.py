@@ -38,10 +38,11 @@ resu = MECA_STATIQUE( MODELE = model,
 
 resu.debugPrint(6)
 
-#resu=CALC_CHAMP(reuse=resu,
-                #RESULTAT=resu,#TOUT_ORDRE='OUI',MODELE=model,
-                #CONTRAINTE=('SIGM_ELNO'),
-                #)
+resu=CALC_CHAMP(reuse=resu,
+                RESULTAT=resu,TOUT_ORDRE='OUI',
+                CONTRAINTE=('SIGM_ELNO'),
+                )
+resu.debugPrint(6)
 
 # Debut du TEST_RESU
 MyFieldOnNodes = resu.getRealFieldOnNodes("DEPL", 0)

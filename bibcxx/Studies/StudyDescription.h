@@ -121,7 +121,7 @@ class StudyDescriptionInstance
         /**
          * @brief Obtenir le matériau affecté
          */
-        MaterialOnMeshPtr getMaterialOnMesh() const
+        const MaterialOnMeshPtr& getMaterialOnMesh() const
         {
             return _materialOnMesh;
         };
@@ -129,7 +129,7 @@ class StudyDescriptionInstance
         /**
          * @brief Obtenir le modèle de l'étude
          */
-        ModelPtr getSupportModel() const
+        const ModelPtr& getSupportModel() const
         {
             return _supportModel;
         };
