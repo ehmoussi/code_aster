@@ -20,3 +20,24 @@
  *   You should have received a copy of the GNU General Public License
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+#include "Modeling/PhysicalQuantityManager.h"
+#include "aster_fort.h"
+
+PhysicalQuantityManager::PhysicalQuantityManager():
+    _nameOfCmp( JeveuxCollectionChar8( "&CATA.GD.NOMCMP" ) )
+{};
+
+const JeveuxCollectionObjectChar8& PhysicalQuantityManager::getComponentNames
+    ( const long& quantityNumber ) const
+{
+    _nameOfCmp->buildFromJeveux();
+    return _nameOfCmp->getObject( quantityNumber );
+};
+
+long PhysicalQuantityManager::getNumberOfEncodedInteger( const long& quantityNumber ) const
+{
+    long toReturn = 0;
+    toReturn = CALL_NBEC( &quantityNumber );
+    return toReturn;
+};

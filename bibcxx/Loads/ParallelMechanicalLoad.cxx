@@ -46,6 +46,7 @@ ParallelMechanicalLoadInstance::ParallelMechanicalLoadInstance( const GenericMec
         if( zone->getName() != savedName )
             throw std::runtime_error( "Different FiniteElementDescriptor in one PCFieldOnMesh is not allowed" );
         savedName = zone->getName();
+        pcField.getValues( pos );
     }
     const auto FEDesc = pcField.getZoneDescription(1).getFiniteElementDescriptor();
     _FEDesc = ParallelFiniteElementDescriptorPtr

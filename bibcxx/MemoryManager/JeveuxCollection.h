@@ -278,6 +278,25 @@ public:
     };
 };
 
+/** @typedef Definition d'un objet de collection de type long */
+typedef JeveuxCollectionObject< long > JeveuxCollectionObjectLong;
+/** @typedef Definition d'un objet de collection de type short int */
+typedef JeveuxCollectionObject< short int > JeveuxCollectionObjectShort;
+/** @typedef Definition d'un objet de collection de type double */
+typedef JeveuxCollectionObject< double > JeveuxCollectionObjectDouble;
+/** @typedef Definition d'un objet de collection de type double complex */
+typedef JeveuxCollectionObject< DoubleComplex > JeveuxCollectionObjectComplex;
+/** @typedef Definition d'un objet de collection de JeveuxChar8 */
+typedef JeveuxCollectionObject< JeveuxChar8 > JeveuxCollectionObjectChar8;
+/** @typedef Definition d'un objet de collection de JeveuxChar16 */
+typedef JeveuxCollectionObject< JeveuxChar16 > JeveuxCollectionObjectChar16;
+/** @typedef Definition d'un objet de collection de JeveuxChar24 */
+typedef JeveuxCollectionObject< JeveuxChar24 > JeveuxCollectionObjectChar24;
+/** @typedef Definition d'un objet de collection de JeveuxChar32 */
+typedef JeveuxCollectionObject< JeveuxChar32 > JeveuxCollectionObjectChar32;
+/** @typedef Definition d'un objet de collection de JeveuxChar80 */
+typedef JeveuxCollectionObject< JeveuxChar80 > JeveuxCollectionObjectChar80;
+
 /**
  * @enum JeveuxCollectionAccessType
  */

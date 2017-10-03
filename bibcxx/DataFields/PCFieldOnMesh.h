@@ -35,6 +35,7 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "Meshes/Mesh.h"
 #include "Modeling/FiniteElementDescriptor.h"
+#include "Modeling/PhysicalQuantityManager.h"
 #include "aster_fort.h"
 
 /**
@@ -112,6 +113,33 @@ public:
     {
         return _indexes;
     };
+};
+
+/**
+ * @class PCFieldValues Piecewise Constant (PC) Field values
+ * @author Natacha Bereux
+ */
+class PCFieldValues
+{
+private:
+//     JeveuxVectorChar8&         _components;
+//     JeveuxVector< ValueType >& _values;
+
+public:
+    PCFieldValues()
+    {};
+
+//     const JeveuxVectorChar8& getComponents() const
+//     {
+//         _components->updateValuePointer();
+//         return _components;
+//     };
+// 
+//     const VectorLong& getValues() const
+//     {
+//         _values->updateValuePointer();
+//         return _values;
+//     };
 };
 
 /**
@@ -320,6 +348,40 @@ class PCFieldOnMeshInstance: public DataStructure
             if ( jeveuxBase == Permanent ) strJeveuxBase = "G";
             fortranAllocate( strJeveuxBase, componant );
             _isAllocated = true;
+        };
+
+        /**
+         * @brief Get values of a zone
+         */
+        void getValues( const int& position ) const
+            throw( std::runtime_error )
+        {
+            _descriptor->updateValuePointer();
+            if( position >= (*_descriptor)[2] )
+                throw std::runtime_error( "Out of PCFieldOnMesh bound" );
+
+            long nbZoneMax = (*_descriptor)[1];
+            long gdeur = (*_descriptor)[0];
+            long nec = PhysicalQuantityManager::Instance().getNumberOfEncodedInteger( gdeur );
+            std::cout << "nec " << nec << std::endl;
+            const auto& compNames = PhysicalQuantityManager::Instance().getComponentNames( gdeur );
+//             long zoneNumber = (*_descriptor)[ 3 + 2*nbZoneMax + 1 ];
+            VectorString cmpToReturn;
+            for( int i = 0; i < nec; ++i )
+            {
+                long encodedInt = (*_descriptor)[ 3 + 2*nbZoneMax + position*nec + i ];
+                VectorLong vecOfComp( 30, -1 );
+                CALL_ISDECO( &encodedInt, vecOfComp.data(), &nec );
+                long pos = 0;
+                for( const auto& val : vecOfComp )
+                {
+                    if( val != 0 )
+                        cmpToReturn.push_back( compNames[pos+i*30].toString() );
+                    ++pos;
+                }
+            }
+            for( const auto& name : cmpToReturn )
+                std::cout << "name " << name << std::endl;
         };
 
         /**
