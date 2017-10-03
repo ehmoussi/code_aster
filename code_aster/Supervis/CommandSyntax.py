@@ -17,6 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import random
+
 from ..Extensions import DataStructure
 from ..Utilities import (force_list, is_complex, is_float, is_int, is_str,
                          value_is_sequence)
@@ -29,7 +31,7 @@ class CommandSyntax:
     with the fortran code that use the legacy supervisor.
     """
 
-    _currentCommand = None
+    _currentCommand = _random = None
 
     @classmethod
     def setCurrentCommand(cls, command):
@@ -498,13 +500,30 @@ class CommandSyntax:
             types.append(typ)
         return kws, types
 
-    def getran(self):
-        """Returns a random number."""
-        import random
-        return random.random()
+    @classmethod
+    def iniran(cls, jump=0):
+        """Initialize the generator of random numbers.
+
+        Arguments:
+            jump (int): Non-negative integer to change the state of the
+                numbers generator.
+        """
+        cls._random = random.Random(100)
+        cls._random.jumpahead(jump)
+
+    @classmethod
+    def getran(cls):
+        """Returns a random number between 0 and 1.
+
+        Returns:
+            float: Random number.
+        """
+        if not cls._random:
+            cls.iniran()
+        return cls._random.random()
 
     def getmat(self):
-        raise NotImplementedError
+        raise NotImplementedError("'getmat' is not yet supported.")
 
     def getoper(self):
         """Return the operator number.
@@ -515,8 +534,9 @@ class CommandSyntax:
         return self._commandCata.definition['op']
 
     def gettyp(self, typaster):
-        """Return the objects of the given type.
-        TODO ???
+        """'gettyp' is not yet supported because it requires to store all the
+        results of Commands, and it was only used in `FIN` for statistical
+        purposes.
         """
         return 0, ()
 
