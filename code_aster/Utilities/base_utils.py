@@ -24,6 +24,7 @@ This modules gives some basic utilities.
 """
 
 from array import array
+from decimal import Decimal
 from functools import wraps
 import sys
 
@@ -70,7 +71,27 @@ def force_list(values):
 
 def value_is_sequence(value):
     """Tell if *value* is a valid object if max > 1."""
-    return type(value) in (list, tuple, array, numpy.ndarray)
+    return isinstance(value, (list, tuple, array, numpy.ndarray))
+
+def is_int(obj):
+    """Tell if an object is an integer."""
+    return isinstance(obj, (int, long))
+
+def is_float(obj):
+    """Tell if an object is a float number."""
+    return isinstance(obj, (float, Decimal))
+
+def is_complex(obj):
+    """Tell if an object is complex number."""
+    if isinstance(obj, (list, tuple)) and len(obj) == 3 \
+        and obj[0] in ('RI', 'MP') and is_float_or_int(obj[1]) \
+        and is_float_or_int(obj[2]):
+        return True
+    return isinstance(obj, complex)
+
+def is_str(obj):
+    """Tell if an object is a string."""
+    return isinstance(obj, (str, unicode))
 
 def array_to_list(obj):
     """Convert an object to a list if possible (using `tolist()`) or keep it

@@ -17,7 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from ..Utilities import force_list
+from ..Utilities import force_list, is_complex, is_float, is_int, is_str
+from .typeaster import typeaster
 from .logger import logger
 
 
@@ -53,7 +54,6 @@ class CommandSyntax:
     def __init__(self, name="unNamed", cata=None):
         """Create a new command"""
         self._name = name
-        # TODO: remove unused attributes
         self._resultName = " "
         self._resultType = " "
         self._definition = None
@@ -86,16 +86,24 @@ class CommandSyntax:
 
     def debugPrint( self ):
         """Representation of the command"""
-        print repr(self)
         logger.debug( repr(self) )
 
     def setResult( self, sdName, sdType ):
-        """Register the result of the command: name and type"""
+        """Register the result of the command: name and type.
+
+        Arguments:
+            sdName (str): Name of the result created by the Command.
+            sdType (str): Type of the result created by the Command.
+        """
         self._resultName = sdName
         self._resultType = sdType
 
     def define( self, dictSyntax ):
-        """Register the keywords values"""
+        """Register the keywords values.
+
+        Arguments:
+            dictSyntax (dict): User keywords.
+        """
         if self._commandCata != None:
             logger.debug( "define0 %r: %r", self._name, dictSyntax )
             self._commandCata.addDefaultKeywords( dictSyntax )
@@ -103,19 +111,39 @@ class CommandSyntax:
         logger.debug( "define1 %r: %r", self._name, self._definition )
 
     def getName( self ):
-        """Return the command name"""
+        """Return the command name.
+
+        Returns:
+            str: Command name.
+        """
         return self._name
 
     def getResultName( self ):
-        """Return the name of the result of the command"""
+        """Return the name of the result of the Command.
+
+        Returns:
+            str: Name of the result of the Command.
+        """
         return self._resultName
 
     def getResultType( self ):
-        """Return the type of the result of the command"""
+        """Return the type of the result of the command.
+
+        Returns:
+            str: Type name of the result of the Command.
+        """
         return self._resultType
 
     def _getFactorKeyword( self, factName ):
-        """Return the occurrences of a factor keyword"""
+        """Return the occurrences of a factor keyword.
+
+        Arguments:
+            factName (str): Name of the factor keyword.
+
+        Returns:
+            list: List of occurences of a factor keyword, *None* if it is not
+                provided by the user.
+        """
         # a factor keyword may be empty: {} (None means 'does not exist')
         dictDef = self._definition.get( factName, None )
         logger.debug( "factor keyword %r: %r", factName, dictDef )
@@ -126,7 +154,15 @@ class CommandSyntax:
         return dictDef
 
     def _getFactorKeywordOccurrence( self, factName, occurrence ):
-        """Return the definition of an occurrence of a factor keyword"""
+        """Return the definition of an occurrence of a factor keyword.
+
+        Arguments:
+            factName (str): Name of the factor keyword.
+            occurrence (int): Index of the occurrence (start from 0).
+
+        Returns:
+            dict: Occurrence of a factor keyword, *None* if it is not
+                provided by the user."""
         dictDef = self._getFactorKeyword( factName )
         if dictDef is None:
             return None
@@ -137,7 +173,15 @@ class CommandSyntax:
 
     def _getDefinition( self, factName, occurrence ):
         """Return the definition of a factor keyword or of the top-level
-        if `factName` is blank"""
+        if `factName` is blank.
+
+        Arguments:
+            factName (str): Name of the factor keyword.
+            occurrence (int): Index of the occurrence (start from 0).
+
+        Returns:
+            dict: User keywords under a factor keyword or the Command.
+        """
         if not factName.strip():
             dictDef = self._definition
         else:
@@ -147,8 +191,34 @@ class CommandSyntax:
         assert isinstance(dictDef, dict), "syntax not defined"
         return dictDef
 
+    def _getCataDefinition( self, factName ):
+        """Return the definition of a factor keyword in the catalog or of the
+        top-level if `factName` is blank.
+
+        Arguments:
+            factName (str): Name of the factor keyword.
+
+        Returns:
+            *CataDefinition*: Definition of the factor keyword or the Command.
+        """
+        factName = factName.strip()
+        catadef = self._commandCata.definition
+        if not factName:
+            return catadef
+        keywords = catadef.factor_keywords.get(factName)
+        if not keywords:
+            return None
+        return keywords.definition
+
     def getFactorKeywordNbOcc( self, factName ):
-        """Return the number of occurrences of a factor keyword"""
+        """Return the number of occurrences of a factor keyword.
+
+        Arguments:
+            factName (str): Name of the factor keyword.
+
+        Returns:
+            int: Number of occurrences of a factor keyword.
+        """
         dictDef = self._getFactorKeyword( factName )
         logger.debug( "_getFactorKeyword %r: %r", factName, dictDef )
         if dictDef is None:
@@ -160,19 +230,34 @@ class CommandSyntax:
 
     def existsFactorAndSimpleKeyword( self, factName, occurrence,
                                       simpName ):
-        """Tell if the couple ( factor keyword, simple keyword ) exists"""
+        """Tell if the couple ( factor keyword, simple keyword ) exists in the
+        user keywords.
+
+        Arguments:
+            factName (str): Name of the factor keyword.
+            occurrence (int): Index of the occurrence (start from 0).
+            simpName (str): Name of the simple keyword.
+
+        Returns:
+            int: 1 if the keyword exists, else 0.
+        """
         dictDef = self._getDefinition( factName, occurrence )
         value = dictDef.get( simpName, None )
         if value is None or isinstance(value, dict):
             return 0
         return 1
 
-    def getexm(self, factName, simpName):
-        """"""
-        return self.existsFactorAndSimpleKeyword(factName, 0, simpName)
-
     def getValue( self, factName, occurrence, simpName ):
-        """Return the values of a (simple) keyword"""
+        """Return the values of a (simple) keyword.
+
+        Arguments:
+            factName (str): Name of the factor keyword.
+            occurrence (int): Index of the occurrence (start from 0).
+            simpName (str): Name of the simple keyword.
+
+        Returns:
+            list[misc]: List of the values provided by the user.
+        """
         if not self.existsFactorAndSimpleKeyword( factName, occurrence, simpName ):
             return []
         value = self._getDefinition( factName, occurrence )[simpName]
@@ -181,37 +266,90 @@ class CommandSyntax:
         return value
 
     def getltx(self, factName, simpName, occurrence, maxval, lenmax):
-        """Wrapper function to return length of strings"""
+        """Wrapper function to return length of strings.
+
+        Arguments:
+            factName (str): Name of the factor keyword.
+            simpName (str): Name of the simple keyword.
+            occurrence (int): Index of the occurrence (start from 0).
+            maxval (int): Maximum number of values read.
+            lenmax (int): Maximum of lengths.
+
+        Returns:
+            list[misc]: List of the values provided by the user.
+        """
         value = self.getValue( factName, occurrence, simpName )
         value = _check_strings(factName, simpName, value)
         size = len(value)
         if size > maxval:
             size = -size
         length = [min(len(i), lenmax) for i in value]
-        return size, length
+        return size, length[:maxval]
 
     def getvid(self, factName, simpName, occurrence, maxval):
-        """Wrapper function to return a list of results."""
+        """Wrapper function to return a list of results.
+
+        Arguments:
+            factName (str): Name of the factor keyword.
+            occurrence (int): Index of the occurrence (start from 0).
+            simpName (str): Name of the simple keyword.
+            maxval (int): Maximum number of values read.
+
+        Returns:
+            int: Number of the values provided by the user.
+                If `size > maxval`, `-size` is returned.
+            list: List of results names.
+            int: 1 if the value is the default, 0 if it has been explicitly
+                provided by the user.
+        """
         value = self.getValue( factName, occurrence, simpName )
         value = [i.getName()if hasattr(i, 'getName') else i for i in value]
         value = tuple(value)
         size = len(value)
         if size > maxval:
             size = -size
-        return size, value, 0
+        return size, value[:maxval], 0
 
     def getvtx(self, factName, simpName, occurrence, maxval):
-        """Wrapper function to return a list of strings."""
+        """Wrapper function to return a list of strings.
+
+        Arguments:
+            factName (str): Name of the factor keyword.
+            occurrence (int): Index of the occurrence (start from 0).
+            simpName (str): Name of the simple keyword.
+            maxval (int): Maximum number of values read.
+
+        Returns:
+            int: Number of the values provided by the user.
+                If `size > maxval`, `-size` is returned.
+            list: List of strings.
+            int: 1 if the value is the default, 0 if it has been explicitly
+                provided by the user.
+        """
         value = self.getValue( factName, occurrence, simpName )
         value = tuple(_check_strings(factName, simpName, value))
         size = len(value)
         if size > maxval:
             size = -size
         # TODO: last returned value is "is_default"
-        return size, value, 0
+        return size, value[:maxval], 0
 
     def getvis(self, factName, simpName, occurrence, maxval):
-        """Wrapper function to return a list of integers."""
+        """Wrapper function to return a list of integers.
+
+        Arguments:
+            factName (str): Name of the factor keyword.
+            occurrence (int): Index of the occurrence (start from 0).
+            simpName (str): Name of the simple keyword.
+            maxval (int): Maximum number of values read.
+
+        Returns:
+            int: Number of the values provided by the user.
+                If `size > maxval`, `-size` is returned.
+            list: List of integers.
+            int: 1 if the value is the default, 0 if it has been explicitly
+                provided by the user.
+        """
         value = self.getValue( factName, occurrence, simpName )
         if len( value ) > 0 and not isinstance(value[0], (int, long)):
             raise TypeError( "integer expected, got %s" % type( value[0] ) )
@@ -220,10 +358,24 @@ class CommandSyntax:
         if size > maxval:
             size = -size
         # TODO: last returned value is "is_default"
-        return size, value, 0
+        return size, value[:maxval], 0
 
     def getvr8(self, factName, simpName, occurrence, maxval):
-        """Wrapper function to return a list of float numbers."""
+        """Wrapper function to return a list of float numbers.
+
+        Arguments:
+            factName (str): Name of the factor keyword.
+            occurrence (int): Index of the occurrence (start from 0).
+            simpName (str): Name of the simple keyword.
+            maxval (int): Maximum number of values read.
+
+        Returns:
+            int: Number of the values provided by the user.
+                If `size > maxval`, `-size` is returned.
+            list: List of floats.
+            int: 1 if the value is the default, 0 if it has been explicitly
+                provided by the user.
+        """
         value = self.getValue( factName, occurrence, simpName )
         if len( value ) > 0:
             try:
@@ -235,10 +387,25 @@ class CommandSyntax:
         if size > maxval:
             size = -size
         # TODO: last returned value is "is_default"
-        return size, value, 0
+        return size, value[:maxval], 0
 
     def getvc8(self, factName, simpName, occurrence, maxval):
-        """Wrapper function to return a list of integers"""
+        """Wrapper function to return a list of complex numbers.
+
+        Arguments:
+            factName (str): Name of the factor keyword.
+            occurrence (int): Index of the occurrence (start from 0).
+            simpName (str): Name of the simple keyword.
+            maxval (int): Maximum number of values read.
+
+        Returns:
+            int: Number of the values provided by the user.
+                If `size > maxval`, `-size` is returned.
+            list: List of complex numbers.
+            int: 1 if the value is the default, 0 if it has been explicitly
+                provided by the user.
+        """
+        # TODO: Support of ('RI', a, b) notation
         value = self.getValue( factName, occurrence, simpName )
         if len( value ) > 0:
             try:
@@ -250,16 +417,79 @@ class CommandSyntax:
         if size > maxval:
             size = -size
         # TODO: last returned value is "is_default"
-        return size, value, 0
+        return size, value[:maxval], 0
 
     def getres(self):
-        """Return the name and type of the result, and the command name."""
+        """Return the name and type of the result, and the command name.
+
+        Returns:
+            str: Name of the Command result (name of the jeveux object).
+            str: Type name of the result.
+            str: Command name.
+        """
         ret = self.getResultName(), self.getResultType(), self.getName()
         logger.debug("Command {2}: result name {0!r}, type {1!r}".format(*ret))
         return ret
 
+    def getexm(self, factName, simpName):
+        """Tell if the couple ( factor keyword, simple keyword ) exists in the
+        Command catalog.
+
+        Arguments:
+            factName (str): Name of the factor keyword.
+            simpName (str): Name of the simple keyword.
+
+        Returns:
+            int: 1 if the keyword exists, else 0.
+        """
+        catadef = self._getCataDefinition(factName)
+        if not catadef:
+            return 0
+        keywords = catadef.simple_keywords
+        return int(keywords.get(simpName) is not None)
+
+    def getmjm(self, factName, occurrence, maxval):
+        """Return the list of simple keywords  provided by the user under a
+        factor keyword.
+
+        Arguments:
+            factName (str): Name of the factor keyword.
+            occurrence (int): Index of the occurrence (start from 0).
+            maxval (int): Maximum number of values returned.
+
+        Returns:
+            list[str]: List of the names of simple keywords.
+            list[str]: List of type names of the keywords.
+        """
+        userkw = self._getDefinition(factName, occurrence)
+        if not userkw:
+            return (), ()
+        logger.debug("getmjm: user keywords: {0}".format(userkw))
+        catadef = self._getCataDefinition(factName)
+        kws, types = [], []
+        for kw, obj in userkw.items():
+            if obj is None:
+                continue
+            kws.append(kw)
+            typ = typeaster(catadef[kw].definition['typ'])
+            if is_complex(obj) and typ == 'C8':
+                pass
+            elif is_float(obj) and typ in ('R8', 'C8'):
+                pass
+            elif is_int(obj) and typ in ('IS', 'R8', 'C8'):
+                pass
+            elif is_str(obj) and typ == 'TX':
+                pass
+            elif isinstance(obj, DataStructure):
+                typ = obj.getType()
+            else:
+                raise TypeError("unsupported type: {0!r} <{1}>"
+                                .format(obj, type(obj)))
+            types.append(typ)
+        return kws, types
+
     def getran(self):
-        """"""
+        """Returns a random number."""
         import random
         return random.random()
 

@@ -125,6 +125,26 @@ class CataDefinition(OrderedDict):
         kws = self._filter_entities((SimpleKeyword, FactorKeyword))
         return sorted_dict(kws)
 
+    @property
+    def factor_keywords(self):
+        """Return the factor keywords contained in the object.
+
+        Returns:
+            dict: dict of all factor keywords of the object.
+        """
+        kws = self._filter_entities((FactorKeyword, ))
+        return sorted_dict(kws)
+
+    @property
+    def simple_keywords(self):
+        """Return the simple keywords contained in the object.
+
+        Returns:
+            dict: dict of all simple keywords of the object.
+        """
+        kws = self._filter_entities((SimpleKeyword, ))
+        return sorted_dict(kws)
+
     def _filter_entities(self, typeslist):
         """Filter entities by type.
 
