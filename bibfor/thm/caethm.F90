@@ -18,7 +18,7 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504
 !
-subroutine caethm(l_axi, l_steady, l_vf, type_vf,&
+subroutine caethm(l_axi, l_steady, l_vf, &
                   type_elem, inte_type, mecani, press1, press2,&
                   tempe, dimdep, dimdef, dimcon, nddl_meca,&
                   nddl_p1, nddl_p2, ndim, nno, nnos,&
@@ -39,7 +39,6 @@ implicit none
 aster_logical, intent(out) :: l_axi, l_steady, l_vf
 integer, intent(out) :: ndim
 integer, intent(out) :: mecani(5), press1(7), press2(7), tempe(5)
-integer, intent(out) :: type_vf
 character(len=3), intent(out) :: inte_type
 integer, intent(out) :: dimdep, dimdef, dimcon, dimuel
 integer, intent(out) :: nddl_meca, nddl_p1, nddl_p2
@@ -95,17 +94,13 @@ character(len=8), intent(out) :: type_elem(2)
 ! OUT IDFDE2 : ADRESSE DU TABLEAU DES DERIVESS DES FONCTIONS DE FORME P1
 ! OUT JGANO  : ADRESSE DANS ZR DE LA MATRICE DE PASSAGE
 !              GAUSS -> NOEUDS
-! OUT TYPVF   TYPE DE VF : 1  = TPFA (FLUX A DEUX POINTS - SUPPRIME)
-!                          2  = SUSHI AVEC VOISIN DECENTRE MAILLE (SUDM - SUPPRIME)
-!                          3  = SUSHI AVEC VOISIN DECENTRE ARETE (SUDA)
-!                          4  = SUSHI AVEC VOISIN CENTRE  (SUC - SUPPRIME)
 ! CORPS DU PROGRAMME
 
 
 !
 ! - Get model of finite element
 !
-    call thmGetElemModel(l_axi, l_vf, type_vf, l_steady, ndim, type_elem)
+    call thmGetElemModel(l_axi, l_vf, l_steady, ndim, type_elem)
 !
 ! - Get type of integration
 !
@@ -128,7 +123,7 @@ character(len=8), intent(out) :: type_elem(2)
 !
 ! - Get dimensions about element
 !
-    call thmGetElemDime(l_vf     , type_vf,&
+    call thmGetElemDime(l_vf     ,&
                         ndim     , nnos   , nnom  , nface,&
                         mecani   , press1 , press2 , tempe ,&
                         nddls    , nddlm  , nddlk  , nddlfa,&

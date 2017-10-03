@@ -87,14 +87,13 @@ character(len=8), intent(out) :: type_elem(2)
     integer :: enrmec(3), enrhyd(3), nenr
     integer :: nnop, nnops, nnopm
     aster_logical :: l_vf
-    integer :: type_vf
 !
 ! --- INITIALISATIONS --------------------------------------------------
 ! ======================================================================
 !
 ! - Get model of finite element
 !
-    call thmGetElemModel(l_axi, l_vf, type_vf, l_steady, ndim, type_elem)
+    call thmGetElemModel(l_axi, l_vf, l_steady, ndim, type_elem)
 !
 ! - Get type of integration
 !

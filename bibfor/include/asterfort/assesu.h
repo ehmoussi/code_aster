@@ -26,7 +26,7 @@ interface
                       vectu, rinstm, rinstp, option, j_mater,&
                       mecani, press1, press2, tempe, dimdef,&
                       dimcon, dimuel, nbvari, ndim, compor,&
-                      typmod, typvf, axi, perman)
+                      typmod, axi, perman)
         integer, parameter :: maxfa=6
         integer :: ndim
         integer :: nbvari
@@ -59,7 +59,6 @@ interface
         integer :: tempe(5)
         character(len=16) :: compor(*)
         character(len=8) :: typmod(2)
-        integer :: typvf
         aster_logical :: axi
         aster_logical :: perman
     end subroutine assesu

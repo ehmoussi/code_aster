@@ -15,15 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
-! aslint: disable=W1504
-!
 interface
-    subroutine caethm(l_axi, l_steady, l_vf, type_vf,&
+    subroutine caethm(l_axi, l_steady, l_vf,&
                       type_elem, inte_type, mecani, press1, press2,&
                       tempe, dimdep, dimdef, dimcon, nddl_meca,&
                       nddl_p1, nddl_p2, ndim, nno, nnos,&
@@ -34,7 +31,6 @@ interface
         aster_logical, intent(out) :: l_axi, l_steady, l_vf
         integer, intent(out) :: ndim
         integer, intent(out) :: mecani(5), press1(7), press2(7), tempe(5)
-        integer, intent(out) :: type_vf
         character(len=3), intent(out) :: inte_type
         integer, intent(out) :: dimdep, dimdef, dimcon, dimuel
         integer, intent(out) :: nddl_meca, nddl_p1, nddl_p2

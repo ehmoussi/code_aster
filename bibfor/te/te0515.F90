@@ -62,7 +62,6 @@ implicit none
 ! =====================================================================
     integer :: li
     aster_logical :: axi, perman, vf
-    integer :: typvf
 ! =====================================================================
 !  CETTE ROUTINE FAIT UN CALCUL EN HH2SUDA OU HH2SUC, (HYDRO NON SATURE
 !   SUSHI DECENTRE ARETE OU CENTRE)
@@ -104,7 +103,6 @@ implicit none
 ! DIMDEF    DIMENSION DES DEFORMATIONS GENERALISEES ELEMENTAIRES
 ! IVF       FONCTIONS DE FORMES QUADRATIQUES
 ! IVF2      FONCTIONS DE FORMES LINEAIRES
-! TYPVF     : 3 OU 4 SCHEMA SUSHI DECENTRE ARETE OU CENTRE
 ! =====================================================================
 ! =====================================================================
 ! --- 1. INITIALISATIONS ----------------------------------------------
@@ -122,7 +120,7 @@ implicit none
 !
     call thmGetElemModel()
 !
-    call caethm(axi, perman, vf, typvf,&
+    call caethm(axi, perman, vf, &
                 typmod, modint, mecani, press1, press2,&
                 tempe, dimdep, dimdef, dimcon, nmec,&
                 np1, np2, ndim, nno, nnos,&
@@ -179,22 +177,22 @@ implicit none
                         zr(ivectu), zr(iinstm), zr(iinstp), option, zi(imate),&
                         mecani, press1, press2, tempe, dimdef,&
                         dimcon, dimuel, nbvari, ndim, zk16( icompo),&
-                        typmod, typvf, axi, perman)
+                        typmod, axi, perman)
         else
 !
 !   DU FAIT DE L UTIISATION DES VOISINS CETTE BOUCLE
 !  NE PEUT PLUS ETRE FAITECONTRAIREMENT A LA SITUATION EF
 !  ASSESU UTILISE DELTAP ET PM
-            do 30 li = 1, dimuel
+            do li = 1, dimuel
                 zr(ideplp+li-1) = zr(ideplm+li-1) + zr(ideplp+li-1)
- 30         continue
+            end do
             call assesu(nno, nnos, nface, zr(igeom), zr(icarcr),&
                         zr( ideplm), zr(ideplp), zr(icontm), zr(icontp), zr(ivarim),&
                         zr( ivarip), defgem, defgep, dsde, zr(imatuu),&
                         zr(ivectu), zr(iinstm), zr(iinstp), option, zi(imate),&
                         mecani, press1, press2, tempe, dimdef,&
                         dimcon, dimuel, nbvari, ndim, zk16( icompo),&
-                        typmod, typvf, axi, perman)
+                        typmod, axi, perman)
             zi(jcret) = retloi
         endif
     endif
@@ -210,11 +208,9 @@ implicit none
 ! --- PARAMETRES EN SORTIE ---------------------------------------------
 ! ======================================================================
         call jevech('PVECTUR', 'E', ivectu)
-        call fnoesu(option, nno, nnos, nnom, nface,&
-                    zr(icontm), zr(ivectu), mecani, press1, press2,&
-                    tempe, dimcon, dimuel, typvf, axi,&
-                    ipoids, ivf, idfde, ipoid2, ivf2,&
-                    idfde2, npi2, jgano, retloi)
+        call fnoesu(option, nface,&
+                    zr(icontm), zr(ivectu), press1, press2,&
+                    dimcon, dimuel)
     endif
 ! ======================================================================
 end subroutine

@@ -62,7 +62,6 @@ implicit none
     integer :: jv_poids, jv_poids2
     integer :: jv_func, jv_func2, jv_dfunc, jv_dfunc2, jv_gano
     aster_logical :: l_axi, l_vf, l_steady
-    integer :: type_vf
     character(len=3) :: inte_type
     integer :: ndim
     integer :: mecani(5), press1(7), press2(7), tempe(5)
@@ -74,7 +73,7 @@ implicit none
 !
 ! - Get model of finite element
 !
-    call thmGetElemModel(l_axi, l_vf, type_vf, l_steady, ndim)
+    call thmGetElemModel(l_axi, l_vf, l_steady, ndim)
 !
 ! - Get type of integration
 !
@@ -126,7 +125,7 @@ implicit none
 !
 ! - Get dimensions about element
 !
-    call thmGetElemDime(l_vf     , type_vf,&
+    call thmGetElemDime(l_vf     ,&
                         ndim     , nnos   , nnom   , nface,&
                         mecani   , press1 , press2 , tempe ,&
                         nddls    , nddlm  , nddlk  , nddlfa,&

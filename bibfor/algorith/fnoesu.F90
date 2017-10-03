@@ -15,16 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine fnoesu(option, nno, nnos, nnom, nface,&
-                  congem, vectu, mecani, press1, press2,&
-                  tempe, dimcon, dimuel, typvf, axi,&
-                  ipoids, ivf, idfde, ipoid2, ivf2,&
-                  idfde2, npi2, jgano, codret)
-! aslint: disable=W1504
-    implicit none
 !
-! =====================================================================
+subroutine fnoesu(option, nface,&
+                  congem, vectu, press1, press2,&
+                  dimcon, dimuel)
+!
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -32,22 +28,16 @@ subroutine fnoesu(option, nno, nnos, nnom, nface,&
 #include "asterfort/tecael.h"
 #include "asterfort/utmess.h"
 !
-    integer :: maxfa
-    parameter   (maxfa=6)
-    integer :: dimcon, dimuel
-    integer :: codret
-    integer :: mecani(5), press1(7), press2(7), tempe(5)
-    integer :: typvf
-    integer :: adcp11, adcp12, adcp21, adcp22
-    real(kind=8) :: congem(dimcon, maxfa+1)
-    real(kind=8) :: vectu(dimuel)
-    aster_logical :: axi
-    character(len=16) :: option
-    integer :: nno, nnos, nnom, nface
-!
-    integer :: ifa
-    integer :: ipoids, ivf, idfde, ipoid2, ivf2, idfde2, npi2, jgano
-!
+integer :: maxfa
+parameter   (maxfa=6)
+integer :: dimcon, dimuel
+integer :: press1(7), press2(7)
+integer :: adcp11, adcp12, adcp21, adcp22
+real(kind=8) :: congem(dimcon, maxfa+1)
+real(kind=8) :: vectu(dimuel)
+character(len=16) :: option
+integer :: nface
+integer :: ifa
 !
 ! =====================================================================
 !.......................................................................
@@ -58,8 +48,6 @@ subroutine fnoesu(option, nno, nnos, nnom, nface,&
 ! =====================================================================
 ! IN AXI AXISYMETRIQUE?
 ! IN NFACE NB DE FACES AU SENS BORD DE DIMENSION DIM-1 NE SERT QU EN VF
-! TYPVF     TYPE DE VF : 3 = SUSHI SSUDA
-!                        4 = EFMH  SANS VOISIN
 ! IN NDIM DIMENSION DE L'ESPACE
 ! IN DIMUEL NB DE DDL TOTAL DE L'ELEMENT
 ! =====================================================================
@@ -131,13 +119,10 @@ subroutine fnoesu(option, nno, nnos, nnom, nface,&
 !
 ! TERMES DE FLUX
 !
-    if (.not. ((typvf .eq.3 ) .or.(typvf .eq.4))) then
-        call utmess('F', 'VOLUFINI_9', si=typvf)
-    endif
-    do 2 ifa = 1, nface
+    do ifa = 1, nface
         vectu(adcf1(ifa))=congem(adcp11+1,ifa+1)
         vectu(adcf2(ifa))=congem(adcp12+1,ifa+1)
-  2 end do
+    end do
     sfluw =congem(adcp11+1,1)
     sfluvp =congem(adcp12+1,1)
     sfluas =congem(adcp21+1,1)

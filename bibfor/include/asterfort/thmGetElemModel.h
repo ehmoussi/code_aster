@@ -15,15 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface 
-    subroutine thmGetElemModel(l_axi_, l_vf_, type_vf_, l_steady_, ndim_, type_elem_)
+    subroutine thmGetElemModel(l_axi_, l_vf_, l_steady_, ndim_, type_elem_)
         aster_logical, optional, intent(out) :: l_axi_, l_steady_, l_vf_
-        integer, optional, intent(out) :: ndim_, type_vf_
+        integer, optional, intent(out) :: ndim_
         character(len=8), optional, intent(out) :: type_elem_(2)
     end subroutine thmGetElemModel
 end interface 
