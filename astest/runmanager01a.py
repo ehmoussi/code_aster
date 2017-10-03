@@ -5,7 +5,7 @@ import platform
 import code_aster
 from code_aster.Commands import *
 
-code_aster.init()
+code_aster.init(debug=True)
 
 test = code_aster.TestCase()
 
