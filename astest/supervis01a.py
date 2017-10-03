@@ -10,7 +10,7 @@ import code_aster
 from code_aster.Cata.Commands.debut import DEBUT as cata
 from code_aster.Supervis import CommandSyntax
 
-code_aster.init(debug=True)
+code_aster.init()
 
 test = code_aster.TestCase()
 
@@ -83,5 +83,10 @@ test.assertEqual(len(kws), len(types))
 test.assertEqual(len(kws), 4)
 test.assertSequenceEqual(kws, ["IGNORE_ALARM", "IMPR_MACRO", "INFO", "PAR_LOT"])
 test.assertSequenceEqual(types, ["TX", "TX", "IS", "TX"])
+
+rand = syntax.getran()
+test.assertGreaterEqual(rand, 0.)
+test.assertLessEqual(rand, 1.)
+
 
 test.printSummary()
