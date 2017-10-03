@@ -30,8 +30,10 @@ subroutine caethm(l_axi, l_steady, l_vf, &
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/thmGetGene.h"
-#include "asterfort/itgthm.h"
+#include "asterfort/thmGetElemInfo.h"
+#include "asterfort/thmGetElemRefe.h"
 #include "asterfort/thmGetElemIntegration.h"
 #include "asterfort/thmGetElemModel.h"
 #include "asterfort/thmGetElemDime.h"
@@ -94,8 +96,13 @@ character(len=8), intent(out) :: type_elem(2)
 ! OUT IDFDE2 : ADRESSE DU TABLEAU DES DERIVESS DES FONCTIONS DE FORME P1
 ! OUT JGANO  : ADRESSE DANS ZR DE LA MATRICE DE PASSAGE
 !              GAUSS -> NOEUDS
-! CORPS DU PROGRAMME
-
+!
+! --------------------------------------------------------------------------------------------------
+!
+    character(len=8) :: elrefe, elref2
+!
+! --------------------------------------------------------------------------------------------------
+!
 
 !
 ! - Get model of finite element
@@ -111,15 +118,35 @@ character(len=8), intent(out) :: type_elem(2)
     call thmGetGene(l_steady, l_vf, ndim,&
                     mecani, press1, press2, tempe)
 !
-! - Get definition of element
+! - Get reference elements
 !
-    call itgthm(ndim    , l_vf     , inte_type,&
-                nno     , nnos     , nnom     , nface ,&
-                npi     , npi2     , npg      ,&
-                jv_poids, jv_poids2,&
-                jv_func , jv_func2 ,&
-                jv_dfunc, jv_dfunc2,&
-                jv_gano )
+    call thmGetElemRefe(l_vf, elrefe, elref2)
+!
+! - Get informations about element
+!
+    call thmGetElemInfo(l_vf     , elrefe  , elref2   ,&
+                        nno      , nnos    , nnom     ,&
+                        jv_gano  , jv_poids, jv_poids2,&
+                        jv_func  , jv_func2, jv_dfunc , jv_dfunc2,&
+                        inte_type, npi     , npi2     , npg)
+!
+! - For finite volume
+!
+    if (l_vf) then
+        if (ndim .eq. 2) then
+            nface = nnos
+        else
+            if (elrefe .eq. 'H27') then
+                nface = 6
+            else if (elrefe .eq. 'T9') then
+                nface = 4
+            else
+                ASSERT(ASTER_FALSE)
+            endif
+        endif
+    else
+        nface = 0
+    endif
 !
 ! - Get dimensions about element
 !
