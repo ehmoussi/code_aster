@@ -15,23 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
-! aslint: disable=W1504
-!
 interface
-    subroutine caeihm(nomte, axi, perman, mecani, press1,&
+    subroutine caeihm(nomte, l_axi, l_steady, mecani, press1,&
                       press2, tempe, dimdef, dimcon, ndim,&
                       nno1, nno2, npi, npg, dimuel,&
                       iw, ivf1, idf1, ivf2, idf2,&
                       jgano1, iu, ip, ipf, iq,&
                       inte_type)
         character(len=16) :: nomte
-        aster_logical :: axi
-        aster_logical :: perman
+        aster_logical :: l_axi, l_steady
         integer :: mecani(8)
         integer :: press1(9)
         integer :: press2(9)

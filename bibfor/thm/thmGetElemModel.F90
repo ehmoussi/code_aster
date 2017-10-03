@@ -28,7 +28,6 @@ implicit none
 #include "asterfort/lteatt.h"
 #include "asterfort/rcvarc.h"
 #include "asterfort/utmess.h"
-#include "asterfort/thmGetParaIntegration.h"
 !
 aster_logical, optional, intent(out) :: l_axi_, l_steady_, l_vf_
 integer, optional, intent(out) :: ndim_, type_vf_
@@ -42,12 +41,12 @@ character(len=8), optional, intent(out) :: type_elem_(2)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Out l_axi        : flag is axisymmetric model
-! Out l_vf         : flag for finite volume
-! Out type_vf      : type for finite volume
-! Out l_steady     : .true. for steady state
-! Out ndim         : dimension of element (2 ou 3)
-! Out type_elem    : type of element
+! Out l_axi            : flag is axisymmetric model
+! Out l_vf             : flag for finite volume
+! Out type_vf          : type for finite volume
+! Out l_steady         : .true. for steady state
+! Out ndim             : dimension of element (2 ou 3)
+! Out type_elem        : type of element
 !
 ! --------------------------------------------------------------------------------------------------
 !

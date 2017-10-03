@@ -16,17 +16,15 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine thmGetParaIntegration(l_vf, inte_type)
+subroutine thmGetElemIntegration(l_vf, inte_type)
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/lteatt.h"
 #include "asterfort/teattr.h"
 !
-!
-    aster_logical, intent(in) :: l_vf
-    character(len=3), intent(out) :: inte_type
+aster_logical, intent(in) :: l_vf
+character(len=3), intent(out) :: inte_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -36,8 +34,8 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  l_vf         : flag for finite volume
-! Out inte_type    : type of integration - classical, lumped (D), reduced (R)
+! In  l_vf             : flag for finite volume
+! Out inte_type        : type of integration - classical, lumped (D), reduced (R)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,8 +51,8 @@ implicit none
     else
         call teattr('S', 'DIM_TOPO_MODELI', d1, iret)
         call teattr('S', 'DIM_TOPO_MAILLE', d2, iret)
-        l_princ = (d1.eq.d2)
-        inte_type='CLA'
+        l_princ   = (d1.eq.d2)
+        inte_type = 'CLA'
         if (l_princ) then
             call teattr('C', 'INTTHM', mint, iret)
             if (iret .eq. 0) then

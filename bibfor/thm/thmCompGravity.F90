@@ -37,7 +37,7 @@ implicit none
 #include "asterfort/thmGetElemRefe.h"
 #include "asterfort/thmGetElemModel.h"
 #include "asterfort/thmGetGene.h"
-#include "asterfort/thmGetParaIntegration.h"
+#include "asterfort/thmGetElemIntegration.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -78,7 +78,7 @@ implicit none
 !
 ! - Get type of integration
 !
-    call thmGetParaIntegration(l_vf, inte_type)
+    call thmGetElemIntegration(l_vf, inte_type)
 !
 ! - Get generalized coordinates
 !

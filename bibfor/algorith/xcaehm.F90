@@ -29,21 +29,21 @@ subroutine xcaehm(nomte, l_axi, l_steady, type_elem, inte_type,&
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/thmGetParaIntegration.h"
+#include "asterfort/thmGetElemIntegration.h"
 #include "asterfort/thmGetElemModel.h"
 #include "asterfort/xgrdhm.h"
 #include "asterfort/xitghm.h"
 !
-    integer :: nfh
-    integer :: mecani(5), press1(7), press2(7), tempe(5), dimuel
-    integer :: nno, nnos, nnom
-    integer :: dimdef, dimcon, nmec, np1, np2
-    integer :: npg, npi, nddls, nddlm, ipoids, ivf, idfde
-    character(len=16) :: nomte
-    character(len=3), intent(out) :: inte_type
-    aster_logical, intent(out) :: l_axi, l_steady
-    integer, intent(out) :: ndim
-    character(len=8), intent(out) :: type_elem(2)
+integer :: nfh
+integer :: mecani(5), press1(7), press2(7), tempe(5), dimuel
+integer :: nno, nnos, nnom
+integer :: dimdef, dimcon, nmec, np1, np2
+integer :: npg, npi, nddls, nddlm, ipoids, ivf, idfde
+character(len=16) :: nomte
+character(len=3), intent(out) :: inte_type
+aster_logical, intent(out) :: l_axi, l_steady
+integer, intent(out) :: ndim
+character(len=8), intent(out) :: type_elem(2)
 
 ! ======================================================================
 ! --- BUT : PREPARATION DU CALCUL SUR UN ELEMENT THM -------------------
@@ -98,7 +98,7 @@ implicit none
 !
 ! - Get type of integration
 !
-    call thmGetParaIntegration(l_vf, inte_type)
+    call thmGetElemIntegration(l_vf, inte_type)
 ! ======================================================================
 ! --- INITIALISATION DES GRANDEURS GENERALISEES SELON MODELISATION -----
 ! ======================================================================
