@@ -27,3 +27,4 @@ objects.
 from .CommandSyntax import CommandSyntax
 from .ExecutionParameter import ExecutionParameter
 from .logger import logger
+from .typeaster import cata2datastructure
