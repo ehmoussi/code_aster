@@ -20,14 +20,29 @@
 # person_in_charge: mathieu.courtois@edf.fr
 
 """
-This module gives common utilities.
+This module gives basic functions to convert Python types to code_aster
+syntax types.
 """
 
-from .Tester import TestCase
 
-from .base_utils import (accept_array, array_to_list, force_list, import_object,
-                         is_complex, is_float, is_int, is_str,
-                         objects_from_context, Singleton, value_is_sequence)
-from .compatibility import compat_listr8, deprecated
-from .i18n import localization
-from .strfunc import convert, from_unicode, get_encoding, to_unicode
+def typeaster(cata_type):
+    """Convert a code_aster type used in the syntax description as a string.
+
+    Arguments:
+        cata_type (misc): Type of a keyword.
+
+    Returns:
+        str: Name of the code_aster type.
+    """
+    if isinstance(cata_type, (list, tuple)):
+        return [typeaster(i) for i in cata_type]
+
+    dtyp = {'R': 'R8', 'C': 'C8', 'I': 'IS', 'TXM': 'TX'}
+    name = dtyp.get(cata_type)
+    if not name:
+        name = cata_type.getType()
+        if name == 'entier':
+            name = 'IS'
+        elif name == 'reel':
+            name = 'R8'
+    return name
