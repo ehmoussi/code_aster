@@ -54,7 +54,7 @@ implicit none
     integer :: jv_poids, jv_poids2
     integer :: jv_func, jv_func2, jv_dfunc, jv_dfunc2, jv_gano
     integer :: dimdep, dimdef, dimcon, dimuel
-    integer :: nddls, nddlm, nddlk, nddlfa, nface
+    integer :: nddls, nddlm
     integer :: nddl_meca, nddl_p1, nddl_p2
     aster_logical :: l_axi, l_vf, l_steady
     character(len=3) :: inte_type
@@ -93,10 +93,10 @@ implicit none
 !
 ! - Get dimensions about element
 !
-    call thmGetElemDime(l_vf     , &
-                        ndim     , nnos   , nnom   , nface,&
+    call thmGetElemDime(l_vf     ,&
+                        ndim     , nnos   , nnom   ,&
                         mecani   , press1 , press2 , tempe ,&
-                        nddls    , nddlm  , nddlk  , nddlfa,&
+                        nddls    , nddlm  ,&
                         nddl_meca, nddl_p1, nddl_p2,&
                         dimdep   , dimdef , dimcon , dimuel)
 !

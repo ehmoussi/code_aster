@@ -151,10 +151,11 @@ character(len=8), intent(out) :: type_elem(2)
 ! - Get dimensions about element
 !
     call thmGetElemDime(l_vf     ,&
-                        ndim     , nnos   , nnom  , nface,&
+                        ndim     , nnos   , nnom   ,&
                         mecani   , press1 , press2 , tempe ,&
-                        nddls    , nddlm  , nddlk  , nddlfa,&
+                        nddls    , nddlm  , &
                         nddl_meca, nddl_p1, nddl_p2,&
-                        dimdep   , dimdef , dimcon , dimuel)
+                        dimdep   , dimdef , dimcon , dimuel,&
+                        nface    , nddlk  , nddlfa )
 !
 end subroutine

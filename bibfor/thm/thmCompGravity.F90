@@ -58,7 +58,7 @@ implicit none
     integer :: nno, nnos, nnom
     integer :: npi, npi2, npg
     integer :: dimdep, dimdef, dimcon, dimuel
-    integer :: nddls, nddlm, nddlk, nddlfa, nface
+    integer :: nddls, nddlm
     integer :: nddl_meca, nddl_p1, nddl_p2
     integer :: jv_poids, jv_poids2
     integer :: jv_func, jv_func2, jv_dfunc, jv_dfunc2, jv_gano
@@ -121,9 +121,9 @@ implicit none
 ! - Get dimensions about element
 !
     call thmGetElemDime(l_vf     ,&
-                        ndim     , nnos   , nnom   , nface,&
+                        ndim     , nnos   , nnom   , &
                         mecani   , press1 , press2 , tempe ,&
-                        nddls    , nddlm  , nddlk  , nddlfa,&
+                        nddls    , nddlm  , &
                         nddl_meca, nddl_p1, nddl_p2,&
                         dimdep   , dimdef , dimcon , dimuel)
 !
