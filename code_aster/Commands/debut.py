@@ -25,11 +25,10 @@ from Comportement import catalc
 
 from ..RunManager import LogicalUnitFile
 from ..Supervis import CommandSyntax, ExecutionParameter, logger
+from ..Supervis.logger import setlevel
 from ..Utilities import import_object
 
 from .ExecuteCommand import ExecuteCommand
-
-from ..Supervis.logger import setlevel
 
 
 class Starter(ExecuteCommand):
@@ -40,7 +39,6 @@ class Starter(ExecuteCommand):
     @classmethod
     def init(cls, argv):
         """Initialization of class attributes."""
-        setlevel()
         cls.params = ExecutionParameter()
         cls.params.parse_args(argv)
         cls.params.catalc = catalc
@@ -89,5 +87,9 @@ def init(*argv, **kwargs):
     """
     if Starter._is_initialized:
         return
+    if 'debug' in kwargs:
+        if kwargs['debug']:
+            setlevel()
+        del kwargs['debug']
     DEBUT.init(argv)
     DEBUT.exec_(**kwargs)
