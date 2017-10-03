@@ -288,7 +288,7 @@ class CommandSyntax:
         if size > maxval:
             size = -size
         length = [min(len(i), lenmax) for i in value]
-        return size, length[:maxval]
+        return size, tuple(length[:maxval])
 
     def getvid(self, factName, simpName, occurrence, maxval):
         """Wrapper function to return a list of results.
@@ -308,11 +308,10 @@ class CommandSyntax:
         """
         value = self.getValue( factName, occurrence, simpName )
         value = [i.getName()if hasattr(i, 'getName') else i for i in value]
-        value = tuple(value)
         size = len(value)
         if size > maxval:
             size = -size
-        return size, value[:maxval], 0
+        return size, tuple(value[:maxval]), 0
 
     def getvtx(self, factName, simpName, occurrence, maxval):
         """Wrapper function to return a list of strings.
@@ -331,12 +330,12 @@ class CommandSyntax:
                 provided by the user.
         """
         value = self.getValue( factName, occurrence, simpName )
-        value = tuple(_check_strings(factName, simpName, value))
+        value = _check_strings(factName, simpName, value)
         size = len(value)
         if size > maxval:
             size = -size
         # TODO: last returned value is "is_default"
-        return size, value[:maxval], 0
+        return size, tuple(value[:maxval]), 0
 
     def getvis(self, factName, simpName, occurrence, maxval):
         """Wrapper function to return a list of integers.
@@ -357,12 +356,11 @@ class CommandSyntax:
         value = self.getValue( factName, occurrence, simpName )
         if len( value ) > 0 and not isinstance(value[0], (int, long)):
             raise TypeError( "integer expected, got %s" % type( value[0] ) )
-        value = tuple(value)
         size = len(value)
         if size > maxval:
             size = -size
         # TODO: last returned value is "is_default"
-        return size, value[:maxval], 0
+        return size, tuple(value[:maxval]), 0
 
     def getvr8(self, factName, simpName, occurrence, maxval):
         """Wrapper function to return a list of float numbers.
@@ -386,12 +384,11 @@ class CommandSyntax:
                 float( value[0] )
             except TypeError:
                 raise TypeError( "float expected, got %s" % type( value[0] ) )
-        value = tuple(value)
         size = len(value)
         if size > maxval:
             size = -size
         # TODO: last returned value is "is_default"
-        return size, value[:maxval], 0
+        return size, tuple(value[:maxval]), 0
 
     def getvc8(self, factName, simpName, occurrence, maxval):
         """Wrapper function to return a list of complex numbers.
@@ -416,12 +413,11 @@ class CommandSyntax:
                 complex( value[0] )
             except TypeError:
                 raise TypeError( "complex expected, got %s" % type( value[0] ) )
-        value = tuple(value)
         size = len(value)
         if size > maxval:
             size = -size
         # TODO: last returned value is "is_default"
-        return size, value[:maxval], 0
+        return size, tuple(value[:maxval]), 0
 
     def getres(self):
         """Return the name and type of the result, and the command name.
