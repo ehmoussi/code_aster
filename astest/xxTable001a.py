@@ -33,4 +33,7 @@ TAB2 = CALC_TABLE(TABLE=TAB,
                             VALE_I=1),
                   INFO=2)
 
+tab2 = TAB2.EXTR_TABLE()
+test.assertSequenceEqual(tab2.NUMERO.values(), [1])
+
 test.printSummary()

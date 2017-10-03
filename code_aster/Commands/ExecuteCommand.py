@@ -27,6 +27,7 @@ import aster
 from libaster import ResultNaming
 
 from ..Cata import Commands, checkSyntax
+from ..Extensions import DataStructure
 from ..Supervis import cata2datastructure, CommandSyntax, logger
 from ..Utilities import deprecated, import_object
 
@@ -140,7 +141,17 @@ class ExecuteCommandOps(ExecuteCommand):
 
 
 class ExecuteMacro(ExecuteCommand):
-    """This implements an executor of *legacy* macro-commands."""
+    """This implements an executor of *legacy* macro-commands.
+
+    The OPS function of *legacy* macro-commands returns a return code and
+    declared results through ``self.DeclareOut(...)``.
+
+    Now the results must be directly returned by the OPS function.
+
+    TODO: Associate additional results with ``CO()``.
+    """
+
+    sd = _store = None
 
     def __init__(self, command_name):
         """Initialization"""
@@ -157,7 +168,9 @@ class ExecuteMacro(ExecuteCommand):
             misc: Result of the Command, *None* if it returns no result.
         """
         logger.debug("Starting {0}...".format(self.name))
-        return self._op(self, **keywords)
+        outputs = self._op(self, **keywords)
+        assert not isinstance(outputs, int), "OPS must now return results."
+        return outputs
 
     # create a sub-object?
     def get_cmd(self, name):
@@ -169,3 +182,23 @@ class ExecuteMacro(ExecuteCommand):
     def set_icmd(self, _):
         """Does nothing, kept for compatibility."""
         return
+
+    @deprecated(False)
+    def DeclareOut(self, result, target):
+        """Register a result of the macro-command."""
+        pass
+
+    @property
+    @deprecated(True, help="Not yet implemented.")
+    def reuse(self):
+        return
+
+    @property
+    @deprecated(True, help="Not yet implemented.")
+    def sd(self):
+        return
+
+    @property
+    @deprecated(True, help="Use the 'logger' object instead.")
+    def cr(self):
+        return logger
