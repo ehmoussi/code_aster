@@ -24,6 +24,8 @@ This module gives basic functions to convert Python types to code_aster
 syntax types.
 """
 
+from ..Utilities import Singleton
+
 
 def typeaster(cata_type):
     """Convert a code_aster type used in the syntax description as a string.
@@ -46,3 +48,25 @@ def typeaster(cata_type):
         elif name == 'reel':
             name = 'R8'
     return name
+
+
+class Cata2DataStructure(object):
+    """Helper class to build correspondance between DataStructures in
+    syntax description and those created in C++."""
+    __metaclass__ = Singleton
+    _singleton_id = 'typeaster.Cata2DataStructure'
+
+    _cata2cxx = None
+
+    def __init__(self):
+        """Initialization."""
+        from .. import Extensions as EXT
+        Cata2DataStructure._cata2cxx = {
+            'TABLE': EXT.Table,
+        }
+
+    @classmethod
+    def objtype(cls, type_name):
+        return cls._cata2cxx.get(type_name)
+
+cata2datastructure = Cata2DataStructure()

@@ -27,7 +27,7 @@ import aster
 from libaster import ResultNaming
 
 from ..Cata import Commands, checkSyntax
-from ..Supervis import CommandSyntax, logger
+from ..Supervis import cata2datastructure, CommandSyntax, logger
 
 
 class ExecuteCommand(object):
@@ -87,9 +87,9 @@ class ExecuteCommand(object):
             result = None
         else:
             type_name = sd_type.getType()
-            result_name = self._result_name()
-            result = sd_type()
-            result.setName(result_name)
+            klass = cata2datastructure.objtype(type_name)
+            result = klass.create()
+            result_name = result.getName()
         syntax.setResult(result_name, type_name)
 
         self._call_oper(syntax)
