@@ -44,13 +44,15 @@ class StaticMechanicalAlgorithm: public GenericUnitaryAlgorithm< Stepper >
         /** @brief Problème discret */
         DiscreteProblemPtr  _discreteProblem;
         /** @brief Solveur linéaire */
-        BaseLinearSolverPtr     _linearSolver;
+        BaseLinearSolverPtr _linearSolver;
         /** @brief Sd de stockage des résultats */
         ResultsContainerPtr _results;
         /** @brief Chargements */
         ListOfLoadsPtr      _listOfLoads;
         /** @brief Pas de temps courant */
         double              _time;
+        /** @brief rank */
+        int                 _rank;
 
     public:
         /**
@@ -66,7 +68,8 @@ class StaticMechanicalAlgorithm: public GenericUnitaryAlgorithm< Stepper >
             _linearSolver( linSolv ),
             _listOfLoads( _discreteProblem->getStudyDescription()->getListOfLoads() ),
             _results( container ),
-            _time( 0. )
+            _time( 0. ),
+            _rank( 0 )
         {};
 
         /**
@@ -132,6 +135,12 @@ void StaticMechanicalAlgorithm< Stepper >::oneStep() throw( AlgoException& )
                                                           chNoDir, resultField );
 
     /** @todo rajouter un rsadpa */
+    const auto& study = _discreteProblem->getStudyDescription();
+    const auto& model = study->getSupportModel();
+    const auto& mater = study->getMaterialOnMesh();
+    _results->addModel( model, _rank );
+    _results->addMaterialOnMesh( mater, _rank );
+    _results->addTimeValue( _time, _rank );
 };
 
 template< class Stepper >
@@ -139,6 +148,7 @@ void StaticMechanicalAlgorithm< Stepper >::prepareStep( AlgorithmStepperIter& cu
     throw( AlgoException& )
 {
     _time = *curStep;
+    _rank = curStep.rank;
 };
 
 #endif /* STATICMECHANICALGORITHM_H_ */
