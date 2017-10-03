@@ -22,7 +22,7 @@ subroutine caethm(l_axi, l_steady, l_vf, &
                   type_elem, inte_type, mecani, press1, press2,&
                   tempe, dimdep, dimdef, dimcon, nddl_meca,&
                   nddl_p1, nddl_p2, ndim, nno, nnos,&
-                  nnom, nface, npi, npg, nddls,&
+                  nface, npi, npg, nddls,&
                   nddlm, nddlfa, nddlk, dimuel, jv_poids,&
                   jv_func, jv_dfunc, jv_poids2, jv_func2, jv_dfunc2,&
                   npi2, jv_gano)
@@ -44,7 +44,7 @@ integer, intent(out) :: mecani(5), press1(7), press2(7), tempe(5)
 character(len=3), intent(out) :: inte_type
 integer, intent(out) :: dimdep, dimdef, dimcon, dimuel
 integer, intent(out) :: nddl_meca, nddl_p1, nddl_p2
-integer, intent(out) :: nno, nnos, nnom, nface
+integer, intent(out) :: nno, nnos, nface
 integer, intent(out) :: npi, npi2, npg
 integer, intent(out) :: nddls, nddlm, nddlfa, nddlk
 integer, intent(out) :: jv_poids, jv_poids2
@@ -78,7 +78,6 @@ character(len=8), intent(out) :: type_elem(2)
 ! OUT NNO    : NOMBRE DE NOEUDS DE L'ELEMENT
 ! OUT NNOS   : NOMBRE DE NOEUDS SOMMETS DE L'ELEMENT
 ! OUT NFACE  : NB FACES AU SENS BORD DE DIMENSION DIM-1 NE SERT QU EN VF
-! OUT NNOM   : NB NOEUDS MILIEUX DE FACE OU D ARRETE NE SERT QU EN EF
 ! OUT NPI    : NOMBRE DE POINTS D'INTEGRATION DE L'ELEMENT
 ! OUT NPG    : NOMBRE DE POINTS DE GAUSS     POUR CLASSIQUE(=NPI)
 !                        SOMMETS             POUR LUMPEE   (=NPI=NNOS)
@@ -100,6 +99,7 @@ character(len=8), intent(out) :: type_elem(2)
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=8) :: elrefe, elref2
+    integer :: nnom
 !
 ! --------------------------------------------------------------------------------------------------
 !

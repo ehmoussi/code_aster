@@ -72,7 +72,7 @@ subroutine te0500(option, nomte)
     integer :: itab(7), nbcmp, ibid, ibid2, ibid3, ibid4
     integer :: dimdep, dimdef, dimcon
     integer :: ipoids, ivf, idfde, ipoid2, ivf2, idfde2
-    integer :: nmec, npi, np1, np2, nnos, nnom, nddls, nddlm
+    integer :: nmec, npi, np1, np2, nnos, nddls, nddlm
     integer :: mecani(5), press1(7), press2(7), tempe(5), dimuel
 !
     real(kind=8) :: poids2
@@ -117,7 +117,7 @@ subroutine te0500(option, nomte)
                 typmod, modint, mecani, press1, press2,&
                 tempe, dimdep, dimdef, dimcon, nmec,&
                 np1, np2, ndim, nno, nnos,&
-                nnom, ibid, npi, npg, nddls,&
+                ibid, npi, npg, nddls,&
                 nddlm, ibid2, ibid3, dimuel, ipoids,&
                 ivf, idfde, ipoid2, ivf2, idfde2,&
                 ibid4, jgano)

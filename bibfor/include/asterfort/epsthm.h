@@ -22,7 +22,7 @@
 interface
     subroutine epsthm(l_axi    , ndim     ,&
                       addeme   , addep1   , addep2  , addete   ,&
-                      nno      , nnos     , nnom    , &
+                      nno      , nnos     ,&
                       dimuel   , dimdef   , nddls   , nddlm    ,&
                       nddl_meca, nddl_p1  , nddl_p2 ,&
                       npi      , elem_coor, disp    ,&
@@ -32,7 +32,7 @@ interface
         aster_logical, intent(in) :: l_axi
         integer, intent(in) :: ndim
         integer, intent(in) :: addeme, addep1, addep2, addete
-        integer, intent(in) :: nno, nnos, nnom
+        integer, intent(in) :: nno, nnos
         integer, intent(in) :: dimuel, dimdef
         integer, intent(in) :: nddls, nddlm
         integer, intent(in) :: nddl_meca, nddl_p1, nddl_p2

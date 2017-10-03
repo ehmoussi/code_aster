@@ -59,7 +59,7 @@ character(len=16), intent(in) :: option
     integer :: mecani(5), press1(7), press2(7), tempe(5)
     integer :: dimdep, dimdef, dimcon, dimuel
     integer :: nddls, nddlm, nddl_p1, nddl_p2, nddl_meca
-    integer :: ndim, nno, nnos, nnom
+    integer :: ndim, nno, nnos
     integer :: npi, npg, nbvari
     integer :: jv_poids, jv_func, jv_dfunc, jv_poids2, jv_func2, jv_dfunc2, jv_gano
     character(len=8) :: typmod(2)
@@ -75,7 +75,7 @@ character(len=16), intent(in) :: option
                 typmod, inte_type, mecani, press1, press2,&
                 tempe, dimdep, dimdef, dimcon, nddl_meca,&
                 nddl_p1, nddl_p2, ndim, nno, nnos,&
-                nnom, ibid, npi, npg, nddls,&
+                ibid, npi, npg, nddls,&
                 nddlm, ibid2, ibid3, dimuel, jv_poids,&
                 jv_func, jv_dfunc, jv_poids2, jv_func2, jv_dfunc2,&
                 ibid4, jv_gano)
@@ -141,7 +141,7 @@ character(len=16), intent(in) :: option
                 l_axi          , l_steady     ,&
                 typmod         , inte_type    , angl_naut,&
                 ndim           , nbvari       ,&
-                nno            , nnos         , nnom     ,&
+                nno            , nnos         ,&
                 npg            , npi          ,&
                 nddls          , nddlm        , nddl_meca, nddl_p1, nddl_p2, &
                 dimdef         , dimcon       , dimuel   ,&

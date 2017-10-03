@@ -19,7 +19,7 @@
 !
 subroutine epsthm(l_axi    , ndim     ,&
                   addeme   , addep1   , addep2  , addete   ,&
-                  nno      , nnos     , nnom    , &
+                  nno      , nnos     ,&
                   dimuel   , dimdef   , nddls   , nddlm    ,&
                   nddl_meca, nddl_p1  , nddl_p2 ,&
                   npi      , elem_coor, disp    ,&
@@ -40,7 +40,7 @@ implicit none
 aster_logical, intent(in) :: l_axi
 integer, intent(in) :: ndim
 integer, intent(in) :: addeme, addep1, addep2, addete
-integer, intent(in) :: nno, nnos, nnom
+integer, intent(in) :: nno, nnos
 integer, intent(in) :: dimuel, dimdef
 integer, intent(in) :: nddls, nddlm
 integer, intent(in) :: nddl_meca, nddl_p1, nddl_p2
@@ -67,7 +67,6 @@ real(kind=8), intent(out) :: epsm(6,27)
 ! In  addete       : adress of thermic dof in vector and matrix (generalized quantities)
 ! In  nno          : number of nodes (all)
 ! In  nnos         : number of nodes (not middle ones)
-! In  nnom         : number of nodes (middle ones)
 ! In  dimuel       : number of dof for element
 ! In  dimdef       : number of generalized strains
 ! In  nddls        : number of dof at nodes (not middle ones)
@@ -106,7 +105,7 @@ real(kind=8), intent(out) :: epsm(6,27)
         call cabthm(l_axi    , ndim     ,&
                     nddls    , nddlm    ,&
                     nddl_meca, nddl_p1  , nddl_p2,&
-                    nno      , nnos     , nnom   ,&
+                    nno      , nnos     ,&
                     dimuel   , dimdef   , kpi    ,&
                     addeme   , addete   , addep1 , addep2,&
                     elem_coor,&

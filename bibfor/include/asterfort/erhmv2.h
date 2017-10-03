@@ -22,7 +22,7 @@
 interface 
     subroutine erhmv2(axi, perman, deltat, dimdep, dimdef,&
                       nmec, np1, np2, ndim, nno,&
-                      nnos, nnom, npg, nddls, nddlm,&
+                      nnos, npg, nddls, nddlm,&
                       dimuel, ipoids, ivf, idfde, ipoid2,&
                       ivf2, idfde2, elem_coor, fovo, deplp,&
                       deplm, sielnp, sielnm, nbcmp, biot,&
@@ -41,7 +41,6 @@ interface
         integer :: nmec
         integer :: np1
         integer :: np2
-        integer :: nnom
         integer :: npg
         integer :: nddls
         integer :: nddlm

@@ -15,9 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine thmevc(option  , nomte  , l_axi   ,&
-                  nno     , nnom   , nnos    ,&
+                  nno     , nnos   ,&
                   npg     , nddls  , nddlm   ,&
                   jv_poids, jv_func, jv_dfunc)
 !
@@ -30,14 +30,12 @@ implicit none
 #include "asterfort/jevech.h"
 #include "asterfort/tefrep.h"
 !
-!
-    character(len=16), intent(in) :: option, nomte
-    aster_logical, intent(in) :: l_axi
-    integer, intent(in) :: nno, nnom, nnos
-    integer, intent(in) :: npg
-    integer, intent(in) :: nddls, nddlm
-    integer, intent(in) :: jv_poids, jv_func, jv_dfunc
-
+character(len=16), intent(in) :: option, nomte
+aster_logical, intent(in) :: l_axi
+integer, intent(in) :: nno, nnos
+integer, intent(in) :: npg
+integer, intent(in) :: nddls, nddlm
+integer, intent(in) :: jv_poids, jv_func, jv_dfunc
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -52,7 +50,6 @@ implicit none
 ! In  l_axi        : flag is axisymmetric model
 ! In  nno          : number of nodes (all)
 ! In  nnos         : number of nodes (not middle ones)
-! In  nnom         : number of nodes (middle ones)
 ! In  npg          : number of Gauss points
 ! In  nddls        : number of dof at nodes (not middle ones)
 ! In  nddlm        : number of dof at nodes (middle ones)
@@ -63,12 +60,13 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     real(kind=8) :: poids
-    integer :: i_node, jv_forc, jv_geom, jv_vect, ii, kp, k
+    integer :: i_node, jv_forc, jv_geom, jv_vect, ii, kp, k, nnom
     real(kind=8) :: fx, fy, fz
     real(kind=8) :: rx
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    nnom = nno - nnos
     if (option .eq. 'CHAR_MECA_FR3D3D') then
         call jevech('PGEOMER', 'L', jv_geom)
         call tefrep(option, nomte, 'PFR3D3D', jv_forc)

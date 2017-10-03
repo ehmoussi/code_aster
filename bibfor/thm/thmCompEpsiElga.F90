@@ -120,7 +120,7 @@ implicit none
 !
     call epsthm(l_axi    , ndim       ,&
                 addeme   , addep1     , addep2  , addete   ,&
-                nno      , nnos       , nnom    , &
+                nno      , nnos       , &
                 dimuel   , dimdef     , nddls   , nddlm    ,&
                 nddl_meca, nddl_p1    , nddl_p2 ,&
                 npi      , zr(jv_geom), zr(jv_disp),&

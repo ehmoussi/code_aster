@@ -21,7 +21,7 @@
 subroutine cabthm(l_axi    , ndim     ,&
                   nddls    , nddlm    ,&
                   nddl_meca, nddl_p1  , nddl_p2,&
-                  nno      , nnos     , nnom   ,&
+                  nno      , nnos     , &
                   dimuel   , dimdef   , kpi    ,&
                   addeme   , addete   , addep1 , addep2,&
                   elem_coor,&
@@ -46,7 +46,7 @@ implicit none
 aster_logical, intent(in) :: l_axi
 integer, intent(in) :: ndim, nddls, nddlm
 integer, intent(in) :: nddl_meca, nddl_p1, nddl_p2
-integer, intent(in) :: nno, nnos, nnom
+integer, intent(in) :: nno, nnos
 integer, intent(in) :: dimuel, dimdef, kpi
 integer, intent(in) :: addeme, addete, addep1, addep2
 real(kind=8), intent(in) :: elem_coor(ndim, nno)
@@ -87,7 +87,6 @@ real(kind=8), intent(out) :: b(dimdef, dimuel)
 ! In  nddl_p2          : number of dof for second hydraulic quantity
 ! In  nno              : number of nodes (all)
 ! In  nnos             : number of nodes (not middle ones)
-! In  nnom             : number of nodes (middle ones)
 ! In  dimuel           : number of dof for element
 ! In  dimdef           : number of generalized strains
 ! In  kpi              : current Gauss point
@@ -112,13 +111,14 @@ real(kind=8), intent(out) :: b(dimdef, dimuel)
 !
     real(kind=8), parameter :: rac = sqrt(2.d0)
     real(kind=8) :: r, rmax
-    integer :: i_dim, i_node, kk
+    integer :: i_dim, i_node, kk, nnom
 !
 ! --------------------------------------------------------------------------------------------------
 !
     b(:,:)     = 0.d0
     dfdi(:,:)  = 0.d0
     dfdi2(:,:) = 0.d0
+    nnom       = nno - nnos
 !
 ! - Get derivatives of shape function
 !
