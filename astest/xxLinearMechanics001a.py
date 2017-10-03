@@ -5,7 +5,9 @@ from code_aster.Commands import *
 
 test = code_aster.TestCase()
 
-mail1 = LIRE_MAILLAGE( FORMAT = "MED" )
+#mail1 = LIRE_MAILLAGE( FORMAT = "MED" )
+mail1=code_aster.Mesh.create()
+mail1.readMedFile("test001f.mmed")
 
 model = AFFE_MODELE( MAILLAGE = mail1,
                      AFFE = _F( MODELISATION = "3D",
@@ -35,6 +37,11 @@ resu = MECA_STATIQUE( MODELE = model,
                                     RENUM = "METIS", ), )
 
 resu.debugPrint(6)
+
+#resu=CALC_CHAMP(reuse=resu,
+                #RESULTAT=resu,#TOUT_ORDRE='OUI',MODELE=model,
+                #CONTRAINTE=('SIGM_ELNO'),
+                #)
 
 # Debut du TEST_RESU
 MyFieldOnNodes = resu.getRealFieldOnNodes("DEPL", 0)
