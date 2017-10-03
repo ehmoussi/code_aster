@@ -52,15 +52,15 @@ class ExtendedDataStructure(injector, DataStructure):
 
     # transitional functions - to remove later
     @staticmethod
-    @deprecated()
+    @deprecated(False)
     def accessible():
         return True
 
-    @deprecated()
+    @deprecated(help="Use 'getName()' instead.")
     def get_name(self):
         return self.getName()
 
     @property
-    @deprecated()
+    @deprecated(help="Use 'getName()' instead.")
     def nom(self):
         return self.getName()

@@ -29,7 +29,7 @@ from warnings import simplefilter, warn
 from .base_utils import array_to_list
 
 
-def deprecated(replaced=True):
+def deprecated(replaced=True, help=None):
     """Decorator to mark a function as deprecated.
 
     It will do nothing at the beginning of the transitional phase.
@@ -52,6 +52,8 @@ def deprecated(replaced=True):
             if replaced:
                 msg = ("This feature has a new implementation, {0!r} will be "
                        "removed in the future.")
+            if help:
+                msg += " " + help
             warn(msg.format(func.__name__),
                  DeprecationWarning, stacklevel=2)
             return func(*args, **kwargs)

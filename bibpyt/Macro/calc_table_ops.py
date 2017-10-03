@@ -39,7 +39,6 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
     self.set_icmd(1)
 
     # Le concept sortant (de type table_sdaster ou dérivé) est tabout
-    self.DeclareOut('tabout', self.sd)
     if self.sd.__class__ == table_fonction:
         typ_tabout = 'TABLE_FONCTION'
     elif self.sd.__class__ == table_container:
@@ -203,7 +202,7 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
         aster.affiche('MESSAGE', texte_final)
 
     # surcharge par le titre fourni
-    tit = args['TITRE']
+    tit = args.get('TITRE')
     if tit != None:
         if type(tit) not in (list, tuple):
             tit = [tit]
@@ -211,5 +210,4 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
     # type de la table de sortie à passer à CREA_TABLE
     tabout = CREA_TABLE(TYPE_TABLE=typ_tabout,
                         **dprod)
-
-    return ier
+    return tabout
