@@ -56,7 +56,7 @@ implicit none
     integer :: npi, npi2, npg
     real(kind=8) :: dt
     integer :: dimdep, dimdef, dimcon, dimuel
-    integer :: nddls, nddlm, nddlk, nddlfa, nface
+    integer :: nddls, nddlm
     integer :: nddl_meca, nddl_p1, nddl_p2
     real(kind=8) :: b(21, 120), r(22)
     integer :: jv_poids, jv_poids2
@@ -125,10 +125,10 @@ implicit none
 !
 ! - Get dimensions about element
 !
-    call thmGetElemDime(l_vf     ,&
-                        ndim     , nnos   , nnom   , nface,&
+    call thmGetElemDime(l_vf     , &
+                        ndim     , nnos   , nnom   ,&
                         mecani   , press1 , press2 , tempe ,&
-                        nddls    , nddlm  , nddlk  , nddlfa,&
+                        nddls    , nddlm  ,&
                         nddl_meca, nddl_p1, nddl_p2,&
                         dimdep   , dimdef , dimcon , dimuel)
 !
