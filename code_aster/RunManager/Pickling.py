@@ -17,6 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+:py:mod:`Pickling` --- Serialization of code_aster objects
+**********************************************************
+
+.. note:: Currently not work at all! To be completely reviewed.
+
+"""
+
 import cPickle
 import types
 import traceback
@@ -29,7 +37,6 @@ from ..Supervis.logger import logger
 
 
 class Pickler(object):
-
     """This class manages 'save & reload' feature."""
 
     # TODO use repglob option?

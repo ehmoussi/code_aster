@@ -17,6 +17,44 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+"""
+:py:mod:`CommandSyntax` --- Interface between C++/Fortran operators and user syntax
+***********************************************************************************
+
+The :py:class:`CommandSyntax` provides an interface between operators originally
+defined in Fortran (:file:`opXXXX` subroutines) and the user syntax.
+The C/Fortran interface is defined in :file:`astermodule.c`.
+
+It is also used in some C++ objects to emulate a user command.
+The C++ interface is available from C++ ``CommandSyntax`` class.
+
+The method :py:meth:`~CommandSyntax.define` stores the user keywords.
+The execution of an operator (by :py:func:`aster.oper` for example) registers
+the current :py:class:`CommandSyntax` instance that can be requested by the
+operator using the functions:
+
+    - :py:meth:`~CommandSyntax.getres`,
+
+    - :py:meth:`~CommandSyntax.getvtx`,
+
+    - :py:meth:`~CommandSyntax.getltx`,
+
+    - :py:meth:`~CommandSyntax.getvid`,
+
+    - :py:meth:`~CommandSyntax.getvis`,
+
+    - :py:meth:`~CommandSyntax.getvr8`,
+
+    - :py:meth:`~CommandSyntax.getvc8`,
+
+    - :py:meth:`~CommandSyntax.getfac`,
+
+    - :py:meth:`~CommandSyntax.getexm`,
+
+    - :py:meth:`~CommandSyntax.getmjm`.
+
+"""
+
 import random
 
 from ..Objects import DataStructure
@@ -26,7 +64,7 @@ from .typeaster import typeaster
 from .logger import logger
 
 
-class CommandSyntax:
+class CommandSyntax(object):
     """This class describes the syntax of command for compatibility
     with the fortran code that use the legacy supervisor.
     """

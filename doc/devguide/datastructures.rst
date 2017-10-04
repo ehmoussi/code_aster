@@ -17,12 +17,13 @@ Details
    :members:
    :special-members: __init__
 
-.. automodule:: code_aster.Objects.assemblymatrix_ext
+.. automodule:: code_aster.Objects.datastructure_ext
    :show-inheritance:
    :members:
+   :inherited-members:
    :special-members: __init__
 
-.. automodule:: code_aster.Objects.datastructure_ext
+.. automodule:: code_aster.Objects.assemblymatrix_ext
    :show-inheritance:
    :members:
    :special-members: __init__
