@@ -18,7 +18,12 @@
 # --------------------------------------------------------------------
 
 # c_mfront_official will only be available after installation
-from .c_mfront_official import C_MFRONT_OFFICIAL # pragma pylint: disable=import-error
+try:
+    from .c_mfront_official import C_MFRONT_OFFICIAL # pragma pylint: disable=import-error
+except ImportError:
+    def C_MFRONT_OFFICIAL():
+        return {}
+
 
 from .c_affichage import C_AFFICHAGE
 from .c_archivage import C_ARCHIVAGE
