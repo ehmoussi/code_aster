@@ -13,13 +13,27 @@
 # serve to show the default.
 
 from __future__ import unicode_literals
+import os
 import os.path as osp
 import sys
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, osp.join(osp.dirname(__file__), '_extensions'))
+DOCDIR = osp.dirname(__file__)
+SRCDIR = osp.abspath(osp.join(osp.dirname(__file__), os.pardir))
+BUILDDIR = os.environ['BUILDDIR']
+
+paths = [osp.join(DOCDIR, '_extensions'),
+         osp.join(DOCDIR, '_fake'),
+         SRCDIR,
+         osp.join(SRCDIR, 'bibpyt'),
+         BUILDDIR,
+         osp.join(BUILDDIR, 'bibc'),
+         osp.join(BUILDDIR, 'bibpyt'),
+         osp.join(BUILDDIR, 'mfront')]
+
+sys.path = paths + sys.path
 
 # -- General configuration ------------------------------------------------
 

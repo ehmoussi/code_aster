@@ -32,10 +32,9 @@ def options(self):
                     dest='enable_doc', help='Disable documentation support.')
     group.add_option('--enable-doc', action='store_true', default=None,
                     dest='enable_doc',
-                    help='Force documentation support. '
-                         'NB: The documentation build needs an successful '
-                         'installation of code_aster (`waf install` '
-                         'previously passed).')
+                    help='Force documentation support.'
+                         'NB: The documentation build must be explicitly '
+                         ' called by running `waf doc|doc_debug`.')
 
 def configure(self):
     opts = self.options
@@ -65,8 +64,10 @@ def build_doc(self):
     files.extend(self.path.ant_glob('conf.py'))
 
     self(
-        rule   = ". ${{ASTERDATADIR}}/profile.sh ; ${{SPHINX_BUILD}} ${{SPHINX_ARGS}} -b html -d {0} . {1}".format(
-            osp.join(out, "doctrees"), osp.join(out, "html")),
+        rule   = ("BUILDDIR={0} ${{SPHINX_BUILD}} ${{SPHINX_ARGS}} "
+                  "-b html -d {1} . {2}"
+                  .format(self.path.parent.get_bld().abspath(),
+                          osp.join(out, "doctrees"), osp.join(out, "html"))),
         cwd    = self.path.abspath(),
         source = files,
         target = self.path.find_or_declare('html/index.html')
