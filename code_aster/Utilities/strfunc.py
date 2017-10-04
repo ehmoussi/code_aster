@@ -17,7 +17,11 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-"""Module rassemblant des fonctions utilitaires de manipulations
+"""
+:py:mod:`strfunc` --- String manipulations utilities
+****************************************************
+
+Module rassemblant des fonctions utilitaires de manipulations
 de chaines de caractères
 """
 # module identique à Execution/strfunc.py pour usage dans Eficas

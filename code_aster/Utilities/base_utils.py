@@ -20,6 +20,9 @@
 # person_in_charge: mathieu.courtois@edf.fr
 
 """
+:py:mod:`base_utils` --- General purpose utilities
+**************************************************
+
 This modules gives some basic utilities.
 """
 

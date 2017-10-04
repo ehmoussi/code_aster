@@ -21,6 +21,8 @@
 
 """
 This module gives common utilities.
+
+No external import of other :py:mod:`code_aster` packages.
 """
 
 from .Tester import TestCase
