@@ -50,7 +50,7 @@ elif [ "$1" = "reconfigure" ]; then
 else
     # is the first argument a waf command ?
     wafcmd=(build buildelem clean configure dist distcheck distclean \
-            i18n install list step test uninstall)
+            doc i18n install list step test uninstall)
     found=0
     # remove '_debug' suffix
     called=${1//_debug/}
