@@ -34,6 +34,7 @@ implicit none
 #include "asterc/r8vide.h"
 #include "asterfort/assert.h"
 #include "asterfort/copisd.h"
+#include "asterfort/detrsd.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetc.h"
 #include "asterfort/jemarq.h"
@@ -50,6 +51,7 @@ implicit none
 #include "asterfort/rsexch.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vpcres.h"
+#include "asterfort/vpleci.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
@@ -102,7 +104,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: linsta
-    integer :: nfreq, nfreqc, nbrss, maxitr, nbborn, i, ljeveu, ibid, iret
+    integer :: nfreq, nfreqc, nbrss, maxitr, i, ljeveu, ibid, iret
     integer :: defo, ldccvg, numord, nddle, nsta, ljeve2, cdsp, nbvec2, nbvect
     real(kind=8) :: bande(2), r8bid, alpha, tolsor, precsh, fcorig, precdc, omecor, freqm, freqv
     real(kind=8) :: freqa, freqr, csta
@@ -192,22 +194,21 @@ implicit none
     precsh = 5.d-2
 ! SEUIL_FREQ/CRIT EN DUR
     fcorig = 1.d-2
+    if (typres(1:9) .eq. 'DYNAMIQUE') omecor = omega2(fcorig)
 ! VERI_MODE/PREC_SHIFT EN DUR
     precdc = 5.d-2
-    if (typres(1:9) .eq. 'DYNAMIQUE') omecor = omega2(fcorig)
-    if (option(1:5).eq.'BANDE') then
-      nbborn=2
-    else
-      nbborn=1
-    endif
     call vpcres(eigsol, typres, raide, masse, k19bid, optiof, method, k16bid, k8bid, k19bid,&
-                k16bid, k16bid, k1bid, k16bid, nfreqc, nbvect, nbvec2, nbrss, nbborn, ibid,&
+                k16bid, k16bid, k1bid, k16bid, nfreqc, nbvect, nbvec2, nbrss, ibid, ibid,&
                 ibid, ibid, ibid, maxitr, bande, precsh, omecor, precdc, r8bid,&
                 r8bid, r8bid, r8bid, r8bid, tolsor, alpha)
 !
 ! --- CALCUL MODAL PROPREMENT DIT
 !
     call nmop45(eigsol, defo, mod45, ddlexc, nddle, sdmode, sdstab, ddlsta, nsta)
+    call vpleci(eigsol, 'I', 1, k24bid, r8bid, nfreqc)
+    write(6,*)'nmflam ',nfreqc
+    call detrsd('EIGENSOLVER',eigsol)
+
     if (nfreqc .eq. 0) then
         freqr = r8vide()
         numord = -1

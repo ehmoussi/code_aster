@@ -55,6 +55,7 @@ subroutine dtmeigen(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
 #include "asterfort/utmess.h"
 #include "asterfort/vpcres.h"
 #include "asterfort/vprecu.h"
+#include "asterfort/vpleci.h"
 #include "asterfort/vpnorm.h"
 #include "asterfort/wkvect.h"
 #include "blas/ddot.h"
@@ -73,7 +74,7 @@ subroutine dtmeigen(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
 !   -0.2- Local variables
     integer               :: nbmode, i, j, count, jrefa, nbnoli, nbvect, nbvec2, nbrss, maxitr
     integer               :: jdesc, lmatm, lmatk, lmatc, jbase, defo, nddle, nsta
-    integer               :: ibid, nlcase, iret, fsichoc, info, ifm, nbborn
+    integer               :: ibid, nlcase, iret, fsichoc, info, ifm
     real(kind=8)          :: time, bande(2), r8bid, alpha, tolsor, precsh, omecor, precdc, fcorig
     character(len=1)      :: k1bid
     character(len=4)      :: mod45
@@ -316,10 +317,9 @@ subroutine dtmeigen(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
         omecor = omega2(fcorig)
 ! VERI_MODE/PREC_SHIFT EN DUR
         precdc = 5.d-2
-        nbborn=1
         call vpcres(eigsol, typres, raide2, masse2, k19bid, optiof, method, k16bid, k8bid,&
                     k19bid, k16bid, k16bid, k1bid, k16bid, nbmode, nbvect, nbvec2, nbrss,&
-                    nbborn, ibid, ibid, ibid, ibid, maxitr, bande, precsh, omecor, precdc,&
+                    ibid, ibid, ibid, ibid, ibid, maxitr, bande, precsh, omecor, precdc,&
                     r8bid, r8bid, r8bid, r8bid, r8bid, tolsor, alpha)
         
 !       2.1 - Mode calculation
@@ -329,6 +329,8 @@ subroutine dtmeigen(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
         sdstab='&&DUMMY'
         nsta=0
         call nmop45(eigsol, defo, mod45, k24bid, nddle, modes, sdstab, k24bid, nsta)
+        call vpleci(eigsol, 'I', 1, k24bid, r8bid, nbmode)
+        call detrsd('EIGENSOLVER',eigsol)
 
 !       2.2 - Mode normalising using MASS_GENE option
 
