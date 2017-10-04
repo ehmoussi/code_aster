@@ -27,7 +27,7 @@ import aster
 from libaster import ResultNaming
 
 from ..Cata import Commands, checkSyntax
-from ..Extensions import DataStructure
+from ..Objects import DataStructure
 from ..Supervis import cata2datastructure, CommandSyntax, logger
 from ..Utilities import deprecated, import_object
 

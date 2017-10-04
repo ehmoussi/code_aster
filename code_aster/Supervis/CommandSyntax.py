@@ -19,7 +19,7 @@
 
 import random
 
-from ..Extensions import DataStructure
+from ..Objects import DataStructure
 from ..Utilities import (force_list, is_complex, is_float, is_int, is_str,
                          value_is_sequence)
 from .typeaster import typeaster
@@ -300,11 +300,12 @@ class CommandSyntax:
             maxval (int): Maximum number of values read.
 
         Returns:
-            int: Number of the values provided by the user.
-                If `size > maxval`, `-size` is returned.
-            list: List of results names.
-            int: 1 if the value is the default, 0 if it has been explicitly
-                provided by the user.
+            int, list, int: Returns three values ``(size, values, isdef)``.
+            ``size`` is the number of the values provided by the user.
+            If ``size > maxval``, ``-size`` is returned.
+            ``values`` is a list of result names.
+            ``isdef`` is 1 if the value is the default, 0 if it has been
+            explicitly provided by the user.
         """
         value = self.getValue( factName, occurrence, simpName )
         value = [i.getName()if hasattr(i, 'getName') else i for i in value]
@@ -323,11 +324,12 @@ class CommandSyntax:
             maxval (int): Maximum number of values read.
 
         Returns:
-            int: Number of the values provided by the user.
-                If `size > maxval`, `-size` is returned.
-            list: List of strings.
-            int: 1 if the value is the default, 0 if it has been explicitly
-                provided by the user.
+            int, list, int: Returns three values ``(size, values, isdef)``.
+            ``size`` is the number of the values provided by the user.
+            If ``size > maxval``, ``-size`` is returned.
+            ``values`` is a list of strings.
+            ``isdef`` is 1 if the value is the default, 0 if it has been
+            explicitly provided by the user.
         """
         value = self.getValue( factName, occurrence, simpName )
         value = _check_strings(factName, simpName, value)
@@ -347,11 +349,12 @@ class CommandSyntax:
             maxval (int): Maximum number of values read.
 
         Returns:
-            int: Number of the values provided by the user.
-                If `size > maxval`, `-size` is returned.
-            list: List of integers.
-            int: 1 if the value is the default, 0 if it has been explicitly
-                provided by the user.
+            int, list, int: Returns three values ``(size, values, isdef)``.
+            ``size`` is the number of the values provided by the user.
+            If ``size > maxval``, ``-size`` is returned.
+            ``values`` is a list of integers.
+            ``isdef`` is 1 if the value is the default, 0 if it has been
+            explicitly provided by the user.
         """
         value = self.getValue( factName, occurrence, simpName )
         if len( value ) > 0 and not isinstance(value[0], (int, long)):
@@ -372,11 +375,12 @@ class CommandSyntax:
             maxval (int): Maximum number of values read.
 
         Returns:
-            int: Number of the values provided by the user.
-                If `size > maxval`, `-size` is returned.
-            list: List of floats.
-            int: 1 if the value is the default, 0 if it has been explicitly
-                provided by the user.
+            int, list, int: Returns three values ``(size, values, isdef)``.
+            ``size`` is the number of the values provided by the user.
+            If ``size > maxval``, ``-size`` is returned.
+            ``values`` is a list of floats.
+            ``isdef`` is 1 if the value is the default, 0 if it has been
+            explicitly provided by the user.
         """
         value = self.getValue( factName, occurrence, simpName )
         if len( value ) > 0:
@@ -400,11 +404,12 @@ class CommandSyntax:
             maxval (int): Maximum number of values read.
 
         Returns:
-            int: Number of the values provided by the user.
-                If `size > maxval`, `-size` is returned.
-            list: List of complex numbers.
-            int: 1 if the value is the default, 0 if it has been explicitly
-                provided by the user.
+            int, list, int: Returns three values ``(size, values, isdef)``.
+            ``size`` is the number of the values provided by the user.
+            If ``size > maxval``, ``-size`` is returned.
+            ``values`` is a list of complex numbers.
+            ``isdef`` is 1 if the value is the default, 0 if it has been
+            explicitly provided by the user.
         """
         # TODO: Support of ('RI', a, b) notation
         value = self.getValue( factName, occurrence, simpName )
@@ -458,9 +463,9 @@ class CommandSyntax:
             maxval (int): Maximum number of values returned.
 
         Returns:
-            list[str]: List of the names of simple keywords, alphabetically
-                sorted.
-            list[str]: List of type names of the keywords.
+            list[str], list[str]: Two lists: one for the names of simple
+            keywords, alphabetically sorted, and one for the type names
+            of the keywords.
         """
         userkw = self._getDefinition(factName, occurrence)
         if not userkw:

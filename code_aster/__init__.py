@@ -26,7 +26,7 @@ __all__ = []
 import libaster
 
 # import datastructures enriched by pure python extensions
-from .Extensions import *
+from .Objects import *
 
 from .Commands.debut import init
 
