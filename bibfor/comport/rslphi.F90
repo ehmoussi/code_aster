@@ -73,12 +73,18 @@ subroutine rslphi(fami, kpg, ksp, loi, imat,&
 !
 !      -------------------------------------------------------------
 !
+    overfl = .false.
     ftheta = f - (un - theta)*df
     unmf = (un-ftheta)
 !
 ! ----- CALCUL DE RIGM ET DRIGM/DDF---------------
     rigm = rigdmo + troisk*theta*(depsmo - d13*df/unmf/acc)
     drigm = -troisk*d13*theta*(unmf+theta*df)/(unmf**2)/acc
+    ! limit some quantities to avoid FPE in exponentials
+    if ((rigm/s1) > 1.d1) then
+        overfl = .true.
+        goto 9999
+    endif
     expo = d*exp(rigm/s1)
     dexpo = expo*(drigm/s1)
     unex = unmf*expo*acc
@@ -104,12 +110,10 @@ subroutine rslphi(fami, kpg, ksp, loi, imat,&
     endif
     p = pi+dp
     ptheta= pi +theta*dp
-! --- RESTONS DANS LES LIMITES DU RAISONNABLE ----
-    if (p .gt. 1.d100) then
+    ! limit plastic strain to avoid subsequent FPE
+    if (p > 1.d30) then
         overfl = .true.
         goto 9999
-    else
-        overfl = .false.
     endif
 !
 ! ----- CALCUL DE RIGEQ ---------------
