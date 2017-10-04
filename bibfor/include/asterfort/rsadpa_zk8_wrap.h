@@ -18,8 +18,9 @@
 
 interface
     subroutine rsadpa_zk8_wrap(nomsd, nuordr, modele, typesd)
-        integer, intent(in) :: nuordr, 
-        character(len=8), intent(in) :: nomsd, modele
-    character(len=*), intent(in) :: typesd
+        integer, intent(in) :: nuordr
+        character(len=8), intent(in) :: nomsd
+        character(len=*), intent(in) :: modele
+        character(len=*), intent(in) :: typesd
     end subroutine rsadpa_zk8_wrap
 end interface

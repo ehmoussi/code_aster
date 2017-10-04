@@ -360,6 +360,10 @@ extern void DEFSPSS(RSADPA_ZK8_WRAP, rsadpa_zk8_wrap, const char *, STRING_SIZE,
 extern void DEFSPPS(RSADPA_ZR_WRAP, rsadpa_zr_wrap, const char *, STRING_SIZE,
                     ASTERINTEGER *, ASTERDOUBLE *, const char *,  STRING_SIZE);
 
+#define CALL_RSADPA_ZK24_WRAP(a,b,c,d) CALLSPSS(RSADPA_ZK24_WRAP,rsadpa_zk24_wrap,a,b,c,d)
+extern void DEFSPSS(RSADPA_ZK24_WRAP, rsadpa_zk24_wrap, const char *, STRING_SIZE,
+                    ASTERINTEGER *, const char *,  STRING_SIZE, const char *,  STRING_SIZE);
+
 /* routines de manipulation de la SD RESULTAT */
 extern void DEFSPPSPPPSP(RSACPA,rsacpa,char *, STRING_SIZE, ASTERINTEGER *, ASTERINTEGER *,
           char *, STRING_SIZE, ASTERINTEGER *, ASTERINTEGER *, ASTERDOUBLE *,

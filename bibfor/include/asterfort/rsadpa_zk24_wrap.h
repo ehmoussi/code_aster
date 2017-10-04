@@ -16,21 +16,11 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine rsadpa_zk8_wrap(nomsd, nuordr, modele, typesd)
-! aslint: disable=W1306
-    implicit none
-#include "jeveux.h"
-#include "asterfort/rsadpa.h"
-! ----------------------------------------------------------------------
-    integer, intent(in) :: nuordr
-    character(len=*), intent(in) :: typesd
-    character(len=8), intent(in) :: nomsd
-    character(len=*), intent(in) :: modele
-! person_in_charge: nicolas.sellenet at edf.fr
-!
-    integer :: jpara
-! ----------------------------------------------------------------------
-    call rsadpa(nomsd, 'E', 1, typesd, nuordr,&
-                0, sjv=jpara)
-    zk8(jpara)=modele
-end subroutine
+interface
+    subroutine rsadpa_zk24_wrap(nomsd, nuordr, modele, typesd)
+        integer, intent(in) :: nuordr
+        character(len=8), intent(in) :: nomsd
+        character(len=*), intent(in) :: modele
+        character(len=*), intent(in) :: typesd
+    end subroutine rsadpa_zk24_wrap
+end interface

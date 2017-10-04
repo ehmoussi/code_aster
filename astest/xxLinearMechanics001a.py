@@ -42,7 +42,8 @@ resu=CALC_CHAMP(reuse=resu,
                 RESULTAT=resu,TOUT_ORDRE='OUI',
                 CONTRAINTE=('SIGM_ELNO'),
                 )
-resu.debugPrint(6)
+resu.getRealFieldOnElements("SIGM_ELNO", 0)
+resu.debugPrint()
 
 # Debut du TEST_RESU
 MyFieldOnNodes = resu.getRealFieldOnNodes("DEPL", 0)
