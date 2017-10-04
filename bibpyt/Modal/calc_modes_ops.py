@@ -37,7 +37,7 @@ def calc_modes_ops(self, TYPE_RESU, OPTION,
     from Modal.calc_modes_multi_bandes import calc_modes_multi_bandes
     from Modal.calc_modes_amelioration import calc_modes_amelioration
     from Modal.calc_modes_post import calc_modes_post
-
+    from Utilitai.Utmess import MasquerAlarme, RetablirAlarme
     
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
@@ -55,6 +55,21 @@ def calc_modes_ops(self, TYPE_RESU, OPTION,
           assert(False)   
         stop_erreur='NON'
         sturm      ='NON'
+        # Warnings from op/op0045.F90 & algeline/vpcntl.F90
+        MasquerAlarme('ALGELINE2_74')
+        MasquerAlarme('ALGELINE5_15')
+        MasquerAlarme('ALGELINE5_16')
+        MasquerAlarme('ALGELINE5_17')
+        MasquerAlarme('ALGELINE5_18')
+        MasquerAlarme('ALGELINE5_20')
+        MasquerAlarme('ALGELINE5_23')
+        MasquerAlarme('ALGELINE5_24')
+        MasquerAlarme('ALGELINE5_25')
+        MasquerAlarme('ALGELINE5_26')
+        MasquerAlarme('ALGELINE5_77')
+        MasquerAlarme('ALGELINE5_78')
+        MasquerAlarme('ALGELINE6_23')
+        MasquerAlarme('ALGELINE6_24')
     else:
         stop_erreur=VERI_MODE['STOP_ERREUR']
         sturm      =VERI_MODE['STURM']
@@ -84,6 +99,20 @@ def calc_modes_ops(self, TYPE_RESU, OPTION,
     if AMELIORATION=='OUI':
         # after a 1st modal computation, achieve a 2nd computation with MODE_ITER_INV
         # and option 'PROCHE' to refine the modes
+        RetablirAlarme('ALGELINE2_74')
+        RetablirAlarme('ALGELINE5_15')
+        RetablirAlarme('ALGELINE5_16')
+        RetablirAlarme('ALGELINE5_17')
+        RetablirAlarme('ALGELINE5_18')
+        RetablirAlarme('ALGELINE5_20')
+        RetablirAlarme('ALGELINE5_23')
+        RetablirAlarme('ALGELINE5_24')
+        RetablirAlarme('ALGELINE5_25')
+        RetablirAlarme('ALGELINE5_26')
+        RetablirAlarme('ALGELINE5_77')
+        RetablirAlarme('ALGELINE5_78')
+        RetablirAlarme('ALGELINE6_23')
+        RetablirAlarme('ALGELINE6_24')
         modes = calc_modes_amelioration(self, modes, TYPE_RESU, SOLVEUR_MODAL,
                                         SOLVEUR, VERI_MODE, INFO, TITRE, **args)
 
