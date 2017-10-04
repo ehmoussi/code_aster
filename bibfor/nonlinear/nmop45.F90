@@ -49,6 +49,7 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
 #include "asterfort/vpbost.h"
 #include "asterfort/vpcrea.h"
 #include "asterfort/vpddl.h"
+#include "asterfort/vpecri.h"
 #include "asterfort/vpfopr.h"
 #include "asterfort/vplecs.h"
 #include "asterfort/vpordi.h"
@@ -60,11 +61,11 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
 #include "asterfort/vrrefe.h"
 #include "asterfort/wkvect.h"
 !
-    integer           :: defo, nddle, nsta
-    character(len=4)  :: mod45
-    character(len=8)  :: modes, modes2
-    character(len=19) :: eigensol
-    character(len=24) :: ddlexc, ddlsta
+    integer           , intent(in) :: defo, nddle, nsta
+    character(len=4)  , intent(in) :: mod45
+    character(len=8)  , intent(in) :: modes, modes2
+    character(len=19) , intent(in) :: eigsol
+    character(len=24) , intent(in) :: ddlexc, ddlsta
 !
 ! ======================================================================
 !        MODE_ITER_SIMULT
@@ -98,22 +99,23 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
     parameter (nbpari=8,nbparr=16,nbpark=3,nbpara=27)
     parameter (mxddl=1)
 !
-    integer :: indf, imet, i, ieq, iret, ier1, ibid, ierd, ifreq, nbborn
+    integer :: indf, imet, i, ieq, iret, ier1, ibid, ierd, ifreq
     integer :: lamor, lmasse, lresur, lworkd, laux, lraide, nfreq
     integer :: lworkl, lworkv, lprod, lddl, eddl, eddl2, nbddl2, redem
     integer :: lmatra, lonwl, ityp, iordre, nbvec2, icoef, jexx, jest, cdsp
     integer :: npivot, nbvect, priram(8), maxitr, neqact, mfreq, nparr, nbcine
     integer :: nbrss, mxresf, nblagr, nconv, npiv2(2), ldsor, neq, idet(2)
-    integer :: ifm, niv, nbddl, un, zslvk, zslvr, zslvi, eislvk, eislvr, eislvi
+    integer :: ifm, niv, nbddl, un
     real(kind=8) :: alpha, tolsor, undf, omemin, omemax, omeshi, omecor, precdc
-    real(kind=8) :: vpinf, precsh, vpmax, csta, det(2), omebid, r8bid, fcorig
+    real(kind=8) :: vpinf, precsh, vpmax, csta, det(2), omebid, r8bid
     complex(kind=8) :: cbid
     character(len=1) :: ktyp, k1bid
-    character(len=8) :: knega, method, chaine, k8bid, k9bid
+    character(len=8) :: knega, method, chaine, k8bid
+    character(len=9) :: k9bid
     character(len=14) ::k14bid
     character(len=16) :: typcon, typres, typco2, k16bid, option
-    character(len=19) :: matopa, numedd, solveu, eigsol, k19bid, matgeo, matrig
-    character(len=24) :: nopara(nbpara), metres
+    character(len=19) :: matopa, numedd, solveu, k19bid, matgeo, matrig
+    character(len=24) :: nopara(nbpara), metres, k24bid
     aster_logical :: flage, lbid, lc, lkr, lns
 
 !
@@ -142,10 +144,12 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
     call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
 
+! --- POUR TRACER LE CODE-COVERAGE
+!    write(6,*)'coucou nmop45: ',mod45
 !
 ! --- LECTURE DES DONNEES DE EIGSOL
 !
-    call vplecs(eigsol, ibid, maxitr, nbborn, ibid,&
+    call vplecs(eigsol, ibid, maxitr, ibid, ibid,&
                 ibid, cdsp, ibid, nbrss, nfreq,&
                 ibid, alpha, omecor, omemin, omemax,&
                 precdc, precsh, r8bid, r8bid, r8bid,&
@@ -541,7 +545,12 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
 !
     endif
 !
+    nfreq=nconv
  80 continue
+ 
+! --- CORRECTION DES CERTAINES DONNEES DE EIGSOL
+    call vpecri(eigsol, 'I', 1, k24bid, r8bid, nfreq)
+    call vpecri(eigsol, 'I', 2, k24bid, r8bid, nbvect)
 !
 !
 ! --- MENAGE
@@ -555,7 +564,6 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
     AS_DEALLOCATE(vr=vect_stabil)
     AS_DEALLOCATE(vl=select)
     AS_DEALLOCATE(vr=resid)
-    call detrsd('EIGENSOLVER',eigsol)
     call jedetr('&&NMOP45.VECT.WORKD')
     call jedetr('&&NMOP45.VECT.WORKL')
     call jedetr('&&NMOP45.VECT.WORKV')

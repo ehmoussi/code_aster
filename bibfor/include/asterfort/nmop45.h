@@ -21,14 +21,14 @@
 interface
     subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes,&
                       modes2, ddlsta, nsta)                    
-        character(len=19) :: eigsol
-        integer           :: defo
-        character(len=4)  :: mod45
-        character(len=24) :: ddlexc
-        integer           :: nddle
-        character(len=8)  :: modes
-        character(len=8)  :: modes2
-        character(len=24) :: ddlsta
-        integer           :: nsta
+        character(len=19), intent(in) :: eigsol
+        integer          , intent(in) :: defo
+        character(len=4) , intent(in) :: mod45
+        character(len=24), intent(in) :: ddlexc
+        integer          , intent(in) :: nddle
+        character(len=8) , intent(in) :: modes
+        character(len=8) , intent(in) :: modes2
+        character(len=24), intent(in) :: ddlsta
+        integer          , intent(in) :: nsta
     end subroutine nmop45
 end interface

@@ -88,6 +88,7 @@ subroutine modint(ssami, raiint, nddlin, nbmod, shift,&
 #include "asterfort/resoud.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vpcres.h"
+#include "asterfort/vpleci.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/rsadpa.h"
 #include "asterfort/as_deallocate.h"
@@ -112,7 +113,7 @@ subroutine modint(ssami, raiint, nddlin, nbmod, shift,&
     integer :: lmatmo, i1, j1, k1, m1, lmakry, nsekry,nsekry2,nsekry3
     integer :: lmatk, lmatm, lmapro, nbrss, lkpro, lmatrm, lmatrk, lwork
     integer :: limped, lmatma, iret, nbvect, ibid, no, nbsst, lindin, coeff, lvp
-    integer :: ifm,niv,mode_symetrique, maxitr, nbborn, nbvec2, defo, nddle, nsta
+    integer :: ifm,niv,mode_symetrique, maxitr, nbvec2, defo, nddle, nsta
     integer(kind=4) :: info
     real(kind=8) :: temp, rbid, norm, lambda, comlin(2), swork(1), max, omecor
     real(kind=8) :: bande(2), freq1, freq2, alpha, tolsor, precsh, fcorig, precdc
@@ -270,9 +271,8 @@ subroutine modint(ssami, raiint, nddlin, nbmod, shift,&
 ! VERI_MODE/PREC_SHIFT EN DUR
     precdc = 5.d-2
     omecor = omega2(fcorig)
-    nbborn=1
     call vpcres(eigsol, typres, raide2, masse2, k19bid, optiof, method, k16bid, k8bid, k19bid,&
-                k16bid, k16bid, k1bid, k16bid, nsekry2, nbvect, nbvec2, nbrss, nbborn, ibid,&
+                k16bid, k16bid, k1bid, k16bid, nsekry2, nbvect, nbvec2, nbrss, ibid, ibid,&
                 ibid, ibid, ibid, maxitr, bande, precsh, omecor, precdc, r8bid,&
                 r8bid, r8bid, r8bid, r8bid, tolsor, alpha)
 !
@@ -284,6 +284,8 @@ subroutine modint(ssami, raiint, nddlin, nbmod, shift,&
     sdstab='&&DUMMY2'
     nsta=0
     call nmop45(eigsol, defo, mod45, k24bid, nddle, modes, sdstab, k24bid, nsta)
+    call vpleci(eigsol, 'I', 1, k24bid, r8bid, nsekry2)
+    call detrsd('EIGENSOLVER',eigsol)
 
 !   -- on examine les modes calcules pour savoir ou tronquer sans couper
 !      un sous-espace propre en 2 :
