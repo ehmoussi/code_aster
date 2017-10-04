@@ -60,7 +60,7 @@ class Cata2DataStructure(object):
 
     def __init__(self):
         """Initialization."""
-        from .. import Extensions as EXT
+        from .. import Objects as EXT
         Cata2DataStructure._cata2cxx = {
             'TABLE': EXT.Table,
         }

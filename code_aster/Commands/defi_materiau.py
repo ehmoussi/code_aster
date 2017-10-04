@@ -23,7 +23,7 @@ import types
 
 import code_aster
 from ..Cata import Commands, checkSyntax
-from ..Extensions import Material, GeneralMaterialBehaviour
+from ..Objects import Material, GeneralMaterialBehaviour
 
 
 def _byKeyword():
@@ -32,7 +32,7 @@ def _byKeyword():
     Returns:
         dict: Behaviour classes by keyword in DEFI_MATERIAU.
     """
-    import code_aster.Extensions as all_types
+    import code_aster.Objects as all_types
     objects = {}
     for name, obj in all_types.__dict__.items():
         if not isinstance(obj, type):

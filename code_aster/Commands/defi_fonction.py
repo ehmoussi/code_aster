@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -22,7 +22,7 @@
 import numpy as np
 
 from ..Cata import Commands, checkSyntax
-from ..Extensions import Function
+from ..Objects import Function
 from ..Utilities import compat_listr8
 
 

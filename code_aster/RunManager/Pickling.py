@@ -24,7 +24,7 @@ import os.path as osp
 
 from libaster import ResultNaming
 
-from ..Extensions import DataStructure
+from ..Objects import DataStructure
 from ..Supervis.logger import logger
 
 

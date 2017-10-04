@@ -19,7 +19,7 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 from ..Cata import Commands, checkSyntax
-from ..Extensions import Function
+from ..Objects import Function
 from ..RunManager.AsterFortran import python_execop
 from ..Supervis import CommandSyntax
 from ..Utilities import compat_listr8

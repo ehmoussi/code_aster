@@ -19,7 +19,7 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
-# from code_aster.Extensions.MacroCommand import ExecuteMacro
+# from code_aster.Objects.MacroCommand import ExecuteMacro
 #
 #
 # # please keep alphabetical order
