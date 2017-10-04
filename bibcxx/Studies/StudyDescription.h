@@ -35,6 +35,7 @@
 #include "Loads/KinematicsLoad.h"
 #include "Loads/ListOfLoads.h"
 #include "Discretization/DOFNumbering.h"
+#include "Discretization/ElementaryCharacteristics.h"
 
 /**
  * @class StudyDescriptionInstance
@@ -45,11 +46,13 @@ class StudyDescriptionInstance
 {
     private:
         /** @brief Modèle support */
-        ModelPtr          _supportModel;
+        ModelPtr                     _supportModel;
         /** @brief Materiau affecté */
-        MaterialOnMeshPtr _materialOnMesh;
+        MaterialOnMeshPtr            _materialOnMesh;
         /** @brief Liste des chargements */
-        ListOfLoadsPtr    _listOfLoads;
+        ListOfLoadsPtr               _listOfLoads;
+        /** @brief Liste des chargements */
+        ElementaryCharacteristicsPtr _elemChara;
 
     public:
         /**
@@ -61,7 +64,8 @@ class StudyDescriptionInstance
                                   const MaterialOnMeshPtr& curMat ):
             _supportModel( curModel ),
             _materialOnMesh( curMat ),
-            _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) )
+            _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) ),
+            _elemChara( ElementaryCharacteristicsPtr( nullptr ) )
         {};
 
         ~StudyDescriptionInstance()
@@ -92,6 +96,14 @@ class StudyDescriptionInstance
         bool buildListOfLoads()
         {
             return _listOfLoads->build();
+        };
+
+        /**
+         * @brief Get elementary characteristics
+         */
+        const ElementaryCharacteristicsPtr& getElementaryCharacteristics() const
+        {
+            return _elemChara;
         };
 
         /**
@@ -132,6 +144,14 @@ class StudyDescriptionInstance
         const ModelPtr& getSupportModel() const
         {
             return _supportModel;
+        };
+
+        /**
+         * @brief Set elementary characteristics
+         */
+        void setElementaryCharacteristics( const ElementaryCharacteristicsPtr& cara )
+        {
+            _elemChara = cara;
         };
 };
 

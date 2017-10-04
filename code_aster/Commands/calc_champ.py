@@ -35,5 +35,6 @@ def CALC_CHAMP(**curDict):
     numOp = 52
     python_execop(numOp)
     syntax.free()
+    myResult.update()
 
     return myResult
