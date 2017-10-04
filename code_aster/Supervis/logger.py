@@ -18,9 +18,19 @@
 # --------------------------------------------------------------------
 
 """
-This module defines a logger object and error functions for the package
+:py:mod:`logger` --- Logging and messages output
+************************************************
 
-A trace.log file is also opened for detailed traceback.
+This module defines a logger object and error functions.
+All message outputs should pass by this object.
+Probably additional levels should be added to distinguish low-debug messages,
+debug messages that may be interesting for the user (equivalent to
+``INFO=2``)...
+It might be necessary to refactor it in C++ for better performance and a
+global access (no C interface currently)...
+
+.. todo:: Not used anymore, remove ?
+    A :file:`trace.log` file is also opened for detailed traceback.
 """
 
 import sys

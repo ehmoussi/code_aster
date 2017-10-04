@@ -31,7 +31,7 @@ creation. It can be simply called from this toplevel module with:
     import code_aster
     code_aster.init()
 
-The same job is done by :py:obj:`code_aster.Commands.debut.DEBUT`.
+The same job is done by :py:class:`~code_aster.Commands.debut.DEBUT`.
 
 For convenience the objects are direcly available here:
 

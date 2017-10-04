@@ -38,15 +38,10 @@ Details
    :members:
    :special-members: __init__
 
-.. automodule:: code_aster.RunManager
-   :show-inheritance:
-   :members:
-   :special-members: __init__
-
-.. automodule:: code_aster.RunManager.loading
-   :show-inheritance:
-   :members:
-   :special-members: __init__
+.. .. automodule:: code_aster.RunManager
+..    :show-inheritance:
+..    :members:
+..    :special-members: __init__
 
 .. automodule:: code_aster.RunManager.LogicalUnit
    :show-inheritance:
@@ -54,6 +49,11 @@ Details
    :special-members: __init__
 
 .. automodule:: code_aster.RunManager.Pickling
+   :show-inheritance:
+   :members:
+   :special-members: __init__
+
+.. automodule:: code_aster.RunManager.loading
    :show-inheritance:
    :members:
    :special-members: __init__

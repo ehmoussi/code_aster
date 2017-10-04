@@ -18,6 +18,21 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois@edf.fr
+"""
+:py:class:`DEBUT` --- Initialization of code_aster
+**************************************************
+
+The :py:class:`Starter` starts the execution by initializing the code_aster
+memory manager (*Jeveux*). For this task, it parses the arguments
+through the :py:class:`~code_aster.Supervis.ExecutionParameter.ExecutionParameter`
+object.
+By default, arguments are read from the command line. Otherwise, the arguments
+can be passed to :py:func:`.init`.
+
+Some Python objects that have to be available from :py:mod:`libaster` are
+passed during the initialization to the
+:py:class:`~code_aster.Supervis.ExecutionParameter.ExecutionParameter`.
+"""
 
 import aster
 import aster_core
@@ -49,7 +64,7 @@ class Starter(ExecuteCommand):
         cls._is_initialized = True
 
     def __call__(self, **keywords):
-        """Run the macro-command.
+        """Run the Command.
 
         Arguments:
             keywords (dict): User keywords

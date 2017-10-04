@@ -44,6 +44,7 @@ sys.path = paths + sys.path
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    # 'sphinx.ext.intersphinx',
     'sphinx.ext.autodoc',
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
@@ -304,3 +305,5 @@ napoleon_include_private_with_doc = True
 
 # Skip objects that are not documented in the source with a docstring. False by default.
 #coverage_skip_undoc_in_source = True
+
+# intersphinx_mapping = {'python': ('https://docs.python.org/2.7', None)}

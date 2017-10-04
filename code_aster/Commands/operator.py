@@ -19,6 +19,18 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
+"""
+:py:mod:`operator` --- Generic operators
+****************************************
+
+The function :py:func:`define_operators` automatically creates executors objects
+(:py:class:`ExecuteCommand` or :py:class:`ExecuteMacro`) for operators that
+are not already defined in the store.
+
+It is mainly a transtional feature that should make work most of the *legacy*
+command with few changes.
+"""
+
 from ..Cata.Commands import commandStore
 from ..Cata.Syntax import Macro, Operator, Procedure
 from .ExecuteCommand import ExecuteCommand, ExecuteMacro
@@ -27,7 +39,11 @@ from .ExecuteCommand import ExecuteCommand, ExecuteMacro
 UNSUPPORTED = ('FORMULE', )
 
 def define_operators(store):
-    """Add definition of operators to the given store."""
+    """Add definition of operators to the given store.
+
+    Arguments:
+        store (dict): Store where the executors will be registered.
+    """
     for name, command in commandStore.items():
         if store.has_key(name):
             continue

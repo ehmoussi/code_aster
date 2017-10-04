@@ -19,6 +19,20 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
+"""
+:py:mod:`ExecutionParameter` --- Management of the execution parameters
+***********************************************************************
+
+A singleton object :py:class:`.ExecutionParameter` is created during the
+initialization. Its main feature is to parse and store the arguments read from
+the command line or passed to the :py:func:`~code_aster.Commands.debut.init`
+function.
+It also stores Python objects that have to be available from :py:mod:`libaster`.
+They will be available though properties of the :py:class:`.ExecutionParameter`
+object.
+
+"""
+
 import json
 import os
 import os.path as osp

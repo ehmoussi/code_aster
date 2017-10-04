@@ -20,8 +20,11 @@
 # person_in_charge: mathieu.courtois@edf.fr
 
 """
-This module gives basic functions to convert Python types to code_aster
-syntax types.
+:py:mod:`typeaster` --- Understanding code_aster types
+******************************************************
+
+This module gives basic functions to convert types as defined in catalogs
+to their corresponding C++ objects, or their type names as string.
 """
 
 from ..Utilities import Singleton

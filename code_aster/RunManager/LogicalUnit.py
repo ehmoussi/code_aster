@@ -16,6 +16,22 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+:py:mod:`LogicalUnit` --- Files manipulations
+*********************************************
+
+The :py:class:`LogicalUnitFile` helps to open/close files from Fortran, C++ or
+Python without conflict.
+
+A convenient context manager :py:class:`ReservedUnitUsed` allows to
+automatically open/close reserved units in case of writing in a such unit in
+a Python command.
+
+.. note:: It may be interesting to refactor that in C++ to simplify the
+    interface.
+
+"""
+
 import tempfile
 from itertools import ifilter
 
