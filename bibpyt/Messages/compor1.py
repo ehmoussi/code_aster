@@ -103,14 +103,6 @@ Seules quelques lois de comportement qui ne nécessitent pas la méthode Deborst
     Conseil: utilisez une loi élastoplastique sur laquelle vous aurez mis une limite d'élasticité très grande.
 """),
 
-    16 : _(u"""
-Arrêt suite à l'échec de l'intégration de la loi de comportement.
-
-Erreur numérique: la plasticité cumulée devient très grande.
-Ce message est un message d'erreur développeur.
-Contactez le support technique.
-"""),
-
     17 : _(u"""
   HUJEUX : Soit le zéro n'existe pas, soit il se trouve hors des
             bornes admissibles.
