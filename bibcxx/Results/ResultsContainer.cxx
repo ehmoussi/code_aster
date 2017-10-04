@@ -39,6 +39,32 @@ bool ResultsContainerInstance::allocate( int nbRanks ) throw ( std::runtime_erro
     return true;
 };
 
+void ResultsContainerInstance::addModel( const ModelPtr& model,
+                                         int rank ) throw ( std::runtime_error )
+{
+    long rang = rank;
+    std::string type("MODELE");
+    CALL_RSADPA_ZK8_WRAP( getName().c_str(), &rang, model->getName().c_str(),
+                          type.c_str() );
+};
+
+void ResultsContainerInstance::addMaterialOnMesh( const MaterialOnMeshPtr& mater,
+                                                  int rank ) throw ( std::runtime_error )
+{
+    long rang = rank;
+    std::string type("CHAMPMAT");
+    CALL_RSADPA_ZK8_WRAP( getName().c_str(), &rang, mater->getName().c_str(),
+                          type.c_str() );
+};
+
+void ResultsContainerInstance::addTimeValue( double value,
+                                             int rank ) throw ( std::runtime_error )
+{
+    long rang = rank;
+    std::string type("INST");
+    CALL_RSADPA_ZR_WRAP( getName().c_str(), &rang, &value, type.c_str() );
+};
+
 bool ResultsContainerInstance::buildFromExisting() throw ( std::runtime_error )
 {
     _serialNumber->updateValuePointer();

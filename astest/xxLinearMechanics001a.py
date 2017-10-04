@@ -8,7 +8,9 @@ code_aster.init()
 
 test = code_aster.TestCase()
 
-mail1 = LIRE_MAILLAGE( FORMAT = "MED" )
+#mail1 = LIRE_MAILLAGE( FORMAT = "MED" )
+mail1=code_aster.Mesh.create()
+mail1.readMedFile("test001f.mmed")
 
 model = AFFE_MODELE( MAILLAGE = mail1,
                      AFFE = _F( MODELISATION = "3D",
@@ -37,6 +39,12 @@ resu = MECA_STATIQUE( MODELE = model,
                       SOLVEUR = _F( METHODE = "MUMPS",
                                     RENUM = "METIS", ), )
 
+resu.debugPrint(6)
+
+resu=CALC_CHAMP(reuse=resu,
+                RESULTAT=resu,TOUT_ORDRE='OUI',
+                CONTRAINTE=('SIGM_ELNO'),
+                )
 resu.debugPrint(6)
 
 # Debut du TEST_RESU

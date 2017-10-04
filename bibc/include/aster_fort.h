@@ -357,6 +357,14 @@ extern void DEFPSPP(UTGTME, utgtme, ASTERINTEGER *, char *,  STRING_SIZE,
 #define CALL_UTPTME(a,b,c) CALLSPP(UTPTME,utptme,a,b,c)
 extern void DEFSPP(UTPTME, utptme, char *,  STRING_SIZE,  ASTERDOUBLE *, ASTERINTEGER *);
 
+#define CALL_RSADPA_ZK8_WRAP(a,b,c,d) CALLSPSS(RSADPA_ZK8_WRAP,rsadpa_zk8_wrap,a,b,c,d)
+extern void DEFSPSS(RSADPA_ZK8_WRAP, rsadpa_zk8_wrap, const char *, STRING_SIZE,
+                    ASTERINTEGER *, const char *,  STRING_SIZE, const char *,  STRING_SIZE);
+
+#define CALL_RSADPA_ZR_WRAP(a,b,c,d) CALLSPPS(RSADPA_ZR_WRAP,rsadpa_zr_wrap,a,b,c,d)
+extern void DEFSPPS(RSADPA_ZR_WRAP, rsadpa_zr_wrap, const char *, STRING_SIZE,
+                    ASTERINTEGER *, ASTERDOUBLE *, const char *,  STRING_SIZE);
+
 /* routines de manipulation de la SD RESULTAT */
 extern void DEFSPPSPPPSP(RSACPA,rsacpa,char *, STRING_SIZE, ASTERINTEGER *, ASTERINTEGER *,
           char *, STRING_SIZE, ASTERINTEGER *, ASTERINTEGER *, ASTERDOUBLE *,

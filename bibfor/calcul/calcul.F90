@@ -39,6 +39,7 @@ implicit none
 #include "asterfort/alrslt.h"
 #include "asterfort/asmpi_barrier.h"
 #include "asterfort/asmpi_info.h"
+#include "asterfort/asmpi_comm_vect.h"
 #include "asterfort/assert.h"
 #include "asterfort/caldbg.h"
 #include "asterfort/caundf.h"
@@ -119,18 +120,18 @@ implicit none
     aster_logical :: dbg, l_thm
     character(len=8) :: lpain2(nin), lpaou2(nou)
     character(len=19) :: lchin2(nin), lchou2(nou)
-    character(len=24) :: valk(2)
+    character(len=24) :: valk(2), kret
     integer ::   ima, ifm
     integer :: niv
     integer :: ier
     integer ::  iret, iuncod, j
     integer ::  nval
-    integer :: afaire
+    integer :: afaire,afaire2
     integer :: numc
     integer :: i, ipar, jpar, nin2, nin3, nou2, nou3
-    character(len=8) :: nompar, exiele, k8bid, tych
+    character(len=8) :: nompar, exiele, k8bid, tych,noma
     character(len=10) :: k10b
-    character(len=16) :: k16bid, cmde
+    character(len=16) :: k16bid, cmde,typeco
     character(len=20) :: k20b1, k20b2, k20b3, k20b4
     character(len=8), pointer :: typma(:) => null()
 !----------------------------------------------------------------------
@@ -216,7 +217,18 @@ implicit none
         afaire=max(afaire,numc)
     enddo
     ASSERT(ier.le.0)
+
+!   Dans le cas d'un ParallelMesh, on vérifie qu'aucun élément sur l'intégralité
+!   du maillage distribué ne sait calculer l'option
+    afaire2=afaire
+    call dismoi('NOM_MAILLA', ca_ligrel_, 'LIGREL', repk=noma)
+    call dismoi('PARALLEL_MESH', noma, 'MAILLAGE', repk=kret)
+    if( kret.eq.'OUI' ) then
+        call asmpi_comm_vect('MPI_MAX', 'I', sci=afaire2)
+    endif
+
     if (afaire .eq. 0) then
+        if (afaire2.ne.0) goto 999
         if (stop .eq. 'S') then
             call utmess('F', 'CALCUL_38', sk=ca_option_)
         else
@@ -308,7 +320,7 @@ implicit none
     loop_grel : &
     do ca_igr_ = 1, ca_nbgr_
 
-        
+
 
 !       -- si methode='GROUP_ELEM' ou 'SOUS_DOMAINE' : on peut tout "sauter"
         if (ca_ldgrel_ .and. mod(ca_igr_,ca_nbproc_) .ne. ca_rang_) cycle loop_grel

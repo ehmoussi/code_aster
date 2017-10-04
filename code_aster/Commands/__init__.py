@@ -34,6 +34,7 @@ define_operators(globals())
 # from .asse_matrice import ASSE_MATRICE
 # from .asse_matr_gene import ASSE_MATR_GENE
 # from .asse_vect_gene import ASSE_VECT_GENE
+# from .calc_champ import CALC_CHAMP
 # from .calc_fonc_interp import CALC_FONC_INTERP
 # from .calc_matr_elem import CALC_MATR_ELEM
 # from .comb_fourier import COMB_FOURIER
