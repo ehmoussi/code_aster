@@ -8,8 +8,8 @@ code_aster.init()
 
 test = code_aster.TestCase()
 
-parallel=False
-#parallel=True
+#parallel=False
+parallel=True
 
 if (parallel):
     monMaillage = code_aster.ParallelMesh.create()

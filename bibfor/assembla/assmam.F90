@@ -104,11 +104,11 @@ subroutine assmam(base, matas, nbmat, tlimat, licoef,&
     character(len=14) :: nudev, nu14
     character(len=19) :: matdev, mat19, resu, matel, ligre1
     character(len=1) :: matsym
-    character(len=3) :: matd
+    character(len=3) :: matd,kret
     real(kind=8) :: c1, temps(7)
 
     aster_logical :: acreer, cumul, dbg, ldistme, lmatd
-    aster_logical :: lmasym, lmesym, ldgrel
+    aster_logical :: lmasym, lmesym, ldgrel,lparallel_mesh
 
     integer :: admodl, i
     integer :: jdesc
@@ -196,18 +196,24 @@ subroutine assmam(base, matas, nbmat, tlimat, licoef,&
     dbg=.false.
     call jedbg2(idbgav, 0)
     call infniv(ifm, niv)
-    call asmpi_barrier()
-    call uttcpu('CPU.CALC.1', 'DEBUT', ' ')
-    call uttcpu('CPU.ASSE.1', 'DEBUT', ' ')
-    call uttcpu('CPU.ASSE.2', 'DEBUT', ' ')
 
     base1=base
     matdev=matas
     nudev=nu
-    if (dbg) call cheksd(nudev, 'SD_NUME_DDL', iret)
 
     call dismoi('NOM_MODELE', nudev, 'NUME_DDL', repk=mo)
     call dismoi('NOM_MAILLA', mo, 'MODELE', repk=ma)
+    call dismoi('PARALLEL_MESH', ma, 'MAILLAGE', repk=kret)
+    lparallel_mesh=(kret.eq.'OUI')
+    if (.not.lparallel_mesh) then
+        call asmpi_barrier()
+    endif
+    call uttcpu('CPU.CALC.1', 'DEBUT', ' ')
+    call uttcpu('CPU.ASSE.1', 'DEBUT', ' ')
+    call uttcpu('CPU.ASSE.2', 'DEBUT', ' ')
+
+    if (dbg) call cheksd(nudev, 'SD_NUME_DDL', iret)
+
     call dismoi('NOM_MAILLA', nudev, 'NUME_DDL', repk=ma2)
     ASSERT(ma.eq.ma2)
     call dismoi('NB_NO_SS_MAX', ma, 'MAILLAGE', repi=nbnoss)
@@ -592,7 +598,9 @@ subroutine assmam(base, matas, nbmat, tlimat, licoef,&
     call jedbg2(ibid, idbgav)
     if (dbg) call cheksd(matdev, 'SD_MATR_ASSE', iret)
 
-    call asmpi_barrier()
+    if (.not.lparallel_mesh) then
+        call asmpi_barrier()
+    endif
     call uttcpu('CPU.CALC.1', 'FIN', ' ')
     call uttcpu('CPU.ASSE.1', 'FIN', ' ')
     call uttcpu('CPU.ASSE.2', 'FIN', ' ')

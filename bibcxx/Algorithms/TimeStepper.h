@@ -79,19 +79,25 @@ class TimeStepperInstance: public DataStructure, public GenericStepper
         struct const_iterator
         {
             double* position;
+            int     rank;
 
-            inline const_iterator(): position( NULL )
+            inline const_iterator(): position( NULL ), rank(0)
             {};
 
-            inline const_iterator( double* memoryPosition ): position( memoryPosition )
+            inline const_iterator( double* memoryPosition, int curRank ):
+                position( memoryPosition ),
+                rank( curRank )
             {};
 
-            inline const_iterator( const const_iterator& iter ): position( iter.position )
+            inline const_iterator( const const_iterator& iter ):
+                position( iter.position ),
+                rank( iter.rank )
             {};
 
             inline const_iterator& operator=( const const_iterator& testIter )
             {
                 position = testIter.position;
+                rank = testIter.rank;
                 return *this;
             };
 
@@ -130,7 +136,7 @@ class TimeStepperInstance: public DataStructure, public GenericStepper
          */
         const_iterator begin() const
         {
-            return const_iterator( &( *_values )[0] );
+            return const_iterator( &( *_values )[0], 0 );
         };
 
         /**
@@ -140,7 +146,7 @@ class TimeStepperInstance: public DataStructure, public GenericStepper
         const_iterator end() const
         {
 //             return const_iterator( &( *_values )[ _values->size() - 1 ] );
-            return const_iterator( &( *_values )[ _values->size() ] );
+            return const_iterator( &( *_values )[ _values->size() ], _values->size() );
         };
 
         /**
