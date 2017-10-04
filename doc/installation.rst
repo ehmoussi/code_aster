@@ -1,9 +1,10 @@
-====================================
- Building and installing Code_Aster
-====================================
+##################################
+Building and installing Code_Aster
+##################################
 
+*******************
 Getting the sources
-===================
+*******************
 
 The Code_Aster sources are under Mercurial_ version control system.
 Use this command to check out the latest project source code::
@@ -15,13 +16,15 @@ Use this command to check out the latest project source code::
 In this manual, we assume that the working directory corresponds to the Code_Aster
 source folder (``cd $HOME/dev/codeaster/src``).
 
+*********************
 Required dependencies
-=====================
+*********************
 
 Python 2.7 or later with development files (under Debian python-dev)
 
+*******************
 Building Code_Aster
-===================
+*******************
 
 To build Code_Aster enter::
 
@@ -42,8 +45,9 @@ For example, to build a sequential production version on Debian Squeeze enter::
 
 For more build examples, have a look at the appendix.
 
+*********************
 Installing Code_Aster
-=====================
+*********************
 
 To install Code_Aster enter::
 
@@ -59,8 +63,9 @@ place (``install`` folder in the current directory for instance)::
     $ ./waf configure install --prefix=$PWD/install
 
 
+****************************
 Running the validation tests
-============================
+****************************
 
 To run a single test, use::
 
@@ -73,8 +78,9 @@ To run all the test cases, get the devtools and run the script::
     $ cd devtools
     $ ./bin/run_testcases
 
+**********
 Appendices
-==========
+**********
 
 Appendix: examples for building libaster with different configurations
 ----------------------------------------------------------------------
@@ -178,3 +184,4 @@ Running test in a dev machine::
 [1] http://www.code-aster.org/V2/doc/default/man_u/u2/u2.10.01.pdf
 [2] You can get them at the address: http://code-aster.org/spip.php?article90
 
+.. _Mercurial: https://www.mercurial-scm.org/

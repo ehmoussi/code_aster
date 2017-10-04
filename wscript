@@ -134,6 +134,7 @@ def options(self):
     self.recurse('mfront')
     self.recurse('i18n')
     self.recurse('data')
+    self.recurse('doc')
 
 
 def configure(self):
@@ -218,6 +219,7 @@ def configure(self):
     self.recurse('mfront')
     self.recurse('i18n')
     self.recurse('data')
+    self.recurse('doc')
 
     # keep compatibility for as_run
     if self.get_define('HAVE_MPI'):
@@ -273,8 +275,10 @@ def build_elements(self):
     self.recurse('catalo')
 
 def init(self):
-    from waflib.Build import BuildContext, CleanContext, InstallContext, UninstallContext
-    _all = (BuildContext, CleanContext, InstallContext, UninstallContext, TestContext, I18NContext)
+    from waflib.Build import (BuildContext, CleanContext, InstallContext,
+                              UninstallContext)
+    _all = (BuildContext, CleanContext, InstallContext, UninstallContext,
+            TestContext, I18NContext, DocContext)
     for x in ['debug', 'release']:
         for y in _all:
             name = y.__name__.replace('Context','').lower()
@@ -311,6 +315,14 @@ class I18NContext(Build.BuildContext):
     """build the i18n files"""
     cmd = 'i18n'
     fun = 'update_i18n'
+
+def build_doc(self):
+    self.recurse('doc')
+
+class DocContext(Build.BuildContext):
+    """build the documentation files"""
+    cmd = 'doc'
+    fun = 'build_doc'
 
 @Configure.conf
 def set_installdirs(self):
