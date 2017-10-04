@@ -20,6 +20,9 @@
 # person_in_charge: mathieu.courtois at edf.fr
 
 """
+:py:mod:`i18n` --- Internationalization support
+***********************************************
+
 Internationalization support for code_aster.
 """
 

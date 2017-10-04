@@ -19,6 +19,29 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
+"""
+Main entry point for the users.
+
+The :py:func:`~code_aster.Commands.debut.init` function initializes the
+memory manager. It must be called before any :py:mod:`code_aster.Objects`
+creation. It can be simply called from this toplevel module with:
+
+.. code-block:: python
+
+    import code_aster
+    code_aster.init()
+
+The same job is done by :py:obj:`code_aster.Commands.debut.DEBUT`.
+
+For convenience the objects are direcly available here:
+
+.. code-block:: python
+
+    import code_aster
+    mymesh = code_aster.Mesh.create()
+
+"""
+
 # discourage import *
 __all__ = []
 

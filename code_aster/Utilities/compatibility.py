@@ -20,7 +20,12 @@
 # person_in_charge: mathieu.courtois@edf.fr
 
 """
+:py:mod:`compatibility` --- Manage compatibility with *legacy* version
+**********************************************************************
+
 This modules will help for transitional features.
+It defines *decorators* or conversion functions for step by step migration
+from *legacy* code_aster source code and C++ code_aster code.
 """
 
 from functools import wraps
