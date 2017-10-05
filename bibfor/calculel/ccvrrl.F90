@@ -192,6 +192,7 @@ subroutine ccvrrl(nommai, modele, carael, mesmai, chames,&
         do 20 ima = 1, nbma
             posma = zi(jconi1+posit+ima-2)
 !           LE COMPORTEMENT DE CNCINV N'EST PAS LE MEME SUIVANT QU'ON DONNE OU NON MESMAI
+            if (posma .eq. 0) goto 20
             if (llimai) then
                 numma = zi(jmai+posma-1)
             else
@@ -245,6 +246,7 @@ subroutine ccvrrl(nommai, modele, carael, mesmai, chames,&
 !           Compare les repères des autres mailles liées au noeud ino
             do 30 ima2 = ima+1, nbma
                 posma = zi(jconi1+posit+ima2-2)
+                if (posma .eq. 0) goto 30
                 if (llimai) then
                     numma2 = zi(jmai+posma-1)
                 else
