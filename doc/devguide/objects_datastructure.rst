@@ -1,5 +1,7 @@
 .. _devguide-objects_datastructure:
 
+.. AUTOMATICALLY CREATED BY gen_automodule.py - DO NOT EDIT MANUALLY!
+
 
 Documentation of
 :py:class:`~code_aster.Objects.datastructure_ext.DataStructure` subclasses

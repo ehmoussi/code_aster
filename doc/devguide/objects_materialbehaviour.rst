@@ -1,5 +1,7 @@
 .. _devguide-objects_materialbehaviour:
 
+.. AUTOMATICALLY CREATED BY gen_automodule.py - DO NOT EDIT MANUALLY!
+
 
 Documentation of
 :py:class:`~code_aster.Objects.GeneralMaterialBehaviour` subclasses.

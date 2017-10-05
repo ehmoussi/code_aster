@@ -55,7 +55,7 @@ class ExtendedFieldOnElementsDouble(injector, FieldOnElementsDouble):
                 support of the field.
 
         Returns:
-            :py:class:`post_comp_cham_el`: Object containing the values and,
+            :py:class:`.post_comp_cham_el`: Object containing the values and,
             eventually, the topological informations of the support.
         """
         import numpy
@@ -93,7 +93,7 @@ class ExtendedFieldOnElementsDouble(injector, FieldOnElementsDouble):
 
 class post_comp_cham_el:
     """Container object that store the results of
-    :py:meth:`FieldOnElementsDouble.EXTR_COMP`.
+    :py:meth:`code_aster.Objects.FieldOnElementsDouble.EXTR_COMP`.
 
     The support of the field may be unknown. In this case, :py:attr:`maille`,
     :py:attr:`point` and :py:attr:`sous_point` are set to *None*.

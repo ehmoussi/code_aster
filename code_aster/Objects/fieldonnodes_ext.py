@@ -55,7 +55,7 @@ class ExtendedFieldOnNodesDouble(injector, FieldOnNodesDouble):
                 support of the field.
 
         Returns:
-            :py:class:`post_comp_cham_no`: Object containing the values and,
+            :py:class:`.post_comp_cham_no`: Object containing the values and,
             eventually, the topological informations of the support.
         """
         import numpy
@@ -93,7 +93,7 @@ class ExtendedFieldOnNodesDouble(injector, FieldOnNodesDouble):
 
 class post_comp_cham_no:
     """Container object that store the results of
-    :py:meth:`FieldOnNodesDouble.EXTR_COMP`.
+    :py:meth:`code_aster.Objects.FieldOnNodesDouble.EXTR_COMP`.
 
     The support of the field may be unknown. In this case, :py:attr:`noeud`
     and :py:attr:`comp` are set to *None*.

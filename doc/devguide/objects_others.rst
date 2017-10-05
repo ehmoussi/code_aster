@@ -1,9 +1,11 @@
 .. _devguide-objects_others:
 
+.. AUTOMATICALLY CREATED BY gen_automodule.py - DO NOT EDIT MANUALLY!
 
-####################
-Index of all objects
-####################
+
+####################################
+Index of all other available objects
+####################################
 
 Documentation of all other types.
 
