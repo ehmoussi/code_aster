@@ -57,7 +57,6 @@ extern DL_EXPORT(int) Py_Main();
 
 void initAsterModules()
 {
-    printf("initialization of aster modules...\n");
     PyImport_AppendInittab("_aster_core", init_aster_core);
     PyImport_AppendInittab("aster", initaster);
 
