@@ -18,13 +18,19 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois@edf.fr
+"""
+:py:class:`FieldOnElementsDouble` --- Fields defined per element
+****************************************************************
+"""
 
 from libaster import FieldOnElementsDouble
 from ..Utilities import deprecated, import_object
 
 
 class injector(object):
+
     class __metaclass__(FieldOnElementsDouble.__class__):
+
         def __init__(self, name, bases, dict):
             for b in bases:
                 if type(b) not in (self, type):
@@ -34,49 +40,72 @@ class injector(object):
 
 
 class ExtendedFieldOnElementsDouble(injector, FieldOnElementsDouble):
-   cata_sdj = "SD.sd_champ.sd_cham_elem_class"
+    cata_sdj = "SD.sd_champ.sd_cham_elem_class"
 
-   def EXTR_COMP(self,comp,lgma=[],topo=0) :
-      """ retourne les valeurs de la composante comp du champ sur la liste
+    def EXTR_COMP(self, comp, lgma=[], topo=0):
+        """Retourne les valeurs de la composante comp du champ sur la liste
         de groupes de mailles lgma avec eventuellement l'info de la
         topologie si topo>0. Si lgma est une liste vide, c'est equivalent
         a un TOUT='OUI' dans les commandes aster
-        Attributs retourne
-          - self.valeurs : numpy.array contenant les valeurs
-        Si on a demande la topo  :
-          - self.maille  : numero de mailles
-          - self.point   : numero du point dans la maille
-          - self.sous_point : numero du sous point dans la maille """
-      import numpy
-      import aster
-      if not self.accessible() :
-         raise Accas.AsException("Erreur dans cham_elem.EXTR_COMP en PAR_LOT='OUI'")
 
-      ncham=self.get_name()
-      ncham=ncham+(19-len(ncham))*' '
-      nchams=aster.get_nom_concept_unique('_')
-      ncmp=comp+(8-len(comp))*' '
+        Arguments:
+            comp (str): Name of the component.
+            lgma (list[str]): List of groups of elements.
+            topo (int): ``topo == 1`` means to return informations about the
+                support of the field.
 
-      aster.prepcompcham(ncham,nchams,ncmp,"EL      ",topo,lgma)
+        Returns:
+            :py:class:`post_comp_cham_el`: Object containing the values and,
+            eventually, the topological informations of the support.
+        """
+        import numpy
+        import aster
+        if not self.accessible():
+            raise Accas.AsException(
+                "Erreur dans cham_elem.EXTR_COMP en PAR_LOT='OUI'")
 
-      valeurs=numpy.array(aster.getvectjev(nchams+(19-len(nchams))*' '+'.V'))
+        ncham = self.get_name()
+        ncham = ncham + (19 - len(ncham)) * ' '
+        nchams = aster.get_nom_concept_unique('_')
+        ncmp = comp + (8 - len(comp)) * ' '
 
-      if (topo>0) :
-         maille=(aster.getvectjev(nchams+(19-len(nchams))*' '+'.M'))
-         point=(aster.getvectjev(nchams+(19-len(nchams))*' '+'.P'))
-         sous_point=(aster.getvectjev(nchams+(19-len(nchams))*' '+'.SP'))
-      else :
-         maille=None
-         point=None
-         sous_point=None
+        aster.prepcompcham(ncham, nchams, ncmp, "EL      ", topo, lgma)
 
-      aster.prepcompcham("__DETR__",nchams,ncmp,"EL      ",topo,lgma)
+        valeurs = numpy.array(
+            aster.getvectjev(nchams + (19 - len(nchams)) * ' ' + '.V'))
 
-      return post_comp_cham_el(valeurs,maille,point,sous_point)
+        if (topo > 0):
+            maille = (
+                aster.getvectjev(nchams + (19 - len(nchams)) * ' ' + '.M'))
+            point = (
+                aster.getvectjev(nchams + (19 - len(nchams)) * ' ' + '.P'))
+            sous_point = (
+                aster.getvectjev(nchams + (19 - len(nchams)) * ' ' + '.SP'))
+        else:
+            maille = None
+            point = None
+            sous_point = None
 
-# post-traitement :
-class post_comp_cham_el :
-    def __init__(self, valeurs, maille=None, point=None, sous_point=None) :
+        aster.prepcompcham("__DETR__", nchams, ncmp, "EL      ", topo, lgma)
+
+        return post_comp_cham_el(valeurs, maille, point, sous_point)
+
+
+class post_comp_cham_el:
+    """Container object that store the results of
+    :py:meth:`FieldOnElementsDouble.EXTR_COMP`.
+
+    The support of the field may be unknown. In this case, :py:attr:`maille`,
+    :py:attr:`point` and :py:attr:`sous_point` are set to *None*.
+
+    Attributes:
+        valeurs (numpy.ndarray): Values of the field.
+        maille (list[int]): List of elements numbers.
+        point (list[int]): List of points numbers in the element.
+        sous_point (list[int]): List of subpoints numbers in the element.
+    """
+
+    def __init__(self, valeurs, maille=None, point=None, sous_point=None):
         self.valeurs = valeurs
         self.maille = maille
         self.point = point

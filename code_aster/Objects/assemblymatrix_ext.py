@@ -18,6 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois@edf.fr
+"""
+:py:class:`AssemblyMatrixDouble` --- Assembly matrix
+****************************************************
+"""
 
 from libaster import AssemblyMatrixDouble
 from ..Utilities import deprecated, import_object

@@ -70,5 +70,6 @@ def build_doc(self):
                           osp.join(out, "doctrees"), osp.join(out, "html"))),
         cwd    = self.path.abspath(),
         source = files,
-        target = self.path.find_or_declare('html/index.html')
+        target = self.path.find_or_declare('html/index.html'),
+        install_path = env.HTMLDIR,
     )
