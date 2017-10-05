@@ -36,6 +36,7 @@ void exportResultsContainerToPython()
         .def( "getRealFieldOnNodes", &ResultsContainerInstance::getRealFieldOnNodes )
         .def( "getRealFieldOnElements", &ResultsContainerInstance::getRealFieldOnElements )
         .def( "printMedFile", &ResultsContainerInstance::printMedFile )
+        .def( "listFields", &ResultsContainerInstance::listFields )
         .def( "update", &ResultsContainerInstance::update )
     ;
 };

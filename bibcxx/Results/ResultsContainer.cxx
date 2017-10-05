@@ -84,6 +84,19 @@ void ResultsContainerInstance::addTimeValue( double value,
     CALL_RSADPA_ZR_WRAP( getName().c_str(), &rang, &value, type.c_str() );
 };
 
+void ResultsContainerInstance::listFields() const
+{   std::cout<<"Content of DataStructure : ";
+    for ( auto curIter : _dictOfVectorOfFieldsNodes )
+    {
+        std::cout << curIter.first << " - " ;
+    }
+    for ( auto curIter : _dictOfVectorOfFieldsElements )
+    {
+        std::cout << curIter.first << " - "  ;
+    }
+    std::cout << std::endl;
+};
+
 bool ResultsContainerInstance::update() throw ( std::runtime_error )
 {
     _serialNumber->updateValuePointer();
@@ -233,16 +246,6 @@ FieldOnNodesDoublePtr ResultsContainerInstance::getRealFieldOnNodes( const std::
     FieldOnNodesDoublePtr toReturn = curIter->second[ rank ];
     return toReturn;
 };
-
-//void getListOfFields
-//{
-    //for (auto curIter it = _dictOfVectorOfFieldsElements.begin(); it != _dictOfVectorOfFieldsElements.end(); ++it)
-    //{
-      //for (int rank=0;rank<_nbRanks;++rank)
-      //{
-        //std::cout<<rank<<" : " <<it->second[ rank ];
-    //}
-//};
 
 bool ResultsContainerInstance::printMedFile( const std::string fileName ) const
     throw ( std::runtime_error )

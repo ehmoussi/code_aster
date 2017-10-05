@@ -23,6 +23,7 @@ from code_aster.RunManager.AsterFortran import python_execop
 from code_aster.Supervis.libCommandSyntax import CommandSyntax
 from code_aster import EvolutiveLoad
 from code_aster import EvolutiveThermalLoad
+from code_aster import LinearDisplacementEvolutionContainer
 
 
 def CREA_RESU(**curDict):
@@ -31,6 +32,8 @@ def CREA_RESU(**curDict):
         returnRC = EvolutiveLoad.create()
     elif curDict["TYPE_RESU"] == "EVOL_THER":
         returnRC = EvolutiveThermalLoad.create()
+    elif curDict["TYPE_RESU"] == "EVOL_ELAS":
+        returnRC = LinearDisplacementEvolutionContainer.create()
     else:
         raise NameError("Not yet implemented")
     name = returnRC.getName()
@@ -43,5 +46,7 @@ def CREA_RESU(**curDict):
     numOp = 124
     python_execop(numOp)
     syntax.free()
+
+    returnRC.update()
 
     return returnRC

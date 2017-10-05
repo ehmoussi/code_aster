@@ -33,7 +33,7 @@
 
 /**
  * @class LinearDisplacementEvolutionContainerInstance
- * @brief Cette classe correspond a un evol_depl
+ * @brief Cette classe correspond a un evol_elas
  * @author Nicolas Sellenet
  */
 class LinearDisplacementEvolutionContainerInstance: public ResultsContainerInstance
@@ -43,7 +43,7 @@ public:
      * @brief Constructeur
      */
     LinearDisplacementEvolutionContainerInstance():
-        ResultsContainerInstance( "EVOL_DEPL" )
+        ResultsContainerInstance( "EVOL_ELAS" )
     {};
 
 };
