@@ -291,6 +291,13 @@ napoleon_include_special_with_doc = True
 # i.e. methods that start with single underscore: e.g. _func()
 napoleon_include_private_with_doc = True
 
+# Show todo blocks
+todo_include_todos = True
+
+# Highlight todo blocks
+def setup(app):
+    app.add_stylesheet('mystyles.css')
+
 # List of modules which should be ignored when checking coverage.
 #coverage_ignore_modules = []
 

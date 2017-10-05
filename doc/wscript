@@ -62,6 +62,7 @@ def build_doc(self):
     files = self.path.parent.find_dir('code_aster').ant_glob('**/*.py')
     files.extend(self.path.ant_glob('**/*.rst'))
     files.extend(self.path.ant_glob('conf.py'))
+    files.extend(self.path.ant_glob('_static/mystyles.css'))
 
     self(
         rule   = ("BUILDDIR={0} ${{SPHINX_BUILD}} ${{SPHINX_ARGS}} "
