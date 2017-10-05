@@ -38,8 +38,6 @@
 #include "DataFields/FieldOnElements.h"
 #include "Discretization/DOFNumbering.h"
 #include "Discretization/ParallelDOFNumbering.h"
-#include "Discretization/ElementaryCharacteristics.h"
-#include "Loads/ListOfLoads.h"
 
 /**
  * @class ResultsContainerInstance
@@ -114,21 +112,13 @@ public:
     bool allocate( int nbRanks ) throw ( std::runtime_error );
 
     /**
-     * @brief Add elementary characteristics to container
+     * @brief Add model
      * @param rank
      */
-    void addElementaryCharacteristics( const ElementaryCharacteristicsPtr&, int rank )
-        throw ( std::runtime_error );
+    void addModel( const ModelPtr&, int rank ) throw ( std::runtime_error );
 
     /**
-     * @brief Add elementary characteristics to container
-     * @param rank
-     */
-    void addListOfLoads( const ListOfLoadsPtr&, int rank )
-        throw ( std::runtime_error );
-
-    /**
-     * @brief Add material definition
+     * @brief Add model
      * @param rank
      */
     void addMaterialOnMesh( const MaterialOnMeshPtr&, int rank ) throw ( std::runtime_error );
@@ -137,13 +127,14 @@ public:
      * @brief Add model
      * @param rank
      */
-    void addModel( const ModelPtr&, int rank ) throw ( std::runtime_error );
+    void addTimeValue( double, int rank ) throw ( std::runtime_error );
 
     /**
-     * @brief Add time value for one rank
-     * @param rank
+     * @brief Construire une sd_resultat à partir d'objet produit dans le Fortran
+     * @return true si l'allocation s'est bien passée
+     * @todo revoir l'agrandissement de dictOfVectorOfFieldsNodes et dictOfVectorOfFieldsElements
      */
-    void addTimeValue( double, int rank ) throw ( std::runtime_error );
+    bool buildFromExisting() throw ( std::runtime_error );
 
     /**
      * @brief Obtenir un DOFNumbering à remplir
@@ -211,14 +202,12 @@ public:
     const int getNumberOfRanks() const
     {
         return _nbRanks;
-    };
+    }
 
     /**
-     * @brief Construire une sd_resultat à partir d'objet produit dans le Fortran
-     * @return true si l'allocation s'est bien passée
-     * @todo revoir l'agrandissement de dictOfVectorOfFieldsNodes et dictOfVectorOfFieldsElements
-     */
-    bool update() throw ( std::runtime_error );
+    * @brief Get the fields stored in the ResultContainer
+    */
+    //const void getListOfFields() const ;
 };
 
 /**
