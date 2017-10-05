@@ -9,11 +9,11 @@ EPILOG = """
 EXAMPLES:
     Generate a file like ``supervis.rst``::
 
-        gen_automodule.py code_aster/__init__.py code_aster/Supervis/*.py
+        generate_rst.py code_aster/__init__.py code_aster/Supervis/*.py
 
     Generate files for *DataStructure* and derivated subclasses::
 
-        gen_automodule --objects
+        generate_rst --objects
 """
 
 import argparse
@@ -38,7 +38,7 @@ autoclass_block = \
 auto_documentation = \
 """.. _devguide-{link}:
 
-.. AUTOMATICALLY CREATED BY gen_automodule.py - DO NOT EDIT MANUALLY!
+.. AUTOMATICALLY CREATED BY generate_rst.py - DO NOT EDIT MANUALLY!
 
 {intro}
 

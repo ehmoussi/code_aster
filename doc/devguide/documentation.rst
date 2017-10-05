@@ -18,6 +18,10 @@ See the Sphinx Documentation for details.
 Getting started
 ***************
 
+=======
+Example
+=======
+
 Documentation of functions arguments is using the *Google Style* supported
 by the `sphinx-napoleon`_ extension.
 
@@ -29,6 +33,33 @@ As an example, this description of :py:func:`~help_doc.my_function`:
 is automatically generated from this source file:
 
 .. literalinclude:: ../help_doc.py
+
+
+=============================
+Automatically generated pages
+=============================
+
+Except the page :ref:`devguide-objects_ext`, all source pages under
+:ref:`devguide-datastructures` are automatically generated.
+These pages group objects from :py:mod:`code_aster.Objects` by
+subclasses of :py:class:`~code_aster.Objects.DataStructure`, of
+:py:class:`~code_aster.Objects.GeneralMaterialBehaviour` and objects of other
+types.
+
+The source tree contains a script that can generate these pages:
+:file:`doc/generate_rst.py` (use ``./doc/generate_rst.py --help`` for details).
+
+It can be used to generate the source file for these three groups with::
+
+    # prefer use a different terminal not to change your environment
+    source  ../install/std/share/aster/profile.sh
+    ./doc/generate_rst.py --objects --dest doc/devguide
+
+It can also be used to generate a draft to document a package. Blocks are
+printed on the standard output, copy/paste into your *rst* file.
+For example: ::
+
+    ./doc/generate_rst.py code_aster/Supervis/*.py
 
 
 =====================================================
