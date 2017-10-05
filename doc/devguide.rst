@@ -43,3 +43,7 @@ Contents
     devguide/datastructures
     devguide/supervis
     devguide/utilities
+
+    devguide/documentation
+
+    devguide/todolist
