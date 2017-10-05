@@ -1,4 +1,4 @@
-autoclass.. _devguide-datastructures:
+.. _devguide-datastructures:
 
 ########################
 Objects / DataStructures
