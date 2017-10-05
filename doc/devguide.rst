@@ -37,12 +37,9 @@ Contents
 ********
 
 ..  toctree::
+    :maxdepth: 3
 
     devguide/commands
     devguide/datastructures
     devguide/supervis
     devguide/utilities
-
-    devguide/objects_datastructure
-    devguide/objects_materialbehaviour
-    devguide/objects_others

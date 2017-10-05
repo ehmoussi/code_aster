@@ -38,6 +38,8 @@ autoclass_block = \
 auto_documentation = \
 """.. _devguide-{link}:
 
+.. AUTOMATICALLY CREATED BY gen_automodule.py - DO NOT EDIT MANUALLY!
+
 {intro}
 
 {content}
@@ -161,9 +163,9 @@ Documentation of
                       content=os.linesep.join(dicttext.values()[2:]),
                       intro=\
 """
-####################
-Index of all objects
-####################
+####################################
+Index of all other available objects
+####################################
 
 Documentation of all other types.
 """)
