@@ -90,6 +90,7 @@ class ExecuteCommand(object):
         else:
             type_name = sd_type.getType()
             klass = cata2datastructure.objtype(type_name)
+            assert klass, "Object unknown for {0}".format(type_name)
             result = klass.create()
             result_name = result.getName()
         syntax.setResult(result_name, type_name)

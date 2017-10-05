@@ -19,6 +19,7 @@
 
 from .debut import DEBUT
 from .defi_fichier import DEFI_FICHIER
+from .defi_list_reel import DEFI_LIST_REEL
 from .fin import FIN
 
 from .operator import define_operators
@@ -53,7 +54,6 @@ define_operators(globals())
 # from .defi_group import DEFI_GROUP
 # from .defi_inte_spec import DEFI_INTE_SPEC
 # from .defi_interf_dyna import DEFI_INTERF_DYNA
-# from .defi_list_reel import DEFI_LIST_REEL
 # from .defi_materiau import DEFI_MATERIAU
 # from .defi_modele_gene import DEFI_MODELE_GENE
 # from .defi_nappe import DEFI_NAPPE
