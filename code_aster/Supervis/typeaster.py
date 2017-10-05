@@ -55,7 +55,11 @@ def typeaster(cata_type):
 
 class Cata2DataStructure(object):
     """Helper class to build correspondance between DataStructures in
-    syntax description and those created in C++."""
+    syntax description and those created in C++.
+
+    .. todo:: This correspondance could be automatically build if ``getType()``
+        was a class method.
+    """
     __metaclass__ = Singleton
     _singleton_id = 'typeaster.Cata2DataStructure'
 
@@ -65,6 +69,8 @@ class Cata2DataStructure(object):
         """Initialization."""
         from .. import Objects as EXT
         Cata2DataStructure._cata2cxx = {
+            'FONCTION': EXT.Function,
+            'NAPPE': EXT.Surface,
             'TABLE': EXT.Table,
         }
 

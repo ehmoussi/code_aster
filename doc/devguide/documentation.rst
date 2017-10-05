@@ -188,6 +188,10 @@ Or ``./waf build_debug``, then ``./waf doc_debug`` with the debug configuration.
     The ``waf`` script does not copy the html files into the installation
     directory for the moment.
 
+.. note::
+    It is necessary to remove the ``build/{debug,release}/doc`` directory
+    to reflect last changes to update the :ref:`devguide-todolist` page.
+
 
 ========================
 Browse the documentation
