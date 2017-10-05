@@ -234,6 +234,16 @@ FieldOnNodesDoublePtr ResultsContainerInstance::getRealFieldOnNodes( const std::
     return toReturn;
 };
 
+//void getListOfFields
+//{
+    //for (auto curIter it = _dictOfVectorOfFieldsElements.begin(); it != _dictOfVectorOfFieldsElements.end(); ++it)
+    //{
+      //for (int rank=0;rank<_nbRanks;++rank)
+      //{
+        //std::cout<<rank<<" : " <<it->second[ rank ];
+    //}
+//};
+
 bool ResultsContainerInstance::printMedFile( const std::string fileName ) const
     throw ( std::runtime_error )
 {
