@@ -18,6 +18,11 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois@edf.fr
+"""
+:py:class:`DataStructure` --- Base of all objects
+*************************************************
+"""
+
 
 from libaster import DataStructure
 from ..Utilities import deprecated, import_object
@@ -34,6 +39,8 @@ class injector(object):
 
 
 class ExtendedDataStructure(injector, DataStructure):
+    """This class defines the base class of the DataStructures.
+    """
     cata_sdj = None
     ptr_class_sdj = None
     ptr_sdj = None

@@ -4,14 +4,19 @@
 Interface with the user syntax
 ##############################
 
+*************
+Class diagram
+*************
+
 .. inheritance-diagram::
     code_aster.Supervis.CommandSyntax
     code_aster.Supervis.ExecutionParameter
    :parts: 1
 
 
-Details
-*******
+********************
+Detailed description
+********************
 
 .. automodule:: code_aster.Supervis
    :show-inheritance:

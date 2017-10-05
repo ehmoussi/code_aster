@@ -18,6 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois@edf.fr
+"""
+:py:class:`Function` --- Function object
+****************************************
+"""
 
 import numpy as NP
 

@@ -18,6 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois@edf.fr
+"""
+:py:class:`Table` --- Representation of tables
+**********************************************
+"""
 
 from libaster import Table
 import aster
