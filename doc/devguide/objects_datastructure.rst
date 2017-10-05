@@ -1,6 +1,6 @@
 .. _devguide-objects_datastructure:
 
-.. AUTOMATICALLY CREATED BY gen_automodule.py - DO NOT EDIT MANUALLY!
+.. AUTOMATICALLY CREATED BY generate_rst.py - DO NOT EDIT MANUALLY!
 
 
 Documentation of
