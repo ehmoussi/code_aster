@@ -153,8 +153,7 @@ subroutine op0145()
                 call dismoi('NOM_MAILLA', modele, 'MODELE', repk=maillage)
                 call reliem(modele, maillage, 'NO_NOEUD', nommcf, iocc,&
                             2, motcle, typmcl, nomno, nbno)
-!
-                call utmess('F', 'MODELISA5_67', sk=nommcf, si=nbno)
+
                 dim = nbno*(nbno+1)/2
                 if (dim .ne. mxval) then
                     call utmess('F', 'MODELISA5_69')
