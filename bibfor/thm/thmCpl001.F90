@@ -23,8 +23,6 @@ subroutine thmCpl001(perman, option, angl_naut,&
                      dimdef, dimcon,&
                      adcome, adcote, adcp11,& 
                      addeme, addete, addep1,&
-                     advico, advihy,&
-                     vihrho, vicphi,&
                      temp  ,&
                      dtemp , dp1   ,&
                      deps  , epsv  , depsv,&
@@ -71,7 +69,6 @@ integer, intent(in) :: ndim, nbvari
 integer, intent(in) :: dimdef, dimcon
 integer, intent(in) :: adcome, adcote, adcp11 
 integer, intent(in) :: addeme, addete, addep1
-integer, intent(in) :: advico, advihy, vihrho, vicphi
 real(kind=8), intent(in) :: temp
 real(kind=8), intent(in) :: dtemp, dp1
 real(kind=8), intent(in) :: epsv, depsv, deps(6), tbiot(6)
@@ -107,10 +104,6 @@ integer, intent(out) :: retcom
 ! In  addeme           : adress of mechanic components in generalized strains vector
 ! In  addete           : adress of thermic components in generalized strains vector
 ! In  addep1           : adress of capillary pressure in generalized strains vector
-! In  advico           : index of first internal state variable for coupling law
-! In  advihy           : index of internal state variable for hydraulic law 
-! In  vihrho           : index of internal state variable for volumic mass of liquid
-! In  vicphi           : index of internal state variable for porosity
 ! In  temp             : temperature at end of current time step
 ! In  dtemp            : increment of temperature
 ! In  dp1              : increment of capillary pressure (here, only liquid)
@@ -146,6 +139,7 @@ integer, intent(out) :: retcom
     real(kind=8) :: dpad, dp2, signe
     real(kind=8) :: dmdeps(6), sigmp(6), dsdp1(6)
     real(kind=8) :: dqeps(6)
+    integer :: advico, advihy, vihrho, vicphi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -164,6 +158,13 @@ integer, intent(out) :: retcom
     satur  = 0.d0
     dp2    = 0.d0
     dpad   = 0.d0
+!
+! - Get storage parameters for behaviours
+!
+    advico = ds_thm%ds_behaviour%advico
+    advihy = ds_thm%ds_behaviour%advihy
+    vihrho = ds_thm%ds_behaviour%vihrho
+    vicphi = ds_thm%ds_behaviour%vicphi
 !
 ! - Get initial parameters
 !

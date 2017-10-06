@@ -127,26 +127,10 @@ integer, intent(out) :: retcom
     real(kind=8) :: tperm(ndim, ndim)
     real(kind=8) :: lambp, dlambp, lambs, dlambs
     real(kind=8) :: tlambt(ndim, ndim), tlamct(ndim, ndim), tdlamt(ndim, ndim)
-    integer :: nume_thmc
-    integer :: advihy, advico
-    integer :: vihrho, vicphi, vicpvp, vicsat
-    character(len=16) :: hydr, thmc
 !
 ! --------------------------------------------------------------------------------------------------
 !
     retcom = 0
-!
-! - Get storage parameters for behaviours
-!
-    thmc      = ds_thm%ds_behaviour%rela_thmc
-    hydr      = ds_thm%ds_behaviour%rela_hydr
-    nume_thmc = ds_thm%ds_behaviour%nume_thmc
-    advico    = ds_thm%ds_behaviour%advico
-    advihy    = ds_thm%ds_behaviour%advihy
-    vihrho    = ds_thm%ds_behaviour%vihrho
-    vicphi    = ds_thm%ds_behaviour%vicphi
-    vicpvp    = ds_thm%ds_behaviour%vicpvp
-    vicsat    = ds_thm%ds_behaviour%vicsat
 !
 ! - Update unknowns
 !
@@ -187,15 +171,13 @@ integer, intent(out) :: retcom
 !
 ! - Compute generalized stresses and matrix for coupled quantities
 !
-    call calcco(l_steady, nume_thmc,&
+    call calcco(l_steady,&
                 option  , angl_naut,&
-                hydr    , j_mater  ,&
+                j_mater  ,&
                 ndim    , nbvari   ,&
                 dimdef  , dimcon   ,&
                 adcome  , adcote   , adcp11, adcp12, adcp21, adcp22,&
                 addeme  , addete   , addep1, addep2,&
-                advico  , advihy   ,&
-                vihrho  , vicphi   , vicpvp, vicsat,&
                 temp    , p1       , p2    ,&
                 dtemp   , dp1      , dp2   ,&
                 deps    , epsv     , depsv ,&
