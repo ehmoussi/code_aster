@@ -15,13 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface 
-    subroutine thmEvalSatuFinal(hydr , j_mater, p1    ,&
-                                satur, dsatur , retcom)
-        character(len=16), intent(in) :: hydr
+    subroutine thmEvalSatuFinal(j_mater, p1    ,&
+                                satur  , dsatur, retcom)
         integer, intent(in) :: j_mater
         real(kind=8), intent(in) :: p1
         real(kind=8), intent(out) :: satur, dsatur
