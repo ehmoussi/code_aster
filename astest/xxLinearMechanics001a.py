@@ -44,6 +44,13 @@ resu=CALC_CHAMP(reuse=resu,
                 )
 
 # Debut du TEST_RESU
+z=mail1.getCoordinates()
+x=z.EXTR_COMP(topo=1)
+test.assertAlmostEqual(x.valeurs.sum(), 40.5)
+test.assertEqual(x.comp[0:3],('X', 'Y', 'Z'))
+test.assertEqual(x.noeud[-3:],(27, 27, 27))
+
+
 MyFieldOnElements = resu.getRealFieldOnElements("SIGM_ELNO", 0)
 z=MyFieldOnElements.EXTR_COMP('SIXX',topo=1)
 test.assertEqual(len(z.valeurs), 64)

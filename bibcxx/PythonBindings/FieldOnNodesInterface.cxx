@@ -62,6 +62,6 @@ void exportFieldOnNodesToPython()
         .def( "updateValuePointers", &FieldOnNodesDoubleInstance::updateValuePointers )
     ;
 
-    to_python_converter< MeshCoordinatesFieldPtr,
-                         MeshCoordinatesFieldToFieldOnNodes >();
+    //to_python_converter< MeshCoordinatesFieldPtr,
+                         //MeshCoordinatesFieldToFieldOnNodes >();
 };

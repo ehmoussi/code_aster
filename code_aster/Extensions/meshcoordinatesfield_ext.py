@@ -19,12 +19,12 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
-from libaster import FieldOnNodesDouble
+from libaster import MeshCoordinatesField
 from ..Utilities import deprecated, import_object
 
 
 class injector(object):
-    class __metaclass__(FieldOnNodesDouble.__class__):
+    class __metaclass__(MeshCoordinatesField.__class__):
         def __init__(self, name, bases, dict):
             for b in bases:
                 if type(b) not in (self, type):
@@ -33,7 +33,7 @@ class injector(object):
             return type.__init__(self, name, bases, dict)
 
 
-class ExtendedFieldOnNodesDouble(injector, FieldOnNodesDouble):
+class ExtendedMeshCoordinatesField(injector, MeshCoordinatesField):
    cata_sdj = "SD.sd_champ.sd_cham_no_class"
 
    def EXTR_COMP(self,comp=' ',lgno=[],topo=0) :
