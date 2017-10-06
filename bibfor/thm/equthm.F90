@@ -25,9 +25,6 @@ subroutine equthm(option   , j_mater  ,&
                   dimdef   , dimcon   ,&
                   mecani   , press1   , press2    , tempe, &
                   compor   , carcri   ,&
-                  thmc     , hydr     ,&
-                  advihy   , advico   ,&
-                  vihrho   , vicphi   , vicpvp    , vicsat,&
                   defgem   , defgep   ,&
                   congem   , congep   ,&
                   vintm    , vintp    ,&
@@ -54,9 +51,6 @@ integer, intent(in) :: dimdef, dimcon
 integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
 character(len=16), intent(in)  :: compor(*)
 real(kind=8), intent(in) :: carcri(*)
-character(len=16), intent(in) :: thmc, hydr
-integer, intent(in) :: advihy, advico
-integer, intent(in) :: vihrho, vicphi, vicpvp, vicsat
 real(kind=8), intent(in) :: defgem(dimdef), defgep(dimdef)
 real(kind=8), intent(inout) :: congem(dimcon), congep(dimcon)
 real(kind=8), intent(in) :: vintm(nbvari)
@@ -91,14 +85,6 @@ integer, intent(out) :: retcom
 ! In  tempe            : parameters for thermic
 ! In  compor           : behaviour
 ! In  carcri           : parameters for comportment
-! In  thmc             : coupling law
-! In  hydr             : hydraulic law
-! In  advihy           : index of internal state variable for hydraulic law 
-! In  advico           : index of first internal state variable for coupling law
-! In  vihrho           : index of internal state variable for volumic mass of liquid
-! In  vicphi           : index of internal state variable for porosity
-! In  vicpvp           : index of internal state variable for pressure of steam
-! In  vicsat           : index of internal state variable for saturation
 ! In  defgem           : generalized strains - At begin of current step
 ! In  defgep           : generalized strains - At end of current step
 ! IO  congem           : generalized stresses - At begin of current step
@@ -169,14 +155,11 @@ integer, intent(out) :: retcom
 !
     call comthm(l_steady ,&
                 option   , j_mater  ,&
-                typmod   , angl_naut,&
-                thmc     , hydr     ,&     
+                typmod   , angl_naut,&  
                 ndim     , nbvari   ,&
                 dimdef   , dimcon   ,&
                 adcome   , adcote   , adcp11  , adcp12, adcp21, adcp22,&
                 addeme   , addete   , addep1  , addep2,&
-                advico   , advihy   ,&
-                vihrho   , vicphi   , vicpvp  , vicsat,&
                 kpi      , npg      ,&
                 compor   , carcri   ,&
                 defgem   , defgep   ,& 
