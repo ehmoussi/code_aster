@@ -26,7 +26,7 @@ subroutine comthm(l_steady ,&
                   adcome   , adcote   , adcp11  , adcp12, adcp21, adcp22,&
                   addeme   , addete   , addep1  , addep2,&
                   kpi      , npg      ,&
-                  compor   , carcri   ,&
+                  carcri   ,&
                   defgem   , defgep   ,& 
                   congem   , congep   ,& 
                   vintm    , vintp    ,& 
@@ -66,7 +66,6 @@ integer, intent(in) :: dimdef, dimcon
 integer, intent(in) :: adcome, adcote, adcp11, adcp12, adcp21, adcp22
 integer, intent(in) :: addeme, addete, addep1, addep2
 integer, intent(in) :: kpi, npg
-character(len=16), intent(in)  :: compor(*)
 real(kind=8), intent(in) :: carcri(*)
 real(kind=8), intent(in) :: defgem(1:dimdef), defgep(1:dimdef)
 real(kind=8), intent(in) :: congem(1:dimcon)
@@ -107,7 +106,6 @@ integer, intent(out) :: retcom
 ! In  addep2           : adress of gaz pressure in generalized strains vector
 ! In  kpi              : current Gauss point
 ! In  npg              : number of Gauss points
-! In  compor           : behaviour
 ! In  carcri           : parameters for comportment
 ! In  defgem           : generalized strains - At begin of current step
 ! In  defgep           : generalized strains - At end of current step
@@ -218,7 +216,7 @@ integer, intent(out) :: retcom
                            p2       , dp2      ,&
                            satur    , tbiot    ,&
                            option   , j_mater  , ndim  , type_elem, angl_naut,&
-                           compor   , carcri   ,&
+                           carcri   ,&
                            time_prev, time_curr, dtemp ,&
                            addeme   , addete   , adcome, addep1, addep2   ,&
                            dimdef   , dimcon   ,&

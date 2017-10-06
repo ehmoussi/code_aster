@@ -24,7 +24,7 @@ subroutine equthm(option   , j_mater  ,&
                   kpi      , npg      ,&
                   dimdef   , dimcon   ,&
                   mecani   , press1   , press2    , tempe, &
-                  compor   , carcri   ,&
+                  carcri   ,&
                   defgem   , defgep   ,&
                   congem   , congep   ,&
                   vintm    , vintp    ,&
@@ -49,7 +49,6 @@ integer, intent(in) :: ndim, nbvari
 integer, intent(in) :: npg, kpi
 integer, intent(in) :: dimdef, dimcon
 integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
-character(len=16), intent(in)  :: compor(*)
 real(kind=8), intent(in) :: carcri(*)
 real(kind=8), intent(in) :: defgem(dimdef), defgep(dimdef)
 real(kind=8), intent(inout) :: congem(dimcon), congep(dimcon)
@@ -83,8 +82,6 @@ integer, intent(out) :: retcom
 ! In  press1           : parameters for hydraulic (capillary pressure)
 ! In  press2           : parameters for hydraulic (gaz pressure)
 ! In  tempe            : parameters for thermic
-! In  compor           : behaviour
-! In  carcri           : parameters for comportment
 ! In  defgem           : generalized strains - At begin of current step
 ! In  defgep           : generalized strains - At end of current step
 ! IO  congem           : generalized stresses - At begin of current step
@@ -161,7 +158,7 @@ integer, intent(out) :: retcom
                 adcome   , adcote   , adcp11  , adcp12, adcp21, adcp22,&
                 addeme   , addete   , addep1  , addep2,&
                 kpi      , npg      ,&
-                compor   , carcri   ,&
+                carcri   ,&
                 defgem   , defgep   ,& 
                 congem   , congep   ,& 
                 vintm    , vintp    ,& 

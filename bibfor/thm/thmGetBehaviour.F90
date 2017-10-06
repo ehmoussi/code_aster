@@ -42,6 +42,7 @@ character(len=16), intent(in) :: compor(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    ds_thm%ds_behaviour%defo      = compor(DEFO)
     ds_thm%ds_behaviour%rela_thmc = compor(THMC_NAME)
     ds_thm%ds_behaviour%rela_ther = compor(THER_NAME)
     ds_thm%ds_behaviour%rela_hydr = compor(HYDR_NAME)

@@ -27,7 +27,7 @@ interface
                          ifa      , valfac   , valcen, &
                          adcome   , adcote   , adcp11, adcp12, adcp21, adcp22,&
                          addeme   , addete   , addep1, addep2,&
-                         compor   , carcri   ,&
+                         carcri   ,&
                          defgem   , defgep   ,& 
                          congem   , congep   ,&
                          vintm    , vintp    ,&
@@ -41,7 +41,6 @@ interface
         integer, intent(in) :: dimdef, dimcon
         integer, intent(in) :: adcome, adcote, adcp11, adcp12, adcp21, adcp22
         integer, intent(in) :: addeme, addete, addep1, addep2
-        character(len=16), intent(in)  :: compor(*)
         real(kind=8), intent(in) :: carcri(*)
         real(kind=8), intent(in) :: defgem(1:dimdef), defgep(1:dimdef)
         real(kind=8), intent(in) :: congem(1:dimcon)

@@ -252,7 +252,7 @@ integer, intent(out) :: codret
                         kpi      , npg      ,&
                         dimdef   , dimcon   ,&
                         mecani   , press1   , press2, tempe ,&
-                        compor   , carcri   ,&
+                        carcri   ,&
                         defgem   , defgep   ,&
                         congem((kpi-1)*dimcon+1), congep((kpi-1)*dimcon+1),&
                         vintm((kpi-1)*nbvari+1) , vintp((kpi-1)*nbvari+1) ,&
@@ -265,7 +265,7 @@ integer, intent(out) :: codret
                         kpi      , npg      ,&
                         dimdef   , dimcon   ,&
                         mecani   , press1   , press2, tempe, &
-                        compor   , carcri   ,&
+                        carcri   ,&
                         defgem   , defgep   ,&
                         congem((kpi-1)* dimcon+1), congep((kpi-1)* dimcon+1),&
                         vintm((kpi-1)*nbvari+1)  , vintp((kpi-1)*nbvari+1)  ,&

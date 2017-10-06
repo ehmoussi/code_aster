@@ -24,7 +24,7 @@ interface
                       kpi      , npg      ,&
                       dimdef   , dimcon   ,&
                       mecani   , press1   , press2    , tempe, &
-                      compor   , carcri   ,&
+                      carcri   ,&
                       defgem   , defgep   ,&
                       congem   , congep   ,&
                       vintm    , vintp    ,&
@@ -38,7 +38,6 @@ interface
         integer, intent(in) :: npg, kpi
         integer, intent(in) :: dimdef, dimcon
         integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
-        character(len=16), intent(in)  :: compor(*)
         real(kind=8), intent(in) :: carcri(*)
         real(kind=8), intent(in) :: defgem(dimdef), defgep(dimdef)
         real(kind=8), intent(inout) :: congem(dimcon), congep(dimcon)
