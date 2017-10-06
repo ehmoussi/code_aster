@@ -23,13 +23,10 @@ interface
     subroutine comthm_vf(option   , j_mater  ,&
                          type_elem, angl_naut,&
                          ndim     , nbvari   ,&
-                         thmc     , hydr     ,&
                          dimdef   , dimcon   ,&
                          ifa      , valfac   , valcen, &
                          adcome   , adcote   , adcp11, adcp12, adcp21, adcp22,&
                          addeme   , addete   , addep1, addep2,&
-                         advico   , advihy   ,&
-                         vihrho   , vicphi   , vicpvp  , vicsat,&
                          compor   , carcri   ,&
                          defgem   , defgep   ,& 
                          congem   , congep   ,&
@@ -40,13 +37,10 @@ interface
         integer, intent(in) :: j_mater
         character(len=8), intent(in) :: type_elem(2)
         real(kind=8), intent(in) :: angl_naut(3)
-        character(len=16), intent(in) :: thmc, hydr
         integer, intent(in) :: ndim, nbvari
         integer, intent(in) :: dimdef, dimcon
         integer, intent(in) :: adcome, adcote, adcp11, adcp12, adcp21, adcp22
         integer, intent(in) :: addeme, addete, addep1, addep2
-        integer, intent(in) :: advihy, advico
-        integer, intent(in) :: vihrho, vicphi, vicpvp, vicsat
         character(len=16), intent(in)  :: compor(*)
         real(kind=8), intent(in) :: carcri(*)
         real(kind=8), intent(in) :: defgem(1:dimdef), defgep(1:dimdef)

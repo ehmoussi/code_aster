@@ -47,12 +47,13 @@ implicit none
 #include "asterfort/cafves.h"
 #include "asterfort/comthm_vf.h"
 #include "asterfort/inices.h"
-#include "asterfort/nvithm.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vfcfks.h"
 #include "asterfort/thmGetBehaviour.h"
+#include "asterfort/thmGetBehaviourVari.h"
 #include "asterfort/thmGetParaInit.h"
+#include "asterfort/THM_type.h"
 !
 integer, parameter :: maxfa=6
 character(len=16), intent(in) :: option
@@ -118,9 +119,6 @@ real(kind=8), intent(inout) :: vectu(dimuel)
 ! --------------------------------------------------------------------------------------------------
 !
 
-!
-! --------------------------------------------------------------------------------------------------
-!
 ! PCP PRESSION CAPILLAIRE AU CENTRE DE LA MAILLE
 ! PWP PRESSION EAU
 ! DPWP1 DERIVEE PRESSION EAU PAR P1
@@ -222,14 +220,10 @@ real(kind=8), intent(inout) :: vectu(dimuel)
     integer, parameter :: rhoga = 1, rholq = 2, rhoga1 = 3, rhoga2 = 4, rholq1 = 5, rholq2 = 6
     integer :: addeme, addep1, addep2, addete, adcome, adcp11, adcp12, adcp21
     integer :: adcp22, adcote
-    integer :: nvim, nvit, nvih, nvic
-    integer :: advime, advith, advihy, advico
-    integer :: vihrho, vicphi, vicpvp, vicsat, vicpr1, vicpr2
     integer :: ipg, retcom, fa, i, j
     real(kind=8) :: gravity(3), kintvf(6)
     real(kind=8) :: valcen(14, 6), valfac(maxfa, 14, 6)
     aster_logical :: l_matr, l_resi, bool
-    character(len=16) :: thmc, meca, ther, hydr
     real(kind=8) :: dsde(dimcon, dimdef)
     real(kind=8) :: mface(maxfa), dface(maxfa), xface(3, maxfa), normfa(3, maxfa), vol
     integer :: ifa, jfa, idim
@@ -266,6 +260,7 @@ real(kind=8), intent(inout) :: vectu(dimuel)
     real(kind=8), parameter :: zero = 0.d0
     integer :: iadp1k, iadp2k
     integer :: adcm1, adcm2
+    integer :: nume_thmc, advico, vicpr1, vicpr2
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -402,17 +397,21 @@ real(kind=8), intent(inout) :: vectu(dimuel)
     addep1 = press1(3)
     addep2 = press2(3)
     addete = tempe(2)
-
-! - Get behaviours parameters from COMPOR field
 !
-    call nvithm(compor, meca, thmc, ther, hydr,&
-                nvim, nvit, nvih, nvic, advime,&
-                advith, advihy, advico, vihrho, vicphi,&
-                vicpvp, vicsat, vicpr1, vicpr2)
-!
-! - Get parameters for coupling
+! - Get parameters for behaviour
 !
     call thmGetBehaviour(compor)
+!
+! - Get parameters for internal variables
+!
+    call thmGetBehaviourVari()
+!
+! - Get storage parameters for behaviours
+!
+    nume_thmc = ds_thm%ds_behaviour%nume_thmc
+    advico    = ds_thm%ds_behaviour%advico
+    vicpr1    = ds_thm%ds_behaviour%vicpr1
+    vicpr2    = ds_thm%ds_behaviour%vicpr2
 !
 ! - Get initial parameters (THM_INIT)
 !
@@ -448,13 +447,10 @@ real(kind=8), intent(inout) :: vectu(dimuel)
     call comthm_vf(option     , j_mater    ,&
                    type_elem  , angl_naut  ,&
                    ndim       , nbvari     ,&
-                   thmc       , hydr       ,&
                    dimdef     , dimcon     ,&
                    0          , valfac     , valcen,&
                    adcome     , adcote     , adcp11, adcp12, adcp21, adcp22,&
                    addeme     , addete     , addep1, addep2,&
-                   advico     , advihy     ,&
-                   vihrho     , vicphi     , vicpvp, vicsat,&
                    compor     , carcri     ,&
                    defgem     , defgep     ,& 
                    congem     , congep     ,& 
@@ -492,13 +488,10 @@ real(kind=8), intent(inout) :: vectu(dimuel)
         call comthm_vf(option        , j_mater       ,&
                        type_elem     , angl_naut     ,&
                        ndim          , nbvari        ,&
-                       thmc          , hydr          ,&
                        dimdef        , dimcon        ,&
                        fa            , valfac        , valcen,&
                        adcome        , adcote        , adcp11, adcp12, adcp21, adcp22,&
                        addeme        , addete        , addep1, addep2,&
-                       advico        , advihy        ,&
-                       vihrho        , vicphi        , vicpvp, vicsat,&
                        compor        , carcri        ,&
                        defgem        , defgep        ,& 
                        congem        , congep        ,& 
@@ -592,7 +585,7 @@ real(kind=8), intent(inout) :: vectu(dimuel)
 !
 ! - Save pressures in internal variables
 !
-    if (thmc .eq. 'LIQU_AD_GAZ') then
+    if (nume_thmc .eq. LIQU_AD_GAZ) then
         do ipg = 1, nface+1
             vintp(advico+vicpr1,ipg) = pcp
             vintp(advico+vicpr2,ipg) = pgp
