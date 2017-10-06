@@ -23,7 +23,7 @@ interface
     subroutine xhmsat(option,&
                       ndim, dimenr,&
                       dimcon, nbvari, addeme,&
-                      adcome, advihy, advico, vihrho, vicphi,&
+                      adcome,&
                       addep1, adcp11, congem, congep, vintm,&
                       vintp, dsde, epsv, depsv,&
                       dp1, phi, rho11,&
@@ -36,10 +36,6 @@ interface
         integer :: ndim
         integer :: addeme
         integer :: adcome
-        integer :: advihy
-        integer :: advico
-        integer :: vihrho
-        integer :: vicphi
         integer :: addep1
         integer :: adcp11
         real(kind=8) :: congem(dimcon)

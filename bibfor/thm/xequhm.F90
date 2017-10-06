@@ -19,7 +19,7 @@
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
 subroutine xequhm(imate, option, ta, ta1, ndim,&
-                  compor, kpi, npg, dimenr,&
+                  kpi, npg, dimenr,&
                   enrmec, dimdef, dimcon, nbvari, defgem,&
                   congem, vintm, defgep, congep, vintp,&
                   mecani, press1, press2, tempe,&
@@ -75,7 +75,7 @@ implicit none
     real(kind=8) :: deux, rac2, ta, ta1
     real(kind=8) :: angmas(3)
     parameter    (deux = 2.d0)
-    character(len=16) :: option, compor(*)
+    character(len=16) :: option
 !
 ! DECLARATIONS POUR XFEM
     integer :: dimenr, enrmec(3), enrhyd(3)
@@ -134,7 +134,7 @@ implicit none
 !
     retcom = 0
 !
-    call xcomhm(option, imate, compor, rinstp, &
+    call xcomhm(option, imate, rinstp, &
                 ndim, dimdef, dimcon, nbvari, &
                 addeme, adcome, addep1, adcp11,&
                 addep2, addete, defgem, &

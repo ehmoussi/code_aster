@@ -18,12 +18,12 @@
 ! aslint: disable=W1504
 !
 interface 
-    subroutine xcomhm(option, imate, compor, instap,&
+    subroutine xcomhm(option, j_mater, time_curr,&
                       ndim, dimdef, dimcon, nbvari,&
                       addeme, adcome, addep1, adcp11,&
                       addep2, addete, defgem,&
                       defgep, congem, congep, vintm,&
-                      vintp, dsde, pesa, retcom, kpi,&
+                      vintp, dsde, gravity, retcom, kpi,&
                       npg, dimenr,&
                       angl_naut, yaenrh, adenhy, nfh)
         integer :: dimenr
@@ -32,9 +32,8 @@ interface
         integer :: dimdef
         integer :: ndim
         character(len=16) :: option
-        integer :: imate
-        character(len=16) :: compor(*)
-        real(kind=8) :: instap
+        integer :: j_mater
+        real(kind=8) :: time_curr
         integer :: addeme
         integer :: adcome
         integer :: addep1
@@ -48,7 +47,7 @@ interface
         real(kind=8) :: vintm(1:nbvari)
         real(kind=8) :: vintp(1:nbvari)
         real(kind=8) :: dsde(1:dimcon, 1:dimenr)
-        real(kind=8) :: pesa(3)
+        real(kind=8) :: gravity(3)
         integer :: retcom
         integer :: kpi
         integer :: npg

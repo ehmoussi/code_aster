@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
-subroutine xcalfh(option, thmc, ndim, dimcon,&
+subroutine xcalfh(option, ndim, dimcon,&
                   addep1, adcp11, addeme, congep, dsde,&
-                  grap1, rho11, pesa, tperm, &
+                  grap1, rho11, gravity, tperm, &
                   dimenr,&
                   adenhy, nfh)
 !
@@ -28,43 +28,45 @@ use THM_module
 !
 implicit none
 !
-
-! ======================================================================
-! ROUTINE CALC_FLUX_HYDRO
-! CALCULE LES CONTRAINTES GENERALISEES ET LA MATRICE TANGENTE DES FLUX
-! HYDRAULIQUES AU POINT DE GAUSS CONSIDERE
-! ======================================================================
+#include "asterfort/THM_type.h"
 !
-    integer :: ndim, dimcon, nfh
-    integer :: addeme, addep1, adcp11, adenhy
-    integer :: bdcp11, dimenr
-    real(kind=8) :: congep(1:dimcon)
-    real(kind=8) :: dsde(1:dimcon, 1:dimenr), grap1(3)
-    real(kind=8) :: rho11, pesa(3), tperm(ndim,ndim)
+integer :: ndim,  nfh
+integer :: addeme, addep1, adcp11, adenhy
+integer :: dimcon, dimenr
+real(kind=8) :: congep(1:dimcon)
+real(kind=8) :: dsde(1:dimcon, 1:dimenr), grap1(3)
+real(kind=8) :: rho11, gravity(3), tperm(ndim,ndim)
+character(len=16) :: option
+!
+! --------------------------------------------------------------------------------------------------
+!
+! THM - Compute (XFEM)
+!
+! Compute flux
+!
+! --------------------------------------------------------------------------------------------------
+!
     real(kind=8) :: cliq, viscl, dviscl
-    character(len=16) :: option, thmc
-! ======================================================================
-! --- VARIABLES LOCALES ------------------------------------------------
-! ======================================================================
-    integer :: i, j, k, ifh
+    integer :: i, j, k, ifh, nume_thmc
     real(kind=8) :: lambd1(3), visco, dvisco
     real(kind=8) :: krel1, dkrel1
     real(kind=8) :: dr11p1
 !
-! ======================================================================
-! --- QUELQUES INITIALISATIONS -----------------------------------------
-! ======================================================================
+! --------------------------------------------------------------------------------------------------
 !
     cliq = ds_thm%ds_material%liquid%unsurk
     viscl  = ds_thm%ds_material%liquid%visc
     dviscl = ds_thm%ds_material%liquid%dvisc_dtemp
     dr11p1 = 0.d0
-    bdcp11 = adcp11
+!
+! - Get storage parameters for behaviours
+!
+    nume_thmc = ds_thm%ds_behaviour%nume_thmc
 !
 ! ======================================================================
 ! RECUPERATION DES COEFFICIENTS
 ! ======================================================================
-    if (thmc .eq. 'LIQU_SATU') then
+    if (nume_thmc .eq. LIQU_SATU) then
         krel1 = 1.d0
         dkrel1 = 0.d0
         visco = viscl
@@ -85,7 +87,7 @@ implicit none
 ! CALCUL DES DERIVEES DES MASSES VOLUMIQUES
 !
     if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
-        if (thmc .eq. 'LIQU_SATU') then
+        if (nume_thmc .eq. LIQU_SATU) then
             dr11p1=rho11*cliq
         endif
     endif
@@ -94,35 +96,35 @@ implicit none
 ! CALCUL DES FLUX HYDRAULIQUES
 !
     if ((option(1:9).eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
-        if (thmc .eq. 'LIQU_SATU') then
+        if (nume_thmc .eq. LIQU_SATU) then
             do i = 1, ndim
-                congep(bdcp11+i)=0.d0
+                congep(adcp11+i)=0.d0
                 do j = 1, ndim
-                    congep(bdcp11+i) = congep(bdcp11+i)+&
-                                       rho11*lambd1(1) *tperm(i,j)*(-grap1(j)+rho11*pesa(j))
+                    congep(adcp11+i) = congep(adcp11+i)+&
+                                       rho11*lambd1(1) *tperm(i,j)*(-grap1(j)+rho11*gravity(j))
                 end do
             end do
         endif
     endif
 !
     if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
-        if (thmc .eq. 'LIQU_SATU') then
+        if (nume_thmc .eq. LIQU_SATU) then
             do i=1,ndim
                 do j = 1, ndim
-                    dsde(bdcp11+i,addep1) = dsde(bdcp11+i,addep1) +&
-                                            dr11p1*lambd1(1)*tperm(i,j)*(-grap1(j)+rho11*pesa(j))
-                    dsde(bdcp11+i,addep1) = dsde(bdcp11+i, addep1) +&
-                                            rho11*lambd1(3)*tperm(i,j)*(-grap1(j)+rho11*pesa(j))
-                    dsde(bdcp11+i,addep1) = dsde(bdcp11+i,addep1) +&
-                                            rho11*lambd1(1)*tperm(i,j)*(dr11p1*pesa(j))
-                    dsde(bdcp11+i,addep1+j) = dsde(bdcp11+i,addep1+j)-&
+                    dsde(adcp11+i,addep1) = dsde(adcp11+i,addep1) +&
+                                            dr11p1*lambd1(1)*tperm(i,j)*(-grap1(j)+rho11*gravity(j))
+                    dsde(adcp11+i,addep1) = dsde(adcp11+i, addep1) +&
+                                            rho11*lambd1(3)*tperm(i,j)*(-grap1(j)+rho11*gravity(j))
+                    dsde(adcp11+i,addep1) = dsde(adcp11+i,addep1) +&
+                                            rho11*lambd1(1)*tperm(i,j)*(dr11p1*gravity(j))
+                    dsde(adcp11+i,addep1+j) = dsde(adcp11+i,addep1+j)-&
                                               rho11*lambd1(1)*tperm(i,j)
                 end do
                 if (ds_thm%ds_elem%l_dof_meca) then
                     do j=1, 3
                         do k = 1, ndim 
-                            dsde(bdcp11+i,addeme+ndim-1+i) = dsde(bdcp11+i,addeme+ndim-1+i)+&
-                                         rho11*lambd1(2)*tperm(i,k)*(-grap1(k)+rho11*pesa(k))
+                            dsde(adcp11+i,addeme+ndim-1+i) = dsde(adcp11+i,addeme+ndim-1+i)+&
+                                         rho11*lambd1(2)*tperm(i,k)*(-grap1(k)+rho11*gravity(k))
                         end do
                     end do
                endif
@@ -133,19 +135,19 @@ implicit none
 ! CALCUL DES FLUX HYDRAULIQUES POUR XFEM
 !
     if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
-        if (thmc .eq. 'LIQU_SATU') then
+        if (nume_thmc .eq. LIQU_SATU) then
             do i = 1, ndim
                 do ifh = 1, nfh
                     do j = 1, ndim
-                        dsde(bdcp11+i,adenhy+(ifh-1)*(ndim+1)) = &
-                            dsde(bdcp11+i,adenhy+(ifh-1)*(ndim+1))+&
-                            dr11p1*lambd1(1)*(-grap1(j)+rho11*pesa(j))*tperm(i,j)
-                        dsde(bdcp11+i,adenhy+(ifh-1)*(ndim+1)) =&
-                            dsde(bdcp11+i,adenhy+(ifh-1)*(ndim+1))+&
-                            rho11*lambd1(3)*(-grap1(j)+rho11*pesa(j))*tperm(i,j)
-                        dsde(bdcp11+i,adenhy+(ifh-1)*(ndim+1)) =&
-                            dsde(bdcp11+i,adenhy+(ifh-1)*(ndim+1))+&
-                            rho11*lambd1(1)*(dr11p1*pesa(j))*tperm(i,j)
+                        dsde(adcp11+i,adenhy+(ifh-1)*(ndim+1)) = &
+                            dsde(adcp11+i,adenhy+(ifh-1)*(ndim+1))+&
+                            dr11p1*lambd1(1)*(-grap1(j)+rho11*gravity(j))*tperm(i,j)
+                        dsde(adcp11+i,adenhy+(ifh-1)*(ndim+1)) =&
+                            dsde(adcp11+i,adenhy+(ifh-1)*(ndim+1))+&
+                            rho11*lambd1(3)*(-grap1(j)+rho11*gravity(j))*tperm(i,j)
+                        dsde(adcp11+i,adenhy+(ifh-1)*(ndim+1)) =&
+                            dsde(adcp11+i,adenhy+(ifh-1)*(ndim+1))+&
+                            rho11*lambd1(1)*(dr11p1*gravity(j))*tperm(i,j)
                     end do
                 end do
             end do

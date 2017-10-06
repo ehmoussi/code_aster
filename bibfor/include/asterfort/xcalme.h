@@ -15,17 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface 
-    subroutine xcalme(option, meca, ndim, dimenr,&
+    subroutine xcalme(option, ndim, dimenr,&
                       dimcon, addeme, adcome, congep,&
                       dsde, deps, angl_naut)
         integer :: dimcon
         integer :: dimenr
         character(len=16) :: option
-        character(len=16) :: meca
         integer :: ndim
         integer :: addeme
         integer :: adcome

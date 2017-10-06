@@ -17,15 +17,14 @@
 ! --------------------------------------------------------------------
 !
 interface 
-    subroutine xcalfh(option, thmc, ndim, dimcon,&
+    subroutine xcalfh(option, ndim, dimcon,&
                       addep1, adcp11, addeme, congep, dsde,&
-                      grap1, rho11, pesa, tperm, &
+                      grap1, rho11, gravity, tperm, &
                       dimenr,&
                       adenhy, nfh)
         integer :: dimenr
         integer :: dimcon
         character(len=16) :: option
-        character(len=16) :: thmc
         integer :: ndim
         integer :: addep1
         integer :: adcp11
@@ -34,7 +33,7 @@ interface
         real(kind=8) :: dsde(1:dimcon, 1:dimenr)
         real(kind=8) :: grap1(3)
         real(kind=8) :: rho11
-        real(kind=8) :: pesa(3)
+        real(kind=8) :: gravity(3)
         real(kind=8) :: tperm(ndim,ndim)
         integer :: adenhy
         integer :: nfh

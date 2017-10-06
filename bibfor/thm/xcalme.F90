@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
-subroutine xcalme(option, meca, ndim, dimenr,&
+subroutine xcalme(option, ndim, dimenr,&
                   dimcon, addeme, adcome, congep,&
                   dsde, deps, angl_naut)
 !
@@ -27,6 +27,7 @@ use THM_module
 implicit none
 !
 #include "asterfort/tecael.h"
+#include "asterfort/assert.h"
 #include "asterfort/thmTherElas.h"
 ! **********************************************************************
 ! ROUTINE CALC_MECA
@@ -39,7 +40,7 @@ implicit none
     integer :: adcome
     real(kind=8) :: congep(dimcon)
     real(kind=8) :: dsde(dimcon, dimenr), rac2
-    character(len=16) :: option, meca
+    character(len=16) :: option
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
@@ -49,6 +50,7 @@ implicit none
     real(kind=8) :: mdal(6), dalal
     character(len=8) :: fami, poum
     integer :: spt, kpg
+    character(len=16) :: meca
 !
 ! - Initializations
 !
@@ -57,6 +59,10 @@ implicit none
     spt  = 1
     poum = '+'
     rac2 = sqrt(2.0d0)
+!
+! - Get storage parameters for behaviours
+!
+    meca      = ds_thm%ds_behaviour%rela_meca
 
     if ((meca.eq.'ELAS')) then
 !
@@ -111,7 +117,8 @@ implicit none
         do i = 4, 6
             congep(adcome+i-1)= congep(adcome+i-1)*rac2
          end do
-!
+    else
+        ASSERT(ASTER_FALSE)
     endif
-! ======================================================================
+!
 end subroutine
