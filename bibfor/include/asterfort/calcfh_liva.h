@@ -19,7 +19,7 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine calcfh_liva(option, hydr  , ndim, j_mater,&
+    subroutine calcfh_liva(option, ndim, j_mater,&
                            dimdef, dimcon,&
                            addep1, adcp11, adcp12, addeme, addete,&
                            t     , p2    , pvp,&
@@ -27,7 +27,7 @@ interface
                            rho11 , h11   , h12    ,&
                            satur , dsatur, gravity, tperm,&
                            congep, dsde  )
-        character(len=16), intent(in) :: option, hydr
+        character(len=16), intent(in) :: option
         integer, intent(in) :: ndim, dimdef, dimcon, j_mater
         integer, intent(in) :: addeme, addep1, addete, adcp11, adcp12
         real(kind=8), intent(in) :: rho11, satur, dsatur

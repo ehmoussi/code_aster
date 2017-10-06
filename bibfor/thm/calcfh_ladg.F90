@@ -18,7 +18,7 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504
 !
-subroutine calcfh_ladg(option, perman, hydr   , ndim  , j_mater,&
+subroutine calcfh_ladg(option, perman, ndim  , j_mater,&
                        dimdef, dimcon,&
                        addep1, addep2, adcp11 , adcp12, adcp21 , adcp22,&
                        addeme, addete, &
@@ -41,7 +41,7 @@ implicit none
 #include "asterfort/thmEvalFickSteam.h"
 #include "asterfort/thmEvalFickAir.h"
 !
-character(len=16), intent(in) :: option, hydr
+character(len=16), intent(in) :: option
 aster_logical, intent(in) :: perman
 integer, intent(in) :: j_mater
 integer, intent(in) :: ndim, dimdef, dimcon
@@ -64,7 +64,6 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
 ! In  option           : option to compute
 ! In  perman           : .flag. for no-transient problem
-! In  hydr             : type of hydraulic law
 ! In  ndim             : dimension of space (2 or 3)
 ! In  j_mater          : coded material address
 ! In  dimdef           : dimension of generalized strains vector
@@ -202,9 +201,9 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
 ! - Evaluate permeability for liquid and gaz
 !
-    call thmEvalPermLiquGaz(hydr  , j_mater, satur, p2, t,&
-                            permli, dperml ,&
-                            permgz, dperms , dpermp)
+    call thmEvalPermLiquGaz(j_mater, satur, p2, t,&
+                            permli , dperml ,&
+                            permgz , dperms , dpermp)
 ! 
 ! - Evaluate Fick coefficients for steam in gaz
 !

@@ -18,7 +18,7 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504
 !
-subroutine calcfh_liva(option, hydr  , ndim, j_mater,&
+subroutine calcfh_liva(option, ndim  , j_mater,&
                        dimdef, dimcon,&
                        addep1, adcp11, adcp12, addeme, addete,&
                        t     , p2    , pvp,&
@@ -37,7 +37,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/thmEvalPermLiquGaz.h"
 !
-character(len=16), intent(in) :: option, hydr
+character(len=16), intent(in) :: option
 integer, intent(in) :: ndim, j_mater
 integer, intent(in) :: dimdef, dimcon
 integer, intent(in) :: addep1, adcp11, adcp12, addeme, addete
@@ -58,7 +58,6 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
 ! In  option           : option to compute
 ! In  ndim             : dimension of space (2 or 3)
-! In  hydr             : type of hydraulic law
 ! In  j_mater          : coded material address
 ! In  dimdef           : dimension of generalized strains vector
 ! In  dimcon           : dimension of generalized stresses vector
@@ -120,9 +119,9 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
 ! - Evaluate permeability for liquid and gaz
 !
-    call thmEvalPermLiquGaz(hydr  , j_mater, satur, p2, t,&
-                            permli, dperml ,&
-                            permgz, dperms , dpermp)
+    call thmEvalPermLiquGaz(j_mater, satur, p2, t,&
+                            permli , dperml ,&
+                            permgz , dperms , dpermp)
 !
 ! - Get parameters
 !

@@ -272,17 +272,16 @@ real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
         tperm(i,i) = tlint
     end do
     if (ds_thm%ds_elem%l_dof_pre1) then
-        call calcfh(nume_thmc, &
-                    option   , l_steady, hydr   , ndim  , j_mater,&
-                    dimdef   , dimcon,&
-                    addep1   , addep2,&
-                    adcp11   , adcp12, adcp21 , adcp22,&
-                    addeme   , addete, &
-                    t        , p1    , p2     , pvp   , pad,&
-                    grat     , grap1 , grap2  ,& 
-                    rho11    , h11   , h12    ,&
-                    sat      , dsatur, pesa   , tperm,&
-                    sigp     , dsde)
+        call calcfh(option, l_steady, ndim  , j_mater,&
+                    dimdef, dimcon,&
+                    addep1, addep2,&
+                    adcp11, adcp12, adcp21 , adcp22,&
+                    addeme, addete, &
+                    t     , p1    , p2     , pvp   , pad,&
+                    grat  , grap1 , grap2  ,& 
+                    rho11 , h11   , h12    ,&
+                    sat   , dsatur, pesa   , tperm,&
+                    sigp  , dsde)
         if (retcom .ne. 0) then
             goto 99
         endif
