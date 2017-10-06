@@ -106,15 +106,10 @@ real(kind=8) :: angl_naut(3)
     real(kind=8) :: satur
     real(kind=8) :: tbiot(6)
     real(kind=8) :: tperm(ndim, ndim)
-    character(len=16) :: hydr
 !
 ! --------------------------------------------------------------------------------------------------
 !
     retcom = 0
-!
-! - Get storage parameters for behaviours
-!
-    hydr      = ds_thm%ds_behaviour%rela_hydr
 !
 ! - Update unknowns
 !
@@ -132,7 +127,7 @@ real(kind=8) :: angl_naut(3)
 !
 ! - Get hydraulic parameters
 !
-    call thmGetParaHydr(hydr, j_mater)
+    call thmGetParaHydr(j_mater)
 !
 ! - Get Biot parameters (for porosity evolution)
 !

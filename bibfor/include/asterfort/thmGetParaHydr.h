@@ -15,12 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface 
-    subroutine thmGetParaHydr(hydr, j_mater)
-        character(len=16), intent(in) :: hydr
+    subroutine thmGetParaHydr(j_mater)
         integer, intent(in) :: j_mater
     end subroutine thmGetParaHydr
 end interface 

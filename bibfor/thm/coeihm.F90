@@ -186,7 +186,7 @@ real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
 !
 ! - Get hydraulic parameters
 !
-    call thmGetParaHydr(hydr, j_mater)
+    call thmGetParaHydr(j_mater)
 !
 ! - Get Biot parameters (for porosity evolution)
 !

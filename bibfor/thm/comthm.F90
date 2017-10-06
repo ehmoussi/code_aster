@@ -166,7 +166,7 @@ integer, intent(out) :: retcom
 !
 ! - Get hydraulic parameters
 !
-    call thmGetParaHydr(hydr, j_mater)
+    call thmGetParaHydr(j_mater)
 !
 ! - Get Biot parameters (for porosity evolution)
 !
