@@ -18,7 +18,7 @@
 ! aslint: disable=W1504,W1306
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine calcft(option, thmc, ndim, dimdef,&
+subroutine calcft(option, ndim, dimdef,&
                   dimcon, addete,&
                   addeme, addep1, addep2, adcote, congep,&
                   dsde, t, grat, phi, pvp,&
@@ -37,6 +37,7 @@ implicit none
 #include "asterfort/dilata.h"
 #include "asterfort/matini.h"
 #include "asterfort/unsmfi.h"
+#include "asterfort/THM_type.h"
 ! ======================================================================
 ! ======================================================================
 
@@ -60,7 +61,8 @@ implicit none
     real(kind=8) :: lamdt1(ndim, ndim), lamdt2(ndim, ndim)
     real(kind=8) :: lamdt3(ndim, ndim)
     real(kind=8) :: lamdt4(ndim, ndim), lamdt5(ndim, ndim), mamolv
-    character(len=16) :: option, thmc
+    character(len=16) :: option
+    integer :: nume_thmc
 ! =====================================================================
 ! --- DEFINITION DU SYMBOLE DE KRONECKER ------------------------------
 ! =====================================================================
@@ -72,6 +74,10 @@ implicit none
     do i = 1, ndim
         kron(i,i) = 1.d0
     end do
+!
+! - Get storage parameters for behaviours
+!
+    nume_thmc = ds_thm%ds_behaviour%nume_thmc
 !
     rgaz   = ds_thm%ds_material%solid%r_gaz
 !
@@ -106,10 +112,10 @@ implicit none
         alphfi = 0.d0
         cs = 0.d0
     endif
-    if (thmc .eq. 'GAZ') then
+    if (nume_thmc .eq. GAZ) then
         sat = 0.d0
         dsatp1 = 0.d0
-    else if (thmc.eq.'LIQU_SATU') then
+    else if (nume_thmc .eq. LIQU_SATU) then
         sat = 1.d0
         dsatp1 = 0.d0
     endif
@@ -120,7 +126,7 @@ implicit none
 !           LAMDT4 : DLAMB / DP2
 !           LAMDT5 : DLAMB / DT
 ! =====================================================================
-    if (thmc .eq. 'LIQU_VAPE') then
+    if (nume_thmc .eq. LIQU_VAPE) then
         mamolv = ds_thm%ds_material%steam%mass_mol
         rho12=mamolv*pvp/rgaz/t
         do i = 1, ndim
