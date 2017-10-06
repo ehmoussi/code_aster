@@ -17,12 +17,11 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine calcfh_gazp(option, perman , ndim,&
-                       dimdef, dimcon ,&
-                       addep1, adcp11 , addeme, addete,&
-                       t     , p1     , grap1 ,&
-                       rho11 , gravity, tperm ,&
-                       congep, dsde)
+subroutine thmFlh001(option, perman, ndim,&
+                     dimdef, dimcon,&
+                     addep1, adcp11, addeme , addete,&
+                     grap1 , rho11 , gravity, tperm ,&
+                     congep, dsde  )
 !
 use THM_type
 use THM_module
@@ -30,15 +29,13 @@ use THM_module
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/assert.h"
-#include "asterfort/hmderp.h"
 #include "asterfort/utmess.h"
 !
 character(len=16), intent(in) :: option
 aster_logical, intent(in) :: perman
 integer, intent(in) :: ndim, dimdef, dimcon
 integer, intent(in) :: addeme, addep1, addete, adcp11
-real(kind=8), intent(in) :: rho11, grap1(3), t, p1
+real(kind=8), intent(in) :: rho11, grap1(3)
 real(kind=8), intent(in) :: gravity(3), tperm(ndim, ndim)
 real(kind=8), intent(inout) :: congep(1:dimcon)
 real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
@@ -47,7 +44,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
 ! THM
 !
-! Compute flux and stress for hydraulic - 'GAZ'
+! Compute flux and stress for hydraulic - 'LIQU_SATU'
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -59,10 +56,13 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 ! In  addeme           : adress of mechanic dof in vector of generalized strains
 ! In  addete           : adress of thermic dof in vector of generalized strains
 ! In  addep1           : adress of first hydraulic dof in vector of generalized strains
+! In  adcp11           : adress of first hydraulic/first component dof in vector of gene. stresses
 ! In  grap1            : gradient of capillary pressure
 ! In  rho11            : volumic mass for liquid
 ! In  gravity          : gravity
 ! In  tperm            : permeability tensor
+! IO  congep           : generalized stresses - At end of current step
+! IO  dsde             : derivative matrix
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -70,7 +70,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
     real(kind=8) :: lambd1(5)
     real(kind=8) :: krel1, dkrel1
     real(kind=8) :: dr11p1, dr11t
-    real(kind=8) :: visco, dvisco
+    real(kind=8) :: cliq, alpliq, visco, dvisco
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -80,10 +80,12 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
 ! - Get parameters
 !
+    cliq   = ds_thm%ds_material%liquid%unsurk
+    alpliq = ds_thm%ds_material%liquid%alpha
     krel1  = 1.d0
     dkrel1 = 0.d0
-    visco  = ds_thm%ds_material%gaz%visc
-    dvisco = ds_thm%ds_material%gaz%dvisc_dtemp
+    visco  = ds_thm%ds_material%liquid%visc
+    dvisco = ds_thm%ds_material%liquid%dvisc_dtemp
 !
 ! - Adress
 !
@@ -104,9 +106,9 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 ! - Volumic mass - Derivative
 !
     if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
-        dr11p1=rho11/p1
+        dr11p1=rho11*cliq
         if (ds_thm%ds_elem%l_dof_ther) then
-            dr11t=-rho11/t
+            dr11t=-3.d0*alpliq*rho11
         endif
     endif
 !
@@ -114,7 +116,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
     if ((option(1:9).eq.'RAPH_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
         do i = 1, ndim
-            congep(bdcp11+i)=0.d0
+            congep(bdcp11+i) = 0.d0
             do j = 1, ndim
                 congep(bdcp11+i) = congep(bdcp11+i)+&
                                    rho11*lambd1(1)*tperm(i,j)*(-grap1(j)+rho11*gravity(j))
@@ -133,7 +135,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
                                           rho11*lambd1(3)*tperm(i,j)*(-grap1(j)+rho11*gravity(j))
                 dsde(bdcp11+i,addep1)   = dsde(bdcp11+i,addep1) +&
                                           rho11*lambd1(1)*tperm(i,j)*(dr11p1*gravity(j))
-                dsde(bdcp11+i,addep1+j) = dsde(bdcp11+i,addep1+j)-&
+                dsde(bdcp11+i,addep1+j) = dsde(bdcp11+i,addep1+j) -&
                                           rho11*lambd1(1)*tperm(i,j)
             end do
             if (ds_thm%ds_elem%l_dof_meca) then

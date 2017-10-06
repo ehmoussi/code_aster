@@ -20,11 +20,11 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine calcfh_lvag(option, perman, ndim  , j_mater,&
+    subroutine thmFlh010(option, perman, ndim  , j_mater,&
                            dimdef, dimcon,&
-                           addep1, addep2, adcp11, adcp12, adcp21 ,&
+                           addep1, addep2, adcp11 , adcp12, adcp21 , adcp22,&
                            addeme, addete, &
-                           t     , p2    , pvp    ,&
+                           t     , p1    , p2     , pvp   , pad,&
                            grat  , grap1 , grap2  ,& 
                            rho11 , h11   , h12    ,&
                            satur , dsatur, gravity, tperm,&
@@ -33,13 +33,13 @@ interface
         aster_logical, intent(in) :: perman
         integer, intent(in) :: j_mater
         integer, intent(in) :: ndim, dimdef, dimcon
-        integer, intent(in) :: addeme, addep1, addep2, addete, adcp11, adcp12, adcp21
+        integer, intent(in) :: addeme, addep1, addep2, addete, adcp11, adcp12, adcp21, adcp22
         real(kind=8), intent(in) :: rho11, satur, dsatur
         real(kind=8), intent(in) :: grat(3), grap1(3), grap2(3)
-        real(kind=8), intent(in) :: p2, pvp, t
+        real(kind=8), intent(in) :: t, p1, p2, pvp, pad
         real(kind=8), intent(in) :: gravity(3), tperm(ndim, ndim)
         real(kind=8), intent(in) :: h11, h12
         real(kind=8), intent(inout) :: congep(1:dimcon)
         real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
-    end subroutine calcfh_lvag
+    end subroutine thmFlh010
 end interface 

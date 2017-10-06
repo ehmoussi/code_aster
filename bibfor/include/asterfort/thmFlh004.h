@@ -16,26 +16,30 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
+!
 #include "asterf_types.h"
 !
 interface 
-    subroutine calcfh_liva(option, ndim, j_mater,&
+    subroutine thmFlh004(option, perman, ndim  , j_mater,&
                            dimdef, dimcon,&
-                           addep1, adcp11, adcp12, addeme, addete,&
-                           t     , p2    , pvp,&
-                           grap1 , grat  ,&
+                           addep1, addep2, adcp11, adcp12, adcp21 ,&
+                           addeme, addete, &
+                           t     , p2    , pvp    ,&
+                           grat  , grap1 , grap2  ,& 
                            rho11 , h11   , h12    ,&
                            satur , dsatur, gravity, tperm,&
-                           congep, dsde  )
+                           congep, dsde)
         character(len=16), intent(in) :: option
-        integer, intent(in) :: ndim, dimdef, dimcon, j_mater
-        integer, intent(in) :: addeme, addep1, addete, adcp11, adcp12
+        aster_logical, intent(in) :: perman
+        integer, intent(in) :: j_mater
+        integer, intent(in) :: ndim, dimdef, dimcon
+        integer, intent(in) :: addeme, addep1, addep2, addete, adcp11, adcp12, adcp21
         real(kind=8), intent(in) :: rho11, satur, dsatur
-        real(kind=8), intent(in) :: grat(3), grap1(3)
+        real(kind=8), intent(in) :: grat(3), grap1(3), grap2(3)
         real(kind=8), intent(in) :: p2, pvp, t
         real(kind=8), intent(in) :: gravity(3), tperm(ndim, ndim)
         real(kind=8), intent(in) :: h11, h12
         real(kind=8), intent(inout) :: congep(1:dimcon)
         real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
-    end subroutine calcfh_liva
+    end subroutine thmFlh004
 end interface 

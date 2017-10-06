@@ -18,14 +18,14 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504
 !
-subroutine calcfh_liva(option, ndim  , j_mater,&
-                       dimdef, dimcon,&
-                       addep1, adcp11, adcp12, addeme, addete,&
-                       t     , p2    , pvp,&
-                       grap1 , grat  ,&
-                       rho11 , h11   , h12    ,&
-                       satur , dsatur, gravity, tperm,&
-                       congep, dsde  )
+subroutine thmFlh003(option, ndim  , j_mater,&
+                     dimdef, dimcon,&
+                     addep1, adcp11, adcp12, addeme, addete,&
+                     t     , p2    , pvp,&
+                     grap1 , grat  ,&
+                     rho11 , h11   , h12    ,&
+                     satur , dsatur, gravity, tperm,&
+                     congep, dsde  )
 !
 use THM_type
 use THM_module

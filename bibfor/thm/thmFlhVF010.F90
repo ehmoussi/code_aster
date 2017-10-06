@@ -17,11 +17,11 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine calcfh_vf_lvga(option, j_mater, ifa, &
-                          t     , p1     , p2 , pvp, pad ,&
-                          rho11 , h11    , h12,&
-                          satur , dsatur , & 
-                          valfac, valcen)
+subroutine thmFlhVF010(option, j_mater, ifa, &
+                       t     , p1     , p2 , pvp, pad ,&
+                       rho11 , h11    , h12,&
+                       satur , dsatur , & 
+                       valfac, valcen)
 !
 use THM_type
 use THM_module
@@ -31,7 +31,6 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/hmderp.h"
 #include "asterfort/utmess.h"
-#include "asterfort/thmEvalFickSteam.h"
 #include "asterfort/thmEvalFickAir.h"
 #include "asterfort/thmEvalPermLiquGaz.h"
 !
@@ -48,7 +47,7 @@ real(kind=8), intent(inout) :: valfac(6, 14, 6)
 !
 ! THM - Finite volume
 !
-! Compute flux and stress for hydraulic - 'LIQU_AD_GAZ_VAPE'
+! Compute flux and stress for hydraulic - 'LIQU_AD_GAZ'
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -90,14 +89,14 @@ real(kind=8), intent(inout) :: valfac(6, 14, 6)
     integer, parameter :: rhoga2=4
     integer, parameter :: rholq1=5
     integer, parameter :: rholq2=6
-    real(kind=8) :: rgaz, cvp
+    real(kind=8) :: rgaz
     real(kind=8) :: permli, dperml
     real(kind=8) :: permgz, dperms, dpermp
-    real(kind=8) :: dfickt, dfickg, fick, fickad, dfadt
+    real(kind=8) :: fickad, dfadt
     real(kind=8) :: rho12, rho21, rho22, masrt, kh
     real(kind=8) :: cliq, alpliq, dficks
     real(kind=8) :: viscl, dviscl, viscg, dviscg
-    real(kind=8) :: mamolg, mamolv
+    real(kind=8) :: mamolg
     real(kind=8) :: lambd1(5), lambd2(5), fv(5), fa(5)
     aster_logical :: yavp
     real(kind=8) :: gp(3), gc(3)
@@ -187,15 +186,9 @@ real(kind=8), intent(inout) :: valfac(6, 14, 6)
 !
 ! - Evaluate permeability for liquid and gaz
 !
-    call thmEvalPermLiquGaz(j_mater, satur , p2, t,&
-                            permli , dperml,&
-                            permgz , dperms, dpermp)
-! 
-! - Evaluate Fick coefficients for steam in gaz
-!
-    call thmEvalFickSteam(j_mater,&
-                          satur  , p2    , pvp   , t,&
-                          fick   , dfickt, dfickg)
+    call thmEvalPermLiquGaz(j_mater, satur, p2, t,&
+                            permli , dperml ,&
+                            permgz , dperms , dpermp)
 ! 
 ! - Evaluate Fick coefficients for air in liquid
 !
@@ -211,25 +204,18 @@ real(kind=8), intent(inout) :: valfac(6, 14, 6)
     alpliq = ds_thm%ds_material%liquid%alpha
     viscl  = ds_thm%ds_material%liquid%visc
     dviscl = ds_thm%ds_material%liquid%dvisc_dtemp
-    mamolv = ds_thm%ds_material%steam%mass_mol
-    viscg  = ds_thm%ds_material%steam%visc
-    dviscg = ds_thm%ds_material%steam%dvisc_dtemp
+    viscg  = ds_thm%ds_material%gaz%visc
+    dviscg = ds_thm%ds_material%gaz%dvisc_dtemp
     mamolg = ds_thm%ds_material%gaz%mass_mol
     kh     = ds_thm%ds_material%ad%coef_henry
-    rho12  = mamolv*pvp/rgaz/t
-    rho21  = mamolg*(p2-pvp)/rgaz/t
+    rho12  = 0.d0
+    rho21  = mamolg*p2/rgaz/t
     rho22  = mamolg*pad/rgaz/t
     masrt  = mamolg/rgaz/t
-    cvp    = pvp/p2
-    yavp   = .true.
+    yavp   = .false.
 !
 ! - Fick
 !
-    fv(1) = fick
-    fv(2) = 0.d0
-    fv(3) = 0.d0
-    fv(4) = dfickg
-    fv(5) = dfickt
     fa(1) = fickad
     fa(2) = 0.d0
     fa(3) = 0.d0
@@ -265,10 +251,10 @@ real(kind=8), intent(inout) :: valfac(6, 14, 6)
 ! - Pressure gradient (Eq. 5.5.1-7)
 !
     if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
-        dcvp1 = dp12p1/p2
-        dcvp2 = dp12p2/p2-pvp/p2/p2
+        dcvp1 = 0.d0
+        dcvp2 = 0.d0
         if (ds_thm%ds_elem%l_dof_ther) then
-            dcvt = dp12t/p2
+            dcvt = 0.d0
         endif
     endif
 !
@@ -277,15 +263,15 @@ real(kind=8), intent(inout) :: valfac(6, 14, 6)
     if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
         dr11p1 = rho11*dp11p1*cliq
         dr11p2 = rho11*dp11p2*cliq
-        dr12p1 = rho12/pvp*dp12p1
-        dr12p2 = rho12/pvp*dp12p2
+        dr12p1 = 0.d0
+        dr12p2 = 0.d0
         dr21p1 = masrt*dp21p1
         dr21p2 = masrt*dp21p2
         dr22p1 = mamolg/kh*dp21p1
         dr22p2 = mamolg/kh*dp21p2
         if (ds_thm%ds_elem%l_dof_ther) then
             dr11t = rho11*cliq*dp11t-3.d0*alpliq*rho11
-            dr12t = rho12*(dp12t/pvp-1.d0/t)
+            dr12t = 0.d0
             dr21t = masrt*dp12t-rho21/t
             dr22t = mamolg/kh*dp22t
         endif
@@ -293,18 +279,19 @@ real(kind=8), intent(inout) :: valfac(6, 14, 6)
 !
     if (ifa .eq. 0) then
 ! ----- Compute at nodes
-        valcen(densit ,rhoga)     = rho12+rho21
+        valcen(densit ,rhoga)     = rho21
         valcen(densit ,rhoga1)    = dr12p1+dr21p1
         valcen(densit ,rhoga2)    = dr12p2+dr21p2
         valcen(densit ,rholq)     = rho11+rho22
         valcen(densit ,rholq1)    = dr11p1+dr22p1
         valcen(densit ,rholq2)    = dr11p2+dr22p2
+!
         valcen(mob    ,wliq)      = rho11*permli/viscl
         valcen(dmobp1,wliq)       = dr11p1*permli/viscl+rho11*dperml*dsatur/viscl
         valcen(dmobp2,wliq)       = dr11p2*permli/viscl
-        valcen(mob,wvap)          = rho12*permgz/viscg
-        valcen(dmobp1,wvap)       = dr12p1*permgz/viscg+rho12*dperms*dsatur/viscg
-        valcen(dmobp2,wvap)       = dr12p2*permgz/viscg+rho12*dpermp/viscg
+        valcen(mob,wvap)          = 0.d0
+        valcen(dmobp1,wvap)       = 0.d0
+        valcen(dmobp2,wvap)       = 0.d0
         valcen(mob,airsec)        = rho21*permgz/viscg
         valcen(dmobp1,airsec)     = dr21p1*permgz/viscg+rho21*dperms*dsatur/viscg
         valcen(dmobp2,airsec)     = dr21p2*permgz/viscg+rho21*dpermp/viscg
@@ -312,31 +299,22 @@ real(kind=8), intent(inout) :: valfac(6, 14, 6)
         valcen(dmobp1,airdis)     = dr22p1*permli/viscl+rho22*dperml*dsatur/viscl
         valcen(dmobp2,airdis)     = dr22p2*permli/viscl
 ! ****************** CONCENTRATIONS*******************
-        valcen(con,wvap)          = cvp
-        valcen(dconp1,wvap)       = dcvp1
-        valcen(dconp2,wvap)       = dcvp2
+        valcen(con,wvap)          = 0.d0
+        valcen(dconp1,wvap)       = 0.d0
+        valcen(dconp2,wvap)       = 0.d0
         valcen(con,airdis)        = rho22
         valcen(dconp1,airdis)     = dr22p1
         valcen(dconp2,airdis)     = dr22p2
+! ****************** DIFFUSIVITES*******************
         valcen(diffu,wliq)        = 0.d0
         valcen(ddifp1,wliq)       = 0.d0
         valcen(ddifp2,wliq)       = 0.d0
-! ****************** DIFFUSIVITES*******************
-        valcen(diffu,wvap)        = rho12*(1.d0-cvp)*fick
-        valcen(ddifp1,wvap)       = dr12p1*(1.d0-cvp)*fick-&
-                                    rho12*dcvp1*fick+&
-                                    rho12*(1.d0-cvp)*dficks*dsatur
-        valcen(ddifp2,wvap)       = dr12p2*(1.d0-cvp)*fick-&
-                                    rho12*dcvp2*fick+&
-                                    rho12*(1.d0-cvp)*dfickg
-        valcen(diffu,airsec)      = rho21*cvp*fick
-        valcen(ddifp1,airsec)     = dr21p1*cvp*fick+&
-                                    rho21*dcvp1*fick+&
-                                    rho21*cvp*dficks*dsatur
-        valcen(ddifp2,airsec)     = dr21p2*cvp*fick+&
-                                    rho21*dcvp2*fick+&
-                                    rho21*cvp*dfickg+&
-                                    rho12*(1.d0-cvp)*dfickg
+        valcen(diffu,wvap)        = 0.d0
+        valcen(ddifp1,wvap)       = 0.d0
+        valcen(ddifp2,wvap)       = 0.d0
+        valcen(diffu,airsec)      = 0.d0
+        valcen(ddifp1,airsec)     = 0.d0
+        valcen(ddifp2,airsec)     = 0.d0
         valcen(diffu,airdis)      = fickad
         valcen(ddifp1,airdis)     = 0.d0
         valcen(ddifp2,airdis)     = 0.d0
@@ -346,12 +324,12 @@ real(kind=8), intent(inout) :: valfac(6, 14, 6)
         valfac(ifa,con,wliq)      = 1.d0
         valfac(ifa,dconp1,wliq)   = 0.d0
         valfac(ifa,dconp2,wliq)   = 0.d0
-        valfac(ifa,con,wvap)      = cvp
-        valfac(ifa,dconp1,wvap)   = dcvp1
-        valfac(ifa,dconp2,wvap)   = dcvp2
-        valfac(ifa,con,airsec)    = 1.d0-cvp
-        valfac(ifa,dconp1,airsec) = -dcvp1
-        valfac(ifa,dconp2,airsec) = -dcvp2
+        valfac(ifa,con,wvap)      = 0.d0
+        valfac(ifa,dconp1,wvap)   = 0.d0
+        valfac(ifa,dconp2,wvap)   = 0.d0
+        valfac(ifa,con,airsec)    = 0.d0
+        valfac(ifa,dconp1,airsec) = 0.d0
+        valfac(ifa,dconp2,airsec) = 0.d0
         valfac(ifa,con,airdis)    = rho22
         valfac(ifa,dconp1,airdis) = dr22p1
         valfac(ifa,dconp2,airdis) = dr22p2
@@ -360,11 +338,9 @@ real(kind=8), intent(inout) :: valfac(6, 14, 6)
         valfac(ifa,dmobp1,wliq)   = dr11p1*permli/viscl+&
                                     rho11*dperml*dsatur/viscl
         valfac(ifa,dmobp2,wliq)   = dr11p2*permli/viscl
-        valfac(ifa,mob,wvap)      = rho12*permgz/viscg
-        valfac(ifa,dmobp1,wvap)   = dr12p1*permgz/viscg+&
-                                    rho12*dperms*dsatur/viscg
-        valfac(ifa,dmobp2,wvap)   = dr12p2*permgz/viscg+&
-                                    rho12*dpermp/viscg
+        valfac(ifa,mob,wvap)      = 0.d0
+        valfac(ifa,dmobp1,wvap)   = 0.d0
+        valfac(ifa,dmobp2,wvap)   = 0.d0
         valfac(ifa,mob,airsec)    = rho21*permgz/viscg
         valfac(ifa,dmobp1,airsec) = dr21p1*permgz/viscg+&
                                     rho21*dperms*dsatur/viscg
@@ -378,21 +354,12 @@ real(kind=8), intent(inout) :: valfac(6, 14, 6)
         valfac(ifa,diffu,wliq)    = 0.d0
         valfac(ifa,ddifp1,wliq)   = 0.d0
         valfac(ifa,ddifp2,wliq)   = 0.d0
-        valfac(ifa,diffu,wvap)    = rho12*(1.d0-cvp)*fick
-        valfac(ifa,ddifp1,wvap)   = dr12p1*(1.d0-cvp)*fick-&
-                                    rho12*dcvp1*fick+&
-                                    rho12*(1.d0-cvp)*dficks*dsatur
-        valfac(ifa,ddifp2,wvap)   = dr12p2*(1.d0-cvp)*fick-&
-                                    rho12*dcvp2*fick+&
-                                    rho12*(1.d0-cvp)*dfickg
-        valfac(ifa,diffu,airsec)  = rho21*cvp*fick
-        valfac(ifa,ddifp1,airsec) = dr21p1*cvp*fick+&
-                                    rho21*dcvp1*fick+&
-                                    rho21*cvp*dficks*dsatur
-        valfac(ifa,ddifp2,airsec) = dr21p2*cvp*fick+&
-                                    rho21*dcvp2*fick+&
-                                    rho21*cvp*dfickg+&
-                                    rho12*(1.d0-cvp)*dfickg
+        valfac(ifa,diffu,wvap)    = 0.d0
+        valfac(ifa,ddifp1,wvap)   = 0.d0
+        valfac(ifa,ddifp2,wvap)   = 0.d0
+        valfac(ifa,diffu,airsec)  = 0.d0
+        valfac(ifa,ddifp1,airsec) = 0.d0
+        valfac(ifa,ddifp2,airsec) = 0.d0
         valfac(ifa,diffu,airdis)  = fickad
         valfac(ifa,ddifp1,airdis) = 0.d0
         valfac(ifa,ddifp2,airdis) = 0.d0
