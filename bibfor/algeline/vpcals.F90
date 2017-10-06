@@ -20,7 +20,7 @@ subroutine vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
                   matopa, mxresf, neqact, nblagr, omemax,&
                   omemin, omeshi, solveu, vecblo, veclag,&
                   sigma, npivot, flage, nconv, vpinf,&
-                  vpmax)
+                  vpmax, mod45)
 !
 ! ROUTINE EFFECTUANT LE CALCUL MODAL PARAMETRE DANS EIGSOL PAR LA METHODE DE SORENSEN
 ! -------------------------------------------------------------------------------------------------
@@ -59,8 +59,9 @@ subroutine vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
 ! --- INPUT
 !
     integer, intent(in) :: mxresf, neqact, nblagr
-    real(kind=8), intent(in) :: omemax, omemin, omeshi
+    real(kind=8), intent(in)    :: omeshi
     complex(kind=8), intent(in) :: sigma
+    character(len=4) , intent(in) :: mod45
     character(len=19), intent(in) :: eigsol, matopa, solveu
     character(len=24), intent(in) :: vecrer, vecrei, vecrek, vecvp, vecblo, veclag
 !
@@ -74,6 +75,7 @@ subroutine vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
 ! --- INPUT/OUTPUT
 !
     integer, intent(inout) :: npivot
+    real(kind=8), intent(inout) :: omemax, omemin
 !
 !
 ! --- VARIABLES LOCALES
@@ -248,8 +250,8 @@ subroutine vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
             call vpbost(typres, nconv, nconv, omeshi, zr(ldsor),&
                         nfreq1, vpinf, vpmax, precdc, method,&
                         omecor)
-            if (typres(1:9) .eq. 'DYNAMIQUE') call vpordi(1, 0, nconv, zr(lresur+mxresf),&
-                                                          zr(lvec), neq, zi(lresui))
+            if (typres(1:9) .eq. 'DYNAMIQUE')&
+              call vpordi(1, 0, nconv, zr(lresur+mxresf), zr(lvec), neq, zi(lresui))
 !
             do imet = 1, nconv
                 zi(lresui-1+mxresf+imet) = izero
@@ -260,8 +262,7 @@ subroutine vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
                 zk24(lresuk-1+ mxresf+imet)= kmetho
             enddo
             if (typres(1:9) .ne. 'DYNAMIQUE') then
-                call vpordo(0, 0, nconv, zr(lresur+mxresf), zr(lvec),&
-                            neq)
+                call vpordo(0, 0, nconv, zr(lresur+mxresf), zr(lvec), neq)
                 do imet = 1, nconv
                     zr(lresur-1+imet) = freqom(zr(lresur-1+mxresf+ imet))
                     zi(lresui-1+imet) = imet
@@ -383,18 +384,27 @@ subroutine vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
     mfreq = nconv
     if (optiof(1:5) .eq. 'BANDE') then
         if (lc .or. lns .or. .not.lkr) then
-            ASSERT(.false.)
+	  ASSERT(.false.)
+	endif
+        if ((typres(1:9).ne.'DYNAMIQUE').and.(mod45(1:4).ne.'OP45')) then
+          rbid = omemin
+          omemin=-omemax
+          omemax=-rbid
         endif
         do ifreq = mfreq - 1, 0, -1
             if ((zr(lresur+mxresf+ifreq).gt.omemax) .or. (zr(lresur+ mxresf+ifreq).lt.omemin)) &
             nconv = nconv - 1
         enddo
+        if ((typres(1:9).ne.'DYNAMIQUE').and.(mod45(1:4).ne.'OP45')) then
+          rbid = omemin
+          omemin=-omemax
+          omemax=-rbid
+        endif
         if (mfreq .ne. nconv) call utmess('I', 'ALGELINE2_17')
     endif
 !
 ! ---  ON MODIFIE LES VALEURS NFREQ DE LA SD EIGENSOLVER
-    call vpecri(eigsol, 'I', 1, k24bid, rbid,&
-                nfreq)
+    call vpecri(eigsol, 'I', 1, k24bid, rbid, nfreq)
 !
 !
 ! --- NETTOYAGE OBJETS TEMPORAIRES

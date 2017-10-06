@@ -104,14 +104,15 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: linsta
-    integer :: nfreq, nfreqc, nbrss, maxitr, i, ljeveu, ibid, iret
+    integer :: nfreq, nfreqc, nbrss, maxitr, i, ljeveu, ibid, iret, nbborn
     integer :: defo, ldccvg, numord, nddle, nsta, ljeve2, cdsp, nbvec2, nbvect
     real(kind=8) :: bande(2), r8bid, alpha, tolsor, precsh, fcorig, precdc, omecor, freqm, freqv
     real(kind=8) :: freqa, freqr, csta
     character(len=1)  :: k1bid
     character(len=4)  :: mod45
-    character(len=8)  :: sdmode, sdstab, method, k8bid
-    character(len=16) :: optmod, varacc, typmat, modrig, typres, k16bid, optiof
+    character(len=8)  :: sdmode, sdstab, method, arret
+    character(len=16) :: optmod, varacc, typmat, modrig, typres, k16bid, optiof, sturm, modri2
+    character(len=16) :: stoper
     character(len=19) :: matgeo, matas2, vecmod, champ, k19bid, champ2, vecmo2, eigsol
     character(len=19) :: raide, masse
     character(len=24) :: k24bid, ddlexc, ddlsta
@@ -160,8 +161,7 @@ implicit none
 ! --- UN GEP SYM REEL RESOLU VIA SORENSEN
 !
     eigsol='&&NMFLAM.EIGSOL'
-    k1bid=''
-    k8bid=''
+    k1bid='R'
     k16bid=''
     k19bid=''
     ibid=isnnem()
@@ -178,6 +178,11 @@ implicit none
     masse=matgeo
 ! OPTION MODALE
     optiof=optmod
+    if (optiof(1:5).eq.'BANDE') then
+      nbborn=2
+    else
+      nbborn=1
+    endif
 ! DIM_SOUS_ESPACE EN DUR
     nbvect=0
 ! COEF_SOUS_ESPACE
@@ -194,11 +199,23 @@ implicit none
     precsh = 5.d-2
 ! SEUIL_FREQ/CRIT EN DUR
     fcorig = 1.d-2
-    if (typres(1:9) .eq. 'DYNAMIQUE') omecor = omega2(fcorig)
+    if (typres(1:9) .eq. 'DYNAMIQUE') then
+      omecor = omega2(fcorig)
+    else
+      omecor=fcorig
+    endif
 ! VERI_MODE/PREC_SHIFT EN DUR
     precdc = 5.d-2
-    call vpcres(eigsol, typres, raide, masse, k19bid, optiof, method, k16bid, k8bid, k19bid,&
-                k16bid, k16bid, k1bid, k16bid, nfreqc, nbvect, nbvec2, nbrss, ibid, ibid,&
+! STOP_BANDE_VIDE EN DUR
+    arret='NON'
+! STURM EN DUR
+    sturm='NON'
+! OPTION MODE RIGIDE EN DUR
+    modri2='SANS'
+! OPTION STOP_ERREUR EN DUR
+    stoper='NON'
+    call vpcres(eigsol, typres, raide, masse, k19bid, optiof, method, modri2, arret, k19bid,&
+                stoper, sturm, k1bid, k16bid, nfreqc, nbvect, nbvec2, nbrss, nbborn, ibid,&
                 ibid, ibid, ibid, maxitr, bande, precsh, omecor, precdc, r8bid,&
                 r8bid, r8bid, r8bid, r8bid, tolsor, alpha)
 !
@@ -206,7 +223,6 @@ implicit none
 !
     call nmop45(eigsol, defo, mod45, ddlexc, nddle, sdmode, sdstab, ddlsta, nsta)
     call vpleci(eigsol, 'I', 1, k24bid, r8bid, nfreqc)
-    write(6,*)'nmflam ',nfreqc
     call detrsd('EIGENSOLVER',eigsol)
 
     if (nfreqc .eq. 0) then

@@ -72,6 +72,7 @@ subroutine op0045()
     integer :: rangl, icom1, icom2
     real(kind=8) :: omemin, omemax, omeshi, vpinf, vpmax, rbid
     complex(kind=8) :: sigma
+    character(len=4) :: mod45
     character(len=8) :: modes, method
     character(len=16) :: typcon, compex
     character(len=19) :: k19bid, matpsc, matopa, solveu, eigsol
@@ -83,6 +84,7 @@ subroutine op0045()
 ! --- ETAPE 0: INITS. ET LECTURE/VERIFICATION DES DONNEES
 ! --------------------------------------------------------------------------------------------------
     call infmaj()
+    mod45='OP45'
 !
 ! --  ETAPE 0.0: INITIALISATIONS PROPRES A CET OPERATEUR
     call vpini0(compex, modes, typcon, solveu, eigsol,&
@@ -112,7 +114,7 @@ subroutine op0045()
     call vpini1(eigsol, modes, solveu, typcon, vecblo,&
                 veclag, vecrig, matpsc, matopa, iret,&
                 nblagr, neqact, npivot, nstoc, omemax,&
-                omemin, omeshi, sigma)
+                omemin, omeshi, sigma, mod45)
     if (iret .ne. 0) goto 999
 !
 ! --  ETAPE 1.2: PARALLELISME MULTI-NIVEAUX STEP 2
@@ -128,29 +130,28 @@ subroutine op0045()
 ! --------------------------------------------------------------------------------------------------
 ! --- ETAPE 2: CALCUL MODAL PROPREMENT DIT SUIVANT LA METHODE CHOISIE
 ! --------------------------------------------------------------------------------------------------
-    call vpleci(eigsol, 'K', 6, k24bid, rbid,&
-                ibid)
+    call vpleci(eigsol, 'K', 6, k24bid, rbid, ibid)
     method=''
     method=trim(k24bid)
     select case (method)
-        case('SORENSEN')
+    case('SORENSEN')
         call vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
                     matopa, mxresf, neqact, nblagr, omemax,&
                     omemin, omeshi, solveu, vecblo, veclag,&
                     sigma, npivot, flage, nconv, vpinf,&
-                    vpmax)
-        case('TRI_DIAG')
+                    vpmax, mod45)
+    case('TRI_DIAG')
         call vpcalt(eigsol, vecrer, vecrei, vecrek, vecvp,&
                     matopa, matpsc, mxresf, nblagr, nstoc,&
                     omemax, omemin, omeshi, solveu, vecblo,&
                     veclag, vecrig, sigma, npivot, flage,&
                     nconv, vpinf, vpmax)
-        case('JACOBI')
+    case('JACOBI')
         call vpcalj(eigsol, vecrer, vecrei, vecrek, vecvp,&
                     matopa, matpsc, mxresf, nblagr, omemax,&
                     omemin, omeshi, solveu, vecblo, npivot,&
                     flage, nconv, vpinf, vpmax)
-        case('QZ')
+    case('QZ')
         call vpcalq(eigsol, vecrer, vecrei, vecrek, vecvp,&
                     mxresf, neqact, nblagr, omemax, omemin,&
                     omeshi, vecblo, sigma, npivot, flage,&
@@ -169,7 +170,7 @@ subroutine op0045()
                 nfreqg, modes, typcon, compex, eigsol,&
                 matopa, matpsc, solveu, vecblo, veclag,&
                 flage, icom1, icom2, mpicou, mpicow,&
-                omemax, omemin, vpinf, vpmax, lcomod)
+                omemax, omemin, vpinf, vpmax, lcomod, mod45)
 999 continue
 !
 ! --------------------------------------------------------------------------------------------------

@@ -21,7 +21,7 @@ subroutine vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
                   nfreqg, modes, typcon, compex, eigsol,&
                   matopa, matpsc, solveu, vecblo, veclag,&
                   flage, icom1, icom2, mpicou, mpicow,&
-                  omemax, omemin, vpinf, vpmax, lcomod)
+                  omemax, omemin, vpinf, vpmax, lcomod, mod45)
 !
 ! ROUTINE ORGANISANT LES POST-TRAITEMENTS ET NETTOYAGES GENERAUX D'OP0045.
 ! RQ. ON DETRUITS LES OBJETS GLOBAUX VECBLO, VECLAG ET, SUIVANT LES CAS, VECRIG, SUR BASE VOLATILE.
@@ -35,6 +35,7 @@ subroutine vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/detrsd.h"
+#include "asterfort/infniv.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeexin.h"
@@ -54,6 +55,7 @@ subroutine vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
 !
     integer, intent(in) :: nbpark, nbpari, nbparr, mxresf, nconv, nblagr
     integer, intent(in) :: nfreqg
+    character(len=4), intent(in) :: mod45
     character(len=8), intent(in) :: modes
     character(len=16), intent(in) :: typcon, compex
     character(len=19), intent(in) :: eigsol, matopa, matpsc, solveu
@@ -77,12 +79,11 @@ subroutine vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
     integer :: nbpara
     parameter           (nbpara=27)
     integer :: nparr, ibid, nbrss, iret, lraide, lmasse, lamor, neq, lddl, lprod
-    integer :: lmat(3), lmtpsc, lmatra, ierx
+    integer :: lmat(3), lmtpsc, lmatra, ierx, ifm, niv
     integer :: lresui, lresur, lresuk, lvec
     real(kind=8) :: omecor, rbid, precdc, precsh, seuil
     complex(kind=8) :: czero
     character(len=1) :: k1bid, ktyp, k1blan, ctyp
-    character(len=4) :: k4blan
     character(len=8) :: knega, k8bid
     character(len=9) :: k9bid
     character(len=14) :: k14bid, matra, matrc
@@ -115,6 +116,7 @@ subroutine vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
 !
 ! --  INITS.
     call jemarq()
+    call infniv(ifm, niv)
     call jeveuo(vecrer, 'E', lresur)
     call jeveuo(vecrei, 'E', lresui)
     call jeveuo(vecrek, 'E', lresuk)
@@ -123,7 +125,6 @@ subroutine vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
     call jeveuo(veclag, 'L', lddl)
     czero=dcmplx(0.d0,0.d0)
     k1blan=' '
-    k4blan='    '
 !
 ! --  LECTURE DES DONNEES DE EIGSOL
     call vplecs(eigsol, ibid, ibid, ibid, ibid,&
@@ -175,7 +176,7 @@ subroutine vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
         call vppara(modes, typcon, knega, lraide, lmasse,&
                     lamor, mxresf, neq, nconv, omecor,&
                     zi(lddl), zi(lprod), zr(lvec), [czero], nbpari,&
-                    nparr, nbpark, nopara, k4blan, zi(lresui),&
+                    nparr, nbpark, nopara, mod45, zi(lresui),&
                     zr(lresur), zk24(lresuk), ktyp, lcomod, icom1,&
                     icom2, typres, nfreqg)
     else
@@ -185,16 +186,17 @@ subroutine vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
         call vppara(modes, typcon, knega, lraide, lmasse,&
                     lamor, mxresf, neq, nconv, omecor,&
                     zi(lddl), zi(lprod), [rbid], zc(lvec), nbpari,&
-                    nparr, nbpark, nopara, k4blan, zi(lresui),&
+                    nparr, nbpark, nopara, mod45, zi(lresui),&
                     zr(lresur), zk24(lresuk), ktyp, lcomod, ibid,&
                     ibid, k16bid, ibid)
     endif
 !
 !
 ! --  IMPRESSIONS LIEES A LA METHODE
-    call vpwecf(k1blan, typres, nconv, mxresf, zi(lresui),&
-                zr(lresur), zk24(lresuk), lamor, ktyp, lns)
-    call titre()
+    if ((mod45(1:4).eq.'OP45').or.(niv.ge.2))&
+      call vpwecf(k1blan, typres, nconv, mxresf, zi(lresui),&
+                  zr(lresur), zk24(lresuk), lamor, ktyp, lns)
+    if (mod45(1:4).eq.'OP45') call titre()
 !
 ! --  CONTROLE DE VALIDITE DES MODES CALCULES
     if (sturm(1:3) .eq. 'NON') then
@@ -221,39 +223,43 @@ subroutine vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
     call vpmpi(4, k19bid, ibid, ibid, lcomod,&
                mpicou, mpicow, ibid, ibid, ibid,&
                omemax, omemin, vpinf, vpmax)
+    if (mod45(1:4).eq.'OP45') then
 !
 ! --  ON PASSE DANS LE MODE "VALIDATION DU CONCEPT EN CAS D'ERREUR"
-    call onerrf('EXCEPTION+VALID', k16bid, ibid)
-    if (stoper(1:3) .eq. 'OUI') then
-        ctyp = 'E'
-    else
-        ctyp = 'A'
-    endif
-    call vpcntl(ctyp, modes, optiov, omemin, omemax,&
+        call onerrf('EXCEPTION+VALID', k16bid, ibid)
+        if (stoper(1:3) .eq. 'OUI') then
+           ctyp = 'E'
+        else
+           ctyp = 'A'
+        endif
+        call vpcntl(ctyp, modes, optiov, omemin, omemax,&
                 seuil, nconv, zi(lresui), lmat, omecor,&
                 precdc, ierx, vpinf, vpmax, zr(lresur),&
                 zr(lresur+3*mxresf), zr(lresur+mxresf), typres, nblagr, solveu,&
                 nbrss, precsh)
 !
-    if ((stoper(1:3) .eq. 'OUI') .and. (ierx .ne. 0)) call utmess('Z', 'ALGELINE2_74',&
-                                                                  num_except=33)
+        if ((stoper(1:3) .eq. 'OUI') .and. (ierx .ne. 0))&
+          call utmess('Z', 'ALGELINE2_74',num_except=33)
 !
-    if (flage) call utmess('F', 'ALGELINE5_75')
+        if (flage) call utmess('F', 'ALGELINE5_75')
 !
 !
 ! --  ON REMET LE MECANISME D'EXCEPTION A SA VALEUR INITIALE
-    call onerrf(compex, k16bid, ibid)
+        call onerrf(compex, k16bid, ibid)
+    endif
 !
 ! --  DESTRUCTION DE LA MATRICE DYNAMIQUE RESTANTE (VRAI MATPSC DISSOSSIEE DE MATOPA OU
 ! --  MATPSC POINTANT SUR MATOPA D'OU LA RECONSTRUCTION DE NOM CI-DESSOUS
     if (lmtpsc .ne. 0) then
-        k19bid=zk24(zi(lmtpsc+1))(1:19)
-        call detrsd('MATR_ASSE', k19bid)
+      k19bid=zk24(zi(lmtpsc+1))(1:19)
+      call detrsd('MATR_ASSE', k19bid)
     endif
 !
 ! -- NETTOYAGE DES OBJETS JEVEUX GLOBAUX DE L'OPERATEUR DE LA BASE VOLATILE
-    call detrsd('SOLVEUR',solveu)
-    call detrsd('EIGENSOLVER',eigsol)
+    if (mod45(1:4).eq.'OP45') then
+      call detrsd('SOLVEUR',solveu)
+      call detrsd('EIGENSOLVER',eigsol)
+    endif
     call jedetr(vecblo)
     call jedetr(veclag)
     call jedetr(vecrer)

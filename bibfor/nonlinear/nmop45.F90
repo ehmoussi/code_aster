@@ -21,44 +21,23 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
-#include "asterc/isnnem.h"
-#include "asterc/r8vide.h"
 #include "asterfort/assert.h"
-#include "asterfort/as_deallocate.h"
-#include "asterfort/as_allocate.h"
-#include "asterfort/codent.h"
-#include "asterfort/detrsd.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/elmddl.h"
-#include "asterfort/freqom.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
-#include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/mtdefs.h"
-#include "asterfort/mtdscr.h"
-#include "asterfort/omega2.h"
-#include "asterfort/rectfr.h"
-#include "asterfort/sdeiso.h"
-#include "asterfort/utmess.h"
-#include "asterfort/vecini.h"
-#include "asterfort/vecink.h"
-#include "asterfort/vecint.h"
-#include "asterfort/vpbost.h"
-#include "asterfort/vpcrea.h"
-#include "asterfort/vpddl.h"
-#include "asterfort/vpecri.h"
-#include "asterfort/vpfopr.h"
-#include "asterfort/vplecs.h"
-#include "asterfort/vpordi.h"
-#include "asterfort/vpordo.h"
+#include "asterfort/onerrf.h"
+#include "asterfort/vpcals.h"
+#include "asterfort/vpleci.h"
+#include "asterfort/vpini1.h"
+#include "asterfort/vpini2.h"
 #include "asterfort/vppara.h"
+#include "asterfort/vppost.h"
 #include "asterfort/vpsor1.h"
-#include "asterfort/vpsorn.h"
-#include "asterfort/vpwecf.h"
-#include "asterfort/vrrefe.h"
+#include "asterfort/vpvers.h"
 #include "asterfort/wkvect.h"
 !
     integer           , intent(in) :: defo, nddle, nsta
@@ -76,8 +55,9 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
 !                        L (M) Y  + (K) Y = 0
 !
 !          LES MATRICES (K) ET (M) SONT REELLES SYMETRIQUES
-!          LES VALEURS PROPRES ET DES VECTEURS PROPRES SONT REELS
-!          PERIMETRE ACTUEL: GEP SYMETRIQUE REEL
+!          LES VALEURS PROPRES ET VECTEURS PROPRES SONT REELS
+!          PERIMETRE ACTUEL: GEP SYMETRIQUE REEL AVEC SORENSEN
+!          SEQUENTIEL AU NIVEAU SOLVEUR MODAL, PAS DE POST-VERIFICATION
 !-----------------------------------------------------------------------
 !   IN : EIGSOL : SD EIGENSOLVER CONTENANT LES PARAMETRES DU PB MODAL
 !   IN : DEFO   : TYPE DE DEFORMATIONS
@@ -95,485 +75,149 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
 !-----------------------------------------------------------------------
 !
 !
-    integer :: nbpari, nbparr, nbpark, mxddl, nbpara
-    parameter (nbpari=8,nbparr=16,nbpark=3,nbpara=27)
-    parameter (mxddl=1)
+    integer :: nbpari, nbparr, nbpark
+    parameter (nbpari=8,nbparr=16,nbpark=3)
 !
-    integer :: indf, imet, i, ieq, iret, ier1, ibid, ierd, ifreq
-    integer :: lamor, lmasse, lresur, lworkd, laux, lraide, nfreq
-    integer :: lworkl, lworkv, lprod, lddl, eddl, eddl2, nbddl2, redem
-    integer :: lmatra, lonwl, ityp, iordre, nbvec2, icoef, jexx, jest, cdsp
-    integer :: npivot, nbvect, priram(8), maxitr, neqact, mfreq, nparr, nbcine
-    integer :: nbrss, mxresf, nblagr, nconv, npiv2(2), ldsor, neq, idet(2)
-    integer :: ifm, niv, nbddl, un
-    real(kind=8) :: alpha, tolsor, undf, omemin, omemax, omeshi, omecor, precdc
-    real(kind=8) :: vpinf, precsh, vpmax, csta, det(2), omebid, r8bid
-    complex(kind=8) :: cbid
-    character(len=1) :: ktyp, k1bid
-    character(len=8) :: knega, method, chaine, k8bid
-    character(len=9) :: k9bid
-    character(len=14) ::k14bid
-    character(len=16) :: typcon, typres, typco2, k16bid, option
-    character(len=19) :: matopa, numedd, solveu, k19bid, matgeo, matrig
-    character(len=24) :: nopara(nbpara), metres, k24bid
-    aster_logical :: flage, lbid, lc, lkr, lns
-
-!
-    integer, pointer :: resu_i(:) => null()
-    real(kind=8), pointer :: resid(:) => null()
-    real(kind=8), pointer :: vect_propre(:) => null()
-    real(kind=8), pointer :: vect_stabil(:) => null()
-    character(len=24), pointer :: resu_k(:) => null()
-    character(len=24), pointer :: slvk(:) => null()
-    aster_logical, pointer :: select(:) => null()
-!
-!     ------------------------------------------------------------------
-    data  nopara /&
-     &  'NUME_MODE'       , 'ITER_QR'         , 'ITER_BATHE'      ,&
-     &  'ITER_ARNO'       , 'ITER_JACOBI'     , 'ITER_SEPARE'     ,&
-     &  'ITER_AJUSTE'     , 'ITER_INVERSE'    ,&
-     &  'NORME'           , 'METHODE'         , 'TYPE_MODE'       ,&
-     &  'FREQ'            ,&
-     &  'OMEGA2'          , 'AMOR_REDUIT'     , 'ERREUR'          ,&
-     &  'MASS_GENE'       , 'RIGI_GENE'       , 'AMOR_GENE'       ,&
-     &  'MASS_EFFE_DX'    , 'MASS_EFFE_DY'    , 'MASS_EFFE_DZ'    ,&
-     &  'FACT_PARTICI_DX' , 'FACT_PARTICI_DY' , 'FACT_PARTICI_DZ' ,&
-     &  'MASS_EFFE_UN_DX' , 'MASS_EFFE_UN_DY' , 'MASS_EFFE_UN_DZ' /
-!     ------------------------------------------------------------------
-
+    integer           :: iret, ibid, npivot, neqact, mxresf, nblagr
+    integer           :: nconv, ifm, niv
+    real(kind=8)      :: omemin, omemax, omeshi, vpinf, vpmax, r8bid
+    complex(kind=8)   :: cbid
+    character(len=8)  :: method
+    character(len=16) :: typcon, k16bid
+    character(len=19) :: matopa, solveu, raide
+    character(len=24) :: k24bid, vecblo, veclag, vecrer, vecrei, vecrek, vecvp
+    aster_logical     :: lbid, lcomod, checksd
+    mpi_int           :: mpibid
+! DIVERS
     call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
-
-! --- POUR TRACER LE CODE-COVERAGE
-!    write(6,*)'coucou nmop45: ',mod45
+    cbid=(0.d0,0.d0) 
 !
-! --- LECTURE DES DONNEES DE EIGSOL
+! --- CALCUL MODAL NON PARALLELISE (SEUL EVENTUELLEMENT LE SOLVEUR LINEAIRE SOUS-JACENT)
 !
-    call vplecs(eigsol, ibid, maxitr, ibid, ibid,&
-                ibid, cdsp, ibid, nbrss, nfreq,&
-                ibid, alpha, omecor, omemin, omemax,&
-                precdc, precsh, r8bid, r8bid, r8bid,&
-                r8bid, r8bid, tolsor, k1bid, k8bid,&
-                method, k9bid, k14bid, k14bid, k14bid,&
-                k16bid, option, k16bid, k16bid, k16bid,&
-                typres, k19bid, matgeo, matrig, k19bid,&
-                lc, lkr, lns, lbid, lbid)
-
-! DIVERS
-    cbid=(0.d0,0.d0)
-    un=1
- 
-    flage = .false.
-    undf = r8vide()
-    indf = isnnem()
-    nconv = nfreq
-    nbvec2 = 0
-    lamor = 0
-    nbvect = cdsp*nfreq
-
+    lcomod=.false.
 !
-! --- RECUPERATION DU RESULTAT
+! --- LECTURE DES PARAMETRES SOLVEUR LINEAIRE
 !
-    typcon = 'MODE_FLAMB'
-    if (mod45 .eq. 'VIBR') typcon = 'MODE_MECA'
-!
-!
-!
-!     --- TEST DU TYPE (COMPLEXE OU REELLE) DE LA MATRICE DE RAIDEUR ---
-    call jelira(matrig//'.VALM', 'TYPE', cval=ktyp)
-!
-!     --- RECUPERATION DE LA NUMEROTATION DE LA MATRICE DE RAIDEUR ---
-    call dismoi('NOM_NUME_DDL', matrig, 'MATR_ASSE', repk=numedd)
-!
-!     --- COMPATIBILITE DES MODES (DONNEES ALTEREES) ---
-!
-!------------------a remettre------------------------------
-!
-    call vpcrea(0, modes, matgeo, ' ', matrig,&
-                numedd, ier1)
-    call vpcrea(0, modes2, matgeo, ' ', matrig,&
-                numedd, ier1)
-!------------------------------------------------------------
-!
-!
-!     --- VERIFICATION DES "REFE" ---
-!      IF (OPTION.EQ.'BANDE') THEN
-    call vrrefe(matgeo, matrig, iret)
-!      ENDIF
-!
-!     --- DESCRIPTEUR DES MATRICES ---
-    call mtdscr(matgeo)
-    call jeveuo(matgeo(1:19)//'.&INT', 'E', lmasse)
-!
-    call mtdscr(matrig)
-    call jeveuo(matrig(1:19)//'.&INT', 'E', lraide)
-!     --- NOMBRE D'EQUATIONS ---
-    neq = zi(lraide+2)
-!
-!     ------------------------------------------------------------------
-!     ----------- DDL : LAGRANGE, BLOQUE PAR AFFE_CHAR_CINE  -----------
-!     ------------------------------------------------------------------
-!
-    call wkvect('&&NMOP45.POSITION.DDL', 'V V I', neq*mxddl, lddl)
-    call wkvect('&&NMOP45.DDL.BLOQ.CINE', 'V V I', neq, lprod)
-!
-    call vpddl(matrig, matgeo, neq, nblagr, nbcine,&
-               neqact, zi(lddl), zi(lprod), ierd)
-    if (ierd .ne. 0) goto 80
-!
-!     --- CREATION DE LA MATRICE DYNAMIQUE ET DE SA FACTORISEE ---
-!
-    matopa = '&&NMOP45.DYN_FAC_C '
-!   pour gerer l'appel depuis modint :    
-    call dismoi('SOLVEUR', matrig, 'MATR_ASSE', repk=solveu)
+    call vpleci(eigsol, 'K', 2, k24bid, r8bid, ibid)
+    raide=trim(k24bid)
+    call dismoi('SOLVEUR', raide, 'MATR_ASSE', repk=solveu)
     if ((solveu(1:8) .ne. '&&NUME91') .and. (solveu(1:8) .ne. '&&DTM&&&')) then
         solveu='&&OP00XX.SOLVER'
     endif
-! --- VERIF SOLVEUR LINEAIRE
-    call jeveuo(solveu//'.SLVK', 'L', vk24=slvk)
-    metres = slvk(1)
-    if ((metres(1:4).ne.'LDLT') .and. (metres(1:10).ne.'MULT_FRONT') .and.&
-        (metres(1:5).ne.'MUMPS')) then
-        call utmess('F', 'ALGELINE5_71')
-    endif
 !
-!     --- CREATION / AFFECTATION DES MATRICES DYNAMIQUES  ---
+! --- VERIFICATION FR LA COHERENCE DE LA SD EIGSOL ET DES OBJETS SOUS-JACENTS
 !
-!
-!     --- PROBLEME GENERALISE ---
-!      - CAS REEL
-!
-    call mtdefs(matopa, matrig, 'V', 'R')
-    call mtdscr(matopa)
-    call jeveuo(matopa(1:19)//'.&INT', 'E', lmatra)
-!        RECHERCHE DU NOMBRE DE CHAR_CRIT DANS LINTERVALEE OMEMIN,OMEMAX
-    
-    if (mod45 .eq. 'FLAM') then
-        omebid = omemin 
-        omemin = - omemax
-        omemax = - omebid
-    endif
-    
-    if (option .eq. 'BANDE') then
-        call vpfopr(option, typres, lmasse, lraide, lmatra,&
-                    omemin, omemax, omeshi, nfreq, npiv2,&
-                    omecor, precsh, nbrss, nblagr, solveu,&
-                    det, idet)
-        npivot=npiv2(1)
-        if (nfreq .le. 0) then
-            call utmess('I', 'ALGELINE2_15')
-            goto 80
-        else
-            call codent(nfreq, 'G', chaine)
-            call utmess('I', 'ALGELINE2_16', sk=chaine)
-        endif
+    checksd=.true. 
+    call vpvers(eigsol, modes, checksd)
+
+! ---  TRAITEMENTS NUMERIQUES (SOLVEUR LINEAIRE, LAGRANGE, MODES RIGIDES, 
+! ---  BORNES DE TRAVAIL EFFECTIVES, CALCUL DU NOMBRE DE MODES, FACTO. MATRICE SHIFTEE
+! ---  DETERMINATION TAILLE DE L'ESPACE DE PROJECTION)
+    if (mod45(1:4) .eq. 'VIBR') then
+      typcon = 'MODE_MECA'
     else
-        omeshi = 0.d0
-        call vpfopr(option, typres, lmasse, lraide, lmatra,&
-                    omemin, omemax, omeshi, nfreq, npiv2,&
-                    omecor, precsh, nbrss, nblagr, solveu,&
-                    det, idet)
-        npivot=npiv2(1)
+      typcon = 'MODE_FLAMB'
     endif
-    
-    if (mod45 .eq. 'FLAM') then
-        omebid = omemin 
-        omemin = - omemax
-        omemax = - omebid
-    endif
+    vecblo='&&NMOP45.POSITION.DDL'
+    veclag='&&NMOP45.DDL.BLOQ.CINE'
+    matopa='&&NMOP45.DYN_FAC_C '
+    call vpini1(eigsol, modes, solveu, typcon, vecblo, veclag, k24bid, matopa, matopa, iret,&
+                nblagr, neqact, npivot, ibid, omemax, omemin, omeshi, cbid, mod45)
+    if (iret.ne.0) goto 80
 !
-!     ------------------------------------------------------------------
-!     ----  DETERMINATION DE LA DIMENSION DU SOUS ESPACE NBVECT   ------
-!     ------------------------------------------------------------------
+! --- CREATION ET INITIALISATION DES SDS RESULTATS
 !
-    if (niv .ge. 2) then
-        write (ifm,*) 'INFORMATIONS SUR LE CALCUL DEMANDE:'
-        write (ifm,*) 'NOMBRE DE MODES DEMANDES     : ',nfreq
-        write (ifm,*)
-    endif
+    vecrer = '&&NMOP45.RESU_'
+    vecrei = '&&NMOP45.RESU_I'
+    vecrek = '&&NMOP45.RESU_K'
+    vecvp  = '&&NMOP45.VECTEUR_PROPRE'
+    call vpini2(eigsol, lcomod, ibid, ibid, nbpark,&
+                nbpari, nbparr, vecrer, vecrei, vecrek, vecvp, mxresf)
 !
-!     --- CORRECTION DU NOMBRE DE FREQUENCES DEMAMDEES EN FONCTION
-!         DE NEQACT
+! --- CALCUL MODAL PROPREMENT DIT
 !
-    if (nfreq .gt. neqact) then
-        nfreq = neqact
-        if (niv .ge. 2) then
-            write (ifm,*) 'INFORMATIONS SUR LE CALCUL DEMANDE:'
-            write (ifm,*) 'TROP DE MODES DEMANDES POUR LE NOMBRE '//&
-     &      'DE DDL ACTIFS, ON EN CALCULERA LE MAXIMUM '//'A SAVOIR: ',&
-     &      nfreq
-        endif
-    endif
+    call vpleci(eigsol, 'K', 6, k24bid, r8bid, ibid)
+    method=''
+    method=trim(k24bid)
+    select case (method)
+    case('SORENSEN')
+        call vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
+                    matopa, mxresf, neqact, nblagr, omemax,&
+                    omemin, omeshi, solveu, vecblo, veclag,&
+                    cbid, npivot, lbid, nconv, vpinf, vpmax, mod45)
+    case default
+        ASSERT(.false.)
+    end select
 !
-!     --- DETERMINATION DE NBVECT (DIMENSION DU SOUS ESPACE) ---
+! --- POST-TRAITEMENTS SANS VERIFICATION (NI STURM, NI SEUIL, NI BANDE) +
+! --- NETTOYAGE EXPLICITE DES OBJETS JEVEUX GLOBAUX LIES AU MODAL
 !
-    if (niv .ge. 2) then
-        write (ifm,*) 'LA DIMENSION DE L''ESPACE REDUIT EST : ',&
-        nbvect
-    endif
-!
-    if (nbvec2 .ne. 0) then
-        icoef = nbvec2
-    else
-        icoef = 2
-    endif
-!
-    if (nbvect .lt. nfreq) then
-        nbvect = min(max(2+nfreq,icoef*nfreq),neqact)
-        if (niv .ge. 2) then
-            write (ifm,*) 'ELLE EST INFERIEURE AU NOMBRE '//&
-     &      'DE MODES, ON LA PREND EGALE A ',nbvect
-            write (ifm,*)
-        endif
-    else
-        if (nbvect .gt. neqact) then
-            nbvect = neqact
-            if (niv .ge. 2) then
-                write (ifm,*) 'ELLE EST SUPERIEURE AU'//&
-     &        ' NOMBRE DE DDL ACTIFS, ON LA RAMENE A CE NOMBRE ',nbvect
-                write (ifm,*)
-            endif
-        endif
-    endif
-!
-!     --- TRAITEMENT SPECIFIQUE A SORENSEN ---
-!
-    if ((method.eq.'SORENSEN') .and. (nbvect-nfreq.lt.2)) then
-!C  AUGMENTATION FORCEE DE NBVECT
-!C (NECESSITE UNE ALARME OU INFO UTILISATEUR : A VOIR)
-        nbvect = nfreq + 2
-    endif
-!
-!     ------------------------------------------------------------------
-!     --------------  ALLOCATION DES ZONES DE TRAVAIL   ----------------
-!     ------------------------------------------------------------------
-!
-    mxresf = nfreq
-    AS_ALLOCATE(vi=resu_i, size=nbpari*mxresf)
-    call wkvect('&&NMOP45.RESU_R', 'V V R', nbparr*mxresf, lresur)
-    AS_ALLOCATE(vk24=resu_k, size=nbpark*mxresf)
-!
-!     --- INITIALISATION A UNDEF DE LA STRUCTURE DE DONNEES RESUF --
-!
-    do ieq = 1, nbparr*mxresf
-        zr(lresur+ieq-1) = undf
-    end do
-    do ieq = 1, nbpari*mxresf
-        resu_i(ieq) = indf
-    end do
-!
-!     --- CAS REEL ET GENERALISE ---
-    AS_ALLOCATE(vr=vect_propre, size=neq*nbvect)
-    AS_ALLOCATE(vr=vect_stabil, size=neq)
-!
-    lonwl = 3*nbvect*nbvect + 6*nbvect
-    AS_ALLOCATE(vl=select, size=nbvect)
-!     --- CAS REEL GENERALISE ---
-!
-    AS_ALLOCATE(vr=resid, size=neq)
-    call wkvect('&&NMOP45.VECT.WORKD', 'V V R', 3*neq, lworkd)
-    call wkvect('&&NMOP45.VECT.WORKL', 'V V R', lonwl, lworkl)
-    call wkvect('&&NMOP45.VECT.WORKV', 'V V R', 3*nbvect, lworkv)
-    call wkvect('&&NMOP45.VAL.PRO', 'V V R', 2* (nfreq+1), ldsor)
-    call wkvect('&&NMOP45.VECT.AUX', 'V V R', neq, laux)
-!
-!
-!     ------------------------------------------------------------------
-!     -------  CALCUL DES VALEURS PROPRES ET VECTEURS PROPRES   --------
-!     ------------------------------------------------------------------
-!
-!
-    if (niv .eq. 2) then
-        priram(1) = 2
-        priram(2) = 2
-        priram(3) = 2
-        priram(4) = 2
-        priram(5) = 0
-        priram(6) = 0
-        priram(7) = 0
-        priram(8) = 2
-    else
-        do i = 1, 8
-            priram(i) = 0
-        end do
-    endif
-!     --- SORENSEN : CAS REEL GENERALISE ---
-!     CALCUL DES MODES PROPRES
+    call vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
+                nbpari, nbparr, mxresf, nconv, nblagr,&
+                ibid, modes, typcon, k16bid, eigsol,&
+                matopa, matopa, solveu, vecblo, veclag,&
+                lbid, ibid, ibid, mpibid, mpibid,&
+                omemax, omemin, vpinf, vpmax, lcomod, mod45)
 !
     if (mod45 .eq. 'FLAM') then
 !
         if (defo .eq. 0) then
-!
-            call vpsorn(lmasse, lmatra, neq, nbvect, nfreq,&
-                        tolsor, vect_propre, resid, zr(lworkd), zr(lworkl),&
-                        lonwl, select, zr(ldsor), omeshi, zr(laux),&
-                        zr(lworkv), zi(lprod), zi(lddl), neqact, maxitr,&
-                        ifm, niv, priram, alpha, omecor,&
-                        nconv, flage, solveu)
-!
+!         ancien vpsorn
         else
-            call wkvect('&&NMOP45.POSI.EDDL', 'V V I', neq*mxddl, eddl)
-            if (nddle .ne. 0) then
-                call jeveuo(ddlexc, 'L', jexx)
-                call elmddl(matrig, 'DDL_EXCLUS    ', neq, zk8(jexx), nddle,&
-                            nbddl, zi(eddl))
-            else
-                nbddl = 0
-            endif
+            write(ifm,*)'<NMOP45> A FAIRE 1'
+            ASSERT(.false.)
+!            call wkvect('&&NMOP45.POSI.EDDL', 'V V I', neq*mxddl, eddl)
+!            if (nddle .ne. 0) then
+!                call jeveuo(ddlexc, 'L', jexx)
+!                call elmddl(matrig, 'DDL_EXCLUS    ', neq, zk8(jexx), nddle,&
+!                            nbddl, zi(eddl))
+!            else
+!                nbddl = 0
+!            endif
 !
-            call wkvect('&&NMOP45.POSI.SDDL', 'V V I', neq*mxddl, eddl2)
+!            call wkvect('&&NMOP45.POSI.SDDL', 'V V I', neq*mxddl, eddl2)
 !
-            if (nsta .ne. 0) then
-                call jeveuo(ddlsta, 'L', jest)
-                call elmddl(matrig, 'DDL_STAB      ', neq, zk8(jest), nsta,&
-                            nbddl2, zi(eddl2))
-            else
-                nbddl2 = 0
-            endif
+!            if (nsta .ne. 0) then
+!                call jeveuo(ddlsta, 'L', jest)
+!                call elmddl(matrig, 'DDL_STAB      ', neq, zk8(jest), nsta,&
+!                            nbddl2, zi(eddl2))
+!            else
+!                nbddl2 = 0
+!            endif
 !
-            redem = 0
+!            redem = 0
 !
-            call vpsor1(lmatra, neq, nbvect, nfreq, tolsor,&
-                        vect_propre, resid, zr(lworkd), zr(lworkl), lonwl,&
-                        select, zr(ldsor), omeshi, zr(laux), zr(lworkv),&
-                        zi(lprod), zi(lddl), zi(eddl), nbddl, neqact,&
-                        maxitr, ifm, niv, priram, alpha,&
-                        omecor, nconv, flage, solveu, nbddl2,&
-                        zi(eddl2), vect_stabil, csta, redem)
+!            call vpsor1(lmatra, neq, nbvect, nfreq, tolsor,&
+!                        vect_propre, resid, zr(lworkd), zr(lworkl), lonwl,&
+!                        select, zr(ldsor), omeshi, zr(laux), zr(lworkv),&
+!                        zi(lprod), zi(lddl), zi(eddl), nbddl, neqact,&
+!                        maxitr, ifm, niv, priram, alpha,&
+!                        omecor, nconv, flage, solveu, nbddl2,&
+!                        zi(eddl2), vect_stabil, csta, redem)
 !
         endif
     else
-        call vpsorn(lmasse, lmatra, neq, nbvect, nfreq,&
-                    tolsor, vect_propre, resid, zr(lworkd), zr(lworkl),&
-                    lonwl, select, zr(ldsor), omeshi, zr(laux),&
-                    zr(lworkv), zi(lprod), zi(lddl), neqact, maxitr,&
-                    ifm, niv, priram, alpha, omecor,&
-                    nconv, flage, solveu)
-!
+!      ancien vpsorn
     endif
-!
-!     --- DESTRUCTION DE LA MATRICE DYNAMIQUE (ET DE SON ENVENTUELLE
-!         OCCURENCE MUMPS)
-    call detrsd('MATR_ASSE', matopa)
-    call jedetr(matopa(1:19)//'.&INT')
-    call jedetr(matopa(1:19)//'.&IN2')
-!
-!     TRI DE CES MODES
-    call rectfr(nconv, nconv, omeshi, npivot, nblagr,&
-                zr(ldsor), nfreq+1, resu_i, zr(lresur), nfreq)
-    call vpbost(typres, nconv, nconv, omeshi, zr(ldsor),&
-                nfreq+1, vpinf, vpmax, precdc, method,&
-                omecor)
-    if (mod45 .eq. 'VIBR') then
-        call vpordi(1, 0, nconv, zr(lresur+mxresf), vect_propre,&
-                    neq, resu_i)
-    endif
-    do imet = 1, nconv
-        resu_i(mxresf+imet) = 0
-        zr(lresur-1+imet) = freqom(zr(lresur-1+mxresf+imet))
-        zr(lresur-1+2*mxresf+imet) = 0.0d0
-        resu_k(mxresf+imet) = 'SORENSEN'
-    end do
-!
-!
-    if (mod45 .ne. 'VIBR') then
-        ityp = 0
-        iordre = 0
-        call vpordo(ityp, iordre, nconv, zr(lresur+mxresf), vect_propre,&
-                    neq)
-        do imet = 1, nconv
-            zr(lresur-1+imet) = freqom(zr(lresur-1+mxresf+imet))
-            resu_i(imet) = imet
-        end do
-    endif
-!
-!     ------------------------------------------------------------------
-!     -------------------- CORRECTION : OPTION BANDE -------------------
-!     ------------------------------------------------------------------
-!
-!     --- SI OPTION BANDE ON NE GARDE QUE LES FREQUENCES DANS LA BANDE
-!
-    mfreq = nconv
-    if (option .eq. 'BANDE') then
-        if (mod45 .eq. 'FLAM') then
-            omebid = omemin 
-            omemin = - omemax
-            omemax = - omebid
-        endif
-        do ifreq = mfreq - 1, 0, -1
-            if (zr(lresur+mxresf+ifreq) .gt. omemax .or. zr(lresur+ mxresf+ifreq) .lt.&
-                omemin) then
-                nconv = nconv - 1
-            endif
-        end do
-        if (mod45 .eq. 'FLAM') then
-            omebid = omemin 
-            omemin = - omemax
-            omemax = - omebid
-        endif
-        if (mfreq .ne. nconv) then
-            call utmess('I', 'ALGELINE2_17')
-        endif
-    endif
-!
-    knega = 'NON'
-    nparr = nbparr
-!
-    call vppara(modes, typcon, knega, lraide, lmasse,&
-                lamor, mxresf, neq, nconv, omecor,&
-                zi(lddl), zi(lprod), vect_propre, [cbid], nbpari,&
-                nparr, nbpark, nopara, mod45, resu_i,&
-                zr(lresur), resu_k, ktyp, .false._1, ibid,&
-                ibid, k16bid, ibid)
-!
-    if (niv .ge. 2) then
-        lbid = .false.
-        call vpwecf(' ', typres, nconv, mxresf, resu_i,&
-                    zr(lresur), resu_k, lamor, ktyp, lbid)
-    endif
-!
+
     if (nsta .ne. 0) then
+            write(ifm,*)'<NMOP45> A FAIRE 2'
+            ASSERT(.false.)
 !
-        typco2 = 'MODE_STAB'
+!        typco2 = 'MODE_STAB'
 !
-        call vppara(modes2, typco2, knega, lraide, lmasse,&
-                    lamor, un, neq, un, omecor,&
-                    zi(lddl), zi(lprod), vect_stabil, [cbid], nbpari,&
-                    nparr, nbpark, nopara, 'STAB', resu_i,&
-                    [csta], resu_k, ktyp, .false._1, ibid,&
-                    ibid, k16bid, ibid)
+!        call vppara(modes2, typco2, knega, lraide, lmasse,&
+!                    lamor, un, neq, un, omecor,&
+!                    zi(lddl), zi(lprod), vect_stabil, [cbid], nbpari,&
+!                    nparr, nbpark, nopara, 'STAB', resu_i,&
+!                    [csta], resu_k, ktyp, .false._1, ibid,&
+!                    ibid, k16bid, ibid)
 !
     endif
 !
-    nfreq=nconv
  80 continue
- 
-! --- CORRECTION DES CERTAINES DONNEES DE EIGSOL
-    call vpecri(eigsol, 'I', 1, k24bid, r8bid, nfreq)
-    call vpecri(eigsol, 'I', 2, k24bid, r8bid, nbvect)
-!
-!
-! --- MENAGE
-!
-    call jedetr('&&NMOP45.POSITION.DDL')
-    call jedetr('&&NMOP45.DDL.BLOQ.CINE')
-    AS_DEALLOCATE(vi=resu_i)
-    call jedetr('&&NMOP45.RESU_R')
-    AS_DEALLOCATE(vk24=resu_k)
-    AS_DEALLOCATE(vr=vect_propre)
-    AS_DEALLOCATE(vr=vect_stabil)
-    AS_DEALLOCATE(vl=select)
-    AS_DEALLOCATE(vr=resid)
-    call jedetr('&&NMOP45.VECT.WORKD')
-    call jedetr('&&NMOP45.VECT.WORKL')
-    call jedetr('&&NMOP45.VECT.WORKV')
-    call jedetr('&&NMOP45.VAL.PRO')
-    call jedetr('&&NMOP45.VECT.AUX')
-    call jedetr('&&NMOP45.POSI.EDDL')
-    call jedetr('&&NMOP45.POSI.SDDL')
-    call detrsd('MATR_ASSE', matopa)
-    call jedetr(matopa(1:19)//'.&INT')
-    call jedetr(matopa(1:19)//'.&IN2')
+
 !
     call jedema()
 !
