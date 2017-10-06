@@ -66,43 +66,43 @@ subroutine pjloin(nbnod,nbnodm,m2,geom2,nbmax,tino2m,tdmin2,lino_loin)
 !
     call jemarq()
 !
-!
-    alarme='OUI'
-    call getres(k16bid, k16bid, nomcmd)
-    if (nomcmd .eq. 'PROJ_CHAMP') then
-        call getvtx(' ', 'ALARME', scal=alarme, nbret=ibid)
-    endif
-
-    if (alarme .eq. 'OUI') then
-        ico=ico+1
-        call codent(ico, 'D0', kico)
-        do ii = 1, nbnod
-            ino2m = tino2m(ii)
-            call jenuno(jexnum(m2//'.NOMNOE', ino2m), nono2)
-            valr(1) = geom2(3*(ino2m-1)+1)
-            valr(2) = geom2(3*(ino2m-1)+2)
-            valr(3) = geom2(3*(ino2m-1)+3)
-            valr(4) = tdmin2(ii)
-            call utmess('I', 'CALCULEL5_43', sk=nono2, nr=4, valr=valr)
-        enddo
-        vali(1) = nbnodm
-        vali(2) = nbnod
-        fichier='REPE_OUT/maillage_proj_loin_'//kico//'.med'
-        valk(1) = fichier
-        call utmess('A', 'CALCULEL5_48',ni=2,vali=vali,nk=1,valk=valk)
+    if (nbnodm .ne. 0) then
+        alarme='OUI'
+        call getres(k16bid, k16bid, nomcmd)
+        if (nomcmd .eq. 'PROJ_CHAMP') then
+            call getvtx(' ', 'ALARME', scal=alarme, nbret=ibid)
+        endif
+        if (alarme .eq. 'OUI') then
+            ico=ico+1
+            call codent(ico, 'D0', kico)
+            do ii = 1, nbnod
+                ino2m = tino2m(ii)
+                call jenuno(jexnum(m2//'.NOMNOE', ino2m), nono2)
+                valr(1) = geom2(3*(ino2m-1)+1)
+                valr(2) = geom2(3*(ino2m-1)+2)
+                valr(3) = geom2(3*(ino2m-1)+3)
+                valr(4) = tdmin2(ii)
+                call utmess('I', 'CALCULEL5_43', sk=nono2, nr=4, valr=valr)
+            enddo
+            vali(1) = nbnodm
+            vali(2) = nbnod
+            fichier='REPE_OUT/maillage_proj_loin_'//kico//'.med'
+            valk(1) = fichier
+            call utmess('A', 'CALCULEL5_48',ni=2,vali=vali,nk=1,valk=valk)
 
 !       -- Creation et impression d'un "petit" maillage contenant juste les noeuds
 !          lointains. Cela peut aider l'utilisateur a les visualiser.
-        call gcncon('_',madebug)
-        call crea_maillage(m2,madebug,'V',nbno=nbnodm,lino=lino_loin)
+            call gcncon('_',madebug)
+            call crea_maillage(m2,madebug,'V',nbno=nbnodm,lino=lino_loin)
 
-        unite = ulnume()
-        if (unite.le.0) call utmess('F', 'UTILITAI5_10')
-        call ulopen(unite, fichier, ' ', 'N', 'O')
-        formar=' '
-        call irmail('MED', unite, ibid, madebug, ASTER_FALSE , k8bid, 1, formar)
-        call ulopen(-unite, k8bid, k8bid, k8bid, k8bid)
-        call detrsd('MAILLAGE', madebug)
+            unite = ulnume()
+            if (unite.le.0) call utmess('F', 'UTILITAI5_10')
+            call ulopen(unite, fichier, ' ', 'N', 'O')
+            formar=' '
+            call irmail('MED', unite, ibid, madebug, ASTER_FALSE , k8bid, 1, formar)
+            call ulopen(-unite, k8bid, k8bid, k8bid, k8bid)
+            call detrsd('MAILLAGE', madebug)
+        endif
     endif
 
     call jedema()
