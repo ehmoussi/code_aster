@@ -16,9 +16,11 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
+#include "asterf_types.h"
+!
 interface 
-    subroutine thmGetParaInit(j_mater, compor_)
+    subroutine thmGetParaInit(j_mater, l_check_)
         integer, intent(in) :: j_mater
-        character(len=16), optional, intent(in) :: compor_(*)
+        aster_logical, optional, intent(in) :: l_check_
     end subroutine thmGetParaInit
 end interface 

@@ -415,7 +415,7 @@ real(kind=8), intent(inout) :: vectu(dimuel)
 !
 ! - Get initial parameters (THM_INIT)
 !
-    call thmGetParaInit(j_mater, compor)
+    call thmGetParaInit(j_mater, l_check_ = ASTER_TRUE)
 !
 ! - Compute geometric parameters for current cell
 !

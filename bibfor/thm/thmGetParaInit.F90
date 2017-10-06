@@ -15,8 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine thmGetParaInit(j_mater, compor_)
+!
+subroutine thmGetParaInit(j_mater, l_check_)
 !
 use THM_type
 use THM_module
@@ -28,10 +28,10 @@ implicit none
 #include "asterc/r8prem.h"
 #include "asterfort/rcvala.h"
 #include "asterfort/utmess.h"
-#include "asterfort/thmGetParaBehaviour.h"
+#include "asterfort/THM_type.h"
 !
 integer, intent(in) :: j_mater
-character(len=16), optional, intent(in) :: compor_(*)
+aster_logical, optional, intent(in) :: l_check_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -41,8 +41,8 @@ character(len=16), optional, intent(in) :: compor_(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  j_mater        : coded material address
-! In  compor         : name of comportment definition (field)
+! In  j_mater          : coded material address
+! In  l_check          : check THM_INIT
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -112,8 +112,8 @@ character(len=16), optional, intent(in) :: compor_(*)
 !
 ! - Check: compatibility coupling law with initial parameters
 !
-    if (present(compor_)) then
-        call thmGetParaBehaviour(compor_, nume_thmc_ = nume_thmc)
+    if (present(l_check_)) then
+        nume_thmc = ds_thm%ds_behaviour%nume_thmc
         call rcvala(j_mater, ' '       , 'THM_INIT',&
                     0      , ' '       , [0.d0]    ,&
                     1      , 'COMP_THM', para_vale2,&

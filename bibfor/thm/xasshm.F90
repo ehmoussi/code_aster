@@ -231,7 +231,7 @@ implicit none
 !
 ! - Get initial parameters (THM_INIT)
 !
-    call thmGetParaInit(j_mater, compor)
+    call thmGetParaInit(j_mater, l_check_ = ASTER_TRUE)
 !
 !     RECUPERATION DE LA CONNECTIVITE FISSURE - DDL HEAVISIDES
 !     ATTENTION !!! FISNO PEUT ETRE SURDIMENTIONNE

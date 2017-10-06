@@ -121,10 +121,6 @@ implicit none
 !
 
 !
-! - Get initial parameters (THM_INIT)
-!
-    call thmGetParaInit(j_mater, compor)
-!
 ! - Get parameters for behaviour
 !
     call thmGetBehaviour(compor)
@@ -132,6 +128,10 @@ implicit none
 ! - Get parameters for internal variables
 !
     call thmGetBehaviourVari()
+!
+! - Get initial parameters (THM_INIT)
+!
+    call thmGetParaInit(j_mater, l_check_ = ASTER_TRUE)
 !
 ! =====================================================================
 ! --- DETERMINATION DES VARIABLES CARACTERISANT LE MILIEU ET OPTION ---
