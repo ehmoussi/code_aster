@@ -47,7 +47,6 @@ implicit none
 #include "asterfort/calcft.h"
 #include "asterfort/thmSelectMeca.h"
 #include "asterfort/calcva.h"
-#include "asterfort/nvithm.h"
 #include "asterfort/thmGetParaBiot.h"
 #include "asterfort/thmGetParaElas.h"
 #include "asterfort/thmGetParaTher.h"
