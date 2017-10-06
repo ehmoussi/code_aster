@@ -233,8 +233,8 @@ integer, intent(out) :: retcom
 !
 ! - Evaluation of final saturation
 !
-    call thmEvalSatuFinal(hydr , j_mater , p1    ,&
-                          satur, dsatur, retcom)
+    call thmEvalSatuFinal(j_mater, p1    ,&
+                          satur  , dsatur, retcom)
 !
 ! - Evaluate thermal conductivity
 !
