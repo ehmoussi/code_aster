@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: daniele.colombo at ifpen.fr
+!
 subroutine te0588(option, nomte)
 !
 use THM_type
@@ -47,10 +48,11 @@ implicit none
 #include "asterfort/utmess.h"
 #include "jeveux.h"
 #include "asterfort/thmGetElemModel.h"
+#include "asterfort/Behaviour_type.h"
     character(len=16) :: option, nomte
 !     ------------------------------------------------------------------
 ! =====================================================================
-! person_in_charge: daniele.colombo at ifpen.fr
+!
 !    - FONCTION REALISEE:  CALCUL DES OPTIONS NON-LINEAIRES MECANIQUES
 !                          ELEMENTS THHM, HM ET HH
 !    - ARGUMENTS:
@@ -209,7 +211,7 @@ implicit none
         call jevech('PCARCRI', 'L', icarcr)
         call jevech('PVARIMR', 'L', ivarim)
         call jevech('PCONTMR', 'L', icontm)
-        read (zk16(icompo-1+2),'(I16)') nbvari
+        read (zk16(icompo-1+NVAR),'(I16)') nbvari
 ! =====================================================================
 ! ----RECUPERATION DES ANGLES NAUTIQUES/EULER DEFINIS PAR AFFE_CARA_ELEM
 ! --- ORIENTATION DU MASSIF
@@ -221,11 +223,11 @@ implicit none
         call vecini(3, 0.d0, angleu)
         call vecini(3, 0.d0, angnau)
 !
-        do 150 i = 1, nno
-            do 140 idim = 1, ndim
+        do i = 1, nno
+            do idim = 1, ndim
                 coor(idim) = coor(idim)+zr(igeom+idim+ndim*(i-1)-1)/ nno
-140         continue
-150     continue
+            end do
+        end do
         call rcangm(ndim, coor, angmas)
 !# ANGMAS : donne par affe_cara_elem en degre et ici en fourni en radian
 !# CAS OU AFFE_CARA_ELEM EST EN ANGLE D EULER => On CONVERTIT EN NAUTIQUE
@@ -286,9 +288,9 @@ implicit none
                         jpmilt, jheavn, angnau,dimmat, enrhyd, nfiss, nfh, jfisno,&
                         work1, work2)
         else
-            do 30 li = 1, dimuel
+            do li = 1, dimuel
                 zr(ideplp+li-1) = zr(ideplm+li-1) + zr(ideplp+li-1)
- 30         continue
+            end do
             call xasshm(nno, npg, npi, ipoids, ivf,&
                         idfde, igeom, zr(igeom), zr(icarcr), zr(ideplm),&
                         zr(ideplp), zr(icontm), zr(icontp), zr(ivarim), zr(ivarip),&

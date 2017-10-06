@@ -54,7 +54,7 @@ implicit none
 #include "asterfort/xdefhm.h"
 #include "asterfort/xequhm.h"
 #include "asterfort/xlinhm.h"
-#include "asterfort/thmGetParaBehaviour.h"
+#include "asterfort/thmGetBehaviourVari.h"
 #include "asterfort/thmGetBehaviour.h"
 #include "asterfort/thmGetParaCoupling.h"
 #include "asterfort/thmGetParaInit.h"
@@ -65,7 +65,7 @@ implicit none
     integer ::  nfiss, nfh, jfisno
     integer :: addeme, addep1, ii, jj, in, jheavn
     integer :: kpi, ipi
-    integer :: i, j, n, k, kji, nvim, nbcomp
+    integer :: i, j, n, k, kji, nb_vari_meca
     real(kind=8) :: geom(ndim, nnop), crit(*), poids
     real(kind=8) :: deplp(dimuel), deplm(dimuel)
     real(kind=8) :: matuu(dimuel*dimuel), matri(dimmat, dimmat)
@@ -75,7 +75,7 @@ implicit none
     real(kind=8) :: angmas(3)
     aster_logical :: axi
     character(len=3) :: modint
-    character(len=16) :: option, compor(*), thmc
+    character(len=16) :: option, compor(*)
 !
 ! DECLARATION POUR XFEM
     integer :: nnops, nnopm
@@ -162,7 +162,7 @@ implicit none
 ! --- CALCUL DE CONSTANTES TEMPORELLES --------------------------------
 ! =====================================================================
     dt = rinstp-rinstm
-    ta= crit(4)
+    ta  = crit(4)
     ta1 = 1.d0-ta
 ! =====================================================================
 ! --- CREATION DES MATRICES DE SELECTION ------------------------------
@@ -215,14 +215,14 @@ implicit none
         end do
         call matini(dimmat, dimmat, 0.d0, matri)
     endif
-! 
-! - Get behaviours parameters from COMPOR field
-!
-    call thmGetParaBehaviour(compor, thmc_ = thmc)
 !
 ! - Get parameters for behaviour
 !
     call thmGetBehaviour(compor)
+!
+! - Get parameters for internal variables
+!
+    call thmGetBehaviourVari()
 !
 ! - Get parameters for coupling
 !
@@ -233,8 +233,8 @@ implicit none
 !
     call thmGetParaInit(j_mater, compor)
 !
-!     RECUPERATION DE LA CONNECTIVITÃ~I FISSURE - DDL HEAVISIDES
-!     ATTENTION !!! FISNO PEUT ETRE SURDIMENTIONNÃ~I
+!     RECUPERATION DE LA CONNECTIVITE FISSURE - DDL HEAVISIDES
+!     ATTENTION !!! FISNO PEUT ETRE SURDIMENTIONNE
     if (nfiss .eq. 1) then
         do ino = 1, nnop
             fisno(ino,1) = 1
@@ -359,7 +359,7 @@ implicit none
                 congep(i) = contp(npi*(ise-1)*dimcon+(kpi-1)*dimcon+i)
             end do
             call xequhm(j_mater, option, ta, ta1, ndim,&
-                        compor, kpi, npg, dimenr, enrmec,&
+                        kpi, npg, dimenr, enrmec,&
                         dimdef, dimcon, nbvari, defgem, congem,&
                         vintm, defgep, congep,&
                         vintp, mecani, press1, press2, tempe,&
@@ -394,9 +394,8 @@ implicit none
                         contp((kpi-1)*dimcon+i)=contp((kpi-npg-1)*&
                         dimcon+i)
                     end do
-                    nbcomp = 9 + 7
-                    read (compor(nbcomp+4),'(I16)') nvim
-                    do i = 1, nvim
+                    nb_vari_meca = ds_thm%ds_behaviour%nb_vari_meca
+                    do i = 1, nb_vari_meca
                         varip((kpi-1)*nbvari+i) = varip((kpi-npg-1)* nbvari+i)
                     end do
                 endif

@@ -21,7 +21,7 @@
 subroutine xhmsat(option, &
                   ndim, dimenr,&
                   dimcon, nbvari, addeme,&
-                  adcome, advihy, advico, vihrho, vicphi,&
+                  adcome, &
                   addep1, adcp11, congem, congep, vintm,&
                   vintp, dsde, epsv, depsv, &
                   dp1, phi, rho11,&
@@ -47,34 +47,32 @@ implicit none
 #include "asterfort/virhol.h"
 #include "asterfort/tebiot.h"
 !
-! ROUTINE HMLISA : CETTE ROUTINE CALCULE LES CONTRAINTES GENERALISEES
+integer :: ndim, dimcon, nbvari
+integer :: adcome, adcp11, nfh
+integer :: addeme, addep1, retcom
+real(kind=8) :: congem(dimcon), congep(dimcon)
+real(kind=8) :: vintm(nbvari), vintp(nbvari)
+real(kind=8) :: epsv, depsv, dp1, dt
+real(kind=8) :: phi, rho11
+real(kind=8) :: angl_naut(3)
+character(len=16) :: option
+integer :: dimenr
+real(kind=8) :: dsde(dimcon, dimenr)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! CETTE ROUTINE CALCULE LES CONTRAINTES GENERALISEES
 !   ET LA MATRICE TANGENTE DES GRANDEURS COUPLEES, A SAVOIR CELLES QUI
 !   NE SONT PAS DES GRANDEURS DE MECANIQUE PURE OU DES FLUX PURS
-!   DANS LE CAS OU THMC = 'LIQU_SATU'
 ! ======================================================================
 ! OUT RETCOM : RETOUR LOI DE COMPORTEMENT
 ! COMMENTAIRE DE NMCONV :
 !                       = 0 OK
 !                       = 1 ECHEC DANS L'INTEGRATION : PAS DE RESULTAT
 !                       = 3 SIZZ NON NUL (DEBORST) ON CONTINUE A ITERER
-! ======================================================================
 !
-    integer :: ndim, dimcon, nbvari
-    integer :: adcome, adcp11, vihrho, vicphi, nfh
-    integer :: addeme, addep1, advihy, advico, retcom
-    real(kind=8) :: congem(dimcon), congep(dimcon)
-    real(kind=8) :: vintm(nbvari), vintp(nbvari)
-    real(kind=8) :: epsv, depsv, dp1, dt
-    real(kind=8) :: phi, rho11
-    real(kind=8) :: angl_naut(3)
-    character(len=16) :: option
+! --------------------------------------------------------------------------------------------------
 !
-! DECLARATION POUR XFEM
-    integer :: dimenr
-    real(kind=8) :: dsde(dimcon, dimenr)
-! ======================================================================
-! --- VARIABLES LOCALES ------------------------------------------------
-! ======================================================================
     integer :: i, yaenrh, adenhy, ifh
     real(kind=8) :: epsvm, phim, rho11m, rho110
     real(kind=8) :: tbiot(6), cs, alpha0, alpliq, cliq, satur
@@ -83,13 +81,13 @@ implicit none
     real(kind=8) :: m11m, saturm, mdal(6), dalal, alphfi, cbiot, unsks
     real(kind=8) :: deps(6)
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
-! ======================================================================
-! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
-! ======================================================================
     real(kind=8) :: dp2, signe, phi0
     real(kind=8) :: dmdeps(6), dsdp1(6), sigmp(6)
-!
     aster_logical :: emmag
+    integer :: advico, advihy, vicphi, vihrho
+!
+! --------------------------------------------------------------------------------------------------
+!
 
 !
 ! - Get material parameters
@@ -98,6 +96,13 @@ implicit none
     rho110 = ds_thm%ds_material%liquid%rho
     cliq   = ds_thm%ds_material%liquid%unsurk
     alpliq = ds_thm%ds_material%liquid%alpha
+!
+! - Get storage parameters for behaviours
+!
+    advico    = ds_thm%ds_behaviour%advico
+    advihy    = ds_thm%ds_behaviour%advihy
+    vihrho    = ds_thm%ds_behaviour%vihrho
+    vicphi    = ds_thm%ds_behaviour%vicphi
 !
 ! - Evaluation of initial saturation
 !

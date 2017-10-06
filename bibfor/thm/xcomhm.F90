@@ -18,12 +18,12 @@
 ! person_in_charge: daniele.colombo at ifpen.fr
 ! aslint: disable=W1504,W1306
 !
-subroutine xcomhm(option, imate, compor,instap,&
-                  ndim, dimdef, dimcon,nbvari,&
+subroutine xcomhm(option, j_mater, time_curr,&
+                  ndim, dimdef, dimcon, nbvari,&
                   addeme, adcome, addep1, adcp11,&
                   addep2, addete, defgem,&
                   defgep, congem, congep, vintm,&
-                  vintp, dsde, pesa, retcom, kpi,&
+                  vintp, dsde, gravity, retcom, kpi,&
                   npg, dimenr,&
                   angl_naut, yaenrh, adenhy, nfh)
 !
@@ -34,7 +34,6 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/calcva.h"
-#include "asterfort/nvithm.h"
 #include "asterfort/xcalfh.h"
 #include "asterfort/xcalme.h"
 #include "asterfort/xhmsat.h"
@@ -48,10 +47,27 @@ implicit none
 #include "asterfort/thmEvalGravity.h"
 #include "asterfort/tebiot.h"
 !
-! ======================================================================
+integer :: retcom, kpi, npg, nfh
+integer :: ndim, dimdef, dimcon, nbvari, j_mater
+integer :: addeme, addep1, addep2, addete
+integer :: adcome, adcp11
+real(kind=8) :: defgem(1:dimdef), defgep(1:dimdef), congep(1:dimcon)
+real(kind=8) :: congem(1:dimcon), vintm(1:nbvari), vintp(1:nbvari)
+real(kind=8) :: time_curr
+character(len=16) :: option
+integer :: dimenr
+integer :: yaenrh, adenhy
+real(kind=8) :: dsde(1:dimcon, 1:dimenr)
+real(kind=8) :: gravity(3)
+real(kind=8) :: angl_naut(3)
+!
+! --------------------------------------------------------------------------------------------------
+!
 ! CALCULE LES CONTRAINTES GENERALISEES ET LA MATRICE TANGENTE AU POINT
 ! DE GAUSS SUIVANT LES OPTIONS DEFINIES
-! ======================================================================
+!
+! --------------------------------------------------------------------------------------------------
+!
 ! IN OPTION : OPTION DE CALCUL
 ! IN COMPOR : COMPORTEMENT
 ! IN IMATE  : MATERIAU CODE
@@ -82,48 +98,23 @@ implicit none
 ! OUT DSDE   : MATRICE TANGENTE CONTRAINTES DEFORMATIONS
 !
 ! OUT RETCOM : RETOUR LOI DE COMPORTEMENT
-! ======================================================================
-! VARIABLES IN / OUT
-! ======================================================================
-
-    integer :: retcom, kpi, npg, vicpr1, vicpr2, nfh
-    integer :: ndim, dimdef, dimcon, nbvari, imate
-    integer :: addeme, addep1, addep2, addete
-    integer :: adcome, adcp11
-    real(kind=8) :: defgem(1:dimdef), defgep(1:dimdef), congep(1:dimcon)
-    real(kind=8) :: congem(1:dimcon), vintm(1:nbvari), vintp(1:nbvari)
-    real(kind=8) :: instap
-    character(len=16) :: compor(*), option
 !
-! DECLARATION POUR XFEM
-    integer :: dimenr
-    integer :: yaenrh, adenhy
-    real(kind=8) :: dsde(1:dimcon, 1:dimenr)
-! ======================================================================
-! --- VARIABLES LOCALES ------------------------------------------------
-! ======================================================================
-    integer :: nvim, advime, advith, advihy, advico
-    integer :: vihrho, vicphi, vicpvp, vicsat, nvih, nvic, nvit
+! --------------------------------------------------------------------------------------------------
+!
     real(kind=8) :: p1, dp1, grap1(3), p2, dp2, grap2(3), t, dt, grat(3)
     real(kind=8) :: phi, rho11, epsv, deps(6), depsv
-    real(kind=8) :: sat
-    real(kind=8) :: tbiot(6), pesa(3)
+    real(kind=8) :: satur
+    real(kind=8) :: tbiot(6)
     real(kind=8) :: tperm(ndim, ndim)
-    real(kind=8) :: angl_naut(3)
-    character(len=16) :: thmc, ther, hydr, meca
-! ======================================================================
-! --- INITIALISATION ---------------------------------------------------
-! ======================================================================
+    character(len=16) :: hydr
+!
+! --------------------------------------------------------------------------------------------------
+!
     retcom = 0
-! ======================================================================
-! --- MISE AU POINT POUR LES VARIABLES INTERNES ------------------------
-! --- DEFINITION DES POINTEURS POUR LES DIFFERENTES RELATIONS DE -------
-! --- COMPORTEMENTS ET POUR LES DIFFERENTES COMPOSANTES ----------------
-! ======================================================================
-    call nvithm(compor, meca, thmc, ther, hydr,&
-                nvim, nvit, nvih, nvic, advime,&
-                advith, advihy, advico, vihrho, vicphi,&
-                vicpvp, vicsat, vicpr1, vicpr2)
+!
+! - Get storage parameters for behaviours
+!
+    hydr      = ds_thm%ds_behaviour%rela_hydr
 !
 ! - Update unknowns
 !
@@ -141,11 +132,11 @@ implicit none
 !
 ! - Get hydraulic parameters
 !
-    call thmGetParaHydr(hydr, imate)
+    call thmGetParaHydr(hydr, j_mater)
 !
 ! - Get Biot parameters (for porosity evolution)
 !
-    call thmGetParaBiot(imate)
+    call thmGetParaBiot(j_mater)
 !
 ! - Compute Biot tensor
 !
@@ -153,12 +144,12 @@ implicit none
 !
 ! - Get elastic parameters
 !
-    call thmGetParaElas(imate, kpi, t, ndim)
+    call thmGetParaElas(j_mater, kpi, t, ndim)
     call thmMatrHooke(angl_naut)
 !
 ! - Get thermic parameters
 !
-    call thmGetParaTher(imate, kpi, t)
+    call thmGetParaTher(j_mater, kpi, t)
 
 ! ======================================================================
 ! --- CALCUL DES RESIDUS ET DES MATRICES TANGENTES ---------------------
@@ -166,11 +157,11 @@ implicit none
     call xhmsat(option,&
                 ndim, dimenr,&
                 dimcon, nbvari, addeme,&
-                adcome, advihy, advico, vihrho, vicphi,&
+                adcome,&
                 addep1, adcp11, congem, congep, vintm,&
                 vintp, dsde, epsv, depsv,&
                 dp1, phi, rho11,&
-                sat, retcom, tbiot,&
+                satur, retcom, tbiot,&
                 angl_naut, yaenrh, adenhy, nfh)
     if (retcom .ne. 0) then
         goto 99
@@ -181,7 +172,7 @@ implicit none
 !  C'EST A DIRE SI KPI<NPG
 ! ======================================================================
     if (ds_thm%ds_elem%l_dof_meca .and. kpi .le. npg) then
-        call xcalme(option, meca, ndim, dimenr,&
+        call xcalme(option, ndim, dimenr,&
                     dimcon, addeme, adcome, congep,&
                     dsde, deps, angl_naut)
         if (retcom .ne. 0) then
@@ -191,26 +182,26 @@ implicit none
 !
 ! - Get permeability tensor
 !
-    call thmGetPermeabilityTensor(ndim , angl_naut, imate, phi, vintp(1),&
+    call thmGetPermeabilityTensor(ndim , angl_naut, j_mater, phi, vintp(1),&
                                   tperm)
 !
 ! - Compute gravity
 !
-    call thmEvalGravity(imate, instap, pesa)
+    call thmEvalGravity(j_mater, time_curr, gravity)
 ! ======================================================================
 ! --- CALCUL DES FLUX HYDRAULIQUES UNIQUEMENT
 ! ======================================================================
     if ((ds_thm%ds_elem%l_dof_pre1).and.(yaenrh.eq.1)) then
-        call xcalfh(option, thmc, ndim, dimcon,&
+        call xcalfh(option, ndim, dimcon,&
                     addep1, adcp11, addeme, congep, dsde,&
-                    grap1, rho11, pesa, tperm, &
+                    grap1, rho11, gravity, tperm, &
                     dimenr,&
                     adenhy, nfh)
         if (retcom .ne. 0) then
             goto 99
         endif
     endif
-! ======================================================================
+!
 99 continue
-! ======================================================================
+!
 end subroutine
