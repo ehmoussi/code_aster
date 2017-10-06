@@ -173,7 +173,7 @@ integer, intent(out) :: retcom
 !
     call calcco(l_steady,&
                 option  , angl_naut,&
-                j_mater  ,&
+                j_mater ,&
                 ndim    , nbvari   ,&
                 dimdef  , dimcon   ,&
                 adcome  , adcote   , adcp11, adcp12, adcp21, adcp22,&
@@ -253,14 +253,17 @@ integer, intent(out) :: retcom
 ! - Compute flux and stress for thermic
 !
     if (ds_thm%ds_elem%l_dof_ther) then
-        call calcft(option, ndim, dimdef,&
-                    dimcon, addete,&
-                    addeme, addep1, addep2, adcote, congep,&
-                    dsde, temp, grad_temp, phi, pvp,&
-                    tbiot, satur, dsatur, lambp,&
-                    dlambp, lambs, dlambs, tlambt, tdlamt,&
-                    tlamct, rho11, h11, h12,&
-                    angl_naut)
+        call calcft(option, angl_naut,&
+                    ndim  , dimdef   , dimcon,&
+                    adcote, &
+                    addeme, addete   , addep1, addep2,&
+                    temp  , grad_temp,&
+                    tbiot ,&
+                    phi   , rho11    , satur, dsatur,&
+                    pvp   , h11      , h12   ,&
+                    lambs , dlambs   , lambp , dlambp,&
+                    tlambt, tlamct   , tdlamt,&
+                    congep, dsde)
     endif
 !
 99  continue

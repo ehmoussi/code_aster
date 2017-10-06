@@ -18,42 +18,31 @@
 ! aslint: disable=W1504
 !
 interface 
-    subroutine calcft(option, ndim, dimdef,&
-                      dimcon, addete,&
-                      addeme, addep1, addep2, adcote, congep,&
-                      dsde, t, grat, phi, pvp,&
-                      tbiot, sat, dsatp1, lambp,&
-                      dlambp, lambs, dlambs, tlambt, tdlamt,&
-                      tlamct, rho11, h11, h12,&
-                      angmas)
-        integer :: dimcon
-        integer :: dimdef
-        integer :: ndim
-        character(len=16) :: option
-        integer :: addete
-        integer :: addeme
-        integer :: addep1
-        integer :: addep2
-        integer :: adcote
-        real(kind=8) :: congep(1:dimcon)
-        real(kind=8) :: dsde(1:dimcon, 1:dimdef)
-        real(kind=8) :: t
-        real(kind=8) :: grat(3)
-        real(kind=8) :: phi
-        real(kind=8) :: pvp
-        real(kind=8) :: tbiot(6)
-        real(kind=8) :: sat
-        real(kind=8) :: dsatp1
-        real(kind=8) :: lambp
-        real(kind=8) :: dlambp
-        real(kind=8) :: lambs
-        real(kind=8) :: dlambs
-        real(kind=8) :: tlambt(ndim, ndim)
-        real(kind=8) :: tdlamt(ndim, ndim)
-        real(kind=8) :: tlamct(ndim, ndim)
-        real(kind=8) :: rho11
-        real(kind=8) :: h11
-        real(kind=8) :: h12
-        real(kind=8) :: angmas(3)
+    subroutine calcft(option, angl_naut,&
+                      ndim  , dimdef   , dimcon,&
+                      adcote, &
+                      addeme, addete   , addep1, addep2,&
+                      temp  , grad_temp,&
+                      tbiot ,&
+                      phi   , rho11    , satur_, dsatur_,&
+                      pvp   , h11      , h12   ,&
+                      lambs , dlambs   , lambp , dlambp,&
+                      tlambt, tlamct   , tdlamt,&
+                      congep, dsde)
+        character(len=16), intent(in) :: option
+        real(kind=8), intent(in) :: angl_naut(3)
+        integer, intent(in) :: ndim, dimdef, dimcon
+        integer, intent(in) :: adcote
+        integer, intent(in) :: addeme, addete, addep1, addep2
+        real(kind=8), intent(in) :: temp, grad_temp(3)
+        real(kind=8), intent(in) :: tbiot(6)
+        real(kind=8), intent(in) :: phi, rho11, satur_, dsatur_
+        real(kind=8), intent(in) :: pvp, h11, h12
+        real(kind=8), intent(in) :: lambs, dlambs
+        real(kind=8), intent(in) :: lambp, dlambp
+        real(kind=8), intent(in) :: tlambt(ndim, ndim)
+        real(kind=8), intent(in) :: tlamct(ndim, ndim)
+        real(kind=8), intent(in) :: tdlamt(ndim, ndim)
+        real(kind=8), intent(inout) :: congep(1:dimcon), dsde(1:dimcon, 1:dimdef)
     end subroutine calcft
 end interface 
