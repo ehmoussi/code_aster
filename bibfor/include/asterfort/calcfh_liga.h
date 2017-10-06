@@ -20,7 +20,7 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine calcfh_liga(option, hydr  , ndim  , j_mater,&
+    subroutine calcfh_liga(option, ndim  , j_mater,&
                            dimdef, dimcon,&
                            addep1, addep2, adcp11, adcp21 ,&
                            addeme, addete,&
@@ -29,7 +29,7 @@ interface
                            rho11 ,&
                            satur , dsatur, gravity, tperm,&
                            congep, dsde)
-        character(len=16), intent(in) :: option, hydr
+        character(len=16), intent(in) :: option
         integer, intent(in) :: j_mater
         integer, intent(in) :: ndim, dimdef, dimcon
         integer, intent(in) :: addeme, addep1, addep2, addete, adcp11, adcp21

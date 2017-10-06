@@ -20,7 +20,7 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine calcfh_ladg(option, perman, hydr  , ndim  , j_mater,&
+    subroutine calcfh_ladg(option, perman, ndim  , j_mater,&
                            dimdef, dimcon,&
                            addep1, addep2, adcp11 , adcp12, adcp21 , adcp22,&
                            addeme, addete, &
@@ -29,7 +29,7 @@ interface
                            rho11 , h11   , h12    ,&
                            satur , dsatur, gravity, tperm,&
                            congep, dsde)
-        character(len=16), intent(in) :: option, hydr
+        character(len=16), intent(in) :: option
         aster_logical, intent(in) :: perman
         integer, intent(in) :: j_mater
         integer, intent(in) :: ndim, dimdef, dimcon

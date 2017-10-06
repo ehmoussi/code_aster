@@ -17,14 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface 
-    subroutine calcfh_vf(nume_thmc,&
-                         option   , hydr  , j_mater, ifa,&
-                         t        , p1    , p2     , pvp, pad ,&
-                         rho11    , h11   , h12    ,&
-                         satur    , dsatur, & 
-                         valfac   , valcen)
-        integer, intent(in) :: nume_thmc
-        character(len=16), intent(in) :: option, hydr
+    subroutine calcfh_vf(option, j_mater, ifa,&
+                         t     , p1    , p2     , pvp, pad ,&
+                         rho11 , h11   , h12    ,&
+                         satur , dsatur, & 
+                         valfac, valcen)
+        character(len=16), intent(in) :: option
         integer, intent(in) :: j_mater
         integer, intent(in) :: ifa
         real(kind=8), intent(in) :: t, p1, p2, pvp, pad

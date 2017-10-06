@@ -17,10 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface 
-    subroutine thmEvalPermLiquGaz(hydr, j_mater     , satur, p2, temp,&
-                                  krl , dkrl_dsatur ,&
-                                  krg_, dkrg_dsatur_, dkrg_dp2_)
-        character(len=16), intent(in) :: hydr
+    subroutine thmEvalPermLiquGaz(j_mater, satur       , p2, temp,&
+                                  krl    , dkrl_dsatur ,&
+                                  krg_   , dkrg_dsatur_, dkrg_dp2_)
         integer, intent(in) :: j_mater
         real(kind=8), intent(in) :: satur, p2, temp
         real(kind=8), intent(out) :: krl, dkrl_dsatur

@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine calcfh_vf_lvga(option, hydr  , j_mater, ifa, &
-                          t     , p1    , p2     , pvp, pad ,&
-                          rho11 , h11   , h12    ,&
-                          satur , dsatur, & 
+subroutine calcfh_vf_lvga(option, j_mater, ifa, &
+                          t     , p1     , p2 , pvp, pad ,&
+                          rho11 , h11    , h12,&
+                          satur , dsatur , & 
                           valfac, valcen)
 !
 use THM_type
@@ -35,7 +35,7 @@ implicit none
 #include "asterfort/thmEvalFickAir.h"
 #include "asterfort/thmEvalPermLiquGaz.h"
 !
-character(len=16), intent(in) :: option, hydr
+character(len=16), intent(in) :: option
 integer, intent(in) :: j_mater
 integer, intent(in) :: ifa
 real(kind=8), intent(in) :: t, p1, p2, pvp, pad
@@ -53,7 +53,6 @@ real(kind=8), intent(inout) :: valfac(6, 14, 6)
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  option           : option to compute
-! In  hydr             : type of hydraulic law
 ! In  j_mater          : coded material address
 ! In  ifa              : index of current face
 ! In  t                : temperature - At end of current step
@@ -188,9 +187,9 @@ real(kind=8), intent(inout) :: valfac(6, 14, 6)
 !
 ! - Evaluate permeability for liquid and gaz
 !
-    call thmEvalPermLiquGaz(hydr  , j_mater, satur, p2, t,&
-                            permli, dperml ,&
-                            permgz, dperms , dpermp)
+    call thmEvalPermLiquGaz(j_mater, satur , p2, t,&
+                            permli , dperml,&
+                            permgz , dperms, dpermp)
 ! 
 ! - Evaluate Fick coefficients for steam in gaz
 !

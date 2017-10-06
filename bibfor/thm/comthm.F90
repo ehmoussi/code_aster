@@ -253,8 +253,7 @@ integer, intent(out) :: retcom
 ! - Compute flux and stress for hydraulic
 !
     if (ds_thm%ds_elem%l_dof_pre1) then
-        call calcfh(nume_thmc, &
-                    option   , l_steady, hydr   , ndim  , j_mater,&
+        call calcfh(option   , l_steady, ndim  , j_mater,&
                     dimdef   , dimcon  ,&
                     addep1   , addep2  ,&
                     adcp11   , adcp12  , adcp21 , adcp22,&

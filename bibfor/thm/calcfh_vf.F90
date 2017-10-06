@@ -17,12 +17,14 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine calcfh_vf(nume_thmc,&
-                     option   , hydr  , j_mater, ifa,&
-                     t        , p1    , p2     , pvp, pad ,&
-                     rho11    , h11   , h12    ,&
-                     satur    , dsatur, & 
+subroutine calcfh_vf(option   , j_mater, ifa,&
+                     t        , p1     , p2     , pvp, pad ,&
+                     rho11    , h11    , h12    ,&
+                     satur    , dsatur , & 
                      valfac   , valcen)
+!
+use THM_type
+use THM_module
 !
 implicit none
 !
@@ -30,9 +32,9 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/calcfh_vf_lvga.h"
 #include "asterfort/calcfh_vf_ladg.h"
+#include "asterfort/THM_type.h"
 !
-integer, intent(in) :: nume_thmc
-character(len=16), intent(in) :: option, hydr
+character(len=16), intent(in) :: option
 integer, intent(in) :: j_mater
 integer, intent(in) :: ifa
 real(kind=8), intent(in) :: t, p1, p2, pvp, pad
@@ -49,9 +51,7 @@ real(kind=8), intent(inout) :: valfac(6, 14, 6)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  nume_thmc        : index of coupling law for THM
 ! In  option           : option to compute
-! In  hydr             : type of hydraulic law
 ! In  j_mater          : coded material address
 ! In  ifa              : index of current face
 ! In  t                : temperature - At end of current step
@@ -69,16 +69,16 @@ real(kind=8), intent(inout) :: valfac(6, 14, 6)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    select case (nume_thmc)
+    select case (ds_thm%ds_behaviour%nume_thmc)
     case (9)
-        call calcfh_vf_lvga(option, hydr  , j_mater, ifa, &
+        call calcfh_vf_lvga(option, j_mater, ifa, &
                             t     , p1    , p2     , pvp, pad,&
                             rho11 , h11   , h12    ,&
                             satur , dsatur, & 
                             valfac, valcen)
 
     case (10)
-        call calcfh_vf_ladg(option, hydr  , j_mater, ifa, &
+        call calcfh_vf_ladg(option, j_mater, ifa, &
                             t     , p1    , p2     , pvp, pad,&
                             rho11 , h11   , h12    ,&
                             satur , dsatur, & 

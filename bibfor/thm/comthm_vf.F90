@@ -305,8 +305,7 @@ real(kind=8), intent(inout) :: valfac(maxfa, 14, 6)
 ! - Compute flux and stress for hydraulic
 !
     if (ds_thm%ds_elem%l_dof_pre1) then
-        call calcfh_vf(nume_thmc,&
-                       option, hydr  , j_mater, ifa,&
+        call calcfh_vf(option, j_mater, ifa,&
                        temp  , p1    , p2     , pvp, pad,&
                        rho11 , h11   , h12    ,&
                        satur , dsatur, & 
