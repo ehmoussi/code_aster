@@ -25,9 +25,6 @@ interface
                       dimdef   , dimcon   ,&
                       mecani   , press1   , press2    , tempe, &
                       compor   , carcri   ,&
-                      thmc     , hydr     ,&
-                      advihy   , advico   ,&
-                      vihrho   , vicphi   , vicpvp    , vicsat,&
                       defgem   , defgep   ,&
                       congem   , congep   ,&
                       vintm    , vintp    ,&
@@ -43,9 +40,6 @@ interface
         integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
         character(len=16), intent(in)  :: compor(*)
         real(kind=8), intent(in) :: carcri(*)
-        character(len=16), intent(in) :: thmc, hydr
-        integer, intent(in) :: advihy, advico
-        integer, intent(in) :: vihrho, vicphi, vicpvp, vicsat
         real(kind=8), intent(in) :: defgem(dimdef), defgep(dimdef)
         real(kind=8), intent(inout) :: congem(dimcon), congep(dimcon)
         real(kind=8), intent(in) :: vintm(nbvari)

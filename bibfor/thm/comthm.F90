@@ -20,14 +20,11 @@
 !
 subroutine comthm(l_steady ,&
                   option   , j_mater  ,&
-                  typmod   , angl_naut,&
-                  thmc     , hydr     ,&     
+                  type_elem, angl_naut,&   
                   ndim     , nbvari   ,&
                   dimdef   , dimcon   ,&
                   adcome   , adcote   , adcp11  , adcp12, adcp21, adcp22,&
                   addeme   , addete   , addep1  , addep2,&
-                  advico   , advihy   ,&
-                  vihrho   , vicphi   , vicpvp  , vicsat,&
                   kpi      , npg      ,&
                   compor   , carcri   ,&
                   defgem   , defgep   ,& 
@@ -53,24 +50,21 @@ implicit none
 #include "asterfort/thmGetParaHydr.h"
 #include "asterfort/thmMatrHooke.h"
 #include "asterfort/tebiot.h"
-#include "asterfort/thmGetParaBehaviour.h"
 #include "asterfort/thmEvalSatuFinal.h"
 #include "asterfort/thmGetPermeabilityTensor.h"
 #include "asterfort/thmEvalGravity.h"
 #include "asterfort/thmEvalConductivity.h"
+#include "asterfort/THM_type.h"
 !
 aster_logical, intent(in) :: l_steady
 character(len=16), intent(in) :: option
 integer, intent(in) :: j_mater
-character(len=8), intent(in) :: typmod(2)
+character(len=8), intent(in) :: type_elem(2)
 real(kind=8), intent(in) :: angl_naut(3)
-character(len=16), intent(in) :: thmc, hydr
 integer, intent(in) :: ndim, nbvari
 integer, intent(in) :: dimdef, dimcon
 integer, intent(in) :: adcome, adcote, adcp11, adcp12, adcp21, adcp22
 integer, intent(in) :: addeme, addete, addep1, addep2
-integer, intent(in) :: advihy, advico
-integer, intent(in) :: vihrho, vicphi, vicpvp, vicsat
 integer, intent(in) :: kpi, npg
 character(len=16), intent(in)  :: compor(*)
 real(kind=8), intent(in) :: carcri(*)
@@ -95,10 +89,8 @@ integer, intent(out) :: retcom
 ! In  l_steady         : flag for no-transient problem
 ! In  option           : name of option- to compute
 ! In  j_mater          : coded material address
-! In  typmod           : type of modelization (TYPMOD2)
+! In  type_elem        : type of modelization (TYPMOD2)
 ! In  angl_naut        : nautical angles
-! In  thmc             : coupling law
-! In  hydr             : hydraulic law
 ! In  ndim             : dimension of space (2 or 3)
 ! In  nbvari           : total number of internal state variables
 ! In  dimdef           : dimension of generalized strains vector
@@ -113,12 +105,6 @@ integer, intent(out) :: retcom
 ! In  addete           : adress of thermic components in generalized strains vector
 ! In  addep1           : adress of capillary pressure in generalized strains vector
 ! In  addep2           : adress of gaz pressure in generalized strains vector
-! In  advico           : index of first internal state variable for coupling law
-! In  advihy           : index of internal state variable for hydraulic law 
-! In  vihrho           : index of internal state variable for volumic mass of liquid
-! In  vicphi           : index of internal state variable for porosity
-! In  vicpvp           : index of internal state variable for pressure of steam
-! In  vicsat           : index of internal state variable for saturation
 ! In  kpi              : current Gauss point
 ! In  npg              : number of Gauss points
 ! In  compor           : behaviour
@@ -144,10 +130,25 @@ integer, intent(out) :: retcom
     real(kind=8) :: lambp, dlambp, lambs, dlambs
     real(kind=8) :: tlambt(ndim, ndim), tlamct(ndim, ndim), tdlamt(ndim, ndim)
     integer :: nume_thmc
+    integer :: advihy, advico
+    integer :: vihrho, vicphi, vicpvp, vicsat
+    character(len=16) :: hydr, thmc
 !
 ! --------------------------------------------------------------------------------------------------
 !
     retcom = 0
+!
+! - Get storage parameters for behaviours
+!
+    thmc      = ds_thm%ds_behaviour%rela_thmc
+    hydr      = ds_thm%ds_behaviour%rela_hydr
+    nume_thmc = ds_thm%ds_behaviour%nume_thmc
+    advico    = ds_thm%ds_behaviour%advico
+    advihy    = ds_thm%ds_behaviour%advihy
+    vihrho    = ds_thm%ds_behaviour%vihrho
+    vicphi    = ds_thm%ds_behaviour%vicphi
+    vicpvp    = ds_thm%ds_behaviour%vicpvp
+    vicsat    = ds_thm%ds_behaviour%vicsat
 !
 ! - Update unknowns
 !
@@ -188,8 +189,6 @@ integer, intent(out) :: retcom
 !
 ! - Compute generalized stresses and matrix for coupled quantities
 !
-    call thmGetParaBehaviour(compor,&
-                             nume_thmc_ = nume_thmc)
     call calcco(l_steady, nume_thmc,&
                 option  , angl_naut,&
                 hydr    , j_mater  ,&
@@ -218,7 +217,7 @@ integer, intent(out) :: retcom
         call thmSelectMeca(p1       , dp1      ,&
                            p2       , dp2      ,&
                            satur    , tbiot    ,&
-                           option   , j_mater  , ndim  , typmod, angl_naut,&
+                           option   , j_mater  , ndim  , type_elem, angl_naut,&
                            compor   , carcri   ,&
                            time_prev, time_curr, dtemp ,&
                            addeme   , addete   , adcome, addep1, addep2   ,&

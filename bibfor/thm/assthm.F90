@@ -53,8 +53,8 @@ implicit none
 #include "asterfort/matini.h"
 #include "asterfort/pmathm.h"
 #include "asterfort/utmess.h"
-#include "asterfort/nvithm.h"
 #include "asterfort/thmGetBehaviour.h"
+#include "asterfort/thmGetBehaviourVari.h"
 #include "asterfort/Behaviour_type.h"
 #include "asterfort/thmGetParaInit.h"
 #include "asterfort/thmSelectMatrix.h"
@@ -147,10 +147,7 @@ integer, intent(out) :: codret
     real(kind=8) :: time_incr, parm_theta
     integer :: kpi, ipi
     integer :: i, j, n, k, kji
-    character(len=16) :: meca, thmc, ther, hydr
-    integer :: nvit, nvih, nvic, nvim
-    integer :: advihy, advico, advime, advith
-    integer :: vihrho, vicphi, vicpvp, vicsat, vicpr1, vicpr2
+    integer :: nb_vari_meca
     real(kind=8) :: a(2), as(2), ak(2), poids, poids2
     real(kind=8) :: c(21), ck(21), cs(21)
     integer :: addeme, addep1, addep2, addete, ii, jj
@@ -182,16 +179,17 @@ integer, intent(out) :: codret
     addep2     = press2(3)
     addete     = tempe(2)
 !
-! - Get behaviours parameters from COMPOR field
-!
-    call nvithm(compor, meca, thmc, ther, hydr,&
-                nvim, nvit, nvih, nvic, advime,&
-                advith, advihy, advico, vihrho, vicphi,&
-                vicpvp, vicsat, vicpr1, vicpr2)
-!
-! - Get parameters for coupling
+! - Get parameters for behaviour
 !
     call thmGetBehaviour(compor)
+!
+! - Get parameters for internal variables
+!
+    call thmGetBehaviourVari()
+!
+! - Get storage parameters for behaviours
+!
+    nb_vari_meca = ds_thm%ds_behaviour%nb_vari_meca
 !
 ! - Get initial parameters (THM_INIT)
 !
@@ -255,9 +253,6 @@ integer, intent(out) :: codret
                         dimdef   , dimcon   ,&
                         mecani   , press1   , press2, tempe ,&
                         compor   , carcri   ,&
-                        thmc     , hydr     ,&
-                        advihy   , advico   ,&
-                        vihrho   , vicphi   , vicpvp, vicsat,&
                         defgem   , defgep   ,&
                         congem((kpi-1)*dimcon+1), congep((kpi-1)*dimcon+1),&
                         vintm((kpi-1)*nbvari+1) , vintp((kpi-1)*nbvari+1) ,&
@@ -271,9 +266,6 @@ integer, intent(out) :: codret
                         dimdef   , dimcon   ,&
                         mecani   , press1   , press2, tempe, &
                         compor   , carcri   ,&
-                        thmc     , hydr     ,&
-                        advihy   , advico   ,&
-                        vihrho   , vicphi   , vicpvp, vicsat,&
                         defgem   , defgep   ,&
                         congem((kpi-1)* dimcon+1), congep((kpi-1)* dimcon+1),&
                         vintm((kpi-1)*nbvari+1)  , vintp((kpi-1)*nbvari+1)  ,&
@@ -285,14 +277,14 @@ integer, intent(out) :: codret
                     do i = 1, 6
                         congep((kpi-1)*dimcon+i) = congep((kpi-npg-1)*dimcon+i)
                     end do
-                    do i = 1, nvim
+                    do i = 1, nb_vari_meca
                         vintp((kpi-1)*nbvari+i) = vintp((kpi-npg-1)*nbvari+i)
                     end do
                 endif
             endif
         endif
         if (codret .ne. 0) then
-            goto 999
+            goto 99
         endif
 ! ======================================================================
 ! --- CONTRIBUTION DU POINT D'INTEGRATION KPI A LA MATRICE TANGENTE ET -
@@ -373,6 +365,6 @@ integer, intent(out) :: codret
         end do
     endif
 ! ======================================================================
-999 continue
+99 continue
 ! ======================================================================
 end subroutine
