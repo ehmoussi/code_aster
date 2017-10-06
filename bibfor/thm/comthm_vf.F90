@@ -25,7 +25,7 @@ subroutine comthm_vf(option   , j_mater  ,&
                      ifa      , valfac   , valcen, &
                      adcome   , adcote   , adcp11, adcp12, adcp21, adcp22,&
                      addeme   , addete   , addep1, addep2,&
-                     compor   , carcri   ,&
+                     carcri   ,&
                      defgem   , defgep   ,& 
                      congem   , congep   ,&
                      vintm    , vintp    ,&
@@ -63,7 +63,6 @@ integer, intent(in) :: ndim, nbvari
 integer, intent(in) :: dimdef, dimcon
 integer, intent(in) :: adcome, adcote, adcp11, adcp12, adcp21, adcp22
 integer, intent(in) :: addeme, addete, addep1, addep2
-character(len=16), intent(in)  :: compor(*)
 real(kind=8), intent(in) :: carcri(*)
 real(kind=8), intent(in) :: defgem(1:dimdef), defgep(1:dimdef)
 real(kind=8), intent(in) :: congem(1:dimcon)
@@ -109,7 +108,6 @@ real(kind=8), intent(inout) :: valfac(maxfa, 14, 6)
 ! In  addete           : adress of thermic components in generalized strains vector
 ! In  addep1           : adress of capillary pressure in generalized strains vector
 ! In  addep2           : adress of gaz pressure in generalized strains vector
-! In  compor           : behaviour
 ! In  carcri           : parameters for comportment
 ! In  defgem           : generalized strains - At begin of current step
 ! In  defgep           : generalized strains - At end of current step
@@ -246,7 +244,7 @@ real(kind=8), intent(inout) :: valfac(maxfa, 14, 6)
                            p2       , dp2      ,&
                            satur    , tbiot    ,&
                            option   , j_mater  , ndim  , type_elem, angl_naut,&
-                           compor   , carcri   ,&
+                           carcri   ,&
                            time_prev, time_curr, dtemp ,&
                            addeme   , addete   , adcome, addep1   , addep2   ,&
                            dimdef   , dimcon   ,&

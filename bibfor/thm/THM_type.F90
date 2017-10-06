@@ -54,6 +54,8 @@ implicit none
 
 ! - Behaviour
     type THM_Behaviour
+! ----- Name of deformation algorithm
+        character(len=16) :: defo
 ! ----- Name of behaviour law for coupling
         character(len=16) :: rela_thmc
 ! ----- Name of behaviour law for mechanic

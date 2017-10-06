@@ -451,7 +451,7 @@ real(kind=8), intent(inout) :: vectu(dimuel)
                    0          , valfac     , valcen,&
                    adcome     , adcote     , adcp11, adcp12, adcp21, adcp22,&
                    addeme     , addete     , addep1, addep2,&
-                   compor     , carcri     ,&
+                   carcri     ,&
                    defgem     , defgep     ,& 
                    congem     , congep     ,& 
                    vintm(1, 1), vintp(1, 1),& 
@@ -492,7 +492,7 @@ real(kind=8), intent(inout) :: vectu(dimuel)
                        fa            , valfac        , valcen,&
                        adcome        , adcote        , adcp11, adcp12, adcp21, adcp22,&
                        addeme        , addete        , addep1, addep2,&
-                       compor        , carcri        ,&
+                       carcri        ,&
                        defgem        , defgep        ,& 
                        congem        , congep        ,& 
                        vintm(1, fa+1), vintp(1, fa+1),& 

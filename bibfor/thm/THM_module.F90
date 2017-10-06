@@ -58,6 +58,7 @@ subroutine thmModuleInit()
     ds_thm%ds_parainit%poro_init          = 0.d0
     ds_thm%ds_parainit%prev_init          = 0.d0
 !   Behaviour
+    ds_thm%ds_behaviour%defo              = ' '
     ds_thm%ds_behaviour%rela_thmc         = ' '
     ds_thm%ds_behaviour%rela_meca         = ' '
     ds_thm%ds_behaviour%rela_ther         = ' '

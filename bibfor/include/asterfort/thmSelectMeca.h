@@ -18,17 +18,17 @@
 ! aslint: disable=W1504
 !
 interface 
-    subroutine thmSelectMeca(p1    , dp1      , p2    , dp2   , satur    , tbiot,&
-                             option, j_mater  , ndim  , typmod, angl_naut,&
-                             compor, carcri   , instam, instap, dtemp    ,&
-                             addeme, addete   , adcome, addep1, addep2,&
-                             dimdef, dimcon,&
-                             defgem, deps     ,&
-                             congem, vintm    ,&
-                             congep, vintp    ,&
+    subroutine thmSelectMeca(p1    , dp1    , p2    , dp2   , satur    , tbiot,&
+                             option, j_mater, ndim  , typmod, angl_naut,&
+                             carcri, instam , instap, dtemp ,&
+                             addeme, addete , adcome, addep1, addep2,&
+                             dimdef, dimcon ,&
+                             defgem, deps   ,&
+                             congem, vintm  ,&
+                             congep, vintp  ,&
                              dsde  , retcom)
         integer, intent(in) :: j_mater
-        character(len=16), intent(in) :: option, compor(*)
+        character(len=16), intent(in) :: option
         real(kind=8), intent(in) :: p1, dp1, p2, dp2, satur, tbiot(6)
         character(len=8), intent(in) :: typmod(2)
         real(kind=8), intent(in) :: carcri(*)

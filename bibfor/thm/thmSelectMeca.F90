@@ -17,11 +17,11 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
 !
-subroutine thmSelectMeca(p1    , dp1      , p2    , dp2   , satur    , tbiot,&
+subroutine thmSelectMeca(p1    , dp1    , p2    , dp2   , satur    , tbiot,&
                          option, j_mater, ndim  , typmod, angl_naut,&
-                         compor, carcri , instam, instap, dtemp    ,&
-                         addeme, addete   , adcome, addep1, addep2,&
-                         dimdef, dimcon,&
+                         carcri, instam , instap, dtemp ,&
+                         addeme, addete , adcome, addep1, addep2,&
+                         dimdef, dimcon ,&
                          defgem, deps   ,&
                          congem, vintm  ,&
                          congep, vintp  ,&
@@ -39,11 +39,10 @@ implicit none
 #include "asterfort/Behaviour_type.h"
 #include "asterfort/thmMecaElas.h"
 #include "asterfort/thmCheckPorosity.h"
-#include "asterfort/thmGetParaBehaviour.h"
 #include "asterfort/thmMecaSpecial.h"
 !
 integer, intent(in) :: j_mater
-character(len=16), intent(in) :: option, compor(*)
+character(len=16), intent(in) :: option
 real(kind=8), intent(in) :: p1, dp1, p2, dp2, satur, tbiot(6)
 character(len=8), intent(in) :: typmod(2)
 real(kind=8), intent(in) :: carcri(*)
@@ -80,7 +79,6 @@ integer, intent(out) :: retcom
 !                        (1) Alpha - clockwise around Z0
 !                        (2) Beta  - counterclockwise around Y1
 !                        (3) Gamma - clockwise around X
-! In  compor           : behaviour
 ! In  carcri           : parameters for comportment
 ! In  instam           : time at beginning of time step
 ! In  instap           : time at end of time step
@@ -103,12 +101,14 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=16) :: meca, compor_meca(NB_COMP_MAXI)
-    integer :: nvimec, numlc, i, j, nume_thmc
+    character(len=16) :: compor_meca(NB_COMP_MAXI)
+    integer :: i, j
     real(kind=8) :: dsdeme(6, 6), alpha0, ther_meca(6)
     aster_logical :: l_matrix
     integer :: ndt, ndi
     common /tdim/   ndt  , ndi
+    character(len=16) :: meca, defo
+    integer :: nb_vari_meca, nume_meca, nume_thmc
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -121,13 +121,13 @@ integer, intent(out) :: retcom
     retcom         = 0
     l_matrix       = (option(1:9).eq.'RIGI_MECA') .or. (option(1:9) .eq.'FULL_MECA')
 !
-! - Get mechanical behaviour
+! - Get storage parameters for behaviours
 !
-    call thmGetParaBehaviour(compor,&
-                             meca_      = meca     ,&
-                             nvim_      = nvimec   ,&
-                             nume_meca_ = numlc    ,&
-                             nume_thmc_ = nume_thmc)
+    defo         = ds_thm%ds_behaviour%defo
+    meca         = ds_thm%ds_behaviour%rela_meca
+    nb_vari_meca = ds_thm%ds_behaviour%nb_vari_meca
+    nume_meca    = ds_thm%ds_behaviour%nume_meca
+    nume_thmc    = ds_thm%ds_behaviour%nume_thmc
 !
 ! - Check porosity
 !
@@ -135,7 +135,7 @@ integer, intent(out) :: retcom
 !
 ! - Select
 !
-    if (numlc .eq. 0) then
+    if (nume_meca .eq. 0) then
 ! ----- Special behaviours
         call thmMecaSpecial(option , meca     , nume_thmc,&
                             p1     , dp1      , p2       , dp2   , satur, tbiot,&
@@ -147,7 +147,7 @@ integer, intent(out) :: retcom
                             congep , vintp    ,&
                             dsde   , ther_meca, retcom)
 
-    elseif (numlc .eq. 1) then
+    elseif (nume_meca .eq. 1) then
 ! ----- Elasticity
         ASSERT(meca .eq. 'ELAS')
         call thmMecaElas(option, angl_naut, dtemp,&
@@ -155,16 +155,16 @@ integer, intent(out) :: retcom
                          deps  , congep, dsdeme, ther_meca)
 
 
-    elseif (numlc .ge. 100) then
+    elseif (nume_meca .ge. 100) then
 ! ----- Forbidden behaviours
         call utmess('F', 'THM1_1', sk = meca)
 
     else
 ! ----- Standard behaviours
         compor_meca(NAME) = meca
-        write (compor_meca(NVAR),'(I16)') nvimec
-        compor_meca(DEFO) = compor(DEFO)
-        write (compor_meca(NUME),'(I16)') numlc
+        write (compor_meca(NVAR),'(I16)') nb_vari_meca
+        compor_meca(DEFO) = defo
+        write (compor_meca(NUME),'(I16)') nume_meca
         call calcme(option     , j_mater, ndim  , typmod, angl_naut,&
                     compor_meca, carcri , instam, instap,&
                     addeme     , adcome , dimdef, dimcon,&
