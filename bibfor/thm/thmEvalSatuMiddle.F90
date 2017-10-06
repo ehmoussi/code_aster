@@ -16,8 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine thmEvalSatuMiddle(hydr , j_mater, p1    ,&
-                             satur, dsatur , retcom)
+subroutine thmEvalSatuMiddle(j_mater, p1    ,&
+                             satur  , dsatur , retcom)
 !
 use THM_type
 use THM_module
@@ -30,9 +30,6 @@ implicit none
 #include "asterfort/satuvg.h"
 #include "asterfort/THM_type.h"
 !
-! --------------------------------------------------------------------------------------------------
-!
-character(len=16), intent(in) :: hydr
 integer, intent(in) :: j_mater
 real(kind=8), intent(in) :: p1
 real(kind=8), intent(out) :: satur, dsatur
@@ -46,7 +43,6 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  hydr         : type of hydraulic law
 ! In  j_mater      : coded material address
 ! In  p1           : capillary pressure - At end of current step
 ! Out satur        : saturation
@@ -65,7 +61,8 @@ integer, intent(out) :: retcom
 !
     retcom       = 0
     para_vale(:) = 0.d0
-    if (hydr .eq. 'HYDR_UTIL' .or. hydr .eq. 'HYDR_ENDO') then
+    if (ds_thm%ds_behaviour%rela_hydr .eq. 'HYDR_UTIL' .or.&
+        ds_thm%ds_behaviour%rela_hydr .eq. 'HYDR_ENDO') then
         call rcvala(j_mater, ' '      , 'THM_DIFFU',&
                     1      , 'PCAP'   , [p1]       ,&
                     nb_para, para_name, para_vale  , icodre,&

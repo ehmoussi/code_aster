@@ -25,8 +25,6 @@ interface
                          dimdef, dimcon,&
                          adcome, adcote, adcp11,& 
                          addeme, addete, addep1,&
-                         advico, advihy,&
-                         vihrho, vicphi,&
                          temp  ,&
                          dtemp , dp1   ,&
                          deps  , epsv  , depsv,&
@@ -42,7 +40,6 @@ interface
         integer, intent(in) :: dimdef, dimcon
         integer, intent(in) :: adcome, adcote, adcp11 
         integer, intent(in) :: addeme, addete, addep1
-        integer, intent(in) :: advico, advihy, vihrho, vicphi
         real(kind=8), intent(in) :: temp
         real(kind=8), intent(in) :: dtemp, dp1
         real(kind=8), intent(in) :: epsv, depsv, deps(6), tbiot(6)

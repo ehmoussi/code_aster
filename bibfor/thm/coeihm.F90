@@ -135,10 +135,8 @@ real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
     real(kind=8) :: dsde(dimcon, dimdef)
     real(kind=8) :: tlint, ouvh, deltat
     real(kind=8) :: angl_naut(3)
-    integer :: advihy, advico
-    integer :: vihrho, vicphi, vicpvp, vicsat
-    character(len=16) :: hydr, meca
     integer :: nume_thmc
+    character(len=16) :: meca
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -158,15 +156,8 @@ real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
 !
 ! - Get storage parameters for behaviours
 !
-    hydr      = ds_thm%ds_behaviour%rela_hydr
     meca      = ds_thm%ds_behaviour%rela_meca
     nume_thmc = ds_thm%ds_behaviour%nume_thmc
-    advico    = ds_thm%ds_behaviour%advico
-    advihy    = ds_thm%ds_behaviour%advihy
-    vihrho    = ds_thm%ds_behaviour%vihrho
-    vicphi    = ds_thm%ds_behaviour%vicphi
-    vicpvp    = ds_thm%ds_behaviour%vicpvp
-    vicsat    = ds_thm%ds_behaviour%vicsat
 !
 ! - Update unknowns
 !
@@ -219,15 +210,13 @@ real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
 !
 ! - Compute generalized stresses and matrix for coupled quantities
 !
-    call calcco(l_steady, nume_thmc,&
+    call calcco(l_steady,&
                 option  , angl_naut,&
-                hydr    , j_mater  ,&
+                j_mater  ,&
                 ndim-1  , nbvari   ,&
                 dimdef  , dimcon   ,&
                 adcome  , adcote   , adcp11, adcp12, adcp21, adcp22,&
                 addeme  , addete   , addep1, addep2,&
-                advico  , advihy   ,&
-                vihrho  , vicphi   , vicpvp, vicsat,&
                 t       , p1       , p2    ,&
                 dt      , dp1      , dp2   ,&
                 deps    , epsv     , depsv ,&

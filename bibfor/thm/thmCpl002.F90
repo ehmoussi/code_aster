@@ -23,7 +23,6 @@ subroutine thmCpl002(option, angl_naut,&
                      dimdef, dimcon,&
                      adcome, adcote, adcp11,& 
                      addeme, addete, addep1,&
-                     advico, vicphi,&
                      temp  , p1    ,&
                      dtemp , dp1   ,&
                      deps  , epsv  , depsv,&
@@ -67,7 +66,6 @@ integer, intent(in) :: ndim, nbvari
 integer, intent(in) :: dimdef, dimcon
 integer, intent(in) :: adcome, adcote, adcp11 
 integer, intent(in) :: addeme, addete, addep1
-integer, intent(in) :: advico, vicphi
 real(kind=8), intent(in) :: temp, p1
 real(kind=8), intent(in) :: dtemp, dp1
 real(kind=8), intent(in) :: epsv, depsv, deps(6), tbiot(6)
@@ -102,8 +100,6 @@ integer, intent(out) :: retcom
 ! In  addeme           : adress of mechanic components in generalized strains vector
 ! In  addete           : adress of thermic components in generalized strains vector
 ! In  addep1           : adress of first pressure in generalized strains vector
-! In  advico           : index of first internal state variable for coupling law
-! In  vicphi           : index of internal state variable for porosity
 ! In  temp             : temperature at end of current time step
 ! In  p1               : capillary pressure at end of current time step (here, only gaz)
 ! In  dtemp            : increment of temperature
@@ -141,6 +137,7 @@ integer, intent(out) :: retcom
     real(kind=8) :: dp1_, dp2, p2, signe
     real(kind=8) :: dmdeps(6), sigmp(6), dsdp2(6)
     real(kind=8) :: dqeps(6)
+    integer :: advico, vicphi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -165,6 +162,11 @@ integer, intent(out) :: retcom
     p2     = p1
     dp2    = dp1
     dp1_   = 0.d0
+!
+! - Get storage parameters for behaviours
+!
+    advico = ds_thm%ds_behaviour%advico
+    vicphi = ds_thm%ds_behaviour%vicphi
 !
 ! - Get initial parameters
 !

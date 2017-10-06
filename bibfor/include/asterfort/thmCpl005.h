@@ -19,13 +19,11 @@
 !
 interface 
     subroutine thmCpl005(option, angl_naut,&
-                         hydr  , j_mater  ,&
+                         j_mater  ,&
                          ndim  , nbvari   ,&
                          dimdef, dimcon   ,&
                          adcome, adcote   , adcp11, adcp21,&
-                         addeme, addete   , addep1, addep2,& 
-                         advico, advihy   ,&
-                         vihrho, vicphi   , vicsat,&
+                         addeme, addete   , addep1, addep2,&
                          temp  , p1       , p2    ,&
                          dtemp , dp1      , dp2   ,&
                          deps  , epsv     , depsv ,&
@@ -36,13 +34,10 @@ interface
                          retcom)
         character(len=16), intent(in) :: option
         real(kind=8), intent(in) :: angl_naut(3)
-        character(len=16), intent(in) :: hydr
         integer, intent(in) :: j_mater, ndim, nbvari
         integer, intent(in) :: dimdef, dimcon
         integer, intent(in) :: adcome, adcote, adcp11, adcp21
         integer, intent(in) :: addeme, addete, addep1, addep2
-        integer, intent(in) :: advihy, advico
-        integer, intent(in) :: vihrho, vicphi, vicsat
         real(kind=8), intent(in) :: temp, p1, p2
         real(kind=8), intent(in) :: dtemp, dp1, dp2
         real(kind=8), intent(in) :: epsv, depsv, deps(6), tbiot(6)

@@ -19,13 +19,11 @@
 ! person_in_charge: sylvie.granet at edf.fr
 !
 subroutine thmCpl005(option, angl_naut,&
-                     hydr  , j_mater  ,&
+                     j_mater,&
                      ndim  , nbvari   ,&
                      dimdef, dimcon   ,&
                      adcome, adcote   , adcp11, adcp21,&
-                     addeme, addete   , addep1, addep2,& 
-                     advico, advihy   ,&
-                     vihrho, vicphi   , vicsat,&
+                     addeme, addete   , addep1, addep2,&
                      temp  , p1       , p2    ,&
                      dtemp , dp1      , dp2   ,&
                      deps  , epsv     , depsv ,&
@@ -75,13 +73,10 @@ implicit none
 !
 character(len=16), intent(in) :: option
 real(kind=8), intent(in) :: angl_naut(3)
-character(len=16), intent(in) :: hydr
 integer, intent(in) :: j_mater, ndim, nbvari
 integer, intent(in) :: dimdef, dimcon
 integer, intent(in) :: adcome, adcote, adcp11, adcp21
 integer, intent(in) :: addeme, addete, addep1, addep2
-integer, intent(in) :: advihy, advico
-integer, intent(in) :: vihrho, vicphi, vicsat
 real(kind=8), intent(in) :: temp, p1, p2
 real(kind=8), intent(in) :: dtemp, dp1, dp2
 real(kind=8), intent(in) :: epsv, depsv, deps(6), tbiot(6)
@@ -106,7 +101,6 @@ integer, intent(out)  :: retcom
 !                        (1) Alpha - clockwise around Z0
 !                        (2) Beta  - counterclockwise around Y1
 !                        (1) Gamma - clockwise around X
-! In  hydr             : type of hydraulic law
 ! In  j_mater          : coded material address
 ! In  ndim             : dimension of space (2 or 3)
 ! In  nbvari           : total number of internal state variables
@@ -120,11 +114,6 @@ integer, intent(out)  :: retcom
 ! In  addete           : adress of thermic components in generalized strains vector
 ! In  addep1           : adress of capillary pressure in generalized strains vector
 ! In  addep2           : adress of gaz pressure in generalized strains vector
-! In  advico           : index of first internal state variable for coupling law
-! In  advihy           : index of internal state variable for hydraulic law 
-! In  vihrho           : index of internal state variable for volumic mass of liquid
-! In  vicphi           : index of internal state variable for porosity
-! In  vicsat           : index of internal state variable for saturation
 ! In  temp             : temperature at end of current time step
 ! In  p1               : capillary pressure at end of current time step
 ! In  p2               : gaz pressure at end of current time step
@@ -165,6 +154,8 @@ integer, intent(out)  :: retcom
     real(kind=8) :: dmdeps(6), sigmp(6), dsdp1(6), dsdp2(6)
     real(kind=8) :: dqeps(6)
     real(kind=8) :: p1m
+    integer :: advihy, advico
+    integer :: vihrho, vicphi, vicpvp, vicsat
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -183,6 +174,15 @@ integer, intent(out)  :: retcom
     dsatur = 0.d0
     satur  = 0.d0
     retcom = 0
+!
+! - Get storage parameters for behaviours
+!
+    advico    = ds_thm%ds_behaviour%advico
+    advihy    = ds_thm%ds_behaviour%advihy
+    vihrho    = ds_thm%ds_behaviour%vihrho
+    vicphi    = ds_thm%ds_behaviour%vicphi
+    vicpvp    = ds_thm%ds_behaviour%vicpvp
+    vicsat    = ds_thm%ds_behaviour%vicsat
 !
 ! - Get initial parameters
 !
@@ -211,8 +211,8 @@ integer, intent(out)  :: retcom
 !
 ! - Evaluation of initial saturation
 !
-    call thmEvalSatuInit(hydr  , j_mater, p1m   , p1    ,&
-                         saturm, satur  , dsatur, retcom)
+    call thmEvalSatuInit(j_mater, p1m   , p1    ,&
+                         saturm , satur  , dsatur, retcom)
 !
 ! - Evaluation of initial porosity
 !
