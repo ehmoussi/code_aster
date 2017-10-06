@@ -30,8 +30,8 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/calcfh_vf_lvga.h"
-#include "asterfort/calcfh_vf_ladg.h"
+#include "asterfort/thmFlhVF009.h"
+#include "asterfort/thmFlhVF010.h"
 #include "asterfort/THM_type.h"
 !
 character(len=16), intent(in) :: option
@@ -70,19 +70,19 @@ real(kind=8), intent(inout) :: valfac(6, 14, 6)
 ! --------------------------------------------------------------------------------------------------
 !
     select case (ds_thm%ds_behaviour%nume_thmc)
-    case (9)
-        call calcfh_vf_lvga(option, j_mater, ifa, &
-                            t     , p1    , p2     , pvp, pad,&
-                            rho11 , h11   , h12    ,&
-                            satur , dsatur, & 
-                            valfac, valcen)
+    case (LIQU_AD_GAZ_VAPE)
+        call thmFlhVF009(option, j_mater, ifa, &
+                         t     , p1    , p2     , pvp, pad,&
+                         rho11 , h11   , h12    ,&
+                         satur , dsatur, & 
+                         valfac, valcen)
 
-    case (10)
-        call calcfh_vf_ladg(option, j_mater, ifa, &
-                            t     , p1    , p2     , pvp, pad,&
-                            rho11 , h11   , h12    ,&
-                            satur , dsatur, & 
-                            valfac, valcen)
+    case (LIQU_AD_GAZ)
+        call thmFlhVF010(option, j_mater, ifa, &
+                         t     , p1    , p2     , pvp, pad,&
+                         rho11 , h11   , h12    ,&
+                         satur , dsatur, & 
+                         valfac, valcen)
 
     case default
         ASSERT(ASTER_FALSE)

@@ -16,22 +16,19 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-#include "asterf_types.h"
-!
 interface 
-    subroutine calcfh_gazp(option, perman , ndim,&
-                           dimdef, dimcon ,&
-                           addep1, adcp11 , addeme, addete,&
-                           t     , p1     , grap1 ,&
-                           rho11 , gravity, tperm ,&
-                           congep, dsde)
+    subroutine thmFlhVF009(option, j_mater, ifa,&
+                              t     , p1    , p2     , pvp, pad ,&
+                              rho11 , h11   , h12    ,&
+                              satur , dsatur, & 
+                              valfac, valcen)
         character(len=16), intent(in) :: option
-        aster_logical, intent(in) :: perman
-        integer, intent(in) :: ndim, dimdef, dimcon
-        integer, intent(in) :: addeme, addep1, addete, adcp11
-        real(kind=8), intent(in) :: rho11, grap1(3), t, p1
-        real(kind=8), intent(in) :: gravity(3), tperm(ndim, ndim)
-        real(kind=8), intent(inout) :: congep(1:dimcon)
-        real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
-    end subroutine calcfh_gazp
+        integer, intent(in) :: j_mater
+        integer, intent(in) :: ifa
+        real(kind=8), intent(in) :: t, p1, p2, pvp, pad
+        real(kind=8), intent(in) :: rho11, h11, h12
+        real(kind=8), intent(in) :: satur, dsatur
+        real(kind=8), intent(inout) :: valcen(14, 6)
+        real(kind=8), intent(inout) :: valfac(6, 14, 6)
+    end subroutine thmFlhVF009
 end interface 

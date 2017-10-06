@@ -18,16 +18,16 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504
 !
-subroutine calcfh(option, l_steady, ndim  , j_mater,&
-                  dimdef, dimcon  ,&
-                  addep1, addep2  ,&
-                  adcp11, adcp12  , adcp21 , adcp22,&
-                  addeme, addete  , &
-                  t     , p1      , p2     , pvp   , pad,&
-                  grat  , grap1   , grap2  ,& 
-                  rho11 , h11     , h12    ,&
-                  satur , dsatur  , gravity, tperm,&
-                  congep, dsde)
+subroutine calcfh(option   , l_steady, ndim  , j_mater,&
+                  dimdef   , dimcon  ,&
+                  addep1   , addep2  ,&
+                  adcp11   , adcp12  , adcp21 , adcp22,&
+                  addeme   , addete  , &
+                  temp     , p1      , p2     , pvp   , pad,&
+                  grad_temp, grad_p1 , grad_p2,& 
+                  rho11    , h11     , h12    ,&
+                  satur    , dsatur  , gravity, tperm,&
+                  congep   , dsde)
 !
 use THM_type
 use THM_module
@@ -37,14 +37,14 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/THM_type.h"
-#include "asterfort/calcfh_gazp.h"
-#include "asterfort/calcfh_lisa.h"
-#include "asterfort/calcfh_liva.h"
-#include "asterfort/calcfh_lvag.h"
-#include "asterfort/calcfh_liga.h"
-#include "asterfort/calcfh_lgat.h"
-#include "asterfort/calcfh_lvga.h"
-#include "asterfort/calcfh_ladg.h"
+#include "asterfort/thmFlh001.h"
+#include "asterfort/thmFlh002.h"
+#include "asterfort/thmFlh003.h"
+#include "asterfort/thmFlh004.h"
+#include "asterfort/thmFlh005.h"
+#include "asterfort/thmFlh006.h"
+#include "asterfort/thmFlh009.h"
+#include "asterfort/thmFlh010.h"
 !
 character(len=16), intent(in) :: option
 aster_logical, intent(in) :: l_steady
@@ -52,8 +52,8 @@ integer, intent(in) :: j_mater
 integer, intent(in) :: ndim, dimdef, dimcon
 integer, intent(in) :: addeme, addep1, addep2, addete, adcp11, adcp12, adcp21, adcp22
 real(kind=8), intent(in) :: rho11, satur, dsatur
-real(kind=8), intent(in) :: grat(3), grap1(3), grap2(3)
-real(kind=8), intent(in) :: t, p1, p2, pvp, pad
+real(kind=8), intent(in) :: grad_temp(3), grad_p1(3), grad_p2(3)
+real(kind=8), intent(in) :: temp, p1, p2, pvp, pad
 real(kind=8), intent(in) :: gravity(3), tperm(ndim, ndim)
 real(kind=8), intent(in) :: h11, h12
 real(kind=8), intent(inout) :: congep(1:dimcon)
@@ -81,14 +81,14 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 ! In  adcp12           : adress of first hydraulic/second component dof in vector of gene. stresses
 ! In  adcp21           : adress of second hydraulic/first component dof in vector of gene. stresses
 ! In  adcp22           : adress of second hydraulic/second component dof in vector of gene. stresses
-! In  t                : temperature - At end of current step
+! In  temp             : temperature - At end of current step
 ! In  p1               : capillary pressure - At end of current step
 ! In  p2               : gaz pressure - At end of current step
 ! In  pvp              : steam pressure
 ! In  pad              : dissolved air pressure
-! In  grat             : gradient of temperature
-! In  grap1            : gradient of capillary pressure
-! In  grap2            : gradient of gaz pressure
+! In  grad_temp        : gradient of temperature
+! In  grad_p1          : gradient of capillary pressure
+! In  grad_p2          : gradient of gaz pressure
 ! In  rho11            : volumic mass for liquid
 ! In  h11              : enthalpy of liquid
 ! In  h12              : enthalpy of steam
@@ -102,78 +102,78 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 ! --------------------------------------------------------------------------------------------------
 !
     select case (ds_thm%ds_behaviour%nume_thmc)
-    case (1)
-        call calcfh_lisa(option, l_steady, ndim,&
-                         dimdef, dimcon,&
-                         addep1, adcp11, addeme , addete,&
-                         grap1 , rho11 , gravity, tperm ,&
-                         congep, dsde  )
-    case (2)
-        call calcfh_gazp(option, l_steady , ndim,&
-                         dimdef, dimcon ,&
-                         addep1, adcp11 , addeme, addete,&
-                         t     , p1     , grap1 ,&
-                         rho11 , gravity, tperm ,&
-                         congep, dsde)
-    case (3)
-        call calcfh_liva(option, ndim, j_mater,&
-                         dimdef, dimcon,&
-                         addep1, adcp11, adcp12, addeme, addete,&
-                         t     , p2    , pvp,&
-                         grap1 , grat  ,&
-                         rho11 , h11   , h12    ,&
-                         satur , dsatur, gravity, tperm,&
-                         congep, dsde  )
-    case (4)
-        call calcfh_lvag(option, l_steady, ndim  , j_mater,&
-                         dimdef, dimcon,&
-                         addep1, addep2, adcp11 , adcp12, adcp21 ,&
-                         addeme, addete, &
-                         t     , p2    , pvp    ,&
-                         grat  , grap1 , grap2  ,& 
-                         rho11 , h11   , h12    ,&
-                         satur , dsatur, gravity, tperm,&
-                         congep, dsde)
-    case (5)
-        call calcfh_liga(option, ndim  , j_mater,&
-                         dimdef, dimcon,&
-                         addep1, addep2, adcp11 , adcp21 ,&
-                         addeme, addete, &
-                         t     , p2    , &
-                         grap1 , grap2  ,& 
-                         rho11 , &
-                         satur , dsatur, gravity, tperm,&
-                         congep, dsde)
-    case (6)
-        call calcfh_lgat(option, l_steady , ndim  , j_mater,&
-                         dimdef, dimcon ,&
-                         addep1, adcp11 ,&
-                         addeme, addete ,&
-                         t     , p2     ,&
-                         grap1 , & 
-                         rho11 , &
-                         satur , dsatur , gravity , tperm,&
-                         congep, dsde)
-    case (9)
-        call calcfh_lvga(option, l_steady, ndim  , j_mater,&
-                         dimdef, dimcon,&
-                         addep1, addep2, adcp11 , adcp12, adcp21 , adcp22,&
-                         addeme, addete, &
-                         t     , p1    , p2     , pvp   , pad,&
-                         grat  , grap1 , grap2  ,& 
-                         rho11 , h11   , h12    ,&
-                         satur , dsatur, gravity, tperm,&
-                         congep, dsde)
-    case (10)
-        call calcfh_ladg(option, l_steady, ndim  , j_mater,&
-                         dimdef, dimcon,&
-                         addep1, addep2, adcp11 , adcp12, adcp21 , adcp22,&
-                         addeme, addete, &
-                         t     , p1    , p2     , pvp   , pad,&
-                         grat  , grap1 , grap2  ,& 
-                         rho11 , h11   , h12    ,&
-                         satur , dsatur, gravity, tperm,&
-                         congep, dsde)
+    case (LIQU_SATU)
+        call thmFlh001(option , l_steady, ndim,&
+                       dimdef , dimcon  ,&
+                       addep1 , adcp11  , addeme , addete,&
+                       grad_p1, rho11   , gravity, tperm ,&
+                       congep , dsde)
+    case (GAZ)
+        call thmFlh002(option, l_steady, ndim,&
+                       dimdef, dimcon  ,&
+                       addep1, adcp11  , addeme , addete,&
+                       temp  , p1      , grad_p1,&
+                       rho11 , gravity , tperm  ,&
+                       congep, dsde)
+    case (LIQU_VAPE)
+        call thmFlh003(option , ndim     , j_mater,&
+                       dimdef , dimcon   ,&
+                       addep1 , adcp11   , adcp12 , addeme, addete,&
+                       temp   , p2       , pvp,&
+                       grad_p1, grad_temp,&
+                       rho11  , h11      , h12    ,&
+                       satur  , dsatur   , gravity, tperm,&
+                       congep , dsde  )
+    case (LIQU_VAPE_GAZ)
+        call thmFlh004(option   , l_steady, ndim  , j_mater,&
+                       dimdef   , dimcon ,&
+                       addep1   , addep2 , adcp11 , adcp12 , adcp21,&
+                       addeme   , addete ,&
+                       temp     , p2     , pvp    ,&
+                       grad_temp, grad_p1, grad_p2,& 
+                       rho11    , h11    , h12    ,&
+                       satur    , dsatur , gravity, tperm,&
+                       congep   , dsde)
+    case (LIQU_GAZ)
+        call thmFlh005(option , ndim   , j_mater,&
+                       dimdef , dimcon ,&
+                       addep1 , addep2 , adcp11 , adcp21 ,&
+                       addeme , addete ,&
+                       temp   , p2     ,&
+                       grad_p1, grad_p2,& 
+                       rho11  , &
+                       satur  , dsatur , gravity, tperm,&
+                       congep , dsde)
+    case (LIQU_GAZ_ATM)
+        call thmFlh006(option , l_steady, ndim   , j_mater,&
+                       dimdef , dimcon  ,&
+                       addep1 , adcp11  ,&
+                       addeme , addete  ,&
+                       temp   , p2      ,&
+                       grad_p1, & 
+                       rho11  , &
+                       satur  , dsatur  , gravity, tperm ,&
+                       congep , dsde)
+    case (LIQU_AD_GAZ_VAPE)
+        call thmFlh009(option   , l_steady, ndim   , j_mater,&
+                       dimdef   , dimcon  ,&
+                       addep1   , addep2  , adcp11 , adcp12 , adcp21, adcp22,&
+                       addeme   , addete  , &
+                       temp     , p1      , p2     , pvp    , pad,&
+                       grad_temp, grad_p1 , grad_p2,& 
+                       rho11    , h11     , h12    ,&
+                       satur    , dsatur  , gravity, tperm,&
+                       congep   , dsde)
+    case (LIQU_AD_GAZ)
+        call thmFlh010(option   , l_steady, ndim   , j_mater,&
+                       dimdef   , dimcon  ,&
+                       addep1   , addep2  , adcp11 , adcp12, adcp21, adcp22,&
+                       addeme   , addete  , &
+                       temp     , p1      , p2     , pvp   , pad,&
+                       grad_temp, grad_p1 , grad_p2,& 
+                       rho11    , h11     , h12    ,&
+                       satur    , dsatur  , gravity, tperm,&
+                       congep   , dsde)
     case default
         ASSERT(ASTER_FALSE)
     end select

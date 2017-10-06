@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 !
 interface 
-    subroutine calcfh_vf_ladg(option, j_mater, ifa,&
+    subroutine thmFlhVF010(option, j_mater, ifa,&
                               t     , p1    , p2     , pvp, pad ,&
                               rho11 , h11   , h12    ,&
                               satur , dsatur, & 
@@ -30,5 +30,5 @@ interface
         real(kind=8), intent(in) :: satur, dsatur
         real(kind=8), intent(inout) :: valcen(14, 6)
         real(kind=8), intent(inout) :: valfac(6, 14, 6)
-    end subroutine calcfh_vf_ladg
+    end subroutine thmFlhVF010
 end interface 

@@ -15,29 +15,23 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
 interface 
-    subroutine calcfh_liga(option, ndim  , j_mater,&
-                           dimdef, dimcon,&
-                           addep1, addep2, adcp11, adcp21 ,&
-                           addeme, addete,&
-                           t     , p2    ,&
-                           grap1 , grap2 ,& 
-                           rho11 ,&
-                           satur , dsatur, gravity, tperm,&
+    subroutine thmFlh002(option, perman , ndim,&
+                           dimdef, dimcon ,&
+                           addep1, adcp11 , addeme, addete,&
+                           t     , p1     , grap1 ,&
+                           rho11 , gravity, tperm ,&
                            congep, dsde)
         character(len=16), intent(in) :: option
-        integer, intent(in) :: j_mater
+        aster_logical, intent(in) :: perman
         integer, intent(in) :: ndim, dimdef, dimcon
-        integer, intent(in) :: addeme, addep1, addep2, addete, adcp11, adcp21
-        real(kind=8), intent(in) :: rho11, satur, dsatur
-        real(kind=8), intent(in) :: grap1(3), grap2(3)
-        real(kind=8), intent(in) :: p2, t
+        integer, intent(in) :: addeme, addep1, addete, adcp11
+        real(kind=8), intent(in) :: rho11, grap1(3), t, p1
         real(kind=8), intent(in) :: gravity(3), tperm(ndim, ndim)
         real(kind=8), intent(inout) :: congep(1:dimcon)
         real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
-    end subroutine calcfh_liga
+    end subroutine thmFlh002
 end interface 

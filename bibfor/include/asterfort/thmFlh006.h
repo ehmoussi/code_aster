@@ -15,12 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
 interface 
-    subroutine calcfh_lgat(option, perman , ndim  , j_mater,&
+    subroutine thmFlh006(option, perman , ndim  , j_mater,&
                            dimdef, dimcon ,&
                            addep1, adcp11 ,&
                            addeme, addete ,&
@@ -40,5 +39,5 @@ interface
         real(kind=8), intent(in) :: gravity(3), tperm(ndim, ndim)
         real(kind=8), intent(inout) :: congep(1:dimcon)
         real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
-    end subroutine calcfh_lgat
+    end subroutine thmFlh006
 end interface 

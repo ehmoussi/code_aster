@@ -18,15 +18,15 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504
 !
-subroutine calcfh_lvag(option, perman, ndim  , j_mater,&
-                       dimdef, dimcon,&
-                       addep1, addep2, adcp11, adcp12, adcp21 ,&
-                       addeme, addete, &
-                       t     , p2    , pvp    ,&
-                       grat  , grap1 , grap2  ,& 
-                       rho11 , h11   , h12    ,&
-                       satur , dsatur, gravity, tperm,&
-                       congep, dsde)
+subroutine thmFlh004(option, perman, ndim  , j_mater,&
+                     dimdef, dimcon,&
+                     addep1, addep2, adcp11, adcp12, adcp21 ,&
+                     addeme, addete, &
+                     t     , p2    , pvp    ,&
+                     grat  , grap1 , grap2  ,& 
+                     rho11 , h11   , h12    ,&
+                     satur , dsatur, gravity, tperm,&
+                     congep, dsde)
 !
 use THM_type
 use THM_module

@@ -15,22 +15,31 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
 interface 
-    subroutine calcfh_lisa(option, perman, ndim,&
+    subroutine thmFlh009(option, perman, ndim  , j_mater,&
                            dimdef, dimcon,&
-                           addep1, adcp11, addeme , addete,&
-                           grap1 , rho11 , gravity, tperm ,&
-                           congep, dsde  )
+                           addep1, addep2, adcp11 , adcp12, adcp21 , adcp22,&
+                           addeme, addete, &
+                           t     , p1    , p2     , pvp   , pad,&
+                           grat  , grap1 , grap2  ,& 
+                           rho11 , h11   , h12    ,&
+                           satur , dsatur, gravity, tperm,&
+                           congep, dsde)
         character(len=16), intent(in) :: option
         aster_logical, intent(in) :: perman
+        integer, intent(in) :: j_mater
         integer, intent(in) :: ndim, dimdef, dimcon
-        integer, intent(in) :: addeme, addep1, addete, adcp11
-        real(kind=8), intent(in) :: rho11, grap1(3)
+        integer, intent(in) :: addeme, addep1, addep2, addete, adcp11, adcp12, adcp21, adcp22
+        real(kind=8), intent(in) :: rho11, satur, dsatur
+        real(kind=8), intent(in) :: grat(3), grap1(3), grap2(3)
+        real(kind=8), intent(in) :: t, p1, p2, pvp, pad
         real(kind=8), intent(in) :: gravity(3), tperm(ndim, ndim)
+        real(kind=8), intent(in) :: h11, h12
         real(kind=8), intent(inout) :: congep(1:dimcon)
         real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
-    end subroutine calcfh_lisa
+    end subroutine thmFlh009
 end interface 
