@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: daniele.colombo at ifpen.fr
-! aslint: disable=W1504
+! aslint: disable=W1504,W1306
 !
 subroutine xassha_frac(nddls, nddlm, nnop, nnops,&
                        lact, elrefp, elrefc, elc, contac,&
@@ -43,7 +43,7 @@ subroutine xassha_frac(nddls, nddlm, nnop, nnops,&
 #include "asterfort/xmofhm.h"
 #include "asterfort/xsautl.h"
 #include "asterfort/xvinhm.h"
-#include "asterfort/thmGetParaBehaviour.h"
+#include "asterfort/thmGetBehaviourVari.h"
 #include "asterfort/thmGetBehaviour.h"
 #include "asterfort/thmGetParaCoupling.h"
 !
@@ -73,16 +73,15 @@ subroutine xassha_frac(nddls, nddlm, nnop, nnops,&
     real(kind=8) :: rho11, w11, rho110, raug
     real(kind=8) :: dsidep(6,6), delta(6), p(3,3), r
     character(len=8) :: elrefp, elrefc, elc, fpg, job, champ
-    character(len=16):: compor(*), thmc, hydr, meca 
-! 
-! - Get behaviours parameters from COMPOR field
+    character(len=16):: compor(*)
 !
-    call thmGetParaBehaviour(compor,&
-                             meca_ = meca, thmc_ = thmc, hydr_ = hydr)    
-!
-!-  Get parameters for behaviour
+! - Get parameters for behaviour
 !
     call thmGetBehaviour(compor)
+!
+! - Get parameters for internal variables
+!
+    call thmGetBehaviourVari()  
 !
 ! - Get parameters for coupling
 !
@@ -132,7 +131,7 @@ subroutine xassha_frac(nddls, nddlm, nnop, nnops,&
           call xmodfc(lact, nlact, nnops, dfdic, dffc, ndim)          
 !
           if (algocr.eq.3) then
-             if ((rela.eq.3.d0).or.(rela.eq.4.d0)) then
+             if ((nint(rela).eq.3).or.(nint(rela).eq.4)) then
 !
 !          POUR L'ACTUALISATION DES VARIABLES INTERNES
 !
@@ -173,7 +172,7 @@ subroutine xassha_frac(nddls, nddlm, nnop, nnops,&
                  end do
                  eps = r8prem()
                  ASSERT((alpha(1)+eps).ge.cohes(1))
-             else if (rela.eq.5.d0) then
+             else if (nint(rela).eq.5) then
                 job='ACTU_VI'
                 nvec = 1
                 do ino = 1, nnops

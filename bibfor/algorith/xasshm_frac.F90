@@ -29,7 +29,7 @@ subroutine xasshm_frac(nddls, nddlm, nnop, nnops,&
                        pla, algocr, rela, ifa, ipgf, matri,&
                        cohes, coheo, jheavn, ncompn, ifiss,&
                        nfiss, nfh, jheafa, ncomph, pos)
-    implicit none 
+implicit none 
     
 #include "jeveux.h"
 #include "asterfort/elrefe_info.h"
@@ -51,7 +51,7 @@ subroutine xasshm_frac(nddls, nddlm, nnop, nnops,&
 #include "asterfort/matini.h"
 #include "asterfort/vecini.h"
 #include "asterfort/thmGetParaBiot.h"
-#include "asterfort/thmGetParaBehaviour.h"
+#include "asterfort/thmGetBehaviourVari.h"
 #include "asterfort/thmGetBehaviour.h"
 #include "asterfort/thmGetParaCoupling.h"
 !
@@ -83,21 +83,20 @@ subroutine xasshm_frac(nddls, nddlm, nnop, nnops,&
     real(kind=8) :: am(3), ad(3), r
     real(kind=8) :: temp
     character(len=8) :: elrefp, elrefc, elc, fpg, job, champ
-    character(len=16):: compor(*), thmc, hydr
+    character(len=16):: compor(*)
 
 !   DETERMINATION DES CONSTANTES TEMPORELLES (INSTANT+THETA SCHEMA)
     dt = rinstp-rinstm
     ta = crit(4)
     ta1 = 1.d0-ta
-!   
-! - Get behaviours parameters from COMPOR field
 !
-    call thmGetParaBehaviour(compor,&
-                             thmc_ = thmc, hydr_ = hydr)  
-!
-!-  Get parameters for behaviour
+! - Get parameters for behaviour
 !
     call thmGetBehaviour(compor)
+!
+! - Get parameters for internal variables
+!
+    call thmGetBehaviourVari() 
 !
 ! - Get parameters for coupling
 !

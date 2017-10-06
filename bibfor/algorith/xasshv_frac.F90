@@ -50,7 +50,7 @@ implicit none
 #include "asterfort/xsautl.h"
 #include "asterfort/xvinhm.h"
 #include "asterfort/thmGetParaBiot.h"
-#include "asterfort/thmGetParaBehaviour.h"
+#include "asterfort/thmGetBehaviourVari.h"
 #include "asterfort/thmGetBehaviour.h"
 #include "asterfort/thmGetParaCoupling.h"
 !
@@ -82,21 +82,20 @@ implicit none
     real(kind=8) :: rho11, wsaut(3), mu(3), wsautm(3)
     real(kind=8) :: dsidep(6,6), delta(6), rela, p(3,3)
     character(len=8) :: elrefp, elrefc, elc, fpg, job, champ
-    character(len=16):: compor(*), thmc, hydr
+    character(len=16):: compor(*)
 
 !   DETERMINATION DES CONSTANTES TEMPORELLES (INSTANT+THETA SCHEMA)
     dt = rinstp-rinstm
     ta = crit(4)
-    ta1 = 1.d0-ta 
-!   
-! - Get behaviours parameters from COMPOR field
-!
-    call thmGetParaBehaviour(compor,&
-                             thmc_ = thmc, hydr_ = hydr)  
+    ta1 = 1.d0-ta
 !
 ! - Get parameters for behaviour
 !
     call thmGetBehaviour(compor)
+!
+! - Get parameters for internal variables
+!
+    call thmGetBehaviourVari()
 !
 ! - Get parameters for coupling
 !
