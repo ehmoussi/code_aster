@@ -18,7 +18,7 @@
 ! aslint: disable=W1504
 !
 interface 
-    subroutine calcft(option, thmc, ndim, dimdef,&
+    subroutine calcft(option, ndim, dimdef,&
                       dimcon, addete,&
                       addeme, addep1, addep2, adcote, congep,&
                       dsde, t, grat, phi, pvp,&
@@ -30,7 +30,6 @@ interface
         integer :: dimdef
         integer :: ndim
         character(len=16) :: option
-        character(len=16) :: thmc
         integer :: addete
         integer :: addeme
         integer :: addep1

@@ -272,7 +272,7 @@ integer, intent(out) :: retcom
 ! - Compute flux and stress for thermic
 !
     if (ds_thm%ds_elem%l_dof_ther) then
-        call calcft(option, thmc, ndim, dimdef,&
+        call calcft(option, ndim, dimdef,&
                     dimcon, addete,&
                     addeme, addep1, addep2, adcote, congep,&
                     dsde, temp, grad_temp, phi, pvp,&
