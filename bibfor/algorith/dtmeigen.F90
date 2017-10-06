@@ -73,15 +73,15 @@ subroutine dtmeigen(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
 !
 !   -0.2- Local variables
     integer               :: nbmode, i, j, count, jrefa, nbnoli, nbvect, nbvec2, nbrss, maxitr
-    integer               :: jdesc, lmatm, lmatk, lmatc, jbase, defo, nddle, nsta
+    integer               :: jdesc, lmatm, lmatk, lmatc, jbase, defo, nddle, nsta, nbborn
     integer               :: ibid, nlcase, iret, fsichoc, info, ifm
     real(kind=8)          :: time, bande(2), r8bid, alpha, tolsor, precsh, omecor, precdc, fcorig
     character(len=1)      :: k1bid
     character(len=4)      :: mod45
     character(len=7)      :: casek7, case0k7
-    character(len=8)      :: sd_dtm, sd_int, modmec, typrof, modes, method, sdstab, k8bid
+    character(len=8)      :: sd_dtm, sd_int, modmec, typrof, modes, method, sdstab, arret
     character(len=14)     :: nugene, nopara(9)
-    character(len=16)     :: optiof, typres, k16bid
+    character(len=16)     :: optiof, typres, k16bid, sturm, modrig, stoper
     character(len=19)     :: matmass, matrigi, matamor, raide2, masse2, eigsol, k19bid
     character(len=24)     :: stomor, solver, base_jv, kvali, kvalr, kvalk, add_jv, k24bid
 !
@@ -283,8 +283,7 @@ subroutine dtmeigen(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
         modes='&&DTMMOD'
         eigsol='&&MODINT.EIGSOL'
 !
-        k1bid=''
-        k8bid=''
+        k1bid='R'
         k16bid=''
         k19bid=''
         k24bid=''
@@ -298,6 +297,7 @@ subroutine dtmeigen(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
         masse2=matmass
 ! OPTION MODALE EN DUR
         optiof='PLUS_PETITE'
+        nbborn=1
 ! DIM_SOUS_ESPACE EN DUR
         nbvect=0
 ! COEF_SOUS_ESPACE EN DUR 
@@ -317,10 +317,18 @@ subroutine dtmeigen(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
         omecor = omega2(fcorig)
 ! VERI_MODE/PREC_SHIFT EN DUR
         precdc = 5.d-2
-        call vpcres(eigsol, typres, raide2, masse2, k19bid, optiof, method, k16bid, k8bid,&
-                    k19bid, k16bid, k16bid, k1bid, k16bid, nbmode, nbvect, nbvec2, nbrss,&
-                    ibid, ibid, ibid, ibid, ibid, maxitr, bande, precsh, omecor, precdc,&
-                    r8bid, r8bid, r8bid, r8bid, r8bid, tolsor, alpha)
+! STOP_BANDE_VIDE EN DUR
+        arret='NON'
+! STURM EN DUR
+        sturm='NON'
+! OPTION MODE RIGIDE EN DUR
+        modrig='SANS'
+! OPTION STOP_ERREUR EN DUR
+        stoper='NON'
+        call vpcres(eigsol,typres,raide2,masse2,k19bid,optiof,method,modrig,arret,k19bid,&
+                    stoper,sturm,k1bid,k16bid,nbmode,nbvect,nbvec2,nbrss,nbborn,ibid,&
+                    ibid, ibid, ibid, maxitr, bande, precsh, omecor, precdc,r8bid,&
+                    r8bid, r8bid, r8bid, r8bid, tolsor, alpha)
         
 !       2.1 - Mode calculation
         defo=0

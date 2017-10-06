@@ -19,7 +19,7 @@
 subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
                   veclag, vecrig, matpsc, matopa, iretr,&
                   nblagr, neqact, npivot, nstoc, omemax,&
-                  omemin, omeshi, sigma)
+                  omemin, omeshi, sigma, mod45)
 ! PREPARATION DES ASPECTS NUMERIQUES POUR MODE_ITER_SIMULT: SOLVEUR LINEAIRE, LAGRANGE ET MODES
 ! RIGIDES, BORNES DE TRAVAIL EFFECTIVES, CALCUL DU NOMBRE DE MODES, FACTO. DE LA MATRICE SHIFTEE,
 ! DETERMINATION DE LA TAILLE DE L'ESPACE DE PROJECTION.
@@ -37,6 +37,7 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
 #include "asterc/isnnem.h"
 #include "asterc/r8prem.h"
 #include "asterfort/assert.h"
+#include "asterfort/codent.h"
 #include "asterfort/infniv.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jeexin.h"
@@ -64,6 +65,7 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
 !
 ! --- INPUT
 !
+    character(len=4), intent(in) :: mod45
     character(len=8), intent(in) :: modes
     character(len=16), intent(in) :: typcon
     character(len=19), intent(in) :: eigsol, solveu
@@ -88,7 +90,7 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
     real(kind=8) :: eps, fmax, fmin, effmax, effmin, freq1, freq2, omecor, precdc, precsh
     real(kind=8) :: rbid, rbid2(2), rtest, rzero
     character(len=1) :: appr
-    character(len=8) :: arret, method
+    character(len=8) :: arret, method, chaine
     character(len=9) :: typevp
     character(len=14) :: k14bid, matra, matrc
     character(len=16) :: k16bid, modrig, optiof, optiov, typeqz, typres
@@ -243,11 +245,11 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
             endif
         endif
     endif
-    
-    if (typres(1:9) .ne. 'DYNAMIQUE') then
-        rbid = omemin
-        omemin=-omemax
-        omemax=-rbid
+
+    if (typres(1:9).ne.'DYNAMIQUE') then
+      rbid = omemin
+      omemin=-omemax
+      omemax=-rbid
     endif
     
 !
@@ -281,15 +283,26 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
                         omecor, precsh, nbrss, nblagr, solveu,&
                         rbid2, ibid2)
             npivot=npiv2(1)
-            if (nfreq .le. 0) then
+            if (mod45(1:4).eq.'OP45') then
+              if (nfreq .le. 0) then
                 if (arret(1:3) .eq. 'OUI') then
-                    call utmess('Z', 'MODAL_1', num_except=24)
+                  call utmess('Z', 'MODAL_1', num_except=24)
                 else
-                    nfreq = 1
-                    call rscrsd('G', modes, typcon, nfreq)
-                    iretr=-2
-                    goto 999
+                  nfreq = 1
+                  call rscrsd('G', modes, typcon, nfreq)
+                  iretr=-2
+                  goto 999
                 endif
+              endif
+            else
+              if (nfreq .le. 0) then
+                call utmess('I', 'ALGELINE2_15')
+                iretr=-2
+                goto 999
+              else
+                call codent(nfreq, 'G', chaine)
+                call utmess('I', 'ALGELINE2_16', sk=chaine)             
+              endif         
             endif
             lmtpsc=lmatra
             matpsc=matopa
@@ -319,6 +332,13 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
             if (.not.lqz) call jeveuo(matopa(1:19)//'.&INT', 'E', lmatra)
         endif
     endif
+
+! fait dans nmop45 et pas dans op0045: je ne comprends pas pourquoi
+!    if (typres(1:9).ne.'DYNAMIQUE') then
+!      rbid = omemin
+!      omemin=-omemax
+!      omemax=-rbid
+!    endif
 !
 ! --- ON BLINDE LES STRUCTURES DE DONNEES DE TYPE MATR_ASSE
 ! --- ON NE MANIPULE PAR LA SUITE QUE LEUR DESCRIPTEUR
@@ -360,9 +380,9 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
             icoef = nbvec2
         else
             select case (method)
-                case('JACOBI','SORENSEN')
+            case('JACOBI','SORENSEN')
                 icoef = 2
-                case('TRI_DIAG')
+            case('TRI_DIAG')
                 icoef = 4
             case default
                 ASSERT(.false.)
@@ -370,11 +390,11 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
         endif
         if (nbvect .lt. nfreq) then
             select case (method)
-                case('JACOBI')
+            case('JACOBI')
                 nbvect = min(min(7+nfreq,icoef*nfreq),neqact)
-                case('TRI_DIAG')
+            case('TRI_DIAG')
                 nbvect = min(max(7+nfreq,icoef*nfreq),neqact)
-                case('SORENSEN')
+            case('SORENSEN')
                 nbvect = min(max(3+nfreq,icoef*nfreq),neqact)
             case default
                 ASSERT(.false.)
@@ -408,10 +428,8 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
 !
 ! --  ON MODIFIE LES VALEURS NFREQ ET DE NBVECT DE LA SD EIGENSOLVER
     if (nfreq>200) call utmess('A', 'MODAL_22', si=nfreq)
-    call vpecri(eigsol, 'I', 1, k24bid, rbid,&
-                nfreq)
-    call vpecri(eigsol, 'I', 2, k24bid, rbid,&
-                nbvect)
+    call vpecri(eigsol, 'I', 1, k24bid, rbid, nfreq)
+    call vpecri(eigsol, 'I', 2, k24bid, rbid, nbvect)
 !
 999 continue
 !
