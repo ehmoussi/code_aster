@@ -15,8 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine thmGetParaHydr(hydr, j_mater)
+!
+subroutine thmGetParaHydr(j_mater)
 !
 use THM_type
 use THM_module
@@ -27,8 +27,8 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
 #include "asterfort/rcvala.h"
+#include "asterfort/THM_type.h"
 !
-character(len=16), intent(in) :: hydr
 integer, intent(in) :: j_mater
 !
 ! --------------------------------------------------------------------------------------------------
@@ -39,7 +39,6 @@ integer, intent(in) :: j_mater
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  hydr         : type of hydraulic law
 ! In  j_mater      : coded material address
 !
 ! --------------------------------------------------------------------------------------------------
@@ -56,11 +55,13 @@ integer, intent(in) :: j_mater
     real(kind=8) :: para_vale(nb_para)
     integer :: icodre(nb_para)
     character(len=16), parameter :: para_name(nb_para) = (/'EMMAG'/)
+    character(len=16) :: hydr
 !
 ! --------------------------------------------------------------------------------------------------
 !
     para_vale(:)     = 0.d0
     para_vale_vgm(:) = 0.d0
+    hydr             = ds_thm%ds_behaviour%rela_hydr
     if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
         call rcvala(j_mater    , ' '          , 'THM_DIFFU'  ,&
                     0          , ' '          , [0.d0]       ,&

@@ -180,7 +180,7 @@ real(kind=8), intent(inout) :: valfac(maxfa, 14, 6)
 !
 ! - Get hydraulic parameters
 !
-    call thmGetParaHydr(hydr, j_mater)
+    call thmGetParaHydr(j_mater)
 !
 ! - Get Biot parameters (for porosity evolution)
 !
