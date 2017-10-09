@@ -112,4 +112,10 @@ implicit none
         endif
     endif
 !
+    if (.not.ds_thm%ds_elem%l_dof_pre2) then
+        if (ds_thm%ds_behaviour%rela_meca .eq. 'GONF_ELAS') then
+            call utmess('F', 'THM1_67')
+        endif
+    endif
+!
 end subroutine

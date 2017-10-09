@@ -125,6 +125,10 @@ La loi de couplage <%(k1)s> n'est pas compatible avec la modélisation choisie.
 La modélisation a un degré de liberté pour la thermique la loi de comportement n'a pas de loi thermique.
 """),
 
+    67 : _(u"""
+La loi mécanique GONF_ELAS n'est utilisable qu'avec une modélisation à deux pressions.
+"""),
+
     94 : _(u"""Il manque les paramètres de Van Genuchten."""),
 
 }
