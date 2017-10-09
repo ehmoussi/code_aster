@@ -432,4 +432,4 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
     with ReservedUnitUsed(args['UNITE'], args.get('UNITE_DIGR')):
             graph.Trace(**kargs)
 
-    return ier
+    return
