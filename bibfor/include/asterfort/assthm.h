@@ -20,70 +20,51 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine assthm(nno, nnos, nnom, npg, npi,&
-                      jv_poids, jv_poids2, jv_func, jv_func2, jv_dfunc,&
-                      jv_dfunc2, elem_coor, crit, deplm, deplp,&
-                      contm, contp, varim, varip, defgem,&
-                      defgep, drds, drdsr, dsde, b,&
-                      dfdi, dfdi2, r, sigbar, &
-                      matuu, vectu, rinstm,&
-                      rinstp, option, j_mater, mecani, press1,&
-                      press2, tempe, dimdef, dimcon, dimuel,&
-                      nbvari, nddls, nddlm, nddl_meca, nddl_p1,&
-                      nddl_p2, ndim, compor, typmod, axi,&
-                      perman, inte_type, codret, angmas, work1, work2)
-        integer :: ndim
-        integer :: nbvari
-        integer :: dimuel
-        integer :: dimcon
-        integer :: dimdef
-        integer :: npi
-        integer :: nnos
-        integer :: nno
-        integer :: nnom
-        integer :: npg
-        integer, intent(in) :: nddl_meca, nddl_p1, nddl_p2
+    subroutine assthm(option   , j_mater  ,&
+                      l_axi    , l_steady ,&
+                      typmod   , inte_type, angl_naut,&
+                      ndim     , nbvari   ,&
+                      nno      , nnos     , nnom     ,&
+                      npg      , npi      ,&
+                      nddls    , nddlm    , nddl_meca, nddl_p1, nddl_p2, &
+                      dimdef   , dimcon   , dimuel   ,&
+                      mecani   , press1   , press2   , tempe  ,&
+                      compor   , carcri   ,&
+                      jv_poids , jv_poids2,&
+                      jv_func  , jv_func2 ,&
+                      jv_dfunc , jv_dfunc2,&
+                      elem_coor,&
+                      dispm    , dispp    ,&
+                      congem   , congep   ,&
+                      vintm    , vintp    ,&
+                      time_prev, time_curr,&
+                      matuu    , vectu    , codret)
+        character(len=16), intent(in) :: option
+        integer, intent(in) :: j_mater
+        aster_logical, intent(in)  :: l_axi, l_steady
+        character(len=8), intent(in) :: typmod(2)
+        character(len=3), intent(in) :: inte_type
+        real(kind=8), intent(in)  :: angl_naut(3)
+        integer, intent(in) :: nbvari, ndim
+        integer, intent(in) :: nno, nnos, nnom
+        integer, intent(in) :: npg, npi
+        integer, intent(in) :: nddls, nddlm, nddl_meca, nddl_p1, nddl_p2
+        integer, intent(in) :: dimuel, dimdef, dimcon
+        integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
+        character(len=16), intent(in)  :: compor(*)
+        real(kind=8), intent(in) :: carcri(*)
         integer, intent(in) :: jv_poids, jv_poids2
         integer, intent(in) :: jv_func, jv_func2
         integer, intent(in) :: jv_dfunc, jv_dfunc2
         real(kind=8), intent(in) :: elem_coor(ndim, nno)
-        real(kind=8) :: crit(*)
-        real(kind=8) :: deplm(dimuel)
-        real(kind=8) :: deplp(dimuel)
-        real(kind=8) :: contm(dimcon*npi)
-        real(kind=8) :: contp(dimcon*npi)
-        real(kind=8) :: varim(nbvari*npi)
-        real(kind=8) :: varip(nbvari*npi)
-        real(kind=8) :: defgem(dimdef)
-        real(kind=8) :: defgep(dimdef)
-        real(kind=8) :: drds(dimdef+1, dimcon)
-        real(kind=8) :: drdsr(dimdef, dimcon)
-        real(kind=8) :: dsde(dimcon, dimdef)
-        real(kind=8) :: b(dimdef, dimuel)
-        real(kind=8) :: dfdi(nno, 3)
-        real(kind=8) :: dfdi2(nnos, 3)
-        real(kind=8) :: r(dimdef+1)
-        real(kind=8) :: sigbar(dimdef)
-        real(kind=8) :: matuu(dimuel*dimuel)
-        real(kind=8) :: vectu(dimuel)
-        real(kind=8) :: rinstm
-        real(kind=8) :: rinstp
-        character(len=16) :: option
-        integer :: j_mater
-        integer :: mecani(5)
-        integer :: press1(7)
-        integer :: press2(7)
-        integer :: tempe(5)
-        integer :: nddls
-        integer :: nddlm
-        character(len=16) :: compor(*)
-        character(len=8) :: typmod(2)
-        aster_logical :: axi
-        aster_logical :: perman
-        character(len=3), intent(in) :: inte_type
-        integer :: codret
-        real(kind=8) :: angmas(3)
-        real(kind=8) :: work1(dimcon, dimuel)
-        real(kind=8) :: work2(dimdef, dimuel)
+        real(kind=8), intent(in) :: dispm(dimuel), dispp(dimuel)
+        real(kind=8), intent(in) :: congem(dimcon*npi)
+        real(kind=8), intent(inout) :: congep(dimcon*npi)
+        real(kind=8), intent(in) :: vintm(nbvari*npi)
+        real(kind=8), intent(inout) :: vintp(nbvari*npi)
+        real(kind=8), intent(in) :: time_prev, time_curr
+        real(kind=8), intent(inout) :: matuu(dimuel*dimuel)
+        real(kind=8), intent(inout) :: vectu(dimuel)
+        integer, intent(out) :: codret
     end subroutine assthm
 end interface

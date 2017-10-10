@@ -43,7 +43,7 @@ character(len=16), intent(in) :: option
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  option       : name of option to compute
+! In  option           : name of option to compute
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,27 +64,10 @@ character(len=16), intent(in) :: option
     integer :: npi, npg, nbvari
     integer :: jv_poids, jv_func, jv_dfunc, jv_poids2, jv_func2, jv_dfunc2, jv_gano
     character(len=8) :: typmod(2)
-    real(kind=8) :: defgep(21), defgem(21)
-    real(kind=8) :: dfdi(20, 3), dfdi2(20, 3), b(21, 120)
-    real(kind=8) :: drds(22, 31+5), drdsr(21, 31+5), dsde(31+5, 21)
-    real(kind=8) :: r(22), sigbar(21)
-    real(kind=8) :: work1(31+5, 120), work2(21, 120)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     codret     = 0
-    defgep(:)  = 0.d0
-    defgem(:)  = 0.d0
-    dfdi(:,:)  = 0.d0
-    dfdi2(:,:) = 0.d0
-    b(:,:)     = 0.d0
-    drds(:,:)  = 0.d0
-    drdsr(:,:) = 0.d0
-    dsde(:,:)  = 0.d0
-    r(:)       = 0.d0
-    sigbar(:)  = 0.d0
-    work1(:,:) = 0.d0
-    work2(:,:) = 0.d0
 !
 ! - Get parameters
 !
@@ -155,18 +138,25 @@ character(len=16), intent(in) :: option
 !
 ! - Compute
 !
-    call assthm(nno, nnos, nnom, npg, npi,&
-                jv_poids, jv_poids2, jv_func, jv_func2, jv_dfunc,&
-                jv_dfunc2, zr(jv_geom), zr(jv_carcri), zr(jv_dispm), zr(jv_disp),&
-                zr(jv_sigmm), zr(jv_sigm), zr(jv_varim), zr(jv_vari), defgem,&
-                defgep, drds, drdsr, dsde, b,&
-                dfdi, dfdi2, r, sigbar, &
-                zr(jv_matr), zr(jv_vect), zr(jv_instm),&
-                zr(jv_instp), option, zi( jv_mater), mecani, press1,&
-                press2, tempe, dimdef, dimcon, dimuel,&
-                nbvari, nddls, nddlm, nddl_meca, nddl_p1,&
-                nddl_p2, ndim, zk16(jv_compor), typmod, l_axi,&
-                l_steady, inte_type, codret, angl_naut, work1, work2)
+    call assthm(option         , zi(jv_mater) ,&
+                l_axi          , l_steady     ,&
+                typmod         , inte_type    , angl_naut,&
+                ndim           , nbvari       ,&
+                nno            , nnos         , nnom     ,&
+                npg            , npi          ,&
+                nddls          , nddlm        , nddl_meca, nddl_p1, nddl_p2, &
+                dimdef         , dimcon       , dimuel   ,&
+                mecani         , press1       , press2   , tempe  ,&
+                zk16(jv_compor), zr(jv_carcri),&
+                jv_poids       , jv_poids2    ,&
+                jv_func        , jv_func2     ,&
+                jv_dfunc       , jv_dfunc2    ,&
+                zr(jv_geom)    ,&
+                zr(jv_dispm)   , zr(jv_disp)  ,&
+                zr(jv_sigmm)   , zr(jv_sigm)  ,&
+                zr(jv_varim)   , zr(jv_vari)  ,&
+                zr(jv_instm)   , zr(jv_instp) ,& 
+                zr(jv_matr)    , zr(jv_vect)  , codret)
 !
 ! - Save error from integration
 !
