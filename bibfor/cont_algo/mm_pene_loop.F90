@@ -81,15 +81,17 @@ implicit none
     integer :: ztabf
     integer :: ifm, niv
     integer :: jdecme, elem_slav_indx
-    integer :: indi_cont_curr
+    integer :: indi_cont_curr=0
     integer :: i_zone, i_elem_slav, i_cont_poin, i_poin_elem
     integer :: model_ndim, nb_cont_zone, loop_cont_vali
     integer ::  nb_poin_elem, nb_elem_slav
-    real(kind=8) :: gap
-    real(kind=8) :: time_curr
-    aster_logical :: l_glis
-    aster_logical :: l_veri, l_exis_glis, loop_cont_conv, l_loop_cont
-    aster_logical :: l_frot_zone, l_pena_frot, l_frot,l_pena_cont
+    real(kind=8) :: gap=0.0
+    real(kind=8) :: time_curr=0.0
+    aster_logical :: l_glis=.false._1
+    aster_logical :: l_veri=.false._1, l_exis_glis=.false._1
+    aster_logical :: loop_cont_conv=.false._1, l_loop_cont=.false._1
+    aster_logical :: l_frot_zone=.false._1, l_pena_frot=.false._1
+    aster_logical :: l_frot=.false._1,l_pena_cont=.false._1
     
     integer :: type_adap, continue_calcul
     character(len=24) :: sdcont_cychis, sdcont_cyccoe, sdcont_cyceta
@@ -102,7 +104,7 @@ implicit none
     real(kind=8), pointer :: v_sdcont_apjeu(:) => null()
     character(len=24) :: sdcont_pene
     real(kind=8), pointer :: v_sdcont_pene(:) => null()
-    real(kind=8) ::  dist_max,vale_pene
+    real(kind=8) ::  dist_max=1.0,vale_pene=1.0
 !
 ! --------------------------------------------------------------------------------------------------
 !

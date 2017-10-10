@@ -404,10 +404,12 @@ implicit none
                 dist_max = vale_pene
             endif
             
-            mmcvca = mmcvca .and. (ctcsta .eq. 0)
-            call bussetta_algorithm(dist_cont_curr, dist_cont_prev,dist_max, coef_bussetta)
-            v_sdcont_cychis(60*(i_cont_poin-1)+2) = max(coef_bussetta,&
-                                                    v_sdcont_cychis(60*(i_cont_poin-1)+2))
+            if (l_pena_cont) then
+                mmcvca = mmcvca .and. (ctcsta .eq. 0)
+                call bussetta_algorithm(dist_cont_curr, dist_cont_prev,dist_max, coef_bussetta)
+                v_sdcont_cychis(60*(i_cont_poin-1)+2) = max(coef_bussetta,&
+                                                        v_sdcont_cychis(60*(i_cont_poin-1)+2))
+            endif
                                                     
             ! Traitement de fortes interpenetrations         
             if (indi_cont_curr .eq. 1 .and. l_pena_cont) then            

@@ -180,8 +180,10 @@ U=STAT_NON_LINE(MODELE=MO,
                              ),
                 NEWTON=_F(MATRICE  ='TANGENTE',
                           REAC_ITER=1,),
-                SOLVEUR=_F(POSTTRAITEMENTS='SANS', RESI_RELA=-1),
-                CONVERGENCE=_F(RESI_GLOB_MAXI=9.E-3));
+                #SOLVEUR=_F(POSTTRAITEMENTS='SANS', RESI_RELA=-1),
+                #CONVERGENCE=_F(RESI_GLOB_MAXI=9.E-3),
+                CONVERGENCE=_F(RESI_GLOB_RELA=1.E-6),
+                );
 
 IMPR_RESU(FORMAT='MED',
           RESU=_F(RESULTAT=U,),);
@@ -257,7 +259,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    PRECISION=5.E-3,),
                 _F(NUME_ORDRE=11,
                    PARA='ITER_GLOB',
-                   VALE_CALC_I=2,
+                   VALE_CALC_I=1,
                    RESULTAT=U,
                    CRITERE='ABSOLU',
                    ),
