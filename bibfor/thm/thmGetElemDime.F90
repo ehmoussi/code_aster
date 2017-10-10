@@ -48,27 +48,27 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  l_vf         : flag for finite volume
-! In  type_vf      : type for finite volume
-! In  mecani       : parameters for mechanic
-! In  press1       : parameters for hydraulic (first pressure)
-! In  press1       : parameters for hydraulic (second pressure)
-! In  tempe        : parameters for thermic
-! In  ndim         : dimension of element (2 ou 3)
-! In  nnos         : number of nodes (not middle ones)
-! In  nnom         : number of nodes (middle ones)
-! In  nface        : number of faces (for finite volume)
-! Out nddls        : number of dof at nodes (not middle ones)
-! Out nddlm        : number of dof at nodes (middle ones)
-! Out nddlk        : number of dof for element (bubble or finite volume)
-! Out nddlfa       : number of dof on faces (for finite volume)
-! Out nddl_meca    : number of dof for mechanical quantity
-! Out nddl_p1      : number of dof for first hydraulic quantity
-! Out nddl_p2      : number of dof for second hydraulic quantity
-! Out dimdep       : dimension of generalized displacement vector
-! Out dimdef       : dimension of generalized strains vector
-! Out dimcon       : dimension of generalized stresses vector
-! Out dimuel       : total number of dof for element
+! In  l_vf             : flag for finite volume
+! In  type_vf          : type for finite volume
+! In  mecani           : parameters for mechanic
+! In  press1           : parameters for hydraulic (capillary pressure)
+! In  press2           : parameters for hydraulic (gaz pressure)
+! In  tempe            : parameters for thermic
+! In  ndim             : dimension of element (2 ou 3)
+! In  nnos             : number of nodes (not middle ones)
+! In  nnom             : number of nodes (middle ones)
+! In  nface            : number of faces (for finite volume)
+! Out nddls            : number of dof at nodes (not middle ones)
+! Out nddlm            : number of dof at nodes (middle ones)
+! Out nddlk            : number of dof for element (bubble or finite volume)
+! Out nddlfa           : number of dof on faces (for finite volume)
+! Out nddl_meca        : number of dof for mechanical quantity
+! Out nddl_p1          : number of dof for first hydraulic quantity
+! Out nddl_p2          : number of dof for second hydraulic quantity
+! Out dimdep           : dimension of generalized displacement vector
+! Out dimdef           : dimension of generalized strains vector
+! Out dimcon           : dimension of generalized stresses vector
+! Out dimuel           : total number of dof for element
 !
 ! --------------------------------------------------------------------------------------------------
 !
