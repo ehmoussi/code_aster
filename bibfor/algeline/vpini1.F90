@@ -334,11 +334,11 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
     endif
 
 ! fait dans nmop45 et pas dans op0045: je ne comprends pas pourquoi
-!    if (typres(1:9).ne.'DYNAMIQUE') then
-!      rbid = omemin
-!      omemin=-omemax
-!      omemax=-rbid
-!    endif
+    if ((typres(1:9).ne.'DYNAMIQUE').and.(mod45(1:4).ne.'OP45')) then
+      rbid = omemin
+      omemin=-omemax
+      omemax=-rbid
+    endif
 !
 ! --- ON BLINDE LES STRUCTURES DE DONNEES DE TYPE MATR_ASSE
 ! --- ON NE MANIPULE PAR LA SUITE QUE LEUR DESCRIPTEUR

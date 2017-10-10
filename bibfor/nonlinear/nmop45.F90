@@ -22,6 +22,7 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
+#include "asterfort/detrsd.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/elmddl.h"
 #include "asterfort/infdbg.h"
@@ -31,9 +32,10 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
 #include "asterfort/jeveuo.h"
 #include "asterfort/onerrf.h"
 #include "asterfort/vpcals.h"
-#include "asterfort/vpleci.h"
+#include "asterfort/vpecri.h"
 #include "asterfort/vpini1.h"
 #include "asterfort/vpini2.h"
+#include "asterfort/vpleci.h"
 #include "asterfort/vppara.h"
 #include "asterfort/vppost.h"
 #include "asterfort/vpsor1.h"
@@ -88,10 +90,13 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
     character(len=24) :: k24bid, vecblo, veclag, vecrer, vecrei, vecrek, vecvp
     aster_logical     :: lbid, lcomod, checksd
     mpi_int           :: mpibid
+    aster_logical     :: flage
+!
 ! DIVERS
     call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
-    cbid=(0.d0,0.d0) 
+    cbid=(0.d0,0.d0)
+    nconv=0 
 !
 ! --- CALCUL MODAL NON PARALLELISE (SEUL EVENTUELLEMENT LE SOLVEUR LINEAIRE SOUS-JACENT)
 !
@@ -145,7 +150,7 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
         call vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
                     matopa, mxresf, neqact, nblagr, omemax,&
                     omemin, omeshi, solveu, vecblo, veclag,&
-                    cbid, npivot, lbid, nconv, vpinf, vpmax, mod45)
+                    cbid, npivot, flage, nconv, vpinf, vpmax, mod45)
     case default
         ASSERT(.false.)
     end select
@@ -157,7 +162,7 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
                 nbpari, nbparr, mxresf, nconv, nblagr,&
                 ibid, modes, typcon, k16bid, eigsol,&
                 matopa, matopa, solveu, vecblo, veclag,&
-                lbid, ibid, ibid, mpibid, mpibid,&
+                flage, ibid, ibid, mpibid, mpibid,&
                 omemax, omemin, vpinf, vpmax, lcomod, mod45)
 !
     if (mod45 .eq. 'FLAM') then
@@ -217,7 +222,14 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
     endif
 !
  80 continue
-
+!
+! ---  ON AJUSTE LA VALEURS NFREQ DE LA SD EIGENSOLVER
+    call vpecri(eigsol, 'I', 1, k24bid, r8bid, nconv)
+    if (iret.ne.0) then 
+      call jedetr(vecblo)
+      call jedetr(veclag)
+      call detrsd('MATR_ASSE', matopa)
+    endif
 !
     call jedema()
 !

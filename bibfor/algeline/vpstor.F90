@@ -88,7 +88,6 @@ subroutine vpstor(ineg, typ, modes, nbmode, neq,&
     call jemarq()
 !
     call getres(res, typcon, nomcmd)
-    write(6,*)'<vpstor> typcon/nomcmd/mod45=',typcon,nomcmd,mod45
 !
 !     POUR POUVOIR UTILISER VPSTOR DANS STAT_NON_LINE VIA NMOP45
     if (typcon .eq. 'EVOL_NOLI') then

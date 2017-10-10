@@ -35,6 +35,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/copisd.h"
 #include "asterfort/detrsd.h"
+#include "asterfort/freqom.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetc.h"
 #include "asterfort/jemarq.h"
@@ -201,6 +202,8 @@ implicit none
     fcorig = 1.d-2
     if (typres(1:9) .eq. 'DYNAMIQUE') then
       omecor = omega2(fcorig)
+      bande(1)=freqom(bande(1))
+      bande(2)=freqom(bande(2))
     else
       omecor=fcorig
     endif
@@ -222,6 +225,7 @@ implicit none
 ! --- CALCUL MODAL PROPREMENT DIT
 !
     call nmop45(eigsol, defo, mod45, ddlexc, nddle, sdmode, sdstab, ddlsta, nsta)
+    
     call vpleci(eigsol, 'I', 1, k24bid, r8bid, nfreqc)
     call detrsd('EIGENSOLVER',eigsol)
 
