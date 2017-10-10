@@ -25,7 +25,8 @@
 #include "aster_fort.h"
 
 PhysicalQuantityManager::PhysicalQuantityManager():
-    _nameOfCmp( JeveuxCollectionChar8( "&CATA.GD.NOMCMP" ) )
+    _nameOfCmp( JeveuxCollectionChar8( "&CATA.GD.NOMCMP" ) ),
+    _nameOfPhysicalQuantity( JeveuxBidirectionalMapChar8( "&CATA.GD.NOMGD" ) )
 {};
 
 const JeveuxCollectionObjectChar8& PhysicalQuantityManager::getComponentNames
@@ -40,4 +41,12 @@ long PhysicalQuantityManager::getNumberOfEncodedInteger( const long& quantityNum
     long toReturn = 0;
     toReturn = CALL_NBEC( &quantityNumber );
     return toReturn;
+};
+
+std::string PhysicalQuantityManager::getPhysicalQuantityName( const long& quantityNumber ) const
+    throw( std::runtime_error )
+{
+    if( quantityNumber <= 0 || quantityNumber > _nameOfPhysicalQuantity->size() )
+        throw std::runtime_error( "Not a known physical quantity" );
+    return _nameOfPhysicalQuantity->findStringOfElement( quantityNumber );
 };

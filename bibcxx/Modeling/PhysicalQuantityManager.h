@@ -46,7 +46,8 @@ public:
 class PhysicalQuantityManager: public Singleton< PhysicalQuantityManager >
 {
 private:
-    const JeveuxCollectionChar8 _nameOfCmp;
+    const JeveuxCollectionChar8       _nameOfCmp;
+    const JeveuxBidirectionalMapChar8 _nameOfPhysicalQuantity;
 
     PhysicalQuantityManager();
 
@@ -56,6 +57,9 @@ public:
     const JeveuxCollectionObjectChar8& getComponentNames( const long& quantityNumber ) const;
 
     long getNumberOfEncodedInteger( const long& quantityNumber ) const;
+
+    std::string getPhysicalQuantityName( const long& quantityNumber ) const
+        throw( std::runtime_error );
 };
 
 #endif /* PHYSICALQUANTITYMANAGER_H_ */

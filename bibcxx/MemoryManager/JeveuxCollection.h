@@ -88,12 +88,13 @@ public:
      * @param objectName Nom de l'objet de collection
      */
     JeveuxCollectionObject( const std::string& collectionName, const int& number,
-                            bool isNamed ):
+                            bool isNamed, bool exists ):
         _collectionName( collectionName ),
         _numberInCollection( number ),
         _nameOfObject( "" ),
-        _valuePtr( nullptr ), _size( -1 )
+        _valuePtr( nullptr ), _size( 0 )
     {
+        if( ! exists ) return;
         const char* tmp = "L";
         long iret=number;
         const char* charName = collectionName.c_str();
@@ -123,6 +124,7 @@ public:
         FreeStr( charval );
         FreeStr( collectionObjectName );
     };
+
     /**
      * @brief Constructeur
      * @param collectionName Nom de collection
@@ -602,7 +604,7 @@ public:
 
         _mapNumObject[ std::string( trim( name.c_str() ) ) ] = _listObjects.size();
         _listObjects.push_back( JeveuxCollObjValType( _name, _listObjects.size() + 1,
-                                                      name.c_str(), size ) );
+                                                      name, size ) );
         return true;
     };
 
@@ -633,6 +635,13 @@ public:
      * @return Renvoit true si l'objet existe dans la collection
      */
     bool existsObject( const std::string& name ) const;
+
+    /**
+     * @brief Methode verifiant l'existance d'un objet de collection dans la collection
+     * @param number entier
+     * @return Renvoit true si l'objet existe dans la collection
+     */
+    bool existsObject( const long& number ) const;
 
     /**
      * @brief Methode permettant d'obtenir la liste des objets nommés dans la collection
@@ -715,7 +724,7 @@ bool JeveuxCollectionInstance< ValueType, PointerType >::buildFromJeveux()
     _listObjects.clear();
     long nbColObj, valTmp;
     const char* charName = _name.c_str();
-    JeveuxChar8 param( "NMAXOC" );
+    JeveuxChar8 param( "NUTIOC" );
     char* charval = MakeBlankFStr(32);
     long iret=0;
     CALL_JEEXIN( charName, &iret);
@@ -732,11 +741,15 @@ bool JeveuxCollectionInstance< ValueType, PointerType >::buildFromJeveux()
 
     for ( long i = 1; i <= nbColObj; ++i )
     {
-        _listObjects.push_back( JeveuxCollObjValType( _name, i, _isNamed ) );
+        if( ! existsObject( i ) )
+        {
+            _listObjects.push_back( JeveuxCollObjValType( _name, i, _isNamed, false ) );
+            continue;
+        }
+        _listObjects.push_back( JeveuxCollObjValType( _name, i, _isNamed, true ) );
         if ( _isNamed )
             _mapNumObject[ trim( _listObjects[ _listObjects.size()-1 ].getStringName() ) ] = i-1;
     }
-    FreeStr( charval );
     _isEmpty = false;
     return true;
 };
@@ -749,6 +762,20 @@ bool JeveuxCollectionInstance< ValueType, PointerType >::existsObject( const std
     long returnBool;
     CALL_JEXNOM( charJeveuxName, collName, name.c_str() );
     CALL_JEEXIN( charJeveuxName, &returnBool );
+    FreeStr( charJeveuxName );
+    if ( returnBool == 0 ) return false;
+    return true;
+};
+
+template< class ValueType, class PointerType >
+bool JeveuxCollectionInstance< ValueType, PointerType >::existsObject( const long& number ) const
+{
+    const char* collName = _name.c_str();
+    char* charJeveuxName = MakeBlankFStr(32);
+    long returnBool = number;
+    CALL_JEXNUM( charJeveuxName, collName, &returnBool );
+    CALL_JEEXIN( charJeveuxName, &returnBool );
+    FreeStr( charJeveuxName );
     if ( returnBool == 0 ) return false;
     return true;
 };
