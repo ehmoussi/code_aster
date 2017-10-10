@@ -384,8 +384,8 @@ subroutine vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
     mfreq = nconv
     if (optiof(1:5) .eq. 'BANDE') then
         if (lc .or. lns .or. .not.lkr) then
-	  ASSERT(.false.)
-	endif
+          ASSERT(.false.)
+        endif
         if ((typres(1:9).ne.'DYNAMIQUE').and.(mod45(1:4).ne.'OP45')) then
           rbid = omemin
           omemin=-omemax
@@ -403,8 +403,11 @@ subroutine vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
         if (mfreq .ne. nconv) call utmess('I', 'ALGELINE2_17')
     endif
 !
-! ---  ON MODIFIE LES VALEURS NFREQ DE LA SD EIGENSOLVER
-    call vpecri(eigsol, 'I', 1, k24bid, rbid, nfreq)
+! ---  ON AJUSTE LA VALEUR NFREQ DE LA SD EIGENSOLVER
+    if (mod45(1:4).eq.'OP45') then
+      call vpecri(eigsol, 'I', 1, k24bid, rbid, nfreq)
+    endif
+
 !
 !
 ! --- NETTOYAGE OBJETS TEMPORAIRES
