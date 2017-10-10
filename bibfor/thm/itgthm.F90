@@ -15,10 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine itgthm(ndim    , l_vf     , type_vf, inte_type,&
-                  nno     , nnos     , nnom   , nface ,&
-                  npi     , npi2     , npg    ,&
+!
+subroutine itgthm(ndim    , l_vf     , inte_type,&
+                  nno     , nnos     , nnom     , nface,&
+                  npi     , npi2     , npg      ,&
                   jv_poids, jv_poids2,&
                   jv_func , jv_func2 ,&
                   jv_dfunc, jv_dfunc2,&
@@ -31,18 +31,15 @@ implicit none
 #include "asterfort/thmGetElemInfo.h"
 #include "asterfort/thmGetElemRefe.h"
 !
-! aslint: disable=W1504
-!
-    integer, intent(in) :: ndim
-    aster_logical, intent(in) :: l_vf
-    integer, intent(in) :: type_vf
-    character(len=3), intent(in) :: inte_type
-    integer, intent(out) :: nno, nnos, nnom
-    integer, intent(out) :: nface
-    integer, intent(out) :: npi, npi2, npg
-    integer, intent(out) :: jv_gano
-    integer, intent(out) :: jv_poids, jv_poids2
-    integer, intent(out) :: jv_func, jv_func2, jv_dfunc, jv_dfunc2
+integer, intent(in) :: ndim
+aster_logical, intent(in) :: l_vf
+character(len=3), intent(in) :: inte_type
+integer, intent(out) :: nno, nnos, nnom
+integer, intent(out) :: nface
+integer, intent(out) :: npi, npi2, npg
+integer, intent(out) :: jv_gano
+integer, intent(out) :: jv_poids, jv_poids2
+integer, intent(out) :: jv_func, jv_func2, jv_dfunc, jv_dfunc2
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -54,7 +51,6 @@ implicit none
 !
 ! In  ndim         : dimension of element (2 ou 3)
 ! In  l_vf         : flag for finite volume
-! In  type_vf      : type for finite volume
 ! In  inte_type    : type of integration - classical, lumped (D), reduced (R)
 ! Out nno          : number of nodes (all)
 ! Out nnos         : number of nodes (not middle ones)
@@ -84,11 +80,11 @@ implicit none
 !
 ! - Get informations about element
 !
-    call thmGetElemInfo(l_vf, type_vf, inte_type, elrefe, elref2,&
-                        nno, nnos, nnom, &
-                        npi, npi2, npg,&
-                        jv_gano, jv_poids, jv_poids2,&
-                        jv_func, jv_func2, jv_dfunc, jv_dfunc2)
+    call thmGetElemInfo(l_vf     , elrefe  , elref2   ,&
+                        nno      , nnos    , nnom     ,&
+                        jv_gano  , jv_poids, jv_poids2,&
+                        jv_func  , jv_func2, jv_dfunc , jv_dfunc2,&
+                        inte_type, npi     , npi2     , npg)
 !
 ! - For finite volume
 !

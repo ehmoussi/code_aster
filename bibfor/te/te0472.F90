@@ -15,9 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: sylvie.granet at edf.fr
+!
 subroutine te0472(option, nomte)
-    implicit none
+!
+use THM_type
+use THM_module
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/thmGetElemModel.h"
@@ -28,29 +34,24 @@ subroutine te0472(option, nomte)
 #include "asterfort/vff2dn.h"
 #include "asterfort/lteatt.h"
 #include "asterfort/assert.h"
-    character(len=16) :: option, nomte
 !
-! person_in_charge: sylvie.granet at edf.fr
+character(len=16) :: option, nomte
 !
-!     BUT: CALCUL DES VECTEURS ELEMENTAIRES EN MECANIQUE
-!          CORRESPONDANT A UN FLUX THM (THH, THHM, THH, THH2,HHM,HM,HH)
-!          SUR DES FACES D'ELEMENTS ISOPARAMETRIQUES 2D
+! --------------------------------------------------------------------------------------------------
 !
-!          OPTION : 'CHAR_MECA_FLUX_R'
-!          OPTION : 'CHAR_MECA_FLUX_F'
+! Elementary computation
 !
-!    - ARGUMENTS:
-!        DONNEES:      OPTION       -->  OPTION DE CALCUL
-!                      NOMTE        -->  NOM DU TYPE ELEMENT
-! ======================================================================
-! NNO      NB DE NOEUDS DE L'ELEMENT DE BORD QUADRATIQUE
-! NNO2     NB DE NOEUDS DE L'ELEMENT DE BORD LINEAIRE
-! NNOS     NB DE NOEUDS EXTREMITE
-! NDLNO    NB DE DDL DES NOEUDS EXTREMITE
-! NDLNM    NB DE DDL DES NOEUDS MILIEUX
-! NPG      NB DE POINTS DE GAUSS DE L'ELEMENT DE BORD
-! ======================================================================
-! ======================================================================
+! Elements: THM - 2D (FE and SUSHI)
+!
+! Options: CHAR_MECA_FLUX_R, CHAR_MECA_FLUX_F, CHAR_MECA_PRES_R, CHAR_MECA_PRES_F
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
+! --------------------------------------------------------------------------------------------------
+!
     aster_logical :: l_axi, l_steady, l_vf
     integer :: nno, nno2, nnos, kp, npg, ndim, jgano, jgano2, napre1, napre2
     integer :: ipoids, ipoid2, ivf, ivf2, idfde, idfde2, igeom, natemp
@@ -61,9 +62,13 @@ subroutine te0472(option, nomte)
     character(len=8) :: nompar(3), type_elem(2)
     integer :: type_vf
 !
+! --------------------------------------------------------------------------------------------------
+!
+    call thmModuleInit()
+!
 ! - Get model of finite element
 !
-    call thmGetElemModel(l_axi, l_vf, type_vf, l_steady, ndim, type_elem)
+    call thmGetElemModel(l_axi_ = l_axi, l_vf_ = l_vf, ndim_ = ndim, l_steady_ = l_steady)
     call dimthm(ndlno, ndlnm, ndim)
 
 ! ======================================================================
@@ -81,14 +86,11 @@ subroutine te0472(option, nomte)
 ! ======================================================================
     call elrefe_info(elrefe='SE2', fami='RIGI', ndim=ndim, nno=nno2, nnos=nnos,&
                      npg=npg, jpoids=ipoid2, jvf=ivf2, jdfde=idfde2, jgano=jgano2)
-! ======================================================================
-! --- RECUPERATION DES CHAMPS IN ET DES CHAMPS OUT ---------------------
-! ======================================================================
+!
+! - Input/output fields
+!
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PVECTUR', 'E', ires)
-! ======================================================================
-! --- CAS DES FLUX -----------------------------------------------------
-! ======================================================================
     if (option .eq. 'CHAR_MECA_FLUX_R') then
         iopt = 1
         call jevech('PFLUXR', 'L', iflux)
@@ -119,7 +121,7 @@ subroutine te0472(option, nomte)
         nompar(3) = 'INST'
         valpar(3) = zr(itemps)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 ! ======================================================================
 ! --- CAS DU PERMANENT POUR LA PARTIE H OU T : LE SYSTEME A ETE --------

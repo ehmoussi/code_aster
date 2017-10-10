@@ -15,26 +15,23 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine thmGetElemInfo(l_vf, type_vf, inte_type, elrefe, elref2,&
-                              nno, nnos, nnom, &
-                              npi, npi2, npg,&
-                              jv_gano, jv_poids, jv_poids2,&
-                              jv_func, jv_func2, jv_dfunc, jv_dfunc2)
+    subroutine thmGetElemInfo(l_vf      , elrefe  , elref2   ,&
+                              nno       , nnos    , nnom     ,&
+                              jv_gano   , jv_poids, jv_poids2,&
+                              jv_func   , jv_func2, jv_dfunc , jv_dfunc2,&
+                              inte_type_, npi_    , npi2_    , npg_)
         aster_logical, intent(in) :: l_vf
-        integer, intent(in) :: type_vf
-        character(len=3), intent(in) :: inte_type
         character(len=8), intent(in) :: elrefe
         character(len=8), intent(in) :: elref2
         integer, intent(out) :: nno, nnos, nnom
-        integer, intent(out) :: npi, npi2, npg
         integer, intent(out) :: jv_gano
         integer, intent(out) :: jv_poids, jv_poids2
         integer, intent(out) :: jv_func, jv_func2, jv_dfunc, jv_dfunc2
+        character(len=3), optional, intent(in) :: inte_type_
+        integer, optional, intent(out):: npi_, npi2_, npg_
     end subroutine thmGetElemInfo
 end interface

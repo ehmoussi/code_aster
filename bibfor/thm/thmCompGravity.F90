@@ -105,11 +105,11 @@ implicit none
 !
 ! - Get informations about element
 !
-    call thmGetElemInfo(l_vf, type_vf, inte_type, elrefe, elref2,&
+    call thmGetElemInfo(l_vf, elrefe, elref2,&
                         nno, nnos, nnom, &
-                        npi, npi2, npg,&
                         jv_gano, jv_poids, jv_poids2,&
-                        jv_func, jv_func2, jv_dfunc, jv_dfunc2)
+                        jv_func, jv_func2, jv_dfunc, jv_dfunc2,&
+                        inte_type, npi   , npi2    , npg)
     ASSERT(npi .le. 27)
     ASSERT(nno .le. 20)
 !

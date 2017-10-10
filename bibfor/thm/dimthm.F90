@@ -15,8 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine dimthm(ndlno, ndlnm, ndim)
+!
+use THM_type
+use THM_module
 !
 implicit none
 !
@@ -46,7 +49,7 @@ implicit none
     if (lteatt('TYPMOD3','SUSHI')) then
         ndlnm = 2
     else
-        if (lteatt('MECA','OUI')) then
+        if (ds_thm%ds_elem%l_dof_meca) then
             ndlnm = ndim
         endif
     endif
@@ -54,16 +57,16 @@ implicit none
     if (lteatt('TYPMOD3','SUSHI')) then
         ndlno = 0
     else
-        if (lteatt('MECA','OUI')) then
+        if (ds_thm%ds_elem%l_dof_meca) then
             ndlno = ndim
         endif
-        if (lteatt('THER','OUI')) then
+        if (ds_thm%ds_elem%l_dof_ther) then
             ndlno = ndlno + 1
         endif
-        if (lteatt('HYDR1','1') .or. lteatt('HYDR1','2')) then
+        if (ds_thm%ds_elem%l_dof_pre1) then
             ndlno = ndlno + 1
         endif
-        if (lteatt('HYDR2','1') .or. lteatt('HYDR2','2')) then
+        if (ds_thm%ds_elem%l_dof_pre2) then
             ndlno = ndlno + 1
         endif
     endif
