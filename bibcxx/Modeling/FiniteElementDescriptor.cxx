@@ -25,6 +25,7 @@
 #include <algorithm>
 
 FiniteElementDescriptorInstance::FiniteElementDescriptorInstance( const std::string& name,
+                                                                  const BaseMeshPtr mesh,
                                                                   const JeveuxMemory memType ):
     DataStructure( name, "LIGREL", memType ),
     _numberOfDelayedNumberedConstraintNodes( getName() + ".NBNO" ),
@@ -37,6 +38,7 @@ FiniteElementDescriptorInstance::FiniteElementDescriptorInstance( const std::str
     _delayedNodesNumbering( getName() + ".LGNS" ),
     _superElementsDescriptor( getName() + ".SSSA" ),
     _nameOfNeighborhoodStructure( getName() + ".NVGE" ),
+    _mesh( mesh ),
     _explorer( ConnectivityDelayedElementsExplorer( _delayedNumberedConstraintElementsDescriptor ) ),
     _explorer2( ConnectivityDelayedElementsExplorer( _listOfGroupOfElements ) )
 {

@@ -30,7 +30,7 @@
 ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
     ( const std::string& name, const FiniteElementDescriptorPtr& FEDesc,
       const PartialMeshPtr& mesh, const ModelPtr& model, const JeveuxMemory memType ):
-                    FiniteElementDescriptorInstance( name, memType ),
+                    FiniteElementDescriptorInstance( name, model->getSupportMesh(), memType ),
                     _BaseFEDesc( FEDesc )
 {
     const int rank = getMPIRank();
@@ -41,7 +41,7 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
     VectorInt delayedElemToKeep;
     VectorInt meshNodesToKeep( owner->size(), -1 );
     long nbOldDelayedNodes = FEDesc->getNumberOfDelayedNodes();
-    VectorInt _delayedElemToKeep( nbOldDelayedNodes, -1 );
+    _delayedElemToKeep = VectorLong( nbOldDelayedNodes, 1 );
     VectorInt delayedNodesToKeep( nbOldDelayedNodes, -1 );
     VectorInt delayedNodesNumbering( nbOldDelayedNodes, 0 );
     long nbDelayedNodes = 0, nbElemToKeep = 0, totalSizeToKeep = 0;
@@ -84,8 +84,8 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
         if( keepElem )
         {
             delayedElemToKeep.push_back( numElem );
-            _delayedElemToKeep[ numElem-1 ] = nbElemToKeep;
-            ++nbElemToKeep;
+            _delayedElemToKeep[ numElem-1 ] = nbElemToKeep-1;
+            --nbElemToKeep;
         }
     }
 
@@ -100,7 +100,7 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
 
         // Allocation du .NEMA
         _delayedNumberedConstraintElementsDescriptor->allocateContiguous
-            ( memType, nbElemToKeep, totalSizeToKeep+nbElemToKeep, Numbered );
+            ( memType, -nbElemToKeep, totalSizeToKeep-nbElemToKeep, Numbered );
 
         // Remplissage du .NEMA avec les elements tardifs a conserver
         int posInCollection = 1;
@@ -130,9 +130,9 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
             bool addedElem = false;
             for( const auto& val : colObj )
             {
-                if( _delayedElemToKeep[-val-1] != -1 )
+                if( _delayedElemToKeep[-val-1] != 1 )
                 {
-                    toLiel[numInColl-1].push_back(-_delayedElemToKeep[-val-1]-1);
+                    toLiel[numInColl-1].push_back(_delayedElemToKeep[-val-1]);
                     addedElem = true;
                     ++totalCollSize;
                 }

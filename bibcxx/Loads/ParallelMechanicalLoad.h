@@ -32,6 +32,7 @@
 #include "DataStructures/DataStructure.h"
 #include "DataFields/PCFieldOnMesh.h"
 #include "Modeling/Model.h"
+#include "Modeling/FiniteElementDescriptor.h"
 #include "Modeling/ParallelFiniteElementDescriptor.h"
 #include "Loads/MechanicalLoad.h"
 
@@ -42,9 +43,16 @@
  */
 class ParallelMechanicalLoadInstance: public DataStructure
 {
+private:
+    void transferPCFieldOnMesh( const PCFieldOnMeshDoublePtr& fieldIn,
+                                PCFieldOnMeshDoublePtr& fieldOut )
+        throw( std::runtime_error );
+
 protected:
     /** @brief Modèle support */
     ModelPtr                           _supportModel;
+    /** @brief Vecteur Jeveux '.LIGRE' */
+    FiniteElementDescriptorPtr         _BaseFEDesc;
     /** @brief Vecteur Jeveux '.LIGRE' */
     ParallelFiniteElementDescriptorPtr _FEDesc;
     /** @brief Carte '.CIMPO' */

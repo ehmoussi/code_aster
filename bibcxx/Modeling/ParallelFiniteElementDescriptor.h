@@ -35,16 +35,16 @@
 
 /**
  * @class ParallelFiniteElementDescriptorInstance
- * @brief Classe definissant une charge dualisée parallèle
+ * @brief Classe definissant un ligrel parallèle
  * @author Nicolas Sellenet
  */
 class ParallelFiniteElementDescriptorInstance: public FiniteElementDescriptorInstance
 {
 protected:
     /** @brief Base FiniteElementDescriptor */
-    const FiniteElementDescriptorPtr& _BaseFEDesc;
+    const FiniteElementDescriptorPtr _BaseFEDesc;
     /** @brief Matching numbering between keeped delayed elements and base elements */
-    VectorLong                        _delayedElemToKeep;
+    VectorLong                       _delayedElemToKeep;
 
 public:
     /**
@@ -55,6 +55,15 @@ public:
                                              const PartialMeshPtr& mesh,
                                              const ModelPtr& model,
                                              const JeveuxMemory memType = Permanent );
+
+    /**
+     * @brief Get vector of delayed elements keeped from the base FiniteElementDescriptor
+     * @return reference on VectorLong
+     */
+    const VectorLong& getDelayedElementsToKeep()
+    {
+        return _delayedElemToKeep;
+    };
 
     /**
      * @typedef ParallelFiniteElementDescriptorPtr

@@ -119,27 +119,28 @@ public:
  * @class PCFieldValues Piecewise Constant (PC) Field values
  * @author Natacha Bereux
  */
+template< class ValueType >
 class PCFieldValues
 {
 private:
-//     JeveuxVectorChar8&         _components;
-//     JeveuxVector< ValueType >& _values;
+    VectorString             _components;
+    std::vector< ValueType > _values;
 
 public:
-    PCFieldValues()
+    PCFieldValues( const VectorString& comp, const std::vector< ValueType >& val ):
+        _components( comp ),
+        _values( val )
     {};
 
-//     const JeveuxVectorChar8& getComponents() const
-//     {
-//         _components->updateValuePointer();
-//         return _components;
-//     };
-// 
-//     const VectorLong& getValues() const
-//     {
-//         _values->updateValuePointer();
-//         return _values;
-//     };
+    const VectorString& getComponents() const
+    {
+        return _components;
+    };
+
+    const std::vector< ValueType >& getValues() const
+    {
+        return _values;
+    };
 };
 
 /**
@@ -163,7 +164,7 @@ class PCFieldOnMeshInstance: public DataStructure
         /** @brief Vecteur Jeveux '.VALE' */
         JeveuxVector< ValueType >  _valuesList;
         /** @brief Maillage sous-jacent */
-        BaseMeshPtr                _supportMesh;
+        const BaseMeshPtr          _supportMesh;
         /** @brief Ligrel */
         FiniteElementDescriptorPtr _FEDesc;
         /** @brief La carte est-elle allouée ? */
@@ -197,6 +198,43 @@ class PCFieldOnMeshInstance: public DataStructure
             {
                 (*_componentNames)[position] = (*component)[position];
                 (*_valuesListTmp)[position] = (*values)[position];
+            }
+
+            const std::string limano( " " );
+            try
+            {
+                CALL_NOCARTC( getName().c_str(), &code, &tVerif1, grp.c_str(), mode.c_str(),
+                              &nma, limano.c_str(), &( *limanu )[0], _FEDesc->getName().c_str() );
+            }
+            catch( ... )
+            {
+                throw;
+            }
+        };
+
+        void fortranAddValues( const long& code, const std::string& grp, const std::string& mode,
+                               const long& nma, const JeveuxVectorLong& limanu,
+                               const VectorString& component,
+                               const std::vector< ValueType >& values )
+            throw ( std::runtime_error )
+        {
+            if( ( code == -1 || code == -3 ) && ! _FEDesc )
+                throw std::runtime_error( "Build of PCFieldOnMesh impossible, FiniteElementDescriptor is missing" );
+            bool test = _componentNames->updateValuePointer();
+            test = test && _valuesListTmp->updateValuePointer();
+            if ( ! test )
+                throw std::runtime_error( "PCFieldOnMeshInstance not allocate" );
+            const long taille = _componentNames->size();
+
+            const long tVerif1 = component.size();
+            const long tVerif2 = values.size();
+            if ( tVerif1 > taille || tVerif2 > taille || tVerif1 != tVerif2 )
+                throw std::runtime_error( "Unconsistent size" );
+
+            for ( int position = 0; position < tVerif1; ++position )
+            {
+                (*_componentNames)[position] = component[position];
+                (*_valuesListTmp)[position] = values[position];
             }
 
             const std::string limano( " " );
@@ -275,7 +313,7 @@ class PCFieldOnMeshInstance: public DataStructure
             _nameOfLigrels( JeveuxVectorChar24( name + ".NOLI" ) ),
             _listOfMeshElements( JeveuxCollectionLong( name + ".LIMA" ) ),
             _valuesList( JeveuxVector<ValueType>( name + ".VALE" ) ),
-            _supportMesh( BaseMeshPtr() ),
+            _supportMesh( ligrel->getSupportMesh() ),
             _FEDesc( ligrel ),
             _isAllocated( false ),
             _componentNames( name + ".NCMP" ),
@@ -289,7 +327,7 @@ class PCFieldOnMeshInstance: public DataStructure
          * @param mesh Maillage support
          * @param name Nom Jeveux de la carte
          */
-        PCFieldOnMeshInstance( const BaseMeshPtr& mesh, 
+        PCFieldOnMeshInstance( const BaseMeshPtr& mesh,
                                const JeveuxMemory memType = Permanent ):
             DataStructure( "CART_", memType, 19 ),
             _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
@@ -319,7 +357,7 @@ class PCFieldOnMeshInstance: public DataStructure
             _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
             _listOfMeshElements( JeveuxCollectionLong( getName() + ".LIMA" ) ),
             _valuesList( JeveuxVector<ValueType>( getName() + ".VALE" ) ),
-            _supportMesh( BaseMeshPtr() ),
+            _supportMesh( ligrel->getSupportMesh() ),
             _FEDesc( ligrel ),
             _isAllocated( false ),
             _componentNames( getName() + ".NCMP" ),
@@ -327,6 +365,8 @@ class PCFieldOnMeshInstance: public DataStructure
         {
             assert( getName().size() == 19 );
         };
+
+        typedef boost::shared_ptr< PCFieldOnMeshInstance< ValueType > > PCFieldOnMeshValueTypePtr;
 
         /**
          * @brief Destructeur
@@ -351,22 +391,49 @@ class PCFieldOnMeshInstance: public DataStructure
         };
 
         /**
+         * @brief Allocation de la carte
+         * @return true si l'allocation s'est bien deroulee, false sinon
+         */
+        void allocate( const JeveuxMemory jeveuxBase,
+                       const PCFieldOnMeshValueTypePtr& model )
+            throw ( std::runtime_error )
+        {
+            auto componant = model->getPhysicalQuantityName();
+            std::string strJeveuxBase( "V" );
+            if ( jeveuxBase == Permanent ) strJeveuxBase = "G";
+            fortranAllocate( strJeveuxBase, componant );
+            _isAllocated = true;
+        };
+
+        /**
+         * @brief Get support physical quantity
+         */
+        std::string getPhysicalQuantityName() const
+        {
+            _descriptor->updateValuePointer();
+            long gdeur = (*_descriptor)[0];
+            return PhysicalQuantityManager::Instance().getPhysicalQuantityName( gdeur );
+        };
+
+        /**
          * @brief Get values of a zone
          */
-        void getValues( const int& position ) const
+        PCFieldValues< ValueType > getValues( const int& position ) const
             throw( std::runtime_error )
         {
+            _valuesList->updateValuePointer();
             _descriptor->updateValuePointer();
             if( position >= (*_descriptor)[2] )
                 throw std::runtime_error( "Out of PCFieldOnMesh bound" );
 
             long nbZoneMax = (*_descriptor)[1];
             long gdeur = (*_descriptor)[0];
+            const auto name1 = PhysicalQuantityManager::Instance().getPhysicalQuantityName( gdeur );
             long nec = PhysicalQuantityManager::Instance().getNumberOfEncodedInteger( gdeur );
-            std::cout << "nec " << nec << std::endl;
             const auto& compNames = PhysicalQuantityManager::Instance().getComponentNames( gdeur );
-//             long zoneNumber = (*_descriptor)[ 3 + 2*nbZoneMax + 1 ];
+            const long nbCmpMax = compNames.size();
             VectorString cmpToReturn;
+            std::vector< ValueType > valToReturn;
             for( int i = 0; i < nec; ++i )
             {
                 long encodedInt = (*_descriptor)[ 3 + 2*nbZoneMax + position*nec + i ];
@@ -375,13 +442,16 @@ class PCFieldOnMeshInstance: public DataStructure
                 long pos = 0;
                 for( const auto& val : vecOfComp )
                 {
-                    if( val != 0 )
+                    if( val == 1 )
+                    {
                         cmpToReturn.push_back( compNames[pos+i*30].toString() );
+                        const long posInVale = pos+i*30 + nbCmpMax*position;
+                        valToReturn.push_back( (*_valuesList)[posInVale] );
+                    }
                     ++pos;
                 }
             }
-            for( const auto& name : cmpToReturn )
-                std::cout << "name " << name << std::endl;
+            return PCFieldValues< ValueType >( cmpToReturn, valToReturn );
         };
 
         /**
@@ -465,7 +535,7 @@ class PCFieldOnMeshInstance: public DataStructure
 
             const long code = -3;
             const std::string grp2( " " );
-            const std::string mode( " " );
+            const std::string mode( "NUM" );
             const long nbMa = 0;
             JeveuxVectorLong limanu( "&&TEMPORARY" );
             limanu->allocate( Temporary, grp.size() );
@@ -498,6 +568,65 @@ class PCFieldOnMeshInstance: public DataStructure
             JeveuxVectorLong limanu( "empty" );
             limanu->allocate( Temporary, 1 );
             fortranAddValues( code, grp.getName(), mode, nbMa, limanu, component, values );
+            return true;
+        };
+
+        /**
+         * @brief Fixer une valeur sur un groupe de mailles
+         * @param zone Zone sur laquelle on alloue la carte
+         * @param values Valeur a allouer
+         * @return renvoit true si l'ajout s'est bien deroulee, false sinon
+         */
+        bool setValueOnZone( const PCFieldZone& zone,
+                             const PCFieldValues< ValueType >& values )
+            throw ( std::runtime_error )
+        {
+            if ( _supportMesh.use_count() == 0 || _supportMesh->isEmpty() )
+                throw std::runtime_error( "Mesh is empty" );
+
+            long code = 0;
+            std::string grp( " " );
+            std::string mode( " " );
+            long nbMa = 0;
+            JeveuxVectorLong limanu( "&&TEMPORARY" );
+            if( zone.getLocalizationType() == PCFieldZone::AllMesh )
+            {
+                code = 1;
+                limanu->allocate( Temporary, 1 );
+            }
+            else if( zone.getLocalizationType() == PCFieldZone::AllDelayedElements )
+            {
+                code = -1;
+                limanu->allocate( Temporary, 1 );
+            }
+            else if( zone.getLocalizationType() == PCFieldZone::OnGroupOfElements )
+            {
+                code = 2;
+                grp = zone.getSupportGroup()->getName();
+                limanu->allocate( Temporary, 1 );
+            }
+            else if( zone.getLocalizationType() == PCFieldZone::ListOfElements )
+            {
+                code = 3;
+                mode = "NUM";
+                const auto& vecTmp = zone.getListOfElements();
+                nbMa = vecTmp.size();
+                limanu->allocate( Temporary, nbMa );
+                for( long pos = 0; pos < nbMa; ++pos )
+                    (*limanu)[pos] = vecTmp[pos];
+            }
+            else if( zone.getLocalizationType() == PCFieldZone::ListOfDelayedElements )
+            {
+                code = -3;
+                mode = "NUM";
+                const auto& vecTmp = zone.getListOfElements();
+                nbMa = vecTmp.size();
+                limanu->allocate( Temporary, nbMa );
+                for( long pos = 0; pos < nbMa; ++pos )
+                    (*limanu)[pos] = vecTmp[pos];
+            }
+            fortranAddValues( code, grp, mode, nbMa, limanu,
+                              values.getComponents(), values.getValues() );
             return true;
         };
 

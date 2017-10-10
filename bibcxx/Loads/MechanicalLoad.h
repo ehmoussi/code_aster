@@ -334,7 +334,7 @@ public:
                 _nameOfAssemblyVector( name + ".VEASS" ),
                 _veiss( name + ".VEISS" ),
                 _evolChar( name + ".EVOL.CHAR" ),
-                _FEDesc( new FiniteElementDescriptorInstance( name + ".LIGRE" ) ),
+                _FEDesc( new FiniteElementDescriptorInstance( name + ".LIGRE", _mesh ) ),
                 _cimpo( new PCFieldOnMeshDoubleInstance( name + ".CIMPO", _FEDesc ) ),
                 _cmult( new PCFieldOnMeshDoubleInstance( name + ".CMULT", _FEDesc ) ),
                 _dpgen( new PCFieldOnMeshDoubleInstance( name + ".DPGEN", _FEDesc ) ),

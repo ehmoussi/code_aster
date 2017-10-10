@@ -29,6 +29,7 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "Meshes/MeshExplorer.h"
+#include "Meshes/Mesh.h"
 
 /**
  * @class FiniteElementDescriptorInstance
@@ -62,6 +63,8 @@ protected:
     JeveuxVectorLong                          _superElementsDescriptor;
     /** @brief Vecteur Jeveux '.NVGE' */
     JeveuxVectorChar16                        _nameOfNeighborhoodStructure;
+    /** @brief Vecteur Jeveux '.NVGE' */
+    BaseMeshPtr                               _mesh;
     /** @brief Object to allow loop over connectivity of delayed numbered elements */
     const ConnectivityDelayedElementsExplorer _explorer;
     /** @brief Object to allow loop over list of group of elements */
@@ -72,6 +75,7 @@ public:
      * @brief Constructeur
      */
     FiniteElementDescriptorInstance( const std::string& name,
+                                     const BaseMeshPtr mesh,
                                      const JeveuxMemory memType = Permanent );
 
     /**
@@ -114,6 +118,11 @@ public:
     {
         _dofDescriptor->updateValuePointer();
         return _dofDescriptor;
+    };
+
+    const BaseMeshPtr getSupportMesh() const
+    {
+        return _mesh;
     };
 };
 
