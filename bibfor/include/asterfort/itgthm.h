@@ -15,24 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
-! aslint: disable=W1504
-!
 interface
-    subroutine itgthm(ndim    , l_vf     , type_vf, inte_type,&
-                      nno     , nnos     , nnom   , nface    ,&
-                      npi     , npi2     , npg    ,&
+    subroutine itgthm(ndim    , l_vf     , inte_type,&
+                      nno     , nnos     , nnom     , nface    ,&
+                      npi     , npi2     , npg      ,&
                       jv_poids, jv_poids2,&
                       jv_func , jv_func2 ,&
                       jv_dfunc, jv_dfunc2,&
                       jv_gano )
         integer, intent(in) :: ndim
         aster_logical, intent(in) :: l_vf
-        integer, intent(in) :: type_vf
         character(len=3), intent(in) :: inte_type
         integer, intent(out) :: nno, nnos, nnom
         integer, intent(out) :: npi, npi2, npg

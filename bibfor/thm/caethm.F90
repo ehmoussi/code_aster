@@ -118,9 +118,9 @@ implicit none
 !
 ! - Get definition of element
 !
-    call itgthm(ndim    , l_vf     , type_vf  , inte_type,&
-                nno     , nnos     , nnom   , nface ,&
-                npi     , npi2     , npg    ,&
+    call itgthm(ndim    , l_vf     , inte_type,&
+                nno     , nnos     , nnom     , nface ,&
+                npi     , npi2     , npg      ,&
                 jv_poids, jv_poids2,&
                 jv_func , jv_func2 ,&
                 jv_dfunc, jv_dfunc2,&

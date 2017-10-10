@@ -15,9 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: sylvie.granet at edf.fr
+!
 subroutine te0466(option, nomte)
-    implicit none
+!
+use THM_type
+use THM_module
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterfort/dimthm.h"
 #include "asterfort/elref1.h"
@@ -25,25 +31,28 @@ subroutine te0466(option, nomte)
 #include "asterfort/fointe.h"
 #include "asterfort/jevech.h"
 #include "asterfort/utmess.h"
+#include "asterfort/thmGetElemModel.h"
 #include "asterfort/lteatt.h"
 #include "asterfort/teattr.h"
-    character(len=16) :: option, nomte
-! =====================================================================
-! person_in_charge: sylvie.granet at edf.fr
 !
+character(len=16) :: option, nomte
 !
-!     BUT: CALCUL DES VECTEURS ELEMENTA EN MECANIQUE
-!          CORRESPONDANT A UN CHARGEMENT EN FLUX NORMAUX HYDRAULIQUES
-!          ET THERMIQUES SUR DES FACES D'ELEMENTS ISOPARAMETRIQUES
-!          3D_THHM, 3D_THM,3D_THH,3D_HHM,3D_HM, 3D_HH
-!          ACTUELLEMENT TRAITES : FACE8 ET FACE6
-!          OPTIONS : 'CHAR_MECA_FLUX_R' ET 'CHAR_MECA_FLUX_F'
+! --------------------------------------------------------------------------------------------------
 !
-!     ENTREES  ---> OPTION : OPTION DE CALCUL
-!              ---> NOMTE  : NOM DU TYPE ELEMENT
-!.......................................................................
+! Elementary computation
 !
+! Elements: THM - 3D (FE and SUSHI)
 !
+! Options: CHAR_MECA_FLUX_R, CHAR_MECA_FLUX_F, CHAR_MECA_PRES_R, CHAR_MECA_PRES_F, CHAR_MECA_FR2D3D
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
+! --------------------------------------------------------------------------------------------------
+!
+    aster_logical :: l_axi, l_steady, l_vf
     integer :: ipoids, ivf, idfdx, idfdy, igeom, i, j, l, ifluxf
     integer :: ndim, nno, ipg, npi, ires, iflux, itemps, jgano
     integer :: idec, jdec, kdec, ldec, ldec2, ino, jno
@@ -56,19 +65,16 @@ subroutine te0466(option, nomte)
     character(len=24) :: elref2
     integer :: ndlno, ndlnm, ipres, ipresf
     real(kind=8) :: pres, presf
-!
     integer :: nnos, npi2
     integer :: nflux
-!------------------------------------------------------------------
-!  CETTE ROUTINE FAIT UN CALCUL EN THHM , HM , HHM , THH ,THM,
-!                           THH2M, HH2M,  THH2, HH, HH2
-!------------------------------------------------------------------
-! ======================================================================
-! --- INITIALISATIONS --------------------------------------------------
-! ======================================================================
-
-    call teattr('C','MODTHM',mthm,iret)
-    if (iret.ne.0) mthm=' '
+!
+! --------------------------------------------------------------------------------------------------
+!
+    call thmModuleInit()
+!
+! - Get model of finite element
+!
+    call thmGetElemModel(l_axi_ = l_axi, l_vf_ = l_vf, ndim_ = ndim, l_steady_ = l_steady)
 
     ndim2 = 3
     call elref1(elrefe)
@@ -93,13 +99,11 @@ subroutine te0466(option, nomte)
 !
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PVECTUR', 'E', ires)
-!
     if (option .eq. 'CHAR_MECA_FLUX_R') then
         iopt = 1
         call jevech('PFLUXR', 'L', iflux)
         call jevech('PTEMPSR', 'L', itemps)
         deltat = zr(itemps+1)
-!
     else if (option.eq.'CHAR_MECA_FLUX_F') then
         iopt = 2
         call jevech('PFLUXF', 'L', ifluxf)
@@ -113,7 +117,6 @@ subroutine te0466(option, nomte)
     else if (option.eq.'CHAR_MECA_PRES_R') then
         iopt = 3
         call jevech('PPRESSR', 'L', ipres)
-!
     else if (option.eq.'CHAR_MECA_PRES_F') then
         iopt = 4
         call jevech('PPRESSF', 'L', ipresf)
