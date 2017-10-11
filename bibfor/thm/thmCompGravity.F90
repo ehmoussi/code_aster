@@ -75,6 +75,10 @@ implicit none
 !
     call thmGetElemModel(l_axi, l_vf, l_steady, ndim)
 !
+! - Cannot compute for finite volume
+!
+    ASSERT(.not.l_vf)
+!
 ! - Get type of integration
 !
     call thmGetElemIntegration(l_vf, inte_type)
@@ -120,8 +124,7 @@ implicit none
 !
 ! - Get dimensions about element
 !
-    call thmGetElemDime(l_vf     ,&
-                        ndim     , nnos   , nnom   , &
+    call thmGetElemDime(ndim     , nnos   , nnom   , &
                         mecani   , press1 , press2 , tempe ,&
                         nddls    , nddlm  , &
                         nddl_meca, nddl_p1, nddl_p2,&
@@ -135,6 +138,7 @@ implicit none
 !
 ! - Compute
 !
+    nnom = nno - nnos
     if (ndim .eq. 3) then
         do kpg = 1, npg
             l = (kpg-1)*nno

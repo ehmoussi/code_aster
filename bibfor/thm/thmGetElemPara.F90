@@ -151,28 +151,10 @@ integer, intent(out) :: jv_gano
                         jv_func  , jv_func2, jv_dfunc , jv_dfunc2,&
                         inte_type, npi     , npi2     , npg)
 !
-! - For finite volume
-!
-!    if (l_vf) then
-!        if (ndim .eq. 2) then
-!            nface = nnos
-!        else
-!            if (elrefe .eq. 'H27') then
-!                nface = 6
-!            else if (elrefe .eq. 'T9') then
-!                nface = 4
-!            else
-!                ASSERT(ASTER_FALSE)
-!            endif
-!        endif
-!    else
-!        nface = 0
-!    endif
 !
 ! - Get dimensions about element
 !
-    call thmGetElemDime(l_vf     ,&
-                        ndim     , nnos   , nnom   ,&
+    call thmGetElemDime(ndim     , nnos   , nnom   ,&
                         mecani   , press1 , press2 , tempe ,&
                         nddls    , nddlm  ,&
                         nddl_meca, nddl_p1, nddl_p2,&

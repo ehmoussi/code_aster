@@ -68,6 +68,10 @@ implicit none
 !
     call thmGetElemModel(l_axi, l_vf, l_steady, ndim)
 !
+! - Cannot compute for finite volume
+!
+    ASSERT(.not.l_vf)
+!
 ! - Get type of integration
 !
     call thmGetElemIntegration(l_vf, inte_type)
@@ -76,10 +80,6 @@ implicit none
 !
     call thmGetGene(l_steady, l_vf  , ndim  ,&
                     mecani  , press1, press2, tempe)
-!
-! - Cannot compute for finite volume
-!
-    ASSERT(.not.l_vf)
 !
 ! - Get reference elements
 !
@@ -104,8 +104,7 @@ implicit none
 !
 ! - Get dimensions about element
 !
-    call thmGetElemDime(l_vf     ,&
-                        ndim     , nnos   , nnom   ,&
+    call thmGetElemDime(ndim     , nnos   , nnom   ,&
                         mecani   , press1 , press2 , tempe ,&
                         nddls    , nddlm  ,&
                         nddl_meca, nddl_p1, nddl_p2,&

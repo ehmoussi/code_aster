@@ -19,20 +19,15 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine thmGetElemDime(l_vf     ,&
-                              ndim     , nnos   , nnom   ,&
+    subroutine thmGetElemDime(ndim     , nnos   , nnom   ,&
                               mecani   , press1 , press2 , tempe ,&
                               nddls    , nddlm  , &
                               nddl_meca, nddl_p1, nddl_p2,&
-                              dimdep   , dimdef , dimcon , dimuel,&
-                              nface_   , nddlk_ , nddlfa_)
-        aster_logical, intent(in) :: l_vf
+                              dimdep   , dimdef , dimcon , dimuel)
         integer, intent(in) :: ndim, nnos, nnom
         integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
         integer, intent(out) :: nddls, nddlm
         integer, intent(out) :: nddl_meca, nddl_p1, nddl_p2
         integer, intent(out) :: dimdep, dimdef, dimcon, dimuel
-        integer, optional, intent(in) :: nface_
-        integer, optional, intent(out) :: nddlk_, nddlfa_
     end subroutine thmGetElemDime
 end interface

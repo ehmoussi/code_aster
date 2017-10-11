@@ -51,8 +51,8 @@ character(len=16) :: option, nomte
     integer :: icontm, ivarip, ivarim, ivectu, icontp
 ! =====================================================================
     integer :: mecani(5), press1(7), press2(7), tempe(5), dimuel
-    integer :: dimdep, dimdef, dimcon, nbvari, nddls, nddlm, nddlfa, nddlk
-    integer :: nddl_meca, nddl_p1, nddl_p2, nnos
+    integer :: dimdep, dimdef, dimcon, nbvari, nddls, nddlm
+    integer :: nddl_meca, nddl_p1, nddl_p2, nnos, nddlk, nddlfa
     integer :: nface
 !     REMARQUE : CES DIMENSIONS DOIVENT ETRE LES MEMES QUE DANS TE0492
     real(kind=8) :: defgep(21), defgem(21)
@@ -83,16 +83,7 @@ character(len=16) :: option, nomte
 !                                      ENT22
 ! TYPMOD    MODELISATION (D_PLAN, 3D )
 ! MODINT    METHODE D'INTEGRATION (CLASSIQUE,LUMPEE(D),REDUITE(R) ?)
-! NNO       NB DE NOEUDS DE L'ELEMENT
-! NNOS      NB DE NOEUDS SOMMETS DE L'ELEMENT
-! OUT
-!     NFACE  NB DE FACES AU SENS BORD DE DIM DIM-1 NE SERT QU EN VF
-!
-! NDDLS     NB DE DDL SUR LES SOMMETS
-! OUT
-!    NDDLM     NB DDL SUR LES MILIEUX DE FACE OU D ARRETE
-!              NE SERT QU EN EF
-!    NDDLFA    NB DDL SUR LES FACE DE DIMENSION DIM-1 NE SERT QU EN VF
+
 ! NDDLK     NB DDL AU CENTRE ELEMENT
 ! NDIM      DIMENSION DE L'ESPACE
 ! DIMUEL    NB DE DDL TOTAL DE L'ELEMENT
@@ -143,13 +134,16 @@ character(len=16) :: option, nomte
 !
 ! - Get all parameters for current element
 !
-    call thmGetElemDime(l_vf     ,&
-                        ndim     , nnos   , nnom   ,&
+    call thmGetElemDime(ndim     , nnos   , nnom   ,&
                         mecani   , press1 , press2 , tempe ,&
                         nddls    , nddlm  , &
                         nddl_meca, nddl_p1, nddl_p2,&
-                        dimdep   , dimdef , dimcon , dimuel,&
-                        nface    , nddlk  , nddlfa )
+                        dimdep   , dimdef , dimcon , dimuel)
+    nddls  = 0
+    nddlm  = 0
+    nddlk  = press1(1) + press2(1) + tempe(1)
+    nddlfa = press1(1) + press2(1) + tempe(1)
+    dimuel = nnos*nddls + nface*nddlfa + nddlk
     
 ! =====================================================================
 ! --- DEBUT DES DIFFERENTES OPTIONS -----------------------------------
