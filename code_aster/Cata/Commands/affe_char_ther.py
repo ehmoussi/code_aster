@@ -215,7 +215,7 @@ AFFE_CHAR_THER=OPER(nom="AFFE_CHAR_THER",op=34,sd_prod=char_ther
                                  into=("TEMP","TEMP_MIL","TEMP_INF","TEMP_SUP") ),
          ),
 
-         LIAISON_CHAMNO  =FACT(statut='f',max='**',
+         LIAISON_CHAMNO  =FACT(statut='f',max=1,
            CHAM_NO         =SIMP(statut='o',typ=cham_no_sdaster),# CO()# "il faut definir une structure de donnee generique chamno"
            COEF_IMPO       =SIMP(statut='o',typ='R' ),
            NUME_LAGR       =SIMP(statut='f',typ='TXM',defaut="NORMAL",into=("NORMAL","APRES") ),
