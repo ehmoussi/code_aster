@@ -15,29 +15,25 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine cacdsu(maxfa, maxdim, alpha, ndim, nno,&
-                      nface, geom, vol, mface, dface,&
-                      xface, normfa, kdiag, yss, c,&
-                      d)
-        integer :: nno
-        integer :: ndim
-        integer :: maxdim
-        integer :: maxfa
-        real(kind=8) :: alpha
-        integer :: nface
-        real(kind=8) :: geom(ndim, nno)
-        real(kind=8) :: vol
-        real(kind=8) :: mface(maxfa)
-        real(kind=8) :: dface(maxfa)
-        real(kind=8) :: xface(maxdim, maxfa)
-        real(kind=8) :: normfa(maxdim, maxfa)
-        real(kind=8) :: kdiag(6)
-        real(kind=8) :: yss(maxdim, maxfa, maxfa)
-        real(kind=8) :: c(maxfa, maxfa)
-        real(kind=8) :: d(maxfa, maxfa)
+    subroutine cacdsu(maxfa    , parm_alpha,&
+                      ndim     , nno       , nface,&
+                      elem_coor,&
+                      vol      , mface     , dface,&
+                      xface    , normfa    , kdiag,&
+                      yss      , c         , d    )
+        integer, intent(in) :: maxfa
+        real(kind=8), intent(in) :: parm_alpha
+        integer, intent(in) :: ndim, nno, nface
+        real(kind=8), intent(in) :: elem_coor(ndim, nno)
+        real(kind=8), intent(in) :: vol
+        real(kind=8), intent(in) :: mface(1:maxfa)
+        real(kind=8), intent(in) :: dface(1:maxfa)
+        real(kind=8), intent(in) :: xface(1:3, 1:maxfa)
+        real(kind=8), intent(in) :: normfa(1:3, 1:maxfa)
+        real(kind=8), intent(in) :: kdiag(6)
+        real(kind=8), intent(out) :: yss(3, maxfa, maxfa)
+        real(kind=8), intent(out) :: c(maxfa, maxfa), d(maxfa, maxfa)
     end subroutine cacdsu
 end interface
