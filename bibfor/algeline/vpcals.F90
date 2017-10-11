@@ -19,8 +19,8 @@
 subroutine vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
                   matopa, mxresf, neqact, nblagr, omemax,&
                   omemin, omeshi, solveu, vecblo, veclag,&
-                  sigma, npivot, flage, nconv, vpinf,&
-                  vpmax, mod45)
+                  sigma, npivot, flage, nconv, vpinf, vpmax, mod45b,&
+                  vecstb, vecedd, nbddl, vecsdd, nbddl2, csta)
 !
 ! ROUTINE EFFECTUANT LE CALCUL MODAL PARAMETRE DANS EIGSOL PAR LA METHODE DE SORENSEN
 ! -------------------------------------------------------------------------------------------------
@@ -48,6 +48,7 @@ subroutine vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
 #include "asterfort/vpordo.h"
 #include "asterfort/vpsorc.h"
 #include "asterfort/vpsorn.h"
+#include "asterfort/vpsor1.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/wpsorc.h"
@@ -58,17 +59,18 @@ subroutine vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
 !
 ! --- INPUT
 !
-    integer, intent(in) :: mxresf, neqact, nblagr
+    integer, intent(in) :: mxresf, neqact, nblagr, nbddl, nbddl2
     real(kind=8), intent(in)    :: omeshi
     complex(kind=8), intent(in) :: sigma
-    character(len=4) , intent(in) :: mod45
+    character(len=4) , intent(in) :: mod45b
     character(len=19), intent(in) :: eigsol, matopa, solveu
     character(len=24), intent(in) :: vecrer, vecrei, vecrek, vecvp, vecblo, veclag
+    character(len=24), intent(in) :: vecstb, vecedd, vecsdd
 !
 ! --- OUTPUT
 !
     integer, intent(out) :: nconv
-    real(kind=8), intent(out) :: vpinf, vpmax
+    real(kind=8), intent(out) :: vpinf, vpmax, csta
     aster_logical , intent(out) :: flage
 !
 !
@@ -82,9 +84,9 @@ subroutine vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
 !
     integer :: ibid, imet, lamor, lmasse, lmatra, lraide, maxitr, nbvect, neq, nfreq
     integer :: lonwl, lselec, lresid, lworkd, lworkl, lworkv, ldsor, laux, lworkr
-    integer :: lauc, laur, laul, ldiagr, lsurdr, lprod, lddl
+    integer :: lauc, laur, laul, ldiagr, lsurdr, lprod, lddl, eddl, eddl2
     integer :: nfreq1, izero, mfreq, ifreq, ifm, niv, priram(8)
-    integer :: lresui, lresur, lresuk, lvec
+    integer :: lresui, lresur, lresuk, lvec, redem, jstab
     real(kind=8) :: alpha, quapi2, omecor, precdc, precsh, rbid, rzero, tolsor
     character(len=1) :: appr
     character(len=8) :: method, k8bid
@@ -128,6 +130,11 @@ subroutine vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
     call jeveuo(vecvp, 'E', lvec)
     call jeveuo(vecblo, 'L', lprod)
     call jeveuo(veclag, 'L', lddl)
+    if (mod45b(1:4).EQ.'SOR1') then
+        call jeveuo(vecstb, 'E', jstab)
+        call jeveuo(vecedd, 'L', eddl)
+        call jeveuo(vecsdd, 'L', eddl2)
+    endif
 !
 ! --- LECTURE DES DONNEES DE EIGSOL
 !
@@ -222,6 +229,43 @@ subroutine vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
         call wkvect('&&VPCALS.VECT.AUR', 'V V R', 2*neq*(nbvect+1), laur)
     else
         ASSERT(.false.)
+    endif
+!
+! --- CAS PARTICULIER DE NMOP45 + FLAMBEMENT SANS MATRICE GEOMETRIQUE
+!
+    if (mod45b(1:4).EQ.'SOR1') then
+        redem = 0
+        call vpsor1(        lmatra, neq, nbvect, nfreq,&
+                    tolsor, zr(lvec), zr(lresid), zr(lworkd), zr(lworkl),&
+                    lonwl, zl(lselec), zr(ldsor), omeshi, zr(laux),&
+                    zr(lworkv), zi(lprod), zi(lddl), zi(eddl), nbddl, neqact, maxitr,&
+                    ifm, niv, priram, alpha,omecor,&
+                    nconv, flage, solveu,&
+                    nbddl2, zi(eddl2), zr(jstab), csta, redem)
+        call rectfr(nconv, nconv, omeshi, npivot, nblagr,&
+                    zr(ldsor), nfreq+1, zi(lresui), zr(lresur), mxresf)
+        nfreq1=nfreq+1
+        call vpbost(typres, nconv, nconv, omeshi, zr(ldsor),&
+                    nfreq1, vpinf, vpmax, precdc, method, omecor)
+        if (typres(1:9) .eq. 'DYNAMIQUE')&
+        call vpordi(1, 0, nconv, zr(lresur+mxresf), zr(lvec), neq, zi(lresui))
+!
+        do imet = 1, nconv
+           zi(lresui-1+mxresf+imet) = izero
+           zr(lresur-1+imet) = freqom(zr(lresur-1+mxresf+imet))
+!       SI OPTION 'PLUS_GRANDE' : CONVERSION EN VALEUR PHYSIQUE
+           if (lpg) zr(lresur-1+imet) = +1.d0 / (quapi2 * zr( lresur-1+imet))
+              zr(lresur-1+2*mxresf+imet) = rzero
+              zk24(lresuk-1+ mxresf+imet)= kmetho
+        enddo
+        if (typres(1:9) .ne. 'DYNAMIQUE') then
+            call vpordo(0, 0, nconv, zr(lresur+mxresf), zr(lvec), neq)
+            do imet = 1, nconv
+              zr(lresur-1+imet) = freqom(zr(lresur-1+mxresf+ imet))
+              zi(lresui-1+imet) = imet
+            enddo
+        endif
+        goto 99
     endif
 !
 ! --- CALCUL MODAL PROPREMENT DIT
@@ -374,6 +418,7 @@ subroutine vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
 ! ---- NOMBRE DE MODES CONVERGES
 ! ---- SI LE SOLVEUR MODAL A BIEN ACHEVE SON TRAVAIL ON FAIT CETTE AFFEC
 ! ---- TATION SINON ON NE TIENT COMPTE QUE DES NCONV MODES REELLEMENT CV
+ 99 continue
     if (.not.flage) nconv = nfreq
 !
 !     ------------------------------------------------------------------
@@ -386,7 +431,7 @@ subroutine vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
         if (lc .or. lns .or. .not.lkr) then
           ASSERT(.false.)
         endif
-        if ((typres(1:9).ne.'DYNAMIQUE').and.(mod45(1:4).ne.'OP45')) then
+        if ((typres(1:9).ne.'DYNAMIQUE').and.(mod45b(1:4).ne.'OP45')) then
           rbid = omemin
           omemin=-omemax
           omemax=-rbid
@@ -395,7 +440,7 @@ subroutine vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
             if ((zr(lresur+mxresf+ifreq).gt.omemax) .or. (zr(lresur+ mxresf+ifreq).lt.omemin)) &
             nconv = nconv - 1
         enddo
-        if ((typres(1:9).ne.'DYNAMIQUE').and.(mod45(1:4).ne.'OP45')) then
+        if ((typres(1:9).ne.'DYNAMIQUE').and.(mod45b(1:4).ne.'OP45')) then
           rbid = omemin
           omemin=-omemax
           omemax=-rbid
@@ -404,7 +449,7 @@ subroutine vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
     endif
 !
 ! ---  ON AJUSTE LA VALEUR NFREQ DE LA SD EIGENSOLVER
-    if (mod45(1:4).eq.'OP45') then
+    if (mod45b(1:4).eq.'OP45') then
       call vpecri(eigsol, 'I', 1, k24bid, rbid, nfreq)
     endif
 

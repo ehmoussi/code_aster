@@ -415,8 +415,6 @@ implicit none
         call jedetr(matas//'.VALF')
         call jedetr(matas//'.VALM')
         call jedetr(matas//'.WALF')
-        call jedetr(matas//'.&INT')
-        call jedetr(matas//'.&IN2')
 !
 !
 !     ------------------------------------------------------------------

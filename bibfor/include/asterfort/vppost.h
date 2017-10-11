@@ -24,7 +24,7 @@ interface
     subroutine vppost(vecrer, vecrei, vecrek, vecvp, nbpark, nbpari, nbparr, mxresf,&
                       nconv, nblagr, nfreqg, modes, typcon, compex, eigsol, matopa, matpsc, solveu,&
                       vecblo, veclag, flage,&
-                      icom1, icom2, mpicou, mpicow, omemax, omemin, vpinf, vpmax, lcomod, mod45)
+                      icom1, icom2, mpicou, mpicow, omemax, omemin, vpinf, vpmax, lcomod, mod45b)
         character(len=24) , intent(in)    :: vecrer
         character(len=24) , intent(in)    :: vecrei
         character(len=24) , intent(in)    :: vecrek
@@ -45,7 +45,7 @@ interface
         character(len=19) , intent(in)    :: solveu
         character(len=24) , intent(in)    :: vecblo
         character(len=24) , intent(in)    :: veclag
-        aster_logical   , intent(in)    :: flage
+        aster_logical     , intent(in)    :: flage
 !!
         integer           , intent(inout) :: icom1
         integer           , intent(inout) :: icom2
@@ -56,6 +56,6 @@ interface
         real(kind=8)      , intent(inout) :: vpinf
         real(kind=8)      , intent(inout) :: vpmax
         aster_logical     , intent(inout) :: lcomod
-        character(len=4)  , intent(in)    :: mod45
+        character(len=4)  , intent(in)    :: mod45b
     end subroutine vppost
 end interface

@@ -72,7 +72,7 @@ subroutine op0045()
     integer :: rangl, icom1, icom2
     real(kind=8) :: omemin, omemax, omeshi, vpinf, vpmax, rbid
     complex(kind=8) :: sigma
-    character(len=4) :: mod45
+    character(len=4) :: mod45, mod45b
     character(len=8) :: modes, method
     character(len=16) :: typcon, compex
     character(len=19) :: k19bid, matpsc, matopa, solveu, eigsol
@@ -85,6 +85,7 @@ subroutine op0045()
 ! --------------------------------------------------------------------------------------------------
     call infmaj()
     mod45='OP45'
+    mod45b=mod45
 !
 ! --  ETAPE 0.0: INITIALISATIONS PROPRES A CET OPERATEUR
     call vpini0(compex, modes, typcon, solveu, eigsol,&
@@ -138,8 +139,8 @@ subroutine op0045()
         call vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
                     matopa, mxresf, neqact, nblagr, omemax,&
                     omemin, omeshi, solveu, vecblo, veclag,&
-                    sigma, npivot, flage, nconv, vpinf,&
-                    vpmax, mod45)
+                    sigma, npivot, flage, nconv, vpinf, vpmax, mod45b,&
+                    k24bid, k24bid, ibid, K24bid, ibid, rbid)
     case('TRI_DIAG')
         call vpcalt(eigsol, vecrer, vecrei, vecrek, vecvp,&
                     matopa, matpsc, mxresf, nblagr, nstoc,&
