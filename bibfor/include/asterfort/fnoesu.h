@@ -16,18 +16,16 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-#include "asterf_types.h"
-!
 interface
-    subroutine fnoesu(option, nface,&
-                      congem, vectu, press1, press2,&
-                      dimcon, dimuel)
-        integer :: dimuel, dimcon
-        character(len=16) :: option
-        integer :: nface
-        real(kind=8) :: congem(dimcon, 7)
-        real(kind=8) :: vectu(dimuel)
-        integer :: press1(7)
-        integer :: press2(7)
+    subroutine fnoesu(nface ,&
+                      dimcon, dimuel,&
+                      press1, press2,&
+                      congem, vectu )
+        integer, parameter :: maxfa = 6 
+        integer, intent(in) :: nface
+        integer, intent(in) :: dimcon, dimuel
+        integer, intent(in) :: press1(7), press2(7)
+        real(kind=8), intent(in) :: congem(dimcon, maxfa+1)
+        real(kind=8), intent(inout) :: vectu(dimuel)
     end subroutine fnoesu
 end interface
