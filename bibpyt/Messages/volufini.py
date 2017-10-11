@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+# person_in_charge: sylvie.granet at edf.fr
 
 cata_msg = {
 
@@ -41,10 +41,6 @@ Le type de voisinage %(k1)s est inconnu.
 """),
     7 : _(u"""
 Le type de voisinage %(k1)s a une longueur %(i1)i trop grande
-"""),
-
-    11 : _(u"""
-L'option  %(k1)s est inconnue
 """),
 
     13 : _(u"""
