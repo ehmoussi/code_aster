@@ -15,20 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine vfnulo(maxfa, maxar, ndim, nnos, nface,&
+    subroutine vfnulo(maxfa , maxar, ndim , nnos , nface,&
                       nbnofa, nosar, nosfa, narfa)
-        integer :: nface
-        integer :: maxar
-        integer :: maxfa
-        integer :: ndim
-        integer :: nnos
-        integer :: nbnofa(1:nface)
-        integer :: nosar(1:maxar, 2)
-        integer :: nosfa(1:maxfa, *)
-        integer :: narfa(1:maxfa, *)
+        integer, intent(in) :: maxfa, maxar, ndim, nnos, nface
+        integer, intent(out) :: nbnofa(1:nface)
+        integer, intent(out) :: nosar(1:maxar, 2), nosfa(1:maxfa, *), narfa(1:maxfa, *)
     end subroutine vfnulo
 end interface

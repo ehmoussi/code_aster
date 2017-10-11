@@ -15,59 +15,63 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine vfnulo(maxfa, maxar, ndim, nnos, nface,&
+!
+subroutine vfnulo(maxfa , maxar, ndim , nnos , nface,&
                   nbnofa, nosar, nosfa, narfa)
-    implicit none
-! DONNE LA NUMEROTATION LOCALE DES SOMMETS DES FACES DE VF
-! LA FACE EST UN ELEMENT DE BORD DE DIMENSION DIM-1
 !
-! IN NDIM DIMENSION D ESPACE
-! IN NFACE NOMBRE DE FACES
-! IN NNOS NOMBRE DE SOMMETS
-! MAXFA NOMBRE MAX DE FACES
-! MAXAR NOMBRE MAX DE ARETES
-! NOSAR(IAR ,1:2)  LES DESDUS SOMMETS DE L ARETE IAR
-! OUT NBNOFA(1:NFACE) : NOMBRE DE SOMMETS DE LA FACE
-! OUT NOSFA(IFA :1,NFACE,J : 1,NBNOFA(IFA)) J EME SOMMET DE LA FACE IFA
-!     (EN NUMEROTATION LOCALE)
-! OUT NARFA(IFA :1,NFACE,J : 1,NBNOFA(IFA)) J EME ARETE DE LA FACE IFA
-!     (EN NUMEROTATION LOCALE)
-!
+implicit none
 !
 #include "asterfort/assert.h"
 #include "asterfort/elref1.h"
 #include "asterfort/utmess.h"
-    integer :: maxfa, maxar, ndim, nnos, nface
-    integer :: nbnofa(1:nface)
-    integer :: nosar(1:maxar, 2)
-    integer :: nosfa(1:maxfa, *)
-    integer :: narfa(1:maxfa, *)
+!
+integer, intent(in) :: maxfa, maxar, ndim, nnos, nface
+integer, intent(out) :: nbnofa(1:nface)
+integer, intent(out) :: nosar(1:maxar, 2), nosfa(1:maxfa, *), narfa(1:maxfa, *)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! THM - Compute (finite volume)
+!
+! Utility - Get numbering of faces
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  maxfa            : maximum number of faces
+! In  maxar            : maximum number of edged
+! In  ndim             : dimension of space (2 or 3)
+! In  nnos             : number of nodes (not middle ones)
+! In  nface            : number of faces (for finite volume)
+! Out nbnofa           : number of nodes by face
+! Out nosar            : for each edge => list of nodes
+! Out nosfa            : for each face => list of nodes
+! Out narfa            : for each face => list of edges
+!
+! --------------------------------------------------------------------------------------------------
 !
     character(len=8) :: elrefe
     integer :: ifa
+!
+! --------------------------------------------------------------------------------------------------
 !
     call elref1(elrefe)
 !
     if (ndim .eq. 2) then
         ASSERT(nnos.eq.nface)
-        do 1 ifa = 1, nface
-            nbnofa(ifa)=2
-            nosfa(ifa,1)=ifa
+        do ifa = 1, nface
+            nbnofa(ifa)  = 2
+            nosfa(ifa,1) = ifa
             if ((ifa+1) .le. nnos) then
-                nosfa(ifa,2)=ifa+1
+                nosfa(ifa,2) = ifa+1
             else
-                nosfa(ifa,2)=ifa+1-nnos
+                nosfa(ifa,2) = ifa+1-nnos
             endif
- 1      continue
-    else
+        end do
+    elseif (ndim .eq. 3) then
         if (elrefe .eq. 'H27') then
             ASSERT(nface.eq.6)
             ASSERT(nnos.eq.8)
-            do 2 ifa = 1, 6
-                nbnofa(ifa)=4
- 2          continue
-! SOMMETS DE ARETE
+            nbnofa(1:6) = 4
             nosar(1,1)=1
             nosar(1,2)=2
             nosar(2,1)=2
@@ -90,7 +94,6 @@ subroutine vfnulo(maxfa, maxar, ndim, nnos, nface,&
             nosar(10,2)=7
             nosar(11,1)=7
             nosar(11,2)=8
-! SOMMETS DE FACE
             nosar(12,1)=8
             nosar(12,2)=5
             nosfa(1,1)=1
@@ -117,7 +120,6 @@ subroutine vfnulo(maxfa, maxar, ndim, nnos, nface,&
             nosfa(6,2)=6
             nosfa(6,3)=7
             nosfa(6,4)=8
-! ARETES DE FACE
             narfa(1,1)=1
             narfa(1,2)=2
             narfa(1,3)=3
@@ -145,10 +147,7 @@ subroutine vfnulo(maxfa, maxar, ndim, nnos, nface,&
         else if (elrefe.eq.'T9') then
             ASSERT(nface.eq.4)
             ASSERT(nnos.eq.4)
-            do 3 ifa = 1, 4
-                nbnofa(ifa)=3
- 3          continue
-! SOMMETS DE ARETE
+            nbnofa(1:4) = 3
             nosar(1,1)=1
             nosar(1,2)=2
             nosar(2,1)=2
@@ -161,7 +160,6 @@ subroutine vfnulo(maxfa, maxar, ndim, nnos, nface,&
             nosar(5,2)=4
             nosar(6,1)=3
             nosar(6,2)=4
-! SOMMETS DE FACE
             nosfa(1,1)=2
             nosfa(1,2)=3
             nosfa(1,3)=4
@@ -174,7 +172,6 @@ subroutine vfnulo(maxfa, maxar, ndim, nnos, nface,&
             nosfa(4,1)=1
             nosfa(4,2)=2
             nosfa(4,3)=3
-! ARETES DE FACE
             narfa(1,1)=2
             narfa(1,2)=6
             narfa(1,3)=5
@@ -188,7 +185,9 @@ subroutine vfnulo(maxfa, maxar, ndim, nnos, nface,&
             narfa(4,2)=2
             narfa(4,3)=3
         else
-            call utmess('F', 'VOLUFINI_12', sk=elrefe)
+            ASSERT(ASTER_FALSE)
         endif
+    else
+        ASSERT(ASTER_FALSE)
     endif
 end subroutine

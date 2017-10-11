@@ -397,12 +397,12 @@ implicit none
         dvp1ff(i)= 0.d0
         dvp2ff(i)= 0.d0
     end do
-! ================================================================
-! --- CALCUL DES QUANTITES GEOMETRIQUES
-! ================================================================
-    call cabhvf(maxfa, maxdim, ndim, nno, nnos,&
-                nface, axi, geom, vol, mface,&
-                dface, xface, normfa)
+!
+! - Compute geometric parameters for current cell
+!
+    call cabhvf(maxfa, ndim , nno  , nnos , nface ,&
+                geom ,&
+                vol  , mface, dface, xface, normfa)
 ! ================================================================
 ! --- CALCUL DES DEFORMATIONS GENERALISEES ----------------------
 ! ON MET DANS LE TABLEAU DES DEF GENERALISES LES PRESSIONS
