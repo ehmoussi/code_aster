@@ -671,106 +671,106 @@ implicit none
             fm2ads(ifa,jfa)=0.d0
         end do
     end do
-! ========================================
-! FLUX VOLUMIQUES
-!=========================================
-    call vfcfks(.true._1, tange, maxfa, nface, cvp,&
-                dcvp1, dcvp2, cvpf, dcvp1f, dcvp2f,&
-                d, gravity, zero, zero, zero,&
-                xg, xface, maxdim, ndim, ftgks,&
-                ftgks1, ftgks2)
-    call vfcfks(.true._1, tange, maxfa, nface, cad,&
-                dcad1, dcad2, cadf, dcad1f, dcad2f,&
-                d, gravity, zero, zero, zero,&
-                xg, xface, maxdim, ndim, fclks,&
-                fclks1, fclks2)
-    call vfcfks(.true._1, tange, maxfa, nface, pwp,&
-                dpwp1, dpwp2, pwpf, dpwp1f, dpwp2f,&
-                c, gravity, rhol, drhol1, drhol2,&
-                xg, xface, maxdim, ndim, flks,&
-                dflks1, dflks2)
-    call vfcfks(.true._1, tange, maxfa, nface, pgp,&
-                dpgp1, dpgp2, pgpf, dpgp1f, dpgp2f,&
-                c, gravity, rhog, drhog1, drhog2,&
-                xg, xface, maxdim, ndim, fgks,&
-                dfgks1, dfgks2)
+!
+! - Compute "volumic" flux
+!
+    call vfcfks(tange , maxfa  , ndim  , nface,&
+                cvp   , dcvp1  , dcvp2 ,&
+                cvpf  , dcvp1f , dcvp2f,&
+                d     , gravity,&
+                zero  , zero   , zero  ,&
+                xg    , xface  ,&
+                ftgks , ftgks1  , ftgks2)
+    call vfcfks(tange , maxfa  , ndim  , nface,&
+                cad   , dcad1  , dcad2 ,&
+                cadf  , dcad1f , dcad2f,&
+                d     , gravity,&
+                zero  , zero   , zero  ,&
+                xg    , xface  ,&
+                fclks , fclks1 , fclks2)
+    call vfcfks(tange , maxfa  , ndim  , nface,&
+                pwp   , dpwp1  , dpwp2 ,&
+                pwpf  , dpwp1f , dpwp2f,&
+                c     , gravity,&
+                rhol  , drhol1 , drhol2,&
+                xg    , xface  ,&
+                flks  , dflks1 , dflks2)
+    call vfcfks(tange , maxfa  , ndim  , nface,&
+                pgp   , dpgp1  , dpgp2 ,&
+                pgpf  , dpgp1f , dpgp2f,&
+                c     , gravity,&
+                rhog  , drhog1 , drhog2,&
+                xg    , xface  ,&
+                fgks  , dfgks1 , dfgks2)
+!
+! - Get diffusion
+!
     do ifa = 1, nface
-! ========================================
-! CALCUL DIFFUSIONS
-! ========================================
         difuvp(ifa) = valcen(diffu,wvap)
         difuas(ifa) = -valcen(diffu,airsec)
         difuad(ifa) = valcen(diffu,airdis)
-        divp1(ifa) = valcen(ddifp1,wvap)
-        divp2(ifa) = valcen(ddifp2,wvap)
+        divp1(ifa)  = valcen(ddifp1,wvap)
+        divp2(ifa)  = valcen(ddifp2,wvap)
         divp1f(ifa) = 0.d0
         divp2f(ifa) = 0.d0
-        dias1(ifa) = -valcen(ddifp1,airsec)
-        dias2(ifa) = -valcen(ddifp2,airsec)
+        dias1(ifa)  = -valcen(ddifp1,airsec)
+        dias2(ifa)  = -valcen(ddifp2,airsec)
         dias1f(ifa) = 0.d0
         dias2f(ifa) = 0.d0
-        diad1(ifa) = valcen(ddifp1,airdis)
-        diad2(ifa) = valcen(ddifp2,airdis)
+        diad1(ifa)  = valcen(ddifp1,airdis)
+        diad2(ifa)  = valcen(ddifp2,airdis)
         diad1f(ifa) = 0.d0
         diad2f(ifa) = 0.d0
     end do
+!
+! - Get mobility
+!
     do ifa = 1, nface
-! ==========================================
-! CALCUL MOBILITES
-! ==========================================
-
-! ===========================
-! CALCUL MOBILITES
-! ===========================
         if (flks(ifa) .ge. 0.d0) then
-            mobwf(ifa) = valcen(mob,wliq)
-            dw1f(ifa) = valcen(dmobp1,wliq)
-            dw2f(ifa) = valcen(dmobp2,wliq)
+            mobwf(ifa)  = valcen(mob,wliq)
+            dw1f(ifa)   = valcen(dmobp1,wliq)
+            dw2f(ifa)   = valcen(dmobp2,wliq)
             dw1ffa(ifa) = 0.d0
             dw2ffa(ifa) = 0.d0
-!
-            moadf(ifa) = valcen(mob,airdis)
-            dad1f(ifa) = valcen(dmobp1,airdis)
-            dad2f(ifa) = valcen(dmobp2,airdis)
-            dad1ff(ifa)= 0.d0
-            dad2ff(ifa)= 0.d0
+            moadf(ifa)  = valcen(mob,airdis)
+            dad1f(ifa)  = valcen(dmobp1,airdis)
+            dad2f(ifa)  = valcen(dmobp2,airdis)
+            dad1ff(ifa) = 0.d0
+            dad2ff(ifa) = 0.d0
         else
-            mobwf(ifa) = valfac(ifa,mob,wliq)
-            dw1f(ifa) = 0.d0
-            dw2f(ifa) = 0.d0
-            dw1ffa(ifa)=valfac(ifa,dmobp1,wliq)
-            dw2ffa(ifa)= valfac(ifa,dmobp2,wliq)
-!
-            moadf(ifa) = valfac(ifa,mob,airdis)
-            dad1f(ifa) = 0.d0
-            dad2f(ifa) = 0.d0
-            dad1ff(ifa)= valfac(ifa,dmobp1,airdis)
-            dad2ff(ifa)= valfac(ifa,dmobp2,airdis)
+            mobwf(ifa)  = valfac(ifa,mob,wliq)
+            dw1f(ifa)   = 0.d0
+            dw2f(ifa)   = 0.d0
+            dw1ffa(ifa) = valfac(ifa,dmobp1,wliq)
+            dw2ffa(ifa) = valfac(ifa,dmobp2,wliq)
+            moadf(ifa)  = valfac(ifa,mob,airdis)
+            dad1f(ifa)  = 0.d0
+            dad2f(ifa)  = 0.d0
+            dad1ff(ifa) = valfac(ifa,dmobp1,airdis)
+            dad2ff(ifa) = valfac(ifa,dmobp2,airdis)
         endif
         if (fgks(ifa) .ge. 0.d0) then
-            moasf(ifa) = valcen(mob,airsec)
-            das1f(ifa) = valcen(dmobp1,airsec)
-            das2f(ifa) = valcen(dmobp2,airsec)
-            das1ff(ifa)= 0.d0
-            das2ff(ifa)= 0.d0
-!
-            movpf(ifa) = valcen(mob,wvap)
-            dvp1f(ifa) = valcen(dmobp1,wvap)
-            dvp2f(ifa) = valcen(dmobp2,wvap)
-            dvp1ff(ifa)= 0.d0
-            dvp2ff(ifa)= 0.d0
+            moasf(ifa)  = valcen(mob,airsec)
+            das1f(ifa)  = valcen(dmobp1,airsec)
+            das2f(ifa)  = valcen(dmobp2,airsec)
+            das1ff(ifa) = 0.d0
+            das2ff(ifa) = 0.d0
+            movpf(ifa)  = valcen(mob,wvap)
+            dvp1f(ifa)  = valcen(dmobp1,wvap)
+            dvp2f(ifa)  = valcen(dmobp2,wvap)
+            dvp1ff(ifa) = 0.d0
+            dvp2ff(ifa) = 0.d0
         else
-            moasf(ifa) = valfac(ifa,mob,airsec)
-            das1f(ifa) = 0.d0
-            das2f(ifa) = 0.d0
-            das1ff(ifa)= valfac(ifa,dmobp1,airsec)
-            das2ff(ifa)= valfac(ifa,dmobp2,airsec)
-!
-            movpf(ifa) = valfac(ifa,mob,wvap)
-            dvp1f(ifa) = 0.d0
-            dvp2f(ifa) = 0.d0
-            dvp1ff(ifa)= valfac(ifa,dmobp1,wvap)
-            dvp2ff(ifa)= valfac(ifa,dmobp2,wvap)
+            moasf(ifa)  = valfac(ifa,mob,airsec)
+            das1f(ifa)  = 0.d0
+            das2f(ifa)  = 0.d0
+            das1ff(ifa) = valfac(ifa,dmobp1,airsec)
+            das2ff(ifa) = valfac(ifa,dmobp2,airsec)
+            movpf(ifa)  = valfac(ifa,mob,wvap)
+            dvp1f(ifa)  = 0.d0
+            dvp2f(ifa)  = 0.d0
+            dvp1ff(ifa) = valfac(ifa,dmobp1,wvap)
+            dvp2ff(ifa) = valfac(ifa,dmobp2,wvap)
         endif
     end do
     do ifa = 1, nface
