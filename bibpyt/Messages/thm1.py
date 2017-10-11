@@ -46,10 +46,6 @@ Le coefficient d'emmagasinement EMMAG n'est pas utilisable avec un couplage méc
  Les conditions initiales de DEFI_MATERIAU (THM_INIT) ne sont pas compatibles avec la loi de couplage choisie dans STAT_NON_LINE.
 """),
 
-    35 : _(u"""
-La loi de couplage <%(k1)s> n'est pas compatible avec la modélisation choisie <%(k2)s>.
-"""),
-
     36 : _(u"""
 Il y a déjà une loi de couplage.
 """),
@@ -92,6 +88,41 @@ Il y a une loi mécanique définie dans la relation, ce n'est pas possible avec 
 
     59 : _(u"""
 La loi de couplage doit être LIQU_SATU ou GAZ pour une modélisation <%(k1)s>.
+"""),
+
+    60 : _(u"""
+La loi de couplage <%(k1)s> n'est pas compatible avec la modélisation choisie.
+L'élément a %(i1)d pressions et la loi de couplage en utilise %(i2)d.
+"""),
+
+    61 : _(u"""
+La loi de couplage <%(k1)s> n'est pas compatible avec la modélisation choisie.
+L'élément a %(i1)d composantes sur la première pression et la loi de couplage en utilise %(i2)d.
+"""),
+
+    62 : _(u"""
+La loi de couplage <%(k1)s> n'est pas compatible avec la modélisation choisie.
+L'élément a %(i1)d composantes sur la première pression et la loi de couplage en utilise %(i2)d.
+"""),
+
+    63 : _(u"""
+La loi de couplage <%(k1)s> n'est pas compatible avec la modélisation choisie.
+La modélisation a besoin d'un degré de liberté pour la mécanique.
+"""),
+
+    64 : _(u"""
+La loi de couplage <%(k1)s> n'est pas compatible avec la modélisation choisie.
+La modélisation a un degré de liberté pour la mécanique la loi de comportement n'a pas de loi mécanique.
+"""),
+
+    65 : _(u"""
+La loi de couplage <%(k1)s> n'est pas compatible avec la modélisation choisie.
+La modélisation a besoin d'un degré de liberté pour la thermique.
+"""),
+
+    66 : _(u"""
+La loi de couplage <%(k1)s> n'est pas compatible avec la modélisation choisie.
+La modélisation a un degré de liberté pour la thermique la loi de comportement n'a pas de loi thermique.
 """),
 
     94 : _(u"""Il manque les paramètres de Van Genuchten."""),

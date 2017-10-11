@@ -15,17 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
 !
-!
-#include "asterf_types.h"
-!
-interface
-    subroutine thm_kit_chck(model, l_affe_all, list_elem_affe, nb_elem_affe, rela_thmc)
-        character(len=8), intent(in) :: model
-        aster_logical, intent(in) :: l_affe_all
-        character(len=24), intent(in) :: list_elem_affe
-        integer, intent(in) :: nb_elem_affe
-        character(len=16), intent(in) :: rela_thmc
-    end subroutine thm_kit_chck
-end interface
+interface 
+    subroutine thmGetBehaviourChck()
+    end subroutine thmGetBehaviourChck
+end interface 

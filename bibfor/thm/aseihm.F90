@@ -35,6 +35,7 @@ implicit none
 #include "asterfort/thmGetParaInit.h"
 #include "asterfort/thmGetBehaviour.h"
 #include "asterfort/thmGetBehaviourVari.h"
+#include "asterfort/thmGetBehaviourChck.h"
 !......................................................................
 !
 !     BUT:  CALCUL DU VECTEUR FORCES INTERNES ELEMENTAIRE, DES
@@ -128,6 +129,10 @@ implicit none
 ! - Get parameters for internal variables
 !
     call thmGetBehaviourVari()
+!
+! - Some checks between behaviour and model
+!
+    call thmGetBehaviourChck()
 !
 ! - Get initial parameters (THM_INIT)
 !

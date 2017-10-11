@@ -58,6 +58,7 @@ implicit none
 #include "asterfort/Behaviour_type.h"
 #include "asterfort/thmGetParaInit.h"
 #include "asterfort/thmSelectMatrix.h"
+#include "asterfort/thmGetBehaviourChck.h"
 !
 integer, parameter :: dimmat = 120
 character(len=16), intent(in) :: option
@@ -186,6 +187,10 @@ integer, intent(out) :: codret
 ! - Get parameters for internal variables
 !
     call thmGetBehaviourVari()
+!
+! - Some checks between behaviour and model
+!
+    call thmGetBehaviourChck()
 !
 ! - Get storage parameters for behaviours
 !

@@ -35,7 +35,6 @@ implicit none
 #include "asterfort/dismoi.h"
 #include "asterfort/nmdovd.h"
 #include "asterfort/nmdovm.h"
-#include "asterfort/thm_kit_chck.h"
 #include "asterfort/comp_read_mesh.h"
 #include "asterfort/utmess.h"
 !
@@ -86,7 +85,7 @@ aster_logical, intent(out) :: l_comp_erre
     character(len=16) :: keywordfact
     integer :: i_comp, nb_comp
     character(len=8) :: repons
-    aster_logical :: l_kit_thm, l_one_elem, l_elem_bound
+    aster_logical :: l_one_elem, l_elem_bound
     character(len=24) :: ligrmo
     character(len=8) :: partit
     mpi_int :: nb_proc, mpicou
@@ -120,8 +119,6 @@ aster_logical, intent(out) :: l_comp_erre
 !
 ! ----- Detection of specific cases
 !              
-        call comp_meca_l(rela_comp, 'KIT_THM', l_kit_thm)
-!
         if (rela_comp .eq. 'ENDO_HETEROGENE') then 
             ligrmo = model//'.MODELE'
             call dismoi('PARTITION', ligrmo, 'LIGREL', repk=partit)
@@ -162,12 +159,6 @@ aster_logical, intent(out) :: l_comp_erre
             texte(1) = defo_comp
             texte(2) = rela_comp
             call utmess('F', 'COMPOR1_44', nk = 2, valk = texte)
-        endif
-!
-! ----- Check comportment/model for THM (cannot use Comportement.py)
-!
-        if (l_kit_thm) then
-            call thm_kit_chck(model, l_affe_all, list_elem_affe, nb_elem_affe, rela_thmc)
         endif
 !
 ! ----- Check deformation with Comportement.py

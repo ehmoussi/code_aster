@@ -53,6 +53,7 @@ implicit none
 #include "asterfort/thmGetBehaviourVari.h"
 #include "asterfort/thmGetBehaviour.h"
 #include "asterfort/thmGetParaCoupling.h"
+#include "asterfort/thmGetBehaviourChck.h"
 !
 ! ======================================================================
 !
@@ -96,6 +97,10 @@ implicit none
 ! - Get parameters for internal variables
 !
     call thmGetBehaviourVari()
+!
+! - Some checks between behaviour and model
+!
+    call thmGetBehaviourChck()
 !
 ! - Get parameters for coupling
 !

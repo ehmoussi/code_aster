@@ -83,6 +83,7 @@ subroutine thmModuleInit()
     ds_thm%ds_behaviour%vicpr1            = 0
     ds_thm%ds_behaviour%vicpr2            = 0
     ds_thm%ds_behaviour%l_temp            = ASTER_FALSE
+    ds_thm%ds_behaviour%l_meca            = ASTER_FALSE
     ds_thm%ds_behaviour%nb_pres           = 0
     ds_thm%ds_behaviour%nb_phase(1:2)     = 0
     ds_thm%ds_behaviour%satur_type        = SATURATED
