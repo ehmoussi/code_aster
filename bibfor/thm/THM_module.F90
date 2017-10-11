@@ -16,6 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1403
 !
 module THM_module
 !
@@ -61,6 +62,25 @@ subroutine thmModuleInit()
     ds_thm%ds_behaviour%rela_meca         = ' '
     ds_thm%ds_behaviour%rela_ther         = ' '
     ds_thm%ds_behaviour%rela_hydr         = ' '
+    ds_thm%ds_behaviour%nume_thmc         = 0
+    ds_thm%ds_behaviour%nume_meca         = 0
+    ds_thm%ds_behaviour%nume_ther         = 0
+    ds_thm%ds_behaviour%nume_hydr         = 0
+    ds_thm%ds_behaviour%nb_vari           = 0
+    ds_thm%ds_behaviour%nb_vari_thmc      = 0
+    ds_thm%ds_behaviour%nb_vari_meca      = 0
+    ds_thm%ds_behaviour%nb_vari_ther      = 0
+    ds_thm%ds_behaviour%nb_vari_hydr      = 0
+    ds_thm%ds_behaviour%advime            = 0
+    ds_thm%ds_behaviour%advith            = 0
+    ds_thm%ds_behaviour%advihy            = 0
+    ds_thm%ds_behaviour%advico            = 0
+    ds_thm%ds_behaviour%vihrho            = 0
+    ds_thm%ds_behaviour%vicphi            = 0
+    ds_thm%ds_behaviour%vicsat            = 0
+    ds_thm%ds_behaviour%vicpvp            = 0
+    ds_thm%ds_behaviour%vicpr1            = 0
+    ds_thm%ds_behaviour%vicpr2            = 0
     ds_thm%ds_behaviour%l_temp            = ASTER_FALSE
     ds_thm%ds_behaviour%nb_pres           = 0
     ds_thm%ds_behaviour%nb_phase(1:2)     = 0

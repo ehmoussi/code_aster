@@ -25,8 +25,8 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/thmGetParaBehaviour.h"
 #include "asterfort/THM_type.h"
+#include "asterfort/Behaviour_type.h"
 !
 character(len=16), intent(in) :: compor(*)
 !
@@ -38,31 +38,33 @@ character(len=16), intent(in) :: compor(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  compor         : name of comportment definition (field)
+! In  compor           : name of comportment definition (field)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=16) :: rela_meca , rela_thmc, rela_ther, rela_hydr
-!
-! --------------------------------------------------------------------------------------------------
-!
-    call thmGetParaBehaviour(compor,&
-                             rela_meca , rela_thmc, rela_ther, rela_hydr)
-    ds_thm%ds_behaviour%rela_thmc = rela_thmc
-    ds_thm%ds_behaviour%rela_ther = rela_ther
-    ds_thm%ds_behaviour%rela_hydr = rela_hydr
-    ds_thm%ds_behaviour%rela_meca = rela_meca
+    ds_thm%ds_behaviour%rela_thmc = compor(THMC_NAME)
+    ds_thm%ds_behaviour%rela_ther = compor(THER_NAME)
+    ds_thm%ds_behaviour%rela_hydr = compor(HYDR_NAME)
+    ds_thm%ds_behaviour%rela_meca = compor(MECA_NAME)
+    read (compor(THMC_NVAR),'(I16)') ds_thm%ds_behaviour%nb_vari_thmc
+    read (compor(THER_NVAR),'(I16)') ds_thm%ds_behaviour%nb_vari_ther
+    read (compor(HYDR_NVAR),'(I16)') ds_thm%ds_behaviour%nb_vari_hydr
+    read (compor(MECA_NVAR),'(I16)') ds_thm%ds_behaviour%nb_vari_meca
+    read (compor(THMC_NUME),'(I16)') ds_thm%ds_behaviour%nume_thmc
+    read (compor(MECA_NUME),'(I16)') ds_thm%ds_behaviour%nume_meca
+    read (compor(THER_NUME),'(I16)') ds_thm%ds_behaviour%nume_ther
+    read (compor(HYDR_NUME),'(I16)') ds_thm%ds_behaviour%nume_hydr
+    read (compor(NVAR),'(I16)')      ds_thm%ds_behaviour%nb_vari
 !
 ! - For coupling law
 !
     ds_thm%ds_behaviour%nb_pres = 0
-    if (rela_thmc .eq. 'VIDE' .or. &
-        rela_thmc .eq. ' ') then
+    if (ds_thm%ds_behaviour%nume_thmc .eq. NO_LAW) then
         ds_thm%ds_behaviour%nb_pres = 0
-    elseif (rela_thmc .eq. 'LIQU_SATU' .or. &
-        rela_thmc .eq. 'GAZ' .or. &
-        rela_thmc .eq. 'LIQU_GAZ_ATM' .or. &
-        rela_thmc .eq. 'LIQU_VAPE') then
+    elseif (ds_thm%ds_behaviour%nume_thmc .eq. LIQU_SATU .or. &
+        ds_thm%ds_behaviour%nume_thmc .eq. GAZ .or. &
+        ds_thm%ds_behaviour%nume_thmc .eq. LIQU_GAZ_ATM .or. &
+        ds_thm%ds_behaviour%nume_thmc .eq. LIQU_VAPE) then
         ds_thm%ds_behaviour%nb_pres = 1
     else
         ds_thm%ds_behaviour%nb_pres = 2
@@ -70,74 +72,74 @@ character(len=16), intent(in) :: compor(*)
 !
     if (ds_thm%ds_behaviour%nb_pres .ge. 1) then
         ds_thm%ds_behaviour%nb_phase(1) = 1
-        if (rela_thmc .eq. 'LIQU_GAZ' .or. &
-            rela_thmc .eq. 'LIQU_VAPE_GAZ' .or. &
-            rela_thmc .eq. 'LIQU_AD_GAZ_VAPE' .or. &
-            rela_thmc .eq. 'LIQU_AD_GAZ'.or. &
-            rela_thmc .eq. 'LIQU_VAPE') then
+        if (ds_thm%ds_behaviour%nume_thmc .eq. LIQU_GAZ .or. &
+            ds_thm%ds_behaviour%nume_thmc .eq. LIQU_VAPE_GAZ .or. &
+            ds_thm%ds_behaviour%nume_thmc .eq. LIQU_AD_GAZ_VAPE .or. &
+            ds_thm%ds_behaviour%nume_thmc .eq. LIQU_AD_GAZ.or. &
+            ds_thm%ds_behaviour%nume_thmc .eq. LIQU_VAPE) then
             ds_thm%ds_behaviour%nb_phase(1) = 2
         endif
         if (ds_thm%ds_behaviour%nb_pres .eq. 2) then
             ds_thm%ds_behaviour%nb_phase(2) = 1
-            if (rela_thmc .eq. 'LIQU_AD_GAZ_VAPE' .or. &
-                rela_thmc .eq. 'LIQU_AD_GAZ') then
+            if (ds_thm%ds_behaviour%nume_thmc .eq. LIQU_AD_GAZ_VAPE .or. &
+                ds_thm%ds_behaviour%nume_thmc .eq. LIQU_AD_GAZ) then
                 ds_thm%ds_behaviour%nb_phase(2) = 2
             endif
         endif  
     endif
 !
-    if (rela_thmc .eq. 'LIQU_SATU'.or. &
-        rela_thmc .eq. 'GAZ') then
+    if (ds_thm%ds_behaviour%nume_thmc .eq. LIQU_SATU.or. &
+        ds_thm%ds_behaviour%nume_thmc .eq. GAZ) then
         ds_thm%ds_behaviour%satur_type = SATURATED
-    elseif (rela_thmc .eq. 'LIQU_VAPE') then
+    elseif (ds_thm%ds_behaviour%nume_thmc .eq. LIQU_VAPE) then
         ds_thm%ds_behaviour%satur_type = SATURATED_SPEC
-    elseif (rela_thmc .eq. 'LIQU_GAZ' .or. &
-            rela_thmc .eq. 'LIQU_VAPE_GAZ' .or. &
-            rela_thmc .eq. 'LIQU_GAZ_ATM' .or. & 
-            rela_thmc .eq. 'LIQU_AD_GAZ_VAPE' .or. &
-            rela_thmc .eq. 'LIQU_AD_GAZ') then
+    elseif (ds_thm%ds_behaviour%nume_thmc .eq. LIQU_GAZ .or. &
+            ds_thm%ds_behaviour%nume_thmc .eq. LIQU_VAPE_GAZ .or. &
+            ds_thm%ds_behaviour%nume_thmc .eq. LIQU_GAZ_ATM .or. & 
+            ds_thm%ds_behaviour%nume_thmc .eq. LIQU_AD_GAZ_VAPE .or. &
+            ds_thm%ds_behaviour%nume_thmc .eq. LIQU_AD_GAZ) then
         ds_thm%ds_behaviour%satur_type = UNSATURATED
     else
         ASSERT(.false.)
     endif
 !
-    if (rela_thmc(1:4) .eq. 'LIQU') then
+    if (ds_thm%ds_behaviour%nume_thmc .ne. GAZ .and.&
+        ds_thm%ds_behaviour%nume_thmc .ne. NO_LAW) then
         ds_thm%ds_material%l_liquid = ASTER_TRUE
     endif
-    if (rela_thmc .eq. 'LIQU_GAZ' .or. &
-        rela_thmc .eq. 'GAZ' .or. &
-        rela_thmc .eq. 'LIQU_VAPE_GAZ' .or. &
-        rela_thmc .eq. 'LIQU_GAZ_ATM' .or. & 
-        rela_thmc .eq. 'LIQU_AD_GAZ_VAPE' .or. &
-        rela_thmc .eq. 'LIQU_AD_GAZ') then
+    if (ds_thm%ds_behaviour%nume_thmc .eq. LIQU_GAZ .or. &
+        ds_thm%ds_behaviour%nume_thmc .eq. GAZ .or. &
+        ds_thm%ds_behaviour%nume_thmc .eq. LIQU_VAPE_GAZ .or. &
+        ds_thm%ds_behaviour%nume_thmc .eq. LIQU_GAZ_ATM .or. & 
+        ds_thm%ds_behaviour%nume_thmc .eq. LIQU_AD_GAZ_VAPE .or. &
+        ds_thm%ds_behaviour%nume_thmc .eq. LIQU_AD_GAZ) then
         ds_thm%ds_material%l_gaz = ASTER_TRUE
     endif
-    if (rela_thmc .eq. 'LIQU_VAPE' .or. &
-        rela_thmc .eq. 'LIQU_VAPE_GAZ' .or. &
-        rela_thmc .eq. 'LIQU_AD_GAZ_VAPE') then
+    if (ds_thm%ds_behaviour%nume_thmc .eq. LIQU_VAPE .or. &
+        ds_thm%ds_behaviour%nume_thmc .eq. LIQU_VAPE_GAZ .or. &
+        ds_thm%ds_behaviour%nume_thmc .eq. LIQU_AD_GAZ_VAPE) then
         ds_thm%ds_material%l_steam = ASTER_TRUE
     endif
-    if (rela_thmc .eq. 'LIQU_AD_GAZ_VAPE' .or. &
-        rela_thmc .eq. 'LIQU_AD_GAZ') then
+    if (ds_thm%ds_behaviour%nume_thmc .eq. LIQU_AD_GAZ_VAPE .or. &
+        ds_thm%ds_behaviour%nume_thmc .eq. LIQU_AD_GAZ) then
         ds_thm%ds_material%l_ad = ASTER_TRUE
     endif
     ds_thm%ds_material%l_r_gaz = ASTER_TRUE
-    if (rela_thmc .eq. 'LIQU_SATU' .or. &
-        rela_thmc .eq. 'LIQU_GAZ_ATM') then
+    if (ds_thm%ds_behaviour%nume_thmc .eq. LIQU_SATU .or. &
+        ds_thm%ds_behaviour%nume_thmc .eq. LIQU_GAZ_ATM) then
         ds_thm%ds_material%l_r_gaz = ASTER_FALSE
     endif
 !
 ! - For temperature
 !
     ds_thm%ds_behaviour%l_temp = ASTER_TRUE
-    if (rela_ther .eq. ' ' .or. &
-        rela_ther .eq. 'VIDE') then
+    if (ds_thm%ds_behaviour%nume_ther .eq. NO_LAW) then
         ds_thm%ds_behaviour%l_temp = ASTER_FALSE
     endif
 !
 ! - For stress measures
 !
-    if (rela_meca .eq. 'GONF_ELAS') then
+    if (ds_thm%ds_behaviour%rela_meca .eq. 'GONF_ELAS') then
         ds_thm%ds_behaviour%l_stress_bishop = ASTER_FALSE
     endif
 !

@@ -24,7 +24,7 @@ from cata_comportement import LoiComportement
 loi = LoiComportement(
     nom            = 'THER',
     doc            =   """Relation de comportement thermique pour la thm"""          ,
-    num_lc         = 0,
+    num_lc         = 1,
     nb_vari        = 0,
     nom_vari       = None,
     mc_mater       = None,
