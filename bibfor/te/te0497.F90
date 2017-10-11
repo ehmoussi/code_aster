@@ -25,7 +25,7 @@ implicit none
 #include "jeveux.h"
 #include "asterc/r8miem.h"
 #include "asterfort/assert.h"
-#include "asterfort/caethm.h"
+#include "asterfort/thmGetElemPara.h"
 #include "asterfort/calnor.h"
 #include "asterfort/erhmb2.h"
 #include "asterfort/erhms2.h"
@@ -70,15 +70,15 @@ character(len=16), intent(in) :: option, nomte
     integer :: ierr, ivois
     integer :: ierrm, imate, ifovr, ifovf
     integer :: ipes, irot, iref1, iref2, ndim
-    integer :: nno, nnos, npg, ipoids, ivf, idfde, jgano
-    integer :: ipoid2, ivf2, idfde2
+    integer :: nno, nnos, npg, jv_poids, jv_func, jv_dfunc, jv_gano
+    integer :: jv_poids2, jv_func2, jv_dfunc2
     integer :: nbcmp, ipg, ifa, tyv, nbs, kpg, spt
     integer :: isienp, isienm, ideplp, ideplm, jkp, nbna
-    integer :: iagd, iatyma, typ, iacmp, ibid2, ibid3, ibid4
+    integer :: iagd, iatyma, typ, iacmp
     integer :: iade2, iava2, iaptm2, igd2, ncmpm2
     integer :: iade3, iava3, iaptm3, igd3, ncmpm3
     integer :: igrdca, dimdep, dimdef, dimcon
-    integer :: nmec, npi, np1, np2, nddls, nddlm
+    integer :: nddl_meca, npi, nddl_p1, nddl_p2, nddls, nddlm
     integer :: mecani(5), press1(7), press2(7), tempe(5), dimuel
     integer :: adsip, addeme, adcome, addete
     integer :: addep1, adcp11
@@ -100,13 +100,13 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: tsisbh, denomi
     real(kind=8) :: longc, presc, admec, adhy0, adhy1, adv1h, adhymd
 !
-    aster_logical :: laxi, perman, vf
+    aster_logical :: l_axi, l_steady
 !
     character(len=2) :: form, noeu
-    character(len=3) :: modint
+    character(len=3) :: inte_type
     character(len=4) :: nompar(1)
     character(len=8) :: typema, typmav
-    character(len=8) :: typmod(2), fami, poum
+    character(len=8) :: type_elem(2), fami, poum
 !
     integer :: nbre1, nbre2, nbre3, nbre4
     parameter ( nbre1 = 2 , nbre2 = 2, nbre3 = 1 , nbre4 = 2 )
@@ -149,19 +149,18 @@ character(len=16), intent(in) :: option, nomte
 !
     ovfl = r8miem()
 !
-! =====================================================================
-! A. --- RECUPERATION D'INFORMATIONS SUR L'ELEMENT THM ----------------
-! =====================================================================
-    ibid = 0
-    vf = .false.
-    call caethm(laxi, perman, vf, &
-                typmod, modint, mecani, press1, press2,&
-                tempe, dimdep, dimdef, dimcon, nmec,&
-                np1, np2, ndim, nno, nnos,&
-                ibid, npi, npg, nddls,&
-                nddlm, ibid2, ibid3, dimuel, ipoids,&
-                ivf, idfde, ipoid2, ivf2, idfde2,&
-                ibid4, jgano)
+! - Get all parameters for current element
+!
+    call thmGetElemPara(l_axi    , l_steady ,&
+                        type_elem, inte_type, ndim     ,&
+                        mecani   , press1   , press2   , tempe  ,&
+                        dimdep   , dimdef   , dimcon   , dimuel ,&
+                        nddls    , nddlm    , nddl_meca, nddl_p1, nddl_p2,&
+                        nno      , nnos     ,&
+                        npi      , npg      ,&
+                        jv_poids , jv_func  , jv_dfunc ,&
+                        jv_poids2, jv_func2 , jv_dfunc2,&
+                        jv_gano)
 !
 ! =====================================================================
 ! B. --- DETERMINATION DES VARIABLES CARACTERISANT LE MILIEU ----------
@@ -183,7 +182,7 @@ character(len=16), intent(in) :: option, nomte
     call tecach('ONO', 'PTEMPSR', 'L', iret, iad=itab(1))
     if (iret .eq. 0) then
         instpm(1) = zr(itab(1))
-        if (.not.perman) then
+        if (.not.l_steady) then
             deltat = zr(itab(1)+1)
             theta = zr(itab(1)+2)
             instpm(2) = instpm(1)-deltat
@@ -206,7 +205,7 @@ character(len=16), intent(in) :: option, nomte
 !
     call jevech('PDEPLAR', 'L', ideplp)
 !
-    if (.not. perman) then
+    if (.not. l_steady) then
         call jevech('PDEPLMR', 'L', ideplm)
     else
         ideplm=1
@@ -220,7 +219,7 @@ character(len=16), intent(in) :: option, nomte
                 itab=itab)
     isienp = itab(1)
     nbcmp = itab(2)/nno
-    if (.not. perman) then
+    if (.not. l_steady) then
         call tecach('ONO', 'PCONTNM', 'L', iret, nval=3,&
                     itab=itab)
         isienm = itab(1)
@@ -341,7 +340,7 @@ character(len=16), intent(in) :: option, nomte
 !     . MODULE DE YOUNG
 !--------------------------------------------------------------------
 !
-    if (.not. perman) then
+    if (.not. l_steady) then
 !
 ! 4.1. RECHERCHE DE LA POROSITE INITIALE
 !
@@ -444,7 +443,7 @@ character(len=16), intent(in) :: option, nomte
 ! 2.3. --- CALCUL DE LA FORCE DE ROTATION ---
 !
     if (yaro) then
-        call resrot(zr(irot), zr(igeom), zr(ivf), rhohom, nno,&
+        call resrot(zr(irot), zr(igeom), zr(jv_func), rhohom, nno,&
                     npg, frx, fry)
     else
 !
@@ -485,11 +484,11 @@ character(len=16), intent(in) :: option, nomte
 !
 ! 2.3. --- TERME VOLUMIQUE ---
 !
-    call erhmv2(laxi, perman, deltat, dimdep, dimdef,&
-                nmec, np1, np2, ndim, nno,&
+    call erhmv2(l_axi, l_steady, deltat, dimdep, dimdef,&
+                nddl_meca, nddl_p1, nddl_p2, ndim, nno,&
                 nnos, npg, nddls, nddlm,&
-                dimuel, ipoids, ivf, idfde, ipoid2,&
-                ivf2, idfde2, zr(igeom), fovo, zr(ideplp),&
+                dimuel, jv_poids, jv_func, jv_dfunc, jv_poids2,&
+                jv_func2, jv_dfunc2, zr(igeom), fovo, zr(ideplp),&
                 zr(ideplm), zr(isienp), zr(isienm), nbcmp, biot,&
                 unsurm, fpx, fpy, frx, fry,&
                 addeme, addep1,&
@@ -500,7 +499,7 @@ character(len=16), intent(in) :: option, nomte
     admec = 1.d0/(presc**2*longc**ndim)
     tsivom = hk**2 * admec * tm2h1v(1)
 !
-    if (.not. perman) then
+    if (.not. l_steady) then
         tdevom = hk**2 * admec * tm2h1v(2)
         adv1h = cyoung*unsurk*admec
         tsivoh = deltat * hk**2 * adv1h * tm2h1v(3)
@@ -581,7 +580,7 @@ character(len=16), intent(in) :: option, nomte
 !                DE GAUSS, SACHANT QUE L'ORIENTATION NE DOIT PAS CHANGER
 !
     jkp = 1
-    call utjac(.true._1, zr(igeom), jkp, idfde, 0,&
+    call utjac(.true._1, zr(igeom), jkp, jv_dfunc, 0,&
                ibid, nno, orien)
 !
 !------------------------------------------------------------------
@@ -629,7 +628,7 @@ character(len=16), intent(in) :: option, nomte
 !
             if (typmav(1:4) .eq. 'TRIA' .or. typmav(1:4) .eq. 'QUAD') then
 !
-                call erhms2(perman, ifa, nbs, theta, jaco,&
+                call erhms2(l_steady, ifa, nbs, theta, jaco,&
                             nx, ny, zr(isienp), adsip, zr(isienm),&
                             nbcmp, typmav, zi(iref1), zi(iref2), ivois,&
                             tm2h1s)
@@ -639,7 +638,7 @@ character(len=16), intent(in) :: option, nomte
 !
             else if (typmav(1:2).eq.'SE') then
 !
-                call erhmb2(perman, ifa, nbs, ndim, theta,&
+                call erhmb2(l_steady, ifa, nbs, ndim, theta,&
                             instpm, jaco, nx, ny, tx,&
                             ty, nbcmp, zr(igeom), ivois, zr(isienp),&
                             zr(isienm), adsip, iagd, zi(iref2), iade2,&
@@ -682,7 +681,7 @@ character(len=16), intent(in) :: option, nomte
     tsisam = hk * admec * tm2h1s(1)
     tsibom = hk * admec * tm2h1b(1)
 !
-    if (perman) then
+    if (l_steady) then
 !
         tsibsh = hk * adhy0 * tm2h1b(3)
         tsibbh = hk**3 * adhy1 * tm2h1b(3)
@@ -707,7 +706,7 @@ character(len=16), intent(in) :: option, nomte
 !
     call jevech('PERREUR', 'E', ierr)
 !
-    if (perman) then
+    if (l_steady) then
 !
         zr(ierr ) = sqrt(tsivom + tsibom + tsisam) + sqrt(tsibsh + tsissh)
         zr(ierr+1) = sqrt(tsivom + tsibom + tsisam) + sqrt(tsibbh + tsisbh)

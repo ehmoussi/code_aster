@@ -15,8 +15,24 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0500(option, nomte)
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "jeveux.h"
+#include "asterc/r8miem.h"
+#include "asterfort/thmGetElemPara.h"
+#include "asterfort/dfdm2d.h"
+#include "asterfort/jevech.h"
+#include "asterfort/lxlgut.h"
+#include "asterfort/rcvalb.h"
+#include "asterfort/tecach.h"
+#include "asterfort/utmess.h"
+#include "asterfort/assert.h"
+!
+character(len=16) :: option, nomte
 !    - FONCTION REALISEE:  CALCUL DE L'ESTIMATEUR D'ERREUR TEMPORELLE
 !      SUR UN ELEMENT ISOPARAMETRIQUE POUR LES MODELISATIONS HM SATUREES
 !
@@ -37,22 +53,6 @@ subroutine te0500(option, nomte)
 !       25/02/08 (SM) : CREATION POUR CALCUL INDICATEUR D'ERREUR
 !                       TEMPORELLE EN INSTATIONNAIRE .
 !----------------------------------------------------------------------
-! CORPS DU PROGRAMME
-    implicit none
-!
-! DECLARATION PARAMETRES D'APPELS
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterc/r8miem.h"
-#include "asterfort/caethm.h"
-#include "asterfort/dfdm2d.h"
-#include "asterfort/jevech.h"
-#include "asterfort/lxlgut.h"
-#include "asterfort/rcvalb.h"
-#include "asterfort/tecach.h"
-#include "asterfort/utmess.h"
-#include "asterfort/assert.h"
-    character(len=16) :: option, nomte
 !
 !
 ! DECLARATION VARIABLES LOCALES
@@ -68,11 +68,11 @@ subroutine te0500(option, nomte)
 !
     integer :: ndim, nno
 !
-    integer :: ipi, kpi, iaux, npg, igeom, jgano, imate, ierre, igrdca, iret, isigap, isigam
-    integer :: itab(7), nbcmp, ibid, ibid2, ibid3, ibid4
+    integer :: ipi, kpi, iaux, npg, igeom, jv_gano, imate, ierre, igrdca, iret, isigap, isigam
+    integer :: itab(7), nbcmp
     integer :: dimdep, dimdef, dimcon
-    integer :: ipoids, ivf, idfde, ipoid2, ivf2, idfde2
-    integer :: nmec, npi, np1, np2, nnos, nddls, nddlm
+    integer :: jv_poids, jv_func, jv_dfunc, jv_poids2, jv_func2, jv_dfunc2
+    integer :: nddl_meca, npi, nddl_p1, nddl_p2, nnos, nddls, nddlm
     integer :: mecani(5), press1(7), press2(7), tempe(5), dimuel
 !
     real(kind=8) :: poids2
@@ -84,13 +84,13 @@ subroutine te0500(option, nomte)
     real(kind=8) :: fluhpx, fluhmx, fluhpy, fluhmy
     real(kind=8) :: tertps
 !
-    aster_logical :: laxi, perman, vf
+    aster_logical :: l_axi, l_steady
 !
     integer :: codme1(nbre1), codmr1(nbrr1), codme2(nbre2), codmr2(nbrr1), codme3(nbre3), kpg, spt
     integer :: codmr3(nbrr3), codmr4(nbrr3)
-    character(len=3) :: modint
+    character(len=3) :: inte_type
     character(len=4) :: nompar(1)
-    character(len=8) :: typmod(2), valk
+    character(len=8) :: type_elem(2), valk
     character(len=8) :: nomre1(nbre1), nomrr1(nbrr1)
     character(len=8) :: nomrr3(nbrr3), nomrr4(nbrr3), nomre2(nbre2), nomre3(nbre3), fami, poum
     character(len=8) :: nomrr2(nbrr1)
@@ -105,22 +105,21 @@ subroutine te0500(option, nomte)
 !
 ! ------------------------------------------------------------------
 !
-!
     ovfl = r8miem()
 !
-! =====================================================================
-! 1. RECUPERATION D'INFORMATIONS SUR L'ELEMENT THM
-! =====================================================================
-    ibid = 0
-    vf = .false.
-    call caethm(laxi, perman, vf, &
-                typmod, modint, mecani, press1, press2,&
-                tempe, dimdep, dimdef, dimcon, nmec,&
-                np1, np2, ndim, nno, nnos,&
-                ibid, npi, npg, nddls,&
-                nddlm, ibid2, ibid3, dimuel, ipoids,&
-                ivf, idfde, ipoid2, ivf2, idfde2,&
-                ibid4, jgano)
+! - Get all parameters for current element
+!
+    call thmGetElemPara(l_axi    , l_steady ,&
+                        type_elem, inte_type, ndim     ,&
+                        mecani   , press1   , press2   , tempe  ,&
+                        dimdep   , dimdef   , dimcon   , dimuel ,&
+                        nddls    , nddlm    , nddl_meca, nddl_p1, nddl_p2,&
+                        nno      , nnos     ,&
+                        npi      , npg      ,&
+                        jv_poids , jv_func  , jv_dfunc ,&
+                        jv_poids2, jv_func2 , jv_dfunc2,&
+                        jv_gano)
+
 ! =====================================================================
 ! 2. RECUPERATION DES PARAMETRES TEMPORELS
 ! =====================================================================
@@ -290,7 +289,7 @@ subroutine te0500(option, nomte)
 !
 ! 4.2. ON RECUPERE LES POIDS D'INTEGRATION AUX POINTS DE GAUSS
 !
-        call dfdm2d(nnos, kpi, ipoid2, idfde2, zr(igeom),&
+        call dfdm2d(nnos, kpi, jv_poids2, jv_dfunc2, zr(igeom),&
                     poids2)
 !
         iaux = nbcmp*(kpi-1)

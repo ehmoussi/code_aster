@@ -28,40 +28,42 @@ implicit none
 #include "asterc/ismaem.h"
 #include "asterfort/assert.h"
 #include "asterfort/assesu.h"
-#include "asterfort/caethm.h"
+#include "asterfort/thmGetElemDime.h"
+#include "asterfort/thmGetGene.h"
 #include "asterfort/fnoesu.h"
 #include "asterfort/jevech.h"
 #include "asterfort/thmGetElemModel.h"
-    character(len=16) :: option, nomte
+#include "asterfort/thmGetElemRefe.h"
+#include "asterfort/elrefe_info.h"
+!
+character(len=16) :: option, nomte
 !    - FONCTION REALISEE:  CALCUL DES OPTIONS NON-LINEAIRES MECANIQUES
 !                          ELEMENTS HH2_SUDA, (SUSHI DECENTRE ARRETE)
 !    - ARGUMENTS:
 !        DONNEES:      OPTION       -->  OPTION DE CALCUL
 !                      NOMTE        -->  NOM DU TYPE ELEMENT
 ! =====================================================================
-    integer :: jgano, nno, imatuu, ndim, imate, iinstm, jcret
-    integer :: ipoid2, ivf2
-    integer :: idfde2, npi, npg, npi2
-!
+    integer :: nno, imatuu, ndim, imate, iinstm, jcret
+    integer :: nnom
     integer :: retloi
-    integer :: ipoids, ivf, idfde, igeom
+    integer :: igeom
     integer :: iinstp, ideplm, ideplp, icompo, icarcr
     integer :: icontm, ivarip, ivarim, ivectu, icontp
 ! =====================================================================
     integer :: mecani(5), press1(7), press2(7), tempe(5), dimuel
     integer :: dimdep, dimdef, dimcon, nbvari, nddls, nddlm, nddlfa, nddlk
-    integer :: nmec, np1, np2, nnos
+    integer :: nddl_meca, nddl_p1, nddl_p2, nnos
     integer :: nface
 !     REMARQUE : CES DIMENSIONS DOIVENT ETRE LES MEMES QUE DANS TE0492
     real(kind=8) :: defgep(21), defgem(21)
     integer :: nconma, ndefma
     parameter (nconma=31,ndefma=21)
     real(kind=8) :: dsde(nconma, ndefma)
-    character(len=3) :: modint
-    character(len=8) :: typmod(2)
+    character(len=8) :: type_elem(2)
 ! =====================================================================
     integer :: li
-    aster_logical :: axi, perman, vf
+    aster_logical :: l_axi, l_steady, l_vf
+    character(len=8) :: elrefe, elref2
 ! =====================================================================
 !  CETTE ROUTINE FAIT UN CALCUL EN HH2SUDA OU HH2SUC, (HYDRO NON SATURE
 !   SUSHI DECENTRE ARETE OU CENTRE)
@@ -92,10 +94,6 @@ implicit none
 !              NE SERT QU EN EF
 !    NDDLFA    NB DDL SUR LES FACE DE DIMENSION DIM-1 NE SERT QU EN VF
 ! NDDLK     NB DDL AU CENTRE ELEMENT
-! NPI       NB DE POINTS D'INTEGRATION DE L'ELEMENT
-! NPG       NB DE POINTS DE GAUSS     POUR CLASSIQUE(=NPI)
-!                 SOMMETS             POUR LUMPEE   (=NPI=NNOS)
-!                 POINTS DE GAUSS     POUR REDUITE  (<NPI)
 ! NDIM      DIMENSION DE L'ESPACE
 ! DIMUEL    NB DE DDL TOTAL DE L'ELEMENT
 ! DIMCON    DIMENSION DES CONTRAINTES GENERALISEES ELEMENTAIRES
@@ -117,17 +115,42 @@ implicit none
 !
 ! - Get model of finite element
 !
-    call thmGetElemModel()
+    call thmGetElemModel(l_axi, l_vf, l_steady, ndim_ = ndim, type_elem_ = type_elem)
+    ASSERT(l_vf)
+    ASSERT(.not. l_steady)
 !
-    call caethm(axi, perman, vf, &
-                typmod, modint, mecani, press1, press2,&
-                tempe, dimdep, dimdef, dimcon, nmec,&
-                np1, np2, ndim, nno, nnos,&
-                nface, npi, npg, nddls,&
-                nddlm, nddlfa, nddlk, dimuel, ipoids,&
-                ivf, idfde, ipoid2, ivf2, idfde2,&
-                npi2, jgano)
-    ASSERT(vf)
+! - Get informations about element
+!
+    call thmGetElemRefe(l_vf, elrefe, elref2)
+    call elrefe_info(elrefe=elrefe, fami='RIGI', nno=nno, nnos=nnos)
+    nnom = nno - nnos
+    if (ndim .eq. 2) then
+        nface = nnos
+    else
+        if (elrefe .eq. 'H27') then
+            nface = 6
+        else if (elrefe .eq. 'T9') then
+            nface = 4
+        else
+            ASSERT(ASTER_FALSE)
+        endif
+    endif
+!
+! - Get generalized coordinates
+!
+    call thmGetGene(l_steady, l_vf, ndim,&
+                    mecani  , press1, press2, tempe)
+!
+! - Get all parameters for current element
+!
+    call thmGetElemDime(l_vf     ,&
+                        ndim     , nnos   , nnom   ,&
+                        mecani   , press1 , press2 , tempe ,&
+                        nddls    , nddlm  , &
+                        nddl_meca, nddl_p1, nddl_p2,&
+                        dimdep   , dimdef , dimcon , dimuel,&
+                        nface    , nddlk  , nddlfa )
+    
 ! =====================================================================
 ! --- DEBUT DES DIFFERENTES OPTIONS -----------------------------------
 ! =====================================================================
@@ -176,7 +199,7 @@ implicit none
                         zr(ivectu), zr(iinstm), zr(iinstp), option, zi(imate),&
                         mecani, press1, press2, tempe, dimdef,&
                         dimcon, dimuel, nbvari, ndim, zk16( icompo),&
-                        typmod, axi, perman)
+                        type_elem, l_axi, l_steady)
         else
 !
 !   DU FAIT DE L UTIISATION DES VOISINS CETTE BOUCLE
@@ -191,7 +214,7 @@ implicit none
                         zr(ivectu), zr(iinstm), zr(iinstp), option, zi(imate),&
                         mecani, press1, press2, tempe, dimdef,&
                         dimcon, dimuel, nbvari, ndim, zk16( icompo),&
-                        typmod, axi, perman)
+                        type_elem, l_axi, l_steady)
             zi(jcret) = retloi
         endif
     endif
