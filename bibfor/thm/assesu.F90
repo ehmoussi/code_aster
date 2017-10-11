@@ -563,10 +563,22 @@ implicit none
         kintvf(5) = valcen(vkint ,kyz)
         kintvf(6) = valcen(vkint ,kzx)
     endif
-    call cacdsu(maxfa, maxdim, alpha, ndim, nno,&
-                nface, geom, vol, mface, dface,&
-                xface, normfa, kintvf, yss, c,&
-                d)
+!
+! - Compute what ?
+!
+    call cacdsu(maxfa    , alpha,&
+                ndim     , nno       , nface ,&
+                geom     ,&
+                vol      , mface     , dface ,&
+                xface    , normfa    , kintvf,&
+                yss      , c         , d    )
+    !call cacdsu(maxfa, maxdim, alpha, ndim, nno,&
+    !            nface, geom, vol, mface, dface,&
+    !            xface, normfa, kintvf, yss, c,&
+    !            d)
+!
+! - Get pressures and derivatives
+!
     pcp = deplp(iadp1k)
     pgp = deplp(iadp2k)
 !
