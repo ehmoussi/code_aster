@@ -18,13 +18,12 @@
 
 !
 !
-#include "asterf_types.h"
-!
 interface
-    subroutine rc32r0(nomres, pmpb, sn, snet)
-        character(len=8) :: nomres
-        aster_logical :: pmpb
-        aster_logical :: sn
-        aster_logical :: snet
-    end subroutine rc32r0
+    subroutine rc32env2(iocc1, iocc2, ke, lieu, fen)
+        integer :: iocc1
+        integer :: iocc2
+        real(kind=8) :: ke
+        character(len=4) :: lieu
+        real(kind=8) :: fen
+    end subroutine rc32env2
 end interface

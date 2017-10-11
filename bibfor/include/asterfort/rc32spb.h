@@ -21,15 +21,17 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine rc32pm(lieu, seisme, pi, mi, mse,&
-                      pm, pb, pmpb)
+    subroutine rc32spb(ze200, lieu, iocc1, iocc2, ns,&
+                      sp, spmeca, instsp, nbsscyc, spss)
+        aster_logical :: ze200
         character(len=4) :: lieu
-        aster_logical :: seisme
-        real(kind=8) :: pi
-        real(kind=8) :: mi(*)
-        real(kind=8) :: mse(*)
-        real(kind=8) :: pm
-        real(kind=8) :: pb
-        real(kind=8) :: pmpb
-    end subroutine rc32pm
+        integer :: iocc1
+        integer :: iocc2
+        integer :: ns
+        real(kind=8) :: sp(2)
+        real(kind=8) :: spmeca(2)
+        real(kind=8) :: instsp(4)
+        integer :: nbsscyc
+        real(kind=8) :: spss(100)
+    end subroutine rc32spb
 end interface

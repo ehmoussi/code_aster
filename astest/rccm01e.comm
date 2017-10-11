@@ -716,21 +716,22 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=600.000000000,
-           VALE_REFE=600.0,
-           NOM_PARA='SP_MAX',
-           TABLE=FAT14g,
-           FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='ORIG',),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=1275.000000000,
            VALE_REFE=1275.0,
            NOM_PARA='SN_MAX',
            TABLE=FAT14g,
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),
+           )
+
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=600.000000000,
+           VALE_REFE=600.0,
+           NOM_PARA='SP_MAX',
+           TABLE=FAT14g,
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -741,7 +742,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),
            )
-
 
 # FAT14h
 # METHODE TOUT_INST
@@ -755,21 +755,21 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=600.000000000,
-           VALE_REFE=600.0,
-           NOM_PARA='SP_MAX',
-           TABLE=FAT14h,
-           FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='ORIG',),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=1275.000000000,
            VALE_REFE=1275.0,
            NOM_PARA='SN_MAX',
            TABLE=FAT14h,
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),
+           )
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=600.000000000,
+           VALE_REFE=600.0,
+           NOM_PARA='SP_MAX',
+           TABLE=FAT14h,
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',

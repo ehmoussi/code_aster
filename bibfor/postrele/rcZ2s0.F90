@@ -16,36 +16,34 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine rcZ2s2(typ, propi, propj, seisme, mse, s2)
+subroutine rcZ2s0(typ, ma, mb, presa, presb, ns, s2)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jedema.h"
+#include "asterfort/jexnom.h"
+#include "asterfort/codent.h"
+#include "asterfort/jeexin.h"
+#include "asterfort/utmess.h"
     character(len=2) :: typ
-    real(kind=8) :: propi(20), propj(20), mse(*), s2
-    aster_logical :: seisme
+    real(kind=8) :: ma(12), mb(12), presa, presb, s2
+    integer :: ns
 !     OPERATEUR POST_RCCM, TRAITEMENT DE FATIGUE_ZE200
 !     CALCUL de la partie simplifiée (B3600) DU SN ou du SP
 !
-! IN  : TYP    : SN OU SP
-! IN  : PI     : PRESSION ASSOCIEE A L'ETAT I
-! IN  : MI     : EFFORTS ET MOMENTS ASSOCIEES A L'ETAT I
-! IN  : PJ     : PRESSION ASSOCIEE A L'ETAT J
-! IN  : MJ     : EFFORTS ET MOMENTS ASSOCIEES A L'ETAT J
-! IN  : SEISME : CALCUL AVEC OU SANS SEISME
-! IN  : MSE    : MOMENTS ASSOCIEES AU SEISME
-! OUT : S2     : PARTIE B3600 de SN/SP
 !     ------------------------------------------------------------------
 !
     real(kind=8) :: s2p, s2m, racine, racicor, k1, c1, k2, c2
-    integer :: jvalin, i, i0, i1, i2, i3, i4, i5, i6
+    integer :: jvalin, i, i0, i1, i2, i3, i4, i5, i6, jinfois, numcha
+    integer :: iret, jchars, k
     real(kind=8) :: rayon, ep, inertie, k2tub, c2tub, k2cor
     real(kind=8) :: c2cor, rtub, itub, rcor, icor, coefp, coefm
     real(kind=8) :: coefcor, coeftub, pij, mij(3), mijcor(3)
     real(kind=8) :: s2ms, racines, racicors, fact, e1(2), e2(2)
-    real(kind=8) :: e3(2), e4(2), e5(2), e6(2), mijs(3), mijcors(3) 
+    real(kind=8) :: e3(2), e4(2), e5(2), e6(2), mijs(3), mijcors(3), mse(12)
+    character(len=8) ::  knumec
 !
 ! DEB ------------------------------------------------------------------
     call jemarq()
@@ -90,19 +88,19 @@ subroutine rcZ2s2(typ, propi, propj, seisme, mse, s2)
 !-----------------------------------------------------
 ! --- CALCUL DE LA PARTIE DUE A LA PRESSION S2P
 !-----------------------------------------------------
-    pij = propi(1) - propj(1)
+    pij = presa - presb
     s2p = coefp*rayon*abs(pij)/ep
 !---------------------------------------------------------
 ! --- CALCUL DE LA PARTIE DUE AUX MOMENTS S2M SANS SEISME
 !---------------------------------------------------------
     do 100 i = 1, 3    
-        mij(i) = propi(i+4) - propj(i+4)
+        mij(i) = ma(i+3) - mb(i+3)
         racine = racine + mij(i)**2
-        mijcor(i) = propi(10+i) - propj(10+i)
+        mijcor(i) = ma(9+i) - mb(9+i)
         racicor = racicor + mijcor(i)**2
  100 continue
 !
-    if (rcor+rtub .eq. 0) then
+    if (rcor+rtub .lt. 1e-8) then
         s2m = coefm*rayon*sqrt(racine)/inertie
     else
         s2m = coefcor*rcor*sqrt(racicor)/icor+ coeftub*rtub*sqrt(racine)/itub
@@ -110,7 +108,18 @@ subroutine rcZ2s2(typ, propi, propj, seisme, mse, s2)
 !---------------------------------------------------------
 ! --- CALCUL DE LA PARTIE DUE AUX MOMENTS S2M AVEC SEISME
 !---------------------------------------------------------
-    if (.not. seisme) goto 999
+    if (ns .eq. 0) goto 999
+!
+    call jeveuo('&&RC3200.SEIS_INFOI', 'L', jinfois)
+    numcha = zi(jinfois+4)
+    knumec = 'C       '
+    call codent(numcha, 'D0', knumec(2:8))
+    call jeexin(jexnom('&&RC3200.VALE_CHAR', knumec), iret)
+    if (iret .eq. 0) call utmess('F', 'POSTRCCM_51')
+    call jeveuo(jexnom('&&RC3200.VALE_CHAR', knumec), 'L', jchars)
+    do 11 k = 1, 12
+          mse(k) = zr(jchars-1+k)
+11  continue
 !
     s2m = 0.d0
     s2ms = 0.d0
@@ -133,16 +142,16 @@ subroutine rcZ2s2(typ, propi, propj, seisme, mse, s2)
                do 30 i4 = 1, 2
                    do 20 i5 = 1, 2
                        do 10 i6 = 1, 2
-                           mijs(1) = propi(5) - propj(5)+ mse(4)*e1(i1)
-                           mijs(2) = propi(6) - propj(6)+ mse(5)*e2(i2)
-                           mijs(3) = propi(7) - propj(7)+ mse(6)*e3(i3)
+                           mijs(1) = ma(4) - mb(4)+ mse(4)*e1(i1)
+                           mijs(2) = ma(5) - mb(5)+ mse(5)*e2(i2)
+                           mijs(3) = ma(6) - mb(6)+ mse(6)*e3(i3)
                            racines = mijs(1)**2+mijs(2)**2+mijs(3)**2
-                           mijcors(1) = propi(11) - propj(11)+ mse(10)*e4(i4)
-                           mijcors(2) = propi(12) - propj(12)+ mse(11)*e5(i5)
-                           mijcors(3) = propi(13) - propj(13)+ mse(12)*e6(i6)
+                           mijcors(1) = ma(10) - mb(10)+ mse(10)*e4(i4)
+                           mijcors(2) = ma(11) - mb(11)+ mse(11)*e5(i5)
+                           mijcors(3) = ma(12) - mb(12)+ mse(12)*e6(i6)
                            racicors = mijcors(1)**2+mijcors(2)**2+mijcors(3)**2
 !
-                           if (rcor+rtub .eq. 0) then
+                           if (rcor+rtub .lt. 1e-8) then
                                s2ms = coefm*rayon*sqrt(racines)/inertie
                            else
                                s2ms = coefcor*rcor*sqrt(racicors)/icor+&

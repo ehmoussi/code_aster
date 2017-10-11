@@ -21,23 +21,15 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine rc32f1(nbsigr, nocc, saltij, isk, isl,&
-                      nk, nl, n0, nbp12, nbp23,&
-                      nbp13, sigr, yapass, typass, nsitup)
-        integer :: nbsigr
-        integer :: nocc(*)
-        real(kind=8) :: saltij(*)
-        integer :: isk
-        integer :: isl
-        integer :: nk
-        integer :: nl
-        integer :: n0
-        integer :: nbp12
-        integer :: nbp23
-        integer :: nbp13
-        integer :: sigr(*)
-        aster_logical :: yapass
-        character(len=3) :: typass
-        integer :: nsitup
-    end subroutine rc32f1
+    subroutine rc32spa(ze200, lieu, iocc1, iocc2, ns,&
+                      sp, spmeca, instsp)
+        aster_logical :: ze200
+        character(len=4) :: lieu
+        integer :: iocc1
+        integer :: iocc2
+        integer :: ns
+        real(kind=8) :: sp(2)
+        real(kind=8) :: spmeca(2)
+        real(kind=8) :: instsp(4)
+    end subroutine rc32spa
 end interface

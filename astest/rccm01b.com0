@@ -157,7 +157,7 @@ SN12=POST_RCCM(TYPE_RESU_MECA='B3200',
               )
 
 IMPR_TABLE(    TABLE=SN12,)
-     
+  
 #--------------------------------------------------------------------------------
 # VALIDATION DE LA METHODE B3200 avec MOMENTS INTERPOLES SUR LA TEMPERATURE
 #--------------------------------------------------------------------------------
@@ -173,7 +173,6 @@ T_TEMP5b = LIRE_TABLE (UNITE=35, FORMAT='ASTER',SEPARATEUR=' ',
 # TEMPERATURE PENDANT LA SITUATION 6        
 T_TEMP6 = LIRE_TABLE (UNITE=35, FORMAT='ASTER',SEPARATEUR=' ',
                       NUME_TABLE=14,)
-
 
 # CALCUL DE SN/SN*/ROCHET POUR LA SITUATION 5
 SN5=POST_RCCM( MATER=MAT,
@@ -284,7 +283,6 @@ SN6=POST_RCCM( MATER=MAT,
                      PRES_B=20.0,),),);
 
 IMPR_TABLE(    TABLE=SN6,) 
-
 
 # CALCUL DE SN/SN*/ROCHET POUR LES SITUATIONS 5 et 6
 SN56=POST_RCCM( MATER=MAT,
@@ -402,7 +400,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=761.904760000,
            VALE_REFE=761.90476,
-           NOM_PARA='VALE_MAXI_LINE',
+           NOM_PARA='CRIT_LINE_MAX',
            FILTRE=(_F(NOM_PARA='LIEU',
                      VALE_K='ORIG',),),
            TABLE=SN1,)
@@ -410,7 +408,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=761.904760000,
            VALE_REFE=761.90476,
-           NOM_PARA='VALE_MAXI_LINE',
+           NOM_PARA='CRIT_LINE_MAX',
            FILTRE=(_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),),
            TABLE=SN1,)
@@ -486,7 +484,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=761.904760000,
            VALE_REFE=761.90476,
-           NOM_PARA='VALE_MAXI_LINE',
+           NOM_PARA='CRIT_LINE_MAX',
            FILTRE=(_F(NOM_PARA='LIEU',
                      VALE_K='ORIG',),),
            TABLE=SN2,)
@@ -494,7 +492,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=761.904760000,
            VALE_REFE=761.90476,
-           NOM_PARA='VALE_MAXI_LINE',
+           NOM_PARA='CRIT_LINE_MAX',
            FILTRE=(_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),),
            TABLE=SN2,)
@@ -571,7 +569,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=1600.0000,
            VALE_REFE=1600.0,
-           NOM_PARA='VALE_MAXI_LINE',
+           NOM_PARA='CRIT_LINE_MAX',
            FILTRE=(_F(NOM_PARA='LIEU',
                      VALE_K='ORIG',),),
            TABLE=SN2b,)
@@ -579,7 +577,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=761.904760000,
            VALE_REFE=761.90476,
-           NOM_PARA='VALE_MAXI_LINE',
+           NOM_PARA='CRIT_LINE_MAX',
            FILTRE=(_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),),
            TABLE=SN2b,)
@@ -600,6 +598,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),
            TABLE=SN2b,)
+
 
 # ----------------------SITUATIONS 1 ET 2 TOUT_INST
 # SN
@@ -656,7 +655,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=761.904760000,
            VALE_REFE=761.90476,
-           NOM_PARA='VALE_MAXI_LINE',
+           NOM_PARA='CRIT_LINE_MAX',
            FILTRE=(_F(NOM_PARA='LIEU',
                      VALE_K='ORIG',),),
            TABLE=SN12,)
@@ -664,7 +663,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=761.904760000,
            VALE_REFE=761.90476,
-           NOM_PARA='VALE_MAXI_LINE',
+           NOM_PARA='CRIT_LINE_MAX',
            FILTRE=(_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),),
            TABLE=SN12,)
@@ -746,7 +745,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=0.000000000,
            VALE_REFE=0.0,
            ORDRE_GRANDEUR=1.0e-6, 
-           NOM_PARA='SN_THER_MAX',
+           NOM_PARA='SN_THER',
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='ORIG',),
            TABLE=SN5,)
@@ -754,7 +753,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=200.000000000,
            VALE_REFE=200.0,
-           NOM_PARA='SN_THER_MAX',
+           NOM_PARA='SN_THER',
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),
            TABLE=SN5,)

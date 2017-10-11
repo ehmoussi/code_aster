@@ -40,14 +40,6 @@ MAT=DEFI_MATERIAU(  ELAS=_F( E = 200000.,  NU = 0.3,  ALPHA = 1.0E-5),
                               SM = 200.,
                               SY_02 = 200.)
                                )
-
-MAT2=DEFI_MATERIAU(  ELAS=_F( E = 200000.,  NU = 0.3,  ALPHA = 1.0E-5),
-                    FATIGUE=_F(  WOHLER = FWOHLER, E_REFE = 200000.),
-                    RCCM=_F(  M_KE = 2.,
-                              N_KE = 0.2,
-                              SM = 200.,)
-                               )
- 
 #--------------------------------------------------------------------------------
 # VALIDATION DE LA METHODE EVOLUTION
 #--------------------------------------------------------------------------------
@@ -137,9 +129,8 @@ IMPR_TABLE(    TABLE=SNROC1,)
 # VALIDATION DU ROCHET THERMIQUE SITUATION 2
 SNROC2=POST_RCCM(TYPE_RESU_MECA='EVOLUTION',
                 OPTION='SN',
-                SY_MAX = 200.0,
                 TYPE_RESU='DETAILS',
-                MATER=MAT2,
+                MATER=MAT,
                 TITRE='CALCUL DE SN/SN*/ROCHET (DETAILS), SITUATION 2 ',
                 TRANSITOIRE=_F(  TABL_RESU_MECA = T_TOT2,
                                  TABL_SIGM_THER = T_TH2,
@@ -253,7 +244,6 @@ SN3=POST_RCCM( MATER=MAT,
 
 IMPR_TABLE(    TABLE=SN3,) 
 
-
 # CALCUL DE SN/SN*/ROCHET POUR LA SITUATION 4
 # METHODE TOUT_INST
 SN4=POST_RCCM( MATER=MAT,
@@ -292,8 +282,7 @@ IMPR_TABLE(    TABLE=SN4,)
 
 # CALCUL DE SN/SN*/ROCHET POUR LA SITUATION 4
 # METHODE TRESCA
-SN4b=POST_RCCM( MATER=MAT2,
-                SY_MAX = 200.0,
+SN4b=POST_RCCM( MATER=MAT,
                  TITRE='CALCUL DE SN/SN*/ROCHET (DETAILS), SITUATION 4, UNITAIRE, TRESCA',
                  TYPE_RESU='DETAILS',
                  TYPE_RESU_MECA='B3200',
@@ -865,6 +854,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 #--------------------------------------------------------------------------------
 # SITUATION 3 sans thermique
 # SN
+
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=65.000000000,
            VALE_REFE=65.0,
@@ -883,6 +873,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 # SITUATION 3 avec thermique et METHODE TOUT_INST
 # SN
+
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=127.500000000,
            VALE_REFE=127.5,
@@ -938,7 +929,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=300.000000000,
            VALE_REFE=300.0,
-           NOM_PARA='VALE_MAXI_LINE',
+           NOM_PARA='CRIT_LINE_MAX',
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='ORIG',),
            TABLE=SN3,)
@@ -946,7 +937,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=300.000000000,
            VALE_REFE=300.0,
-           NOM_PARA='VALE_MAXI_LINE',
+           NOM_PARA='CRIT_LINE_MAX',
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),
            TABLE=SN3,)
@@ -1024,7 +1015,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=3200.000000000,
            VALE_REFE=3200.0,
-           NOM_PARA='VALE_MAXI_LINE',
+           NOM_PARA='CRIT_LINE_MAX',
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='ORIG',),
            TABLE=SN4,)
@@ -1032,7 +1023,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=3200.000000000,
            VALE_REFE=3200.0,
-           NOM_PARA='VALE_MAXI_LINE',
+           NOM_PARA='CRIT_LINE_MAX',
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),
            TABLE=SN4,)
@@ -1164,7 +1155,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=300.000000000,
            VALE_REFE=300.0,
-           NOM_PARA='VALE_MAXI_LINE',
+           NOM_PARA='CRIT_LINE_MAX',
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='ORIG',),
            TABLE=SN34,)
@@ -1172,7 +1163,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=300.000000000,
            VALE_REFE=300.0,
-           NOM_PARA='VALE_MAXI_LINE',
+           NOM_PARA='CRIT_LINE_MAX',
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),
            TABLE=SN34,)

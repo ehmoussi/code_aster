@@ -18,9 +18,23 @@
 
 !
 !
+#include "asterf_types.h"
+!
 interface
-    subroutine rc32r1(nomres,lefat)
-        character(len=8) :: nomres
-        aster_logical :: lefat
-    end subroutine rc32r1
+    subroutine rc32sna(ze200, lieu, iocc1, iocc2, ns,&
+                      sn, instsn, snet, sigmoypres, snther,&
+                      sp3, spmeca3)
+        aster_logical :: ze200
+        character(len=4) :: lieu
+        integer :: iocc1
+        integer :: iocc2
+        integer :: ns
+        real(kind=8) :: sn
+        real(kind=8) :: instsn(4)
+        real(kind=8) :: snet
+        real(kind=8) :: sigmoypres
+        real(kind=8) :: snther
+        real(kind=8) :: sp3
+        real(kind=8) :: spmeca3
+    end subroutine rc32sna
 end interface

@@ -19,20 +19,12 @@
 !
 !
 interface
-    subroutine rc32fu(nbsigr, nocc, nom, situ, sigr, fuij, comb, lieu,&
-                      ug, factus, factus2, ugenv, fatiguenv)
-        integer :: nbsigr
-        integer :: nocc(*)
-        character(len=24) :: nom(*)
-        integer :: situ(*)
-        integer :: sigr(*)
-        real(kind=8) :: fuij(*)
-        real(kind=8) :: comb(*)
+    subroutine rc32pmb(lieu, iocc, ns, pm, pb, pmpb)
         character(len=4) :: lieu
-        real(kind=8) :: ug
-        real(kind=8) :: factus(*)
-        character(len=24) :: factus2(*)
-        real(kind=8) :: ugenv
-        aster_logical :: fatiguenv
-    end subroutine rc32fu
+        integer :: iocc
+        integer :: ns
+        real(kind=8) :: pm
+        real(kind=8) :: pb
+        real(kind=8) :: pmpb
+    end subroutine rc32pmb
 end interface

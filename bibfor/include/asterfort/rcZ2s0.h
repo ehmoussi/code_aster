@@ -21,25 +21,13 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine rcZ2sn(ze200, lieu, numsip, numsiq, iocs, mse,&
-                      propi, propj, proqi, proqj, instsn, sn,&
-                      sp3, spmeca3, snet, trescapr, tresth)
-        aster_logical :: ze200
-        character(len=4) :: lieu
-        integer :: numsip
-        integer :: numsiq
-        integer :: iocs
-        real(kind=8) :: mse(12)
-        real(kind=8) :: propi(20)
-        real(kind=8) :: propj(20)
-        real(kind=8) :: proqi(20)
-        real(kind=8) :: proqj(20)
-        real(kind=8) :: instsn(2)
-        real(kind=8) :: sn
-        real(kind=8) :: sp3
-        real(kind=8) :: spmeca3
-        real(kind=8) :: snet
-        real(kind=8) :: trescapr
-        real(kind=8) :: tresth
-    end subroutine rcZ2sn
+    subroutine rcZ2s0(typ, ma, mb, presa, presb, ns, s2)
+        character(len=2) :: typ
+        real(kind=8) :: ma(12)
+        real(kind=8) :: mb(12)
+        real(kind=8) :: presa
+        real(kind=8) :: presb
+        integer :: ns
+        real(kind=8) :: s2
+    end subroutine rcZ2s0
 end interface

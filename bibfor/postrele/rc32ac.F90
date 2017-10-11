@@ -16,546 +16,667 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine rc32ac(ze200, mater, lpmpb, lsn,&
-                  lther, lfat, lefat)
+subroutine rc32ac(lfat, lefat)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/infniv.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/jelira.h"
-#include "asterfort/jecrec.h"
+#include "asterc/getfac.h"
 #include "asterfort/wkvect.h"
-#include "asterfort/jexnum.h"
-#include "asterfort/jecroc.h"
-#include "asterfort/jeecra.h"
-#include "asterfort/rc3201.h"
-#include "asterfort/jeexin.h"
-#include "asterc/r8vide.h"
-#include "asterfort/rcma02.h"
-#include "asterfort/rcmo02.h"
-#include "asterfort/rc32pm.h"
-#include "asterfort/rcZ2sn.h"
-#include "asterfort/rc32rt.h"
+#include "asterfort/rc32pmb.h"
+#include "asterfort/rc32sn.h"
 #include "asterfort/rc32sp.h"
 #include "asterfort/rc32sa.h"
+#include "asterfort/rc32fact.h"
+#include "asterc/r8vide.h"
 #include "asterfort/getvtx.h"
-#include "asterfort/rc32env.h"
+#include "asterfort/jemarq.h"
 #include "asterfort/jedema.h"
+#include "asterfort/jeveuo.h"
+
+    aster_logical :: lfat, lefat
+
+!     OPERATEUR POST_RCCM, TRAITEMENT DE FATIGUE B3200 et ZE200
+!                           CALCUL DES GRANDEURS
 !
-    aster_logical :: ze200, lpmpb, lsn, lther, lfat, lefat
-    character(len=8) :: mater
-!     OPERATEUR POST_RCCM, CALCUL DES AMPLITUDES DE CONTRAINTES SN et SP 
-!     et du FACTEUR D'USAGE
-!
-!     Pour chaque extremite :
-!     on calcule le SALT = 0,5*(EC/E)*Ke(SN)*SP
-!
-! Etape 1 : on calcule le SALT qui correspond aux combinaisons des 
-!           situations d'un groupe donné.
-!
-! Etape 2 : on calcule le SALT pour les situations non combinables
-!
-! Etape 3 : traitement des situations de passage
 !     ------------------------------------------------------------------
-!
+    integer :: nb, ndim, jresu, iocc, im, jmax, ns, jresus, n1, i, jcombi
+    integer :: iocc1, iocc2, jresucomb, jresucombs, jvalin, nbsscyc, nbid
+    integer :: kk
+    real(kind=8) :: pm, pb, pmpb, pmmax, pbmax, pmpbmax, pms, pbs, pmpbs
+    real(kind=8) :: snmax, sn, sns, instsn(4), instsns(4), snet, snets
+    real(kind=8) :: snetmax, sigmoypres, siprmoymax, snthmax, snther, sbid
+    real(kind=8) :: spmax, sp(2), sps(2), instsp(4), instsps(4), samax
+    real(kind=8) :: spmeca(2), spmecas(2), salt(2), salts(2), kemeca
+    real(kind=8) :: kether, fu(2), fus(2), snp, snq, snetp, snetq, sigmoypresp
+    real(kind=8) :: sigmoypresq, sntherp, sntherq, snthers,snps, snqs, snetps
+    real(kind=8) :: snetqs, sntherps, sntherqs, spp, spq, futot, spthmax
+    real(kind=8) :: fuseism, spmecap, spmecaq, futotenv, ktsn, ktsp, sp3
+    real(kind=8) :: spmeca3, sp3s, spmeca3s, spss2(2), keequi, saltss(2)
+    real(kind=8) :: fuss(2), spss(1000), spssbid(1000), fusstot
     character(len=4) :: lieu(2)
-    integer :: ifm, niv, nbgr, jcombi, nbp12, nbp23, nbp13, im, jresu1
-    integer, pointer :: situ_numero(:) => null()
-    integer, pointer :: situ_nume_group(:) => null()
-    integer, pointer :: situ_seisme(:) => null()
-    real(kind=8), pointer :: situ_pres_a(:) => null()
-    real(kind=8), pointer :: situ_pres_b(:) => null()
-    integer, pointer :: situ_nb_occur(:) => null()
-    character(len=24) :: k24as, k24ss, k24ca, k24cs, k24fu, k24fu2
-    real(kind=8) :: utot, utotenv, mse(12), ppi, ppj, matpi(7) 
-    integer :: l, ig, numgr, nbsigr, jnsg, i1, jreas, jress, ndim 
-    integer :: jrecs, jreca, jfact, jfact2, iocs, i, jresu2, kk, is1
-    aster_logical :: yapass, seisme, cfait
-    integer :: ioc1, iret, j, nsitup, nsituq, nocc, nb, jresu3, ll
-    real(kind=8) :: matpj(7), mpi(12), mpj(12), pm, pb, pmpb, sn, snet
-    real(kind=8) :: simpij, sp(2), sp1(2), sp2, spmeca(2), kemeca
-    real(kind=8) :: kether, saltij(2), smm, fuij(2), upart, ke, feni
-    real(kind=8) :: sn1, sn2, spmeca1(2), sp3
-    character(len=8) :: typeke
-    integer :: jresu, k
-    real(kind=8) :: spmeca3, instsn(2), instsp(4), propi(20), propj(20)
-    real(kind=8) :: proqi(20), set, trescapr, tresth
+    character(len=16) :: option, chap
+    character(len=8) :: typeke, sscyc
+    aster_logical :: ze200
 !
 ! DEB ------------------------------------------------------------------
-    data lieu / 'ORIG' , 'EXTR' /  
-!  
+!
     call jemarq()
-    call infniv(ifm, niv)
 !
-    call jeveuo('&&RC3200.SITU_NUMERO', 'L', vi=situ_numero)
-    call jelira('&&RC3200.SITU_NUME_GROUP', 'LONMAX', nbgr)
-    call jeveuo('&&RC3200.SITU_NUME_GROUP', 'L', vi=situ_nume_group)
-    call jeveuo('&&RC3200.SITU_SEISME', 'L', vi=situ_seisme)
-    call jeveuo('&&RC3200.SITU_COMBINABLE', 'L', jcombi)
-    call jeveuo('&&RC3200.SITU_PRES_A', 'L', vr=situ_pres_a)
-    call jeveuo('&&RC3200.SITU_PRES_B', 'L', vr=situ_pres_b)
-    call jeveuo('&&RC3200.SITU_NB_OCCUR', 'L', vi=situ_nb_occur)
-    call jelira('&&RC32SI.PASSAGE_1_2', 'LONUTI', nbp12)
-    call jelira('&&RC32SI.PASSAGE_2_3', 'LONUTI', nbp23)
-    call jelira('&&RC32SI.PASSAGE_1_3', 'LONUTI', nbp13)
+    lfat = .false.
+    lefat = .false.
+    lieu(1) = 'ORIG'
+    lieu(2) = 'EXTR' 
 !
-! --- POUR CHAQUE EXTREMITE
-    do 10 im = 1, 2
+!-- fait-on du calcul de pmpb, sn ou fatigue
+    call getvtx(' ', 'OPTION', iocc=1, scal=option, nbret=n1)
+!-- est on en ZE200
+    ze200 = .false.
+    call getvtx(' ', 'TYPE_RESU_MECA', iocc=1, scal=chap, nbret=n1)
+    if(chap .eq. 'ZE200a' .or. chap .eq. 'ZE200b') ze200 = .true.
+!-- est on en fatigue environnementale ?
+    if(option .eq. 'EFAT') lefat = .true.
+!-- combien de situations sont déclarées
+    call getfac('SITUATION', nb)
+!-- le séisme est-il pris en compte
+    call getfac('SEISME', ns)
 !
-! ------ POUR CHAQUE SITUATION, ON ARCHIVE :
-!         * 9 QUANTITES AVEC LA PRISE EN COMPTE DU SEISME
-!         * 9 QUANTITES SANS LA PRISE EN COMPTE DU SEISME
-!         1  : PM
-!         2  : PB
-!         3  : PMPB
-!         4  : SN
-!         5  : SN*
-!         6  : KE_MECA
-!         7  : KE_THER
-!         8  : SALT
-!         9 : UPART
+!-- les grandeurs sont calculées à l'origine et à l'extrémité du segment
+    do 10 im = 1,2
+! 
+! ---------------------------------------------------------------------------------
+! - POUR TOUT LE CALCUL (SITUATION, COMBINAISON, SEISME) STOCKAGE DES 9 GRANDEURS 
+! - MAXIMALES A L'ORIGINE ET A L'EXTREMITE (&&RC3200.MAX_RESU)
+! ---------------------------------------------------------------------------------
+      pmmax = 0.d0
+      pbmax = 0.d0
+      pmpbmax = 0.d0
+      snmax = 0.d0
+      snetmax = 0.d0
+      siprmoymax = 0.d0
+      snthmax = 0.d0
+      spmax = 0.d0
+      samax = 0.d0
+      spthmax = 0.d0
+      fuseism = 0.d0
 !
-! ------ POUR CHAQUE COMBINAISON, ON ARCHIVE :
-!         * 13 QUANTITES AVEC LA PRISE EN COMPTE DU SEISME
-!         * 13 QUANTITES SANS LA PRISE EN COMPTE DU SEISME
-!         1  : INST SN 1
-!         2  : INST SN 2
-!         3  : SN
-!         4  : SN*
-!         5  : KE_MECA
-!         6  : KE_THER
-!         7  : INST SP1 1
-!         8  : INST SP1 2
-!         9  : INST SP2 1
-!         10 : INST SP2 2
-!         11 : SALT1
-!         12 : SALT2
-!         13 : FU ELEMENTAIRE
+      call wkvect('&&RC3200.MAX_RESU.'//lieu(im), 'V V R', 13, jmax)
+      do 20 i = 1, 13
+          zr(jmax+i-1) = r8vide()
+20    continue 
+! ---------------------------------------------------------------------------------
+! - POUR CHAQUE SITUATION, STOCKAGE DE 121 GRANDEURS A L'ORIGINE ET A L'EXTREMITE
+! - (&&RC3200.SITU_RESU SANS SEISME et &&RC3200.SITUS_RESU AVEC SEISME)
+! - PM, PB, PMPB, SN, INST_SN_1, INST_SN_2, SN*, INST_SN*_1, INST_SN*_2
+! - SIGMOYPRES, SN_THER, SP1, INST_SALT1_1, INST_SALT1_2, SALT, FUEL, SP_THER, SPMECA, 
+! - KE POUR EFAT, SPSS(100), NBSSCYC, FUSS
+! ---------------------------------------------------------------------------------
+      ndim = nb*121
+      call wkvect('&&RC3200.SITU_RESU.'//lieu(im), 'V V R', ndim, jresu) 
+      do 25 i = 1, ndim
+          zr(jresu+i-1) = r8vide()
+25    continue 
+      if(ns .ne. 0) then
+          call wkvect('&&RC3200.SITUS_RESU.'//lieu(im), 'V V R', ndim, jresus)
+          do 26 i = 1, ndim
+              zr(jresus+i-1) = r8vide()
+26        continue 
+      endif
 !
-        k24as = '&&RC3200.AVEC_SEISME'//lieu(im)
-        call jecrec(k24as, 'V V R', 'NU', 'DISPERSE', 'VARIABLE',&
-                    nbgr)
+      do 30 iocc = 1, nb , 1
 !
-        k24ss = '&&RC3200.SANS_SEISME'//lieu(im)
-        call jecrec(k24ss, 'V V R', 'NU', 'DISPERSE', 'VARIABLE',&
-                    nbgr)
+!------ Calcul du PM, PB et PMPB
+        if(option .eq. 'PM_PB') then
+            pm = 0.d0
+            pb = 0.d0
+            pmpb = 0.d0
+            pms = 0.d0
+            pbs = 0.d0
+            pmpbs = 0.d0
 !
-        k24ca = '&&RC3200.COMBI_A_SEI'//lieu(im)
-        call jecrec(k24ca, 'V V R', 'NU', 'DISPERSE', 'VARIABLE',&
-                    nbgr)
+            call rc32pmb(lieu(im), iocc, 0, pm, pb, pmpb)
 !
-        k24cs = '&&RC3200.COMBI_S_SEI'//lieu(im)
-        call jecrec(k24cs, 'V V R', 'NU', 'DISPERSE', 'VARIABLE',&
-                    nbgr)
+            zr(jresu+121*(iocc-1))=pm
+            zr(jresu+121*(iocc-1)+1)=pb
+            zr(jresu+121*(iocc-1)+2)=pmpb
+            pmmax=max(pm, pmmax)
+            pbmax=max(pb, pbmax)
+            pmpbmax=max(pmpb, pmpbmax)
 !
-        k24fu = '&&RC3200.FACTUSAG '//lieu(im)
-        call jecrec(k24fu, 'V V R', 'NU', 'DISPERSE', 'VARIABLE',&
-                    nbgr)
-!
-        k24fu2 = '&&RC3200.FACTUSAG2 '//lieu(im)
-        call jecrec(k24fu2, 'V V K24', 'NU', 'DISPERSE', 'VARIABLE',&
-                    nbgr)
-!
-        utot = 0.d0
-        utotenv = 0.d0
-!
-! ----------------------------------------------------------------------
-!                           E T A P E   1
-!         ON TRAITE LES SITUATIONS COMBINABLES DANS LEUR GROUPE
-! ----------------------------------------------------------------------
-!
-        call wkvect('&&RC3200.RESU1.'//lieu(im), 'V V R', 10, jresu1)
-!
-        do 60 l = 1, 10
-            zr(jresu1-1+l) = 0.d0
- 60     continue
-!
-        if (niv .ge. 2) then
-            if (im .eq. 1) then
-                write(ifm,*)'  '
-                write(ifm,*)'******* ORIGINE DU SEGMENT *******'
-            else
-                write(ifm,*)'  '
-                write(ifm,*)'******* EXTREMITE DU SEGMENT *******'
+            if (ns .ne. 0) then
+              call rc32pmb(lieu(im), iocc, ns, pms, pbs, pmpbs)
+              zr(jresus+121*(iocc-1))=pms
+              zr(jresus+121*(iocc-1)+1)=pbs
+              zr(jresus+121*(iocc-1)+2)=pmpbs
+              pmmax=max(pms, pmmax)
+              pbmax=max(pbs, pbmax)
+              pmpbmax=max(pmpbs, pmpbmax)
             endif
-            write(ifm,*) ' '
-            write(ifm,*)&
-     &       '=> ON TRAITE LES SITUATIONS COMBINABLES DANS LEUR GROUPE'
         endif
 !
-        do 100 ig = 1, nbgr
+!------ Calcul du SN
+        if(option .eq. 'SN' .or. option .eq. 'FATIGUE' .or. option .eq. 'EFAT') then
+            call jeveuo('&&RC3200.INDI', 'L', jvalin)
+            ktsn = zr(jvalin+9)
+            ktsp = zr(jvalin+10) 
+            sn = 0.d0
+            sns = 0.d0
+            snet = 0.d0
+            snets = 0.d0
+            snther = 0.d0
+            sp3 = 0.d0
+            spmeca3 = 0.d0
+            sp3s = 0.d0
+            spmeca3s = 0.d0
 !
-            numgr = situ_nume_group(ig)
-!---------- s'il y a situation de passage 
-            if (numgr .lt. 0) goto 100
-!---------- sinon
-!------------- on liste les situations du groupe
-            call jelira(jexnum('&&RC3200.LES_GROUPES', numgr), 'LONUTI', nbsigr)
-            call jeveuo(jexnum('&&RC3200.LES_GROUPES', numgr), 'L', jnsg)
-            if (niv .ge. 2) then
-                write (ifm,300) numgr,nbsigr
-                write (ifm,302) (situ_numero(1+zi(jnsg+i1-1)-1),i1=1,&
-                nbsigr)
+            call rc32sn(ze200, lieu(im), iocc, 0, 0, sn, instsn,&
+                        snet, sigmoypres, snther, sp3, spmeca3)
+            sn = sn*ktsn
+            snet = snet*ktsn
+            zr(jresu+121*(iocc-1)+3)=sn
+            zr(jresu+121*(iocc-1)+4)=instsn(1)
+            zr(jresu+121*(iocc-1)+5)=instsn(2)
+            zr(jresu+121*(iocc-1)+6)=snet
+            zr(jresu+121*(iocc-1)+7)=instsn(3)
+            zr(jresu+121*(iocc-1)+8)=instsn(4)
+            zr(jresu+121*(iocc-1)+9)=sigmoypres
+            zr(jresu+121*(iocc-1)+10)=snther
+            snmax=max(sn, snmax)
+            snetmax=max(snet, snetmax)
+            snthmax=max(snther, snthmax)
+            if (sigmoypres .ne. r8vide()) siprmoymax=max(sigmoypres, siprmoymax)
+!
+            if (ns .ne. 0) then
+              call rc32sn(ze200, lieu(im), iocc, 0, ns, sns, instsns,&
+                          snets, sbid, sbid, sp3s, spmeca3s)
+              sns = ktsn*sns
+              snets = ktsn*snets
+              zr(jresus+121*(iocc-1)+3)=sns
+              zr(jresus+121*(iocc-1)+4)=instsns(1)
+              zr(jresus+121*(iocc-1)+5)=instsns(2)
+              zr(jresus+121*(iocc-1)+6)=snets
+              zr(jresus+121*(iocc-1)+7)=instsns(3)
+              zr(jresus+121*(iocc-1)+8)=instsns(4)
+              zr(jresus+121*(iocc-1)+9)=sigmoypres
+              zr(jresus+121*(iocc-1)+10)=snther
+              snmax=max(sns, snmax)
+              snetmax=max(snets, snetmax)
             endif
-!------------- on dimensionne les vecteurs en fonction du nombre 
-!------------- de situations dans le groupe 
-            call jecroc(jexnum(k24as, ig))
-            call jeecra(jexnum(k24as, ig), 'LONMAX', 9*nbsigr)
-            call jeveuo(jexnum(k24as, ig), 'E', jreas)
+        endif
 !
-            call jecroc(jexnum(k24ss, ig))
-            call jeecra(jexnum(k24ss, ig), 'LONMAX', 9*nbsigr)
-            call jeveuo(jexnum(k24ss, ig), 'E', jress)
+!------ Calcul du SP, du SALT et du FU de chaque situation seule
+        if(option .eq. 'FATIGUE' .or. option .eq. 'EFAT') then
+            lfat = .true.
+            sp(1) = 0.d0
+            salt(1) = 0.d0
+            spmeca(1) = 0.d0
+            sps(1) = 0.d0
+            salts(1) = 0.d0
+            spmecas(1) = 0.d0
+            instsp(1)=-1.d0
+            instsp(2)=-1.d0
+            instsps(1)=-1.d0
+            instsps(2)=-1.d0
 !
-            ndim = max(13,int(13*nbsigr*(nbsigr-1)/2))
-            call jecroc(jexnum(k24ca, ig))
-            call jeecra(jexnum(k24ca, ig), 'LONMAX', ndim)
-            call jeveuo(jexnum(k24ca, ig), 'E', jreca)
+            call rc32sp(ze200, lieu(im), iocc, 0, 0,&
+                        sp, spmeca, instsp, nbsscyc, spss)
+            sp(1) = ktsp*(sp(1)+sp3)
+            spmeca(1) = ktsp*(spmeca(1)+spmeca3)
+            zr(jresu+121*(iocc-1)+11)=sp(1)
+            zr(jresu+121*(iocc-1)+12)=instsp(1)
+            zr(jresu+121*(iocc-1)+13)=instsp(2)
+            spmax=max(sp(1), spmax)
+            call rc32sa('SITU', sn, sp, spmeca, kemeca, kether, salt, fu)
+            zr(jresu+121*(iocc-1)+14)=salt(1)
+            zr(jresu+121*(iocc-1)+15)=fu(1)
+            zr(jresu+121*(iocc-1)+16)=max(0.d0, sp(1)-spmeca(1))
+            zr(jresu+121*(iocc-1)+17)=spmeca(1)
 !
-            call jecroc(jexnum(k24cs, ig))
-            call jeecra(jexnum(k24cs, ig), 'LONMAX', ndim)
-            call jeveuo(jexnum(k24cs, ig), 'E', jrecs)
-!
-            call jecroc(jexnum(k24fu, ig))
-            call jeecra(jexnum(k24fu, ig), 'LONMAX', 23*200)
-            call jeveuo(jexnum(k24fu, ig), 'E', jfact)
-!
-            call jecroc(jexnum(k24fu2, ig))
-            call jeecra(jexnum(k24fu2, ig), 'LONMAX', 2*200)
-            call jeveuo(jexnum(k24fu2, ig), 'E', jfact2)
-!
-            if (ig .eq. 1) then
-                if (nbp12 .ne. 0 .or. nbp13 .ne. 0) goto 100
-            else if (ig .eq. 2) then
-                if (nbp12 .ne. 0 .or. nbp23 .ne. 0) goto 100
-            else if (ig .eq. 3) then
-                if (nbp13 .ne. 0 .or. nbp23 .ne. 0) goto 100
-            endif
-            yapass = .false.
-!
-            iocs = situ_seisme(ig)
-            if (iocs .eq. 0) then
-                seisme = .false.
+            call getvtx(' ', 'TYPE_KE', scal=typeke, nbret=n1)
+            if (typeke .eq. 'KE_MECA') then
+                keequi = kemeca
             else
-                seisme = .true.
+                keequi = (kemeca*spmeca(1)+kether*(sp(1)-spmeca(1)))/sp(1)
+            endif
+            zr(jresu+121*(iocc-1)+18) = keequi
+!
+!---------- Calcul du FU dû aux sous cycles
+            call getvtx(' ', 'SOUS_CYCL', scal=sscyc, nbret=n1)
+            if(sscyc .eq. 'OUI') then
+              fusstot=0.d0
+              do 31 kk = 1, nbsscyc
+                  zr(jresu+121*(iocc-1)+19-1+kk) = spss(kk)
+                  spss2(1) = keequi*spss(kk)
+                  spss2(2) = 0.d0
+                  call rc32sa('SITU', 1e-12, spss2, spss2, kemeca, kether, saltss, fuss)
+                  fusstot = fusstot+fuss(1)
+31            continue
+              zr(jresu+121*(iocc-1)+119) = nbsscyc
+              zr(jresu+121*(iocc-1)+120) = fusstot
+              zr(jresu+121*(iocc-1)+15) = zr(jresu+121*(iocc-1)+15)+fusstot
+            else
+              zr(jresu+121*(iocc-1)+120) = 0.d0
             endif
 !
-            call rc3201(ze200, numgr, lpmpb, lsn, lther, lfat, lefat, yapass,&
-                        seisme, iocs, mater, lieu(im), utot, utotenv,&
-                        zr(jreas), zr(jress), zr(jreca), zr(jrecs),&
-                        zr(jfact), zk24(jfact2), zr(jresu1))
+            samax=max(salt(1), samax)
+            spthmax = max(spthmax, zr(jresu+121*(iocc-1)+16))
 !
-100     continue
+!------ Calcul du SP, du SALT et du FU avec SEISME
+            if (ns .ne. 0) then
+              call rc32sp(ze200, lieu(im), iocc, 0, ns,&
+                          sps, spmecas, instsps, nbid, spssbid)
+              sps(1) = ktsp*(sps(1)+sp3s)
+              spmecas(1) = ktsp*(spmecas(1)+spmeca3s)
+              zr(jresus+121*(iocc-1)+11)=sps(1)
+              zr(jresus+121*(iocc-1)+12)=instsps(1)
+              zr(jresus+121*(iocc-1)+13)=instsps(2)
+              spmax=max(spmax, sps(1))
+              call rc32sa('SITU', sns, sps, spmecas, kemeca, kether, salts, fus)
+              zr(jresus+121*(iocc-1)+14)=salts(1)
+              zr(jresus+121*(iocc-1)+15)=fus(1)
+              zr(jresus+121*(iocc-1)+16)=max(0.d0, sps(1)-spmecas(1))
+              zr(jresus+121*(iocc-1)+17)=spmecas(1)
 !
-! ----------------------------------------------------------------------
-!                           E T A P E   2
-!               ON TRAITE LES SITUATIONS NON COMBINABLES
-! ----------------------------------------------------------------------
+              if (typeke .eq. 'KE_MECA') then
+                  keequi = kemeca
+              else
+                  keequi = (kemeca*spmecas(1)+kether*(sps(1)-spmecas(1)))/sps(1)
+              endif
+              zr(jresus+121*(iocc-1)+18) = keequi
 !
-        seisme = .false.
-        iocs =0
-        do 220 i = 1, 12
-            mse(i) = 0.d0
-220     continue
+!---------- Calcul du FU dû aux sous cycles avec SEISME
 !
-        call wkvect('&&RC3200.RESU2.'//lieu(im), 'V V R', 10, jresu2)
-        do 40 kk = 1, 10
-            zr(jresu2-1+kk) = 0.d0
- 40     continue
+            if(sscyc .eq. 'OUI') then
+              fusstot=0.d0
+              do 32 kk = 1, nbsscyc
+                  zr(jresus+121*(iocc-1)+19-1+kk) = spss(kk)
+                  spss2(1) = keequi*spss(kk)
+                  spss2(2) = 0.d0
+                  call rc32sa('SITU', 1e-12, spss2, spss2, kemeca, kether, saltss, fuss)
+                  fusstot = fusstot+fuss(1)
+32            continue
+              zr(jresus+121*(iocc-1)+119) = nbsscyc
+              zr(jresus+121*(iocc-1)+120) = fusstot
+              zr(jresus+121*(iocc-1)+15) = zr(jresu+121*(iocc-1)+15)+fusstot
+            else
+              zr(jresus+121*(iocc-1)+120) = 0.d0
+            endif
 !
-        cfait = .false.
-        do 20 ig = 1, nbgr
+              samax=max(samax, salts(1))
+              spthmax = max(spthmax, zr(jresus+121*(iocc-1)+16))
+!              
+            endif
+        endif
 !
-            numgr = situ_nume_group(ig)
-            if (numgr .lt. 0) goto 20
+30    continue
 !
-            call jelira(jexnum('&&RC3200.LES_GROUPES', numgr), 'LONUTI', nbsigr)
-            call jeveuo(jexnum('&&RC3200.LES_GROUPES', numgr), 'L', jnsg)
+! ---------------------------------------------------------------------------------
+! - POUR CHAQUE COMBINAISON DE SITUATIONS POSSIBLE (MEME GROUPE ou SITUATION DE PASSAGE)
+! - STOCKAGE DE 20 GRANDEURS A L'ORIGINE ET A L'EXTREMITE
+! - (&&RC3200.SITU_RESU SANS SEISME et &&RC3200.SITUS_RESU AVEC SEISME)
+! - SN, INST_SN_1, INST_SN_2, SN*, INST_SN*_1, INST_SN*_2
+! - SIGMOYPRES, SN_THER, SP1,INST_SALT1_1, INST_SALT1_2, SALT1, SP2,INST_SALT2_1,
+! - INST_SALT2_2, SALT2, FUEL, SP_THER, KE POUR EFAT, FUSS
+! ---------------------------------------------------------------------------------
 !
-            do 210 is1 = 1, nbsigr
-                ioc1 = zi(jnsg+is1-1)
-                if (zl(jcombi+ioc1-1)) goto 210
+      ndim = nb*nb*20
+      call wkvect('&&RC3200.COMB_RESU.'//lieu(im), 'V V R', ndim, jresucomb) 
+      do 35 i = 1, ndim
+          zr(jresucomb+i-1) = r8vide()
+35    continue 
+      if(ns .ne. 0) then
+          call wkvect('&&RC3200.COMBS_RESU.'//lieu(im), 'V V R', ndim, jresucombs)
+          do 36 i = 1, ndim
+              zr(jresucombs+i-1) = r8vide()
+36        continue 
+      endif
 !
-                call jeexin(jexnum(k24as, ig), iret)
-                if (iret .eq. 0) then
-                    call jecroc(jexnum(k24as, ig))
-                    call jeecra(jexnum(k24as, ig), 'LONMAX', 9*nbsigr)
-                endif
-                call jeveuo(jexnum(k24as, ig), 'E', jreas)
-                do 212 j = 1, 10
-                    zr(jreas-1+10*(is1-1)+j) = r8vide()
-212             continue
+!-- on consulte le tableau qui indique si la combinaison des deux situations P et Q
+!-- est possible (elles sont dans le même groupe ou liées par une situation de passage)
+      if(option .eq. 'FATIGUE' .or. option .eq. 'EFAT') then
+        call jeveuo('&&RC3200.COMBI', 'L', jcombi)
+        do 40 iocc1 = 1, nb
+          do 50 iocc2 = 1, nb
+              sn = 0.d0
+              sns = 0.d0
+              snet = 0.d0
+              snets = 0.d0
+              snther = 0.d0
+              if(zi(jcombi+nb*(iocc1-1)+iocc2-1) .ne. 0) then
 !
-                call jeexin(jexnum(k24ss, ig), iret)
-                if (iret .eq. 0) then
-                    call jecroc(jexnum(k24ss, ig))
-                    call jeecra(jexnum(k24ss, ig), 'LONMAX', 9*nbsigr)
-                endif
-                call jeveuo(jexnum(k24ss, ig), 'E', jress)
+!---------------- Calcul de SN(P,Q), SN*(P,Q) et leurs instants sans séisme
+                  call rc32sn(ze200, lieu(im), iocc1, iocc2, 0, sn, instsn,&
+                              snet, sbid, snther, sp3, spmeca3) 
+                  sn = ktsn*sn
+                  snet = ktsn*snet
+                  zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+1)=sn
+                  zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+2)=instsn(1)
+                  zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+3)=instsn(2)
+                  zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+4)=snet
+                  zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+5)=instsn(3)
+                  zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+6)=instsn(4)
+                  sigmoypresp = zr(jresu+121*(iocc1-1)+9)
+                  sigmoypresq = zr(jresu+121*(iocc2-1)+9)
+                  zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+7)=max(sigmoypresp, sigmoypresq)
+                  if (sigmoypresp .ne. r8vide()) siprmoymax=max(sigmoypresp, siprmoymax)
+                  if (sigmoypresq .ne. r8vide()) siprmoymax=max(sigmoypresq, siprmoymax)
+                  zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+8)=snther
+!---------------- On prend le max de SN(P,Q), SN(P,P) et SN(Q,Q)
+                  snp = zr(jresu+121*(iocc1-1)+3)
+                  snq = zr(jresu+121*(iocc2-1)+3)
+                  sntherp = zr(jresu+121*(iocc1-1)+10)
+                  sntherq = zr(jresu+121*(iocc2-1)+10)
+                  if (snp .ge. sn) then
+                      sn = snp
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+1)=sn
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+2)=zr(jresu+121*(iocc1-1)+4)
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+3)=zr(jresu+121*(iocc1-1)+5)
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+8)=sntherp
+                  endif
+                  if (snq .ge. sn) then
+                      sn = snq
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+1)=sn
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+2)=zr(jresu+121*(iocc2-1)+4)
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+3)=zr(jresu+121*(iocc2-1)+5)
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+8)=sntherq
+                  endif
+                  snmax = max (snmax, sn)
+                  snthmax=max(zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+8), snthmax)
 !
-                if (.not.cfait .and. niv .ge. 2) then
-                    cfait = .true.
-                    write(ifm,*) ' '
-                    write(ifm,*)&
-     &   '=> ON TRAITE LES SITUATIONS NON COMBINABLES DANS LEUR GROUPE'
-                endif
-                if (niv .ge. 2) write (ifm,200) ig, ioc1
+                  snetp = zr(jresu+121*(iocc1-1)+6)
+                  snetq = zr(jresu+121*(iocc2-1)+6)
+                  if (snetp .ge. snet) then
+                      snet = snetp
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+4)=snet
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+5)=zr(jresu+121*(iocc1-1)+7)
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+6)=zr(jresu+121*(iocc1-1)+8)
+                  endif
+                  if (snetq .ge. snet) then
+                      snet = snetq
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+4)=snet
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+5)=zr(jresu+121*(iocc2-1)+7)
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+6)=zr(jresu+121*(iocc2-1)+8)
+                  endif
+                  snetmax=max(snet, snetmax)
 !
-                nsitup = situ_numero(ioc1)
-                nsituq = 0
-                nocc = situ_nb_occur(1+2*ioc1-2)
-                ppi = situ_pres_a(ioc1)
-                ppj = situ_pres_b(ioc1)
-                call rcma02('A', ioc1, matpi)
-                call rcma02('B', ioc1, matpj)
-                call rcmo02('A', nsitup, mpi)
-                call rcmo02('B', nsitup, mpj)
+!---------------- Calcul de SN, SN* et leurs instants avec séisme
+                  if(ns .ne. 0) then
+                      call rc32sn(ze200, lieu(im), iocc1, iocc2, ns, sns, instsns,&
+                                  snets, sbid, snthers, sp3s, spmeca3s)
+                      sns = ktsn*sns
+                      snets = ktsn*snets    
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+1)=sns
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+2)=instsns(1)
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+3)=instsns(2)
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+4)=snets
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+5)=instsns(3)
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+6)=instsns(4)
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+7)=max(sigmoypresp, sigmoypresq)
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+8)=snthers
 !
-! ----------- CALCUL DU PM_PB
-                if (lpmpb) then
-                    pm = 0.d0
-                    pb = 0.d0
-                    pmpb = 0.d0
-                    call rc32pm(lieu(im), seisme, ppi, mpi, mse,&
-                                pm, pb, pmpb)
-                    call rc32pm(lieu(im), seisme, ppj, mpj, mse,&
-                                pm, pb, pmpb)
-                    zr(jress-1+9*(is1-1)+1) = pm
-                    zr(jress-1+9*(is1-1)+2) = pb
-                    zr(jress-1+9*(is1-1)+3) = pmpb
-                    if (niv .ge. 2) then
-                        write (ifm,202) nsitup, pm, pb, pmpb
+                      snps = zr(jresus+121*(iocc1-1)+3)
+                      snqs = zr(jresus+121*(iocc2-1)+3)
+                      sntherps = zr(jresus+121*(iocc1-1)+10)
+                      sntherqs = zr(jresus+121*(iocc2-1)+10)
+                      if (snps .ge. sns) then
+                          sns = snps
+                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+1)=sns
+                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+2)=zr(jresus+121*(iocc1-1)+4)
+                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+3)=zr(jresus+121*(iocc1-1)+5)
+                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+8)=sntherps
+                      endif
+                      if (snqs .ge. sns) then
+                          sns = snqs
+                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+1)=sns
+                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+2)=zr(jresus+121*(iocc2-1)+4)
+                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+3)=zr(jresus+121*(iocc2-1)+5)
+                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+8)=sntherqs
+                      endif
+                      snmax = max (snmax, sns)
+                      snthmax=max(zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+8), snthmax)
+!
+                      snetps = zr(jresus+121*(iocc1-1)+6)
+                      snetqs = zr(jresus+121*(iocc2-1)+6)
+                      if (snetps .ge. snets) then
+                          snets = snetps
+                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+4)=snets
+                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+5)=zr(jresus+121*(iocc1-1)+7)
+                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+6)=zr(jresus+121*(iocc1-1)+8)
+                      endif
+                      if (snetqs .ge. snets) then
+                          snets = snetqs
+                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+4)=snets
+                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+5)=zr(jresus+121*(iocc2-1)+7)
+                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+6)=zr(jresus+121*(iocc2-1)+8)
+                      endif
+                      snetmax=max(snets, snetmax)
+                  endif
+!
+!---------------- Calcul de SP1(P,Q), SP2(P,Q) et leurs instants sans séisme
+                  call rc32sp(ze200, lieu(im), iocc1, iocc2, 0,&
+                              sp, spmeca, instsp, nbid, spssbid)
+                  sp(1) = ktsp*(sp(1)+sp3)
+                  spmeca(1) = ktsp*(spmeca(1)+spmeca3)
+                  sp(2) = ktsp*(sp(2)+sp3)
+                  spmeca(2) = ktsp*(spmeca(2)+spmeca3)
+                  zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+9)=sp(1)
+                  zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+10)=instsp(1)
+                  zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+11)=instsp(2)
+                  zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+13)=sp(2)
+                  zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+14)=instsp(3)
+                  zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+15)=instsp(4)
+                  call rc32sa('COMB', sn, sp, spmeca, kemeca, kether, salt, fu)
+                  zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+12)=salt(1)
+                  zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+16)=salt(2)
+                  zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+17)=fu(1)+fu(2)
+                  zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+18)=max(0.d0, sp(1)-spmeca(1))
+!---------------- On prend le max de SP(P,Q), SP(P,P) et SP(Q,Q)
+                  spp = zr(jresu+121*(iocc1-1)+11)
+                  spq = zr(jresu+121*(iocc2-1)+11)
+                  spmecap = zr(jresu+121*(iocc1-1)+17)
+                  spmecaq = zr(jresu+121*(iocc2-1)+17)
+                  if (spp .ge. sp(1)) then
+                      sp(1) = spp
+                      sp(2) = spq
+                      spmeca(1) = spmecap
+                      spmeca(2) = spmecaq
+                      call rc32sa('COMB', sn, sp, spmeca, kemeca, kether, salt, fu)
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+9)=spp
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+10)=zr(jresu+121*(iocc1-1)+12)
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+11)=zr(jresu+121*(iocc1-1)+13)
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+12)=salt(1)
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+13)=spq
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+14)=zr(jresu+121*(iocc2-1)+12)
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+15)=zr(jresu+121*(iocc2-1)+13)
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+16)=salt(2)
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+17)=fu(1)+fu(2)
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+18)=max(0.d0, sp(1)-spmeca(1))
+                  endif
+                  if (spq .ge. sp(1)) then
+                      sp(1) = spq
+                      sp(2) = spp
+                      spmeca(1) = spmecaq
+                      spmeca(2) = spmecap
+                      call rc32sa('COMB', sn, sp, spmeca, kemeca, kether, salt, fu)
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+9)=spq
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+10)=zr(jresu+121*(iocc2-1)+12)
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+11)=zr(jresu+121*(iocc2-1)+13)
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+12)=salt(1)
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+13)=spp
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+14)=zr(jresu+121*(iocc1-1)+12)
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+15)=zr(jresu+121*(iocc1-1)+13)
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+16)=salt(2)
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+17)=fu(1)+fu(2)
+                      zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+18)=max(0.d0, sp(1)-spmeca(1))
+                  endif
+!
+                  if (typeke .eq. 'KE_MECA') then
+                      keequi = kemeca
+                  else
+                      keequi =(kemeca*spmeca(1)+kether*(sp(1)-spmeca(1)))/sp(1)
+                  endif
+                  zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+19) = keequi
+!
+!---------- Calcul du FU dû aux sous cycles
+!
+                  if(sscyc .eq. 'OUI') then
+                    fusstot=0.d0
+                    nbsscyc = int(zr(jresu+121*(iocc1-1)+119))
+                    do 51 kk = 1, nbsscyc     
+                        spss2(1) = keequi*zr(jresu+121*(iocc1-1)+19-1+kk)
+                        spss2(2) = 0.d0
+                        call rc32sa('SITU', 1e-12, spss2, spss2, kemeca, kether, saltss, fuss)
+                        fusstot = fusstot+fuss(1)
+51                  continue
+                    nbsscyc = int(zr(jresu+121*(iocc2-1)+119))
+                    do 52 kk = 1, nbsscyc     
+                        spss2(1) = keequi*zr(jresu+121*(iocc2-1)+19-1+kk)
+                        spss2(2) = 0.d0
+                        call rc32sa('SITU', 1e-12, spss2, spss2, kemeca, kether, saltss, fuss)
+                        fusstot = fusstot+fuss(1)
+52                  continue
+!
+                    zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+20) = fusstot
+                    zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+17)=&
+                    zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+17)+fusstot
+                  else
+                    zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+20) = 0.d0
+                  endif
+!
+                  spmax = max(spmax, sp(1))
+                  samax = max(samax, salt(1))
+                  spthmax = max(spthmax, zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+18))
+!
+!---------------- Calcul de SP1(P,Q), SP2(P,Q) et leurs instants avec séisme
+                  if(ns .ne. 0) then
+                    call rc32sp(ze200, lieu(im), iocc1, iocc2, ns,&
+                                sps, spmecas, instsps, nbid, spssbid)
+                    sps(1) = ktsp*(sps(1)+sp3s)
+                    spmecas(1) = ktsp*(spmecas(1)+spmeca3s)
+                    sps(2) = ktsp*(sps(2)+sp3s)
+                    spmecas(2) = ktsp*(spmecas(2)+spmeca3s)
+                    zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+9)=sps(1)
+                    zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+10)=instsps(1)
+                    zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+11)=instsps(2)
+                    zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+13)=sps(2)
+                    zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+14)=instsps(3)
+                    zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+15)=instsps(4)
+                    call rc32sa('COMB', sns, sps, spmecas, kemeca, kether, salts, fus)
+                    zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+12)=salts(1)
+                    zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+16)=salts(2)
+                    zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+17)=fus(1)+fus(2)
+                    zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+18)=max(0.d0, sps(1)-spmecas(1))
+!---------------- On prend le max de SP(P,Q), SP(P,P) et SP(Q,Q)
+                    spp = zr(jresus+121*(iocc1-1)+11)
+                    spq = zr(jresus+121*(iocc2-1)+11)
+                    spmecap = zr(jresus+121*(iocc1-1)+17)
+                    spmecaq = zr(jresus+121*(iocc2-1)+17)
+                    if (spp .ge. sps(1)) then
+                      sps(1) = spp
+                      sps(2) = spq
+                      spmecas(1) = spmecap
+                      spmecas(2) = spmecaq
+                      call rc32sa('COMB', sns, sps, spmecas, kemeca, kether, salts, fus)
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+9)=spp
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+10)=zr(jresus+121*(iocc1-1)+12)
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+11)=zr(jresus+121*(iocc1-1)+13)
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+12)=salts(1)
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+13)=spq
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+14)=zr(jresus+121*(iocc2-1)+12)
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+15)=zr(jresus+121*(iocc2-1)+13)
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+16)=salts(2)
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+17)=fus(1)+fus(2)
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+18)=max(0.d0, sps(1)-spmecas(1))
                     endif
-                    zr(jresu2)=pm
-                    zr(jresu2+1)=pb
-                    zr(jresu2+2)=pmpb
-                endif
-!
-! ----------- CALCUL DU SN
-                if (lsn) then
-                    sn = 0.d0
-                    sn1 = 0.d0
-                    sn2 = 0.d0
-                    sp3 = 0.d0
-                    spmeca3 = 0.d0
-                    propi(1)=ppi
-                    propj(1)=ppj
-                    do 223 k = 1,12
-                      propi(1+k) = mpi(k)     
-                      propj(1+k) = mpj(k)         
-223                 continue
-                    do 222 j = 1,7
-                      propi(13+j) = matpi(j)     
-                      propj(13+j) = matpj(j)               
-222                 continue
-                    do 221 j = 1,20
-                      proqi(j) = 0.d0                  
-221                 continue
-                    call rcZ2sn(ze200, lieu(im), nsitup, nsitup,iocs, mse,&
-                                propi, propj, proqi, proqi, instsn, sn,&
-                               sp3, spmeca3, set, trescapr, tresth)
-                    zr(jresu2+8) = tresth
-                    zr(jress-1+9*(is1-1)+4) = sn
-                    if (niv .ge. 2) then
-                        write (ifm,203) nsitup, sn
-                        if (instsn(1) .lt. 0.d0) then
-                            write (ifm,*) '                SANS INSTANTS'
-                        else
-                            write (ifm,*) '                INSTANTS     : ',instsn
-                        endif
+                    if (spq .ge. sps(1)) then
+                      sps(1) = spq
+                      sps(2) = spp
+                      spmecas(1) = spmecaq
+                      spmecas(2) = spmecap
+                      call rc32sa('COMB', sns, sps, spmecas, kemeca, kether, salts, fus)
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+9)=spq
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+10)=zr(jresus+121*(iocc2-1)+12)
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+11)=zr(jresus+121*(iocc2-1)+13)
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+12)=salts(1)
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+13)=spp
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+14)=zr(jresus+121*(iocc1-1)+12)
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+15)=zr(jresus+121*(iocc1-1)+13)
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+16)=salts(2)
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+17)=fus(1)+fus(2)
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+18)=max(0.d0, sps(1)-spmecas(1))
                     endif
-                    zr(jresu2+3)=sn
-                endif
 !
-! ----------- CALCUL DU SN*
-                if (lsn .and. lther) then
-                    snet = set
-                    zr(jress-1+9*(is1-1)+5) = snet
-                    if (niv .ge. 2) then
-                        write (ifm,232) nsitup, snet
-                    endif
-                    zr(jresu2+4)=snet
-                endif
-!
-! ----------- CALCUL DU ROCHET THERMIQUE
-                if (lther) then
-                    call rc32rt(ze200, ppi, ppj, simpij)
-                    simpij=simpij+trescapr
-                    write (ifm,234) nsitup, simpij
-                    zr(jresu2+7)=simpij
-                endif
-                if (.not.lfat) goto 210
-!
-! ----------- CALCUL DU SP
-                sp(1) = 0.d0
-                sp(2) = 0.d0
-                spmeca(1) = 0.d0
-                spmeca(2) = 0.d0
-                spmeca1(1) = 0.d0
-                spmeca1(2) = 0.d0
-                sp2 = 0.d0
-!
-                call rc32sp(ze200, lieu(im), nsitup, nsitup, iocs, mse,&
-                             propi, propj, proqi, proqi, instsp, sp1, spmeca1, matpi, matpj)
-                sp(1)=sp1(1)+sp3
-                spmeca(1)=spmeca1(1)+spmeca3
-                if (niv .ge. 2) write (ifm,240) nsitup, sp(1)
-                if (instsp(1) .lt. 0.d0) then
-                    write (ifm,*) '                SANS INSTANTS'
-                else
-                    write (ifm,*) '                INSTANTS     : ',instsp(1),',', instsp(2)
-                endif
-                zr(jresu2+5) = sp(1)
-                zr(jresu2+8) = max(0.0,sp(1)-spmeca(1))
-!
-! ----------- CALCUL DU SALT
-                call rc32sa('SITU', mater, matpi, matpj, sn, sp, spmeca,&
-                            kemeca, kether, saltij, smm, fuij)
-                if (niv .ge. 2) then
-                    write (ifm,250) nsitup, saltij(1)
-                endif
-                zr(jress-1+9*(is1-1)+6) = kemeca
-                zr(jress-1+9*(is1-1)+7) = kether
-                zr(jress-1+9*(is1-1)+8) = saltij(1)
-!
-                zr(jresu2+6) = saltij(1)
-!
-! ----------- CALCUL DU FACTEUR D'USAGE
-                upart = dble(nocc) * fuij(1)
-                zr(jress-1+9*(is1-1)+9) = upart
-                if (niv .ge. 2) then
-                    write (ifm,260) nsitup, upart
-                endif
-!
-                if (lefat) then
-                    call getvtx(' ', 'TYPE_KE', scal=typeke, nbret=nb)
                     if (typeke .eq. 'KE_MECA') then
-                        ke = kemeca
+                      keequi = kemeca
                     else
-                        ke = (kemeca*spmeca(1)+kether*(sp(1)-spmeca(1)))/sp(1)
+                      keequi =(kemeca*spmecas(1)+kether*(sps(1)-spmecas(1)))/sps(1)
                     endif
-                    call rc32env(nsitup, nsitup, ke, lieu(im),feni)
-                    utotenv = utotenv + upart*feni
-                endif
-                utot = utot + upart
+                    zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+19) = keequi
 !
-210         continue
-20     continue
+!---------- Calcul du FU dû aux sous cycles
 !
-! ----------------------------------------------------------------------
-!                           E T A P E   3
-!               ON TRAITE LES SITUATIONS DE PASSAGE
-! ----------------------------------------------------------------------
+                    if(sscyc .eq. 'OUI') then
+                      fusstot=0.d0
+                      nbsscyc = int(zr(jresu+121*(iocc1-1)+119))
+                      do 53 kk = 1, nbsscyc     
+                        spss2(1) = keequi*zr(jresu+121*(iocc1-1)+19-1+kk)
+                        spss2(2) = 0.d0
+                        call rc32sa('SITU', 1e-12, spss2, spss2, kemeca, kether, saltss, fuss)
+                        fusstot = fusstot+fuss(1)
+53                    continue
+                      nbsscyc = int(zr(jresu+121*(iocc2-1)+119))
+                      do 54 kk = 1, nbsscyc     
+                        spss2(1) = keequi*zr(jresu+121*(iocc2-1)+19-1+kk)
+                        spss2(2) = 0.d0
+                        call rc32sa('SITU', 1e-12, spss2, spss2, kemeca, kether, saltss, fuss)
+                        fusstot = fusstot+fuss(1)
+54                    continue
 !
-     call wkvect('&&RC3200.RESU3.'//lieu(im), 'V V R', 10, jresu3)
-     do 50 ll = 1, 10
-        zr(jresu3-1+ll) = 0.d0
- 50 continue
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+20) = fusstot
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+17)=&
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+17)+fusstot
+                    else
+                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+20) = 0.d0
+                    endif
 !
-        do 310 ig = 1, nbgr
+                    spmax = max(spmax, sps(1))
+                    samax = max(samax, salts(1))
+                    spthmax = max(spthmax, zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+18))
+                  endif
 !
-            numgr = situ_nume_group(ig)
-            if (numgr .ge. 0) goto 310
-            numgr = -numgr
-            iocs = situ_seisme(ig)
-            if (iocs .eq. 0) then
-                seisme = .false.
-            else
-                seisme = .true.
-            endif
+              endif
+50        continue
+40      continue
 !
-            call jelira(jexnum('&&RC3200.LES_GROUPES', numgr), 'LONUTI', nbsigr)
-            call jeveuo(jexnum('&&RC3200.LES_GROUPES', numgr), 'L', jnsg)
-            if (niv .ge. 2) then
-                write (ifm,304)
-                write (ifm,302) (situ_numero(1+zi(jnsg+i1-1)-1),i1=1,&
-                nbsigr)
-            endif
+! ---------------------------------------------------------------------------------
+!                          CALCUL DU FACTEUR D'USAGE TOTAL
+! ---------------------------------------------------------------------------------
+        call rc32fact(ze200, nb, lieu(im), ns, fuseism, futot, lefat, futotenv)
+      endif
+! ---------------------------------------------------------------------------------
+! --- on remplit le vecteur des quantités max (&&RC3200.MAX_RESU)
+! ---------------------------------------------------------------------------------
+      if(option .eq. 'PM_PB') then
+        zr(jmax)=pmmax
+        zr(jmax+1)=pbmax
+        zr(jmax+2)=pmpbmax
+      endif
+      if(option .eq. 'SN' .or. option .eq. 'FATIGUE' .or. option .eq. 'EFAT') then
+        zr(jmax+3)=snmax
+        zr(jmax+4)=snetmax
+        zr(jmax+5)=siprmoymax
+        zr(jmax+6)=snthmax
+      endif
+      if(option .eq. 'FATIGUE' .or. option .eq. 'EFAT') then
+        zr(jmax+7)=spthmax
+        zr(jmax+8)=spmax
+        zr(jmax+9)=samax
+        zr(jmax+10)=futot
+        zr(jmax+11)=fuseism
+        zr(jmax+12)=futotenv
+      endif
 !
-            call jecroc(jexnum(k24as, ig))
-            call jeecra(jexnum(k24as, ig), 'LONMAX', 9*nbsigr)
-            call jeveuo(jexnum(k24as, ig), 'E', jreas)
-!
-            call jecroc(jexnum(k24ss, ig))
-            call jeecra(jexnum(k24ss, ig), 'LONMAX', 9*nbsigr)
-            call jeveuo(jexnum(k24ss, ig), 'E', jress)
-!
-            ndim = max(13,13*nbsigr*(nbsigr-1)/2)
-            call jecroc(jexnum(k24ca, ig))
-            call jeecra(jexnum(k24ca, ig), 'LONMAX', ndim)
-            call jeveuo(jexnum(k24ca, ig), 'E', jreca)
-!
-            call jecroc(jexnum(k24cs, ig))
-            call jeecra(jexnum(k24cs, ig), 'LONMAX', ndim)
-            call jeveuo(jexnum(k24cs, ig), 'E', jrecs)
-!
-            call jecroc(jexnum(k24fu, ig))
-            call jeecra(jexnum(k24fu, ig), 'LONMAX', 23*200)
-            call jeveuo(jexnum(k24fu, ig), 'E', jfact)
-!
-            call jecroc(jexnum(k24fu2, ig))
-            call jeecra(jexnum(k24fu2, ig), 'LONMAX', 2*200)
-            call jeveuo(jexnum(k24fu2, ig), 'E', jfact2)
-!
-            yapass = .true.
-!
-            call rc3201(ze200, numgr, lpmpb, lsn, lther, lfat, lefat, yapass,&
-                        seisme, iocs, mater, lieu(im), utot, utotenv,&
-                        zr(jreas), zr(jress), zr(jreca), zr(jrecs),&
-                        zr(jfact), zk24(jfact2), zr(jresu3))
-!
-310     continue
-        if (lfat) write (ifm,270) utot
-!
-! ----------------------------------------------------------------------
-!               ON STOCKE LES RESULTATS TYPE MAXI :
-!    PM, PB, PMPB, SN, SN*, SP, SALT, FACTEUR D'USAGE TOTAL, 
-!  FACTEUR D'USAGE ENVIRONNEMENTAL TOTAL, ROCHET THERMIQUE(2)
-! ----------------------------------------------------------------------
-!
-        call wkvect('&&RC3200.RESU.'//lieu(im), 'V V R', 12, jresu)
-!------ PM
-        zr(jresu) = max(zr(jresu1), zr(jresu2), zr(jresu3))
-!------ PB
-        zr(jresu+1) = max(zr(jresu1+1), zr(jresu2+1), zr(jresu3+1))
-!------ PMPB
-        zr(jresu+2) = max(zr(jresu1+2), zr(jresu2+2), zr(jresu3+2))
-!------ SN
-        zr(jresu+3) = max(zr(jresu1+3), zr(jresu2+3), zr(jresu3+3))
-!------ SN*
-        zr(jresu+4) = max(zr(jresu1+4), zr(jresu2+4), zr(jresu3+4))
-!------ SP
-        zr(jresu+5) = max(zr(jresu1+5), zr(jresu2+5), zr(jresu3+5))
-!------ SALT
-        zr(jresu+6) = max(zr(jresu1+6), zr(jresu2+6), zr(jresu3+6))
-!------ FU TOTAL
-        zr(jresu+7) = utot
-!------ FU TOTAL ENV
-        zr(jresu+8) = utotenv
-!------ ROCHET THERMIQUE SIMPIJ
-        zr(jresu+9) = max(zr(jresu1+7), zr(jresu2+7), zr(jresu3+7))
-!------ ROCHET THERMIQUE SPTHER
-        zr(jresu+10) = max(zr(jresu1+8), zr(jresu2+8), zr(jresu3+8))
-!------ ROCHET THERMIQUE SNTHER
-        zr(jresu+11) = max(zr(jresu1+9), zr(jresu2+9), zr(jresu3+9))
-!
- 10 continue
-!
-    300 format (/,'=> GROUPE: ',i4,' , NOMBRE DE SITUATIONS: ',i4)
-    302 format ('=> LISTE DES NUMEROS DE SITUATION: ',100 (i4,1x))
-    304 format (/,'=> SITUATION DE PASSAGE')
-    200 format ('=> GROUPE: ',i4,' , SITUATION: ',i4)
-    202 format (1p,' SITUATION ',i4,' PM =',e12.5,&
-     &                            ' PB =',e12.5,' PMPB =',e12.5)
-    203 format (1p,' SITUATION ',i4,' SN =',e12.5 )
-    232 format (1p,' SITUATION ',i4,' SN* =',e12.5 )
-    234 format (1p,' SITUATION ',i4,' ROCHET THERMIQUE =',e12.5 )
-    240 format (1p,' SITUATION ',i4,' SP =',e12.5)
-    250 format (1p,' SITUATION ',i4,' SALT =',e12.5)
-    260 format (1p,' SITUATION ',i4,' FACT_USAGE =',e12.5)
-    270 format (1p,' SOMME(FACT_USAGE) =',e12.5)
+10  continue
 !
     call jedema()
+!
 end subroutine
