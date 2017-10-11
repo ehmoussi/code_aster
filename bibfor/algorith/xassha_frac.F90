@@ -46,6 +46,7 @@ subroutine xassha_frac(nddls, nddlm, nnop, nnops,&
 #include "asterfort/thmGetBehaviourVari.h"
 #include "asterfort/thmGetBehaviour.h"
 #include "asterfort/thmGetParaCoupling.h"
+#include "asterfort/thmGetBehaviourChck.h"
 !
 ! ======================================================================
 !
@@ -81,7 +82,11 @@ subroutine xassha_frac(nddls, nddlm, nnop, nnops,&
 !
 ! - Get parameters for internal variables
 !
-    call thmGetBehaviourVari()  
+    call thmGetBehaviourVari()
+!
+! - Some checks between behaviour and model
+!
+    call thmGetBehaviourChck()
 !
 ! - Get parameters for coupling
 !

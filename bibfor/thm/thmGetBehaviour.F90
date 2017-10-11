@@ -131,11 +131,18 @@ character(len=16), intent(in) :: compor(*)
         ds_thm%ds_material%l_r_gaz = ASTER_FALSE
     endif
 !
-! - For temperature
+! - For thermic
 !
     ds_thm%ds_behaviour%l_temp = ASTER_TRUE
     if (ds_thm%ds_behaviour%nume_ther .eq. NO_LAW) then
         ds_thm%ds_behaviour%l_temp = ASTER_FALSE
+    endif
+!
+! - For mechanic
+!
+    ds_thm%ds_behaviour%l_meca = ASTER_TRUE
+    if (ds_thm%ds_behaviour%rela_meca .eq. 'VIDE') then
+        ds_thm%ds_behaviour%l_meca = ASTER_FALSE
     endif
 !
 ! - For stress measures

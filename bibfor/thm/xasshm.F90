@@ -58,6 +58,7 @@ implicit none
 #include "asterfort/thmGetBehaviour.h"
 #include "asterfort/thmGetParaCoupling.h"
 #include "asterfort/thmGetParaInit.h"
+#include "asterfort/thmGetBehaviourChck.h"
     integer :: dimmat, npg, dimuel
     integer :: npi, ipoids, ivf, idfde, j_mater, dimdef, dimcon, nnop
     integer :: nbvari, nddls, nddlm, nmec, np1, ndim, codret
@@ -223,6 +224,10 @@ implicit none
 ! - Get parameters for internal variables
 !
     call thmGetBehaviourVari()
+!
+! - Some checks between behaviour and model
+!
+    call thmGetBehaviourChck()
 !
 ! - Get parameters for coupling
 !

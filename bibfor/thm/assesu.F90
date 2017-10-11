@@ -54,6 +54,7 @@ implicit none
 #include "asterfort/thmGetBehaviourVari.h"
 #include "asterfort/thmGetParaInit.h"
 #include "asterfort/THM_type.h"
+#include "asterfort/thmGetBehaviourChck.h"
 !
 integer, parameter :: maxfa=6
 character(len=16), intent(in) :: option
@@ -405,6 +406,10 @@ real(kind=8), intent(inout) :: vectu(dimuel)
 ! - Get parameters for internal variables
 !
     call thmGetBehaviourVari()
+!
+! - Some checks between behaviour and model
+!
+    call thmGetBehaviourChck()
 !
 ! - Get storage parameters for behaviours
 !

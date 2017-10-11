@@ -97,6 +97,8 @@ implicit none
         integer :: vicpr1, vicpr2
 ! ----- Flag for thermic
         aster_logical :: l_temp
+! ----- Flag for mechanic
+        aster_logical :: l_meca
 ! ----- Total number of pressures (0, 1 or 2)
         integer :: nb_pres
 ! ----- Number of phases by pressure
