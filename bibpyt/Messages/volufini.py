@@ -46,11 +46,7 @@ Le type de voisinage %(k1)s a une longueur %(i1)i trop grande
     11 : _(u"""
 L'option  %(k1)s est inconnue
 """),
-    12 : _(u"""
-En 3D et en VF on peut utiliser uniquement des hexaèdres a 27 DDL et des tétraèdres a 27 DDL.
-Ce message est un message d'erreur développeur.
-Contactez le support technique.
-"""),
+
     13 : _(u"""
 L'élément %(k1)s et la face  %(i1)i est non plane
 """),

@@ -15,23 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine vfgefa(maxdim, ndim, nbnos, xs, t,&
-                      xg, surf, norm, xgf, d,&
+    subroutine vfgefa(nnos, xs  , t  , xg,&
+                      surf, norm, xgf, d ,&
                       iret)
-        integer :: nbnos
-        integer :: ndim
-        integer :: maxdim
-        real(kind=8) :: xs(maxdim, nbnos)
-        real(kind=8) :: t(maxdim, nbnos)
-        real(kind=8) :: xg(ndim)
-        real(kind=8) :: surf
-        real(kind=8) :: norm(maxdim)
-        real(kind=8) :: xgf(maxdim)
-        real(kind=8) :: d
-        integer :: iret
+        integer, intent(in) :: nnos
+        real(kind=8), intent(in) :: xs(3, nnos), t(3, nnos)
+        real(kind=8), intent(out) :: xg(3), surf, norm(3), xgf(3), d
+        integer, intent(out) :: iret
     end subroutine vfgefa
 end interface
