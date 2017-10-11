@@ -16,228 +16,294 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine rc32s0(option, mm, pr, mse, sigun,&
-                  nbinst, sth, snp)
+subroutine rc32s0(option, sig, lieu, trescamax)
     implicit   none
+#include "asterf_types.h"
 #include "jeveux.h"
-#include "asterfort/jeveuo.h"
 #include "asterfort/rctres.h"
-    integer :: nbinst
-    real(kind=8) :: mm(*), pr, mse(*), sigun(*), sth(6*nbinst), snp
-    character(len=4) :: option
+#include "asterfort/jeveuo.h"
+#include "asterfort/codent.h"
+#include "asterfort/jeexin.h"
+#include "asterfort/jexnom.h"
+#include "asterfort/utmess.h"
+#include "asterfort/getvid.h"
+#include "asterfort/rcveri.h"
+#include "asterfort/tbexip.h"
+#include "asterfort/tbexv1.h"
+#include "asterfort/rcver1.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
+#include "asterfort/jedetr.h"
+#include "asterfort/tbliva.h"
+#include "asterfort/rc32my.h"
+    real(kind=8) :: sig(6), trescamax
+    character(len=4) :: option, lieu
+
 !
 !     OPERATEUR POST_RCCM, TRAITEMENT DE FATIGUE_B3200
-!     CALCUL DU SN MAX SUR LES INSTANTS ET LES 64 POSSIBILITES DE SIGNE
+!     CALCUL AVEC TOUTES LES POSSIBILITES DE SIGNE
 !     POUR LES CMP DE SEISME
-!     64 POSSIBLITES DE SIGNE DE MSE
 !
-! IN  : OPTION : ='PMPB'  MAX(+-SIGM_M + SIGM_SEISME)
-!              : ='SITU' OU 'COMB'  ON CALCULE UNE AMPLITUDE (SN,SP) :
-!                        MAX(+-SIGM_M + 2 * SIGM_SEISME)
-! IN  : MM     : EFFORTS ASSOCIEES A L'ETAT DE CONTRAINTE MECANIQUE
-! IN  : PR     : PRESSION
-! IN  : MSE    : EFFORTS DUS AU SEISME
-! IN  : SIGUN  : CONTRAINTES UNITAIRES
-! IN  : NBINST : 0 SI MECA PUR / >0 SI TRANSITOIRE THERMOMECA
-! IN  : STH    : CONTRAINTES LINEARISEES OU EN PEAU ( THERMOMECA)
-! OUT : SNP    : AMPLITUDE DE VARIATION DES CONTRAINTES DE TRESCA
 !     ------------------------------------------------------------------
 !
-    integer :: i1, i2, i3, i4, i5, i6, i, icmps, icmp, jcorp
-    integer :: i11, i21, i31, i41, i51, i61, fact
-    real(kind=8) :: mtt(6), mtc(6), sij(6), sijt(6), snp1, sth1, tresca
-    real(kind=8) :: sigt, sigc, sigp
-    real(kind=8) :: e1(2), e2(2), e3(2), e4(2), e5(2), e6(2), e7(2)
+    integer :: i0, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12
+    integer :: e0(2), jinfois, numcha, jchars, k, jsigu, j, typseis
+    integer :: iret, n0, i, nbabsc, jabsc, ibid
+    real(kind=8) :: st(6), ms(12), seisfx(6), seisfy(6), seisfz(6)
+    real(kind=8) :: seismx(6), seismy(6), seismz(6), seisfx2(6)
+    real(kind=8) :: seisfy2(6), seisfz2(6), seismx2(6), seismy2(6)
+    real(kind=8) :: seismz2(6), tresca, prec(1), vale(1), momen0
+    real(kind=8) :: momen1
+    character(len=8) ::  knumec, crit(1), nocmp(6), tabfm(6), k8b
+    character(len=16) :: valek(1)
+    character(len=24) :: valk(3)
+    aster_logical :: exist
+    complex(kind=8) :: cbid
+    real(kind=8), pointer :: contraintes(:) => null()
+
 ! DEB ------------------------------------------------------------------
 !
-    snp = 0.d0
-! ON DISTINGUE LE CAS CLASSIQUE DU CAS CORPS/TUBU POUR OPTIMISER
-! LES PERFORMANCES
-    call jeveuo('&&RC3200.CORPS', 'L ', jcorp)
+    trescamax = 0.d0
+    do 10 i0 = 1, 2
+        i1 = 2*(i0-2)+1
+        e0(i0) = i1
+10  continue
 !
-    fact = 2
-    if (option .eq. 'PMPB') fact = 1
-    do 2 i = 1, 2
-        i1 = 2*(i-2)+1
-        e1(i) = i1 * fact
-        e2(i) = i1 * fact
-        e3(i) = i1 * fact
-        e4(i) = i1 * fact
-        e5(i) = i1 * fact
-        e6(i) = i1 * fact
-        e7(i) = i1
- 2  end do
+    call jeveuo('&&RC3200.SEIS_INFOI', 'L', jinfois)
+    typseis = zi(jinfois+3)
 !
-! --- CALCUL MECANIQUE :
-!     ----------------
-    if (nbinst .eq. 0) then
-        do 70 i1 = 1, 2
-            mtt(1) = mm(1) + mse(1)*e1(i1)
-            do 60 i2 = 1, 2
-                mtt(2) = mm(2) + mse(2)*e2(i2)
-                do 50 i3 = 1, 2
-                    mtt(3) = mm(3) + mse(3)*e3(i3)
-                    do 40 i4 = 1, 2
-                        mtt(4) = mm(4) + mse(4)*e4(i4)
-                        do 30 i5 = 1, 2
-                            mtt(5) = mm(5) + mse(5)*e5(i5)
-                            do 20 i6 = 1, 2
-                                mtt(6) = mm(6) + mse(6)*e6(i6)
-! CAS CORPS/TUBULURE
-                                if (zl(jcorp)) then
-                                    do 71 i11 = 1, 2
-                                        mtc(1) = mm(7) + mse(7)*e1( i11)
-                                        do 61 i21 = 1, 2
-                                            mtc(2) = mm(8) + mse(8)*e2( i21)
-                                            do 51 i31 = 1, 2
-                                                mtc(3) = mm(9) + mse(9)*e3( i31)
-                                                do 41 i41 = 1, 2
-                                                    mtc(4) = mm(10) + mse(10)*e4( i41)
-                                                    do 31 i51 = 1, 2
-                                                        mtc(5) = mm(11) + mse(11)*e5( i51)
-                                                        do 21 i61 = 1, 2
-                                                            mtc(6) = mm(12) + mse(12)*e6( i61)
+    if (typseis .eq. 1) then
+!-----------------------------------------
+!---- le séisme est sous forme unitaire
+!-----------------------------------------
+      numcha = zi(jinfois+4)
+      knumec = 'C       '
+      call codent(numcha, 'D0', knumec(2:8))
+      call jeexin(jexnom('&&RC3200.VALE_CHAR', knumec), iret)
+      if (iret .eq. 0) call utmess('F', 'POSTRCCM_51')
+      call jeveuo(jexnom('&&RC3200.VALE_CHAR', knumec), 'L', jchars)
+      do 11 k = 1, 12
+            ms(k) = zr(jchars-1+k)
+11    continue
+      call jeveuo('&&RC3200.MECA_UNIT .'//lieu, 'L', jsigu)
 !
-                                                            do 10 icmps = 1, 6
-                                                                sij(icmps) = 0.d0
-                                                                do 12 icmp = 1, 6
-                                                                    sigt = sigun(&
-                                                                           6*(icmp-1 )+icmps)
-                                                                    sigc = sigun(&
-                                                                           6*(icmp+6-1 )+ icmps)
-                                                                    sij(icmps) = sij(icmps) + mtt&
-                                                                                 &( icmp)*sigt
-                                                                    sij(icmps) = sij(icmps) + mtc&
-                                                                                 &( icmp)*sigc
-12                                                              continue
-                                                                sigp = sigun(72+icmps)
-                                                                sij(icmps) = sij(icmps&
-                                                                             ) + pr* sigp
-10                                                          continue
-!
-                                                            call rctres(sij, tresca)
-                                                            snp1 = tresca
-                                                            snp = max( snp , snp1)
-!
-21                                                      continue
-31                                                  continue
-41                                              continue
-51                                          continue
-61                                      continue
-71                                  continue
-!
-                                else
-                                    do 101 icmps = 1, 6
-                                        sij(icmps) = 0.d0
-                                        do 102 icmp = 1, 6
-                                            sigt = sigun(6*(icmp-1)+icmps)
-                                            sij(icmps) = sij(icmps) + mtt( icmp)*sigt
-102                                      continue
-                                        sigp = sigun(72+icmps)
-                                        sij(icmps) = sij(icmps) + pr* sigp
-101                                  continue
-                                    call rctres(sij, tresca)
-                                    snp1 = tresca
-                                    snp = max( snp , snp1 )
-!
-                                endif
-20                          continue
-30                      continue
-40                  continue
-50              continue
-60          continue
-70      continue
-!
-! --- CALCUL THERMOMECANIQUE (DEPENDANT DU TEMPS)
-!     -------------------------------------------
+      if (option .eq. 'SNSN') then 
+        do 20 j = 1, 6
+          seisfx(j) = 2*ms(1)*zr(jsigu-1+78+j)
+          seisfy(j) = 2*ms(2)*zr(jsigu-1+78+1*6+j)
+          seisfz(j) = 2*ms(3)*zr(jsigu-1+78+2*6+j)
+          seismx(j) = 2*ms(4)*zr(jsigu-1+78+3*6+j)
+          seismy(j) = 2*ms(5)*zr(jsigu-1+78+4*6+j)
+          seismz(j) = 2*ms(6)*zr(jsigu-1+78+5*6+j)
+          seisfx2(j)= 2*ms(7)*zr(jsigu-1+78+6*6+j)
+          seisfy2(j)= 2*ms(8)*zr(jsigu-1+78+7*6+j)
+          seisfz2(j)= 2*ms(9)*zr(jsigu-1+78+8*6+j)
+          seismx2(j)= 2*ms(10)*zr(jsigu-1+78+9*6+j)
+          seismy2(j)= 2*ms(11)*zr(jsigu-1+78+10*6+j)
+          seismz2(j)= 2*ms(12)*zr(jsigu-1+78+11*6+j)
+20      continue
+      else if (option .eq. 'SPSP') then 
+        do 25 j = 1, 6
+          seisfx(j) = 2*ms(1)*zr(jsigu-1+j)
+          seisfy(j) = 2*ms(2)*zr(jsigu-1+6*1+j)
+          seisfz(j) = 2*ms(3)*zr(jsigu-1+6*2+j)
+          seismx(j) = 2*ms(4)*zr(jsigu-1+6*3+j)
+          seismy(j) = 2*ms(5)*zr(jsigu-1+6*4+j)
+          seismz(j) = 2*ms(6)*zr(jsigu-1+6*5+j)
+          seisfx2(j)= 2*ms(7)*zr(jsigu-1+6*6+j)
+          seisfy2(j)= 2*ms(8)*zr(jsigu-1+6*7+j)
+          seisfz2(j)= 2*ms(9)*zr(jsigu-1+6*8+j)
+          seismx2(j)= 2*ms(10)*zr(jsigu-1+6*9+j)
+          seismy2(j)= 2*ms(11)*zr(jsigu-1+6*10+j)
+          seismz2(j)= 2*ms(12)*zr(jsigu-1+6*11+j)
+25      continue
+      else if (option .eq. 'PMPM') then 
+        do 30 j = 1, 6
+          seisfx(j) = 2*ms(1)*zr(jsigu-1+156+j)
+          seisfy(j) = 2*ms(2)*zr(jsigu-1+156+6*1+j)
+          seisfz(j) = 2*ms(3)*zr(jsigu-1+156+6*2+j)
+          seismx(j) = 2*ms(4)*zr(jsigu-1+156+6*3+j)
+          seismy(j) = 2*ms(5)*zr(jsigu-1+156+6*4+j)
+          seismz(j) = 2*ms(6)*zr(jsigu-1+156+6*5+j)
+          seisfx2(j)= 2*ms(7)*zr(jsigu-1+156+6*6+j)
+          seisfy2(j)= 2*ms(8)*zr(jsigu-1+156+6*7+j)
+          seisfz2(j)= 2*ms(9)*zr(jsigu-1+156+6*8+j)
+          seismx2(j)= 2*ms(10)*zr(jsigu-1+156+6*9+j)
+          seismy2(j)= 2*ms(11)*zr(jsigu-1+156+6*10+j)
+          seismz2(j)= 2*ms(12)*zr(jsigu-1+156+6*11+j)
+30      continue
+      else if (option .eq. 'PBPB') then 
+        do 35 j = 1, 6
+          seisfx(j) = 2*ms(1)*zr(jsigu-1+234+j)
+          seisfy(j) = 2*ms(2)*zr(jsigu-1+234+6*1+j)
+          seisfz(j) = 2*ms(3)*zr(jsigu-1+234+6*2+j)
+          seismx(j) = 2*ms(4)*zr(jsigu-1+234+6*3+j)
+          seismy(j) = 2*ms(5)*zr(jsigu-1+234+6*4+j)
+          seismz(j) = 2*ms(6)*zr(jsigu-1+234+6*5+j)
+          seisfx2(j)= 2*ms(7)*zr(jsigu-1+234+6*6+j)
+          seisfy2(j)= 2*ms(8)*zr(jsigu-1+234+6*7+j)
+          seisfz2(j)= 2*ms(9)*zr(jsigu-1+234+6*8+j)
+          seismx2(j)= 2*ms(10)*zr(jsigu-1+234+6*9+j)
+          seismy2(j)= 2*ms(11)*zr(jsigu-1+234+6*10+j)
+          seismz2(j)= 2*ms(12)*zr(jsigu-1+234+6*11+j)
+35      continue
+      endif
     else
-        do 170 i1 = 1, 2
-            mtt(1) = mm(1) + mse(1)*e1(i1)
-            do 160 i2 = 1, 2
-                mtt(2) = mm(2) + mse(2)*e2(i2)
-                do 150 i3 = 1, 2
-                    mtt(3) = mm(3) + mse(3)*e3(i3)
-                    do 140 i4 = 1, 2
-                        mtt(4) = mm(4) + mse(4)*e4(i4)
-                        do 130 i5 = 1, 2
-                            mtt(5) = mm(5) + mse(5)*e5(i5)
-                            do 120 i6 = 1, 2
-                                mtt(6) = mm(6) + mse(6)*e6(i6)
-! CAS CORPS/TUBULURE
-                                if (zl(jcorp)) then
-                                    do 171 i11 = 1, 2
-                                        mtc(1) = mm(7) + mse(7)*e1( i11)
-                                        do 161 i21 = 1, 2
-                                            mtc(2) = mm(8) + mse(8)*e2( i21)
-                                            do 151 i31 = 1, 2
-                                                mtc(3) = mm(9) + mse(9)*e3( i31)
-                                                do 141 i41 = 1, 2
-                                                    mtc(4) = mm(10) + mse(10)*e4( i41)
-                                                    do 131 i51 = 1, 2
-                                                        mtc(5) = mm(11) + mse(11)*e5( i51)
-                                                        do 121 i61 = 1, 2
-                                                            mtc(6) = mm(12) + mse(12)*e6( i61)
+!-------------------------------------------
+!---- le séisme est sous forme de 6 tables
+!-------------------------------------------
+        valek(1) = 'ABSC_CURV       '
+        prec(1) = 1.0d-06
+        crit(1) = 'RELATIF'
+        nocmp(1) = 'SIXX'
+        nocmp(2) = 'SIYY'
+        nocmp(3) = 'SIZZ'
+        nocmp(4) = 'SIXY'
+        nocmp(5) = 'SIXZ'
+        nocmp(6) = 'SIYZ'
+!-- on récupère les tables correspondantes
+        call getvid('SEISME', 'TABL_FX', iocc=1, scal=tabfm(1), nbret=n0)
+        call getvid('SEISME', 'TABL_FY', iocc=1, scal=tabfm(2), nbret=n0)
+        call getvid('SEISME', 'TABL_FZ', iocc=1, scal=tabfm(3), nbret=n0)
+        call getvid('SEISME', 'TABL_MX', iocc=1, scal=tabfm(4), nbret=n0)
+        call getvid('SEISME', 'TABL_MY', iocc=1, scal=tabfm(5), nbret=n0)
+        call getvid('SEISME', 'TABL_MZ', iocc=1, scal=tabfm(6), nbret=n0)
+! ----  on verifie l'ordre des noeuds de la table
+        do 36 i = 1, 6
+            call rcveri(tabfm(i))
+36      continue
+! ----- on recupere les abscisses curvilignes de la table
+        call tbexip(tabfm(1), valek(1), exist, k8b)
+        if (.not. exist) then
+            valk (1) = tabfm(1)
+            valk (2) = valek(1)
+            call utmess('F', 'POSTRCCM_1', nk=2, valk=valk)
+        endif
+        call tbexv1(tabfm(1), valek(1), 'RC.ABSC', 'V', nbabsc,&
+                   k8b)
+        call jeveuo('RC.ABSC', 'L', jabsc)
+! ----- on vérifie la cohérence des tables
+        do 37 i = 1, 5
+            call rcver1('MECANIQUE', tabfm(1), tabfm(1+i))
+37      continue
 !
-                                                            do 110 icmps = 1, 6
-                                                                sij(icmps) = 0.d0
-                                                                do 112 icmp = 1, 6
-                                                                    sigt = sigun(&
-                                                                           6*(icmp-1 )+icmps)
-                                                                    sigc = sigun(&
-                                                                           6*(icmp+6-1 )+ icmps)
-                                                                    sij(icmps) = sij(icmps) + mtt&
-                                                                                 &( icmp)*sigt
-                                                                    sij(icmps) = sij(icmps) + mtc&
-                                                                                 &( icmp)*sigc
-112                                                              continue
-                                                                sigp = sigun(72+icmps)
-                                                                sij(icmps) = sij(icmps&
-                                                                             ) + pr* sigp
-110                                                          continue
-                                                            do 202 i = 1, 2
-                                                                do 204 icmp = 1, 6
-                                                                    sth1 = sth(icmp)
-                                                                    sijt(icmp) = sij(icmp)*e7(i) &
-                                                                                 &+ sth1
-204                                                              continue
-                                                                call rctres(sijt, tresca)
-                                                                snp1 = tresca
-                                                                snp = max(snp , snp1)
-202                                                          continue
-121                                                      continue
-131                                                  continue
-141                                              continue
-151                                          continue
-161                                      continue
-171                                  continue
+        AS_ALLOCATE(vr=contraintes,  size=nbabsc)
+! ----- on vient lire les tables
+        do 40 i = 1, 6
+            do 50 j = 1, 6
+                do 60 k = 1, nbabsc
+                  vale(1) = zr(jabsc+k-1)
 !
-                                else
-                                    do 1101 icmps = 1, 6
-                                        sij(icmps) = 0.d0
-                                        do 1121 icmp = 1, 6
-                                            sigt = sigun(6*(icmp-1)+icmps)
-                                            sij(icmps) = sij(icmps) + mtt( icmp)*sigt
-1121                                      continue
-                                        sigp = sigun(72+icmps)
-                                        sij(icmps) = sij(icmps) + pr* sigp
-1101                                  continue
-                                    do 2021 i = 1, 2
-                                        do 2041 icmp = 1, 6
-                                            sth1 = sth(icmp)
-                                            sijt(icmp) = sij(icmp)*e7(i) + sth1
-2041                                      continue
-                                        call rctres(sijt, tresca)
-                                        snp1 = tresca
-                                        snp = max( snp , snp1 )
-2021                                  continue
-                                endif
+                  call tbliva(tabfm(i), 1, valek, [ibid], vale,&
+                             [cbid], k8b, crit, prec, nocmp(j),&
+                             k8b, ibid, contraintes(k), cbid, k8b,&
+                             iret)
+                  if (iret .ne. 0) then
+                    valk (1) = tabfm(i)
+                    valk (2) = nocmp(j)
+                    valk (3) = valek(1)
+                    call utmess('F', 'POSTRCCM_2', nk=3, valk=valk, nr=1,&
+                                valr=vale(1))
+                  endif
+ 60             continue
+                call rc32my(nbabsc, zr(jabsc), contraintes, momen0, momen1)
+                if (option .eq. 'SNSN') then
+                  if (lieu .eq. 'ORIG') then
+                    if(i .eq. 1) seisfx(j) = 2*(momen0 - 0.5d0*momen1)
+                    if(i .eq. 2) seisfy(j) = 2*(momen0 - 0.5d0*momen1)
+                    if(i .eq. 3) seisfz(j) = 2*(momen0 - 0.5d0*momen1)
+                    if(i .eq. 4) seismx(j) = 2*(momen0 - 0.5d0*momen1)
+                    if(i .eq. 5) seismy(j) = 2*(momen0 - 0.5d0*momen1)
+                    if(i .eq. 6) seismz(j) = 2*(momen0 - 0.5d0*momen1)
+                  else
+                    if(i .eq. 1) seisfx(j) = 2*(momen0 + 0.5d0*momen1)
+                    if(i .eq. 2) seisfy(j) = 2*(momen0 + 0.5d0*momen1)
+                    if(i .eq. 3) seisfz(j) = 2*(momen0 + 0.5d0*momen1)
+                    if(i .eq. 4) seismx(j) = 2*(momen0 + 0.5d0*momen1)
+                    if(i .eq. 5) seismy(j) = 2*(momen0 + 0.5d0*momen1)
+                    if(i .eq. 6) seismz(j) = 2*(momen0 + 0.5d0*momen1)
+                  endif
+                else if (option .eq. 'SPSP') then
+                  if (lieu .eq. 'ORIG') then
+                    if(i .eq. 1) seisfx(j) = 2*contraintes(1)
+                    if(i .eq. 2) seisfy(j) = 2*contraintes(1)
+                    if(i .eq. 3) seisfz(j) = 2*contraintes(1)
+                    if(i .eq. 4) seismx(j) = 2*contraintes(1)
+                    if(i .eq. 5) seismy(j) = 2*contraintes(1)
+                    if(i .eq. 6) seismz(j) = 2*contraintes(1)
+                  else
+                    if(i .eq. 1) seisfx(j) = 2*contraintes(nbabsc)
+                    if(i .eq. 2) seisfy(j) = 2*contraintes(nbabsc)
+                    if(i .eq. 3) seisfz(j) = 2*contraintes(nbabsc)
+                    if(i .eq. 4) seismx(j) = 2*contraintes(nbabsc)
+                    if(i .eq. 5) seismy(j) = 2*contraintes(nbabsc)
+                    if(i .eq. 6) seismz(j) = 2*contraintes(nbabsc)
+                  endif
+                else if (option .eq. 'PMPM') then
+                    if(i .eq. 1) seisfx(j) = 2*momen0 
+                    if(i .eq. 2) seisfy(j) = 2*momen0 
+                    if(i .eq. 3) seisfz(j) = 2*momen0 
+                    if(i .eq. 4) seismx(j) = 2*momen0 
+                    if(i .eq. 5) seismy(j) = 2*momen0 
+                    if(i .eq. 6) seismz(j) = 2*momen0 
+                else if (option .eq. 'PBPB') then
+                    if(i .eq. 1) seisfx(j) = 2*(0.5d0*momen1) 
+                    if(i .eq. 2) seisfy(j) = 2*(0.5d0*momen1)  
+                    if(i .eq. 3) seisfz(j) = 2*(0.5d0*momen1) 
+                    if(i .eq. 4) seismx(j) = 2*(0.5d0*momen1) 
+                    if(i .eq. 5) seismy(j) = 2*(0.5d0*momen1) 
+                    if(i .eq. 6) seismz(j) = 2*(0.5d0*momen1) 
+                endif
+ 50         continue
+ 40     continue
 !
-120                          continue
-130                      continue
-140                  continue
-150              continue
-160          continue
-170      continue
+        do 70 j = 1, 6
+            seisfx2(j)= 0.d0
+            seisfy2(j)= 0.d0
+            seisfz2(j)= 0.d0
+            seismx2(j)= 0.d0
+            seismy2(j)= 0.d0
+            seismz2(j)= 0.d0
+70      continue
+        call jedetr('RC.ABSC')
+        AS_DEALLOCATE(vr=contraintes)
     endif
+!
+    do 101 i1 = 1, 2
+      do 102 i2 = 1, 2
+        do 103 i3 = 1, 2
+          do 104 i4 = 1, 2
+            do 105 i5 = 1, 2
+              do 106 i6 = 1, 2
+                do 107 i7 = 1, 2
+                  do 108 i8 = 1, 2
+                    do 109 i9 = 1, 2
+                      do 110 i10 = 1, 2
+                        do 111 i11 = 1, 2
+                          do 112 i12 = 1, 2
+                            do 113 j = 1, 6
+!
+                                st(j) =  sig(j)+e0(i1)*seisfx(j)  +e0(i2)*seisfy(j)  +&
+                                               e0(i3)*seisfz(j)  +e0(i4)*seismx(j)   +&
+                                               e0(i5)*seismy(j)  +e0(i6)*seismz(j)   +&
+                                               e0(i7)*seisfx2(j) +e0(i8)*seisfy2(j)  +&
+                                               e0(i9)*seisfz2(j) +e0(i10)*seismx2(j) +&
+                                               e0(i11)*seismy2(j)+e0(i12)*seismz2(j)
+!
+113                         continue
+                            call rctres(st, tresca)
+                            trescamax=max(tresca, trescamax)
+112                       continue
+111                     continue
+110                   continue
+109                 continue
+108               continue
+107             continue
+106           continue
+105         continue
+104       continue
+103     continue
+102   continue
+101 continue
 !
 end subroutine

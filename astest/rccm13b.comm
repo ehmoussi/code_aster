@@ -136,7 +136,6 @@ SN1s = POST_RCCM( MATER=MAT,
                   SEISME =_F(NB_OCCUR =2,
                              NB_CYCL_SEISME =10,
                              NUME_SITU =3,
-                             NUME_GROUPE=1,
                              CHAR_ETAT=1,
                              ),
                  SITUATION=(
@@ -437,6 +436,7 @@ SN3b = POST_RCCM( MATER=MAT,
                         ),),);
 
 IMPR_TABLE(    TABLE=SN3b,)
+
 #-------------------------------------------------------------------------------
 #   TEST (SOLUTION DE REFERENCE ANALYTIQUE)
 #   MEMES RESULTATS AVEC LES DEUX METHODES

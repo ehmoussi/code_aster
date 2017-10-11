@@ -19,10 +19,14 @@
 !
 !
 interface
-    subroutine rc32st(sijm, nbinst, sth, sn)
-        integer :: nbinst
-        real(kind=8) :: sijm(6)
-        real(kind=8) :: sth(6*nbinst)
-        real(kind=8) :: sn
-    end subroutine rc32st
+    subroutine rc32fact(ze200, nb, lieu, ns, fuseism, futot, lefat, futotenv)
+        aster_logical :: ze200
+        integer :: nb
+        character(len=4) :: lieu
+        integer :: ns
+        real(kind=8) :: fuseism
+        real(kind=8) :: futot
+        aster_logical :: lefat
+        real(kind=8) :: futotenv
+    end subroutine rc32fact
 end interface

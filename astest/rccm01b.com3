@@ -66,7 +66,6 @@ SN3s=POST_RCCM( MATER=MAT,
                      NUME_SITU=7,
                      NB_CYCL_SEISME = 10, 
                      NOM_SITU='Seisme',
-                     NUME_GROUPE=1,
                      CHAR_ETAT=11,),),);
 
 IMPR_TABLE(    TABLE=SN3s,) 
@@ -129,7 +128,6 @@ SN3Js=POST_RCCM( MATER=MAT,
                      NUME_SITU=7,
                      NB_CYCL_SEISME = 10, 
                      NOM_SITU='Seisme',
-                     NUME_GROUPE=1,
                      CHAR_ETAT=11,),),);
 
 IMPR_TABLE(    TABLE=SN3Js,) 
@@ -164,7 +162,6 @@ SN1s=POST_RCCM(TYPE_RESU_MECA='B3200',
                      NUME_SITU=7,
                      NB_CYCL_SEISME = 10, 
                      NOM_SITU='Seisme',
-                     NUME_GROUPE=1,
                      TABL_MX=T_MX,
                      TABL_MY=T_MY,
                      TABL_MZ=T_MZ,
@@ -221,7 +218,6 @@ SN5s=POST_RCCM( MATER=MAT,
                      NUME_SITU=7,
                      NB_CYCL_SEISME = 10, 
                      NOM_SITU='Seisme',
-                     NUME_GROUPE=1,
                      CHAR_ETAT=11,),),);
 
 IMPR_TABLE(    TABLE=SN5s,)  
@@ -287,7 +283,6 @@ SN5Js=POST_RCCM( MATER=MAT,
                      NUME_SITU=7,
                      NB_CYCL_SEISME = 10, 
                      NOM_SITU='Seisme',
-                     NUME_GROUPE=1,
                      CHAR_ETAT=11,),),);
 
 IMPR_TABLE(    TABLE=SN5Js,)  
@@ -352,7 +347,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=300.000000000,
            VALE_REFE=300.0,
-           NOM_PARA='VALE_MAXI_LINE',
+           NOM_PARA='CRIT_LINE_MAX',
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='ORIG',),
            TABLE=SN3s,)
@@ -360,7 +355,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=300.000000000,
            VALE_REFE=300.0,
-           NOM_PARA='VALE_MAXI_LINE',
+           NOM_PARA='CRIT_LINE_MAX',
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),
            TABLE=SN3s,)
@@ -438,7 +433,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=300.000000000,
            VALE_REFE=300.0,
-           NOM_PARA='VALE_MAXI_LINE',
+           NOM_PARA='CRIT_LINE_MAX',
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='ORIG',),
            TABLE=SN3Js,)
@@ -446,10 +441,10 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=300.000000000,
            VALE_REFE=300.0,
-           NOM_PARA='VALE_MAXI_LINE',
+           NOM_PARA='CRIT_LINE_MAX',
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),
-           TABLE=SN3s,)
+           TABLE=SN3Js,)
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=62.500000000,
@@ -525,7 +520,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=761.904760000,
            VALE_REFE=761.90476,
-           NOM_PARA='VALE_MAXI_LINE',
+           NOM_PARA='CRIT_LINE_MAX',
            FILTRE=(_F(NOM_PARA='LIEU',
                      VALE_K='ORIG',),),
            TABLE=SN1s,)
@@ -533,7 +528,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=761.904760000,
            VALE_REFE=761.90476,
-           NOM_PARA='VALE_MAXI_LINE',
+           NOM_PARA='CRIT_LINE_MAX',
            FILTRE=(_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),),
            TABLE=SN1s,)
@@ -615,17 +610,21 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=0.000000000,
            VALE_REFE=0.0,
            ORDRE_GRANDEUR=1.0e-6, 
-           NOM_PARA='SN_THER_MAX',
-           FILTRE=_F(NOM_PARA='LIEU',
+           NOM_PARA='SN_THER',
+           FILTRE=(_F(NOM_PARA='LIEU',
                      VALE_K='ORIG',),
+                  _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),),
            TABLE=SN5s,)
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=200.000000000,
            VALE_REFE=200.0,
-           NOM_PARA='SN_THER_MAX',
-           FILTRE=_F(NOM_PARA='LIEU',
+           NOM_PARA='SN_THER',
+           FILTRE=(_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),
+                  _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),),
            TABLE=SN5s,)
 
 # SITUATION 5 avec SEISME JONCTION CORPS/TUBU
@@ -686,17 +685,21 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=0.000000000,
            VALE_REFE=0.0,
            ORDRE_GRANDEUR=1.0e-6, 
-           NOM_PARA='SN_THER_MAX',
-           FILTRE=_F(NOM_PARA='LIEU',
+           NOM_PARA='SN_THER',
+           FILTRE=(_F(NOM_PARA='LIEU',
                      VALE_K='ORIG',),
+                  _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),),
            TABLE=SN5Js,)
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=200.000000000,
            VALE_REFE=200.0,
-           NOM_PARA='SN_THER_MAX',
-           FILTRE=_F(NOM_PARA='LIEU',
+           NOM_PARA='SN_THER',
+           FILTRE=(_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),
+                  _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),),
            TABLE=SN5Js,)
 
 FIN()

@@ -21,586 +21,366 @@ subroutine rc32si()
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/getfac.h"
-#include "asterfort/as_allocate.h"
 #include "asterfort/wkvect.h"
-#include "asterfort/jecrec.h"
-#include "asterfort/jeecra.h"
-#include "asterfort/codent.h"
 #include "asterfort/getvis.h"
-#include "asterfort/getvr8.h"
+#include "asterfort/getvid.h"
 #include "asterfort/utmess.h"
-#include "asterfort/jedetr.h"
+#include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
-#include "asterfort/jecroc.h"
-#include "asterfort/jexnom.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/ordis.h"
-#include "asterfort/jexnum.h"
-#include "asterfort/as_deallocate.h"
+#include "asterfort/jemarq.h"
+#include "asterfort/jedema.h"
+
 !     OPERATEUR POST_RCCM, TRAITEMENT DE FATIGUE B3200 et ZE200
 !     RECUPERATION DES DONNEES DU MOT CLE "SITUATION"
+!
 !     ------------------------------------------------------------------
-    integer :: nbsitu, nbseis, ndim
-    integer, pointer :: nume_group(:) => null()
-    integer :: jsigr, jnsitu, jnbocc, jpresa, jpresb, jcombi, jsigrpas
-    integer :: jsp12, jsp23, jsp13, nbgr, iocc, nume, n1, nocc
-    aster_logical :: yapass
-    character(len=8) :: k8b, knume
-    integer :: nbvg, jnbvg, ing, numgr, ig, numpas(2)
+    integer :: nb, ndim, jinfo, iocc, nume, n1, i, numgr(20), nbocc, ibid
+    integer :: jnom, jinfor, chara, charb, ns, jinfos, jnoms, jcombi, k
+    integer :: numgr1(20), iocc1, numgr2(20), iocc2, nbgrpass, grpass(20)
+    integer :: nbgr, i1, i2, numgr1p, numgr2p, i3, i4, jpassage, compteur
+    integer :: jpartage, k1, k2, n2, nbocc1, nbocc2
+    real(kind=8) :: presa, presb, tempa, tempb
     character(len=8) :: ouinon
-    integer :: nbchar, jchara, jcharb, nbth, jther, nbpres, jpres
-    integer :: nbmec, jmec, nscy, jnumgr, jseigr, nbgrt, nbsigr
-    integer :: numgs, jnsg, ii, vali(3), jspas, nbsg1, nbsg2, nbsg3
-    integer :: nbp12, nbp23, nbp13, numg1, numg2, jnom, jtempa, jtempb
-    character(len=24) :: nomsitu
+    character(len=16) :: nom, cbid
+    aster_logical :: passok, partageok, dejapass
 !
 ! DEB ------------------------------------------------------------------
 !
-    call getfac('SITUATION', nbsitu)
-    call getfac('SEISME', nbseis)
-    ndim = nbsitu + nbseis
-    AS_ALLOCATE(vi=nume_group, size=ndim)
+    call jemarq()
 !
-    call wkvect('&&RC32SI.SIT_GROUP', 'V V I', 2*ndim, jsigr)
-    call wkvect('&&RC32SI.SIT_GROUP_PAS', 'V V I', 2*ndim, jsigrpas)
-    call wkvect('&&RC3200.SITU_NUMERO', 'V V I', ndim, jnsitu)
-    call wkvect('&&RC3200.SITU_NB_OCCUR', 'V V I', 2*ndim, jnbocc)
-    call wkvect('&&RC3200.SITU_PRES_A', 'V V R', nbsitu, jpresa)
-    call wkvect('&&RC3200.SITU_PRES_B', 'V V R', nbsitu, jpresb)
-    call wkvect('&&RC3200.SITU_COMBINABLE', 'V V L', ndim, jcombi)
-    call wkvect('&&RC3200.SITU_NOM', 'V V K24', ndim, jnom)
-!
-    call jecrec('&&RC3200.SITU_ETAT_A', 'V V I', 'NO', 'DISPERSE', 'VARIABLE',&
-                ndim)
-    call jecrec('&&RC3200.SITU_ETAT_B', 'V V I', 'NO', 'DISPERSE', 'VARIABLE',&
-                nbsitu)
-    call jecrec('&&RC3200.TEMP_ETAT_A', 'V V R', 'NO', 'DISPERSE', 'VARIABLE',&
-                ndim)
-    call jecrec('&&RC3200.TEMP_ETAT_B', 'V V R', 'NO', 'DISPERSE', 'VARIABLE',&
-                nbsitu)
-!
-    call jecrec('&&RC3200.SITU_THER', 'V V I', 'NO', 'DISPERSE', 'VARIABLE',&
-                ndim)
-    call jecrec('&&RC3200.SITU_PRES', 'V V I', 'NO', 'DISPERSE', 'VARIABLE',&
-                ndim)
-    call jecrec('&&RC3200.SITU_MECA', 'V V I', 'NO', 'DISPERSE', 'VARIABLE',&
-                ndim)
-!
-    call wkvect('&&RC32SI.PASSAGE_1_2', 'V V I', ndim, jsp12)
-    call wkvect('&&RC32SI.PASSAGE_2_3', 'V V I', ndim, jsp23)
-    call wkvect('&&RC32SI.PASSAGE_1_3', 'V V I', ndim, jsp13)
-    call jeecra('&&RC32SI.PASSAGE_1_2', 'LONUTI', 0)
-    call jeecra('&&RC32SI.PASSAGE_2_3', 'LONUTI', 0)
-    call jeecra('&&RC32SI.PASSAGE_1_3', 'LONUTI', 0)
-!
-!-- Nombre de groupes au total
-    nbgr = 0
-!-- Y-a-t-il une situation de passage ?
-    yapass = .false.
-!
-!-----------------------------------------------
-!------ BOUCLE SUR LE MOT CLE SITUATION
-!-----------------------------------------------
-    do 10 iocc = 1, nbsitu, 1
-!
-        call codent(iocc, 'D0', k8b)
-!
-! ------ ON STOCKE LE NUMERO DE SITUATION:
-!        ---------------------------------
-!
-        call getvis('SITUATION', 'NUME_SITU', iocc=iocc, scal=nume, nbret=n1)
-        zi(jnsitu+iocc-1) = nume
-        knume = 'S       '
-        call codent(nume, 'D0', knume(2:8))
+!----------------------------------------------------------------------
+!-----------------------TRAITEMENT DU MOT CLE SITUATION----------------
+!----------------------------------------------------------------------
 
-! ------ ON STOCKE LE NOM DE SITUATION:
-!        ---------------------------------
-        call getvtx('SITUATION', 'NOM_SITU', iocc=iocc, scal=nomsitu, nbret=n1)
-        if(n1 .ne. 0) then
-            zk24(jnom+iocc-1)=nomsitu
+    call getfac('SITUATION', nb)
+!
+! CREATION D'UN TABLEAU QUI CONTIENT LES INFOS TYPE ENTIER DE CHAQUE
+! SITUATION (NUMERO, NUMEROS DE GROUPE(MAX 20), NBOCCUR, FORMAT PRESSION,
+!       FORMAT MECA, CHAR_ETAT_A, CHAR_ETAT_B, FORMAT THERMIQUE)
+!
+    ndim = 27*nb
+    call wkvect('&&RC3200.SITU_INFOI', 'V V I', ndim, jinfo) 
+!
+    do 10 iocc = 1, nb , 1
+!
+!------ on récupère le numéro de situation
+        call getvis('SITUATION', 'NUME_SITU', iocc=iocc, scal=nume, nbret=n1)
+        zi(jinfo+27*(iocc-1)) = nume
+!
+!------ verif : deux situations ne peuvent avoir le même numéro
+        do 20 i = 1, iocc-1
+            if (nume .eq. zi(jinfo+27*(i-1))) call utmess('F', 'POSTRCCM_48')
+20      continue
+!
+!------ on récupère le ou les groupes de la situation
+        do 25 i = 1, 20
+            zi(jinfo+27*(iocc-1)+i)= 0
+25      continue
+        call getvis('SITUATION', 'NUME_GROUPE', iocc = iocc, nbval=0, nbret=n1)
+        nbgr = -n1
+        call getvis('SITUATION', 'NUME_GROUPE', iocc = iocc, nbval=nbgr, vect=numgr, nbret=n1)
+        do 26 i = 1, nbgr
+            zi(jinfo+27*(iocc-1)+i)= numgr(i)
+            if(numgr(i) .le. 0) call utmess('F', 'POSTRCCM_12')
+26      continue
+!
+!------ on récupère le nombre d'occurences de la situation
+        call getvis('SITUATION', 'NB_OCCUR', iocc=iocc, scal=nbocc, nbret=n1)
+        zi(jinfo+27*(iocc-1)+21) = nbocc
+!
+!------ on regarde si la pression est sous forme unitaire ou transitoire
+        zi(jinfo+27*(iocc-1)+22) = 0
+        call getvr8('SITUATION', 'PRES_A', iocc=iocc, scal=presa, nbret=n1)
+        if (n1 .ne. 0) zi(jinfo+27*(iocc-1)+22) = 1
+        call getvis('SITUATION', 'NUME_RESU_PRES', iocc=iocc, scal=ibid, nbret=n1)
+        if (n1 .ne. 0) zi(jinfo+27*(iocc-1)+22) = 2
+!
+!------ on regarde si la méca est sous forme unitaire ou transitoire 
+!------ ou moments interpolés sur la température
+        zi(jinfo+27*(iocc-1)+23) = 0
+        zi(jinfo+27*(iocc-1)+24) = 0
+        zi(jinfo+27*(iocc-1)+25) = 0
+        call getvis('SITUATION', 'CHAR_ETAT_A', iocc=iocc, scal=chara, nbret=n1)
+        if (n1 .ne. 0) then 
+            zi(jinfo+27*(iocc-1)+23) = 1
+            zi(jinfo+27*(iocc-1)+24) = chara
+            call getvis('SITUATION', 'CHAR_ETAT_B', iocc=iocc, scal=charb, nbret=n1)
+            zi(jinfo+27*(iocc-1)+25) = charb
+        endif
+        call getvis('SITUATION', 'NUME_RESU_MECA', iocc=iocc, scal=ibid, nbret=n1)
+        if (n1 .ne. 0) zi(jinfo+27*(iocc-1)+23) = 2
+        call getvr8('SITUATION', 'TEMP_A', iocc=iocc, scal=tempa, nbret=n1)
+        if (n1 .ne. 0) zi(jinfo+27*(iocc-1)+23) = 3
+!
+!------ on regarde si la thermique est sous forme transitoire
+        zi(jinfo+27*(iocc-1)+26) = 0
+        call getvis('SITUATION', 'NUME_RESU_THER', iocc=iocc, scal=ibid, nbret=n1)
+        if (n1 .ne. 0) zi(jinfo+27*(iocc-1)+26) = 1
+!
+10  continue
+!
+! CREATION D'UN TABLEAU QUI CONTIENT LES INFOS TYPE CARACTERE DE CHAQUE
+!                             SITUATION (NOM)
+!
+    ndim = nb
+    call wkvect('&&RC3200.SITU_NOM', 'V V K16', ndim, jnom) 
+!
+    do 30 iocc = 1, nb , 1
+!
+!------ on récupère le nom de situation
+        call getvtx('SITUATION', 'NOM_SITU', iocc=iocc, scal=nom, nbret=n1)
+        if (n1 .ne. 0) then      
+            zk16(jnom+iocc-1) = nom
         else
-            zk24(jnom+iocc-1)='PAS DE NOM'
-        endif      
+            zk16(jnom+iocc-1) = 'PAS DE NOM'
+        endif         
 !
-! ------ ON STOCKE LE NOMBRE D'OCCURRENCE:
-!        ---------------------------------
+30  continue
 !
-        call getvis('SITUATION', 'NB_OCCUR', iocc=iocc, scal=nocc, nbret=n1)
-        zi(jnbocc+2*iocc-2) = nocc
+! CREATION D'UN TABLEAU QUI CONTIENT LES INFOS TYPE REELS DE CHAQUE
+!            SITUATION (PRES_A, PRES_B, TEMP_A, TEMP_B)
 !
-! ------ ON STOCKE LES PRESSIONS: (0 si b3200_t ou ze200b)
-!        ------------------------
+    ndim = nb*4
+    call wkvect('&&RC3200.SITU_INFOR', 'V V R', ndim, jinfor) 
 !
-        call getvr8('SITUATION', 'PRES_A', iocc=iocc, nbval=0, nbret=n1)
-        if (n1 .ne. 0) then
-            call getvr8('SITUATION', 'PRES_A', iocc=iocc, scal=zr(jpresa+iocc-1), nbret=n1)
-        else
-            zr(jpresa+iocc-1)= 0.d0
-        endif
-        call getvr8('SITUATION', 'PRES_B', iocc=iocc, nbval=0, nbret=n1)
-        if (n1 .ne. 0) then
-            call getvr8('SITUATION', 'PRES_B', iocc=iocc, scal=zr(jpresb+iocc-1), nbret=n1)
-        else
-            zr(jpresb+iocc-1)= 0.d0
-        endif
+    do 40 iocc = 1, nb , 1
 !
-! ------ ON STOCKE LE OU LES NUMEROS DE GROUPE:
-!        --------------------------------------
+!------ on récupère pres_a et pres_b
+        zr(jinfor+4*(iocc-1)) = 0.d0
+        zr(jinfor+4*(iocc-1)+1) = 0.d0
+        call getvr8('SITUATION', 'PRES_A', iocc=iocc, scal=presa, nbret=n1)
+        if (n1 .ne. 0) zr(jinfor+4*(iocc-1)) = presa         
+        call getvr8('SITUATION', 'PRES_B', iocc=iocc, scal=presb, nbret=n1)
+        if (n1 .ne. 0) zr(jinfor+4*(iocc-1)+1) = presb  
+        zr(jinfor+4*(iocc-1)+2) = 0.d0
+        zr(jinfor+4*(iocc-1)+3) = 0.d0
+        call getvr8('SITUATION', 'TEMP_A', iocc=iocc, scal=tempa, nbret=n1)
+        if (n1 .ne. 0) zr(jinfor+4*(iocc-1)+2) = tempa         
+        call getvr8('SITUATION', 'TEMP_B', iocc=iocc, scal=tempb, nbret=n2)
+        if (n2 .ne. 0) zr(jinfor+4*(iocc-1)+3) = tempb
+        if(n1 .ne. 0 .and. n2 .ne. 0) then
+         if (abs(tempa-tempb) .lt. 1.0d-08) call utmess('F', 'POSTRCCM_47')
+        endif         
 !
-        call getvis('SITUATION', 'NUME_GROUPE', iocc=iocc, nbval=0, nbret=n1)
-        nbvg = -n1
-        if(nbvg .eq. 1 .or. nbvg .eq. 2) then
-            call wkvect('&&RC32SI.VALE_GR', 'V V I', nbvg, jnbvg)
-            call getvis('SITUATION', 'NUME_GROUPE', iocc=iocc, nbval=nbvg, vect=zi( jnbvg),&
-                        nbret=n1)
-            do 26 ing = 1, nbvg
-                numgr = zi(jnbvg+ing-1)
-!-------------- On vérifie que le numéro de groupe est strictement positif
-                if (numgr .le. 0) then
-                call utmess('F', 'POSTRCCM_12')
-                endif
-!-------------- On comptabilise le nombre de groupes au total nbgr
-                do 20 ig = 1, nbgr
-                    if (nume_group(ig) .eq. numgr) goto 21
- 20             continue
-                nbgr = nbgr + 1
-                nume_group(nbgr) = numgr
- 21             continue
- 26         continue
+40  continue
+!----------------------------------------------------------------------
+!---------------------------TRAITEMENT DU MOT CLE SEISME---------------
+!----------------------------------------------------------------------
+    call getfac('SEISME', ns)
+    if (ns .eq. 0) goto 999
 !
-!----------- Si la situation n'appartient qu'à un seul groupe
-            if (nbvg .eq. 1) then
-                zi(jsigr+2*iocc-2) = zi(jnbvg)
-                zi(jsigr+2*iocc-1) = zi(jnbvg)
-                zi(jsigrpas+2*iocc-2) = zi(jnbvg)
-                zi(jsigrpas+2*iocc-1) = zi(jnbvg)
-            else
-!----------- Sinon (elle appartient à deux groupes)
-                zi(jsigr+2*iocc-2) = zi(jnbvg)
-                zi(jsigr+2*iocc-1) = zi(jnbvg+1)
-                zi(jsigrpas+2*iocc-2) = zi(jnbvg)
-                zi(jsigrpas+2*iocc-1) = zi(jnbvg+1)
-            endif
-            call jedetr('&&RC32SI.VALE_GR')
-        else
-            call utmess('F', 'POSTRCCM_12')
-        endif
-!------- Si c'est une situation de passage
-        call getvis('SITUATION', 'NUME_PASSAGE', iocc=iocc, nbval=0, nbret=n1)
-        if (n1 .ne. 0) then
-            yapass = .true.
-            call getvis('SITUATION', 'NUME_PASSAGE', iocc=iocc, nbval=2, vect=numpas,&
-                        nbret=n1)
-            if (numpas(1) .le. 0 .or. numpas(2) .le. 0 ) then
-                call utmess('F', 'POSTRCCM_34')
-            endif
-            if (numpas(1) .gt. 3 .or. numpas(2) .gt. 3) then
-                call utmess('F', 'POSTRCCM_34')
-            endif
+! CREATION D'UN TABLEAU QUI CONTIENT LES INFOS TYPE ENTIER DU SEISME
+!          (NUMERO, NBCYCL, NBOCCUR, FORMAT MECA, CHAR_ETAT)
 !
-            zi(jsigrpas+2*iocc-2) = min ( numpas(1), numpas(2) )
-            zi(jsigrpas+2*iocc-1) = max ( numpas(1), numpas(2) )
+    ndim = 5
+    call wkvect('&&RC3200.SEIS_INFOI', 'V V I', ndim, jinfos) 
 !
-!----------- On comptabilise le nombre de groupes au total nbgr
-            numgr = numpas(1)
-            do 22 ig = 1, nbgr
-                if (nume_group(ig) .eq. numgr) goto 23
- 22         continue
-            nbgr = nbgr + 1
-            nume_group(nbgr) = numgr
- 23         continue
-            numgr = numpas(2)
-            do 24 ig = 1, nbgr
-                if (nume_group(ig) .eq. numgr) goto 25
- 24         continue
-            nbgr = nbgr + 1
-            nume_group(nbgr) = numgr
- 25         continue
+!-- on récupère le numéro de situation du séisme
+    call getvis('SEISME', 'NUME_SITU', iocc=1, scal=nume, nbret=n1)
+    zi(jinfos) = nume
 !
-        endif
+!-- verif : le séisme ne peut avoir le même numéro qu'une autre situation
+    do 41 i = 1, nb
+        if (nume .eq. zi(jinfo+27*(i-1))) call utmess('F', 'POSTRCCM_48')
+41  continue
 !
-! ------ EST-ELLE COMBINABLE DANS SON GROUPE:
-!        ------------------------------------
-        call getvtx('SITUATION', 'COMBINABLE', iocc=iocc, scal=ouinon, nbret=n1)
-        if (ouinon(1:3) .eq. 'OUI') then
-            zl(jcombi+iocc-1) = .true.
-        else
-            zl(jcombi+iocc-1) = .false.
-        endif
+!-- on récupère le nbcycl du séisme
+    call getvis('SEISME', 'NB_CYCL_SEISME', iocc=1, scal=nume, nbret=n1)
+    zi(jinfos+1) = nume
 !
-! ------ ETAT DE CHARGEMENT POUR "A":
-!        ----------------------------
-        call getvis('SITUATION', 'CHAR_ETAT_A', iocc=iocc, nbval=0, nbret=n1)
-        nbchar = -n1
-!------ pour l'option B3200_T nbchar=0 sinon nbchar=1
-        call jecroc(jexnom('&&RC3200.SITU_ETAT_A', knume))
-        call jeecra(jexnom('&&RC3200.SITU_ETAT_A', knume), 'LONMAX', nbchar)
-        call jeecra(jexnom('&&RC3200.SITU_ETAT_A', knume), 'LONUTI', nbchar)
-        if (nbchar .ne. 0) then
-            call jeveuo(jexnom('&&RC3200.SITU_ETAT_A', knume), 'E', jchara)
-            call getvis('SITUATION', 'CHAR_ETAT_A', iocc=iocc, nbval=nbchar, scal=zi(jchara),&
-                        nbret=n1)
-        endif
+!-- on récupère le nombre d'occurences du séisme
+    call getvis('SEISME', 'NB_OCCUR', iocc=1, scal=nbocc, nbret=n1)
+    zi(jinfos+2) = nbocc
 !
-! ------ TEMPERATURE EN LIEN AVEC LE CHARGEMENT "A":
-!        ----------------------------
-        call getvr8('SITUATION', 'TEMP_A', iocc=iocc, nbval=0, nbret=n1)
-        nbchar = -n1
-        call jecroc(jexnom('&&RC3200.TEMP_ETAT_A', knume))
-        call jeecra(jexnom('&&RC3200.TEMP_ETAT_A', knume), 'LONMAX', nbchar)
-        call jeecra(jexnom('&&RC3200.TEMP_ETAT_A', knume), 'LONUTI', nbchar)
-        if (nbchar .ne. 0) then
-            call jeveuo(jexnom('&&RC3200.TEMP_ETAT_A', knume), 'E', jtempa)
-            call getvr8('SITUATION', 'TEMP_A', iocc=iocc, nbval=nbchar, scal=zr(jtempa),&
-                        nbret=n1)
-        endif
+!-- on regarde si la méca est sous forme unitaire ou 6 tables
+    zi(jinfos+3) = 0
+    zi(jinfos+4) = 0
+    call getvis('SEISME', 'CHAR_ETAT', iocc=1, scal=chara, nbret=n1)
+    if (n1 .ne. 0) then 
+        zi(jinfos+3) = 1
+        zi(jinfos+4) = chara
+    endif
+    call getvid('SEISME', 'TABL_FX', iocc=1, scal=cbid, nbret=n1)
+    if (n1 .ne. 0) zi(jinfos+3) = 2
 !
-! ------ ETAT DE CHARGEMENT POUR "B":
-!        ----------------------------
-        call getvis('SITUATION', 'CHAR_ETAT_B', iocc=iocc, nbval=0, nbret=n1)
-        nbchar = -n1
-!------ pour l'option B3200_T nbchar=0 sinon nbchar=1
-        call jecroc(jexnom('&&RC3200.SITU_ETAT_B', knume))
-        call jeecra(jexnom('&&RC3200.SITU_ETAT_B', knume), 'LONMAX', nbchar)
-        call jeecra(jexnom('&&RC3200.SITU_ETAT_B', knume), 'LONUTI', nbchar)
-        if (nbchar .ne. 0) then
-            call jeveuo(jexnom('&&RC3200.SITU_ETAT_B', knume), 'E', jcharb)
-            call getvis('SITUATION', 'CHAR_ETAT_B', iocc=iocc, nbval=nbchar, scal=zi(jcharb),&
-                        nbret=n1)
-        endif
+! CREATION D'UN TABLEAU QUI CONTIENT LES INFOS TYPE CARACTERE DU SEISME (NOM)
 !
-! ------ TEMPERATURE EN LIEN AVEC LE CHARGEMENT "B":
-!        ----------------------------
-        call getvr8('SITUATION', 'TEMP_B', iocc=iocc, nbval=0, nbret=n1)
-        nbchar = -n1
-        call jecroc(jexnom('&&RC3200.TEMP_ETAT_B', knume))
-        call jeecra(jexnom('&&RC3200.TEMP_ETAT_B', knume), 'LONMAX', nbchar)
-        call jeecra(jexnom('&&RC3200.TEMP_ETAT_B', knume), 'LONUTI', nbchar)
-        if (nbchar .ne. 0) then
-            call jeveuo(jexnom('&&RC3200.TEMP_ETAT_B', knume), 'E', jtempb)
-            call getvr8('SITUATION', 'TEMP_B', iocc=iocc, nbval=nbchar, scal=zr(jtempb),&
-                        nbret=n1)
-            if (abs(zr(jtempa)-zr(jtempb)) .lt. 1.0d-08) call utmess('F', 'POSTRCCM_47')
-        endif
+    call wkvect('&&RC3200.SEIS_NOM', 'V V K16', 1, jnoms) 
 !
-! ------ TRANSITOIRE THERMIQUE ASSOCIE A LA SITUATION:
-!        ---------------------------------------------
-        call getvis('SITUATION', 'NUME_RESU_THER', iocc=iocc, nbval=0, nbret=n1)
-        nbth = -n1
-        call jecroc(jexnom('&&RC3200.SITU_THER', knume))
-        call jeecra(jexnom('&&RC3200.SITU_THER', knume), 'LONMAX', nbth)
-        call jeecra(jexnom('&&RC3200.SITU_THER', knume), 'LONUTI', nbth)
-!
-        if (nbth .ne. 0) then
-            call jeveuo(jexnom('&&RC3200.SITU_THER', knume), 'E', jther)
-            call getvis('SITUATION', 'NUME_RESU_THER', iocc=iocc, nbval=nbth, scal=zi(jther),&
-                        nbret=n1)
-        endif
-!
-! ------ TRANSITOIRE DE PRESSION ASSOCIE A LA SITUATION:
-!        ---------------------------------------------
-        call getvis('SITUATION', 'NUME_RESU_PRES', iocc=iocc, nbval=0, nbret=n1)
-        nbpres = -n1
-        call jecroc(jexnom('&&RC3200.SITU_PRES', knume))
-        call jeecra(jexnom('&&RC3200.SITU_PRES', knume), 'LONMAX', nbpres)
-        call jeecra(jexnom('&&RC3200.SITU_PRES', knume), 'LONUTI', nbpres)
-!
-        if (nbpres .ne. 0) then
-            call jeveuo(jexnom('&&RC3200.SITU_PRES', knume), 'E', jpres)
-            call getvis('SITUATION', 'NUME_RESU_PRES', iocc=iocc, nbval=nbpres, scal=zi(jpres),&
-                        nbret=n1)
-        endif
-!
-! ------ TRANSITOIRE MECANIQUE ASSOCIE A LA SITUATION:
-!        ---------------------------------------------
-        call getvis('SITUATION', 'NUME_RESU_MECA', iocc=iocc, nbval=0, nbret=n1)
-        nbmec = -n1
-        call jecroc(jexnom('&&RC3200.SITU_MECA', knume))
-        call jeecra(jexnom('&&RC3200.SITU_MECA', knume), 'LONMAX', nbmec)
-        call jeecra(jexnom('&&RC3200.SITU_MECA', knume), 'LONUTI', nbmec)
-!
-        if (nbmec .ne. 0) then
-            call jeveuo(jexnom('&&RC3200.SITU_MECA', knume), 'E', jmec)
-            call getvis('SITUATION', 'NUME_RESU_MECA', iocc=iocc, nbval=nbmec, scal=zi(jmec),&
-                        nbret=n1)
-        endif
- 10 continue
-!
-!-----------------------------------------------
-!------- BOUCLE SUR LE MOT CLE SEISME
-!-----------------------------------------------
-    do 110 iocc = 1, nbseis, 1
-!
-! ------ LE NUMERO DE GROUPE:
-!        -----------------------
-        call getvis('SEISME', 'NUME_GROUPE', iocc=iocc, scal=nume, nbret=n1)
-        zi(jsigr+2*(nbsitu+iocc)-2) = nume
-        zi(jsigr+2*(nbsitu+iocc)-1) = nume
-        zi(jsigrpas+2*(nbsitu+iocc)-2) = nume
-        zi(jsigrpas+2*(nbsitu+iocc)-1) = nume
-!
-! ------ COMBINABLE DANS SON GROUPE:
-!        ------------------------------------
-        zl(jcombi+nbsitu+iocc-1) = .true.
-!
-! ------ LE NUMERO DE SITUATION:
-!        -----------------------
-        call getvis('SEISME', 'NUME_SITU', iocc=iocc, scal=nume, nbret=n1)
-        zi(jnsitu+nbsitu+iocc-1) = nume
-        knume = 'S       '
-        call codent(nume, 'D0', knume(2:8))
-!
-! ------ LE NOMBRE D'OCCURRENCE DE SEISME:
-!        ---------------------------------
-        call getvis('SEISME', 'NB_OCCUR', iocc=iocc, scal=nocc, nbret=n1)
-        zi(jnbocc+2*(nbsitu+iocc)-2) = nocc
-!
-! ------ LE NOMBRE DE CYCLES ASSOCIES:
-!        ---------------------------------
-        call getvis('SEISME', 'NB_CYCL_SEISME', iocc=iocc, scal=nscy, nbret=n1)
-        zi(jnbocc+2*(nbsitu+iocc)-1) = nscy
-!
-! ------ EFFORTS MECANIQUES ASSOCIES AU SEISME:
-!        ---------------------------------------------
-        call getvis('SEISME', 'CHAR_ETAT', iocc=iocc, nbval=0, nbret=n1)
-        nbchar = -n1
-        call jecroc(jexnom('&&RC3200.SITU_ETAT_A', knume))
-        call jeecra(jexnom('&&RC3200.SITU_ETAT_A', knume), 'LONMAX', nbchar)
-        call jeecra(jexnom('&&RC3200.SITU_ETAT_A', knume), 'LONUTI', nbchar)
-        if (nbchar .ne. 0) then
-            call jeveuo(jexnom('&&RC3200.SITU_ETAT_A', knume), 'E', jchara)
-            call getvis('SEISME', 'CHAR_ETAT', iocc=iocc, nbval=nbchar, vect=zi(jchara),&
-                        nbret=n1)
-        endif
-!
-! ------ PAS DE TRANSITOIRE THERMIQUE NI DE PRESSION
-!        ---------------------------------------------
-        call jecroc(jexnom('&&RC3200.SITU_THER', knume))
-        call jeecra(jexnom('&&RC3200.SITU_THER', knume), 'LONMAX', 0)
-        call jeecra(jexnom('&&RC3200.SITU_THER', knume), 'LONUTI', 0)
-!
-        call jecroc(jexnom('&&RC3200.SITU_PRES', knume))
-        call jeecra(jexnom('&&RC3200.SITU_PRES', knume), 'LONMAX', 0)
-        call jeecra(jexnom('&&RC3200.SITU_PRES', knume), 'LONUTI', 0)     
-!
-        call jecroc(jexnom('&&RC3200.SITU_MECA', knume))
-        call jeecra(jexnom('&&RC3200.SITU_MECA', knume), 'LONMAX', 0)
-        call jeecra(jexnom('&&RC3200.SITU_MECA', knume), 'LONUTI', 0)  
-110 continue
-!
-!-----------------------------------------------
-!------- DEFINITION DES GROUPES
-!-----------------------------------------------
-    call ordis(nume_group, nbgr)
-!
-! -- incompatibilité des situations de passage et de plus de 3 groupes
-    if (nbgr .gt. 3 .and. yapass) call utmess('F', 'POSTRCCM_34')
-!
-! --- on ajoute un groupe pour les situations de passage
-    if (yapass) nbgr = nbgr + 1
-!
-    call wkvect('&&RC3200.SITU_NUME_GROUP', 'V V I', nbgr, jnumgr)
-    call wkvect('&&RC3200.SITU_SEISME', 'V V I', nbgr, jseigr)
-    call jecrec('&&RC3200.LES_GROUPES', 'V V I', 'NU', 'DISPERSE', 'VARIABLE',&
-                nbgr)
-!
-    if (yapass) then
-        nbgrt = nbgr - 1
+    call getvtx('SEISME', 'NOM_SITU', iocc=1, scal=nom, nbret=n1)
+    if (n1 .ne. 0) then      
+        zk16(jnoms) = nom
     else
-        nbgrt = nbgr
-    endif
+        zk16(jnoms) = 'PAS DE NOM'
+    endif         
 !
-    do 30 ig = 1, nbgrt, 1
+999 continue
 !
-        numgr = nume_group(ig)
-        zi(jnumgr+ig-1) = numgr
+!----------------------------------------------------------------------
+!--------------------SITUATIONS COMBINABLES ENTRE ELLES----------------
+!----------------------------------------------------------------------
 !
-! ------ on compte le nombre de situations dans le groupe
-        nbsigr = 0
-        do 32 iocc = 1, nbsitu, 1
-            call getvis('SITUATION', 'NUME_GROUPE', iocc=iocc, nbval=0, nbret=n1)
-            nbvg = -n1
-            call wkvect('&&RC32SI.VALE_GR', 'V V I', nbvg, jnbvg)
-            call getvis('SITUATION', 'NUME_GROUPE', iocc=iocc, nbval=nbvg, vect=zi(jnbvg),&
-                        nbret=n1)
-            do 321 ing = 1, nbvg
-                if (zi(jnbvg+ing-1) .eq. numgr) nbsigr = nbsigr + 1
-321         continue
-            call jedetr('&&RC32SI.VALE_GR')
+! CREATION D'UN TABLEAU DE DIMENSION NBSITU*NBSITU QUI CONTIENT UN ENTIER 
+! CET ENTIER EST NUL SI LES SITUATIONS NE SONT PAS COMBINABLES ENTRE ELLES
+! IL VAUT 1 SI LES DEUX SITUATIONS SONT DANS LE MEME GROUPE OU BIEN RELIEES
+! PAR UNE SITUATION DE PASSAGE
+    ndim = nb*nb
+    call wkvect('&&RC3200.COMBI', 'V V I', ndim, jcombi) 
+    do 50 k = 1, ndim
+        zi(jcombi-1+k) = 0
+50  continue
 !
-            call getvis('SITUATION', 'NUME_PASSAGE', iocc=iocc, nbval=0, nbret=n1)
-            if (n1 .ne. 0) then
-                call getvis('SITUATION', 'NUME_PASSAGE', iocc=iocc, nbval=2, vect=numpas,&
-                            nbret=n1)
-                if (numpas(1) .eq. numgr) nbsigr = nbsigr + 1
-                if (numpas(2) .eq. numgr) nbsigr = nbsigr + 1
+! -- deux situations sont combinables si elles sont dans le même groupe
+! -- et on ne remplit que au dessus de la diagonale le tableau qui est symétrique
+    do 60 iocc1 = 1, nb-1
+        do 61 i1 = 1,20
+          numgr1(i1) = zi(jinfo+27*(iocc1-1)+i1)
+61      continue
+        do 70 iocc2 = iocc1+1, nb
+            do 71 i2 = 1,20
+              numgr2(i2) = zi(jinfo+27*(iocc2-1)+i2)
+71          continue
+            do 72 i1 = 1, 20
+                do 73 i2 = 1,20
+                    if(numgr1(i1) .ne. 0 .and. numgr2(i2) .ne. 0) then    
+                        if (numgr2(i2) .eq. numgr1(i1)) zi(jcombi+nb*(iocc1-1)+iocc2-1) = 1
+                    endif
+73              continue
+72          continue
+70      continue
+60  continue
+!
+! -- on traite les situations de passage
+    ndim = 3*nb*nb*nb
+    call wkvect('&&RC3200.PASSAGE', 'V V I', ndim, jpassage) 
+    do 92 i = 1,ndim
+        zi(jpassage-1+i) = 0
+92  continue
+    do 95 i = 1,20
+        grpass(i) = 0
+95  continue
+    compteur =0
+    do 96 iocc = 1, nb
+      call getvis('SITUATION', 'NUME_PASSAGE', iocc = iocc, nbval=0, nbret=n1)
+      if(n1 .ne. 0) then
+!
+        nbgrpass = -n1
+        call getvis('SITUATION', 'NUME_PASSAGE', iocc = iocc, nbval=nbgrpass,&
+                     vect=grpass, nbret=n1)
+! -- on vérifie que la situation fait bien partie des groupes qu'elle relie
+        do 97 i1 = 1, nbgrpass
+          if (grpass(i1) .eq. 0) call utmess('F', 'POSTRCCM_34')
+          passok = .false.
+          do 98 i2=1,20
+            if (zi(jinfo+27*(iocc-1)+i2) .eq. grpass(i1)) passok = .true.
+98        continue
+          if (.not. passok) call utmess('F', 'POSTRCCM_34')
+97      continue
+        do 101 i1 = 1, nbgrpass-1
+          numgr1p = grpass(i1) 
+          do 102 i2 = i1+1, nbgrpass
+            numgr2p = grpass(i2)
+            if(numgr1p .eq. numgr2p) call utmess('F', 'POSTRCCM_34')
+!
+            do 103 iocc1 = 1, nb-1
+              do 104 i3 = 1,20
+                numgr1(i3) = zi(jinfo+27*(iocc1-1)+i3)
+104           continue
+              do 105 iocc2 = iocc1+1, nb
+                dejapass = .false.
+                do 106 i4 = 1,20
+                  numgr2(i4) = zi(jinfo+27*(iocc2-1)+i4)
+106             continue
+                do 107 i3 = 1, 20
+                  do 108 i4 = 1,20                   
+                    if(numgr1(i3) .ne. 0 .and. numgr2(i4) .ne. 0) then    
+                      if (numgr1(i3) .eq. numgr1p .and. numgr2(i4) .eq. numgr2p &
+                        .and. zi(jcombi+nb*(iocc1-1)+iocc2-1) .ne. 1 .and. .not. dejapass) then
+                        dejapass = .true.
+                        zi(jcombi+nb*(iocc1-1)+iocc2-1) = 2
+                        zi(jpassage+3*compteur)=iocc
+                        zi(jpassage+3*compteur+1)=iocc1
+                        zi(jpassage+3*compteur+2)=iocc2
+                        compteur = compteur +1
+!
+                        if (compteur .ge. nb*nb*nb) call utmess('F', 'POSTRCCM_34')
+                      endif
+                      if (numgr1(i3) .eq. numgr2p .and. numgr2(i4) .eq. numgr1p &
+                        .and. zi(jcombi+nb*(iocc1-1)+iocc2-1) .ne. 1 .and. .not. dejapass) then
+                        dejapass = .true.
+                        zi(jcombi+nb*(iocc1-1)+iocc2-1) = 2
+                        zi(jpassage+3*compteur)=iocc
+                        zi(jpassage+3*compteur+1)=iocc1
+                        zi(jpassage+3*compteur+2)=iocc2
+                        compteur = compteur +1
+                        if (compteur .ge. nb*nb*nb) call utmess('F', 'POSTRCCM_34')
+                      endif
+                    endif
+108               continue
+107             continue
+105           continue
+103         continue
+102       continue
+101     continue
+!
+      endif
+96  continue
+!
+! -- on traite les situations combinables avec elle même seulement
+    do 80 iocc1 = 1, nb
+        call getvtx('SITUATION', 'COMBINABLE', iocc=iocc1, scal=ouinon, nbret=n1)
+        if (n1 .ne. 0 .and. ouinon .eq. 'NON') then
+          do 90 iocc2 = 1, nb
+            if(iocc2 .ne. iocc1) then
+              zi(jcombi+nb*(iocc1-1)+iocc2-1) = 0
+              zi(jcombi+nb*(iocc2-1)+iocc1-1) = 0
             endif
- 32     continue
+90        continue
+        endif
+80  continue
 !
-! ------ on ajoute le séisme à ce nombre si présent
+!----------------------------------------------------------------------
+!-------------------- GROUPES DE PARTAGE ------------------------------
+!----------------------------------------------------------------------
 !
-        do 36 iocc = 1, nbseis, 1
-            call getvis('SEISME', 'NUME_GROUPE', iocc=iocc, scal=numgs, nbret=n1)
-            if (numgs .eq. numgr) nbsigr = nbsigr + 1
- 36     continue
+    ndim = 1*nb
+    call wkvect('&&RC3200.PARTAGE', 'V V I', ndim, jpartage) 
+    do 110 k = 1, ndim
+        zi(jpartage-1+k) = 0
+110  continue
 !
-! ------ pour chaque groupe, on stocke ses numéros de situations
-! ------ (normales, passages et séisme)
-        call jecroc(jexnum('&&RC3200.LES_GROUPES', numgr))
-        call jeecra(jexnum('&&RC3200.LES_GROUPES', numgr), 'LONMAX', nbsigr)
-        call jeecra(jexnum('&&RC3200.LES_GROUPES', numgr), 'LONUTI', nbsigr)
-        call jeveuo(jexnum('&&RC3200.LES_GROUPES', numgr), 'E', jnsg)
+    do 120 iocc = 1, nb , 1
 !
-        ii = 0
-        do 34 iocc = 1, nbsitu, 1
-            call getvis('SITUATION', 'NUME_GROUPE', iocc=iocc, nbval=0, nbret=n1)
-            nbvg = -n1
-            call wkvect('&&RC32SI.VALE_GR', 'V V I', nbvg, jnbvg)
-            call getvis('SITUATION', 'NUME_GROUPE', iocc=iocc, nbval=nbvg, vect=zi(jnbvg),&
-                        nbret=n1)
-            do 341 ing = 1, nbvg
-                if (zi(jnbvg+ing-1) .eq. numgr) then
-                    ii = ii + 1
-                    zi(jnsg+ii-1) = iocc
+!------ on récupère le numéro du groupe de partage
+        call getvis('SITUATION', 'NUME_PARTAGE', iocc=iocc, scal=nume, nbret=n1)
+        if(n1 .ne. 0) then
+            if (nume .le. 0) call utmess('F', 'POSTRCCM_53')
+            zi(jpartage-1+iocc) = nume
+            nbocc1 = zi(jinfo+27*(iocc-1)+21)
+!
+!------ verif : deux situations du même groupe de partage doivent appartenir au 
+!------ même groupe de fonctionnement et avoir le même nombre d'occurence initial
+            do 130 i = 1, iocc-1
+                if (nume .eq. zi(jpartage-1+i)) then
+                    nbocc2 = zi(jinfo+27*(i-1)+21)
+                    if(nbocc1 .ne. nbocc2) call utmess('A', 'POSTRCCM_53')
+                    partageok = .false.
+                    do 136 k1 = 1, 20
+                        numgr1(k1)= zi(jinfo+27*(iocc-1)+k1)
+                        do 137 k2 = 1,20
+                            numgr2(k2)= zi(jinfo+27*(i-1)+k2)
+                            if (numgr1(k1) .eq. numgr2(k2) .and. numgr1(k1) .ne. 0) then
+                                partageok =.true.
+                            endif
+137                     continue
+136                 continue
+                    if(.not. partageok) call utmess('A', 'POSTRCCM_53')
                 endif
-341         continue
-            call jedetr('&&RC32SI.VALE_GR')
+130          continue
+
+        endif
+120 continue
 !
-            call getvis('SITUATION', 'NUME_PASSAGE', iocc=iocc, nbval=0, nbret=n1)
-            if (n1 .ne. 0) then
-                call getvis('SITUATION', 'NUME_PASSAGE', iocc=iocc, nbval=2, vect=numpas,&
-                            nbret=n1)
-                if (numpas(1) .eq. numgr) then
-                    ii = ii + 1
-                    zi(jnsg+ii-1) = iocc
-                endif
-                if (numpas(2) .eq. numgr) then
-                    ii = ii + 1
-                    zi(jnsg+ii-1) = iocc
-                endif
-            endif
- 34     continue
-!
-        do 38 iocc = 1, nbseis, 1
-            call getvis('SEISME', 'NUME_GROUPE', iocc=iocc, scal=numgs, nbret=n1)
-            if (numgs .eq. numgr) then
-                ii = ii + 1
-                zi(jnsg+ii-1) = nbsitu+iocc
-!-------------- un seul séisme par groupe
-                if (zi(jseigr+ig-1) .ne. 0) then
-                    vali(1) = numgr
-                    vali(2) = iocc
-                    vali(3) = zi(jseigr+ig-1)
-                    call utmess('F', 'POSTRCCM_26', ni=3, vali=vali)
-                endif
-                zi(jseigr+ig-1) = iocc
-            endif
- 38     continue
-!
- 30 continue
-!
-!-----------------------------------------------
-!------- TRAITEMENT DES SITUATIONS DE PASSAGE
-!-----------------------------------------------
-    if (yapass) then
-!
-        call wkvect('&&RC32SI.PASSAGE_SIT', 'V V I', 3, jspas)
-!
-        nbsg1 = 0
-        nbsg2 = 0
-        nbsg3 = 0
-        nbp12 = 0
-        nbp23 = 0
-        nbp13 = 0
-!
-        do 40 iocc = 1, ndim, 1
-            numg1 = zi(jsigrpas+2*iocc-2)
-            numg2 = zi(jsigrpas+2*iocc-1)
-            if (numg1 .eq. 1 .and. numg2 .eq. 1) then
-                nbsg1 = nbsg1 + 1
-            else if (numg1.eq.1 .and. numg2.eq.2) then
-                nbsg1 = nbsg1 + 1
-                nbp12 = nbp12 + 1
-                zi(jsp12+nbp12-1) = iocc
-            else if (numg1.eq.2 .and. numg2.eq.2) then
-                nbsg2 = nbsg2 + 1
-            else if (numg1.eq.2 .and. numg2.eq.3) then
-                nbsg2 = nbsg2 + 1
-                nbp23 = nbp23 + 1
-                zi(jsp23+nbp23-1) = iocc
-            else if (numg1.eq.3 .and. numg2.eq.3) then
-                nbsg3 = nbsg3 + 1
-            else if (numg1.eq.1 .and. numg2.eq.3) then
-                nbsg3 = nbsg3 + 1
-                nbp13 = nbp13 + 1
-                zi(jsp13+nbp13-1) = iocc
-            endif
- 40     continue
-!
-        call jeecra('&&RC32SI.PASSAGE_1_2', 'LONUTI', nbp12)
-        call jeecra('&&RC32SI.PASSAGE_2_3', 'LONUTI', nbp23)
-        call jeecra('&&RC32SI.PASSAGE_1_3', 'LONUTI', nbp13)
-        zi(jspas ) = nbsg1
-        zi(jspas+1) = nbsg2
-        zi(jspas+2) = nbsg3
-!
-        zi(jnumgr+nbgr-1) = -nbgr
-        call jecroc(jexnum('&&RC3200.LES_GROUPES', nbgr))
-        call jeecra(jexnum('&&RC3200.LES_GROUPES', nbgr), 'LONMAX', ndim)
-        call jeveuo(jexnum('&&RC3200.LES_GROUPES', nbgr), 'E', jnsg)
-!
-        ii = 0
-        do 42 iocc = 1, ndim, 1
-            numg1 = zi(jsigrpas+2*iocc-2)
-            numg2 = zi(jsigrpas+2*iocc-1)
-            if (numg1 .eq. 1 .and. numg2 .eq. 1) then
-                ii = ii + 1
-                zi(jnsg+ii-1) = iocc
-            endif
- 42     continue
-        do 44 iocc = 1, ndim, 1
-            numg1 = zi(jsigrpas+2*iocc-2)
-            numg2 = zi(jsigrpas+2*iocc-1)
-            if (numg1 .eq. 1 .and. numg2 .eq. 2) then
-                ii = ii + 1
-                zi(jnsg+ii-1) = iocc
-            endif
- 44     continue
-        do 46 iocc = 1, ndim, 1
-            numg1 = zi(jsigrpas+2*iocc-2)
-            numg2 = zi(jsigrpas+2*iocc-1)
-            if (numg1 .eq. 2 .and. numg2 .eq. 2) then
-                ii = ii + 1
-                zi(jnsg+ii-1) = iocc
-            endif
- 46     continue
-        do 48 iocc = 1, ndim, 1
-            numg1 = zi(jsigrpas+2*iocc-2)
-            numg2 = zi(jsigrpas+2*iocc-1)
-            if (numg1 .eq. 2 .and. numg2 .eq. 3) then
-                ii = ii + 1
-                zi(jnsg+ii-1) = iocc
-            endif
- 48     continue
-        do 50 iocc = 1, ndim, 1
-            numg1 = zi(jsigrpas+2*iocc-2)
-            numg2 = zi(jsigrpas+2*iocc-1)
-            if (numg1 .eq. 3 .and. numg2 .eq. 3) then
-                ii = ii + 1
-                zi(jnsg+ii-1) = iocc
-            endif
- 50     continue
-        do 52 iocc = 1, ndim, 1
-            numg1 = zi(jsigrpas+2*iocc-2)
-            numg2 = zi(jsigrpas+2*iocc-1)
-            if (numg1 .eq. 1 .and. numg2 .eq. 3) then
-                ii = ii + 1
-                zi(jnsg+ii-1) = iocc
-            endif
- 52     continue
-        call jeecra(jexnum('&&RC3200.LES_GROUPES', nbgr), 'LONUTI', ii)
-    endif
-!
-    AS_DEALLOCATE(vi=nume_group)
+    call jedema()
 !
 end subroutine

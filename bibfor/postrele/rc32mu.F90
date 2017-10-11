@@ -57,7 +57,7 @@ subroutine rc32mu()
 !
     motclf = 'RESU_MECA_UNIT'
     call getfac(motclf, nb)
-!-- si on est en ZE200 ou B3200_T
+!
     if (nb .eq. 0) goto 999
 !
     prec = 1.0d-06

@@ -16,20 +16,20 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine rc32sp(ze200, lieu, iocc1, iocc2, ns,&
-                  sp, spmeca, instsp, nbsscyc, spss)
+subroutine rc32sn(ze200, lieu, iocc1, iocc2, ns, sn, instsn, snet,&
+                  sigmoypres, snther, sp3, spmeca3)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jedema.h"
 #include "asterfort/getvtx.h"
-#include "asterfort/rc32spa.h"
-#include "asterfort/rc32spb.h"
+#include "asterfort/rc32sna.h"
+#include "asterfort/rc32snb.h"
 
     character(len=4) :: lieu
-    integer :: iocc1, iocc2, ns, nbsscyc
-    real(kind=8) :: sp(2), instsp(4), spmeca(2), spss(100)
+    integer :: iocc1, iocc2, ns
+    real(kind=8) :: sn, instsn(4), snet, sigmoypres, snther, sp3, spmeca3
     aster_logical :: ze200
 !     OPERATEUR POST_RCCM, TRAITEMENT DE FATIGUE_ZE200
 !     CALCUL DU SN
@@ -38,23 +38,21 @@ subroutine rc32sp(ze200, lieu, iocc1, iocc2, ns,&
 ! IN  : LIEU   : ='ORIG' : ORIGINE DU SEGEMNT, ='EXTR' : EXTREMITE
 ! OUT : SN     : PARTIE B3200 du SN
 !
-    integer :: n1, k
+    integer :: n1
     character(len=8) :: methode
 
 !
 ! DEB ------------------------------------------------------------------
     call jemarq()
 !
-    do 10 k = 1,100
-        spss(k) = 0.d0
-10  continue
-    nbsscyc = 0
 !
     call getvtx(' ', 'METHODE', scal=methode, nbret=n1)
     if (methode .eq. 'TRESCA') then
-        call rc32spa(ze200, lieu, iocc1, iocc2, ns, sp, spmeca, instsp)
+        call rc32sna(ze200, lieu, iocc1, iocc2, ns, sn, instsn, snet,&
+                     sigmoypres, snther, sp3, spmeca3)
     else
-        call rc32spb(ze200, lieu, iocc1, iocc2, ns, sp, spmeca, instsp, nbsscyc, spss)
+        call rc32snb(ze200, lieu, iocc1, iocc2, ns, sn, instsn, snet,&
+                     sigmoypres, snther, sp3, spmeca3)
     endif
 !
     call jedema()
