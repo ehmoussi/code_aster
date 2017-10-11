@@ -813,27 +813,44 @@ implicit none
                     diad1f     , diad2f,&
                     fmads      , fm1ads, fm2ads)
     end do
-    call cafves(.true._1, tange, maxfa, nface, flks,&
-                dflks1, dflks2, mobwf, dw1f, dw2f,&
-                dw1ffa, dw2ffa, fluws, fw1s, fw2s)
-    call cafves(.true._1, tange, maxfa, nface, fgks,&
-                dfgks1, dfgks2, movpf, dvp1f, dvp2f,&
-                dvp1ff, dvp2ff, fluvps, fvp1s, fvp2s)
-    call cafves(.true._1, tange, maxfa, nface, ftgks,&
-                ftgks1, ftgks2, difuvp, divp1, divp2,&
-                divp1f, divp2f, fluvps, fvp1s, fvp2s)
-    call cafves(.true._1, tange, maxfa, nface, fgks,&
-                dfgks1, dfgks2, moasf, das1f, das2f,&
-                das1ff, das2ff, fluass, fas1s, fas2s)
-    call cafves(.true._1, tange, maxfa, nface, ftgks,&
-                ftgks1, ftgks2, difuas, dias1, dias2,&
-                dias1f, dias2f, fluass, fas1s, fas2s)
-    call cafves(.true._1, tange, maxfa, nface, flks,&
-                dflks1, dflks2, moadf, dad1f, dad2f,&
-                dad1ff, dad2ff, fluads, fad1s, fad2s)
-    call cafves(.true._1, tange, maxfa, nface, fclks,&
-                fclks1, fclks2, difuad, diad1, diad2,&
-                diad1f, diad2f, fluads, fad1s, fad2s)
+!
+! - Compute total "volumic" flux
+!
+    call cafves(tange , maxfa , nface ,&
+                flks  , dflks1, dflks2,&
+                mobwf , dw1f  , dw2f  ,&
+                dw1ffa, dw2ffa,&
+                fluws , fw1s  , fw2s)
+    call cafves(tange , maxfa , nface ,&
+                fgks  , dfgks1, dfgks2,&
+                movpf , dvp1f , dvp2f ,&
+                dvp1ff, dvp2ff,&
+                fluvps, fvp1s, fvp2s)
+    call cafves(tange , maxfa , nface ,&
+                ftgks , ftgks1, ftgks2,&
+                difuvp, divp1 , divp2 ,&
+                divp1f, divp2f,&
+                fluvps, fvp1s , fvp2s)
+    call cafves(tange , maxfa , nface ,&
+                fgks  , dfgks1, dfgks2,&
+                moasf , das1f , das2f ,&
+                das1ff, das2ff,&
+                fluass, fas1s , fas2s)
+    call cafves(tange , maxfa, nface,&
+                ftgks, ftgks1, ftgks2,&
+                difuas, dias1, dias2,&
+                dias1f, dias2f,&
+                fluass, fas1s, fas2s)
+    call cafves(tange , maxfa , nface ,&
+                flks  , dflks1, dflks2,&
+                moadf , dad1f , dad2f ,&
+                dad1ff, dad2ff,&
+                fluads, fad1s , fad2s)
+    call cafves(tange , maxfa , nface ,&
+                fclks , fclks1, fclks2,&
+                difuad, diad1 , diad2 ,&
+                diad1f, diad2f,&
+                fluads, fad1s , fad2s)
     if (cont) then
 ! ********************************************************************
 ! EQUATION DE LA CONTINUITE DES FLUX
