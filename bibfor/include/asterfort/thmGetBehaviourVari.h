@@ -15,33 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! person_in_charge: mickael.abbas at edf.fr
 !
-!
-! THM data structure : Parameters <-> integer definitions
-! -------------------------------------------------------------------------
-!
-
-! - Type of Biot coefficients
-#define BIOT_TYPE_ISOT   0
-#define BIOT_TYPE_ISTR   1
-#define BIOT_TYPE_ORTH   2
-! - Type of saturation
-#define SATURATED        0
-#define UNSATURATED      1
-#define SATURATED_SPEC   2
-! - Type of thermal conductivity
-#define THER_COND_ISOT   0
-#define THER_COND_ISTR   1
-#define THER_COND_ORTH   2
-! - Coupling laws
-#define NO_LAW           0
-#define LIQU_SATU        1
-#define GAZ              2
-#define LIQU_VAPE        3
-#define LIQU_VAPE_GAZ    4
-#define LIQU_GAZ         5
-#define LIQU_GAZ_ATM     6
-#define LIQU_AD_GAZ_VAPE 9
-#define LIQU_AD_GAZ      10
-
+interface 
+    subroutine thmGetBehaviourVari()
+    end subroutine thmGetBehaviourVari
+end interface 

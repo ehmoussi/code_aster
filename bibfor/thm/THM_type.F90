@@ -54,14 +54,45 @@ implicit none
 
 ! - Behaviour
     type THM_Behaviour
-! ----- Part of behaviour for coupling
+! ----- Name of behaviour law for coupling
         character(len=16) :: rela_thmc
-! ----- Part of behaviour for mechanic
+! ----- Name of behaviour law for mechanic
         character(len=16) :: rela_meca
-! ----- Part of behaviour for thermic
+! ----- Name of behaviour law for thermic
         character(len=16) :: rela_ther
-! ----- Part of behaviour for hydraulic
+! ----- Name of behaviour law for hydraulic
         character(len=16) :: rela_hydr
+! ----- Index of behaviour law for coupling
+        integer :: nume_thmc
+! ----- Index of behaviour law for mechanic
+        integer :: nume_meca
+! ----- Index of behaviour law for thermic
+        integer :: nume_ther
+! ----- Index of behaviour law for hydraulic
+        integer :: nume_hydr
+! ----- Total number of internal variables
+        integer :: nb_vari
+! ----- Number of internal variables for coupling
+        integer :: nb_vari_thmc
+! ----- Number of internal variables for mechanic
+        integer :: nb_vari_meca
+! ----- Number of internal variables for thermic
+        integer :: nb_vari_ther
+! ----- Number of internal variables for hydraulic
+        integer :: nb_vari_hydr
+! ----- advime: index of first internal variable for mechanic in internal variable vectors
+! ----- advith: index of first internal variable for thermic in internal variable vectors
+! ----- advihy: index of first internal variable for hydric in internal variable vectors
+! ----- advico: index of first internal variable for coupling in internal variable vectors
+! ----- vihrho: index of internal state variable for volumic mass of liquid
+! ----- vicphi: index of internal state variable for porosity
+! ----- vicpvp: index of internal state variable for pressure of steam
+! ----- vicsat: index of internal state variable for saturation
+! ----- vicpr1: index of internal state variable for saving capillary pressure (FV)
+! ----- vicpr2: index of internal state variable for saving gaz pressure (FV)
+        integer :: advime, advith, advihy, advico
+        integer :: vihrho, vicphi, vicpvp, vicsat
+        integer :: vicpr1, vicpr2
 ! ----- Flag for thermic
         aster_logical :: l_temp
 ! ----- Total number of pressures (0, 1 or 2)
