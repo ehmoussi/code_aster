@@ -440,17 +440,36 @@ implicit none
             dsde(i,j)=0.d0
         end do
     end do
-    call comthm_vf(option, perman, 0, valfac,&
-                valcen, j_mater, typmod, compor, crit,&
-                rinstm, rinstp, ndim, dimdef, dimcon,&
-                nbvari,&
-                addeme, adcome, addep1, adcp11, adcp12,&
-                addep2, adcp21, adcp22, addete, adcote,&
-                defgem, defgep, congem, congep, vintm(1, 1),&
-                vintp(1, 1), dsde, gravity, retcom, 1,&
-                1, angbid,&
-                thmc, hydr,&
-                advihy, advico, vihrho, vicphi, vicpvp, vicsat)
+!
+! - Compute generalized stresses and derivatives
+!
+    call comthm_vf(option     , j_mater    ,&
+                   typmod     , angbid     ,&
+                   ndim       , nbvari     ,&
+                   thmc       , hydr       ,&
+                   dimdef     , dimcon     ,&
+                   0          , valfac     , valcen,&
+                   adcome     , adcote     , adcp11, adcp12, adcp21, adcp22,&
+                   addeme     , addete     , addep1, addep2,&
+                   advico     , advihy     ,&
+                   vihrho     , vicphi     , vicpvp, vicsat,&
+                   compor     , crit       ,&
+                   defgem     , defgep     ,& 
+                   congem     , congep     ,& 
+                   vintm(1, 1), vintp(1, 1),& 
+                   rinstm     , rinstp     ,&
+                   dsde       , gravity    , retcom)
+    !call comthm_vf(option, perman, 0, valfac,&
+    !            valcen, j_mater, typmod, compor, crit,&
+    !            rinstm, rinstp, ndim, dimdef, dimcon,&
+    !            nbvari,&
+    !            addeme, adcome, addep1, adcp11, adcp12,&
+    !            addep2, adcp21, adcp22, addete, adcote,&
+    !            defgem, defgep, congem, congep, vintm(1, 1),&
+    !            vintp(1, 1), dsde, gravity, retcom, 1,&
+    !            1, angbid,&
+    !            thmc, hydr,&
+    !            advihy, advico, vihrho, vicphi, vicpvp, vicsat)
     if (retcom .ne. 0) then
         call utmess('F', 'COMPOR1_9')
     endif
@@ -481,17 +500,34 @@ implicit none
                 dsde(i,j)=0.d0
             end do
         end do
-        call comthm_vf(option, perman, fa, valfac,&
-                    valcen, j_mater, typmod, compor, crit,&
-                    rinstm, rinstp, ndim, dimdef, dimcon,&
-                    nbvari,&
-                    addeme, adcome, addep1, adcp11, adcp12,&
-                    addep2, adcp21, adcp22, addete, adcote,&
-                    defgem, defgep, congem, congep, vintm(1, fa+1),&
-                    vintp(1, fa+1), dsde, gravity, retcom, 1,&
-                    1, angbid,&
-                    thmc, hydr,&
-                    advihy, advico, vihrho, vicphi, vicpvp, vicsat)
+! ----- Compute generalized stresses and derivatives
+        call comthm_vf(option        , j_mater       ,&
+                       typmod        , angbid        ,&
+                       ndim          , nbvari        ,&
+                       thmc          , hydr          ,&
+                       dimdef        , dimcon        ,&
+                       fa            , valfac        , valcen,&
+                       adcome        , adcote        , adcp11, adcp12, adcp21, adcp22,&
+                       addeme        , addete        , addep1, addep2,&
+                       advico        , advihy        ,&
+                       vihrho        , vicphi        , vicpvp, vicsat,&
+                       compor        , crit          ,&
+                       defgem        , defgep        ,& 
+                       congem        , congep        ,& 
+                       vintm(1, fa+1), vintp(1, fa+1),& 
+                       rinstm        , rinstp        ,&
+                       dsde          , gravity       , retcom)
+   !     call comthm_vf(option, perman, fa, valfac,&
+   !                 valcen, j_mater, typmod, compor, crit,&
+   !                 rinstm, rinstp, ndim, dimdef, dimcon,&
+   !                 nbvari,&
+   !                 addeme, adcome, addep1, adcp11, adcp12,&
+   !                 addep2, adcp21, adcp22, addete, adcote,&
+   !                 defgem, defgep, congem, congep, vintm(1, fa+1),&
+   !                 vintp(1, fa+1), dsde, gravity, retcom, 1,&
+   !                 1, angbid,&
+   !                 thmc, hydr,&
+   !                 advihy, advico, vihrho, vicphi, vicpvp, vicsat)
         if (retcom .ne. 0) then
             call utmess('F', 'COMPOR1_9')
         endif

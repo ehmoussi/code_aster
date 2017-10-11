@@ -20,62 +20,47 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine comthm_vf(option, l_steady, ifa, valfac,&
-                      valcen, j_mater, typmod, compor, carcri,&
-                      instam, instap, ndim, dimdef, dimcon,&
-                      nbvari,&
-                      addeme, adcome, addep1, adcp11, adcp12,&
-                      addep2, adcp21, adcp22, addete, adcote,&
-                      defgem, defgep, congem, congep, vintm,&
-                      vintp, dsde, pesa, retcom, kpi,&
-                      npg, angl_naut,&
-                      thmc, hydr,&
-                      advihy, advico, vihrho, vicphi, vicpvp, vicsat)
-        integer, parameter :: maxfa=6
-        integer :: nbvari
-        integer :: dimcon
-        integer :: dimdef
-        integer :: ndim
-        character(len=16) :: option
-        aster_logical :: l_steady
-        integer :: ifa
-        real(kind=8) :: valfac(maxfa, 14, 6)
-        real(kind=8) :: valcen(14, 6)
-        integer :: j_mater
-        character(len=8) :: typmod(2)
-        character(len=16) :: compor(*)
-        real(kind=8) :: carcri(*)
-        real(kind=8) :: instam
-        real(kind=8) :: instap
-        integer :: addeme
-        integer :: adcome
-        integer :: addep1
-        integer :: adcp11
-        integer :: adcp12
-        integer :: addep2
-        integer :: adcp21
-        integer :: adcp22
-        integer :: addete
-        integer :: adcote
-        real(kind=8) :: defgem(1:dimdef)
-        real(kind=8) :: defgep(1:dimdef)
-        real(kind=8) :: congem(1:dimcon)
-        real(kind=8) :: congep(1:dimcon)
-        real(kind=8) :: vintm(1:nbvari)
-        real(kind=8) :: vintp(1:nbvari)
-        real(kind=8) :: dsde(1:dimcon, 1:dimdef)
-        real(kind=8) :: pesa(3)
-        integer :: retcom
-        integer :: kpi
-        integer :: npg
-        real(kind=8) :: angl_naut(3)
-        character(len=16), intent(in) :: thmc
-        character(len=16), intent(in) :: hydr
-        integer, intent(in) :: advihy
-        integer, intent(in) :: advico
-        integer, intent(in) :: vihrho
-        integer, intent(in) :: vicphi
-        integer, intent(in) :: vicpvp
-        integer, intent(in) :: vicsat
+    subroutine comthm_vf(option   , j_mater  ,&
+                         type_elem, angl_naut,&
+                         ndim     , nbvari   ,&
+                         thmc     , hydr     ,&
+                         dimdef   , dimcon   ,&
+                         ifa      , valfac   , valcen, &
+                         adcome   , adcote   , adcp11, adcp12, adcp21, adcp22,&
+                         addeme   , addete   , addep1, addep2,&
+                         advico   , advihy   ,&
+                         vihrho   , vicphi   , vicpvp  , vicsat,&
+                         compor   , carcri   ,&
+                         defgem   , defgep   ,& 
+                         congem   , congep   ,&
+                         vintm    , vintp    ,&
+                         time_prev, time_curr,&
+                         dsde     , gravity  , retcom)
+        character(len=16), intent(in) :: option
+        integer, intent(in) :: j_mater
+        character(len=8), intent(in) :: type_elem(2)
+        real(kind=8), intent(in) :: angl_naut(3)
+        character(len=16), intent(in) :: thmc, hydr
+        integer, intent(in) :: ndim, nbvari
+        integer, intent(in) :: dimdef, dimcon
+        integer, intent(in) :: adcome, adcote, adcp11, adcp12, adcp21, adcp22
+        integer, intent(in) :: addeme, addete, addep1, addep2
+        integer, intent(in) :: advihy, advico
+        integer, intent(in) :: vihrho, vicphi, vicpvp, vicsat
+        character(len=16), intent(in)  :: compor(*)
+        real(kind=8), intent(in) :: carcri(*)
+        real(kind=8), intent(in) :: defgem(1:dimdef), defgep(1:dimdef)
+        real(kind=8), intent(in) :: congem(1:dimcon)
+        real(kind=8), intent(inout) :: congep(1:dimcon)
+        real(kind=8), intent(in) :: vintm(1:nbvari)
+        real(kind=8), intent(inout) :: vintp(nbvari)
+        real(kind=8), intent(in) :: time_prev, time_curr
+        real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
+        real(kind=8), intent(out) :: gravity(3)
+        integer, intent(out) :: retcom
+        integer, intent(in) :: ifa
+        integer, parameter :: maxfa = 6
+        real(kind=8), intent(inout) :: valcen(14, 6)
+        real(kind=8), intent(inout) :: valfac(maxfa, 14, 6)
     end subroutine comthm_vf
 end interface 

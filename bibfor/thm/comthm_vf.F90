@@ -16,19 +16,24 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: sylvie.granet at edf.fr
-! aslint: disable=W1504, W1306
+! aslint: disable=W1504,W1306
 !
-subroutine comthm_vf(option, l_steady, ifa, valfac,&
-                     valcen, j_mater, typmod, compor, carcri,&
-                     instam, instap, ndim, dimdef, dimcon,&
-                     nbvari, &
-                     addeme, adcome, addep1, adcp11, adcp12,&
-                     addep2, adcp21, adcp22, addete, adcote,&
-                     defgem, defgep, congem, congep, vintm,&
-                     vintp, dsde, pesa, retcom, kpi,&
-                     npg, angl_naut,&
-                     thmc, hydr,&
-                     advihy, advico, vihrho, vicphi, vicpvp, vicsat)
+subroutine comthm_vf(option   , j_mater  ,&
+                     type_elem, angl_naut,&
+                     ndim     , nbvari   ,&
+                     thmc     , hydr     ,&
+                     dimdef   , dimcon   ,&
+                     ifa      , valfac   , valcen, &
+                     adcome   , adcote   , adcp11, adcp12, adcp21, adcp22,&
+                     addeme   , addete   , addep1, addep2,&
+                     advico   , advihy   ,&
+                     vihrho   , vicphi   , vicpvp, vicsat,&
+                     compor   , carcri   ,&
+                     defgem   , defgep   ,& 
+                     congem   , congep   ,&
+                     vintm    , vintp    ,&
+                     time_prev, time_curr,&
+                     dsde     , gravity  , retcom)
 !
 use THM_type
 use THM_module
@@ -54,128 +59,120 @@ implicit none
 #include "asterfort/thmEvalGravity.h"
 #include "asterfort/thmEvalConductivity.h"
 !
-character(len=16), intent(in) :: thmc
-character(len=16), intent(in) :: hydr
-integer, intent(in) :: advihy
-integer, intent(in) :: advico
-integer, intent(in) :: vihrho
-integer, intent(in) :: vicphi
-integer, intent(in) :: vicpvp
-integer, intent(in) :: vicsat
-
-! **********************************************************************
+character(len=16), intent(in) :: option
+integer, intent(in) :: j_mater
+character(len=8), intent(in) :: type_elem(2)
+real(kind=8), intent(in) :: angl_naut(3)
+character(len=16), intent(in) :: thmc, hydr
+integer, intent(in) :: ndim, nbvari
+integer, intent(in) :: dimdef, dimcon
+integer, intent(in) :: adcome, adcote, adcp11, adcp12, adcp21, adcp22
+integer, intent(in) :: addeme, addete, addep1, addep2
+integer, intent(in) :: advihy, advico
+integer, intent(in) :: vihrho, vicphi, vicpvp, vicsat
+character(len=16), intent(in)  :: compor(*)
+real(kind=8), intent(in) :: carcri(*)
+real(kind=8), intent(in) :: defgem(1:dimdef), defgep(1:dimdef)
+real(kind=8), intent(in) :: congem(1:dimcon)
+real(kind=8), intent(inout) :: congep(1:dimcon)
+real(kind=8), intent(in) :: vintm(1:nbvari)
+real(kind=8), intent(inout) :: vintp(nbvari)
+real(kind=8), intent(in) :: time_prev, time_curr
+real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
+real(kind=8), intent(out) :: gravity(3)
+integer, intent(out) :: retcom
+integer, intent(in) :: ifa
+integer, parameter :: maxfa = 6
+real(kind=8), intent(inout) :: valcen(14, 6)
+real(kind=8), intent(inout) :: valfac(maxfa, 14, 6)
 !
-! VERSION DU 07/06/99  ECRITE PAR PASCAL CHARLES
-! ROUTINE COMTHM
-! CALCULE LES CONTRAINTES GENERALISEES ET LA MATRICE TANGENTE AU POINT
-! DE GAUSS SUIVANT LES OPTIONS DEFINIES
+! --------------------------------------------------------------------------------------------------
 !
-! **********************************************************************
-!               CRIT    CRITERES  LOCAUX
-!                       CRIT(1) = NOMBRE D ITERATIONS MAXI A CONVERGENCE
-!                                 (ITER_INTE_MAXI == ITECREL)
-!                       CRIT(2) = TYPE DE JACOBIEN A T+DT
-!                                 (TYPE_MATR_COMP == MACOMP)
-!                                 0 = EN VITESSE     > SYMETRIQUE
-!                                 1 = EN INCREMENTAL > NON-SYMETRIQUE
-!                       CRIT(3) = VALEUR DE LA TOLERANCE DE CONVERGENCE
-!                                 (RESI_INTE_RELA == RESCREL)
-!                       CRIT(5) = NOMBRE D'INCREMENTS POUR LE
-!                                 REDECOUPAGE LOCAL DU PAS DE TEMPS
-!                                 (RESI_INTE_PAS == ITEDEC )
-!                                 0 = PAS DE REDECOUPAGE
-!                                 N = NOMBRE DE PALIERS
-! ======================================================================
-! IN OPTION : OPTION DE CALCUL
-! IN l_steady : TRUE SI l_steadyENT
-! IN VF : TRUE SI VOLUMES FINIS
-! IN IFA : UTILISE EN VF ET POUR LES VALEURS AUX ARETES
-!      -> NUMERO DE LA FACE. LES INFORMATIONS SONT STOCKES
-!       DS VALFAC(1:6,1:4,1:NBFACE)
-! VALFAC : SOCKAGE DES VALEURS CALSULEES AUX ARETES EN VF IFA!=0
-! DES VALEURS AU CENTRE
-! IN COMPOR : COMPORTEMENT
-! IN IMATE  : MATERIAU CODE
-! IN NDIM   : DIMENSION DE L'ESPACE
-! IN DIMDEF : DIMENSION DU TABLEAU DES DEFORMATIONS GENERALISEES
-!             AU POINT DE GAUSS CONSIDERE
-! IN DIMCON : DIMENSION DU TABLEAU DES CONTRAINTES GENERALISEES
-!             AU POINT DE GAUSS CONSIDERE
-! IN NBVARI : NOMBRE TOTAL DE VARIABLES INTERNES AU POINT DE GAUSS
-! IN ADDEME : ADRESSE DES DEFORMATIONS MECANIQUES
-! IN ADDEP1 : ADRESSE DES DEFORMATIONS CORRESPONDANT A LA PRESSION 1
-! IN ADDEP2 : ADRESSE DES DEFORMATIONS CORRESPONDANT A LA PRESSION 2
-! IN ADDETE : ADRESSE DES DEFORMATIONS THERMIQUES
-! IN ADCOME : ADRESSE DES CONTRAINTES MECANIQUES
-! IN ADCP11 : ADRESSE DES CONTRAINTES FLUIDE 1 PHASE 1
-! IN ADCP11 : ADRESSE DES CONTRAINTES FLUIDE 1 PHASE 2
-! IN ADCP11 : ADRESSE DES CONTRAINTES FLUIDE 2 PHASE 1
-! IN ADCP11 : ADRESSE DES CONTRAINTES FLUIDE 2 PHASE 2
-! IN ADCOTE : ADRESSE DES CONTRAINTES THERMIQUES
-! IN DEFGEM : DEFORMATIONS GENERALISEES A L'INSTANT MOINS
-! IN DEFGEP : DEFORMATIONS GENERALISEES A L'INSTANT PLUS
-! IN CONGEM : CONTRAINTES GENERALISEES A L'INSTANT MOINS
-! IN VINTM  : VARIABLES INTERNES A L'INSTANT MOINS
-! IN TYPMOD : MODELISATION (D_PLAN, AXI, 3D ?)
+! THM - Compute
 !
-! OUT CONGEP : CONTRAINTES GENERALISEES A L'INSTANT PLUS
-! OUT VINTP  : VARIABLES INTERNES A L'INSTANT PLUS
-! OUT DSDE   : MATRICE TANGENTE CONTRAINTES DEFORMATIONS
+! Compute generalized stresses and derivatives
 !
-! OUT RETCOM : RETOUR LOI DE COMPORTEMENT
+! --------------------------------------------------------------------------------------------------
 !
-    real(kind=8) :: valcen(14, 6)
-    integer :: maxfa
-    parameter     (maxfa=6)
-    real(kind=8) :: valfac(maxfa, 14, 6)
+! In  l_steady         : flag for no-transient problem
+! In  option           : name of option- to compute
+! In  j_mater          : coded material address
+! In  type_elem        : type of modelization (TYPMOD2)
+! In  angl_naut        : nautical angles
+! In  thmc             : coupling law
+! In  hydr             : hydraulic law
+! In  ndim             : dimension of space (2 or 3)
+! In  nbvari           : total number of internal state variables
+! In  dimdef           : dimension of generalized strains vector
+! In  dimcon           : dimension of generalized stresses vector
+! In  ifa              : index of current face
+! IO  valfac           : values at faces
+! IO  valcen           : values at nodes
+! In  adcome           : adress of mechanic components in generalized stresses vector
+! In  adcote           : adress of thermic components in generalized stresses vector
+! In  adcp11           : adress of first component and first phase in generalized stresses vector
+! In  adcp12           : adress of first component and second phase in generalized stresses vector
+! In  adcp21           : adress of second component and first phase in generalized stresses vector
+! In  adcp22           : adress of second component and second phase in generalized stresses vector
+! In  addeme           : adress of mechanic components in generalized strains vector
+! In  addete           : adress of thermic components in generalized strains vector
+! In  addep1           : adress of capillary pressure in generalized strains vector
+! In  addep2           : adress of gaz pressure in generalized strains vector
+! In  advico           : index of first internal state variable for coupling law
+! In  advihy           : index of internal state variable for hydraulic law 
+! In  vihrho           : index of internal state variable for volumic mass of liquid
+! In  vicphi           : index of internal state variable for porosity
+! In  vicpvp           : index of internal state variable for pressure of steam
+! In  vicsat           : index of internal state variable for saturation
+! In  compor           : behaviour
+! In  carcri           : parameters for comportment
+! In  defgem           : generalized strains - At begin of current step
+! In  defgep           : generalized strains - At end of current step
+! In  congem           : generalized stresses - At begin of current step
+! IO  congep           : generalized stresses - At end of current step
+! In  vintm            : internal state variables - At begin of current step
+! IO  vintp            : internal state variables - At end of current step
+! In  time_prev        : time at beginning of step
+! In  time_curr        : time at end of step
+! Out dsde             : derivative matrix stress/strain (behaviour only)
+! Out gravity          : gravity
+! Out retcom           : return code for error
+!
+! --------------------------------------------------------------------------------------------------
+!
     integer :: masse, dmasp1, dmasp2
-    integer :: eau, air
+    integer :: eau, air, kpi
     integer :: vkint, kxx, kyy, kzz, kxy, kyz, kzx
     parameter     (masse=10,dmasp1=11,dmasp2=12)
     parameter     (vkint=13)
     parameter     (kxx=1,kyy=2,kzz=3,kxy=4,kyz=5,kzx=6)
     parameter     (eau=1,air=2)
-    integer :: retcom, kpi, npg
-    integer :: ndim, dimdef, dimcon, nbvari, j_mater
-    integer :: addeme, addep1, addep2, addete
-    integer :: adcome, adcp11, adcp12, adcp21, adcp22, adcote
-    real(kind=8) :: defgem(1:dimdef), defgep(1:dimdef), congep(1:dimcon)
-    real(kind=8) :: congem(1:dimcon), vintm(1:nbvari), vintp(1:nbvari)
-    real(kind=8) :: dsde(1:dimcon, 1:dimdef), carcri(*), instam, instap
-    character(len=8) :: typmod(2)
-    character(len=16) :: compor(*), option
-    aster_logical :: l_steady
-    integer :: ifa
-! ======================================================================
-! --- VARIABLES LOCALES ------------------------------------------------
-! ======================================================================
-    real(kind=8) :: p1, dp1, grap1(3), p2, dp2, grap2(3), t, dt, grat(3)
+    real(kind=8) :: p1, dp1, grad_p1(3), p2, dp2, grad_p2(3), temp, dtemp, grad_temp(3)
     real(kind=8) :: phi, pvp, pad, h11, h12, rho11, epsv, deps(6), depsv
-    real(kind=8) :: mamolv
-    real(kind=8) :: tbiot(6), satur, dsatur, pesa(3)
+    real(kind=8) :: tbiot(6), satur, dsatur
     real(kind=8) :: tperm(ndim, ndim)
-    real(kind=8) :: lambp, dlambp, unsurk
-    real(kind=8) :: lambs, dlambs, viscl, dviscl
-    real(kind=8) :: viscg, dviscg, mamolg
-    real(kind=8) :: alpha
+    real(kind=8) :: lambp, dlambp
+    real(kind=8) :: lambs, dlambs
     real(kind=8) :: tlambt(ndim, ndim), tlamct(ndim, ndim), tdlamt(ndim, ndim)
     real(kind=8) :: deltat
-    real(kind=8) :: angl_naut(3)
     integer :: nume_thmc
-! ======================================================================
-! --- INITIALISATION ---------------------------------------------------
-! ======================================================================
-    retcom = 0
+    aster_logical :: l_steady
+!
+! --------------------------------------------------------------------------------------------------
+!
+    retcom   = 0
+    l_steady = ASTER_FALSE
+    kpi      = 1
 !
 ! - Update unknowns
 !
     call calcva(kpi   , ndim  ,&
                 defgem, defgep,&
-                addeme, addep1, addep2   , addete,&
-                depsv , epsv  , deps     ,&
-                t     , dt     , grat  ,&
-                p1    , dp1    , grap1 ,&
-                p2    , dp2    , grap2 ,&
+                addeme, addep1 , addep2   , addete,&
+                depsv , epsv   , deps     ,&
+                temp  , dtemp  , grad_temp,&
+                p1    , dp1    , grad_p1  ,&
+                p2    , dp2    , grad_p2  ,&
                 retcom)
     if (retcom .ne. 0) then
         goto 99
@@ -196,13 +193,13 @@ integer, intent(in) :: vicsat
 ! - Get elastic parameters
 !
     if (ds_thm%ds_elem%l_dof_meca .or. ds_thm%ds_elem%l_weak_coupling) then
-        call thmGetParaElas(j_mater, kpi, t, ndim)
+        call thmGetParaElas(j_mater, kpi, temp, ndim)
         call thmMatrHooke(angl_naut)
     endif
 !
 ! - Get thermic parameters
 !
-    call thmGetParaTher(j_mater, kpi, t)
+    call thmGetParaTher(j_mater, kpi, temp)
 !
 ! - Compute generalized stresses and matrix for coupled quantities
 !
@@ -217,8 +214,8 @@ integer, intent(in) :: vicsat
                 addeme  , addete   , addep1, addep2,&
                 advico  , advihy   ,&
                 vihrho  , vicphi   , vicpvp, vicsat,&
-                t       , p1       , p2    ,&
-                dt      , dp1      , dp2   ,&
+                temp    , p1       , p2    ,&
+                dtemp   , dp1      , dp2   ,&
                 deps    , epsv     , depsv ,&
                 tbiot   ,&
                 phi     , rho11    , satur ,&
@@ -231,34 +228,34 @@ integer, intent(in) :: vicsat
     endif
 !
     if (ifa.eq.0) then
-        deltat=instap-instam
+        deltat = time_curr-time_prev
         if ((option(1:9).eq.'FULL_MECA') .or. (option(1:9) .eq.'RAPH_MECA')) then
-            valcen(masse,eau)=( congep(adcp11)+congep(adcp12)-congem(adcp11)-congem(adcp12))/deltat
-            valcen(masse,air)=( congep(adcp21)+congep(adcp22)-congem(adcp21)-congem(adcp22))/deltat
+            valcen(masse,eau) = (congep(adcp11)+congep(adcp12)-congem(adcp11)-congem(adcp12))/deltat
+            valcen(masse,air) = (congep(adcp21)+congep(adcp22)-congem(adcp21)-congem(adcp22))/deltat
         endif
         if ((option(1:9) .eq. 'RIGI_MECA') .or. (option(1:9) .eq. 'FULL_MECA')) then
-            valcen(dmasp1, eau)= (dsde(adcp11, addep1)+ dsde(adcp12, addep1))/deltat
-            valcen(dmasp2, eau)= (dsde(adcp11, addep2)+ dsde(adcp12, addep2))/deltat
-            valcen(dmasp1, air)= (dsde(adcp22, addep1)+ dsde(adcp21, addep1))/deltat
-            valcen(dmasp2, air)= (dsde(adcp22, addep2)+ dsde(adcp21, addep2))/deltat
+            valcen(dmasp1, eau) = (dsde(adcp11, addep1)+ dsde(adcp12, addep1))/deltat
+            valcen(dmasp2, eau) = (dsde(adcp11, addep2)+ dsde(adcp12, addep2))/deltat
+            valcen(dmasp1, air) = (dsde(adcp22, addep1)+ dsde(adcp21, addep1))/deltat
+            valcen(dmasp2, air) = (dsde(adcp22, addep2)+ dsde(adcp21, addep2))/deltat
         endif
     endif
 !
-! ======================================================================
-! --- CALCUL DES GRANDEURS MECANIQUES PURES 
-!SI ON EST SUR UN POINT DE GAUSS (POUR L'INTEGRATION REDUITE)
-!  C'EST A DIRE SI KPI<NPG
-! ======================================================================
-    if (ds_thm%ds_elem%l_dof_meca .and. kpi .le. npg) then
-        call thmSelectMeca(p1    , dp1    , p2    , dp2   , satur, tbiot,&
-                           option, j_mater  , ndim  , typmod, angl_naut,&
-                           compor, carcri , instam, instap, dt       ,&
-                           addeme, addete , adcome, addep1, addep2   ,&
-                           dimdef, dimcon ,&
-                           defgem, deps   ,&
-                           congem, vintm  ,&
-                           congep, vintp  ,&
-                           dsde  , retcom)
+! - Main select subroutine to integrate mechanical behaviour
+!
+    if (ds_thm%ds_elem%l_dof_meca) then
+        call thmSelectMeca(p1       , dp1      ,&
+                           p2       , dp2      ,&
+                           satur    , tbiot    ,&
+                           option   , j_mater  , ndim  , type_elem, angl_naut,&
+                           compor   , carcri   ,&
+                           time_prev, time_curr, dtemp ,&
+                           addeme   , addete   , adcome, addep1   , addep2   ,&
+                           dimdef   , dimcon   ,&
+                           defgem   , deps     ,&
+                           congem   , vintm    ,&
+                           congep   , vintp    ,&
+                           dsde     , retcom)
         if (retcom .ne. 0) then
             goto 99
         endif
@@ -281,75 +278,61 @@ integer, intent(in) :: vicsat
     call thmGetPermeabilityTensor(ndim , angl_naut, j_mater, phi, vintp(1),&
                                   tperm)
 !
-! - Compute pesa
+! - Compute gravity
 !
-    call thmEvalGravity(j_mater, instap, pesa)
+    call thmEvalGravity(j_mater, time_curr, gravity)
 !
 ! - (re)-compute Biot tensor
 !
     call tebiot(angl_naut, tbiot)
 !
-! - Get parameters
+! - Set conductivities
 !
-    unsurk = ds_thm%ds_material%liquid%unsurk
-    alpha  = ds_thm%ds_material%liquid%alpha
-    viscl  = ds_thm%ds_material%liquid%visc
-    dviscl = ds_thm%ds_material%liquid%dvisc_dtemp
-    viscg  = ds_thm%ds_material%gaz%visc
-    dviscg = ds_thm%ds_material%gaz%dvisc_dtemp
-    mamolv = ds_thm%ds_material%steam%mass_mol
-    mamolg = ds_thm%ds_material%gaz%mass_mol
-!
-! CONDUCTIVITES EN VF
-!
-    if (ifa.eq.0) then
+    if (ifa .eq. 0) then
         if (ndim .eq. 3) then
-            valcen(vkint ,kxx)=tperm(1,1)
-            valcen(vkint ,kyy)=tperm(2,2)
-            valcen(vkint ,kzz)=tperm(3,3)
-            valcen(vkint ,kxy)=tperm(1,2)
-            valcen(vkint ,kyz)=tperm(1,3)
-            valcen(vkint ,kzx)=tperm(2,3)
+            valcen(vkint, kxx) = tperm(1,1)
+            valcen(vkint, kyy) = tperm(2,2)
+            valcen(vkint, kzz) = tperm(3,3)
+            valcen(vkint, kxy) = tperm(1,2)
+            valcen(vkint, kyz) = tperm(1,3)
+            valcen(vkint, kzx) = tperm(2,3)
         else
-            valcen(vkint ,kxx)=tperm(1,1)
-            valcen(vkint ,kyy)=tperm(1,1)
-            valcen(vkint ,kzz)=tperm(2,2)
-            valcen(vkint ,kxy)=tperm(1,2)
-            valcen(vkint ,kyz)=0.d0
-            valcen(vkint ,kzx)=0.d0
+            valcen(vkint, kxx) = tperm(1,1)
+            valcen(vkint, kyy) = tperm(1,1)
+            valcen(vkint, kzz) = tperm(2,2)
+            valcen(vkint, kxy) = tperm(1,2)
+            valcen(vkint, kyz) = 0.d0
+            valcen(vkint, kzx) = 0.d0
         endif
     endif
-! ======================================================================
-! --- CALCUL DES FLUX HYDRAULIQUES 
-! ======================================================================
+!
+! - Compute flux and stress for hydraulic
+!
     if (ds_thm%ds_elem%l_dof_pre1) then
         call calcfh_vf(nume_thmc,&
                        option, hydr  , j_mater, ifa,&
-                       t     , p1    , p2   , pvp, pad,&
-                       rho11 , h11   , h12  ,&
+                       temp  , p1    , p2     , pvp, pad,&
+                       rho11 , h11   , h12    ,&
                        satur , dsatur, & 
                        valfac, valcen)
         if (retcom .ne. 0) then
             goto 99
         endif
     endif
-! ======================================================================
-! --- CALCUL DU FLUX THERMIQUE 
-! ======================================================================
+!
+! - Compute flux and stress for thermic
+!
     if (ds_thm%ds_elem%l_dof_ther) then
         call calcft(option, thmc, ndim, dimdef,&
                     dimcon, addete,&
                     addeme, addep1, addep2, adcote, congep,&
-                    dsde, t, grat, phi, pvp,&
+                    dsde, temp, grad_temp, phi, pvp,&
                     tbiot, satur, dsatur, lambp,&
                     dlambp, lambs, dlambs, tlambt, tdlamt,&
                     tlamct, rho11, h11, h12,&
                     angl_naut)
-        if (retcom .ne. 0) then
-            goto 99
-        endif
     endif
-! ======================================================================
+!
 99  continue
-! ======================================================================
+!
 end subroutine
