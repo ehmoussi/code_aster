@@ -15,27 +15,41 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine inices(valcen, valfac, maxfa)
-    implicit none
+!
+subroutine inices(maxfa, valcen, valfac)
+!
+implicit none
+!
 #include "asterc/r8maem.h"
-    integer :: maxfa
-    real(kind=8) :: valcen(14, 6)
-    real(kind=8) :: valfac(maxfa, 14, 6)
 !
+integer, intent(in) :: maxfa
+real(kind=8), intent(out) :: valcen(14, 6)
+real(kind=8), intent(out) :: valfac(maxfa, 14, 6)
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
+!
+! THM - Compute (finite volume)
+!
+! Initialization of FV quantities
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  maxfa            : maximum number of faces
+! Out valfac           : values at faces
+! Out valcen           : values at nodes
+!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: i, j, k
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    do 10 i = 1, 14
-        do 11 j = 1, 6
+    do i = 1, 14
+        do j = 1, 6
             valcen(i,j)= r8maem()
-            do 12 k = 1, maxfa
+            do k = 1, maxfa
                 valfac(k,i,j)= r8maem()
-12          continue
-11      continue
-10  end do
+            end do
+        end do
+    end do
 end subroutine

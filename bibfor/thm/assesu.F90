@@ -276,7 +276,10 @@ implicit none
     iadp2k=2*nface+2
     adcm1 = 2*nface+1
     adcm2 = 2*nface+2
-    call inices(valcen, valfac, maxfa)
+!
+! - Initialization of FV quantities
+!
+    call inices(maxfa, valcen, valfac)
 !
     alpha = crit(18)
 !============================
