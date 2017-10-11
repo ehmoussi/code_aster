@@ -72,14 +72,12 @@ subroutine vmci1d(fami, kpg, ksp, imate, em,&
     data nomecl/'D_SIGM_EPSI','SY','SIGM_LIM','EPSI_LIM'/
 ! --------------------------------------------------------------------------------------------------
 !   instant -
-    call rcvalb(fami, kpg, ksp, '-', imate,&
-                materi, 'ECRO_LINE', 0, ' ', [0.d0],&
+    call rcvalb(fami, kpg, ksp, '-', imate, materi, 'ECRO_LINE', 0, ' ', [0.d0],&
                 1, nomecl, valres, icodre, 1)
     etm = valres(1)
     hm = em*etm/(em-etm)
 !   instant +
-    call rcvalb(fami, kpg, ksp, '+', imate,&
-                materi, 'ECRO_LINE', 0, ' ', [0.d0],&
+    call rcvalb(fami, kpg, ksp, '+', imate, materi, 'ECRO_LINE', 0, ' ', [0.d0],&
                 4, nomecl, valres, icodre, 1)
 !   vérification que SIGM_LIM, EPSI_LIM sont présents
     if (icodre(3)+icodre(4) .ne. 0) then

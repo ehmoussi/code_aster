@@ -1,0 +1,287 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='NON'),PAR_LOT='NON',)
+
+# Matériau évoluant en fonction de la température
+TempeRef = 20.0; TempeMax = 110.0
+Temp = [ TempeRef , 50.0 , 80.0 , TempeMax, ]
+Fcj  = [     40.0 , 35.0 , 35.0 ,  30.0, ]
+
+
+# Calcul des paramètres de MAZARS en utilisant DEFI_MATER_GC
+nomresELAS   = ['E','NU','ALPHA']
+nomresMAZARS = ['K','EPSD0','AC','AT','BC','BT','SIGM_LIM','EPSI_LIM']
+
+valCara = {}
+for jj in range(len(nomresELAS)):   valCara[nomresELAS[jj]] = []
+for jj in range(len(nomresMAZARS)): valCara[nomresMAZARS[jj]]  = []
+
+for ii in range(len(Temp)) :
+    DBETON = DEFI_MATER_GC(INFO=2,
+        MAZARS=_F(CODIFICATION='BAEL91', UNITE_CONTRAINTE="Pa", FCJ = Fcj[ii]*1.0E+06,),
+        ALPHA = 0.0,
+    )
+    valres, codret = DBETON.RCVALE('ELAS', [''], [0.0], nomresELAS, 2)
+    for jj in range(len(nomresELAS)):
+        valCara[nomresELAS[jj]].append( valres[jj] )
+    #
+    valres, codret = DBETON.RCVALE('MAZARS', [''], [0.0], nomresMAZARS, 2)
+    for jj in range(len(nomresMAZARS)):
+        valCara[nomresMAZARS[jj]].append( valres[jj] )
+    #
+    DETRUIRE(CONCEPT=_F(NOM=DBETON))
+
+
+lesCara = nomresELAS + nomresMAZARS
+
+# Fabrication des fonctions : PARA(temp)
+LFct = [None]*len(lesCara)
+LesFct={}
+for ii in range(len(lesCara)):
+    fct = ()
+    for jj in range(len(Temp)):
+        fct += (Temp[jj],valCara[lesCara[ii]][jj])
+    #
+    LFct[ii] = DEFI_FONCTION(TITRE=lesCara[ii],
+        NOM_PARA='TEMP',
+        VALE=fct,
+        PROL_DROITE='CONSTANT',
+        PROL_GAUCHE='CONSTANT',
+    )
+    LesFct[lesCara[ii]] = LFct[ii]
+
+
+BETON = DEFI_MATERIAU(
+    ELAS_FO=_F(E=LesFct['E'],NU=LesFct['NU'], ALPHA=LesFct['ALPHA'], TEMP_DEF_ALPHA=20.0),
+    MAZARS_FO=_F(
+        EPSD0    = LesFct['EPSD0'],
+        K        = LesFct['K'],
+        AC       = LesFct['AC'],
+        BC       = LesFct['BC'],
+        AT       = LesFct['AT'],
+        BT       = LesFct['BT'],
+        SIGM_LIM = LesFct['SIGM_LIM'],
+        EPSI_LIM = LesFct['EPSI_LIM'],
+    ),
+)
+
+# ---------------------------------------------------------- Début du calcul
+# lecture maillage lineique
+POUT=LIRE_MAILLAGE(UNITE=17,FORMAT='MED',);
+# lecture maillage section1
+MASEC=LIRE_MAILLAGE(UNITE=18,FORMAT='MED',);
+
+MOPOU=AFFE_MODELE(
+   MAILLAGE=POUT,
+   AFFE=_F(TOUT='OUI', PHENOMENE='MECANIQUE', MODELISATION='POU_D_EM',),);
+
+GF=DEFI_GEOM_FIBRE(
+   SECTION = _F(GROUP_FIBRE='SECF', MAILLAGE_SECT = MASEC , TOUT_SECT = 'OUI',COOR_AXE_POUTRE = (0.5, 0.5,)),
+)
+
+COMPF=DEFI_COMPOR(
+   GEOM_FIBRE=GF,MATER_SECT=BETON,
+   MULTIFIBRE=_F(GROUP_FIBRE='SECF',MATER=BETON, RELATION='MAZARS_GC'),
+)
+
+POUCA=AFFE_CARA_ELEM(
+   MODELE=MOPOU, INFO=1,
+   POUTRE=_F(GROUP_MA=('POUTRE'), SECTION='RECTANGLE', CARA=('H'), VALE=(1.0)),
+   ORIENTATION=_F(GROUP_MA=('POUTRE'), CARA='ANGL_VRIL', VALE=0.0,),
+   GEOM_FIBRE=GF,
+   MULTIFIBRE=_F(GROUP_MA='POUTRE', GROUP_FIBRE='SECF', PREC_AIRE=1.0E-05, PREC_INERTIE=2.6E-01),
+)
+
+
+LINST1=DEFI_LIST_REEL(
+   DEBUT=0.0,
+   INTERVALLE=(
+      _F(JUSQU_A=1.0,  NOMBRE=50,),
+      _F(JUSQU_A=2.0,  NOMBRE=50,),
+      _F(JUSQU_A=3.0,  NOMBRE=50,),
+      _F(JUSQU_A=4.0,  NOMBRE=50,),
+      _F(JUSQU_A=5.0,  NOMBRE=50,),
+      _F(JUSQU_A=6.0,  NOMBRE=50,),
+      _F(JUSQU_A=7.0,  NOMBRE=50,),),
+)
+
+
+TEMP_0=CREA_CHAMP(
+   TYPE_CHAM='NOEU_TEMP_R', OPERATION='AFFE', MAILLAGE=POUT, AFFE_SP=_F(CARA_ELEM=POUCA),
+   AFFE=_F(TOUT='OUI', NOM_CMP='TEMP', VALE= TempeRef,),
+)
+TEMP_1=CREA_CHAMP(
+   TYPE_CHAM='NOEU_TEMP_R', OPERATION='AFFE', MAILLAGE=POUT, AFFE_SP=_F(CARA_ELEM=POUCA),
+   AFFE=_F( TOUT='OUI', NOM_CMP='TEMP', VALE= TempeMax,),
+)
+
+CHTEMP=CREA_RESU(
+   OPERATION='AFFE',
+   TYPE_RESU='EVOL_THER',
+   NOM_CHAM='TEMP',
+   AFFE=(
+      _F(CHAM_GD=TEMP_0, INST=0.0,),
+      _F(CHAM_GD=TEMP_1, INST=5.0,),
+      _F(CHAM_GD=TEMP_1, INST=7.0,),
+   ),
+)
+
+CHMAT=AFFE_MATERIAU(
+    MAILLAGE=POUT,
+    AFFE=_F(GROUP_MA='POUTRE',MATER=BETON),
+    AFFE_COMPOR=_F(TOUT='OUI',COMPOR=COMPF),
+    AFFE_VARC=(
+        _F(TOUT='OUI',NOM_VARC='TEMP', EVOL=CHTEMP,VALE_REF=TempeRef),
+    ),
+)
+
+
+BLOCAGE=AFFE_CHAR_MECA(
+   MODELE=MOPOU,
+   DDL_IMPO=(
+      _F(GROUP_NO='A', DX=0.0, DY=0.0, DZ=0.0, DRX=0.0, DRY=0.0, DRZ=0.0,),
+      _F(GROUP_NO='B',         DY=0.0, DZ=0.0, DRX=0.0, DRY=0.0, DRZ=0.0,), ),
+)
+
+DEPLAC=AFFE_CHAR_MECA(
+   MODELE=MOPOU,
+   DDL_IMPO=_F(GROUP_NO='B', DX=1.E-4,),
+)
+
+FOFO1=DEFI_FONCTION(
+   NOM_PARA='INST',
+   VALE=(   0.0,       0.0,
+            1.0,       1.4,
+            2.0,       0.5,
+            3.0,      10.0,
+            4.0,     -40.0,
+            5.0,     -20.0,
+            6.0,     -50.0,
+            7.0,       0.0,),
+   PROL_DROITE='EXCLU',
+   PROL_GAUCHE='EXCLU',
+)
+
+
+
+U1MAZAR=STAT_NON_LINE(
+   MODELE=MOPOU,
+   CHAM_MATER=CHMAT,
+   CARA_ELEM=POUCA,
+   EXCIT=(
+      _F(CHARGE=BLOCAGE,),
+      _F(CHARGE=DEPLAC, FONC_MULT=FOFO1,),),
+   COMPORTEMENT=_F(RELATION='MULTIFIBRE', TOUT='OUI',),
+   INCREMENT=_F(LIST_INST=LINST1, ),
+   NEWTON=_F(MATRICE='TANGENTE',REAC_ITER=1,),
+)
+
+
+
+
+Resultat = [
+ ( 0.60,  2.8828728355E+06,  7.3182177638E-02,  3.0800000000E+01, ),
+ ( 1.00,  2.3133846636E+06,  5.4897304523E-01,  3.8000000000E+01, ),
+ ( 2.00,  7.7769639331E+05,  5.6772655029E-01,  5.6000000000E+01, ),
+ ( 3.00,  2.7014353939E+05,  9.9249219357E-01,  7.4000000000E+01, ),
+ ( 4.00, -2.3619458743E+07,  8.3253750892E-01,  9.2000000000E+01, ),
+ ( 5.00, -1.0456618119E+07,  8.4703386002E-01,  1.1000000000E+02, ),
+ ( 6.00, -1.5277297601E+07,  9.1060554314E-01,  1.1000000000E+02, ),
+]
+#
+# 'DOMMAGE'==V3 , 'TEMPMAX'==V7
+mclf = {}
+mclf['RESU'] = []
+for ii in range(len(Resultat)):
+    instant,sigma,dommage,tempmax = Resultat[ii]
+    mclf['RESU'].append(_F(RESULTAT=U1MAZAR,MAILLE='M1',POINT=1,SOUS_POINT=1,NOM_CMP='SIXX',INST=instant,
+                        VALE_CALC=sigma, VALE_REFE=sigma,
+                        NOM_CHAM='SIEF_ELGA', REFERENCE='ANALYTIQUE', CRITERE=('RELATIF','ABSOLU'), ), )
+    mclf['RESU'].append(_F(RESULTAT=U1MAZAR,MAILLE='M1',POINT=1,SOUS_POINT=1,NOM_CMP='V3',  INST=instant,
+                        VALE_CALC=dommage, VALE_REFE=dommage,
+                        NOM_CHAM='VARI_ELGA', REFERENCE='ANALYTIQUE', CRITERE=('RELATIF','ABSOLU'), ), )
+    mclf['RESU'].append(_F(RESULTAT=U1MAZAR,MAILLE='M1',POINT=1,SOUS_POINT=1,NOM_CMP='V7',  INST=instant,
+                        VALE_CALC=tempmax, VALE_REFE=tempmax,
+                        NOM_CHAM='VARI_ELGA', REFERENCE='ANALYTIQUE', CRITERE=('RELATIF'), ), )
+
+TEST_RESU(**mclf)
+
+
+"""
+# ==============================================================
+# COURBES POUR LES FIGURES DE LA DOCUMENTATION : EN COMMENTAIRE
+# ==============================================================
+# Table contenant les déplacements
+D1MAZAR = CREA_TABLE( RESU=_F(RESULTAT=U1MAZAR, NOM_CHAM='DEPL',TOUT='OUI',TOUT_CMP='OUI'), )
+# Table contenant les resultats en contrainte aux sous-points
+S1MAZAR = CREA_TABLE( RESU=_F(RESULTAT=U1MAZAR, NOM_CHAM='SIEF_ELGA',TOUT='OUI',TOUT_CMP='OUI'), )
+# Table contenant les resultats en variables aux sous-points
+V1MAZAR = CREA_TABLE( RESU=_F(RESULTAT=U1MAZAR, NOM_CHAM='VARI_ELGA',TOUT='OUI',TOUT_CMP='OUI'), )
+
+#fic = './REPE_OUT/contraintes_sous_points1.table'
+#unit = DEFI_FICHIER(FICHIER = fic, ACTION='ASSOCIER', TYPE='ASCII',ACCES='NEW')
+#IMPR_TABLE(UNITE=unit,TABLE=D1MAZAR,FORMAT='ASTER')
+#IMPR_TABLE(UNITE=unit,TABLE=S1MAZAR,FORMAT='ASTER')
+#IMPR_TABLE(UNITE=unit,TABLE=V1MAZAR,FORMAT='ASTER')
+#DEFI_FICHIER(UNITE = unit, ACTION='LIBERER',)
+#DETRUIRE(INFO=1,CONCEPT=(_F(NOM=unit,),),)
+
+
+fic = './REPE_OUT/courbes1.post'
+unit = DEFI_FICHIER(FICHIER = fic, ACTION='ASSOCIER', TYPE='ASCII',ACCES='NEW')
+# Beton
+DEPL = RECU_FONCTION(
+   TABLE=D1MAZAR, PARA_X='INST', PARA_Y='DX',
+   FILTRE =(
+      _F(NOM_PARA='NOEUD',      CRIT_COMP='EQ', VALE_K='N2'),),
+)
+CONBET1 = RECU_FONCTION(
+   TABLE=S1MAZAR, PARA_X='INST', PARA_Y='SIXX',
+   FILTRE =(
+      _F(NOM_PARA='MAILLE',     CRIT_COMP='EQ', VALE_K='M1'),
+      _F(NOM_PARA='POINT',      CRIT_COMP='EQ', VALE_I=  1),
+      _F(NOM_PARA='SOUS_POINT', CRIT_COMP='EQ', VALE_I=  1), ),
+)
+DOMMAGE = RECU_FONCTION(
+   TABLE=V1MAZAR, PARA_X='INST', PARA_Y='V3',
+   FILTRE =(
+      _F(NOM_PARA='MAILLE',     CRIT_COMP='EQ', VALE_K='M1'),
+      _F(NOM_PARA='POINT',      CRIT_COMP='EQ', VALE_I=  1),
+      _F(NOM_PARA='SOUS_POINT', CRIT_COMP='EQ', VALE_I=  1),),
+)
+TEMPMAX = RECU_FONCTION(
+   TABLE=V1MAZAR, PARA_X='INST', PARA_Y='V7',
+   FILTRE =(
+      _F(NOM_PARA='MAILLE',     CRIT_COMP='EQ', VALE_K='M1'),
+      _F(NOM_PARA='POINT',      CRIT_COMP='EQ', VALE_I=  1),
+      _F(NOM_PARA='SOUS_POINT', CRIT_COMP='EQ', VALE_I=  1), ),
+)
+IMPR_FONCTION(UNITE=unit,FORMAT='TABLEAU',FORMAT_R='E19.10',
+   COURBE=(
+      _F(FONCTION=DEPL), _F(FONCTION=CONBET1), _F(FONCTION=DOMMAGE), _F(FONCTION=TEMPMAX),
+   )
+)
+DEFI_FICHIER(UNITE = unit, ACTION='LIBERER',)
+DETRUIRE(INFO=1,CONCEPT=(_F(NOM=unit,),),)
+"""
+
+FIN()
+
+

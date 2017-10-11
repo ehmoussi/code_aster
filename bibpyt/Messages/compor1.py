@@ -91,8 +91,8 @@ localement via ITER_INTE_PAS.
 """),
 
    13 : _(u"""
-Les contraintes planes ou les modèles unidimensionnels avec la méthode DEBORST et les grandes déformations GDEF_LOG ou SIMO_MIEHE sont incompatibles. 
-Seules quelques lois de comportement qui ne nécessitent pas la méthode Deborst sont utilisables en grandes déformations. 
+Les contraintes planes ou les modèles unidimensionnels avec la méthode DEBORST et les grandes déformations GDEF_LOG ou SIMO_MIEHE sont incompatibles.
+Seules quelques lois de comportement qui ne nécessitent pas la méthode Deborst sont utilisables en grandes déformations.
 """),
 
     14: _(u"""
@@ -324,7 +324,7 @@ Il faut supprimer cette occurrence pour que le calcul fonctionne.
 
     61: _(u"""
 Vous utilisez un comportement élastique non-linéaire avec un état initial.
-Cet état initial ne sera pas pris en compte. 
+Cet état initial ne sera pas pris en compte.
 """),
 
     63 : _(u"""
@@ -356,6 +356,18 @@ Erreur dans le calcul du tenseur équivalent au sens de HILL.
     73: _(u"""
 Lors d'un calcul avec des poutres multifibres, il est nécessaire de renseigner le mot-clé
 AFFE_COMPOR dans AFFE_MATERIAU.
+"""),
+
+    74: _(u"""
+Vous utilisez la loi de comportement %(k1)s et vous avez définit la caractéristique matériau %(k2)s.
+Le champ %(k3)s n'existe pas, on ne peut donc pas en tenir compte.
+
+Pour prendre en compte l'effet de %(k3)s, déformation correspondante non nulle :
+- il faut donner %(k2)s et %(k3)s.
+
+Pour ne pas prendre en compte l'effet de %(k3)s, déformation correspondante nulle :
+- vous ne donnez pas la caractéristique %(k2)s (valeur par défaut nulle).
+- vous donnez la caractéristique %(k2)s, avec une valeur nulle pour le champ %(k3)s.
 """),
 
     75 : _(u""" == Paramètres de la loi %(k1)s ==
@@ -440,7 +452,7 @@ Vérifiez les valeurs de la fonction.
 """),
 
     92 : _(u"""
-Seule la modélisation 3D est disponible avec la loi d'endommagement de KIT_RGI. 
+Seule la modélisation 3D est disponible avec la loi d'endommagement de KIT_RGI.
 """),
 
     93 : _(u"""
@@ -450,10 +462,10 @@ La donnée de l'énergie de fissuration initiale G_INIT est trop élevée. Elle 
     94 : _(u"""
 La largeur de bande est trop grande par rapport à la longueur de la zone cohésive si bien que
 m=%(r1)f et p=%(r2)f ne respectent pas la contrainte m>p+2.
-"""),     
+"""),
 
     95 : _(u"""
-ITER_INTE_PAS ne peut admettre qu'une valeur positive pour un comportement MFRONT. 
+ITER_INTE_PAS ne peut admettre qu'une valeur positive pour un comportement MFRONT.
  """),
 
 
