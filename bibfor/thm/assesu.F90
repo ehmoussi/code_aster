@@ -773,35 +773,45 @@ implicit none
             dvp2ff(ifa) = valfac(ifa,dmobp2,wvap)
         endif
     end do
+!
+! - Compute "massic" flux
+!
     do ifa = 1, nface
-        call cafmes(ifa, .true._1, tange, maxfa, nface,&
-                    flks(ifa), dflks1, dflks2, mobwf(ifa), dw1f,&
-                    dw2f, dw1ffa, dw2ffa, fmws, fm1ws,&
-                    fm2ws)
-        call cafmes(ifa, .true._1, tange, maxfa, nface,&
-                    fgks(ifa), dfgks1, dfgks2, movpf(ifa), dvp1f,&
-                    dvp2f, dvp1ff, dvp2ff, fmvps, fm1vps,&
-                    fm2vps)
-        call cafmes(ifa, cont, tange, maxfa, nface,&
-                    ftgks(ifa), ftgks1, ftgks2, difuvp(ifa), divp1,&
-                    divp2, divp1f, divp2f, fmvps, fm1vps,&
-                    fm2vps)
-        call cafmes(ifa, .true._1, tange, maxfa, nface,&
-                    fgks(ifa), dfgks1, dfgks2, moasf(ifa), das1f,&
-                    das2f, das1ff, das2ff, fmass, fm1ass,&
-                    fm2ass)
-        call cafmes(ifa, cont, tange, maxfa, nface,&
-                    ftgks(ifa), ftgks1, ftgks2, difuas(ifa), dias1,&
-                    dias2, dias1f, dias2f, fmass, fm1ass,&
-                    fm2ass)
-        call cafmes(ifa, .true._1, tange, maxfa, nface,&
-                    flks(ifa), dflks1, dflks2, moadf(ifa), dad1f,&
-                    dad2f, dad1ff, dad2ff, fmads, fm1ads,&
-                    fm2ads)
-        call cafmes(ifa, cont, tange, maxfa, nface,&
-                    fclks(ifa), fclks1, fclks2, difuad(ifa), diad1,&
-                    diad2, diad1f, diad2f, fmads, fm1ads,&
-                    fm2ads)
+        call cafmes(ifa       , ASTER_TRUE, tange, maxfa, nface,&
+                    flks(ifa) , dflks1    , dflks2,&
+                    mobwf(ifa), dw1f      , dw2f  ,&
+                    dw1ffa    , dw2ffa    ,&
+                    fmws      , fm1ws     , fm2ws)
+        call cafmes(ifa       , ASTER_TRUE, tange, maxfa, nface,&
+                    fgks(ifa) , dfgks1    , dfgks2,&
+                    movpf(ifa), dvp1f     , dvp2f ,&
+                    dvp1ff    , dvp2ff    ,&
+                    fmvps     , fm1vps    , fm2vps)
+        call cafmes(ifa        , cont, tange, maxfa, nface,&
+                    ftgks(ifa) , ftgks1, ftgks2,&
+                    difuvp(ifa), divp1 , divp2 ,&
+                    divp1f     , divp2f,&
+                    fmvps      , fm1vps, fm2vps)
+        call cafmes(ifa       , ASTER_TRUE, tange, maxfa, nface,&
+                    fgks(ifa) , dfgks1    , dfgks2,&
+                    moasf(ifa), das1f     , das2f ,&
+                    das1ff    , das2ff    ,&
+                    fmass     , fm1ass    , fm2ass)
+        call cafmes(ifa        , cont, tange, maxfa, nface,&
+                    ftgks(ifa) , ftgks1, ftgks2,&
+                    difuas(ifa), dias1 , dias2 ,&
+                    dias1f     , dias2f,&
+                    fmass      , fm1ass, fm2ass)
+        call cafmes(ifa       , ASTER_TRUE, tange, maxfa, nface,&
+                    flks(ifa) , dflks1    , dflks2,&
+                    moadf(ifa), dad1f     , dad2f ,&
+                    dad1ff    , dad2ff    ,&
+                    fmads     , fm1ads    , fm2ads)
+        call cafmes(ifa        , cont, tange, maxfa, nface,&
+                    fclks(ifa) , fclks1, fclks2,&
+                    difuad(ifa), diad1 , diad2 ,&
+                    diad1f     , diad2f,&
+                    fmads      , fm1ads, fm2ads)
     end do
     call cafves(.true._1, tange, maxfa, nface, flks,&
                 dflks1, dflks2, mobwf, dw1f, dw2f,&

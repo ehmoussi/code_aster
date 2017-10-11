@@ -15,31 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine cafmes(ifa, cont, tange, maxfa, nface,&
-                      fkss, dfks1, dfks2, mobfas, dmob1,&
-                      dmob2, dmob1f, dmob2f, fmw, fm1w,&
-                      fm2w)
-        integer :: maxfa
-        integer :: ifa
-        aster_logical :: cont
-        aster_logical :: tange
-        integer :: nface
-        real(kind=8) :: fkss
-        real(kind=8) :: dfks1(1+maxfa, maxfa)
-        real(kind=8) :: dfks2(1+maxfa, maxfa)
-        real(kind=8) :: mobfas
-        real(kind=8) :: dmob1(1:maxfa)
-        real(kind=8) :: dmob2(1:maxfa)
-        real(kind=8) :: dmob1f(1:maxfa)
-        real(kind=8) :: dmob2f(1:maxfa)
-        real(kind=8) :: fmw(1:maxfa)
-        real(kind=8) :: fm1w(1+maxfa, maxfa)
-        real(kind=8) :: fm2w(1+maxfa, maxfa)
+    subroutine cafmes(ifa   , l_resi, l_matr, maxfa, nface,&
+                      fkss  , dfks1 , dfks2 ,&
+                      mobfas, dmob1 , dmob2 ,&
+                      dmob1f, dmob2f,&
+                      fmw   , fm1w  , fm2w)
+        aster_logical, intent(in) :: l_matr, l_resi
+        integer, intent(in) :: ifa, maxfa, nface
+        real(kind=8), intent(in) :: fkss, dfks1(1+maxfa, maxfa), dfks2(1+maxfa, maxfa)
+        real(kind=8), intent(in) :: mobfas,  dmob1(1:maxfa), dmob2(1:maxfa)
+        real(kind=8), intent(in) :: dmob2f(1:maxfa), dmob1f(1:maxfa)
+        real(kind=8), intent(out) :: fmw(1:maxfa), fm1w(1+maxfa, maxfa), fm2w(1+maxfa, maxfa)
     end subroutine cafmes
 end interface
