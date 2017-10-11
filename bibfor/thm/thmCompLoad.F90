@@ -94,8 +94,7 @@ implicit none
 !
 ! - Get dimensions about element
 !
-    call thmGetElemDime(l_vf     ,&
-                        ndim     , nnos   , nnom   ,&
+    call thmGetElemDime(ndim     , nnos   , nnom   ,&
                         mecani   , press1 , press2 , tempe ,&
                         nddls    , nddlm  ,&
                         nddl_meca, nddl_p1, nddl_p2,&
