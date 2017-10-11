@@ -28,7 +28,7 @@ implicit none
 #include "asterc/ismaem.h"
 #include "asterfort/assert.h"
 #include "asterfort/assthm.h"
-#include "asterfort/caethm.h"
+#include "asterfort/thmGetElemPara.h"
 #include "asterfort/thmGetParaOrientation.h"
 #include "asterfort/jevech.h"
 #include "asterfort/Behaviour_type.h"
@@ -48,13 +48,13 @@ character(len=16), intent(in) :: option
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: codret
-    integer :: ibid, i_dimuel, ibid2, ibid3, ibid4
+    integer :: i_dimuel
     real(kind=8) :: angl_naut(3)
     integer :: jv_sigm, jv_vari, jv_disp
     integer :: jv_geom, jv_matr, jv_vect, jv_sigmm, jv_varim, jv_cret
     integer :: jv_mater, jv_instm, jv_instp, jv_dispm
     integer :: jv_dispp, jv_compor, jv_carcri, jv_varip, jv_sigmp
-    aster_logical :: l_axi, l_steady, l_vf
+    aster_logical :: l_axi, l_steady
     character(len=3) :: inte_type
     integer :: mecani(5), press1(7), press2(7), tempe(5)
     integer :: dimdep, dimdef, dimcon, dimuel
@@ -62,23 +62,24 @@ character(len=16), intent(in) :: option
     integer :: ndim, nno, nnos
     integer :: npi, npg, nbvari
     integer :: jv_poids, jv_func, jv_dfunc, jv_poids2, jv_func2, jv_dfunc2, jv_gano
-    character(len=8) :: typmod(2)
+    character(len=8) :: type_elem(2)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     codret     = 0
 !
-! - Get parameters
+! - Get all parameters for current element
 !
-    ibid = 0
-    call caethm(l_axi, l_steady, l_vf,&
-                typmod, inte_type, mecani, press1, press2,&
-                tempe, dimdep, dimdef, dimcon, nddl_meca,&
-                nddl_p1, nddl_p2, ndim, nno, nnos,&
-                ibid, npi, npg, nddls,&
-                nddlm, ibid2, ibid3, dimuel, jv_poids,&
-                jv_func, jv_dfunc, jv_poids2, jv_func2, jv_dfunc2,&
-                ibid4, jv_gano)
+    call thmGetElemPara(l_axi    , l_steady ,&
+                        type_elem, inte_type, ndim     ,&
+                        mecani   , press1   , press2   , tempe  ,&
+                        dimdep   , dimdef   , dimcon   , dimuel ,&
+                        nddls    , nddlm    , nddl_meca, nddl_p1, nddl_p2,&
+                        nno      , nnos     ,&
+                        npi      , npg      ,&
+                        jv_poids , jv_func  , jv_dfunc ,&
+                        jv_poids2, jv_func2 , jv_dfunc2,&
+                        jv_gano)
 !
 ! - Input fields
 !
@@ -139,7 +140,7 @@ character(len=16), intent(in) :: option
 !
     call assthm(option         , zi(jv_mater) ,&
                 l_axi          , l_steady     ,&
-                typmod         , inte_type    , angl_naut,&
+                type_elem      , inte_type    , angl_naut,&
                 ndim           , nbvari       ,&
                 nno            , nnos         ,&
                 npg            , npi          ,&
