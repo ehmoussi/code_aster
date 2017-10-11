@@ -61,9 +61,6 @@ character(len=16), intent(in) :: option, nomte
     character(len=8) :: type_elem(2)
     integer :: li
     aster_logical :: l_axi, l_vf, l_steady
-    integer :: nconma, ndefma
-    parameter (nconma=31,ndefma=21)
-    real(kind=8) :: dsde(nconma, ndefma)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -115,24 +112,38 @@ character(len=16), intent(in) :: option, nomte
         endif
         retloi = 0
         if (option(1:14) .eq. 'RIGI_MECA_TANG') then
-            call assesu(nno, nnos, nface, zr(igeom), zr(icarcr),&
-                        zr( ideplm), zr(ideplm), zr(icontm), zr(icontm), zr(ivarim),&
-                        zr( ivarim), defgem, defgem, dsde, zr(imatuu),&
-                        zr(ivectu), zr(iinstm), zr(iinstp), option, zi(imate),&
-                        mecani, press1, press2, tempe, dimdef,&
-                        dimcon, dimuel, nbvari, ndim, zk16( icompo),&
-                        type_elem, l_axi, l_steady)
+            call assesu(option      , zi(imate) ,&
+                        type_elem   ,&
+                        ndim        , nbvari    ,&
+                        nno         , nnos      , nface ,&
+                        dimdef      , dimcon    , dimuel,&
+                        mecani      , press1    , press2, tempe,&
+                        zk16(icompo), zr(icarcr),&
+                        zr(igeom)   ,&
+                        zr(ideplm)  , zr(ideplm),&
+                        defgem      , defgep    ,& 
+                        zr(icontm)  , zr(icontm),&
+                        zr(ivarim)  , zr(ivarim),&
+                        zr(iinstm)  , zr(iinstp),& 
+                        zr(imatuu)  , zr(ivectu))
         else
             do li = 1, dimuel
                 zr(ideplp+li-1) = zr(ideplm+li-1) + zr(ideplp+li-1)
             end do
-            call assesu(nno, nnos, nface, zr(igeom), zr(icarcr),&
-                        zr( ideplm), zr(ideplp), zr(icontm), zr(icontp), zr(ivarim),&
-                        zr( ivarip), defgem, defgep, dsde, zr(imatuu),&
-                        zr(ivectu), zr(iinstm), zr(iinstp), option, zi(imate),&
-                        mecani, press1, press2, tempe, dimdef,&
-                        dimcon, dimuel, nbvari, ndim, zk16( icompo),&
-                        type_elem, l_axi, l_steady)
+            call assesu(option      , zi(imate) ,&
+                        type_elem   ,&
+                        ndim        , nbvari    ,&
+                        nno         , nnos      , nface ,&
+                        dimdef      , dimcon    , dimuel,&
+                        mecani      , press1    , press2, tempe,&
+                        zk16(icompo), zr(icarcr),&
+                        zr(igeom)   ,&
+                        zr(ideplm)  , zr(ideplp),&
+                        defgem      , defgep    ,& 
+                        zr(icontm)  , zr(icontp),&
+                        zr(ivarim)  , zr(ivarip),&
+                        zr(iinstm)  , zr(iinstp),& 
+                        zr(imatuu)  , zr(ivectu))
             zi(jcret) = retloi
         endif
     endif
