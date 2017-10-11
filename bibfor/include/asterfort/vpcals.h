@@ -23,7 +23,8 @@
 interface
     subroutine vpcals(eigsol, vecrer, vecrei, vecrek, vecvp, matopa, mxresf, neqact, nblagr,&
                       omemax, omemin, omeshi, solveu, vecblo, veclag, sigma,&
-                      npivot, flage, nconv, vpinf, vpmax, mod45)
+                      npivot, flage, nconv, vpinf, vpmax, mod45b,&
+                      vecstb, vecedd, nbddl, vecsdd, nbddl2, csta)
         character(len=19) , intent(in)    :: eigsol
         character(len=24) , intent(in)    :: vecrer
         character(len=24) , intent(in)    :: vecrei
@@ -46,6 +47,12 @@ interface
         integer           , intent(out)   :: nconv
         real(kind=8)      , intent(out)   :: vpinf
         real(kind=8)      , intent(out)   :: vpmax
-        character(len=4)  , intent(in)    :: mod45
+        character(len=4)  , intent(in)    :: mod45b
+        character(len=24) , intent(in)    :: vecstb
+        character(len=24) , intent(in)    :: vecedd
+        integer           , intent(in)    :: nbddl
+        character(len=24) , intent(in)    :: vecsdd
+        integer           , intent(in)    :: nbddl2
+        real(kind=8)      , intent(out)   :: csta
     end subroutine vpcals
 end interface

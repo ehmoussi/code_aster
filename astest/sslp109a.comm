@@ -72,7 +72,7 @@ CH_U4  = AFFE_CHAR_CINE( MODELE    = MO,
                                          DY        =  0.,)
                         )
 
-EVOL   = STAT_NON_LINE( MODELE     = MO,
+EVOL   = STAT_NON_LINE( MODELE     = MO,INFO=1,
                         CHAM_MATER = CHMAT,
                         EXCIT      = ( _F( CHARGE       = CH_U1),
                                        _F( CHARGE       = CH_U2,

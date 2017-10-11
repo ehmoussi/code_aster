@@ -21,7 +21,7 @@ subroutine vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
                   nfreqg, modes, typcon, compex, eigsol,&
                   matopa, matpsc, solveu, vecblo, veclag,&
                   flage, icom1, icom2, mpicou, mpicow,&
-                  omemax, omemin, vpinf, vpmax, lcomod, mod45)
+                  omemax, omemin, vpinf, vpmax, lcomod, mod45b)
 !
 ! ROUTINE ORGANISANT LES POST-TRAITEMENTS ET NETTOYAGES GENERAUX D'OP0045.
 ! RQ. ON DETRUITS LES OBJETS GLOBAUX VECBLO, VECLAG ET, SUIVANT LES CAS, VECRIG, SUR BASE VOLATILE.
@@ -55,7 +55,7 @@ subroutine vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
 !
     integer, intent(in) :: nbpark, nbpari, nbparr, mxresf, nconv, nblagr
     integer, intent(in) :: nfreqg
-    character(len=4), intent(in) :: mod45
+    character(len=4), intent(in) :: mod45b
     character(len=8), intent(in) :: modes
     character(len=16), intent(in) :: typcon, compex
     character(len=19), intent(in) :: eigsol, matopa, matpsc, solveu
@@ -176,7 +176,7 @@ subroutine vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
         call vppara(modes, typcon, knega, lraide, lmasse,&
                     lamor, mxresf, neq, nconv, omecor,&
                     zi(lddl), zi(lprod), zr(lvec), [czero], nbpari,&
-                    nparr, nbpark, nopara, mod45, zi(lresui),&
+                    nparr, nbpark, nopara, mod45b, zi(lresui),&
                     zr(lresur), zk24(lresuk), ktyp, lcomod, icom1,&
                     icom2, typres, nfreqg)
     else
@@ -186,17 +186,17 @@ subroutine vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
         call vppara(modes, typcon, knega, lraide, lmasse,&
                     lamor, mxresf, neq, nconv, omecor,&
                     zi(lddl), zi(lprod), [rbid], zc(lvec), nbpari,&
-                    nparr, nbpark, nopara, mod45, zi(lresui),&
+                    nparr, nbpark, nopara, mod45b, zi(lresui),&
                     zr(lresur), zk24(lresuk), ktyp, lcomod, ibid,&
                     ibid, k16bid, ibid)
     endif
 !
 !
 ! --  IMPRESSIONS LIEES A LA METHODE
-    if ((mod45(1:4).eq.'OP45').or.(niv.ge.2))&
+    if ((mod45b(1:4).eq.'OP45').or.(niv.ge.2))&
       call vpwecf(k1blan, typres, nconv, mxresf, zi(lresui),&
                   zr(lresur), zk24(lresuk), lamor, ktyp, lns)
-    if (mod45(1:4).eq.'OP45') call titre()
+    if (mod45b(1:4).eq.'OP45') call titre()
 !
 ! --  CONTROLE DE VALIDITE DES MODES CALCULES
     if (sturm(1:3) .eq. 'NON') then
@@ -217,13 +217,17 @@ subroutine vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
     lmat(3) = lmtpsc
 ! --  SI ON MANIPULE DEUX MATRICES DYNAMIQUES (MATOPA/MATPSC), ON SE DEBARASSE DE CELLE INUTILE
 !     (MATRICE + FACTORISEE EVENTUELLE) ET DE SON EVENTUELLE OCCURENCE EXTERNE (MUMPS)
-    if ((lmtpsc.ne.lmatra) .and. (lmatra.ne.0)) call detrsd('MATR_ASSE', matopa)
+    if ((lmtpsc.ne.lmatra) .and. (lmatra.ne.0)) then
+      call detrsd('MATR_ASSE', matopa)
+      call jedetr(matopa(1:19)//'.&INT')
+      call jedetr(matopa(1:19)//'.&IN2')
+    endif
 !
 ! --  PARALLELISME MULTI-NIVEAUX STEP 4
     call vpmpi(4, k19bid, ibid, ibid, lcomod,&
                mpicou, mpicow, ibid, ibid, ibid,&
                omemax, omemin, vpinf, vpmax)
-    if (mod45(1:4).eq.'OP45') then
+    if (mod45b(1:4).eq.'OP45') then
 !
 ! --  ON PASSE DANS LE MODE "VALIDATION DU CONCEPT EN CAS D'ERREUR"
         call onerrf('EXCEPTION+VALID', k16bid, ibid)
@@ -248,24 +252,27 @@ subroutine vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
         call onerrf(compex, k16bid, ibid)
     endif
 !
-! --  DESTRUCTION DE LA MATRICE DYNAMIQUE RESTANTE (VRAI MATPSC DISSOSSIEE DE MATOPA OU
+! --  DESTRUCTION DE LA MATRICE DYNAMIQUE RESTANTE (VRAI MATPSC DISSOSIEE DE MATOPA OU
 ! --  MATPSC POINTANT SUR MATOPA D'OU LA RECONSTRUCTION DE NOM CI-DESSOUS
     if (lmtpsc .ne. 0) then
       k19bid=zk24(zi(lmtpsc+1))(1:19)
       call detrsd('MATR_ASSE', k19bid)
+      call jedetr(k19bid//'.&INT')
+      call jedetr(k19bid//'.&IN2')
     endif
 !
 ! -- NETTOYAGE DES OBJETS JEVEUX GLOBAUX DE L'OPERATEUR DE LA BASE VOLATILE
-    if (mod45(1:4).eq.'OP45') then
+    if (mod45b(1:4).eq.'OP45') then
       call detrsd('SOLVEUR',solveu)
       call detrsd('EIGENSOLVER',eigsol)
+      call jedetr(vecblo)
+      call jedetr(veclag)
+      call jedetr(vecrer)
+      call jedetr(vecrei)
+      call jedetr(vecrek)
+      call jedetr(vecvp)
     endif
-    call jedetr(vecblo)
-    call jedetr(veclag)
-    call jedetr(vecrer)
-    call jedetr(vecrei)
-    call jedetr(vecrek)
-    call jedetr(vecvp)
+
     call jedema()
 !
 !     FIN DE VPPOST

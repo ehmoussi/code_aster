@@ -28,9 +28,11 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
 #include "asterfort/infdbg.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
+#include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/onerrf.h"
+#include "asterfort/vecini.h"
 #include "asterfort/vpcals.h"
 #include "asterfort/vpecri.h"
 #include "asterfort/vpini1.h"
@@ -49,17 +51,8 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
     character(len=24) , intent(in) :: ddlexc, ddlsta
 !
 ! ======================================================================
-!        MODE_ITER_SIMULT
-!        RECHERCHE DE MODES PAR ITERATION SIMULTANEE EN SOUS-ESPACE
-!-----------------------------------------------------------------------
-!        - POUR LE PROBLEME GENERALISE AUX VALEURS PROPRES :
-!                         2
-!                        L (M) Y  + (K) Y = 0
-!
-!          LES MATRICES (K) ET (M) SONT REELLES SYMETRIQUES
-!          LES VALEURS PROPRES ET VECTEURS PROPRES SONT REELS
-!          PERIMETRE ACTUEL: GEP SYMETRIQUE REEL AVEC SORENSEN
-!          SEQUENTIEL AU NIVEAU SOLVEUR MODAL, PAS DE POST-VERIFICATION
+!        ROUTINE DE CALCUL DE CRITERE DE STABILITE VIA UNE RESOLUTION
+!        DE GEP (PARTAGEE AVEC OP0045).
 !-----------------------------------------------------------------------
 !   IN : EIGSOL : SD EIGENSOLVER CONTENANT LES PARAMETRES DU PB MODAL
 !   IN : DEFO   : TYPE DE DEFORMATIONS
@@ -80,14 +73,16 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
     integer :: nbpari, nbparr, nbpark
     parameter (nbpari=8,nbparr=16,nbpark=3)
 !
-    integer           :: iret, ibid, npivot, neqact, mxresf, nblagr
-    integer           :: nconv, ifm, niv
-    real(kind=8)      :: omemin, omemax, omeshi, vpinf, vpmax, r8bid
+    integer           :: iret, ibid, npivot, neqact, mxresf, nblagr,nbddl, nbddl2, un, lresur
+    integer           :: nconv, ifm, niv, neq, lraide, eddl, jexx, eddl2, jest, jstab, iauxr
+    real(kind=8)      :: omemin, omemax, omeshi, vpinf, vpmax, r8bid, csta
     complex(kind=8)   :: cbid
+    character(len=4)  :: mod45b
     character(len=8)  :: method
-    character(len=16) :: typcon, k16bid
+    character(len=16) :: typcon, typco2, k16bid
     character(len=19) :: matopa, solveu, raide
-    character(len=24) :: k24bid, vecblo, veclag, vecrer, vecrei, vecrek, vecvp
+    character(len=24) :: k24bid, vecblo, veclag, vecrer, vecrei, vecrek, vecvp, vecstb
+    character(len=24) :: vecedd, vecsdd, vecstab
     aster_logical     :: lbid, lcomod, checksd
     mpi_int           :: mpibid
     aster_logical     :: flage
@@ -115,6 +110,7 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
 !
     checksd=.true. 
     call vpvers(eigsol, modes, checksd)
+    call vpvers(eigsol, modes2, checksd)
 
 ! ---  TRAITEMENTS NUMERIQUES (SOLVEUR LINEAIRE, LAGRANGE, MODES RIGIDES, 
 ! ---  BORNES DE TRAVAIL EFFECTIVES, CALCUL DU NOMBRE DE MODES, FACTO. MATRICE SHIFTEE
@@ -130,6 +126,7 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
     call vpini1(eigsol, modes, solveu, typcon, vecblo, veclag, k24bid, matopa, matopa, iret,&
                 nblagr, neqact, npivot, ibid, omemax, omemin, omeshi, cbid, mod45)
     if (iret.ne.0) goto 80
+    
 !
 ! --- CREATION ET INITIALISATION DES SDS RESULTATS
 !
@@ -139,97 +136,132 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
     vecvp  = '&&NMOP45.VECTEUR_PROPRE'
     call vpini2(eigsol, lcomod, ibid, ibid, nbpark,&
                 nbpari, nbparr, vecrer, vecrei, vecrek, vecvp, mxresf)
-!
-! --- CALCUL MODAL PROPREMENT DIT
-!
+
+! --- LECTURE TYPE DE SOLVEUR MODAL
     call vpleci(eigsol, 'K', 6, k24bid, r8bid, ibid)
     method=''
     method=trim(k24bid)
-    select case (method)
-    case('SORENSEN')
-        call vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
+    if (((mod45(1:4).eq.'FLAM').and.(defo.eq.0)).or.(mod45(1:4).ne.'FLAM')) then
+! ========================================================================
+! --- FLAMBEMENT AVEC MATRICE GEOMETRIQUE OU DYNAMIQUE TOUT CAS DE FIGURE
+! ======================================================================== 
+!
+! ------ CALCUL MODAL STANDARD
+!
+        mod45b=mod45
+        select case (method)
+        case('SORENSEN')
+            call vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
                     matopa, mxresf, neqact, nblagr, omemax,&
                     omemin, omeshi, solveu, vecblo, veclag,&
-                    cbid, npivot, flage, nconv, vpinf, vpmax, mod45)
-    case default
-        ASSERT(.false.)
-    end select
+                    cbid, npivot, flage, nconv, vpinf, vpmax, mod45b,&
+                    k24bid, k24bid, ibid, K24bid, ibid, r8bid)
+        case default
+            ASSERT(.false.)
+        end select
 !
-! --- POST-TRAITEMENTS SANS VERIFICATION (NI STURM, NI SEUIL, NI BANDE) +
-! --- NETTOYAGE EXPLICITE DES OBJETS JEVEUX GLOBAUX LIES AU MODAL
+! ------ POST-TRAITEMENTS SANS VERIFICATION (NI STURM, NI SEUIL, NI BANDE) +
+! ------ PAS DE NETTOYAGE EXPLICITE DES OBJETS JEVEUX GLOBAUX LIES AU MODAL
 !
-    call vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
+        mod45b=mod45
+        call vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
                 nbpari, nbparr, mxresf, nconv, nblagr,&
                 ibid, modes, typcon, k16bid, eigsol,&
                 matopa, matopa, solveu, vecblo, veclag,&
                 flage, ibid, ibid, mpibid, mpibid,&
-                omemax, omemin, vpinf, vpmax, lcomod, mod45)
-!
-    if (mod45 .eq. 'FLAM') then
-!
-        if (defo .eq. 0) then
-!         ancien vpsorn
-        else
-            write(ifm,*)'<NMOP45> A FAIRE 1'
-            ASSERT(.false.)
-!            call wkvect('&&NMOP45.POSI.EDDL', 'V V I', neq*mxddl, eddl)
-!            if (nddle .ne. 0) then
-!                call jeveuo(ddlexc, 'L', jexx)
-!                call elmddl(matrig, 'DDL_EXCLUS    ', neq, zk8(jexx), nddle,&
-!                            nbddl, zi(eddl))
-!            else
-!                nbddl = 0
-!            endif
-!
-!            call wkvect('&&NMOP45.POSI.SDDL', 'V V I', neq*mxddl, eddl2)
-!
-!            if (nsta .ne. 0) then
-!                call jeveuo(ddlsta, 'L', jest)
-!                call elmddl(matrig, 'DDL_STAB      ', neq, zk8(jest), nsta,&
-!                            nbddl2, zi(eddl2))
-!            else
-!                nbddl2 = 0
-!            endif
-!
-!            redem = 0
-!
-!            call vpsor1(lmatra, neq, nbvect, nfreq, tolsor,&
-!                        vect_propre, resid, zr(lworkd), zr(lworkl), lonwl,&
-!                        select, zr(ldsor), omeshi, zr(laux), zr(lworkv),&
-!                        zi(lprod), zi(lddl), zi(eddl), nbddl, neqact,&
-!                        maxitr, ifm, niv, priram, alpha,&
-!                        omecor, nconv, flage, solveu, nbddl2,&
-!                        zi(eddl2), vect_stabil, csta, redem)
-!
-        endif
-    else
-!      ancien vpsorn
-    endif
+                omemax, omemin, vpinf, vpmax, lcomod, mod45b)
 
-    if (nsta .ne. 0) then
-            write(ifm,*)'<NMOP45> A FAIRE 2'
+    else
+! ========================================================================
+! --- FLAMBEMENT SANS MATRICE GEOMETRIQUE
+! ========================================================================
+
+!
+! ------ PRETRAITEMENTS
+!
+        call jeveuo(raide(1:19)//'.&INT', 'L', lraide)
+        neq = zi(lraide+2)
+        vecstb='&&NMOP45.VEC.STAB'
+        call wkvect(vecstb,'V V R', neq, jstab)
+
+        vecedd='&&NMOP45.POSI.EDDL'
+        call wkvect(vecedd,'V V I', neq, eddl)
+        if (nddle.ne.0) then
+            call jeveuo(ddlexc, 'L', jexx)
+            call elmddl(raide, 'DDL_EXCLUS    ', neq, zk8(jexx), nddle, nbddl, zi(eddl))
+        else
+            nbddl = 0
+        endif
+        vecsdd='&&NMOP45.POSI.SDDL'
+        call wkvect(vecsdd, 'V V I', neq, eddl2)
+        if (nsta.ne.0) then
+            call jeveuo(ddlsta, 'L', jest)
+            call elmddl(raide, 'DDL_STAB      ', neq, zk8(jest), nsta, nbddl2, zi(eddl2))
+        else
+            nbddl2 = 0
+        endif
+!
+! ------ CALCUL MODAL ADAPTE
+        mod45b='SOR1'
+        select case (method)
+        case('SORENSEN')
+            call vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
+                    matopa, mxresf, neqact, nblagr, omemax,&
+                    omemin, omeshi, solveu, vecblo, veclag,&
+                    cbid, npivot, flage, nconv, vpinf, vpmax, mod45b,&
+                    vecstb, vecedd, nbddl, vecsdd, nbddl2, csta)
+        case default
             ASSERT(.false.)
+        end select
 !
-!        typco2 = 'MODE_STAB'
+! ------ POST-TRAITEMENTS SANS VERIFICATION (NI STURM, NI SEUIL, NI BANDE) +
+! ------ PAS DE NETTOYAGE EXPLICITE DES OBJETS JEVEUX GLOBAUX LIES AU MODAL
+
 !
-!        call vppara(modes2, typco2, knega, lraide, lmasse,&
-!                    lamor, un, neq, un, omecor,&
-!                    zi(lddl), zi(lprod), vect_stabil, [cbid], nbpari,&
-!                    nparr, nbpark, nopara, 'STAB', resu_i,&
-!                    [csta], resu_k, ktyp, .false._1, ibid,&
-!                    ibid, k16bid, ibid)
-!
+        mod45b=mod45
+        call vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
+                nbpari, nbparr, mxresf, nconv, nblagr,&
+                ibid, modes, typcon, k16bid, eigsol,&
+                matopa, matopa, solveu, vecblo, veclag,&
+                flage, ibid, ibid, mpibid, mpibid,&
+                omemax, omemin, vpinf, vpmax, lcomod, mod45b)
+        if (nsta .ne. 0) then
+            typco2='MODE_STAB'
+            mod45b='STAB'
+            un=1
+            call jeveuo(vecrer, 'E', lresur)
+            call jelira(vecrer, 'LONMAX', iauxr)
+            call vecini(iauxr, csta, zr(lresur))
+            call vppost(vecrer, vecrei, vecrek, vecstb, nbpark,&
+                    nbpari, nbparr, un, un, nblagr,&
+                    ibid, modes2, typco2, k16bid, eigsol,&
+                    matopa, matopa, solveu, vecblo, veclag,&
+                    flage, ibid, ibid, mpibid, mpibid,&
+                    omemax, omemin, vpinf, vpmax, lcomod, mod45b)
+        endif
+        call jedetr(vecstb)
+        call jedetr(vecedd)
+        call jedetr(vecsdd)
+
     endif
 !
  80 continue
 !
 ! ---  ON AJUSTE LA VALEURS NFREQ DE LA SD EIGENSOLVER
     call vpecri(eigsol, 'I', 1, k24bid, r8bid, nconv)
-    if (iret.ne.0) then 
-      call jedetr(vecblo)
-      call jedetr(veclag)
-      call detrsd('MATR_ASSE', matopa)
+!
+! --- NETTOYAGE EXPLICITE DES OBJETS JEVEUX GLOBAUX
+    call jedetr(vecblo)
+    call jedetr(veclag)
+    if (iret.ne.0) then
+        call detrsd('MATR_ASSE', matopa)
+        call jedetr(matopa(1:19)//'.&INT')
+        call jedetr(matopa(1:19)//'.&IN2')
     endif
+    call jedetr(vecrer)
+    call jedetr(vecrei)
+    call jedetr(vecrek)
+    call jedetr(vecvp)      
 !
     call jedema()
 !
