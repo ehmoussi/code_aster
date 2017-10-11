@@ -21,11 +21,12 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine ornorm(noma, listma, nbmail, reorie, norien)
+    subroutine ornorm(noma, listma, nbmail, reorie, norien, command)
         character(len=8) :: noma
         integer :: listma(*)
         integer :: nbmail
         aster_logical :: reorie
         integer :: norien
+        character(len=24), optional :: command
     end subroutine ornorm
 end interface

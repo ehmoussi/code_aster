@@ -294,6 +294,18 @@ Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
+    92 : _(u"""
+ Erreur de mise en données :
+ Le mot clé ORIE_LIGNE ne traite que les mailles linéiques.
+ Or, des mailles surfaciques ont été fournies. 
+"""),
+
+    93 : _(u"""
+ Erreur de mise en données :
+ Le mot clé ORIE_LIGNE ne traite que les mailles linéiques.
+ La maille %(k1)s est de type %(k2)s.
+"""),
+
     94 : _(u"""
  impossibilité, la maille  %(k1)s  doit être une maille de peau, i.e. de type "QUAD" ou "tria" en 3d ou de type "SEG" en 2d, et elle est de type :  %(k2)s
 """),

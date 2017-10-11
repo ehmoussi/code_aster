@@ -262,7 +262,7 @@ subroutine op0154()
 !
 !
 !     --- TRAITEMENT DES MOTS CLES  "ORIE_PEAU_2D" , "ORIE_PEAU_3D"
-!                               ET  "ORIE_NORM_COQUE" :
+!                                   "ORIE_LIGNE" ET  "ORIE_NORM_COQUE" :
 !     ---------------------------------------------------------------
     call orilgm(ma)
 !
