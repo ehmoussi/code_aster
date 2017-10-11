@@ -16,8 +16,19 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
+#include "asterf_types.h"
+!
 interface
-    subroutine te0515(option, nomte)
-        character(len=16), intent(in) :: option, nomte
-    end subroutine te0515
+    subroutine thmGetElemPara_vf(l_axi    , l_steady , l_vf  ,&
+                                 type_elem, ndim     ,&
+                                 mecani   , press1   , press2, tempe,&
+                                 dimdef   , dimcon   , dimuel,&
+                                 nno      , nnos     , nface )
+        aster_logical, intent(out) :: l_axi, l_steady, l_vf
+        character(len=8), intent(out) :: type_elem(2)
+        integer, intent(out) :: ndim
+        integer, intent(out) :: mecani(5), press1(7), press2(7), tempe(5)
+        integer, intent(out) :: dimdef, dimcon, dimuel
+        integer, intent(out) :: nno, nnos, nface   
+    end subroutine thmGetElemPara_vf
 end interface
