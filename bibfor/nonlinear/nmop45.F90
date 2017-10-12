@@ -257,11 +257,12 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
         call detrsd('MATR_ASSE', matopa)
         call jedetr(matopa(1:19)//'.&INT')
         call jedetr(matopa(1:19)//'.&IN2')
-    endif
-    call jedetr(vecrer)
-    call jedetr(vecrei)
-    call jedetr(vecrek)
-    call jedetr(vecvp)      
+    else
+        call jedetr(vecrer)
+        call jedetr(vecrei)
+        call jedetr(vecrek)
+        call jedetr(vecvp)
+    endif      
 !
     call jedema()
 !
