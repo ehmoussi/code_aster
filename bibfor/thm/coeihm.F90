@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1306,W1504
 !
-subroutine coeihm(option, l_steady, resi, rigi, j_mater,&
-                  compor, instam, instap, nomail,&
+subroutine coeihm(option, l_steady, l_resi, l_matr, j_mater,&
+                  time_prev, time_curr, nomail,&
                   ndim, dimdef, dimcon, nbvari, &
                   addeme, adcome,&
                   addep1, adcp11, adcp12, addlh1, adcop1,&
@@ -37,66 +37,45 @@ implicit none
 #include "asterfort/calcfh.h"
 #include "asterfort/coeime.h"
 #include "asterfort/calcva.h"
-#include "asterfort/nvithm.h"
 #include "asterfort/utmess.h"
 #include "asterfort/thmGetParaBiot.h"
 #include "asterfort/thmGetParaHydr.h"
 #include "asterfort/tebiot.h"
-#include "asterfort/thmGetParaBehaviour.h"
 #include "asterfort/thmEvalSatuFinal.h"
 #include "asterfort/thmEvalConductivity.h"
 #include "asterfort/thmEvalGravity.h"
+#include "asterfort/THM_type.h"
 !
-    integer :: dimdef, dimcon, npg, kpi, npi, ndim
-    integer :: nbvari,j_mater
-    integer :: addeme, addep1, addep2, addete, adcop1, addlh1
-    integer :: adcome, adcp11, adcp12, adcp21, adcp22, adcote
+integer, intent(in) :: j_mater
+character(len=8), intent(in) :: nomail
+character(len=16), intent(in) :: option
+integer, intent(in) :: dimdef, dimcon, npg, kpi, npi, ndim
+integer, intent(in) :: nbvari
+integer, intent(in) :: addeme, addep1, addep2, addete, adcop1, addlh1
+integer, intent(in) :: adcome, adcp11, adcp12, adcp21, adcp22, adcote
+real(kind=8), intent(in) :: defgem(1:dimdef), defgep(1:dimdef)
+real(kind=8), intent(in) :: varim(nbvari), time_prev, time_curr
+real(kind=8), intent(in) :: sigm(dimcon)
+aster_logical, intent(in) :: l_steady, l_resi, l_matr
+integer, intent(out) :: retcom
+real(kind=8), intent(inout) :: sigp(dimcon), varip(nbvari)
+real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
 !
-    real(kind=8) :: defgem(1:dimdef), defgep(1:dimdef)
-    real(kind=8) :: varim(nbvari), instam, instap
-    real(kind=8) :: sigm(dimcon)
-    character(len=8) :: nomail
-    character(len=16) :: option, compor(*)
-    aster_logical :: l_steady, resi, rigi
-!
-! - VARIABLES SORTIE
-    integer :: retcom
-    real(kind=8) :: sigp(dimcon), varip(nbvari)
-    real(kind=8) :: res(dimdef), drde(dimdef, dimdef)
-!
-! - VARIABLES LOCALES
-    integer :: nvim, nvit, nvih, nvic, advime, advith, advihy, advico
-    integer :: i, j, f
-    integer :: vihrho, vicphi, vicpvp, vicsat
-    integer :: vicpr1, vicpr2
-    real(kind=8) :: depsv, epsv, deps(6)
-    real(kind=8) :: t, p1, p2, dt, dp1, dp2, grat(3), grap1(3), grap2(3)
-    real(kind=8) :: pvp, pad, h11, h12, rho11, phi
-    real(kind=8) :: tperm(ndim, ndim), sat, tbiot(6), satur, dsatur, pesa(3)
-    real(kind=8) :: lambp, dlambp, lambs, dlambs, viscl , viscg
-    real(kind=8) :: tlambt(ndim, ndim), tdlamt(ndim, ndim)
-    real(kind=8) :: tlamct(ndim, ndim)
-    real(kind=8) :: dsde(dimcon, dimdef)
-    real(kind=8) :: tlint, ouvh, deltat, unsurn
-    real(kind=8) :: angl_naut(3)
-    character(len=16) :: meca, thmc, ther, hydr
-    integer :: nume_thmc
-!
-! =====================================================================
-!.......................................................................
+! --------------------------------------------------------------------------------------------------
 !
 !     BUT:  INTEGRATION DES LOIS DE COMPORTEMENT
 !
 !     L'INTEGRATION DES LOIS DE COMPORTEMENT THM ET D'INTERFACE
 !     PERMET DE CALCULER LES CONTRAINTES GENERALISES ET LES VARIABLES
 !     INTERNES EN CHAQUE POINT D'INTEGRATION
-!     LA ROUTINE RENVOIE EGALEMENT LES RESIDUS ET L'OPERATEUR TANGENT EN
+!     LA ROUTINE RENVOIE EGALEMENT LES l_resiDUS ET L'OPERATEUR TANGENT EN
 !     FONCTION DU POINT D'INTEGRATION
-!.......................................................................
-! =====================================================================
+!
+! --------------------------------------------------------------------------------------------------
+!
 ! IN OPTION : OPTION DE CALCUL
 ! IN l_steady : l_steadyENT ?
-! IN RESI   : FULL_MECA OU RAPH_MECA ?
+! IN l_resi   : FULL_MECA OU RAPH_MECA ?
 ! IN RIGI   : FULL_MECA OU RIGI_MECA ?
 ! IN IMATE  : MATERIAU CODE
 ! IN COMPOR : COMPORTEMENT
@@ -142,19 +121,52 @@ implicit none
 ! OUT RES   : RESIDU AU POINT D'INTEGRATION
 ! OUT DRDE  : OPERATEUR TANGENT AU POINT D'INTEGRATION
 ! OUT RETCOM: RETOUR LOI DE COPORTEMENT
-! =====================================================================
 !
-    retcom     = 0
-    deltat     = instap-instam
-    tperm(:,:) = 0.d0
-    if (resi) then
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: i, j, f
+    real(kind=8) :: depsv, epsv, deps(6)
+    real(kind=8) :: t, p1, p2, dt, dp1, dp2, grat(3), grap1(3), grap2(3)
+    real(kind=8) :: pvp, pad, h11, h12, rho11, phi
+    real(kind=8) :: tperm(ndim, ndim), sat, tbiot(6), satur, dsatur, pesa(3)
+    real(kind=8) :: lambp, dlambp, lambs, dlambs, viscl , viscg
+    real(kind=8) :: tlambt(ndim, ndim), tdlamt(ndim, ndim)
+    real(kind=8) :: tlamct(ndim, ndim)
+    real(kind=8) :: dsde(dimcon, dimdef)
+    real(kind=8) :: tlint, ouvh, deltat
+    real(kind=8) :: angl_naut(3)
+    integer :: advihy, advico
+    integer :: vihrho, vicphi, vicpvp, vicsat
+    character(len=16) :: hydr, meca
+    integer :: nume_thmc
+!
+! --------------------------------------------------------------------------------------------------
+!
+    retcom       = 0
+    deltat       = time_curr-time_prev
+    tperm(:,:)   = 0.d0
+    angl_naut(:) = 0.d0
+    if (l_resi) then
         varip(1:nbvari) = 0.d0
         sigp(1:dimcon)  = 0.d0
+        res(1:dimdef)   = 0.d0
     endif
-    if (rigi) then
+    if (l_matr) then
         dsde(1:dimcon,1:dimdef) = 0.d0
         drde(1:dimdef,1:dimdef) = 0.d0
     endif
+!
+! - Get storage parameters for behaviours
+!
+    hydr      = ds_thm%ds_behaviour%rela_hydr
+    meca      = ds_thm%ds_behaviour%rela_meca
+    nume_thmc = ds_thm%ds_behaviour%nume_thmc
+    advico    = ds_thm%ds_behaviour%advico
+    advihy    = ds_thm%ds_behaviour%advihy
+    vihrho    = ds_thm%ds_behaviour%vihrho
+    vicphi    = ds_thm%ds_behaviour%vicphi
+    vicpvp    = ds_thm%ds_behaviour%vicpvp
+    vicsat    = ds_thm%ds_behaviour%vicsat
 !
 ! - Update unknowns
 !
@@ -167,17 +179,10 @@ implicit none
                 p2    , dp2    , grap2 ,&
                 retcom)
 !
-    epsv = 0.d0
+! - Mechanic - Not fully coupled
+!
+    epsv  = 0.d0
     depsv = 0.d0
-! ======================================================================
-! --- MISE AU POINT POUR LES VARIABLES INTERNES ------------------------
-! --- DEFINITION DES POINTEURS POUR LES DIFFERENTES RELATIONS DE -------
-! --- COMPORTEMENTS ET POUR LES DIFFERENTES COMPOSANTES ----------------
-! ======================================================================
-    call nvithm(compor, meca, thmc, ther, hydr,&
-                nvim, nvit, nvih, nvic, advime,&
-                advith, advihy, advico, vihrho, vicphi,&
-                vicpvp, vicsat, vicpr1, vicpr2)
 !
 ! - Get hydraulic parameters
 !
@@ -189,26 +194,21 @@ implicit none
 !
 ! - Compute Biot tensor
 !
-    angl_naut(:) = 0.d0
     call tebiot(angl_naut, tbiot)
 !
-! - TEST LOI DE COMPORTEMENT
+! - Compute generalized stresses and matrix for mechanical behaviour
 !
     if ((meca.ne.'JOINT_BANDIS') .and. (meca.ne.'CZM_LIN_REG') .and.&
         (meca.ne.'CZM_EXP_REG')) then
         call utmess('F', 'ALGORITH17_10', sk=meca)
     endif
-! ======================================================================
-! --- CALCULS MECA -----------------------------------------------------
-! ======================================================================
-    call coeime(meca, j_mater, nomail, option, resi,&
-                rigi, ndim, dimdef, dimcon, &
+    call coeime(j_mater, nomail, option, l_resi,&
+                l_matr, ndim, dimdef, dimcon, &
                 addeme, addep1, &
-                nbvari, advime, advico, npg, npi,&
+                nbvari, npg, npi,&
                 defgep, defgem, sigm, sigp, varim,&
                 varip, ouvh, tlint, drde, kpi,&
-                vicphi, unsurn, retcom)
-!
+                retcom)
     if (retcom .ne. 0) then
         goto 99
     endif
@@ -219,8 +219,6 @@ implicit none
 !
 ! - Compute generalized stresses and matrix for coupled quantities
 !
-    call thmGetParaBehaviour(compor,&
-                             nume_thmc_ = nume_thmc)
     call calcco(l_steady, nume_thmc,&
                 option  , angl_naut,&
                 hydr    , j_mater  ,&
@@ -257,7 +255,7 @@ implicit none
 !
 ! - Compute gravity
 !
-    call thmEvalGravity(j_mater, instap, pesa)
+    call thmEvalGravity(j_mater, time_curr, pesa)
 !
 ! - (re)-compute Biot tensor
 !
@@ -267,19 +265,12 @@ implicit none
 !
     viscl  = ds_thm%ds_material%liquid%visc
     viscg  = ds_thm%ds_material%gaz%visc
-
-! ======================================================================
-! --- CALCUL DES FLUX HYDRAULIQUES -------------------------------------
-! ======================================================================
-
 !
-! CREATION D'UN TENSEUR ISOTROPE POUR LA PERMEABILITE LONGTUDINALE
-! POUR LE CALCUL DANS CALCF
+! - Compute flux
 !
     do i = 1, ndim-1
         tperm(i,i) = tlint
     end do
-!
     if (ds_thm%ds_elem%l_dof_pre1) then
         call calcfh(nume_thmc, &
                     option   , l_steady, hydr   , ndim  , j_mater,&
@@ -296,11 +287,10 @@ implicit none
             goto 99
         endif
     endif
-! ======================================================================
-! --- CONTRAINTES GENERALISEES -----------------------------------------
-! ======================================================================
-    if (resi) then
-! - COMPOSANTES CONSTITUANT 1
+!
+! - Generalized stress and residual
+!
+    if (l_resi) then
         if (ds_thm%ds_elem%l_dof_pre1) then
             sigp(adcp11+1) = ouvh*sigp(adcp11+1)
             do f = 1, 2
@@ -308,21 +298,11 @@ implicit none
                 sigp(adcop1+f+1)= defgep(addlh1-1+f)-defgep(addep1)
             end do
         endif
-! ======================================================================
-! --- CALCUL DU VECTEUR FORCE INTERNE AUX POINTS DE GAUSS --------------
-! ======================================================================
-        do i = 1, dimdef
-            res(i)=0.d0
-        end do
-!
         if (kpi .le. npg) then
-! - COMPOSANTES MECANIQUES
             do i = 1, ndim
                 res(i) = sigp(i)
             end do
             res(1) = res(1)+sigp(ndim+1)
-!
-! - COMPOSANTES CONSTITUANT 1
             if (ds_thm%ds_elem%l_dof_pre1) then
                 res(addep1) = deltat*(sigp(adcop1)+sigp(adcop1+1))
                 do j = 1, ndim-1
@@ -334,48 +314,32 @@ implicit none
                 end do
             endif
         endif
-! ======================================================================
-! --- CALCUL DU VECTEUR FORCE INTERNE AUX SOMMETS --------------
-! ======================================================================
         if ((kpi .gt. npg) .or. (npi .eq. npg)) then
-!
-! - COMPOSANTES CONSTITUANT 1
             if (ds_thm%ds_elem%l_dof_pre1) then
                 res(addep1) = res(addep1) - sigp(adcp11)
                 res(addep1) = res(addep1) + sigm(adcp11)
             endif
         endif
     endif
-! - FIN DE L'OPTION RESI
 !
-! ======================================================================
-! --- CALCUL DE L'OPERATEUR TANGENT ------------------------------------
-! ======================================================================
-    if (rigi) then
-! ======================================================================
-! --- D(RESIDU)/D(DEFORMATIONS GENERALISES)------------
-! --- POUR MATRICE DE RIGIDITE------------------------------------------
-! ======================================================================
+! - Tangent matrix
+!
+    if (l_matr) then
         if (kpi .le. npg) then
-!
-! - LIGNES CORRESPONDANT AUX TERMES HYDRAULIQUES
-!
             if (ds_thm%ds_elem%l_dof_pre1) then
                 do f = 1, 2
                     drde(addep1,addlh1+1+f)= deltat
-!
                     drde(addlh1+f-1,addlh1+1+f)=-deltat
-!
                     drde(addlh1+f+1,addep1)=-1.d0
                     drde(addlh1+f+1,addlh1+f-1)=1.d0
                 end do
                 do i = 1, ndim-1
                     do j = 1, ndim-1
-                        if (thmc .eq. 'GAZ') then
+                        if (nume_thmc .eq. GAZ) then
                             drde(addep1+i,1) = drde(addep1+i,1) +&
                                 deltat*3.d0*tlint*rho11/viscg*(-grap1(i)+ rho11*pesa(i))
                         endif
-                        if (thmc .eq. 'LIQU_SATU') then
+                        if (nume_thmc .eq. LIQU_SATU) then
                             drde(addep1+i,1) = drde(addep1+i,1) +&
                                 deltat*3.d0*tlint*rho11/viscl*(-grap1(i)+ rho11*pesa(i))
                         endif
@@ -387,19 +351,14 @@ implicit none
                 end do
             endif
         endif
-! ======================================================================
-! --- D(RESIDU)/D(DEFORMATIONS GENERALISES)------------
-! --- POUR MATRICE DE MASSE---------------------------------------------
-! ======================================================================
         if ((kpi .gt. npg) .or. (npi .eq. npg)) then
-!
             if (ds_thm%ds_elem%l_dof_pre1) then
                 drde(addep1,addeme) = drde(addep1,addeme) - rho11
                 drde(addep1,addep1) = rho11*drde(addep1,addep1) + dsde(adcp11,addep1)
             endif
         endif
     endif
-! ======================================================================
+!
 99  continue
-! ======================================================================
+!
 end subroutine

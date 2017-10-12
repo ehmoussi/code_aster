@@ -47,7 +47,7 @@ implicit none
 !        DONNEES:      OPTION       -->  OPTION DE CALCUL
 !                      NOMTE        -->  NOM DU TYPE ELEMENT
 ! =====================================================================
-    integer :: jgano, imatuu, ndim, imate, iinstm, jcret, ncmp, nvim
+    integer :: jgano, imatuu, ndim, imate, iinstm, jcret, nb_strain_meca
     integer :: iret, ichg, ichn, itabin(7), itabou(7)
     integer :: ivf2
     integer :: idf2, npi, npg
@@ -60,7 +60,7 @@ implicit none
 ! =====================================================================
 !
     integer :: mecani(8), press1(9), press2(9), tempe(5), dimuel
-    integer :: dimdef, dimcon, nbvari
+    integer :: dimdef, dimcon, nbvari, nb_vari_meca
     integer :: nno1, nno2
     integer :: iadzi, iazk24
     integer :: iu(3, 18), ip(2, 9), ipf(2, 2, 9), iq(2, 2, 9)
@@ -135,7 +135,7 @@ implicit none
         (option(1:9).eq.'RAPH_MECA' ) .or. (option(1:9).eq.'FULL_MECA' )) then
 !
         call jevech('PCAMASS', 'L', icamas)
-        if (zr(icamas) .eq. -1.d0) then
+        if (zr(icamas) .lt. 0.d0) then
             call utmess('F', 'ELEMENTS5_48')
         endif
 !
@@ -161,7 +161,6 @@ implicit none
         call jevech('PCOMPOR', 'L', icompo)
         call jevech('PVARIMR', 'L', ivarim)
         call jevech('PCONTMR', 'L', icontm)
-!
         read (zk16(icompo-1+NVAR),'(I16)') nbvari
 ! =====================================================================
 ! --- PARAMETRES EN SORTIE ISMAEM? ------------------------------------
@@ -261,12 +260,9 @@ implicit none
     if (option .eq. 'SIEF_ELNO') then
         call jevech('PCONTRR', 'L', ichg)
         call jevech('PSIEFNOR', 'E', ichn)
-!
-!
-        nvim=mecani(6)
-!
+        nb_strain_meca = mecani(6)
         call poeihm(nomte, option, modint, jgano, nno1,&
-                    nno2, dimcon, nvim, zr(ichg), zr(ichn))
+                    nno2, dimcon, nb_strain_meca, zr(ichg), zr(ichn))
     endif
 !
 ! ======================================================================
@@ -281,11 +277,10 @@ implicit none
         ichn=itabou(1)
 !
         call jevech('PCOMPOR', 'L', icompo)
-        read (zk16(icompo-1+NVAR),'(I16)') ncmp
-        read (zk16(icompo-1+MECA_NVAR),'(I16)') nvim
-!
+        read (zk16(icompo-1+NVAR),'(I16)') nbvari
+        read (zk16(icompo-1+MECA_NVAR),'(I16)') nb_vari_meca
         call poeihm(nomte, option, modint, jgano, nno1,&
-                    nno2, ncmp, nvim, zr(ichg), zr(ichn))
+                    nno2, nbvari, nb_vari_meca, zr(ichg), zr(ichn))
     endif
 !
 ! ======================================================================
