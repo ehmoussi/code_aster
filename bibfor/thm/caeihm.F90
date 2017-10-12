@@ -135,27 +135,25 @@ character(len=3), intent(out) :: inte_type
 ! --- DETERMINATION DES DECALAGES D'INDICE POUR ACCEDER AUX DDL --------
 ! ======================================================================
 !
-    if ((nomte.eq.'HM_J_DPQ8S') .or. (nomte.eq.'HM_J_AXQ8S')) then
-        dimuel = 2*nno1*ndim+nno2*3*(press1(1)+press2(1))+2
-        do n = 1, 5
-            do i = 1, 2
-                iu(i,n) = i + (f1q8(n)-1)*3
-            end do
-        end do
+    dimuel = 2*nno1*ndim+nno2*3*(press1(1)+press2(1))+2
+    do n = 1, 5
         do i = 1, 2
-            iu(i,6) = iu(i,3) + 4
+            iu(i,n) = i + (f1q8(n)-1)*3
         end do
-        do n = 1, 2
-            ip(1,n) = 16 + (f2q8(n)-6)*2
-        end do
-        do n = 1, 2
-            ipf(1,1,n) = 3+(f4q8(n)-1)*3
-        end do
-        do n = 1, 2
-            ipf(1,2,n) = 3+(f3q8(n)-1)*3
-        end do
-        iq(1,1,1)=iu(2,6)+1
-        iq(1,2,1)=iu(2,3)+1
-    endif
+    end do
+    do i = 1, 2
+        iu(i,6) = iu(i,3) + 4
+    end do
+    do n = 1, 2
+        ip(1,n) = 16 + (f2q8(n)-6)*2
+    end do
+    do n = 1, 2
+        ipf(1,1,n) = 3+(f4q8(n)-1)*3
+    end do
+    do n = 1, 2
+        ipf(1,2,n) = 3+(f3q8(n)-1)*3
+    end do
+    iq(1,1,1)=iu(2,6)+1
+    iq(1,2,1)=iu(2,3)+1
 !
 end subroutine

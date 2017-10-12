@@ -20,14 +20,14 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine aseihm(option, axi, ndim, nno1, nno2,&
+    subroutine aseihm(option, l_axi, ndim, nno1, nno2,&
                       npi, npg, dimuel, dimdef, dimcon,&
-                      nbvari, imate, iu, ip, ipf,&
+                      nbvari, j_mater, iu, ip, ipf,&
                       iq, mecani, press1, press2, tempe,&
-                      vff1, vff2, dffr2, instam, instap,&
+                      vff1, vff2, dffr2, time_prev, time_curr,&
                       deplm, deplp, sigm, sigp, varim,&
                       varip, nomail, wref, geom, ang,&
-                      compor, perman, vectu, matuu,&
+                      compor, l_steady, vectu, matuu,&
                       retcom)
         integer :: nbvari
         integer :: dimcon
@@ -38,9 +38,9 @@ interface
         integer :: nno1
         integer :: ndim
         character(len=16) :: option
-        aster_logical :: axi
+        aster_logical :: l_axi
         integer :: npg
-        integer :: imate
+        integer :: j_mater
         integer :: iu(3, 18)
         integer :: ip(2, 9)
         integer :: ipf(2, 2, 9)
@@ -52,8 +52,8 @@ interface
         real(kind=8) :: vff1(nno1, npi)
         real(kind=8) :: vff2(nno2, npi)
         real(kind=8) :: dffr2(ndim-1, nno2, npi)
-        real(kind=8) :: instam
-        real(kind=8) :: instap
+        real(kind=8) :: time_prev
+        real(kind=8) :: time_curr
         real(kind=8) :: deplm(dimuel)
         real(kind=8) :: deplp(dimuel)
         real(kind=8) :: sigm(dimcon, npi)
@@ -64,8 +64,8 @@ interface
         real(kind=8) :: wref(npi)
         real(kind=8) :: geom(ndim, nno2)
         real(kind=8) :: ang(24)
-        character(len=16) :: compor(*)
-        aster_logical :: perman
+        character(len=16), intent(in) :: compor(*)
+        aster_logical :: l_steady
         real(kind=8) :: vectu(dimuel)
         real(kind=8) :: matuu(dimuel*dimuel)
         integer :: retcom

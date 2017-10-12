@@ -20,50 +20,28 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine coeihm(option, l_steady, resi, rigi, j_mater,&
-                      compor, instam, instap, nomail,&
-                      ndim, dimdef, dimcon, nbvari,&
-                      addeme, adcome, addep1, adcp11, adcp12,&
-                      addlh1, adcop1, addep2, adcp21, adcp22,&
-                      addete, adcote, defgem, defgep,&
-                      kpi, npg, npi, sigm, sigp,&
-                      varim, varip, res, drde, retcom)
-        integer :: nbvari
-        integer :: dimcon
-        integer :: dimdef
-        integer :: ndim
-        character(len=16) :: option
-        aster_logical :: l_steady
-        aster_logical :: resi
-        aster_logical :: rigi
-        integer :: j_mater
-        character(len=16) :: compor(*)
-        real(kind=8) :: instam
-        real(kind=8) :: instap
-        character(len=8) :: nomail
-        integer :: addeme
-        integer :: adcome
-        integer :: addep1
-        integer :: adcp11
-        integer :: adcp12
-        integer :: addlh1
-        integer :: adcop1
-        integer :: addep2
-        integer :: adcp21
-        integer :: adcp22
-        integer :: addete
-        integer :: adcote
-        real(kind=8) :: defgem(1:dimdef)
-        real(kind=8) :: defgep(1:dimdef)
-        integer :: kpi
-        integer :: npg
-        integer :: npi
-        real(kind=8) :: sigm(dimcon)
-        real(kind=8) :: sigp(dimcon)
-        real(kind=8) :: varim(nbvari)
-        real(kind=8) :: varip(nbvari)
-        real(kind=8) :: res(dimdef)
-        real(kind=8) :: drde(dimdef, dimdef)
-        integer :: retcom
+    subroutine coeihm(option, l_steady, l_resi, l_matr, j_mater,&
+                      time_prev, time_curr, nomail,&
+                      ndim, dimdef, dimcon, nbvari, &
+                      addeme, adcome,&
+                      addep1, adcp11, adcp12, addlh1, adcop1,&
+                      addep2, adcp21, adcp22, addete, adcote,&
+                      defgem, defgep, kpi, npg, npi,&
+                      sigm, sigp, varim, varip, res,&
+                      drde, retcom)
+        integer, intent(in) :: j_mater
+        character(len=8), intent(in) :: nomail
+        character(len=16), intent(in) :: option
+        integer, intent(in) :: dimdef, dimcon, npg, kpi, npi, ndim
+        integer, intent(in) :: nbvari
+        integer, intent(in) :: addeme, addep1, addep2, addete, adcop1, addlh1
+        integer, intent(in) :: adcome, adcp11, adcp12, adcp21, adcp22, adcote
+        real(kind=8), intent(in) :: defgem(1:dimdef), defgep(1:dimdef)
+        real(kind=8), intent(in) :: varim(nbvari), time_prev, time_curr
+        real(kind=8), intent(in) :: sigm(dimcon)
+        aster_logical, intent(in) :: l_steady, l_resi, l_matr
+        integer, intent(out) :: retcom
+        real(kind=8), intent(inout) :: sigp(dimcon), varip(nbvari)
+        real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
     end subroutine coeihm
 end interface 

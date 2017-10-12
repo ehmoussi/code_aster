@@ -17,13 +17,13 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504,W1306
 !
-subroutine coeime(meca, imate, nomail, option, resi,&
-                  rigi, ndim, dimdef, dimcon,&
+subroutine coeime(j_mater, nomail, option, l_resi,&
+                  l_matr, ndim, dimdef, dimcon,&
                   addeme, addep1,&
-                  nbvari, advime, advico, npg, npi,&
+                  nbvari, npg, npi,&
                   defgep, defgem, sigm, sigp, varim,&
                   varip, ouvh, tlint, drde, kpi,&
-                  vicphi, unsurn, retcom)
+                  retcom)
 !
 use THM_type
 use THM_module
@@ -35,31 +35,28 @@ implicit none
 #include "asterfort/lcejli.h"
 #include "asterfort/lcjohm.h"
 #include "asterfort/rcvalb.h"
-    integer :: imate, ndim, dimcon, addeme, addep1, npg, kpi, npi
-    integer :: retcom, dimdef, advime, nbvari, advico, vicphi
-    real(kind=8) :: defgem(dimdef), defgep(dimdef), sigm(dimcon), varim(nbvari)
-    character(len=8) :: nomail
-    character(len=16) :: meca, option
-    aster_logical :: resi, rigi
 !
-! VARIABLES DE SORTIE
-    real(kind=8) :: sigp(dimcon), varip(nbvari), drde(dimdef, dimdef), tlint
-    real(kind=8) :: ouvh
+integer, intent(in) :: j_mater
+character(len=8), intent(in) :: nomail
+character(len=16), intent(in) :: option
+aster_logical, intent(in) :: l_resi, l_matr
+integer, intent(in) :: ndim, dimcon, dimdef
+integer, intent(in) :: addeme, addep1, npg, kpi, npi, nbvari
+real(kind=8), intent(in) :: defgem(dimdef), defgep(dimdef)
+real(kind=8), intent(in) :: sigm(dimcon)
+real(kind=8), intent(inout) :: sigp(dimcon)
+real(kind=8), intent(in) :: varim(nbvari)
+real(kind=8), intent(inout) :: varip(nbvari)
+real(kind=8), intent(out) :: ouvh, tlint
+real(kind=8), intent(inout) :: drde(dimdef, dimdef)
+integer, intent(out) :: retcom
 !
-! VARIABLES LOCALES
-    integer :: i, j, kpg, spt
-    real(kind=8) :: da(ndim), dsidep(6, 6), para(2), ouvfic, unsurn
-    character(len=8) :: ncra(2), fami, poum
-    integer :: icodre(18)
+! --------------------------------------------------------------------------------------------------
 !
-! =====================================================================
-!.......................................................................
+!  INTEGRATION DE LA LOI DE COMPORTEMENT MECANIQUE ET RENVOI DE LA LOI CUBIQUE
 !
-!     BUT:  INTEGRATION DE LA LOI DE COMPORTEMENT MECANIQUE ET RENVOI
-!           DE LA LOI CUBIQUE
+! --------------------------------------------------------------------------------------------------
 !
-!.......................................................................
-! =====================================================================
 ! IN MECA   : COMPORTEMENT MECA
 ! IN IMATE  : CODE MATERIAU
 ! IN RESI   : FULL_MECA OU RAPH_MECA
@@ -85,15 +82,29 @@ implicit none
 ! OUT TLINT : PERMEABILITE LONGITUDINALE
 ! OUT DRDE  : MATRICE DE RIGIDITE
 ! OUT RETCOM : RETOUR LOI DE COMPORTEMENT
-! =====================================================================
 !
-    data ncra / 'OUV_FICT','UN_SUR_N' /
-    ouvh=0.d0
-    tlint=0.d0
-    fami='FPG1'
-    kpg=1
-    spt=1
-    poum='+'
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: i, j, kpg, spt
+    real(kind=8) :: da(ndim), dsidep(6, 6), para(2), ouvfic, unsurn
+    character(len=8) :: fami, poum
+    integer :: icodre(2)
+    character(len=16) :: meca
+    integer :: advime, advico, vicphi
+    character(len=8), parameter :: ncra(2) = (/'OUV_FICT','UN_SUR_N' /)
+!
+! --------------------------------------------------------------------------------------------------
+!
+    ouvh   = 0.d0
+    tlint  = 0.d0
+    fami   = 'FPG1'
+    kpg    = 1
+    spt    = 1
+    poum   = '+'
+    meca   = ds_thm%ds_behaviour%rela_meca
+    advime = ds_thm%ds_behaviour%advime
+    advico = ds_thm%ds_behaviour%advico
+    vicphi = ds_thm%ds_behaviour%vicphi
 !
 ! ====================================================================
 ! LOI DE COMPORTEMENT JOINT_BANDIS
@@ -101,20 +112,20 @@ implicit none
 !
     if (meca .eq. 'JOINT_BANDIS') then
 !
-        call lcjohm(imate, resi, rigi, kpi, npg,&
+        call lcjohm(j_mater, l_resi, l_matr, kpi, npg,&
                     nomail, addeme, advico, ndim, dimdef,&
                     dimcon, nbvari, defgem, defgep, varim,&
                     varip, sigm, sigp, drde, ouvh,&
                     retcom)
 !
         tlint = ouvh**2/12.d0
-        if (resi) then
+        if (l_resi) then
             varip(advime)=tlint
             if (ds_thm%ds_elem%l_dof_pre1) then
                 sigp(1+ndim)=-defgep(addep1)
             endif
         endif
-        if ((rigi) .and. (kpi .le. npg)) then
+        if ((l_matr) .and. (kpi .le. npg)) then
             if (ds_thm%ds_elem%l_dof_pre1) then
                 drde(addeme,addep1)=-1.d0
             endif
@@ -132,7 +143,7 @@ implicit none
 !
 ! - INTEGRATION DE LA LOI DE COMPORTEMENT MECANIQUE
 !
-        call lcejli('RIGI', kpi, 1, ndim, imate,&
+        call lcejli('RIGI', kpi, 1, ndim, j_mater,&
                     option, defgem, da, sigp, dsidep,&
                     varim(advime), varip(advime))
 !
@@ -141,7 +152,7 @@ implicit none
         if (nint(varip(advime)) .eq. 2) then
             unsurn=0.d0
         else
-            call rcvalb(fami, kpg, spt, poum, imate,&
+            call rcvalb(fami, kpg, spt, poum, j_mater,&
                         ' ', 'THM_RUPT', 0, ' ', [0.d0],&
                         2, ncra(1), para(1), icodre, 1)
             ouvfic = para(1)
@@ -150,7 +161,7 @@ implicit none
 !
 ! - CALCUL DES TERMES MECA ET DE COUPLAGE DE L'OPERATEUR TANGENT
 !
-        if (rigi) then
+        if (l_matr) then
             if (kpi .le. npg) then
                 do i = 1, ndim
                     do j = 1, ndim
@@ -167,7 +178,7 @@ implicit none
             endif
 ! - CALCUL DE L'OUVERTURE HYDRO ET DE LA PERMEABILITE
             ouvh=varim(advico+vicphi)
-            if (varim(3) .eq. 0) then
+            if (nint(varim(3)) .eq. 0) then
                 ouvh=ouvfic
             endif
             tlint=ouvh**2/12
@@ -175,7 +186,7 @@ implicit none
 !
 ! - CALCUL DES TERMES MECA ET DE COUPLAGE DU VECTEUR FORCES INTERNES
 !
-        if (resi) then
+        if (l_resi) then
             if ((ds_thm%ds_elem%l_dof_pre1) .and.&
                  ((nint(varip(advime+2)) .eq. 1) .or.( nint(varip(advime+2)).eq. 2))) then
                 sigp(1+ndim)=-defgep(addep1)
@@ -184,7 +195,7 @@ implicit none
             varip(advico+vicphi)=defgep(1)
             ouvh=varip(advico+vicphi)
 ! - SI FISSURE FERMEE ALORS ON DONNE UNE OUVERTURE HYDRO FICTIVE
-            if ((varip(3).eq.0)) then
+            if ((nint(varip(3)).eq.0)) then
                 ouvh=ouvfic
             endif
             tlint=ouvh**2/12
@@ -203,13 +214,13 @@ implicit none
 !
 ! - INTEGRATION DE LA LOI DE COMPORTEMENT MECANIQUE
 !
-        call lcejex('RIGI', kpi, 1, ndim, imate,&
+        call lcejex('RIGI', kpi, 1, ndim, j_mater,&
                     option, defgem, da, sigp, dsidep,&
                     varim(advime), varip(advime))
 !
 ! - RECUPERATION DES PARAMETRES DE COUPLAGE POUR LA POINTE DE FISSURE
 !
-        call rcvalb(fami, kpg, spt, poum, imate,&
+        call rcvalb(fami, kpg, spt, poum, j_mater,&
                     ' ', 'THM_RUPT', 0, ' ', [0.d0],&
                     2, ncra(1), para(1), icodre, 1)
         ouvfic = para(1)
@@ -217,7 +228,7 @@ implicit none
 !
 ! - CALCUL DES TERMES MECA ET DE COUPLAGE DE L'OPERATEUR TANGENT
 !
-        if (rigi) then
+        if (l_matr) then
             if (kpi .le. npg) then
                 do i = 1, ndim
                     do j = 1, ndim
@@ -241,7 +252,7 @@ implicit none
 !
 ! - CALCUL DES TERMES MECA ET DE COUPLAGE DU VECTEUR FORCES INTERNES
 !
-        if (resi) then
+        if (l_resi) then
             if ((ds_thm%ds_elem%l_dof_pre1) .and. (nint(varip(advime+2)) .eq. 1)) then
                 sigp(1+ndim)=-defgep(addep1)
             endif

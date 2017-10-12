@@ -17,14 +17,14 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1306,W1504
 !
-subroutine aseihm(option, axi, ndim, nno1, nno2,&
+subroutine aseihm(option, l_axi, ndim, nno1, nno2,&
                   npi, npg, dimuel, dimdef, dimcon,&
-                  nbvari, imate, iu, ip, ipf,&
+                  nbvari, j_mater, iu, ip, ipf,&
                   iq, mecani, press1, press2, tempe,&
-                  vff1, vff2, dffr2, instam, instap,&
+                  vff1, vff2, dffr2, time_prev, time_curr,&
                   deplm, deplp, sigm, sigp, varim,&
                   varip, nomail, wref, geom, ang,&
-                  compor, perman, vectu, matuu,&
+                  compor, l_steady, vectu, matuu,&
                   retcom)
 !
 implicit none
@@ -32,8 +32,9 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/coeihm.h"
 #include "asterfort/matthm.h"
-#include "asterfort/thmGetBehaviour.h"
 #include "asterfort/thmGetParaInit.h"
+#include "asterfort/thmGetBehaviour.h"
+#include "asterfort/thmGetBehaviourVari.h"
 !......................................................................
 !
 !     BUT:  CALCUL DU VECTEUR FORCES INTERNES ELEMENTAIRE, DES
@@ -93,16 +94,17 @@ implicit none
 !
     integer :: ndim, nno1, nno2, npi, npg, dimuel, dimdef, dimcon, nbvari
     integer :: mecani(8), press1(9), press2(9), tempe(5)
-    integer :: imate
+    integer :: j_mater
     integer :: iu(3, 18), ip(2, 9), ipf(2, 2, 9), iq(2, 2, 9)
     real(kind=8) :: vff1(nno1, npi), vff2(nno2, npi), dffr2(ndim-1, nno2, npi)
     real(kind=8) :: wref(npi), ang(24)
-    real(kind=8) :: instam, instap, deplm(dimuel), deplp(dimuel)
+    real(kind=8) :: time_prev, time_curr, deplm(dimuel), deplp(dimuel)
     real(kind=8) :: geom(ndim, nno2)
     real(kind=8) :: sigm(dimcon, npi), varim(nbvari, npi)
     character(len=8) :: nomail
-    character(len=16) :: option, compor(*)
-    aster_logical :: axi, perman
+    character(len=16) :: option
+    aster_logical :: l_axi, l_steady
+    character(len=16), intent(in) :: compor(*)
 !
 ! - VARIABLES SORTIE
     integer :: retcom
@@ -115,16 +117,21 @@ implicit none
     integer :: i, j, m, k, km, kpi, addlh1
     real(kind=8) :: q(dimdef, dimuel), res(dimdef), drde(dimdef, dimdef), wi
     real(kind=8) :: defgem(dimdef), defgep(dimdef), matri
-    aster_logical :: resi, rigi
+    aster_logical :: l_resi, l_matr
 !
-!
-! - Get parameters for coupling
-!
-    call thmGetBehaviour(compor)
+
 !
 ! - Get initial parameters (THM_INIT)
 !
-    call thmGetParaInit(imate, compor)
+    call thmGetParaInit(j_mater, compor)
+!
+! - Get parameters for behaviour
+!
+    call thmGetBehaviour(compor)
+!
+! - Get parameters for internal variables
+!
+    call thmGetBehaviourVari()
 !
 ! =====================================================================
 ! --- DETERMINATION DES VARIABLES CARACTERISANT LE MILIEU ET OPTION ---
@@ -142,17 +149,17 @@ implicit none
     addete = tempe(2)
     adcote = tempe(3)
 !
-    resi = option(1:4).eq.'FULL' .or. option(1:4).eq.'RAPH'
-    rigi = option(1:4).eq.'FULL' .or. option(1:4).eq.'RIGI'
+    l_resi = option(1:4).eq.'FULL' .or. option(1:4).eq.'RAPH'
+    l_matr = option(1:4).eq.'FULL' .or. option(1:4).eq.'RIGI'
 !
 ! ======================================================================
 ! --- INITIALISATION DE VECTU, MATUU A 0 SUIVANT OPTION ----------------
 ! ======================================================================
-    if (resi) then
+    if (l_resi) then
         vectu(:)=0.d0
     endif
 !
-    if (rigi) then
+    if (l_matr) then
         matuu(:)=0.d0
     endif
 !
@@ -166,7 +173,7 @@ implicit none
 ! --- CALCUL DE LA MATRICE DE PASSAGE DDL -> DEFORMATIONS GENERALISEES
 ! =====================================================================
 !
-        call matthm(ndim, axi, nno1, nno2, dimuel,&
+        call matthm(ndim, l_axi, nno1, nno2, dimuel,&
                     dimdef, iu, ip, ipf, iq,&
                     addep1,&
                     addlh1, vff1(1, kpi), vff2(1, kpi), dffr2(1, 1, kpi), wref(kpi),&
@@ -189,8 +196,8 @@ implicit none
 ! --- INTEGRATION DES LOIS DE COMPORTEMENT ----------------------------
 ! =====================================================================
 !
-        call coeihm(option, perman, resi, rigi, imate,&
-                    compor, instam, instap, nomail,&
+        call coeihm(option, l_steady, l_resi, l_matr, j_mater,&
+                    time_prev, time_curr, nomail,&
                     ndim, dimdef, dimcon, nbvari,&
                     addeme, adcome,&
                     addep1, adcp11, adcp12, addlh1, adcop1,&
@@ -203,7 +210,7 @@ implicit none
 ! --- CALCUL DES FORCES INTERIEURES ET DE L'OPERATEUR TANGENT ---------
 ! =====================================================================
 !
-        if (resi) then
+        if (l_resi) then
             do k = 1, dimuel
                 do i = 1, dimdef
                     vectu(k)=vectu(k)+wi*q(i,k)*res(i)
@@ -211,7 +218,7 @@ implicit none
             end do
         endif
 !
-        if (rigi) then
+        if (l_matr) then
             km = 1
             do k = 1, dimuel
                 do m = 1, dimuel

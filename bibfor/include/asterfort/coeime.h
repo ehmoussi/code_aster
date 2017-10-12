@@ -20,41 +20,26 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine coeime(meca, imate, nomail, option, resi,&
-                      rigi, ndim, dimdef, dimcon, &
+    subroutine coeime(j_mater, nomail, option, l_resi,&
+                      l_matr, ndim, dimdef, dimcon, &
                       addeme, addep1,&
-                      nbvari, advime, advico, npg, npi,&
+                      nbvari, npg, npi,&
                       defgep, defgem, sigm, sigp, varim,&
                       varip, ouvh, tlint, drde, kpi,&
-                      vicphi, unsurn, retcom)
-        integer :: nbvari
-        integer :: dimcon
-        integer :: dimdef
-        integer :: ndim
-        character(len=16) :: meca
-        integer :: imate
-        character(len=8) :: nomail
-        character(len=16) :: option
-        aster_logical :: resi
-        aster_logical :: rigi
-        integer :: addeme
-        integer :: addep1
-        integer :: advime
-        integer :: advico
-        integer :: npg
-        integer :: npi
-        real(kind=8) :: defgep(dimdef)
-        real(kind=8) :: defgem(dimdef)
-        real(kind=8) :: sigm(dimcon)
-        real(kind=8) :: sigp(dimcon)
-        real(kind=8) :: varim(nbvari)
-        real(kind=8) :: varip(nbvari)
-        real(kind=8) :: ouvh
-        real(kind=8) :: tlint
-        real(kind=8) :: drde(dimdef, dimdef)
-        integer :: kpi
-        integer :: vicphi
-        real(kind=8) :: unsurn
-        integer :: retcom
+                      retcom)
+        integer, intent(in) :: j_mater
+        character(len=8), intent(in) :: nomail
+        character(len=16), intent(in) :: option
+        aster_logical, intent(in) :: l_resi, l_matr
+        integer, intent(in) :: ndim, dimcon, dimdef
+        integer, intent(in) :: addeme, addep1, npg, kpi, npi, nbvari
+        real(kind=8), intent(in) :: defgem(dimdef), defgep(dimdef)
+        real(kind=8), intent(in) :: sigm(dimcon)
+        real(kind=8), intent(inout) :: sigp(dimcon)
+        real(kind=8), intent(in) :: varim(nbvari)
+        real(kind=8), intent(inout) :: varip(nbvari)
+        real(kind=8), intent(out) :: ouvh, tlint
+        real(kind=8), intent(inout) :: drde(dimdef, dimdef)
+        integer, intent(out) :: retcom
     end subroutine coeime
 end interface
