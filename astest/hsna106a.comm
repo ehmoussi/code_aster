@@ -335,5 +335,35 @@ TEST_RESU(RESU=(
            ),)
 
 IMPR_RESU(FORMAT='MED', RESU=_F(RESULTAT=VL),)
+
+VLMED=LIRE_RESU(TYPE_RESU='EVOL_NOLI', FORMAT='MED',  UNITE=80,
+              MODELE=MO, TOUT_ORDRE='OUI',
+              FORMAT_MED=(
+                   _F(NOM_RESU='VL', NOM_CHAM='EPME_NOEU'),
+              )
+              );
+
+TEST_RESU(RESU=(
+                _F(INST=1.3,
+                   RESULTAT=VLMED,
+                   NOM_CHAM='EPME_NOEU',
+                   NOEUD='NO3',
+                   NOM_CMP='EPYY',
+                   VALE_CALC=-0.0096,
+                   VALE_REFE=-0.0096,
+                   REFERENCE='AUTRE_ASTER',
+                   PRECISION=1.E-6,),
+                _F(INST=2.0,
+                   RESULTAT=VLMED,
+                   NOM_CHAM='EPME_NOEU',
+                   NOEUD='NO3',
+                   NOM_CMP='EPYY',
+                   VALE_CALC=-0.004,
+                   VALE_REFE=-0.004,
+                   REFERENCE='AUTRE_ASTER',
+                   PRECISION=1.E-6,),
+           ),)
+
+
 FIN()
 #
