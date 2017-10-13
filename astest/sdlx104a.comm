@@ -56,7 +56,7 @@ MASELEM=CALC_MATR_ELEM(OPTION='MASS_MECA',
                         CHAM_MATER=MATER,
                        CARA_ELEM = ELEM);
 
-NUM_DYN=NUME_DDL(MATR_RIGI=RIGIELEM,);
+NUM_DYN=NUME_DDL(MATR_RIGI=RIGIELEM);
 
 MATMASS=ASSE_MATRICE(MATR_ELEM=MASELEM,
                      NUME_DDL=NUM_DYN,);
@@ -72,7 +72,7 @@ MATRIGI=ASSE_MATRICE(MATR_ELEM=RIGIELEM,
 #
 #
 #
-MOD_DYN=CALC_MODES(MATR_RIGI=MATRIGI,
+MOD_DYN=CALC_MODES(MATR_RIGI=MATRIGI,SOLVEUR=_F(METHODE='MULT_FRONT'),
                    VERI_MODE=_F(STURM='LOCAL',
                                 ),
                    FILTRE_MODE=_F(CRIT_EXTR='MASS_EFFE_UN',
@@ -97,7 +97,7 @@ STAMAELE=CALC_MATR_ELEM(OPTION='MASS_MECA',
                         CHAM_MATER=MATERB,
                         CARA_ELEM = ELEMB);
 
-NUM_STA=NUME_DDL(MATR_RIGI=STARIELE,);
+NUM_STA=NUME_DDL(MATR_RIGI=STARIELE);
 
 MASSETAT=ASSE_MATRICE(MATR_ELEM=STAMAELE,
                       NUME_DDL=NUM_STA,);
@@ -108,7 +108,7 @@ RIGISTAT=ASSE_MATRICE(MATR_ELEM=STARIELE,
 # calcul des modes de fondation sur tapis de ressorts
 # ----------------------------------------------------------
 #
-MOD_STA=CALC_MODES(MATR_RIGI=RIGISTAT,
+MOD_STA=CALC_MODES(MATR_RIGI=RIGISTAT,SOLVEUR=_F(METHODE='MULT_FRONT'),
                    MATR_MASS=MASSETAT,
                    CALC_FREQ=_F(NMAX_FREQ=40,
                                 ),
@@ -520,7 +520,7 @@ TEST_TABLE(VALE_CALC=0.410365084113,TOLE_MACHINE=1.E-5,  # En attente issue24202
                      VALE=3.525,),
            )
 
-TEST_TABLE(VALE_CALC=0.422943654003,TOLE_MACHINE=1.E-5,  # En attente issue24202 
+TEST_TABLE(VALE_CALC=0.422942986674,TOLE_MACHINE=1.E-5,  # En attente issue24202 
            NOM_PARA='eH_0_SOMMET',
            TABLE=TAB,
            FILTRE=_F(NOM_PARA='FREQ',
