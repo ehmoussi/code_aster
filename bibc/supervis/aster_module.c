@@ -2576,6 +2576,41 @@ void DEFSS(LCSYMM, lcsymm, _IN char *compor, STRING_SIZE lcompor,
    Py_XDECREF(catalc);
 }
 
+
+void DEFPSS(LCKITREAD, lckitread,_IN ASTERINTEGER *nbkit,
+                                 _IN char *lkit, STRING_SIZE llkit,
+                                 _OUT char *lrela, STRING_SIZE llrela)
+{
+    PyObject *catalc, *tup_lkit, *res;
+    int nb_tuple;
+    catalc = GetJdcAttr("catalc");
+
+    // Input in tuple: first => name of kit, next => components of kit
+    tup_lkit = MakeTupleString((long)*nbkit, lkit, llkit, NULL);
+
+    // Call C function
+    res = PyObject_CallMethod(catalc, "get_kit", "O", tup_lkit);
+                        
+    if (res == NULL) {
+        MYABORT("Echec lors de la lecture du kit (lckitread/get_kit) !");
+        DEBUG_ASSERT(PyTuple_Check(res)) ;
+    }
+    nb_tuple = PyTuple_Size(tup_lkit);
+    if (nb_tuple != 5) {
+        MYABORT("Echec lors de la lecture du kit (lckitread/get_kit) !");
+        DEBUG_ASSERT(PyTuple_Check(res)) ;
+    }
+
+
+    // Convert output
+    convertxt(4, res, lrela, llrela);
+
+
+    Py_XDECREF(res);
+    Py_XDECREF(tup_lkit);
+    Py_XDECREF(catalc);
+}
+
 /* ----------   FIN catalogue de loi de comportement   -------------- */
 /* ------------------------------------------------------------------ */
 

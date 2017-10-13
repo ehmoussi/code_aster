@@ -15,27 +15,25 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine thm_kit_read(keywordfact, iocc, rela_comp, rela_thmc, rela_hydr,&
-                        rela_meca, rela_ther)
-!
-    implicit none
-!
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/getvtx.h"
-#include "asterfort/assert.h"
-#include "asterfort/utmess.h"
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    character(len=16), intent(in) :: keywordfact
-    integer, intent(in) :: iocc
-    character(len=16), intent(in) :: rela_comp
-    character(len=16), intent(out) :: rela_thmc
-    character(len=16), intent(out) :: rela_hydr
-    character(len=16), intent(out) :: rela_meca
-    character(len=16), intent(out) :: rela_ther
+subroutine thm_kit_read(keywordfact, iocc     , rela_comp, rela_thmc, rela_hydr,&
+                        rela_meca  , rela_ther)
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/getvtx.h"
+#include "asterfort/assert.h"
+#include "asterc/lckitread.h"
+!
+character(len=16), intent(in) :: keywordfact
+integer, intent(in) :: iocc
+character(len=16), intent(in) :: rela_comp
+character(len=16), intent(out) :: rela_thmc
+character(len=16), intent(out) :: rela_hydr
+character(len=16), intent(out) :: rela_meca
+character(len=16), intent(out) :: rela_ther
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -55,28 +53,8 @@ subroutine thm_kit_read(keywordfact, iocc, rela_comp, rela_thmc, rela_hydr,&
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: dmthmc, dmhydr, dmmeca
-    parameter  ( dmthmc = 8, dmhydr = 4, dmmeca = 21 )
-    character(len=16) :: pothmc(dmthmc), pohydr(dmhydr), pomeca(dmmeca)
-    character(len=16) :: valk(3)
-    integer :: ikit, ii, nocc
-    aster_logical :: l_thmc, l_hydr, l_meca
-    character(len=16) :: rela_kit(4)
-!
-! --------------------------------------------------------------------------------------------------
-!
-    data pothmc / 'LIQU_SATU'       ,'LIQU_GAZ'        ,'GAZ'             ,&
-                  'LIQU_GAZ_ATM'    ,'LIQU_VAPE_GAZ'   ,'LIQU_VAPE'       ,&
-                  'LIQU_AD_GAZ_VAPE','LIQU_AD_GAZ'/
-    data pohydr / 'HYDR_UTIL'       ,'HYDR_VGM'        ,&
-                  'HYDR_VGC'        ,'HYDR_ENDO'/
-    data pomeca / 'ELAS'            ,'CJS'             ,'HUJEUX'          ,&
-                  'CAM_CLAY'        ,'BARCELONE'       ,'LAIGLE'          ,&
-                  'LETK'            ,'VISC_DRUC_PRAG'  ,'HOEK_BROWN_EFF'  ,&
-                  'HOEK_BROWN_TOT'  ,'MAZARS'          ,'ENDO_ISOT_BETON' ,&
-                  'GONF_ELAS'       ,'DRUCK_PRAGER'    ,'DRUCK_PRAG_N_A'  ,&
-                  'JOINT_BANDIS'    ,'CZM_LIN_REG'     ,'CZM_EXP_REG'     ,&
-                  'MOHR_COULOMB'    ,'MFRONT'          ,'LKR'/
+    integer :: nocc
+    character(len=16) :: rela_kit(4), rela_list(4), list_kit(5)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -84,9 +62,6 @@ subroutine thm_kit_read(keywordfact, iocc, rela_comp, rela_thmc, rela_hydr,&
     rela_hydr = 'VIDE'
     rela_meca = 'VIDE'
     rela_ther = 'VIDE'
-    l_thmc = .false.
-    l_hydr = .false.
-    l_meca = .false.
 !
 ! - Read command file
 !
@@ -94,291 +69,15 @@ subroutine thm_kit_read(keywordfact, iocc, rela_comp, rela_thmc, rela_hydr,&
     nocc = -nocc
     call getvtx(keywordfact, 'RELATION_KIT', iocc = iocc, nbval = nocc, vect = rela_kit)
 !
-! - Get relations for kit
+! - Get right type
 !
-    do ikit = 1, nocc
-!
-! ----- Coupling
-!
-        do ii = 1, dmthmc
-            if (rela_kit(ikit) .eq. pothmc(ii)) then
-                rela_thmc = rela_kit(ikit)
-                if (l_thmc) then
-                    call utmess('F', 'THM1_36')
-                endif
-                l_thmc = .true.
-                goto 10
-            endif
-        enddo
-!
-! ----- Hydraulic
-!
-        do ii = 1, dmhydr
-            if (rela_kit(ikit) .eq. pohydr(ii)) then
-                rela_hydr = rela_kit(ikit)
-                if (l_hydr) then
-                    call utmess('F', 'THM1_37')
-                endif
-                l_hydr = .true.
-                goto 10
-            endif
-        enddo
-!
-! ----- Mechanic
-!
-        do ii = 1, dmmeca
-            if (rela_kit(ikit) .eq. pomeca(ii)) then
-                rela_meca = rela_kit(ikit)
-                if (l_meca) then
-                    call utmess('F', 'THM1_38')
-                endif
-                l_meca = .true.
-                goto 10
-            endif
-        enddo
- 10     continue
-    enddo
-!
-! - Thermic
-!
-    if ((rela_comp.eq.'KIT_THH') .or. (rela_comp.eq.'KIT_THV') .or.&
-        (rela_comp.eq.'KIT_THM') .or. (rela_comp.eq.'KIT_THHM').or.&
-        (rela_comp.eq.'KIT_THH2') .or. (rela_comp.eq.'KIT_THH2M')) then
-        rela_ther = 'THER'
-    endif
-!
-! - Always coupling and hydraulic relation
-!
-    if (.not.l_thmc) then
-        call utmess('F', 'THM1_39', 1, rela_comp)
-    endif
-    if (.not.l_hydr) then
-        call utmess('F', 'THM1_40', 1, rela_comp)
-    endif
-!
-! - Check if all relation was determined depending on kit
-!
-    if (rela_comp .eq. 'KIT_HM') then
-!
-! ----- KIT_HM
-!
-        if (.not.l_meca) call utmess('F', 'THM1_41', 1, rela_comp)
-        if (rela_thmc .ne. 'LIQU_SATU' .and. rela_thmc .ne. 'GAZ' .and. rela_thmc .ne.&
-            'LIQU_GAZ_ATM') then
-            valk(1) = rela_thmc
-            valk(2) = rela_comp
-            call utmess('F', 'THM1_42', nk=2, valk=valk)
-        endif
-        if (rela_hydr .eq. 'HYDR_ENDO' .and.&
-            (rela_meca.ne.'MAZARS' .and. rela_meca.ne.'ENDO_ISOT_BETON' )) then
-            valk(1) = rela_hydr
-            valk(2) = rela_meca
-            call utmess('F', 'THM1_43', nk=2, valk=valk)
-        endif
-        if (rela_meca .eq. 'BARCELONE') then
-            valk(1) = rela_meca
-            valk(2) = rela_comp
-            call utmess('F', 'THM1_44', nk=2, valk=valk)
-        endif
-!
-    else if (rela_comp.eq.'KIT_HHM') then
-!
-! ----- KIT_HHM
-!
-        if (.not.l_meca) call utmess('F', 'THM1_41', 1, rela_comp)
-        if (rela_thmc .ne. 'LIQU_GAZ' .and. rela_thmc .ne. 'LIQU_VAPE_GAZ') then
-            valk(1) = rela_thmc
-            valk(2) = rela_comp
-            call utmess('F', 'THM1_42', nk=2, valk=valk)
-        endif
-        if (rela_hydr .eq. 'HYDR_ENDO' .and.&
-            (rela_meca.ne.'MAZARS' .and. rela_meca.ne.'ENDO_ISOT_BETON' )) then
-            valk(1) = rela_hydr
-            valk(2) = rela_meca
-            call utmess('F', 'THM1_43', nk=2, valk=valk)
-        endif
-        if (rela_meca .eq. 'BARCELONE' .and.&
-            (rela_thmc.ne.'LIQU_GAZ' .and. rela_thmc.ne.'LIQU_VAPE_GAZ')) then
-            valk(1) = rela_meca
-            valk(2) = rela_comp
-            call utmess('F', 'THM1_44', nk=2, valk=valk)
-        endif
-!
-    else if (rela_comp.eq.'KIT_HH2M') then
-!
-! ----- KIT_HH2M
-!
-        if (.not.l_meca) call utmess('F', 'THM1_41', 1, rela_comp)
-        if (rela_thmc .ne. 'LIQU_AD_GAZ_VAPE' .and. rela_thmc .ne. 'LIQU_AD_GAZ') then
-            valk(1) = rela_thmc
-            valk(2) = rela_comp
-            call utmess('F', 'THM1_42', nk=2, valk=valk)
-        endif
-        if (rela_hydr .eq. 'HYDR_ENDO' .and.&
-            (rela_meca.ne.'MAZARS' .and. rela_meca.ne.'ENDO_ISOT_BETON' )) then
-            valk(1) = rela_hydr
-            valk(2) = rela_meca
-            call utmess('F', 'THM1_43', nk=2, valk=valk)
-        endif
-        if (rela_meca .eq. 'BARCELONE' .and.&
-            (rela_thmc.ne.'LIQU_GAZ' .and. rela_thmc.ne.'LIQU_VAPE_GAZ')) then
-            valk(1) = rela_meca
-            valk(2) = rela_comp
-            call utmess('F', 'THM1_44', nk=2, valk=valk)
-        endif
-!
-    else if (rela_comp.eq.'KIT_H') then
-!
-! ----- KIT_H
-!
-        if (l_meca) then
-            valk(1) = rela_comp
-            call utmess('F', 'THM1_46', 1, valk)
-        endif
-        if (rela_thmc .ne. 'LIQU_SATU' .and. rela_thmc .ne. 'GAZ') then
-            valk(1) = rela_comp
-            call utmess('F', 'THM1_59', 1, valk)
-        endif
-!
-    else if (rela_comp.eq.'KIT_THH') then
-!
-! ----- KIT_THH
-!
-        if (l_meca) then
-            valk(1) = rela_comp
-            call utmess('F', 'THM1_46', 1, valk)
-        endif
-        if (rela_thmc .ne. 'LIQU_GAZ' .and. rela_thmc .ne. 'LIQU_VAPE_GAZ') then
-            valk(1) = rela_thmc
-            valk(2) = rela_comp
-            call utmess('F', 'THM1_42', nk=2, valk=valk)
-        endif
-    else if (rela_comp.eq.'KIT_THH2') then
-!
-! ----- KIT_THH2
-!
-        if (l_meca) then
-            valk(1) = rela_comp
-            call utmess('F', 'THM1_46', 1, valk)
-        endif
-        if (rela_thmc .ne. 'LIQU_AD_GAZ_VAPE' .and. rela_thmc .ne. 'LIQU_AD_GAZ') then
-            valk(1) = rela_thmc
-            valk(2) = rela_comp
-            call utmess('F', 'THM1_42', nk=2, valk=valk)
-        endif
-!
-    else if (rela_comp.eq.'KIT_HH') then
-!
-! ----- KIT_HH
-!
-        if (l_meca) then
-            valk(1) = rela_comp
-            call utmess('F', 'THM1_46', 1, valk)
-        endif
-        if (rela_thmc .ne. 'LIQU_GAZ' .and. rela_thmc .ne. 'LIQU_VAPE_GAZ') then
-            valk(1) = rela_thmc
-            valk(2) = rela_comp
-            call utmess('F', 'THM1_42', nk=2, valk=valk)
-        endif
-!
-    else if (rela_comp.eq.'KIT_HH2') then
-!
-! ----- KIT_HH2
-!
-        if (l_meca) then
-            valk(1) = rela_comp
-            call utmess('F', 'THM1_46', 1, valk)
-        endif
-        if (rela_thmc .ne. 'LIQU_AD_GAZ_VAPE' .and. rela_thmc .ne. 'LIQU_AD_GAZ') then
-            valk(1) = rela_thmc
-            valk(2) = rela_comp
-            call utmess('F', 'THM1_42', nk=2, valk=valk)
-        endif
-!
-    else if (rela_comp.eq.'KIT_THV') then
-!
-! ----- KIT_THV
-!
-        if (l_meca) then
-            valk(1) = rela_comp
-            call utmess('F', 'THM1_46', 1, valk)
-        endif
-        if (rela_thmc .ne. 'LIQU_VAPE') then
-            valk(1) = rela_thmc
-            valk(2) = rela_comp
-            call utmess('F', 'THM1_42', nk=2, valk=valk)
-        endif
-!
-    else if (rela_comp.eq.'KIT_THM') then
-!
-! ----- KIT_THM
-!
-        if (.not.l_meca) call utmess('F', 'THM1_41', 1, rela_comp)
-        if (rela_thmc .ne. 'LIQU_SATU' .and. rela_thmc .ne. 'LIQU_GAZ_ATM' .and. rela_thmc&
-            .ne. 'GAZ') then
-            valk(1) = rela_thmc
-            valk(2) = rela_comp
-            call utmess('F', 'THM1_42', nk=2, valk=valk)
-        endif
-        if (rela_hydr .eq. 'HYDR_ENDO' .and.&
-            (rela_meca.ne.'MAZARS' .and. rela_meca.ne.'ENDO_ISOT_BETON' )) then
-            valk(1) = rela_hydr
-            valk(2) = rela_meca
-            call utmess('F', 'THM1_43', nk=2, valk=valk)
-        endif
-        if (rela_meca .eq. 'BARCELONE') then
-            valk(1) = rela_meca
-            valk(2) = rela_comp
-            call utmess('F', 'THM1_44', nk=2, valk=valk)
-        endif
-!
-    else if (rela_comp.eq.'KIT_THHM') then
-!
-! ----- KIT_THHM
-!
-        if (.not.l_meca) call utmess('F', 'THM1_41', 1, rela_comp)
-        if (rela_thmc .ne. 'LIQU_VAPE_GAZ' .and. rela_thmc .ne. 'LIQU_GAZ') then
-            valk(1) = rela_thmc
-            valk(2) = rela_comp
-            call utmess('F', 'THM1_42', nk=2, valk=valk)
-        endif
-        if (rela_hydr .eq. 'HYDR_ENDO' .and.&
-            (rela_meca.ne.'MAZARS' .and. rela_meca.ne.'ENDO_ISOT_BETON' )) then
-            valk(1) = rela_hydr
-            valk(2) = rela_meca
-            call utmess('F', 'THM1_43', nk=2, valk=valk)
-        endif
-        if (rela_meca .eq. 'BARCELONE' .and.&
-            (rela_thmc.ne.'LIQU_GAZ' .and. rela_thmc.ne.'LIQU_VAPE_GAZ')) then
-            valk(1) = rela_thmc
-            valk(2) = rela_comp
-            call utmess('F', 'THM1_42', nk=2, valk=valk)
-        endif
-!
-    else if (rela_comp.eq.'KIT_THH2M') then
-!
-! ----- KIT_THH2M
-!
-        if (.not.l_meca) call utmess('F', 'THM1_41', 1, rela_comp)
-        if (rela_thmc .ne. 'LIQU_AD_GAZ_VAPE' .and. rela_thmc .ne. 'LIQU_AD_GAZ') then
-            valk(1) = rela_thmc
-            valk(2) = rela_comp
-            call utmess('F', 'THM1_42', nk=2, valk=valk)
-        endif
-        if (rela_hydr .eq. 'HYDR_ENDO' .and.&
-            (rela_meca.ne.'MAZARS' .and. rela_meca.ne.'ENDO_ISOT_BETON' )) then
-            valk(1) = rela_hydr
-            valk(2) = rela_meca
-            call utmess('F', 'THM1_43', nk=2, valk=valk)
-        endif
-        if (rela_meca .eq. 'BARCELONE' .and.&
-            (rela_thmc.ne.'LIQU_GAZ' .and. rela_thmc.ne.'LIQU_VAPE_GAZ')) then
-            valk(1) = rela_thmc
-            valk(2) = rela_comp
-            call utmess('F', 'THM1_42', nk=2, valk=valk)
-        endif
-    else
-        ASSERT(.false.)
-    endif
+    list_kit(1:5)      = 'VIDE'
+    list_kit(1)        = rela_comp
+    list_kit(2:nocc+1) = rela_kit(1:nocc)
+    call lckitread(5, list_kit, rela_list)
+    rela_meca = rela_list(1)
+    rela_hydr = rela_list(2)
+    rela_thmc = rela_list(3)
+    rela_ther = rela_list(4)
 !
 end subroutine
