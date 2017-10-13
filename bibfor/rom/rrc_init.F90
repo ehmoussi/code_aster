@@ -134,6 +134,9 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
         AS_ALLOCATE(vi = ds_para%v_equa_ridd, size = nb_equa_dual)
         call rsexch(' ', result_rom, ds_para%ds_empi_dual%field_name,&
                     1, field, iret)
+        if (iret .ne. 0) then
+            call utmess('F', 'ROM7_25', sk = ds_para%ds_empi_dual%field_name)
+        endif
         call jelira(field(1:19)//'.VALE', 'LONMAX', nb_equa_ridd)
         call select_dof_3(field, nb_cmp_dual, ds_para%v_equa_ridd)
         ds_para%nb_equa_ridd = nb_equa_ridd
