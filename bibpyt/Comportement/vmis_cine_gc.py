@@ -23,8 +23,9 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'VMIS_CINE_GC',
+    lc_type        = ('MECANIQUE',),
     doc            =   """Loi de Von Mises en 1D - Écrouissage cinématique linéaire.
-   Application aux études en génie civil : armatures, trellis soudés"""          ,
+   Application aux études en génie civil : armatures, trellis soudés"""            ,
     num_lc         = 0,
     nb_vari        = 6,
     nom_vari       = ('CRITSIG','CRITEPS','XCINXX','INDIPLAS','DISSIP',

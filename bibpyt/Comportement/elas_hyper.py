@@ -23,10 +23,11 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'ELAS_HYPER',
+    lc_type        = ('MECANIQUE',),
     doc            =   """Relation de comportement hyper-élastique généralisant le modèle de Mooney-Rivlin généralisé
             Sous sa version incrémentale, elle permet de prendre en compte des déplacements
             et contraintes initiaux donnés sous le mot clé ETAT_INIT.
-            Cette relation n'est supportée qu'en grandes déformations (DEFORMATION='GREEN') cf.[R5.03.23]. """          ,
+            Cette relation n'est supportée qu'en grandes déformations (DEFORMATION='GREEN') cf.[R5.03.23]. """            ,
     num_lc         = 19,
     nb_vari        = 1,
     nom_vari       = ('VIDE',),

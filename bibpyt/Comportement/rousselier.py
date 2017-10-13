@@ -23,9 +23,10 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'ROUSSELIER',
+    lc_type        = ('MECANIQUE',),
     doc            =   """Relation de comportement élasto-plastique de G.Rousselier en grandes déformations.
    Elle permet de rendre compte de la croissance des cavités et de décrire la rupture ductile.
-   Pour faciliter l'intégration de ce modèle, il est conseillé d'utiliser systématiquement le redécoupage global du pas de temps (SUBD_PAS)."""          ,
+   Pour faciliter l'intégration de ce modèle, il est conseillé d'utiliser systématiquement le redécoupage global du pas de temps (SUBD_PAS)."""            ,
     num_lc         = 36,
     nb_vari        = 9,
     nom_vari       = ('EPSPEQ','POROSITE','INDIPLAS','EPSEXX','EPSEYY',

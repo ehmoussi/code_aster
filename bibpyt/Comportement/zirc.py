@@ -23,7 +23,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'ZIRC',
-    doc            =   """phases metallurgiques du zirconium"""          ,
+    lc_type        = ('PHASE',),
+    doc            =   """phases metallurgiques du zirconium"""            ,
     num_lc         = 0,
     nb_vari        = 3,
     nom_vari       = ('ZIRCALPH','ZIRCALBE','ZIRCBETA',),

@@ -23,8 +23,9 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'LIQU_GAZ',
+    lc_type        = ('COUPLAGE_THM',),
     doc            =   """Loi de comportement pour un milieu poreux non saturé liquide/gaz sans changement de phase
-   (Cf. [R7.01.11] pour plus de détails)."""          ,
+   (Cf. [R7.01.11] pour plus de détails)."""            ,
     num_lc         = 5,
     nb_vari        = 2,
     nom_vari       = ('POROSITE','SATLIQ',),

@@ -22,7 +22,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'ELAS_VMIS_LINE',
-    doc            =   """Elasticité non linéaire de Von Mises - Hencky à écrouissage isotrope linéaire"""          ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """Elasticité non linéaire de Von Mises - Hencky à écrouissage isotrope linéaire"""            ,
     num_lc         = 0,
     nb_vari        = 2,
     nom_vari       = ('EPSPEQ','INDIPLAS',),

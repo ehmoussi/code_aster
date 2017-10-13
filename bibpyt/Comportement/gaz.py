@@ -23,8 +23,9 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'GAZ',
+    lc_type        = ('COUPLAGE_THM',),
     doc            =   """Loi de comportement d'un gaz parfait, c'est-à-dire vérifiant la relation P/rho   rho la masse volumique, Mv la masse molaire, R la constante de Boltzman et T la température (Cf. [R7.01.11]).
-   Pour milieu saturé uniquement. """          ,
+   Pour milieu saturé uniquement. """            ,
     num_lc         = 2,
     nb_vari        = 1,
     nom_vari       = ('POROSITE',),

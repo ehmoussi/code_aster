@@ -23,7 +23,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'THER_NL',
-    doc            =   """Relation de comportement de thermique non lineaire"""          ,
+    lc_type        = ('THERMIQUE',),
+    doc            =   """Relation de comportement de thermique non lineaire"""            ,
     num_lc         = 0,
     nb_vari        = 0,
     nom_vari       = None,

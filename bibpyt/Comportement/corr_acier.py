@@ -22,7 +22,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'CORR_ACIER',
-    doc            =   """Comportement élastoplastique avec endommagement dépendant du taux de corrosion, cf. R7.01.20"""          ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """Comportement élastoplastique avec endommagement dépendant du taux de corrosion, cf. R7.01.20"""            ,
     num_lc         = 24,
     nb_vari        = 3,
     nom_vari       = ('EPSPEQ','ENDO','INDIPLAS',),

@@ -22,8 +22,9 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'VMIS_ISOT_TRAC',
+    lc_type        = ('MECANIQUE',),
     doc            =   """Loi de plasticité de Von Mises à écrouissage isotrope défini
-            par une courbe de traction affine par morceaux [R5.03.02]"""          ,
+            par une courbe de traction affine par morceaux [R5.03.02]"""            ,
     num_lc         = 2,
     nb_vari        = 2,
     nom_vari       = ('EPSPEQ','INDIPLAS',),

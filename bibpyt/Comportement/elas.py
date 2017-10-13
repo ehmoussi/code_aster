@@ -22,7 +22,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'ELAS',
-    doc            =   """élasticité linéaire isotrope"""          ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """élasticité linéaire isotrope"""            ,
     num_lc         = 1,
     nb_vari        = 1,
     nom_vari       = ('VIDE',),

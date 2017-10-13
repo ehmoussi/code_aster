@@ -22,7 +22,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'VISC_CIN1_CHAB',
-    doc            =   """Loi élasto-visco-plastique de Chaboche à 1 variable cinématique"""          ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """Loi élasto-visco-plastique de Chaboche à 1 variable cinématique"""            ,
     num_lc         = 4,
     nb_vari        = 8,
     nom_vari       = ('EPSPEQ','INDIPLAS','ALPHAXX','ALPHAYY','ALPHAZZ',

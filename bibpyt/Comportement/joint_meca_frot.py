@@ -23,9 +23,10 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'JOINT_MECA_FROT',
+    lc_type        = ('MECANIQUE',),
     doc            =   """Loi elastoplastique de Mohr-Coulomb avec adhesion pour modélisation de joints dans les barrages.
             Elle permet aussi de modéliser, avec les éléments  de joint hydro-mécaniques, un couplage entre
-            la mécanique et l'écoulement de fluide dans la fissure """          ,
+            la mécanique et l'écoulement de fluide dans la fissure """            ,
     num_lc         = 48,
     nb_vari        = 18,
     nom_vari       = ('LAMBDA','INDIPLAS','DEPPLAS1','DEPPLAS2','INDIOUV',

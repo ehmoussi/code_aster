@@ -22,7 +22,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'LKR',
-    doc            =   """To complete ..."""        ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """To complete ..."""          ,
     num_lc         = 59,
     nb_vari        = 12,
     nom_vari       = ('XIP','GAMMAP','XIVP','GAMMAVP','INDICDIL',

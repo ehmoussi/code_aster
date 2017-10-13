@@ -23,8 +23,9 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'RUPT_FRAG',
+    lc_type        = ('MECANIQUE',),
     doc            =   """Relation de comportement non locale basée sur la formulation de J.J. Marigo et G. Francfort de la mécanique de la rupture (pas d'équivalent en version locale).
-   Ce modèle décrit l'apparition et la propagation de fissures dans un matériau élastique (cf. [R7.02.11])."""          ,
+   Ce modèle décrit l'apparition et la propagation de fissures dans un matériau élastique (cf. [R7.02.11])."""            ,
     num_lc         = 0,
     nb_vari        = 1,
     nom_vari       = ('ENDO',),

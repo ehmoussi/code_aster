@@ -23,7 +23,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'IMPLEX',
-    doc            =   """Algo de type IMPLEX"""          ,
+    lc_type        = ('UTILITAIRE',),
+    doc            =   """Algo de type IMPLEX"""            ,
     num_lc         = 2000,
     nb_vari        = 0,
     nom_vari       = None,

@@ -23,7 +23,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'GDEF_LOG',
-    doc            =   """Algo pour résolution en grandes déformations."""          ,
+    lc_type        = ('DEFORMATION',),
+    doc            =   """Algo pour résolution en grandes déformations."""            ,
     num_lc         = 0,
     nb_vari        = 6,
     nom_vari       = ('TXX','TYY','TZZ','TXY','TXZ',

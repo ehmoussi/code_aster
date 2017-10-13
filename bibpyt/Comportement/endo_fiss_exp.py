@@ -22,8 +22,9 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'ENDO_FISS_EXP',
+    lc_type        = ('MECANIQUE',),
     doc            =   """Comportement élastique-fragile, à endommagement scalaire, seuil exponentiel et
-   non local à gradient d'endommagement - R5.03.25"""          ,
+   non local à gradient d'endommagement - R5.03.25"""            ,
     num_lc         = 57,
     nb_vari        = 9,
     nom_vari       = ('ENDO','INDIENDO','ENDORIGI','EPSEXX','EPSEYY',

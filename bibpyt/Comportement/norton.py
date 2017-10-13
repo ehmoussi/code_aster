@@ -22,7 +22,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'NORTON',
-    doc            =   """Modele viscoplastique isotrope de Norton"""          ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """Modele viscoplastique isotrope de Norton"""            ,
     num_lc         = 32,
     nb_vari        = 7,
     nom_vari       = ('EPSPXX','EPSPYY','EPSPZZ','EPSPXY','EPSPXZ',

@@ -22,6 +22,7 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'KIT_HM',
+    lc_type        = ('KIT_THM',),
     doc            =   """KIT associé au comportement des milieux poreux (modélisations thermo-hydro-mécanique).
    Pour plus de détails sur les modélisations thermo-hydro-mécaniques et les modèles de comportement,
    on pourra consulter les documents [R7.01.10] et [R7.01.11], ainsi que la notice d'utilisation [U2.04.05].
@@ -39,7 +40,7 @@ loi = LoiComportement(
    un composant (en pratique de l'eau), mais que ce composant peut être sous forme liquide ou vapeur.
    Il n'y a alors qu'une équation de conservation de ce composant, donc un seul degré de liberté pression,
    mais il y a un flux liquide et un flux vapeur.
-   """          ,
+   """            ,
     num_lc         = 0,
     nb_vari        = 0,
     nom_vari       = None,

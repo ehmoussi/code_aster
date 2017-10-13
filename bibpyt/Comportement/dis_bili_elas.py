@@ -23,7 +23,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'DIS_BILI_ELAS',
-    doc            =   """Relation de comportement bilineaire des elements discrets"""          ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """Relation de comportement bilineaire des elements discrets"""            ,
     num_lc         = 0,
     nb_vari        = 6,
     nom_vari       = ('DIS1','DIS2','DIS3','DIS4','DIS5',

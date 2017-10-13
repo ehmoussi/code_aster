@@ -23,7 +23,8 @@ from cata_comportement import LoiComportementMFront
 loi = LoiComportementMFront(
     nom            = 'MonoDDCC_Irra',
     symbol_mfront  = 'astermonoddcc_irra',
-    doc            =   """To complete ..."""        ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """To complete ..."""          ,
     num_lc         = 58,
     nb_vari        = 0,
     nom_vari       = None,

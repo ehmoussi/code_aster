@@ -23,7 +23,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'LIQU_SATU',
-    doc            =   """Loi de comportement pour un milieux poreux saturé par un seul liquide (Cf. [R7.01.11] pour plus de détails)."""          ,
+    lc_type        = ('COUPLAGE_THM',),
+    doc            =   """Loi de comportement pour un milieux poreux saturé par un seul liquide (Cf. [R7.01.11] pour plus de détails)."""            ,
     num_lc         = 1,
     nb_vari        = 1,
     nom_vari       = ('POROSITE',),

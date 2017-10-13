@@ -24,7 +24,8 @@ from cata_comportement import LoiComportementMFront
 loi = LoiComportementMFront(
     nom            = 'MetaAcierEPIL_PT',
     symbol_mfront  = 'astermetaacierepil_pt',
-    doc            =   """To complete ..."""        ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """To complete ..."""          ,
     num_lc         = 58,
     nb_vari        = 0,
     nom_vari       = None,

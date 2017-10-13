@@ -23,7 +23,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'VIDE',
-    doc            =   """comportement inopérant, nécessaire pour THM quand absence de comportement mécanique"""          ,
+    lc_type        = ('UTILITAIRE',),
+    doc            =   """comportement inopérant, nécessaire pour THM quand absence de comportement mécanique"""            ,
     num_lc         = 0,
     nb_vari        = 0,
     nom_vari       = None,

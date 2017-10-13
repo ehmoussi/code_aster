@@ -22,7 +22,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'VMIS_CINE_LINE',
-    doc            =   """Loi de Von Mises - Prager avec ecrouissage cinematique lineaire [R5.03.02]"""          ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """Loi de Von Mises - Prager avec ecrouissage cinematique lineaire [R5.03.02]"""            ,
     num_lc         = 3,
     nb_vari        = 7,
     nom_vari       = ('XCINXX','XCINYY','XCINZZ','XCINXY','XCINXZ',

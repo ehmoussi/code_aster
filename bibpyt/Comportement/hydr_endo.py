@@ -23,10 +23,11 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'HYDR_ENDO',
+    lc_type        = ('HYDRAULIQUE',),
     doc            =   """Loi de comportement hydraulique, si le comportement mécanique est endommageant
    (donc si on utilise 'MAZARS' ou 'ENDO_ISOT_BETON') sous RELATION_KIT. Ce mot clé permet de renseigner la
    courbe de saturation et sa dérivée en fonction de la pression capillaire
-   ainsi que la perméabilité relative et sa dérivée en fonction de la saturation."""          ,
+   ainsi que la perméabilité relative et sa dérivée en fonction de la saturation."""            ,
     num_lc         = 0,
     nb_vari        = 1,
     nom_vari       = ('RHOLIQ',),

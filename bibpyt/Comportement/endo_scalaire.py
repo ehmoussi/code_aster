@@ -22,8 +22,9 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'ENDO_SCALAIRE',
+    lc_type        = ('MECANIQUE',),
     doc            =   """Comportement elastique-fragile, a endommagement scalaire, seuil elliptique et
-   ecrouissage isotrope lineaire negatif - R5.03.18"""          ,
+   ecrouissage isotrope lineaire negatif - R5.03.18"""            ,
     num_lc         = 46,
     nb_vari        = 9,
     nom_vari       = ('ENDO','INDIENDO','ENDORIGI','EPSEXX','EPSEYY',

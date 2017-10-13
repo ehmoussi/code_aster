@@ -22,8 +22,9 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'BETON_GRANGER',
+    lc_type        = ('MECANIQUE',),
     doc            =   """Comportement de fluage propre du beton, identique à BETON_GRANGER_V mais
-   traitant uniquement un comportement isotherme. cf. R7.01.01"""          ,
+   traitant uniquement un comportement isotherme. cf. R7.01.01"""            ,
     num_lc         = 26,
     nb_vari        = 55,
     nom_vari       = ('VG1','VG2','VG3','VG4','VG5',

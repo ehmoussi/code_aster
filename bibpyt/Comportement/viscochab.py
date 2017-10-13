@@ -23,9 +23,10 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'VISCOCHAB',
+    lc_type        = ('MECANIQUE',),
     doc            =   """Modèle élastoviscoplastique de Lemaitre-Chaboche avec effet de
    mémoire et restauration.
-   Ce modèle s'emploie avec les mots clés DEFORMATION = PETIT ou PETIT_REAC."""          ,
+   Ce modèle s'emploie avec les mots clés DEFORMATION = PETIT ou PETIT_REAC."""            ,
     num_lc         = 32,
     nb_vari        = 28,
     nom_vari       = ('VISCHA1','VISCHA2','VISCHA3','VISCHA4','VISCHA5',
