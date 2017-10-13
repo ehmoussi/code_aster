@@ -59,4 +59,7 @@ cata_msg = {
 
    24 : _(u"""Le calcul de type POD_INCR nécessite de récupérer la table des coordonnées réduites dans la base %(k1)s.
               Conseil: si vous récupérez la base d'un fichier externe (LIRE_RESU), ça ne peut pas fonctionner, il faut que la création de la base soit dans la même étude."""),
+
+   25 : _(u"""Vous demandez à calculer un champ de type %(k1)s par REST_REDUIT_COMPLET alors que ce champ n'existe pas dans le résultat réduit.
+              Conseil: utilisez CALC_CHAMP pour calculer ce champ."""),
 }
