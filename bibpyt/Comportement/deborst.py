@@ -22,7 +22,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'DEBORST',
-    doc            =   """Algo pour résolution en contraintes planes."""          ,
+    lc_type        = ('UTILITAIRE',),
+    doc            =   """Algo pour résolution en contraintes planes."""            ,
     num_lc         = 0,
     nb_vari        = 4,
     nom_vari       = ('DB1','DB2','DB3','DB4',),

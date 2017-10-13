@@ -22,7 +22,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'LEMA_SEUIL',
-    doc            =   """Relation de comportement viscoplastique avec seuil sous irradiation pour les assemblages combustibles cf. [R5.03.08]"""          ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """Relation de comportement viscoplastique avec seuil sous irradiation pour les assemblages combustibles cf. [R5.03.08]"""            ,
     num_lc         = 28,
     nb_vari        = 2,
     nom_vari       = ('EPSPEQ','SEUIL',),

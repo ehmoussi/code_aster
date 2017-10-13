@@ -22,7 +22,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'SECH_BAZANT',
-    doc            =   """Relation de comportement de thermique non lineaire pour modéliser le séchage du béton suivant le modèle de Bazant"""          ,
+    lc_type        = ('SECHAGE',),
+    doc            =   """Relation de comportement de thermique non lineaire pour modéliser le séchage du béton suivant le modèle de Bazant"""            ,
     num_lc         = 0,
     nb_vari        = 0,
     nom_vari       = None,

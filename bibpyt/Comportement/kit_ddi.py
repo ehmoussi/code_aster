@@ -23,7 +23,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'KIT_DDI',
-    doc            =   """Double Deformation Incrementale"""        ,
+    lc_type        = ('KIT_DDI',),
+    doc            =   """Double Deformation Incrementale"""          ,
     num_lc         = 8000,
     nb_vari        = 0,
     nom_vari       = None,

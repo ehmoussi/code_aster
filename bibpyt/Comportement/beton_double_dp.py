@@ -23,9 +23,10 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'BETON_DOUBLE_DP',
+    lc_type        = ('MECANIQUE',),
     doc            =   """Relation de comportement tridimensionnelle utilisée pour la description du comportement non linéaire du béton.
    Il comporte un critere de Drucker-Prager en traction et un critère de Drucker-Prager en compression, découplés.
-   Les deux critères peuvent avoir un écrouissage adoucissant."""          ,
+   Les deux critères peuvent avoir un écrouissage adoucissant."""            ,
     num_lc         = 120,
     nb_vari        = 4,
     nom_vari       = ('EPSPEQT','EPSPEQC','TEMP_MAX','INDIPLAS',),

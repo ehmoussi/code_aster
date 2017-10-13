@@ -23,7 +23,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'CRIT_RUPT',
-    doc            =   """Détection critère de rupture"""          ,
+    lc_type        = ('UTILITAIRE',),
+    doc            =   """Détection critère de rupture"""            ,
     num_lc         = 0,
     nb_vari        = 6,
     nom_vari       = ('EPSPVIT','EDISS','EDISSCUM','PDISS','PDISSCUM',

@@ -23,7 +23,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'DIS_VISC',
-    doc            =   """Relation de comportement visqueuse pour les éléments discrets"""          ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """Relation de comportement visqueuse pour les éléments discrets"""            ,
     num_lc         = 0,
     nb_vari        = 4,
     nom_vari       = ('FORCE','UVISQ','DISSTHER','RAIDEUR',),

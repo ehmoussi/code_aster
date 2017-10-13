@@ -22,7 +22,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'ASSE_CORN',
-    doc            =   """Relation de comportement élasto-plastique isotherme pour les assemblages boulonnés de cornières de pylônes [R5.03.32]"""          ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """Relation de comportement élasto-plastique isotherme pour les assemblages boulonnés de cornières de pylônes [R5.03.32]"""            ,
     num_lc         = 0,
     nb_vari        = 7,
     nom_vari       = ('ASSCORN1','ASSCORN2','ASSCORN3','ASSCORN4','ASSCORN5',

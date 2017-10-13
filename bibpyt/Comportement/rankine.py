@@ -23,8 +23,9 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'RANKINE',
+    lc_type        = ('MECANIQUE',),
     doc            =   """Loi de Rankine, associee, pour les joints de plots (cf. [R7.01.39] pour plus de details).
-            Pas d'ecrouissage"""          ,
+            Pas d'ecrouissage"""            ,
     num_lc         = 25,
     nb_vari        = 9,
     nom_vari       = ('EPSPVOL','EPSPEQ','INDIPLAS','EPSPXX','EPSPYY',

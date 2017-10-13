@@ -23,8 +23,9 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'META_V_CL_RE',
+    lc_type        = ('KIT_META',),
     doc            =   """Loi de comportement elasto-visco-plastique à écrouissage cinématique linéaire,
-   prenant en compte la métallurgie, la restauration"""          ,
+   prenant en compte la métallurgie, la restauration"""            ,
     num_lc         = 15,
     nb_vari        = 6,
     nom_vari       = ('XCINXX','XCINYY','XCINZZ','XCINXY','XCINXZ',

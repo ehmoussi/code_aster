@@ -23,8 +23,9 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'MFRONT',
+    lc_type        = ('MECANIQUE',),
     doc            =   """Loi de comportement utilisateur dont l'intégration
-            est réalisée par MFront."""          ,
+            est réalisée par MFront."""            ,
     num_lc         = 58,
     nb_vari        = 0,
     nom_vari       = None,

@@ -17,20 +17,22 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'RELAX_ACIER',
-    doc            =   """Loi de relaxation pour les câbles précontraint""",
+    lc_type        = ('MECANIQUE',),
+    doc            =   """Loi de relaxation pour les câbles précontraint"""  ,
     num_lc         = 0,
     nb_vari        = 2,
-    nom_vari       = ('EPSPEQ','TANGENTE'),
+    nom_vari       = ('EPSPEQ','TANGENTE',),
     mc_mater       = None,
     modelisation   = ('1D',),
     deformation    = ('PETIT','PETIT_REAC','GROT_GDEP',),
     algo_inte      = ('SPECIFIQUE',),
     type_matr_tang = None,
     proprietes     = None,
-    exte_vari      = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

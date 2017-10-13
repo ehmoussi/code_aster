@@ -22,8 +22,9 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'VMIS_ECMI_LINE',
+    lc_type        = ('MECANIQUE',),
     doc            =   """Relation de comportement d'élasto-plasticité de VON MISES à écrouissage combiné,
-   cinématique linéaire et isotrope linéaire (Cf. [R5.03.16] pour plus de détails)."""          ,
+   cinématique linéaire et isotrope linéaire (Cf. [R5.03.16] pour plus de détails)."""            ,
     num_lc         = 3,
     nb_vari        = 8,
     nom_vari       = ('EPSPEQ','INDIPLAS','XCINXX','XCINYY','XCINZZ',

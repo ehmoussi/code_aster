@@ -22,9 +22,10 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'VMIS_CIN1_CHAB',
+    lc_type        = ('MECANIQUE',),
     doc            =   """Loi élastoplastique de J.L.Chaboche à 1 variable cinématique qui rend compte du comportement cyclique en élasto-plasticité
    avec un tenseur d'écrouissage cinématique non linéaire, un écrouissage isotrope non linéaire, un effet d'écrouissage sur la variable
-   tensorielle de rappel. Toutes les constantes du matériau peuvent éventuellement dépendre de la température."""          ,
+   tensorielle de rappel. Toutes les constantes du matériau peuvent éventuellement dépendre de la température."""            ,
     num_lc         = 4,
     nb_vari        = 8,
     nom_vari       = ('EPSPEQ','INDIPLAS','ALPHAXX','ALPHAYY','ALPHAZZ',

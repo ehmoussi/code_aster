@@ -22,8 +22,9 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'VISC_CIN2_MEMO',
+    lc_type        = ('MECANIQUE',),
     doc            =   """Loi élasto-visco-plastique de Chaboche à 2 variables cinématiques et
-   effet de memoire"""          ,
+   effet de memoire"""            ,
     num_lc         = 4,
     nb_vari        = 28,
     nom_vari       = ('EPSPEQ','INDIPLAS','ALPHAXX','ALPHAYY','ALPHAZZ',

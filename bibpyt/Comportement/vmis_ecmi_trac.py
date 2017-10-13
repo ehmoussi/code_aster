@@ -22,10 +22,11 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'VMIS_ECMI_TRAC',
+    lc_type        = ('MECANIQUE',),
     doc            =   """Relation de comportement d'élasto-plasticité de VON MISES à écrouissage combiné,
    cinématique linéaire et isotrope non linéaire (Cf. [R5.03.16] pour plus de détails).
    L'écrouissage isotrope est donné par une courbe de traction ou éventuellement par plusieurs courbes
-   si celles ci dépendent de la température."""          ,
+   si celles ci dépendent de la température."""            ,
     num_lc         = 3,
     nb_vari        = 8,
     nom_vari       = ('EPSPEQ','INDIPLAS','XCINXX','XCINYY','XCINZZ',

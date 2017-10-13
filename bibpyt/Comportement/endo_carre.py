@@ -22,8 +22,9 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'ENDO_CARRE',
+    lc_type        = ('MECANIQUE',),
     doc            =   """Comportement élastique-fragile-JJM, à endommagement scalaire et
-   écrouissage isotrope hyperbolique négatif - R"""          ,
+   écrouissage isotrope hyperbolique négatif - R"""            ,
     num_lc         = 53,
     nb_vari        = 2,
     nom_vari       = ('ENDO','INDIENDO',),

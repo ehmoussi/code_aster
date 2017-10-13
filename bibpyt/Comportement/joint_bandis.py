@@ -22,7 +22,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'JOINT_BANDIS',
-    doc            =   """Bandis"""          ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """Bandis"""            ,
     num_lc         = 0,
     nb_vari        = 1,
     nom_vari       = ('PERM_LONG',),

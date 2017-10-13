@@ -22,7 +22,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'VMIS_ISOT_LINE',
-    doc            =   """Loi de plasticité de Von Mises à écrouissage linéaire [R5.03.02]"""          ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """Loi de plasticité de Von Mises à écrouissage linéaire [R5.03.02]"""            ,
     num_lc         = 2,
     nb_vari        = 2,
     nom_vari       = ('EPSPEQ','INDIPLAS',),

@@ -23,7 +23,8 @@ from cata_comportement import LoiComportementMFront
 loi = LoiComportementMFront(
     nom            = 'Hayhurst',
     symbol_mfront  = 'asterhayhurst',
-    doc            =   """To complete ..."""        ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """To complete ..."""          ,
     num_lc         = 58,
     nb_vari        = 0,
     nom_vari       = None,

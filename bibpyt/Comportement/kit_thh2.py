@@ -22,13 +22,14 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'KIT_THH2',
-    doc            =   """KIT associé au comportement des milieux poreux (modélisations thermo-hydro-mécanique). """          ,
+    lc_type        = ('KIT_THM',),
+    doc            =   """KIT associé au comportement des milieux poreux (modélisations thermo-hydro-mécanique). """            ,
     num_lc         = 0,
     nb_vari        = 0,
     nom_vari       = None,
     mc_mater       = None,
-    modelisation   = ('D_PLAN_THH2D','AXIS_THH2D','3D_THH2D','D_PLAN_THH2S','AXIS_THH2S','3D_THH2S',
-        ),
+    modelisation   = ('D_PLAN_THH2D','AXIS_THH2D','3D_THH2D','D_PLAN_THH2S','AXIS_THH2S',
+        '3D_THH2S',),
     deformation    = ('PETIT','PETIT_REAC','GROT_GDEP',),
     algo_inte      = ('SANS_OBJET',),
     type_matr_tang = None,

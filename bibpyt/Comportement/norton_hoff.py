@@ -23,6 +23,7 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'NORTON_HOFF',
+    lc_type        = ('MECANIQUE',),
     doc            =   """Loi de visco-plasticité  indépendante de la température, régularisant la loi rigide-plastique de Von Mises
    à utiliser pour le calcul de charges limites de structures, à seuil de VON MISES.
    Le seul paramètre matériau est la limite d'élasticité à renseigner dans l'opérateur DEFI_MATERIAU [U4.43.01]
@@ -31,7 +32,7 @@ loi = LoiComportement(
    (voir mot clé PILOTAGE='ANA_LIM' de STAT_NON_LINE [U4.51.03]).
    Il est fortement conseillé d'employer de la recherche linéaire (voir mot clé RECH_LINEAIRE de STAT_NON_LINE [U4.51.03]).
    En effet, le calcul de la charge limite requiert beaucoup d'itérations de recherche linéaire (de l'ordre de 50)
-   et d'itérations de Newton (de l'ordre de 50)."""          ,
+   et d'itérations de Newton (de l'ordre de 50)."""            ,
     num_lc         = 17,
     nb_vari        = 1,
     nom_vari       = ('VIDE',),

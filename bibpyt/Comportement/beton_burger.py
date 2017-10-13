@@ -22,7 +22,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'BETON_BURGER',
-    doc            =   """Comportement de fluage propre du beton selon modele de burger avec non linearite sur le fluide de Maxwell (R7.01.35)"""          ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """Comportement de fluage propre du beton selon modele de burger avec non linearite sur le fluide de Maxwell (R7.01.35)"""            ,
     num_lc         = 30,
     nb_vari        = 21,
     nom_vari       = ('ERSP','EISP','ERD11','EID11','ERD22',

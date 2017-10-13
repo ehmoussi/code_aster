@@ -22,7 +22,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'POLYCRISTAL',
-    doc            =   """Comportement poly-cristallin homogénéisé, défini par DEFI_COMPOR"""          ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """Comportement poly-cristallin homogénéisé, défini par DEFI_COMPOR"""            ,
     num_lc         = 137,
     nb_vari        = 0,
     nom_vari       = None,

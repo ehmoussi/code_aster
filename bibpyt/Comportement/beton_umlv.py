@@ -22,8 +22,9 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'BETON_UMLV',
+    lc_type        = ('MECANIQUE',),
     doc            =   """Comportement de fluage propre du béton
-   avec distinction fluage volumique et fluage déviatorique (R7.01.16)"""          ,
+   avec distinction fluage volumique et fluage déviatorique (R7.01.16)"""            ,
     num_lc         = 21,
     nb_vari        = 21,
     nom_vari       = ('ERSP','EISP','ERD11','EID11','ERD22',

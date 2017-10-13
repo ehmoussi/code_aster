@@ -22,7 +22,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'GRILLE_CINE_LINE',
-    doc            =   """Relation de comportement des grilles d'armatures de béton armé, à écrouissage cinématique linéaire"""          ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """Relation de comportement des grilles d'armatures de béton armé, à écrouissage cinématique linéaire"""            ,
     num_lc         = 0,
     nb_vari        = 4,
     nom_vari       = ('EPSPEQ','INDIPLAS','VIDE','VIDE',),

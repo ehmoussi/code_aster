@@ -22,7 +22,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'CABLE_GAINE_FROT',
-    doc            =   """Relation de comportement cohésive d'adherence Cable/Gaine"""          ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """Relation de comportement cohésive d'adherence Cable/Gaine"""            ,
     num_lc         = 152,
     nb_vari        = 2,
     nom_vari       = ('GLIS','INDIC',),
