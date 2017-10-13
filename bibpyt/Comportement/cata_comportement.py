@@ -27,7 +27,7 @@
    Contenu du module :
 
    - CataLoiComportement : le catalogue
-      Méthodes : add, get, create, get_info, get_vari, query, get_algo
+      Méthodes : add, get, create, get_info, get_vari, query, get_algo, get_kit
 
    - LoiComportement : l'objet loi de comportement
       Définition, stockage et récupération des valeurs
@@ -58,6 +58,10 @@ Interfaces Fortran/Python :
          CALL LCALGO(COMPOR, ALGO)
          ==> algo_inte = catalc.get_algo(COMPOR)
 
+      6. récupère le nom des composantes d'un kit
+         CALL LCGETKIT(COMPOR, ALGO)
+         ==> algo_inte = catalc.get_kit(COMPOR)
+
 ------------------------------------------------------------------------
 
 """
@@ -70,6 +74,7 @@ from Noyau.N_utils import Singleton
 from Execution.strfunc import convert, ufmt
 from cata_vari import DICT_NOM_VARI
 
+from Utilitai.Utmess import UTMESS
 
 class CataComportementError(Exception):
 
@@ -140,7 +145,7 @@ class Base(object):
 
     __properties__ = ('deformation', 'mc_mater', 'modelisation', 'nb_vari',
                       'nom_vari', 'proprietes', 'algo_inte',
-                      'type_matr_tang', 'syme_matr_tang', 'exte_vari')
+                      'type_matr_tang', 'syme_matr_tang', 'exte_vari', 'lc_type')
 
     def copy(self):
         """Copie d'un objet LoiComportement"""
@@ -197,6 +202,7 @@ class Base(object):
    propriétés supplémentaires        : %(proprietes)r
    symétrie                          : %(syme_matr_tang)r
    nom des variables d'état externes : %(exte_vari)r
+   type de la loi de comportement    : %(lc_type)r
 """
         return template % self.dict_info()
 
@@ -279,6 +285,8 @@ class LoiComportement(Base):
         'proprietes',     (str, unicode), "Propriétés")
     syme_matr_tang  = Base.gen_property(
         'syme_matr_tang', (str, unicode), "Symétrie")
+    lc_type = Base.gen_property(
+        'lc_type', (str, unicode), "Type de la loi de comportement")
 
     def check_vari(self):
         """Vérifie la cohérence de la définition des variables internes"""
@@ -586,6 +594,87 @@ class CataLoiComportement(Singleton):
             print 'catalc.get_symmetry - args =', loi
         comport = self.get(loi)
         return comport.syme_matr_tang
+
+    def get_kit(self, *list_kit):
+#        """Identifie les LdC pour le kit THM """
+        if self.debug:
+            print 'catalc.get_kit - args =', list_kit
+
+        rela_meca = 'VIDE'
+        rela_hydr = 'VIDE'
+        rela_thmc = 'VIDE'
+        rela_ther = 'VIDE'
+        type_kit  = list_kit[0]
+
+# ----- Get components of KIT: meca, ther, hydr and thmc
+        for rela in list_kit:
+            comport = self.get(rela)
+            if ('MECANIQUE' in comport.lc_type or 'MECANIQUE_THM' in comport.lc_type):
+                if (rela_meca != 'VIDE'):
+                    UTMESS('F','THM1_38')
+                rela_meca = comport.nom
+            if ('HYDRAULIQUE' in comport.lc_type):
+                if (rela_hydr != 'VIDE'):
+                    UTMESS('F','THM1_37')
+                rela_hydr = comport.nom
+            if ('COUPLAGE_THM' in comport.lc_type):
+                if (rela_thmc != 'VIDE'):
+                    UTMESS('F','THM1_36')
+                rela_thmc = comport.nom
+            if ('THERMIQUE' in comport.lc_type):
+                rela_ther = comport.nom
+
+# ----- Check: hydr and thmc are required
+        if (rela_thmc == 'VIDE'):
+            UTMESS('F', 'THM1_39', valk=type_kit)
+        if (rela_hydr == 'VIDE'):
+            UTMESS('F', 'THM1_40', valk=type_kit)
+
+# ----- Check: detect requirement for kit
+        l_h   = (type_kit == 'KIT_H' or type_kit == 'KIT_HM' or type_kit == 'KIT_THM')
+        l_hh  = (type_kit == 'KIT_HH' or type_kit == 'KIT_HHM' or type_kit == 'KIT_THHM' or type_kit == 'KIT_THH')
+        l_hh2 = (type_kit == 'KIT_HH2' or type_kit == 'KIT_HH2M' or type_kit == 'KIT_THH2M' or type_kit == 'KIT_THH2')
+        l_hv  = (type_kit == 'KIT_THV')
+        l_t   = (type_kit == 'KIT_THH' or type_kit == 'KIT_THHM' or type_kit == 'KIT_THM' or type_kit == 'KIT_THV' or type_kit == 'KIT_THH2' or type_kit == 'KIT_THH2M')
+        l_m   = (type_kit == 'KIT_HHM' or type_kit == 'KIT_HM' or type_kit == 'KIT_THHM' or type_kit == 'KIT_THM' or type_kit == 'KIT_HH2M' or type_kit == 'KIT_THH2M')
+
+# ----- Check: coupling law
+        if (l_h):
+            comport = self.get(rela_thmc)
+            if (rela_thmc != 'LIQU_SATU' and rela_thmc != 'GAZ' and rela_thmc != 'LIQU_GAZ_ATM'):
+                UTMESS('F', 'THM1_42', valk=(rela_thmc,type_kit))
+
+        if (l_hh):
+            comport = self.get(rela_thmc)
+            if (rela_thmc != 'LIQU_GAZ' and rela_thmc != 'LIQU_VAPE_GAZ'):
+                UTMESS('F', 'THM1_42', valk=(rela_thmc,type_kit))
+
+        if (l_hh2):
+            comport = self.get(rela_thmc)
+            if (rela_thmc != 'LIQU_AD_GAZ_VAPE' and rela_thmc != 'LIQU_AD_GAZ'):
+                UTMESS('F', 'THM1_42', valk=(rela_thmc,type_kit))
+
+        if (l_hv):
+            comport = self.get(rela_thmc)
+            if (rela_thmc != 'LIQU_VAPE'):
+                UTMESS('F', 'THM1_42', valk=(rela_thmc,type_kit))
+
+# ----- Check: thermic law
+        if (l_t):
+            if (rela_ther == 'VIDE'):
+                rela_ther = 'THER'
+
+# ----- Check: mechanical law
+        if (l_m):
+            if (rela_hydr == 'HYDR_ENDO'):
+                if (rela_meca != 'MAZARS' and rela_meca != 'ENDO_ISOT_BETON'):
+                    UTMESS('F', 'THM1_43', valk=(rela_hydr,rela_meca))
+            if (rela_meca == 'BARCELONE'):
+                if (rela_thmc != 'LIQU_GAZ'):
+                    UTMESS('F', 'THM1_44', valk=(rela_meca,type_kit))
+
+# ----- Return
+        return rela_meca, rela_hydr, rela_thmc, rela_ther
 
     def __repr__(self):
         """Représentation du catalogue"""

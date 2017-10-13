@@ -66,10 +66,6 @@ Il manque la loi de couplage pour définir le kit <%(k1)s> .
 Il manque la loi hydraulique pour définir le kit <%(k1)s> .
 """),
 
-    41 : _(u"""
-Il manque la loi mécanique pour définir le kit <%(k1)s> .
-"""),
-
     42 : _(u"""
 La loi de couplage <%(k1)s> est incorrecte pour une modélisation <%(k2)s>.
 """),
@@ -80,14 +76,6 @@ La loi hydraulique <%(k1)s> n'est pas compatible avec la loi mécanique <%(k2)s>
 
     44 : _(u"""
 La loi mécanique <%(k1)s> est incorrecte pour une modélisation <%(k2)s>.
-"""),
-
-    46 : _(u"""
-Il y a une loi mécanique définie dans la relation, ce n'est pas possible avec la modélisation <%(k1)s> .
-"""),
-
-    59 : _(u"""
-La loi de couplage doit être LIQU_SATU ou GAZ pour une modélisation <%(k1)s>.
 """),
 
     60 : _(u"""
