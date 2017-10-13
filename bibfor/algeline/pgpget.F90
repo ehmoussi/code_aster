@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -112,7 +112,7 @@ subroutine pgpget(sd_pgp, param, iobs, lonvec, savejv,&
     data  parind  / -1, -1, -1, -1, -1,&
                     -1, -1,  1,  1,  2,&
                      1,  2,  2,  2,  2,&
-                     1,  1,  2,  2,&
+                     1,  2,  2,  2,&
                      2,  2,  2,  2,  2/
 !
     savename = '                        '

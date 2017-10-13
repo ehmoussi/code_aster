@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -64,8 +64,8 @@ POST_GENE_PHYS  = OPER( nom="POST_GENE_PHYS",op=  58,sd_prod=table_sdaster,
 
                       b_acce_abs      = BLOC(condition = """(equal_to("NOM_CHAM", 'ACCE_ABSOLU'))""",
                                              regles    = (PRESENT_PRESENT('ACCE_MONO_APPUI','DIRECTION'),),
-                      ACCE_MONO_APPUI = SIMP(statut = 'f', typ=(fonction_sdaster,nappe_sdaster,formule)),
-                      DIRECTION       = SIMP(statut = 'f', typ='R', min=3, max = 3 ),),),
+                      ACCE_MONO_APPUI = SIMP(statut = 'f', typ=(fonction_sdaster,nappe_sdaster,formule), max = 3),
+                      DIRECTION       = SIMP(statut = 'f', typ='R', min=3, max = 9 ),),),
 
                   TITRE       = SIMP(statut = 'f', typ='TXM',),
 )  ;
