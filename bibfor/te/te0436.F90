@@ -55,7 +55,7 @@ subroutine te0436(option, nomte)
     real(kind=8) :: dff(2, 9), vff(9), b(3, 3, 9), jac
     real(kind=8) :: alpha, beta, epot
     real(kind=8) :: epsm(3), epsg(3, 9), epsthe, sig(3), sigg(3, 9), rig(6, 6)
-    real(kind=8) :: rho(1)
+    real(kind=8) :: rho(1), rhog
     real(kind=8) :: x(9), y(9), z(9), surfac, cdg(3), ppg, xxi, yyi, zzi
     real(kind=8) :: matine(6)
     real(kind=8) :: vro
@@ -114,21 +114,15 @@ subroutine te0436(option, nomte)
 !
     else if (option.eq.'MASS_INER') then
         call jevech('PMASSINE', 'E', imass)
-        call rcvalb(fami, kpg, 1, '+', zi(imate),&
-                    ' ', 'ELAS_MEMBRANE', 0, ' ', [0.d0],&
-                    1, 'RHO', rho, codres, 1)
-        if (rho(1) .le. r8prem()) then
-            call utmess('F', 'ELEMENTS5_45')
-        endif
     endif
-    
+
 ! - ON INTERDIT CERTAINES OPTIONS POUR LES GRANDES DEFORMATIONS
     call tecach('NNO', 'PCOMPOR', 'L', iret, iad=icompo)
     if (((option.eq.'EPSI_ELGA').or.(option.eq.'EPOT_ELEM')).and.&
         (iret.eq. 0).and.(zk16 ( icompo + 2 )(1:9) .eq. 'GROT_GDEP')) then
         call utmess('F', 'MEMBRANE_8', sk=option)
     endif
-    
+
 !
 ! - LE VECTEUR NORME QUI DETERMINE LE REPERE LOCAL DE LA MEMBRANE
 !   (COMPORTEMENT ANISOTROPE)
@@ -147,6 +141,7 @@ subroutine te0436(option, nomte)
         call r8inir(3, 0.d0, cdg, 1)
         call r8inir(6, 0.d0, matine, 1)
         surfac = 0.d0
+        rhog = 0.d0
     endif
 !
 !
@@ -226,7 +221,14 @@ subroutine te0436(option, nomte)
 ! --- MASS_INER : ON SOMME LA CONTRIBUTION DU PG A LA MASSE TOTALE
 !
         else if (option.eq.'MASS_INER') then
+            call rcvalb(fami, kpg, 1, '+', zi(imate),&
+                ' ', 'ELAS_MEMBRANE', 0, ' ', [0.d0],&
+                1, 'RHO', rho, codres, 1)
+            if (rho(1) .le. r8prem()) then
+                call utmess('F', 'ELEMENTS5_45')
+            endif
             surfac = surfac + zr(ipoids+kpg-1)*jac
+            rhog = rhog + rho(1)*zr(ipoids+kpg-1)*jac
             ppg = zr(ipoids+kpg-1)*jac
             do i = 1, nno
                 cdg(1) = cdg(1) + ppg*vff(i)*x(i)
@@ -270,17 +272,17 @@ subroutine te0436(option, nomte)
         end do
 !
     else if (option.eq.'MASS_INER') then
-        vro = rho(1) / surfac
-        zr(imass) = rho(1) * surfac
+        vro = rhog / surfac
+        zr(imass) = rhog * surfac
         zr(imass+1) = cdg(1)/surfac
         zr(imass+2) = cdg(2)/surfac
         zr(imass+3) = cdg(3)/surfac
-        zr(imass+4) = matine(1)*rho(1) - vro*(cdg(2)*cdg(2)+cdg(3)*cdg(3) )
-        zr(imass+5) = matine(3)*rho(1) - vro*(cdg(1)*cdg(1)+cdg(3)*cdg(3) )
-        zr(imass+6) = matine(6)*rho(1) - vro*(cdg(1)*cdg(1)+cdg(2)*cdg(2) )
-        zr(imass+7) = matine(2)*rho(1) - vro*(cdg(1)*cdg(2))
-        zr(imass+8) = matine(4)*rho(1) - vro*(cdg(1)*cdg(3))
-        zr(imass+9) = matine(5)*rho(1) - vro*(cdg(2)*cdg(3))
+        zr(imass+4) = matine(1)*rhog - vro*(cdg(2)*cdg(2)+cdg(3)*cdg(3) )
+        zr(imass+5) = matine(3)*rhog - vro*(cdg(1)*cdg(1)+cdg(3)*cdg(3) )
+        zr(imass+6) = matine(6)*rhog - vro*(cdg(1)*cdg(1)+cdg(2)*cdg(2) )
+        zr(imass+7) = matine(2)*rhog - vro*(cdg(1)*cdg(2))
+        zr(imass+8) = matine(4)*rhog - vro*(cdg(1)*cdg(3))
+        zr(imass+9) = matine(5)*rhog - vro*(cdg(2)*cdg(3))
     endif
 
 999 continue
