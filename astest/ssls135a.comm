@@ -25,9 +25,12 @@ MeshLin0=LIRE_MAILLAGE(FORMAT='MED',UNITE=20,)
 
 # definition d'un group_ma sur lequel on fera le calcul de ferraillage :
 MeshLin0=DEFI_GROUP( reuse=MeshLin0, MAILLAGE=MeshLin0,
-     CREA_GROUP_MA=_F(  NOM = 'CALCFER',
+     CREA_GROUP_MA=(_F(  NOM = 'CALCFER',
                    MAILLE = ( 'M1113', 'M1115', 'M1173', 'M1373', 'M1391',
-                              'M462', 'M516', 'M562',),
+                              'M462', 'M516', 'M562',),),
+                    _F(  NOM = 'CF',
+                   MAILLE = ( 'M1113', 'M1115', 'M1173', 'M1373', 'M1391',
+                              'M462', 'M516', 'M562','M596','M686'),)
                  ))
 # Type de calcul
 
@@ -161,9 +164,6 @@ Solution=CALC_FERRAILLAGE(reuse =Solution,
                       # l'affectation ci-dessous permet de verifier l'usage du mot cle AFFE/MAILLE
                       _F( MAILLE=('M596','M686'),  ENROBG=0.04, CEQUI=15.E0, SIGM_ACIER=2.3E8, SIGM_BETON=3.5E7),
                    ));
-
-#IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=Solution, NOM_CHAM='FERRAILLAGE'));
-
 
 #--------------------------------------------------------------------------------------------
 # Tests de validation (source externe) :
@@ -657,4 +657,98 @@ TEST_RESU(CHAM_ELEM=(_F(CRITERE='RELATIF',
                      ),
           )
 
-FIN();
+# ------------------------------------------------- #
+# Test CHAM_UTIL and neutral fields on DKT elements #
+# ------------------------------------------------- #
+
+# Formula to compute a maximal criterion in CALC_FERRAILLAGE
+
+MAX_FERR = FORMULE(
+    NOM_PARA=('DNSXI', 'DNSXS', 'DNSYI', 'DNSYS'),
+    VALE='max(DNSXI,DNSXS,DNSYI,DNSYS)'
+)
+
+# Max field using CALC_CHAMP/CHAM_UTIL
+
+ferUtil = CALC_CHAMP(
+    GROUP_MA='CF',
+    CHAM_UTIL=_F(
+        FORMULE=(MAX_FERR, ), NOM_CHAM='FERRAILLAGE', NUME_CHAM_RESU=1
+    ),
+    RESULTAT=Solution
+)
+
+# Same field using CREA_CHAMP/EXTR + AFFE + EVAL
+
+fer = CREA_CHAMP(
+    NOM_CHAM='FERRAILLAGE',
+    OPERATION='EXTR',
+    RESULTAT=Solution,
+    TYPE_CHAM='ELEM_FER2_R'
+)
+
+# Dummy function to make sure that the field is defined everywhere and does not disturb the
+# max/min computations
+Fdummy=DEFI_CONSTANTE(VALE=0.0005)
+
+ferFonc = CREA_CHAMP(
+    AFFE=(
+    _F(TOUT='OUI', NOM_CMP='X1',VALE_F=Fdummy),
+    _F(GROUP_MA='CF',
+    NOM_CMP=('X1', ),
+    VALE_F=(MAX_FERR, )
+    ),),
+    MODELE=FEMLin,
+    OPERATION='AFFE',
+    PROL_ZERO='OUI',
+    TYPE_CHAM='ELEM_NEUT_F'
+)
+
+ferMax = CREA_CHAMP(
+    CHAM_F=ferFonc,
+    CHAM_PARA=(fer, ),
+    OPERATION='EVAL',
+    TYPE_CHAM='ELEM_NEUT_R'
+)
+
+# Verification tests
+
+# CHAM_UTIL for reference and regarding non-regression
+TEST_RESU(RESU=(
+                _F(RESULTAT=ferUtil,
+                   INST=0.0,
+                   NOM_CHAM='UT01_ELEM',
+                   NOM_CMP='X1',
+                   TYPE_TEST='MAX',
+                   VALE_CALC=0.000515023673871,
+                   ),
+                _F(RESULTAT=ferUtil,
+                   INST=0.0,
+                   NOM_CHAM='UT01_ELEM',
+                   NOM_CMP='X1',
+                   TYPE_TEST='MIN',
+                   VALE_CALC=5.67845794742E-05,
+                   ),
+                ),)
+
+# CREA_CHAMP with respect to CHAM_UTIL
+
+TEST_RESU(CHAM_ELEM=(
+                _F(CHAM_GD=ferMax,
+                   NOM_CMP='X1',
+                   TYPE_TEST='MAX',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=0.000515023673871,
+                   VALE_CALC=0.000515023673871,
+                   ),
+                _F(CHAM_GD=ferMax,
+                   NOM_CMP='X1',
+                   TYPE_TEST='MIN',
+                   GROUP_MA='CALC_FER',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=5.67845794742E-05,
+                   VALE_CALC=5.67845794742E-05,
+                   ),
+                ),)
+
+FIN()
