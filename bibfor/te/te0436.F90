@@ -54,7 +54,7 @@ subroutine te0436(option, nomte)
     integer :: igeom, icacoq, imate, idepl, icontp, inr, idefo, imass, icompo
     real(kind=8) :: dff(2, 9), vff(9), b(3, 3, 9), jac
     real(kind=8) :: alpha, beta, epot
-    real(kind=8) :: epsm(3), epsg(3, 9), epsthe, sig(3), sigg(3, 9), rig(6, 6)
+    real(kind=8) :: epsm(3), epsg(3, 9), epsthe, sig(3), sigg(3, 9), rig(3, 3)
     real(kind=8) :: rho(1), rhog
     real(kind=8) :: x(9), y(9), z(9), surfac, cdg(3), ppg, xxi, yyi, zzi
     real(kind=8) :: matine(6)
