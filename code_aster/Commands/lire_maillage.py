@@ -28,7 +28,7 @@ class MeshReader(ExecuteCommand):
     command_name = "LIRE_MAILLAGE"
 
 
-    def create_result(self, keywords):
+    def create_result(self, _):
         """Create the :class:`~code_aster.Objects.Mesh`.
 
         Arguments:
@@ -41,9 +41,6 @@ class MeshReader(ExecuteCommand):
 
         Arguments:
             keywords (dict): User's keywords.
-
-        Returns:
-            *Mesh*: Mesh object read.
         """
         mesh = self._result
         fileName = "fort.{UNITE}".format(**keywords)

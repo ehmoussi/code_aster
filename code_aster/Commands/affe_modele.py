@@ -44,9 +44,6 @@ class ModelAssignment(ExecuteCommand):
 
         Arguments:
             keywords (dict): User's keywords.
-
-        Returns:
-            *Model*: Model object.
         """
         self._result.setSupportMesh(keywords["MAILLAGE"])
 

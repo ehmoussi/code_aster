@@ -54,7 +54,7 @@ from .affe_modele import AFFE_MODELE
 # from .defi_group import DEFI_GROUP
 # from .defi_inte_spec import DEFI_INTE_SPEC
 # from .defi_interf_dyna import DEFI_INTERF_DYNA
-# from .defi_materiau import DEFI_MATERIAU
+from .defi_materiau import DEFI_MATERIAU
 # from .defi_modele_gene import DEFI_MODELE_GENE
 # from .defi_nappe import DEFI_NAPPE
 # from .defi_squelette import DEFI_SQUELETTE

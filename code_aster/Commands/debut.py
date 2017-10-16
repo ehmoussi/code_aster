@@ -79,17 +79,12 @@ class Starter(ExecuteCommand):
 
         Arguments:
             keywords (dict): User's keywords.
-
-        Returns:
-            None: The command has no result.
         """
         logger.info("Starting DEBUT...")
         syntax = CommandSyntax(self.name, self._cata)
         syntax.define(keywords)
         aster.debut(syntax)
         syntax.free()
-
-        return None
 
 
 DEBUT = Starter()

@@ -19,11 +19,8 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-import types
-
-import code_aster
-from ..Cata import Commands, checkSyntax
 from ..Objects import Material, GeneralMaterialBehaviour
+from .ExecuteCommand import ExecuteCommand
 
 
 def _byKeyword():
@@ -44,31 +41,52 @@ def _byKeyword():
     return objects
 
 
-def DEFI_MATERIAU( **kwargs ):
-    """Opérateur de définition d'un matériau"""
-    checkSyntax( Commands.DEFI_MATERIAU, kwargs )
+class MaterialDefinition(ExecuteCommand):
+    """Definition of the material properties.
+    Returns a :class:`~code_aster.Objects.Material` object.
+    """
+    command_name = "DEFI_MATERIAU"
 
-    classByName = _byKeyword()
-    mater = Material.create()
-    for fkwName, fkw in kwargs.iteritems():
-        # only see factor keyword
-        if not isinstance(fkw, dict):
-            continue
-        klass = classByName.get(fkwName)
-        if not klass:
-            raise NotImplementedError("Unsupported behaviour: '{0}'".format(fkwName))
-        matBehav = klass.create()
-        for skwName, skw in fkw.iteritems():
-            if type( skw ) is float:
-                iName = skwName.capitalize()
-                cRet = matBehav.setDoubleValue( iName, skw )
-                if not cRet:
-                    print ValueError("Can not assign keyword '{1}'/'{0}' (as '{3}'/'{2}') "
-                                     .format(skwName, fkwName, iName, klass.__name__))
-            else:
-                raise NotImplementedError("Unsupported type for keyword: {0} <{1}>"
-                                          .format(skwName, type(skw)))
-        mater.addMaterialBehaviour( matBehav )
+    def create_result(self, _):
+        """Create the :class:`~code_aster.Objects.Mesh`.
 
-    mater.build()
-    return mater
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = Material.create()
+
+    def exec_(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        classByName = _byKeyword()
+        for fkwName, fkw in keywords.iteritems():
+            # only see factor keyword
+            if not isinstance(fkw, dict):
+                continue
+            klass = classByName.get(fkwName)
+            if not klass:
+                raise NotImplementedError("Unsupported behaviour: '{0}'"
+                                          .format(fkwName))
+            matBehav = klass.create()
+            for skwName, skw in fkw.iteritems():
+                if type( skw ) is float:
+                    iName = skwName.capitalize()
+                    cRet = matBehav.setDoubleValue( iName, skw )
+                    if not cRet:
+                        print ValueError("Can not assign keyword '{1}'/'{0}' "
+                                         "(as '{3}'/'{2}') "
+                                         .format(skwName, fkwName, iName,
+                                                 klass.__name__))
+                else:
+                    raise NotImplementedError("Unsupported type for keyword: "
+                                              "{0} <{1}>"
+                                              .format(skwName, type(skw)))
+            self._result.addMaterialBehaviour( matBehav )
+
+        self._result.build()
+
+
+DEFI_MATERIAU = MaterialDefinition()

@@ -35,8 +35,9 @@ from ..Utilities import deprecated, import_object
 class ExecuteCommand(object):
     """This class implements an executor of commands.
 
-    Commands are defined by subclassing this class and overloading some
-    of the methods.
+    Commands executors are defined by subclassing this class and overloading
+    some of the methods. User's Commands are instance of these executors.
+
     The *__call__* method executes successively these methods:
 
         - :meth:`.adapt_syntax` to eventually change the user's keywords to
@@ -60,7 +61,9 @@ class ExecuteCommand(object):
 
     def __init__(self, command_name=None):
         """Initialization"""
-        self._cata = getattr(Commands, command_name or self.command_name)
+        command_name = command_name or self.command_name
+        assert command_name, "'command_name' attribute/argument not defined!"
+        self._cata = getattr(Commands, command_name)
         self._op = self._cata.definition['op']
         self._result = None
 
