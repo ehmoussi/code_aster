@@ -23,14 +23,26 @@
 # de la division réelle pour les entiers, et non la division entière
 # 1/2=0.5 (et non 0). Comportement par défaut dans Python 3.0.
 from __future__ import division
-
-from math import sin, cos, tan, asin, acos, atan2, atan, sinh, cosh, tanh
-from math import pi, exp, log, log10, sqrt
 import pickle
 
 from N_ASSD import ASSD
 from N_info import message, SUPERV
 from N_Exception import AsException
+
+
+def initial_context():
+    """Returns `initial` Python context (independent of Stage and Command)
+
+    Returns:
+        dict: pairs of name per corresponding Python instance.
+    """
+    import math
+    context = {}
+    for func in dir(math):
+        if not func.startswith('_'):
+            context[func] = getattr(math, func)
+
+    return context
 
 
 class FONCTION(ASSD):
@@ -63,8 +75,7 @@ class formule(ASSD):
         for param, value in zip(self.nompar, val):
             context[param] = value
         try:
-            # globals() pour math.*
-            res = eval(self.code, context, globals())
+            res = eval(self.code, context, initial_context())
         except Exception, exc:
             message.error(SUPERV, "ERREUR LORS DE L'ÉVALUATION DE LA FORMULE '%s' "
                           ":\n>> %s", self.nom, str(exc))
