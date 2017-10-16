@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,20 +19,42 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster import Mesh
-from code_aster.Cata import Commands, checkSyntax
+from ..Objects import Mesh
+from .ExecuteCommand import ExecuteCommand
 
 
-def LIRE_MAILLAGE( **kwargs ):
-    """Opérateur de relecture du maillage"""
-    checkSyntax( Commands.LIRE_MAILLAGE, kwargs )
-    mesh = Mesh.create()
-    fileName = "fort." + str( kwargs["UNITE"] )
-    format = kwargs["FORMAT"]
-    if format == "MED":
-        mesh.readMedFile( fileName )
-    elif format == "GMSH":
-        mesh.readGmshFile( fileName )
-    elif format == "GIBI":
-        mesh.readGibiFile( fileName )
-    return mesh
+class MeshReader(ExecuteCommand):
+    """Command that creates a :class:`~code_aster.Objects.Mesh` from a file."""
+    command_name = "LIRE_MAILLAGE"
+
+
+    def create_result(self, keywords):
+        """Create the :class:`~code_aster.Objects.Mesh`.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = Mesh.create()
+
+    def exec_(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+
+        Returns:
+            *Mesh*: Mesh object read.
+        """
+        mesh = self._result
+        fileName = "fort.{UNITE}".format(**keywords)
+        format = keywords["FORMAT"]
+        if format == "MED":
+            mesh.readMedFile( fileName )
+        elif format == "GMSH":
+            mesh.readGmshFile( fileName )
+        elif format == "GIBI":
+            mesh.readGibiFile( fileName )
+        return mesh
+
+
+LIRE_MAILLAGE = MeshReader()

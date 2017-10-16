@@ -19,23 +19,36 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import Model
+from ..Objects import Model
+from .ExecuteCommand import ExecuteCommand
 
 
-def AFFE_MODELE(**curDict):
-    returnModel = Model.create()
-    name = returnModel.getName()
-    type = returnModel.getType()
+class ModelAssignment(ExecuteCommand):
+    """Command that creates the :class:`~code_aster.Objects.Model` by assigning
+    finite elements on a :class:`~code_aster.Objects.Mesh`."""
+    command_name = "AFFE_MODELE"
 
-    syntax = CommandSyntax("AFFE_MODELE")
-    syntax.setResult(name, type)
-    syntax.define(curDict)
+    def create_result(self, keywords):
+        """Create the result before calling the *exec* command function
+        if needed.
+        The result is stored in an internal attribute and will be returned by
+        *exec*.
 
-    numOp = 18
-    python_execop(numOp)
-    syntax.free()
-    returnModel.setSupportMesh(curDict["MAILLAGE"])
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = Model.create()
 
-    return returnModel
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+
+        Returns:
+            *Model*: Model object.
+        """
+        self._result.setSupportMesh(keywords["MAILLAGE"])
+
+
+AFFE_MODELE = ModelAssignment()

@@ -48,7 +48,7 @@ from .ExecuteCommand import ExecuteCommand
 
 class Starter(ExecuteCommand):
     """Define the command DEBUT."""
-
+    command_name = "DEBUT"
     params = _is_initialized = None
 
     @classmethod
@@ -74,25 +74,25 @@ class Starter(ExecuteCommand):
         self.init(None)
         super(Starter, self).__call__(**keywords)
 
-    def exec_(self, **kwargs):
+    def exec_(self, keywords):
         """Execute the command.
 
         Arguments:
-            kwargs (dict): User's keywords.
+            keywords (dict): User's keywords.
 
         Returns:
             None: The command has no result.
         """
         logger.info("Starting DEBUT...")
         syntax = CommandSyntax(self.name, self._cata)
-        syntax.define(kwargs)
+        syntax.define(keywords)
         aster.debut(syntax)
         syntax.free()
 
         return None
 
 
-DEBUT = Starter("DEBUT")
+DEBUT = Starter()
 
 def init(*argv, **kwargs):
     """Initialize code_aster as `DEBUT` command does + command line options.
@@ -107,4 +107,4 @@ def init(*argv, **kwargs):
             setlevel()
         del kwargs['debug']
     DEBUT.init(argv)
-    DEBUT.exec_(**kwargs)
+    DEBUT.exec_(kwargs)
