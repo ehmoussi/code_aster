@@ -19,21 +19,8 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import CrackTip
+from ..Objects import CrackTip
+from .ExecuteCommand import ExecuteCommandWithType
 
 
-def DEFI_FOND_FISS(**curDict):
-    returnCrackDef = CrackTip.create()
-    name = returnCrackDef.getName()
-    type = returnCrackDef.getType()
-    syntax = CommandSyntax("DEFI_FOND_FISS")
-
-    syntax.setResult(name, type)
-
-    syntax.define(curDict)
-    numOp = 55
-    python_execop(numOp)
-    syntax.free()
-    return returnCrackDef
+DEFI_FOND_FISS = ExecuteCommandWithType("DEFI_FOND_FISS", CrackTip)

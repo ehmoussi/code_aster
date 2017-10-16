@@ -195,6 +195,24 @@ def check_jeveux():
                            "No command can be executed.")
 
 
+class ExecuteCommandWithType(ExecuteCommand):
+    """This implements an executor of commands with a convenient way to
+    define the result type."""
+
+    def __init__(self, command_name, result_type):
+        """Initialization"""
+        super(ExecuteCommandWithType, self).__init__(command_name)
+        self._result_type = result_type
+
+    def create_result(self, keywords):
+        """Create the result.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = self._result_type.create()
+
+
 class ExecuteCommandOps(ExecuteCommand):
     """This implements an executor of commands that use an
      `opsXXX` subroutine."""

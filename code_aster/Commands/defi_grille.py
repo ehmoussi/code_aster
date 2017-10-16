@@ -19,21 +19,8 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import FiberGeometry
+from ..Objects import FiberGeometry
+from .ExecuteCommand import ExecuteCommandWithType
 
 
-def DEFI_GRILLE(**curDict):
-    returnGrid = FiberGeometry.create()
-    name = returnGrid.getName()
-    type = returnGrid.getType()
-    syntax = CommandSyntax("DEFI_GRILLE")
-
-    syntax.setResult(name, type)
-
-    syntax.define(curDict)
-    numOp = 82
-    python_execop(numOp)
-    syntax.free()
-    return returnGrid
+DEFI_GRILLE = ExecuteCommandWithType("DEFI_GRILLE", FiberGeometry)
