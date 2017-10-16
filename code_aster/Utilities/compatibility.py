@@ -66,27 +66,59 @@ def deprecated(replaced=True, help=None):
     return deprecated_decorator
 
 
-def compat_listr8(kwargs, factor_keyword, list_keyword, float_keyword):
+def compat_listr8(keywords, factor_keyword, list_keyword, float_keyword):
     """Pass values given to a keyword that expects a *listr8* to the similar
     keyword that takes a list of floats, eventually under a factor keyword.
 
     Arguments:
-        kwargs (dict): Dict of keywords passed to a command, changed in place.
+        keywords (dict): Dict of keywords passed to a command, changed in place.
         factor_keyword (str): Name of the factor keyword or an empty string if
             the keywords are at the top level.
         list_keyword (str): Name of the keyword that needs a *listr8*.
         float_keyword (str): Name of the keyword that takes a list of floats.
     """
     if factor_keyword and factor_keyword.strip():
-        if not kwargs.has_key(factor_keyword):
+        if not keywords.has_key(factor_keyword):
             return
-        fact = kwargs[factor_keyword]
+        fact = keywords[factor_keyword]
         if not isinstance(fact, (list, tuple)):
             fact = [fact]
         for occ in fact:
             compat_listr8(occ, None, list_keyword, float_keyword)
     else:
         try:
-            kwargs[float_keyword] = array_to_list(kwargs.pop(list_keyword))
+            keywords[float_keyword] = array_to_list(keywords.pop(list_keyword))
         except KeyError:
             pass
+
+
+def remove_keyword(keywords, factor_keyword, simple_keyword, warning=False):
+    """Remove a couple *(factor_keyword, simple_keyword)* for the user's
+    keywords.
+
+    Arguments:
+        keywords (dict): Dict of keywords passed to a command, changed in place.
+        factor_keyword (str): Name of the factor keyword or an empty string if
+            the keywords are at the top level.
+        simple_keyword (str): Name of the simple keyword. It it is an empty
+            string the factor keyword is entirely removed.
+        warning (bool): If *True* a warning message is emitted.
+    """
+    def _warn():
+        if not warning:
+            return
+        msg = ("These keywords is not yet supported: {0}{1}{2}")
+        sep = "/" if simple_keyword and simple_keyword.strip() else ""
+        warn(msg.format(factor_keyword, sep, simple_keyword))
+
+    if factor_keyword and factor_keyword.strip():
+        if not keywords.has_key(factor_keyword):
+            return
+        if simple_keyword and simple_keyword.strip():
+            fact = keywords[factor_keyword]
+            if fact.has_key(simple_keyword):
+                _warn()
+                del fact[simple_keyword]
+            return
+        _warn()
+        del keywords[factor_keyword]

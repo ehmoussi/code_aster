@@ -31,7 +31,7 @@ define_operators(globals())
 # from .affe_char_cine import AFFE_CHAR_CINE
 # from .affe_char_meca import AFFE_CHAR_MECA
 # from .affe_materiau import AFFE_MATERIAU
-# from .affe_modele import AFFE_MODELE
+from .affe_modele import AFFE_MODELE
 # from .asse_matrice import ASSE_MATRICE
 # from .asse_matr_gene import ASSE_MATR_GENE
 # from .asse_vect_gene import ASSE_VECT_GENE
@@ -60,7 +60,7 @@ define_operators(globals())
 # from .defi_squelette import DEFI_SQUELETTE
 # from .defi_spec_turb import DEFI_SPEC_TURB
 # from .fin import FIN
-# from .lire_maillage import LIRE_MAILLAGE
+from .lire_maillage import LIRE_MAILLAGE
 # from .macr_elem_dyna import MACR_ELEM_DYNA
 # from .macr_elem_stat import MACR_ELEM_STAT
 # from .meca_statique import MECA_STATIQUE
