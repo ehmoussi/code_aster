@@ -223,7 +223,11 @@ class formule_c(formule):
 
 # Objects provided in the header of cata.py
 class GEOM(object):
-    pass
+
+    @classmethod
+    def getType(cls):
+        """Return the type of DataStructure"""
+        return 'TX'
 
 class grma(GEOM):
     pass
