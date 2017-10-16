@@ -18,9 +18,9 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine comp_mfront_vname(nb_vari    , &
-                             defo_comp  , type_cpla, post_iter,&
-                             libr_name  , subr_name, model_mfront, model_dim,&
-                             v_vari_name)
+                             defo_comp  , type_cpla  , post_iter,&
+                             libr_name  , subr_name  , model_mfront, model_dim,&
+                             vari_begin , v_vari_name)
 !
 implicit none
 !
@@ -46,6 +46,7 @@ character(len=255), intent(in) :: libr_name
 character(len=255), intent(in) :: subr_name
 character(len=16), intent(in) :: model_mfront
 integer, intent(in) :: model_dim
+integer, intent(in) :: vari_begin
 character(len=16), pointer, intent(in) :: v_vari_name(:)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -99,7 +100,7 @@ character(len=16), pointer, intent(in) :: v_vari_name(:)
             leng        = lxlgut(m_vari_name)
             if (m_vari_type .eq. 'scalar') then
                 i_vari = i_vari + 1
-                v_vari_name(i_vari) = m_vari_name
+                v_vari_name(vari_begin-1+i_vari) = m_vari_name
             elseif (m_vari_type .eq. 'vector') then
                 do i_dime = 1, 2*model_dim
                     if (leng .le. 14) then
@@ -108,7 +109,7 @@ character(len=16), pointer, intent(in) :: v_vari_name(:)
                         vari_name = m_vari_name(1:14)//cmpv_name(i_dime)
                     endif
                     i_vari = i_vari + 1
-                    v_vari_name(i_vari) = vari_name
+                    v_vari_name(vari_begin-1+i_vari) = vari_name
                 end do
             elseif (m_vari_type .eq. 'tensor') then
                 do i_dime = 1, 9
@@ -118,7 +119,7 @@ character(len=16), pointer, intent(in) :: v_vari_name(:)
                         vari_name = m_vari_name(1:14)//cmpt_name(i_dime)
                     endif
                     i_vari = i_vari + 1
-                    v_vari_name(i_vari) = vari_name
+                    v_vari_name(vari_begin-1+i_vari) = vari_name
                 end do
             else
                 ASSERT(.False.)
@@ -130,7 +131,7 @@ character(len=16), pointer, intent(in) :: v_vari_name(:)
             AS_ALLOCATE(vk16 = v_vari_supp, size = nb_vari_supp)
             call lcvari(comp_code_py, nb_vari_supp, v_vari_supp)
             do i = 1, nb_vari_supp
-               v_vari_name(i+nb_vari_mfr) = v_vari_supp(i)
+               v_vari_name(vari_begin-1+i+nb_vari_mfr) = v_vari_supp(i)
             end do
             AS_DEALLOCATE(vk16 = v_vari_supp)
         endif

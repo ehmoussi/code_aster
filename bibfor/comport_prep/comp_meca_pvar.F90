@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1003
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine comp_meca_pvar(model_, compor_cart_, compor_list_, compor_info)
 !
 use NonLin_Datastructure_type
@@ -47,13 +49,10 @@ implicit none
 #include "asterfort/lteatt.h"
 #include "asterfort/Behaviour_type.h"
 !
-! aslint: disable=W1003
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), optional, intent(in) :: model_
-    character(len=19), optional, intent(in) :: compor_cart_
-    character(len=16), optional, intent(in) :: compor_list_(20)
-    character(len=19), intent(in) :: compor_info
+character(len=8), optional, intent(in) :: model_
+character(len=19), optional, intent(in) :: compor_cart_
+character(len=16), optional, intent(in) :: compor_list_(20)
+character(len=19), intent(in) :: compor_info
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -87,7 +86,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: l_excl, l_kit_meta, l_cristal, l_pmf
+    aster_logical :: l_excl, l_kit_meta, l_cristal, l_pmf, l_kit_thm
     aster_logical :: l_umat, l_mfront_proto, l_mfront_offi, l_prot_comp
     aster_logical :: l_zone_read
     character(len=8) :: mesh
@@ -104,7 +103,7 @@ implicit none
     integer, pointer :: v_compor_lima_lc(:) => null()
     integer, pointer :: v_compor_ptma(:) => null()
     integer :: nb_vale, nb_cmp_max, nb_zone, nb_vari, nt_vari, nb_vari_maxi, nb_zone_acti, nb_zone2
-    integer :: i_zone, i_elem, nb_elem_mesh, iret, nutyel
+    integer :: i_zone, i_elem, nb_elem_mesh, iret, nutyel, nb_vari_meca
     character(len=16) :: post_iter, vari_excl
     character(len=16) :: rela_comp, defo_comp, kit_comp(4), type_cpla, type_comp
     character(len=255) :: libr_name, subr_name
@@ -215,33 +214,42 @@ implicit none
 ! --------- Get parameters
 !
             if (present(compor_cart_)) then
-                rela_comp   = v_compor_vale(nb_cmp_max*(i_zone-1)+NAME)
-                defo_comp   = v_compor_vale(nb_cmp_max*(i_zone-1)+DEFO)
-                type_comp   = v_compor_vale(nb_cmp_max*(i_zone-1)+INCRELAS)
-                type_cpla   = v_compor_vale(nb_cmp_max*(i_zone-1)+PLANESTRESS)
-                kit_comp(1) = v_compor_vale(nb_cmp_max*(i_zone-1)+KIT1_NAME)
-                kit_comp(2) = v_compor_vale(nb_cmp_max*(i_zone-1)+KIT2_NAME)
-                kit_comp(3) = v_compor_vale(nb_cmp_max*(i_zone-1)+KIT3_NAME)
-                kit_comp(4) = v_compor_vale(nb_cmp_max*(i_zone-1)+KIT4_NAME)
-                post_iter   = v_compor_vale(nb_cmp_max*(i_zone-1)+POSTITER)
+                rela_comp    = v_compor_vale(nb_cmp_max*(i_zone-1)+NAME)
+                defo_comp    = v_compor_vale(nb_cmp_max*(i_zone-1)+DEFO)
+                type_comp    = v_compor_vale(nb_cmp_max*(i_zone-1)+INCRELAS)
+                type_cpla    = v_compor_vale(nb_cmp_max*(i_zone-1)+PLANESTRESS)
+                kit_comp(1)  = v_compor_vale(nb_cmp_max*(i_zone-1)+KIT1_NAME)
+                kit_comp(2)  = v_compor_vale(nb_cmp_max*(i_zone-1)+KIT2_NAME)
+                kit_comp(3)  = v_compor_vale(nb_cmp_max*(i_zone-1)+KIT3_NAME)
+                kit_comp(4)  = v_compor_vale(nb_cmp_max*(i_zone-1)+KIT4_NAME)
+                post_iter    = v_compor_vale(nb_cmp_max*(i_zone-1)+POSTITER)
                 read (v_compor_vale(nb_cmp_max*(i_zone-1)+NVAR),'(I16)') nb_vari
+                nb_vari_meca = 0
+                if (v_compor_vale(nb_cmp_max*(i_zone-1)+MECA_NVAR) .ne. 'VIDE') then
+                    read (v_compor_vale(nb_cmp_max*(i_zone-1)+MECA_NVAR),'(I16)') nb_vari_meca
+                endif
             else
-                rela_comp   = compor_list_(NAME)
-                defo_comp   = compor_list_(DEFO)
-                type_cpla   = compor_list_(PLANESTRESS)
-                type_comp   = compor_list_(INCRELAS)
-                kit_comp(1) = compor_list_(KIT1_NAME)
-                kit_comp(2) = compor_list_(KIT2_NAME)
-                kit_comp(3) = compor_list_(KIT3_NAME)
-                kit_comp(4) = compor_list_(KIT4_NAME)
-                post_iter   = compor_list_(POSTITER)
+                rela_comp    = compor_list_(NAME)
+                defo_comp    = compor_list_(DEFO)
+                type_cpla    = compor_list_(PLANESTRESS)
+                type_comp    = compor_list_(INCRELAS)
+                kit_comp(1)  = compor_list_(KIT1_NAME)
+                kit_comp(2)  = compor_list_(KIT2_NAME)
+                kit_comp(3)  = compor_list_(KIT3_NAME)
+                kit_comp(4)  = compor_list_(KIT4_NAME)
+                post_iter    = compor_list_(POSTITER)
                 read (compor_list_(NVAR),'(I16)') nb_vari
+                nb_vari_meca = 0
+                if (compor_list_(MECA_NVAR) .ne. 'VIDE') then
+                    read (compor_list_(MECA_NVAR),'(I16)') nb_vari_meca
+                endif
             endif
 !
 ! --------- Detection of specific cases
 !
-            call comp_meca_l(rela_comp, 'KIT_META' , l_kit_meta)
-            call comp_meca_l(rela_comp, 'CRISTAL'  , l_cristal)
+            call comp_meca_l(rela_comp, 'KIT_THM' , l_kit_thm)
+            call comp_meca_l(rela_comp, 'KIT_META', l_kit_meta)
+            call comp_meca_l(rela_comp, 'CRISTAL' , l_cristal)
             if (present(compor_list_)) then
                 l_pmf = .false._1
             else
@@ -280,11 +288,11 @@ implicit none
 !
             call jeecra(jexnum(compor_info(1:19)//'.VARI', i_zone), 'LONMAX', nb_vari)
             call jeveuo(jexnum(compor_info(1:19)//'.VARI', i_zone), 'E', vk16 = v_vari)
-            call comp_meca_name(nb_vari    , l_excl       , vari_excl,&
-                                l_kit_meta , l_mfront_offi, &
-                                rela_comp  , defo_comp    , kit_comp ,&
-                                type_cpla  , post_iter,&
-                                libr_name  , subr_name    , model_mfront, model_dim   ,&
+            call comp_meca_name(nb_vari   , nb_vari_meca,&
+                                l_excl    , vari_excl   ,&
+                                l_kit_meta, l_kit_thm   , l_mfront_offi, &
+                                rela_comp , defo_comp   , kit_comp     , type_cpla, post_iter,&
+                                libr_name , subr_name   , model_mfront , model_dim,&
                                 v_vari)
 !
 ! --------- Save current zone

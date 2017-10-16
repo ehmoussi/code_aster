@@ -15,16 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine comp_mfront_vname(nb_vari    , &
-                                 defo_comp  , type_cpla, post_iter   ,&
-                                 libr_name  , subr_name, model_mfront, model_dim,&
-                                 v_vari_name)
+    subroutine comp_mfront_vname(nb_vari   , &
+                                 defo_comp , type_cpla  , post_iter   ,&
+                                 libr_name , subr_name  , model_mfront, model_dim,&
+                                 vari_begin, v_vari_name)
         integer, intent(in) :: nb_vari
         character(len=16), intent(in) :: defo_comp
         character(len=16), intent(in) :: type_cpla
@@ -33,6 +31,7 @@ interface
         character(len=255), intent(in) :: subr_name
         character(len=16), intent(in) :: model_mfront
         integer, intent(in) :: model_dim
+        integer, intent(in) :: vari_begin
         character(len=16), pointer, intent(in) :: v_vari_name(:)
     end subroutine comp_mfront_vname
 end interface

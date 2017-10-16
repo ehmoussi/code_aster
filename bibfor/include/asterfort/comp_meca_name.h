@@ -15,29 +15,23 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine comp_meca_name(nb_vari    , l_excl       , vari_excl,&
-                          l_kit_meta , l_mfront_offi, &
-                          rela_comp  , defo_comp  , kit_comp, type_cpla, post_iter,&
-                          libr_name  , subr_name    , model_mfront, model_dim   ,&
-                          v_vari_name)
-        integer, intent(in) :: nb_vari
+    subroutine comp_meca_name(nb_vari    , nb_vari_meca,&
+                              l_excl     , vari_excl   ,&
+                              l_kit_meta , l_kit_thm   , l_mfront_offi, &
+                              rela_comp  , defo_comp   , kit_comp     , type_cpla, post_iter,&
+                              libr_name  , subr_name   , model_mfront , model_dim,&
+                              v_vari_name)
+        integer, intent(in) :: nb_vari, nb_vari_meca
         aster_logical, intent(in) :: l_excl
         character(len=16), intent(in) :: vari_excl
-        aster_logical, intent(in) :: l_kit_meta
-        aster_logical, intent(in) :: l_mfront_offi
-        character(len=16), intent(in) :: rela_comp
-        character(len=16), intent(in) :: defo_comp
-        character(len=16), intent(in) :: kit_comp(4)
-        character(len=16), intent(in) :: type_cpla
-        character(len=16), intent(in) :: post_iter
-        character(len=255), intent(in) :: libr_name
-        character(len=255), intent(in) :: subr_name
+        aster_logical, intent(in) :: l_kit_meta, l_kit_thm, l_mfront_offi
+        character(len=16), intent(in) :: rela_comp, defo_comp, kit_comp(4)
+        character(len=16), intent(in) :: type_cpla, post_iter
+        character(len=255), intent(in) :: libr_name, subr_name
         character(len=16), intent(in) :: model_mfront
         integer, intent(in) :: model_dim
         character(len=16), pointer, intent(in) :: v_vari_name(:)
