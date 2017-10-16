@@ -93,10 +93,8 @@ aster_logical, intent(out) :: l_meca_mfront
         nb_vari_comp(1) = nb_vari_thmc
         nb_vari_comp(2) = nb_vari_ther
         nb_vari_comp(3) = nb_vari_hydr
-        if (rela_meca .eq. 'MFRONT') then
-            nb_vari_comp(4) = 0
-            l_meca_mfront   = .true.
-        else
+        call comp_meca_l(rela_meca, 'MFRONT', l_meca_mfront)
+        if (.not. l_meca_mfront) then
             nb_vari_comp(4) = nb_vari_meca
         endif
         nume_comp(1) = nume_comp_thmc

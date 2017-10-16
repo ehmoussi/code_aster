@@ -78,7 +78,7 @@ integer, optional, intent(out) :: nume_comp_(4)
     aster_logical :: l_cristal, l_kit_meta, l_kit_thm, l_kit_ddi, l_kit_cg, l_exte_comp
     aster_logical :: l_kit, l_meca_mfront
     aster_logical :: l_mfront_proto, l_mfront_offi, l_umat, l_implex
-    character(len=16) :: kit_comp(4), post_iter, mult_comp
+    character(len=16) :: kit_comp(4), post_iter, mult_comp, rela_meca
     integer :: nb_vari_exte, nume_comp(4)=0, nb_vari_comp(4)=0
     integer :: nb_vari_umat, model_dim
     character(len=255) :: libr_name, subr_name
@@ -148,8 +148,11 @@ integer, optional, intent(out) :: nume_comp_(4)
                              l_kit_meta, l_kit_thm   , l_kit_ddi   , l_kit_cg     ,&
                              nb_vari   , nb_vari_comp, nume_comp   , l_meca_mfront)
         if (l_meca_mfront) then
-            l_mfront_proto = .true._1
-            l_exte_comp    = .true._1
+            rela_meca = kit_comp(4)
+            call comp_meca_l(rela_meca, 'EXTE_COMP'   , l_exte_comp)
+            call comp_meca_l(rela_meca, 'MFRONT_PROTO', l_mfront_proto)
+            call comp_meca_l(rela_meca, 'MFRONT_OFFI' , l_mfront_offi)
+            call comp_meca_l(rela_meca, 'UMAT'        , l_umat)
         endif
     endif
 !

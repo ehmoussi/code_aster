@@ -57,7 +57,8 @@ character(len=16), intent(out) :: type_cpla
 !
     integer :: iret
     character(len=1) :: model_dim_s
-    character(len=16) :: principal, model_thm, model_type
+    character(len=16) :: principal, model_thm, model_type, answer
+    aster_logical :: l_axis, l_dplan
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -73,6 +74,10 @@ character(len=16), intent(out) :: type_cpla
     call teattr('C', 'TYPMOD2'        , model_thm  , iret, typel = elem_type_name)
     call teattr('C', 'DIM_TOPO_MODELI', model_dim_s, iret, typel = elem_type_name)
     read(model_dim_s,'(I1)') model_dim
+    call teattr('C', 'AXIS           ', answer, iret, typel = elem_type_name)
+    l_axis  = answer .eq. 'OUI'
+    call teattr('C', 'D_PLAN         ', answer, iret, typel = elem_type_name)
+    l_dplan = answer .eq. 'OUI'
 !
 ! - Select modelisation for MFront
 !
@@ -99,7 +104,19 @@ character(len=16), intent(out) :: type_cpla
             model_dim    = 2
             type_cpla    = 'DEBORST'
         elseif ( model_thm .eq. 'THM' ) then
-            model_mfront = '_Tridimensional'
+            if (model_dim .eq. 2) then
+                if (l_axis) then
+                    model_mfront = '_Axisymmetrical'
+                elseif (l_dplan) then
+                    model_mfront = '_PlaneStrain'
+                else
+                    ASSERT(ASTER_FALSE)
+                endif
+            elseif (model_dim .eq. 3) then
+                model_mfront = '_Tridimensional'
+            else
+                ASSERT(ASTER_FALSE)
+            endif
         else
             model_mfront = model_type
             codret = 2

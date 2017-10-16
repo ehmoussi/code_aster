@@ -17,10 +17,11 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine comp_meca_name(nb_vari    , l_excl       , vari_excl,&
-                          l_kit_meta , l_mfront_offi, &
-                          rela_comp  , defo_comp  , kit_comp, type_cpla, post_iter,&
-                          libr_name  , subr_name    , model_mfront, model_dim   ,&
+subroutine comp_meca_name(nb_vari    , nb_vari_meca,&
+                          l_excl     , vari_excl   ,&
+                          l_kit_meta , l_kit_thm   , l_mfront_offi, &
+                          rela_comp  , defo_comp   , kit_comp     , type_cpla, post_iter,&
+                          libr_name  , subr_name   , model_mfront , model_dim,&
                           v_vari_name)
 !
 implicit none
@@ -33,18 +34,13 @@ implicit none
 #include "asterfort/comp_mfront_vname.h"
 #include "asterfort/comp_meca_code.h"
 !
-integer, intent(in) :: nb_vari
+integer, intent(in) :: nb_vari, nb_vari_meca
 aster_logical, intent(in) :: l_excl
 character(len=16), intent(in) :: vari_excl
-aster_logical, intent(in) :: l_kit_meta
-aster_logical, intent(in) :: l_mfront_offi
-character(len=16), intent(in) :: rela_comp
-character(len=16), intent(in) :: defo_comp
-character(len=16), intent(in) :: kit_comp(4)
-character(len=16), intent(in) :: type_cpla
-character(len=16), intent(in) :: post_iter
-character(len=255), intent(in) :: libr_name
-character(len=255), intent(in) :: subr_name
+aster_logical, intent(in) :: l_kit_meta, l_kit_thm, l_mfront_offi
+character(len=16), intent(in) :: rela_comp, defo_comp, kit_comp(4)
+character(len=16), intent(in) :: type_cpla, post_iter
+character(len=255), intent(in) :: libr_name, subr_name
 character(len=16), intent(in) :: model_mfront
 integer, intent(in) :: model_dim
 character(len=16), pointer, intent(in) :: v_vari_name(:)
@@ -57,16 +53,27 @@ character(len=16), pointer, intent(in) :: v_vari_name(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  nb_vari          : number of internal variables 
+! In  nb_vari          : number of internal variables
+! In  nb_vari_meca     : number of internal variables for mechanic
 ! In  l_excl           : .true. if exception case (no names for internal variables)
 ! In  vari_excl        : name of internal variables if l_excl
 ! In  l_kit_meta       : .true. if metallurgy
+! In  l_kit_thm        : .true. if kit THM
+! In  l_mfront_offi    : .true. if MFront official
+! In  rela_comp        : RELATION comportment
 ! In  defo_comp        : DEFORMATION comportment
+! In  kit_comp         : KIT comportment
+! In  type_cpla        : plane stress method
+! In  post_iter        : type of post_treatment
+! In  libr_name        : name of library if UMAT or MFront
+! In  subr_name        : name of comportement in library if UMAT or MFront
+! In  model_mfront     : type of modelisation MFront
+! In  model_dim        : dimension of modelisation (2D or 3D)
 ! In  v_vari_name      : pointer to names of internal variables
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_vari_meta, nb_vari_rela, idummy, idummy2
+    integer :: nb_vari_meta, nb_vari_rela, idummy, idummy2, nb_vari_other
     character(len=6) :: phas_name(10)
     character(len=8) :: rela_name(30)
     integer :: i_vari, i_vari_meta, i_vari_rela
@@ -121,11 +128,22 @@ character(len=16), pointer, intent(in) :: v_vari_name(:)
                 v_vari_name(i_vari) = 'TYZ'
             endif
             ASSERT(i_vari .eq. nb_vari)
+        elseif (l_kit_thm) then
+            nb_vari_other = nb_vari - nb_vari_meca
+            if (l_mfront_offi) then
+                call lcvari(comp_code_py, nb_vari_other, v_vari_name(1:nb_vari_other))
+                call comp_mfront_vname(nb_vari_meca, &
+                                       defo_comp    , type_cpla  , post_iter   ,&
+                                       libr_name    , subr_name  , model_mfront, model_dim,&
+                                       nb_vari_other, v_vari_name)
+            else
+                call lcvari(comp_code_py, nb_vari, v_vari_name)
+            endif
         elseif (l_mfront_offi) then
             call comp_mfront_vname(nb_vari    , &
-                                   defo_comp  , type_cpla, post_iter   ,&
-                                   libr_name  , subr_name, model_mfront, model_dim,&
-                                   v_vari_name)
+                                   defo_comp  , type_cpla  , post_iter   ,&
+                                   libr_name  , subr_name  , model_mfront, model_dim,&
+                                   1          , v_vari_name)
         else
             call lcvari(comp_code_py, nb_vari, v_vari_name)
         endif
