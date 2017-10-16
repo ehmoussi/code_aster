@@ -20,21 +20,7 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import BehaviourDefinition
-from .ExecuteCommand import ExecuteCommand
+from .ExecuteCommand import ExecuteCommandWithType
 
 
-class BehaviourDefinitionOperator(ExecuteCommand):
-    """Command that creates the
-    :class:`~code_aster.Objects.BehaviourDefinition`."""
-    command_name = "DEFI_COMPOR"
-
-    def create_result(self, _):
-        """Initialize the result object.
-
-        Arguments:
-            keywords (dict): Keywords arguments of user's keywords.
-        """
-        self._result = BehaviourDefinition.create()
-
-
-DEFI_COMPOR = BehaviourDefinitionOperator()
+DEFI_COMPOR = ExecuteCommandWithType("DEFI_COMPOR", BehaviourDefinition)

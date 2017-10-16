@@ -27,7 +27,7 @@ define_operators(globals())
 
 
 # please keep alphabetical order
-# from .affe_cara_elem import AFFE_CARA_ELEM
+from .affe_cara_elem import AFFE_CARA_ELEM
 # from .affe_char_cine import AFFE_CHAR_CINE
 # from .affe_char_meca import AFFE_CHAR_MECA
 from .affe_materiau import AFFE_MATERIAU
@@ -48,9 +48,9 @@ from .defi_compor import DEFI_COMPOR
 # from .defi_flui_stru import DEFI_FLUI_STRU
 # from .defi_fonc_flui import DEFI_FONC_FLUI
 # from .defi_fonction import DEFI_FONCTION
-# from .defi_fond_fiss import DEFI_FOND_FISS
+from .defi_fond_fiss import DEFI_FOND_FISS
 # from .defi_geom_fibre import DEFI_GEOM_FIBRE
-# from .defi_grille import DEFI_GRILLE
+from .defi_grille import DEFI_GRILLE
 # from .defi_group import DEFI_GROUP
 # from .defi_inte_spec import DEFI_INTE_SPEC
 # from .defi_interf_dyna import DEFI_INTERF_DYNA

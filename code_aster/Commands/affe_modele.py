@@ -29,10 +29,7 @@ class ModelAssignment(ExecuteCommand):
     command_name = "AFFE_MODELE"
 
     def create_result(self, keywords):
-        """Create the result before calling the *exec* command function
-        if needed.
-        The result is stored in an internal attribute and will be returned by
-        *exec*.
+        """Initialize the result.
 
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.

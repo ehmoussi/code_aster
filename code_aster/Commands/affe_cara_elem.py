@@ -19,22 +19,23 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import ElementaryCharacteristics
+from ..Objects import ElementaryCharacteristics
+from .ExecuteCommand import ExecuteCommand
 
 
-def AFFE_CARA_ELEM(**curDict):
-    model = curDict["MODELE"]
-    returnCaraElem = ElementaryCharacteristics.create( model )
-    name = returnCaraElem.getName()
-    type = returnCaraElem.getType()
-    syntax = CommandSyntax("AFFE_CARA_ELEM")
+class ElementaryCharacteristicsAssignment(ExecuteCommand):
+    """Command that defines the
+    :class:`~code_aster.Objects.ElementaryCharacteristics` on a
+    :class:`~code_aster.Objects.Mesh`."""
+    command_name = "AFFE_CARA_ELEM"
 
-    syntax.setResult(name, type)
+    def create_result(self, keywords):
+        """Initialize the result.
 
-    syntax.define(curDict)
-    numOp = 19
-    python_execop(numOp)
-    syntax.free()
-    return returnCaraElem
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = ElementaryCharacteristics.create(keywords["MODELE"])
+
+
+AFFE_CARA_ELEM = ElementaryCharacteristicsAssignment()
