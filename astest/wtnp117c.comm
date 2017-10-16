@@ -329,11 +329,10 @@ cal1 = STAT_NON_LINE (
        EXCIT  =(
          _F( CHARGE  = CH0 ,) ,
           ),
-
+       SCHEMA_THM=_F(PARM_THETA=1.,PARM_ALPHA=PARM_ALPHA, ),
        COMPORTEMENT =_F(  RELATION  = 'KIT_HH2',
                        RELATION_KIT = ('LIQU_AD_GAZ', 'HYDR_VGM'),
-                       PARM_THETA  = 1. ,
-                       PARM_ALPHA=PARM_ALPHA, ),
+                       ),
 
        INCREMENT  =_F(
            LIST_INST    = INST1,

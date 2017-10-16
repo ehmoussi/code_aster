@@ -275,10 +275,11 @@ RESU0=STAT_NON_LINE(
                         _F(CHARGE=CALPC)),
 
               ETAT_INIT=_F(DEPL=PINIT),
+                 SCHEMA_THM=_F(PARM_ALPHA=PARM_ALPHA,),
 
                 COMPORTEMENT=_F( RELATION = 'KIT_HH2',
                               RELATION_KIT = ('LIQU_AD_GAZ','HYDR_VGM'),
-                              PARM_ALPHA=PARM_ALPHA),
+                              ),
                 INCREMENT=_F(
                    LIST_INST = LI,
                      INST_FIN=10),

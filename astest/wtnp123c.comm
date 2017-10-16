@@ -368,10 +368,10 @@ CAL1=STAT_NON_LINE(MODELE=MODELT,
                           _F( CHARGE   = CHG ,
                               FONC_MULT = FLUXG ) ,
                            ),
+                   SCHEMA_THM=_F(PARM_THETA=1.,
+                               PARM_ALPHA=PARM_ALPHA,),
                    COMPORTEMENT=_F(RELATION='KIT_HH2',
-                                RELATION_KIT=(LOI,'HYDR_VGC',),
-                                PARM_THETA  = 1. ,
-                                PARM_ALPHA=PARM_ALPHA,),
+                                RELATION_KIT=(LOI,'HYDR_VGC',),),
                    ETAT_INIT=_F(DEPL=PINIT,),
 
                  INCREMENT=_F(
