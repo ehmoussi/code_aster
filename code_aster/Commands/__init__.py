@@ -43,7 +43,7 @@ from .affe_modele import AFFE_MODELE
 # from .crea_maillage import CREA_MAILLAGE
 # from .crea_resu import CREA_RESU
 # from .crea_table import CREA_TABLE
-# from .defi_compor import DEFI_COMPOR
+from .defi_compor import DEFI_COMPOR
 # from .defi_fiss_xfem import DEFI_FISS_XFEM
 # from .defi_flui_stru import DEFI_FLUI_STRU
 # from .defi_fonc_flui import DEFI_FONC_FLUI
