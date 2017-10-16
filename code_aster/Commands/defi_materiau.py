@@ -23,24 +23,6 @@ from ..Objects import Material, GeneralMaterialBehaviour
 from .ExecuteCommand import ExecuteCommand
 
 
-def _byKeyword():
-    """Build a dict of all behaviours subclasses, indexed by keyword.
-
-    Returns:
-        dict: Behaviour classes by keyword in DEFI_MATERIAU.
-    """
-    import code_aster.Objects as all_types
-    objects = {}
-    for name, obj in all_types.__dict__.items():
-        if not isinstance(obj, type):
-            continue
-        if not issubclass(obj, GeneralMaterialBehaviour):
-            continue
-        key = obj.create().getAsterName()
-        objects[key] = obj
-    return objects
-
-
 class MaterialDefinition(ExecuteCommand):
     """Definition of the material properties.
     Returns a :class:`~code_aster.Objects.Material` object.
@@ -48,7 +30,7 @@ class MaterialDefinition(ExecuteCommand):
     command_name = "DEFI_MATERIAU"
 
     def create_result(self, _):
-        """Create the :class:`~code_aster.Objects.Mesh`.
+        """Initialize the :class:`~code_aster.Objects.Material`.
 
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
@@ -61,7 +43,7 @@ class MaterialDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        classByName = _byKeyword()
+        classByName = self._byKeyword()
         for fkwName, fkw in keywords.iteritems():
             # only see factor keyword
             if not isinstance(fkw, dict):
@@ -87,6 +69,24 @@ class MaterialDefinition(ExecuteCommand):
             self._result.addMaterialBehaviour( matBehav )
 
         self._result.build()
+
+    @staticmethod
+    def _byKeyword():
+        """Build a dict of all behaviours subclasses, indexed by keyword.
+
+        Returns:
+            dict: Behaviour classes by keyword in DEFI_MATERIAU.
+        """
+        import code_aster.Objects as all_types
+        objects = {}
+        for name, obj in all_types.__dict__.items():
+            if not isinstance(obj, type):
+                continue
+            if not issubclass(obj, GeneralMaterialBehaviour):
+                continue
+            key = obj.create().getAsterName()
+            objects[key] = obj
+        return objects
 
 
 DEFI_MATERIAU = MaterialDefinition()

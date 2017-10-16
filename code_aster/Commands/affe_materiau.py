@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,54 +19,75 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster import MaterialOnMesh
-from code_aster.Cata import Commands, checkSyntax
+from ..Objects import MaterialOnMesh
+from ..Utilities import force_list
+from .ExecuteCommand import ExecuteCommand
 
 
-def _addMaterial(materOnMesh, fkw):
-    kwTout = fkw.get("TOUT")
-    kwGrMa = fkw.get("GROUP_MA")
-    mater = fkw[ "MATER" ]
+class MaterialAssignment(ExecuteCommand):
+    """Assign the :class:`~code_aster.Objects.Material` properties on the
+    :class:`~code_aster.Objects.Mesh` that creates a
+    :class:`~code_aster.Objects.MaterialOnMesh` object.
+    """
+    command_name = "AFFE_MATERIAU"
 
-    for mater_i in mater:
-        if kwTout != None:
-            materOnMesh.addMaterialOnAllMesh(mater_i)
-        elif kwGrMa != None:
-            if type(kwGrMa) == list:
-                for grp in kwGrMa:
-                    materOnMesh.addMaterialOnGroupOfElements(mater_i, grp)
-            else:
-                materOnMesh.addMaterialOnGroupOfElements(mater_i, kwGrMa)
+    def create_result(self, keywords):
+        """Initialize the :class:`~code_aster.Objects.Mesh`.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        mesh = None
+        if keywords.has_key("MAILLAGE"):
+            mesh = keywords["MAILLAGE"]
         else:
-            assert False
+            mesh = keywords["MODELE"].getSupportMesh()
+        self._result = MaterialOnMesh.create(mesh)
+
+    def adapt_syntax(self, keywords):
+        """Hook to adapt syntax from a old version or for compatibility reasons.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords, changed
+                in place.
+        """
+        for key in ("AFFE_COMPOR", "AFFE_VARC"):
+            if keywords.get(key) != None:
+                raise NotImplementedError("'{0}' is not yet implemented"
+                                          .format(key))
+
+    def exec_(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        fkw = keywords["AFFE"]
+        if isinstance(fkw, dict):
+            self._addMaterial(fkw)
+        elif type(fkw) in (list, tuple):
+            for curDict in fkw:
+                self._addMaterial(curDict)
+        else:
+            raise TypeError("Unexpected type: {0!r} {1}".format(fkw, type(fkw)))
+
+        self._result.build()
+
+    def _addMaterial(self, fkw):
+        kwTout = fkw.get("TOUT")
+        kwGrMa = fkw.get("GROUP_MA")
+        mater = fkw[ "MATER" ]
+
+        for mater_i in mater:
+            if kwTout != None:
+                self._result.addMaterialOnAllMesh(mater_i)
+            elif kwGrMa != None:
+                kwGrMa = force_list(kwGrMa)
+                for grp in kwGrMa:
+                    self._result.addMaterialOnGroupOfElements(mater_i, grp)
+            else:
+                raise TypeError("At least {0} or {1} is required"
+                                .format("TOUT", "GROUP_MA"))
 
 
-def AFFE_MATERIAU(**kwargs):
-    """Opérateur d'affection d'un matériau"""
-    checkSyntax( Commands.AFFE_MATERIAU, kwargs )
-
-    mesh = None
-    if kwargs.has_key("MAILLAGE"):
-        mesh = kwargs["MAILLAGE"]
-    else:
-        try:
-            mesh = kwargs["MODELE"].getSupportMesh()
-        except:
-            raise NameError("A Mesh or a Model is required")
-    materOnMesh = MaterialOnMesh.create(mesh)
-
-    if kwargs.get("AFFE_COMPOR") != None or kwargs.get("AFFE_VARC") != None:
-        raise NameError("AFFE_COMPOR or AFFE_VARC not yet implemented")
-
-    fkw = kwargs[ "AFFE" ]
-    if type(fkw) == dict:
-        _addMaterial(materOnMesh, fkw)
-    elif type(fkw) in (list, tuple):
-        for curDict in fkw:
-            _addMaterial(materOnMesh,curDict )
-    else:
-        assert False, fkw
-
-    materOnMesh.build()
-
-    return materOnMesh
+AFFE_MATERIAU = MaterialAssignment()
