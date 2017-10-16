@@ -72,8 +72,9 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
     real(kind=8), pointer :: p_carc_valv(:) => null()
     character(len=16) :: algo_inte, rela_comp, meca_comp, defo_comp
     real(kind=8) :: iter_inte_maxi, resi_inte_rela, parm_theta, vale_pert_rela, algo_inte_r
-    real(kind=8) :: resi_deborst_max, resi_radi_rela, parm_alpha
+    real(kind=8) :: resi_deborst_max, resi_radi_rela
     real(kind=8) :: post_iter, post_incr
+    real(kind=8) :: parm_theta_thm, parm_alpha_thm
     integer :: type_matr_t, iter_inte_pas, iter_deborst_max
     aster_logical :: plane_stress, l_mfront_proto, l_mfront_offi, l_kit_thm
     integer :: cptr_nbvarext=0, cptr_namevarext=0, cptr_fct_ldc=0
@@ -92,6 +93,11 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
 !
     call jeveuo(carcri//'.VALV', 'E', vr = p_carc_valv)
 !
+! - Get SCHEMA_THM
+!
+    parm_theta_thm = ds_compor_para%parm_theta_thm
+    parm_alpha_thm = ds_compor_para%parm_alpha_thm
+!
 ! - Loop on occurrences of COMPORTEMENT
 !
     do i_comp = 1, nb_comp
@@ -106,7 +112,6 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
         iter_deborst_max = ds_compor_para%v_para(i_comp)%iter_deborst_max
         resi_radi_rela   = ds_compor_para%v_para(i_comp)%resi_radi_rela
         post_iter        = ds_compor_para%v_para(i_comp)%ipostiter
-        parm_alpha       = ds_compor_para%v_para(i_comp)%parm_alpha
         post_incr        = ds_compor_para%v_para(i_comp)%ipostincr
         iveriborne       = ds_compor_para%v_para(i_comp)%iveriborne
         rela_comp        = ds_compor_para%v_para(i_comp)%rela_comp
@@ -208,8 +213,8 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
         else
             p_carc_valv(17) = 0
         endif
-!       For THM
-        p_carc_valv(18) = parm_alpha
+        p_carc_valv(PARM_ALPHA_THM) = parm_alpha_thm
+        p_carc_valv(PARM_THETA_THM) = parm_theta_thm
 !
 ! ----- Affect in <CARTE>
 !

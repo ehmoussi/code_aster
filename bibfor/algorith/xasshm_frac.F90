@@ -24,7 +24,7 @@ subroutine xasshm_frac(nddls, nddlm, nnop, nnops,&
                        jptint, igeom, jbasec,&
                        jcohes, jcoheo,&
                        nlact, cface, rinstp,&
-                       rinstm, crit, fpg, ncompv,&
+                       rinstm, carcri, fpg, ncompv,&
                        compor, jmate, ndim, idepm, idepd,&
                        pla, algocr, rela, ifa, ipgf, matri,&
                        cohes, coheo, jheavn, ncompn, ifiss,&
@@ -55,6 +55,7 @@ implicit none
 #include "asterfort/thmGetBehaviour.h"
 #include "asterfort/thmGetParaCoupling.h"
 #include "asterfort/thmGetBehaviourChck.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! ======================================================================
 !
@@ -70,8 +71,8 @@ implicit none
     integer :: ipgf, ifa, cface(30,6), algocr, idepd, idepm, pos(16)
     integer :: jptint, igeom, jbasec, nlact(2), lact(16), ibid, ino
     integer :: ifiss, nfh, jheafa, ncomph
-    real(kind=8) :: dt, ta, ta1, cohes(5), rela, g(3), vihydr(64)
-    real(kind=8) :: rinstp, rinstm, crit(*), jac, raug
+    real(kind=8) :: dt, parm_theta, ta1, cohes(5), rela, g(3), vihydr(64)
+    real(kind=8) :: rinstp, rinstm, carcri(*), jac, raug
     real(kind=8) :: ffp(27), ffpc(27), ffc(16), dfdic(nnops,3)
     real(kind=8) :: dfbid(27,3), lamb(3), wsaut(3), wsautm(3)
     real(kind=8) :: nd(3), tau1(3), tau2(3)
@@ -88,8 +89,8 @@ implicit none
 
 !   DETERMINATION DES CONSTANTES TEMPORELLES (INSTANT+THETA SCHEMA)
     dt = rinstp-rinstm
-    ta = crit(4)
-    ta1 = 1.d0-ta
+    parm_theta = carcri(PARM_THETA_THM)
+    ta1 = 1.d0-parm_theta
 !
 ! - Get parameters for behaviour
 !
@@ -181,7 +182,7 @@ implicit none
 !          CALCUL DES MATRICES (CF. DOC R7.02.18)
            call xmathm(ndim,&
                        nnops, nnop, nddls, nddlm, ffc,&
-                       pla, nd, jac, ffp, ffp2, dt, ta, saut,&
+                       pla, nd, jac, ffp, ffp2, dt, parm_theta, saut,&
                        dffc, rho11, gradpf, matri,&
                        dsidep, p, r, jheavn, ncompn, ifiss,&
                        nfiss, nfh, ifa, jheafa, ncomph)
@@ -269,13 +270,13 @@ implicit none
                        nfh, ifa, jheafa, ncomph)
 !
            call xmmatb(ndim, nnops, nddls, nddlm, ffc,&
-                       pla, dt, ta, jac, ffp2, matri,&
+                       pla, dt, parm_theta, jac, ffp2, matri,&
                        jheavn, ncompn, ifiss, nfiss, nfh,&
                        ifa, jheafa, ncomph)
 !
            call xmmata(ndim, nnops, nnop, nddls, nddlm, saut,&
                        nd, pla, ffc, dffc, matri, rho11, &
-                       gradpf, ffp, dt, ta, jac,&
+                       gradpf, ffp, dt, parm_theta, jac,&
                        jheavn, ncompn, ifiss, nfiss,&
                        nfh, ifa, jheafa, ncomph)
 !

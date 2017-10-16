@@ -28,6 +28,7 @@ subroutine nmcrer(carcri, sdcriq)
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/Behaviour_type.h"
     character(len=24) :: sdcriq, carcri
 !
 ! ----------------------------------------------------------------------
@@ -70,7 +71,7 @@ subroutine nmcrer(carcri, sdcriq)
 ! --- VALEUR DE THETA
 !
     call jeveuo(carcri(1:19)//'.VALV', 'L', vr=valv)
-    theta = valv(4)
+    theta = valv(PARM_THETA_THM)
 !
 ! --- ERREUR EN TEMPS (THM)
 !

@@ -19,7 +19,7 @@
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
 subroutine xasshm(nno, npg, npi, ipoids, ivf,&
-                  idfde, igeom, geom, crit, deplm,&
+                  idfde, igeom, geom, carcri, deplm,&
                   deplp, contm, contp, varim, varip,&
                   defgem, defgep, drds, drdsr, dsde,&
                   b, dfdi, dfdi2, r, sigbar,&
@@ -59,6 +59,7 @@ implicit none
 #include "asterfort/thmGetParaCoupling.h"
 #include "asterfort/thmGetParaInit.h"
 #include "asterfort/thmGetBehaviourChck.h"
+#include "asterfort/Behaviour_type.h"
     integer :: dimmat, npg, dimuel
     integer :: npi, ipoids, ivf, idfde, j_mater, dimdef, dimcon, nnop
     integer :: nbvari, nddls, nddlm, nmec, np1, ndim, codret
@@ -67,12 +68,12 @@ implicit none
     integer :: addeme, addep1, ii, jj, in, jheavn
     integer :: kpi, ipi
     integer :: i, j, n, k, kji, nb_vari_meca
-    real(kind=8) :: geom(ndim, nnop), crit(*), poids
+    real(kind=8) :: geom(ndim, nnop), carcri(*), poids
     real(kind=8) :: deplp(dimuel), deplm(dimuel)
     real(kind=8) :: matuu(dimuel*dimuel), matri(dimmat, dimmat)
     real(kind=8) :: rinstp, rinstm, vectu(dimuel)
     real(kind=8) :: defgem(dimdef), defgep(dimdef)
-    real(kind=8) :: dt, ta, ta1
+    real(kind=8) :: dt, parm_theta, ta1
     real(kind=8) :: angmas(3)
     aster_logical :: axi
     character(len=3) :: modint
@@ -163,8 +164,8 @@ implicit none
 ! --- CALCUL DE CONSTANTES TEMPORELLES --------------------------------
 ! =====================================================================
     dt = rinstp-rinstm
-    ta  = crit(4)
-    ta1 = 1.d0-ta
+    parm_theta  = carcri(PARM_THETA_THM)
+    ta1 = 1.d0-parm_theta
 ! =====================================================================
 ! --- CREATION DES MATRICES DE SELECTION ------------------------------
 ! --- (MATRICES DIAGONALES) C,CS --------------------------------------
@@ -363,7 +364,7 @@ implicit none
                 congem(i) = contm(npi*(ise-1)*dimcon+(kpi-1)*dimcon+i)
                 congep(i) = contp(npi*(ise-1)*dimcon+(kpi-1)*dimcon+i)
             end do
-            call xequhm(j_mater, option, ta, ta1, ndim,&
+            call xequhm(j_mater, option, parm_theta, ta1, ndim,&
                         kpi, npg, dimenr, enrmec,&
                         dimdef, dimcon, nbvari, defgem, congem,&
                         vintm, defgep, congep,&

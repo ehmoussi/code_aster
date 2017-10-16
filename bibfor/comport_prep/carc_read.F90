@@ -66,7 +66,8 @@ aster_logical, intent(in), optional :: l_implex_
     character(len=16) :: type_matr_tang=' ', method=' ', post_iter=' ', post_incr=' '
     real(kind=8) :: parm_theta=0.d0, vale_pert_rela=0.d0
     real(kind=8) :: resi_deborst_max=0.d0
-    real(kind=8) :: parm_alpha=0.d0, resi_radi_rela=0.d0
+    real(kind=8) :: resi_radi_rela=0.d0
+    real(kind=8) :: parm_theta_thm=0.d0, parm_alpha_thm=0.d0
     integer :: type_matr_t=0, iter_inte_pas=0, iter_deborst_max=0
     integer :: ipostiter=0, ipostincr=0, iveriborne=0
     character(len=8) :: mesh = ' '
@@ -75,8 +76,8 @@ aster_logical, intent(in), optional :: l_implex_
     character(len=16) :: kit_comp(4) = (/'VIDE','VIDE','VIDE','VIDE'/)
     character(len=16) :: defo_comp=' ',  rela_comp=' '
     character(len=16) :: thmc_comp=' ', hydr_comp=' ', ther_comp=' ', meca_comp=' '
-    aster_logical :: l_kit_thm=.false._1, l_kit_ddi = .false._1
-    aster_logical :: l_kit = .false._1, l_matr_unsymm
+    aster_logical :: l_kit_thm=ASTER_FALSE, l_kit_ddi = ASTER_FALSE, l_thm = ASTER_FALSE
+    aster_logical :: l_kit = ASTER_FALSE, l_matr_unsymm
     aster_logical :: l_implex, l_comp_external
     character(len=16) :: texte(3)=(/ ' ',' ',' '/)
     integer, pointer :: v_model_elem(:) => null()
@@ -86,7 +87,8 @@ aster_logical, intent(in), optional :: l_implex_
     keywordfact = 'COMPORTEMENT'
     nb_comp     = ds_compor_para%nb_comp
     mesh        = ' '
-    l_implex    = .false.
+    l_implex    = ASTER_FALSE
+    l_thm       = ASTER_FALSE
     if (present(l_implex_)) then
         l_implex = l_implex_
     endif
@@ -112,6 +114,9 @@ aster_logical, intent(in), optional :: l_implex_
         call comp_meca_l(rela_comp, 'KIT'    , l_kit)
         call comp_meca_l(rela_comp, 'KIT_THM', l_kit_thm)
         call comp_meca_l(rela_comp, 'KIT_DDI', l_kit_ddi)
+        if (l_kit_thm) then
+            l_thm = ASTER_TRUE
+        endif
 !
 ! ----- For KIT
 !
@@ -221,12 +226,10 @@ aster_logical, intent(in), optional :: l_implex_
             endif
         endif
 !
-! ----- Get PARM_THETA/PARM_ALPHA
+! ----- Get PARM_THETA (for viscous laws)
 !
         parm_theta = 1.d0
-        parm_alpha = 1.d0
         call getvr8(keywordfact, 'PARM_THETA', iocc = i_comp, scal = parm_theta)
-        call getvr8(keywordfact, 'PARM_ALPHA', iocc = i_comp, scal = parm_alpha)
 !
 ! ----- Get RESI_RADI_RELA
 !
@@ -300,7 +303,6 @@ aster_logical, intent(in), optional :: l_implex_
 !
         ds_compor_para%v_para(i_comp)%l_comp_external          = l_comp_external
         ds_compor_para%v_para(i_comp)%type_matr_t              = type_matr_t
-        ds_compor_para%v_para(i_comp)%parm_alpha               = parm_alpha
         ds_compor_para%v_para(i_comp)%parm_theta               = parm_theta
         ds_compor_para%v_para(i_comp)%iter_inte_pas            = iter_inte_pas
         ds_compor_para%v_para(i_comp)%vale_pert_rela           = vale_pert_rela
@@ -316,5 +318,17 @@ aster_logical, intent(in), optional :: l_implex_
         ds_compor_para%v_para(i_comp)%kit_comp(1:4)            = kit_comp(1:4)
         ds_compor_para%v_para(i_comp)%l_matr_unsymm            = l_matr_unsymm
     end do
+!
+! - Read SCHEMA_THM
+!
+    if (l_thm) then
+        keywordfact    = 'SCHEMA_THM'
+        parm_theta_thm = 1.d0
+        call getvr8(keywordfact, 'PARM_THETA', iocc = 1, scal = parm_theta_thm, nbret = iret)
+        parm_alpha_thm = 1.d0
+        call getvr8(keywordfact, 'PARM_ALPHA', iocc = 1, scal = parm_alpha_thm, nbret = iret)
+        ds_compor_para%parm_theta_thm = parm_theta_thm
+        ds_compor_para%parm_alpha_thm = parm_alpha_thm
+    endif
 !
 end subroutine

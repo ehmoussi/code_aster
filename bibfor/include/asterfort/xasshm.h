@@ -21,7 +21,7 @@
 !
 interface
     subroutine xasshm(nno, npg, npi, ipoids, ivf,&
-                      idfde, igeom, geom, crit, deplm,&
+                      idfde, igeom, geom, carcri, deplm,&
                       deplp, contm, contp, varim,&
                       varip, defgem, defgep, drds,&
                       drdsr, dsde, b, dfdi, dfdi2,&
@@ -51,7 +51,7 @@ interface
         integer :: idfde
         integer :: igeom
         real(kind=8) :: geom(ndim, nnop)
-        real(kind=8) :: crit(*)
+        real(kind=8) :: carcri(*)
         real(kind=8) :: deplm(dimuel)
         real(kind=8) :: deplp(dimuel)
         real(kind=8) :: contm(*)

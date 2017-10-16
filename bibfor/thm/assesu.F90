@@ -55,6 +55,7 @@ implicit none
 #include "asterfort/thmGetParaInit.h"
 #include "asterfort/THM_type.h"
 #include "asterfort/thmGetBehaviourChck.h"
+#include "asterfort/Behaviour_type.h"
 !
 integer, parameter :: maxfa=6
 character(len=16), intent(in) :: option
@@ -375,7 +376,7 @@ real(kind=8), intent(inout) :: vectu(dimuel)
 !
 ! - Parameter for scheme
 !
-    parm_alpha = carcri(18)
+    parm_alpha = carcri(PARM_ALPHA_THM)
 !
 ! - Get center of cell (last node nno is center ! )
 !

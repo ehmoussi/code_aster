@@ -39,3 +39,4 @@ from .c_suivi_ddl import C_SUIVI_DDL
 from .c_test_reference import C_TEST_REFERENCE
 from .c_type_cham_into import C_TYPE_CHAM_INTO
 from .c_mesure import C_MESURE
+from .c_schema_thm import C_SCHEMA_THM

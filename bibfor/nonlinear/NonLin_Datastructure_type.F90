@@ -442,7 +442,6 @@ implicit none
     type NL_DS_ComporPara
         aster_logical :: l_comp_external
         integer       :: type_matr_t
-        real(kind=8)  :: parm_alpha
         real(kind=8)  :: parm_theta
         integer       :: iter_inte_pas
         real(kind=8)  :: vale_pert_rela
@@ -465,6 +464,9 @@ implicit none
     type NL_DS_ComporParaPrep
 ! ----- Number of comportements
         integer                         :: nb_comp
+! ----- Parameters for THM scheme
+        real(kind=8)                    :: parm_alpha_thm
+        real(kind=8)                    :: parm_theta_thm
 ! ----- List of parameters
         type(NL_DS_ComporPara), pointer :: v_para(:)
     end type NL_DS_ComporParaPrep

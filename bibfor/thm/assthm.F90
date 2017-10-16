@@ -203,7 +203,7 @@ integer, intent(out) :: codret
 ! - Time parameters
 !
     time_incr  = time_curr-time_prev
-    parm_theta = carcri(4)
+    parm_theta = carcri(PARM_THETA_THM)
 !
 ! - Create matrix for selection of dof
 !

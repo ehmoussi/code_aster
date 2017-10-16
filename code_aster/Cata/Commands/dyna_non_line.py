@@ -35,7 +35,6 @@ DYNA_NON_LINE=OPER(nom="DYNA_NON_LINE",op= 70,sd_prod=evol_noli,reentrant='f',
          EXCIT           =FACT(statut='f',max='**',
            regles=(PRESENT_ABSENT('FONC_MULT','ACCE'),
                    PRESENT_PRESENT('ACCE','VITE','DEPL'),
-                   # PRESENT_ABSENT('MULT_APPUI','FONC_MULT'),
                    ),
            TYPE_CHARGE     =SIMP(statut='f',typ='TXM',defaut="FIXE_CSTE",
                                  into=("FIXE_CSTE","SUIV","DIDI")),
@@ -81,6 +80,8 @@ DYNA_NON_LINE=OPER(nom="DYNA_NON_LINE",op= 70,sd_prod=evol_noli,reentrant='f',
            VITE_INIT_GENE  =SIMP(statut='f',typ=vect_asse_gene),
            ACCE_INIT_GENE  =SIMP(statut='f',typ=vect_asse_gene),
          ),
+#-------------------------------------------------------------------
+         SCHEMA_THM        =C_SCHEMA_THM(),
 #-------------------------------------------------------------------
          COMPORTEMENT      =C_COMPORTEMENT('DYNA_NON_LINE'),
 #-------------------------------------------------------------------
