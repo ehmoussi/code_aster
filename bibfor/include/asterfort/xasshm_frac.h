@@ -15,8 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 interface
     subroutine xasshm_frac(nddls, nddlm, nnop, nnops,&
@@ -25,7 +24,7 @@ interface
                            jptint, igeom, jbasec,&
                            jcohes, jcoheo,&
                            nlact, cface, rinstp,&
-                           rinstm, crit, fpg, ncompv,&
+                           rinstm, carcri, fpg, ncompv,&
                            compor, jmate, ndim, idepm, idepd,&
                            pla, algocr, rela, ifa, ipgf, matri,&
                            cohes, coheo, jheavn, ncompn, ifiss,&
@@ -55,7 +54,7 @@ interface
         integer :: cface(30,6)
         real(kind=8) :: rinstp
         real(kind=8) :: rinstm
-        real(kind=8) :: crit(*)
+        real(kind=8) :: carcri(*)
         character(len=8) :: fpg
         integer :: ncompv
         character(len=16) :: compor(*)

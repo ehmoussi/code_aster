@@ -48,6 +48,8 @@ STAT_NON_LINE=OPER(nom="STAT_NON_LINE",op=70,sd_prod=evol_noli,
                 FONC_MULT   =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
               ),
 #-------------------------------------------------------------------
+         SCHEMA_THM      =C_SCHEMA_THM(),
+#-------------------------------------------------------------------
          COMPORTEMENT    =C_COMPORTEMENT('STAT_NON_LINE'),
 #-------------------------------------------------------------------
          ETAT_INIT         =C_ETAT_INIT('STAT_NON_LINE','f'),

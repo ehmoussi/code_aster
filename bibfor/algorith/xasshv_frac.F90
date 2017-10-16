@@ -23,7 +23,7 @@ subroutine xasshv_frac(nddls, nddlm, nnop, nnops,&
                        dimuel, nface, npgf, nbspg, nptf,&
                        jcohes, jptint, igeom, jbasec,&
                        nlact, cface, rinstp,&
-                       rinstm, crit, fpg, ncompv, vect,&
+                       rinstm, carcri, fpg, ncompv, vect,&
                        compor, jmate, ndim, idepm, idepd, pla,&
                        algocr, rela, jheavn, ncompn, ifiss, nfiss,&
                        nfh, jheafa, ncomph, pos)
@@ -54,6 +54,7 @@ implicit none
 #include "asterfort/thmGetBehaviour.h"
 #include "asterfort/thmGetParaCoupling.h"
 #include "asterfort/thmGetBehaviourChck.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! ======================================================================
 !
@@ -70,8 +71,8 @@ implicit none
     integer :: jptint, igeom, jbasec, nlact(2), nfiss, ibid, ino
     integer :: ifiss, nfh, jheafa, ncomph
     integer :: idepm, idepd
-    real(kind=8) :: dt, ta, ta1, cohes(5), lamb(3), g(3)
-    real(kind=8) :: rinstp, rinstm, crit(*), jac, r
+    real(kind=8) :: dt, parm_theta, ta1, cohes(5), lamb(3), g(3)
+    real(kind=8) :: rinstp, rinstm, carcri(*), jac, r
     real(kind=8) :: ffp(27), ffpc(27), ffc(16), dfdic(nnops,3)
     real(kind=8) :: dfbid(27,3), am(3), ad(3)
     real(kind=8) :: nd(3), tau1(3), tau2(3), raug, sigma(6), rho110
@@ -87,8 +88,8 @@ implicit none
 
 !   DETERMINATION DES CONSTANTES TEMPORELLES (INSTANT+THETA SCHEMA)
     dt = rinstp-rinstm
-    ta = crit(4)
-    ta1 = 1.d0-ta
+    parm_theta = carcri(PARM_THETA_THM)
+    ta1 = 1.d0-parm_theta
 !
 ! - Get parameters for behaviour
 !
@@ -197,7 +198,7 @@ implicit none
 !
                  call xvechm(nnops, nddls, nddlm, ndim, pla,&
                              saut, sautm, nd, ffc, w11, w11m, jac,&
-                             q1, dt, ta, q1m, ta1, q2, q2m, dffc,&
+                             q1, dt, parm_theta, q1m, ta1, q2, q2m, dffc,&
                              rho11, gradpf, rho11m, gradpfm, ffp2,&
                              vect,&
                              ffp, nnop, delta, lamb, am, r, p,&
@@ -275,12 +276,12 @@ implicit none
 !
                 call xvecha(ndim, pla, nnops, saut,&
                             sautm, nd, ffc, w11, w11m, jac,&
-                            q1, q1m, q2, q2m, dt, ta, ta1,&
+                            q1, q1m, q2, q2m, dt, parm_theta, ta1,&
                             dffc, rho11, gradpf, rho11m,&
                             gradpfm, vect)
 !
                 call xvechb(nnops, nddls, nddlm, ndim,&
-                            ffp2, q1, dt, ta, jac, q1m, ta1,&
+                            ffp2, q1, dt, parm_theta, jac, q1m, ta1,&
                             q2, q2m, vect, ncompn, jheavn, ifiss,&
                             nfiss, nfh, ifa, jheafa, ncomph)
 !
