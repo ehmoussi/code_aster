@@ -223,9 +223,9 @@ cal1=STAT_NON_LINE(MODELE=MODELT,
                  CHAM_MATER=CHMAT,
 
                  EXCIT=( _F(CHARGE=CHIMP,),),
+                 SCHEMA_THM=_F(PARM_THETA=0.111,
+                               PARM_ALPHA=PARM_ALPHA,),
                  COMPORTEMENT=_F(RELATION='KIT_HH2',
-                              PARM_THETA=0.111,
-                              PARM_ALPHA=PARM_ALPHA,
                              RELATION_KIT=('LIQU_AD_GAZ_VAPE','HYDR_UTIL'),
                  ),
 
