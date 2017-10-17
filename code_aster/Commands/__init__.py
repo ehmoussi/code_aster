@@ -38,7 +38,6 @@ from .affe_modele import AFFE_MODELE
 # from .calc_champ import CALC_CHAMP
 # from .calc_fonc_interp import CALC_FONC_INTERP
 from .calc_matr_elem import CALC_MATR_ELEM
-# from .comb_fourier import COMB_FOURIER
 from .crea_champ import CREA_CHAMP
 # from .crea_maillage import CREA_MAILLAGE
 from .crea_resu import CREA_RESU
@@ -52,7 +51,7 @@ from .defi_fond_fiss import DEFI_FOND_FISS
 from .defi_geom_fibre import DEFI_GEOM_FIBRE
 from .defi_grille import DEFI_GRILLE
 from .defi_group import DEFI_GROUP
-# from .defi_inte_spec import DEFI_INTE_SPEC
+from .defi_inte_spec import DEFI_INTE_SPEC
 # from .defi_interf_dyna import DEFI_INTERF_DYNA
 from .defi_materiau import DEFI_MATERIAU
 # from .defi_modele_gene import DEFI_MODELE_GENE
