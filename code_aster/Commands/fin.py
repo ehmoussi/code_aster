@@ -21,5 +21,6 @@
 
 
 def FIN( **kwargs ):
-    """Does nothing. The memory manager is closed when libaster is unloaded."""
+    """Does nothing. The memory manager is closed when :mod:`libaster`
+    is unloaded."""
     return None

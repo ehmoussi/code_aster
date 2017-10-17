@@ -18,7 +18,10 @@
 # --------------------------------------------------------------------
 
 """
-This module adds the support of macro-commands.
+This module defines the objects on which the user's Commands are based.
+
+
+
 """
 
 import sys
@@ -38,7 +41,7 @@ class ExecuteCommand(object):
     Commands executors are defined by subclassing this class and overloading
     some of the methods. User's Commands are instance of these executors.
 
-    The *__call__* method executes successively these methods:
+    The *__call__* method executes successively these steps:
 
         - :meth:`.adapt_syntax` to eventually change the user's keywords to
           adapt the syntax from an older version. Does nothing by default.

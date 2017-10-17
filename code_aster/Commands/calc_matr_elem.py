@@ -19,21 +19,8 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import ElementaryMatrix
+from ..Objects import ElementaryMatrix
+from .ExecuteCommand import ExecuteCommandWithType
 
 
-def CALC_MATR_ELEM(**curDict):
-    returnMatrix = ElementaryMatrix.create()
-    name = returnMatrix.getName()
-    type = returnMatrix.getType()
-    syntax = CommandSyntax("CALC_MATR_ELEM")
-
-    syntax.setResult(name, type)
-
-    syntax.define(curDict)
-    numOp = 9
-    python_execop(numOp)
-    syntax.free()
-    return returnMatrix
+CALC_MATR_ELEM = ExecuteCommandWithType("CALC_MATR_ELEM", ElementaryMatrix)
