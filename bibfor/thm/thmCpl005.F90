@@ -155,7 +155,7 @@ integer, intent(out)  :: retcom
     real(kind=8) :: dqeps(6)
     real(kind=8) :: p1m
     integer :: advihy, advico
-    integer :: vihrho, vicphi, vicpvp, vicsat
+    integer :: vihrho, vicphi, vicsat
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -181,7 +181,6 @@ integer, intent(out)  :: retcom
     advihy    = ds_thm%ds_behaviour%advihy
     vihrho    = ds_thm%ds_behaviour%vihrho
     vicphi    = ds_thm%ds_behaviour%vicphi
-    vicpvp    = ds_thm%ds_behaviour%vicpvp
     vicsat    = ds_thm%ds_behaviour%vicsat
 !
 ! - Get initial parameters
