@@ -77,3 +77,7 @@ structInterf.addInterface( "droite_interf", code_aster.InterfaceType.CraigBampto
 structInterf.addInterface( "Gauche_interf", code_aster.InterfaceType.CraigBampton,
                        ["Gauche"] )
 #structInterf.build()
+
+# at least it pass here!
+test.assertTrue( True )
+test.printSummary()
