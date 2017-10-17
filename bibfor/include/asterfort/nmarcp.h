@@ -15,13 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine nmarcp(typost, sdpost, vecmod, freqr, imode)
+    subroutine nmarcp(typost, ds_posttimestep, vecmod, freqr, imode)
+        use NonLin_Datastructure_type
         character(len=4) :: typost
-        character(len=19) :: sdpost
+        type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
         character(len=19) :: vecmod
         real(kind=8) :: freqr
         integer :: imode

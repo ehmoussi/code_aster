@@ -15,14 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine nmdopo(sddyna, ds_algopara, sdpost)
+    subroutine nmdopo(sddyna, ds_algopara, ds_posttimestep)
         use NonLin_Datastructure_type
         character(len=19), intent(in) :: sddyna
-        character(len=19), intent(in) :: sdpost  
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+        type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
     end subroutine nmdopo
 end interface

@@ -15,23 +15,23 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmarcp(typost, sdpost, vecmod, freqr, imode)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine nmarcp(typost, ds_posttimestep, vecmod, freqr, imode)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterc/r8vide.h"
 #include "asterfort/assert.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/nmlesd.h"
-    character(len=4) :: typost
-    character(len=19) :: sdpost
-    character(len=19) :: vecmod
-    real(kind=8) :: freqr
-    integer :: imode
+!
+character(len=4) :: typost
+type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
+character(len=19) :: vecmod
+real(kind=8) :: freqr
+integer :: imode
 !
 ! ----------------------------------------------------------------------
 !
@@ -43,47 +43,28 @@ subroutine nmarcp(typost, sdpost, vecmod, freqr, imode)
 !
 !
 ! IN  TYPOST : TYPE DE POST-TRAITEMENTS (STABILITE OU MODE_VIBR)
-! IN  SDPOST : SD POUR POST-TRAITEMENTS (CRIT_STAB ET MODE_VIBR)
+! In  ds_posttimestep  : datastructure for post-treatment at each time step
 ! OUT VECMOD : VECTEUR DE DEPLACEMENT POUR LE MODE
 ! OUT FREQR  : FREQUENCE ATTACHEE AU MODE
 ! OUT IMODE  : VAUT ZEOR S'IL N'Y A PAS DE MODE
 !
-!
-!
-!
-    integer :: ibid, numord
-    character(len=24) :: k24bid
-    real(kind=8) :: r8bid
-!
 ! ----------------------------------------------------------------------
 !
-    call jemarq()
+
 !
 ! --- MODE SELECTIONNE: INFOS DANS SDPOST
 !
     if (typost .eq. 'VIBR') then
-        call nmlesd('POST_TRAITEMENT', sdpost, 'SOLU_FREQ_VIBR', ibid, freqr,&
-                    k24bid)
-        call nmlesd('POST_TRAITEMENT', sdpost, 'SOLU_NUME_VIBR', numord, r8bid,&
-                    k24bid)
-        call nmlesd('POST_TRAITEMENT', sdpost, 'SOLU_MODE_VIBR', ibid, r8bid,&
-                    vecmod)
+        freqr  = ds_posttimestep%mode_vibr_resu%eigen_value
+        vecmod = ds_posttimestep%mode_vibr_resu%eigen_vector
     else if (typost .eq. 'FLAM') then
-        call nmlesd('POST_TRAITEMENT', sdpost, 'SOLU_FREQ_FLAM', ibid, freqr,&
-                    k24bid)
-        call nmlesd('POST_TRAITEMENT', sdpost, 'SOLU_NUME_FLAM', numord, r8bid,&
-                    k24bid)
-        call nmlesd('POST_TRAITEMENT', sdpost, 'SOLU_MODE_FLAM', ibid, r8bid,&
-                    vecmod)
+        freqr  = ds_posttimestep%mode_flam_resu%eigen_value
+        vecmod = ds_posttimestep%mode_flam_resu%eigen_vector
     else if (typost .eq. 'STAB') then
-        call nmlesd('POST_TRAITEMENT', sdpost, 'SOLU_FREQ_STAB', ibid, freqr,&
-                    k24bid)
-        call nmlesd('POST_TRAITEMENT', sdpost, 'SOLU_NUME_STAB', numord, r8bid,&
-                    k24bid)
-        call nmlesd('POST_TRAITEMENT', sdpost, 'SOLU_MODE_STAB', ibid, r8bid,&
-                    vecmod)
+        freqr  = ds_posttimestep%crit_stab_resu%eigen_value
+        vecmod = ds_posttimestep%crit_stab_resu%eigen_vector
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! --- EXTRACTION DU MODE
@@ -94,5 +75,4 @@ subroutine nmarcp(typost, sdpost, vecmod, freqr, imode)
         imode = 1
     endif
 !
-    call jedema()
 end subroutine

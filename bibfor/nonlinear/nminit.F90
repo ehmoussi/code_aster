@@ -22,7 +22,7 @@ subroutine nminit(mesh      , model     , mate       , cara_elem      , list_loa
                   numedd    , numfix    , ds_algopara, ds_constitutive, maprec    ,&
                   solver    , numins    , sddisc     , sdnume         , sdcrit    ,&
                   varc_refe , fonact    , sdpilo     , sddyna         , ds_print  ,&
-                  sd_suiv   , sd_obsv   , sderro     , sdpost         , ds_inout  ,&
+                  sd_suiv   , sd_obsv   , sderro     , ds_posttimestep, ds_inout  ,&
                   ds_energy , ds_conv   , sdcriq     , valinc         , solalg    ,&
                   measse    , veelem    , meelem     , veasse         , ds_contact,&
                   ds_measure, ds_algorom)
@@ -108,7 +108,7 @@ type(NL_DS_Print), intent(inout) :: ds_print
 character(len=24), intent(out) :: sd_suiv
 character(len=19), intent(out) :: sd_obsv
 character(len=24) :: sderro
-character(len=19) :: sdpost
+type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 type(NL_DS_InOut), intent(inout) :: ds_inout
 type(NL_DS_Energy), intent(inout) :: ds_energy
 type(NL_DS_Conv), intent(inout) :: ds_conv
@@ -138,6 +138,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 ! In  list_load        : name of datastructure for list of loads
 ! IO  ds_algopara      : datastructure for algorithm parameters
 ! IO  ds_constitutive  : datastructure for constitutive laws management
+! In  ds_posttimestep  : datastructure for post-treatment at each time step
 ! In  solver           : name of datastructure for solver
 ! IO  ds_print         : datastructure for printing parameters
 ! Out sd_suiv          : datastructure for dof monitoring parameters
@@ -260,8 +261,8 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! - Create input/output datastructure
 !
-    call nmetcr(ds_inout, model     , ds_constitutive%compor, fonact   , sddyna   ,&
-                sdpost  , ds_contact, cara_elem, list_load)
+    call nmetcr(ds_inout       , model     , ds_constitutive%compor, fonact   , sddyna   ,&
+                ds_posttimestep, ds_contact, cara_elem, list_load)
 !
 ! - Read initial state
 !
@@ -375,7 +376,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 ! - Prepare storing
 !
     call nmnoli(sddisc   , sderro, ds_constitutive, ds_print , sdcrit  ,&
-                fonact   , sddyna, sdpost         , model    , mate    ,&
+                fonact   , sddyna, ds_posttimestep, model    , mate    ,&
                 cara_elem, sdpilo, ds_measure     , ds_energy, ds_inout,&
                 sdcriq)
 !

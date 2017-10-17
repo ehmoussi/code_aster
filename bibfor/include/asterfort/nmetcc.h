@@ -15,12 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine nmetcc(field_type, algo_name, init_name,&
-                      compor    , sddyna   , sdpost   , ds_contact,&
+    subroutine nmetcc(field_type, algo_name, init_name      ,&
+                      compor    , sddyna   , ds_posttimestep, ds_contact,&
                       hydr      , temp_init, hydr_init)
         use NonLin_Datastructure_type 
         character(len=24), intent(in) :: field_type
@@ -29,7 +27,7 @@ interface
         type(NL_DS_Contact), optional, intent(in) :: ds_contact
         character(len=19), optional, intent(in) :: compor
         character(len=19), optional, intent(in) :: sddyna
-        character(len=19), optional, intent(in) :: sdpost
+        type(NL_DS_PostTimeStep), optional, intent(in) :: ds_posttimestep
         character(len=24), optional, intent(in) :: hydr
         character(len=24), optional, intent(in) :: hydr_init
         character(len=24), optional, intent(in) :: temp_init
