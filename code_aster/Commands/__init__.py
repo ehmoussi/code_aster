@@ -37,7 +37,7 @@ from .affe_modele import AFFE_MODELE
 # from .asse_vect_gene import ASSE_VECT_GENE
 # from .calc_champ import CALC_CHAMP
 # from .calc_fonc_interp import CALC_FONC_INTERP
-# from .calc_matr_elem import CALC_MATR_ELEM
+from .calc_matr_elem import CALC_MATR_ELEM
 # from .comb_fourier import COMB_FOURIER
 # from .crea_champ import CREA_CHAMP
 # from .crea_maillage import CREA_MAILLAGE
