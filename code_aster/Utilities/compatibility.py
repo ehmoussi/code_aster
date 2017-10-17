@@ -31,7 +31,7 @@ from *legacy* code_aster source code and C++ code_aster code.
 from functools import wraps
 from warnings import simplefilter, warn
 
-from .base_utils import array_to_list
+from .base_utils import array_to_list, force_list
 
 
 def deprecated(replaced=True, help=None):
@@ -80,9 +80,7 @@ def compat_listr8(keywords, factor_keyword, list_keyword, float_keyword):
     if factor_keyword and factor_keyword.strip():
         if not keywords.has_key(factor_keyword):
             return
-        fact = keywords[factor_keyword]
-        if not isinstance(fact, (list, tuple)):
-            fact = [fact]
+        fact = force_list(keywords[factor_keyword])
         for occ in fact:
             compat_listr8(occ, None, list_keyword, float_keyword)
     else:
@@ -90,6 +88,33 @@ def compat_listr8(keywords, factor_keyword, list_keyword, float_keyword):
             keywords[float_keyword] = array_to_list(keywords.pop(list_keyword))
         except KeyError:
             pass
+
+
+def _if_exists(keywords, factor_keyword, simple_keyword, callback):
+    """Call a *callback* if the couple *(factor_keyword, simple_keyword)* is
+    found in the user's keywords.
+
+    Arguments:
+        keywords (dict): Dict of keywords passed to a command, changed in place.
+        factor_keyword (str): Name of the factor keyword or an empty string if
+            the keywords are at the top level.
+        simple_keyword (str): Name of the simple keyword. It it is an empty
+            string the factor keyword is entirely removed.
+        callback (function): Callback function with signature *(container, key)*
+            where *(container, key)* is *(keywords, factor_keyword)* if
+            *factor_keyword* is empty or *(factor keyword dict, simple_keyword)*
+            otherwise.
+    """
+    if factor_keyword and factor_keyword.strip():
+        if not keywords.has_key(factor_keyword):
+            return
+        if simple_keyword and simple_keyword.strip():
+            fact = force_list(keywords[factor_keyword])
+            for occ in fact:
+                if occ.has_key(simple_keyword):
+                    callback(occ, simple_keyword)
+            return
+        callback(keywords, factor_keyword)
 
 
 def remove_keyword(keywords, factor_keyword, simple_keyword, warning=False):
@@ -104,21 +129,33 @@ def remove_keyword(keywords, factor_keyword, simple_keyword, warning=False):
             string the factor keyword is entirely removed.
         warning (bool): If *True* a warning message is emitted.
     """
-    def _warn():
+    def _warn(container, key):
         if not warning:
             return
-        msg = ("These keywords is not yet supported: {0}{1}{2}")
+        msg = ("This keyword is not yet supported and are currently "
+               "removed: {0}{1}{2}")
         sep = "/" if simple_keyword and simple_keyword.strip() else ""
         warn(msg.format(factor_keyword, sep, simple_keyword))
+        del container[key]
 
-    if factor_keyword and factor_keyword.strip():
-        if not keywords.has_key(factor_keyword):
-            return
-        if simple_keyword and simple_keyword.strip():
-            fact = keywords[factor_keyword]
-            if fact.has_key(simple_keyword):
-                _warn()
-                del fact[simple_keyword]
-            return
-        _warn()
-        del keywords[factor_keyword]
+    _if_exists(keywords, factor_keyword, simple_keyword, _warn)
+
+
+def unsupported(keywords, factor_keyword, simple_keyword):
+    """Raises a *NotImplementedError* exception if the couple
+    *(factor_keyword, simple_keyword)* exists in the user's keywords.
+
+    Arguments:
+        keywords (dict): Dict of keywords passed to a command, changed in place.
+        factor_keyword (str): Name of the factor keyword or an empty string if
+            the keywords are at the top level.
+        simple_keyword (str): Name of the simple keyword. It it is an empty
+            string the factor keyword is entirely removed.
+    """
+    def _raise(container, key):
+        msg = ("This keyword is not yet supported: {0}{1}{2}")
+        sep = "/" if simple_keyword and simple_keyword.strip() else ""
+        raise NotImplementedError(msg.format(factor_keyword, sep,
+                                             simple_keyword))
+
+    _if_exists(keywords, factor_keyword, simple_keyword, _raise)

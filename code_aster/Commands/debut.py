@@ -74,17 +74,13 @@ class Starter(ExecuteCommand):
         self.init(None)
         super(Starter, self).__call__(**keywords)
 
-    def exec_(self, keywords):
-        """Execute the command.
+    def _call_oper(self, syntax):
+        """Call fortran operator.
 
         Arguments:
-            keywords (dict): User's keywords.
+            syntax (*CommandSyntax*): Syntax description with user keywords.
         """
-        logger.info("Starting DEBUT...")
-        syntax = CommandSyntax(self.name, self._cata)
-        syntax.define(keywords)
-        aster.debut(syntax)
-        syntax.free()
+        return aster.debut(syntax)
 
 
 DEBUT = Starter()

@@ -21,7 +21,13 @@
 This module defines the objects on which the user's Commands are based.
 
 
+For all features that are not yet supported, prefer use utilities from
+the :mod:`code_aster.Utilities` functions (example:
+:func:`~code_aster.Utilities.compatibility.unsupported`).
 
+
+Base classes
+============
 """
 
 import sys
@@ -198,6 +204,7 @@ def check_jeveux():
                            "No command can be executed.")
 
 
+# shortcut classes
 class ExecuteCommandWithType(ExecuteCommand):
     """This implements an executor of commands with a convenient way to
     define the result type."""
