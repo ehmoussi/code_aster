@@ -19,21 +19,8 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import FiberGeometry
+from ..Objects import FiberGeometry
+from .ExecuteCommand import ExecuteCommandWithType
 
 
-def DEFI_GEOM_FIBRE(**curDict):
-    returnFiberGeom = FiberGeometry.create()
-    name = returnFiberGeom.getName()
-    syntax = CommandSyntax("DEFI_GEOM_FIBRE")
-
-    # self.getType()
-    syntax.setResult(name, "MAILLAGE")
-
-    syntax.define(curDict)
-    numOp = 119
-    python_execop(numOp)
-    syntax.free()
-    return returnFiberGeom
+DEFI_GEOM_FIBRE = ExecuteCommandWithType("DEFI_GEOM_FIBRE", FiberGeometry)
