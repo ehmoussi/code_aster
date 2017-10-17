@@ -111,7 +111,10 @@ class CommandSyntax(object):
         # TODO: remove cata argument (not easy to fill in C++)
         if not cata:
             from ..Cata import Commands
-            cata = getattr(Commands, name)
+            cata = getattr(Commands, name, None)
+            if not cata:
+                logger.debug("CommandSyntax: catalog not found for {0!r}"
+                             .format(name))
         self._commandCata = cata
 
     def free( self ):
@@ -243,6 +246,9 @@ class CommandSyntax(object):
         Returns:
             *CataDefinition*: Definition of the factor keyword or the Command.
         """
+        if not self._commandCata:
+            logger.debug("CommandSyntax: catalog is not available")
+            return None
         factName = factName.strip()
         catadef = self._commandCata.definition
         if not factName:
