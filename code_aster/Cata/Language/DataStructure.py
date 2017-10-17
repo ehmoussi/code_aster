@@ -260,7 +260,12 @@ class cham_gd_sdaster(ASSD):
     pass
 
 class carte_sdaster(cham_gd_sdaster):
-    pass
+
+    @classmethod
+    def getType(cls):
+        """Return the type of DataStructure"""
+        # use for static checking (with fake datastructures)
+        return "CART_"
 
 class cham_elem(cham_gd_sdaster):
     pass
