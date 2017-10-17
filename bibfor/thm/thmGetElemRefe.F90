@@ -15,19 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine thmGetElemRefe(l_vf, elrefe, elref2)
 !
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/elref1.h"
 #include "asterfort/utmess.h"
 !
-!
-    aster_logical, intent(in) :: l_vf
-    character(len=8), intent(out) :: elrefe
-    character(len=8), intent(out) :: elref2
+aster_logical, intent(in) :: l_vf
+character(len=8), intent(out) :: elrefe
+character(len=8), intent(out) :: elref2
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -37,9 +37,9 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  l_vf         : flag for finite volume
-! Out elrefe       : reference element for non-middle nodes (linear)
-! Out elref2       : reference element for middle nodes (quadratic)
+! In  l_vf             : flag for finite volume
+! Out elrefe           : reference element for non-middle nodes (linear)
+! Out elref2           : reference element for middle nodes (quadratic)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -51,13 +51,17 @@ implicit none
             elref2 = 'QU4'
         else if (elrefe.eq.'H27') then
             elref2 = 'HE8'
+        else if (elrefe.eq.'SE3') then
+            elref2 = 'SE2'
         else
-            call utmess('F', 'DVP_9', sk=elrefe)
+            ASSERT(ASTER_FALSE)
         endif
     else
         if (elrefe .eq. 'TR6') then
             elref2 = 'TR3'
         else if (elrefe.eq.'QU8') then
+            elref2 = 'QU4'
+        else if (elrefe.eq.'QU9') then
             elref2 = 'QU4'
         else if (elrefe.eq.'H20') then
             elref2 = 'HE8'
@@ -67,8 +71,10 @@ implicit none
             elref2 = 'PY5'
         else if (elrefe.eq.'T10') then
             elref2 = 'TE4'
+        else if (elrefe.eq.'SE3') then
+            elref2 = 'SE2'
         else
-            call utmess('F', 'DVP_9', sk=elrefe)
+            ASSERT(ASTER_FALSE)
         endif
     endif
 !
