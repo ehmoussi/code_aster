@@ -404,7 +404,9 @@ ASTERINTEGER DEFSS( GETEXM, getexm, _IN char *motfac,_IN STRING_SIZE lfac,
         PyObject *res  = (PyObject*)0 ;
         char *mfc, *mcs;
         ASTERINTEGER presence;
-                                                                 DEBUG_ASSERT(motcle!=(char*)0);
+        if (get_sh_etape() == Py_None)
+            return (ASTERINTEGER)0;
+                                                 DEBUG_ASSERT(motcle!=(char*)0);
         mfc = MakeCStrFromFStr(motfac, lfac);
         mcs = MakeCStrFromFStr(motcle, lcle);
         res=PyObject_CallMethod(get_sh_etape(),"getexm","ss", mfc, mcs);
