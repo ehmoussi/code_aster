@@ -15,12 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine CreateContactDS(ds_contact)
+    subroutine nonlinDSPrintCreate(ds_print)
         use NonLin_Datastructure_type
-        type(NL_DS_Contact), intent(out) :: ds_contact
-    end subroutine CreateContactDS
+        type(NL_DS_Print), intent(out) :: ds_print
+    end subroutine nonlinDSPrintCreate
 end interface

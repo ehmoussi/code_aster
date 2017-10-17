@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine CreateMeasureDS(ds_measure)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nonlinDSMeasureCreate(ds_measure)
 !
 use NonLin_Datastructure_type
 !
@@ -28,9 +29,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Measure), intent(out) :: ds_measure
+type(NL_DS_Measure), intent(out) :: ds_measure
 !
 ! --------------------------------------------------------------------------------------------------
 !

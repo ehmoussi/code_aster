@@ -15,12 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine CreateMeasureDS(ds_measure)
+    subroutine nonlinDSEnergyCreate(ds_energy)
         use NonLin_Datastructure_type
-        type(NL_DS_Measure), intent(out) :: ds_measure
-    end subroutine CreateMeasureDS
+        type(NL_DS_Energy), intent(out) :: ds_energy
+    end subroutine nonlinDSEnergyCreate
 end interface

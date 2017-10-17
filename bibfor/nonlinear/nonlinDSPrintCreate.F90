@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine CreatePrintDS(ds_print)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nonlinDSPrintCreate(ds_print)
 !
 use NonLin_Datastructure_type
 !
@@ -28,9 +29,7 @@ implicit none
 #include "asterfort/infdbg.h"
 #include "asterfort/CreateVoidColumn.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Print), intent(out) :: ds_print
+type(NL_DS_Print), intent(out) :: ds_print
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -123,11 +122,11 @@ implicit none
         call CreateVoidColumn(column)
         column%name          = cols_name(i_col)(1:16)
         if (cols_type(i_col).eq.'R') then
-            column%l_vale_real   = .true._1
+            column%l_vale_real   = ASTER_TRUE
         elseif (cols_type(i_col).eq.'I') then
-            column%l_vale_inte   = .true._1
+            column%l_vale_inte   = ASTER_TRUE
         elseif (cols_type(i_col).eq.'K') then
-            column%l_vale_strg   = .true._1
+            column%l_vale_strg   = ASTER_TRUE
         else
             ASSERT(.false.)
         endif
@@ -135,7 +134,7 @@ implicit none
         column%title(2)    = cols_title_2(i_col)
         column%title(3)    = cols_title_3(i_col)
         table_cvg%cols(i_col)        = column
-        table_cvg%l_cols_acti(i_col) = .false._1
+        table_cvg%l_cols_acti(i_col) = ASTER_FALSE
     end do
 !
 ! - Set list of columns for DOF monitor in convergence table
@@ -148,7 +147,7 @@ implicit none
         column%name          = 'SUIVDDL'//indsui
         column%title(1)      = '   SUIVI DDL'//indsui
         table_cvg%cols(i_col)        = column
-        table_cvg%l_cols_acti(i_col) = .false._1
+        table_cvg%l_cols_acti(i_col) = ASTER_FALSE
     end do
 !
 ! - Checks

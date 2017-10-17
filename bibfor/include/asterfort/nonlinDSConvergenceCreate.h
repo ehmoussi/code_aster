@@ -15,12 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine CreateAlgoParaDS(ds_algopara)
+    subroutine nonlinDSConvergenceCreate(ds_conv)
         use NonLin_Datastructure_type
-        type(NL_DS_AlgoPara), intent(out) :: ds_algopara
-    end subroutine CreateAlgoParaDS
+        type(NL_DS_Conv), intent(out) :: ds_conv
+    end subroutine nonlinDSConvergenceCreate
 end interface

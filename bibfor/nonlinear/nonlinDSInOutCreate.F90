@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine CreateInOutDS(phenom, ds_inout)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nonlinDSInOutCreate(phenom, ds_inout)
 !
 use NonLin_Datastructure_type
 !
@@ -29,10 +30,8 @@ implicit none
 #include "asterfort/CreateInOutDS_M.h"
 #include "asterfort/CreateInOutDS_T.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=4), intent(in) :: phenom
-    type(NL_DS_InOut), intent(out) :: ds_inout
+character(len=4), intent(in) :: phenom
+type(NL_DS_InOut), intent(out) :: ds_inout
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,24 +52,24 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     ds_inout%result            = ' '
-    ds_inout%l_temp_nonl       = .false.
+    ds_inout%l_temp_nonl       = ASTER_FALSE
     ds_inout%stin_evol         = ' '
-    ds_inout%l_stin_evol       = .false._1
-    ds_inout%l_state_init      = .false._1
-    ds_inout%l_reuse           = .false._1
+    ds_inout%l_stin_evol       = ASTER_FALSE
+    ds_inout%l_state_init      = ASTER_FALSE
+    ds_inout%l_reuse           = ASTER_FALSE
     ds_inout%didi_nume         = -1
     ds_inout%criterion         = ' '
     ds_inout%precision         = r8vide()
     ds_inout%user_time         = r8vide()
     ds_inout%user_nume         = 0
     ds_inout%stin_time         = r8vide()
-    ds_inout%l_stin_time       = .false._1
-    ds_inout%l_user_time       = .false._1
-    ds_inout%l_user_nume       = .false._1
+    ds_inout%l_stin_time       = ASTER_FALSE
+    ds_inout%l_user_time       = ASTER_FALSE
+    ds_inout%l_user_nume       = ASTER_FALSE
     ds_inout%init_time         = r8vide()
     ds_inout%init_nume         = -1
-    ds_inout%l_init_stat       = .false._1
-    ds_inout%l_init_vale       = .false._1
+    ds_inout%l_init_stat       = ASTER_FALSE
+    ds_inout%l_init_vale       = ASTER_FALSE
     ds_inout%temp_init         = r8vide()
 !
 ! - Generate name of list of loads saved in results datastructure
@@ -85,9 +84,9 @@ implicit none
     if (phenom.eq.'MECA') then
         call CreateInOutDS_M(ds_inout)
     elseif (phenom.eq.'THER') then
-        call CreateInOutDS_T(ds_inout, .false._1)
+        call CreateInOutDS_T(ds_inout, ASTER_FALSE)
     elseif (phenom.eq.'THNL') then
-        call CreateInOutDS_T(ds_inout, .true._1)
+        call CreateInOutDS_T(ds_inout, ASTER_TRUE)
     else
         ASSERT(.false.)
     endif

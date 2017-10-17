@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine pminit(imate, nbvari, ndim, typmod, table,&
                   nbpar, iforta, nompar, typpar, ang,&
                   pgl, irota, epsm, sigm, vim,&
@@ -51,7 +52,6 @@ implicit none
 #include "asterfort/nmdomt.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/tbajli.h"
-#include "asterfort/CreateConvDS.h"
 #include "asterfort/InitConv.h"
 #include "asterfort/tbajpa.h"
 #include "asterfort/tbcrsd.h"
@@ -60,10 +60,8 @@ implicit none
 #include "blas/dcopy.h"
 #include "blas/dscal.h"
 !
-! aslint: disable=W1504
-!
-    type(NL_DS_Conv), intent(inout) :: ds_conv
-    type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
+type(NL_DS_Conv), intent(inout) :: ds_conv
+type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
 !
 ! --------------------------------------------------------------------------------------------------
 !

@@ -52,7 +52,7 @@ implicit none
 #include "asterfort/tabcor.h"
 #include "asterfort/vtcmbl.h"
 #include "asterfort/wkvect.h"
-#include "asterfort/CreateInOutDS.h"
+#include "asterfort/nonlinDSInOutCreate.h"
 #include "asterfort/ReadInOut.h"
 !
 !
@@ -135,7 +135,7 @@ implicit none
 !
 ! - Create input/output management datastructure
 !
-    call CreateInOutDS('THER', ds_inout)
+    call nonlinDSInOutCreate('THER', ds_inout)
 !
 ! - Read parameters for input/output management
 !

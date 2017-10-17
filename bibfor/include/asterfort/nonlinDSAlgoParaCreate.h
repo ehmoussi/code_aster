@@ -15,12 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine CreateEnergyDS(ds_energy)
+    subroutine nonlinDSAlgoParaCreate(ds_algopara)
         use NonLin_Datastructure_type
-        type(NL_DS_Energy), intent(out) :: ds_energy
-    end subroutine CreateEnergyDS
+        type(NL_DS_AlgoPara), intent(out) :: ds_algopara
+    end subroutine nonlinDSAlgoParaCreate
 end interface

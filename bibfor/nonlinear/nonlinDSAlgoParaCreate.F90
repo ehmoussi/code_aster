@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine CreateAlgoParaDS(ds_algopara)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nonlinDSAlgoParaCreate(ds_algopara)
 !
 use NonLin_Datastructure_type
 !
@@ -27,9 +28,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_AlgoPara), intent(out) :: ds_algopara
+type(NL_DS_AlgoPara), intent(out) :: ds_algopara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -61,11 +60,11 @@ implicit none
     ds_algopara%reac_iter        = 0
     ds_algopara%pas_mini_elas    = -9999.0d0
     ds_algopara%reac_iter_elas   = 0
-    ds_algopara%l_dyna           = .false._1
-    ds_algopara%l_line_search    = .false._1
-    ds_algopara%l_pilotage       = .false._1
+    ds_algopara%l_dyna           = ASTER_FALSE
+    ds_algopara%l_line_search    = ASTER_FALSE
+    ds_algopara%l_pilotage       = ASTER_FALSE
     ds_algopara%result_prev_disp = ' '
-    ds_algopara%l_matr_rigi_syme = .false._1
+    ds_algopara%l_matr_rigi_syme = ASTER_FALSE
 !
 ! - Parameters for line search
 !

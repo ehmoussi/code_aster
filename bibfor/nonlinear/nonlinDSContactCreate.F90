@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine CreateContactDS(ds_contact)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nonlinDSContactCreate(ds_contact)
 !
 use NonLin_Datastructure_type
 !
@@ -26,9 +27,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Contact), intent(out) :: ds_contact
+type(NL_DS_Contact), intent(out) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,14 +55,14 @@ implicit none
 !
 ! - Main parameters
 !
-    ds_contact%l_contact   = .false._1
-    ds_contact%l_meca_cont = .false._1
-    ds_contact%l_meca_unil = .false._1
+    ds_contact%l_contact   = ASTER_FALSE
+    ds_contact%l_meca_cont = ASTER_FALSE
+    ds_contact%l_meca_unil = ASTER_FALSE
     ds_contact%sdcont      = ' '
-    ds_contact%l_form_cont = .false._1
-    ds_contact%l_form_disc = .false._1
-    ds_contact%l_form_xfem = .false._1
-    ds_contact%l_form_lac  = .false._1
+    ds_contact%l_form_cont = ASTER_FALSE
+    ds_contact%l_form_disc = ASTER_FALSE
+    ds_contact%l_form_xfem = ASTER_FALSE
+    ds_contact%l_form_lac  = ASTER_FALSE
 !
 ! - Name of datastructures
 !
@@ -75,9 +74,9 @@ implicit none
 ! - Name of <LIGREL> - Slave and contact elements
 !
     ds_contact%ligrel_elem_slav = ' '
-    ds_contact%l_elem_slav      = .false._1
+    ds_contact%l_elem_slav      = ASTER_FALSE
     ds_contact%ligrel_elem_cont = ' '
-    ds_contact%l_elem_cont      = .false._1
+    ds_contact%l_elem_cont      = ASTER_FALSE
 !
 ! - Name of <CHELEM> - Input field
 !
@@ -89,12 +88,12 @@ implicit none
 !
 ! - Identity relations between dof
 !
-    ds_contact%l_iden_rela = .false._1
+    ds_contact%l_iden_rela = ASTER_FALSE
     ds_contact%iden_rela   = ' '
 !
 ! - Relations between dof (QUAD8 in discrete methods or XFEM)
 !
-    ds_contact%l_dof_rela       = .false._1
+    ds_contact%l_dof_rela       = ASTER_FALSE
     ds_contact%ligrel_dof_rela  = ' '
 !
 ! - Management of loops
@@ -103,8 +102,8 @@ implicit none
     ASSERT(ds_contact%nb_loop.le.ds_contact%nb_loop_maxi)
     do i_loop = 1, nb_loop_defi
         ds_contact%loop(i_loop)%type    = loop_type(i_loop)
-        ds_contact%loop(i_loop)%conv    = .false._1
-        ds_contact%loop(i_loop)%error   = .false._1
+        ds_contact%loop(i_loop)%conv    = ASTER_FALSE
+        ds_contact%loop(i_loop)%error   = ASTER_FALSE
         ds_contact%loop(i_loop)%counter = 0
     end do
 !
@@ -120,7 +119,7 @@ implicit none
 !
 ! - Flag for (re) numbering
 !
-    ds_contact%l_renumber   = .false._1
+    ds_contact%l_renumber   = ASTER_FALSE
 !
 ! - Geometric loop control
 !
@@ -135,15 +134,15 @@ implicit none
 !
 ! - Get-off indicator
 !
-    ds_contact%l_getoff     = .false._1
+    ds_contact%l_getoff     = ASTER_FALSE
 !
 ! - First geometric loop
 !
-    ds_contact%l_first_geom = .false._1
+    ds_contact%l_first_geom = ASTER_FALSE
 !
 ! - Flag for pairing
 !
-    ds_contact%l_pair       = .false._1
+    ds_contact%l_pair       = ASTER_FALSE
 !
 ! - Total number of patches (for LAC method)
 !

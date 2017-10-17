@@ -15,12 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine CreatePrintDS(ds_print)
+    subroutine nonlinDSInOutCreate(phenom, ds_inout)
         use NonLin_Datastructure_type
-        type(NL_DS_Print), intent(out) :: ds_print
-    end subroutine CreatePrintDS
+        character(len=4), intent(in) :: phenom
+        type(NL_DS_InOut), intent(out) :: ds_inout
+    end subroutine nonlinDSInOutCreate
 end interface
