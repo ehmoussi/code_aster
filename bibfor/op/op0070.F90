@@ -97,7 +97,7 @@ implicit none
     character(len=24) :: sderro
     character(len=24) :: sd_suiv, sdcriq
     character(len=19) :: sdpilo, sdnume, sddyna, sddisc, sdcrit
-    character(len=19) :: sd_obsv, sdpost
+    character(len=19) :: sd_obsv
     type(NL_DS_Print)        :: ds_print
     type(NL_DS_Conv)         :: ds_conv
     type(NL_DS_AlgoPara)     :: ds_algopara
@@ -107,6 +107,7 @@ implicit none
     type(NL_DS_Energy)       :: ds_energy
     type(ROM_DS_AlgoPara)    :: ds_algorom
     type(NL_DS_Constitutive) :: ds_constitutive
+    type(NL_DS_PostTimeStep) :: ds_posttimestep
 !
 ! --- VARIABLES CHAPEAUX
 !
@@ -120,7 +121,7 @@ implicit none
 ! ----------------------------------------------------------------------
 !
     data sdpilo            /'&&OP0070.PILO.'/
-    data sdpost, sdcriq    /'&&OP0070.POST.','&&OP0070.CRIQ.'/
+    data sdcriq            /'&&OP0070.CRIQ.'/
     data sderro            /'&&OP0070.ERRE.'/
     data sdnume            /'&&OP0070.NUME.ROTAT'/
     data sddisc            /'&&OP0070.DISC.'/
@@ -156,7 +157,7 @@ implicit none
 ! - Read parameters
 !
     call nmdata(model    , mesh      , mate      , cara_elem , ds_constitutive,&
-                list_load, solver    , ds_conv   , sddyna    , sdpost         ,&
+                list_load, solver    , ds_conv   , sddyna    , ds_posttimestep,&
                 sderro   , ds_energy , sdcriq    , ds_print  , ds_algopara    ,&
                 ds_inout , ds_contact, ds_measure, ds_algorom)
 !
@@ -166,7 +167,7 @@ implicit none
                 numedd    , numfix    , ds_algopara, ds_constitutive, maprec    ,&
                 solver    , numins    , sddisc     , sdnume         , sdcrit    ,&
                 comref    , fonact    , sdpilo     , sddyna         , ds_print  ,&
-                sd_suiv   , sd_obsv   , sderro     , sdpost         , ds_inout  ,&
+                sd_suiv   , sd_obsv   , sderro     , ds_posttimestep, ds_inout  ,&
                 ds_energy , ds_conv   , sdcriq     , valinc         , solalg    ,&
                 measse    , veelem    , meelem     , veasse         , ds_contact,&
                 ds_measure, ds_algorom)
@@ -245,11 +246,11 @@ implicit none
 !
 ! - Post-treatment
 !
-    call nmpost(model          , mesh       , numedd, numfix  , cara_elem ,&
-                ds_constitutive, numins     , mate  , comref  , ds_inout  ,&
-                ds_contact     , ds_algopara, fonact, ds_print, ds_measure,&
-                sddisc         , sd_obsv    , sderro, sddyna  , sdpost    ,&
-                valinc         , solalg     , meelem, measse  , veelem    ,&
+    call nmpost(model          , mesh       , numedd, numfix  , cara_elem      ,&
+                ds_constitutive, numins     , mate  , comref  , ds_inout       ,&
+                ds_contact     , ds_algopara, fonact, ds_print, ds_measure     ,&
+                sddisc         , sd_obsv    , sderro, sddyna  , ds_posttimestep,&
+                valinc         , solalg     , meelem, measse  , veelem         ,&
                 veasse         , ds_energy  , sdcriq, eta     , list_load)
 !
 ! --- ETAT DE LA CONVERGENCE DU PAS DE TEMPS
@@ -293,9 +294,9 @@ implicit none
 ! --- ARCHIVAGE DES RESULTATS
 !
     call onerrf(compex, k16bid, ibid)
-    call nmarch(numins         , model  , mate  , cara_elem, fonact   ,&
-                ds_constitutive, ds_print, sddisc, sdpost, sdcrit   ,&
-                ds_measure     , sderro  , sddyna, sdpilo, ds_energy,&
+    call nmarch(numins         , model   , mate      , cara_elem      , fonact   ,&
+                ds_constitutive, ds_print, sddisc    , ds_posttimestep, sdcrit   ,&
+                ds_measure     , sderro  , sddyna    , sdpilo         , ds_energy,&
                 ds_inout       , sdcriq  , ds_algorom)
     call onerrf('EXCEPTION+VALID', k16bid, ibid)
 !
@@ -326,9 +327,9 @@ implicit none
 ! --- ON COMMENCE PAR ARCHIVER LE PAS DE TEMPS PRECEDENT
 !
     if (numins .ne. 1) then
-        call nmarch(numins-1       , model  , mate  , cara_elem, fonact   ,&
-                    ds_constitutive, ds_print, sddisc, sdpost, sdcrit   ,&
-                    ds_measure     , sderro  , sddyna, sdpilo, ds_energy,&
+        call nmarch(numins-1       , model   , mate      , cara_elem      , fonact   ,&
+                    ds_constitutive, ds_print, sddisc    , ds_posttimestep, sdcrit   ,&
+                    ds_measure     , sderro  , sddyna    , sdpilo         , ds_energy,&
                     ds_inout       , sdcriq  , ds_algorom)
     endif
 !

@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine nmdata(model    , mesh      , mate      , cara_elem , ds_constitutive,&
-                  list_load, solver    , ds_conv   , sddyna    , sdpost         ,&
+                  list_load, solver    , ds_conv   , sddyna    , ds_posttimestep,&
                   sderro   , ds_energy , sdcriq    , ds_print  , ds_algopara    ,&
                   ds_inout , ds_contact, ds_measure, ds_algorom)
 !
@@ -62,7 +62,7 @@ character(len=*), intent(out) :: list_load
 character(len=*), intent(out) :: solver
 type(NL_DS_Conv), intent(inout) :: ds_conv
 character(len=19) :: sddyna
-character(len=19) :: sdpost
+type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 character(len=24) :: sderro
 type(NL_DS_Energy), intent(inout) :: ds_energy
 character(len=24) :: sdcriq
@@ -90,7 +90,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 ! Out solver           : name of datastructure for solver
 ! IO  ds_conv          : datastructure for convergence management
 ! IN  SDDYNA : SD DYNAMIQUE
-! OUT SDPOST : SD POUR POST-TRAITEMENTS (CRIT_STAB ET MODE_VIBR)
+! IO  ds_posttimestep  : datastructure for post-treatment at each time step
 ! OUT SDERRO : SD ERREUR
 ! IO  ds_energy        : datastructure for energy management
 ! OUT SDCRIQ : SD CRITERE QUALITE
@@ -172,7 +172,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! - Read parameters for post-treatment management (CRIT_STAB and MODE_VIBR)
 !
-    call nmdopo(sddyna, ds_algopara, sdpost)
+    call nmdopo(sddyna, ds_algopara, ds_posttimestep)
 !
 ! - Read parameters for contact management
 !

@@ -15,9 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmnoli(sddisc, sderro, ds_constitutive, ds_print , sdcrit  ,&
-                  fonact, sddyna, sdpost         , modele   , mate    ,&
+                  fonact, sddyna, ds_posttimestep, modele   , mate    ,&
                   carele, sdpilo, ds_measure     , ds_energy, ds_inout,&
                   sdcriq)
 !
@@ -35,18 +36,17 @@ implicit none
 #include "asterfort/rsrusd.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=19) :: sddisc, sdcrit, sddyna, sdpost, sdpilo
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    type(NL_DS_Energy), intent(in) :: ds_energy
-    character(len=24) :: sderro
-    character(len=24) :: modele, mate, carele
-    character(len=24) :: sdcriq
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    type(NL_DS_InOut), intent(inout) :: ds_inout
-    integer :: fonact(*)
-    type(NL_DS_Print), intent(in) :: ds_print
+character(len=19) :: sddisc, sdcrit, sddyna, sdpilo
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
+type(NL_DS_Energy), intent(in) :: ds_energy
+character(len=24) :: sderro
+character(len=24) :: modele, mate, carele
+character(len=24) :: sdcriq
+type(NL_DS_Measure), intent(inout) :: ds_measure
+type(NL_DS_InOut), intent(inout) :: ds_inout
+integer :: fonact(*)
+type(NL_DS_Print), intent(in) :: ds_print
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -61,7 +61,7 @@ implicit none
 ! In  ds_print         : datastructure for printing parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
-! IN  SDPOST : SD POUR POST-TRAITEMENTS (CRIT_STAB ET MODE_VIBR)
+! In  ds_posttimestep  : datastructure for post-treatment at each time step
 ! IN  SDDYNA : SD DYNAMIQUE
 ! IO  ds_inout         : datastructure for input/output management
 ! IN  SDCRIT : INFORMATIONS RELATIVES A LA CONVERGENCE
@@ -127,9 +127,9 @@ implicit none
 !
     if (.not.lreuse) then
         call utmess('I', 'ARCHIVAGE_4')
-        call nmarch(numins         , modele  , mate  , carele, fonact   ,&
-                    ds_constitutive, ds_print, sddisc, sdpost, sdcrit   ,&
-                    ds_measure     , sderro  , sddyna, sdpilo, ds_energy,&
+        call nmarch(numins         , modele  , mate  , carele         , fonact   ,&
+                    ds_constitutive, ds_print, sddisc, ds_posttimestep, sdcrit   ,&
+                    ds_measure     , sderro  , sddyna, sdpilo         , ds_energy,&
                     ds_inout       , sdcriq  )
     endif
 !

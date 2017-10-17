@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmarc0(result, modele        , mate  , carele         , fonact,&
-                  sdcrit, sddyna        , sdpost, ds_constitutive, sdcriq,&
-                  sdpilo, list_load_resu, numarc, time_curr)
+subroutine nmarc0(result, modele        , mate           , carele         , fonact,&
+                  sdcrit, sddyna        , ds_posttimestep, ds_constitutive, sdcriq,&
+                  sdpilo, list_load_resu, numarc         , time_curr)
 !
 use NonLin_Datastructure_type
 !
@@ -44,8 +44,9 @@ character(len=8) :: result
 integer :: numarc
 integer :: fonact(*)
 real(kind=8) :: time_curr
-character(len=19) :: sddyna, sdpost, sdpilo
+character(len=19) :: sddyna, sdpilo
 character(len=19) :: list_load_resu, sdcrit
+type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 character(len=24) :: modele, mate, carele, sdcriq
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 !
@@ -66,7 +67,7 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 ! IN  SDCRIQ : SD CRITERE QUALITE
 ! IN  COMPOR : CARTE DECRIVANT LE TYPE DE COMPORTEMENT
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  SDPOST : SD POUR POST-TRAITEMENTS (CRIT_STAB ET MODE_VIBR)
+! In  ds_posttimestep  : datastructure for post-treatment at each time step
 ! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
 ! IN  SDDYNA : SD DEDIEE A LA DYNAMIQUE
 ! In  list_load_resu : name of list of loads saved in results datastructure
@@ -120,7 +121,7 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 ! --- ARCHIVAGE DE LA CHARGE CRITIQUE DU MODE DE FLAMBEMENT
 !
     if (lflam) then
-        call nmarcp('FLAM', sdpost, k19bla, chcrit, iret)
+        call nmarcp('FLAM', ds_posttimestep, k19bla, chcrit, iret)
         if (iret .ne. 0) then
             call rsadpa(result, 'E', 1, 'CHAR_CRIT', numarc, 0, sjv=jv_para)
             zr(jv_para) = chcrit
@@ -130,7 +131,7 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 ! --- ARCHIVAGE DE LA CHARGE CRITIQUE DU MDOE DE STABILITE
 !
     if (lstab) then
-        call nmarcp('STAB', sdpost, k19bla, chstab, iret)
+        call nmarcp('STAB', ds_posttimestep, k19bla, chstab, iret)
         if (iret .ne. 0) then
             call rsadpa(result, 'E', 1, 'CHAR_STAB', numarc, 0, sjv=jv_para)
             zr(jv_para) = chstab
@@ -141,7 +142,7 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 !
     if (lvibr) then
         ASSERT(ldyna)
-        call nmarcp('VIBR', sdpost, k19bla, freqr, iret)
+        call nmarcp('VIBR', ds_posttimestep, k19bla, freqr, iret)
         if (iret .ne. 0) then
             call rsadpa(result, 'E', 1, 'FREQ', numarc, 0, sjv=jv_para)
             zr(jv_para) = freqr

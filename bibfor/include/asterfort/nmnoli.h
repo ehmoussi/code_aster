@@ -15,12 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine nmnoli(sddisc, sderro, ds_constitutive, ds_print , sdcrit  ,&
-                      fonact, sddyna, sdpost         , modele   , mate    ,&
+                      fonact, sddyna, ds_posttimestep, modele   , mate    ,&
                       carele, sdpilo, ds_measure     , ds_energy, ds_inout,&
                       sdcriq)
         use NonLin_Datastructure_type
@@ -31,7 +29,7 @@ interface
         character(len=19) :: sdcrit
         integer :: fonact(*)
         character(len=19) :: sddyna
-        character(len=19) :: sdpost
+        type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
         character(len=24) :: modele
         character(len=24) :: mate
         character(len=24) :: carele

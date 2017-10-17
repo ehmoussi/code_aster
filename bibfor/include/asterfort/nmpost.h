@@ -25,7 +25,7 @@ interface
                       ds_constitutive , numins  , mate  , comref     , ds_inout,&
                       ds_contact, ds_algopara, fonact  ,&
                       ds_print, ds_measure, sddisc , &
-                      sd_obsv, sderro  , sddyna, sdpost     , valinc  ,&
+                      sd_obsv, sderro  , sddyna, ds_posttimestep     , valinc  ,&
                       solalg , meelem  , measse, veelem     , veasse  ,&
                       ds_energy, sdcriq  , eta   , lischa)
         use NonLin_Datastructure_type
@@ -50,7 +50,7 @@ interface
         character(len=24) :: sdieto
         character(len=19) :: sddyna
         character(len=19) :: lischa
-        character(len=19) :: sdpost
+        type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
         character(len=19) :: valinc(*)
         character(len=19) :: solalg(*)
         character(len=19) :: meelem(*)

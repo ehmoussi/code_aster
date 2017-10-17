@@ -15,12 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
 subroutine nmpost(modele , mesh    , numedd, numfix     , carele  ,&
                   ds_constitutive , numins  , mate  , comref     , ds_inout,&
                   ds_contact, ds_algopara, fonact  ,&
                   ds_print, ds_measure, sddisc     , &
-                  sd_obsv, sderro  , sddyna, sdpost     , valinc  ,&
+                  sd_obsv, sderro  , sddyna, ds_posttimestep, valinc  ,&
                   solalg , meelem  , measse, veelem     , veasse  ,&
                   ds_energy, sdcriq  , eta   , lischa)
 !
@@ -42,30 +44,28 @@ implicit none
 #include "asterfort/nmrinc.h"
 #include "asterfort/nmrest_ecro.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer :: numins
-    character(len=8), intent(in) :: mesh
-    real(kind=8) :: eta
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    character(len=19) :: meelem(*)
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-    type(NL_DS_Energy), intent(inout) :: ds_energy
-    character(len=19) :: lischa
-    character(len=19) :: sddisc, sddyna, sdpost
-    character(len=19), intent(in) :: sd_obsv
-    type(NL_DS_Print), intent(in) :: ds_print
-    character(len=24) :: modele, numedd, numfix
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=19) :: veelem(*), measse(*), veasse(*)
-    character(len=19) :: solalg(*), valinc(*)
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=24) :: sderro, sdcriq
-    character(len=24) :: mate, carele
-    character(len=24) :: comref
-    integer :: fonact(*)
+integer :: numins
+character(len=8), intent(in) :: mesh
+real(kind=8) :: eta
+type(NL_DS_InOut), intent(in) :: ds_inout
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+character(len=19) :: meelem(*)
+type(NL_DS_Contact), intent(inout) :: ds_contact
+type(NL_DS_Energy), intent(inout) :: ds_energy
+character(len=19) :: lischa
+character(len=19) :: sddisc, sddyna
+type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
+character(len=19), intent(in) :: sd_obsv
+type(NL_DS_Print), intent(in) :: ds_print
+character(len=24) :: modele, numedd, numfix
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=19) :: veelem(*), measse(*), veasse(*)
+character(len=19) :: solalg(*), valinc(*)
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=24) :: sderro, sdcriq
+character(len=24) :: mate, carele
+character(len=24) :: comref
+integer :: fonact(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -92,7 +92,7 @@ implicit none
 ! IN  NUMINS : NUMERO D'INSTANT
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
-! IN  SDPOST : SD POUR POST-TRAITEMENTS (CRIT_STAB ET MODE_VIBR)
+! IO  ds_posttimestep  : datastructure for post-treatment at each time step
 ! IN  SDCRIQ : SD CRITERE QUALITE
 !
 ! --------------------------------------------------------------------------------------------------
@@ -149,14 +149,14 @@ implicit none
     endif
 !
 ! --- CALCUL DE POST-TRAITEMENT: STABILITE ET MODES VIBRATOIRES
-!
-    if (lmvib .or. lflam) then
-        call nmspec(modele     , numedd, numfix  , carele    , ds_constitutive,&
-                    numins     , mate  , comref  , lischa    , ds_contact     ,&
-                    ds_algopara, fonact, ds_print, ds_measure, sddisc         ,&
-                    valinc     , solalg, meelem  , measse    , veelem         ,&
-                    sddyna     , sdpost, sderro)
-    endif
+!!
+!    if (lmvib .or. lflam) then
+!        call nmspec(modele     , numedd         , numfix  , carele    , ds_constitutive,&
+!                    numins     , mate           , comref  , lischa    , ds_contact     ,&
+!                    ds_algopara, fonact         , ds_print, ds_measure, sddisc         ,&
+!                    valinc     , solalg         , meelem  , measse    , veelem         ,&
+!                    sddyna     , ds_posttimestep, sderro)
+!    endif
 !
 ! --- CALCUL DES ENERGIES
 !

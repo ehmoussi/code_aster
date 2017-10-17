@@ -15,9 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmetcc(field_type, algo_name, init_name,&
-                  compor    , sddyna   , sdpost   , ds_contact,&
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmetcc(field_type, algo_name, init_name      ,&
+                  compor    , sddyna   , ds_posttimestep, ds_contact,&
                   hydr      , temp_init, hydr_init)
 !
 use NonLin_Datastructure_type
@@ -26,22 +27,19 @@ implicit none
 !
 #include "asterfort/assert.h"
 #include "asterfort/ndynkk.h"
-#include "asterfort/nmlesd.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jeveuo.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=24), intent(in) :: field_type
-    character(len=24), intent(out) :: algo_name
-    character(len=24), intent(out) :: init_name
-    type(NL_DS_Contact), optional, intent(in) :: ds_contact
-    character(len=19), optional, intent(in) :: compor
-    character(len=19), optional, intent(in) :: sddyna
-    character(len=19), optional, intent(in) :: sdpost
-    character(len=24), optional, intent(in) :: hydr
-    character(len=24), optional, intent(in) :: hydr_init
-    character(len=24), optional, intent(in) :: temp_init
+character(len=24), intent(in) :: field_type
+character(len=24), intent(out) :: algo_name
+character(len=24), intent(out) :: init_name
+type(NL_DS_Contact), optional, intent(in) :: ds_contact
+character(len=19), optional, intent(in) :: compor
+character(len=19), optional, intent(in) :: sddyna
+type(NL_DS_PostTimeStep), optional, intent(in) :: ds_posttimestep
+character(len=24), optional, intent(in) :: hydr
+character(len=24), optional, intent(in) :: hydr_init
+character(len=24), optional, intent(in) :: temp_init
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -59,7 +57,7 @@ implicit none
 ! In  compor           : name of <CARTE> COMPOR
 ! In  ds_contact       : datastructure for contact management
 ! In  sddyna           : name of dynamic parameters datastructure
-! In  sdpost           : name of post-treatment for stability analysis parameters datastructure
+! In  ds_posttimestep  : datastructure for post-treatment at each time step
 ! In  hydr             : name of field for hydratation (HYDR_ELNO)
 ! In  hydr_init        : name of field for initial hydratation
 ! In  temp_init        : name of field for initial temperature
@@ -73,8 +71,6 @@ implicit none
     character(len=24) :: sdcont_solv
     character(len=19) :: vecfla, vecvib, vecsta
     character(len=19) :: depabs, vitabs, accabs
-    real(kind=8) :: r8bid
-    integer :: ibid
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -90,13 +86,10 @@ implicit none
         xcohes = sdcont_solv(1:14)//'.XCOP'
         xseuco = sdcont_solv(1:14)//'.XFSE'
     endif
-    if (present(sdpost)) then
-        call nmlesd('POST_TRAITEMENT', sdpost, 'SOLU_MODE_FLAM', ibid, r8bid,&
-                    vecfla)
-        call nmlesd('POST_TRAITEMENT', sdpost, 'SOLU_MODE_STAB', ibid, r8bid,&
-                    vecsta)
-        call nmlesd('POST_TRAITEMENT', sdpost, 'SOLU_MODE_VIBR', ibid, r8bid,&
-                    vecvib)
+    if (present(ds_posttimestep)) then
+        vecfla = ds_posttimestep%mode_flam_resu%eigen_vector
+        vecsta = ds_posttimestep%crit_stab_resu%eigen_vector
+        vecvib = ds_posttimestep%mode_vibr_resu%eigen_vector
     endif
     if (present(sddyna)) then
         call ndynkk(sddyna, 'DEPABS', depabs)

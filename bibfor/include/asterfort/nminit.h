@@ -15,9 +15,6 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 ! aslint: disable=W1504
 !
 interface
@@ -25,7 +22,7 @@ interface
                       numedd    , numfix    , ds_algopara, ds_constitutive, maprec    ,&
                       solver    , numins    , sddisc     , sdnume         , sdcrit    ,&
                       varc_refe , fonact    , sdpilo     , sddyna         , ds_print  ,&
-                      sd_suiv   , sd_obsv   , sderro     , sdpost         , ds_inout  ,&
+                      sd_suiv   , sd_obsv   , sderro     , ds_posttimestep, ds_inout  ,&
                       ds_energy , ds_conv   , sdcriq     , valinc         , solalg    ,&
                       measse    , veelem    , meelem     , veasse         , ds_contact,&
                       ds_measure, ds_algorom)
@@ -54,7 +51,7 @@ interface
         character(len=24), intent(out) :: sd_suiv
         character(len=19), intent(out) :: sd_obsv
         character(len=24) :: sderro
-        character(len=19) :: sdpost
+        type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
         type(NL_DS_InOut), intent(inout) :: ds_inout
         type(NL_DS_Energy), intent(inout) :: ds_energy
         type(NL_DS_Conv), intent(inout) :: ds_conv
