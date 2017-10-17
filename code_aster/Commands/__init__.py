@@ -63,7 +63,7 @@ from .defi_materiau import DEFI_MATERIAU
 from .lire_maillage import LIRE_MAILLAGE
 # from .macr_elem_dyna import MACR_ELEM_DYNA
 # from .macr_elem_stat import MACR_ELEM_STAT
-# from .meca_statique import MECA_STATIQUE
+from .meca_statique import MECA_STATIQUE
 # from .mode_iter_cycl import MODE_ITER_CYCL
 # from .mode_statique import MODE_STATIQUE
 # from .modi_maillage import MODI_MAILLAGE

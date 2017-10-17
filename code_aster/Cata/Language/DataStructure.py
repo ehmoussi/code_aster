@@ -264,7 +264,6 @@ class carte_sdaster(cham_gd_sdaster):
     @classmethod
     def getType(cls):
         """Return the type of DataStructure"""
-        # use for static checking (with fake datastructures)
         return "CART_"
 
 class cham_elem(cham_gd_sdaster):
