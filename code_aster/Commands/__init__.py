@@ -69,7 +69,7 @@ from .lire_maillage import LIRE_MAILLAGE
 # from .modi_maillage import MODI_MAILLAGE
 # from .nume_ddl import NUME_DDL
 # from .nume_ddl_gene import NUME_DDL_GENE
-# from .proj_champ import PROJ_CHAMP
+from .proj_champ import PROJ_CHAMP
 # from .stat_non_line import STAT_NON_LINE
 
 #from .macro_commands import (
