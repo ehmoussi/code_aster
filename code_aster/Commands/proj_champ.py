@@ -19,26 +19,27 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import MatchingMeshes
+from ..Objects import MatchingMeshes
+from .ExecuteCommand import ExecuteCommand
 
 
-def PROJ_CHAMP(**curDict):
-    returnProj = None
-    if not curDict.has_key("RESULTAT") and not curDict.has_key("CHAM_GD"):
-        returnProj = MatchingMeshes.create()
-    else:
-        raise NameError("Not yet implemented")
-    name = returnProj.getName()
-    type = returnProj.getType()
+class FieldProjector(ExecuteCommand):
+    """Command that allows to project fields."""
+    command_name = "PROJ_CHAMP"
 
-    syntax = CommandSyntax("PROJ_CHAMP")
-    syntax.setResult(name, type)
-    syntax.define(curDict)
+    def create_result(self, keywords):
+        """Initialize the result.
 
-    numOp = 166
-    python_execop(numOp)
-    syntax.free()
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        if keywords.has_key("RESULTAT"):
+            raise NotImplementedError("{0!r} is not yet implemented"
+                                      .format("CHAM_GD"))
+        if keywords.has_key("CHAM_GD"):
+            raise NotImplementedError("{0!r} is not yet implemented"
+                                      .format("CHAM_GD"))
+        self._result = MatchingMeshes.create()
 
-    return returnProj
+
+PROJ_CHAMP = FieldProjector()
