@@ -29,7 +29,7 @@ loi = LoiComportement(
    le modèle de Mualem Van-Genuchten. """          ,
     num_lc         = 0,
     nb_vari        = 1,
-    nom_vari       = ('HYDRUTI1',),
+    nom_vari       = ('RHOLIQ',),
     mc_mater       = None,
     modelisation   = ('KIT_HH','KIT_HHM','KIT_HM','KIT_THHM','KIT_THH',
         'KIT_THM','KIT_THV',),

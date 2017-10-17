@@ -27,7 +27,7 @@ loi = LoiComportement(
    (Cf. [R7.01.11] pour plus de détails)."""          ,
     num_lc         = 5,
     nb_vari        = 2,
-    nom_vari       = ('LIQGAZ1','LIQGAZ2',),
+    nom_vari       = ('POROSITE','SATLIQ',),
     mc_mater       = ('THM_LIQ','THM_GAZ',),
     modelisation   = ('KIT_HH','KIT_HHM','KIT_HM','KIT_THHM','KIT_THH',
         'KIT_THM','KIT_THV',),

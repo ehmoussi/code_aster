@@ -27,7 +27,7 @@ loi = LoiComportement(
    avec changement de phase (Cf. [R7.01.11] pour plus de détails)."""          ,
     num_lc         = 9,
     nb_vari        = 3,
-    nom_vari       = ('LIQADGV1','LIQADGV2','LIQADGV3',),
+    nom_vari       = ('POROSITE','PVP','SATLIQ',),
     mc_mater       = ('THM_LIQ','THM_VAPE','THM_GAZ','THM_AIR_DISS',),
     modelisation   = ('KIT_HH','KIT_HHM','KIT_HM','KIT_THHM','KIT_THH',
         'KIT_THM','KIT_THV',),
