@@ -184,8 +184,11 @@ subroutine vpinis(eigsol)
     ASSERT(iret.eq.1)
     call getvr8('CALC_'//typevp, 'SEUIL_'//typevp, iocc=1, scal=fcorig, nbret=iret)
     ASSERT(iret.eq.1)
-    omecor = 0.d0
-    if (typres(1:9) .eq. 'DYNAMIQUE') omecor = omega2(fcorig)
+    if (typres(1:9) .eq. 'DYNAMIQUE') then
+        omecor = omega2(fcorig)
+    else
+        omecor = fcorig
+    endif
  
 ! --  PARAMETRES DES SOLVEURS MODAUX
     appr=''
