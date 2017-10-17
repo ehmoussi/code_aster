@@ -15,48 +15,59 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine ReadEnergy(ds_energy)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nonlinDSContactRead(ds_contact, it_maxi)
 !
 use NonLin_Datastructure_type
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "asterfort/infniv.h"
-#include "asterc/getfac.h"
+#include "asterfort/getvid.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Energy), intent(inout) :: ds_energy
-!
-! --------------------------------------------------------------------------------------------------
-!
-! MECA_NON_LINE - Energy management
-!
-! Read parameters for energy management
+type(NL_DS_Contact), intent(inout) :: ds_contact
+integer,  intent(in),  optional :: it_maxi 
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  ds_energy        : datastructure for energy management
+! MECA_NON_LINE - Contact management
+!
+! Read parameters for contact management
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv, nocc
+! IO  ds_contact       : datastructure for contact management
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: ifm, niv
+    integer :: nocc
+    character(len=8) :: sdcont
+    character(len=16) :: keyw
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> . Read parameters for energy parameters'
+        write (ifm,*) '<MECANONLINE> . Read parameters contact management'
     endif
 !
-! - Activation ?
+! - Initializations
 !
-    call getfac('ENERGIE', nocc)
-    ds_energy%l_comp  = nocc.gt.0
+    keyw = 'CONTACT'
 !
-! - Command
+! - Get name of datastructure from DEFI_CONTACT
 !
-    ds_energy%command = 'MECA_NON_LINE'
+    call getvid(' ', keyw, scal=sdcont, nbret=nocc)
+    ds_contact%l_contact = nocc .gt. 0
+    if (nocc .ne. 0) then   
+        ds_contact%sdcont = sdcont
+        if (present(it_maxi)) then
+!            ds_contact%iteration_cycl_maxi = it_maxi
+            ds_contact%it_cycl_maxi = 6
+        endif
+    endif
 !
 end subroutine

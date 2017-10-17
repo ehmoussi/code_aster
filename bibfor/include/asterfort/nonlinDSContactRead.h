@@ -15,12 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine ReadPrint(ds_print)
+    subroutine nonlinDSContactRead(ds_contact,it_maxi)
         use NonLin_Datastructure_type
-        type(NL_DS_Print), intent(inout) :: ds_print
-    end subroutine ReadPrint
+        type(NL_DS_Contact), intent(inout) :: ds_contact
+        integer, intent(in), optional      :: it_maxi
+    end subroutine nonlinDSContactRead
 end interface

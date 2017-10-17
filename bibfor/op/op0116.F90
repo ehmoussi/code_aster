@@ -53,10 +53,10 @@ implicit none
 #include "asterfort/vtcmbl.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/nonlinDSInOutCreate.h"
-#include "asterfort/ReadInOut.h"
+#include "asterfort/nonlinDSInOutRead.h"
 !
 !
-! person_in_charge: hassan.berro@edf.fr
+! person_in_charge: hassan.berro at edf.fr
 ! OPERATEUR CALCULANT LE CHAMP DE PRESSION DANS UN FLUIDE SELON LES
 ! HYPOTHESES D'UN ECOULEMENT POTENTIEL
 !
@@ -139,7 +139,7 @@ implicit none
 !
 ! - Read parameters for input/output management
 !
-    call ReadInOut('THER', nomres, ds_inout)
+    call nonlinDSInOutRead('THER', nomres, ds_inout)
 
 !---------------------------------------------------------------------
 !---------- APPEL A CALFLU -------------------------------------------

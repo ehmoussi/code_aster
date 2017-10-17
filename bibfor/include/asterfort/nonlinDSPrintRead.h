@@ -15,12 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine ReadMeasure(ds_measure)
+    subroutine nonlinDSPrintRead(ds_print)
         use NonLin_Datastructure_type
-        type(NL_DS_Measure), intent(inout) :: ds_measure
-    end subroutine ReadMeasure
+        type(NL_DS_Print), intent(inout) :: ds_print
+    end subroutine nonlinDSPrintRead
 end interface

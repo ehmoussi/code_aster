@@ -15,14 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine ReadInOut(phenom, result, ds_inout)
+    subroutine nonlinDSEnergyRead(ds_energy)
         use NonLin_Datastructure_type
-        character(len=4), intent(in) :: phenom
-        character(len=8), intent(in) :: result
-        type(NL_DS_InOut), intent(inout) :: ds_inout
-    end subroutine ReadInOut
+        type(NL_DS_Energy), intent(inout) :: ds_energy
+    end subroutine nonlinDSEnergyRead
 end interface
