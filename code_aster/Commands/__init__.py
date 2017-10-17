@@ -39,9 +39,9 @@ from .affe_modele import AFFE_MODELE
 # from .calc_fonc_interp import CALC_FONC_INTERP
 from .calc_matr_elem import CALC_MATR_ELEM
 # from .comb_fourier import COMB_FOURIER
-# from .crea_champ import CREA_CHAMP
+from .crea_champ import CREA_CHAMP
 # from .crea_maillage import CREA_MAILLAGE
-# from .crea_resu import CREA_RESU
+from .crea_resu import CREA_RESU
 # from .crea_table import CREA_TABLE
 from .defi_compor import DEFI_COMPOR
 # from .defi_fiss_xfem import DEFI_FISS_XFEM

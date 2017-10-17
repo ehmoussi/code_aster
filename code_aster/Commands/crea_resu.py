@@ -19,29 +19,27 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import EvolutiveLoad
-from code_aster import EvolutiveThermalLoad
+from ..Objects import EvolutiveLoad, EvolutiveThermalLoad
+from .ExecuteCommand import ExecuteCommand
 
 
-def CREA_RESU(**curDict):
-    returnRC = None
-    if curDict["TYPE_RESU"] == "EVOL_CHAR":
-        returnRC = EvolutiveLoad.create()
-    elif curDict["TYPE_RESU"] == "EVOL_THER":
-        returnRC = EvolutiveThermalLoad.create()
-    else:
-        raise NameError("Not yet implemented")
-    name = returnRC.getName()
-    type = returnRC.getType()
+class ResultCreator(ExecuteCommand):
+    """Command that creates evolutive results."""
+    command_name = "CREA_RESU"
 
-    syntax = CommandSyntax("CREA_RESU")
-    syntax.setResult(name, type)
-    syntax.define(curDict)
+    def create_result(self, keywords):
+        """Initialize the result.
 
-    numOp = 124
-    python_execop(numOp)
-    syntax.free()
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        typ = keywords["TYPE_RESU"]
+        if typ == "EVOL_CHAR":
+            self._result = EvolutiveLoad.create()
+        elif typ == "EVOL_THER":
+            self._result = EvolutiveThermalLoad.create()
+        else:
+            raise NotImplementedError("Type of result {0!r} not yet "
+                                      "implemented".format(typ))
 
-    return returnRC
+CREA_RESU = ResultCreator()

@@ -19,36 +19,37 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import PCFieldOnMeshDouble
-from code_aster import FieldOnNodesDouble
+from ..Objects import PCFieldOnMeshDouble, FieldOnNodesDouble
+from .ExecuteCommand import ExecuteCommand
 
 
-def CREA_CHAMP(**curDict):
-    returnField = None
-    if curDict["TYPE_CHAM"][:5] == "CART_" and curDict["TYPE_CHAM"][10:] == "R":
-        mesh = None
-        if curDict.has_key("MAILLAGE"):
-            mesh = curDict["MAILLAGE"]
+class FieldCreator(ExecuteCommand):
+    """Command that creates fields that may be
+    :class:`~code_aster.Objects.FieldOnNodesDouble` or
+    :class:`~code_aster.Objects.PCFieldOnMeshDouble`."""
+    command_name = "CREA_CHAMP"
+
+    def create_result(self, keywords):
+        """Initialize the result.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        location = keywords["TYPE_CHAM"][:5]
+        typ = keywords["TYPE_CHAM"][10:]
+        if typ != "R" or location not in ("CART_", "NOEU_"):
+            raise NotImplementedError("Type of field {0!r} not yet supported"
+                                      .format(keywords["TYPE_CHAM"]))
+
+        if location == "CART_":
+            if keywords.has_key("MAILLAGE"):
+                mesh = keywords["MAILLAGE"]
+            else:
+                mesh = keywords["MODELE"].getSupportMesh()
+            self._result = PCFieldOnMeshDouble.create(mesh)
         else:
-            if not curDict.has_key("MODELE"):
-                raise NameError("A mesh or a model is required")
-            mesh = curDict["MODELE"].getSupportMesh()
-        returnField = PCFieldOnMeshDouble.create(mesh)
-    elif curDict["TYPE_CHAM"][:5] == "NOEU_" and curDict["TYPE_CHAM"][10:] == "R":
-        returnField = FieldOnNodesDouble.create()
-    else:
-        raise NameError("Not yet implemented")
-    name = returnField.getName()
-    type = returnField.getType()
+            # NOEU_
+            self._result = FieldOnNodesDouble.create()
 
-    syntax = CommandSyntax("CREA_CHAMP")
-    syntax.setResult(name, type)
-    syntax.define(curDict)
 
-    numOp = 195
-    python_execop(numOp)
-    syntax.free()
-
-    return returnField
+CREA_CHAMP = FieldCreator()
