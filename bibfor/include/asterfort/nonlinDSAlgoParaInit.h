@@ -15,13 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine InitAlgoPara(list_func_acti, ds_algopara)
+    subroutine nonlinDSAlgoParaInit(list_func_acti, ds_algopara)
         use NonLin_Datastructure_type
         integer, intent(in) :: list_func_acti(*)        
         type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
-    end subroutine InitAlgoPara
+    end subroutine nonlinDSAlgoParaInit
 end interface

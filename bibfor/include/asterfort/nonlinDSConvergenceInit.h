@@ -15,13 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine InitPrint(sdsuiv, ds_print)
+    subroutine nonlinDSConvergenceInit(ds_conv, list_func_acti, ds_contact)
         use NonLin_Datastructure_type
-        character(len=24), intent(in) :: sdsuiv
-        type(NL_DS_Print), intent(inout) :: ds_print
-    end subroutine InitPrint
+        type(NL_DS_Conv), intent(inout) :: ds_conv
+        integer, optional, intent(in) :: list_func_acti(*)
+        type(NL_DS_Contact), optional, intent(in) :: ds_contact
+    end subroutine nonlinDSConvergenceInit
 end interface

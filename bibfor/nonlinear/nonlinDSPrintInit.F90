@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine InitPrint(sdsuiv, ds_print)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nonlinDSPrintInit(sdsuiv, ds_print)
 !
 use NonLin_Datastructure_type
 !
@@ -30,10 +31,8 @@ implicit none
 #include "asterfort/ulopen.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=24), intent(in) :: sdsuiv
-    type(NL_DS_Print), intent(inout) :: ds_print
+character(len=24), intent(in) :: sdsuiv
+type(NL_DS_Print), intent(inout) :: ds_print
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -116,7 +115,7 @@ implicit none
 ! ----- Set column
 !
         col = table_cvg%cols(i_col_name)
-        col%l_vale_real = .true._1
+        col%l_vale_real = ASTER_TRUE
         col%title(1)    = v_sdsuiv_titr(3*(i_dof_monitor-1)+1)
         col%title(2)    = v_sdsuiv_titr(3*(i_dof_monitor-1)+2)
         col%title(3)    = v_sdsuiv_titr(3*(i_dof_monitor-1)+3)
@@ -131,7 +130,7 @@ implicit none
 !
 ! - Print every step time (default)
 !
-    ds_print%l_print = .true._1
+    ds_print%l_print = ASTER_TRUE
 !
 ! - Set convergence table
 !

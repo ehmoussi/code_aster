@@ -15,14 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine InitContact(mesh, model, ds_contact)
+    subroutine nonlinDSContactInit(mesh, model, ds_contact)
         use NonLin_Datastructure_type
         character(len=8), intent(in) :: mesh
         character(len=8), intent(in) :: model
         type(NL_DS_Contact), intent(inout) :: ds_contact
-    end subroutine InitContact
+    end subroutine nonlinDSContactInit
 end interface

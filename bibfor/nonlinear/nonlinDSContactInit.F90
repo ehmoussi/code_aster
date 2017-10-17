@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine InitContact(mesh, model, ds_contact)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nonlinDSContactInit(mesh, model, ds_contact)
 !
 use NonLin_Datastructure_type
 !
@@ -33,11 +34,9 @@ implicit none
 #include "asterfort/lac_rela.h"
 #include "asterfort/wkvect.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: mesh
-    character(len=8), intent(in) :: model
-    type(NL_DS_Contact), intent(inout) :: ds_contact
+character(len=8), intent(in) :: mesh
+character(len=8), intent(in) :: model
+type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -70,13 +69,13 @@ implicit none
 !
 ! - Initializations
 !
-    l_cont      = .false._1
-    l_unil      = .false._1
-    l_form_disc = .false._1
-    l_form_cont = .false._1
-    l_form_xfem = .false._1
-    l_form_lac  = .false._1
-    l_iden_rela = .false._1
+    l_cont      = ASTER_FALSE
+    l_unil      = ASTER_FALSE
+    l_form_disc = ASTER_FALSE
+    l_form_cont = ASTER_FALSE
+    l_form_xfem = ASTER_FALSE
+    l_form_lac  = ASTER_FALSE
+    l_iden_rela = ASTER_FALSE
     iden_rela   = '&&CFMXR0.IDEN_RELA'
 ! 
     if (ds_contact%l_contact) then
@@ -137,9 +136,9 @@ implicit none
 !
         if (l_form_cont) then
             ds_contact%field_input      = ds_contact%sdcont_solv(1:14)//'.CHML'
-            ds_contact%l_elem_slav      = .true.
+            ds_contact%l_elem_slav      = ASTER_TRUE
             ds_contact%ligrel_elem_slav = sdcont
-            ds_contact%l_elem_cont      = .true.
+            ds_contact%l_elem_cont      = ASTER_TRUE
             ds_contact%ligrel_elem_cont = '&&LIGRCF.CHME.LIGRE'
             call wkvect(ds_contact%ligrel_elem_cont(1:8)//'.TYPE', 'V V K8', 1, vk8 = v_load_type)
             v_load_type(1) = 'ME'
@@ -162,23 +161,23 @@ implicit none
             if (l_cont_xfem_gg) then  
                 ds_contact%ligrel_elem_cont = model(1:8)//'.MODELE'
             endif
-            ds_contact%l_elem_cont      = .false.
+            ds_contact%l_elem_cont      = ASTER_FALSE
             ds_contact%ligrel_elem_cont = model(1:8)//'.MODELE'
         endif
 !
 ! ----- Special for xfem contact (large sliding)
 !
         if (l_cont_xfem_gg) then          
-            ds_contact%l_elem_cont      = .true.
+            ds_contact%l_elem_cont      = ASTER_TRUE
             ds_contact%ligrel_elem_cont = '&&LIGRXF.CHME.LIGRE'
             call wkvect(ds_contact%ligrel_elem_cont(1:8)//'.TYPE', 'V V K8', 1, vk8 = v_load_type)
             v_load_type(1) = 'ME'
             if (ds_contact%l_dof_rela) then
                 ds_contact%ligrel_elem_slav = sdcont
-                ds_contact%l_elem_slav      = .false.
+                ds_contact%l_elem_slav      = ASTER_FALSE
             else
                 ds_contact%ligrel_elem_slav = sdcont
-                ds_contact%l_elem_slav      = .true.
+                ds_contact%l_elem_slav      = ASTER_TRUE
             endif
         endif
 !
@@ -186,9 +185,9 @@ implicit none
 !
         if (l_form_lac) then
             ds_contact%field_input      = ds_contact%sdcont_solv(1:14)//'.CHML'
-            ds_contact%l_elem_slav      = .true.
+            ds_contact%l_elem_slav      = ASTER_TRUE
             ds_contact%ligrel_elem_slav = sdcont
-            ds_contact%l_elem_cont      = .true.
+            ds_contact%l_elem_cont      = ASTER_TRUE
             ds_contact%ligrel_elem_cont = '&&LIGRCF.CHME.LIGRE'
             call wkvect(ds_contact%ligrel_elem_cont(1:8)//'.TYPE', 'V V K8', 1, vk8 = v_load_type)
             v_load_type(1) = 'ME'
@@ -211,20 +210,20 @@ implicit none
 !
         if (l_form_cont) then
             if (l_all_verif) then
-                ds_contact%l_renumber = .false._1
+                ds_contact%l_renumber = ASTER_FALSE
             else
-                ds_contact%l_renumber = .true._1
+                ds_contact%l_renumber = ASTER_TRUE
             endif
         endif
         if (l_form_lac) then
-            ds_contact%l_renumber = .true._1
+            ds_contact%l_renumber = ASTER_TRUE
         endif
 !
 ! ----- Flag for pairing
 !
         if (l_form_disc) then
-            ds_contact%l_pair       = .true._1
-            ds_contact%l_first_geom = .true._1
+            ds_contact%l_pair       = ASTER_TRUE
+            ds_contact%l_first_geom = ASTER_TRUE
         endif
 !
 ! ----- Save parameters

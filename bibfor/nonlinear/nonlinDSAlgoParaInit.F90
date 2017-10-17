@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine InitAlgoPara(list_func_acti, ds_algopara)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nonlinDSAlgoParaInit(list_func_acti, ds_algopara)
 !
 use NonLin_Datastructure_type
 !
@@ -29,10 +30,8 @@ implicit none
 #include "asterfort/isfonc.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer, intent(in) :: list_func_acti(*)
-    type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
+integer, intent(in) :: list_func_acti(*)
+type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
 !
 ! --------------------------------------------------------------------------------------------------
 !

@@ -52,7 +52,7 @@ implicit none
 #include "asterfort/nmdomt.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/tbajli.h"
-#include "asterfort/InitConv.h"
+#include "asterfort/nonlinDSConvergenceInit.h"
 #include "asterfort/tbajpa.h"
 #include "asterfort/tbcrsd.h"
 #include "asterfort/utmess.h"
@@ -146,7 +146,7 @@ type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
 !
 ! - Initializations for convergence management
 !
-    call InitConv(ds_conv)
+    call nonlinDSConvergenceInit(ds_conv)
 !
 !     ----------------------------------------
 !     RECUPERATION DU NOM DE LA TABLE PRODUITE

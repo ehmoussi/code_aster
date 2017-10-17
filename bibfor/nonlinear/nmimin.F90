@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!    
 subroutine nmimin(list_func_acti, sddisc, sdsuiv, nume_inst, ds_print)
 !
 use NonLin_Datastructure_type
@@ -24,17 +25,14 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/InitTableCvg.h"
-#include "asterfort/InitPrint.h"
 #include "asterfort/nmimpt.h"
 #include "asterfort/nmimpx.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!    
-    integer, intent(in) :: list_func_acti(*)
-    character(len=19), intent(in) :: sddisc
-    character(len=24), intent(in) :: sdsuiv
-    integer, intent(in) :: nume_inst
-    type(NL_DS_Print), intent(inout) :: ds_print
+integer, intent(in) :: list_func_acti(*)
+character(len=19), intent(in) :: sddisc
+character(len=24), intent(in) :: sdsuiv
+integer, intent(in) :: nume_inst
+type(NL_DS_Print), intent(inout) :: ds_print
 !
 ! --------------------------------------------------------------------------------------------------
 !

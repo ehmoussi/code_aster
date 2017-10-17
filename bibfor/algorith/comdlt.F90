@@ -46,7 +46,7 @@ implicit none
 #include "asterc/r8prem.h"
 #include "asterfort/cochre.h"
 #include "asterfort/nonlinDSEnergyCreate.h"
-#include "asterfort/InitEnergy.h"
+#include "asterfort/nonlinDSEnergyInit.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/dladap.h"
 #include "asterfort/dldiff.h"
@@ -307,7 +307,7 @@ implicit none
     call getfac('ENERGIE', iret)
     ds_energy%l_comp  = iret.gt.0
     ds_energy%command = 'DYNA_VIBRA'
-    call InitEnergy(result, ds_energy)
+    call nonlinDSEnergyInit(result, ds_energy)
     if (iret .eq. 0) then
         nomsym(4) = ' '
         nomsym(5) = ' '
