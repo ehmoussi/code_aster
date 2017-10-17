@@ -96,7 +96,12 @@ def isValidType(obj, expected):
         return True
     try:
         typname = obj.getType()
-        expectname = [i.getType() for i in expected if issubclass(i, DS.DataStructure)]
+        expectname = []
+        for i in expected:
+            if not issubclass(i, DS.DataStructure):
+                continue
+            expectname.append(i.getType())
+            expectname.extend([j.getType() for j in i.__subclasses__()])
         debug_message2(obj, typname, 'expecting:', expectname)
         return typname in expectname
     except AttributeError:
