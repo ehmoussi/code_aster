@@ -19,21 +19,8 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import InterspectralMatrix
+from ..Objects import InterspectralMatrix
+from .ExecuteCommand import ExecuteCommandWithType
 
 
-def DEFI_INTE_SPEC(**curDict):
-    returnMatrix = InterspectralMatrix.create()
-    name = returnMatrix.getName()
-    type = returnMatrix.getType()
-    syntax = CommandSyntax("DEFI_INTE_SPEC")
-
-    syntax.setResult(name, type)
-
-    syntax.define(curDict)
-    numOp = 115
-    python_execop(numOp)
-    syntax.free()
-    return returnMatrix
+DEFI_INTE_SPEC = ExecuteCommandWithType("DEFI_INTE_SPEC", InterspectralMatrix)
