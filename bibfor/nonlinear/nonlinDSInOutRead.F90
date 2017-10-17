@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine ReadInOut(phenom, result, ds_inout)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nonlinDSInOutRead(phenom, result, ds_inout)
 !
 use NonLin_Datastructure_type
 !
@@ -34,11 +35,9 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=4), intent(in) :: phenom
-    character(len=8), intent(in) :: result
-    type(NL_DS_InOut), intent(inout) :: ds_inout
+character(len=4), intent(in) :: phenom
+character(len=8), intent(in) :: result
+type(NL_DS_InOut), intent(inout) :: ds_inout
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -122,11 +121,11 @@ implicit none
     if (phenom.eq.'THER') then
         call getvtx(keywf, 'STATIONNAIRE', iocc=1, scal=answer   , nbret=nocc)
         if (nocc.eq.1) then
-            ds_inout%l_init_stat = .true._1
+            ds_inout%l_init_stat = ASTER_TRUE
         endif
         call getvr8(keywf, 'VALE'        , iocc=1, scal=temp_init, nbret=nocc)
         if (nocc.eq.1) then
-            ds_inout%l_init_vale = .true._1
+            ds_inout%l_init_vale = ASTER_TRUE
             ds_inout%temp_init   = temp_init
         endif
     endif
@@ -141,7 +140,7 @@ implicit none
         if (getexm(keywf,init_keyw) .eq. 1 .and. ds_inout%field(i_field)%l_read_init) then
             call getvid(keywf, init_keyw, scal = field, iocc=1, nbret=nocc)
             if (nocc.eq.1) then
-                ds_inout%l_field_read(i_field)     = .true._1
+                ds_inout%l_field_read(i_field)     = ASTER_TRUE
                 ds_inout%field(i_field)%field_read = field
             endif
         endif

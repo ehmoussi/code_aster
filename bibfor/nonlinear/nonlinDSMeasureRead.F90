@@ -15,88 +15,71 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine ReadPrint(ds_print)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nonlinDSMeasureRead(ds_measure)
 !
 use NonLin_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/assert.h"
+#include "asterfort/infniv.h"
 #include "asterfort/getvis.h"
 #include "asterfort/getvtx.h"
-#include "asterfort/infdbg.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Print), intent(inout) :: ds_print
+type(NL_DS_Measure), intent(inout) :: ds_measure
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! MECA_NON_LINE - Print management
+! MECA_NON_LINE - Contact management
 !
-! Read parameters for printing
+! Read parameters for measure and statistics management
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Out ds_print         : datastructure for printing parameters
+! IO  ds_measure       : datastructure for measure and statistics management
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=16) :: keywf, repk
-    aster_logical :: l_csv, l_info_resi, l_info_time
-    integer :: noc, unit_csv, reac_print
+    character(len=16) :: keywfact, answer
+    aster_logical :: l_csv, l_table
+    integer :: unit_csv, noc
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECANONLINE', ifm, niv)
+    call infniv(ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> . Read parameters for printing'
+        write (ifm,*) '<MECANONLINE> . Read parameters for measure and statistics management'
     endif
 !
 ! - Initializations
 !
-    keywf       = 'AFFICHAGE'
-    l_info_resi = .false.
-    l_info_time = .false.
-    unit_csv    = 0
-    reac_print  = 1
-    l_csv       = .false.
-    repk        = 'NON'
+    keywfact = 'MESURE'
+    unit_csv = 0
+    l_table  = ASTER_FALSE
+    l_csv    = ASTER_FALSE
 !
 ! - Read parameters
 !
-    call getvtx(keywf, 'INFO_RESIDU', iocc=1, scal=repk, nbret=noc)
-    if (noc .ne. 0) then
-        l_info_resi = repk .eq. 'OUI'
-    endif
-    call getvtx(keywf, 'INFO_TEMPS', iocc=1, scal=repk, nbret=noc)
-    if (noc .ne. 0) then
-        l_info_time = repk .eq. 'OUI'
-    endif
-    call getvis(keywf, 'UNITE', iocc=1, scal=unit_csv, nbret=noc)
+    call getvtx(keywfact, 'TABLE', iocc=1, scal=answer)
+    l_table = answer.eq.'OUI'
+    call getvis(keywfact, 'UNITE', iocc=1, scal=unit_csv, nbret=noc)
     if (noc .eq. 0) then
-        l_csv = .false.
+        l_csv = ASTER_FALSE
     else
         if (unit_csv .eq. 0) then
-            l_csv = .false.
+            l_csv = ASTER_FALSE
         else
-            l_csv = .true.
+            l_csv = ASTER_TRUE
         endif
-    endif
-    call getvis(keywf, 'PAS', iocc=1, scal=reac_print, nbret=noc)
-    if (noc .eq. 0) then
-        reac_print = 1
     endif
 !
 ! - Save parameters
 !
-    ds_print%l_info_resi = l_info_resi
-    ds_print%l_info_time = l_info_time
-    ds_print%l_tcvg_csv  = l_csv
-    ds_print%tcvg_unit   = unit_csv
-    ds_print%reac_print  = reac_print
+    ds_measure%l_table        = l_table
+    ds_measure%table%l_csv    = l_csv
+    ds_measure%table%unit_csv = unit_csv
 !
 end subroutine
