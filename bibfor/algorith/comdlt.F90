@@ -45,7 +45,7 @@ implicit none
 #include "asterc/r8vide.h"
 #include "asterc/r8prem.h"
 #include "asterfort/cochre.h"
-#include "asterfort/CreateEnergyDS.h"
+#include "asterfort/nonlinDSEnergyCreate.h"
 #include "asterfort/InitEnergy.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/dladap.h"
@@ -303,7 +303,7 @@ implicit none
 !
 ! - Energy management
 !
-    call CreateEnergyDS(ds_energy)
+    call nonlinDSEnergyCreate(ds_energy)
     call getfac('ENERGIE', iret)
     ds_energy%l_comp  = iret.gt.0
     ds_energy%command = 'DYNA_VIBRA'

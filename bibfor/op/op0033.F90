@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine op0033()
 !
 use NonLin_Datastructure_type
@@ -59,19 +60,17 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/vrcinp.h"
 #include "asterfort/wkvect.h"
-#include "asterfort/CreateConvDS.h"
-#include "asterfort/CreateAlgoParaDS.h"
+#include "asterfort/nonlinDSConvergenceCreate.h"
+#include "asterfort/nonlinDSAlgoParaCreate.h"
 #include "blas/daxpy.h"
 #include "blas/dcopy.h"
 #include "blas/dscal.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
+! --------------------------------------------------------------------------------------------------
 !
-
+! CALC_POINT_MAT
 !
-! ----------------------------------------------------------------------
-!  OPERATEUR    CALC_POINT_MAT
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     integer :: ndim, iret, nbmat, nbvari, nbpar, i, incela, ier
     integer :: imate, kpg, ksp, iter, pred, ncmp, imptgt
@@ -115,9 +114,8 @@ implicit none
     data vim2    /'&&OP0033.VIM2'/
     data nomvi   /'&&OP0033.NOMVI'/
 !
-! ======================================================================
-! --- RECUPERATION DES ARGUMENTS  DE LA COMMANDE
-! ======================================================================
+! --------------------------------------------------------------------------------------------------
+!
     call infmaj()
     call jemarq()
     ndim=3
@@ -134,11 +132,11 @@ implicit none
 !
 ! - Create convergence management datastructure
 !
-    call CreateConvDS(ds_conv)
+    call nonlinDSConvergenceCreate(ds_conv)
 !
 ! - Create algorithm parameters datastructure
 !
-    call CreateAlgoParaDS(ds_algopara)
+    call nonlinDSAlgoParaCreate(ds_algopara)
 !
 !     RECUPERATION DES OPTIONS DEMANDEES
 !     ----------------------------------

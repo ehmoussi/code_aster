@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine CreateConvDS(ds_conv)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nonlinDSConvergenceCreate(ds_conv)
 !
 use NonLin_Datastructure_type
 !
@@ -30,9 +31,7 @@ implicit none
 #include "asterfort/SetResi.h"
 #include "asterfort/SetResiRefe.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Conv), intent(out) :: ds_conv
+type(NL_DS_Conv), intent(out) :: ds_conv
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -109,7 +108,7 @@ implicit none
 !
     call SetResi(ds_conv   , &
                  vale_calc_   = r8vide(), locus_calc_ = ' ', user_para_ = r8vide(),&
-                 l_conv_ = .false._1, l_resi_test_ = .false._1)
+                 l_conv_ = ASTER_FALSE, l_resi_test_ = ASTER_FALSE)
 !
 ! - Set name of reference residuals
 !
@@ -141,15 +140,15 @@ implicit none
 !
 ! - Initializations for all reference residuals
 !
-    call SetResiRefe(ds_conv, user_para_ = r8nnem(), l_refe_test_ = .false._1)
+    call SetResiRefe(ds_conv, user_para_ = r8nnem(), l_refe_test_ = ASTER_FALSE)
 !
 ! - Other convergence parameters
 !
     ds_conv%iter_glob_maxi   = 0
     ds_conv%iter_glob_elas   = 0
-    ds_conv%l_stop           = .true._1
-    ds_conv%l_stop_pene      = .true._1
-    ds_conv%l_iter_elas      = .false._1
+    ds_conv%l_stop           = ASTER_TRUE
+    ds_conv%l_stop_pene      = ASTER_TRUE
+    ds_conv%l_iter_elas      = ASTER_FALSE
 !
 ! - Parameters for automatic swap of convergence criterias
 !

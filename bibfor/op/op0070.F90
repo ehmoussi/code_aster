@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine op0070()
 !
 use NonLin_Datastructure_type
@@ -53,10 +54,6 @@ implicit none
 #include "asterfort/onerrf.h"
 #include "asterfort/titre.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-
-!
 ! --------------------------------------------------------------------------------------------------
 !
 ! STAT_NON_LINE
@@ -65,10 +62,8 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: fonact(100)
-    integer :: zmeelm, zmeass, zveelm, zveass
-    parameter    (zmeelm=9 ,zmeass=4 ,zveelm=21,zveass=32)
-    integer :: zsolal, zvalin
-    parameter    (zsolal=17,zvalin=28)
+    integer, parameter :: zmeelm=9, zmeass=4, zveelm=21, zveass=32
+    integer, parameter :: zsolal=17, zvalin=28
 !
 ! --- GESTION BOUCLES
 !

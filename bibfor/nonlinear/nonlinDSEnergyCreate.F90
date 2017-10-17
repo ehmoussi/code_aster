@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine CreateEnergyDS(ds_energy)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nonlinDSEnergyCreate(ds_energy)
 !
 use NonLin_Datastructure_type
 !
@@ -30,9 +31,7 @@ implicit none
 #include "asterfort/CreateVoidColumn.h"
 #include "asterfort/CreateVoidTable.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Energy), intent(out) :: ds_energy
+type(NL_DS_Energy), intent(out) :: ds_energy
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -52,7 +51,7 @@ implicit none
     type(NL_DS_Table) :: table
     type(NL_DS_Column) :: column
 !
-    character(len=24), parameter :: cols_name(nb_col_defi) = (/&
+    character(len=16), parameter :: cols_name(nb_col_defi) = (/&
                     'NUME_REUSE','INST      ','TRAV_EXT  ',&
                     'ENER_CIN  ','ENER_TOT  ','TRAV_AMOR ',&
                     'TRAV_LIAI ','DISS_SCH  '/)
@@ -78,15 +77,15 @@ implicit none
     do i_col = 1, nb_col_defi
         call CreateVoidColumn(column)
         column%name        = cols_name(i_col)
-        column%l_vale_inte = .false._1
-        column%l_vale_real = .false._1
+        column%l_vale_inte = ASTER_FALSE
+        column%l_vale_real = ASTER_FALSE
         column%vale_inte   = ismaem()
         column%vale_real   = r8vide()
         if (cols_type(i_col) .eq. 'I') then
-            column%l_vale_inte = .true._1
+            column%l_vale_inte = ASTER_TRUE
             column%vale_inte   = 0
         elseif (cols_type(i_col) .eq. 'R') then
-            column%l_vale_real = .true._1
+            column%l_vale_real = ASTER_TRUE
             column%vale_real   = 0.d0
         else
             ASSERT(.false.)
@@ -97,7 +96,7 @@ implicit none
 !
 ! - Set main parameters
 !
-    ds_energy%l_comp   = .false._1
+    ds_energy%l_comp   = ASTER_FALSE
     ds_energy%command  = ' '
     ds_energy%table    = table 
 !

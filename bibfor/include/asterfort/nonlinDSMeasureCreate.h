@@ -15,12 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine CreateConvDS(ds_conv)
+    subroutine nonlinDSMeasureCreate(ds_measure)
         use NonLin_Datastructure_type
-        type(NL_DS_Conv), intent(out) :: ds_conv
-    end subroutine CreateConvDS
+        type(NL_DS_Measure), intent(out) :: ds_measure
+    end subroutine nonlinDSMeasureCreate
 end interface

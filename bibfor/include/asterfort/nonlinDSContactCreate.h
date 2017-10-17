@@ -15,13 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine CreateInOutDS(phenom, ds_inout)
+    subroutine nonlinDSContactCreate(ds_contact)
         use NonLin_Datastructure_type
-        character(len=4), intent(in) :: phenom
-        type(NL_DS_InOut), intent(out) :: ds_inout
-    end subroutine CreateInOutDS
+        type(NL_DS_Contact), intent(out) :: ds_contact
+    end subroutine nonlinDSContactCreate
 end interface
