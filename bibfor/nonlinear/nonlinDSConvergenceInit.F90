@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine InitConv(ds_conv, list_func_acti, ds_contact)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nonlinDSConvergenceInit(ds_conv, list_func_acti, ds_contact)
 !
 use NonLin_Datastructure_type
 !
@@ -33,11 +34,9 @@ implicit none
 #include "asterfort/SetResi.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Conv), intent(inout) :: ds_conv
-    integer, optional, intent(in) :: list_func_acti(*)
-    type(NL_DS_Contact), optional, intent(in) :: ds_contact
+type(NL_DS_Conv), intent(inout) :: ds_conv
+integer, optional, intent(in) :: list_func_acti(*)
+type(NL_DS_Contact), optional, intent(in) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -77,7 +76,7 @@ implicit none
     l_resi_user = l_rela .or. l_maxi .or. l_refe .or. l_comp
     if (.not.l_resi_user) then
         call SetResi(ds_conv   , type_ = 'RESI_GLOB_RELA', &
-                     user_para_ = 1.d-6, l_resi_test_ = .true._1)
+                     user_para_ = 1.d-6, l_resi_test_ = ASTER_TRUE)
     endif
 !
 ! - Relaxation of convergence criterion: alarm !
@@ -122,12 +121,12 @@ implicit none
         if (l_newt_frot) then
             resi_frot = cfdisr(sdcont_defi, 'RESI_FROT')
             call SetResi(ds_conv   , type_ = 'RESI_FROT', user_para_ = resi_frot,&
-                         l_resi_test_ = .true._1)
+                         l_resi_test_ = ASTER_TRUE)
         endif
         if (l_newt_geom) then
             resi_geom = cfdisr(sdcont_defi, 'RESI_GEOM')
             call SetResi(ds_conv   , type_ = 'RESI_GEOM', user_para_ = resi_geom,&
-                         l_resi_test_ = .true._1)
+                         l_resi_test_ = ASTER_TRUE)
         endif
         if (l_pena_cont) then 
             pene_maxi_user = cfdisr(sdcont_defi, 'PENE_MAXI')
@@ -135,7 +134,7 @@ implicit none
             !courante
             ! dans mmalgo
             call SetResi(ds_conv   , type_ = 'RESI_PENE', user_para_ = pene_maxi_user,&
-                         l_resi_test_ = .true._1)
+                         l_resi_test_ = ASTER_TRUE)
         endif
 
     endif

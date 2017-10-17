@@ -15,13 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine InitEnergy(result, ds_energy)
+    subroutine nonlinDSPrintInit(sdsuiv, ds_print)
         use NonLin_Datastructure_type
-        character(len=8), intent(in) :: result
-        type(NL_DS_Energy), intent(inout) :: ds_energy
-    end subroutine InitEnergy
+        character(len=24), intent(in) :: sdsuiv
+        type(NL_DS_Print), intent(inout) :: ds_print
+    end subroutine nonlinDSPrintInit
 end interface

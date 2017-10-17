@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine InitEnergy(result, ds_energy)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nonlinDSEnergyInit(result, ds_energy)
 !
 use NonLin_Datastructure_type
 !
@@ -28,10 +29,8 @@ implicit none
 #include "asterfort/CreateTable.h"
 #include "asterfort/SetTablePara.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: result
-    type(NL_DS_Energy), intent(inout) :: ds_energy
+character(len=8), intent(in) :: result
+type(NL_DS_Energy), intent(inout) :: ds_energy
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -67,12 +66,12 @@ implicit none
     do i_col = 1, table%nb_cols
         col_name = table%cols(i_col)%name
         if (col_name.eq.'NUME_REUSE') then
-            table%l_cols_acti(i_col) = .true.
+            table%l_cols_acti(i_col) = ASTER_TRUE
         elseif (col_name.eq.'INST      ') then
-            table%l_cols_acti(i_col) = .true.
+            table%l_cols_acti(i_col) = ASTER_TRUE
         else
             if (ds_energy%l_comp) then
-                table%l_cols_acti(i_col) = .true.
+                table%l_cols_acti(i_col) = ASTER_TRUE
             endif
         endif
     end do

@@ -15,14 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine InitConv(ds_conv, list_func_acti, ds_contact)
+    subroutine nonlinDSEnergyInit(result, ds_energy)
         use NonLin_Datastructure_type
-        type(NL_DS_Conv), intent(inout) :: ds_conv
-        integer, optional, intent(in) :: list_func_acti(*)
-        type(NL_DS_Contact), optional, intent(in) :: ds_contact
-    end subroutine InitConv
+        character(len=8), intent(in) :: result
+        type(NL_DS_Energy), intent(inout) :: ds_energy
+    end subroutine nonlinDSEnergyInit
 end interface
