@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine dimthm(ndlno, ndlnm, ndim)
+subroutine dimthm(l_vf, ndim, ndlno, ndlnm)
 !
 use THM_type
 use THM_module
@@ -24,12 +24,10 @@ use THM_module
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/lteatt.h"
 !
-!
-    integer, intent(in)  :: ndim
-    integer, intent(out) :: ndlno
-    integer, intent(out) :: ndlnm
+aster_logical, intent(in) :: l_vf
+integer, intent(in)  :: ndim
+integer, intent(out) :: ndlno, ndlnm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -39,14 +37,16 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-!     NDDLNO NOMBRE DE DDL DES NOEUDS EXTREMITE DE SEGMENTS
-!     NDDLM  NOMBRE DE DDL DES NOEUDS MILIEU DE SEGMENTS OU FACE
+! In  l_vf             : flag for finite volumes
+! In  ndim             : dimension of space (2 or 3)
+! Out ndlno            : number of dof at vertex
+! Out ndlnm            : number of dof at middle vertex
 !
 ! --------------------------------------------------------------------------------------------------
 !
     ndlno = 0
     ndlnm = 0
-    if (lteatt('TYPMOD3','SUSHI')) then
+    if (l_vf) then
         ndlnm = 2
     else
         if (ds_thm%ds_elem%l_dof_meca) then
@@ -54,7 +54,7 @@ implicit none
         endif
     endif
 !
-    if (lteatt('TYPMOD3','SUSHI')) then
+    if (l_vf) then
         ndlno = 0
     else
         if (ds_thm%ds_elem%l_dof_meca) then

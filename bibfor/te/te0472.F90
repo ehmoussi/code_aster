@@ -26,16 +26,17 @@ implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
-#include "asterfort/thmGetElemModel.h"
 #include "asterfort/dimthm.h"
-#include "asterfort/elrefe_info.h"
 #include "asterfort/fointe.h"
 #include "asterfort/jevech.h"
 #include "asterfort/vff2dn.h"
 #include "asterfort/lteatt.h"
 #include "asterfort/assert.h"
+#include "asterfort/thmGetElemModel.h"
+#include "asterfort/thmGetElemRefe.h"
+#include "asterfort/thmGetElemInfo.h"
 !
-character(len=16) :: option, nomte
+character(len=16), intent(in) :: option, nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,39 +54,39 @@ character(len=16) :: option, nomte
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: l_axi, l_steady, l_vf
-    integer :: nno, nno2, nnos, kp, npg, ndim, jgano, jgano2, napre1, napre2
-    integer :: ipoids, ipoid2, ivf, ivf2, idfde, idfde2, igeom, natemp
+    integer :: nno, nnos, kp, npg, ndim, nnom, napre1, napre2, ndim2
+    integer :: jv_gano, jv_poids, jv_poids2, jv_func, jv_func2, jv_dfunc, jv_dfunc2
     integer :: ipres, k, kk, i, l, ires, iflux, itemps, iopt, ipresf, ndlnm
-    integer :: ifluxf, iret, ndlno
+    integer :: ifluxf, iret, ndlno, igeom, natemp
     real(kind=8) :: poids, r, z, tx, ty, nx, ny, valpar(3), deltat, tplus
     real(kind=8) :: pres, presf, poids2, nx2, ny2, flu1, flu2, fluth
-    character(len=8) :: nompar(3), type_elem(2)
-    integer :: type_vf
+    character(len=8) :: nompar(3), elrefe, elref2
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call thmModuleInit()
+    ndim = 1
 !
 ! - Get model of finite element
 !
-    call thmGetElemModel(l_axi_ = l_axi, l_vf_ = l_vf, ndim_ = ndim, l_steady_ = l_steady)
-    call dimthm(ndlno, ndlnm, ndim)
-
-! ======================================================================
-! --- DEFINITION DE L'ELEMENT (NOEUDS, SOMMETS, POINTS DE GAUSS) -------
-! ======================================================================
-! --- LES DDLS THERMO-HYDRAULIQUES NE SONT PLUS EXPRIMES AUX NOEUDS ----
-! --- MILIEUX ----------------------------------------------------------
-! ======================================================================
-! --- INTERPOLATION (QUADRATIQUE) POUR LA MECANIQUE --------------------
-! ======================================================================
-    call elrefe_info(fami='RIGI', ndim=ndim, nno=nno, nnos=nnos, npg=npg,&
-                     jpoids=ipoids, jvf=ivf, jdfde=idfde, jgano=jgano)
-! ======================================================================
-! --- INTERPOLATION (LINEAIRE) POUR LA THERMO-HYDRAULIQUE --------------
-! ======================================================================
-    call elrefe_info(elrefe='SE2', fami='RIGI', ndim=ndim, nno=nno2, nnos=nnos,&
-                     npg=npg, jpoids=ipoid2, jvf=ivf2, jdfde=idfde2, jgano=jgano2)
+    call thmGetElemModel(l_axi_ = l_axi, l_vf_ = l_vf, l_steady_ = l_steady)
+!
+! - Get reference elements
+!
+    call thmGetElemRefe(l_vf, elrefe, elref2)
+!
+! - Get informations about element
+!
+    call thmGetElemInfo(l_vf   , elrefe  , elref2   ,&
+                        nno    , nnos    , nnom     ,&
+                        jv_gano, jv_poids, jv_poids2,&
+                        jv_func, jv_func2, jv_dfunc , jv_dfunc2,&
+                        npg_ = npg)
+!
+! - Get number of dof on boundary
+!
+    ndim2 = 2
+    call dimthm(l_vf, ndim2, ndlno, ndlnm)
 !
 ! - Input/output fields
 !
@@ -133,13 +134,13 @@ character(len=16) :: option, nomte
 ! ======================================================================
     do kp = 1, npg
         k = (kp-1)*nno
-        kk = (kp-1)*nno2
+        kk = (kp-1)*nnos
 ! ======================================================================
 ! --- RECUPERATION DES DERIVEES DES FONCTONS DE FORMES -----------------
 ! ======================================================================
-        call vff2dn(ndim, nno, kp, ipoids, idfde,&
+        call vff2dn(ndim, nno, kp, jv_poids, jv_dfunc,&
                     zr(igeom), nx, ny, poids)
-        call vff2dn(ndim, nno2, kp, ipoid2, idfde2,&
+        call vff2dn(ndim, nnos, kp, jv_poids2, jv_dfunc2,&
                     zr(igeom), nx2, ny2, poids2)
 ! ======================================================================
 ! --- MODIFICATION DU POIDS POUR LES CAS AXI ---------------------------
@@ -149,7 +150,7 @@ character(len=16) :: option, nomte
             z = 0.d0
             do i = 1, nno
                 l = (kp-1)*nno + i
-                r = r + zr(igeom+2*i-2)*zr(ivf+l-1)
+                r = r + zr(igeom+2*i-2)*zr(jv_func+l-1)
             end do
             poids = poids*r
         endif
@@ -157,7 +158,7 @@ character(len=16) :: option, nomte
 ! --- OPTION CHAR_MECA_FLUX_R OU CHAR_MECA_FLUX_F ----------------------
 ! ======================================================================
 ! --- DANS CES CAS LES INTERPOLATIONS SONT LINEAIRES -------------------
-! --- CAR FLUX = GRANDEURS TH (ON UTILISE IVF2 ET NNO2) ----------------
+! --- CAR FLUX = GRANDEURS TH (ON UTILISE IVF2 ET nnos) ----------------
 ! ======================================================================
 ! --- NAPRE1,NAPRE2,NATEMP SONT MIS EN PLACE ---------------------------
 ! --- POUR UNE EVENTUELLE MODIFICATION DE L'ORDRE DES DDL --------------
@@ -169,10 +170,11 @@ character(len=16) :: option, nomte
 ! ======================================================================
         if (iopt .eq. 1 .or. iopt .eq. 2) then
 !
-! --------- Temp-Meca-Hydr1-Hydr2
+! --------- Temp-Meca-Hydr1(2)-Hydr2(1,2)
 !
-            if (lteatt('HYDR1','2')  .and. .not.lteatt('HYDR2','0') .and.&
-                lteatt('THER','OUI') ) then
+            if (ds_thm%ds_elem%nb_phase(1) .eq. 2 .and.&
+                ds_thm%ds_elem%l_dof_pre2 .and.&
+                ds_thm%ds_elem%l_dof_ther) then
                 napre1 = 0
                 napre2 = 1
                 natemp = 2
@@ -183,10 +185,10 @@ character(len=16) :: option, nomte
                 else if (iopt.eq.2) then
                     r = 0.d0
                     z = 0.d0
-                    do i = 1, nno2
-                        l = (kp-1)*nno2 + i
-                        r = r + zr(igeom+2*i-2)*zr(ivf2+l-1)
-                        z = z + zr(igeom+2*i-1)*zr(ivf2+l-1)
+                    do i = 1, nnos
+                        l = (kp-1)*nnos + i
+                        r = r + zr(igeom+2*i-2)*zr(jv_func2+l-1)
+                        z = z + zr(igeom+2*i-1)*zr(jv_func2+l-1)
                     end do
                     valpar(1) = r
                     valpar(2) = z
@@ -194,27 +196,29 @@ character(len=16) :: option, nomte
                     call fointe('FM', zk8(ifluxf+napre2), 3, nompar, valpar, flu2 , iret)
                     call fointe('FM', zk8(ifluxf+natemp), 3, nompar, valpar, fluth, iret)
                 endif
-                if (lteatt('MECA','OUI')) then
-                    do i = 1, nno2
+                if (ds_thm%ds_elem%l_dof_meca) then
+                    do i = 1, nnos
                         l = 5* (i-1) - 1
-                        zr(ires+l+3) = zr(ires+l+3) - poids*deltat* flu1*zr(ivf2+kk+i-1)
-                        zr(ires+l+4) = zr(ires+l+4) - poids*deltat* flu2*zr(ivf2+kk+i-1)
-                        zr(ires+l+5) = zr(ires+l+5) - poids*deltat* fluth*zr(ivf2+kk+i-1)
+                        zr(ires+l+3) = zr(ires+l+3) - poids*deltat* flu1*zr(jv_func2+kk+i-1)
+                        zr(ires+l+4) = zr(ires+l+4) - poids*deltat* flu2*zr(jv_func2+kk+i-1)
+                        zr(ires+l+5) = zr(ires+l+5) - poids*deltat* fluth*zr(jv_func2+kk+i-1)
                     end do
                 else
-                    do i = 1, nno2
+                    do i = 1, nnos
                         l = 3* (i-1) - 1
-                        zr(ires+l+1) = zr(ires+l+1) - poids*deltat* flu1*zr(ivf2+kk+i-1)
-                        zr(ires+l+2) = zr(ires+l+2) - poids*deltat* flu2*zr(ivf2+kk+i-1)
-                        zr(ires+l+3) = zr(ires+l+3) - poids*deltat* fluth*zr(ivf2+kk+i-1)
+                        zr(ires+l+1) = zr(ires+l+1) - poids*deltat* flu1*zr(jv_func2+kk+i-1)
+                        zr(ires+l+2) = zr(ires+l+2) - poids*deltat* flu2*zr(jv_func2+kk+i-1)
+                        zr(ires+l+3) = zr(ires+l+3) - poids*deltat* fluth*zr(jv_func2+kk+i-1)
                     end do
                 endif
             endif
 !
-! --------- Hydr1-Hydr2
+! --------- Hydr1(2)-Hydr2(1,2)
 !
-            if (lteatt('HYDR1','2')  .and. .not. lteatt('HYDR2','0') .and.&
-                lteatt('THER','NON') .and.       lteatt('MECA','NON')) then
+            if (ds_thm%ds_elem%nb_phase(1) .eq. 2 .and.&
+                ds_thm%ds_elem%l_dof_pre2 .and.&
+                .not. ds_thm%ds_elem%l_dof_ther .and.&
+                .not. ds_thm%ds_elem%l_dof_meca) then
                 napre1 = 0
                 napre2 = 1
                 if (iopt .eq. 1) then
@@ -223,10 +227,10 @@ character(len=16) :: option, nomte
                 else if (iopt.eq.2) then
                     r = 0.d0
                     z = 0.d0
-                    do i = 1, nno2
-                        l = (kp-1)*nno2 + i
-                        r = r + zr(igeom+2*i-2)*zr(ivf2+l-1)
-                        z = z + zr(igeom+2*i-1)*zr(ivf2+l-1)
+                    do i = 1, nnos
+                        l = (kp-1)*nnos + i
+                        r = r + zr(igeom+2*i-2)*zr(jv_func2+l-1)
+                        z = z + zr(igeom+2*i-1)*zr(jv_func2+l-1)
                     end do
                     valpar(1) = r
                     valpar(2) = z
@@ -234,24 +238,26 @@ character(len=16) :: option, nomte
                     call fointe('FM', zk8(ifluxf+napre2), 2, nompar, valpar, flu2, iret)
                 endif
 !
-                if (lteatt('TYPMOD3','SUSHI')) then
-                    do i = 1, nno2
-                        zr(ires) = zr(ires) - poids*flu1*zr(ivf2+kk+i- 1)
-                        zr(ires+1) = zr(ires+1) - poids*flu2*zr(ivf2+ kk+i-1)
+                if (l_vf) then
+                    do i = 1, nnos
+                        zr(ires) = zr(ires) - poids*flu1*zr(jv_func2+kk+i- 1)
+                        zr(ires+1) = zr(ires+1) - poids*flu2*zr(jv_func2+ kk+i-1)
                     end do
                 else
-                    do i = 1, nno2
+                    do i = 1, nnos
                         l = 2* (i-1) - 1
-                        zr(ires+l+1) = zr(ires+l+1) - poids*deltat* flu1*zr(ivf2+kk+i-1)
-                        zr(ires+l+2) = zr(ires+l+2) - poids*deltat* flu2*zr(ivf2+kk+i-1)
+                        zr(ires+l+1) = zr(ires+l+1) - poids*deltat* flu1*zr(jv_func2+kk+i-1)
+                        zr(ires+l+2) = zr(ires+l+2) - poids*deltat* flu2*zr(jv_func2+kk+i-1)
                     end do
                 endif
             endif
 !
-! --------- Temp-Hydr1
+! --------- Temp - Hydr1(2)
 !
-            if (lteatt('HYDR1','2')  .and. lteatt('HYDR2','0') .and.&
-                lteatt('THER','OUI') .and. lteatt('MECA','NON')) then
+            if (ds_thm%ds_elem%nb_phase(1) .eq. 2 .and.&
+                .not. ds_thm%ds_elem%l_dof_pre2 .and.&
+                      ds_thm%ds_elem%l_dof_ther .and.&
+                .not. ds_thm%ds_elem%l_dof_meca) then
                 napre1 = 0
                 natemp = 1
                 if (iopt .eq. 1) then
@@ -260,10 +266,10 @@ character(len=16) :: option, nomte
                 else if (iopt.eq.2) then
                     r = 0.d0
                     z = 0.d0
-                    do i = 1, nno2
-                        l = (kp-1)*nno2 + i
-                        r = r + zr(igeom+2*i-2)*zr(ivf2+l-1)
-                        z = z + zr(igeom+2*i-1)*zr(ivf2+l-1)
+                    do i = 1, nnos
+                        l = (kp-1)*nnos + i
+                        r = r + zr(igeom+2*i-2)*zr(jv_func2+l-1)
+                        z = z + zr(igeom+2*i-1)*zr(jv_func2+l-1)
                     end do
                     valpar(1) = r
                     valpar(2) = z
@@ -274,73 +280,79 @@ character(len=16) :: option, nomte
                     call fointe('FM', zk8(ifluxf+natemp), 3, nompar, valpar,&
                                 fluth, iret)
                 endif
-                do i = 1, nno2
+                do i = 1, nnos
                     l = 2* (i-1) - 1
-                    zr(ires+l+1) = zr(ires+l+1) - poids*deltat*flu1* zr(ivf2+kk+i-1)
-                    zr(ires+l+2) = zr(ires+l+2) - poids*deltat*fluth* zr(ivf2+kk+i-1)
+                    zr(ires+l+1) = zr(ires+l+1) - poids*deltat*flu1* zr(jv_func2+kk+i-1)
+                    zr(ires+l+2) = zr(ires+l+2) - poids*deltat*fluth* zr(jv_func2+kk+i-1)
                 end do
             endif
 !
-! --------- Temp-Hydr1
+! --------- Hydr1(1)
 !
-            if (lteatt('MECA','NON') .and. lteatt('THER','NON') .and.&
-                lteatt('HYDR1','1')  .and. lteatt('HYDR2','0')) then
+            if (ds_thm%ds_elem%nb_phase(1) .eq. 1 .and.&
+                .not. ds_thm%ds_elem%l_dof_pre2 .and.&
+                .not. ds_thm%ds_elem%l_dof_ther .and.&
+                .not. ds_thm%ds_elem%l_dof_meca) then
                 napre1 = 0
                 if (iopt .eq. 1) then
                     flu1 = zr(iflux+ (kp-1)+napre1)
                 else if (iopt.eq.2) then
                     r = 0.d0
                     z = 0.d0
-                    do i = 1, nno2
-                        l = (kp-1)*nno2 + i
-                        r = r + zr(igeom+2*i-2)*zr(ivf2+l-1)
-                        z = z + zr(igeom+2*i-1)*zr(ivf2+l-1)
+                    do i = 1, nnos
+                        l = (kp-1)*nnos + i
+                        r = r + zr(igeom+2*i-2)*zr(jv_func2+l-1)
+                        z = z + zr(igeom+2*i-1)*zr(jv_func2+l-1)
                     end do
                     valpar(1) = r
                     valpar(2) = z
                     call fointe('FM', zk8(ifluxf+napre1), 3, nompar, valpar,&
                                 flu1, iret)
                 endif
-                do i = 1, nno2
+                do i = 1, nnos
                     l = 1* (i-1) - 1
-                    zr(ires+l+1) = zr(ires+l+1) - poids*deltat*flu1* zr(ivf2+kk+i-1)
+                    zr(ires+l+1) = zr(ires+l+1) - poids*deltat*flu1* zr(jv_func2+kk+i-1)
                 end do
             endif
 !
-! --------- Meca-Hydr1
+! --------- Meca-Hydr1(1)
 !
-            if (lteatt('MECA','OUI') .and. lteatt('THER','NON') .and.&
-                lteatt('HYDR1','1')  .and. lteatt('HYDR2','0')) then
+            if (ds_thm%ds_elem%nb_phase(1) .eq. 1 .and.&
+                .not. ds_thm%ds_elem%l_dof_pre2 .and.&
+                .not. ds_thm%ds_elem%l_dof_ther .and.&
+                      ds_thm%ds_elem%l_dof_meca) then
                 napre1 = 0
                 if (iopt .eq. 1) then
                     flu1 = zr(iflux+ (kp-1)+napre1)
                 else if (iopt.eq.2) then
                     r = 0.d0
                     z = 0.d0
-                    do i = 1, nno2
-                        l = (kp-1)*nno2 + i
-                        r = r + zr(igeom+2*i-2)*zr(ivf2+l-1)
-                        z = z + zr(igeom+2*i-1)*zr(ivf2+l-1)
+                    do i = 1, nnos
+                        l = (kp-1)*nnos + i
+                        r = r + zr(igeom+2*i-2)*zr(jv_func2+l-1)
+                        z = z + zr(igeom+2*i-1)*zr(jv_func2+l-1)
                     end do
                     valpar(1) = r
                     valpar(2) = z
                     call fointe('FM', zk8(ifluxf+napre1), 3, nompar, valpar,&
                                 flu1, iret)
                 endif
-                do i = 1, nno2
+                do i = 1, nnos
                     l = 3* (i-1) - 1
                     if (.not.l_steady) then
-                        zr(ires+l+3) = zr(ires+l+3) - poids*deltat* flu1*zr(ivf2+kk+i-1)
+                        zr(ires+l+3) = zr(ires+l+3) - poids*deltat* flu1*zr(jv_func2+kk+i-1)
                     else
-                        zr(ires+l+3) = zr(ires+l+3) - poids*flu1*zr( ivf2+kk+i-1)
+                        zr(ires+l+3) = zr(ires+l+3) - poids*flu1*zr( jv_func2+kk+i-1)
                     endif
                 end do
             endif
 !
-! --------- Meca-Hydr1-Hydr2
+! --------- Meca-Hydr1(2)-Hydr2(1,2)
 !
-            if (lteatt('MECA','OUI') .and.      lteatt('THER','NON') .and.&
-                lteatt('HYDR1','2')  .and. .not.lteatt('HYDR2','0')) then
+            if (ds_thm%ds_elem%nb_phase(1) .eq. 2 .and.&
+                      ds_thm%ds_elem%l_dof_pre2 .and.&
+                .not. ds_thm%ds_elem%l_dof_ther .and.&
+                      ds_thm%ds_elem%l_dof_meca) then
                 napre1 = 0
                 napre2 = 1
                 if (iopt .eq. 1) then
@@ -349,27 +361,29 @@ character(len=16) :: option, nomte
                 else if (iopt.eq.2) then
                     r = 0.d0
                     z = 0.d0
-                    do i = 1, nno2
-                        l = (kp-1)*nno2 + i
-                        r = r + zr(igeom+2*i-2)*zr(ivf2+l-1)
-                        z = z + zr(igeom+2*i-1)*zr(ivf2+l-1)
+                    do i = 1, nnos
+                        l = (kp-1)*nnos + i
+                        r = r + zr(igeom+2*i-2)*zr(jv_func2+l-1)
+                        z = z + zr(igeom+2*i-1)*zr(jv_func2+l-1)
                     end do
                     valpar(1) = r
                     valpar(2) = z
                     call fointe('FM', zk8(ifluxf+napre1), 3, nompar, valpar, flu1, iret)
                     call fointe('FM', zk8(ifluxf+napre2), 3, nompar, valpar, flu2, iret)
                 endif
-                do i = 1, nno2
+                do i = 1, nnos
                     l = 4* (i-1) - 1
-                    zr(ires+l+3) = zr(ires+l+3) - poids*deltat*flu1* zr(ivf2+kk+i-1)
-                    zr(ires+l+4) = zr(ires+l+4) - poids*deltat*flu2* zr(ivf2+kk+i-1)
+                    zr(ires+l+3) = zr(ires+l+3) - poids*deltat*flu1* zr(jv_func2+kk+i-1)
+                    zr(ires+l+4) = zr(ires+l+4) - poids*deltat*flu2* zr(jv_func2+kk+i-1)
                 end do
             endif
 !
-! --------- Meca-Temp-Hydr1
+! --------- Meca-Temp-Hydr1(1)
 !
-            if (lteatt('MECA','OUI') .and. lteatt('THER','OUI') .and.&
-                lteatt('HYDR1','1')  .and. lteatt('HYDR2','0')) then
+            if (ds_thm%ds_elem%nb_phase(1) .eq. 1 .and.&
+                .not. ds_thm%ds_elem%l_dof_pre2 .and.&
+                      ds_thm%ds_elem%l_dof_ther .and.&
+                      ds_thm%ds_elem%l_dof_meca) then
                 napre1 = 0
                 natemp = 1
                 if (iopt .eq. 1) then
@@ -378,10 +392,10 @@ character(len=16) :: option, nomte
                 else if (iopt.eq.2) then
                     r = 0.d0
                     z = 0.d0
-                    do i = 1, nno2
-                        l = (kp-1)*nno2 + i
-                        r = r + zr(igeom+2*i-2)*zr(ivf2+l-1)
-                        z = z + zr(igeom+2*i-1)*zr(ivf2+l-1)
+                    do i = 1, nnos
+                        l = (kp-1)*nnos + i
+                        r = r + zr(igeom+2*i-2)*zr(jv_func2+l-1)
+                        z = z + zr(igeom+2*i-1)*zr(jv_func2+l-1)
                     end do
                     valpar(1) = r
                     valpar(2) = z
@@ -390,10 +404,10 @@ character(len=16) :: option, nomte
                     call fointe('FM', zk8(ifluxf+natemp), 3, nompar, valpar,&
                                 fluth, iret)
                 endif
-                do i = 1, nno2
+                do i = 1, nnos
                     l = 4* (i-1) - 1
-                    zr(ires+l+3) = zr(ires+l+3) - poids*deltat*flu1* zr(ivf2+kk+i-1)
-                    zr(ires+l+4) = zr(ires+l+4) - poids*deltat*fluth* zr(ivf2+kk+i-1)
+                    zr(ires+l+3) = zr(ires+l+3) - poids*deltat*flu1* zr(jv_func2+kk+i-1)
+                    zr(ires+l+4) = zr(ires+l+4) - poids*deltat*fluth* zr(jv_func2+kk+i-1)
                 end do
             endif
 ! ======================================================================
@@ -406,7 +420,7 @@ character(len=16) :: option, nomte
                 pres = 0.d0
                 do i = 1, nno
                     l = (kp-1)*nno + i
-                    pres = pres + zr(ipres+i-1)*zr(ivf+l-1)
+                    pres = pres + zr(ipres+i-1)*zr(jv_func+l-1)
                 end do
             else if (iopt.eq.4) then
                 pres = 0.d0
@@ -416,20 +430,20 @@ character(len=16) :: option, nomte
                     call fointe('FM', zk8(ipresf), 3, nompar, valpar,&
                                 presf, iret)
                     l = (kp-1)*nno + i
-                    pres = pres + presf*zr(ivf+l-1)
+                    pres = pres + presf*zr(jv_func+l-1)
                 end do
             endif
             tx = -nx*pres
             ty = -ny*pres
             do i = 1, nnos
                 l = ndlno* (i-1) - 1
-                zr(ires+l+1) = zr(ires+l+1) + tx*zr(ivf+k+i-1)*poids
-                zr(ires+l+2) = zr(ires+l+2) + ty*zr(ivf+k+i-1)*poids
+                zr(ires+l+1) = zr(ires+l+1) + tx*zr(jv_func+k+i-1)*poids
+                zr(ires+l+2) = zr(ires+l+2) + ty*zr(jv_func+k+i-1)*poids
             end do
             do i = 1, (nno - nnos)
                 l = ndlno*nnos+ndlnm* (i-1) -1
-                zr(ires+l+1) = zr(ires+l+1) + tx*zr(ivf+k+i+nnos-1)* poids
-                zr(ires+l+2) = zr(ires+l+2) + ty*zr(ivf+k+i+nnos-1)* poids
+                zr(ires+l+1) = zr(ires+l+1) + tx*zr(jv_func+k+i+nnos-1)* poids
+                zr(ires+l+2) = zr(ires+l+2) + ty*zr(jv_func+k+i+nnos-1)* poids
             end do
         endif
     end do
