@@ -24,7 +24,7 @@ fsin = DEFI_FONCTION(NOM_PARA="INST",
 fsin.debugPrint()
 
 test.assertEqual(fsin.getProperties(),
-                 ['FONCTION', 'LIN LIN', 'INST', 'TEMP', 'EE', '1'])
+                 ['FONCTION', 'LIN LIN', 'INST', 'TEMP', 'EE', '00000001'])
 test.assertEqual(len(fsin.Absc()), n)
 test.assertEqual(len(fsin.Ordo()), n)
 

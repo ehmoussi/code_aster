@@ -18,26 +18,33 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 # person_in_charge: mathieu.courtois@edf.fr
-from ..Cata import Commands, checkSyntax
 from ..Objects import Function
-from ..RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
 from ..Utilities import compat_listr8
+from .ExecuteCommand import ExecuteCommand
 
 
-def CALC_FONC_INTERP(**kwargs):
-    """Interpolate functions and formulas."""
-    compat_listr8(kwargs, None, "LIST_PARA", "VALE_PARA")
-    compat_listr8(kwargs, None, "LIST_PARA_FONC", "VALE_PARA_FONC")
-    checkSyntax(Commands.CALC_FONC_INTERP, kwargs)
+class FunctionInterpolation(ExecuteCommand):
+    """Command that interpolates functions and formulas to create a new
+    :py:class:`~code_aster.Objects.Function`."""
+    command_name = "CALC_FONC_INTERP"
 
-    result = Function.create()
-    name = result.getName()
+    def adapt_syntax(self, keywords):
+        """Hook to adapt syntax from a old version or for compatibility reasons.
 
-    syntax = CommandSyntax("CALC_FONC_INTERP")
-    syntax.setResult(name, "FONCTION")
-    syntax.define(kwargs)
-    numOp = 134
-    python_execop(numOp)
-    syntax.free()
-    return result
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords, changed
+                in place.
+        """
+        compat_listr8(keywords, "", "LIST_PARA", "VALE_PARA")
+        compat_listr8(keywords, "", "LIST_PARA_FONC", "VALE_PARA_FONC")
+
+    def create_result(self, keywords):
+        """Initialize the result object.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = Function.create()
+
+
+CALC_FONC_INTERP = FunctionInterpolation()
