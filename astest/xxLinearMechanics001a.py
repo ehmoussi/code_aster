@@ -8,9 +8,7 @@ code_aster.init()
 
 test = code_aster.TestCase()
 
-#mail1 = LIRE_MAILLAGE( FORMAT = "MED" )
-mail1=code_aster.Mesh.create()
-mail1.readMedFile("test001f.mmed")
+mail1 = LIRE_MAILLAGE( FORMAT = "MED" )
 
 model = AFFE_MODELE( MAILLAGE = mail1,
                      AFFE = _F( MODELISATION = "3D",
