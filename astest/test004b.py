@@ -18,7 +18,7 @@ monModel.build()
 YOUNG = 200000.0;
 POISSON = 0.3;
 
-materElas = code_aster.MaterialBehaviour.ElasMaterialBehaviour()
+materElas = code_aster.ElasMaterialBehaviour.create()
 materElas.setDoubleValue( "E", YOUNG )
 materElas.setDoubleValue( "Nu", POISSON )
 
@@ -32,20 +32,20 @@ affectMat.addMaterialOnAllMesh( acier )
 affectMat.build()
 
 imposedDof1 = code_aster.DisplacementDouble.create()
-imposedDof1.setValue( code_aster.Loads.Dx, 0.0 )
-imposedDof1.setValue( code_aster.Loads.Dy, 0.0 )
-imposedDof1.setValue( code_aster.Loads.Dz, 0.0 )
-charMeca1 = code_aster.ImposedDisplacementDouble(monModel)
+imposedDof1.setValue( code_aster.PhysicalQuantityComponent.Dx, 0.0 )
+imposedDof1.setValue( code_aster.PhysicalQuantityComponent.Dy, 0.0 )
+imposedDof1.setValue( code_aster.PhysicalQuantityComponent.Dz, 0.0 )
+charMeca1 = code_aster.ImposedDisplacementDouble.create(monModel)
 charMeca1.setValue( imposedDof1, "Bas" )
 charMeca1.build()
 
 imposedPres1 = code_aster.PressureDouble.create()
-imposedPres1.setValue( code_aster.Loads.Pres, 1000. )
+imposedPres1.setValue( code_aster.PhysicalQuantityComponent.Pres, 1000. )
 charMeca2 = code_aster.DistributedPressureDouble.create(monModel)
 charMeca2.setValue( imposedPres1, "Haut" )
 charMeca2.build()
 
-monSolver = code_aster.MumpsSolver.create( code_aster.Metis )
+monSolver = code_aster.MumpsSolver.create( code_aster.Renumbering.Metis )
 
 # Define a first nonlinear Analysis
 statNonLine1 = code_aster.StaticNonLinearAnalysis.create()
