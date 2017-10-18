@@ -13,6 +13,7 @@ Class diagram
     code_aster.Objects.fieldonelements_ext
     code_aster.Objects.fieldonnodes_ext
     code_aster.Objects.function_ext
+    code_aster.Objects.listoffloats
     code_aster.Objects.table_ext
    :parts: 1
 
@@ -35,6 +36,12 @@ Detailed description
 .. automodule:: code_aster.Objects.fieldonnodes_ext
 
 .. autoclass:: code_aster.Objects.fieldonnodes_ext.post_comp_cham_no
+   :show-inheritance:
+   :members:
+
+.. automodule:: code_aster.Objects.listoffloats
+
+.. autoclass:: code_aster.Objects.listoffloats.ListOfFloats
    :show-inheritance:
    :members:
 
