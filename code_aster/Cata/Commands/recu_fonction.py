@@ -45,10 +45,9 @@ def recu_fonction_prod(RESULTAT=None,TABLE=None,RESU_GENE=None,
 
 RECU_FONCTION=OPER(nom="RECU_FONCTION",op=90,sd_prod=recu_fonction_prod,
                    fr=tr("Extraire sous forme d'une fonction, l'évolution d'une grandeur en fonction d'une autre"),
-                   reentrant='f',
+                   reentrant='n',
          regles=(UN_PARMI('CHAM_GD','RESULTAT','RESU_GENE','TABLE','BASE_ELAS_FLUI','NAPPE','INTE_SPEC'),),
 
-         reuse=SIMP(statut='c', typ=CO),
          CHAM_GD         =SIMP(statut='f',typ=(cham_no_sdaster,cham_elem,),),
          RESULTAT        =SIMP(statut='f',typ=resultat_sdaster),
          RESU_GENE       =SIMP(statut='f',typ=(tran_gene, mode_gene, harm_gene)),

@@ -31,7 +31,7 @@ DEFI_DOMAINE_REDUIT=OPER(nom="DEFI_DOMAINE_REDUIT",op=50,
      NOM_DOMAINE     = SIMP(statut='o',typ='TXM',max=1),
      NB_COUCHE_SUPPL = SIMP(statut='f',typ='I',defaut=0),
      NOM_INTERFACE   = SIMP(statut='o',typ='TXM',max=1),
-     
+     MAILLAGE        = SIMP(statut='o',typ=maillage_sdaster,fr=tr("Maillage réutlisé en entrée")),
      DOMAINE_MINI   = FACT(statut='f',max=1,
          GROUP_NO        = SIMP(statut='f',typ=grno,validators=NoRepeat(),max='**'),
          NOEUD           = SIMP(statut='c',typ=no  ,validators=NoRepeat(),max='**'),

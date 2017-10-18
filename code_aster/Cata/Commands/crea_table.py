@@ -36,11 +36,10 @@ def crea_table_prod(TYPE_TABLE, **args):
 
 CREA_TABLE=OPER(nom="CREA_TABLE",op=36,sd_prod=crea_table_prod,
                 fr=tr("Création d'une table à partir d'une fonction ou de deux listes"),
-                reentrant='f',
+                reentrant='n',
 
            regles=(EXCLUS('FONCTION','LISTE','RESU'),),
 
-           reuse=SIMP(statut='c', typ=CO),
            LISTE=FACT(statut='f',max='**',
                  fr=tr("Creation d'une table a partir de listes"),
                  regles=(UN_PARMI('LISTE_I','LISTE_R','LISTE_K')),
