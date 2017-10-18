@@ -19,22 +19,22 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import GenericMechanicalLoad
+from ..Objects import GenericMechanicalLoad
+from .ExecuteCommand import ExecuteCommand
 
 
-def AFFE_CHAR_MECA(**curDict):
-    model = curDict["MODELE"]
-    returnLoad = GenericMechanicalLoad.create(model)
-    name = returnLoad.getName()
-    type = returnLoad.getType()
-    syntax = CommandSyntax("AFFE_CHAR_MECA")
+class MechanicalLoadDefinition(ExecuteCommand):
+    """Command that defines :class:`~code_aster.Objects.GenericMechanicalLoad`.
+    """
+    command_name = "AFFE_CHAR_MECA"
 
-    syntax.setResult(name, type)
+    def create_result(self, keywords):
+        """Initialize the result.
 
-    syntax.define(curDict)
-    numOp = 7
-    python_execop(numOp)
-    syntax.free()
-    return returnLoad
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = GenericMechanicalLoad.create(keywords["MODELE"])
+
+
+AFFE_CHAR_MECA = MechanicalLoadDefinition()
