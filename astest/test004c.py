@@ -10,7 +10,7 @@ code_aster.init()
 test = code_aster.TestCase()
 
 monMaillage = code_aster.Mesh.create()
-monMaillage.readAsterMeshFile( "ssnv176a.mail" )
+monMaillage.readAsterMeshFile( "test004c.mail" )
 
 monModel = code_aster.Model.create()
 monModel.setSupportMesh( monMaillage )
@@ -63,7 +63,7 @@ charMeca2.build()
 # Instants de calcul pour la première phase de calcul
 
 temps = [0.0, 1.0]
-timeList = code_aster.Studies.TimeStepManager.create()
+timeList = code_aster.TimeStepManager.create()
 timeList.setTimeList( temps )
 timeList.build()
 
@@ -85,7 +85,7 @@ statNonLine1.addBehaviourOnElements( EndoOrthBeton )
 
 # Instants de calcul pour la seconde phase de calcul
 temps = np.linspace(1.0, 2.0, num=50)
-timeList = code_aster.Studies.TimeStepManager.create()
+timeList = code_aster.TimeStepManager.create()
 timeList.setTimeList( temps )
 timeList.build()
 
