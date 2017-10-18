@@ -37,8 +37,6 @@ Development rules
 
         .. code-block:: none
 
-            function01b  <S>_ERROR              expected listr8, not numpy.float64
-            function01c  <S>_ERROR              expected listr8, not numpy.float64
             test001f     NOOK_TEST_RESU         'MATR_ASSE_DEPL_R_DEPL_R' != 'MATR_ASSE_DEPL_R'
             test004b     <S>_ERROR              ConstitutiveLawEnum
             test004c     <S>_ERROR              ConstitutiveLawEnum
