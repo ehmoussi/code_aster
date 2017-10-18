@@ -105,17 +105,48 @@ def _if_exists(keywords, factor_keyword, simple_keyword, callback):
             *factor_keyword* is empty or *(factor keyword dict, simple_keyword)*
             otherwise.
     """
-    if factor_keyword and factor_keyword.strip():
+    if factor_keyword.strip():
         if not keywords.has_key(factor_keyword):
             return
-        if simple_keyword and simple_keyword.strip():
+        if simple_keyword.strip():
             fact = force_list(keywords[factor_keyword])
             for occ in fact:
                 if occ.has_key(simple_keyword):
                     callback(occ, simple_keyword)
             return
         callback(keywords, factor_keyword)
+    elif simple_keyword.strip():
+        if keywords.has_key(simple_keyword):
+            callback(keywords, simple_keyword)
 
+
+def _if_not_exists(keywords, factor_keyword, simple_keyword, callback):
+    """Call a *callback* if the couple *(factor_keyword, simple_keyword)* is
+    **not found** in the user's keywords.
+
+    Arguments:
+        keywords (dict): Dict of keywords passed to a command, changed in place.
+        factor_keyword (str): Name of the factor keyword or an empty string if
+            the keywords are at the top level.
+        simple_keyword (str): Name of the simple keyword. It it is an empty
+            string the factor keyword is entirely removed.
+        callback (function): Callback function with signature *(container, key)*
+            where *(container, key)* is *(keywords, factor_keyword)* if
+            *factor_keyword* is empty or *(factor keyword dict, simple_keyword)*
+            otherwise.
+    """
+    if factor_keyword.strip():
+        if not keywords.has_key(factor_keyword):
+            callback(keywords, factor_keyword)
+            return
+        if simple_keyword.strip():
+            fact = force_list(keywords[factor_keyword])
+            for occ in fact:
+                if not occ.has_key(simple_keyword):
+                    callback(occ, simple_keyword)
+    elif simple_keyword.strip():
+        if not keywords.has_key(simple_keyword):
+            callback(keywords, simple_keyword)
 
 def remove_keyword(keywords, factor_keyword, simple_keyword, warning=False):
     """Remove a couple *(factor_keyword, simple_keyword)* for the user's
@@ -134,16 +165,42 @@ def remove_keyword(keywords, factor_keyword, simple_keyword, warning=False):
             return
         msg = ("This keyword is not yet supported and are currently "
                "removed: {0}{1}{2}")
-        sep = "/" if simple_keyword and simple_keyword.strip() else ""
+        sep = "/" if factor_keyword.strip() and simple_keyword.strip() else ""
         warn(msg.format(factor_keyword, sep, simple_keyword))
         del container[key]
 
     _if_exists(keywords, factor_keyword, simple_keyword, _warn)
 
 
-def unsupported(keywords, factor_keyword, simple_keyword):
+def unsupported(keywords, factor_keyword, simple_keyword, warning=False):
+    """Raises a *NotImplementedError* exception or a *SyntaxWarning* if
+    the couple *(factor_keyword, simple_keyword)* exists in the user's keywords.
+
+    Arguments:
+        keywords (dict): Dict of keywords passed to a command, changed in place.
+        factor_keyword (str): Name of the factor keyword or an empty string if
+            the keywords are at the top level.
+        simple_keyword (str): Name of the simple keyword. It it is an empty
+            string the factor keyword is entirely removed.
+        warning (bool): If *True* *DeprecationWarning* is emitted. Otherwise
+            a *NotImplementedError* is raised.
+    """
+    def _raise(container, key):
+        msg = ("This keyword is not yet supported: {0}{1}{2}")
+        sep = "/" if factor_keyword.strip() and simple_keyword.strip() else ""
+        text_msg = msg.format(factor_keyword, sep, simple_keyword)
+        if not warning:
+            raise NotImplementedError(text_msg)
+        else:
+            warn(text_msg, SyntaxWarning)
+
+    _if_exists(keywords, factor_keyword, simple_keyword, _raise)
+
+
+def required(keywords, factor_keyword, simple_keyword):
     """Raises a *NotImplementedError* exception if the couple
-    *(factor_keyword, simple_keyword)* exists in the user's keywords.
+    *(factor_keyword, simple_keyword)* **does not** exists in the
+    user's keywords.
 
     Arguments:
         keywords (dict): Dict of keywords passed to a command, changed in place.
@@ -153,9 +210,9 @@ def unsupported(keywords, factor_keyword, simple_keyword):
             string the factor keyword is entirely removed.
     """
     def _raise(container, key):
-        msg = ("This keyword is not yet supported: {0}{1}{2}")
-        sep = "/" if simple_keyword and simple_keyword.strip() else ""
-        raise NotImplementedError(msg.format(factor_keyword, sep,
-                                             simple_keyword))
+        msg = ("This keyword is currently required: {0}{1}{2}")
+        sep = "/" if factor_keyword.strip() and simple_keyword.strip() else ""
+        text_msg = msg.format(factor_keyword, sep, simple_keyword)
+        raise NotImplementedError(text_msg)
 
-    _if_exists(keywords, factor_keyword, simple_keyword, _raise)
+    _if_not_exists(keywords, factor_keyword, simple_keyword, _raise)
