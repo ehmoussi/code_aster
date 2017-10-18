@@ -39,13 +39,23 @@ bool ResultsContainerInstance::allocate( int nbRanks ) throw ( std::runtime_erro
     return true;
 };
 
-void ResultsContainerInstance::addModel( const ModelPtr& model,
-                                         int rank ) throw ( std::runtime_error )
+void ResultsContainerInstance::addElementaryCharacteristics( const ElementaryCharacteristicsPtr& cara,
+                                                             int rank )
+    throw ( std::runtime_error )
 {
     long rang = rank;
-    std::string type("MODELE");
-    CALL_RSADPA_ZK8_WRAP( getName().c_str(), &rang, model->getName().c_str(),
+    std::string type("CARAELEM");
+    CALL_RSADPA_ZK8_WRAP( getName().c_str(), &rang, cara->getName().c_str(),
                           type.c_str() );
+};
+
+void ResultsContainerInstance::addListOfLoads( const ListOfLoadsPtr& load,
+                                               int rank ) throw ( std::runtime_error )
+{
+    long rang = rank;
+    std::string type("EXCIT");
+    CALL_RSADPA_ZK24_WRAP( getName().c_str(), &rang, load->getName().c_str(),
+                           type.c_str() );
 };
 
 void ResultsContainerInstance::addMaterialOnMesh( const MaterialOnMeshPtr& mater,
@@ -57,6 +67,15 @@ void ResultsContainerInstance::addMaterialOnMesh( const MaterialOnMeshPtr& mater
                           type.c_str() );
 };
 
+void ResultsContainerInstance::addModel( const ModelPtr& model,
+                                         int rank ) throw ( std::runtime_error )
+{
+    long rang = rank;
+    std::string type("MODELE");
+    CALL_RSADPA_ZK8_WRAP( getName().c_str(), &rang, model->getName().c_str(),
+                          type.c_str() );
+};
+
 void ResultsContainerInstance::addTimeValue( double value,
                                              int rank ) throw ( std::runtime_error )
 {
@@ -65,7 +84,20 @@ void ResultsContainerInstance::addTimeValue( double value,
     CALL_RSADPA_ZR_WRAP( getName().c_str(), &rang, &value, type.c_str() );
 };
 
-bool ResultsContainerInstance::buildFromExisting() throw ( std::runtime_error )
+void ResultsContainerInstance::listFields() const
+{   std::cout<<"Content of DataStructure : ";
+    for ( auto curIter : _dictOfVectorOfFieldsNodes )
+    {
+        std::cout << curIter.first << " - " ;
+    }
+    for ( auto curIter : _dictOfVectorOfFieldsElements )
+    {
+        std::cout << curIter.first << " - "  ;
+    }
+    std::cout << std::endl;
+};
+
+bool ResultsContainerInstance::update() throw ( std::runtime_error )
 {
     _serialNumber->updateValuePointer();
     _namesOfFields->buildFromJeveux();
@@ -103,21 +135,31 @@ bool ResultsContainerInstance::buildFromExisting() throw ( std::runtime_error )
 
                 if( resu == "NOEU" )
                 {
-                    FieldOnNodesDoublePtr result( new FieldOnNodesDoubleInstance( name ) );
-
-                    auto curIter2 = _dictOfVectorOfFieldsNodes.find( nomSymb );
+                    const auto& curIter2 = _dictOfVectorOfFieldsNodes.find( nomSymb );
                     if( curIter2 == _dictOfVectorOfFieldsNodes.end() )
-                        _dictOfVectorOfFieldsNodes[ nomSymb ] = VectorOfFieldsNodes( numberOfSerialNum );
-                    _dictOfVectorOfFieldsNodes[ nomSymb ][ rank ] = result;
+                        _dictOfVectorOfFieldsNodes[ nomSymb ] = VectorOfFieldsNodes( numberOfSerialNum,
+                            FieldOnNodesDoublePtr( nullptr ) );
+
+                    long test2 = _dictOfVectorOfFieldsNodes[ nomSymb ][ rank ].use_count();
+                    if( test2 == 0 )
+                    {
+                        FieldOnNodesDoublePtr result( new FieldOnNodesDoubleInstance( name ) );
+                        _dictOfVectorOfFieldsNodes[ nomSymb ][ rank ] = result;
+                    }
                 }
                 else if( resu == "ELEM" || resu == "ELNO" || resu == "ELGA" )
                 {
-                    FieldOnElementsDoublePtr result( new FieldOnElementsDoubleInstance( name ) );
-
-                    auto curIter2 = _dictOfVectorOfFieldsElements.find( nomSymb );
+                    const auto& curIter2 = _dictOfVectorOfFieldsElements.find( nomSymb );
                     if( curIter2 == _dictOfVectorOfFieldsElements.end() )
-                        _dictOfVectorOfFieldsElements[ nomSymb ] = VectorOfFieldsElements( numberOfSerialNum );
-                    _dictOfVectorOfFieldsElements[ nomSymb ][ rank ] = result;
+                        _dictOfVectorOfFieldsElements[ nomSymb ] = VectorOfFieldsElements( numberOfSerialNum,
+                            FieldOnElementsDoublePtr( nullptr ) );
+
+                    long test2 = _dictOfVectorOfFieldsElements[ nomSymb ][ rank ].use_count();
+                    if( test2 == 0 )
+                    {
+                        FieldOnElementsDoublePtr result( new FieldOnElementsDoubleInstance( name ) );
+                        _dictOfVectorOfFieldsElements[ nomSymb ][ rank ] = result;
+                    }
                 }
             }
         }

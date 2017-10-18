@@ -150,7 +150,7 @@ NonLinearEvolutionContainerPtr StaticNonLinearAnalysisInstance::execute() throw 
     }
 // Return result 
 //    resultSNL->debugPrint(6);
-    resultSNL->buildFromExisting(); 
+    resultSNL->update(); 
     return resultSNL;
 };
 

@@ -1,6 +1,6 @@
 /**
- * @file ResultsContainerInterface.cxx
- * @brief Interface python de ResultsContainer
+ * @file LinearDisplacementEvolutionContainerInterface.cxx
+ * @brief Interface python de LinearDisplacementEvolutionContainer
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,22 +21,17 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/ResultsContainerInterface.h"
+#include "PythonBindings/LinearDisplacementEvolutionContainerInterface.h"
 #include "PythonBindings/SharedPtrUtilities.h"
 #include <boost/python.hpp>
 
-void exportResultsContainerToPython()
+void exportLinearDisplacementEvolutionContainerToPython()
 {
     using namespace boost::python;
 
-    class_< ResultsContainerInstance, ResultsContainerInstance::ResultsContainerPtr,
-            bases< DataStructure > > ( "ResultsContainer", no_init )
-        .def( "create", &createSharedPtr< ResultsContainerInstance > )
+    class_< LinearDisplacementEvolutionContainerInstance, LinearDisplacementEvolutionContainerPtr,
+            bases< ResultsContainerInstance > > ( "LinearDisplacementEvolutionContainer", no_init )
+        .def( "create", &createSharedPtr< LinearDisplacementEvolutionContainerInstance > )
         .staticmethod( "create" )
-        .def( "getRealFieldOnNodes", &ResultsContainerInstance::getRealFieldOnNodes )
-        .def( "getRealFieldOnElements", &ResultsContainerInstance::getRealFieldOnElements )
-        .def( "printMedFile", &ResultsContainerInstance::printMedFile )
-        .def( "listFields", &ResultsContainerInstance::listFields )
-        .def( "update", &ResultsContainerInstance::update )
     ;
 };

@@ -19,7 +19,8 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import EvolutiveLoad, EvolutiveThermalLoad
+from ..Objects import (EvolutiveLoad, EvolutiveThermalLoad,
+                       LinearDisplacementEvolutionContainer)
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -38,8 +39,19 @@ class ResultCreator(ExecuteCommand):
             self._result = EvolutiveLoad.create()
         elif typ == "EVOL_THER":
             self._result = EvolutiveThermalLoad.create()
+        elif typ == "EVOL_ELAS":
+            self._result = LinearDisplacementEvolutionContainer.create()
         else:
             raise NotImplementedError("Type of result {0!r} not yet "
                                       "implemented".format(typ))
+
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        self._result.update()
+
 
 CREA_RESU = ResultCreator()

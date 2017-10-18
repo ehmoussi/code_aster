@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine rsadpa_zk8_wrap(nomsd, nuordr, modele, typesd)
+subroutine rsadpa_zk24_wrap(nomsd, nuordr, modele, typesd)
 ! aslint: disable=W1306
     implicit none
 #include "jeveux.h"
@@ -32,5 +32,5 @@ subroutine rsadpa_zk8_wrap(nomsd, nuordr, modele, typesd)
 ! ----------------------------------------------------------------------
     call rsadpa(nomsd, 'E', 1, typesd, nuordr,&
                 0, sjv=jpara)
-    zk8(jpara)=modele
+    zk24(jpara)=modele
 end subroutine
