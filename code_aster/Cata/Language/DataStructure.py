@@ -21,7 +21,7 @@
 This package is only used to check the *legacy* syntax.
 
 It is not important to use the real class (defined in Cython).
-Cython objects must defined a `getType()` function that is compared to
+Boost-Python objects must defined a `getType()` function that is compared to
 the return of the class method `getType()` of datastructures.
 
 Ex.: maillage_sdaster.getType() = Mesh().getType() = "MAILLAGE"
@@ -37,8 +37,15 @@ class DataStructure(object):
     @classmethod
     def getType(cls):
         """Return the type of DataStructure"""
-        # use for static checking (with fake datastructures)
         return cls.__name__.replace("_sdaster", "").upper()
+
+    @classmethod
+    def getSubtypes(cls):
+        """Return the type of DataStructure and all its subtypes."""
+        types = [cls.getType()]
+        for subclass in cls.__subclasses__():
+            types.extend(subclass.getSubtypes())
+        return types
 
     @classmethod
     def register_deepcopy_callback(cls, callback):
