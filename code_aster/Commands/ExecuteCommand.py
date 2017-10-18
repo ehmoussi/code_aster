@@ -20,10 +20,33 @@
 """
 This module defines the objects on which the user's Commands are based.
 
+All Commands executors are subclasses of :class:`.ExecuteCommand`.
 
-For all features that are not yet supported, prefer use utilities from
+When a new command is added there are different levels of complexity:
+
+- Commands that are automatically added just using their catalog.
+  Only few commands fully work with this method but it is very useful
+  to see what it is necessary to implement to add a new Command.
+
+  .. note:: All Commands that are not explicitly imported by
+    :mod:`code_aster.Commands.__init__` are automatically created using this
+    method.
+
+- Commands where the Fortran operator is directly called. Usually it is just
+  necessary to define the type of result object.
+  Example: :mod:`~code_aster.Commands.defi_compor`.
+
+- Commands where keywords are used to create the output result.
+  Example: :mod:`~code_aster.Commands.defi_group`.
+
+- Commands where several steps must be adapted. Usually, the operator directly
+  calls C++ Objects to do the job.
+
+
+For all features that are not yet supported, please use utilities from
 the :mod:`code_aster.Utilities` functions (example:
-:func:`~code_aster.Utilities.compatibility.unsupported`).
+:func:`~code_aster.Utilities.compatibility.unsupported` or
+:func:`~code_aster.Utilities.compatibility.required`) to identify them.
 
 
 Base classes

@@ -37,3 +37,5 @@ Detailed description
 .. autoclass:: code_aster.Objects.fieldonnodes_ext.post_comp_cham_no
    :show-inheritance:
    :members:
+
+.. automodule:: code_aster.Objects.meshcoordinatesfield_ext
