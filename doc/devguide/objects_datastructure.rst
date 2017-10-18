@@ -492,6 +492,15 @@ that are not documented on :ref:`devguide-datastructures`.
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.LinearDisplacementEvolutionContainer` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.LinearDisplacementEvolutionContainer
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.LineicForceDouble` object
 ================================================================================
 
@@ -559,6 +568,15 @@ that are not documented on :ref:`devguide-datastructures`.
 ================================================================================
 
 .. autoclass:: code_aster.Objects.Mesh
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.MeshCoordinatesField` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.MeshCoordinatesField
    :show-inheritance:
    :members:
 
