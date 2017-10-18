@@ -82,7 +82,7 @@ class MechanicalSolver(ExecuteCommand):
         fkwSolv = keywords["SOLVEUR"]
         for key, value in fkwSolv.iteritems():
             if key not in ("METHODE", "RENUM"):
-                unsupported(fkwSolv, "", key)
+                unsupported(keywords, "SOLVEUR", key, warning=True)
         method = fkwSolv["METHODE"]
         renum = fkwSolv["RENUM"]
 
