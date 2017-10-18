@@ -21,62 +21,67 @@
 
 import numpy as np
 
-from ..Cata import Commands, checkSyntax
 from ..Objects import Function
-from ..Utilities import compat_listr8
+from ..Utilities import unsupported
+from .ExecuteCommand import ExecuteCommand
 
 
-funcParameterNames = (
-    "DX","DY","DZ","DRX","DRY","DRZ","TEMP","TSEC",
-    "INST","X","Y","Z","EPSI","META","FREQ","PULS","DSP",
-    "AMOR","ABSC","SIGM","HYDR","SECH","PORO","SAT",
-    "PGAZ","PCAP","PLIQ","PVAP","PAD","VITE","ENDO",
-    "NORM","EPAIS","NEUT1","NEUT2","XF","YF","ZF"
-)
+class FunctionDefinition(ExecuteCommand):
+    """Command that creates a :py:class:`~code_aster.Objects.Function`."""
+    command_name = "DEFI_FONCTION"
 
-def DEFI_FONCTION( **kwargs ):
-    """Définit une fonction réelle ou complexe d'une variable réelle"""
-    compat_listr8(kwargs, None, "VALE_PARA", "ABSCISSE")
-    compat_listr8(kwargs, None, "VALE_FONC", "ORDONNEE")
-    checkSyntax(Commands.DEFI_FONCTION, kwargs)
+    def adapt_syntax(self, keywords):
+        """Hook to adapt syntax from a old version or for compatibility reasons.
 
-    NOM_PARA = kwargs['NOM_PARA']
-    assert NOM_PARA in funcParameterNames
-    # default values
-    NOM_RESU = kwargs.get("NOM_RESU", "TOUTRESU")
-    ABSCISSE = kwargs.get("ABSCISSE")
-    VALE = kwargs.get("VALE")
-    VALE_C = kwargs.get("VALE_C")
-    # switch
-    assert not (kwargs.get("VALE_PARA") or kwargs.get("VALE_FONC"))
-    if ABSCISSE is not None:
-        absc = np.array(ABSCISSE)
-        ordo = np.array(kwargs["ORDONNEE"])
-    elif VALE is not None:
-        values = np.array(VALE)
-        values = values.reshape( ( values.size / 2, 2 ) )
-        absc = values[:, 0]
-        ordo = values[:, 1]
-    elif VALE_C is not None:
-        raise NameError("'VALE_C' not yet supported!")
-    elif NOEUD_PARA is not None:
-        raise NameError("'NOEUD_PARA' not supported anymore!")
-    else:
-        raise NameError("DEFI_FONCTION expects ABSCISSE/ORDONNEE keywords")
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords, changed
+                in place.
+        """
+        unsupported(keywords, "", "VALE_C")
+        unsupported(keywords, "", "NOEUD_PARA")
+
+    def create_result(self, keywords):
+        """Initialize the result object.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = Function.create()
+
+    def exec_(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        if keywords.get("ABSCISSE") is not None:
+            absc = np.array(keywords["ABSCISSE"])
+            ordo = np.array(keywords["ORDONNEE"])
+        elif keywords.get("VALE") is not None:
+            values = np.array(keywords["VALE"])
+            values = values.reshape((values.size / 2, 2))
+            absc = values[:, 0]
+            ordo = values[:, 1]
+        elif keywords.get("VALE_PARA") is not None:
+            absc = keywords["VALE_PARA"].getValues()
+            ordo = keywords["VALE_FONC"].getValues()
+        else:
+            raise SyntaxError("No keyword defining the values!")
+
+        nom_resu = keywords.get("NOM_RESU", "TOUTRESU")
+        interpol = keywords.get("INTERPOL", ["LIN", "LIN"])
+        if type(interpol) in (list, tuple):
+            interpol = " ".join(interpol)
+        if len(interpol.split()) == 1:
+            interpol = interpol + " " + interpol
+        prol_gauche = keywords.get("PROL_GAUCHE", "E")
+        prol_droite = keywords.get("PROL_DROITE", "E")
+
+        self._result.setParameterName(keywords["NOM_PARA"])
+        self._result.setResultName(nom_resu)
+        self._result.setInterpolation(interpol)
+        self._result.setExtrapolation(prol_gauche[0] + prol_droite[0])
+        self._result.setValues(absc, ordo)
 
 
-    INTERPOL = kwargs.get("INTERPOL", ["LIN", "LIN"])
-    if type(INTERPOL) in (list, tuple):
-        INTERPOL = " ".join(INTERPOL)
-    if len(INTERPOL.split()) == 1:
-        INTERPOL = INTERPOL + " " + INTERPOL
-    PROL_GAUCHE = kwargs.get("PROL_GAUCHE", "E")
-    PROL_DROITE = kwargs.get("PROL_DROITE", "E")
-
-    func = Function.create()
-    func.setParameterName( NOM_PARA )
-    func.setResultName( NOM_RESU )
-    func.setInterpolation( INTERPOL )
-    func.setExtrapolation( PROL_GAUCHE[0] + PROL_DROITE[0] )
-    func.setValues( absc, ordo )
-    return func
+DEFI_FONCTION = FunctionDefinition()

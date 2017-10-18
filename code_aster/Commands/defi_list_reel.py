@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -21,29 +21,48 @@
 
 import numpy as np
 
-from ..Cata import Commands, checkSyntax
+from ..Objects import ListOfFloats
+from .ExecuteCommand import ExecuteCommand
 
 
-def DEFI_LIST_REEL( **kwargs ):
-    """Définir une liste de réels strictement croissante"""
-    checkSyntax( Commands.DEFI_LIST_REEL, kwargs )
+class ListOfFloatsDefinition(ExecuteCommand):
+    """Command that creates a :py:class:`~code_aster.Objects.ListOfFloats`."""
+    command_name = "DEFI_LIST_REEL"
 
-    vale = kwargs.get('VALE')
-    if vale is not None:
-        values = np.array(vale)
-    else:
-        start = kwargs['DEBUT']
-        values = np.array([])
-        for factkw in kwargs['INTERVALLE']:
-            stop = factkw['JUSQU_A']
-            step = factkw.get('PAS')
-            if step is None:
-                step = ( stop - start ) / factkw['NOMBRE']
-            if step > stop - start:
-                raise ValueError("PAS is greater than the interval")
-            values = np.concatenate( (values, np.arange(start, stop, step)) )
-            if abs( stop - values[-1] ) < 1.e-3 * step:
-                values = values[:-1]
-            start = stop
-        values = np.concatenate( ( values, np.array([stop]) ) )
-    return values
+    def create_result(self, keywords):
+        """Initialize the result object.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = ListOfFloats()
+
+    def exec_(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        vale = keywords.get('VALE')
+        if vale is not None:
+            values = np.array(vale)
+        else:
+            start = keywords['DEBUT']
+            values = np.array([])
+            for factkw in keywords['INTERVALLE']:
+                stop = factkw['JUSQU_A']
+                step = factkw.get('PAS')
+                if step is None:
+                    step = (stop - start) / factkw['NOMBRE']
+                if step > stop - start:
+                    raise ValueError("PAS is greater than the interval")
+                values = np.concatenate((values, np.arange(start, stop, step)))
+                if abs(stop - values[-1]) < 1.e-3 * step:
+                    values = values[:-1]
+                start = stop
+            values = np.concatenate((values, np.array([stop])))
+
+        self._result.setValues(values)
+
+
+DEFI_LIST_REEL = ListOfFloatsDefinition()

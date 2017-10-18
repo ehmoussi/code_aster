@@ -37,4 +37,6 @@ from .fieldonnodes_ext import FieldOnNodesDouble
 from .fieldonelements_ext import FieldOnElementsDouble
 from .meshcoordinatesfield_ext import MeshCoordinatesField
 
+from .listoffloats import ListOfFloats
+
 ALL_DS = objects_from_context(globals(), DataStructure)
