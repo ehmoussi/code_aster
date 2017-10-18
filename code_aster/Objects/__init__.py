@@ -35,5 +35,6 @@ from .table_ext import Table
 from .assemblymatrix_ext import AssemblyMatrixDouble
 from .fieldonnodes_ext import FieldOnNodesDouble
 from .fieldonelements_ext import FieldOnElementsDouble
+from .meshcoordinatesfield_ext import MeshCoordinatesField
 
 ALL_DS = objects_from_context(globals(), DataStructure)

@@ -138,9 +138,16 @@ void StaticMechanicalAlgorithm< Stepper >::oneStep() throw( AlgoException& )
     const auto& study = _discreteProblem->getStudyDescription();
     const auto& model = study->getSupportModel();
     const auto& mater = study->getMaterialOnMesh();
+    const auto& load = study->getListOfLoads();
+    const auto& cara = study->getElementaryCharacteristics();
     _results->addModel( model, _rank );
     _results->addMaterialOnMesh( mater, _rank );
     _results->addTimeValue( _time, _rank );
+    _results->addListOfLoads( load, _rank );
+    if( cara != nullptr )
+    {
+        _results->addElementaryCharacteristics( cara, _rank );
+    }
 };
 
 template< class Stepper >

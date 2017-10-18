@@ -43,12 +43,36 @@ resu=CALC_CHAMP(reuse=resu,
                 )
 
 # Debut du TEST_RESU
+z=mail1.getCoordinates()
+x=z.EXTR_COMP(topo=1)
+test.assertAlmostEqual(x.valeurs.sum(), 40.5)
+test.assertEqual(x.comp[0:3],('X', 'Y', 'Z'))
+test.assertEqual(x.noeud[-3:],(27, 27, 27))
+
+
+MyFieldOnElements = resu.getRealFieldOnElements("SIGM_ELNO", 0)
+z=MyFieldOnElements.EXTR_COMP('SIXX',topo=1)
+test.assertEqual(len(z.valeurs), 64)
+
 MyFieldOnNodes = resu.getRealFieldOnNodes("DEPL", 0)
 sfon = MyFieldOnNodes.exportToSimpleFieldOnNodes()
 #sfon.debugPrint()
 sfon.updateValuePointers()
 
 test.assertAlmostEqual(sfon.getValue(5, 3), -0.159403241003)
+
+resu2 = CREA_RESU(OPERATION = 'AFFE',
+                 TYPE_RESU = 'EVOL_ELAS',
+                 NOM_CHAM = 'DEPL',
+                 AFFE = _F(CHAM_GD = MyFieldOnNodes,
+                           MODELE = model,
+                           CHAM_MATER = AFFMAT,
+                           INST=0.,
+                           )
+                 )
+resu2.listFields()
+dispField=resu2.getRealFieldOnNodes("DEPL", 0)
+test.assertEqual(MyFieldOnNodes.EXTR_COMP().valeurs.sum(), dispField.EXTR_COMP().valeurs.sum())
 
 test.printSummary()
 # Fin du TEST_RESU

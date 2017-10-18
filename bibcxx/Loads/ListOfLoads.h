@@ -97,7 +97,7 @@ class ListOfLoadsInstance: public DataStructure
          * @brief Function de récupération des informations des charges
          * @return _loadInformations
          */
-        const JeveuxVectorLong getInformationVector() const
+        const JeveuxVectorLong& getInformationVector() const
         {
             return _loadInformations;
         };
@@ -106,7 +106,7 @@ class ListOfLoadsInstance: public DataStructure
          * @brief Function de récupération de la liste des fonctions multiplicatrices
          * @return _listOfFunctions
          */
-        const JeveuxVectorChar24 getListOfFunctions() const
+        const JeveuxVectorChar24& getListOfFunctions() const
         {
             return _listOfFunctions;
         };
@@ -133,7 +133,7 @@ class ListOfLoadsInstance: public DataStructure
          * @brief Function de récupération de la liste des charges
          * @return _list
          */
-        const JeveuxVectorChar24 getListVector() const
+        const JeveuxVectorChar24& getListVector() const
         {
             return _list;
         };

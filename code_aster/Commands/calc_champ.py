@@ -46,5 +46,13 @@ class ComputeAdditionalField(ExecuteCommand):
         """
         self._result = keywords["RESULTAT"]
 
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        self._result.update()
+
 
 CALC_CHAMP = ComputeAdditionalField()

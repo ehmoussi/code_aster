@@ -103,7 +103,7 @@ ResultsContainerPtr StaticModeDeplInstance::execute() throw ( std::runtime_error
     //_isEmpty = false;
     // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire ???
     //_typeOfElements->updateValuePointer();
-    resultC->buildFromExisting();
+    resultC->update();
     return resultC;
 };
 
@@ -172,7 +172,7 @@ ResultsContainerPtr StaticModeForcInstance::execute() throw ( std::runtime_error
     //_isEmpty = false;
     // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire ???
     //_typeOfElements->updateValuePointer();
-    resultC->buildFromExisting();
+    resultC->update();
     return resultC;
 };
 
@@ -247,7 +247,7 @@ ResultsContainerPtr StaticModePseudoInstance::execute() throw ( std::runtime_err
     //_isEmpty = false;
     // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire ???
     //_typeOfElements->updateValuePointer();
-    resultC->buildFromExisting();
+    resultC->update();
     return resultC;
 };
 
@@ -333,6 +333,6 @@ ResultsContainerPtr StaticModeInterfInstance::execute() throw ( std::runtime_err
     //_isEmpty = false;
     // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire ???
     //_typeOfElements->updateValuePointer();
-    resultC->buildFromExisting();
+    resultC->update();
     return resultC;
 };

@@ -1,6 +1,6 @@
 /**
- * @file ResultsContainerInterface.cxx
- * @brief Interface python de ResultsContainer
+ * @file exportMeshCoordinatesFieldToPython.cxx
+ * @brief Interface python de MeshCoordinates
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,22 +21,23 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/ResultsContainerInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
+#include "PythonBindings/DataStructureInterface.h"
+#include "PythonBindings/MeshCoordinatesFieldInterface.h"
+#include "DataFields/MeshCoordinatesField.h"
 #include <boost/python.hpp>
 
-void exportResultsContainerToPython()
+void exportMeshCoordinatesFieldToPython()
 {
     using namespace boost::python;
 
-    class_< ResultsContainerInstance, ResultsContainerInstance::ResultsContainerPtr,
-            bases< DataStructure > > ( "ResultsContainer", no_init )
-        .def( "create", &createSharedPtr< ResultsContainerInstance > )
-        .staticmethod( "create" )
-        .def( "getRealFieldOnNodes", &ResultsContainerInstance::getRealFieldOnNodes )
-        .def( "getRealFieldOnElements", &ResultsContainerInstance::getRealFieldOnElements )
-        .def( "printMedFile", &ResultsContainerInstance::printMedFile )
-        .def( "listFields", &ResultsContainerInstance::listFields )
-        .def( "update", &ResultsContainerInstance::update )
+    class_< MeshCoordinatesFieldInstance, MeshCoordinatesFieldPtr,
+            bases< DataStructure > >("MeshCoordinatesField", no_init)
+        .def( "__getitem__", +[](const MeshCoordinatesFieldInstance& v, int i)
+        {
+            return v.operator[](i);
+        })
     ;
+
 };

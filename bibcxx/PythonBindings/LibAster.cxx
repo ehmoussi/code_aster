@@ -105,6 +105,8 @@
 #include "PythonBindings/GeneralizedResultsContainerInterface.h"
 #include "PythonBindings/PartialMeshInterface.h"
 #include "PythonBindings/ResultNamingInterface.h"
+#include "PythonBindings/LinearDisplacementEvolutionContainerInterface.h"
+#include "PythonBindings/MeshCoordinatesFieldInterface.h"
 
 using namespace boost::python;
 
@@ -210,6 +212,8 @@ BOOST_PYTHON_MODULE(libaster)
     exportCppToFortranGlossaryToPython();
     exportCyclicSymmetryModeToPython();
     exportGeneralizedResultsContainerToPython();
+    exportLinearDisplacementEvolutionContainerToPython();
+    exportMeshCoordinatesFieldToPython();
 
 #ifdef _USE_MPI
     exportParallelMeshToPython();
