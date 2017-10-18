@@ -42,11 +42,11 @@ class ListOfFloats(DataStructure):
         self._array = np.array([])
 
     def getName(self):
-        """Override :py:method:`code_aster.Objects.DataStructure.getName`."""
+        """Override :py:meth:`code_aster.Objects.DataStructure.getName`."""
         return self._name
 
     def getType(self):
-        """Override :py:method:`code_aster.Objects.DataStructure.getType`."""
+        """Override :py:meth:`code_aster.Objects.DataStructure.getType`."""
         return "LISTR8"
 
     def debugPrint(self, unit):
