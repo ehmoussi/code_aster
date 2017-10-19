@@ -33,6 +33,11 @@ from .datastructure_ext import DataStructure
 class ListOfFloats(DataStructure):
     """Object that defines a list of float numbers as a *proxy* to a
     :py:class:`numpy.array`.
+
+    .. note::
+        Even if :class:`ListOfFloats` is derivated from
+        :class:`~code_aster.Objects.DataStructure`, it has no C++ implementation
+        and no associated Fortran objects.
     """
     _array = _name = None
 
