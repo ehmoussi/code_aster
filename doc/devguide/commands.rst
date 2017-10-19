@@ -27,10 +27,15 @@ Commands executors
    :special-members: __init__
 
 
-Automatic definition of executors
-=================================
+Utility functions for executors
+===============================
 
 .. automodule:: code_aster.Commands.operator
+   :show-inheritance:
+   :members:
+   :special-members: __init__
+
+.. automodule:: code_aster.Commands.common_keywords
    :show-inheritance:
    :members:
    :special-members: __init__

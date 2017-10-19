@@ -25,6 +25,7 @@ from ..Objects import (MultFrontSolver, LdltSolver, MumpsSolver,
                        KinematicsLoad, GenericMechanicalLoad)
 from ..Utilities import unsupported
 from .ExecuteCommand import ExecuteCommand
+from .common_keywords import create_solver
 
 
 class MechanicalSolver(ExecuteCommand):
@@ -79,27 +80,8 @@ class MechanicalSolver(ExecuteCommand):
         else:
             assert False
 
-        fkwSolv = keywords["SOLVEUR"]
-        for key, value in fkwSolv.iteritems():
-            if key not in ("METHODE", "RENUM"):
-                unsupported(keywords, "SOLVEUR", key, warning=True)
-        method = fkwSolv["METHODE"]
-        renum = fkwSolv["RENUM"]
-
-        glossary = getGlossary()
-        solverInt = glossary.getSolver(method)
-        renumInt = glossary.getRenumbering(renum)
-
-        selected_solver = {"MULT_FRONT": MultFrontSolver, "LDLT": LdltSolver,
-                           "MUMPS": MumpsSolver, "PETSC": PetscSolver,
-                           "GCPC": GcpcSolver
-                           }.get(method)
-        if selected_solver:
-            currentSolver = selected_solver.create(renumInt)
-        else:
-            currentSolver = None
-
-        mechaSolv.setLinearSolver(currentSolver)
+        solver = create_solver(keywords["SOLVEUR"])
+        mechaSolv.setLinearSolver(solver)
         self._result = mechaSolv.execute()
 
 

@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -24,11 +24,12 @@ from code_aster import MultFrontSolver, LdltSolver, MumpsSolver, PetscSolver, Gc
 from code_aster.Cata import Commands, checkSyntax
 from code_aster import getGlossary
 
+
 def buildSolverObject(dictSolver):
     """
     .. todo:: Rajouter les autres mots-clés
     """
-    solver=None
+    solver = None
     if dictSolver == None:
         solver = MultFrontSolver.create()
     else:
@@ -45,130 +46,133 @@ def buildSolverObject(dictSolver):
     return solver
 
 
-def MODE_STATIQUE( **kwargs ):
+def MODE_STATIQUE(**kwargs):
 
-    checkSyntax( Commands.MODE_STATIQUE, kwargs )
-    glossary  = getGlossary()
+    checkSyntax(Commands.MODE_STATIQUE, kwargs)
+    glossary = getGlossary()
     results = None
-    kw_Smat   = kwargs.get( "MATR_RIGI" )
-    kw_Mmat   = kwargs.get( "MATR_MASS" )
-    fkw_mstat = kwargs.get( "MODE_STAT" )
-    fkw_fnoda = kwargs.get( "FORCE_NODALE" )
-    fkw_psdo  = kwargs.get( "PSEUDO_MODE" )
-    fkw_interf= kwargs.get( "MODE_INTERF" )
+    kw_Smat = kwargs.get("MATR_RIGI")
+    kw_Mmat = kwargs.get("MATR_MASS")
+    fkw_mstat = kwargs.get("MODE_STAT")
+    fkw_fnoda = kwargs.get("FORCE_NODALE")
+    fkw_psdo = kwargs.get("PSEUDO_MODE")
+    fkw_interf = kwargs.get("MODE_INTERF")
     # Exactly one ("MODE_STAT","FORCE_NODALE", "PSEUDO_MODE", "MODE_INTERF")
     if fkw_mstat != None:
-        mode_stat=StaticModeDepl.create()
+        mode_stat = StaticModeDepl.create()
         mode_stat.setStiffMatrix(kw_Smat)
         if kw_Mmat != None:
             mode_stat.setMassMatrix(kw_Mmat)
         # Exactly one ("TOUT", "GROUP_NO")
-        kwtout = fkw_mstat.get( "TOUT" )
-        kwGroupNo = fkw_mstat.get( "GROUP_NO" )
+        kwtout = fkw_mstat.get("TOUT")
+        kwGroupNo = fkw_mstat.get("GROUP_NO")
         if kwtout != None:
             mode_stat.setAllLoc()
         if kwGroupNo != None:
             mode_stat.WantedGrno(list(kwGroupNo))
         # Exactly one ("TOUT_CMP", "AVEC_CMP", "SANS CMP")
-        kwtoutcmp = fkw_mstat.get( "TOUT_CMP" )
-        kwcmpad   = fkw_mstat.get( "AVEC_CMP" )
-        kwcmple   = fkw_mstat.get( "SANS_CMP" )
+        kwtoutcmp = fkw_mstat.get("TOUT_CMP")
+        kwcmpad = fkw_mstat.get("AVEC_CMP")
+        kwcmple = fkw_mstat.get("SANS_CMP")
         if kwtoutcmp != None:
             mode_stat.setAllCmp()
         if kwcmpad != None:
             mode_stat.Wantedcmp(list(kwcmpad))
         elif kwcmple != None:
             mode_stat.Unwantedcmp(list(kwcmple))
-        fkw_solver = kwargs.get( "SOLVEUR" )
+        fkw_solver = kwargs.get("SOLVEUR")
         solver = buildSolverObject(fkw_solver)
         if fkw_solver != None:
-            print(NotImplementedError("Not yet implemented: '{0}' is ignored".format("SOLVEUR")))
+            print(
+                NotImplementedError("Not yet implemented: '{0}' is ignored".format("SOLVEUR")))
         mode_stat.setLinearSolver(solver)
         results = mode_stat.execute()
         print results
         return results
     elif fkw_fnoda != None:
-        force_noda=StaticModeForc.create()
+        force_noda = StaticModeForc.create()
         force_noda.setStiffMatrix(kw_Smat)
         if kw_Mmat != None:
             force_noda.setMassMatrix(kw_Mmat)
         # Exactly one ("TOUT", "GROUP_NO")
-        kwtout = fkw_fnoda.get( "TOUT" )
-        kwGroupNo = fkw_fnoda.get( "GROUP_NO" )
+        kwtout = fkw_fnoda.get("TOUT")
+        kwGroupNo = fkw_fnoda.get("GROUP_NO")
         if kwtout != None:
             force_noda.setAllLoc()
         elif kwGroupNo != None:
             force_noda.WantedGrno(kwGroupNo)
         # Exactly one ("TOUT_CMP", "AVEC_CMP", "SANS CMP")
-        kwtoutcmp = fkw_fnoda.get( "TOUT_CMP" )
-        kwcmpad   = fkw_fnoda.get( "AVEC_CMP" )
-        kwcmple   = fkw_fnoda.get( "SANS_CMP" )
+        kwtoutcmp = fkw_fnoda.get("TOUT_CMP")
+        kwcmpad = fkw_fnoda.get("AVEC_CMP")
+        kwcmple = fkw_fnoda.get("SANS_CMP")
         if kwtoutcmp != None:
             force_noda.setAllCmp()
         elif kwcmpad != None:
             force_noda.Wantedcmp(list(kwcmpad))
         elif kwcmple != None:
             force_noda.Unwantedcmp(list(kwcmple))
-        fkw_solver = kwargs.get( "SOLVEUR" )
+        fkw_solver = kwargs.get("SOLVEUR")
         solver = buildSolverObject(fkw_solver)
         if fkw_solver != None:
-            print(NotImplementedError("Not yet implemented: '{0}' is ignored".format("SOLVEUR")))
+            print(
+                NotImplementedError("Not yet implemented: '{0}' is ignored".format("SOLVEUR")))
         force_noda.setLinearSolver(solver)
         return force_noda.execute()
     elif fkw_psdo != None:
-        pseudo_mod=StaticModePseudo.create()
+        pseudo_mod = StaticModePseudo.create()
         pseudo_mod.setStiffMatrix(kw_Smat)
         pseudo_mod.setMassMatrix(kw_Mmat)
         # Exactly one ("TOUT", "GROUP_NO","DIRECTION","AXE")
-        kwtout = fkw_psdo.get( "TOUT" )
-        kwGroupNo = fkw_psdo.get( "GROUP_NO" )
-        kwDir     = fkw_psdo.get( "DIRECTION" )
-        kwAxe     = fkw_psdo.get( "AXE" )
+        kwtout = fkw_psdo.get("TOUT")
+        kwGroupNo = fkw_psdo.get("GROUP_NO")
+        kwDir = fkw_psdo.get("DIRECTION")
+        kwAxe = fkw_psdo.get("AXE")
         if kwtout != None:
             pseudo_mod.setAllLoc()
         elif kwGroupNo != None:
             pseudo_mod.WantedGrno(kwGroupNo)
         elif kwDir != None:
-            kwdirname = fkw_psdo.get( "NOM_DIR" )
+            kwdirname = fkw_psdo.get("NOM_DIR")
             pseudo_mod.setDirname(kwdirname)
             pseudo_mod.WantedDir(list(kwDir))
         elif kwAxe != None:
             pseudo_mod.Wanted_axe(kwAxe)
         # Bloc (TOUT=OUI or "GROUP_NO" != None)
-        if  kwGroupNo != None or kwtout != None:
+        if kwGroupNo != None or kwtout != None:
 
-            kwtoutcmp = fkw_psdo.get( "TOUT_CMP" )
-            kwcmpad   = fkw_psdo.get( "AVEC_CMP" )
-            kwcmple   = fkw_psdo.get( "SANS_CMP" )
-            if kwtoutcmp!=None:
+            kwtoutcmp = fkw_psdo.get("TOUT_CMP")
+            kwcmpad = fkw_psdo.get("AVEC_CMP")
+            kwcmple = fkw_psdo.get("SANS_CMP")
+            if kwtoutcmp != None:
                 pseudo_mod.setAllCmp()
             elif kwcmpad != None:
                 pseudo_mod.Wantedcmp(list(kwcmpad))
             elif kwcmple != None:
                 pseudo_mod.Unwantedcmp(list(kwcmple))
-        fkw_solver = kwargs.get( "SOLVEUR" )
+        fkw_solver = kwargs.get("SOLVEUR")
         solver = buildSolverObject(fkw_solver)
         if fkw_solver != None:
-            print(NotImplementedError("Not yet implemented: '{0}' is ignored".format("SOLVEUR")))
+            print(
+                NotImplementedError("Not yet implemented: '{0}' is ignored".format("SOLVEUR")))
         pseudo_mod.setLinearSolver(solver)
         return pseudo_mod.execute()
 
     elif fkw_interf != None:
-        mode_interf=StaticModeInterf.create()
+        mode_interf = StaticModeInterf.create()
         mode_interf.setStiffMatrix(kw_Smat)
         if kw_Mmat != None:
             mode_interf.setMassMatrix(kw_Mmat)
         # Exactly one ("TOUT", "GROUP_NO")
-        kwtout = fkw_interf.get( "TOUT" )
-        kwGroupNo = fkw_interf.get( "GROUP_NO" )
+        kwtout = fkw_interf.get("TOUT")
+        kwGroupNo = fkw_interf.get("GROUP_NO")
         if kwtout != None:
             mode_interf.setAllLoc()
         elif kwGroupNo != None:
             mode_interf.WantedGrno(kwGroupNo)
         # Exactly one ("TOUT_CMP", "AVEC_CMP", "SANS CMP")
-        kwtoutcmp = fkw_interf.get( "TOUT_CMP" )
-        kwcmpad   = fkw_interf.get( "AVEC_CMP" )
-        kwcmple   = v.get( "SANS_CMP" )
+        kwtoutcmp = fkw_interf.get("TOUT_CMP")
+        kwcmpad = fkw_interf.get("AVEC_CMP")
+        kwcmple = v.get("SANS_CMP")
         if kwtoutcmp != None:
             mode_interf.setAllCmp()
         elif kwcmpad != None:
@@ -179,10 +183,11 @@ def MODE_STATIQUE( **kwargs ):
         mode_interf.setNbmod(kwnbmod)
         kwshift = fkw_interf.get("SHIFT")
         mode_interf.setShift(kwshift)
-        fkw_solver = kwargs.get( "SOLVEUR" )
+        fkw_solver = kwargs.get("SOLVEUR")
         solver = buildSolverObject(fkw_solver)
         if fkw_solver != None:
-            print(NotImplementedError("Not yet implemented: '{0}' is ignored".format("SOLVEUR")))
+            print(
+                NotImplementedError("Not yet implemented: '{0}' is ignored".format("SOLVEUR")))
         mode_interf.setLinearSolver(solver)
         return mode_interf.execute()
     else:
