@@ -64,10 +64,11 @@ def remove_none(obj):
                 remove_none(obj[key])
 
 def force_list(values):
-    """Ensure `values` is iterable (list, tuple, array...)."""
+    """Ensure `values` is iterable (list, tuple, array...) and return it as
+    a list."""
     if not value_is_sequence(values):
         values = [values]
-    return values
+    return list(values)
 
 def value_is_sequence(value):
     """Tell if *value* is a valid object if max > 1."""
