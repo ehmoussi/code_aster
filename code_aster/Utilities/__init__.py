@@ -27,8 +27,8 @@ No external import of other :py:mod:`code_aster` packages.
 
 from .Tester import TestCase
 
-from .base_utils import (accept_array, array_to_list, force_list, import_object,
-                         is_complex, is_float, is_int, is_str,
+from .base_utils import (accept_array, array_to_list, force_list, force_tuple,
+                         import_object, is_complex, is_float, is_int, is_str,
                          objects_from_context, Singleton, value_is_sequence)
 from .compatibility import (compat_listr8, deprecated, remove_keyword,
                             required, unsupported)
