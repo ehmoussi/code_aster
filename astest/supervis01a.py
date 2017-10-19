@@ -42,6 +42,8 @@ test.assertTrue(syntax.getexm("CODE", "NIV_PUB_WEB"))
 test.assertTrue(syntax.getexm("", "IMPR_MACRO"))
 test.assertFalse(syntax.getexm(" ", "CODE"))
 test.assertFalse(syntax.getexm("ERREUR", "ALARM"))
+test.assertTrue(syntax.getexm("ERREUR", ""))
+test.assertTrue(syntax.getexm("ERREUR", " "))
 
 size, length = syntax.getltx("", "IGNORE_ALARM", 0, 3, 7)
 test.assertEqual(size, -4)
