@@ -72,7 +72,7 @@ from .lire_maillage import LIRE_MAILLAGE
 # from .macr_elem_stat import MACR_ELEM_STAT
 from .meca_statique import MECA_STATIQUE
 # from .mode_iter_cycl import MODE_ITER_CYCL
-# from .mode_statique import MODE_STATIQUE
+from .mode_statique import MODE_STATIQUE
 # from .modi_maillage import MODI_MAILLAGE
 # from .nume_ddl import NUME_DDL
 # from .nume_ddl_gene import NUME_DDL_GENE
