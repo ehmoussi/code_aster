@@ -37,8 +37,22 @@ class injector(object):
             return type.__init__(self, name, bases, dict)
 
 
+_orig_getType = AssemblyMatrixDouble.getType
+
 class ExtendedAssemblyMatrixDouble(injector, AssemblyMatrixDouble):
     cata_sdj = "SD.sd_matr_asse.sd_matr_asse"
+
+    def getType(self):
+        """Returns the type of the matrix object.
+
+        .. todo:: This is a workaround to pass the case where the native
+            implementation returns ``MATR_ASSE_DEPL_R_DEPL_R``.
+
+        Returns:
+            str: Type name of the matrix.
+        """
+        typ = _orig_getType(self).replace("_DEPL_R_DEPL_R", "_DEPL_R")
+        return typ
 
     def EXTR_MATR(self, sparse=False) :
         """Retourne les valeurs de la matrice dans un format numpy
