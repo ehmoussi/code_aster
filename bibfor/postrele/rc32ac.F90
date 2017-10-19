@@ -247,7 +247,7 @@ subroutine rc32ac(lfat, lefat)
                   zr(jresu+121*(iocc-1)+19-1+kk) = spss(kk)
                   spss2(1) = keequi*spss(kk)
                   spss2(2) = 0.d0
-                  call rc32sa('SITU', 1e-12, spss2, spss2, kemeca, kether, saltss, fuss)
+                  call rc32sa('SITU', 1.d-12, spss2, spss2, kemeca, kether, saltss, fuss)
                   fusstot = fusstot+fuss(1)
 31            continue
               zr(jresu+121*(iocc-1)+119) = nbsscyc
@@ -291,7 +291,7 @@ subroutine rc32ac(lfat, lefat)
                   zr(jresus+121*(iocc-1)+19-1+kk) = spss(kk)
                   spss2(1) = keequi*spss(kk)
                   spss2(2) = 0.d0
-                  call rc32sa('SITU', 1e-12, spss2, spss2, kemeca, kether, saltss, fuss)
+                  call rc32sa('SITU', 1.d-12, spss2, spss2, kemeca, kether, saltss, fuss)
                   fusstot = fusstot+fuss(1)
 32            continue
               zr(jresus+121*(iocc-1)+119) = nbsscyc
@@ -524,14 +524,14 @@ subroutine rc32ac(lfat, lefat)
                     do 51 kk = 1, nbsscyc     
                         spss2(1) = keequi*zr(jresu+121*(iocc1-1)+19-1+kk)
                         spss2(2) = 0.d0
-                        call rc32sa('SITU', 1e-12, spss2, spss2, kemeca, kether, saltss, fuss)
+                        call rc32sa('SITU', 1.d-12, spss2, spss2, kemeca, kether, saltss, fuss)
                         fusstot = fusstot+fuss(1)
 51                  continue
                     nbsscyc = int(zr(jresu+121*(iocc2-1)+119))
                     do 52 kk = 1, nbsscyc     
                         spss2(1) = keequi*zr(jresu+121*(iocc2-1)+19-1+kk)
                         spss2(2) = 0.d0
-                        call rc32sa('SITU', 1e-12, spss2, spss2, kemeca, kether, saltss, fuss)
+                        call rc32sa('SITU', 1.d-12, spss2, spss2, kemeca, kether, saltss, fuss)
                         fusstot = fusstot+fuss(1)
 52                  continue
 !
@@ -620,14 +620,14 @@ subroutine rc32ac(lfat, lefat)
                       do 53 kk = 1, nbsscyc     
                         spss2(1) = keequi*zr(jresu+121*(iocc1-1)+19-1+kk)
                         spss2(2) = 0.d0
-                        call rc32sa('SITU', 1e-12, spss2, spss2, kemeca, kether, saltss, fuss)
+                        call rc32sa('SITU', 1.d-12, spss2, spss2, kemeca, kether, saltss, fuss)
                         fusstot = fusstot+fuss(1)
 53                    continue
                       nbsscyc = int(zr(jresu+121*(iocc2-1)+119))
                       do 54 kk = 1, nbsscyc     
                         spss2(1) = keequi*zr(jresu+121*(iocc2-1)+19-1+kk)
                         spss2(2) = 0.d0
-                        call rc32sa('SITU', 1e-12, spss2, spss2, kemeca, kether, saltss, fuss)
+                        call rc32sa('SITU', 1.d-12, spss2, spss2, kemeca, kether, saltss, fuss)
                         fusstot = fusstot+fuss(1)
 54                    continue
 !
