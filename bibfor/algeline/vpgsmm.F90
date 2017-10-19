@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine vpgsmm(nbeq, nconv, vect, alpha, lmatb,&
+subroutine vpgsmm(nbeq, nfreq, nconv, vect, alpha, lmatb,&
                   typeps, vaux, ddlexc, delta, dsor,&
                   omecor)
 !---------------------------------------------------------------------
@@ -53,8 +53,8 @@ subroutine vpgsmm(nbeq, nconv, vect, alpha, lmatb,&
 #include "asterfort/mrmult.h"
 #include "asterfort/vpgskp.h"
 #include "asterfort/wkvect.h"
-    integer :: nbeq, nconv, lmatb, ddlexc(nbeq), typeps
-    real(kind=8) :: vect(nbeq, nconv), alpha, vaux(nbeq), delta(nconv), dsor(nconv, 2), omecor
+    integer :: nbeq, nfreq, nconv, lmatb, ddlexc(nbeq), typeps
+    real(kind=8) :: vect(nbeq, nconv), alpha, vaux(nbeq), delta(nconv), dsor(nfreq+1, 2), omecor
 !
 !-----------------------------------------------------------------------
 ! DECLARATION VARIABLES LOCALES
