@@ -259,7 +259,8 @@ class CommandSyntax(object):
         return keywords.definition
 
     def getFactorKeywordNbOcc( self, factName ):
-        """Return the number of occurrences of a factor keyword.
+        """Return the number of occurrences of a factor keyword in the
+        user's keywords.
 
         Arguments:
             factName (str): Name of the factor keyword.
@@ -494,6 +495,8 @@ class CommandSyntax(object):
         catadef = self._getCataDefinition(factName)
         if not catadef:
             return 0
+        if not simpName.strip():
+            return 1
         keywords = catadef.simple_keywords
         return int(keywords.get(simpName) is not None)
 
