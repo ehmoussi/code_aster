@@ -11,6 +11,6 @@ P mpi_nbnoeud 1
 P testlist asterxx verification sequential
 
 
-F comm xxModeStatique.py D 1
+F comm xxModeStatique01a.py D 1
 
 F nom test001f.mmed D 0
