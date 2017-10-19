@@ -19,10 +19,8 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from libaster import getGlossary
-from ..Objects import (MultFrontSolver, LdltSolver, MumpsSolver,
-                       PetscSolver, GcpcSolver, StaticMechanicalSolver,
-                       KinematicsLoad, GenericMechanicalLoad)
+from ..Objects import (GenericMechanicalLoad, KinematicsLoad,
+                       StaticMechanicalSolver)
 from ..Utilities import unsupported
 from .ExecuteCommand import ExecuteCommand
 from .common_keywords import create_solver
@@ -44,7 +42,7 @@ class MechanicalSolver(ExecuteCommand):
         unsupported(keywords, "", "INST_FIN")
 
     def create_result(self, keywords):
-        """Does nothing."""
+        """Does nothing, creating by *exec*."""
 
     @staticmethod
     def _addLoad(mechaSolv, fkw):
@@ -80,7 +78,7 @@ class MechanicalSolver(ExecuteCommand):
         else:
             assert False
 
-        solver = create_solver(keywords["SOLVEUR"])
+        solver = create_solver(keywords.get("SOLVEUR"))
         mechaSolv.setLinearSolver(solver)
         self._result = mechaSolv.execute()
 

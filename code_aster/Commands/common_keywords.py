@@ -44,6 +44,8 @@ def create_solver(solver_keyword):
         :class:`~code_aster.Objects.BaseLinearSolver` (derivated of):
         Instance of a solver or *None* if none is selected.
     """
+    if not solver_keyword:
+        return None
     for key, value in solver_keyword.iteritems():
         if key not in ("METHODE", "RENUM"):
             unsupported(solver_keyword, "", key, warning=True)
