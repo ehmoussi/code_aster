@@ -37,11 +37,9 @@ Development rules
 
         .. code-block:: none
 
-            test001f     NOOK_TEST_RESU         'MATR_ASSE_DEPL_R_DEPL_R' != 'MATR_ASSE_DEPL_R'
             test004b     <S>_ERROR              ConstitutiveLawEnum
             test004c     <S>_ERROR              ConstitutiveLawEnum
             test004d     <S>_ERROR              ConstitutiveLawEnum
-            xxModeStatique <S>_ERROR            expected matr_asse_depl_r, not AssemblyMatrixDouble
             xxMultiSteps01a <S>_ERROR
 
     - Currently, these testcases have been partially truncated because of
