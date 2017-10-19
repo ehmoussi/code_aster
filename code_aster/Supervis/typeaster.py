@@ -57,8 +57,11 @@ class Cata2DataStructure(object):
     """Helper class to build correspondance between DataStructures in
     syntax description and those created in C++.
 
-    .. todo:: This correspondance could be automatically build if ``getType()``
-        was a class method.
+    This table of correspondance allows to automatically execute legacy
+    operators with very few modifications. More classes can be added if there
+    is a strict bijection.
+
+    .. todo:: To be removed?
     """
     __metaclass__ = Singleton
     _singleton_id = 'typeaster.Cata2DataStructure'
