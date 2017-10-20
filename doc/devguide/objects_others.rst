@@ -431,7 +431,7 @@ Documentation of all other types.
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.DrivingTypeEnum
+.. autoclass:: code_aster.Objects.DrivingType
    :show-inheritance:
    :members:
 

@@ -18,30 +18,29 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois@edf.fr
-
 """
-This module imports BoostPython DataStructures and extends them with pure
-Python functions.
+:py:class:`TimeStepManager` --- Management of list of time steps
+****************************************************************
 """
 
-from ..Utilities import objects_from_context
+import numpy as NP
 
-from libaster import *
+from libaster import TimeStepManager
+import aster
 
-# ensure DataStructure is extended first
-from .datastructure_ext import DataStructure
-
-# extend DataStructures using metaclasses
-from .assemblymatrix_ext import AssemblyMatrixDouble
-from .fieldonnodes_ext import FieldOnNodesDouble
-from .fieldonelements_ext import FieldOnElementsDouble
-from .function_ext import Function
-from .meshcoordinatesfield_ext import MeshCoordinatesField
-from .table_ext import Table
-from .timestepmanager_ext import TimeStepManager
-
-# objects without C++ mirror
-from .listoffloats import ListOfFloats
+from ..Utilities import accept_array
 
 
-ALL_DS = objects_from_context(globals(), DataStructure)
+class injector(object):
+    class __metaclass__(TimeStepManager.__class__):
+        def __init__(self, name, bases, dict):
+            for b in bases:
+                if type(b) not in (self, type):
+                    for k, v in dict.items():
+                        setattr(b, k, v)
+            return type.__init__(self, name, bases, dict)
+
+
+class ExtendedTimeStepManager(injector, TimeStepManager):
+
+    setTimeList = accept_array(TimeStepManager.setTimeList)

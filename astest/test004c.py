@@ -76,8 +76,9 @@ statNonLine1.setMaterialOnMesh( affectMat )
 
 statNonLine1.setLoadStepManager( timeList )
 
-endoOrthBeton = code_aster.Behaviour.create(code_aster.ConcreteOrthotropicDamage,
-                                            code_aster.SmallStrain )
+endoOrthBeton = code_aster.Behaviour.create(
+    code_aster.ConstitutiveLaw.ConcreteOrthotropicDamage,
+    code_aster.StrainType.SmallStrain)
 statNonLine1.addBehaviourOnElements( endoOrthBeton )
 
 
@@ -102,12 +103,12 @@ statNonLine2.addBehaviourOnElements( endoOrthBeton )
 statNonLine2.setLoadStepManager( timeList )
 
 # Define the initial state of the current analysis
-start = code_aster.State()
+start = code_aster.State.create(0)
 # from the last computed step of the previous analysis
 #start.setFromNonLinearEvolution( resu1, 1.0 )
 #statNonLine2.setInitialState( start )
 
-pilotage=code_aster.Driving.create( code_aster.ElasticityLimit )
+pilotage=code_aster.Driving.create( code_aster.DrivingType.ElasticityLimit )
 pilotage.setLowerBoundOfDrivingParameter(0.0)
 pilotage.setUpperBoundOfDrivingParameter(1.0)
 pilotage.setMinimumValueOfDrivingParameter( 0.000001 )

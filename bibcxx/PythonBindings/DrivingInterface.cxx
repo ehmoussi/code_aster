@@ -29,7 +29,7 @@ void exportDrivingToPython()
 {
     using namespace boost::python;
 
-    enum_< DrivingTypeEnum >( "DrivingTypeEnum" )
+    enum_< DrivingTypeEnum >( "DrivingType" )
         .value( "DisplacementValue", DisplacementValue )
         .value( "DisplacementNorm", DisplacementNorm )
         .value( "JumpOnCrackValue", JumpOnCrackValue )
