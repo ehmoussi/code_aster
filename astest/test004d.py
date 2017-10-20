@@ -54,16 +54,17 @@ statNonLine1.addStandardExcitation( kine2 )
 statNonLine1.setSupportModel( monModel )
 statNonLine1.setMaterialOnMesh( affectMat )
 statNonLine1.setLinearSolver( monSolver )
-Elas = code_aster.Behaviour.create( code_aster.Elas, code_aster.SmallStrain )
-statNonLine1.addBehaviourOnElements( Elas );
+elas = code_aster.Behaviour.create(code_aster.ConstitutiveLaw.Elas,
+                                   code_aster.StrainType.SmallStrain )
+statNonLine1.addBehaviourOnElements( elas );
 
 
 temps = [0., 0.5 ]
-timeList = code_aster.Studies.TimeStepManager.create()
+timeList = code_aster.TimeStepManager.create()
 timeList.setTimeList( temps )
 
-error1 = code_aster.Studies.ConvergenceError.create()
-action1 = code_aster.Studies.SubstepingOnError.create()
+error1 = code_aster.ConvergenceError.create()
+action1 = code_aster.SubstepingOnError.create()
 action1.setAutomatic( False )
 error1.setAction( action1 )
 timeList.addErrorManager( error1 )
