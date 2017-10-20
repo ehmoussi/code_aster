@@ -2449,17 +2449,15 @@ void DEFSS(LCALGO, lcalgo, _IN char *compor, STRING_SIZE lcompor,
    Py_XDECREF(catalc);
 }
 
-void DEFSPPP(LCINFO, lcinfo, _IN char *compor, STRING_SIZE lcompor,
-                             _OUT ASTERINTEGER *numlc,
-                             _OUT ASTERINTEGER *nbvari,
-                             _OUT ASTERINTEGER *nbvari_exte
-                             )
+void DEFSPP(LCINFO, lcinfo, _IN char *compor, STRING_SIZE lcompor,
+                            _OUT ASTERINTEGER *numlc,
+                            _OUT ASTERINTEGER *nbvari)
 {
 /*
    Retourne le numéro de routine et le nbre de variables internes
 
-      CALL LCINFO(COMPOR, NUMLC, NBVARI, NBVARI_EXTE)
-      ==> num_lc, nb_vari, nb_vari_exte = catalc.get_info(COMPOR)
+      CALL LCINFO(COMPOR, NUMLC, NBVARI)
+      ==> num_lc, nb_vari = catalc.get_info(COMPOR)
 */
    PyObject *catalc, *res;
 
@@ -2470,9 +2468,8 @@ void DEFSPPP(LCINFO, lcinfo, _IN char *compor, STRING_SIZE lcompor,
               "comportement (lcinfo/get_info) !");
    }
 
-   *numlc       = (ASTERINTEGER)PyInt_AsLong(PyTuple_GetItem(res, 0));
-   *nbvari      = (ASTERINTEGER)PyInt_AsLong(PyTuple_GetItem(res, 1));
-   *nbvari_exte = (ASTERINTEGER)PyInt_AsLong(PyTuple_GetItem(res, 2));
+   *numlc  = (ASTERINTEGER)PyInt_AsLong(PyTuple_GetItem(res, 0));
+   *nbvari = (ASTERINTEGER)PyInt_AsLong(PyTuple_GetItem(res, 1));
 
    Py_XDECREF(res);
    Py_XDECREF(catalc);
