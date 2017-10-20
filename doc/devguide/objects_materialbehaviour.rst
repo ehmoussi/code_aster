@@ -1,10 +1,7 @@
-.. _devguide-objects_materialbehaviour:
-
 .. AUTOMATICALLY CREATED BY generate_rst.py - DO NOT EDIT MANUALLY!
 
+.. _devguide-objects_materialbehaviour:
 
-Documentation of
-:py:class:`~code_aster.Objects.GeneralMaterialBehaviour` subclasses.
 
 
 

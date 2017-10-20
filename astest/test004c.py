@@ -76,9 +76,9 @@ statNonLine1.setMaterialOnMesh( affectMat )
 
 statNonLine1.setLoadStepManager( timeList )
 
-EndoOrthBeton = code_aster.Behaviour.create(code_aster.ConcreteOrthotropicDamage,
+endoOrthBeton = code_aster.Behaviour.create(code_aster.ConcreteOrthotropicDamage,
                                             code_aster.SmallStrain )
-statNonLine1.addBehaviourOnElements( EndoOrthBeton )
+statNonLine1.addBehaviourOnElements( endoOrthBeton )
 
 
 #resu1 = statNonLine1.execute()
@@ -97,7 +97,7 @@ statNonLine2.addStandardExcitation( charMeca1 )
 statNonLine2.addStandardExcitation( charMeca2 )
 statNonLine2.setSupportModel( monModel )
 statNonLine2.setMaterialOnMesh( affectMat )
-statNonLine2.addBehaviourOnElements( EndoOrthBeton )
+statNonLine2.addBehaviourOnElements( endoOrthBeton )
 
 statNonLine2.setLoadStepManager( timeList )
 

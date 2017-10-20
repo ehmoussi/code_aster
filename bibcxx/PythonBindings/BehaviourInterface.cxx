@@ -31,7 +31,7 @@ void exportBehaviourToPython()
 
     class_< BehaviourInstance, BehaviourPtr > ( "Behaviour", no_init )
         .def( "create", &createSharedPtr< BehaviourInstance,
-                                          ConstitutiveLawEnum, StrainEnum > )
+                                          int, int >)
         .staticmethod( "create" )
     ;
 };
