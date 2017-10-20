@@ -3,6 +3,8 @@
 import code_aster
 from code_aster.Commands import *
 
+code_aster.init()
+
 POUTRE=code_aster.Mesh.create()
 POUTRE.readAsterMeshFile("sdll117a.mail")
 
