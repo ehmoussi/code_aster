@@ -61,6 +61,8 @@ class Starter(ExecuteCommand):
         cls.params.syntax = CommandSyntax
         aster_core.register(cls.params)
         aster.init(0)
+        if cls.params.get_option('abort'):
+            aster.onFatalError('ABORT')
         cls._is_initialized = True
 
     def __call__(self, **keywords):
