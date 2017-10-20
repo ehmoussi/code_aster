@@ -1001,44 +1001,6 @@ void DEFP(PUTVRR,putvrr, _IN ASTERDOUBLE *rval)
 
 
 /* ------------------------------------------------------------------ */
-void DEFSSP(GCUCON,gcucon, _IN char *resul, STRING_SIZE lresul,
-                           _IN char *concep, STRING_SIZE lconcep, ASTERINTEGER *ier)
-{
-   /*
-            Entrees:
-               resul   nom du concept
-               concep type du concept
-            Sorties :
-               ier     >0 le concept existe avant
-                        =0 le concept n'existe pas avant
-                        <0 le concept existe avant mais n'est pas du bon type
-            Fonction:
-               Verification de l existence du couple (resul,concep) dans les
-               resultats produits par les etapes precedentes
-   */
-    printf("GCUCON ???\n");
-    ASTERINTEGER ier2=SIGABRT;
-    CALL_ASABRT( &ier2 );
-    /* TODO */
-
-   PyObject * res = (PyObject*)0 ;
-                                                                           DEBUG_ASSERT(lresul) ;
-                                                                           DEBUG_ASSERT(lconcep) ;
-   res = PyObject_CallMethod(get_sh_etape(),"gcucon","s#s#",resul,lresul,concep,lconcep);
-   /*
-               Si le retour est NULL : une exception a ete levee dans le code Python appele
-               Cette exception est a transferer normalement a l appelant mais FORTRAN ???
-               On produit donc un abort en ecrivant des messages sur la stdout
-   */
-   if (res == NULL)
-            MYABORT("erreur a l appel de gcucon dans la partie Python");
-
-   *ier = (ASTERINTEGER)PyInt_AsLong(res);
-   Py_DECREF(res);
-}
-
-
-/* ------------------------------------------------------------------ */
 void DEFP(GCECDU,gcecdu, ASTERINTEGER *numint)
 {
         /*
@@ -1060,7 +1022,6 @@ void DEFP(GCECDU,gcecdu, ASTERINTEGER *numint)
         *numint = (ASTERINTEGER)PyInt_AsLong(res);
         Py_DECREF(res);
 }
-
 
 /* ------------------------------------------------------------------ */
 void gcncon2_(char *type,char *resul,STRING_SIZE ltype,int lresul)
