@@ -4,7 +4,7 @@
 /**
  * @file DynamicResultsContainer.h
  * @brief Fichier entete de la classe DynamicResultsContainer
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
  *
@@ -35,20 +35,20 @@
 /**
  * @class DynamicResultsContainerInstance
  * @brief Cette classe correspond a la sd_resu_dyna de Code_Aster.
- * Un objet sd_resu_dyna est un concept produit par un opérateur 
+ * Un objet sd_resu_dyna est un concept produit par un opérateur
  * dynamique sur base physique ou base généralisée.
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  */
 class DynamicResultsContainerInstance: public DataStructure
 {
 private:
     /** @brief Collection '.REFD' */
     /** Collection de vecteurs contenant les informations sur les matrices de masse, amortissement
-        et rigidité mais également d’autres informations telles que la numérotation (NUME_DDL) 
+        et rigidité mais également d’autres informations telles que la numérotation (NUME_DDL)
         ou encore la liste d’interfaces dynamiques et statiques ayant servi au calcul produisant le concept*/
     JeveuxCollectionChar24       _refd;
     /** @brief Vecteur Jeveux '.INDI' */
-    /** Cet objet définit l’indirection entre le numéro d’ordre des champs enregistrés et les objets 
+    /** Cet objet définit l’indirection entre le numéro d’ordre des champs enregistrés et les objets
         enregistrés dans  la collection .REFD */
     JeveuxVectorLong             _indi;
 public:
@@ -61,7 +61,7 @@ public:
     /**
      * @brief Constructeur
      */
-    DynamicResultsContainerInstance( std::string sd_type="SD_RESU_DYNA" ):
+    DynamicResultsContainerInstance( std::string sd_type="SD_DYNA" ):
             DataStructure( sd_type , Permanent ),
             _refd( JeveuxCollectionChar24( getName() + ".REFD" ) ),
             _indi( JeveuxVectorLong( getName() + ".INDI" ) )
