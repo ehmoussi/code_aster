@@ -15,10 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nsta)
 !
-    implicit none
+subroutine nmop45(eigsol, defo, mod45, modes, modes2, ds_posttimestep_)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -44,11 +47,11 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
 #include "asterfort/vpvers.h"
 #include "asterfort/wkvect.h"
 !
-    integer           , intent(in) :: defo, nddle, nsta
-    character(len=4)  , intent(in) :: mod45
-    character(len=8)  , intent(in) :: modes, modes2
-    character(len=19) , intent(in) :: eigsol
-    character(len=24) , intent(in) :: ddlexc, ddlsta
+integer           , intent(in) :: defo
+character(len=4)  , intent(in) :: mod45
+character(len=8)  , intent(in) :: modes, modes2
+character(len=19) , intent(in) :: eigsol
+type(NL_DS_PostTimeStep), optional, intent(in) :: ds_posttimestep_
 !
 ! ======================================================================
 !        ROUTINE DE CALCUL DE CRITERE DE STABILITE VIA UNE RESOLUTION
@@ -59,14 +62,9 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
 !                0            PETITES DEFORMATIONS (MATR. GEOM.)
 !                1            GRANDES DEFORMATIONS (PAS DE MATR. GEOM.)                  
 !   IN : MOD45  : TYPE DE CALCUL AU SENS NMOP45: VIBR OU FLAM
-!   IN : DDLEXC : OBJET JEVEUX VECTEUR POSITION DES DDLS BLOQUES
-!   IN : NDDLE  : TAILLE DE CE VECTEUR
 !   IN : MODES  : NOM UTILISATEUR DU CONCEPT MODAL PRODUIT
 !   IN : MODES2 : NOM UTILISATEUR D'UN SECOND CONCEPT MODAL PRODUIT (SI
 !                 ANALYSE DE STABILITE (NSTA.NE.0)
-!   IN : DDLSTA : OBJET JEVEUX VECTEUR DES DDLS DE STABILITE A EXCLURE
-!                 DU PB MODAL
-!   IN : NSTA   : TAILLE DE CE VECTEUR
 !-----------------------------------------------------------------------
 !
 !
@@ -74,7 +72,8 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
     parameter (nbpari=8,nbparr=16,nbpark=3)
 !
     integer           :: iret, ibid, npivot, neqact, mxresf, nblagr,nbddl, nbddl2, un, lresur
-    integer           :: nconv, ifm, niv, neq, lraide, eddl, jexx, eddl2, jest, jstab, iauxr
+    integer           :: nconv, ifm, niv, neq, lraide, eddl, eddl2, jstab, iauxr
+    integer           :: nsta, nddle
     real(kind=8)      :: omemin, omemax, omeshi, vpinf, vpmax, r8bid, csta
     complex(kind=8)   :: cbid
     character(len=4)  :: mod45b
@@ -82,8 +81,8 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
     character(len=16) :: typcon, typco2, k16bid
     character(len=19) :: matopa, solveu, raide
     character(len=24) :: k24bid, vecblo, veclag, vecrer, vecrei, vecrek, vecvp, vecstb
-    character(len=24) :: vecedd, vecsdd, vecstab
-    aster_logical     :: lbid, lcomod, checksd
+    character(len=24) :: vecedd, vecsdd
+    aster_logical     :: lcomod, checksd
     mpi_int           :: mpibid
     aster_logical     :: flage
 !
@@ -92,6 +91,12 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
     call infdbg('MECA_NON_LINE', ifm, niv)
     cbid=(0.d0,0.d0)
     nconv=0 
+    nsta  = 0
+    nddle = 0
+    if (present(ds_posttimestep_)) then
+        nddle  = ds_posttimestep_%stab_para%nb_dof_excl
+        nsta   = ds_posttimestep_%stab_para%nb_dof_stab
+    endif
 !
 ! --- CALCUL MODAL NON PARALLELISE (SEUL EVENTUELLEMENT LE SOLVEUR LINEAIRE SOUS-JACENT)
 !
@@ -187,16 +192,16 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
         vecedd='&&NMOP45.POSI.EDDL'
         call wkvect(vecedd,'V V I', neq, eddl)
         if (nddle.ne.0) then
-            call jeveuo(ddlexc, 'L', jexx)
-            call elmddl(raide, 'DDL_EXCLUS    ', neq, zk8(jexx), nddle, nbddl, zi(eddl))
+            call elmddl(raide, 'DDL_EXCLUS    ', neq, ds_posttimestep_%stab_para%list_dof_excl,&
+                        nddle, nbddl, zi(eddl))
         else
             nbddl = 0
         endif
         vecsdd='&&NMOP45.POSI.SDDL'
         call wkvect(vecsdd, 'V V I', neq, eddl2)
         if (nsta.ne.0) then
-            call jeveuo(ddlsta, 'L', jest)
-            call elmddl(raide, 'DDL_STAB      ', neq, zk8(jest), nsta, nbddl2, zi(eddl2))
+            call elmddl(raide, 'DDL_STAB      ', neq, ds_posttimestep_%stab_para%list_dof_stab,&
+                        nsta, nbddl2, zi(eddl2))
         else
             nbddl2 = 0
         endif

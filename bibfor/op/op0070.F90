@@ -246,12 +246,12 @@ implicit none
 !
 ! - Post-treatment
 !
-    call nmpost(model          , mesh       , numedd, numfix  , cara_elem      ,&
-                ds_constitutive, numins     , mate  , comref  , ds_inout       ,&
-                ds_contact     , ds_algopara, fonact, ds_print, ds_measure     ,&
-                sddisc         , sd_obsv    , sderro, sddyna  , ds_posttimestep,&
-                valinc         , solalg     , meelem, measse  , veelem         ,&
-                veasse         , ds_energy  , sdcriq, eta     , list_load)
+    call nmpost(model          , mesh       , numedd, numfix    , cara_elem      ,&
+                ds_constitutive, numins     , mate  , comref    , ds_inout       ,&
+                ds_contact     , ds_algopara, fonact, ds_measure,&
+                sddisc         , sd_obsv    , sderro, sddyna    , ds_posttimestep,&
+                valinc         , solalg     , meelem, measse    , veelem         ,&
+                veasse         , ds_energy  , sdcriq, eta       , list_load)
 !
 ! --- ETAT DE LA CONVERGENCE DU PAS DE TEMPS
 !
