@@ -24,10 +24,10 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterc/getres.h"
-#include "asterc/gcucon.h"
 #include "asterfort/assert.h"
 #include "asterfort/dbr_read_pod.h"
 #include "asterfort/dbr_read_rb.h"
+#include "asterfort/gcucon.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/getvis.h"
 #include "asterfort/getvr8.h"
