@@ -9,6 +9,9 @@ Development rules
 *****************
 
 .. note::
+    Please read carefully the :ref:`devguide-recommendations`.
+
+.. note::
 
     - Add a testcase for all new features.
 
@@ -97,5 +100,7 @@ Contents
     devguide/utilities
 
     devguide/documentation
+
+    devguide/recommendations
 
     devguide/todolist

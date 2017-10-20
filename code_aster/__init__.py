@@ -51,6 +51,9 @@ import libaster
 # import datastructures enriched by pure python extensions
 from .Objects import *
 
+from .Algorithms import (ConstitutiveLaw, IntegrationAlgorithm, StrainType,
+                         TangentMatrixType)
+
 from .Commands.debut import init
 
 # # install i18n function as soon as possible

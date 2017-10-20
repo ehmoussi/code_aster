@@ -1,6 +1,6 @@
-.. _devguide-objects_others:
-
 .. AUTOMATICALLY CREATED BY generate_rst.py - DO NOT EDIT MANUALLY!
+
+.. _devguide-objects_others:
 
 
 ####################################

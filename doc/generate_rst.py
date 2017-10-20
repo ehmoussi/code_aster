@@ -36,9 +36,9 @@ autoclass_block = \
 """.format
 
 auto_documentation = \
-""".. _devguide-{link}:
+""".. AUTOMATICALLY CREATED BY generate_rst.py - DO NOT EDIT MANUALLY!
 
-.. AUTOMATICALLY CREATED BY generate_rst.py - DO NOT EDIT MANUALLY!
+.. _devguide-{link}:
 
 {intro}
 
@@ -139,22 +139,13 @@ def all_objects(destdir):
     with open(osp.join(destdir, "objects_datastructure.rst"), "wb") as fobj:
         params = dict(link="objects_datastructure",
                       content=dicttext["DataStructure"],
-                      intro=\
-"""
-Documentation of
-:py:class:`~code_aster.Objects.datastructure_ext.DataStructure` subclasses
-that are not documented on :ref:`devguide-datastructures`.
-""")
+                      intro="")
         fobj.write(auto_documentation(**params))
 
     with open(osp.join(destdir, "objects_materialbehaviour.rst"), "wb") as fobj:
         params = dict(link="objects_materialbehaviour",
                       content=dicttext["GeneralMaterialBehaviour"],
-                      intro=\
-"""
-Documentation of
-:py:class:`~code_aster.Objects.GeneralMaterialBehaviour` subclasses.
-""")
+                      intro="")
         fobj.write(auto_documentation(**params))
 
     # generate a page for all other classes

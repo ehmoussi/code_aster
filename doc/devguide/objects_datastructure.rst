@@ -1,11 +1,7 @@
-.. _devguide-objects_datastructure:
-
 .. AUTOMATICALLY CREATED BY generate_rst.py - DO NOT EDIT MANUALLY!
 
+.. _devguide-objects_datastructure:
 
-Documentation of
-:py:class:`~code_aster.Objects.datastructure_ext.DataStructure` subclasses
-that are not documented on :ref:`devguide-datastructures`.
 
 
 
@@ -505,6 +501,15 @@ that are not documented on :ref:`devguide-datastructures`.
 ================================================================================
 
 .. autoclass:: code_aster.Objects.LineicForceDouble
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.ListOfFloats` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.ListOfFloats
    :show-inheritance:
    :members:
 
