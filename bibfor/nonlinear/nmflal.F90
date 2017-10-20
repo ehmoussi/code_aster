@@ -15,33 +15,26 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmflal(option, ds_constitutive, sdpost, mod45 , defo  ,&
-                  nfreq , cdsp           , typmat, optmod, bande ,&
-                  nddle , ddlexc         , nsta  , ddlsta, modrig)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmflal(option, ds_constitutive, ds_posttimestep, mod45 , defo  ,&
+                  nfreq , cdsp           , typmat         , optmod, bande ,&
+                  nddle , nsta           , modrig)
 !
 use NonLin_Datastructure_type
 !
 implicit none
 !
-#include "jeveux.h"
 #include "asterfort/assert.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/nmlesd.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=24) :: ddlexc, ddlsta
-    character(len=16) :: optmod, option
-    character(len=4) :: mod45
-    integer :: nfreq, defo, nddle, nsta, cdsp
-    character(len=16) :: typmat, modrig
-    real(kind=8) :: bande(2)
-    character(len=19) :: sdpost
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=16) :: optmod, option
+character(len=4) :: mod45
+integer :: nfreq, defo, nddle, nsta, cdsp
+character(len=16) :: typmat, modrig
+real(kind=8) :: bande(2)
+type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,7 +49,7 @@ implicit none
 !              'FLAMBDYN' MODES DE FLAMBEMENT EN DYNAMIQUE
 !              'VIBRDYNA' MODES VIBRATOIRES
 ! In  ds_constitutive  : datastructure for constitutive laws management
-! IN  SDPOST : SD POUR POST-TRAITEMENTS (CRIT_STAB ET MODE_VIBR)
+! In  ds_posttimestep  : datastructure for post-treatment at each time step
 ! OUT MOD45  : TYPE DE CALCUL DE MODES PROPRES
 !              'VIBR'     MODES VIBRATOIRES
 !              'FLAM'     MODES DE FLAMBEMENT
@@ -79,16 +72,9 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ibid
-    real(kind=8) :: r8bid
-    character(len=24) :: k24bid
     character(len=16) :: optrig
 !
 ! --------------------------------------------------------------------------------------------------
-!
-    call jemarq()
-!
-! --- INITIALISATIONS
 !
     bande(1) = 1.d-5
     bande(2) = 1.d5
@@ -111,64 +97,43 @@ implicit none
 ! --- RECUPERATION DES OPTIONS
 !
     if (option(1:7) .eq. 'VIBRDYN') then
-        call nmlesd('POST_TRAITEMENT', sdpost, 'NB_FREQ_VIBR', nfreq, r8bid,&
-                    k24bid)
-        call nmlesd('POST_TRAITEMENT', sdpost, 'COEF_DIM_VIBR', cdsp, r8bid,&
-                    k24bid)
-        call nmlesd('POST_TRAITEMENT', sdpost, 'TYPE_MATR_VIBR', ibid, r8bid,&
-                    typmat)
-        call nmlesd('POST_TRAITEMENT', sdpost, 'OPTION_EXTR_VIBR', ibid, r8bid,&
-                    optmod)
-        call nmlesd('POST_TRAITEMENT', sdpost, 'BANDE_VIBR_1', ibid, bande(1),&
-                    k24bid)
-        call nmlesd('POST_TRAITEMENT', sdpost, 'BANDE_VIBR_2', ibid, bande(2),&
-                    k24bid)
-        mod45 = 'VIBR'
+        nfreq  = ds_posttimestep%mode_vibr%nb_eigen
+        cdsp   = ds_posttimestep%mode_vibr%coef_dim_espace
+        typmat = ds_posttimestep%mode_vibr%type_matr_rigi
+        if (ds_posttimestep%mode_vibr%l_small) then
+            optmod = 'PLUS_PETITE'
+        else
+            optmod = 'BANDE'
+        endif
+        bande  = ds_posttimestep%mode_vibr%strip_bounds
+        mod45  = 'VIBR'
     else if (option(1:5) .eq. 'FLAMB') then
-        call nmlesd('POST_TRAITEMENT', sdpost, 'NB_FREQ_FLAMB', nfreq, r8bid,&
-                    k24bid)
-        call nmlesd('POST_TRAITEMENT', sdpost, 'COEF_DIM_FLAMB', cdsp, r8bid,&
-                    k24bid)
-        call nmlesd('POST_TRAITEMENT', sdpost, 'TYPE_MATR_FLAMB', ibid, r8bid,&
-                    typmat)
+        nfreq  = ds_posttimestep%crit_stab%nb_eigen
+        cdsp   = ds_posttimestep%crit_stab%coef_dim_espace
+        typmat = ds_posttimestep%crit_stab%type_matr_rigi
         mod45 = 'FLAM'
-        call nmlesd('POST_TRAITEMENT', sdpost, 'RIGI_GEOM_FLAMB', ibid, r8bid,&
-                    optrig)
-        if (optrig .eq. 'RIGI_GEOM_NON') then
+        if (.not. ds_posttimestep%stab_para%l_geom_matr) then
             defo = 1
             call utmess('I', 'MECANONLINE4_3')
         endif
 !
         if (defo .eq. 0) then
+            ASSERT(ds_posttimestep%crit_stab%l_strip)
             optmod = 'BANDE'
-            call nmlesd('POST_TRAITEMENT', sdpost, 'OPTION_EXTR_FLAM', ibid, r8bid,&
-                        optmod)
-        else if (defo.eq.1) then
+        else if (defo .eq. 1) then
+            ASSERT(ds_posttimestep%crit_stab%l_small)
             optmod = 'PLUS_PETITE'
-            call nmlesd('POST_TRAITEMENT', sdpost, 'OPTION_EXTR_FLAM', ibid, r8bid,&
-                        optmod)
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
-!
-        call nmlesd('POST_TRAITEMENT', sdpost, 'BANDE_FLAMB_1', ibid, bande(1),&
-                    k24bid)
-        call nmlesd('POST_TRAITEMENT', sdpost, 'BANDE_FLAMB_2', ibid, bande(2),&
-                    k24bid)
-        call nmlesd('POST_TRAITEMENT', sdpost, 'NB_DDL_EXCLUS', nddle, r8bid,&
-                    k24bid)
-        call nmlesd('POST_TRAITEMENT', sdpost, 'NOM_DDL_EXCLUS', ibid, r8bid,&
-                    ddlexc)
-        call nmlesd('POST_TRAITEMENT', sdpost, 'NB_DDL_STAB', nsta, r8bid,&
-                    k24bid)
-        call nmlesd('POST_TRAITEMENT', sdpost, 'NOM_DDL_STAB', ibid, r8bid,&
-                    ddlsta)
-        call nmlesd('POST_TRAITEMENT', sdpost, 'MODI_RIGI', ibid, r8bid,&
-                    modrig)
+        bande  = ds_posttimestep%crit_stab%strip_bounds
+        nddle  = ds_posttimestep%stab_para%nb_dof_excl
+        nsta   = ds_posttimestep%stab_para%nb_dof_stab
+        if (ds_posttimestep%stab_para%l_modi_rigi) then
+            modrig = 'MODI_RIGI_OUI'
+        endif
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
-!
-    call jedema()
 !
 end subroutine

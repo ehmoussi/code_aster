@@ -15,25 +15,24 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmflin(sdpost, matass, freqr, linsta)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine nmflin(ds_posttimestep, matass, freqr, linsta)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
 #include "asterf_types.h"
-#include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/echmat.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/nmlesd.h"
 #include "asterfort/utmess.h"
-    character(len=19) :: sdpost
-    character(len=19) :: matass
-    aster_logical :: linsta
-    real(kind=8) :: freqr
+!
+type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
+character(len=19) :: matass
+aster_logical :: linsta
+real(kind=8) :: freqr
 !
 ! ----------------------------------------------------------------------
 !
@@ -45,54 +44,46 @@ subroutine nmflin(sdpost, matass, freqr, linsta)
 !
 !
 ! IN  MATASS : MATRICE ASSEMBLEE
-! IN  SDPOST : SD POUR POST-TRAITEMENTS (CRIT_STAB ET MODE_VIBR)
+! IO  ds_posttimestep  : datastructure for post-treatment at each time step
 ! IN  FREQR  : FREQUENCE SOLUTION INSTABILITE
 ! OUT LINSTA : .TRUE. SI INSTABILITE DETECTEE
 !
 !
 !
 !
-    aster_logical :: valtst, ldist
-    character(len=24) :: k24bid
-    real(kind=8) :: freqr0, prec, r8bid, minmat, maxmat
-    character(len=16) :: optrig, sign
-    integer :: ibid
+    aster_logical :: valtst, ldist, l_geom_matr
+    real(kind=8) :: freqr0, prec, minmat, maxmat
+    character(len=16) :: sign
     character(len=24), pointer :: refa(:) => null()
 !
 ! ----------------------------------------------------------------------
 !
-    call jemarq()
+    linsta = ASTER_FALSE
 !
-! --- INITIALISATIONS
+! - Get parameters
 !
-    linsta = .false.
-!
-! --- PARAMETRES
-!
-    call nmlesd('POST_TRAITEMENT', sdpost, 'SOLU_FREQ_FLAM', ibid, freqr0,&
-                k24bid)
-    if (abs(freqr0) .gt. 1.d30) freqr0=freqr
-    call nmlesd('POST_TRAITEMENT', sdpost, 'RIGI_GEOM_FLAMB', ibid, r8bid,&
-                optrig)
-    call nmlesd('POST_TRAITEMENT', sdpost, 'PREC_INSTAB', ibid, prec,&
-                k24bid)
-    call nmlesd('POST_TRAITEMENT', sdpost, 'SIGN_INSTAB', ibid, r8bid,&
-                sign)
+    freqr0 = ds_posttimestep%mode_flam_resu%eigen_value
+    if (abs(freqr0) .gt. 1.d30) then
+        freqr0 = freqr
+    endif
+    l_geom_matr = ds_posttimestep%stab_para%l_geom_matr
+    prec        = ds_posttimestep%stab_para%instab_prec
+    sign        = ds_posttimestep%stab_para%instab_sign
 !
 ! --- DETECTION INSTABILITE
 !
-    if (optrig .eq. 'RIGI_GEOM_NON') then
+    if (.not. l_geom_matr) then
         call jeveuo(matass//'.REFA', 'L', vk24=refa)
         if (refa(11)(1:11) .ne. 'MPI_COMPLET') then
             call utmess('F', 'MECANONLINE6_13')
         endif
-        ldist = .false.
+        ldist = ASTER_FALSE
         call echmat(matass, ldist, minmat, maxmat)
         if (((freqr0*freqr).lt.0.d0) .or. (abs(freqr).lt.(prec*minmat))) then
-            linsta = .true.
+            linsta = ASTER_TRUE
         endif
     else
-        valtst = .false.
+        valtst = ASTER_FALSE
         if (sign .eq. 'POSITIF') then
             valtst = ((freqr.ge.0.d0).and.(abs(freqr).lt.(1.d0+prec)))
         else if (sign.eq.'NEGATIF') then
@@ -100,10 +91,11 @@ subroutine nmflin(sdpost, matass, freqr, linsta)
         else if (sign.eq.'POSITIF_NEGATIF') then
             valtst = (abs(freqr).lt.(1.d0+prec))
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
-        if (valtst) linsta = .true.
+        if (valtst) then
+            linsta = ASTER_TRUE
+        endif
     endif
 !
-    call jedema()
 end subroutine

@@ -113,7 +113,7 @@ subroutine modint(ssami, raiint, nddlin, nbmod, shift,&
     integer :: lmatmo, i1, j1, k1, m1, lmakry, nsekry,nsekry2,nsekry3, nbborn
     integer :: lmatk, lmatm, lmapro, nbrss, lkpro, lmatrm, lmatrk, lwork
     integer :: limped, lmatma, iret, nbvect, ibid, no, nbsst, lindin, coeff, lvp
-    integer :: ifm,niv,mode_symetrique, maxitr, nbvec2, defo, nddle, nsta
+    integer :: ifm,niv,mode_symetrique, maxitr, nbvec2, defo
     integer(kind=4) :: info
     real(kind=8) :: temp, rbid, norm, lambda, comlin(2), swork(1), max, omecor
     real(kind=8) :: bande(2), freq1, freq2, alpha, tolsor, precsh, fcorig, precdc
@@ -289,10 +289,8 @@ subroutine modint(ssami, raiint, nddlin, nbmod, shift,&
 !
     defo=0
     mod45='VIBR'
-    nddle=0
     sdstab='&&DUMMY2'
-    nsta=0
-    call nmop45(eigsol, defo, mod45, k24bid, nddle, modes, sdstab, k24bid, nsta)
+    call nmop45(eigsol, defo, mod45, modes, sdstab)
     call vpleci(eigsol, 'I', 1, k24bid, r8bid, nsekry2)
     call detrsd('EIGENSOLVER',eigsol)
 

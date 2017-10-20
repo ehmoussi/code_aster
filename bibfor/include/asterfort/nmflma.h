@@ -15,9 +15,6 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 ! aslint: disable=W1504
 !
 interface
@@ -26,7 +23,7 @@ interface
                       numins, valinc, solalg, lischa     , comref,&
                       ds_contact, numedd, numfix,&
                       ds_constitutive, ds_measure, meelem,&
-                      measse, veelem, nddle , ddlexc     , modrig,&
+                      measse, veelem, nddle , ds_posttimestep, modrig,&
                       ldccvg, matass, matgeo)
         use NonLin_Datastructure_type
         character(len=16) :: typmat
@@ -53,7 +50,7 @@ interface
         character(len=19) :: measse(*)
         character(len=19) :: veelem(*)
         integer :: nddle
-        character(len=24) :: ddlexc
+        type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
         character(len=16) :: modrig
         integer :: ldccvg
         character(len=19) :: matass

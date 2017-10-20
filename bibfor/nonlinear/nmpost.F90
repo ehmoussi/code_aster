@@ -21,7 +21,7 @@
 subroutine nmpost(modele , mesh    , numedd, numfix     , carele  ,&
                   ds_constitutive , numins  , mate  , comref     , ds_inout,&
                   ds_contact, ds_algopara, fonact  ,&
-                  ds_print, ds_measure, sddisc     , &
+                  ds_measure, sddisc     , &
                   sd_obsv, sderro  , sddyna, ds_posttimestep, valinc  ,&
                   solalg , meelem  , measse, veelem     , veasse  ,&
                   ds_energy, sdcriq  , eta   , lischa)
@@ -56,7 +56,6 @@ character(len=19) :: lischa
 character(len=19) :: sddisc, sddyna
 type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 character(len=19), intent(in) :: sd_obsv
-type(NL_DS_Print), intent(in) :: ds_print
 character(len=24) :: modele, numedd, numfix
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 character(len=19) :: veelem(*), measse(*), veasse(*)
@@ -83,7 +82,6 @@ integer :: fonact(*)
 ! IN  COMREF : VARI_COM DE REFERENCE
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  ds_inout         : datastructure for input/output management
-! In  ds_print         : datastructure for printing parameters
 ! IO  ds_contact       : datastructure for contact management
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
@@ -97,7 +95,7 @@ integer :: fonact(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: lmvib, lflam, lerrt, lcont, lener, l_post_incr, l_obsv, l_post
+    aster_logical :: l_mode_vibr, l_crit_stab, lerrt, lcont, lener, l_post_incr, l_obsv
     character(len=4) :: etfixe
     real(kind=8) :: time
 !
@@ -105,14 +103,14 @@ integer :: fonact(*)
 !
     lcont       = isfonc(fonact,'CONTACT')
     lerrt       = isfonc(fonact,'ERRE_TEMPS_THM')
-    lmvib       = isfonc(fonact,'MODE_VIBR')
-    lflam       = isfonc(fonact,'CRIT_STAB')
+    l_mode_vibr = isfonc(fonact,'MODE_VIBR')
+    l_crit_stab = isfonc(fonact,'CRIT_STAB')
     lener       = isfonc(fonact,'ENERGIE')
     l_post_incr = isfonc(fonact,'POST_INCR')
 !
 ! - Observation ?
 !
-    l_obsv = .false.
+    l_obsv = ASTER_FALSE
     time   = diinst(sddisc, numins)
     call lobs(sd_obsv, numins, time, l_obsv)
 !
@@ -122,70 +120,65 @@ integer :: fonact(*)
 !
 ! - Post-treatment ?
 !
-    l_post = (lerrt .or. lcont .or. lmvib .or. lflam .or. lener .or. l_obsv .or. l_post_incr).and.&
-             etfixe .eq. 'CONV'
+    if (etfixe .eq. 'CONV') then
+! ----- Launch timer for post-treatment
+        call nmtime(ds_measure, 'Init'  , 'Post')
+        call nmtime(ds_measure, 'Launch', 'Post')
+! ----- CALCUL EVENTUEL DE L'INDICATEUR D'ERREUR TEMPORELLE THM
+        if (lerrt) then
+            call nmetca(modele, mesh  , mate, sddisc, sdcriq,&
+                        numins, valinc)
+        endif
 !
-    if (.not.l_post) then
-        goto 99
+! ----- POST_TRAITEMENT DU CONTACT
+!
+        if (lcont) then
+            call cfmxpo(mesh      , modele, ds_contact, numins, sddisc,&
+                        ds_measure, solalg, valinc    , veasse)
+        endif
+!
+! ----- Spectral analysis (MODE_VIBR/CRIT_STAB)
+!
+        if (l_mode_vibr .or. l_crit_stab) then
+            call nmspec(modele         , mate      , carele    ,lischa      , fonact,&
+                        numedd         , numfix    ,&
+                        ds_constitutive, comref    ,&
+                        sddisc         , numins    ,&
+                        sddyna         , sderro    , ds_contact, ds_algopara,&
+                        ds_measure     ,&
+                        valinc         , solalg    ,&
+                        meelem         , measse    ,&
+                        veelem         ,&
+                        ds_posttimestep)
+        endif
+!
+! ----- CALCUL DES ENERGIES
+!
+        if (lener) then
+            call nmener(valinc, veasse, measse, sddyna, eta        ,&
+                        ds_energy, fonact, numedd, numfix, ds_algopara,&
+                        meelem, numins, modele, mate  , carele     ,&
+                        ds_constitutive, ds_measure, sddisc, solalg, lischa     ,&
+                        comref, veelem, ds_inout)
+        endif
+!
+! ----- Post-treatment for behavior laws.
+!
+        if (l_post_incr) then
+            call nmrest_ecro(modele, mate, ds_constitutive, valinc)
+        endif
+!
+! ----- Make observation
+!
+        if (l_obsv) then
+            call nmobsv(mesh  , modele, sddisc         , sd_obsv, numins,&
+                        carele, mate  , ds_constitutive, comref , valinc)
+        endif
+!
+! ----- End of timer for post-treatment
+!
+        call nmtime(ds_measure, 'Stop', 'Post')
+        call nmrinc(ds_measure, 'Post')
     endif
-!
-! - Launch timer for post-treatment
-!
-    call nmtime(ds_measure, 'Init'  , 'Post')
-    call nmtime(ds_measure, 'Launch', 'Post')
-!
-! --- CALCUL EVENTUEL DE L'INDICATEUR D'ERREUR TEMPORELLE THM
-!
-    if (lerrt) then
-        call nmetca(modele, mesh, mate, sddisc, sdcriq,&
-                    numins, valinc)
-    endif
-!
-! --- POST_TRAITEMENT DU CONTACT
-!
-    if (lcont) then
-        call cfmxpo(mesh      , modele, ds_contact, numins, sddisc,&
-                    ds_measure, solalg, valinc    , veasse)
-    endif
-!
-! --- CALCUL DE POST-TRAITEMENT: STABILITE ET MODES VIBRATOIRES
-!!
-!    if (lmvib .or. lflam) then
-!        call nmspec(modele     , numedd         , numfix  , carele    , ds_constitutive,&
-!                    numins     , mate           , comref  , lischa    , ds_contact     ,&
-!                    ds_algopara, fonact         , ds_print, ds_measure, sddisc         ,&
-!                    valinc     , solalg         , meelem  , measse    , veelem         ,&
-!                    sddyna     , ds_posttimestep, sderro)
-!    endif
-!
-! --- CALCUL DES ENERGIES
-!
-    if (lener) then
-        call nmener(valinc, veasse, measse, sddyna, eta        ,&
-                    ds_energy, fonact, numedd, numfix, ds_algopara,&
-                    meelem, numins, modele, mate  , carele     ,&
-                    ds_constitutive, ds_measure, sddisc, solalg, lischa     ,&
-                    comref, veelem, ds_inout)
-    endif
-!
-! - Post-treatment for behavior laws.
-!
-    if (l_post_incr) then
-        call nmrest_ecro(modele, mate, ds_constitutive, valinc)
-    endif
-!
-! - Make observation
-!
-    if (l_obsv) then
-        call nmobsv(mesh  , modele, sddisc         , sd_obsv, numins,&
-                    carele, mate  , ds_constitutive, comref , valinc)
-    endif
-!
-! - End of timer for post-treatment
-!
-    call nmtime(ds_measure, 'Stop', 'Post')
-    call nmrinc(ds_measure, 'Post')
-!
-99  continue
 !
 end subroutine

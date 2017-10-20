@@ -15,13 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmflam(option, modele, numedd, numfix     , carele,&
-                  ds_constitutive, numins, mate       , comref,&
-                  lischa, ds_contact, ds_algopara, fonact,&
-                  ds_measure, sddisc, sddyna,&
-                  sdpost, valinc, solalg, meelem     , measse,&
-                  veelem, sderro)
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
+subroutine nmflam(option         ,&
+                  model          , mate         , cara_elem , list_load  , list_func_acti,&
+                  nume_dof       , nume_dof_inva,&
+                  ds_constitutive, varc_refe    ,&
+                  sddisc         , nume_inst    ,& 
+                  sddyna         , sderro       , ds_contact, ds_algopara,& 
+                  ds_measure     ,&
+                  hval_incr      , hval_algo    ,&
+                  hval_meelem    , hval_measse  ,&
+                  hval_veelem    ,&
+                  ds_posttimestep)
 !
 use NonLin_Datastructure_type
 !
@@ -41,11 +48,9 @@ implicit none
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/nmcrel.h"
-#include "asterfort/nmecsd.h"
 #include "asterfort/nmflal.h"
 #include "asterfort/nmflin.h"
 #include "asterfort/nmflma.h"
-#include "asterfort/nmlesd.h"
 #include "asterfort/nmop45.h"
 #include "asterfort/omega2.h"
 #include "asterfort/rsadpa.h"
@@ -54,53 +59,55 @@ implicit none
 #include "asterfort/vpcres.h"
 #include "asterfort/vpleci.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer :: numins, fonact(*)
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=16) :: option
-    character(len=19) :: lischa, sddisc, sddyna, sdpost, meelem(*)
-    character(len=19) :: veelem(*), measse(*), solalg(*), valinc(*)
-    character(len=24) :: mate, comref, sderro
-    character(len=24) :: modele, numedd, numfix, carele
-!
-! --------------------------------------------------------------------------------------------------
-!
-! ROUTINE MECA_NON_LINE (ALGORITHME)
-!
-! CALCUL DE MODES
+character(len=16), intent(in) :: option
+character(len=24), intent(in) :: model, mate, cara_elem
+character(len=19), intent(in) :: list_load
+integer, intent(in) :: list_func_acti(*)
+character(len=24), intent(in) :: nume_dof, nume_dof_inva
+character(len=24), intent(in) :: varc_refe
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=19), intent(in) :: sddisc
+integer, intent(in) :: nume_inst
+character(len=19), intent(in) :: sddyna
+character(len=24), intent(in) :: sderro
+type(NL_DS_Contact), intent(in) :: ds_contact
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
+character(len=19), intent(in) :: hval_veelem(*), hval_meelem(*), hval_measse(*)
+type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IN  OPTION : TYPE DE CALCUL
-!              'FLAMBSTA' MODES DE FLAMBEMENT EN STATIQUE
-!              'FLAMBDYN' MODES DE FLAMBEMENT EN DYNAMIQUE
-!              'VIBRDYNA' MODES VIBRATOIRES
-! IN  MODELE : MODELE
-! IN  NUMEDD : NUME_DDL (VARIABLE AU COURS DU CALCUL)
-! IN  NUMFIX : NUME_DDL (FIXE AU COURS DU CALCUL)
-! IN  MATE   : CHAMP MATERIAU
-! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VARI_COM DE REFERENCE
+! MECA_NON_LINE - Initializations
+!
+! Spectral analysis (MODE_VIBR/CRIT_STAB)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  option           : which compute (FLAMBSTA/FLAMBDYN/VIBRDYNA)
+! In  model            : name of model
+! In  mate             : name of material characteristics (field)
+! In  cara_elem        : name of elementary characteristics (field)
+! In  list_load        : datastructure for list of loads
+! In  list_func_acti   : list of active functionnalities
+! In  nume_dof         : name of numbering (NUME_DDL)
+! In  nume_dof_inva    : name of reference numbering (invariant)
 ! In  ds_constitutive  : datastructure for constitutive laws management
-! IN  LISCHA : LISTE DES CHARGES
+! In  varc_refe        : name of reference external state variables
+! In  sddisc           : datastructure for time discretization
+! In  nume_inst        : index of current time step
+! In  sddyna           : datastructure for dynamic
+! In  sderro           : datastructure for error management (events)
 ! In  ds_contact       : datastructure for contact management
-! IO  ds_measure       : datastructure for measure and statistics management
-! IN  SDDYNA : SD POUR LA DYNAMIQUE
 ! In  ds_algopara      : datastructure for algorithm parameters
-! IN  SDPOST : SD POUR POST-TRAITEMENTS (CRIT_STAB ET MODE_VIBR)
-! IN  SDDISC : SD DISCRETISATION TEMPORELLE
-! IN  NUMINS : NUMERO D'INSTANT
-! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
-! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
-! IN  MEELEM : MATRICES ELEMENTAIRES (POUR NMFLMA)
-! IN  MEASSE : MATRICE ASSEMBLEE (POUR NMFLMA)
-! IN  VEELEM : VECTEUR ELEMENTAIRE (POUR NMFLMA)
-! IN  SDERRO : SD ERREUR
+! IO  ds_measure       : datastructure for measure and statistics management
+! In  hval_incr        : hat-variable for incremental values fields
+! In  hval_algo        : hat-variable for algorithms fields
+! In  hval_veelem      : hat-variable for elementary vectors
+! In  hval_meelem      : hat-variable for elementary matrix
+! In  hval_measse      : hat-variable for matrix
+! IO  ds_posttimestep  : datastructure for post-treatment at each time step
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -116,17 +123,17 @@ implicit none
     character(len=16) :: stoper
     character(len=19) :: matgeo, matas2, vecmod, champ, k19bid, champ2, vecmo2, eigsol
     character(len=19) :: raide, masse
-    character(len=24) :: k24bid, ddlexc, ddlsta
+    character(len=24) :: k24bid
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
 !
-! --- INITIALISATIONS
+! - Initializations
 !
     matgeo = '&&NMFLAM.MAGEOM'
     matas2 = '&&NMFLAM.MATASS'
-    linsta = .false.
+    linsta = ASTER_FALSE
 !
 ! --- NOM DE LA SD DE STOCKAGE DES MODES
 !
@@ -135,18 +142,18 @@ implicit none
 !
 ! --- RECUPERATION DES OPTIONS
 !
-    call nmflal(option, ds_constitutive, sdpost, mod45 , defo  ,&
-                nfreq , cdsp           , typmat, optmod, bande ,&
-                nddle , ddlexc         , nsta  , ddlsta, modrig)
+    call nmflal(option, ds_constitutive, ds_posttimestep, mod45 , defo  ,&
+                nfreq , cdsp           , typmat         , optmod, bande ,&
+                nddle , nsta           , modrig)
 !
 ! --- CALCUL DE LA MATRICE TANGENTE ASSEMBLEE ET DE LA MATRICE GEOM.
 !
-    call nmflma(typmat, mod45 , defo  , ds_algopara, modele,&
-                mate  , carele, sddisc, sddyna     , fonact,&
-                numins, valinc, solalg, lischa     , comref,&
-                ds_contact, numedd     , numfix,&
-                ds_constitutive, ds_measure, meelem,&
-                measse, veelem, nddle , ddlexc     , modrig,&
+    call nmflma(typmat, mod45 , defo  , ds_algopara, model,&
+                mate  , cara_elem, sddisc, sddyna     , list_func_acti,&
+                nume_inst, hval_incr, hval_algo, list_load     , varc_refe,&
+                ds_contact, nume_dof     , nume_dof_inva,&
+                ds_constitutive, ds_measure, hval_meelem,&
+                hval_measse, hval_veelem, nddle , ds_posttimestep, modrig,&
                 ldccvg, matas2, matgeo)
     ASSERT(ldccvg.eq.0)
 !
@@ -224,7 +231,7 @@ implicit none
 !
 ! --- CALCUL MODAL PROPREMENT DIT
 !
-    call nmop45(eigsol, defo, mod45, ddlexc, nddle, sdmode, sdstab, ddlsta, nsta)
+    call nmop45(eigsol, defo, mod45, sdmode, sdstab, ds_posttimestep)
     
     call vpleci(eigsol, 'I', 1, k24bid, r8bid, nfreqc)
     call detrsd('EIGENSOLVER',eigsol)
@@ -242,7 +249,7 @@ implicit none
     else if (mod45 .eq. 'FLAM') then
         varacc = 'CHAR_CRIT'
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
     freqm = r8maem()
     numord = 0
@@ -261,7 +268,7 @@ implicit none
         else if (mod45 .eq. 'FLAM') then
             call utmess('I', 'MECANONLINE6_11', si=i, sr=freqv)
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
     end do
     if (nsta .ne. 0) then
@@ -274,27 +281,22 @@ implicit none
 ! --- NOM DU MODE
 !
     if (mod45 .eq. 'VIBR') then
-        call nmlesd('POST_TRAITEMENT', sdpost, 'SOLU_MODE_VIBR', ibid, r8bid,&
-                    vecmod)
+        vecmod = ds_posttimestep%mode_vibr_resu%eigen_vector
     else if (mod45 .eq. 'FLAM') then
-        call nmlesd('POST_TRAITEMENT', sdpost, 'SOLU_MODE_FLAM', ibid, r8bid,&
-                    vecmod)
+        vecmod = ds_posttimestep%mode_flam_resu%eigen_vector
         if (nsta .ne. 0) then
-            call nmlesd('POST_TRAITEMENT', sdpost, 'SOLU_MODE_STAB', ibid, r8bid,&
-                        vecmo2)
+            vecmo2 = ds_posttimestep%crit_stab_resu%eigen_vector
         endif
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! --- RECUPERATION DES MODES DANS LA SD MODE
 !
-    call rsexch('F', sdmode, 'DEPL', numord, champ,&
-                iret)
+    call rsexch('F', sdmode, 'DEPL', numord, champ, iret)
     call copisd('CHAMP_GD', 'V', champ, vecmod)
     if (nsta .ne. 0) then
-        call rsexch('F', sdstab, 'DEPL', 1, champ2,&
-                    iret)
+        call rsexch('F', sdstab, 'DEPL', 1, champ2, iret)
         call copisd('CHAMP_GD', 'V', champ2, vecmo2)
     endif
 !
@@ -308,13 +310,13 @@ implicit none
             call utmess('I', 'MECANONLINE6_16', sr=csta)
         endif
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! --- DETECTION INSTABILITE SI DEMANDE
 !
     if (mod45 .eq. 'FLAM') then
-        call nmflin(sdpost, matas2, freqr, linsta)
+        call nmflin(ds_posttimestep, matas2, freqr, linsta)
         call nmcrel(sderro, 'CRIT_STAB', linsta)
     endif
 !
@@ -322,26 +324,20 @@ implicit none
 !
 999 continue
 !
-! --- MODE SELECTIONNE ECRIT DANS SDPOST
+! - Save results
 !
     if (mod45 .eq. 'VIBR') then
-        call nmecsd('POST_TRAITEMENT', sdpost, 'SOLU_FREQ_VIBR', ibid, freqr,&
-                    k24bid)
-        call nmecsd('POST_TRAITEMENT', sdpost, 'SOLU_NUME_VIBR', numord, r8bid,&
-                    k24bid)
+        ds_posttimestep%mode_vibr_resu%eigen_value = freqr
+        ds_posttimestep%mode_vibr_resu%eigen_index = numord
     else if (mod45 .eq. 'FLAM') then
-        call nmecsd('POST_TRAITEMENT', sdpost, 'SOLU_FREQ_FLAM', ibid, freqr,&
-                    k24bid)
-        call nmecsd('POST_TRAITEMENT', sdpost, 'SOLU_NUME_FLAM', numord, r8bid,&
-                    k24bid)
+        ds_posttimestep%mode_flam_resu%eigen_value = freqr
+        ds_posttimestep%mode_flam_resu%eigen_index = numord
         if (nsta .ne. 0) then
-            call nmecsd('POST_TRAITEMENT', sdpost, 'SOLU_FREQ_STAB', ibid, csta,&
-                        k24bid)
-            call nmecsd('POST_TRAITEMENT', sdpost, 'SOLU_NUME_STAB', 1, r8bid,&
-                        k24bid)
+            ds_posttimestep%crit_stab_resu%eigen_value = csta
+            ds_posttimestep%crit_stab_resu%eigen_index = 1
         endif
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! --- DESTRUCTION DE LA SD DE STOCKAGE DES MODES

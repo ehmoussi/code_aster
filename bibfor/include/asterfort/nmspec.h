@@ -15,40 +15,35 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 ! aslint: disable=W1504
 !
 interface
-    subroutine nmspec(modele     , numedd, numfix  , carele    , ds_constitutive,&
-                      numins     , mate  , comref  , lischa    , ds_contact     ,&
-                      ds_algopara, fonact, ds_print, ds_measure, sddisc         ,&
-                      valinc     , solalg, meelem  , measse    , veelem         ,&
-                      sddyna     , sdpost, sderro)
+    subroutine nmspec(model          , mate         , cara_elem , list_load  , list_func_acti,& 
+                      nume_dof       , nume_dof_inva,&
+                      ds_constitutive, varc_refe    ,&
+                      sddisc         , nume_inst    ,&
+                      sddyna         , sderro       , ds_contact, ds_algopara,&
+                      ds_measure     , &
+                      hval_incr      , hval_algo    ,&
+                      hval_meelem    , hval_measse  ,&
+                      hval_veelem    ,&
+                      ds_posttimestep)
         use NonLin_Datastructure_type
-        character(len=24) :: modele
-        character(len=24) :: numedd
-        character(len=24) :: numfix
-        character(len=24) :: carele
+        character(len=24), intent(in) :: model, mate, cara_elem
+        character(len=19), intent(in) :: list_load
+        integer, intent(in) :: list_func_acti(*)
+        character(len=24), intent(in) :: nume_dof, nume_dof_inva
+        character(len=24), intent(in) :: varc_refe
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        integer :: numins
-        character(len=24) :: mate
-        character(len=24) :: comref
-        character(len=19) :: lischa
+        character(len=19), intent(in) :: sddisc
+        integer, intent(in) :: nume_inst
+        character(len=19), intent(in) :: sddyna
+        character(len=24), intent(in) :: sderro
         type(NL_DS_Contact), intent(in) :: ds_contact
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-        integer :: fonact(*)
-        type(NL_DS_Print), intent(in) :: ds_print
         type(NL_DS_Measure), intent(inout) :: ds_measure
-        character(len=19) :: sddisc
-        character(len=19) :: valinc(*)
-        character(len=19) :: solalg(*)
-        character(len=19) :: meelem(*)
-        character(len=19) :: measse(*)
-        character(len=19) :: veelem(*)
-        character(len=19) :: sddyna
-        character(len=19) :: sdpost
-        character(len=24) :: sderro
+        character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
+        character(len=19), intent(in) :: hval_veelem(*), hval_meelem(*), hval_measse(*)
+        type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
     end subroutine nmspec
 end interface

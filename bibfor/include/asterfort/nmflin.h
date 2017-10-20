@@ -15,16 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine nmflin(sdpost, matass, freqr, linsta)
-        character(len=19) :: sdpost
+    subroutine nmflin(ds_posttimestep, matass, freqr, linsta)
+        use NonLin_Datastructure_type
+        type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
         character(len=19) :: matass
-        real(kind=8) :: freqr
         aster_logical :: linsta
+        real(kind=8) :: freqr
     end subroutine nmflin
 end interface

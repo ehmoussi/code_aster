@@ -15,13 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
 subroutine nmflma(typmat, mod45 , defo  , ds_algopara, modelz,&
                   mate  , carele, sddisc, sddyna     , fonact,&
                   numins, valinc, solalg, lischa     , comref,&
                   ds_contact, numedd     , numfix,&
                   ds_constitutive, ds_measure, meelem,&
-                  measse, veelem, nddle , ddlexc     , modrig,&
+                  measse, veelem, nddle , ds_posttimestep, modrig,&
                   ldccvg, matass, matgeo)
 !
 use NonLin_Datastructure_type
@@ -51,25 +53,23 @@ implicit none
 #include "asterfort/nmxmat.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    character(len=16) :: typmat, modrig
-    character(len=4) :: mod45
-    integer :: defo
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    integer :: fonact(*)
-    character(len=*) :: modelz
-    character(len=24) :: mate, carele
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    integer :: numins, ldccvg, nddle
-    character(len=19) :: sddisc, sddyna, lischa
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    character(len=24) :: comref, numedd, numfix, ddlexc
-    character(len=19) :: meelem(*), measse(*), veelem(*)
-    character(len=19) :: solalg(*), valinc(*)
-    character(len=19) :: matass, matgeo
+character(len=16) :: typmat, modrig
+character(len=4) :: mod45
+integer :: defo
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+integer :: fonact(*)
+character(len=*) :: modelz
+character(len=24) :: mate, carele
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_Measure), intent(inout) :: ds_measure
+integer :: numins, ldccvg, nddle
+character(len=19) :: sddisc, sddyna, lischa
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=24) :: comref, numedd, numfix
+character(len=19) :: meelem(*), measse(*), veelem(*)
+character(len=19) :: solalg(*), valinc(*)
+character(len=19) :: matass, matgeo
+type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -108,7 +108,7 @@ implicit none
 ! IN  MEASSE : MATRICE ASSEMBLEE
 ! IN  VEELEM : VECTEUR ELEMENTAIRE
 ! IN  NDDLE  : NOMBRE DE DDL A EXCLURE
-! IN  DDLEXC : LISTE DES NOMS DES DDL A EXCLURE
+! In  ds_posttimestep  : datastructure for post-treatment at each time step
 ! IN  MODRIG : MODIFICATION OU NON DE LA RAIDEUR
 ! OUT LDCCVG : CODE RETOUR INTEGRATION DU COMPORTEMENT
 !                0 - OK
@@ -134,7 +134,7 @@ implicit none
     character(len=19) :: rigi2, masse, memass, megeom
     character(len=19) :: depplu, vitplu, accplu, sigplu, varplu, valin2(zvalin)
     integer :: nmax
-    integer :: nb_matr, jexx
+    integer :: nb_matr
     character(len=6) :: list_matr_type(20)
     character(len=16) :: list_calc_opti(20), list_asse_opti(20), modlag
     aster_logical :: list_l_asse(20), list_l_calc(20)
@@ -291,8 +291,7 @@ implicit none
     modlag = 'MODI_LAGR_OUI'
     tdiag = 'MAX_ABS'
     if ((nddle.ne.0) .and. (modrig(1:13).eq.'MODI_RIGI_OUI')) then
-        call jeveuo(ddlexc, 'L', jexx)
-        call matide(matass, nddle, zk8(jexx), modlag, tdiag,&
+        call matide(matass, nddle, ds_posttimestep%stab_para%list_dof_excl, modlag, tdiag,&
                     10.d0)
     endif
 !
@@ -303,7 +302,7 @@ implicit none
             call asmatr(1, megeom, ' ', numedd, &
                         lischa, 'ZERO', 'V', 1, matgeo)
             if ((nddle.ne.0) .and. (modrig(1:13).eq.'MODI_RIGI_OUI')) then
-                call matide(matgeo, nddle, zk8(jexx), modlag, tdiag,&
+                call matide(matgeo, nddle, ds_posttimestep%stab_para%list_dof_excl, modlag, tdiag,&
                             10.d0)
             endif
         else
