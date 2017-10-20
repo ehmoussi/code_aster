@@ -1,10 +1,10 @@
-#ifndef LINEARDISPLACEMENTEVOLUTIONCONTAINER_H_
-#define LINEARDISPLACEMENTEVOLUTIONCONTAINER_H_
+#ifndef FULLDYNAMICRESULTSCONTAINER_H_
+#define FULLDYNAMICRESULTSCONTAINER_H_
 
 /**
- * @file LinearDisplacementEvolutionContainer.h
- * @brief Fichier entete de la classe LinearDisplacementEvolutionContainer
- * @author Nicolas Sellenet
+ * @file FullDynamicResultsContainer.h
+ * @brief Fichier entete de la classe FullDynamicResultsContainer
+ * @author Nicolas Tardieu
  * @section LICENCE
  *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
  *
@@ -24,35 +24,33 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: natacha.bereux at edf.fr */
-
 #include "astercxx.h"
 
-#include "Results/ResultsContainer.h"
-
+#include "Results/DynamicResultsContainer.h"
 
 /**
- * @class LinearDisplacementEvolutionContainerInstance
- * @brief Cette classe correspond a un evol_elas
- * @author Nicolas Sellenet
+ * @class FullDynamicResultsContainerInstance
+ * @brief Cette classe correspond à un dyna_tran
+ * @author Nicolas Tardieu
  */
-class LinearDisplacementEvolutionContainerInstance: public ResultsContainerInstance
+class FullDynamicResultsContainerInstance: public DynamicResultsContainerInstance
 {
+private:
+
 public:
     /**
      * @brief Constructeur
      * @todo  Ajouter les objets Jeveux de la SD
      */
-    LinearDisplacementEvolutionContainerInstance():
-        ResultsContainerInstance( "EVOL_ELAS" )
+    FullDynamicResultsContainerInstance(): DynamicResultsContainerInstance( "DYNA_TRAN" )
     {};
 
 };
 
 /**
- * @typedef LinearDisplacementEvolutionContainerPtr
- * @brief Pointeur intelligent vers un LinearDisplacementEvolutionContainerInstance
+ * @typedef FullDynamicResultsContainerPtr
+ * @brief Pointeur intelligent vers un FullDynamicResultsContainerInstance
  */
-typedef boost::shared_ptr< LinearDisplacementEvolutionContainerInstance > LinearDisplacementEvolutionContainerPtr;
+typedef boost::shared_ptr< FullDynamicResultsContainerInstance > FullDynamicResultsContainerPtr;
 
-#endif /* LINEARDISPLACEMENTEVOLUTIONCONTAINER_H_ */
+#endif /* FULLDYNAMICRESULTSCONTAINER_H_ */
