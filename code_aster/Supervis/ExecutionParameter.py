@@ -153,15 +153,6 @@ class ExecutionParameter(object):
             action='store_const', const=1, default=0,
             help="abort execution in case of error (testcase mode, by default "
                  "raise an exception)")
-        parser.add_argument('--build-elem', dest='buildelem',
-            action='store_const', const=1, default=0,
-            help="enable specific starting mode to build the elements database")
-        parser.add_argument('--start', dest='autostart',
-            action='store_const', const=1, default=1,
-            help="automatically start the memory manager")
-        parser.add_argument('--no-start', dest='autostart',
-            action='store_const', const=0,
-            help="turn off the automatic start of the memory manager")
 
         parser.add_argument('--dbgjeveux',
             action='store_const', const=1, default=0,

@@ -10,7 +10,7 @@ import code_aster
 from code_aster.Cata.Commands.debut import DEBUT as cata
 from code_aster.Supervis import CommandSyntax
 
-code_aster.init()
+code_aster.init("--abort", "--debug")
 
 test = code_aster.TestCase()
 
