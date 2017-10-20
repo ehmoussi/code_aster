@@ -43,6 +43,7 @@ Development rules
             test004b     <S>_ERROR              ConstitutiveLawEnum
             test004c     <S>_ERROR              ConstitutiveLawEnum
             test004d     <S>_ERROR              ConstitutiveLawEnum
+            xxFlow001a   <S>_ERROR              DEFI_FLUI_STRU ?
             xxMultiSteps01a <S>_ERROR
 
     - Currently, these testcases have been partially truncated because of

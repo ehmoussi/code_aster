@@ -73,6 +73,7 @@ class Cata2DataStructure(object):
         from .. import Objects as EXT
         Cata2DataStructure._cata2cxx = {
             'FONCTION': EXT.Function,
+            'MAILLAGE': EXT.Mesh,
             'NAPPE': EXT.Surface,
             'TABLE': EXT.Table,
         }
