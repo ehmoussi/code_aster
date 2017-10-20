@@ -20,6 +20,7 @@ subroutine aceamb(nomu, noma, lmax, nbocc)
     implicit none
 #include "jeveux.h"
 #include "asterc/r8rddg.h"
+#include "asterc/r8dgrd.h"
 #include "asterfort/alcart.h"
 #include "asterfort/angvx.h"
 #include "asterfort/assert.h"
@@ -44,6 +45,7 @@ subroutine aceamb(nomu, noma, lmax, nbocc)
 !
     integer :: lmax, nbocc
     character(len=8) :: nomu, noma
+!
 !                          AFFE_CARA_ELEM
 !
 !     AFFECTATION DES CARACTERISTIQUES POUR LE MOT CLE "MEMBRANE"
@@ -55,13 +57,14 @@ subroutine aceamb(nomu, noma, lmax, nbocc)
 !     LMAX   : LONGUEUR
 !     NBOCC  : NOMBRE D'OCCURENCES DU MOT CLE MEMBRANE
 ! ----------------------------------------------------------------------
-    integer :: jdcc, jdvc, jdls, ioc, ng, nm, n1, n2, n3, n4, iret, jdls2
+    integer :: jdcc, jdvc, jdls, ioc, ng, nm, iret, jdls2
+    integer :: n1, n2, n3, n4, n5, n6
     integer :: i,  nbmat, nbma, ncomp
     integer :: ima, nbno,  adrm, numa, jgrma, igr, nbmat0
     integer :: noe1, noe2, noe3, iarg
     real(kind=8) :: ep, tens
-    real(kind=8) :: ang(2)
-    real(kind=8) :: axey(3), xnorm, epsi, axex(3), vecnor(3)
+    real(kind=8) :: ang(2), angx(2)
+    real(kind=8) :: axex(3), axey(3), axet2(3), xnorm, epsi, vecnor(3)
     real(kind=8) :: vn1n2(3), vn1n3(3)
     character(len=19) :: cartgr
     character(len=24) :: tmpngr, tmpvgr, nomagr, nomama, connex
@@ -112,23 +115,41 @@ subroutine aceamb(nomu, noma, lmax, nbocc)
         call getvem(noma, 'MAILLE', 'MEMBRANE', 'MAILLE', ioc,&
                     iarg, lmax, zk8(jdls2), nm)
 !
-        call getvr8('MEMBRANE', 'ANGL_REP', iocc=ioc, nbval=2, vect=ang,&
+        call getvr8('MEMBRANE', 'ANGL_REP_1', iocc=ioc, nbval=2, vect=ang,&
                     nbret=n1)
-        call getvr8('MEMBRANE', 'AXE', iocc=ioc, nbval=3, vect=axey,&
+        call getvr8('MEMBRANE', 'ANGL_REP_2', iocc=ioc, nbval=2, vect=ang,&
                     nbret=n2)
-        call getvr8('MEMBRANE', 'EPAIS', iocc=ioc, scal=ep, nbret=n3)
-        call getvr8('MEMBRANE', 'N_INIT', iocc=ioc, scal=tens, nbret=n4)
+        call getvr8('MEMBRANE', 'VECT_1', iocc=ioc, nbval=3, vect=axex,&
+                    nbret=n3)
+        call getvr8('MEMBRANE', 'VECT_2', iocc=ioc, nbval=3, vect=axey,&
+                    nbret=n4)
+        call getvr8('MEMBRANE', 'EPAIS', iocc=ioc, scal=ep, nbret=n5)
+        call getvr8('MEMBRANE', 'N_INIT', iocc=ioc, scal=tens, nbret=n6)
 !        EPAIS EST OBLIGATOIRE : ASSERT SI PAS LA
-        if (n3 .ne. 0) then
+        if (n5 .ne. 0) then
             zr(jdvc) = ep
         else
             ASSERT(.false.)
         endif
-        zr(jdvc+1) = ang(1)
-        zr(jdvc+2) = ang(2)
-        zr(jdvc+3) = tens
-        
-        if (n2 .eq. 0) then
+!
+!       SI ANGL_REP_1 OU VECT_1 SONT RENSEIGNES
+        if ((n2 .eq. 0) .and. (n4 .eq. 0)) then
+!           SI ANGL_REP_1 EST RENSEIGNE
+            if (n3 .eq. 0) then
+                zr(jdvc+1) = ang(1)
+                zr(jdvc+2) = ang(2)
+                zr(jdvc+3) = tens
+            endif
+!           SI VECT_1 EST RENSEIGNE
+            if (n1 .eq. 0) then
+                call normev(axex, xnorm)
+                if (xnorm .lt. epsi) then
+                    call utmess('F', 'MODELISA_10')
+                endif
+                call angvx(axex, angx(1), angx(2))
+                zr(jdvc+1) = angx(1)*r8rddg()
+                zr(jdvc+2) = angx(2)*r8rddg()
+            endif
 ! ---       "GROUP_MA" = TOUTES LES MAILLES DE LA LISTE
             if (ng .gt. 0) then
                 do i = 1, ng
@@ -140,8 +161,9 @@ subroutine aceamb(nomu, noma, lmax, nbocc)
                 call nocart(cartgr, 3, ncomp, mode='NOM', nma=nm,&
                             limano=zk8(jdls2))
             endif
-        else
 !
+!       SI ANGL_REP_2 OU VECT_2 SONT RENSEIGNES
+        else
             if (ng .gt. 0) then
                 nbmat = 0
                 numa = -1
@@ -163,16 +185,19 @@ subroutine aceamb(nomu, noma, lmax, nbocc)
                 end do
             endif
 !
-            call normev(axey, xnorm)
-            if (xnorm .lt. epsi) then
-                call utmess('F', 'MODELISA_10')
+!           SI VECT_2 EST RENSEIGNE
+            if (n2 .eq. 0) then
+                call normev(axey, xnorm)
+                if (xnorm .lt. epsi) then
+                    call utmess('F', 'MODELISA_10')
+                endif
             endif
 !
             do ima = 1, nbmat
+!               CALCUL DE LA NORMALE : VECTEUR Z LOCAL
                 numa = nume_ma(ima)
                 call jelira(jexnum(connex, numa), 'LONMAX', nbno)
                 call jeveuo(jexnum(connex, numa), 'L', adrm)
-!              CALCUL DE LA NORMALE : VECTEUR Z LOCAL
                 noe1 = zi(adrm+1-1)
                 noe2 = zi(adrm+2-1)
                 noe3 = zi(adrm+3-1)
@@ -184,23 +209,37 @@ subroutine aceamb(nomu, noma, lmax, nbocc)
                 vecnor(2) = vn1n2(3)*vn1n3(1) - vn1n2(1)*vn1n3(3)
                 vecnor(3) = vn1n2(1)*vn1n3(2) - vn1n2(2)*vn1n3(1)
                 call normev(vecnor, xnorm)
-!              CALCUL DE LA DIRECTION DES ARMATURES : XLOCAL
+                if (xnorm .lt. epsi) then
+                    call utmess('F', 'MODELISA_11')
+                endif
+!
+!               SI ANGL_REP_2 EST RENSEIGNE
+                if (n4 .eq. 0) then
+                    axey(1) = cos(ang(1)*r8dgrd())*cos(ang(2)*r8dgrd())
+                    axey(2) = sin(ang(1)*r8dgrd())*cos(ang(2)*r8dgrd())
+                    axey(3) = sin(ang(2)*r8dgrd())
+                    call normev(axey, xnorm)
+                    if (xnorm .lt. epsi) then
+                        call utmess('F', 'MODELISA_10')
+                    endif
+                endif
+
+!               CALCUL DU VECTEUR X LOCAL
                 axex(1) = axey(2)*vecnor(3) - axey(3)*vecnor(2)
                 axex(2) = axey(3)*vecnor(1) - axey(1)*vecnor(3)
                 axex(3) = axey(1)*vecnor(2) - axey(2)*vecnor(1)
                 call normev(axex, xnorm)
                 if (xnorm .lt. epsi) then
-                    call utmess('F', 'MODELISA_11')
+                    call utmess('F', 'MODELISA_10')
                 endif
-                call angvx(axex, ang(1), ang(2))
-                zr(jdvc+1) = ang(1) * r8rddg()
-                zr(jdvc+2) = ang(2) * r8rddg()
+                call angvx(axex, angx(1), angx(2))
+                zr(jdvc+1) = angx(1) * r8rddg()
+                zr(jdvc+2) = angx(2) * r8rddg()
                 call nocart(cartgr, 3, ncomp, mode='NUM', nma=1,&
                             limanu=[numa])
             end do
         endif
     end do
-    
 !
     AS_DEALLOCATE(vi=nume_ma)
     call jedetr('&&TMPMEMBRANE')
