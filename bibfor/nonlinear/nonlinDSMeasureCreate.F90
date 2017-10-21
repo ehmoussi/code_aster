@@ -24,7 +24,7 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/CreateVoidColumn.h"
+#include "asterfort/nonlinDSColumnVoid.h"
 #include "asterfort/CreateVoidTable.h"
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
@@ -181,7 +181,7 @@ type(NL_DS_Measure), intent(out) :: ds_measure
 ! - First column: time
 !
     i_col = 1
-    call CreateVoidColumn(column)
+    call nonlinDSColumnVoid(column)
     column%name        = 'INST'
     column%l_vale_real = .true._1
     column%title(1)    = ' '
@@ -194,7 +194,7 @@ type(NL_DS_Measure), intent(out) :: ds_measure
         device      = ds_measure%device(i_device)
         l_time      = device%time_indi_step .ne. 0
         l_count     = device%count_indi_step .ne. 0
-        call CreateVoidColumn(column)
+        call nonlinDSColumnVoid(column)
         ds_measure%indx_cols(2*(i_device-1)+1) = 0
         ds_measure%indx_cols(2*(i_device-1)+2) = 0
         if (l_time) then
@@ -226,7 +226,7 @@ type(NL_DS_Measure), intent(out) :: ds_measure
 ! - Other column: state and memory
 !
     i_col = i_col + 1
-    call CreateVoidColumn(column)
+    call nonlinDSColumnVoid(column)
     column%name        = 'State'
     column%l_vale_strg = .true._1
     column%title(1)    = ' '
@@ -234,7 +234,7 @@ type(NL_DS_Measure), intent(out) :: ds_measure
     table%cols(i_col)  = column
     table%nb_cols    = i_col
     i_col = i_col + 1
-    call CreateVoidColumn(column)
+    call nonlinDSColumnVoid(column)
     column%name        = 'Memory'
     column%l_vale_inte = .true._1
     column%title(1)    = 'Memory'

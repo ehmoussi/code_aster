@@ -28,7 +28,7 @@ implicit none
 #include "asterc/r8vide.h"
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
-#include "asterfort/CreateVoidColumn.h"
+#include "asterfort/nonlinDSColumnVoid.h"
 #include "asterfort/CreateVoidTable.h"
 !
 type(NL_DS_Energy), intent(out) :: ds_energy
@@ -75,7 +75,7 @@ type(NL_DS_Energy), intent(out) :: ds_energy
     table%nb_cols        = nb_col_defi
     ASSERT(table%nb_cols .le. table%nb_cols_maxi)
     do i_col = 1, nb_col_defi
-        call CreateVoidColumn(column)
+        call nonlinDSColumnVoid(column)
         column%name        = cols_name(i_col)
         column%l_vale_inte = ASTER_FALSE
         column%l_vale_real = ASTER_FALSE

@@ -25,9 +25,8 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/impfoi.h"
 #include "asterfort/infdbg.h"
-#include "asterfort/CreateVoidColumn.h"
+#include "asterfort/nonlinDSColumnVoid.h"
 !
 type(NL_DS_Print), intent(out) :: ds_print
 !
@@ -119,7 +118,7 @@ type(NL_DS_Print), intent(out) :: ds_print
 ! - Set list of columns in convergence table
 !
     do i_col = 1, nb_cols_defi
-        call CreateVoidColumn(column)
+        call nonlinDSColumnVoid(column)
         column%name          = cols_name(i_col)(1:16)
         if (cols_type(i_col).eq.'R') then
             column%l_vale_real   = ASTER_TRUE
@@ -142,8 +141,8 @@ type(NL_DS_Print), intent(out) :: ds_print
     i_col = nb_cols_defi
     do i_cols_dof = 1, nb_cols_dof_defi
         i_col = i_col+1
-        call CreateVoidColumn(column)
-        call impfoi(0, 1, i_cols_dof, indsui)
+        call nonlinDSColumnVoid(column)
+        write(indsui,'(I1)') i_cols_dof
         column%name          = 'SUIVDDL'//indsui
         column%title(1)      = '   SUIVI DDL'//indsui
         table_cvg%cols(i_col)        = column

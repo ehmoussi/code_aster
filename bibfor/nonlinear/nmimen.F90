@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmimen(ds_print)
 !
 use NonLin_Datastructure_type
@@ -23,13 +24,11 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/impfok.h"
+#include "asterfort/nonlinDSColumnWriteValue.h"
 #include "asterfort/iunifi.h"
 #include "asterfort/ComputeTableHead.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Print), intent(in) :: ds_print
+type(NL_DS_Print), intent(in) :: ds_print
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -69,19 +68,35 @@ implicit none
 !
 ! - Print in message unit
 !
-    call impfok(sep_line, line_width, mesg_unit)
-    call impfok(table_head(1), line_width, mesg_unit)
-    call impfok(table_head(2), line_width, mesg_unit)
-    call impfok(table_head(3), line_width, mesg_unit)
-    call impfok(sep_line, line_width, mesg_unit)
+    call nonlinDSColumnWriteValue(line_width,&
+                                  output_unit_ = mesg_unit,&
+                                  value_k_     = sep_line)
+    call nonlinDSColumnWriteValue(line_width,&
+                                  output_unit_ = mesg_unit,&
+                                  value_k_     = table_head(1) )
+    call nonlinDSColumnWriteValue(line_width,&
+                                  output_unit_ = mesg_unit,&
+                                  value_k_     = table_head(2) )
+    call nonlinDSColumnWriteValue(line_width,&
+                                  output_unit_ = mesg_unit,&
+                                  value_k_     = table_head(3) )
+    call nonlinDSColumnWriteValue(line_width,&
+                                  output_unit_ = mesg_unit,&
+                                  value_k_     = sep_line)
 !
 ! - Print in file
 !
     if (l_tcvg_csv) then
         call ComputeTableHead(table_cvg, ',', table_head)
-        call impfok(table_head(1), line_width, tcvg_unit)
-        call impfok(table_head(2), line_width, tcvg_unit)
-        call impfok(table_head(3), line_width, tcvg_unit)
+        call nonlinDSColumnWriteValue(line_width,&
+                                      output_unit_ = tcvg_unit,&
+                                      value_k_     = table_head(1) )
+        call nonlinDSColumnWriteValue(line_width,&
+                                      output_unit_ = tcvg_unit,&
+                                      value_k_     = table_head(2) )
+        call nonlinDSColumnWriteValue(line_width,&
+                                      output_unit_ = tcvg_unit,&
+                                      value_k_     = table_head(3) )
     endif
 !
 end subroutine

@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmobse(meshz     , sd_obsv  , time,&
                   cara_elemz, modelz   , matez    , ds_constitutive, disp_curr,&
                   strx_curr , varc_curr, varc_refe)
@@ -26,7 +27,6 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/impfoi.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/nmextr_comp.h"
@@ -35,19 +35,17 @@ implicit none
 #include "asterfort/nmobs2.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=*), intent(in) :: meshz
-    character(len=19), intent(in) :: sd_obsv
-    real(kind=8), intent(in) :: time
-    character(len=*), optional, intent(in) :: cara_elemz
-    character(len=*), optional, intent(in) :: matez
-    character(len=*), optional, intent(in) :: modelz
-    type(NL_DS_Constitutive), optional, intent(in) :: ds_constitutive
-    character(len=*), optional, intent(in) :: disp_curr
-    character(len=*), optional, intent(in) :: strx_curr
-    character(len=*), optional, intent(in) :: varc_curr
-    character(len=*), optional, intent(in) :: varc_refe
+character(len=*), intent(in) :: meshz
+character(len=19), intent(in) :: sd_obsv
+real(kind=8), intent(in) :: time
+character(len=*), optional, intent(in) :: cara_elemz
+character(len=*), optional, intent(in) :: matez
+character(len=*), optional, intent(in) :: modelz
+type(NL_DS_Constitutive), optional, intent(in) :: ds_constitutive
+character(len=*), optional, intent(in) :: disp_curr
+character(len=*), optional, intent(in) :: strx_curr
+character(len=*), optional, intent(in) :: varc_curr
+character(len=*), optional, intent(in) :: varc_refe
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -167,7 +165,7 @@ implicit none
 !
 ! --------- Datastructure name generation
 !
-            call impfoi(0, 2, i_keyw_fact, chaine)
+            write(chaine,'(I2)') i_keyw_fact
             list_node = sdextr_obsv(1:14)//chaine(1:2)//'   .NOEU'
             list_elem = sdextr_obsv(1:14)//chaine(1:2)//'   .MAIL'
             list_poin = sdextr_obsv(1:14)//chaine(1:2)//'   .POIN'
