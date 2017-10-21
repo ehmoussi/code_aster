@@ -38,6 +38,9 @@ class ListOfFloats(DataStructure):
         Even if :class:`ListOfFloats` is derivated from
         :class:`~code_aster.Objects.DataStructure`, it has no C++ implementation
         and no associated Fortran objects.
+
+    .. todo::
+        The '.VALE' will be required by some fortran subroutines...
     """
     _array = _name = None
 
