@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine op0186()
 !
 use NonLin_Datastructure_type
@@ -35,7 +36,7 @@ implicit none
 #include "asterfort/didern.h"
 #include "asterfort/diinst.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/impfot.h"
+#include "asterfort/nonlinDSColumnWriteValue.h"
 #include "asterfort/infmaj.h"
 #include "asterfort/infniv.h"
 #include "asterfort/jedema.h"
@@ -64,10 +65,6 @@ implicit none
 #include "asterfort/uttcpu.h"
 #include "asterfort/vtcreb.h"
 #include "asterfort/vtzero.h"
-!
-! person_in_charge: mickael.abbas at edf.fr
-!
-
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -513,7 +510,7 @@ implicit none
     call uttcpu('CPU.OP0186.1', 'FIN', ' ')
     call uttcpr('CPU.OP0186.1', 7, tps1)
     tconso = tps1(7) - tpex
-    call impfot(tconso, tpscvt)
+    call nonlinDSColumnWriteValue(0, time_=tconso, output_string_=tpscvt)
     call utmess('I', 'MECANONLINE7_1', sk=tpscvt)
     write (ifm,'(/)')
     tpex = tps1(7)

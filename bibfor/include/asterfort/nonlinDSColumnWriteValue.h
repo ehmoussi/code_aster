@@ -15,12 +15,21 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine CreateVoidColumn(column)
+    subroutine nonlinDSColumnWriteValue(length      , output_string_,&
+                                        output_unit_,&
+                                        value_r_    ,&
+                                        value_i_    ,&
+                                        value_k_    ,&
+                                        time_   )
         use NonLin_Datastructure_type
-        type(NL_DS_Column), intent(out) :: column
-    end subroutine CreateVoidColumn
+        integer, intent(in) :: length
+        character(len=*), optional, intent(out) :: output_string_
+        integer, optional, intent(in) :: output_unit_
+        real(kind=8), optional, intent(in) :: value_r_
+        integer, optional, intent(in) :: value_i_
+        character(len=*), optional, intent(in) :: value_k_
+        real(kind=8), optional, intent(in) :: time_
+    end subroutine nonlinDSColumnWriteValue
 end interface

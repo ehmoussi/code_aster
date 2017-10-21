@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmcrti(list_func_acti, result, ds_contact, ds_measure)
 !
 use NonLin_Datastructure_type
@@ -28,7 +29,7 @@ implicit none
 #include "asterfort/isfonc.h"
 #include "asterfort/ulopen.h"
 #include "asterfort/uttcpu.h"
-#include "asterfort/impfok.h"
+#include "asterfort/nonlinDSColumnWriteValue.h"
 #include "asterfort/ActivateDevice.h"
 #include "asterfort/CreateTable.h"
 #include "asterfort/SetTablePara.h"
@@ -36,12 +37,10 @@ implicit none
 #include "asterfort/ComputeTableHead.h"
 #include "asterfort/ComputeTableWidth.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer, intent(in) :: list_func_acti(*)
-    character(len=8), intent(in) :: result
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    type(NL_DS_Measure), intent(inout) :: ds_measure
+integer, intent(in) :: list_func_acti(*)
+character(len=8), intent(in) :: result
+type(NL_DS_Contact), intent(in) :: ds_contact
+type(NL_DS_Measure), intent(inout) :: ds_measure
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -204,8 +203,12 @@ implicit none
         if (table%l_csv) then
             call ulopen(table%unit_csv, ' ', ' ', 'NEW', 'O')
             call ComputeTableHead(table, ',', table_head)
-            call impfok(table_head(1), table%width, table%unit_csv)
-            call impfok(table_head(2), table%width, table%unit_csv)
+            call nonlinDSColumnWriteValue(table%width,&
+                                          output_unit_ = table%unit_csv,&
+                                          value_k_     = table_head(1) )
+            call nonlinDSColumnWriteValue(table%width,&
+                                          output_unit_ = table%unit_csv,&
+                                          value_k_     = table_head(2) )
         endif
 !
 ! ----- Set table

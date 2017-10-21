@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmextr_read_2(sdextrz      , ds_inout, nb_keyw_fact, list_field, rela_field_keyw,&
                          nb_field_comp)
 !
@@ -28,16 +29,13 @@ implicit none
 #include "asterfort/nmextd.h"
 #include "asterfort/assert.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/impfoi.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    character(len=*), intent(in) :: sdextrz
-    integer, intent(in) :: nb_keyw_fact
-    character(len=24), intent(in), pointer :: list_field(:)
-    integer, intent(in), pointer :: rela_field_keyw(:)
-    integer, intent(in) :: nb_field_comp
+type(NL_DS_InOut), intent(in) :: ds_inout
+character(len=*), intent(in) :: sdextrz
+integer, intent(in) :: nb_keyw_fact
+character(len=24), intent(in), pointer :: list_field(:)
+integer, intent(in), pointer :: rela_field_keyw(:)
+integer, intent(in) :: nb_field_comp
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -78,7 +76,7 @@ implicit none
 !
 ! ----- Name of LIGREL
 !
-        call impfoi(0, 2, i_field_comp, chaine)
+        write(chaine,'(I2)') i_field_comp
         ligrel = sdextr(1:14)//chaine(1:2)//'   .LIGR'
 !
 ! ----- Find first keyword for this field

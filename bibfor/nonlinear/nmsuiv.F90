@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmsuiv(meshz    , sd_suiv        , ds_print, cara_elemz, modelz,&
                   matez    , ds_constitutive, valinc  , varc_refe , sddisc,&
                   nume_inst)
@@ -24,7 +25,6 @@ use NonLin_Datastructure_type
 !
 implicit none
 !
-#include "asterfort/impfoi.h"
 #include "asterfort/assert.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/diinst.h"
@@ -36,19 +36,17 @@ implicit none
 #include "asterfort/nmchex.h"
 #include "asterfort/nmextr_comp.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=*), intent(in) :: meshz
-    character(len=24), intent(in) :: sd_suiv
-    type(NL_DS_Print), intent(inout) :: ds_print
-    character(len=19), intent(in) :: sddisc
-    character(len=*), intent(in) :: cara_elemz
-    character(len=*), intent(in) :: matez
-    character(len=*), intent(in) :: modelz
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=*), intent(in) :: varc_refe
-    integer, intent(in) :: nume_inst
-    character(len=19), intent(in) :: valinc(*)
+character(len=*), intent(in) :: meshz
+character(len=24), intent(in) :: sd_suiv
+type(NL_DS_Print), intent(inout) :: ds_print
+character(len=19), intent(in) :: sddisc
+character(len=*), intent(in) :: cara_elemz
+character(len=*), intent(in) :: matez
+character(len=*), intent(in) :: modelz
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=*), intent(in) :: varc_refe
+integer, intent(in) :: nume_inst
+character(len=19), intent(in) :: valinc(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -150,7 +148,7 @@ implicit none
 !
 ! ----- Datastructure name generation
 !
-        call impfoi(0, 2, i_keyw_fact, chaine)
+        write(chaine,'(I2)') i_keyw_fact
         list_node = sdextr_suiv(1:14)//chaine(1:2)//'   .NOEU'
         list_elem = sdextr_suiv(1:14)//chaine(1:2)//'   .MAIL'
         list_poin = sdextr_suiv(1:14)//chaine(1:2)//'   .POIN'

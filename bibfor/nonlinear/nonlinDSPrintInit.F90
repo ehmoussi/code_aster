@@ -26,7 +26,6 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
-#include "asterfort/impfoi.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/ulopen.h"
 #include "asterfort/utmess.h"
@@ -98,7 +97,7 @@ type(NL_DS_Print), intent(inout) :: ds_print
 !
 ! ----- Name of the column
 !
-        call impfoi(0, 1, i_dof_monitor, indsui)
+        write(indsui,'(I1)') i_dof_monitor
         col_name        = 'SUIVDDL'//indsui
 !
 ! ----- Look for column index

@@ -15,8 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine CreateVoidColumn(column)
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1403
+!
+subroutine nonlinDSColumnVoid(column)
 !
 use NonLin_Datastructure_type
 !
@@ -26,9 +28,7 @@ implicit none
 #include "asterc/ismaem.h"
 #include "asterc/r8vide.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Column), intent(out) :: column
+type(NL_DS_Column), intent(out) :: column
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -43,11 +43,11 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     column%name          = ' '
-    column%l_vale_affe   = .false._1
-    column%l_vale_inte   = .false._1
-    column%l_vale_real   = .false._1
-    column%l_vale_cplx   = .false._1
-    column%l_vale_strg   = .false._1
+    column%l_vale_affe   = ASTER_FALSE
+    column%l_vale_inte   = ASTER_FALSE
+    column%l_vale_real   = ASTER_FALSE
+    column%l_vale_cplx   = ASTER_FALSE
+    column%l_vale_strg   = ASTER_FALSE
     column%vale_inte     = ismaem()
     column%vale_real     = r8vide()
     column%vale_cplx     = dcmplx(r8vide(),r8vide())

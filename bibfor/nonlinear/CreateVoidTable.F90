@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine CreateVoidTable(table)
 !
 use NonLin_Datastructure_type
@@ -24,11 +25,9 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/CreateVoidColumn.h"
+#include "asterfort/nonlinDSColumnVoid.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Table), intent(out) :: table
+type(NL_DS_Table), intent(out) :: table
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -47,7 +46,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call CreateVoidColumn(column_void)
+    call nonlinDSColumnVoid(column_void)
     nb_cols_maxi = table%nb_cols_maxi
 !
     table%result                      = ' '
