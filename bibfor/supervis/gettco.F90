@@ -34,12 +34,21 @@ subroutine gettco(name, typeco, errstop)
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/gettc2.h"
+#include "asterfort/assert.h"
 
 !   arguments
     character(len=*), intent(in) :: name
     character(len=*), intent(out) :: typeco
     aster_logical, intent(in), optional :: errstop
 
+    aster_logical :: fail_on_error
+    fail_on_error = ASTER_TRUE
+    if (present(errstop)) then
+        fail_on_error = errstop
+    endif
+
+    ASSERT(name .ne. ' ')
     call gettc2(name, typeco)
+    ASSERT(.not. fail_on_error .or. typeco .ne. ' ')
 
 end subroutine gettco
