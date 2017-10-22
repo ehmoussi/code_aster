@@ -96,7 +96,11 @@ def commun_DEBUT_POURSUITE(jdc, PAR_LOT, IMPR_MACRO, CODE, DEBUG, IGNORE_ALARM, 
                     MessageLog.disable_alarm(idmess)
         # en POURSUITE, conserver le catalogue de comportement picklé
         if not hasattr(jdc, 'catalc'):
-            from Comportement import catalc
+            try:
+                from Comportement import catalc
+            except Exception as exc:
+                UTMESS('F', 'SUPERVIS_7', valk=traceback.format_exc())
+                catalc = None
             jdc.catalc = catalc
         # ne faire qu'une fois
         if not hasattr(jdc, 'msg_init') and jdc.syntax_check():
