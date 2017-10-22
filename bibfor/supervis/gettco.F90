@@ -33,22 +33,44 @@ subroutine gettco(name, typeco, errstop)
 
 #include "asterf_types.h"
 #include "jeveux.h"
-#include "asterc/gettc2.h"
 #include "asterfort/assert.h"
+#include "asterfort/jedema.h"
+#include "asterfort/jeexin.h"
+#include "asterfort/jemarq.h"
+#include "asterfort/lxlgut.h"
+#include "asterfort/jeveuo.h"
 
 !   arguments
     character(len=*), intent(in) :: name
     character(len=*), intent(out) :: typeco
     aster_logical, intent(in), optional :: errstop
 
-    aster_logical :: fail_on_error
-    fail_on_error = ASTER_TRUE
+    character(len=19) :: name19
+    character(len=16) :: attr
+    integer :: iret
+    character(len=24), pointer :: vk(:) => null()
+    aster_logical :: error
+
+    call jemarq()
+
+    error = ASTER_TRUE
     if (present(errstop)) then
-        fail_on_error = errstop
+        error = errstop
     endif
 
+    ASSERT(lxlgut(name) .le. 19)
+    name19 = name
     ASSERT(name .ne. ' ')
-    call gettc2(name, typeco)
-    ASSERT(.not. fail_on_error .or. typeco .ne. ' ')
+    attr = name19//'._TCO'
+    call jeexin(attr, iret)
+    ASSERT(.not. error .or. iret .ne. 0)
+    if (iret .eq. 0) then
+        typeco = ' '
+    else
+        call jeveuo(attr, 'L', vk24=vk)
+        typeco = vk(1)
+    endif
+
+    call jedema()
 
 end subroutine gettco

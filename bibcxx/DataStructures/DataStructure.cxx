@@ -31,26 +31,21 @@
 
 TemporaryDataStructure tempName = TemporaryDataStructure();
 
-mapStrSD mapNameDataStructure = mapStrSD();
-
 DataStructure::DataStructure( const std::string name, const std::string type,
-                              const JeveuxMemory memType ): _name( name ), _type( type ),
-                                                            _memoryType( memType )
+                              const JeveuxMemory memType ):
+    _name( name ),
+    _type( type ),
+    _memoryType( memType )
 {
-    std::string nameWithoutBlanks = trim( name );
-    if ( nameWithoutBlanks != "" && memType == Permanent )
-        mapNameDataStructure.insert( mapStrSDValue( nameWithoutBlanks, this ) );
-};
+    CALL_SETTCO(_name.c_str(), _type.c_str());
+}
 
-DataStructure::DataStructure( const std::string type, const JeveuxMemory memType, int lenghtName ):
-        _name( DataStructureNaming::getNewName( memType, lenghtName ) ),
-        _type( type ),
-        _memoryType( memType )
+DataStructure::DataStructure( const std::string type,
+                              const JeveuxMemory memType, int nameLength ):
+    DataStructure::DataStructure( DataStructureNaming::getNewName( memType, nameLength ),
+                                  type, memType )
 {
-    std::string nameWithoutBlanks = trim( _name );
-    if ( nameWithoutBlanks != "" && memType == Permanent )
-        mapNameDataStructure.insert( mapStrSDValue( nameWithoutBlanks, this ) );
-};
+}
 
 DataStructure::~DataStructure()// throw ( std::runtime_error )
 {
@@ -60,10 +55,6 @@ DataStructure::~DataStructure()// throw ( std::runtime_error )
     std::string nameWithoutBlanks = trim( _name );
     if ( nameWithoutBlanks == "" || _memoryType == Temporary )
         return;
-    mapStrSDIterator curIter = mapNameDataStructure.find( nameWithoutBlanks );
-    if ( curIter == mapNameDataStructure.end() )
-        throw std::runtime_error( "Problem !!! " + nameWithoutBlanks );
-    mapNameDataStructure.erase( curIter );
 #ifdef _DEBUG_CXX
     std::string base( " " );
     long pos = 0;
@@ -95,14 +86,4 @@ void DataStructure::debugPrint( int logicalUnit ) const
     {
         throw std::runtime_error( "debugPrint failed!" );
     }
-};
-
-char* getSDType( char* nom )
-{
-    std::string nameWithoutBlanks = trim( nom );
-    mapStrSDIterator curIter = mapNameDataStructure.find( nameWithoutBlanks );
-    if ( curIter == mapNameDataStructure.end() )
-        //~ throw std::runtime_error( "SD not registered: " + nameWithoutBlanks + " T" );
-        return const_cast< char* >(" ");
-    return const_cast< char* >( curIter->second->getType().c_str() );
 };
