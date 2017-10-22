@@ -73,7 +73,7 @@ class DataStructure
          * @param memType Mémoire Jeveux de création de l'objet
          */
         DataStructure( const std::string type = "", const JeveuxMemory memType = Permanent,
-                       int lenghtName = 8 );
+                       int nameLength = 8 );
 
         /**
          * @brief Destructeur
@@ -129,6 +129,7 @@ class DataStructure
         void setType( const std::string newType )
         {
             _type = newType;
+            CALL_SETTCO(_name.c_str(), _type.c_str());
         };
 };
 
@@ -139,26 +140,6 @@ typedef mapStrSD::iterator mapStrSDIterator;
 /** @typedef Valeur contenue dans mapStrSD */
 typedef mapStrSD::value_type mapStrSDValue;
 
-/**
- * @brief map< string, DataStructure* > mapNameDataStructure
- *   Ce map contient toutes les DataStructures initialisees
- */
-extern mapStrSD mapNameDataStructure;
-
-#endif
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/**
- * @fn getSDType
- * @brief Obtention du type de la sd dont le nom est passe en argument
- */
-char* getSDType(char*);
-
-#ifdef __cplusplus
-}
 #endif
 
 #endif /* DATASTRUCTURE_H_ */

@@ -258,24 +258,6 @@ void DEFP(INIRAN,iniran,_IN ASTERINTEGER *jump)
 }
 
 /* ------------------------------------------------------------------ */
-/* TODO CommandSyntax */
-void DEFSS(GETTC2,gettc2,_IN char *nomobj, _IN STRING_SIZE lnom,
-                        _OUT char *typobj, _IN STRING_SIZE ltyp)
-{
-        /*
-          retrouver le type "superviseur" du concept nomobj.
-        */
-    char* tmp = (char*)malloc(lnom + 1);
-    strncpy(tmp, nomobj, lnom);
-    tmp[lnom] = '\0';
-    char* nomCmdCp = getSDType(tmp);
-    CopyCStrToFStr(typobj, nomCmdCp, ltyp);
-    //fprintf(fileOut, "GETTC2 %s\n", typobj);
-    FreeStr(tmp);
-}
-
-
-/* ------------------------------------------------------------------ */
 void DEFPS(GETMAT,getmat,_INOUT ASTERINTEGER *nbarg,_OUT char *motcle,_IN STRING_SIZE lcle)
 {
         /*
@@ -2236,33 +2218,6 @@ return PyInt_FromLong((long)ier);
 }
 
 /* ------------------------------------------------------------------ */
-static char register_type_doc[]=
-"register_type(sdname, typename)\n\
-\n\
-Enregistre le type du concept dans son objet jeveux.";
-
-static PyObject *aster_register_type(self, args)
-PyObject *self; /* Not used */
-PyObject *args;
-{
-    printf("SETTCO ???\n");
-    ASTERINTEGER ier2=SIGABRT;
-    CALL_ASABRT( &ier2 );
-    /* TODO */
-    char *name, *type, *Fname, *Ftype;
-    int lname, ltype;
-
-    if (!PyArg_ParseTuple(args, "s#s#", &name, &lname, &type, &ltype)) return NULL;
-    Fname = MakeFStrFromCStr(name, lname);
-    Ftype = MakeFStrFromCStr(type, ltype);
-
-    CALL_SETTCO(Fname, Ftype);
-
-    Py_INCREF( Py_None ) ;
-    return Py_None;
-}
-
-/* ------------------------------------------------------------------ */
 static PyObject *jeveux_getobjects( PyObject* self, PyObject* args)
 {
     ASTERINTEGER nmax, total;
@@ -2647,7 +2602,6 @@ static PyMethodDef aster_methods[] = {
                 {"jeveux_exists", jeveux_exists,     METH_VARARGS},
                 {"jeveux_status", jeveux_status,     METH_VARARGS},
                 {"get_nom_concept_unique", aster_gcncon, METH_VARARGS},
-                {"register_type", aster_register_type, METH_VARARGS, register_type_doc},
                 {NULL,                NULL}/* sentinel */
 };
 
