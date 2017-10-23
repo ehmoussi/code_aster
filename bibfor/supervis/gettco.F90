@@ -37,35 +37,35 @@ subroutine gettco(name, typeco, errstop)
 #include "asterfort/jedema.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jemarq.h"
+#include "asterfort/lxlgut.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/wkvect.h"
 
 !   arguments
     character(len=*), intent(in) :: name
     character(len=*), intent(out) :: typeco
     aster_logical, intent(in), optional :: errstop
 
-    character(len=8) :: name8
-    character(len=16) :: attr
+    character(len=19) :: name19
+    character(len=24) :: attr
     integer :: iret
     character(len=24), pointer :: vk(:) => null()
     aster_logical :: error
 
     call jemarq()
 
-    error = .false._1
+    error = ASTER_FALSE
     if (present(errstop)) then
         error = errstop
     endif
 
-    name8 = name
-    attr = name8//'._TYPCO_'
+    ASSERT(lxlgut(name) .le. 19)
+    name19 = name
+    ASSERT(.not. error .or. name .ne. ' ')
+    attr = name19//'._TCO'
     call jeexin(attr, iret)
+    ASSERT(.not. error .or. iret .ne. 0)
     if (iret .eq. 0) then
         typeco = ' '
-        if (error) then
-        endif
-        ASSERT(.not. error)
     else
         call jeveuo(attr, 'L', vk24=vk)
         typeco = vk(1)
