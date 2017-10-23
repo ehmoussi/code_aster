@@ -70,9 +70,9 @@ class JeveuxBidirectionalMapInstance: public JeveuxObjectInstance,
         {
             if ( position <= _size )
             {
-                char* charJeveuxObjName = MakeBlankFStr(32);
-                CALL_JEXNOM( charJeveuxObjName, _name.c_str(), toAdd.c_str() );
-                CALL_JECROC( charJeveuxObjName );
+                JeveuxChar32 objName( " " );
+                CALLO_JEXNOM( objName, _name, toAdd );
+                CALLO_JECROC( objName );
                 return true;
             }
             return false;
@@ -94,9 +94,9 @@ class JeveuxBidirectionalMapInstance: public JeveuxObjectInstance,
                 long taille = size;
                 const int intType = AllowedJeveuxType< ValueType >::numTypeJeveux;
                 std::string carac = strJeveuxBase + " N " + JeveuxTypesNames[intType];
-                CALL_JECREO( _name.c_str(), carac.c_str() );
+                CALLO_JECREO( _name, carac );
                 std::string param( "NOMMAX" );
-                CALL_JEECRA_WRAP( _name.c_str(), param.c_str(), &taille );
+                CALLO_JEECRA_WRAP( _name, param, &taille );
                 _size = size;
                 return true;
             }
@@ -110,12 +110,11 @@ class JeveuxBidirectionalMapInstance: public JeveuxObjectInstance,
          */
         std::string findStringOfElement( long elementNumber ) const
         {
-            char* charJeveuxObjName = MakeBlankFStr(32);
-            char* charName = MakeBlankFStr(32);
-            CALL_JEXNUM(charJeveuxObjName, _name.c_str(),
-                        &elementNumber);
-            CALL_JENUNO(charJeveuxObjName, charName);
-            return std::string(charName);
+            JeveuxChar32 objName( " " );
+            JeveuxChar32 charName( " " );
+            CALLO_JEXNUM(objName, _name, &elementNumber);
+            CALLO_JENUNO(objName, charName);
+            return charName.toString();
         };
 
 
@@ -126,10 +125,10 @@ class JeveuxBidirectionalMapInstance: public JeveuxObjectInstance,
          */
         long findIntegerOfElement( const std::string& elementName ) const
         {
-            char* charJeveuxObjName = MakeBlankFStr(32);
-            CALL_JEXNOM(charJeveuxObjName, _name.c_str(), elementName.c_str() );
+            JeveuxChar32 objName( " " );
+            CALLO_JEXNOM(objName, _name, elementName );
             long resu = -1;
-            CALL_JENONU(charJeveuxObjName, &resu);
+            CALLO_JENONU(objName, &resu);
             return resu;
         };
 
@@ -143,8 +142,8 @@ class JeveuxBidirectionalMapInstance: public JeveuxObjectInstance,
 
             long vectSize;
             JeveuxChar8 param( "NOMMAX" );
-            char dummy[32] = " ";
-            CALL_JELIRA( _name.c_str(), param.c_str(), &vectSize, dummy );
+            JeveuxChar32 dummy( " " );
+            CALLO_JELIRA( _name, param, &vectSize, dummy );
             return vectSize;
         };
 };

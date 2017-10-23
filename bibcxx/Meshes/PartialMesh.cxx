@@ -1,6 +1,6 @@
 /**
  * @file PartialMesh.cxx
- * @brief Implementation de 
+ * @brief Implementation de
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -192,7 +192,7 @@ PartialMeshInstance::PartialMeshInstance( ParallelMeshPtr& mesh, const VectorStr
         _connectivity->getObject( position - 1 ).setValues( position );
         (*_elementsType)[ position-1 ] = 1;
     }
-    CALL_CARGEO( getName().c_str() );
+    CALLO_CARGEO( getName() );
     _isEmpty = false;
 };
 

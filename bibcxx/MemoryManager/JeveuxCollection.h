@@ -109,14 +109,14 @@ public:
         else
             ibid = _numberInCollection;
 
-        CALL_JUCROC_WRAP( _collectionName.c_str(), nameOfObject.c_str(),
-                          &ibid, &taille, (void*)(&_valuePtr) );
+        CALLO_JUCROC_WRAP( _collectionName, nameOfObject,
+                           &ibid, &taille, (void*)(&_valuePtr) );
         return true;
     };
 
     JeveuxChar32 getName() const
     {
-        return JeveuxChar32( _nameOfObject.c_str() );
+        return JeveuxChar32( _nameOfObject );
     };
 
     /** @brief Get size of collection object */
@@ -143,14 +143,13 @@ public:
     /** @brief Get size of collection object */
     int size() const
     {
-        const char* collName = _collectionName.c_str();
-        char* charJeveuxName = MakeBlankFStr(32);
+        JeveuxChar32 objName( " " );
         long num = _numberInCollection;
-        CALL_JEXNUM( charJeveuxName, collName, &num );
+        CALLO_JEXNUM( objName, _collectionName, &num );
         long valTmp;
         JeveuxChar8 param( "LONMAX" );
-        char* charval = MakeBlankFStr(32);
-        CALL_JELIRA( charJeveuxName, param.c_str(), &valTmp, charval );
+        JeveuxChar32 charval( " " );
+        CALLO_JELIRA( objName, param, &valTmp, charval );
         return (int)valTmp;
     };
 };
@@ -258,8 +257,7 @@ private:
         std::string typeColl3( "VARIABLE" );
         if( objectSizes == Constant ) typeColl3 = "CONSTANT";
 
-        CALL_JECREC( _name.c_str(), carac.c_str(), typeColl1.c_str(),
-                     typeColl2.c_str(), typeColl3.c_str(), &taille );
+        CALLO_JECREC( _name, carac, typeColl1, typeColl2, typeColl3, &taille );
         _isEmpty = false;
         if( storage == Contiguous )
         {
@@ -267,7 +265,7 @@ private:
                 throw std::runtime_error( "Total size of a contiguous collection must be grower than 0" );
             std::string strParam( "LONT" );
             taille = totalSize;
-            CALL_JEECRA_WRAP( _name.c_str(), strParam.c_str(), &taille );
+            CALLO_JEECRA_WRAP( _name, strParam, &taille );
         }
         return true;
     };
@@ -504,47 +502,44 @@ bool JeveuxCollectionInstance< ValueType, PointerType >::buildFromJeveux()
 {
     _listObjects.clear();
     long nbColObj, valTmp;
-    const char* charName = _name.c_str();
     JeveuxChar8 param( "NMAXOC" );
-    char* charval = MakeBlankFStr(32);
+    std::string charval(32, ' ');
     long iret=0;
-    CALL_JEEXIN( charName, &iret);
-    if ( iret == 0) return false;
-    CALL_JELIRA( charName, param.c_str(), &nbColObj, charval );
-    _size = nbColObj;
+    CALLO_JEEXIN( _name, &iret);
+    if (iret == 0)
+        return false;
 
+    CALLO_JELIRA( _name, param, &nbColObj, charval );
+    _size = nbColObj;
     param = "ACCES ";
-    CALL_JELIRA( charName, param.c_str(), &valTmp, charval );
+    CALLO_JELIRA( _name, param, &valTmp, charval );
     const std::string resu( charval, 2 );
-    FreeStr( charval );
 
     if ( resu == "NO" ) _isNamed = true;
 
-    const char* tmp = "L";
-    charval = MakeBlankFStr(32);
-    char* collectionObjectName = MakeBlankFStr(32);
+    std::string read( "L" );
+    std::string collectionObjectName(32, ' ');
     for ( long i = 1; i <= nbColObj; ++i )
     {
         ValueType* valuePtr;
-        CALL_JEXNUM( charval, charName, &i );
-        CALL_JEEXIN( charval, &iret);
-        if( iret == 0 ) continue;
+        CALLO_JEXNUM( charval, _name, &i );
+        CALLO_JEEXIN( charval, &iret);
+        if (iret == 0)
+            continue;
         if ( _isNamed )
-            CALL_JENUNO( charval, collectionObjectName );
-        CALL_JEVEUOC( charval, tmp, (void*)(&valuePtr) );
+            CALLO_JENUNO( charval, collectionObjectName );
+        CALLO_JEVEUOC( charval, read, (void*)(&valuePtr) );
         if ( _isNamed )
         {
-            _listObjects.push_back( JeveuxCollObjValType( charName, i,
+            _listObjects.push_back( JeveuxCollObjValType( _name, i,
                                                           collectionObjectName, valuePtr ) );
             _mapNumObject[ std::string( trim( collectionObjectName ) ) ] = i-1;
         }
         else
         {
-            _listObjects.push_back( JeveuxCollObjValType( charName, i, valuePtr ) );
+            _listObjects.push_back( JeveuxCollObjValType( _name, i, valuePtr ) );
         }
     }
-    FreeStr( charval );
-    FreeStr( collectionObjectName );
     _isEmpty = false;
     return true;
 };
@@ -552,12 +547,12 @@ bool JeveuxCollectionInstance< ValueType, PointerType >::buildFromJeveux()
 template< class ValueType, class PointerType >
 bool JeveuxCollectionInstance< ValueType, PointerType >::existsObject( const std::string& name ) const
 {
-    const char* collName = _name.c_str();
-    char* charJeveuxName = MakeBlankFStr(32);
+    std::string objName(32, ' ');
     long returnBool;
-    CALL_JEXNOM( charJeveuxName, collName, name.c_str() );
-    CALL_JEEXIN( charJeveuxName, &returnBool );
-    if ( returnBool == 0 ) return false;
+    CALLO_JEXNOM( objName, _name, name );
+    CALLO_JEEXIN( objName, &returnBool );
+    if ( returnBool == 0 )
+        return false;
     return true;
 };
 

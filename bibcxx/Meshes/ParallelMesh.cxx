@@ -46,7 +46,7 @@ bool ParallelMeshInstance::readMedFile( const std::string& fileName )
     std::string completeFileName = fileName + "/" + std::to_string( getMPIRank() ) + ".med";
     BaseMeshInstance::readMedFile( completeFileName );
 
-    CALL_LRMJOI_WRAP( getName().c_str(), completeFileName.c_str() );
+    CALLO_LRMJOI_WRAP( getName(), completeFileName );
 
     MPIContainerUtilities util;
     _groupsOfNodes->buildFromJeveux();

@@ -129,7 +129,7 @@ class DataStructure
         void setType( const std::string newType )
         {
             _type = newType;
-            CALL_SETTCO(_name.c_str(), _type.c_str());
+            CALLO_SETTCO(_name, _type);
         };
 };
 

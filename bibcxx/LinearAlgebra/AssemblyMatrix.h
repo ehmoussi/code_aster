@@ -262,14 +262,15 @@ bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
     if ( _dofNum->isEmpty() )
         throw std::runtime_error( "Numbering is empty" );
 
+    std::string base( "G" );
     std::string blanc( " " );
     std::string cumul( "ZERO" );
     if( _listOfLoads->isEmpty() && _listOfLoads->size() != 0 )
         _listOfLoads->build();
     long nbMatrElem = 1;
-    CALL_ASMATR( &nbMatrElem, _elemMatrix->getName().c_str(), blanc.c_str(),
-                 _dofNum->getName().c_str(), _listOfLoads->getName().c_str(),
-                 cumul.c_str(), "G", &type, getName().c_str() );
+    CALLO_ASMATR( &nbMatrElem, _elemMatrix->getName(), blanc,
+                  _dofNum->getName(), _listOfLoads->getName(),
+                  cumul, base, &type, getName() );
     _isEmpty = false;
 
     return true;
@@ -283,12 +284,12 @@ Mat AssemblyMatrixInstance< ValueType >::toPetsc4py() throw ( std::runtime_error
 {
     Mat myMat;
     PetscErrorCode ierr;
-    
+
     if ( _isEmpty )
         throw std::runtime_error( "Assembly matrix is empty" );
     if ( getType() != "MATR_ASSE_DEPL_R_DEPL_R" ) throw std::runtime_error( "Not yet implemented" );
 
-    CALL_MATASS2PETSC( getName().c_str(), &myMat, &ierr );
+    CALLO_MATASS2PETSC( getName(), &myMat, &ierr );
 
     return myMat;
 };

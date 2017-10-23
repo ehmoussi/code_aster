@@ -68,12 +68,12 @@ bool ListOfLoadsInstance::build() throw ( std::runtime_error )
     name.resize( 19, ' ' );
     std::string blank( " " );
     blank.resize( 19, ' ' );
-    CALL_NMDOCH_WRAP( name.c_str(), &iexcit, blank.c_str() );
+    CALLO_NMDOCH_WRAP( name, &iexcit, blank );
     _isEmpty = false;
     return true;
 };
 
-/* buildListExcit : construit la liste des charges utilisées pour valoriser le mot-clé facteur EXCIT 
+/* buildListExcit : construit la liste des charges utilisées pour valoriser le mot-clé facteur EXCIT
 dans STAT_NON_LINE. C'est une méthode temporaire qui disparaîtra avec la réécriture d'op0070 */
 ListSyntaxMapContainer ListOfLoadsInstance::buildListExcit() throw ( std::runtime_error )
 {
