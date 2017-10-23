@@ -89,7 +89,7 @@ def check(checker, co, l_before, etape):
 
     # concept utilisateur
     if co.nom[0:8].strip() == sd.nomj.nomj.strip():
-        obj = "{:24}".format("{0:<8}._TYPCO_".format(co.nom))
+        obj = "{:24}".format("{0:<19}._TCO".format(co.nom))
         if obj in l_interdit:
             l_interdit.remove(obj)
         if obj not in l_after:

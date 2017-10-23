@@ -142,15 +142,15 @@ subroutine uimpba(clas, iunmes)
 !     -- ON IMPRIME D'ABORD LES CONCEPTS UTILISATEUR :
     do i=1,nbcon
         call jenuno(jexnum('&&UIMPBA.LCONK8', i), k8)
-        call gettco(k8, typcon)
+        call gettco(k8, typcon, errstop=ASTER_FALSE)
         if (typcon .eq. ' ') cycle
         write(iunmes,1000) k8,typcon,tailcon(i)/mega, vnbobj(i),nbsvc(i)
     end do
-    
+
 !     -- ON IMPRIME ENSUITE LES CONCEPTS CACHES  :
     do i=1,nbcon
         call jenuno(jexnum('&&UIMPBA.LCONK8', i), k8)
-        call gettco(k8, typcon)
+        call gettco(k8, typcon, errstop=ASTER_FALSE)
         if (typcon .ne. ' ') cycle
         write(iunmes,1000) k8,typcon,tailcon(i)/mega, vnbobj(i),nbsvc(i)
     end do

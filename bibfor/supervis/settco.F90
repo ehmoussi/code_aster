@@ -32,27 +32,30 @@ subroutine settco(name, typeco)
     implicit none
 
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/lxlgut.h"
 #include "asterfort/wkvect.h"
 
 !   arguments
     character(len=*), intent(in) :: name
     character(len=*), intent(in) :: typeco
 
-    character(len=8) :: name8
-    character(len=16) :: attr
+    character(len=19) :: name19
+    character(len=24) :: attr
     character(len=24) :: type24
     integer :: iret
     character(len=24), pointer :: vk(:) => null()
 
     call jemarq()
 
-    name8 = name
+    ASSERT(lxlgut(name) .le. 19)
+    name19 = name
     type24 = typeco
-    attr = name8//'._TYPCO_'
+    attr = name19//'._TCO'
     call jeexin(attr, iret)
     if (iret .eq. 0) then
         call wkvect(attr, 'G V K24', 1, vk24=vk)
