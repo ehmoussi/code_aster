@@ -176,8 +176,8 @@ class PCFieldOnMeshInstance: public DataStructure
             const std::string limano( " " );
             try
             {
-                CALL_NOCARTC( getName().c_str(), &code, &tVerif1, grp.c_str(), mode.c_str(),
-                              &nma, limano.c_str(), &( *limanu )[0], ligrel.c_str() );
+                CALLO_NOCARTC( getName(), &code, &tVerif1, grp, mode,
+                              &nma, limano, &( *limanu )[0], ligrel );
             }
             catch( ... )
             {
@@ -190,8 +190,7 @@ class PCFieldOnMeshInstance: public DataStructure
         {
             try
             {
-                CALL_ALCART( base.c_str(), getName().c_str(), _supportMesh->getName().c_str(),
-                             quantity.c_str() );
+                CALLO_ALCART( base, getName(), _supportMesh->getName(), quantity );
             }
             catch( ... )
             {

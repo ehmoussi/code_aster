@@ -64,8 +64,10 @@ bool BaseDOFNumberingInstance::computeNumerotation() throw ( std::runtime_error 
         jvListOfLoads->updateValuePointer();
         long nbLoad = jvListOfLoads->size();
 
-        CALL_NUMERO_WRAP( getName().c_str(), "VG", " ", " ",
-                          _supportModel->getName().c_str(), _listOfLoads->getName().c_str() );
+        const std::string base( "VG" );
+        const std::string null( " " );
+        CALLO_NUMERO_WRAP( getName(), base, null, null,
+                           _supportModel->getName(), _listOfLoads->getName() );
     }
     else if ( ! _supportMatrix.use_count() == 0 )
     {

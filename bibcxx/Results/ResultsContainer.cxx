@@ -34,7 +34,7 @@ bool ResultsContainerInstance::allocate( int nbRanks ) throw ( std::runtime_erro
 {
     std::string base( JeveuxMemoryTypesNames[ getMemoryType() ] );
     long nbordr = nbRanks;
-    CALL_RSCRSD( base.c_str(), getName().c_str(), getType().c_str(), &nbordr );
+    CALLO_RSCRSD( base, getName(), getType(), &nbordr );
     _nbRanks = nbRanks;
     return true;
 };
@@ -45,8 +45,7 @@ void ResultsContainerInstance::addElementaryCharacteristics( const ElementaryCha
 {
     long rang = rank;
     std::string type("CARAELEM");
-    CALL_RSADPA_ZK8_WRAP( getName().c_str(), &rang, cara->getName().c_str(),
-                          type.c_str() );
+    CALLO_RSADPA_ZK8_WRAP( getName(), &rang, cara->getName(), type );
 };
 
 void ResultsContainerInstance::addListOfLoads( const ListOfLoadsPtr& load,
@@ -54,8 +53,7 @@ void ResultsContainerInstance::addListOfLoads( const ListOfLoadsPtr& load,
 {
     long rang = rank;
     std::string type("EXCIT");
-    CALL_RSADPA_ZK24_WRAP( getName().c_str(), &rang, load->getName().c_str(),
-                           type.c_str() );
+    CALLO_RSADPA_ZK24_WRAP( getName(), &rang, load->getName(), type );
 };
 
 void ResultsContainerInstance::addMaterialOnMesh( const MaterialOnMeshPtr& mater,
@@ -63,8 +61,7 @@ void ResultsContainerInstance::addMaterialOnMesh( const MaterialOnMeshPtr& mater
 {
     long rang = rank;
     std::string type("CHAMPMAT");
-    CALL_RSADPA_ZK8_WRAP( getName().c_str(), &rang, mater->getName().c_str(),
-                          type.c_str() );
+    CALLO_RSADPA_ZK8_WRAP( getName(), &rang, mater->getName(), type );
 };
 
 void ResultsContainerInstance::addModel( const ModelPtr& model,
@@ -72,8 +69,7 @@ void ResultsContainerInstance::addModel( const ModelPtr& model,
 {
     long rang = rank;
     std::string type("MODELE");
-    CALL_RSADPA_ZK8_WRAP( getName().c_str(), &rang, model->getName().c_str(),
-                          type.c_str() );
+    CALLO_RSADPA_ZK8_WRAP( getName(), &rang, model->getName(), type );
 };
 
 void ResultsContainerInstance::addTimeValue( double value,
@@ -81,7 +77,7 @@ void ResultsContainerInstance::addTimeValue( double value,
 {
     long rang = rank;
     std::string type("INST");
-    CALL_RSADPA_ZR_WRAP( getName().c_str(), &rang, &value, type.c_str() );
+    CALLO_RSADPA_ZR_WRAP( getName(), &rang, &value, type );
 };
 
 void ResultsContainerInstance::listFields() const
@@ -119,19 +115,17 @@ bool ResultsContainerInstance::update() throw ( std::runtime_error )
                 const std::string questi( "TYPE_CHAMP" );
                 const std::string typeco( "CHAMP" );
                 long repi = 0, ier = 0;
-                char* repk = MakeBlankFStr(32);
+                JeveuxChar32 repk(" ");
                 const std::string arret( "C" );
                 const std::string questi2( "TYPE_SCA" );
 
-                CALL_DISMOI( questi2.c_str(), name.c_str(), typeco.c_str(),
-                             &repi, repk, arret.c_str(), &ier );
-                const std::string resu2( trim( repk ) );
+                CALLO_DISMOI( questi2, name, typeco, &repi, repk, arret, &ier );
+                const std::string resu2( trim( repk.toString() ) );
                 /*if( resu2 != "R" )
                     throw std::runtime_error( "Not yet implemented" );*/
 
-                CALL_DISMOI( questi.c_str(), name.c_str(), typeco.c_str(),
-                             &repi, repk, arret.c_str(), &ier );
-                const std::string resu( trim( repk ) );
+                CALLO_DISMOI( questi, name, typeco, &repi, repk, arret, &ier );
+                const std::string resu( trim( repk.toString() ) );
 
                 if( resu == "NOEU" )
                 {
@@ -174,7 +168,7 @@ BaseDOFNumberingPtr ResultsContainerInstance::getEmptyDOFNumbering()
     std::string resuName( getName() );
     std::string name( "12345678.00000          " );
     long a = 10, b = 14;
-    CALL_GNOMSD( resuName.c_str(), name.c_str(), &a, &b );
+    CALLO_GNOMSD( resuName, name, &a, &b );
     DOFNumberingPtr retour( new DOFNumberingInstance( name.substr(0, 14) ) );
     _listOfDOFNum.push_back( retour );
     return retour;
@@ -186,7 +180,7 @@ BaseDOFNumberingPtr ResultsContainerInstance::getEmptyParallelDOFNumbering()
     std::string resuName( getName() );
     std::string name( "12345678.00000          " );
     long a = 10, b = 14;
-    CALL_GNOMSD( resuName.c_str(), name.c_str(), &a, &b );
+    CALLO_GNOMSD( resuName, name, &a, &b );
     ParallelDOFNumberingPtr retour( new ParallelDOFNumberingInstance( name.substr(0, 14) ) );
     _listOfDOFNum.push_back( retour );
     return retour;
@@ -202,9 +196,10 @@ FieldOnNodesDoublePtr ResultsContainerInstance::getEmptyFieldOnNodesDouble( cons
     ASTERINTEGER retour;
     retour = 0;
     const ASTERINTEGER rankLong = rank;
+    std::string null( " " );
     std::string returnName( 19, ' ' );
-    CALL_RSEXCH( " ", getName().c_str(), name.c_str(), &rankLong, returnName.c_str(), &retour );
-    CALL_RSNOCH( getName().c_str(), name.c_str(), &rankLong );
+    CALLO_RSEXCH( null, getName(), name, &rankLong, returnName, &retour );
+    CALLO_RSNOCH( getName(), name, &rankLong );
     std::string bis( returnName.c_str(), 19 );
     FieldOnNodesDoublePtr result( new FieldOnNodesDoubleInstance( bis ) );
 

@@ -37,7 +37,7 @@ DataStructure::DataStructure( const std::string name, const std::string type,
     _type( type ),
     _memoryType( memType )
 {
-    CALL_SETTCO(_name.c_str(), _type.c_str());
+    CALLO_SETTCO(_name, _type);
 }
 
 DataStructure::DataStructure( const std::string type,
@@ -60,9 +60,9 @@ DataStructure::~DataStructure()// throw ( std::runtime_error )
     long pos = 0;
     long nbval2 = 0;
     long retour = 0;
-    std::string nothing( "" );
-    CALL_JELSTC( base.c_str(), nameWithoutBlanks.c_str(), &pos,
-                 &nbval2, nothing.c_str(), &retour );
+    JeveuxChar24 nothing( " " );
+    CALLO_JELSTC( base, nameWithoutBlanks, &pos,
+                  &nbval2, nothing, &retour );
     if ( nbval2 != 0 )
         throw std::runtime_error( "Remaining jeveux objects in " + _name );
 #endif
@@ -79,8 +79,8 @@ void DataStructure::debugPrint( int logicalUnit ) const
     JeveuxString< 1 > base( " " );
     JeveuxString< 3 > no( "NON" );
     try {
-        CALL_UTIMSD( &unit, &niveau, &False, &True, this->getName().c_str(),
-                     &ipos, base.c_str(), no.c_str() );
+        CALLO_UTIMSD( &unit, &niveau, &False, &True, this->getName(),
+                      &ipos, base, no );
     }
     catch (...)
     {

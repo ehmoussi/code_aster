@@ -69,7 +69,8 @@ bool BaseLinearSolverInstance::build()
     dict.container[ "SOLVEUR" ] = listeSolver;
     cmdSt.define( dict );
 
-    CALL_CRESOL_WRAP( newName.c_str(), "G" );
+    std::string base("G");
+    CALLO_CRESOL_WRAP( newName, base );
     _isEmpty = false;
 
     return true;
@@ -92,8 +93,7 @@ bool BaseLinearSolverInstance::matrixFactorization( AssemblyMatrixDoublePtr curr
     CommandSyntax cmdSt( "AUTRE" );
     cmdSt.setResult( "AUCUN", "AUCUN" );
 
-    CALL_MATRIX_FACTOR( solverName.c_str(), base.c_str(), &cret, matpre.c_str(),
-                        matass.c_str(), &npvneg, &istop );
+    CALLO_MATRIX_FACTOR( solverName, base, &cret, matpre, matass, &npvneg, &istop );
     currentMatrix->_isFactorized = true;
 
     return true;
@@ -149,10 +149,10 @@ FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystem(
     long nsecm = 0, prepos = 1, istop = 0, iret = 0;
     std::string base( JeveuxMemoryTypesNames[ result->getMemoryType() ] );
 
-    CALL_RESOUD_WRAP( currentMatrix->getName().c_str(), blanc.c_str(), getName().c_str(),
-                      kinematicsField->getName().c_str(), &nsecm, currentRHS->getName().c_str(),
-                      result->getName().c_str(), base.c_str(), blanc.c_str(),
-                      &prepos, &istop, &iret );
+    CALLO_RESOUD_WRAP( currentMatrix->getName(), blanc, getName(),
+                       kinematicsField->getName(), &nsecm, currentRHS->getName(),
+                       result->getName(), base, blanc,
+                       &prepos, &istop, &iret );
 
     return result;
 };

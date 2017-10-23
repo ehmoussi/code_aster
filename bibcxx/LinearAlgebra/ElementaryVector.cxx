@@ -69,14 +69,13 @@ FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const BaseDOFNum
             std::string vectElem( (*_listOfElementaryResults)[i-1].c_str() );
             vectElem.resize( 24, ' ' );
             long in;
-            CALL_CORICH( detr.c_str(), vectElem.c_str(), &i, &in);
+            CALLO_CORICH( detr, vectElem, &i, &in);
         }
     }
     /**/
 
     std::string typres( "R" );
-    CALL_ASASVE( getName().c_str(), currentNumerotation->getName().c_str(), typres.c_str(),
-                 name.c_str() );
+    CALLO_ASASVE( getName(), currentNumerotation->getName(), typres, name );
 
     std::string detr( "D" );
     std::string fomult( " " );
@@ -91,8 +90,7 @@ FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const BaseDOFNum
     FieldOnNodesDoublePtr vectTmp3( new FieldOnNodesDoubleInstance( name2 ) );
     vectTmp->allocateFrom( *vectTmp3 );
 
-    CALL_ASCOVA( detr.c_str(), name.c_str(), fomult.c_str(), param.c_str(), &time,
-                 typres.c_str(), vectTmp->getName().c_str() );
+    CALLO_ASCOVA( detr, name, fomult, param, &time, typres, vectTmp->getName() );
 
     return vectTmp;
 };

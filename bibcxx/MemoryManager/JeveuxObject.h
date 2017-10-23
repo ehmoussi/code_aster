@@ -40,7 +40,7 @@ enum JeveuxMemory { Permanent, Temporary };
  * @def JeveuxTypesNames
  * @brief Fournit la lettre correspondant aux différentes base Jeveux
  */
-static const char* JeveuxMemoryTypesNames[2] = { "G", "V" };
+static const std::string JeveuxMemoryTypesNames[2] = { "G", "V" };
 
 /**
  * @class JeveuxObjectInstance
@@ -72,7 +72,7 @@ public:
     {
         if ( _name != "" )
         {
-            CALL_JEDETR(  _name.c_str() );
+            CALLO_JEDETR( _name );
         }
     };
 
@@ -84,7 +84,7 @@ public:
 
         long boolRetour;
         // Appel a jeexin pour verifier que le vecteur existe
-        CALL_JEEXIN( _name.c_str(), &boolRetour );
+        CALLO_JEEXIN( _name, &boolRetour );
         if ( boolRetour == 0 )
             return false;
         return true;

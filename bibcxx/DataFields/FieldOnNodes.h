@@ -198,11 +198,9 @@ public:
     {
         _dofNum = dofNum;
         if ( _dofNum->isEmpty() ) throw std::runtime_error( "DOFNumering is empty" );
-        std::string base( JeveuxMemoryTypesNames[ getMemoryType() ] );
         const int intType = AllowedFieldType< ValueType >::numTypeJeveux;
-        std::string type( JeveuxTypesNames[ intType ] );
-        CALL_VTCREB_WRAP( getName().c_str(), base.c_str(), type.c_str(),
-                          _dofNum->getName().c_str() );
+        CALLO_VTCREB_WRAP( getName(), JeveuxMemoryTypesNames[ getMemoryType() ],
+                           JeveuxTypesNames[ intType ], _dofNum->getName() );
         return true;
     };
 
@@ -215,8 +213,8 @@ public:
         SimpleFieldOnNodesValueTypePtr toReturn( new SimpleFieldOnNodesValueTypeInstance( getMemoryType() ) );
         const std::string resultName = toReturn->getName();
         const std::string inName = getName();
-        CALL_CNOCNS( inName.c_str(), JeveuxMemoryTypesNames[ getMemoryType() ],
-                     resultName.c_str() );
+        CALLO_CNOCNS( inName, JeveuxMemoryTypesNames[ getMemoryType() ],
+                     resultName );
         return toReturn;
     };
 
