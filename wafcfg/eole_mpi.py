@@ -36,7 +36,7 @@ def configure(self):
     # parallel must be set before calling intel.configure() to use MPI wrappers
     opts.parallel = True
     eole.configure(self)
-    self.env['ADDMEM'] = 800
+    self.env['ADDMEM'] = 900
 
     self.env.append_value('OPT_ENV_FOOTER', [
         'module load impi/2017.0.098'])
