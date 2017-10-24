@@ -53,11 +53,11 @@ caraco=AFFE_CARA_ELEM(MODELE=modelco,
    COQUE=_F(GROUP_MA='surfco', EPAIS_FO=epais, EXCENTREMENT_FO=decal, INER_ROTA='OUI',),
 )
 caragr=AFFE_CARA_ELEM(MODELE=modelgr,
-   GRILLE=_F(GROUP_MA='surfgr', SECTION_FO=section, EXCENTREMENT_FO=excent,),
+   GRILLE=_F(GROUP_MA='surfgr', SECTION_FO=section, EXCENTREMENT_FO=excent, ANGL_REP_1=(0.,0.),),
 )
 carael=AFFE_CARA_ELEM(MODELE=model,
    COQUE= _F(GROUP_MA='surfco', EPAIS_FO  =epais,   EXCENTREMENT_FO=decal, INER_ROTA='OUI',),
-   GRILLE=_F(GROUP_MA='surfgr', SECTION_FO=section, EXCENTREMENT_FO=excent,),
+   GRILLE=_F(GROUP_MA='surfgr', SECTION_FO=section, EXCENTREMENT_FO=excent, ANGL_REP_1=(0.,0.),),
 )
 # Pour vérifier qu'en croisant les _FO cela fonctionne sur les COQUE et/ou GRILLE
 CQext = 0.123 ; CQep  = 0.222 ; GRext = 0.456 ; GRsec = 0.325
@@ -69,30 +69,30 @@ caco02=AFFE_CARA_ELEM(MODELE=modelco,
    COQUE=_F(GROUP_MA='surfco', EPAIS=CQep, EXCENTREMENT_FO=decal, INER_ROTA='OUI',),
 )
 cagr01=AFFE_CARA_ELEM(MODELE=modelgr,
-   GRILLE=_F(GROUP_MA='surfgr', SECTION_FO=section, EXCENTREMENT=GRext,),
+   GRILLE=_F(GROUP_MA='surfgr', SECTION_FO=section, EXCENTREMENT=GRext, ANGL_REP_1=(0.,0.),),
 )
 cagr02=AFFE_CARA_ELEM(MODELE=modelgr,
-   GRILLE=_F(GROUP_MA='surfgr', SECTION=GRsec, EXCENTREMENT_FO=excent,),
+   GRILLE=_F(GROUP_MA='surfgr', SECTION=GRsec, EXCENTREMENT_FO=excent, ANGL_REP_1=(0.,0.),),
 )
 cael01=AFFE_CARA_ELEM(MODELE=model,
    COQUE= _F(GROUP_MA='surfco', EPAIS_FO  =epais,   EXCENTREMENT=CQext, INER_ROTA='OUI',),
-   GRILLE=_F(GROUP_MA='surfgr', SECTION_FO=section, EXCENTREMENT=GRext,),
+   GRILLE=_F(GROUP_MA='surfgr', SECTION_FO=section, EXCENTREMENT=GRext, ANGL_REP_1=(0.,0.),),
 )
 cael02=AFFE_CARA_ELEM(MODELE=model,
    COQUE= _F(GROUP_MA='surfco', EPAIS     =CQep,   EXCENTREMENT_FO=decal, INER_ROTA='OUI',),
-   GRILLE=_F(GROUP_MA='surfgr', SECTION   =GRsec,  EXCENTREMENT_FO=excent,),
+   GRILLE=_F(GROUP_MA='surfgr', SECTION   =GRsec,  EXCENTREMENT_FO=excent, ANGL_REP_1=(0.,0.),),
 )
 cael03=AFFE_CARA_ELEM(MODELE=model,
    COQUE= _F(GROUP_MA='surfco', EPAIS_FO  =epais,   EXCENTREMENT   =CQext, INER_ROTA='OUI',),
-   GRILLE=_F(GROUP_MA='surfgr', SECTION   =GRsec,   EXCENTREMENT_FO=excent,),
+   GRILLE=_F(GROUP_MA='surfgr', SECTION   =GRsec,   EXCENTREMENT_FO=excent, ANGL_REP_1=(0.,0.),),
 )
 cael04=AFFE_CARA_ELEM(MODELE=model,
    COQUE= _F(GROUP_MA='surfco', EPAIS     =CQep,    EXCENTREMENT_FO=decal, INER_ROTA='OUI',),
-   GRILLE=_F(GROUP_MA='surfgr', SECTION_FO=section, EXCENTREMENT   =GRext,),
+   GRILLE=_F(GROUP_MA='surfgr', SECTION_FO=section, EXCENTREMENT   =GRext, ANGL_REP_1=(0.,0.),),
 )
 cael05=AFFE_CARA_ELEM(MODELE=model,
    COQUE= _F(GROUP_MA='surfco', EPAIS  =CQep,   EXCENTREMENT=CQext, INER_ROTA='OUI',),
-   GRILLE=_F(GROUP_MA='surfgr', SECTION=GRsec,  EXCENTREMENT=GRext,),
+   GRILLE=_F(GROUP_MA='surfgr', SECTION=GRsec,  EXCENTREMENT=GRext, ANGL_REP_1=(0.,0.),),
 )
 
 # Création des champs et des tables
