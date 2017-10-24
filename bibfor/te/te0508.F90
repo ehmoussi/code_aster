@@ -23,13 +23,18 @@ subroutine te0508(option, nomte)
 #include "asterf_types.h"
 #include "jeveux.h"
 !
+#include "asterfort/assert.h"
 #include "asterfort/elrefv.h"
 #include "asterfort/jevech.h"
+#include "asterfort/lteatt.h"
 #include "asterfort/ngforc.h"
 #include "asterfort/ngfore.h"
 #include "asterfort/nmgvmb.h"
+#include "asterfort/lgicfc.h"
+!#include "asterfort/lgicfr.h"
 #include "asterfort/teattr.h"
 #include "asterfort/terefe.h"
+
     character(len=16) :: option, nomte
 ! ......................................................................
 !    - FONCTION REALISEE:  OPTIONS FORC_NODA ET REFE_FORC_NODA
@@ -38,27 +43,21 @@ subroutine te0508(option, nomte)
 !        DONNEES:      OPTION       -->  OPTION DE CALCUL
 !                      NOMTE        -->  NOM DU TYPE ELEMENT
 ! ......................................................................
-    integer :: nnomax, npgmax, epsmax, ddlmax
-    parameter (nnomax=27,npgmax=27,epsmax=20,ddlmax=15*nnomax)
-! ......................................................................
-    character(len=8) :: typmod(2)
-    aster_logical :: axi
+    character(len=8) :: typmod
+    aster_logical :: axi,grand
     integer :: nno, nnob, npg, ndim, nddl, neps
     integer :: iret, nnos, jgano, ipoids, ivf, idfde, ivfb, idfdeb, jganob
-    integer :: igeom, icontm, ivectu
-    real(kind=8) :: sigref, varref, lagref, sref(11)
-    real(kind=8) :: b(epsmax, npgmax, ddlmax), w(npgmax), ni2ldc(epsmax)
-    character(len=16) :: nomelt
-    common /ffauto/ nomelt
-!
-!
-!
+    integer :: igeom, icontm, ivectu, ideplm, icompo
+    real(kind=8) :: sigref, varref, lagref,epsref, sref(13)
+    real(kind=8),allocatable:: b(:,:,:), w(:,:),ni2ldc(:,:)
+    
+! ----------------------------------------------------------------------
+    
+   
 ! - INITIALISATION
-!
-    nomelt = nomte
-    call teattr('S', 'TYPMOD', typmod(1), iret)
-    typmod(2) = 'GRADVARI'
-    axi = typmod(1).eq.'AXIS'
+
+    call teattr('S', 'TYPMOD', typmod, iret)
+    axi = typmod.eq.'AXIS'
 !
     call elrefv(nomte, 'RIGI', ndim, nno, nnob,&
                 nnos, npg, ipoids, ivf, ivfb,&
@@ -66,61 +65,91 @@ subroutine te0508(option, nomte)
 !
 !
 !
-! - CALCUL DES ELEMENTS CINEMATIQUES
-!
+! - Parametres des options
     call jevech('PGEOMER', 'L', igeom)
-    call nmgvmb(ndim, nno, nnob, npg, axi,&
-                zr(igeom), zr(ivf), zr(ivfb), idfde, idfdeb,&
-                ipoids, nddl, neps, b, w,&
-                ni2ldc)
-!
-! - OPTION FORC_NODA
-!
-    if (option .eq. 'FORC_NODA') then
+    call jevech('PCOMPOR', 'L', icompo)
+    call jevech('PVECTUR', 'E', ivectu)
+    if (option.eq.'FORC_NODA') then
         call jevech('PCONTMR', 'L', icontm)
-        call jevech('PVECTUR', 'E', ivectu)
-        call ngforc(nddl, neps, npg, w, b,&
-                    ni2ldc, zr(icontm), zr(ivectu))
-    endif
-!
-!
+        call jevech('PDEPLMR', 'L', ideplm) 
+    end if
+   
+
+!   GRAD_VARI + GDEF_LOG + INCO
+
+    if (lteatt('INCO','C5GV').and.zk16(icompo+2) (1:8).eq.'GDEF_LOG') then  
+         nddl = nno*ndim + nnob*4
+         
+         if (option .eq. 'FORC_NODA') then
+             grand = .true._1 
+             call lgicfc(ndim, nno, nnob, npg, nddl, axi,grand,&
+                       zr(igeom),zr(ideplm), zr(ivf),zr(ivfb), idfde, idfdeb,&
+                       ipoids,zr(icontm),zr(ivectu))
+        
+        else if (option .eq. 'REFE_FORC_NODA') then
+            call terefe('SIGM_REFE', 'MECA_GRADVARI', sigref)
+            call terefe('VARI_REFE', 'MECA_GRADVARI', varref)
+            call terefe('LAGR_REFE', 'MECA_GRADVARI', lagref)
+            call terefe('EPSI_REFE', 'MECA_INCO', epsref)
+            if (ndim .eq. 2) then
+                sref(1:10) = [sigref,sigref,sigref,sigref,epsref, &
+                              sigref,lagref,varref, 0.d0, 0.d0]
+            else if (ndim.eq.3) then
+                sref(1:13) = [sigref,sigref,sigref,sigref,sigref, &
+                              sigref,epsref,sigref,lagref,varref, &
+                              0.d0, 0.d0, 0.d0]
+            endif
+            stop 'not implemented te0508'
+            stop 'DEPLM non fourni'
+!            call lgicfr(ndim, nno, nnob, npg, nddl, axi,.true._1,&
+!                        zr(igeom),zr(ideplm), zr(ivf),zr(ivfb), idfde, idfdeb,&
+!                        ipoids,sref,zr(ivectu))
+        endif
+        goto 9999
+    end if
+    
+    
+!   GRAD_VARI + HPP  ET/OU  GRAD_VARI + GDEF_LOG
+    if (zk16(icompo+2) (1:5) .eq. 'PETIT' .or. option.eq.'REFE_FORC_NODA') then  ! temporaire
+        call nmgvmb(ndim, nno, nnob, npg, axi,.false._1,&
+                    zr(igeom), zr(ivf), zr(ivfb), idfde, idfdeb,&
+                    ipoids, nddl, neps, b, w,ni2ldc)
+
+
+!   GRAD_VARI + GDEF_LOG 
+    else if (zk16(icompo+2) (1:8).eq.'GDEF_LOG') then
+        call nmgvmb(ndim, nno, nnob, npg, axi,.true._1,&
+                    zr(igeom), zr(ivf), zr(ivfb), idfde, idfdeb,&
+                    ipoids, nddl, neps, b, w,ni2ldc, zr(ideplm))
+                    
+    else
+        ASSERT(.false.)
+    end if
+! 
+
+    if (option .eq. 'FORC_NODA') then
+        call ngforc(w, b, ni2ldc, zr(icontm), zr(ivectu))
 !
 ! - OPTION REFE_FORC_NODA
 !
-    if (option .eq. 'REFE_FORC_NODA') then
-        call jevech('PVECTUR', 'E', ivectu)
-!
+    else if (option .eq. 'REFE_FORC_NODA') then
+
 !      LECTURE DES COMPOSANTES DE REFERENCE
         call terefe('SIGM_REFE', 'MECA_GRADVARI', sigref)
         call terefe('VARI_REFE', 'MECA_GRADVARI', varref)
         call terefe('LAGR_REFE', 'MECA_GRADVARI', lagref)
-!
+        
 !      AFFECTATION DES CONTRAINTES GENERALISEES DE REFERENCE
         if (ndim .eq. 2) then
-            sref(1) = sigref
-            sref(2) = sigref
-            sref(3) = sigref
-            sref(4) = sigref
-            sref(5) = lagref
-            sref(6) = varref
-            sref(7) = 0
-            sref(8) = 0
+            sref(1:neps) = [sigref,sigref,sigref,sigref,lagref, &
+                         varref,0.d0,0.d0]
         else if (ndim.eq.3) then
-            sref(1) = sigref
-            sref(2) = sigref
-            sref(3) = sigref
-            sref(4) = sigref
-            sref(5) = sigref
-            sref(6) = sigref
-            sref(7) = lagref
-            sref(8) = varref
-            sref(9) = 0
-            sref(10) = 0
-            sref(11) = 0
+            sref(1:neps) = [sigref,sigref,sigref,sigref,sigref, &
+                          sigref,lagref,varref,0.d0,0.d0,0.d0]
         endif
-!
-        call ngfore(nddl, neps, npg, w, b,&
-                    ni2ldc, sref, zr(ivectu))
+        call ngfore(w,b,ni2ldc,sref,zr(ivectu))
     endif
-!
+    deallocate(b,w,ni2ldc)
+    
+9999 continue
 end subroutine

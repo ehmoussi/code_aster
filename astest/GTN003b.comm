@@ -1,0 +1,318 @@
+# ======================================================================
+# COPYRIGHT (C)  EDF R&D                            WWW.CODE-ASTER.ORG
+# THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
+# IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
+# THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
+# (AT YOUR OPTION) ANY LATER VERSION.
+#
+# THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
+# WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
+# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
+# GENERAL PUBLIC LICENSE FOR MORE DETAILS.
+#
+# YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
+# ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
+# EDF Lab Paris-Saclay, Boulevard Gaspard Monge, Palaiseau
+# ======================================================================
+# CAS_TEST__: GTN003b: TRACTION UNIAXIALE
+# ----------------------------------------------------------------------
+# GEOMETRIE           : NT4
+# MODELISATION        : AXIS_GRAD_VARI
+# MAILLAGE            : MED (ISSU DE SALOME)
+# CL ET CHARGEMENT    : TRACTION UNIAXIALE
+# LOI D'ENDOMMAGEMENT : GTN LOCAL
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+
+DEBUT(PAR_LOT='NON',CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+import math
+import numpy as np
+
+# -------------------------------------------------------------------------
+# PARAMETRES
+# -------------------------------------------------------------------------
+# NOMBRE DU PAS DE CALCUL
+nb_pas = 500
+
+# NOMBRE DU PAS D'ARCHIVAGE 
+nb_arch = 100
+
+# INSTANT DE FIN <= DERNIER INSTANT
+inst_fin = 1
+
+# DERNIER INSTANT
+inst_total = 1
+
+
+# DEPLACEMENT IMPOSE: 1.5 pour NT2, 2 pour NT4, 3.2 pour NT10
+depl = 2
+                       
+
+# -------------------------------------------------------------------------
+# OBJET ASTER
+# -------------------------------------------------------------------------
+# LECTURE DU MAILLAGE
+MAIL = LIRE_MAILLAGE(FORMAT='MED', UNITE = 20)
+
+# AFFECTATION DU MODELE
+MODE = AFFE_MODELE(MAILLAGE = MAIL,
+  		   AFFE     = _F(TOUT         = 'OUI',
+			   	 PHENOMENE    = 'MECANIQUE',
+    		   		 MODELISATION = 'AXIS_GRAD_VARI',
+			         ),
+		   ),
+                    
+# MODELISATION DU MATERIAU 
+# LES PARAMETRES UTILISES CI-DESSOUS VIENNENT DE LA THESE DE YI ZHANG(2016)                         
+ACIER = DEFI_MATERIAU(ELAS = _F(E=190000.0, NU=0.3),
+		      ECRO_NL  = _F(R0 = 488.361123569,
+				    RH = 0,
+				    R1 = 57.1333673502,
+				    GAMMA_1 = 8613.0,
+				    R2 = 238.731127339,
+				    GAMMA_2 = 10.386585592,
+				    ),
+                      GTN_ASTER = _F(Q1 = 1.5,
+                                     Q2 = 1.07,
+                                     PORO_INI = 2.e-4,
+                                     PORO_COA = 0.05, 
+                                     COAL_ACC = 3,
+                                     NUCL_POR = 0.0,
+                                     NUCL_PLA = 0.2,
+                                     NUCL_DEV = 0.01,
+				     ), 
+		      NON_LOCAL = _F(C_GRAD_VARI = 1,
+				     PENA_LAGR   =5000,),           
+                      ) 
+
+# AFFECTATION DES MATERIAUX                              
+MATE = AFFE_MATERIAU (MAILLAGE = MAIL,
+  		      AFFE     = _F(TOUT  ='OUI',
+  				    MATER = ACIER),)
+
+# CONDITIONS AUX LIMITES DE CHARGEMENT 
+CL = AFFE_CHAR_MECA(MODELE=MODE,
+                    DDL_IMPO=(_F(GROUP_MA = 'LEFT_ed', DX = 0.),
+                              _F(GROUP_MA = 'BOTTOM_ed',DY = 0.),),)
+
+CHAR = AFFE_CHAR_MECA(MODELE=MODE,
+                      DDL_IMPO=_F(GROUP_MA = 'TOP_ed', DY = depl),)
+
+
+# LISTE DES INSTANTS DE CALCUL
+REEL_CAL = DEFI_LIST_REEL(DEBUT      = 0,
+                          INTERVALLE = _F(JUSQU_A=inst_total, NOMBRE=nb_pas),)
+                          
+INST_CAL = DEFI_LIST_INST(DEFI_LIST = _F(LIST_INST=REEL_CAL),METHODE='AUTO')
+
+REEL_ARC = DEFI_LIST_REEL(DEBUT      = 0,
+                          INTERVALLE = _F(JUSQU_A=inst_total, NOMBRE=nb_arch),)
+
+FONC = DEFI_FONCTION(NOM_PARA = 'INST',
+                     VALE     = (0.0, 0.0 ,inst_total, 1.0),
+                     PROL_DROITE = 'LINEAIRE',) 
+
+# CALCUL NON LINEAIRE
+RESU = STAT_NON_LINE (MODELE       = MODE,
+  		      CHAM_MATER   = MATE ,
+  		      EXCIT        = (_F(CHARGE = CL),
+                  		      _F(CHARGE = CHAR, FONC_MULT=FONC),),
+  		      COMPORTEMENT = _F(TOUT='OUI', RELATION='GTN_ASTER', DEFORMATION='GDEF_LOG'),
+                      INCREMENT    = _F(LIST_INST = INST_CAL, INST_FIN=inst_fin),
+                      CONVERGENCE  = _F(ITER_GLOB_MAXI= 20,
+					RESI_GLOB_MAXI=1.E-3,
+					),
+                      NEWTON       = _F(MATRICE='TANGENTE',REAC_ITER=1),
+                      SOLVEUR      = _F(METHODE='MUMPS', PCENT_PIVOT=20, MATR_DISTRIBUEE='OUI',),
+                      ARCHIVAGE    = _F(LIST_INST=REEL_ARC),
+			) 
+                      
+# COORDONNEES DES POINTS DE GAUSS
+
+COOR = CALC_CHAM_ELEM(MODELE = MODE,
+  		      OPTION = 'COOR_ELGA',)
+
+COORX = COOR.EXTR_COMP('X',['NT4']).valeurs
+COORY = COOR.EXTR_COMP('Y',['NT4']).valeurs
+
+    # PREMIER POINT A TESTER: PG LE PLUS PROCHE DE L'ORIGINE j
+    # DEUXIEME POINT A TESTER: PG MILIEU
+for i in range (len(COORX)): 
+	if(COORX[i]<0.06 and COORY[i]<0.06):
+		j = i
+	if(COORX[i]>2.5 and COORX[i]<2.56098 and COORY[i]<0.06):
+		k = i
+	
+
+#--------------------------------------------------------------------------------------------------------------- 
+#------------------------------------------ TEST SUR SIYY-------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------- 
+# ATTENTION: LA DISTRIBUTION DE SIYY N'EST PAS DU TOUT HOMOGENE!!! 
+
+# INST1 = 0.45     (INST_TOTAL = 1.00)
+SIGMA1 = CREA_CHAMP(TYPE_CHAM = 'ELGA_SIEF_R',
+  	           OPERATION = 'EXTR',
+                   RESULTAT  = RESU,
+                   NOM_CHAM  = 'SIEF_ELGA',
+                   INST      = 0.45,
+                   )
+
+SIYY1 = SIGMA1.EXTR_COMP('SIYY',['NT4']).valeurs
+
+SXX11 = CREA_TABLE(LISTE = (_F(PARA='SIYY',LISTE_R = SIYY1[j])))
+SXX12 = CREA_TABLE(LISTE = (_F(PARA='SIYY',LISTE_R = SIYY1[k])))
+
+TEST_TABLE(TABLE = SXX11,
+	   NOM_PARA = 'SIYY',
+           TYPE_TEST = 'MAX',
+           VALE_CALC= 1493.16312546,
+           #REFERENCE= 'SOURCE_EXTERNE',
+           #VALE_REFE= 673.733259364634,
+           )
+TEST_TABLE(TABLE = SXX12,
+	   NOM_PARA = 'SIYY',
+           TYPE_TEST = 'MAX',
+           VALE_CALC= 1313.06814522,
+           #REFERENCE= 'SOURCE_EXTERNE',
+           #VALE_REFE= 673.733259364634,
+           )
+
+# INST2 = 0.52     (INST_TOTAL = 1.00)
+SIGMA2 = CREA_CHAMP(TYPE_CHAM = 'ELGA_SIEF_R',
+  	           OPERATION = 'EXTR',
+                   RESULTAT  = RESU,
+                   NOM_CHAM  = 'SIEF_ELGA',
+                   INST      = 0.52,
+                   )
+
+SIYY2 = SIGMA2.EXTR_COMP('SIYY',['NT4']).valeurs
+
+SXX21 = CREA_TABLE(LISTE = (_F(PARA='SIYY',LISTE_R = SIYY2[j])))
+SXX22 = CREA_TABLE(LISTE = (_F(PARA='SIYY',LISTE_R = SIYY2[k])))
+
+TEST_TABLE(TABLE = SXX21,
+	   NOM_PARA = 'SIYY',
+           TYPE_TEST = 'MAX',
+           VALE_CALC= 0.0,
+           #REFERENCE= 'SOURCE_EXTERNE',
+           #VALE_REFE= 673.733259364634,
+           )
+TEST_TABLE(TABLE = SXX22,
+	   NOM_PARA = 'SIYY',
+           TYPE_TEST = 'MAX',
+           VALE_CALC= 1420.39083329,
+           #REFERENCE= 'SOURCE_EXTERNE',
+           #VALE_REFE= 673.733259364634,
+           )
+
+
+#--------------------------------------------------------------------------------------------------------------- 
+#------------------------------------- TEST SUR VARIABLE INTERNE : k et f---------------------------------------
+#--------------------------------------------------------------------------------------------------------------- 
+
+###
+### INST1 = 0.45     (INST_TOTAL = 1.00)
+###
+
+VI1 = CREA_CHAMP(TYPE_CHAM = 'ELGA_VARI_R',
+  	         OPERATION = 'EXTR',
+                 RESULTAT  = RESU,
+                 NOM_CHAM  = 'VARI_ELGA',
+                 INST      = 0.45,
+                 )
+
+#   VARIABLE D'ECROUISSAGE
+V11 = VI1.EXTR_COMP('V1',['NT4']).valeurs
+V111 = CREA_TABLE(LISTE = (_F(PARA='V1',LISTE_R = V11[j])))
+V112 = CREA_TABLE(LISTE = (_F(PARA='V1',LISTE_R = V11[k])))
+
+TEST_TABLE(TABLE = V111,
+	   NOM_PARA = 'V1',
+           TYPE_TEST = 'MAX',
+           VALE_CALC= 0.555992976222,
+           #REFERENCE= 'SOURCE_EXTERNE',
+           #VALE_REFE= 673.733259364634,
+           )
+TEST_TABLE(TABLE = V112,
+	   NOM_PARA = 'V1',
+           TYPE_TEST = 'MAX',
+           VALE_CALC=0.492046260327,
+           #REFERENCE= 'SOURCE_EXTERNE',
+           #VALE_REFE= 673.733259364634,
+           )
+
+#  POROSITE
+V12 = VI1.EXTR_COMP('V2',['NT4']).valeurs
+V121 = CREA_TABLE(LISTE = (_F(PARA='V2',LISTE_R = V12[j])))
+V122 = CREA_TABLE(LISTE = (_F(PARA='V2',LISTE_R = V12[k])))
+
+TEST_TABLE(TABLE = V121,
+	   NOM_PARA = 'V2',
+           TYPE_TEST = 'MAX',
+           VALE_CALC= 0.0163215414046,
+           #REFERENCE= 'SOURCE_EXTERNE',
+           #VALE_REFE= 673.733259364634,
+           )
+TEST_TABLE(TABLE = V122,
+	   NOM_PARA = 'V2',
+           TYPE_TEST = 'MAX',
+           VALE_CALC= 0.00258833995973,
+           #REFERENCE= 'SOURCE_EXTERNE',
+           #VALE_REFE= 673.733259364634,
+           )
+
+###
+### INST1 = 0.52     (INST_TOTAL = 1.00)
+###
+
+VI2 = CREA_CHAMP(TYPE_CHAM = 'ELGA_VARI_R',
+  	         OPERATION = 'EXTR',
+                 RESULTAT  = RESU,
+                 NOM_CHAM  = 'VARI_ELGA',
+                 INST      = 0.52,
+                 )
+
+#   VARIABLE D'ECROUISSAGE
+V21 = VI2.EXTR_COMP('V1',['NT4']).valeurs
+V211 = CREA_TABLE(LISTE = (_F(PARA='V1',LISTE_R = V21[j])))
+V212 = CREA_TABLE(LISTE = (_F(PARA='V1',LISTE_R = V21[k])))
+
+TEST_TABLE(TABLE = V211,
+	   NOM_PARA = 'V1',
+           TYPE_TEST = 'MAX',
+           VALE_CALC= 0.879320835858,
+           #REFERENCE= 'SOURCE_EXTERNE',
+           #VALE_REFE= 673.733259364634,
+           )
+TEST_TABLE(TABLE = V212,
+	   NOM_PARA = 'V1',
+           TYPE_TEST = 'MAX',
+           VALE_CALC= 0.607581368479,
+           #REFERENCE= 'SOURCE_EXTERNE',
+           #VALE_REFE= 673.733259364634,
+           )
+
+#  POROSITE
+V22 = VI2.EXTR_COMP('V2',['NT4']).valeurs
+V221 = CREA_TABLE(LISTE = (_F(PARA='V2',LISTE_R = V22[j])))
+V222 = CREA_TABLE(LISTE = (_F(PARA='V2',LISTE_R = V22[k])))
+
+TEST_TABLE(TABLE = V221,
+	   NOM_PARA = 'V2',
+           TYPE_TEST = 'MAX',
+           VALE_CALC= 0.255555555556,
+           #REFERENCE= 'SOURCE_EXTERNE',
+           #VALE_REFE= 673.733259364634,
+           )
+TEST_TABLE(TABLE = V222,
+	   NOM_PARA = 'V2',
+           TYPE_TEST = 'MAX',
+           VALE_CALC= 0.00534513348004,
+           #REFERENCE= 'SOURCE_EXTERNE',
+           #VALE_REFE= 673.733259364634,
+           )
+
+
+FIN()

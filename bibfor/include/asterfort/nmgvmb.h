@@ -21,25 +21,16 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nmgvmb(ndim, nno1, nno2, npg, axi,&
-                      geom, vff1, vff2, idfde1, idfde2,&
-                      iw, nddl, neps, b, w,&
-                      ni2ldc)
-        integer :: npg
-        integer :: nno2
-        integer :: nno1
-        integer :: ndim
-        aster_logical :: axi
-        real(kind=8) :: geom(ndim, nno1)
-        real(kind=8) :: vff1(nno1, npg)
-        real(kind=8) :: vff2(nno2, npg)
-        integer :: idfde1
-        integer :: idfde2
-        integer :: iw
-        integer :: nddl
-        integer :: neps
-        real(kind=8) :: b(3*ndim+2, npg, *)
-        real(kind=8) :: w(npg)
-        real(kind=8) :: ni2ldc(3*ndim+2)
+    subroutine nmgvmb(ndim, nno1, nno2, npg, axi, grand, &
+                  geoi, vff1, vff2, idfde1, idfde2, &
+                  iw, nddl, neps, b, w, ni2ldc, ddlm)
+        aster_logical,intent(in) :: axi,grand
+        integer,intent(in) :: ndim, nno1, nno2, npg, idfde1, idfde2, iw
+        real(kind=8),intent(in) :: geoi(ndim,nno1)
+        real(kind=8),intent(in) :: vff1(nno1,npg), vff2(nno2,npg)
+        integer,intent(out) :: nddl,neps
+        real(kind=8),intent(out),allocatable :: b(:,:,:)
+        real(kind=8),intent(out),allocatable :: w(:,:),ni2ldc(:,:)
+        real(kind=8),intent(in),optional :: ddlm(nno1*ndim + nno2*2)
     end subroutine nmgvmb
 end interface

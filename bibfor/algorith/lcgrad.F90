@@ -71,6 +71,15 @@ subroutine lcgrad(resi, rigi, ndim, ndimsi, neps,&
 ! -- CALCUL DE LA MATRICE TANGENTE GENERALISEE
 !
     if (rigi) then
+! 	  write (6,*) 'lcgrad neps = ',neps
+
+!         write (6,*) 'DIM     = ',ndim,ndimsi,neps
+!         write (6,*) 'R,C     = ',r,c
+!         write (6,*) 'DSIDEP1 = ',ktg(1:ndimsi,1:ndimsi,1)
+!         write (6,*) 'DSIDEP2 = ',ktg(1:ndimsi,1,2)
+!         write (6,*) 'DSIDEP3 = ',ktg(1:ndimsi,1,3)
+!         write (6,*) 'DSIDEP4 = ',ktg(1,1,4)
+
         call r8inir(neps*neps, 0.d0, dsidep, 1)
 !
 !      SIG - EPS
@@ -107,6 +116,13 @@ subroutine lcgrad(resi, rigi, ndim, ndimsi, neps,&
             dsidep(ndimsi+2+i,ndimsi+2+i) = c
  70     continue
 !
+
+! 	do i = 1,ndimsi+2
+! 	do j = 1,ndimsi+2
+! 	write (6,*) 'M[',i-1,',',j-1,'] = ',dsidep(i,j)
+! 	end do
+! 	end do
+
     endif
 !
 end subroutine

@@ -508,6 +508,22 @@ phen.add('3D_GRAD_VARI', Modelisation(dim=(3,3), code='3DV',
         (MT.SEG3      , EL.MECA_ARETE3),
     )))
 
+phen.add('3D_GRAD_INCO', Modelisation(dim=(3,3), code='3GI',
+    attrs=(
+        (AT.NBSIGM,'6'),
+        (AT.TYPMOD,'COMP3D'),
+        (AT.INCO  ,'C5GV'),
+    ),
+    elements=(
+        (MT.HEXA20    , EL.GVI_3D_HE20),
+        (MT.PENTA15   , EL.GVI_3D_PE15),
+        (MT.PYRAM13   , EL.GVI_3D_PY13),
+        (MT.TETRA10   , EL.GVI_3D_TE10),
+        (MT.QUAD8     , EL.MECA_FACE8),
+        (MT.TRIA6     , EL.MECA_FACE6),
+        (MT.SEG3      , EL.MECA_ARETE3),
+    )))
+
 phen.add('3D_GVNO', Modelisation(dim=(3,3), code='3GN',
     attrs=(
         (AT.NBSIGM,'6'),
@@ -1479,6 +1495,19 @@ phen.add('AXIS_GRAD_VARI', Modelisation(dim=(2,2), code='AXV',
         (MT.SEG3      , EL.MEAXSE3),
         (MT.TRIA6     , EL.MVAXTR6),
         (MT.QUAD8     , EL.MVAXQS8),
+    )))
+        
+phen.add('AXIS_GRAD_INCO', Modelisation(dim=(2,2), code='AGI',
+    attrs=(
+        (AT.AXIS,'OUI'),
+        (AT.NBSIGM,'4'),
+        (AT.TYPMOD,'AXIS'),
+        (AT.INCO  ,'C5GV'),
+    ),
+    elements=(
+        (MT.SEG3      , EL.MEAXSE3),
+        (MT.TRIA6     , EL.GVI_AX_TR6),
+        (MT.QUAD8     , EL.GVI_AX_QU8),
     )))
 
 phen.add('AXIS_GVNO', Modelisation(dim=(2,2), code='AGN',
@@ -3099,6 +3128,19 @@ phen.add('D_PLAN_GRAD_VARI', Modelisation(dim=(2,2), code='DPV',
         (MT.SEG3      , EL.MEPLSE3),
         (MT.TRIA6     , EL.MVDPTR6),
         (MT.QUAD8     , EL.MVDPQS8),
+    )))
+
+phen.add('D_PLAN_GRAD_INCO', Modelisation(dim=(2,2), code='DGI',
+    attrs=(
+        (AT.NBSIGM,'4'),
+        (AT.D_PLAN,'OUI'),
+        (AT.TYPMOD,'D_PLAN'),
+        (AT.INCO  ,'C5GV'),
+    ),
+    elements=(
+        (MT.SEG3      , EL.MEPLSE3),
+        (MT.TRIA6     , EL.GVI_DP_TR6),
+        (MT.QUAD8     , EL.GVI_DP_QU8),
     )))
 
 phen.add('D_PLAN_GVNO', Modelisation(dim=(2,2), code='DGN',

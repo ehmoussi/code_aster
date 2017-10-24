@@ -83,7 +83,7 @@ implicit none
 
     aster_logical :: grand, axi, resi, rigi, matsym, cplan, lintbo
     parameter (grand = .true._1)
-    integer :: g, nddl, cod(27), ivf, jvariexte
+    integer :: g, nddl, cod(27), ivf, jvariexte, iret
     integer :: ndim, nno, npg, mate, lgpg, codret, iw, idff
     character(len=8) :: typmod(*)
     character(len=*) :: fami
@@ -167,7 +167,7 @@ implicit none
                     logl, fm, fp, epsml, deps,&
                     tn, resi, cod(g))
 !
-        if (cod(g) .ne. 0) goto 10
+        if (cod(g) .ne. 0) goto 999
 !
         call r8inir(36, 0.d0, dtde, 1)
         call r8inir(6, 0.d0, tp, 1)
@@ -187,10 +187,12 @@ implicit none
                     lgpg, vip(1, g), ndim, fp, g,&
                     dtde, sigm(1, g), cplan, fami, mate,&
                     instp, angmas, gn, lamb, logl,&
-                    sigp(1, g), dsidep, pk2m, pk2, cod(g))
+                    sigp(1, g), dsidep, pk2m, pk2, iret)
 !
-        if (cod(g) .eq. 1) goto 999
-        if (cod(g) .eq. 4) lintbo= .true.
+        if (iret .eq. 1) then
+            cod(g) = 1
+            goto 999
+        end if
 !
 !     CALCUL DE LA MATRICE DE RIGIDITE ET DE LA FORCE INTERIEURE
 !     CONFG LAGRANGIENNE COMME NMGR3D / NMGR2D

@@ -29,6 +29,7 @@ subroutine deflog(ndim, f, epsl, gn, lamb,&
 !     OUT   GN    directions propres du tenseur F
 !     OUT   LAMB  valeurs propres du tenseur F
 !     OUT   LOGL  log des valeurs propres du tenseur F
+!     OUT   IRET  0=OK, 1=vp(Ft.F) trop petites (compression infinie)
 ! ----------------------------------------------------------------------
 #include "asterc/r8miem.h"
 #include "asterfort/diago2.h"
@@ -42,6 +43,7 @@ subroutine deflog(ndim, f, epsl, gn, lamb,&
     integer :: nbvec, i, j, k, ndim, iret
 ! ----------------------------------------------------------------------
 !
+    iret  = 0
     nbvec = 3
 !
 !     LE CALCUL DES VALEURS PROPRES N'A PAS ENCORE ETE FAIT

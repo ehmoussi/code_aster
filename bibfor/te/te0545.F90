@@ -25,10 +25,13 @@ subroutine te0545(option, nomte)
 #include "asterfort/elrefv.h"
 #include "asterfort/jevech.h"
 #include "asterfort/ngfint.h"
+#include "asterfort/ngvlog.h"
+#include "asterfort/nglgic.h"
 #include "asterfort/nmgvmb.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/rcangm.h"
 #include "asterfort/teattr.h"
+#include "asterfort/lteatt.h"
 #include "asterfort/tecach.h"
 #include "blas/dcopy.h"
 #include "blas/dgemv.h"
@@ -42,29 +45,27 @@ subroutine te0545(option, nomte)
 !        DONNEES:      OPTION       -->  OPTION DE CALCUL
 !                      NOMTE        -->  NOM DU TYPE ELEMENT
 ! ......................................................................
-    integer :: nnomax, npgmax, epsmax, ddlmax
-    parameter (nnomax=27,npgmax=27,epsmax=20,ddlmax=15*nnomax)
-! ......................................................................
     character(len=8) :: typmod(2)
-    aster_logical :: resi, rigi, axi
+    aster_logical :: resi, rigi, axi,matsym
     integer :: nno, nnob, npg, ndim, nddl, neps, lgpg
     integer :: ipoids, ivf, idfde, ivfb, idfdeb
     integer :: imate, icontm, ivarim, iinstm, iinstp, ideplm, ideplp, icompo
     integer :: ivectu, icontp, ivarip, imatuu, icarcr, ivarix, igeom, icoret
     integer :: iret, nnos, jgano, jganob, jtab(7)
-    real(kind=8) :: xyz(3), unit(nnomax), angmas(7)
-    real(kind=8) :: b(epsmax, npgmax, ddlmax), w(npgmax), ni2ldc(epsmax)
+    integer :: i,j
+    real(kind=8) :: xyz(3)=0.d0, angmas(7)
+    real(kind=8),allocatable:: b(:,:,:), w(:,:),ni2ldc(:,:)
 !
-!
+
 ! - INITIALISATION
 !
     resi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RAPH_MECA'
     rigi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RIGI_MECA'
-!
     call teattr('S', 'TYPMOD', typmod(1), iret)
     typmod(2) = 'GRADVARI'
     axi = typmod(1).eq.'AXIS'
-!
+
+
     call elrefv(nomte, 'RIGI', ndim, nno, nnob,&
                 nnos, npg, ipoids, ivf, ivfb,&
                 idfde, idfdeb, jgano, jganob)
@@ -86,6 +87,7 @@ subroutine te0545(option, nomte)
 !
 ! - PARAMETRES EN SORTIE
 !
+    matsym = .false._1
     if (rigi) then
         call jevech('PMATUNS', 'E', imatuu)
     else
@@ -114,32 +116,63 @@ subroutine te0545(option, nomte)
 !    ESTIMATION VARIABLES INTERNES A L'ITERATION PRECEDENTE
     if (resi) then
         call jevech('PVARIMP', 'L', ivarix)
-        call dcopy(npg*lgpg, zr(ivarix), 1, zr(ivarip), 1)
+        zr(ivarip:ivarip-1+npg*lgpg) = zr(ivarix:ivarix-1+npg*lgpg)
     endif
 !
 !
 !    BARYCENTRE ET ORIENTATION DU MASSIF
-    call r8inir(nno, 1.d0/nno, unit, 1)
-    call dgemv('N', ndim, nno, 1.d0, zr(igeom),&
-               ndim, unit, 1, 0.d0, xyz,&
-               1)
+    do i = 1,ndim
+        xyz(ndim) = sum(zr(igeom-1+i:igeom-1+(nno-1)*ndim+i:ndim))/nno
+    end do
     call rcangm(ndim, xyz, angmas)
 !
 !
-! - CALCUL DES ELEMENTS CINEMATIQUES
-!
-    call nmgvmb(ndim, nno, nnob, npg, axi,&
-                zr(igeom), zr(ivf), zr(ivfb), idfde, idfdeb,&
-                ipoids, nddl, neps, b, w,&
-                ni2ldc)
 !
 ! - CALCUL DES FORCES INTERIEURES ET MATRICES TANGENTES
 !
-    call ngfint(option, typmod, ndim, nddl, neps,&
-                npg, w, b, zk16(icompo), 'RIGI',&
-                zi(imate), angmas, lgpg, zr(icarcr), zr(iinstm),&
-                zr(iinstp), zr(ideplm), zr(ideplp), ni2ldc, zr(icontm),&
-                zr(ivarim), zr(icontp), zr(ivarip), zr(ivectu), zr(imatuu),&
-                zi(icoret))
+     if (zk16(icompo+2) (1:8).eq.'GDEF_LOG') then
+        if (lteatt('INCO','C5GV')) then
+            nddl = nno*ndim+4*nnob
+            neps = 3*ndim +2
+            call nglgic('RIGI', option, typmod, ndim, nno,nnob,neps,&
+                       npg,nddl, ipoids, zr(ivf), zr(ivfb),idfde,idfdeb,&
+                       zr(igeom),zk16(icompo), zi(imate), lgpg,&
+                       zr(icarcr), angmas, zr(iinstm), zr(iinstp), matsym,&
+                       zr( ideplm), zr(ideplp), zr(icontm), zr(ivarim), zr(icontp),&
+                       zr( ivarip), zr(ivectu), zr(imatuu), zi(icoret))
+
+
+
+
+        else
+            nddl = nno*ndim+2*nnob
+            neps = 3*ndim +2
+            call ngvlog('RIGI', option, typmod, ndim, nno,nnob,neps,&
+                   npg,nddl, ipoids, zr(ivf), zr(ivfb),idfde,idfdeb,&
+                   zr(igeom),zk16(icompo), zi(imate), lgpg,&
+                   zr(icarcr), angmas, zr(iinstm), zr(iinstp), matsym,&
+                   zr( ideplm), zr(ideplp), zr(icontm), zr(ivarim), zr(icontp),&
+                   zr( ivarip), zr(ivectu), zr(imatuu), zi(icoret))
+
+
+        endif
+
+
+
+     else if (zk16(icompo+2) (1:5) .eq. 'PETIT') then
+        call nmgvmb(ndim, nno, nnob, npg, axi,.false._1,&
+                    zr(igeom), zr(ivf), zr(ivfb), idfde, idfdeb,&
+                    ipoids, nddl, neps, b, w,&
+                    ni2ldc)
+                    
+        call ngfint(option, typmod, ndim, nddl, neps,&
+                    npg, w, b, zk16(icompo), 'RIGI',&
+                    zi(imate), angmas, lgpg, zr(icarcr), zr(iinstm),&
+                    zr(iinstp), zr(ideplm), zr(ideplp), ni2ldc, zr(icontm),&
+                    zr(ivarim), zr(icontp), zr(ivarip), zr(ivectu), zr(imatuu),&
+                    zi(icoret))
+
+        deallocate(b,w,ni2ldc)
+     endif
 !
 end subroutine

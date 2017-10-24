@@ -347,7 +347,7 @@ class MVCA_HEXA20(Element):
         ),
 
         OP.FORC_NODA(te=508,
-            para_in=((OP.FORC_NODA.PCONTMR, ECONTPG), (SP.PDEPLMR, DDL_MECA),
+            para_in=((OP.FORC_NODA.PCOMPOR, LC.CCOMPOR), (OP.FORC_NODA.PCONTMR, ECONTPG), (SP.PDEPLMR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (OP.FORC_NODA.PVARCPR, LC.ZVARCPG), ),
             para_out=((SP.PVECTUR, MVECTUR), ),
@@ -417,7 +417,7 @@ class MVCA_HEXA20(Element):
         ),
 
         OP.PILO_PRED_DEFO(te=518,
-            para_in=((SP.PCDTAU, LC.CCDTAU), (SP.PDDEPLR, DDL_MECA),
+            para_in=((SP.PCDTAU, LC.CCDTAU), (OP.PILO_PRED_DEFO.PCOMPOR, LC.CCOMPOR), (SP.PDDEPLR, DDL_MECA),
                      (SP.PDEPL0R, DDL_MECA), (SP.PDEPL1R, DDL_MECA),
                      (SP.PDEPLMR, DDL_MECA), (SP.PGEOMER, NGEOMER), (SP.PCARCRI, CCARCRI),
                      (SP.PTYPEPI, LC.CTYPEPI), ),
@@ -450,8 +450,8 @@ class MVCA_HEXA20(Element):
         ),
 
         OP.REFE_FORC_NODA(te=508,
-            para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
-                     (SP.PREFCO, EREFCO), ),
+            para_in=((OP.REFE_FORC_NODA.PCOMPOR, LC.CCOMPOR), (SP.PGEOMER, NGEOMER),
+                     (SP.PMATERC, LC.CMATERC), (SP.PREFCO, EREFCO), ),
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
 
