@@ -59,6 +59,7 @@ TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh,
 
 # Avec NB_COUCHE_SUPPL = 4 => RID == DOMAINE_ENTIER
 mesh=DEFI_DOMAINE_REDUIT(reuse=mesh,INFO=2,
+            MAILLAGE=mesh,
             BASE_PRIMAL=base_p,
             BASE_DUAL=base_d,
             NOM_DOMAINE='RID',
@@ -137,6 +138,7 @@ TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh2,
 
 # Avec CORR_COMPLET
 mesh2=DEFI_DOMAINE_REDUIT(reuse=mesh2,INFO=2,
+            MAILLAGE=mesh2,
             BASE_PRIMAL=base_p2,
             BASE_DUAL=base_d2,
             NOM_DOMAINE='RID',
@@ -220,6 +222,7 @@ base_d3=LIRE_RESU(TYPE_RESU  = 'MODE_EMPI',
 
 # Avec DOMAINE_MINI
 mesh3=DEFI_DOMAINE_REDUIT(reuse=mesh3,INFO=2,
+            MAILLAGE=mesh3,
             BASE_PRIMAL=base_p3,
             BASE_DUAL=base_d3,
             NOM_DOMAINE='RID',
