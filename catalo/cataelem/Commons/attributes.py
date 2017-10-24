@@ -320,6 +320,7 @@ INCO = Attribute(value=(
                  'C2O',
                  'C3',
                  'C3B',
+                 'C5GV',
                  ),
                  comment="""
   INCO   : Type d'elements "incompressibles" (R3.06.08)

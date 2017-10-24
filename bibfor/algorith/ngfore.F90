@@ -16,14 +16,15 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine ngfore(nddl, neps, npg, w, b,&
-                  ni2ldc, sigref, fref)
+subroutine ngfore(w, b, ni2ldc, sref, fref)
 !
     implicit none
 !
-    integer :: nddl, neps, npg
-    real(kind=8) :: w(0:npg-1), ni2ldc(0:neps-1), b(0:neps*npg-1, nddl)
-    real(kind=8) :: sigref(0:neps-1), fref(nddl)
+#include "asterfort/ngforc.h"
+
+    real(kind=8),intent(in) :: w(:,:), ni2ldc(:,:), b(:,:,:)
+    real(kind=8),intent(in) :: sref(:) 
+    real(kind=8) :: fref(*)
 ! ----------------------------------------------------------------------
 !     REFE_FORC_NODA - FORMULATION GENERIQUE
 ! ----------------------------------------------------------------------
@@ -33,30 +34,18 @@ subroutine ngfore(nddl, neps, npg, w, b,&
 ! IN  W       : POIDS DES POINTS DE GAUSS
 ! IN  B       : MATRICE CINEMATIQUE : DEFORMATION = B.DDL
 ! IN  LI2LDC  : CONVERSION CONTRAINTE STOCKEE -> CONTRAINTE LDC (RAC2)
-! IN  SIGREF  : CONTRAINTES DE REFERENCE (PAR COMPOSANTE)
+! IN  SREF    : CONTRAINTES DE REFERENCE (PAR COMPOSANTE)
 ! OUT FREF    : FORCES DE REFERENCE
 ! ----------------------------------------------------------------------
-    integer :: npgmax, epsmax
-    parameter (npgmax=27,epsmax=20)
-! ----------------------------------------------------------------------
-    integer :: nepg, ieg, i
-    real(kind=8) :: sigpds(0:epsmax*npgmax-1)
+    integer :: sizes(3), neps, npg
 ! ----------------------------------------------------------------------
 !
 !    INITIALISATION
-    nepg = neps*npg
-!
-!    CONTRAINTE AVEC RAC2 ET POIDS DU POINT DE GAUSS
-    do 10 ieg = 0, nepg-1
-        sigpds(ieg) = sigref(mod(ieg,neps))*ni2ldc(mod(ieg,neps)) * w(ieg/neps)
-10  end do
-!
-!    FINT = SOMME(G) W(G).ABS(BT).SIGREF
-    do 20 i = 1, nddl
-        fref(i)=0
-        do 30 ieg = 0, nepg-1
-            fref(i) = fref(i) + abs(b(ieg,i))*sigpds(ieg)
-30      continue
-20  end do
-!
+    sizes = shape(b)
+    neps = sizes(1)
+    npg  = sizes(2)
+ 
+    call ngforc(w,abs(b),ni2ldc,transpose(spread(sref(1:neps),1,npg)), &
+                fref) 
+
 end subroutine

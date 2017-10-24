@@ -16,42 +16,35 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine ngforc(nddl, neps, npg, w, b,&
-                  ni2ldc, sigmam, fint)
+subroutine ngforc(w, b, ni2ldc, sigmam, fint)
 !
     implicit none
 !
 #include "blas/dgemv.h"
-    integer :: nddl, neps, npg
-    real(kind=8) :: w(0:npg-1), ni2ldc(0:neps-1), b(neps*npg*nddl)
-    real(kind=8) :: sigmam(0:neps*npg-1), fint(nddl)
+
+    real(kind=8),intent(in) :: w(:,:), ni2ldc(:,:), b(:,:,:)
+    real(kind=8),intent(in) :: sigmam(size(w,1),size(w,2))
+    real(kind=8) :: fint(*)
 ! ----------------------------------------------------------------------
 ! OPTION FORC_NODA - FORMULATION GENERIQUE
 ! ----------------------------------------------------------------------
-! IN  NDDL    : NOMBRE DE DEGRES DE LIBERTE
-! IN  NEPS    : NOMBRE DE COMPOSANTES DE DEFORMATION ET CONTRAINTE
-! IN  NPG     : NOMBRE DE POINTS DE GAUSS
-! IN  W       : POIDS DES POINTS DE GAUSS
+! IN  W       : POIDS DES POINTS DE GAUSS (POUR CHAQUE COMPOSANTE)
 ! IN  B       : MATRICE CINEMATIQUE : DEFORMATION = B.DDL
 ! IN  LI2LDC  : CONVERSION CONTRAINTE STOCKEE -> CONTRAINTE LDC (RAC2)
 ! IN  SIGMAM  : CONTRAINTES A L'INSTANT PRECEDENT
 ! OUT FINT    : FORCES INTERIEURES
 ! ----------------------------------------------------------------------
-    integer :: npgmax, epsmax
-    parameter (npgmax=27,epsmax=20)
-! ----------------------------------------------------------------------
-    integer :: nepg, ieg
-    real(kind=8) :: sigm(0:epsmax*npgmax-1)
+    integer :: nepg, nddl
+    real(kind=8) :: sigm(size(w,1),size(w,2))
 ! ----------------------------------------------------------------------
 !
 !    INITIALISATION
-    nepg = neps*npg
+    nepg = size(w)
+    nddl = size(b)/nepg
 !
 !    CONTRAINTE AVEC RAC2 ET POIDS DU POINT DE GAUSS
-    do 10 ieg = 0, nepg-1
-        sigm(ieg) = sigmam(ieg)*ni2ldc(mod(ieg,neps))*w(ieg/neps)
-10  end do
-!
+    sigm = sigmam*ni2ldc*w
+    
 !    FINT = SOMME(G) WG.BT.SIGMA
     call dgemv('T', nepg, nddl, 1.d0, b,&
                nepg, sigm, 1, 0.d0, fint,&

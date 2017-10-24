@@ -31,11 +31,7 @@ subroutine nmgvdn(ndim, nno1, nno2, iu, ia)
 ! IN  NNO1    : NOMBRE DE NOEUDS (FAMILLE U)
 ! IN  NNO2    : NOMBRE DE NOEUDS (FAMILLE A)
 ! ---------------------------------------------------------------------
-!
     integer :: n, i, os
-!
-    character(len=16) :: nomelt
-    common /ffauto/ nomelt
 ! ---------------------------------------------------------------------
 !
 !
@@ -53,7 +49,6 @@ subroutine nmgvdn(ndim, nno1, nno2, iu, ia)
             iu(nno1*(i-1)+n+nno2) = i + (n-1)*ndim + os
 150      continue
 140  continue
-!
 !
 !
 end subroutine

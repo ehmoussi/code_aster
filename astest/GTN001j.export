@@ -1,0 +1,11 @@
+P time_limit 90
+P memory_limit 256
+P ncpus 1
+P mpi_nbcpu 1
+P mpi_nbnoeud 1
+P testlist verification sequential
+
+F comm GTN001j.comm D 1
+F mmed GTN001.mmed D 20
+
+

@@ -49,10 +49,12 @@ subroutine prelog(ndim, lgpg, vim, gn, lamb,&
 !
     call deflog(ndim, fm, epsml, gn, lamb,&
                 logl, iret)
+    if (iret.ne.0) goto 999
 !
     if (resi) then
         call deflog(ndim, fp, epspl, gn, lamb,&
                     logl, iret)
+        if (iret.ne.0) goto 999
         do 35 i = 1, 6
             deps(i)=epspl(i)-epsml(i)
  35     continue
@@ -70,4 +72,6 @@ subroutine prelog(ndim, lgpg, vim, gn, lamb,&
     call r8inir(6, 0.d0, tn, 1)
     call dcopy(2*ndim, vim(ivtn), 1, tn, 1)
 !
+
+999 continue
 end subroutine

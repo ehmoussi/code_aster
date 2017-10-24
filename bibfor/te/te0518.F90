@@ -34,9 +34,6 @@ subroutine te0518(option, nomte)
 !   CALCUL DES COEFFICIENTS A0 ET A1 POUR LE PILOTAGE PAR CRITERE
 !   ELASTIQUE OU PAR DEFORMATION POUR LES ELEMENTS GRAD_VARI
 ! ......................................................................
-    integer :: nnomax, npgmax, epsmax, ddlmax
-    parameter (nnomax=27,npgmax=27,epsmax=20,ddlmax=15*nnomax)
-! ......................................................................
     character(len=8) :: typmod(2)
     character(len=16) :: typilo
     aster_logical :: axi
@@ -44,15 +41,12 @@ subroutine te0518(option, nomte)
     integer :: iret, nnos, jgano, ipoids, ivf, idfde, ivfb, idfdeb, jganob
     integer :: igeom, imate, itype, icontm, ivarim, icopil, iborne, ictau
     integer :: iddlm, iddld, iddl0, iddl1, icompo
-    real(kind=8) :: b(epsmax, npgmax, ddlmax), w(npgmax), ni2ldc(epsmax)
+    real(kind=8),allocatable:: b(:,:,:), w(:,:),ni2ldc(:,:)
     real(kind=8) :: etamin, etamax
-    character(len=16) :: nomelt
-    common /ffauto/ nomelt
 !
 !
 ! - INITIALISATION
 !
-    nomelt = nomte
     call teattr('S', 'TYPMOD', typmod(1), iret)
     typmod(2) = 'GRADVARI'
     axi = typmod(1).eq.'AXIS'
@@ -65,10 +59,12 @@ subroutine te0518(option, nomte)
 ! - CALCUL DES ELEMENTS CINEMATIQUES
 !
     call jevech('PGEOMER', 'L', igeom)
-    call nmgvmb(ndim, nno, nnob, npg, axi,&
-                zr(igeom), zr(ivf), zr(ivfb), idfde, idfdeb,&
-                ipoids, nddl, neps, b, w,&
-                ni2ldc)
+    call jevech('PDEPLMR', 'L', iddlm)
+    call nmgvmb(ndim, nno, nnob, npg, axi,.false._1,&
+                zr(igeom),zr(ivf), zr(ivfb), idfde, idfdeb,&
+                ipoids, nddl, neps, b, w, ni2ldc)
+                
+                
 ! - TYPE DE PILOTAGE (IDENTIQUE A UNE SELECTION VIA LE NOM DE L'OPTION
 !
     call jevech('PTYPEPI', 'L', itype)
@@ -81,15 +77,15 @@ subroutine te0518(option, nomte)
     call jevech('PDDEPLR', 'L', iddld)
     call jevech('PDEPL0R', 'L', iddl0)
     call jevech('PDEPL1R', 'L', iddl1)
-    call jevech('PCDTAU', 'L', ictau)
+    call jevech('PCDTAU',  'L', ictau)
     call jevech('PCOPILO', 'E', icopil)
+    call jevech('PCOMPOR', 'L', icompo)
 !
 !
 ! - PARAMETRES SPECIFIQUES AU PILOTAGE PAR LA LOI DE COMPORTEMENT
 !
     if (typilo .eq. 'PRED_ELAS') then
         call jevech('PMATERC', 'L', imate)
-        call jevech('PCOMPOR', 'L', icompo)
         call jevech('PCONTMR', 'L', icontm)
         call jevech('PVARIMR', 'L', ivarim)
         call jevech('PBORNPI', 'L', iborne)
@@ -104,7 +100,6 @@ subroutine te0518(option, nomte)
         lgpg = max(jtab(6),1)*jtab(7)
     else
         imate=1
-        icompo=1
         icontm=1
         ivarim=1
         iborne=1
@@ -118,4 +113,6 @@ subroutine te0518(option, nomte)
                 zr(iddlm), zr(icontm), zr(ivarim), zr(iddld), zr(iddl0),&
                 zr(iddl1), zr(ictau), etamin, etamax, zr(icopil))
 !
+
+    deallocate(b,w,ni2ldc)
 end subroutine
