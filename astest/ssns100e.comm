@@ -68,7 +68,7 @@ LEMOD=AFFE_MODELE(    MAILLAGE=MAILTOT,
 LACAR=AFFE_CARA_ELEM(    MODELE=LEMOD,
                        GRILLE=_F( GROUP_MA = 'GEOB',
                                 SECTION = .01,
-                                ANGL_REP = (0.0, 0.0,),
+                                ANGL_REP_1 = (0.0, 0.0,),
                                 EXCENTREMENT = 0.0,
                               )
                         )

@@ -92,11 +92,11 @@ LACAR=AFFE_CARA_ELEM(MODELE=LEMOD,
                               ANGL_REP=(0.0,0.0,),),
                      GRILLE=(_F(GROUP_MA='ACPLUS',
                                 SECTION=.2,
-                                ANGL_REP=(0,0,),
+                                ANGL_REP_1=(0,0,),
                                 EXCENTREMENT=.05,),
                              _F(GROUP_MA='ACMOINS',
                                 SECTION=.2,
-                                ANGL_REP=(0,0,),
+                                ANGL_REP_1=(0,0,),
                                 EXCENTREMENT=-.05,),)
                        );
 

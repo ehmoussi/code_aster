@@ -112,7 +112,7 @@ def LIST_CARA_CIRCONF(GROUP_MA,AXE,MAILLAGE,**args):
          vecX1=copy.copy(vecV)
          vecX1[2]=0.
 
-         # On calcule les angles de ANGL_REP pour obtenir le vecteur vecV
+         # On calcule les angles de ANGL_REP_1 pour obtenir le vecteur vecV
          alpha=NP.arctan2(vecX1[1],vecX1[0])*180./NP.pi
          beta=-NP.arctan2(vecV[2],norm(vecX1))*180./NP.pi
 
@@ -128,7 +128,7 @@ def LIST_CARA_CIRCONF(GROUP_MA,AXE,MAILLAGE,**args):
          for cle in args["GRILLE"].keys():
             mon_dico[cle]=args["GRILLE"][cle]
          mon_dico["MAILLE"]=nom_maille
-         mon_dico["ANGL_REP"]=(alpha,beta)
+         mon_dico["ANGL_REP_1"]=(alpha,beta)
 
          LISTE_CARA.append(mon_dico)
 

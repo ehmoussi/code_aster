@@ -119,7 +119,7 @@ MA=MODI_MAILLAGE( reuse=MA,
 CAREL=AFFE_CARA_ELEM(    MODELE=MO,
                        GRILLE=(_F( GROUP_MA = 'SURF_EXT',
                                 SECTION = sec,
-                                ANGL_REP = (90., 0.0,),
+                                ANGL_REP_1 = (90., 0.0,),
                                 EXCENTREMENT = 0.0,
                               ),
                               )
