@@ -1,6 +1,14 @@
+
+#include "astercxx.h"
+
+#ifdef _USE_MPI
+
+#ifndef COMMUNICATIONGRAPH_H_
+#define COMMUNICATIONGRAPH_H_
+
 /**
- * @file CppToFortranGlossaryInterface.cxx
- * @brief Interface python de CppToFortranGlossary
+ * @file CommunicationGraph.h
+ * @brief Header of CommunicationGraph class
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,23 +29,27 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/CppToFortranGlossaryInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
-#include <boost/python.hpp>
+/* person_in_charge: nicolas.sellenet at edf.fr */
 
-void exportCppToFortranGlossaryToPython()
+#include "aster_fort.h"
+#include "MemoryManager/JeveuxVector.h"
+
+class CommunicationGraph
 {
-    using namespace boost::python;
+private:
+    /** @brief Graph */
+    JeveuxVectorLong _graph;
 
-    class_< Glossary >( "Glossary", no_init )
-        .def( "getComponent", &Glossary::getComponent )
-        .def( "getModeling", &Glossary::getModeling )
-        .def( "getPhysics", &Glossary::getPhysics )
-        .def( "getRenumbering", &Glossary::getRenumbering )
-        .def( "getPreconditioning", &Glossary::getPreconditioning )
-        .def( "getSolver", &Glossary::getSolver )
-    ;
-
-    def( "getGlossary", &getReferenceToGlossary,
-         return_value_policy<reference_existing_object>() );
+public:
+    CommunicationGraph( const std::string&, const JeveuxVectorLong& );
 };
+
+/**
+ * @typedef CommunicationGraphPtr
+ * @brief Pointeur intelligent vers un CommunicationGraph
+ */
+typedef boost::shared_ptr< CommunicationGraph > CommunicationGraphPtr;
+
+#endif /* COMMUNICATIONGRAPH_H_ */
+
+#endif /* _USE_MPI */

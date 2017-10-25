@@ -61,6 +61,13 @@ ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runti
           curIter != mecaList.end();
           ++curIter )
         study->addMechanicalLoad( *curIter );
+
+#ifdef _USE_MPI
+    const auto& pMecaList = _listOfLoads->getListOfParallelMechanicalLoads();
+    for ( const auto& curIter : pMecaList )
+        study->addParallelMechanicalLoad( curIter );
+#endif /* _USE_MPI */
+
     const ListKineLoad& kineList = _listOfLoads->getListOfKinematicsLoads();
     for ( ListKineLoadCIter curIter = kineList.begin();
           curIter != kineList.end();

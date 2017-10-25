@@ -46,7 +46,7 @@ function typmat(nbmat, tlimat)
     character(len=8) :: sym, zero
     character(len=19) :: matel
     integer :: i, itymat
-    integer :: iexi, iexiav
+    integer :: iexi
 !----------------------------------------------------------------------
 !     ITYMAT =  0 -> SYMETRIQUE
 !            =  1 -> NON-SYMETRIQUE
@@ -58,10 +58,6 @@ function typmat(nbmat, tlimat)
         matel = tlimat(i)
         call jeexin(matel//'.RELR', iexi)
         iexi=min(1,abs(iexi))
-        iexiav=iexi
-        call asmpi_comm_vect('MPI_MAX', 'I', sci=iexi)
-        iexi=min(1,abs(iexi))
-        ASSERT(iexi.eq.iexiav)
         if (iexi .eq. 0) goto 10
 !
 !       -- LA LOGIQUE CI-DESSOUS N'EST VALABLE QUE SI LE MATR_ELEM
@@ -76,13 +72,13 @@ function typmat(nbmat, tlimat)
             endif
         endif
 !
-        call asmpi_comm_vect('MPI_MAX', 'I', sci=itymat)
         if (itymat .eq. 1) goto 11
 !
  10     continue
     end do
  11 continue
 !
+    call asmpi_comm_vect('MPI_MAX', 'I', sci=itymat)
     if (itymat .eq. 0) then
         typmat='S'
     else

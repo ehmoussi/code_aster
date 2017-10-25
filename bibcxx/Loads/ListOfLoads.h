@@ -30,6 +30,7 @@
 
 #include "astercxx.h"
 #include "Loads/MechanicalLoad.h"
+#include "Loads/ParallelMechanicalLoad.h"
 #include "Loads/KinematicsLoad.h"
 #include "MemoryManager/JeveuxVector.h"
 
@@ -45,6 +46,10 @@ class ListOfLoadsInstance: public DataStructure
         ListKineLoad       _listOfKinematicsLoads;
         /** @brief Chargements Mecaniques */
         ListMecaLoad       _listOfMechanicalLoads;
+#ifdef _USE_MPI
+        /** @brief Chargements Mecaniques paralleles */
+        ListParaMecaLoad   _listOfParallelMechanicalLoads;
+#endif /* _USE_MPI */
         /** @brief .INFC */
         JeveuxVectorLong   _loadInformations;
         /** @brief .LCHA */
@@ -79,6 +84,18 @@ class ListOfLoadsInstance: public DataStructure
             _isEmpty = true;
             _listOfMechanicalLoads.push_back( currentLoad );
         };
+
+#ifdef _USE_MPI
+        /**
+         * @brief Function d'ajout d'une charge mecanique
+         * @param currentLoad charge a ajouter a la sd
+         */
+        void addParallelMechanicalLoad( const ParallelMechanicalLoadPtr& currentLoad )
+        {
+            _isEmpty = true;
+            _listOfParallelMechanicalLoads.push_back( currentLoad );
+        };
+#endif /* _USE_MPI */
 
         /**
          * @brief Construction de la liste de charge
@@ -128,6 +145,17 @@ class ListOfLoadsInstance: public DataStructure
         {
             return _listOfMechanicalLoads;
         };
+
+#ifdef _USE_MPI
+        /**
+         * @brief Function de récupération de la liste des charges mécaniques
+         * @return _listOfMechanicalLoads
+         */
+        const ListParaMecaLoad& getListOfParallelMechanicalLoads() const
+        {
+            return _listOfParallelMechanicalLoads;
+        };
+#endif /* _USE_MPI */
 
         /**
          * @brief Function de récupération de la liste des charges

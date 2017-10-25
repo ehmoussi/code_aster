@@ -31,19 +31,27 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
     ( const std::string& name, const FiniteElementDescriptorPtr& FEDesc,
       const PartialMeshPtr& mesh, const ModelPtr& model, const JeveuxMemory memType ):
                     FiniteElementDescriptorInstance( name, model->getSupportMesh(), memType ),
-                    _BaseFEDesc( FEDesc )
+                    _BaseFEDesc( FEDesc ),
+                    _joins( JeveuxVectorLong( getName() + ".DOMJ" ) ),
+                    _owner( JeveuxVectorLong( getName() + ".PNOE" ) ),
+                    _multiplicity( JeveuxVectorLong( getName() + ".MULT" ) )
 {
     const int rank = getMPIRank();
+    const int nbProcs = getMPINumberOfProcs();
 
-    const auto& owner = mesh->getOwner();
+    const auto& owner = *(mesh->getOwner());
     const auto& explorer = FEDesc->getDelayedElementsExplorer();
 
     VectorInt delayedElemToKeep;
-    VectorInt meshNodesToKeep( owner->size(), -1 );
+    VectorInt meshNodesToKeep( owner.size(), -1 );
     long nbOldDelayedNodes = FEDesc->getNumberOfDelayedNodes();
     _delayedElemToKeep = VectorLong( nbOldDelayedNodes, 1 );
     VectorInt delayedNodesToKeep( nbOldDelayedNodes, -1 );
     VectorInt delayedNodesNumbering( nbOldDelayedNodes, 0 );
+    VectorInt delayedNodesMult( nbOldDelayedNodes, 0 );
+    VectorInt delayedNodesOwner( nbOldDelayedNodes, -1 );
+    VectorInt nbOwnedDelayedNodes( nbProcs, 0 );
+    std::vector< std::set< int > > sharedDelayedNodes( nbOldDelayedNodes );
     long nbDelayedNodes = 0, nbElemToKeep = 0, totalSizeToKeep = 0;
     // On commence par regarder les noeuds et elements qui doivent etre
     // gardes dans le nouveau ligrel
@@ -51,7 +59,7 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
     {
         const auto& numElem = meshElem.getElementNumber();
         bool keepElem = false;
-        int pos = 0;
+        int pos = 0, curOwner = -1;
         for( auto numNode : meshElem )
         {
             if( pos == 0 && numNode < 0 )
@@ -60,23 +68,52 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
             if( numNode > 0 )
             {
                 const long num2 = numNode - 1;
+                curOwner = owner[ num2 ];
                 // ... et que le processeur courant le possede, on conserve ce noeud
                 // et on conserve l'element
-                if( (*owner)[ num2 ] == rank )
+                if( curOwner == rank )
                 {
                     keepElem = true;
                     meshNodesToKeep[ num2 ] = rank;
                     ++totalSizeToKeep;
                 }
             }
-            // Si on est sur un noeud tardif et qu'il faut conserver l'element
-            // Alors on conserve les noeuds tardifs aussi
-            if( numNode < 0 && keepElem )
+            // Si on est sur un noeud tardif...
+            if( numNode < 0 )
             {
-                delayedNodesToKeep[ -numNode - 1 ] = rank;
-                delayedNodesNumbering[ -numNode - 1 ] = nbDelayedNodes;
-                ++nbDelayedNodes;
-                ++totalSizeToKeep;
+                ++delayedNodesMult[ -numNode - 1 ];
+                if( keepElem )
+                {
+                    // ... et qu'il faut conserver l'element
+                    // Alors on conserve les noeuds tardifs aussi
+                    delayedNodesToKeep[ -numNode - 1 ] = rank;
+                    delayedNodesNumbering[ -numNode - 1 ] = nbDelayedNodes;
+                    ++nbDelayedNodes;
+                    ++totalSizeToKeep;
+                }
+                // On cherche a equilibrer la charge des noeuds tardifs
+                auto curOwner2 = delayedNodesOwner[ -numNode - 1 ];
+                if( curOwner2 == -1 )
+                {
+                    delayedNodesOwner[ -numNode - 1 ] = curOwner;
+                    ++nbOwnedDelayedNodes[ curOwner ];
+                }
+                else
+                {
+                    if( nbOwnedDelayedNodes[ curOwner2 ] > nbOwnedDelayedNodes[ curOwner ] )
+                    {
+                        delayedNodesOwner[ -numNode - 1 ] = curOwner;
+                        ++nbOwnedDelayedNodes[ curOwner ];
+                        --nbOwnedDelayedNodes[ curOwner2 ];
+                    }
+                    else
+                    {
+                        delayedNodesOwner[ -numNode - 1 ] = curOwner;
+                        ++nbOwnedDelayedNodes[ curOwner ];
+                    }
+                }
+                // On note tous les procs qui possèdent un noeud tardif
+                sharedDelayedNodes[ -numNode - 1 ].insert( curOwner );
             }
             ++pos;
         }
@@ -89,14 +126,85 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
         }
     }
 
+    int i = 0, nbJoins = 0;
+    std::vector< VectorLong > toSend( nbProcs );
+    std::vector< VectorLong > toReceive( nbProcs );
+    for( const auto& curSet : sharedDelayedNodes )
+    {
+        if( delayedNodesToKeep[i] == rank )
+        {
+            if( delayedNodesOwner[i] == rank )
+            {
+                for( const auto& proc : curSet )
+                    if( proc != rank )
+                        toSend[proc].push_back(-delayedNodesNumbering[i]-1);
+            }
+            else
+            {
+                toReceive[delayedNodesOwner[i]].push_back(-delayedNodesNumbering[i]-1);
+            }
+        }
+        ++i;
+    }
+
+    auto nbPartialNodes = mesh->getNumberOfNodes();
+    const auto& localNum = mesh->getLocalNumbering();
+    const auto& pNodesComp = FEDesc->getPhysicalNodesComponentDescriptor();
+    // Calcul du nombre d'entier code
+    int nec = pNodesComp->size()/nbPartialNodes;
     // Si des noeuds tardifs sont a conserver, on peut creer le ligrel
     if( nbDelayedNodes > 0 )
     {
-        auto nbPartialNodes = mesh->getNumberOfNodes();
-        const auto& localNum = mesh->getLocalNumbering();
-        const auto& pNodesComp = FEDesc->getPhysicalNodesComponentDescriptor();
-        // Calcul du nombre d'entier code
-        int nec = pNodesComp->size()/nbPartialNodes;
+        _owner->allocate( Permanent, nbDelayedNodes );
+        _multiplicity->allocate( Permanent, nbDelayedNodes );
+        int i = 0, nbJoins = 0, j = 0;
+        std::vector< VectorLong > toSend( nbProcs );
+        std::vector< VectorLong > toReceive( nbProcs );
+        for( const auto& curSet : sharedDelayedNodes )
+        {
+            if( delayedNodesToKeep[i] == rank )
+            {
+                if( delayedNodesOwner[i] == rank )
+                {
+                    for( const auto& proc : curSet )
+                        if( proc != rank )
+                            toSend[proc].push_back(-delayedNodesNumbering[i]-1);
+                }
+                else
+                {
+                    toReceive[delayedNodesOwner[i]].push_back(-delayedNodesNumbering[i]-1);
+                }
+                (*_owner)[j] = delayedNodesOwner[i];
+                (*_multiplicity)[j] = delayedNodesMult[i];
+                ++j;
+            }
+            ++i;
+        }
+        if( j != nbDelayedNodes )
+            throw std::runtime_error( "Out of bound error" );
+
+        // Creation des raccords
+        VectorLong joins;
+        for( i = 0; i < nbProcs; ++i )
+        {
+            const auto& taille1 = toSend[i].size();
+            if( taille1 != 0 )
+            {
+                auto vec = JeveuxVectorLong( getName() + ".E" + std::to_string( i ) );
+                _joinToSend.push_back( vec );
+                (*vec) = toSend[i];
+                joins.push_back(i);
+            }
+            const auto& taille2 = toReceive[i].size();
+            if( taille2 != 0 )
+            {
+                auto vec = JeveuxVectorLong( getName() + ".R" + std::to_string( i ) );
+                _joinToReceive.push_back( vec );
+                (*vec) = toReceive[i];
+                joins.push_back(i);
+            }
+        }
+        *(_joins) = joins;
 
         // Allocation du .NEMA
         _delayedNumberedConstraintElementsDescriptor->allocateContiguous
@@ -122,8 +230,10 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
         }
 
         const auto& liel = FEDesc->getListOfGroupOfElements();
-        std::vector< VectorLong > toLiel( liel.size(), VectorLong() );
         int nbCollObj = 0, totalCollSize = 0;
+        std::vector< VectorLong > toLiel( 1, VectorLong() );
+        long type = 0;
+        nbCollObj = 1;
         for( const auto& colObj : liel )
         {
             const long numInColl = colObj.getElementNumber();
@@ -132,17 +242,17 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
             {
                 if( _delayedElemToKeep[-val-1] != 1 )
                 {
-                    toLiel[numInColl-1].push_back(_delayedElemToKeep[-val-1]);
+                    toLiel[0].push_back(_delayedElemToKeep[-val-1]);
                     addedElem = true;
                     ++totalCollSize;
                 }
             }
             if( addedElem )
             {
-                toLiel[numInColl-1].push_back(colObj.getType());
-                ++nbCollObj;
+                type = colObj.getType();
             }
         }
+        toLiel[0].push_back(type);
 
         _listOfGroupOfElements->allocateContiguous( memType, nbCollObj,
                                                     totalCollSize+nbCollObj, Numbered );
@@ -156,18 +266,38 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
                 ++posInCollection;
             }
         }
+    }
+    else
+        _listOfGroupOfElements->allocateContiguous( memType, 1, 1, Numbered );
 
-        // Remplissage du .NBNO avec le nouveau nombre de noeuds tardifs
-        _numberOfDelayedNumberedConstraintNodes->allocate( memType, 1 );
-        (*_numberOfDelayedNumberedConstraintNodes)[0] = nbDelayedNodes;
+    // Remplissage du .NBNO avec le nouveau nombre de noeuds tardifs
+    _numberOfDelayedNumberedConstraintNodes->allocate( memType, 1 );
+    (*_numberOfDelayedNumberedConstraintNodes)[0] = nbDelayedNodes;
 
-        // Creation du .LGRF en y mettant les noms du maillage et modele d'origine
-        _parameters->allocate( memType, 2 );
-        const auto& pMesh = mesh->getParallelMesh();
-        (*_parameters)[0] = pMesh->getName();
-        (*_parameters)[1] = model->getName();
-        /** @todo ajouter un assert sur le maillage sous-jacent au modele */
+    // Creation du .LGRF en y mettant les noms du maillage et modele d'origine
+    _parameters->allocate( memType, 2 );
+    const auto& pMesh = mesh->getParallelMesh();
+    (*_parameters)[0] = pMesh->getName();
+    (*_parameters)[1] = model->getName();
+    auto docu = FEDesc->getParameters()->getInformationParameter();
+    _parameters->setInformationParameter( docu );
+    /** @todo ajouter un assert sur le maillage sous-jacent au modele */
 
+    // Creation du .PRNM sur les noeuds du getParallelMesh
+    // Recopie en position locale
+    _dofDescriptor->allocate( memType, (pMesh->getNumberOfNodes())*nec );
+    for( int i = 0; i < nbPartialNodes; ++i )
+    {
+        if( meshNodesToKeep[i] == rank )
+            for( int j = 0; j < nec; ++j )
+            {
+                const int newPos = nec*((*localNum)[i]-1) + j;
+                (*_dofDescriptor)[newPos] = (*pNodesComp)[i*nec+j];
+            }
+    }
+
+    if( nbDelayedNodes > 0 )
+    {
         // Creation des .LGNS et .PRNM
         // Recopie des valeurs sur les noeuds tardifs du nouveau ligrel
         _delayedNodesNumbering->allocate( memType, nbDelayedNodes+2 );
@@ -187,20 +317,8 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
                 (*_delayedNodesNumbering)[newNum] = (*numbering)[num];
             }
         }
-
-        // Creation du .PRNM sur les noeuds du getParallelMesh
-        // Recopie en position locale
-        _dofDescriptor->allocate( memType, (pMesh->getNumberOfNodes())*nec );
-        for( int i = 0; i < nbPartialNodes; ++i )
-        {
-            if( meshNodesToKeep[i] == rank )
-                for( int j = 0; j < nec; ++j )
-                {
-                    const int newPos = nec*((*localNum)[i]-1) + j;
-                    (*_dofDescriptor)[newPos] = (*pNodesComp)[i*nec+j];
-                }
-        }
     }
+    _commGraph = CommunicationGraphPtr( new CommunicationGraph( getName(), getJoins() ) );
 };
 
 #endif /* _USE_MPI */

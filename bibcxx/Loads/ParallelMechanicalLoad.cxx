@@ -35,9 +35,15 @@ ParallelMechanicalLoadInstance::ParallelMechanicalLoadInstance( const GenericMec
                     ( getName() + ".CHME.LIGRE", _BaseFEDesc,
                       load->getSupportModel()->getPartialMesh(), model ) ),
     _cimpo( new PCFieldOnMeshDoubleInstance( getName() + ".CHME.CIMPO", _FEDesc ) ),
-    _cmult( new PCFieldOnMeshDoubleInstance( getName() + ".CHME.CMULT", _FEDesc ) )
+    _cmult( new PCFieldOnMeshDoubleInstance( getName() + ".CHME.CMULT", _FEDesc ) ),
+    _type( getName() + ".TYPE" ),
+    _modelName( getName() + ".CHME.MODEL.NOMO" )
 {
     const auto& pcField = load->getMechanicalLoadDescription()._cimpo;
+    _type->allocate( Permanent, 1 );
+    (*_type)[0] = "MECA_RE ";
+    _modelName->allocate( Permanent, 1 );
+    (*_modelName)[0] = model->getName();
 
     transferPCFieldOnMesh( load->getMechanicalLoadDescription()._cimpo, _cimpo );
     transferPCFieldOnMesh( load->getMechanicalLoadDescription()._cmult, _cmult );

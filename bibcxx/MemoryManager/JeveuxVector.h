@@ -28,6 +28,7 @@
 
 #include "astercxx.h"
 #include "aster_fort.h"
+#include "aster_utils.h"
 
 #include "MemoryManager/JeveuxAllowedTypes.h"
 #include "MemoryManager/JeveuxObject.h"
@@ -54,8 +55,8 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
          *   Attention, le pointeur est mis a zero. Avant d'utiliser ce vecteur,
          *   il faut donc faire appel a JeveuxVectorInstance::updateValuePointer
          */
-        JeveuxVectorInstance( const std::string& nom ):
-            JeveuxObjectInstance( nom ),
+        JeveuxVectorInstance( const std::string& nom, JeveuxMemory mem = Permanent ):
+            JeveuxObjectInstance( nom, mem ),
             _valuePtr( NULL )
         {};
 
@@ -73,12 +74,25 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
         /**
          * @brief Surcharge de l'operateur =
          */
-        JeveuxVectorInstance& operator=( JeveuxVectorInstance& toCopy )
+        JeveuxVectorInstance& operator=( JeveuxVectorInstance< ValueType >& toCopy )
         {
             if( this->size() != 0 )
                 this->deallocate();
             this->allocate( _mem, toCopy.size() );
             toCopy.updateValuePointer();
+            for( int i = 0; i < toCopy.size(); ++i )
+                this->operator[](i) = toCopy[i];
+            return *this;
+        };
+
+        /**
+         * @brief Surcharge de l'operateur =
+         */
+        JeveuxVectorInstance& operator=( const std::vector< ValueType >& toCopy )
+        {
+            if( this->size() != 0 )
+                this->deallocate();
+            this->allocate( _mem, toCopy.size() );
             for( int i = 0; i < toCopy.size(); ++i )
                 this->operator[](i) = toCopy[i];
             return *this;
@@ -147,6 +161,20 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
         };
 
         /**
+         * @brief Get the value of DOCU parameter of jeveux object
+         */
+        std::string getInformationParameter() const
+        {
+            const std::string param( "DOCU" );
+            char* charval = MakeBlankFStr(4);
+            long valTmp;
+            CALL_JELIRA( _name.c_str(), param.c_str(), &valTmp, charval );
+            std::string toReturn( charval );
+            FreeStr( charval );
+            return toReturn;
+        };
+
+        /**
          * @brief Return the name
          */
         std::string getName() const
@@ -161,6 +189,17 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
         bool isAllocated()
         {
             return exists();
+        };
+
+        /**
+         * @brief Set the value of DOCU parameter of jeveux object
+         */
+        bool setInformationParameter( const std::string value )
+        {
+            if( ! exists() ) return false;
+
+            const std::string param( "DOCU" );
+            CALL_JEECRA_STRING_WRAP( _name.c_str(), param.c_str(), value.c_str() );
         };
 
         /**

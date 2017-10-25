@@ -59,6 +59,10 @@ protected:
     PCFieldOnMeshDoublePtr             _cimpo;
     /** @brief Carte '.CMULT' */
     PCFieldOnMeshDoublePtr             _cmult;
+    /** @brief Vecteur Jeveux '.TYPE' */
+    JeveuxVectorChar8                  _type;
+    /** @brief Vecteur Jeveux '.MODEL.NOMO' */
+    JeveuxVectorChar8                  _modelName;
 
 public:
     /**
@@ -88,6 +92,13 @@ public:
  * @brief Pointeur intelligent vers un ParallelMechanicalLoadInstance
  */
 typedef boost::shared_ptr< ParallelMechanicalLoadInstance > ParallelMechanicalLoadPtr;
+
+/** @typedef std::list de ParallelMechanicalLoad */
+typedef std::list< ParallelMechanicalLoadPtr > ListParaMecaLoad;
+/** @typedef Iterateur sur une std::list de ParallelMechanicalLoad */
+typedef ListParaMecaLoad::iterator ListParaMecaLoadIter;
+/** @typedef Iterateur constant sur une std::list de ParallelMechanicalLoad */
+typedef ListParaMecaLoad::const_iterator ListParaMecaLoadCIter;
 
 #endif /* PARALLELMECHANICALLOAD_H_ */
 

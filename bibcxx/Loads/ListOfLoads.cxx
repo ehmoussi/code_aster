@@ -53,6 +53,14 @@ bool ListOfLoadsInstance::build() throw ( std::runtime_error )
         dict2.container[ "CHARGE" ] = (*curIter)->getName();
         listeExcit.push_back( dict2 );
     }
+#ifdef _USE_MPI
+    for ( const auto& curIter : _listOfParallelMechanicalLoads )
+    {
+        SyntaxMapContainer dict2;
+        dict2.container[ "CHARGE" ] = curIter->getName();
+        listeExcit.push_back( dict2 );
+    }
+#endif /* _USE_MPI */
     for ( ListKineLoadCIter curIter = _listOfKinematicsLoads.begin();
           curIter != _listOfKinematicsLoads.end();
           ++curIter )
@@ -86,6 +94,14 @@ ListSyntaxMapContainer ListOfLoadsInstance::buildListExcit() throw ( std::runtim
         dict2.container[ "CHARGE" ] = (*curIter)->getName();
         listeExcit.push_back( dict2 );
     }
+#ifdef _USE_MPI
+    for ( const auto& curIter : _listOfParallelMechanicalLoads )
+    {
+        SyntaxMapContainer dict2;
+        dict2.container[ "CHARGE" ] = curIter->getName();
+        listeExcit.push_back( dict2 );
+    }
+#endif /* _USE_MPI */
     for ( ListKineLoadCIter curIter = _listOfKinematicsLoads.begin();
           curIter != _listOfKinematicsLoads.end();
           ++curIter )
