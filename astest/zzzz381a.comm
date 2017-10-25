@@ -172,7 +172,7 @@ TEST_FICHIER(FICHIER="./REPE_OUT/GF.concept",
              VALE_CALC_I=342833,
              NB_VALE=1818,
              VALE_CALC=1363.940666,
-             VALE_CALC_K="8ccc33be4f17e2bd5bf957b2871d4620",
+             VALE_CALC_K="13d205855397b696dd0eefd833f71e9d",
              EXPR_IGNORE=('IADM','DATE','LTYP','LONO'),
 )
 
@@ -188,7 +188,7 @@ TEST_FICHIER(FICHIER="./REPE_OUT/POUCA.concept",
              # décalages dans l'objet CELD
              NB_VALE=2960,
              VALE_CALC=4234.6971548,
-             VALE_CALC_K="525d5647c628915356ecc2c959bb192b",
+             VALE_CALC_K="55f60d48103e8ec2cf2f947101acb417",
              EXPR_IGNORE=('IADM','DATE','LTYP','LONO'),
 )
 
@@ -203,7 +203,7 @@ TEST_FICHIER(FICHIER="./REPE_OUT/COMP1.concept",
              VALE_CALC_I=1152,
              NB_VALE=0,
              VALE_CALC=0.0000000000,
-             VALE_CALC_K="489e1eda3e6d0342c68e8209a1e04dfd",
+             VALE_CALC_K="d67cc3fe40822018545c7b888c5f0567",
              EXPR_IGNORE=('IADM','DATE','LTYP','LONO'),
 )
 
@@ -218,7 +218,7 @@ TEST_FICHIER(FICHIER="./REPE_OUT/CHMAT.concept",
              VALE_CALC_I=2107671,
              NB_VALE=0,
              VALE_CALC=0.0000000000,
-             VALE_CALC_K="b26cd6abd93735d23e30b34875ea4ecf",
+             VALE_CALC_K="b803ca7ce4c6359123177ac68a4e7dc1",
              EXPR_IGNORE=('IADM','DATE','LTYP','LONO'),
 )
 
