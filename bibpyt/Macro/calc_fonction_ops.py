@@ -649,7 +649,7 @@ class CalcFonction_SPEC_OSCI(CalcFonctionOper):
         l_freq, l_amor = self._dat['FREQ'], self._dat['AMOR']
         kw = self.kw
         l_fonc_f = []
-        # construction de la nappe
+        # construction de la nappe ou de la fonction
         vale_para = l_amor
         para = {
             'INTERPOL'      : ['LIN', 'LOG'],
@@ -694,7 +694,10 @@ class CalcFonction_SPEC_OSCI(CalcFonctionOper):
                 spectr = ACCE2SRO(f_in, iamor, l_freq, ideb)
                 vale_y = spectr.vale_y / kw['NORME']
                 l_fonc_f.append(t_fonction(l_freq, vale_y, para_fonc))
-        self.resu = t_nappe(vale_para, l_fonc_f, para)
+        if self.typres == nappe_sdaster:
+            self.resu = t_nappe(vale_para, l_fonc_f, para)
+        else:
+            self.resu = l_fonc_f[0]
 
 class CalcFonction_DSP(CalcFonctionOper):
     """DSP"""

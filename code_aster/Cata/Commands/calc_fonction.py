@@ -54,7 +54,17 @@ def calc_fonction_prod(self, DERIVE, EXTRACTION, INTEGRE, INVERSE, COMB, COMB_C,
    if (MOYENNE    != None): return AsType(MOYENNE[0] ['FONCTION'])
    if (EXTRACTION  != None): return fonction_sdaster
    if (PROL_SPEC_OSCI   != None): return fonction_sdaster
-   if (SPEC_OSCI   != None): return nappe_sdaster
+   if (SPEC_OSCI   != None): 
+       if (SPEC_OSCI[0]['TYPE_RESU'] == "NAPPE"):
+           return nappe_sdaster
+       else:
+           if (SPEC_OSCI[0]['AMOR_REDUIT'] != None):
+               if len(SPEC_OSCI[0]['AMOR_REDUIT']) == 1:
+                   return fonction_sdaster
+               else:
+                   return nappe_sdaster
+           else:
+               return nappe_sdaster
    if (DSP         != None): return fonction_sdaster
    if (COMPOSE     != None): return fonction_sdaster
    if (ASSE        != None): return fonction_sdaster
@@ -134,6 +144,7 @@ CALC_FONCTION=MACRO(nom="CALC_FONCTION",
            DEPL_MAX     = SIMP(statut='o',typ='R', val_min=0., fr=tr("Deplacement maximal pour la prolongation" ) ),
          ),
         SPEC_OSCI       =FACT(statut='f',fr=tr("Spectre d'oscillateur"),
+           TYPE_RESU       =SIMP(statut='f',typ='TXM',defaut="NAPPE",into=("NAPPE","FONCTION") ),
            METHODE         =SIMP(statut='f',typ='TXM',defaut="NIGAM",into=("NIGAM","HARMO","RICE") ),
            FONCTION        =SIMP(statut='o',typ=fonction_sdaster ),
            AMOR_REDUIT     =SIMP(statut='f',typ='R',max='**'),
