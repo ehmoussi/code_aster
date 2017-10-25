@@ -115,6 +115,9 @@ implicit none
     real(kind=8) ::  coef_tmp
 !    real(kind=8) ::  racine,racine1,racine2,racinesup
 !    real(kind=8) ::  a,b,c,discriminant
+    real(kind=8) :: bound_coef(2)
+    bound_coef(1)     = 1.d-8
+    bound_coef(2)     = 1.d8
     
 
 
@@ -238,7 +241,7 @@ implicit none
        dist_cont(1) = dist_cont_curr
        dist_cont(2) = dist_cont_prev
        
-       call search_opt_coef([1.d-6, 1.d7], &
+       call search_opt_coef(bound_coef, &
                                        indi, pres_cont, dist_cont, &
                                        coef_opt,coef_found)
 !      write (6,*) "coefficient found" , coef_found                                

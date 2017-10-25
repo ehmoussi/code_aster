@@ -23,7 +23,7 @@
 interface
     subroutine nmelcm(phase    , mesh     , model    , mate     , ds_contact    , &
                       disp_prev, vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
-                      matr_elem, time_prev, time_curr, ds_constitutive, l_xthm)
+                      disp_newt_curr,matr_elem, time_prev, time_curr, ds_constitutive, l_xthm)
         use NonLin_Datastructure_type
         character(len=4), intent(in) :: phase
         character(len=8), intent(in) :: mesh
@@ -35,6 +35,7 @@ interface
         character(len=19), intent(in) :: acce_prev
         character(len=19), intent(in) :: vite_curr
         character(len=19), intent(in) :: disp_cumu_inst
+        character(len=19), intent(in) :: disp_newt_curr
         character(len=19), intent(out) :: matr_elem
         character(len=19), intent(in) :: time_prev
         character(len=19), intent(in) :: time_curr

@@ -19,7 +19,7 @@
 subroutine lcreac(nb_lagr       , indi_lagc      , elem_dime   , coef_upda_geom,&
                   nb_node_slav  , nb_node_mast   ,&
                   jv_geom       , jv_disp        , jv_disp_incr,&
-                  elem_slav_coor, elem_mast_coor)
+                  elem_slav_coor, elem_mast_coor , jv_ddisp)
 !
 implicit none
 !
@@ -35,6 +35,7 @@ implicit none
     integer, intent(in) :: jv_geom
     integer, intent(in) :: jv_disp
     integer, intent(in) :: jv_disp_incr
+    integer, intent(in), optional :: jv_ddisp
     real(kind=8), intent(inout) :: elem_slav_coor(elem_dime, nb_node_slav)
     real(kind=8), intent(inout) :: elem_mast_coor(elem_dime, nb_node_mast)
 !
@@ -75,7 +76,13 @@ implicit none
                 zr(jv_geom+(i_node_slav-1)*elem_dime+i_dime-1) +&
                 zr(jv_disp+(i_node_slav-1)*(elem_dime)+deca+i_dime-1)+ &
                 coef_upda_geom*&
-                zr(jv_disp_incr+(i_node_slav-1)*(elem_dime)+deca+i_dime-1)     
+                zr(jv_disp_incr+(i_node_slav-1)*(elem_dime)+deca+i_dime-1) 
+                
+                if(present(jv_ddisp)) then 
+                   elem_slav_coor(i_dime, i_node_slav) =&
+                      elem_slav_coor(i_dime, i_node_slav)-&
+                      zr(jv_ddisp+(i_node_slav-1)*(elem_dime)+deca+i_dime-1) 
+                end if                  
         end do
     end do
 !
@@ -88,6 +95,12 @@ implicit none
                 zr(jv_disp+nb_node_slav*elem_dime+nb_lagr+(i_node_mast-1)*elem_dime+i_dime-1)+&
                 coef_upda_geom*&
                 zr(jv_disp_incr+nb_node_slav*elem_dime+nb_lagr+(i_node_mast-1)*elem_dime+i_dime-1)
+                
+                if(present(jv_ddisp)) then 
+                    elem_mast_coor(i_dime, i_node_mast) = &
+                        elem_mast_coor(i_dime, i_node_mast)-&
+                 zr(jv_ddisp+nb_node_slav*elem_dime+nb_lagr+(i_node_mast-1)*elem_dime+i_dime-1)
+                end if 
         end do
   end do
 !
