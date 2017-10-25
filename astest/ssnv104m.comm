@@ -105,10 +105,10 @@ RESU2=STAT_NON_LINE(MODELE=MO,
                                     DEFORMATION='PETIT',),
                     INCREMENT=_F(LIST_INST=L_INST,),
                     CONVERGENCE=_F(ITER_GLOB_MAXI=50,
-                                RESI_GLOB_RELA=1.E-6),
+                                RESI_GLOB_MAXI=1.E-6),
                     SOLVEUR=_F(ELIM_LAGR='NON',
                             METHODE='MUMPS',
-                            RESI_RELA=1.E-6,
+                            RESI_RELA=5.E-6,
                             PCENT_PIVOT= 30),
                         NEWTON=_F(REAC_ITER=1,),);
 

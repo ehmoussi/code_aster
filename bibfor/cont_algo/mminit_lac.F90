@@ -33,6 +33,7 @@ implicit none
 #include "asterfort/copisd.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/mmopti_lac.h"
+#include "asterfort/mm_cycl_init_lac.h"
 !
 !
     character(len=8), intent(in) :: mesh
@@ -113,5 +114,7 @@ implicit none
     if (.not.l_cont_allv .and. l_step_first) then
        call mmopti_lac(mesh, ds_contact)
     endif
+! Cycling initialization
+    call mm_cycl_init_lac(mesh,ds_contact)
 !
 end subroutine
