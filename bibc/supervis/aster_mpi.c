@@ -455,6 +455,40 @@ void DEFPPPPP(ASMPI_RECV_I4, asmpi_recv_i4, ASTERINTEGER4 *buf, ASTERINTEGER4 *c
  * Wrapper around MPI_ISend
  * Do not check returncode because all errors raise
  */
+void DEFPPPPPP(ASMPI_ISEND_I, asmpi_isend_i, ASTERINTEGER *buf, ASTERINTEGER4 *count,
+               ASTERINTEGER4 *dest, ASTERINTEGER4 *tag, MPI_Fint *comm, MPI_Fint *request) {
+    MPI_Comm mpicom;
+    MPI_Request mpireq;
+#ifdef _USE_MPI
+    mpicom = MPI_Comm_f2c(*comm);
+    AS_ASSERT(MPI_Isend((void *)buf, *count, MPI_INTEGER8,
+                        *dest, *tag, mpicom, &mpireq) == MPI_SUCCESS);
+    *request = MPI_Request_c2f(mpireq);
+#endif
+    return;
+}
+
+/*
+ * Wrapper around MPI_IRecv
+ * Do not check returncode because all errors raise
+ */
+void DEFPPPPPP(ASMPI_IRECV_I, asmpi_irecv_i, ASTERINTEGER *buf, ASTERINTEGER4 *count,
+               ASTERINTEGER4 *source, ASTERINTEGER4 *tag, MPI_Fint *comm, MPI_Fint *request) {
+    MPI_Comm mpicom;
+    MPI_Request mpireq;
+#ifdef _USE_MPI
+    mpicom = MPI_Comm_f2c(*comm);
+    AS_ASSERT(MPI_Irecv((void *)buf, *count, MPI_INTEGER8,
+                        *source, *tag, mpicom, &mpireq) == MPI_SUCCESS);
+    *request = MPI_Request_c2f(mpireq);
+#endif
+    return;
+}
+
+/*
+ * Wrapper around MPI_ISend
+ * Do not check returncode because all errors raise
+ */
 void DEFPPPPPP(ASMPI_ISEND_I4, asmpi_isend_i4, ASTERDOUBLE *buf, ASTERINTEGER4 *count,
                ASTERINTEGER4 *dest, ASTERINTEGER4 *tag, MPI_Fint *comm, MPI_Fint *request) {
     MPI_Comm mpicom;

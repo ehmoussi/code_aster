@@ -67,7 +67,7 @@ def AFFE_CHAR_CINE( **kwargs ):
 
     fkwMecaImpo = kwargs.get( "MECA_IMPO" )
     if fkwMecaImpo != None:
-        if type( fkwMecaImpo ) == tuple:
+        if type( fkwMecaImpo ) in (tuple, list):
             for curDict in fkwMecaImpo:
                 _addLoad( load, curDict, "MECA_IMPO" )
         elif type( fkwMecaImpo ) == dict:
@@ -75,7 +75,7 @@ def AFFE_CHAR_CINE( **kwargs ):
 
     fkwTherImpo = kwargs.get( "THER_IMPO" )
     if fkwTherImpo != None:
-        if type( fkwTherImpo ) == tuple:
+        if type( fkwTherImpo ) in (tuple, list):
             for curDict in fkwTherImpo:
                 _addLoad( load, curDict, "THER_IMPO" )
         elif type( fkwTherImpo ) == dict:
@@ -83,7 +83,7 @@ def AFFE_CHAR_CINE( **kwargs ):
 
     fkwAcouImpo = kwargs.get( "ACOU_IMPO" )
     if fkwAcouImpo != None:
-        if type( fkwAcouImpo ) == tuple:
+        if type( fkwAcouImpo ) in (tuple, list):
             for curDict in fkwAcouImpo:
                 _addLoad( load, curDict, "ACOU_IMPO" )
         elif type( fkwAcouImpo ) == dict:

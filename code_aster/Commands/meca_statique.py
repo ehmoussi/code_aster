@@ -21,6 +21,7 @@
 
 from code_aster import MultFrontSolver, LdltSolver, MumpsSolver, PetscSolver, GcpcSolver
 from code_aster import StaticMechanicalSolver, KinematicsLoad, GenericMechanicalLoad
+from code_aster import ParallelMechanicalLoad
 from code_aster.Cata import Commands, checkSyntax
 from code_aster import getGlossary
 
@@ -34,6 +35,8 @@ def _addLoad( mechaSolv, fkw ):
         mechaSolv.addKinematicsLoad( load )
     elif isinstance( load, GenericMechanicalLoad ):
         mechaSolv.addMechanicalLoad( load )
+    elif isinstance( load, ParallelMechanicalLoad ):
+        mechaSolv.addParallelMechanicalLoad( load )
     else:
         assert False
 
@@ -68,20 +71,26 @@ def MECA_STATIQUE( **kwargs ):
 
     fkwSolv = kwargs["SOLVEUR"]
     for key, value in fkwSolv.iteritems():
-        if key not in ( "METHODE", "RENUM" ):
+        if key not in ( "METHODE", "RENUM", "PRE_COND", "RESI_RELA" ):
             print(NotImplementedError("Not yet implemented: '{0}' is ignored".format(key)))
     methode = fkwSolv[ "METHODE" ]
     renum = fkwSolv[ "RENUM" ]
+    # TODO: a modifier si undef
+    precond = fkwSolv[ "PRE_COND" ]
+    resiRela = fkwSolv[ "RESI_RELA" ]
 
     glossary = getGlossary()
     solverInt = glossary.getSolver( methode )
     renumInt = glossary.getRenumbering( renum )
+    precondInt = glossary.getPreconditioning( precond )
     currentSolver = None
     if methode == "MULT_FRONT": currentSolver = MultFrontSolver.create( renumInt )
     elif methode == "LDLT": currentSolver = LdltSolver.create( renumInt )
     elif methode == "MUMPS": currentSolver = MumpsSolver.create( renumInt )
     elif methode == "PETSC": currentSolver = PetscSolver.create( renumInt )
     elif methode == "GCPC": currentSolver = GcpcSolver.create( renumInt )
+    currentSolver.setPreconditioning( precondInt )
+    currentSolver.setSolverResidual(resiRela)
 
     mechaSolv.setLinearSolver( currentSolver )
 

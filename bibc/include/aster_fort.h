@@ -158,6 +158,11 @@ void DEFSSPPP(JUCROC_WRAP, jucroc_wrap, const char *, STRING_SIZE, const char *,
 #define CALL_JEECRA_WRAP(a, b, c) CALLSSP(JEECRA_WRAP, jeecra_wrap, a, b, c)
 void DEFSSP(JEECRA_WRAP, jeecra_wrap, const char *, STRING_SIZE, const char *, STRING_SIZE, ASTERINTEGER*);
 
+#define CALL_JEECRA_STRING_WRAP(a, b, c) CALLSSS(JEECRA_STRING_WRAP, jeecra_string_wrap, a, b, c)
+void DEFSSS(JEECRA_STRING_WRAP, jeecra_string_wrap, const char *, STRING_SIZE,
+                                             const char *, STRING_SIZE,
+                                             const char *, STRING_SIZE);
+
 #define CALL_JECROC(a) CALLS(JECROC, jecroc, a)
 void DEFS(JECROC, jecroc, const char *, STRING_SIZE);
 

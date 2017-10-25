@@ -114,6 +114,12 @@ public:
         return (*_numberOfDelayedNumberedConstraintNodes)[0];
     };
 
+    JeveuxVectorChar8 getParameters() const
+    {
+        _parameters->updateValuePointer();
+        return _parameters;
+    };
+
     const JeveuxVectorLong& getPhysicalNodesComponentDescriptor() const
     {
         _dofDescriptor->updateValuePointer();

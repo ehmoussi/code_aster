@@ -35,6 +35,9 @@ void exportStaticMechanicalSolverToPython()
         .staticmethod( "create" )
         .def( "addKinematicsLoad", &StaticMechanicalSolverInstance::addKinematicsLoad )
         .def( "addMechanicalLoad", &StaticMechanicalSolverInstance::addMechanicalLoad )
+#ifdef _USE_MPI
+        .def( "addParallelMechanicalLoad", &StaticMechanicalSolverInstance::addParallelMechanicalLoad )
+#endif /* _USE_MPI */
         .def( "execute", &StaticMechanicalSolverInstance::execute )
         .def( "setLinearSolver", &StaticMechanicalSolverInstance::setLinearSolver )
         .def( "setMaterialOnMesh", &StaticMechanicalSolverInstance::setMaterialOnMesh )

@@ -1,6 +1,6 @@
 /**
- * @file MPIInfos.cxx
- * @brief Implementation de ParallelMeshInstance
+ * @file MPIContainerUtilities.cxx
+ * @brief Implementation de MPIContainerUtilities
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org

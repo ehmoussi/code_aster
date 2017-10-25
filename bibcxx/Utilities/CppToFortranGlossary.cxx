@@ -55,6 +55,12 @@ Glossary::Glossary()
         const std::string curName( RenumberingNames[i] );
         _strToInt[ curName ] = i;
     }
+
+    for( int i = 0; i < nbPreconditionings; ++i )
+    {
+        const std::string curName( PreconditioningNames[i] );
+        _strToInt[ curName ] = i;
+    }
 };
 
 Glossary fortranGlossary;

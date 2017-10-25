@@ -78,10 +78,10 @@ subroutine cpysol(numddl, rsolu, debglo, vecpet, nbval)
         if (numpro .ne. -1) then
             call codent(iaux, 'G', chnbjo)
 !
-            nojoinr = numddl//'.NUME.R'//chnbjo(1:3)
+            nojoinr = numddl//'.NUMER'//chnbjo(1:3)
             call jeveuo(nojoinr, 'L', jjointr)
             call jelira(nojoinr, 'LONMAX', lgrecep, k8bid)
-            nojoine = numddl//'.NUME.E'//chnbjo(1:3)
+            nojoine = numddl//'.NUMEE'//chnbjo(1:3)
             call jeveuo(nojoine, 'L', jjointe)
             call jelira(nojoine, 'LONMAX', lgenvo, k8bid)
             ASSERT(lgenvo .gt. 0 .and. lgrecep .gt. 0)

@@ -32,6 +32,7 @@
 #include "Modeling/Model.h"
 #include "Modeling/FiniteElementDescriptor.h"
 #include "Meshes/PartialMesh.h"
+#include "ParallelUtilities/CommunicationGraph.h"
 
 /**
  * @class ParallelFiniteElementDescriptorInstance
@@ -45,6 +46,18 @@ protected:
     const FiniteElementDescriptorPtr _BaseFEDesc;
     /** @brief Matching numbering between keeped delayed elements and base elements */
     VectorLong                       _delayedElemToKeep;
+    /** @brief Join to send */
+    std::vector< JeveuxVectorLong >  _joinToSend;
+    /** @brief Join to receive */
+    std::vector< JeveuxVectorLong >  _joinToReceive;
+    /** @brief All joins */
+    JeveuxVectorLong                 _joins;
+    /** @brief Delayed nodes owner */
+    JeveuxVectorLong                 _owner;
+    /** @brief Number of elements in which a given node is located */
+    JeveuxVectorLong                 _multiplicity;
+    /** @brief Communication graph */
+    CommunicationGraphPtr            _commGraph;
 
 public:
     /**
@@ -60,9 +73,19 @@ public:
      * @brief Get vector of delayed elements keeped from the base FiniteElementDescriptor
      * @return reference on VectorLong
      */
-    const VectorLong& getDelayedElementsToKeep()
+    const VectorLong& getDelayedElementsToKeep() const
     {
         return _delayedElemToKeep;
+    };
+
+    /**
+     * @brief Get vector of joins between subdomains
+     * @return reference on VectorLong
+     */
+    const JeveuxVectorLong& getJoins() const
+    {
+        _joins->updateValuePointer();
+        return _joins;
     };
 
     /**
@@ -73,7 +96,7 @@ public:
 };
 
 /**
- * @typedef ParallelFiniteElementDescriptor
+ * @typedef ParallelFiniteElementDescriptorPtr
  * @brief Pointeur intelligent vers un ParallelFiniteElementDescriptorInstance
  */
 typedef boost::shared_ptr< ParallelFiniteElementDescriptorInstance > ParallelFiniteElementDescriptorPtr;

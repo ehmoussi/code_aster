@@ -32,6 +32,7 @@
 #include "Materials/MaterialOnMesh.h"
 #include "Loads/MechanicalLoad.h"
 #include "Loads/KinematicsLoad.h"
+#include "Loads/ParallelMechanicalLoad.h"
 #include "Loads/ListOfLoads.h"
 #include "LinearAlgebra/LinearSolver.h"
 #include "Algorithms/TimeStepper.h"
@@ -47,17 +48,23 @@ class StaticMechanicalSolverInstance: public GenericSolver
         typedef std::list< KinematicsLoadPtr > ListKineLoad;
         /** @typedef Iterateur sur une std::list de KinematicsLoad */
         typedef ListKineLoad::iterator ListKineLoadIter;
+#ifdef _USE_MPI
+        /** @typedef std::list de ParallelMechanicalLoad */
+        typedef std::list< ParallelMechanicalLoadPtr > ListParaMechaLoad;
+        /** @typedef Iterateur sur une std::list de ParallelMechanicalLoad */
+        typedef ListKineLoad::iterator ListParaMechaLoadIter;
+#endif /* _USE_MPI */
 
         /** @brief Modele support */
-        ModelPtr           _supportModel;
+        ModelPtr            _supportModel;
         /** @brief Champ de materiau a utiliser */
-        MaterialOnMeshPtr  _materialOnMesh;
+        MaterialOnMeshPtr   _materialOnMesh;
         /** @brief Solveur lineaire */
-        BaseLinearSolverPtr    _linearSolver;
+        BaseLinearSolverPtr _linearSolver;
         /** @brief Liste des chargements */
-        ListOfLoadsPtr     _listOfLoads;
+        ListOfLoadsPtr      _listOfLoads;
         /** @brief Liste de pas de temps */
-        TimeStepperPtr     _timeStep;
+        TimeStepperPtr      _timeStep;
 
     public:
         /**
@@ -82,6 +89,17 @@ class StaticMechanicalSolverInstance: public GenericSolver
         {
             _listOfLoads->addMechanicalLoad( currentLoad );
         };
+
+#ifdef _USE_MPI
+        /**
+         * @brief Function d'ajout d'une charge mecanique parallele
+         * @param currentLoad charge a ajouter a la sd
+         */
+        void addParallelMechanicalLoad( const ParallelMechanicalLoadPtr& currentLoad )
+        {
+            _listOfLoads->addParallelMechanicalLoad( currentLoad );
+        };
+#endif /* _USE_MPI */
 
         /**
          * @brief Lancement de la resolution

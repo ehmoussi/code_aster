@@ -100,6 +100,7 @@ implicit none
 !
     character(len=24) :: moloc
     character(len=8) :: gran_name, kbid
+    character(len=3) :: kret
     integer :: n, igds, nec, nlili
     character(len=8) :: nomcmp
     character(len=8) :: mesh
@@ -123,8 +124,9 @@ implicit none
     integer :: n0re, n1, n1m1re, n1re, n2, n21, n3, nbcmp, nbn, nb_node_subs
     integer :: nb_node, nbnonu, nbnore, nddl1, nddlb
     integer :: nel, niv, nlag, nma, nn
-    integer :: ns, numa, nunoel
+    integer :: ns, numa, nunoel, n22, n32
     integer ::  vali(5)
+    aster_logical :: lparallel_mesh
     integer, pointer :: v_nnli(:) => null()
     integer, pointer :: adli(:) => null()
     integer, pointer :: bid(:) => null()
@@ -132,6 +134,7 @@ implicit none
     integer, pointer :: qrns(:) => null()
     integer, pointer :: p_nequ(:) => null()
     integer, pointer :: v_sdiden_info(:) => null()
+    integer, pointer :: lagr_mult(:) => null()
 
 !
 ! --------------------------------------------------------------------------------------------------
@@ -302,6 +305,8 @@ implicit none
         call jeveuo(mesh(1:8)//'.CONNEX', 'L', iconx1)
         call jeveuo(jexatr(mesh(1:8)//'.CONNEX', 'LONCUM'), 'L', iconx2)
     endif
+    call dismoi('PARALLEL_MESH', mesh, 'MAILLAGE', repk=kret)
+    lparallel_mesh=(kret.eq.'OUI')
     call dismoi('NB_NO_MAILLA', mesh, 'MAILLAGE', repi=nb_node_mesh)
     call dismoi('NB_NL_MAILLA', mesh, 'MAILLAGE', repi=nb_node_subs)
     nb_node = nb_node_mesh + nb_node_subs
@@ -510,6 +515,10 @@ implicit none
             call jeveuo(nomli(1:19)//'.LGNS', 'L', idlgns)
             inulag = 1
         endif
+        call jeexin(nomli(1:19)//'.MULT', iret)
+        if( lparallel_mesh.and.iret.ne.0 ) then
+            call jeveuo(nomli(1:19)//'.MULT', 'L', vi=lagr_mult)
+        endif
 
         do iel = 1, zznels(ili)
             nn = zznsup(ili,iel)
@@ -523,6 +532,8 @@ implicit none
 ! ---    NUMEROTATION LOCALE AU LIGREL EN SON NUMERO DANS LA
 ! ---    NUMEROTATION GLOBALE :
 !        --------------------
+                    n22 = -n2
+                    n32 = -n3
                     n21 = -n2
                     n2 = -n2
                     n2 = zi(inuno2+ili-1) + n2 - 1
@@ -626,6 +637,14 @@ implicit none
 ! ---    A CECI PRES QUE DANS CE DERNIER CAS, ON PLACE
 ! ---    LE SECOND LAGRANGE APRES LE PREMIER :
 !        -----------------------------------
+                    if (lparallel_mesh) then
+                        if(lagr_mult(n22).gt.1.or.lagr_mult(n32).gt.1) then
+                            zi(iddlag+3* (ilag2-1)) = 0
+                            zi(iddlag+3* (ilag3-1)) = 0
+                            zi(iddlag+3* (ilag2-1)+1) = 0
+                            zi(iddlag+3* (ilag3-1)+1) = 0
+                        endif
+                    endif
                     if (n0 .gt. 0) then
                         zi(iddlag+3* (ilag2-1)) = 0
                         zi(iddlag+3* (ilag3-1)) = 0

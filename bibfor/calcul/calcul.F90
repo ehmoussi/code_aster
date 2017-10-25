@@ -152,7 +152,7 @@ implicit none
 !   -- Pour que les mesures de temps en // soient comprehensibles
 !      par les utilisateurs, il faut forcer une synchro avant les mesures :
 !   -----------------------------------------------------------------------
-    call asmpi_barrier()
+!    call asmpi_barrier()
     call uttcpu('CPU.CALC.1', 'DEBUT', ' ')
     call uttcpu('CPU.CALC.2', 'DEBUT', ' ')
 
@@ -442,7 +442,7 @@ implicit none
 
 !   9- Mesure du temps consomme :
 !   ----------------------------------
-    call asmpi_barrier()
+!    call asmpi_barrier()
     call uttcpu('CPU.CALC.2', 'FIN', ' ')
     call uttcpu('CPU.CALC.1', 'FIN', ' ')
 

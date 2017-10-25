@@ -73,10 +73,10 @@ subroutine lrmjoi(fid, nomam2, nbnoeu, nomnoe)
                        nbnoeu, codret)
         call codent(rang, 'G', chrang)
         call as_msdnjn(fid, nomam2, nbjoin, codret)
-        call wkvect(nomnoe(1:8)//'.NO_JO_ENV', 'G V K24', &
-                    nbproc, jnojoe)
-        call wkvect(nomnoe(1:8)//'.NO_JO_REC', 'G V K24', &
-                    nbproc, jnojor)
+!         call wkvect(nomnoe(1:8)//'.NO_JO_ENV', 'G V K24', &
+!                     nbproc, jnojoe)
+!         call wkvect(nomnoe(1:8)//'.NO_JO_REC', 'G V K24', &
+!                     nbproc, jnojor)
         call wkvect(nomnoe(1:8)//'.DOMJOINTS', 'G V I', &
                     nbjoin, jdojoi)
         do iaux = 1, nbjoin
@@ -96,13 +96,13 @@ subroutine lrmjoi(fid, nomam2, nbnoeu, nomnoe)
                     call as_msdcrr(fid, nomam2, nomjoi, -1, -1, entlcl, &
                                 geolcl, entdst, geodst, 2*ncorr2, &
                                 zi(jjoint), codret)
-                    if ( nomjoi(1:4).eq.chrang ) then
-                        ASSERT(zk24(jnojor + domdis).eq.' ')
-                        zk24(jnojor + domdis) = nojoin
-                    else
-                        ASSERT(zk24(jnojoe + domdis).eq.' ')
-                        zk24(jnojoe + domdis) = nojoin
-                    endif
+!                     if ( nomjoi(1:4).eq.chrang ) then
+!                         ASSERT(zk24(jnojor + domdis).eq.' ')
+!                         zk24(jnojor + domdis) = nojoin
+!                     else
+!                         ASSERT(zk24(jnojoe + domdis).eq.' ')
+!                         zk24(jnojoe + domdis) = nojoin
+!                     endif
                     ASSERT(domdis.le.nbproc)
                     zi(jdojoi + iaux - 1) = domdis
                 endif

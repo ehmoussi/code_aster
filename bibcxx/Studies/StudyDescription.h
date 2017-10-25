@@ -89,6 +89,17 @@ class StudyDescriptionInstance
             _listOfLoads->addMechanicalLoad( currentLoad );
         };
 
+#ifdef _USE_MPI
+        /**
+         * @brief Function d'ajout d'une charge mecanique
+         * @param currentLoad charge a ajouter a la sd
+         */
+        void addParallelMechanicalLoad( const ParallelMechanicalLoadPtr& currentLoad )
+        {
+            _listOfLoads->addParallelMechanicalLoad( currentLoad );
+        };
+#endif /* _USE_MPI */
+
         /**
          * @brief Construction de la liste de chargements
          * @return true si tout s'est bien passé

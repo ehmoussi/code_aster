@@ -102,8 +102,8 @@ class Glossary
 
         /**
          * @brief getRenumbering
-         * @param searchMod Nom d'un solveur dans le fichier de commande
-         * @return une valeur dans l'enum LinearSolverEnum
+         * @param searchRenum Nom d'un solveur dans le fichier de commande
+         * @return une valeur dans l'enum Renumbering
          */
         Renumbering getRenumbering( std::string searchRenum ) throw( std::runtime_error )
         {
@@ -114,8 +114,21 @@ class Glossary
         };
 
         /**
+         * @brief getPreconditioning
+         * @param searchPrecond Nom d'un solveur dans le fichier de commande
+         * @return une valeur dans l'enum Preconditioning
+         */
+        Preconditioning getPreconditioning( std::string searchPrecond ) throw( std::runtime_error )
+        {
+            MapStrIntIter curIter = _strToInt.find( searchPrecond );
+            if( curIter == _strToInt.end() )
+                throw std::runtime_error( "Unknown preconditioning" );
+            return ( Preconditioning )( curIter->second );
+        };
+
+        /**
          * @brief getSolver
-         * @param searchMod Nom d'un solveur dans le fichier de commande
+         * @param searchSol Nom d'un solveur dans le fichier de commande
          * @return une valeur dans l'enum LinearSolverEnum
          */
         LinearSolverEnum getSolver( std::string searchSol ) throw( std::runtime_error )
