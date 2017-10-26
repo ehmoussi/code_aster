@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine dbr_paraPODDSInit(ds_snap, ds_para_pod)
 !
 use Rom_Datastructure_type
@@ -27,10 +28,8 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_Snap), intent(in) :: ds_snap
-    type(ROM_DS_ParaDBR_POD), intent(out) :: ds_para_pod
+type(ROM_DS_Snap), intent(in) :: ds_snap
+type(ROM_DS_ParaDBR_POD), intent(out) :: ds_para_pod
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -65,5 +64,6 @@ implicit none
     ds_para_pod%tole_incr    = r8vide()
     ds_para_pod%ds_snap      = ds_snap
     ds_para_pod%tabl_name    = ' '
+    ds_para_pod%nb_mode_maxi = 0
 !
 end subroutine

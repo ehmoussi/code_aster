@@ -1,0 +1,252 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# Simple test of FSI calculations with transverse flow on an array
+# a clamped-clamped steel tubes (beam model).
+#-------------------------------------------------------------------
+# person_in_charge: yannick.tampango at edf.fr
+
+D = 0.040 # Tube diameter  = 4 cm
+t = 0.005 # Tube thickness = 5 mm
+
+DEBUT( CODE=_F(NIV_PUB_WEB='INTRANET'),DEBUG=_F(SDVERI='NON'))
+
+TUBE=LIRE_MAILLAGE(FORMAT='ASTER')
+MODI_MAILLAGE(reuse=TUBE, MAILLAGE=TUBE,
+              ABSC_CURV=_F(NOEUD_ORIG='N001',
+                           TOUT='OUI'))
+
+DEFI_GROUP(reuse=TUBE, MAILLAGE=TUBE, CREA_GROUP_NO=_F(NOM='GRNO', NOEUD='N051'))
+
+MODEL=AFFE_MODELE(MAILLAGE=TUBE,
+                   AFFE    =(_F(GROUP_MA     = 'BEAM',
+                                PHENOMENE    = 'MECANIQUE',
+                                MODELISATION = 'POU_D_T')))
+
+CARA=AFFE_CARA_ELEM(MODELE = MODEL,
+                    POUTRE = _F(GROUP_MA = 'BEAM',
+                                SECTION  = 'CERCLE',
+                                CARA     = ('R','EP',),
+                                VALE     = (0.5*D, t)))
+
+TYPEFLUI=DEFI_FLUI_STRU(    GRAPPE=_F(  COUPLAGE = 'NON') )
+
+
+MAT=DEFI_MATERIAU(ELAS=_F(E   = 210.E9,
+                               RHO = 7800.,
+                               NU  = 0.3,
+                               ))
+
+CHMAT=AFFE_MATERIAU(MAILLAGE=TUBE,
+                    AFFE    =_F(TOUT = 'OUI',
+                               MATER = MAT))
+
+CHDDL=AFFE_CHAR_MECA(MODELE =MODEL,
+                     DDL_IMPO= (_F(GROUP_NO = 'CLAMPED',
+                                   DX  = 0.0, DY  = 0.0, DZ  = 0.0,
+                                   DRX = 0.0, DRY = 0.0, DRZ = 0.0),
+                                _F(GROUP_MA = 'BEAM',
+                                   DZ = 0.0)))
+
+MELR=CALC_MATR_ELEM(MODELE=MODEL,
+                    CHARGE=CHDDL,
+                    CARA_ELEM=CARA,
+                    CHAM_MATER=CHMAT,
+                    OPTION='RIGI_MECA')
+
+MELM=CALC_MATR_ELEM(MODELE=MODEL,
+                    CHARGE=CHDDL,
+                    CARA_ELEM=CARA,
+                    CHAM_MATER=CHMAT,
+                    OPTION='MASS_MECA')
+
+NUM=NUME_DDL(MATR_RIGI=MELR)
+
+MATRR=ASSE_MATRICE(MATR_ELEM=MELR,
+                   NUME_DDL=NUM)
+
+MATRM=ASSE_MATRICE(MATR_ELEM=MELM,
+                   NUME_DDL=NUM)
+
+MODES=CALC_MODES(MATR_RIGI=MATRR,
+                 OPTION='PLUS_PETITE',
+                 CALC_FREQ=_F(NMAX_FREQ=2),
+                 MATR_MASS=MATRM)
+
+MODES=NORM_MODE(reuse=MODES, MODE=MODES, NORME=('TRAN',))
+
+vmin     = 0.1
+vmax     = 5.1
+pas      = 0.1
+nb_poin  = 1 + int((vmax - vmin)/pas)
+vite = 1.
+
+MELES=CALC_FLUI_STRU(VITE_FLUI  = _F(VITE_MIN  = 1.,
+                                     VITE_MAX  = 1.,
+                                     NB_POIN   = 1.),
+                     BASE_MODALE= _F(MODE_MECA = MODES,
+                                     
+                                     AMOR_REDUIT = (0.15E-2,0.15E-2),
+                                     ),
+                     TYPE_FLUI_STRU=TYPEFLUI,
+                     )
+
+
+
+FREQ1_AC=RECU_FONCTION(
+                 BASE_ELAS_FLUI=MELES,
+                         PARA_X='VITE_FLU',
+                         PARA_Y='FREQ',
+                     TOUT_ORDRE='OUI',
+                      NUME_MODE=1  )
+
+#
+
+TEST_FONCTION(VALEUR=_F(VALE_CALC=226.3914026606,
+                        VALE_PARA=1.0,
+                        FONCTION=FREQ1_AC,),
+              )
+
+
+
+INTSPEX=LIRE_INTE_SPEC( UNITE=19,
+                        FORMAT_C='REEL_IMAG',
+                        PROL_DROITE='LINEAIRE',
+                        PROL_GAUCHE='LINEAIRE',
+                        INTERPOL='LIN'      )
+
+
+SPECTRE1=DEFI_SPEC_TURB(
+              SPEC_EXCI_POINT=_F(
+                   INTE_SPEC = INTSPEX,
+                   NATURE = 'FORCE',
+                   ANGLE=5, 
+                   CARA_ELEM = CARA,
+                   MODELE = MODEL,
+                   GROUP_NO = 'GRNO',)
+)
+
+SPRJ=PROJ_SPEC_BASE(
+                SPEC_TURB=(SPECTRE1, ),
+                TOUT='OUI',
+                NB_POIN=256,
+                FREQ_INIT= 1. ,
+                FREQ_FIN= 500. ,
+                BASE_ELAS_FLUI=MELES,
+                VITE_FLUI=1.,
+                OPTION='TOUT',
+               )
+
+
+
+RPM0=DYNA_SPEC_MODAL(
+          BASE_ELAS_FLUI=MELES,
+                VITE_FLUI=vite,
+                   EXCIT=_F(  INTE_SPEC_GENE = SPRJ,),
+                OPTION='TOUT' 
+               )
+
+RPP0=REST_SPEC_PHYS(
+           BASE_ELAS_FLUI=MELES,
+                VITE_FLUI=vite,
+           INTE_SPEC_GENE=RPM0,
+                 NOM_CHAM='DEPL',
+                  NOM_CMP='DY',
+                   OPTION='TOUT_TOUT',
+                    NOEUD=('N024', )
+                )
+
+DYN0=POST_DYNA_ALEA(INTERSPECTRE=_F(
+         INTE_SPEC=RPP0,
+            OPTION='DIAG'
+            ))
+
+
+TEST_TABLE(
+           VALE_CALC=5.22969730277E-05,
+           NOM_PARA='ECART',
+           TABLE=DYN0,
+           FILTRE=(_F(NOM_PARA='NOEUD_I',
+                      VALE_K='N024',),
+                   _F(NOM_PARA='NOEUD_J',
+                      VALE_K='N024',),
+                   ),
+           )
+
+
+SPECTRE2=DEFI_SPEC_TURB(
+              SPEC_EXCI_POINT=_F(
+                   INTE_SPEC = INTSPEX,
+                   NATURE = 'MOMENT',
+                   ANGLE=10, 
+                   CARA_ELEM = CARA,
+                   MODELE = MODEL,
+                   GROUP_NO = 'GRNO',)
+)
+
+SPRJ2=PROJ_SPEC_BASE(
+                SPEC_TURB=(SPECTRE2, ),
+                TOUT='OUI',
+                NB_POIN=256,
+                FREQ_INIT= 1. ,
+                FREQ_FIN= 500. ,
+                BASE_ELAS_FLUI=MELES,
+                VITE_FLUI=1.,
+                OPTION='TOUT',
+               )
+
+
+
+RPM02=DYNA_SPEC_MODAL(
+          BASE_ELAS_FLUI=MELES,
+                VITE_FLUI=vite,
+                   EXCIT=_F(  INTE_SPEC_GENE = SPRJ2,),
+                OPTION='TOUT' 
+               )
+
+RPP02=REST_SPEC_PHYS(
+           BASE_ELAS_FLUI=MELES,
+                VITE_FLUI=vite,
+           INTE_SPEC_GENE=RPM02,
+                 NOM_CHAM='DEPL',
+                  NOM_CMP='DY',
+                   OPTION='TOUT_TOUT',
+                    NOEUD=('N024', )
+                )
+
+DYN02=POST_DYNA_ALEA(INTERSPECTRE=_F(
+         INTE_SPEC=RPP02,
+            OPTION='DIAG'
+            ))
+
+# pas de test de non regression car la valeur est en 1E-17
+#TEST_TABLE(
+           #VALE_CALC=8.2925753893E-05,
+           #NOM_PARA='ECART',
+           #TABLE=DYN02,
+           #FILTRE=(_F(NOM_PARA='NOEUD_I',
+                      #VALE_K='N024',),
+                   #_F(NOM_PARA='NOEUD_J',
+                      #VALE_K='N024',),
+                   #),
+           #)
+
+
+
+FIN()

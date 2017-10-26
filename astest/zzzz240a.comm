@@ -164,7 +164,9 @@ IMPR_RESU(FORMAT='MED',
                    NOM_CHAM=('TEMP','FLUX_ELGA',),
                    NUME_ORDRE=(0,3,),),
                 _F(RESULTAT=U1B,
-                   NUME_ORDRE=(2,3,),),),);
+                   NUME_ORDRE=(2,3,),),),
+          PROC0='NON'
+);
 
 #  2.1 ON RELIT LE FICHIER => MA2, U2, TEMP2
 #  ------------------------------------------------------------------------------------------

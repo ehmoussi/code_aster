@@ -46,11 +46,6 @@ CCARCRI  = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
           'ALPHA','LC_EXT2[2]',))
 
 
-CCOMPOR  = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
-    components=('RELCOM','NBVARI','DEFORM','INCELA','C_PLAN',
-          'NUME_LC','SD_COMP',))
-
-
 EDEFONC  = LocatedComponents(phys=PHY.EPSI_C, type='ELNO',
     components=('EPXX','EPYY','EPZZ','EPXY','EPXZ',
           'EPYZ',))
@@ -326,7 +321,7 @@ class MET3SEG3(Element):
 
         OP.EFGE_ELNO(te=185,
             para_in=((SP.PCAGEPO, CCAGEPO), (OP.EFGE_ELNO.PCAORIE, CCAORIE),
-                     (OP.EFGE_ELNO.PCOMPOR, CCOMPOR), (OP.EFGE_ELNO.PCONTRR, ECONTPG),
+                     (OP.EFGE_ELNO.PCOMPOR, LC.CCOMPOR), (OP.EFGE_ELNO.PCONTRR, ECONTPG),
                      (SP.PDEPLAR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), (OP.EFGE_ELNO.PNBSP_I, ENBSP_I),
                      (SP.PNONLIN, LC.ENONLIN), (SP.PTEMPSR, CTEMPSR),
@@ -386,7 +381,7 @@ class MET3SEG3(Element):
         ),
 
         OP.EPVC_ELGA(te=531,
-            para_in=((OP.EPVC_ELGA.PCOMPOR, CCOMPOR), (SP.PGEOMER, NGEOMER),
+            para_in=((OP.EPVC_ELGA.PCOMPOR, LC.CCOMPOR), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), (OP.EPVC_ELGA.PNBSP_I, ENBSP_I),
                      (OP.EPVC_ELGA.PVARCPR, LC.ZVARCPG), (SP.PVARCRR, LC.ZVARCPG),
                  ),
@@ -400,7 +395,7 @@ class MET3SEG3(Element):
 
         OP.FORC_NODA(te=585,
             para_in=((SP.PCAGEPO, CCAGEPO), (OP.FORC_NODA.PCAORIE, CCAORIE),
-                     (OP.FORC_NODA.PCOMPOR, CCOMPOR), (OP.FORC_NODA.PCONTMR, ECONTPG),
+                     (OP.FORC_NODA.PCOMPOR, LC.CCOMPOR), (OP.FORC_NODA.PCONTMR, ECONTPG),
                      (SP.PGEOMER, NGEOMER), (OP.FORC_NODA.PNBSP_I, ENBSP_I),
                      (OP.FORC_NODA.PVARCPR, LC.ZVARCPG), ),
             para_out=((SP.PVECTUR, MVECTUR), ),
@@ -409,7 +404,7 @@ class MET3SEG3(Element):
         OP.FULL_MECA(te=586,
             para_in=((SP.PCAGEPO, CCAGEPO), (SP.PCAMASS, CCAMASS),
                      (OP.FULL_MECA.PCAORIE, CCAORIE), (SP.PCARCRI, CCARCRI),
-                     (OP.FULL_MECA.PCOMPOR, CCOMPOR), (OP.FULL_MECA.PCONTMR, ECONTPG),
+                     (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (OP.FULL_MECA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
                      (SP.PINSTPR, CTEMPSR), (SP.PMATERC, LC.CMATERC),
@@ -469,7 +464,7 @@ class MET3SEG3(Element):
         OP.RAPH_MECA(te=586,
             para_in=((SP.PCAGEPO, CCAGEPO), (SP.PCAMASS, CCAMASS),
                      (OP.RAPH_MECA.PCAORIE, CCAORIE), (SP.PCARCRI, CCARCRI),
-                     (OP.RAPH_MECA.PCOMPOR, CCOMPOR), (OP.RAPH_MECA.PCONTMR, ECONTPG),
+                     (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR), (OP.RAPH_MECA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
                      (SP.PINSTPR, CTEMPSR), (SP.PMATERC, LC.CMATERC),
@@ -484,7 +479,7 @@ class MET3SEG3(Element):
 
         OP.REFE_FORC_NODA(te=585,
             para_in=((SP.PCAGEPO, CCAGEPO), (OP.REFE_FORC_NODA.PCAORIE, CCAORIE),
-                     (OP.REFE_FORC_NODA.PCOMPOR, CCOMPOR), (SP.PGEOMER, NGEOMER),
+                     (OP.REFE_FORC_NODA.PCOMPOR, LC.CCOMPOR), (SP.PGEOMER, NGEOMER),
                      (OP.REFE_FORC_NODA.PNBSP_I, ENBSP_I), (SP.PREFCO, EREFCO),
                      ),
             para_out=((SP.PVECTUR, MVECTUR), ),
@@ -514,7 +509,7 @@ class MET3SEG3(Element):
         OP.RIGI_MECA_TANG(te=586,
             para_in=((SP.PCAGEPO, CCAGEPO), (SP.PCAMASS, CCAMASS),
                      (OP.RIGI_MECA_TANG.PCAORIE, CCAORIE), (SP.PCARCRI, CCARCRI),
-                     (OP.RIGI_MECA_TANG.PCOMPOR, CCOMPOR), (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
+                     (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
                      (SP.PINSTPR, CTEMPSR), (SP.PMATERC, LC.CMATERC),

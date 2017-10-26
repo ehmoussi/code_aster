@@ -15,13 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine dfllty(sdlist, metlis, dtmin)
-        character(len=8) :: sdlist
-        character(len=16) :: metlis
-        real(kind=8) :: dtmin
+    subroutine dfllty(sdlist, list_method, dtmin)
+        character(len=8), intent(in) :: sdlist
+        character(len=16), intent(out) :: list_method
+        real(kind=8), intent(out) :: dtmin
     end subroutine dfllty
 end interface

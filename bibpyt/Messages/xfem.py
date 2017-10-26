@@ -444,22 +444,6 @@ Utilisez ELIM_ARETE='DUAL'.
 
 """),
 
-    61: _(u"""
-  -> Une face contient au moins 3 points d'intersection avec la courbe d'isovaleur zéro du champ
-     de level-set car la valeur des level-sets aux noeuds de la maille a probablement été
-     mal réactualisée lors de la phase de réinitialisation ou à la propagation précédente.
-  -> Risque & Conseil:
-     Vous pouvez utiliser un maillage plus raffiné ou bien une grille auxiliaire plus
-     raffiné du maillage actuel.
-     Vous pouvez vérifier que la zone de mise à jour des level-sets est localisé autour du
-     fond de la fissure (il ne faut pas utiliser ZONE_MAJ='TOUT' dans PROPA_FISS). Dans ce
-     cas, si vous utilisez la méthode simplexe (METHODE='SIMPLEXE'), vous pouvez essayer
-     d'utiliser un rayon de localisation plus élevé (opérande RAYON_TORE).
-
-     Dans tout le cas, il faut vérifier que l'angle de propagation de la fissure calculée
-     par CALC_G a sens physique pour le problème à résoudre.
-"""),
-
     62: _(u"""
 Le modèle X-FEM utilise la formulation mortier pour le contact (CONTACT='MORTAR').
 Il est interdit d'utiliser ELIM_ARETE='ELIM' avec cette formulation.

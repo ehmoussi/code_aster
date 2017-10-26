@@ -23,15 +23,15 @@ interface
                       nvim, nvit, nvih, nvic, advime,&
                       advith, advihy, advico, vihrho, vicphi,&
                       vicpvp, vicsat, vicpr1, vicpr2)
-        character(len=16) :: compor(*)
-        character(len=16) :: meca
-        character(len=16) :: thmc
-        character(len=16) :: ther
-        character(len=16) :: hydr
-        integer :: nvim
-        integer :: nvit
-        integer :: nvih
-        integer :: nvic
+        character(len=16), intent(in) :: compor(*)
+        character(len=16), intent(out) :: meca
+        character(len=16), intent(out) :: thmc
+        character(len=16), intent(out) :: ther
+        character(len=16), intent(out) :: hydr
+        integer, intent(out) :: nvim
+        integer, intent(out) :: nvit
+        integer, intent(out) :: nvih
+        integer, intent(out) :: nvic
         integer :: advime
         integer :: advith
         integer :: advihy

@@ -56,12 +56,6 @@ CCARCRI  = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
           'TSAMPL','TSRETOUR','POSTITER','LC_EXT[3]','MODECALC',
           'ALPHA','LC_EXT2[2]',))
 
-
-CCOMPOR  = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
-    components=('RELCOM','NBVARI','DEFORM','INCELA','C_PLAN',
-          'NUME_LC','SD_COMP','KIT[9]',))
-
-
 NDEPLAC  = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',
     components=('DX','DY','DZ','DRX','DRY',
           'DRZ',))
@@ -242,7 +236,7 @@ class MECA_POU_D_EM(Element):
         ),
 
         OP.AMOR_MECA(te=50,
-            para_in=((OP.AMOR_MECA.PCOMPOR, CCOMPOR), (SP.PGEOMER, NGEOMER),
+            para_in=((OP.AMOR_MECA.PCOMPOR, LC.CCOMPOR), (SP.PGEOMER, NGEOMER),
                      (SP.PMASSEL, MMATUUR), (SP.PMATERC, LC.CMATERC),
                      (SP.PRIGIEL, MMATUUR), (OP.AMOR_MECA.PVARCPR, LC.ZVARCPG),
                      ),
@@ -251,7 +245,7 @@ class MECA_POU_D_EM(Element):
 
         OP.CHAR_MECA_EPSI_R(te=20,
             para_in=((SP.PCAGNPO, CCAGNPO), (OP.CHAR_MECA_EPSI_R.PCAORIE, CCAORIE),
-                     (OP.CHAR_MECA_EPSI_R.PCOMPOR, CCOMPOR), (SP.PEPSINR, CEPSINR),
+                     (OP.CHAR_MECA_EPSI_R.PCOMPOR, LC.CCOMPOR), (SP.PEPSINR, CEPSINR),
                      (SP.PFIBRES, LC.ECAFIEL), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), (OP.CHAR_MECA_EPSI_R.PNBSP_I, ENBSP_I),
                      (OP.CHAR_MECA_EPSI_R.PVARCPR, LC.ZVARCPG), ),
@@ -260,7 +254,7 @@ class MECA_POU_D_EM(Element):
         
         OP.CHAR_MECA_EPSI_F(te=20,
             para_in=((SP.PCAGNPO, CCAGNPO), (OP.CHAR_MECA_EPSI_F.PCAORIE, CCAORIE),
-                     (OP.CHAR_MECA_EPSI_F.PCOMPOR, CCOMPOR), (SP.PEPSINF, CEPSINF),
+                     (OP.CHAR_MECA_EPSI_F.PCOMPOR, LC.CCOMPOR), (SP.PEPSINF, CEPSINF),
                      (SP.PFIBRES, LC.ECAFIEL), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), (OP.CHAR_MECA_EPSI_F.PNBSP_I, ENBSP_I),
                      (OP.CHAR_MECA_EPSI_F.PVARCPR, LC.ZVARCPG),
@@ -309,7 +303,7 @@ class MECA_POU_D_EM(Element):
 
         OP.CHAR_MECA_PESA_R(te=150,
             para_in=((SP.PCAGNPO, CCAGNPO), (OP.CHAR_MECA_PESA_R.PCAORIE, CCAORIE),
-                     (OP.CHAR_MECA_PESA_R.PCOMPOR, CCOMPOR), (SP.PFIBRES, LC.ECAFIEL),
+                     (OP.CHAR_MECA_PESA_R.PCOMPOR, LC.CCOMPOR), (SP.PFIBRES, LC.ECAFIEL),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (OP.CHAR_MECA_PESA_R.PNBSP_I, ENBSP_I), (SP.PPESANR, LC.CPESANR),
                      (OP.CHAR_MECA_PESA_R.PVARCPR, LC.ZVARCPG), ),
@@ -347,7 +341,7 @@ class MECA_POU_D_EM(Element):
 
         OP.CHAR_MECA_TEMP_R(te=150,
             para_in=((SP.PCAGNPO, CCAGNPO), (OP.CHAR_MECA_TEMP_R.PCAORIE, CCAORIE),
-                     (OP.CHAR_MECA_TEMP_R.PCOMPOR, CCOMPOR), (SP.PFIBRES, LC.ECAFIEL),
+                     (OP.CHAR_MECA_TEMP_R.PCOMPOR, LC.CCOMPOR), (SP.PFIBRES, LC.ECAFIEL),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (OP.CHAR_MECA_TEMP_R.PNBSP_I, ENBSP_I), (OP.CHAR_MECA_TEMP_R.PVARCPR, LC.ZVARCPG),
                      (SP.PVARCRR, LC.ZVARCPG), ),
@@ -370,7 +364,7 @@ class MECA_POU_D_EM(Element):
 
         OP.DEGE_ELNO(te=158,
             para_in=((SP.PCAGNPO, CCAGNPO), (OP.DEGE_ELNO.PCAORIE, CCAORIE),
-                     (OP.DEGE_ELNO.PCOMPOR, CCOMPOR), (SP.PDEPLAR, DDL_MECA),
+                     (OP.DEGE_ELNO.PCOMPOR, LC.CCOMPOR), (SP.PDEPLAR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (OP.DEGE_ELNO.PNBSP_I, ENBSP_I), (OP.DEGE_ELNO.PSTRXRR, ESTRAUX),
                      (OP.DEGE_ELNO.PVARCPR, LC.ZVARCPG), (SP.PVARCRR, LC.ZVARCPG),
@@ -381,7 +375,7 @@ class MECA_POU_D_EM(Element):
         OP.EFGE_ELNO(te=185,
             para_in=((SP.PCAGNPO, CCAGNPO), (OP.EFGE_ELNO.PCAORIE, CCAORIE),
                      (SP.PCHDYNR, DDL_MECA), (SP.PCOEFFC, LC.CCOEFC),
-                     (SP.PCOEFFR, LC.CCOEFR), (OP.EFGE_ELNO.PCOMPOR, CCOMPOR),
+                     (SP.PCOEFFR, LC.CCOEFR), (OP.EFGE_ELNO.PCOMPOR, LC.CCOMPOR),
                      (OP.EFGE_ELNO.PCONTRR, ECONTPG), (SP.PDEPLAR, DDL_MECA),
                      (SP.PFF1D1D, CFORCEF), (SP.PFIBRES, LC.ECAFIEL),
                      (SP.PFR1D1D, CFORCER), (SP.PGEOMER, NGEOMER),
@@ -405,7 +399,7 @@ class MECA_POU_D_EM(Element):
         ),
 
         OP.EPME_ELGA(te=531,
-            para_in=((OP.EPME_ELGA.PCOMPOR, CCOMPOR), (OP.EPME_ELGA.PDEFORR, EDEFOPG),
+            para_in=((OP.EPME_ELGA.PCOMPOR, LC.CCOMPOR), (OP.EPME_ELGA.PDEFORR, EDEFOPG),
                      (SP.PMATERC, LC.CMATERC), (OP.EPME_ELGA.PNBSP_I, ENBSP_I),
                      (OP.EPME_ELGA.PVARCPR, LC.ZVARCPG), (SP.PVARCRR, LC.ZVARCPG),
                      ),
@@ -419,7 +413,7 @@ class MECA_POU_D_EM(Element):
 
         OP.EPOT_ELEM(te=151,
             para_in=((SP.PCAGNPO, CCAGNPO), (OP.EPOT_ELEM.PCAORIE, CCAORIE),
-                     (OP.EPOT_ELEM.PCOMPOR, CCOMPOR), (SP.PDEPLAR, DDL_MECA),
+                     (OP.EPOT_ELEM.PCOMPOR, LC.CCOMPOR), (SP.PDEPLAR, DDL_MECA),
                      (SP.PFIBRES, LC.ECAFIEL), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), (OP.EPOT_ELEM.PNBSP_I, ENBSP_I),
                      (OP.EPOT_ELEM.PVARCPR, LC.ZVARCPG), (SP.PVARCRR, LC.ZVARCPG),
@@ -444,7 +438,7 @@ class MECA_POU_D_EM(Element):
         ),
 
         OP.EPSP_ELGA(te=531,
-            para_in=((OP.EPSP_ELGA.PCOMPOR, CCOMPOR), (OP.EPSP_ELGA.PCONTRR, ECONTPG),
+            para_in=((OP.EPSP_ELGA.PCOMPOR, LC.CCOMPOR), (OP.EPSP_ELGA.PCONTRR, ECONTPG),
                      (OP.EPSP_ELGA.PDEFORR, EDEFOPG), (SP.PMATERC, LC.CMATERC),
                      (OP.EPSP_ELGA.PNBSP_I, ENBSP_I), (OP.EPSP_ELGA.PVARCPR, LC.ZVARCPG),
                      (SP.PVARCRR, LC.ZVARCPG), ),
@@ -457,7 +451,7 @@ class MECA_POU_D_EM(Element):
         ),
 
         OP.EPVC_ELGA(te=531,
-            para_in=((OP.EPVC_ELGA.PCOMPOR, CCOMPOR), (SP.PMATERC, LC.CMATERC),
+            para_in=((OP.EPVC_ELGA.PCOMPOR, LC.CCOMPOR), (SP.PMATERC, LC.CMATERC),
                      (OP.EPVC_ELGA.PNBSP_I, ENBSP_I), (OP.EPVC_ELGA.PVARCPR, LC.ZVARCPG),
                      (SP.PVARCRR, LC.ZVARCPG), ),
             para_out=((OP.EPVC_ELGA.PDEFOPG, EDFVCPG), ),
@@ -469,7 +463,7 @@ class MECA_POU_D_EM(Element):
         ),
 
         OP.FORC_NODA(te=517,
-            para_in=((OP.FORC_NODA.PCAORIE, CCAORIE), (OP.FORC_NODA.PCOMPOR, CCOMPOR),
+            para_in=((OP.FORC_NODA.PCAORIE, CCAORIE), (OP.FORC_NODA.PCOMPOR, LC.CCOMPOR),
                      (OP.FORC_NODA.PCONTMR, ECONTPG), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PFIBRES, LC.ECAFIEL),
                      (SP.PGEOMER, NGEOMER), (OP.FORC_NODA.PNBSP_I, ENBSP_I),
@@ -480,7 +474,7 @@ class MECA_POU_D_EM(Element):
 
         OP.FULL_MECA(te=535,
             para_in=((SP.PCAGNPO, CCAGNPO), (OP.FULL_MECA.PCAORIE, CCAORIE),
-                     (SP.PCARCRI, CCARCRI), (OP.FULL_MECA.PCOMPOR, CCOMPOR),
+                     (SP.PCARCRI, CCARCRI), (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR),
                      (OP.FULL_MECA.PCONTMR, ECONTPG), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PFIBRES, LC.ECAFIEL),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -512,7 +506,7 @@ class MECA_POU_D_EM(Element):
         OP.MASS_FLUI_STRU(te=141,
             para_in=((SP.PABSCUR, CABSCUR), (SP.PCAGEPO, CCAGEPO),
                      (SP.PCAGNPO, CCAGNPO), (OP.MASS_FLUI_STRU.PCAORIE, CCAORIE),
-                     (OP.MASS_FLUI_STRU.PCOMPOR, CCOMPOR), (SP.PFIBRES, LC.ECAFIEL),
+                     (OP.MASS_FLUI_STRU.PCOMPOR, LC.CCOMPOR), (SP.PFIBRES, LC.ECAFIEL),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (OP.MASS_FLUI_STRU.PNBSP_I, ENBSP_I), (OP.MASS_FLUI_STRU.PVARCPR, LC.ZVARCPG),
                      ),
@@ -522,7 +516,7 @@ class MECA_POU_D_EM(Element):
         OP.MASS_INER(te=38,
             para_in=((SP.PABSCUR, CABSCUR), (SP.PCAGEPO, CCAGEPO),
                      (SP.PCAGNPO, CCAGNPO), (OP.MASS_INER.PCAORIE, CCAORIE),
-                     (OP.MASS_INER.PCOMPOR, CCOMPOR), (SP.PFIBRES, LC.ECAFIEL),
+                     (OP.MASS_INER.PCOMPOR, LC.CCOMPOR), (SP.PFIBRES, LC.ECAFIEL),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (OP.MASS_INER.PNBSP_I, ENBSP_I), (OP.MASS_INER.PVARCPR, LC.ZVARCPG),
                      ),
@@ -531,7 +525,7 @@ class MECA_POU_D_EM(Element):
 
         OP.MASS_MECA(te=141,
             para_in=((SP.PCAGNPO, CCAGNPO), (OP.MASS_MECA.PCAORIE, CCAORIE),
-                     (OP.MASS_MECA.PCOMPOR, CCOMPOR), (SP.PFIBRES, LC.ECAFIEL),
+                     (OP.MASS_MECA.PCOMPOR, LC.CCOMPOR), (SP.PFIBRES, LC.ECAFIEL),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (OP.MASS_MECA.PNBSP_I, ENBSP_I), (OP.MASS_MECA.PVARCPR, LC.ZVARCPG),
                      ),
@@ -540,7 +534,7 @@ class MECA_POU_D_EM(Element):
 
         OP.MASS_MECA_DIAG(te=141,
             para_in=((SP.PCAGNPO, CCAGNPO), (OP.MASS_MECA_DIAG.PCAORIE, CCAORIE),
-                     (OP.MASS_MECA_DIAG.PCOMPOR, CCOMPOR), (SP.PFIBRES, LC.ECAFIEL),
+                     (OP.MASS_MECA_DIAG.PCOMPOR, LC.CCOMPOR), (SP.PFIBRES, LC.ECAFIEL),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (OP.MASS_MECA_DIAG.PNBSP_I, ENBSP_I), (OP.MASS_MECA_DIAG.PVARCPR, LC.ZVARCPG),
                      ),
@@ -549,7 +543,7 @@ class MECA_POU_D_EM(Element):
 
         OP.MECA_GYRO(te=259,
             para_in=((SP.PCAGNPO, CCAGNPO), (OP.MECA_GYRO.PCAORIE, CCAORIE),
-                     (OP.MECA_GYRO.PCOMPOR, CCOMPOR), (SP.PFIBRES, LC.ECAFIEL),
+                     (OP.MECA_GYRO.PCOMPOR, LC.CCOMPOR), (SP.PFIBRES, LC.ECAFIEL),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (OP.MECA_GYRO.PNBSP_I, ENBSP_I), ),
             para_out=((SP.PMATUNS, MMATUNS), ),
@@ -562,7 +556,7 @@ class MECA_POU_D_EM(Element):
 
         OP.M_GAMMA(te=141,
             para_in=((SP.PACCELR, DDL_MECA), (SP.PCAGNPO, CCAGNPO),
-                     (OP.M_GAMMA.PCAORIE, CCAORIE), (OP.M_GAMMA.PCOMPOR, CCOMPOR),
+                     (OP.M_GAMMA.PCAORIE, CCAORIE), (OP.M_GAMMA.PCOMPOR, LC.CCOMPOR),
                      (SP.PFIBRES, LC.ECAFIEL), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), (OP.M_GAMMA.PNBSP_I, ENBSP_I),
                      (OP.M_GAMMA.PVARCPR, LC.ZVARCPG), ),
@@ -583,7 +577,7 @@ class MECA_POU_D_EM(Element):
 
         OP.RAPH_MECA(te=535,
             para_in=((SP.PCAGNPO, CCAGNPO), (OP.RAPH_MECA.PCAORIE, CCAORIE),
-                     (SP.PCARCRI, CCARCRI), (OP.RAPH_MECA.PCOMPOR, CCOMPOR),
+                     (SP.PCARCRI, CCARCRI), (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR),
                      (OP.RAPH_MECA.PCONTMR, ECONTPG), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PFIBRES, LC.ECAFIEL),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -610,7 +604,7 @@ class MECA_POU_D_EM(Element):
 
         OP.RIGI_FLUI_STRU(te=140,
             para_in=((SP.PCAGNPO, CCAGNPO), (OP.RIGI_FLUI_STRU.PCAORIE, CCAORIE),
-                     (OP.RIGI_FLUI_STRU.PCOMPOR, CCOMPOR), (SP.PFIBRES, LC.ECAFIEL),
+                     (OP.RIGI_FLUI_STRU.PCOMPOR, LC.CCOMPOR), (SP.PFIBRES, LC.ECAFIEL),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (OP.RIGI_FLUI_STRU.PNBSP_I, ENBSP_I), (OP.RIGI_FLUI_STRU.PVARCPR, LC.ZVARCPG),
                      ),
@@ -619,7 +613,7 @@ class MECA_POU_D_EM(Element):
 
         OP.RIGI_GYRO(te=262,
             para_in=((SP.PCAGNPO, CCAGNPO), (OP.RIGI_GYRO.PCAORIE, CCAORIE),
-                     (OP.RIGI_GYRO.PCOMPOR, CCOMPOR), (SP.PFIBRES, LC.ECAFIEL),
+                     (OP.RIGI_GYRO.PCOMPOR, LC.CCOMPOR), (SP.PFIBRES, LC.ECAFIEL),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (OP.RIGI_GYRO.PNBSP_I, ENBSP_I), ),
             para_out=((SP.PMATUNS, MMATUNS), ),
@@ -627,7 +621,7 @@ class MECA_POU_D_EM(Element):
 
         OP.RIGI_MECA(te=140,
             para_in=((SP.PCAGNPO, CCAGNPO), (OP.RIGI_MECA.PCAORIE, CCAORIE),
-                     (OP.RIGI_MECA.PCOMPOR, CCOMPOR), (SP.PFIBRES, LC.ECAFIEL),
+                     (OP.RIGI_MECA.PCOMPOR, LC.CCOMPOR), (SP.PFIBRES, LC.ECAFIEL),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (OP.RIGI_MECA.PNBSP_I, ENBSP_I), (OP.RIGI_MECA.PVARCPR, LC.ZVARCPG),
                      ),
@@ -643,7 +637,7 @@ class MECA_POU_D_EM(Element):
 
         OP.RIGI_MECA_TANG(te=535,
             para_in=((SP.PCAGNPO, CCAGNPO), (OP.RIGI_MECA_TANG.PCAORIE, CCAORIE),
-                     (SP.PCARCRI, CCARCRI), (OP.RIGI_MECA_TANG.PCOMPOR, CCOMPOR),
+                     (SP.PCARCRI, CCARCRI), (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR),
                      (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PFIBRES, LC.ECAFIEL),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -657,7 +651,7 @@ class MECA_POU_D_EM(Element):
 
         OP.SIEF_ELGA(te=537,
             para_in=((SP.PCAGNPO, CCAGNPO), (OP.SIEF_ELGA.PCAORIE, CCAORIE),
-                     (OP.SIEF_ELGA.PCOMPOR, CCOMPOR), (SP.PDEPLAR, DDL_MECA),
+                     (OP.SIEF_ELGA.PCOMPOR, LC.CCOMPOR), (SP.PDEPLAR, DDL_MECA),
                      (SP.PFIBRES, LC.ECAFIEL), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), (OP.SIEF_ELGA.PNBSP_I, ENBSP_I),
                      (OP.SIEF_ELGA.PSTRXRR, ESTRAUX), (OP.SIEF_ELGA.PVARCPR, LC.ZVARCPG),
@@ -704,7 +698,7 @@ class MECA_POU_D_EM(Element):
 
         OP.STRX_ELGA(te=537,
             para_in=((SP.PCAGNPO, CCAGNPO), (OP.STRX_ELGA.PCAORIE, CCAORIE),
-                     (OP.STRX_ELGA.PCOMPOR, CCOMPOR), (SP.PDEPLAR, DDL_MECA),
+                     (OP.STRX_ELGA.PCOMPOR, LC.CCOMPOR), (SP.PDEPLAR, DDL_MECA),
                      (SP.PFIBRES, LC.ECAFIEL), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), (OP.STRX_ELGA.PNBSP_I, ENBSP_I),
                      (OP.STRX_ELGA.PVARCPR, LC.ZVARCPG), (SP.PVARCRR, LC.ZVARCPG),

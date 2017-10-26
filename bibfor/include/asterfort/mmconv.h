@@ -20,15 +20,16 @@
 !
 interface
     subroutine mmconv(noma , ds_contact, valinc, solalg, vfrot,&
-                      nfrot, vgeom     , ngeom)
+                      nfrot, vgeom     , ngeom, vpene)
         use NonLin_Datastructure_type
         character(len=8), intent(in) :: noma
-        type(NL_DS_Contact), intent(in) :: ds_contact
+        type(NL_DS_Contact), intent(inout) :: ds_contact
         character(len=19), intent(in) :: valinc(*)
         character(len=19), intent(in) :: solalg(*)
         real(kind=8), intent(out) :: vfrot
         character(len=16), intent(out) :: nfrot
         real(kind=8), intent(out) :: vgeom
+        real(kind=8), intent(out) :: vpene
         character(len=16), intent(out) :: ngeom
     end subroutine mmconv
 end interface

@@ -199,6 +199,7 @@ ORIEN=AFFE_CARA_ELEM(MODELE=TROISD,
 # premiere resolution : explicite. tes de SIMO_MIEHE + MONOCRISTAL + RUNGE_KUTTA
 
 SOLEXPL=STAT_NON_LINE(MODELE = TROISD,
+                    SOLVEUR=_F(METHODE='MULT_FRONT',RENUM='MD'),
                     CHAM_MATER = MAT,
                     CARA_ELEM = ORIEN,
                     ETAT_INIT = _F(VARI=VAIN11,),
@@ -249,6 +250,7 @@ SOLEXPL=STAT_NON_LINE(MODELE = TROISD,
 # FE puis FP pour l'implicite, FP puis FE pour l'explicite.
 
 SOLIMPN=STAT_NON_LINE(MODELE = TROISD,
+                    SOLVEUR=_F(METHODE='MULT_FRONT',RENUM='MDA'),
                     ETAT_INIT = _F(VARI=VAIN11,),
                     CHAM_MATER = MAT,
                     CARA_ELEM = ORIEN,
@@ -299,6 +301,7 @@ SOLIMPN=STAT_NON_LINE(MODELE = TROISD,
 
 SOLNL=STAT_NON_LINE(
                    # ETAT_INIT=_F(EVOL_NOLI=SOLNL),reuse=SOLNL,
+                    SOLVEUR=_F(METHODE='MULT_FRONT',RENUM='METIS'),
                     ETAT_INIT = _F(VARI=VAIN11,),
                     MODELE = TROISD,
                     CHAM_MATER = MAT,

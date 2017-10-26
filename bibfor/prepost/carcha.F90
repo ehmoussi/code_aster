@@ -147,7 +147,7 @@ subroutine carcha(noch, nomgd, typcha, option, param)
         nomgd = 'EPSI_R'
         typcha = 'ELNO'
         option = 'EPSP_ELNO'
-        param = 'PDEFOPL'
+        param = 'PDEFONO'
     else if (noch.eq.'EPSP_ELGA') then
         nomgd = 'EPSI_R'
         typcha = 'ELGA'
@@ -165,6 +165,9 @@ subroutine carcha(noch, nomgd, typcha, option, param)
     else if (noch.eq.'EPME_ELNO') then
         nomgd = 'EPSI_R'
         typcha = 'ELNO'
+    else if (noch.eq.'EPME_NOEU') then
+        nomgd = 'EPSI_R'
+        typcha = 'NOEU'
 !
 !     CHAMP DE GRANDEUR "FLUX_R"
     else if (noch.eq.'FLUX_NOEU') then

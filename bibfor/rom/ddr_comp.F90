@@ -160,9 +160,9 @@ implicit none
                 do i_equa = 1, nb_equa
                     term = 0
                     do i_vect = 1, nb_vect
-                        term = term+v_base(i_equa+nb_equa*(i_vect-1))*v_vect(i_vect)    
+                        term = term+v_base(i_equa+nb_equa*(i_vect-1))*v_vect(i_vect)
                     enddo
-                    v_resi(i_equa)=v_mode(i_equa)-term        
+                    v_resi(i_equa)=v_mode(i_equa)-term
                 enddo
                 vale_maxi   = -r8gaem()
                 equa_maxi   = 0
@@ -177,11 +177,11 @@ implicit none
                 v_list_loca(k_mode) = equa_maxi
                 AS_DEALLOCATE(vi4=IPIV)
                 AS_DEALLOCATE(vr=v_vect)
-                AS_DEALLOCATE(vr=v_matr)   
+                AS_DEALLOCATE(vr=v_matr)
             enddo
             AS_DEALLOCATE(vr=v_base)
             AS_DEALLOCATE(vi=v_list_loca)
-        endif        
+        endif
     enddo
     AS_DEALLOCATE(vr=v_resi)
     AS_DEALLOCATE(vi=v_npl)

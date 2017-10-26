@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmevac(sddisc, sderro   , i_echec_acti, nume_inst   , iterat,&
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmevac(sddisc, sderro   , i_fail_acti, nume_inst   , iterat,&
                   retact, ds_print_, ds_contact_)
 !
 use NonLin_Datastructure_type
@@ -24,6 +25,9 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
+#include "event_def.h"
+#include "asterfort/getFailAction.h"
+#include "asterfort/getFailEvent.h"
 #include "asterfort/assert.h"
 #include "asterfort/nmadcp.h"
 #include "asterfort/nmdeco.h"
@@ -32,19 +36,16 @@ implicit none
 #include "asterfort/nmerge.h"
 #include "asterfort/nmevdp.h"
 #include "asterfort/nmitsp.h"
-#include "asterfort/utdidt.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=19), intent(in) :: sddisc
-    character(len=24), intent(in) :: sderro
-    integer, intent(in) :: i_echec_acti
-    integer, intent(in) :: nume_inst
-    integer, intent(in) :: iterat
-    integer, intent(out) :: retact
-    type(NL_DS_Print), optional, intent(in) :: ds_print_
-    type(NL_DS_Contact), optional, intent(in) :: ds_contact_
+character(len=19), intent(in) :: sddisc
+character(len=24), intent(in) :: sderro
+integer, intent(in) :: i_fail_acti
+integer, intent(in) :: nume_inst
+integer, intent(in) :: iterat
+integer, intent(out) :: retact
+type(NL_DS_Print), optional, intent(in) :: ds_print_
+type(NL_DS_Contact), optional, intent(in) :: ds_contact_
 !
 ! ----------------------------------------------------------------------
 !
@@ -69,16 +70,15 @@ implicit none
 !
 ! ----------------------------------------------------------------------
 !
-    character(len=16) :: action, event_name
-    integer :: retsup, retswa, retpen, retdec
+    integer :: retsup, retswa, retpen, retdec, event_type, action_type
     aster_logical :: trydec, litmax
 !
 ! ----------------------------------------------------------------------
 !
-    retact = 3
-    action = 'ARRET'
-    trydec = .false.
-    ASSERT(i_echec_acti.ne.0)
+    retact      = 3
+    action_type = FAIL_ACT_STOP
+    trydec      = .false.
+    ASSERT(i_fail_acti.ne.0)
 !
 ! --- RECUPERATION ERREURS PARTICULIERES
 !
@@ -87,20 +87,18 @@ implicit none
         call nmerge(sderro, 'ITER_MAXI', litmax)
     endif
 !
-! - Event and action
+! - Get event and action
 !
-    call utdidt('L', sddisc, 'ECHE', 'NOM_EVEN', index_ = i_echec_acti,&
-                valk_ = event_name)
-    call utdidt('L', sddisc, 'ECHE', 'ACTION'  , index_ = i_echec_acti,&
-                valk_ = action)
+    call getFailEvent(sddisc, i_fail_acti, event_type)
+    call getFailAction(sddisc, i_fail_acti, action_type)
 !
 ! --- REALISATION DE L'ACTION
 !
-    if (action .eq. 'ARRET') then
+    if (action_type .eq. FAIL_ACT_STOP) then
         call utmess('I', 'MECANONLINE10_30')
         retact = 3
         trydec = .false.
-    else if (action.eq.'ITER_SUPPL') then
+    else if (action_type .eq. FAIL_ACT_ITER) then
         ASSERT(iterat.ge.0)
         if (litmax) then
             call utmess('I', 'MECANONLINE10_32')
@@ -115,9 +113,9 @@ implicit none
         else
             ASSERT(.false.)
         endif
-    else if (action.eq.'DECOUPE') then
+    else if (action_type .eq. FAIL_ACT_CUT) then
         trydec = .true.
-    else if (action.eq.'AUTRE_PILOTAGE') then
+    else if (action_type .eq. FAIL_ACT_PILOTAGE) then
         if (litmax) then
             call utmess('I', 'MECANONLINE10_34')
             call nmevdp(sddisc, retswa)
@@ -131,9 +129,9 @@ implicit none
         else
             ASSERT(.false.)
         endif
-    else if (action.eq.'ADAPT_COEF_PENA') then
+    else if (action_type .eq. FAIL_ACT_ADAPT_COEF) then
         call utmess('I', 'MECANONLINE10_35')
-        call nmadcp(sddisc, ds_contact_, i_echec_acti, retpen)
+        call nmadcp(sddisc, ds_contact_, i_fail_acti, retpen)
         trydec = .false.
         if (retpen .eq. 0) then
             retact = 3
@@ -142,7 +140,7 @@ implicit none
         else
             ASSERT(.false.)
         endif
-    else if (action.eq.'CONTINUE') then
+    else if (action_type .eq. FAIL_ACT_CONTINUE) then
         retact = 0
     else
         ASSERT(.false.)
@@ -152,7 +150,7 @@ implicit none
 !
     if (trydec) then
         call utmess('I', 'MECANONLINE10_33')
-        call nmdeco(sddisc, nume_inst, iterat, i_echec_acti, retdec)
+        call nmdeco(sddisc, nume_inst, iterat, i_fail_acti, retdec)
         if (retdec .eq. 0) then
             retact = 3
         else if (retdec.eq.1) then
@@ -167,7 +165,7 @@ implicit none
 ! --- ECHEC DE L'ACTION -> EVENEMENT ERREUR FATALE
 !
     if (retact .eq. 3) then
-        call nmecev(sderro, 'E', event_name, action)
+        call nmecev(sderro, 'E', event_type, action_type)
     endif
 !
 ! --- ON DESACTIVE LES EVENEMENTS

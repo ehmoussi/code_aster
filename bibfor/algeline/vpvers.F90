@@ -161,11 +161,9 @@ subroutine vpvers(eigsol, modes, checksd)
                     'LAGR', ' ', 'ELIM=')
 ! --  ON MODIFIE QUELQUES VALEURS DE LA SD EIGENSOLVER
         k24buff=raide
-        call vpecri(eigsol, 'K', 2, k24buff, rbid,&
-                    ibid)
+        call vpecri(eigsol, 'K', 2, k24buff, rbid, ibid)
         k24buff=masse
-        call vpecri(eigsol, 'K', 3, k24buff, rbid,&
-                    ibid)
+        call vpecri(eigsol, 'K', 3, k24buff, rbid, ibid)
     endif
 !
 ! --  COMPATIBILITE DES MODES (DONNEES ALTEREES)
@@ -176,11 +174,9 @@ subroutine vpvers(eigsol, modes, checksd)
         numedd=''
     endif
     if (lpg) then
-        call vpcrea(0, modes, raide0, amor, masse0,&
-                    numedd, iret)
+        call vpcrea(0, modes, raide0, amor, masse0, numedd, iret)
     else
-        call vpcrea(0, modes, masse, amor, raide,&
-                    numedd, iret)
+        call vpcrea(0, modes, masse, amor, raide, numedd, iret)
     endif
 !
 ! --  VERIFICATION DES "REFE"

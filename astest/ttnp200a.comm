@@ -268,43 +268,117 @@ CHTH1=AFFE_CHAR_THER(         MODELE=MO,
                                          COEF_MULT = ( 0.8,  1.1, -0.7, ),
                                          COEF_IMPO = 1.3),
                            TEMP_IMPO=_F(  NOEUD = ( 'N129', 'N130', ),
-                                       TEMP = 1.8),LIAISON_UNIF=(
-                           _F(  MAILLE = 'M60',
-                                          DDL = ('TEMP', 'TEMP',
-                                                      'TEMP', 'TEMP', )),
-                           _F(  GROUP_MA = 'GMA22',
-                                          DDL = 'TEMP'),
-                           _F(  NOEUD = ( 'N19', 'N163', ),
-                                          DDL = ( 'TEMP', 'TEMP',)),
-                           _F(  GROUP_NO = 'GNO1',
-                                          DDL = 'TEMP')),SOURCE=(
-                           _F(  SOUR_CALCULEE = CHELEM1),
-                           _F(  MAILLE = 'M66',
-                                    SOUR = 0.3),
-                           _F(  GROUP_MA = 'GMA8',
-                                    SOUR = 0.2)),FLUX_REP=(
-                           _F(  MAILLE = 'M134',
-                                      FLUN = -1.2),
-                           _F(  GROUP_MA = 'GMA16',
-                                      FLUN = -0.8)) )
+                                       TEMP = 1.8),
+                           LIAISON_UNIF=(
+                                         _F(  MAILLE = 'M60',
+                                              DDL = ('TEMP', 'TEMP',
+                                                     'TEMP', 'TEMP', )),
+                                         _F(  GROUP_MA = 'GMA22',
+                                              DDL = 'TEMP'),
+                                         _F(  NOEUD = ( 'N19', 'N163', ),
+                                              DDL = ( 'TEMP', 'TEMP',)),
+                                         _F(  GROUP_NO = 'GNO1',
+                                              DDL = 'TEMP')),
+                           SOURCE=(
+                                         _F(  SOUR_CALCULEE = CHELEM1),
+                                         _F(  MAILLE = 'M66',
+                                              SOUR = 0.3),
+                                         _F(  GROUP_MA = 'GMA8',
+                                              SOUR = 0.2)),
+                           FLUX_REP=(
+                                         _F(  MAILLE = 'M134',
+                                              FLUN = -1.2),
+                                         _F(  GROUP_MA = 'GMA16',
+                                              FLUN = -0.8)) )
 
-CHTH1B=AFFE_CHAR_THER(         MODELE=MO,ECHANGE=(
-                           _F(  MAILLE = 'M150',
-                                     COEF_H = 1.3,
-                                     TEMP_EXT = 0.6),
-                           _F(  GROUP_MA = 'GMA12',
-                                     COEF_H = 1.1,
-                                     TEMP_EXT = 1.8)), )
+# duplication du chargement pour tester EVOL_CHAR/FLUN (equivalent à FLUX_REP)
+CHTH1C =AFFE_CHAR_THER(         MODELE=MO,
+                           LIAISON_DDL=_F(  GROUP_NO = ( 'GNO5', 'GNO6', ),
+                                         DDL = ( 'TEMP', 'TEMP',
+                                                       'TEMP', ),
+                                         COEF_MULT = ( 0.8,  1.1, -0.7, ),
+                                         COEF_IMPO = 1.3),
+                           TEMP_IMPO=_F(  NOEUD = ( 'N129', 'N130', ),
+                                       TEMP = 1.8),
+                           LIAISON_UNIF=(
+                                         _F(  MAILLE = 'M60',
+                                              DDL = ('TEMP', 'TEMP',
+                                                     'TEMP', 'TEMP', )),
+                                         _F(  GROUP_MA = 'GMA22',
+                                              DDL = 'TEMP'),
+                                         _F(  NOEUD = ( 'N19', 'N163', ),
+                                              DDL = ( 'TEMP', 'TEMP',)),
+                                         _F(  GROUP_NO = 'GNO1',
+                                              DDL = 'TEMP')),
+                           SOURCE=(
+                                         _F(  SOUR_CALCULEE = CHELEM1),
+                                         _F(  MAILLE = 'M66',
+                                              SOUR = 0.3),
+                                         _F(  GROUP_MA = 'GMA8',
+                                              SOUR = 0.2)),
+                           )
 
-CHTH2=AFFE_CHAR_THER(            MODELE=MO,PRE_GRAD_TEMP=(
-                           _F(  GROUP_MA = 'GMA10',
-                                            FLUX_Y = -0.7),
-                           _F(  MAILLE = ( 'M60', 'M81', 'M93', ),
-                                            FLUX_X = 0.5,
-                                            FLUX_Y = 0.8)),
+FLUN=[None]*6
+# valeur de la fonction FOE
+for i,coef in enumerate([0.87, 1.6, 1.32, 1.4, 1.5, 1.6]):
+
+    FLUN[i] = CREA_CHAMP(TYPE_CHAM = 'ELEM_FLUN_R',
+                       OPERATION = 'AFFE',
+                       MODELE    = MO,
+                       PROL_ZERO='OUI',
+                       INFO=2,
+                       AFFE      = (_F(
+                                        MAILLE = 'M134',
+                                        NOM_CMP=('FLUN',),
+                                        VALE=(-1.2*coef,),
+                                        ),
+                                    _F(
+                                        GROUP_MA = 'GMA16',
+                                        NOM_CMP=('FLUN',),
+                                        VALE=(-0.8*coef,),
+                                        ),
+                                    ),
+                         )
+
+
+EVOL_FLU = CREA_RESU(OPERATION='AFFE',
+                     TYPE_RESU='EVOL_CHAR',
+                     NOM_CHAM='FLUN',
+                     AFFE=(_F( CHAM_GD=FLUN[0], INST=-10.3, ),
+                           _F( CHAM_GD=FLUN[1], INST=5.3, ),
+                           _F( CHAM_GD=FLUN[2], INST=7.8, ),
+                           _F( CHAM_GD=FLUN[3], INST=11.2, ),
+                           _F( CHAM_GD=FLUN[4], INST=18.2, ),
+                           _F( CHAM_GD=FLUN[5], INST=25.2, ),
+                           ),
+                    )
+
+CHTH1_EC=AFFE_CHAR_THER(MODELE=MO,
+                        EVOL_CHAR=EVOL_FLU,
+                        )
+##
+                                              
+                                              
+
+CHTH1B=AFFE_CHAR_THER(         MODELE=MO,
+                           ECHANGE=(
+                                         _F(  MAILLE = 'M150',
+                                              COEF_H = 1.3,
+                                              TEMP_EXT = 0.6),
+                                         _F(  GROUP_MA = 'GMA12',
+                                              COEF_H = 1.1,
+                                              TEMP_EXT = 1.8)), )
+
+CHTH2=AFFE_CHAR_THER(            MODELE=MO,
+                           PRE_GRAD_TEMP=(
+                                         _F(  GROUP_MA = 'GMA10',
+                                              FLUX_Y = -0.7),
+                                         _F(  MAILLE = ( 'M60', 'M81', 'M93', ),
+                                              FLUX_X = 0.5,
+                                              FLUX_Y = 0.8)),
                            ECHANGE_PAROI=_F(  GROUP_MA_1 = 'GMA14',
-                                           MAILLE_2 = 'M144',
-                                           COEF_H = 0.7) )
+                                              MAILLE_2 = 'M144',
+                                              COEF_H = 0.7) )
 
 CHTHF=AFFE_CHAR_THER_F(         MODELE=MO,
                              LIAISON_DDL=_F(  NOEUD = ( 'N124', 'N44', ),
@@ -398,10 +472,24 @@ THNL1=THER_NON_LINE(        MODELE=MO,
                                _F(  CHARGE = CHTH1B)),
                           CONVERGENCE=_F() )
 
+THNL1_EC=THER_NON_LINE(   MODELE=MO,
+                          CHAM_MATER=CHMATNL,
+                          EXCIT=(
+                                 _F(CHARGE = CHTH1C,
+                                    FONC_MULT = FOE),
+                                 _F(  CHARGE = CHTH1_EC),
+                                 _F(  CHARGE = CHTH1B)),
+                          CONVERGENCE=_F() )
+                          
+                          
+
 THNL6=THER_NON_LINE(        MODELE=MO,
                           CHAM_MATER=CHMATNL,EXCIT=(
-                               _F(  CHARGE = CHTH1,
+                                 _F(  CHARGE = CHTH1,
                                        FONC_MULT = FOE),
+                                #_F(CHARGE = CHTH1C,
+                                    #FONC_MULT = FOE),
+                                 #_F(  CHARGE = CHTH1_EC),
                                _F(  CHARGE = CHTH1B)),
                            INCREMENT=_F(  LIST_INST = LR1),
                           CONVERGENCE=_F(),
@@ -558,6 +646,18 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=0,
                    ),
                 ),
           )
+
+TEST_RESU(RESU=(_F(NUME_ORDRE=0,
+                   TYPE_TEST='SOMM_ABS',
+                   RESULTAT=THNL1_EC,
+                   NOM_CHAM='TEMP',
+                   VALE_CALC=471.03617152718,
+                   ),
+                ),
+          )
+
+
+
 
 FIN( )
 #

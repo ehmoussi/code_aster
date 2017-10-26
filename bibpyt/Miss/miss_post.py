@@ -771,15 +771,27 @@ class PostMissControl(PostMiss):
         tab = NP.array([absc, real, imag])
         vale_c = tab.transpose().ravel().tolist()
         _fct = DEFI_FONCTION(NOM_PARA=nom_para,
+                             PROL_GAUCHE='CONSTANT',
+                             PROL_DROITE='CONSTANT',
                              NOM_RESU='ACCE',
                              VALE_C=vale_c)
         return _fct
 
     def gen_funct(self, nompc, cham, fonct_i, ftri, tfa_i):
-        """Calcul le produit 'fonction de transfert' * fft(acce_i)"""
+        """Calcule le produit 'fonction de transfert' * fft(acce_i)"""
         tfft = ftri.convert('complex')
-        tfc = tfft * tfa_i
-        tffr = tfc.evalfonc(tfft.vale_x)
+        dfc = tfft.vale_x[1] - tfft.vale_x[0]
+        fmaxc = tfft.vale_x[-1]
+        _filt0 = DEFI_FONCTION(NOM_PARA='FREQ',
+                             PROL_GAUCHE='CONSTANT',
+                             PROL_DROITE='CONSTANT',
+                             NOM_RESU='ACCE',
+                             VALE_C=(0.,1.0,0.,fmaxc,1.0,0.,fmaxc+dfc,0.,0.))
+        filt = _filt0.convert('complex')
+        tfc = tfft * tfa_i * filt
+        med = len(tfa_i.vale_x) / 2 + 1
+        lfreq = tfa_i.vale_x[:med].tolist()
+        tffr = tfc.evalfonc(lfreq)
         tffr.para['NOM_PARA'] = 'FREQ'
         fft = tffr.fft('COMPLET', 'NON')
         # création des concepts

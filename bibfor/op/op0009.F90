@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine op0009()
 !
 implicit none
@@ -35,7 +35,8 @@ implicit none
 #include "asterfort/meamac.h"
 #include "asterfort/meamgy.h"
 #include "asterfort/meamme.h"
-#include "asterfort/mecact.h"
+#include "asterfort/cme_prep.h"
+#include "asterfort/medith.h"
 #include "asterfort/meimme.h"
 #include "asterfort/memaac.h"
 #include "asterfort/memame.h"
@@ -47,11 +48,11 @@ implicit none
 #include "asterfort/merigy.h"
 #include "asterfort/merime.h"
 #include "asterfort/meriro.h"
-#include "asterfort/merith.h"
+#include "asterfort/mergth.h"
 #include "asterfort/redetr.h"
+#include "asterfort/ntdoch.h"
 #include "asterfort/sdmpic.h"
 #include "asterfort/cme_getpara.h"
-!
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -63,20 +64,16 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: nb_cmp = 6
-    character(len=8), parameter :: list_cmp(nb_cmp) = (/'INST    ','DELTAT  ','THETA   ',&
-                                                        'KHI     ','R       ','RHO     '/)
-    real(kind=8) :: list_vale(nb_cmp)   = (/0.d0,1.d0,1.d0,0.d0,0.d0,0.d0/)
     integer :: nb_load, nbresu, iresu, iexi, nh
     character(len=1) :: base
     character(len=4) :: kmpic
     character(len=8) :: model, cara_elem, sigm, strx, disp
     character(len=16) :: k8dummy, option
-    character(len=19) :: matr_elem, rigi_meca, mass_meca, resuel
-    character(len=24) :: chtime, mate, compor_mult
+    character(len=19) :: matr_elem, rigi_meca, mass_meca, resuel, list_load
+    character(len=24) :: chtime, mate, compor_mult, matr_elem24
     character(len=8), pointer :: v_list_load8(:) => null()
     character(len=24), pointer :: relr(:) => null()
-    real(kind=8) :: time, time_incr
+    real(kind=8) :: time_curr, time_incr
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -85,8 +82,8 @@ implicit none
 !
 ! - Initializations
 !
-    base   = 'G'
-    chtime = '&&CHTIME'
+    base      = 'G'
+    list_load = '&&OP0009.LISCHA'
 !
 ! - Get results
 !
@@ -98,20 +95,23 @@ implicit none
                      model       , cara_elem, mate, compor_mult,&
                      v_list_load8, nb_load  ,&
                      rigi_meca   , mass_meca,&
-                     time        , time_incr, nh       ,&
+                     time_curr   , time_incr, nh       ,&
                      sigm        , strx     , disp)
-    list_vale(1) = time
-    list_vale(2) = time_incr
 !
-! --------------------------------------------------------------------------------------------------
+! - Preparation
+!
+    call cme_prep(option, model, time_curr, time_incr, chtime)
+!
+! - Compute
+!
     if (option .eq. 'RIGI_MECA') then
         call merime(model, nb_load     , v_list_load8, mate, cara_elem,&
-                    time , compor_mult , matr_elem   , nh  , base)
+                    time_curr , compor_mult , matr_elem   , nh  , base)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'RIGI_FLUI_STRU') then
         call merifs(model, nb_load  , v_list_load8, mate, cara_elem,&
-                    time , matr_elem, nh)
+                    time_curr , matr_elem, nh)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'RIGI_GEOM') then
@@ -121,7 +121,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'RIGI_ROTA') then
         call meriro(model, cara_elem  , nb_load  , v_list_load8, mate,&
-                    time , compor_mult, matr_elem)
+                    time_curr , compor_mult, matr_elem)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'MECA_GYRO') then
@@ -135,23 +135,23 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'MASS_MECA') then
-        call memame(option     , model    , mate, cara_elem, time,&
+        call memame(option     , model    , mate, cara_elem, time_curr,&
                     compor_mult, matr_elem, base)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'MASS_FLUI_STRU') then
-        call memame(option     , model    , mate, cara_elem, time,&
+        call memame(option     , model    , mate, cara_elem, time_curr,&
                     compor_mult, matr_elem, base)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'MASS_MECA_DIAG') then
-        call memame(option     , model    , mate, cara_elem, time,&
+        call memame(option     , model    , mate, cara_elem, time_curr,&
                     compor_mult, matr_elem, base)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'AMOR_MECA') then
         call meamme(option   , model, nb_load, v_list_load8, mate     ,&
-                    cara_elem, time , base   , rigi_meca   , mass_meca,&
+                    cara_elem, time_curr , base   , rigi_meca   , mass_meca,&
                     matr_elem, ' ')
 !
 ! --------------------------------------------------------------------------------------------------
@@ -165,21 +165,21 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'RIGI_MECA_HYST') then
         call meamme(option   , model, nb_load, v_list_load8, mate     ,&
-                    cara_elem, time , base   , rigi_meca   , mass_meca,&
+                    cara_elem, time_curr , base   , rigi_meca   , mass_meca,&
                     matr_elem, ' ')
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'RIGI_THER') then
-        call mecact('V', chtime, 'MODELE', model//'.MODELE', 'INST_R',&
-                    ncmp=nb_cmp, lnomcmp=list_cmp, vr=list_vale)
-        call merith(model , nb_load  , v_list_load8, mate, cara_elem,&
-                    chtime, matr_elem, nh, base)
+        call ntdoch(list_load, l_load_user_ = .true._1)
+        matr_elem24 = matr_elem
+        call mergth(model      , list_load, cara_elem, mate, chtime,&
+                    matr_elem24, base,&
+                    time_curr  , nh_ = nh)
+        call medith(base, 'CUMU', model, list_load, matr_elem24)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'MASS_THER') then
-        call mecact('V', chtime, 'MODELE', model//'.MODELE', 'INST_R',&
-                    ncmp=nb_cmp, lnomcmp=list_cmp, vr=list_vale)
-        call memsth(model, cara_elem, mate, chtime, matr_elem, base, time_ = time)
+        call memsth(model, cara_elem, mate, chtime, matr_elem, base, time_curr_ = time_curr)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'RIGI_ACOU') then

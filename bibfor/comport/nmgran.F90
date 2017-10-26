@@ -76,9 +76,9 @@ subroutine nmgran(fami, kpg, ksp, typmod, imate,&
     real(kind=8) :: depsmo, depsdv(6), sigmmo, sigmdv(6), sigpmo, sigpdv(6)
     real(kind=8) :: smdv(6), spdv(6), smmo, spmo, dsdv(6), dsmo, deps(6), deps3
     real(kind=8) :: sigldv(6), siglmo, sigmp(6), sigmpo, sigmpd(6)
-    integer :: ndimsi, ibid, iret
+    integer :: ndimsi, ibid, iret, ibid2
     integer :: i, k, l, n, iret1, iret2, iret3
-    integer :: icodre(16)
+    integer :: icodre(16), ndt, ndi
     character(len=16) :: nomres(16)
     character(len=8) :: nompar, mod
     real(kind=8) :: valpam, valpap
@@ -89,14 +89,14 @@ subroutine nmgran(fami, kpg, ksp, typmod, imate,&
     real(kind=8) :: coefg, coefh, coefi, coefj, coefv, coefk(9), epsthp, epsthm
     aster_logical :: cplan
     data        kron/1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/
+
+
+    common /tdim/   ndt  , ndi
 ! DEB -----------------------------------------------------------------
 !
-    call rcvarc('F', 'TEMP', '-', fami, kpg,&
-                ksp, tm, iret2)
-    call rcvarc('F', 'TEMP', '+', fami, kpg,&
-                ksp, tp, iret3)
-    call rcvarc('F', 'TEMP', 'REF', fami, kpg,&
-                ksp, tref, iret1)
+    call rcvarc('F', 'TEMP', '-', fami, kpg, ksp, tm, iret2)
+    call rcvarc('F', 'TEMP', '+', fami, kpg, ksp, tp, iret3)
+    call rcvarc('F', 'TEMP', 'REF', fami, kpg, ksp, tref, iret1)
     if ((iret1+iret2+iret3) .ge. 1) then
         call utmess('F', 'COMPOR5_40', sk=compor(1))
     endif
@@ -110,7 +110,8 @@ subroutine nmgran(fami, kpg, ksp, typmod, imate,&
 !
 !      NDIMSI = 2*NDIM
     mod = typmod(1)
-    call granvi(mod, ndimsi, ibid, ibid)
+    call granvi(mod, ndimsi, ibid, ibid2)
+    call granvi(mod, ndt, ndi)
     call matini(6, 6, 0.d0, dsidep)
     if (.not.( compor(1)(1:13) .eq. 'BETON_GRANGER' )) then
         call utmess('F', 'ALGORITH4_50', sk=compor(1))

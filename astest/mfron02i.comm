@@ -24,12 +24,8 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 
-import os
 
-os.system("mfront --obuild DruckPragEcroLin.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so DruckPragEcroLin.so")
-
-assert os.path.isfile("DruckPragEcroLin.so")
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=39)
 
 MAILIN=LIRE_MAILLAGE(FORMAT='MED',);
 
@@ -144,7 +140,7 @@ U1 = STAT_NON_LINE(
                     COMPORTEMENT=_F( RELATION = 'KIT_HM',
                                   RELATION_KIT =  ('MFRONT', 'LIQU_SATU','HYDR_UTIL',),
                                  NOM_ROUTINE='asterdruckpragecrolin',
-                                 LIBRAIRIE='DruckPragEcroLin.so',
+                                 UNITE_LIBRAIRIE=39,
                                       RESI_INTE_MAXI = 1.E-6,
                                       ITER_INTE_MAXI = 100),
                      NEWTON      = _F( MATRICE  = 'TANGENTE',

@@ -18,9 +18,11 @@
 
 subroutine nsassp(modele    , numedd, lischa, fonact    , sddyna,&
                   ds_measure, valinc, veelem, veasse    , cnpilo,&
-                  cndonn    , mate  , carele, ds_contact, matass)
+                  cndonn    , mate  , carele, ds_contact, matass,&
+                  ds_algorom)
 !
 use NonLin_Datastructure_type
+use Rom_Datastructure_type
 !
 implicit none
 !
@@ -47,6 +49,7 @@ implicit none
     type(NL_DS_Contact), intent(in) :: ds_contact
     character(len=19) :: veasse(*), veelem(*), valinc(*)
     character(len=19) :: cnpilo, cndonn
+    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! ----------------------------------------------------------------------
 !
@@ -80,7 +83,7 @@ implicit none
     parameter    (nbcoef=9)
     real(kind=8) :: coef(nbcoef)
     character(len=19) :: vect(nbcoef)
-    character(len=19) :: cnfnod, cnbudi, cnvcpr, cnsstr, cneltc, cneltf
+    character(len=19) :: cnfnod, cnbudi, cnvcpr, cnsstr, cneltc, cneltf, cnfint
     character(len=19) :: depmoi, k19bla
     aster_logical :: lmacr, leltc, leltf, lallv
 !
@@ -130,6 +133,7 @@ implicit none
 ! --- FORCES NODALES
 !
     call nmchex(veasse, 'VEASSE', 'CNFNOD', cnfnod)
+    call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
 !
 ! --- CALCUL DES REACTIONS D'APPUI BT.LAMBDA
 !
@@ -164,6 +168,12 @@ implicit none
     vect(5) = cnfnod
     vect(6) = cnvcpr
     vect(7) = cndfdo
+!
+! - Internal forces
+! 
+    if (ds_algorom%phase.eq.'CORR_EF') then
+        vect(5) = cnfint
+    endif
 !
 ! --- FORCES ISSUES DES MACRO-ELEMENTS STATIQUES
 !

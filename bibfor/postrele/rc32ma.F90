@@ -31,16 +31,15 @@ subroutine rc32ma()
 #include "asterfort/jedema.h"
 !     OPERATEUR POST_RCCM, TRAITEMENT DE FATIGUE B3200 et ZE200
 !     TRAITEMENT DU CHAM_MATER
-!     RECUPERATION POUR CHAQUE ETAT STABILISE
+!     PAS DE MATERIAU FONCTION DU TEMPS
 !          DE  E, NU, ALPHA    SOUS ELAS
 !          DE  E_REFE          SOUS FATIGUE
 !          DE  M_KE, N_KE, SM  SOUS RCCM
 !     ------------------------------------------------------------------
 !
-    character(len=8) :: mater, nocmp(7), nopa, nopb
-    integer :: n1, icodre(7) ,nbsitu, ndim, jvala, jvalb
-    integer :: iocc, na, nbpa, i, nb, nbpb
-    real(kind=8) :: tempa, para(7), tempb
+    character(len=8) :: mater, nocmp(7), nopa
+    integer :: n1, icodre(7), jvala, nbpa, i
+    real(kind=8) :: tempa, para(7)
 !
 ! DEB ------------------------------------------------------------------
     call jemarq()
@@ -74,24 +73,11 @@ subroutine rc32ma()
     nocmp(6) = 'M_KE'
     nocmp(7) = 'N_KE'
 !
-    call getfac('SITUATION', nbsitu)
-    ndim = 7 * nbsitu
-    call wkvect('&&RC3200.MATERIAU_A', 'V V R8', ndim, jvala)
-    call wkvect('&&RC3200.MATERIAU_B', 'V V R8', ndim, jvalb)
+    call wkvect('&&RC3200.MATERIAU', 'V V R8', 7, jvala)
 !
-    do 10, iocc = 1, nbsitu, 1
-!
-! ------ état stabilisé A
-!
-    call getvr8('SITUATION', 'TEMP_REF_A', iocc=iocc, scal=tempa, nbret=na)
-    if (na .eq. 0) then
-        nbpa = 0
-        nopa = ' '
-        tempa = 0.d0
-    else
-        nbpa = 1
-        nopa = 'TEMP'
-    endif
+    nbpa = 0
+    nopa = ' '
+    tempa = 0.d0
 !
     call rcvale(mater, 'ELAS', nbpa, nopa, [tempa],&
                 3, nocmp(1), para(1), icodre, 2)
@@ -103,35 +89,8 @@ subroutine rc32ma()
                 3, nocmp(5), para(5), icodre, 2)
 !
     do 12 i = 1, 7
-        zr(jvala-1+7*(iocc-1)+i) = para(i)
+        zr(jvala-1+i) = para(i)
 12  continue
-!
-! ------ état stabilisé B
-!
-    call getvr8('SITUATION', 'TEMP_REF_B', iocc=iocc, scal=tempb, nbret=nb)
-    if (nb .eq. 0) then
-        nbpb = 0
-        nopb = ' '
-        tempb = 0.d0
-    else
-        nbpb = 1
-        nopb = 'TEMP'
-    endif
-!
-    call rcvale(mater, 'ELAS', nbpb, nopb, [tempb],&
-                3, nocmp(1), para(1), icodre, 2)
-!
-    call rcvale(mater, 'FATIGUE', nbpb, nopb, [tempb],&
-                1, nocmp(4), para(4), icodre, 2)
-!
-    call rcvale(mater, 'RCCM', nbpb, nopb, [tempb],&
-                3, nocmp(5), para(5), icodre, 2)
-!
-    do 14 i = 1, 7
-        zr(jvalb-1+7*(iocc-1)+i) = para(i)
-14  continue
-!
-    10 continue
 !
     call jedema()
 end subroutine

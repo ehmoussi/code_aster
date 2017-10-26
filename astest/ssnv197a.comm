@@ -150,6 +150,7 @@ COEF3=DEFI_FONCTION(NOM_PARA='INST',
 #    PRECONSOLIDATION ELASTIQUE JUSQU'A 50KPA
 #***********************************************************************
 U0M=STAT_NON_LINE(MODELE=MODELE,
+                 SOLVEUR=_F(METHODE='MULT_FRONT',RENUM='MD'),
                  CHAM_MATER=CHMAT0,
                  EXCIT=(_F(CHARGE    = CHAR_U1,
                            FONC_MULT = COEF0),
@@ -175,6 +176,7 @@ SIG0=CREA_CHAMP(INFO=2,
 #    ESSAI TRIAXIAL DRAINE
 #***********************************************************************
 U1=STAT_NON_LINE(MODELE=MODELE,
+                 SOLVEUR=_F(METHODE='MULT_FRONT',RENUM='MDA'),
                  CHAM_MATER=CHMAT,
                  EXCIT=(_F(CHARGE      = CHAR_U1,
                            FONC_MULT   = COEF0),

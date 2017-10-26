@@ -24,6 +24,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/nocart.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -45,7 +46,6 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: icmp
     character(len=16), pointer :: p_compelas_valv(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -58,28 +58,24 @@ implicit none
 !
 ! - Init <CARTE>
 !
-    do icmp = 1, 20
-        p_compelas_valv(icmp) = 'VIDE'
-    enddo
+    p_compelas_valv(1:NB_COMP_MAXI) = 'VIDE'
 !
 ! - Set for ELASTIQUE
 !
-    p_compelas_valv(1) = 'ELAS'
-    p_compelas_valv(2) = '1'
-    p_compelas_valv(3) = 'PETIT'
+    p_compelas_valv(NAME) = 'ELAS'
+    p_compelas_valv(NVAR) = '1'
+    p_compelas_valv(DEFO) = 'PETIT'
     if (l_etat_init) then
-        p_compelas_valv(4) = 'COMP_INCR'
+        p_compelas_valv(INCRELAS) = 'COMP_INCR'
     else
-        p_compelas_valv(4) = 'COMP_ELAS'
+        p_compelas_valv(INCRELAS) = 'COMP_ELAS'
     endif
-    p_compelas_valv(5) = 'ANALYTIQUE'
-    write (p_compelas_valv(6) ,'(I16)') 1
-! 99999 = Not affected
-    write (p_compelas_valv(12),'(I16)') 99999
-    write (p_compelas_valv(17) ,'(I16)') 1
-    write (p_compelas_valv(18) ,'(I16)') 1
-    write (p_compelas_valv(19) ,'(I16)') 1
-    write (p_compelas_valv(20) ,'(I16)') 1
+    p_compelas_valv(PLANESTRESS) = 'ANALYTIQUE'
+    write (p_compelas_valv(NUME) ,'(I16)') 1
+    write (p_compelas_valv(KIT1_NVAR) ,'(I16)') 1
+    write (p_compelas_valv(KIT2_NVAR) ,'(I16)') 1
+    write (p_compelas_valv(KIT3_NVAR) ,'(I16)') 1
+    write (p_compelas_valv(KIT4_NVAR) ,'(I16)') 1
 !
 ! - Create <CARTE>
 !

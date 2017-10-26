@@ -342,6 +342,7 @@ MODET=CALC_MODES(MATR_RIGI=RIGIDIT1,
                  CALC_FREQ=_F(FREQ=(0.1,25000),
                               ),
                  MATR_MASS=MASSE1,
+                 SOLVEUR=_F(NPREC=9),
                  SOLVEUR_MODAL=_F(METHODE='SORENSEN',
                                   ),
                  )

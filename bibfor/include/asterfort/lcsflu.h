@@ -15,13 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
 !
 interface 
     subroutine lcsflu(fami, kpg, ksp, ndim, imate,&
                       compor, crit, instam, instap, epsm,&
                       deps, sigm, vim, option, angmas,&
-                      sigp, vip, tampon, typmod, icomp,&
+                      sigp, vip, tampon, typmod, &
                       nvi, dsidep, codret)
         character(len=*) :: fami
         integer :: kpg
@@ -42,7 +42,6 @@ interface
         real(kind=8) :: vip(*)
         real(kind=8) :: tampon(*)
         character(len=8) :: typmod(*)
-        integer :: icomp
         integer :: nvi
         real(kind=8) :: dsidep(6, 6)
         integer :: codret

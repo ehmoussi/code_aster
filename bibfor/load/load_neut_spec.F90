@@ -179,24 +179,24 @@ implicit none
         if (load_keyw.eq.'EVOL_CHAR') then
             call load_neut_evol(nb_type_neumz, type_calc  , time_curr, load_name, load_type_ligr,&
                                 load_opti_r  , load_para_r, load_name_evol, nb_obje  )
-            load_keyw = 'ECHANGE'
-            ASSERT(nb_obje.eq.2)
             ASSERT(l_constant)
 !
 ! --------- Set name of option and input parameters
 !
             load_option  = load_opti_r
             load_para(1) = load_para_r(1)
-            load_para(2) = load_para_r(2)
+            if (nb_obje.eq.2) load_para(2) = load_para_r(2)
 !
 ! --------- Set name of input fields
 !
             i_field_in = i_field_in+1
             lchin(i_field_in) = load_name_evol(1)
             lpain(i_field_in) = load_para_r(1)
-            i_field_in = i_field_in+1
-            lchin(i_field_in) = load_name_evol(2)
-            lpain(i_field_in) = load_para_r(2)
+            if (nb_obje.eq.2) then
+                i_field_in = i_field_in+1
+                lchin(i_field_in) = load_name_evol(2)
+                lpain(i_field_in) = load_para_r(2)
+            endif
         endif
 !
 ! ----- Select time for ECHANGE_PAROI load

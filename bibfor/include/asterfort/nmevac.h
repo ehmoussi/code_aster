@@ -19,12 +19,12 @@
 !
 !
 interface
-    subroutine nmevac(sddisc, sderro   , i_echec_acti, nume_inst   , iterat,&
+    subroutine nmevac(sddisc, sderro   , i_fail_acti, nume_inst   , iterat,&
                       retact, ds_print_, ds_contact_)
         use NonLin_Datastructure_type
         character(len=19), intent(in) :: sddisc
         character(len=24), intent(in) :: sderro
-        integer, intent(in) :: i_echec_acti
+        integer, intent(in) :: i_fail_acti
         integer, intent(in) :: nume_inst
         integer, intent(in) :: iterat
         integer, intent(out) :: retact

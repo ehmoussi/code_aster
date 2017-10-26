@@ -103,7 +103,7 @@ VECTEUR=ASSE_VECTEUR(  VECT_ELEM=VECT_ELE,  NUME_DDL=NUMEDDL  )
 #
 
 MODE_MEC=CALC_MODES(MATR_RIGI=RIGIDITE,
-                    OPTION='PROCHE',
+                    OPTION='PROCHE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                     CALC_FREQ=_F(FREQ=( 4.77,),
                                  ),
                     MATR_MASS=MASSE,

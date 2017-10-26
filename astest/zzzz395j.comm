@@ -224,6 +224,12 @@ model_r=AFFE_MODELE(MAILLAGE=mesh,
                        PHENOMENE='MECANIQUE',
                        MODELISATION='3D',),);
 
+# Truncation of base
+base_t=DEFI_BASE_REDUITE(OPERATION='TRONCATURE',
+                         MODELE_REDUIT = model_r, 
+                         BASE = base_p,
+                         INFO=2)
+
 # Boundary condition
 chg_b_r=AFFE_CHAR_CINE(MODELE=model_r,
                       MECA_IMPO=_F(GROUP_MA='S_inf_rid',
@@ -244,7 +250,7 @@ redu=STAT_NON_LINE(MODELE=model_r,
                     METHODE='MODELE_REDUIT',
                    MODELE_REDUIT=_F(
                     REAC_ITER=1,
-                    BASE_PRIMAL     = base_p,
+                    BASE_PRIMAL     = base_t,
                     DOMAINE_REDUIT  = 'OUI',
                     GROUP_NO_INTERF = 'INF',
                     ),
@@ -446,13 +452,15 @@ TEST_RESU(CHAM_NO=(
 ####################################################################################################
 
 
-# Gappy-POD (reconstruction tout domine)
+# Gappy-POD (reconstruction tout le domaine)
 reduR = REST_REDUIT_COMPLET(
     MODELE           = model,
     RESULTAT_REDUIT  = redu, 
     BASE_PRIMAL      = base_p,
+    REST_DUAL        = 'OUI',
     BASE_DUAL        = base_d,
     INFO             = 2,
+    GROUP_NO_INTERF  = 'INF',
 )
 
 # Test calcul hyper-réduit après reconstruction/complet - Dans RID
@@ -497,9 +505,9 @@ TEST_RESU(RESU=(
                    NOEUD='N23',
                    NOM_CMP='SIXX',
                    REFERENCE='AUTRE_ASTER',
-                   VALE_CALC=13550.9523017,
+                   VALE_CALC=13275.8395843,
                    VALE_REFE=13300.4780377,
-                   PRECISION=0.019
+                   PRECISION=0.002
                    ),
                 _F(RESULTAT=reduR,
                    NUME_ORDRE= 10,
@@ -507,9 +515,9 @@ TEST_RESU(RESU=(
                    NOEUD='N23',
                    NOM_CMP='SIYY',
                    REFERENCE='AUTRE_ASTER',
-                   VALE_CALC=13549.7558537,
+                   VALE_CALC=13275.728917,
                    VALE_REFE=13300.3220671,
-                   PRECISION=0.019
+                   PRECISION=0.002
                    ),
                 _F(RESULTAT=reduR,
                    NUME_ORDRE= 10,
@@ -517,9 +525,9 @@ TEST_RESU(RESU=(
                    NOEUD='N23',
                    NOM_CMP='SIZZ',
                    REFERENCE='AUTRE_ASTER',
-                   VALE_CALC=14431.8619623,
+                   VALE_CALC=13342.280783,
                    VALE_REFE=13368.1442621,
-                   PRECISION=0.08
+                   PRECISION=0.002
                    ),
                 ),
           );
@@ -567,8 +575,8 @@ TEST_RESU(RESU=(
                    NOM_CHAM='SIEF_NOEU',
                    NOEUD='N2',
                    NOM_CMP='SIXX',
-                   VALE_CALC=13897.2753496,
-                   PRECISION = 0.007,
+                   VALE_CALC=13987.7588169,
+                   PRECISION = 0.0004,
                    ),
                 _F(RESULTAT=reduR,
                    REFERENCE='AUTRE_ASTER',
@@ -577,8 +585,8 @@ TEST_RESU(RESU=(
                    NOM_CHAM='SIEF_NOEU',
                    NOEUD='N2',
                    NOM_CMP='SIYY',
-                   VALE_CALC=13897.2753496,
-                   PRECISION = 0.007,
+                   VALE_CALC=13987.7588169,
+                   PRECISION = 0.0004,
                    ),
                 _F(RESULTAT=reduR,
                    REFERENCE='AUTRE_ASTER',
@@ -587,8 +595,8 @@ TEST_RESU(RESU=(
                    NOM_CHAM='SIEF_NOEU',
                    NOEUD='N2',
                    NOM_CMP='SIZZ',
-                   VALE_CALC=15399.0484373,
-                   PRECISION = 0.097
+                   VALE_CALC=14042.6647581,
+                   PRECISION = 0.0004
                    ),
                 ),
           );

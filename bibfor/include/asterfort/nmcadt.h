@@ -15,13 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine nmcadt(sddisc, i_adapt, nume_inst, hval_incr, dtp)
+    subroutine nmcadt(sddisc, i_adap, nume_inst, hval_incr, dtp)
         character(len=19), intent(in) :: sddisc
-        integer, intent(in) :: i_adapt
+        integer, intent(in) :: i_adap
         integer, intent(in) :: nume_inst
         character(len=19), intent(in) :: hval_incr(*)
         real(kind=8), intent(out) :: dtp

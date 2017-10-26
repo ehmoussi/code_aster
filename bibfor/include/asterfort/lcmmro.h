@@ -15,13 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine lcmmro(tampon, omp, nvi, vind, vinf)
+    subroutine lcmmro(omp, nvi, vind, vinf)
         integer :: nvi
-        real(kind=8) :: tampon(*)
         real(kind=8) :: omp(3)
         real(kind=8) :: vind(nvi)
         real(kind=8) :: vinf(nvi)

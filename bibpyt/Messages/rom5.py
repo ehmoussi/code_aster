@@ -47,6 +47,8 @@ cata_msg = {
 
    14 : _(u"""Initialisation des structures de données pour les paramètres du calcul."""),
 
+   15 : _(u"""Le nombre de couches du domaine est inférieur au nombre de couches de l'interface, on aura peut-être un problème de convergence"""),
+
    16 : _(u"""Méthode de construction de la base empirique: %(k1)s """),
 
    17 : _(u"""Nombre de modes maximum de la base empirique: %(i1)d """),
@@ -71,6 +73,10 @@ cata_msg = {
    26 : _(u"""Initialisation des structures de données pour les paramètres GLOUTON du calcul."""),
 
    27 : _(u"""Lecture des paramètres pour la méthode GLOUTON."""),
+
+   28 : _(u"""Initialisation des structures de données pour les paramètres de troncature."""),
+
+   29 : _(u"""Lecture des paramètres pour la méthode de troncature."""),
 
    30 : _(u"""Vérification des paramètres pour le calcul non-linéaire avec réduction de modèle."""),
 
@@ -110,11 +116,15 @@ cata_msg = {
 
    48 : _(u"""Valeur du coefficient complexe pour la matrice de nom %(k1)s : (%(r1)19.12e,%(r2)19.12e)."""),
 
+   49 : _(u"""La base empirique ne repose pas sur le même modèle sur le calcul non-linéaire."""),
+
    50 : _(u"""Initialisation de la structure de données pour résoudre le système %(k1)s."""),
 
    51 : _(u"""Valeur des paramètres pour la variation d'indice %(i1)d."""),
 
    52 : _(u"""Le paramètre %(k1)s vaut %(r1)19.12e."""),
+
+   53 : _(u"""Le nombre de composantes dans le modèle est incorrect. Vérifiez que vous n'avez pas de chargements de Dirichlet appliqués avec AFFE_CHAR_MECA."""),
 
    60 : _(u"""Calcul par la méthode GLOUTON."""),
 
@@ -131,6 +141,8 @@ cata_msg = {
    66 : _(u"""Calcul du second membre du système réduit."""),
 
    67 : _(u"""Calcul de la matrice du système réduit."""),
+
+   68 : _(u"""Troncature de la base empirique."""),
 
    81 : _(u"""Initialisation de la structure de données pour la variation des coefficients pour le calcul multi-paramétrique."""),
 

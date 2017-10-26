@@ -24,7 +24,6 @@ subroutine rc32t()
 #include "asterc/getfac.h"
 #include "asterfort/jecrec.h"
 #include "asterfort/getvis.h"
-#include "asterfort/codent.h"
 #include "asterfort/getvid.h"
 #include "asterfort/rcveri.h"
 #include "asterfort/tbexip.h"
@@ -35,7 +34,7 @@ subroutine rc32t()
 #include "asterfort/as_allocate.h"
 #include "asterfort/jecroc.h"
 #include "asterfort/jeecra.h"
-#include "asterfort/jexnom.h"
+#include "asterfort/jexnum.h"
 #include "asterfort/tbliva.h"
 #include "asterfort/rc32my.h"
 #include "asterfort/rctres.h"
@@ -44,20 +43,23 @@ subroutine rc32t()
 #include "asterfort/as_deallocate.h"
 #include "asterfort/jedema.h"
 #include "asterfort/getvtx.h"
+
+!     ------------------------------------------------------------------
 !     OPERATEUR POST_RCCM, TRAITEMENT DE FATIGUE_ZE200 et B3200
+!     AVEC LA METHODE DE SELECTION DES INSTANTS TRESCA
 !     STOCKAGE DES CONTRAINTES TOTALES ET LINEARISEES :
 !                 - THERMIQUES SOUS "RESU_THER"
 !                 - DE PRESSION SOUS "RESU_PRES"
 !                 - DUS AUX EFFORTS ET MOMENTS SOUS "RESU_MECA"
 !     ------------------------------------------------------------------
 !
-    integer :: nbsitu, nbther, nbpres, nbmeca, iocc, numesitu, n0
+    integer :: nbsitu, nbther, nbpres, nbmeca, iocc
     character(len=24) :: jvorig, jvextr, valk(4)
-    character(len=8) :: nocmp(6), crit(2), knume, tabther, tabpres
-    character(len=16) :: valek(2)
+    character(len=8) :: nocmp(6), crit(2), tabther, tabpres
+    character(len=16) :: valek(2), methode
     integer :: nume1, n1, nume2, n2, nume3, n3, nn, ither, numether
     integer :: n5, ipres, numepres, imeca, numemeca, nbinst, jinst
-    character(len=8) :: tabmeca, tableok, k8b, tabtemp, methode
+    character(len=8) :: tabmeca, tableok, k8b, tabtemp
     aster_logical :: exist
     integer :: nbabsc, jabsc, ncmp, ndim, jorig, jextr, k, i, j
     real(kind=8) :: prec(2)
@@ -66,7 +68,8 @@ subroutine rc32t()
     real(kind=8) :: tremin(2), treminb(2), tremax(2), tremaxb(2)
     real(kind=8) :: vale(2), momen0, momen1, siglin(1000*6), momen0ther, momen1ther
     real(kind=8) :: momen0pres, momen1pres, momen0mec, momen1mec, temp(8)
-    integer :: ibid, iret, kk, n4, jtemp, nb
+    real(kind=8) :: verifori, verifextr
+    integer :: ibid, iret, kk, n4, jtemp, nb, l
     complex(kind=8) :: cbid
     real(kind=8), pointer :: contraintesth(:) => null()
     real(kind=8), pointer :: contraintespr(:) => null()
@@ -83,11 +86,11 @@ subroutine rc32t()
 !
     jvorig = '&&RC3200.TRANSIT.ORIG'
     jvextr = '&&RC3200.TRANSIT.EXTR'
-    call jecrec(jvorig, 'V V R', 'NO', 'DISPERSE', 'VARIABLE',&
+    call jecrec(jvorig, 'V V R', 'NU', 'DISPERSE', 'VARIABLE',&
                 nbsitu)
-    call jecrec(jvextr, 'V V R', 'NO', 'DISPERSE', 'VARIABLE',&
+    call jecrec(jvextr, 'V V R', 'NU', 'DISPERSE', 'VARIABLE',&
                 nbsitu)
-    call jecrec('&&RC3200.TEMPCST', 'V V R', 'NO', 'DISPERSE', 'VARIABLE',&
+    call jecrec('&&RC3200.TEMPCST', 'V V R', 'NU', 'DISPERSE', 'VARIABLE',&
                 nbsitu)
 !
     call getfac('RESU_THER', nbther)
@@ -111,14 +114,11 @@ subroutine rc32t()
 !
     do 5 i=1,8
         temp(i)=0.d0
-5   continue    
+5   continue  
+!
+    l = 0  
 !
     do 10 iocc = 1, nbsitu, 1
-!
-! ------ on récupère le numéro de la situation
-        call getvis('SITUATION', 'NUME_SITU', iocc=iocc, scal=numesitu, nbret=n0)
-        knume = 'S       '
-        call codent(numesitu, 'D0', knume(2:8))
 !
 !------ on récupère les numéros des tables sous le mot clé situation 
 !------ puis les tables associées sous RESU_THER, RESU_PRES et RESU_MECA 
@@ -194,6 +194,15 @@ subroutine rc32t()
                     k8b)
         call jeveuo('RC.ABSC', 'L', jabsc)
 !
+! --------- on vérifie que toutes les situations sont definies sur les mêmes abscisses
+        l = l+1
+        if(l .eq. 1) verifori = zr(jabsc)
+        if(l .eq. 1) verifextr = zr(jabsc+nbabsc-1)
+        if(l .gt. 1) then
+            if (abs(verifori-zr(jabsc)) .gt. 1e-8) call utmess('F', 'POSTRCCM_45')
+            if (abs(verifextr-zr(jabsc+nbabsc-1)) .gt. 1e-8) call utmess('F', 'POSTRCCM_45')
+        endif
+!
 ! ------ ON VERIFIE LA COHERENCE DES TABLES (THERMIQUE, PRESSION ET MECA)
         if (n1 .ne. 0) then
             if (n2 .ne. 0) then
@@ -211,10 +220,10 @@ subroutine rc32t()
 !
         if (nn .eq. 0) then
             if (n4 .ne. 0) then
-                call jecroc(jexnom('&&RC3200.TEMPCST', knume))
-                call jeecra(jexnom('&&RC3200.TEMPCST', knume), 'LONMAX', n4)
-                call jeecra(jexnom('&&RC3200.TEMPCST', knume), 'LONUTI', n4)
-                call jeveuo(jexnom('&&RC3200.TEMPCST', knume), 'E', jtemp)
+                call jecroc(jexnum('&&RC3200.TEMPCST', iocc))
+                call jeecra(jexnum('&&RC3200.TEMPCST', iocc), 'LONMAX', n4)
+                call jeecra(jexnum('&&RC3200.TEMPCST', iocc), 'LONUTI', n4)
+                call jeveuo(jexnum('&&RC3200.TEMPCST', iocc), 'E', jtemp)
 !
                 vale(1)= zr(jinst)
                 vale(2)= zr(jabsc)
@@ -249,15 +258,15 @@ subroutine rc32t()
 !
         ncmp=6
         ndim = 2 * 8 * ncmp + 4 + 4
-        call jecroc(jexnom(jvorig, knume))
-        call jeecra(jexnom(jvorig, knume), 'LONMAX', ndim)
-        call jeecra(jexnom(jvorig, knume), 'LONUTI', ndim)
-        call jeveuo(jexnom(jvorig, knume), 'E', jorig)
+        call jecroc(jexnum(jvorig, iocc))
+        call jeecra(jexnum(jvorig, iocc), 'LONMAX', ndim)
+        call jeecra(jexnum(jvorig, iocc), 'LONUTI', ndim)
+        call jeveuo(jexnum(jvorig, iocc), 'E', jorig)
 !
-        call jecroc(jexnom(jvextr, knume))
-        call jeecra(jexnom(jvextr, knume), 'LONMAX', ndim)
-        call jeecra(jexnom(jvextr, knume), 'LONUTI', ndim)
-        call jeveuo(jexnom(jvextr, knume), 'E', jextr)
+        call jecroc(jexnum(jvextr, iocc))
+        call jeecra(jexnum(jvextr, iocc), 'LONMAX', ndim)
+        call jeecra(jexnum(jvextr, iocc), 'LONUTI', ndim)
+        call jeveuo(jexnum(jvextr, iocc), 'E', jextr)
 !
         do 116 k = 1, nbabsc*ncmp
             sigtot(k) = 0.d0

@@ -118,7 +118,7 @@ subroutine orvlse(noma, listma, nbmail, norien, vect,&
             call jenuno(jexnum(mailma, numa), nomail)
             valk(1) = nomail
             valk(2) = typel
-            call utmess('F', 'MODELISA5_94', nk=2, valk=valk)
+            call utmess('F', 'MODELISA5_93', nk=2, valk=valk)
         endif
  10 end do
 !ok --- on teste le type de maille de la liste

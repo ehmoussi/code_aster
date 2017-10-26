@@ -72,7 +72,7 @@ CH_U4  = AFFE_CHAR_CINE( MODELE    = MO,
                                          DY        =  0.,)
                         )
 
-EVOL   = STAT_NON_LINE( MODELE     = MO,
+EVOL   = STAT_NON_LINE( MODELE     = MO,INFO=1,
                         CHAM_MATER = CHMAT,
                         EXCIT      = ( _F( CHARGE       = CH_U1),
                                        _F( CHARGE       = CH_U2,
@@ -82,7 +82,7 @@ EVOL   = STAT_NON_LINE( MODELE     = MO,
                                      ),
                         CRIT_STAB  = _F( TYPE           ='STABILITE',
                                          RIGI_GEOM      = 'NON',
-                                         NB_FREQ        = 1,
+                                         NB_MODE        = 1,
                                          DDL_STAB       = ('DX','DY')
                                         ),
                         COMPORTEMENT  = _F( TOUT           = 'OUI',

@@ -15,13 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+#include "asterf_types.h"
 !
 interface
-    subroutine dimthm(ndlno, ndlnm, ndim)
+    subroutine dimthm(l_vf, ndim, ndlno, ndlnm)
+        aster_logical, intent(in) :: l_vf
         integer, intent(in)  :: ndim
-        integer, intent(out) :: ndlno
-        integer, intent(out) :: ndlnm
+        integer, intent(out) :: ndlno, ndlnm
     end subroutine dimthm
 end interface

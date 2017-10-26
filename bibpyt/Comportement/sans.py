@@ -23,7 +23,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'SANS',
-    doc            =   """comportement inopérant, utile à la simulation des cables de précontrainte"""      ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """comportement inopérant, utile à la simulation des cables de précontrainte"""            ,
     num_lc         = 38,
     nb_vari        = 1,
     nom_vari       = ('VIDE',),
@@ -35,4 +36,5 @@ loi = LoiComportement(
     type_matr_tang = None,
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

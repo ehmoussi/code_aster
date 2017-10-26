@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine dbr_main_rb(nb_mode_maxi, ds_para_rb, ds_empi)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine dbr_main_rb(ds_para_rb, ds_empi)
 !
 use Rom_Datastructure_type
 !
@@ -37,11 +38,8 @@ implicit none
 #include "asterfort/romGreedyResiMaxi.h"
 #include "asterfort/romGreedyResi.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer, intent(in) :: nb_mode_maxi
-    type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
-    type(ROM_DS_Empi), intent(inout) :: ds_empi
+type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
+type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -51,14 +49,13 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  nb_mode_maxi     : maximum number of empiric modes
 ! IO  ds_para_rb       : datastructure for parameters (RB)
 ! IO  ds_empi          : datastructure for empiric modes
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: i_mode, i_coef_maxi, i_coef
+    integer :: i_mode, i_coef_maxi, i_coef, nb_mode_maxi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -69,8 +66,9 @@ implicit none
 !
 ! - Initializations
 !
-    i_mode     = 1
-    i_coef     = 1
+    i_mode       = 1
+    i_coef       = 1
+    nb_mode_maxi = ds_para_rb%nb_mode_maxi
 !
 ! - First mode
 !

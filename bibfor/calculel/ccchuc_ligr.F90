@@ -24,6 +24,7 @@ subroutine ccchuc_ligr(list_elem_stor, nb_elem_old, nb_elem_new, list_elem_new, 
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/exlim1.h"
 #include "asterfort/gnomsd.h"
 #include "asterfort/jeveuo.h"
@@ -88,15 +89,15 @@ subroutine ccchuc_ligr(list_elem_stor, nb_elem_old, nb_elem_new, list_elem_new, 
         zi(jlist-1+1) = nb_elem_new
         do ima = 1, nb_elem_new
             zi(jlist-1+ima+1) = zi(jelem-1+ima)
-        enddo 
-    endif 
+        enddo
+    endif
 !
 ! - Create new <LIGREL> ?
 !
     if (same) then
         ligrel_new = ligrel_old
     else
-        model = ligrel_old(1:8)
+        call dismoi('NOM_MODELE', ligrel_old, 'LIGREL', repk=model)
         call gnomsd(' ', noojb, 14, 19)
         ligrel_new = noojb(1:19)
         call exlim1(zi(jelem), nb_elem_new, model, 'G', ligrel_new)

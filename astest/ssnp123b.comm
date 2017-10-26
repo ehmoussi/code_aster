@@ -50,23 +50,39 @@ TRACTION=AFFE_CHAR_MECA(MODELE=MO,
                         FACE_IMPO=_F(GROUP_MA='LFG',
                                      DY=0.1,),);
 
+# Dummy time step is added to test PRECISION keyword in MACR_LIGN_COUPE
 INSTANTS=DEFI_LIST_REEL(DEBUT=0.0,
-                        INTERVALLE=_F(JUSQU_A=1.0,
-                                      NOMBRE=5,),);
+                        INTERVALLE=(_F(JUSQU_A=1.0,
+                                      NOMBRE=5,),
+                                    _F(JUSQU_A=1.000001,
+                                      NOMBRE=1,),
+                                    ),);
 
 RAMPE=DEFI_FONCTION(NOM_PARA='INST',
-                    VALE=(0.0,0.0,1.0,1.0,),);
+                    VALE=(0.0,0.0,1.0,1.0,),PROL_DROITE='LINEAIRE',);
 
-DEFLIST =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST =INSTANTS ),
-                        ECHEC=_F(ACTION       = 'DECOUPE',
-                                 SUBD_METHODE = 'MANUEL',
-                                 SUBD_PAS=4,
-                                 SUBD_PAS_MINI = 0.001),)
+DEFLIST =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST =INSTANTS ),)
 
 # CALCUL
 #========
 
 RESU=STAT_NON_LINE(MODELE=MO,
+                   CHAM_MATER=CH_MATER,
+                   EXCIT=(_F(CHARGE=TRACTION,
+                             FONC_MULT=RAMPE,),
+                          _F(CHARGE=SYMETRIE,),),
+                   COMPORTEMENT=_F(RELATION='VMIS_ISOT_LINE',),
+                   INCREMENT=_F(LIST_INST=DEFLIST,INST_FIN=1.0,),
+                   NEWTON=_F(REAC_ITER=1,),
+                   CONVERGENCE=_F(EPSI_REFE=SIGY/YOUNG,
+                                  SIGM_REFE=SIGY,
+                                  RESI_REFE_RELA=1.E-4,),
+                   SOLVEUR=_F(METHODE='MUMPS',),
+                   ARCHIVAGE=_F(LIST_INST=INSTANTS,),);
+
+# Dummy calculation to test PRECISION keyword in MACR_LIGN_COUPE
+RESU_2=STAT_NON_LINE(ETAT_INIT=_F(EVOL_NOLI=RESU,),
+                   MODELE=MO,
                    CHAM_MATER=CH_MATER,
                    EXCIT=(_F(CHARGE=TRACTION,
                              FONC_MULT=RAMPE,),
@@ -79,6 +95,7 @@ RESU=STAT_NON_LINE(MODELE=MO,
                                   RESI_REFE_RELA=1.E-4,),
                    SOLVEUR=_F(METHODE='MUMPS',),
                    ARCHIVAGE=_F(LIST_INST=INSTANTS,),);
+
 # POST TRAITEMENT
 #=================
 
@@ -93,7 +110,12 @@ RESU=CALC_CHAMP(reuse =RESU,
              RESULTAT=RESU,
              CONTRAINTE='SIGM_NOEU',);
 
-S_T=MACR_LIGN_COUPE(RESULTAT=RESU,  NOM_CHAM='SIGM_NOEU', INST=1.0,
+RESU_2=CALC_CHAMP(reuse =RESU_2,
+             RESULTAT=RESU_2,
+             CONTRAINTE='SIGM_NOEU',);
+
+# test PRECISION which is needed to discriminate between possible choices
+S_T=MACR_LIGN_COUPE(RESULTAT=RESU_2,  NOM_CHAM='SIGM_NOEU', INST=1.0, CRITERE='ABSOLU',PRECISION=0.0000005,
                   LIGN_COUPE=(
                      _F(TYPE='SEGMENT', NB_POINTS=11, INTITULE='S_EXT', NOM_CMP='SIYY',
                         COOR_ORIG=(0.0, 1.0,),

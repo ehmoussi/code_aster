@@ -23,13 +23,14 @@
 # MODELISATION AXIS_META  (ELEMENTS AXISYMETRIQUES METALLURGIQUES)
 #             13 NOEUDS  2 MAILLES QUAD8
 
-os.system("mfront --obuild MetaAcierEPIL_PT.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so MetaAcierEPIL_PT.so")
+
 
 DEBUT(CODE  = _F(NIV_PUB_WEB = 'INTERNET'),
       BASE  = _F(FICHIER = 'GLOBALE', LONG_REPE = 7000),
       DEBUG =_F(SDVERI = 'OUI')
      )
+
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=39)
 
 MAIL = LIRE_MAILLAGE(FORMAT="ASTER", )
 
@@ -350,7 +351,7 @@ U = STAT_NON_LINE(MODELE       = MO,
                                     FONC_MULT = RAMPE),
                   COMPORTEMENT = _F(RELATION='MFRONT',
                                     NOM_ROUTINE='astermetaacierepil_pt',
-                                    LIBRAIRIE='MetaAcierEPIL_PT.so',
+                                    UNITE_LIBRAIRIE=39,
                                     RESI_INTE_MAXI=1e-12,
                                   ),
                   INCREMENT    = _F(LIST_INST     = DEFLIST2,

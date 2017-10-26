@@ -15,19 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface 
-    subroutine unsmfi(imate, phi, cs, t, tbiot,&
-                      aniso, ndim, phenom)
-        integer :: imate
-        real(kind=8) :: phi
-        real(kind=8) :: cs
-        real(kind=8) :: t
-        real(kind=8) :: tbiot(6)
-        integer :: aniso
-        integer :: ndim
-        character(len=16) :: phenom
+    subroutine unsmfi(phi, tbiot, cs)
+        real(kind=8), intent(in) :: phi
+        real(kind=8), intent(in) :: tbiot(6)
+        real(kind=8), intent(out) :: cs
     end subroutine unsmfi
 end interface 

@@ -17,12 +17,14 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'ELAS_VMIS_TRAC',
+    lc_type        = ('MECANIQUE',),
     doc            =   """Elasticité non linéaire de Von Mises - Hencky à écrouissage isotrope défini
-par une courbe de traction affine par morceaux"""      ,
+par une courbe de traction affine par morceaux"""            ,
     num_lc         = 0,
     nb_vari        = 2,
     nom_vari       = ('EPSPEQ','INDIPLAS',),
@@ -33,4 +35,5 @@ par une courbe de traction affine par morceaux"""      ,
     type_matr_tang = None,
     proprietes     = ('COMP_ELAS',),
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

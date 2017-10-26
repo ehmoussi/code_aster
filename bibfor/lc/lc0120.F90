@@ -15,32 +15,31 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504,W0104
+!
 subroutine lc0120(fami, kpg, ksp, ndim, imate,&
                   compor, crit, instam, instap, epsm,&
                   deps, sigm, vim, option, angmas,&
-                  sigp, vip, tampon, typmod, icomp,&
+                  sigp, vip, typmod, icomp,&
                   nvi, dsidep, codret)
 !
 implicit none
 !
 #include "asterfort/plasbe.h"
 !
-! aslint: disable=W1504,W0104
-!
-    integer :: imate, ndim, kpg, ksp, codret, icomp, nvi
-    real(kind=8) :: crit(*), angmas(*)
-    real(kind=8) :: instam, instap, tampon(*)
-    real(kind=8) :: epsm(6), deps(6)
-    real(kind=8) :: sigm(6), sigp(6)
-    real(kind=8) :: vim(*), vip(*)
-    real(kind=8) :: dsidep(6, 6)
-    character(len=16) :: compor(*), option
-    character(len=8) :: typmod(*)
-    character(len=*) :: fami
+integer :: imate, ndim, kpg, ksp, codret, icomp, nvi
+real(kind=8) :: crit(*), angmas(*)
+real(kind=8) :: instam, instap
+real(kind=8) :: epsm(6), deps(6)
+real(kind=8) :: sigm(6), sigp(6)
+real(kind=8) :: vim(*), vip(*)
+real(kind=8) :: dsidep(6, 6)
+character(len=16) :: compor(*), option
+character(len=8) :: typmod(*)
+character(len=*) :: fami
 !
     call plasbe(fami, kpg, ksp, typmod, imate,&
                 crit, epsm, deps, sigm, vim,&
-                option, tampon, sigp, vip, dsidep,&
+                option, sigp, vip, dsidep,&
                 icomp, nvi, codret)
 end subroutine

@@ -90,6 +90,14 @@ ACCE1t=GENE_ACCE_SEISME( INFO =2,
                                         AMOR_REDUIT=amor,FREQ_PAS=0.01, ),
                MODULATION      = _F(TYPE="GAMMA",INST_INI=tini, ),)
 
+IMPR_ACCE_SEISME(TABLE=ACCE1t, TITRE = 'SPEC_FRACTILE',
+                 SPEC_OSCI = SRO_NGA,
+                 RATIO_HV = 3./2.,
+                 LIST_FREQ = L_FREQ,
+                 SPEC_1_SIGMA = SIG_NGA,
+                 )
+
+
 FONCt1=RECU_FONCTION( TABLE=ACCE1t,
                       FILTRE= (_F(  NOM_PARA = 'NUME_ORDRE',     VALE_I = 1),
                                _F(NOM_PARA = 'NOM_PARA',    VALE_K = 'ACCE1'),),

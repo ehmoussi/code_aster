@@ -15,10 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine betcvx(nmat, mater, sig, vind, vinf,&
-                  elgeom, nvi, nseuil)
-    implicit none
+                  nvi, nseuil)
+!
+implicit none
+!
+#include "asterfort/betfpp.h"
+#include "asterfort/lcdevi.h"
+#include "asterfort/lchydr.h"
+#include "asterfort/lcprsc.h"
+#include "asterfort/utmess.h"
+!
 !       BETON_DOUBLE_DP: CONVEXE ELASTO PLASTIQUE POUR (MATER,SIG,P1,P2)
 !            AVEC UN SEUIL EN COMPRESSION ET UN SEUIL EN TRACTION
 !            SEUILC = FCOMP      = (SIGEQ   + A  SIGH)/B - FC
@@ -40,20 +48,13 @@ subroutine betcvx(nmat, mater, sig, vind, vinf,&
 !       IN  VINF   :  VARIABLES INTERNES = ( PC PT THETA ) A T+DT
 !       IN  NMAT   :  DIMENSION MATER
 !       IN  MATER  :  COEFFICIENTS MATERIAU A TEMP
-!       IN  ELGEOM :  TABLEAUX DES ELEMENTS GEOMETRIQUES SPECIFIQUES AUX
-!                     LOIS DE COMPORTEMENT
 !       VAR NSEUIL :  SEUIL ELASTIQUE PRECEDENT / NOUVEAU SEUIL CALCULE
 !       ----------------------------------------------------------------
-#include "asterfort/betfpp.h"
-#include "asterfort/lcdevi.h"
-#include "asterfort/lchydr.h"
-#include "asterfort/lcprsc.h"
-#include "asterfort/utmess.h"
+
     integer :: nvi, nmat, nseuil
     real(kind=8) :: pc, pt, sig(6), dev(6), vind(*), vinf(*)
-    real(kind=8) :: mater(nmat, 2), elgeom(*)
+    real(kind=8) :: mater(nmat, 2)
     real(kind=8) :: fcp, ftp, fc, ft, beta
-!        REAL*8          ALPHA
     real(kind=8) :: rac2, un, deux, trois
     real(kind=8) :: ke, fcomp, ftrac
     real(kind=8) :: a, b, c, d
@@ -110,7 +111,7 @@ subroutine betcvx(nmat, mater, sig, vind, vinf,&
 !
 ! ---   ECROUISSAGE EN TRACTION ET EN COMPRESSION
 !
-    call betfpp(mater, nmat, elgeom, pc, pt,&
+    call betfpp(mater, nmat, pc, pt,&
                 3, fc, ft, dfcdlc, dftdlt,&
                 kuc, kut, ke)
 !
@@ -142,65 +143,65 @@ subroutine betcvx(nmat, mater, sig, vind, vinf,&
             if (ftrac .le. zero) then
                 call utmess('A', 'ALGORITH_42')
                 nseuil = 4
-                goto 9999
+                goto 999
             else
                 nseuil = 2
-                goto 9999
+                goto 999
             endif
         endif
         if (lasts .eq. 2 .and. dlambt .lt. zero) then
             if (fcomp .le. zero) then
                 call utmess('A', 'ALGORITH_43')
                 nseuil = 4
-                goto 9999
+                goto 999
             else
                 nseuil = 1
-                goto 9999
+                goto 999
             endif
         endif
         if (lasts .eq. 3 .and. dlambc .lt. zero) then
             nseuil = 2
-            goto 9999
+            goto 999
         endif
         if (lasts .eq. 3 .and. dlambt .lt. zero) then
             nseuil = 1
-            goto 9999
+            goto 999
         endif
         if (lasts .eq. 22 .and. nseuil .gt. 0) then
             nseuil = 33
-            goto 9999
+            goto 999
         endif
         if (lasts .eq. 22 .and. dlambt .lt. zero) then
             nseuil = 33
-            goto 9999
+            goto 999
         endif
         if (lasts .eq. 11 .and. nseuil .gt. 0) then
             nseuil = 44
-            goto 9999
+            goto 999
         endif
         if (lasts .eq. 11 .and. dlambc .lt. zero) then
             nseuil = 44
-            goto 9999
+            goto 999
         endif
         if (lasts .eq. 33 .and. nseuil .gt. 0) then
             nseuil = 11
-            goto 9999
+            goto 999
         endif
         if (lasts .eq. 33 .and. dlambc .lt. zero) then
             nseuil = 11
-            goto 9999
+            goto 999
         endif
         if (lasts .eq. 33 .and. dlambt .lt. zero) then
             nseuil = 11
-            goto 9999
+            goto 999
         endif
         if (lasts .eq. 4 .and. nseuil .lt. 0) then
             nseuil = 4
-            goto 9999
+            goto 999
         endif
         if (lasts .eq. 44 .and. nseuil .lt. 0) then
             nseuil = 44
-            goto 9999
+            goto 999
         endif
         if (nseuil .eq. lasts) then
             if (nseuil .eq. 2) then
@@ -211,7 +212,7 @@ subroutine betcvx(nmat, mater, sig, vind, vinf,&
                 nseuil = 2
             else
                 nseuil = 4
-                goto 9999
+                goto 999
             endif
         endif
     else
@@ -229,6 +230,6 @@ subroutine betcvx(nmat, mater, sig, vind, vinf,&
         endif
     endif
 !
-9999  continue
+999  continue
 !
 end subroutine

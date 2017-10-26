@@ -46,9 +46,10 @@ subroutine specep(casint, nomu, spectr, base, vite,&
 #include "asterfort/axdipo.h"
 #include "asterfort/deelpo.h"
 #include "asterfort/exmano.h"
-#include "asterfort/fointc.h"
+#include "asterfort/fointr.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
+#include "asterfort/jeexin.h"
 #include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jenonu.h"
@@ -56,7 +57,6 @@ subroutine specep(casint, nomu, spectr, base, vite,&
 #include "asterfort/jexnom.h"
 #include "asterfort/jexnum.h"
 #include "asterfort/scalep.h"
-#include "asterfort/tbliva.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
@@ -67,27 +67,28 @@ subroutine specep(casint, nomu, spectr, base, vite,&
     real(kind=8) :: vite
 !
     integer :: ibid, dim, ival(2)
-    real(kind=8) :: r8b, module
+    real(kind=8) :: module
     real(kind=8) :: coefac(8), coefae(8), coefdc(6), coefde(6)
-    complex(kind=8) :: c16b
-    aster_logical :: ltable
-    character(len=8) :: k8b, caelem, modele, table, noma, nomno0
+    aster_logical :: ltable,exiind
+    character(len=8) :: caelem, modele, table, noma, nomno0
     character(len=16) :: config, nopart(2)
-    character(len=19) :: typflu, nomfon
+    character(len=19) :: typflu
     character(len=24) :: spvain, spvate, spvare, spnnoe
-    character(len=24) :: chvale
-    character(len=24) :: remf, fsic, chrefe, mlgnno, mlgnma
+    character(len=24) :: chvale, chnumj, chtab
+    character(len=24) :: remf, fsic, chrefe, mlgnno, mlgnma, chnumi
 !
 !-----------------------------------------------------------------------
-    integer :: iaxe, ichref, ideb, idec, ier, iex, iex1
+    integer :: iaxe, ichref, ideb, idec, iex, iex1
     integer :: iex2, ifsic, iinte, il, im1, im1b, im2
-    integer :: im2b, imail, inat, iremf, iret, iscal, ispin
+    integer :: im2b, imail, inat, iremf, iscal, ispin
     integer :: ispno, ispre, ispte, itypfl, iv, ivale, lwr
-    integer :: nbexcp, nbma, nbmano, nbmr, numno0
+    integer :: nbexcp, nbma, nbmano, nbmr, numno0, lnumi, lnumj, i1, ind
+    integer :: iprol, ire, iim, itab, nbfreq, isre, isim, ier2
     real(kind=8) :: beta, coedim, coef1, coef2, coefd, difphi, fr
-    real(kind=8) :: frc, frref, phi1, phi2, phie, ptf(1), resuim
-    real(kind=8) :: resure, rhof, s0, scal11, scal12, scal21, scal22
+    real(kind=8) :: frc, frref, phi1, phi2, phie
+    real(kind=8) :: rhof, s0, scal11, scal12, scal21, scal22
     real(kind=8) :: sref, tolr, uabs
+    real(kind=8), pointer :: freq(:) => null()
 !-----------------------------------------------------------------------
     data nopart / 'NUME_ORDRE_I' , 'NUME_ORDRE_J' /
 !
@@ -147,13 +148,11 @@ subroutine specep(casint, nomu, spectr, base, vite,&
     if (ltable) then
 !
         table = zk16(ispte+3)(1:8)
-        call tbliva(table, 0, k8b, [ibid], [r8b],&
-                    [c16b], k8b, k8b, [r8b], 'DIMENSION',&
-                    k8b, nbexcp, r8b, c16b, k8b,&
-                    iret)
-        if (iret .ne. 0) then
-            call utmess('F', 'MODELISA2_89')
-        endif
+        chnumi = table//'.NUMI'
+        chnumj = table//'.NUMJ'
+        call jeveuo(chnumi, 'L', lnumi)
+        call jeveuo(chnumj, 'L', lnumj)
+        call jelira(chnumi, 'LONMAX', nbexcp)
 !
     else
 !
@@ -227,30 +226,69 @@ subroutine specep(casint, nomu, spectr, base, vite,&
 !
     if (ltable) then
 !
-        do 20 iex2 = 1, nbexcp
+        call wkvect('&&SPECEP.PROL', 'V V K24', 5, iprol)
+        zk24(iprol) = 'FONCTION'
+        zk24(iprol+1) = 'LIN LIN '
+        zk24(iprol+2) = ' '
+        zk24(iprol+3) = 'TOUTRESU'
+        zk24(iprol+4) = 'CC      '
+        call wkvect('&&SPECEP.IRE', 'V V R', nbpf, ire)
+        call wkvect('&&SPECEP.IIM', 'V V R', nbpf, iim)
+        chtab=table//'.VALE'
+        call jeveuo(table//'.DISC', 'L', vr=freq)
+        
+        do iex2 = 1, nbexcp
             ival(2) = iex2
-            do 21 iex1 = 1, iex2
+            do iex1 = 1, iex2
                 iex = iex2*(iex2-1)/2 + iex1
                 ival(1) = iex1
-                call tbliva(table, 2, nopart, ival, [r8b],&
-                            [c16b], k8b, k8b, [r8b], 'FONCTION_C',&
-                            k8b, ibid, r8b, c16b, nomfon,&
-                            iret)
-                ASSERT(iret.eq.0)
-                k8b = ' '
-                do 22 il = 1, nbpf
-                    ptf(1) = zr(lwr+il-1)
-                    call fointc('E', nomfon, 0, k8b, ptf,&
-                                resure, resuim, ier)
-                    if (ier .ne. 0) then
-                        call utmess('F', 'MODELISA7_5')
+                exiind = .false.
+                do i1 = 1, nbexcp
+                    if ((zi(lnumi-1+i1) .eq. ival(1)) .and. (zi(lnumj- 1+i1) .eq. ival(2))) then
+                        exiind = .true.
+                        ind = i1
                     endif
+                enddo
+                if (.not. exiind) then
+                    call utmess('F', 'MODELISA2_89')
+                endif
+                call jeveuo(jexnum(chtab, ind), 'L', itab)
+                call jelira(jexnum(chtab, ind), 'LONMAX', nbval)
+                if (iex2 .eq. iex1) then
+                    nbfreq = nbval
+                    call jeexin('&&SPECEP.SRE', ibid)
+                    if (ibid .eq. 0) then
+                        call wkvect('&&SPECEP.SRE', 'V V R', nbfreq, isre)
+                        call wkvect('&&SPECEP.SIM', 'V V R', nbfreq, isim)
+                    endif
+                    call fointr(' ', zk24(iprol), nbfreq, freq, zr( itab),&
+                                nbpf, zr(lwr), zr(isre), ier2)
+                    do i1 = 1, nbfreq
+                        zr(isim-1+i1) = 0.d0
+                    enddo
+                else
+                    nbfreq = nbval/2
+                    call jeexin('&&SPECEP.SRE', ibid)
+                    if (ibid .eq. 0) then
+                        call wkvect('&&SPECEP.SRE', 'V V R', nbfreq, isre)
+                        call wkvect('&&SPECEP.SIM', 'V V R', nbfreq, isim)
+                    endif
+                    do i1 = 1, nbfreq
+                        zr(ire-1+i1) = zr(itab+2*(i1-1))
+                        zr(iim-1+i1) = zr(itab+2*(i1-1)+1)
+                    enddo
+                    call fointr(' ', zk24(iprol), nbfreq, freq, zr( ire),&
+                                nbpf, zr(lwr), zr(isre), ier2)
+                    call fointr(' ', zk24(iprol), nbfreq, freq, zr( iim),&
+                                nbpf, zr(lwr), zr(isim), ier2)
+                endif
+                do il = 1, nbpf
                     idec = 2*nbpf*(iex-1)+2*(il-1)
-                    zr(iinte+idec) = resure
-                    zr(iinte+idec+1) = resuim
- 22             continue
- 21         continue
- 20     continue
+                    zr(iinte+idec ) = zr(isre-1+il)
+                    zr(iinte+idec+1) = zr(isim-1+il)
+                enddo
+            enddo
+        enddo
 !
     else if (config(1:7).eq.'ASC_CEN') then
 !

@@ -60,7 +60,7 @@ ASSEMBLAGE(   MODELE=MO,           CARA_ELEM=CARELEM,
 #====================================================================
 #                CALCUL MODAL
 
-MODE=CALC_MODES( OPTION='AJUSTE',
+MODE=CALC_MODES( OPTION='AJUSTE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                  MATR_RIGI=MATASSR1,
                  MATR_MASS=MATASSM1,
                  CALC_FREQ=_F( FREQ = (80., 570.) )

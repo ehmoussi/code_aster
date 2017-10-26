@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine romAlgoNLRead(ds_algorom)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine romAlgoNLRead(phenom, ds_algorom)
 !
 use Rom_Datastructure_type
 !
@@ -25,12 +26,12 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/getvid.h"
+#include "asterfort/getvr8.h"
 #include "asterfort/romBaseRead.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
+    character(len=4), intent(in) :: phenom
     type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
@@ -41,15 +42,17 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  phenom           : phenomenon (MECA/THER)
 ! IO  ds_algorom       : datastructure for ROM parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
+    real(kind=8) :: coef_pena
     character(len=8) :: ds_empi_name
     character(len=16) :: keywf, answer
-    character(len=24) :: grnode_int
-    aster_logical :: l_hrom
+    character(len=24) :: grnode_int, grnode_sub
+    aster_logical :: l_hrom, l_hrom_corref
     type(ROM_DS_Empi) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
@@ -61,9 +64,12 @@ implicit none
 !
 ! - Initializations
 !
-    keywf      = 'MODELE_REDUIT'
-    l_hrom     = .false._1
-    grnode_int = ' '
+    keywf         = 'MODELE_REDUIT'
+    l_hrom        = .false._1
+    l_hrom_corref = .false._1
+    grnode_int    = ' '
+    grnode_sub    = ' '
+    coef_pena     = 0.d0
 !
 ! - Read
 !
@@ -72,11 +78,22 @@ implicit none
     l_hrom = answer .eq. 'OUI'
     if (l_hrom) then
         call getvtx(keywf,'GROUP_NO_INTERF', iocc=1, scal = grnode_int)
+        if (phenom .eq. 'MECA') then
+            call getvtx(keywf,'CORR_COMPLET', iocc=1, scal = answer)
+            l_hrom_corref = answer .eq. 'OUI'
+            if (l_hrom_corref) then
+                call getvtx(keywf,'GROUP_NO_ENCASTRE', iocc=1, scal = grnode_sub)
+                call getvr8(keywf,'VALE_PENA'        , iocc=1, scal = coef_pena)
+            endif
+        endif
     endif
     call romBaseRead(ds_empi_name, ds_empi)
-    ds_algorom%l_rom      = .true.
-    ds_algorom%ds_empi    = ds_empi
-    ds_algorom%l_hrom     = l_hrom
-    ds_algorom%grnode_int = grnode_int
+    ds_algorom%l_rom         = .true.
+    ds_algorom%ds_empi       = ds_empi
+    ds_algorom%l_hrom        = l_hrom
+    ds_algorom%grnode_int    = grnode_int
+    ds_algorom%l_hrom_corref = l_hrom_corref
+    ds_algorom%grnode_sub    = grnode_sub
+    ds_algorom%vale_pena     = coef_pena
 !
 end subroutine

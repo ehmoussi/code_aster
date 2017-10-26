@@ -43,9 +43,8 @@ subroutine op0165()
 !
     real(kind=8) :: symax
     character(len=16) :: typtab, typmec, kopt(4)
-    integer :: n1, nbopt
+    integer :: n1, nbopt, icodre
     character(len=8) :: nommat
-    integer :: icodre
 !
 ! DEB ------------------------------------------------------------------
 !
@@ -81,7 +80,7 @@ subroutine op0165()
 !
 !     ------------------------------------------------------------------
 !
-!     ------------------ TYPE_RESU_MECA = TUYAUTERIE ------------------
+!     ------------------ TYPE_RESU_MECA = B3600 ------------------
 !
 !     ------------------------------------------------------------------
 !

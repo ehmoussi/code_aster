@@ -15,11 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: etienne.grimal at edf.fr
+! aslint: disable=W1504
+!
 subroutine lcsflu(fami, kpg, ksp, ndim, imate,&
                   compor, crit, instam, instap, epsm,&
                   deps, sigm, vim, option, angmas,&
-                  sigp, vip, tampon, typmod, icomp,&
+                  sigp, vip, tampon, typmod, &
                   nvi, dsidep, codret)
 ! person_in_charge: etienne.grimal at edf.fr
 !=====================================================================
@@ -34,7 +36,7 @@ subroutine lcsflu(fami, kpg, ksp, ndim, imate,&
 #include "asterfort/utmess.h"
 !
 !
-    integer :: imate, ndim, kpg, ksp, codret, icomp, nvi, iret
+    integer :: imate, ndim, kpg, ksp, codret, nvi, iret
     real(kind=8) :: crit(*), angmas(*)
     real(kind=8) :: instam, instap, tampon(*)
     real(kind=8) :: epsm(6), deps(6)

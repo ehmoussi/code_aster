@@ -55,11 +55,12 @@ implicit none
     integer :: ifm, niv
     integer :: i_col, i_dof_monitor, nb_dof_monitor, line_width, i, nb_cols_active
     type(NL_DS_Table) :: table_cvg
-    aster_logical :: l_line_search, l_pilo, l_cont_disc, l_cont_cont
+    aster_logical :: l_line_search, l_pilo, l_cont_disc, l_cont_cont, l_hrom
     aster_logical :: l_deborst, l_refe_rela, l_comp_rela
     aster_logical :: l_loop_cont, l_loop_frot, l_loop_geom, l_cont_all_verif
     aster_logical :: l_newt_frot, l_newt_cont, l_newt_geom
     aster_logical :: l_info_resi, l_info_time, l_csv
+    aster_logical :: l_pena_cont
     character(len=1) :: indsui
     character(len=24) :: col_name
     character(len=512) :: sep_line
@@ -100,6 +101,8 @@ implicit none
     l_newt_geom      = isfonc(list_func_acti,'GEOM_NEWTON')
     l_comp_rela      = isfonc(list_func_acti,'RESI_COMP')
     l_cont_all_verif = isfonc(list_func_acti,'CONT_ALL_VERIF')
+    l_hrom           = isfonc(list_func_acti,'HROM')
+    l_pena_cont      = isfonc(list_func_acti,'EXIS_PENA')
 !
 ! - No cols activated
 !
@@ -185,6 +188,10 @@ implicit none
     if (l_newt_cont) then
         call SetTableColumn(table_cvg, name_ = 'CONT_NEWT', flag_acti_ = .true._1)
     endif
+    
+    if (l_pena_cont) then
+        call SetTableColumn(table_cvg, name_ = 'PENE_MAXI', flag_acti_ = .true._1)
+    endif
 !
 ! - Contact (fixed points)
 !
@@ -217,6 +224,12 @@ implicit none
 ! - Matrix option
 !
     call SetTableColumn(table_cvg, name_ = 'MATR_ASSE', flag_acti_ = .true._1)
+!
+! - Hyper-reduction
+!
+    if (l_hrom) then
+        call SetTableColumn(table_cvg, name_ = 'BOUC_HROM', flag_acti_ = .true._1)
+    endif
 !
 ! - For DOF monitoring
 !

@@ -195,7 +195,6 @@ ONDE=AFFE_CHAR_MECA_F(MODELE=MODELE,INFO=2,
                             TYPE_ONDE = Onde,
                             FONC_SIGNAL = vite,
                             DIST=-5.0,
-                            #GROUP_MA= 'BAS',
                             MAILLE='M128'));
 # ---Fin
 IMPR_CO(CONCEPT=_F(NOM=ONDE))
@@ -217,10 +216,6 @@ UBID=STAT_NON_LINE(MODELE=MODELE,
                              _F(RELATION = 'KIT_HM',
                                 RELATION_KIT=('ELAS','LIQU_SATU','HYDR_UTIL'),
                                 GROUP_MA=list_group_ma),
-                              #_F(RELATION='ELAS',
-                              # DEFORMATION='PETIT',
-                              # GROUP_MA=Paraxia,
-                              # PARM_THETA=0.57)
                               ),
                  INCREMENT=_F(LIST_INST=TANBID),
                  NEWTON=_F(MATRICE='TANGENTE',
@@ -336,10 +331,6 @@ DYNB=DYNA_NON_LINE(reuse=DYNB,INFO=1,MODELE=MODELE,
                              _F(RELATION = 'KIT_HM',
                                 RELATION_KIT=('ELAS','LIQU_SATU','HYDR_UTIL'),
                                 GROUP_MA=list_group_ma),
-                              #_F(RELATION='ELAS',
-                              # DEFORMATION='PETIT',
-                              # GROUP_MA=Paraxia,
-                              # PARM_THETA=0.57)
                               ),
                    CONVERGENCE=_F(RESI_GLOB_RELA = 1.E-10,
                                   ITER_GLOB_MAXI = 10,
@@ -350,7 +341,6 @@ DYNB=DYNA_NON_LINE(reuse=DYNB,INFO=1,MODELE=MODELE,
                    INCREMENT=_F(LIST_INST = TEMLI,
                                 INST_INIT = 0.,
                                 INST_FIN  = 0.18),
-                   #ARCHIVAGE=_F(LIST_INST = L_ARCH),
                    SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',
                                    FORMULATION='DEPLACEMENT'));
 

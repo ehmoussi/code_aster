@@ -26,7 +26,7 @@ from code_aster.Cata.DataStructure import matr_asse_depl_r
 
 
 def calc_modes_multi_bandes( self, SOLVEUR_MODAL, SOLVEUR,
-                                   VERI_MODE, INFO, TITRE, **args):
+                                   VERI_MODE, stop_erreur, sturm, INFO, TITRE, **args):
     """
        Macro-command CALC_MODES, case of the simultaneous iterations method
        over several frequency bands, with optional parallelization.
@@ -218,12 +218,12 @@ def calc_modes_multi_bandes( self, SOLVEUR_MODAL, SOLVEUR,
                                       PREC_SHIFT=CALC_FREQ['PREC_SHIFT'],
                                       **motscfa)
 
-            if VERI_MODE['STURM'] == 'LOCAL':
+            if (sturm == 'LOCAL'):
                 motveri = 'OUI'
             else:
                 motveri = 'NON'
 
-            motscit['VERI_MODE'] = _F(STOP_ERREUR=VERI_MODE['STOP_ERREUR'],
+            motscit['VERI_MODE'] = _F(STOP_ERREUR=stop_erreur,
                                       SEUIL=VERI_MODE['SEUIL'],
                                       STURM=motveri,
                                       PREC_SHIFT=VERI_MODE['PREC_SHIFT'])
@@ -295,18 +295,18 @@ def calc_modes_multi_bandes( self, SOLVEUR_MODAL, SOLVEUR,
             # 2b. Preparation du test de Sturm de l'etape 3a.
             #
             #-----------------------------------------------------------------
-            if VERI_MODE['STURM'] in ('GLOBAL', 'OUI'):  # in the case of CALC_MODES on several bands, OUI is reset to GLOBAL
-                dicomode = {}
-                dicomode = __nomre0.LIST_VARI_ACCES()
-                if (len(dicomode['FREQ']) != 0):
-                    raux_ini = dicomode['FREQ'][0]
-                    raux_fin = dicomode['FREQ'][-1]
-                    if (raux_ini < freq_ini):
-                        freq_ini = raux_ini
-                    if (raux_fin > freq_fin):
-                        freq_fin = raux_fin
-                else:
-                    assert(False)  # Ce test ne marche pas (PB LIST_VARI_ACCES)
+            if sturm in ('GLOBAL', 'OUI'):  # in the case of CALC_MODES on several bands, OUI is reset to GLOBAL
+                  dicomode = {}
+                  dicomode = __nomre0.LIST_VARI_ACCES()
+                  if (len(dicomode['FREQ']) != 0):
+                      raux_ini = dicomode['FREQ'][0]
+                      raux_fin = dicomode['FREQ'][-1]
+                      if (raux_ini < freq_ini):
+                            freq_ini = raux_ini
+                      if (raux_fin > freq_fin):
+                            freq_fin = raux_fin
+                  else:
+                      assert(False)  # Ce test ne marche pas (PB LIST_VARI_ACCES)
 
             #-----------------------------------------------------------------
             #
@@ -340,17 +340,17 @@ def calc_modes_multi_bandes( self, SOLVEUR_MODAL, SOLVEUR,
     # 3a. Test de sturm effectif
     #
     #-----------------------------------------------------------------------
-    if VERI_MODE['STURM'] == 'NON':
-        aster.affiche('MESSAGE', 72 * '-')
-        UTMESS('I', 'MODAL_2')
-        aster.affiche('MESSAGE', 72 * '-')
+    if (sturm == 'NON'):
+          aster.affiche('MESSAGE', 72 * '-')
+          UTMESS('I', 'MODAL_2')
+          aster.affiche('MESSAGE', 72 * '-')
 
-    elif VERI_MODE['STURM'] == 'LOCAL':
-        aster.affiche('MESSAGE', 72 * '-')
-        UTMESS('I', 'MODAL_3')
-        aster.affiche('MESSAGE', 72 * '-')
+    elif (sturm == 'LOCAL'):
+          aster.affiche('MESSAGE', 72 * '-')
+          UTMESS('I', 'MODAL_3')
+          aster.affiche('MESSAGE', 72 * '-')
 
-    elif VERI_MODE['STURM'] in ('GLOBAL', 'OUI'):  # in the case of CALC_MODES on several bands, OUI is reset to GLOBAL
+    elif sturm in ('GLOBAL', 'OUI'):  # in the case of CALC_MODES on several bands, OUI is reset to GLOBAL
 
         # Construction des 2 bornes de la bande a tester
         if (nbmodeth != 0):
@@ -383,10 +383,10 @@ def calc_modes_multi_bandes( self, SOLVEUR_MODAL, SOLVEUR,
                 aster.affiche('MESSAGE', 72 * '-')
             else:
                 # Message similaire a ALGELINE5_24 pour le FORTRAN
-                if (VERI_MODE['STOP_ERREUR'] == 'OUI'):
+                if (stop_erreur == 'OUI'):
                     UTMESS('F', 'MODAL_5', valr=(
                         freq_ini, freq_fin, precshift), vali=(nbmodesg, nbmodeth))
-                elif (VERI_MODE['STOP_ERREUR'] == 'NON'):
+                elif (stop_erreur == 'NON'):
                     UTMESS('A', 'MODAL_5', valr=(
                         freq_ini, freq_fin, precshift), vali=(nbmodesg, nbmodeth))
                 else:
@@ -399,7 +399,7 @@ def calc_modes_multi_bandes( self, SOLVEUR_MODAL, SOLVEUR,
             aster.affiche('MESSAGE', 72 * '-')
     else:
         assert(False)  # Pb parametrage STURM
-
+ 
     #-----------------------------------------------------------------------
     #
     # 3b. Concaténation des résultats

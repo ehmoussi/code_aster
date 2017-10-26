@@ -37,8 +37,7 @@ cata_msg = {
 """),
 
     5: _(u"""
- La construction d'un nouveau concept NUME_DDL ne peut se faire qu'en présence du mot clé MATR_ASSE avec une des options
- suivantes: RIGI_MECA, RIGI_THER, RIGI_ACOU ou RIGI_FLUI_STRU.
+ La construction d'un nouveau concept NUME_DDL ne peut se faire qu'en présence du mot clé MATR_ASSE.
  Attention: si vous cherchez à assembler des vecteurs seulement, le concept NUME_DDL doit être construit préalablement.
 """),
 
@@ -55,10 +54,6 @@ cata_msg = {
 
     8: _(u"""
   Pour la construction d'un vecteur assemblé il faut renseigner au moins une charge.
-"""),
-
-    9: _(u"""
- Une des options doit être RIGI_MECA ou RIGI_THER ou RIGI_ACOU ou RIGI_FLUI_STRU.
 """),
 
     10: _(u"""

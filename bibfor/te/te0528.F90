@@ -17,7 +17,9 @@
 ! --------------------------------------------------------------------
 
 subroutine te0528(option, nomte)
-    implicit none
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/burftm.h"
@@ -30,6 +32,7 @@ subroutine te0528(option, nomte)
 #include "asterfort/rcvalb.h"
 #include "asterfort/tecach.h"
 #include "asterfort/utmess.h"
+#include "asterfort/Behaviour_type.h"
 !
     character(len=16) :: option, nomte
 !
@@ -67,8 +70,8 @@ subroutine te0528(option, nomte)
 !     -------------------------------
     call jevech('PCOMPOR', 'L', icompo)
 !
-    compo1=zk16(icompo)
-    compo2=zk16(icompo+7)
+    compo1=zk16(icompo-1+NAME)
+    compo2=zk16(icompo-1+CREEP_NAME)
 !
 !    VERIFICATION DU COMPORTEMENT FLUAGE
     lflu=.false.

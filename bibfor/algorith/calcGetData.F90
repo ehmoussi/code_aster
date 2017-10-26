@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine calcGetData(table_new, table_old  ,&
                        nb_option, list_option,&
                        nume_inst, list_inst  ,&
@@ -25,21 +26,20 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterc/getres.h"
+#include "asterfort/assert.h"
 #include "asterfort/utmess.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvis.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/diinst.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(out) :: table_new
-    character(len=8), intent(out) :: table_old
-    integer, intent(out) :: nb_option
-    character(len=16), intent(out) :: list_option(:)
-    integer, intent(out) :: nume_inst
-    character(len=19), intent(out) :: list_inst
-    character(len=16), intent(out) :: phenom
+character(len=8), intent(out) :: table_new
+character(len=8), intent(out) :: table_old
+integer, intent(out) :: nb_option
+character(len=16), intent(out) :: list_option(:)
+integer, intent(out) :: nume_inst
+character(len=19), intent(out) :: list_inst
+character(len=16), intent(out) :: phenom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -94,7 +94,8 @@ implicit none
 !
 ! - Phenomen
 !
-    phenom = 'MECANIQUE'
+    call getvtx(' ', 'PHENOMENE', scal = phenom, nbret=nocc)
+    ASSERT(nocc .eq. 1)
 !
 ! - Get current time
 !

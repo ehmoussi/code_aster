@@ -469,7 +469,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=0.00301144488705,
+           VALE_CALC=0.00302709522842,
            NOM_PARA='FACT_USAGE_CUMU',
            TABLE=TBRCCM2,
            TYPE_TEST='MAX',

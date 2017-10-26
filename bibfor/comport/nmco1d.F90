@@ -27,7 +27,6 @@ subroutine nmco1d(fami, kpg, ksp, imate, compor,&
 #include "asterfort/nm1dis.h"
 #include "asterfort/nm1dpm.h"
 #include "asterfort/nmmaba.h"
-#include "asterfort/r8inir.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/utmess.h"
 #include "asterfort/verift.h"

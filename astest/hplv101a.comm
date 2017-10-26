@@ -35,10 +35,8 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 
 #
 
-import os
 
-os.system("mfront --obuild Plasticity.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so Plasticity.so")
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=39)
 
 #
 
@@ -148,7 +146,7 @@ DEPLD2=STAT_NON_LINE( MODELE=MODME,
                       COMPORTEMENT=_F( #RELATION = 'VMIS_ISOT_LINE',
                                        RELATION='MFRONT',
                                        NOM_ROUTINE='asterplasticity',
-                                       LIBRAIRIE='Plasticity.so',
+                                       UNITE_LIBRAIRIE=39,
                                        ITER_INTE_MAXI = 30,
                                        RESI_INTE_MAXI = 1.E-8),
                       INCREMENT=_F( LIST_INST = L_INST),

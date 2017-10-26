@@ -55,7 +55,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: dvrela, dvmaxi, dvrefe, dvcomp
-    aster_logical :: dvfixc, dvfixf, dvfixg, dvfrot, dvcont, dvgeom
+    aster_logical :: dvfixc, dvfixf, dvfixg, dvfrot, dvcont, dvgeom, dvpene
     aster_logical :: dvdebo, cvpilo
     aster_logical :: cvnewt, lerrne
     aster_logical :: erctcg, erctcf, erctcc
@@ -89,6 +89,7 @@ implicit none
     call nmerge(sderro, 'ERRE_CTCG', erctcg)
     call nmerge(sderro, 'ERRE_CTCF', erctcf)
     call nmerge(sderro, 'ERRE_CTCC', erctcc)
+    call nmerge(sderro, 'DIVE_PENE', dvpene)
 !
 ! - Set marks in cols
 !
@@ -98,12 +99,17 @@ implicit none
         call SetTableColumn(table_cvg, name_ = 'RESI_MAXI', mark_ = ' ')
         call SetTableColumn(table_cvg, name_ = 'RESI_REFE', mark_ = ' ')
         call SetTableColumn(table_cvg, name_ = 'RESI_COMP', mark_ = ' ')
+        call SetTableColumn(table_cvg, name_ = 'PENE_MAXI', mark_ = ' ')
         if (dvrela) then
             call SetTableColumn(table_cvg, name_ = 'RESI_RELA', mark_ = 'X')
         endif
         if (dvmaxi) then
             call SetTableColumn(table_cvg, name_ = 'RESI_MAXI', mark_ = 'X')
         endif
+        if (dvpene) then
+            call SetTableColumn(table_cvg, name_ = 'PENE_MAXI', mark_ = 'X')
+        endif
+
         if (dvrefe) then
             call SetTableColumn(table_cvg, name_ = 'RESI_REFE', mark_ = 'X')
         endif

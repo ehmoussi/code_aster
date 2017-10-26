@@ -15,78 +15,77 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine dpao2d(repere, irep, passag)
-!.======================================================================
-    implicit none
 !
-!      DPAO2D  -- CALCUL DE LA MATRICE DE PASSAGE DU REPERE
-!                 D'ORTHOTROPIE AU REPERE GLOBAL POUR LE
-!                 TENSEUR D'ELASTICITE EN 2D
+subroutine dpao2d(repere, irep, matr_tran)
 !
-!   ARGUMENT        E/S  TYPE         ROLE
-!    REPERE(7)      IN     R        VALEURS DEFINISSANT LE REPERE
-!                                   D'ORTHOTROPIE
-!    IREP           OUT    I        = 0
-!                                     SI LE CHANGEMENT DE REPERE EST
-!                                     TRIVIAL (I.E. PASSAG = IDENTITE)
-!                                   = 1 SINON
-!    PASSAG(6,6)    OUT    R        MATRICE DE PASSAGE DU REPERE
-!                                   D'ORTHOTROPIE AU REPERE GLOBAL
-!                                   POUR LE TENSEUR D'ELASTICITE
+implicit none
 !
-!.========================= DEBUT DES DECLARATIONS ====================
-! -----  ARGUMENTS
-    real(kind=8) :: repere(7), passag(4, 4)
-!.========================= DEBUT DU CODE EXECUTABLE ==================
+#include "asterfort/assert.h"
 !
-! ---- INITIALISATIONS
-!      ---------------
-!-----------------------------------------------------------------------
-    integer :: irep
-    real(kind=8) :: angl, cosa, deux, sina, un, zero
-!-----------------------------------------------------------------------
-    zero = 0.0d0
-    un = 1.0d0
-    deux = 2.0d0
+real(kind=8), intent(in) :: repere(7)
+integer, intent(out) :: irep
+real(kind=8), intent(out) :: matr_tran(4, 4)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Elasticity
+!
+! Construct transition matrix for orthotropic elasticity - 2D case
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  repere           : define reference frame (AFFE_CARA_ELEM/MASSIF)
+!                        repere(1) =  1 => nautical angles (ANGL_REP)
+!                           repere(2:4) : nautical angles
+!                           repere(5:7) : 0.d0
+!                        repere(1) =  2 => Euler angles (ANGL_EULER)
+!                           repere(2:4) : nautical angles
+!                           repere(5:7) : Euler angles
+!                        repere(1) = -1 => axisymetric axis (ANGL_AXE)
+!                           repere(2:4) : ANGL_AXE
+!                           repere(5:7) : ORIG_AXE
+! Out irep             : 0 if matrix is trivial (identity), 1 otherwise
+! Out matr_tran        : transition matrix
+!
+! --------------------------------------------------------------------------------------------------
+!
+    real(kind=8) :: angl, cosa, sina
+    real(kind=8), parameter :: zero = 0.d0
+    real(kind=8), parameter :: un = 1.d0
+    real(kind=8), parameter :: deux = 2.d0
+!
+! --------------------------------------------------------------------------------------------------
+!
     irep = 0
-!
     angl = repere(2)
 !
     if (angl .eq. zero) then
-!
         irep = 0
     else
-!
         cosa = cos(angl)
         sina = sin(angl)
         irep = 1
 !
-! ---- CONSTRUCTION DE LA MATRICE DE PASSAGE  POUR LE TENSEUR
-! ---- D'ELASTICITE (QUI EST DU QUATRIEME ORDRE) DU REPERE
-! ---- D'ORTHOTROPIE AU REPERE GLOBAL.
-!       ------------------------------
+        matr_tran(1,1) = cosa*cosa
+        matr_tran(2,1) = sina*sina
+        matr_tran(3,1) = zero
+        matr_tran(4,1) =-deux*cosa*sina
 !
-        passag(1,1) = cosa*cosa
-        passag(2,1) = sina*sina
-        passag(3,1) = zero
-        passag(4,1) =-deux*cosa*sina
+        matr_tran(1,2) = sina*sina
+        matr_tran(2,2) = cosa*cosa
+        matr_tran(3,2) = zero
+        matr_tran(4,2) = deux*sina*cosa
 !
-        passag(1,2) = sina*sina
-        passag(2,2) = cosa*cosa
-        passag(3,2) = zero
-        passag(4,2) = deux*sina*cosa
+        matr_tran(1,3) = zero
+        matr_tran(2,3) = zero
+        matr_tran(3,3) = un
+        matr_tran(4,3) = zero
 !
-        passag(1,3) = zero
-        passag(2,3) = zero
-        passag(3,3) = un
-        passag(4,3) = zero
-!
-        passag(1,4) = sina*cosa
-        passag(2,4) =-sina*cosa
-        passag(3,4) = zero
-        passag(4,4) = cosa*cosa - sina*sina
+        matr_tran(1,4) = sina*cosa
+        matr_tran(2,4) =-sina*cosa
+        matr_tran(3,4) = zero
+        matr_tran(4,4) = cosa*cosa - sina*sina
 !
     endif
-!.============================ FIN DE LA ROUTINE ======================
+!
 end subroutine

@@ -37,7 +37,6 @@ subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
 #include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/bool_to_int.h"
 #include "asterfort/lxlgut.h"
 #include "asterfort/mdnoch.h"
 #include "asterfort/rsexch.h"
@@ -47,6 +46,7 @@ subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
 #include "asterfort/wkvect.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
+#include "asterfort/bool_to_int.h"
 !
     character(len=8) :: carael
     character(len=19) :: linopa
@@ -76,17 +76,17 @@ subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
 !
 !     ------------------------------------------------------------------
     character(len=6) :: chnumo, tsca
-    character(len=8) :: typech, nomgd, saux08, noresu, sdcarm, carel2, valk2(2)
-    character(len=16) :: nosy16
+    character(len=8) :: typech, nomgd, saux08, result_name, sdcarm, carel2, valk2(2)
+    character(len=16) :: field_type
     character(len=19) :: cham19, cesnsp, cescoq, cesfib, cesori, cestuy
     character(len=24) :: valk(2), tyres
-    character(len=64) :: nommed, nochmd
+    character(len=64) :: field_name
 !
     integer :: numord, isy, iordr, iret, ibid, codret, nbcham
-    integer :: lnochm, i, cresav, nbcmdu, jnosym, ierd
+    integer :: lnochm, nbcmdu, jnosym, ierd
     integer :: jnocha, jliord, nbordr, nbrcmp, jnocmp
 !
-    aster_logical :: lfirst
+    aster_logical :: lfirst, l_mult_model, l_vari_name
     integer, pointer :: numcmp(:) => null()
     character(len=24), pointer :: celk(:) => null()
     parameter   (cesnsp = '&&IREMED.CANBSP')
@@ -97,7 +97,7 @@ subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
 !     ------------------------------------------------------------------
     call jemarq()
 !
-    noresu=nomcon
+    result_name=nomcon
     lfirst=.true.
 !
     call jeveuo(nocham, 'L', jnocha)
@@ -174,7 +174,8 @@ subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
 !     --- BOUCLE SUR LE NOMBRE DE CHAMPS A IMPRIMER
 !
     do isy = 1, nbcham
-        cresav=0
+        l_mult_model = ASTER_FALSE 
+        l_vari_name  = ASTER_FALSE
 !
 !       --- BOUCLE SUR LA LISTE DES NUMEROS D'ORDRE
 !
@@ -213,17 +214,12 @@ subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
 !             LE CHAMP EST UN CHAM_GD SIMPLE SI LRESU=.FALSE. OU
 !             LE CHAMP EST LE CHAM_GD CHAM(ISY) DE NUMERO D'ORDRE
 !             ORDR(IORDR) ISSU DE LA SD_RESULTAT NOMCON
-            if (nbcmdu .eq. 0) then
-                nommed=' '
-            else
-                nommed=zk80(jnosym+isy-1)
-            endif
-            nosy16=zk16(jnocha+isy-1)
+            field_type=zk16(jnocha+isy-1)
             numord=zi(jliord+iordr-1)
 !
 !       --- TYPE DU CHAMP A IMPRIMER (CHAM_NO OU CHAM_ELEM)
             call dismoi('TYPE_CHAMP', cham19, 'CHAMP', repk=typech)
-            call dismoi('TYPE_RESU', noresu, 'RESULTAT', repk=tyres)
+            call dismoi('TYPE_RESU', result_name, 'RESULTAT', repk=tyres)
 !
             if ((typech(1:4).eq.'NOEU') .or. (typech(1:2).eq.'EL')) then
             else if (typech(1:4).eq. 'CART') then
@@ -259,18 +255,14 @@ subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
                     AS_DEALLOCATE(vi=numcmp)
                 endif
             endif
-!
-            saux08 = noresu
-!
+! --------- Get name of field in MED file
+            field_name = ' '
+            saux08 = result_name
             if (nbcmdu .eq. 0) then
-                call mdnoch(nochmd, lnochm, bool_to_int(lresu), saux08, nosy16,&
+                call mdnoch(field_name, lnochm, bool_to_int(lresu), saux08, field_type,&
                             codret)
             else
-                do i = 1, 64
-                    nochmd(i:i) = ' '
-                end do
-                i = lxlgut(nommed)
-                nochmd(1:i) = nommed(1:i)
+                field_name = zk80(jnosym+isy-1)(1:64)
             endif
 !
 !         -- TRAITEMENT SPECIFIQUE POUR LES CHAMPS ISSUE DE PROJ_CHAMP
@@ -278,7 +270,7 @@ subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
             if (typech .eq. 'ELGA') then
                 call jeveuo(cham19//'.CELK', 'L', vk24=celk)
                 if (celk(2) .eq. 'INI_SP_MATER') then
-                    call utmess('A', 'MED2_9', sk=nosy16)
+                    call utmess('A', 'MED2_9', sk=field_type)
                     codret = 0
                     goto 999
                 endif
@@ -287,31 +279,39 @@ subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
 !         -- ON LANCE L'IMPRESSION:
 !         -------------------------
 !
-            if (.not.lresu) noresu = ' '
-            call irchme(ifichi, cham19, partie, nochmd, noresu,&
-                        nosy16, typech, numord, nbrcmp, zk8(jnocmp),&
+            if (.not.lresu) result_name = ' '
+            call irchme(ifichi, cham19, partie, field_name, result_name,&
+                        field_type, typech, numord, nbrcmp, zk8(jnocmp),&
                         nbnoec, linoec, nbmaec, limaec, lvarie,&
                         sdcarm, linopa, codret)
 !
 999         continue
 !
-            if (codret .ne. 0 .and. codret .ne. 100) then
-                valk(1) = cham19
+            if (codret .ne. 0 .and. codret .ne. 100 .and.&
+                codret .ne. 200 .and. codret .ne. 300) then
+                valk(1) = field_type
                 valk(2) = 'MED'
-                call utmess('A', 'PREPOST_90', nk=2, valk=valk)
+                if (field_type .ne. 'COMPORTEMENT') then
+                    call utmess('A', 'PREPOST_90', nk=2, valk=valk)
+                endif
             endif
-            if (codret .eq. 100 .or. codret .eq. 200) cresav=codret
+            if (codret .eq. 100) then
+                l_mult_model = ASTER_TRUE
+            endif
+            if (codret .eq. 200) then
+                l_vari_name  = ASTER_TRUE
+            endif
 !
  22         continue
 !
  21         continue
         end do
-        if (cresav .eq. 100) then
-            valk(1) = nosy16
+        if (l_mult_model) then
+            valk(1) = field_type
             call utmess('I', 'MED_30', sk=valk(1))
-        else if (cresav.eq.200) then
-            valk(1) = nosy16
-            call utmess('A', 'MED2_7', sk=valk(1))
+        endif
+        if (l_vari_name) then
+            call utmess('A', 'MED2_7')
         endif
         lfirst=.false.
 !

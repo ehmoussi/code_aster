@@ -49,7 +49,7 @@ seq.setGlossaryName("HillStress");
 @LocalVariable real invn[3], f[3], gamma[3], sv[3]  ;
 
 // variables de commande aster
-@ExternalStateVariable real SECH,HYDR,IRRA,NEUT1,NEUT2,CORR,ALPHPUR,ALPHBETA;
+@ExternalStateVariable real ALPHPUR,ALPHBETA;
 
 @IsTangentOperatorSymmetric true;
 @TangentOperator{

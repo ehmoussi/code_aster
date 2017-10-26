@@ -58,7 +58,7 @@ subroutine dismnu(questi, nomobz, repi, repkz, ierd)
 !         CE N'EST PAS LE NOM D'UN LIGREL
 !
 !-----------------------------------------------------------------------
-    integer ::  iarefe,imatd
+    integer ::  iarefe,imatd, iret
     integer, pointer :: nequ(:) => null()
 !-----------------------------------------------------------------------
     call jemarq()
@@ -74,8 +74,13 @@ subroutine dismnu(questi, nomobz, repi, repkz, ierd)
         repk = zk24(iarefe+1) (1:8)
 !
     else if (questi(1:9).eq.'NUM_GD_SI') then
-        call jeveuo(nomob//'.NUME.REFN', 'L', iarefe)
-        call dismgd(questi, zk24(iarefe+1) (1:8), repi, repk, ierd)
+        call jeexin(nomob//'.NUME.REFN', iret)
+        if (iret .eq. 0) then
+            repi = 0
+        else
+            call jeveuo(nomob//'.NUME.REFN', 'L', iarefe)
+            call dismgd(questi, zk24(iarefe+1) (1:8), repi, repk, ierd)
+        endif
 !
     else if (questi.eq.'NB_EQUA') then
         call jeveuo(nomob//'.NUME.NEQU', 'L', vi=nequ)
@@ -104,8 +109,13 @@ subroutine dismnu(questi, nomobz, repi, repkz, ierd)
         endif
 !
     else if (questi.eq.'NOM_MAILLA') then
-        call jeveuo(nomob//'.NUME.REFN', 'L', iarefe)
-        repk = zk24(iarefe) (1:8)
+        call jeexin(nomob//'.NUME.REFN', iret)
+        if (iret .eq. 0) then
+            repk = ' '
+        else     
+            call jeveuo(nomob//'.NUME.REFN', 'L', iarefe)
+            repk = zk24(iarefe) (1:8)
+        endif
 !
     else
         ierd = 1

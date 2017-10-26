@@ -15,29 +15,22 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine virhol(nbvari, vintm, vintp, advihy, vihrho,&
-                      rho110, dp1, dp2, dpad, cliq,&
-                      dt, alpliq, signe, rho11, rho11m,&
+    subroutine virhol(nbvari, vintm , vintp ,&
+                      advihy, vihrho,&
+                      dtemp , dp1   , dp2   , dpad,& 
+                      cliq  , alpliq, signe ,&
+                      rho110, rho11 , rho11m,&
                       retcom)
-        integer :: nbvari
-        real(kind=8) :: vintm(nbvari)
-        real(kind=8) :: vintp(nbvari)
-        integer :: advihy
-        integer :: vihrho
-        real(kind=8) :: rho110
-        real(kind=8) :: dp1
-        real(kind=8) :: dp2
-        real(kind=8) :: dpad
-        real(kind=8) :: cliq
-        real(kind=8) :: dt
-        real(kind=8) :: alpliq
-        real(kind=8) :: signe
-        real(kind=8) :: rho11
-        real(kind=8) :: rho11m
-        integer :: retcom
+        integer, intent(in) :: nbvari
+        real(kind=8), intent(in) :: vintm(nbvari)
+        real(kind=8), intent(inout) :: vintp(nbvari)
+        integer, intent(in) :: advihy, vihrho
+        real(kind=8), intent(in) :: dtemp, dp1, dp2, dpad
+        real(kind=8), intent(in) :: cliq, signe, alpliq
+        real(kind=8), intent(in) :: rho110
+        real(kind=8), intent(out) :: rho11, rho11m
+        integer, intent(out) :: retcom
     end subroutine virhol
 end interface

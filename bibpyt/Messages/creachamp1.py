@@ -45,5 +45,10 @@ cata_msg = {
    Si vous ne voulez pas perdre cette information, il ne faut pas utiliser NUME_DDL ou CHAM_NO.
 """),
 
-
+   15 : _(u"""
+   Erreur lors de l'opération NORMALE.
+   L'élément %(k1)s n'est pas du bon type. 
+   Si vous êtes en deux dimensions, les éléments doivent être des segments.
+   Si vous êtes en trois dimensions, les éléments doivent être des triangles ou des quadrangles.
+"""),
 }

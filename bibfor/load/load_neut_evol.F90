@@ -78,30 +78,8 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    load_name_evol(1) = '&&NTDEPR.COEFH'
-    load_name_evol(2) = '&&NTDEPR.T_EXT'
-    
     i_type_echa    = 0
     ASSERT(nb_type_neumz.eq.nb_type_neum)
-!
-! - Identify ECHANGE load
-!
-    do i_type_neum = 1, nb_type_neum
-        call load_neut_data(i_type_neum, nb_type_neum,&
-                            load_keyw_ = load_keyw)
-        if (load_keyw.eq.'ECHANGE') then
-            i_type_echa = i_type_neum
-        endif
-    end do
-    ASSERT(i_type_echa.ne.0)
-!
-! - Get data for ECHANGE load
-!
-    call load_neut_data(i_type_echa   , nb_type_neum, type_calc,&
-                        load_type_ligr,&
-                        load_opti_r_ = load_opti_r,&
-                        load_para_r_ = load_para_r,&
-                        load_obje_   = load_obje  , nb_obje_ = nb_obje)
 !
 ! - Get EVOL_CHAR
 !
@@ -118,26 +96,69 @@ implicit none
     call gettco(evol_char, type_sd)
     ASSERT(type_sd .eq. 'EVOL_CHAR')
 !
-! - Get exterior temperature
+! - Identify type of load (ECHANGE with COEF_H and T_EXT or FLUX_REP with FLUN)
 !
-    call rsinch(evol_char, 'COEF_H', 'INST', time_curr, load_name_evol(1),&
+    load_name_evol(1) = '&&NTDEPR.FLURE'
+    call rsinch(evol_char, 'FLUN', 'INST', time_curr, load_name_evol(1),&
                 'EXCLU', 'EXCLU', 0, 'V', iret)
     if (iret.gt.2) then
-        call utmess('F', 'CHARGES3_12', sk=evol_char, sr=time_curr)
-    endif
+
+        load_name_evol(1) = '&&NTDEPR.COEFH'
+        load_name_evol(2) = '&&NTDEPR.T_EXT'
 !
-! - Get exchange coefficient
+! -     Get exterior temperature
 !
-    call rsinch(evol_char, 'T_EXT', 'INST', time_curr, load_name_evol(2),&
-                'EXCLU', 'EXCLU', 0, 'V', iret)
-    if (iret.gt.2) then
-        call utmess('F', 'CHARGES3_12', sk=evol_char, sr=time_curr)
+        call rsinch(evol_char, 'COEF_H', 'INST', time_curr, load_name_evol(1),&
+                    'EXCLU', 'EXCLU', 0, 'V', iret)
+        if (iret.gt.2) then
+            call utmess('F', 'CHARGES3_12', sk=evol_char, sr=time_curr)
+        endif
+!
+! -     Get exchange coefficient
+!
+        call rsinch(evol_char, 'T_EXT', 'INST', time_curr, load_name_evol(2),&
+                    'EXCLU', 'EXCLU', 0, 'V', iret)
+        if (iret.gt.2) then
+            call utmess('F', 'CHARGES3_12', sk=evol_char, sr=time_curr)
+        endif
+!
+! -     Identify ECHANGE load
+!
+        do i_type_neum = 1, nb_type_neum
+            call load_neut_data(i_type_neum, nb_type_neum,&
+                                load_keyw_ = load_keyw)
+            if (load_keyw.eq.'ECHANGE') then
+                i_type_echa = i_type_neum
+            endif
+        end do
+    else
+!
+! -     Identify FLUX_REP_NORM load
+!
+        do i_type_neum = 1, nb_type_neum
+            call load_neut_data(i_type_neum, nb_type_neum,&
+                                load_keyw_ = load_keyw)
+            if (load_keyw.eq.'FLUX_REP_XYZ') then
+                i_type_echa = i_type_neum
+            endif
+        end do
     endif
+
+    ASSERT(i_type_echa.ne.0)
+!
+! - Get data for select load
+!
+    call load_neut_data(i_type_echa   , nb_type_neum, type_calc,&
+                        load_type_ligr,&
+                        load_opti_r_ = load_opti_r,&
+                        load_para_r_ = load_para_r,&
+                        load_obje_   = load_obje  , nb_obje_ = nb_obje)
 !
 ! - Output objects
 !
-    ASSERT(nb_obje.eq.2)
+    ASSERT(nb_obje.gt.0 .and. nb_obje.le.2)
+    
     load_obje(1) = load_name_evol(1)
-    load_obje(2) = load_name_evol(2)
+    if (nb_obje.eq.2) load_obje(2) = load_name_evol(2)
 !
 end subroutine

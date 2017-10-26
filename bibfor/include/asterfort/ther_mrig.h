@@ -15,17 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine ther_mrig(model    , mate     , time     , cara_elem, varc_curr,&
-                         resu_elem, matr_elem)
+    subroutine ther_mrig(model, mate     , time     , cara_elem, varc_curr, nh,&
+                         base , resu_elem, matr_elem)
         character(len=24), intent(in) :: model
         character(len=24), intent(in) :: time
         character(len=24), intent(in) :: mate
         character(len=24), intent(in) :: cara_elem
         character(len=19), intent(in) :: varc_curr
+        integer, intent(in) :: nh
+        character(len=1), intent(in) :: base
         character(len=19), intent(in) :: resu_elem   
         character(len=24), intent(in) :: matr_elem
     end subroutine ther_mrig

@@ -93,18 +93,12 @@ La déformation est supposée nulle.
 
     22: _(u"""
  Sur certaines mailles, la modélisation est incompatible avec le comportement.
- Une erreur fatale pourrait suivre se message.
+ Une erreur fatale pourrait suivre ce message.
 """),
 
     23: _(u"""
  La modélisation choisie <%(k1)s> sur la maille <%(k2)s> est incompatible avec les déformations <%(k3)s>.
  Utilisez un autre type de déformations (cf. U4.51.11 et les documents R).
-"""),
-
-    24: _(u"""
- La modélisation doit être la même sur toutes les mailles d'une occurrence du mot-clef comportement.
- Conseils:
-   Réutilisez les groupes définies dans AFFE_MODELE pour affecter le comportement.
 """),
 
     30: _(u"""

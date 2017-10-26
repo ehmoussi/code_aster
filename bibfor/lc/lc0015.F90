@@ -31,6 +31,7 @@ implicit none
 #include "asterfort/nzedga.h"
 #include "asterfort/nzgdzi.h"
 #include "asterfort/nzisfw.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! aslint: disable=W1504,W0104
 !
@@ -65,32 +66,32 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (compor(1)(8:8) .eq. 'I') then
-        if (compor(8) .eq. 'ACIER') then
+    if (compor(NAME)(8:8) .eq. 'I') then
+        if (compor(META_NAME) .eq. 'ACIER') then
             call nzisfw(fami, kpg, ksp, ndim, imate,&
                         compor, carcri, instam, instap, epsm,&
                         deps, sigm, vim, option, sigp,&
                         vip, dsidep, codret)
-        else if (compor(8).eq.'ZIRC') then
+        else if (compor(META_NAME).eq.'ZIRC') then
             call nzedga(fami, kpg, ksp, ndim, imate,&
                         compor, carcri, instam, instap, epsm,&
                         deps, sigm, vim, option, sigp,&
                         vip, dsidep, codret)
         endif
-    else if (compor(1)(8:8).eq.'C') then
-        if (compor(8) .eq. 'ACIER') then
+    else if (compor(NAME)(8:8).eq.'C') then
+        if (compor(META_NAME) .eq. 'ACIER') then
             call nzcifw(fami, kpg, ksp, ndim, imate,&
                         compor, carcri, instam, instap, epsm,&
                         deps, sigm, vim, option, sigp,&
                         vip, dsidep, codret)
-        else if (compor(8).eq.'ZIRC') then
+        else if (compor(META_NAME).eq.'ZIRC') then
             call nzcizi(fami, kpg, ksp, ndim, imate,&
                         compor, carcri, instam, instap, epsm,&
                         deps, sigm, vim, option, sigp,&
                         vip, dsidep, codret)
         endif
     else
-        ASSERT(.falsE.)
+        ASSERT(.false.)
     endif
 !
 end subroutine

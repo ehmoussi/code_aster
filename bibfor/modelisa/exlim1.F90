@@ -112,6 +112,10 @@ subroutine exlim1(lismai, nbmail, modelz, basez, ligrez)
             lismai_nz(nbmail_nz)=numail
         endif
     enddo
+    
+    if (nbmail_nz.eq.0)then
+        call utmess('F', 'MODELISA4_51', sk=nomail)
+    endif
 
 
 

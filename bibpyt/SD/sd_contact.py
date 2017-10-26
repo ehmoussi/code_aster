@@ -33,7 +33,7 @@ class sd_contact(AsBase):
 
 #   Longueurs des vecteurs fixes (voir CFMMVD.F)
     zpari = 29
-    zparr = 5
+    zparr = 6
     zdime = 18
     zmeth = 23
     zdirn = 6
@@ -42,7 +42,7 @@ class sd_contact(AsBase):
     ztypm = 2
     zmaes = 4
     zcmdf = 6
-    zcmcf = 13
+    zcmcf = 14
     zexcl = 3
     zcmxf = 16
     zmesx = 5

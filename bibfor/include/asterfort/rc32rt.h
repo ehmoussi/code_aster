@@ -19,8 +19,7 @@
 !
 !
 interface
-    subroutine rc32rt(ze200, pi, pj, simpij)
-        aster_logical :: ze200
+    subroutine rc32rt(pi, pj, simpij)
         real(kind=8) :: pi
         real(kind=8) :: pj
         real(kind=8) :: simpij

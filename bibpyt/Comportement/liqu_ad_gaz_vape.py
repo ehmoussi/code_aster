@@ -23,11 +23,12 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'LIQU_AD_GAZ_VAPE',
+    lc_type        = ('COUPLAGE_THM',),
     doc            =   """Loi de comportement pour un milieu poreux non saturé eau/vapeur/air sec/air dissous
-   avec changement de phase (Cf. [R7.01.11] pour plus de détails)."""      ,
-    num_lc         = 0,
+   avec changement de phase (Cf. [R7.01.11] pour plus de détails)."""            ,
+    num_lc         = 9,
     nb_vari        = 3,
-    nom_vari       = ('LIQADGV1','LIQADGV2','LIQADGV3',),
+    nom_vari       = ('POROSITE','PVP','SATLIQ',),
     mc_mater       = ('THM_LIQ','THM_VAPE','THM_GAZ','THM_AIR_DISS',),
     modelisation   = ('KIT_HH','KIT_HHM','KIT_HM','KIT_THHM','KIT_THH',
         'KIT_THM','KIT_THV',),
@@ -36,4 +37,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

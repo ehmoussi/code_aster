@@ -66,7 +66,7 @@ subroutine orilgm(noma)
     character(len=8) :: k8b
     character(len=16) :: mofa2d, mofa3d, mofb3d, mofc3d
     character(len=24) :: nomnoe, grmama, nnoeud, gmat
-    character(len=24) :: valk(2)
+    character(len=24) :: valk(2), cmd
     integer :: iarg
 !
 ! ========================= DEBUT DU CODE EXECUTABLE ==================
@@ -307,7 +307,9 @@ subroutine orilgm(noma)
                 call jeveuo(jexnom(grmama, gmat), 'L', jgro)
                 write(ifm,1000) gmat, nbmail
                 norien=0
-                call ornorm(noma, zi(jgro), nbmail, reorie, norien)
+                cmd = 'ORIE_NORM_COQUE'
+                call ornorm(noma, zi(jgro), nbmail, reorie, norien,& 
+                            command=cmd)
                 norit = norit + norien
                 write(ifm,1100) norien
             end do
@@ -371,7 +373,9 @@ subroutine orilgm(noma)
                 call jeveuo(jexnom(grmama, gmat), 'L', jgro)
                 write(ifm,1000) gmat, nbmail
                 norien=0
-                call ornorm(noma, zi(jgro), nbmail, reorie, norien)
+                cmd = 'ORIE_LIGNE'
+                call ornorm(noma, zi(jgro), nbmail, reorie, norien,&
+                            command=cmd)
                 norit = norit + norien
                 write(ifm,1100) norien
             end do

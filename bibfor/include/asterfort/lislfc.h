@@ -15,19 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine lislfc(list_load_resu, i_load, indic , l_load_user, nexci,&
-                      lfcplx        , lacce , fctcsr, nomfct)
-        aster_logical :: lfcplx, lacce, l_load_user
-        integer :: i_load, indic
-        integer :: nexci
-        character(len=19) :: list_load_resu
-        character(len=8) :: fctcsr
-        character(len=8) :: nomfct
+    subroutine lislfc(list_load_resu, i_load      , i_excit   , l_load_user,&
+                      l_func_c      , load_keyword, const_func, load_func)
+        character(len=19), intent(in) :: list_load_resu
+        integer, intent(in) :: i_load, i_excit
+        aster_logical, intent(in) :: l_load_user, l_func_c
+        character(len=16), intent(in) :: load_keyword
+        character(len=8), intent(inout) :: const_func
+        character(len=8), intent(out) :: load_func
     end subroutine lislfc
 end interface

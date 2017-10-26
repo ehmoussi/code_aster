@@ -18,12 +18,13 @@
 
 subroutine nmprca(modele, numedd         , numfix     , mate       , carele    ,&
                   comref, ds_constitutive, lischa     , ds_algopara, solveu    ,&
-                  fonact, ds_print       , ds_measure , sddisc     , numins    ,&
+                  fonact, ds_print       , ds_measure , ds_algorom, sddisc     , numins    ,&
                   valinc, solalg         , matass     , maprec     , ds_contact,&
                   sddyna, meelem         , measse     , veelem     , veasse    ,&
                   depest, ldccvg         , faccvg     , rescvg)
 !
 use NonLin_Datastructure_type
+use Rom_Datastructure_type
 !
 implicit none
 !
@@ -48,6 +49,7 @@ implicit none
     character(len=19) :: maprec, matass
     type(NL_DS_Measure), intent(inout) :: ds_measure
     type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     character(len=19) :: lischa, solveu, sddisc, sddyna
     character(len=24) :: modele, mate, carele, comref
     character(len=24) :: numedd, numfix
@@ -80,6 +82,7 @@ implicit none
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! IO  ds_print         : datastructure for printing parameters
 ! IO  ds_measure       : datastructure for measure and statistics management
+! In  ds_algorom       : datastructure for ROM parameters
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IN  NUMINS : NUMERO D'INSTANT
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
@@ -147,7 +150,7 @@ implicit none
 !
     call nmprma(modele     , mate    , carele, ds_constitutive,&
                 ds_algopara, lischa  , numedd, numfix, solveu,&
-                comref     , ds_print, ds_measure, sddisc,&
+                comref     , ds_print, ds_measure, ds_algorom, sddisc,&
                 sddyna     , numins  , fonact, ds_contact,&
                 valinc     , solalg  , veelem, meelem, measse,&
                 maprec     , matass  , faccvg, ldccvg)

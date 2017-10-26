@@ -15,22 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
-#include "asterf_types.h"
 !
 interface 
-    subroutine sigmap(net, bishop, sat, signe, tbiot,&
-                      dp2, dp1, sigmp)
-        aster_logical :: net
-        aster_logical :: bishop
-        real(kind=8) :: sat
-        real(kind=8) :: signe
-        real(kind=8) :: tbiot(6)
-        real(kind=8) :: dp2
-        real(kind=8) :: dp1
-        real(kind=8) :: sigmp(6)
-
+    subroutine sigmap(satur, signe, tbiot, dp2, dp1,&
+                      sigmp)
+        real(kind=8), intent(in) :: signe, tbiot(6), satur, dp1, dp2
+        real(kind=8), intent(out) :: sigmp(6)
     end subroutine sigmap
 end interface 

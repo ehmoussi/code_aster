@@ -15,13 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine lcinfo(compor, numlc, nbvari)
-        character(len=*) :: compor
-        integer :: numlc
-        integer :: nbvari
+    subroutine lcinfo(compor, numlc, nbvari, nbvari_exte)
+        character(len=*), intent(in) :: compor
+        integer, intent(out) :: numlc
+        integer, intent(out) :: nbvari
+        integer, intent(out) :: nbvari_exte
     end subroutine lcinfo
 end interface

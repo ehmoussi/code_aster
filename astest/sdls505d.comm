@@ -122,15 +122,15 @@ RES_NORM=NORM_MODE( MODE=RESULT, NORME='TRAN')
 #---------------------------------------------------------------------
 #                        VERIFICATION DES RESULTATS
 #---------------------------------------------------------------------
-# C'est le dernier mode qui correspond a la charge de flambement la plus petite :
-numode=6
+# Le premier mode correspond a la charge de flambement la plus petite :
+numode=1
 
 # Test de la charge limite :
 TEST_RESU(RESU=_F(PARA='CHAR_CRIT',
                   NUME_MODE=numode,
                   RESULTAT=RESULT,
-                  VALE_CALC=-1704305.4339,
-                  VALE_REFE=-1.523E6,
+                  VALE_CALC=1704305.4339,
+                  VALE_REFE=1.523E6,
                   REFERENCE='ANALYTIQUE',
                   CRITERE='RELATIF',
                   PRECISION=0.13,),)

@@ -47,8 +47,7 @@ ou une modélisation THM
 """),
 
     5 : _(u"""
-Il n'est pas possible de faire du chaînage avec un coefficient d'emmagasinement
-non nul.
+Il n'est pas possible de faire du chaînage avec un coefficient d'emmagasinement non nul.
 """),
 
     6 : _(u"""
@@ -76,6 +75,10 @@ instant trouvé dans la SD résultat %(k1)s.
 
     11 : _(u"""
   On a trouvé une évolution de variable de commandes PTOT incomplète. Il manque un instant.
+"""),
+
+    12 : _(u"""
+Vous cherchez à faire du chaînage HM dans une modélisation qui ne le permet pas.
 """),
 
 }

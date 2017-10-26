@@ -16,23 +16,25 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine rk5app(nbeq, vparam_real, vparam_int, dtemps, yinit, dyinit,&
+subroutine rk5app(nbeq, vparam_real, vparam_int, vparam_car, dtemps, yinit, dyinit,&
                   rk5fct, solu, decoup)
     implicit none
 #include "asterf_types.h"
     integer :: nbeq
-    real(kind=8) :: vparam_real(*), dtemps, yinit(nbeq), dyinit(nbeq), solu(3*nbeq)
-    aster_logical :: decoup
-    integer :: vparam_int(*)
+    real(kind=8)     :: vparam_real(*), dtemps, yinit(nbeq), dyinit(nbeq), solu(3*nbeq)
+    integer          :: vparam_int(*)
+    character(len=*) :: vparam_car(*)
+    aster_logical    :: decoup
 !
     interface
-        subroutine rk5fct(ppr, ppi, yy0, dy0, dyy, decoup)
-            real(kind=8) :: ppr(*)
-            integer      :: ppi(*)
-            real(kind=8) :: yy0(*)
-            real(kind=8) :: dy0(*)
-            real(kind=8) :: dyy(*)
-            aster_logical :: decoup
+        subroutine rk5fct(ppr, ppi, ppc, yy0, dy0, dyy, decoup)
+            real(kind=8)     :: ppr(*)
+            integer          :: ppi(*)
+            character(len=*) :: ppc(*)
+            real(kind=8)     :: yy0(*)
+            real(kind=8)     :: dy0(*)
+            real(kind=8)     :: dyy(*)
+            aster_logical    :: decoup
         end subroutine rk5fct
     end interface
 !
@@ -95,7 +97,7 @@ subroutine rk5app(nbeq, vparam_real, vparam_int, dtemps, yinit, dyinit,&
                 yy(ii) = yy(ii) + tabb(niv,nn)*dtemps*rr(ii,nn)
             enddo
         enddo
-        call rk5fct(vparam_real, vparam_int, yy, dyinit, rr(1,niv), decoup)
+        call rk5fct(vparam_real, vparam_int, vparam_car, yy, dyinit, rr(1,niv), decoup)
         if (decoup) goto 999
     enddo
 !

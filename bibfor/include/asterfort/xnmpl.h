@@ -21,7 +21,7 @@ interface
     subroutine xnmpl(nnop, nfh, nfe, ddlc, ddlm,&
                      igeom, instam, instap, ideplp, sigm,&
                      vip, typmod, option, imate, compor,&
-                     lgpg, crit, jpintt, cnset, heavt,&
+                     lgpg, carcri, jpintt, cnset, heavt,&
                      lonch, basloc, idepl, lsn, lst,&
                      sig, vi, matuu, ivectu, codret,&
                      jpmilt, nfiss, jheavn, jstno)
@@ -42,7 +42,7 @@ interface
         integer :: imate
         character(len=16) :: compor(*)
         integer :: lgpg
-        real(kind=8) :: crit(3)
+        real(kind=8) :: carcri(*)
         integer :: jpintt
         integer :: cnset(128)
         integer :: heavt(*)

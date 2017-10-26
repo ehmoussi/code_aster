@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine betjpl(mod, nmat, mater, sig, vin,&
-                  elgeom, dsde)
+                  dsde)
     implicit none
 !       BETON_DOUBLE_DP: LOI ELASTO PLASTIQUE AVEC DOUBLE CRITERE DE
 !       PLASTICITE AVEC UN SEUIL EN COMPRESSION ET UN SEUIL EN TRACTION
@@ -30,8 +30,6 @@ subroutine betjpl(mod, nmat, mater, sig, vin,&
 !           MATER  :  COEFFICIENTS MATERIAU
 !           SIG    :  CONTRAINTES
 !           VIN    :  VARIABLES INTERNES
-!           ELGEOM :  TABLEAUX DES ELEMENTS GEOMETRIQUES SPECIFIQUES
-!                     AUX LOIS DE COMPORTEMENT
 !       OUT DSDE   :  MATRICE DE COMPORTEMENT TANGENT = DSIG/DEPS
 !       ----------------------------------------------------------------
 #include "jeveux.h"
@@ -57,7 +55,7 @@ subroutine betjpl(mod, nmat, mater, sig, vin,&
     real(kind=8) :: vin(*), sig(6)
     real(kind=8) :: hook(6, 6), dsde(6, 6), vtmp(6)
 !
-    real(kind=8) :: mater(nmat, 2), elgeom(*)
+    real(kind=8) :: mater(nmat, 2)
 !
     character(len=8) :: mod
     real(kind=8) :: trav1(6), trav2(6), pi0(6), dev(6)
@@ -106,7 +104,7 @@ subroutine betjpl(mod, nmat, mater, sig, vin,&
 !
 ! --  CALCUL DES ECROUISSAGES ET DERIVES DES COURBES D'ADOUCISSEMENT
 !
-    call betfpp(mater, nmat, elgeom, pc, pt,&
+    call betfpp(mater, nmat, pc, pt,&
                 nseuil, fc, ft, dfcdlc, dftdlt,&
                 kuc, kut, ke)
 !

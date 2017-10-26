@@ -15,18 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine nmdoch_nbload(l_load_user, list_load_resu, l_zero_allowed, nb_load,&
-                             nb_excit)
+    subroutine nmdoch_nbload(l_load_user , list_load_resu, l_zero_allowed, nb_load,&
+                             load_keyword)
         aster_logical, intent(in) :: l_load_user
         character(len=19), intent(in) :: list_load_resu
         aster_logical, intent(in) :: l_zero_allowed
         integer, intent(out) :: nb_load
-        integer, intent(out) :: nb_excit
+        character(len=16), intent(out) :: load_keyword
     end subroutine nmdoch_nbload
 end interface

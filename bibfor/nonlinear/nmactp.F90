@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmactp(ds_print, sddisc, sderro, ds_contact,&
                   ds_conv , nbiter, numins)
 !
@@ -24,6 +25,7 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
+#include "event_def.h"
 #include "asterfort/assert.h"
 #include "asterfort/isacti.h"
 #include "asterfort/nmacto.h"
@@ -33,15 +35,13 @@ implicit none
 #include "asterfort/utdidt.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Print), intent(in) :: ds_print
-    character(len=24), intent(in) :: sderro
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    character(len=19), intent(in) :: sddisc
-    type(NL_DS_Conv), intent(in) :: ds_conv
-    integer, intent(in) :: nbiter
-    integer, intent(in) :: numins
+type(NL_DS_Print), intent(in) :: ds_print
+character(len=24), intent(in) :: sderro
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=19), intent(in) :: sddisc
+type(NL_DS_Conv), intent(in) :: ds_conv
+integer, intent(in) :: nbiter
+integer, intent(in) :: numins
 !
 ! ----------------------------------------------------------------------
 !
@@ -153,18 +153,15 @@ implicit none
 ! --- PROCHAIN INSTANT: ON REINITIALISE
 !
     if (actpas .eq. 0) then
-
 !
 ! ----- REMISE A ZERO ESSAI_ITER_PILO
 !
-        call isacti(sddisc, 'AUTRE_PILOTAGE', i_action)
+        call isacti(sddisc, FAIL_ACT_PILOTAGE, i_action)
         if (i_action .ne. 0) then
             piless = 1
             pilcho = 'NATUREL'
-            call utdidt('E', sddisc, 'ECHE', 'ESSAI_ITER_PILO',&
-                        vali_ = piless)
-            call utdidt('E', sddisc, 'ECHE', 'CHOIX_SOLU_PILO',&
-                        valk_ = pilcho)
+            call utdidt('E', sddisc, 'ECHE', 'ESSAI_ITER_PILO', vali_ = piless)
+            call utdidt('E', sddisc, 'ECHE', 'CHOIX_SOLU_PILO', valk_ = pilcho)
         endif
     endif
 !

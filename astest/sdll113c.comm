@@ -380,6 +380,7 @@ EVOLB=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                       SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',), 
                       INCREMENT=_F( LIST_INST = L_INST),
                       ARCHIVAGE=_F( PAS_ARCH=500),
+                      SOLVEUR=_F(RESI_RELA=-1.0),
                      EXCIT=(
                             _F( VECT_ASSE=VECASFO, COEF_MULT = 1.0,),
                             ),                            

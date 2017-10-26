@@ -19,11 +19,8 @@
 !
 !
 interface
-    subroutine rc32env(k, l, ke, lieu, fen)
-        integer :: k
-        integer :: l
-        real(kind=8) :: ke
+    subroutine rc32env(lieu, futotenv)
         character(len=4) :: lieu
-        real(kind=8) :: fen
+        real(kind=8) :: futotenv
     end subroutine rc32env
 end interface

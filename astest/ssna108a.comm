@@ -105,7 +105,7 @@ U=CALC_CHAMP(reuse=U,
              RESULTAT=U,
              CONTRAINTE=('SIGM_ELNO'),
              VARI_INTERNE=('VARI_ELNO'),
-             DEFORMATION=('EPSG_ELGA',))
+             DEFORMATION=('EPSG_ELGA','EPSL_ELGA'))
 
 #CALCUL MECANIQUE SIMO_MIEHE
 TSM=STAT_NON_LINE(
@@ -130,7 +130,7 @@ USM=CALC_CHAMP(reuse=USM,
              RESULTAT=USM,
              CONTRAINTE=('SIGM_ELNO'),
              VARI_INTERNE=('VARI_ELNO'),
-             DEFORMATION=('EPSG_ELGA',))
+             DEFORMATION=('EPSG_ELGA','EPSL_ELGA'))
 #CALCUL MECANIQUE GDEF_LOG
 TLOG=STAT_NON_LINE(
                             MODELE=MO,
@@ -154,7 +154,7 @@ ULOG=CALC_CHAMP(reuse=ULOG,
              RESULTAT=ULOG,
              CONTRAINTE=('SIGM_ELNO'),
              VARI_INTERNE=('VARI_ELNO'),
-             DEFORMATION=('EPSG_ELGA',))
+             DEFORMATION=('EPSG_ELGA','EPSL_ELGA'))
 
 
 TEST_RESU(RESU=(_F(NUME_ORDRE=10,

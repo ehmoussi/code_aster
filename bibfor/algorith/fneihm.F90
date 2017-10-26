@@ -15,15 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1306,W1504
+!
 subroutine fneihm(fnoevo, deltat, perman, nno1, nno2,&
                   npi, npg, wref, iu, ip,&
                   ipf, iq, vff1, vff2, dffr2,&
                   geom, ang, congem, r, vectu,&
-                  mecani, press1, press2, tempe, dimdef,&
+                  mecani, press1, press2, dimdef,&
                   dimcon, dimuel, ndim, axi)
-! aslint: disable=W1306,W1504
-    implicit none
+!
+use THM_type
+use THM_module
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "asterfort/fonoei.h"
 #include "asterfort/matthm.h"
@@ -31,8 +36,7 @@ subroutine fneihm(fnoevo, deltat, perman, nno1, nno2,&
     integer :: dimdef, dimcon, nno1, nno2
     integer :: dimuel, ndim
     integer :: npi, npg, mecani(8), press1(9), press2(9)
-    integer :: tempe(5), yamec, yap1, yap2, yate
-    integer :: addeme, addep1, addep2, addete
+    integer :: addeme, addep1, addep2
     integer :: iu(3, 18), ip(2, 9), ipf(2, 2, 9), iq(2, 2, 9)
     real(kind=8) :: deltat, geom(ndim, nno2), dffr2(ndim-1, nno2, npi)
     real(kind=8) :: congem(dimcon, npi), vff1(nno1, npi), vff2(nno2, npi)
@@ -72,9 +76,7 @@ subroutine fneihm(fnoevo, deltat, perman, nno1, nno2,&
 ! OUT R       : TABLEAU DES RESIDUS
 ! OUT VECTU   : FORCES NODALES
 ! ======================================================================
-    integer :: adcome, adcp11, adcp12, adcp21, adcp22, adcote
-    integer :: addlh1
-    integer :: adcop1, adcop2, nbpha1, nbpha2
+    integer :: adcome, adcp11, addlh1, adcop1, adcop2
     integer :: kpi, i, n
     real(kind=8) :: dt, wi, q(dimdef, dimuel)
 !
@@ -82,25 +84,14 @@ subroutine fneihm(fnoevo, deltat, perman, nno1, nno2,&
 ! --- DETERMINATION DES VARIABLES CARACTERISANT LE MILIEU --------------
 ! ======================================================================
 !
-    yamec = mecani(1)
     addeme = mecani(2)
     adcome = mecani(3)
-    yap1 = press1(1)
-    nbpha1 = press1(2)
     addep1 = press1(3)
     addlh1 = press1(4)
     adcp11 = press1(5)
-    adcp12 = press1(6)
     adcop1 = press1(7)
-    yap2 = press2(1)
-    nbpha2 = press2(2)
     addep2 = press2(3)
-    adcp21 = press2(4)
-    adcp22 = press2(5)
     adcop2 = press2(6)
-    yate = tempe(1)
-    addete = tempe(2)
-    adcote = tempe(3)
 !
     if (perman) then
         dt = 1.d0
@@ -111,20 +102,20 @@ subroutine fneihm(fnoevo, deltat, perman, nno1, nno2,&
 ! ======================================================================
 ! --- INITIALISATION DE VECTU ------------------------------------------
 ! ======================================================================
-    do 1 i = 1, dimuel
+    do i = 1, dimuel
         vectu(i)=0.d0
-  1 end do
+    end do
 ! ======================================================================
 ! --- CALCUL POUR CHAQUE POINT DE GAUSS : BOUCLE SUR KPG ---------------
 ! ======================================================================
-    do 10 kpi = 1, npg
+    do kpi = 1, npg
 !
 ! ======================================================================
 ! --- INITIALISATION DE R ----------------------------------------------
 ! ======================================================================
-        do 22 i = 1, dimdef
+        do i = 1, dimdef
             r(i)=0.d0
- 22     continue
+        end do
 !
 ! ======================================================================
 ! --- CALCUL DE LA MATRICE Q AU POINT DE GAUSS -------------------------
@@ -132,29 +123,28 @@ subroutine fneihm(fnoevo, deltat, perman, nno1, nno2,&
 !
         call matthm(ndim, axi, nno1, nno2, dimuel,&
                     dimdef, iu, ip, ipf, iq,&
-                    yap1, yap2, yate, addep1, addep2,&
+                    addep1,&
                     addlh1, vff1(1, kpi), vff2(1, kpi), dffr2(1, 1, kpi), wref(kpi),&
                     geom, ang, wi, q)
 !
 ! ======================================================================
         call fonoei(ndim, dt, fnoevo, dimdef, dimcon,&
-                    yamec, yap1, yap2, yate, addeme,&
-                    addep1, addep2, addete, addlh1, adcome,&
-                    adcp11, adcp12, adcp21, adcp22, adcote,&
-                    adcop1, adcop2, nbpha1, nbpha2, congem(1, kpi),&
+                    addeme,&
+                    addep1, addep2, addlh1, adcome,&
+                    adcp11,&
+                    adcop1, adcop2, congem(1, kpi),&
                     r)
 !
 ! ======================================================================
 ! --- CONTRIBUTION DU POINT D'INTEGRATION KPI AU RESIDU ----------------
 ! ======================================================================
 !
-        do 117 i = 1, dimuel
-            do 118 n = 1, dimdef
+        do i = 1, dimuel
+            do n = 1, dimdef
                 vectu(i)=vectu(i)+q(n,i)*r(n)*wi
-118         continue
-117     continue
+            end do
+        end do
 !
-! ======================================================================
- 10 end do
-! ======================================================================
+    end do
+!
 end subroutine

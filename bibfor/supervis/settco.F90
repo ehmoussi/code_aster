@@ -45,7 +45,7 @@ subroutine settco(name, typeco)
     character(len=*), intent(in) :: typeco
 
     character(len=19) :: name19
-    character(len=16) :: attr
+    character(len=24) :: attr
     character(len=24) :: type24
     integer :: iret
     character(len=24), pointer :: vk(:) => null()

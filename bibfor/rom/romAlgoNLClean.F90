@@ -54,5 +54,8 @@ implicit none
     endif
 !
     AS_DEALLOCATE(vi = ds_algorom%v_equa_int)
+    if (ds_algorom%l_hrom_corref) then
+        AS_DEALLOCATE(vi = ds_algorom%v_equa_sub)
+    endif
 !
 end subroutine

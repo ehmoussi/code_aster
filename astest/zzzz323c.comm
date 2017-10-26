@@ -40,6 +40,10 @@ MODELE=AFFE_MODELE( MAILLAGE=MAILLAGE,
                               PHENOMENE = 'MECANIQUE',
                               MODELISATION = 'GRILLE_MEMBRANE'
                             ),
+                          _F( MAILLE = ('MEMB4',),
+                              PHENOMENE = 'MECANIQUE',
+                              MODELISATION = 'MEMBRANE'
+                            ),
                          ),
                   )
 
@@ -59,6 +63,10 @@ CARAELEM=AFFE_CARA_ELEM(
                                    SECTION = 0.1,
                                    ANGL_REP=(45.0,-45.0),
                                 ),
+                       MEMBRANE=_F(  MAILLE='MEMB4',
+                                   EPAIS = 0.1,
+                                   ANGL_REP=(45.0,-45.0),
+                                ),  
                          )
 
 
@@ -167,6 +175,16 @@ TEST_RESU(CHAM_ELEM=(_F(
                         REFERENCE = 'ANALYTIQUE',
                         PRECISION = 1.E-8
                        ),
+                     _F(
+                        CHAM_GD = REPLO_1,
+                        MAILLE='MEMB4',
+                        POINT= 1,
+                        NOM_CMP = 'Z',
+                        VALE_CALC=0.707106781186E0,
+                        VALE_REFE=0.707106781186E0,
+                        REFERENCE = 'ANALYTIQUE',
+                        PRECISION = 1.E-8
+                       ),
                     ),
          )
 
@@ -208,6 +226,16 @@ TEST_RESU(CHAM_ELEM=(_F(
                         NOM_CMP = 'Y',
                         VALE_CALC=-0.707106781186E0,
                         VALE_REFE=-0.707106781186E0,
+                        REFERENCE = 'ANALYTIQUE',
+                        PRECISION = 1.E-8
+                       ),
+                     _F(
+                        CHAM_GD = REPLO_3,
+                        MAILLE='MEMB4',
+                        POINT= 1,
+                        NOM_CMP = 'X',
+                        VALE_CALC=0.707106781186E0,
+                        VALE_REFE=0.707106781186E0,
                         REFERENCE = 'ANALYTIQUE',
                         PRECISION = 1.E-8
                        ),

@@ -23,7 +23,8 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'SECH_GRANGER',
-    doc            =   """Relation de comportement de thermique non lineaire pour modéliser le séchage du béton suivant le modèle de Granger"""      ,
+    lc_type        = ('SECHAGE',),
+    doc            =   """Relation de comportement de thermique non lineaire pour modéliser le séchage du béton suivant le modèle de Granger"""            ,
     num_lc         = 0,
     nb_vari        = 0,
     nom_vari       = None,
@@ -35,4 +36,5 @@ loi = LoiComportement(
     type_matr_tang = None,
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

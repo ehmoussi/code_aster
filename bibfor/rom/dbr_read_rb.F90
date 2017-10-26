@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine dbr_read_rb(ds_para_rb)
 !
 use Rom_Datastructure_type
@@ -26,12 +27,11 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/cresol.h"
 #include "asterfort/infniv.h"
+#include "asterfort/getvis.h"
 #include "asterfort/romMultiParaRead.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
+type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -46,12 +46,20 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
+    integer :: nb_mode_maxi = 0, nocc
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
         call utmess('I', 'ROM5_27')
+    endif
+!
+! - Maximum number of modes
+!
+    call getvis(' ', 'NB_MODE' , scal = nb_mode_maxi, nbret = nocc)
+    if (nocc .eq. 0) then
+        nb_mode_maxi = 0
     endif
 !
 ! - Read data for multiparametric problems
@@ -61,5 +69,9 @@ implicit none
 ! - Read solver parameters
 !
     call cresol(ds_para_rb%solver)
+!
+! - Save parameters in datastructure
+!
+    ds_para_rb%nb_mode_maxi = nb_mode_maxi
 !
 end subroutine

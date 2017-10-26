@@ -15,57 +15,28 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 ! aslint: disable=W1504
 !
 interface 
-    subroutine calcme(option, compor, thmc, meca, imate,&
-                      typmod, carcri, instam, instap,&
-                      ndim, dimdef, dimcon, nvimec, yate,&
-                      addeme, adcome, addete, defgem, congem,&
-                      congep, vintm, vintp, addep1, addep2,&
-                      dsde, deps, p1, p2,&
-                      t, dt, retcom, dp1, dp2,&
-                      sat, tbiot, ang2, aniso, phenom)
-        integer :: nvimec
-        integer :: dimcon
-        integer :: dimdef
-        character(len=16) :: option
-        character(len=16) :: compor(*)
-        character(len=16) :: thmc
-        character(len=16) :: meca
-        integer :: imate
-        character(len=8) :: typmod(2)
-        real(kind=8) :: carcri(*)
-        real(kind=8) :: instam
-        real(kind=8) :: instap
-        integer :: ndim
-        integer :: yate
-        integer :: addeme
-        integer :: adcome
-        integer :: addete
-        real(kind=8) :: defgem(dimdef)
-        real(kind=8) :: congem(dimcon)
-        real(kind=8) :: congep(dimcon)
-        real(kind=8) :: vintm(nvimec)
-        real(kind=8) :: vintp(nvimec)
-        integer :: addep1
-        integer :: addep2
-        real(kind=8) :: dsde(dimcon, dimdef)
-        real(kind=8) :: deps(6)
-        real(kind=8) :: p1
-        real(kind=8) :: p2
-        real(kind=8) :: t
-        real(kind=8) :: dt
-        integer :: retcom
-        real(kind=8) :: dp1
-        real(kind=8) :: dp2
-        real(kind=8) :: sat
-        real(kind=8) :: tbiot(6)
-        real(kind=8) :: ang2(3)
-        integer :: aniso
-        character(len=16) :: phenom
+    subroutine calcme(option, j_mater, ndim  , typmod, angl_naut,&
+                      compor, carcri , instam, instap,&
+                      addeme, adcome , dimdef, dimcon,&
+                      defgem, deps   ,&
+                      congem, vintm  ,&
+                      congep, vintp  ,&
+                      dsdeme, retcom )
+        character(len=16), intent(in) :: option, compor(*)
+        integer, intent(in) :: j_mater
+        character(len=8), intent(in) :: typmod(2)
+        real(kind=8), intent(in) :: carcri(*)
+        real(kind=8), intent(in) :: instam, instap
+        integer, intent(in) :: ndim, dimdef, dimcon, addeme, adcome
+        real(kind=8), intent(in) :: vintm(*)
+        real(kind=8), intent(in) :: angl_naut(3)
+        real(kind=8), intent(in) :: defgem(dimdef), deps(6), congem(dimcon)
+        real(kind=8), intent(inout) :: congep(dimcon)
+        real(kind=8), intent(inout) :: vintp(*)
+        real(kind=8), intent(out) :: dsdeme(6, 6)
+        integer, intent(out) :: retcom
     end subroutine calcme
 end interface 

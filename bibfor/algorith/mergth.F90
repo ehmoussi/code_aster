@@ -15,9 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine mergth(model    , lload_name, lload_info, cara_elem, mate,&
-                  time_curr, time      , varc_curr , matr_elem)
+!
+subroutine mergth(model_    , list_load_, cara_elem_, mate_, chtime_,&
+                  matr_elem , base,&
+                  time_curr , varc_curr_, nh_)
 !
 implicit none
 !
@@ -26,23 +27,26 @@ implicit none
 #include "asterfort/ther_mrig.h"
 #include "asterfort/gcnco2.h"
 #include "asterfort/inical.h"
-#include "asterfort/jeexin.h"
+#include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
+#include "asterfort/jeexin.h"
+#include "asterfort/jemarq.h"
 #include "asterfort/memare.h"
+#include "asterfort/vrcins.h"
 #include "asterfort/load_list_info.h"
 #include "asterfort/load_neut_comp.h"
 #include "asterfort/load_neut_prep.h"
 !
-!
-    character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: lload_name
-    character(len=24), intent(in) :: lload_info
+    character(len=*), intent(in) :: model_
+    character(len=*), intent(in) :: list_load_
+    character(len=*), intent(in) :: cara_elem_
+    character(len=*), intent(in) :: mate_
+    character(len=*), intent(in) :: chtime_
+    character(len=24), intent(in) :: matr_elem
+    character(len=1), intent(in) :: base
     real(kind=8), intent(in) :: time_curr
-    character(len=24), intent(in) :: time
-    character(len=24), intent(in) :: mate
-    character(len=24), intent(in) :: cara_elem
-    character(len=19), intent(in) :: varc_curr
-    character(len=24), intent(inout) :: matr_elem
+    character(len=19), optional, intent(in) :: varc_curr_
+    integer, optional, intent(in) :: nh_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,47 +57,67 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  model            : name of the model
-! In  mate             : name of material characteristics (field)
-! In  lload_name       : name of object for list of loads name
-! In  lload_info       : name of object for list of loads info
-! In  time_curr        : current time
-! In  time             : time (<CARTE>)
+! In  list_load        : name of datastructure for list of loads
 ! In  cara_elem        : name of elementary characteristics (field)
+! In  mate             : name of material characteristics (field)
+! In  chtime           : time (<CARTE>)
+! In  matr_elem        : name of matr_elem result
+! In  base             : JEVEUX base to create matr_elem
 ! In  varc_curr        : command variable for current time
-! IO  matr_elem        : name of matr_elem result
+! In  time_curr        : current time
+! In  nh               : Fourier mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_in_maxi, nbout
-    parameter (nb_in_maxi = 16, nbout = 1)
+    integer, parameter :: nb_in_maxi = 16
+    integer, parameter :: nbout = 1
     character(len=8) :: lpain(nb_in_maxi), lpaout(nbout)
     character(len=19) :: lchin(nb_in_maxi), lchout(nbout)
-!
-    character(len=1) :: base, stop_calc
+    character(len=24) :: cara_elem, mate, chtime, model
+    character(len=1) :: stop_calc
     character(len=8) :: load_name, newnom
-    integer :: iret
-    character(len=19) :: resu_elem
+    integer :: iret, nh
+    character(len=19) :: resu_elem, varc_curr
     integer :: load_nume
     aster_logical :: load_empty
     integer :: i_load, nb_load, nb_in_prep
+    character(len=24) :: lload_name
     character(len=24), pointer :: v_load_name(:) => null()
+    character(len=24) :: lload_info
     integer, pointer :: v_load_info(:) => null()
+    character(len=2) :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    call jemarq()
 !
 ! - Initializations
 !
-    resu_elem   = '&&MERGTH.0000000'
-    stop_calc   = 'S'
-    base        = 'V'
+    model     = model_
+    cara_elem = cara_elem_
+    mate      = mate_
+    chtime    = chtime_
+    resu_elem = matr_elem(1:8)//'.0000000'
+    stop_calc = 'S'
+    nh        = -1
+    if (present(nh_)) then
+        nh = nh_
+    endif
+!
+! - Prepare external state variables
+!
+    if (present(varc_curr_)) then
+        varc_curr = varc_curr_
+    else
+        varc_curr = '&&VARC_CURR'
+        call vrcins(model, mate, ' ', time_curr, varc_curr, codret)
+    endif
 !
 ! - Prepare MATR_ELEM
 !
     call jeexin(matr_elem(1:19)//'.RELR', iret)
     if (iret .eq. 0) then
-        call memare('V', matr_elem, model, mate, cara_elem,&
-                    'RIGI_THER')
+        call memare(base, matr_elem, model, mate, cara_elem, 'RIGI_THER')
     else
         call jedetr(matr_elem(1:19)//'.RELR')
     endif
@@ -106,8 +130,8 @@ implicit none
 !
 ! - Rigidity matrix - Volumic terms
 !
-    call ther_mrig(model    , mate     , time, cara_elem, varc_curr,&
-                   resu_elem, matr_elem)
+    call ther_mrig(model, mate     , chtime   , cara_elem, varc_curr, nh,&
+                   base , resu_elem, matr_elem)
 !
 ! - Init fields
 !
@@ -116,6 +140,8 @@ implicit none
 !
 ! - Loads
 !
+    lload_name = list_load_(1:19)//'.LCHA'
+    lload_info = list_load_(1:19)//'.INFC'
     call load_list_info(load_empty, nb_load   , v_load_name, v_load_info,&
                         lload_name, lload_info)
 !
@@ -130,10 +156,12 @@ implicit none
         load_name = v_load_name(i_load)(1:8)
         load_nume = v_load_info(nb_load+i_load+1)
         if (load_nume .gt. 0) then
-            call load_neut_comp('MRIG'   , stop_calc, model     , time_curr , time ,&
-                                load_name, load_nume, nb_in_maxi, nb_in_prep, lpain,&
+            call load_neut_comp('MRIG'   , stop_calc, model     , time_curr , chtime,&
+                                load_name, load_nume, nb_in_maxi, nb_in_prep, lpain ,&
                                 lchin    , base     , resu_elem , matr_elem )
         endif
     end do
+!
+    call jedema()
 !
 end subroutine

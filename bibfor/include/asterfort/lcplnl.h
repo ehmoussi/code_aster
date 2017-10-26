@@ -25,7 +25,7 @@ interface
                       deps, epsd, sigd, vind, comp,&
                       nbcomm, cpmono, pgl, nfs, nsg,&
                       toutms, hsr, sigf, vinf, icomp,&
-                      codret, drdy, tampon, crit)
+                      codret, drdy, crit)
         common/tdim/ ndt,ndi
         integer :: ndt
         integer :: ndi
@@ -61,7 +61,6 @@ interface
         integer :: icomp
         integer :: codret
         real(kind=8) :: drdy(nr, nr)
-        real(kind=8) :: tampon(*)
         real(kind=8) :: crit(*)
     end subroutine lcplnl
 end interface

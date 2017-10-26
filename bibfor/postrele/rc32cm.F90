@@ -30,7 +30,6 @@ subroutine rc32cm()
 #include "asterfort/jeecra.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/getvr8.h"
-#include "asterfort/wkvect.h"
 #include "asterfort/jedema.h"
 !     OPERATEUR POST_RCCM, TRAITEMENT DE FATIGUE B3200 et ZE200
 !     LECTURE DU MOT CLE FACTEUR "CHAR_MECA"
@@ -38,14 +37,14 @@ subroutine rc32cm()
 !
     integer :: nbchar, iocc, nume, n1, jchar, i, n2
     character(len=8) :: knumec
-    integer :: jcorp
+!
 ! DEB ------------------------------------------------------------------
     call jemarq()
 !
     call getfac('CHAR_MECA', nbchar)
-!-- si on est en B3200_T
+!
     if (nbchar .eq. 0) goto 999
-!-- sinon
+!
     call jecrec('&&RC3200.VALE_CHAR', 'V V R', 'NO', 'DISPERSE', 'VARIABLE',&
                 nbchar)
 !
@@ -92,13 +91,6 @@ subroutine rc32cm()
         endif
 !
     20 continue
-!
-    call wkvect('&&RC3200.CORPS', 'V V L', 1, jcorp)
-    if (n2 .ne. 0) then
-        zl(jcorp) = .false.
-    else
-        zl(jcorp) = .true.
-    endif
 !
 999 continue
     call jedema()

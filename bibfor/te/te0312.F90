@@ -31,7 +31,7 @@ subroutine te0312(option, nomte)
 !
     integer :: lmater
     character(len=8) :: fami, poum
-    real(kind=8) :: bendog(1),kdessi(1)
+    real(kind=8) :: bendog(1),kdessi(1),alpha(1)
     integer :: icodre(2), kpg, spt
 !.......................................................................
 !
@@ -60,6 +60,16 @@ subroutine te0312(option, nomte)
             call utmess('F', 'ELEMENTS_23', sk=nomte)
         else
 !       -- KDESSI ABSENT => CHARGEMENT NUL
+        endif
+    else if (option.eq.'CHAR_MECA_TEMP_R') then
+        call rcvalb(fami, kpg, spt, poum, zi(lmater),&
+                    ' ', 'ELAS', 0, ' ', [0.d0],&
+                    1, 'ALPHA', alpha, icodre, 0)
+!
+        if ((icodre(1).eq.0) .and. (alpha(1).ne.0.d0)) then
+            call utmess('F', 'ELEMENTS_19', sk=nomte)
+        else
+!       -- ALPHA ABSENT => CHARGEMENT NUL
         endif
     else
         ASSERT(.false.)

@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 function isfonc(list_func_acti, func_name_z)
 !
 implicit none
@@ -23,11 +24,9 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    aster_logical :: isfonc
-    integer, intent(in) :: list_func_acti(*)
-    character(len=*), intent(in) :: func_name_z
+aster_logical :: isfonc
+integer, intent(in) :: list_func_acti(*)
+character(len=*), intent(in) :: func_name_z
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -70,6 +69,7 @@ implicit none
 !                             CONTACT
 !       GEOM_NEWTON        :  NEWTON GENERALISE POUR LE CONTACT CONTINU
 !                             GEOMETRIE
+!       EXIS_PENA          :  AT LEAST ONE CONTACT ZONE IS ACTIVATED ON PENALISATION
 !       CONT_ALL_VERIF     :  CONTACT SANS CALCUL SUR TOUTES LES ZONES
 !       LIAISON_UNILATER   :  LIAISON UNILATERALE
 !       ELT_CONTACT        :  ELEMENTS DE CONTACT (CONTINU/XFEM)
@@ -108,8 +108,9 @@ implicit none
 !       ETAT_INIT          :  initial state
 !       ROM                :  reduced order model
 !       HROM               :  hyper-reduced order model
+!       HROM_CORR_EF       :  hyper-reduced order model with EF correction
 !
-! DERNIER NUMERO UTILISE: 65
+! DERNIER NUMERO UTILISE: 66
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -161,6 +162,8 @@ implicit none
         isfonc = list_func_acti(34).eq.1
     else if (func_name.eq.'GEOM_NEWTON') then
         isfonc = list_func_acti(55).eq.1
+    else if (func_name.eq.'EXIS_PENA') then
+        isfonc = list_func_acti(66).eq.1
     else if (func_name.eq.'FROT_NEWTON') then
         isfonc = list_func_acti(47).eq.1
     else if (func_name.eq.'CONT_NEWTON') then
@@ -231,6 +234,8 @@ implicit none
         isfonc = list_func_acti(61).eq.1
     else if (func_name.eq.'HROM') then
         isfonc = list_func_acti(62).eq.1
+    else if (func_name.eq.'HROM_CORR_EF') then
+        isfonc = list_func_acti(66).eq.1
     else if (func_name.eq.'ENERGIE') then
         isfonc = list_func_acti(50).eq.1
     else if (func_name.eq.'PROJ_MODAL') then

@@ -47,7 +47,7 @@ def C_ETAT_INIT( COMMAND, statut ) :  #COMMUN#
     kwargs['CRITERE']        = SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU"))
 
     if COMMAND == 'DYNA_NON_LINE':
-        mcfact = FACT(statut=statut,max='**',
+        mcfact = FACT(statut=statut,max=1,
                   regles=(AU_MOINS_UN('EVOL_NOLI','ACCE','VITE','DEPL','SIGM','VARI',),
                           EXCLUS('NUME_ORDRE','INST'), ),
                   b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
@@ -57,7 +57,7 @@ def C_ETAT_INIT( COMMAND, statut ) :  #COMMUN#
                     **kwargs
                  )
     else:
-        mcfact = FACT(statut=statut,max='**',
+        mcfact = FACT(statut=statut,max=1,
                   regles=(AU_MOINS_UN('EVOL_NOLI','DEPL','SIGM','VARI','COHE',),
                           EXCLUS('NUME_ORDRE','INST'), ),
                   b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",

@@ -15,16 +15,23 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1306
+!
 subroutine matthm(ndim, axi, nno1, nno2, dimuel,&
                   dimdef, iu, ip, ipf, iq,&
-                  yap1, yap2, yate, addep1, addep2,&
+                  addep1,&
                   addlh1, vff1, vff2, dffr2, wref,&
                   geom, ang, wi, q)
 !
+use THM_type
+use THM_module
 !
+implicit none
 !
-! =====================================================================
+#include "asterf_types.h"
+#include "asterfort/dfdm1d.h"
+#include "asterfort/eicine.h"
+!
 !.......................................................................
 !
 !     BUT:  CALCUL DE LA MATRICE DE PASSAGE DES DDL A LA DEFORMATION
@@ -41,11 +48,7 @@ subroutine matthm(ndim, axi, nno1, nno2, dimuel,&
 ! IN IP      : DECALAGE D'INDICE POUR ACCEDER AUX DDL DE PRESSION MILIEU
 ! IN IPF     : DECALAGE D'INDICE POUR ACCEDER AUX DDL DE PRESSION FACES
 ! IN IQ      : DECALAGE D'INDICE POUR ACCEDER AUX DDL DE LAGRANGE HYDRO
-! IN YAP1    : SI=1 : EQUATION SUR LA PRESSION 1
-! IN YAP2    : SI=1 : EQUATION SUR LA PRESSION 2
-! IN YATE    : SI=1 : EQUATION SUR LA TEMPERATURE
 ! IN ADDEP1  : ADRESSE DES DEFORMATIONS PRESSION 1
-! IN ADDEP2  : ADRESSE DES DEFORMATIONS PRESSION 2
 ! IN ADDLH1  : ADRESSE DES DEFORMATIONS LAGRANGE PRESSION 1
 ! IN VFF1    : VALEUR DES FONCTIONS DE FORME (FAMILLE 1)
 ! IN VFF2    : VALEUR DES FONCTIONS DE FORME (FAMILLE 2)
@@ -59,16 +62,10 @@ subroutine matthm(ndim, axi, nno1, nno2, dimuel,&
 !......................................................................
 !
 !
-! aslint: disable=W1306,W1504
-    implicit none
-!
-! - VARIABLES ENTREE
-#include "asterf_types.h"
-#include "asterfort/dfdm1d.h"
-#include "asterfort/eicine.h"
-    integer :: ndim, nno1, nno2, dimuel, dimdef, yap1, yap2, yate
+
+    integer :: ndim, nno1, nno2, dimuel, dimdef
     integer :: iu(3, 18), ip(2, 9), ipf(2, 2, 9), iq(2, 2, 9)
-    integer :: addep1, addep2, addlh1
+    integer :: addep1, addlh1
     real(kind=8) :: vff1(nno1), vff2(nno2), dffr2(ndim-1, nno2)
     real(kind=8) :: wref, geom(ndim, nno2), ang(24)
     aster_logical :: axi
@@ -84,11 +81,7 @@ subroutine matthm(ndim, axi, nno1, nno2, dimuel,&
 ! ======================================================================
 ! --- INITIALISATION ----------------------------------------------
 ! ======================================================================
-    do 108 i = 1, dimdef
-        do 109 j = 1, dimuel
-            q(i,j)=0.d0
-109     continue
-108 continue
+    q(1:dimdef,1:dimuel)=0.d0
 !
 ! ======================================================================
 ! --- CALCUL DE Q ET WI ----------------------------------------------
@@ -104,33 +97,28 @@ subroutine matthm(ndim, axi, nno1, nno2, dimuel,&
     call eicine(ndim, axi, nno1, nno2, vff1,&
                 vff2, wref, dffr2, geom, ang,&
                 wi, b)
-!
-!
-    do 10 i = 1, ndim
-        do 11 j = 1, ndim
-            do 12 n = 1, 2*nno1
+    do i = 1, ndim
+        do j = 1, ndim
+            do n = 1, 2*nno1
                 kj=iu(j,n)
                 q(i,kj) = b(i,j,n)
- 12         continue
- 11     continue
- 10 end do
-!
-!
+            end do
+        end do
+    end do
 !
 ! - LIGNES PRESS1
 !
-    if (yap1 .eq. 1) then
-        do 30 n = 1, nno2
+    if (ds_thm%ds_elem%l_dof_pre1) then
+        do n = 1, nno2
             q(addep1,ip(1,n)) = vff2(n)
-            do 31 i = 1, ndim-1
+            do i = 1, ndim-1
                 q(addep1+i,ip(1,n)) = dfdx(n)
- 31         continue
-            do 32 f = 1, 2
+            end do
+            do f = 1, 2
                 q(addlh1+f-1,ipf(1,f,n)) = vff2(n)
                 q(addlh1+f+1,iq(1,f,1)) = 1
- 32         continue
- 30     continue
+            end do
+        end do
     endif
-!
 !
 end subroutine

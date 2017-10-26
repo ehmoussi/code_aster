@@ -15,29 +15,27 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface 
-    subroutine capaca(rho0, rho11, rho12, rho21, rho22,&
-                      sat, phi, csigm, cp11, cp12,&
-                      cp21, cp22, dalal, t, coeps,&
-                      retcom)
-        real(kind=8) :: rho0
-        real(kind=8) :: rho11
-        real(kind=8) :: rho12
-        real(kind=8) :: rho21
-        real(kind=8) :: rho22
-        real(kind=8) :: sat
-        real(kind=8) :: phi
-        real(kind=8) :: csigm
-        real(kind=8) :: cp11
-        real(kind=8) :: cp12
-        real(kind=8) :: cp21
-        real(kind=8) :: cp22
-        real(kind=8) :: dalal
-        real(kind=8) :: t
-        real(kind=8) :: coeps
-        integer :: retcom
+    subroutine capaca(rho0 , rho11, rho12, rho21 , rho22,&
+                      satur, phi  ,&
+                      csigm, cp11 , cp12 , cp21  , cp22 ,&
+                      dalal, temp , coeps, retcom)
+        real(kind=8), intent(in) :: rho0
+        real(kind=8), intent(in) :: rho11
+        real(kind=8), intent(in) :: rho12
+        real(kind=8), intent(in) :: rho21
+        real(kind=8), intent(in) :: rho22
+        real(kind=8), intent(in) :: satur
+        real(kind=8), intent(in) :: phi
+        real(kind=8), intent(in) :: csigm
+        real(kind=8), intent(in) :: cp11
+        real(kind=8), intent(in) :: cp12
+        real(kind=8), intent(in) :: cp21
+        real(kind=8), intent(in) :: cp22
+        real(kind=8), intent(in) :: temp
+        real(kind=8), intent(in) :: dalal
+        real(kind=8), intent(out) :: coeps
+        integer, intent(out) :: retcom
     end subroutine capaca
 end interface 

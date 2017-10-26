@@ -54,7 +54,7 @@ implicit none
 !          'MATR_ELEM'    'VECT_ELEM'   'PARTITION'
 !          'VARI_COM'     'FONCTION' (POUR LES FONCTIONS OU NAPPES)
 !          'TABLE_SDASTER' 'TABLE_CONTAINER'
-!          'SOLVEUR'      'CORRESP_2_MAILLA'
+!          'SOLVEUR'      'EIGENSOLVER'  'CORRESP_2_MAILLA'
 !          'CHAM_NO_S'    'CHAM_ELEM_S'
 !          'CHAM_NO'      'CHAM_ELEM'  'CARTE'
 !          'CHAMP' (CHAPEAU AUX CHAM_NO/CHAM_ELEM/CARTE/RESUELEM)
@@ -197,6 +197,14 @@ implicit none
         call jedetr(solveu//'.SLVI')
         call jedetr(solveu//'.SLVK')
         call jedetr(solveu//'.SLVR')
+!
+!     ------------------------------------------------------------------
+    else if (typ2sd.eq.'EIGENSOLVER') then
+!     ----------------------------------
+        solveu = nomsd
+        call jedetr(solveu//'.ESVK')
+        call jedetr(solveu//'.ESVR')
+        call jedetr(solveu//'.ESVI')
 !
 !     ------------------------------------------------------------------
     else if (typ2sd.eq.'VOISINAGE') then

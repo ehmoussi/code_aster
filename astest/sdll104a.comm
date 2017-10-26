@@ -140,7 +140,7 @@ MATASSM1=ASSE_MATRICE(MATR_ELEM=MELM1,NUME_DDL=NUM1)
 #*********************************************************************#
 
 FREQ1=CALC_MODES(MATR_RIGI=MATASSR1,
-                 OPTION='AJUSTE',
+                 OPTION='AJUSTE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                  CALC_FREQ=_F(NMAX_FREQ=10,
                               FREQ=(0.1,3000.0,),
                               ),
@@ -215,7 +215,18 @@ STADE=POST_DYNA_ALEA(INTERSPECTRE=_F(
                           NUME_ORDRE_I = 1,
                           DUREE =10.,),
                           INFO=2,
-                      )   
+                      ) 
+
+
+STADE_F=POST_DYNA_ALEA(INTERSPECTRE=_F(
+                          INTE_SPEC=INTKTJ1,
+                          NUME_ORDRE_J = 1,
+                          NUME_ORDRE_I = 1,
+                          DUREE =10., FRACTILE = 0.95),
+                          INFO=2,
+                      ) 
+
+  
                       
 STADEJ2=POST_DYNA_ALEA(INTERSPECTRE=_F(
                          INTE_SPEC=INTKTJ2,
@@ -236,6 +247,8 @@ STADECS=POST_DYNA_ALEA(INTERSPECTRE=_F(
                          DUREE =10.,),
                           INFO=2,
                       )   
+
+
                       
 TEST_TABLE(CRITERE='RELATIF',
            VALE_CALC=5.5220842862402,
@@ -300,6 +313,30 @@ TEST_TABLE(CRITERE='RELATIF',
                       VALE_I=1,),
                    ),
            )
+
+TEST_TABLE(CRITERE='RELATIF',
+           VALE_CALC= 22.5384604631,
+           NOM_PARA='MAX_FRACT',
+           TABLE=STADE_F,
+           FILTRE=(_F(NOM_PARA='NUME_ORDRE_I',
+                      VALE_I=1,),
+                   _F(NOM_PARA='NUME_ORDRE_J',
+                      VALE_I=1,),
+                   ),
+           )
+
+TEST_TABLE(CRITERE='RELATIF',
+           VALE_CALC=4.08151330093,
+           NOM_PARA='FACT_PIC',
+           TABLE=STADE_F,
+           FILTRE=(_F(NOM_PARA='NUME_ORDRE_I',
+                      VALE_I=1,),
+                   _F(NOM_PARA='NUME_ORDRE_J',
+                      VALE_I=1,),
+                   ),
+           )
+
+
 
 IMPR_TABLE(TABLE=STADE,
            UNITE=8,
@@ -425,7 +462,7 @@ MATASSM2=ASSE_MATRICE(MATR_ELEM=MELM2,NUME_DDL=NUM2)
 #
 
 FREQ2=CALC_MODES(MATR_RIGI=MATASSR2,
-                 OPTION='AJUSTE',
+                 OPTION='AJUSTE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                  CALC_FREQ=_F(NMAX_FREQ=10,
                               FREQ=(0.1,3000.0,),
                               ),
@@ -521,7 +558,7 @@ MATASSM3=ASSE_MATRICE(MATR_ELEM=MELM3,NUME_DDL=NUM3)
 #
 
 FREQ3=CALC_MODES(MATR_RIGI=MATASSR3,
-                 OPTION='AJUSTE',
+                 OPTION='AJUSTE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                  CALC_FREQ=_F(NMAX_FREQ=15,
                               FREQ=(0.1,3000.0,),
                               ),
@@ -577,15 +614,17 @@ INTERRE3=REST_SPEC_PHYS(         MODE_MECA=FREQ3,
 
 REP1=RECU_FONCTION(    INTE_SPEC=INTERRE1,
                             NOEUD_I = 'PB25',
+                            NOEUD_J = 'PB25',
                             NOM_CMP_I = 'DY',
                       )
 
 REP3=RECU_FONCTION(    INTE_SPEC=INTERRE3,
                             NOEUD_I = 'PB25',
                             NOM_CMP_I = 'DY',
+                            NOM_CMP_J = 'DY',
                       )
 
-TEST_FONCTION(VALEUR=_F(VALE_CALC=3.691346679753,
+TEST_FONCTION(VALEUR=_F(VALE_CALC=3.691346679570,
                         VALE_REFE=3.6913,
                         REFERENCE='AUTRE_ASTER',
                         VALE_PARA=5.0,
@@ -593,7 +632,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=3.691346679753,
                         FONCTION=REP1,),
               )
 
-TEST_FONCTION(VALEUR=_F(VALE_CALC=75.4391373345,
+TEST_FONCTION(VALEUR=_F(VALE_CALC=75.43911340159,
                         VALE_REFE=75.438999999999993,
                         REFERENCE='AUTRE_ASTER',
                         VALE_PARA=10.0,
@@ -601,7 +640,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=75.4391373345,
                         FONCTION=REP1,),
               )
 
-TEST_FONCTION(VALEUR=_F(VALE_CALC=1.677697469259,
+TEST_FONCTION(VALEUR=_F(VALE_CALC=1.677697469245,
                         VALE_REFE=1.6776,
                         REFERENCE='AUTRE_ASTER',
                         VALE_PARA=15.0,
@@ -609,7 +648,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=1.677697469259,
                         FONCTION=REP1,),
               )
 
-TEST_FONCTION(VALEUR=_F(VALE_CALC=1.136675356122,
+TEST_FONCTION(VALEUR=_F(VALE_CALC=1.136675355994,
                         VALE_REFE=1.1367,
                         REFERENCE='AUTRE_ASTER',
                         VALE_PARA=20.0,
@@ -617,7 +656,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=1.136675356122,
                         FONCTION=REP1,),
               )
 
-TEST_FONCTION(VALEUR=_F(VALE_CALC=0.29269259525658,
+TEST_FONCTION(VALEUR=_F(VALE_CALC=0.29269259525277,
                         VALE_REFE=0.29260000000000003,
                         REFERENCE='AUTRE_ASTER',
                         VALE_PARA=25.0,
@@ -625,7 +664,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=0.29269259525658,
                         FONCTION=REP1,),
               )
 
-TEST_FONCTION(VALEUR=_F(VALE_CALC=3.70524134758,
+TEST_FONCTION(VALEUR=_F(VALE_CALC=3.705241347541,
                         VALE_REFE=3.6913,
                         REFERENCE='AUTRE_ASTER',
                         VALE_PARA=5.0,
@@ -633,7 +672,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=3.70524134758,
                         FONCTION=REP3,),
               )
 
-TEST_FONCTION(VALEUR=_F(VALE_CALC=75.7975390778,
+TEST_FONCTION(VALEUR=_F(VALE_CALC=75.79753907733,
                         VALE_REFE=75.438999999999993,
                         REFERENCE='AUTRE_ASTER',
                         VALE_PARA=10.0,
@@ -641,7 +680,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=75.7975390778,
                         FONCTION=REP3,),
               )
 
-TEST_FONCTION(VALEUR=_F(VALE_CALC=1.6928744493,
+TEST_FONCTION(VALEUR=_F(VALE_CALC=1.692874449303,
                         VALE_REFE=1.6776,
                         REFERENCE='AUTRE_ASTER',
                         VALE_PARA=15.0,
@@ -649,7 +688,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=1.6928744493,
                         FONCTION=REP3,),
               )
 
-TEST_FONCTION(VALEUR=_F(VALE_CALC=1.09871332483,
+TEST_FONCTION(VALEUR=_F(VALE_CALC=1.098713324798,
                         VALE_REFE=1.1367,
                         REFERENCE='AUTRE_ASTER',
                         VALE_PARA=20.0,
@@ -657,7 +696,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=1.09871332483,
                         FONCTION=REP3,),
               )
 
-TEST_FONCTION(VALEUR=_F(VALE_CALC=0.262991181818,
+TEST_FONCTION(VALEUR=_F(VALE_CALC=0.26299118181513,
                         VALE_REFE=0.29260000000000003,
                         REFERENCE='AUTRE_ASTER',
                         VALE_PARA=25.0,

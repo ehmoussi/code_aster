@@ -25,7 +25,7 @@ subroutine nmprta(modele    , numedd         , numfix    , mate       , carele,&
                   rescvg    )
 !
 use NonLin_Datastructure_type
-use ROM_Datastructure_type
+use Rom_Datastructure_type
 !
 implicit none
 !
@@ -162,7 +162,7 @@ implicit none
 !
     call nmprma(modele     , mate    , carele, ds_constitutive,&
                 ds_algopara, lischa  , numedd, numfix, solveu,&
-                comref     , ds_print, ds_measure, sddisc,&
+                comref     , ds_print, ds_measure, ds_algorom, sddisc,&
                 sddyna     , numins  , fonact, ds_contact,&
                 valinc     , solalg  , veelem, meelem, measse,&
                 maprec     , matass  , faccvg, ldccvg)
@@ -192,7 +192,8 @@ implicit none
     call nmassp(modele         , numedd, mate  , carele    , comref    ,&
                 ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
                 sddyna         , valinc, solalg, veelem    , veasse    ,&
-                ldccvg         , cnpilo, cndonn, sdnume    , matass)
+                ldccvg         , cnpilo, cndonn, sdnume    , matass    ,&
+                ds_algorom)
 !
 ! --- INCREMENT DE DEPLACEMENT NUL EN PREDICTION
 !

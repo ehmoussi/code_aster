@@ -15,21 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine vfgetr(maxdim, ndim, nbnos, xs, t,&
-                      xg, surf, norm, xgf, d)
-        integer :: nbnos
-        integer :: maxdim
-        integer :: ndim
-        real(kind=8) :: xs(1:maxdim, nbnos)
-        real(kind=8) :: t(1:maxdim, 2)
-        real(kind=8) :: xg(1:maxdim)
-        real(kind=8) :: surf
-        real(kind=8) :: norm(1:maxdim)
-        real(kind=8) :: xgf(1:maxdim)
-        real(kind=8) :: d
+    subroutine vfgetr(xs  , t   , xg ,&
+                      surf, norm, xgf, d)
+        real(kind=8), intent(in) :: xs(3, 3), t(3, 2), xg(3)
+        real(kind=8), intent(out) :: surf, norm(3), xgf(3), d
     end subroutine vfgetr
 end interface

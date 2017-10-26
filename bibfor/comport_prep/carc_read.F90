@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine carc_read(ds_compor_para, model_, l_implex_)
 !
 use NonLin_Datastructure_type
@@ -23,7 +24,7 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/comp_read_typmod.h"
+#include "asterfort/getExternalBehaviourPara.h"
 #include "asterfort/dismoi.h"
 #include "asterc/getexm.h"
 #include "asterfort/assert.h"
@@ -31,25 +32,20 @@ implicit none
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
 #include "asterc/lcalgo.h"
-#include "asterc/lccree.h"
 #include "asterc/lctest.h"
 #include "asterc/lcsymm.h"
 #include "asterfort/jeveuo.h"
 #include "asterc/lcdiscard.h"
-#include "asterc/umat_get_function.h"
-#include "asterc/mfront_get_pointers.h"
-#include "asterc/mfront_set_outofbounds_policy.h"
 #include "asterfort/comp_meca_l.h"
 #include "asterfort/comp_meca_rkit.h"
-#include "asterfort/comp_read_exte.h"
+#include "asterfort/comp_meca_code.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/deprecated_algom.h"
 !
-!
-    type(NL_DS_ComporParaPrep), intent(inout) :: ds_compor_para
-    character(len=8), intent(in), optional :: model_
-    aster_logical, intent(in), optional :: l_implex_
+type(NL_DS_ComporParaPrep), intent(inout) :: ds_compor_para
+character(len=8), intent(in), optional :: model_
+aster_logical, intent(in), optional :: l_implex_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -66,26 +62,24 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=16) :: keywordfact=' ', answer
-    integer :: i_comp=0, iret=0, nb_comp=0, model_dim=0
-    integer :: cptr_nbvarext=0, cptr_namevarext=0, cptr_fct_ldc=0
-    integer :: cptr_matprop=0, cptr_nbprop=0, nbval = 0
-    character(len=16) :: algo_inte=' ', type_matr_tang=' ', method=' ', post_iter=' ', post_incr=' '
+    integer :: i_comp=0, iret=0, nb_comp=0
+    character(len=16) :: type_matr_tang=' ', method=' ', post_iter=' ', post_incr=' '
     real(kind=8) :: parm_theta=0.d0, vale_pert_rela=0.d0
-    real(kind=8) :: resi_deborst_max=0.d0, seuil=0.d0
-    real(kind=8) :: parm_alpha=0.d0, resi_radi_rela=0.d0
+    real(kind=8) :: resi_deborst_max=0.d0
+    real(kind=8) :: resi_radi_rela=0.d0
+    real(kind=8) :: parm_theta_thm=0.d0, parm_alpha_thm=0.d0
     integer :: type_matr_t=0, iter_inte_pas=0, iter_deborst_max=0
-    integer :: ipostiter=0, ipostincr=0
+    integer :: ipostiter=0, ipostincr=0, iveriborne=0
     character(len=8) :: mesh = ' '
-    character(len=16) :: rela_comp=' ', rela_comp_py=' '
-    character(len=16) :: defo_comp=' ', defo_comp_py=' '
-    character(len=16) :: veri_b=' '
-    character(len=16) :: kit_comp(9) = (/' ',' ',' ',' ',' ',' ',' ',' ',' '/)
-    character(len=16):: rela_thmc=' ', rela_hydr=' ', rela_ther=' ', rela_meca=' ', rela_meca_py=' '
-    aster_logical :: l_kit_thm=.false._1, l_mfront_proto=.false._1, l_kit_ddi = .false._1
-    aster_logical :: l_mfront_offi=.false._1, l_umat=.false._1, l_kit = .false._1, l_matr_unsymm
-    aster_logical :: l_implex
-    character(len=16) :: texte(3)=(/ ' ',' ',' '/), model_mfront=' '
-    character(len=255) :: libr_name=' ', subr_name=' '
+    character(len=16) :: rela_code_py=' ', defo_code_py=' ', meca_code_py=' '
+    character(len=16) :: veri_borne=' '
+    character(len=16) :: kit_comp(4) = (/'VIDE','VIDE','VIDE','VIDE'/)
+    character(len=16) :: defo_comp=' ',  rela_comp=' '
+    character(len=16) :: thmc_comp=' ', hydr_comp=' ', ther_comp=' ', meca_comp=' '
+    aster_logical :: l_kit_thm=ASTER_FALSE, l_kit_ddi = ASTER_FALSE, l_thm = ASTER_FALSE
+    aster_logical :: l_kit = ASTER_FALSE, l_matr_unsymm
+    aster_logical :: l_implex, l_comp_external
+    character(len=16) :: texte(3)=(/ ' ',' ',' '/)
     integer, pointer :: v_model_elem(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -93,7 +87,8 @@ implicit none
     keywordfact = 'COMPORTEMENT'
     nb_comp     = ds_compor_para%nb_comp
     mesh        = ' '
-    l_implex    = .false.
+    l_implex    = ASTER_FALSE
+    l_thm       = ASTER_FALSE
     if (present(l_implex_)) then
         l_implex = l_implex_
     endif
@@ -119,57 +114,51 @@ implicit none
         call comp_meca_l(rela_comp, 'KIT'    , l_kit)
         call comp_meca_l(rela_comp, 'KIT_THM', l_kit_thm)
         call comp_meca_l(rela_comp, 'KIT_DDI', l_kit_ddi)
+        if (l_kit_thm) then
+            l_thm = ASTER_TRUE
+        endif
 !
-! ----- Coding comportment (Python)
+! ----- For KIT
 !
-        call lccree(1, rela_comp, rela_comp_py)
-        call lccree(1, defo_comp, defo_comp_py)
+        if (l_kit) then
+            call comp_meca_rkit(keywordfact, i_comp, rela_comp, kit_comp)
+        endif
 !
 ! ----- Get mechanics part
 !
         if (l_kit_thm) then
-            call comp_meca_rkit(keywordfact, i_comp, rela_comp, kit_comp)
-            rela_thmc = kit_comp(1)
-            rela_ther = kit_comp(2)
-            rela_hydr = kit_comp(3)
-            rela_meca = kit_comp(4)
+            thmc_comp = kit_comp(1)
+            ther_comp = kit_comp(2)
+            hydr_comp = kit_comp(3)
+            meca_comp = kit_comp(4)
         elseif (l_kit_ddi) then
-            call comp_meca_rkit(keywordfact, i_comp, rela_comp, kit_comp)
-            rela_meca = kit_comp(1)
+            meca_comp = kit_comp(1)
         else
-            rela_meca = rela_comp
+            meca_comp = rela_comp
         endif
-        call lccree(1, rela_meca, rela_meca_py)
 !
-! ----- Get ALGO_INTE
+! ----- Coding comportment (Python)
 !
-        call getvtx(keywordfact, 'ALGO_INTE', iocc = i_comp, scal = algo_inte, nbret = iret)
-        if (iret .eq. 0) then
-            call lcalgo(rela_comp_py, algo_inte)
-        else  
-            call lctest(rela_meca_py, 'ALGO_INTE', algo_inte, iret)
-            if (iret .eq. 0) then
-                texte(1) = algo_inte
-                texte(2) = 'ALGO_INTE'
-                texte(3) = rela_comp
-                call utmess('F', 'COMPOR1_45', nk = 3, valk = texte)
-            endif
-        endif
+        call comp_meca_code(rela_comp_    = rela_comp   ,&
+                            defo_comp_    = defo_comp   ,&
+                            meca_comp_    = meca_comp   ,&
+                            rela_code_py_ = rela_code_py,&
+                            defo_code_py_ = defo_code_py,&
+                            meca_code_py_ = meca_code_py)
 !
 ! ----- Symmetric or not ?
 !
         l_matr_unsymm = .false.
-        call lcsymm(rela_comp_py, answer)
+        call lcsymm(rela_code_py, answer)
         l_matr_unsymm = l_matr_unsymm .or. answer .eq. 'No'
-        call lcsymm(rela_meca_py, answer)
+        call lcsymm(meca_code_py, answer)
         l_matr_unsymm = l_matr_unsymm .or. answer .eq. 'No'
-        call lcsymm(defo_comp_py, answer)
+        call lcsymm(defo_code_py, answer)
         l_matr_unsymm = l_matr_unsymm .or. answer .eq. 'No'
         call getvtx(keywordfact, 'SYME_MATR_TANG', iocc = i_comp, scal = answer, nbret = iret)
         if (iret .ne. 0) then
             l_matr_unsymm = l_matr_unsymm .or. answer .eq. 'NON'
         endif
-        call lcdiscard(rela_meca_py)
 !
 ! ----- Get ITER_INTE_PAS
 !
@@ -210,7 +199,7 @@ implicit none
             else
                 ASSERT(.false.)
             endif
-            call lctest(rela_comp_py, 'TYPE_MATR_TANG', type_matr_tang, iret)
+            call lctest(rela_code_py, 'TYPE_MATR_TANG', type_matr_tang, iret)
             if (iret .eq. 0) then
                 texte(1) = type_matr_tang
                 texte(2) = rela_comp
@@ -229,7 +218,7 @@ implicit none
             else
                 type_matr_t = 9
             endif
-            call lctest(rela_comp_py, 'TYPE_MATR_TANG', method, iret)
+            call lctest(rela_code_py, 'TYPE_MATR_TANG', method, iret)
             if ((iret.eq.0) .and. (rela_comp.ne.'SANS')) then
                 texte(1) = type_matr_tang
                 texte(2) = method
@@ -237,22 +226,18 @@ implicit none
             endif
         endif
 !
-! ----- Get PARM_THETA/PARM_ALPHA
+! ----- Get PARM_THETA (for viscous laws)
 !
         parm_theta = 1.d0
-        parm_alpha = 1.d0
         call getvr8(keywordfact, 'PARM_THETA', iocc = i_comp, scal = parm_theta)
-        call getvr8(keywordfact, 'PARM_ALPHA', iocc = i_comp, scal = parm_alpha)
 !
 ! ----- Get RESI_RADI_RELA
 !
         if (type_matr_t .eq. 0) then
             call getvr8(keywordfact, 'RESI_RADI_RELA', iocc = i_comp, scal = resi_radi_rela,&
                         nbret = iret)
-            if (iret .ne. 0) then
-                seuil = resi_radi_rela
-            else
-                seuil = -10.d0
+            if (iret .eq. 0) then
+                resi_radi_rela = -10.d0
             endif
         endif
 !
@@ -284,89 +269,66 @@ implicit none
             endif
         endif
 !
-! ----- For KIT
+! ----- Get VERI_BORNE
 !
-        if (l_kit) then
-            call comp_meca_rkit(keywordfact, i_comp, rela_comp, kit_comp)
+        iveriborne = 0
+        if (getexm(keywordfact,'VERI_BORNE') .eq. 1) then
+            call getvtx(keywordfact, 'VERI_BORNE', iocc = i_comp, scal = veri_borne, nbret = iret )
+            if (iret .eq. 0) then
+                iveriborne = 2
+            else
+                if ( veri_borne .eq. 'ARRET' ) then
+                    iveriborne = 2
+                elseif ( veri_borne .eq. 'MESSAGE' ) then
+                    iveriborne = 1
+                else
+                    iveriborne = 0
+                endif
+            endif
         endif
 !
 ! ----- Get parameters for external programs (MFRONT/UMAT)
 !
-        call comp_read_exte(rela_comp  , kit_comp ,&
-                            l_umat     , l_mfront_proto , l_mfront_offi,&
-                            libr_name  , subr_name,&
-                            keywordfact, i_comp   )
+        call getExternalBehaviourPara(mesh           , v_model_elem, rela_comp, kit_comp,&
+                                      l_comp_external, ds_compor_para%v_para(i_comp)%comp_exte,&
+                                      keywordfact    , i_comp)
 !
-! ----- Get model for MFRONT
+! ----- Discard
 !
-        if (l_mfront_proto .or. l_mfront_offi) then
-            call comp_read_typmod(mesh       , v_model_elem,&
-                                  keywordfact, i_comp      , rela_comp,&
-                                  model_dim  , model_mfront)
-        endif
-!
-! ----- Get function pointers for external programs (MFRONT/UMAT)
-!
-        cptr_nbvarext   = 0
-        cptr_namevarext = 0
-        cptr_fct_ldc    = 0
-        if ( l_mfront_offi .or. l_mfront_proto) then
-            call mfront_get_pointers(libr_name, subr_name, model_mfront,&
-                                     cptr_nbvarext, cptr_namevarext,&
-                                     cptr_fct_ldc,&
-                                     cptr_matprop, cptr_nbprop)
-            call getvtx(keywordfact, 'VERI_BORNE', iocc = i_comp,&
-                        scal = veri_b, nbret = nbval )
-            if ( nbval.eq.0 ) then
-                call mfront_set_outofbounds_policy(libr_name, subr_name, model_mfront, 2)
-            else
-                if ( veri_b.eq.'ARRET' ) then
-                    call mfront_set_outofbounds_policy(libr_name, subr_name, model_mfront, 2)
-                elseif ( veri_b.eq.'MESSAGE' ) then
-                    call mfront_set_outofbounds_policy(libr_name, subr_name, model_mfront, 1)
-                else
-                    call mfront_set_outofbounds_policy(libr_name, subr_name, model_mfront, 0)
-                endif
-            endif
-        elseif ( l_umat ) then
-            call umat_get_function(libr_name, subr_name, cptr_fct_ldc)
-        endif
-!
-! ----- Ban if RELATION = MFRONT and ITER_INTE_PAS negative
-!
-        if (iter_inte_pas .lt. 0.d0) then
-            if ( l_mfront_offi .or. l_mfront_proto) then
-                call utmess('F', 'COMPOR1_95')
-            end if
-        end if
-!
-        call lcdiscard(rela_comp_py)
+        call lcdiscard(meca_code_py)
+        call lcdiscard(rela_code_py)
+        call lcdiscard(defo_code_py)
 !
 ! ----- Save options in list
 !
+        ds_compor_para%v_para(i_comp)%l_comp_external          = l_comp_external
         ds_compor_para%v_para(i_comp)%type_matr_t              = type_matr_t
-        ds_compor_para%v_para(i_comp)%parm_alpha               = parm_alpha
         ds_compor_para%v_para(i_comp)%parm_theta               = parm_theta
         ds_compor_para%v_para(i_comp)%iter_inte_pas            = iter_inte_pas
         ds_compor_para%v_para(i_comp)%vale_pert_rela           = vale_pert_rela
         ds_compor_para%v_para(i_comp)%resi_deborst_max         = resi_deborst_max
         ds_compor_para%v_para(i_comp)%iter_deborst_max         = iter_deborst_max
-        ds_compor_para%v_para(i_comp)%seuil                    = seuil
-        ds_compor_para%v_para(i_comp)%post_iter                = ipostiter
-        ds_compor_para%v_para(i_comp)%post_incr                = ipostincr
-        ds_compor_para%v_para(i_comp)%c_pointer%nbvarext       = cptr_nbvarext
-        ds_compor_para%v_para(i_comp)%c_pointer%namevarext     = cptr_namevarext
-        ds_compor_para%v_para(i_comp)%c_pointer%fct_ldc        = cptr_fct_ldc
-        ds_compor_para%v_para(i_comp)%c_pointer%matprop        = cptr_matprop
-        ds_compor_para%v_para(i_comp)%c_pointer%nbprop         = cptr_nbprop
+        ds_compor_para%v_para(i_comp)%resi_radi_rela           = resi_radi_rela
+        ds_compor_para%v_para(i_comp)%ipostiter                = ipostiter
+        ds_compor_para%v_para(i_comp)%ipostincr                = ipostincr
+        ds_compor_para%v_para(i_comp)%iveriborne               = iveriborne
         ds_compor_para%v_para(i_comp)%rela_comp                = rela_comp
-        ds_compor_para%v_para(i_comp)%algo_inte                = algo_inte
+        ds_compor_para%v_para(i_comp)%meca_comp                = meca_comp
+        ds_compor_para%v_para(i_comp)%defo_comp                = defo_comp
+        ds_compor_para%v_para(i_comp)%kit_comp(1:4)            = kit_comp(1:4)
         ds_compor_para%v_para(i_comp)%l_matr_unsymm            = l_matr_unsymm
-        ds_compor_para%v_para(i_comp)%comp_exte%nb_vari_umat   = 0
-        ds_compor_para%v_para(i_comp)%comp_exte%libr_name      = libr_name 
-        ds_compor_para%v_para(i_comp)%comp_exte%subr_name      = subr_name
-        ds_compor_para%v_para(i_comp)%comp_exte%model_mfront   = model_mfront
-        ds_compor_para%v_para(i_comp)%comp_exte%model_dim      = model_dim
     end do
+!
+! - Read SCHEMA_THM
+!
+    if (l_thm) then
+        keywordfact    = 'SCHEMA_THM'
+        parm_theta_thm = 1.d0
+        call getvr8(keywordfact, 'PARM_THETA', iocc = 1, scal = parm_theta_thm, nbret = iret)
+        parm_alpha_thm = 1.d0
+        call getvr8(keywordfact, 'PARM_ALPHA', iocc = 1, scal = parm_alpha_thm, nbret = iret)
+        ds_compor_para%parm_theta_thm = parm_theta_thm
+        ds_compor_para%parm_alpha_thm = parm_alpha_thm
+    endif
 !
 end subroutine

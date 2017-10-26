@@ -17,11 +17,13 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'ARME',
-    doc            =   """Relation de comportement élasto-plastique isotherme pour les armements de lignes [R5.03.31]"""      ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """Relation de comportement élasto-plastique isotherme pour les armements de lignes [R5.03.31]"""            ,
     num_lc         = 0,
     nb_vari        = 1,
     nom_vari       = ('DUY',),
@@ -32,4 +34,5 @@ loi = LoiComportement(
     type_matr_tang = None,
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

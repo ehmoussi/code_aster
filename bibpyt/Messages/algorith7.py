@@ -22,17 +22,6 @@
 cata_msg = {
 
 
-    4 : _(u"""
- DEBORST non compatible avec couplage UMLV/Mazars.
- Mais le traitement analytique est réalisé, il suffit de supprimer le
- mot-clé DEBORST),
-
-"""),
-    5 : _(u"""
- pas de C_PLAN pour ENDO_ISOT_BETON
- utiliser C_PLAN_DEBORST
-"""),
-
     7 : _(u"""
  pas d'orthotropie non linéaire
 """),

@@ -158,6 +158,10 @@ SOLNL1=STAT_NON_LINE(
 SOLNL1=CALC_CHAMP(reuse=SOLNL1,RESULTAT=SOLNL1,CONTRAINTE=('SIGM_ELNO'),VARI_INTERNE=('VARI_ELNO'),DEFORMATION=('EPSI_ELNO','EPSP_ELGA','EPSP_ELNO'))
 
 
+
+
+
+
 #
 ENGENDRE_TEST (  CO = SOLNL1, )
 
@@ -295,5 +299,38 @@ TEST_RESU(RESU=(_F(INST=2.,
                    MAILLE='MA1',),
                 ),
           )
+
+TEST_RESU(RESU=(_F(INST=2.,
+                   NOEUD='NO1',
+                   RESULTAT=SOLNL1,
+                   NOM_CHAM='EPSP_ELNO',
+                   NOM_CMP='EPXX',
+                   VALE_CALC=1.06044313508154E-06,
+                   MAILLE='MA1',),
+                ),
+          )
+
+
+IMPR_RESU( FORMAT='MED', UNITE=81,  RESU=_F(RESULTAT=SOLNL1))
+SOLNLMED=LIRE_RESU(TYPE_RESU='EVOL_NOLI', FORMAT='MED',  UNITE=81,
+              MODELE=TROISD, TOUT_ORDRE='OUI',
+              FORMAT_MED=(
+                   _F(NOM_RESU='SOLNL1', NOM_CHAM='EPSP_ELNO'),
+              )
+              );
+
+#IMPR_RESU(FORMAT='RESULTAT', RESU=_F(RESULTAT=SOLNL1, NOM_CHAM='EPSP_ELNO'), )
+TEST_RESU(RESU=(_F(INST=2.,
+                   NOEUD='NO1',
+                   RESULTAT=SOLNLMED,
+                   NOM_CHAM='EPSP_ELNO',
+                   NOM_CMP='EPXX',
+                   VALE_CALC=1.06044313508154E-06,
+                   MAILLE='MA1',),
+                ),
+          )
+
+
+
 
 FIN()

@@ -115,6 +115,7 @@ MODE_SO=CALC_MODES(INFO=1,
                                 FREQ=10.,
                                 ),
                    MATR_MASS=MATRMASS,
+                   SOLVEUR=_F(METHODE='MUMPS',ELIM_LAGR='NON',),
                    SOLVEUR_MODAL=_F(METHODE='SORENSEN',
                                     ),
                    )

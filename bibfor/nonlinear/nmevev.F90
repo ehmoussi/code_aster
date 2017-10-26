@@ -31,6 +31,7 @@ implicit none
 #include "asterfort/nmevel.h"
 #include "asterfort/nmlecv.h"
 #include "asterfort/nmltev.h"
+#include "asterfort/nmcrel.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -82,6 +83,8 @@ implicit none
     call nmltev(sderro, 'ERRC', loop_name, lerror)
     if (conver .and. lerror) then
         lerrcv = .true.
+        call nmcrel(sderro, 'INTE_NPHY', ASTER_FALSE)
+        call nmcrel(sderro, 'ERRE_NPHY', ASTER_TRUE)
     else
         lerrcv = .false.
     endif

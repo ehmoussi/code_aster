@@ -43,14 +43,6 @@ CCARCRI = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
                             'INTLOC', 'PERTURB', 'TOLDEBO', 'ITEDEBO', 'TSSEUIL',
                             'TSAMPL', 'TSRETOUR', 'POSTITER', 'LC_EXT[3]', 'MODECALC',))
 
-
-CCOMPOR = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
-                            components=(
-                                'RELCOM', 'NBVARI', 'DEFORM', 'INCELA', 'C_PLAN',
-                            'NUME_LC', 'SD_COMP', 'KIT[9]', 'NVI_C', 'NVI_T',
-                            'NVI_H', 'NVI_M',))
-
-
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO', diff=True,
                              components=(
                              ('EN1', ('DX', 'DY', 'PRE1', 'H1X', 'H1Y',
@@ -313,7 +305,7 @@ class HM_DPTR6_XH1(Element):
                      para_in=(
                      (OP.FORC_NODA.PBASLOR, LC.N6NEUT_R), (
                      OP.FORC_NODA.PCNSETO, LC.E144NEUI),
-                     (OP.FORC_NODA.PCOMPOR, CCOMPOR), (
+                     (OP.FORC_NODA.PCOMPOR, LC.CCOMPOR), (
                      OP.FORC_NODA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (OP.FORC_NODA.PFISNO, LC.FISNO_I),
                      (SP.PGEOMER, NGEOMER), (OP.FORC_NODA.PHEAVTO, E24NEUI),
@@ -336,7 +328,7 @@ class HM_DPTR6_XH1(Element):
                          SP.PCAMASS, CCAMASS),
                      (SP.PCARCRI, CCARCRI), (
                      OP.FULL_MECA.PCNSETO, LC.E144NEUI),
-                     (OP.FULL_MECA.PCOMPOR, CCOMPOR), (
+                     (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (
                      OP.FULL_MECA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (OP.FULL_MECA.PFISNO, LC.FISNO_I), (SP.PGEOMER, NGEOMER),
@@ -363,7 +355,7 @@ class HM_DPTR6_XH1(Element):
 
         OP.INDL_ELGA(te=30,
                      para_in=(
-                     (OP.INDL_ELGA.PCOMPOR, CCOMPOR), (
+                     (OP.INDL_ELGA.PCOMPOR, LC.CCOMPOR), (
                      OP.INDL_ELGA.PCONTPR, ESIGMPG),
                      (SP.PMATERC, LC.CMATERC), (OP.INDL_ELGA.PVARIPR, ZVARIPG),
                      ),
@@ -398,7 +390,7 @@ class HM_DPTR6_XH1(Element):
                          SP.PCAMASS, CCAMASS),
                      (SP.PCARCRI, CCARCRI), (
                      OP.RAPH_MECA.PCNSETO, LC.E144NEUI),
-                     (OP.RAPH_MECA.PCOMPOR, CCOMPOR), (
+                     (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR), (
                      OP.RAPH_MECA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (OP.RAPH_MECA.PHEAVTO, E24NEUI),
@@ -427,7 +419,7 @@ class HM_DPTR6_XH1(Element):
                           SP.PCAMASS, CCAMASS),
                           (SP.PCARCRI, CCARCRI), (
                           OP.RIGI_MECA_TANG.PCNSETO, LC.E144NEUI),
-                          (OP.RIGI_MECA_TANG.PCOMPOR, CCOMPOR), (
+                          (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (
                           OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
                           (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                           (OP.RIGI_MECA_TANG.PFISNO, LC.FISNO_I), (
@@ -456,7 +448,7 @@ class HM_DPTR6_XH1(Element):
                      (OP.SIEF_ELGA.PBASLOR, LC.N6NEUT_R), (
                          SP.PCAMASS, CCAMASS),
                      (OP.SIEF_ELGA.PCNSETO, LC.E144NEUI), (
-                     OP.SIEF_ELGA.PCOMPOR, CCOMPOR),
+                     OP.SIEF_ELGA.PCOMPOR, LC.CCOMPOR),
                      (SP.PDEPLAR, DDL_MECA), (OP.SIEF_ELGA.PFISNO, LC.FISNO_I),
                      (SP.PGEOMER, NGEOMER), (OP.SIEF_ELGA.PHEAVTO, E24NEUI),
                      (OP.SIEF_ELGA.PLONCHA, LC.E10NEUTI), (
@@ -569,7 +561,7 @@ class HM_DPTR6_XH1(Element):
 
         OP.VAEX_ELGA(te=549,
                      para_in=(
-                         (OP.VAEX_ELGA.PCOMPOR, CCOMPOR), (
+                         (OP.VAEX_ELGA.PCOMPOR, LC.CCOMPOR), (
                              SP.PNOVARI, E1NEUTK),
                      (SP.PVARIGR, ZVARIPG), ),
                      para_out=((SP.PVARIGS, LC.E1GNEUT), ),
@@ -577,7 +569,7 @@ class HM_DPTR6_XH1(Element):
 
         OP.VAEX_ELNO(te=549,
                      para_in=(
-                         (OP.VAEX_ELNO.PCOMPOR, CCOMPOR), (
+                         (OP.VAEX_ELNO.PCOMPOR, LC.CCOMPOR), (
                              SP.PNOVARI, E1NEUTK),
                      (OP.VAEX_ELNO.PVARINR, LC.ZVARINO), ),
                      para_out=((SP.PVARINS, LC.E1NNEUT), ),

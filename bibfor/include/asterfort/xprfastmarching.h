@@ -19,13 +19,12 @@
 !
 !
 interface
-   subroutine xprfastmarching(cmnd, noma, fispre, cnxinv, noesom,&
+   subroutine xprfastmarching(cmnd, noma, cnxinv, noesom,&
                            lcmin, cnsln, grln, cnslt, grlt,&
                            isozro, nodtor,eletor, liggrd,&
-                           vpoint, cnsbl ,deltat ,cnsbet ,listp)
+                           vpoint, cnsbl ,cnsbet ,listp)
        character(len=8)  :: cmnd
        character(len=8)  :: noma
-       character(len=8)  :: fispre
        character(len=19) :: cnxinv
        character(len=19) :: noesom   
        real(kind=8)      :: lcmin   
@@ -39,7 +38,6 @@ interface
        character(len=19) :: liggrd       
        character(len=19) :: vpoint
        character(len=19) :: cnsbl
-       real(kind=8)      :: deltat
        character(len=19) :: cnsbet
        character(len=19) :: listp
    end subroutine

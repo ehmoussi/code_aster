@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine medime(base, cumul, model, list_load, matr_elem)
 !
 implicit none
@@ -36,13 +37,11 @@ implicit none
 #include "asterfort/memare.h"
 #include "asterfort/reajre.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=1), intent(in) :: base
-    character(len=4), intent(in) :: cumul
-    character(len=24), intent(in) :: model
-    character(len=19), intent(in) :: list_load
-    character(len=19), intent(in) :: matr_elem
+character(len=1), intent(in) :: base
+character(len=4), intent(in) :: cumul
+character(len=24), intent(in) :: model
+character(len=19), intent(in) :: list_load
+character(len=19), intent(in) :: matr_elem
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -62,16 +61,16 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nbout, nbin
-    parameter    (nbout=1, nbin=1)
+    integer, parameter :: nbin = 1
+    integer, parameter :: nbout = 1
     character(len=8) :: lpaout(nbout), lpain(nbin)
     character(len=19) :: lchout(nbout), lchin(nbin)
 !
     character(len=8) :: load_name
     character(len=16) :: option
     character(len=19) :: ligrch, resu_elem
-    integer :: iret, ilires, load_nume
-    integer :: nluti, nb_load, i_load
+    integer :: iret, i_resu_elem, load_nume
+    integer :: nb_load, i_load
     character(len=24), pointer :: v_load_name(:) => null()
     integer, pointer :: v_load_info(:) => null()
     aster_logical :: load_empty
@@ -87,8 +86,7 @@ implicit none
 !
 ! - Init fields
 !
-    call inical(nbin, lpain, lchin, nbout, lpaout,&
-                lchout)
+    call inical(nbin, lpain, lchin, nbout, lpaout, lchout)
 !
 ! - Loads
 !
@@ -98,31 +96,31 @@ implicit none
         goto 99
     endif
 !
+! - Prepare MATR_ELEM
+!
+    if (cumul .eq. 'ZERO') then
+        call jedetr(matr_elem(1:19)//'.RELR')
+        call memare(base, matr_elem, model, ' ', ' ', 'RIGI_MECA')
+        call reajre(matr_elem, ' ', base)
+    endif
+!
+! - Prepare RESU_ELEM
+!
+    if (cumul .eq. 'ZERO') then
+        i_resu_elem = 0
+    else if (cumul.eq.'CUMU') then
+        call jelira(matr_elem(1:19)//'.RELR', 'LONUTI', i_resu_elem)
+        i_resu_elem = i_resu_elem + 1
+    else
+        ASSERT(.false.)
+    endif
+!
 ! - Output field
 !
     lpaout(1) = 'PMATUUR'
 !
-! - Allocate result
+! - Loop on loads
 !
-    if (cumul .eq. 'ZERO') then
-        call jedetr(matr_elem//'.RELR')
-        call memare(base, matr_elem, model, ' ', ' ',&
-                    'RIGI_MECA')
-        call reajre(matr_elem, ' ', base)
-    endif
-    if (cumul .eq. 'ZERO') then
-        nluti = 1
-    else if (cumul.eq.'CUMU') then
-        call jelira(matr_elem//'.RELR', 'LONUTI', nluti)
-        nluti = nluti+1
-        call codent(nluti+1, 'D0', lchout(1) (12:14))
-    else
-        ASSERT(.false.)
-    endif
-!3
-! - Computation
-!
-    ilires = nluti-1
     do i_load = 1, nb_load
         load_name = v_load_name(i_load)(1:8)
         load_nume = v_load_info(i_load+1) 
@@ -140,8 +138,8 @@ implicit none
 !
 ! --------- Generate new RESU_ELEM name
 !
-            ASSERT(ilires+1.le.9999999)
-            call codent(ilires+1, 'D0', resu_elem(10:16))
+            ASSERT(i_resu_elem.le.9999999)
+            call codent(i_resu_elem, 'D0', resu_elem(10:16))
             lchout(1) = resu_elem
 !
 ! --------- Computation
@@ -150,10 +148,10 @@ implicit none
                         lpain, nbout, lchout, lpaout, base,&
                         'OUI')
 !
-! --------- Copying resu_elem
+! --------- Save RESU_ELEM
 !
             call reajre(matr_elem, lchout(1), base)
-            ilires = ilires + 1
+            i_resu_elem = i_resu_elem + 1
         endif
     end do
  99 continue

@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine dbr_DSInit(ds_para)
 !
 use Rom_Datastructure_type
@@ -28,6 +29,7 @@ implicit none
 #include "asterfort/romSnapDSInit.h"
 #include "asterfort/dbr_paraPODDSInit.h"
 #include "asterfort/dbr_paraRBDSInit.h"
+#include "asterfort/dbr_paraTRDSInit.h"
 #include "asterfort/dbr_paraDSInit.h"
 #include "asterfort/romMultiParaDSInit.h"
 #include "asterfort/romSolveDSInit.h"
@@ -36,9 +38,7 @@ implicit none
 #include "asterfort/romEvalCoefDSInit.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaDBR), intent(out) :: ds_para
+type(ROM_DS_ParaDBR), intent(out) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -58,6 +58,7 @@ implicit none
     type(ROM_DS_LineicNumb)  :: ds_lineicnumb
     type(ROM_DS_ParaDBR_POD) :: ds_para_pod
     type(ROM_DS_ParaDBR_RB)  :: ds_para_rb
+    type(ROM_DS_ParaDBR_TR)  :: ds_para_tr
     type(ROM_DS_Solve)       :: ds_solveROM, ds_solveDOM
     type(ROM_DS_MultiPara)   :: ds_multipara
     type(ROM_DS_MultiCoef)   :: ds_multicoef_v, ds_multicoef_m
@@ -112,10 +113,15 @@ implicit none
 !
 ! - Initialization of datastructures for RB parameters
 !
-    call dbr_paraRBDSInit(ds_multipara, ds_solveDOM, ds_solveROM, ds_para_rb)    
+    call dbr_paraRBDSInit(ds_multipara, ds_solveDOM, ds_solveROM, ds_para_rb)
+!
+! - Initialization of datastructures for truncation parameters
+!
+    call dbr_paraTRDSInit(ds_para_tr)   
 !
 ! - Initialization of datastructures for parameters
 !
-    call dbr_paraDSInit(ds_empi, ds_para_pod, ds_para_rb, ds_para)
+    call dbr_paraDSInit(ds_empi, ds_para_pod, ds_para_rb, ds_para_tr,&
+                        ds_para)
 !
 end subroutine

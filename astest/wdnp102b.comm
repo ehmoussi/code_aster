@@ -233,6 +233,7 @@ UBID=STAT_NON_LINE(MODELE=MODELE,
                  INCREMENT=_F(LIST_INST=TANBID),
                  NEWTON=_F(MATRICE='TANGENTE',
                            REAC_ITER=1),
+                 SOLVEUR=_F(NPREC=-1),
                  CONVERGENCE=_F(RESI_GLOB_RELA = 1.E-10,
                                 ARRET='OUI'));
 

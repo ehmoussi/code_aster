@@ -15,86 +15,74 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine dflld2(sdlist, ifm, iechec)
 !
+subroutine dflld2(sdlist, i_fail)
 !
-    implicit none
-#include "jeveux.h"
+implicit none
+!
+#include "asterf_types.h"
+#include "event_def.h"
 #include "asterfort/assert.h"
-#include "asterfort/dfllvd.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
-    character(len=8) :: sdlist
-    integer :: ifm, iechec
+#include "asterfort/utmess.h"
 !
-! ----------------------------------------------------------------------
+character(len=8), intent(in) :: sdlist
+integer, intent(in) :: i_fail
 !
-! OPERATEUR DEFI_LIST_INST
+! --------------------------------------------------------------------------------------------------
 !
-! IMPRESSION DEBUG - OPTIONS DE DECOUPE
+! DEFI_LIST_INST
 !
-! ----------------------------------------------------------------------
+! Print for time step cutting
 !
-! IN  SDLIST : NOM DE LA SD RESULTAT
-! IN  IFM    : UNITE LOGIQUE AFFICHAGE
+! --------------------------------------------------------------------------------------------------
 !
+! In  sdlist           : name of DEFI_LIST_INST datastructure
+! In  i_fail           : current event
 !
+! --------------------------------------------------------------------------------------------------
 !
+    character(len=24) :: sdlist_esubdr
+    real(kind=8), pointer :: v_sdlist_esubdr(:) => null()
+    character(len=24) :: sdlist_linfor
+    real(kind=8), pointer :: v_sdlist_linfor(:) => null()
+    real(kind=8) :: subd_pas_mini, subd_inst, subd_duree
+    integer :: subd_niveau, subd_pas, subd_auto
 !
-    character(len=24) :: lisifr
-    integer :: jlinr
-    integer :: lesur
-    character(len=24) :: lisesu
-    integer :: jesur
-!
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
 !
-! --- TAILLE DES VECTEURS
+! - Access to datastructures
 !
-    lesur = dfllvd('LESUR')
+    sdlist_linfor = sdlist(1:8)//'.LIST.INFOR'
+    call jeveuo(sdlist_linfor, 'L', vr = v_sdlist_linfor)
+    sdlist_esubdr = sdlist(1:8)//'.ECHE.SUBDR'
+    call jeveuo(sdlist_esubdr, 'L', vr = v_sdlist_esubdr)
 !
-! --- ACCES SDS
+! - Print
 !
-    lisifr = sdlist(1:8)//'.LIST.INFOR'
-    call jeveuo(lisifr, 'L', jlinr)
-    lisesu = sdlist(1:8)//'.ECHE.SUBDR'
-    call jeveuo(lisesu, 'L', jesur)
-!
-! --- AFFICHAGE
-!
-!
-    if (zr(jesur-1+lesur*(iechec-1)+1) .eq. 1.d0) then
-        write(ifm,*) '<DEFILISTINST> ......... MANUEL'
-        write(ifm,*) '<DEFILISTINST> ............ NBRE DE'//&
-     &             ' SUBDIVISIONS DEMANDEES',&
-     &             nint(zr(jesur-1+lesur*(iechec-1)+2))
-        if (nint(zr(jesur-1+lesur*(iechec-1)+4)) .eq. 0) then
-            write(ifm,*) '<DEFILISTINST> ............ ARRET'//&
-            ' DE LA SUBDIVISION QUAND LE PAS '// ' VAUT MOINS DE : ',&
-            zr(jesur-1+lesur*(iechec-1)+3)
+    subd_pas      = nint(v_sdlist_esubdr(SIZE_LESUR*(i_fail-1)+2))
+    subd_pas_mini = v_sdlist_esubdr(SIZE_LESUR*(i_fail-1)+3)
+    subd_niveau   = nint(v_sdlist_esubdr(SIZE_LESUR*(i_fail-1)+4))
+    subd_inst     = v_sdlist_esubdr(SIZE_LESUR*(i_fail-1)+5)
+    subd_duree    = v_sdlist_esubdr(SIZE_LESUR*(i_fail-1)+6)
+    subd_auto     = nint(v_sdlist_esubdr(SIZE_LESUR*(i_fail-1)+10))
+    if (nint(v_sdlist_esubdr(SIZE_LESUR*(i_fail-1)+1)) .eq. 1) then
+        call utmess('I', 'DISCRETISATION3_60')
+        if (subd_niveau .eq. 0) then
+            call utmess('I', 'DISCRETISATION3_61', si = subd_pas, sr = subd_pas_mini)
         else
-            write(ifm,*) '<DEFILISTINST> ............ ARRET'//&
-     &                 ' DE LA SUBDIVISION QUAND LE NIVEAU'//&
-     &                 ' DE SUBDIVISION VAUT: ',&
-     &                 nint(zr(jesur-1+lesur*(iechec-1)+4))
+            call utmess('I', 'DISCRETISATION3_62', ni = 2, vali = [subd_pas, subd_niveau])
         endif
-    else if (zr(jesur-1+lesur*(iechec-1)+1).eq.2.d0) then
-        write(ifm,*) '<DEFILISTINST> ......... AUTOMATIQUE'
-!
-        if (zr(jesur-1+lesur*(iechec-1)+10) .eq. 2.d0) then
-            write(ifm,*) '<DEFILISTINST> ............ EXTRAPOLATION '
-        else if (zr(jesur-1+lesur*(iechec-1)+10).eq.1.d0) then
-            write(ifm,*) '<DEFILISTINST> ............ COLLISION '
-            write(ifm,*) '<DEFILISTINST> ............... DELTAT '//&
-            ' DE LA COLLISION : ', zr(jesur-1+lesur*(iechec-1)+5)
-            write(ifm,*) '<DEFILISTINST> ............... DUREE '//&
-            ' DE LA DECOUPE : ', zr(jesur-1+lesur*(iechec-1)+6)
-        else
-            ASSERT(.false.)
+    else if (nint(v_sdlist_esubdr(SIZE_LESUR*(i_fail-1)+1)) .eq. 2) then
+        if (subd_auto .eq. 2) then
+            call utmess('I', 'DISCRETISATION3_70')
+        else if (subd_auto .eq. 1) then
+            call utmess('I', 'DISCRETISATION3_71')
+            call utmess('I', 'DISCRETISATION3_72', nr=2, valr = [subd_inst, subd_duree])
         endif
     endif
 !

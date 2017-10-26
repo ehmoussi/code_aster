@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine pielas(ndim, npg, kpg, compor, typmod,&
-                  mate, elgeom, lgpg, vim, epsm,&
+                  mate, lgpg, vim, epsm,&
                   epsp, epsd, sigma, etamin, etamax,&
                   tau, copilo)
 !
@@ -42,7 +42,6 @@ subroutine pielas(ndim, npg, kpg, compor, typmod,&
     real(kind=8) :: copilo(5, npg)
     real(kind=8) :: etamin, etamax, tau
     real(kind=8) :: sigma(6)
-    real(kind=8) :: elgeom(10, *)
 !
 ! ----------------------------------------------------------------------
 !
@@ -58,9 +57,6 @@ subroutine pielas(ndim, npg, kpg, compor, typmod,&
 ! IN  KPG    : NUMERO DU POINT DE GAUSS
 ! IN  TYPMOD : TYPE DE MODELISATION
 ! IN  MATE   : MATERIAU CODE
-! IN  ELGEOM : TABLEAUX DES ELEMENTS GEOMETRIQUES SPECIFIQUES AUX LOIS
-!              DE COMPORTEMENT (DIMENSION MAXIMALE FIXEE EN DUR, EN
-!              FONCTION DU NOMBRE MAXIMAL DE POINT DE GAUSS)
 ! IN  COMPOR : COMPORTEMENT
 ! IN  LGPG   : "LONGUEUR" DES VARIABLES INTERNES POUR 1 POINT DE GAUSS
 !             CETTE LONGUEUR EST UN MAJORANT DU NBRE REEL DE VAR. INT.
@@ -133,7 +129,7 @@ subroutine pielas(ndim, npg, kpg, compor, typmod,&
 !
         call pipedp(kpg, 1, ndim, typmod, mate,&
                     epsm, sigma, vim(1, kpg), epsp, epsd,&
-                    elgeom(1, kpg), copilo(1, kpg), copilo(2, kpg))
+                    copilo(1, kpg), copilo(2, kpg))
 !
     else
         call utmess('F', 'PILOTAGE_88', sk=compor(1))

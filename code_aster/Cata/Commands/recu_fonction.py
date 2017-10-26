@@ -28,22 +28,26 @@ def recu_fonction_prod(RESULTAT=None,TABLE=None,RESU_GENE=None,
                        INTE_SPEC=None,NOEUD_J=None,NUME_ORDRE_J=None,
                        NOM_CMP_J=None,NOM_CMP_I=None,NUME_ORDRE_I=None,NOEUD_I=None,
                        NOM_PARA_TABL=None,PARA_Y=None,**args):
-   if AsType(RESULTAT)  == dyna_harmo or \
-      AsType(RESU_GENE) == harm_gene or \
-      (INTE_SPEC and NUME_ORDRE_J and (NUME_ORDRE_I != NUME_ORDRE_J) ) or \
-      (INTE_SPEC and NOEUD_J and ((NOEUD_I != NOEUD_J) or (NOM_CMP_I != NOM_CMP_J)) ) or \
-      (TABLE != None and NOM_PARA_TABL == "FONCTION_C")  or \
-      (TABLE != None and PARA_Y == "VALE_C") :
-      return fonction_c
-   else:
-      return fonction_sdaster
+
+    if AsType(RESULTAT) == dyna_harmo:
+        return fonction_c
+    if AsType(RESU_GENE) == harm_gene:
+        return fonction_c
+    if INTE_SPEC:
+        if NUME_ORDRE_J and NUME_ORDRE_I != NUME_ORDRE_J:
+            return fonction_c
+        if (NOEUD_J and NOEUD_I != NOEUD_J) or \
+                NOM_CMP_J and NOM_CMP_I != NOM_CMP_J:
+            return fonction_c
+    if TABLE and (NOM_PARA_TABL == "FONCTION_C" or PARA_Y == "VALE_C"):
+        return fonction_c
+    return fonction_sdaster
 
 RECU_FONCTION=OPER(nom="RECU_FONCTION",op=90,sd_prod=recu_fonction_prod,
                    fr=tr("Extraire sous forme d'une fonction, l'évolution d'une grandeur en fonction d'une autre"),
-                   reentrant='f',
+                   reentrant='n',
          regles=(UN_PARMI('CHAM_GD','RESULTAT','RESU_GENE','TABLE','BASE_ELAS_FLUI','NAPPE','INTE_SPEC'),),
 
-         reuse=SIMP(statut='c', typ=CO),
          CHAM_GD         =SIMP(statut='f',typ=(cham_no_sdaster,cham_elem,),),
          RESULTAT        =SIMP(statut='f',typ=resultat_sdaster),
          RESU_GENE       =SIMP(statut='f',typ=(tran_gene, mode_gene, harm_gene)),

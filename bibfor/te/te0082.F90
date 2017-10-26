@@ -22,7 +22,7 @@ subroutine te0082(option, nomte)
 #include "asterfort/assert.h"
 #include "asterfort/dfdm2d.h"
 #include "asterfort/elrefe_info.h"
-#include "asterfort/grdthm.h"
+#include "asterfort/thmGetGene.h"
 #include "asterfort/jevech.h"
 #include "asterfort/lteatt.h"
 #include "asterfort/pmavec.h"
@@ -68,9 +68,11 @@ subroutine te0082(option, nomte)
   npg=npg2,jpoids=ipoids,jvf=ivf,jdfde=idfde,jgano=jgano)
     nddl = 2 * nno
     nvec = nddl * ( nddl + 1 ) / 2
-
-    call grdthm(.false._1, .false._1, 2,&
-                mecani, press1, press2, tempe)
+!
+! - Get generalized coordinates
+!
+    call thmGetGene(.false._1, .false._1, 2,&
+                    mecani, press1, press2, tempe)
     idec = press1(1) + press2(1) + tempe(1)
 !
     call jevech('PGEOMER', 'L', igeom)

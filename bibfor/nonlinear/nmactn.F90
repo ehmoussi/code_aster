@@ -123,6 +123,29 @@ implicit none
             actnew = 0
             call nmcrel(sderro, 'ITER_MAXI', .false._1)
             call nmeceb(sderro, 'RESI', 'CONV')
+        else if  (.not.ds_conv%l_stop_pene) then
+!
+! ------- CONVERGENCE PENE_MAXI 
+!
+            call utmess('A', 'MECANONLINE2_38', nr=4,valr=[&
+                        ds_contact%calculated_penetration/ds_contact%arete_min,&
+                        ds_contact%arete_min,ds_contact%estimated_coefficient,ds_contact%arete_max])
+!
+! ------- ARRET DU CALCUL
+!
+            actnew = 3
+        else if  (nint(ds_contact%critere_penetration) .eq. 2) then
+!
+! ------- CONVERGENCE PENE_MAXI 
+!
+            call utmess('A', 'MECANONLINE2_39', nr=4,valr=[&
+                        ds_contact%calculated_penetration/ds_contact%arete_min,&
+                        ds_contact%arete_min,ds_contact%estimated_coefficient,ds_contact%arete_max])
+!
+! ------- ARRET DU CALCUL
+!
+            actnew = 3
+        
         else
 !
 ! ------- ARRET DU CALCUL
