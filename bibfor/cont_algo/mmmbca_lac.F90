@@ -97,6 +97,7 @@ implicit none
     real(kind=8) :: bound_coef(2)
     aster_logical:: coef_found=.false._1
     integer :: indi(2)=0
+    integer :: type_adap
     
 !
 ! --------------------------------------------------------------------------------------------------
@@ -120,6 +121,8 @@ implicit none
     nb_cont_zone = cfdisi(ds_contact%sdcont_defi, 'NZOCO')
     r_smooth     = real(cfdisi(ds_contact%sdcont_defi,'LISSAGE'),kind=8)
     r_axi        = real(cfdisi(ds_contact%sdcont_defi,'AXISYMETRIQUE'),kind=8)
+    type_adap    = cfdisi(ds_contact%sdcont_defi,'TYPE_ADAPT')
+    write (6,*) 'type d adaptation',type_adap
 !
 ! - Access to mesh (patches)
 !
