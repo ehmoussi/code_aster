@@ -439,22 +439,21 @@ implicit none
          !           write (6,*) "branchez ADAPTATION=CYCLAGE"
                 endif
             endif
-            
-        elseif  (s_algo_cont .eq. 'LAC') then 
-            
-            call getvtx(keywf, 'ADAPTATION', iocc=i_zone, scal=adaptation,nbret=nbret)
-            if ( nbret .eq. 0 )  adaptation='NON'
-            v_sdcont_paraci(20) = 0
+                         
+        else 
+            ASSERT(.false.)
+        endif
+    elseif  (s_algo_cont .eq. 'LAC') then 
         
-            if (adaptation .eq. 'NON') then
-            ! Aucun traitement adaptatif inactif
-                 v_sdcont_paraci(20) = 0
-            else if (adaptation .eq. 'CYCLAGE') then
-                v_sdcont_paraci(20) = 4
-            else 
-                ASSERT(.false.)
-            endif
-             
+        call getvtx(keywf, 'ADAPTATION', iocc=i_zone, scal=adaptation,nbret=nbret)
+        if ( nbret .le. 0 )  adaptation='NON'
+        v_sdcont_paraci(20) = 0
+    
+        if (adaptation .eq. 'NON') then
+        ! Aucun traitement adaptatif inactif
+             v_sdcont_paraci(20) = 0
+        else if (adaptation .eq. 'CYCLAGE') then
+            v_sdcont_paraci(20) = 4
         else 
             ASSERT(.false.)
         endif
