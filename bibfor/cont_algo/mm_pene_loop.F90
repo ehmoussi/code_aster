@@ -160,7 +160,7 @@ implicit none
 !
     time_curr = ds_contact%time_curr
 
-        ds_contact%calculated_penetration = 1.d-300
+        ds_contact%calculated_penetration = 1.d-100
 !
 ! - Loop on contact zones
 !
@@ -205,6 +205,7 @@ implicit none
 ! Information for convergence : PENE_MAXI
                     dist_max      = vale_pene*ds_contact%arete_min
                     if (l_pena_cont .and. indi_cont_curr .eq. 1 ) then
+                        ds_contact%continue_pene = 0
                         v_sdcont_pene((i_cont_poin-1)+1)  = abs(gap)
                         ! On cherche le max des penetrations
                         if (i_cont_poin .gt. 1 ) then 
@@ -222,9 +223,11 @@ implicit none
                         if (ds_contact%iteration_newton .ge. ds_contact%it_adapt_maxi-6) then
                                 ds_contact%continue_pene = 1.0
                          endif 
-                    elseif (l_pena_cont .and. (indi_cont_curr .eq. 0)) then 
-                    ! PENALISATION ACTIF mais pas encore de contact, la penetration n'a pas de sens
-                        ds_contact%calculated_penetration = 1.d-300
+!                    elseif (l_pena_cont .and. (indi_cont_curr .eq. 0) .and.&
+!                            (ds_contact%calculated_penetration .le. 1.d-299)) then 
+!                    ! PENALISATION ADAPTATIF ACTIF mais pas encore de contact,
+!                    ! la penetration n'a pas de sens
+!                        ds_contact%continue_pene = 5
                     endif
                         
 !

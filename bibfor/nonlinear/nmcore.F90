@@ -108,12 +108,10 @@ implicit none
         user_para = ds_conv%list_resi(i_resi)%user_para
         if (ds_conv%l_resi_test(i_resi)) then
             call nmcoru(vale_calc, user_para, l_conv)
-            ! Si on a pas la convergence de Newton
-            ! et que si cela est du a un critère de conv autre que penetration max
-            ! Alors ne pas afficher le message d'alarme MECANONLINE2_38
-            ! Ce message ne sert que pour le cas ou la penetration est la cause de non
-            ! convergence.
-            if (.not. l_conv .and. (i_resi .ne. 7 ) ) ds_conv%l_stop_pene = .true.
+            ! Si on a pas la convergence d'une boucle de point fixe,Pas la peine de vérifier vpene.
+            if ((.not. l_conv) .and. (i_resi .eq. 7 )  .and. (.not. ds_conv%l_stop_pene )) &
+                l_conv = .true._1
+            
         else
             l_conv = .true._1
         endif
