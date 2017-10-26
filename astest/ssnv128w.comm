@@ -72,8 +72,8 @@ CHA1=DEFI_CONTACT(MODELE=MO,
                  FORMULATION    = 'CONTINUE',
                  FROTTEMENT     = 'COULOMB',
                  #ITER_GEOM_MAXI = 2,
-                 ALGO_RESO_FROT = 'NEWTON',
-                 ALGO_RESO_GEOM = 'NEWTON',
+                 ALGO_RESO_FROT = 'NEWTON',RESI_FROT=1.E-4,
+                 ALGO_RESO_GEOM = 'POINT_FIXE',REAC_GEOM='CONTROLE',NB_ITER_GEOM=2,
                  ALGO_RESO_CONT = 'NEWTON',
                  ZONE=_F(
                          GROUP_MA_MAIT = 'SBATI',
@@ -84,9 +84,11 @@ CHA1=DEFI_CONTACT(MODELE=MO,
 
                          ALGO_CONT='PENALISATION',
                          ALGO_FROT='STANDARD',
-                         ADAPTATION='ADAPT_COEF',
-                         PENE_MAXI=1.E-6,
-                         #COEF_PENA_CONT=1.E+16,
+                         # ADAPTATION Fonctionne mais sensibilite 1.E-4% machine
+                         #ADAPTATION='TOUT',
+                         #PENE_MAXI=1.E-9,
+                         ADAPTATION='CYCLAGE',
+                         COEF_PENA_CONT=1.E+14,
                          #COEF_PENA_FROT=1.E+8,
                  ),);
 CHA2=AFFE_CHAR_MECA(MODELE=MO,
@@ -109,7 +111,7 @@ L_INST=DEFI_LIST_INST(METHODE='MANUEL',
                       ECHEC=_F(EVENEMENT='ERREUR',
                               ACTION='DECOUPE',
                               SUBD_METHODE = 'MANUEL',
-                              SUBD_PAS=5,
+                              SUBD_PAS=2,
                               SUBD_NIVEAU=5,),);
 
 #-----------------------------------------------------------
@@ -120,8 +122,9 @@ U2M=STAT_NON_LINE(MODELE   = MO,
                 CONTACT=CHA1,
                 COMPORTEMENT  = _F(RELATION = 'ELAS'),
                 NEWTON     = _F(REAC_ITER = 1),
+                #SOLVEUR  =_F(METHODE='LDLT'),
                 INCREMENT  = _F(LIST_INST = L_INST),
-                CONVERGENCE= _F(ARRET = 'OUI',
+                CONVERGENCE= _F(ARRET = 'OUI',#RESI_GLOB_MAXI=1.E-6,RESI_GLOB_RELA=1.E-10,
                                ITER_GLOB_MAXI = 30,),);
 
 TEST_RESU(RESU=(_F(GROUP_NO='PPA',
@@ -130,7 +133,7 @@ TEST_RESU(RESU=(_F(GROUP_NO='PPA',
                    RESULTAT=U2M,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
-                   VALE_CALC= 2.91303990364E-05,
+                   VALE_CALC= 2.87140830195E-05,
                    VALE_REFE=2.8600000000000001E-05,
                    PRECISION=0.050000000000000003,
                    ),
@@ -140,7 +143,7 @@ TEST_RESU(RESU=(_F(GROUP_NO='PPA',
                    RESULTAT=U2M,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
-                   VALE_CALC= 2.7658943023E-05,
+                   VALE_CALC= 2.72420701055E-05,
                    VALE_REFE=2.72E-05,
                    PRECISION=0.050000000000000003,
                    ),
@@ -150,7 +153,7 @@ TEST_RESU(RESU=(_F(GROUP_NO='PPA',
                    RESULTAT=U2M,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
-                   VALE_CALC= 2.31010118031E-05,
+                   VALE_CALC= 2.26982719744E-05 ,
                    VALE_REFE=2.2799999999999999E-05,
                    PRECISION=0.050000000000000003,
                    ),
@@ -160,7 +163,7 @@ TEST_RESU(RESU=(_F(GROUP_NO='PPA',
                    RESULTAT=U2M,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
-                   VALE_CALC= 2.00342348625E-05,
+                   VALE_CALC= 1.96646126676E-05,
                    VALE_REFE=1.98E-05,
                    PRECISION=0.050000000000000003,
                    ),
@@ -170,7 +173,7 @@ TEST_RESU(RESU=(_F(GROUP_NO='PPA',
                    RESULTAT=U2M,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
-                   VALE_CALC= 1.5621631973E-05,
+                   VALE_CALC= 1.52965588508E-05,
                    VALE_REFE=1.5E-05,
                    PRECISION=0.050000000000000003,
                    ),
@@ -225,12 +228,12 @@ POSY=POST_RELEVE_T(ACTION=_F(INTITULE='LAMBDA',
                              NOM_CMP='DY',
                              OPERATION='EXTRACTION'));
 
-IMPR_TABLE(TABLE=PRFUS);
-IMPR_TABLE(TABLE=LAGSC);
-IMPR_TABLE(TABLE=LAGSF1);
-IMPR_TABLE(TABLE=LAGSF2);
-IMPR_TABLE(TABLE=POSX);
-IMPR_TABLE(TABLE=POSY);
+#IMPR_TABLE(TABLE=PRFUS);
+#IMPR_TABLE(TABLE=LAGSC);
+#IMPR_TABLE(TABLE=LAGSF1);
+#IMPR_TABLE(TABLE=LAGSF2);
+#IMPR_TABLE(TABLE=POSX);
+#IMPR_TABLE(TABLE=POSY);
 
 #IMPR_RESU(FORMAT='GMSH',UNITE=37,RESU=_F(RESULTAT=U2M));
 
