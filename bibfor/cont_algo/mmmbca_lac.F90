@@ -122,7 +122,6 @@ implicit none
     r_smooth     = real(cfdisi(ds_contact%sdcont_defi,'LISSAGE'),kind=8)
     r_axi        = real(cfdisi(ds_contact%sdcont_defi,'AXISYMETRIQUE'),kind=8)
     type_adap    = cfdisi(ds_contact%sdcont_defi,'TYPE_ADAPT')
-    write (6,*) 'type d adaptation',type_adap
 !
 ! - Access to mesh (patches)
 !
@@ -224,8 +223,8 @@ implicit none
                 
                             
     ! --------- Cycling ?
-                
                 etatcyc = indi_cont_curr+2*indi_cont_prev+4*indi_cont_prev2
+                if (type_adap .ne. 4) etatcyc = 0
                 if( (ds_contact%iteration_newton .ge. 3 ).and.&
                     (etatcyc .eq.2 .or. etatcyc .eq. 5) ) then
                     v_sdcont_cyclac_etat(j_patch-2+i_patch) = 1
