@@ -223,7 +223,7 @@ Contact et détection de collision.
         - La plus petite arête de la zone maître est  %(r1).2e.
         - La plus grande arête de la zone maître est  %(r2).2e.
     -> Risque & Conseils :
-       Vous risquez d'avoir des résultats inattendus. Vérifiez que le niveau d'interpénétration dans le tableau de convergence est bien inférieure une longueur d'arete dans la zone de contact. 
+       Vous risquez d'avoir des résultats inattendus. Vérifiez que le niveau d'interpénétration dans le tableau de convergence est bien inférieure une longueur d'arêtete dans la zone de contact. 
        S'il y a trop d'interpénétrations, il faudrait relancer le calcul avec PENE_MAXI <= %(r1).2e.
 """),
 
