@@ -541,7 +541,7 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
 
                                           b_cont_std=BLOC(condition = """equal_to("ALGO_CONT", 'STANDARD') """, fr=tr("Paramètres de la formulation Lagrangienne"),
                                                            COEF_CONT = SIMP(statut='f',typ='R',defaut=100.E+0),
-                                                           #ADAPTATION      =SIMP(statut='f',typ='TXM',defaut="CYCLAGE", into=("ADAPT_COEF","CYCLAGE","TOUT","NON"),),
+                                                           ADAPTATION      =SIMP(statut='f',typ='TXM',defaut="CYCLAGE", into=("ADAPT_COEF","CYCLAGE","TOUT","NON"),),
                                           ),
                                           
                                           b_cont_lac_adapt=BLOC(condition = """equal_to("ALGO_CONT", 'LAC') """,
