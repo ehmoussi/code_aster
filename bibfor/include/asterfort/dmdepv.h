@@ -15,14 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface 
-    subroutine dmdepv(rho, fsat, tbiot, dmdeps)
-        real(kind=8) :: rho
-        real(kind=8) :: fsat
-        real(kind=8) :: tbiot(6)
-        real(kind=8) :: dmdeps(6)
+    subroutine dmdepv(rho, satur, tbiot, dmdeps)
+        real(kind=8), intent(in) :: rho, tbiot(6), satur
+        real(kind=8), intent(out) :: dmdeps(6)
     end subroutine dmdepv
 end interface 

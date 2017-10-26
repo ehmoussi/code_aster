@@ -122,6 +122,8 @@ class MESSAGE_LOGGER(Singleton):
             return
         rank = aster_core.MPI_CommRankSize()[0]
         self._mpi_rank = aster_core._USE_MPI and rank or None
+        np   = aster_core.MPI_CommRankSize()[1]
+        self._mpi_nbcpu = aster_core._USE_MPI and np or None
         import platform
         node = platform.node()
 
@@ -494,10 +496,11 @@ Exception : %s
             # current step should be the JDC object in FIN()
             jdc = CONTEXT.get_current_step()
             code = 'A'
-            if in_testcase():
-                code = 'F'
-            self.print_message(code, 'CATAMESS_87', valk=list(not_seen),
-                               exception=True)
+            if self._mpi_nbcpu is None:
+                if in_testcase():
+                    code = 'F'            
+                self.print_message(code, 'CATAMESS_87', valk=list(not_seen),
+                                   exception=True)
 
     def update_counter(self, code, idmess):
         """Update the counters of alarms.

@@ -23,11 +23,12 @@
 interface
     subroutine nmprde(modele, numedd         , numfix    , mate       , carele    ,&
                       comref, ds_constitutive, lischa    , ds_algopara, solveu    ,&
-                      fonact, ds_print       , ds_measure, sddisc     , numins    ,&
+                      fonact, ds_print       , ds_measure, ds_algorom,sddisc     , numins    ,&
                       valinc, solalg         , matass    , maprec     , ds_contact,&
                       sddyna, meelem         , measse    , veelem     , veasse    ,&
                       ldccvg, faccvg         , rescvg)
-        use NonLin_Datastructure_type
+        use NonLin_Datastructure_type  
+        use Rom_Datastructure_type
         character(len=24) :: modele
         character(len=24) :: numedd
         character(len=24) :: numfix
@@ -37,6 +38,7 @@ interface
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         character(len=19) :: lischa
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+        type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
         character(len=19) :: solveu
         integer :: fonact(*)
         type(NL_DS_Print), intent(inout) :: ds_print

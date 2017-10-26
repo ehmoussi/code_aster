@@ -19,11 +19,8 @@
 !
 !
 interface 
-    subroutine tebiot(angmas, biot, tbiot, aniso, ndim)
-        real(kind=8) :: angmas(3)
-        real(kind=8) :: biot(4)
-        real(kind=8) :: tbiot(6)
-        integer :: aniso
-        integer :: ndim
+    subroutine tebiot(angl_naut, tbiot)
+        real(kind=8), intent(in) :: angl_naut(3)
+        real(kind=8), intent(out) :: tbiot(6)
     end subroutine tebiot
 end interface 

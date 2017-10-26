@@ -15,10 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine comp_nbvari_std(rela_comp , defo_comp , type_cpla   , nb_vari   ,&
-                           kit_comp_ , type_matg_, post_iter_  , mult_comp_,&
-                           l_cristal_, l_implex_ , type_model2_,&
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine comp_nbvari_std(rela_comp , defo_comp    , type_cpla   ,&
+                           nb_vari   ,&
+                           kit_comp_ , post_iter_   , mult_comp_  ,&
+                           l_cristal_, l_implex_    , &
                            nume_comp_, nb_vari_rela_)
 !
 implicit none
@@ -30,21 +32,17 @@ implicit none
 #include "asterfort/comp_meca_code.h"
 #include "asterfort/jeveuo.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=16), intent(in) :: rela_comp
-    character(len=16), intent(in) :: defo_comp
-    character(len=16), intent(in) :: type_cpla
-    integer, intent(out) :: nb_vari
-    character(len=16), optional, intent(in) :: kit_comp_(4)
-    character(len=16), optional, intent(in) :: type_matg_
-    character(len=16), optional, intent(in) :: post_iter_
-    character(len=16), optional, intent(in) :: mult_comp_
-    aster_logical, optional, intent(in) :: l_cristal_
-    aster_logical, optional, intent(in) :: l_implex_
-    character(len=16), optional, intent(in) :: type_model2_
-    integer, optional, intent(out) :: nb_vari_rela_
-    integer, optional, intent(out) :: nume_comp_(4)
+character(len=16), intent(in) :: rela_comp
+character(len=16), intent(in) :: defo_comp
+character(len=16), intent(in) :: type_cpla
+integer, intent(out) :: nb_vari
+character(len=16), optional, intent(in) :: kit_comp_(4)
+character(len=16), optional, intent(in) :: post_iter_
+character(len=16), optional, intent(in) :: mult_comp_
+aster_logical, optional, intent(in) :: l_cristal_
+aster_logical, optional, intent(in) :: l_implex_
+integer, optional, intent(out) :: nb_vari_rela_
+integer, optional, intent(out) :: nume_comp_(4)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,24 +55,22 @@ implicit none
 ! In  rela_comp        : RELATION comportment
 ! In  defo_comp        : DEFORMATION comportment
 ! In  type_cpla        : plane stress method
+! Out nb_vari          : number of internal variables
 ! In  kit_comp         : KIT comportment
-! In  type_matg        : type of tangent matrix
 ! In  post_iter        : type of post_treatment
 ! In  mult_comp        : multi-comportment
 ! In  l_cristal        : .true. if *CRISTAL comportment
 ! In  l_implex         : .true. if IMPLEX method
-! In  type_model2      : type of modelization (TYPMOD2)
-! Out nb_vari          : number of internal variables
 ! Out nb_vari_rela     : number of internal variables for RELATION
 ! Out nume_comp        : number LCxxxx subroutine
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=16) :: kit_comp(4), type_matg, post_iter, mult_comp, type_model2
+    character(len=16) :: kit_comp(4), post_iter, mult_comp
     aster_logical :: l_cristal, l_implex
     integer :: nb_vari_rela, nume_comp(4)
-    character(len=16) :: comp_elem_py, rela_comp_py
-    integer :: idummy
+    character(len=16) :: comp_code_py, rela_code_py
+    integer :: idummy, idummy2
     character(len=8) :: sdcomp
     integer :: nb_vari_cris
     integer, pointer :: v_cpri(:) => null()
@@ -84,10 +80,6 @@ implicit none
     kit_comp(:) = 'VIDE'
     if (present(kit_comp_)) then
         kit_comp(:) = kit_comp_(:)
-    endif
-    type_matg = 'VIDE'
-    if (present(type_matg_)) then
-        type_matg = type_matg_
     endif
     post_iter = 'VIDE'
     if (present(post_iter_)) then
@@ -105,24 +97,21 @@ implicit none
     if (present(l_implex_)) then
         l_implex = l_implex_
     endif
-    type_model2 = 'VIDE'
-    if (present(type_model2_)) then
-        type_model2 = type_model2_
-    endif
     nb_vari      = 0
     nb_vari_rela = 0
     nume_comp(:) = 0
 !
 ! - Coding composite comportment (Python)
 !
-    call comp_meca_code(rela_comp   , defo_comp   , type_cpla  , kit_comp, type_matg,&
-                        post_iter   , l_implex    , type_model2,&
-                        comp_elem_py, rela_comp_py)
+    call comp_meca_code(rela_comp_  = rela_comp , defo_comp_  = defo_comp ,&
+                        type_cpla_  = type_cpla , kit_comp_   = kit_comp,&
+                        post_iter_  = post_iter , l_implex_   = l_implex,&
+                        comp_code_py_ = comp_code_py, rela_code_py_ = rela_code_py)
 !
 ! - Get number of variables
 !
-    call lcinfo(rela_comp_py, idummy, nb_vari_rela)
-    call lcinfo(comp_elem_py, nume_comp(1), nb_vari)
+    call lcinfo(rela_code_py, idummy, nb_vari_rela, idummy2)
+    call lcinfo(comp_code_py, nume_comp(1), nb_vari, idummy2)
 !
 ! - Special for CRISTAL
 !
@@ -138,8 +127,8 @@ implicit none
 !
 ! - End of encoding
 !
-    call lcdiscard(comp_elem_py)
-    call lcdiscard(rela_comp_py)
+    call lcdiscard(comp_code_py)
+    call lcdiscard(rela_code_py)
 !
 ! - Copy
 !

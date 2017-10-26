@@ -17,11 +17,11 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-os.system("mfront --obuild Chaboche.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so Chaboche.so")
+
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=39)
 
 C1_I=187.*341.
 C2_I=29.*17184.
@@ -68,7 +68,7 @@ S3=DEFI_FONCTION( NOM_PARA='INST',
 SOLMF=SIMU_POINT_MAT( MATER=MATF,
                 COMPORTEMENT=_F(RELATION='MFRONT',
                                 NOM_ROUTINE='asterchaboche',
-                                LIBRAIRIE='Chaboche.so',
+                                UNITE_LIBRAIRIE=39,
                                 VERI_BORNE='MESSAGE',),
                 INCREMENT=_F(  LIST_INST = LSUB),
                 NEWTON=_F(REAC_ITER = 1, ),
@@ -78,7 +78,7 @@ SOLMF=SIMU_POINT_MAT( MATER=MATF,
 SOLMF2=SIMU_POINT_MAT( MATER=MATF,
                  COMPORTEMENT=_F(RELATION='MFRONT',
                                  NOM_ROUTINE='asterchaboche',
-                                 LIBRAIRIE='Chaboche.so',
+                                 UNITE_LIBRAIRIE=39,
                                  VERI_BORNE='SANS',),
                  INCREMENT=_F(  LIST_INST = LSUB),
                  NEWTON=_F(REAC_ITER = 1, ),

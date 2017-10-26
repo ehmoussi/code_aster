@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine dbr_main_podincr(l_reuse, nb_mode_maxi, ds_para_pod, field_iden, ds_empi)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine dbr_main_podincr(l_reuse, ds_para_pod, field_iden, ds_empi)
 !
 use Rom_Datastructure_type
 !
@@ -31,13 +32,10 @@ implicit none
 #include "asterfort/dbr_calcpod_save.h"
 #include "asterfort/as_deallocate.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    aster_logical, intent(in) :: l_reuse
-    integer, intent(in) :: nb_mode_maxi
-    type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
-    character(len=24), intent(in) :: field_iden
-    type(ROM_DS_Empi), intent(inout) :: ds_empi
+aster_logical, intent(in) :: l_reuse
+type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
+character(len=24), intent(in) :: field_iden
+type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,7 +46,6 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  l_reuse          : .true. if reuse
-! In  nb_mode_maxi     : maximum number of emprical modes
 ! In  field_iden       : identificator of field (name in results datastructure)
 ! In  ds_para_pod      : datastructure for parameters (POD)
 ! IO  ds_empi          : datastructure for empiric modes
@@ -58,11 +55,11 @@ implicit none
     real(kind=8), pointer :: q(:) => null()
     real(kind=8), pointer :: v(:) => null()
     real(kind=8), pointer :: s(:) => null()
-    integer :: nb_mode, nb_snap_redu
+    integer :: nb_mode, nb_snap_redu, nb_mode_maxi
 !
 ! --------------------------------------------------------------------------------------------------
 !
-
+    nb_mode_maxi = ds_para_pod%nb_mode_maxi
 !
 ! - Create snapshots matrix Q
 !    

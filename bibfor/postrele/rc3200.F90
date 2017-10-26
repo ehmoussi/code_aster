@@ -20,34 +20,30 @@ subroutine rc3200()
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
-#include "asterfort/getvtx.h"
-#include "asterfort/getvid.h"
-#include "asterc/getfac.h"
+#include "asterfort/rc32rs.h"
 #include "asterfort/rc32si.h"
-#include "asterfort/rc32ma.h"
 #include "asterfort/rc32in.h"
 #include "asterfort/rc32cm.h"
 #include "asterfort/rc32t.h"
+#include "asterfort/rc32t2.h"
 #include "asterfort/rc32mu.h"
+#include "asterfort/rc32ma.h"
 #include "asterfort/rc32ac.h"
-#include "asterfort/rc32rs.h"
 #include "asterfort/jedetc.h"
+#include "asterfort/jemarq.h"
+#include "asterfort/jedema.h"
+!
 !     OPERATEUR POST_RCCM, TRAITEMENT DE FATIGUE_ZE200 et B3200
 !
-    character(len=8) :: mater
-    integer :: n1, nbther, nbopt, iopt, nb
-    character(len=16) :: typmec, kopt(3)
-    aster_logical :: lpmpb, lsn, lther, lfat, lefat, ze200, b32unit
+!     ------------------------------------------------------------------
+!
+    aster_logical :: lfat, lefat
 !
 ! DEB ------------------------------------------------------------------
 !
-    ze200 = .false.
-    b32unit = .false.
-    call getvtx(' ', 'TYPE_RESU_MECA', scal=typmec, nbret=n1)
-    if (typmec .eq. 'ZE200a' .or. typmec .eq. 'ZE200b') ze200=.true.
-
+    call jemarq()
 !     ------------------------------------------------------------------
-!              TRAITEMENT DES SITUATIONS (GROUPES, PASSAGE...)
+!              TRAITEMENT DES SITUATIONS (GROUPES, NOM...)
 !     ------------------------------------------------------------------
 !
     call rc32si()
@@ -64,14 +60,15 @@ subroutine rc3200()
 !     ------------------------------------------------------------------
 !
     call rc32in()
-! 
+!
 !     ------------------------------------------------------------------
-!              RECUPERATION DES CHARGES MECANIQUES
-!              (SOUS CHAR_MECA et RESU_MECA_UNIT) 
+!              RECUPERATION DES TENSEURS UNITAIRES SI PRESENTS
+!                 ET DES TORSEURS EFFORTS ET MOMENTS
+!                  (SOUS RESU_MECA_UNIT et CHAR_MECA) 
 !     ------------------------------------------------------------------
 !
-    call rc32cm()
     call rc32mu()
+    call rc32cm()
 !
 !     ------------------------------------------------------------------
 !                  RECUPERATION DES TRANSITOIRES :
@@ -81,57 +78,22 @@ subroutine rc3200()
 !     ------------------------------------------------------------------
 !
     call rc32t()
+    call rc32t2()
 !
 !     ------------------------------------------------------------------
-!              CALCULS DES AMPLITUDES DE CONTRAINTES
-!                  ET DU FACTEUR D'USAGE
+!                        CALCUL DES GRANDEURS
 !     ------------------------------------------------------------------
 !
-    call getvid(' ', 'MATER', scal=mater, nbret=n1)
-    call getfac('RESU_MECA_UNIT', nb)
-!-- si on est en ZE200 ou B3200_T
-    if (nb .ne. 0) b32unit=.true.
-!
-    lpmpb = .false.
-    lsn   = .false.
-    lther = .false.
-    lfat  = .false.
-    lefat = .false.
-!
-    call getfac('RESU_THER', nbther)
-    if (nbther .ne. 0) then
-        lther = .true.
-    endif
-!
-    call getvtx(' ', 'OPTION', nbval=0, nbret=n1)
-    nbopt = -n1
-    call getvtx(' ', 'OPTION', nbval=nbopt, vect=kopt, nbret=n1)
-    do 20 iopt = 1, nbopt
-        if (kopt(iopt) .eq. 'PM_PB') then
-            if (nb .ne. 0) lpmpb = .true.
-        else if (kopt(iopt) .eq. 'SN') then
-            lsn = .true.
-        else if (kopt(iopt) .eq. 'FATIGUE') then
-            if (nb .ne. 0) lpmpb = .true.
-            lfat = .true.
-            lsn = .true.
-        else if (kopt(iopt) .eq. 'EFAT') then
-            if (nb .ne. 0) lpmpb = .true.
-            lfat = .true.
-            lsn = .true.
-            lefat = .true.
-        endif
- 20 continue
-!
-    call rc32ac(ze200, mater, lpmpb, lsn, lther, lfat, lefat)
+    call rc32ac(lfat, lefat)
 !
 !     ------------------------------------------------------------------
-!                       STOCKAGE DES RESULTATS
+!              AFFICHAGE DES RESULTATS DANS LE .RESU
 !     ------------------------------------------------------------------
 !
-    call rc32rs(mater, lpmpb, lsn, lther,&
-                lfat, lefat)
+    call rc32rs(lfat, lefat)
 !
     call jedetc('V', '&&RC3200', 1)
+!
+    call jedema()
 !
 end subroutine

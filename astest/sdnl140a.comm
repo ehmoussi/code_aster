@@ -85,6 +85,8 @@ contact=DEFI_CONTACT(MODELE=modele,
                              ALGO_CONT = 'PENALISATION',
                              ALGO_FROT = 'PENALISATION',
                              COEF_PENA_FROT=1.E6,COEF_PENA_CONT=1.E9,
+                             #PENE_MAXI=1.E-2,
+                             ADAPTATION='NON',
                              SANS_GROUP_NO = ('Clim_Bas', ),
                              DIST_APPA = 0.2,
                              COULOMB=0.2),);

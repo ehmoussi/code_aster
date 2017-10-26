@@ -85,7 +85,7 @@ ASSEMBLAGE(  MODELE=MODELE,   CHARGE=CON_LIM,   CARA_ELEM=CARA_ELE,
 # CALCUL DES MODES AVEC BLOCAGE DES ANCRAGES:
 #---------------------------------------------
 MODE_MEC=CALC_MODES(MATR_RIGI=RIGIDITE,
-                    OPTION='AJUSTE',
+                    OPTION='AJUSTE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                     CALC_FREQ=_F(FREQ=(3.8,7.,9.3,),
                                  ),
                     MATR_MASS=MASSE,

@@ -105,7 +105,7 @@ subroutine irchme(ifichi, chanom, partie, nochmd, noresu,&
     parameter (ednopt=-1)
 !
     integer :: ifm, nivinf, numpt, iaux, nbgrel, jmaille, j1, n1
-    integer :: nbma, igr, iel, ite, ima
+    integer :: nbma, igr, iel, ite, ima, codret_vari
 !
     character(len=8) :: saux08, modele, ma
     character(len=64) :: nochmd
@@ -117,13 +117,14 @@ subroutine irchme(ifichi, chanom, partie, nochmd, noresu,&
 !====
 !
     call infniv(ifm, nivinf)
-    codret=0
+    codret      = 0
+    codret_vari = 0
 !
-    10000 format(/,81('='),/,81('='),/)
-    10001 format(81('-'),/)
+100 format(/,81('='),/,81('='),/)
+101 format(81('-'),/)
     if (nivinf .gt. 1) then
         call utflsh(codret)
-        write (ifm,10000)
+        write (ifm,100)
         call utmess('I', 'MED_90', sk=chanom)
     endif
 !
@@ -133,12 +134,12 @@ subroutine irchme(ifichi, chanom, partie, nochmd, noresu,&
 !
     if (codret .eq. 0) then
         if (nivinf .gt. 1) then
-            write (ifm,11000) saux08
-            write (ifm,11001) nomsym
+            write (ifm,110) saux08
+            write (ifm,111) nomsym
         endif
         if (nivinf .gt. 1) then
-            write (ifm,11003) typech
-            write (ifm,11004) nochmd
+            write (ifm,113) typech
+            write (ifm,114) nochmd
         endif
     else
         call utmess('A', 'MED_91')
@@ -146,10 +147,10 @@ subroutine irchme(ifichi, chanom, partie, nochmd, noresu,&
         call utmess('A', 'MED_45', sk=noresu)
     endif
 !
-    11000 format(1x,'RESULTAT           : ',a8)
-    11001 format(1x,'CHAMP              : ',a16)
-    11003 format(1x,'TYPE DE CHAMP      : ',a)
-    11004 format(3x,'==> NOM MED DU CHAMP : ',a64,/)
+110 format(1x,'RESULTAT           : ',a8)
+111 format(1x,'CHAMP              : ',a16)
+113 format(1x,'TYPE DE CHAMP      : ',a)
+114 format(3x,'==> NOM MED DU CHAMP : ',a64,/)
 !
 ! 1.2. ==> INSTANT CORRESPONDANT AU NUMERO D'ORDRE
 !
@@ -241,6 +242,7 @@ subroutine irchme(ifichi, chanom, partie, nochmd, noresu,&
 ! 2. ECRITURE DANS LE FICHIER MED
 !====
 !
+    codret_vari = 0
     if (codret .eq. 0) then
 !
         if (typech(1:4) .eq. 'NOEU') then
@@ -248,23 +250,19 @@ subroutine irchme(ifichi, chanom, partie, nochmd, noresu,&
                         nbrcmp, nomcmp, partie, numpt, instan,&
                         numord, nbnoec, linoec, sdcarm, codret)
         else if (typech(1:2).eq.'EL') then
-!
-!         SI ON EST DANS LE CAS VARI ET QU'ON A DEMANDE L'EXPLOSION
-!         DU CHAMP SUIVANT LE COMPORTEMENT, ON DOIT RAJOUTER
-!         CERTAINS TRAITEMENT
             if ((nomsym.eq.'VARI_ELGA') .and. lvarie) then
                 call irvari(ifichi, nochmd, chanom, typech, modele,&
                             nbrcmp, nomcmp, partie, numpt, instan,&
                             numord, nbmaec, limaec, noresu, sdcarm,&
-                            codret)
-                if (codret .ne. 0) then
-                    call utmess('A', 'MED2_7', sk=nomsym)
-                endif
+                            codret_vari)
             endif
             call irceme(ifichi, nochmd, chanom, typech, modele,&
                         nbrcmp, nomcmp, ' ', partie, numpt,&
                         instan, numord, nbmaec, limaec, sdcarm,&
                         codret)
+            if (codret_vari .ne. 0 .and. codret .eq. 0) then
+                codret = codret_vari
+            endif
         else if (typech(1:4).eq.'CART') then
 !
             call irceme(ifichi, nochmd, chanom, typech, modele,&
@@ -282,15 +280,15 @@ subroutine irchme(ifichi, chanom, partie, nochmd, noresu,&
 ! 3. BILAN
 !====
 !
-    if (codret .ne. 0 .and. codret .ne. 100) then
-        call utmess('A', 'MED_89', sk=chanom)
+    if (codret .ne. 0 .and. codret .ne. 100 .and. codret .ne. 200 .and. codret .ne. 300) then
+        call utmess('A', 'MED_89', sk=nomsym)
     endif
 !
     if (nivinf .gt. 1) then
         call utmess('I', 'MED_93', sk=chanom)
-        write (ifm,10000)
+        write (ifm,100)
         call utflsh(codret)
-        write (ifm,10001)
+        write (ifm,101)
     endif
 !
     call jedetr('&&IRCHME.MAILLE')

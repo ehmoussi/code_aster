@@ -45,6 +45,7 @@ PILO_PRED_DEFO = Option(
     para_in=(
         SP.PCDTAU,
            PCOMPOR,
+        SP.PCARCRI,
            PCONTMR,
         SP.PDDEPLR,
         SP.PDEPL0R,

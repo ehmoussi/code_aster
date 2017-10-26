@@ -15,21 +15,21 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-function diadap(sddisc, i_adapt)
+!
+function diadap(sddisc, i_adap)
 !
 implicit none
 !
 #include "asterf_types.h"
+#include "event_def.h"
 #include "asterfort/assert.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/utdidt.h"
+#include "asterfort/getAdapEvent.h"
 !
-! person_in_charge: samuel.geniaut at edf.fr
-!
-    aster_logical :: diadap
-    integer, intent(in) :: i_adapt
-    character(len=19), intent(in) :: sddisc
+aster_logical :: diadap
+character(len=19), intent(in) :: sddisc
+integer, intent(in) :: i_adap
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -45,31 +45,30 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nbinse, nbok
-    character(len=19) :: event_name
+    integer :: nbinse, nbok, event_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    diadap = .false.
 !
-! - Event name
+! - Get event type
 !
-    call utdidt('L', sddisc, 'ADAP', 'NOM_EVEN', index_= i_adapt,&
-                valk_ = event_name)
+    call getAdapEvent(sddisc, i_adap, event_type)
 !
-    if (event_name .eq. 'AUCUN') then
+    if (event_type .eq. ADAP_EVT_NONE) then
         diadap = .false.
-    else if (event_name.eq.'TOUT_INST') then
+    else if (event_type .eq. ADAP_EVT_ALLSTEPS) then
         diadap = .true.
-    else if (event_name.eq.'SEUIL_SANS_FORMU') then
+    else if (event_type .eq. ADAP_EVT_TRIGGER) then
 !
 ! ----- RECUP DU SEUIL SUR LE NB DE SUCCES CONSECUTIFS
 !
-        call utdidt('L', sddisc, 'ADAP', 'NB_INCR_SEUIL', index_= i_adapt,&
+        call utdidt('L', sddisc, 'ADAP', 'NB_INCR_SEUIL', index_= i_adap,&
                     vali_ = nbinse)
 !
 ! ----- RECUP DU NB DE SUCCES CONSECUTIFS
 !
-        call utdidt('L', sddisc, 'ADAP', 'NB_EVEN_OK', index_= i_adapt,&
+        call utdidt('L', sddisc, 'ADAP', 'NB_EVEN_OK', index_= i_adap,&
                     vali_ = nbok)
         if (nbok .lt. nbinse) then
             diadap = .false.
@@ -80,10 +79,10 @@ implicit none
             diadap = .true.
 !         REMISE A ZERO DE NBOK
             nbok = 0
-            call utdidt('E', sddisc, 'ADAP', 'NB_EVEN_OK', index_= i_adapt,&
+            call utdidt('E', sddisc, 'ADAP', 'NB_EVEN_OK', index_= i_adap,&
                         vali_ = nbok)
         endif
-    else if (event_name.eq.'SEUIL_AVEC_FORMU') then
+    else
         ASSERT(.false.)
     endif
 !

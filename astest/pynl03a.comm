@@ -1,0 +1,495 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),PAR_LOT='NON',DEBUG=_F(SDVERI='NON'))
+
+import numpy as NP
+
+# Read mesh
+MAIL=LIRE_MAILLAGE(FORMAT='MED', )
+
+# Functions
+
+
+CONDUC=DEFI_FONCTION(    NOM_PARA='TEMP',  NOM_RESU='LAMBDA',
+                                 VALE=(    0.0,       2.E2,
+                                         500.0,       7.E2, ),
+               PROL_DROITE='LINEAIRE',    PROL_GAUCHE='LINEAIRE' )
+
+ENTHAL=DEFI_FONCTION(    NOM_PARA='TEMP',  NOM_RESU='CP',
+                                 VALE=(    0.0,      0.0,
+                                         500.0,   4000.E6, ),
+               PROL_DROITE='LINEAIRE',    PROL_GAUCHE='LINEAIRE' )
+
+
+# Material properties
+MATER=DEFI_MATERIAU( THER_NL=_F(  LAMBDA = CONDUC,
+                                    BETA = ENTHAL) )
+
+CHMAT=AFFE_MATERIAU(  MAILLAGE=MAIL,
+                 AFFE=_F(  TOUT = 'OUI', MATER = MATER) )
+
+# Finite elements
+MOTH=AFFE_MODELE(  MAILLAGE=MAIL,
+                         AFFE=_F( TOUT = 'OUI', MODELISATION = 'PLAN',
+                                          PHENOMENE = 'THERMIQUE'))
+
+
+# Loads
+TGAUCHE=DEFI_FONCTION(NOM_RESU='TEMP',  
+                      NOM_PARA='INST',
+                      VALE=(0.0E0,      200.0E0,
+                            10.0E0,      200.0E0,
+                            10.001E0,    100.0E0,
+                            100.0E0,      100.0E0, )
+                           )
+
+TDROITE=DEFI_FONCTION(    NOM_RESU='TEMP',  NOM_PARA='INST',
+                                  VALE=(0.0E0,      100.0E0,
+                                      100.0E0,      100.0E0, )
+                            )
+CHTH=AFFE_CHAR_THER_F(MODELE=MOTH,TEMP_IMPO=(
+              _F( GROUP_NO = 'NOE_GAU', TEMP = TGAUCHE),
+              _F( GROUP_NO = 'NOE_DRO', TEMP = TDROITE))
+              )
+
+
+#
+# DEFINITION DE LA STATEGIE DE CALCUL -----------------------------
+#
+
+LIST=DEFI_LIST_REEL(        DEBUT=0.,INTERVALLE=(
+                   _F(    JUSQU_A = 1.E-3, NOMBRE = 10),
+                   _F(    JUSQU_A = 1.E-2, NOMBRE = 9),
+                   _F(    JUSQU_A = 1.E-1, NOMBRE = 9),
+                   _F(    JUSQU_A = 1.E0,  NOMBRE = 9),
+                   _F(    JUSQU_A = 10.E0,  NOMBRE = 9),
+                   _F(    JUSQU_A = 13.E0,  NOMBRE = 3))
+                              )
+
+
+temp_init = 100.
+
+l_inst = LIST.Valeurs()
+
+# Create numbering
+NU       = NUME_DDL(MODELE = MOTH,
+                    CHARGE = CHTH,)
+
+# Fields
+T        = CREA_CHAMP(TYPE_CHAM = 'NOEU_TEMP_R',
+                      OPERATION = 'AFFE',
+                      MAILLAGE  = MAIL,
+                      NUME_DDL  = NU,
+                      AFFE      =_F(
+                                    TOUT    = 'OUI',
+                                    NOM_CMP = ('TEMP'),
+                                    VALE    = (temp_init,),
+                                   ),
+                      );
+DELTA_T  = CREA_CHAMP(TYPE_CHAM = 'NOEU_TEMP_R',
+                      OPERATION = 'AFFE',
+                      MAILLAGE  = MAIL,
+                      NUME_DDL  = NU,
+                      AFFE      =_F(
+                                    TOUT    = 'OUI',
+                                    NOM_CMP = ('TEMP'),
+                                    VALE    = (0.,),
+                                   ),
+                      );
+
+for i_inst in range(1,len(l_inst)) :
+    inst = l_inst[i_inst]
+    print ' '
+    print '        ####################################'
+    print '             instant de calcul ',inst
+    print '        ####################################'
+    print ' '
+
+####################################################################################################
+# Routine NXPRED
+####################################################################################################
+
+    # Linear loads
+    CHAR_EL = CALC_VECT_ELEM(OPTION = 'CHAR_THER',
+                              INST   = inst,
+                              CHARGE = CHTH,)
+    CHAR_AS = ASSE_VECTEUR(VECT_ELEM = CHAR_EL,
+                            NUME_DDL  = NU,)
+    DETRUIRE(CONCEPT=_F(NOM=CHAR_EL),INFO=1)
+
+    # Compute non linear quantities
+    PRED     = CALCUL(PHENOMENE  = 'THERMIQUE',
+                      OPTION     = (
+                                    'CHAR_EVOL_ELEM',
+                                    'MATR_TANG_ELEM',
+                                    'CHAR_THER_ELEM',
+                                    ),
+                      MODELE     = MOTH,
+                      CHAM_MATER = CHMAT,
+                      INCREMENT  = _F(
+                                      LIST_INST  = LIST,
+                                      NUME_ORDRE = i_inst,
+                                     ),
+                      EXCIT      = _F(
+                                      CHARGE     = CHTH,
+                                     ),
+                      INCR_TEMP  = DELTA_T,
+                      TEMP       = T,
+                      INFO       = 2,)
+
+    # Get CHAR_EVNL
+    EVNL_EL  = EXTR_TABLE(TYPE_RESU = 'VECT_ELEM_TEMP_R',
+                          TABLE     = PRED,
+                          NOM_PARA  = 'NOM_SD',
+                          FILTRE    = (
+                                       _F(
+                                          NOM_PARA = 'NOM_OBJET',
+                                          VALE_K   = 'CHAR_EVNL_ELEM',
+                                         ),
+                                       _F(
+                                          NOM_PARA = 'NUME_ORDRE',
+                                          VALE_I   = i_inst,
+                                         ),
+                                      ),
+                          )
+
+    EVNL_AS  = ASSE_VECTEUR(VECT_ELEM = EVNL_EL,
+                            NUME_DDL  = NU,)
+    DETRUIRE(CONCEPT=_F(NOM=(EVNL_EL),))
+
+    # Get CHAR_EVNL
+    EVOL_EL  = EXTR_TABLE(TYPE_RESU = 'VECT_ELEM_TEMP_R',
+                          TABLE     = PRED,
+                          NOM_PARA  = 'NOM_SD',
+                          FILTRE    = (
+                                       _F(
+                                          NOM_PARA = 'NOM_OBJET',
+                                          VALE_K   = 'CHAR_EVOL_ELEM',
+                                         ),
+                                       _F(
+                                          NOM_PARA = 'NUME_ORDRE',
+                                          VALE_I   = i_inst,
+                                         ),
+                                      ),
+                          )
+
+    EVOL_AS  = ASSE_VECTEUR(VECT_ELEM = EVOL_EL,
+                            NUME_DDL  = NU,)
+    DETRUIRE(CONCEPT=_F(NOM=(EVOL_EL),))
+
+    # Get CHAR_THER_NONL
+    CHNL_EL  = EXTR_TABLE(TYPE_RESU = 'VECT_ELEM_TEMP_R',
+                          TABLE     = PRED,
+                          NOM_PARA  = 'NOM_SD',
+                          FILTRE    = (
+                                       _F(
+                                          NOM_PARA = 'NOM_OBJET',
+                                          VALE_K   = 'CHAR_THER_ELEM',
+                                         ),
+                                       _F(
+                                          NOM_PARA = 'NUME_ORDRE',
+                                          VALE_I   = i_inst,
+                                         ),
+                                      ),
+                          )
+
+    CHNL_AS  = ASSE_VECTEUR(VECT_ELEM = CHNL_EL,
+                            NUME_DDL  = NU,)
+    DETRUIRE(CONCEPT=_F(NOM=(CHNL_EL),))
+
+    # Create second member (transient)
+    F2M_PRED  = CREA_CHAMP(OPERATION = 'COMB',
+                          TYPE_CHAM = 'NOEU_TEMP_R',
+                          NUME_DDL  = NU,
+                          COMB      = (
+                                       _F(
+                                          CHAM_GD = CHAR_AS, 
+                                          COEF_R  = 1.,
+                                         ),
+                                       _F(
+                                          CHAM_GD = CHNL_AS,
+                                          COEF_R  = 1.,
+                                         ),
+                                       _F(
+                                          CHAM_GD = EVNL_AS,
+                                          COEF_R  = 1.,
+                                         ),
+                                      ),
+                          )
+
+
+    # Get tangent matrix
+    MT_EL    = EXTR_TABLE(TYPE_RESU = 'MATR_ELEM_TEMP_R',
+                          TABLE     = PRED,
+                          NOM_PARA  = 'NOM_SD',
+                          FILTRE    = (
+                                       _F(
+                                          NOM_PARA = 'NOM_OBJET',
+                                          VALE_K   = 'MATR_TANG_ELEM',
+                                         ),
+                                       _F(
+                                          NOM_PARA = 'NUME_ORDRE',
+                                          VALE_I   = i_inst,
+                                         ),
+                                      ),
+                          )
+
+    MT_AS    = ASSE_MATRICE(MATR_ELEM = MT_EL,
+                            NUME_DDL  = NU,);
+    DETRUIRE(CONCEPT=_F(NOM=MT_EL),INFO=1)
+
+####################################################################################################
+# Routine NXPRED
+####################################################################################################
+
+    # Factor matrix
+    MT_AS    = FACTORISER(reuse     = MT_AS,
+                          MATR_ASSE = MT_AS,)
+
+    # Solve
+    DETRUIRE(CONCEPT=_F(NOM=DELTA_T),INFO=1)
+    DELTA_T  = RESOUDRE(MATR    = MT_AS,
+                        CHAM_NO = F2M_PRED,);
+    #DETRUIRE(CONCEPT=_F(NOM=MT_AS),INFO=1)
+
+#=========================================================
+#               BOUCLE DE NEWTON
+#=========================================================
+
+    NbIterNewtonMax = 10
+    ResiGlobRela    = 1.e-6
+    Residu  = NP.zeros(NbIterNewtonMax+1)
+    ResiduX = NP.zeros(NbIterNewtonMax+1)
+    Conv    = NP.zeros(NbIterNewtonMax+1)
+
+    for IterNewton in range(1,NbIterNewtonMax+1) :
+        print ' '
+        print '        ####################################'
+        print '             iteration de Newton ',IterNewton
+        print '        ####################################'
+        print ' '
+
+####################################################################################################
+# Routine NXNEWT
+####################################################################################################        
+
+        # Compute non linear quantities
+        CORR     = CALCUL(PHENOMENE  = 'THERMIQUE',
+                          OPTION     = (
+                                        'RESI_THER_ELEM',
+                                        'MATR_TANG_ELEM',
+                                        ),
+                          MODELE     = MOTH,
+                          CHAM_MATER = CHMAT,
+                          INCREMENT  = _F(
+                                          LIST_INST  = LIST,
+                                          NUME_ORDRE = i_inst,
+                                         ),
+                          EXCIT      = _F(
+                                          CHARGE     = CHTH,
+                                         ),
+                          INCR_TEMP  = DELTA_T,
+                          TEMP       = T,
+                          INFO       = 2,)
+
+        # RESI_THER
+        RESI_EL  = EXTR_TABLE(TYPE_RESU = 'VECT_ELEM_TEMP_R',
+                              TABLE     = CORR,
+                              NOM_PARA  = 'NOM_SD',
+                              FILTRE    = (
+                                           _F(
+                                              NOM_PARA = 'NOM_OBJET',
+                                              VALE_K   = 'RESI_THER_ELEM',
+                                             ),
+                                           _F(
+                                              NOM_PARA = 'NUME_ORDRE',
+                                              VALE_I   = i_inst,
+                                             ),
+                                          ),
+                            )
+
+        RESI_AS  = ASSE_VECTEUR(VECT_ELEM = RESI_EL,
+                                NUME_DDL  = NU,)
+        DETRUIRE(CONCEPT=_F(NOM=RESI_EL),INFO=1)
+
+        # Reaction
+        BTLA_EL  = EXTR_TABLE(TYPE_RESU = 'VECT_ELEM_TEMP_R',
+                              TABLE     = CORR,
+                              NOM_PARA  = 'NOM_SD',
+                              FILTRE    = (
+                                           _F(
+                                              NOM_PARA = 'NOM_OBJET',
+                                              VALE_K   = 'FORC_DIRI_ELEM',
+                                             ),
+                                           _F(
+                                              NOM_PARA = 'NUME_ORDRE',
+                                              VALE_I   = i_inst,
+                                             ),
+                                          ),
+                              )
+        BTLA_AS  = ASSE_VECTEUR(VECT_ELEM = BTLA_EL,
+                                NUME_DDL  = NU,)
+        DETRUIRE(CONCEPT=_F(NOM=BTLA_EL),INFO=1)
+
+####################################################################################################
+# Routine NXRESI
+####################################################################################################  
+        # Evaluate equilibrium
+        CN2MBR   = CREA_CHAMP(OPERATION = 'COMB',
+                              TYPE_CHAM = 'NOEU_TEMP_R',
+                              NUME_DDL  = NU,
+                              COMB      = (
+                                           _F(
+                                              CHAM_GD = EVOL_AS,
+                                              COEF_R  = 1.,
+                                             ),
+                                           _F(
+                                              CHAM_GD = RESI_AS,
+                                              COEF_R  = -1.,
+                                             ),
+                                           _F(
+                                              CHAM_GD = BTLA_AS,
+                                              COEF_R  = -1.,
+                                             ),
+                                          ),
+                              )
+
+        # Evaluate residual
+        v_cn2mbr = CN2MBR.EXTR_COMP('TEMP',[]).valeurs
+        v_vec2nd = F2M_PRED.EXTR_COMP('TEMP',[]).valeurs
+        v_cnvabt = BTLA_AS.EXTR_COMP('TEMP',[]).valeurs
+
+        resi_rela = 0.
+        vnorm     = 0.
+        resi_maxi = 0.
+        for i_equa in range(1,len(v_cn2mbr)):
+            resi_rela = resi_rela + (v_cn2mbr[i_equa])**2
+            vnorm     = vnorm + ( v_vec2nd[i_equa] - v_cnvabt[i_equa] )**2
+            resi_maxi = max( resi_maxi,abs( v_cn2mbr[i_equa]) )
+
+
+        Residu[IterNewton-1]  = sqrt( resi_rela / vnorm )
+        ResiduX[IterNewton-1] = resi_maxi
+
+        print 'RESI_GLOB_RELA:',Residu[IterNewton-1]
+        print 'RESI_GLOB_MAXI:',ResiduX[IterNewton-1]
+
+        # Estimation de la convergence
+        if Residu[IterNewton-1] <= ResiGlobRela :
+            Conv[IterNewton-1] = 1
+            break
+        else :
+            Conv[IterNewton-1] = 0
+
+
+        # Compute non linear quantities
+        DETRUIRE(CONCEPT=_F(NOM=CORR),INFO=1)
+        CORR     = CALCUL(PHENOMENE  = 'THERMIQUE',
+                          OPTION     = (
+                                        'CHAR_THER_ELEM',
+                                        'MATR_TANG_ELEM',
+                                        ),
+                          MODELE     = MOTH,
+                          CHAM_MATER = CHMAT,
+                          INCREMENT  = _F(
+                                          LIST_INST  = LIST,
+                                          NUME_ORDRE = i_inst,
+                                         ),
+                          EXCIT      = _F(
+                                          CHARGE     = CHTH,
+                                         ),
+                          INCR_TEMP  = DELTA_T,
+                          TEMP       = T,
+                          INFO       = 2,)
+
+
+        # Solve
+        DETRUIRE(CONCEPT=_F(NOM=T),INFO=1)
+        T  = RESOUDRE(MATR    = MT_AS,
+                      CHAM_NO = CN2MBR,);
+        
+
+        # Somme en python T+ = DELTA_t + T-
+        DELTA_T = CREA_CHAMP(reuse     = DELTA_T,
+                              OPERATION = 'COMB',
+                              TYPE_CHAM = 'NOEU_TEMP_R',
+                              COMB      = (
+                                           _F(
+                                              CHAM_GD = DELTA_T, 
+                                              COEF_R  = 1.
+                                             ),
+                                           _F(
+                                              CHAM_GD = T, 
+                                              COEF_R  = 1.
+                                             ),
+                                          ),)
+
+        DETRUIRE(CONCEPT=_F(NOM=CORR),INFO=1)
+        DETRUIRE(CONCEPT=_F(NOM=RESI_AS),INFO=1)
+        DETRUIRE(CONCEPT=_F(NOM=BTLA_AS),INFO=1)
+        DETRUIRE(CONCEPT=_F(NOM=CN2MBR),INFO=1)
+
+    print 'instant ',inst
+    print 'IterNewton | Resi_Glob_rela   | Resi_Glob_Maxi  | Convergence'
+    for i in range(0,IterNewton) :
+        print '     %d     |   %e   |   %e  |    %d ' %(i,Residu[i],ResiduX[i],Conv[i])
+
+    if Conv[IterNewton-1] != 1 :
+        print 'echec de la convergence des iterations de Newton'
+        FIN()
+
+    DETRUIRE(CONCEPT=_F(NOM=CHAR_AS),INFO=1)
+    DETRUIRE(CONCEPT=_F(NOM=PRED),INFO=1)
+    DETRUIRE(CONCEPT=_F(NOM=EVNL_AS),INFO=1)
+    DETRUIRE(CONCEPT=_F(NOM=EVOL_AS),INFO=1)
+    DETRUIRE(CONCEPT=_F(NOM=CHNL_AS),INFO=1)
+    DETRUIRE(CONCEPT=_F(NOM=F2M_PRED),INFO=1)
+    DETRUIRE(CONCEPT=_F(NOM=CORR),INFO=1)
+    DETRUIRE(CONCEPT=_F(NOM=RESI_AS),INFO=1)
+    DETRUIRE(CONCEPT=_F(NOM=BTLA_AS),INFO=1)
+    DETRUIRE(CONCEPT=_F(NOM=CN2MBR),INFO=1)
+    DETRUIRE(CONCEPT=_F(NOM=MT_AS),INFO=1)
+
+    # Somme en python T+ = DELTA_t + T-
+    T = CREA_CHAMP(reuse     = T,
+                  OPERATION = 'COMB',
+                  TYPE_CHAM = 'NOEU_TEMP_R',
+                  COMB      = (
+                               _F(
+                                  CHAM_GD = DELTA_T, 
+                                  COEF_R  = 1.
+                                 ),
+                               _F(
+                                  CHAM_GD = T, 
+                                  COEF_R  = 0.
+                                 ),
+                              ),)
+
+    DELTA_T = CREA_CHAMP(reuse     = DELTA_T,
+                  OPERATION = 'COMB',
+                  TYPE_CHAM = 'NOEU_TEMP_R',
+                  COMB      = (
+                               _F(
+                                  CHAM_GD = DELTA_T, 
+                                  COEF_R  = 0.
+                                 ),
+                              ),)
+FIN()
+#

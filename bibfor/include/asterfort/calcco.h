@@ -15,85 +15,44 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
 interface 
-    subroutine calcco(option, yachai, perman, meca, thmc,&
-                      ther, hydr, imate, ndim, dimdef,&
-                      dimcon, nbvari, yamec, yate, addeme,&
-                      adcome, advihy, advico, addep1, adcp11,&
-                      adcp12, addep2, adcp21, adcp22, addete,&
-                      adcote, congem, congep, vintm, vintp,&
-                      dsde, deps, epsv, depsv, p1,&
-                      p2, dp1, dp2, t, dt,&
-                      phi, pvp, pad, h11, h12,&
-                      kh, rho11, phi0, pvp0, sat,&
-                      retcom, crit, tbiot, vihrho, vicphi,&
-                      vicpvp, vicsat, rinstp, angmas, aniso,&
-                      phenom)
-        integer :: nbvari
-        integer :: dimcon
-        integer :: dimdef
-        character(len=16) :: option
-        aster_logical :: yachai
-        aster_logical :: perman
-        character(len=16) :: meca
-        character(len=16) :: thmc
-        character(len=16) :: ther
-        character(len=16) :: hydr
-        integer :: imate
-        integer :: ndim
-        integer :: yamec
-        integer :: yate
-        integer :: addeme
-        integer :: adcome
-        integer :: advihy
-        integer :: advico
-        integer :: addep1
-        integer :: adcp11
-        integer :: adcp12
-        integer :: addep2
-        integer :: adcp21
-        integer :: adcp22
-        integer :: addete
-        integer :: adcote
-        real(kind=8) :: congem(dimcon)
-        real(kind=8) :: congep(dimcon)
-        real(kind=8) :: vintm(nbvari)
-        real(kind=8) :: vintp(nbvari)
-        real(kind=8) :: dsde(dimcon, dimdef)
-        real(kind=8) :: deps(6)
-        real(kind=8) :: epsv
-        real(kind=8) :: depsv
-        real(kind=8) :: p1
-        real(kind=8) :: p2
-        real(kind=8) :: dp1
-        real(kind=8) :: dp2
-        real(kind=8) :: t
-        real(kind=8) :: dt
-        real(kind=8) :: phi
-        real(kind=8) :: pvp
-        real(kind=8) :: pad
-        real(kind=8) :: h11
-        real(kind=8) :: h12
-        real(kind=8) :: kh
-        real(kind=8) :: rho11
-        real(kind=8) :: phi0
-        real(kind=8) :: pvp0
-        real(kind=8) :: sat
-        integer :: retcom
-        real(kind=8) :: crit(*)
-        real(kind=8) :: tbiot(6)
-        integer :: vihrho
-        integer :: vicphi
-        integer :: vicpvp
-        integer :: vicsat
-        real(kind=8) :: rinstp
-        real(kind=8) :: angmas(3)
-        integer :: aniso
-        character(len=16) :: phenom
+    subroutine calcco(l_steady,&
+                      option  , angl_naut,&
+                      j_mater ,&
+                      ndim    , nbvari   ,&
+                      dimdef  , dimcon   ,&
+                      adcome  , adcote   , adcp11, adcp12, adcp21, adcp22,&
+                      addeme  , addete   , addep1, addep2,&
+                      temp    , p1       , p2    ,&
+                      dtemp   , dp1      , dp2   ,&
+                      deps    , epsv     , depsv ,&
+                      tbiot   ,&
+                      phi     , rho11    , satur ,&
+                      pad     , pvp      , h11   , h12   ,&
+                      congem  , congep   ,&
+                      vintm   , vintp    , dsde  ,& 
+                      retcom)
+        aster_logical, intent(in) :: l_steady
+        character(len=16), intent(in) :: option
+        real(kind=8), intent(in) :: angl_naut(3)
+        integer, intent(in) :: j_mater, ndim, nbvari
+        integer, intent(in) :: dimdef, dimcon
+        integer, intent(in) :: adcome, adcote, adcp11, adcp12, adcp21, adcp22
+        integer, intent(in) :: addeme, addete, addep1, addep2
+        real(kind=8), intent(in) :: temp, p1, p2
+        real(kind=8), intent(in) :: dtemp, dp1, dp2
+        real(kind=8), intent(in) :: epsv, depsv, deps(6), tbiot(6)
+        real(kind=8), intent(out) :: phi, rho11, satur
+        real(kind=8), intent(out) :: pad, pvp, h11, h12
+        real(kind=8), intent(in) :: congem(dimcon)
+        real(kind=8), intent(inout) :: congep(dimcon)
+        real(kind=8), intent(in) :: vintm(nbvari)
+        real(kind=8), intent(inout) :: vintp(nbvari)
+        real(kind=8), intent(inout) :: dsde(dimcon, dimdef)
+        integer, intent(out)  :: retcom
     end subroutine calcco
 end interface 

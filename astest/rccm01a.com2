@@ -63,7 +63,6 @@ PMPB3=POST_RCCM( MATER=MAT,
                      NUME_SITU=7,
                      NB_CYCL_SEISME = 10, 
                      NOM_SITU='Seisme',
-                     NUME_GROUPE=1,
                      CHAR_ETAT=11,),),);
 
 IMPR_TABLE(    TABLE=PMPB3,) 
@@ -104,7 +103,6 @@ PMPB3s=POST_RCCM( MATER=MAT,
                      NUME_SITU=7,
                      NB_CYCL_SEISME = 10, 
                      NOM_SITU='Seisme',
-                     NUME_GROUPE=1,
                      CHAR_ETAT=11,),),);
 
 IMPR_TABLE(    TABLE=PMPB3s,) 
@@ -163,7 +161,6 @@ PMPB3Js=POST_RCCM( MATER=MAT,
                      NUME_SITU=7,
                      NB_CYCL_SEISME = 10, 
                      NOM_SITU='Seisme',
-                     NUME_GROUPE=1,
                      CHAR_ETAT=11,),),);
 
 IMPR_TABLE(    TABLE=PMPB3Js,) 
@@ -208,24 +205,24 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 # SITUATION 3 avec séisme
 TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=100.000000000,
-           VALE_REFE=100.0,
+           VALE_CALC=162.500000000,
+           VALE_REFE=162.5,
            NOM_PARA='PM_MAX',
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),
            TABLE=PMPB3s,)
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=200.000000000,
-           VALE_REFE=200.0,
+           VALE_CALC=275.000000000,
+           VALE_REFE=275.0,
            NOM_PARA='PB_MAX',
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),
            TABLE=PMPB3s,)
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=175.000000000,
-           VALE_REFE=175.0,
+           VALE_CALC=262.500000000,
+           VALE_REFE=262.5,
            NOM_PARA='PMPB_MAX',
            TABLE=PMPB3s,
            FILTRE=_F(NOM_PARA='LIEU',
@@ -233,8 +230,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=275.000000000,
-           VALE_REFE=275.0,
+           VALE_CALC=387.500000000,
+           VALE_REFE=387.5,
            NOM_PARA='PMPB_MAX',
            TABLE=PMPB3s,
            FILTRE=_F(NOM_PARA='LIEU',
@@ -243,24 +240,24 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 # SITUATION 3 JONCTION avec séisme
 TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=100.000000000,
-           VALE_REFE=100.0,
+           VALE_CALC=162.500000000,
+           VALE_REFE=162.5,
            NOM_PARA='PM_MAX',
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),
            TABLE=PMPB3Js,)
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=200.000000000,
-           VALE_REFE=200.0,
+           VALE_CALC=275.000000000,
+           VALE_REFE=275.0,
            NOM_PARA='PB_MAX',
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),
            TABLE=PMPB3Js,)
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=175.000000000,
-           VALE_REFE=175.0,
+           VALE_CALC=262.500000000,
+           VALE_REFE=262.5,
            NOM_PARA='PMPB_MAX',
            TABLE=PMPB3Js,
            FILTRE=_F(NOM_PARA='LIEU',
@@ -268,8 +265,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=275.000000000,
-           VALE_REFE=275.0,
+           VALE_CALC=387.500000000,
+           VALE_REFE=387.5,
            NOM_PARA='PMPB_MAX',
            TABLE=PMPB3Js,
            FILTRE=_F(NOM_PARA='LIEU',

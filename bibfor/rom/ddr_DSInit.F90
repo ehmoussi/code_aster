@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine ddr_DSInit(ds_para)
 !
 use Rom_Datastructure_type
@@ -27,9 +28,7 @@ implicit none
 #include "asterfort/romLineicBaseDSInit.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaDDR), intent(out) :: ds_para
+type(ROM_DS_ParaDDR), intent(out) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -69,11 +68,15 @@ implicit none
     ds_para%ds_empi_prim  = empi_prim
     ds_para%ds_empi_dual  = empi_dual
     ds_para%grelem_rid    = ' '
-    ds_para%nb_layer_ma   = 0
+    ds_para%nb_layer_rid  = 0
     ds_para%grnode_int    = ' '
     ds_para%l_corr_ef     = .false._1
     ds_para%grnode_sub    = ' '
     ds_para%nb_rid_mini   = 0
     ds_para%v_rid_mini    => null()
+    ds_para%l_rid_maxi    = .false._1
+    ds_para%v_rid_maxi    => null()
+    ds_para%nb_rid_maxi   = 0
+    ds_para%nb_layer_sub  = 0
 !
 end subroutine

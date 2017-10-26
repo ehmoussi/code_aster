@@ -33,11 +33,6 @@ from cataelem.Options.options import OP
 #----------------
 
 
-CCOMPOR  = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
-    components=('RELCOM','NBVARI','DEFORM','INCELA','C_PLAN',
-          'NUME_LC','SD_COMP','KIT[9]','NVI_C','NVI_T',
-          'NVI_H','NVI_M',))
-
 
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO', diff=True,
     components=(
@@ -140,7 +135,7 @@ class TR6_DP_2D(Element):
         ),
 
         OP.FORC_NODA(te=5,
-            para_in=((OP.FORC_NODA.PCOMPOR, CCOMPOR), (OP.FORC_NODA.PCONTMR, ECONTPG),
+            para_in=((OP.FORC_NODA.PCOMPOR, LC.CCOMPOR), (OP.FORC_NODA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), (OP.FORC_NODA.PVARCPR, LC.ZVARCPG),
                      ),
@@ -148,7 +143,7 @@ class TR6_DP_2D(Element):
         ),
 
         OP.FULL_MECA(te=5,
-            para_in=((OP.FULL_MECA.PCOMPOR, CCOMPOR), (OP.FULL_MECA.PCONTMR, ECONTPG),
+            para_in=((OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (OP.FULL_MECA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PVARCMR, LC.ZVARCPG), (OP.FULL_MECA.PVARCPR, LC.ZVARCPG),
@@ -168,7 +163,7 @@ class TR6_DP_2D(Element):
         ),
 
         OP.RAPH_MECA(te=5,
-            para_in=((OP.RAPH_MECA.PCOMPOR, CCOMPOR), (OP.RAPH_MECA.PCONTMR, ECONTPG),
+            para_in=((OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR), (OP.RAPH_MECA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PVARCMR, LC.ZVARCPG), (OP.RAPH_MECA.PVARCPR, LC.ZVARCPG),
@@ -179,7 +174,7 @@ class TR6_DP_2D(Element):
         ),
 
         OP.RIGI_MECA_TANG(te=5,
-            para_in=((OP.RIGI_MECA_TANG.PCOMPOR, CCOMPOR), (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
+            para_in=((OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PVARCMR, LC.ZVARCPG), (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG),
@@ -213,13 +208,13 @@ class TR6_DP_2D(Element):
         ),
 
         OP.VAEX_ELGA(te=549,
-            para_in=((OP.VAEX_ELGA.PCOMPOR, CCOMPOR), (SP.PNOVARI, E1NEUTK),
+            para_in=((OP.VAEX_ELGA.PCOMPOR, LC.CCOMPOR), (SP.PNOVARI, E1NEUTK),
                      (SP.PVARIGR, ZVARIPG), ),
             para_out=((SP.PVARIGS, LC.E1GNEUT), ),
         ),
 
         OP.VAEX_ELNO(te=549,
-            para_in=((OP.VAEX_ELNO.PCOMPOR, CCOMPOR), (SP.PNOVARI, E1NEUTK),
+            para_in=((OP.VAEX_ELNO.PCOMPOR, LC.CCOMPOR), (SP.PNOVARI, E1NEUTK),
                      (OP.VAEX_ELNO.PVARINR, LC.ZVARINO), ),
             para_out=((SP.PVARINS, LC.E1NNEUT), ),
         ),

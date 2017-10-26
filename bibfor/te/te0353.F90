@@ -30,10 +30,12 @@ implicit none
 #include "asterfort/meta_vpta_coef.h"
 #include "asterfort/get_meta_phasis.h"
 #include "asterfort/get_meta_id.h"
+#include "asterfort/get_elas_id.h"
 #include "asterfort/get_elas_para.h"
 #include "asterfort/rcvarc.h"
 #include "asterfort/tecach.h"
 #include "asterfort/utmess.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -70,6 +72,7 @@ implicit none
     real(kind=8) :: phas_prev(5), phas_curr(5), temp
     aster_logical :: l_axi
     logical :: l_temp
+    character(len=16) :: elas_keyword
 !
     data kron  /1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/
 !
@@ -97,7 +100,7 @@ implicit none
 ! - Comportement
 !
     call jevech('PCOMPOR', 'L', j_compor)
-    rela_comp = zk16(j_compor)
+    rela_comp = zk16(j_compor-1+NAME)
 !
 ! - Cannot evaluate command variables effect for Mfront behaviors
 !
@@ -108,7 +111,7 @@ implicit none
 !
 ! - Get type of phasis
 !
-    type_phas = zk16(j_compor+7)
+    type_phas = zk16(j_compor-1+META_NAME)
     call get_meta_id(meta_id, nb_phasis)
     ASSERT(nb_phasis.le.5)
     if ((meta_id.eq.0).or.(rela_comp.eq.'META_LEMA_ANI')) then
@@ -117,7 +120,6 @@ implicit none
 !
 ! - Check type of phasis
 !
-    type_phas = zk16(j_compor+7)
     valk(1) = type_phas
     if (type_phas.eq.'ACIER') then
         if (meta_id.ne.1) then
@@ -187,8 +189,9 @@ implicit none
 !
 ! ----- Get elastic parameters
 !
-        call get_elas_para(fami, j_mater , '+', ipg,&
-                           ispg, elas_id,&
+        call get_elas_id(j_mater, elas_id, elas_keyword)
+        call get_elas_para(fami, j_mater , '+', ipg, ispg,&
+                           elas_id  , elas_keyword,&
                            e  = young , nu = nu)
         ASSERT(elas_id.eq.1)
         deuxmu = young/(1.d0+nu)

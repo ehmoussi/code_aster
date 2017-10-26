@@ -133,8 +133,8 @@ TABL_MAS=POST_ELEM(        MODELE=MODELE,
 
 MODES=CALC_MODES(MATR_RIGI=K_ASSE,
                  OPTION='BANDE',
-                 CALC_FREQ=_F(FREQ=(70.,300.,),
-                              ),
+                 SOLVEUR_MODAL=_F(COEF_DIM_ESPACE=4),
+                 CALC_FREQ=_F(FREQ=(70.,300.,),),
                  MATR_MASS=M_ASSE,
                  )
 

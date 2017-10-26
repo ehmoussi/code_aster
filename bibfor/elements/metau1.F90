@@ -27,6 +27,7 @@ implicit none
 #include "asterfort/get_meta_id.h"
 #include "asterfort/get_meta_phasis.h"
 #include "asterfort/get_elas_para.h"
+#include "asterfort/get_elas_id.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/jevech.h"
 #include "asterfort/lteatt.h"
@@ -49,7 +50,6 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-!
     real(kind=8) :: coef
     real(kind=8) :: young, nu
     real(kind=8) :: epsth
@@ -59,6 +59,7 @@ implicit none
     integer :: meta_id, nb_phasis
     integer :: ipoids, ivf, idfde
     integer :: j_geom, j_mate, j_mater, j_vect
+    character(len=16) :: elas_keyword
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -125,8 +126,10 @@ implicit none
 !
 ! ----- Get elastic parameters
 !
+        call get_elas_id(j_mater, elas_id, elas_keyword)
         call get_elas_para('RIGI', j_mater, '+', kp, ispg,&
-                           elas_id, e = young, nu = nu)
+                           elas_id  , elas_keyword,&
+                           e = young, nu = nu)
         ASSERT(elas_id.eq.1)
 !
 ! ----- Compute

@@ -15,13 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine dpao2d(repere, irep, passag)
-        real(kind=8) :: repere(7)
-        integer :: irep
-        real(kind=8) :: passag(4, 4)
+    subroutine dpao2d(repere, irep, matr_tran)
+        real(kind=8), intent(in) :: repere(7)
+        integer, intent(out) :: irep
+        real(kind=8), intent(out) :: matr_tran(4, 4)
     end subroutine dpao2d
 end interface

@@ -15,11 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine lceib1(fami, kpg, ksp, imate, compor,&
+    subroutine lceib1(fami, kpg, ksp, imate,&
                       ndim, epsm, sref, sechm, hydrm,&
                       t, lambda, deuxmu, epsthe, kdess,&
                       bendo, gamma, seuil)
@@ -27,7 +25,6 @@ interface
         integer :: kpg
         integer :: ksp
         integer :: imate
-        character(len=16) :: compor(*)
         integer :: ndim
         real(kind=8) :: epsm(6)
         real(kind=8) :: sref

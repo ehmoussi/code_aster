@@ -15,16 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 interface
     subroutine xmmata(ndim, nnops, nnop, ddls, ddlm, saut,&
-                      nd, pla, ffc, dffc, mmat, rho11, mu,&
+                      nd, pla, ffc, dffc, mmat, rho11,&
                       gradpf, ffp, dt, ta, jac,&
-                      cliq, jheavn, ncompn, ifiss,&
-                      nfiss, nfh, ifa, jheafa, ncomph)
-                           
+                      jheavn, ncompn, ifiss,&
+                      nfiss, nfh, ifa, jheafa, ncomph)                
         integer :: nnops
         integer :: nnop
         integer :: ndim
@@ -38,12 +36,10 @@ interface
         real(kind=8) :: ffp(27)
         real(kind=8) :: jac
         real(kind=8) :: rho11
-        real(kind=8) :: mu
         real(kind=8) :: gradpf(3)
         real(kind=8) :: dt
         real(kind=8) :: ta
         real(kind=8) :: mmat(560,560)
-        real(kind=8) :: cliq
         integer :: jheavn
         integer :: ncompn
         integer :: ifiss

@@ -28,7 +28,6 @@ implicit none
 #include "asterf_types.h"
 #include "asterc/r8vide.h"
 #include "asterfort/lcvali.h"
-#include "asterfort/nmcoup.h"
 #include "asterfort/nmcpl1.h"
 #include "asterfort/nmcpl2.h"
 #include "asterfort/nmcpl3.h"
@@ -147,28 +146,18 @@ implicit none
     endif
 !
 !     RECUP NUMLC
-    read (compor(6),'(I16)') numlc
+    read (compor(6),'(I16)') numlc    
+    
 !
 !     BOUCLE POUR ETABLIR LES CONTRAINTES PLANES
     do icp = 1, ncpmax
-!
-        if (compor(1) .eq. 'KIT_DDI') then
-!        POUR EVITER LA RECURSIVITE. PETITES DEFORMATIONS
-            call nmcoup(fami, kpg, ksp, ndim, typmod,&
-                        imate, compor, mult_comp, cp, carcri, instam,&
-                        instap, neps, epsm, deps, nsig,&
-                        sigm, vim, option, angmas, nwkin,&
-                        wkin, sigp, vip, ndsde, dsidep,&
-                        nwkout, wkout, codret)
-        else
-            call redece(fami, kpg, ksp, ndim, typmod,&
-                        imate, compor, mult_comp, carcri, instam, instap,&
-                        neps, epsm, deps, nsig, sigm,&
-                        vim, option, angmas, nwkin, wkin,&
-                        cp, numlc,&
-                        sigp, vip, ndsde, dsidep, nwkout,&
-                        wkout, codret)
-        endif
+        call redece(fami, kpg, ksp, ndim, typmod,&
+                    imate, compor, mult_comp, carcri, instam, instap,&
+                    neps, epsm, deps, nsig, sigm,&
+                    vim, option, angmas, nwkin, wkin,&
+                    cp, numlc,&
+                    sigp, vip, ndsde, dsidep, nwkout,&
+                    wkout, codret)
 !
 !       VERIFIER LA CONVERGENCE DES CONTRAINTES PLANES ET
 !       SORTIR DE LA BOUCLE SI NECESSAIRE

@@ -2365,15 +2365,17 @@ void DEFSS(LCALGO, lcalgo, _IN char *compor, STRING_SIZE lcompor,
    Py_XDECREF(catalc);
 }
 
-void DEFSPP(LCINFO, lcinfo, _IN char *compor, STRING_SIZE lcompor,
-                            _OUT ASTERINTEGER *numlc,
-                            _OUT ASTERINTEGER *nbvari)
+void DEFSPPP(LCINFO, lcinfo, _IN char *compor, STRING_SIZE lcompor,
+                             _OUT ASTERINTEGER *numlc,
+                             _OUT ASTERINTEGER *nbvari,
+                             _OUT ASTERINTEGER *nbvari_exte
+                             )
 {
 /*
    Retourne le numéro de routine et le nbre de variables internes
 
-      CALL LCINFO(COMPOR, NUMLC, NBVARI)
-      ==> num_lc, nb_vari = catalc.get_info(COMPOR)
+      CALL LCINFO(COMPOR, NUMLC, NBVARI, NBVARI_EXTE)
+      ==> num_lc, nb_vari, nb_vari_exte = catalc.get_info(COMPOR)
 */
    PyObject *catalc, *res;
 
@@ -2384,8 +2386,9 @@ void DEFSPP(LCINFO, lcinfo, _IN char *compor, STRING_SIZE lcompor,
               "comportement (lcinfo/get_info) !");
    }
 
-   *numlc  = (ASTERINTEGER)PyInt_AsLong(PyTuple_GetItem(res, 0));
-   *nbvari = (ASTERINTEGER)PyInt_AsLong(PyTuple_GetItem(res, 1));
+   *numlc       = (ASTERINTEGER)PyInt_AsLong(PyTuple_GetItem(res, 0));
+   *nbvari      = (ASTERINTEGER)PyInt_AsLong(PyTuple_GetItem(res, 1));
+   *nbvari_exte = (ASTERINTEGER)PyInt_AsLong(PyTuple_GetItem(res, 2));
 
    Py_XDECREF(res);
    Py_XDECREF(catalc);
@@ -2559,6 +2562,41 @@ void DEFSS(LCSYMM, lcsymm, _IN char *compor, STRING_SIZE lcompor,
 
    Py_XDECREF(res);
    Py_XDECREF(catalc);
+}
+
+
+void DEFPSS(LCKITREAD, lckitread,_IN ASTERINTEGER *nbkit,
+                                 _IN char *lkit, STRING_SIZE llkit,
+                                 _OUT char *lrela, STRING_SIZE llrela)
+{
+    PyObject *catalc, *tup_lkit, *res;
+    int nb_tuple;
+    catalc = GetJdcAttr("catalc");
+
+    // Input in tuple: first => name of kit, next => components of kit
+    tup_lkit = MakeTupleString((long)*nbkit, lkit, llkit, NULL);
+
+    // Call C function
+    res = PyObject_CallMethod(catalc, "get_kit", "O", tup_lkit);
+                        
+    if (res == NULL) {
+        MYABORT("Echec lors de la lecture du kit (lckitread/get_kit) !");
+        DEBUG_ASSERT(PyTuple_Check(res)) ;
+    }
+    nb_tuple = PyTuple_Size(tup_lkit);
+    if (nb_tuple != 5) {
+        MYABORT("Echec lors de la lecture du kit (lckitread/get_kit) !");
+        DEBUG_ASSERT(PyTuple_Check(res)) ;
+    }
+
+
+    // Convert output
+    convertxt(4, res, lrela, llrela);
+
+
+    Py_XDECREF(res);
+    Py_XDECREF(tup_lkit);
+    Py_XDECREF(catalc);
 }
 
 /* ----------   FIN catalogue de loi de comportement   -------------- */

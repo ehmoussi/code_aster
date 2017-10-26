@@ -15,16 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 module NonLin_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-!
-! person_in_charge: mickael.abbas at edf.fr
-!
-
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -63,11 +60,11 @@ implicit none
 ! ----- Number of active columns
         integer                :: nb_cols
 ! ----- Maximum number of columns in table
-        integer                :: nb_cols_maxi = 37
+        integer                :: nb_cols_maxi = 39
 ! ----- List of columns in table
-        type(NL_DS_Column)     :: cols(37)
+        type(NL_DS_Column)     :: cols(39)
 ! ----- List of _active_ columns in table
-        aster_logical          :: l_cols_acti(37)
+        aster_logical          :: l_cols_acti(39)
 ! ----- Total width of table
         integer                :: width
 ! ----- eNumber of lines for title
@@ -84,10 +81,10 @@ implicit none
         integer                :: nb_para_real
         integer                :: nb_para_cplx
         integer                :: nb_para_strg
-        character(len=24)      :: list_para(37)
-        character(len=3)       :: type_para(37)
+        character(len=24)      :: list_para(39)
+        character(len=3)       :: type_para(39)
 ! ----- Index to values
-        integer                :: indx_vale(37)
+        integer                :: indx_vale(39)
     end type NL_DS_Table
 !
 ! - Type: print
@@ -128,9 +125,9 @@ implicit none
 ! 
     type NL_DS_Conv
         integer :: nb_resi
-        integer :: nb_resi_maxi = 6
-        type(NL_DS_Resi)     :: list_resi(6)
-        aster_logical        :: l_resi_test(6)
+        integer :: nb_resi_maxi = 7
+        type(NL_DS_Resi)     :: list_resi(7)
+        aster_logical        :: l_resi_test(7)
         integer :: nb_refe
         integer :: nb_refe_maxi = 11
         type(NL_DS_RefeResi) :: list_refe(11)
@@ -138,6 +135,7 @@ implicit none
         integer :: iter_glob_maxi
         integer :: iter_glob_elas
         aster_logical :: l_stop
+        aster_logical :: l_stop_pene
         aster_logical :: l_iter_elas
         real(kind=8)  :: swap_trig
         real(kind=8)  :: line_sear_coef
@@ -290,12 +288,14 @@ implicit none
         integer           :: nb_loop_maxi = 3
         integer           :: iteration_newton = 0
         integer           :: it_cycl_maxi = 0
+        integer           :: it_adapt_maxi = 0
         type(NL_DS_Loop)  :: loop(3)
 ! ----- Flag for (re) numbering
         aster_logical     :: l_renumber
 ! ----- Geometric loop control
         real(kind=8)      :: geom_maxi
         real(kind=8)      :: arete_min
+        real(kind=8)      :: arete_max=0.0
 ! ----- Get-off indicator
         aster_logical     :: l_getoff
 ! ----- First geometric loop
@@ -306,6 +306,15 @@ implicit none
         integer           :: nt_patch
 ! ----- Total number of contact pairs
         integer           :: nb_cont_pair
+! ----- Automatic update of penalised coefficient
+        real(kind=8)      :: estimated_coefficient = 100.0
+        real(kind=8)      :: max_coefficient = 100.0
+        real(kind=8)      :: update_init_coefficient = 0.0
+        real(kind=8)      :: calculated_penetration  = 1.0
+        real(kind=8)      :: critere_penetration  = 0.0
+        real(kind=8)      :: continue_pene  = 0.0
+        real(kind=8)      :: time_curr  = -1.0
+
     end type NL_DS_Contact
 !
 ! - Type: timer management
@@ -378,17 +387,26 @@ implicit none
         type(NL_DS_Table)     :: table
     end type NL_DS_Energy
 !
-! - Type: for exterior comportement
+! - Type: for external comportement
 ! 
     type NL_DS_ComporExte
+! ----- Flag for UMAT law
         aster_logical      :: l_umat
+! ----- Flag for non-official MFront law
         aster_logical      :: l_mfront_proto
+! ----- Flag for official MFront law
         aster_logical      :: l_mfront_offi
+! ----- Name of subroutine for external law
         character(len=255) :: subr_name
+! ----- Name of library for external law
         character(len=255) :: libr_name
+! ----- Model for MFront law
         character(len=16)  :: model_mfront
+! ----- Number of dimension for MFront law
         integer            :: model_dim
+! ----- Number of internal variables for UMAT
         integer            :: nb_vari_umat
+
     end type NL_DS_ComporExte
 !
 ! - Type: for comportement
@@ -400,12 +418,10 @@ implicit none
         character(len=16) :: type_cpla
         character(len=16) :: kit_comp(4)
         character(len=16) :: mult_comp
-        character(len=16) :: type_matg
         character(len=16) :: post_iter
         integer           :: nb_vari
         integer           :: nb_vari_comp(4)
         integer           :: nume_comp(4)
-        character(len=16) :: type_model2
     end type NL_DS_Compor
 !
 ! - Type: for preparation of comportment
@@ -421,33 +437,25 @@ implicit none
         aster_logical                   :: l_implex
     end type NL_DS_ComporPrep
 !
-! - Type: pointer to external constitutive laws
-! 
-    type NL_DS_ComporPointer
-        integer      ::  nbvarext
-        integer      ::  namevarext
-        integer      ::  fct_ldc
-        integer      ::  matprop
-        integer      ::  nbprop
-    end type NL_DS_ComporPointer
-!
 ! - Type: for parameters for constitutive laws
 ! 
     type NL_DS_ComporPara
+        aster_logical :: l_comp_external
         integer       :: type_matr_t
-        real(kind=8)  :: parm_alpha
         real(kind=8)  :: parm_theta
         integer       :: iter_inte_pas
         real(kind=8)  :: vale_pert_rela
         real(kind=8)  :: resi_deborst_max
         integer       :: iter_deborst_max
-        real(kind=8)  :: seuil
-        integer       :: post_iter
-        integer       :: post_incr
+        real(kind=8)  :: resi_radi_rela
+        integer       :: ipostiter
+        integer       :: ipostincr
+        integer       :: iveriborne
         aster_logical :: l_matr_unsymm
         character(len=16)         :: rela_comp
-        character(len=16)         :: algo_inte
-        type(NL_DS_ComporPointer) :: c_pointer
+        character(len=16)         :: meca_comp
+        character(len=16)         :: defo_comp
+        character(len=16)         :: kit_comp(4)
         type(NL_DS_ComporExte)    :: comp_exte
     end type NL_DS_ComporPara
 !
@@ -456,6 +464,9 @@ implicit none
     type NL_DS_ComporParaPrep
 ! ----- Number of comportements
         integer                         :: nb_comp
+! ----- Parameters for THM scheme
+        real(kind=8)                    :: parm_alpha_thm
+        real(kind=8)                    :: parm_theta_thm
 ! ----- List of parameters
         type(NL_DS_ComporPara), pointer :: v_para(:)
     end type NL_DS_ComporParaPrep

@@ -83,8 +83,8 @@ MATASSM=ASSE_MATRICE(MATR_ELEM=MELM,NUME_DDL=NUM)
 #
 #-------------- CALCUL MODAL
 
-MODES=CALC_MODES(MATR_RIGI=MATASSR,
-                 OPTION='AJUSTE',
+MODES=CALC_MODES(MATR_RIGI=MATASSR,VERI_MODE=_F(STURM='OUI'),
+                 OPTION='AJUSTE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                  CALC_FREQ=_F(NMAX_FREQ=13,
                               FREQ=(5.,350.,),
                               ),

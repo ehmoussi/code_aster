@@ -42,9 +42,6 @@ CCAORIE = LocatedComponents(phys=PHY.CAORIE, type='ELEM',
                             components=('ALPHA', 'BETA', 'GAMMA',))
 
 
-CCOMPOR = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
-                            components=('RELCOM', 'NBVARI', 'DEFORM', 'INCELA', 'C_PLAN',))
-
 
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO',
                              components=('DX', 'DY', 'DZ', 'DRX', 'DRY',
@@ -241,7 +238,7 @@ class MECA_POU_D_T_GD(Element):
                      para_in=((SP.PACCKM1, DDL_MECA), (SP.PACCPLU, DDL_MECA),
                               (SP.PCAGNPO, CCAGNPO), (
                                   OP.FULL_MECA.PCAORIE, CCAORIE),
-                              (OP.FULL_MECA.PCOMPOR, CCOMPOR), (
+                              (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (
                               SP.PDDEPLA, DDL_MECA),
                               (SP.PDEPKM1, DDL_MECA), (SP.PDEPLMR, DDL_MECA),
                               (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
@@ -298,7 +295,7 @@ class MECA_POU_D_T_GD(Element):
                      para_in=((SP.PACCKM1, DDL_MECA), (SP.PACCPLU, DDL_MECA),
                               (SP.PCAGNPO, CCAGNPO), (
                                   OP.RAPH_MECA.PCAORIE, CCAORIE),
-                              (OP.RAPH_MECA.PCOMPOR, CCOMPOR), (
+                              (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR), (
                               SP.PDDEPLA, DDL_MECA),
                               (SP.PDEPKM1, DDL_MECA), (SP.PDEPLMR, DDL_MECA),
                               (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
@@ -332,7 +329,7 @@ class MECA_POU_D_T_GD(Element):
                               (SP.PACCKM1, DDL_MECA), (SP.PACCPLU, DDL_MECA),
                           (SP.PCAGNPO, CCAGNPO), (
                           OP.RIGI_MECA_TANG.PCAORIE, CCAORIE),
-                              (OP.RIGI_MECA_TANG.PCOMPOR, CCOMPOR), (
+                              (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (
                           SP.PDDEPLA, DDL_MECA),
                           (SP.PDEPKM1, DDL_MECA), (SP.PDEPLMR, DDL_MECA),
                           (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),

@@ -15,12 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-function pdvc2d(v1, v2)
-    implicit none
-    real(kind=8) :: pdvc2d
-    real(kind=8) :: v1(2), v2(2)
 !
-    pdvc2d=v1(1)*v2(2)-v1(2)*v2(1)
+function pdvc2d(v1, v2)
+!
+implicit none
+!
+real(kind=8) :: pdvc2d
+real(kind=8), intent(in) :: v1(2), v2(2)
+!
+pdvc2d = v1(1)*v2(2)-v1(2)*v2(1)
 !
 end function

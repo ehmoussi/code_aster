@@ -15,13 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine isacti(sddisc, action_name_s_, i_action)
+    subroutine isacti(sddisc, action_type_in, i_action)
         character(len=19), intent(in) :: sddisc
-        character(len=*), intent(in) :: action_name_s_
+        integer, intent(in) :: action_type_in
         integer, intent(out) :: i_action
     end subroutine isacti
 end interface

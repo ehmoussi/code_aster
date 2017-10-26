@@ -18,16 +18,13 @@
 
 !
 !
-! aslint: disable=W1504
-!
 #include "asterf_types.h"
 !
 interface
     subroutine ntacmv(model , mate  , cara_elem, list_load, nume_dof,&
                       l_stat, time  , tpsthe   , reasrg   , reasms  ,&
-                      vtemp , vhydr , varc_curr, dry_prev , dry_curr,&
-                      cn2mbr, matass, cndiri   , cncine   , mediri  ,&
-                      compor)
+                      vtemp , varc_curr,&
+                      cn2mbr, matass, cndiri   , cncine   , mediri)
         character(len=24), intent(in) :: model
         character(len=24), intent(in) :: mate
         character(len=24), intent(in) :: cara_elem
@@ -39,15 +36,11 @@ interface
         aster_logical, intent(in) :: reasrg
         aster_logical, intent(in) :: reasms
         character(len=24), intent(in) :: vtemp
-        character(len=24), intent(in) :: vhydr
         character(len=19), intent(in) :: varc_curr
-        character(len=24), intent(in) :: dry_prev
-        character(len=24), intent(in) :: dry_curr
         character(len=24), intent(in) :: cn2mbr
         character(len=24), intent(in) :: matass
         character(len=24), intent(in) :: cndiri
         character(len=24), intent(out) :: cncine
         character(len=24), intent(in) :: mediri
-        character(len=24), intent(in) :: compor
     end subroutine ntacmv
 end interface

@@ -470,6 +470,7 @@ CMV290=AFFE_MATERIAU(MAILLAGE=MAILL,
 
 #RESULTATS MECANIQUES
 RMECA1=MECA_STATIQUE(MODELE=MODELE,
+                     SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                      CHAM_MATER=CMV10,
                      CARA_ELEM=CARA_POU,
                      EXCIT=_F(CHARGE=BLOC3,),)
@@ -479,6 +480,7 @@ RMECA1=CALC_CHAMP(RESULTAT=RMECA1,reuse=RMECA1,
 
 
 RMECA2_9=MECA_STATIQUE(MODELE=MODELE,
+                       SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                        CHAM_MATER=CMV287,
                        CARA_ELEM=CARA_POU,
                        EXCIT=(_F(CHARGE=BLOC1,),
@@ -489,6 +491,7 @@ RMECA2_9=CALC_CHAMP(RESULTAT=RMECA2_9,reuse=RMECA2_9,
 
 
 RMECA3=MECA_STATIQUE(MODELE=MODELE,
+                     SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                      CHAM_MATER=CMV274,
                      CARA_ELEM=CARA_POU,
                      EXCIT=(_F(CHARGE=BLOC1,),
@@ -498,6 +501,7 @@ RMECA3=CALC_CHAMP(RESULTAT=RMECA3,reuse=RMECA3,
                      CONTRAINTE='EFGE_ELNO')
 
 RMECA4=MECA_STATIQUE(MODELE=MODELE,
+                     SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                      CHAM_MATER=CMV272,
                      CARA_ELEM=CARA_POU,
                      EXCIT=(_F(CHARGE=BLOC1,),
@@ -507,6 +511,7 @@ RMECA4=CALC_CHAMP(RESULTAT=RMECA4,reuse=RMECA4,
                      CONTRAINTE='EFGE_ELNO')
 
 RMECA5=MECA_STATIQUE(MODELE=MODELE,
+                     SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                      CHAM_MATER=CMV286,
                      CARA_ELEM=CARA_POU,
                      EXCIT=(_F(CHARGE=BLOC1,),
@@ -516,6 +521,7 @@ RMECA5=CALC_CHAMP(RESULTAT=RMECA5,reuse=RMECA5,
                      CONTRAINTE='EFGE_ELNO')
 
 RMECA6=MECA_STATIQUE(MODELE=MODELE,
+                     SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                      CHAM_MATER=CMV275,
                      CARA_ELEM=CARA_POU,
                      EXCIT=(_F(CHARGE=BLOC1,),
@@ -526,6 +532,7 @@ RMECA6=CALC_CHAMP(RESULTAT=RMECA6,reuse=RMECA6,
 
 
 RMECA711=MECA_STATIQUE(MODELE=MODELE,
+                       SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                        CHAM_MATER=CMV290,
                        CARA_ELEM=CARA_POU,
                        EXCIT=(_F(CHARGE=BLOC1,),
@@ -537,6 +544,7 @@ RMECA711=CALC_CHAMP(RESULTAT=RMECA711,reuse=RMECA711,
 
 
 RMECA8=MECA_STATIQUE(MODELE=MODELE,
+                     SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                      CHAM_MATER=CMV284,
                      CARA_ELEM=CARA_POU,
                      EXCIT=(_F(CHARGE=BLOC1,),
@@ -547,6 +555,7 @@ RMECA8=CALC_CHAMP(RESULTAT=RMECA8,reuse=RMECA8,
 
 
 RMECA10=MECA_STATIQUE(MODELE=MODELE,
+                      SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                       CHAM_MATER=CMV256,
                       CARA_ELEM=CARA_POU,
                       EXCIT=(_F(CHARGE=BLOC1,),
@@ -556,6 +565,7 @@ RMECA10=CALC_CHAMP(RESULTAT=RMECA10,reuse=RMECA10,
                      CONTRAINTE='EFGE_ELNO')
 
 RMECA12=MECA_STATIQUE(MODELE=MODELE,
+                      SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                       CHAM_MATER=CMV257,
                       CARA_ELEM=CARA_POU,
                       EXCIT=(_F(CHARGE=BLOC1,),
@@ -566,6 +576,7 @@ RMECA12=CALC_CHAMP(RESULTAT=RMECA12,reuse=RMECA12,
 
 #ETAT NUL
 RMECA13=MECA_STATIQUE(MODELE=MODELE,
+                      SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                       CHAM_MATER=CMV20,
                       CARA_ELEM=CARA_POU,
                       EXCIT=(
@@ -577,6 +588,7 @@ RMECA13=CALC_CHAMP(RESULTAT=RMECA13,reuse=RMECA13,
 
 # EPREUVE HYDRAULIQUE
 RMECAP=MECA_STATIQUE(MODELE=MODELE,
+                     SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                      CHAM_MATER=CMP20,
                      CARA_ELEM=CARA_POU,
                      EXCIT=(_F(CHARGE=BLOC4,),
@@ -586,6 +598,7 @@ RMECAP=CALC_CHAMP(RESULTAT=RMECAP,reuse=RMECAP,
                      CONTRAINTE='EFGE_ELNO')
 
 RMECAV=MECA_STATIQUE(MODELE=MODELE,
+                     SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                      CHAM_MATER=CMV20,
                      CARA_ELEM=CARA_POU,
                      EXCIT=(_F(CHARGE=BLOC4,),
@@ -666,6 +679,7 @@ ANC_GVDZ=AFFE_CHAR_MECA(MODELE=MODELE,
                                     DRZ=0.0,),);
 
 RANCBRDX=MECA_STATIQUE(MODELE=MODELE,
+                       SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                        CHAM_MATER=CMV20,
                        CARA_ELEM=CARA_POU,
                        EXCIT=(_F(CHARGE=BLOC2,),
@@ -677,6 +691,7 @@ RANCBRDX=CALC_CHAMP(RESULTAT=RANCBRDX,reuse=RANCBRDX,
 
 
 RANCBRDY=MECA_STATIQUE(MODELE=MODELE,
+                       SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                        CHAM_MATER=CMV20,
                        CARA_ELEM=CARA_POU,
                        EXCIT=(_F(CHARGE=BLOC2,),
@@ -688,6 +703,7 @@ RANCBRDY=CALC_CHAMP(RESULTAT=RANCBRDY,reuse=RANCBRDY,
 
 
 RANCBRDZ=MECA_STATIQUE(MODELE=MODELE,
+                       SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                        CHAM_MATER=CMV20,
                        CARA_ELEM=CARA_POU,
                        EXCIT=(_F(CHARGE=BLOC2,),
@@ -699,6 +715,7 @@ RANCBRDZ=CALC_CHAMP(RESULTAT=RANCBRDZ,reuse=RANCBRDZ,
 
 
 RANCGVDX=MECA_STATIQUE(MODELE=MODELE,
+                       SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                        CHAM_MATER=CMV20,
                        CARA_ELEM=CARA_POU,
                        EXCIT=(_F(CHARGE=BLOC1,),
@@ -710,6 +727,7 @@ RANCGVDX=CALC_CHAMP(RESULTAT=RANCGVDX,reuse=RANCGVDX,
 
 
 RANCGVDY=MECA_STATIQUE(MODELE=MODELE,
+                       SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                        CHAM_MATER=CMV20,
                        CARA_ELEM=CARA_POU,
                        EXCIT=(_F(CHARGE=BLOC1,),
@@ -720,6 +738,7 @@ RANCGVDY=CALC_CHAMP(RESULTAT=RANCGVDY,reuse=RANCGVDY,
 
 
 RANCGVDZ=MECA_STATIQUE(MODELE=MODELE,
+                       SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                        CHAM_MATER=CMV20,
                        CARA_ELEM=CARA_POU,
                        EXCIT=(_F(CHARGE=BLOC1,),

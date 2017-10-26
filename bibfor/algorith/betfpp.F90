@@ -16,18 +16,19 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine betfpp(materf, nmat, elgeom, pc, pt,&
+subroutine betfpp(materf, nmat, pc, pt,&
                   nseuil, fc, ft, dfcdlc, dftdlt,&
                   kuc, kut, ke)
-    implicit none
+!
+use calcul_module, only : ca_vext_eltsize1_
+!
+implicit none
 !       BETON_DOUBLE_DP: CONVEXE ELASTO PLASTIQUE POUR (MATER,SIG,P1,P2)
 !                   AVEC UN SEUIL EN COMPRESSION ET UN SEUIL EN TRACTION
 !       CALCUL DES VALEURS DES COURBES D'ADOUCISSEMENT ET DES DERIVES
 !       PAR RAPPORT AUX INCREMENTS DE MULTIPLICATEURS PLASTIQUES
 !       IN  MATERF :  COEFFICIENTS MATERIAU
 !           NMAT   :  DIMENSION MATERF
-!           ELGEOM :  TABLEAUX DES ELEMENTS GEOMETRIQUES SPECIFIQUES
-!                     AUX LOIS DE COMPORTEMENT
 !           PC     :  MULTIPLICATEUR PLASTIQUE EN COMPRESSION
 !           PT     :  MULTIPLICATEUR PLASTIQUE EN TRACTION
 !           NSEUIL :  SEUIL D'ELASTICITE ACTIVE
@@ -52,7 +53,7 @@ subroutine betfpp(materf, nmat, elgeom, pc, pt,&
     parameter       ( d13   =  .33333333333333d0 )
 !
     integer :: nmat, nseuil
-    real(kind=8) :: materf(nmat, 2), elgeom(*)
+    real(kind=8) :: materf(nmat, 2)
     real(kind=8) :: pc, pt, dfcdlc, dftdlt, kuc, kut
 !
     real(kind=8) :: lc, fcp, ftp, fc, ft
@@ -89,7 +90,7 @@ subroutine betfpp(materf, nmat, elgeom, pc, pt,&
 ! --- LONGUEUR CARACTERISTIQUE POUR LOI BETON LC
 !
     if (materf(9,2) .lt. zero) then
-        lc = elgeom(1)
+        lc = ca_vext_eltsize1_
     else
         lc = materf(9,2)
     endif

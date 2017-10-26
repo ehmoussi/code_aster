@@ -248,23 +248,32 @@ subroutine vpstor(ineg, typ, modes, nbmode, neq,&
 !
     do imode = 1, nbmode
 !
-!       STOCKAGE DES FREQUENCES PAR ORDRE CROISSANT DE NUMERO
-        if (imode .eq. 1) then
-            kmode = imin
-        else if (imode.eq.nbmode) then
-            kmode = imax
-        else
-            do lmode = 1, nbmode
-                if (resufi(lmode,1) .gt. nmin .and. resufi(lmode,1) .lt. nmin1) then
-                    nmin1 = resufi(lmode,1)
-                    kmode = lmode
-                endif
-            end do
-            nmin = nmin1
-            nmin1 = nmax
-        endif
+        if ((typcon .ne. 'MODE_FLAMB') .or. (nomcmd .eq. 'NORM_MODE')) then
+!           STOCKAGE DES FREQUENCES PAR ORDRE CROISSANT DE NUMERO
+            if (imode .eq. 1) then
+                kmode = imin
+            else if (imode.eq.nbmode) then
+                kmode = imax
+            else
+                do lmode = 1, nbmode
+                    if (resufi(lmode,1) .gt. nmin .and. resufi(lmode,1) .lt. nmin1) then
+                        nmin1 = resufi(lmode,1)
+                        kmode = lmode
+                    endif
+                end do
+                nmin = nmin1
+                nmin1 = nmax
+            endif
 !
-        jmode = resufi(kmode,1)
+            jmode = resufi(kmode,1)
+        else
+!           stockage par ordre croissant de charge critique
+!           cad par ordre decroissant de frequence
+!           Rq : dans ce cas resufi(imode,1) = imode (ce qui simplifie les choses)
+            kmode = nbmode - imode + 1
+            jmode = kmode
+        endif
+        
         nordr = iprec + imode
 !
 !        --- VECTEUR PROPRE ---
@@ -304,7 +313,11 @@ subroutine vpstor(ineg, typ, modes, nbmode, neq,&
         if (irang .gt. 0) then
             call rsadpa(modes, 'E', 1, nopast(1), nordr,&
                         0, sjv=ladpa, styp=k8b)
-            zi(ladpa) = resufi(kmode,irang)
+            if ((typcon .ne. 'MODE_FLAMB') .or. (nomcmd .eq. 'NORM_MODE')) then
+                zi(ladpa) = resufi(kmode,irang)
+            else
+                zi(ladpa) = nordr
+            endif
         endif
 !
 ! ----- ON STOCKE 'NORME'
@@ -365,7 +378,7 @@ subroutine vpstor(ineg, typ, modes, nbmode, neq,&
             if (nomcmd .eq. 'NORM_MODE') then
                 zr(ladpa) = resufr(kmode,1)
             else
-                zr(ladpa) = resufr(kmode,2)
+                zr(ladpa) = -resufr(kmode,2)
             endif
         else if (typcon .eq. 'MODE_STAB') then
             call rsadpa(modes, 'E', 1, 'CHAR_STAB', 1,&

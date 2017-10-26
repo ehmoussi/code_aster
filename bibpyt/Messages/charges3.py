@@ -94,7 +94,9 @@ L'extraction du chargement a échoué pour l'instant %(r1)f.
 Le chargement est mal défini:
 - soit %(k1)s n'est pas indexé par l'instant;
 - soit le chargement n'a pas été trouvé pour cet instant;
-- soit il manque l'un des deux champs nécessaires;
+- soit il manque un champ nécessaire :
+    - COEF_H et T_EXT pour ECHANGE
+    - FLUN pour FLUX_REP
 """),
 
 }

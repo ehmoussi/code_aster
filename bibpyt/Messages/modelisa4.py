@@ -197,6 +197,9 @@ Le numéro de corrélation et/ou le type de réseau passes dans le fichier de co
  la maille :  %(k1)s  n'est pas affectée par un élément fini.
 """),
 
+    51 : _(u"""
+Aucune des mailles sélectionnées n'est affectée par un élément fini.
+"""),
 
 
 

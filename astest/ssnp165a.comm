@@ -143,6 +143,10 @@ RESU=CALC_CHAMP(reuse=RESU,
                 FORCE=('FORC_NODA','REAC_NODA'),
                 CRITERES='SIEQ_NOEU');
 
+RESU=CALC_CHAMP(reuse=RESU,
+                RESULTAT=RESU,
+                DEFORMATION='EPSL_NOEU');
+
 IMPR_RESU(UNITE=80,
           FORMAT='MED',
           RESU=_F(RESULTAT=RESU,),);

@@ -15,15 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine lcplnf(rela_comp, vind, nbcomm, nmat, cpmono,&
                       materd, materf, iter, nvi, itmax,&
                       toler, pgl, nfs, nsg, toutms,&
                       hsr, dt, dy, yd, yf,&
-                      vinf, tampon, sigd, sigf,&
+                      vinf, sigd, sigf,&
                       deps, nr, mod, timef,&
                       indi, vins, codret)
         integer :: nsg
@@ -47,7 +45,6 @@ interface
         real(kind=8) :: yd(*)
         real(kind=8) :: yf(*)
         real(kind=8) :: vinf(*)
-        real(kind=8) :: tampon(*)
         real(kind=8) :: sigd(6)
         real(kind=8) :: sigf(6)
         real(kind=8) :: deps(*)

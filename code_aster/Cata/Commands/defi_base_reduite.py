@@ -31,7 +31,7 @@ DEFI_BASE_REDUITE=OPER(
     reentrant='f',
     reuse=SIMP(statut='c', typ=CO),
 
-    OPERATION = SIMP(statut='f',typ='TXM',defaut="POD",into=("POD","POD_INCR",'GLOUTON',)),
+    OPERATION = SIMP(statut='f',typ='TXM',defaut="POD",into=("POD","POD_INCR",'GLOUTON','TRONCATURE',)),
 
     b_pod  = BLOC(condition ="""(equal_to("OPERATION", 'POD'))""",
         RESULTAT        =SIMP(statut='o',typ=resultat_sdaster),
@@ -46,6 +46,7 @@ DEFI_BASE_REDUITE=OPER(
                                AXE       = SIMP(statut='o',typ='TXM',max=1,into=('OX','OY','OZ')),
                                SECTION   = SIMP(statut='o',typ=grno ,max=1)),
         TOLE_SVD        =SIMP(statut='f',typ='R',defaut=1.E-6),
+        NB_MODE         =SIMP(statut='f',typ='I'),
     ),
 
     b_incr = BLOC(condition ="""(equal_to("OPERATION", 'POD_INCR'))""",
@@ -62,6 +63,7 @@ DEFI_BASE_REDUITE=OPER(
                                SECTION   = SIMP(statut='o',typ=grno ,max=1)),
         TOLE            =SIMP(statut='f',typ='R',defaut=1.E-10),
         TOLE_SVD        =SIMP(statut='f',typ='R',defaut=1.E-6),
+        NB_MODE         =SIMP(statut='f',typ='I'),
     ),
 
     b_type_rb       =BLOC(condition ="""(equal_to("OPERATION", 'GLOUTON'))""",
@@ -89,8 +91,14 @@ DEFI_BASE_REDUITE=OPER(
         COEF_C          =SIMP(statut='f',typ='C', max = 1),
         COEF_R          =SIMP(statut='f',typ='R', max = 1),
         SOLVEUR         =C_SOLVEUR('DYNA_LINE_HARM'),
+        NB_MODE         =SIMP(statut='f',typ='I'),
     ),
-    NB_MODE         =SIMP(statut='f',typ='I'),
+ 
+    b_tronca       =BLOC(condition ="""(equal_to("OPERATION", 'TRONCATURE'))""",
+        BASE          = SIMP(statut='f',typ=mode_empi),
+        MODELE_REDUIT = SIMP(statut='o',typ=modele_sdaster),
+    ),
+   
     INFO            =SIMP(statut='f',typ='I',defaut= 1,into=( 1 , 2) ),
     TITRE           =SIMP(statut='f',typ='TXM'),
 ) ;

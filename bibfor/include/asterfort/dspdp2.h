@@ -15,16 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
-#include "asterf_types.h"
 !
 interface 
-    subroutine dspdp2(net, bishop, tbiot, dsdp2)
-        aster_logical :: net
-        aster_logical :: bishop
-        real(kind=8) :: tbiot(6)
-        real(kind=8) :: dsdp2(6)
+    subroutine dspdp2(tbiot, dsdp2)
+        real(kind=8), intent(in) :: tbiot(6)
+        real(kind=8), intent(out) :: dsdp2(6)
     end subroutine dspdp2
 end interface 

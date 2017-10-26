@@ -438,6 +438,15 @@ Contactez le support technique.
   des valeurs des paramètres de décalage NMAX_ITER_SHIFT et PREC_SHIFT).
 """),
 
+    86: _(u"""
+  La borne supérieure de l'intervalle a été décalée plusieurs fois car elle est trop proche
+  d'une valeur propre. En raison de ces décalages, elle est devenue plus petite que la borne
+  inférieure !
+
+  -> Conseils :
+  Relancez votre calcul en espaçant suffisamment les bornes de l'intervalle (en tenant compte
+  des valeurs des paramètres de décalage NMAX_ITER_SHIFT et PREC_SHIFT).
+"""),
 
 
     90: _(u"""

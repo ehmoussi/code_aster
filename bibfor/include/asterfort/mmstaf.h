@@ -22,7 +22,7 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine mmstaf(mesh          , ndim  , chdepd, coef_frot   , lpenaf      , &
+    subroutine mmstaf(mesh          , ndim  , chdepd, coef_frot         , &
                       nummae        , aliase, nne   , nummam      , ksipc1      , &
                       ksipc2        , ksipr1, ksipr2, mult_lagr_f1, mult_lagr_f2, &
                       tang_1        , tang_2, norm  , pres_frot   , dist_frot   , &
@@ -31,7 +31,6 @@ interface
         integer, intent(in) :: ndim
         character(len=19), intent(in) :: chdepd
         real(kind=8), intent(in) :: coef_frot
-        aster_logical, intent(in) :: lpenaf
         integer, intent(in) :: nummae
         character(len=8), intent(in) :: aliase
         integer, intent(in) :: nne

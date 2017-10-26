@@ -65,7 +65,7 @@ ASSEMBLAGE(  MODELE=MO,     CHARGE=CH,      CARA_ELEM=CARELEM,
 
 # --------------------------------------------------------------------
 
-MODES=CALC_MODES( OPTION='AJUSTE',
+MODES=CALC_MODES( OPTION='AJUSTE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                   MATR_RIGI=MATASSR,
                   MATR_MASS=MATASSM,
                   CALC_FREQ=_F( FREQ = (5.,10.,15.,20.,24.,27.,30.,32.) )

@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine dbr_paraRBDSInit(ds_multipara, ds_solveDOM, ds_solveROM, ds_para_rb)
 !
 use Rom_Datastructure_type
@@ -27,12 +28,10 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_Solve), intent(in)       :: ds_solveDOM
-    type(ROM_DS_Solve), intent(in)       :: ds_solveROM
-    type(ROM_DS_MultiPara), intent(in)   :: ds_multipara
-    type(ROM_DS_ParaDBR_RB), intent(out) :: ds_para_rb
+type(ROM_DS_Solve), intent(in)       :: ds_solveDOM
+type(ROM_DS_Solve), intent(in)       :: ds_solveROM
+type(ROM_DS_MultiPara), intent(in)   :: ds_multipara
+type(ROM_DS_ParaDBR_RB), intent(out) :: ds_para_rb
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -70,5 +69,6 @@ implicit none
     ds_para_rb%multipara       = ds_multipara
     ds_para_rb%solveROM        = ds_solveROM
     ds_para_rb%solveDOM        = ds_solveDOM
+    ds_para_rb%nb_mode_maxi    = 0
 !
 end subroutine

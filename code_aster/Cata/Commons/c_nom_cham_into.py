@@ -116,6 +116,13 @@ class NOM_CHAM_INTO:  #COMMUN#
                                  tr(u"Déformations dues aux variables de commande aux noeuds par élément"), ),
             "EPVC_NOEU":        ( ("lin", "nonlin",),
                                  tr(u"Déformations dues aux variables de commande aux noeuds"), ),
+            "EPSL_ELGA":        ( ("lin", "nonlin",),
+                                 tr(u"Déformations logarithmiques aux points de Gauss"), ),
+            "EPSL_ELNO":        ( ("lin", "nonlin",),
+                                 tr(u"Déformations logarithmiques aux noeuds par élément"), ),
+            "EPSL_NOEU":        ( ("lin", "nonlin",),
+                                 tr(u"Déformations logarithmiques aux noeuds"), ),
+
         }
         d['ENERGIE'] = {
             "DISS_ELEM":        ( ("lin", "nonlin",),

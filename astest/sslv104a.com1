@@ -167,20 +167,16 @@ fVonMis = FORMULE(NOM_PARA=('SIXY', 'SIXZ', 'SIYZ', 'SIXX', 'SIYY', 'SIZZ'),
 RES = CALC_CHAMP(
     reuse=RES,
     RESULTAT=RES,
-    CHAM_UTIL=_F(
+    CHAM_UTIL=(_F(
         NOM_CHAM='SIGM_ELGA',
         FORMULE=(fTrace, fVonMis),
         NUME_CHAM_RESU=2,
-    ),
-)
-
-RES = CALC_CHAMP(
-    reuse=RES,
-    RESULTAT=RES,
-    CHAM_UTIL=_F(
+                ),
+               _F(
         NOM_CHAM='SIGM_ELGA',
         CRITERE='TRACE',
         NUME_CHAM_RESU=3,
+                ),
     ),
 )
 

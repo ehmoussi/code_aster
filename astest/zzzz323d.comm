@@ -21,15 +21,22 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),);
 
 # MODELISATION 3D
 
-MAILLAGE=LIRE_MAILLAGE(FORMAT="ASTER",    UNITE=20 )
+MA0=LIRE_MAILLAGE(FORMAT="ASTER",    UNITE=20 )
+
+MAILLAGE=CREA_MAILLAGE(MAILLAGE=MA0,
+                 LINE_QUAD=_F(MAILLE='HEX2'),)
 
 #
 MODELE=AFFE_MODELE(
                    MAILLAGE=MAILLAGE,
                    AFFE=(
-                         _F(  TOUT='OUI',
+                         _F(  MAILLE='HEX1',
                               PHENOMENE = 'MECANIQUE',
                               MODELISATION = '3D',
+                           ),
+                         _F(  MAILLE='HEX2',
+                              PHENOMENE = 'MECANIQUE',
+                              MODELISATION = '3D_INTERFACE',
                            ),
                         )
                   )

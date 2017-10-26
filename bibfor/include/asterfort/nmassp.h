@@ -15,15 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 interface
     subroutine nmassp(modele         , numedd, mate  , carele    , comref    ,&
                       ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
                       sddyna         , valinc, solalg, veelem    , veasse    ,&
-                      ldccvg         , cnpilo, cndonn, sdnume    , matass)
+                      ldccvg         , cnpilo, cndonn, sdnume    , matass    ,&
+                      ds_algorom)
         use NonLin_Datastructure_type
+        use Rom_Datastructure_type  
         character(len=24) :: modele
         character(len=24) :: numedd
         character(len=24) :: mate
@@ -45,5 +46,6 @@ interface
         character(len=19) :: cndonn
         character(len=19) :: sdnume
         character(len=19) :: matass
+        type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     end subroutine nmassp
 end interface

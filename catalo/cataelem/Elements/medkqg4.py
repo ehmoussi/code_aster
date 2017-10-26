@@ -50,12 +50,6 @@ CCARCRI = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
                             'ALPHA', 'LC_EXT2[2]',))
 
 
-CCOMPOR = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
-                            components=(
-                                'RELCOM', 'NBVARI', 'DEFORM', 'INCELA', 'C_PLAN',
-                            'NUME_LC', 'SD_COMP', 'KIT[9]',))
-
-
 NDEPLAC = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',
                             components=('DX', 'DY', 'DZ', 'DRX', 'DRY',
                                         'DRZ',))
@@ -360,7 +354,7 @@ class MEDKQG4(Element):
         OP.DISS_ELEM(te=413,
                      para_in=(
                          (SP.PCACOQU, CCACOQU), (
-                             OP.DISS_ELEM.PCOMPOR, CCOMPOR),
+                             OP.DISS_ELEM.PCOMPOR, LC.CCOMPOR),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (OP.DISS_ELEM.PVARIPR, ZVARIPG), ),
                      para_out=((SP.PDISSD1, EDISSR), ),
@@ -369,7 +363,7 @@ class MEDKQG4(Element):
         OP.DISS_ELGA(te=413,
                      para_in=(
                          (SP.PCACOQU, CCACOQU), (
-                             OP.DISS_ELGA.PCOMPOR, CCOMPOR),
+                             OP.DISS_ELGA.PCOMPOR, LC.CCOMPOR),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PVARIGR, ZVARIPG), ),
                      para_out=((OP.DISS_ELGA.PDISSPG, EDISSPG), ),
@@ -398,7 +392,7 @@ class MEDKQG4(Element):
         OP.EFGE_ELNO(te=185,
                      para_in=(
                          (SP.PCACOQU, CCACOQU), (
-                             OP.EFGE_ELNO.PCOMPOR, CCOMPOR),
+                             OP.EFGE_ELNO.PCOMPOR, LC.CCOMPOR),
                      (OP.EFGE_ELNO.PCONTRR, EEFGEGA), (SP.PDEPLAR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PNONLIN, LC.ENONLIN), (SP.PTEMPSR, CTEMPSR),
@@ -424,7 +418,7 @@ class MEDKQG4(Element):
         OP.ENEL_ELEM(te=412,
                      para_in=(
                          (SP.PCACOQU, CCACOQU), (
-                             OP.ENEL_ELEM.PCOMPOR, CCOMPOR),
+                             OP.ENEL_ELEM.PCOMPOR, LC.CCOMPOR),
                      (OP.ENEL_ELEM.PCONTPR, EEFGEGA), (SP.PDEPLR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (OP.ENEL_ELEM.PVARCPR, LC.ZVARCPG), (
@@ -436,7 +430,7 @@ class MEDKQG4(Element):
         OP.ENEL_ELGA(te=412,
                      para_in=(
                          (SP.PCACOQU, CCACOQU), (
-                             OP.ENEL_ELGA.PCOMPOR, CCOMPOR),
+                             OP.ENEL_ELGA.PCOMPOR, LC.CCOMPOR),
                      (OP.ENEL_ELGA.PCONTRR, EEFGEGA), (SP.PDEPLAR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PTEMPSR, CTEMPSR), (OP.ENEL_ELGA.PVARCPR, LC.ZVARCPG),
@@ -469,7 +463,7 @@ class MEDKQG4(Element):
         OP.FORC_NODA(te=446,
                      para_in=(
                          (SP.PCACOQU, CCACOQU), (
-                             OP.FORC_NODA.PCOMPOR, CCOMPOR),
+                             OP.FORC_NODA.PCOMPOR, LC.CCOMPOR),
                      (OP.FORC_NODA.PCONTMR, EEFGEGA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), (
@@ -480,7 +474,7 @@ class MEDKQG4(Element):
 
         OP.FULL_MECA(te=409,
                      para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, CCARCRI),
-                              (OP.FULL_MECA.PCOMPOR, CCOMPOR), (
+                              (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (
                               OP.FULL_MECA.PCONTMR, EEFGEGA),
                               (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                               (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -501,7 +495,7 @@ class MEDKQG4(Element):
         OP.FULL_MECA_ELAS(te=409,
                           para_in=(
                           (SP.PCARCRI, CCARCRI), (
-                              OP.FULL_MECA_ELAS.PCOMPOR, CCOMPOR),
+                              OP.FULL_MECA_ELAS.PCOMPOR, LC.CCOMPOR),
                           (OP.FULL_MECA_ELAS.PCONTMR, EEFGEGA), (
                           SP.PDEPLMR, DDL_MECA),
                           (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
@@ -578,7 +572,7 @@ class MEDKQG4(Element):
 
         OP.RAPH_MECA(te=409,
                      para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, CCARCRI),
-                              (OP.RAPH_MECA.PCOMPOR, CCOMPOR), (
+                              (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR), (
                               OP.RAPH_MECA.PCONTMR, EEFGEGA),
                               (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                               (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -636,7 +630,7 @@ class MEDKQG4(Element):
         OP.RIGI_MECA_ELAS(te=409,
                           para_in=(
                               (SP.PCACOQU, CCACOQU), (SP.PCARCRI, CCARCRI),
-                          (OP.RIGI_MECA_ELAS.PCOMPOR, CCOMPOR), (
+                          (OP.RIGI_MECA_ELAS.PCOMPOR, LC.CCOMPOR), (
                           OP.RIGI_MECA_ELAS.PCONTMR, EEFGEGA),
                               (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                           (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -668,7 +662,7 @@ class MEDKQG4(Element):
         OP.RIGI_MECA_TANG(te=409,
                           para_in=(
                               (SP.PCACOQU, CCACOQU), (SP.PCARCRI, CCARCRI),
-                          (OP.RIGI_MECA_TANG.PCOMPOR, CCOMPOR), (
+                          (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (
                           OP.RIGI_MECA_TANG.PCONTMR, EEFGEGA),
                               (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                           (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),

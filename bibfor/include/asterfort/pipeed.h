@@ -21,7 +21,7 @@
 interface
     subroutine pipeed(nno, npg, ipoids, ivf, idfde,&
                       geom, typmod, mate, lgpg, deplm,&
-                      vim, ddepl, ddepl0, ddepl1, dfdi,&
+                      vim, ddepl, ddepl0, ddepl1,&
                       dtau, copilo)
         integer :: lgpg
         integer :: npg
@@ -37,7 +37,6 @@ interface
         real(kind=8) :: ddepl(2, 4)
         real(kind=8) :: ddepl0(2, 4)
         real(kind=8) :: ddepl1(2, 4)
-        real(kind=8) :: dfdi(nno, 2)
         real(kind=8) :: dtau
         real(kind=8) :: copilo(5, npg)
     end subroutine pipeed

@@ -36,6 +36,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/granvi.h"
 #include "asterfort/ortrep.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! aslint: disable=W0104
 ! person_in_charge: mickael.abbas at edf.fr
@@ -59,7 +60,7 @@ implicit none
     real(kind=8) :: epsi_creep(nbsgm)
     integer :: i, ndim, nno, nbsig, idsig
     integer :: npg, ipoids, ivf, idfde, igau, isig, igeom, idepl, itemps, imate
-    integer :: idefp, icompo, nbvari, ivari, nvi, nvif, ibid, jtab(7), iret
+    integer :: idefp, icompo, nbvari, ivari, nvi, nvif, ibid, jtab(7), iret, ibid2
     integer :: idim
     real(kind=8) :: c1, c2, trsig, xyz(3)
     real(kind=8) :: repere(7), nharm, e, nu, zero, un, tempg, time
@@ -121,9 +122,9 @@ implicit none
 ! - Comportment
 !
     call jevech('PCOMPOR', 'L', icompo)
-    rela_comp  = zk16(icompo)
-    kit_comp_1 = zk16(icompo+7)
-    kit_comp_2 = zk16(icompo+8)
+    rela_comp  = zk16(icompo-1+NAME)
+    kit_comp_1 = zk16(icompo-1+CREEP_NAME)
+    kit_comp_2 = zk16(icompo-1+PLAS_NAME)
 !
 ! - Internal variables
 !
@@ -160,7 +161,7 @@ implicit none
             epsi_creep(i) = zero
         end do
     else
-        call granvi(mod3d, ibid, ibid, nvif)
+        call granvi(mod3d, ibid, ibid2, nvif)
         l_creep = .true.
     endif
 !
@@ -200,8 +201,10 @@ implicit none
 !
 ! ----- Get elastic parameters (only isotropic elasticity)
 !
+        call get_elas_id(zi(imate), elas_id, elas_keyword)
         call get_elas_para('RIGI', zi(imate), '+', igau, 1,&
-                           elas_id, time = time, temp = tempg, e = e, nu = nu)
+                           elas_id  , elas_keyword,&
+                           time = time, temp = tempg, e = e, nu = nu)
         ASSERT(elas_id.eq.1)
 !
 ! ----- Compute creep strains (current Gauss point)

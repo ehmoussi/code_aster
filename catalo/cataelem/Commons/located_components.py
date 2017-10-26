@@ -63,6 +63,14 @@ CCOEFC = LocatedComponents(phys=PHY.IMPE_C, type='ELEM',
 CCOEFR = LocatedComponents(phys=PHY.IMPE_R, type='ELEM',
                            components=('IMPE',))
 
+CCOMPOR  = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
+                             components=('RELCOM','NBVARI','DEFORM','INCELA',
+                                         'C_PLAN','NUME_LC','MULTCOMP','POSTITER',
+                                         'KIT1NAME', 'KIT2NAME', 'KIT3NAME', 'KIT4NAME',
+                                         'KIT1NUME', 'KIT2NUME', 'KIT3NUME', 'KIT4NUME',
+                                         'KIT1NVAR', 'KIT2NVAR', 'KIT3NVAR', 'KIT4NVAR',
+                                         ))
+
 CCOMPO2 = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
                             components=('NBVARI',))
 

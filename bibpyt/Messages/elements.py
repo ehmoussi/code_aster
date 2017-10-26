@@ -108,6 +108,15 @@ Risque & Conseil : mettre un léger écrouissage peut permettre de passer cette 
  le nombre de noeuds d'un tuyau est différent de 3 ou 4
 """),
 
+    19 : _(u"""
+Erreur :
+   Le calcul du chargement dû à la température n'est pas programmé pour le type d'élément %(k1)s.
+
+Conseil :
+  Pour pouvoir continuer le calcul, ALPHA doit être nul. Le chargement sera nul.
+  Il faut émettre une demande d'évolution pour que ce chargement soit pris en compte.
+"""),
+
     20 : _(u"""
  Aucun type d'éléments ne correspond au type demandé.
 """),
@@ -118,7 +127,7 @@ Risque & Conseil : mettre un léger écrouissage peut permettre de passer cette 
 
     22 : _(u"""
 Erreur :
-   Le calcul du chargement dû l'hydratation n'est pas programmé pour le type d'élément %(k1)s.
+   Le calcul du chargement dû à l'hydratation n'est pas programmé pour le type d'élément %(k1)s.
 
 Conseil :
   Pour pouvoir continuer le calcul, B_ENDOGE doit être nul. Le chargement sera nul.
@@ -195,8 +204,8 @@ Conseil :
     38 : _(u"""
  Élément de poutre %(k1)s :
  Vous faites des calculs avec l'option GROT_GDEP. Lors de la réactualisation de la géométrie,
- un angle d'orientation de la poutre %(k1)s varie de plus de PI/8.
- Angle concerné %(k2)s avec un saut de %(r1)f degrés.
+ une rotation pour la poutre %(k1)s varie de plus de PI/8.
+ Variation d'angle %(k2)s de %(r1)f degrés.
 
  * Cela peut arriver lorsque l'axe de la poutre correspond à l'axe global Z. Dans ce cas le
  calcul des angles définissant l'orientation de la poutre peut présenter une indétermination.

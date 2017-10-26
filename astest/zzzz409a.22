@@ -25,7 +25,7 @@ C --------------------------------------------------------------------
 C ======================================================================
 C
 C
-C     ELASTO-PLASTIC BEHAVIOUR LAW WITH ISOTROPIC LINEAR HARDENING
+C            DAMAGE BEHAVIOUR LAW WITH POSITIVE HARDENING
 C
 C
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
@@ -158,7 +158,7 @@ C Contraintes à l'issue du pas de temps
          STRESS(K1) = (1+STATEV(1))/(1+2*STATEV(1))*STRANP2(K1)
  1013 CONTINUE
 
-C Matrice tangente : membre commun aux deux branches élastique / plastique
+C Matrice tangente : membre commun aux deux régimes elastique / endo
       DO 1007 K1 = 1,NTENS
          DO 1008 K2 = 1,NTENS
             DDSDDE(K1,K2) = (1+STATEV(1))/(1+2*STATEV(1))*MAT(K1,K2)

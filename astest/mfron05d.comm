@@ -21,10 +21,8 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'))
 
-import os
 
-os.system("mfront --obuild Tvergaard.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so Tvergaard.so")
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=39)
 
 MA=LIRE_MAILLAGE(FORMAT="ASTER", )
 
@@ -115,7 +113,7 @@ U_1F=STAT_NON_LINE( MODELE     = MO,
                     RECH_LINEAIRE=_F(ITER_LINE_MAXI=5,METHODE='MIXTE'),
                     COMPORTEMENT  = ( _F(RELATION='MFRONT',
                                          NOM_ROUTINE='astertvergaard',
-                                         LIBRAIRIE='Tvergaard.so',
+                                         UNITE_LIBRAIRIE=39,
                                          MAILLE = 'CUBEDEG',
                                          RESI_INTE_MAXI=1.E-8,
                                                 ),

@@ -109,13 +109,7 @@ subroutine lcmaza(fami, kpg, ksp, ndim, typmod,&
                   tm, tp, tref)
 
 ! -- OPTION ET MODELISATION
-    if ((.not.( compor(1)(1:6) .eq. 'MAZARS')) .and. (.not.( compor(1)(1:6) .eq. 'KIT_HM'))&
-        .and. (.not.( compor(1)(1:7) .eq. 'KIT_HHM')) .and.&
-        (.not.( compor(1)(1:7) .eq. 'KIT_THM')) .and.&
-        (.not.( compor(1)(1:7) .eq. 'KIT_DDI')) .and.&
-        (.not.( compor(1)(1:8) .eq. 'KIT_THHM'))) then
-        call utmess('F', 'ALGORITH4_50', sk=compor(1))
-    endif
+
     rigi = (option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL')
     resi = (option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL')
 ! M.B.: NOUVELLE OPTION COUP POUR LE COUPLAGE AVEC UMLV

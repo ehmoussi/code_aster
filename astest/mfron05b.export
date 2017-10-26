@@ -6,6 +6,6 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm mfron05b.comm D 1
-F nom  ImplicitHayhurst.mfront   D 0
-F nom  Hayhurst.mfront   D 0
+F libr  ImplicitHayhurst.mfront   D 39
+F libr  Hayhurst.mfront   D 38
 

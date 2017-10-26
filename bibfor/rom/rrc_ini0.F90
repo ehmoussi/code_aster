@@ -15,21 +15,21 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine rrc_ini0(ds_para)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "asterfort/infniv.h"
 #include "asterfort/romBaseDSInit.h"
 #include "asterfort/romLineicBaseDSInit.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaRRC), intent(out) :: ds_para
+type(ROM_DS_ParaRRC), intent(out) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -44,7 +44,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    type(ROM_DS_Empi) :: empi_prim, empi_dual
+    type(ROM_DS_Empi) :: empi_prim, empi_dual, empi_rid
     type(ROM_DS_LineicNumb) :: ds_lineicnumb
 !
 ! --------------------------------------------------------------------------------------------------
@@ -62,6 +62,7 @@ implicit none
 !
     call romBaseDSInit(ds_lineicnumb, empi_prim)
     call romBaseDSInit(ds_lineicnumb, empi_dual)
+    call romBaseDSInit(ds_lineicnumb, empi_rid)
 !
 ! - Create parameters datastructure
 !
@@ -73,7 +74,17 @@ implicit none
     ds_para%model_rom     = ' '
     ds_para%result_rom    = ' '
     ds_para%result_dom    = ' '
+    ds_para%grnode_int    = ' '
     ds_para%ds_empi_prim  = empi_prim
     ds_para%ds_empi_dual  = empi_dual
+    ds_para%l_prev_dual   = .false._1
+    ds_para%nb_equa_ridi  = 0
+    ds_para%v_equa_ridi   => null()
+    ds_para%nb_equa_ridd  = 0
+    ds_para%v_equa_ridd   => null()
+    ds_para%nb_equa_ridp  = 0
+    ds_para%v_equa_ridp   => null()
+    ds_para%l_corr_ef     = .false._1
+    ds_para%ds_empi_rid  = empi_rid
 !
 end subroutine

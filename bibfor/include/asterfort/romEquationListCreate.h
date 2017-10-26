@@ -15,17 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine romEquationListCreate(ds_empi, nume_dof, grnode_int, v_equa_int)
+    subroutine romEquationListCreate(ds_empi, v_equa  , nume_dof    ,&
+                                     grnode_, nb_node_, v_list_node_)
         use Rom_Datastructure_type
         type(ROM_DS_Empi), intent(in) :: ds_empi
+        integer, pointer, intent(out) :: v_equa(:)
         character(len=24), intent(in) :: nume_dof
-        character(len=24), intent(in) :: grnode_int
-        integer, pointer, intent(out) :: v_equa_int(:)
+        character(len=24), optional, intent(in) :: grnode_
+        integer, optional, intent(in) :: nb_node_
+        integer, optional, pointer, intent(in) :: v_list_node_(:)
     end subroutine romEquationListCreate
 end interface

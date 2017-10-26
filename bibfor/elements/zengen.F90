@@ -16,15 +16,16 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine zengen(ppr, ppi, yy0, dy0, dyy, decoup)
+subroutine zengen(ppr, ppi, ppc, yy0, dy0, dyy, decoup)
     implicit none
 #include "asterf_types.h"
-    real(kind=8) :: ppr(*)
-    integer      :: ppi(*)
-    real(kind=8) :: yy0(*)
-    real(kind=8) :: dy0(*)
-    real(kind=8) :: dyy(*)
-    aster_logical :: decoup
+    real(kind=8)     :: ppr(*)
+    integer          :: ppi(*)
+    character(len=*) :: ppc(*)
+    real(kind=8)     :: yy0(*)
+    real(kind=8)     :: dy0(*)
+    real(kind=8)     :: dyy(*)
+    aster_logical    :: decoup
 !
 ! person_in_charge: jean-luc.flejou at edf.fr
 ! ----------------------------------------------------------------------
@@ -34,6 +35,7 @@ subroutine zengen(ppr, ppi, yy0, dy0, dyy, decoup)
 !  IN
 !     ppr      : paramètres réels
 !     ppi      : paramètres entiers
+!     ppc      : paramètres character
 !     nbeq     : nombre d'équations
 !     yy0      : valeurs initiales
 !     dy0      : dérivées initiales

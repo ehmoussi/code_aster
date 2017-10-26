@@ -18,11 +18,14 @@
 
 !
 !
+#include "asterf_types.h"
+!
 interface
-    subroutine ddi_kit_read(keywordfact, iocc, rela_flua, rela_plas, rela_cpla, &
-                            rela_coup  )
+    subroutine ddi_kit_read(keywordfact, iocc     , l_etat_init,&
+                            rela_flua  , rela_plas, rela_cpla  , rela_coup)
         character(len=16), intent(in) :: keywordfact
         integer, intent(in) :: iocc
+        aster_logical, intent(in) :: l_etat_init
         character(len=16), intent(out) :: rela_flua
         character(len=16), intent(out) :: rela_plas
         character(len=16), intent(out) :: rela_cpla

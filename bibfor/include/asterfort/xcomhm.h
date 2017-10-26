@@ -15,32 +15,25 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 interface 
-    subroutine xcomhm(option, imate, compor, instap,&
+    subroutine xcomhm(option, j_mater, time_curr,&
                       ndim, dimdef, dimcon, nbvari,&
-                      yamec, yap1, yap2, yate,&
                       addeme, adcome, addep1, adcp11,&
                       addep2, addete, defgem,&
                       defgep, congem, congep, vintm,&
-                      vintp, dsde, pesa, retcom, kpi,&
-                      npg, p10, p20, dimenr,&
-                      idecpg, angmas, yaenrh, adenhy, nfh)
+                      vintp, dsde, gravity, retcom, kpi,&
+                      npg, dimenr,&
+                      angl_naut, yaenrh, adenhy, nfh)
         integer :: dimenr
         integer :: nbvari
         integer :: dimcon
         integer :: dimdef
         integer :: ndim
         character(len=16) :: option
-        integer :: imate
-        character(len=16) :: compor(*)
-        real(kind=8) :: instap
-        integer :: yamec
-        integer :: yap1
-        integer :: yap2
-        integer :: yate
+        integer :: j_mater
+        real(kind=8) :: time_curr
         integer :: addeme
         integer :: adcome
         integer :: addep1
@@ -54,14 +47,12 @@ interface
         real(kind=8) :: vintm(1:nbvari)
         real(kind=8) :: vintp(1:nbvari)
         real(kind=8) :: dsde(1:dimcon, 1:dimenr)
-        real(kind=8) :: pesa(3)
+        real(kind=8) :: gravity(3)
         integer :: retcom
         integer :: kpi
         integer :: npg
-        real(kind=8) :: p10
-        real(kind=8) :: p20
         integer :: idecpg
-        real(kind=8) :: angmas(3)
+        real(kind=8) :: angl_naut(3)
         integer :: yaenrh
         integer :: adenhy
         integer :: nfh

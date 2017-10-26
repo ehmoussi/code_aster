@@ -17,11 +17,13 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'VMIS_ASYM_LINE',
-    doc            =   """Relation de comportement des barres, à écrouissage isotrope, et seuils non symétrique en traction et compression"""      ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """Relation de comportement des barres, à écrouissage isotrope, et seuils non symétrique en traction et compression"""            ,
     num_lc         = 0,
     nb_vari        = 4,
     nom_vari       = ('EPSPEQT','INDIPLAT','EPSPEQC','INDIPLAC',),
@@ -32,4 +34,5 @@ loi = LoiComportement(
     type_matr_tang = None,
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

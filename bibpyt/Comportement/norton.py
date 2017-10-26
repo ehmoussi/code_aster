@@ -17,11 +17,13 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'NORTON',
-    doc            =   """Modele viscoplastique isotrope de Norton"""      ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """Modele viscoplastique isotrope de Norton"""            ,
     num_lc         = 32,
     nb_vari        = 7,
     nom_vari       = ('EPSPXX','EPSPYY','EPSPZZ','EPSPXY','EPSPXZ',
@@ -33,4 +35,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

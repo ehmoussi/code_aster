@@ -302,10 +302,10 @@ cal1 = STAT_NON_LINE (
        EXCIT  =(
          _F( CHARGE  = CH0 ,) ,
           ),
-
+       SCHEMA_THM=_F(PARM_THETA=1.,),
        COMPORTEMENT =_F(  RELATION  = 'KIT_HH',
            RELATION_KIT = ('LIQU_VAPE_GAZ', 'HYDR_VGM'),
-           PARM_THETA  = 1. ,  ),
+            ),
 
        INCREMENT  =_F(
            LIST_INST    = INST1   ,
@@ -333,10 +333,10 @@ cal1 = STAT_NON_LINE (reuse=cal1,
        EXCIT  =(
          _F( CHARGE  = CH0 ,) ,
           ),
-
+       SCHEMA_THM=_F(PARM_THETA=1.,),
        COMPORTEMENT =_F(  RELATION  = 'KIT_HH',
            RELATION_KIT = ('LIQU_VAPE_GAZ', 'HYDR_VGM'),
-           PARM_THETA  = 1. ,  ),
+            ),
 
        INCREMENT  =_F(
            LIST_INST    = INST1   ,
@@ -376,10 +376,10 @@ cal2 = STAT_NON_LINE (
        EXCIT  =(
          _F( CHARGE  = CH0 ,) ,
           ),
-
+       SCHEMA_THM=_F(PARM_THETA=1.,),
        COMPORTEMENT =_F(  RELATION  = 'KIT_HH',
            RELATION_KIT = ('LIQU_VAPE_GAZ', 'HYDR_VGM'),
-           PARM_THETA  = 1. ,  ),
+           ),
 
        INCREMENT  =_F(
            LIST_INST    = DEFLIST   ,
@@ -405,10 +405,10 @@ cal2 = STAT_NON_LINE (reuse=cal2,
        EXCIT  =(
          _F( CHARGE  = CH0 ,) ,
           ),
-
+       SCHEMA_THM=_F(PARM_THETA=1.,),
        COMPORTEMENT =_F(  RELATION  = 'KIT_HH',
            RELATION_KIT = ('LIQU_VAPE_GAZ', 'HYDR_VGM'),
-           PARM_THETA  = 1. ,  ),
+           ),
 
        INCREMENT  =_F(
            LIST_INST    = DEFLIST   ,

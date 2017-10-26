@@ -18,7 +18,7 @@
 
 subroutine pipedp(kpg, ksp, ndim, typmod, mate,&
                   epsm, sigm, vim, epsp, epsd,&
-                  elgeom, a0, a1)
+                  a0, a1)
 !
 !
     implicit none
@@ -33,7 +33,6 @@ subroutine pipedp(kpg, ksp, ndim, typmod, mate,&
     integer :: ndim, mate, kpg, ksp
     real(kind=8) :: epsp(6), epsd(6)
     real(kind=8) :: epsm(6), vim(2), sigm(6), a0, a1
-    real(kind=8) :: elgeom(*)
 !
 ! ----------------------------------------------------------------------
 !
@@ -113,7 +112,7 @@ subroutine pipedp(kpg, ksp, ndim, typmod, mate,&
 !
     pc = vim(1)
     pt = vim(2)
-    call betfpp(materf, nmat, elgeom, pc, pt,&
+    call betfpp(materf, nmat, pc, pt,&
                 3, fc, ft, rbid, rbid,&
                 kuc, kut, ke)
 !

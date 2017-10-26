@@ -15,19 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine isacti(sddisc, action_name_s_, i_action)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine isacti(sddisc, action_type_in, i_action)
 !
 implicit none
 !
 #include "asterf_types.h"
+#include "event_def.h"
 #include "asterfort/utdidt.h"
+#include "asterfort/getFailAction.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=19), intent(in) :: sddisc
-    character(len=*), intent(in) :: action_name_s_
-    integer, intent(out) :: i_action
+character(len=19), intent(in) :: sddisc
+integer, intent(in) :: action_type_in
+integer, intent(out) :: i_action
 !
 ! ----------------------------------------------------------------------
 !
@@ -39,26 +40,23 @@ implicit none
 !
 !
 ! In  sddisc           : datastructure for time discretization
-! In  action_name_s    : action to search
+! In  action_type_in   : action to search
 ! Out i_action         : index of action
 !
 ! ----------------------------------------------------------------------
 !
-    integer :: i_echec, nb_echec
-    character(len=16) :: action_name_s, action_name
+    integer :: i_fail, nb_fail
+    integer :: action_type
 !
 ! ----------------------------------------------------------------------
 !
     i_action = 0
-    action_name_s = action_name_s_
-    call utdidt('L', sddisc, 'LIST', 'NECHEC',&
-                vali_ = nb_echec)
+    call utdidt('L', sddisc, 'LIST', 'NECHEC', vali_ = nb_fail)
 !
-    do i_echec = 1, nb_echec
-        call utdidt('L', sddisc, 'ECHE', 'ACTION', index_ = i_echec,&
-                    valk_ = action_name)
-        if (action_name .eq. action_name_s) then
-            i_action = i_echec
+    do i_fail = 1, nb_fail
+        call getFailAction(sddisc, i_fail, action_type)
+        if (action_type .eq. action_type_in) then
+            i_action = i_fail
         endif
     end do
 !

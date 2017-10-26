@@ -23,12 +23,11 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 
-POST_RELEVE_T=OPER(nom="POST_RELEVE_T",op=51,sd_prod=table_sdaster,reentrant='f',
+POST_RELEVE_T=OPER(nom="POST_RELEVE_T",op=51,sd_prod=table_sdaster,reentrant='n',
             fr=tr("Extraire des valeurs de composantes de champs de grandeurs pour y effectuer des calculs (moyenne,invariants,..)"
                " ou pour les exprimer dans d'autres repères"),
             docu="U4.81.21",
 
-         reuse=SIMP(statut='c', typ=CO),
          ACTION          =FACT(statut='o',max='**',
                                regles=(UN_PARMI('RESULTAT','CHAM_GD'),),
 

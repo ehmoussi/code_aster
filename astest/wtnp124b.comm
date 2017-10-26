@@ -22,9 +22,7 @@
 #
 #
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
-import sys
-import string
-import os
+
 
 #=============================================================
 #                     CHOIX METHODE
@@ -281,7 +279,7 @@ RESU0=STAT_NON_LINE(
                      ),
                  ETAT_INIT=_F(DEPL=PINIT,
                               ),
-                COMPORTEMENT=_F( RELATION = 'KIT_HH',
+                COMPORTEMENT=_F( RELATION = 'KIT_HH2',
                                    RELATION_KIT = ('LIQU_AD_GAZ','HYDR_VGM')),
 
                 INCREMENT=_F(
@@ -312,7 +310,7 @@ RESU0=STAT_NON_LINE( reuse=RESU0,
                  ETAT_INIT=_F(EVOL_NOLI=RESU0,
                               ),
                 COMPORTEMENT=_F(
-                RELATION = 'KIT_HH',
+                RELATION = 'KIT_HH2',
                 RELATION_KIT = ('LIQU_AD_GAZ','HYDR_VGM')),
 
                 INCREMENT=_F(  LIST_INST = LI),

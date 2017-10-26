@@ -29,6 +29,7 @@ implicit none
 #include "asterfort/nmcpqu.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -80,9 +81,9 @@ implicit none
     call jeveuo(ds_constitutive%compor(1:19)//'.DESC', 'L', vi   = v_compor_desc)
     nb_affe = v_compor_desc(3)
     do i_affe = 1, nb_affe
-        if ((v_compor_vale(1+2+20*(i_affe-1)).eq.'GROT_GDEP') .or.&
-            (v_compor_vale(1+2+20*(i_affe-1)).eq.'SIMO_MIEHE') .or.&
-            (v_compor_vale(1+2+20*(i_affe-1)).eq.'GDEF_LOG')) then
+        if ((v_compor_vale(DEFO+NB_COMP_MAXI*(i_affe-1)).eq.'GROT_GDEP') .or.&
+            (v_compor_vale(DEFO+NB_COMP_MAXI*(i_affe-1)).eq.'SIMO_MIEHE') .or.&
+            (v_compor_vale(DEFO+NB_COMP_MAXI*(i_affe-1)).eq.'GDEF_LOG')) then
             ds_constitutive%l_matr_geom = .true.
         endif
     enddo

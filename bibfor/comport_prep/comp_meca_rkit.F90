@@ -16,10 +16,11 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine comp_meca_rkit(keywordfact, iocc, rela_comp, kit_comp)
+subroutine comp_meca_rkit(keywordfact, iocc, rela_comp, kit_comp, l_etat_init_)
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
@@ -32,6 +33,7 @@ implicit none
     integer, intent(in) :: iocc
     character(len=16), intent(in) :: rela_comp
     character(len=16), intent(out) :: kit_comp(4)
+    aster_logical, optional, intent(in) :: l_etat_init_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -41,10 +43,11 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  keywordfact  : factor keyword to read
-! In  iocc         : factor keyword index
-! In  rela_comp    : comportment relation
-! Out kit_comp     : KIT comportment
+! In  keywordfact      : factor keyword to read
+! In  iocc             : factor keyword index
+! In  rela_comp        : comportment relation
+! Out kit_comp         : KIT comportment
+! In  l_etat_init      : .true. if initial state is defined
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -52,11 +55,16 @@ implicit none
     character(len=16) :: rela_thmc, rela_hydr, rela_meca, rela_ther
     character(len=16) :: rela_flua, rela_plas, rela_cpla, rela_coup
     character(len=16) :: rela_cg(2), rela_meta
+    aster_logical :: l_etat_init
 !
 ! --------------------------------------------------------------------------------------------------
 !
     nb_rela_kit   = 0
     kit_comp(1:4) = 'VIDE'
+    l_etat_init   = .false.
+    if (present(l_etat_init_)) then
+        l_etat_init = l_etat_init_
+    endif
 !
     if (rela_comp(1:4) .eq. 'META') then
         nb_rela_kit = 1
@@ -71,8 +79,8 @@ implicit none
             kit_comp(1) = 'ZIRC'
         endif
     else if (rela_comp.eq.'KIT_DDI') then
-        call ddi_kit_read(keywordfact, iocc, rela_flua, rela_plas, rela_cpla, &
-                          rela_coup  )
+        call ddi_kit_read(keywordfact, iocc     , l_etat_init,&
+                          rela_flua  , rela_plas, rela_cpla  , rela_coup)
         kit_comp(1) = rela_flua
         kit_comp(2) = rela_plas
         kit_comp(3) = rela_coup 
@@ -85,8 +93,8 @@ implicit none
         kit_comp(1) = rela_cg(1)
         kit_comp(2) = rela_cg(2)
     elseif ((rela_comp(1:5).eq.'KIT_H') .or. (rela_comp(1:6).eq.'KIT_TH')) then
-        call thm_kit_read(keywordfact, iocc     , rela_comp, rela_thmc, rela_hydr, &
-                          rela_meca  , rela_ther)
+        call thm_kit_read(keywordfact, iocc     ,&
+                          rela_comp  , rela_thmc, rela_hydr  , rela_meca  , rela_ther)
         kit_comp(1) = rela_thmc
         kit_comp(2) = rela_ther
         kit_comp(3) = rela_hydr

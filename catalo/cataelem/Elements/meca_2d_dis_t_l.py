@@ -46,10 +46,6 @@ CCAORIE  = LocatedComponents(phys=PHY.CAORIE, type='ELEM',
     components=('ALPHA','BETA','GAMMA',))
 
 
-CCOMPOR  = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
-    components=('RELCOM','NBVARI','DEFORM','INCELA','C_PLAN',))
-
-
 NDEPLAC  = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',
     components=('DX','DY',))
 
@@ -216,7 +212,7 @@ class MECA_2D_DIS_T_L(Element):
 
         OP.FULL_MECA(te=47,
             para_in=((SP.PCADISK, CCADISK), (OP.FULL_MECA.PCAORIE, CCAORIE),
-                     (SP.PCINFDI, LC.CCINFDI), (OP.FULL_MECA.PCOMPOR, CCOMPOR),
+                     (SP.PCINFDI, LC.CCINFDI), (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR),
                      (OP.FULL_MECA.PCONTMR, EEFGEGA), (SP.PDEPENT, DDL_MECA),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, LC.CINSTPR),
@@ -231,7 +227,7 @@ class MECA_2D_DIS_T_L(Element):
 
         OP.FULL_MECA_ELAS(te=47,
             para_in=((SP.PCADISK, CCADISK), (OP.FULL_MECA_ELAS.PCAORIE, CCAORIE),
-                     (SP.PCINFDI, LC.CCINFDI), (OP.FULL_MECA_ELAS.PCOMPOR, CCOMPOR),
+                     (SP.PCINFDI, LC.CCINFDI), (OP.FULL_MECA_ELAS.PCOMPOR, LC.CCOMPOR),
                      (OP.FULL_MECA_ELAS.PCONTMR, EEFGEGA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, LC.CINSTPR), (SP.PINSTPR, LC.CINSTPR),
@@ -297,7 +293,7 @@ class MECA_2D_DIS_T_L(Element):
 
         OP.RAPH_MECA(te=47,
             para_in=((SP.PCADISK, CCADISK), (OP.RAPH_MECA.PCAORIE, CCAORIE),
-                     (SP.PCINFDI, LC.CCINFDI), (OP.RAPH_MECA.PCOMPOR, CCOMPOR),
+                     (SP.PCINFDI, LC.CCINFDI), (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR),
                      (OP.RAPH_MECA.PCONTMR, EEFGEGA), (SP.PDEPENT, DDL_MECA),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, LC.CINSTPR),
@@ -326,7 +322,7 @@ class MECA_2D_DIS_T_L(Element):
 
         OP.RIGI_MECA_ELAS(te=47,
             para_in=((SP.PCADISK, CCADISK), (OP.RIGI_MECA_ELAS.PCAORIE, CCAORIE),
-                     (SP.PCINFDI, LC.CCINFDI), (OP.RIGI_MECA_ELAS.PCOMPOR, CCOMPOR),
+                     (SP.PCINFDI, LC.CCINFDI), (OP.RIGI_MECA_ELAS.PCOMPOR, LC.CCOMPOR),
                      (OP.RIGI_MECA_ELAS.PCONTMR, EEFGEGA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, LC.CINSTPR), (SP.PINSTPR, LC.CINSTPR),
@@ -344,7 +340,7 @@ class MECA_2D_DIS_T_L(Element):
 
         OP.RIGI_MECA_TANG(te=47,
             para_in=((SP.PCADISK, CCADISK), (OP.RIGI_MECA_TANG.PCAORIE, CCAORIE),
-                     (SP.PCINFDI, LC.CCINFDI), (OP.RIGI_MECA_TANG.PCOMPOR, CCOMPOR),
+                     (SP.PCINFDI, LC.CCINFDI), (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR),
                      (OP.RIGI_MECA_TANG.PCONTMR, EEFGEGA), (SP.PDEPENT, DDL_MECA),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, LC.CINSTPR),

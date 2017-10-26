@@ -1,0 +1,460 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),);
+
+mailcol=LIRE_MAILLAGE(FORMAT="MED",UNITE=20);
+
+#
+#-----------------------------
+#
+#    DEFI_FONCTION : UL 33
+#    ACCELEROGRAMME : LBEW
+#    (LONG BEACH NORTH SOUTH)
+#
+#-----------------------------
+#
+#    DEFI_FONCTION : UL 34
+#    ACCELEROGRAMME : LBNS
+#    (LONG BEACH EAST WEST)
+#
+
+
+INCLUDE(UNITE=33,);
+
+INCLUDE(UNITE=34,);
+
+#
+#  ACCELEROGRAMMES NORMES A 0.1G
+#
+#
+#
+
+N=200
+dt=0.05
+TFIN=10
+
+linst = DEFI_LIST_REEL ( DEBUT = 0.,
+                          INTERVALLE = (
+                                      _F(
+                                         JUSQU_A = (N-1)*dt,
+                                         PAS=1*dt,
+                                         ),
+                                       ),
+                           );
+
+ACCEX=CALC_FONCTION(COMB=_F(FONCTION=LBNS,
+                               COEF=0.3,),
+                       LIST_PARA=linst,);
+
+ACCEXL=CALC_FONCTION(COMB=_F(FONCTION=ACCEX,
+                            COEF=1.e-6,),
+               LIST_PARA=linst,); 
+
+ACCEY=CALC_FONCTION(COMB=_F(FONCTION=LBEW,
+                               COEF=0.3,),
+                       LIST_PARA=linst,);
+
+vitex=CALC_FONCTION(INTEGRE=_F(FONCTION=ACCEX,));
+
+deplx0=CALC_FONCTION(INTEGRE=_F(FONCTION=vitex,));
+
+deplxF=FORMULE(NOM_PARA='INST',
+            VALE='deplx0(INST)-(INST*deplx0(TFIN-dt)/(TFIN-dt))')
+
+deplx=CALC_FONC_INTERP(FONCTION=deplxF, NOM_PARA = 'INST',
+                        PROL_DROITE='CONSTANT',
+                        PROL_GAUCHE='CONSTANT',
+                        LIST_PARA=linst);
+
+vitey=CALC_FONCTION(INTEGRE=_F(FONCTION=ACCEY,));
+
+deply0=CALC_FONCTION(INTEGRE=_F(FONCTION=vitey,));
+
+deplyF=FORMULE(NOM_PARA='INST',
+            VALE='deply0(INST)-(INST*deply0(TFIN-dt)/(TFIN-dt))')
+
+deply=CALC_FONC_INTERP(FONCTION=deplyF, NOM_PARA = 'INST',
+                        PROL_DROITE='CONSTANT',
+                        PROL_GAUCHE='CONSTANT',
+                        LIST_PARA=linst);
+
+freqspec = DEFI_LIST_REEL ( DEBUT = 0.1,
+                          INTERVALLE = (
+                                      _F(
+                                         JUSQU_A = 15.,
+                                         NOMBRE = 149,
+                                       ),
+                                      _F(
+                                         JUSQU_A = 35.,
+                                         NOMBRE = 80,
+                                       ),
+                                      _F(
+                                         JUSQU_A = 100.,
+                                         NOMBRE = 65,
+                                       ),
+                                       ),
+                           );
+                           
+                           
+labsr = DEFI_LIST_REEL ( VALE=(0.000001, 0.000005, 0.000015, 0.00005,
+                                 0.0001, 0.0004, 0.001, 0.004, 0.01),
+                           );
+                           
+lfreqc = DEFI_LIST_REEL(DEBUT=0.15,
+                          INTERVALLE=_F(PAS=0.15,
+                                        JUSQU_A=8.4,),
+                          )
+
+#calcul 2D
+#tabsol2D= DEFI_SOL_EQUI(#MAILLAGE=mailcol,
+#                       GROUP_MA_DROITE='DR8',GROUP_MA_GAUCHE='GA8',
+#                       GROUP_MA_COL='SURF',GROUP_MA_SUBSTR='BAS',
+
+#             MATERIAU=(
+#                       _F(GAMMA=(0.000001, 0.000003, 0.00001, 0.00003,
+#                                 0.0001, 0.0003, 0.001, 0.003, 0.01),
+#                          G_GMAX=(1, 1, 0.99, 0.96,
+#                                  0.84, 0.66, 0.37, 0.19, 0.08),
+#                          D=(0.025, 0.025, 0.025, 0.025, 0.025, 0.03,
+#                             0.04, 0.05, 0.07),
+#                          ),
+#                       _F(GAMMA=(0.000001, 0.000003, 0.00001, 0.00003,
+#                                 0.0001, 0.0003, 0.001, 0.003, 0.01),
+#                          G_GMAX=(1, 0.99, 0.96, 0.89,
+#                                  0.75, 0.54, 0.3, 0.15, 0.07),
+#                          D=(0.025, 0.025, 0.025, 0.025, 0.03,
+#                             0.04, 0.05, 0.07, 0.1),
+#                          ),
+#                       _F(GAMMA=(0.000001, 0.000003, 0.00001, 0.00003,
+#                                 0.0001, 0.0003, 0.001, 0.003, 0.01),
+#                          G_GMAX=(1, 0.98, 0.93, 0.83,
+#                                  0.64, 0.43, 0.22, 0.11, 0.05),
+#                          D=(0.025, 0.025, 0.025, 0.03,
+#                             0.04, 0.05, 0.07, 0.1, 0.135 ),
+#                          ),
+#                       _F(GAMMA=(0.000001, 0.000003, 0.00001, 0.00003,
+#                                 0.0001, 0.0003, 0.001, 0.003, 0.01),
+#                          G_GMAX=(1, 1, 1, 1,
+#                                  1, 1, 1, 1, 1),
+#                          D=(0.01, 0.01, 0.01, 0.01,
+#                             0.01, 0.01, 0.01, 0.01, 0.01, ),
+#                          ),
+#                               ),
+#                     COUCHE=(
+#                       _F(GROUP_MA='COUCH1A',EPAIS=1.9, E=2.67E8, NU=0.49,
+#                          RHO=2650., AMOR_HYST=0.05, NUME_MATE=1,),
+#                       _F(GROUP_MA='COUCH1B',EPAIS=1.9, E=2.67E8, NU=0.49,
+#                          RHO=2650., AMOR_HYST=0.05, NUME_MATE=1,),
+#                       _F(GROUP_MA='COUCH1C',EPAIS=1.9, E=2.67E8, NU=0.49,
+#                          RHO=2650., AMOR_HYST=0.05, NUME_MATE=1,),
+#                       _F(GROUP_MA='COUCH1D',EPAIS=1.9, E=2.67E8, NU=0.49,
+#                          RHO=2650., AMOR_HYST=0.05, NUME_MATE=1,),
+#                       _F(GROUP_MA='COUCH2A',EPAIS=1.9, E=3.35E8, NU=0.49,
+#                          RHO=2650., AMOR_HYST=0.05, NUME_MATE=1,),
+#                       _F(GROUP_MA='COUCH2B',EPAIS=1.9, E=3.35E8, NU=0.49,
+#                          RHO=2650., AMOR_HYST=0.05, NUME_MATE=1,),
+#                       _F(GROUP_MA='COUCH2C',EPAIS=1.9, E=3.35E8, NU=0.49,
+#                          RHO=2650., AMOR_HYST=0.05, NUME_MATE=1,),
+#                       _F(GROUP_MA='COUCH2D',EPAIS=1.9, E=3.35E8, NU=0.49,
+#                          RHO=2650., AMOR_HYST=0.05, NUME_MATE=1,),
+#                       _F(GROUP_MA='COUCH3A',EPAIS=4.125, E=9.21E8, NU=0.47,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+#                       _F(GROUP_MA='COUCH3B',EPAIS=4.125, E=9.21E8, NU=0.47,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+#                       _F(GROUP_MA='COUCH3C',EPAIS=4.125, E=9.21E8, NU=0.47,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+#                       _F(GROUP_MA='COUCH3D',EPAIS=4.125, E=9.21E8, NU=0.47,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+#                       _F(GROUP_MA='COUCH3E',EPAIS=4.125, E=9.21E8, NU=0.47,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+#                       _F(GROUP_MA='COUCH3F',EPAIS=4.125, E=9.21E8, NU=0.47,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+#                       _F(GROUP_MA='COUCH3G',EPAIS=4.125, E=9.21E8, NU=0.47,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+#                       _F(GROUP_MA='COUCH3H',EPAIS=4.125, E=9.21E8, NU=0.47,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+#                       _F(GROUP_MA='COUCH4A',EPAIS=4.25, E=1.39E9, NU=0.47,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+#                       _F(GROUP_MA='COUCH4B',EPAIS=4.25, E=1.39E9, NU=0.47,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+#                       _F(GROUP_MA='COUCH4C',EPAIS=4.25, E=1.39E9, NU=0.47,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+#                       _F(GROUP_MA='COUCH4D',EPAIS=4.25, E=1.39E9, NU=0.47,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+#                       _F(GROUP_MA='COUCH4E',EPAIS=4.25, E=1.39E9, NU=0.47,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+#                       _F(GROUP_MA='COUCH4F',EPAIS=4.25, E=1.39E9, NU=0.47,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+#                       _F(GROUP_MA='COUCH4G',EPAIS=4.25, E=1.39E9, NU=0.47,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+#                       _F(GROUP_MA='COUCH4H',EPAIS=4.25, E=1.39E9, NU=0.47,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+#                       _F(GROUP_MA='COUCH5A',EPAIS=4.25, E=1.96E9, NU=0.47,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+#                       _F(GROUP_MA='COUCH5B',EPAIS=4.25, E=1.96E9, NU=0.47,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+#                       _F(GROUP_MA='COUCH5C',EPAIS=4.25, E=1.96E9, NU=0.47,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+#                       _F(GROUP_MA='COUCH5D',EPAIS=4.25, E=1.96E9, NU=0.47,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+#                       _F(GROUP_MA='COUCH5E',EPAIS=4.25, E=1.96E9, NU=0.47,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+#                       _F(GROUP_MA='COUCH5F',EPAIS=4.25, E=1.96E9, NU=0.47,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+#                       _F(GROUP_MA='COUCH5G',EPAIS=4.25, E=1.96E9, NU=0.47,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+#                       _F(GROUP_MA='COUCH5H',EPAIS=4.25, E=1.96E9, NU=0.47,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+#                       _F(GROUP_MA='COUCH6',EPAIS=5.5, E=3.02E9, NU=0.45,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=3,),
+#                       _F(GROUP_MA='COUCH7',EPAIS=5.5, E=5.95E9, NU=0.45,
+#                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=3,),
+#                       _F(GROUP_MA='COUCH8',EPAIS=10., E=4.23E10, NU=0.25,
+#                          RHO=2710., AMOR_HYST=0.02, NUME_MATE=4,),
+#                            ),
+#                       LIEU_SIGNAL='AFFLEURANT',
+#                       FONC_SIGNAL=ACCEX,
+#                       RESI_RELA=0.05,
+#                       SURF='OUI',
+#                       FREQ_COUP=9.5,
+#                       COEF_AMPL_ACCE=1.);
+
+#IMPR_TABLE(TABLE=tabsol2D);
+
+
+tabsol= DEFI_SOL_EQUI(MAILLAGE=mailcol,
+                       GROUP_MA_COL='SURF_',GROUP_MA_SUBSTR='BAS_',
+                       GROUP_MA_LIGNE='LIST',
+
+             MATERIAU=(
+                       _F(GAMMA=(0.000001, 0.000003, 0.00001, 0.00003,
+                                 0.0001, 0.0003, 0.001, 0.003, 0.01),
+                          G_GMAX=(1, 1, 0.99, 0.96,
+                                  0.84, 0.66, 0.37, 0.19, 0.08),
+                          D=(0.025, 0.025, 0.025, 0.025, 0.025, 0.03,
+                             0.04, 0.05, 0.07),
+                          ),
+                       _F(GAMMA=(0.000001, 0.000003, 0.00001, 0.00003,
+                                 0.0001, 0.0003, 0.001, 0.003, 0.01),
+                          G_GMAX=(1, 0.99, 0.96, 0.89,
+                                  0.75, 0.54, 0.3, 0.15, 0.07),
+                          D=(0.025, 0.025, 0.025, 0.025, 0.03,
+                             0.04, 0.05, 0.07, 0.1),
+                          ),
+                       _F(GAMMA=(0.000001, 0.000003, 0.00001, 0.00003,
+                                 0.0001, 0.0003, 0.001, 0.003, 0.01),
+                          G_GMAX=(1, 0.98, 0.93, 0.83,
+                                  0.64, 0.43, 0.22, 0.11, 0.05),
+                          D=(0.025, 0.025, 0.025, 0.03,
+                             0.04, 0.05, 0.07, 0.1, 0.135 ),
+                          ),
+                       _F(GAMMA=(0.000001, 0.000003, 0.00001, 0.00003,
+                                 0.0001, 0.0003, 0.001, 0.003, 0.01),
+                          G_GMAX=(1, 1, 1, 1,
+                                  1, 1, 1, 1, 1),
+                          D=(0.01, 0.01, 0.01, 0.01,
+                             0.01, 0.01, 0.01, 0.01, 0.01, ),
+                          ),
+                               ),
+                     COUCHE=(
+                       _F(GROUP_MA='COUCH1A_',EPAIS=1.9, E=2.67E8, NU=0.49,
+                          RHO=2650., AMOR_HYST=0.05, NUME_MATE=1,),
+                       _F(GROUP_MA='COUCH1B_',EPAIS=1.9, E=2.67E8, NU=0.49,
+                          RHO=2650., AMOR_HYST=0.05, NUME_MATE=1,),
+                       _F(GROUP_MA='COUCH1C_',EPAIS=1.9, E=2.67E8, NU=0.49,
+                          RHO=2650., AMOR_HYST=0.05, NUME_MATE=1,),
+                       _F(GROUP_MA='COUCH1D_',EPAIS=1.9, E=2.67E8, NU=0.49,
+                          RHO=2650., AMOR_HYST=0.05, NUME_MATE=1,),
+                       _F(GROUP_MA='COUCH2A_',EPAIS=1.9, E=3.35E8, NU=0.49,
+                          RHO=2650., AMOR_HYST=0.05, NUME_MATE=1,),
+                       _F(GROUP_MA='COUCH2B_',EPAIS=1.9, E=3.35E8, NU=0.49,
+                          RHO=2650., AMOR_HYST=0.05, NUME_MATE=1,),
+                       _F(GROUP_MA='COUCH2C_',EPAIS=1.9, E=3.35E8, NU=0.49,
+                          RHO=2650., AMOR_HYST=0.05, NUME_MATE=1,),
+                       _F(GROUP_MA='COUCH2D_',EPAIS=1.9, E=3.35E8, NU=0.49,
+                          RHO=2650., AMOR_HYST=0.05, NUME_MATE=1,),
+                       _F(GROUP_MA='COUCH3A_',EPAIS=4.125, E=9.21E8, NU=0.47,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+                       _F(GROUP_MA='COUCH3B_',EPAIS=4.125, E=9.21E8, NU=0.47,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+                       _F(GROUP_MA='COUCH3C_',EPAIS=4.125, E=9.21E8, NU=0.47,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+                       _F(GROUP_MA='COUCH3D_',EPAIS=4.125, E=9.21E8, NU=0.47,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+                       _F(GROUP_MA='COUCH3E_',EPAIS=4.125, E=9.21E8, NU=0.47,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+                       _F(GROUP_MA='COUCH3F_',EPAIS=4.125, E=9.21E8, NU=0.47,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+                       _F(GROUP_MA='COUCH3G_',EPAIS=4.125, E=9.21E8, NU=0.47,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+                       _F(GROUP_MA='COUCH3H_',EPAIS=4.125, E=9.21E8, NU=0.47,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+                       _F(GROUP_MA='COUCH4A_',EPAIS=4.25, E=1.39E9, NU=0.47,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+                       _F(GROUP_MA='COUCH4B_',EPAIS=4.25, E=1.39E9, NU=0.47,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+                       _F(GROUP_MA='COUCH4C_',EPAIS=4.25, E=1.39E9, NU=0.47,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+                       _F(GROUP_MA='COUCH4D_',EPAIS=4.25, E=1.39E9, NU=0.47,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+                       _F(GROUP_MA='COUCH4E_',EPAIS=4.25, E=1.39E9, NU=0.47,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+                       _F(GROUP_MA='COUCH4F_',EPAIS=4.25, E=1.39E9, NU=0.47,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+                       _F(GROUP_MA='COUCH4G_',EPAIS=4.25, E=1.39E9, NU=0.47,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+                       _F(GROUP_MA='COUCH4H_',EPAIS=4.25, E=1.39E9, NU=0.47,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+                       _F(GROUP_MA='COUCH5A_',EPAIS=4.25, E=1.96E9, NU=0.47,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+                       _F(GROUP_MA='COUCH5B_',EPAIS=4.25, E=1.96E9, NU=0.47,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+                       _F(GROUP_MA='COUCH5C_',EPAIS=4.25, E=1.96E9, NU=0.47,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+                       _F(GROUP_MA='COUCH5D_',EPAIS=4.25, E=1.96E9, NU=0.47,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+                       _F(GROUP_MA='COUCH5E_',EPAIS=4.25, E=1.96E9, NU=0.47,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+                       _F(GROUP_MA='COUCH5F_',EPAIS=4.25, E=1.96E9, NU=0.47,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+                       _F(GROUP_MA='COUCH5G_',EPAIS=4.25, E=1.96E9, NU=0.47,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+                       _F(GROUP_MA='COUCH5H_',EPAIS=4.25, E=1.96E9, NU=0.47,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=2,),
+                       _F(GROUP_MA='COUCH6_',EPAIS=5.5, E=3.02E9, NU=0.45,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=3,),
+                       _F(GROUP_MA='COUCH7_',EPAIS=5.5, E=5.95E9, NU=0.45,
+                          RHO=2710., AMOR_HYST=0.05, NUME_MATE=3,),
+                       _F(GROUP_MA='COUCH8_',EPAIS=10., E=4.23E10, NU=0.25,
+                          RHO=2710., AMOR_HYST=0.02, NUME_MATE=4,),
+                            ),
+                       UNITE_TABLE_RESU = 24,
+                       LIEU_SIGNAL='AFFLEURANT',
+                       TOUT_CHAM='NON',
+                       FONC_SIGNAL_X=ACCEX,
+                       FONC_SIGNAL_Y=ACCEXL,
+                       FONC_SIGNAL_Z=ACCEXL,
+                       CHARGEMENT='MONO_APPUI',
+                       RESI_RELA=0.05,
+                       LIST_FREQ_SPEC_OSCI=freqspec,
+                       SURF='OUI',
+                       FREQ_COUP=9.5,
+                       COEF_AMPL_ACCE=1.0);
+IMPR_TABLE(TABLE=tabsol);
+
+
+T_resu1=LIRE_TABLE(UNITE=24,
+               FORMAT='TABLEAU',
+               NUME_TABLE=1,
+               TITRE='',);
+
+
+# test valeurs G/Gmax
+# comparaison résultats entre modélisations ONDE_PLANE et MONO_APPUI
+TEST_TABLE(  TABLE=T_resu1,
+             NOM_PARA='G/Gmax',
+             FILTRE=_F(NOM_PARA='M',
+                       VALE_K='COUCH1C_',
+                       CRITERE='RELATIF',
+                       ),
+             REFERENCE='AUTRE_ASTER',
+             VALE_CALC=0.860086, 
+             VALE_REFE=(8.60086E-01, ),
+             PRECISION=0.001,
+             CRITERE='RELATIF',
+             VALE_ABS='NON',)
+
+            
+TEST_TABLE(  TABLE=T_resu1,
+             NOM_PARA='G/Gmax',
+             FILTRE=_F(NOM_PARA='M',
+                       VALE_K='COUCH4F_ ',
+                       CRITERE='RELATIF',
+                       ),
+             REFERENCE='AUTRE_ASTER',
+             VALE_CALC=0.764629, 
+             VALE_REFE=(7.64629E-01, ),
+             PRECISION=0.001,
+             CRITERE='RELATIF',
+             VALE_ABS='NON',)
+
+
+# test valeurs AHfin
+
+TEST_TABLE(  TABLE=T_resu1,
+             NOM_PARA='AHfin',
+             FILTRE=_F(NOM_PARA='M',
+                       VALE_K='COUCH1C_',
+                       CRITERE='RELATIF',
+                       ),
+             REFERENCE='AUTRE_ASTER',
+             VALE_CALC=0.05, 
+             VALE_REFE=(5.00000E-02, ),
+             PRECISION=0.001,
+             CRITERE='RELATIF',
+             VALE_ABS='NON',)
+
+
+            
+TEST_TABLE(  TABLE=T_resu1,
+             NOM_PARA='AHfin',
+             FILTRE=_F(NOM_PARA='M',
+                       VALE_K='COUCH4F_ ',
+                       CRITERE='RELATIF',
+                       ),
+             REFERENCE='AUTRE_ASTER',
+             VALE_CALC=0.0589551, 
+             VALE_REFE=(5.89551E-02, ),
+             PRECISION=0.001,
+             CRITERE='RELATIF',
+             VALE_ABS='NON',)
+
+
+# test valeurs gamma_ma
+
+TEST_TABLE(  TABLE=T_resu1,
+             NOM_PARA='gamma_ma',
+             FILTRE=_F(NOM_PARA='M',
+                       VALE_K='COUCH1C_',
+                       CRITERE='RELATIF',
+                       ),
+             REFERENCE='AUTRE_ASTER',
+             VALE_CALC=0.0001352986, 
+             VALE_REFE=(1.35298E-04 , ),
+             PRECISION=0.001,
+             CRITERE='RELATIF',
+             VALE_ABS='NON',)
+
+
+            
+TEST_TABLE(  TABLE=T_resu1,
+             NOM_PARA='gamma_ma',
+             FILTRE=_F(NOM_PARA='M',
+                       VALE_K='COUCH4F_ ',
+                       CRITERE='RELATIF',
+                       ),
+             REFERENCE='AUTRE_ASTER',
+             VALE_CALC=0.000146267, 
+             VALE_REFE=(1.46266E-04, ),
+             PRECISION=0.001,
+             CRITERE='RELATIF',
+             VALE_ABS='NON',)
+
+FIN();

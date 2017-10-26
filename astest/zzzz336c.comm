@@ -111,8 +111,8 @@ RESUTHER = CREA_RESU( OPERATION = 'AFFE',
 
 # MATERIAUX
 
-BETON=DEFI_MATERIAU(ELAS=_F(E=3.E10, NU=0.2, ALPHA=1.E-5))
-ACIER=DEFI_MATERIAU(ELAS=_F(E=2.E11, NU=0.3, ALPHA=2.E-5))
+BETON=DEFI_MATERIAU(ELAS=_F(E=3.E10, NU=0.2, ALPHA=1.E-5,))
+ACIER=DEFI_MATERIAU(ELAS=_F(E=2.E11, NU=0.3, ALPHA=2.E-5,))
 
 
 # CALCUL MECANIQUE 3D : REFERENCE
@@ -235,8 +235,12 @@ U_POU=STAT_NON_LINE(MODELE=MOPOU,
                  INCREMENT=_F(LIST_INST=LINST),
                  );
 
-CALC_CHAMP(reuse=U_POU,RESULTAT=U_POU,DEFORMATION=('EPVC_ELGA','EPVC_ELNO'))
+CALC_CHAMP(reuse=U_POU,RESULTAT=U_POU,DEFORMATION=('EPSI_ELGA', 'EPME_ELGA', 'EPVC_ELGA',))
+CALC_CHAMP(reuse=U_POU,RESULTAT=U_POU,DEFORMATION=('EPSI_ELNO', 'EPME_ELNO', 'EPVC_ELNO',))
 
+#IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT = U_POU, NOM_CHAM=('EPSI_ELGA', 'EPME_ELGA', 'EPVC_ELGA'), 
+          #MAILLE='M1',
+          #))
 
 IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT = U_POU, NOM_CHAM='DEPL', GROUP_NO = 'P3'))
 
@@ -263,7 +267,16 @@ TEST_RESU(RESU=(_F(INST=2.,
                    PRECISION=4.E-2,),
                ))
 
-TEST_RESU(RESU=(
+
+TEST_RESU(RESU=(_F(INST=2.,
+                   RESULTAT=U_POU,
+                   NOM_CHAM='EPSI_ELGA',
+                   MAILLE='M1',
+                   POINT = 1,
+                   SOUS_POINT = 8,
+                   NOM_CMP='EPXX',
+                   VALE_CALC=0.006,
+                   ),
                 _F(INST=2.,
                    REFERENCE='ANALYTIQUE',
                    RESULTAT=U_POU,
@@ -274,6 +287,18 @@ TEST_RESU(RESU=(
                    NOM_CMP='EPTHER_L',
                    VALE_CALC=0.006,
                    VALE_REFE=0.006,
+                   ),
+                _F(INST=2.,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=U_POU,
+                   NOM_CHAM='EPME_ELGA',
+                   MAILLE='M1',
+                   POINT = 1,
+                   SOUS_POINT = 8,
+                   NOM_CMP='EPXX',
+                   VALE_CALC=0.,
+                   VALE_REFE=0.,
+                   CRITERE='ABSOLU'
                    ),
                ))
 
@@ -441,6 +466,10 @@ U_POU2=STAT_NON_LINE(MODELE=MOPOU,
                  INCREMENT=_F(LIST_INST=LINST),
                  );
 
+CALC_CHAMP(reuse=U_POU2,RESULTAT=U_POU2, DEFORMATION = 'EPSI_ELGA')
+
+IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U_POU2, NOM_CHAM='EPSI_ELGA', INST = 2.0))
+
 TEST_RESU(RESU=(_F(INST=2.,
                    REFERENCE='ANALYTIQUE',
                    RESULTAT=U_POU2,
@@ -476,7 +505,8 @@ U_POU3=STAT_NON_LINE(MODELE=MOPOU,
                  INCREMENT=_F(LIST_INST=LINST),
                  );
 
-CALC_CHAMP(reuse=U_POU3,RESULTAT=U_POU3,DEFORMATION=('EPVC_ELGA'))
+
+CALC_CHAMP(reuse=U_POU3,RESULTAT=U_POU3,DEFORMATION=('EPME_ELGA', 'EPVC_ELGA','EPSP_ELGA'))
 
 IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U_POU3, NOM_CHAM='SIEF_ELGA', INST = 2.0, MAILLE = 'M1'))
 
@@ -521,6 +551,29 @@ TEST_RESU(RESU=(
                    NOM_CMP='EPTHER_L',
                    VALE_CALC=8E-4,
                    VALE_REFE=8E-4,
+                   ),
+                _F(INST=2.,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=U_POU3,
+                   NOM_CHAM='EPME_ELGA',
+                   MAILLE='M1',
+                   POINT = 1,
+                   SOUS_POINT = 8,
+                   NOM_CMP='EPXX',
+                   VALE_CALC=-8E-4,
+                   VALE_REFE=-8E-4,
+                   ),
+                _F(INST=2.,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=U_POU3,
+                   NOM_CHAM='EPSP_ELGA',
+                   MAILLE='M1',
+                   POINT = 1,
+                   SOUS_POINT = 8,
+                   NOM_CMP='EPXX',
+                   VALE_CALC=0.,
+                   VALE_REFE=0.,
+                   CRITERE='ABSOLU'
                    ),
                ))
 

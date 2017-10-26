@@ -58,7 +58,7 @@ implicit none
     real(kind=8) :: pres_frot(3), dist_frot(3)
     aster_logical :: propa, l_frot_zone
     real(kind=8) :: tole_stick, tole_slide
-    integer :: zone_frot, zone_frot_prop
+    integer :: zone_frot, zone_frot_prop,it=0
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -99,7 +99,7 @@ implicit none
                 call mm_cycl_laugf(pres_frot, dist_frot, coef_frot_maxi, nrese_maxi)
                 call mm_cycl_laugf(pres_frot, dist_frot, coef_frot_mini, nrese_mini)
                 nrese_prop = nrese_maxi
-!
+!           
      10         continue
 !
 ! ------------- Friction zone
@@ -139,18 +139,21 @@ implicit none
                 if (propa) then
                     if ( (coef_frot .ge. coef_frot_maxi-1.d-15) .or.&
                          (coef_frot .le. coef_frot_maxi+1.d-15) ) then
-                        coef_frot = coef_frot_maxi
+            
+                        coef_frot = max(coef_frot_maxi,coef_frot)
                     endif
                 else
                     if ( (nrese_prop .ge. nrese_maxi-1.d-15) .or. &
                          (nrese_prop .le. nrese_maxi+1.d-15) )then
                         nrese_prop = nrese_mini
-                        goto 10
+                        it = it + 1
+                        if (it .lt. 100) goto 10
                     endif
                 endif
             endif
             v_sdcont_cychis(60*(i_cont_poin-1)+6) = coef_frot
+            
         endif
-    enddo
+    enddo    
 !
 end subroutine

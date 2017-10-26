@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine cfresu(time_incr, sddisc, ds_contact, disp_cumu_inst, disp_iter,&
                   cnsinr   , cnsper)
 !
@@ -24,6 +25,7 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
+#include "event_def.h"
 #include "jeveux.h"
 #include "asterc/r8miem.h"
 #include "asterc/r8prem.h"
@@ -42,15 +44,13 @@ implicit none
 #include "asterfort/mmnorm.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    real(kind=8), intent(in) :: time_incr
-    character(len=19), intent(in) :: sddisc
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    character(len=19), intent(in) :: disp_cumu_inst
-    character(len=19), intent(in) :: disp_iter
-    character(len=19), intent(in) :: cnsinr
-    character(len=19), intent(in) :: cnsper
+real(kind=8), intent(in) :: time_incr
+character(len=19), intent(in) :: sddisc
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=19), intent(in) :: disp_cumu_inst
+character(len=19), intent(in) :: disp_iter
+character(len=19), intent(in) :: cnsinr
+character(len=19), intent(in) :: cnsper
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -132,7 +132,7 @@ implicit none
 !
     laffle = .false.
     valras = 1.d-3
-    call iseven(sddisc, 'COLLISION', lcolli)
+    call iseven(sddisc, FAIL_EVT_COLLISION, lcolli)
 !
 ! - Acces to contact objects
 !

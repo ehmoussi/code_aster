@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504,W1306
+! person_in_charge: daniele.colombo at ifpen.fr
+!
 subroutine xfnohm(fnoevo, deltat, nno, npg, ipoids,&
                   ivf, idfde, geom, congem, b,&
                   dfdi, dfdi2, r, vectu, imate,&
@@ -24,9 +26,12 @@ subroutine xfnohm(fnoevo, deltat, nno, npg, ipoids,&
                   dimenr, nnop, nnops, nnopm, igeom,&
                   jpintt, jpmilt, jheavn, lonch, cnset, heavt,&
                   enrmec, enrhyd, nfiss, nfh, jfisno)
-! ======================================================================
-! person_in_charge: daniele.colombo at ifpen.fr
-    implicit none
+!
+use THM_type
+use THM_module
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/tecach.h"
@@ -40,7 +45,7 @@ subroutine xfnohm(fnoevo, deltat, nno, npg, ipoids,&
     integer :: nno, npg, imate, dimenr, dimcon, nddls, nddlm
     integer :: dimuel, nmec, np1, ndim, ipoids, ivf, kpi, i, n
     integer :: idfde, mecani(5), press1(7)
-    integer :: yamec, yap1, addeme, addep1, nfiss, nfh, jfisno
+    integer :: addeme, addep1, nfiss, nfh, jfisno
     real(kind=8) :: poids, dt, deltat
     real(kind=8) :: vectu(dimuel), b(dimenr, dimuel), r(1:dimenr)
 !
@@ -113,9 +118,7 @@ subroutine xfnohm(fnoevo, deltat, nno, npg, ipoids,&
 ! ======================================================================
 ! --- DETERMINATION DES VARIABLES CARACTERISANT LE MILIEU --------------
 ! ======================================================================
-    yamec = mecani(1)
     addeme = mecani(2)
-    yap1 = press1(1)
     addep1 = press1(3)
     yaenrm = enrmec(1)
     adenme = enrmec(2)
@@ -145,26 +148,23 @@ subroutine xfnohm(fnoevo, deltat, nno, npg, ipoids,&
     enddo
 !
 !     BOUCLE D'INTEGRATION SUR LES NSE SOUS-ELEMENTS
-    do 600 ise = 1, nse
+    do ise = 1, nse
 !
 !     BOUCLE SUR LES 4/3 SOMMETS DU SOUS-TETRA/TRIA
-        do 610 in = 1, nno
+        do in = 1, nno
             ino=cnset(nno*(ise-1)+in)
-            do 620 j = 1, ndim
+            do j = 1, ndim
                 if (ino .lt. 1000) then
                     coorse(ndim*(in-1)+j)=zr(igeom-1+ndim*(ino-1)+j)
                 else if (ino.gt.1000 .and. ino.lt.2000) then
-                    coorse(ndim*(in-1)+j)=zr(jpintt-1+ndim*(ino-1000-&
-                    1)+j)
+                    coorse(ndim*(in-1)+j)=zr(jpintt-1+ndim*(ino-1000-1)+j)
                 else if (ino.gt.2000 .and. ino.lt.3000) then
-                    coorse(ndim*(in-1)+j)=zr(jpmilt-1+ndim*(ino-2000-&
-                    1)+j)
+                    coorse(ndim*(in-1)+j)=zr(jpmilt-1+ndim*(ino-2000-1)+j)
                 else if (ino.gt.3000) then
-                    coorse(ndim*(in-1)+j)=zr(jpmilt-1+ndim*(ino-3000-&
-                    1)+j)
+                    coorse(ndim*(in-1)+j)=zr(jpmilt-1+ndim*(ino-3000-1)+j)
                 endif
-620         continue
-610     continue
+            end do
+        end do
 !
 !     FONCTION HEAVISIDE CSTE POUR CHAQUE FISSURE SUR LE SS-ELT
         do ifiss = 1, nfiss
@@ -173,22 +173,22 @@ subroutine xfnohm(fnoevo, deltat, nno, npg, ipoids,&
 ! ======================================================================
 ! --- CALCUL POUR CHAQUE POINT DE GAUSS : BOUCLE SUR KPI ---------------
 ! ======================================================================
-        do 10 kpi = 1, npg
+        do kpi = 1, npg
 ! ======================================================================
 ! --- INITIALISATION DE R ----------------------------------------------
 ! ======================================================================
-            do 22 i = 1, dimenr
+            do i = 1, dimenr
                 r(i)=0.d0
- 22         continue
+            end do
 !
 !     COORDONNÉES DU PT DE GAUSS DANS LE REPÈRE RÉEL : XG
             call vecini(ndim, 0.d0, xg)
-            do 510 j = 1, ndim
-                do 511 in = 1, nno
+            do j = 1, ndim
+                do in = 1, nno
                     xg(j)=xg(j)+zr(ivf-1+nno*(kpi-1)+in)* coorse(ndim*&
                     (in-1)+j)
-511             continue
-510         continue
+                end do
+            end do
 !
 !     XG -> XE (DANS LE REPERE DE l'ELREFP) ET VALEURS DES FF EN XE
             call vecini(ndim, 0.d0, xe)
@@ -207,8 +207,8 @@ subroutine xfnohm(fnoevo, deltat, nno, npg, ipoids,&
 ! ======================================================================
             call xcabhm(nddls, nddlm, nnop, nnops, nnopm,&
                         dimuel, ndim, kpi, ff, ff2,&
-                        dfdi, dfdi2, b, nmec, yamec,&
-                        addeme, yap1, addep1, np1, axi,&
+                        dfdi, dfdi2, b, nmec,&
+                        addeme, addep1, np1, axi,&
                         ivf, ipoids, idfde, poids, coorse,&
                         nno, geom, yaenrm, adenme, dimenr,&
                         he, heavn, yaenrh, adenhy, nfiss, nfh)
@@ -219,12 +219,11 @@ subroutine xfnohm(fnoevo, deltat, nno, npg, ipoids,&
 ! ======================================================================
 ! --- CONTRIBUTION DU POINT D'INTEGRATION KPI AU RESIDU ----------------
 ! ======================================================================
-            do 117 i = 1, dimuel
-                do 118 n = 1, dimenr
+            do i = 1, dimuel
+                do n = 1, dimenr
                     vectu(i)=vectu(i)+b(n,i)*r(n)*poids
-118             continue
-117         continue
- 10     continue
-600 continue
-! ======================================================================
+                end do
+            end do
+        end do
+    end do
 end subroutine

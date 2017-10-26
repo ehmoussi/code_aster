@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romModeSave(base        , i_mode     , model      ,&
                        field_name  , field_iden , field_refe , nb_equa,&
                        mode_vectr_ ,&
@@ -26,29 +27,26 @@ subroutine romModeSave(base        , i_mode     , model      ,&
 !
 implicit none
 !
-#include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/copisd.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/rsadpa.h"
 #include "asterfort/rsagsd.h"
 #include "asterfort/rsexch.h"
 #include "asterfort/rsnoch.h"
+#include "asterfort/romModeParaSave.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: base
-    integer, intent(in) :: i_mode
-    character(len=8), intent(in) :: model
-    character(len=24), intent(in) :: field_name
-    character(len=24), intent(in) :: field_iden
-    character(len=24), intent(in) :: field_refe
-    integer, intent(in) :: nb_equa
-    real(kind=8), optional, intent(in) :: mode_vectr_(nb_equa)
-    complex(kind=8), optional, intent(in) :: mode_vectc_(nb_equa)
-    integer, optional, intent(in)     :: nume_slice_
-    real(kind=8), optional, intent(in) :: mode_freq_
-    integer, optional, intent(in)     :: nb_snap_
+character(len=8), intent(in) :: base
+integer, intent(in) :: i_mode
+character(len=8), intent(in) :: model
+character(len=24), intent(in) :: field_name
+character(len=24), intent(in) :: field_iden
+character(len=24), intent(in) :: field_refe
+integer, intent(in) :: nb_equa
+real(kind=8), optional, intent(in) :: mode_vectr_(nb_equa)
+complex(kind=8), optional, intent(in) :: mode_vectc_(nb_equa)
+integer, optional, intent(in)     :: nume_slice_
+real(kind=8), optional, intent(in) :: mode_freq_
+integer, optional, intent(in)     :: nb_snap_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -73,7 +71,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: iret, jv_para, nume_slice, nb_snap
+    integer :: iret, nume_slice, nb_snap
     character(len=24) :: field
     real(kind=8) :: mode_freq
     real(kind=8), pointer :: v_field_r(:) => null()
@@ -126,17 +124,7 @@ implicit none
 !
 ! - Save parameters
 !
-    call rsadpa(base, 'E', 1, 'NUME_MODE', i_mode, 0, sjv=jv_para)
-    zi(jv_para)   = i_mode
-    call rsadpa(base, 'E', 1, 'FREQ', i_mode, 0, sjv=jv_para)
-    zr(jv_para)   = mode_freq
-    call rsadpa(base, 'E', 1, 'MODELE', i_mode, 0, sjv=jv_para)
-    zk8(jv_para)  = model
-    call rsadpa(base, 'E', 1, 'NOM_CHAM', i_mode, 0, sjv=jv_para)
-    zk24(jv_para) = field_name
-    call rsadpa(base, 'E', 1, 'NUME_PLAN', i_mode, 0, sjv=jv_para)
-    zi(jv_para)   = nume_slice
-    call rsadpa(base, 'E', 1, 'NB_SNAP', i_mode, 0, sjv=jv_para)
-    zi(jv_para)   = nb_snap
+    call romModeParaSave(base , i_mode    ,&
+                         model, field_name, mode_freq, nume_slice, nb_snap)
 !
 end subroutine

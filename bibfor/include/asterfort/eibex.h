@@ -15,12 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine eibex(fami, kpg, ksp, ndim, imate,&
-                     compor, instam, instap, epsm, deps,&
+                     instam, instap, epsm, deps,&
                      vim, option, sig, vip, dsidep,&
                      codret)
         character(len=*) :: fami
@@ -28,7 +26,6 @@ interface
         integer :: ksp
         integer :: ndim
         integer :: imate
-        character(len=16) :: compor(*)
         real(kind=8) :: instam
         real(kind=8) :: instap
         real(kind=8) :: epsm(6)

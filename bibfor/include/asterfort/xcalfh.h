@@ -15,21 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface 
-    subroutine xcalfh(option, thmc, ndim, dimcon, yamec,&
+    subroutine xcalfh(option, ndim, dimcon,&
                       addep1, adcp11, addeme, congep, dsde,&
-                      grap1, rho11, pesa, tperm, cliq,&
-                      viscl, dviscl, dimenr,&
+                      grap1, rho11, gravity, tperm, &
+                      dimenr,&
                       adenhy, nfh)
         integer :: dimenr
         integer :: dimcon
         character(len=16) :: option
-        character(len=16) :: thmc
         integer :: ndim
-        integer :: yamec
         integer :: addep1
         integer :: adcp11
         integer :: addeme
@@ -37,11 +33,8 @@ interface
         real(kind=8) :: dsde(1:dimcon, 1:dimenr)
         real(kind=8) :: grap1(3)
         real(kind=8) :: rho11
-        real(kind=8) :: pesa(3)
+        real(kind=8) :: gravity(3)
         real(kind=8) :: tperm(ndim,ndim)
-        real(kind=8) :: cliq
-        real(kind=8) :: viscl
-        real(kind=8) :: dviscl
         integer :: adenhy
         integer :: nfh
     end subroutine xcalfh

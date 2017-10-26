@@ -290,14 +290,6 @@ Risques & conseils :
    On passe outre car VERI_PAS = NON
   """),
 
-    94 : _(u"""
-  il manque les paramètres de Van Genuchten
- """),
-
-    95 : _(u"""
-  Van Genuchten non autorisé pour ce modèle de couplage
- """),
-
     96 : _(u"""
   Comportement pour le zirconium: la dérivée est nulle.
 """),

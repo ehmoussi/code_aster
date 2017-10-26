@@ -15,16 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1306,W1504
+!
 subroutine lcplnl(fami, kpg, ksp, rela_comp, toler,&
                   itmax, mod, imat, nmat, materd,&
                   materf, nr, nvi, timed, timef,&
                   deps, epsd, sigd, vind, comp,&
                   nbcomm, cpmono, pgl, nfs, nsg,&
                   toutms, hsr, sigf, vinf, icomp,&
-                  codret, drdy, tampon, crit)
-! aslint: disable=W1306,W1504
-    implicit none
+                  codret, drdy, crit)
+implicit none
 !
 !     INTEGRATION ELASTO-PLASTIQUE ET VISCO-PLASTICITE
 !           SUR DT DE Y = ( SIG , VIN )
@@ -68,7 +68,6 @@ subroutine lcplnl(fami, kpg, ksp, rela_comp, toler,&
 !         VINF   :  VARIABLES INTERNES A T+DT
 !         CODRET :  CONTROLE DU REDECOUPAGE DU PAS DE TEMPS
 !         DRDY   :  JACOBIEN
-!         TAMPON :  DONNES GEOM SUIVANT LE TE APPELANT
 !         CRIT   :  CRITERES DE CONVERGENCE LOCAUX
 ! VARIABLES LOCALES
 !         R      :  VECTEUR RESIDU
@@ -112,7 +111,7 @@ subroutine lcplnl(fami, kpg, ksp, rela_comp, toler,&
     real(kind=8) :: drdy1(nr, nr)
     real(kind=8) :: ddy(ndt+nvi), dy(ndt+nvi), yd(ndt+nvi), yf(ndt+nvi)
     real(kind=8) :: materd(nmat, 2), materf(nmat, 2), dt
-    real(kind=8) :: timed, timef, tampon(*), drdyb(nr, nr)
+    real(kind=8) :: timed, timef, drdyb(nr, nr)
     aster_logical :: lreli
 !
     character(len=8) :: mod
@@ -326,7 +325,7 @@ subroutine lcplnl(fami, kpg, ksp, rela_comp, toler,&
                 materd, materf, iter, nvi, itmax,&
                 toler, pgl, nfs, nsg, toutms,&
                 hsr, dt, dy, yd, yf,&
-                vinf, tampon, sigd, sigf,&
+                vinf, sigd, sigf,&
                 deps, nr1, mod, timef,&
                 indi, vind0, iret)
 !

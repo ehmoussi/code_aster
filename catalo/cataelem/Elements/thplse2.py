@@ -93,6 +93,10 @@ CT_EXTF  = LocatedComponents(phys=PHY.TEMP_F, type='ELEM',
 
 DDL_THER = LocatedComponents(phys=PHY.TEMP_R, type='ELNO',
     components=('TEMP',))
+    
+
+EEFLUNR = LocatedComponents(phys=PHY.FLUN_R, type='ELEM',
+    components=('FLUN',))
 
 
 MVECTTR  = ArrayOfComponents(phys=PHY.VTEM_R, locatedComponents=DDL_THER)
@@ -323,7 +327,9 @@ class THPLSE2(Element):
         ),
 
         OP.TOU_INI_ELEM(te=99,
-            para_out=((OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM2D), ),
+            para_out=((OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM2D), 
+                      (OP.TOU_INI_ELEM.PFLUN_R, EEFLUNR),
+                     ),
         ),
 
 

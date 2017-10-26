@@ -46,21 +46,21 @@ subroutine gettco(name, typeco, errstop)
     aster_logical, intent(in), optional :: errstop
 
     character(len=19) :: name19
-    character(len=16) :: attr
+    character(len=24) :: attr
     integer :: iret
     character(len=24), pointer :: vk(:) => null()
     aster_logical :: error
 
     call jemarq()
 
-    error = ASTER_TRUE
+    error = ASTER_FALSE
     if (present(errstop)) then
         error = errstop
     endif
 
     ASSERT(lxlgut(name) .le. 19)
     name19 = name
-    ASSERT(name .ne. ' ')
+    ASSERT(.not. error .or. name .ne. ' ')
     attr = name19//'._TCO'
     call jeexin(attr, iret)
     ASSERT(.not. error .or. iret .ne. 0)

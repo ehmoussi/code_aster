@@ -58,6 +58,7 @@ TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh,
           )
 
 mesh=DEFI_DOMAINE_REDUIT(reuse=mesh,INFO=2,
+            MAILLAGE=mesh,
             BASE_PRIMAL=base_p,
             BASE_DUAL=base_d,
             NOM_DOMAINE='RID',

@@ -98,6 +98,8 @@ cata_msg = {
 
    38 : _(u"""Pas de lecture des données pour la variation des coefficients."""),
 
+   39 : _(u"""Initialisation de la base empirique dans le cas d'une méthode de troncature."""),
+
    40 : _(u"""Initialisation de l'algorithme pour les méthodes POD."""),
 
    41 : _(u"""Initialisation de l'algorithme pour la méthode GLOUTON."""),
@@ -112,6 +114,10 @@ cata_msg = {
 
    46 : _(u"""Pour le coefficient %(i1)d."""),
 
+   47 : _(u"""Initialisation pour la troncature de la base empirique."""),
+
+   48 : _(u"""Création de la nouvelle numérotation sur le domaine tronqué."""),
+
    49 : _(u"""Norme du résidu pour le coefficient %(i1)d: %(r1)19.12e."""),
 
    50 : _(u"""Évaluation du résidu."""),
@@ -123,4 +129,5 @@ cata_msg = {
    53 : _(u"""Évaluation du résidu initial."""),
 
    54 : _(u"""Norme du résidu initial: %(r1)19.12e."""),
+
 }

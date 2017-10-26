@@ -15,12 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine ntacmv(model , mate  , cara_elem, list_load, nume_dof,&
                   l_stat, time  , tpsthe   , reasrg   , reasms  ,&
-                  vtemp , vhydr , varc_curr, dry_prev , dry_curr,&
-                  cn2mbr, matass, cndiri   , cncine   , mediri  ,&
-                  compor)
+                  vtemp , varc_curr, &
+                  cn2mbr, matass, cndiri   , cncine   , mediri)
 !
 implicit none
 !
@@ -49,30 +49,23 @@ implicit none
 #include "asterfort/vetnth.h"
 #include "asterfort/vrcins.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: mate
-    character(len=24), intent(in) :: cara_elem
-    character(len=19), intent(in) :: list_load
-    character(len=24), intent(in) :: nume_dof
-    aster_logical, intent(in) :: l_stat
-    character(len=24), intent(in) :: time
-    real(kind=8), intent(in) :: tpsthe(6)
-    aster_logical, intent(in) :: reasrg
-    aster_logical, intent(in) :: reasms
-    character(len=24), intent(in) :: vtemp
-    character(len=24), intent(in) :: vhydr
-    character(len=19), intent(in) :: varc_curr
-    character(len=24), intent(in) :: dry_prev
-    character(len=24), intent(in) :: dry_curr
-    character(len=24), intent(in) :: cn2mbr
-    character(len=24), intent(in) :: matass
-    character(len=24), intent(in) :: cndiri
-    character(len=24), intent(out) :: cncine
-    character(len=24), intent(in) :: mediri
-    character(len=24), intent(in) :: compor
+character(len=24), intent(in) :: model
+character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: cara_elem
+character(len=19), intent(in) :: list_load
+character(len=24), intent(in) :: nume_dof
+aster_logical, intent(in) :: l_stat
+character(len=24), intent(in) :: time
+real(kind=8), intent(in) :: tpsthe(6)
+aster_logical, intent(in) :: reasrg
+aster_logical, intent(in) :: reasms
+character(len=24), intent(in) :: vtemp
+character(len=19), intent(in) :: varc_curr
+character(len=24), intent(in) :: cn2mbr
+character(len=24), intent(in) :: matass
+character(len=24), intent(in) :: cndiri
+character(len=24), intent(out) :: cncine
+character(len=24), intent(in) :: mediri
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -95,7 +88,6 @@ implicit none
     character(len=8), parameter :: nomcmp(6) = (/'INST    ','DELTAT  ',&
                                                  'THETA   ','KHI     ',&
                                                  'R       ','RHO     '/)
-    character(len=16) :: option
     character(len=24) :: ligrmo
     character(len=24) :: vadiri, vachtp, vatntp
     character(len=24) :: merigi = '&&METRIG           .RELR'
@@ -103,7 +95,6 @@ implicit none
     character(len=24) :: vediri = '&&VEDIRI           .RELR'
     character(len=24) :: vechtp = '&&VECHTP           .RELR'
     character(len=24) :: vetntp = '&&VETNTP           .RELR'
-    character(len=24) :: vetnti = '&&VETNTI           .RELR'
     character(len=24) :: cntntp = ' '
     character(len=24) :: cnchtp = ' '
     character(len=24) :: lload_name, lload_info, lload_func
@@ -157,10 +148,8 @@ implicit none
 ! - Compute CHAR_THER_EVOL
 !
     if (.not.l_stat) then
-        option = 'CHAR_THER_EVOL'
-        call vetnth(option, model, cara_elem, mate, time,&
-                    vtemp , compor, dry_prev, dry_curr, vhydr,&
-                    vetntp, vetnti, varc_curr)
+        call vetnth(model    , cara_elem, mate  , time,&
+                    vtemp    , varc_curr, vetntp, 'V')
         call asasve(vetntp, nume_dof, 'R', vatntp)
         call jeveuo(vatntp, 'L', jtn)
         cntntp = zk24(jtn)
@@ -209,8 +198,9 @@ implicit none
         endif
 
         if (reasrg) then
-            call mergth(model    , lload_name, lload_info, cara_elem, mate,&
-                        time_curr, time      , varc_curr , merigi)
+            call mergth(model    , list_load, cara_elem, mate, time,&
+                        merigi   , 'V',&
+                        time_curr, varc_curr)
         endif
 
         nb_matr = 0

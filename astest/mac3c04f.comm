@@ -38,17 +38,6 @@ FLEX = CALC_MAC3COEUR(TYPE_COEUR  = 'MONO_FROID',
                                        ARCHIMEDE      = 'NON',
                                        ),)
 
-# POST_MAC3COEUR(RESULTAT    =  FLEX,
-#                TYPE_COEUR  = 'MONO_FROID',
-#                INST        =  0.005,
-#                LAME        = ( _F( TYPE_RESU   = 'MINI', FORMAT = 'GRACE', UNITE = 51,),
-#                                _F( FORMAT = 'TABLE', UNITE = 50,),),
-#                DEFORMATION = ( _F( TYPE_RESU   = 'MAXI', FORMAT = 'GRACE', UNITE = 52, TYPE_VISU = 'AMPLITUDE',),
-#                                _F( TYPE_RESU   = 'MAXI', FORMAT = 'GRACE', UNITE = 53, TYPE_VISU = 'MODULE',), 
-#                                _F( TYPE_RESU   = 'MAXI', FORMAT = 'GRACE', UNITE = 54, TYPE_VISU = 'VECTEUR',), 
-#                                _F( FORMAT     = 'GRACE', POSITION = 'A_A', CONCEPTION = 'AFA', UNITE = 55, TYPE_VISU = 'DEFORME',),
-#                                _F( FORMAT = 'TABLE', NOM_SITE='BIDON', UNITE = 56, )))
-
 #----------------------------------------------------------------------
 # TRACER LA COURBE FORCE-DEPLACEMENT
 #----------------------------------------------------------------------

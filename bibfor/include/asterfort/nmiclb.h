@@ -20,7 +20,7 @@
 !
 interface
     subroutine nmiclb(fami, kpg, ksp, option, compor,&
-                      imate, xlong0, a, tmoins, tplus,&
+                      imate, xlong0, aire, tmoins, tplus,&
                       dlong0, effnom, vim, effnop, vip,&
                       klv, fono, epsm, crildc, codret)
         character(len=*) :: fami
@@ -30,7 +30,7 @@ interface
         character(len=16) :: compor(*)
         integer :: imate
         real(kind=8) :: xlong0
-        real(kind=8) :: a
+        real(kind=8) :: aire
         real(kind=8) :: tmoins
         real(kind=8) :: tplus
         real(kind=8) :: dlong0

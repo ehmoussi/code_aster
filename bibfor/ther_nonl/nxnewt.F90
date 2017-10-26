@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
 subroutine nxnewt(model    , mate       , cara_elem  , list_load, nume_dof ,&
                   solver   , tpsthe     , time       , matass   , cn2mbr   ,&
                   maprec   , cnchci     , varc_curr  , temp_prev, temp_iter,&
@@ -38,35 +40,36 @@ implicit none
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/jeexin.h"
 #include "asterfort/merxth.h"
 #include "asterfort/nxresi.h"
 #include "asterfort/romAlgoNLTherResidual.h"
 #include "asterfort/romAlgoNLSystemSolve.h"
+#include "asterfort/romAlgoNLCorrEFTherResidual.h"
+#include "asterfort/romAlgoNLCorrEFMatrixModify.h"
+#include "asterfort/romAlgoNLCorrEFResiduModify.h"
 #include "asterfort/mtdscr.h"
 #include "asterfort/preres.h"
 #include "asterfort/verstp.h"
 #include "asterfort/vethbt.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: mate
-    character(len=24), intent(in) :: cara_elem
-    character(len=19), intent(in) :: list_load
-    character(len=24), intent(in) :: nume_dof
-    character(len=19), intent(in) :: solver
-    real(kind=8) :: tpsthe(6)
-    character(len=24), intent(in) :: time
-    character(len=19), intent(in) :: varc_curr
-    aster_logical :: conver, reasma
-    character(len=19) :: maprec
-    character(len=24) :: matass, cnchci, cnresi, temp_prev, temp_iter, vtempp, vec2nd, cn2mbr
-    character(len=24) :: hydr_prev, hydr_curr, compor, dry_prev, dry_curr
-    integer :: ther_crit_i(*)
-    real(kind=8) :: ther_crit_r(*)
-    real(kind=8) :: testr, testm, vnorm
-    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+character(len=24), intent(in) :: model
+character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: cara_elem
+character(len=19), intent(in) :: list_load
+character(len=24), intent(in) :: nume_dof
+character(len=19), intent(in) :: solver
+real(kind=8) :: tpsthe(6)
+character(len=24), intent(in) :: time
+character(len=19), intent(in) :: varc_curr
+aster_logical :: conver, reasma
+character(len=19) :: maprec
+character(len=24) :: matass, cnchci, cnresi, temp_prev, temp_iter, vtempp, vec2nd, cn2mbr
+character(len=24) :: hydr_prev, hydr_curr, compor, dry_prev, dry_curr
+integer :: ther_crit_i(*)
+real(kind=8) :: ther_crit_r(*)
+real(kind=8) :: testr, testm, vnorm
+type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -83,7 +86,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ibid
-    integer :: jmed, jmer, nbmat, ierr
+    integer :: jmed, jmer, nbmat, ierr, iret
     real(kind=8) :: r8bid
     character(len=1) :: typres
     character(len=19) :: chsol
@@ -112,8 +115,9 @@ implicit none
 ! - Neumann loads elementary vectors (residuals)
 !
     call verstp(model    , lload_name, lload_info, mate     , time_curr,&
-                time     , compor    , temp_prev , temp_iter, hydr_prev,&
-                hydr_curr, dry_prev  , dry_curr  , varc_curr, veresi)
+                time     , compor    , temp_prev , temp_iter, varc_curr,&
+                veresi   , 'V'       ,&
+                hydr_prev, hydr_curr , dry_prev  , dry_curr )
 !
 ! - Neumann loads vector (residuals)
 !
@@ -124,7 +128,7 @@ implicit none
 ! - Dirichlet - BT LAMBDA 
 !
     call vethbt(model, lload_name, lload_info, cara_elem, mate,&
-                temp_iter, vebtla)
+                temp_iter, vebtla, 'V')
     call asasve(vebtla, nume_dof, typres, vabtla)
     call ascova('D', vabtla, bidon, 'INST', r8bid,&
                 typres, cnvabt)
@@ -132,13 +136,18 @@ implicit none
 ! - Evaluate residuals
 !
     if (ds_algorom%l_rom) then
-        call romAlgoNLTherResidual(ther_crit_i, ther_crit_r, vec2nd, cnvabt, cnresi    ,&
-                                   cn2mbr     , testr      , testm , conver, ds_algorom)
+        if (ds_algorom%phase .eq. 'HROM') then
+            call romAlgoNLTherResidual(ther_crit_i, ther_crit_r, vec2nd, cnvabt, cnresi    ,&
+                                       cn2mbr     , testr      , testm , conver, ds_algorom)
+        else if (ds_algorom%phase .eq. 'CORR_EF') then
+            call romAlgoNLCorrEFTherResidual(ther_crit_i, ther_crit_r, vec2nd, cnvabt, cnresi    ,&
+                                             cn2mbr     , testr      , testm , conver, ds_algorom)
+        endif
     else
         call nxresi(ther_crit_i, ther_crit_r, vec2nd, cnvabt, cnresi,&
                     cn2mbr     , testr      , testm , vnorm, conver)
     endif
-!
+ 
     if (conver) then
         call copisd('CHAMP_GD', 'V', temp_iter, vtempp)
         goto 999
@@ -152,18 +161,25 @@ implicit none
 !
         call merxth(model    , lload_name, lload_info, cara_elem, mate     ,&
                     time_curr, time      , temp_iter , compor   , varc_curr,&
-                    dry_prev , dry_curr  , merigi)
-        call jeveuo(merigi, 'L', jmer)
-        call jeveuo(mediri, 'L', jmed)
-!
+                    merigi   , 'V',&
+                    dry_prev , dry_curr)
+
         nbmat = 0
-        if (zk24(jmer)(1:8) .ne. '        ') then
-            nbmat = nbmat + 1
-            tlimat(nbmat) =merigi(1:19)
+        call jeexin(merigi(1:19)//'.RELR', iret)
+        if (iret .ne. 0) then
+            call jeveuo(merigi(1:19)//'.RELR', 'L', jmer)
+            if (zk24(jmer)(1:8) .ne. '        ') then
+                nbmat = nbmat + 1
+                tlimat(nbmat) =merigi(1:19)
+            endif
         endif
-        if (zk24(jmed)(1:8) .ne. '        ') then
-            nbmat = nbmat + 1
-            tlimat(nbmat) =mediri(1:19)
+        call jeexin(mediri(1:19)//'.RELR', iret)
+        if (iret .ne. 0) then
+            call jeveuo(mediri(1:19)//'.RELR', 'L', jmed)
+            if (zk24(jmed)(1:8) .ne. '        ') then
+                nbmat = nbmat + 1
+                tlimat(nbmat) =mediri(1:19)
+            endif
         endif
 !
 ! --- ASSEMBLAGE DE LA MATRICE
@@ -173,7 +189,7 @@ implicit none
 !
 ! --- DECOMPOSITION OU CALCUL DE LA MATRICE DE PRECONDITIONNEMENT
 !
-        if (ds_algorom%l_rom) then
+        if (ds_algorom%l_rom .and. ds_algorom%phase .eq. 'HROM') then
             call mtdscr(matass)
         else
             call preres(solver, 'V', ierr, maprec, matass,&
@@ -184,9 +200,14 @@ implicit none
 !
 ! - Solve linear system
 ! 
-    if (ds_algorom%l_rom) then
+    if (ds_algorom%l_rom .and. ds_algorom%phase .eq. 'HROM') then
         call copisd('CHAMP_GD', 'V', temp_prev, chsol)
         call romAlgoNLSystemSolve(matass, cn2mbr, ds_algorom, chsol)
+    else if (ds_algorom%l_rom .and. ds_algorom%phase .eq. 'CORR_EF') then
+        call romAlgoNLCorrEFMatrixModify(nume_dof, matass, ds_algorom)
+        call romAlgoNLCorrEFResiduModify(cn2mbr, ds_algorom)
+        call nxreso(matass, maprec, solver, cnchci, cn2mbr,&
+                    chsol)
     else
         call nxreso(matass, maprec, solver, cnchci, cn2mbr,&
                     chsol)

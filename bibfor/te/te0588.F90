@@ -15,35 +15,44 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: daniele.colombo at ifpen.fr
+!
 subroutine te0588(option, nomte)
-    implicit none
-#   include "asterf_types.h"
-#   include "asterfort/assert.h"
-#   include "asterfort/eulnau.h"
-#   include "asterc/r8dgrd.h"
-#   include "asterfort/elref1.h"
-#   include "asterfort/iselli.h"
-#   include "asterc/ismaem.h"
-#   include "asterfort/jevech.h"
-#   include "asterfort/naueul.h"
-#   include "asterfort/rcangm.h"
-#   include "asterfort/rccoma.h"
-#   include "asterfort/rcvalb.h"
-#   include "asterfort/teattr.h"
-#   include "asterfort/tecach.h"
-#   include "asterfort/vecini.h"
-#   include "asterfort/xasshm.h"
-#   include "asterfort/xcaehm.h"
-#   include "asterfort/xfnohm.h"
-#   include "asterfort/xhmddl.h"
-#   include "asterfort/xhmini.h"
-#   include "asterfort/xpeshm.h"
-#   include "jeveux.h"
+!
+use THM_type
+use THM_module
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/assert.h"
+#include "asterfort/eulnau.h"
+#include "asterc/r8dgrd.h"
+#include "asterfort/elref1.h"
+#include "asterfort/iselli.h"
+#include "asterc/ismaem.h"
+#include "asterfort/jevech.h"
+#include "asterfort/naueul.h"
+#include "asterfort/rcangm.h"
+#include "asterfort/rccoma.h"
+#include "asterfort/rcvalb.h"
+#include "asterfort/teattr.h"
+#include "asterfort/tecach.h"
+#include "asterfort/vecini.h"
+#include "asterfort/xasshm.h"
+#include "asterfort/xcaehm.h"
+#include "asterfort/xfnohm.h"
+#include "asterfort/xhmddl.h"
+#include "asterfort/xhmini.h"
+#include "asterfort/xpeshm.h"
+#include "asterfort/utmess.h"
+#include "jeveux.h"
+#include "asterfort/thmGetElemModel.h"
+#include "asterfort/Behaviour_type.h"
     character(len=16) :: option, nomte
 !     ------------------------------------------------------------------
 ! =====================================================================
-! person_in_charge: daniele.colombo at ifpen.fr
+!
 !    - FONCTION REALISEE:  CALCUL DES OPTIONS NON-LINEAIRES MECANIQUES
 !                          ELEMENTS THHM, HM ET HH
 !    - ARGUMENTS:
@@ -138,6 +147,17 @@ subroutine te0588(option, nomte)
 ! --- RECUPERATION DE LA GEOMETRIE ET POIDS DES POINTS D'INTEGRATION --
 ! --- RECUPERATION DES FONCTIONS DE FORME -----------------------------
 ! =====================================================================
+!
+! - Init THM module
+!
+    call thmModuleInit()
+!
+! - Get model of finite element
+!
+    call thmGetElemModel()
+    if (ds_thm%ds_elem%l_weak_coupling) then
+        call utmess('F', 'CHAINAGE_12')
+    endif
 ! INITIALISATION POUR XFEM
 !
     call xhmini(nomte, nfh, ddld, ddlm, ddlp, nfiss, ddlc, contac)
@@ -164,10 +184,13 @@ subroutine te0588(option, nomte)
 !
 ! PARAMÈTRES PROPRES AUX ÉLÉMENTS 1D ET 2D QUADRATIQUES
 !
-    if ((ibid.eq.0) .and. (enr(1:2).eq.'XH') .and. .not. iselli(elref)) call jevech('PPMILTO', 'L',&
-                                                                               jpmilt)
+    if ((ibid.eq.0) .and. (enr(1:2).eq.'XH') .and. .not. iselli(elref)) then
+        call jevech('PPMILTO', 'L',jpmilt)
+    endif
 ! PARAMETRE PROPRE AU MULTI-HEAVISIDE
-    if (nfiss .gt. 1) call jevech('PFISNO', 'L', jfisno)
+    if (nfiss .gt. 1) then
+        call jevech('PFISNO', 'L', jfisno)
+    endif
 ! =====================================================================
 ! --- DEBUT DES DIFFERENTES OPTIONS -----------------------------------
 ! =====================================================================
@@ -188,8 +211,7 @@ subroutine te0588(option, nomte)
         call jevech('PCARCRI', 'L', icarcr)
         call jevech('PVARIMR', 'L', ivarim)
         call jevech('PCONTMR', 'L', icontm)
-!        call jevech('PVARIMP', 'L',
-        read (zk16(icompo-1+2),'(I16)') nbvari
+        read (zk16(icompo-1+NVAR),'(I16)') nbvari
 ! =====================================================================
 ! ----RECUPERATION DES ANGLES NAUTIQUES/EULER DEFINIS PAR AFFE_CARA_ELEM
 ! --- ORIENTATION DU MASSIF
@@ -201,11 +223,11 @@ subroutine te0588(option, nomte)
         call vecini(3, 0.d0, angleu)
         call vecini(3, 0.d0, angnau)
 !
-        do 150 i = 1, nno
-            do 140 idim = 1, ndim
+        do i = 1, nno
+            do idim = 1, ndim
                 coor(idim) = coor(idim)+zr(igeom+idim+ndim*(i-1)-1)/ nno
-140         continue
-150     continue
+            end do
+        end do
         call rcangm(ndim, coor, angmas)
 !# ANGMAS : donne par affe_cara_elem en degre et ici en fourni en radian
 !# CAS OU AFFE_CARA_ELEM EST EN ANGLE D EULER => On CONVERTIT EN NAUTIQUE
@@ -266,9 +288,9 @@ subroutine te0588(option, nomte)
                         jpmilt, jheavn, angnau,dimmat, enrhyd, nfiss, nfh, jfisno,&
                         work1, work2)
         else
-            do 30 li = 1, dimuel
+            do li = 1, dimuel
                 zr(ideplp+li-1) = zr(ideplm+li-1) + zr(ideplp+li-1)
- 30         continue
+            end do
             call xasshm(nno, npg, npi, ipoids, ivf,&
                         idfde, igeom, zr(igeom), zr(icarcr), zr(ideplm),&
                         zr(ideplp), zr(icontm), zr(icontp), zr(ivarim), zr(ivarip),&

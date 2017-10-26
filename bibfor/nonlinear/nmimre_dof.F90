@@ -18,7 +18,7 @@
 
 subroutine nmimre_dof(nume_dof , ds_conv  , vale_rela, vale_maxi     , vale_refe     ,&
                       vale_comp, vale_frot, vale_geom, ieq_rela      , ieq_maxi      ,&
-                      ieq_refe , noddlm   , ieq_comp , name_node_frot, name_node_geom)
+                      ieq_refe , noddlm   , ieq_comp , name_node_frot, name_node_geom, vpene)
 !
 use NonLin_Datastructure_type
 !
@@ -44,6 +44,7 @@ implicit none
     real(kind=8), intent(in) :: vale_comp
     real(kind=8), intent(in) :: vale_frot
     real(kind=8), intent(in) :: vale_geom
+    real(kind=8), intent(in) :: vpene
     character(len=8), intent(in) :: noddlm
     character(len=16), intent(in) :: name_node_frot
     character(len=16), intent(in) :: name_node_geom
@@ -115,6 +116,9 @@ implicit none
         else if (resi_type.eq.'RESI_GEOM') then
             vale_calc  = vale_geom
             locus_calc = name_node_geom
+        else if (resi_type.eq.'RESI_PENE') then
+            vale_calc  = vpene
+            locus_calc = ' '
         else
             ASSERT(.false.)
         endif

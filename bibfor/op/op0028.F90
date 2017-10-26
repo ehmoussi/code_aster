@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine op0028()
 !
 implicit none
@@ -28,10 +29,6 @@ implicit none
 #include "asterfort/infmaj.h"
 #include "asterfort/infniv.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-
-!
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_LIST_INST
@@ -40,7 +37,7 @@ implicit none
 !
     character(len=8) :: sdlist
     character(len=16) :: k16bid
-    character(len=16) :: metlis
+    character(len=16) :: list_method
     real(kind=8) :: dtmin
     integer :: ifm, niv
 !
@@ -49,28 +46,28 @@ implicit none
     call infmaj()
     call infniv(ifm, niv)
 !
-! --- NOM DU CONCEPT
+! - Get result datastructure
 !
     call getres(sdlist, k16bid, k16bid)
 !
-! --- LECTURE DU TYPE DE CONSTRUCTION DE LA LISTE D'INSTANTS
+! - Read parameters for keyword DEFI_LIST 
 !
-    call dfllty(sdlist, metlis, dtmin)
+    call dfllty(sdlist, list_method, dtmin)
 !
-! --- LECTURE DES ECHECS
+! - Read parameters for keyword ECHEC
 !
     call dfllec(sdlist, dtmin)
 !
-! --- ADAPTATION SEULEMENT SI METHODE AUTO
+! - Read parameters for keyword ADAPTATION
 !
-    if (metlis .eq. 'AUTO') then
+    if (list_method .eq. 'AUTO') then
         call dfllad(sdlist)
     endif
 !
-! --- DEBUG
+! - Print debug
 !
-    if (niv .ge. 2) then
-        call dflldb(sdlist, ifm)
+    if (niv .ge. 1) then
+        call dflldb(sdlist)
     endif
 
 end subroutine

@@ -129,10 +129,6 @@ Un seul noeud doit constituer le groupe de noeuds %(k1)s. On n'utilisera que le 
 
 """),
 
-    41 : _(u"""
-     Température négative à la maille :  %(k1)s
-"""),
-
     42 : _(u"""
  L'épaisseur définie dans DEFI_GLRC et celle définie dans AFFE_CARA_ELEM ne sont pas cohérentes.
  Épaisseur dans DEFI_GLRC: %(r1)f

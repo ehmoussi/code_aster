@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine calcPrepDataMeca(model          , mate          , cara_elem,&
                             disp_prev      , disp_cumu_inst, vari_prev, sigm_prev,&
                             time_prev      , time_curr     ,&
@@ -44,27 +45,25 @@ implicit none
 #include "asterfort/gcncon.h"
 #include "asterfort/nmvcre.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: mate
-    character(len=24), intent(in) :: cara_elem
-    character(len=19), intent(in) :: disp_prev
-    character(len=19), intent(in) :: disp_cumu_inst
-    character(len=19), intent(in) :: vari_prev
-    character(len=19), intent(in) :: sigm_prev
-    real(kind=8), intent(in) :: time_prev
-    real(kind=8), intent(in) :: time_curr
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=24), intent(out) :: varc_refe
-    character(len=19), intent(out) :: hval_incr(:)
-    character(len=19), intent(out) :: hval_algo(:)
-    character(len=19), intent(out) :: merigi
-    character(len=19), intent(out) :: vediri
-    character(len=19), intent(out) :: vefint
-    character(len=19), intent(out) :: veforc
-    character(len=19), intent(out) :: vevarc_prev
-    character(len=19), intent(out) :: vevarc_curr
+character(len=24), intent(in) :: model
+character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: cara_elem
+character(len=19), intent(in) :: disp_prev
+character(len=19), intent(in) :: disp_cumu_inst
+character(len=19), intent(in) :: vari_prev
+character(len=19), intent(in) :: sigm_prev
+real(kind=8), intent(in) :: time_prev
+real(kind=8), intent(in) :: time_curr
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=24), intent(out) :: varc_refe
+character(len=19), intent(out) :: hval_incr(:)
+character(len=19), intent(out) :: hval_algo(:)
+character(len=19), intent(out) :: merigi
+character(len=19), intent(out) :: vediri
+character(len=19), intent(out) :: vefint
+character(len=19), intent(out) :: veforc
+character(len=19), intent(out) :: vevarc_prev
+character(len=19), intent(out) :: vevarc_curr
 !
 ! --------------------------------------------------------------------------------------------------
 !

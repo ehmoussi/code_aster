@@ -15,15 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface 
-    function dilgaz(sat, phi, alphfi, t)
-        real(kind=8) :: sat
-        real(kind=8) :: phi
-        real(kind=8) :: alphfi
-        real(kind=8) :: t
+    function dilgaz(satur, phi, alphfi, temp)
+        real(kind=8), intent(in) :: satur
+        real(kind=8), intent(in) :: phi
+        real(kind=8), intent(in) :: alphfi
+        real(kind=8), intent(in) :: temp
         real(kind=8) :: dilgaz
     end function dilgaz
 end interface 

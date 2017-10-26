@@ -15,13 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine medith(model, list_load, matr_elem)
-        character(len=24), intent(in) :: model
+    subroutine medith(base, cumul, model_, list_load, matr_elem)
+        character(len=1), intent(in) :: base
+        character(len=4), intent(in) :: cumul
+        character(len=*), intent(in) :: model_
         character(len=19), intent(in) :: list_load
-        character(len=24), intent(inout) :: matr_elem
+        character(len=24), intent(in) :: matr_elem
     end subroutine medith
 end interface

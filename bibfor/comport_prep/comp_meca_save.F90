@@ -40,6 +40,7 @@ implicit none
 #include "asterfort/nocart.h"
 #include "asterfort/reliem.h"
 #include "asterfort/utmess.h"
+#include "asterfort/setBehaviourValue.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -78,7 +79,7 @@ implicit none
     integer :: i_comp, nb_comp
     character(len=16), pointer :: v_compor_valv(:) => null()
     character(len=16) :: defo_comp, rela_comp, type_comp, type_cpla, mult_comp
-    character(len=16) :: kit_comp(4), type_matg, post_iter
+    character(len=16) :: kit_comp(4), post_iter
     aster_logical :: l_cristal, l_pmf, l_is_pmf
     integer :: nb_vari, nb_vari_comp(4), elem_nume, nume_comp(4)
 !
@@ -113,7 +114,6 @@ implicit none
         type_cpla       = ds_compor_prep%v_comp(i_comp)%type_cpla
         kit_comp(:)     = ds_compor_prep%v_comp(i_comp)%kit_comp(:)
         mult_comp       = ds_compor_prep%v_comp(i_comp)%mult_comp
-        type_matg       = ds_compor_prep%v_comp(i_comp)%type_matg
         post_iter       = ds_compor_prep%v_comp(i_comp)%post_iter
 !
 ! ----- Detection of specific cases
@@ -152,27 +152,10 @@ implicit none
 !
 ! ----- Set in <CARTE>
 !
-        v_compor_valv(1) = rela_comp
-        write (v_compor_valv(2),'(I16)') nb_vari
-        v_compor_valv(3) = defo_comp
-        v_compor_valv(4) = type_comp
-        v_compor_valv(5) = type_cpla
-        if (.not.l_pmf) then
-            write (v_compor_valv(6),'(I16)') nume_comp(1)
-        endif
-        v_compor_valv(7) = mult_comp
-        v_compor_valv(8) = kit_comp(1)
-        v_compor_valv(9) = kit_comp(2)
-        v_compor_valv(10) = kit_comp(3)
-        v_compor_valv(11) = kit_comp(4)
-        v_compor_valv(13) = type_matg
-        v_compor_valv(14) = post_iter
-        write (v_compor_valv(15),'(I16)') nume_comp(2)
-        write (v_compor_valv(16),'(I16)') nume_comp(3)
-        write (v_compor_valv(17),'(I16)') nb_vari_comp(1)
-        write (v_compor_valv(18),'(I16)') nb_vari_comp(2)
-        write (v_compor_valv(19),'(I16)') nb_vari_comp(3)
-        write (v_compor_valv(20),'(I16)') nb_vari_comp(4)
+        call setBehaviourValue(rela_comp, defo_comp   , type_comp, type_cpla,&
+                               mult_comp, post_iter   , kit_comp ,&
+                               nb_vari  , nb_vari_comp, nume_comp,&
+                               v_compor_ = v_compor_valv) 
 !
 ! ----- Affect in <CARTE>
 !

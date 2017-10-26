@@ -72,9 +72,10 @@ subroutine diisotrope(option, nomte, ndim, nbt, nno,&
 !   pour la loi de comportement
     integer :: nbpara, nbfct
     parameter  (nbpara=2, nbfct=1*3)
-    integer      :: ldcfct(nbfct)
-    real(kind=8) :: ldcpar(nbpara)
-    real(kind=8) :: temps0, temps1, dtemps
+    integer          :: ldcfct(nbfct)
+    real(kind=8)     :: ldcpar(nbpara)
+    real(kind=8)     :: temps0, temps1, dtemps
+    character(len=8) :: ldccar(1)
 !   équations du système : force, Up, U, Puiss, P
     integer :: nbequa, nbdecp
     parameter  (nbequa=5)
@@ -204,7 +205,7 @@ subroutine diisotrope(option, nomte, ndim, nbt, nno,&
     ldcpar(1) = zr(jvale+nbvale+1)
     ldcpar(2) = zr(jvale+1)
 !
-    call rk5adp(nbequa, ldcpar, ldcfct, temps0, dtemps, nbdecp,&
+    call rk5adp(nbequa, ldcpar, ldcfct, ldccar, temps0, dtemps, nbdecp,&
                 errmax, y0, dy0, disc_isotr, resu, iret)
 !   resu(1:nbeq)            : variables intégrées
 !   resu(nbeq+1:2*nbeq)     : d(resu)/d(t) a t+dt

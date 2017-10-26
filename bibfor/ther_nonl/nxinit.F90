@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nxinit(model , mate    , cara_elem , compor       , list_load,&
                   para  , nume_dof, l_stat    , l_evol       , l_rom    ,&
                   sddisc, ds_inout, vhydr     , sdobse       , mesh     ,&
@@ -42,27 +43,25 @@ implicit none
 #include "asterfort/ntload_chck.h"
 #include "asterfort/romAlgoNLInit.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: mate
-    character(len=24), intent(in) :: cara_elem
-    character(len=24), intent(in) :: compor
-    character(len=19), intent(in) :: list_load
-    real(kind=8), intent(in) :: para(*)
-    character(len=24), intent(out) :: nume_dof
-    aster_logical, intent(out) :: l_stat
-    aster_logical, intent(out) :: l_evol
-    aster_logical, intent(out) :: l_rom
-    character(len=19), intent(in) :: sddisc
-    type(NL_DS_InOut), intent(inout) :: ds_inout
-    character(len=24), intent(in) :: vhydr
-    character(len=19), intent(out) :: sdobse
-    character(len=8), intent(out) :: mesh
-    character(len=19), intent(in) :: sdcrit
-    character(len=24), intent(out) :: time
-    type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
-    aster_logical, intent(in) :: l_line_search
+character(len=24), intent(in) :: model
+character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: cara_elem
+character(len=24), intent(in) :: compor
+character(len=19), intent(in) :: list_load
+real(kind=8), intent(in) :: para(*)
+character(len=24), intent(out) :: nume_dof
+aster_logical, intent(out) :: l_stat
+aster_logical, intent(out) :: l_evol
+aster_logical, intent(out) :: l_rom
+character(len=19), intent(in) :: sddisc
+type(NL_DS_InOut), intent(inout) :: ds_inout
+character(len=24), intent(in) :: vhydr
+character(len=19), intent(out) :: sdobse
+character(len=8), intent(out) :: mesh
+character(len=19), intent(in) :: sdcrit
+character(len=24), intent(out) :: time
+type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
+aster_logical, intent(in) :: l_line_search
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -135,7 +134,7 @@ implicit none
 ! - Initialization for reduced method
 !
     if (l_rom) then
-        call romAlgoNLInit('THER'       , mesh, nume_dof, result, ds_algorom,&
+        call romAlgoNLInit('THER'       , model, mesh, nume_dof, result, ds_algorom,&
                            l_line_search)
     endif
 !

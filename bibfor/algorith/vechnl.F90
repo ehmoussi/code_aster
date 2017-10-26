@@ -15,274 +15,173 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine vechnl(modele, charge, infcha, carele, inst,&
-                  chtn, lvechn)
 !
-! CALCUL DES VECTEURS ELEMENTAIRES TERMES D EVOLUTION
-! POUR LES CHARGES NON LINEAIRES ( FLUXNL, RAYONNEMENT, SOUR_NL )
-! IN  MODELE : NOM DU MODELE
-! IN  CHARGE : LISTE DES CHARGES
-! IN  INFCHA : INFORMATIONS SUR LES CHARGES
-! IN  CARELE : CHAMP DE CARA_ELEM
-! IN  INST   : CARTE CONTENANT LA VALEUR DU TEMPS ET AUTRES PARAMETRES
-! IN  CHTN   : ITERE A L INSTANT PRECEDENT DU CHAMP DE TEMPERATURE
-! OUT LVECHN : VECT_ELEM
-!----------------------------------------------------------------------
-! CORPS DU PROGRAMME
-    implicit none
+subroutine vechnl(model    , lload_name, lload_info, time,&
+                  temp_iter, vect_elem , base)
 !
-! 0.1. ==> ARGUMENTS
+implicit none
 !
-#include "jeveux.h"
 #include "asterfort/calcul.h"
 #include "asterfort/corich.h"
 #include "asterfort/gcnco2.h"
 #include "asterfort/infniv.h"
-#include "asterfort/jedema.h"
 #include "asterfort/jeecra.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jelira.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/mecara.h"
 #include "asterfort/megeom.h"
 #include "asterfort/reajre.h"
 #include "asterfort/wkvect.h"
-    character(len=24) :: modele, charge, infcha, carele, inst, chtn, lvechn
+#include "asterfort/inical.h"
+#include "asterfort/load_list_info.h"
+#include "asterfort/memare.h"
+#include "asterfort/detrsd.h"
 !
-! 0.2. ==> COMMUNS
+character(len=24), intent(in) :: model
+character(len=24), intent(in) :: lload_name
+character(len=24), intent(in) :: lload_info
+character(len=24), intent(in) :: time
+character(len=24), intent(in) :: temp_iter
+character(len=24), intent(in) :: vect_elem
+character(len=1), intent(in) :: base
 !
-! 0.3. ==> VARIABLES LOCALES
+! --------------------------------------------------------------------------------------------------
+!
+! Thermic - Residuals
+! 
+! Non-linear neumann loads elementary vectors
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  model            : name of the model
+! In  lload_name       : name of object for list of loads name
+! In  lload_info       : name of object for list of loads info
+! In  time             : time (<CARTE>)
+! In  temp_iter        : temperature field at current Newton iteration
+! In  vect_elem        : name of vect_elem result
+! In  base             : JEVEUX base for object
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer , parameter :: nbin  = 4
+    integer , parameter :: nbout = 1
+    character(len=8) :: lpain(nbin), lpaout(nbout)
+    character(len=19) :: lchin(nbin), lchout(nbout)
     character(len=1) :: c1
-    character(len=8) :: lpain(7), lpaout(1), newnom, nomcha, nomch2
+    character(len=8) :: newnom, load_name
     character(len=16) :: option
-    character(len=24) :: ligrmo, lchin(7), lchout(1), chgeom, chcara(18)
-    integer :: iret, ifm, niv, exicha, nchin, i, nchar, jchar, jinf, icha, ibid
-    integer :: jlvn
+    character(len=19) :: resu_elem
+    character(len=24) :: ligrmo, chgeom
+    integer :: iret, ibid, load_nume
+    aster_logical :: load_empty
+    integer :: i_load, nb_load
+    character(len=24), pointer :: v_load_name(:) => null()
+    integer, pointer :: v_load_info(:) => null()
 !
-!====
-! 1.1 PREALABLES LIES AUX OPTIONS
-!====
-    call jemarq()
-    call infniv(ifm, niv)
+! --------------------------------------------------------------------------------------------------
 !
-    do i = 1, 6
-        lpain(i) = '        '
-        lchin(i) = '                        '
-    end do
-!====
-! 1.2 PREALABLES LIES AUX CHARGES
-!====
+    resu_elem = '&&VECHTN.0000000'
+    newnom    = '.0000000'
+    ligrmo    = model(1:8)//'.MODELE'
 !
-    newnom = '.0000000'
-    ligrmo = modele(1:8)//'.MODELE'
-! TEST D'EXISTENCE DE L'OBJET JEVEUX CHARGE
-    call jeexin(charge, iret)
-    if (iret .ne. 0) then
-! LECTURE DU NBRE DE CHARGE NCHAR DANS L'OBJET JEVEUX CHARGE
-        call jelira(charge, 'LONMAX', nchar)
-! LECTURE DES ADRESSES JEVEUX DES CHARGES ET DES INFOS AFFERENTES
-        call jeveuo(charge, 'L', jchar)
-        call jeveuo(infcha, 'L', jinf)
-    else
-        nchar = 0
-    endif
+! - Init fields
 !
-!====
-! 2.1 PREPARATION DES CALCULS ELEMENTAIRES
-!====
+    call inical(nbin, lpain, lchin, nbout, lpaout, lchout)    
 !
-    call megeom(modele, chgeom)
-    call mecara(carele, chcara)
-    call jeexin(lvechn, iret)
-    if (iret .eq. 0) then
-        call wkvect(lvechn, 'V V K24', 2*nchar, jlvn)
-        call jeecra(lvechn, 'LONUTI', 0)
-    endif
+! - Loads
 !
-! PAS DE CHARGE ==> EXIT
-    if (nchar .eq. 0) goto 70
+    call load_list_info(load_empty, nb_load   , v_load_name, v_load_info,&
+                        lload_name, lload_info)
 !
-! CHAMP LOCAL RESULTAT
-    lpaout(1) = 'PVECTTR'
-    lchout(1) = '&&VECHNL.???????'
-! ... LA CARTE DES NOEUDS (X Y Z)
+! - Prepare fields
+!
+    call megeom(model, chgeom)
+!
+! - Input fields
+!
     lpain(1) = 'PGEOMER'
-    lchin(1) = chgeom
-! ... LA CARTE DES INSTANTS (INST DELTAT THETA KHI  R RHO)
-    lpain(3) = 'PTEMPSR'
-    lchin(3) = inst
-! ... LE CHAM_NO T- OU (DT/DS)-
-    lpain(4) = 'PTEMPER'
-    lchin(4) = chtn
+    lchin(1) = chgeom(1:19)
+    lpain(2) = 'PTEMPSR'
+    lchin(2) = time(1:19)
+    lpain(3) = 'PTEMPER'
+    lchin(3) = temp_iter(1:19)
 !
-!====
-! 2.2 IMPRESSIONS NIVEAU 2 POUR DIAGNOSTICS...
-!====
+! - Output fields
 !
-    if (niv .eq. 2) then
-        write (ifm,*) '*******************************************'
-        write (ifm,*) ' CALCUL DE SECOND MEMBRE THERMIQUE: VECHNL'
-        write (ifm,*)
-        write (ifm,*) ' LIGREL/MODELE    :',ligrmo
-        write (ifm,*) ' OBJ JEVEUX CHARGE:',charge
-        write (ifm,*) '            INFOCH:',infcha
-        write (ifm,*) ' NBRE DE CHARGES  :',nchar
-        write (ifm,*) ' BOUCLE SUR LES CHARGES DE TYPE NEUMANN NON-LIN'
-    endif
+    lpaout(1) = 'PVECTTR'
 !
-!====
-! 3. BOUCLE SUR LES AFFE_CHAR_THER ==================================
-!====
+! - Allocate result
 !
-    if (nchar .gt. 0) then
-        do icha = 1, nchar
+    call detrsd('VECT_ELEM', vect_elem)
+    call memare(base, vect_elem, model, ' ', ' ', 'CHAR_THER')
+    call reajre(vect_elem, ' ', base)
 !
-! NOM DE LA CHARGE
-            nomcha = zk24(jchar+icha-1) (1:8)
-            if (niv .eq. 2) then
-                write (ifm,*) ' '
-                write (ifm,*) '   CHARGE         :',nomcha
+! - Loop on loads
+!
+    if (nb_load .gt. 0) then
+        do i_load = 1, nb_load
+            load_name = v_load_name(i_load)(1:8)
+            load_nume = v_load_info(nb_load+i_load+1)
+! --------- For FLUX_NL
+            lpain(4) = 'PFLUXNL'
+            lchin(4) = load_name(1:8)//'.CHTH.FLUNL'
+            call jeexin(lchin(4)//'.DESC', iret)
+            if (iret .ne. 0) then
+                option = 'CHAR_THER_FLUNL'
+! ------------- Generate new RESU_ELEM name
+                call gcnco2(newnom)
+                resu_elem(10:16) = newnom(2:8)
+                call corich('E', resu_elem, -1, ibid)
+                lchout(1)        = resu_elem
+! ------------- Compute
+                call calcul('S'  , option, ligrmo, nbin  , lchin,&
+                            lpain, nbout , lchout, lpaout, base ,&
+                            'OUI')
+! ------------- Save RESU_ELEM
+                call reajre(vect_elem, resu_elem, base)
             endif
-!
-! ON CONSTRUIT LES SECONDS MEMBRES ELEM
-            exicha = 0
-            nomch2 = nomcha
-!
-            if (exicha .eq. 0) then
-!
-!====
-! 3.2 TEST D'EXISTENCE DE LA CL DE FLUX NON-LINEAIRE
-!====
-                iret = 0
-                lpain(2) = 'PFLUXNL'
-                lchin(2) = nomch2(1:8)//'.CHTH.FLUNL.DESC'
-                call jeexin(lchin(2), iret)
-!
-                if (iret .ne. 0) then
-                    option = 'CHAR_THER_FLUNL'
-! CALCUL DU SECOND MEMBRE DU PB STD
-                    nchin = 4
-!====
-! 3.2.1 PRETRAITEMENTS POUR TENIR COMPTE DE FONC_MULT
-!====
-                    call gcnco2(newnom)
-                    lchout(1) (10:16) = newnom(2:8)
-                    call corich('E', lchout(1), -1, ibid)
-!
-!====
-! 3.2.2 LANCEMENT DES CALCULS ELEMENTAIRES
-!====
-                    if (niv .eq. 2) then
-                        write (ifm,*) '     OPTION         :',option
-                        do i = 1, nchin
-                            write (ifm,*) '     LPAIN/LCHIN    :',lpain(i),' ',&
-     &              lchin(i)
-                        end do
-                    endif
-                    call calcul('S', option, ligrmo, nchin, lchin,&
-                                lpain, 1, lchout, lpaout, 'V',&
-                                'OUI')
-!
-! INCREMENTATION DE LONUTI ET STOCKAGE DU RESULTAT
-                    call reajre(lvechn, lchout(1), 'V')
-! FIN DU IF IRET POUR FLUX_NL
+! --------- For RAYONNEMENT
+            lchin(4) = load_name(1:8)//'.CHTH.RAYO '
+            call jeexin(lchin(4)//'.DESC', iret)
+            if (iret .ne. 0) then
+                c1 = 'R'
+                if (load_nume .gt. 1) then
+                    c1 = 'F'
                 endif
-!
-!====
-! 3.3 TEST D'EXISTENCE DE LA CL DE RAYONNEMENT
-!====
-                iret = 0
-                lpain(2) = 'PRAYONF'
-                lchin(2) = nomch2(1:8)//'.CHTH.RAYO .DESC'
-                call jeexin(lchin(2), iret)
-!
-                if (iret .ne. 0) then
-! CALCUL DU SECOND MEMBRE
-                    nchin = 4
-                    c1 = 'R'
-                    if (zi(jinf+nchar+icha) .gt. 1) c1 = 'F'
-                    option = 'CHAR_THER_RAYO_'//c1
-                    lpain(2) = 'PRAYON'//c1
-                    lchin(2) = nomch2(1:8)//'.CHTH.RAYO'
-!
-!====
-! 3.3.1 PRETRAITEMENTS POUR TENIR COMPTE DE FONC_MULT
-!====
-                    call gcnco2(newnom)
-                    lchout(1) (10:16) = newnom(2:8)
-                    call corich('E', lchout(1), -1, ibid)
-!
-!====
-! 3.3.2 LANCEMENT DES CALCULS ELEMENTAIRES
-!====
-                    if (niv .eq. 2) then
-                        write (ifm,*) '     OPTION         :',option
-                        do i = 1, nchin
-                            write (ifm,*) '     LPAIN/LCHIN    :',lpain(i),' ',&
-     &              lchin(i)
-                        end do
-                    endif
-                    call calcul('S', option, ligrmo, nchin, lchin,&
-                                lpain, 1, lchout, lpaout, 'V',&
-                                'OUI')
-!
-! INCREMENTATION DE LONUTI ET STOCKAGE DU RESULTAT
-                    call reajre(lvechn, lchout(1), 'V')
-! FIN DU IF IRET POUR RAYONNEMENT
-                endif
-!
-!
-!====
-! 3.4 TEST D'EXISTENCE DE LA CHARGE DE SOURCE NON LINEAIRE
-!====
-                iret = 0
-                lpain(2) = 'PSOURNL'
-                lchin(2) = nomch2(1:8)//'.CHTH.SOUNL.DESC'
-                call jeexin(lchin(2), iret)
-!
-                if (iret .ne. 0) then
-                    option = 'CHAR_THER_SOURNL'
-! CALCUL DU SECOND MEMBRE DU PB STD
-                    nchin = 4
-!====
-! 3.4.1 PRETRAITEMENTS POUR TENIR COMPTE DE FONC_MULT
-!====
-                    call gcnco2(newnom)
-                    lchout(1) (10:16) = newnom(2:8)
-                    call corich('E', lchout(1), -1, ibid)
-!
-!====
-! 3.4.2 LANCEMENT DES CALCULS ELEMENTAIRES
-!====
-                    if (niv .eq. 2) then
-                        write (ifm,*) '     OPTION         :',option
-                        do i = 1, nchin
-                            write (ifm,*) '     LPAIN/LCHIN    :',lpain(i),' ',&
-     &              lchin(i)
-                        end do
-                    endif
-                    call calcul('S', option, ligrmo, nchin, lchin,&
-                                lpain, 1, lchout, lpaout, 'V',&
-                                'OUI')
-!
-! INCREMENTATION DE LONUTI ET STOCKAGE DU RESULTAT
-                    call reajre(lvechn, lchout(1), 'V')
-! FIN DU IF IRET POUR SOUR_NL
-                endif
-!
-! FIN DU IF EXICHA
+                option   = 'CHAR_THER_RAYO_'//c1
+                lpain(4) = 'PRAYON'//c1
+! ------------- Generate new RESU_ELEM name
+                call gcnco2(newnom)
+                resu_elem(10:16) = newnom(2:8)
+                call corich('E', resu_elem, -1, ibid)
+                lchout(1) = resu_elem
+! ------------- Compute
+                call calcul('S', option, ligrmo, nbin, lchin,&
+                            lpain, nbout, lchout, lpaout, base,&
+                            'OUI')
+! ------------- Save RESU_ELEM
+                call reajre(vect_elem, resu_elem, base)
             endif
-!
-! 5. FIN DE BOUCLE SUR LES CHARGES
-!====
+! --------- For SOURCE_NL
+            lpain(4) = 'PSOURNL'
+            lchin(4) = load_name(1:8)//'.CHTH.SOUNL'
+            call jeexin(lchin(4)//'.DESC', iret)
+            if (iret .ne. 0) then
+                option = 'CHAR_THER_SOURNL'
+! ------------- Generate new RESU_ELEM name
+                call gcnco2(newnom)
+                resu_elem(10:16) = newnom(2:8)
+                call corich('E', resu_elem, -1, ibid)
+                lchout(1)        = resu_elem
+! ------------- Compute
+                call calcul('S'  , option, ligrmo, nbin  , lchin,&
+                            lpain, nbout , lchout, lpaout, base ,&
+                            'OUI')
+! ------------- Save RESU_ELEM
+                call reajre(vect_elem, resu_elem, base)
+            endif
         end do
-! FIN DU IF NCHAR
     endif
 !
-! SORTIE DE SECOURS EN CAS D'ABSENCE DE CHARGE
-70  continue
-! FIN ------------------------------------------------------------------
-    call jedema()
 end subroutine

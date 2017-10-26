@@ -15,17 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine lcplnf(rela_comp, vind, nbcomm, nmat, cpmono,&
                   materd, materf, iter, nvi, itmax,&
                   toler, pgl, nfs, nsg, toutms,&
                   hsr, dt, dy, yd, yf,&
-                  vinf, tampon, sigd, sigf,&
+                  vinf, sigd, sigf,&
                   deps, nr, mod, timef,&
                   indi, vins, codret)
 !
-! aslint: disable=W1504
-    implicit none
+implicit none
 !   POST-TRAITEMENTS SPECIFIQUES AUX LOIS
 !
 !   CORRESPONDANCE ENTRE LES VARIABLES INTERNES ET LES EQUATIONS
@@ -72,7 +72,7 @@ subroutine lcplnf(rela_comp, vind, nbcomm, nmat, cpmono,&
     integer :: nfs, nsg, indi(7), i
     real(kind=8) :: materd(nmat, 2), materf(nmat, 2), vins(nvi), timef
     real(kind=8) :: pkc, m13, dtot, hookf(6, 6)
-    real(kind=8) :: yd(*), vind(*), toler, pgl(3, 3), dt, tampon(*)
+    real(kind=8) :: yd(*), vind(*), toler, pgl(3, 3), dt
     real(kind=8) :: toutms(nfs, nsg, 6), hsr(nsg, nsg), dy(*), yf(*), vinf(*)
     character(len=16) :: rela_comp
     character(len=24) :: cpmono(5*nmat+1)
@@ -90,7 +90,7 @@ subroutine lcplnf(rela_comp, vind, nbcomm, nmat, cpmono,&
         call lcdpec(vind, nbcomm, nmat, ndt, cpmono,&
                     materf, iter, nvi, itmax, toler,&
                     pgl, nfs, nsg, toutms, hsr,&
-                    dt, dy, yd, vinf, tampon,&
+                    dt, dy, yd, vinf,&
                     sigf, deps, nr, mod,&
                     codret)
 !

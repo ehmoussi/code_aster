@@ -15,17 +15,22 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: etienne.grimal at edf.fr
+! aslint: disable=W1504
+!
 subroutine lcsend(fami, kpg, ksp, ndim, imate,&
                   compor, crit, instam, instap, epsm,&
                   deps, sigm, vim, option, angmas,&
-                  sigp, vip, tampon, typmod, icomp,&
-                  nvi, dsidep, codret)
-! person_in_charge: etienne.grimal at edf.fr
+                  sigp, vip, tampon, typmod, &
+                  dsidep, codret)
+!
+use calcul_module, only : ca_vext_eltsize2_
+!
+
 !=====================================================================
 !  Gestion du module ENDO_PORO_BETON
 !=====================================================================
-    implicit none
+implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/tecael.h"
@@ -37,7 +42,7 @@ subroutine lcsend(fami, kpg, ksp, ndim, imate,&
 #include "asterfort/matini.h"
 !
 !
-    integer :: imate, ndim, kpg, ksp, codret, icomp, nvi, iret
+    integer :: imate, ndim, kpg, ksp, codret, iret
     real(kind=8) :: crit(*), angmas(*)
     real(kind=8) :: instam, instap, tampon(*)
     real(kind=8) :: epsm(6), deps(6)
@@ -183,7 +188,7 @@ subroutine lcsend(fami, kpg, ksp, ndim, imate,&
     nmtail = 12
 !
 ! --- TRAITEMENT DIFFERENT SI COUPLAGE FLUA3D-ENDO3D
-    if (compor(1) .eq. 'KIT_DDI') then
+    if (nint(tampon(1)) .eq. 1) then
         fl3d = .true.
         nvari = nvcom+nvflu+nvendo+nvtail
         nmat = nmelas+nmhydr+nmflu+nmendo+nmtail
@@ -271,7 +276,7 @@ subroutine lcsend(fami, kpg, ksp, ndim, imate,&
  30     continue
 !
         do 40 i = 1, 9
-            xmat(nmelas+nmflu+nmhydr+nmendo+i) = tampon(i)
+            xmat(nmelas+nmflu+nmhydr+nmendo+i) = ca_vext_eltsize2_(i)
  40     continue
         xmat(nmat-2) = 0.d0
         xmat(nmat-1) = 0.d0
@@ -350,7 +355,7 @@ subroutine lcsend(fami, kpg, ksp, ndim, imate,&
         xmat(16) = vgp
 !
         do 70 i = 1, 9
-            xmat(38+i) = tampon(i)
+            xmat(38+i) = ca_vext_eltsize2_(i)
  70     continue
         xmat(48) = 0.d0
         xmat(49) = 0.d0

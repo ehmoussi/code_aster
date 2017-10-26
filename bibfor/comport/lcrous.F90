@@ -410,18 +410,18 @@ subroutine lcrous(fami, kpg, ksp, toler, itmax,&
 !
 ! -- ERREURS--------------------------------------------------------
  45 continue
-    call utmess('Z', 'COMPOR1_16', num_except=23)
-    goto 9999
-!
-! -- PROBABLEMENT UN INCREMENT TROP GRAND DE DEFORMATION-----------
- 50 continue
-!
+! -- Overflow in exponential calculations or exploding plastic strain
+! ==> try to subdivide the strain increment
     irtet=1
     goto 9999
 !
-! -- NON CONVERGENCE------------------------------------------------
- 60 continue
+ 50 continue
+! -- PROBABLEMENT UN INCREMENT TROP GRAND DE DEFORMATION-----------
+    irtet=1
+    goto 9999
 !
+ 60 continue
+! -- NON CONVERGENCE------------------------------------------------
     irtet=1
     goto 9999
 !

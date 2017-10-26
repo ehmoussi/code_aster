@@ -37,7 +37,7 @@
                  'NO2_NAME', 'VEC_NORM', 'NUMDDL_1', 'NUMDDL_2', 'OBST_TYP', &
                  'PSI_DEL1', 'PSI_DEL2', 'RES_INTE', 'STIF_TAN', 'ROTR_DFK', &
                  'ROTR_FK ', 'SIGN_DYZ', 'SINCOS_A', 'SINCOS_B', 'SINCOS_G', &
-                 'SS1_NAME', 'SS2_NAME', 'STIF_NOR'/
+                 'SS1_NAME', 'SS2_NAME', 'STIF_NOR', 'FEXT_MPI'/
 
     data partyp /'R  ', 'K24', 'R  ', 'R  ', 'R  ', &
                  'R  ', 'R  ', 'R  ', 'R  ', 'R  ', &
@@ -53,7 +53,7 @@
                  'K24', 'R  ', 'K24', 'K24', 'K24', &
                  'R  ', 'R  ', 'R  ', 'R  ', 'K24', &
                  'K24', 'R  ', 'R  ', 'R  ', 'R  ', &
-                 'K24', 'K24', 'R  '/ 
+                 'K24', 'K24', 'R  ', 'R  '/  
 
 ! -------------------------------------------------------------------------
 !   parind = -2 : vector global        ; = -1 : scalar global ;
@@ -74,4 +74,4 @@
                   1,  2,  1,  1,  1, &
                   2,  2,  1,  1,  1, &
                   1,  2,  2,  2,  2, &
-                  1,  1,  1/
+                  1,  1,  1, -2/

@@ -15,8 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine romEquationListCreate(ds_empi, nume_dof, grnode_int, v_equa_int)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine romEquationListCreate(ds_empi, v_equa  , nume_dof    ,&
+                                 grnode_, nb_node_, v_list_node_)
 !
 use Rom_Datastructure_type
 !
@@ -33,25 +35,29 @@ implicit none
 #include "asterfort/select_dof.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_Empi), intent(in) :: ds_empi
-    character(len=24), intent(in) :: nume_dof
-    character(len=24), intent(in) :: grnode_int
-    integer, pointer, intent(out) :: v_equa_int(:)
+type(ROM_DS_Empi), intent(in) :: ds_empi
+integer, pointer, intent(out) :: v_equa(:)
+character(len=24), intent(in) :: nume_dof
+character(len=24), optional, intent(in) :: grnode_
+integer, optional, intent(in) :: nb_node_
+integer, optional, pointer, intent(in) :: v_list_node_(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Model reduction
 !
-! Prepare the list of equations at interface
+! Prepare the list of equations from list of nodes
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ds_empi          : datastructure for empiric modes
 ! In  nume_dof         : name of numbering (NUME_DDL)
-! In  grnode_int       : name of GROUP_NO for interface
-! Out v_equa_int       : pointer to list of equations for interface nodes
+! Out v_equa           : pointer to list of equations for nodes
+!
+! In  grnode           : name of GROUP_NO
+!<or>
+! In  nb_node          : number of nodes
+! In  v_list_node      : list of nodes
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -74,15 +80,19 @@ implicit none
     mesh       = ds_empi%mesh
     field_name = ds_empi%field_name
 !
-! - Access to mesh
+! - Access to list of nodes
 !
-    call jelira(jexnom(mesh//'.GROUPENO', grnode_int), 'LONUTI', nb_node)
-    call jeveuo(jexnom(mesh//'.GROUPENO', grnode_int), 'E'     , vi = v_list_node)
+    if (present(grnode_)) then
+        call jelira(jexnom(mesh//'.GROUPENO', grnode_), 'LONUTI', nb_node)
+        call jeveuo(jexnom(mesh//'.GROUPENO', grnode_), 'E'     , vi = v_list_node)
+    else
+        nb_node     = nb_node_
+    endif
 !
 ! - Create list of equations
 !
     call dismoi('NB_EQUA', nume_dof, 'NUME_DDL', repi = nb_equa)
-    AS_ALLOCATE(vi = v_equa_int, size = nb_equa)
+    AS_ALLOCATE(vi = v_equa, size = nb_equa)
 !
 ! - List of components to search
 !
@@ -102,8 +112,13 @@ implicit none
 !
 ! - Find index of equations
 !
-    call select_dof(list_equa  = v_equa_int , nume_ddlz = nume_dof, nb_nodez  = nb_node,&
-                    list_nodez = v_list_node, nb_cmpz   = nb_cmp  , list_cmpz = v_list_cmp)
+    if (present(v_list_node_)) then
+        call select_dof(list_equa  = v_equa      , nume_ddlz = nume_dof, nb_nodez  = nb_node,&
+                        list_nodez = v_list_node_, nb_cmpz   = nb_cmp  , list_cmpz = v_list_cmp)
+    else
+        call select_dof(list_equa  = v_equa     , nume_ddlz = nume_dof, nb_nodez  = nb_node,&
+                        list_nodez = v_list_node, nb_cmpz   = nb_cmp  , list_cmpz = v_list_cmp)
+    endif
 !
 ! - Clean
 !

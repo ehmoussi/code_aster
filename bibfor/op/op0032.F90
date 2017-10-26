@@ -321,13 +321,14 @@ subroutine op0032()
             if (l .ne. nbmod) then
                 ASSERT(.false.)
             endif
-            do 12 k = 1, nbmod-1
+            
+            do k = 1, nbmod-1
                 zi(jstu+k-1)=izero
                 zr(jlmoe+k-1)=rzero
                 if (zr(jlmod+k) .le. zr(jlmod+k-1)) then
                     ASSERT(.false.)
                 endif
- 12         continue
+            enddo
             zr(jlmoe+nbmod-1)=rzero
         else
 !       --- PARAMETRIZATION PB
@@ -543,6 +544,7 @@ subroutine op0032()
 !         --- CALCUL // TYPE 1
                 kopt1='STURML1P'
                 koptn='STURMLNP'
+                if (lflamb) koptn='STURMLNQ'
                 if (frecou .eq. 1) then
 !         --- LE PROC (ET SES AMIS DU MEME SOUS-COMMUNICATEUR) TRAITE LA
 !         --- PREMIERE SOUS-BANDE
@@ -582,6 +584,7 @@ subroutine op0032()
             lfirst=.true.
             kopt1='STURML1'
             koptn='STURMLN'
+            if (lflamb) koptn='STURMLNS'
         endif
         npivot(1)=-9999
         npivot(2)=-9999
@@ -592,12 +595,13 @@ subroutine op0032()
             omin=omega2(zr(jlmod))
             omax=omega2(zr(jlmod+1))
         else if (lflamb) then
-            omin=zr(jlmod)
-            omax=zr(jlmod+1)
+            omin=-zr(jlmod+1)
+            omax=-zr(jlmod)
         else
             ASSERT(.false.)
         endif
         if (lfirst) then
+        
             call vpfopr(kopt1, typmod, lmasse, lraide, ldynam,&
                         omin, omax, rbid, zi(jstu), npivot,&
                         omecor, precsh, nbrss, nblagr, solveu,&
@@ -607,8 +611,8 @@ subroutine op0032()
                 zr(jlmoe)=freqom(omin)
                 zr(jlmoe+1)=freqom(omax)
             else
-                zr(jlmoe)=omin
-                zr(jlmoe+1)=omax
+                zr(jlmoe)=-omax
+                zr(jlmoe+1)=-omin
             endif
         endif
         do 20 k = k1, k2
@@ -617,19 +621,27 @@ subroutine op0032()
                 omin=omega2(zr(jlmod+k-1))
                 omax=omega2(zr(jlmod+k))
             else
-                omin=zr(jlmod+k-1)
-                omax=zr(jlmod+k)
+                omin=-zr(jlmod+k)
+                omax=-zr(jlmod+k-1)
             endif
-            npivot(1)=npivot(2)
-            npivot(2)=k
+            
+            if (koptn.eq.'STURMLNS' .or. koptn.eq.'STURMLNQ') then
+                npivot(2)=npivot(1)
+                npivot(1)=k
+            else
+                npivot(1)=npivot(2)
+                npivot(2)=k
+            endif
+            
             call vpfopr(koptn, typmod, lmasse, lraide, ldynam,&
                         omin, omax, rbid, zi(jstu+k-1), npivot,&
                         omecor, precsh, nbrss, nblagr, solveu,&
                         det, idet)
+            
             if (ldyna) then
                 zr(jlmoe+k)=freqom(omax)
             else
-                zr(jlmoe+k)=omax
+                zr(jlmoe+k)=-omin
             endif
  20     continue
 !

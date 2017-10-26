@@ -19,15 +19,11 @@
 
 # person_in_charge: francois.hamon at edf.fr
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), PAR_LOT='NON',)
 
 import os
 
-# Version  de mfront
-
-os.system("tfel-config --version ")
-
-os.system("mfront --obuild BurgerAgeing.mfront --interface=aster ")
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=39)
 
 from subprocess import Popen, PIPE
 

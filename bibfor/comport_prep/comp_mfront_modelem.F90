@@ -15,10 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine comp_mfront_modelem(elem_type_name, l_mfront_cp ,&
                                model_dim     , model_mfront,&
-                               codret        , type_cpla_)
+                               codret        , type_cpla)
 !
 implicit none
 !
@@ -27,14 +28,12 @@ implicit none
 #include "asterfort/teattr.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=16), intent(in) :: elem_type_name
-    aster_logical, intent(in) :: l_mfront_cp
-    integer, intent(out) :: model_dim
-    character(len=16), intent(out) :: model_mfront
-    integer, intent(out) :: codret
-    character(len=16), optional, intent(out) :: type_cpla_
+character(len=16), intent(in) :: elem_type_name
+aster_logical, intent(in) :: l_mfront_cp
+integer, intent(out) :: model_dim
+character(len=16), intent(out) :: model_mfront
+integer, intent(out) :: codret
+character(len=16), intent(out) :: type_cpla
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -58,7 +57,8 @@ implicit none
 !
     integer :: iret
     character(len=1) :: model_dim_s
-    character(len=16) :: principal, model_thm, model_type, type_cpla
+    character(len=16) :: principal, model_thm, model_type, answer
+    aster_logical :: l_axis, l_dplan
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -74,6 +74,10 @@ implicit none
     call teattr('C', 'TYPMOD2'        , model_thm  , iret, typel = elem_type_name)
     call teattr('C', 'DIM_TOPO_MODELI', model_dim_s, iret, typel = elem_type_name)
     read(model_dim_s,'(I1)') model_dim
+    call teattr('C', 'AXIS           ', answer, iret, typel = elem_type_name)
+    l_axis  = answer .eq. 'OUI'
+    call teattr('C', 'D_PLAN         ', answer, iret, typel = elem_type_name)
+    l_dplan = answer .eq. 'OUI'
 !
 ! - Select modelisation for MFront
 !
@@ -100,7 +104,19 @@ implicit none
             model_dim    = 2
             type_cpla    = 'DEBORST'
         elseif ( model_thm .eq. 'THM' ) then
-            model_mfront = '_Tridimensional'
+            if (model_dim .eq. 2) then
+                if (l_axis) then
+                    model_mfront = '_Axisymmetrical'
+                elseif (l_dplan) then
+                    model_mfront = '_PlaneStrain'
+                else
+                    ASSERT(ASTER_FALSE)
+                endif
+            elseif (model_dim .eq. 3) then
+                model_mfront = '_Tridimensional'
+            else
+                ASSERT(ASTER_FALSE)
+            endif
         else
             model_mfront = model_type
             codret = 2
@@ -109,10 +125,6 @@ implicit none
 !
     if (model_dim .le. 1) then
         codret = 2
-    endif
-!
-    if (present(type_cpla_)) then
-        type_cpla_ = type_cpla
     endif
 !
 end subroutine

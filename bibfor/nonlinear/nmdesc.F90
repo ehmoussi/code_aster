@@ -133,7 +133,7 @@ implicit none
 !
     call nmcoma(modele, mate  , carele    , ds_constitutive, ds_algopara,&
                 lischa, numedd, numfix    , solveu         , comref     ,&
-                sddisc, sddyna, ds_print  , ds_measure     , numins     ,&
+                sddisc, sddyna, ds_print  , ds_measure     , ds_algorom ,numins     ,&
                 iterat, fonact, ds_contact, valinc         , solalg     ,&
                 veelem, meelem, measse    , veasse         , maprec     ,&
                 matass, faccvg, ldccvg    , sdnume)

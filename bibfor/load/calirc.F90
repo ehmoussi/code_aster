@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1501
+! Person in charge: mickael.abbas at edf.fr
+!
 subroutine calirc(phenom_, load, mesh)
 !
 implicit none
@@ -54,13 +56,11 @@ implicit none
 #include "asterfort/getvr8.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
+#include "asterfort/checkModelOnElements.h"
 !
-! aslint: disable=W1501
-! Person in charge: mickael.abbas at edf.fr
-!
-    character(len=*), intent(in) :: phenom_
-    character(len=8), intent(in) :: load
-    character(len=8), intent(in) :: mesh
+character(len=*), intent(in) :: phenom_
+character(len=8), intent(in) :: load
+character(len=8), intent(in) :: mesh
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -85,10 +85,11 @@ implicit none
     integer :: jconb2, jconu2, jcocf2, jcom12, ideca2
     integer :: nbtyp, nddl2, nbma2, jlistk, jdim, ndim1
     integer :: jnorm, idim, ij, ima1, jlisv1
-    integer :: kno2, kkno2, jcoor, n1
+    integer :: kno2, kkno2, jcoor, n1, nb_found
     aster_logical :: lrota, dnor
     real(kind=8) :: beta, coef1, mrota(3, 3), zero, normal(3)
-    complex(kind=8) :: betac, cbid
+    complex(kind=8) :: betac
+    complex(kind=8), parameter :: cbid = dcmplx(0.d0, 0.d0)
     character(len=2) :: typlag
     character(len=4) :: fonree
     character(len=4) :: typcoe, typlia
@@ -118,7 +119,9 @@ implicit none
     integer, pointer :: linonu2bis(:) => null()
     character(len=8), pointer :: nomddl(:) => null()
     character(len=8), pointer :: nomnoe(:) => null()
-    cbid = dcmplx(0.d0, 0.d0)
+    character(len=16), pointer :: v_list_type(:) => null()
+    aster_logical :: l_error
+    character(len=8) :: elem_error
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -271,8 +274,11 @@ implicit none
 ! ---        ET DES NOMBRES D'OCCURENCES DE CES NOEUDS '&&NBNLMA.NBN'
 ! ---        DES MAILLES DE PEAU MAILLE_ESCL :
 !            -------------------------------
-            call nbnlma(mesh, nbma2, limanu2, nbtyp, listyp,&
-                        nbno2)
+            call nbnlma(mesh , nbma2, limanu2, nbtyp, listyp,&
+                        nbno2, l_error, elem_error)
+            if (l_error) then
+                call utmess('F', 'CHARGES6_4', sk = elem_error)
+            endif
 !
 ! ---        CALCUL DES NORMALES EN CHAQUE NOEUD :
 !            -----------------------------------
@@ -373,8 +379,7 @@ implicit none
                 call pj3dco('PARTIE', model, model, nbma1, limanu1,&
                             nbno2, zi(iagno2), ' ', geom2, corres,&
                             l_dmax, dmax, dala)
-                elseif (typrac.eq.'COQUE' .or. typrac.eq.'MASSIF_COQUE')&
-            then
+            elseif (typrac.eq.'COQUE' .or. typrac.eq.'MASSIF_COQUE') then
                 call pj4dco('PARTIE', model, model, nbma1, limanu1,&
                             nbno2, zi(iagno2), ' ', geom2, corres,&
                             l_dmax, dmax, dala)
@@ -389,6 +394,22 @@ implicit none
                 ASSERT(.false.)
             endif
 !
+        endif
+!
+! ----- No COQUE_3D with MASSIF_COQUE
+!
+        if (typrac.eq.'MASSIF_COQUE') then
+            AS_ALLOCATE(vk16 = v_list_type, size = 2)
+            v_list_type(1) = 'MEC3TR7H'
+            v_list_type(2) = 'MEC3QU9H'
+            call checkModelOnElements(model,&
+                            nbma1, limanu1,&
+                            2, v_list_type,&
+                            nb_found)
+            if (nb_found .ne. 0) then
+                call utmess('F', 'CHARGES6_6')
+            endif
+            AS_DEALLOCATE(vk16 = v_list_type)
         endif
 !
         call jeveuo(corres//'.PJEF_NB', 'L', jconb)

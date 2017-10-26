@@ -23,10 +23,11 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'HYDR',
-    doc            =   """Loi de comportement hydraulique"""      ,
+    lc_type        = ('HYDRAULIQUE',),
+    doc            =   """Loi de comportement hydraulique"""            ,
     num_lc         = 0,
     nb_vari        = 1,
-    nom_vari       = ('HYDR1',),
+    nom_vari       = ('RHOLIQ',),
     mc_mater       = None,
     modelisation   = ('KIT_HH','KIT_HHM','KIT_HM','KIT_THHM','KIT_THH',
         'KIT_THM','KIT_THV',),
@@ -35,4 +36,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

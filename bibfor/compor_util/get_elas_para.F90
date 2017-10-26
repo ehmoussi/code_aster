@@ -15,9 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine get_elas_para(fami     , j_mater, poum, ipg, ispg, &
-                         elas_id,&
+                         elas_id  , elas_keyword,&
                          time     , temp,&
                          e   , nu  , g,&
                          e1  , e2  , e3,&
@@ -28,16 +29,17 @@ implicit none
 !
 #include "asterfort/assert.h"
 #include "asterfort/hypmat.h"
-#include "asterfort/get_elas_id.h"
 #include "asterfort/rcvalb.h"
 !
+
 !
     character(len=*), intent(in) :: fami
     integer, intent(in) :: j_mater
     character(len=*), intent(in) :: poum
     integer, intent(in) :: ipg
     integer, intent(in) :: ispg
-    integer, intent(out) :: elas_id
+    integer, intent(in) :: elas_id
+    character(len=16), intent(in) :: elas_keyword
     real(kind=8), optional, intent(in) :: time
     real(kind=8), optional, intent(in) :: temp
     real(kind=8), optional, intent(out) :: e
@@ -68,10 +70,11 @@ implicit none
 ! In  poum         : '-' or '+' for parameters evaluation (previous or current temperature)
 ! In  ipg          : current point gauss
 ! In  ispg         : current "sous-point" gauss
-! Out elas_id    : Type of elasticity
+! In  elas_id      : Type of elasticity
 !                 1 - Isotropic
 !                 2 - Orthotropic
 !                 3 - Transverse isotropic
+! In  elas_keyword : keyword factor linked to type of elasticity parameters
 ! Out e            : Young modulus (isotropic)
 ! Out nu           : Poisson ratio (isotropic)
 ! Out e1           : Young modulus - Direction 1 (Orthotropic/Transverse isotropic)
@@ -87,8 +90,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nbresm
-    parameter (nbresm=9)
+    integer, parameter :: nbresm = 9
     integer :: icodre(nbresm)
     character(len=16) :: nomres(nbresm)
     real(kind=8) :: valres(nbresm)
@@ -98,7 +100,6 @@ implicit none
     integer :: nbres, nb_para
     real(kind=8) :: c10, c01, c20, k
     real(kind=8) :: un
-    character(len=16) :: elas_keyword
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -117,9 +118,7 @@ implicit none
         para_vale(nb_para) = temp
     endif
 !
-! - Get type of elasticity (Isotropic/Orthotropic/Transverse isotropic)
-!
-    call get_elas_id(j_mater, elas_id, elas_keyword)
+! - Get elastic parameters
 !
     if (elas_id.eq.1) then
         if (elas_keyword.eq.'ELAS_HYPER') then

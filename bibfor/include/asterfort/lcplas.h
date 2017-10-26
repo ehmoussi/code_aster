@@ -26,7 +26,7 @@ interface
                       vinf, comp, nbcomm, cpmono, pgl,&
                       nfs, nsg, toutms, hsr, icomp,&
                       codret, theta, vp, vecp, seuil,&
-                      devg, devgii, drdy, tampon, crit)
+                      devg, devgii, drdy, crit)
         integer :: nsg
         integer :: nfs
         integer :: nr
@@ -65,7 +65,6 @@ interface
         real(kind=8) :: devg(*)
         real(kind=8) :: devgii
         real(kind=8) :: drdy(nr, nr)
-        real(kind=8) :: tampon(*)
         real(kind=8) :: crit(*)
     end subroutine lcplas
 end interface

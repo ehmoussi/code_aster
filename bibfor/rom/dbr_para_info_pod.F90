@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine dbr_para_info_pod(ds_para_pod)
 !
 use Rom_Datastructure_type
@@ -28,9 +29,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/romSnapInfo.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
+type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -49,6 +48,7 @@ implicit none
     character(len=24) :: field_name = ' ', surf_num = ' '
     character(len=8)  :: result_in = ' ', axe_line = ' '
     real(kind=8) :: tole_svd, tole_incr
+    integer :: nb_mode_maxi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -65,10 +65,14 @@ implicit none
     field_name   = ds_para_pod%field_name
     axe_line     = ds_para_pod%axe_line
     surf_num     = ds_para_pod%surf_num
+    nb_mode_maxi = ds_para_pod%nb_mode_maxi
 !
 ! - Print - General for POD
 !
     if (niv .ge. 2) then
+        if (nb_mode_maxi .ne. 0) then
+            call utmess('I', 'ROM5_17', si = nb_mode_maxi)
+        endif
         call utmess('I', 'ROM7_3' , sr = tole_svd)
         if (operation .eq. 'POD_INCR') then
             call utmess('I', 'ROM7_13' , sr = tole_incr)

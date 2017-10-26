@@ -19,7 +19,7 @@
 subroutine ntreso(model , mate  , cara_elem, list_load, nume_dof,&
                   solver, l_stat, time     , tpsthe   , reasrg  ,&
                   reasms, cn2mbr, matass   , maprec   , cndiri  ,&
-                  cncine, mediri, compor)
+                  cncine, mediri)
 !
 implicit none
 !
@@ -49,7 +49,6 @@ implicit none
     character(len=24), intent(in) :: cndiri
     character(len=24), intent(out) :: cncine
     character(len=24), intent(in) :: mediri
-    character(len=24), intent(in) :: compor
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -67,25 +66,21 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=19) :: chsol, varc_curr
-    character(len=24) :: dry_prev, dry_curr, vhydr, vtemp
+    character(len=24) :: vtemp
     integer :: ierr, ibid
 !
 ! --------------------------------------------------------------------------------------------------
 !
     chsol     = '&&NTRESO_SOLUTION'
     varc_curr = '&&NTRESO.CHVARC'
-    vhydr     = ' '
     vtemp     = '&&NXLECTVAR_____'
-    dry_prev  = ' '
-    dry_curr  = ' '
 !
 ! - Construct second member
 !
     call ntacmv(model , mate  , cara_elem, list_load, nume_dof,&
                 l_stat, time  , tpsthe   , reasrg   , reasms  ,&
-                vtemp , vhydr , varc_curr, dry_prev , dry_curr,&
-                cn2mbr, matass, cndiri   , cncine   , mediri  ,&
-                compor)
+                vtemp , varc_curr, &
+                cn2mbr, matass, cndiri   , cncine   , mediri  )
 !
 ! - Factor
 !

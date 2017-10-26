@@ -61,7 +61,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     call lcedga(fami, kpg, ksp, ndim, imate,&
-                carcri, typmod, instam, instap, wkin,&
+                carcri, typmod, instam, instap,&
                 deps, sigm, vim, option, sigp,&
                 vip, dsidep, codret)
 !

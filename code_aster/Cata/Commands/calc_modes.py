@@ -37,7 +37,7 @@ def calc_modes_prod( self, TYPE_RESU, **args) :
    if (vale_rigi== None) : # si MATR_RIGI non renseigné
       # on retourne un type fictif pour que le plantage aie lieu dans la lecture du catalogue
       return ASSD
-   vale_amor = args['MATR_AMOR']
+   vale_amor = args.get('MATR_AMOR')
    if ( (AsType(vale_rigi) in (matr_asse_depl_r, matr_asse_depl_c)) & (AsType(vale_mass) in (matr_asse_gene_r, matr_asse_gene_c)) ) :
       raise AsException("Matrices d'entrée de types différents : physique / généralisée.")
    if (AsType(vale_amor)== matr_asse_depl_r) : return mode_meca_c
@@ -401,6 +401,8 @@ CALC_MODES=MACRO(nom="CALC_MODES",
              STOP_ERREUR =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),
              SEUIL       =SIMP(statut='f',typ='R',val_min=0.E+0,defaut=1.e-2,
                                        fr=tr("Valeur limite admise pour l'erreur a posteriori des modes")),
+             PREC_SHIFT  =SIMP(statut='f',typ='R',defaut= 5.E-3,val_min=0.E+0 ),
+             STURM       =SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON") ),
            ), #fin mcf_veri_mode
          ),# fin b_veri_mode_inv
 

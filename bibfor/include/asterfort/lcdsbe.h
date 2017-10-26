@@ -15,18 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine lcdsbe(fami, ndim, typmod, imate, compor,&
+    subroutine lcdsbe(fami, ndim, imate,&
                       epstm, depst, vim, option, sig,&
                       vip, dsidpt, proj)
         character(len=*) :: fami
         integer :: ndim
-        character(len=8) :: typmod(2)
         integer :: imate
-        character(len=16) :: compor(*)
         real(kind=8) :: epstm(12)
         real(kind=8) :: depst(12)
         real(kind=8) :: vim(2)

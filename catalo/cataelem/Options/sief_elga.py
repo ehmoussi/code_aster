@@ -137,6 +137,7 @@ SIEF_ELGA = Option(
       CondCalcul('+', ((AT.PHENO,'ME'),(AT.BORD,'0'),)),
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.ABSO,'OUI'),)),
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.FLUIDE,'OUI'),)),
+      CondCalcul('-', ((AT.PHENO,'ME'),(AT.INTERFACE,'OUI'),)),
     ),
     comment=""" CALCUL DES CONTRAINTES ET/OU EFFORTS GENERALISES AUX POINTS DE GAUSS
    A PARTIR DES DEPLACEMENTS. LICITE EN LINEAIRE SEULEMENT. """,

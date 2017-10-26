@@ -15,14 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine lcdpec(vind, nbcomm, nmat, ndt, cpmono,&
                       materf, iter, nvi, itmax, toler,&
                       pgl, nfs, nsg, toutms, hsr,&
-                      dt, dy, yd, vinf, tampon,&
+                      dt, dy, yd, vinf,&
                       sigf, df, nr, mod,&
                       codret)
         integer :: nsg
@@ -44,7 +42,6 @@ interface
         real(kind=8) :: dy(*)
         real(kind=8) :: yd(*)
         real(kind=8) :: vinf(*)
-        real(kind=8) :: tampon(*)
         real(kind=8) :: sigf(6)
         real(kind=8) :: df(3, 3)
         integer :: nr

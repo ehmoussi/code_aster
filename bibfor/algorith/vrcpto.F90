@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine vrcpto(compor, deps, neps, fami, kpg,&
                   ksp, imate)
 !
@@ -57,26 +57,16 @@ subroutine vrcpto(compor, deps, neps, fami, kpg,&
     parameter     ( dmmeca = 21 )
     character(len=16) :: pomeca(dmmeca)
 !
-    data pomeca / 'ELAS'            ,&
-     &              'CJS'             ,&
-     &              'HUJEUX'          ,&
-     &              'MOHR_COULOMB'    ,&
-     &              'CAM_CLAY'        ,&
-     &              'BARCELONE'       ,&
-     &              'LAIGLE'          ,&
-     &              'LETK'            ,&
-     &              'LKR'             ,&
-     &              'VISC_DRUC_PRAG'  ,&
-     &              'HOEK_BROWN_EFF'  ,&
-     &              'HOEK_BROWN_TOT'  ,&
-     &              'MAZARS'          ,&
-     &              'ENDO_ISOT_BETON' ,&
-     &              'ELAS_GONF'       ,&
-     &              'DRUCK_PRAGER'    ,&
-     &              'DRUCK_PRAG_N_A'  ,&
-     &              'JOINT_BANDIS'    ,&
-     &              'CZM_LIN_REG'     ,&
-     &              'CZM_EXP_REG'     ,&
+    data pomeca / 'ELAS'            , 'CJS'             ,&
+     &              'HUJEUX'          , 'MOHR_COULOMB'    ,&
+     &              'CAM_CLAY'        , 'BARCELONE'       ,&
+     &              'LAIGLE'          , 'LETK'            ,&
+     &              'LKR'             , 'VISC_DRUC_PRAG'  ,&
+     &              'HOEK_BROWN_EFF'  , 'HOEK_BROWN_TOT'  ,&
+     &              'MAZARS'          , 'ENDO_ISOT_BETON' ,&
+     &              'GONF_ELAS'       , 'DRUCK_PRAGER'    ,&
+     &              'DRUCK_PRAG_N_A'  , 'JOINT_BANDIS'    ,&
+     &              'CZM_LIN_REG'     , 'CZM_EXP_REG'     ,&
      &              'ENDO_HETEROGENE' /
 !
 !
@@ -87,7 +77,7 @@ subroutine vrcpto(compor, deps, neps, fami, kpg,&
     call rcvarc(' ', 'PTOT', '+', fami, kpg,&
                 ksp, ptotp, iret2)
 !
-    if ((iret1.eq.1) .and. (iret2.eq.1)) goto 9999
+    if ((iret1.eq.1) .and. (iret2.eq.1)) goto 999
 !
     if (iret1 .ne. iret2) then
         call utmess('F', 'CHAINAGE_11')
@@ -151,12 +141,12 @@ subroutine vrcpto(compor, deps, neps, fami, kpg,&
 !
 ! --- CALCUL DE LA DEFORMATION TOTALE ACTUALISEE
 !
-        do 10 k = 1, 3
+        do k = 1, 3
             deps(k) = deps(k)-(biotp/troikp*ptotp-biotm/troikm*ptotm)
- 10     continue
+        end do
 !
     endif
 !
-9999 continue
+999 continue
 !
 end subroutine

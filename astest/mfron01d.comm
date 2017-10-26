@@ -46,10 +46,8 @@
 #
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
-import os
 
-os.system("mfront --obuild Chaboche.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so Chaboche.so")
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=39)
 
 
 CARRE=LIRE_MAILLAGE(FORMAT="ASTER",     )
@@ -118,7 +116,7 @@ SOLNL=STAT_NON_LINE(
                 TYPE_CHARGE = 'FIXE_CSTE'),
                 COMPORTEMENT=_F(RELATION='MFRONT',
                                 NOM_ROUTINE='asterchaboche',
-                                LIBRAIRIE='Chaboche.so',
+                                UNITE_LIBRAIRIE=39,
                                 RESI_INTE_MAXI=1.e-8),
                          INCREMENT=_F(
                 LIST_INST = LINST),

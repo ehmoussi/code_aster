@@ -80,7 +80,8 @@ ASSEMBLAGE(  MODELE=MODELE,   CHARGE=CON_LIM,   CARA_ELEM=CARA_ELE,
 #
 # CALCUL DES MODES AVEC BLOCAGE DES ANCRAGES:
 #---------------------------------------------
-MODE_MEC=CALC_MODES(MATR_RIGI=RIGIDITE,
+SOLVEURL='MULT_FRONT'
+MODE_MEC=CALC_MODES(MATR_RIGI=RIGIDITE,SOLVEUR=_F(METHODE=SOLVEURL),
                     OPTION='AJUSTE',
                     CALC_FREQ=_F(FREQ=(3.8,7.,9.3,),
                                  ),
@@ -95,13 +96,13 @@ MODE_EXT=EXTR_MODE(FILTRE_MODE=_F(MODE=MODE_MEC,
 #
 # CALCUL DES MODES STATIQUES AUX POINTS D ANCRAGE:
 #-------------------------------------------------
-MODE_STA=MODE_STATIQUE(  MATR_RIGI=RIGIDITE,   MATR_MASS=MASSE,
+MODE_STA=MODE_STATIQUE(  MATR_RIGI=RIGIDITE,   MATR_MASS=MASSE,SOLVEUR=_F(METHODE=SOLVEURL),
                          MODE_STAT=_F(  TOUT = 'OUI', AVEC_CMP = 'DX') )
 
 ####################################################################
 # CALCUL MODES STATIQUES POUR CORRECTION STATIQUE A PRIORI
 ######################################################################
-PSEUDO=MODE_STATIQUE(  MATR_RIGI=RIGIDITE,   MATR_MASS=MASSE,
+PSEUDO=MODE_STATIQUE(  MATR_RIGI=RIGIDITE,   MATR_MASS=MASSE,SOLVEUR=_F(METHODE=SOLVEURL),
                              PSEUDO_MODE=_F(  AXE = ( 'X',  'Y',  'Z', ))  )
 
 PSEUDO=CALC_CHAMP(reuse=PSEUDO,RESULTAT=PSEUDO,CONTRAINTE=('SIEF_ELGA','EFGE_ELNO'))
@@ -110,7 +111,7 @@ PSEUDO=CALC_CHAMP(reuse=PSEUDO,RESULTAT=PSEUDO,CONTRAINTE=('SIEF_ELGA','EFGE_ELN
 PSEUDO=CALC_CHAMP(reuse=PSEUDO,  RESULTAT=PSEUDO,
                    FORCE='REAC_NODA',)
 
-MODESTAT=MODE_STATIQUE(MATR_RIGI=RIGIDITE,
+MODESTAT=MODE_STATIQUE(MATR_RIGI=RIGIDITE,SOLVEUR=_F(METHODE=SOLVEURL),
                      MATR_MASS=MASSE,
                      FORCE_NODALE=_F(TOUT='OUI',
                                     TOUT_CMP='OUI',
@@ -216,7 +217,7 @@ PROJ_BASE(BASE=MODE_MEC,
 #
 # CALCUL TRANSITOIRE SUR BASE PHYSIQUE
 # -------------------------------------------
-TRAN_PHY=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
+TRAN_PHY=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',SOLVEUR=_F(METHODE=SOLVEURL),
                      MATR_MASS=MASSE,   MATR_RIGI=RIGIDITE,
                      SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
                      MODE_STAT=MODE_STA,
@@ -363,7 +364,7 @@ RITZ1=DEFI_BASE_MODALE(RITZ=(_F(MODE_MECA=MODE_EXT),
                              _F(MODE_INTF=PSEUDO),
                              ),
                        ORTHO='OUI',MATRICE=RIGIDITE,
-                       NUME_REF=NUMEDDL,
+                       NUME_REF=NUMEDDL,SOLVEUR=_F(METHODE=SOLVEURL),
                       ),
 PROJ_BASE(BASE=RITZ1,
           STOCKAGE='DIAG',
@@ -398,7 +399,7 @@ RITZ2=DEFI_BASE_MODALE(RITZ=(_F(MODE_MECA=MODE_EXT),
                              _F(MODE_INTF=MODESTAT),
                              ),
                        ORTHO='OUI',MATRICE=RIGIDITE,
-                       NUME_REF=NUMEDDL,
+                       NUME_REF=NUMEDDL,SOLVEUR=_F(METHODE=SOLVEURL),
                       ),
 PROJ_BASE(BASE=RITZ2,
           STOCKAGE='DIAG',

@@ -15,26 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine thmevc(option, nomte, axi, nno, npg,&
-                      ipoids, ivf, idfde, nddls, nnos,&
-                      nddlm, nnom)
-        character(len=16) :: option
-        character(len=16) :: nomte
-        aster_logical :: axi
-        integer :: nno
-        integer :: npg
-        integer :: ipoids
-        integer :: ivf
-        integer :: idfde
-        integer :: nddls
-        integer :: nnos
-        integer :: nddlm
-        integer :: nnom
+    subroutine thmevc(option  , nomte  , l_axi   ,&
+                      nno     , nnos   ,&
+                      npg     , nddls  , nddlm   ,&
+                      jv_poids, jv_func, jv_dfunc)
+        character(len=16), intent(in) :: option, nomte
+        aster_logical, intent(in) :: l_axi
+        integer, intent(in) :: nno, nnos
+        integer, intent(in) :: npg
+        integer, intent(in) :: nddls, nddlm
+        integer, intent(in) :: jv_poids, jv_func, jv_dfunc
     end subroutine thmevc
 end interface

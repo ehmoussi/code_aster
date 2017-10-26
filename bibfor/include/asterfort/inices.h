@@ -15,13 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine inices(valcen, valfac, maxfa)
-        integer :: maxfa
-        real(kind=8) :: valcen(14, 6)
-        real(kind=8) :: valfac(maxfa, 14, 6)
+    subroutine inices(maxfa, valcen, valfac)
+        integer, intent(in) :: maxfa
+        real(kind=8), intent(out) :: valcen(14, 6)
+        real(kind=8), intent(out) :: valfac(maxfa, 14, 6)
     end subroutine inices
 end interface

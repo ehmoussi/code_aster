@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine dbr_init_algo_rb(nb_mode, ds_para_rb)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine dbr_init_algo_rb(ds_para_rb)
 !
 use Rom_Datastructure_type
 !
@@ -31,10 +32,7 @@ implicit none
 #include "asterfort/romMultiParaSystEvalType.h"
 #include "asterfort/romMultiParaInit.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer, intent(in) :: nb_mode
-    type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
+type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -44,13 +42,12 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  nb_mode          : number of empiric modes
 ! IO  ds_para_rb       : datastructure for parameters (RB)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_vari_coef
+    integer :: nb_vari_coef, nb_mode
     character(len=1) :: syst_matr_type, syst_2mbr_type, syst_type
 !
 ! --------------------------------------------------------------------------------------------------
@@ -59,6 +56,10 @@ implicit none
     if (niv .ge. 2) then
         call utmess('I', 'ROM2_41')
     endif
+!
+! - Get parameters
+!
+    nb_mode = ds_para_rb%nb_mode_maxi
 !
 ! - Evaluate type of system
 !

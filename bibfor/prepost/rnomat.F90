@@ -106,8 +106,10 @@ subroutine rnomat(icesd, icesl, icesv, imap, nomcri,&
 !C VERIFICATION HORS BORNES DEFINIES DANS CESMAT
 !C OU COMPOSANTE NON AFFECTEE
             ASSERT(iad .gt. 0)
-            if ((k .gt. 1) .and. (nommat .ne. zk8(icesv - 1 + iad))) then
-                call utmess('F', 'FATIGUE1_33')
+            if (k .gt. 1) then
+                if (nommat .ne. zk8(icesv - 1 + iad)) then
+                    call utmess('F', 'FATIGUE1_33')
+                endif
             else
                 nommat = zk8(icesv - 1 + iad)
             endif

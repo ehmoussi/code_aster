@@ -23,11 +23,12 @@
 interface
     subroutine nmprma(modelz     , mate    , carele, ds_constitutive,&
                       ds_algopara, lischa  , numedd, numfix, solveu,&
-                      comref     , ds_print, ds_measure, sddisc,&
+                      comref     , ds_print, ds_measure, ds_algorom, sddisc,&
                       sddyna     , numins  , fonact, ds_contact,&
                       valinc     , solalg  , veelem, meelem, measse,&
                       maprec     , matass  , faccvg, ldccvg)
         use NonLin_Datastructure_type
+        use Rom_Datastructure_type
         character(len=*) :: modelz
         character(len=24) :: mate
         character(len=24) :: carele
@@ -40,6 +41,7 @@ interface
         character(len=24) :: comref
         type(NL_DS_Print), intent(inout) :: ds_print
         type(NL_DS_Measure), intent(inout) :: ds_measure
+        type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
         character(len=19) :: sddisc
         character(len=19) :: sddyna
         integer :: numins

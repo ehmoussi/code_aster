@@ -21,7 +21,7 @@ subroutine mmalgo(ds_contact, l_loop_cont, l_frot_zone, &
                   indi_cont_eval, indi_frot_eval, dist_cont_curr,  &
                   pres_cont_curr, dist_frot_curr, pres_frot_curr, v_sdcont_cychis,&
                   v_sdcont_cyccoe, v_sdcont_cyceta, indi_cont_curr,indi_frot_curr,&
-                  ctcsta, mmcvca)
+                  ctcsta, mmcvca,l_pena_frot,l_pena_cont,vale_pene)
 !
 use NonLin_Datastructure_type
 !
@@ -36,14 +36,17 @@ implicit none
 #include "asterfort/cfdisi.h"
 #include "asterfort/search_opt_coef.h"
 #include "asterfort/bussetta_algorithm.h"
+!#include "asterfort/proscal.h"
 !
 ! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 ! aslint: disable=W1504
 !
-    type(NL_DS_Contact), intent(in) :: ds_contact
+    type(NL_DS_Contact), intent(inout) :: ds_contact
     aster_logical, intent(in) :: l_loop_cont
     aster_logical, intent(in) :: l_frot_zone
     aster_logical, intent(in) :: l_glis_init
+    aster_logical, intent(in) :: l_pena_frot
+    aster_logical, intent(in) :: l_pena_cont
     integer, intent(in) :: type_adap
     integer, intent(in) :: i_cont_poin
     integer, intent(in) :: zone_index
@@ -105,6 +108,18 @@ implicit none
     real(kind=8) :: alpha_frot_matr=0.0, alpha_frot_vect=0.0
     real(kind=8) :: coef_opt=0.0,pres_cont(2)=0.0, dist_cont(2)=0.0
     real(kind=8) :: coef_bussetta=0.0, dist_max
+    real(kind=8), intent(in) :: vale_pene
+    integer      ::  i_algo_cont=0
+    integer :: i_reso_frot=0
+!    real(kind=8) :: coef_bussetta=0.0, dist_max, coef_tmp
+    real(kind=8) ::  coef_tmp
+!    real(kind=8) ::  racine,racine1,racine2,racinesup
+!    real(kind=8) ::  a,b,c,discriminant
+    
+
+
+
+
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -114,10 +129,12 @@ implicit none
     
     l_coef_adap = ((type_adap .eq. 1) .or. (type_adap .eq. 2) .or. &
                   (type_adap .eq. 5) .or. (type_adap .eq. 6 ))
-    
+! le cas type_adap = 3 est particulier : on adapte coef_cont avec bussetta mais pas coef_frot    
     treatment =  ((type_adap .eq. 4) .or. (type_adap .eq. 5) .or. &
                   (type_adap .eq. 6) .or. (type_adap .eq. 7 ))
     i_reso_cont  = cfdisi(ds_contact%sdcont_defi,'ALGO_RESO_CONT')
+    i_reso_frot  = cfdisi(ds_contact%sdcont_defi,'ALGO_FROT')
+    i_algo_cont  = cfdisi(ds_contact%sdcont_defi,'ALGO_CONT')
 !
 ! - Save old history
 !
@@ -376,10 +393,109 @@ implicit none
     if ((type_adap .eq. 2) .or. (type_adap .eq. 3) .or. &
         (type_adap .eq. 6) .or. (type_adap .eq. 7)) then
         
-        coef_bussetta = v_sdcont_cychis(60*(i_cont_poin-1)+2)
-        dist_max      = 0.001*ds_contact%arete_min
-        call bussetta_algorithm(dist_cont_curr, dist_cont_prev,dist_max, coef_bussetta)
-        v_sdcont_cychis(60*(i_cont_poin-1)+2) = coef_bussetta
-        
+            coef_bussetta = v_sdcont_cychis(60*(i_cont_poin-1)+2)
+            coef_tmp = v_sdcont_cychis(60*(i_cont_poin-1)+2)
+            
+            if (nint(vale_pene) .eq. -1) then 
+            ! Mode relatif 
+                dist_max = 1.d-2*ds_contact%arete_min
+            else
+            ! Mode absolu
+                dist_max = vale_pene
+            endif
+            
+            if (l_pena_cont) then
+                mmcvca = mmcvca .and. (ctcsta .eq. 0)
+                call bussetta_algorithm(dist_cont_curr, dist_cont_prev,dist_max, coef_bussetta)
+                v_sdcont_cychis(60*(i_cont_poin-1)+2) = max(coef_bussetta,&
+                                                        v_sdcont_cychis(60*(i_cont_poin-1)+2))
+            endif
+                                                    
+            ! Traitement de fortes interpenetrations         
+            if (indi_cont_curr .eq. 1 .and. l_pena_cont) then            
+                    
+                if (dist_cont_curr .gt. dist_max) then 
+                    coef_tmp =coef_tmp*(abs(dist_cont_curr)/dist_max)*100
+                    call bussetta_algorithm(dist_cont_curr, dist_cont_prev,dist_max, coef_bussetta)
+                    if (coef_bussetta .lt. coef_tmp) coef_bussetta = coef_tmp
+                    ! On approche de la fin des iterations de Newton mais penetration pas satisfait
+                    ! Le calcul du coefficient n'est pas satisfaisant on l'augmente
+                    if (nint(ds_contact%continue_pene) .eq. 1) coef_bussetta = coef_bussetta*10
+                    if (coef_bussetta .gt. ds_contact%max_coefficient)  then
+                        coef_bussetta = coef_bussetta *0.1
+                        ! critere trop severe : risque de non convergence
+                        ds_contact%critere_penetration = 2.0
+                    endif
+                    v_sdcont_cychis(60*(i_cont_poin-1)+2) = coef_bussetta
+                    ! critere trop lache
+                    if (dist_max .gt. ds_contact%arete_min) &
+                        ds_contact%critere_penetration = 1.0
+                endif
+            endif
+       ! cas ALGO_CONT=PENALISATION, ALGO_FROT=STANDARD
+       ! On fixe un statut adherent en cas de fortes interpenetration
+       if ((.not. l_pena_frot .and. l_pena_cont ).and. indi_cont_curr .eq. 1) then 
+           if ((dist_cont_curr .gt. dist_max) .and. (indi_frot_curr .eq. 0.)&
+                .and. (norm2(dist_frot_curr) .lt. 0.01*dist_max)) then 
+               v_sdcont_cychis(60*(i_cont_poin-1)+5)  = 2
+           endif
+       endif
+       
+       ! cas ALGO_CONT=PENALISATION, ALGO_FROT=PENALISATION
+!        if ( indi_cont_curr .eq. 1 .and. l_pena_frot .and. l_pena_cont) then   
+!           if (dist_cont_curr .gt. dist_max .and. indi_frot_curr .eq. 0.&
+!                .and. (norm2(dist_frot_curr) .lt. 1.d-6*dist_max)) then 
+!               v_sdcont_cychis(60*(i_cont_poin-1)+5)  = 2
+
+!cas 1 : Forte interpenetrations : statut = adherent + recherche du coef_frot_curr optimale
+!        Statut doit etre adherent :
+!        (Lamba+r*dt).(Lambda+r*dt) < 1
+!         On aboutit a une equation du 2nd degre : 
+!         Lambda.Lambda+2r*Lambda.dt+r2*dt.dt < 1
+!         Discriminant = (2Lambda.dt)**2 - 4(dt.dt)(Lambda*Lambda)
+!         Si Discriminant < 0 Alors c'est le pire cas  qui puisse arriver
+!         On ne fait rien. On laisse l'algorithme de Newton se débrouiller.
+!         Si Discriminant > 0  Alors
+!         Pour que l'inequation soit verifiee alors il faut prendre une valeur 
+!         legerement inferieure a la racine superieure. coef_frot_curr peut devenir negatif
+!         Dans ce dernier cas, cela veut dire qu'on a calculer un glissement dans une mauvaise
+!         direction tangentielle : coef_frot_curr*dist_frot_curr
+!                a = proscal(3,dist_frot_curr,dist_frot_curr)
+!                b = 2*proscal(3,pres_frot_curr,dist_frot_curr)
+!                c = proscal(3,pres_frot_curr,pres_frot_curr)
+!                discriminant = b**2 -4.0*a*c
+!                if (discriminant .gt. 0.0d0) then
+!                    racine1 = (-b - sqrt(discriminant))/(2*a)
+!                    racine2 = (-b + sqrt(discriminant))/(2*a)
+!                    racinesup =racine2 
+!                    if (racine1 .gt. racine2) racinesup = racine1 
+!                else
+!                    racinesup = ds_contact%estimated_coefficient**0.2
+!                endif               
+                
+!                if (racinesup .gt. 0.0) then 
+!                    coef_frot_curr = 0.99*racinesup
+!                else
+!                    coef_frot_curr = coef_frot_curr*norm2(dist_frot_curr) / dist_max 
+!                endif
+!                if (i_cont_poin .eq. 1) &
+!                   write (6,*) "coef_frott gliss",coef_frot_curr, i_cont_poin  
+!            endif    
+                
+                
+!            if (indi_frot_curr .eq. 1 .and. norm2(dist_frot_curr) .gt. 1.d-6*dist_max) then
+!               v_sdcont_cychis(60*(i_cont_poin-1)+5)  = 1
+!                coef_frot_curr = coef_frot_curr*norm2(dist_frot_curr) / dist_max 
+                
+!                if (i_cont_poin .eq. 1) &
+!                write (6,*) "coef_frott adhe",coef_frot_curr, i_cont_poin
+!            elseif  (indi_frot_curr .eq. 0 .and. dist_cont_curr .gt. dist_max ) then
+!               v_sdcont_cychis(60*(i_cont_poin-1)+5)  = 1
+!                coef_frot_curr = coef_frot_curr*norm2(dist_frot_curr) / dist_max 
+!                if (i_cont_poin .eq. 1) &
+!                 write (6,*) "coef_frott gliss",coef_frot_curr, i_cont_poin          
+!            endif
+!            v_sdcont_cychis(60*(i_cont_poin-1)+6)  = coef_frot_curr
+!        endif
     endif
 end subroutine

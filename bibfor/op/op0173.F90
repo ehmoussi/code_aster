@@ -15,14 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine op0173()
-    implicit none
 !
+implicit none
 !
-!     COMMANDE:  EXTR_TABLE
-!
-! ----------------------------------------------------------------------
 #include "jeveux.h"
 #include "asterfort/copisd.h"
 #include "asterc/getfac.h"
@@ -39,6 +36,14 @@ subroutine op0173()
 #include "asterfort/tbliva.h"
 #include "asterfort/titre.h"
 #include "asterfort/utmess.h"
+!
+! ----------------------------------------------------------------------
+!
+!
+!     COMMANDE:  EXTR_TABLE
+!
+! ----------------------------------------------------------------------
+!
     integer :: ibid, n1, iret, nparfi, vali
     real(kind=8) :: r8b, valr
     complex(kind=8) :: cbid, valc
@@ -98,6 +103,15 @@ subroutine op0173()
         call sdmpic('MATR_ELEM', nomres)
 !
     else if (typesd .eq. 'VECT_ELEM_DEPL_R') then
+!          ------------------------------
+        call copisd('VECT_ELEM', 'G', valk, nomres)
+!
+    else if (typesd .eq. 'MATR_ELEM_TEMP_R') then
+!          ------------------------------
+        call copisd('MATR_ELEM', 'G', valk, nomres)
+        call sdmpic('MATR_ELEM', nomres)
+!
+    else if (typesd .eq. 'VECT_ELEM_TEMP_R') then
 !          ------------------------------
         call copisd('VECT_ELEM', 'G', valk, nomres)
 !

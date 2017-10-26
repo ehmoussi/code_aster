@@ -58,11 +58,11 @@ subroutine rcmcrt(symax, sigm, stlin, stpar)
         valer(2) = sigm
         valer(3) = symax
         call utmess('I', 'POSTRCCM_5', nr=3, valr=valer)
-        goto 9998
+        goto 888
     endif
     stlin = yprim * symax
 !
-9998  continue
+888  continue
 !
 ! --- VARIATION DE TEMPERATURE PARABOLIQUE DANS LA PAROI
 !
@@ -82,16 +82,19 @@ subroutine rcmcrt(symax, sigm, stlin, stpar)
     else if (x.ge.0.3d0 .and. x.lt.0.4d0) then
         yprim = linlin( x, 0.3d0,4.65d0, 0.4d0,3.55d0 )
 !
+    else if (x.ge.0.0d0 .and. x.lt.0.3d0) then
+        yprim = linlin( x, 0.0d0,7.95d0, 0.3d0,4.65d0 )
+!
     else
         stpar = r8vide()
         valer(1) = x
         valer(2) = sigm
         valer(3) = symax
         call utmess('I', 'POSTRCCM_6', nr=3, valr=valer)
-        goto 9999
+        goto 999
     endif
     stpar = yprim * symax
 !
-9999  continue
+999  continue
 !
 end subroutine

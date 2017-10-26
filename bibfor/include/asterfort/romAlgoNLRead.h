@@ -19,8 +19,9 @@
 !
 !
 interface
-    subroutine romAlgoNLRead(ds_algorom)
+    subroutine romAlgoNLRead(phenom, ds_algorom)
         use Rom_Datastructure_type
+        character(len=4), intent(in) :: phenom
         type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
     end subroutine romAlgoNLRead
 end interface

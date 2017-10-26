@@ -23,11 +23,12 @@
 interface
     subroutine nmcoma(modelz, mate  , carele    , ds_constitutive, ds_algopara,&
                       lischa, numedd, numfix    , solveu         , comref     ,&
-                      sddisc, sddyna, ds_print  , ds_measure     , numins     ,&
+                      sddisc, sddyna, ds_print  , ds_measure     , ds_algorom, numins     ,&
                       iterat, fonact, ds_contact, valinc         , solalg     ,&
                       veelem, meelem, measse    , veasse         , maprec     ,&
                       matass, faccvg, ldccvg    , sdnume)
         use NonLin_Datastructure_type
+        use Rom_Datastructure_type
         character(len=*) :: modelz
         character(len=24) :: mate
         character(len=24) :: carele
@@ -42,6 +43,7 @@ interface
         character(len=19) :: sddyna
         type(NL_DS_Print), intent(inout) :: ds_print
         type(NL_DS_Measure), intent(inout) :: ds_measure
+        type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
         integer :: numins
         integer :: iterat
         integer :: fonact(*)

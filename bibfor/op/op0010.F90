@@ -595,7 +595,9 @@ subroutine op0010()
     cnsdis='&&OP0010.CNSDIS'
     delta='&&OP0010.DELTA'
 !
-    if ((method.eq.'GEOMETRI') .and. (operation.ne.'PROPA_COHESIF')) then
+    if ((method.eq.'GEOMETRI' .or. method .eq.'SIMPLEXE') & 
+         .and. (operation.ne.'PROPA_COHESIF')) then
+
          call pre_traitement(dnoma, fispre, ndim, vbeta, vgamma)
 !         
          call xprvit(dnoma, fispre, ndim, vvit, vbeta,&
@@ -728,7 +730,7 @@ subroutine op0010()
 !     AJUSTEMENT DE VT
 !-----------------------------------------------------------------------
 !
-    if (method .ne. 'GEOMETRI') then
+    if (method .ne. 'GEOMETRI'.and. method .ne. 'SIMPLEXE') then
 !
         if (niv .ge. 0) then
             write(ifm,*)
@@ -760,7 +762,7 @@ subroutine op0010()
      &               ,dttot
     endif
 !
-    if (method .eq. 'GEOMETRI') then
+    if (method .eq. 'GEOMETRI' ) then
         write(ifm,*)'   '
         write(ifm,*)'   UTILISATION DE LA METHODE GEOMETRIQUE.'
         call xprgeo(dnoma, dcnsln, dcnslt, dgrln, dgrlt,&
@@ -769,13 +771,21 @@ subroutine op0010()
         goto 100
     endif
 !
-    call xprls(dnoma, dcnsln, dcnslt, dgrln, dgrlt,&
-               cnsvn, cnsvt, cnsbl, dttot, nodtor,&
-               eletor, liggrd, delta)
+    if (method .eq. 'SIMPLEXE' ) then
+        write(ifm,*)'   '
+        write(ifm,*)'   UTILISATION DE LA METHODE SIMPLEXE.'
+        call xprgeo(dnoma, dcnsln, dcnslt, dgrln, dgrlt,&
+                    vpoint, cnsbl, dttot, nodtor, liggrd,&
+                    cnsbet, listp, operation)
+    else
+        call xprls(dnoma, dcnsln, dcnslt, dgrln, dgrlt,&
+                   cnsvn, cnsvt, cnsbl, dttot, nodtor,&
+                   eletor, liggrd, delta)
+    endif
 !
     call jedetr(cnsvt)
     call jedetr(cnsvn)
-    call jedetr(cnsbl)
+
 !
 !-----------------------------------------------------------------------
 !     REINITIALISATION DE LSN
@@ -791,17 +801,17 @@ subroutine op0010()
 
     if (method.eq.'UPWIND') then
             nbrinit = 1
-            call xprupw_fmm('REINITLN', dnoma, fispre, vcnt, grlrt,&
+            call xprupw_fmm('REINITLN', dnoma, vcnt, grlrt,&
                              noesom, lcmin, dcnsln, dgrln, dcnslt, &
                              dgrlt, isozro, nodtor, eletor, liggrd,&
                              vpoint ,cnsbl ,dttot ,cnsbet ,listp,nbrinit)
     endif
     
     if (method .eq. 'SIMPLEXE') then
-        call xprfastmarching('REINITLN', dnoma, fispre, cnxinv, &
+        call xprfastmarching('REINITLN', dnoma, cnxinv, &
                               noesom, lcmin, dcnsln, dgrln, dcnslt, &
                               dgrlt, isozro, nodtor, eletor, liggrd,&
-                              vpoint ,cnsbl ,dttot ,cnsbet ,listp)
+                              vpoint ,cnsbl ,cnsbet ,listp)
      endif    
     
     call jedetr(isozro)
@@ -819,7 +829,7 @@ subroutine op0010()
 !   On réinitialise deux fois pour redresser l'iso zéro
     if (method.eq.'UPWIND') then
         do nbrinit = 1 , 2
-           call xprupw_fmm('REINITLT', dnoma, fispre, vcnt, grlrt,&
+           call xprupw_fmm('REINITLT', dnoma, vcnt, grlrt,&
                            noesom, lcmin, dcnsln, dgrln, dcnslt, &
                            dgrlt, isozro, nodtor,eletor, liggrd, &
                            vpoint ,cnsbl ,dttot ,cnsbet ,listp,nbrinit)
@@ -828,13 +838,14 @@ subroutine op0010()
     endif
     
     if (method .eq. 'SIMPLEXE') then    
-        call xprfastmarching('REINITLT', dnoma, fispre, cnxinv, &
+        call xprfastmarching('REINITLT', dnoma, cnxinv, &
                              noesom, lcmin, dcnsln, dgrln, dcnslt, &
                              dgrlt, isozro, nodtor, eletor, liggrd,&
-                             vpoint ,cnsbl ,dttot ,cnsbet ,listp)
+                             vpoint ,cnsbl ,cnsbet ,listp)
         call jedetr(isozro)                             
     endif
 
+    call jedetr(cnsbl)
 !------------------------------------------------------------------!
 
 
