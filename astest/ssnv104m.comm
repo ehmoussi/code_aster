@@ -81,6 +81,7 @@ CHA2=DEFI_CONTACT(MODELE=MO,
                           GROUP_MA_MAIT='CON1',
                           GROUP_MA_ESCL='CON2',
                           CONTACT_INIT='OUI',
+                          ADAPTATION='CYCLAGE',
                           ),);
 
 
@@ -108,7 +109,7 @@ RESU2=STAT_NON_LINE(MODELE=MO,
                                 RESI_GLOB_MAXI=1.E-6),
                     SOLVEUR=_F(ELIM_LAGR='NON',
                             METHODE='MUMPS',
-                            RESI_RELA=5.E-6,
+                            #RESI_RELA=5.E-6,
                             PCENT_PIVOT= 30),
                         NEWTON=_F(REAC_ITER=1,),);
 
