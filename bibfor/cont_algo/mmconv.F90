@@ -68,7 +68,8 @@ implicit none
 !
     integer :: ifm, niv
     character(len=19) :: depplu, depmoi, ddepla,depdel
-    aster_logical :: lnewtf, lnewtg,lnewtc,loop_cont_dive,l_exis_pena
+    aster_logical :: loop_cont_divec,loop_cont_diveg
+    aster_logical :: lnewtf, lnewtg,lnewtc,l_exis_pena
     real(kind=8) :: time_curr
 
 !
@@ -132,28 +133,37 @@ implicit none
     endif
     
     if (l_exis_pena) then 
+        call mm_pene_loop(ds_contact)
+        vpene = ds_contact%calculated_penetration
         if (lnewtc) then
         !   Cas de newton generalise pour le contact
-        !   on remet a jour vpene a chaque iteration 
-            call mm_pene_loop(ds_contact)
-            vpene = ds_contact%calculated_penetration
+        !   Cas de point fixe pour la géométrie
+        !   on remet a jour vpene a chaque iteration mais Pas de verif de conv pene
+            if (.not. lnewtg) then 
+                call mmbouc(ds_contact, 'Geom', 'Is_Divergence',loop_state_=loop_cont_diveg)
+                if (loop_cont_diveg) then 
+                    ds_contact%continue_pene = 4.0
+                endif 
+            else 
+                ds_contact%continue_pene = 0.0            
+            endif
         else 
         !   Cas de point fixe pour le contact
-        !   on ne remet pas a jour vpene a chaque iteration 
-            call mmbouc(ds_contact, 'Cont', 'Is_Divergence',loop_state_=loop_cont_dive)
-            if (loop_cont_dive) then 
-                vpene = 1.d-300
-                ds_contact%critere_penetration = 3.0
+        !   on remet a jour vpene a chaque iteration mais Pas de verif de conv pene
+            call mmbouc(ds_contact, 'Cont', 'Is_Divergence',loop_state_=loop_cont_divec)
+            if (loop_cont_divec) then 
+                ds_contact%continue_pene = 3.0
             else
-                call mm_pene_loop(ds_contact)
-                vpene = ds_contact%calculated_penetration
+                call mmbouc(ds_contact, 'Geom', 'Is_Divergence',loop_state_=loop_cont_diveg)
+                if (loop_cont_diveg) then 
+                    ds_contact%continue_pene = 4.0
+                else 
+                    ds_contact%continue_pene = 0.0
+                endif                            
             endif
             
         endif
     endif
-!    L'adaptation n'a pas fonctionne : On fait des iterations supplementaires
-!    if (ds_contact%iteration_newton .gt. ds_contact%it_adapt_maxi-6) &
-!     ds_contact%continue_pene=1.0 --> voir dans mm_pene_loop
 
 
 !

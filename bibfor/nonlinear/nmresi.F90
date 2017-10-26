@@ -356,7 +356,8 @@ implicit none
     if (l_cont_cont .or. l_cont_lac) then
         call mmconv(noma , ds_contact, valinc, solalg, vfrot,&
                     nfrot, vgeom     , ngeom, vpene)
-        if (nint(ds_contact%continue_pene) .eq. 1) ds_conv%l_stop_pene = .false._1
+        if (nint(ds_contact%continue_pene) .eq. 3 .or. &
+            nint(ds_contact%continue_pene) .eq. 4 ) ds_conv%l_stop_pene = .false._1
     endif
 !
 ! - Save informations about residuals into convergence datastructure

@@ -399,15 +399,15 @@ implicit none
             coef_bussetta = v_sdcont_cychis(60*(i_cont_poin-1)+2)
             coef_tmp = v_sdcont_cychis(60*(i_cont_poin-1)+2)
             
-            if (nint(vale_pene) .eq. -1) then 
-            ! Mode relatif 
-                dist_max = 1.d-2*ds_contact%arete_min
-            else
-            ! Mode absolu
-                dist_max = vale_pene
-            endif
-            
             if (l_pena_cont) then
+                if (nint(vale_pene) .eq. -1) then 
+                ! Mode relatif 
+                    dist_max = 1.d-2*ds_contact%arete_min
+                else
+                ! Mode absolu
+                    dist_max = vale_pene
+                endif
+            
                 mmcvca = mmcvca .and. (ctcsta .eq. 0)
                 call bussetta_algorithm(dist_cont_curr, dist_cont_prev,dist_max, coef_bussetta)
                 v_sdcont_cychis(60*(i_cont_poin-1)+2) = max(coef_bussetta,&
@@ -427,12 +427,12 @@ implicit none
                     if (coef_bussetta .gt. ds_contact%max_coefficient)  then
                         coef_bussetta = coef_bussetta *0.1
                         ! critere trop severe : risque de non convergence
-                        ds_contact%critere_penetration = 2.0
+                        ds_contact%continue_pene = 2.0
                     endif
                     v_sdcont_cychis(60*(i_cont_poin-1)+2) = coef_bussetta
                     ! critere trop lache
                     if (dist_max .gt. ds_contact%arete_min) &
-                        ds_contact%critere_penetration = 1.0
+                        ds_contact%continue_pene = 1.0
                 endif
             endif
        ! cas ALGO_CONT=PENALISATION, ALGO_FROT=STANDARD

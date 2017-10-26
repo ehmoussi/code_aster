@@ -510,15 +510,15 @@ character(len=19), intent(in) :: cnsper
 !
 ! - Alarm for large penetration criteria
 !
-    if (nint(ds_contact%critere_penetration) .eq. 1) then
+    if (nint(ds_contact%continue_pene) .eq. 1) then
         call utmess('A', 'CONTACT3_99', nr=2,valr=[ds_contact%arete_min,ds_contact%arete_max])
     endif
 !
 ! - Alarm for penetration criteria
 !
-    if (nint(ds_contact%critere_penetration) .eq. 3) then
+    if (ds_contact%calculated_penetration .le. 1.d-99) then
         call utmess('A', 'CONTACT3_97')
-    endif
+    endif    
 !
     call jedema()
 end subroutine
