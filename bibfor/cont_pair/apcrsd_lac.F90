@@ -106,6 +106,8 @@ implicit none
     real(kind=8), pointer :: v_sdappa_gapi(:) => null()
     character(len=24) :: sdappa_coef
     real(kind=8), pointer :: v_sdappa_coef(:) => null()
+    character(len=24) :: sdappa_gpre
+    real(kind=8), pointer :: v_sdappa_gpre(:) => null()
     character(len=24) :: sdappa_poid
     real(kind=8), pointer :: v_sdappa_poid(:) => null()
     character(len=24) :: sdappa_psno
@@ -114,6 +116,12 @@ implicit none
     character(len=24) :: sdappa_dcl
     integer, pointer :: v_sdappa_dcl(:) => null()
     integer, pointer :: vi_ptrdclac(:) => null()
+    character(len=24) :: sdcont_stat_prev
+    integer, pointer :: v_sdcont_stat_prev(:) => null()
+    character(len=24) :: sdcont_cyclac_etat
+    integer, pointer :: v_sdcont_cyclac_etat(:) => null()
+    character(len=24) :: sdcont_cyclac_hist
+    real(kind=8), pointer :: v_sdcont_cyclac_hist(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -209,6 +217,15 @@ implicit none
     sdappa_poid = sdappa(1:19)//'.POID'
     call wkvect(sdappa_poid, 'V V R', nt_patch, vr = v_sdappa_coef)
     call wkvect(sdappa_coef, 'V V R', nt_patch, vr = v_sdappa_poid)
+    
+
+
+! - Datastructures for adaptation rho_n
+ 
+    sdappa_gpre = sdappa(1:19)//'.GPRE'
+    call wkvect(sdappa_gpre, 'V V R', nt_patch, vr = v_sdappa_gpre)
+
+
 !
 ! - Loop on contact zones
 !
@@ -236,6 +253,18 @@ implicit none
     sdappa_norl = sdappa(1:19)//'.NORL'
     call wkvect(sdappa_norl, 'V V R', 3*nb_cont_node, vr = v_sdappa_norl)
 !
+! - Status saving (At Iteration k-2) ! statut a n-1
+!
+    sdcont_stat_prev = ds_contact%sdcont_solv(1:14)//'.CYCL'
+    sdcont_cyclac_etat = ds_contact%sdcont_solv(1:14)//'.CYCE'
+    sdcont_cyclac_hist = ds_contact%sdcont_solv(1:14)//'.CYCH'
+!
+! - Creating cycling objects
+!
+    call wkvect(sdcont_stat_prev, 'V V I', nt_patch, vi = v_sdcont_stat_prev)
+    call wkvect(sdcont_cyclac_etat, 'V V I', nt_patch, vi = v_sdcont_cyclac_etat)
+    call wkvect(sdcont_cyclac_hist, 'V V R', 22*nt_patch, vr = v_sdcont_cyclac_hist)
+!
 ! - Datastructures for informations (from mesh to patch)
 !
     sdappa_info = sdappa(1:19)//'.INFO'
@@ -251,6 +280,10 @@ implicit none
             ASSERT(v_sdappa_info(6*(patch_indx-1)+1+nb_elem_patch) .eq. 0)
             v_sdappa_info(6*(patch_indx-1)+1+nb_elem_patch) = elem_nume
             v_sdappa_info(6*(patch_indx-1)+1) = nb_elem_patch
+            v_sdcont_stat_prev((patch_indx-1)+1) = -2
+            v_sdcont_cyclac_etat((patch_indx-1)+1) = -2
+            v_sdcont_cyclac_hist(22*(patch_indx-1)+1) = -2
+            v_sdcont_cyclac_hist(22*(patch_indx-1)+11) = elem_nume
         endif
     end do
 !

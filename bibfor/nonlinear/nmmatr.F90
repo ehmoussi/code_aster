@@ -107,7 +107,7 @@ implicit none
 !
     lctcd         = isfonc(fonact,'CONT_DISCRET')
     l_neum_undead = isfonc(fonact,'NEUM_UNDEAD')
-    l_cont_laC    = isfonc(fonact,'CONT_LAC')
+    l_cont_lac    = isfonc(fonact,'CONT_LAC')
     lamor         = ndynlo(sddyna,'MAT_AMORT')
     ldyna         = ndynlo(sddyna,'DYNAMIQUE')
     lexpl         = ndynlo(sddyna,'EXPLICITE')

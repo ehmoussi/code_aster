@@ -172,14 +172,14 @@ implicit none
         call getvr8(keywf, 'COEF_CONT', iocc=i_zone, scal=coef_augm_cont)
         algo_cont = 1.d0
         coef_cont = coef_augm_cont
-        pene_maxi = 1.d15
+        pene_maxi = 1.d3
     else if (s_algo_cont .eq. 'PENALISATION') then
         call getvtx(keywf, 'ADAPTATION', iocc=i_zone, scal=adaptation)
         ! L'utilisateur peut ne pas renseigner pene_maxi
         call getvr8(keywf, 'PENE_MAXI', iocc=i_zone, scal=pene_maxi,nbret=nbret)
         if ((adaptation .eq. 'NON' .or. adaptation .eq. 'CYCLAGE') .and. (nbret .le. 0) )then
             call getvr8(keywf, 'COEF_PENA_CONT', iocc=i_zone, scal=coef_pena_cont)
-            pene_maxi = 1.d15
+            pene_maxi = 1.d3
         elseif (adaptation .eq. 'ADAPT_COEF' .or. adaptation .eq. 'TOUT' .or.(nbret .ge. 1))then
 !            write (6,*) "nbret=",nbret
             if (nbret .le. 0) then 
@@ -194,7 +194,7 @@ implicit none
     else if (s_algo_cont .eq. 'LAC') then
         algo_cont = 5.d0
         coef_cont = coef_augm_cont
-        pene_maxi = 1.d15
+        pene_maxi = 1.d3
     else
         ASSERT(.false.)
     endif
@@ -439,8 +439,22 @@ implicit none
          !           write (6,*) "branchez ADAPTATION=CYCLAGE"
                 endif
             endif
-            
-        else
+                         
+        else 
+            ASSERT(.false.)
+        endif
+    elseif  (s_algo_cont .eq. 'LAC') then 
+        
+        call getvtx(keywf, 'ADAPTATION', iocc=i_zone, scal=adaptation,nbret=nbret)
+        if ( nbret .le. 0 )  adaptation='NON'
+        v_sdcont_paraci(20) = 0
+    
+        if (adaptation .eq. 'NON') then
+        ! Aucun traitement adaptatif inactif
+             v_sdcont_paraci(20) = 0
+        else if (adaptation .eq. 'CYCLAGE') then
+            v_sdcont_paraci(20) = 4
+        else 
             ASSERT(.false.)
         endif
     endif

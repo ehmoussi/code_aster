@@ -14,7 +14,7 @@
 !
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
-! --------------------------------------------------------------------
+! ----------------------------------------------------------crit----------
 
 subroutine nmactn(ds_print, sddisc, sderro, ds_contact,&
                   ds_conv , iterat, numins)
@@ -99,7 +99,7 @@ implicit none
     if (retact .eq. 0) then
 !
 ! ----- TOUT EST OK -> ON PASSE A LA SUITE
-!
+!cri
         actnew = 0
     else if (retact.eq.1) then
 !
@@ -125,16 +125,9 @@ implicit none
             call nmeceb(sderro, 'RESI', 'CONV')
         else if  (.not.ds_conv%l_stop_pene) then
 !
-! ------- CONVERGENCE PENE_MAXI 
-!
-            call utmess('A', 'MECANONLINE2_38', nr=4,valr=[&
-                        ds_contact%calculated_penetration/ds_contact%arete_min,&
-                        ds_contact%arete_min,ds_contact%estimated_coefficient,ds_contact%arete_max])
-!
-! ------- ARRET DU CALCUL
-!
+! ------- CONVERGENCE PENE_MAXI : Bcle PF not converged
             actnew = 3
-        else if  (nint(ds_contact%critere_penetration) .eq. 2) then
+        else if  (nint(ds_contact%continue_pene) .eq. 2) then
 !
 ! ------- CONVERGENCE PENE_MAXI 
 !
