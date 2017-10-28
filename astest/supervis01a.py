@@ -7,17 +7,17 @@ Unittest for CommandSyntax.
 
 import platform
 import code_aster
-from code_aster.Cata.Commands.debut import DEBUT as cata
+from code_aster.Cata.Commands import DEBUT, DYNA_VIBRA
 from code_aster.Supervis import CommandSyntax
 
 code_aster.init("--abort", "--debug")
 
 test = code_aster.TestCase()
 
-syntax = CommandSyntax("DEBUT", cata)
+syntax = CommandSyntax("DEBUT", DEBUT)
 test.assertEqual(syntax.getName(), "DEBUT")
 
-catadef = cata.definition
+catadef = DEBUT.definition
 test.assertIn('INFO', catadef.simple_keywords)
 test.assertNotIn('INFO', catadef.factor_keywords)
 test.assertIn('CODE', catadef.factor_keywords)
@@ -90,5 +90,18 @@ rand = syntax.getran()
 test.assertGreaterEqual(rand, 0.)
 test.assertLessEqual(rand, 1.)
 
+syntax.free()
+
+# some more complex cases (factor keywords under conditional blocks)
+syntax = CommandSyntax("DYNA_VIBRA", DYNA_VIBRA)
+test.assertEqual(syntax.getName(), "DYNA_VIBRA")
+
+test.assertTrue(syntax.getexm("", "TYPE_CALCUL"))
+test.assertTrue(syntax.getexm("", "INFO"))
+
+test.assertTrue(syntax.getexm("IMPRESSION", ""))
+test.assertTrue(syntax.getexm("IMPRESSION", "NIVEAU"))
+
+test.assertTrue(syntax.getexm("EXCIT", "CHARGE"))
 
 test.printSummary()

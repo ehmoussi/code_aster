@@ -39,16 +39,14 @@ to import command files that contain it. But it is always optional (see
 `checkMandatory`) because it is removed during import.
 """
 
-import os
 import inspect
-import copy
 import types
 from collections import OrderedDict
 
+from .DataStructure import DataStructure, UnitBaseType
 from .SyntaxUtils import (block_utils, debug_message2, disable_0key,
                           enable_0key, mixedcopy, sorted_dict,
                           value_is_sequence)
-from .DataStructure import UnitBaseType, DataStructure
 
 
 class SyntaxId(object):
@@ -96,7 +94,8 @@ class ConversionLevel(object):
 class CataDefinition(OrderedDict):
 
     """Dictionary to store the definition of syntax objects.
-    Iteration over the elements is ordered by type: SimpleKeyword, FactorKeyword and Bloc.
+    Iteration over the elements is ordered by type: SimpleKeyword, FactorKeyword
+    and Bloc.
     """
 
     @property
@@ -146,15 +145,17 @@ class CataDefinition(OrderedDict):
         return sorted_dict(kws)
 
     def _filter_entities(self, typeslist):
-        """Filter entities by type.
+        """Filter entities by type recursively.
 
         Returns:
             dict: dict of entities of the requested types.
         """
         entities = CataDefinition()
         for key, value in self.items():
-            if type(value) in typeslist:
+            if isinstance(value, typeslist):
                 entities[key] = value
+            elif isinstance(value, Bloc):
+                entities.update(value.definition._filter_entities(typeslist))
         return entities
 
     def iterItemsByType(self):

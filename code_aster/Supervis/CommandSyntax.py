@@ -493,11 +493,14 @@ class CommandSyntax(object):
             int: 1 if the keyword exists, else 0.
         """
         catadef = self._getCataDefinition(factName)
+        logger.debug("getexm: catadef: {0}".format(catadef.keys()
+                                                   if catadef else None))
         if not catadef:
             return 0
         if not simpName.strip():
             return 1
         keywords = catadef.simple_keywords
+        logger.debug("getexm: simple keywords: {0}".format(keywords.keys()))
         return int(keywords.get(simpName) is not None)
 
     def getmjm(self, factName, occurrence, maxval):
