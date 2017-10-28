@@ -105,6 +105,7 @@ RIGI_CONT = Option(
         SP.PCONFR,
         SP.PDEPL_M,
         SP.PDEPL_P,
+        SP.PDDEPLA,
         SP.PDONCO,
            PFISNO,
         SP.PGEOMER,

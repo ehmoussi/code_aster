@@ -85,7 +85,7 @@ implicit none
     character(len=8) :: mesh
     character(len=19) :: vect_elem_cont, vect_elem_frot
     character(len=19) :: vect_asse_frot, vect_asse_cont, vect_asse_fint
-    character(len=19) :: disp_prev, disp_cumu_inst, vite_prev, acce_prev, vite_curr
+    character(len=19) :: disp_prev, disp_cumu_inst, disp_newt_curr, vite_prev, acce_prev, vite_curr
     character(len=19) :: varc_prev, varc_curr, time_prev, time_curr
 !
 ! --------------------------------------------------------------------------------------------------
@@ -114,6 +114,7 @@ implicit none
     call nmchex(hval_incr, 'VALINC', 'ACCMOI', acce_prev)
     call nmchex(hval_incr, 'VALINC', 'VITPLU', vite_curr)
     call nmchex(hval_algo, 'SOLALG', 'DEPDEL', disp_cumu_inst)
+    call nmchex(hval_algo, 'SOLALG', 'DDEPLA', disp_newt_curr)
     call nmchex(hval_veelem, 'VEELEM', 'CNELTC', vect_elem_cont)
     call nmchex(hval_veelem, 'VEELEM', 'CNELTF', vect_elem_frot)
     call nmchex(hval_veasse, 'VEASSE', 'CNELTC', vect_asse_cont)
@@ -148,7 +149,7 @@ implicit none
         call nmtime(ds_measure, 'Launch', 'Cont_Elem')
         call nmelcv('CONT'        , mesh     , model    , mate     , ds_contact    ,&
                     disp_prev     , vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
-                    vect_elem_cont, time_prev, time_curr, ds_constitutive)
+                    disp_newt_curr, vect_elem_cont, time_prev, time_curr, ds_constitutive)
         call assvec('V', vect_asse_cont, 1, vect_elem_cont, [1.d0],&
                     nume_dof, ' ', 'ZERO', 1)
         call nmtime(ds_measure, 'Stop', 'Cont_Elem')
@@ -165,7 +166,7 @@ implicit none
         call nmtime(ds_measure, 'Launch', 'Cont_Elem')
         call nmelcv('FROT'        , mesh     , model    , mate     , ds_contact    ,&
                     disp_prev     , vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
-                    vect_elem_frot, time_prev, time_curr, ds_constitutive)
+                    disp_newt_curr, vect_elem_frot, time_prev, time_curr, ds_constitutive)
         call assvec('V', vect_asse_frot, 1, vect_elem_frot, [1.d0],&
                     nume_dof, ' ', 'ZERO', 1)
         call nmtime(ds_measure, 'Stop', 'Cont_Elem')

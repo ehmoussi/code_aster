@@ -19,7 +19,7 @@
 subroutine nmelco_prep(phase    , calc_type,&
                        mesh     , model    , mate     , ds_contact,&
                        disp_prev, vite_prev, acce_prev, vite_curr , disp_cumu_inst,&
-                       nbin     , lpain    , lchin    ,&
+                       disp_newt_curr,nbin     , lpain    , lchin    ,&
                        option   , time_prev, time_curr , ds_constitutive,&
                        ccohes_  , xcohes_  )
 !
@@ -48,6 +48,7 @@ implicit none
     character(len=19), intent(in) :: acce_prev
     character(len=19), intent(in) :: vite_curr
     character(len=19), intent(in) :: disp_cumu_inst
+    character(len=19), intent(in) :: disp_newt_curr
     integer, intent(in) :: nbin
     character(len=8), intent(out) :: lpain(nbin)
     character(len=19), intent(out) :: lchin(nbin)
@@ -300,7 +301,9 @@ implicit none
     lchin(34) = ds_constitutive%compor(1:19)
     lpain(35) = 'PFISCO'
     lchin(35) = fisco
-    ASSERT(35.le.nbin)
+    lpain(36) = 'PDDEPLA'
+    lchin(36) = disp_newt_curr(1:19)
+    ASSERT(36.le.nbin)
 !
 ! - Prepare output field for XFEM/CZM
 !
