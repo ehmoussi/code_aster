@@ -386,8 +386,9 @@ ASTERINTEGER DEFSS( GETEXM, getexm, _IN char *motfac,_IN STRING_SIZE lfac,
         PyObject *res  = (PyObject*)0 ;
         char *mfc, *mcs;
         ASTERINTEGER presence;
-        if (get_sh_etape() == Py_None)
+        if (get_sh_etape() == Py_None) {
             return (ASTERINTEGER)0;
+        }
                                                  DEBUG_ASSERT(motcle!=(char*)0);
         mfc = MakeCStrFromFStr(motfac, lfac);
         mcs = MakeCStrFromFStr(motcle, lcle);
@@ -2578,7 +2579,7 @@ void DEFPSS(LCKITREAD, lckitread,_IN ASTERINTEGER *nbkit,
 
     // Call C function
     res = PyObject_CallMethod(catalc, "get_kit", "O", tup_lkit);
-                        
+
     if (res == NULL) {
         MYABORT("Echec lors de la lecture du kit (lckitread/get_kit) !");
         DEBUG_ASSERT(PyTuple_Check(res)) ;
