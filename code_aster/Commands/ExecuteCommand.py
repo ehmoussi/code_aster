@@ -66,6 +66,25 @@ from ..Supervis import CommandSyntax, cata2datastructure, logger
 from ..Utilities import (command_header, command_result, command_text,
                          deprecated, import_object)
 
+class CommandCounter(object):
+    """Simple object to store the number of called Commands.
+
+    Attributes:
+        _counter (int): Number of Commands called.
+    """
+    # class attribute
+    _counter = 0
+
+    @classmethod
+    def incr_counter(cls):
+        """Increment the counter."""
+        cls._counter += 1
+
+    @classmethod
+    def get_counter(cls):
+        """Return the current value of the counter."""
+        return cls._counter
+
 
 class ExecuteCommand(object):
     """This class implements an executor of commands.
@@ -94,12 +113,8 @@ class ExecuteCommand(object):
     """
     command_name = result = None
 
-    # class attribute
-    cmd_counter = 0
-
     def __init__(self, command_name=None):
         """Initialization"""
-        ExecuteCommand.cmd_counter += 1
         command_name = command_name or self.command_name
         assert command_name, "'command_name' attribute/argument not defined!"
         self._cata = getattr(Commands, command_name)
@@ -130,6 +145,7 @@ class ExecuteCommand(object):
             logger.debug("ignore command {0}".format(self.name))
             return
 
+        CommandCounter.incr_counter()
         self.adapt_syntax(keywords)
         self.check_syntax(keywords)
         logger.debug("Starting {0}...".format(self.name))
@@ -156,14 +172,14 @@ class ExecuteCommand(object):
         """
         printed_args = mixedcopy(keywords)
         remove_none(printed_args)
-        logger.info(command_header(ExecuteCommand.cmd_counter))
+        logger.info(command_header(CommandCounter.get_counter()))
         logger.info(command_text(self.name, printed_args))
 
     def print_result(self):
         """Print an echo of the result of the command."""
         if self._result:
-            logger.info(command_result(ExecuteCommand.cmd_counter, self.name,
-                                    self._result.getName()))
+            logger.info(command_result(CommandCounter.get_counter(), self.name,
+                                       self._result.getName()))
 
     def check_syntax(self, keywords):
         """Check the syntax passed to the command. *keywords* will contain
