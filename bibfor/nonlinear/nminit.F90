@@ -72,6 +72,7 @@ implicit none
 #include "asterfort/romAlgoNLInit.h"
 #include "asterfort/nonlinDSConstitutiveInit.h"
 #include "asterfort/nonlinDSPostTimeStepInit.h"
+#include "asterfort/nonlinDSInOutInit.h"
 #include "asterfort/nmrefe.h"
 #include "asterfort/nminma.h"
 #include "asterfort/nminmc.h"
@@ -163,8 +164,8 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
     real(kind=8) :: instin
     character(len=8) :: partit
     character(len=19) :: varc_prev, disp_prev, strx_prev
-    aster_logical :: lacc0, lpilo, lmpas, lsstf, lerrt, lviss, lrefe, ldidi, l_obsv
-    aster_logical :: limpl,lcont
+    aster_logical :: lacc0, lpilo, lmpas, lsstf, lerrt, lviss, lrefe, ldidi, l_obsv, l_ener
+    aster_logical :: limpl, lcont
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -214,6 +215,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
     lviss = ndynlo(sddyna,'VECT_ISS' )
     lrefe = isfonc(fonact,'RESI_REFE')
     ldidi = isfonc(fonact,'DIDI')
+    l_ener = isfonc(fonact,'ENERGIE')
 !
 ! - Initialization for reduced method
 !
@@ -248,7 +250,13 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! - Initializations for energy management
 !
-    call nonlinDSEnergyInit(ds_inout%result, ds_energy)
+    if (l_ener) then
+        call nonlinDSEnergyInit(ds_inout%result, ds_energy)
+    endif
+!
+! - Initializations for input/output management
+!
+    call nonlinDSInOutInit('MECA', ds_inout)
 !
 ! --- CREATION DES VECTEURS D'INCONNUS
 !

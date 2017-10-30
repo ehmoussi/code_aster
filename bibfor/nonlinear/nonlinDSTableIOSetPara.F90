@@ -49,7 +49,7 @@ character(len=8), optional :: type_para_(:)
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: i_all_col, i_col, i_para
-    integer :: nb_cols, nb_para_real, nb_para_inte, nb_para_strg, nb_para
+    integer :: nb_cols, nb_para_real, nb_para_inte, nb_para_strg, nb_para, nb_cols_acti
     aster_logical :: l_acti
     character(len=24) :: col_name
 !
@@ -63,8 +63,14 @@ character(len=8), optional :: type_para_(:)
 !
     if (present(table_)) then
         nb_cols      = table_%nb_cols
-        AS_ALLOCATE(vk24 = table_%table_io%list_para, size = nb_cols)
-        AS_ALLOCATE(vk8  = table_%table_io%type_para, size = nb_cols) 
+        nb_cols_acti = 0
+        do i_all_col = 1, nb_cols
+            if (table_%l_cols_acti(i_all_col)) then
+                nb_cols_acti = nb_cols_acti + 1
+            endif
+        end do
+        AS_ALLOCATE(vk24 = table_%table_io%list_para, size = nb_cols_acti)
+        AS_ALLOCATE(vk8  = table_%table_io%type_para, size = nb_cols_acti) 
         do i_all_col = 1, nb_cols
             l_acti   = table_%l_cols_acti(i_all_col)
             col_name = table_%cols(i_all_col)%name

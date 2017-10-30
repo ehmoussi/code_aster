@@ -17,47 +17,49 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmcrpc(ds_inout, nume_reuse, time_curr)
+subroutine nonlinDSInOutInit(phenom, ds_inout)
 !
 use NonLin_Datastructure_type
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/tbajli.h"
+#include "asterfort/nonlinDSTableIOCreate.h"
+#include "asterfort/nonlinDSTableIOSetPara.h"
 !
-type(NL_DS_InOut), intent(in) :: ds_inout
-integer, intent(in) :: nume_reuse
-real(kind=8), intent(in) :: time_curr
-!
-! --------------------------------------------------------------------------------------------------
-!
-! *_NON_LINE
-!
-! Save parameters in output table
+character(len=4), intent(in) :: phenom
+type(NL_DS_InOut), intent(inout) :: ds_inout
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_inout         : datastructure for input/output management
-! In  nume_reuse       : index for reuse rsults datastructure
-! In  time_curr        : current time
+! *_NON_LINE - Input/output management
+!
+! Initializations for input/output management
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: vali(1)
-    character(len=8) :: k8bid = ' '
-    complex(kind=8), parameter :: c16bid =(0.d0,0.d0)
-    real(kind=8) :: valr(1)
+! In  phenom           : phenomenon (MECA/THER/THNL)
+! Out ds_inout         : datastructure for input/output management
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    vali(1) = nume_reuse
-    valr(1) = time_curr
+    integer, parameter :: nb_para = 2
+    character(len=24), parameter :: list_para(nb_para) = (/'NUME_REUSE','INST      '/)
+    character(len=8),  parameter :: type_para(nb_para) = (/'I','R'/)
 !
-! - Add line in table
+! --------------------------------------------------------------------------------------------------
 !
-    call tbajli(ds_inout%table_io%table_name,&
-                ds_inout%table_io%nb_para, ds_inout%table_io%list_para,&
-                vali, valr, [c16bid], k8bid, 0)
+    if (phenom.eq.'MECA') then
+! ----- Create list of parameters
+        call nonlinDSTableIOSetPara(tableio_   = ds_inout%table_io,&
+                                    nb_para_   = nb_para,&
+                                    list_para_ = list_para,&
+                                    type_para_ = type_para)
+! ----- Create table in results datastructure
+        call nonlinDSTableIOCreate(ds_inout%result, 'PARA_CALC', ds_inout%table_io)
+    else
+        ASSERT(ASTER_FALSE)
+    endif
 !
 end subroutine

@@ -82,7 +82,6 @@ subroutine dltlec(result, modele, numedd, materi, mate,&
 #include "asterfort/jeveuo.h"
 #include "asterfort/mtdscr.h"
 #include "asterfort/nmarnr.h"
-#include "asterfort/nmcrpc.h"
 #include "asterfort/nmdome.h"
 #include "asterfort/rcmfmc.h"
 #include "asterfort/utmess.h"
@@ -324,10 +323,6 @@ subroutine dltlec(result, modele, numedd, materi, mate,&
 ! 4.4. ==> L'INSTANT INITIAL ET SON NUMERO D'ORDRE SI REPRISE
 !
     call dltp0(t0, nume)
-!
-! --- CREATION DE LA TABLE DES PARAMETRES A SAUVEGARDER
-!
-    call nmcrpc(result)
 !
 ! --- RECUPERATION NUMERO REUSE - TABLE PARA_CALC
 !
