@@ -33,4 +33,5 @@ from .base_utils import (accept_array, array_to_list, force_list, force_tuple,
 from .compatibility import (compat_listr8, deprecated, remove_keyword,
                             required, unsupported)
 from .i18n import localization
+from .outputs import command_header, command_text, command_result
 from .strfunc import convert, from_unicode, get_encoding, to_unicode

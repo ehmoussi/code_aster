@@ -32,7 +32,3 @@ of the commands language (already used by AsterStudy).
 
 # Use the *new* language description
 HAVE_ASTERSTUDY = True
-
-from functools import partial
-from .Language import SyntaxChecker
-checkSyntax = partial(SyntaxChecker.checkCommandSyntax, printSyntax=True)

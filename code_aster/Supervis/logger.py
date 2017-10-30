@@ -101,10 +101,9 @@ class HgStreamHandler(logging.StreamHandler):
         return logging.StreamHandler.emit(self, record)
 
 
-def build_logger(level=logging.WARN):
+def build_logger(level=logging.INFO):
     """Initialize the logger with its handlers"""
     logger = logging.getLogger("code_aster")
-    #logger.setLevel(logging.DEBUG)
     logger.setLevel(level)
     term = HgStreamHandler(sys.stdout)
     term.setFormatter(PerLevelFormatter())
