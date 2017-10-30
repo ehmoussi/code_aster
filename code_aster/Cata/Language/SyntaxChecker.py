@@ -325,25 +325,11 @@ class SyntaxCheckerVisitor(object):
                     self._stack.pop()
 
 
-# counter of 'printed' command
-_cmd_counter = 0
-
-def checkCommandSyntax(command, keywords, printSyntax=False, add_default=True):
+def checkCommandSyntax(command, keywords, add_default=True):
     """Check the syntax of a command
     `keywords` contains the keywords filled by the user"""
-    from pprint import pformat
-    if not hasattr(checkCommandSyntax, "_cmd_counter"):
-        checkCommandSyntax._cmd_counter = 0
     if not isinstance(keywords, dict):
         raise TypeError("'dict' object is expected")
-    if printSyntax:
-        checkCommandSyntax._cmd_counter += 1
-        printed_args = mixedcopy(keywords)
-        remove_none(printed_args)
-        print("\n{0:-^100}\n Command #{1:0>4}\n{0:-^100}"
-            .format("", checkCommandSyntax._cmd_counter))
-        print(" {0}({1})".format(command.name or "COMMAND",
-                                 pformat(printed_args)))
 
     checker = SyntaxCheckerVisitor()
     command.accept(checker, keywords)

@@ -58,10 +58,13 @@ import sys
 import aster
 from libaster import ResultNaming
 
-from ..Cata import Commands, checkSyntax
+from ..Cata import Commands
+from ..Cata.SyntaxChecker import checkCommandSyntax
+from ..Cata.SyntaxUtils import mixedcopy, remove_none
 from ..Objects import DataStructure
-from ..Supervis import cata2datastructure, CommandSyntax, logger
-from ..Utilities import deprecated, import_object
+from ..Supervis import CommandSyntax, cata2datastructure, logger
+from ..Utilities import (command_header, command_result, command_text,
+                         deprecated, import_object)
 
 
 class ExecuteCommand(object):
@@ -91,8 +94,12 @@ class ExecuteCommand(object):
     """
     command_name = result = None
 
+    # class attribute
+    cmd_counter = 0
+
     def __init__(self, command_name=None):
         """Initialization"""
+        ExecuteCommand.cmd_counter += 1
         command_name = command_name or self.command_name
         assert command_name, "'command_name' attribute/argument not defined!"
         self._cata = getattr(Commands, command_name)
@@ -126,9 +133,11 @@ class ExecuteCommand(object):
         self.adapt_syntax(keywords)
         self.check_syntax(keywords)
         logger.debug("Starting {0}...".format(self.name))
+        self.print_syntax(keywords)
         self.create_result(keywords)
         self.exec_(keywords)
         self.post_exec(keywords)
+        self.print_result()
         return self._result
 
     def adapt_syntax(self, keywords):
@@ -139,6 +148,23 @@ class ExecuteCommand(object):
                 in place.
         """
 
+    def print_syntax(self, keywords):
+        """Print an echo of the Command.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        printed_args = mixedcopy(keywords)
+        remove_none(printed_args)
+        logger.info(command_header(ExecuteCommand.cmd_counter))
+        logger.info(command_text(self.name, printed_args))
+
+    def print_result(self):
+        """Print an echo of the result of the command."""
+        if self._result:
+            logger.info(command_result(ExecuteCommand.cmd_counter, self.name,
+                                    self._result.getName()))
+
     def check_syntax(self, keywords):
         """Check the syntax passed to the command. *keywords* will contain
         default keywords after executing this method.
@@ -148,7 +174,7 @@ class ExecuteCommand(object):
                 in place.
         """
         logger.debug("checking syntax of {0}...".format(self.name))
-        checkSyntax(self._cata, keywords, add_default=True)
+        checkCommandSyntax(self._cata, keywords, add_default=True)
 
     def create_result(self, keywords):
         """Create the result before calling the *exec* command function

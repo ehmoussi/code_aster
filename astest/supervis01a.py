@@ -6,6 +6,7 @@ Unittest for CommandSyntax.
 """
 
 import platform
+
 import code_aster
 from code_aster.Cata.Commands import DEBUT, DYNA_VIBRA
 from code_aster.Supervis import CommandSyntax

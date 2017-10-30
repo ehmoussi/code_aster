@@ -24,6 +24,11 @@ Common utilities
    :members:
    :special-members: __init__
 
+.. automodule:: code_aster.Utilities.outputs
+   :show-inheritance:
+   :members:
+   :special-members: __init__
+
 .. automodule:: code_aster.Utilities.strfunc
    :show-inheritance:
    :members:
