@@ -19,7 +19,7 @@
 !
 subroutine nmmeng(list_func_acti,&
                   ds_algorom, ds_print, ds_measure,&
-                  ds_energy , ds_posttimestep)
+                  ds_energy , ds_inout, ds_posttimestep)
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
@@ -34,12 +34,14 @@ implicit none
 #include "asterfort/nonlinDSMeasureClean.h"
 #include "asterfort/nonlinDSEnergyClean.h"
 #include "asterfort/nonlinDSPostTimeStepClean.h"
+#include "asterfort/nonlinDSInOutClean.h"
 !
 integer, intent(in) :: list_func_acti(*)
 type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 type(NL_DS_Print), intent(inout) :: ds_print
 type(NL_DS_Energy), intent(inout) :: ds_energy
 type(NL_DS_Measure), intent(inout) :: ds_measure
+type(NL_DS_InOut), intent(inout) :: ds_inout
 type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 !
 ! --------------------------------------------------------------------------------------------------
@@ -55,6 +57,7 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 ! IO  ds_print         : datastructure for printing parameters
 ! IO  ds_energy        : datastructure for energy management
 ! IO  ds_measure       : datastructure for measure and statistics management
+! IO  ds_inout         : datastructure for input/output management
 ! IO  ds_posttimestep  : datastructure for post-treatment at each time step
 !
 ! --------------------------------------------------------------------------------------------------
@@ -73,6 +76,7 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
     call nonlinDSPrintClean(ds_print)
     call nonlinDSMeasureClean(ds_measure)
     call nonlinDSEnergyClean(ds_energy)
+    call nonlinDSInOutClean(ds_inout)
     call nonlinDSPostTimeStepClean(ds_posttimestep)
 !
 ! - DESTRUCTION DE TOUTES LES MATRICES CREEES

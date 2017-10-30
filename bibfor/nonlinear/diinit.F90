@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine diinit(mesh_         , model_     , ds_inout, mate       , cara_elem,&
                   list_func_acti, sddyna     , ds_conv , ds_algopara, solver   ,&
                   ds_contact    , sddisc)
@@ -32,24 +33,21 @@ implicit none
 #include "asterfort/nmcrar.h"
 #include "asterfort/nmcrdd.h"
 #include "asterfort/nmcrli.h"
-#include "asterfort/nmcrpc.h"
 #include "asterfort/nmcrsu.h"
 #include "asterfort/ndxcfl.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=*), intent(in) :: mesh_
-    character(len=*), intent(in) :: model_
-    character(len=19), intent(in) :: sddisc
-    character(len=19), intent(in) :: sddyna
-    character(len=24), intent(in) :: cara_elem
-    character(len=24), intent(in) :: mate
-    type(NL_DS_Conv), intent(in) :: ds_conv
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    character(len=19), intent(in) :: solver
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    integer, intent(in) :: list_func_acti(*)
+character(len=*), intent(in) :: mesh_
+character(len=*), intent(in) :: model_
+character(len=19), intent(in) :: sddisc
+character(len=19), intent(in) :: sddyna
+character(len=24), intent(in) :: cara_elem
+character(len=24), intent(in) :: mate
+type(NL_DS_Conv), intent(in) :: ds_conv
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+type(NL_DS_InOut), intent(in) :: ds_inout
+character(len=19), intent(in) :: solver
+type(NL_DS_Contact), intent(in) :: ds_contact
+integer, intent(in) :: list_func_acti(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -113,9 +111,5 @@ implicit none
 !
     call nmcrsu(sddisc, list_inst , ds_conv, ds_algopara, l_implex,&
                 solver, ds_contact)
-!
-! - Table for parameters
-!
-    call nmcrpc(result)
 !
 end subroutine

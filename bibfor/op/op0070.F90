@@ -361,6 +361,6 @@ implicit none
 !
     call nmmeng(fonact,&
                 ds_algorom, ds_print, ds_measure,&
-                ds_energy , ds_posttimestep)
+                ds_energy , ds_inout, ds_posttimestep)
 !
 end subroutine

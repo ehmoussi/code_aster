@@ -28,11 +28,13 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/isfonc.h"
 #include "asterfort/diinst.h"
 #include "asterfort/dinuar.h"
 #include "asterfort/nmarc0.h"
 #include "asterfort/nmarce.h"
 #include "asterfort/nmarpc.h"
+#include "asterfort/nmcrpc.h"
 #include "asterfort/nmfinp.h"
 #include "asterfort/nmleeb.h"
 #include "asterfort/nmrinc.h"
@@ -132,7 +134,11 @@ type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
 !
 ! - Save energy parameters in output table
 !
-    call nmarpc(ds_energy, nume_reuse, instan)
+    if (isfonc(fonact,'ENERGIE')) then
+        call nmarpc(ds_energy, nume_reuse, instan)
+    else
+        call nmcrpc(ds_inout, nume_reuse, instan)
+    endif
 !
 ! - Print or not ?
 !

@@ -240,6 +240,8 @@ implicit none
         aster_logical     :: l_init_stat
         aster_logical     :: l_init_vale
         real(kind=8)      :: temp_init
+! ----- Table of parameters in output datastructure
+        type(NL_DS_TableIO) :: table_io
     end type NL_DS_InOut
 !
 ! - Type: loop management
