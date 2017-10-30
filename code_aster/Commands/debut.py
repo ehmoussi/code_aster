@@ -65,7 +65,8 @@ class Starter(ExecuteCommand):
             aster.onFatalError('ABORT')
         cls._is_initialized = True
 
-    def __call__(self, **keywords):
+    @classmethod
+    def run(cls, **keywords):
         """Run the Command.
 
         Arguments:
@@ -73,8 +74,19 @@ class Starter(ExecuteCommand):
         """
         if Starter._is_initialized:
             return
-        self.init(None)
-        super(Starter, self).__call__(**keywords)
+        cls.init(None)
+        super(Starter, cls).run(**keywords)
+
+    @classmethod
+    def run_with_argv(cls, **keywords):
+        """Run the macro-command with the arguments from the command line.
+
+        Arguments:
+            keywords (dict): User keywords
+        """
+        cmd = cls(cls.command_name, cls.command_op)
+        cmd._result = None
+        cmd.exec_(keywords)
 
     def _call_oper(self, syntax):
         """Call fortran operator.
@@ -85,7 +97,7 @@ class Starter(ExecuteCommand):
         return aster.debut(syntax)
 
 
-DEBUT = Starter()
+DEBUT = Starter.run
 
 def init(*argv, **kwargs):
     """Initialize code_aster as `DEBUT` command does + command line options.
@@ -99,5 +111,5 @@ def init(*argv, **kwargs):
         if kwargs['debug']:
             setlevel()
         del kwargs['debug']
-    DEBUT.init(argv)
-    DEBUT.exec_(kwargs)
+    Starter.init(argv)
+    Starter.run_with_argv(**kwargs)

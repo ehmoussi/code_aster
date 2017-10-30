@@ -46,7 +46,7 @@ from .calc_matr_elem import CALC_MATR_ELEM
 from .crea_champ import CREA_CHAMP
 # from .crea_maillage import CREA_MAILLAGE
 from .crea_resu import CREA_RESU
-# from .crea_table import CREA_TABLE
+from .crea_table import CREA_TABLE
 from .debut import DEBUT
 from .defi_compor import DEFI_COMPOR
 from .defi_fichier import DEFI_FICHIER
@@ -63,13 +63,14 @@ from .defi_inte_spec import DEFI_INTE_SPEC
 from .defi_list_reel import DEFI_LIST_REEL
 from .defi_materiau import DEFI_MATERIAU
 # from .defi_modele_gene import DEFI_MODELE_GENE
-# from .defi_nappe import DEFI_NAPPE
+from .defi_nappe import DEFI_NAPPE
 # from .defi_squelette import DEFI_SQUELETTE
 # from .defi_spec_turb import DEFI_SPEC_TURB
 from .fin import FIN
 from .lire_maillage import LIRE_MAILLAGE
 # from .macr_elem_dyna import MACR_ELEM_DYNA
 # from .macr_elem_stat import MACR_ELEM_STAT
+from .maj_cata import MAJ_CATA
 from .meca_statique import MECA_STATIQUE
 # from .mode_iter_cycl import MODE_ITER_CYCL
 from .mode_statique import MODE_STATIQUE

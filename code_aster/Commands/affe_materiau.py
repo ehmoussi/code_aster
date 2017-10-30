@@ -90,4 +90,4 @@ class MaterialAssignment(ExecuteCommand):
                                 .format("TOUT", "GROUP_MA"))
 
 
-AFFE_MATERIAU = MaterialAssignment()
+AFFE_MATERIAU = MaterialAssignment.run

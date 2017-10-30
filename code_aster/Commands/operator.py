@@ -23,6 +23,8 @@
 :py:mod:`operator` --- Generic operators
 ****************************************
 
+.. warning:: Removed!
+
 The function :py:func:`define_operators` automatically creates executors objects
 (:py:class:`~code_aster.Commands.ExecuteCommand.ExecuteCommand` or
 :py:class:`~code_aster.Commands.ExecuteCommand.ExecuteMacro`) for operators that
@@ -45,12 +47,19 @@ def define_operators(store):
     Arguments:
         store (dict): Store where the executors will be registered.
     """
+    def legacy_command_factory(class_, name):
+        class InheritedCommand(class_):
+            """Execute legacy operator."""
+            command_name = name
+
+        return InheritedCommand.run
+
     for name, command in commandStore.items():
         if store.has_key(name):
             continue
         if name in UNSUPPORTED:
             continue
         if isinstance(command, (Operator, Procedure)):
-            store[name] = ExecuteCommand(name)
+            store[name] = legacy_command_factory(ExecuteCommand, name)
         elif isinstance(command, Macro):
-            store[name] = ExecuteMacro(name)
+            store[name] = legacy_command_factory(ExecuteMacro, name)

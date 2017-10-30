@@ -65,4 +65,4 @@ class ListOfFloatsDefinition(ExecuteCommand):
         self._result.setValues(values)
 
 
-DEFI_LIST_REEL = ListOfFloatsDefinition()
+DEFI_LIST_REEL = ListOfFloatsDefinition.run

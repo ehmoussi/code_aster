@@ -51,35 +51,3 @@ def typeaster(cata_type):
         elif name == 'reel':
             name = 'R8'
     return name
-
-
-class Cata2DataStructure(object):
-    """Helper class to build correspondance between DataStructures in
-    syntax description and those created in C++.
-
-    This table of correspondance allows to automatically execute legacy
-    operators with very few modifications. More classes can be added if there
-    is a strict bijection.
-
-    .. todo:: To be removed?
-    """
-    __metaclass__ = Singleton
-    _singleton_id = 'typeaster.Cata2DataStructure'
-
-    _cata2cxx = None
-
-    def __init__(self):
-        """Initialization."""
-        from .. import Objects as EXT
-        Cata2DataStructure._cata2cxx = {
-            'FONCTION': EXT.Function,
-            'MAILLAGE': EXT.Mesh,
-            'NAPPE': EXT.Surface,
-            'TABLE': EXT.Table,
-        }
-
-    @classmethod
-    def objtype(cls, type_name):
-        return cls._cata2cxx.get(type_name)
-
-cata2datastructure = Cata2DataStructure()

@@ -22,4 +22,9 @@
 from .ExecuteCommand import ExecuteCommandOps
 
 
-DEFI_FICHIER = ExecuteCommandOps("DEFI_FICHIER", 26)
+class DefineUnitFile(ExecuteCommandOps):
+    """Execute legacy operator DEFI_FICHIER."""
+    command_name = "DEFI_FICHIER"
+    command_op = 26
+
+DEFI_FICHIER = DefineUnitFile.run

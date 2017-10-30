@@ -1,5 +1,5 @@
 # coding=utf-8
-# --------------------------------------------------------------------
+#
 # Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
@@ -15,15 +15,24 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
-# --------------------------------------------------------------------
 
+# person_in_charge: mathieu.courtois at edf.fr
 # person_in_charge: mathieu.courtois@edf.fr
 
-"""
-This module supports basics to give access to Commands from code_aster
-objects.
-"""
+from ..Objects import Table
+from .ExecuteCommand import ExecuteCommand
 
-from .CommandSyntax import CommandSyntax
-from .ExecutionParameter import ExecutionParameter
-from .logger import logger
+
+class TableCreation(ExecuteCommand):
+    """Execute legacy operator CREA_TABLE."""
+    command_name = "CREA_TABLE"
+
+    def create_result(self, keywords):
+        """Create the result.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = Table.create()
+
+CREA_TABLE = TableCreation.run

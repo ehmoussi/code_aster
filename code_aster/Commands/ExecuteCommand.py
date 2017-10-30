@@ -21,12 +21,14 @@
 This module defines the objects on which the user's Commands are based.
 
 All Commands executors are subclasses of :class:`.ExecuteCommand`.
+Commands are factories (:meth:`.run` *classmethod*) that create an executor
+that is called to create a result object.
 
 When a new command is added there are different levels of complexity:
 
 - Commands that are automatically added just using their catalog.
-  Only few commands fully work with this method but it is very useful
-  to see what it is necessary to implement to add a new Command.
+  Only the commands that return no result can work with this method.
+  Other commands will raise a *NotImplementedError* exception at runtime.
 
   .. note:: All Commands that are not explicitly imported by
     :mod:`code_aster.Commands.__init__` are automatically created using this
@@ -62,7 +64,7 @@ from ..Cata import Commands
 from ..Cata.SyntaxChecker import checkCommandSyntax
 from ..Cata.SyntaxUtils import mixedcopy, remove_none
 from ..Objects import DataStructure
-from ..Supervis import CommandSyntax, cata2datastructure, logger
+from ..Supervis import CommandSyntax, logger
 from ..Utilities import (command_header, command_result, command_text,
                          deprecated, import_object)
 
@@ -77,12 +79,12 @@ class CommandCounter(object):
 
     @classmethod
     def incr_counter(cls):
-        """Increment the counter."""
-        cls._counter += 1
+        """Increment the counter.
 
-    @classmethod
-    def get_counter(cls):
-        """Return the current value of the counter."""
+        Returns:
+            int: Current value of the counter.
+        """
+        cls._counter += 1
         return cls._counter
 
 
@@ -111,15 +113,43 @@ class ExecuteCommand(object):
         - :meth:`.post_exec` that allows to execute additional code after
           the main function. Does nothing by default.
     """
-    command_name = result = None
+    # class attributes
+    command_name = command_op = None
 
-    def __init__(self, command_name=None):
+    _cata = _op = _result = _counter = None
+
+    def __init__(self, command_name=None, command_op=None):
         """Initialization"""
         command_name = command_name or self.command_name
         assert command_name, "'command_name' attribute/argument not defined!"
         self._cata = getattr(Commands, command_name)
-        self._op = self._cata.definition['op']
+        self._op = command_op or self._cata.definition['op']
         self._result = None
+        self._counter = 0
+
+    @classmethod
+    def run(cls, **keywords):
+        """Run the macro-command.
+
+        Arguments:
+            keywords (dict): User keywords
+        """
+        cmd = cls(cls.command_name, cls.command_op)
+        cmd._result = None
+        check_jeveux()
+        if not cmd._op:
+            logger.debug("ignore command {0}".format(cmd.name))
+            return
+
+        cmd._counter = CommandCounter.incr_counter()
+        cmd.adapt_syntax(keywords)
+        cmd.check_syntax(keywords)
+        cmd.create_result(keywords)
+        cmd.print_syntax(keywords)
+        cmd.exec_(keywords)
+        cmd.post_exec(keywords)
+        cmd.print_result()
+        return cmd._result
 
     def _call_oper(self, syntax):
         """Call fortran operator.
@@ -133,28 +163,6 @@ class ExecuteCommand(object):
     def name(self):
         """Returns the command name."""
         return self._cata.name
-
-    def __call__(self, **keywords):
-        """Run the macro-command.
-
-        Arguments:
-            keywords (dict): User keywords
-        """
-        check_jeveux()
-        if not self._op:
-            logger.debug("ignore command {0}".format(self.name))
-            return
-
-        CommandCounter.incr_counter()
-        self.adapt_syntax(keywords)
-        self.check_syntax(keywords)
-        logger.debug("Starting {0}...".format(self.name))
-        self.print_syntax(keywords)
-        self.create_result(keywords)
-        self.exec_(keywords)
-        self.post_exec(keywords)
-        self.print_result()
-        return self._result
 
     def adapt_syntax(self, keywords):
         """Hook to adapt syntax from a old version or for compatibility reasons.
@@ -172,14 +180,25 @@ class ExecuteCommand(object):
         """
         printed_args = mixedcopy(keywords)
         remove_none(printed_args)
-        logger.info(command_header(CommandCounter.get_counter()))
-        logger.info(command_text(self.name, printed_args))
+        logger.info(command_header(self._counter))
+        logger.info(command_text(self.name, printed_args, self._res_syntax()))
 
     def print_result(self):
         """Print an echo of the result of the command."""
         if self._result:
-            logger.info(command_result(CommandCounter.get_counter(), self.name,
+            logger.info(command_result(self._counter, self.name,
                                        self._result.getName()))
+
+    def _res_syntax(self):
+        """Return the name of the result for the echo of the Command.
+
+        Returns:
+            str: Automatically built name.
+        """
+        if self._result is None:
+            return ""
+        return self._result.getName()
+        # return "obj{:05x}".format(self._counter)
 
     def check_syntax(self, keywords):
         """Check the syntax passed to the command. *keywords* will contain
@@ -210,10 +229,8 @@ class ExecuteCommand(object):
             result_name = ""
             self._result = None
         else:
-            type_name = sd_type.getType()
-            klass = cata2datastructure.objtype(type_name)
-            assert klass, "Object unknown for {0}".format(type_name)
-            self._result = klass.create()
+            raise NotImplementedError("Method 'create_result' must be "
+                                      "overridden for {0!r}.".format(self.name))
 
     def exec_(self, keywords):
         """Execute the command.
@@ -269,33 +286,9 @@ def check_jeveux():
                            "No command can be executed.")
 
 
-# shortcut classes
-class ExecuteCommandWithType(ExecuteCommand):
-    """This implements an executor of commands with a convenient way to
-    define the result type."""
-
-    def __init__(self, command_name, result_type):
-        """Initialization"""
-        super(ExecuteCommandWithType, self).__init__(command_name)
-        self._result_type = result_type
-
-    def create_result(self, keywords):
-        """Create the result.
-
-        Arguments:
-            keywords (dict): Keywords arguments of user's keywords.
-        """
-        self._result = self._result_type.create()
-
-
 class ExecuteCommandOps(ExecuteCommand):
     """This implements an executor of commands that use an
      `opsXXX` subroutine."""
-
-    def __init__(self, command_name, ops):
-        """Initialization"""
-        super(ExecuteCommandOps, self).__init__(command_name)
-        self._op = ops
 
     def _call_oper(self, syntax):
         """Call fortran operator.
@@ -314,15 +307,15 @@ class ExecuteMacro(ExecuteCommand):
 
     Now the results must be directly returned by the OPS function.
 
-    TODO: Associate additional results with ``CO()``.
+    .. todo:: Associate additional results with ``CO()``.
     """
 
     sd = _store = None
 
-    def __init__(self, command_name):
+    def __init__(self, command_name, command_op=None):
         """Initialization"""
         super(ExecuteMacro, self).__init__(command_name)
-        self._op = import_object(self._op)
+        self._op = command_op or import_object(self._op)
 
     def exec_(self, keywords):
         """Execute the command.
@@ -333,7 +326,6 @@ class ExecuteMacro(ExecuteCommand):
         Returns:
             misc: Result of the Command, *None* if it returns no result.
         """
-        logger.debug("Starting {0}...".format(self.name))
         outputs = self._op(self, **keywords)
         assert not isinstance(outputs, int), "OPS must now return results."
         return outputs

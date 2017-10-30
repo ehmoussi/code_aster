@@ -47,4 +47,4 @@ class FunctionInterpolation(ExecuteCommand):
         self._result = Function.create()
 
 
-CALC_FONC_INTERP = FunctionInterpolation()
+CALC_FONC_INTERP = FunctionInterpolation.run

@@ -120,4 +120,4 @@ class StaticModeCalculation(ExecuteCommand):
         self._result = solv.execute()
 
 
-MODE_STATIQUE = StaticModeCalculation()
+MODE_STATIQUE = StaticModeCalculation.run

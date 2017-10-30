@@ -37,4 +37,4 @@ class MechanicalLoadDefinition(ExecuteCommand):
         self._result = GenericMechanicalLoad.create(keywords["MODELE"])
 
 
-AFFE_CHAR_MECA = MechanicalLoadDefinition()
+AFFE_CHAR_MECA = MechanicalLoadDefinition.run

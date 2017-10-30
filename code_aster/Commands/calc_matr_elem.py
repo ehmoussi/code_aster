@@ -17,10 +17,22 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-# person_in_charge: nicolas.sellenet@edf.fr
+# person_in_charge: mathieu.courtois@edf.fr
 
 from ..Objects import ElementaryMatrix
-from .ExecuteCommand import ExecuteCommandWithType
+from .ExecuteCommand import ExecuteCommand
 
 
-CALC_MATR_ELEM = ExecuteCommandWithType("CALC_MATR_ELEM", ElementaryMatrix)
+class ElementaryMatrixCalculation(ExecuteCommand):
+    """Execute legacy operator CALC_MATR_ELEM."""
+    command_name = "CALC_MATR_ELEM"
+
+    def create_result(self, keywords):
+        """Create the result.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = ElementaryMatrix.create()
+
+CALC_MATR_ELEM = ElementaryMatrixCalculation.run

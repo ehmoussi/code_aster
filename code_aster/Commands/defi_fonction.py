@@ -84,4 +84,4 @@ class FunctionDefinition(ExecuteCommand):
         self._result.setValues(absc, ordo)
 
 
-DEFI_FONCTION = FunctionDefinition()
+DEFI_FONCTION = FunctionDefinition.run

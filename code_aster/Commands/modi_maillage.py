@@ -37,4 +37,4 @@ class MeshModification(ExecuteCommand):
         self._result = keywords["MAILLAGE"]
 
 
-MODI_MAILLAGE = MeshModification()
+MODI_MAILLAGE = MeshModification.run

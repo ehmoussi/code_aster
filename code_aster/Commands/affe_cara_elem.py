@@ -38,4 +38,4 @@ class ElementaryCharacteristicsAssignment(ExecuteCommand):
         self._result = ElementaryCharacteristics.create(keywords["MODELE"])
 
 
-AFFE_CARA_ELEM = ElementaryCharacteristicsAssignment()
+AFFE_CARA_ELEM = ElementaryCharacteristicsAssignment.run

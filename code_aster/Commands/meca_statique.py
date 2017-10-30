@@ -83,4 +83,4 @@ class MechanicalSolver(ExecuteCommand):
         self._result = mechaSolv.execute()
 
 
-MECA_STATIQUE = MechanicalSolver()
+MECA_STATIQUE = MechanicalSolver.run

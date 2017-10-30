@@ -54,4 +54,4 @@ class MeshReader(ExecuteCommand):
         return mesh
 
 
-LIRE_MAILLAGE = MeshReader()
+LIRE_MAILLAGE = MeshReader.run

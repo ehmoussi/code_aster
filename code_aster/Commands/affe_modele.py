@@ -45,4 +45,4 @@ class ModelAssignment(ExecuteCommand):
         self._result.setSupportMesh(keywords["MAILLAGE"])
 
 
-AFFE_MODELE = ModelAssignment()
+AFFE_MODELE = ModelAssignment.run
