@@ -17,10 +17,22 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-# person_in_charge: nicolas.sellenet@edf.fr
+# person_in_charge: mathieu.courtois@edf.fr
 
 from ..Objects import FiberGeometry
-from .ExecuteCommand import ExecuteCommandWithType
+from .ExecuteCommand import ExecuteCommand
 
 
-DEFI_GEOM_FIBRE = ExecuteCommandWithType("DEFI_GEOM_FIBRE", FiberGeometry)
+class FiberGeometryDefinition(ExecuteCommand):
+    """Execute legacy operator DEFI_GEOM_FIBRE."""
+    command_name = "DEFI_GEOM_FIBRE"
+
+    def create_result(self, keywords):
+        """Create the result.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = FiberGeometry.create()
+
+DEFI_GEOM_FIBRE = FiberGeometryDefinition.run

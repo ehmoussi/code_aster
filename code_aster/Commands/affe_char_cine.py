@@ -115,4 +115,4 @@ class KinematicsLoadDefinition(ExecuteCommand):
                             component, value, kwGroupMa )
 
 
-AFFE_CHAR_CINE = KinematicsLoadDefinition()
+AFFE_CHAR_CINE = KinematicsLoadDefinition.run

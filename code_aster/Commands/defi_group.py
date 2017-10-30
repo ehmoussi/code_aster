@@ -36,4 +36,4 @@ class GroupDefinition(ExecuteCommand):
         self._result = keywords["MAILLAGE"]
 
 
-DEFI_GROUP = GroupDefinition()
+DEFI_GROUP = GroupDefinition.run

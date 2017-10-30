@@ -54,4 +54,4 @@ class ResultCreator(ExecuteCommand):
         self._result.update()
 
 
-CREA_RESU = ResultCreator()
+CREA_RESU = ResultCreator.run

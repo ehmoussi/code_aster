@@ -55,4 +55,4 @@ class ComputeAdditionalField(ExecuteCommand):
         self._result.update()
 
 
-CALC_CHAMP = ComputeAdditionalField()
+CALC_CHAMP = ComputeAdditionalField.run

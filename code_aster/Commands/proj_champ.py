@@ -42,4 +42,4 @@ class FieldProjector(ExecuteCommand):
         self._result = MatchingMeshes.create()
 
 
-PROJ_CHAMP = FieldProjector()
+PROJ_CHAMP = FieldProjector.run

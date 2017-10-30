@@ -17,10 +17,22 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-# person_in_charge: nicolas.sellenet@edf.fr
+# person_in_charge: mathieu.courtois@edf.fr
 
 from ..Objects import InterspectralMatrix
-from .ExecuteCommand import ExecuteCommandWithType
+from .ExecuteCommand import ExecuteCommand
 
 
-DEFI_INTE_SPEC = ExecuteCommandWithType("DEFI_INTE_SPEC", InterspectralMatrix)
+class InterspectralDefinition(ExecuteCommand):
+    """Execute legacy operator DEFI_INTE_SPEC."""
+    command_name = "DEFI_INTE_SPEC"
+
+    def create_result(self, keywords):
+        """Create the result.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = InterspectralMatrix.create()
+
+DEFI_INTE_SPEC = InterspectralDefinition.run

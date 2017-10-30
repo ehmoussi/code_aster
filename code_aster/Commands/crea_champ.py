@@ -52,4 +52,4 @@ class FieldCreator(ExecuteCommand):
             self._result = FieldOnNodesDouble.create()
 
 
-CREA_CHAMP = FieldCreator()
+CREA_CHAMP = FieldCreator.run

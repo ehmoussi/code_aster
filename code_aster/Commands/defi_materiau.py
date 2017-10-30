@@ -89,4 +89,4 @@ class MaterialDefinition(ExecuteCommand):
         return objects
 
 
-DEFI_MATERIAU = MaterialDefinition()
+DEFI_MATERIAU = MaterialDefinition.run

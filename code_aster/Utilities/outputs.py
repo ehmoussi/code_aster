@@ -84,15 +84,16 @@ class CommandRepresentation(object):
         """Return the text"""
         return os.linesep.join(self._lines)
 
-    def repr_command(self, name, keywords):
+    def repr_command(self, name, keywords, result):
         """Write the representation of a command.
 
         Arguments:
-    Arguments:
             name (str): Command name.
             keywords (dict): Dict of keywords.
         """
         self._newline()
+        if result:
+            self._curline.extend([self.decorate_name(result), " = "])
         self._curline.extend([name, "("])
         self._add_indent()
         self.repr_keywords(keywords)
@@ -212,7 +213,7 @@ class CommandRepresentation(object):
     @classmethod
     def decorate_name(cls, text):
         """Decorate a DataStructure's name."""
-        return convert("'<{0}>'".format(text))
+        return convert("'<{0}>'".format(text.strip()))
 
 
 def command_header(counter):
@@ -237,11 +238,11 @@ def command_result(counter, command_name, result_name):
     Returns:
         str: String representation.
     """
-    return "\nResult of command #{1:0>4} - {2}: {3}\n{0:-^100}".format(
+    return "\nResult of command #{1:0>4} ({2}): {3}\n{0:-^100}".format(
         "", counter, command_name,
         CommandRepresentation.decorate_name(result_name))
 
-def command_text(command_name, keywords, limit=0):
+def command_text(command_name, keywords, result="", limit=0):
     """Return a text representation of a command.
 
     Use ``limit=NN`` to limit the output to the fist ``NN`` occurrences in
@@ -250,6 +251,7 @@ def command_text(command_name, keywords, limit=0):
     Arguments:
         command_name (str): Command name.
         keywords (dict): Dictionary of keywords.
+        result (str): Name of the result.
         limit (int): If *limit* is a positive number, only the *limit* first
             occurrences are printed (default is 0, unlimited.
 
@@ -257,7 +259,7 @@ def command_text(command_name, keywords, limit=0):
         str: String representation.
     """
     export = CommandRepresentation(limit)
-    export.repr_command(command_name, keywords)
+    export.repr_command(command_name, keywords, result)
     export.end()
 
     text = export.get_text()

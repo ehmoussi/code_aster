@@ -19,11 +19,11 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
-"""
-This module supports basics to give access to Commands from code_aster
-objects.
-"""
+from .ExecuteCommand import ExecuteCommand
 
-from .CommandSyntax import CommandSyntax
-from .ExecutionParameter import ExecutionParameter
-from .logger import logger
+
+class CompileElementsDescription(ExecuteCommand):
+    """Execute legacy operator MAJ_CATA."""
+    command_name = "MAJ_CATA"
+
+MAJ_CATA = CompileElementsDescription.run
