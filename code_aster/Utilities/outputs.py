@@ -38,46 +38,27 @@ class CommandRepresentation(object):
     its keywords.
 
     Arguments:
-        name (str): Command name.
         limit (int): Limits the output to the first occurrences of factor
             keywords or in the lists of values. Warning: Using *limit* may
             generate an invalid commands file.
-        indent (int): Number of spaces to indent each sublevel.
+        indent (int): Indentation of the first line.
 
     Attributes:
-        xxx
+        _limit (int): Maximum number of occurrences for sequences.
+        _limit_reached (bool): Tell if the limit has been reached at least once.
+        _lines (list[str]): List of lines.
+        _curline (list[str]): List of strings composing the current line.
+        _indent (list[int]): Stack of indentation levels.
     """
     interrupt_value = '"_interrupt_MARK_value_"'
     interrupt_fact = '_interrupt_MARK_fact_()'
 
-    def __init__(self, name, limit=0, indent=0):
-        self._name = name
+    def __init__(self, limit=0, indent=0):
         self._limit = limit
         self._limit_reached = False
         self._lines = []
         self._curline = []
         self._indent = [indent, ]
-        self._saved = {}
-        self._count = 0
-
-    def save_buffer(self, obj):
-        """Save the current state."""
-        self._saved[id(obj)] = {
-            'lines': self._lines[:],
-            'curline': self._curline[:],
-            'indent': self._indent[:],
-            'name': self._name,
-        }
-
-    def restore_buffer(self, obj):
-        """Restore the previous saved state."""
-        ido = id(obj)
-        dsav = self._saved[ido]
-        self._lines = dsav['lines']
-        self._curline = dsav['curline']
-        self._indent = dsav['indent']
-        self._name = dsav['name']
-        del self._saved[ido]
 
     def _newline(self):
         """Initialize a new line."""
@@ -103,14 +84,16 @@ class CommandRepresentation(object):
         """Return the text"""
         return os.linesep.join(self._lines)
 
-    def repr_command(self, keywords):
+    def repr_command(self, name, keywords):
         """Write the representation of a command.
 
         Arguments:
+    Arguments:
+            name (str): Command name.
             keywords (dict): Dict of keywords.
         """
         self._newline()
-        self._curline.extend([self._name, "("])
+        self._curline.extend([name, "("])
         self._add_indent()
         self.repr_keywords(keywords)
         self._curline.append(")")
@@ -226,7 +209,8 @@ class CommandRepresentation(object):
         text = text.replace(cls.interrupt_fact, "...")
         return text
 
-    def decorate_name(self, text): # pragma pylint: disable=no-self-use
+    @classmethod
+    def decorate_name(cls, text):
         """Decorate a DataStructure's name."""
         return convert("'<{0}>'".format(text))
 
@@ -253,9 +237,9 @@ def command_result(counter, command_name, result_name):
     Returns:
         str: String representation.
     """
-    export = CommandRepresentation(command_name)
     return "\nResult of command #{1:0>4} - {2}: {3}\n{0:-^100}".format(
-        "", counter, command_name, export.decorate_name(result_name))
+        "", counter, command_name,
+        CommandRepresentation.decorate_name(result_name))
 
 def command_text(command_name, keywords, limit=0):
     """Return a text representation of a command.
@@ -272,8 +256,8 @@ def command_text(command_name, keywords, limit=0):
     Returns:
         str: String representation.
     """
-    export = CommandRepresentation(command_name, limit)
-    export.repr_command(keywords)
+    export = CommandRepresentation(limit)
+    export.repr_command(command_name, keywords)
     export.end()
 
     text = export.get_text()
