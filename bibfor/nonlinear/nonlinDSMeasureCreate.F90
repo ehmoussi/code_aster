@@ -25,7 +25,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/nonlinDSColumnVoid.h"
-#include "asterfort/CreateVoidTable.h"
+#include "asterfort/nonlinDSTableVoid.h"
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
 !
@@ -135,7 +135,7 @@ type(NL_DS_Measure), intent(out) :: ds_measure
 !
 ! - Main parameters
 !
-    ds_measure%l_table          = .false._1
+    ds_measure%l_table          = ASTER_FALSE
     ds_measure%nb_timer         = nb_timer_defi
     ds_measure%nb_device        = nb_device_defi
     ds_measure%store_mean_time  = 0.d0
@@ -144,7 +144,7 @@ type(NL_DS_Measure), intent(out) :: ds_measure
     ds_measure%iter_remain_time = 0.d0
     ds_measure%step_remain_time = 0.d0
     ds_measure%nb_device_acti   = 0
-    ds_measure%l_device_acti(1:ds_measure%nb_device_maxi) = .false._1
+    ds_measure%l_device_acti(1:ds_measure%nb_device_maxi) = ASTER_FALSE
 !
 ! - For timers
 !
@@ -174,9 +174,9 @@ type(NL_DS_Measure), intent(out) :: ds_measure
 !
 ! - Create table
 !
-    call CreateVoidTable(table)
-    table%table_type   = 'STAT'
-    table%title_height = 2
+    call nonlinDSTableVoid(table)
+    table%table_io%table_type = 'STAT'
+    table%title_height        = 2
 !
 ! - First column: time
 !

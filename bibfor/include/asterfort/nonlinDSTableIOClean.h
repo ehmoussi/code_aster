@@ -17,13 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmmeng(list_func_acti, ds_algorom, ds_print, ds_measure, ds_energy)
+    subroutine nonlinDSTableIOClean(tableio)
         use NonLin_Datastructure_type
-        use Rom_Datastructure_type
-        integer, intent(in) :: list_func_acti(*)
-        type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
-        type(NL_DS_Print), intent(inout) :: ds_print
-        type(NL_DS_Energy), intent(inout) :: ds_energy
-        type(NL_DS_Measure), intent(inout) :: ds_measure
-    end subroutine nmmeng
+        type(NL_DS_TableIO), intent(inout) :: tableio
+    end subroutine nonlinDSTableIOClean
 end interface
