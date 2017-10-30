@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine CreateVoidTable(table)
+subroutine nonlinDSTableVoid(table)
 !
 use NonLin_Datastructure_type
 !
@@ -26,6 +26,7 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/nonlinDSColumnVoid.h"
+#include "asterfort/nonlinDSTableIOVoid.h"
 !
 type(NL_DS_Table), intent(out) :: table
 !
@@ -42,31 +43,24 @@ type(NL_DS_Table), intent(out) :: table
 ! --------------------------------------------------------------------------------------------------
 !
     type(NL_DS_Column) :: column_void
+    type(NL_DS_TableIO) :: tableio_void
     integer :: nb_cols_maxi
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call nonlinDSColumnVoid(column_void)
+    call nonlinDSTableIOVoid(tableio_void)
     nb_cols_maxi = table%nb_cols_maxi
 !
-    table%result                      = ' '
-    table%table_name                  = ' '
-    table%table_type                  = ' '
+    table%table_io                    = tableio_void
     table%nb_cols                     = 0
     table%cols(1:nb_cols_maxi)        = column_void
-    table%l_cols_acti(1:nb_cols_maxi) = .false._1
+    table%l_cols_acti(1:nb_cols_maxi) = ASTER_FALSE
     table%width                       = 0
     table%title_height                = 0
     table%sep_line                    = ' '
-    table%l_csv                       = .false._1
-    table%unit_csv                    = 0  
-    table%nb_para                     = 0
-    table%list_para(1:nb_cols_maxi)   = ' '
-    table%type_para(1:nb_cols_maxi)   = ' '
-    table%nb_para_inte                = 0
-    table%nb_para_real                = 0
-    table%nb_para_cplx                = 0
-    table%nb_para_strg                = 0
+    table%l_csv                       = ASTER_FALSE
+    table%unit_csv                    = 0
     table%indx_vale(1:nb_cols_maxi)   = 0
 !
 end subroutine

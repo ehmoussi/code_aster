@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine CreateTable(result, table)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nonlinDSTableIOCreate(result, table_typez, tableio)
 !
 use NonLin_Datastructure_type
 !
@@ -31,21 +32,21 @@ implicit none
 #include "asterfort/tbcrsd.h"
 #include "asterfort/tbajpa.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: result
-    type(NL_DS_Table), intent(inout) :: table
+character(len=8), intent(in) :: result
+character(len=*), intent(in) :: table_typez
+type(NL_DS_TableIO), intent(inout) :: tableio
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! MECA_NON_LINE - Table management
+! MECA_NON_LINE - Table in output datastructure management
 !
 ! Create table in results datastructure
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  result           : name of results datastructure
-! IO  table            : datastructure for table
+! In  table_type       : type of table
+! IO  tableio          : table in output datastructure
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -55,7 +56,8 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    table_type = table%table_type
+    table_name = ' '
+    table_type = table_typez
 !
 ! - Create list of tables if necessary
 !  
@@ -73,12 +75,13 @@ implicit none
     call exisd('TABLE', table_name, iret)
     if (iret .eq. 0) then
         call tbcrsd(table_name, 'G')
-        call tbajpa(table_name, table%nb_para, table%list_para, table%type_para)
+        call tbajpa(table_name, tableio%nb_para, tableio%list_para, tableio%type_para)
     endif
 !
 ! - Set table parameters
 !
-    table%result     = result
-    table%table_name = table_name
+    tableio%result     = result
+    tableio%table_name = table_name
+    tableio%table_type = table_type
 !
 end subroutine

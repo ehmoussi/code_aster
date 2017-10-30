@@ -15,12 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine CreateVoidTable(table)
+    subroutine nonlinDSTableIOCreate(result, table_typez, tableio)
         use NonLin_Datastructure_type
-        type(NL_DS_Table), intent(out) :: table
-    end subroutine CreateVoidTable
+        character(len=8), intent(in) :: result
+        character(len=*), intent(in) :: table_typez
+        type(NL_DS_TableIO), intent(inout) :: tableio
+    end subroutine nonlinDSTableIOCreate
 end interface

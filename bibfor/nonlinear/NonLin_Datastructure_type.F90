@@ -50,13 +50,27 @@ implicit none
         character(len=16)  :: vale_strg
     end type NL_DS_Column
 !
+! - Type: table in output datastructure
+! 
+    type NL_DS_TableIO
+! ----- Name of result datastructure
+        character(len=8)           :: result = ' '
+! ----- Parameters for table in output Datastructure
+        character(len=19)          :: table_name = ' '
+        character(len=24)          :: table_type = ' '
+! ----- List of parameters
+        integer                    :: nb_para = 0
+        integer                    :: nb_para_inte = 0
+        integer                    :: nb_para_real = 0
+        integer                    :: nb_para_cplx = 0
+        integer                    :: nb_para_strg = 0
+        character(len=24), pointer :: list_para(:) => null()
+        character(len=8), pointer  :: type_para(:) => null()
+    end type NL_DS_TableIO
+!
 ! - Type: table 
 ! 
     type NL_DS_Table
-! ----- Name of result datastructure
-        character(len=8)       :: result
-        character(len=19)      :: table_name
-        character(len=24)      :: table_type
 ! ----- Number of active columns
         integer                :: nb_cols
 ! ----- Maximum number of columns in table
@@ -75,14 +89,8 @@ implicit none
         aster_logical          :: l_csv
 ! ----- Logical unit for outside file (CSV)
         integer                :: unit_csv
-! ----- List of parameters (for table definition)
-        integer                :: nb_para
-        integer                :: nb_para_inte
-        integer                :: nb_para_real
-        integer                :: nb_para_cplx
-        integer                :: nb_para_strg
-        character(len=24)      :: list_para(39)
-        character(len=3)       :: type_para(39)
+! ----- Table in output datastructure
+        type(NL_DS_TableIO)    :: table_io
 ! ----- Index to values
         integer                :: indx_vale(39)
     end type NL_DS_Table

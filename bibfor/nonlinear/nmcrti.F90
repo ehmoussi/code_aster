@@ -31,8 +31,8 @@ implicit none
 #include "asterfort/uttcpu.h"
 #include "asterfort/nonlinDSColumnWriteValue.h"
 #include "asterfort/ActivateDevice.h"
-#include "asterfort/CreateTable.h"
-#include "asterfort/SetTablePara.h"
+#include "asterfort/nonlinDSTableIOCreate.h"
+#include "asterfort/nonlinDSTableIOSetPara.h"
 #include "asterfort/SetTableColumn.h"
 #include "asterfort/ComputeTableHead.h"
 #include "asterfort/ComputeTableWidth.h"
@@ -187,11 +187,11 @@ type(NL_DS_Measure), intent(inout) :: ds_measure
 !
 ! ----- Create list of parameters
 !
-        call SetTablePara(table)
+        call nonlinDSTableIOSetPara(table)
 !
 ! ----- Create table in results datastructure
 !
-        call CreateTable(result, table)
+        call nonlinDSTableIOCreate(result, 'STAT', table%table_io)
 !
 ! ----- Prepare table in output CSV file
 !

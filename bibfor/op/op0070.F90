@@ -359,6 +359,6 @@ implicit none
 !
 ! --- MENAGE
 !
-    call nmmeng(fonact, ds_algorom)
+    call nmmeng(fonact, ds_algorom, ds_print, ds_measure, ds_energy)
 !
 end subroutine

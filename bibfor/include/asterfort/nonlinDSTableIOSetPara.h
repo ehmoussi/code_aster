@@ -17,13 +17,14 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmmeng(list_func_acti, ds_algorom, ds_print, ds_measure, ds_energy)
+    subroutine nonlinDSTableIOSetPara(table_  ,&
+                                      tableio_,&
+                                      nb_para_, list_para_, type_para_)
         use NonLin_Datastructure_type
-        use Rom_Datastructure_type
-        integer, intent(in) :: list_func_acti(*)
-        type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
-        type(NL_DS_Print), intent(inout) :: ds_print
-        type(NL_DS_Energy), intent(inout) :: ds_energy
-        type(NL_DS_Measure), intent(inout) :: ds_measure
-    end subroutine nmmeng
+        type(NL_DS_Table), optional, intent(inout) :: table_
+        type(NL_DS_TableIO), optional, intent(inout) :: tableio_
+        integer, optional :: nb_para_
+        character(len=24), optional :: list_para_(:)
+        character(len=8), optional :: type_para_(:)
+    end subroutine nonlinDSTableIOSetPara
 end interface

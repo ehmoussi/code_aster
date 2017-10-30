@@ -29,7 +29,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/nonlinDSColumnVoid.h"
-#include "asterfort/CreateVoidTable.h"
+#include "asterfort/nonlinDSTableIOVoid.h"
 !
 type(NL_DS_Energy), intent(out) :: ds_energy
 !
@@ -56,7 +56,7 @@ type(NL_DS_Energy), intent(out) :: ds_energy
                     'ENER_CIN  ','ENER_TOT  ','TRAV_AMOR ',&
                     'TRAV_LIAI ','DISS_SCH  '/)
 !
-    character(len=3), parameter :: cols_type(nb_col_defi) = (/&
+    character(len=8), parameter :: cols_type(nb_col_defi) = (/&
                     'I  ','R  ','R  ',&
                     'R  ','R  ','R  ',&
                     'R  ','R  '/)
@@ -70,9 +70,9 @@ type(NL_DS_Energy), intent(out) :: ds_energy
 !
 ! - Create table
 !
-    call CreateVoidTable(table)
-    table%table_type     = 'PARA_CALC'
-    table%nb_cols        = nb_col_defi
+    call nonlinDSTableIOVoid(table%table_io)
+    table%table_io%table_type = 'PARA_CALC'
+    table%nb_cols             = nb_col_defi
     ASSERT(table%nb_cols .le. table%nb_cols_maxi)
     do i_col = 1, nb_col_defi
         call nonlinDSColumnVoid(column)

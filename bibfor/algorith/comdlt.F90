@@ -47,6 +47,7 @@ implicit none
 #include "asterfort/cochre.h"
 #include "asterfort/nonlinDSEnergyCreate.h"
 #include "asterfort/nonlinDSEnergyInit.h"
+#include "asterfort/nonlinDSEnergyClean.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/dladap.h"
 #include "asterfort/dldiff.h"
@@ -453,6 +454,8 @@ implicit none
 !
  62     continue
     endif
+!
+    call nonlinDSEnergyClean(ds_energy)
 !
     call jedema()
 end subroutine

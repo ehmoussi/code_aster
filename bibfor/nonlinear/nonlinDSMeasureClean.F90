@@ -17,60 +17,31 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmmeng(list_func_acti, ds_algorom, ds_print, ds_measure, ds_energy)
+subroutine nonlinDSMeasureClean(ds_measure)
 !
 use NonLin_Datastructure_type
-use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/detmat.h"
-#include "asterfort/isfonc.h"
-#include "asterfort/romAlgoNLClean.h"
-#include "asterfort/nonlinDSPrintClean.h"
-#include "asterfort/nonlinDSMeasureClean.h"
-#include "asterfort/nonlinDSEnergyClean.h"
+#include "asterfort/assert.h"
+#include "asterfort/as_deallocate.h"
+#include "asterfort/nonlinDSTableIOClean.h"
 !
-integer, intent(in) :: list_func_acti(*)
-type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
-type(NL_DS_Print), intent(inout) :: ds_print
-type(NL_DS_Energy), intent(inout) :: ds_energy
 type(NL_DS_Measure), intent(inout) :: ds_measure
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! MECA_NON_LINE - Algorithm
+! MECA_NON_LINE - Measure and statistic management
 !
-! Cleaning datastructures
+! Clean measure and statistic management datastructure
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  list_func_acti   : list of active functionnalities
-! IO  ds_algorom       : datastructure for ROM parameters
-! IO  ds_print         : datastructure for printing parameters
-! IO  ds_energy        : datastructure for energy management
 ! IO  ds_measure       : datastructure for measure and statistics management
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: l_rom
-!
-! --------------------------------------------------------------------------------------------------
-!
-    l_rom = isfonc(list_func_acti,'ROM')
-    if (l_rom) then
-        call romAlgoNLClean(ds_algorom)
-    endif
-!
-! - De-allocate
-!
-    call nonlinDSPrintClean(ds_print)
-    call nonlinDSMeasureClean(ds_measure)
-    call nonlinDSEnergyClean(ds_energy)
-!
-! - DESTRUCTION DE TOUTES LES MATRICES CREEES
-!
-    call detmat()
+    call nonlinDSTableIOClean(ds_measure%table%table_io)
 !
 end subroutine

@@ -15,13 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine CreateTable(result, table)
+    subroutine nonlinDSMeasureClean(ds_measure)
         use NonLin_Datastructure_type
-        character(len=8), intent(in) :: result
-        type(NL_DS_Table), intent(inout) :: table
-    end subroutine CreateTable
+        type(NL_DS_Measure), intent(inout) :: ds_measure
+    end subroutine nonlinDSMeasureClean
 end interface
