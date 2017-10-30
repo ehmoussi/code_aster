@@ -41,8 +41,11 @@ Development rules
         .. code-block:: none
 
             test004b     <S>_ERROR              JEVEUX_26 on '&&NMRESI.CNFINP    .VALE'
+            xxElementaryCharacteristics001a <F>_ABNORMAL_ABORT  AFFE_CARA_ELEM
             xxFlow001a   <S>_ERROR              DEFI_FLUI_STRU ?
+            xxMechanicalLoad001a <F>_ABNORMAL_ABORT   AFFE_CARA_ELEM
             xxMultiSteps01a <S>_ERROR
+            table01b     <S>_ERROR              CALC_TABLE
 
     - Currently, these testcases have been partially truncated because of
       unsupported features:
