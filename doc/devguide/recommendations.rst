@@ -17,7 +17,6 @@ should give some ideas.
 One can also search for names in the :ref:`devguide-objects_datastructure` page.
 
 
-
 Default arguments in Boost Interface
 ====================================
 
@@ -46,3 +45,58 @@ The macro generates a wrapper with between 1 and 2 arguments.
 
 
 Source: `Boost Python Overloads <http://www.boost.org/doc/libs/1_65_1/libs/python/doc/html/reference/function_invocation_and_creation/boost_python_overloads_hpp.html#function_invocation_and_creation.boost_python_overloads_hpp.macros>`_.
+
+
+Converting Macro-Commands
+=========================
+
+*Work is still in progress*...
+
+.. warning: ``CO()`` results are not yet supported.
+
+Legacy Macro-commands do not work as is.
+
+#. There is no need to define an executor manually.
+   Default :class:`~code_aster.Commands.ExecuteCommand.ExecuteMacro` is just
+   adapted by :mod:`code_aster.Commands.operator` using the right catalog
+   description.
+
+#. The body of the macro-command, the ``ops()`` function, is automatically
+   called by the :meth:`~code_aster.Commands.ExecuteCommand.ExecuteMacro.run`
+   factory.
+
+#. Results of macro-commands are created directly by the ``ops()`` function
+   (called by ``exec_()``). ``create_result()`` method does nothing.
+
+#. The ``ops()`` function must now returns the result object it creates.
+
+
+Required changes
+----------------
+
+- The ``ops()`` function returned an exit code as integer.
+
+  Now, it must return the created result object, or *None* if there is not.
+
+- In code_aster legacy the keywords arguments passed to ``ops()`` contained
+  all existing keywords, eventually with *None* value.
+
+  Now, only the user keywords + the default keywords are passed.
+  If needed, these arguments may be wrapped by ``_F()`` that provides a ``[]``
+  operator that returns *None* if a keyword does not exist.
+
+  Example:
+
+  .. code-block:: python
+
+        def my_macro_ops(INFO, **kwargs):
+            """..."""
+            kwargs = _F(kwargs)
+            para = kwargs['NOM_PARA']  # no failure even if the keyword does not exist
+
+- Tests on DataStructures types must be changed.
+  For example:
+
+  Replace ``AsType(obj) is fonction_sdaster`` by ``obj.getType() == "FONCTION"``
+
+  or ``type(obj) is fonction_sdaster`` by ``obj.getType() == "FONCTION"``

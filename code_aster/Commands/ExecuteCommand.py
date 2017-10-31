@@ -69,6 +69,7 @@ from ..Supervis import CommandSyntax, logger
 from ..Utilities import (command_header, command_result, command_text,
                          deprecated, import_object)
 
+
 class CommandCounter(object):
     """Simple object to store the number of called Commands.
 
