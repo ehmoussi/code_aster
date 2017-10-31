@@ -64,7 +64,7 @@ subroutine aceamb(nomu, noma, lmax, nbocc)
     integer :: noe1, noe2, noe3, iarg
     real(kind=8) :: ep, tens
     real(kind=8) :: ang(2), angx(2)
-    real(kind=8) :: axex(3), axey(3), axet2(3), xnorm, epsi, vecnor(3)
+    real(kind=8) :: axex(3), axey(3), xnorm, epsi, vecnor(3)
     real(kind=8) :: vn1n2(3), vn1n3(3)
     character(len=19) :: cartgr
     character(len=24) :: tmpngr, tmpvgr, nomagr, nomama, connex
@@ -132,13 +132,14 @@ subroutine aceamb(nomu, noma, lmax, nbocc)
             ASSERT(.false.)
         endif
 !
+        zr(jdvc+3) = tens
+!
 !       SI ANGL_REP_1 OU VECT_1 SONT RENSEIGNES
         if ((n2 .eq. 0) .and. (n4 .eq. 0)) then
 !           SI ANGL_REP_1 EST RENSEIGNE
             if (n3 .eq. 0) then
                 zr(jdvc+1) = ang(1)
                 zr(jdvc+2) = ang(2)
-                zr(jdvc+3) = tens
             endif
 !           SI VECT_1 EST RENSEIGNE
             if (n1 .eq. 0) then
@@ -209,9 +210,6 @@ subroutine aceamb(nomu, noma, lmax, nbocc)
                 vecnor(2) = vn1n2(3)*vn1n3(1) - vn1n2(1)*vn1n3(3)
                 vecnor(3) = vn1n2(1)*vn1n3(2) - vn1n2(2)*vn1n3(1)
                 call normev(vecnor, xnorm)
-                if (xnorm .lt. epsi) then
-                    call utmess('F', 'MODELISA_11')
-                endif
 !
 !               SI ANGL_REP_2 EST RENSEIGNE
                 if (n4 .eq. 0) then
