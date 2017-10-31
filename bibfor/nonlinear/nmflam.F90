@@ -111,9 +111,9 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: linsta
+    aster_logical :: linsta, l_hpp
     integer :: nfreq, nfreqc, nbrss, maxitr, i, ljeveu, ibid, iret, nbborn
-    integer :: defo, ldccvg, numord, nddle, nsta, ljeve2, cdsp, nbvec2, nbvect
+    integer :: ldccvg, numord, nddle, nsta, ljeve2, cdsp, nbvec2, nbvect
     real(kind=8) :: bande(2), r8bid, alpha, tolsor, precsh, fcorig, precdc, omecor, freqm, freqv
     real(kind=8) :: freqa, freqr, csta
     character(len=1)  :: k1bid
@@ -142,13 +142,13 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 !
 ! --- RECUPERATION DES OPTIONS
 !
-    call nmflal(option, ds_constitutive, ds_posttimestep, mod45 , defo  ,&
-                nfreq , cdsp           , typmat         , optmod, bande ,&
+    call nmflal(option, ds_posttimestep, mod45 , l_hpp ,&
+                nfreq , cdsp           , typmat, optmod, bande,&
                 nddle , nsta           , modrig)
 !
 ! --- CALCUL DE LA MATRICE TANGENTE ASSEMBLEE ET DE LA MATRICE GEOM.
 !
-    call nmflma(typmat, mod45 , defo  , ds_algopara, model,&
+    call nmflma(typmat, mod45 , l_hpp  , ds_algopara, model,&
                 mate  , cara_elem, sddisc, sddyna     , list_func_acti,&
                 nume_inst, hval_incr, hval_algo, list_load     , varc_refe,&
                 ds_contact, nume_dof     , nume_dof_inva,&
@@ -231,7 +231,7 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 !
 ! --- CALCUL MODAL PROPREMENT DIT
 !
-    call nmop45(eigsol, defo, mod45, sdmode, sdstab, ds_posttimestep)
+    call nmop45(eigsol, l_hpp, mod45, sdmode, sdstab, ds_posttimestep)
     
     call vpleci(eigsol, 'I', 1, k24bid, r8bid, nfreqc)
     call detrsd('EIGENSOLVER',eigsol)

@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine nmop45(eigsol, defo, mod45, modes, modes2, ds_posttimestep_)
+subroutine nmop45(eigsol, l_hpp, mod45, modes, modes2, ds_posttimestep_)
 !
 use NonLin_Datastructure_type
 !
@@ -47,7 +47,7 @@ implicit none
 #include "asterfort/vpvers.h"
 #include "asterfort/wkvect.h"
 !
-integer           , intent(in) :: defo
+aster_logical     , intent(in) :: l_hpp
 character(len=4)  , intent(in) :: mod45
 character(len=8)  , intent(in) :: modes, modes2
 character(len=19) , intent(in) :: eigsol
@@ -58,9 +58,9 @@ type(NL_DS_PostTimeStep), optional, intent(in) :: ds_posttimestep_
 !        DE GEP (PARTAGEE AVEC OP0045).
 !-----------------------------------------------------------------------
 !   IN : EIGSOL : SD EIGENSOLVER CONTENANT LES PARAMETRES DU PB MODAL
-!   IN : DEFO   : TYPE DE DEFORMATIONS
-!                0            PETITES DEFORMATIONS (MATR. GEOM.)
-!                1            GRANDES DEFORMATIONS (PAS DE MATR. GEOM.)                  
+!   IN : L_HPP  : TYPE DE DEFORMATIONS
+!                .TRUE.         PETITES DEFORMATIONS (MATR. GEOM.)
+!                .FALSE.        GRANDES DEFORMATIONS (PAS DE MATR. GEOM.)                  
 !   IN : MOD45  : TYPE DE CALCUL AU SENS NMOP45: VIBR OU FLAM
 !   IN : MODES  : NOM UTILISATEUR DU CONCEPT MODAL PRODUIT
 !   IN : MODES2 : NOM UTILISATEUR D'UN SECOND CONCEPT MODAL PRODUIT (SI
@@ -146,7 +146,7 @@ type(NL_DS_PostTimeStep), optional, intent(in) :: ds_posttimestep_
     call vpleci(eigsol, 'K', 6, k24bid, r8bid, ibid)
     method=''
     method=trim(k24bid)
-    if (((mod45(1:4).eq.'FLAM').and.(defo.eq.0)).or.(mod45(1:4).ne.'FLAM')) then
+    if (((mod45(1:4).eq.'FLAM').and.l_hpp).or.(mod45(1:4).ne.'FLAM')) then
 ! ========================================================================
 ! --- FLAMBEMENT AVEC MATRICE GEOMETRIQUE OU DYNAMIQUE TOUT CAS DE FIGURE
 ! ======================================================================== 

@@ -17,24 +17,25 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmflal(option, ds_constitutive, ds_posttimestep, mod45 , defo  ,&
-                  nfreq , cdsp           , typmat         , optmod, bande ,&
+subroutine nmflal(option, ds_posttimestep, mod45 , l_hpp ,&
+                  nfreq , cdsp           , typmat, optmod, bande ,&
                   nddle , nsta           , modrig)
 !
 use NonLin_Datastructure_type
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
 !
-type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 character(len=16) :: optmod, option
 character(len=4) :: mod45
-integer :: nfreq, defo, nddle, nsta, cdsp
+integer :: nfreq, nddle, nsta, cdsp
 character(len=16) :: typmat, modrig
 real(kind=8) :: bande(2)
 type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
+aster_logical, intent(out) :: l_hpp
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,7 +49,6 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 !              'FLAMBSTA' MODES DE FLAMBEMENT EN STATIQUE
 !              'FLAMBDYN' MODES DE FLAMBEMENT EN DYNAMIQUE
 !              'VIBRDYNA' MODES VIBRATOIRES
-! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  ds_posttimestep  : datastructure for post-treatment at each time step
 ! OUT MOD45  : TYPE DE CALCUL DE MODES PROPRES
 !              'VIBR'     MODES VIBRATOIRES
@@ -61,7 +61,7 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 ! OUT OPTMOD : OPTION DE RECHERCHE DE MODES
 !               'PLUS_PETITE' LA PLUS PETITE FREQUENCE
 !               'BANDE'       DANS UNE BANDE DE FREQUENCE DONNEE
-! OUT DEFO   : TYPE DE DEFORMATIONS
+! OUT l_hpp   : TYPE DE DEFORMATIONS
 !                0            PETITES DEFORMATIONS (MATR. GEOM.)
 !                1            GRANDES DEFORMATIONS (PAS DE MATR. GEOM.)
 ! OUT BANDE  : BANDE DE FREQUENCE SI OPTMOD='BANDE'
@@ -81,18 +81,12 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
     nfreq = 0
     cdsp = 0
     nddle = 0
-    defo = 0
     mod45 = ' '
     optmod = ' '
     optrig = ' '
     typmat = ' '
     nsta = 0
-!
-! - Check if geometric matrix is included in global tangent matrix
-!
-    if (ds_constitutive%l_matr_geom) then
-        defo = 1
-    endif
+    l_hpp  = ASTER_TRUE
 !
 ! --- RECUPERATION DES OPTIONS
 !
@@ -107,31 +101,24 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
         endif
         bande  = ds_posttimestep%mode_vibr%strip_bounds
         mod45  = 'VIBR'
+        
     else if (option(1:5) .eq. 'FLAMB') then
         nfreq  = ds_posttimestep%crit_stab%nb_eigen
         cdsp   = ds_posttimestep%crit_stab%coef_dim_espace
         typmat = ds_posttimestep%crit_stab%type_matr_rigi
-        mod45 = 'FLAM'
-        if (.not. ds_posttimestep%stab_para%l_geom_matr) then
-            defo = 1
-            call utmess('I', 'MECANONLINE4_3')
-        endif
-!
-        if (defo .eq. 0) then
-            ASSERT(ds_posttimestep%crit_stab%l_strip)
-            optmod = 'BANDE'
-        else if (defo .eq. 1) then
-            ASSERT(ds_posttimestep%crit_stab%l_small)
+        if (ds_posttimestep%crit_stab%l_small) then
             optmod = 'PLUS_PETITE'
         else
-            ASSERT(ASTER_FALSE)
+            optmod = 'BANDE'
         endif
         bande  = ds_posttimestep%crit_stab%strip_bounds
+        mod45 = 'FLAM'
         nddle  = ds_posttimestep%stab_para%nb_dof_excl
         nsta   = ds_posttimestep%stab_para%nb_dof_stab
         if (ds_posttimestep%stab_para%l_modi_rigi) then
             modrig = 'MODI_RIGI_OUI'
         endif
+        l_hpp  = ds_posttimestep%l_hpp
     else
         ASSERT(ASTER_FALSE)
     endif

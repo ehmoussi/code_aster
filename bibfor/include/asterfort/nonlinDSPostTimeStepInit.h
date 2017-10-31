@@ -17,9 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nonlinDSPostTimeStepInit(ds_algopara, ds_posttimestep)
+    subroutine nonlinDSPostTimeStepInit(ds_algopara, ds_constitutive, ds_posttimestep)
         use NonLin_Datastructure_type
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
     end subroutine nonlinDSPostTimeStepInit
 end interface

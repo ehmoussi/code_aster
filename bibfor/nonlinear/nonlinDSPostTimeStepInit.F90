@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nonlinDSPostTimeStepInit(ds_algopara, ds_posttimestep)
+subroutine nonlinDSPostTimeStepInit(ds_algopara, ds_constitutive, ds_posttimestep)
 !
 use NonLin_Datastructure_type
 !
@@ -27,8 +27,10 @@ implicit none
 #include "asterc/r8vide.h"
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
 !
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 !
 ! --------------------------------------------------------------------------------------------------
@@ -40,11 +42,13 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ds_algopara      : datastructure for algorithm parameters
+! In  ds_constitutive  : datastructure for constitutive laws management
 ! IO  ds_posttimestep  : datastructure for post-treatment at each time step
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
+    aster_logical :: l_hpp
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -59,7 +63,19 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
         ds_posttimestep%crit_stab%type_matr_rigi = ds_algopara%matrix_pred
     endif
 !
-! - Initializations
+! - Select small strain hypothese
+!
+    l_hpp = ASTER_TRUE
+    if (ds_constitutive%l_matr_geom) then
+        l_hpp = ASTER_FALSE
+    endif
+    if (ds_posttimestep%l_crit_stab) then
+        if (.not. ds_posttimestep%stab_para%l_geom_matr) then
+            l_hpp = ASTER_FALSE
+            call utmess('I', 'MECANONLINE4_3')
+        endif
+    endif
+    ds_posttimestep%l_hpp = l_hpp
 !
     ds_posttimestep%mode_vibr_resu%eigen_value  = r8vide()
     ds_posttimestep%mode_vibr_resu%eigen_index  = -1
