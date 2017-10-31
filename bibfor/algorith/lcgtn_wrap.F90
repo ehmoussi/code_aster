@@ -20,15 +20,14 @@ subroutine lcgtn_wrap(fami, kpg, ksp, ndim, imate, &
                       crit, instam, instap, neps, epsm, &
                       deps, vim, option, sigp, vip, &
                       grvi, dsidep, codret)
-!
-!
-! aslint: disable=W1504,W0104
-    use lcgtn,         only: gtn_material
+    use lcgtn_module, only: gtn_material
 
     implicit none
-#include "asterfort/lcgrad_bis.h"
+#include "asterfort/lcgrad.h"
 #include "asterfort/lcgtn_compute.h"
 #include "asterfort/lcgtn_material.h"
+
+! aslint: disable=W1504
     
     aster_logical:: grvi
     integer      :: imate, ndim, kpg, ksp, codret, neps
@@ -45,7 +44,7 @@ subroutine lcgtn_wrap(fami, kpg, ksp, ndim, imate, &
 ! ----------------------------------------------------------------------
     type(gtn_material):: mat
     aster_logical:: elas,rigi,resi
-    integer      :: itemax,ndimsi,state,iret
+    integer      :: itemax,ndimsi,state
     real(kind=8) :: epsth,prec
     real(kind=8) :: apg,lag,phi,ka,f
     real(kind=8) :: grad(ndim),eps(2*ndim),ep(2*ndim),t(2*ndim)
@@ -109,9 +108,9 @@ subroutine lcgtn_wrap(fami, kpg, ksp, ndim, imate, &
 
 ! COMPORTEMENT    
 
-    iret = lcgtn_compute(grvi,resi,rigi,elas, itemax, prec, mat, instap-instam, eps, phi, ep, ka, &
+    codret = lcgtn_compute(resi,rigi,elas, itemax, prec, mat, instap-instam, eps, phi, ep, ka, &
                   f, state, t, deps_t,dphi_t,deps_ka,dphi_ka)
-    if (iret.ne.0) goto 999
+    if (codret.ne.0) goto 999
 
 
 
@@ -126,7 +125,7 @@ subroutine lcgtn_wrap(fami, kpg, ksp, ndim, imate, &
 
     if (grvi) then
         ! Non local
-        call lcgrad_bis(resi, rigi, t, apg, lag, grad, ka,&
+        call lcgrad(resi, rigi, t, apg, lag, grad, ka,&
                   mat%r, mat%c, deps_t,dphi_t,deps_ka,dphi_ka, sigp, dsidep)
     else
         ! Local

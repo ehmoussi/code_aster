@@ -25,25 +25,26 @@ subroutine poslog(resi, rigi, tn, tp, fm,&
 !     SUIVANT ARTICLE MIEHE APEL LAMBRECHT CMAME 2002
 !     CONFIGURATION LAGRANGIENNE
 ! ----------------------------------------------------------------------
-! IN  RESI    : .TRUE. SI FULL_MECA/RAPH_MECA .FALSE. SI RIGI_MECA_TANG
-! IN  RIGI    : .TRUE. SI FULL_MECA/RIGI_MECA_TANG
-! IN  TN      : CONTRAINTES ASSOCIEES AUX DEF. LOGARITHMIQUES EN T-
-! IN  TP      : CONTRAINTES ASSOCIEES AUX DEF. LOGARITHMIQUES EN T+
-! IN  FM      : GRADIENT TRANSFORMATION EN T-
-! IN  LGPG    : DIMENSION DU VECTEUR DES VAR. INTERNES POUR 1 PT GAUSS
-! VAR VIP     : VARIABLES INTERNES EN T+
-! IN  NDIM    : DIMENSION DE L'ESPACE
-! IN  FP      : GRADIENT TRANSFORMATION EN T+
-! IN  PES     : OPERATEUR DE TRANSFORMATION TN (OU TP) EN PK2
-! IN  G       : NUMERO DU POINTS DE GAUSS
-! IN  DTDE    : OPERATEUR TANGENT ISSU DE NMCOMP (6,6)
-! IN  GN      : TERMES UTILES AU CALCUL DE TL DANS POSLOG
-! IN  FETA    : TERMES UTILES AU CALCUL DE TL DANS POSLOG
-! IN  XI      : TERMES UTILES AU CALCUL DE TL DANS POSLOG
-! IN  ME      : TERMES UTILES AU CALCUL DE TL DANS POSLOG
-! OUT SIGP    : CONTRAINTES DE CAUCHY EN T+
+! in  resi    : .true. si full_meca/raph_meca .false. si rigi_meca_tang
+! in  rigi    : .true. si full_meca/rigi_meca_tang
+! in  tn      : contraintes associees aux def. logarithmiques en t-
+! in  tp      : contraintes associees aux def. logarithmiques en t+
+! in  fm      : gradient transformation en t-
+! in  lgpg    : dimension du vecteur des var. internes pour 1 pt gauss
+! var vip     : variables internes en t+
+! in  ndim    : dimension de l'espace
+! in  fp      : gradient transformation en t+
+! in  pes     : operateur de transformation tn (ou tp) en pk2
+! in  g       : numero du points de gauss
+! in  dtde    : operateur tangent issu de nmcomp (6,6)
+! in  sigm    : contrainte de cauchy en t- 
+! in  gn      : termes utiles au calcul de tl dans poslog
+! in  feta    : termes utiles au calcul de tl dans poslog
+! in  xi      : termes utiles au calcul de tl dans poslog
+! in  me      : termes utiles au calcul de tl dans poslog
+! out sigp    : contraintes de cauchy en t+
 !
-! aslint: disable=,W1504
+! aslint: disable=W1504
     implicit none
 #include "asterf_types.h"
 #include "asterfort/d1macp.h"
@@ -88,7 +89,7 @@ subroutine poslog(resi, rigi, tn, tp, fm,&
 !     PERTINENCE DES GRANDEURS
     if (detf .le. 1.d-2 .or. detf .gt. 1.d2) then
         codret = 1
-        goto 9999
+        goto 999
     endif
 !
 ! CORRECTION POUR LES CONTRAINTES PLANES
@@ -100,19 +101,21 @@ subroutine poslog(resi, rigi, tn, tp, fm,&
         if (resi) then
             call d1macp(fami, mate, instp, '+', g,&
                         1, angmas, d1)
-            do 10 i = 1, 4
-                do 10 j = 1, 4
+            do i = 1, 4
+                do j = 1, 4
                     epse(i)=epse(i)+d1(i,j)*tp(j)
- 10             continue
+                end do
+            end do
 !           EN ELASTICITE ISTROPE
             epse(3)=d1(1,2)*(tp(1)+tp(2))
         else
             call d1macp(fami, mate, instp, '-', g,&
                         1, angmas, d1)
-            do 11 i = 1, 4
-                do 11 j = 1, 4
+            do i = 1, 4
+                do j = 1, 4
                     epse(i)=epse(i)+d1(i,j)*tn(j)
- 11             continue
+                end do
+            end do
 !           EN ELASTICITE ISTROPE
             epse(3)=d1(1,2)*(tn(1)+tn(2))
         endif
@@ -133,9 +136,9 @@ subroutine poslog(resi, rigi, tn, tp, fm,&
         if (.not.resi) then
             call pk2sig(ndim, fm, detf, pk2m, sigm,&
                         -1)
-            do 54 kl = 4, 2*ndim
+            do kl = 4, 2*ndim
                 pk2m(kl)=pk2m(kl)*rac2
- 54         continue
+            end do
             call dcopy(6, tn, 1, tp2, 1)
         else
             call dcopy(6, tp, 1, tp2, 1)
@@ -161,11 +164,11 @@ subroutine poslog(resi, rigi, tn, tp, fm,&
 !        TRANSFORMATION DU TENSEUR T EN PK2
 !
         call r8inir(6, 0.d0, pk2, 1)
-        do 51 i = 1, 6
-            do 52 j = 1, 6
+        do i = 1, 6
+            do j = 1, 6
                 pk2(i)=pk2(i)+tp(j)*pes(j,i)
- 52         continue
- 51     continue
+            end do
+        end do
 !        CALCUL DES CONTRAINTES DE CAUCHY, CONVERSION LAGRANGE -> CAUCHY
         call pk2sig(ndim, fp, detf, pk2, sigp,&
                     1)
@@ -178,6 +181,6 @@ subroutine poslog(resi, rigi, tn, tp, fm,&
 !
     endif
 !
-9999 continue
+999 continue
 !
 end subroutine

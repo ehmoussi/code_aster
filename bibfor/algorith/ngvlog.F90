@@ -1,3 +1,21 @@
+! --------------------------------------------------------------------
+! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! This file is part of code_aster.
+!
+! code_aster is free software: you can redistribute it and/or modify
+! it under the terms of the GNU General Public License as published by
+! the Free Software Foundation, either version 3 of the License, or
+! (at your option) any later version.
+!
+! code_aster is distributed in the hope that it will be useful,
+! but WITHOUT ANY WARRANTY; without even the implied warranty of
+! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+! GNU General Public License for more details.
+!
+! You should have received a copy of the GNU General Public License
+! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+! --------------------------------------------------------------------
+
 subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
                   npg, nddl, iw, vff, vffb, idff,idffb,&
                   geomi, compor, mate, lgpg,&
@@ -5,22 +23,6 @@ subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
                   ddlm, ddld, sigmg, vim, sigpg,&
                   vip, fint,matr, codret)
 
-! ======================================================================
-! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
-! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
-! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
-! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
-! (AT YOUR OPTION) ANY LATER VERSION.
-!
-! THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
-! WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
-! MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
-! GENERAL PUBLIC LICENSE FOR MORE DETAILS.
-!
-! YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
-! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
-!   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
-! ======================================================================
 
     implicit none
 #include "asterf_types.h"
@@ -44,6 +46,8 @@ subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
 #include "blas/dcopy.h"
 #include "blas/dgemm.h"
 #include "blas/dgemv.h"
+
+! aslint: disable=W1504
 
 ! -------------------------------------------------------------------------------------------------
     aster_logical    :: matsym
@@ -100,11 +104,10 @@ subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
 !! MEM DFF,DFFB: ESPACE MEMOIRE POUR LA DERIVEE DES FONCTIONS DE FORME
 !               DIM :(NNO,3) EN 3D, (NNO,4) EN AXI, (NNO,2) EN D_PLAN
 ! ----------------------------------------------------------------------
-    aster_logical, parameter :: grand = .true._1
-    real(kind=8),  parameter :: rac2  = sqrt(2.d0)
+    aster_logical, parameter :: grand = ASTER_TRUE
 ! ----------------------------------------------------------------------
     aster_logical:: axi, resi, rigi, cplan
-    integer      :: g,i,j,n,m,cod(npg),nepg,nddl1
+    integer      :: g,i,j,n,m,cod(npg),nddl1
     real(kind=8) :: dff(nno,ndim)
     real(kind=8) :: dffb(nnob,ndim)
     real(kind=8) :: dtdeg(neps, neps)
@@ -114,13 +117,12 @@ subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
     real(kind=8) :: sigm(2*ndim)
     real(kind=8) :: geomm(ndim,nno), geomp(ndim,nno), fm(3, 3), fp(3, 3),fr(3, 3)
     real(kind=8) :: deplt(nno*ndim), deplm(nno*ndim), depld(nno*ndim)
-    real(kind=8) :: r, poids, elgeom(10, 27), tm(6), tp(6), deps(6),tmg(neps),tpg(neps)
+    real(kind=8) :: r, poids, tm(6), tp(6), deps(6),tmg(neps),tpg(neps)
     real(kind=8) :: gn(3, 3), lamb(3), logl(3), rbid(1), tbid(6)
     real(kind=8) :: dsidep(6,6), pk2(6), pk2m(6)
     real(kind=8) :: me(3, 3, 3, 3), xi(3, 3), feta(4), pes(6, 6)
     real(kind=8) :: epmlg(neps), depsg(neps),jp
     real(kind=8) :: fu(nno*ndim)
-    real(kind=8) :: pk2ref(6), pk2ref2(6),furef(nno*ndim),furef2(nno*ndim),dfuref2(nno*ndim)
 ! ----------------------------------------------------------------------
     real(kind=8), allocatable:: def(:,:,:),pff(:,:,:),deff(:,:),bst(:,:),matuu(:,:),b(:,:),bb(:,:)
 ! ----------------------------------------------------------------------
@@ -164,17 +166,16 @@ subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
 !------------------------------DEPLACEMENT ET GEOMETRIE-------------
 !
 !    DETERMINATION DES CONFIGURATIONS EN T- (GEOMM) ET T+ (GEOMP)
-    do 20 n = 1, nnob
+    do n = 1, nnob
        call dcopy(ndim, ddlm((ndim+2)*(n-1)+1), 1, deplm(ndim*(n-1)+1), 1)
        call dcopy(ndim, ddld((ndim+2)*(n-1)+1), 1, depld(ndim*(n-1)+1), 1)
-20  end do
+    end do
     call dcopy(ndim*(nno-nnob), ddlm((ndim+2)*nnob+1), 1, deplm(ndim*nnob+1), 1)
     call dcopy(ndim*(nno-nnob), ddld((ndim+2)*nnob+1), 1, depld(ndim*nnob+1), 1)
 
     call dcopy(nddl1, geomi, 1, geomm, 1)
     call daxpy(nddl1, 1.d0, deplm, 1, geomm,1)
     call dcopy(nddl1, geomm, 1, geomp, 1)
-!     DEPLT : DEPLACEMENT TOTAL ENTRE CONF DE REF ET INSTANT T_N+1
     call dcopy(nddl1, deplm, 1, deplt, 1)
 
     if (resi) then
@@ -188,7 +189,7 @@ subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
 
 ! - CALCUL POUR CHAQUE POINT DE GAUSS
 
-    do 10 g = 1, npg
+    do g = 1, npg
 
 ! ---     CALCUL DE F_N, F_N+1 PAR RAPPORT A GEOMI GEOM INITIAL
         call dfdmip(ndim, nno, axi, geomi, g,iw, vff(1, g), idff, r, poids, dff)
@@ -202,27 +203,26 @@ subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
 
         if (jp .le. 0) then
             cod = 1
-            goto 9999
+            goto 999
         endif
 
         fr = merge(fp,fm,resi)
   
         call nmfdff(ndim, nno, axi, g, r,rigi, matsym, fr, vff, dff,def, pff)     
 
-        do 333 m = 1,2*ndim
-            do 111 n =1,nno
-                do 222 i = 1,ndim
+        do m = 1,2*ndim
+            do n =1,nno
+                do i = 1,ndim
                     deff(m,(n-1)*ndim+i) = def(m,n,i)
-222             end do
-111         end do
-333    end do
+                end do
+            end do
+       end do
 
 
 !---     CALCUL de pes : projetcteur de T vers S(Pk2), PES = 2dE/dC              
         call prelog(ndim, lgpg, vim(1, g), gn, lamb,logl, fm, fp, epsml, deps, tm, resi, cod(g))
         if (cod(g) .eq. 1) then
-            print*,'prelog echec'
-            goto 9999
+            goto 999
         endif
         call deflg2(gn, lamb, logl, pes, feta, xi, me)    
 
@@ -231,9 +231,9 @@ subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
 !-----------------------------------------------------------------------------
 
         bst = matmul(pes,deff)
-        call lggvmb(ndim,nno,nnob,npg,g,axi,r,&
+        call lggvmb(ndim,nno,nnob,axi,r,&
                     bst,vffb(1,g),dffb,nddl,&
-                    neps,b,poids)
+                    neps,b)
 
 !-----------------------------------------------------------------------------
 ! CALCULER LES DEFORMATIONS GENERALISEES
@@ -252,7 +252,7 @@ subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
         call dcopy(2*ndim,sigmg(1,g),1,sigm,1)
 
 
-        if (cod(g) .ne. 0) goto 9999
+        if (cod(g) .ne. 0) goto 999
         call r8inir(neps*neps, 0.d0, dtdeg, 1)
         call r8inir(neps, 0.d0, tpg, 1)
 
@@ -266,8 +266,7 @@ subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
 
 !        TEST SUR LES CODES RETOUR DE LA LOI DE COMPORTEMENT
         if (cod(g) .eq. 1) then
-            print*,'nmcomp echec'
-            goto 9999
+            goto 999
         endif
 
         call dcopy(2*ndim, tpg, 1, tp, 1)
@@ -275,11 +274,11 @@ subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
 !-----------------------------------------------------------------------------
 ! COPIER LA PARTIE "DEPLACEMENT" DANS LA MATRICE TANGENTE
 !------------------------------------------------------------------------------    
-        do 12 i = 1,ndim*2
-            do 13 j = 1, ndim*2
+        do i = 1,ndim*2
+            do j = 1, ndim*2
                dtde(i,j) = dtdeg(i,j) 
-13          end do
-12      end do
+            end do
+        end do
 
         call poslog(resi, rigi, tm, tp, fm,&
                     lgpg, vip(1, g), ndim, fp, g,&
@@ -290,8 +289,7 @@ subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
         call dcopy(2*ndim, sigp, 1, sigpg(1,g), 1)
         call dcopy(2+ndim, tpg(2*ndim+1), 1, sigpg(2*ndim+1,g), 1)
         if (cod(g) .eq. 1) then
-            print*,'poslog echec'
-            goto 9999
+            goto 999
         endif
 
 !     CALCUL DE LA MATRICE DE RIGIDITE ET DE LA FORCE INTERIEURE
@@ -320,38 +318,37 @@ subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
                     dff, def, pff, option, axi,&
                     r, fm, fp, dsidep, pk2m,&
                     pk2, matsym, matuu, fu)                 
-10  end do
+    end do
 
  
 !- REMPLACER MATUU DANS LA PARTIE DEPLACEMENT DE MATR   
     if (rigi) then
-        do 700 i =1, ndim
-            do 710 j =1, ndim
-                do 500 n = 1,nnob
-                    do 510 m =1,nnob
+        do i =1, ndim
+            do j =1, ndim
+                do n = 1,nnob
+                    do m =1,nnob
                         matr(nu1(n,i),nu1(m,j)) = matuu(uu1(n,i),uu1(m,j))
-510                 end do
-                    do 520 m =nnob+1, nno
+                    end do
+                    do m =nnob+1, nno
                         matr(nu1(n,i),nu2(m,j)) = matuu(uu1(n,i),uu1(m,j))
-520                 end do
-500             end do
+                    end do
+                end do
 
-                do 600 n = nnob+1,nno
-                    do 610 m =1,nnob
+                do n = nnob+1,nno
+                    do m =1,nnob
                         matr(nu2(n,i),nu1(m,j)) = matuu(uu1(n,i),uu1(m,j))
-610                 end do
-                    do 620 m =nnob+1, nno
+                    end do
+                    do m =nnob+1, nno
                         matr(nu2(n,i),nu2(m,j)) = matuu(uu1(n,i),uu1(m,j))
-620                 end do
-600             end do
-710         end do
-700     end do
+                    end do
+                end do
+            end do
+        end do
     endif
 
 
-9999  continue
+999  continue
     call codere(cod, npg, codret)
 
     deallocate(def,pff,deff,bst,matuu,b,bb)
-!     write (6,*) 'fin ngvlog'
 end subroutine

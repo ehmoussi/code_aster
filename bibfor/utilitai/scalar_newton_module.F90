@@ -1,4 +1,22 @@
-module scalar_newton
+! --------------------------------------------------------------------
+! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! This file is part of code_aster.
+!
+! code_aster is free software: you can redistribute it and/or modify
+! it under the terms of the GNU General Public License as published by
+! the Free Software Foundation, either version 3 of the License, or
+! (at your option) any later version.
+!
+! code_aster is distributed in the hope that it will be useful,
+! but WITHOUT ANY WARRANTY; without even the implied warranty of
+! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+! GNU General Public License for more details.
+!
+! You should have received a copy of the GNU General Public License
+! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+! --------------------------------------------------------------------
+
+module scalar_newton_module
 
 implicit none
 #include "asterf_types.h"
@@ -53,8 +71,12 @@ real(kind=8),parameter::accel=0.5d0
     if (ite.eq.1) then
         mem%eximin = present(xmin)
         mem%eximax = present(xmax)
-        if (mem%eximin) ASSERT(xmin.le.x)
-        if (mem%eximax) ASSERT(x.le.xmax)
+        if (mem%eximin) then
+            ASSERT(xmin.le.x)
+        end if
+        if (mem%eximax) then
+            ASSERT(x.le.xmax)
+        end if
 
         if (mem%eximin) mem%xmin = xmin
         if (mem%eximax) mem%xmax = xmax
@@ -89,12 +111,22 @@ real(kind=8),parameter::accel=0.5d0
 !     mem%relx(ite)  = (x-mem%bdmin(1))/(mem%bdmax(1)-mem%bdmin(1))
 
 
-    if (mem%ismin) ASSERT (mem%usemin)
-    if (mem%ismax) ASSERT (mem%usemax)
+    if (mem%ismin) then
+        ASSERT (mem%usemin)
+    end if
+    if (mem%ismax) then
+        ASSERT (mem%usemax)
+    end if
 
-    if (.not. (mem%eximin .and. mem%eximax)) ASSERT(df.gt.0)
-    if (mem%ismin) ASSERT (f.le.0)
-    if (mem%ismax) ASSERT (f.ge.0)
+    if (.not. (mem%eximin .and. mem%eximax)) then
+        ASSERT(df.gt.0)
+    end if
+    if (mem%ismin) then 
+        ASSERT (f.le.0)
+    end if
+    if (mem%ismax) then
+        ASSERT (f.ge.0)
+    end if
 
 
     ! Construction des bornes
@@ -165,4 +197,4 @@ end function utnewt
         
 
        
-end module scalar_newton
+end module scalar_newton_module

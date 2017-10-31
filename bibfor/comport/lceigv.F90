@@ -457,8 +457,8 @@ subroutine lceigv(fami, kpg, ksp, neps, imate,&
 !
 !
 99 continue
-    call lcgrad(resi, rigi, ndim, ndimsi, neps,&
-                sigma, apg, lag, grad, d,&
-                r, c, ktg, sig, dsidep)
+    call lcgrad(resi, rigi, sigma, apg, lag, &
+                grad, d, r, c, ktg(1:ndimsi,1:ndimsi,1), &
+                ktg(1:ndimsi,1,2),ktg(1:ndimsi,1,3),ktg(1,1,4),sig, dsidep)
 !
 end subroutine

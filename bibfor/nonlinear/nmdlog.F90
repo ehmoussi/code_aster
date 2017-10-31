@@ -201,7 +201,6 @@ implicit none
                     r, fm, fp, dsidep, pk2m,&
                     pk2, matsym, matuu, fint)
 !
-10  continue
     end do
     if (lintbo) cod(1) = 4
 999 continue

@@ -136,8 +136,8 @@ ESIGMNC  = LocatedComponents(phys=PHY.SIEF_C, type='ELNO',
 
 
 ECONTNC  = LocatedComponents(phys=PHY.SIEF_C, type='ELNO',
-    components=('SIXX','SIYY','SIZZ','SIXY','SIGV_A',
-          'SIGV_L','SIGV_GX','SIGV_GY',))
+    components=('SIXX','SIYY','SIZZ','SIXY','SIGONF',
+                'SIP','SIGV_A','SIGV_L','SIGV_GX','SIGV_GY',))
 
 
 ESIGMPG  = LocatedComponents(phys=PHY.SIEF_R, type='ELGA', location='RIGI',
@@ -149,8 +149,8 @@ ESIGMNO  = LocatedComponents(phys=PHY.SIEF_R, type='ELNO',
 
 
 ECONTPG  = LocatedComponents(phys=PHY.SIEF_R, type='ELGA', location='RIGI',
-    components=('SIXX','SIYY','SIZZ','SIXY','SIGV_A',
-          'SIGV_L','SIGV_GX','SIGV_GY',))
+    components=('SIXX','SIYY','SIZZ','SIXY','SIGONF',
+                'SIP','SIGV_A','SIGV_L','SIGV_GX','SIGV_GY',))
 
 
 ECOEQPG  = LocatedComponents(phys=PHY.SIEF_R, type='ELGA', location='RIGI',
@@ -160,8 +160,8 @@ ECOEQPG  = LocatedComponents(phys=PHY.SIEF_R, type='ELGA', location='RIGI',
 
 
 ECONTNO  = LocatedComponents(phys=PHY.SIEF_R, type='ELNO',
-    components=('SIXX','SIYY','SIZZ','SIXY','SIGV_A',
-          'SIGV_L','SIGV_GX','SIGV_GY',))
+    components=('SIXX','SIYY','SIZZ','SIXY','SIGONF',
+                'SIP','SIGV_A','SIGV_L','SIGV_GX','SIGV_GY',))
 
 
 EGVALO_R = LocatedComponents(phys=PHY.VALO_R, type='ELGA', location='RIGI',

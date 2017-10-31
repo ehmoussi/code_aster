@@ -2722,6 +2722,7 @@ SIEF_C   = PhysicalQuantity(type='C',
        'FLUZ',
        'PM',
        'PMPB',
+       'SIGONF',
        'SIP',
        'SIPXX',
        'SIPYY',
@@ -2882,6 +2883,7 @@ SIEF_C   = PhysicalQuantity(type='C',
        FLUZ :
        PM :
        PMPB :
+       SIGONF:
        SIP :
        SIPXX : sigmap_xx contraintes de pression dans la massif
        SIPYY : sigmap_yy contraintes de pression dans la massif
@@ -3055,6 +3057,7 @@ SIEF_R   = PhysicalQuantity(type='R',
        'FLUZ',
        'PM',
        'PMPB',
+       'SIGONF',
        'SIP',
        'SIPXX',
        'SIPYY',

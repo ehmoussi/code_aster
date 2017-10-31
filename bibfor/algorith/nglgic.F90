@@ -1,29 +1,63 @@
-subroutine nglgic(fami, option, typmod, ndim, nno,nnob,neps,&
-                  npg, nddl, iw, vff, vffb, idff,idffb,&
-                  geomi, compor, mate, lgpg,&
-                  crit, angmas, instm, instp, matsym,&
-                  ddlm, ddld, sigmg, vim, sigpg,&
-                  vip, fint,matr, codret)
-! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
-! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
-! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
-! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
-! (AT YOUR OPTION) ANY LATER VERSION.
+! --------------------------------------------------------------------
+! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! This file is part of code_aster.
 !
-! THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
-! WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
-! MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
-! GENERAL PUBLIC LICENSE FOR MORE DETAILS.
+! code_aster is free software: you can redistribute it and/or modify
+! it under the terms of the GNU General Public License as published by
+! the Free Software Foundation, either version 3 of the License, or
+! (at your option) any later version.
 !
-! YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
-! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
-!   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
-! ======================================================================
+! code_aster is distributed in the hope that it will be useful,
+! but WITHOUT ANY WARRANTY; without even the implied warranty of
+! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+! GNU General Public License for more details.
+!
+! You should have received a copy of the GNU General Public License
+! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+! --------------------------------------------------------------------
+
+subroutine nglgic(fami, option, typmod, ndim, nno, &
+                    nnob,npg, nddl, iw, vff, &
+                    vffb, idff,idffb,geomi, compor, &
+                    mate, lgpg,crit, angmas, instm, &
+                    instp, matsym,ddlm, ddld, siefm, &
+                    vim, siefp,vip, fint, matr, &
+                    codret)
+
+use gdlog_module, only: GDLOG_DS, gdlog_init, gdlog_defo, gdlog_matb,  &
+                        gdlog_rigeo, gdlog_nice_cauchy, gdlog_delete
+ 
+    implicit none
+#include "asterf_types.h"
+#include "asterfort/assert.h"
+#include "asterfort/codere.h"
+#include "asterfort/dfdmip.h"
+#include "asterfort/nmcomp.h"
+#include "asterfort/nmepsi.h"
+#include "blas/dgemv.h"
+#include "blas/dgemm.h"
+
+! aslint: disable=W1504
+
+    aster_logical,intent(in)       :: matsym
+    character(len=8),intent(in)    :: typmod(*)
+    character(len=*),intent(in)    :: fami
+    character(len=16),intent(in)   :: option, compor(*)
+    integer,intent(in)             :: ndim,nno,nnob,npg,nddl,lgpg
+    integer,intent(in)             :: mate,iw,idff,idffb
+    real(kind=8),intent(in)        :: geomi(ndim,nno), crit(*), instm, instp
+    real(kind=8),intent(in)        :: vff(nno, npg),vffb(nnob, npg)
+    real(kind=8),intent(in)        :: angmas(3), ddlm(nddl), ddld(nddl), siefm(3*ndim+4, npg)
+    real(kind=8),intent(in)        :: vim(lgpg, npg)
+    real(kind=8),intent(out)       :: fint(nddl),matr(nddl,nddl),siefp(3*ndim+4, npg),vip(lgpg,npg)
+    integer,intent(out)            :: codret
+
+
+
 ! ----------------------------------------------------------------------
 !     BUT:  CALCUL  DES OPTIONS RIGI_MECA_*, RAPH_MECA ET FULL_MECA_*
 !           EN GRANDES DEFORMATIONS 2D (D_PLAN ET AXI) ET 3D 
-!          A GRADIENT DE VARIABLE INTERNE : XXXX_GRAD_VARI
+!          A GRADIENT DE VARIABLE INTERNE : XXXX_GRAD_INCO
 ! ----------------------------------------------------------------------
 ! IN  FAMI    : FAMILLE DE POINTS DE GAUSS
 ! IN  OPTION  : OPTION DE CALCUL
@@ -31,7 +65,6 @@ subroutine nglgic(fami, option, typmod, ndim, nno,nnob,neps,&
 ! IN  NDIM    : DIMENSION DE L'ESPACE
 ! IN  NNO     : NOMBRE DE NOEUDS STANDARDS D'UN ELEMENT
 ! IN  NNOB    : NOMBRE DE NOEUDS ENRICHIS D'UN ELEMENT
-! IN  NEPS    : DIMENSION DE DEFORMATION GENERALISEE 
 ! IN  NPG     : NOMBRE DE POINTS DE GAUSS
 ! IN  NDDL    : DEGRES DE LIBERTE D'UN ELEMENT ENRICHI
 ! IN  IW      : PTR. POIDS DES POINTS DE GAUSS
@@ -62,622 +95,400 @@ subroutine nglgic(fami, option, typmod, ndim, nno,nnob,neps,&
 !! MEM DFF,DFFB: ESPACE MEMOIRE POUR LA DERIVEE DES FONCTIONS DE FORME
 !               DIM :(NNO,3) EN 3D, (NNO,4) EN AXI, (NNO,2) EN D_PLAN
 
-    implicit none
-#include "asterf_types.h"
-#include "asterfort/assert.h"
-#include "asterfort/codere.h"
-#include "asterfort/dfdmip.h"
-#include "asterfort/lcegeo.h"
-#include "asterfort/nmcomp.h"
-#include "asterfort/nmepsi.h"
-! #include "asterfort/nmgrtg.h"
-#include "asterfort/poslog.h"
-#include "asterfort/prelog.h"
-#include "asterfort/r8inir.h"
-#include "asterfort/utmess.h"
-#include "asterfort/lgvicb.h"
-#include "asterfort/nmfdff.h"
-#include "asterfort/deflog.h"
-#include "asterfort/deflg2.h"
-#include "asterfort/deflg3.h"
-#include "asterfort/symt46.h"
-#include "blas/daxpy.h"
-#include "blas/dcopy.h"
-#include "blas/dgemm.h"
-#include "blas/ddot.h"
-#include "blas/dgemv.h"
-#include "blas/dscal.h"
 
-    aster_logical :: grand, axi, resi, rigi, matsym, cplan
-    parameter (grand = .true._1)
-    integer :: g,i,j,n,m,k,nddl
-    integer :: ndim, nno,nnob,npg,mate,lgpg, codret, iw, idff, idffb,nepg,neps,nddl1
-    character(len=8) :: typmod(*)
-    character(len=*) :: fami
-    character(len=16) :: option, compor(*)
-    real(kind=8) :: geomi(ndim,nno), dff(nno,ndim),dffb(nnob,ndim), crit(*), instm, instp
-    real(kind=8) :: vff(nno, npg),vffb(nnob, npg), dtdeg(neps, neps),dtde(6,6)
-    real(kind=8) :: angmas(3), ddlm(nddl), ddld(nddl), sigmg(neps, npg),sigpg(neps, npg), epsml(6)
-    real(kind=8) :: vim(lgpg, npg), sigp(2*ndim),sigm(2*ndim), vip(lgpg, npg)
-    real(kind=8) :: matr(nddl,nddl),dfint(nddl)
-    real(kind=8) :: geomm(ndim,nno), geomp(ndim,nno), fm(3, 3), fp(3, 3),fr(3, 3), deplt(nno*ndim), deplm(nno*ndim), depld(nno*ndim)
-    real(kind=8) :: r, poids, elgeom(10, 27), tm(6), tp(6), deps(6),tmg(neps),tpg(neps)
-    real(kind=8) :: gn(3, 3), lamb(3), logl(3), rbid(1), tbid(6)
-    real(kind=8) :: def(2*ndim, nno,ndim), pff(2*ndim, nno, nno),deff(6, nno*ndim)
-    real(kind=8) :: dsidep(6,6), pk2(6), pk2m(6)
-    real(kind=8) :: me(3, 3, 3, 3), xi(3, 3), feta(4), pes(6, 6),bst(6,nno*ndim)
-    real(kind=8) :: epmlg(neps), depsg(neps),rac2
-    real(kind=8) :: temp1(neps,nddl),dmatr1(nddl,nddl),temp2(2*ndim,nno*ndim),temp(nno*ndim,nno*ndim)
-    real(kind=8) :: tptem(2*ndim),tl(3,3,3,3),tls(6,6)
-    real(kind=8) :: matuu(nno*ndim,nno*ndim), fu(nno*ndim)
-    real(kind=8) :: fint(nddl),id2(2*ndim),id3(2*ndim), idid(3,3)
-    real(kind=8) :: b(3*ndim+4, nddl),jm,jp,presm(nnob),presd(nnob),gonfm(nnob),gonfd(nnob),anodm(nnob),anodd(nnob),lambm(nnob),lambd(nnob)
-    real(kind=8) :: gm,gd,gp,pm,pd,pp,am,ad,lm,ld,corm,corp,ftm(3, 3), ftp(3, 3),gam(ndim),gad(ndim),ebid(6)
-    real(kind=8) :: ttra,tdev(6),idev(6, 6),kr(6),id(3, 3),sigint(neps+2), dtdegt(neps+2, neps+2)
-    real(kind=8) :: pk2ref(6), pk2ref2(6),furef(nno*ndim),furef2(nno*ndim),dfuref2(nno*ndim),bb(neps, nddl)
-    real(kind=8) :: tmps0(6,6),tmps1(2*ndim),tmps2(2*ndim),tmps3(2*ndim),tmps4(2*ndim),tmps5,dtddeth(6)
-    real(kind=8) :: tpp(6),tls2(2*ndim,2*ndim),sigpp(6),dmatr2(ndim*nno,ndim*nno),matr2(ndim*nno,ndim*nno)
-    integer :: nu1,nu2,uu1,iret,cod(npg)
-    nu1(n,i) = (n-1)*(ndim+4) + i
-    nu2(n,i) = nnob*4 + (n-1)*ndim + i
-    uu1(n,i) = (n-1)*ndim+i
+! ----------------------------------------------------------------------
+    aster_logical, parameter              :: grand=ASTER_TRUE
+    real(kind=8), dimension(6), parameter :: kron = (/1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/)
+! ----------------------------------------------------------------------
+    aster_logical:: resi, rigi, axi
+    type(GDLOG_DS):: gdl
 
-    data         kr   / 1.d0, 1.d0, 1.d0, 0.d0, 0.d0, 0.d0/
-    data         id   / 1.d0, 0.d0, 0.d0,&
-     &                    0.d0, 1.d0, 0.d0,&
-     &                    0.d0, 0.d0, 1.d0/
-!     data         idev / 2.d0,-1.d0,-1.d0, 0.d0, 0.d0, 0.d0,&
-!      &                   -1.d0, 2.d0,-1.d0, 0.d0, 0.d0, 0.d0,&
-!      &                   -1.d0,-1.d0, 2.d0, 0.d0, 0.d0, 0.d0,&
-!      &                    0.d0, 0.d0, 0.d0, 3.d0, 0.d0, 0.d0,&
-!      &                    0.d0, 0.d0, 0.d0, 0.d0, 3.d0, 0.d0,&
-!      &                    0.d0, 0.d0, 0.d0, 0.d0, 0.d0, 3.d0/
+    integer:: kpg,n,i,m,j,kl,pq
+    integer:: ndimsi,nelc
+    integer:: larg,indu(ndim),indg(2),indi(2)
+    integer:: xu(ndim,nno),xg(2,nnob),xi(2,nnob)
+    integer:: cod(npg)
+
+    real(kind=8) :: kr(2*ndim),rbid,tbid(6)
+    real(kind=8) :: r,dff(nno,ndim),dffb(nnob,ndim),poids
+    real(kind=8) :: deplm(ndim,nno), deplp(ndim,nno)
+    real(kind=8) :: geomm(ndim,nno), geomp(ndim,nno)
+    real(kind=8) :: incom(2,nnob), incop(2,nnob)
+    real(kind=8) :: gradm(2,nnob), gradd(2,nnob)
+    real(kind=8) :: fm(3, 3), fp(3, 3), logjm, logjp
+    real(kind=8) :: epsm(2*ndim),epsp(2*ndim),etim(2*ndim),etip(2*ndim)
+    real(kind=8) :: elcm(3*ndim+2),elcd(3*ndim+2)
+    real(kind=8) :: gm,gp,pm,pp,am,ad,lm,ld,gam(ndim),gad(ndim)
+    real(kind=8) :: slcm(3*ndim+2),slcp(3*ndim+2), t(1:2*ndim)
+    real(kind=8) :: bu(2*ndim,ndim,nno)
+    real(kind=8) :: sigu(2*ndim),sigi(2),sigg(2+ndim)
+    real(kind=8) :: fu(ndim,nno),fi(2,nnob),fg(2+ndim,nnob)
+
+    real(kind=8) :: dsde_lc(3*ndim+2,3*ndim+2)
+    real(kind=8) :: dee(2*ndim,2*ndim),hdee(2*ndim),deeh(2*ndim)
+    real(kind=8) :: pdeep(2*ndim,2*ndim),pdeeh(2*ndim),hdeep(2*ndim),hdeeh
+    real(kind=8) :: kuu(ndim,nno,ndim,nno)
+    real(kind=8) :: dei(2*ndim,2), budei(2,ndim,nno),kui(ndim,nno,2,nnob)
+    real(kind=8) :: deg(2*ndim,2), budeg(2,ndim,nno),kug(ndim,nno,2,nnob)
+    real(kind=8) :: kii(2,nnob,2,nnob)
+    real(kind=8) :: hdeg(2),kig(2,nnob,2,nnob)
+    real(kind=8) :: dgg(2,2),dnn(ndim,ndim),kgg(2,nnob,2,nnob)
+    real(kind=8) :: die(2,2*ndim),diebu(2,ndim,nno),kiu(2,nnob,ndim,nno)
+    real(kind=8) :: dge(2,2*ndim),dgebu(2,ndim,nno),kgu(2,nnob,ndim,nno)
+    real(kind=8) :: dgeh(2),kgi(2,nnob,2,nnob)
 ! ----------------------------------------------------------------------
 
-!
-! -----------------------------INITIALISATION-----------------------------
 
-    nddl1 = nno*ndim
-    matr = 0.
-    matuu = 0.
-    matr2 = 0.
-    fint = 0.
-    dfint = 0.
-    jm= 0.
-    jp= 0.
-    fu = 0.
-    tp = 0.
-    sigp = 0.
-    pk2m= 0.
-    sigm= 0.
-    sigpg = 0.
-    deff = 0.
-    dmatr2= 0.
-    tls = 0.
-    tl = 0.
-    bst = 0.
-    tpg = 0.
-    dtde = 0.
-    dtdeg = 0.  
-    dtdegt = 0.
-    idev= 0.
-    idev(1:3,1:3) = -1.d0
-    do i = 1, ndim*2
-        idev(i,i) = idev(i,i) + 3.d0
-    end do    
+! --- INITIALISATION ---
 
-!     AFFECTATION DES VARIABLES LOGIQUES  OPTIONS ET MODELISATION
-    axi = typmod(1).eq.'AXIS'
+    ndimsi = 2*ndim
+    nelc = 3*ndim+2
+    kr = kron(1:ndimsi)
+
+    fint = 0
+    matr = 0
+
+    rbid = 0
+    tbid = 0
+
+    ! tableaux de reference bloc (depl,inco,grad) -> numero du ddl
+    indu = (/ (i, i=1,ndim) /)
+    indi = (/ ndim+1, ndim+2 /)
+    indg = (/ ndim+3, ndim+4 /)
+    larg = ndim+4
+    do n = 1,nnob
+        xu(:,n) = indu + (n-1)*larg
+        xi(:,n) = indi + (n-1)*larg
+        xg(:,n) = indg + (n-1)*larg
+    end do
+    do n = nnob+1,nno
+        xu(:,n) = indu + larg*nnob + ndim*(n-nnob-1)
+    end do
+
+    axi  = typmod(1).eq.'AXIS'
     resi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RAPH_MECA'
     rigi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RIGI_MECA'
-    id2 = 0. 
-    id2(1:3) = 1.
-    idid = 1.
-    rac2 = sqrt(2.d0)
     cod = 0  
-!
-!------------------------------DEPLACEMENT ET GEOMETRIE-------------
-!
-!    DETERMINATION DES CONFIGURATIONS EN T- (GEOMM) ET T+ (GEOMP)
-    do 20 n = 1, nnob
-       call dcopy(ndim, ddlm((ndim+4)*(n-1)+1), 1, deplm(ndim*(n-1)+1), 1)
-       call dcopy(ndim, ddld((ndim+4)*(n-1)+1), 1, depld(ndim*(n-1)+1), 1)
 
-       presm(n) = ddlm((ndim+4)*(n-1)+ndim+1)       
-       presd(n) = ddld((ndim+4)*(n-1)+ndim+1)
+    call gdlog_init(gdl,ndim,nno,axi,rigi)
 
-       gonfm(n) = ddlm((ndim+4)*(n-1)+ndim+2)
-       gonfd(n) = ddld((ndim+4)*(n-1)+ndim+2)
 
-       anodm(n) = ddlm((ndim+4)*(n-1)+ndim+3)       
-       anodd(n) = ddld((ndim+4)*(n-1)+ndim+3)
 
-       lambm(n) = ddlm((ndim+4)*(n-1)+ndim+4)       
-       lambd(n) = ddld((ndim+4)*(n-1)+ndim+4)
-20  end do
-!     print*, 'anodm = ', anodm
-!     print*, 'anodd = ', anodd
-     
-    call dcopy(ndim*(nno-nnob), ddlm((ndim+4)*nnob+1), 1, deplm(ndim*nnob+1), 1)
-    call dcopy(ndim*(nno-nnob), ddld((ndim+4)*nnob+1), 1, depld(ndim*nnob+1), 1)
+    ! Decompactage des ddls en t- et t+
+    forall (i=1:ndim, n=1:nno)  deplm(i,n) = ddlm(xu(i,n))
+    forall (i=1:2,    n=1:nnob) incom(i,n) = ddlm(xi(i,n))
+    forall (i=1:2,    n=1:nnob) gradm(i,n) = ddlm(xg(i,n))
+    geomm = geomi + deplm
 
-    call dcopy(nddl1, geomi, 1, geomm, 1)
-    call daxpy(nddl1, 1.d0, deplm, 1, geomm,1)
-    call dcopy(nddl1, geomm, 1, geomp, 1)
-!     DEPLT : DEPLACEMENT TOTAL ENTRE CONF DE REF ET INSTANT T_N+1
-    call dcopy(nddl1, deplm, 1, deplt, 1)
-!     print*, 'ddlm =', ddlm
-!     print*, 'ddld =', ddld
-    if (resi) then
-        call daxpy(nddl1, 1.d0, depld, 1, geomp,1)
-        call daxpy(nddl1, 1.d0, depld, 1, deplt,1)
-    endif
-
+    forall (i=1:ndim, n=1:nno)  deplp(i,n) = deplm(i,n) + ddld(xu(i,n))
+    forall (i=1:2,    n=1:nnob) incop(i,n) = incom(i,n) + ddld(xi(i,n))
+    forall (i=1:2,    n=1:nnob) gradd(i,n) = ddld(xg(i,n))
+    geomp = geomi + deplp
 
     
-!****************************BOUCLE SUR LES POINTS DE GAUSS************
-!
-! - CALCUL POUR CHAQUE POINT DE GAUSS
 
-    do 10 g = 1, npg
+    do kpg = 1, npg
  
-!---     CALCUL DE F_N, F_N+1 PAR RAPPORT A GEOMI GEOM INITIAL
-        call dfdmip(ndim, nno, axi, geomi, g,iw, vff(1, g), idff, r, poids, dff)
-        call dfdmip(ndim, nnob, axi, geomi, g,iw, vffb(1,g), idffb, r, poids,dffb)
-        call nmepsi(ndim, nno, axi, grand, vff(1, g),r, dff, deplm, fm, tbid)
-        call nmepsi(ndim, nno, axi, grand, vff(1, g),r, dff, deplt, fp, tbid)
-         jp=0.d0
-!          print*,'jp=',jp
-!---     CALCUL DE JACOBIEN
-        jm = fm(1,1)*(fm(2,2)*fm(3,3)-fm(2,3)*fm(3,2)) - fm(2,1)*(fm( 1,2)*fm(3,3)-fm(1,3)*fm(3,2&
-             &)) + fm(3,1)*(fm(1,2)*fm(2,3)-fm(1, 3)*fm(2,2))
-        jp = fp(1,1)*(fp(2,2)*fp(3,3)-fp(2,3)*fp(3,2)) - fp(2,1)*(fp( 1,2)*fp(3,3)-fp(1,3)*fp(3,2&
-             &)) + fp(3,1)*(fp(1,2)*fp(2,3)-fp(1, 3)*fp(2,2))   
+        ! -----------------------!
+        !  ELEMENTS CINEMATIQUES !
+        ! -----------------------!
 
-        if (jp .le. 0.d0) then
-            cod = 1
-            print*,'jp=',jp
-            goto 9999
-        endif 
-!       print*,'jm=',jm
+        ! Calcul des derivees des fonctions de forme P1 
+        call dfdmip(ndim, nnob, axi, geomi, kpg, iw, vffb(1,kpg), idffb, r, poids,dffb)
 
-!         pm = ddot(nnob,vffb(1,g),1,presm,1)
-!         pd = ddot(nnob,vffb(1,g),1,presd,1)
-!         pp = pm+pd
+        ! Calcul des derivees des fonctions de forme P2, du rayon r et des poids
+        call dfdmip(ndim, nno, axi, geomi, kpg, iw, vff(1, kpg), idff, r, poids, dff)
 
-        pm = dot_product(vffb(:,g),presm)
-        pd = dot_product(vffb(:,g),presd)
-        pp = pm+pd
+        ! Calcul de la deformation en t- (fm et epm)
+        call nmepsi(ndim, nno, axi, grand, vff(1,kpg), r, dff, deplm, fm, tbid)
+        call gdlog_defo(gdl,fm,epsm,cod(kpg))
+        if (cod(kpg).ne.0) goto 999
+        logjm =  sum(epsm(1:3))   
 
-!         gm = ddot(nnob,vffb(1,g),1,gonfm,1)
-!         gd = ddot(nnob,vffb(1,g),1,gonfd,1)
-!         gp = gm+gd
-
-        gm = dot_product(vffb(:,g),gonfm)
-        gd = dot_product(vffb(:,g),gonfd)
-        gp = gm+gd
-
-!         print*,'gp = ',gp 
+        ! Calcul des elements cinematiques en t+
+        call nmepsi(ndim, nno, axi, grand, vff(1,kpg),r, dff, deplp, fp, tbid)
+        call gdlog_defo(gdl,fp,epsp,cod(kpg))
+        if (cod(kpg).ne.0) goto 999
+        logjp =  sum(epsp(1:3))   
+        call gdlog_matb(gdl,r,vff(:,kpg),dff,bu)
 
 
-!         am = ddot(nnob,vffb(1,g),1,anodm,1)
-!         ad = ddot(nnob,vffb(1,g),1,anodd,1)
-        am = dot_product(vffb(:,g),anodm)
-        ad = dot_product(vffb(:,g),anodd)
-
-!         lm = ddot(nnob,vffb(1,g),1,lambm,1)
-!         ld = ddot(nnob,vffb(1,g),1,lambd,1)   
-        lm = dot_product(vffb(:,g),lambm)
-        ld = dot_product(vffb(:,g),lambd)
+        ! Calcul des champs P,G,A, grad(A) et L aux points de Gauss
+        pm = dot_product(vffb(:,kpg),incom(1,:))
+        pp = dot_product(vffb(:,kpg),incop(1,:))
+        gm = dot_product(vffb(:,kpg),incom(2,:))
+        gp = dot_product(vffb(:,kpg),incop(2,:))
+        am = dot_product(vffb(:,kpg),gradm(1,:))
+        ad = dot_product(vffb(:,kpg),gradd(1,:))
+        lm = dot_product(vffb(:,kpg),gradm(2,:))
+        ld = dot_product(vffb(:,kpg),gradd(2,:))
+        gam = matmul(gradm(1,:),dffb)
+        gad = matmul(gradd(1,:),dffb) 
        
-!         do 11 i = 1, ndim 
-!             gam(i) = ddot(nnob,dffb(:,i),1,anodm,1)
-!             gad(i) = ddot(nnob,dffb(:,i),1,anodd,1)
-! 11      end do
+
+        ! Deformation corrigee du gonflement (e tilda)
+        etim(1:3) = epsm(1:3) + (gm-sum(epsm(1:3)))/3
+        etip(1:3) = epsp(1:3) + (gp-sum(epsp(1:3)))/3
 
 
 
-        gam = matmul(anodm,dffb)
+        ! -----------------------!
+        !   LOI DE COMPORTEMENT  !
+        ! -----------------------!
 
-        gad = matmul(anodm+anodd,dffb) - gam
+        ! Preparation des deformations generalisees de ldc en t- et Dt
+        elcm(1:ndimsi) = etim
+        elcm(ndimsi+1) = am
+        elcm(ndimsi+2) = lm
+        elcm(ndimsi+3:3*ndim+2) = gam        
 
-        corm = (exp(gm)/jm)**(1.d0/3.d0)
-        ftm = fm*corm 
-        corp = (exp(gp)/jp)**(1.d0/3.d0)
-        ftp = fp*corp
+        elcd(1:ndimsi) = etip-etim
+        elcd(ndimsi+1) = ad
+        elcd(ndimsi+2) = ld
+        elcd(ndimsi+3:3*ndim+2) = gad        
 
-!         print*,'jp=',jp
-!       
-        call prelog(ndim, lgpg, vim(1, g), gn, lamb,logl, ftm, ftp, epsml, deps, tm, resi, cod(g))
-        if (cod(g) .ne. 0) then
-            print*,'prelog wrong!'
-            PRINT*,'CODg=',cod(g)
-        endif 
-! 
-! !---     CALCUL de pes : projetcteur de T vers S(Pk2), PES = 2dE/dC
-!         call deflg2(gn, lamb, logl, pes, feta, xi, me)    
-! !-------------------------------------------
-! ! pour construire la matrice b(neps,nddl)
-! !-------------------------------------------
-! 
-!         bst = matmul(pes,deff)
-! !         call lggvmb(ndim,nno,nnob,npg,g,axi,r,&
-! !                     bst,vffb(1,g),dffb,nddl,&
-! !                     neps,b,poids)
-! !         call dgemv('N', neps, nddl, 1.d0, b,neps, ddlm, 1, 0.d0, epmlg,1)   
-! !         call dgemv('N', neps, nddl, 1.d0, b,neps, ddld, 1, 0.d0, depsg,1)
 
-        do 12 i = 1, 2*ndim
-            epmlg(i) = epsml(i)
-            depsg(i) = deps(i)        
-12      end do
+        ! Preparation des contraintes generalisees T en t-
+        slcm(1:ndimsi) = vim(lgpg-5:lgpg-6+ndimsi,kpg)
+        slcm(ndimsi+1:3*ndim+2) = siefm(ndimsi+3:3*ndim+4,kpg)
 
-        epmlg(2*ndim+1) = am
-        depsg(2*ndim+1) = ad
 
-        epmlg(2*ndim+2) = lm
-        depsg(2*ndim+2) = ld
-        
-        call dcopy(ndim,gam,1,epmlg(2*ndim+3),1)
-        call dcopy(ndim,gad,1,depsg(2*ndim+3),1)       
-
-        call dcopy(2*ndim, tm, 1, tmg, 1)
-        call dcopy(2+ndim,sigmg(2*ndim+1,g),1,tmg(2*ndim+1),1)
-        call dcopy(2*ndim,sigmg(1,g),1,sigm,1)
-!         print*,'sigp=',sigp
-!         do 123 i = 4, 2*ndim
-!             tmg(i) = tmg(i)*rac2
-! 123     end do
-        if (cod(g) .ne. 0) goto 9999
-        call nmcomp(fami, g, 1, ndim, typmod,&
+        ! Comportement
+        call nmcomp(fami, kpg, 1, ndim, typmod,&
                     mate, compor, crit, instm, instp,&
-                    neps, epmlg, depsg, neps, tmg,&
-                    vim(1, g), option, angmas, 1,rbid,&
-                    tpg, vip(1, g), neps*neps, dtdeg, 1,&
-                    rbid, cod(g))
+                    nelc, elcm, elcd, nelc, slcm,&
+                    vim(1,kpg), option, angmas, 1,[rbid],&
+                    slcp, vip(1,kpg), nelc*nelc, dsde_lc, 1,&
+                    [rbid], cod(kpg))
+        if (cod(kpg) .eq. 1) goto 999
 
-
-!          print*,'MnmLG = ',dtdeg
-!        TEST SUR LES CODES RETOUR DE LA LOI DE COMPORTEMENT
-!         if (cod(g) .eq. 1) goto 9999
-        if (cod(g) .ne. 0) then
-            print*,'nmcomp wrong!'
-            PRINT*,'CODg=',cod(g)
-        endif 
-        call dcopy(2*ndim, tpg, 1, tp, 1)
-!         print*,'tp=',tp
-        do 14 i = 1,ndim*2
-            do 13 j = 1, ndim*2
-               dtde(i,j) = dtdeg(i,j) 
-13          end do
-14      end do
+        ! Archivage des contraintes mecaniques en t+ (tau tilda) dans les vi
+        if (resi) then
+            vip(lgpg-5:lgpg-6+ndimsi,kpg) = slcp(1:ndimsi)
+        end if
 
 
 
-        call poslog(resi, rigi, tm, tp, ftm,&
-                    lgpg, vip(1, g), ndim, ftp, g,&
-                    dtde, sigm, cplan, fami, mate,&
-                    instp, angmas, gn, lamb, logl,&
-                    sigp, dsidep, pk2m, pk2, cod(g))
-        if (cod(g) .ne. 0) then
-            print*,'prelog wrong!'
-            PRINT*,'CODg=',cod(g)
-        endif 
+        ! -----------------------!
+        !   FORCES INTERIEURES   !
+        ! -----------------------!
 
         if (resi) then
-            call dscal(2*ndim, exp(gp), sigp, 1)
-!         print*,'sigp1=',sigp
-!             call dcopy(2*ndim, sigp, 1, taup, 1)
-             call dscal(2*ndim, 1.d0/jp, sigp, 1)  
 
-!         sigp = sigp*exp(gp)/jp
-!         print*,'jp=',jp
-             sigpg(1:2*ndim,g) = sigp(1:2*ndim)
-             sigpg(2*ndim+1:neps,g) = tpg(2*ndim+1:neps)
+            ! Contraintes generalisees EF
+            t = slcp(1:ndimsi)
+            sigi = (/ logjp-gp, sum(t)/3-pp /)
+            sigu = t - sigi(2)*kr
+            sigg = slcp(ndimsi+1:)
+
+            ! Forces interieures au point de Gauss kpg
+            call dgemv('t',ndimsi,ndim*nno,1.d0,bu,ndimsi,t,1,0.d0,fu,1)
+            fi(1,:) = sigi(1)*vffb(:,kpg)
+            fi(2,:) = sigi(2)*vffb(:,kpg)
+            fg(1,:) = sigg(1)*vffb(:,kpg) + matmul(dffb,sigg(3:2+ndim))
+            fg(2,:) = sigg(2)*vffb(:,kpg)
+
+            ! Somme des contributions aux forces interieures
+            forall (i=1:ndim, n=1:nno)  fint(xu(i,n)) = fint(xu(i,n)) + poids*fu(i,n)
+            forall (i=1:2,    n=1:nnob) fint(xi(i,n)) = fint(xi(i,n)) + poids*fi(i,n)
+            forall (i=1:2,    n=1:nnob) fint(xg(i,n)) = fint(xg(i,n)) + poids*fg(i,n)
+
+            ! Stockage des contraintes generalisees Cauchy
+            siefp(1:ndimsi,kpg) = gdlog_nice_cauchy(gdl,sigu)
+            siefp(ndimsi+1:ndimsi+2,kpg) = sigi
+            siefp(ndimsi+3:3*ndimsi+4,kpg) = sigg
+
         endif
-!         print*,'sigjp=',sigp(1:2*ndim)*jp
-!         print*,'jp=',jp
-!         if(resi) then
-!             do 321 i = 4, 2*ndim
-!                 sigpg(i,g) = sigpg(i,g)/rac2
-! 321         end do
-!         end if
-        if (cod(g) .eq. 1) goto 9999
-        
-!     CALCUL DE LA MATRICE DE RIGIDITE ET DE LA FORCE INTERIEURE
-!     CONFG LAGRANGIENNE COMME NMGR3D / NMGR2D
-! 
-!   CONSTRUCTION DE LA MATRICE GEOMETIQUE B
-! ---     CALCUL de deff = trans(F)*(derive fonction de forme)
-   
-        if (resi) then
-            call dcopy(9, fp, 1, fr, 1)
-        else
-            call dcopy(9, fm, 1, fr, 1)
-        endif    
-   
-        call nmfdff(ndim, nno, axi, g, r,rigi, matsym, fr, vff, dff,def, pff)     
-        do 333 m = 1,2*ndim
-            do 111 n =1,nno
-                do 222 i = 1,ndim
-                    deff(m,(n-1)*ndim+i) = def(m,n,i)
-222             end do
-111         end do
-333     end do
 
-!         call prelog(ndim, lgpg, vim(1, g), gn, lamb,logl, fm, fp, ebid, ebid, ebid, resi, cod(g))
+
+
+        ! -----------------------!
+        !    MATRICE TANGENTE    !
+        ! -----------------------!
+    
         
 
-!
-        if (resi) then
-            call deflog(ndim, fp, ebid, gn, lamb,logl, iret)
-        else 
-            call deflog(ndim, fm, ebid, gn, lamb,logl, iret)
-        endif
-!---     CALCUL de pes : projetcteur de T vers S(Pk2), PES = 2dE/dC
-        call deflg2(gn, lamb, logl, pes, feta, xi, me)    
 
-! !
-!        
-!-------------------------------------------
-! pour construire la matrice b(neps,nddl)
-!-------------------------------------------
+        if (rigi) then
 
-        bst = matmul(pes,deff)
-        call lgvicb(ndim,nno,nnob,npg,g,axi,r,&
-                    bst,vffb(1,g),dffb,nddl,b)
-        ttra = (tpg(1)+tpg(2)+tpg(3))/3.d0
-        tdev = tpg - ttra*kr
-! - FORCE INTERIEURE
-        if (resi) then
-!            CONSTRUCTION DE CONTRAINTE POUR CALCULER LA FORCE INTERIEUR 
+            ! Contraintes generalisees EF (si resi: deja calculee dans Fint)
+            if (.not. resi) then
+                t = slcm(1:ndimsi)
+                sigi = (/ logjm-gm, sum(t)/3-pm /)
+                sigu = t - sigi(2)*kr
+                sigg = slcm(ndimsi+1:)
+            end if
 
-      
-            do i = 1, 2*ndim
-                sigint(i) = tdev(i)+ pp*kr(i)
-            end do
+            ! Projection de Kee (dt/de)
+            dee  = dsde_lc(1:ndimsi,1:ndimsi)
+            hdee = sum(dee(1:3,:),dim=1)/3
+            deeh = sum(dee(:,1:3),dim=2)/3
+            hdeeh = sum(hdee(1:3))/3
+            hdeep = hdee - hdeeh*kr
+            pdeeh = deeh - hdeeh*kr
+            forall(kl=1:ndimsi,pq=1:ndimsi) pdeep(kl,pq)= &
+                dee(kl,pq) - pdeeh(kl)*kr(pq) - kr(kl)*hdeep(pq) - hdeeh*kr(kl)*kr(pq)
 
-            sigint(2*ndim+1) = log(jp) - gp
-!             print*,'lnj-the=',sigint(2*ndim+1)         
-            sigint(2*ndim+2) = ttra-pp
-            sigint(2*ndim+3:3*ndim+4) = tpg(2*ndim+1:3*ndim+2)
-!             print*,'sint=',sigint
-! !      FINT = SOMME(G) WG.BT.SIGMA
-!             print*,'b8=',b(:,8) 
+            ! Kuu
+            kuu = gdlog_rigeo(gdl,sigu) + prod_bb(bu,prod_kb(pdeep,bu))
 
-!Pénalisation si l'élément est trop déformé 
-!	if (jp < 0.3) then 
-!	    sigint(1:2*ndim) = sigint(1:2*ndim)-200 / jp * id2
-!	endif	
-            dfint = matmul(transpose(b),sigint)
-            fint = fint + dfint*poids
-!             if (maxval(fint)>1.E5) then
-!                 print*,'545fint=',fint
-!                 print*,'545dfint=',dfint
-!                 print*,'545sigint=',sigint
-!                 print*,'poids = ',poids
-!                 print*,'resi=',resi,'rigi=',rigi
-!                 print*,'sigpg=',sigpg(:,3)
-!                 print*,'gonf=',gp, 'lnJ=',log(jp)   
-!                 print*,'sigp=',sigp
-!                 print*,'tpg=',tpg      
-!                 print*,'pp=',pp
-!                 print*,'tm=',tm
-!                 print*,'sigmg=',sigmg
-!                 print*,'fm=',fm
-!                 print*,'fp=',fp
-!                 print*,'ddlm=',ddlm
-!                 print*,'ddld=',ddld
-!                 print*,'VIM6=',vim(6,g)
-!                 print*,'========'
-!             endif
-        endif
+            ! Kui
+            dei(:,1)=kr
+            dei(:,2)=pdeeh
+            budei = prod_kb(transpose(dei),bu)
+            forall (i=1:ndim,n=1:nno,j=1:2,m=1:nnob) kui(i,n,j,m) = budei(j,i,n)*vffb(m,kpg)
 
-! - MATRICE TANGENTE
+            ! Kug
+            deg(:,1) = dev(dsde_lc(1:ndimsi,ndimsi+1))
+            deg(:,2) = dev(dsde_lc(1:ndimsi,ndimsi+2))
+            budeg = prod_kb(transpose(deg),bu)
+            forall (i=1:ndim,n=1:nno,j=1:2,m=1:nnob) kui(i,n,j,m) = budeg(j,i,n)*vffb(m,kpg)
 
+            ! Kii
+            forall (n=1:nnob,m=1:nnob) kii(1,n,1,m) = 0
+            forall (n=1:nnob,m=1:nnob) kii(1,n,2,m) = -vffb(n,kpg)*vffb(m,kpg)
+            forall (n=1:nnob,m=1:nnob) kii(2,n,1,m) = -vffb(n,kpg)*vffb(m,kpg)
+            forall (n=1:nnob,m=1:nnob) kii(2,n,2,m) = hdeeh*vffb(n,kpg)*vffb(m,kpg)
 
-
-        if (rigi) then 
-! CONSTRUCTION DE LA MATRICE (DT/DE) GENERALISE TOTAL
-! dEdE  PARTIE UNE      
-            tmps0 = matmul(matmul(idev/3.0,dtde),idev/3.0)
-!Pénalisation si l'élément est trop déformé 
-!	    if (jp < 0.3) then 
-!	        print*,'tres deforme'
-!	        tmps0(1:3,1:3) = tmps0(1:3,1:3)+ 200/jp * idid
-!	    endif	
-            dtdegt(1:2*ndim,1:2*ndim) = tmps0(1:2*ndim,1:2*ndim)
-!dEdp
-            dtdegt(1:2*ndim, 2*ndim+1) = id2
-!dEdtheta
-            dtddeth = matmul(matmul(idev/3.0,dtde),kr/3.0)
-            dtdegt(1:2*ndim, 2*ndim+2) = dtddeth(1:2*ndim)
-! dEda   
-            tmps1 = dtdeg(1:2*ndim,2*ndim+1)
-            dtdegt(1:2*ndim, 2*ndim+3) = tmps1-id2*ddot(ndim*2,tmps1,1,id2,1)/3.0
-
-! dEdl
-            tmps2 = dtdeg(1:2*ndim,2*ndim+2)
-            dtdegt(1:2*ndim, 2*ndim+4) = tmps2-id2*ddot(ndim*2,tmps2,1,id2,1)/3.0
-!dpdE
-            dtdegt(2*ndim+1,1:2*ndim) = id2
-
-!dpdtheta  
-            dtdegt(2*ndim+1,2*ndim+2) = -1.
-
-!dthetadE
-            dtddeth = matmul(kr/3.0,matmul(dtde,idev/3.0))
-            dtdegt(2*ndim+2,1:2*ndim) = dtddeth(1:2*ndim)
-!dthetadp            
-            dtdegt(2*ndim+2,2*ndim+1) = -1.
-!dthetadtheta 
-            dtdegt(2*ndim+2,2*ndim+2) = ddot(6,kr/3.0,1,matmul(kr/3.0,dtde),1)
-!dthetada 
-            dtdegt(2*ndim+2,2*ndim+3) = ddot(ndim*2,id2,1,tmps1,1)/3.0 
-!dthetadl
-            dtdegt(2*ndim+2,2*ndim+4) = ddot(ndim*2,id2,1,tmps2,1)/3.0 
-
-
-!dadE
-            tmps3 = dtdeg(2*ndim+1,1:2*ndim)
-            dtdegt(2*ndim+3,1:2*ndim) = tmps3-id2*ddot(ndim*2,tmps3,1,id2,1)/3.0
-!dadtheta
-            dtdegt(2*ndim+3,2*ndim+2) =  ddot(ndim*2,tmps3,1,id2,1)/3.0
-!dada
-            dtdegt(2*ndim+3,2*ndim+3) =  dtdeg(2*ndim+1,2*ndim+1)
-!dadl
-            dtdegt(2*ndim+3,2*ndim+4) =  dtdeg(2*ndim+1,2*ndim+2)
-
-
-
-
-
-!dldE
-            tmps4 = dtdeg(2*ndim+2,1:2*ndim)            
-            dtdegt(2*ndim+4,1:2*ndim) = tmps4-id2*ddot(ndim*2,tmps4,1,id2,1)/3.0
-!dldtheta
-            dtdegt(2*ndim+4,2*ndim+2) =  ddot(ndim*2,tmps4,1,id2,1)/3.0
-!dlda            
-            dtdegt(2*ndim+4,2*ndim+3) =  dtdeg(2*ndim+2,2*ndim+1)
-!dldl
-            dtdegt(2*ndim+4,2*ndim+4) =  dtdeg(2*ndim+2,2*ndim+2)
-!             print*,'dtdegt(2*ndim+4,2*ndim+4)=',   dtdegt(2*ndim+4,2*ndim+4)
-!dgradadgrada
-            do 16 i = 1, ndim
-                dtdegt(2*ndim+4+i,2*ndim+4+i) =  dtdeg(2*ndim+2+i,2*ndim+2+i)    
-16          end do
-! - MATRICE TANGENTE parite I : bT.H.b    H = dT/dE
-!              print*,'dtdegt = ',dtdegt
-!             temp1 = matmul(dtdegt,b)
-            dmatr1 = matmul(matmul(transpose(b),dtdegt),b)
-!             print*,'dmatr144=',dmatr1(4,4) 
-!              dmatr1 = matmul(transpose(b),matmul(dtdegt,b))
-!             print*,'dmatr1 = ',dmatr1
-            matr = matr + poids*dmatr1
-!             print*,'poids=', poids
-
-!         call nmgrtg(ndim, nno, poids, g, vff,&
-!                     dff, def, pff, option, axi,&
-!                     r, fm, fp, dsidep, pk2m,&
-!                     pk2, matsym, matuu, fu) 
-! tpp = Tdev + p  
-            tpp = 0.
-            tpp(1:2*ndim) = tdev(1:2*ndim)+pp*kr(1:2*ndim)
-            call deflg3(gn, feta, xi, me, tpp, tl)
-            call symt46(tl, tls)
-!             tls2(1:2*ndim,1:2*ndim) = tls(1:2*ndim,1:2*ndim) 
-            dmatr2 = matmul(matmul(transpose(deff),tls),deff)
-            matr2 = matr2 + poids*dmatr2
-
-            sigpp = matmul(tpp,pes)
+            ! Kig
+            hdeg(1) = sum(dsde_lc(1:3,ndimsi+1))/3
+            hdeg(2) = sum(dsde_lc(1:3,ndimsi+2))/3
+            forall (n=1:nnob,m=1:nnob,j=1:2) kig(1,n,j,m) = 0
+            forall (n=1:nnob,m=1:nnob,j=1:2) kig(2,n,j,m) = hdeg(j)*vffb(n,kpg)*vffb(m,kpg)
             
-!           do 160 n = 1, nno
-!               do 150 i = 1, ndim
-!                   do 140 j =1, ndim
-!                       do 130 m = 1, nno
-!                           tmps5 = 0.d0
-!                           if(j .eq. i) then
-!                               do 131 k = 1, 2*ndim
-!                                   tmps5 = pff(k,n,m)*sigpp(k) + tmps5
-! 131                           end do
-! !                           TERME DE CORRECTION AXISYMETRIQUE
-!                               if (axi .and. i .eq. 1) then
-!                                   tmps5=tmps5+vff(n,g)* vff(m,g)/(r*r)*sigpp(3)
-!                               endif
-!                           endif
-!                           matr2((n-1)*ndim+i,(m-1)*ndim+j) = matr2((n-1)*ndim+i,(m-1)*ndim+j) + (tmps5)*poids
-! 130                   continue
-! 140               continue
-! 150            continue
-! 160        continue
+            ! Kgg
+            dgg = dsde_lc(ndimsi+1:ndimsi+2,ndimsi+1:ndimsi+2)
+            forall (i=1:2,n=1:nnob,j=1:2,m=1:nnob) kgg(i,n,j,m) = vffb(n,kpg)*dgg(i,j)*vffb(m,kpg)
+            dnn = dsde_lc(ndimsi+3:ndimsi+2+ndim,ndimsi+3:ndimsi+2+ndim)
+            kgg(1,:,1,:) = kgg(1,:,1,:) + matmul( matmul(dffb,dnn), transpose(dffb) )
 
-            do 160 n = 1, nno
-                do 150 i = 1, ndim
-                    do 130 m = 1, nno
-                        tmps5 = 0.d0
-                        do 131 j = 1, 2*ndim
-                            tmps5 = pff(j,n,m)*sigpp(j) + tmps5
-131                     end do
-    !                       TERME DE CORRECTION AXISYMETRIQUE
-                        if (axi .and. i .eq. 1) then
-                            tmps5=tmps5+vff(n,g)* vff(m,g)/(r*r)*sigpp(3)
-                        endif
-                        matr2((n-1)*ndim+i,(m-1)*ndim+i) = matr2((n-1)*ndim+i,(m-1)*ndim+i) + (tmps5)*poids
-130                  end do
-150             end do
-160         end do
-        
-        endif
+            if (matsym) goto 200
 
-10  end do
+            ! Kiu
+            die(1,:)=kr
+            die(2,:)=hdeep
+            diebu = prod_kb(die,bu)
+            forall (i=1:ndim,n=1:nno,j=1:2,m=1:nnob) kiu(i,n,j,m) = vffb(n,kpg)*diebu(i,j,m)
+            
+            ! Kgu
+            dge(1,:)=dev(dsde_lc(ndimsi+1,1:ndimsi))
+            dge(2,:)=dev(dsde_lc(ndimsi+2,1:ndimsi))
+            dgebu = prod_kb(dge,bu)
+            forall (i=1:ndim,n=1:nno,j=1:2,m=1:nnob) kgu(i,n,j,m) = vffb(n,kpg)*dgebu(i,j,m)
+            
+            ! Kgi
+            dgeh(1) = sum(dsde_lc(ndimsi+1,1:3))/3
+            dgeh(2) = sum(dsde_lc(ndimsi+2,1:3))/3
+            forall (i=1:ndim,n=1:nno,m=1:nnob) kgi(i,n,1,m) = 0
+            forall (i=1:ndim,n=1:nno,m=1:nnob) kgi(i,n,2,m) = dgeh(i)*vffb(n,kpg)*vffb(m,kpg)
 
-!       print*,'matr_44=',matr(4,4)
-!     print*,'ma1=',matr
-!     print*,'ma2=',matr2
+200         continue
+
+            ! Stockage dans la matrice globale
+            if (.not. matsym) then
+                forall (i=1:ndim,n=1:nno,j=1:ndim,m=1:nno) matr(xu(j,m),xu(i,n)) = &
+                    matr(xu(j,m),xu(i,n)) + kuu(i,n,j,m)*poids
+
+                forall (i=1:ndim,n=1:nno,j=1:2,m=1:nnob) matr(xi(j,m),xu(i,n)) = &
+                    matr(xi(j,m),xu(i,n)) + kui(i,n,j,m)*poids
+
+                forall (i=1:ndim,n=1:nno,j=1:2,m=1:nnob) matr(xg(j,m),xu(i,n)) = &
+                    matr(xg(j,m),xu(i,n)) + kug(i,n,j,m)*poids
+
+                forall (i=1:2,n=1:nnob,j=1:ndim,m=1:nno) matr(xu(j,m),xi(i,n)) = &
+                    matr(xu(j,m),xi(i,n)) + kiu(i,n,j,m)*poids
+
+                forall (i=1:2,n=1:nnob,j=1:2,m=1:nnob) matr(xi(j,m),xi(i,n)) = &
+                    matr(xi(j,m),xi(i,n)) + kii(i,n,j,m)*poids
+
+                forall (i=1:2,n=1:nnob,j=1:2,m=1:nnob) matr(xg(j,m),xi(i,n)) = &
+                    matr(xg(j,m),xi(i,n)) + kig(i,n,j,m)*poids
+
+                forall (i=1:2,n=1:nnob,j=1:ndim,m=1:nno) matr(xu(j,m),xg(i,n)) = &
+                    matr(xu(j,m),xg(i,n)) + kgu(i,n,j,m)*poids
+
+                forall (i=1:2,n=1:nnob,j=1:2,m=1:nnob) matr(xi(j,m),xg(i,n)) = &
+                    matr(xi(j,m),xg(i,n)) + kgi(i,n,j,m)*poids
+
+                forall (i=1:2,n=1:nnob,j=1:2,m=1:nnob) matr(xg(j,m),xg(i,n)) = &
+                    matr(xg(j,m),xg(i,n)) + kgg(i,n,j,m)*poids
+
+            else
+                ASSERT(.false.)
+            end if
+
+        end if
+            
 
 
-!             print*, 'bngv=',btot
-    if (rigi) then
-!       print*,'step-11'
-        do 700 i =1, ndim
-            do 710 j =1, ndim
-                do 500 n = 1,nnob
-                    do 510 m =1,nnob
-                        matr(nu1(n,i),nu1(m,j)) = matr(nu1(n,i),nu1(m,j)) + matr2(uu1(n,i),uu1(m,j))
-510                 end do
-                    do 520 m =nnob+1, nno
-                        matr(nu1(n,i),nu2(m,j)) = matr(nu1(n,i),nu2(m,j)) + matr2(uu1(n,i),uu1(m,j))
-520                 end do
-500             end do
-
-                do 600 n = nnob+1,nno
-                    do 610 m =1,nnob
-                        matr(nu2(n,i),nu1(m,j)) = matr(nu2(n,i),nu1(m,j)) + matr2(uu1(n,i),uu1(m,j))
-610                 end do
-                    do 620 m =nnob+1, nno
-                        matr(nu2(n,i),nu2(m,j)) = matr(nu2(n,i),nu2(m,j)) + matr2(uu1(n,i),uu1(m,j))
-620                 end do
-600             end do
-710         end do
-700     end do
-    endif
+    end do 
 
 
 
       
 ! - SYNTHESE DES CODES RETOURS
-!     print*, "étape 20"
-!         print*, 'MgL=',matr 
-!         print*, 'FgL=',fint 
-
-!        print*, 'matr133=', matr(4,5)
-!        print*, 'fint=',fint
-!        print*, 'matr_tt2=',matr
-!         print*, 'fint545=',fint
-!       print*, 'fu=',fu
-! !     print*, 'cod = ', cod
-9999  continue
+999 continue
     call codere(cod, npg, codret)
+    call gdlog_delete(gdl)
 
 
-!    if (abs(sigmg(1,3)-93.80922489903)<0.0001) then
-!        print*,'TROUVE'
-!        print*,'5f = ',fint
-!        print*,'nddl=',nddl
-!        print*,'ndim=',ndim
-!        print*,'nno=',nno
-!        print*,'nnob=',nnob
-!        print*,'szMatr=',size(matr)
-!        print*,'ddld=',ddld
-!        print*,'5M=',matr
-!     endif
-!      if (resi) then
-!        write (6,*) 'FINT RAPH_MECA = ',fint
-!      end if
-! print*,'sigpg =',sigpg
-! print*,'fint545=',fint
-! print*,'ddlm545=',ddlm+ddld
-! print*,'pp545=',pp
-! print*,'ttr545=',ttra
+
+contains
+
+function prod_sb(s,b) result(sb)
+    implicit none
+    real(kind=8)::s(:),b(:,:,:)
+    real(kind=8)::sb(size(b,2),size(b,3))
+    ! -------------------------------------------------------------------------
+    integer:: ndim,nno,ndimsi
+    ! -------------------------------------------------------------------------
+    ndim = size(b,2)
+    nno  = size(b,3)
+    ndimsi = size(s)
+    ASSERT(ndimsi.eq.size(b,1))
+    call dgemv('t',ndimsi,ndim*nno,1.d0,b,ndimsi,s,1,0.d0,sb,1)
+end function prod_sb
+
+
+function prod_kb(k,b) result(kb)
+    implicit none
+    real(kind=8)::k(:,:),b(:,:,:)
+    real(kind=8)::kb(size(k,1),size(b,2),size(b,3))
+    ! -------------------------------------------------------------------------
+    integer:: ndim,nno
+    ! -------------------------------------------------------------------------
+    ndim = size(b,2)
+    nno  = size(b,3)
+    ASSERT(size(k,2).eq.size(b,1))
+    call dgemm('n','n',size(k,1),ndim*nno,size(k,2),1.d0,k,size(k,1),b,size(b,1),0.d0,kb,size(k,1))
+end function prod_kb
+
+
+function prod_bb(b1,b2) result(bb)
+    implicit none
+    real(kind=8)::b1(:,:,:),b2(:,:,:)
+    real(kind=8)::bb(size(b1,2),size(b1,3),size(b2,2),size(b2,3))
+    ! -------------------------------------------------------------------------
+    integer:: ndno1,ndno2,ndimsi
+    ! -------------------------------------------------------------------------
+    ndno1  = size(b1,2)*size(b1,3)
+    ndno2  = size(b2,2)*size(b2,3)
+    ndimsi = size(b1,1)
+    ASSERT(size(b2,1).eq.ndimsi)
+    call dgemm('t','n',ndno1,ndno2,ndimsi,1.d0,b1,ndimsi,b2,ndimsi,0.d0,bb,ndno1)
+end function prod_bb
+
+
+
+
+
+
+
+function dev(tns)
+    implicit none
+    real(kind=8)::tns(:)
+    real(kind=8)::dev(size(tns))
+    dev = tns - sum(tns(1:3))/3*kr
+end function dev
 
 end subroutine

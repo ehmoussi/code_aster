@@ -1,5 +1,23 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C)  EDF R&D                            WWW.CODE-ASTER.ORG
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
 # ======================================================================
-# COPYRIGHT (C)  EDF R&D                            WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -61,18 +79,18 @@ MAIL = LIRE_MAILLAGE(FORMAT='MED', UNITE = 20)
 # AFFECTATION DU MODELE
 MODE = AFFE_MODELE(MAILLAGE = MAIL,
                    AFFE     = _F(TOUT     = 'OUI',
-                 	         PHENOMENE= 'MECANIQUE',
-                 	         MODELISATION = ('D_PLAN_SI'),),)                   
+                              PHENOMENE= 'MECANIQUE',
+                              MODELISATION = ('D_PLAN_SI'),),)                   
 
 # MODELISATION DU MATERIAU 
 ACIER = DEFI_MATERIAU(ELAS = _F(E=190000.0, NU=0.3),
-		      ECRO_NL  = _F(R0 = 488.361123569,
-				    RH = 0,
-				    R1 = 57.1333673502,
-				    GAMMA_1 = 8613.0,
-				    R2 = 238.731127339,
-				    GAMMA_2 = 10.386585592,
-				    ),
+              ECRO_NL  = _F(R0 = 488.361123569,
+                    RH = 0,
+                    R1 = 57.1333673502,
+                    GAMMA_1 = 8613.0,
+                    R2 = 238.731127339,
+                    GAMMA_2 = 10.386585592,
+                    ),
                       GTN_ASTER = _F(Q1 = 1.5,
                                      Q2 = 1.07,
                                      PORO_INI = 1.e-2, 
@@ -81,7 +99,7 @@ ACIER = DEFI_MATERIAU(ELAS = _F(E=190000.0, NU=0.3),
                                      NUCL_POR = 0.0,
                                      NUCL_PLA = 0.6,
                                      NUCL_DEV = 0.01,
-				     ),                 
+                     ),                 
                       ) 
                                  
 # AFFECTATION DES MATERIAUX                               
@@ -119,94 +137,94 @@ FONC = DEFI_FONCTION(NOM_PARA = 'INST',
 RESU = STAT_NON_LINE (MODELE       = MODE,
                       CHAM_MATER   = MATE ,
                       EXCIT        = (_F(CHARGE = CL),
-			              _F(CHARGE = CHAR, FONC_MULT=FONC),),
+                          _F(CHARGE = CHAR, FONC_MULT=FONC),),
                       COMPORTEMENT = _F(GROUP_MA='SPECIMEN', RELATION='GTN_ASTER', DEFORMATION='GDEF_LOG'),
                       INCREMENT    = _F(LIST_INST = INST_CAL, INST_FIN=inst_fin),
                       CONVERGENCE  = _F(ITER_GLOB_MAXI= 20,
-					RESI_GLOB_MAXI=1.E-3,
-					),
+                    RESI_GLOB_MAXI=1.E-3,
+                    ),
                       NEWTON       = _F(MATRICE='TANGENTE',REAC_ITER=1),
                       SOLVEUR      = _F(METHODE='MUMPS', PCENT_PIVOT=20, MATR_DISTRIBUEE='OUI',),
                       ARCHIVAGE    = _F(LIST_INST=REEL_ARC,),
-			) 
+            ) 
 
     
 # TEST SUR SIXX
 TEST_RESU(RESU=(_F(RESULTAT = RESU,
                    INST     = 0.50,
-		   NOM_CHAM = 'SIEF_ELGA',
-		   NOM_CMP  = 'SIXX',
+           NOM_CHAM = 'SIEF_ELGA',
+           NOM_CMP  = 'SIXX',
                    TYPE_TEST= 'MIN',
                    VALE_CALC= 332.278833249,
-		   REFERENCE= 'SOURCE_EXTERNE',
+           REFERENCE= 'SOURCE_EXTERNE',
                    VALE_REFE=3.322788e+02,
-	           PRECISION=0.01,
-		   ),
-		),
+               PRECISION=0.01,
+           ),
+        ),
            )
 
 TEST_RESU(RESU=(_F(RESULTAT = RESU,
                    INST     = 0.70,
-		   NOM_CHAM = 'SIEF_ELGA',
-		   NOM_CMP  = 'SIXX',
+           NOM_CHAM = 'SIEF_ELGA',
+           NOM_CMP  = 'SIXX',
                    TYPE_TEST= 'MIN',
                    VALE_CALC= 368.400385906,
-		   REFERENCE= 'SOURCE_EXTERNE',
+           REFERENCE= 'SOURCE_EXTERNE',
                    VALE_REFE= 3.684004e+02 ,
-	           PRECISION=0.01,
-		   ),
-		),
+               PRECISION=0.01,
+           ),
+        ),
            )
 
 # TEST SUR VARIABLE D'ECROUISSAGE V1
 TEST_RESU(RESU=(_F(RESULTAT = RESU,
                    INST     = 0.50,
-		   NOM_CHAM = 'VARI_ELGA',
-		   NOM_CMP  = 'V1',
+           NOM_CHAM = 'VARI_ELGA',
+           NOM_CMP  = 'V1',
                    TYPE_TEST= 'MAX',
                    VALE_CALC= 2.11733464523,
-		   REFERENCE= 'SOURCE_EXTERNE',
+           REFERENCE= 'SOURCE_EXTERNE',
                    VALE_REFE= 2.138722e+00,
-	           PRECISION=0.011,
-		   ),
-		),
+               PRECISION=0.011,
+           ),
+        ),
            )
 TEST_RESU(RESU=(_F(RESULTAT = RESU,
                    INST     = 0.70,
-		   NOM_CHAM = 'VARI_ELGA',
-		   NOM_CMP  = 'V1',
+           NOM_CHAM = 'VARI_ELGA',
+           NOM_CMP  = 'V1',
                    TYPE_TEST= 'MAX',
                    VALE_CALC= 2.53563262353,
-		   REFERENCE= 'SOURCE_EXTERNE',
+           REFERENCE= 'SOURCE_EXTERNE',
                    VALE_REFE=2.561245e+00,
-	           PRECISION=0.011,
-		   ),
-		),
+               PRECISION=0.011,
+           ),
+        ),
            )
    
 # TEST SUR POROSITE V2
 TEST_RESU(RESU=(_F(RESULTAT = RESU,
                    INST     = 0.50,
-		   NOM_CHAM = 'VARI_ELGA',
-		   NOM_CMP  = 'V2',
+           NOM_CHAM = 'VARI_ELGA',
+           NOM_CMP  = 'V2',
                    TYPE_TEST= 'MAX',
                    VALE_CALC= 0.01,
-		   REFERENCE= 'SOURCE_EXTERNE',
+           REFERENCE= 'SOURCE_EXTERNE',
                    VALE_REFE= 1.000000e-02,
-	           PRECISION=0.01,
-		   ),
-		),
+               PRECISION=0.01,
+           ),
+        ),
            )
 TEST_RESU(RESU=(_F(RESULTAT = RESU,
                    INST     = 0.70,
-		   NOM_CHAM = 'VARI_ELGA',
-		   NOM_CMP  = 'V2',
+           NOM_CHAM = 'VARI_ELGA',
+           NOM_CMP  = 'V2',
                    TYPE_TEST= 'MAX',
                    VALE_CALC= 0.01,
-		   REFERENCE= 'SOURCE_EXTERNE',
+           REFERENCE= 'SOURCE_EXTERNE',
                    VALE_REFE= 1.000000e-02,
-	           PRECISION=0.01,
-		   ),
-		),
+               PRECISION=0.01,
+           ),
+        ),
            )
 FIN()
