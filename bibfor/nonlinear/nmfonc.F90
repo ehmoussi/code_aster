@@ -17,9 +17,10 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmfonc(ds_conv  , ds_algopara    , solver   , model     , ds_contact    ,&
-                  list_load, sdnume         , sddyna   , sdcriq    , mate          ,&
-                  ds_inout , ds_constitutive, ds_energy, ds_algorom, list_func_acti)
+subroutine nmfonc(ds_conv       , ds_algopara    , solver   , model     , ds_contact     ,&
+                  list_load     , sdnume         , sddyna   , sdcriq    , mate           ,&
+                  ds_inout      , ds_constitutive, ds_energy, ds_algorom, ds_posttimestep,&
+                  list_func_acti)
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
@@ -35,7 +36,6 @@ implicit none
 #include "asterfort/cfdisl.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/exixfe.h"
-#include "asterfort/getvtx.h"
 #include "asterfort/GetResi.h"
 #include "asterfort/infniv.h"
 #include "asterfort/ischar.h"
@@ -61,6 +61,7 @@ type(NL_DS_InOut), intent(in) :: ds_inout
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Energy), intent(in) :: ds_energy
 type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 integer, intent(inout) :: list_func_acti(*)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -87,15 +88,17 @@ integer, intent(inout) :: list_func_acti(*)
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  ds_energy        : datastructure for energy management
 ! In  ds_algorom       : datastructure for ROM parameters
+! In  ds_posttimestep  : datastructure for post-treatment at each time step
 ! IO  list_func_acti   : list of active functionnalities
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     integer :: nocc, iret, nb_subs_stat, nb_load_subs
     integer :: i_cont_form
     aster_logical :: l_deborst, l_frot, l_dis_choc, l_all_verif, l_refe, l_comp, l_post_incr
     aster_logical :: l_loop_geom, l_loop_frot, l_loop_cont,l_pena
-    integer :: ixfem, i_buckl, i_vibr_mode, i_stab
+    integer :: ixfem
     aster_logical :: l_load_undead, l_load_laplace, l_load_elim, l_load_didi
     character(len=8) :: k8bid, repk
     character(len=16) :: command, k16bid, matr_distr
@@ -103,8 +106,6 @@ integer, intent(inout) :: list_func_acti(*)
     aster_logical :: l_stat, l_dyna
     aster_logical :: l_newt_cont, l_newt_frot, l_newt_geom
     aster_logical :: l_dyna_expl, l_cont, l_unil
-    integer :: ifm, niv
-    integer :: nb_dof_stab
     character(len=24), pointer :: slvk(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -165,8 +166,9 @@ integer, intent(inout) :: list_func_acti(*)
 ! - Modal projection for dynamic
 !
     if (l_dyna) then
-        call getfac('PROJ_MODAL', nocc)
-        if (nocc .ne. 0) list_func_acti(51) = 1
+        if (ndynlo(sddyna,'PROJ_MODAL')) then
+            list_func_acti(51) = 1
+        endif
     endif
 !
 ! - Distributed matrix (parallel computaing)
@@ -337,21 +339,20 @@ integer, intent(inout) :: list_func_acti(*)
 !
 ! - Buckling
 !
-    call getfac('CRIT_STAB', i_buckl)
-    if (i_buckl .gt. 0) list_func_acti(18) = 1
+    if (ds_posttimestep%l_crit_stab) then
+        list_func_acti(18) = 1
+    endif
 !
 ! - Stability
 !
-    i_stab = 0
-    call getvtx('CRIT_STAB', 'DDL_STAB', iocc=1, nbval=0, nbret=nb_dof_stab)
-    i_stab = -nb_dof_stab
-    if (i_stab .gt. 0) list_func_acti(49) = 1
+    if (ds_posttimestep%stab_para%nb_dof_stab .gt. 0) then
+        list_func_acti(49) = 1
+    endif
 !
 ! - Vibration modes
 !
-    if (l_dyna) then
-        call getfac('MODE_VIBR', i_vibr_mode)
-        if (i_vibr_mode .gt. 0) list_func_acti(19) = 1
+    if (ds_posttimestep%l_mode_vibr) then
+        list_func_acti(19) = 1
     endif
 !
 ! - THM time error

@@ -71,6 +71,7 @@ implicit none
 #include "asterfort/nonlinDSPrintInit.h"
 #include "asterfort/romAlgoNLInit.h"
 #include "asterfort/nonlinDSConstitutiveInit.h"
+#include "asterfort/nonlinDSPostTimeStepInit.h"
 #include "asterfort/nmrefe.h"
 #include "asterfort/nminma.h"
 #include "asterfort/nminmc.h"
@@ -108,7 +109,7 @@ type(NL_DS_Print), intent(inout) :: ds_print
 character(len=24), intent(out) :: sd_suiv
 character(len=19), intent(out) :: sd_obsv
 character(len=24) :: sderro
-type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
+type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 type(NL_DS_InOut), intent(inout) :: ds_inout
 type(NL_DS_Energy), intent(inout) :: ds_energy
 type(NL_DS_Conv), intent(inout) :: ds_conv
@@ -138,7 +139,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 ! In  list_load        : name of datastructure for list of loads
 ! IO  ds_algopara      : datastructure for algorithm parameters
 ! IO  ds_constitutive  : datastructure for constitutive laws management
-! In  ds_posttimestep  : datastructure for post-treatment at each time step
+! IO  ds_posttimestep  : datastructure for post-treatment at each time step
 ! In  solver           : name of datastructure for solver
 ! IO  ds_print         : datastructure for printing parameters
 ! Out sd_suiv          : datastructure for dof monitoring parameters
@@ -177,6 +178,10 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
     call nonlinDSConstitutiveInit(model, cara_elem, ds_constitutive)
 !
+! - Initializations for post-treatment at each time step
+!
+    call nonlinDSPostTimeStepInit(ds_algopara, ds_posttimestep)
+!
 ! - Prepare list of loads (and late elements) for contact
 !
     call nmdoct(list_load, ds_contact)
@@ -193,9 +198,10 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! - Prepare active functionnalities information
 !
-    call nmfonc(ds_conv  , ds_algopara    , solver   , model     , ds_contact,&
-                list_load, sdnume         , sddyna   , sdcriq    , mate      ,&
-                ds_inout , ds_constitutive, ds_energy, ds_algorom, fonact)
+    call nmfonc(ds_conv  , ds_algopara    , solver   , model     , ds_contact     ,&
+                list_load, sdnume         , sddyna   , sdcriq    , mate           ,&
+                ds_inout , ds_constitutive, ds_energy, ds_algorom, ds_posttimestep,&
+                fonact)
 !
 ! - Check compatibility of some functionnalities
 !
