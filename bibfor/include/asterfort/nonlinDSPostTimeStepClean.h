@@ -17,7 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmcrpc(result)
-        character(len=8), intent(in) :: result
-    end subroutine nmcrpc
+    subroutine nonlinDSPostTimeStepClean(ds_posttimestep)
+        use NonLin_Datastructure_type
+        type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
+    end subroutine nonlinDSPostTimeStepClean
 end interface
