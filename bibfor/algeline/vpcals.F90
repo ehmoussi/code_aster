@@ -144,7 +144,7 @@ subroutine vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
                 precdc, precsh, rbid, rbid, rbid,&
                 rbid, rbid, tolsor, appr, k8bid,&
                 method, k9bid, k14bid, k14bid, k14bid,&
-                k16bid, optiof, stoper, k16bid, k16bid,&
+                k16bid, optiof, stoper, k16bid, k16bid, k16bid,&
                 typres, amor, masse, raide, k19bid,&
                 lc, lkr, lns, lpg, lbid)
     ASSERT(method(1:8).eq.'SORENSEN')

@@ -123,7 +123,7 @@ subroutine modint(ssami, raiint, nddlin, nbmod, shift,&
     character(len=1)  :: listyp(2), k1bid
     character(len=4)  :: mod45
     character(len=8)  :: k8bid, method, sdstab, arret
-    character(len=16) :: typres, k16bid, optiof, sturm, modrig, stoper
+    character(len=16) :: typres, k16bid, optiof, sturm, modrig, stoper, typcal
     character(len=19) :: lismat(2), imped, solveu, nume91, nume, prno, eigsol, k19bid
     character(len=19) :: raide2, masse2
     character(len=24) :: valk, k24bid
@@ -281,9 +281,11 @@ subroutine modint(ssami, raiint, nddlin, nbmod, shift,&
     modrig='SANS'
 ! OPTION STOP_ERREUR EN DUR
     stoper='NON'
+! TYPE DE CALCUL: 'CALIBRATION' OU 'TOUT'.
+    typcal='TOUT'
     call vpcres(eigsol, typres, raide2, masse2, k19bid, optiof, method, modrig, arret, k19bid,&
-                stoper, sturm, k1bid, k16bid, nsekry2, nbvect, nbvec2, nbrss, nbborn, ibid,&
-                ibid, ibid, ibid, maxitr, bande, precsh, omecor, precdc, r8bid,&
+                stoper, sturm, typcal, k1bid, k16bid, nsekry2, nbvect, nbvec2, nbrss, nbborn,&
+                ibid, ibid, ibid, ibid, maxitr, bande, precsh, omecor, precdc, r8bid,&
                 r8bid, r8bid, r8bid, r8bid, tolsor, alpha)
 !
 ! --- CALCUL MODAL PROPREMENT DIT

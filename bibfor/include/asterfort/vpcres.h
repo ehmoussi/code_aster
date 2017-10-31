@@ -20,8 +20,8 @@
 !
 interface
     subroutine vpcres(eigsol, typres, raide, masse, amor, optiof, method, modrig, arret, tabmod,&
-                  stoper, sturm, appr, typeqz, nfreq, nbvect, nbvec2, nbrss, nbborn, nborto,&
-                  nitv, itemax, nperm, maxitr, vectf, precsh, omecor, precdc, seuil,&
+                  stoper, sturm, typcal, appr, typeqz, nfreq, nbvect, nbvec2, nbrss, nbborn,&
+                  nborto, nitv, itemax, nperm, maxitr, vectf, precsh, omecor, precdc, seuil,&
                   prorto, prsudg, tol, toldyn, tolsor, alpha)
         character(len=19) , intent(in) :: eigsol
         character(len=16) , intent(in) :: typres
@@ -35,6 +35,7 @@ interface
         character(len=19) , intent(in) :: tabmod
         character(len=16) , intent(in) :: stoper
         character(len=16) , intent(in) :: sturm
+        character(len=16) , intent(in) :: typcal
         character(len=1)  , intent(in) :: appr
         character(len=16) , intent(in) :: typeqz
         integer           , intent(in) :: nfreq

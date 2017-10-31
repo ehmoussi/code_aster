@@ -115,7 +115,7 @@ subroutine vpcalq(eigsol, vecrer, vecrei, vecrek, vecvp,&
                 precdc, rbid, rbid, rbid, rbid,&
                 rbid, rbid, rbid, k1bid, k8bid,&
                 method, k9bid, k14bid, k14bid, k14bid,&
-                k16bid, optiof, k16bid, k16bid, typeqz,&
+                k16bid, optiof, k16bid, k16bid, k16bid, typeqz,&
                 typres, amor, masse, raide, k19bid,&
                 lc, lkr, lns, lpg, lbid)
     ASSERT(method(1:2).eq.'QZ')

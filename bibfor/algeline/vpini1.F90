@@ -26,6 +26,7 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
 ! RQ1. CODE RETOUR IRETR:
 ! = -1: PB DS VPDDL
 ! = -2: PB BANDE VIDE
+! = -3: NMOP45, OPTION CALIBRATION, ON NE VEUT QUE LE NBRE DE MODES
 ! RQ2. ON MODIFIE LES VALEURS NFREQ/NBVECT DE LA SD EIGENSOLVER VIA VPECRI.
 ! RQ3. ON CREE LES OBJETS GLOBAUX VECBLO, VECLAG ET, SUIVANT LES CAS, VECRIG, SUR BASE VOLATILE.
 !      ILS SONT DETRUITS DANS VPPOST POUR LES PREMIERS ET VPCALT POUR LE DERNIER.
@@ -93,7 +94,7 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
     character(len=8) :: arret, method, chaine
     character(len=9) :: typevp
     character(len=14) :: k14bid, matra, matrc
-    character(len=16) :: k16bid, modrig, optiof, optiov, typeqz, typres
+    character(len=16) :: k16bid, modrig, optiof, optiov, typeqz, typres, typcal
     character(len=19) :: amor, masse, raide, tabmod
     character(len=24) :: metres, valk(2), k24bid
     aster_logical :: lbid, lc, lkr, lns, lqz, ltabmo
@@ -117,7 +118,7 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
                 precdc, precsh, rbid, rbid, rbid,&
                 rbid, rbid, rbid, appr, arret,&
                 method, typevp, matra, k14bid, matrc,&
-                modrig, optiof, k16bid, k16bid, typeqz,&
+                modrig, optiof, k16bid, k16bid, typcal, typeqz,&
                 typres, amor, masse, raide, tabmod,&
                 lc, lkr, lns, lbid, lqz)
 !
@@ -278,6 +279,10 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
             else
                 optiov=optiof
             endif
+! --  POUR EVITER DE CALCULER LA MATRICE DYNAMIQUE ET SA FACTORISEE
+            if ((optiof(1:5).eq.'BANDE').and.(typcal(1:11).eq.'CALIBRATION')) then
+              optiov='BANDEB'
+            endif
             call vpfopr(optiov, typres, lmasse, lraide, lmatra,&
                         omemin, omemax, omeshi, nfreq, npiv2,&
                         omecor, precsh, nbrss, nblagr, solveu,&
@@ -302,6 +307,10 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
               else
                 call codent(nfreq, 'G', chaine)
                 call utmess('I', 'ALGELINE2_16', sk=chaine)             
+              endif
+              if (typcal(1:11).eq.'CALIBRATION') then
+                iretr=-3
+                goto 999
               endif         
             endif
             lmtpsc=lmatra
@@ -333,7 +342,6 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
         endif
     endif
 
-! fait dans nmop45 et pas dans op0045: je ne comprends pas pourquoi
     if ((typres(1:9).ne.'DYNAMIQUE').and.(mod45(1:4).ne.'OP45')) then
       rbid = omemin
       omemin=-omemax

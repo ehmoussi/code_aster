@@ -57,7 +57,7 @@ subroutine vpinis(eigsol)
     character(len=8)  :: arret, method
     character(len=9)  :: typevp
     character(len=14) :: matra, matrb, matrc
-    character(len=16) :: optiof, modrig, stoper, sturm, typeqz, typres
+    character(len=16) :: optiof, modrig, stoper, sturm, typeqz, typres, typcal
     character(len=19) :: amor, k19b, masse, tabmod, raide
 
 !
@@ -249,11 +249,12 @@ subroutine vpinis(eigsol)
     arret=''
     call getvtx(' ', 'STOP_BANDE_VIDE', scal=arret, nbret=iret)
     ASSERT(iret.eq.1)
+    typcal='TOUT'
 
 ! --- CREATION ET REMPLISSAGE DE LA SD
     call vpcres(eigsol, typres, raide, masse, amor, optiof, method, modrig, arret, tabmod,&
-                  stoper, sturm, appr, typeqz, nfreq, nbvect, nbvec2, nbrss, nbborn, nborto,&
-                  nitv, itemax, nperm, maxitr, vectf, precsh, omecor, precdc, seuil,&
+                  stoper, sturm, typcal, appr, typeqz, nfreq, nbvect, nbvec2, nbrss, nbborn,&
+                  nborto, nitv, itemax, nperm, maxitr, vectf, precsh, omecor, precdc, seuil,&
                   prorto, prsudg, tol, toldyn, tolsor, alpha)    
     call jedema()
 !
