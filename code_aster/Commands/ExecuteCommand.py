@@ -21,8 +21,8 @@
 This module defines the objects on which the user's Commands are based.
 
 All Commands executors are subclasses of :class:`.ExecuteCommand`.
-Commands are factories (:meth:`.run` *classmethod*) that create an executor
-that is called to create a result object.
+Commands are factories (:meth:`ExecuteCommand.run` *classmethod*) that
+create an executor that is called to create a result object.
 
 When a new command is added there are different levels of complexity:
 
@@ -310,12 +310,19 @@ class ExecuteMacro(ExecuteCommand):
     .. todo:: Associate additional results with ``CO()``.
     """
 
-    sd = _store = None
+    _store = None
 
     def __init__(self, command_name, command_op=None):
         """Initialization"""
         super(ExecuteMacro, self).__init__(command_name)
         self._op = command_op or import_object(self._op)
+
+    def create_result(self, keywords):
+        """Macro-commands create their results in the *exec_* method.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
 
     def exec_(self, keywords):
         """Execute the command.
@@ -328,7 +335,7 @@ class ExecuteMacro(ExecuteCommand):
         """
         outputs = self._op(self, **keywords)
         assert not isinstance(outputs, int), "OPS must now return results."
-        return outputs
+        self._result = outputs
 
     # create a sub-object?
     def get_cmd(self, name):

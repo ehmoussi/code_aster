@@ -27,13 +27,13 @@ pytab = tab.EXTR_TABLE()
 test.assertSequenceEqual(pytab.NOM_NUM.values(),
                          ['{0:<24}'.format(i) for i in table2])
 
-TAB2 = CALC_TABLE(TABLE=tab,
+tab2 = CALC_TABLE(TABLE=tab,
                   ACTION=_F(OPERATION='FILTRE',
                             NOM_PARA='NUMERO',
                             VALE_I=1),
                   INFO=2)
 
-tab2 = TAB2.EXTR_TABLE()
-test.assertSequenceEqual(tab2.NUMERO.values(), [1])
+pytab2 = tab2.EXTR_TABLE()
+test.assertSequenceEqual(pytab2.NUMERO.values(), [1])
 
 test.printSummary()
