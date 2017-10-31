@@ -19,6 +19,8 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
+from Macro.cara_elem import CARA_ELEM as CATA_CARA_ELEM
+
 from ..Objects import ElementaryCharacteristics
 from .ExecuteCommand import ExecuteCommand
 
@@ -27,7 +29,14 @@ class ElementaryCharacteristicsAssignment(ExecuteCommand):
     """Command that defines the
     :class:`~code_aster.Objects.ElementaryCharacteristics` on a
     :class:`~code_aster.Objects.Mesh`."""
-    command_name = "AFFE_CARA_ELEM"
+    command_name = "CARA_ELEM"
+
+    def __init__(self, command_name=None, command_op=None):
+        """Initialization"""
+        self._cata = CATA_CARA_ELEM
+        self._op = self._cata.definition['op']
+        self._result = None
+        self._counter = 0
 
     def create_result(self, keywords):
         """Initialize the result.
@@ -38,4 +47,4 @@ class ElementaryCharacteristicsAssignment(ExecuteCommand):
         self._result = ElementaryCharacteristics.create(keywords["MODELE"])
 
 
-AFFE_CARA_ELEM = ElementaryCharacteristicsAssignment.run
+CARA_ELEM = ElementaryCharacteristicsAssignment.run

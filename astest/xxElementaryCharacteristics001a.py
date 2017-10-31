@@ -29,4 +29,8 @@ LACAR=AFFE_CARA_ELEM(MODELE=LEMOD,
 
 LACAR.debugPrint()
 
+# add low level tests
+vale = LACAR.sdj.CARCOQUE.VALE.get()
+test.assertEqual(vale[0], 0.2)
+
 test.printSummary()

@@ -24,7 +24,9 @@
 """
 
 from libaster import MeshCoordinatesField
+
 from ..Utilities import deprecated, import_object
+from .fieldonnodes_ext import post_comp_cham_no
 
 
 class injector(object):
@@ -89,22 +91,3 @@ class ExtendedMeshCoordinatesField(injector, MeshCoordinatesField):
             aster.prepcompcham(
                 "__DETR__", nchams, ncmp, "NO      ", topo, lgno)
             return post_comp_cham_no(valeurs, noeud)
-
-
-class post_comp_cham_no:
-    """Container object that store the results of
-    :py:meth:`code_aster.Objects.FieldOnNodesDouble.EXTR_COMP`.
-
-    The support of the field may be unknown. In this case, :py:attr:`noeud`
-    and :py:attr:`comp` are set to *None*.
-
-    Attributes:
-        valeurs (numpy.ndarray): Values of the field.
-        noeud (list[int]): List of nodes numbers.
-        comp (list[int]): List of components.
-    """
-
-    def __init__(self, valeurs, noeud=None, comp=None):
-        self.valeurs = valeurs
-        self.noeud = noeud
-        self.comp = tuple(i.strip() for i in comp) if comp else None

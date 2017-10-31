@@ -19,21 +19,37 @@
 
 # person_in_charge: jean-luc.flejou at edf.fr
 #
+from code_aster.Utilities import force_list
 
 
-def affe_cara_elem_ops(self, MODELE, INFO, VERIF,
-                       POUTRE, BARRE, COQUE, CABLE,
-                       DISCRET, DISCRET_2D, ORIENTATION, MASSIF, POUTRE_FLUI, GRILLE, MEMBRANE,
-                       RIGI_PARASOL, RIGI_MISS_3D, MASS_AJOU, MASS_REP,
-                       GEOM_FIBRE, MULTIFIBRE, **args):
+def affe_cara_elem_ops(self, **args):
     """
        Ecriture de la macro AFFE_CARA_ELEM
     """
+    from code_aster.Commands.cara_elem import CARA_ELEM
+    args = _F(args)
+    MODELE = args['MODELE']
+    INFO = args['INFO']
+    VERIF = args['VERIF']
+    POUTRE = args['POUTRE']
+    BARRE = args['BARRE']
+    COQUE = args['COQUE']
+    CABLE = args['CABLE']
+    DISCRET = args['DISCRET']
+    DISCRET_2D = args['DISCRET_2D']
+    ORIENTATION = args['ORIENTATION']
+    MASSIF = args['MASSIF']
+    POUTRE_FLUI = args['POUTRE_FLUI']
+    GRILLE = args['GRILLE']
+    MEMBRANE = args['MEMBRANE']
+    RIGI_PARASOL = args['RIGI_PARASOL']
+    RIGI_MISS_3D = args['RIGI_MISS_3D']
+    MASS_AJOU = args['MASS_AJOU']
+    MASS_REP = args['MASS_REP']
+    GEOM_FIBRE = args['GEOM_FIBRE']
+    MULTIFIBRE = args['MULTIFIBRE']
     #
     ier = 0
-    # On importe les définitions des commandes à utiliser dans la macro
-    # Le nom de la variable doit être obligatoirement le nom de la commande
-    from Macro.cara_elem import CARA_ELEM
     # La macro compte pour ?? dans la numérotation des commandes
     self.set_icmd(1)
     #
@@ -49,56 +65,56 @@ def affe_cara_elem_ops(self, MODELE, INFO, VERIF,
         motclef_cara_elem['VERIF'] = VERIF
     #
     if POUTRE != None:
-        motclef_cara_elem['POUTRE'] = POUTRE.List_F()
+        motclef_cara_elem['POUTRE'] = force_list(POUTRE)
     #
     if BARRE != None:
-        motclef_cara_elem['BARRE'] = BARRE.List_F()
+        motclef_cara_elem['BARRE'] = force_list(BARRE)
     #
     if COQUE != None:
-        motclef_cara_elem['COQUE'] = COQUE.List_F()
+        motclef_cara_elem['COQUE'] = force_list(COQUE)
     #
     if CABLE != None:
-        motclef_cara_elem['CABLE'] = CABLE.List_F()
+        motclef_cara_elem['CABLE'] = force_list(CABLE)
     #
     if DISCRET != None:
-        motclef_cara_elem['DISCRET'] = DISCRET.List_F()
+        motclef_cara_elem['DISCRET'] = force_list(DISCRET)
     #
     if DISCRET_2D != None:
-        motclef_cara_elem['DISCRET_2D'] = DISCRET_2D.List_F()
+        motclef_cara_elem['DISCRET_2D'] = force_list(DISCRET_2D)
     #
     if ORIENTATION != None:
-        motclef_cara_elem['ORIENTATION'] = ORIENTATION.List_F()
+        motclef_cara_elem['ORIENTATION'] = force_list(ORIENTATION)
     #
     if MASSIF != None:
-        motclef_cara_elem['MASSIF'] = MASSIF.List_F()
+        motclef_cara_elem['MASSIF'] = force_list(MASSIF)
     #
     if POUTRE_FLUI != None:
-        motclef_cara_elem['POUTRE_FLUI'] = POUTRE_FLUI.List_F()
+        motclef_cara_elem['POUTRE_FLUI'] = force_list(POUTRE_FLUI)
     #
     if GRILLE != None:
-        motclef_cara_elem['GRILLE'] = GRILLE.List_F()
+        motclef_cara_elem['GRILLE'] = force_list(GRILLE)
     #
     if MEMBRANE != None:
-        motclef_cara_elem['MEMBRANE'] = MEMBRANE.List_F()
+        motclef_cara_elem['MEMBRANE'] = force_list(MEMBRANE)
     #
     if RIGI_PARASOL != None:
-        motclef_cara_elem['RIGI_PARASOL'] = RIGI_PARASOL.List_F()
+        motclef_cara_elem['RIGI_PARASOL'] = force_list(RIGI_PARASOL)
     #
     if RIGI_MISS_3D != None:
-        motclef_cara_elem['RIGI_MISS_3D'] = RIGI_MISS_3D.List_F()
+        motclef_cara_elem['RIGI_MISS_3D'] = force_list(RIGI_MISS_3D)
     #
     if MASS_AJOU != None:
-        motclef_cara_elem['MASS_AJOU'] = MASS_AJOU.List_F()
+        motclef_cara_elem['MASS_AJOU'] = force_list(MASS_AJOU)
     #
     if MASS_REP != None:
-        motclef_cara_elem['MASS_REP'] = MASS_REP.List_F()
+        motclef_cara_elem['MASS_REP'] = force_list(MASS_REP)
     #
     if GEOM_FIBRE != None:
         motclef_cara_elem['GEOM_FIBRE'] = GEOM_FIBRE
     #
     if MULTIFIBRE != None:
-        motclef_cara_elem['MULTIFIBRE'] = MULTIFIBRE.List_F()
+        motclef_cara_elem['MULTIFIBRE'] = force_list(MULTIFIBRE)
     #
     nomres = CARA_ELEM(**motclef_cara_elem)
     #
-    return ier
+    return nomres
