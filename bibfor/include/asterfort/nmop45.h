@@ -16,11 +16,13 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
+#include "asterf_types.h"
+!
 interface
-    subroutine nmop45(eigsol, defo, mod45, modes, modes2, ds_posttimestep_)
+    subroutine nmop45(eigsol, l_hpp, mod45, modes, modes2, ds_posttimestep_)
         use NonLin_Datastructure_type          
         character(len=19), intent(in) :: eigsol
-        integer          , intent(in) :: defo
+        aster_logical    , intent(in) :: l_hpp
         character(len=4) , intent(in) :: mod45
         character(len=8) , intent(in) :: modes
         character(len=8) , intent(in) :: modes2

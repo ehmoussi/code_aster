@@ -17,8 +17,10 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
 !
+#include "asterf_types.h"
+!
 interface
-    subroutine nmflma(typmat, mod45 , defo  , ds_algopara, modelz,&
+    subroutine nmflma(typmat, mod45 , l_hpp  , ds_algopara, modelz,&
                       mate  , carele, sddisc, sddyna     , fonact,&
                       numins, valinc, solalg, lischa     , comref,&
                       ds_contact, numedd, numfix,&
@@ -28,7 +30,7 @@ interface
         use NonLin_Datastructure_type
         character(len=16) :: typmat
         character(len=4) :: mod45
-        integer :: defo
+        aster_logical, intent(in) :: l_hpp
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         character(len=*) :: modelz
         character(len=24) :: mate

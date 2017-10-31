@@ -180,7 +180,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! - Initializations for post-treatment at each time step
 !
-    call nonlinDSPostTimeStepInit(ds_algopara, ds_posttimestep)
+    call nonlinDSPostTimeStepInit(ds_algopara, ds_constitutive, ds_posttimestep)
 !
 ! - Prepare list of loads (and late elements) for contact
 !

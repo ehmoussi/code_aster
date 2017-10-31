@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmflma(typmat, mod45 , defo  , ds_algopara, modelz,&
+subroutine nmflma(typmat, mod45 , l_hpp  , ds_algopara, modelz,&
                   mate  , carele, sddisc, sddyna     , fonact,&
                   numins, valinc, solalg, lischa     , comref,&
                   ds_contact, numedd     , numfix,&
@@ -55,7 +55,7 @@ implicit none
 !
 character(len=16) :: typmat, modrig
 character(len=4) :: mod45
-integer :: defo
+aster_logical, intent(in) :: l_hpp
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 integer :: fonact(*)
 character(len=*) :: modelz
@@ -84,7 +84,7 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 ! IN  MOD45  : TYPE DE CALCUL DE MODES PROPRES
 !              'VIBR'     MODES VIBRATOIRES
 !              'FLAM'     MODES DE FLAMBEMENT
-! IN  DEFO   : TYPE DE DEFORMATIONS
+! IN  l_hpp   : TYPE DE DEFORMATIONS
 !                0        PETITES DEFORMATIONS (MATR. GEOM.)
 !                1        GRANDES DEFORMATIONS (PAS DE MATR. GEOM.)
 ! IN  MODELE : MODELE
@@ -245,7 +245,7 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 ! --- CALCUL DE LA RIGIDITE GEOMETRIQUE DANS LE CAS HPP
 !
     if (mod45 .eq. 'FLAM') then
-        if (defo .eq. 0) then
+        if (l_hpp) then
             call nmcmat('MEGEOM', ' ', ' ', .true._1,&
                         .false._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                         list_l_calc, list_l_asse)
@@ -298,7 +298,7 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 ! --- CALCUL DE LA RIGIDITE GEOMETRIQUE DANS LE CAS HPP
 !
     if (mod45 .eq. 'FLAM') then
-        if (defo .eq. 0) then
+        if (l_hpp) then
             call asmatr(1, megeom, ' ', numedd, &
                         lischa, 'ZERO', 'V', 1, matgeo)
             if ((nddle.ne.0) .and. (modrig(1:13).eq.'MODI_RIGI_OUI')) then

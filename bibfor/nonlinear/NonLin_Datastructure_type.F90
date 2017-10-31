@@ -566,6 +566,8 @@ implicit none
         type(NL_DS_Spectral)  :: crit_stab
         type(NL_DS_Spectral)  :: mode_vibr
         type(NL_DS_Stability) :: stab_para
+! ----- Small strain hypothese for geometry matrix
+        aster_logical         :: l_hpp
 ! ----- Results (provisoire)
         type(NL_DS_SpectralResults) :: mode_vibr_resu
         type(NL_DS_SpectralResults) :: mode_flam_resu

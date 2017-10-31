@@ -15,17 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+#include "asterf_types.h"
 !
 interface
-    subroutine nmflal(option, ds_constitutive, ds_posttimestep, mod45 , defo  ,&
-                      nfreq , cdsp           , typmat         , optmod, bande ,&
+    subroutine nmflal(option, ds_posttimestep, mod45 , l_hpp ,&
+                      nfreq , cdsp           , typmat, optmod, bande ,&
                       nddle , nsta           , modrig)
         use NonLin_Datastructure_type
         character(len=16) :: option
-        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
         character(len=4) :: mod45
-        integer :: defo
+        aster_logical, intent(out) :: l_hpp
         integer :: nfreq
         integer :: cdsp
         character(len=16) :: typmat
