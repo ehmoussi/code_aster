@@ -16,113 +16,85 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lcgrad(resi, rigi, ndim, ndimsi, neps,&
-                  sigma, apg, lag, grad, aldc,&
-                  r, c, ktg, sig, dsidep)
+subroutine lcgrad(resi, rigi, sig, apg, lag, grad, aldc,&
+                  r, c, deps_sig,dphi_sig,deps_a,dphi_a, sief, dsde)
     implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/r8inir.h"
+#include "asterfort/assert.h"
     aster_logical :: resi, rigi
-    integer :: ndim, ndimsi, neps
-    real(kind=8) :: sigma(6), ktg(6, 6, 4), apg, lag, grad(ndim), aldc, r, c
-    real(kind=8) :: sig(neps), dsidep(neps, neps)
+    real(kind=8),intent(in) :: sig(:), apg, lag, grad(:), aldc, r, c
+    real(kind=8),intent(in) :: deps_sig(:,:),dphi_sig(:),deps_a(:),dphi_a
+    real(kind=8)            :: sief(*), dsde(:,:)
 ! ----------------------------------------------------------------------
 !  GRAD_VARI : CALCUL DES TERMES COMMUNS AU LAGRANGIEN AUGMENTE
 ! ----------------------------------------------------------------------
-! IN  RESI   .TRUE. SI CALCUL DES CONTRAINTES
-! IN  RIGI   .TRUE. SI CALCUL DE LA RIGIDITE
-! IN  NDIM   DIMENSION DE L'ESPACE
-! IN  NDIMSI DIMENSION DES DEFORMATIONS ET DES CONTRAINTES MECANIQUES
-! IN  NEPS   DIMENSION DES DEFORMATIONS ET DES CONTRAINTES
-! IN  SIGMA  CONTRAINTES MECANIQUES
-! IN  APG    VARIABLE NON LOCALE NODALE INTERPOLEE AU POINT DE GAUSS
-! IN  LAG    MULTIPLICATEUR DE LAGRANGE
-! IN  GRAD   GRADIENT DE LA VARIABLE NON LOCALE
-! IN  ALDC   VARIABLE NON LOCALE ISSUE DE LA LOI DE COMPORTEMENT
-! IN  R      COEFFICIENT D'AUGMENTATION DU LAGRANGIEN AUGMENTE
-! IN  C      COEFFICIENT DE PONDERATION DU TERME NON LOCAL
-! IN  KTG    MATRICES TANGENTES PAR BOUT
-!             KTG(6,6,1) DSIGMA/DEPS
-!             KTG(6,1,2) DSIGMA/DPHI
-!             KTG(6,1,3) DALDC/DEPS
-!             KTG(1,1,4) DALDC/DPHI
-! OUT SIG    CONTRAINTES GENERALISEES
-! OUT DSIDEP MATRICE TANGENTE GENERALISEE
+! IN  RESI     .TRUE. SI CALCUL DES CONTRAINTES
+! IN  RIGI     .TRUE. SI CALCUL DE LA RIGIDITE
+! IN  SIG      CONTRAINTES MECANIQUES
+! IN  APG      VARIABLE NON LOCALE NODALE INTERPOLEE AU POINT DE GAUSS
+! IN  LAG      MULTIPLICATEUR DE LAGRANGE
+! IN  GRAD     GRADIENT DE LA VARIABLE NON LOCALE
+! IN  ALDC     VARIABLE NON LOCALE ISSUE DE LA LOI DE COMPORTEMENT
+! IN  R        COEFFICIENT D'AUGMENTATION DU LAGRANGIEN AUGMENTE
+! IN  C        COEFFICIENT DE PONDERATION DU TERME NON LOCAL
+! IN  DEPS_SIG DSIGMA/DEPS
+! IN  DPHI_SIG DSIGMA/DPHI
+! IN  DEPS_A   DALDC/DEPS
+! IN  DPHI_A   DALDC/DPHI
+! OUT SIEF     CONTRAINTES GENERALISEES
+! OUT DSDE     MATRICE TANGENTE GENERALISEE
 ! ----------------------------------------------------------------------
-    integer :: i, j
+    integer :: i,neps,ndim,ndimsi
 ! ----------------------------------------------------------------------
-!
-!
+
+! Initialisation
+    ndim   = size(grad)
+    ndimsi = 2*ndim
+    neps   = 3*ndim + 2
+    ASSERT(size(sig).eq.ndimsi)
+    ASSERT(size(dsde,1).eq.neps)
+    ASSERT(size(dsde,2).eq.neps)
+
+
 ! -- CALCUL DES CONTRAINTES GENERALISEES
-!
     if (resi) then
-        do 10 i = 1, ndimsi
-            sig(i) = sigma(i)
- 10     continue
-        sig(ndimsi+1) = lag + r*(apg-aldc)
-        sig(ndimsi+2) = apg-aldc
-        do 20 i = 1, ndim
-            sig(ndimsi+2+i) = c*grad(i)
- 20     continue
+        sief(1:ndimsi) = sig
+        sief(ndimsi+1) = lag + r*(apg-aldc)
+        sief(ndimsi+2) = apg-aldc
+        sief(ndimsi+3:ndimsi+2+ndim) = c*grad
     endif
-!
-!
+
+
 ! -- CALCUL DE LA MATRICE TANGENTE GENERALISEE
-!
     if (rigi) then
-! 	  write (6,*) 'lcgrad neps = ',neps
+        dsde = 0.d0
 
-!         write (6,*) 'DIM     = ',ndim,ndimsi,neps
-!         write (6,*) 'R,C     = ',r,c
-!         write (6,*) 'DSIDEP1 = ',ktg(1:ndimsi,1:ndimsi,1)
-!         write (6,*) 'DSIDEP2 = ',ktg(1:ndimsi,1,2)
-!         write (6,*) 'DSIDEP3 = ',ktg(1:ndimsi,1,3)
-!         write (6,*) 'DSIDEP4 = ',ktg(1,1,4)
+        ! SIG - EPS
+        dsde(1:ndimsi,1:ndimsi) = deps_sig
 
-        call r8inir(neps*neps, 0.d0, dsidep, 1)
-!
-!      SIG - EPS
-        do 30 i = 1, ndimsi
-            do 40 j = 1, ndimsi
-                dsidep(i,j) = ktg(i,j,1)
- 40         continue
- 30     continue
-!
-!      SIG - A ET SIG - MU
-        do 50 i = 1, ndimsi
-            dsidep(i,ndimsi+1) = r*ktg(i,1,2)
-            dsidep(i,ndimsi+2) = ktg(i,1,2)
- 50     continue
-!
-!      SIGA - EPS ET SIGMU - EPS
-        do 60 i = 1, ndimsi
-            dsidep(ndimsi+1,i) = -r*ktg(i,1,3)
-            dsidep(ndimsi+2,i) = -ktg(i,1,3)
- 60     continue
-!
-!      SIGA - A
-        dsidep(ndimsi+1,ndimsi+1) = (1-r*ktg(1,1,4))*r
-!
-!      SIGA - MU ET SIGMU - A
-        dsidep(ndimsi+1,ndimsi+2) = 1-r*ktg(1,1,4)
-        dsidep(ndimsi+2,ndimsi+1) = 1-r*ktg(1,1,4)
-!
-!      SIGMU - MU
-        dsidep(ndimsi+2,ndimsi+2) = - ktg(1,1,4)
-!
-!      SIGG - GRAD
-        do 70 i = 1, ndim
-            dsidep(ndimsi+2+i,ndimsi+2+i) = c
- 70     continue
-!
+        ! SIG - A ET SIG - MU
+        dsde(1:ndimsi,ndimsi+1) = dphi_sig*r
+        dsde(1:ndimsi,ndimsi+2) = dphi_sig
 
-! 	do i = 1,ndimsi+2
-! 	do j = 1,ndimsi+2
-! 	write (6,*) 'M[',i-1,',',j-1,'] = ',dsidep(i,j)
-! 	end do
-! 	end do
+        ! SIGA - EPS ET SIGMU - EPS
+        dsde(ndimsi+1,1:ndimsi) = -deps_a*r
+        dsde(ndimsi+2,1:ndimsi) = -deps_a
 
+        ! SIGA - A
+        dsde(ndimsi+1,ndimsi+1) = (1-r*dphi_a)*r
+
+        ! SIGA - MU ET SIGMU - A
+        dsde(ndimsi+1,ndimsi+2) = 1-r*dphi_a
+        dsde(ndimsi+2,ndimsi+1) = 1-r*dphi_a
+
+        ! SIGMU - MU
+        dsde(ndimsi+2,ndimsi+2) = -dphi_a
+
+        ! SIGG - GRAD
+        do i = 1, ndim
+            dsde(ndimsi+2+i,ndimsi+2+i) = c
+        end do
     endif
-!
+
 end subroutine

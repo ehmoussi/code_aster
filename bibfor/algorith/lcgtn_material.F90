@@ -1,6 +1,24 @@
+! --------------------------------------------------------------------
+! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! This file is part of code_aster.
+!
+! code_aster is free software: you can redistribute it and/or modify
+! it under the terms of the GNU General Public License as published by
+! the Free Software Foundation, either version 3 of the License, or
+! (at your option) any later version.
+!
+! code_aster is distributed in the hope that it will be useful,
+! but WITHOUT ANY WARRANTY; without even the implied warranty of
+! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+! GNU General Public License for more details.
+!
+! You should have received a copy of the GNU General Public License
+! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+! --------------------------------------------------------------------
+
 function lcgtn_material(fami,kpg,ksp,imate,resi,grvi) result(mat)
 
-    use lcgtn,         only: gtn_material
+    use lcgtn_module, only: gtn_material
 
     implicit none
 #include "asterf_types.h"
@@ -33,13 +51,13 @@ function lcgtn_material(fami,kpg,ksp,imate,resi,grvi) result(mat)
     poum   = merge('+','-',resi)
 
 !  Elasticity
-    call rcvalb(fami, kpg, ksp, poum, imate,' ', 'ELAS'     , 0, ' ', [0.d0],nbel, nomel, valel, iok, 2)
+    call rcvalb(fami,kpg,ksp,poum,imate,' ','ELAS',0,' ',[0.d0],nbel,nomel,valel,iok,2)
     mat%lambda = valel(1)*valel(2)/((1+valel(2))*(1-2*valel(2)))
     mat%deuxmu = valel(1)/(1+valel(2))
     mat%troisk = valel(1)/(1.d0-2.d0*valel(2))
 
 !  Hardening
-    call rcvalb(fami, kpg, ksp, poum, imate,' ', 'ECRO_NL'  , 0, ' ', [0.d0],nbec, nomec, valec, iok, 2)
+    call rcvalb(fami,kpg,ksp,poum,imate,' ','ECRO_NL',0,' ',[0.d0],nbec,nomec,valec,iok,2)
     mat%r0 = valec(1)
     mat%rh = valec(2)
     mat%r1 = valec(3)
@@ -51,7 +69,7 @@ function lcgtn_material(fami,kpg,ksp,imate,resi,grvi) result(mat)
     mat%gk = valec(9)
     
 !  GTN
-    call rcvalb(fami, kpg, ksp, poum, imate,' ', 'GTN_ASTER', 0, ' ',[0.d0], nben, nomen, valen, iok, 2)
+    call rcvalb(fami,kpg,ksp,poum,imate,' ','GTN_ASTER', 0,' ',[0.d0],nben,nomen,valen,iok,2)
     mat%q1 = valen(1)
     mat%q2 = valen(2)
     mat%f0 = valen(3)
@@ -62,7 +80,7 @@ function lcgtn_material(fami,kpg,ksp,imate,resi,grvi) result(mat)
     mat%sn = valen(8)
 
 !  Viscosity
-    call rcvalb(fami, kpg, ksp, poum, imate,' ', 'VISC_REG', 0, ' ',[0.d0], nbvs, nomvs, valvs, iok, 0)
+    call rcvalb(fami,kpg,ksp,poum,imate,' ','VISC_REG',0,' ',[0.d0],nbvs,nomvs,valvs,iok,0)
     mat%vs0 = merge(valvs(1),0.d0,iok(1).eq.0)
     mat%ve0 = merge(valvs(2),1.d0,iok(2).eq.0)
     mat%vm  = merge(valvs(3),0.5d0,iok(3).eq.0)
@@ -70,7 +88,7 @@ function lcgtn_material(fami,kpg,ksp,imate,resi,grvi) result(mat)
     
 !  Nonlocal
     if (grvi) then
-        call rcvalb(fami, kpg, ksp, poum, imate,' ', 'NON_LOCAL', 0, ' ', [0.d0],nbnl, nomnl, valnl, iok, 2)
+        call rcvalb(fami,kpg,ksp,poum,imate,' ','NON_LOCAL',0,' ',[0.d0],nbnl,nomnl,valnl,iok,2)
         mat%c     = valnl(1)
         mat%r     = valnl(2)
     else

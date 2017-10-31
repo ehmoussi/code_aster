@@ -16,25 +16,17 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-interface
-    subroutine lgicfc(ndim, nno1, nno2, npg, nddl, axi,grand,&
-                      geoi, ddlm, vff1, vff2, idfde1,idfde2, &
-                      iw,sigmag,fint)
-        integer :: ndim
-        integer :: nno1        
-        integer :: nno2
-        integer :: npg      
-        integer :: nddl
-        aster_logical :: axi
-        aster_logical :: grand
-        real(kind=8) :: geoi(ndim*nno1)
-        real(kind=8) :: ddlm(nddl)
-        real(kind=8) :: vff1(nno1,npg)
-        real(kind=8) :: vff2(nno2,npg)
-        integer :: idfde1        
-        integer :: idfde2
-        integer :: iw       
-        real(kind=8) :: sigmag(3*ndim+2,npg)
-        real(kind=8) :: fint(nddl)
-    end subroutine lgicfc
-end interface
+module lcgtn_module
+
+implicit none
+
+type gtn_material
+    real(kind=8) :: lambda,deuxmu,troisk
+    real(kind=8) :: r0,rh,r1,g1,r2,g2,rk,p0,gk
+    real(kind=8) :: q1,q2,f0,fc,fr,fn,pn,sn
+    real(kind=8) :: vs0,ve0,vm,vd
+    real(kind=8) :: c,r
+end type gtn_material
+
+
+end module lcgtn_module

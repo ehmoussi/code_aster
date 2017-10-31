@@ -1,9 +1,27 @@
-function lcgtn_compute(grvi,resi,rigi,elas, itemax, prec, m, dt, eps, phi, ep, ka, f, state, &
+! --------------------------------------------------------------------
+! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! This file is part of code_aster.
+!
+! code_aster is free software: you can redistribute it and/or modify
+! it under the terms of the GNU General Public License as published by
+! the Free Software Foundation, either version 3 of the License, or
+! (at your option) any later version.
+!
+! code_aster is distributed in the hope that it will be useful,
+! but WITHOUT ANY WARRANTY; without even the implied warranty of
+! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+! GNU General Public License for more details.
+!
+! You should have received a copy of the GNU General Public License
+! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+! --------------------------------------------------------------------
+
+function lcgtn_compute(resi,rigi,elas, itemax, prec, m, dt, eps, phi, ep, ka, f, state, &
                   t,deps_t,dphi_t,deps_ka,dphi_ka) &
     result(iret)
 
-    use scalar_newton, only: newton_state, utnewt
-    use lcgtn,         only: gtn_material
+    use scalar_newton_module, only: newton_state, utnewt
+    use lcgtn_module,         only: gtn_material
 
     implicit none
 #include "asterf_types.h"
@@ -11,8 +29,10 @@ function lcgtn_compute(grvi,resi,rigi,elas, itemax, prec, m, dt, eps, phi, ep, k
 #include "asterfort/assert.h"
 #include "asterfort/proten.h"
 
+! aslint: disable=W1501,W0104
 
-    aster_logical,intent(in)     :: grvi,resi,rigi,elas
+
+    aster_logical,intent(in)     :: resi,rigi,elas
     type(gtn_material),intent(in):: m
     integer,intent(in)           :: itemax
     real(kind=8),intent(in)      :: prec
@@ -34,7 +54,7 @@ function lcgtn_compute(grvi,resi,rigi,elas, itemax, prec, m, dt, eps, phi, ep, k
     real(kind=8):: tel(size(eps)),telh,telq,teld(size(eps)),tels
     real(kind=8):: tsm,tsmax
     real(kind=8):: gamm1,deph,depd(size(eps)),depq,pin,chim1,cs
-    real(kind=8):: kamin,tsmin,ka0,kamax
+    real(kind=8):: kamin,tsmin
     real(kind=8):: equ,d_equ,equint,equext,d_equint,d_equext,p,q,ts
     real(kind=8):: pmin,pmax,p1,p2,fg1,fg2,m1,m2,offset,xm,xp,equm,equp,sgn,dts_p
     type(newton_state):: mem,memint,memext
@@ -217,7 +237,8 @@ function lcgtn_compute(grvi,resi,rigi,elas, itemax, prec, m, dt, eps, phi, ep, k
             equint   = f_g_hat(p1,ts)
             d_equint = dp_g_hat(p1,ts)
             if (abs(equint).le.prec) exit
-            p1 = utnewt(p1,equint,d_equint,iteint,memint,xmin=pmin,xmax=pmax,usemin=to_aster_logical(pmin.ne.0.d0))
+            p1 = utnewt(p1,equint,d_equint,iteint,memint,xmin=pmin,xmax=pmax, &
+                        usemin=to_aster_logical(pmin.ne.0.d0))
         end do
         if (iteint.gt.itemax) then
             iret = 1
@@ -261,7 +282,8 @@ function lcgtn_compute(grvi,resi,rigi,elas, itemax, prec, m, dt, eps, phi, ep, k
                 equint   = f_g_hat(p2,ts)+offset
                 d_equint = dp_g_hat(p2,ts)
                 if (abs(equint).le.0.1d0*prec) exit
-                p2 = utnewt(p2,equint,d_equint,iteint,memint,xmin=xm,xmax=xp,usemin=to_aster_logical(xm.ne.0.d0))
+                p2 = utnewt(p2,equint,d_equint,iteint,memint,xmin=xm,xmax=xp, &
+                            usemin=to_aster_logical(xm.ne.0.d0))
             end do
             if (iteint.gt.itemax) then
                 iret = 1
@@ -366,7 +388,7 @@ function lcgtn_compute(grvi,resi,rigi,elas, itemax, prec, m, dt, eps, phi, ep, k
 
 
 
-    if (state.eq.0) then
+    if (state.eq.0 .or. elas) then
         ! Regime elastique (seul deps_t est non nulle, egale a la matrice d'elasticite)
         deps_t(1:3,1:3) = m%lambda
         do i = 1,size(eps)
@@ -512,12 +534,12 @@ end function dteq_g
 
 real(kind=8) function f_ecro(ka)
     real(kind=8)::ka
-    f_ecro = m%r0 + m%rh*ka + m%r1*(1-exp(-m%g1*ka)) + m%r2*(1-exp(-m%g2*ka)) + m%rk*(ka+m%p0)**m%gk
+    f_ecro = m%r0+m%rh*ka+m%r1*(1-exp(-m%g1*ka))+m%r2*(1-exp(-m%g2*ka))+m%rk*(ka+m%p0)**m%gk
 end function f_ecro
 
 real(kind=8) function dka_ecro(ka)
     real(kind=8)::ka
-    dka_ecro = m%rh + m%r1*m%g1*exp(-m%g1*ka) + m%r2*m%g2*exp(-m%g2*ka) + m%rk*m%gk*(ka+m%p0)**(m%gk-1)
+    dka_ecro = m%rh+m%r1*m%g1*exp(-m%g1*ka)+m%r2*m%g2*exp(-m%g2*ka)+m%rk*m%gk*(ka+m%p0)**(m%gk-1)
 end function dka_ecro
 
 
@@ -862,5 +884,4 @@ end function bnd_pmax
 
 
 end function
-
 

@@ -76,33 +76,34 @@ subroutine deflog(ndim, f, epsl, gn, lamb,&
         call diago2(tr2, gn2, lamb)
         lamb(3)=tr(3)
         call r8inir(9, 0.d0, gn, 1)
-        do 1 i = 1, 2
-            do 1 j = 1, 2
+        do i = 1, 2
+            do j = 1, 2
                 gn(i,j)=gn2(i,j)
- 1          continue
+            end do
+        end do
         gn(3,3)=1.d0
 !
     endif
 !
-    do 10 i = 1, nbvec
+    do i = 1, nbvec
         if (lamb(i) .le. r8miem()) then
             iret=1
             goto 9999
         endif
         logl(i)=log(lamb(i))*0.5d0
-10  end do
+    end do
 !
 !     EPSL = DEFORMATION LOGARITHMIQUE
     call r8inir(9, 0.d0, epsl33, 1)
     call r8inir(6, 0.d0, epsl, 1)
-    do 11 i = 1, 3
-        do 12 j = 1, 3
-            do 13 k = 1, nbvec
+    do i = 1, 3
+        do j = 1, 3
+            do k = 1, nbvec
 !              Calcul de EPSL dans le repere general
                 epsl33(i,j)=epsl33(i,j)+logl(k)*gn(i,k)*gn(j,k)
-13          continue
-12      continue
-11  end do
+            end do
+        end do
+    end do
     call tnsvec(3, 3, epsl33, epsl, sqrt(2.d0))
 !
 9999  continue

@@ -322,9 +322,9 @@ subroutine lcesgv(fami, kpg, ksp, neps, typmod,&
 ! -- PRISE EN CHARGE DES TERMES DU LAGRANGIEN AUGMENTE
 !
 800 continue
-    call lcgrad(resi, rigi, ndim, ndimsi, neps,&
-                sigma, apg, lag, grad, a,&
-                pr, pc, ktg, sig, dsidep)
+    call lcgrad(resi, rigi, sigma, apg, lag, &
+                grad, a, pr, pc, ktg(1:ndimsi,1:ndimsi,1), &
+                ktg(1:ndimsi,1,2),ktg(1:ndimsi,1,3),ktg(1,1,4),sig, dsidep)
 !
 !
 999 continue

@@ -1,22 +1,24 @@
+! --------------------------------------------------------------------
+! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! This file is part of code_aster.
+!
+! code_aster is free software: you can redistribute it and/or modify
+! it under the terms of the GNU General Public License as published by
+! the Free Software Foundation, either version 3 of the License, or
+! (at your option) any later version.
+!
+! code_aster is distributed in the hope that it will be useful,
+! but WITHOUT ANY WARRANTY; without even the implied warranty of
+! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+! GNU General Public License for more details.
+!
+! You should have received a copy of the GNU General Public License
+! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+! --------------------------------------------------------------------
+
 subroutine lgicfc(ndim, nno1, nno2, npg, nddl, axi,grand,&
                   geoi,ddlm, vff1, vff2, idfde1, idfde2,&
                   iw, sigmag,fint)
-! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
-! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
-! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
-! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
-! (AT YOUR OPTION) ANY LATER VERSION.
-!
-! THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
-! WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
-! MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
-! GENERAL PUBLIC LICENSE FOR MORE DETAILS.
-!
-! YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
-! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
-!   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
-! ======================================================================
 !
     implicit none
 #include "asterf_types.h"
@@ -34,7 +36,7 @@ subroutine lgicfc(ndim, nno1, nno2, npg, nddl, axi,grand,&
     real(kind=8) ::vff1(nno1, npg), vff2(nno2, npg)
     integer :: nddl,neps,nepg
     real(kind=8) :: b(3*ndim+4, npg, nddl),sigmag(3*ndim+2,npg),sigfint(3*ndim+4,npg)
-    real(kind=8) :: w(npg),wdef(npg),bv((3*ndim+4)* npg* nddl,1),sigfintv((3*ndim+4)*npg,1)
+    real(kind=8) :: w(npg),wdef(npg)
     real(kind=8) ::  geom(ndim*nno1), ddlm(nddl),geoi(ndim*nno1),depl(ndim*nno1)
 ! ----------------------------------------------------------------------
 !  CALCUL DES ELEMENTS CINEMATIQUES POUR LA MODELISATION GRAD_VARI_INCO
@@ -121,12 +123,6 @@ subroutine lgicfc(ndim, nno1, nno2, npg, nddl, axi,grand,&
 ! - CALCUL DE LA PRESSION ET DU GONFLEMENT
         gm = ddot(nno2,vff2(1,g),1,gonfm,1)
         pm = ddot(nno2,vff2(1,g),1,presm,1)
-
-! 	write (6,*) 'LGICFC Point de Gauss ',g,w(g)
-! 	write (6,*) 'LGICFC JM = ',jm,log(jm)
-! 	write (6,*) 'LGICFC gm = ',gm
-! 	write (6,*) 'LGICFC pm = ',pm
-
 
         tau(1:2*ndim) = sigmag(1:2*ndim,g)*jm
         tauhy = (tau(1)+tau(2)+tau(3))/3.d0

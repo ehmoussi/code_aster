@@ -1,22 +1,24 @@
-subroutine lggvmb(ndim, nno1, nno2, npg, g,axi,r,&
+! --------------------------------------------------------------------
+! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! This file is part of code_aster.
+!
+! code_aster is free software: you can redistribute it and/or modify
+! it under the terms of the GNU General Public License as published by
+! the Free Software Foundation, either version 3 of the License, or
+! (at your option) any later version.
+!
+! code_aster is distributed in the hope that it will be useful,
+! but WITHOUT ANY WARRANTY; without even the implied warranty of
+! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+! GNU General Public License for more details.
+!
+! You should have received a copy of the GNU General Public License
+! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+! --------------------------------------------------------------------
+
+subroutine lggvmb(ndim, nno1, nno2, axi,r,&
                   bst, vff2, dfdi2, nddl,&
-                  neps, b, w)
-! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
-! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
-! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
-! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
-! (AT YOUR OPTION) ANY LATER VERSION.
-!
-! THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
-! WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
-! MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
-! GENERAL PUBLIC LICENSE FOR MORE DETAILS.
-!
-! YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
-! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
-!   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
-! ======================================================================
+                  neps, b)
 !
     implicit none
 #include "asterf_types.h"
@@ -24,11 +26,10 @@ subroutine lggvmb(ndim, nno1, nno2, npg, g,axi,r,&
 #include "asterfort/dfdmip.h"
 #include "asterfort/r8inir.h"
     aster_logical :: axi
-    integer :: ndim, nno1, nno2, npg,g
+    integer :: ndim, nno1, nno2
     real(kind=8) :: vff2(nno2)
     integer :: nddl, neps
     real(kind=8) :: b(3*ndim+2,nddl),bst(6,nno1*ndim)
-    real(kind=8) :: w
 ! ----------------------------------------------------------------------
 !  CALCUL DES ELEMENTS CINEMATIQUES POUR LA MODELISATION GRAD_VARI
 ! ----------------------------------------------------------------------
@@ -46,20 +47,12 @@ subroutine lggvmb(ndim, nno1, nno2, npg, g,axi,r,&
 ! OUT NDDL   NOMBRE DE DDL / ELEMENT
 ! OUT NEPS   NBR DE COMPOSANTE DE DEFORMATION (GENERALISEE)
 ! OUT B      MATRICE CINEMATIQUE EPS = B.U
-! OUT W      POIDS DES POINTS DE GAUSS REELS
 ! OUT NI2LDC CONVERSION CONTRAINTE STOCKEE -> CONTRAINTE LDC (AVEC RAC2)
 ! ----------------------------------------------------------------------
     real(kind=8) :: rac2, r2, r, unsurr
 ! ----------------------------------------------------------------------
-    integer :: iu1, iu2, iub,ia, il, n, i, idfde2
-    real(kind=8) :: dff1, dff2,dfdi2(nno2*ndim)
-    iu1(n,i) = (n-1)*(ndim+2) + i
-    iu2(n,i) = nno2*2 + (n-1)*ndim + i
-    iub(n,i) = (n-1)*ndim + i
-    ia(n) = (n-1)*(ndim+2) + ndim + 1
-    il(n) = (n-1)*(ndim+2) + ndim + 2
-!     dff1(n,i) = dfdi1(nno1*(i-1) + n)
-    dff2(n,i) = dfdi2(nno2*(i-1) + n)
+    integer :: n, i
+    real(kind=8) :: dfdi2(nno2*ndim)
 ! ----------------------------------------------------------------------
     ASSERT(nno1.le.27)
     ASSERT(nno2.le.8)
@@ -132,6 +125,42 @@ subroutine lggvmb(ndim, nno1, nno2, npg, g,axi,r,&
 41              continue
 40          continue
         endif
+
+contains
+
+! ----------------------------------------------------------------------------------------
+!  Liste des fonctions d'acces aux composantes du tableau
+! ----------------------------------------------------------------------------------------
+
+integer function iu1(n,i)
+    integer n,i
+    iu1 = (n-1)*(ndim+2) + i
+end function iu1
+
+integer function iu2(n,i)
+    integer n,i
+    iu2 = nno2*2 + (n-1)*ndim + i
+end function iu2
+
+integer function iub(n,i)
+    integer n,i
+    iub = (n-1)*ndim + i
+end function iub
+
+integer function ia(n)
+    integer n
+    ia = (n-1)*(ndim+2) + ndim + 1
+end function ia
+
+integer function il(n)
+    integer n
+    il = (n-1)*(ndim+2) + ndim + 2
+end function il
+
+real(kind=8) function dff2(n,i)
+    integer n,i
+    dff2 = dfdi2(nno2*(i-1) + n)
+end function dff2
 
 
 end subroutine

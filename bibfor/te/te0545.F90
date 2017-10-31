@@ -28,6 +28,7 @@ subroutine te0545(option, nomte)
 #include "asterfort/ngvlog.h"
 #include "asterfort/nglgic.h"
 #include "asterfort/nmgvmb.h"
+#include "asterfort/nmtstm.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/rcangm.h"
 #include "asterfort/teattr.h"
@@ -52,7 +53,7 @@ subroutine te0545(option, nomte)
     integer :: imate, icontm, ivarim, iinstm, iinstp, ideplm, ideplp, icompo
     integer :: ivectu, icontp, ivarip, imatuu, icarcr, ivarix, igeom, icoret
     integer :: iret, nnos, jgano, jganob, jtab(7)
-    integer :: i,j
+    integer :: i
     real(kind=8) :: xyz(3)=0.d0, angmas(7)
     real(kind=8),allocatable:: b(:,:,:), w(:,:),ni2ldc(:,:)
 !
@@ -87,12 +88,13 @@ subroutine te0545(option, nomte)
 !
 ! - PARAMETRES EN SORTIE
 !
-    matsym = .false._1
+
     if (rigi) then
-        call jevech('PMATUNS', 'E', imatuu)
+        call nmtstm(zr(icarcr), imatuu, matsym)
     else
-        imatuu=1
+        imatuu = 1
     endif
+
 !
     if (resi) then
         call jevech('PVECTUR', 'E', ivectu)
@@ -133,8 +135,7 @@ subroutine te0545(option, nomte)
      if (zk16(icompo+2) (1:8).eq.'GDEF_LOG') then
         if (lteatt('INCO','C5GV')) then
             nddl = nno*ndim+4*nnob
-            neps = 3*ndim +2
-            call nglgic('RIGI', option, typmod, ndim, nno,nnob,neps,&
+            call nglgic('RIGI', option, typmod, ndim, nno,nnob,&
                        npg,nddl, ipoids, zr(ivf), zr(ivfb),idfde,idfdeb,&
                        zr(igeom),zk16(icompo), zi(imate), lgpg,&
                        zr(icarcr), angmas, zr(iinstm), zr(iinstp), matsym,&
