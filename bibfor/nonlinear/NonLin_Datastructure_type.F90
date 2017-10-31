@@ -492,4 +492,20 @@ implicit none
         aster_logical         :: l_matr_geom
     end type NL_DS_Constitutive
 !
+! - Type: selection list
+! 
+    type NL_DS_SelectList
+! ----- List of values
+        integer               :: nb_value   = 0
+        real(kind=8)          :: incr_mini  = 0.d0
+        real(kind=8), pointer :: list_value(:) => null()
+! ----- Parameters to detect real in list
+        real(kind=8)          :: precision  = 0.d0
+        aster_logical         :: l_abso     = ASTER_FALSE
+        real(kind=8)          :: tolerance  = 0.d0
+        integer               :: freq_step  = 0
+! ----- Type of selection
+        aster_logical         :: l_by_freq  = ASTER_FALSE
+    end type NL_DS_SelectList
+!
 end module
