@@ -15,23 +15,21 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmcrot(result, sd_obsv)
+!
+use NonLin_Datastructure_type
 !
 implicit none
 !
-#include "asterfort/exisd.h"
-#include "asterfort/jeexin.h"
-#include "asterfort/ltcrsd.h"
-#include "asterfort/ltnotb.h"
-#include "asterfort/tbajpa.h"
-#include "asterfort/tbcrsd.h"
+#include "asterfort/nonlinDSTableIOSetPara.h"
+#include "asterfort/nonlinDSTableIOCreate.h"
+#include "asterfort/nonlinDSTableIOClean.h"
 #include "asterfort/wkvect.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: result
-    character(len=19), intent(in) :: sd_obsv
+character(len=8), intent(in) :: result
+character(len=19), intent(in) :: sd_obsv
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -47,59 +45,52 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer, parameter :: nb_para = 16
-    character(len=8) :: para_type(nb_para)
-    character(len=16) :: para_name(nb_para)
-!
+    type(NL_DS_TableIO) :: tableio
+    character(len=24), parameter :: list_para(nb_para) = (/'NOM_OBSERVATION','TYPE_OBJET     ',&
+                                                           'NUME_REUSE     ','NUME_OBSE      ',&
+                                                           'INST           ','NOM_CHAM       ',&
+                                                           'EVAL_CHAM      ','NOM_CMP        ',&
+                                                           'NOM_VARI       ','EVAL_CMP       ',&
+                                                           'NOEUD          ','MAILLE         ',&
+                                                           'EVAL_ELGA      ','POINT          ',&
+                                                           'SOUS_POINT     ','VALE           '/)
+    character(len=8),  parameter :: type_para(nb_para) = (/'K16','K16',&
+                                                           'I  ','I  ',&
+                                                           'R  ','K16',&
+                                                           'K8 ','K8 ',&
+                                                           'K16','K8 ',&
+                                                           'K8 ','K8 ',&
+                                                           'K8 ','I  ',&
+                                                           'I  ','R  ' /)
     character(len=24) :: obsv_tabl
     character(len=24), pointer :: v_obsv_tabl(:) => null()
-    integer :: iret
-    character(len=19) :: tabl_name
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    data para_name /'NOM_OBSERVATION','TYPE_OBJET'  ,&
-                    'NUME_REUSE'     ,'NUME_OBSE'   ,'INST'   ,&
-                    'NOM_CHAM'       ,'EVAL_CHAM'   ,'NOM_CMP', 'NOM_VARI',&
-                    'EVAL_CMP'       ,'NOEUD'       ,'MAILLE' ,&
-                    'EVAL_ELGA'      ,'POINT'       ,'SOUS_POINT',&
-                    'VALE'           /
-    data para_type /'K16','K16',&
-                    'I'  ,'I'  ,'R'  ,&
-                    'K16','K8' ,'K8' ,'K16',&
-                    'K8' ,'K8' ,'K8' ,&
-                    'K8' ,'I'  ,'I'  ,&
-                    'R' /
-!
-! --------------------------------------------------------------------------------------------------
-!
+
 !
 ! - Create vector for table name
 !
     obsv_tabl = sd_obsv(1:14)//'     .TABL'
     call wkvect(obsv_tabl, 'V V K24', 1, vk24 = v_obsv_tabl)
 !
-! - Create list of tables in results datastructure
+! - Create list of parameters
 !
-    call jeexin(result//'           .LTNT', iret)
-    if (iret .eq. 0) then
-        call ltcrsd(result, 'G')
-    endif
+    call nonlinDSTableIOSetPara(tableio_   = tableio,&
+                                nb_para_   = nb_para,&
+                                list_para_ = list_para,&
+                                type_para_ = type_para)
 !
-! - Get name of observation table
+! - Create table in results datastructure
 !
-    tabl_name = ' '
-    call ltnotb(result, 'OBSERVATION', tabl_name)
-!
-! - Create observation table
-!
-    call exisd('TABLE', tabl_name, iret)
-    if (iret .eq. 0) then
-        call tbcrsd(tabl_name, 'G')
-        call tbajpa(tabl_name, nb_para, para_name, para_type)
-    endif
+    call nonlinDSTableIOCreate(result, 'OBSERVATION', tableio)
 !
 ! - Save name of table
 !
-    v_obsv_tabl(1) = tabl_name
+    v_obsv_tabl(1) = tableio%table_name
+!
+! - Clean table in results datastructure
+!
+    call nonlinDSTableIOClean(tableio)
 !
 end subroutine

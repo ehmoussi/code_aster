@@ -357,8 +357,10 @@ implicit none
 !
     call onerrf(compex, k16bid, ibid)
 !
-! --- MENAGE
+! - Cleaning datastructures
 !
-    call nmmeng(fonact, ds_algorom, ds_print, ds_measure, ds_energy)
+    call nmmeng(fonact,&
+                ds_algorom, ds_print, ds_measure,&
+                ds_energy , ds_posttimestep)
 !
 end subroutine

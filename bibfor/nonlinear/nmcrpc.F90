@@ -15,76 +15,58 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmcrpc(result)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit     none
-#include "asterfort/exisd.h"
-#include "asterfort/infdbg.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jeexin.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/ltcrsd.h"
-#include "asterfort/ltnotb.h"
-#include "asterfort/tbajpa.h"
-#include "asterfort/tbcrsd.h"
-    character(len=8) :: result
+subroutine nmcrpc(result)
 !
-! ----------------------------------------------------------------------
+use NonLin_Datastructure_type
 !
-! ROUTINE *_NON_LINE (STRUCTURES DE DONNES)
+implicit none
 !
-! CREATION DE LA TABLE DES PARAMETRES CALCULES
+#include "asterfort/nonlinDSTableIOSetPara.h"
+#include "asterfort/nonlinDSTableIOCreate.h"
+#include "asterfort/nonlinDSTableIOClean.h"
 !
-! ----------------------------------------------------------------------
+character(len=8), intent(in) :: result
 !
-! IN  RESULT : NOM SD RESULTAT
+! --------------------------------------------------------------------------------------------------
 !
-! ----------------------------------------------------------------------
+! *_NON_LINE
 !
-    integer :: nbpar
-    parameter   (nbpar=8)
-    character(len=2) :: typpar(nbpar)
-    character(len=10) :: nompar(nbpar)
-! ----------------------------------------------------------------------
-    integer :: ifm, niv, iret
-    character(len=19) :: tablpc
-    data         nompar / 'NUME_REUSE','INST'      ,'TRAV_EXT  ',&
-     &                      'ENER_CIN'  ,'ENER_TOT'  ,'TRAV_AMOR ',&
-     &                      'TRAV_LIAI' ,'DISS_SCH'/
-    data         typpar / 'I'         ,'R'         ,'R'         ,&
-     &                      'R'         ,'R'         ,'R'         ,&
-     &                      'R'         ,'R'/
+! Create table of parameters
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
+! In  result           : name of results datastructure
 !
-! --- CREATION DE LA LISTE DE TABLES SI ELLE N'EXISTE PAS
+! --------------------------------------------------------------------------------------------------
 !
-    call jeexin(result//'           .LTNT', iret)
-    if (iret .eq. 0) call ltcrsd(result, 'G')
+    integer, parameter :: nb_para = 8
+    type(NL_DS_TableIO) :: tableio
+    character(len=24), parameter :: list_para(nb_para) = (/'NUME_REUSE','INST      ','TRAV_EXT  ',&
+                                                           'ENER_CIN  ','ENER_TOT  ','TRAV_AMOR ',&
+                                                           'TRAV_LIAI ','DISS_SCH  '/)
+    character(len=8),  parameter :: type_para(nb_para) = (/'I','R','R',&
+                                                           'R','R','R',&
+                                                           'R','R'/)
 !
-! --- RECUPERATION DU NOM DE LA TABLE CORRESPONDANT
-!     AUX PARAMETRE CALCULES
+! --------------------------------------------------------------------------------------------------
 !
-    tablpc = ' '
-    call ltnotb(result, 'PARA_CALC', tablpc)
+
 !
-! --- LA TABLE PARA_CALC EXISTE-T-ELLE ?
+! - Create list of parameters
 !
-    call exisd('TABLE', tablpc, iret)
+    call nonlinDSTableIOSetPara(tableio_   = tableio,&
+                                nb_para_   = nb_para,&
+                                list_para_ = list_para,&
+                                type_para_ = type_para)
 !
-! --- NON, ON LA CREE
+! - Create table in results datastructure
 !
-    if (iret .eq. 0) then
-        call tbcrsd(tablpc, 'G')
-        call tbajpa(tablpc, nbpar, nompar, typpar)
-    endif
+    call nonlinDSTableIOCreate(result, 'PARA_CALC', tableio)
 !
-    call jedema()
+! - Clean table in results datastructure
+!
+    call nonlinDSTableIOClean(tableio)
 !
 end subroutine
