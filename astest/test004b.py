@@ -88,9 +88,9 @@ statNonLine2.setSupportModel( monModel )
 statNonLine2.setMaterialOnMesh( affectMat )
 statNonLine2.addBehaviourOnElements( elas )
 # Define the initial state of the current analysis
-start = code_aster.State()
+start = code_aster.State.create(0)
 # from the last computed step of the previous analysis
-start.setFromNonLinearEvolution( resu, 0.5 )
+start.setFromNonLinearEvolution( resu, 0.5, 1.e-6 )
 statNonLine2.setInitialState( start )
 #
 temps =[1.0, 1.5];

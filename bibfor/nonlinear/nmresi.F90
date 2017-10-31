@@ -211,8 +211,13 @@ implicit none
                 cnfext, cnfint)
 
 ! --- COMPLETION DES CHAMPS PRODUITS PAR ASSEMBLAGE :
-    call cnoadd(cnfext,cnfexp)
-    call cnoadd(cnfint,cnfinp)
+#ifdef _USE_MPI
+    call cnoadd(cnfext, cnfexp)
+    call cnoadd(cnfint, cnfinp)
+#else
+    cnfexp = cnfext
+    cnfinp = cnfint
+#endif
 !
 ! --- POINTEUR SUR LES DDLS ELIMINES PAR AFFE_CHAR_CINE
 !

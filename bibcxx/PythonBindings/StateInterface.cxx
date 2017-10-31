@@ -25,6 +25,7 @@
 #include "PythonBindings/SharedPtrUtilities.h"
 #include <boost/python.hpp>
 
+
 void exportStateToPython()
 {
     using namespace boost::python;

@@ -40,7 +40,6 @@ Development rules
 
         .. code-block:: none
 
-            test004b     <S>_ERROR              JEVEUX_26 on '&&NMRESI.CNFINP    .VALE'
             xxFlow001a   <S>_ERROR              DEFI_FLUI_STRU ?
             xxMultiSteps01a <S>_ERROR
 

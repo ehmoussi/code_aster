@@ -17,10 +17,8 @@
 ! --------------------------------------------------------------------
 
 !
-!
-!
 interface
-    subroutine cnoadd(chno,chnop)
-        character*(*) chno,chnop
+    subroutine cnoadd(chno, chnop)
+        character(len=*), intent(in) :: chno, chnop
     end subroutine cnoadd
 end interface
