@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmdopo(sddyna, ds_posttimestep)
+    subroutine nonlinDSPostTimeStepInit(ds_algopara, ds_posttimestep)
         use NonLin_Datastructure_type
-        character(len=19), intent(in) :: sddyna
+        type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
-    end subroutine nmdopo
+    end subroutine nonlinDSPostTimeStepInit
 end interface

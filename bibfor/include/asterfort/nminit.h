@@ -51,7 +51,7 @@ interface
         character(len=24), intent(out) :: sd_suiv
         character(len=19), intent(out) :: sd_obsv
         character(len=24) :: sderro
-        type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
+        type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
         type(NL_DS_InOut), intent(inout) :: ds_inout
         type(NL_DS_Energy), intent(inout) :: ds_energy
         type(NL_DS_Conv), intent(inout) :: ds_conv

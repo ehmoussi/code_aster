@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmdopo(sddyna, ds_algopara, ds_posttimestep)
+subroutine nmdopo(sddyna, ds_posttimestep)
 !
 use NonLin_Datastructure_type
 !
@@ -25,7 +25,6 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterc/getfac.h"
-#include "asterc/r8vide.h"
 #include "asterfort/assert.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/getvis.h"
@@ -37,19 +36,17 @@ implicit none
 #include "asterfort/selectListRead.h"
 !
 character(len=19), intent(in) :: sddyna
-type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! MECA_NON_LINE - Contact management
+! MECA_NON_LINE - Post-treatment management
 !
-! Read parameters for measure and statistics management
+! Read parameters for post-treatment parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! IN  SDDYNA : SD DYNAMIQUE
-! In  ds_algopara      : datastructure for algorithm parameters
 ! IO  ds_posttimestep  : datastructure for post-treatment at each time step
 !
 ! --------------------------------------------------------------------------------------------------
@@ -75,9 +72,11 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 !
 ! - Initializations
 !
-    iocc = 1
-    strip(1) = -10.d0
-    strip(2) = 10.d0
+    iocc        = 1
+    strip(1)    = -10.d0
+    strip(2)    = 10.d0
+    l_mode_vibr = ASTER_FALSE
+    l_crit_stab = ASTER_FALSE
 !
 ! - Active functionnalities
 !
@@ -159,8 +158,6 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 !
     if (l_crit_stab) then
         keywfact = 'CRIT_STAB'
-! ----- Rigidity matrix
-        ds_posttimestep%crit_stab%type_matr_rigi = ds_algopara%matrix_pred
 ! ----- How to seek eigen values
         l_small = ASTER_FALSE
         l_strip = ASTER_FALSE
@@ -228,15 +225,5 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
                     isdefault=iarg)
         ds_posttimestep%stab_para%instab_sign = instab_sign
     endif
-!
-    ds_posttimestep%mode_vibr_resu%eigen_value  = r8vide()
-    ds_posttimestep%mode_vibr_resu%eigen_index  = -1
-    ds_posttimestep%mode_vibr_resu%eigen_vector = '&&NMDOPO.VIBMOD'
-    ds_posttimestep%mode_flam_resu%eigen_value  = r8vide()
-    ds_posttimestep%mode_flam_resu%eigen_index  = -1
-    ds_posttimestep%mode_flam_resu%eigen_vector = '&&NMDOPO.FLAMOD'
-    ds_posttimestep%crit_stab_resu%eigen_value  = r8vide()
-    ds_posttimestep%crit_stab_resu%eigen_index  = -1
-    ds_posttimestep%crit_stab_resu%eigen_vector = '&&NMDOPO.STAMOD'
 !
 end subroutine

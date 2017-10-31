@@ -172,7 +172,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! - Read parameters for post-treatment management (CRIT_STAB and MODE_VIBR)
 !
-    call nmdopo(sddyna, ds_algopara, ds_posttimestep)
+    call nmdopo(sddyna, ds_posttimestep)
 !
 ! - Read parameters for contact management
 !
