@@ -508,4 +508,68 @@ implicit none
         aster_logical         :: l_by_freq  = ASTER_FALSE
     end type NL_DS_SelectList
 !
+! - Type: spectral analysis for stability
+! 
+    type NL_DS_Stability
+! ----- Use geometric matrix (only CRIT_STAB)
+        aster_logical             :: l_geom_matr
+! ----- Use modified rigidity matrix (only CRIT_STAB)
+        aster_logical             :: l_modi_rigi
+! ----- Excluded DOF (only CRIT_STAB)
+        integer                   :: nb_dof_excl
+        character(len=8), pointer :: list_dof_excl(:) => null()
+! ----- Stabilized DOF (only CRIT_STAB)
+        integer                   :: nb_dof_stab
+        character(len=8), pointer :: list_dof_stab(:) => null()
+! ----- Instability parameters
+        character(len=16)         :: instab_sign
+        real(kind=8)              :: instab_prec
+    end type NL_DS_Stability
+!
+! - Type: spectral analysis
+! 
+    type NL_DS_Spectral
+! ----- Name of option to compute
+        character(len=16)      :: option
+! ----- Type of rigidity matrix
+        character(len=16)      :: type_matr_rigi
+! ----- Type of eigenvalues research
+        aster_logical          :: l_small
+        aster_logical          :: l_strip
+! ----- Bounds of strip (STRIP option)
+        real(kind=8)           :: strip_bounds(2)
+! ----- Number of eigenvalues to search (SMALL option)
+        integer                :: nb_eigen
+! ----- Parameter for eigen solver
+        integer                :: coef_dim_espace
+! ----- Selector (when spectral analysis occurs)
+        type(NL_DS_SelectList) :: selector
+! ----- Level of computation (number of eigenvalues, eigenvalue, eigenvalue+eigenvector)
+        integer                :: level
+    end type NL_DS_Spectral
+!
+! - Type: post_treatment at each time step - Results (provisoire)
+! 
+    type NL_DS_SpectralResults
+        real(kind=8)         :: eigen_value
+        integer              :: eigen_index
+        character(len=19)    :: eigen_vector
+    end type NL_DS_SpectralResults
+!
+! - Type: post_treatment at each time step
+! 
+    type NL_DS_PostTimeStep
+! ----- Compute CRIT_STAB / MODE_VIBR
+        aster_logical         :: l_crit_stab
+        aster_logical         :: l_mode_vibr
+! ----- Spectral analyses
+        type(NL_DS_Spectral)  :: crit_stab
+        type(NL_DS_Spectral)  :: mode_vibr
+        type(NL_DS_Stability) :: stab_para
+! ----- Results (provisoire)
+        type(NL_DS_SpectralResults) :: mode_vibr_resu
+        type(NL_DS_SpectralResults) :: mode_flam_resu
+        type(NL_DS_SpectralResults) :: crit_stab_resu
+    end type NL_DS_PostTimeStep
+!
 end module
