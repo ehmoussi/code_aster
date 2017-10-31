@@ -26,7 +26,7 @@ interface
                   alpha, omecor, freq1, freq2, precdc, precsh, prorto, prsudg, seuil, tol, toldyn,&
                   tolsor,&
                   appr, arret, method, typevp, matra, matrb, matrc, modrig, optiof, stoper, sturm,&
-                  typeqz, typres, amor, masse, raide, tabmod,&
+                  typcal, typeqz, typres, amor, masse, raide, tabmod,&
                   lc, lkr, lns, lpg, lqz)
 !                    
     character(len=19) , intent(in)    :: eigsol
@@ -70,6 +70,7 @@ interface
     character(len=16) , intent(out)   :: optiof
     character(len=16) , intent(out)   :: stoper
     character(len=16) , intent(out)   :: sturm
+    character(len=16) , intent(out)   :: typcal
     character(len=16) , intent(out)   :: typeqz
     character(len=16) , intent(out)   :: typres
 !

@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 
 subroutine vpcres(eigsol, typres, raide, masse, amor, optiof, method, modrig, arret, tabmod,&
-                  stoper, sturm, appr, typeqz, nfreq, nbvect, nbvec2, nbrss, nbborn, nborto,&
-                  nitv, itemax, nperm, maxitr, vectf, precsh, omecor, precdc, seuil,&
-                  prorto, prsudg, tol, toldyn, tolsor, alpha)
+                stoper, sturm, typcal, appr, typeqz, nfreq, nbvect, nbvec2, nbrss, nbborn, nborto,&
+                nitv, itemax, nperm, maxitr, vectf, precsh, omecor, precdc, seuil,&
+                prorto, prsudg, tol, toldyn, tolsor, alpha)
 ! -------------------------------------------------------------------------------------------------
 !
 ! CREATION ET REMPLISSAGE DE LA SD EIGSOL ASSOCIEE AUX PARAMETRES MODAUX FOURNIS EN PARAMETRE
@@ -51,7 +51,7 @@ subroutine vpcres(eigsol, typres, raide, masse, amor, optiof, method, modrig, ar
     real(kind=8)      , intent(in) :: prorto, prsudg, tol, toldyn, tolsor, alpha
     character(len=1)  , intent(in) :: appr
     character(len=8)  , intent(in) :: method, arret
-    character(len=16) , intent(in) :: typres, optiof, modrig, stoper, sturm, typeqz
+    character(len=16) , intent(in) :: typres, optiof, modrig, stoper, sturm, typcal, typeqz
     character(len=19) , intent(in) :: eigsol, raide, masse, amor, tabmod
 !
 ! --- OUTPUT
@@ -102,6 +102,7 @@ subroutine vpcres(eigsol, typres, raide, masse, amor, optiof, method, modrig, ar
     zk24(eislvk-1+9)=trim(tabmod)
     zk24(eislvk-1+10)=trim(stoper)
     zk24(eislvk-1+11)=trim(sturm)
+    zk24(eislvk-1+12)=trim(typcal)
 
 ! --  PARAMETRES K24 LIES AUX SOLVEURS MODAUX
     zk24(eislvk-1+16)=trim(appr)

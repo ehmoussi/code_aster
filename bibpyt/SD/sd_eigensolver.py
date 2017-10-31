@@ -43,6 +43,7 @@ class sd_eigensolver(AsBase):
         assert esvk[7] in ('OUI', 'NON')
         assert esvk[9] in ('OUI', 'NON')
         assert esvk[10] in ('OUI', 'NON')
+        assert esvk[11] in ('CALIBRATION', 'TOUT')
         assert esvk[15] in ('R', 'I', 'C')
         if esvk[5] == 'QZ':
             assert esvk[16] in ('QZ_SIMPLE', 'QZ_EQUI', 'QZ_QR')

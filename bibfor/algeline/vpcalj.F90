@@ -105,7 +105,7 @@ subroutine vpcalj(eigsol, vecrer, vecrei, vecrek, vecvp,&
                 precdc, rbid, rbid, rbid, rbid,&
                 tol, toldyn, rbid, k1bid, k8bid,&
                 method, k9bid, k14bid, k14bid, k14bid,&
-                k16bid, optiof, k16bid, k16bid, k16bid,&
+                k16bid, optiof, k16bid, k16bid, k16bid, k16bid,&
                 typres, k19bid, masse, raide, k19bid,&
                 lc, lkr, lns, lpg, lbid)
     ASSERT(method(1:6).eq.'JACOBI')
