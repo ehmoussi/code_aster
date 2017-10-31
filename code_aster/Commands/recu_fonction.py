@@ -16,17 +16,22 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 
-# person_in_charge: mathieu.courtois at edf.fr
-
 # person_in_charge: mathieu.courtois@edf.fr
 
-from ..Objects import Table
-from .ExecuteCommand import ExecuteMacro
+from ..Objects import Function
+from .ExecuteCommand import ExecuteCommand
 
 
-class TableManipulation(ExecuteMacro):
-    """Execute legacy operator CALC_TABLE."""
-    command_name = "CALC_TABLE"
+class ExtractFunction(ExecuteCommand):
+    """Execute legacy operator RECU_FONCTION."""
+    command_name = "RECU_FONCTION"
 
+    def create_result(self, keywords):
+        """Create the result.
 
-CALC_TABLE = TableManipulation.run
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = Function.create()
+
+RECU_FONCTION = ExtractFunction.run

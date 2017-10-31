@@ -47,13 +47,14 @@ from Macro.defi_inte_spec_ops import tocomplex
 
 def calc_fonction_ops(self, **args):
     """Corps de la macro CALC_FONCTION"""
+    args = _F(args)
     self.set_icmd(1)
     # éléments de contexte
     ctxt = Context()
 
     operation = CalcFonctionOper.factory(self, ctxt, args)
     try:
-        operation.run()
+        result = operation.run()
     except InterpolationError, msg:
         UTMESS('F', 'FONCT0_27', valk=(ctxt.f, str(msg)))
     except ParametreError, msg:
@@ -63,6 +64,7 @@ def calc_fonction_ops(self, **args):
     except FonctionError, msg:
         UTMESS('F', 'FONCT0_30',
                valk=(ctxt.f, str(msg), traceback.format_exc()))
+    return result
 
 class CalcFonctionOper(object):
     """Base of all CALC_FONCTION operations.
@@ -111,7 +113,7 @@ class CalcFonctionOper(object):
         self._build_data()
         self.ctxt.f = [func.nom for func in self._lf]
         self._run()
-        self.build_result()
+        return self.build_result()
 
     def build_result(self):
         """Create the result function"""
@@ -153,6 +155,7 @@ class CalcFonctionOper(object):
         if self.args['INFO'] > 1:
             IMPR_FONCTION(FORMAT='TABLEAU', UNITE=6,
                           COURBE=_F(FONCTION=result),)
+        return result
 
     # utilities
     def _use_list_para(self):
@@ -179,7 +182,7 @@ class CalcFonctionOper(object):
         as t_fonction objects.
         nappe_sdaster objects are interpolated on the same abscissa."""
         lf_in = self._get_mcsimp(mcsimp)
-        all_nap = min([int(AsType(i) is nappe_sdaster) for i in lf_in]) == 1
+        all_nap = min([int(i.getType() == "NAPPE") for i in lf_in]) == 1
         if all_nap:
             list_fonc = [tf.convert() for tf in lf_in]
             list_fonc = homo_support_nappe(list_fonc)
@@ -266,17 +269,17 @@ class CalcFonction_PROL_SPEC_OSCI(CalcFonctionOper):
         vale_sro_depl = vale_sro_acce * vale_freq**(-2)
         f_min = vale_freq[0]
         assert f_min > 0.0
-        d_fmin = vale_sro_depl[0]    
+        d_fmin = vale_sro_depl[0]
         pente = ( d_fmin - vale_sro_depl[1])/(f_min-vale_freq[1])
         freq_dmax = f_min + (dmax - d_fmin)/pente
 
         if d_fmin < dmax:
-            if freq_dmax < 0.00 : 
+            if freq_dmax < 0.00 :
                 dc = d_fmin - pente * f_min
                 UTMESS('F','FONCT0_78', valr=[dmax, 0.0, dc])
             elif pente > 0.00:
                 UTMESS('F','FONCT0_78', valr=[dmax, f_min, d_fmin])
-            else : 
+            else :
                 pass
         elif d_fmin > dmax:
             if pente < 0.00:
@@ -291,9 +294,9 @@ class CalcFonction_PROL_SPEC_OSCI(CalcFonctionOper):
         vale_sro_depl = list(vale_sro_depl)
         vale_freq = list(vale_freq)
         vale_sro_depl.insert(0,dmax)
-        vale_freq.insert(0,freq_dmax) 
+        vale_freq.insert(0,freq_dmax)
         vale_sro_depl.insert(0,dmax)
-        vale_freq.insert(0, 0.0)     
+        vale_freq.insert(0, 0.0)
         sro_prol_acce = NP.array(vale_sro_depl) * NP.array(vale_freq)**(2) * kw['NORME']
         para = f_in.para.copy()
 
@@ -532,7 +535,7 @@ class CalcFonction_COHERENCE(CalcFonctionOper):
         lfreq, fcohe = calc_cohefromdata(acce1, acce2, dt, Mm)
         N1 = NP.searchsorted(lfreq, 0.0)
         N2 = len(lfreq)
-        if FREQ_COUP != None:
+        if FREQ_COUP is not None:
             if lfreq[-1] > FREQ_COUP:
                 N2 = NP.searchsorted(lfreq, FREQ_COUP)
                 print self.kw['FREQ_COUP'], N2
@@ -754,21 +757,21 @@ class CalcFonction_LISS_ENVELOP(CalcFonctionOper):
                 # error
                 if 'FREQ' not in nom_para:
                     print 'error'
-                nom_para.remove('FREQ')    
+                nom_para.remove('FREQ')
                 # print dir(tab.EXTR_TABLE())
                 dico = tab.EXTR_TABLE().values()
-                l_fonc_f = []    
+                l_fonc_f = []
                 for para in nom_para:
                     freq = dico['FREQ']
                     # print freq
                     vale = dico[para]
                     # print vale
-                    l_fonc_f.append(t_fonction(freq,vale,para_fonc))  
+                    l_fonc_f.append(t_fonction(freq,vale,para_fonc))
                     # print 'fonction'
-                l_nappe.append(t_nappe(amor, l_fonc_f,para_napp))        
+                l_nappe.append(t_nappe(amor, l_fonc_f,para_napp))
             # print 'nappe',l_nappe
             self._lf = l_nappe
-        
+
     def _run(self):
         """LISS_ENVELOP"""
         kw = self.kw
@@ -784,8 +787,8 @@ class CalcFonction_LISS_ENVELOP(CalcFonctionOper):
                               listeTable=[f_in.vale_y],
                               listAmor=[amor],
                               entete="")
-            para_fonc = f_in.para   
-            para      = f_in.para.copy()   
+            para_fonc = f_in.para
+            para      = f_in.para.copy()
             # print 'para',para
             para['NOM_PARA'] = 'AMOR'
             para['NOM_PARA_FONC'] = para_fonc['NOM_PARA']
@@ -812,32 +815,32 @@ class CalcFonction_LISS_ENVELOP(CalcFonctionOper):
                         erreur_amor = 1
                 if erreur_amor:
                     UTMESS('F', 'FONCT0_74')
-                l_sp_nappe.append(sp_nappe)                  
+                l_sp_nappe.append(sp_nappe)
             para_fonc = f_in.l_fonc[0].para
             para      = f_in.para
-            
+
         if kw['OPTION'] =='CONCEPTION':
             sp_lisse = LISS.liss_enveloppe(l_sp_nappe ,
                                         option = kw['OPTION'],
-                                        fmin = kw['FREQ_MIN'], 
+                                        fmin = kw['FREQ_MIN'],
                                         fmax = kw['FREQ_MAX'],
                                         l_freq = list(kw['LIST_FREQ']),
                                         nb_pts = kw['NB_FREQ_LISS'],
                                         zpa    = kw['ZPA'],
-                                        precision=1e-3, 
+                                        precision=1e-3,
                                         critere='RELATIF' )
         else:
             sp_lisse = LISS.liss_enveloppe(l_sp_nappe ,
                                         option = kw['OPTION'],
                                         coef_elarg  = kw['ELARG'],
-                                        fmin = kw['FREQ_MIN'], 
+                                        fmin = kw['FREQ_MIN'],
                                         fmax = kw['FREQ_MAX'],
                                         l_freq = list(kw['LIST_FREQ']),
                                         nb_pts = kw['NB_FREQ_LISS'],
                                         zpa    = kw['ZPA'],
-                                        precision=1e-3, 
+                                        precision=1e-3,
                                         critere='RELATIF' )
-                                
+
         l_fonc_f = []
         for spec in sp_lisse.listSpec:
             l_fonc_f.append(t_fonction(sp_lisse.listFreq, spec.dataVal, para_fonc))
