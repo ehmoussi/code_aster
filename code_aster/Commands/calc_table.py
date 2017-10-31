@@ -28,12 +28,5 @@ class TableManipulation(ExecuteMacro):
     """Execute legacy operator CALC_TABLE."""
     command_name = "CALC_TABLE"
 
-    def create_result(self, keywords):
-        """Create the result.
-
-        Arguments:
-            keywords (dict): Keywords arguments of user's keywords.
-        """
-        self._result = Table.create()
 
 CALC_TABLE = TableManipulation.run
