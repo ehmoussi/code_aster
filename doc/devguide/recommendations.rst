@@ -100,3 +100,11 @@ Required changes
   Replace ``AsType(obj) is fonction_sdaster`` by ``obj.getType() == "FONCTION"``
 
   or ``type(obj) is fonction_sdaster`` by ``obj.getType() == "FONCTION"``
+
+- Object ``MCLIST`` does not exist anymore. List of factor keywords is just a
+  *list* or a *tuple*.
+
+  Just use :func:`~code_aster.Utilities.force_list` to ensure to have a list
+  even if the user passed only one occurrence.
+
+  Replace ``POUTRE.List_F()`` by ``force_list(POUTRE)``.

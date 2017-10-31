@@ -21,8 +21,6 @@ MATER=DEFI_MATERIAU(ELAS=_F(E=2.1E11, NU=0.30, RHO=7800.0));
 
 CHAMPMAT=AFFE_MATERIAU(MAILLAGE=MAILLA, AFFE=_F(GROUP_MA='CALCUL', MATER=MATER));
 
-CARELE=AFFE_CARA_ELEM(MODELE=MODELE, COQUE=_F(GROUP_MA='CALCUL', EPAIS=0.1));
-
 ########################################################################
 #
 #        PLAQUE APPUYEE SUR SES BORDS, DECOUPEE EN 4 PARTIES
@@ -58,3 +56,5 @@ CHARGE=AFFE_CHAR_MECA(MODELE=MODELE,
 
 # Test trivial
 test.assertTrue( True )
+
+test.printSummary()

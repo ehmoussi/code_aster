@@ -9,12 +9,9 @@ Class diagram
 *************
 
 .. inheritance-diagram::
-    code_aster.Objects.assemblymatrix_ext
     code_aster.Objects.fieldonelements_ext
     code_aster.Objects.fieldonnodes_ext
-    code_aster.Objects.function_ext
     code_aster.Objects.listoffloats
-    code_aster.Objects.table_ext
    :parts: 1
 
 
@@ -44,5 +41,3 @@ Detailed description
 .. autoclass:: code_aster.Objects.listoffloats.ListOfFloats
    :show-inheritance:
    :members:
-
-.. automodule:: code_aster.Objects.meshcoordinatesfield_ext

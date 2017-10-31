@@ -33,6 +33,7 @@ from .datastructure_ext import DataStructure
 
 # extend DataStructures using metaclasses
 from .assemblymatrix_ext import AssemblyMatrixDouble
+from .elementarycharacteristics_ext import ElementaryCharacteristics
 from .fieldonnodes_ext import FieldOnNodesDouble
 from .fieldonelements_ext import FieldOnElementsDouble
 from .function_ext import Function
