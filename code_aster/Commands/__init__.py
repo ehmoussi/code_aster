@@ -43,7 +43,6 @@ from .affe_modele import AFFE_MODELE
 from .calc_champ import CALC_CHAMP
 from .calc_fonc_interp import CALC_FONC_INTERP
 from .calc_matr_elem import CALC_MATR_ELEM
-from .calc_table import CALC_TABLE
 from .crea_champ import CREA_CHAMP
 # from .crea_maillage import CREA_MAILLAGE
 from .crea_resu import CREA_RESU
@@ -80,6 +79,7 @@ from .modi_maillage import MODI_MAILLAGE
 # from .nume_ddl_gene import NUME_DDL_GENE
 from .proj_champ import PROJ_CHAMP
 # from .stat_non_line import STAT_NON_LINE
+from .recu_fonction import RECU_FONCTION
 
 # from .macro_commands import (
 #    ASSEMBLAGE, DEBUT, IMPR_FONCTION,

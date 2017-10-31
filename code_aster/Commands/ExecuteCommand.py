@@ -29,6 +29,7 @@ When a new command is added there are different levels of complexity:
 - Commands that are automatically added just using their catalog.
   Only the commands that return no result can work with this method.
   Other commands will raise a *NotImplementedError* exception at runtime.
+  Macro-commands should work without adding anything else.
 
   .. note:: All Commands that are not explicitly imported by
     :mod:`code_aster.Commands.__init__` are automatically created using this
@@ -92,20 +93,20 @@ class ExecuteCommand(object):
     """This class implements an executor of commands.
 
     Commands executors are defined by subclassing this class and overloading
-    some of the methods. User's Commands are instance of these executors.
+    some of the methods. A user's Command is a factory of these classes.
 
-    The *__call__* method executes successively these steps:
+    The :meth:`run` factory creates an instance of one of these classes and
+    executes successively these steps:
 
         - :meth:`.adapt_syntax` to eventually change the user's keywords to
           adapt the syntax from an older version. Does nothing by default.
 
+        - :meth:`.create_result` to create the *DataStructure* object.
+          The default implementation only works if the operator creates no
+          object.
+
         - :meth:`.check_syntax` to check the user's keywords conformance to
           to catalog definition.
-
-        - :meth:`.create_result` to create the *DataStructure* object.
-          The default implementation can only work if the catalog type
-          exactly matches one :class:`~code_aster.Objects.DataStructure`
-          type.
 
         - :meth:`.exec_` that is the main function of the Command.
           The default implementation calls the *legacy* Fortran operator.
@@ -143,7 +144,12 @@ class ExecuteCommand(object):
 
         cmd._counter = CommandCounter.incr_counter()
         cmd.adapt_syntax(keywords)
-        cmd.check_syntax(keywords)
+        try:
+            cmd.check_syntax(keywords)
+        except (KeyError, ValueError, TypeError):
+            # in case of syntax error, show the syntax and raise the exception
+            cmd.print_syntax(keywords)
+            raise
         cmd.create_result(keywords)
         cmd.print_syntax(keywords)
         cmd.exec_(keywords)
