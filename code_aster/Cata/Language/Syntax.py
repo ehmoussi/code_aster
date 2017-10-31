@@ -26,37 +26,32 @@ It mainly converts new objects to old ones for backward compatibility.
 import __builtin__
 import types
 
-from . import DataStructure as DS, ops
+from . import DataStructure as DS
+from . import ops
 from .DataStructure import AsType
+from .Rules import (AllTogether, AtLeastOne, AtMostOne, ExactlyOne,
+                    IfFirstAllPresent, OnlyFirstPresent)
 from .SyntaxChecker import SyntaxCheckerVisitor
-from .SyntaxObjects import (
-    SimpleKeyword, FactorKeyword, Bloc,
-    Operator, Macro, Procedure, Formule,
-    CataError,
-)
-from .Rules import (
-    AtLeastOne,
-    ExactlyOne,
-    AtMostOne,
-    IfFirstAllPresent,
-    OnlyFirstPresent,
-    AllTogether,
-)
+from .SyntaxObjects import (Bloc, CataError, FactorKeyword, Formule, Macro,
+                            Operator, Procedure, SimpleKeyword)
+from .Validators import (Absent, AndVal, Compulsory, LongStr, NoRepeat,
+                         NotEqualTo, OrdList, OrVal, Together)
 
-from .Validators import (
-    Absent,
-    AndVal,
-    Compulsory,
-    LongStr,
-    NoRepeat,
-    NotEqualTo,
-    OrdList,
-    OrVal,
-    Together,
-)
 
 class _F(dict):
     """Wrapper to add transitional methods to emulate old *MCCOMPO* objects"""
+
+    def __getitem__(self, keyword):
+        """Operator `[]` but without failure if the *keyword* is not set.
+        Same as `get()`.
+
+        Arguments:
+            keyword (str): Simple keyword.
+
+        Returns:
+            *misc*: Value of the keyword or *None*.
+        """
+        return self.get(keyword)
 
     def cree_dict_valeurs(self, *args, **kwargs):
         return self

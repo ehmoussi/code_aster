@@ -21,11 +21,8 @@
 
 import os
 
-from Noyau.N_types import is_complex, is_str, is_sequence
+from Noyau.N_types import is_complex, is_sequence, is_str
 from Utilitai.TestResult import testPrinter
-
-from code_aster.Cata.DataStructure import (formule, formule_c, fonction_sdaster,
-    fonction_c, nappe_sdaster)
 
 epsi = 1e-15
 
@@ -333,7 +330,7 @@ def AfficherResultat(dicoValeur, nomPara, ref, legende, crit, res, valPu, txt, l
 
 def get_valref(lafonc, kw, typ):
     valref = None
-    if (type(lafonc) == formule_c) or (type(lafonc) == fonction_c):
+    if lafonc.getType() in ("FORMULE_C", "FONCTION_C"):
         valref = kw['VALE_' + typ + '_C']
     else:
         valref = kw['VALE_' + typ]
@@ -344,7 +341,7 @@ def get_valref(lafonc, kw, typ):
 # -----------------------------------------------------------------------------
 
 
-def test_fonction_ops(self, TEST_NOOK, VALEUR, ATTRIBUT, **args):
+def test_fonction_ops(self, TEST_NOOK, **args):
     """
        Corps de la macro TEST_FONCTION
     """
@@ -361,6 +358,9 @@ def test_fonction_ops(self, TEST_NOOK, VALEUR, ATTRIBUT, **args):
     ier = 0
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
+
+    VALEUR = args.get('VALEUR')
+    ATTRIBUT = args.get('ATTRIBUT')
 
     # txt sert a l'affichage dans le fichier RESULTAT
     txt = ['', ]
@@ -413,7 +413,7 @@ def test_fonction_ops(self, TEST_NOOK, VALEUR, ATTRIBUT, **args):
             # - "fonction" sur un intervalle
             # - "formule",
             # - "fonction" ou "nappe"
-            if (type(lafonc) == fonction_sdaster) and intervalle != None:
+            if lafonc.getType() == "FONCTION" and intervalle != None:
                 # XXX il faut utiliser lafonc.Parametres() !
                 # XXX ne sert à rien, CALC_FONCTION prend les paramètres de la fonction normalement
                 fctProl = lafonc.sdj.PROL.get()
@@ -446,12 +446,9 @@ def test_fonction_ops(self, TEST_NOOK, VALEUR, ATTRIBUT, **args):
                 res = (res2 - res1) / (intervalle[1] - intervalle[0])
                 valpu[0] = intervalle[0]
 
-            elif type(lafonc) in (formule, formule_c):
+            elif lafonc.getType() in ("FORMULE", "FORMULE_C"):
                 # Lecture des valeurs de reference dans les mots-cles simples
-                if type(lafonc) == formule_c:
-                    typeFct = 'formule_c'
-                else:
-                    typeFct = 'formule'
+                typeFct = lafonc.getType()
 
                 # On cherche les valeurs de reference passees a TEST_FONCTION et
                 # on les trie grace a ceux de la formule
@@ -506,7 +503,8 @@ def test_fonction_ops(self, TEST_NOOK, VALEUR, ATTRIBUT, **args):
                     res = lafonc(*vParamOrdo)
 
             # Cas fonction et nappe
-            elif type(lafonc) in (fonction_sdaster, fonction_c, nappe_sdaster):
+            elif lafonc.getType() in ("FONCTION", "FONCTION_C", "NAPPE"):
+                typeFct = lafonc.getType()
                 # XXX il faut utiliser lafonc.Parametres() !
                 # Recuperation du .PROL de la fonction
                 fct_prol = lafonc.sdj.PROL.get_stripped()
@@ -521,22 +519,13 @@ def test_fonction_ops(self, TEST_NOOK, VALEUR, ATTRIBUT, **args):
                     nompara = [nompu, ]
 
                 # Une nappe a forcement 2 parametres
-                if (fct_prol[0] == 'NAPPE') & (len(nompara) == 1):
+                if typeFct == "NAPPE" and len(nompara) == 1:
                     UTMESS('A', 'PREPOST3_94')
                     break
 
-                # Lecture de la valeur de reference
-                if fct_prol[0] == 'FONCT_C':
-                    typeFct = 'fonction_c'
-                else:
-                    if fct_prol[0] == 'NAPPE':
-                        typeFct = 'nappe'
-                    else:
-                        typeFct = 'fonction'
-
                 # Calcul de la fonction
                 res = 0
-                if type(lafonc) in (fonction_sdaster, fonction_c):
+                if lafonc.getType() in ("FONCTION", "FONCTION_C"):
                     res = lafonc(valpu[0])
                 else:
                     # Remise dans l'ordre des param
@@ -568,7 +557,7 @@ def test_fonction_ops(self, TEST_NOOK, VALEUR, ATTRIBUT, **args):
 
             nomLastPara = nompara[len(nompara) - 1]
             valLastPara = valpu[len(valpu) - 1]
-            if (typeFct == 'nappe'):
+            if typeFct == 'NAPPE':
 
                 # ligne 1
                 nb_espace = 16 - len(str(nompu))
@@ -821,4 +810,4 @@ def test_fonction_ops(self, TEST_NOOK, VALEUR, ATTRIBUT, **args):
     # On affiche txt dans le fichier RESULTAT
     aster.affiche('RESULTAT', os.linesep.join(txt))
 
-    return ier
+    return
