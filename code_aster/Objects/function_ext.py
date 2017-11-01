@@ -25,8 +25,8 @@
 
 import numpy as NP
 
-from libaster import Function
 import aster
+from libaster import Function
 
 from ..Utilities import accept_array
 

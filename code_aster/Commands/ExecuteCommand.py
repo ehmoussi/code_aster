@@ -221,11 +221,8 @@ class ExecuteCommand(object):
     def create_result(self, keywords):
         """Create the result before calling the *exec* command function
         if needed.
-        The result is stored in an internal attribute and will be returned by
-        *exec*.
-
-        *The default implementation only works if the catalog type
-        exactly matches one* :class:`~code_aster.Objects.DataStructure` *type*.
+        The result is stored in an internal attribute and will be built by
+        *exec_*.
 
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.

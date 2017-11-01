@@ -66,6 +66,7 @@ from .defi_nappe import DEFI_NAPPE
 # from .defi_squelette import DEFI_SQUELETTE
 # from .defi_spec_turb import DEFI_SPEC_TURB
 from .fin import FIN
+from .formule import FORMULE
 from .lire_maillage import LIRE_MAILLAGE
 # from .macr_elem_dyna import MACR_ELEM_DYNA
 # from .macr_elem_stat import MACR_ELEM_STAT
