@@ -43,6 +43,7 @@
 #include "PythonBindings/FluidStructureInteractionInterface.h"
 #include "PythonBindings/TurbulentSpectrumInterface.h"
 #include "PythonBindings/FunctionInterface.h"
+#include "PythonBindings/FormulaInterface.h"
 #include "PythonBindings/SurfaceInterface.h"
 #include "PythonBindings/ContactDefinitionInterface.h"
 #include "PythonBindings/ContactZoneInterface.h"
@@ -156,6 +157,7 @@ BOOST_PYTHON_MODULE(libaster)
     exportFluidStructureInteractionToPython();
     exportTurbulentSpectrumToPython();
     exportFunctionToPython();
+    exportFormulaToPython();
     exportSurfaceToPython();
     exportContactDefinitionToPython();
     exportContactZoneToPython();

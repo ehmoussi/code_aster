@@ -24,9 +24,9 @@ This module imports BoostPython DataStructures and extends them with pure
 Python functions.
 """
 
-from ..Utilities import objects_from_context
-
 from libaster import *
+
+from ..Utilities import objects_from_context
 
 # ensure DataStructure is extended first
 from .datastructure_ext import DataStructure
@@ -34,8 +34,9 @@ from .datastructure_ext import DataStructure
 # extend DataStructures using metaclasses
 from .assemblymatrix_ext import AssemblyMatrixDouble
 from .elementarycharacteristics_ext import ElementaryCharacteristics
-from .fieldonnodes_ext import FieldOnNodesDouble
 from .fieldonelements_ext import FieldOnElementsDouble
+from .fieldonnodes_ext import FieldOnNodesDouble
+from .formula_ext import Formula, FormulaC
 from .function_ext import Function
 from .meshcoordinatesfield_ext import MeshCoordinatesField
 from .table_ext import Table
@@ -43,6 +44,5 @@ from .timestepmanager_ext import TimeStepManager
 
 # objects without C++ mirror
 from .listoffloats import ListOfFloats
-
 
 ALL_DS = objects_from_context(globals(), DataStructure)
