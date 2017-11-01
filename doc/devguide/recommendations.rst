@@ -82,6 +82,8 @@ Required changes
   all existing keywords, eventually with *None* value.
 
   Now, only the user keywords + the default keywords are passed.
+  So, only compulsory keywords and those having a default value can be arguments
+  of the ``ops()`` function.
   If needed, these arguments may be wrapped by ``_F()`` that provides a ``[]``
   operator that returns *None* if a keyword does not exist.
 
@@ -108,3 +110,5 @@ Required changes
   even if the user passed only one occurrence.
 
   Replace ``POUTRE.List_F()`` by ``force_list(POUTRE)``.
+
+- Usage of logical units: See :mod:`code_aster.RunManager.LogicalUnit`.
