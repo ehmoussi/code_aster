@@ -62,7 +62,7 @@ import aster
 from libaster import ResultNaming
 
 from ..Cata import Commands
-from ..Cata.SyntaxChecker import checkCommandSyntax
+from ..Cata.SyntaxChecker import CheckerError, checkCommandSyntax
 from ..Cata.SyntaxUtils import mixedcopy, remove_none
 from ..Objects import DataStructure
 from ..Supervis import CommandSyntax, logger
@@ -147,10 +147,10 @@ class ExecuteCommand(object):
         cmd.adapt_syntax(keywords)
         try:
             cmd.check_syntax(keywords)
-        except (KeyError, ValueError, TypeError):
+        except CheckerError as exc:
             # in case of syntax error, show the syntax and raise the exception
             cmd.print_syntax(keywords)
-            raise
+            raise exc.original(exc.msg)
         cmd.create_result(keywords)
         cmd.print_syntax(keywords)
         cmd.exec_(keywords)
