@@ -498,7 +498,7 @@ Exception : %s
             code = 'A'
             if self._mpi_nbcpu is None:
                 if in_testcase():
-                    code = 'F'            
+                    code = 'F'
                 self.print_message(code, 'CATAMESS_87', valk=list(not_seen),
                                    exception=True)
 
@@ -869,34 +869,6 @@ def __fake__():
     UTMESS('I', 'TEST0_12')
     UTMESS('I', 'TEST0_19')
 
-    # TODO : to be removed, not called in asterxx
-    UTMESS('I', 'FICHIER_2')
-    UTMESS('I', 'MODELISA9_97')
-    UTMESS('I', 'MODELISA9_98')
-    UTMESS('I', 'PROBA0_1')
-    UTMESS('I', 'PROBA0_2')
-    UTMESS('I', 'PROBA0_3')
-    UTMESS('I', 'PROBA0_4')
-    UTMESS('I', 'PROBA0_5')
-    UTMESS('I', 'PROBA0_6')
-    UTMESS('I', 'PROBA0_7')
-    UTMESS('I', 'SDVERI_4')
-    UTMESS('I', 'SDVERI_5')
-    UTMESS('I', 'SUPERVIS2_3')
-    UTMESS('I', 'SUPERVIS_10')
-    UTMESS('I', 'SUPERVIS_11')
-    UTMESS('I', 'SUPERVIS_4')
-    UTMESS('I', 'SUPERVIS_5')
-    UTMESS('I', 'SUPERVIS_6')
-    UTMESS('I', 'SUPERVIS_65')
-    UTMESS('I', 'SUPERVIS_66')
-    UTMESS('I', 'SUPERVIS_67')
-    UTMESS('I', 'SUPERVIS_69')
-    UTMESS('I', 'SUPERVIS_70')
-    UTMESS('I', 'SUPERVIS_71')
-    UTMESS('I', 'SUPERVIS_72')
-    UTMESS('I', 'SUPERVIS_73')
-    UTMESS('I', 'SUPERVIS_76')
-    UTMESS('I', 'SUPERVIS_86')
-    UTMESS('I', 'SUPERVIS_89')
-    UTMESS('I', 'SUPERVIS_93')
+    # TODO : current problem in asterxx in jefini.F90
+    UTMESS('I', 'JEVEUX1_77')
+    UTMESS('I', 'JEVEUX1_78')

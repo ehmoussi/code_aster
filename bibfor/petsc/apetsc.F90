@@ -90,7 +90,7 @@ use elim_lagr_comp_module
 #ifdef _HAVE_PETSC
 !
 !     VARIABLES LOCALES
-    integer :: iprem, k, l, nglo, kdeb, jnequ
+    integer :: iprem, k, l, nglo, kdeb, jnequ, ier2
     integer ::  kptsc
     integer :: np
     real(kind=8) :: r8
@@ -149,8 +149,10 @@ use elim_lagr_comp_module
         ASSERT(kind(vbid).eq.kind(np))
         ASSERT(kind(offbid).eq.kind(np))
 !
-        ierr = 0
-        call aster_petsc_initialize()
+        ier2 = 0
+        call aster_petsc_initialize(ier2)
+        ierr = to_petsc_int(ier2)
+        if (ierr .ne. 0) call utmess('F', 'PETSC_1')
         ASSERT(ierr .eq. 0)
         do k = 1, nmxins
             ap(k) = 0

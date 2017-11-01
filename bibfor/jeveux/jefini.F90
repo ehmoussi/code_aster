@@ -74,7 +74,7 @@ subroutine jefini(cond,arg_rank)
     if (present(arg_rank)) then
        rank=arg_rank
     else
-!     
+!
 !   SI L'ARGUMENT N'EST PAS PRESENT, ON N'EFFECTUE PAS D'ECRITURE rank=1
 !
        rank=1

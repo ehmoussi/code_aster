@@ -37,16 +37,13 @@
 
 #ifdef _HAVE_PETSC
 #include "petsc.h"
-#define CALL_PETSC_INITIALIZE() CALL0(PETSC_INITIALIZE,petsc_initialize)
 
-void DEF0(ASTER_PETSC_INITIALIZE,aster_petsc_initialize)
+void DEFP(ASTER_PETSC_INITIALIZE,aster_petsc_initialize, ASTERINTEGER* ierr)
 {
     int a = 0;
-    PetscInitialize(&a, NULL, NULL, NULL);
+    *ierr = (ASTERINTEGER)PetscInitialize(&a, NULL, NULL, NULL);
     PetscInitializeFortran();
 };
-
-#define CALL_PETSC_FINALIZE() CALL0(PETSC_FINALIZE,petsc_finalize)
 
 void DEF0(ASTER_PETSC_FINALIZE,aster_petsc_finalize)
 {
