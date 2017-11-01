@@ -30,6 +30,37 @@ import DataStructure as DS
 from .SyntaxUtils import (debug_message2, force_list, mixedcopy, old_complex,
                           remove_none, value_is_sequence)
 
+class CheckerError(Exception):
+    """Exception raised during checking the syntax.
+
+    Args:
+        orig (Exception): Type of exception (TypeError, KeyError, ValueError).
+        msg (str): Message of the error.
+        stack (str): Checking stack: [*factor keyword*, *simple keyword*].
+
+    Attributes:
+        _msg (str): Message of the error.
+        _orig (Exception): Type of exception.
+        _stack (str): Checking stack as string.
+    """
+
+    def __init__(self, orig, msg, stack):
+        self._orig = orig
+        self._msg = msg
+        self._stack = "/".join(force_list(stack))
+
+    @property
+    def original(self):
+        """Return the original exception."""
+        return self._orig
+
+    @property
+    def msg(self):
+        """Property that holds the main message."""
+        if not self._stack:
+            return self._msg
+        return "For keyword {0._stack}: {0._msg}".format(self)
+
 
 def fromTypeName(typename):
     """Convert a typename to a list of valid Python types (or an empty list)
@@ -66,6 +97,9 @@ def isValidType(obj, expected):
     """Check that `obj` has one of the `expected` type"""
     # None means undefined: type is valid
     if obj is None:
+        return True
+
+    if DS.not_checked in expected:
         return True
 
     # AsterStudy: for PythonVariable
@@ -121,6 +155,10 @@ class SyntaxCheckerVisitor(object):
     def stack(self):
         return self._stack
 
+    def error(self, orig, msg):
+        """Raise a *CheckerError* exception."""
+        raise CheckerError(orig, msg, self._stack)
+
     def set_parent_context(self, context):
         """Set the parent context.
 
@@ -147,8 +185,8 @@ class SyntaxCheckerVisitor(object):
         try:
             step.get_type_sd_prod(**keywords)
         except:
-            raise TypeError('Cannot type result of the command {}'
-                            .format(step.name))
+            self.error(TypeError,
+                       'Cannot type result of the command {}'.format(step.name))
 
     def visitBloc(self, step, userDict=None):
         """Visit a Bloc object"""
@@ -182,7 +220,7 @@ class SyntaxCheckerVisitor(object):
                 pytypes = [i]
             validType.extend(pytypes)
         if not validType:
-            raise TypeError("Unsupported type: {0!r}".format(currentType))
+            self.error(TypeError, "Unsupported type: {0!r}".format(currentType))
 
         # old complex notation
         if complex in validType:
@@ -200,10 +238,12 @@ class SyntaxCheckerVisitor(object):
                 nbMax = None
             if nbMax != None and len(skwValue) > nbMax:
                 debug_message2(step)
-                raise ValueError('At most {0} values are expected'.format(nbMax))
+                self.error(ValueError,
+                           'At most {0} values are expected'.format(nbMax))
             if nbMin != None and len(skwValue) < nbMin:
                 debug_message2(step)
-                raise ValueError('At least {0} values are expected'.format(nbMin))
+                self.error(ValueError,
+                           'At least {0} values are expected'.format(nbMin))
         else:
             skwValue = [skwValue]
 
@@ -228,39 +268,43 @@ class SyntaxCheckerVisitor(object):
             for typeobj in validType:
                 if issubclass(typeobj, DS.ValueCheckMixing):
                     if not typeobj.checkValue(i):
-                        raise ValueError("Unexpected value: %s" % i)
+                        self.error(ValueError, "Unexpected value: %s" % i)
 
                     if step.definition.has_key("into"):
                         into = step.definition["into"]
                         if not typeobj.checkInto(i, into):
-                            raise ValueError("Unexpected value: %s" % i)
+                            self.error(ValueError, "Unexpected value: %s" % i)
 
                     if valMax != None:
                         if not typeobj.checkMax(i, valMax):
-                            raise ValueError("Unexpected value: %s" % i)
+                            self.error(ValueError, "Unexpected value: %s" % i)
 
                     if valMin != None:
                         if not typeobj.checkMin(i, valMin):
-                            raise ValueError("Unexpected value: %s" % i)
+                            self.error(ValueError, "Unexpected value: %s" % i)
 
                     return
             # type
             if not isValidType(i, validType):
                 step._context(i)
-                raise TypeError('Unexpected type: {0}, expecting: {1}'
-                                .format(type(i), validType))
+                self.error(TypeError,
+                           'Unexpected type: {0}, expecting: {1}'
+                               .format(type(i), validType))
             # into
             if step.definition.has_key("into"):
                 if i not in step.definition["into"]:
-                    raise ValueError("Unexpected value: {0!r}, must be in {1!r}"
-                                     .format(i, step.definition["into"]))
+                    self.error(ValueError,
+                               "Unexpected value: {0!r}, must be in {1!r}"
+                                   .format(i, step.definition["into"]))
             # val_min/val_max
             if valMax != None and i > valMax:
-                raise ValueError('Value must be smaller than {0}, {1} is not'
-                                 .format(valMax, i))
+                self.error(ValueError,
+                           'Value must be smaller than {0}, {1} is not'
+                               .format(valMax, i))
             if valMin != None and i < valMin:
-                raise ValueError('Value must be bigger than {0}, {1} is not'
-                                 .format(valMin, i))
+                self.error(ValueError,
+                           'Value must be bigger than {0}, {1} is not'
+                               .format(valMin, i))
 
         # call validators
         for valid in force_list(step.definition.get('validators', [])):
@@ -285,15 +329,19 @@ class SyntaxCheckerVisitor(object):
         elif isinstance(userDict, (list, tuple)):
             pass
         else:
-            raise TypeError("Type 'dict' or 'tuple' is expected")
+            self.error(TypeError, "Type 'dict' or 'tuple' is expected")
 
         # check the number of occurrences
         if len(userDict) < step.definition.get('min', 0):
-            raise ValueError("Too few factor keyword, at least {0} "
-                "occurrence(s) expected".format(step.definition.get('min', 0)))
+            self.error(ValueError,
+                       "Too few factor keyword, at least {0} "
+                       "occurrence(s) expected"
+                           .format(step.definition.get('min', 0)))
         if len(userDict) > step.definition.get('max', 1000000000):
-            raise ValueError("Too much factor keyword, at most {0} "
-                "occurrence(s) expected".format(step.definition.get('max', 0)))
+            self.error(ValueError,
+                       "Too much factor keyword, at most {0} "
+                       "occurrence(s) expected"
+                           .format(step.definition.get('max', 0)))
 
         # loop on occurrences filled by the user
         for userOcc in userDict:
@@ -311,14 +359,15 @@ class SyntaxCheckerVisitor(object):
                 if key == "reuse":
                     if step.definition.get("reentrant") not in ("o", "f"):
                         self._stack.append(key)
-                        raise KeyError("reuse is not allowed!")
+                        self.error(KeyError, "reuse is not allowed!")
                     continue
                 kwd = step.getKeyword(key, userOcc, ctxt)
                 if kwd is None:
                     debug_message2("keyword:", key, "user dict:", userOcc,
                                    "parent context:", ctxt)
                     self._stack.append(key)
-                    raise KeyError("Unauthorized keyword: {!r}".format(key))
+                    self.error(KeyError,
+                               "Unauthorized keyword: {!r}".format(key))
                 else:
                     self._stack.append(key)
                     kwd.accept(self, value)
@@ -328,10 +377,10 @@ class SyntaxCheckerVisitor(object):
 def checkCommandSyntax(command, keywords, add_default=True):
     """Check the syntax of a command
     `keywords` contains the keywords filled by the user"""
-    if not isinstance(keywords, dict):
-        raise TypeError("'dict' object is expected")
-
     checker = SyntaxCheckerVisitor()
+    if not isinstance(keywords, dict):
+        checker.error(TypeError, "'dict' object is expected")
+
     command.accept(checker, keywords)
     if add_default:
         command.addDefaultKeywords(keywords)
