@@ -414,7 +414,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
     elif FORMAT == 'AGRAF':
         nomdigr = None
         if args['UNITE_DIGR'] != 6:
-            nomdigr = LogicalUnitFile.filename_from_unit(args['UNITE'])
+            nomdigr = LogicalUnitFile.filename_from_unit(args['UNITE_DIGR'])
         kargs['FICHIER'] = [nomfich, nomdigr]
         kargs['dform'] = {'formR': '%12.5E'}
 

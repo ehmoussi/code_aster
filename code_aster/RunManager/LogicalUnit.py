@@ -38,8 +38,8 @@ from itertools import ifilter
 from ..Cata.Syntax import _F
 from ..Supervis.logger import logger
 
-
-RESERVED_UNIT = (6, 8, 9)
+# Units 6 and 9 can not be released/associated.
+RESERVED_UNIT = (8, )
 
 class FileType(object):
     """Enumeration for file type."""
@@ -176,9 +176,12 @@ class LogicalUnitFile(object):
             unit (int): Number of a logical unit.
 
         Returns:
-            str: Filename of the logical unit or 'fort.<unit>' if unknown.
+            str: Filename of the logical unit or 'fort.<unit>' if unknown or
+            *None* if unit=6.
         """
         logicalUnit = cls.from_number(unit)
+        if unit == 6:
+            return None
         return logicalUnit.filename if logicalUnit else "fort.{0}".format(unit)
 
     @classmethod
