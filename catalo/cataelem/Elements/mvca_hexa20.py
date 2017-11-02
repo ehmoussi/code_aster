@@ -39,7 +39,7 @@ CCARCRI  = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
     components=('ITECREL','MACOMP','RESCREL','THETA','ITEDEC',
           'INTLOC','PERTURB','TOLDEBO','ITEDEBO','TSSEUIL',
           'TSAMPL','TSRETOUR','POSTITER','LC_EXT[3]','MODECALC',
-          'ALPHA','LC_EXT2[2]',))
+          'ALPHA','LC_EXT2[2]','POSTINCR',))
 
 
 NDEPLAR  = LocatedComponents(phys=PHY.DEPL_R, type='ELNO',

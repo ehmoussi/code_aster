@@ -47,7 +47,7 @@ subroutine te0545(option, nomte)
 !                      NOMTE        -->  NOM DU TYPE ELEMENT
 ! ......................................................................
     character(len=8) :: typmod(2)
-    aster_logical :: resi, rigi, axi,matsym
+    aster_logical :: resi, rigi, axi,matsym=ASTER_FALSE
     integer :: nno, nnob, npg, ndim, nddl, neps, lgpg
     integer :: ipoids, ivf, idfde, ivfb, idfdeb
     integer :: imate, icontm, ivarim, iinstm, iinstp, ideplm, ideplp, icompo
@@ -67,9 +67,11 @@ subroutine te0545(option, nomte)
     axi = typmod(1).eq.'AXIS'
 
 
+
     call elrefv(nomte, 'RIGI', ndim, nno, nnob,&
                 nnos, npg, ipoids, ivf, ivfb,&
                 idfde, idfdeb, jgano, jganob)
+
 !
 !
 ! - PARAMETRES EN ENTREE
@@ -91,10 +93,12 @@ subroutine te0545(option, nomte)
 
     if (rigi) then
         call nmtstm(zr(icarcr), imatuu, matsym)
+!         call jevech('PMATUNS', 'E', imatuu)
+!         matsym = .false.
     else
+!         matsym = .false.
         imatuu = 1
     endif
-
 !
     if (resi) then
         call jevech('PVECTUR', 'E', ivectu)
@@ -154,7 +158,6 @@ subroutine te0545(option, nomte)
                    zr(icarcr), angmas, zr(iinstm), zr(iinstp), matsym,&
                    zr( ideplm), zr(ideplp), zr(icontm), zr(ivarim), zr(icontp),&
                    zr( ivarip), zr(ivectu), zr(imatuu), zi(icoret))
-
 
         endif
 

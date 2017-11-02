@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C)  EDF R&D                            WWW.CODE-ASTER.ORG
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,28 +17,14 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# ======================================================================
-# THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
-# IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
-# THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
-# (AT YOUR OPTION) ANY LATER VERSION.
-#
-# THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
-# WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
-# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
-# GENERAL PUBLIC LICENSE FOR MORE DETAILS.
-#
-# YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
-# ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
-# EDF Lab Paris-Saclay, Boulevard Gaspard Monge, Palaiseau
-# ======================================================================
-# CAS_TEST__: GTN001h : CISAILLEMENT PUR
+
+# CAS_TEST__: GTN001h : TRACTION BIAXIALE
 # ----------------------------------------------------------------------
 # GEOMETRIE           : ELEMENT VOLUME
-# MODELISATION        : D_PLAN_SI
+# MODELISATION        : D_PLAN_GRAD_VARI
 # MAILLAGE            : MED (ISSU DE SALOME)
-# CL ET CHARGEMENT    : CISAILLEMENT PUR
-# LOI D'ENDOMMAGEMENT : GTN LOCAL
+# CL ET CHARGEMENT    : TRACTION BIAXIALE
+# LOI D'ENDOMMAGEMENT : GTN NON LOCAL A 3 CHAMPS
 # ----------------------------------------------------------------------
 # GROUPES DE NOEUDS: AXE, SPECIMEN, LATERAL, FIXE, SYME, TOP, DEPL, FIXE2
 # GROUPES DE MAILLES:  TOP, SYME, LATERAL, AXE, SPECIMEN
@@ -65,9 +51,9 @@ inst_fin =1
 inst_total = 1
 
 # DEPLACEMENT EN HAUT
-depl = 0.5
+depl = 0.008
 deplx = depl
-
+deply = depl
 
 # -------------------------------------------------------------------------
 # OBJET ASTER
@@ -80,7 +66,7 @@ MAIL = LIRE_MAILLAGE(FORMAT='MED', UNITE = 20)
 MODE = AFFE_MODELE(MAILLAGE = MAIL,
                    AFFE     = _F(TOUT     = 'OUI',
                               PHENOMENE= 'MECANIQUE',
-                              MODELISATION = ('D_PLAN_SI'),),)                   
+                              MODELISATION = ('D_PLAN_GRAD_VARI'),),)                   
 
 # MODELISATION DU MATERIAU 
 ACIER = DEFI_MATERIAU(ELAS = _F(E=190000.0, NU=0.3),
@@ -93,13 +79,15 @@ ACIER = DEFI_MATERIAU(ELAS = _F(E=190000.0, NU=0.3),
                     ),
                       GTN_ASTER = _F(Q1 = 1.5,
                                      Q2 = 1.07,
-                                     PORO_INI = 1.e-2, 
+                                     PORO_INI = 1.e-2, #2.e-4,
                                      PORO_COA = 0.05, 
                                      COAL_ACC = 3,
                                      NUCL_POR = 0.0,
                                      NUCL_PLA = 0.6,
                                      NUCL_DEV = 0.01,
-                     ),                 
+                     ), 
+              NON_LOCAL = _F(C_GRAD_VARI = 2.22, 
+                     PENA_LAGR   =5000,),                    
                       ) 
                                  
 # AFFECTATION DES MATERIAUX                               
@@ -107,15 +95,14 @@ MATE = AFFE_MATERIAU (MAILLAGE = MAIL,
                       AFFE     = _F(GROUP_MA='SPECIMEN', MATER = ACIER),)
 
 # CONDITIONS AUX LIMITES ET CHARGEMENTS
-CL = AFFE_CHAR_MECA(MODELE   = MODE,
-                      DDL_IMPO = (_F(GROUP_MA = 'SPECIMEN',  DY=0),),
-                      )
-
-DEFX = DEFI_FONCTION(NOM_PARA = 'Y',
+DEFX = DEFI_FONCTION(NOM_PARA = 'X',
                      VALE = (0,0,0.05,deplx),)
 
+DEFY = DEFI_FONCTION(NOM_PARA = 'Y',
+                     VALE = (0,0,0.05,deply),)
+
 CHAR = AFFE_CHAR_MECA_F(MODELE   = MODE,
-                      DDL_IMPO = (_F(GROUP_MA = 'SPECIMEN',  DX=DEFX),),
+                      DDL_IMPO = (_F(GROUP_MA = 'SPECIMEN',  DX=DEFX,DY = DEFY),),
                       )
 
 
@@ -136,8 +123,7 @@ FONC = DEFI_FONCTION(NOM_PARA = 'INST',
 # CALCUL NON LINEAIRE
 RESU = STAT_NON_LINE (MODELE       = MODE,
                       CHAM_MATER   = MATE ,
-                      EXCIT        = (_F(CHARGE = CL),
-                          _F(CHARGE = CHAR, FONC_MULT=FONC),),
+                      EXCIT        = (_F(CHARGE = CHAR, FONC_MULT=FONC),),
                       COMPORTEMENT = _F(GROUP_MA='SPECIMEN', RELATION='GTN_ASTER', DEFORMATION='GDEF_LOG'),
                       INCREMENT    = _F(LIST_INST = INST_CAL, INST_FIN=inst_fin),
                       CONVERGENCE  = _F(ITER_GLOB_MAXI= 20,
@@ -147,17 +133,16 @@ RESU = STAT_NON_LINE (MODELE       = MODE,
                       SOLVEUR      = _F(METHODE='MUMPS', PCENT_PIVOT=20, MATR_DISTRIBUEE='OUI',),
                       ARCHIVAGE    = _F(LIST_INST=REEL_ARC,),
             ) 
-
     
-# TEST SUR SIXX
+# TEST SUR SIYY
 TEST_RESU(RESU=(_F(RESULTAT = RESU,
                    INST     = 0.50,
            NOM_CHAM = 'SIEF_ELGA',
-           NOM_CMP  = 'SIXX',
-                   TYPE_TEST= 'MIN',
-                   VALE_CALC= 332.278833249,
+           NOM_CMP  = 'SIYY',
+                   TYPE_TEST= 'MAX',
+                   VALE_CALC= 328.188802494,
            REFERENCE= 'SOURCE_EXTERNE',
-                   VALE_REFE=3.322788e+02,
+                   VALE_REFE=3.282971e+02  ,
                PRECISION=0.01,
            ),
         ),
@@ -166,11 +151,11 @@ TEST_RESU(RESU=(_F(RESULTAT = RESU,
 TEST_RESU(RESU=(_F(RESULTAT = RESU,
                    INST     = 0.70,
            NOM_CHAM = 'SIEF_ELGA',
-           NOM_CMP  = 'SIXX',
-                   TYPE_TEST= 'MIN',
-                   VALE_CALC= 368.400385906,
+           NOM_CMP  = 'SIYY',
+                   TYPE_TEST= 'MAX',
+                   VALE_CALC= 155.027432349,
            REFERENCE= 'SOURCE_EXTERNE',
-                   VALE_REFE= 3.684004e+02 ,
+                   VALE_REFE= 1.550775e+02 ,
                PRECISION=0.01,
            ),
         ),
@@ -182,10 +167,10 @@ TEST_RESU(RESU=(_F(RESULTAT = RESU,
            NOM_CHAM = 'VARI_ELGA',
            NOM_CMP  = 'V1',
                    TYPE_TEST= 'MAX',
-                   VALE_CALC= 2.11733464523,
+                   VALE_CALC= 0.189971336346,
            REFERENCE= 'SOURCE_EXTERNE',
-                   VALE_REFE= 2.138722e+00,
-               PRECISION=0.011,
+                   VALE_REFE= 1.906764e-01  ,
+               PRECISION=0.01,
            ),
         ),
            )
@@ -194,23 +179,23 @@ TEST_RESU(RESU=(_F(RESULTAT = RESU,
            NOM_CHAM = 'VARI_ELGA',
            NOM_CMP  = 'V1',
                    TYPE_TEST= 'MAX',
-                   VALE_CALC= 2.53563262353,
+                   VALE_CALC= 0.212230101326,
            REFERENCE= 'SOURCE_EXTERNE',
-                   VALE_REFE=2.561245e+00,
-               PRECISION=0.011,
+                   VALE_REFE= 2.131176e-01,
+               PRECISION=0.01,
            ),
         ),
            )
-   
+
 # TEST SUR POROSITE V2
 TEST_RESU(RESU=(_F(RESULTAT = RESU,
                    INST     = 0.50,
            NOM_CHAM = 'VARI_ELGA',
            NOM_CMP  = 'V2',
                    TYPE_TEST= 'MAX',
-                   VALE_CALC= 0.01,
+                   VALE_CALC= 0.149437703594,
            REFERENCE= 'SOURCE_EXTERNE',
-                   VALE_REFE= 1.000000e-02,
+                   VALE_REFE= 1.494372e-01,
                PRECISION=0.01,
            ),
         ),
@@ -220,9 +205,9 @@ TEST_RESU(RESU=(_F(RESULTAT = RESU,
            NOM_CHAM = 'VARI_ELGA',
            NOM_CMP  = 'V2',
                    TYPE_TEST= 'MAX',
-                   VALE_CALC= 0.01,
+                   VALE_CALC= 0.198556805307,
            REFERENCE= 'SOURCE_EXTERNE',
-                   VALE_REFE= 1.000000e-02,
+                   VALE_REFE= 1.985566e-01,
                PRECISION=0.01,
            ),
         ),

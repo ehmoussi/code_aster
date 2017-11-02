@@ -24,7 +24,7 @@ interface
                       geomi, compor, mate, lgpg,&
                       crit, angmas, instm, instp, matsym,&
                       ddlm, ddld, sigmg, vim, sigpg,&
-                      vip, fint,matr, codret)
+                      vipout, fint,matr, codret)
         character(len=*) :: fami              
         character(len=16) :: option
         character(len=8) :: typmod(*)
@@ -53,7 +53,7 @@ interface
         real(kind=8) :: sigmg(neps,npg)
         real(kind=8) :: vim(lgpg, npg)
         real(kind=8) :: sigpg(neps,npg)
-        real(kind=8) :: vip(lgpg, npg)
+        real(kind=8) :: vipout(lgpg, npg)
         real(kind=8) :: fint(nddl)
         real(kind=8) :: matr(nddl, nddl)
         integer :: codret
