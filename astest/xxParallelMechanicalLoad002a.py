@@ -8,7 +8,6 @@ test = code_aster.TestCase()
 pMesh2 = code_aster.ParallelMesh.create()
 pMesh2.readMedFile("xxParallelMesh001a")
 rank = code_aster.getMPIRank()
-pMesh2.debugPrint(10+rank)
 
 model = AFFE_MODELE(MAILLAGE = pMesh2,
                     AFFE = _F(MODELISATION = "3D",
@@ -16,26 +15,19 @@ model = AFFE_MODELE(MAILLAGE = pMesh2,
                               TOUT = "OUI",),
                     DISTRIBUTION=_F(METHODE='CENTRALISE',),)
 
-model.debugPrint(10+rank)
-
 char_cin = AFFE_CHAR_CINE(MODELE=model,
                           MECA_IMPO=_F(GROUP_NO="COTE_H",
                                        DX=0.,DY=0.,DZ=0.,),)
 
-char_cin.debugPrint(10+rank)
-
 b = code_aster.PartialMesh.create(pMesh2, ["COTE_B", "COTE_H"])
-b.debugPrint(10+rank)
 
 a = code_aster.PartialMesh.create(pMesh2, ["A", "B"])
-a.debugPrint(10+rank)
 
 model1 = AFFE_MODELE(MAILLAGE=a,
                      AFFE=_F(TOUT='OUI',
                              PHENOMENE='MECANIQUE',
                              MODELISATION='DIS_TR',),
                      DISTRIBUTION=_F(METHODE='CENTRALISE',),)
-model1.debugPrint(10+rank)
 
 char_meca1 = AFFE_CHAR_MECA(MODELE=model1,
                             LIAISON_DDL=_F(GROUP_NO=("A", "B"),
@@ -43,7 +35,6 @@ char_meca1 = AFFE_CHAR_MECA(MODELE=model1,
                                            COEF_MULT=(1.0,-1.0),
                                            COEF_IMPO=0,),
                             DDL_IMPO=_F(GROUP_NO="A",DX=1.0))
-char_meca1.debugPrint(10+rank)
 
 char_meca = code_aster.ParallelMechanicalLoad.create(char_meca1, model)
 char_meca.debugPrint(10+rank)
@@ -55,8 +46,7 @@ AFFMAT = AFFE_MATERIAU(MAILLAGE=pMesh2,
                        AFFE=_F(TOUT='OUI',
                                MATER=MATER1,),)
 
-resu = MECA_STATIQUE(INFO=2,
-    CHAM_MATER=AFFMAT,
+resu = MECA_STATIQUE(CHAM_MATER=AFFMAT,
                      MODELE=model,
                      EXCIT=(_F(CHARGE=char_cin,),
                             _F(CHARGE=char_meca,),),

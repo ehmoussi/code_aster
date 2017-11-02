@@ -9,7 +9,6 @@ rank = code_aster.getMPIRank()
 
 pMesh2 = code_aster.ParallelMesh.create()
 pMesh2.readMedFile("xxParallelMesh003a")
-pMesh2.debugPrint(10+rank)
 
 model = AFFE_MODELE(MAILLAGE = pMesh2,
                     AFFE = _F(MODELISATION = "D_PLAN",
@@ -24,14 +23,12 @@ char_cin = AFFE_CHAR_CINE(MODELE=model,
                                         DX=0.,DY=0.,DZ=0.,),),)
 
 a = code_aster.PartialMesh.create(pMesh2, ["N1", "N3"])
-a.debugPrint(10+rank)
 
 model1 = AFFE_MODELE(MAILLAGE=a,
                      AFFE=_F(TOUT='OUI',
                              PHENOMENE='MECANIQUE',
                              MODELISATION='DIS_T',),
                      DISTRIBUTION=_F(METHODE='CENTRALISE',),)
-model1.debugPrint(10+rank)
 
 char_meca1 = AFFE_CHAR_MECA(MODELE=model1,
                             LIAISON_DDL=_F(GROUP_NO=("N1", "N3"),
@@ -39,7 +36,6 @@ char_meca1 = AFFE_CHAR_MECA(MODELE=model1,
                                            COEF_MULT=(1.0,-1.0),
                                            COEF_IMPO=0,),
                             DDL_IMPO=_F(GROUP_NO="N1",DX=1.0))
-char_meca1.debugPrint(10+rank)
 
 char_meca = code_aster.ParallelMechanicalLoad.create(char_meca1, model)
 char_meca.debugPrint(10+rank)
@@ -61,3 +57,11 @@ resu = MECA_STATIQUE(CHAM_MATER=AFFMAT,
 resu.debugPrint(10+rank)
 
 resu.printMedFile("test"+str(rank)+".med")
+
+
+MyFieldOnNodes = resu.getRealFieldOnNodes("DEPL", 0)
+sfon = MyFieldOnNodes.exportToSimpleFieldOnNodes()
+sfon.debugPrint()
+sfon.updateValuePointers()
+
+test.assertAlmostEqual(sfon.getValue(5, 3), -0.159403241003)

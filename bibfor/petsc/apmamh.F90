@@ -172,13 +172,17 @@ use petsc_data_module
 !
 !   On commence par s'occuper du nombres de NZ par ligne
 !   dans le bloc diagonal
-    call MatSetOption(a, MAT_NEW_NONZERO_ALLOCATION_ERR, PETSC_FALSE, ierr)
+!    call MatSetOption(a, MAT_NEW_NONZERO_ALLOCATION_ERR, PETSC_FALSE, ierr)
     un = 1
     do jcoll = 2, nloc
         nzdeb = zi(jsmdi + jcoll - 2) + 1
         nzfin = zi(jsmdi + jcoll - 1)
         procol = zi(jprddl + jcoll - 1)
         jcolg = zi(jnugll + jcoll - 1)
+        nuno2 = 0
+        if( zi(jdeeq + (jcoll - 1) * 2).gt.0 ) then
+            nuno2 = zi(jmlogl + zi(jdeeq + (jcoll - 1) * 2) - 1) + 1
+        endif
         do k = nzdeb, nzfin
             iligl = zi4(jsmhc + k - 1)
             prolig = zi(jprddl + iligl - 1)
@@ -188,10 +192,6 @@ use petsc_data_module
             if( zi(jdeeq + (iligl - 1) * 2).gt.0 ) then
                 nuno1 = zi(jmlogl + zi(jdeeq + (iligl - 1) * 2) - 1) + 1
             endif
-            nuno2 = 0
-            if( zi(jdeeq + (jcoll - 1) * 2).gt.0 ) then
-                nuno2 = zi(jmlogl + zi(jdeeq + (jcoll - 1) * 2) - 1) + 1
-            endif
 ! nsellenet
 !         nucmp1 = zi(jdeeq + (iligl - 1) * 2 + 1)
 !         nucmp2 = zi(jdeeq + (jcoll - 1) * 2 + 1)
@@ -200,15 +200,15 @@ use petsc_data_module
 !         endif
 ! nsellenet
             if ( prolig .eq. rang ) then
+                jterm = jterm + 1
+                zr(jdval2 + jterm - 1) = valm
+                zi4(jdxi2 + jterm - 1) = iligg
                 if ( procol .eq. rang ) then
-                    jterm = jterm + 1
-                    zr(jdval2 + jterm - 1) = valm
-                    zi4(jdxi2 + jterm - 1) = iligg
 ! nsellenet
 !!         write(12+rang, 1000) nuno2, nucmp2, nuno1, nucmp1, jcolg, iligg, valm
 !         write(12+rang, 2000) nuno2, nucmp2, nuno1, nucmp1, valm
 ! nsellenet
-                    if ( iligg .ne. jcolg .and. procol .eq. rang ) then
+                    if ( iligg .ne. jcolg ) then
                         iterm = iterm + 1
                         zr(jdval1 + iterm - 1) = valm
                         zi4(jdxi1 + iterm - 1) = iligg
@@ -218,9 +218,6 @@ use petsc_data_module
 ! nsellenet
                     endif
                 else
-                    jterm = jterm + 1
-                    zr(jdval2 + jterm - 1) = valm
-                    zi4(jdxi2 + jterm - 1) = iligg
                     if( nuno1.eq.0 .or. nuno2.eq.0 ) then
                         iterm = iterm + 1
                         zr(jdval1 + iterm - 1) = valm
@@ -247,15 +244,9 @@ use petsc_data_module
 !         write(12+rang, 2000) nuno2, nucmp2, nuno1, nucmp1, valm
 !                    endif
 ! nsellenet
-                if ( iligg .le. jcolg ) then
-                    iterm = iterm + 1
-                    zr(jdval1 + iterm - 1) = valm
-                    zi4(jdxi1 + iterm - 1) = iligg
-                else
-                    iterm = iterm + 1
-                    zr(jdval1 + iterm - 1) = valm
-                    zi4(jdxi1 + iterm - 1) = iligg
-                endif
+                iterm = iterm + 1
+                zr(jdval1 + iterm - 1) = valm
+                zi4(jdxi1 + iterm - 1) = iligg
             else
                 if( nuno1.eq.0 .or. nuno2.eq.0 ) then
                     jterm = jterm + 1
@@ -268,7 +259,7 @@ use petsc_data_module
                     endif
                 endif
 ! nsellenet
-            else
+!            else
 !                if( nuno1.eq.0 .or. nuno2.eq.0 ) then
 !         write(12+rang, 2000) nuno1, nucmp1, nuno2, nucmp2, valm
 !!         write(12+rang, 3000) nuno1, nucmp1, nuno2, nucmp2, valm
@@ -293,9 +284,9 @@ use petsc_data_module
     call jelibe(nonu//'.SMOS.SMHC')
     call jelibe(jexnum(nomat//'.VALM', 1))
     if (lmnsy) call jelibe(jexnum(nomat//'.VALM', 2))
-    1000 format(i6,' ',i6,' ',i6,' ',i6,' ',i6,' ',i6,' ',1pe20.13)
-    2000 format(i6,' ',i6,' ',i6,' ',i6,' ',1pe20.13)
-    3000 format('ici',i6,' ',i6,' ',i6,' ',i6,' ',1pe20.13)
+!    1000 format(i6,' ',i6,' ',i6,' ',i6,' ',i6,' ',i6,' ',1pe20.13)
+!    2000 format(i6,' ',i6,' ',i6,' ',i6,' ',1pe20.13)
+!    3000 format('ici',i6,' ',i6,' ',i6,' ',i6,' ',1pe20.13)
 !
 !     ON N'OUBLIE PAS DE DETRUIRE LES TABLEAUX
 !     APRES AVOIR ALLOUE CORRECTEMENT

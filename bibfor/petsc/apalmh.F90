@@ -48,14 +48,12 @@ use petsc_data_module
 !     VARIABLES LOCALES
     integer :: nsmdi, nsmhc, ndprop, nz, bs, numpro, iaux, jjoint
     integer :: jsmdi, jsmhc, jidxd, procol, prolig, lgenvo, jvaleu
-    integer :: i, k, nzdeb, nzfin, jidxo, jaux
+    integer :: i, k, nzdeb, nzfin, jidxo, jaux, jdelg, jmdla
     integer :: jnequ, iligl, jcoll, iligg, jcolg, numloc, numglo
     integer :: rang, nbproc, jprddl, jnugll, nloc, nglo, jidxdc
-    integer :: jrefn, nuno1, nucmp1, nuno2, nucmp2, num_ddl_max
-    integer :: num_ddl_min, jslvi, tbloc, iret
-    character(len=8) :: noma
+    integer :: nuno1, nuno2, num_ddl_max, imult, ipos
+    integer :: num_ddl_min, jslvi, tbloc, iret, nblag, jdeeq
 !
-!    integer(kind=4) :: iermpi, lint, lint4, lr8, lc8, n4, iaux4, num4, numpr4
     integer(kind=4) :: mpicou
     mpi_int :: mrank, msize
 !
@@ -64,7 +62,6 @@ use petsc_data_module
     character(len=14) :: nonu
     character(len=4) :: kbid, chnbjo
     character(len=8) :: k8bid
-    character(len=24) :: nojoin
 !
     parameter   (idxo  ='&&APALMC.IDXO___')
     parameter   (idxd  ='&&APALMC.IDXD___')
@@ -97,27 +94,11 @@ use petsc_data_module
 
     ASSERT(bs.ge.1)
 
-!    fictif=fictifs(kptsc)
-!    if (fictif.eq.1) then
-!        new_ieq => new_ieqs(kptsc)%pi4
-!        old_ieq => old_ieqs(kptsc)%pi4
-!        ASSERT(size(new_ieq).eq.neq)
-!        neq2=size(old_ieq)
-!        ASSERT(neq2.gt.neq)
-!    else
-!        neq2=neq
-!        allocate(new_ieq(neq))
-!        allocate(old_ieq(neq))
-!        do k=1,neq
-!            new_ieq(k)=k
-!            old_ieq(k)=k
-!        enddo
-!    endif
     call jeveuo(nonu//'.NUME.NEQU', 'L', jnequ)
     call jeveuo(nonu//'.NUME.NULG', 'L', jnugll)
     call jeveuo(nonu//'.NUME.PDDL', 'L', jprddl)
-    call jeveuo(nonu//'.NUME.REFN', 'L', jrefn)
-    noma = zk24(jrefn)
+    call jeveuo(nonu//'.NUME.DELG', 'L', jdelg)
+    call jeveuo(nonu//'.NUME.DEEQ', 'L', jdeeq)
     nloc = zi(jnequ)
     nglo = zi(jnequ+1)
     neqg = nglo
@@ -160,18 +141,29 @@ use petsc_data_module
     ASSERT(ierr.eq.0)
     low=num_ddl_min
     high=num_ddl_max+1
-!    call MatGetOwnershipRange(a, low, high, ierr)
-!    ASSERT(ierr.eq.0)
 !
     call wkvect(idxd, 'V V S', ndprop, jidxd)
     call wkvect(idxo, 'V V S', ndprop, jidxo)
 !
+    call jeexin(nonu//'.NUME.MDLA', iret)
+    jmdla = 0
+    nblag = 0
+    if( iret.ne.0 ) then
+        call jeveuo(nonu//'.NUME.MDLA', 'L', jmdla)
+        call jelira(nonu//'.NUME.MDLA', 'LONMAX', nblag)
+        nblag = nblag/2
+        do ipos = 0, nblag-1
+            jcoll = zi(jmdla + ipos*2)
+            imult = zi(jmdla + ipos*2 + 1)
+            jcolg = zi(jnugll + jcoll - 1)
+            write(6,*)'TEST3', jcolg, imult - 1
+            zi4(jidxo + jcolg - low) = zi4(jidxo + jcolg - low) + imult
+        enddo
+    endif
+
     jcolg = zi(jnugll)
     if (zi(jprddl) .eq. rang) then
         zi4(jidxd + jcolg - low) = zi4(jidxd + jcolg - low) + 1
-! nsellenet 2013-09-27
-!        ASSERT( jcolg .ge. low .and. jcolg .lt. high )
-! nsellenet 2013-09-27
     endif
 !
 !   On commence par s'occuper du nombre de NZ par ligne
@@ -181,43 +173,42 @@ use petsc_data_module
         nzfin = zi(jsmdi + jcoll - 1)
         procol = zi(jprddl + jcoll - 1)
         jcolg = zi(jnugll + jcoll - 1)
+        nuno2 = 0
+        if( zi(jdeeq + (jcoll - 1) * 2).gt.0 ) then
+            nuno2 = 1
+        endif
         do k = nzdeb, nzfin
             iligl = zi4(jsmhc + k - 1)
             prolig = zi(jprddl + iligl - 1)
             iligg = zi(jnugll + iligl - 1)
+            nuno1 = 0
+            if( zi(jdeeq + (iligl - 1) * 2).gt.0 ) then
+                nuno1 = 1
+            endif
             if (procol .eq. rang .and. prolig .eq. rang) then
                 zi4(jidxd + iligg - low) = zi4(jidxd + iligg - low) + 1
-! nsellenet 2013-09-27
-!                ASSERT( iligg .ge. low .and. iligg .lt. high )
-!                ASSERT( jcolg .ge. low .and. jcolg .lt. high )
-! nsellenet 2013-09-27
                 if (iligg .ne. jcolg) then
                     zi4(jidxd + jcolg - low) = zi4(jidxd + jcolg - low) + 1
                 endif
             else if (procol .ne. rang .and. prolig .eq. rang) then
                 zi4(jidxo + iligg - low) = zi4(jidxo + iligg - low) + 1
-! nsellenet 2013-09-27
-!                ASSERT( iligg .ge. low .and. iligg .lt. high )
-! nsellenet 2013-09-27
+!                if( nuno1.eq.0 .or. nuno2.eq.0 ) then
+!                    write(6,*)'TEST4', rang, iligg
+!                    zi4(jidxo + jcolg - low) = zi4(jidxo + jcolg - low) + 1
+!                endif
             else if (procol .eq. rang .and. prolig .ne. rang) then
                 zi4(jidxo + jcolg - low) = zi4(jidxo + jcolg - low) + 1
-! nsellenet 2013-09-27
-!                ASSERT( jcolg .ge. low .and. jcolg .lt. high )
-! nsellenet 2013-09-27
+!                if( nuno1.eq.0 .or. nuno2.eq.0 ) then
+!                    write(6,*)'TEST5', rang, jcolg
+!                    zi4(jidxo + iligg - low) = zi4(jidxo + iligg - low) + 1
+!                endif
             endif
         end do
     end do
 
-!    if (nbproc .eq. 1) then
-!        call MatSetType(a, MATSEQAIJ, ierr)
-!        ASSERT(ierr.eq.0)
-!        call MatSEQAIJSetPreallocation(a, PETSC_NULL_INTEGER, zi4( jidxd), ierr)
-!        ASSERT(ierr.eq.0)
-!    else
-        call MatMPIAIJSetPreallocation(a, PETSC_NULL_INTEGER, zi4( jidxd),&
-                                       PETSC_NULL_INTEGER, zi4(jidxo), ierr)
-        ASSERT(ierr.eq.0)
-!    endif
+    call MatMPIAIJSetPreallocation(a, PETSC_NULL_INTEGER, zi4(jidxd),&
+                                   PETSC_NULL_INTEGER, zi4(jidxo), ierr)
+    ASSERT(ierr.eq.0)
 !
 #ifdef ASTER_PETSC_VERSION_LEQ_32
 !      LE BS DOIT ABSOLUMENT ETRE DEFINI ICI
