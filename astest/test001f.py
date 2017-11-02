@@ -110,6 +110,7 @@ test.assertTrue( 'numpy' in str(type(x[0])) )
 
 try:
     import petsc4py
+    import code_aster.LinearAlgebra
 except ImportError:
     pass
 else:
