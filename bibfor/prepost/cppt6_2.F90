@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine cphe08(main  , maout , inc   , jcoor , jcnnpa, conloc,&
+subroutine cppt6_2(main  , maout , inc   , jcoor , jcnnpa, conloc,&
                   limane, nomnoe, nbno  , jmacou, jmacsu, macou ,&
                   macsu , ind   , ind1)
 !
@@ -37,11 +37,10 @@ subroutine cphe08(main  , maout , inc   , jcoor , jcnnpa, conloc,&
 #include "asterfort/jelira.h"
 #include "asterfort/cpclma.h"
 #include "asterfort/jenonu.h"
-#include "asterfort/cpnpq8.h"
-#include "asterfort/cpncq8.h"
-#include "asterfort/cpmpq8.h"
-#include "asterfort/cpmcq8.h"
 #include "asterfort/cnpc.h"
+#include "asterfort/cpmcpt6_2.h"
+#include "asterfort/cpnpq8_2.h"
+#include "asterfort/cpmpq8_2.h"
 !
     character(len=8), intent(in) :: main
     character(len=8), intent(in) :: maout
@@ -59,65 +58,54 @@ subroutine cphe08(main  , maout , inc   , jcoor , jcnnpa, conloc,&
     integer, intent(out) :: ind 
     integer, intent(out) :: ind1     
 ! -------------------------------------------------------------------------------------------------
-!        CREATION DES NOUVEAUX NOEUDS ET NOUVELLES MAILLES CAS HEXA 08
+!        CREATION DES NOUVEAUX NOEUDS ET NOUVELLES MAILLES CAS PENTA5 BASE TRIA3
 ! -------------------------------------------------------------------------------------------------
 ! -------------------------------------------------------------------------------------------------
     integer :: patch
     integer :: jlimane
-    integer :: jconneo    
+    integer :: jconneo
     character(len=24) :: conneo
 ! -------------------------------------------------------------------------------------------------
     call jemarq()
 !
     call jecroc(jexnum(maout//'.PATCH',inc+1))
-    call jeecra(jexnum(maout//'.PATCH',inc+1), 'LONMAX', ival=5)
-    call jeecra(jexnum(maout//'.PATCH',inc+1), 'LONUTI', ival=5)
+    call jeecra(jexnum(maout//'.PATCH',inc+1), 'LONMAX', ival=2)
+    call jeecra(jexnum(maout//'.PATCH',inc+1), 'LONUTI', ival=2)
     call jeveuo(jexnum(maout//'.PATCH',inc+1), 'E', patch)
 ! --- TYPE DE MAILLE PATCH
-    zi(patch-1+1) = 25
+    zi(patch-1+1) = 125
 ! --- DDL INTERNE
     zi(patch-1+2)=nbno+ind1
     zi(jcnnpa+nbno+ind1-1) = inc
-! --- DDLs SUPPLEMENTAIRES 
-    zi(patch-1+3)=nbno+ind1+1
-    zi(jcnnpa+nbno+ind1+1-1) = inc
-    zi(patch-1+4)=nbno+ind1+2
-    zi(jcnnpa+nbno+ind1+2-1) = inc
-    zi(patch-1+5)=nbno+ind1+3
-    zi(jcnnpa+nbno+ind1+3-1) = inc
 ! --- CREATION DES NOEUDS DDL INTERNE      
-    call cpnpq8(main,macou,zr(jcoor),nbno+ind1,nomnoe)
+    call cpnpq8_2(main,macou,zr(jcoor),nbno+ind1,nomnoe)
 ! --- NOUVEAUX ELEMENTS DE PEAU
-    call cpmpq8(conloc, jmacou, nbno+ind1, ind)
+    call cpmpq8_2(conloc, jmacou, nbno+ind1, ind)
 ! --- CREATION DES NOEUDS DDL DANS LE VOLUME
-    conneo='&&CPHE08.CNORD'
+    conneo='&&CPPT62.CNORD'
     call cnpc(main, macou, macsu, conneo)
     call jeveuo(conneo,'L',jconneo)
-    call cpncq8(main, macsu, zr(jcoor), nbno+ind1+4, nomnoe, zi(jconneo))
 ! --- NOUVEAUX ELEMENTS DE CORPS
-    call cpmcq8(conloc, jmacsu, nbno+ind1, ind+5, zi(jconneo))        
-! --- CONNECTIVITE ANCIENS NOUVEAUX ELEMENTS (Peau)
+    call cpmcpt6_2(conloc, jmacsu, nbno+ind1, ind+4, zi(jconneo))        
+! --- CONNECTIVITE ANCIENS NOUVEAUX ELEMENTS (Peau)??
 
     call jeveuo(jexnum(limane, macou), 'E', jlimane)
     zi(jlimane+1-1)=ind
     zi(jlimane+2-1)=ind+1
     zi(jlimane+3-1)=ind+2
     zi(jlimane+4-1)=ind+3
-    zi(jlimane+5-1)=ind+4
 ! --- INFO PATCH LIE
-    zi(jlimane+6-1)=inc
-! --- CONNECTIVITE ANCIENS NOUVEAUX ELEMENTS (Volume)
+    zi(jlimane+5-1)=inc
+! --- CONNECTIVITE ANCIENS NOUVEAUX ELEMENTS (Volume)??
 
     call jeveuo(jexnum(limane, macsu), 'E', jlimane)
-    zi(jlimane+1-1)=ind+5
-    zi(jlimane+2-1)=ind+6
-    zi(jlimane+3-1)=ind+7
-    zi(jlimane+4-1)=ind+8
-    zi(jlimane+5-1)=ind+9
-    zi(jlimane+6-1)=ind+10
+    zi(jlimane+1-1)=ind+4
+    zi(jlimane+2-1)=ind+5
+    zi(jlimane+3-1)=ind+6
+    zi(jlimane+4-1)=ind+7
 ! --- Nettoyage / mis à jour
-    ind=ind+11
-    ind1=ind1+8
+    ind=ind+8
+    ind1=ind1+1
     call jedetr(conneo)
 !   
     call jedema()
