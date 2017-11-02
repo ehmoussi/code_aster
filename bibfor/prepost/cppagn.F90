@@ -60,6 +60,8 @@ implicit none
 #include "asterfort/cptr06.h"
 #include "asterfort/cpqu08.h"
 #include "asterfort/cpqu04.h"
+#include "asterfort/cppt6_1.h"
+#include "asterfort/cppt6_2.h"
 #include "asterfort/coppat.h"
 !
 !
@@ -87,7 +89,7 @@ implicit none
     integer :: jmacsu, jmacou, jlimane, jconloc, lgma, inc2, jcnmpa, jcnnpa
     integer :: ind, res(1), ntrou, jtpmao, jtypma, aux, numa, laux(1)
     integer :: jcnmai, jcnmao, incc, ntrou1, jgma, jrgma
-    integer :: conlen, cnlclg, idtpma, nbnoma, odcnpa, odcmpa,lenconloc, lenlimane, lenpat
+    integer :: conlen, cnlclg, idtpma(6), nbnoma(6), odcnpa, odcmpa,lenconloc, lenlimane, lenpat
 !     
     character(len=24) :: nomnoi, nomnoe, limane, conloc
     character(len=24) :: nomnd, nomma, cninv, cnivax, rgma, gpptnn
@@ -172,13 +174,31 @@ implicit none
                 lenconloc = lenconloc + 3*3 + 4*3
                 lenlimane = lenlimane + 3 + 4
                 lenpat = lenpat + 2
+            case ('PENTA6')
+                if(zi(jtypma+macou-1).eq.7)then
+                    nbnot = nbnot + 1
+                    nbmat = nbmat + 5
+                    conlen = conlen + 2*3 + 3*5 + 1*4 - 6
+                    lenconloc = lenconloc + 3*3 + 3*5 + 1*4
+                    cnlclg = cnlclg + 7
+                    lenlimane = lenlimane + 3 + 4 +1
+                    lenpat = lenpat + 2
+                else
+                    nbnot = nbnot + 1
+                    nbmat = nbmat + 6
+                    conlen = conlen + 4*3 + 2*5 + 2*4 - 6 -4
+                    lenconloc = lenconloc + 4*3 + 2*5 + 2*4
+                    cnlclg = cnlclg + 8
+                    lenlimane = lenlimane + 8 +1
+                    lenpat = lenpat + 2
+                endif
             case ('TETRA10')
                 nbnot = nbnot + 5
                 nbmat = nbmat + 4
                 conlen = conlen + 2*6 + 2*10
                 cnlclg = cnlclg + 6
-                lenconloc = lenconloc + 3*6 + 4*10
-                lenlimane = lenlimane + 3 + 4
+                lenconloc = lenconloc + 3*6 + 3*10 
+                lenlimane = lenlimane + 3 + 3 +1
                 lenpat = lenpat + 2
             case ('HEXA8')
                 if (typ_dec.eq.0) then
@@ -353,6 +373,9 @@ implicit none
                         call jeecra(jexnum(limane, inc), 'LONMAX', ival=5)
                         call jeecra(jexnum(limane, inc), 'LONUTI', ival=5)
                     end if
+                case (20)
+                    call jeecra(jexnum(limane, inc), 'LONMAX', ival=4)
+                    call jeecra(jexnum(limane, inc), 'LONUTI', ival=4)
             end select 
         elseif (ntrou1.eq.0 .and. ntrou .eq. 0) then
             call jeecra(jexnum(limane, inc), 'LONMAX', ival=1)
@@ -432,7 +455,17 @@ implicit none
                 call cphe27(maout , inc+nbpain, jcnnpa, conloc,&
                             limane, jmacou, jmacsu, macou ,&
                             macsu , ind   , ind1  )
-                
+! --- CAS PENTA 6 ---------------------------------------------------------------------------------
+           case ('PENTA6')
+                if (zi(jtypma+macou-1).eq.7) then
+                    call cppt6_1(main  , maout , inc+nbpain   , jcoor , jcnnpa, conloc,&
+                                 limane, nomnoe, nbno  , jmacou, jmacsu, macou ,&
+                                 macsu , ind   , ind1  )
+                else
+                    call cppt6_2(main  , maout , inc+nbpain   , jcoor , jcnnpa, conloc,&
+                                 limane, nomnoe, nbno  , jmacou, jmacsu, macou ,&
+                                 macsu , ind   , ind1  )
+                end if               
            case default
                 ASSERT(.false.)
         end select
@@ -466,9 +499,9 @@ implicit none
         call utlisi('INTER', laux, 1, zi(jcninv), nbma, res, 1, ntrou1)
         if (ntrou .eq. 1 .or. ntrou1 .eq. 1) then
             call jeveuo(jexnum(limane,inc),'E',jlimane)    
-   select case(ntrou)
+    select case(ntrou)
        case(1)
-           if (zi(jtypma+inc-1) .eq. 2) then 
+           if (zi(jtypma+inc-1) .eq. 2 .or. zi(jtypma+inc-1) .eq. 12) then 
                do incc=1,nbma
                    if (lima(incc) .eq. inc) then
                        macsu=zi(jcninv+incc-1)
@@ -487,49 +520,49 @@ implicit none
                    call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+macsu-1)), typmail)   
                    if ( typmail .eq. 'TRIA3') then
                        nbnwma = 2
-                       nbnoma = 2
-                       idtpma = 2                      
+                       nbnoma(1:nbnwma) = 2
+                       idtpma(1:nbnwma) = 2                      
                    elseif (typmail .eq. 'QUAD4') then
                        nbnwma = 3
-                       nbnoma = 2
-                       idtpma = 2
+                       nbnoma(1:nbnwma) = 2
+                       idtpma(1:nbnwma) = 2
                    end if
                case ('SEG3') 
                    nbnwma = 1
-                   nbnoma = 3
-                   idtpma = 4
+                   nbnoma(1:nbnwma) = 3
+                   idtpma(1:nbnwma) = 4
                case ('TRIA3') 
                    nbnwma = 3
-                   nbnoma = 3
-                   idtpma = 7
+                   nbnoma(1:nbnwma) = 3
+                   idtpma(1:nbnwma) = 7
                case ('TRIA6') 
                    nbnwma = 3
-                   nbnoma = 6
-                   idtpma = 9
+                   nbnoma(1:nbnwma) = 6
+                   idtpma(1:nbnwma) = 9
                case ('QUAD4')
-                   if (typ_dec.eq.0) then
+                   if (typ_dec.eq.0 .and. zi(jtypma+macsu-1) .ne. 20) then
                        nbnwma = 5
-                       nbnoma = 4
-                       idtpma = 12
+                       nbnoma(1:nbnwma) = 4
+                       idtpma(1:nbnwma) = 12
                    else
                        nbnwma = 4
-                       nbnoma = 3
-                       idtpma = 7
+                       nbnoma(1:nbnwma) = 3
+                       idtpma(1:nbnwma) = 7
                    endif
                case ('QUAD8')
                    if (typ_dec.eq.0) then
                        nbnwma = 5
-                       nbnoma = 8
-                       idtpma = 14
+                       nbnoma(1:nbnwma) = 8
+                       idtpma(1:nbnwma) = 14
                    else
                        nbnwma = 4
-                       nbnoma = 6
-                       idtpma = 9
+                       nbnoma(1:nbnwma) = 6
+                       idtpma(1:nbnwma) = 9
                    end if
                case ('QUAD9') 
                    nbnwma = 1
-                   nbnoma = 9
-                   idtpma = 16
+                   nbnoma(1:nbnwma) = 9
+                   idtpma(1:nbnwma) = 16
        
                case default
                    ASSERT(.false.)
@@ -539,52 +572,66 @@ implicit none
            select case (typmail_trait)
                case ('TRIA3')
                    nbnwma = 2
-                   nbnoma = 3
-                   idtpma = 7
+                   nbnoma(1:nbnwma) = 3
+                   idtpma(1:nbnwma) = 7
                case ('QUAD4')
                    nbnwma = 4
-                   nbnoma = 4
-                   idtpma = 12
+                   nbnoma(1:nbnwma) = 4
+                   idtpma(1:nbnwma) = 12
                case ('TRIA6')
                    nbnwma = 1
-                   nbnoma = 6
-                   idtpma = 9
+                   nbnoma(1:nbnwma) = 6
+                   idtpma(1:nbnwma) = 9
                case ('QUAD8')
                    nbnwma = 1
-                   nbnoma = 8
-                   idtpma = 14
+                   nbnoma(1:nbnwma) = 8
+                   idtpma(1:nbnwma) = 14
                case ('TETRA4')
                    nbnwma = 3
-                   nbnoma = 4
-                   idtpma = 18
+                   nbnoma(1:nbnwma) = 4
+                   idtpma(1:nbnwma) = 18
                case ('TETRA10')
                    nbnwma = 3
-                   nbnoma = 10
-                   idtpma = 19
+                   nbnoma(1:nbnwma) = 10
+                   idtpma(1:nbnwma) = 19
                case ('HEXA8')
                    if (typ_dec.eq.0) then 
                        nbnwma = 6
-                       nbnoma = 8
-                       idtpma = 25
+                       nbnoma(1:nbnwma) = 8
+                       idtpma(1:nbnwma) = 25
                    else
                        nbnwma = 5
-                       nbnoma = 5
-                       idtpma = 23
+                       nbnoma(1:nbnwma) = 5
+                       idtpma(1:nbnwma) = 23
+                   end if
+               case ('PENTA6')
+                   if (zi(jtypma+inc-1).eq.7) then 
+                       nbnwma = 4
+                       nbnoma(1:3) = 5
+                       nbnoma(4) = 4
+                       idtpma(1:3) = 23
+                       idtpma(4) = 18
+                   else
+                       nbnwma = 4
+                       nbnoma(1:2) = 5
+                       nbnoma(3:4) = 4
+                       idtpma(1:2) = 23
+                       idtpma(3:4) = 18
                    end if
                case ('HEXA20')
                    if (typ_dec.eq.0) then
                        nbnwma = 6
-                       nbnoma = 20
-                       idtpma = 26
+                       nbnoma(1:nbnwma) = 20
+                       idtpma(1:nbnwma) = 26
                    else
                        nbnwma = 5
-                       nbnoma = 13
-                       idtpma = 24
+                       nbnoma(1:nbnwma) = 13
+                       idtpma(1:nbnwma) = 24
                    end if
                case ('HEXA27')
                    nbnwma = 1
-                   nbnoma = 27
-                   idtpma = 27
+                   nbnoma(1:nbnwma) = 27
+                   idtpma(1:nbnwma) = 27
                case default
             call utmess('A', 'CREALAC_1')
            end select
@@ -611,12 +658,12 @@ implicit none
                     zi(jcnmpa+ind+incc-1)=zi(jlimane-1+nbnwma+1)  
                 endif
 ! ----------------------- NOUVELLES MAILLES
-                zi(jtpmao+ind+incc-1)=  idtpma
+                zi(jtpmao+ind+incc-1)=  idtpma(incc+1)
                 call jeecra(jexnum(maout//'.CONNEX',ind+incc),&
-                            'LONMAX',nbnoma)
+                            'LONMAX',nbnoma(incc+1))
                 call jeveuo(jexnum(maout//'.CONNEX',ind+incc),&
                             'E', jcnmao)                        
-                do inc2=1, nbnoma
+                do inc2=1, nbnoma(incc+1)
                         zi(jcnmao+inc2-1)=zi(jconloc+inc2-1)
                 end do                   
             end do
@@ -719,6 +766,8 @@ implicit none
                      else
                          nbnwma = nbnwma + 5
                      end if
+                 case ('PENTA6') 
+                     nbnwma = nbnwma + 4
                  case default
                      ASSERT(.false.)
              end select
@@ -781,6 +830,8 @@ implicit none
                else
                    nbnwma =  5
                end if
+           case ('PENTA6') 
+               nbnwma = 4
             case default
                 ASSERT(.false.)
         end select
