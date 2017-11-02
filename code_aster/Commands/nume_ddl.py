@@ -19,21 +19,8 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
+from .ExecuteCommand import ExecuteCommandWithType
 from code_aster import DOFNumbering
 
 
-def NUME_DDL(**curDict):
-    returnDofNum = DOFNumbering.create()
-    name = returnDofNum.getName()
-    type = returnDofNum.getType()
-    syntax = CommandSyntax("NUME_DDL")
-
-    syntax.setResult(name, type)
-
-    syntax.define(curDict)
-    numOp = 11
-    python_execop(numOp)
-    syntax.free()
-    return returnDofNum
+NUME_DDL = ExecuteCommandWithType("NUME_DDL", DOFNumbering)
