@@ -97,398 +97,345 @@ use gdlog_module, only: GDLOG_DS, gdlog_init, gdlog_defo, gdlog_matb,  &
 
 
 ! ----------------------------------------------------------------------
-    aster_logical, parameter              :: grand=ASTER_TRUE
-    real(kind=8), dimension(6), parameter :: kron = (/1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/)
+    aster_logical, parameter               :: grand=ASTER_TRUE
+    real(kind=8), parameter                :: tiers = 1.d0/3.d0
+    real(kind=8), dimension(6), parameter  :: kron    = (/  1.d0,  1.d0,  1.d0, 0.d0, 0.d0, 0.d0 /)
+    real(kind=8), dimension(6), parameter  :: projhyd = (/ tiers, tiers, tiers, 0.d0, 0.d0, 0.d0 /)
+    real(kind=8), dimension(6,6), parameter:: projdev = reshape( &
+        (/ 2*tiers,  -tiers,  -tiers, 0.d0, 0.d0, 0.d0, &
+            -tiers, 2*tiers,  -tiers, 0.d0, 0.d0, 0.d0, &
+            -tiers,  -tiers, 2*tiers, 0.d0, 0.d0, 0.d0, &
+              0.d0,    0.d0,    0.d0, 1.d0, 0.d0, 0.d0, &
+              0.d0,    0.d0,    0.d0, 0.d0, 1.d0, 0.d0, &
+              0.d0,    0.d0,    0.d0, 0.d0, 0.d0, 1.d0  /), (/6,6/))
 ! ----------------------------------------------------------------------
-    aster_logical:: resi, rigi, axi
-    type(GDLOG_DS):: gdl
-
-    integer:: kpg,n,i,m,j,kl,pq
-    integer:: ndimsi,nelc
-    integer:: larg,indu(ndim),indg(2),indi(2)
-    integer:: xu(ndim,nno),xg(2,nnob),xi(2,nnob)
-    integer:: cod(npg)
-
-    real(kind=8) :: kr(2*ndim),rbid,tbid(6)
-    real(kind=8) :: r,dff(nno,ndim),dffb(nnob,ndim),poids
-    real(kind=8) :: deplm(ndim,nno), deplp(ndim,nno)
-    real(kind=8) :: geomm(ndim,nno), geomp(ndim,nno)
-    real(kind=8) :: incom(2,nnob), incop(2,nnob)
-    real(kind=8) :: gradm(2,nnob), gradd(2,nnob)
-    real(kind=8) :: fm(3, 3), fp(3, 3), logjm, logjp
-    real(kind=8) :: epsm(2*ndim),epsp(2*ndim),etim(2*ndim),etip(2*ndim)
-    real(kind=8) :: elcm(3*ndim+2),elcd(3*ndim+2)
-    real(kind=8) :: gm,gp,pm,pp,am,ad,lm,ld,gam(ndim),gad(ndim)
-    real(kind=8) :: slcm(3*ndim+2),slcp(3*ndim+2), t(1:2*ndim)
-    real(kind=8) :: bu(2*ndim,ndim,nno)
-    real(kind=8) :: sigu(2*ndim),sigi(2),sigg(2+ndim)
-    real(kind=8) :: fu(ndim,nno),fi(2,nnob),fg(2+ndim,nnob)
-
-    real(kind=8) :: dsde_lc(3*ndim+2,3*ndim+2)
-    real(kind=8) :: dee(2*ndim,2*ndim),hdee(2*ndim),deeh(2*ndim)
-    real(kind=8) :: pdeep(2*ndim,2*ndim),pdeeh(2*ndim),hdeep(2*ndim),hdeeh
-    real(kind=8) :: kuu(ndim,nno,ndim,nno)
-    real(kind=8) :: dei(2*ndim,2), budei(2,ndim,nno),kui(ndim,nno,2,nnob)
-    real(kind=8) :: deg(2*ndim,2), budeg(2,ndim,nno),kug(ndim,nno,2,nnob)
-    real(kind=8) :: kii(2,nnob,2,nnob)
-    real(kind=8) :: hdeg(2),kig(2,nnob,2,nnob)
-    real(kind=8) :: dgg(2,2),dnn(ndim,ndim),kgg(2,nnob,2,nnob)
-    real(kind=8) :: die(2,2*ndim),diebu(2,ndim,nno),kiu(2,nnob,ndim,nno)
-    real(kind=8) :: dge(2,2*ndim),dgebu(2,ndim,nno),kgu(2,nnob,ndim,nno)
-    real(kind=8) :: dgeh(2),kgi(2,nnob,2,nnob)
+    type(GDLOG_DS):: gdlm,gdlp
+    aster_logical :: resi, rigi, axi
+    integer       :: g,n,i
+    integer       :: xu(ndim,nno),xg(2,nnob),xq(2,nnob)
+    integer       :: cod(npg)
+    integer       :: nnu,nng,nnq,ndu,ndg,ndq,neu,neg,neq
+    real(kind=8)  :: dev(2*ndim,2*ndim),hyd(2*ndim),kr(2*ndim)
+    real(kind=8)  :: r,dff(nno,ndim),dffb(nnob,ndim),poids
+    real(kind=8)  :: fm(3,3), fp(3,3)
+    real(kind=8)  :: bu(2*ndim,ndim,nno),bg(2+ndim,2,nnob),bq(2,2,nnob)
+    real(kind=8)  :: dum(ndim,nno),dup(ndim,nno)
+    real(kind=8)  :: dgm(2,nnob),dgp(2,nnob)
+    real(kind=8)  :: dqm(2,nnob),dqp(2,nnob)
+    real(kind=8)  :: epefum(2*ndim),epefgm(2+ndim),epefqm(2)
+    real(kind=8)  :: epefup(2*ndim),epefgp(2+ndim),epefqp(2)
+    real(kind=8)  :: siefup(2*ndim),siefgp(2+ndim),siefqp(2)
+    real(kind=8)  :: eplcm(3*ndim+2),eplcp(3*ndim+2)
+    real(kind=8)  :: silcm(3*ndim+2),silcp(3*ndim+2)
+    real(kind=8)  :: dsde(3*ndim+2,3*ndim+2)
+    real(kind=8)  :: t(2*ndim)
+    real(kind=8)  :: dee(2*ndim,2*ndim),deg(2*ndim,2+ndim),dge(2+ndim,2*ndim),dgg(2+ndim,2+ndim)
+    real(kind=8)  :: kefuu(2*ndim,2*ndim),kefug(2*ndim,2+ndim),kefuq(2*ndim,2    )
+    real(kind=8)  :: kefgu(2+ndim,2*ndim),kefgg(2+ndim,2+ndim),kefgq(2+ndim,2    )
+    real(kind=8)  :: kefqu(2     ,2*ndim),kefqg(2     ,2+ndim),kefqq(2     ,2    )
+    real(kind=8)  :: rbid=0.d0
+    real(kind=8)  :: tbid(6)=(/0.d0,0.d0,0.d0,0.d0,0.d0,0.d0/)
 ! ----------------------------------------------------------------------
+
+
+! Remarque sur l'ordre des composantes (cf. grandeurs premieres)
+! degres de liberte : DX,DY,DZ,PRES,GONF,VARI,LAG_GV
+! Contraintes EF    : SIXX, .., SIYZ, SIGONF, SIP, SIGV_A, SIGV_L, SIGV_GX, ..., SIVG_GZ, 
+! Deformations ldc  : R2*EPXX, ..., R2*EPZZ, A, L, GX, ..., GZ 
 
 
 ! --- INITIALISATION ---
 
-    ndimsi = 2*ndim
-    nelc = 3*ndim+2
-    kr = kron(1:ndimsi)
-
-    fint = 0
-    matr = 0
-
-    rbid = 0
-    tbid = 0
-
-    ! tableaux de reference bloc (depl,inco,grad) -> numero du ddl
-    indu = (/ (i, i=1,ndim) /)
-    indi = (/ ndim+1, ndim+2 /)
-    indg = (/ ndim+3, ndim+4 /)
-    larg = ndim+4
-    do n = 1,nnob
-        xu(:,n) = indu + (n-1)*larg
-        xi(:,n) = indi + (n-1)*larg
-        xg(:,n) = indg + (n-1)*larg
-    end do
-    do n = nnob+1,nno
-        xu(:,n) = indu + larg*nnob + ndim*(n-nnob-1)
-    end do
+    nnu = nno
+    nng = nnob
+    nnq = nnob
+    ndu = ndim
+    ndg = 2
+    ndq = 2
+    neu = 2*ndim
+    neg = 2+ndim
+    neq = 2
+    kr  = kron(1:neu)
+    hyd = projhyd(1:neu)
+    dev = projdev(1:neu,1:neu)
 
     axi  = typmod(1).eq.'AXIS'
     resi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RAPH_MECA'
     rigi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RIGI_MECA'
     cod = 0  
 
-    call gdlog_init(gdl,ndim,nno,axi,rigi)
+    call gdlog_init(gdlm,ndu,nnu,axi,rigi)
+    call gdlog_init(gdlp,ndu,nnu,axi,rigi)
+    if (resi) fint = 0
+    if (rigi) matr = 0
 
-
+    ! tableaux de reference bloc (depl,inco,grad) -> numero du ddl
+    forall (i=1:ndg,n=1:nng) xg(i,n) = (n-1)*(ndu+ndg+ndq) + ndu + ndq + i
+    forall (i=1:ndq,n=1:nnq) xq(i,n) = (n-1)*(ndu+ndg+ndq) + ndu + i
+    forall (i=1:ndu,n=1:nng) xu(i,n) = (n-1)*(ndu+ndg+ndq) + i
+    forall (i=1:ndu,n=nng+1:nnu) xu(i,n) = (ndu+ndg+ndq)*nng + (n-1-nng)*ndu + i
 
     ! Decompactage des ddls en t- et t+
-    forall (i=1:ndim, n=1:nno)  deplm(i,n) = ddlm(xu(i,n))
-    forall (i=1:2,    n=1:nnob) incom(i,n) = ddlm(xi(i,n))
-    forall (i=1:2,    n=1:nnob) gradm(i,n) = ddlm(xg(i,n))
-    geomm = geomi + deplm
-
-    forall (i=1:ndim, n=1:nno)  deplp(i,n) = deplm(i,n) + ddld(xu(i,n))
-    forall (i=1:2,    n=1:nnob) incop(i,n) = incom(i,n) + ddld(xi(i,n))
-    forall (i=1:2,    n=1:nnob) gradd(i,n) = ddld(xg(i,n))
-    geomp = geomi + deplp
+    forall (i=1:ndu, n=1:nnu) dum(i,n) = ddlm(xu(i,n))
+    forall (i=1:ndg, n=1:nng) dgm(i,n) = ddlm(xg(i,n))
+    forall (i=1:ndq, n=1:nnq) dqm(i,n) = ddlm(xq(i,n))
+    forall (i=1:ndu, n=1:nnu) dup(i,n) = dum(i,n) + ddld(xu(i,n))
+    forall (i=1:ndq, n=1:nnq) dgp(i,n) = dgm(i,n) + ddld(xg(i,n))
+    forall (i=1:ndg, n=1:nng) dqp(i,n) = dqm(i,n) + ddld(xq(i,n))
 
     
-
-    do kpg = 1, npg
+    gauss: do g = 1, npg
  
         ! -----------------------!
         !  ELEMENTS CINEMATIQUES !
         ! -----------------------!
 
         ! Calcul des derivees des fonctions de forme P1 
-        call dfdmip(ndim, nnob, axi, geomi, kpg, iw, vffb(1,kpg), idffb, r, poids,dffb)
+        call dfdmip(ndim, nnob, axi, geomi, g, iw, vffb(1,g), idffb, r, poids,dffb)
 
         ! Calcul des derivees des fonctions de forme P2, du rayon r et des poids
-        call dfdmip(ndim, nno, axi, geomi, kpg, iw, vff(1, kpg), idff, r, poids, dff)
+        call dfdmip(ndim, nno, axi, geomi, g, iw, vff(1, g), idff, r, poids, dff)
 
-        ! Calcul de la deformation en t- (fm et epm)
-        call nmepsi(ndim, nno, axi, grand, vff(1,kpg), r, dff, deplm, fm, tbid)
-        call gdlog_defo(gdl,fm,epsm,cod(kpg))
-        if (cod(kpg).ne.0) goto 999
-        logjm =  sum(epsm(1:3))   
+        ! Calcul de la deformation mecanique en t- (fm et epm)
+        call nmepsi(ndim, nno, axi, grand, vff(1,g), r, dff, dum, fm, tbid)
+        call gdlog_defo(gdlm,fm,epefum,cod(g))
+        if (cod(g).ne.0) goto 999
 
-        ! Calcul des elements cinematiques en t+
-        call nmepsi(ndim, nno, axi, grand, vff(1,kpg),r, dff, deplp, fp, tbid)
-        call gdlog_defo(gdl,fp,epsp,cod(kpg))
-        if (cod(kpg).ne.0) goto 999
-        logjp =  sum(epsp(1:3))   
-        call gdlog_matb(gdl,r,vff(:,kpg),dff,bu)
+        ! Calcul de la deformation mecanique et des elements cinematiques en t+
+        call nmepsi(ndim, nno, axi, grand, vff(1,g),r, dff, dup, fp, tbid)
+        call gdlog_defo(gdlp,fp,epefup,cod(g))
+        if (cod(g).ne.0) goto 999
 
+        ! Calcul des matrices BU, BG et BQ
+        call gdlog_matb(gdlp,r,vff(:,g),dff,bu)
+        bg = 0
+        bg(1,1,:) = vffb(:,g)
+        bg(2,2,:) = vffb(:,g)
+        bg(:,1,:) = transpose(dffb)
+        bq = 0
+        bq(1,1,:) = vffb(:,g)
+        bq(2,2,:) = vffb(:,g)
 
-        ! Calcul des champs P,G,A, grad(A) et L aux points de Gauss
-        pm = dot_product(vffb(:,kpg),incom(1,:))
-        pp = dot_product(vffb(:,kpg),incop(1,:))
-        gm = dot_product(vffb(:,kpg),incom(2,:))
-        gp = dot_product(vffb(:,kpg),incop(2,:))
-        am = dot_product(vffb(:,kpg),gradm(1,:))
-        ad = dot_product(vffb(:,kpg),gradd(1,:))
-        lm = dot_product(vffb(:,kpg),gradm(2,:))
-        ld = dot_product(vffb(:,kpg),gradd(2,:))
-        gam = matmul(gradm(1,:),dffb)
-        gad = matmul(gradd(1,:),dffb) 
+        ! Calcul des deformations non mecaniques  aux points de Gauss
+        epefgm = prod_bd(bg,dgm)
+        epefgp = prod_bd(bg,dgp)
+        epefqm = prod_bd(bq,dqm)
+        epefqp = prod_bd(bq,dqp)
        
-
-        ! Deformation corrigee du gonflement (e tilda)
-        etim(1:3) = epsm(1:3) + (gm-sum(epsm(1:3)))/3
-        etip(1:3) = epsp(1:3) + (gp-sum(epsp(1:3)))/3
-
-
 
         ! -----------------------!
         !   LOI DE COMPORTEMENT  !
         ! -----------------------!
 
-        ! Preparation des deformations generalisees de ldc en t- et Dt
-        elcm(1:ndimsi) = etim
-        elcm(ndimsi+1) = am
-        elcm(ndimsi+2) = lm
-        elcm(ndimsi+3:3*ndim+2) = gam        
+        ! Preparation des deformations generalisees de ldc en t- et t+  
+        eplcm(1:neu) = matmul(dev,epefum) + epefqm(2)*hyd
+        eplcp(1:neu) = matmul(dev,epefup) + epefqp(2)*hyd
+        eplcm(neu+1:neu+neg) = epefgm
+        eplcp(neu+1:neu+neg) = epefgp
 
-        elcd(1:ndimsi) = etip-etim
-        elcd(ndimsi+1) = ad
-        elcd(ndimsi+2) = ld
-        elcd(ndimsi+3:3*ndim+2) = gad        
-
-
-        ! Preparation des contraintes generalisees T en t-
-        slcm(1:ndimsi) = vim(lgpg-5:lgpg-6+ndimsi,kpg)
-        slcm(ndimsi+1:3*ndim+2) = siefm(ndimsi+3:3*ndim+4,kpg)
-
+        ! Preparation des contraintes generalisees de ldc en t-
+        silcm(1:neu) = vim(lgpg-5:lgpg-6+neu,g)
+        silcm(neu+1:neu+neg) = siefm(neu+1:neu+neg,g)
 
         ! Comportement
-        call nmcomp(fami, kpg, 1, ndim, typmod,&
+        call nmcomp(fami, g, 1, ndim, typmod,&
                     mate, compor, crit, instm, instp,&
-                    nelc, elcm, elcd, nelc, slcm,&
-                    vim(1,kpg), option, angmas, 1,[rbid],&
-                    slcp, vip(1,kpg), nelc*nelc, dsde_lc, 1,&
-                    [rbid], cod(kpg))
-        if (cod(kpg) .eq. 1) goto 999
+                    neu+neg, eplcm, eplcp-eplcm, neu+neg, silcm,&
+                    vim(1,g), option, angmas, 1,[rbid],&
+                    silcp, vip(1,g), (neu+neg)*(neu+neg), dsde, 1,&
+                    [rbid], cod(g))
+        if (cod(g) .eq. 1) goto 999
 
         ! Archivage des contraintes mecaniques en t+ (tau tilda) dans les vi
         if (resi) then
-            vip(lgpg-5:lgpg-6+ndimsi,kpg) = slcp(1:ndimsi)
+            vip(lgpg-5:lgpg-6+neu,g) = silcp(1:neu)
         end if
 
 
-
-        ! -----------------------!
-        !   FORCES INTERIEURES   !
-        ! -----------------------!
+        ! ----------------------------------------!
+        !   FORCES INTERIEURES ET CONTRAINTES EF  !
+        ! ----------------------------------------!
 
         if (resi) then
 
-            ! Contraintes generalisees EF
-            t = slcp(1:ndimsi)
-            sigi = (/ logjp-gp, sum(t)/3-pp /)
-            sigu = t - sigi(2)*kr
-            sigg = slcp(ndimsi+1:)
+            ! Contraintes generalisees EF par bloc
+            t = silcp(1:neu)
+            siefup = matmul(dev,t) + epefqp(1)*kr
+            siefgp = silcp(neu+1:neu+neg)
+            siefqp = (/ dot_product(kr,epefup)-epefqp(2), dot_product(hyd,t)-epefqp(1) /)
 
-            ! Forces interieures au point de Gauss kpg
-            call dgemv('t',ndimsi,ndim*nno,1.d0,bu,ndimsi,t,1,0.d0,fu,1)
-            fi(1,:) = sigi(1)*vffb(:,kpg)
-            fi(2,:) = sigi(2)*vffb(:,kpg)
-            fg(1,:) = sigg(1)*vffb(:,kpg) + matmul(dffb,sigg(3:2+ndim))
-            fg(2,:) = sigg(2)*vffb(:,kpg)
-
-            ! Somme des contributions aux forces interieures
-            forall (i=1:ndim, n=1:nno)  fint(xu(i,n)) = fint(xu(i,n)) + poids*fu(i,n)
-            forall (i=1:2,    n=1:nnob) fint(xi(i,n)) = fint(xi(i,n)) + poids*fi(i,n)
-            forall (i=1:2,    n=1:nnob) fint(xg(i,n)) = fint(xg(i,n)) + poids*fg(i,n)
-
-            ! Stockage des contraintes generalisees Cauchy
-            siefp(1:ndimsi,kpg) = gdlog_nice_cauchy(gdl,sigu)
-            siefp(ndimsi+1:ndimsi+2,kpg) = sigi
-            siefp(ndimsi+3:3*ndimsi+4,kpg) = sigg
+            ! Forces interieures au point de Gauss g
+            call add_fint(fint,xu,poids*prod_sb(siefup,bu))
+            call add_fint(fint,xg,poids*prod_sb(siefgp,bg))
+            call add_fint(fint,xq,poids*prod_sb(siefqp,bq))
+            
+            ! Stockage des contraintes generalisees (avec Cauchy au lieu de T)
+            siefp(1:neu,g) = gdlog_nice_cauchy(gdlp,siefup)
+            siefp(neu+1:neu+neq,g) = siefqp
+            siefp(neu+neq+1:neu+neq+neg,g) = siefgp
 
         endif
-
 
 
         ! -----------------------!
         !    MATRICE TANGENTE    !
         ! -----------------------!
     
-        
-
-
         if (rigi) then
 
-            ! Contraintes generalisees EF (si resi: deja calculee dans Fint)
+            ! Contraintes generalisees EF (bloc mecanique pour la rigidite geometrique)
             if (.not. resi) then
-                t = slcm(1:ndimsi)
-                sigi = (/ logjm-gm, sum(t)/3-pm /)
-                sigu = t - sigi(2)*kr
-                sigg = slcm(ndimsi+1:)
+                t = silcm(1:neu)
+                siefup = matmul(dev,t) + epefqm(1)*kr
             end if
 
-            ! Projection de Kee (dt/de)
-            dee  = dsde_lc(1:ndimsi,1:ndimsi)
-            hdee = sum(dee(1:3,:),dim=1)/3
-            deeh = sum(dee(:,1:3),dim=2)/3
-            hdeeh = sum(hdee(1:3))/3
-            hdeep = hdee - hdeeh*kr
-            pdeeh = deeh - hdeeh*kr
-            forall(kl=1:ndimsi,pq=1:ndimsi) pdeep(kl,pq)= &
-                dee(kl,pq) - pdeeh(kl)*kr(pq) - kr(kl)*hdeep(pq) - hdeeh*kr(kl)*kr(pq)
+            ! Rigidite geometrique
+            call add_matr(matr,xu,xu,gdlog_rigeo(gdlp,siefup))
 
-            ! Kuu
-            kuu = gdlog_rigeo(gdl,sigu) + prod_bb(bu,prod_kb(pdeep,bu))
+            ! Blocs de la matrice tangente du comportement
+            dee = dsde(1:neu,1:neu)
+            deg = dsde(1:neu,neu+1:neu+neg)
+            dge = dsde(neu+1:neu+neg,1:neu)
+            dgg = dsde(neu+1:neu+neg,neu+1:neu+neg)
 
-            ! Kui
-            dei(:,1)=kr
-            dei(:,2)=pdeeh
-            budei = prod_kb(transpose(dei),bu)
-            forall (i=1:ndim,n=1:nno,j=1:2,m=1:nnob) kui(i,n,j,m) = budei(j,i,n)*vffb(m,kpg)
+            ! Construction des blocs de la matrice tangente EF
+            kefuu = matmul(matmul(dev,dee),dev)
+            kefug = matmul(dev,deg)
+            kefuq(:,1) = kr
+            kefuq(:,2) = matmul(matmul(dev,dee),hyd)
+            kefgu = matmul(dge,dev)
+            kefgg = dgg
+            kefgq(:,1) = 0
+            kefgq(:,2) = matmul(dge,hyd)
+            kefqu(1,:) = kr
+            kefqu(2,:) = matmul(matmul(hyd,dee),dev)
+            kefqg(1,:) = 0
+            kefqg(2,:) = matmul(hyd,deg)
+            kefqq(1,1) = 0
+            kefqq(1,2) = -1
+            kefqq(2,1) = -1
+            kefqq(2,2) = dot_product(matmul(hyd,dee),hyd)
 
-            ! Kug
-            deg(:,1) = dev(dsde_lc(1:ndimsi,ndimsi+1))
-            deg(:,2) = dev(dsde_lc(1:ndimsi,ndimsi+2))
-            budeg = prod_kb(transpose(deg),bu)
-            forall (i=1:ndim,n=1:nno,j=1:2,m=1:nnob) kui(i,n,j,m) = budeg(j,i,n)*vffb(m,kpg)
-
-            ! Kii
-            forall (n=1:nnob,m=1:nnob) kii(1,n,1,m) = 0
-            forall (n=1:nnob,m=1:nnob) kii(1,n,2,m) = -vffb(n,kpg)*vffb(m,kpg)
-            forall (n=1:nnob,m=1:nnob) kii(2,n,1,m) = -vffb(n,kpg)*vffb(m,kpg)
-            forall (n=1:nnob,m=1:nnob) kii(2,n,2,m) = hdeeh*vffb(n,kpg)*vffb(m,kpg)
-
-            ! Kig
-            hdeg(1) = sum(dsde_lc(1:3,ndimsi+1))/3
-            hdeg(2) = sum(dsde_lc(1:3,ndimsi+2))/3
-            forall (n=1:nnob,m=1:nnob,j=1:2) kig(1,n,j,m) = 0
-            forall (n=1:nnob,m=1:nnob,j=1:2) kig(2,n,j,m) = hdeg(j)*vffb(n,kpg)*vffb(m,kpg)
-            
-            ! Kgg
-            dgg = dsde_lc(ndimsi+1:ndimsi+2,ndimsi+1:ndimsi+2)
-            forall (i=1:2,n=1:nnob,j=1:2,m=1:nnob) kgg(i,n,j,m) = vffb(n,kpg)*dgg(i,j)*vffb(m,kpg)
-            dnn = dsde_lc(ndimsi+3:ndimsi+2+ndim,ndimsi+3:ndimsi+2+ndim)
-            kgg(1,:,1,:) = kgg(1,:,1,:) + matmul( matmul(dffb,dnn), transpose(dffb) )
-
-            if (matsym) goto 200
-
-            ! Kiu
-            die(1,:)=kr
-            die(2,:)=hdeep
-            diebu = prod_kb(die,bu)
-            forall (i=1:ndim,n=1:nno,j=1:2,m=1:nnob) kiu(i,n,j,m) = vffb(n,kpg)*diebu(i,j,m)
-            
-            ! Kgu
-            dge(1,:)=dev(dsde_lc(ndimsi+1,1:ndimsi))
-            dge(2,:)=dev(dsde_lc(ndimsi+2,1:ndimsi))
-            dgebu = prod_kb(dge,bu)
-            forall (i=1:ndim,n=1:nno,j=1:2,m=1:nnob) kgu(i,n,j,m) = vffb(n,kpg)*dgebu(i,j,m)
-            
-            ! Kgi
-            dgeh(1) = sum(dsde_lc(ndimsi+1,1:3))/3
-            dgeh(2) = sum(dsde_lc(ndimsi+2,1:3))/3
-            forall (i=1:ndim,n=1:nno,m=1:nnob) kgi(i,n,1,m) = 0
-            forall (i=1:ndim,n=1:nno,m=1:nnob) kgi(i,n,2,m) = dgeh(i)*vffb(n,kpg)*vffb(m,kpg)
-
-200         continue
-
-            ! Stockage dans la matrice globale
+            ! Assemblage des blocs de la matrice EF
             if (.not. matsym) then
-                forall (i=1:ndim,n=1:nno,j=1:ndim,m=1:nno) matr(xu(j,m),xu(i,n)) = &
-                    matr(xu(j,m),xu(i,n)) + kuu(i,n,j,m)*poids
-
-                forall (i=1:ndim,n=1:nno,j=1:2,m=1:nnob) matr(xi(j,m),xu(i,n)) = &
-                    matr(xi(j,m),xu(i,n)) + kui(i,n,j,m)*poids
-
-                forall (i=1:ndim,n=1:nno,j=1:2,m=1:nnob) matr(xg(j,m),xu(i,n)) = &
-                    matr(xg(j,m),xu(i,n)) + kug(i,n,j,m)*poids
-
-                forall (i=1:2,n=1:nnob,j=1:ndim,m=1:nno) matr(xu(j,m),xi(i,n)) = &
-                    matr(xu(j,m),xi(i,n)) + kiu(i,n,j,m)*poids
-
-                forall (i=1:2,n=1:nnob,j=1:2,m=1:nnob) matr(xi(j,m),xi(i,n)) = &
-                    matr(xi(j,m),xi(i,n)) + kii(i,n,j,m)*poids
-
-                forall (i=1:2,n=1:nnob,j=1:2,m=1:nnob) matr(xg(j,m),xi(i,n)) = &
-                    matr(xg(j,m),xi(i,n)) + kig(i,n,j,m)*poids
-
-                forall (i=1:2,n=1:nnob,j=1:ndim,m=1:nno) matr(xu(j,m),xg(i,n)) = &
-                    matr(xu(j,m),xg(i,n)) + kgu(i,n,j,m)*poids
-
-                forall (i=1:2,n=1:nnob,j=1:2,m=1:nnob) matr(xi(j,m),xg(i,n)) = &
-                    matr(xi(j,m),xg(i,n)) + kgi(i,n,j,m)*poids
-
-                forall (i=1:2,n=1:nnob,j=1:2,m=1:nnob) matr(xg(j,m),xg(i,n)) = &
-                    matr(xg(j,m),xg(i,n)) + kgg(i,n,j,m)*poids
-
+                call add_matr(matr,xu,xu,poids*prod_bkb(bu,kefuu,bu))
+                call add_matr(matr,xu,xg,poids*prod_bkb(bu,kefug,bg))
+                call add_matr(matr,xu,xq,poids*prod_bkb(bu,kefuq,bq))
+                call add_matr(matr,xg,xu,poids*prod_bkb(bg,kefgu,bu))
+                call add_matr(matr,xg,xg,poids*prod_bkb(bg,kefgg,bg))
+                call add_matr(matr,xg,xq,poids*prod_bkb(bg,kefgq,bq))
+                call add_matr(matr,xq,xu,poids*prod_bkb(bq,kefqu,bu))
+                call add_matr(matr,xq,xg,poids*prod_bkb(bq,kefqg,bg))
+                call add_matr(matr,xq,xq,poids*prod_bkb(bq,kefqq,bq))
             else
                 ASSERT(.false.)
             end if
-
         end if
-            
+
+    end do gauss
 
 
-    end do 
-
-
-
-      
-! - SYNTHESE DES CODES RETOURS
+! - SYNTHESE DES CODES RETOURS ET LIBERATION DES OBJETS
 999 continue
-    call codere(cod, npg, codret)
-    call gdlog_delete(gdl)
+    if (resi) call codere(cod, npg, codret)
+    call gdlog_delete(gdlm)
+    call gdlog_delete(gdlp)
 
 
 
 contains
+
+
+function prod_bd(b,d) result(bd)
+    implicit none
+    real(kind=8):: b(:,:,:),d(:,:)
+    real(kind=8):: bd(size(b,1))
+    ! -------------------------------------------------------------------------
+    integer:: neps,ndim,nno
+    ! -------------------------------------------------------------------------
+    neps = size(b,1)
+    ndim = size(b,2)
+    nno  = size(b,3)
+    ASSERT(size(d,1).eq.ndim)
+    ASSERT(size(d,2).eq.nno)
+    call dgemv('n',neps,ndim*nno,1.d0,b,neps,d,1,0.d0,bd,1)
+end function prod_bd
+
+
 
 function prod_sb(s,b) result(sb)
     implicit none
     real(kind=8)::s(:),b(:,:,:)
     real(kind=8)::sb(size(b,2),size(b,3))
     ! -------------------------------------------------------------------------
-    integer:: ndim,nno,ndimsi
+    integer:: ndim,nno,neu
     ! -------------------------------------------------------------------------
     ndim = size(b,2)
     nno  = size(b,3)
-    ndimsi = size(s)
-    ASSERT(ndimsi.eq.size(b,1))
-    call dgemv('t',ndimsi,ndim*nno,1.d0,b,ndimsi,s,1,0.d0,sb,1)
+    neu = size(s)
+    ASSERT(neu.eq.size(b,1))
+    call dgemv('t',neu,ndim*nno,1.d0,b,neu,s,1,0.d0,sb,1)
 end function prod_sb
 
 
-function prod_kb(k,b) result(kb)
+function prod_bkb(bin,kinjm,bjm) result(bkb)
     implicit none
-    real(kind=8)::k(:,:),b(:,:,:)
-    real(kind=8)::kb(size(k,1),size(b,2),size(b,3))
+    real(kind=8),intent(in):: bin(:,:,:),bjm(:,:,:),kinjm(:,:)
+    real(kind=8)           :: bkb(size(bin,1),size(bin,2),size(bjm,1),size(bjm,2))
     ! -------------------------------------------------------------------------
-    integer:: ndim,nno
+    integer:: ndim1,ndim2,nno1,nno2,neps1,neps2
+    real(kind=8)::kbjm(size(bin,1),size(bjm,2),size(bjm,3))
     ! -------------------------------------------------------------------------
-    ndim = size(b,2)
-    nno  = size(b,3)
-    ASSERT(size(k,2).eq.size(b,1))
-    call dgemm('n','n',size(k,1),ndim*nno,size(k,2),1.d0,k,size(k,1),b,size(b,1),0.d0,kb,size(k,1))
-end function prod_kb
+    neps1 = size(bin,1)
+    ndim1 = size(bin,2)
+    nno1  = size(bin,3)
+    neps2 = size(bjm,1)
+    ndim2 = size(bjm,2)
+    nno2  = size(bjm,3)
+    ASSERT(size(kinjm,1).eq.neps1)
+    ASSERT(size(kinjm,2).eq.neps2)
+    call dgemm('n','n',neps1,ndim2*nno2,neps2,1.d0,kinjm,neps1,bjm,neps2,0.d0,kbjm,neps1)
+    call dgemm('t','n',ndim1*nno1,ndim2*nno2,neps1,1.d0,bin,neps1,kbjm,neps1,0.d0,bkb,ndim1*nno1)
+end function prod_bkb
 
 
-function prod_bb(b1,b2) result(bb)
+subroutine add_fint(fint,xin,fin)
+    ! Contribution d'un bloc de forces au vecteur des forces interieures
     implicit none
-    real(kind=8)::b1(:,:,:),b2(:,:,:)
-    real(kind=8)::bb(size(b1,2),size(b1,3),size(b2,2),size(b2,3))
+    integer,intent(in)        :: xin(:,:)
+    real(kind=8),intent(in)   :: fin(:,:)
+    real(kind=8),intent(inout):: fint(:)
     ! -------------------------------------------------------------------------
-    integer:: ndno1,ndno2,ndimsi
+    integer:: ndim,nno,i,n
     ! -------------------------------------------------------------------------
-    ndno1  = size(b1,2)*size(b1,3)
-    ndno2  = size(b2,2)*size(b2,3)
-    ndimsi = size(b1,1)
-    ASSERT(size(b2,1).eq.ndimsi)
-    call dgemm('t','n',ndno1,ndno2,ndimsi,1.d0,b1,ndimsi,b2,ndimsi,0.d0,bb,ndno1)
-end function prod_bb
+    ndim = size(fin,1)
+    nno  = size(fin,2)
+    ASSERT(ndim.eq.size(xin,1))
+    ASSERT(nno .eq.size(xin,2))
+    forall (i=1:ndim,n=1:nno) fint(xin(i,n)) = fint(xin(i,n)) + fin(i,n)
+end subroutine add_fint
 
 
-
-
-
-
-
-function dev(tns)
+subroutine add_matr(matr,xin,xjm,kinjm)
+    ! Contribution d'un bloc de matrice a la matrice tangente (stockage j,m,i,n)
     implicit none
-    real(kind=8)::tns(:)
-    real(kind=8)::dev(size(tns))
-    dev = tns - sum(tns(1:3))/3*kr
-end function dev
+    integer,intent(in)        :: xin(:,:),xjm(:,:)
+    real(kind=8),intent(in)   :: kinjm(:,:,:,:)
+    real(kind=8),intent(inout):: matr(:,:)
+    ! -------------------------------------------------------------------------
+    integer:: ndimin,nnoin,ndimjm,nnojm,i,n,j,m
+    ! -------------------------------------------------------------------------
+    ndimin = size(kinjm,1)
+    nnoin  = size(kinjm,2)
+    ndimjm = size(kinjm,3)
+    nnojm  = size(kinjm,4)
+    ASSERT(ndimin.eq.size(xin,1))
+    ASSERT(nnoin .eq.size(xin,2))
+    ASSERT(ndimjm.eq.size(xjm,1))
+    ASSERT(nnojm .eq.size(xjm,2))
+    forall (i=1:ndimin,n=1:nnoin,j=1:ndimjm,m=1:nnojm) matr(xjm(j,m),xin(i,n)) = &
+        matr(xjm(j,m),xin(i,n)) + kinjm(i,n,j,m)
+end subroutine add_matr
+
 
 end subroutine

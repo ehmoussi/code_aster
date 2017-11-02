@@ -21,7 +21,7 @@ subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
                   geomi, compor, mate, lgpg,&
                   crit, angmas, instm, instp, matsym,&
                   ddlm, ddld, sigmg, vim, sigpg,&
-                  vip, fint,matr, codret)
+                  vipout, fint,matr, codret)
 
 
     implicit none
@@ -59,7 +59,7 @@ subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
     real(kind=8)     :: geomi(ndim,nno), crit(*), instm, instp
     real(kind=8)     :: vff(nno, npg),vffb(nnob, npg)
     real(kind=8)     :: angmas(3), ddlm(nddl), ddld(nddl), sigmg(neps, npg),sigpg(neps, npg)
-    real(kind=8)     :: vim(lgpg, npg), vip(lgpg, npg)
+    real(kind=8)     :: vim(lgpg, npg), vipout(lgpg, npg)
     real(kind=8)     :: fint(nddl)
     real(kind=8)     :: matr(nddl,nddl)
 ! ----------------------------------------------------------------------
@@ -105,8 +105,9 @@ subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
 !               DIM :(NNO,3) EN 3D, (NNO,4) EN AXI, (NNO,2) EN D_PLAN
 ! ----------------------------------------------------------------------
     aster_logical, parameter :: grand = ASTER_TRUE
+    aster_logical, parameter :: cplan = ASTER_FALSE
 ! ----------------------------------------------------------------------
-    aster_logical:: axi, resi, rigi, cplan
+    aster_logical:: axi, resi, rigi
     integer      :: g,i,j,n,m,cod(npg),nddl1
     real(kind=8) :: dff(nno,ndim)
     real(kind=8) :: dffb(nnob,ndim)
@@ -119,7 +120,7 @@ subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
     real(kind=8) :: deplt(nno*ndim), deplm(nno*ndim), depld(nno*ndim)
     real(kind=8) :: r, poids, tm(6), tp(6), deps(6),tmg(neps),tpg(neps)
     real(kind=8) :: gn(3, 3), lamb(3), logl(3), rbid(1), tbid(6)
-    real(kind=8) :: dsidep(6,6), pk2(6), pk2m(6)
+    real(kind=8) :: dsidep(6,6), pk2(6), pk2m(6),vip(lgpg)
     real(kind=8) :: me(3, 3, 3, 3), xi(3, 3), feta(4), pes(6, 6)
     real(kind=8) :: epmlg(neps), depsg(neps),jp
     real(kind=8) :: fu(nno*ndim)
@@ -130,9 +131,15 @@ subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
 #define nu2(n,i)  nnob*2 + (n-1)*ndim + i
 #define uu1(n,i)  (n-1)*ndim+i
 ! ----------------------------------------------------------------------
-!     write (6,*) 'debut ngvlog'
 
 ! - INITIALISATION 
+
+    axi  = typmod(1).eq.'AXIS'
+    resi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RAPH_MECA'
+    rigi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RIGI_MECA'
+
+    nddl1 = nno*ndim
+    nddl  = nno*ndim+2*nnob
 
     allocate (def(2*ndim, nno,ndim))
     allocate (pff(2*ndim, nno, nno))
@@ -142,24 +149,19 @@ subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
     allocate (b(neps, nddl))
     allocate (bb(neps, nddl))
 
-    nddl1 = nno*ndim
-    nddl  = nno*ndim+2*nnob
-    matr  = 0
+    if (resi) fint  = 0
+    if (rigi) matr = 0
+
     matuu = 0
-    fint  = 0
     fu    = 0
     tp    = 0
     deff  = 0
     bst   = 0
     cod   = 0  
-    sigpg = 0
     pk2m  = 0
     sigm  = 0
     dtde  = 0
-
-    axi  = typmod(1).eq.'AXIS'
-    resi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RAPH_MECA'
-    rigi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RIGI_MECA'
+    vip   = 0
 
 
 !
@@ -260,7 +262,7 @@ subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
                     mate, compor, crit, instm, instp,&
                     neps, epmlg, depsg, neps, tmg,&
                     vim(1, g), option, angmas, 1,rbid,&
-                    tpg, vip(1, g), neps*neps, dtdeg, 1,&
+                    tpg, vip, neps*neps, dtdeg, 1,&
                     rbid, cod(g))
 
 
@@ -281,13 +283,11 @@ subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
         end do
 
         call poslog(resi, rigi, tm, tp, fm,&
-                    lgpg, vip(1, g), ndim, fp, g,&
+                    lgpg, vip, ndim, fp, g,&
                     dtde, sigm, cplan, fami, mate,&
                     instp, angmas, gn, lamb, logl,&
                     sigp, dsidep, pk2m, pk2, cod(g))
   
-        call dcopy(2*ndim, sigp, 1, sigpg(1,g), 1)
-        call dcopy(2+ndim, tpg(2*ndim+1), 1, sigpg(2*ndim+1,g), 1)
         if (cod(g) .eq. 1) then
             goto 999
         endif
@@ -300,7 +300,9 @@ subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
 ! - FORCE INTERIEURE
         if (resi) then          
             call dcopy(2*ndim, sigp, 1, sigpg(1,g), 1)
+            call dcopy(2+ndim, tpg(2*ndim+1), 1, sigpg(2*ndim+1,g), 1)
             fint = fint + poids*matmul(transpose(b),tpg)
+            vipout(:,g) = vip(:)
         endif
 
 
@@ -348,7 +350,7 @@ subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
 
 
 999  continue
-    call codere(cod, npg, codret)
+    if (resi) call codere(cod, npg, codret)
 
     deallocate(def,pff,deff,bst,matuu,b,bb)
 end subroutine

@@ -35,6 +35,6 @@ loi = LoiComportement(
     algo_inte      = ('NEWTON',),
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
-    syme_matr_tang = ('Yes',),
+    syme_matr_tang = ('No',),
     exte_vari      = None,
 )
