@@ -19,8 +19,20 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from .ExecuteCommand import ExecuteCommandWithType
 from code_aster import AssemblyMatrixDouble
+from .ExecuteCommand import ExecuteCommand
 
+class AssembleMatrixOperator(ExecuteCommand):
+    """Execute legacy operator ASSE_MATRICE."""
+    command_name = "ASSE_MATRICE"
 
-ASSE_MATRICE = ExecuteCommandWithType("ASSE_MATRICE", AssemblyMatrixDouble)
+    def create_result(self, keywords):
+        """Create the result.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = AssemblyMatrixDouble.create()
+
+ASSE_MATRICE = AssembleMatrixOperator.run
+

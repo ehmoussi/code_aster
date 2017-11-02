@@ -19,8 +19,21 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from .ExecuteCommand import ExecuteCommandWithType
 from code_aster import DOFNumbering
+from .ExecuteCommand import ExecuteCommand
+
+class NumberDOFOperator(ExecuteCommand):
+    """Execute legacy operator NUME_DDL."""
+    command_name = "NUME_DDL"
+
+    def create_result(self, keywords):
+        """Create the result.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = DOFNumbering.create()
+
+NUME_DDL = NumberDOFOperator.run
 
 
-NUME_DDL = ExecuteCommandWithType("NUME_DDL", DOFNumbering)
