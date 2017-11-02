@@ -12,8 +12,8 @@ code_aster.init()
 test = code_aster.TestCase()
 
 n = 10
-valx = np.arange( n ) * 2. * pi / n
-valy = np.sin( valx )
+valx = np.arange(n) * 2. * pi / n
+valy = np.sin(valx)
 
 DEBUT()
 

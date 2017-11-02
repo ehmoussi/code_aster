@@ -24,6 +24,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <cstdio>
 
 #include "astercxx.h"
 #include "Functions/Formula.h"
@@ -36,14 +37,21 @@ FormulaInstance::FormulaInstance( const std::string jeveuxName ):
     _property( JeveuxVectorChar24( getName() + ".PROL" ) ),
     _variables( JeveuxVectorChar8( getName() + ".NOVA" ) ),
     _expression( "" ),
-    _context( "" )
+    _code( NULL ),
+    _context( NULL )
 {
 }
 
 FormulaInstance::FormulaInstance() :
     FormulaInstance::FormulaInstance( ResultNaming::getNewResultName() )
 {
-    propertyAllocate();
+propertyAllocate();
+}
+
+FormulaInstance::~FormulaInstance()
+{
+    Py_XDECREF(_code);
+    Py_XDECREF(_context);
 }
 
 void FormulaInstance::setVariables( const std::vector< std::string > &names )
@@ -63,11 +71,62 @@ void FormulaInstance::setVariables( const std::vector< std::string > &names )
 std::vector< std::string > FormulaInstance::getVariables() const
 {
     _variables->updateValuePointer();
-    long nbvar = _variables->size();
+    long nbvars = _variables->size();
     std::vector< std::string > vars;
-    for ( int i = 0; i < nbvar; ++i )
+    for ( int i = 0; i < nbvars; ++i )
     {
         vars.push_back( (*_variables)[i].rstrip() );
     }
     return vars;
+}
+
+void FormulaInstance::setExpression( const std::string expression )
+    throw(std::runtime_error)
+{
+    const std::string name = "formula";
+    _expression = expression;
+    Py_XDECREF(_code);
+    _code = (PyCodeObject*)Py_CompileString(_expression.c_str(), name.c_str(), Py_eval_input);
+    if ( _code == NULL ) {
+        PyErr_Print();
+        throw std::runtime_error("Invalid syntax in expression.");
+    }
+}
+
+double FormulaInstance::evaluate( const std::vector< double > values ) const
+    throw ( std::runtime_error )
+{
+    const long nbvars = _variables->size();
+    const long nbvalues = values.size();
+    if ( nbvalues != nbvars ) {
+        throw std::runtime_error("Expecting exactly " + std::to_string(nbvars)
+        + " values, not " + std::to_string(nbvalues));
+    }
+
+    // PyObject* globals = PyDict_New();
+    // PyDict_Update(globals, _context);
+
+    PyObject* locals = PyDict_New();
+    std::vector< double >::const_iterator valIt = values.begin();
+    long i = 0;
+    std::string param;
+    for ( ; valIt != values.end(); ++valIt ) {
+        param = (*_variables)[i].rstrip();
+        PyDict_SetItemString(locals, param.c_str(), PyFloat_FromDouble(*valIt));
+        ++i;
+    }
+
+    PyObject* res = PyEval_EvalCode(_code, _context, locals);
+    Py_DECREF(locals);
+    if ( res == NULL ) {
+        PyErr_Print();
+        std::cout << "Parameters values:";
+        PyObject_Print(locals, stdout, 0);
+        std::cout << std::endl;
+        throw std::runtime_error("Error during evaluation of '" + _expression + "'.");
+    }
+    double result = PyFloat_AsDouble(res);
+    Py_DECREF(res);
+    // Py_DECREF(globals);
+    return result;
 }
