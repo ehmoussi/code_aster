@@ -28,15 +28,15 @@ test.assertEqual(fsin(0.), 0.)
 test.assertAlmostEqual(fsin(pi / 6.), 0.5)
 test.assertEqual(fsin(pi / 2.), 1.)
 
-n = 10
+n = 12
 valx = numpy.arange(n) * 2. * pi / n
 
-# ftest = CALC_FONC_INTERP(FONCTION=fsin,
-#                          VALE_PARA=valx)
-# ftest.debugPrint()
+ftest = CALC_FONC_INTERP(FONCTION=fsin,
+                         VALE_PARA=valx)
+ftest.debugPrint()
 
-# test.assertEqual(ftest(0.), 0.)
-# test.assertAlmostEqual(ftest(pi / 6.), 0.5)
-# test.assertEqual(ftest(pi / 2.), 1.)
+test.assertEqual(ftest(0.), 0.)
+test.assertAlmostEqual(ftest(pi / 6.), 0.5)
+test.assertEqual(ftest(pi / 2.), 1.)
 
 test.printSummary()

@@ -37,6 +37,7 @@ class sd_formule(AsBase):
     nomj = SDNom(fin=19)
     PROL = AsVK24(lonmax=6, )
     NOVA = AsVK8()
+    ADDR = AsVR(lonmax=2)
 
 
 class sd_fonction_aster(sd_titre):

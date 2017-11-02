@@ -29,6 +29,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "astercxx.h"
+#include "definition.h"
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 
@@ -48,10 +49,12 @@ class FormulaInstance: public DataStructure
         JeveuxVectorChar24 _property;
         // Vecteur Jeveux '.VALE'
         JeveuxVectorChar8 _variables;
+        // Pointers to PyObject
+        JeveuxVectorLong _pointers;
         // Expression
         std::string _expression;
         // Compiled expression
-        PyCodeObject* _code;
+        PyObject* _code;
         // Evaluation context
         PyObject* _context;
 
@@ -122,7 +125,7 @@ class FormulaInstance: public DataStructure
             return _expression;
         }
 
-        double evaluate( const std::vector< double > values ) const
+        double evaluate( const std::vector< double > &values ) const
             throw(std::runtime_error);
 
         /**
@@ -137,6 +140,7 @@ class FormulaInstance: public DataStructure
             }
             Py_XDECREF(_context);
             _context = context;
+            (*_pointers)[1] = (long)_context;
             Py_INCREF(_context);
         }
 
@@ -148,6 +152,7 @@ class FormulaInstance: public DataStructure
         {
             if (! _context ) {
                 _context = PyDict_New();
+                (*_pointers)[1] = (long)_context;
             }
             Py_INCREF(_context);
             return _context;
@@ -180,10 +185,31 @@ class FormulaInstance: public DataStructure
 };
 
 /**
-* @typedef FormulaPtr
-* @brief  Pointer to a FormulaInstance
-* @author Mathieu Courtois
-*/
+ * @typedef FormulaPtr
+ * @brief  Pointer to a FormulaInstance
+ * @author Mathieu Courtois
+ */
 typedef boost::shared_ptr< FormulaInstance > FormulaPtr;
+
+/**
+ * @brief Evaluate Python code of a Formula
+ */
+double evaluate_formula( const PyObject* code, PyObject* globals,
+                         const std::vector< std::string > &variables,
+                         const std::vector< double > &values,
+                         int* retcode );
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void DEFPPSPPPP(EVAL_FORMULA, eval_formula,
+    ASTERINTEGER* pcode, ASTERINTEGER* pglobals,
+    char* array_vars, STRING_SIZE lenvars, ASTERDOUBLE* array_values,
+    ASTERINTEGER* nbvar, _OUT ASTERINTEGER* iret, _OUT ASTERDOUBLE* result );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* FORMULA_H_ */

@@ -20,7 +20,7 @@ subroutine fointe(codmes, nomf, nbpu, nompu, valpu,&
                   resu, ier)
     implicit none
 #include "jeveux.h"
-#include "asterc/fiintf.h"
+#include "asterfort/fiintf.h"
 #include "asterc/r8prem.h"
 #include "asterc/r8vide.h"
 #include "asterfort/focoli.h"

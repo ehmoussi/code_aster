@@ -623,62 +623,6 @@ void DEFSSPPPPP(GETVR8_WRAP,getvr8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
 
 
 /* ------------------------------------------------------------------ */
-#define CALL_FIINTF(a, b, c, d, e, f, g) CALLSPSPPSP(FIINTF,fiintf, a, b, c, d, e, f, g)
-
-void DEFSPSPPSP(FIINTF,fiintf,_IN char *nomfon,_IN STRING_SIZE lfon,
-                              _IN ASTERINTEGER *nbpu,_IN char *param,_IN STRING_SIZE lpara,
-                              _IN ASTERDOUBLE *val,
-                             _OUT ASTERINTEGER *iret,
-                              _IN char *coderr, _INOUT STRING_SIZE lcod,
-                             _OUT ASTERDOUBLE *resu)
-{
-    printf("FIINTF ???\n");
-    ASTERINTEGER ier=SIGABRT;
-    CALL_ASABRT( &ier );
-    /* TODO */
-
-        PyObject *tup2  = (PyObject*)0 ;
-        PyObject *res, *piret;
-        PyObject *tup_par;
-        PyObject *tup_val;
-        char *kvar, *sret;
-        int i;
-        tup_par = PyTuple_New( (Py_ssize_t)*nbpu ) ;
-        tup_val = PyTuple_New( (Py_ssize_t)*nbpu ) ;
-        for(i=0;i<*nbpu;i++){
-           kvar = param + i*lpara;
-           PyTuple_SetItem( tup_par, i, PyString_FromStringAndSize(kvar,(Py_ssize_t)lpara) ) ;
-        }
-        for(i=0;i<*nbpu;i++){
-           PyTuple_SetItem( tup_val, i, PyFloat_FromDouble((double)val[i]) ) ;
-        }
-
-        tup2 = PyObject_CallMethod(get_sh_etape(),"fiintf","s#s#OO",
-                                   coderr,lcod,nomfon,lfon,tup_par,tup_val);
-
-        if (tup2 == NULL) MYABORT("erreur dans la partie Python");
-        piret = PyTuple_GetItem(tup2, 0);
-        res   = PyTuple_GetItem(tup2, 1);
-
-        *iret = (ASTERINTEGER)PyInt_AsLong(piret);
-        *resu = (ASTERDOUBLE)0.;
-        if ( *iret == 0 ) {
-           if (PyComplex_Check(res)) {
-               *resu    = (ASTERDOUBLE)PyComplex_RealAsDouble(res);
-               *(resu+1)= (ASTERDOUBLE)PyComplex_ImagAsDouble(res);
-           } else if (PyFloat_Check(res) || PyLong_Check(res) || PyInt_Check(res)) {
-               *resu    = (ASTERDOUBLE)PyFloat_AsDouble(res);
-           } else {
-              *iret = 4;
-           }
-        }
-
-        Py_DECREF(tup_par);
-        Py_DECREF(tup_val);
-        Py_DECREF(tup2);
-        return ;
-}
-
 void DEFSPSPPSP(FIINTFC,fiintfc,_IN char *nomfon,_IN STRING_SIZE lfon,
                                 _IN ASTERINTEGER *nbpu,_IN char *param,_IN STRING_SIZE lpara,
                                 _IN ASTERDOUBLE *val,
@@ -686,8 +630,8 @@ void DEFSPSPPSP(FIINTFC,fiintfc,_IN char *nomfon,_IN STRING_SIZE lfon,
                                 _IN char *coderr, _INOUT STRING_SIZE lcod,
                                _OUT ASTERDOUBLE *resuc)
 {
-    return DEFSPSPPSP(FIINTF,fiintf, nomfon, lfon, nbpu, param, lpara, val, iret,
-                                     coderr, lcod, resuc);
+    // return DEFSPSPPSP(FIINTF,fiintf, nomfon, lfon, nbpu, param, lpara, val, iret,
+    //                                  coderr, lcod, resuc);
 }
 
 /* ------------------------------------------------------------------ */
