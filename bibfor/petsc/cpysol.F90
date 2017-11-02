@@ -28,7 +28,6 @@ subroutine cpysol(numddl, rsolu, debglo, vecpet, nbval)
     integer :: lgenvo, lgrecep, jvaleue, jvaleur, iaux, jaux, jnulg, jprddl, jnequ, nloc
     integer :: numglo, jdeeq, jrefn, jmlogl, nuno1, nucmp1, numloc
 !
-!    integer(kind=4) :: iermpi, lint, lint4, lr8, lc8
     integer(kind=4) :: n4r, n4e, iaux4, num4, numpr4
     mpi_int :: mrank, msize, iermpi, mpicou
     mpi_int :: lr8, lint, lint4, nbv4, nbpro4, nudes4, numes4
@@ -36,10 +35,6 @@ subroutine cpysol(numddl, rsolu, debglo, vecpet, nbval)
     character(len=4) :: chnbjo
     character(len=8) :: k8bid, noma
     character(len=24) :: nonbjo, nojoinr, nojoine, nonulg
-!
-!    logical :: first
-!    save         first,lint,lint4,lr8,lc8
-!    data         first /.true./
 !----------------------------------------------------------------------
 !
     call jemarq()
@@ -99,19 +94,11 @@ subroutine cpysol(numddl, rsolu, debglo, vecpet, nbval)
             num4 = iaux
             numpr4 = numpro
             if (rang .lt. numpro) then
-!                call MPI_SEND(zr(jvaleue), n4e, lr8, numpr4, num4,&
-!                              MPI_COMM_WORLD, iermpi)
-!                call MPI_RECV(zr(jvaleur), n4r, lr8, numpr4, num4,&
-!                              MPI_COMM_WORLD, MPI_STATUS_IGNORE, iermpi)
                 call asmpi_send_r(zr(jvaleue), n4e, numpr4, num4,&
                                   mpicou)
                 call asmpi_recv_r(zr(jvaleur), n4r, numpr4, num4,&
                                   mpicou)
             else if (rang.gt.numpro) then
-!                call MPI_RECV(zr(jvaleur), n4r, lr8, numpr4, num4,&
-!                              MPI_COMM_WORLD, MPI_STATUS_IGNORE, iermpi)
-!                call MPI_SEND(zr(jvaleue), n4e, lr8, numpr4, num4,&
-!                              MPI_COMM_WORLD, iermpi)
                 call asmpi_recv_r(zr(jvaleur), n4r, numpr4, num4,&
                                   mpicou)
                 call asmpi_send_r(zr(jvaleue), n4e, numpr4, num4,&
