@@ -637,14 +637,6 @@ implicit none
 ! ---    A CECI PRES QUE DANS CE DERNIER CAS, ON PLACE
 ! ---    LE SECOND LAGRANGE APRES LE PREMIER :
 !        -----------------------------------
-                    if (lparallel_mesh) then
-                        if(lagr_mult(n22).gt.1.or.lagr_mult(n32).gt.1) then
-                            zi(iddlag+3* (ilag2-1)) = 0
-                            zi(iddlag+3* (ilag3-1)) = 0
-                            zi(iddlag+3* (ilag2-1)+1) = 0
-                            zi(iddlag+3* (ilag3-1)+1) = 0
-                        endif
-                    endif
                     if (n0 .gt. 0) then
                         zi(iddlag+3* (ilag2-1)) = 0
                         zi(iddlag+3* (ilag3-1)) = 0
@@ -802,6 +794,14 @@ implicit none
                         zi(ilsuiv+n1re) = zi(ilsuiv+n1re) + 1
                         zi(idsuiv(n1re+1,zi(ilsuiv+n1re))) = n3
                         zi(iderli+n3) = n1
+                    endif
+                    if (lparallel_mesh) then
+                        if(lagr_mult(n22).gt.1.or.lagr_mult(n32).gt.1) then
+                            zi(iddlag+3* (ilag2-1)) = 0
+                            zi(iddlag+3* (ilag3-1)) = 0
+                            zi(iddlag+3* (ilag2-1)+1) = 0
+                            zi(iddlag+3* (ilag3-1)+1) = 0
+                        endif
                     endif
                 endif
             endif
