@@ -26,13 +26,15 @@
 #include "PythonBindings/ElementaryMatrixInterface.h"
 #include <boost/python.hpp>
 
+BOOST_PYTHON_FUNCTION_OVERLOADS(create_overloads, ElementaryMatrixInstance::create, 0, 1)
+
 void exportElementaryMatrixToPython()
 {
     using namespace boost::python;
 
     class_< ElementaryMatrixInstance, ElementaryMatrixInstance::ElementaryMatrixPtr,
             bases< DataStructure > > ( "ElementaryMatrix", no_init )
-        .def( "create", &ElementaryMatrixInstance::create )
+        .def( "create", &ElementaryMatrixInstance::create, create_overloads())
         .staticmethod( "create" )
     ;
 };
