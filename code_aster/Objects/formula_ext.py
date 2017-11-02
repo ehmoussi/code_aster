@@ -29,7 +29,7 @@ import pickle
 
 from libaster import Formula
 
-from ..Utilities import accept_array
+from ..Utilities import accept_array, deprecated
 
 
 class injector(object):
@@ -85,6 +85,12 @@ class ExtendedFormula(injector, Formula):
             raise ValueError("Error evaluating the formula {0!r}:\n{1}".format(
                 self.getExpression(), str(exc)))
         return value
+
+    @property
+    @deprecated(help="Use 'getVariables()' instead.")
+    def nompar(self):
+        """Return the variables names."""
+        return self.getVariables()
 
 
 class FormulaC(Formula):
