@@ -19,8 +19,22 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from .ExecuteCommand import ExecuteCommandWithType
-from code_aster import AssemblyMatrixDouble
+from ..Objects import GenericMechanicalLoad
+from .ExecuteCommand import ExecuteCommand
 
 
-ASSE_MATRICE = ExecuteCommandWithType("ASSE_MATRICE", AssemblyMatrixDouble)
+class MechanicalLoadDefinition(ExecuteCommand):
+    """Command that defines :class:`~code_aster.Objects.GenericMechanicalLoad`.
+    """
+    command_name = "AFFE_CHAR_MECA_F"
+
+    def create_result(self, keywords):
+        """Initialize the result.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = GenericMechanicalLoad.create(keywords["MODELE"])
+
+
+AFFE_CHAR_MECA_F = MechanicalLoadDefinition()

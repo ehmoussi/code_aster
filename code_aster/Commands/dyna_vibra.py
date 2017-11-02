@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import FullDynamicResultContainer
+from ..Objects import FullDynamicResultsContainer
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -36,7 +36,7 @@ class VibrationDynamics(ExecuteCommand):
         base = keywords["BASE_CALCUL"]
         typ  = keywords["TYPE_CALCUL"]
         if base == "PHYS" and typ == "TRAN":
-            self._result = FullDynamicResultContainer.create()
+            self._result = FullDynamicResultsContainer.create()
         else:
             raise NotImplementedError("Types of analysis {0!r} and {0!r} not yet "
                                       "implemented".format(typ, base))
@@ -50,4 +50,4 @@ class VibrationDynamics(ExecuteCommand):
         self._result.update()
 
 
-DYNA_VIBRA = ResultCreator()
+DYNA_VIBRA = VibrationDynamics()
