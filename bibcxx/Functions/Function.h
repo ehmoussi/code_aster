@@ -35,10 +35,10 @@ typedef std::vector< double > VectorDouble;
 typedef std::vector< std::complex< double > > VectorComplex;
 
 /**
-* class BaseFunctionInstance
-*   Create a datastructure for a function with real values
-* @author Mathieu Courtois
-*/
+ * class BaseFunctionInstance
+ *   Create a datastructure for a function with real values
+ * @author Mathieu Courtois
+ */
 class BaseFunctionInstance: public DataStructure
 {
     private:
@@ -52,7 +52,7 @@ class BaseFunctionInstance: public DataStructure
         {
             // Create Jeveux vector ".PROL"
             _property->allocate( Permanent, 6 );
-            (*_property)[0] = "FONCTION";
+            (*_property)[0] = _funct_type;
             (*_property)[1] = "LIN LIN";
             (*_property)[2] = "";
             (*_property)[3] = "TOUTRESU";
@@ -63,6 +63,8 @@ class BaseFunctionInstance: public DataStructure
     protected:
         // Vecteur Jeveux '.VALE'
         JeveuxVectorDouble _value;
+        // Type of Function
+        std::string _funct_type;
 
     public:
         /**
@@ -72,17 +74,17 @@ class BaseFunctionInstance: public DataStructure
         typedef boost::shared_ptr< BaseFunctionInstance > BaseFunctionPtr;
 
         /**
-        * Constructeur
-        */
+         * Constructeur
+         */
         BaseFunctionInstance( const std::string type );
 
         BaseFunctionInstance( const std::string jeveuxName, const std::string type );
 
         /**
-        * @brief Definition of the name of the parameter (abscissa)
-        * @param name name of the parameter
-        * @type  name string
-        */
+         * @brief Definition of the name of the parameter (abscissa)
+         * @param name name of the parameter
+         * @type  name string
+         */
         void setParameterName( const std::string name )
         {
             if( !_property->isAllocated() )
@@ -91,10 +93,10 @@ class BaseFunctionInstance: public DataStructure
         }
 
         /**
-        * @brief Definition of the name of the result (ordinate)
-        * @param name name of the result
-        * @type  name string
-        */
+         * @brief Definition of the name of the result (ordinate)
+         * @param name name of the result
+         * @type  name string
+         */
         void setResultName( const std::string name )
         {
             if( !_property->isAllocated() )
@@ -103,34 +105,34 @@ class BaseFunctionInstance: public DataStructure
         }
 
         /**
-        * @brief Definition of the type of interpolation
-        * @param interpolation type of interpolation
-        * @type  interpolation string
-        * @todo checking
-        */
+         * @brief Definition of the type of interpolation
+         * @param interpolation type of interpolation
+         * @type  interpolation string
+         * @todo checking
+         */
         void setInterpolation( const std::string type ) throw ( std::runtime_error );
 
         /**
-        * @brief Definition of the type of extrapolation
-        * @param extrapolation type of extrapolation
-        * @type  extrapolation string
-        * @todo checking
-        */
+         * @brief Definition of the type of extrapolation
+         * @param extrapolation type of extrapolation
+         * @type  extrapolation string
+         * @todo checking
+         */
         void setExtrapolation( const std::string type ) throw ( std::runtime_error );
 
         /**
-        * @brief Assign the values of the function
-        * @param absc values of the abscissa
-        * @type  absc vector of double
-        * @param ord values of the ordinates
-        * @type  ord vector of double
-        */
+         * @brief Assign the values of the function
+         * @param absc values of the abscissa
+         * @type  absc vector of double
+         * @param ord values of the ordinates
+         * @type  ord vector of double
+         */
         virtual void setValues( const VectorDouble &absc, const VectorDouble &ord )
             throw ( std::runtime_error );
 
         /**
-        * @brief Return the values of the function as an unidimensional vector
-        */
+         * @brief Return the values of the function as an unidimensional vector
+         */
         std::vector<double> getValues() const
         {
             _value->updateValuePointer();
@@ -140,25 +142,25 @@ class BaseFunctionInstance: public DataStructure
         }
 
         /**
-        * @brief Return a pointer to the vector of data
-        */
+         * @brief Return a pointer to the vector of data
+         */
         const double* getDataPtr() const
         {
             return _value->getDataPtr();
         }
 
         /**
-        * @brief Return the number of points of the function
-        */
+         * @brief Return the number of points of the function
+         */
         virtual long size() const
         {
             return _value->size() / 2;
         }
 
         /**
-        * @brief Return the properties of the function
-        * @return vector of strings
-        */
+         * @brief Return the properties of the function
+         * @return vector of strings
+         */
         std::vector< std::string > getProperties() const
         {
             _property->updateValuePointer();
@@ -246,15 +248,25 @@ public:
     /**
     * Constructeur
     */
-    FunctionComplexInstance():
-        BaseFunctionInstance( "FONCTION_C" )
-    {
-    };
-
     FunctionComplexInstance( const std::string jeveuxName ):
         BaseFunctionInstance( jeveuxName, "FONCTION_C" )
     {
+        _funct_type = "FONCT_C";
     };
+
+    FunctionComplexInstance():
+        BaseFunctionInstance( "FONCTION_C" )
+    {
+        _funct_type = "FONCT_C";
+    };
+
+    /**
+     * @brief Return the number of points of the function
+     */
+    long size() const
+    {
+        return _value->size() / 3;
+    }
 
     /**
      * @brief Assign the values of the function

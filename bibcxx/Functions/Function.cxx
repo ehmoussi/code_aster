@@ -35,7 +35,8 @@ BaseFunctionInstance::BaseFunctionInstance( const std::string jeveuxName,
     DataStructure( jeveuxName + "           ", type ),
     _jeveuxName( getName() ),
     _property( JeveuxVectorChar24( getName() + ".PROL" ) ),
-    _value( JeveuxVectorDouble( getName() + ".VALE" ) )
+    _value( JeveuxVectorDouble( getName() + ".VALE" ) ),
+    _funct_type( type )
 {
 }
 
@@ -126,6 +127,7 @@ void FunctionComplexInstance::setValues( const VectorDouble &absc,
     {
         (*_value)[idx] = *abscIt;
         (*_value)[nbpts + 2 * idx] = *ordoIt;
+        ++ordoIt;
         (*_value)[nbpts + 2 * idx + 1] = *ordoIt;
         ++idx;
     }
@@ -135,4 +137,5 @@ void FunctionComplexInstance::setValues( const VectorDouble &absc,
                                          const VectorComplex &ordo )
     throw ( std::runtime_error )
 {
+    throw std::runtime_error( "Not yet implemented!" );
 }

@@ -174,7 +174,6 @@ def _add_assert_methods(cls):
                   'assertItemsEqual',
                   'assertLess',
                   'assertLessEqual',
-                  'assertListEqual',
                   'assertMultiLineEqual',
                   'assertNotAlmostEqual',
                   'assertNotEqual',
