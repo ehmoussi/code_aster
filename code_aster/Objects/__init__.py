@@ -36,7 +36,7 @@ from .assemblymatrix_ext import AssemblyMatrixDouble
 from .elementarycharacteristics_ext import ElementaryCharacteristics
 from .fieldonelements_ext import FieldOnElementsDouble
 from .fieldonnodes_ext import FieldOnNodesDouble
-from .formula_ext import Formula, FormulaC
+from .formula_ext import Formula
 from .function_ext import Function
 from .meshcoordinatesfield_ext import MeshCoordinatesField
 from .table_ext import Table

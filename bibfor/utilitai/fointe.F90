@@ -91,7 +91,7 @@ subroutine fointe(codmes, nomf, nbpu, nompu, valpu,&
 !     ------------------------------------------------------------------
     integer :: mxsave, mxpara, svnbpa, svpar, isvnxt, isvind, nextsv
     integer :: iaprol, iavale, iapara, luvale, lupara
-    real(kind=8) :: svresu
+    real(kind=8) :: svresu, tresu(1)
     character(len=1) :: svtypf
     character(len=2) :: svprgd
     character(len=24) :: svinte
@@ -145,7 +145,8 @@ subroutine fointe(codmes, nomf, nbpu, nompu, valpu,&
     if (zk24(lprol) .eq. 'INTERPRE') then
 !     ------------------------ CAS DES FORMULES ------------------------
         call fiintf(nomf, nbpu, nompu, valpu, ier,&
-                    'A', resu)
+                    'A', tresu)
+        resu = tresu(1)
         if (ier .gt. 0) then
             ier = 200
         endif
