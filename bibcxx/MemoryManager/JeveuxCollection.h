@@ -727,8 +727,9 @@ bool JeveuxCollectionInstance< ValueType, PointerType >::buildFromJeveux()
     _size = nbColObj;
 
     param = "ACCES ";
+    charval = std::string (32, ' ');
     CALLO_JELIRA( _name, param, &valTmp, charval );
-    const std::string resu( charval, 2 );
+    const std::string resu( charval, 0, 2 );
 
     if ( resu == "NO" ) _isNamed = true;
 
