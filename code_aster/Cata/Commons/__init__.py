@@ -24,6 +24,7 @@ from .c_affichage import C_AFFICHAGE
 from .c_archivage import C_ARCHIVAGE
 from .c_relation import C_RELATION
 from .c_comportement import C_COMPORTEMENT
+from .c_comportement_dyna import C_COMPORTEMENT_DYNA
 from .c_convergence import C_CONVERGENCE
 from .c_etat_init import C_ETAT_INIT
 from .c_increment import C_INCREMENT

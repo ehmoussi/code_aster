@@ -68,88 +68,42 @@ BLOCAGE=AFFE_CHAR_MECA(MODELE=MODELE,
                        DDL_IMPO=_F(GROUP_MA='ENCAS',
                                    LIAISON='ENCASTRE',),);
 
-ASSEMBLAGE(MODELE=MODELE,
-           CHAM_MATER=CHMAT,
-           CHARGE=BLOCAGE,
-           NUME_DDL=CO('NUMEDDL'),
-           MATR_ASSE=(_F(MATRICE=CO('RIGIDITE'),
-                         OPTION='RIGI_MECA',),
-                      _F(MATRICE=CO('MASSE'),
-                         OPTION='MASS_MECA',),),);
-
-MODES=CALC_MODES(MATR_RIGI=RIGIDITE,
-                 OPTION='BANDE',
-                 CALC_FREQ=_F(FREQ=(0,50.0,),
-                              ),
-                 MATR_MASS=MASSE,
-                 )
-
-MODES=NORM_MODE(reuse =MODES,
-                MODE=MODES,
-                NORME='MASS_GENE',);
-
-MODEE=EXTR_MODE(FILTRE_MODE=_F(MODE=MODES,
-                               FREQ_MIN=0.0,
-                               FREQ_MAX=100.0,),
-                IMPRESSION=_F(CUMUL='OUI',),);
-
-MODEF=EXTR_MODE(FILTRE_MODE=_F(MODE=MODES,
-                               FREQ_MIN=0.0,
-                               FREQ_MAX=(4.0 * fc),),
-                IMPRESSION=_F(CUMUL='OUI',),);
 
 GRAV=AFFE_CHAR_MECA(MODELE=MODELE,
                     PESANTEUR=_F(GRAVITE=300.,
                                  DIRECTION=(-1.,0,1,),),);
 
-PESELEM=CALC_VECT_ELEM(OPTION='CHAR_MECA',
-                       CHARGE=GRAV,
-                       CHAM_MATER=CHMAT,);
-
-PESA=ASSE_VECTEUR(VECT_ELEM=PESELEM,
-                  NUME_DDL=NUMEDDL,);
-
-PROJ_BASE(BASE=MODEF,
-          STOCKAGE='DIAG',
-          MATR_ASSE_GENE=(_F(MATRICE=CO('MASPRO'),
-                             MATR_ASSE=MASSE,),
-                          _F(MATRICE=CO('RIGPRO'),
-                             MATR_ASSE=RIGIDITE,),),
-          VECT_ASSE_GENE=_F(VECTEUR=CO('PESPRO'),
-                            VECT_ASSE=PESA,),);
 
 sinom = FORMULE(VALE='sin(om*INST)', NOM_PARA='INST',);
 
 
-TRANGENE=DYNA_VIBRA(TYPE_CALCUL='TRAN', BASE_CALCUL='GENE',
+TRANGENE=DYNA_LINE(TYPE_CALCUL='TRAN', BASE_CALCUL='GENE',
                     SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
-                    MATR_MASS=MASPRO,
-                    MATR_RIGI=RIGPRO,
-                    VITE_ROTA=0.0,
-                    INCREMENT=_F(PAS=pa,
-                                 INST_FIN=tfin,),
-                    EXCIT=_F(VECT_ASSE_GENE=PESPRO,
-                             FONC_MULT=sinom,))
+                    MODELE=MODELE,
+                    CHAM_MATER=CHMAT,
+                    CHARGE=BLOCAGE,
+                    BANDE_ANALYSE = 50,
+                    INCREMENT=_F(INST_FIN=tfin,
+                                 PAS=pa,
+                                 ),
+                    EXCIT=_F(CHARGE=GRAV,
+                             FONC_MULT=sinom,),
+                   
+                    BASE_RESU = CO('MODE2'),
+                    RESU_GENE = CO('TRANGEN'),
+                    ENRI_STAT = 'NON',
+                    )
 
 
-DEPLPDZ=RECU_FONCTION(RESU_GENE=TRANGENE,
+DEPLPDZ=RECU_FONCTION(RESU_GENE=TRANGEN,
                       NOM_CHAM='DEPL',
                       NOM_CMP='DZ',
                       GROUP_NO='P',);
 
-DEPLPDX=RECU_FONCTION(RESU_GENE=TRANGENE,
+DEPLPDX=RECU_FONCTION(RESU_GENE=TRANGEN,
                       NOM_CHAM='DEPL',
                       NOM_CMP='DX',
                       GROUP_NO='P',);
-
-IMPR_FONCTION(FORMAT='XMGRACE',
-              UNITE=29,
-              COURBE=(_F(FONCTION=DEPLPDZ, MARQUEUR=0,),))
-
-IMPR_FONCTION(FORMAT='XMGRACE',
-              UNITE=30,
-              COURBE=(_F(FONCTION=DEPLPDX, MARQUEUR=0,),))
-                   
 
 TEST_FONCTION(VALEUR=(_F(
                          FONCTION=DEPLPDZ,
@@ -163,4 +117,143 @@ TEST_FONCTION(VALEUR=(_F(
                          VALE_CALC=5.667541668703E-05
                        )))
 
-FIN();
+# calcul avec correction statique
+
+TRANPHY=DYNA_LINE(TYPE_CALCUL='TRAN', BASE_CALCUL='PHYS',
+                    SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
+                    MODELE=MODELE,
+                    CHAM_MATER=CHMAT,
+                    CHARGE=BLOCAGE,
+                    INCREMENT=_F(INST_FIN=tfin,
+                                 PAS=pa/10),
+                    EXCIT=_F(CHARGE=GRAV,
+                             FONC_MULT=sinom,
+                             ),
+                    ARCHIVAGE=_F(LIST_INST=LISTR, PAS_ARCH=1.E8),
+                    )
+
+UZ3=RECU_FONCTION(RESULTAT=TRANPHY,
+                      NOM_CHAM='DEPL',
+                      NOM_CMP='DZ',
+                      GROUP_NO='P',);
+
+UX3=RECU_FONCTION(RESULTAT=TRANPHY,
+                      NOM_CHAM='DEPL',
+                      NOM_CMP='DX',
+                      GROUP_NO='P',);
+
+TEST_FONCTION(VALEUR=(_F(
+                         FONCTION=UZ3,
+                         VALE_PARA=0.05,
+                         VALE_CALC=0.14604340154756
+                      )))
+
+TEST_FONCTION(VALEUR=(_F(
+                         FONCTION=UX3,
+                         VALE_PARA=0.05,
+                         CRITERE = "ABSOLU",
+                         VALE_CALC=1.749786405277E-04,
+                      )))
+
+# calcul avec pas adaptatif
+LIST0 = DEFI_LIST_REEL(
+                        DEBUT=0.,
+                        INTERVALLE = (_F( JUSQU_A = tfin, PAS = pa/100., ),)
+                        )
+
+sinomv =CALC_FONC_INTERP(
+                        FONCTION = sinom,
+                        LIST_PARA = LIST0,
+                        NOM_RESU = 'SINTHER',
+                        PROL_GAUCHE = 'CONSTANT',
+                        PROL_DROITE = 'CONSTANT',
+                        INTERPOL = 'LIN',
+                         )
+
+
+TRANGEN2=DYNA_LINE(TYPE_CALCUL='TRAN', BASE_CALCUL='GENE',
+                    # SCHEMA_TEMPS=_F(SCHEMA='DEVOGE',),
+                    MODELE=MODELE,
+                    CHAM_MATER=CHMAT,
+                    CHARGE=BLOCAGE,
+                    INCREMENT=_F(INST_FIN=tfin,
+                                 ),
+                    EXCIT=_F(CHARGE=GRAV,
+                             FONC_MULT=sinomv,),
+                    
+                    ARCHIVAGE=_F(LIST_INST=LISTR, PAS_ARCH=1.E8),
+                     
+                    ORTHO = 'OUI',
+                    
+                    )
+
+
+
+UZ4=RECU_FONCTION(RESULTAT=TRANGEN2,
+                      NOM_CHAM='DEPL',
+                      NOM_CMP='DZ',
+                      GROUP_NO='P',
+                      );
+
+UX4=RECU_FONCTION(RESULTAT=TRANGEN2,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DX',
+                  GROUP_NO='P',
+                   );
+
+TEST_FONCTION(VALEUR=(_F(
+                         FONCTION=UZ4,
+                         VALE_PARA=0.05,
+                         VALE_CALC=0.14665350269746,
+                       )))
+
+
+
+TEST_FONCTION(VALEUR=(_F(
+                         FONCTION=UX4,
+                         VALE_PARA=0.05,
+                         CRITERE = "ABSOLU",
+                         VALE_CALC=2.191476390357E-04,
+                       )))
+
+                       
+DUX34 = CALC_FONCTION(COMB=( _F(  FONCTION = UX3, COEF = 1.),
+                              _F(  FONCTION = UX4, COEF = -1.)),
+                      )
+DUZ34 = CALC_FONCTION(COMB=( _F(  FONCTION = UZ3, COEF = 1.),
+                             _F(  FONCTION = UZ4, COEF = -1.)),
+                      )
+
+MAXDUX34 = INFO_FONCTION( MAX=_F(  FONCTION = DUX34))
+MAXDUZ34 = INFO_FONCTION( MAX=_F(  FONCTION = DUZ34))
+
+# unite = 85
+# for st in ['UX3','UZ3','UX4','UZ4','DUZ34']:
+    # fichier = 'REPE_OUT/%s.txt' %(st)
+    # DEFI_FICHIER(UNITE=unite,FICHIER=  fichier )
+    # IMPR_FONCTION(FORMAT='TABLEAU',
+              # COURBE=_F(FONCTION=eval(st),),
+              # UNITE=unite,);
+    # DEFI_FICHIER(UNITE=unite,ACTION='LIBERER');
+
+TEST_TABLE(CRITERE='ABSOLU',
+           REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.0E+00,
+           VALE_REFE=0.0,
+           NOM_PARA='DX',
+           TYPE_TEST='SOMM_ABS',
+           TABLE=MAXDUX34,)
+
+TEST_TABLE(CRITERE='ABSOLU',
+           REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.0E+00,
+           VALE_REFE=0.0,
+           NOM_PARA='DZ',
+           TYPE_TEST='SOMM_ABS',
+           TABLE=MAXDUZ34,
+           PRECISION = 0.005,
+           )
+           
+
+                   
+FIN()

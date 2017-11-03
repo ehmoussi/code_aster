@@ -27,7 +27,8 @@
 # ----------------------------------------------------------------------
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'),
-          BASE=_F( FICHIER = 'GLOBALE',  LONG_REPE = 20000))
+          BASE=_F( FICHIER = 'GLOBALE',  LONG_REPE = 20000),
+          )
 
 MAILLAG0=LIRE_MAILLAGE(FORMAT="ASTER", )
 
@@ -202,121 +203,182 @@ PROJ_BASE(BASE=MODE_MEC,
 #
 # CALCUL TRANSITOIRE PAR SUPERPOSITION MODALE EN MONO-APPUI
 # -------------------------------------------
-TRANMONO=DYNA_VIBRA(TYPE_CALCUL='TRAN',
-                    BASE_CALCUL='GENE',
-                    MATR_MASS=MASSMONO,
-                    MATR_RIGI=RIGIMONO,
-                    SOLVEUR=_F(METHODE='MULT_FRONT'),
-                    SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE',),
-                    EXCIT=(_F(VECT_ASSE_GENE=VECT_X,
-                              FONC_MULT = ACCELER1,),),
-                    INCREMENT=_F(  LIST_INST=L_INST,),)
+# TRANMONO=DYNA_VIBRA(TYPE_CALCUL='TRAN',
+#                     BASE_CALCUL='GENE',
+#                     MATR_MASS=MASSMONO,
+#                     MATR_RIGI=RIGIMONO,
+#                     SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE',),
+#                     EXCIT=(_F(VECT_ASSE_GENE=VECT_X,
+#                               FONC_MULT = ACCELER1,),),
+#                     INCREMENT=_F(  LIST_INST=L_INST,),)
+
+RESPHYA2=DYNA_LINE(MODELE=MODELE,
+                   CARA_ELEM=CARA_ELE,
+                   TYPE_CALCUL='TRAN',
+                   BASE_CALCUL='GENE',
+                   ENRI_STAT = 'OUI',
+                   ORTHO = 'OUI',
+                   CHARGE=CON_LIM,
+                   BANDE_ANALYSE=9.3,
+                   SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE',),
+                   EXCIT=(_F(DIRECTION=( 1., 0., 0.,),
+                             TYPE_APPUI='MONO',
+                             FONC_MULT = ACCELER1,),),
+                   INCREMENT=_F(INST_FIN= 1.,
+                                PAS = 0.0001),
+                   )
 
 #
 # SANS LA MACRO MACR_SPECTRE
 # ----------------------------------------------
-RESPHYA=REST_GENE_PHYS(RESU_GENE=TRANMONO,
-                       LIST_INST=L_INST,
-                       NOM_CHAM='ACCE_ABSOLU',
-                       ACCE_MONO_APPUI=ACCELER1,
-                       DIRECTION=( 1., 0., 0., ))
-#
+# RESPHYA=REST_GENE_PHYS(RESU_GENE=TRANMONO,
+#                        LIST_INST=L_INST,
+#                        NOM_CHAM='ACCE_ABSOLU',
+#                        ACCE_MONO_APPUI=ACCELER1,
+#                        DIRECTION=( 1., 0., 0., ))
+# #
 L_INST1=DEFI_LIST_REEL(DEBUT=0.,
                       INTERVALLE=_F(JUSQU_A = 1., PAS = 0.1) )
-#
-PGP_MOA= POST_GENE_PHYS(RESU_GENE=TRANMONO,
-                        MODE_MECA=MODE_MEC,
-                          OBSERVATION=(
-                                      _F(LIST_INST=L_INST1,
-                                         NOM_CHAM = 'ACCE_ABSOLU',
-                                         ACCE_MONO_APPUI=ACCELER1,
-                                         DIRECTION=( 1., 0., 0., ),
-                                         NOM_CMP = 'DX',
-                                         NOEUD = ('NO2'),),
-                                      _F(LIST_INST=L_INST1,
-                                         NOM_CHAM = 'ACCE',
-                                         NOM_CMP = 'DX',
-                                         NOEUD = ('NO2'),),
-                        ),)
+# #
+# PGP_MOA= POST_GENE_PHYS(RESU_GENE=TRANMONO,
+#                         MODE_MECA=MODE_MEC,
+#                           OBSERVATION=(
+#                                       _F(LIST_INST=L_INST1,
+#                                          NOM_CHAM = 'ACCE_ABSOLU',
+#                                          ACCE_MONO_APPUI=ACCELER1,
+#                                          DIRECTION=( 1., 0., 0., ),
+#                                          NOM_CMP = 'DX',
+#                                          NOEUD = ('NO2'),),
+#                                       _F(LIST_INST=L_INST1,
+#                                          NOM_CHAM = 'ACCE',
+#                                          NOM_CMP = 'DX',
+#                                          NOEUD = ('NO2'),),
+#                         ),)
 #IMPR_TABLE(TABLE=PGP_MOA)
 
-TEST_TABLE(
-           VALE_CALC=199743.313821,
-           TABLE=PGP_MOA,
-           NOM_PARA='VALE_R',
-           FILTRE=(_F(NOM_PARA='INST', VALE=1.,),
-                   _F(NOM_PARA='NOM_CHAM', VALE_K='ACCE_ABSOLU',),
-                   _F(NOM_PARA='NOEUD', VALE_K='NO2',),
-                   _F(NOM_PARA='NOM_CMP', VALE_K='DX',),
-                  ),
-           )
+# TEST_TABLE(
+#            VALE_CALC=199743.313821,
+#            TABLE=PGP_MOA,
+#            NOM_PARA='VALE_R',
+#            FILTRE=(_F(NOM_PARA='INST', VALE=1.,),
+#                    _F(NOM_PARA='NOM_CHAM', VALE_K='ACCE_ABSOLU',),
+#                    _F(NOM_PARA='NOEUD', VALE_K='NO2',),
+#                    _F(NOM_PARA='NOM_CMP', VALE_K='DX',),
+#                   ),
+#            )
 
-TEST_TABLE(
-           VALE_CALC=-256.686178727,
-           TABLE=PGP_MOA,
-           NOM_PARA='VALE_R',
-           FILTRE=(_F(NOM_PARA='INST', VALE=1.,),
-                   _F(NOM_PARA='NOM_CHAM', VALE_K='ACCE',),
-                   _F(NOM_PARA='NOEUD', VALE_K='NO2',),
-                   _F(NOM_PARA='NOM_CMP', VALE_K='DX',),
-                  ),
-           )
+# TEST_TABLE(
+#            VALE_CALC=-256.686178727,
+#            TABLE=PGP_MOA,
+#            NOM_PARA='VALE_R',
+#            FILTRE=(_F(NOM_PARA='INST', VALE=1.,),
+#                    _F(NOM_PARA='NOM_CHAM', VALE_K='ACCE',),
+#                    _F(NOM_PARA='NOEUD', VALE_K='NO2',),
+#                    _F(NOM_PARA='NOM_CMP', VALE_K='DX',),
+#                   ),
+#            )
 
 
 # 1. RECUPERATION DES ACCELERATIONS ABSOLUES CALCULEES
 # ----------------------------------------------
-AN2MONO=RECU_FONCTION(NOEUD='NO2',
+# AN2MONO=RECU_FONCTION(NOEUD='NO2',
+#                        NOM_CMP='DX',
+#                        NOM_CHAM='ACCE_ABSOLU',
+#                        RESULTAT=RESPHYA,
+#                        PROL_DROITE='CONSTANT',
+#                        PROL_GAUCHE='CONSTANT',
+#                        TOUT_ORDRE='OUI',
+#                        INTERPOL='LIN')
+
+# AN3MONO=RECU_FONCTION(NOEUD='NO3',
+#                        NOM_CMP='DX',
+#                        NOM_CHAM='ACCE_ABSOLU',
+#                        RESULTAT=RESPHYA,
+#                        PROL_DROITE='CONSTANT',
+#                        PROL_GAUCHE='CONSTANT',
+#                        TOUT_ORDRE='OUI',
+#                        INTERPOL='LIN')
+
+# AN4MONO=RECU_FONCTION(NOEUD='NO4',
+#                        NOM_CMP='DX',
+#                        NOM_CHAM='ACCE_ABSOLU',
+#                        RESULTAT=RESPHYA,
+#                        PROL_DROITE='CONSTANT',
+#                        PROL_GAUCHE='CONSTANT',
+#                        TOUT_ORDRE='OUI',
+#                        INTERPOL='LIN')
+
+AN2MONO2=RECU_FONCTION(NOEUD='NO2',
                        NOM_CMP='DX',
                        NOM_CHAM='ACCE_ABSOLU',
-                       RESULTAT=RESPHYA,
+                       RESULTAT=RESPHYA2,
                        PROL_DROITE='CONSTANT',
                        PROL_GAUCHE='CONSTANT',
                        TOUT_ORDRE='OUI',
                        INTERPOL='LIN')
 
-AN3MONO=RECU_FONCTION(NOEUD='NO3',
+AN3MONO2=RECU_FONCTION(NOEUD='NO3',
                        NOM_CMP='DX',
                        NOM_CHAM='ACCE_ABSOLU',
-                       RESULTAT=RESPHYA,
+                       RESULTAT=RESPHYA2,
                        PROL_DROITE='CONSTANT',
                        PROL_GAUCHE='CONSTANT',
                        TOUT_ORDRE='OUI',
                        INTERPOL='LIN')
 
-AN4MONO=RECU_FONCTION(NOEUD='NO4',
+AN4MONO2=RECU_FONCTION(NOEUD='NO4',
                        NOM_CMP='DX',
                        NOM_CHAM='ACCE_ABSOLU',
-                       RESULTAT=RESPHYA,
+                       RESULTAT=RESPHYA2,
                        PROL_DROITE='CONSTANT',
                        PROL_GAUCHE='CONSTANT',
                        TOUT_ORDRE='OUI',
                        INTERPOL='LIN')
+
 #
 # 2. CALCUL DES SRO RELATIFS AUX ACCELERATIONS ABSOLUES AUX NOEUDS
 # -----------------------------------------------------------
 
-AN2SRMO=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=AN2MONO,
+# AN2SRMO=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=AN2MONO,
+#                                 AMOR_REDUIT=0.05,
+#                                 LIST_FREQ=L_FREQ,
+#                                 NORME=9.81,),);
+# AN3SRMO=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=AN3MONO,
+#                                 AMOR_REDUIT=0.05,
+#                                 LIST_FREQ=L_FREQ,
+#                                 NORME=9.81,),);
+# AN4SRMO=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=AN4MONO,
+#                                 AMOR_REDUIT=0.05,
+#                                 LIST_FREQ=L_FREQ,
+#                                 NORME=9.81,),);
+
+AN2SRMO2=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=AN2MONO2,
                                 AMOR_REDUIT=0.05,
                                 LIST_FREQ=L_FREQ,
                                 NORME=9.81,),);
-AN3SRMO=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=AN3MONO,
+AN3SRMO2=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=AN3MONO2,
                                 AMOR_REDUIT=0.05,
                                 LIST_FREQ=L_FREQ,
                                 NORME=9.81,),);
-AN4SRMO=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=AN4MONO,
+AN4SRMO2=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=AN4MONO2,
                                 AMOR_REDUIT=0.05,
                                 LIST_FREQ=L_FREQ,
                                 NORME=9.81,),);
+
 #
 # 3. CALCUL DE L'ENVELOPPE DES SRO
 # -----------------------------------------------------------
-ENVEMO=CALC_FONCTION(ENVELOPPE=_F(FONCTION=(AN2SRMO,AN3SRMO,AN4SRMO,),
+# ENVEMO=CALC_FONCTION(ENVELOPPE=_F(FONCTION=(AN2SRMO,AN3SRMO,AN4SRMO,),
+#                                 CRITERE='SUP',),);
+
+ENVEMO2=CALC_FONCTION(ENVELOPPE=_F(FONCTION=(AN2SRMO2,AN3SRMO2,AN4SRMO2,),
                                 CRITERE='SUP',),);
+
 #
 # 4. IMPRESSION
 # -----------------------------------------------------------
 IMPR_FONCTION(FORMAT='TABLEAU',
-              COURBE=(_F(FONCTION=ENVEMO,),),
+              COURBE=(_F(FONCTION=ENVEMO2,),),
               UNITE=8,);
 
 #
@@ -325,37 +387,73 @@ IMPR_FONCTION(FORMAT='TABLEAU',
 #    EN Z=4 (NO5)
 #----------------------------------------------------------
 #
-# CALCUL TRANSITOIRE PAR SUPERPOSITION MODALE EN MONO-APPUI
+# CALCUL TRANSITOIRE PAR SUPERPOSITION MODALE EN MULTI-APPUI
 # -------------------------------------------
-TRANMOMU=DYNA_VIBRA(TYPE_CALCUL='TRAN',
-                    BASE_CALCUL='GENE',
-                    MATR_MASS=MASSMULT,
-                    MATR_RIGI=RIGIMULT,
-                    SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE',),
-                    MODE_STAT=MODE_STA,
-                    SOLVEUR=_F(METHODE='MULT_FRONT'),
-                    EXCIT=(_F(VECT_ASSE_GENE=VECT_X1,
-                              ACCE = ACCELER1,
-                              VITE=VITESSE1,
-                              DEPL = DEPLACE1,
-                              MULT_APPUI = 'OUI',
-                              DIRECTION = ( 1., 0., 0.,),
-                              NOEUD = 'NO1',),
-                           _F(VECT_ASSE_GENE=VECT_X2,
-                              ACCE = ACCELER1,
-                              VITE=VITESSE1,
-                              DEPL = DEPLACE1,
-                              MULT_APPUI = 'OUI',
-                              DIRECTION = ( 1., 0., 0.,),
-                              NOEUD = 'NO5',),),
-                    INCREMENT=_F(  LIST_INST=L_INST,),)
+# TRANMOMU=DYNA_VIBRA(TYPE_CALCUL='TRAN',
+#                     BASE_CALCUL='GENE',
+#                     MATR_MASS=MASSMULT,
+#                     MATR_RIGI=RIGIMULT,
+#                     SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE',),
+#                     MODE_STAT=MODE_STA,
+#                     EXCIT=(_F(VECT_ASSE_GENE=VECT_X1,
+#                               ACCE = ACCELER1,
+#                               VITE=VITESSE1,
+#                               DEPL = DEPLACE1,
+#                               MULT_APPUI = 'OUI',
+#                               DIRECTION = ( 1., 0., 0.,),
+#                               NOEUD = 'NO1',),
+#                            _F(VECT_ASSE_GENE=VECT_X2,
+#                               ACCE = ACCELER1,
+#                               VITE=VITESSE1,
+#                               DEPL = DEPLACE1,
+#                               MULT_APPUI = 'OUI',
+#                               DIRECTION = ( 1., 0., 0.,),
+#                               NOEUD = 'NO5',),),
+#                     INCREMENT=_F(  LIST_INST=L_INST,),)
+
+TRANPHMU=DYNA_LINE(TYPE_CALCUL='TRAN',
+                   BASE_CALCUL='GENE',
+                   MODELE=MODELE,
+                   CARA_ELEM=CARA_ELE,
+                   CHARGE=CON_LIM,
+                   SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE',),
+                   BANDE_ANALYSE=9.3,
+                   ENRI_STAT='NON',
+                   EXCIT=(_F(ACCE = ACCELER1,
+                             VITE = VITESSE1,
+                             DEPL = DEPLACE1,
+                             TYPE_APPUI='MULTI',
+                             DIRECTION = ( 1., 0., 0.,),
+                             NOEUD = 'NO1'
+                             ),
+                          _F(ACCE = ACCELER1,
+                             VITE = VITESSE1,
+                             DEPL = DEPLACE1,
+                             TYPE_APPUI='MULTI',
+                             DIRECTION = ( 1., 0., 0.,),
+                             NOEUD = 'NO5',
+                             ),),
+                   INCREMENT=_F(PAS=0.001,
+                                INST_FIN=1.),
+                   RESU_GENE = CO('TRANMOM2')
+                   )
 
 # AVEC LA MACRO MACR_SPECTRE
 # ----------------------------------------------
 # 1. RECUPERATION DES ACCELERATIONS ABSOLUES CALCULEES
 # ----------------------------------------------
-TBMACMO=MACR_SPECTRE(MAILLAGE=MAILLAGE,
-                      RESU=_F(RESU_GENE=TRANMOMU,),
+# TBMACMO=MACR_SPECTRE(MAILLAGE=MAILLAGE,
+#                       RESU=_F(RESU_GENE=TRANMOMU,),
+#                       PLANCHER=(_F(NOEUD=('NO2','NO3','NO4'),NOM='P_MONO'),),
+#                       LIST_FREQ=L_FREQ,
+#                       NOM_CHAM='ACCE',
+#                       CALCUL='ABSOLU',
+#                       NORME = 9.81,
+#                       AMOR_SPEC=(0.05),
+#                       MULT_APPUI='OUI',)
+
+TBMACMO2=MACR_SPECTRE(MAILLAGE=MAILLAGE,
+                      RESU=_F(RESU_GENE=TRANMOM2,),
                       PLANCHER=(_F(NOEUD=('NO2','NO3','NO4'),NOM='P_MONO'),),
                       LIST_FREQ=L_FREQ,
                       NOM_CHAM='ACCE',
@@ -363,11 +461,34 @@ TBMACMO=MACR_SPECTRE(MAILLAGE=MAILLAGE,
                       NORME = 9.81,
                       AMOR_SPEC=(0.05),
                       MULT_APPUI='OUI',)
+                      
 #
 # 2. IMPRESSION
 # -----------------------------------------------------------
-IMPR_TABLE(TABLE=TBMACMO)
+IMPR_TABLE(TABLE=TBMACMO2)
 
+
+# TEST_FONCTION(VALEUR=(_F(VALE_REFE=642.3320216389,
+#                          VALE_CALC=642.3320216389,
+#                          VALE_PARA=(0.1,0.05),
+#                          PRECISION=1E-4,
+#                          REFERENCE='AUTRE_ASTER',
+#                          NOM_PARA=('FREQ','AMOR'),
+#                          FONCTION=ENVEMO,),
+#                       _F(VALE_REFE=5103.162478220,
+#                          VALE_CALC=5103.162478220,
+#                          VALE_PARA=(0.3,0.05),
+#                          PRECISION=1E-4,
+#                          REFERENCE='AUTRE_ASTER',
+#                          NOM_PARA=('FREQ','AMOR'),
+#                          FONCTION=ENVEMO,),
+#                       _F(VALE_REFE=11996.56524432,
+#                          VALE_CALC=11996.56524432,
+#                          VALE_PARA=(0.52,0.05),
+#                          PRECISION=1E-4,
+#                          REFERENCE='AUTRE_ASTER',
+#                          NOM_PARA=('FREQ','AMOR'),
+#                          FONCTION=ENVEMO,),))
 
 TEST_FONCTION(VALEUR=(_F(VALE_REFE=642.3320216389,
                          VALE_CALC=642.3320216389,
@@ -375,28 +496,53 @@ TEST_FONCTION(VALEUR=(_F(VALE_REFE=642.3320216389,
                          PRECISION=1E-4,
                          REFERENCE='AUTRE_ASTER',
                          NOM_PARA=('FREQ','AMOR'),
-                         FONCTION=ENVEMO,),
+                         FONCTION=ENVEMO2,),
                       _F(VALE_REFE=5103.162478220,
                          VALE_CALC=5103.162478220,
                          VALE_PARA=(0.3,0.05),
                          PRECISION=1E-4,
                          REFERENCE='AUTRE_ASTER',
                          NOM_PARA=('FREQ','AMOR'),
-                         FONCTION=ENVEMO,),
+                         FONCTION=ENVEMO2,),
                       _F(VALE_REFE=11996.56524432,
                          VALE_CALC=11996.56524432,
                          VALE_PARA=(0.52,0.05),
                          PRECISION=1E-4,
                          REFERENCE='AUTRE_ASTER',
                          NOM_PARA=('FREQ','AMOR'),
-                         FONCTION=ENVEMO,),))
+                         FONCTION=ENVEMO2,),))
 
+# TEST_TABLE(REFERENCE='AUTRE_ASTER',
+#                VALE_REFE=642.3320216389,
+#                VALE_CALC=642.33202163891,
+#                PRECISION=1E-4,
+#                NOM_PARA='eH_0_P_MONO',
+#                TABLE=TBMACMO,
+#                FILTRE=_F(NOM_PARA='FREQ',
+#                          VALE=0.1,),)
+# TEST_TABLE(REFERENCE='AUTRE_ASTER',
+#                VALE_REFE=5103.162478220,
+#                VALE_CALC=5103.1624782199,
+#                PRECISION=1E-4,
+#                NOM_PARA='eH_0_P_MONO',
+#                TABLE=TBMACMO,
+#                FILTRE=_F(NOM_PARA='FREQ',
+#                          VALE=0.3,),)
+# TEST_TABLE(REFERENCE='AUTRE_ASTER',
+#                VALE_REFE=11996.56524432,
+#                VALE_CALC=11996.565244318,
+#                PRECISION=1E-4,
+#                NOM_PARA='eH_0_P_MONO',
+#                TABLE=TBMACMO,
+#                FILTRE=_F(NOM_PARA='FREQ',
+#                          VALE=0.52,),)
+# test DYNA_LINE
 TEST_TABLE(REFERENCE='AUTRE_ASTER',
                VALE_REFE=642.3320216389,
                VALE_CALC=642.33202163891,
                PRECISION=1E-4,
                NOM_PARA='eH_0_P_MONO',
-               TABLE=TBMACMO,
+               TABLE=TBMACMO2,
                FILTRE=_F(NOM_PARA='FREQ',
                          VALE=0.1,),)
 TEST_TABLE(REFERENCE='AUTRE_ASTER',
@@ -404,7 +550,7 @@ TEST_TABLE(REFERENCE='AUTRE_ASTER',
                VALE_CALC=5103.1624782199,
                PRECISION=1E-4,
                NOM_PARA='eH_0_P_MONO',
-               TABLE=TBMACMO,
+               TABLE=TBMACMO2,
                FILTRE=_F(NOM_PARA='FREQ',
                          VALE=0.3,),)
 TEST_TABLE(REFERENCE='AUTRE_ASTER',
@@ -412,10 +558,10 @@ TEST_TABLE(REFERENCE='AUTRE_ASTER',
                VALE_CALC=11996.565244318,
                PRECISION=1E-4,
                NOM_PARA='eH_0_P_MONO',
-               TABLE=TBMACMO,
+               TABLE=TBMACMO2,
                FILTRE=_F(NOM_PARA='FREQ',
                          VALE=0.52,),)
-
+                         
 #
 # ON ETUDIE LA STRUCTURE EN VRAI MULTI-APPUI:
 #    ACCE_IMPO = ACCELER1 (A.T*T) EN Z=0 (NO1) ET
