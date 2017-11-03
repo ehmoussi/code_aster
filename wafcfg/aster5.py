@@ -45,31 +45,31 @@ def configure(self):
     # enable TEST_STRICT on the reference server
     self.env.append_value('DEFINES', ['TEST_STRICT'])
 
-    self.env['ADDMEM'] = 250
+    self.env['ADDMEM'] = 600
     self.env.append_value('OPT_ENV', [
-        '. /etc/profile.d/003_modules.sh',
-        'module load intel_compilers/16.0.0.109 '])
+        '. /etc/profile.d/lmod.sh',
+        'module load ifort/2016.0.047 icc/2016.0.047 mkl/2016.0.047'])
+
+    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL300'
+    self.env.TFELHOME = TFELHOME
 
     self.env.append_value('LIBPATH', [
-        '/usr/lib/atlas-base/atlas',                       # for NumPy, see issue18751
-        YAMMROOT + '/prerequisites/Python-273/lib',
         YAMMROOT + '/prerequisites/Hdf5-1814/lib',
         YAMMROOT + '/tools/Medfichier-321/lib',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster1/lib',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster6/SEQ/lib',
-        YAMMROOT + '/prerequisites/Mfront-TFEL203/lib',
         YAMMROOT + '/prerequisites/Mumps-511_consortium_aster/SEQ/lib',
+        TFELHOME + '/lib',
     ])
 
     self.env.append_value('INCLUDES', [
-        YAMMROOT + '/prerequisites/Python-273/include/python2.7',
         YAMMROOT + '/prerequisites/Hdf5-1814/include',
         YAMMROOT + '/tools/Medfichier-321/include',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster1/include',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster6/SEQ/include',
-        YAMMROOT + '/prerequisites/Mfront-TFEL203/include',
         YAMMROOT + '/prerequisites/Mumps-511_consortium_aster/SEQ/include',
         YAMMROOT + '/prerequisites/Mumps-511_consortium_aster/SEQ/include_seq',
+        TFELHOME + '/include',
     ])
 
     self.env.append_value('LIB', ('pthread', 'util'))
@@ -80,6 +80,6 @@ def configure(self):
     opts.enable_metis = True
     opts.enable_mumps = True
     opts.enable_scotch = True
-    opts.enable_mfront = False
+    opts.enable_mfront = True
 
     opts.enable_petsc = False

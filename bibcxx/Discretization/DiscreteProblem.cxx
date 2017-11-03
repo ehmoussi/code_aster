@@ -54,11 +54,11 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryDirichletVector( dou
     std::string resultName( retour->getName() );
 
     // CORICH appel getres
-    CommandSyntaxCython cmdSt( "MECA_STATIQUE" );
+    CommandSyntax cmdSt( "MECA_STATIQUE" );
     cmdSt.setResult( resultName, "AUCUN" );
 
-    CALL_VEDIME( modelName.c_str(), nameLcha.c_str(), nameInfc.c_str(), &time,
-                 typres.c_str(), resultName.c_str() );
+    CALLO_VEDIME( modelName, nameLcha, nameInfc, &time,
+                 typres, resultName );
     retour->setEmpty( false );
 
     retour->setListOfLoads( _study->getListOfLoads() );
@@ -85,11 +85,10 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryLaplaceVector()
     const std::string resultName( retour->getName() );
 
     // CORICH appel getres
-    CommandSyntaxCython cmdSt( "MECA_STATIQUE" );
+    CommandSyntax cmdSt( "MECA_STATIQUE" );
     cmdSt.setResult( resultName, "AUCUN" );
 
-    CALL_VELAME( modelName.c_str(), nameLcha.c_str(), nameInfc.c_str(), blanc.c_str(),
-                 resultName.c_str() );
+    CALLO_VELAME( modelName, nameLcha, nameInfc, blanc, resultName );
     retour->setEmpty( false );
 
     retour->setListOfLoads( _study->getListOfLoads() );
@@ -121,11 +120,11 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryNeumannVector( const
     std::string materName( curMater->getName() + "                " );
 
     // CORICH appel getres
-    CommandSyntaxCython cmdSt( "MECA_STATIQUE" );
+    CommandSyntax cmdSt( "MECA_STATIQUE" );
     cmdSt.setResult( resultName, "AUCUN" );
 
-    CALL_VECHME_WRAP( stop.c_str(), modelName.c_str(), nameLcha.c_str(), nameInfc.c_str(), &inst,
-                      blanc.c_str(), materName.c_str(), retour->getName().c_str(), blanc.c_str() );
+    CALLO_VECHME_WRAP( stop, modelName, nameLcha, nameInfc, &inst,
+                       blanc, materName, retour->getName(), blanc );
     retour->setEmpty( false );
 
     retour->setListOfLoads( _study->getListOfLoads() );
@@ -151,17 +150,19 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix( doub
     materName.resize(24, ' ');
     std::string mate = blanc;
     long thm = 0;
-    CALL_RCMFMC_WRAP( materName.c_str(), mate.c_str(), &thm );
+    CALLO_RCMFMC_WRAP( materName, mate, &thm );
 
     // MERIME appel getres
-    CommandSyntaxCython cmdSt( "MECA_STATIQUE" );
+    CommandSyntax cmdSt( "MECA_STATIQUE" );
     cmdSt.setResult( "AUCUN", "AUCUN" );
 
     long nh = 0;
+    // jvListOfLoads->getDataPtr()->c_str()
+    // const JeveuxVectorChar24 loads = jvListOfLoads->getDataPtr();
 
-    CALL_MERIME_WRAP( modelName.c_str(), &nbLoad, jvListOfLoads->getDataPtr()->c_str(),
-                      mate.c_str(), blanc.c_str(), &time,
-                      blanc.c_str(), retour->getName().c_str(), &nh, "G" );
+    CALLO_MERIME_WRAP( modelName, &nbLoad, *(jvListOfLoads->getDataPtr()),
+                       mate, blanc, &time,
+                       blanc, retour->getName(), &nh, JeveuxMemoryTypesNames[0] );
 
     retour->setEmpty( false );
     return retour;
@@ -202,8 +203,8 @@ FieldOnNodesDoublePtr DiscreteProblemInstance::buildKinematicsLoad( const BaseDO
     std::string funcLoadName = listOfFunctions->getName();
     funcLoadName.resize(24, ' ');
 
-    CALL_ASCAVC( lLoadName.c_str(), infLoadName.c_str(), funcLoadName.c_str(),
-                 dofNumName.c_str(), &time, resuName.c_str() );
+    CALLO_ASCAVC( lLoadName, infLoadName, funcLoadName,
+                  dofNumName, &time, resuName );
 
     return retour;
 };
@@ -236,7 +237,7 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryMechanicalLoadsVecto
     // Comme on calcul RIGI_MECA, il faut preciser le type de la sd
     retour->setType( retour->getType() + "_DEPL_R" );
 
-    CommandSyntaxCython cmdSt( "CALC_VECT_ELEM" );
+    CommandSyntax cmdSt( "CALC_VECT_ELEM" );
     cmdSt.setResult( retour->getName(), retour->getType() );
 
     SyntaxMapContainer dict;
@@ -311,7 +312,7 @@ ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalMatrix( const std:
     retour->setType( retour->getType() + "_DEPL_R" );
 
     // Definition du bout de fichier de commande correspondant a CALC_MATR_ELEM
-    CommandSyntaxCython cmdSt( "CALC_MATR_ELEM" );
+    CommandSyntax cmdSt( "CALC_MATR_ELEM" );
     cmdSt.setResult( retour->getName(), retour->getType() );
 
     SyntaxMapContainer dict = computeMatrixSyntax( optionName );
@@ -342,7 +343,7 @@ ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalDampingMatrix( con
     retour->setType( retour->getType() + "_DEPL_R" );
 
     // Definition du bout de fichier de commande correspondant a CALC_MATR_ELEM
-    CommandSyntaxCython cmdSt( "CALC_MATR_ELEM" );
+    CommandSyntax cmdSt( "CALC_MATR_ELEM" );
     cmdSt.setResult( retour->getName(), retour->getType() );
 
     SyntaxMapContainer dict = computeMatrixSyntax( "AMOR_MECA" );

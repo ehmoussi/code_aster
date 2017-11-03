@@ -390,9 +390,6 @@ RES_XFEM=CALC_CHAMP(reuse =RES_XFEM,
                    INFO=2,
                    );
                    
-RES_XFEM=CALC_CHAMP(reuse =RES_XFEM,
-                 RESULTAT=RES_XFEM,);
-
 IMPR_RESU(FORMAT='GMSH',
 #          UNITE=37,
           RESU=_F(RESULTAT=RES_XFEM,

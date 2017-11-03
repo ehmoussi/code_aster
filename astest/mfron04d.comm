@@ -19,13 +19,13 @@
 
 # person_in_charge: sofiane.hendili at edf.fr
 
-import os
 
-os.system("mfront --obuild AnisoLemaitre.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so AnisoLemaitre.so")
 
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=39)
+
 
 MA=LIRE_MAILLAGE(FORMAT="ASTER",)
 
@@ -175,7 +175,7 @@ VF=STAT_NON_LINE( MODELE=MO, CHAM_MATER=CMF,
 
                 COMPORTEMENT=_F(RELATION='MFRONT',
                                 NOM_ROUTINE='asteranisolemaitre',
-                                LIBRAIRIE='AnisoLemaitre.so',
+                                UNITE_LIBRAIRIE=39,
                                 DEFORMATION = 'GDEF_LOG',
                                 RESI_INTE_MAXI=1e-10,
                         ),
@@ -191,7 +191,7 @@ VF=STAT_NON_LINE( reuse=VF,MODELE=MO,CHAM_MATER=CMF, ETAT_INIT=_F( EVOL_NOLI = V
 
                 COMPORTEMENT=_F(RELATION='MFRONT',
                                 NOM_ROUTINE='asteranisolemaitre',
-                                LIBRAIRIE='AnisoLemaitre.so',
+                                UNITE_LIBRAIRIE=39,
                                 DEFORMATION = 'GDEF_LOG',
                                 RESI_INTE_MAXI=1e-10,
                         ),

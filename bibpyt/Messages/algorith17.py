@@ -33,10 +33,6 @@ cata_msg = {
          Comportement %(k1)s non implanté pour l'élément d'interface
 """),
 
-    4: _(u"""
-        La formulation n'est ni en contrainte nette ni en Bishop
-"""),
-
     5 : _(u"""
   Le champ post-traité est un CHAM_ELEM, le calcul de moyenne ne fonctionne que
  sur les CHAM_NO. Pour les CHAM_ELEM utiliser POST_ELEM mot-clé INTEGRALE.
@@ -67,14 +63,6 @@ cata_msg = {
   fermeture maximale = %(r2)f
   Vérifier la cohérence chargement mécanique, fermeture asymptotique et ouverture
   initiale.
-"""),
-
-    12 : _(u"""
-  La température de référence (exprimée en Kelvin) doit toujours être strictement supérieure à zéro.
-"""),
-
-    13 : _(u"""
-  La pression de gaz de référence doit toujours être différente de zéro.
 """),
 
     14 : _(u"""
@@ -139,9 +127,6 @@ cata_msg = {
   Erreur dans l'allocation de la structure de données dynamique. La liste des champs à allouer n'est pas valide.
 """),
 
-
-
-
     31 : _(u"""
   Il faut donner autant de coefficients pour le paramètre %(k1)s
   qu'il y a de modes propres dans la base sur laquelle est fabriquée
@@ -154,34 +139,7 @@ cata_msg = {
   Le calcul des masses effectives est impossible. Ne pas en tenir
   compte dans les calculs postérieurs.
 """),
-    33 : _(u"""
-  Attention le comportement isotrope transverse ELAS_ISTR 3D doit être compatible avec un comportement
-   isotrope (L,N) transverse dans THM_DIFFU et réciproquement.
-"""),
-    34 : _(u"""
-  Attention le comportement ELAS_ORTH 2D doit être compatible avec un comportement orthotrope 2D (L,T)
-  dans THM_DIFFU et réciproquement.
-"""),
-    35 : _(u"""
-  Attention, en THM le comportement ELAS_ISTR n'est valable qu'en 3D, pour 2D passer en ELAS_ORTH
-"""),
-    36 : _(u"""
-  Attention, en THM le comportement ELAS_ORTH n'est valable qu'en 2D, pour 3D passer en ELAS_ISTR
-"""),
-    37 : _(u"""
-  Attention, si les composantes L,T sont dans THM_DIFFU on est en orthotropie 2D D_PLAN ou AXIS.
-   INCOMPATIBLE 3D
-"""),
-    38 : _(u"""
-  Attention, si les composantes L,N sont dans THM_DIFFU on est en isotropie transverse 3D.
-   INCOMPATIBLE 2D
-"""),
-    39 : _(u"""
-  Attention on sort momentanément du domaine admissible car porosité négative sur la maille %(k1)s
-"""),
-    40 : _(u"""
-   Attention on sort momentanément du domaine admissible car chaleur spécifique négative sur la maille %(k1)s
-"""),
+
     41 : _(u"""
    Le type de résultat %(k1)s (mot clé TYPE_RESU) n'est pas autorisé pour le mot clé facteur %(k2)s (mot clé OPERATION)
 """),

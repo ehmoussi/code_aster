@@ -170,4 +170,68 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   PRECISION=1.E-2,),
           )
 
+# Test with COQUE_3D
+MAIL2=CREA_MAILLAGE(MAILLAGE=MAILL,
+                    LINE_QUAD=_F(TOUT='OUI',),);
+
+MAILAST=CREA_MAILLAGE(MAILLAGE    = MAIL2,
+                      MODI_MAILLE = (_F(
+                                        OPTION     = 'QUAD8_9',
+                                        GROUP_MA   = 'DBCE', 
+                                        PREF_NOEUD = 'NX',
+                                       ),
+                                     _F(
+                                        OPTION     = 'TRIA6_7',
+                                        GROUP_MA   = 'DBCE',
+                                        PREF_NOEUD = 'NX',
+                                       ),
+                                    ),
+                       );
+
+MODEL2=AFFE_MODELE(  MAILLAGE=MAILAST,
+                    AFFE=(_F(GROUP_MA='DBCE', MODELISATION = 'COQUE_3D', PHENOMENE = 'MECANIQUE'),
+                          _F(GROUP_MA='ADET', MODELISATION = '3D'      ,  PHENOMENE = 'MECANIQUE')))
+
+CHNOR2=CREA_CHAMP(TYPE_CHAM = 'NOEU_GEOM_R', 
+                  OPERATION = 'NORMALE', 
+                  MODELE    = MODEL2,
+                  GROUP_MA  = 'DBCE'  )
+
+RACCOR3=AFFE_CHAR_MECA(MODELE=MODEL2,
+                       LIAISON_MAIL =_F(TYPE_RACCORD='COQUE_MASSIF', GROUP_NO_ESCL='ED', GROUP_MA_MAIT='ADET',CHAM_NORMALE=CHNOR2, EPAIS=T,))
+
+BLOQ3=AFFE_CHAR_MECA(  MODELE=MODEL2, INFO=1,
+            DDL_IMPO=(_F( GROUP_MA = 'BC',    DX = 0.,  DY = 0.,   DZ = 0.),
+                      _F( GROUP_NO = 'DBMD',  DY = 0.,  DRX = 0.,  DRZ = 0.),
+                      _F( GROUP_NO = 'CEME',  DX = 0.,  DRY = 0.,  DRZ = 0.),
+                      _F( GROUP_MA = 'ADAD',  DY = 0.),
+                      _F( GROUP_MA = 'EAEA',  DX = 0.),
+                     ))
+
+CHMAT2=AFFE_MATERIAU(  MAILLAGE=MAILAST, AFFE=_F(  TOUT = 'OUI',   MATER = MATER) )
+
+CARELEM2=AFFE_CARA_ELEM(  MODELE=MODEL2,
+                         COQUE=_F(  GROUP_MA = 'DBCE', COQUE_NCOU=9,
+                                    EPAIS = T,  ANGL_REP = (0., 0.,)))
+
+CHARGE3=AFFE_CHAR_MECA(  MODELE=MODEL2, INFO=1,
+               PRES_REP=_F(GROUP_MA='ADE2',   PRES =  P),
+               FORCE_COQUE=_F(GROUP_MA='DBCE', PRES = P))
+
+RESU3=MECA_STATIQUE( MODELE=MODEL2, CHAM_MATER=CHMAT2, CARA_ELEM=CARELEM2,
+          EXCIT=(_F(CHARGE = CHARGE3),_F(CHARGE = RACCOR3),_F(CHARGE = BLOQ3)))
+
+
+TEST_RESU(RESU=_F(NUME_ORDRE=1,
+                  GROUP_NO='A1',
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=RESU3,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DZ',
+                  VALE_CALC=-756.794672367 ,
+                  VALE_REFE=-695.62559999999996,
+                  PRECISION=0.09,),
+          )
+
+IMPR_RESU(FORMAT='MED',RESU=_F(RESULTAT=RESU3),)
 FIN()

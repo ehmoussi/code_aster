@@ -135,6 +135,7 @@ for num_calc in range(0,nb_calc1) :
 
    RESV[num_calc]=STAT_NON_LINE(MODELE=MO[num_calc],
                        CHAM_MATER=CHMAT[num_calc],
+                       SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                        EXCIT=(_F(CHARGE=CLIM[num_calc],),
                               _F(CHARGE=CH[num_calc],
                                  FONC_MULT=F_INST,),),

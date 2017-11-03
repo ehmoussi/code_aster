@@ -40,8 +40,6 @@
 #include "aster_fort.h"
 #include "aster_utils.h"
 
-#include "code_aster/Supervis/libExecutionParameter.h"
-
 FILE* fileOut = NULL;
 
 /*! aster_core C module */
@@ -140,9 +138,7 @@ double get_tpmax()
     int iret = 0;
     double tpmax;
     if ( _cache_tpmax < 0 ) {
-        // tpmax =  asterc_getopt_double("tpmax", &iret);
-        tpmax = 100000.;
-        fprintf(fileOut, "get_tpmax: valeur fixe = %f\n", tpmax);
+        tpmax =  asterc_getopt_double("tpmax", &iret);
         if ( iret == 0 ) {
             _cache_tpmax = tpmax;
         }
@@ -155,7 +151,15 @@ void DEFP(RDTMAX, rdtmax, _IN ASTERDOUBLE *tsub)
     /*
      * Réduit le temps maximum de l'exécution : tpmax = tpmax - tsub
      */
+    PyObject *res;
+
     fprintf(fileOut, "RDTMAX\n");
+    res = PyObject_CallMethod(get_sh_coreopts(), "sub_tpmax", "d", (double)(*tsub));
+    if (res == NULL)
+        MYABORT("erreur dans RDTMAX");
+    // reset du cache
+    _reset_tpmax();
+    return;
 }
 
 /*
@@ -253,6 +257,12 @@ double asterc_getopt_double(_IN char *option, _OUT int *iret)
     if ( PyFloat_Check(res) ) {
         value = PyFloat_AsDouble(res);
         *iret = 0;
+    } else if ( PyInt_Check(res) ) {
+        value = (double)PyInt_AsLong(res);
+        *iret = 0;
+    } else if ( PyLong_Check(res) ) {
+        value = (double)PyLong_AsLong(res);
+        *iret = 0;
     }
     Py_DECREF(res);
     return value;
@@ -291,10 +301,15 @@ void DEFSPP(GTOPTI,gtopti, _IN char *option, STRING_SIZE lopt,
      *  iret = 0 : tout est ok
      *  iret = 4 : option inexistante, type incorrect.
      */
-    char *opt = MakeCStrFromFStr(option, lopt);
-    *vali = getParameterLong(opt);
-    FreeStr(opt);
-    *iret = 0;
+    long value;
+    int ret = 0;
+    char *sopt;
+    sopt = MakeCStrFromFStr(option, lopt);
+    value = asterc_getopt_long(sopt, &ret);
+
+    *vali = (ASTERINTEGER)value;
+    *iret = (ASTERINTEGER)ret;
+    FreeStr(sopt);
 }
 
 void DEFSPP(GTOPTR,gtoptr, _IN char *option, STRING_SIZE lopt,
@@ -307,10 +322,41 @@ void DEFSPP(GTOPTR,gtoptr, _IN char *option, STRING_SIZE lopt,
      *  iret = 0 : tout est ok
      *  iret = 4 : option inexistante, type incorrect.
      */
-    char *opt = MakeCStrFromFStr(option, lopt);
-    *valr = getParameterDouble(opt);
-    FreeStr(opt);
-    *iret = 0;
+    double value;
+    int ret = 0;
+    char *sopt;
+    sopt = MakeCStrFromFStr(option, lopt);
+    value = asterc_getopt_double(sopt, &ret);
+
+    *valr = (ASTERDOUBLE)value;
+    *iret = (ASTERINTEGER)ret;
+    FreeStr(sopt);
+}
+
+void DEFSSP(GTOPTK,gtoptk, _IN char *option, STRING_SIZE lopt,
+            _OUT char *valk, STRING_SIZE lvalk,
+            _OUT ASTERINTEGER *iret)
+{
+    /*
+     * Interface C/Python pour récupérer une option de la ligne de commande.
+     * Retourne la valeur et un code retour :
+     *  iret = 0 : tout est ok
+     *  iret = 1 : longueur de valk insuffisante, valeur tronquée
+     *  iret = 4 : option inexistante, type incorrect.
+     */
+    char *value;
+    int ret = 0;
+    char *sopt;
+    sopt = MakeCStrFromFStr(option, lopt);
+    value = asterc_getopt_string(sopt, &ret);
+
+    if ( ret == 0 ) {
+        if ( strlen(value) > lvalk ) ret = 1;
+        CopyCStrToFStr(valk, value, lvalk);
+    }
+    *iret = (ASTERINTEGER)ret;
+    FreeStr(sopt);
+    FreeStr(value);
 }
 
 static char get_mem_stat_doc[] =
@@ -467,7 +513,8 @@ void DEFSPSPSPPPPS(UTPRIN,utprin, _IN char *typmess, _IN STRING_SIZE ltype,
        PyTuple_SetItem( tup_valr, i, PyFloat_FromDouble((double)valr[i]) ) ;
     }
 
-    args = Py_BuildValue("s#s#OOO", typmess, ltype, idmess, lidmess, tup_valk, tup_vali, tup_valr, (int)*exc_typ);
+    args = Py_BuildValue("s#s#OOO", typmess, ltype, idmess, lidmess, tup_valk,
+                                    tup_vali, tup_valr, (int)*exc_typ);
     kwargs = PyDict_New();
     pyfname = PyString_FromStringAndSize(fname, lfn);
     iret = PyDict_SetItemString(kwargs, "files", pyfname);

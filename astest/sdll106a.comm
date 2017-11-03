@@ -102,7 +102,7 @@ VECTASS1=ASSE_VECTEUR(    VECT_ELEM=VECT1,
 #**********************************************************************
 
 MODES=CALC_MODES(MATR_RIGI=MATASK,
-                 OPTION='AJUSTE',
+                 OPTION='AJUSTE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                  CALC_FREQ=_F(FREQ=(0.1,300.,),
                               ),
                  MATR_MASS=MATASM,

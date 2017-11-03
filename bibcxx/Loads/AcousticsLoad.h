@@ -35,6 +35,7 @@
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "DataFields/PCFieldOnMesh.h"
+#include "Supervis/ResultNaming.h"
 
 extern const char SANS_GROUP_MA[];
 extern const char SANS_GROUP_NO[];
@@ -155,7 +156,7 @@ public:
     };
 
     AcousticsLoadInstance( const ModelPtr& model ):
-        DataStructure( getNewResultObjectName(), "CHAR_ACOU" ),
+        DataStructure( ResultNaming::getNewResultName(), "CHAR_ACOU" ),
         _supportModel( model ),
         _mesh( model->getSupportMesh() ),
         _modelName( JeveuxVectorChar8( getName() + ".CHAC.MODEL.NOMO" ) ),

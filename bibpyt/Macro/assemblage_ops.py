@@ -83,10 +83,6 @@ def assemblage_ops(
         for m in MATR_ASSE:
             iocc = iocc + 1
             option = m['OPTION']
-            if iocc == 1 and lnume == 1 and option not in (
-                'RIGI_MECA', 'RIGI_THER', 'RIGI_ACOU',
-                    'RIGI_FLUI_STRU'):
-                UTMESS('F', 'MATRICE0_9')
 
             motscles = {'OPTION': option}
             if option == 'RIGI_MECA_HYST':
@@ -132,12 +128,24 @@ def assemblage_ops(
             if option == 'MASS_MECA':
                 masel = _a
                 lmasel = 1
-
-            if lnume and option in ('RIGI_MECA', 'RIGI_THER', 'RIGI_ACOU', 'RIGI_FLUI_STRU'):
+            
+            if lnume == 0:
+                num = numeddl
+            
+            # ici iocc est obligatoirement 1 vu le traitement précédent
+            # et la non compatibilité des 4 options
+            elif option in ('RIGI_MECA', 'RIGI_THER', 'RIGI_ACOU', 'RIGI_FLUI_STRU'):
                 self.DeclareOut('num', numeddl)
                 num = NUME_DDL(MATR_RIGI=_a, INFO=info)
-            else:
-                num = numeddl
+
+            elif iocc == 1 and option not in (
+                'RIGI_MECA', 'RIGI_THER', 'RIGI_ACOU','RIGI_FLUI_STRU'):
+                
+                self.DeclareOut('num', numeddl)
+                if CHARGE != None:
+                    num = NUME_DDL(MODELE=MODELE, CHARGE=CHARGE, INFO=info)
+                else:
+                    num = NUME_DDL(MODELE=MODELE, INFO=info)
 
             self.DeclareOut('mm', m['MATRICE'])
             motscles = {'OPTION': option}

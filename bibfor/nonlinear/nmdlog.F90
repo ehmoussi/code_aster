@@ -39,6 +39,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "blas/daxpy.h"
 #include "blas/dcopy.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! aslint: disable=W1306,W1504
 !
@@ -82,7 +83,7 @@ implicit none
 
     aster_logical :: grand, axi, resi, rigi, matsym, cplan, lintbo
     parameter (grand = .true._1)
-    integer :: g, i, nddl, cod(27), ivf
+    integer :: g, nddl, cod(27), ivf, jvariexte
     integer :: ndim, nno, npg, mate, lgpg, codret, iw, idff
     character(len=8) :: typmod(*)
     character(len=*) :: fami
@@ -108,6 +109,7 @@ implicit none
     if (compor(5)(1:7) .eq. 'DEBORST') then
         ASSERT(.false.)
     endif
+    elgeom(:,:) = 0.d0
 !
 ! -----------------------------DECLARATION-----------------------------
     nddl = ndim*nno
@@ -118,33 +120,32 @@ implicit none
     resi = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'
     rigi = option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL'
 !
+! - Get coded integer for external state variable
+!
+    jvariexte = nint(carcri(IVARIEXTE))
+!
 !     CALCUL DES ELEMENTS GEOMETRIQUES SPECIFIQUES AU COMPORTEMENT
 !     ATTENTION DFF NON CALCULE. PB SI MONOCRISTAL
     call lcegeo(nno, npg, iw, ivf, idff,&
-                geomi, typmod, compor, ndim, dff,&
-                deplm, depld, elgeom)
+                geomi, typmod, jvariexte, ndim,&
+                deplm, depld)
 !
 !--------------------------INITIALISATION------------------------
 !
-    do i = 1, 27
-        cod(i)=0
-    end do
+    cod(:) = 0
     lintbo = .false.
 !
 !------------------------------DEPLACEMENT ET GEOMETRIE-------------
 !
 !    DETERMINATION DES CONFIGURATIONS EN T- (GEOMM) ET T+ (GEOMP)
     call dcopy(nddl, geomi, 1, geomm, 1)
-    call daxpy(nddl, 1.d0, deplm, 1, geomm,&
-               1)
+    call daxpy(nddl, 1.d0, deplm, 1, geomm, 1)
     call dcopy(nddl, geomm, 1, geomp, 1)
 !     DEPLT : DEPLACEMENT TOTAL ENTRE CONF DE REF ET INSTANT T_N+1
     call dcopy(nddl, deplm, 1, deplt, 1)
     if (resi) then
-        call daxpy(nddl, 1.d0, depld, 1, geomp,&
-                   1)
-        call daxpy(nddl, 1.d0, depld, 1, deplt,&
-                   1)
+        call daxpy(nddl, 1.d0, depld, 1, geomp, 1)
+        call daxpy(nddl, 1.d0, depld, 1, deplt, 1)
     endif
 !
 !****************************BOUCLE SUR LES POINTS DE GAUSS************

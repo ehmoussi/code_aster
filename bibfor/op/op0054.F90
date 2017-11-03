@@ -31,9 +31,7 @@ implicit none
 #include "asterfort/rrc_init.h"
 #include "asterfort/rrc_chck.h"
 #include "asterfort/rrc_comp.h"
-!
-!
-!
+#include "asterfort/rrc_clean.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -67,5 +65,9 @@ implicit none
 ! - Compute 
 !
     call rrc_comp(ds_para)
+!
+! - Clean
+!
+    call rrc_clean(ds_para)
 !
 end subroutine

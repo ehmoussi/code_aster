@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmfonc(ds_conv  , ds_algopara    , solver   , model     , ds_contact    ,&
                   list_load, sdnume         , sddyna   , sdcriq    , mate          ,&
                   ds_inout , ds_constitutive, ds_energy, ds_algorom, list_func_acti)
@@ -46,23 +47,21 @@ implicit none
 #include "asterfort/ndynlo.h"
 #include "asterfort/nmlssv.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Conv), intent(in) :: ds_conv
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    character(len=19), intent(in) :: solver
-    character(len=24), intent(in) :: model
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    character(len=19), intent(in) :: list_load
-    character(len=19), intent(in) :: sdnume
-    character(len=19), intent(in) :: sddyna
-    character(len=24), intent(in) :: sdcriq
-    character(len=24), intent(in) :: mate
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    type(NL_DS_Energy), intent(in) :: ds_energy
-    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
-    integer, intent(inout) :: list_func_acti(*)
+type(NL_DS_Conv), intent(in) :: ds_conv
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+character(len=19), intent(in) :: solver
+character(len=24), intent(in) :: model
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=19), intent(in) :: list_load
+character(len=19), intent(in) :: sdnume
+character(len=19), intent(in) :: sddyna
+character(len=24), intent(in) :: sdcriq
+character(len=24), intent(in) :: mate
+type(NL_DS_InOut), intent(in) :: ds_inout
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_Energy), intent(in) :: ds_energy
+type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+integer, intent(inout) :: list_func_acti(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -95,7 +94,7 @@ implicit none
     integer :: nocc, iret, nb_subs_stat, nb_load_subs
     integer :: i_cont_form
     aster_logical :: l_deborst, l_frot, l_dis_choc, l_all_verif, l_refe, l_comp, l_post_incr
-    aster_logical :: l_loop_geom, l_loop_frot, l_loop_cont
+    aster_logical :: l_loop_geom, l_loop_frot, l_loop_cont,l_pena
     integer :: ixfem, i_buckl, i_vibr_mode, i_stab
     aster_logical :: l_load_undead, l_load_laplace, l_load_elim, l_load_didi
     character(len=8) :: k8bid, repk
@@ -266,7 +265,9 @@ implicit none
         if (l_loop_geom) list_func_acti(31) = 1
         if (l_loop_frot) list_func_acti(32) = 1
         if (l_loop_cont) list_func_acti(33) = 1
-        if (l_loop_geom .or. l_loop_frot .or. l_loop_cont) list_func_acti(34) = 1
+        if (l_loop_geom .or. l_loop_frot .or. l_loop_cont) then
+            list_func_acti(34) = 1
+        endif
     endif
 !
 ! - Generalized Newton
@@ -279,6 +280,13 @@ implicit none
             if (l_newt_frot) list_func_acti(47) = 1
             if (l_newt_cont) list_func_acti(53) = 1
             if (l_newt_geom) list_func_acti(55) = 1
+        endif
+    endif
+! At least one contact zone has penalisation method
+    if (l_cont) then
+        if (i_cont_form .eq. 2 .or. i_cont_form .eq. 5 ) then
+            l_pena = cfdisl(ds_contact%sdcont_defi,'EXIS_PENA')
+            if (l_pena) list_func_acti(66) = 1
         endif
     endif
 !
@@ -374,6 +382,10 @@ implicit none
         list_func_acti(61) = 1
         if (ds_algorom%l_hrom) then
             list_func_acti(62) = 1
+            if (ds_algorom%l_hrom_corref) then
+                list_func_acti(66) = 1
+                list_func_acti(34) = 1
+            endif
         endif
     endif
 !
@@ -391,7 +403,12 @@ implicit none
 ! - THM ?
 !
     call dismoi('EXI_THM', model, 'MODELE', repk=repk)
-    if (repk .eq. 'OUI') list_func_acti(37) = 1
+    if (repk .eq. 'OUI') then
+        list_func_acti(37) = 1
+    endif
+!
+! - THM + XFEM/CONTACT
+!
     if (l_cont .and. (repk .eq. 'OUI')) then
         list_func_acti(65) = 1
     endif 
@@ -462,6 +479,9 @@ implicit none
         endif
         if (isfonc(list_func_acti,'HROM')) then
             write (ifm,*) '<MECANONLINE> ...... METHODE HROM'
+        endif
+        if (isfonc(list_func_acti,'HROM_CORR_EF')) then
+            write (ifm,*) '<MECANONLINE> ...... METHODE HROM AVEC CORRECTION EF'
         endif
         if (isfonc(list_func_acti,'RECH_LINE')) then
             write (ifm,*) '<MECANONLINE> ...... RECHERCHE LINEAIRE'

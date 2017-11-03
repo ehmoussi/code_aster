@@ -58,6 +58,7 @@ EPSI_ELGA = Option(
     para_in=(
         SP.PCACOQU,
         SP.PCAGEPO,
+        SP.PCAGNPO,
         SP.PCAMASS,
            PCAORIE,
            PCOMPOR,

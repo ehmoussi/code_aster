@@ -18,7 +18,10 @@
 
 subroutine te0313(option, nomte)
 !
-    implicit none
+use THM_type
+use THM_module
+!
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -32,6 +35,8 @@ subroutine te0313(option, nomte)
 #include "asterfort/tecach.h"
 #include "asterfort/tecael.h"
 #include "asterfort/utmess.h"
+#include "asterfort/thmGetElemModel.h"
+#include "asterfort/Behaviour_type.h"
     character(len=16) :: option, nomte
 !
 !
@@ -42,20 +47,20 @@ subroutine te0313(option, nomte)
 !        DONNEES:      OPTION       -->  OPTION DE CALCUL
 !                      NOMTE        -->  NOM DU TYPE ELEMENT
 ! =====================================================================
-    integer :: jgano, imatuu, ndim, imate, iinstm, jcret, ncmp, nvim
+    integer :: jgano, imatuu, ndim, imate, iinstm, jcret, nb_strain_meca
     integer :: iret, ichg, ichn, itabin(7), itabou(7)
     integer :: ivf2
     integer :: idf2, npi, npg
     integer :: retloi, iretp, iretm
     integer :: ipoids, ivf1, idf1, igeom
-    integer :: iinstp, ideplm, ideplp, icompo, icarcr, icamas
+    integer :: iinstp, ideplm, ideplp, icompo, icamas
     integer :: icontm, ivarip, ivarim, ivectu, icontp
 !
 ! =====================================================================
 ! =====================================================================
 !
     integer :: mecani(8), press1(9), press2(9), tempe(5), dimuel
-    integer :: dimdef, dimcon, nbvari
+    integer :: dimdef, dimcon, nbvari, nb_vari_meca
     integer :: nno1, nno2
     integer :: iadzi, iazk24
     integer :: iu(3, 18), ip(2, 9), ipf(2, 2, 9), iq(2, 2, 9)
@@ -101,6 +106,20 @@ subroutine te0313(option, nomte)
 ! --- RECUPERATION DES FONCTIONS DE FORME -----------------------------
 ! =====================================================================
 !
+!
+! - Init THM module
+!
+    call thmModuleInit()
+!
+! - Get model of finite element
+!
+    call thmGetElemModel()
+    if (ds_thm%ds_elem%l_weak_coupling) then
+        call utmess('F', 'CHAINAGE_12')
+    endif
+!
+! - Preparation
+!
     call caeihm(nomte, axi, perman, mecani, press1,&
                 press2, tempe, dimdef, dimcon, ndim,&
                 nno1, nno2, npi, npg, dimuel,&
@@ -116,7 +135,7 @@ subroutine te0313(option, nomte)
         (option(1:9).eq.'RAPH_MECA' ) .or. (option(1:9).eq.'FULL_MECA' )) then
 !
         call jevech('PCAMASS', 'L', icamas)
-        if (zr(icamas) .eq. -1.d0) then
+        if (zr(icamas) .lt. 0.d0) then
             call utmess('F', 'ELEMENTS5_48')
         endif
 !
@@ -140,14 +159,9 @@ subroutine te0313(option, nomte)
         call jevech('PDEPLMR', 'L', ideplm)
         call jevech('PDEPLPR', 'L', ideplp)
         call jevech('PCOMPOR', 'L', icompo)
-        call jevech('PCARCRI', 'L', icarcr)
         call jevech('PVARIMR', 'L', ivarim)
         call jevech('PCONTMR', 'L', icontm)
-!
-!
-!
-!
-        read (zk16(icompo-1+2),'(I16)') nbvari
+        read (zk16(icompo-1+NVAR),'(I16)') nbvari
 ! =====================================================================
 ! --- PARAMETRES EN SORTIE ISMAEM? ------------------------------------
 ! =====================================================================
@@ -173,7 +187,6 @@ subroutine te0313(option, nomte)
 !
 !
         if (option(1:9) .eq. 'RIGI_MECA') then
-!
             call aseihm(option, axi, ndim, nno1, nno2,&
                         npi, npg, dimuel, dimdef, dimcon,&
                         nbvari, zi(imate), iu, ip, ipf,&
@@ -181,13 +194,12 @@ subroutine te0313(option, nomte)
                         zr(ivf1), zr(ivf2), zr(idf2), zr(iinstm), zr(iinstp),&
                         zr(ideplm), zr(ideplm), zr(icontm), zr(icontm), zr(ivarim),&
                         zr(ivarim), nomail, zr(ipoids), zr(igeom), ang,&
-                        zk16(icompo), perman, zr(icarcr), zr(ivectu), zr(imatuu),&
+                        zk16(icompo), perman, zr(ivectu), zr(imatuu),&
                         retloi)
         else
-            do 30 li = 1, dimuel
+            do li = 1, dimuel
                 zr(ideplp+li-1) = zr(ideplm+li-1) + zr(ideplp+li-1)
- 30         continue
-!
+            end do
             call aseihm(option, axi, ndim, nno1, nno2,&
                         npi, npg, dimuel, dimdef, dimcon,&
                         nbvari, zi(imate), iu, ip, ipf,&
@@ -195,7 +207,7 @@ subroutine te0313(option, nomte)
                         zr(ivf1), zr(ivf2), zr(idf2), zr(iinstm), zr(iinstp),&
                         zr(ideplm), zr(ideplp), zr(icontm), zr(icontp), zr(ivarim),&
                         zr(ivarip), nomail, zr(ipoids), zr(igeom), ang,&
-                        zk16(icompo), perman, zr(icarcr), zr(ivectu), zr(imatuu),&
+                        zk16(icompo), perman, zr(ivectu), zr(imatuu),&
                         retloi)
 !
             zi(jcret) = retloi
@@ -237,7 +249,7 @@ subroutine te0313(option, nomte)
                     npi, npg, zr(ipoids), iu, ip,&
                     ipf, iq, zr(ivf1), zr(ivf2), zr(idf2),&
                     zr(igeom), ang, zr( icontm), r, zr(ivectu),&
-                    mecani, press1, press2, tempe, dimdef,&
+                    mecani, press1, press2, dimdef,&
                     dimcon, dimuel, ndim, axi)
 !
     endif
@@ -248,12 +260,9 @@ subroutine te0313(option, nomte)
     if (option .eq. 'SIEF_ELNO') then
         call jevech('PCONTRR', 'L', ichg)
         call jevech('PSIEFNOR', 'E', ichn)
-!
-!
-        nvim=mecani(6)
-!
+        nb_strain_meca = mecani(6)
         call poeihm(nomte, option, modint, jgano, nno1,&
-                    nno2, dimcon, nvim, zr(ichg), zr(ichn))
+                    nno2, dimcon, nb_strain_meca, zr(ichg), zr(ichn))
     endif
 !
 ! ======================================================================
@@ -268,11 +277,10 @@ subroutine te0313(option, nomte)
         ichn=itabou(1)
 !
         call jevech('PCOMPOR', 'L', icompo)
-        read (zk16(icompo+1),'(I16)') ncmp
-        read (zk16(icompo-1+7+9+4),'(I16)') nvim
-!
+        read (zk16(icompo-1+NVAR),'(I16)') nbvari
+        read (zk16(icompo-1+MECA_NVAR),'(I16)') nb_vari_meca
         call poeihm(nomte, option, modint, jgano, nno1,&
-                    nno2, ncmp, nvim, zr(ichg), zr(ichn))
+                    nno2, nbvari, nb_vari_meca, zr(ichg), zr(ichn))
     endif
 !
 ! ======================================================================

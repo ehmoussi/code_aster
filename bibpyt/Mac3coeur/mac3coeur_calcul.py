@@ -348,9 +348,10 @@ class Mac3CoeurCalcul(object):
         dicv = self.mcf[0].cree_dict_valeurs(self.mcf[0].mc_liste)
         typ = dicv.get('TYPE_MAINTIEN') or 'DEPL_PSC'
         force = None
+        compression_init = (self.fluence_cycle != 0)
         if typ == 'FORCE':
             force = self.mcf['FORCE_MAINTIEN']
-        char = coeur.definition_maintien_type(self.model, typ, force)
+        char = coeur.definition_maintien_type(self.model, typ, force,compression_init)
         return [_F(CHARGE=char), ]
 
     @property
@@ -475,8 +476,49 @@ class Mac3CoeurCalcul(object):
             'COMPORTEMENT': (_F(RELATION='MULTIFIBRE',
                                 GROUP_MA=('CRAYON', 'T_GUIDE'),
                                 PARM_THETA=0.5,
-                                # DEFORMATION='GROT_GDEP',),
-                                DEFORMATION='PETIT',),
+                                #DEFORMATION='GROT_GDEP',),
+                                DEFORMATION='PETIT',
+                                ),
+                             _F(RELATION='DIS_GRICRA',
+                                GROUP_MA='ELA',),
+                             _F(RELATION='DIS_CHOC',
+                                GROUP_MA='RES_TOT',),
+                             _F(RELATION='DIS_CHOC',   GROUP_MA ='CREIC',),
+                             _F(RELATION='ELAS',   GROUP_MA ='CREI',),
+                             _F(RELATION='ELAS',
+                                GROUP_MA=('EBOINF', 'EBOSUP', 'RIG', 'DIL')),
+                             _F(RELATION='VMIS_ISOT_TRAC',
+                                GROUP_MA='MAINTIEN',
+                                DEFORMATION='PETIT'),),
+            'SUIVI_DDL':_F(NOM_CHAM='DEPL',EVAL_CHAM='MAXI_ABS',GROUP_NO='CR_BAS',NOM_CMP=('DX',)),
+            # 'CONVERGENCE' : _F(ITER_GLOB_MAXI=100),
+            'NEWTON': _F(MATRICE='TANGENTE',
+                         #PREDICTION='ELASTIQUE',
+                         REAC_ITER=1,),
+            'SOLVEUR': _F(METHODE='MUMPS',
+                          NPREC=15,
+                          RENUM='AMF',
+                          GESTION_MEMOIRE='OUT_OF_CORE',
+                          ELIM_LAGR='NON',
+                          PCENT_PIVOT=200,),
+            'AFFICHAGE': _F(INFO_RESIDU='OUI'),
+        }
+        keywords.update(kwds)
+        return keywords
+
+    def snl_lame(self, **kwds):
+        """Return the common keywords for STAT_NON_LINE
+        All keywords can be overridden using `kwds`."""
+        keywords = {
+            'MODELE': self.model,
+            'CARA_ELEM': self.carael,
+            'CHAM_MATER': self.cham_mater_free,
+            'COMPORTEMENT': (_F(RELATION='MULTIFIBRE',
+                                GROUP_MA=('CRAYON', 'T_GUIDE'),
+                                PARM_THETA=0.5,
+                                DEFORMATION='GROT_GDEP',
+                                #DEFORMATION='PETIT',
+                                ),
                              _F(RELATION='DIS_GRICRA',
                                 GROUP_MA='ELA',),
                              _F(RELATION='DIS_CHOC',
@@ -935,8 +977,10 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
         from code_aster.Cata.Commands import STAT_NON_LINE, PERM_MAC3COEUR, DETRUIRE
         coeur = self.coeur
         # calcul de deformation d'apres DAMAC / T0 - T1
-
-        _snl_lame = STAT_NON_LINE(**self.snl(
+        self.depl_damac = self.keyw['DEPL_DAMAC']
+        if self.depl_damac :
+            self.macro.DeclareOut('_snl_lame',self.depl_damac)
+        _snl_lame = STAT_NON_LINE(**self.snl_lame(
                                   INCREMENT=_F(LIST_INST=self.times,
                                                INST_INIT=0.,
                                                INST_FIN=coeur.temps_simu[
@@ -960,7 +1004,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
         # computed on the initial (not deformed) meshhg st
         # please keep the call to deform_mesh after the computation of keywords
         keywords=[]
-        keywords.append(self.snl(CHAM_MATER=self.cham_mater_free,
+        keywords.append(self.snl_lame(CHAM_MATER=self.cham_mater_free,
                             INCREMENT=_F(LIST_INST=self.times,
                                          INST_FIN=0.),
                             EXCIT=self.rigid_load + self.archimede_load +
@@ -970,8 +1014,10 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
                             self.symetric_cond + self.periodic_cond +
                             self.thyc_load[0] + self.thyc_load[1],
                            ))
-        depl_deformed = self.deform_mesh(_snl_lame)
+        #on fait l'irradiation historique sur assemblages droits
         __RESULT = STAT_NON_LINE(**keywords[-1])
+        #on deforme le maillage
+        depl_deformed = self.deform_mesh(_snl_lame)
         mater=[]
         ratio = 1.
         mater.append(self.cham_mater_contact_progressif(ratio))
@@ -1011,7 +1057,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
                 #     print 'pas possible de detruire'
                 ratio = ratio/10.
                 mater.append(self.cham_mater_contact_progressif(ratio))
-                keywords.append(self.snl(CHAM_MATER=mater[-1],
+                keywords.append(self.snl_lame(CHAM_MATER=mater[-1],
                                 INCREMENT=_F(LIST_INST=self.times_woSubd,
                                              INST_FIN=coeur.temps_simu['T0b']),
                                 ETAT_INIT=_F(EVOL_NOLI=__RESULT),
@@ -1027,7 +1073,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
             raise 'no convergence'
 
 
-        keywords = self.snl(
+        keywords = self.snl_lame(
                             reuse = __RESULT,
                             ETAT_INIT=_F(EVOL_NOLI=__RESULT),
                             NEWTON= _F(MATRICE='TANGENTE',
@@ -1045,7 +1091,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
                             self.thyc_load[0] + self.thyc_load[1],
                             )
         __RESULT = STAT_NON_LINE(**keywords)
-        keywords = self.snl(
+        keywords = self.snl_lame(
                             reuse = __RESULT,
                             ETAT_INIT=_F(EVOL_NOLI=__RESULT),
                             CHAM_MATER=self.cham_mater_contact,

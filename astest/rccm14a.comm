@@ -26,7 +26,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 COURFATA = FORMULE(NOM_PARA='SIGM',VALE='5.E5/SIGM ')
 
 L_INST=DEFI_LIST_REEL(  DEBUT=1.,
-                        INTERVALLE=_F(  JUSQU_A = 1000., PAS = 1.) )
+                        INTERVALLE=_F(  JUSQU_A = 1000., PAS = 0.1) )
                            
 FWOHLER=CALC_FONC_INTERP( FONCTION=COURFATA, LIST_PARA=L_INST,
                           NOM_PARA = 'SIGM',PROL_DROITE='LINEAIRE',
@@ -49,21 +49,30 @@ T_TH1 = LIRE_TABLE (UNITE=35, FORMAT='ASTER',SEPARATEUR=' ',
 T_TH2 = LIRE_TABLE (UNITE=35, FORMAT='ASTER',SEPARATEUR=' ',
                       NUME_TABLE=2,)
 
+# CONTRAINTES THERMIQUES SITU 1                            
+T_TH3 = LIRE_TABLE (UNITE=35, FORMAT='ASTER',SEPARATEUR=' ',
+                      NUME_TABLE=3,)
+
+# CONTRAINTES THERMIQUES SITU 2                        
+T_TH4 = LIRE_TABLE (UNITE=35, FORMAT='ASTER',SEPARATEUR=' ',
+                      NUME_TABLE=4,)
+
+
 # CONTRAINTES "MX" UNITAIRES           
 T_MX = LIRE_TABLE (UNITE=35, FORMAT='ASTER',SEPARATEUR=' ',
-                      NUME_TABLE=3,)
+                      NUME_TABLE=5,)
 
 # CONTRAINTES "MY" UNITAIRES                           
 T_MY = LIRE_TABLE (UNITE=35, FORMAT='ASTER',SEPARATEUR=' ',
-                      NUME_TABLE=4,)
+                      NUME_TABLE=6,)
                       
 # CONTRAINTES "MZ" UNITAIRES                            
 T_MZ = LIRE_TABLE (UNITE=35, FORMAT='ASTER',SEPARATEUR=' ',
-                      NUME_TABLE=5,)
+                      NUME_TABLE=7,)
 
 # CONTRAINTES "PRES" UNITAIRES                            
 T_PRES = LIRE_TABLE (UNITE=35, FORMAT='ASTER',SEPARATEUR=' ',
-                      NUME_TABLE=6,)
+                      NUME_TABLE=8,)
 
 # CALCUL DE FATIGUE POUR LES SITUATIONS 1,2,3
 # METHODE TOUT_INST
@@ -134,6 +143,84 @@ FAT=POST_RCCM( MATER=MAT,
                      PRES_B=1.0,),),);
 
 IMPR_TABLE(    TABLE=FAT,) 
+
+# UN SEUL GROUPE ET UNE SITUATION NON COMBINABLE
+# PLUS LES SOUS_CYCLES
+FATss=POST_RCCM( MATER=MAT,
+                 TITRE='CALCUL DE FATIGUE,SS_CYCL,TOUT_INST',
+                 TYPE_RESU='DETAILS',
+                 TYPE_RESU_MECA='B3200',
+                 METHODE='TOUT_INST',
+                 SOUS_CYCL ='OUI',
+                 OPTION='FATIGUE',
+                 INFO=2,
+                 CHAR_MECA=(
+                   _F(NUME_CHAR=5,
+                      NOM_CHAR='ETAT A - SITU3',
+                      MX=0.4,  MY=0.0,  MZ=-0.6,),
+                   _F(NUME_CHAR=6,
+                      NOM_CHAR='ETAT B - SITU3',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),),
+                 RESU_MECA_UNIT=(
+                   _F(TABL_MX=T_MX,
+                      TABL_MY=T_MY,
+                      TABL_PRES=T_PRES,
+                      TABL_MZ=T_MZ,),),
+                 RESU_THER=(_F(NUME_RESU_THER=2,
+                                TABL_RESU_THER=T_TH4,),),
+                 SITUATION=(
+                  _F(NB_OCCUR=10,
+                     NUME_SITU=3,
+                     NOM_SITU='Situation3',
+                     NUME_GROUPE=1,
+                     NUME_RESU_THER = 2,
+                     CHAR_ETAT_A=5,
+                     CHAR_ETAT_B=6,
+                     PRES_A=0.4,
+                     PRES_B=1.0,),),);
+
+IMPR_TABLE(    TABLE=FATss,
+           FILTRE=(_F(NOM_PARA='TYPE',
+                      VALE_K='SITU',),),) 
+
+# UN SEUL GROUPE ET UNE SITUATION NON COMBINABLE
+# PLUS LES SOUS_CYCLES
+FATssb=POST_RCCM( MATER=MAT,
+                 TITRE='FATIGUE,SS_CYCL2,TOUT_INST',
+                 TYPE_RESU='DETAILS',
+                 TYPE_RESU_MECA='B3200',
+                 METHODE='TOUT_INST',
+                 SOUS_CYCL ='OUI',
+                 OPTION='FATIGUE',
+                 INFO=2,
+                 CHAR_MECA=(
+                   _F(NUME_CHAR=5,
+                      NOM_CHAR='ETAT A - SITU3',
+                      MX=0.0,  MY=0.0,  MZ=0.0,),
+                   _F(NUME_CHAR=6,
+                      NOM_CHAR='ETAT B - SITU3',
+                      MX=0.0,  MY=0.0,  MZ=0.0,),),
+                 RESU_MECA_UNIT=(
+                   _F(TABL_MX=T_MX,
+                      TABL_MY=T_MY,
+                      TABL_PRES=T_PRES,
+                      TABL_MZ=T_MZ,),),
+                 RESU_THER=(_F(NUME_RESU_THER=2,
+                                TABL_RESU_THER=T_TH3,),),
+                 SITUATION=(
+                  _F(NB_OCCUR=10,
+                     NUME_SITU=3,
+                     NOM_SITU='Situation3',
+                     NUME_GROUPE=1,
+                     NUME_RESU_THER = 2,
+                     CHAR_ETAT_A=5,
+                     CHAR_ETAT_B=6,
+                     PRES_A=0.0,
+                     PRES_B=0.0,),),);
+
+IMPR_TABLE(    TABLE=FATssb,
+           FILTRE=(_F(NOM_PARA='TYPE',
+                      VALE_K='SITU',),),) 
 
 # CALCUL DE FATIGUE POUR LES SITUATIONS 1,2,3
 # METHODE TOUT_INST
@@ -247,7 +334,7 @@ FATc=POST_RCCM( MATER=MAT,
                   _F(NB_OCCUR=1,
                      NUME_SITU=1,
                      NOM_SITU='SituationPassage',
-                     NUME_GROUPE=1,
+                     NUME_GROUPE=(1,2),
                      NUME_PASSAGE=(1,2),
                      CHAR_ETAT_A=1,
                      CHAR_ETAT_B=2,
@@ -274,10 +361,321 @@ FATc=POST_RCCM( MATER=MAT,
 
 IMPR_TABLE(    TABLE=FATc,) 
 
+# CALCUL DE FATIGUE POUR LES SITUATIONS 1,2,3
+# METHODE TOUT_INST
+# DEUX GROUPES ET UN GROUPE DE PARTAGE POUR 1 SEULE SITUATION
+FATd=POST_RCCM( MATER=MAT,
+                 TITRE='FATIGUE,UNITAIRE,TOUT_INST, PARTAGE SITU3',
+                 TYPE_RESU='DETAILS',
+                 TYPE_RESU_MECA='B3200',
+                 METHODE='TOUT_INST',
+                 OPTION='FATIGUE',
+                 INFO=2,
+                 CHAR_MECA=(
+                   _F(NUME_CHAR=1,
+                      NOM_CHAR='ETAT A - SITU1',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),
+                   _F(NUME_CHAR=2,
+                      NOM_CHAR='ETAT B - SITU1',
+                      MX=-10.0,  MY=1.0,  MZ=0.1,),
+                   _F(NUME_CHAR=3,
+                      NOM_CHAR='ETAT A - SITU2',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),
+                   _F(NUME_CHAR=4,
+                      NOM_CHAR='ETAT B - SITU2',
+                      MX=-10.0,  MY=1.0,  MZ=0.1,),
+                   _F(NUME_CHAR=5,
+                      NOM_CHAR='ETAT A - SITU3',
+                      MX=0.4,  MY=0.0,  MZ=-0.6,),
+                   _F(NUME_CHAR=6,
+                      NOM_CHAR='ETAT B - SITU3',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),),
+                 RESU_MECA_UNIT=(
+                   _F(TABL_MX=T_MX,
+                      TABL_MY=T_MY,
+                      TABL_PRES=T_PRES,
+                      TABL_MZ=T_MZ,),),
+                 RESU_THER=( _F(NUME_RESU_THER=1,
+                                TABL_RESU_THER=T_TH1,),
+                             _F(NUME_RESU_THER=2,
+                                TABL_RESU_THER=T_TH2,),),
+                 SITUATION=(
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=1,
+                     NOM_SITU='Situation1',
+                     COMBINABLE='NON',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT_A=1,
+                     CHAR_ETAT_B=2,
+                     NUME_RESU_THER = 1,
+                     PRES_A=1.0,
+                     PRES_B=10.0,),
+                  _F(NB_OCCUR=7,
+                     NUME_SITU=2,
+                     NOM_SITU='Situation2',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT_A=3,
+                     CHAR_ETAT_B=4,
+                     NUME_RESU_THER = 1,
+                     PRES_A=1.0,
+                     PRES_B=10.0,),
+                  _F(NB_OCCUR=10,
+                     NUME_SITU=3,
+                     NOM_SITU='Situation3',
+                     NUME_PARTAGE = 1, 
+                     NUME_GROUPE=2,
+                     NUME_RESU_THER = 2,
+                     CHAR_ETAT_A=5,
+                     CHAR_ETAT_B=6,
+                     PRES_A=0.4,
+                     PRES_B=1.0,),),);
+
+IMPR_TABLE(    TABLE=FATd,) 
+
+# CALCUL DE FATIGUE POUR LES SITUATIONS 1,2,3
+# METHODE TOUT_INST
+# DEUX GROUPES ET UN GROUPE DE PARTAGE POUR 2 SITUATIONS
+FATe=POST_RCCM( MATER=MAT,
+                 TITRE='FATIGUE,UNITAIRE,TOUT_INST, PARTAGE SITUS2-3',
+                 TYPE_RESU='DETAILS',
+                 TYPE_RESU_MECA='B3200',
+                 METHODE='TOUT_INST',
+                 OPTION='FATIGUE',
+                 INFO=2,
+                 CHAR_MECA=(
+                   _F(NUME_CHAR=1,
+                      NOM_CHAR='ETAT A - SITU1',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),
+                   _F(NUME_CHAR=2,
+                      NOM_CHAR='ETAT B - SITU1',
+                      MX=-10.0,  MY=1.0,  MZ=0.1,),
+                   _F(NUME_CHAR=3,
+                      NOM_CHAR='ETAT A - SITU2',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),
+                   _F(NUME_CHAR=4,
+                      NOM_CHAR='ETAT B - SITU2',
+                      MX=-10.0,  MY=1.0,  MZ=0.1,),
+                   _F(NUME_CHAR=5,
+                      NOM_CHAR='ETAT A - SITU3',
+                      MX=0.4,  MY=0.0,  MZ=-0.6,),
+                   _F(NUME_CHAR=6,
+                      NOM_CHAR='ETAT B - SITU3',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),),
+                 RESU_MECA_UNIT=(
+                   _F(TABL_MX=T_MX,
+                      TABL_MY=T_MY,
+                      TABL_PRES=T_PRES,
+                      TABL_MZ=T_MZ,),),
+                 RESU_THER=( _F(NUME_RESU_THER=1,
+                                TABL_RESU_THER=T_TH1,),
+                             _F(NUME_RESU_THER=2,
+                                TABL_RESU_THER=T_TH2,),),
+                 SITUATION=(
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=1,
+                     NOM_SITU='Situation1',
+                     COMBINABLE='NON',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT_A=1,
+                     CHAR_ETAT_B=2,
+                     NUME_RESU_THER = 1,
+                     PRES_A=1.0,
+                     PRES_B=10.0,),
+                  _F(NB_OCCUR=10,
+                     NUME_SITU=2,
+                     NOM_SITU='Situation2',
+                     NUME_PARTAGE = 1, 
+                     NUME_GROUPE=2,
+                     CHAR_ETAT_A=3,
+                     CHAR_ETAT_B=4,
+                     NUME_RESU_THER = 1,
+                     PRES_A=1.0,
+                     PRES_B=10.0,),
+                  _F(NB_OCCUR=10,
+                     NUME_SITU=3,
+                     NOM_SITU='Situation3',
+                     NUME_PARTAGE = 1, 
+                     NUME_GROUPE=2,
+                     NUME_RESU_THER = 2,
+                     CHAR_ETAT_A=5,
+                     CHAR_ETAT_B=6,
+                     PRES_A=0.4,
+                     PRES_B=1.0,),),);
+
+IMPR_TABLE(    TABLE=FATe,) 
+
+# CALCUL DE FATIGUE POUR LES SITUATIONS 1,2,3
+# METHODE TOUT_INST
+# DEUX GROUPES ET UN GROUPE DE PARTAGE POUR 2 SITUATIONS
+FATf=POST_RCCM( MATER=MAT,
+                 TITRE='FATIGUE,UNIT.TOUT_INST, PARTAGE SIT2-3 SANS ETRE DANS LE MM GRPE',
+                 TYPE_RESU='DETAILS',
+                 TYPE_RESU_MECA='B3200',
+                 METHODE='TOUT_INST',
+                 OPTION='FATIGUE',
+                 INFO=2,
+                 CHAR_MECA=(
+                   _F(NUME_CHAR=1,
+                      NOM_CHAR='ETAT A - SITU1',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),
+                   _F(NUME_CHAR=2,
+                      NOM_CHAR='ETAT B - SITU1',
+                      MX=-10.0,  MY=1.0,  MZ=0.1,),
+                   _F(NUME_CHAR=3,
+                      NOM_CHAR='ETAT A - SITU2',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),
+                   _F(NUME_CHAR=4,
+                      NOM_CHAR='ETAT B - SITU2',
+                      MX=-10.0,  MY=1.0,  MZ=0.1,),
+                   _F(NUME_CHAR=5,
+                      NOM_CHAR='ETAT A - SITU3',
+                      MX=0.4,  MY=0.0,  MZ=-0.6,),
+                   _F(NUME_CHAR=6,
+                      NOM_CHAR='ETAT B - SITU3',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),),
+                 RESU_MECA_UNIT=(
+                   _F(TABL_MX=T_MX,
+                      TABL_MY=T_MY,
+                      TABL_PRES=T_PRES,
+                      TABL_MZ=T_MZ,),),
+                 RESU_THER=( _F(NUME_RESU_THER=1,
+                                TABL_RESU_THER=T_TH1,),
+                             _F(NUME_RESU_THER=2,
+                                TABL_RESU_THER=T_TH2,),),
+                 SITUATION=(
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=1,
+                     NOM_SITU='Situation1',
+                     COMBINABLE='NON',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT_A=1,
+                     CHAR_ETAT_B=2,
+                     NUME_RESU_THER = 1,
+                     PRES_A=1.0,
+                     PRES_B=10.0,),
+                  _F(NB_OCCUR=7,
+                     NUME_SITU=2,
+                     NOM_SITU='Situation2',
+                     NUME_PARTAGE = 1, 
+                     NUME_GROUPE=1,
+                     CHAR_ETAT_A=3,
+                     CHAR_ETAT_B=4,
+                     NUME_RESU_THER = 1,
+                     PRES_A=1.0,
+                     PRES_B=10.0,),
+                  _F(NB_OCCUR=10,
+                     NUME_SITU=3,
+                     NOM_SITU='Situation3',
+                     NUME_PARTAGE = 1, 
+                     NUME_GROUPE=2,
+                     NUME_RESU_THER = 2,
+                     CHAR_ETAT_A=5,
+                     CHAR_ETAT_B=6,
+                     PRES_A=0.4,
+                     PRES_B=1.0,),),);
+
+IMPR_TABLE(    TABLE=FATf,) 
+
+# CALCUL DE FATIGUE 
+# METHODE TOUT_INST
+# 5 GROUPES ET UNE SITUATION DE PASSAGE
+FATg=POST_RCCM( MATER=MAT,
+                 TITRE='FATIGUE TOUT_INST, PASSAGE AVEC 5 GROUPES',
+                 TYPE_RESU='DETAILS',
+                 TYPE_RESU_MECA='B3200',
+                 METHODE='TOUT_INST',
+                 OPTION='FATIGUE',
+                 INFO=2,
+                 CHAR_MECA=(
+                   _F(NUME_CHAR=1,
+                      NOM_CHAR='ETAT A - SITU1',
+                      MX=0.0,  MY=0.0,  MZ=0.0,),
+                   _F(NUME_CHAR=2,
+                      NOM_CHAR='ETAT B - SITU1',
+                      MX=0.0,  MY=0.0,  MZ=0.0,),
+                   _F(NUME_CHAR=3,
+                      NOM_CHAR='ETAT A - SITU2',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),
+                   _F(NUME_CHAR=4,
+                      NOM_CHAR='ETAT B - SITU2',
+                      MX=-10.0,  MY=1.0,  MZ=0.1,),
+                   _F(NUME_CHAR=5,
+                      NOM_CHAR='ETAT A - SITU3',
+                      MX=0.4,  MY=0.0,  MZ=-0.6,),
+                   _F(NUME_CHAR=6,
+                      NOM_CHAR='ETAT B - SITU3',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),),
+                 RESU_MECA_UNIT=(
+                   _F(TABL_MX=T_MX,
+                      TABL_MY=T_MY,
+                      TABL_PRES=T_PRES,
+                      TABL_MZ=T_MZ,),),
+                 RESU_THER=( _F(NUME_RESU_THER=1,
+                                TABL_RESU_THER=T_TH1,),
+                             _F(NUME_RESU_THER=2,
+                                TABL_RESU_THER=T_TH2,),),
+                 SITUATION=(
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=1,
+                     NOM_SITU='SituationPassage',
+                     NUME_GROUPE=(1,2),
+                     NUME_PASSAGE=(1,2),
+                     CHAR_ETAT_A=1,
+                     CHAR_ETAT_B=2,
+                     PRES_A=0.0,
+                     PRES_B=0.0,),
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=2,
+                     NOM_SITU='Situation2a',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT_A=3,
+                     CHAR_ETAT_B=4,
+                     NUME_RESU_THER = 1,
+                     PRES_A=1.0,
+                     PRES_B=10.0,),
+                  _F(NB_OCCUR=3,
+                     NUME_SITU=3,
+                     NOM_SITU='Situation2b',
+                     NUME_GROUPE=3,
+                     CHAR_ETAT_A=3,
+                     CHAR_ETAT_B=4,
+                     NUME_RESU_THER = 1,
+                     PRES_A=1.0,
+                     PRES_B=10.0,),
+                  _F(NB_OCCUR=3,
+                     NUME_SITU=4,
+                     NOM_SITU='Situation2c',
+                     NUME_GROUPE=4,
+                     CHAR_ETAT_A=3,
+                     CHAR_ETAT_B=4,
+                     NUME_RESU_THER = 1,
+                     PRES_A=1.0,
+                     PRES_B=10.0,),
+                  _F(NB_OCCUR=2,
+                     NUME_SITU=5,
+                     NOM_SITU='Situation3a',
+                     NUME_GROUPE=2,
+                     NUME_RESU_THER = 2,
+                     CHAR_ETAT_A=5,
+                     CHAR_ETAT_B=6,
+                     PRES_A=0.4,
+                     PRES_B=1.0,),
+                  _F(NB_OCCUR=8,
+                     NUME_SITU=6,
+                     NOM_SITU='Situation3b',
+                     NUME_GROUPE=5,
+                     NUME_RESU_THER = 2,
+                     CHAR_ETAT_A=5,
+                     CHAR_ETAT_B=6,
+                     PRES_A=0.4,
+                     PRES_B=1.0,),),);
+
+IMPR_TABLE(    TABLE=FATg,) 
+
 #--------------------------------------------------------------------------------
 #   TEST SUR UNITAIRE (SOLUTION DE REFERENCE ANALYTIQUE)
 #--------------------------------------------------------------------------------
-# -------------------FAT34-----------------------
+# -------------------FAT-----------------------
 # SITUATIONS 1,2,3, METHODE TOUT_INST
 #VALEURS MAX
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -347,7 +745,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=0.00230000000,
            VALE_REFE=0.00230,
-           NOM_PARA='FU_CUMU', 
+           NOM_PARA='FU_TOTAL', 
            FILTRE=(_F(NOM_PARA='LIEU',
                      VALE_K='ORIG',),),
            TABLE=FAT,)
@@ -355,16 +753,181 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=0.00668000000,
            VALE_REFE=0.00668,
-           NOM_PARA='FU_CUMU', 
+           NOM_PARA='FU_TOTAL', 
            FILTRE=(_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),),
            TABLE=FAT,)
+
+# -------------------FATss-----------------------
+# SITUATIONS 1,2,3, METHODE TOUT_INST, SOUS_CYCLES
+#VALEURS MAX
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=105.00000000,
+           VALE_REFE=105.0,
+           NOM_PARA='SN', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+                    _F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='NUM_SIT1',
+                     VALE_I=3,),
+                    ),
+           TABLE=FATss,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=55.00000000,
+           VALE_REFE=55.0,
+           NOM_PARA='SALT', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+                    _F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='NUM_SIT1',
+                     VALE_I=3,),
+                    ),
+           TABLE=FATss,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.000260000,
+           VALE_REFE=0.00026,
+           NOM_PARA='FU_UNIT', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+                    _F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='NUM_SIT1',
+                     VALE_I=3,),
+                    ),
+           TABLE=FATss,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00260000,
+           VALE_REFE=0.0026,
+           NOM_PARA='FU_TOTAL', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+                    ),
+           TABLE=FATss,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=307.50000000,
+           VALE_REFE=307.5,
+           NOM_PARA='SN', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+                    _F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='NUM_SIT1',
+                     VALE_I=3,),
+                    ),
+           TABLE=FATss,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=170.00000000,
+           VALE_REFE=170.0,
+           NOM_PARA='SALT', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+                    _F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='NUM_SIT1',
+                     VALE_I=3,),
+                    ),
+           TABLE=FATss,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.001090000,
+           VALE_REFE=0.00109,
+           NOM_PARA='FU_UNIT', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+                    _F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='NUM_SIT1',
+                     VALE_I=3,),
+                    ),
+           TABLE=FATss,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.01090000,
+           VALE_REFE=0.0109,
+           NOM_PARA='FU_TOTAL', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+                    ),
+           TABLE=FATss,)
+
+
+# -------------------FATssb-----------------------
+# SITUATIONS 1,2,3, METHODE TOUT_INST, SOUS_CYCLES
+#VALEURS MAX
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=112.50000000,
+           VALE_REFE=112.5,
+           NOM_PARA='SN', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+                    _F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='NUM_SIT1',
+                     VALE_I=3,),
+                    ),
+           TABLE=FATssb,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=75.00000000,
+           VALE_REFE=75.0,
+           NOM_PARA='SALT', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+                    _F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='NUM_SIT1',
+                     VALE_I=3,),
+                    ),
+           TABLE=FATssb,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00415000,
+           VALE_REFE=0.00415,
+           NOM_PARA='FU_TOTAL', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+                    ),
+           TABLE=FATssb,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=37.50000000,
+           VALE_REFE=37.5,
+           NOM_PARA='SN', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+                    _F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='NUM_SIT1',
+                     VALE_I=3,),
+                    ),
+           TABLE=FATssb,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00000000,
+           VALE_REFE=0.0,
+           NOM_PARA='SALT',
+           ORDRE_GRANDEUR=1.0e-6,   
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+                    _F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='NUM_SIT1',
+                     VALE_I=3,),
+                    ),
+           TABLE=FATssb,)
 
 # -------------------FAT34b-----------------------
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=0.0023000000,
            VALE_REFE=0.0023,
-           NOM_PARA='FU_CUMU', 
+           NOM_PARA='FU_TOTAL', 
            FILTRE=(_F(NOM_PARA='LIEU',
                      VALE_K='ORIG',),),
            TABLE=FATb,)
@@ -372,7 +935,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=0.00668000000,
            VALE_REFE=0.00668,
-           NOM_PARA='FU_CUMU', 
+           NOM_PARA='FU_TOTAL', 
            FILTRE=(_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),),
            TABLE=FATb,)
@@ -381,7 +944,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=0.00215000000,
            VALE_REFE=0.00215,
-           NOM_PARA='FU_CUMU', 
+           NOM_PARA='FU_TOTAL', 
            FILTRE=(_F(NOM_PARA='LIEU',
                      VALE_K='ORIG',),),
            TABLE=FATc,)
@@ -389,9 +952,77 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=0.00627000000,
            VALE_REFE=0.00627,
-           NOM_PARA='FU_CUMU', 
+           NOM_PARA='FU_TOTAL', 
            FILTRE=(_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),),
            TABLE=FATc,)
+
+# -------------------FAT34d-----------------------
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.0023000000,
+           VALE_REFE=0.0023,
+           NOM_PARA='FU_TOTAL', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FATd,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00668000000,
+           VALE_REFE=0.00668,
+           NOM_PARA='FU_TOTAL', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FATd,)
+
+# -------------------FAT34e-----------------------
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.0027500000,
+           VALE_REFE=0.00275,
+           NOM_PARA='FU_TOTAL', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FATe,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00791000000,
+           VALE_REFE=0.00791,
+           NOM_PARA='FU_TOTAL', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FATe,)
+
+# -------------------FATf-----------------------
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.0015300000,
+           VALE_REFE=0.00153,
+           NOM_PARA='FU_TOTAL', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FATf,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.0043000000,
+           VALE_REFE=0.0043,
+           NOM_PARA='FU_TOTAL', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FATf,)
+
+# -------------------FAT34g-----------------------
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00215000000,
+           VALE_REFE=0.00215,
+           NOM_PARA='FU_TOTAL', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FATg,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00627000000,
+           VALE_REFE=0.00627,
+           NOM_PARA='FU_TOTAL', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FATg,)
 
 FIN()

@@ -26,9 +26,10 @@
 #include "astercxx.h"
 
 #include "Modeling/PrestressingCableDefinition.h"
+#include "Supervis/ResultNaming.h"
 
 PrestressingCableDefinitionInstance::PrestressingCableDefinitionInstance( const MeshPtr& mesh ):
-    DataStructure( getNewResultObjectName(), "CABL_PRECONT" ),
+    DataStructure( ResultNaming::getNewResultName(), "CABL_PRECONT" ),
     _mesh( mesh ),
     _sigin( new PCFieldOnMeshDoubleInstance( getName() + ".CHME.SIGIN", mesh ) ),
     _cableBP( new TableInstance( getName() + "CABLEBP    " ) ),

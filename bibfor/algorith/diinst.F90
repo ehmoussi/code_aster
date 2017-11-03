@@ -62,7 +62,7 @@ function diinst(sddisc, numins)
     endif
     typeco = ' '
 !
-    call gettco(sddisc, typeco)
+    call gettco(sddisc, typeco, errstop=ASTER_FALSE)
 !
 ! --- ACCES SD LISTE D'INSTANTS
 !

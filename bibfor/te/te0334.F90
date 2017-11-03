@@ -33,6 +33,7 @@ implicit none
 #include "asterfort/nbsigm.h"
 #include "asterfort/tecach.h"
 #include "asterfort/utmess.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! aslint: disable=W0104
 ! person_in_charge: mickael.abbas at edf.fr
@@ -107,8 +108,8 @@ implicit none
 ! - Comportment
 !
     call jevech('PCOMPOR', 'L', icompo)
-    rela_comp  = zk16(icompo)
-    kit_comp_2 = zk16(icompo+7)
+    rela_comp  = zk16(icompo-1+NAME)
+    kit_comp_2 = zk16(icompo-1+CREEP_NAME)
 !
 ! - Internal variables
 !
@@ -164,8 +165,10 @@ implicit none
 !
 ! ----- Get elastic parameters (only isotropic elasticity)
 !
+        call get_elas_id(zi(imate), elas_id, elas_keyword)
         call get_elas_para('RIGI', zi(imate), '+', igau, 1,&
-                           elas_id, time = time, e = e, nu = nu)
+                           elas_id  , elas_keyword,&
+                           time = time, e = e, nu = nu)
         ASSERT(elas_id.eq.1)
 !
 ! ----- Compute creep strains (current Gauss point)

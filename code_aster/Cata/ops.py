@@ -27,19 +27,9 @@ Only used by the legacy supervisor.
 
 """
 
-from . import HAVE_ASTERSTUDY
-
-if HAVE_ASTERSTUDY:
-    from .Language.ops import (DEBUT, build_debut,
-                               POURSUITE, build_poursuite, POURSUITE_context,
-                               INCLUDE, build_include, INCLUDE_context,
-                               DETRUIRE, build_detruire,
-                               build_procedure, build_DEFI_FICHIER,
-                               build_formule)
-else:
-    from .Legacy.ops import (DEBUT, build_debut,
-                             POURSUITE, build_poursuite, POURSUITE_context,
-                             INCLUDE, build_include, INCLUDE_context,
-                             DETRUIRE, build_detruire,
-                             build_procedure, build_DEFI_FICHIER,
-                             build_formule)
+from .Legacy.ops import (DEBUT, build_debut,
+                         POURSUITE, build_poursuite, POURSUITE_context,
+                         INCLUDE, build_include, INCLUDE_context,
+                         DETRUIRE, build_detruire,
+                         build_procedure, build_DEFI_FICHIER,
+                         build_formule)

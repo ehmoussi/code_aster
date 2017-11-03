@@ -21,7 +21,7 @@
 This package is only used to check the *legacy* syntax.
 
 It is not important to use the real class (defined in Cython).
-Cython objects must defined a `getType()` function that is compared to
+Boost-Python objects must defined a `getType()` function that is compared to
 the return of the class method `getType()` of datastructures.
 
 Ex.: maillage_sdaster.getType() = Mesh().getType() = "MAILLAGE"
@@ -37,8 +37,15 @@ class DataStructure(object):
     @classmethod
     def getType(cls):
         """Return the type of DataStructure"""
-        # use for static checking (with fake datastructures)
         return cls.__name__.replace("_sdaster", "").upper()
+
+    @classmethod
+    def getSubtypes(cls):
+        """Return the type of DataStructure and all its subtypes."""
+        types = [cls.getType()]
+        for subclass in cls.__subclasses__():
+            types.extend(subclass.getSubtypes())
+        return types
 
     @classmethod
     def register_deepcopy_callback(cls, callback):
@@ -223,7 +230,11 @@ class formule_c(formule):
 
 # Objects provided in the header of cata.py
 class GEOM(object):
-    pass
+
+    @classmethod
+    def getType(cls):
+        """Return the type of DataStructure"""
+        return 'TX'
 
 class grma(GEOM):
     pass
@@ -256,7 +267,11 @@ class cham_gd_sdaster(ASSD):
     pass
 
 class carte_sdaster(cham_gd_sdaster):
-    pass
+
+    @classmethod
+    def getType(cls):
+        """Return the type of DataStructure"""
+        return "CART_"
 
 class cham_elem(cham_gd_sdaster):
     pass
@@ -342,7 +357,7 @@ class macr_elem_stat(ASSD):
 class maillage_sdaster(ASSD):
     pass
 
-class maillage_p_sdaster(ASSD):
+class maillage_p_sdaster(maillage_sdaster):
     pass
 
 class grille_sdaster(maillage_sdaster):

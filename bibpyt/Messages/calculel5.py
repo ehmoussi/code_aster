@@ -348,6 +348,9 @@ Dans ces conditions, les performances CPU de la projection sont dégradées.
 Nombre moyen de mailles dans une cellule   : %(i1)d
 Nombre maximal de mailles dans une cellule : %(i2)d
 
+Conseil : dans ce type de cas de figure, l'utilisation de VIS_A_VIS peut 
+améliorer très significativement les performances de PROJ_CHAMP.  
+
 """),
 
 

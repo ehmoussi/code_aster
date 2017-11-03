@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine rrc_comp(ds_para)
 !
 use Rom_Datastructure_type
@@ -29,9 +30,7 @@ implicit none
 #include "asterfort/rrc_comp_prim.h"
 #include "asterfort/rrc_comp_dual.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaRRC), intent(in) :: ds_para
+type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -60,6 +59,8 @@ implicit none
 !
 ! - For dual field
 !
-    call rrc_comp_dual(ds_para)
+    if (ds_para%l_prev_dual) then
+        call rrc_comp_dual(ds_para)
+    endif
 !
 end subroutine

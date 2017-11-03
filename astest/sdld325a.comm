@@ -128,7 +128,7 @@ MODES=CALC_MODES(MATR_RIGI=MATRRIGI,
                               FREQ=(10.,),
                               ),
                  MATR_MASS=MATRMASS,
-                 SOLVEUR_MODAL=_F(METHODE='JACOBI',
+                 SOLVEUR_MODAL=_F(METHODE='JACOBI',PREC_JACOBI=1.E-4,
                                   NMAX_ITER_BATHE=30,
                                   ),
                  )

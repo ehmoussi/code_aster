@@ -19,15 +19,12 @@
 
 # person_in_charge: david.haboussa at edf.fr
 
-import os
-
-os.system("mfront --obuild GTN.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so gtn.so")
-
 
 # avec SIMU_POINT_MAT
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=39)
 
 
 MATF=DEFI_MATERIAU(ELAS=_F(E=20000., NU=0.3),
@@ -59,7 +56,7 @@ zero=DEFI_CONSTANTE(VALE=0.)
 SOLMF=SIMU_POINT_MAT( MATER=MATF, INFO=1,
                 COMPORTEMENT=_F(RELATION='MFRONT',
                                 NOM_ROUTINE='astergtn',
-                                LIBRAIRIE='gtn.so',
+                                UNITE_LIBRAIRIE=39,
 #                        RESI_INTE_RELA=1.E-8,
                         ),
                 INCREMENT=_F(  LIST_INST = LINST),

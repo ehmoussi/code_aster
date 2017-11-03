@@ -244,9 +244,9 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
              tmp = jeu/valmin
          endif
     
-         if ( (jeu .gt. valmin)  )  then 
-              call utmess('A', 'CONTACT_22',sr=tmp)
-         endif   
+!         if ( (jeu .gt. valmin)  )  then 
+!              call utmess('A', 'CONTACT_22',sr=tmp)
+!         endif   
     endif
 
 

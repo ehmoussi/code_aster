@@ -15,18 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    function dmwdt(rho11, phi, sat, cliq, dp11t,&
-                   alp11)
-        real(kind=8) :: rho11
-        real(kind=8) :: phi
-        real(kind=8) :: sat
-        real(kind=8) :: cliq
-        real(kind=8) :: dp11t
-        real(kind=8) :: alp11
+    function dmwdt(rho11, phi, satur, cliq, dp11t, alp11)
+        real(kind=8), intent(in) :: rho11, phi, satur, cliq, dp11t, alp11
         real(kind=8) :: dmwdt
     end function dmwdt
 end interface

@@ -15,15 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
     subroutine nmdovd(model         , l_affe_all  , l_auto_deborst,&
                       list_elem_affe, nb_elem_affe, full_elem_s   ,&
-                      defo_comp     , defo_comp_py, type_model2)
+                      defo_comp     , defo_comp_py)
         character(len=8), intent(in) :: model
         character(len=24), intent(in) :: list_elem_affe
         aster_logical, intent(in) :: l_affe_all
@@ -32,6 +30,5 @@ interface
         character(len=19), intent(in) :: full_elem_s
         character(len=16), intent(in) :: defo_comp
         character(len=16), intent(in) :: defo_comp_py
-        character(len=16), intent(out) :: type_model2
     end subroutine nmdovd
 end interface

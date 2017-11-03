@@ -61,11 +61,6 @@ CCARCRI = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
                             'TSAMPL', 'TSRETOUR', 'POSTITER', 'LC_EXT[3]', 'MODECALC',
                             'ALPHA', 'LC_EXT2[2]',))
 
-
-CCOMPOR = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
-                            components=('RELCOM', 'NBVARI', 'DEFORM', 'INCELA', 'C_PLAN',))
-
-
 NDEPLAC = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',
                             components=('DX', 'DY', 'DZ', 'DRX', 'DRY',
                                         'DRZ',))
@@ -410,7 +405,7 @@ class MECA_POU_D_T(Element):
                                   OP.EFGE_ELNO.PCAORIE, CCAORIE),
                               (SP.PCHDYNR, DDL_MECA), (SP.PCOEFFC, LC.CCOEFC),
                               (SP.PCOEFFR, LC.CCOEFR), (
-                              OP.EFGE_ELNO.PCOMPOR, CCOMPOR),
+                              OP.EFGE_ELNO.PCOMPOR, LC.CCOMPOR),
                               (OP.EFGE_ELNO.PCONTRR, EEFGEGA), (
                               SP.PDEPLAR, DDL_MECA),
                               (SP.PFF1D1D, CFORCEF), (SP.PFR1D1D, CFORCER),
@@ -442,7 +437,7 @@ class MECA_POU_D_T(Element):
                      para_in=(
                          (SP.PCAGNPO, CCAGNPO), (
                              OP.FORC_NODA.PCAORIE, CCAORIE),
-                     (OP.FORC_NODA.PCOMPOR, CCOMPOR), (
+                     (OP.FORC_NODA.PCOMPOR, LC.CCOMPOR), (
                      OP.FORC_NODA.PCONTMR, EEFGEGA),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
@@ -455,7 +450,7 @@ class MECA_POU_D_T(Element):
                      para_in=(
                          (SP.PCAGNPO, CCAGNPO), (
                              OP.FULL_MECA.PCAORIE, CCAORIE),
-                     (SP.PCARCRI, CCARCRI), (OP.FULL_MECA.PCOMPOR, CCOMPOR),
+                     (SP.PCARCRI, CCARCRI), (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR),
                      (OP.FULL_MECA.PCONTMR, EEFGEGA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
@@ -562,7 +557,7 @@ class MECA_POU_D_T(Element):
                      para_in=((SP.PCAARPO, CCAARPO), (SP.PCAGNPO, CCAGNPO),
                               (OP.RAPH_MECA.PCAORIE, CCAORIE), (
                                   SP.PCARCRI, CCARCRI),
-                              (OP.RAPH_MECA.PCOMPOR, CCOMPOR), (
+                              (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR), (
                               OP.RAPH_MECA.PCONTMR, EEFGEGA),
                               (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                               (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -640,7 +635,7 @@ class MECA_POU_D_T(Element):
                               (SP.PCAARPO, CCAARPO), (SP.PCAGNPO, CCAGNPO),
                           (OP.RIGI_MECA_TANG.PCAORIE, CCAORIE), (
                           SP.PCARCRI, CCARCRI),
-                              (OP.RIGI_MECA_TANG.PCOMPOR, CCOMPOR), (
+                              (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (
                           OP.RIGI_MECA_TANG.PCONTMR, EEFGEGA),
                           (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                           (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -670,7 +665,7 @@ class MECA_POU_D_T(Element):
                      para_in=(
                          (SP.PCAGNPO, CCAGNPO), (
                              OP.SIEF_ELNO.PCAORIE, CCAORIE),
-                     (OP.SIEF_ELNO.PCOMPOR, CCOMPOR), (
+                     (OP.SIEF_ELNO.PCOMPOR, LC.CCOMPOR), (
                      OP.SIEF_ELNO.PCONTRR, EEFGEGA),
                      (SP.PDEPPLU, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), (
@@ -747,7 +742,7 @@ class MECA_POU_D_T(Element):
 
         OP.VARI_ELNO(te=347,
                      para_in=(
-                         (OP.VARI_ELNO.PCOMPOR, CCOMPOR), (
+                         (OP.VARI_ELNO.PCOMPOR, LC.CCOMPOR), (
                              SP.PVARIGR, ZVARIPG),
                      ),
                      para_out=((OP.VARI_ELNO.PVARINR, LC.ZVARINO), ),

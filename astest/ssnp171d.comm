@@ -357,9 +357,6 @@ RES_XFEM=CALC_CHAMP(reuse =RES_XFEM,
                    INFO=2,
                    );
                    
-RES_XFEM=CALC_CHAMP(reuse =RES_XFEM,
-                 RESULTAT=RES_XFEM,);
-
 IMPR_RESU(FORMAT='GMSH',UNITE=37,
           RESU=_F(RESULTAT=RES_XFEM,NOM_CHAM=('DEPL'),TYPE_CHAM='VECT_2D', NOM_CMP=('DX','DY',),),);
          

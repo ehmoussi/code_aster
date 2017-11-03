@@ -28,6 +28,7 @@ implicit none
 #include "asterfort/dmatmc.h"
 #include "asterfort/eps1mc.h"
 #include "asterfort/eps2mc.h"
+#include "asterfort/epslmc.h"
 #include "asterfort/epthmc.h"
 #include "asterfort/lteatt.h"
 #include "asterfort/jevech.h"
@@ -93,25 +94,32 @@ implicit none
     epsi_tota(1:nbsig*npg)   = zero
     epsi_tota_g(1:nbsig*npg) = zero
     epsi_varc(1:nbsig*npg)   = zero
+    if (option(4:4) .eq. 'L') then
+        call epslmc(nno   , ndim   , nbsig,&
+                    npg   , j_poids, j_vf ,&
+                    j_dfde, xyz    , disp ,&
+                    epsi)
+    else
 !
 ! - Total strains: first order (small strains)
 !
-    call eps1mc(nno, ndim, nbsig, npg, j_poids,&
-                j_vf, j_dfde, xyz, disp, nharm,&
-                epsi_tota)
+        call eps1mc(nno, ndim, nbsig, npg, j_poids,&
+                    j_vf, j_dfde, xyz, disp, nharm,&
+                    epsi_tota)
 !
 ! - Total strains: second order (large strains)
 !
-    if (option(4:4) .eq. 'G') then
-        call eps2mc(nno, ndim, nbsig, npg, j_poids,&
-                    j_vf, j_dfde, xyz, disp, epsi_tota_g)
-    endif
+        if (option(4:4) .eq. 'G') then
+            call eps2mc(nno, ndim, nbsig, npg, j_poids,&
+                        j_vf, j_dfde, xyz, disp, epsi_tota_g)
+        endif
 !
 ! - Total strains
 !
-    do i = 1, nbsig*npg
-        epsi(i) = epsi_tota(i) + epsi_tota_g(i)
-    end do
+        do i = 1, nbsig*npg
+            epsi(i) = epsi_tota(i) + epsi_tota_g(i)
+        end do
+    endif
 !
 ! - Compute variable commands strains (thermics, drying, etc.)
 !

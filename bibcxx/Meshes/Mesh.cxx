@@ -29,11 +29,12 @@
 #include "Python.h"
 #include "Meshes/Mesh.h"
 #include "Utilities/CapyConvertibleValue.h"
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
+#include "Supervis/ResultNaming.h"
 #include "RunManager/LogicalUnitManagerCython.h"
 
 BaseMeshInstance::BaseMeshInstance( const std::string& type ):
-                        DataStructure( getNewResultObjectName(), type ),
+                        DataStructure( ResultNaming::getNewResultName(), type ),
                         _dimensionInformations( JeveuxVectorLong( getName() + ".DIME      " ) ),
                         _nameOfNodes( JeveuxBidirectionalMapChar8( getName() + ".NOMNOE    " ) ),
                         _coordinates( new MeshCoordinatesFieldInstance( getName() + ".COORDO    " ) ),
@@ -55,8 +56,8 @@ BaseMeshInstance::BaseMeshInstance( const std::string& type ):
 bool MeshInstance::addGroupOfNodesFromNodes( const std::string& name, const VectorString& vec )
     throw( std::runtime_error )
 {
-    CommandSyntaxCython cmdSt( "DEFI_GROUP" );
-    cmdSt.setResult( getResultObjectName(), "MAILLAGE" );
+    CommandSyntax cmdSt( "DEFI_GROUP" );
+    cmdSt.setResult( ResultNaming::getCurrentName(), "MAILLAGE" );
 
     CapyConvertibleContainer toCapyConverter;
     toCapyConverter.add( new CapyConvertibleValue< std::string >
@@ -96,18 +97,17 @@ bool BaseMeshInstance::readMeshFile( const std::string& fileName, const std::str
 
     if( format == "GIBI" || format == "GMSH" )
     {
-        const std::string tmpFileName = getTemporaryFileName( "." );
         // Fichier temporaire
-        LogicalUnitFileCython file2( tmpFileName, Ascii, Append );
+        LogicalUnitFileCython file2( "", Ascii, Append );
         std::string preCmd = "PRE_" + format;
         ASTERINTEGER op2 = 47;
         if( format == "GIBI" ) op2 = 49;
 
-        CommandSyntaxCython cmdSt( preCmd );
+        CommandSyntax* cmdSt2 = new CommandSyntax( preCmd );
         SyntaxMapContainer syntax2;
         syntax2.container[ "UNITE_" + format ] = file1.getLogicalUnit();
         syntax2.container[ "UNITE_MAILLAGE" ] = file2.getLogicalUnit();
-        cmdSt.define( syntax2 );
+        cmdSt2->define( syntax2 );
 
         try
         {
@@ -117,12 +117,12 @@ bool BaseMeshInstance::readMeshFile( const std::string& fileName, const std::str
         {
             throw;
         }
-//         delete cmdSt2;
+        delete cmdSt2;
         syntax.container[ "FORMAT" ] = "ASTER";
         syntax.container[ "UNITE" ] = file2.getLogicalUnit();
 
-        cmdSt = CommandSyntaxCython( "LIRE_MAILLAGE" );
-        cmdSt.setResult( getResultObjectName(), "MAILLAGE" );
+        CommandSyntax cmdSt( "LIRE_MAILLAGE" );
+        cmdSt.setResult( ResultNaming::getCurrentName(), "MAILLAGE" );
 
         cmdSt.define( syntax );
 
@@ -141,8 +141,8 @@ bool BaseMeshInstance::readMeshFile( const std::string& fileName, const std::str
         syntax.container[ "FORMAT" ] = format;
         syntax.container[ "UNITE" ] = file1.getLogicalUnit();
 
-        CommandSyntaxCython cmdSt( "LIRE_MAILLAGE" );
-        cmdSt.setResult( getResultObjectName(), "MAILLAGE" );
+        CommandSyntax cmdSt( "LIRE_MAILLAGE" );
+        cmdSt.setResult( ResultNaming::getCurrentName(), "MAILLAGE" );
 
         cmdSt.define( syntax );
 

@@ -95,7 +95,6 @@ def register(settings, logger=None):
 
     This function must be called in order to initialize aster.
 
-    :catalog: a JDC instance
     :settings: aster settings object (as given by aster_settings.CoreOptions)
     :logger: the message logger (default: Utilitai.Utmess.MessageLog)
     """

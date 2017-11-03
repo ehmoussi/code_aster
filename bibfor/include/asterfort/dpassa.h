@@ -19,10 +19,10 @@
 !
 !
 interface
-    subroutine dpassa(xyzgau, repere, irep, passag)
-        real(kind=8) :: xyzgau(3)
-        real(kind=8) :: repere(7)
-        integer :: irep
-        real(kind=8) :: passag(6, 6)
+    subroutine dpassa(repere, irep, matr_tran, xyzgau_)
+        real(kind=8), intent(in) :: repere(7)
+        integer, intent(out) :: irep
+        real(kind=8), intent(out) :: matr_tran(6, 6)
+        real(kind=8), optional, intent(in) :: xyzgau_(3)
     end subroutine dpassa
 end interface

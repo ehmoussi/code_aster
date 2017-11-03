@@ -201,9 +201,9 @@ subroutine op0091()
                 nbeq1=ddla1
                 nc=ddla1
                 nl=ddla2
-                call lipsrb(modgen, kb, sst1, sst2, intf1,&
+                call lipsrb(modgen, sst1, sst2, intf1,&
                             intf2, lino1, lino2, indin1, indin2,&
-                            ddla1, ddla2, nbeq1, nbeq2, -imast1,&
+                            ddla1, ddla2, nbeq1, -imast1,&
                             tramo1)
                 call jeveuo(tramo1, 'E', ltramo)
             endif
@@ -212,9 +212,9 @@ subroutine op0091()
                 nbeq2=ddla2
                 nc=ddla2
                 nl=ddla1
-                call lipsrb(modgen, kb, sst1, sst2, intf1,&
+                call lipsrb(modgen, sst1, sst2, intf1,&
                             intf2, lino1, lino2, indin1, indin2,&
-                            ddla2, ddla1, nbeq2, nbeq1, -imast2,&
+                            ddla2, ddla1, nbeq2, -imast2,&
                             tramo2)
                 call jeveuo(tramo2, 'E', ltramo)
             endif

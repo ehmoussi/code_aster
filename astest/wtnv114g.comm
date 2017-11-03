@@ -172,7 +172,8 @@ RESU0=STAT_NON_LINE(
                 CHARGE = CHARHO),
                              _F(
                 CHARGE = CH_FLU1)),
-                         COMPORTEMENT=_F( PARM_THETA=1.,
+                SCHEMA_THM=_F(PARM_THETA=1.,),
+                         COMPORTEMENT=_F( 
                 RELATION = 'KIT_HM',
                 RELATION_KIT = ('ELAS','LIQU_SATU','HYDR_UTIL',),
                 ITER_INTE_MAXI = 5),
@@ -188,26 +189,10 @@ RESU0=STAT_NON_LINE(
                 LIST_INST = ARCHI)
               )
 
-#MODELIN=AFFE_MODELE(MAILLAGE=MAIL,
-#                    AFFE=_F(TOUT='OUI',
-#                            PHENOMENE='MECANIQUE',
-#                            MODELISATION='3D_HM',
-#                           ),
-#                   );
-           
-#IMPR_RESU(FORMAT="RESULTAT",FORMAT='MED',
-#          UNITE=80,
-#          RESU= (_F(MAILLAGE=MAIL,
-#                    RESULTAT = RESU0,
-#                    NOM_CHAM = ('DEPL',),
-#                    NOM_CMP  = ('DX','DY','DZ','PRE1',),
-#                   ),
-#                ),
-#         )
+
 
 RESU0=CALC_CHAMP( reuse= RESU0, RESULTAT= RESU0, CONTRAINTE=('SIGM_ELGA',), )
 
-#IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=RESU0,))
 
 DEP1=POST_RELEVE_T(ACTION=_F(INTITULE='P_SUP',
                              NOEUD=('NO1','NO3','NO6','NO8',),

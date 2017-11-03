@@ -15,11 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine nmccam(fami, kpg, ksp, ndim, typmod, imate, compor, carcri,&
+    subroutine nmccam(fami, kpg, ksp, ndim, typmod, imate, carcri,&
                       deps, sigm, pcrm, option, sigp,&
                       pcrp, dsidep, retcom)
         character(len=*), intent(in) :: fami
@@ -28,7 +26,6 @@ interface
         integer :: ndim
         character(len=8) :: typmod(*)
         integer :: imate
-        character(len=16) :: compor(*)
         real(kind=8) :: carcri(3)
         real(kind=8) :: deps(6)
         real(kind=8) :: sigm(6)

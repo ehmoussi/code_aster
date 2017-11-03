@@ -15,18 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-      subroutine cnoadd(chno,chnop)
+subroutine cnoadd(chno, chnop)
       implicit none
-      character*(*) chno,chnop
+      character(len=*), intent(in) :: chno, chnop
 !----------------------------------------------------------------
 ! BUT :
 ! pour un cham_no (chno) provenant d'un assemblage,
 ! on met à zéro les entrées dont on n'est pas strictement propriétaires
 !----------------------------------------------------------------
+#ifdef _USE_MPI
 #include "asterf_config.h"
 #include "asterf.h"
 #include "asterf_types.h"
-#ifdef _USE_MPI
 #include "mpif.h"
 #include "jeveux.h"
 #include "asterfort/dismoi.h"
@@ -104,6 +104,3 @@
 #endif
 
       end
-
-
-

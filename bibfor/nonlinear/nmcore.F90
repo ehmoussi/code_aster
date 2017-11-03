@@ -108,6 +108,10 @@ implicit none
         user_para = ds_conv%list_resi(i_resi)%user_para
         if (ds_conv%l_resi_test(i_resi)) then
             call nmcoru(vale_calc, user_para, l_conv)
+            ! Si on a pas la convergence d'une boucle de point fixe,Pas la peine de vérifier vpene.
+            if ((.not. l_conv) .and. (i_resi .eq. 7 )  .and. (.not. ds_conv%l_stop_pene )) &
+                l_conv = .true._1
+            
         else
             l_conv = .true._1
         endif

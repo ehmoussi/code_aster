@@ -21,11 +21,14 @@ subroutine caelca(modele, chmat, caelem, irana1, icabl,&
                   ea, rh1000, prelax, fprg, frco,&
                   frli, sa)
     implicit none
-!  DESCRIPTION : RECUPERATION DES CARACTlERISTIQUES ELEMENTAIRES
-!  -----------   D'UN CABLE
-!                CES DONNEES PEUVENT ETRE DEFINI PAR BPEL_ACIER
-!                                                OU ETCC_ACIER
-!                APPELANT : OP0180 , OPERATEUR DEFI_CABLE_BP
+! --------------------------------------------------------------------------------------------------
+!
+!   RECUPERATION DES CARACTlERISTIQUES ELEMENTAIRES D'UN CABLE
+!
+!   CES DONNEES PEUVENT ETRE DEFINI PAR BPEL_ACIER OU ETCC_ACIER
+!
+! --------------------------------------------------------------------------------------------------
+!  APPELANT : OP0180 , OPERATEUR DEFI_CABLE_BP
 !
 !  IN     : MODELE : CHARACTER*8 , SCALAIRE
 !                    NOM DU CONCEPT MODELE ASSOCIE A L'ETUDE
@@ -40,26 +43,21 @@ subroutine caelca(modele, chmat, caelem, irana1, icabl,&
 !  IN     : NBNOCA : INTEGER , VECTEUR DE DIMENSION NBCABL
 !                    CONTIENT LES NOMBRES DE NOEUDS DE CHAQUE CABLE
 !  IN     : NUMACA : CHARACTER*19 , SCALAIRE
-!                    NOM D'UN VECTEUR D'ENTIERS POUR STOCKAGE DES
-!                    NUMEROS DES MAILLES APPARTENANT AUX CABLES
-!                    CE VECTEUR EST COMPLETE LORS DU PASSAGE PREALABLE
+!                    NOM D'UN VECTEUR D'ENTIERS POUR STOCKAGE DES NUMEROS DES MAILLES
+!                    APPARTENANT AUX CABLES CE VECTEUR EST COMPLETE LORS DU PASSAGE PREALABLE
 !                    DANS LA ROUTINE TOPOCA
-! IN      : QUAD   : VRAI SI MAILLAGE QUADRATIQUE (SEG3)
+!  IN     : QUAD   : VRAI SI MAILLAGE QUADRATIQUE (SEG3)
 !
-! IN      : REGL    : CHARACTER*4, NOM DU REGLEMENT UTILISE
-!                     BPEL OU ETCC
+!  IN     : REGL   : CHARACTER*4, NOM DU REGLEMENT UTILISE BPEL OU ETCC
 !  IN/OUT : RELAX  : LOGICAL , SCALAIRE
-!                    INDICATEUR DE PRISE EN COMPTE DES PERTES DE TENSION
-!                    PAR RELAXATION DE L'ACIER
-!                    SI RH1000 = 0  => RELAX = .FALSE.
+!                    INDICATEUR DE PRISE EN COMPTE DES PERTES DE TENSION PAR RELAXATION DE L'ACIER.
 !  OUT    : EA     : REAL*8 , SCALAIRE
 !                    VALEUR DU MODULE D'YOUNG DE L'ACIER
 !  OUT    : RH1000 : REAL*8 , SCALAIRE
 !                    VALEUR DE LA RELAXATION A 1000 HEURES EN %
-!  OUT    : PRELAX    : REAL*8 , SCALAIRE
-!                    VALEUR DU COEFFICIENT DE RELAXATION DE L'ACIER
-!                    PRECONTRAINT
-!  OUT    : FPRG  : REAL*8 , SCALAIRE
+!  OUT    : PRELAX : REAL*8 , SCALAIRE
+!                    VALEUR DU COEFFICIENT DE RELAXATION DE L'ACIER PRECONTRAINT
+!  OUT    : FPRG   : REAL*8 , SCALAIRE
 !                    VALEUR DE LA CONTRAINTE LIMITE ELASTIQUE DE L'ACIER
 !  OUT    : FRCO   : REAL*8 , SCALAIRE
 !                    VALEUR DU COEFFICIENT DE FROTTEMENT EN COURBE
@@ -70,11 +68,8 @@ subroutine caelca(modele, chmat, caelem, irana1, icabl,&
 !  OUT    : SA     : REAL*8 , SCALAIRE
 !                    VALEUR DE L'AIRE DE LA SECTION DROITE DU CABLE
 !
-!-------------------   DECLARATION DES VARIABLES   ---------------------
+! --------------------------------------------------------------------------------------------------
 !
-!
-! ARGUMENTS
-! ---------
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8prem.h"
@@ -97,28 +92,28 @@ subroutine caelca(modele, chmat, caelem, irana1, icabl,&
     aster_logical :: relax, quad
     real(kind=8) :: ea, rh1000, prelax, fprg, frco, frli, sa
 !
-! VARIABLES LOCALES
-! -----------------
+! --------------------------------------------------------------------------------------------------
     integer :: ias, iasmax, icmp, icode, icste, idecma, imail, iranv, iret
     integer :: jdesc, jmodma, jnumac, jptma, jvalk, jvalr, lonuti, nbcste, nbec
     integer :: nbno, ncaba, ntyele(2), numail, nbcmp, idebgd, i, nbma
     real(kind=8) :: eps, rbid
-    aster_logical :: trouv1, trouv2, trouv3, trouv4, trouv5
+    aster_logical :: trouv1, trouv2, trouv3, trouv4, trouv5, relax_loc
     character(len=3) :: k3cab, k3mai
     character(len=11) :: k11
     character(len=8) :: acier, k8b
     character(len=19) :: carte
     character(len=24) :: cadesc, captma, cavalk, cavalr, modmai, rcvalk, rcvalr
-    character(len=24) :: valk(2)
     character(len=4) :: regl
 !
+    real(kind=8)      :: valr(2)
+    character(len=24) :: valk(2)
 !
     character(len=16) :: bpela(5), etcca(4), young
     character(len=16) :: nomele(2)
 !
     data          nomele /'MECA_BARRE      ','MECGSEG3        '/
     data          bpela  /'RELAX_1000','MU0_RELAX','F_PRG',&
-     &                      'FROT_COURB','FROT_LINE'/
+                          'FROT_COURB','FROT_LINE'/
     data          etcca  /'RELAX_1000','F_PRG','COEF_FROT','PERT_LIGNE'/
     data          young  /'E       '/
 !
@@ -147,7 +142,7 @@ subroutine caelca(modele, chmat, caelem, irana1, icabl,&
 !
     do i = 1, 2
         call jenonu(jexnom('&CATA.TE.NOMTE', nomele(i)), ntyele(i))
-    end do
+    enddo
     modmai = modele//'.MAILLE'
     call jeveuo(modmai, 'L', jmodma)
 !
@@ -157,14 +152,13 @@ subroutine caelca(modele, chmat, caelem, irana1, icabl,&
             write(k3cab,'(I3)') icabl
             call utmess('F', 'MODELISA2_48', sk=k3cab)
         endif
-    end do
+    enddo
 !
 !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ! 2   RECUPERATION DES CARACTERISTIQUES DU MATERIAU ACIER
 !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 !
-! 2.1 RECUPERATION DU MATERIAU ACIER CONSTITUANT LE CABLE
-! ---
+!   2.1 RECUPERATION DU MATERIAU ACIER CONSTITUANT LE CABLE
     carte = chmat//'.CHAMP_MAT '
     cavalk = carte//'.VALE'
     captma = carte//'.PTMA'
@@ -182,14 +176,12 @@ subroutine caelca(modele, chmat, caelem, irana1, icabl,&
     endif
 !
     call dismoi('NB_CMP_MAX', 'NOMMATER', 'GRANDEUR', repi=nbcmp)
-!.... NBCMP COMPOSANTES POUR LA GRANDEUR NOMMATER QUI COMPOSE LA CARTE
-!.... => ACCES  AU NOM DU MATERIAU ASSOCIE A UNE MAILLE
+!   NBCMP COMPOSANTES POUR LA GRANDEUR NOMMATER QUI COMPOSE LA CARTE
+!   => ACCES  AU NOM DU MATERIAU ASSOCIE A UNE MAILLE
     idebgd=nbcmp*(ias-1)+1
     acier = zk8(jvalk+idebgd-1)
-!.... ON VERIFIE QUE LE MEME MATERIAU A ETE AFFECTE A TOUTES LES MAILLES
-!.... DU CABLE
-!.... N.B. LE PASSAGE PREALABLE DANS LA ROUTINE TOPOCA GARANTIT NBNO > 2
-!
+!   ON VERIFIE QUE LE MEME MATERIAU A ETE AFFECTE A TOUTES LES MAILLES DU CABLE
+!   N.B. LE PASSAGE PREALABLE DANS LA ROUTINE TOPOCA GARANTIT NBNO > 2
     do imail = 2, nbma
         numail = zi(jnumac+idecma+imail-1)
         ias = zi(jptma+numail-1)
@@ -202,16 +194,14 @@ subroutine caelca(modele, chmat, caelem, irana1, icabl,&
         endif
         idebgd=nbcmp*(ias-1)+1
         k8b = zk8(jvalk+idebgd-1)
-!C         K8B = ZK8(JVALK+IAS-1)
         if (k8b .ne. acier) then
             write(k3cab,'(I3)') icabl
             call utmess('F', 'MODELISA2_50', sk=k3cab)
         endif
-    end do
+    enddo
 !
-! 2.2 RELATION DE COMPORTEMENT <ELAS> DU MATERIAU ACIER
-! ---
-    call rccome(acier, 'ELAS', iret, k11_ind_nomrc=k11)  
+!   2.2 RELATION DE COMPORTEMENT <ELAS> DU MATERIAU ACIER
+    call rccome(acier, 'ELAS', iret, k11_ind_nomrc=k11)
     rcvalk = acier//k11//'.VALK'
     call jeexin(rcvalk, iret)
     if (iret .eq. 0) then
@@ -230,7 +220,7 @@ subroutine caelca(modele, chmat, caelem, irana1, icabl,&
             ea = zr(jvalr+icste-1)
             goto 31
         endif
-    end do
+    enddo
 !
  31 continue
     if (.not. trouv1) then
@@ -242,14 +232,13 @@ subroutine caelca(modele, chmat, caelem, irana1, icabl,&
         call utmess('F', 'MODELISA2_53', sk=k3cab)
     endif
 !
-! 2.3 RELATION DE COMPORTEMENT <BPEL_ACIER> OU <ETCC_ACIER>
-!      DU MATERIAU ACIER
-! ---
+!   2.3 RELATION DE COMPORTEMENT <BPEL_ACIER> OU <ETCC_ACIER> DU MATERIAU ACIER
+    ASSERT( (regl.eq.'BPEL') .or. (regl.eq.'ETCC') )
 !
     if (regl .eq. 'BPEL') then
         call rccome(acier, 'BPEL_ACIER', iret, k11_ind_nomrc=k11)
     else
-        call rccome(acier, 'ETCC_ACIER', iret, k11_ind_nomrc=k11)   
+        call rccome(acier, 'ETCC_ACIER', iret, k11_ind_nomrc=k11)
     endif
     rcvalk = acier//k11//'.VALK'
     call jeexin(rcvalk, iret)
@@ -263,6 +252,7 @@ subroutine caelca(modele, chmat, caelem, irana1, icabl,&
     call jelira(rcvalr, 'LONMAX', nbcste)
 !
 !  2.3.1 CAS BPEL
+    rh1000 = 0.0d0
     if (regl .eq. 'BPEL') then
         trouv1 = .false.
         trouv2 = .false.
@@ -291,10 +281,10 @@ subroutine caelca(modele, chmat, caelem, irana1, icabl,&
                 frli = zr(jvalr+icste-1)
             endif
             if (trouv1 .and. trouv2 .and. trouv3 .and. trouv4 .and. trouv5) goto 41
-        end do
+        enddo
+41      continue
 !
- 41     continue
-    else
+    else if (regl .eq. 'ETCC') then
 !       LECTURE DES DONNEES ETCC_ACIER
         trouv1 = .false.
         trouv2 = .false.
@@ -319,23 +309,34 @@ subroutine caelca(modele, chmat, caelem, irana1, icabl,&
                 frli = zr(jvalr+icste-1)
             endif
             if (trouv1 .and. trouv2 .and. trouv3 .and. trouv4) goto 43
-        end do
-!
- 43     continue
-!
-!     POUR ETCC, FRLI=FROTTEMENT*PERTE EN LIGNE
+        enddo
+43      continue
+!       POUR ETCC, FRLI=FROTTEMENT*PERTE EN LIGNE
         frli=frli*frco
     endif
 !
-!
     if (rh1000 .eq. 0.0d0) then
-        relax = .false.
+        relax_loc = .false.
     else
-        relax = .true.
+        relax_loc = .true.
     endif
-    if (relax .and. fprg .le. 0.0d0) then
+    if (relax_loc .and. fprg .le. 0.0d0) then
         write(k3cab,'(I3)') icabl
         call utmess('F', 'MODELISA2_55', sk=k3cab)
+    endif
+!
+    if ( relax ) then
+!       Si l'utilisateur a fait TYPE_RELAX = BPEL ou ETCC => relax = true
+!           si rh1000 == 0.0 ==> relax = false = relax_loc
+!           si rh1000 <> 0.0 ==> relax = true  = relax_loc
+        relax = relax_loc
+    else
+!       Si l'utilisateur a fait TYPE_RELAX = SANS => relax = false
+!           si rh1000 <> 0 ==> <A>
+        if ( relax_loc ) then
+            valr(1) = rh1000
+            call utmess('A', 'MODELISA2_47', nr=1, valr=valr)
+        endif
     endif
 !
 !
@@ -372,7 +373,7 @@ subroutine caelca(modele, chmat, caelem, irana1, icabl,&
     iranv = 0
     do icmp = 1, irana1
         if (exisdg([icode],icmp)) iranv = iranv + 1
-    end do
+    enddo
     if (iranv .eq. 0) then
         write(k3mai,'(I3)') numail
         write(k3cab,'(I3)') icabl
@@ -410,7 +411,7 @@ subroutine caelca(modele, chmat, caelem, irana1, icabl,&
         iranv = 0
         do icmp = 1, irana1
             if (exisdg([icode],icmp)) iranv = iranv + 1
-        end do
+        enddo
         if (iranv .eq. 0) then
             write(k3mai,'(I3)') numail
             write(k3cab,'(I3)') icabl
@@ -424,7 +425,7 @@ subroutine caelca(modele, chmat, caelem, irana1, icabl,&
             call utmess('F', 'MODELISA2_60', sk=k3cab)
         endif
 !
-    end do
+    enddo
 !
     call jedema()
 !

@@ -25,10 +25,8 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
 
-import os
 
-os.system("mfront --obuild MonoDDCC_Irra.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so MonoDDCC_Irra.so")
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=41)
 
 from numpy.linalg import norm
 from numpy import *
@@ -357,7 +355,7 @@ IMPLDDM=SIMU_POINT_MAT(INFO=1,
                       MATER=ACIERDDI,
                       COMPORTEMENT=_F(RELATION='MFRONT',
                                       NOM_ROUTINE='astermonoddcc_irra',
-                                      LIBRAIRIE='MonoDDCC_Irra.so',
+                                      UNITE_LIBRAIRIE=41,
                                       RESI_INTE_MAXI=1e-9,
                                             ),
                       INCREMENT=(_F(LIST_INST=LIS2DDI,),),

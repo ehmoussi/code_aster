@@ -85,7 +85,7 @@ subroutine te0516(option, nomte)
     integer :: kp, j, k, kk, istrxm, istrxp, istrmp, ncomp2
     real(kind=8) :: ey, ez, gamma, xl, xls2, Nx, My, Mz
     real(kind=8) :: aa, xiy, xiz, alfay, alfaz, xjx, xjg
-    real(kind=8) :: e, g, nu, temp, temm, phiy, phiz
+    real(kind=8) :: e, g, nu, temp, phiy, phiz
     real(kind=8) :: defam(6), defap(6), angp(3)
     real(kind=8) :: pgl(3, 3), ffp(3), matsct(6)
     real(kind=8) :: ang1(3)
@@ -252,7 +252,6 @@ subroutine te0516(option, nomte)
     enddo
 !   coefficient dependant de la temperature moyenne
     call moytem(fami, npg, 1, '+', temp, iret)
-    call moytem(fami, npg, 1, '-', temm, iret)
 !   caracteristiques elastiques (pas de temperature pour l'instant)
 !   on prend le E et NU du materiau torsion (voir op0059)
     call pmfmats(imate, mator)

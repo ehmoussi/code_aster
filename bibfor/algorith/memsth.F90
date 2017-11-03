@@ -16,8 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine memsth(model_    , cara_elem_, mate_, chtime, memass, base,&
-                  varc_curr_, time_)
+subroutine memsth(model_    , cara_elem_, mate_, chtime_, matr_elem, base,&
+                  varc_curr_, time_curr_)
 !
 implicit none
 !
@@ -38,15 +38,14 @@ implicit none
 #include "asterfort/gcnco2.h"
 #include "asterfort/vrcins.h"
 !
-!
     character(len=*), intent(in) :: model_
     character(len=*), intent(in) :: cara_elem_
     character(len=*), intent(in) :: mate_
-    character(len=24), intent(in) :: chtime
-    character(len=19), intent(in) :: memass
+    character(len=*), intent(in) :: chtime_
+    character(len=19), intent(in) :: matr_elem
     character(len=1), intent(in) :: base
     character(len=19), optional, intent(in) :: varc_curr_
-    real(kind=8), optional, intent(in) :: time_
+    real(kind=8), optional, intent(in) :: time_curr_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,12 +56,13 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  model            : name of the model
+! In  cara_elem        : name of elementary characteristics (field)
 ! In  mate             : name of material characteristics (field)
 ! In  chtime           : time (<CARTE>)
-! In  cara_elem        : name of elementary characteristics (field)
-! In  varc_curr        : command variable for current time
-! In  base             : JEVEUX base to create matr_elem
 ! In  matr_elem        : name of matr_elem result
+! In  base             : JEVEUX base to create matr_elem
+! In  varc_curr        : command variable for current time
+! In  time_curr        : current time
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,7 +71,7 @@ implicit none
     character(len=8) :: lpain(nb_in_maxi), lpaout(nbout)
     character(len=19) :: lchin(nb_in_maxi), lchout(nbout)
     character(len=16) :: option
-    character(len=24) :: ligrmo, cara_elem, mate
+    character(len=24) :: ligrmo, cara_elem, mate, chtime
     character(len=19) :: resu_elem, varc_curr
     character(len=24) :: chgeom, chcara(18)
     integer :: iret, nbin
@@ -88,25 +88,29 @@ implicit none
     model     = model_
     cara_elem = cara_elem_
     mate      = mate_
-    resu_elem = memass(1:8)//'.0000000'
+    chtime    = chtime_
+    resu_elem = matr_elem(1:8)//'.0000000'
     ligrmo    = model(1:8)//'.MODELE'
     option    = 'MASS_THER'
     call exixfe(model, iret)
     l_xfem = (iret .ne. 0)
+!
+! - Prepare external state variables
+!
     if (present(varc_curr_)) then
         varc_curr = varc_curr_
     else
         varc_curr = '&&VARC_CURR'
-        call vrcins(model, mate, ' ', time_, varc_curr, codret)
+        call vrcins(model, mate, ' ', time_curr_, varc_curr, codret)
     endif
 !
 ! - Prepare MATR_ELEM
 !
-    call jeexin(memass(1:19)//'.RELR', iret)
+    call jeexin(matr_elem(1:19)//'.RELR', iret)
     if (iret .eq. 0) then
-        call memare(base, memass, model, mate, cara_elem, 'MASS_THER')
+        call memare(base, matr_elem, model, mate, cara_elem, 'MASS_THER')
     else
-        call jedetr(memass(1:19)//'.RELR')
+        call jedetr(matr_elem(1:19)//'.RELR')
     endif
 !
 ! - Generate new RESU_ELEM name
@@ -159,7 +163,7 @@ implicit none
 !
 ! - Add RESU_ELEM in MATR_ELEM
 !
-    call reajre(memass, lchout(1), base)
+    call reajre(matr_elem, lchout(1), base)
 !
     call jedema()
 end subroutine

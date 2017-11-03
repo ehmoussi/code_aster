@@ -349,7 +349,7 @@ try:
                                       ),
                          VERI_MODE=_F(SEUIL=1.E-3,
                                       ),
-                         OPTION='AJUSTE',
+                         OPTION='AJUSTE', SOLVEUR=_F(METHODE='MULT_FRONT',NPREC=9),
                          MATR_RIGI=K_ASSE,
                          #VERI_MODE=_F(  SEUIL = 1.E-7)
                          MATR_MASS=M_ASSE,

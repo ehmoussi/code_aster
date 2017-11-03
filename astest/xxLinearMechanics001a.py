@@ -1,13 +1,14 @@
+#!/usr/bin/python
 # coding: utf-8
 
 import code_aster
 from code_aster.Commands import *
 
+code_aster.init()
+
 test = code_aster.TestCase()
 
 mail1 = LIRE_MAILLAGE( FORMAT = "MED" )
-#mail1=code_aster.Mesh.create()
-#mail1.readMedFile("test001f.mmed")
 
 model = AFFE_MODELE( MAILLAGE = mail1,
                      AFFE = _F( MODELISATION = "3D",
@@ -35,8 +36,6 @@ resu = MECA_STATIQUE( MODELE = model,
                                 _F( CHARGE = load2, ), ),
                       SOLVEUR = _F( METHODE = "MUMPS",
                                     RENUM = "METIS", ), )
-
-resu.debugPrint(6)
 
 resu=CALC_CHAMP(reuse=resu,
                 RESULTAT=resu,TOUT_ORDRE='OUI',

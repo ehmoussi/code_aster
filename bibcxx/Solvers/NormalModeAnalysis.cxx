@@ -29,7 +29,7 @@ MechanicalModeContainerPtr NormalModeAnalysisInstance::execute()
 {
     MechanicalModeContainerPtr result( new MechanicalModeContainerInstance() );
 
-    CommandSyntaxCython cmdSt( "MODE_ITER_SIMULT" );
+    CommandSyntax cmdSt( "MODE_ITER_SIMULT" );
     cmdSt.setResult( result->getName(), result->getType() );
 
     CapyConvertibleSyntax syntax;

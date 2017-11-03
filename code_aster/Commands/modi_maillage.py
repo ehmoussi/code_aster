@@ -19,21 +19,22 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from code_aster.Supervis.libCommandSyntax import CommandSyntax
-from code_aster import Mesh
+from ..Objects import Mesh
+from .ExecuteCommand import ExecuteCommand
 
 
-def MODI_MAILLAGE(**curDict):
-    returnMesh = curDict["MAILLAGE"]
-    name = returnMesh.getName()
-    type = returnMesh.getType()
-    syntax = CommandSyntax("MODI_MAILLAGE")
+class MeshModification(ExecuteCommand):
+    """Command that changes a :class:`~code_aster.Objects.Mesh`.
+    """
+    command_name = "MODI_MAILLAGE"
 
-    syntax.setResult(name, type)
+    def create_result(self, keywords):
+        """Initialize the result.
 
-    syntax.define(curDict)
-    numOp = 154
-    python_execop(numOp)
-    syntax.free()
-    return returnMesh
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = keywords["MAILLAGE"]
+
+
+MODI_MAILLAGE = MeshModification.run

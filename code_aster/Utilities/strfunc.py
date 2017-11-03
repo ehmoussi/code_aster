@@ -17,10 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-"""Module rassemblant des fonctions utilitaires de manipulations
-de chaines de caractères
 """
-# module identique à Execution/strfunc.py pour usage dans Eficas
+:py:mod:`strfunc` --- String manipulations utilities
+****************************************************
+
+This module defines utilities functions for strings manipulation.
+"""
 
 import locale
 
@@ -40,7 +42,14 @@ def get_encoding():
 
 
 def to_unicode(string):
-    """Try to convert string into a unicode string."""
+    """Try to convert string into a unicode string.
+
+    Arguments:
+        string (str): String to convert to unicode.
+
+    Returns:
+        str: Unicode string.
+    """
     if type(string) is unicode:
         return string
     elif type(string) is dict:
@@ -65,7 +74,17 @@ def to_unicode(string):
 
 
 def from_unicode(ustring, encoding, errors='replace'):
-    """Try to encode a unicode string using encoding."""
+    """Try to encode a unicode string using encoding.
+
+    Arguments:
+        ustring (str): Unicode string to encode.
+        encoding (str): Encoding name.
+        errors (str): Behavior in case of encoding error
+            (see :py:func:`string.encode`).
+
+    Returns:
+        str: Encoded string.
+    """
     try:
         return ustring.encode(encoding)
     except UnicodeError:
@@ -74,7 +93,17 @@ def from_unicode(ustring, encoding, errors='replace'):
 
 
 def convert(content, encoding=None, errors='replace'):
-    """Convert content using encoding or default encoding if None."""
+    """Convert content using encoding or default encoding if *None*.
+
+    Arguments:
+        content (str/unicode): Text to convert.
+        encoding (str): Encoding name.
+        errors (str): Behavior in case of encoding error
+            (see :meth:`string.encode`).
+
+    Returns:
+        str: Encoded string.
+    """
     if type(content) not in (str, unicode):
         content = unicode(content)
     if type(content) == str:

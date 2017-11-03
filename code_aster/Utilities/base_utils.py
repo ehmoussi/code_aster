@@ -20,10 +20,14 @@
 # person_in_charge: mathieu.courtois@edf.fr
 
 """
+:py:mod:`base_utils` --- General purpose utilities
+**************************************************
+
 This modules gives some basic utilities.
 """
 
 from array import array
+from decimal import Decimal
 from functools import wraps
 import sys
 
@@ -63,14 +67,41 @@ def import_object(uri):
     return obj
 
 def force_list(values):
-    """Ensure `values` is iterable (list, tuple, array...)."""
+    """Ensure `values` is iterable (list, tuple, array...) and return it as
+    a list."""
     if not value_is_sequence(values):
         values = [values]
-    return values
+    return list(values)
+
+def force_tuple(values):
+    """Ensure `values` is iterable (list, tuple, array...) and return it as
+    a tuple.
+    """
+    return tuple(force_list(values))
 
 def value_is_sequence(value):
     """Tell if *value* is a valid object if max > 1."""
-    return type(value) in (list, tuple, array, numpy.ndarray)
+    return isinstance(value, (list, tuple, array, numpy.ndarray))
+
+def is_int(obj):
+    """Tell if an object is an integer."""
+    return isinstance(obj, (int, long))
+
+def is_float(obj):
+    """Tell if an object is a float number."""
+    return isinstance(obj, (float, Decimal))
+
+def is_complex(obj):
+    """Tell if an object is complex number."""
+    if isinstance(obj, (list, tuple)) and len(obj) == 3 \
+        and obj[0] in ('RI', 'MP') and is_float_or_int(obj[1]) \
+        and is_float_or_int(obj[2]):
+        return True
+    return isinstance(obj, complex)
+
+def is_str(obj):
+    """Tell if an object is a string."""
+    return isinstance(obj, (str, unicode))
 
 def array_to_list(obj):
     """Convert an object to a list if possible (using `tolist()`) or keep it
@@ -107,14 +138,14 @@ def objects_from_context(dict_objects, filter_type, ignore_names=[]):
     return objects
 
 
-class Singleton(object):
-    """Singleton implementation in python."""
-    # add _singleton_id attribute to the class to be independant of import
+class Singleton(type):
+    """Singleton implementation in python (Metaclass)."""
+    # add _singleton_id attribute to the subclasses to be independant of import
     # path used
     __inst = {}
 
-    def __new__(cls, *args, **kargs):
+    def __call__(cls, *args, **kws):
         cls_id = getattr(cls, '_singleton_id', cls)
-        if Singleton.__inst.get(cls_id) is None:
-            Singleton.__inst[cls_id] = object.__new__(cls)
-        return Singleton.__inst[cls_id]
+        if cls_id not in cls.__inst:
+            cls.__inst[cls_id] = super(Singleton, cls).__call__(*args, **kws)
+        return cls.__inst[cls_id]

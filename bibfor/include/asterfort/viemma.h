@@ -15,26 +15,24 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine viemma(nbvari, vintm, vintp, advico, vicphi,&
-                      phi0, dp1, dp2, signe, sat,&
-                      em, phi, phim, retcom)
-        integer :: nbvari
-        real(kind=8) :: vintm(nbvari)
-        real(kind=8) :: vintp(nbvari)
-        integer :: advico
-        integer :: vicphi
-        real(kind=8) :: phi0
-        real(kind=8) :: dp1
-        real(kind=8) :: dp2
-        real(kind=8) :: signe
-        real(kind=8) :: sat
-        real(kind=8) :: em
-        real(kind=8) :: phi
-        real(kind=8) :: phim
-        integer :: retcom
+    subroutine viemma(nbvari, vintm , vintp,&
+                      advico, vicphi,&
+                      phi0  , dp1   , dp2  , signe, satur,&
+                      em    , phi   , phim)
+        integer, intent(in) :: nbvari
+        real(kind=8), intent(in) :: vintm(nbvari)
+        real(kind=8), intent(inout) :: vintp(nbvari)
+        integer, intent(in) :: advico
+        integer, intent(in) :: vicphi
+        real(kind=8), intent(in) :: phi0
+        real(kind=8), intent(in) :: dp1
+        real(kind=8), intent(in) :: dp2
+        real(kind=8), intent(in) :: signe
+        real(kind=8), intent(in) :: satur
+        real(kind=8), intent(in) :: em
+        real(kind=8), intent(out) :: phi
+        real(kind=8), intent(out) :: phim
     end subroutine viemma
 end interface

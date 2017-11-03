@@ -6,6 +6,7 @@ import numpy as np
 import code_aster
 from code_aster.Commands import *
 
+code_aster.init()
 
 test = code_aster.TestCase()
 
@@ -66,10 +67,13 @@ fsin = DEFI_FONCTION(NOM_PARA="INST",
                      ORDONNEE=valy,
                      INTERPOL=("LIN", "LOG"),)
 
+lvalx = DEFI_LIST_REEL(VALE=valx)
+lvaly = DEFI_LIST_REEL(VALE=valy)
+
 fsin = DEFI_FONCTION(NOM_PARA="INST",
                      NOM_RESU="TEMP",
-                     VALE_PARA=valx,
-                     VALE_FONC=valy,
+                     VALE_PARA=lvalx,
+                     VALE_FONC=lvaly,
                      INTERPOL=("LIN", "LOG"),)
 
 values = []

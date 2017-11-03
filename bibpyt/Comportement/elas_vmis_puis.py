@@ -17,12 +17,14 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'ELAS_VMIS_PUIS',
+    lc_type        = ('MECANIQUE',),
     doc            =   """Elasticité non linéaire de Von Mises - Hencky à écrouissage isotrope défini
-par une courbe de traction analytique (loi en puissance)"""      ,
+par une courbe de traction analytique (loi en puissance)"""            ,
     num_lc         = 0,
     nb_vari        = 2,
     nom_vari       = ('EPSPEQ','INDIPLAS',),
@@ -33,4 +35,5 @@ par une courbe de traction analytique (loi en puissance)"""      ,
     type_matr_tang = None,
     proprietes     = ('COMP_ELAS',),
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

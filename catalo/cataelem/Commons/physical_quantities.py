@@ -128,8 +128,8 @@ CACOQU   = PhysicalQuantity(type='R',
                  la direction perpendiculaire au plan tangent de l'element
        EXCENT  : excentrement du feuillet moyen
        INERTIE : prise en compte de l'inertie de rotation
-       TENS    : (réservé aux membranes) application d'une contrainte 
-                 initiale pour faire converger à la première iteration. 
+       TENS    : (réservé aux membranes) application d'une contrainte
+                 initiale pour faire converger à la première iteration.
                  Elle disparait aux increments suivants
 """)
 
@@ -583,12 +583,20 @@ COMPOR   = PhysicalQuantity(type='K16',
        'INCELA',
        'C_PLAN',
        'NUME_LC',
-       'SD_COMP',
-       'KIT[9]',
-       'NVI_C',
-       'NVI_T',
-       'NVI_H',
-       'NVI_M',
+       'MULTCOMP',
+       'POSTITER',
+       'KIT1NAME',
+       'KIT2NAME',
+       'KIT3NAME',
+       'KIT4NAME',
+       'KIT1NUME',
+       'KIT2NUME',
+       'KIT3NUME',
+       'KIT4NUME',
+       'KIT1NVAR',
+       'KIT2NVAR',
+       'KIT3NVAR',
+       'KIT4NVAR',
     ),
     comment="""  COMPOR Type:K16 Comportement materiel
        RELCOM : relation de comportement : 'ELAS' , 'VMIS_ISOT_LINE' , ...
@@ -597,20 +605,20 @@ COMPOR   = PhysicalQuantity(type='K16',
        INCELA : comp_incr ou comp_elas
        C_PLAN : type de contraintes planes : DEBORST ou analytique
        NUME_LC : numero de routine LC
-       SD_COMP : nom de la SD issue de DEFI_COMPOR (PMF, MONOCRISTAL,..)
-       KIT1 : pour la relation kit ....
-       KIT2 : pour la relation kit ....
-       KIT3 : pour la relation kit ....
-       KIT4 : pour la relation kit ....
-       KIT5 : pour la relation kit ....
-       KIT6 : pour la relation kit ....
-       KIT7 : pour la relation kit ....
-       KIT8 : pour la relation kit ....
-       KIT9 : pour la relation kit ....
-       NVI_C : nombre de variables internes associees a la relation de couplage
-       NVI_T : nombre de variables internes associees a la relation thermique
-       NVI_H : nombre de variables internes associees a la relation hydraulique
-       NVI_M : nombre de variables internes associees a la relation mecanique
+       MULTCOMP : nom de la SD issue de DEFI_COMPOR ( MONOCRISTAL,..)
+       POSTITER : parameter for POST_ITER option (CRIT_RUPT, ...)
+       KIT1NAME : behaviour name for kit (1)
+       KIT2NAME : behaviour name for kit (2)
+       KIT3NAME : behaviour name for kit (3)
+       KIT4NAME : behaviour name for kit (4)
+       KIT1NUME : behaviour index for kit (1)
+       KIT2NUME : behaviour index for kit (2)
+       KIT3NUME : behaviour index for kit (3)
+       KIT4NUME : behaviour index for kit (3)
+       KIT1NVAR : number of internal variables for kit (1)
+       KIT2NVAR : number of internal variables for kit (2)
+       KIT3NVAR : number of internal variables for (3)
+       KIT4NVAR : number of internal variables for (4)
 """)
 
 
@@ -710,7 +718,7 @@ list_cmp_depl=(
   'H2Y',        'H2Z',        'H2PRE1',     'H3X',        'H3Y',        'H3Z',
   'H3PRE1',     'H4X',        'H4Y',        'H4Z',        'LAGR',       'K1',
   'K2',         'K3',         'PRE_FLU',
-  'LAG_FLI',    'LAG_FLS',    'LAGS_C',     'LAGS_F[2]',  'LAG2_C',     'LAG2_F[2]',  
+  'LAG_FLI',    'LAG_FLS',    'LAGS_C',     'LAGS_F[2]',  'LAG2_C',     'LAG2_F[2]',
   'LAG3_C',     'LAG3_F[2]',  'PR2_FLU',    'LA2_FLI',    'LA2_FLS',
   'D1X',        'D1Y',        'D1Z',        'D2X',        'D2Y',        'D2Z',
   'D3X',        'D3Y',        'D3Z',
@@ -1693,7 +1701,7 @@ GEOM_R   = PhysicalQuantity(type='R',
        X : coordonnee suivant OX
        Y : coordonnee suivant OY
        Z : coordonnee suivant OZ (0. Si le modele est 2D)
-       W :
+       W : weight of the point when used in a numerical quadrature
 """)
 
 

@@ -69,6 +69,10 @@ cata_msg = {
  <Erreur> Nombre maximum d'itérations atteint dans le solveur linéaire itératif.
  """),
 
+    13 : _(u"""
+ <Erreur> Une valeur non-physique a été atteinte (porosité négative ou supérieure à un par exemple).
+ """),
+
     20 : _(u"""
  <Évènement> Instabilité détectée.
  """),

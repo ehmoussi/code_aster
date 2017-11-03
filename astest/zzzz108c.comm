@@ -177,8 +177,10 @@ tabsol=DEFI_SOL_MISS(TITRE="SOL MOU",
 )
 
 tfin = 4.0
-df = 1.0 / tfin
-fmax = 50.0
+#df = 1.0 / tfin
+#fmax = 50.0
+df = 0.5
+fmax = 15.0
 pas1 = 1.0E-2
 omega = 31.416
 
@@ -265,8 +267,8 @@ TEST_FONCTION(VALEUR=_F(
 TEST_FONCTION(VALEUR=_F(
     FONCTION=ftz3,
     NOM_PARA='FREQ',
-    VALE_PARA=50.0,
-    VALE_CALC_C=2.43119E+00 - 5.10146E-01j,TOLE_MACHINE=4.1E-6, # En attente issue24202
+    VALE_PARA=10.0, #50.0,
+    VALE_CALC_C=1.04290-0.1117490j,
 ))
 
 acce_z1 = EXTR_TABLE(TABLE     = tabctr,
@@ -301,21 +303,21 @@ acce_z3 = EXTR_TABLE(TABLE     = tabctr,
 
 # solution AUTRE_ASTER est obtenue avec zzzz108b
 # sans DIRE_ONDE et en retirant EXCIT_SOL en X et Y
-TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.99503686,
+TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.99504235,
                          VALE_REFE=1.0,
                          CRITERE='RELATIF',
                          VALE_PARA=0.05,
                          REFERENCE='AUTRE_ASTER',
                          PRECISION=1.e-2,
                          FONCTION=acce_z1,),
-                      _F(VALE_CALC=0.077163903,
+                      _F(VALE_CALC=0.077164990,
                          VALE_REFE=0.0781346,
                          CRITERE='RELATIF',
                          VALE_PARA=0.20,
                          REFERENCE='AUTRE_ASTER',
                          PRECISION=2.e-2,
                          FONCTION=acce_z2,),
-                      _F(VALE_CALC=-1.0069431,
+                      _F(VALE_CALC=-1.0069400,
                          VALE_REFE=-1.01214,
                          CRITERE='RELATIF',
                          VALE_PARA=0.05,
@@ -469,20 +471,20 @@ acce_z3f = EXTR_TABLE(TABLE     = tabctrfr,
                                   VALE_K   = 'INST'),),)
 
 # solution AUTRE_ASTER est obtenue avec le calcul tabctr (CALC_MISS)
-TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.99503686,
-                         VALE_REFE=0.99503686,
+TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.99504235,
+                         VALE_REFE=0.99504235,
                          CRITERE='RELATIF',
                          VALE_PARA=0.05,
                          REFERENCE='AUTRE_ASTER',
                          FONCTION=acce_z1f,),
-                      _F(VALE_CALC=0.077163903,
-                         VALE_REFE=0.077163903,
+                      _F(VALE_CALC=0.077164990,
+                         VALE_REFE=0.077164990,
                          CRITERE='RELATIF',
                          VALE_PARA=0.20,
                          REFERENCE='AUTRE_ASTER',
                          FONCTION=acce_z2f,),
-                      _F(VALE_CALC=-1.0069431,
-                         VALE_REFE=-1.0069431,
+                      _F(VALE_CALC=-1.0069400,
+                         VALE_REFE=-1.0069400,
                          CRITERE='RELATIF',
                          VALE_PARA=0.05,
                          REFERENCE='AUTRE_ASTER',

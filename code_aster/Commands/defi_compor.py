@@ -17,23 +17,22 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-# person_in_charge: nicolas.sellenet@edf.fr
+# person_in_charge: mathieu.courtois@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from code_aster.Supervis.libCommandSyntax import CommandSyntax
-from code_aster import BehaviourDefinition
+from ..Objects import BehaviourDefinition
+from .ExecuteCommand import ExecuteCommand
 
 
-def DEFI_COMPOR(**curDict):
-    returnBD = BehaviourDefinition.create()
-    name = returnBD.getName()
-    type = returnBD.getType()
-    syntax = CommandSyntax("DEFI_COMPOR")
+class BehaviourDefinitionOperator(ExecuteCommand):
+    """Execute legacy operator DEFI_COMPOR."""
+    command_name = "DEFI_COMPOR"
 
-    syntax.setResult(name, type)
+    def create_result(self, keywords):
+        """Create the result.
 
-    syntax.define(curDict)
-    numOp = 59
-    python_execop(numOp)
-    syntax.free()
-    return returnBD
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = BehaviourDefinition.create()
+
+DEFI_COMPOR = BehaviourDefinitionOperator.run

@@ -23,7 +23,8 @@
 interface
     subroutine vpcals(eigsol, vecrer, vecrei, vecrek, vecvp, matopa, mxresf, neqact, nblagr,&
                       omemax, omemin, omeshi, solveu, vecblo, veclag, sigma,&
-                      npivot, flage, nconv, vpinf, vpmax)
+                      npivot, flage, nconv, vpinf, vpmax, mod45b,&
+                      vecstb, vecedd, nbddl, vecsdd, nbddl2, csta)
         character(len=19) , intent(in)    :: eigsol
         character(len=24) , intent(in)    :: vecrer
         character(len=24) , intent(in)    :: vecrei
@@ -33,8 +34,8 @@ interface
         integer           , intent(in)    :: mxresf
         integer           , intent(in)    :: neqact
         integer           , intent(in)    :: nblagr
-        real(kind=8)      , intent(in)    :: omemax
-        real(kind=8)      , intent(in)    :: omemin
+        real(kind=8)      , intent(inout) :: omemax
+        real(kind=8)      , intent(inout) :: omemin
         real(kind=8)      , intent(in)    :: omeshi
         character(len=19) , intent(in)    :: solveu
         character(len=24) , intent(in)    :: vecblo
@@ -42,9 +43,16 @@ interface
         complex(kind=8)   , intent(in)    :: sigma
 !!
         integer           , intent(inout) :: npivot
-        aster_logical   , intent(out)   :: flage
+        aster_logical     , intent(out)   :: flage
         integer           , intent(out)   :: nconv
         real(kind=8)      , intent(out)   :: vpinf
         real(kind=8)      , intent(out)   :: vpmax
+        character(len=4)  , intent(in)    :: mod45b
+        character(len=24) , intent(in)    :: vecstb
+        character(len=24) , intent(in)    :: vecedd
+        integer           , intent(in)    :: nbddl
+        character(len=24) , intent(in)    :: vecsdd
+        integer           , intent(in)    :: nbddl2
+        real(kind=8)      , intent(out)   :: csta
     end subroutine vpcals
 end interface

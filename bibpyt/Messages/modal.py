@@ -240,5 +240,4 @@ Opérateur CALC_MODES:
       C'est généralement très rapide (surtout en parallèle) et cela fournit des informations
       concrètes pour ensuite paramétrer un découpage homogène et réaliste.
 """),
-
 }

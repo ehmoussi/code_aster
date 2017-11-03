@@ -101,7 +101,7 @@ implicit none
     integer :: i
     character(len=16) :: optmat
     character(len=19) :: disp_prev, sigplu, vite_curr, vite_prev, acce_prev, strplu
-    character(len=19) :: disp_cumu_inst, varplu, time_curr
+    character(len=19) :: disp_cumu_inst, disp_newt_curr, varplu, time_curr
     character(len=19) :: varc_prev, varc_curr, time_prev
     character(len=24) :: charge, infoch
     character(len=8) :: mesh
@@ -141,6 +141,7 @@ implicit none
     endif
     if (solalg(1)(1:1) .ne. ' ') then
         call nmchex(solalg, 'SOLALG', 'DEPDEL', disp_cumu_inst)
+        call nmchex(solalg, 'SOLALG', 'DDEPLA', disp_newt_curr)
     endif
     if (meelem(1)(1:1) .ne. ' ') then
         call nmchex(meelem, 'MEELEM', 'MERIGI', merigi)
@@ -206,14 +207,14 @@ implicit none
     else if (typmat.eq.'MEELTC') then
         call nmelcm('CONT'   , mesh     , model    , mate     , ds_contact    ,&
                     disp_prev, vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
-                    matele   , time_prev, time_curr, ds_constitutive, l_xthm)
+                    disp_newt_curr,matele   , time_prev, time_curr, ds_constitutive, l_xthm)
 !
 ! --- MATR_ELEM DES ELTS DE FROTTEMENT (XFEM+CONTINUE)
 !
     else if (typmat.eq.'MEELTF') then
         call nmelcm('FROT'   , mesh     , model    , mate     , ds_contact    ,&
                     disp_prev, vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
-                    matele   , time_prev, time_curr, ds_constitutive, l_xthm)
+                    disp_newt_curr,matele   , time_prev, time_curr, ds_constitutive, l_xthm)
     else
         ASSERT(.false.)
     endif

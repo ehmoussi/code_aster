@@ -15,24 +15,22 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface 
-    function calor(mdal, t, dt, deps, dp1,&
-                   dp2, signe, alp11, alp12, coeps,&
-                   ndim)
-        integer :: ndim
-        real(kind=8) :: mdal(6)
-        real(kind=8) :: t
-        real(kind=8) :: dt
-        real(kind=8) :: deps(6)
-        real(kind=8) :: dp1
-        real(kind=8) :: dp2
-        real(kind=8) :: signe
-        real(kind=8) :: alp11
-        real(kind=8) :: alp12
-        real(kind=8) :: coeps
+    function calor(mdal , temp , dtemp, deps,&
+                   dp1  , dp2  , signe,&
+                   alp11, alp12, coeps, ndim)
+        real(kind=8), intent(in) :: mdal(6)
+        real(kind=8), intent(in) :: temp
+        real(kind=8), intent(in) :: dtemp
+        real(kind=8), intent(in) :: deps(6)
+        real(kind=8), intent(in) :: dp1
+        real(kind=8), intent(in) :: dp2
+        real(kind=8), intent(in) :: signe
+        real(kind=8), intent(in) :: alp11
+        real(kind=8), intent(in) :: alp12
+        real(kind=8), intent(in) :: coeps
+        integer, intent(in) ::  ndim
         real(kind=8) :: calor
     end function calor
 end interface 

@@ -235,6 +235,10 @@ subroutine peweib(resu, modele, mate, cara, chmat,&
         valk (1) = k8b
         valk (2) = k8b
         call utmess('A', 'UTILITAI6_60', nk=2, valk=valk, si=vali)
+    else if (nbmtrc .eq. 0) then 
+        valk (1) = nomrc 
+        valk (2) = chmat 
+        call utmess('F', 'UTILITAI6_59', nk=2, valk=valk)
     endif
 !
 !     --- RECUPERATION DES PARAMETRES DE LA RC WEIBULL ---

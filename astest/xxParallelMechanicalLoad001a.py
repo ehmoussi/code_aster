@@ -5,6 +5,8 @@ import code_aster
 from code_aster.Commands import *
 test = code_aster.TestCase()
 
+code_aster.init()
+
 rank = code_aster.getMPIRank()
 
 pMesh2 = code_aster.ParallelMesh.create()

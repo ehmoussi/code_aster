@@ -16,33 +16,45 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine matrot(angl, pgl)
-    implicit none
-    real(kind=8) :: angl(*), pgl(3, 3)
-!       CALCUL DE LA MATRICE ROTATION A PARTIR DES ANGLES NAUTIQUES
+subroutine matrot(angl_naut, pgl)
 !
-!       LES ANGLES NAUTIQUES SONT DEFINIS COMME ETANT LES ROTATIONS
-!       QU IL FAUT EFFECTUER AUTOUR DE ZO , Y1 , X POUR PASSER DU
-!       REPERE INITIAL (X0,Y0,Z0) AU REPERE FINAL (X,Y,Z) :
+implicit none
+!
+!
+    real(kind=8), intent(in) :: angl_naut(*)
+    real(kind=8), intent(out) :: pgl(3, 3)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Reference frames management
+!
+! Construct matrix from nautical angles
+!
+! --------------------------------------------------------------------------------------------------
+!
+! From (X0,Y0,Z0) to (X,Y,Z)
+!
 !       (X0,Y0,Z0)     >    (X1,Y1,Z0)    >    (X,Y1,Z2)    >    (X,Y,Z)
 !                    APLHA              BETA              GAMMA
 !
-!       IN      ANGL(1) = ROTATION SENS DIRECT AUTOUR DE ZO
-!               ANGL(2) = ROTATION SENS ANTI-DIRECT AUTOUR DE Y1
-!               ANGL(3) = ROTATION SENS DIRECT AUTOUR DE X
+! In  angl_naut        : nautical angles
+!                        (1) Alpha - clockwise around Z0
+!                        (2) Beta  - counterclockwise around Y1
+!                        (1) Gamma - clockwise around X
+! Out pgl              : matrix
 !
-!       OUT     PGL   = MATRICE PASSAGE REPERE GLOBAL > FINAL
-!       ----------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-!-----------------------------------------------------------------------
     real(kind=8) :: cosa, cosb, cosg, sina, sinb, sing
-!-----------------------------------------------------------------------
-    cosa = cos( angl(1) )
-    sina = sin( angl(1) )
-    cosb = cos( angl(2) )
-    sinb = sin( angl(2) )
-    cosg = cos( angl(3) )
-    sing = sin( angl(3) )
+!
+! --------------------------------------------------------------------------------------------------
+!
+    cosa = cos( angl_naut(1) )
+    sina = sin( angl_naut(1) )
+    cosb = cos( angl_naut(2) )
+    sinb = sin( angl_naut(2) )
+    cosg = cos( angl_naut(3) )
+    sing = sin( angl_naut(3) )
 !
     pgl(1,1) = cosb*cosa
     pgl(2,1) = sing*sinb*cosa - cosg*sina

@@ -95,12 +95,14 @@ ASSEMBLAGE(MODELE=MODELE,
 # LISTE DISCRETISE TRES FINEMENT POUR RESPECTER
 # LE RAPPORT TAILLE DE MAILLE VITESSE DE L ONDE DE COMPRESSION
 
+SOLVEURL='MULT_FRONT'
 DYNATRAF=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                         MODELE=MODELE,
                         CHAM_MATER=CHMAT,
                         CARA_ELEM=CARAC,
                         MATR_MASS=MASSE,
                         MATR_RIGI=RIGID,
+                        SOLVEUR=_F(METHODE=SOLVEURL),
                         SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
                         EXCIT=(_F(CHARGE=CHARFX,),
                                _F(CHARGE=CL,),),
@@ -209,14 +211,13 @@ TEST_RESU(RESU=_F(NUME_ORDRE=20,
           )
 
 # RECHERCHE DES MODES PROPRES DE TRACTIONS/COMPRESSIONS
-
-MODE_DX=CALC_MODES(MATR_RIGI=RIGID,
-                   OPTION='PROCHE',
+# ON SAUTE SCIEMMENT QUELQUES MODES (D'OU STURM='NON')
+MODE_DX=CALC_MODES(MATR_RIGI=RIGID,VERI_MODE=_F(STURM='NON'),
+                   OPTION='PROCHE', SOLVEUR=_F(METHODE='MULT_FRONT',NPREC=9),
                    CALC_FREQ=_F(FREQ=(1263.497,3790.49,6317.484,8844.4477,11371.473,),
                                 ),
                    MATR_MASS=MASSE,
                    )
-
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   PARA='FREQ',
                   REFERENCE='ANALYTIQUE',
@@ -263,9 +264,9 @@ TEST_RESU(RESU=_F(NUME_ORDRE=5,
           )
 
 # RECHERCHE DES MODES PROPRES DE FLEXION
-
-MODE_FZ=CALC_MODES(MATR_RIGI=RIGID,
-                   OPTION='PROCHE',
+# ON SAUTE SCIEMMENT QUELQUES MODES (D'OU STURM='NON')
+MODE_FZ=CALC_MODES(MATR_RIGI=RIGID,VERI_MODE=_F(STURM='NON'),
+                   OPTION='PROCHE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                    CALC_FREQ=_F(FREQ=(310.133,1943.568,5442.048,10664.242,17628.755,),
                                 ),
                    MATR_MASS=MASSE,
@@ -318,9 +319,9 @@ TEST_RESU(RESU=_F(NUME_ORDRE=5,
           )
 
 # RECHERCHE DES MODES PROPRES DE TORSION
-
-MODE_DRX=CALC_MODES(MATR_RIGI=RIGID,
-                    OPTION='PROCHE',
+# ON SAUTE SCIEMMENT QUELQUES MODES (D'OU STURM='NON')
+MODE_DRX=CALC_MODES(MATR_RIGI=RIGID,VERI_MODE=_F(STURM='NON'),
+                    OPTION='PROCHE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                     CALC_FREQ=_F(FREQ=(786.619,2359.856,3933.094,5506.33,),
                                  ),
                     MATR_MASS=MASSE,
@@ -372,6 +373,7 @@ DYNATRAM=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                         CARA_ELEM=CARAC,
                         MATR_MASS=MASSE,
                         MATR_RIGI=RIGID,
+                        SOLVEUR=_F(METHODE=SOLVEURL),
                         SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
                         EXCIT=(_F(CHARGE=CHARMX,),
                                _F(CHARGE=CL,),),

@@ -170,7 +170,7 @@ MATAGO=DEFI_MATERIAU(ELAS=_F(
                                     NU  = 0.3,
                                     RHO = 2085.,
                                     ALPHA       = 1.E-5),
-                     ELAS_GONF = _F(
+                     GONF_ELAS = _F(
                                     BETAM   =   0.1142,
                                     PREF   =   1.E6,
                                     ),
@@ -198,14 +198,11 @@ MATAGO=DEFI_MATERIAU(ELAS=_F(
                      THM_DIFFU=_F(R_GAZ                 = 8.313,
                                   RHO                   = 2200.0,
                                   CP                    = 1000.0,
-                                  BIOT_T             = BIOTAGO,
-                                  BIOT_L             = BIOTAGO,
-                                  BIOT_N             = BIOTAGO,
+                                  BIOT_COEF = BIOTAGO,
                                   PESA_X                = 0.0,
                                   PESA_Y                = 0.0,
                                   PESA_Z                = 0.0,
-                                  PERMIN_T              = KINTAGO,
-                                  PERMIN_L              = KINTAGO,
+                                  PERM_IN= KINTAGO,
                                  VG_N            = NAGO,
                                  VG_PR           = PRAGO,
                                  VG_SR           = SRAGO,
@@ -217,8 +214,7 @@ MATAGO=DEFI_MATERIAU(ELAS=_F(
                                   D_FV_PG               = DFVPPG,
                                   FICKA_T               = FICKWAG,
                                   FICKA_S               = FAS,
-                                  LAMB_TT                = UN,
-                                  LAMB_TL                = UN,
+                                  LAMB_CT                = 1.0,
                                   ),);
 
 #######################
@@ -330,7 +326,7 @@ U2=STAT_NON_LINE(
                         COMPORTEMENT=_F(
                          RELATION='KIT_THHM',
                            RELATION_KIT=(
-                                'ELAS_GONF','LIQU_GAZ','HYDR_VGM'),
+                                'GONF_ELAS','LIQU_GAZ','HYDR_VGM'),
                          ),
 
 

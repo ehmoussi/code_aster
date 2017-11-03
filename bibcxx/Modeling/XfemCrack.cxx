@@ -26,13 +26,14 @@
 #include "astercxx.h"
 
 #include "Modeling/XfemCrack.h"
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
+#include "Supervis/ResultNaming.h"
 
 #include "Modeling/CrackShape.h"
 
 XfemCrackInstance::XfemCrackInstance(MeshPtr supportMesh):
-    DataStructure( getNewResultObjectName(), "FISS_XFEM" ),
-    _jeveuxName( getResultObjectName() ),
+    DataStructure( ResultNaming::getNewResultName(), "FISS_XFEM" ),
+    _jeveuxName( ResultNaming::getCurrentName() ),
     _supportMesh(supportMesh),
     _auxiliaryGrid(MeshPtr()),
     _existingCrackWithGrid(XfemCrackPtr()),
@@ -70,8 +71,8 @@ XfemCrackInstance::XfemCrackInstance(MeshPtr supportMesh):
 
 bool XfemCrackInstance::build() throw( std::runtime_error )
 {
-    CommandSyntaxCython cmdSt( "DEFI_FISS_XFEM" );
-    cmdSt.setResult( getResultObjectName(), "FISS_XFEM" );
+    CommandSyntax cmdSt( "DEFI_FISS_XFEM" );
+    cmdSt.setResult( ResultNaming::getCurrentName(), "FISS_XFEM" );
 
     SyntaxMapContainer dict;
 
@@ -195,15 +196,15 @@ bool XfemCrackInstance::build() throw( std::runtime_error )
     } catch( ... ) {
         throw;
     }
-    
-    
-    
+
+
+
     return true;
 };
 
 ModelPtr XfemCrackInstance::enrichModelWithXfem( ModelPtr &baseModel ) throw ( std::runtime_error )
 {
-    CommandSyntaxCython cmdSt( "MODI_MODELE_XFEM" );
+    CommandSyntax cmdSt( "MODI_MODELE_XFEM" );
 
     // Create empty model and get its name
     ModelPtr newModelPtr(new ModelInstance());
@@ -237,4 +238,3 @@ ModelPtr XfemCrackInstance::enrichModelWithXfem( ModelPtr &baseModel ) throw ( s
     return newModelPtr;
 
 };
-

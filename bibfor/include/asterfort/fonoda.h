@@ -21,21 +21,18 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine fonoda(imate, perman, mecani, press1, press2,&
-                      tempe, dimdef, dimcon, ndim, dt,&
-                      fnoevo, congem, r)
-        integer :: dimcon
-        integer :: dimdef
-        integer :: imate
-        aster_logical :: perman
-        integer :: mecani(5)
-        integer :: press1(7)
-        integer :: press2(7)
-        integer :: tempe(5)
-        integer :: ndim
-        real(kind=8) :: dt
-        aster_logical :: fnoevo
-        real(kind=8) :: congem(dimcon)
-        real(kind=8) :: r(dimdef+1)
+    subroutine fonoda(jv_mater, ndim  , l_steady, fnoevo,&
+                      mecani  , press1, press2  , tempe ,&
+                      dimdef  , dimcon, dt      , congem,&
+                      r)
+        integer, intent(in) :: jv_mater
+        integer, intent(in) :: ndim
+        aster_logical, intent(in) :: fnoevo
+        aster_logical, intent(in) :: l_steady
+        integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
+        integer, intent(in) :: dimdef, dimcon
+        real(kind=8), intent(in) :: dt
+        real(kind=8), intent(inout) :: congem(dimcon)
+        real(kind=8), intent(out) :: r(dimdef+1)
     end subroutine fonoda
 end interface 

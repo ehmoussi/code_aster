@@ -58,7 +58,7 @@ subroutine jelibf(cond, clas, info)
     integer :: jiadm, jindir, jlong, jlono, jltyp, jluti, jmarq
     integer :: jorig, jrnom, jtype, jusadi, k16, k17, k17i
     integer :: k18, k18i, k19, k19i, k2, k20, lacc
-    integer :: ladi, n, nbacce
+    integer :: ladi, ladi2, n, nbacce, iadad2
 !-----------------------------------------------------------------------
     parameter  ( n = 5 )
     common /jiatje/  jltyp(n), jlong(n), jdate(n), jiadd(n), jiadm(n),&
@@ -79,8 +79,7 @@ subroutine jelibf(cond, clas, info)
     character(len=2) :: dn2
     character(len=5) :: classe
     character(len=8) :: nomfic, kstout, kstini
-    common /kficje/  classe    , nomfic(n) , kstout(n) , kstini(n) ,&
-     &                 dn2(n)
+    common /kficje/  classe    , nomfic(n) , kstout(n) , kstini(n) , dn2(n)
     character(len=8) :: nombas
     common /kbasje/  nombas(n)
 !
@@ -174,6 +173,20 @@ subroutine jelibf(cond, clas, info)
         iaddad(1) = iadd (jiadd(ic) + 2*(lideff-1)-1)
         iaddad(2) = iadd (jiadd(ic) + 2*(lideff-1) )
 !
+! --- ON ECRIT LES OBJETS SYSTEME ($$USADI idos=14 ET $$ACCE idos=15) DONT LES LONGUEURS ONT PU ETRE
+! --- MODIFIEES LORS DE L'APPEL A jjagod (REDIMENSIONNEMENT DU NOMBRE MAXIMUM D'ENREGISTREMENT) LEUR
+! --- PEUT ETRE NULLE
+!
+        call jxecro(ic, iadadi, iaddad, ladi, 0, lideff-1)
+        iadd (jiadd(ic) + 2*(lideff-1)-1) = iaddad(1) 
+        iadd (jiadd(ic) + 2*(lideff-1) )  = iaddad(2) 
+!
+        iadad2 = iadm (jiadm(ic) + 2*lideff-1)
+        ladi2 = lono (jlono(ic) + lideff)* ltyp(jltyp(ic)+lideff)        
+        call jxecro(ic, iadad2, iaddac, ladi2, 0, lideff)
+        iadd (jiadd(ic) + 2*lideff-1) = iaddac(1) 
+        iadd (jiadd(ic) + 2*lideff )  = iaddac(2) 
+
         idb = idebug
         idebug = 0
 !
@@ -226,24 +239,20 @@ subroutine jelibf(cond, clas, info)
 !       ----------- DECHARGER TAMPON D'ECRITURE ( PETITS OBJETS )
         lgbl = 1024*longbl(ic)*lois
         if (iitecr(ic) .gt. 0) then
-            call jxecrb(ic, iitecr(ic), kitecr(ic)+1, lgbl, 0,&
-                        0)
+            call jxecrb(ic, iitecr(ic), kitecr(ic)+1, lgbl, 0, 0)
         endif
         if (litlec(ic)) then
-            call jxecrb(ic, iitlec(ic), kitlec(ic)+1, lgbl, 0,&
-                        0)
+            call jxecrb(ic, iitlec(ic), kitlec(ic)+1, lgbl, 0, 0)
             litlec(ic) = .false.
             iitlec(ic) = 0
         endif
 !       ---- ON DECHARGE MAINTENANT LES STATISTIQUES SUR LES ACCES
         idatos = lideff
         iacce (jiacce(ic)+iaddac(1)) = iacce (jiacce(ic)+iaddac(1))+1
-        call jxecro(ic, iadacc, iaddac, lacc, 0,&
-                    lideff)
+        call jxecro(ic, iadacc, iaddac, lacc, 0, lideff)
         iitecr(ic) = 0
         if (litlec(ic)) then
-            call jxecrb(ic, iitlec(ic), kitlec(ic)+1, lgbl, 0,&
-                        0)
+            call jxecrb(ic, iitlec(ic), kitlec(ic)+1, lgbl, 0, 0)
         endif
 !
 !     GLUTE STAT CODE
@@ -263,12 +272,10 @@ subroutine jelibf(cond, clas, info)
 !       ---- ON DECHARGE MAINTENANT LA DESCRIPTION DES ENREGISTREMENTS
         lgbl = 1024*longbl(ic)*lois
         idatos = lideff-1
-        call jxecro(ic, iadadi, iaddad, ladi, 0,&
-                    lideff-1)
+        call jxecro(ic, iadadi, iaddad, ladi, 0, lideff-1)
         iitecr(ic) = 0
         if (litlec(ic)) then
-            call jxecrb(ic, iitlec(ic), kitlec(ic)+1, lgbl, 0,&
-                        0)
+            call jxecrb(ic, iitlec(ic), kitlec(ic)+1, lgbl, 0, 0)
         endif
         call jjlidy(iadady, iadadi)
         iadady = 0
@@ -292,8 +299,7 @@ subroutine jelibf(cond, clas, info)
     vali(8)= (nreuti(ic)*100)/nremax(ic)
 !
     if (info .ge. 1) then
-        call utmess('I', 'JEVEUX_22', sk=valk(1), ni=8, vali=vali,&
-                    nr=2, valr=valr)
+        call utmess('I', 'JEVEUX_22', sk=valk(1), ni=8, vali=vali, nr=2, valr=valr)
     endif
 !
     if (kcond .ne. 'LIBERE  ') then

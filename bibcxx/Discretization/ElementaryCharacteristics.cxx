@@ -27,9 +27,10 @@
 
 #include "Python.h"
 #include "Discretization/ElementaryCharacteristics.h"
+#include "Supervis/ResultNaming.h"
 
 ElementaryCharacteristicsInstance::ElementaryCharacteristicsInstance( const ModelPtr& model ):
-    DataStructure( getNewResultObjectName(), "CARA_ELEM" ),
+    DataStructure( ResultNaming::getNewResultName(), "CARA_ELEM" ),
     _model( model ),
     _mesh( model->getSupportMesh() ),
     _numberOfSubpoints( new PCFieldOnMeshLongInstance( getName() + ".CANBSP", _mesh ) ),

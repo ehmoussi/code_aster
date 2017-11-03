@@ -15,17 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 interface 
     subroutine xequhm(imate, option, ta, ta1, ndim,&
-                      compor, kpi, npg, dimenr,&
+                      kpi, npg, dimenr,&
                       enrmec, dimdef, dimcon, nbvari, defgem,&
                       congem, vintm, defgep, congep, vintp,&
                       mecani, press1, press2, tempe,&
                       rinstp, dt, r, drds,&
-                      dsde, retcom, idecpg, angmas, enrhyd, nfh)
+                      dsde, retcom, angmas, enrhyd, nfh)
         integer :: nbvari
         integer :: dimcon
         integer :: dimdef
@@ -35,7 +34,6 @@ interface
         real(kind=8) :: ta
         real(kind=8) :: ta1
         integer :: ndim
-        character(len=16) :: compor(*)
         integer :: kpi
         integer :: npg
         integer :: enrmec(3)
@@ -55,7 +53,6 @@ interface
         real(kind=8) :: drds(dimenr, dimcon)
         real(kind=8) :: dsde(dimcon, dimenr)
         integer :: retcom
-        integer :: idecpg
         real(kind=8) :: angmas(3)
         integer :: enrhyd(3)
         integer :: nfh

@@ -15,23 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface 
-    function dmvdp1(rho11, rho12, sat, dsatp1, phi,&
-                    cs, pvp, emmag, em)
-        real(kind=8) :: rho11
-        real(kind=8) :: rho12
-        real(kind=8) :: sat
-        real(kind=8) :: dsatp1
-        real(kind=8) :: phi
-        real(kind=8) :: cs
-        real(kind=8) :: pvp
-        aster_logical :: emmag
-        real(kind=8) :: em
-        real(kind=8) :: dmvdp1_0
+    function dmvdp1(rho11  , rho12 ,&
+                    satur  , dsatur,&
+                    phi    , cs    , pvp,&
+                    l_emmag, em)
+        real(kind=8), intent(in) :: rho11, rho12
+        real(kind=8), intent(in) :: satur, dsatur
+        real(kind=8), intent(in) :: phi, cs, pvp, em
+        aster_logical, intent(in) :: l_emmag
+        real(kind=8) :: dmvdp1
     end function dmvdp1
 end interface 

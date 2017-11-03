@@ -21,10 +21,8 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),);
 
-import os
 
-os.system("mfront --obuild ViscoChaboche.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so ViscoChaboche.so")
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=39)
 
 
 #################################
@@ -215,7 +213,7 @@ SOLAS=SIMU_POINT_MAT( MATER=MATA,INFO=1,
 SOLMF=SIMU_POINT_MAT( MATER=MATF,INFO=1,
                 COMPORTEMENT=_F(RELATION='MFRONT',
                                 NOM_ROUTINE='asterviscochaboche',
-                                LIBRAIRIE='ViscoChaboche.so',
+                                UNITE_LIBRAIRIE=39,
                                 RESI_INTE_MAXI=1e-12,),
                 AFFE_VARC=_F( NOM_VARC='TEMP',
                         VALE_FONC=TEMP_CY,

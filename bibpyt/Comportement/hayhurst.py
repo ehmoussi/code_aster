@@ -17,11 +17,13 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'HAYHURST',
-    doc            =   """Modele viscoplastique couple a l'endommagement isotrope de Kachanov."""      ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """Modele viscoplastique couple a l'endommagement isotrope de Kachanov."""            ,
     num_lc         = 32,
     nb_vari        = 12,
     nom_vari       = ('EPSPXX','EPSPYY','EPSPZZ','EPSPXY','EPSPXZ',
@@ -34,4 +36,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

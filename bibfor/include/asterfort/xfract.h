@@ -15,8 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 interface
     subroutine xfract(nvec, nnop, nnops, nddls, nddlm,&
@@ -24,7 +23,7 @@ interface
                       ffp, ffc, dffc, saut, gradpf,&
                       q1, q2, dpf, q1m, q2m, sautm,&
                       gradpfm, pf, ffp2, psup, pinf,&
-                      job, jmate, meca, hydr, thmc,&
+                      job, jmate,&
                       t, dimuel, lamb, jheavn, ncompn,&
                       ifiss, nfiss, nfh, ifa, jheafa,&
                       ncomph, contac, depl0, depl1, lambm, pfm)
@@ -45,9 +44,6 @@ interface
         real(kind=8), intent(in) :: ffp2(27)
         character(len=8), intent(in) :: job
         integer, intent(in) :: jmate
-        character(len=16), intent(in) :: meca
-        character(len=16), intent(in) :: hydr
-        character(len=16), intent(in) :: thmc
         real(kind=8), intent(out) :: lamb(3)
         real(kind=8), intent(out) :: t
         real(kind=8), intent(out) :: psup

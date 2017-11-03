@@ -26,7 +26,7 @@ POURSUITE(CODE='OUI')
 
 AFREQ=CALC_MODES(MATR_RIGI=MATASSR,
                  MATR_MASS=MATASSM,
-                 OPTION = 'AJUSTE',
+                 OPTION = 'AJUSTE',SOLVEUR=_F(METHODE='MULT_FRONT'),
                  CALC_FREQ=_F(FREQ = (5., 10., 15., 20., 24., 27., 30., 32.,)),
                  SOLVEUR_MODAL=_F(OPTION_INV = 'DIRECT'),
                  )

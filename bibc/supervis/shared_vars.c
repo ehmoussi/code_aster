@@ -86,6 +86,9 @@ void register_sh_pymod(PyObject *obj) {
 
 /*! Register the current 'etape' object as a global variable */
 void register_sh_etape(PyObject *obj) {
+    // printf("DEBUG: register: ");
+    // PyObject_Print(obj, stdout, 0);
+    // printf("\n");
     gEtape = obj;
     return;
 }

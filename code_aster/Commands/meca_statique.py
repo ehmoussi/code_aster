@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,79 +19,68 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster import MultFrontSolver, LdltSolver, MumpsSolver, PetscSolver, GcpcSolver
-from code_aster import StaticMechanicalSolver, KinematicsLoad, GenericMechanicalLoad
-from code_aster import ParallelMechanicalLoad
-from code_aster.Cata import Commands, checkSyntax
-from code_aster import getGlossary
+from ..Objects import (GenericMechanicalLoad, KinematicsLoad,
+                       StaticMechanicalSolver)
+from ..Utilities import unsupported
+from .ExecuteCommand import ExecuteCommand
+from .common_keywords import create_solver
 
 
-def _addLoad( mechaSolv, fkw ):
-    load = fkw[ "CHARGE" ]
-    if fkw.get( "FONC_MULT" ):
-        raise NotImplementedError( "Unsupported keyword: {0}".format("FONC_MULT") )
+class MechanicalSolver(ExecuteCommand):
+    """Solver for static linear mechanical problems."""
+    command_name = "MECA_STATIQUE"
 
-    if isinstance( load, KinematicsLoad ):
-        mechaSolv.addKinematicsLoad( load )
-    elif isinstance( load, GenericMechanicalLoad ):
-        mechaSolv.addMechanicalLoad( load )
-    elif isinstance( load, ParallelMechanicalLoad ):
-        mechaSolv.addParallelMechanicalLoad( load )
-    else:
-        assert False
+    def adapt_syntax(self, keywords):
+        """Hook to adapt syntax from a old version or for compatibility reasons.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords, changed
+                in place.
+        """
+        unsupported(keywords, "", "CARA_ELEM")
+        unsupported(keywords, "", "LIST_INST")
+        unsupported(keywords, "", "INST_FIN")
+
+    def create_result(self, keywords):
+        """Does nothing, creating by *exec*."""
+
+    @staticmethod
+    def _addLoad(mechaSolv, fkw):
+        load = fkw[ "CHARGE" ]
+
+        if isinstance(load, KinematicsLoad):
+            mechaSolv.addKinematicsLoad(load)
+        elif isinstance(load, GenericMechanicalLoad):
+            mechaSolv.addMechanicalLoad(load)
+        else:
+            assert False
+
+    def exec_(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        mechaSolv = StaticMechanicalSolver.create()
+
+        model = keywords["MODELE"]
+        matOnMesh = keywords["CHAM_MATER"]
+        mechaSolv.setSupportModel(model)
+        mechaSolv.setMaterialOnMesh(matOnMesh)
+
+        unsupported(keywords, "EXCIT", "FONC_MULT")
+        fkw = keywords["EXCIT"]
+        if isinstance(fkw, dict):
+            self._addLoad(mechaSolv, fkw)
+        elif isinstance(fkw, (list, tuple)):
+            for curDict in fkw:
+                self._addLoad(mechaSolv, curDict)
+        else:
+            assert False
+
+        solver = create_solver(keywords.get("SOLVEUR"))
+        mechaSolv.setLinearSolver(solver)
+        self._result = mechaSolv.execute()
 
 
-def MECA_STATIQUE( **kwargs ):
-    """Opérateur de résolution de mécanique statique linéaire"""
-    checkSyntax( Commands.MECA_STATIQUE, kwargs )
-
-    mechaSolv = StaticMechanicalSolver.create()
-
-    model = kwargs[ "MODELE" ]
-    matOnMesh = kwargs[ "CHAM_MATER" ]
-    mechaSolv.setSupportModel( model )
-    mechaSolv.setMaterialOnMesh( matOnMesh )
-
-    if kwargs.get( "CARA_ELEM" ):
-        raise NotImplementedError("Unsupported keyword: '{0}'".format("CARA_ELEM"))
-    if kwargs.get( "LIST_INST" ) != None or kwargs.get( "INST_FIN" ) != None:
-        raise NotImplementedError("Unsupported keywords: '{0}'".format(("LIST_INST", "INST_FIN")))
-
-    fkw = kwargs[ "EXCIT" ]
-    if type( fkw ) == dict:
-        _addLoad( mechaSolv, fkw )
-    elif type( fkw ) == tuple:
-        for curDict in fkw:
-            _addLoad( mechaSolv, curDict )
-    else:
-        assert False
-
-    methode = None
-    renum = None
-
-    fkwSolv = kwargs["SOLVEUR"]
-    for key, value in fkwSolv.iteritems():
-        if key not in ( "METHODE", "RENUM", "PRE_COND", "RESI_RELA" ):
-            print(NotImplementedError("Not yet implemented: '{0}' is ignored".format(key)))
-    methode = fkwSolv[ "METHODE" ]
-    renum = fkwSolv[ "RENUM" ]
-    # TODO: a modifier si undef
-    precond = fkwSolv[ "PRE_COND" ]
-    resiRela = fkwSolv[ "RESI_RELA" ]
-
-    glossary = getGlossary()
-    solverInt = glossary.getSolver( methode )
-    renumInt = glossary.getRenumbering( renum )
-    precondInt = glossary.getPreconditioning( precond )
-    currentSolver = None
-    if methode == "MULT_FRONT": currentSolver = MultFrontSolver.create( renumInt )
-    elif methode == "LDLT": currentSolver = LdltSolver.create( renumInt )
-    elif methode == "MUMPS": currentSolver = MumpsSolver.create( renumInt )
-    elif methode == "PETSC": currentSolver = PetscSolver.create( renumInt )
-    elif methode == "GCPC": currentSolver = GcpcSolver.create( renumInt )
-    currentSolver.setPreconditioning( precondInt )
-    currentSolver.setSolverResidual(resiRela)
-
-    mechaSolv.setLinearSolver( currentSolver )
-
-    return mechaSolv.execute()
+MECA_STATIQUE = MechanicalSolver.run

@@ -26,9 +26,10 @@
 #include "astercxx.h"
 
 #include "Discretization/FiberGeometry.h"
+#include "Supervis/ResultNaming.h"
 
 FiberGeometryInstance::FiberGeometryInstance():
-    DataStructure( getNewResultObjectName(), "GFIBRE" ),
+    DataStructure( ResultNaming::getNewResultName(), "GFIBRE" ),
     _nomsGroupes( JeveuxBidirectionalMapChar24( getName() + ".NOMS_GROUPES" ) ),
     _nbFibreGroupe( JeveuxVectorLong( getName() + ".NB_FIBRE_GROUPE" ) ),
     _pointeur( JeveuxVectorLong( getName() + ".POINTEUR" ) ),

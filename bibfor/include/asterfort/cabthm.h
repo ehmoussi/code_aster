@@ -15,51 +15,36 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine cabthm(nddls, nddlm, nno, nnos, nnom,&
-                      dimuel, dimdef, ndim, kpi, ipoids,&
-                      ipoid2, ivf, ivf2, idfde, idfde2,&
-                      dfdi, dfdi2, geom, poids, poids2,&
-                      b, nmec, yamec, addeme, yap1,&
-                      addep1, yap2, addep2, yate, addete,&
-                      np1, np2, axi)
-        integer :: ndim
-        integer :: dimdef
-        integer :: dimuel
-        integer :: nnos
-        integer :: nno
-        integer :: nddls
-        integer :: nddlm
-        integer :: nnom
-        integer :: kpi
-        integer :: ipoids
-        integer :: ipoid2
-        integer :: ivf
-        integer :: ivf2
-        integer :: idfde
-        integer :: idfde2
-        real(kind=8) :: dfdi(nno, 3)
-        real(kind=8) :: dfdi2(nnos, 3)
-        real(kind=8) :: geom(ndim, nno)
-        real(kind=8) :: poids
-        real(kind=8) :: poids2
-        real(kind=8) :: b(dimdef, dimuel)
-        integer :: nmec
-        integer :: yamec
-        integer :: addeme
-        integer :: yap1
-        integer :: addep1
-        integer :: yap2
-        integer :: addep2
-        integer :: yate
-        integer :: addete
-        integer :: np1
-        integer :: np2
-        aster_logical :: axi
+    subroutine cabthm(l_axi    , ndim     ,&
+                      nddls    , nddlm    ,&
+                      nddl_meca, nddl_p1  , nddl_p2,&
+                      nno      , nnos     , &
+                      dimuel   , dimdef   , kpi    ,&
+                      addeme   , addete   , addep1 , addep2,&
+                      elem_coor,&
+                      jv_poids , jv_poids2,&
+                      jv_func  , jv_func2 ,&
+                      jv_dfunc , jv_dfunc2,&
+                      dfdi     , dfdi2    ,&
+                      poids    , poids2   ,&
+                      b        )
+        aster_logical, intent(in) :: l_axi
+        integer, intent(in) :: ndim, nddls, nddlm
+        integer, intent(in) :: nddl_meca, nddl_p1, nddl_p2
+        integer, intent(in) :: nno, nnos
+        integer, intent(in) :: dimuel, dimdef, kpi
+        integer, intent(in) :: addeme, addete, addep1, addep2
+        real(kind=8), intent(in) :: elem_coor(ndim, nno)
+        integer, intent(in) :: jv_poids, jv_poids2
+        integer, intent(in) :: jv_func, jv_func2
+        integer, intent(in) :: jv_dfunc, jv_dfunc2
+        real(kind=8), intent(out) :: dfdi(nno, 3), dfdi2(nnos, 3)
+        real(kind=8), intent(out) :: poids, poids2
+        real(kind=8), intent(out) :: b(dimdef, dimuel)
     end subroutine cabthm
 end interface

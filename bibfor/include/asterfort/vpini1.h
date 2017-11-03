@@ -21,7 +21,7 @@
 interface
     subroutine vpini1(eigsol, modes, solveu, typcon, vecblo, veclag, vecrig,&
                       matpsc, matopa, iretr, nblagr, neqact, npivot, nstoc, omemax, omemin, omeshi,&
-                      sigma)
+                      sigma, mod45)
         character(len=19) , intent(in)  :: eigsol
         character(len=8)  , intent(in)  :: modes
         character(len=19) , intent(in)  :: solveu
@@ -41,5 +41,6 @@ interface
         real(kind=8)      , intent(out) :: omemin
         real(kind=8)      , intent(out) :: omeshi
         complex(kind=8)   , intent(out) :: sigma
+        character(len=4)  , intent(in)  :: mod45
     end subroutine vpini1
 end interface

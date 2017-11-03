@@ -1,8 +1,8 @@
-#ifndef LOGICALUNITMANAGERCYTHON_H_
-#define LOGICALUNITMANAGERCYTHON_H_
+#ifndef LOGICALUNITMANAGER_H_
+#define LOGICALUNITMANAGER_H_
 
 /**
- * @file CommandSyntaxCython.h
+ * @file LogicalUnitManagerCython.h
  * @brief Fichier entete permettant de decrire un fichier sur unité logique
  * @author Nicolas Sellenet
  * @section LICENCE
@@ -24,24 +24,21 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/** @brief Déclarations des fonctions cython */
-__PYX_EXTERN_C DL_IMPORT(void) openLogicalUnitFile(const char *, const int, const int);
-__PYX_EXTERN_C DL_IMPORT(void) releaseLogicalUnitFile(const char *);
-__PYX_EXTERN_C DL_IMPORT(int) getNumberOfLogicalUnitFile(const char *);
-__PYX_EXTERN_C DL_IMPORT(std::string) getTemporaryFileName(const char *);
+// TODO: Refactor LogicalUnit.py in C++
+#include "logical_unit.h"
 
 enum FileTypeCython { Ascii, Binary, Free };
 enum FileAccessCython { New, Append, Old };
 
 /**
  * @class LogicalUnitFileCython
- * @brief This class is a mirror of class LogicalUnitFile in cython
+ * @brief This class is a mirror of class LogicalUnitFile in Python.
  * @author Nicolas Sellenet
  */
 class LogicalUnitFileCython
 {
     private:
-        /** @brief Nom de la commande */
+        /** @brief Nom du fichier */
         std::string _fileName;
         /** @brief Booleen pour savoir si un fichier est utilisable */
         bool _isUsable;
@@ -104,4 +101,4 @@ class LogicalUnitFileCython
         };
 };
 
-#endif /* LOGICALUNITMANAGERCYTHON_H_ */
+#endif /* LOGICALUNITMANAGER_H_ */

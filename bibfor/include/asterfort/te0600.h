@@ -20,7 +20,7 @@
 !
 interface 
     subroutine te0600(option, nomte)
-        character(len=16) :: option
-        character(len=16) :: nomte
+        character(len=16), intent(in) :: option
+        character(len=16), intent(in) :: nomte
     end subroutine te0600
 end interface 

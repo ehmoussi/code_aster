@@ -22,7 +22,7 @@
 !
 interface
     subroutine nmcpla(fami, kpg, ksp, ndim, typmod,&
-                      imat, compor, mult_comp, carcri, timed, timef,&
+                      imat, compor_plas, compor_creep, carcri, timed, timef,&
                       neps, epsdt, depst, nsig, sigd,&
                       vind, option, nwkin, wkin, sigf,&
                       vinf, ndsde, dsde, nwkout, wkout,&
@@ -34,8 +34,8 @@ interface
         integer :: ndim
         character(len=8) :: typmod(*)
         integer :: imat
-        character(len=16), intent(in) :: compor(*)
-        character(len=16), intent(in) :: mult_comp
+        character(len=16), intent(in) :: compor_plas(*)
+        character(len=16), intent(in) :: compor_creep(*)
         real(kind=8), intent(in) :: carcri(*)
         real(kind=8) :: timed
         real(kind=8) :: timef

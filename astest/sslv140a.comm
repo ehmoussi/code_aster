@@ -63,16 +63,10 @@ MESTY=MECA_STATIQUE(MODELE=MO,
                    CHAM_MATER=CHMAT,
                    EXCIT=_F(CHARGE=CHARGY,),);
 
-MESTY=CALC_CHAMP(reuse =MESTY,
-               RESULTAT=MESTY,);
-
 CONTR=CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R',
                  OPERATION='EXTR',
                  RESULTAT=MESTY,
                  NOM_CHAM='SIEF_ELGA',);
-
-CHAMELG=CALC_CHAM_ELEM(MODELE=MO,
-                       OPTION='COOR_ELGA',);
 
 INT_SIYY=POST_ELEM(MODELE=MO,
                    NUME_ORDRE=1,

@@ -77,6 +77,12 @@ Le redécoupage local du pas de temps n'est pas compatible avec <%(k1)s>
 La rotation de réseau n'est pas compatible avec RUNGE_KUTTA. Utiliser l'intégration IMPLICITE.
 """),
 
+    12 : _(u"""
+   On ne peut pas utiliser les variables de commandes intrinsèques dans SIMU_POINT_MAT en mode POINT.
+   Elles seront ignorées dans le calcul. 
+   Si votre loi de comportement en utilise (par exemple ENDO_PORO_BETON, BETON_DOUBLE_DP, MONOCRISTAL ou META_LEMA_ANI), vous aurez des résultats faux ou le calcul n'aboutira pas.
+"""),
+
     13 : _(u"""
   LA MODELISATION GRAD_SIGM N'EST COMPATIBLE QU'AVEC LA LOI ENDO_HETEROGENE.
 """),
@@ -132,6 +138,11 @@ que le comportement est élastique).
 Erreur lors de la vérification de la cohérence entre les champs de variables internes.
 Le maillage sur lequel s'appuie le modèle et le maillage du champ des variables internes ne sont pas les mêmes.
 """),
+
+    25 : _(u"""
+   On ne peut pas utiliser la variable de commande intrinsèque <%(k1)s> dans MFront car ce n'est pas un scalaire.
+"""),
+
 
     27: _(u"""
 Erreur lors de la vérification de la cohérence entre les champs de variables internes.
@@ -427,6 +438,10 @@ FIN()
    Quand on utilise PETIT_REAC dans SIMU_POINT_MAT, il n'est pas possible d'imposer exactement une déformation donnée.
    Les déformations à la fin du calcul seront différentes de celles que l'on a donné, sauf en petites déformations.
    Si vous voulez simuler des grandes déformations, utilisez plutôt GDEF_LOG.
+"""),
+
+    94 : _(u"""
+Il faut déclarer FONC_DESORP sous ELAS_FO pour calculer l'hygrométrie.
 """),
 
 }

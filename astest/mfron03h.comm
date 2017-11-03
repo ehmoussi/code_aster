@@ -26,10 +26,8 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
 
-import os
 
-os.system("mfront --obuild MonoCrystalDDCC.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so MonoCrystalDDCC.so")
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=41)
 
 from numpy.linalg import norm
 from numpy import *
@@ -334,7 +332,7 @@ IMPLDD=SIMU_POINT_MAT(MATER=ACIERDDM,
                       MASSIF=_F(ANGL_EULER=angles),
                       COMPORTEMENT=_F(RELATION='MFRONT',
                                       NOM_ROUTINE='astermonocrystalddcc',
-                                      LIBRAIRIE='MonoCrystalDDCC.so',
+                                      UNITE_LIBRAIRIE=41,
                                       RESI_INTE_MAXI=1e-10,
                                             ),
                       INCREMENT=(_F(LIST_INST=LIS2DDI,),),

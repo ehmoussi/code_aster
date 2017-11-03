@@ -1,26 +1,36 @@
-# coding: utf-8
-
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
 #
-# This file is part of Code_Aster.
-#
-# Code_Aster is free software: you can redistribute it and/or modify
+# code_aster is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 2 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Code_Aster is distributed in the hope that it will be useful,
+# code_aster is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
 
 """
-This module defines a logger object and error functions for the package
+:py:mod:`logger` --- Logging and messages output
+************************************************
 
-A trace.log file is also opened for detailed traceback.
+This module defines a logger object and error functions.
+All message outputs should pass by this object.
+Probably additional levels should be added to distinguish low-debug messages,
+debug messages that may be interesting for the user (equivalent to
+``INFO=2``)...
+It might be necessary to refactor it in C++ for better performance and a
+global access (no C interface currently)...
+
+.. todo:: Not used anymore, remove ?
+    A :file:`trace.log` file is also opened for detailed traceback.
 """
 
 import sys
@@ -91,10 +101,9 @@ class HgStreamHandler(logging.StreamHandler):
         return logging.StreamHandler.emit(self, record)
 
 
-def build_logger(level=logging.WARN):
+def build_logger(level=logging.INFO):
     """Initialize the logger with its handlers"""
     logger = logging.getLogger("code_aster")
-    #logger.setLevel(logging.DEBUG)
     logger.setLevel(level)
     term = HgStreamHandler(sys.stdout)
     term.setFormatter(PerLevelFormatter())

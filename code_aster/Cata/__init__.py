@@ -30,29 +30,5 @@ of the commands language (already used by AsterStudy).
 
 """
 
-# Use or not the *new* language description
-HAVE_ASTERSTUDY = False
-
-
-# Detect AsterStudy session
-try:
-    from common.session import AsterStudySession
-    HAVE_ASTERSTUDY = AsterStudySession.use_cata()
-except ImportError:
-    pass
-
-# Detect code_aster execution
-try:
-    from code_aster import RunManager
-    HAVE_ASTERSTUDY = True
-except ImportError:
-    pass
-
-
-if not HAVE_ASTERSTUDY:
-    # use legacy supervisor of commands
-    from .Legacy import cata
-else:
-    from functools import partial
-    from .Language import SyntaxChecker
-    checkSyntax = partial(SyntaxChecker.checkCommandSyntax, printSyntax=True)
+# Use the *new* language description
+HAVE_ASTERSTUDY = True

@@ -19,6 +19,7 @@
 !
 !
 interface
-    subroutine aster_petsc_initialize()
+    subroutine aster_petsc_initialize(ierr)
+        integer, intent(out) :: ierr
     end subroutine aster_petsc_initialize
 end interface

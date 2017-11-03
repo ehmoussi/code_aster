@@ -24,7 +24,7 @@ subroutine nmpred(modele, numedd         , numfix    , mate       , carele  ,&
                   meelem, measse         , veelem    , veasse     , lerrit)
 !
 use NonLin_Datastructure_type
-use ROM_Datastructure_type
+use Rom_Datastructure_type
 !
 implicit none
 !
@@ -136,7 +136,7 @@ implicit none
             (ds_algopara%matrix_pred .eq.'DEPL_CALCULE')) then
         call nmprde(modele, numedd         , numfix    , mate       , carele    ,&
                     comref, ds_constitutive, lischa    , ds_algopara, solveu    ,&
-                    fonact, ds_print       , ds_measure, sddisc     , numins    ,&
+                    fonact, ds_print       , ds_measure, ds_algorom, sddisc     , numins    ,&
                     valinc, solalg         , matass    , maprec     , ds_contact,&
                     sddyna, meelem         , measse    , veelem     , veasse    ,&
                     ldccvg, faccvg         , rescvg)

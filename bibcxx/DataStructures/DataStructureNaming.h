@@ -31,6 +31,7 @@
 
 #include "MemoryManager/JeveuxObject.h"
 #include "DataStructures/TemporaryDataStructureName.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class DataStructureNaming
@@ -48,7 +49,7 @@ class DataStructureNaming
         {
             if ( memoryType == Permanent )
             {
-                std::string tmpName = getNewResultObjectName();
+                std::string tmpName = ResultNaming::getNewResultName();
                 return std::string( tmpName + "                        ", 0, lengthName );
             }
             else if ( memoryType == Temporary )

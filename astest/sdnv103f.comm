@@ -126,7 +126,7 @@ liste2=DEFI_LIST_INST(  DEFI_LIST=_F(LIST_INST = temps2,),
                           ),
                         )
 
-RESU2=DYNA_NON_LINE(MODELE=MODE,
+RESU2=DYNA_NON_LINE(MODELE=MODE,SOLVEUR=_F(METHODE='MULT_FRONT'),
                    CHAM_MATER=CHMAT,
                    EXCIT=_F(CHARGE=CH,
                             ),

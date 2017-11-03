@@ -47,7 +47,7 @@ private:
     StudyDescriptionPtr _study;
 
     /**
-     * @brief Production d'un CommandSyntaxCython pour CALC_MATR_ELEM
+     * @brief Production d'un CommandSyntax pour CALC_MATR_ELEM
      */
     SyntaxMapContainer computeMatrixSyntax( const std::string& optionName );
 

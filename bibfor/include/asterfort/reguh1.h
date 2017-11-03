@@ -19,11 +19,9 @@
 !
 !
 interface
-    subroutine reguh1(x0, y0, y0p, b, c)
-        real(kind=8) :: x0
-        real(kind=8) :: y0
-        real(kind=8) :: y0p
-        real(kind=8) :: b
-        real(kind=8) :: c
+    subroutine reguh1(x0, y0, y0p,&
+                      b, c)
+        real(kind=8), intent(in) :: x0, y0, y0p
+        real(kind=8), intent(out) :: b, c
     end subroutine reguh1
 end interface

@@ -15,13 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmadev(sddisc, sderro, iterat)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine nmadev(sddisc, sderro, iterat)
+!
+implicit none
+!
 #include "asterf_types.h"
+#include "event_def.h"
 #include "asterfort/assert.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
@@ -29,9 +30,11 @@ subroutine nmadev(sddisc, sderro, iterat)
 #include "asterfort/nmlecv.h"
 #include "asterfort/nmltev.h"
 #include "asterfort/utdidt.h"
-    character(len=19) :: sddisc
-    character(len=24) :: sderro
-    integer :: iterat
+#include "asterfort/getAdapEvent.h"
+!
+character(len=19) :: sddisc
+character(len=24) :: sderro
+integer :: iterat
 !
 ! ----------------------------------------------------------------------
 !
@@ -48,11 +51,10 @@ subroutine nmadev(sddisc, sderro, iterat)
 ! ----------------------------------------------------------------------
 !
     integer :: vali, nb_event_ok
-    integer :: i_adapt, nb_adapt
+    integer :: i_adap, nb_adap, event_type
     real(kind=8) :: vale
     character(len=8) :: cricom, metlis
     character(len=16) :: nopara
-    character(len=19) :: event_name
     aster_logical :: itemax, lerrit, divres, cvnewt
 !
 ! ----------------------------------------------------------------------
@@ -62,8 +64,7 @@ subroutine nmadev(sddisc, sderro, iterat)
 ! --- LA MISE A JOUR DE L'INDICATEUR DE SUCCES DES ITERATIONS DE NEWTON
 ! --- N'EST FAITE QU'EN GESTION AUTO DU PAS DE TEMPS
 !
-    call utdidt('L', sddisc, 'LIST', 'METHODE',&
-                valk_ = metlis)
+    call utdidt('L', sddisc, 'LIST', 'METHODE', valk_ = metlis)
     if (metlis .ne. 'AUTO') goto 999
 !
 ! --- EVENEMENTS
@@ -78,32 +79,28 @@ subroutine nmadev(sddisc, sderro, iterat)
 !
 ! --- BOUCLE SUR LES OCCURENCES D'ADAPTATION
 !
-    call utdidt('L', sddisc, 'LIST', 'NADAPT',&
-                vali_ = nb_adapt)
+    call utdidt('L', sddisc, 'LIST', 'NADAPT', vali_ = nb_adap)
 !
-    do i_adapt = 1, nb_adapt
+    do i_adap = 1, nb_adap
+! ----- Get event type
+        call getAdapEvent(sddisc, i_adap, event_type)
 !
-! ----- NOM DE L'EVENEMENT
-!
-        call utdidt('L', sddisc, 'ADAP', 'NOM_EVEN', index_ = i_adapt, &
-                    valk_ = event_name)
-!
-        if (event_name .eq. 'SEUIL_SANS_FORMU') then
+        if (event_type .eq. ADAP_EVT_TRIGGER) then
 !
 ! ------- PARAMETRES DU SEUIL
 !
-            call utdidt('L', sddisc, 'ADAP', 'NOM_PARA', index_ = i_adapt, &
+            call utdidt('L', sddisc, 'ADAP', 'NOM_PARA', index_ = i_adap, &
                         valk_ = nopara)
-            call utdidt('L', sddisc, 'ADAP', 'CRIT_COMP', index_ = i_adapt, &
+            call utdidt('L', sddisc, 'ADAP', 'CRIT_COMP', index_ = i_adap, &
                         valk_ = cricom)
-            call utdidt('L', sddisc, 'ADAP', 'VALE', index_ = i_adapt, &
+            call utdidt('L', sddisc, 'ADAP', 'VALE', index_ = i_adap, &
                         valr_ = vale, vali_ = vali)
 !
             ASSERT(nopara.eq.'NB_ITER_NEWT')
 !
 ! ------- RECUP DU NB DE SUCCES CONSECUTIFS : NBOK
 !
-            call utdidt('L', sddisc, 'ADAP', 'NB_EVEN_OK', index_ = i_adapt, &
+            call utdidt('L', sddisc, 'ADAP', 'NB_EVEN_OK', index_ = i_adap, &
                         vali_ = nb_event_ok)
 !
 ! ------- EN CAS DE NOUVEAU SUCCES A CONVERGENCE
@@ -122,7 +119,7 @@ subroutine nmadev(sddisc, sderro, iterat)
 !
 ! ------- ENREGISTREMENT DU NB DE SUCCES CONSECUTIFS
 !
-            call utdidt('E', sddisc, 'ADAP', 'NB_EVEN_OK', index_ = i_adapt, &
+            call utdidt('E', sddisc, 'ADAP', 'NB_EVEN_OK', index_ = i_adap, &
                         vali_ = nb_event_ok)
 !
         endif

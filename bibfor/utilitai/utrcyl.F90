@@ -17,15 +17,35 @@
 ! --------------------------------------------------------------------
 
 subroutine utrcyl(point, dire, orig, p)
-    implicit none
 !
-    real(kind=8) :: point(3), dire(3), orig(3), p(3, 3)
+implicit none
+!
+!
+    real(kind=8), intent(in) :: point(3)
+    real(kind=8), intent(in) :: dire(3)
+    real(kind=8), intent(in) :: orig(3)
+    real(kind=8), intent(out) :: p(3, 3)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Reference frames management
+!
+! Construct matrix from direction and axisymetric hypothesis
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  point            : point to define axisymmetric axis
+! In  dire             : first vector to define reference frame (ANGL_AXE)
+! In  orig             : point to origin of axisymmetric axis (ORIG_AXE)
+! Out pgl              : matrix
+!
+! --------------------------------------------------------------------------------------------------
+!
     real(kind=8) :: sca, xnorm
-!-----------------------------------------------------------------------
 !
-    sca=(point(1)-orig(1))*dire(1)+&
-     &    (point(2)-orig(2))*dire(2)+&
-     &    (point(3)-orig(3))*dire(3)
+! --------------------------------------------------------------------------------------------------
+!
+    sca = (point(1)-orig(1))*dire(1) + (point(2)-orig(2))*dire(2) + (point(3)-orig(3))*dire(3)
 !
     p(3,1)=(point(1)-orig(1))-sca*dire(1)
     p(3,2)=(point(2)-orig(2))-sca*dire(2)

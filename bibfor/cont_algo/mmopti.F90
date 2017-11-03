@@ -24,6 +24,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
+#include "asterfort/mcomce.h"
 #include "asterfort/cfmmvd.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/detrsd.h"
@@ -44,6 +45,7 @@ implicit none
 #include "asterfort/mminfl.h"
 #include "asterfort/cfdisi.h"
 #include "asterfort/utmess.h"
+#include "asterc/r8prem.h"
 #include "blas/ddot.h"
 !
 ! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
@@ -83,6 +85,10 @@ implicit none
     integer :: ztabf
     character(len=24) :: sdcont_tabfin
     real(kind=8), pointer :: v_sdcont_tabfin(:) => null()
+    integer  ::  elem_mast_nume,elem_mast_nbno
+    character(len=8) :: elem_mast_type
+    character(len=19) :: oldgeo
+    real(kind=8) :: elem_mast_coor(27),lenght_master_elem,lenght_master_elem_init,milieu(3)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -98,6 +104,9 @@ implicit none
     i_cont_poin  = 1
     nb_cont_init = 0
     nb_cont_excl = 0
+    lenght_master_elem      = 0.0
+    milieu      = 0.0
+    lenght_master_elem_init = -1
 !
 ! - Parameters
 !
@@ -119,6 +128,11 @@ implicit none
     armini = armin(mesh)
     epsint = 1.d-6*armini
     ds_contact%arete_min = armini
+    ds_contact%arete_max = armini
+!
+! - Initial Geometric coordinates
+!
+    oldgeo = mesh//'.COORDO'
 !
 ! - Preparation for SEUIL_INIT
 !
@@ -181,6 +195,77 @@ implicit none
 ! --------- Loop on integration points
 !
             do i_poin_elem = 1, nb_poin_elem
+!
+! ------------- Current master element
+!
+                elem_mast_nume = nint(v_sdcont_tabfin(ztabf*(i_cont_poin-1)+3))
+!
+! --------- Get coordinates of master element
+!
+                call mcomce(mesh          , oldgeo, elem_mast_nume, elem_mast_coor, elem_mast_type,&
+                            elem_mast_nbno)
+    ! Compute the minima lenght of the master element in the current zone
+!                 write (6,*) "elem_mast_type",elem_mast_type
+                 
+                 if ((elem_mast_type(1:2) .eq. 'SE') ) then   
+                 ! On calcule la distance des noeuds sommets                      
+                    lenght_master_elem      = 0.0                
+                    lenght_master_elem = sqrt(                                            &
+                                abs((elem_mast_coor(4)-elem_mast_coor(1)))**2.d0 +&
+                                abs((elem_mast_coor(5)-elem_mast_coor(2)))**2.d0 +&
+                                abs((elem_mast_coor(6)-elem_mast_coor(3)))**2.d0 &
+                                 )
+                 elseif  ((elem_mast_type(1:2) .eq. 'TR')) then                      
+                     lenght_master_elem      = 0.0 
+                 ! On calcule la mediane
+                    milieu(1) =  (elem_mast_coor(1)+elem_mast_coor(4))*0.5
+                    milieu(2) =  (elem_mast_coor(2)+elem_mast_coor(5))*0.5
+                    milieu(3) =  (elem_mast_coor(3)+elem_mast_coor(6))*0.5               
+                    lenght_master_elem = sqrt(                                            &
+                                abs((elem_mast_coor(7)-milieu(1)))**2.d0 +&
+                                abs((elem_mast_coor(8)-milieu(2)))**2.d0 +&
+                                abs((elem_mast_coor(9)-milieu(3)))**2.d0 &
+                                 )   
+                    
+                 elseif  ((elem_mast_type(1:2) .eq. 'QU')) then                   
+                    lenght_master_elem      = 0.0  
+                 ! On calcule la moyenne des diagonale            
+                    lenght_master_elem = sqrt(                                            &
+                                abs((elem_mast_coor(7)-elem_mast_coor(1)))**2.d0 +&
+                                abs((elem_mast_coor(8)-elem_mast_coor(2)))**2.d0 +&
+                                abs((elem_mast_coor(9)-elem_mast_coor(3)))**2.d0 &
+                                 )  + &
+                                 sqrt(                                            &
+                                abs((elem_mast_coor(10)-elem_mast_coor(4)))**2.d0 +&
+                                abs((elem_mast_coor(11)-elem_mast_coor(5)))**2.d0 +&
+                                abs((elem_mast_coor(12)-elem_mast_coor(6)))**2.d0 &
+                                 )  
+                 endif
+                 
+                ! On cherche a initialiser lenght_master_elem_init,ds_contact%arete_min,max
+                ! avec la premiere arete non nulle de la zone maitre
+                ! La valeur initiale est la longueur de la premiere maille maitre de longueur 
+                ! non nulle.                
+                if (lenght_master_elem_init .eq. -1) then
+                    lenght_master_elem_init = lenght_master_elem
+                    ds_contact%arete_min = lenght_master_elem_init
+                    ds_contact%arete_max = lenght_master_elem_init
+                endif
+                    
+                if ( (lenght_master_elem_init .le. 0.0d0 )) then 
+                    lenght_master_elem_init = -1
+                elseif (i_poin_elem .ge. 2 .and. lenght_master_elem_init .ne. -1) then 
+                    if ( (lenght_master_elem .lt. ds_contact%arete_min)  ) then
+                        ds_contact%arete_min = lenght_master_elem 
+                    endif
+                    if ( (lenght_master_elem .gt. ds_contact%arete_max)  ) then
+                        ds_contact%arete_max = lenght_master_elem 
+                    endif
+                 
+                endif
+                
+!                write (6,*) "armin,armax",ds_contact%arete_min,ds_contact%arete_max
+                 
 !
 ! ------------- Get pairing info
 !

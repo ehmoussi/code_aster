@@ -30,12 +30,12 @@ use calcul_module, only : calcul_status
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/Behaviour_type.h"
 #include "asterfort/lc0001.h"
 #include "asterfort/lc0002.h"
 #include "asterfort/lc0003.h"
 #include "asterfort/lc0004.h"
 #include "asterfort/lc0005.h"
-#include "asterfort/lc0006.h"
 #include "asterfort/lc0007.h"
 #include "asterfort/lc0008.h"
 #include "asterfort/lc0009.h"
@@ -61,6 +61,7 @@ implicit none
 #include "asterfort/lc0033.h"
 #include "asterfort/lc0034.h"
 #include "asterfort/lc0035.h"
+#include "asterfort/lc0036.h"
 #include "asterfort/lc0038.h"
 #include "asterfort/lc0039.h"
 #include "asterfort/lc0042.h"
@@ -123,15 +124,16 @@ implicit none
 #include "asterfort/lc2001.h"
 #include "asterfort/lc2002.h"
 #include "asterfort/lc2005.h"
-#include "asterfort/lc2006.h"
+#include "asterfort/lc2036.h"
 #include "asterfort/lc2038.h"
 #include "asterfort/lc3053.h"
 #include "asterfort/lc4047.h"
-#include "asterfort/lc5006.h"
 #include "asterfort/lc5007.h"
 #include "asterfort/lc5008.h"
 #include "asterfort/lc5016.h"
-#include "asterfort/lc6006.h"
+#include "asterfort/lc5021.h"
+#include "asterfort/lc5036.h"
+#include "asterfort/lc6036.h"
 #include "asterfort/lc6046.h"
 #include "asterfort/lc6057.h"
 #include "asterfort/lc7010.h"
@@ -146,9 +148,20 @@ implicit none
 #include "asterfort/lc7051.h"
 #include "asterfort/lc7056.h"
 #include "asterfort/lc7058.h"
+#include "asterfort/lc8027.h"
+#include "asterfort/lc8028.h"
+#include "asterfort/lc8029.h"
+#include "asterfort/lc8056.h"
+#include "asterfort/lc8057.h"
+#include "asterfort/lc8146.h"
+#include "asterfort/lc8331.h"
+#include "asterfort/lc13029.h"
+#include "asterfort/lc13057.h"
 #include "asterfort/lc9999.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vrcpto.h"
+#include "asterfort/isdeco.h"
+#include "asterfort/calcExternalStateVariable5.h"
 !
 ! aslint: disable=W1501,W1504
 !
@@ -259,7 +272,7 @@ implicit none
 !             RETURN1 EN CAS DE NON CONVERGENCE LOCALE
 !     ----------------------------------------------------------------
 !
-
+    integer :: tabcod(30), variextecode(1)
 !     ----------------------------------------------------------------
 !     ------------------------------------------------------------------
 !
@@ -272,6 +285,38 @@ implicit none
                         ksp, imate)
         endif
     endif
+!
+! - Prepare some external state variables
+!
+    tabcod(:) = 0
+    variextecode(1) = nint(carcri(IVARIEXTE))
+    call isdeco(variextecode(1), tabcod, 30)
+    if (tabcod(HYGR) .eq. 1) then
+        call calcExternalStateVariable5(fami, kpg, ksp, imate)
+    endif
+!
+! - Prepare index of behaviour law
+!
+    if (typmod(2) .eq. 'GDVARINO') then
+        numlc = numlc + 3000
+    endif
+    if (typmod(2) .eq. 'GRADSIGM') then
+        numlc = numlc + 4000
+    endif
+    if (typmod(2) .eq. 'GRADEPSI') then
+        numlc = numlc + 5000
+    endif
+    if (typmod(2) .eq. 'GRADVARI') then
+        numlc = numlc + 6000
+    endif
+    if (typmod(2) .eq. 'EJ_HYME' .or. typmod(2) .eq. 'ELEMDISC' .or.&
+        typmod(2) .eq. 'ELEMJOIN'.or. typmod(2) .eq. 'INTERFAC') then
+        numlc = numlc + 7000
+    endif
+!
+! --------------------------------------------------------------------------------------------------
+!
+
 !
     select case (numlc)
 !
@@ -309,14 +354,6 @@ implicit none
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
-    case (6)
-!     ENDO_ISOT_BETON
-        call lc0006(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, neps,&
-                    epsm, deps, nsig, sigm, vim,&
-                    option, angmas, sigp, vip,&
-                    typmod, icomp, nvi, ndsde,&
-                    dsidep, codret)
     case (7)
 !     ENDO_ORTH_BETON
         call lc0007(fami, kpg, ksp, ndim, imate,&
@@ -473,6 +510,14 @@ implicit none
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
+    case (36)
+!     ENDO_ISOT_BETON
+        call lc0036(fami, kpg, ksp, ndim, imate,&
+                    compor, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, vim,&
+                    option, angmas, sigp, vip,&
+                    typmod, icomp, nvi, ndsde,&
+                    dsidep, codret)
     case (38)
         call lc0038(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
@@ -771,7 +816,7 @@ implicit none
         call lc0120(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (137)
 !     MONOCRISTAL, POLYCRISTAL
@@ -779,7 +824,7 @@ implicit none
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, sigm, vim, option,&
                     angmas, sigp, vip, &
-                    wkin, typmod, icomp, nvi,&
+                    typmod, icomp, nvi,&
                     dsidep, codret)
     case (152)
 !     CABLE_GAINE
@@ -793,7 +838,7 @@ implicit none
         call lc0165(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, wkin, typmod, &
                     nvi, dsidep, codret)
     case (166)
 !     ENDO_PORO_BETON
@@ -853,7 +898,7 @@ implicit none
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, sigm, vim, option,&
                     angmas, sigp, vip, &
-                    wkin, typmod, icomp, nvi,&
+                    typmod, icomp, nvi,&
                     dsidep, codret)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -883,9 +928,9 @@ implicit none
                     sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
 
-    case (2006)
+    case (2036)
 !     ENDO_ISOT_BETON
-        call lc2006(fami, kpg, ksp, ndim, imate,&
+        call lc2036(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, neps,&
                     epsm, deps, nsig, sigm, vim,&
                     option, angmas, sigp, vip, &
@@ -929,14 +974,6 @@ implicit none
 ! - With GRADEPSI
 ! --------------------------------------------------------------------------------------------------
 !
-    case (5006)
-!     ENDO_ISOT_BETON
-        call lc5006(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, neps,&
-                    epsm, deps, nsig, sigm, vim,&
-                    option, angmas, sigp, vip, nwkin,&
-                    wkin, typmod, icomp, nvi, ndsde,&
-                    dsidep, nwkout, wkout, codret)
     case (5007)
 !     ENDO_ORTH_BETON
         call lc5007(fami, kpg, ksp, ndim, imate,&
@@ -958,14 +995,29 @@ implicit none
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, wkout, typmod, icomp,&
                     nvi, dsidep, codret)
+    case (5021)
+!     BETON_UMLV
+        call lc5021(fami, kpg, ksp, ndim, imate,&
+                    compor, carcri, instam, instap, epsm,&
+                    deps, sigm, vim, option, angmas,&
+                    sigp, vip, wkout, typmod, icomp,&
+                    nvi, dsidep, codret)
+    case (5036)
+!     ENDO_ISOT_BETON
+        call lc5036(fami, kpg, ksp, ndim, imate,&
+                    compor, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, vim,&
+                    option, angmas, sigp, vip, nwkin,&
+                    wkin, typmod, icomp, nvi, ndsde,&
+                    dsidep, nwkout, wkout, codret)
 !
 ! --------------------------------------------------------------------------------------------------
 ! - With GRADVARI
 ! --------------------------------------------------------------------------------------------------
 !
-    case (6006)
+    case (6036)
 !     ENDO_ISOT_BETON
-        call lc6006(fami, kpg, ksp, ndim, imate,&
+        call lc6036(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, neps,&
                     epsm, deps, nsig, sigm, vim,&
                     option, angmas, sigp, vip,&
@@ -1070,6 +1122,82 @@ implicit none
                     nvi, vim, option, angmas, &
                     icomp, sigp, vip, dsidep,&
                     codret)
+!
+! --------------------------------------------------------------------------------------------------
+! - For KIT_DDI
+! --------------------------------------------------------------------------------------------------
+!
+    case (8027)
+        call lc8027(fami, kpg, ksp, ndim, imate,&
+                    compor, mult_comp, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, vim,&
+                    option, angmas,sigp, nvi, vip, nwkin,&
+                    wkin, typmod,icomp, ndsde,&
+                    dsidep, nwkout, wkout, codret)
+!
+    case (8028)
+        call lc8028(fami, kpg, ksp, ndim, imate,&
+                    compor, mult_comp, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, vim,&
+                    option, angmas,sigp, nvi, vip, nwkin,&
+                    wkin, typmod,icomp, ndsde,&
+                    dsidep, nwkout, wkout, codret)
+!
+    case (8029)
+        call lc8029(fami, kpg, ksp, ndim, imate,&
+                    compor, mult_comp, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, vim,&
+                    option, angmas,sigp, nvi, vip, nwkin,&
+                    wkin, typmod,icomp, ndsde,&
+                    dsidep, nwkout, wkout, codret)
+!
+    case (8056)
+        call lc8056(fami, kpg, ksp, ndim, imate,&
+                    compor, mult_comp, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, vim,&
+                    option, angmas,sigp, nvi, vip, nwkin,&
+                    wkin, typmod,icomp, ndsde,&
+                    dsidep, nwkout, wkout, codret)
+!
+    case (8057)
+        call lc8057(fami, kpg, ksp, ndim, imate,&
+                    compor, mult_comp, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, vim,&
+                    option, angmas,sigp, nvi, vip, nwkin,&
+                    wkin, typmod,icomp, ndsde,&
+                    dsidep, nwkout, wkout, codret)
+!
+    case (8146)
+        call lc8146(fami, kpg, ksp, ndim, imate,&
+                    compor, mult_comp, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, vim,&
+                    option, angmas,sigp, nvi, vip, nwkin,&
+                    wkin, typmod,icomp, ndsde,&
+                    dsidep, nwkout, wkout, codret)
+!
+    case (8331)
+        call lc8331(fami, kpg, ksp, ndim, imate,&
+                    compor, mult_comp, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, vim,&
+                    option, angmas,sigp, nvi, vip, nwkin,&
+                    wkin, typmod,icomp, ndsde,&
+                    dsidep, nwkout, wkout, codret)
+!
+    case (13029)
+        call lc13029(fami, kpg, ksp, ndim, imate,&
+                    compor, mult_comp, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, vim,&
+                    option, angmas,sigp, nvi, vip, nwkin,&
+                    wkin, typmod,icomp, ndsde,&
+                    dsidep, nwkout, wkout, codret)
+!
+    case (13057)
+        call lc13057(fami, kpg, ksp, ndim, imate,&
+                    compor, mult_comp, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, vim,&
+                    option, angmas,sigp, nvi, vip, nwkin,&
+                    wkin, typmod,icomp, ndsde,&
+                    dsidep, nwkout, wkout, codret)
 !
 ! --------------------------------------------------------------------------------------------------
 ! - Error

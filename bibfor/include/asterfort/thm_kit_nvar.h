@@ -15,12 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine thm_kit_nvar(rela_thmc   , rela_hydr   , rela_meca   , rela_ther     , nb_vari_thmc,&
-                            nb_vari_hydr, nb_vari_meca, nb_vari_ther, nume_comp_meca)
+    subroutine thm_kit_nvar(rela_thmc     , rela_hydr     , rela_meca     , rela_ther     ,&
+                            nb_vari_thmc  , nb_vari_hydr  , nb_vari_meca  , nb_vari_ther  ,&
+                            nume_comp_thmc, nume_comp_hydr, nume_comp_meca, nume_comp_ther)
         character(len=16), intent(in) :: rela_thmc
         character(len=16), intent(in) :: rela_hydr
         character(len=16), intent(in) :: rela_meca
@@ -29,6 +28,9 @@ interface
         integer, intent(out) :: nb_vari_hydr
         integer, intent(out) :: nb_vari_meca
         integer, intent(out) :: nb_vari_ther
+        integer, intent(out) :: nume_comp_thmc
+        integer, intent(out) :: nume_comp_hydr
         integer, intent(out) :: nume_comp_meca
+        integer, intent(out) :: nume_comp_ther
     end subroutine thm_kit_nvar
 end interface

@@ -40,11 +40,11 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: zmeth = 23, ztole = 3 , ztabf = 34, zcmcf = 13
+    integer, parameter :: zmeth = 23, ztole = 3 , ztabf = 34, zcmcf = 14
     integer, parameter :: ztgde = 6 , zdirn = 6 , zdime = 18, zpoud = 3
     integer, parameter :: ztypm = 2 , zperc = 4 , ztypn = 2 , zmesx = 5
     integer, parameter :: zapme = 3 , zmaes = 4 , zresu = 30, zcmdf = 6
-    integer, parameter :: zcmxf = 16, zexcl = 3 , zparr = 5 , zpari = 29
+    integer, parameter :: zcmxf = 16, zexcl = 3 , zparr = 6 , zpari = 29
     integer, parameter :: ztaco = 2 , zeven = 5 , zcoco = 8 , ztacf = 4 
     integer, parameter :: zetat = 3
 !

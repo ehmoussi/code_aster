@@ -100,9 +100,9 @@ subroutine mdnoch(nochmd, lnochm, lresu, noresu, nomsym,&
 !
 ! 2.1. ==> BLANCHIMENT INITIAL
 !
-        do 21 , iaux = 1 , 64
-        nochmd(iaux:iaux) = ' '
-        21     end do
+        do iaux = 1 , 64
+            nochmd(iaux:iaux) = ' '
+        end do
 !
 ! 2.2. ==> NOM DU RESULTAT
 !
@@ -119,9 +119,9 @@ subroutine mdnoch(nochmd, lnochm, lresu, noresu, nomsym,&
             jaux = lxlgut(nomsym)
             ASSERT(jaux.ge.1 .and. jaux.le.16)
 !
-            do 23 , iaux = lnochm+1 , 8
-            nochmd(iaux:iaux) = '_'
- 23         continue
+            do iaux = lnochm+1 , 8
+                nochmd(iaux:iaux) = '_'
+            end do
             lnochm = 8+jaux
             nochmd(9:8+jaux) = nomsym(1:jaux)
 !

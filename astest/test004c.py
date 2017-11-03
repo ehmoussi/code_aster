@@ -4,10 +4,13 @@
 
 import code_aster
 import numpy as np
+
+code_aster.init()
+
 test = code_aster.TestCase()
 
 monMaillage = code_aster.Mesh.create()
-monMaillage.readAsterMeshFile( "ssnv176a.mail" )
+monMaillage.readAsterMeshFile( "test004c.mail" )
 
 monModel = code_aster.Model.create()
 monModel.setSupportMesh( monMaillage )
@@ -60,7 +63,7 @@ charMeca2.build()
 # Instants de calcul pour la première phase de calcul
 
 temps = [0.0, 1.0]
-timeList = code_aster.Studies.TimeStepManager.create()
+timeList = code_aster.TimeStepManager.create()
 timeList.setTimeList( temps )
 timeList.build()
 
@@ -73,16 +76,17 @@ statNonLine1.setMaterialOnMesh( affectMat )
 
 statNonLine1.setLoadStepManager( timeList )
 
-EndoOrthBeton = code_aster.Behaviour.create(code_aster.ConcreteOrthotropicDamage,
-                                            code_aster.SmallStrain )
-statNonLine1.addBehaviourOnElements( EndoOrthBeton )
+endoOrthBeton = code_aster.Behaviour.create(
+    code_aster.ConstitutiveLaw.ConcreteOrthotropicDamage,
+    code_aster.StrainType.SmallStrain)
+statNonLine1.addBehaviourOnElements( endoOrthBeton )
 
 
 #resu1 = statNonLine1.execute()
 
 # Instants de calcul pour la seconde phase de calcul
 temps = np.linspace(1.0, 2.0, num=50)
-timeList = code_aster.Studies.TimeStepManager.create()
+timeList = code_aster.TimeStepManager.create()
 timeList.setTimeList( temps )
 timeList.build()
 
@@ -94,17 +98,17 @@ statNonLine2.addStandardExcitation( charMeca1 )
 statNonLine2.addStandardExcitation( charMeca2 )
 statNonLine2.setSupportModel( monModel )
 statNonLine2.setMaterialOnMesh( affectMat )
-statNonLine2.addBehaviourOnElements( EndoOrthBeton )
+statNonLine2.addBehaviourOnElements( endoOrthBeton )
 
 statNonLine2.setLoadStepManager( timeList )
 
 # Define the initial state of the current analysis
-start = code_aster.State()
+start = code_aster.State.create(0)
 # from the last computed step of the previous analysis
 #start.setFromNonLinearEvolution( resu1, 1.0 )
 #statNonLine2.setInitialState( start )
 
-pilotage=code_aster.Driving.create( code_aster.ElasticityLimit )
+pilotage=code_aster.Driving.create( code_aster.DrivingType.ElasticityLimit )
 pilotage.setLowerBoundOfDrivingParameter(0.0)
 pilotage.setUpperBoundOfDrivingParameter(1.0)
 pilotage.setMinimumValueOfDrivingParameter( 0.000001 )

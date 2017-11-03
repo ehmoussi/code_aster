@@ -15,16 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 module Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-!
-! person_in_charge: mickael.abbas at edf.fr
-!
-
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -113,6 +110,23 @@ implicit none
 ! ----- Table for reduced coordinates
         character(len=24) :: tabl_name
         character(len=24) :: coor_redu
+! ----- Flag for dual prevision
+        aster_logical     :: l_prev_dual
+! ----- Name of GROUP_NO of interface
+        character(len=24) :: grnode_int
+! ----- Access to equation in RID (dual) and out of interface
+        integer           :: nb_equa_ridi
+        integer, pointer  :: v_equa_ridi(:)
+! ----- Access to equation in RID (dual)
+        integer           :: nb_equa_ridd
+        integer, pointer  :: v_equa_ridd(:)
+! ----- Access to equation in RID (primal)
+        integer           :: nb_equa_ridp
+        integer, pointer  :: v_equa_ridp(:)
+! ----- Flag for EF corrector?
+        aster_logical     :: l_corr_ef
+! ----- Datastructure for empiric modes on RID (primal)
+        type(ROM_DS_Empi) :: ds_empi_rid
     end type ROM_DS_ParaRRC
 !
 ! - Parameters for definition of multiparametric reduced problem - Evaluation
@@ -216,6 +230,8 @@ implicit none
         type(ROM_DS_Snap)       :: ds_snap
 ! ----- Name of table to save reduced coordinates
         character(len=19)       :: tabl_name
+! ----- Maximum number of modes
+        integer                 :: nb_mode_maxi
     end type ROM_DS_ParaDBR_POD
 !
 ! - Parameters for DEFI_BASE_REDUITE operator (RB)
@@ -237,7 +253,30 @@ implicit none
         type(ROM_DS_Solve)      :: solveDOM
 ! ----- Datastructure for multiparametric reduced problem
         type(ROM_DS_MultiPara)  :: multipara
+! ----- Maximum number of modes
+        integer                 :: nb_mode_maxi
     end type ROM_DS_ParaDBR_RB
+!
+! - Parameters for DEFI_BASE_REDUITE operator (TRUNCATION)
+!
+    type ROM_DS_ParaDBR_TR
+! ----- Base to truncate
+        character(len=8)        :: base_init
+! ----- Datastructure for empiric modes
+        type(ROM_DS_Empi)       :: ds_empi_init
+! ----- Model for truncation
+        character(len=8)        :: model_rom
+! ----- List of equations into RID
+        integer, pointer        :: v_equa_rom(:)
+! ----- Numbering for truncation
+        character(len=14)       :: nume_rom
+! ----- Profile of nodal field 
+        character(len=24)       :: prof_chno_rom
+! ----- Reduced mode (reference)
+        character(len=24)       :: mode_rom
+! ----- Number of equation for RID
+        integer                 :: nb_equa_rom
+    end type ROM_DS_ParaDBR_TR
 !
 ! - Parameters for DEFI_BASE_REDUITE operator
 !
@@ -248,12 +287,12 @@ implicit none
         character(len=8)         :: result_out
 ! ----- Identificator for field in result datastructure
         character(len=24)        :: field_iden
-! ----- Maximum number of modes
-        integer                  :: nb_mode_maxi
 ! ----- Parameters for POD/POD_INCR method
         type(ROM_DS_ParaDBR_POD) :: para_pod
 ! ----- Parameters for RB method
         type(ROM_DS_ParaDBR_RB ) :: para_rb
+! ----- Parameters for truncation method
+        type(ROM_DS_ParaDBR_TR ) :: para_tr
 ! ----- Datastructure for empiric modes
         type(ROM_DS_Empi)        :: ds_empi
 ! ----- If operator is "reuse"
@@ -272,14 +311,21 @@ implicit none
 ! ----- Name of group of elements for RID
         character(len=24) :: grelem_rid
 ! ----- Number of layers in the construction of RID
-        integer           :: nb_layer_ma
+        integer           :: nb_layer_rid
+! ----- The RID in a restricted domain?
+        aster_logical     :: l_rid_maxi
+! ----- List of elements restricted
+        integer, pointer  :: v_rid_maxi(:)
+! ----- Number of elements restricted
+        integer           :: nb_rid_maxi
 ! ----- Name of group of nodes for interface
         character(len=24) :: grnode_int
 ! ----- Flag for EF corrector?
         aster_logical     :: l_corr_ef
 ! ----- Name of group of nodes for outside area of EF corrector
         character(len=24) :: grnode_sub
-! ----- Number of nodes for minimal rid
+! ----- Number of layer in the construction of outside area
+        integer           :: nb_layer_sub
         integer           :: nb_rid_mini
 ! ----- List of nodes for minimal rid
         integer, pointer  :: v_rid_mini(:) 
@@ -290,22 +336,30 @@ implicit none
     type ROM_DS_AlgoPara
 ! ----- Empiric modes
         type(ROM_DS_Empi) :: ds_empi
-! ----- Empiric modes (on RID)
-        type(ROM_DS_Empi) :: ds_empi_rid
 ! ----- Pointer to list of equations for interface nodes
         integer, pointer  :: v_equa_int(:)
+! ----- Pointer to list of equation for internal interface nodes
+        integer, pointer  :: v_equa_sub(:)
 ! ----- Flag for reduced model
         aster_logical     :: l_rom
 ! ----- Flag for hyper-reduced model
         aster_logical     :: l_hrom
-! ----- Name of GROUP_NO
+! ----- Flag for hyper-reduced model with EF correction
+        aster_logical     :: l_hrom_corref
+! ----- Phase of computation when EF correction
+        character(len=24) :: phase
+! ----- Name of GROUP_NO of interface
         character(len=24) :: grnode_int
+! ----- Name of GROUP_NO of internal interface
+        character(len=24) :: grnode_sub
 ! ----- Table for reduced coordinates
         character(len=24) :: tabl_name
 ! ----- Object to save reduced coordinates
         character(len=24) :: gamma
 ! ----- Identificator for field
         character(len=24) :: field_iden
+! ----- Penalisation parameter for EF correction
+        real(kind=8)      :: vale_pena
     end type ROM_DS_AlgoPara
 !     
 end module

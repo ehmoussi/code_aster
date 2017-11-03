@@ -15,17 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine nbnlma(noma, nbm, limanu, nbtyp, lityp,&
-                      nbn)
-        character(len=8) :: noma
-        integer :: nbm
-        integer :: limanu(*)
-        integer :: nbtyp
-        character(len=8) :: lityp(*)
-        integer :: nbn
+    subroutine nbnlma(noma, nbm    , limanu    , nbtyp, lityp,&
+                      nbn , l_error, elem_error)
+        character(len=8), intent(in) :: noma
+        integer, intent(in) :: nbm
+        integer, intent(in) :: limanu(*)
+        integer, intent(in) :: nbtyp
+        character(len=8), intent(in) :: lityp(*)
+        integer, intent(out) :: nbn
+        aster_logical, intent(out) :: l_error
+        character(len=8), intent(out) :: elem_error
     end subroutine nbnlma
 end interface

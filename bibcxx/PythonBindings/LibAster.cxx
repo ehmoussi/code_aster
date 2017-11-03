@@ -43,6 +43,7 @@
 #include "PythonBindings/FluidStructureInteractionInterface.h"
 #include "PythonBindings/TurbulentSpectrumInterface.h"
 #include "PythonBindings/FunctionInterface.h"
+#include "PythonBindings/FormulaInterface.h"
 #include "PythonBindings/SurfaceInterface.h"
 #include "PythonBindings/ContactDefinitionInterface.h"
 #include "PythonBindings/ContactZoneInterface.h"
@@ -104,6 +105,7 @@
 #include "PythonBindings/CyclicSymmetryModeInterface.h"
 #include "PythonBindings/GeneralizedResultsContainerInterface.h"
 #include "PythonBindings/PartialMeshInterface.h"
+#include "PythonBindings/ResultNamingInterface.h"
 #include "PythonBindings/LinearDisplacementEvolutionContainerInterface.h"
 #include "PythonBindings/MeshCoordinatesFieldInterface.h"
 
@@ -123,8 +125,7 @@ struct LibAsterInitializer
         int a = get_sh_jeveux_status();
         if( a != 1 )
             return;
-        ASTERINTEGER op = 9999;
-        CALL_EXECOP( &op );
+        CALL_OP9999();
         register_sh_jeveux_status( 0 );
     };
 };
@@ -156,6 +157,7 @@ BOOST_PYTHON_MODULE(libaster)
     exportFluidStructureInteractionToPython();
     exportTurbulentSpectrumToPython();
     exportFunctionToPython();
+    exportFormulaToPython();
     exportSurfaceToPython();
     exportContactDefinitionToPython();
     exportContactZoneToPython();
@@ -223,4 +225,5 @@ BOOST_PYTHON_MODULE(libaster)
 #endif /* _USE_MPI */
 
     exportPartialMeshToPython();
+    exportResultNamingToPython();
 };

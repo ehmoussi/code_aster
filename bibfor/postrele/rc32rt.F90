@@ -16,12 +16,12 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine rc32rt(ze200, pi, pj, simpij)
+subroutine rc32rt(pi, pj, simpij)
     implicit   none
 #include "jeveux.h"
 #include "asterfort/jeveuo.h"
     real(kind=8) :: pi, pj, simpij
-    aster_logical :: ze200
+
 !     OPERATEUR POST_RCCM, TRAITEMENT DE FATIGUE_B3200
 !     ROCHET THERMIQUE : CALCUL DE LA CONTRAINTE DE MEMBRANE DE PRESSION
 !
@@ -37,14 +37,12 @@ subroutine rc32rt(ze200, pi, pj, simpij)
     s2=0.d0
 !
 ! --- CONTRAINTE MOYENNE DUE A LA PRESSION : partie ze200a
-    if (ze200) then
-        call jeveuo('&&RC3200.INDI', 'L', jvalin)
-        rayon = zr(jvalin+6) 
-        ep = zr(jvalin+7) 
-        s1 = rayon*abs(pi)/ep
-        s2 = rayon*abs(pj)/ep
-    endif
 !
+    call jeveuo('&&RC3200.INDI', 'L', jvalin)
+    rayon = zr(jvalin+6) 
+    ep = zr(jvalin+7) 
+    s1 = rayon*abs(pi)/ep
+    s2 = rayon*abs(pj)/ep
     simpij = max(s1,s2)
 !
 end subroutine

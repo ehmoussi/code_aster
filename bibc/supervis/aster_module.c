@@ -35,33 +35,15 @@
 
 #include "DataStructures/DataStructure.h"
 
-/*
- * Only an extract of #include "code_aster/Supervis/libCommandSyntax.h"
- * because it uses C++ std::string.
- */
-#define __PYX_EXTERN_C extern
-__PYX_EXTERN_C DL_IMPORT(void) getres_(char *, char *, char *, unsigned int, unsigned int, unsigned int);
-__PYX_EXTERN_C DL_IMPORT(int) listeMotCleSimpleFromMotCleFacteur(char *, int, int, char *, int, char *, int, int *);
-__PYX_EXTERN_C DL_IMPORT(void) getfac_(char *, long *, unsigned int);
-__PYX_EXTERN_C DL_IMPORT(int) existsCommandFactorAndSimpleKeyword(char *, int, char *);
-__PYX_EXTERN_C DL_IMPORT(char) **getCommandKeywordValueString(char *, int, char *, int *);
-__PYX_EXTERN_C DL_IMPORT(long) *getCommandKeywordStringLength(char *, int, char *, int, int *);
-__PYX_EXTERN_C DL_IMPORT(double) *getCommandKeywordValueDouble(char *, int, char *, int *);
-__PYX_EXTERN_C DL_IMPORT(double) *getCommandKeywordValueComplex(char *, int, char *, int *);
-__PYX_EXTERN_C DL_IMPORT(long) *getCommandKeywordValueInt(char *, int, char *, int *);
-
 #ifdef _HAVE_PETSC
 #include "petsc.h"
-#define CALL_PETSC_INITIALIZE() CALL0(PETSC_INITIALIZE,petsc_initialize)
 
-void DEF0(ASTER_PETSC_INITIALIZE,aster_petsc_initialize)
+void DEFP(ASTER_PETSC_INITIALIZE,aster_petsc_initialize, ASTERINTEGER* ierr)
 {
     int a = 0;
-    PetscInitialize(&a, NULL, NULL, NULL);
+    *ierr = (ASTERINTEGER)PetscInitialize(&a, NULL, NULL, NULL);
     PetscInitializeFortran();
 };
-
-#define CALL_PETSC_FINALIZE() CALL0(PETSC_FINALIZE,petsc_finalize)
 
 void DEF0(ASTER_PETSC_FINALIZE,aster_petsc_finalize)
 {
@@ -73,7 +55,6 @@ void DEF0(ASTER_PETSC_FINALIZE,aster_petsc_finalize)
  *   PRIVATE FUNCTIONS
  *
  */
-FILE* fileOut;
 
 void TraiteMessageErreur( _IN char* ) ;
 
@@ -89,9 +70,8 @@ void DEFP(XFINI,xfini, _IN ASTERINTEGER *code)
    /* XFINI est n'appelé que par JEFINI avec code=19 (=EOFError) */
    /* jeveux est fermé */
    register_sh_jeveux_status(0);
-   // TODO NS : J'ai commente cette ligne car elle fait planter le code
-   // et que je ne la comprend pas
-   // TODO MC: ceci lève EOFError, appelé par FIN, à voir ce qu'il faut en faire
+
+   // Do not raise EOFError when using new language description.
    // interruptTry(*code);
 }
 
@@ -120,8 +100,7 @@ void DEFP(XFINI,xfini, _IN ASTERINTEGER *code)
 void TraiteMessageErreur( _IN char * message )
 {
     ASTERINTEGER ier=SIGABRT;
-    if (fileOut == NULL) fileOut = stderr;
-    fprintf(fileOut, "%s\n",message);
+    printf("%s\n",message);
     if ( PyErr_Occurred() ) PyErr_Print();
     CALL_ASABRT( &ier );
 }
@@ -166,69 +145,114 @@ void DEFSSPPPPP(GETLTX,getltx,_IN char *motfac,_IN STRING_SIZE lfac,
                               _OUT ASTERINTEGER *isval, _OUT ASTERINTEGER *nbval )
 {
         /*
-        Equivalent de `getCommandKeywordStringLength`.
-        Entrees :
-          le nom d'un mot cle facteur : motfac (string)
-          le nom d'un mot cle simple : motcle (string)
-          le numero de l occurence du mot cle facteur : iocc (entier)
-          la taille maximale souhaitée : taille (entier)
-          le nombre max de valeur à analyser : mxval (entier)
-        Retourne :
-          le tableau des longueurs des chaines : isval (tableau d'entiers)
-          le nombre de valeurs effectivement retournees : nbval (entier)
-             si pas de valeur nbval = 0
-             si plus de valeur que mxval nbval < 0 et valeur abs = nbre valeurs
-             si moins de valeurs que mxval nbval > 0 et egal au nombre retourne
+        Procedure : getltx_ (appelee par le fortran sous le nom GETLTX)
         */
-        char* tmp = MakeCStrFromFStr(motfac, lfac);
-        char* tmp2 = MakeCStrFromFStr(motcle, lcle);
-        if ( existsCommandFactorAndSimpleKeyword(tmp, (int)*iocc - 1, tmp2) == 0 )
-            {
-            *nbval = 0;
-            }
-        else
-        {
-            long* retour = NULL;
-            int nbVal = 0;
-            retour = getCommandKeywordStringLength(tmp, (int)*iocc - 1, tmp2,
-                                                   (int)*taille, &nbVal);
-            *nbval = nbVal;
-            if ( (*nbval) > (*mxval) )
-            {
-                *nbval = -(*nbval);
-    }
-            else
-            {
-                int i;
-                for ( i = 0; i < *nbval; ++i )
-                {
-                    isval[i] = (ASTERINTEGER)retour[i];
-                }
-                free(retour);
-            }
-        }
-        FreeStr(tmp);
-        FreeStr(tmp2);
+        PyObject *res = (PyObject*)0 ;
+        PyObject *tup = (PyObject*)0 ;
+        char *mfc     = (char*)0 ;
+        char *mcs     = (char*)0 ;
+        int ok        = 0 ;
+        int nval      = 0 ;
+        int ioc       = 0 ;
+
+        mfc = MakeCStrFromFStr(motfac,lfac);
+                                                     DEBUG_ASSERT(mfc!=(char*)0);
+        mcs = MakeCStrFromFStr(motcle,lcle);
+                                                     DEBUG_ASSERT(mcs!=(char*)0);
+        ioc=(int)*iocc ;
+        ioc=ioc-1 ;
+        res=PyObject_CallMethod(get_sh_etape(), "getltx", "ssiii",
+                                mfc, mcs, ioc, (int)*mxval, (int)*taille);
+
+        /*  si le retour est NULL : exception Python a transferer
+            normalement a l appelant mais FORTRAN ??? */
+        if (res == NULL)MYABORT("erreur dans la partie Python");
+
+        ok = PyArg_ParseTuple(res,"iO",&nval,&tup);
+        if (!ok)MYABORT("erreur dans la partie Python");
+
+        *nbval = (ASTERINTEGER)nval;
+        if( nval < 0 ) nval=(int)*mxval;
+        convert(nval,tup,isval);
+        Py_DECREF(res);                /*  decrement sur le refcount du retour */
+        FreeStr(mfc);
+        FreeStr(mcs);
+        return ;
 }
 
 
 /* ------------------------------------------------------------------ */
-/* TODO CommandSyntax */
-void DEFSS(GETTC2,gettc2,_IN char *nomobj, _IN STRING_SIZE lnom,
-                        _OUT char *typobj, _IN STRING_SIZE ltyp)
+void DEFSP(GETFAC,getfac,_IN char *nomfac, _IN STRING_SIZE lfac, _OUT ASTERINTEGER *occu)
 {
         /*
-          retrouver le type "superviseur" du concept nomobj.
+          Procedure GETFAC pour le FORTRAN : emule le fonctionnement
+          de la procedure equivalente ASTER
+          Entrees :
+            le nom d un mot cle facteur : nomfac (string)
+          Retourne :
+            le nombre d occurence de ce mot cle dans les args : occu (entier)
+            dans l'etape (ou la commande) courante
         */
-    char* tmp = (char*)malloc(lnom + 1);
-    strncpy(tmp, nomobj, lnom);
-    tmp[lnom] = '\0';
-    char* nomCmdCp = getSDType(tmp);
-    CopyCStrToFStr(typobj, nomCmdCp, ltyp);
-    //fprintf(fileOut, "GETTC2 %s\n", typobj);
-    FreeStr(tmp);
+        PyObject *res  = (PyObject*)0 ;
+        char *mfc;
+        mfc = MakeCStrFromFStr(nomfac, lfac);
+        res=PyObject_CallMethod(get_sh_etape(),"getfac","s",mfc);
+
+        /*  si le retour est NULL : exception Python a transferer
+            normalement a l appelant mais FORTRAN ??? */
+        if (res == NULL)MYABORT("erreur dans la partie Python");
+
+        *occu=(ASTERINTEGER)PyInt_AsLong(res);
+
+        Py_DECREF(res);                /*  decrement sur le refcount du retour */
+        FreeStr(mfc);
+        return ;
 }
 
+
+/* ------------------------------------------------------------------ */
+void DEFP(GETRAN,getran, _OUT ASTERDOUBLE *rval)
+{
+    /*
+      Procedure GETRAN pour le FORTRAN : recupere un réel aleatoire (loi uniforme 0-1)
+      du module python Random
+      Entrees :
+        neant
+      Retourne :
+        un reel tiré au hasard
+    */
+    PyObject *res  = (PyObject*)0 ;
+    PyObject *val  = (PyObject*)0 ;
+    int ok=0;
+
+    res=PyObject_CallMethod(get_sh_etape(),"getran","");
+    /*  si le retour est NULL : exception Python a transferer
+        normalement a l appelant mais FORTRAN ??? */
+    if (res == NULL)MYABORT("erreur dans la partie Python");
+
+    ok = PyArg_ParseTuple(res,"O",&val);
+    if(!ok)MYABORT("erreur dans la partie Python");
+
+    *rval=(ASTERDOUBLE)PyFloat_AsDouble(val);
+
+    Py_DECREF(res);                /*  decrement sur le refcount du retour */
+    return ;
+}
+
+/* ------------------------------------------------------------------ */
+void DEFP(INIRAN,iniran,_IN ASTERINTEGER *jump)
+{
+        /*
+          Procedure INIRAN pour le FORTRAN : recupere un réel aleatoire (loi uniforme 0-1)
+          du module python Random
+          avec un shift eventuel de jump termes
+        */
+        PyObject *res  = (PyObject*)0 ;
+
+        res=PyObject_CallMethod(get_sh_etape(),"iniran","i",(int)*jump);
+        Py_DECREF(res);                /*  decrement sur le refcount du retour */
+        return ;
+}
 
 /* ------------------------------------------------------------------ */
 void DEFPS(GETMAT,getmat,_INOUT ASTERINTEGER *nbarg,_OUT char *motcle,_IN STRING_SIZE lcle)
@@ -240,11 +264,6 @@ void DEFPS(GETMAT,getmat,_INOUT ASTERINTEGER *nbarg,_OUT char *motcle,_IN STRING
             le nombre de mots cles facteur sous la commande, y compris en eliminant les blocs
             la liste de leur noms
         */
-    //fprintf(fileOut, "GETMAT\n");
-    ASTERINTEGER ier=SIGABRT;
-    CALL_ASABRT( &ier );
-    /* TODO */
-
         PyObject *res   = (PyObject*)0 ;
         PyObject *lnom  = (PyObject*)0 ; /* liste python des noms */
         int       nval = 0 ;
@@ -293,14 +312,58 @@ void DEFSPPSSP(GETMJM,getmjm,_IN char *nomfac,_IN STRING_SIZE lfac,
                     CO , COL : un concept ou une liste de concepts.
            nbarg  : nombre d arguments des mots cles du mot cle facteur
         */
-    int nbMC;
-    char* mcfact = MakeCStrFromFStr(nomfac, lfac);
-    int cret = listeMotCleSimpleFromMotCleFacteur( mcfact, (int)(*iocc)-1, (int)(*nbval),
-                                                   motcle, lcle,
-                                                   type, ltyp, &nbMC );
-    FreeStr(mcfact);
-    *nbarg = (ASTERINTEGER)nbMC;
-    return;
+
+        PyObject *res   = (PyObject*)0 ;
+        PyObject *lnom  = (PyObject*)0 ;
+        PyObject *lty   = (PyObject*)0 ; /* liste python des noms */
+        int       nval = 0 ;
+        int          k = 0 ;
+        int        ioc = 0 ;
+        char *mfc;
+                                                                 DEBUG_ASSERT(ltyp>0);
+        for ( k=0 ;k<ltyp ; k++ ) type[k]=' ' ;
+        ioc=(int)*iocc ;
+        ioc=ioc-1 ;
+        mfc = MakeCStrFromFStr(nomfac, lfac);
+        res=PyObject_CallMethod(get_sh_etape(),"getmjm","sii",mfc,ioc,(int)*nbval);
+        /*  si le retour est NULL : exception Python a transferer
+            normalement a l appelant mais FORTRAN ??? */
+        if (res == NULL)MYABORT("erreur dans la partie Python");
+        /*  si non impression du retour */
+
+        if(!PyArg_ParseTuple(res,"OO",&lnom,&lty)) MYABORT("erreur dans la partie Python");
+        nval=(int)PyList_Size(lnom);
+        *nbarg = (ASTERINTEGER)( (nval > *nbval) ? -nval : nval );
+                                 DEBUG_ASSERT(((nval<=*nbval)&&(*nbarg==nval))||(*nbarg==-nval)) ;
+        if(*nbarg < 0)nval=(int)*nbval;
+
+        if ( nval > 0 ){
+                converltx(nval,lnom,motcle,lcle); /* conversion  */
+                converltx(nval,lty,type,ltyp);
+       }
+
+        /*
+        A la demande des developpeurs (J. Pellet), le nom des concepts retourne par
+        la methode EXECUTION.getmjm (par exemple grma) est ici remplace par
+        la chaine CO (pour COncept).
+        les types retournes sont donc parmi les valeurs : R8 , C8 , IS , TX et CO.
+        */
+        for( k=0 ; k<nval*ltyp ; k+=ltyp ){
+                char     *mot = (char*)0 ;
+                mot           = type+k ;
+                if ( strncmp( mot , "R8" , 2 )!=0 && strncmp( mot , "IS" , 2 )!=0 &&
+                     strncmp( mot , "TX" , 2 )!=0 && strncmp( mot , "C8" , 2 )!=0 ){
+                        int j=0 ;
+
+                     DEBUG_ASSERT(ltyp>2);
+                        mot[0]='C' ;
+                        mot[1]='O' ;
+                        for ( j=2 ; j<ltyp ; j++ ) mot[j]=' ' ;
+                }
+        }
+        Py_DECREF(res);                /*  decrement sur le refcount du retour */
+        FreeStr(mfc);
+        return ;
 }
 
 
@@ -317,17 +380,70 @@ ASTERINTEGER DEFSS( GETEXM, getexm, _IN char *motfac,_IN STRING_SIZE lfac,
           Retourne :
             0 si n existe pas 1 si existe
         */
-    char* tmp = MakeCStrFromFStr(motfac, lfac);
-    char* tmp2 = MakeCStrFromFStr(motcle, lcle);
-    //fprintf(fileOut, "GETEXM %s %s\n", tmp, tmp2);
-    const int retour = existsCommandFactorAndSimpleKeyword(tmp, 0, tmp2);
-    FreeStr(tmp);
-    FreeStr(tmp2);
-    return retour;
+        PyObject *res  = (PyObject*)0 ;
+        char *mfc, *mcs;
+        ASTERINTEGER presence;
+        if (get_sh_etape() == Py_None) {
+            return (ASTERINTEGER)0;
+        }
+                                                 DEBUG_ASSERT(motcle!=(char*)0);
+        mfc = MakeCStrFromFStr(motfac, lfac);
+        mcs = MakeCStrFromFStr(motcle, lcle);
+        res=PyObject_CallMethod(get_sh_etape(),"getexm","ss", mfc, mcs);
+        /*  si le retour est NULL : exception Python a transferer
+            normalement a l appelant mais FORTRAN ??? */
+        if (res == NULL)MYABORT("erreur dans la partie Python");
+        presence = (ASTERINTEGER)PyLong_AsLong(res);
+        /*  decrement sur le refcount du retour */
+        Py_DECREF(res);                /*  decrement sur le refcount du retour */
+        FreeStr(mfc);
+        FreeStr(mcs);
+        return presence;
 }
 
 
 /* ------------------------------------------------------------------ */
+void DEFSSS( GETRES ,getres, _OUT char *nomres, _IN STRING_SIZE lres,
+                             _OUT char *concep, _IN STRING_SIZE lconc,
+                             _OUT char *nomcmd, _IN STRING_SIZE lcmd)
+{
+        /*
+          Procedure GETRES pour le FORTRAN : emule le fonctionnement
+          de la procedure equivalente ASTER
+          Retourne
+            le nom utilisateur du resultat : nomres (string)
+            le nom du concept resultat     : concep (string)
+            le nom de la commande          : nomcmd (string)
+        */
+        PyObject *res  = (PyObject*)0 ;
+        PyObject *etape;
+        int ok;
+        char *ss1,*ss2,*ss3;
+
+        /* (MC) le 1er test ne me semble pas suffisant car entre deux commandes,
+           commande n'est pas remis à (PyObject*)0... */
+        etape = get_sh_etape();
+        if(etape == (PyObject*)0 || PyObject_HasAttrString(etape, "getres")==0) {
+          /* Aucune commande n'est active on retourne des chaines blanches */
+          BlankStr(nomres,lres);
+          BlankStr(concep,lconc);
+          BlankStr(nomcmd,lcmd);
+          return ;
+        }
+        res = PyObject_CallMethod(etape,"getres","");
+
+        ok = PyArg_ParseTuple(res,"sss",&ss1,&ss2,&ss3);
+        if (!ok)MYABORT("erreur dans la partie Python");
+
+        /* le fortran attend des chaines de caracteres completees par des blancs */
+        CopyCStrToFStr(nomres, ss1, lres);
+        CopyCStrToFStr(concep, ss2, lconc);
+        CopyCStrToFStr(nomcmd, ss3, lcmd);
+
+        Py_DECREF(res);                /*  decrement sur le refcount du retour */
+        return ;
+}
+
 void DEFSPS(GETTYP,gettyp, _IN char *typaster, _IN STRING_SIZE ltyp,
                         _INOUT ASTERINTEGER *nbval,
                           _OUT char *txval,    _IN STRING_SIZE ltx)
@@ -335,11 +451,6 @@ void DEFSPS(GETTYP,gettyp, _IN char *typaster, _IN STRING_SIZE ltyp,
     /* Interface GETTYP
      * voir B_ETAPE.gettyp
      */
-    //fprintf(fileOut, "GETTYP\n");
-    ASTERINTEGER ier=SIGABRT;
-    CALL_ASABRT( &ier );
-    /* TODO */
-
     PyObject *res = (PyObject*)0;
     PyObject *tup = (PyObject*)0;
     char *typ;
@@ -387,35 +498,54 @@ void DEFSSPPPPP(GETVC8_WRAP,getvc8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
                si plus de valeur que mxval nbval <0 et valeur abs = nbre valeurs
                si moins de valeurs que mxval nbval>0 et egal au nombre retourne
         */
-    char* tmp = MakeCStrFromFStr(motfac, lfac);
-    char* tmp2 = MakeCStrFromFStr(motcle, lcle);
-    //fprintf(fileOut, "GETVC8_WRAP '%s' '%s' %d %d\n", tmp, tmp2, (int)*iocc - 1, (int)*mxval);
-    if ( existsCommandFactorAndSimpleKeyword(tmp, (int)*iocc - 1, tmp2) == 0 )
-    {
-        *nbval = 0;
-    }
-    else
-    {
-        double* retour = NULL;
-        int nbVal = 0;
-        retour = getCommandKeywordValueComplex(tmp, (int)*iocc - 1, tmp2, &nbVal);
-        *nbval = nbVal;
-        if ( (*nbval) > (*mxval) )
+        PyObject *res  = (PyObject*)0 ;
+        PyObject *tup  = (PyObject*)0 ;
+        int ok         = 0 ;
+        int nval       = 0 ;
+        int idef       = 0 ;
+        int ioc        = 0 ;
+        char *mfc      = (char*)0 ;
+        char *mcs      = (char*)0 ;
+        mfc = MakeCStrFromFStr(motfac,lfac);
+                                                     DEBUG_ASSERT(mfc!=(char*)0);
+        mcs = MakeCStrFromFStr(motcle,lcle);
+        /*
+                VERIFICATION
+                Si le mot-cle simple est recherche sous un mot-cle facteur et uniquement dans ce
+                cas, le numero d'occurrence (*iocc) doit etre strictement positif.
+                Si le mot-cle simple est recherche sans un mot-cle facteur iocc n'est pas utilise
+
+        */
+        if( isalpha(mfc[0])&&(*iocc<=0) )
         {
-            *nbval = -(*nbval);
+                printf( "<F> GETVC8 : le numero d'occurence (IOCC=%ld) est invalide\n",*iocc) ;
+                printf( "             commande : %s\n",
+                       PyString_AsString(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
+                printf( "             mot-cle facteur : %s\n",mfc) ;
+                printf( "             mot-cle simple  : %s\n",mcs) ;
+                MYABORT( "erreur d'utilisation detectee") ;
         }
-        else
-        {
-            int i;
-            for ( i = 0; i < 2*(*nbval); ++i )
-            {
-                val[i] = retour[i];
-            }
-            free(retour);
-        }
-    }
-    FreeStr(tmp);
-    FreeStr(tmp2);
+
+        ioc=(int)*iocc ;
+        ioc=ioc-1 ;
+        res=PyObject_CallMethod(get_sh_etape(),"getvc8","ssii",mfc,mcs,ioc,(int)*mxval);
+
+        /*  si le retour est NULL : exception Python a transferer
+            normalement a l appelant mais FORTRAN ??? */
+        if (res == NULL)MYABORT("erreur dans la partie Python");
+                                                     DEBUG_ASSERT(PyTuple_Check(res)) ;
+        ok = PyArg_ParseTuple(res,"iOi",&nval,&tup,&idef);
+        if(!ok)MYABORT("erreur dans la partie Python");
+
+        *nbval = (ASTERINTEGER)nval;
+        if ( nval < 0 ) nval=(int)*mxval;
+        convc8(nval,tup,val);
+        *iarg = (ASTERINTEGER)idef;
+
+        Py_DECREF(res);
+        FreeStr(mfc);
+        FreeStr(mcs);
+        return ;
 }
 
 
@@ -442,35 +572,53 @@ void DEFSSPPPPP(GETVR8_WRAP,getvr8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
                si plus de valeur que mxval nbval <0 et valeur abs = nbre valeurs
                si moins de valeurs que mxval nbval>0 et egal au nombre retourne
         */
-    char* tmp = MakeCStrFromFStr(motfac, lfac);
-    char* tmp2 = MakeCStrFromFStr(motcle, lcle);
-    //fprintf(fileOut, "GETVR8_WRAP '%s' '%s' %d %d\n", tmp, tmp2, (int)*iocc - 1, (int)*mxval);
-    if ( existsCommandFactorAndSimpleKeyword(tmp, (int)*iocc - 1, tmp2) == 0 )
-    {
-        *nbval = 0;
-    }
-    else
-    {
-        double* retour = NULL;
-        int nbVal = 0;
-        retour = getCommandKeywordValueDouble(tmp, (int)*iocc - 1, tmp2, &nbVal);
-        *nbval = nbVal;
-        if ( (*nbval) > (*mxval) )
+        PyObject *res  = (PyObject*)0 ;
+        PyObject *tup  = (PyObject*)0 ;
+        int ok         = 0 ;
+        int nval       = 0 ;
+        int idef       = 0 ;
+        int ioc        = 0 ;
+        char *mfc      = (char*)0 ;
+        char *mcs      = (char*)0 ;
+        mfc = MakeCStrFromFStr(motfac,lfac); /* conversion chaine fortran en chaine C */
+                                                     DEBUG_ASSERT(mfc!=(char*)0);
+        mcs = MakeCStrFromFStr(motcle,lcle);
+        /*
+         * VERIFICATION
+         * Si le mot-cle simple est recherche sous un mot-cle facteur et uniquement dans ce cas,
+         * le numero d'occurrence (*iocc) doit etre strictement positif.
+         * Si le mot-cle simple est recherche sans un mot-cle facteur iocc n'est pas utilise
+         */
+        if( isalpha(mfc[0])&&(*iocc<=0) )
         {
-            *nbval = -(*nbval);
+                printf( "<F> GETVR8 : le numero d'occurence (IOCC=%ld) est invalide\n",*iocc) ;
+                printf( "             commande : %s\n",
+                       PyString_AsString(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
+                printf( "             mot-cle facteur : %s\n",mfc) ;
+                printf( "             mot-cle simple  : %s\n",mcs) ;
+                MYABORT( "erreur d'utilisation detectee") ;
         }
-        else
-        {
-            int i;
-            for ( i = 0; i < *nbval; ++i )
-            {
-                val[i] = retour[i];
-            }
-            free(retour);
+        ioc=(int)*iocc ;
+        ioc=ioc-1 ;
+        res=PyObject_CallMethod(get_sh_etape(),"getvr8","ssii",mfc,mcs,ioc,(int)*mxval);
+        /*  si le retour est NULL : exception Python a transferer
+            normalement a l appelant mais FORTRAN ??? */
+        if (res == NULL)MYABORT("erreur dans la partie Python");
+                                                    DEBUG_ASSERT(PyTuple_Check(res)) ;
+        ok = PyArg_ParseTuple(res,"iOi",&nval,&tup,&idef);
+        if(!ok)MYABORT("erreur dans la partie Python");
+
+        *nbval=(ASTERINTEGER)nval;
+        if ( nval < 0 ) nval=(int)*mxval;
+        if ( nval>0 ){
+                convr8(nval,tup,val);
         }
-    }
-    FreeStr(tmp);
-    FreeStr(tmp2);
+        *iarg = (ASTERINTEGER)idef;
+
+        Py_DECREF(res);                /*  decrement sur le refcount du retour */
+        FreeStr(mfc);
+        FreeStr(mcs);
+        return ;
 }
 
 
@@ -484,7 +632,7 @@ void DEFSPSPPSP(FIINTF,fiintf,_IN char *nomfon,_IN STRING_SIZE lfon,
                               _IN char *coderr, _INOUT STRING_SIZE lcod,
                              _OUT ASTERDOUBLE *resu)
 {
-    //fprintf(fileOut, "FIINTF\n");
+    printf("FIINTF ???\n");
     ASTERINTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -538,7 +686,6 @@ void DEFSPSPPSP(FIINTFC,fiintfc,_IN char *nomfon,_IN STRING_SIZE lfon,
                                 _IN char *coderr, _INOUT STRING_SIZE lcod,
                                _OUT ASTERDOUBLE *resuc)
 {
-    //fprintf(fileOut, "FIINTFC\n");
     return DEFSPSPPSP(FIINTF,fiintf, nomfon, lfon, nbpu, param, lpara, val, iret,
                                      coderr, lcod, resuc);
 }
@@ -568,35 +715,56 @@ void DEFSSPPPPP(GETVIS_WRAP,getvis_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
                si plus de valeur que mxval nbval <0 et valeur abs = nbre valeurs
                si moins de valeurs que mxval nbval>0 et egal au nombre retourne
         */
-    char* tmp = MakeCStrFromFStr(motfac, lfac);
-    char* tmp2 = MakeCStrFromFStr(motcle, lcle);
-    if ( existsCommandFactorAndSimpleKeyword(tmp, (int)*iocc - 1, tmp2) == 0 )
+        PyObject *res  = (PyObject*)0 ;
+        PyObject *tup  = (PyObject*)0 ;
+        int ok         = 0 ;
+        int nval       = 0 ;
+        int idef       = 0 ;
+        int ioc        = 0 ;
+        char *mfc      = (char*)0 ;
+        char *mcs      = (char*)0 ;
+                                                 DEBUG_ASSERT((*iocc>0)||(FStrlen(motfac,lfac)==0));
+        mfc = MakeCStrFromFStr(motfac,lfac); /* conversion chaine fortran en chaine C */
+                                                     DEBUG_ASSERT(mfc!=(char*)0);
+        mcs = MakeCStrFromFStr(motcle,lcle);
+        /*
+                VERIFICATION
+                Si le mot-cle simple est recherche sous un mot-cle facteur et uniquement dans ce
+                cas, le numero d'occurrence (*iocc) doit etre strictement positif.
+                Si le mot-cle simple est recherche sans un mot-cle facteur iocc n'est pas utilise
+
+        */
+        if( isalpha(mfc[0])&&(*iocc<=0) )
         {
-        *nbval = 0;
+                printf( "<F> GETVIS : le numero d'occurence (IOCC=%ld) est invalide\n",*iocc) ;
+                printf( "             commande : %s\n",
+                       PyString_AsString(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
+                printf( "             mot-cle facteur : %s\n",mfc) ;
+                printf( "             mot-cle simple  : %s\n",mcs) ;
+                MYABORT( "erreur d'utilisation detectee") ;
         }
-    else
-    {
-        long* retour = NULL;
-        int nbVal = 0;
-        retour = getCommandKeywordValueInt(tmp, (int)*iocc - 1, tmp2, &nbVal);
-        *nbval = nbVal;
-        if ( (*nbval) > (*mxval) )
-        {
-            *nbval = -(*nbval);
+        ioc=(int)*iocc ;
+        ioc=ioc-1 ;
+        res=PyObject_CallMethod(get_sh_etape(),"getvis","ssii",mfc,mcs,ioc,(int)*mxval);
+
+        /*  si le retour est NULL : exception Python a transferer
+            normalement a l appelant mais FORTRAN ??? */
+        if (res == NULL)MYABORT("erreur dans la partie Python");
+
+        ok = PyArg_ParseTuple(res,"iOi",&nval,&tup,&idef);
+        if (!ok)MYABORT("erreur dans la partie Python");
+
+        *nbval = (ASTERINTEGER)nval;
+        if ( nval < 0 ) nval=(int)*mxval;
+        convert(nval,tup,val);
+        *iarg = (ASTERINTEGER)idef;
+
+        Py_DECREF(res);                /*  decrement sur le refcount du retour */
+        FreeStr(mfc);
+        FreeStr(mcs);
+        return ;
 }
-        else
-        {
-            int i;
-            for ( i = 0; i < *nbval; ++i )
-            {
-                val[i] = (ASTERINTEGER)retour[i];
-            }
-            free(retour);
-        }
-    }
-    FreeStr(tmp);
-    FreeStr(tmp2);
-}
+
 
 /* ------------------------------------------------------------------ */
 #define CALL_GETVTX(a,b,c,d,e,f,g) CALLSSPPPSP(GETVTX_WRAP,getvtx_wrap,a,b,c,d,e,f,g)
@@ -607,10 +775,11 @@ void DEFSSPPPSP(GETVTX_WRAP,getvtx_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
                            _INOUT char *txval,_IN STRING_SIZE ltx,_OUT ASTERINTEGER *nbval)
 {
         /*
-          Equivalent de `getCommandKeywordValueString`.
+          Procedure GETVTX pour le FORTRAN : emule le fonctionnement
+          de la procedure equivalente ASTER
           Entrees :
             le nom d un mot cle facteur : motfac (string)
-            le nom d un mot cle simple : motcle (string)
+            le nom d un mot cle simple ou sous mot cle : motcle (string)
             le numero de l occurence du mot cle facteur : iocc (entier)
             le numero de l argument demande (obsolete =1): iarg (entier)
             le nombre max de valeur attendues dans val : mxval (entier)
@@ -623,36 +792,68 @@ void DEFSSPPPSP(GETVTX_WRAP,getvtx_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
                si moins de valeurs que mxval nbval>0 et egal au nombre retourne
 
         */
-    char* tmp = MakeCStrFromFStr(motfac, lfac);
-    char* tmp2 = MakeCStrFromFStr(motcle, lcle);
-    //fprintf(fileOut, "GETVTX_WRAP '%s' '%s' %d %d\n", tmp, tmp2, (int)*iocc - 1, (int)*mxval);
-    if ( existsCommandFactorAndSimpleKeyword(tmp, (int)*iocc - 1, tmp2) == 0 )
+        PyObject *res  = (PyObject*)0 ;
+        PyObject *tup  = (PyObject*)0 ;
+        int ok         = 0 ;
+        int nval       = 0 ;
+        int idef       = 0 ;
+        int ioc        = 0 ;
+        char *mfc      = (char*)0 ;
+        char *mcs      = (char*)0 ;
+
+        mfc = MakeCStrFromFStr(motfac, lfac);
+        mcs = MakeCStrFromFStr(motcle, lcle);
+        /*
+                VERIFICATION
+                Si le mot-cle simple est recherche sous un mot-cle facteur et uniquement dans ce
+                cas, le numero d'occurrence (*iocc) doit etre strictement positif.
+                Si le mot-cle simple est recherche sans un mot-cle facteur iocc n'est pas utilise
+
+        */
+        if( isalpha(mfc[0])&&(*iocc<=0) )
         {
-        *nbval = 0;
+                printf( "<F> GETVTX : le numero d'occurence (IOCC=%ld) est invalide\n",*iocc) ;
+                printf( "             commande : %s\n",
+                       PyString_AsString(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
+                printf( "             mot-cle facteur : %s\n",mfc) ;
+                printf( "             mot-cle simple  : %s\n",mcs) ;
+                MYABORT( "erreur d'utilisation detectee") ;
         }
-    else
+        ioc=(int)*iocc ;
+        ioc=ioc-1 ;
+        res=PyObject_CallMethod(get_sh_etape(),"getvtx","ssii",mfc,mcs,ioc,(int)*mxval);
+
+        /*  si le retour est NULL : exception Python a transferer
+            normalement a l appelant mais FORTRAN ??? */
+        if (res == NULL)
         {
-        BlankStr(txval, ltx);
-        char** retour = NULL;
-        int nbVal = 0;
-        retour = getCommandKeywordValueString(tmp, (int)*iocc - 1, tmp2, &nbVal);
-        *nbval = nbVal;
-        if ( (*nbval) > (*mxval) )
-        {
-            *nbval = -(*nbval);
+                printf( "<F> GETVTX : numero d'occurence (IOCC=%ld) \n",*iocc) ;
+                printf( "             commande : %s\n",
+                       PyString_AsString(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
+                printf( "             mot-cle facteur : %s\n",mfc) ;
+                printf( "             mot-cle simple  : %s\n",mcs) ;
+                MYABORT("erreur dans la partie Python");
         }
-        else
-        {
-            int i;
-            for ( i = 0; i < *nbval; ++i )
-            {
-                SetTabFStr(txval, i, retour[i], ltx);
-            }
-            free(retour);
+
+        ok = PyArg_ParseTuple(res,"iOi",&nval,&tup,&idef);
+        if (!ok)MYABORT("erreur au decodage d'une chaine dans le module C aster.getvtx");
+
+        *nbval=(ASTERINTEGER)nval;
+        if ( nval < 0 ) nval=(int)*mxval;
+        if ( nval > 0 ){
+                convertxt(nval,tup,txval,ltx);
         }
-    }
-    FreeStr(tmp);
-    FreeStr(tmp2);
+        *iarg = (ASTERINTEGER)idef;
+        /* ATTENTION : il ne faut decrementer le compteur de references de res
+         *             qu'apres en avoir fini avec l'utilisation de tup.
+         *             NE PAS decrementer le compteur de references de tup car
+         *             la disparition de res entrainera un decrement automatique
+         *             du compteur de tup (res=(nbval,tup))
+         */
+        Py_DECREF(res);                /*  decrement sur le refcount du retour */
+        FreeStr(mfc);
+        FreeStr(mcs);
+        return ;
 }
 
 /* ------------------------------------------------------------------ */
@@ -677,35 +878,53 @@ void DEFSSPPPSP(GETVID_WRAP,getvid_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
                si plus de valeur que mxval nbval <0 et valeur abs = nbre valeurs
                si moins de valeurs que mxval nbval>0 et egal au nombre retourne
         */
-    char* tmp = MakeCStrFromFStr(motfac, lfac);
-    char* tmp2 = MakeCStrFromFStr(motcle, lcle);
-    //fprintf(fileOut, "GETVID_WRAP '%s' '%s' %d %d\n", tmp, tmp2, (int)*iocc - 1, (int)*mxval);
-    if ( existsCommandFactorAndSimpleKeyword(tmp, (int)*iocc - 1, tmp2) == 0 )
+        PyObject *res  = (PyObject*)0 ;
+        PyObject *tup  = (PyObject*)0 ;
+        int ok,nval,ioc,idef ;
+        char *mfc;
+        char *mcs;
+                                                 DEBUG_ASSERT((*iocc>0)||(FStrlen(motfac,lfac)==0));
+        mfc = MakeCStrFromFStr(motfac,lfac); /* conversion chaine fortran en chaine C */
+                                                     DEBUG_ASSERT(mfc!=(char*)0);
+        mcs = MakeCStrFromFStr(motcle,lcle);
+        /*
+                VERIFICATION
+                Si le mot-cle simple est recherche sous un mot-cle facteur et uniquement dans ce
+                cas, le numero d'occurrence (*iocc) doit etre strictement positif.
+                Si le mot-cle simple est recherche sans un mot-cle facteur iocc n'est pas utilise
+
+        */
+        if( isalpha(mfc[0])&&(*iocc<=0) )
         {
-        *nbval = 0;
+                printf( "<F> GETVID : le numero d'occurence (IOCC=%ld) est invalide\n",*iocc) ;
+                printf( "             commande : %s\n",
+                       PyString_AsString(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
+                printf( "             mot-cle facteur : %s\n",mfc) ;
+                printf( "             mot-cle simple  : %s\n",mcs) ;
+                MYABORT( "erreur d'utilisation detectee") ;
         }
-    else
-    {
-        char** retour = NULL;
-        int nbVal = 0;
-        retour = getCommandKeywordValueString(tmp, (int)*iocc - 1, tmp2, &nbVal);
-        *nbval = nbVal;
-        if ( (*nbval) > (*mxval) )
-        {
-            *nbval = -(*nbval);
+        ioc=(int)*iocc ;
+        ioc=ioc-1 ;
+        res=PyObject_CallMethod(get_sh_etape(),"getvid","ssii",mfc,mcs,ioc,(int)*mxval);
+
+        /*  si le retour est NULL : exception Python a transferer
+            normalement a l appelant mais FORTRAN ??? */
+        if (res == NULL)MYABORT("erreur dans la partie Python");
+
+        ok = PyArg_ParseTuple(res,"iOi",&nval,&tup,&idef);
+        if (!ok)MYABORT("erreur dans la partie Python");
+
+        *nbval=(ASTERINTEGER)nval;
+        if ( nval < 0 ) nval=(int)*mxval;
+        if ( nval > 0 ){
+                convertxt(nval,tup,txval,ltx);
         }
-        else
-        {
-            int i;
-            for ( i = 0; i < *nbval; ++i )
-            {
-                SetTabFStr(txval, i, retour[i], ltx);
-            }
-            free(retour);
-        }
-    }
-    FreeStr(tmp);
-    FreeStr(tmp2);
+        *iarg = (ASTERINTEGER)idef;
+
+        Py_DECREF(res);                /*  decrement sur le refcount du retour */
+        FreeStr(mfc);
+        FreeStr(mcs);
+        return ;
 }
 
 
@@ -721,7 +940,7 @@ void DEFP(PUTVIR,putvir, _IN ASTERINTEGER *ival)
          cet attribut est ensuite évalué par la méthode traite_value
          de B_ETAPE.py
    */
-    //fprintf(fileOut, "PUTVIR\n");
+    printf("PUTVIR ???\n");
     ASTERINTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -746,7 +965,7 @@ void DEFP(PUTVRR,putvrr, _IN ASTERDOUBLE *rval)
          cet attribut est ensuite évalué par la méthode traite_value
          de B_ETAPE.py
    */
-    //fprintf(fileOut, "PUTVRR\n");
+    printf("PUTVRR ???\n");
     ASTERINTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -762,42 +981,27 @@ void DEFP(PUTVRR,putvrr, _IN ASTERDOUBLE *rval)
 
 
 /* ------------------------------------------------------------------ */
-void DEFSSP(GCUCON,gcucon, _IN char *resul, STRING_SIZE lresul,
-                           _IN char *concep, STRING_SIZE lconcep, ASTERINTEGER *ier)
+void DEFP(GCECDU,gcecdu, ASTERINTEGER *numint)
 {
-   /*
-            Entrees:
-               resul   nom du concept
-               concep type du concept
-            Sorties :
-               ier     >0 le concept existe avant
-                        =0 le concept n'existe pas avant
-                        <0 le concept existe avant mais n'est pas du bon type
-            Fonction:
-               Verification de l existence du couple (resul,concep) dans les
-               resultats produits par les etapes precedentes
-   */
-    //fprintf(fileOut, "GCUCON\n");
-    ASTERINTEGER ier2=SIGABRT;
-    CALL_ASABRT( &ier2 );
-    /* TODO */
+        /*
+          Sortie :
+            numint  numero de l operateur de la commande
+          Fonction:
+             Recuperation du numero de l operateur
+        */
+        PyObject * res = (PyObject*)0 ;
+        res = PyObject_CallMethod(get_sh_etape(),"getoper","");
+        /*
+                    Si le retour est NULL : une exception a ete levee dans le code Python appele
+                    Cette exception est a transferer normalement a l appelant mais FORTRAN ???
+                    On produit donc un abort en ecrivant des messages sur la stdout
+        */
+        if (res == NULL)
+                MYABORT("erreur a l appel de gcecdu dans la partie Python");
 
-   PyObject * res = (PyObject*)0 ;
-                                                                           DEBUG_ASSERT(lresul) ;
-                                                                           DEBUG_ASSERT(lconcep) ;
-   res = PyObject_CallMethod(get_sh_etape(),"gcucon","s#s#",resul,lresul,concep,lconcep);
-   /*
-               Si le retour est NULL : une exception a ete levee dans le code Python appele
-               Cette exception est a transferer normalement a l appelant mais FORTRAN ???
-               On produit donc un abort en ecrivant des messages sur la stdout
-   */
-   if (res == NULL)
-            MYABORT("erreur a l appel de gcucon dans la partie Python");
-
-   *ier = (ASTERINTEGER)PyInt_AsLong(res);
-   Py_DECREF(res);
+        *numint = (ASTERINTEGER)PyInt_AsLong(res);
+        Py_DECREF(res);
 }
-
 
 /* ------------------------------------------------------------------ */
 void gcncon2_(char *type,char *resul,STRING_SIZE ltype,int lresul)
@@ -839,6 +1043,7 @@ PyObject *args;
         PyObject *list;
         int inval=0;
         ASTERINTEGER nval;
+        int long_nomcham=19;
         int long_nomgrp=24;
         int itopo;
         ASTERINTEGER topo;
@@ -846,10 +1051,10 @@ PyObject *args;
         if (!PyArg_ParseTuple(args, "ssssiO:prepcompcham",
                               &nomce,&nomcs,&nomcmp,&ktype,&itopo,&list)) return NULL;
 
-        Fce = MakeFStrFromCStr(nomce, 19);
-        Fcs = MakeFStrFromCStr(nomcs, 19);
-        Fcm = MakeFStrFromCStr(nomcmp, 19);
-        Fty = MakeFStrFromCStr(ktype, 19);
+        Fce = MakeFStrFromCStr(nomce, long_nomcham);
+        Fcs = MakeFStrFromCStr(nomcs, long_nomcham);
+        Fcm = MakeFStrFromCStr(nomcmp, long_nomcham);
+        Fty = MakeFStrFromCStr(ktype, long_nomcham);
         inval=PyList_Size(list);
         nval=(ASTERINTEGER)inval;
         topo=(ASTERINTEGER)itopo;
@@ -2094,17 +2299,314 @@ static PyObject *jeveux_exists( PyObject* self, PyObject* args)
     }
 }
 
+static PyObject *jeveux_status( PyObject* self, PyObject* args)
+{
+    return PyInt_FromLong((long)get_sh_jeveux_status());
+}
+
+/* ------------------------------------------------------------------ */
+/*   Routines d'interface pour le catalogue de loi de comportement    */
+/* ------------------------------------------------------------------ */
+void DEFPSS(LCCREE, lccree, _IN ASTERINTEGER *nbkit,
+                            _IN char *lkit, STRING_SIZE llkit,
+                            _OUT char *compor, STRING_SIZE lcompor)
+{
+/*
+   Créer un assemblage de LC composé des comportements listés dans 'list_kit'
+   et retourne le nom attribué automatiquement à ce comportement.
+
+      CALL LCCREE(NBKIT, LKIT, COMPOR)
+      ==> comport = catalc.create(*list_kit)
+*/
+   PyObject *catalc, *res, *tup_kit;
+   char *scomp;
+
+   catalc = GetJdcAttr("catalc");
+   /* transforme le tableau de chaines fortran en tuple */
+   tup_kit = MakeTupleString((long)*nbkit, lkit, llkit, NULL);
+
+   res = PyObject_CallMethod(catalc, "create", "O", tup_kit);
+   if (res == NULL) {
+      MYABORT("Echec lors de la creation du comportement (lccree/create) !");
+   }
+
+   scomp = PyString_AsString(res);
+   CopyCStrToFStr(compor, scomp, lcompor);
+
+   Py_XDECREF(res);
+   Py_XDECREF(tup_kit);
+   Py_XDECREF(catalc);
+}
+
+void DEFSS(LCALGO, lcalgo, _IN char *compor, STRING_SIZE lcompor,
+                           _OUT char *algo, STRING_SIZE lalgo
+                            )
+{
+/*
+   Retourne le premier algorithme d'intégration
+
+      CALL LCALGO(COMPOR, ALGO)
+      ==> algo_inte = catalc.get_algo(COMPOR)
+*/
+   PyObject *catalc, *res;
+
+   catalc = GetJdcAttr("catalc");
+   res = PyObject_CallMethod(catalc, "get_algo", "s#", compor, lcompor);
+   if (res == NULL) {
+      MYABORT("Echec lors de la recuperation du premier algorithme " \
+              "d'integration (lcalgo/get_algo) !");
+   }
+
+   convertxt(1, res, algo, lalgo);
+
+   Py_XDECREF(res);
+   Py_XDECREF(catalc);
+}
+
+void DEFSPPP(LCINFO, lcinfo, _IN char *compor, STRING_SIZE lcompor,
+                             _OUT ASTERINTEGER *numlc,
+                             _OUT ASTERINTEGER *nbvari,
+                             _OUT ASTERINTEGER *nbvari_exte
+                             )
+{
+/*
+   Retourne le numéro de routine et le nbre de variables internes
+
+      CALL LCINFO(COMPOR, NUMLC, NBVARI, NBVARI_EXTE)
+      ==> num_lc, nb_vari, nb_vari_exte = catalc.get_info(COMPOR)
+*/
+   PyObject *catalc, *res;
+
+   catalc = GetJdcAttr("catalc");
+   res = PyObject_CallMethod(catalc, "get_info", "s#", compor, lcompor);
+   if (res == NULL) {
+      MYABORT("Echec lors de la recuperation des informations sur le " \
+              "comportement (lcinfo/get_info) !");
+   }
+
+   *numlc       = (ASTERINTEGER)PyInt_AsLong(PyTuple_GetItem(res, 0));
+   *nbvari      = (ASTERINTEGER)PyInt_AsLong(PyTuple_GetItem(res, 1));
+   *nbvari_exte = (ASTERINTEGER)PyInt_AsLong(PyTuple_GetItem(res, 2));
+
+   Py_XDECREF(res);
+   Py_XDECREF(catalc);
+}
+
+void DEFSPS(LCVARI, lcvari, _IN char *compor, STRING_SIZE lcompor,
+                            _IN ASTERINTEGER *nbvari,
+                            _OUT char *nomvar, STRING_SIZE lnomvar)
+{
+/*
+   Retourne la liste des variables internes
+
+      CALL LCVARI(COMPOR, NBVARI, LVARI)
+      ==> nom_vari = catalc.get_vari(COMPOR)
+*/
+   PyObject *catalc, *res;
+
+   catalc = GetJdcAttr("catalc");
+   res = PyObject_CallMethod(catalc, "get_vari", "s#", compor, lcompor);
+   if (res == NULL) {
+      MYABORT("Echec lors de la recuperation des noms des variables internes du "\
+              "comportement (lcvari/get_vari) !");
+   }
+
+   convertxt((int)*nbvari, res, nomvar, lnomvar);
+
+   Py_XDECREF(res);
+   Py_XDECREF(catalc);
+}
+
+void DEFSPS(LCEXTEVARI, lcextevari, _IN char *compor, STRING_SIZE lcompor,
+                                    _IN ASTERINTEGER *nbvari,
+                                    _OUT char *nomvar, STRING_SIZE lnomvar)
+{
+/*
+   Retourne la liste des variables externes
+
+      CALL LCEXTEVARI(COMPOR, NBVARI, LVARI)
+      ==> nom_vari = catalc.get_variextevari(COMPOR)
+*/
+   PyObject *catalc, *res;
+
+   catalc = GetJdcAttr("catalc");
+   res = PyObject_CallMethod(catalc, "get_variexte", "s#", compor, lcompor);
+   if (res == NULL) {
+      MYABORT("Echec lors de la recuperation des noms des variables externes du "\
+              "comportement (lcvariexet/get_variexte) !");
+   }
+
+   convertxt((int)*nbvari, res, nomvar, lnomvar);
+
+   Py_XDECREF(res);
+   Py_XDECREF(catalc);
+}
+
+void DEFSSSP(LCTEST, lctest, _IN char *compor, STRING_SIZE lcompor,
+                             _IN char *prop, STRING_SIZE lprop,
+                             _IN char *valeur, STRING_SIZE lvaleur,
+                             _OUT ASTERINTEGER *iret)
+{
+/*
+   Est-ce que VALEUR est un valeur autorisée de PROPRIETE ?
+         CALL LCTEST(COMPOR, PROPRIETE, VALEUR, IRET)
+         ==> iret = catalc.query(COMPOR, PROPRIETE, VALEUR)
+*/
+   PyObject *catalc, *res;
+
+   catalc = GetJdcAttr("catalc");
+   res = PyObject_CallMethod(catalc, "query", "s#s#s#",
+                             compor, lcompor, prop, lprop, valeur, lvaleur);
+   if (res == NULL) {
+      MYABORT("Echec lors du test d'une propriete du comportement (lctest/query) !");
+   }
+
+   *iret = (ASTERINTEGER)PyInt_AsLong(res);
+
+   Py_XDECREF(res);
+   Py_XDECREF(catalc);
+}
+
+void DEFSS(LCTYPE, lctype, _IN char *compor, STRING_SIZE lcompor,
+                          _OUT char *typ, STRING_SIZE ltyp)
+{
+/*
+   Retourne le type de comportement
+         CALL LCTYPE(COMPOR, TYPE)
+         ==> ldctype = catalc.get_type(COMPOR)
+*/
+   PyObject *catalc, *res;
+   char *styp;
+
+   catalc = GetJdcAttr("catalc");
+   res = PyObject_CallMethod(catalc, "get_type", "s#", compor, lcompor);
+   if (res == NULL) {
+      MYABORT("Echec lors du test d'une propriete du comportement (lctype/get_type) !");
+   }
+
+   styp = PyString_AsString(res);
+   CopyCStrToFStr(typ, styp, ltyp);
+
+   Py_XDECREF(res);
+   Py_XDECREF(catalc);
+}
+
+void DEFS(LCDISCARD, lcdiscard, _IN char *compor, STRING_SIZE lcompor)
+{
+/*
+   Supprime la loi "de travail"
+   Si compor=' ', on supprime toutes les lois de travail
+
+       CALL LCDISCARD(COMPOR)
+       ==> catalc.discard(COMPOR)
+*/
+   PyObject *catalc, *res;
+
+   catalc = GetJdcAttr("catalc");
+   if ( compor[0] == ' ' ) {
+       res = PyObject_CallMethod(catalc, "discard", NULL);
+   } else {
+       res = PyObject_CallMethod(catalc, "discard", "s#", compor, lcompor);
+   }
+   if (res == NULL) {
+      MYABORT("Echec lors de la suppression des comportements (lcdiscard) !");
+   }
+
+   Py_XDECREF(res);
+   Py_XDECREF(catalc);
+}
+
+void DEFSS(LCSYMB, lcsymb, _IN char *compor, STRING_SIZE lcompor,
+                          _OUT char *name, STRING_SIZE lname)
+{
+/*
+   Retourne le nom de la fonction dans la bibliothèque MFront
+
+      CALL LCFUNC(COMPOR, NAME)
+      ==> name = catalc.get_symbol(COMPOR)
+*/
+   PyObject *catalc, *res;
+
+   catalc = GetJdcAttr("catalc");
+   res = PyObject_CallMethod(catalc, "get_symbol", "s#", compor, lcompor);
+   if (res == NULL) {
+      MYABORT("Echec lors de la recuperation du nom de la fonction " \
+              "d'integration dans MFront (lcsymb/get_symbol) !");
+   }
+   convertxt(1, res, name, lname);
+
+   Py_XDECREF(res);
+   Py_XDECREF(catalc);
+}
+
+
+void DEFSS(LCSYMM, lcsymm, _IN char *compor, STRING_SIZE lcompor,
+                          _OUT char *symm, STRING_SIZE lsymm)
+{
+/*
+   Retourne le nom de la fonction dans la bibliothèque MFront
+
+      CALL LCSYMM(COMPOR, SYMMETRY)
+      ==> name = catalc.get_symmetry(COMPOR)
+*/
+   PyObject *catalc, *res;
+
+   catalc = GetJdcAttr("catalc");
+   res = PyObject_CallMethod(catalc, "get_symmetry", "s#", compor, lcompor);
+   if (res == NULL) {
+      MYABORT("Echec lors de la recuperation de la symétrie de la matrice !");
+   }
+   convertxt(1, res, symm, lsymm);
+
+   Py_XDECREF(res);
+   Py_XDECREF(catalc);
+}
+
+
+void DEFPSS(LCKITREAD, lckitread,_IN ASTERINTEGER *nbkit,
+                                 _IN char *lkit, STRING_SIZE llkit,
+                                 _OUT char *lrela, STRING_SIZE llrela)
+{
+    PyObject *catalc, *tup_lkit, *res;
+    int nb_tuple;
+    catalc = GetJdcAttr("catalc");
+
+    // Input in tuple: first => name of kit, next => components of kit
+    tup_lkit = MakeTupleString((long)*nbkit, lkit, llkit, NULL);
+
+    // Call C function
+    res = PyObject_CallMethod(catalc, "get_kit", "O", tup_lkit);
+
+    if (res == NULL) {
+        MYABORT("Echec lors de la lecture du kit (lckitread/get_kit) !");
+        DEBUG_ASSERT(PyTuple_Check(res)) ;
+    }
+    nb_tuple = PyTuple_Size(tup_lkit);
+    if (nb_tuple != 5) {
+        MYABORT("Echec lors de la lecture du kit (lckitread/get_kit) !");
+        DEBUG_ASSERT(PyTuple_Check(res)) ;
+    }
+
+
+    // Convert output
+    convertxt(4, res, lrela, llrela);
+
+
+    Py_XDECREF(res);
+    Py_XDECREF(tup_lkit);
+    Py_XDECREF(catalc);
+}
+
+/* ----------   FIN catalogue de loi de comportement   -------------- */
+/* ------------------------------------------------------------------ */
+
 /* ------------------------------------------------------------------ */
 static PyObject *aster_argv( _UNUSED  PyObject *self, _IN PyObject *args )
 {
-    fprintf(fileOut, "aster_argv\n");
-    ASTERINTEGER ier=SIGABRT;
-    CALL_ASABRT( &ier );
-    /* TODO */
-
-    Py_INCREF( Py_None ) ;
-    return Py_None;
+        Py_INCREF( Py_None ) ;
+        return Py_None;
 }
+
 
 /* List of functions defined in the module */
 static PyMethodDef aster_methods[] = {
@@ -2134,6 +2636,7 @@ static PyMethodDef aster_methods[] = {
                 {"jeveux_getobjects", jeveux_getobjects, METH_VARARGS},
                 {"jeveux_getattr", jeveux_getattr,   METH_VARARGS},
                 {"jeveux_exists", jeveux_exists,     METH_VARARGS},
+                {"jeveux_status", jeveux_status,     METH_VARARGS},
                 {"get_nom_concept_unique", aster_gcncon, METH_VARARGS},
                 {NULL,                NULL}/* sentinel */
 };

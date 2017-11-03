@@ -407,4 +407,51 @@ Il faut renseigner le spectre à un sigma jusque 0.1 Hz pour SPEC_FRACTILE.
         Le germe pour les tirages aléatoires vaut %(i1)d.
 """),
 
+    84: _(u"""
+La valeur du mot-clé FREQ_MIN est inférieure à la fréquence minimale de la moyenne des spectres calculés
+ou du spectre cible fourni dans SPEC_OSCI.
+"""),
+
+    85: _(u"""
+La valeur du mot-clé FREQ_MAX est supérieure à la fréquence maximale de la moyenne des spectres calculés
+ou du spectre cible fourni dans SPEC_OSCI.
+"""),
+
+    86: _(u"""
+La moyenne des spectres calculées est supérieure ou égale au spectre cible sur tout l'intervalle définit
+par FREQ_MIN et FREQ_MAX. Il n'y a pas de correction à apporter au spectre moyen.
+"""),
+
+    87: _(u"""
+Facteur de correction apporté au spectre moyen : %(r1).2f
+"""),
+
+    88: _(u"""
+La table fournie n'est pas issue de GENE_ACCE_SEISME.
+"""),
+
+    89: _(u"""
+La valeur du mot-clé DUREE est supérieure à la durée totale des accélérogrammes.
+   
+   Valeur fournie        : %(r1).2f
+   Durée accélérogrammes : %(r2).2f
+"""),
+
+    90: _(u"""
+Les spectres fournis par les mots-clés SPEC_OSCI et SPEC_1_SIGMA n'ont pas
+les mêmes valeurs de fréquence.
+
+Le calcul du spectre cible "moins un sigma" n'est pas possible.
+"""),
+
+    91: _(u"""
+Vous avez renseigné le mot-clé RATIO_HV or il n'y a pas de spectre vertical
+dans les données fournies. Ce mot-clé n'a donc aucun impact.
+"""),
+
+    92: _(u"""
+Il y a un spectre vertical dans les données fournies, cependant vous n'avez pas renseigné
+le mot-clé RATIO_HV. Cette valeur est fixée à 1.
+"""),
+
 }

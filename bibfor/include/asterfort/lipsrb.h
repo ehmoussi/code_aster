@@ -19,12 +19,11 @@
 !
 !
 interface
-    subroutine lipsrb(nomres, matprj, sst1, sst2, intf1,&
+    subroutine lipsrb(nomres, sst1, sst2, intf1,&
                       intf2, lino1, lino2, indin1, indin2,&
-                      ddlmas, ddlsla, nbmoma, nbmosl, imast,&
+                      ddlmas, ddlsla, nbmoma, imast,&
                       tramod)
         character(len=8) :: nomres
-        character(len=8) :: matprj
         character(len=8) :: sst1
         character(len=8) :: sst2
         character(len=8) :: intf1
@@ -36,7 +35,6 @@ interface
         integer :: ddlmas
         integer :: ddlsla
         integer :: nbmoma
-        integer :: nbmosl
         integer :: imast
         character(len=24) :: tramod
     end subroutine lipsrb

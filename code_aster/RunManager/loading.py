@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,8 +19,8 @@
 
 import inspect
 
-from code_aster.RunManager.Pickling import Pickler
-from code_aster.Supervis.logger import logger
+from ..Supervis.logger import logger
+from .Pickling import Pickler
 
 
 def loadObjects(level=1):

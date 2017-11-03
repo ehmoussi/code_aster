@@ -17,23 +17,22 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-# person_in_charge: nicolas.sellenet@edf.fr
+# person_in_charge: mathieu.courtois@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from code_aster.Supervis.libCommandSyntax import CommandSyntax
-from code_aster import FiberGeometry
+from ..Objects import FiberGeometry
+from .ExecuteCommand import ExecuteCommand
 
 
-def DEFI_GEOM_FIBRE(**curDict):
-    returnFiberGeom = FiberGeometry.create()
-    name = returnFiberGeom.getName()
-    syntax = CommandSyntax("DEFI_GEOM_FIBRE")
+class FiberGeometryDefinition(ExecuteCommand):
+    """Execute legacy operator DEFI_GEOM_FIBRE."""
+    command_name = "DEFI_GEOM_FIBRE"
 
-    # self.getType()
-    syntax.setResult(name, "MAILLAGE")
+    def create_result(self, keywords):
+        """Create the result.
 
-    syntax.define(curDict)
-    numOp = 119
-    python_execop(numOp)
-    syntax.free()
-    return returnFiberGeom
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = FiberGeometry.create()
+
+DEFI_GEOM_FIBRE = FiberGeometryDefinition.run

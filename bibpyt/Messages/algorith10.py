@@ -81,11 +81,6 @@ cata_msg = {
  redécoupage global.
 """),
 
-    40 : _(u"""
-Vecteur nul entraînant une division par zéro.
-Ce message est un message d'erreur développeur.
-Contactez le support technique.
-"""),
 
     41 : _(u"""
  incohérence de A ou H
@@ -194,11 +189,6 @@ Contactez le support technique.
     88 : _(u"""
  le seul comportement élastique valide est ELAS
  """),
-
-    90 : _(u"""
- la définition de la température est obligatoire
- pour une loi de couplage de type  %(k1)s
-"""),
 
     91 : _(u"""
  Loi de séchage %(k1)s : le coefficient de diffusion atteint des valeurs trop élevées %(r1)f. Il se peut que cela soit dû à la stabilité du thêta-schéma qui empêche la convergence du calcul non linéaire. 

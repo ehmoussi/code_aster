@@ -20,7 +20,7 @@
 # person_in_charge: mathieu.courtois at edf.fr
 
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'), PAR_LOT='NON')
 
 #--------------------------------------------------------
 #
@@ -502,13 +502,57 @@ TEST_FONCTION(VALEUR=( _F(VALE_CALC=7.030576587190E-03   ,  #signal corrige sans
 
 ),);
 
-
-
-
-
-
-# FIN VALIDATION CORR_ACCE
+# TEST PROL_SPEC_OSCI
 ##--------------------------------------------------------
+
+import numpy as np
+
+liste_freq = [0.25, 0.8,2.5,5.0,8.0,30.,33.,]
+sro_sms = np.array([0.02, 0.066, 0.21, 0.22, 0.23, 0.1, 0.1,])
+
+
+sro_dsms = np.array(liste_freq)**(-2) * np.array(sro_sms ) / 9.81
+
+SRO_ACCE  = DEFI_FONCTION ( NOM_RESU  = 'ACCE',  NOM_PARA    = 'FREQ',
+            PROL_GAUCHE = 'CONSTANT',  PROL_DROITE  = 'CONSTANT',
+            ABSCISSE        = liste_freq,
+            ORDONNEE     = sro_sms);
+
+SRO_DEPL  = DEFI_FONCTION ( NOM_RESU    = 'ACCE',  NOM_PARA    = 'FREQ',
+            PROL_GAUCHE = 'CONSTANT',  PROL_DROITE  = 'CONSTANT',
+            ABSCISSE        = liste_freq,
+            ORDONNEE     = sro_dsms);
+
+dmax = 3.4 / 100. # (max  = 3.4cm)
+SRO_CORR = CALC_FONCTION ( PROL_SPEC_OSCI =_F( FONCTION = SRO_ACCE, NORME = 9.81, DEPL_MAX = dmax ),);
+
+TEST_FONCTION(VALEUR=( _F(VALE_CALC= 0.00   ,  
+                         NOM_PARA=('FREQ',), VALE_PARA=(0.0,),FONCTION = SRO_CORR,),
+                       _F(VALE_CALC= 7.193198614409E-03   ,  
+                         NOM_PARA=('FREQ',), VALE_PARA=(0.1,),FONCTION = SRO_CORR,),
+                      _F(VALE_CALC= 0.02   ,  
+                         NOM_PARA=('FREQ',), VALE_PARA=(0.25,),FONCTION = SRO_CORR,),
+
+),);
+
+liste_freq, sro_d = SRO_CORR.Valeurs()
+sro_cd = np.array(liste_freq[1:])**(-2) * np.array(sro_d[1:]) / 9.81
+SRO_DC  = DEFI_FONCTION ( NOM_RESU    = 'ACCE',  NOM_PARA    = 'FREQ',
+            PROL_GAUCHE = 'CONSTANT',  PROL_DROITE  = 'CONSTANT',
+            ABSCISSE        = liste_freq[1:],
+            ORDONNEE     = sro_cd);
+
+TEST_FONCTION(VALEUR=( _F(VALE_CALC= dmax   ,  
+                         NOM_PARA=('FREQ',), VALE_PARA=(0.0,),FONCTION = SRO_DC,),
+                       _F(VALE_CALC= dmax   ,  
+                         NOM_PARA=('FREQ',), VALE_PARA=(0.1,),FONCTION = SRO_DC,),
+                      _F(VALE_CALC= 0.03261977573904   ,  
+                         NOM_PARA=('FREQ',), VALE_PARA=(0.25,),FONCTION = SRO_DC,),
+
+),);
+
+
+
 
 ##--------------------------------------------------------
 # ------------------ TEST DSP ----------------------------

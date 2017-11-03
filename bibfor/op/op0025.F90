@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine op0025()
 !
 use NonLin_Datastructure_type
@@ -45,11 +46,6 @@ implicit none
 #include "asterfort/vtcreb.h"
 #include "asterfort/xthpos.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-
-
-!
 ! --------------------------------------------------------------------------------------------------
 !
 ! THER_LINEAIRE
@@ -72,7 +68,6 @@ implicit none
     character(len=24) :: cndiri, cncine, time
     character(len=24) :: mate
     character(len=24) :: vec2nd
-    character(len=24) :: compor
 !
     type(NL_DS_AlgoPara) :: ds_algopara
     type(NL_DS_InOut)    :: ds_inout
@@ -93,10 +88,9 @@ implicit none
     vec2nd      = '&&OP0025.2ND_MEMBRE'
     matass      = '&&OP0025.MATR_ASSEM'
     result      = ' '
-    mediri      = ' '
+    mediri      = '&&MEDIRI'
     cndiri      = ' '
     cncine      = ' '
-    compor      = ' '
     sddisc      = '&&OP0025.SDDISC'
 !
 ! - Creation of datastructures
@@ -118,7 +112,7 @@ implicit none
 !
 ! - Elementary matrix for Dirichlet BC
 !
-    call medith(model, list_load, mediri)
+    call medith('V', 'ZERO', model, list_load, mediri)
 !
 ! 2.6. ==> PILOTAGE DES REACTUALISATIONS DES ASSEMBLAGES
 !     REASRG : MATRICE DE RIGIDITE
@@ -196,7 +190,7 @@ implicit none
     call ntreso(model , mate  , cara_elem, list_load, nume_dof,&
                 solver, lostat, time     , tpsthe   , reasrg  ,&
                 reasms, vec2nd, matass   , maprec   , cndiri  ,&
-                cncine, mediri, compor)
+                cncine, mediri)
 !
     reasrg = .false.
     reasms = .false.

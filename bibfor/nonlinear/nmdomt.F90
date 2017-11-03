@@ -128,7 +128,7 @@ implicit none
         call getvis(keywf, 'REAC_ITER', iocc=1, scal=reac_iter)
         ASSERT(reac_iter .ge. 0)
         ds_algopara%reac_iter = reac_iter
-        call romAlgoNLRead(ds_algorom_)
+        call romAlgoNLRead('MECA', ds_algorom_)
     else
         ASSERT(.false.)
     endif

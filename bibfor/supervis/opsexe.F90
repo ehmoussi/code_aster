@@ -34,7 +34,7 @@ subroutine opsexe(nuoper)
         call ops026()
     else
         vali = -nuoper
-        call utmess('E', 'SUPERVIS_60', si=vali)
+        call utmess('F', 'SUPERVIS_60', si=vali)
     endif
 !
 end subroutine

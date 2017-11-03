@@ -17,11 +17,13 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'LEMA_SEUIL',
-    doc            =   """Relation de comportement viscoplastique avec seuil sous irradiation pour les assemblages combustibles cf. [R5.03.08]"""      ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """Relation de comportement viscoplastique avec seuil sous irradiation pour les assemblages combustibles cf. [R5.03.08]"""            ,
     num_lc         = 28,
     nb_vari        = 2,
     nom_vari       = ('EPSPEQ','SEUIL',),
@@ -32,4 +34,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

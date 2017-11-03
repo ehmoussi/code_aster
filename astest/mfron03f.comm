@@ -32,10 +32,8 @@ from numpy.linalg import norm
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'),IGNORE_ALARM=('COMPOR4_62'))
 
-import os
 
-os.system("mfront --obuild PolyCrystalDDCFC.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so PolyCrystalDDCFC.so")
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=41)
 
 MU       = 80000. ;
 NU       = 0.3    ;
@@ -257,7 +255,7 @@ lvari=list(avari)
 SOLMF=SIMU_POINT_MAT(INFO=1,
                      COMPORTEMENT=_F(RELATION='MFRONT',
                                      NOM_ROUTINE='asterpolycrystalddcfc',
-                                     LIBRAIRIE='PolyCrystalDDCFC.so',
+                                     UNITE_LIBRAIRIE=41,
                                      RESI_INTE_MAXI=1e-9,
                                             ),
                    NEWTON=_F(

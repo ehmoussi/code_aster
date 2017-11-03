@@ -72,4 +72,9 @@ implicit none
     
     endif
     
+    if ( coef_bussetta .gt. 1.d16*dist_max ) then 
+        coef_bussetta = 1.d16*dist_max
+    endif
+    
+    
 end subroutine

@@ -15,17 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine permvc(vg, s, krl, dklds, krg,&
-                      dkgds)
-        real(kind=8) :: vg(5)
-        real(kind=8) :: s
-        real(kind=8) :: krl
-        real(kind=8) :: dklds
-        real(kind=8) :: krg
-        real(kind=8) :: dkgds
+    subroutine permvc(satur,&
+                      krl  , dkrl_dsatur, krg, dkrg_dsatur)
+        real(kind=8), intent(in) :: satur
+        real(kind=8), intent(out) :: krl, dkrl_dsatur
+        real(kind=8), intent(out) :: krg, dkrg_dsatur
     end subroutine permvc
 end interface

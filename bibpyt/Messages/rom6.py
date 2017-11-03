@@ -41,10 +41,26 @@ cata_msg = {
 
    11 : _(u"""Le résultat sur le modèle réduit contient %(i1)d numéros d'ordre."""), 
 
+   12 : _(u"""La base empirique est construite sur le maillage %(k1)s alors que le modèle repose sur le maillage %(k2)s. Ce n'est pas possible."""), 
+
+   13 : _(u"""Les deux modèles sont identiques, on ne peut rien tronquer !"""), 
+
+   14 : _(u"""On évalue le champ dual."""),
+
+   15 : _(u"""Correction par le calcul éléments finis."""),
+
    20 : _(u"""Reconstruction des champs sur tout le domaine."""),
  
    21 : _(u"""Reconstruction du champ primal."""),
 
    22 : _(u"""Reconstruction du champ dual."""),
+
+   30 : _(u"""Construction de la matrice des modes. Dimensions: [%(i1)d,%(i2)d]."""),
+
+   31 : _(u"""Calcul des coordonnées réduites."""),
+
+   32 : _(u"""Échec lors du calcul des coordonnées réduites."""),
+
+   33 : _(u"""Le mode empirique de numéro d'ordre %(i1)d dans la base %(k1)s est mis à zéro."""),
 
 }

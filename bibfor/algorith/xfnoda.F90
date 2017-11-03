@@ -15,13 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: daniele.colombo at ifpen.fr
+!
 subroutine xfnoda(imate, mecani, press1, enrmec, dimenr,&
                   dimcon, ndim, dt, fnoevo, congem,&
                   r, enrhyd, nfh)
-! person_in_charge: daniele.colombo at ifpen.fr
-! ======================================================================
-    implicit none
+!
+use THM_type
+use THM_module
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "asterfort/rcvalb.h"
     aster_logical :: fnoevo
@@ -30,7 +34,7 @@ subroutine xfnoda(imate, mecani, press1, enrmec, dimenr,&
     integer :: enrhyd(3), yaenrh, adenhy, nfh
     real(kind=8) :: dt, congem(dimcon), r(dimenr)
 ! ======================================================================
-    integer :: nhom, yamec, yap1, addeme, adcome
+    integer :: nhom, addeme, adcome
     integer :: addep1, adcp11, i, ifh
     parameter    (nhom=3)
     real(kind=8) :: hom(nhom), pesa(3), rac2
@@ -50,9 +54,7 @@ subroutine xfnoda(imate, mecani, press1, enrmec, dimenr,&
 ! ======================================================================
 ! --- DETERMINATION DES VARIABLES CARACTERISANT LE MILIEU --------------
 ! ======================================================================
-    yamec = mecani(1)
     addeme = mecani(2)
-    yap1 = press1(1)
     addep1 = press1(3)
     adcp11 = press1(4)
     adcome = mecani(3)
@@ -65,41 +67,40 @@ subroutine xfnoda(imate, mecani, press1, enrmec, dimenr,&
 ! --- COMME PAR LA SUITE ON TRAVAILLE AVEC SQRT(2)*SXY -----------------
 ! --- ON COMMENCE PAR MODIFIER LES CONGEM EN CONSEQUENCE ---------------
 ! ======================================================================
-    if (yamec .eq. 1) then
-        do 100 i = 4, 6
+    if (ds_thm%ds_elem%l_dof_meca) then
+        do i = 4, 6
             congem(adcome+6+i-1) = congem(adcome+6+i-1)*rac2
             congem(adcome+i-1) = congem(adcome+i-1)*rac2
-100     continue
+        end do
     endif
 ! ======================================================================
 ! --- CALCUL DU RESIDU R (TERMES CLASSIQUES ) --------------------------
 ! ======================================================================
-    if (yamec .eq. 1) then
-        do 6 i = 1, 6
+    if (ds_thm%ds_elem%l_dof_meca) then
+        do i = 1, 6
             r(addeme+ndim+i-1)= r(addeme+ndim+i-1)+congem(adcome-1+i)
-  6     continue
-        do 7 i = 1, 6
+        end do
+        do i = 1, 6
             r(addeme+ndim-1+i)=r(addeme+ndim-1+i)+congem(adcome+6+i-1)
-  7     continue
-!
-        if (yap1 .eq. 1) then
-            do 8 i = 1, ndim
+        end do
+        if (ds_thm%ds_elem%l_dof_pre1) then
+            do i = 1, ndim
                 r(addeme+i-1)=r(addeme+i-1) - pesa(i)*congem(adcp11)
-  8         continue
+            end do
         endif
     endif
 ! ======================================================================
 ! --- CALCUL DU RESIDU R (TERMES HEAVISIDE ) ---------------------------
 ! ======================================================================
     if (yaenrm .eq. 1) then
-        if (yamec .eq. 1) then
-            if (yap1 .eq. 1) then
-              do ifh = 1, nfh
-                do 11 i = 1, ndim
-                    r(adenme+i-1+(ifh-1)*(ndim+1))=r(adenme+i-1+(ifh-1)*&
-                                          (ndim+1))-pesa(i)*congem(adcp11)
- 11             continue
-              end do
+        if (ds_thm%ds_elem%l_dof_meca) then
+            if (ds_thm%ds_elem%l_dof_pre1) then
+                do ifh = 1, nfh
+                    do i = 1, ndim
+                        r(adenme+i-1+(ifh-1)*(ndim+1))=&
+                            r(adenme+i-1+(ifh-1)*(ndim+1))-pesa(i)*congem(adcp11)
+                    end do
+                end do
             endif
         endif
     endif
@@ -108,11 +109,11 @@ subroutine xfnoda(imate, mecani, press1, enrmec, dimenr,&
 ! ======================================================================
 ! --- TERMES DEPENDANT DE DT DANS FORC_NODA POUR STAT_NON_LINE ---------
 ! ======================================================================
-        if (yap1 .eq. 1) then
-            do 112 i = 1, ndim
+        if (ds_thm%ds_elem%l_dof_pre1) then
+            do i = 1, ndim
                 r(addep1+i)=r(addep1+i)+dt*congem(adcp11+i)
-112         continue
+            end do
         endif
     endif
-! ======================================================================
+!
 end subroutine

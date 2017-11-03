@@ -15,16 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
 interface 
     subroutine xcabhm(nddls, nddlm, nnop, nnops, nnopm,&
                       dimuel, ndim, kpi, ff, ff2,&
-                      dfdi, dfdi2, b, nmec, yamec,&
-                      addeme, yap1, addep1, np1, axi,&
+                      dfdi, dfdi2, b, nmec,&
+                      addeme, addep1, np1, axi,&
                       ivf, ipoids, idfde, poids, coorse,&
                       nno, geom, yaenrm, adenme, dimenr,&
                       he, heavn, yaenrh, adenhy, nfiss, nfh)
@@ -43,9 +42,7 @@ interface
         real(kind=8) :: dfdi2(nnops, ndim)
         real(kind=8) :: b(dimenr, dimuel)
         integer :: nmec
-        integer :: yamec
         integer :: addeme
-        integer :: yap1
         integer :: addep1
         integer :: np1
         aster_logical :: axi

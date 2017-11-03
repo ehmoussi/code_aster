@@ -28,6 +28,7 @@ implicit none
 #include "asterfort/lcgdpm.h"
 #include "asterfort/nzgdzi.h"
 #include "asterfort/postsm.h"
+#include "asterfort/Behaviour_type.h"
 
 ! aslint: disable=W1504,W0104
 !
@@ -62,12 +63,12 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (compor(8) .eq. 'ACIER') then
+    if (compor(META_NAME) .eq. 'ACIER') then
         call lcgdpm(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, sigp,&
                     vip, dsidep, codret)
-    else if (compor(8).eq.'ZIRC') then
+    else if (compor(META_NAME) .eq. 'ZIRC') then
         call nzgdzi(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, sigp,&

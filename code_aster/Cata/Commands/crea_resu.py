@@ -42,6 +42,7 @@ CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,reentrant='f',
                fr=tr("Creer ou enrichir une structure de donnees resultat a partir de champs aux noeuds"),
 
          reuse=SIMP(statut='c', typ=CO),
+         
          OPERATION =SIMP(statut='o',typ='TXM',into=("AFFE","ASSE","ECLA_PG","PERM_CHAM","PROL_RTZ","PREP_VRC1","PREP_VRC2",),
                          fr=tr("choix de la fonction a activer"),),
 
@@ -69,7 +70,7 @@ CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,reentrant='f',
                            ),
 
          b_affe_mult_elas = BLOC(condition = """equal_to("OPERATION", 'AFFE') and equal_to("TYPE_RESU", 'MULT_ELAS')""",
-
+           RESULTAT=SIMP(statut='f',typ=mult_elas),
            AFFE         =FACT(statut='o',max='**',
              CHAM_GD       =SIMP(statut='o',typ=(cham_gd_sdaster)),
              MODELE        =SIMP(statut='f',typ=modele_sdaster),
@@ -81,7 +82,7 @@ CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,reentrant='f',
          ), # fin bloc b_affe_mult_elas
          
          b_affe_evol_dyn= BLOC(condition = """equal_to("OPERATION", 'AFFE') and is_in('TYPE_RESU', ('EVOL_ELAS', 'EVOL_NOLI', 'EVOL_THER', 'EVOL_VARC', 'EVOL_CHAR', 'DYNA_TRANS'))""",
-
+           RESULTAT=SIMP(statut='f',typ=(evol_elas, evol_noli, evol_ther, evol_varc, evol_char, dyna_trans)),
            AFFE         =FACT(statut='o',max='**',
              CHAM_GD       =SIMP(statut='o',typ=(cham_gd_sdaster)),
              MODELE        =SIMP(statut='f',typ=modele_sdaster),
@@ -98,7 +99,7 @@ CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,reentrant='f',
          ), # fin bloc b_affe_evol_dyn
 
          b_affe_fourier_elas= BLOC(condition = """equal_to("OPERATION", 'AFFE') and equal_to("TYPE_RESU", 'FOURIER_ELAS')""",
-
+           RESULTAT=SIMP(statut='f',typ=fourier_elas),
            AFFE         =FACT(statut='o',max='**',
              CHAM_GD       =SIMP(statut='o',typ=(cham_gd_sdaster)),
              MODELE        =SIMP(statut='f',typ=modele_sdaster),
@@ -111,7 +112,7 @@ CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,reentrant='f',
          ), # fin bloc b_affe_fourier_elas
 
          b_affe_fourier_ther= BLOC(condition = """equal_to("OPERATION", 'AFFE') and equal_to("TYPE_RESU", 'FOURIER_THER')""",
-
+           RESULTAT=SIMP(statut='f',typ=fourier_ther),
            AFFE         =FACT(statut='o',max='**',
              CHAM_GD       =SIMP(statut='o',typ=(cham_gd_sdaster)),
              MODELE        =SIMP(statut='f',typ=modele_sdaster),
@@ -126,7 +127,8 @@ CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,reentrant='f',
          #-------------------------------------
          b_evol_char =BLOC(condition = """equal_to("OPERATION", 'AFFE') and equal_to("TYPE_RESU", 'EVOL_CHAR')""",
              NOM_CHAM     =SIMP(statut='o',typ='TXM',validators=NoRepeat(),into=("PRES","FORC_NODA",
-                                    "FSUR_2D","FSUR_3D","FVOL_2D","FVOL_3D","VITE_VENT","T_EXT","COEF_H")),
+                                    "FSUR_2D","FSUR_3D","FVOL_2D","FVOL_3D","VITE_VENT","T_EXT","COEF_H",
+                                    "FLUN")),
              COMPORTEMENT     =C_COMPORTEMENT(),
          ), # fin bloc b_evol_char
          
@@ -169,7 +171,7 @@ CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,reentrant='f',
          ), # fin bloc b_evol_noli
    
          b_affe_mode_meca= BLOC(condition = """equal_to("OPERATION", 'AFFE') and equal_to("TYPE_RESU", 'MODE_MECA')""",
-
+           RESULTAT=SIMP(statut='f',typ=mode_meca),
            AFFE         =FACT(statut='o',max='**',
              CHAM_GD       =SIMP(statut='o',typ=(cham_gd_sdaster)),
              MODELE        =SIMP(statut='f',typ=modele_sdaster),
@@ -182,7 +184,7 @@ CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,reentrant='f',
          ), # fin bloc b_affe_mode_meca
            
          b_affe_mode_meca_c= BLOC(condition = """equal_to("OPERATION", 'AFFE') and equal_to("TYPE_RESU", 'MODE_MECA_C')""",
-
+           RESULTAT=SIMP(statut='f',typ=mode_meca_c),
            AFFE         =FACT(statut='o',max='**',
              CHAM_GD       =SIMP(statut='o',typ=(cham_gd_sdaster)),
              MODELE        =SIMP(statut='f',typ=modele_sdaster),
@@ -196,7 +198,7 @@ CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,reentrant='f',
          ), # fin bloc b_affe_mode_meca_c
            
          b_affe_dyna_harmo= BLOC(condition = """equal_to("OPERATION", 'AFFE') and equal_to("TYPE_RESU", 'DYNA_HARMO')""",
-
+           RESULTAT=SIMP(statut='f',typ=dyna_harmo),
            AFFE         =FACT(statut='o',max='**',
              CHAM_GD       =SIMP(statut='o',typ=(cham_gd_sdaster)),
              MODELE        =SIMP(statut='f',typ=modele_sdaster),

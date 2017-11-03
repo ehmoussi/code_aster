@@ -23,10 +23,10 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
-#include "asterc/gcucon.h"
 #include "asterc/getfac.h"
 #include "asterc/getexm.h"
 #include "asterfort/assert.h"
+#include "asterfort/gcucon.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvis.h"
 #include "asterfort/getvr8.h"
@@ -103,7 +103,7 @@ implicit none
         ds_inout%stin_evol   = stin_evol
         ds_inout%l_stin_evol = .true.
     endif
-    
+
     if ( ds_inout%l_reuse .and. (.not.ds_inout%l_state_init) ) then
         call utmess ('F', 'MECANONLINE_4')
     endif

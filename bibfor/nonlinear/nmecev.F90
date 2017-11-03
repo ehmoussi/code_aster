@@ -15,20 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmecev(sderro, acces, nomevd, action)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit     none
-#include "jeveux.h"
+subroutine nmecev(sderro, acces, event_type, action_type)
+!
+implicit none
+!
 #include "asterfort/assert.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
-    character(len=24) :: sderro
-    character(len=1) :: acces
-    character(len=16) :: action, nomevd
+!
+character(len=24) :: sderro
+character(len=1) :: acces
+integer, intent(inout) :: event_type
+integer, intent(inout) :: action_type
 !
 ! ----------------------------------------------------------------------
 !
@@ -47,27 +46,21 @@ subroutine nmecev(sderro, acces, nomevd, action)
 !
 !
 !
-    character(len=24) :: errevt
-    integer :: jeeevt
+    character(len=24) :: sderro_eevt
+    integer, pointer :: v_sderro_eevt(:) => null()
 !
 ! ----------------------------------------------------------------------
 !
-    call jemarq()
-!
-! --- ACCES SD
-!
-    errevt = sderro(1:19)//'.EEVT'
-    call jeveuo(errevt, 'E', jeeevt)
+    sderro_eevt = sderro(1:19)//'.EEVT'
+    call jeveuo(sderro_eevt, 'E', vi = v_sderro_eevt)
 !
     if (acces .eq. 'E') then
-        zk16(jeeevt-1+1) = nomevd
-        zk16(jeeevt-1+2) = action
+        v_sderro_eevt(1) = event_type
+        v_sderro_eevt(2) = action_type
     else if (acces.eq.'L') then
-        nomevd = zk16(jeeevt-1+1)
-        action = zk16(jeeevt-1+2)
+        event_type  = v_sderro_eevt(1)
+        action_type = v_sderro_eevt(2)
     else
         ASSERT(.false.)
     endif
-!
-    call jedema()
 end subroutine

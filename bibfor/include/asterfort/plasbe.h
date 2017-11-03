@@ -15,13 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine plasbe(fami, kpg, ksp, typmod, imat,&
                       crit, epsdt, depst, sigd, vind,&
-                      opt, elgeom, sigf, vinf, dsde,&
+                      opt, sigf, vinf, dsde,&
                       icomp, nvi, irteti)
         character(len=*) :: fami
         integer :: kpg
@@ -34,7 +32,6 @@ interface
         real(kind=8) :: sigd(6)
         real(kind=8) :: vind(*)
         character(len=16) :: opt
-        real(kind=8) :: elgeom(*)
         real(kind=8) :: sigf(6)
         real(kind=8) :: vinf(*)
         real(kind=8) :: dsde(6, 6)

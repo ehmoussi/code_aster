@@ -26,10 +26,10 @@
 #include "astercxx.h"
 
 #include "Loads/ThermalLoad.h"
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/ResultNaming.h"
 
 ThermalLoadInstance::ThermalLoadInstance():
-                    DataStructure( getNewResultObjectName(), "CHAR_THER" ),
+                    DataStructure( ResultNaming::getNewResultName(), "CHAR_THER" ),
                     _supportModel( ModelPtr() ),
                     _isEmpty( true )
 {};
@@ -49,10 +49,10 @@ bool ThermalLoadInstance::build() throw ( std::runtime_error )
 
     SyntaxMapContainer test = syntax.toSyntaxMapContainer();
 //    cmdSt.define( test );
-    		
-//    
+
+//
 // Maintenant que le fichier de commande est pret, on appelle OP0034
-// 
+//
 
     try
     {
@@ -62,11 +62,8 @@ bool ThermalLoadInstance::build() throw ( std::runtime_error )
     catch( ... )
     {
         throw;
-    } 
-    _isEmpty = false; 
+    }
+    _isEmpty = false;
     return true;
 
 };
-
-
-

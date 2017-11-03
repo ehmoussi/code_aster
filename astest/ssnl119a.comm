@@ -184,7 +184,7 @@ Betoc = [ -4.47657E+06 ,  -3.53105E+07 ,  -3.06413E+07 ]
 # contraintes beton tendu
 Betot = [  2.92412E+06 ,   8.52817E+02 ,   5.02952E+03 ]
 
-U1MAZAR=CALC_CHAMP(reuse=U1MAZAR, RESULTAT=U1MAZAR, DEFORMATION=('EPSI_ELGA'), )
+U1MAZAR=CALC_CHAMP(reuse=U1MAZAR, RESULTAT=U1MAZAR, DEFORMATION=('EPSI_ELGA','EPSP_ELGA'), )
 
 
 TEST_RESU(RESU=(_F(NOM_CMP='DY',
@@ -331,6 +331,28 @@ TEST_RESU(RESU=(_F(NOM_CMP='DY',
                    CRITERE=('RELATIF', 'ABSOLU'),
                    VALE_CALC=-401891203.13,
                    VALE_ABS='NON',),
+                # validation de EPSP_ELGA
+                _F(POINT=2,
+                   NOM_CMP='V1',
+                   SOUS_POINT=44,
+                   MAILLE=('M9', ),
+                   INST=2.68,
+                   NOM_CHAM='VARI_ELGA',
+                   RESULTAT=U1MAZAR,
+                   CRITERE=('RELATIF', 'ABSOLU'),
+                   VALE_CALC=0.000567130306951,
+                   VALE_ABS='NON',),
+                _F(POINT=2,
+                   NOM_CMP='EPXX',
+                   SOUS_POINT=44,
+                   MAILLE=('M9', ),
+                   INST=2.68,
+                   NOM_CHAM='EPSP_ELGA',
+                   RESULTAT=U1MAZAR,
+                   CRITERE=('RELATIF', 'ABSOLU'),
+                   VALE_CALC=-0.000567130334883,
+                   VALE_ABS='NON',),
+                #
                 _F(POINT=2,
                    NOM_CMP='EPXX',
                    SOUS_POINT=41,

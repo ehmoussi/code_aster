@@ -26,10 +26,11 @@
 #include "astercxx.h"
 
 #include "Loads/KinematicsLoad.h"
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
+#include "Supervis/ResultNaming.h"
 
 KinematicsLoadInstance::KinematicsLoadInstance():
-                    DataStructure( getNewResultObjectName(), "CHAR_CINE" ),
+                    DataStructure( ResultNaming::getNewResultName(), "CHAR_CINE" ),
                     _supportModel( ModelPtr() ),
                     _isEmpty( true )
 {};
@@ -44,8 +45,8 @@ bool KinematicsLoadInstance::build() throw ( std::runtime_error )
     else
         throw std::runtime_error( "KinematicsLoad empty" );
     setType( typSd );
-    CommandSyntaxCython cmdSt( "AFFE_CHAR_CINE" );
-    cmdSt.setResult( getResultObjectName(), typSd );
+    CommandSyntax cmdSt( "AFFE_CHAR_CINE" );
+    cmdSt.setResult( ResultNaming::getCurrentName(), typSd );
 
     SyntaxMapContainer dict;
     if ( ! _supportModel )

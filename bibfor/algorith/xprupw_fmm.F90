@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine xprupw_fmm(cmnd, noma, fispre, vcn, grlr,&
+subroutine xprupw_fmm(cmnd, noma, vcn, grlr,&
                   noesom, lcmin, cnsln, grln, cnslt,&
                   grlt, isozro, nodtor,eletor, liggrd,&
                   vpoint , cnsbl ,deltat ,cnsbet ,listp, nbrinit)
@@ -47,7 +47,7 @@ subroutine xprupw_fmm(cmnd, noma, fispre, vcn, grlr,&
 #include "asterfort/xcalculfmm.h"
 #include "asterfort/xcalculgeo.h"
 
-    character(len=8)  :: cmnd, noma, fispre
+    character(len=8)  :: cmnd, noma
     character(len=19) :: cnsln, grln, cnslt, grlt, noesom, isozro
     character(len=19) :: nodtor, eletor, liggrd
     character(len=19) :: cnsbl ,cnsbet ,listp , vpoint
@@ -195,7 +195,7 @@ subroutine xprupw_fmm(cmnd, noma, fispre, vcn, grlr,&
 
     call wkvect(isozro, 'V V L', nbnoma, jzero)
 
-    call xprls0(fispre, noma, noesom, lcmin, cnsln,&
+    call xprls0(noma, noesom, lcmin, cnsln,&
                 cnslt, isozro, levset, nodtor, eletor)
 
 !----------------------------------------------------------------------

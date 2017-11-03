@@ -146,13 +146,27 @@ def calc_modes_amelioration(self, modes, TYPE_RESU,
         solveur.pop('OPTION')
     if solveur.has_key('FREQ'):      # because FREQ can be a keyword with a 'global' position
         solveur.pop('FREQ')
-    #motcles['SOLVEUR']=_F(**solveur) # if this line is commented,
+    motcles['SOLVEUR']=_F(**solveur) # if this line is commented,
                                       # one will use the default keywords for SOLVEUR
     
     
     #################################################################
     # read the keyword VERI_MODE
-    motcles['VERI_MODE'] = _F(STOP_ERREUR = VERI_MODE['STOP_ERREUR'],
+#
+    sturm=VERI_MODE['STURM']
+    if sturm in ('GLOBAL', 'LOCAL','OUI'):
+        # for MODE_ITER_INV, value for STURM can be only OUI or NON. Other
+        # values are equivalent to OUI
+        motveri = 'OUI'
+    elif sturm in ('NON'):
+        # for keyword AMELIORATION
+        motveri = 'NON'
+    else:
+        assert(False)  # Pb parametrage STURM                              )
+    motcles['VERI_MODE'] = _F(STOP_ERREUR=VERI_MODE['STOP_ERREUR'],
+                              SEUIL=VERI_MODE['SEUIL'],
+                              STURM=motveri,
+                              PREC_SHIFT=VERI_MODE['PREC_SHIFT']
                               )
     #################################################################
     if TITRE != None:

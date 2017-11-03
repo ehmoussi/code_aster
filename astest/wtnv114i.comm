@@ -153,14 +153,15 @@ CHARHO=AFFE_CHAR_MECA(   MODELE=MODELEK,
 
 
 RESU0=STAT_NON_LINE(
-                MODELE=MODELEK,
+                MODELE=MODELEK,SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                 CHAM_MATER=CHMAT0,
                 EXCIT=(
                              _F(
                 CHARGE = CHARHO),
                              _F(
                 CHARGE = CH_FLU1)),
-                         COMPORTEMENT=_F( PARM_THETA=1.,
+                SCHEMA_THM=_F(PARM_THETA=1.,),
+                         COMPORTEMENT=_F( 
                 RELATION = 'KIT_HM',
                 RELATION_KIT = ('ELAS','LIQU_SATU','HYDR_UTIL',),
                 ITER_INTE_MAXI = 5),

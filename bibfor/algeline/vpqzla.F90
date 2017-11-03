@@ -1064,7 +1064,7 @@ subroutine vpqzla(typeqz, qrn, iqrn, lqrn, qrar,&
                 call utmess(kmsg, 'ALGELINE5_66', ni=2, vali=vali)
             endif
         endif
-        call vpgsmm(qrn, nconv, zr(lvec), alpha, lmasse,&
+        call vpgsmm(qrn, nfreq, nconv, zr(lvec), alpha, lmasse,&
                     2, zr(ivp1), ddlexc, zr(ivp2), zr(lvalpr),&
                     omecor)
 !

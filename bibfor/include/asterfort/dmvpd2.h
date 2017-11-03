@@ -15,20 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface 
-    function dmvpd2(rho12, alp12, dpvpt, phi, ums,&
-                    pvp, phids, cs)
-        real(kind=8) :: rho12
-        real(kind=8) :: alp12
-        real(kind=8) :: dpvpt
-        real(kind=8) :: phi
-        real(kind=8) :: ums
-        real(kind=8) :: pvp
-        real(kind=8) :: phids
-        real(kind=8) :: cs
-        real(kind=8) :: dmvpd2_0
+    function dmvpd2(rho12, alp12, dpvpt, phi, satur,&
+                    pvp  , phids, cs)
+        real(kind=8), intent(in) :: rho12, alp12, dpvpt, phi, satur, pvp, phids, cs
+        real(kind=8) :: dmvpd2
     end function dmvpd2
 end interface 

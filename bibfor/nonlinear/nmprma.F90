@@ -18,12 +18,13 @@
 
 subroutine nmprma(modelz     , mate    , carele, ds_constitutive,&
                   ds_algopara, lischa  , numedd, numfix, solveu,&
-                  comref     , ds_print, ds_measure, sddisc,&
+                  comref     , ds_print, ds_measure, ds_algorom, sddisc,&
                   sddyna     , numins  , fonact, ds_contact,&
                   valinc     , solalg  , veelem, meelem, measse,&
                   maprec     , matass  , faccvg, ldccvg)
 !
 use NonLin_Datastructure_type
+use Rom_Datastructure_type
 !
 implicit none
 !
@@ -39,12 +40,17 @@ implicit none
 #include "asterfort/nmcmat.h"
 #include "asterfort/nmimck.h"
 #include "asterfort/nmmatr.h"
+#include "asterfort/echmat.h"
 #include "asterfort/nmrenu.h"
 #include "asterfort/nmrinc.h"
 #include "asterfort/nmtime.h"
 #include "asterfort/nmxmat.h"
 #include "asterfort/preres.h"
 #include "asterfort/mtdscr.h"
+#include "asterfort/cfdisl.h"
+#include "asterfort/sdmpic.h"
+#include "asterfort/dismoi.h"
+#include "asterfort/romAlgoNLCorrEFMatrixModify.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
@@ -56,6 +62,7 @@ implicit none
     type(NL_DS_Constitutive), intent(in) :: ds_constitutive
     type(NL_DS_Measure), intent(inout) :: ds_measure
     type(NL_DS_Print), intent(inout) :: ds_print
+    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     character(len=24) :: numedd, numfix
     character(len=19) :: sddisc, sddyna, lischa, solveu
     character(len=24) :: comref
@@ -65,6 +72,7 @@ implicit none
     type(NL_DS_Contact), intent(inout) :: ds_contact
     character(len=19) :: maprec, matass
     integer :: faccvg, ldccvg
+    real(kind=8) ::  minmat, maxmat,exponent_val
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -87,6 +95,7 @@ implicit none
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  ds_algopara      : datastructure for algorithm parameters
+! In  ds_algorom       : datastructure for ROM parameters
 ! IN  SOLVEU : SOLVEUR
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IN  NUMINS : NUMERO D'INSTANT
@@ -125,6 +134,8 @@ implicit none
     character(len=6) :: list_matr_type(20)
     character(len=16) :: list_calc_opti(20), list_asse_opti(20)
     aster_logical :: list_l_asse(20), list_l_calc(20)
+    aster_logical :: l_contact_adapt,l_cont_cont
+    character(len=8) ::  kmpic1
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -250,15 +261,59 @@ implicit none
         call nmimck(ds_print, 'MATR_ASSE', metpre, .true._1)
     else
         call nmimck(ds_print, 'MATR_ASSE', ' '   , .false._1)
+    endif 
+    l_cont_cont         = isfonc(fonact,'CONT_CONTINU')
+    if (l_cont_cont) then
+    !   -- Avant la factorisation et pour le cas ou il y a du contact continu avec adaptation de
+    !      coefficient
+    !   -- On cherche le coefficient optimal pour eviter une possible singularite de matrice
+    !   -- La valeur est estimee une seule fois a la premiere prediction du premier pas de 
+    !      temps pour l'etape de calcul
+    !   -- Cette valeur estimee est passee directement a mmchml_c sans passer par mmalgo car 
+    !   -- a la premiere iteration on ne passe pas par mmalgo
+        l_contact_adapt = cfdisl(ds_contact%sdcont_defi,'EXIS_ADAP')
+!            write (6,*) "l_contact_adapt", &
+!                l_contact_adapt,ds_contact%update_init_coefficient
+        if ((nint(ds_contact%update_init_coefficient) .eq. 0) .and. l_contact_adapt) then 
+            call dismoi('MPI_COMPLET', matass, 'MATR_ASSE', repk=kmpic1)
+            if (kmpic1 .eq. 'NON') then 
+                call sdmpic('MATR_ASSE', matass)
+            endif
+            call echmat(matass, .false._1, minmat, maxmat) 
+            ds_contact%max_coefficient = maxmat
+            if (abs(log(minmat)) .ne. 0.0) then 
+            
+                if (abs(log(maxmat))/abs(log(minmat)) .lt. 4.0) then 
+                        ds_contact%estimated_coefficient = 10**(abs(log(maxmat))/3.0)
+                    ds_contact%update_init_coefficient = 1.0
+                else
+                    exponent_val = min(abs(log(minmat)),abs(log(maxmat)))/10
+                    ds_contact%estimated_coefficient = 10**(exponent_val)
+                    ds_contact%update_init_coefficient = 1.0
+                endif
+            else 
+               ds_contact%estimated_coefficient = 1.d16*ds_contact%arete_min
+                    ds_contact%update_init_coefficient = 1.0
+            endif
+            write (6,*) "min,max,coef estime,abs(log(maxmat))/abs(log(minmat))", &
+                minmat,maxmat,ds_contact%estimated_coefficient,abs(log(maxmat))/abs(log(minmat))
+        endif
     endif
+!
+
 !
 ! --- FACTORISATION DE LA MATRICE ASSEMBLEE GLOBALE
 !
     if (reasma) then
         call nmtime(ds_measure, 'Init', 'Factor')
         call nmtime(ds_measure, 'Launch', 'Factor')
-        if (l_rom) then
+        if (l_rom .and. ds_algorom%phase .eq. 'HROM') then
             call mtdscr(matass)
+        elseif (l_rom .and. ds_algorom%phase .eq. 'CORR_EF') then
+            call mtdscr(matass)
+            call romAlgoNLCorrEFMatrixModify(numedd, matass, ds_algorom)
+            call preres(solveu, 'V', faccvg, maprec, matass,&
+                        ibid, -9999)
         else
             call preres(solveu, 'V', faccvg, maprec, matass,&
                         ibid, -9999)

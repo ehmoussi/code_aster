@@ -371,9 +371,9 @@ subroutine callis(nomres)
             if ((irep21.ne.0) .or. (irep22.ne.0)) then
                 imast=2
                 if (iret .eq. 0) then
-                    call lipsrb(nomres, matprj, sst1, sst2, intf1,&
+                    call lipsrb(nomres, sst1, sst2, intf1,&
                                 intf2, lino1, lino2, indin1, indin2,&
-                                ddla2, ddla1, nbeq2, nbeq1, imast,&
+                                ddla2, ddla1, nbeq2, imast,&
                                 tramo2)
                 endif
 !-- ET ON PROJETTE L'EQUATION DE LIAISON SUR PHI1
@@ -382,9 +382,9 @@ subroutine callis(nomres)
 !-- SI ON NE PRECISE RIEN, C'EST LA SOUS STRUCTURE 1 QUI EST MAITRE
                 imast=1
                 if (iret .eq. 0) then
-                    call lipsrb(nomres, matprj, sst1, sst2, intf1,&
+                    call lipsrb(nomres, sst1, sst2, intf1,&
                                 intf2, lino1, lino2, indin1, indin2,&
-                                ddla1, ddla2, nbeq1, nbeq2, imast,&
+                                ddla1, ddla2, nbeq1, imast,&
                                 tramo1)
 !-- ET ON PROJETTE L'EQUATION DE LIAISON SUR PHI2
                 endif

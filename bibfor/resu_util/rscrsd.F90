@@ -59,7 +59,7 @@ subroutine rscrsd(base, nomsd, typesd, nbordr)
 !                      C H A M P _ M E C A N I Q U E
 !     ------------------------------------------------------------------
     parameter (ncmec1=38)
-    parameter (ncmec2=50)
+    parameter (ncmec2=53)
     parameter (ncmec3=37)
     parameter (ncmuti=40)
     parameter (ncmeca=ncmec1+ncmec2+ncmec3+ncmuti)
@@ -143,7 +143,8 @@ subroutine rscrsd(base, nomsd, typesd, nbordr)
      & 'ENEL_NOEU',       'ENEL_ELEM',       'ENTR_ELEM',&
      & 'EPMG_NOEU',       'SING_ELEM',       'SING_ELNO',&
      & 'DISS_ELGA',       'DISS_ELNO',       'DISS_NOEU',&
-     & 'DISS_ELEM'/
+     & 'DISS_ELEM',       'EPSL_ELGA',       'EPSL_ELNO',&
+     & 'EPSL_NOEU'/
 !
 !      '1234567890123456','1234567890123456','1234567890123456',
     data chmec3/&
@@ -347,7 +348,7 @@ subroutine rscrsd(base, nomsd, typesd, nbordr)
 !     ------------------------------------------------------------------
     else if (types2.eq.'EVOL_CHAR') then
 !
-        nbcham=9
+        nbcham=10
         call jeecra(noms2//'.DESC', 'NOMMAX', nbcham)
         call jeecra(noms2//'.DESC', 'DOCU', cval='EVCH')
         call jecroc(jexnom(noms2//'.DESC', 'FORC_NODA'))
@@ -359,6 +360,7 @@ subroutine rscrsd(base, nomsd, typesd, nbordr)
         call jecroc(jexnom(noms2//'.DESC', 'VITE_VENT'))
         call jecroc(jexnom(noms2//'.DESC', 'T_EXT'))
         call jecroc(jexnom(noms2//'.DESC', 'COEF_H'))
+        call jecroc(jexnom(noms2//'.DESC', 'FLUN'))
 
         goto 99
 !

@@ -15,12 +15,24 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine lcplbe(toler, itmax, nmat, materf, nvi,&
-                  vind, sigf, vinf, elgeom, nseuil,&
-                  irteti)
 ! aslint: disable=W1501
-    implicit none
+!
+subroutine lcplbe(toler, itmax, nmat, materf, nvi,&
+                  vind, sigf, vinf, nseuil,&
+                  irteti)
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterc/r8prem.h"
+#include "asterfort/betfpp.h"
+#include "asterfort/betinc.h"
+#include "asterfort/betini.h"
+#include "asterfort/codent.h"
+#include "asterfort/codree.h"
+#include "asterfort/lceqvn.h"
+#include "asterfort/utmess.h"
+!
 !       INTEGRATION ELASTO-PLASTIQUE DE LOIS DE COMPORTEMENT BETON SUR
 !       DT  ( Y = ( DPC , DPT ))
 !       BETON_DOUBLE_DP: LOI ELASTO PLASTIQUE AVEC DOUBLE CRITERE DE
@@ -47,8 +59,6 @@ subroutine lcplbe(toler, itmax, nmat, materf, nvi,&
 !           EPSD   :  DEFORMATION A T
 !           VIND   :  VARIABLES INTERNES A T
 !           NVI    :  NB VARIABLES INTERNES
-!           ELGEOM :  TABLEAUX DES ELEMENTS GEOMETRIQUES SPECIFIQUES
-!                     AUX LOIS DE COMPORTEMENT
 !       VAR NSEUIL :  INDICE DE CRITERE ACTIVE
 !       VAR DEPS   :  INCREMENT DE DEFORMATION
 !       VAR SIGF   :  IN  : PREDICTION ELASTIQUE DE LA CONTRAINTE A T+DT
@@ -56,15 +66,7 @@ subroutine lcplbe(toler, itmax, nmat, materf, nvi,&
 !       OUT VINF   :  VARIABLES INTERNES A T+DT
 !           IRTETI = 1:  CONTROLE DU REDECOUPAGE DU PAS DE TEMPS
 !       ----------------------------------------------------------------
-#include "asterf_types.h"
-#include "asterc/r8prem.h"
-#include "asterfort/betfpp.h"
-#include "asterfort/betinc.h"
-#include "asterfort/betini.h"
-#include "asterfort/codent.h"
-#include "asterfort/codree.h"
-#include "asterfort/lceqvn.h"
-#include "asterfort/utmess.h"
+
     integer :: nmat, nseuil
 !
     integer :: itmax, nprojs, nessai, osci
@@ -74,7 +76,7 @@ subroutine lcplbe(toler, itmax, nmat, materf, nvi,&
     parameter       ( zero =  0.d0   )
     real(kind=8) :: sigf(6)
     real(kind=8) :: vind(*), vinf(*)
-    real(kind=8) :: materf(nmat, 2), elgeom(*)
+    real(kind=8) :: materf(nmat, 2)
 !
 !
     real(kind=8) :: fcomp, fcomp3, ftrac, ftrac3, sige(6)
@@ -122,7 +124,7 @@ subroutine lcplbe(toler, itmax, nmat, materf, nvi,&
 !
     pc = vind(1)
     pt = vind(2)
-    call betfpp(materf, nmat, elgeom, pc, pt,&
+    call betfpp(materf, nmat, pc, pt,&
                 3, fc0, ft0, dfcdlc, dftdlt,&
                 kuc, kut, ke)
 !
@@ -160,7 +162,7 @@ subroutine lcplbe(toler, itmax, nmat, materf, nvi,&
 !
             pc = vind(1)
             pt = vind(2)
-            call betfpp(materf, nmat, elgeom, pc, pt,&
+            call betfpp(materf, nmat, pc, pt,&
                         nessai, fc, ft, dfcdlc, dftdlt,&
                         kuc, kut, ke)
 !
@@ -221,7 +223,7 @@ subroutine lcplbe(toler, itmax, nmat, materf, nvi,&
 !
             pc = vind(1) + dpc
             pt = vind(2) + dpt
-            call betfpp(materf, nmat, elgeom, pc, pt,&
+            call betfpp(materf, nmat, pc, pt,&
                         nessai, fc, ft, dfcdlc, dftdlt,&
                         kuc, kut, ke)
 !
@@ -332,7 +334,7 @@ subroutine lcplbe(toler, itmax, nmat, materf, nvi,&
 !
             pc = vind(1)
             pt = vind(2)
-            call betfpp(materf, nmat, elgeom, pc, pt,&
+            call betfpp(materf, nmat, pc, pt,&
                         nessai, fc, ft, dfcdlc, dftdlt,&
                         kuc, kut, ke)
 !
@@ -387,7 +389,7 @@ subroutine lcplbe(toler, itmax, nmat, materf, nvi,&
 !
             pc = vind(1) + dpc
             pt = vind(2) + dpt
-            call betfpp(materf, nmat, elgeom, pc, pt,&
+            call betfpp(materf, nmat, pc, pt,&
                         nessai, fc, ft, dfcdlc, dftdlt,&
                         kuc, kut, ke)
 !
@@ -495,7 +497,7 @@ subroutine lcplbe(toler, itmax, nmat, materf, nvi,&
 !
             pc = vind(1)
             pt = vind(2)
-            call betfpp(materf, nmat, elgeom, pc, pt,&
+            call betfpp(materf, nmat, pc, pt,&
                         nessai, fc, ft, dfcdlc, dftdlt,&
                         kuc, kut, ke)
 !
@@ -557,7 +559,7 @@ subroutine lcplbe(toler, itmax, nmat, materf, nvi,&
 !
             pc = vind(1) + dpc
             pt = vind(2) + dpt
-            call betfpp(materf, nmat, elgeom, pc, pt,&
+            call betfpp(materf, nmat, pc, pt,&
                         nessai, fc, ft, dfcdlc, dftdlt,&
                         kuc, kut, ke)
 !
@@ -660,7 +662,7 @@ subroutine lcplbe(toler, itmax, nmat, materf, nvi,&
         ftrac1 = zero
         pc = vind(1)
         pt = vind(2)
-        call betfpp(materf, nmat, elgeom, pc, pt,&
+        call betfpp(materf, nmat, pc, pt,&
                     nseuil, fc, ft, dfcdlc, dftdlt,&
                     kuc, kut, ke)
 !
@@ -769,7 +771,7 @@ subroutine lcplbe(toler, itmax, nmat, materf, nvi,&
 !
         pc = vind(1) + dpc
         pt = vind(2) + dpt
-        call betfpp(materf, nmat, elgeom, pc, pt,&
+        call betfpp(materf, nmat, pc, pt,&
                     nseuil, fc, ft, dfcdlc, dftdlt,&
                     kuc, kut, ke)
 !
@@ -902,10 +904,9 @@ subroutine lcplbe(toler, itmax, nmat, materf, nvi,&
 !
 !
     irteti = 0
-    goto 9999
+    goto 999
   5 continue
     irteti = 1
-    goto 9999
 !
-9999 continue
+999 continue
 end subroutine

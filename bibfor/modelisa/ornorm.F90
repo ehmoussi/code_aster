@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine ornorm(noma, listma, nbmail, reorie, norien)
+subroutine ornorm(noma, listma, nbmail, reorie, norien, command)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -40,6 +40,7 @@ subroutine ornorm(noma, listma, nbmail, reorie, norien)
     integer :: listma(*), nbmail, norien
     aster_logical :: reorie
     character(len=8) :: noma
+    character(len=24), optional :: command
 !.======================================================================
 !
 !   ORNORM  --  LE BUT EST QUE TOUTES LES MAILLES DE LA LISTE SOIENT
@@ -63,7 +64,7 @@ subroutine ornorm(noma, listma, nbmail, reorie, norien)
     character(len=2) :: kdim
     character(len=8) :: typel, nomail
     character(len=24) :: mailma, nomavo
-    character(len=24) :: valk(2)
+    character(len=24) :: valk(2), cmd
     integer, pointer :: ori1(:) => null()
     integer, pointer :: ori2(:) => null()
     integer, pointer :: ori3(:) => null()
@@ -75,6 +76,9 @@ subroutine ornorm(noma, listma, nbmail, reorie, norien)
 !
 !.========================= DEBUT DU CODE EXECUTABLE ==================
 !
+    cmd = ' '
+    if (present(command)) cmd = command
+    
     call jemarq()
     if (nbmail .eq. 0) goto 9999
 !
@@ -136,6 +140,11 @@ subroutine ornorm(noma, listma, nbmail, reorie, norien)
             call utmess('F', 'MODELISA5_98')
         endif
  10 end do
+    
+    if (dime2 .and. cmd(1:10).eq.'ORIE_LIGNE')then
+        call utmess('F','MODELISA5_92')
+    endif
+    
 !
 ! --- RECUPERATION DES MAILLES VOISINES DU GROUP_MA :
 !     ---------------------------------------------
@@ -164,7 +173,11 @@ subroutine ornorm(noma, listma, nbmail, reorie, norien)
             endif
             nconex = nconex + 1
             if (nconex .gt. 1) then
-                call utmess('F', 'MODELISA5_99')
+                if (cmd .ne. ' ')then
+                    call utmess('F', 'MODELISA6_2')
+                else
+                    call utmess('F', 'MODELISA5_99')
+                endif
             endif
             ori1(ima) = 1
             lliste = 0

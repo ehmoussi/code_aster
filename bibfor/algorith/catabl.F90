@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine catabl(table_new, table_old  , time, nume_store, nb_obje,&
                   obje_name, obje_sdname)
 !
@@ -36,15 +37,13 @@ implicit none
 #include "asterfort/tbcrsd.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: table_new
-    character(len=8), intent(in) :: table_old
-    real(kind=8), intent(in) :: time
-    integer, intent(in) :: nume_store
-    integer, intent(in) :: nb_obje
-    character(len=16), intent(in) :: obje_name(nb_obje)
-    character(len=24), intent(in) :: obje_sdname(nb_obje)
+character(len=8), intent(in) :: table_new
+character(len=8), intent(in) :: table_old
+real(kind=8), intent(in) :: time
+integer, intent(in) :: nume_store
+integer, intent(in) :: nb_obje
+character(len=16), intent(in) :: obje_name(nb_obje)
+character(len=24), intent(in) :: obje_sdname(nb_obje)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -78,7 +77,7 @@ implicit none
         'MATR_TANG_ELEM  ', 'SIEF_ELGA       ', 'VARI_ELGA       ',&
         'FORC_INTE_ELEM  ', 'FORC_DIRI_ELEM  ', 'FORC_NODA_ELEM  ',&
         'CODE_RETOUR_INTE', 'FORC_VARC_ELEM_M', 'FORC_VARC_ELEM_P'/)
-    character(len=16), parameter :: l_obj_type(l_nb_obje) = (/&
+    character(len=16), parameter :: l_obje_type(l_nb_obje) = (/&
         'MATR_ELEM_DEPL_R', 'CHAM_ELEM       ', 'CHAM_ELEM       ',&
         'VECT_ELEM_DEPL_R', 'VECT_ELEM_DEPL_R', 'VECT_ELEM_DEPL_R',&
         'CHAM_ELEM       ', 'VECT_ELEM_DEPL_R', 'VECT_ELEM_DEPL_R'/)
@@ -90,7 +89,7 @@ implicit none
     integer :: nboldp, nblign, t_nume_store
     integer :: ipara, ilign, i_l_obj, i_obj, ibid
     character(len=24) :: vk(3)
-    character(len=16) :: k16bid, t_obje_name, obj_type
+    character(len=16) :: k16bid, t_obje_name, obje_type
     real(kind=8) :: r8bid
     complex(kind=8) :: c16bid
     character(len=24), pointer :: tblp(:) => null()
@@ -163,13 +162,13 @@ implicit none
 !
 ! ----- Find the type of object
 !
-        obj_type = ' '
+        obje_type = ' '
         do i_l_obj = 1, l_nb_obje
             if (l_obje_name(i_l_obj) .eq. obje_name(i_obj)) then
-                obj_type = l_obj_type(i_l_obj)
+                obje_type = l_obje_type(i_l_obj)
             endif
         end do
-        ASSERT(obj_type .ne. ' ')
+        ASSERT(obje_type .ne. ' ')
 !
 ! ----- Find right line in table
 !
@@ -210,7 +209,7 @@ implicit none
         else
             ASSERT(i_repl_object.eq.0)
             vk(1) = obje_name(i_obj)
-            vk(2) = obj_type
+            vk(2) = obje_type
             vk(3) = obje_sdname(i_obj)
             call tbajli(nomtab, nbpara, nompar, [nume_store], [time],&
                         [c16bid], vk, 0)

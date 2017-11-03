@@ -15,19 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine memsth(model_    , cara_elem_, mate_, chtime, memass, base,&
-                      varc_curr_, time_)
+    subroutine memsth(model_    , cara_elem_, mate_, chtime_, matr_elem, base,&
+                      varc_curr_, time_curr_)
         character(len=*), intent(in) :: model_
         character(len=*), intent(in) :: cara_elem_
         character(len=*), intent(in) :: mate_
-        character(len=24), intent(in) :: chtime
-        character(len=19), intent(in) :: memass
+        character(len=*), intent(in) :: chtime_
+        character(len=19), intent(in) :: matr_elem
         character(len=1), intent(in) :: base
         character(len=19), optional, intent(in) :: varc_curr_
-        real(kind=8), optional, intent(in) :: time_
+        real(kind=8), optional, intent(in) :: time_curr_
     end subroutine memsth
 end interface

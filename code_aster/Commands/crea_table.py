@@ -1,42 +1,38 @@
-# coding: utf-8
-
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# coding=utf-8
 #
-# This file is part of Code_Aster.
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
 #
-# Code_Aster is free software: you can redistribute it and/or modify
+# code_aster is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 2 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Code_Aster is distributed in the hope that it will be useful,
+# code_aster is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 
-# person_in_charge: nicolas.sellenet@edf.fr
-from code_aster import Table
-from code_aster.Cata import Commands, checkSyntax
-from code_aster.RunManager.AsterFortran import python_execop
-from code_aster.Supervis.libCommandSyntax import CommandSyntax
+# person_in_charge: mathieu.courtois at edf.fr
+# person_in_charge: mathieu.courtois@edf.fr
+
+from ..Objects import Table
+from .ExecuteCommand import ExecuteCommand
 
 
-def CREA_TABLE(**kwargs):
-    """Create a Table object."""
-    checkSyntax(Commands.CREA_TABLE, kwargs)
+class TableCreation(ExecuteCommand):
+    """Execute legacy operator CREA_TABLE."""
+    command_name = "CREA_TABLE"
 
-    returnTable = Table.create()
-    name = returnTable.getName()
-    syntax = CommandSyntax("CREA_TABLE")
+    def create_result(self, keywords):
+        """Create the result.
 
-    # self.getType()
-    syntax.setResult(name, "TABLE")
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = Table.create()
 
-    syntax.define(kwargs)
-    numOp = 36
-    python_execop(numOp)
-    syntax.free()
-    return returnTable
+CREA_TABLE = TableCreation.run

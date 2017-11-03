@@ -17,23 +17,22 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-# person_in_charge: nicolas.sellenet@edf.fr
+# person_in_charge: mathieu.courtois@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from code_aster.Supervis.libCommandSyntax import CommandSyntax
-from code_aster import CrackTip
+from ..Objects import CrackTip
+from .ExecuteCommand import ExecuteCommand
 
 
-def DEFI_FOND_FISS(**curDict):
-    returnCrackDef = CrackTip.create()
-    name = returnCrackDef.getName()
-    type = returnCrackDef.getType()
-    syntax = CommandSyntax("DEFI_FOND_FISS")
+class CrackDefinition(ExecuteCommand):
+    """Execute legacy operator DEFI_FOND_FISS."""
+    command_name = "DEFI_FOND_FISS"
 
-    syntax.setResult(name, type)
+    def create_result(self, keywords):
+        """Create the result.
 
-    syntax.define(curDict)
-    numOp = 55
-    python_execop(numOp)
-    syntax.free()
-    return returnCrackDef
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = CrackTip.create()
+
+DEFI_FOND_FISS = CrackDefinition.run

@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1003
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine pmdorc(compor, carcri, nb_vari, incela, mult_comp)
 !
 use NonLin_Datastructure_type
@@ -24,31 +26,33 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterc/getfac.h"
+#include "asterc/lcdiscard.h"
 #include "asterfort/assert.h"
 #include "asterfort/carc_info.h"
 #include "asterfort/carc_read.h"
+#include "asterfort/comp_meca_code.h"
 #include "asterfort/comp_meca_cvar.h"
 #include "asterfort/comp_meca_l.h"
 #include "asterfort/comp_meca_info.h"
 #include "asterfort/comp_meca_pvar.h"
 #include "asterfort/comp_meca_read.h"
+#include "asterfort/Behaviour_type.h"
+#include "asterfort/getBehaviourAlgo.h"
+#include "asterfort/getBehaviourPara.h"
+#include "asterfort/getExternalStateVariable.h"
+#include "asterfort/getExternalBehaviourPntr.h"
 #include "asterfort/imvari.h"
 #include "asterfort/jedema.h"
-#include "asterfort/jedetr.h"
 #include "asterfort/jemarq.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/nmdocv.h"
-#include "asterfort/utlcal.h"
 #include "asterfort/utmess.h"
+#include "asterfort/setBehaviourValue.h"
+#include "asterfort/setMFrontPara.h"
 !
-! aslint: disable=W1003
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=16), intent(out) :: compor(20)
-    real(kind=8), intent(out) :: carcri(21)
-    integer, intent(out) :: nb_vari
-    integer, intent(out) :: incela
-    character(len=16), intent(out) :: mult_comp
+character(len=16), intent(out) :: compor(20)
+real(kind=8), intent(out) :: carcri(21)
+integer, intent(out) :: nb_vari
+integer, intent(out) :: incela
+character(len=16), intent(out) :: mult_comp
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -69,12 +73,17 @@ implicit none
     integer :: i_comp, nume_comp(4), nb_vari_comp(4)
     integer :: nbocc1, nbocc2, nbocc3
     character(len=16) :: keywordfact
-    character(len=16) :: rela_comp, algo_inte, defo_comp, type_comp
-    character(len=16) :: kit_comp(4), type_cpla, type_matg, post_iter
-    aster_logical :: l_kit_thm, l_etat_init, l_implex
+    character(len=16) :: rela_comp, algo_inte, defo_comp, type_comp, meca_comp
+    character(len=16) :: kit_comp(4), type_cpla, post_iter
+    aster_logical :: l_etat_init, l_implex, plane_stress, l_comp_external
+    aster_logical :: l_kit_thm, l_mfront_proto, l_mfront_offi
     real(kind=8) :: algo_inte_r, iter_inte_maxi, resi_inte_rela
+    integer :: iveriborne, jvariexte
     type(NL_DS_ComporPrep) :: ds_compor_prep
     type(NL_DS_ComporParaPrep) :: ds_compor_para
+    integer :: cptr_nbvarext=0, cptr_namevarext=0, cptr_fct_ldc=0
+    integer :: cptr_nameprop=0, cptr_nbprop=0
+    character(len=16) :: rela_code_py=' ', defo_code_py=' ', meca_code_py=' ', comp_code_py=' '
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -119,9 +128,13 @@ implicit none
     type_cpla       = ds_compor_prep%v_comp(i_comp)%type_cpla
     kit_comp(:)     = ds_compor_prep%v_comp(i_comp)%kit_comp(:)
     mult_comp       = ds_compor_prep%v_comp(i_comp)%mult_comp
-    type_matg       = ds_compor_prep%v_comp(i_comp)%type_matg
     post_iter       = ds_compor_prep%v_comp(i_comp)%post_iter
-    call comp_meca_l(rela_comp, 'KIT_THM'  , l_kit_thm)
+!
+! - Detection of specific cases
+!
+    call comp_meca_l(rela_comp, 'KIT_THM'     , l_kit_thm)
+    call comp_meca_l(rela_comp, 'MFRONT_PROTO', l_mfront_proto)
+    call comp_meca_l(rela_comp, 'MFRONT_OFFI' , l_mfront_offi)
     if (l_kit_thm) then
         call utmess('F', 'COMPOR2_7')
     endif
@@ -135,25 +148,10 @@ implicit none
 !  
 ! - Save in list
 !
-    compor(1)  = rela_comp
-    write (compor(2),'(I16)') nb_vari
-    compor(3)  = defo_comp
-    compor(4)  = type_comp
-    write (compor(6),'(I16)') nume_comp(1)
-    compor(7)  = ' '
-    compor(8)  = kit_comp(1)
-    compor(9)  = kit_comp(2)
-    compor(10) = kit_comp(3)
-    compor(11) = kit_comp(4)
-    write (compor(12),'(I16)') i_comp
-    compor(13) = type_matg
-    compor(14) = post_iter
-    write (compor(15),'(I16)') nume_comp(2)
-    write (compor(16),'(I16)') nume_comp(3)
-    write (compor(17),'(I16)') nb_vari_comp(1)
-    write (compor(18),'(I16)') nb_vari_comp(2)
-    write (compor(19),'(I16)') nb_vari_comp(3)
-    write (compor(20),'(I16)') nb_vari_comp(4)
+    call setBehaviourValue(rela_comp, defo_comp   , type_comp, type_cpla,&
+                           mult_comp, post_iter   , kit_comp ,&
+                           nb_vari  , nb_vari_comp, nume_comp,&
+                           l_compor_ = compor)
 !
 ! - Prepare informations about internal variables
 !
@@ -170,18 +168,66 @@ implicit none
 ! - Read informations from command file
 !
     call carc_read(ds_compor_para, l_implex_ = l_implex)
-!  
-! - Save in list
+!
+! - Coding comportment (Python)
+!    
+    i_comp = 1
+    meca_comp = ds_compor_para%v_para(i_comp)%meca_comp
+    call comp_meca_code(rela_comp_    = rela_comp   ,&
+                        defo_comp_    = defo_comp   ,&
+                        kit_comp_     = kit_comp    ,&
+                        meca_comp_    = meca_comp   ,&
+                        comp_code_py_ = comp_code_py,&
+                        rela_code_py_ = rela_code_py,&
+                        defo_code_py_ = defo_code_py,&
+                        meca_code_py_ = meca_code_py)
+!
+! - Get ALGO_INTE
 !
     i_comp = 1
-    algo_inte = ds_compor_para%v_para(i_comp)%algo_inte
-    if (rela_comp.eq.'MFRONT') then
-        call nmdocv(keywordfact, i_comp, algo_inte, 'RESI_INTE_MAXI', resi_inte_rela)
-    else
-        call nmdocv(keywordfact, i_comp, algo_inte, 'RESI_INTE_RELA', resi_inte_rela)
+    plane_stress = .false.
+    call getBehaviourAlgo(plane_stress, rela_comp   ,&
+                          rela_code_py, meca_code_py,&
+                          keywordfact , i_comp      ,&
+                          algo_inte   , algo_inte_r)
+!
+! - Get RESI_INTE_RELA/ITER_INTE_MAXI
+!
+    i_comp = 1
+    call getBehaviourPara(l_mfront_offi , l_mfront_proto, l_kit_thm,&
+                          keywordfact   , i_comp        , algo_inte,&
+                          iter_inte_maxi, resi_inte_rela)
+!
+! - Get function pointers for external programs (MFRONT/UMAT)
+!
+    i_comp = 1
+    l_comp_external = ds_compor_para%v_para(i_comp)%l_comp_external
+    if (l_comp_external) then
+        call getExternalBehaviourPntr(ds_compor_para%v_para(i_comp)%comp_exte,&
+                                      cptr_fct_ldc ,&
+                                      cptr_nbvarext, cptr_namevarext,&
+                                      cptr_nbprop  , cptr_nameprop)
     endif
-    call nmdocv(keywordfact, i_comp, algo_inte, 'ITER_INTE_MAXI', iter_inte_maxi)
-    call utlcal('NOM_VALE', algo_inte, algo_inte_r)
+!
+! - Set values for MFRONT
+!
+    i_comp = 1
+    iveriborne = ds_compor_para%v_para(i_comp)%iveriborne
+    call setMFrontPara(ds_compor_para%v_para(i_comp)%comp_exte,&
+                       iter_inte_maxi, resi_inte_rela, iveriborne)
+!
+! - Get external state variables
+!
+    call getExternalStateVariable(rela_comp    , comp_code_py   ,&
+                                  l_mfront_offi, l_mfront_proto ,&
+                                  cptr_nbvarext, cptr_namevarext,&
+                                  jvariexte)
+    if (jvariexte .ne. 0) then
+        call utmess('A', 'COMPOR2_12')
+        jvariexte = 0
+    endif
+!  
+! - Save in list
 !
     carcri(1)  = iter_inte_maxi
     carcri(2)  = ds_compor_para%v_para(i_comp)%type_matr_t
@@ -192,20 +238,28 @@ implicit none
     carcri(7)  = ds_compor_para%v_para(i_comp)%vale_pert_rela
     carcri(8)  = ds_compor_para%v_para(i_comp)%resi_deborst_max
     carcri(9)  = ds_compor_para%v_para(i_comp)%iter_deborst_max
-    carcri(10) = ds_compor_para%v_para(i_comp)%seuil
-    carcri(13) = ds_compor_para%v_para(i_comp)%post_iter
-    carcri(14) = ds_compor_para%v_para(i_comp)%c_pointer%nbvarext
-    carcri(15) = ds_compor_para%v_para(i_comp)%c_pointer%namevarext
-    carcri(16) = ds_compor_para%v_para(i_comp)%c_pointer%fct_ldc
+    carcri(10) = ds_compor_para%v_para(i_comp)%resi_radi_rela
+    carcri(IVARIEXTE) = jvariexte
+    carcri(13) = ds_compor_para%v_para(i_comp)%ipostiter
+    carcri(14) = cptr_nbvarext
+    carcri(15) = cptr_namevarext
+    carcri(16) = cptr_fct_ldc
+    carcri(19) = cptr_nameprop
+    carcri(20) = cptr_nbprop
     if (ds_compor_para%v_para(i_comp)%l_matr_unsymm) then
         carcri(17) = 1
     else
         carcri(17) = 0
     endif
     carcri(18) = 0
-    carcri(19) = ds_compor_para%v_para(i_comp)%c_pointer%matprop
-    carcri(20) = ds_compor_para%v_para(i_comp)%c_pointer%nbprop
-    carcri(21) = ds_compor_para%v_para(i_comp)%post_incr
+    carcri(21) = ds_compor_para%v_para(i_comp)%ipostincr
+!
+! - Discard
+!
+    call lcdiscard(comp_code_py)
+    call lcdiscard(meca_code_py)
+    call lcdiscard(rela_code_py)
+    call lcdiscard(defo_code_py)
 !
 ! - Cleaning
 !

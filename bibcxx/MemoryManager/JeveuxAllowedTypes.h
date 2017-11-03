@@ -40,7 +40,7 @@ enum JeveuxTypes { Integer, Integer4, Double, Complex, Char8, Char16, Char24, Ch
  * @def JeveuxTypesNames
  * @brief Fournit sous forme de chaine les types Jeveux existant
  */
-static const char* JeveuxTypesNames[10] = { "I", "I4", "R", "C", "K8", "K16", "K24", "K32", "K80", "L" };
+static const std::string JeveuxTypesNames[10] = { "I", "I4", "R", "C", "K8", "K16", "K24", "K32", "K80", "L" };
 
 /**
  * @struct AllowedJeveuxType

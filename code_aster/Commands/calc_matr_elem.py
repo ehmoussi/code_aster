@@ -17,23 +17,22 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-# person_in_charge: nicolas.sellenet@edf.fr
+# person_in_charge: mathieu.courtois@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from code_aster.Supervis.libCommandSyntax import CommandSyntax
-from code_aster import ElementaryMatrix
+from ..Objects import ElementaryMatrix
+from .ExecuteCommand import ExecuteCommand
 
 
-def CALC_MATR_ELEM(**curDict):
-    returnMatrix = ElementaryMatrix.create()
-    name = returnMatrix.getName()
-    type = returnMatrix.getType()
-    syntax = CommandSyntax("CALC_MATR_ELEM")
+class ElementaryMatrixCalculation(ExecuteCommand):
+    """Execute legacy operator CALC_MATR_ELEM."""
+    command_name = "CALC_MATR_ELEM"
 
-    syntax.setResult(name, type)
+    def create_result(self, keywords):
+        """Create the result.
 
-    syntax.define(curDict)
-    numOp = 9
-    python_execop(numOp)
-    syntax.free()
-    return returnMatrix
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = ElementaryMatrix.create()
+
+CALC_MATR_ELEM = ElementaryMatrixCalculation.run

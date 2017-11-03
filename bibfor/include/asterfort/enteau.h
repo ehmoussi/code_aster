@@ -15,21 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    function enteau(dt, alpliq, t, rho11, dp2,&
-                    dp1, dpad, signe, cp)
-        real(kind=8) :: dt
-        real(kind=8) :: alpliq
-        real(kind=8) :: t
-        real(kind=8) :: rho11
-        real(kind=8) :: dp2
-        real(kind=8) :: dp1
-        real(kind=8) :: dpad
-        real(kind=8) :: signe
-        real(kind=8) :: cp
-        real(kind=8) :: enteau
+    function enteau(dtemp, alpha, temp, rho  ,&
+                    dp2  , dp1   , dpad, signe,&
+                    cp)
+        real(kind=8), intent(in) :: dtemp
+        real(kind=8), intent(in) :: alpha
+        real(kind=8), intent(in) :: temp
+        real(kind=8), intent(in) :: rho
+        real(kind=8), intent(in) :: dp1
+        real(kind=8), intent(in) :: dp2
+        real(kind=8), intent(in) :: dpad
+        real(kind=8), intent(in) :: signe
+        real(kind=8), intent(in) :: cp
     end function enteau
 end interface

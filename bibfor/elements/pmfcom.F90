@@ -40,7 +40,7 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
 !       instam  : instant du calcul precedent
 !       instap  : instant du calcul
 !       icdmat  : code materiau
-!       nbvalc  :
+!       nbvalc  : nombre de variable internes
 !       defam   : deformations anelastiques a l'instant precedent
 !       defap   : deformations anelastiques a l'instant du calcul
 !       varim   : variables internes moins
@@ -69,9 +69,12 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
 #include "asterfort/nm1vil.h"
 #include "asterfort/paeldt.h"
 #include "asterfort/r8inir.h"
+#include "asterfort/rcexistvarc.h"
+#include "asterfort/rcvala.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/rcvarc.h"
 #include "asterfort/utmess.h"
+#include "asterfort/verift.h"
 #include "asterfort/vmci1d.h"
 #include "blas/dcopy.h"
 !
@@ -90,14 +93,14 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
     integer :: icodre(nbval)
     real(kind=8) :: valres(nbval)
 
-    integer :: nbvari, codrep, ksp, i, ivari, iret1
-    real(kind=8) :: ep, em, depsth, epsth, tref, tempm, tempp, sigx, epsx, depsx
-    real(kind=8) :: cstpm(13), angmas(3), depsm, nu
+    integer :: nbvari, codrep, ksp, i, ivari, iret
+    real(kind=8) :: ep, em, depsth, tref, tempm, tempp, sigx, epsx, depsx,tempplus
+    real(kind=8) :: cstpm(13), angmas(3), depsm, nu, bendo, kdess, valsech, valsechref, valhydr
     character(len=4) :: fami
     character(len=8) :: nompim(12), mazars(8), materi
     character(len=16) :: compo, algo, nomres(2)
     character(len=30) :: valkm(3)
-    aster_logical :: ltemp
+    aster_logical :: istemp, ishydr, issech
 !
     data nompim /'SY', 'EPSI_ULT', 'SIGM_ULT', 'EPSP_HAR', 'R_PM',&
                  'EP_SUR_E', 'A1_PM', 'A2_PM', 'ELAN', 'A6_PM', 'C_PM', 'A_PM'/
@@ -111,13 +114,10 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
     compo  = compor(2)(1:16)
     algo   = compor(3)(1:16)
 !
-!   calcul de la température
-    call rcvarc(' ', 'TEMP', 'REF', fami, 1,&
-                1, tref, iret1)
+!   TEMP ou pas ?
+    istemp = rcexistvarc('TEMP')
 !
-    ltemp=.true.
-    if (iret1 .eq. 1) ltemp=.false.
-    if (.not.ltemp) then
+    if (.not.istemp) then
         nomres(1) = 'E'
         nomres(2) = 'NU'
         call rcvalb(fami, 1, 1, '+', icdmat, materi, 'ELAS', 0, '', [0.d0],&
@@ -127,15 +127,14 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
         em=ep
         depsth=0.d0
     endif
-!   angle du MOT_CLEF massif (AFFE_CARA_ELEM)
-!   initialise à 0.D0 (on ne s'en sert pas)
+!   angle du MOT_CLEF massif (AFFE_CARA_ELEM) initialise à 0.D0 (on ne s'en sert pas)
     call r8inir(3, 0.d0, angmas, 1)
 !
 ! --------------------------------------------------------------------------------------------------
     if (compo .eq. 'ELAS') then
         nomres(1) = 'E'
         do i = 1, nf
-            if (ltemp) then
+            if (istemp) then
                 ksp=debsp-1+i
                 call paeldt(kpg, ksp, fami, 'T', icdmat, materi, em, ep, nu, depsth)
             endif
@@ -145,11 +144,41 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
 !
 ! --------------------------------------------------------------------------------------------------
     else if (compo.eq.'MAZARS_GC') then
-        epsth = 0.d0
-!       on récupère les paramètres matériau
+!       Y a-t-il de HYDR ou SECH
+!       Par défaut c'est nul
+        bendo = 0.0
+        kdess = 0.0
+!       Valeur des champs : par défaut on considère qu'ils sont nuls
+        valhydr = 0.0
+        valsech = 0.0
+        valsechref = 0.0
+!
+        ishydr = rcexistvarc('HYDR')
+        issech = rcexistvarc('SECH')
+        if ( ishydr .or. issech ) then
+            nomres(1)='B_ENDOGE'
+            nomres(2)='K_DESSIC'
+            valres(1:2) = 0.0
+            call rcvala(icdmat, ' ', 'ELAS', 0, ' ', [0.d0], 2, nomres, valres, icodre,0)
+            bendo = valres(1)
+            kdess = valres(2)
+            if ((icodre(1).eq.0).and.(.not.ishydr)) then
+                valkm(1)='MAZARS_GC'
+                valkm(2)='ELAS/B_ENDOGE'
+                valkm(3)='HYDR'
+                call utmess('F', 'COMPOR1_74', nk=3, valk=valkm)
+            endif
+            if ((icodre(2).eq.0).and.(.not.issech)) then
+                valkm(1)='MAZARS_GC'
+                valkm(2)='ELAS/K_DESSIC'
+                valkm(3)='SECH'
+                call utmess('F', 'COMPOR1_74', nk=3, valk=valkm)
+            endif
+        endif
+!
+!       On récupère les paramètres matériau si pas de variable de commande ==> ils sont constants
         call r8inir(nbval, 0.d0, valres, 1)
-        call rcvalb(fami, 1, 1, '+', icdmat,&
-                    materi, 'MAZARS', 0, ' ', [0.0d0],&
+        call rcvalb(fami, 1, 1, '+', icdmat, materi, 'MAZARS', 0, ' ', [0.0d0],&
                     8, mazars, valres, icodre, 1)
         if (icodre(7)+icodre(8) .ne. 0) then
             valkm(1)='MAZARS_GC'
@@ -157,18 +186,46 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
             valkm(3)=mazars(8)
             call utmess('F', 'COMPOR1_76', nk=3, valk=valkm)
         endif
-!       ajout de NU dans VALRES
-        valres(9) = nu
+!
 !       boucle comportement sur chaque fibre
         do i = 1, nf
             ivari = nbvalc*(i-1) + 1
-            if (ltemp) then
-                ksp=debsp-1+i
-                call paeldt(kpg, ksp, fami, '+', icdmat, materi, em, ep, nu, epsth)
-                valres(9) = nu
+            ksp=debsp-1+i
+            if (istemp) then
+                call verift(fami, kpg, ksp, '+', icdmat, materi, epsth_=depsth, temp_curr_=tempplus)
+!               Mémorise la température maximale atteinte
+                if ( varim(ivari+7-1) .lt. tempplus ) then
+                    varip(ivari+7-1) = tempplus
+                endif
+                nomres(1) = 'E'
+                nomres(2) = 'NU'
+                call rcvalb(fami, kpg, ksp, '+', icdmat, materi, 'ELAS', &
+                            1, 'TEMP', varip(ivari+7-1), 2, nomres, valres, icodre, 1)
+                ep = valres(1)
+                nu = valres(2)
             endif
-            epsm = defm(i) - epsth
-            call mazu1d(ep, valres, contm(i), varim(ivari), epsm,&
+            if ( ishydr ) then
+                call rcvarc('F', 'HYDR', '+',   fami, kpg, ksp, valhydr, iret)
+            endif
+            if ( issech ) then
+                call rcvarc('F', 'SECH', '+',   fami, kpg, ksp, valsech, iret)
+                call rcvarc('F', 'SECH', 'REF', fami, kpg, ksp, valsechref, iret)
+            endif
+            epsm = defm(i) - depsth - kdess*(valsech-valsechref) + bendo*valhydr
+!           On récupère les paramètres matériau s'il y a une variable de commande.
+!           Elles sont ELGA et peuvent donc être différentes d'un sous point à l'autre.
+            if ( istemp .or. ishydr .or. issech ) then
+                if ( istemp ) then
+                    call rcvalb(fami, kpg, ksp, '+', icdmat, materi, 'MAZARS', &
+                                1, 'TEMP', varip(ivari+7-1), 8, mazars, valres, icodre, 1)
+                else
+                    call rcvalb(fami, kpg, ksp, '+', icdmat, materi, 'MAZARS', &
+                                0, ' ', [0.0d0], 8, mazars, valres, icodre, 1)
+                endif
+            endif
+!           Ajout de NU dans VALRES
+            valres(9) = nu
+            call mazu1d(ep, valres, contm(i), varim(ivari), epsm, &
                         ddefp(i), modf(i), sigf(i), varip(ivari), option)
         enddo
 !
@@ -177,12 +234,12 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
 !       boucle sur chaque fibre
         do i = 1, nf
             ivari = nbvalc*(i-1) + 1
-            if (ltemp) then
-                ksp=debsp-1+i
+            ksp=debsp-1+i
+            if (istemp) then
                 call paeldt(kpg, ksp, fami, 'T', icdmat, materi, em, ep, nu, depsth)
             endif
             depsm = ddefp(i)-depsth
-            call vmci1d('RIGI', kpg, i, icdmat, em,&
+            call vmci1d('RIGI', kpg, ksp, icdmat, em,&
                         ep, contm(i), depsm, varim(ivari), option,&
                         materi, sigf(i), varip(ivari), modf(i))
         enddo
@@ -201,7 +258,7 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
         enddo
         do i = 1, nf
             ivari = nbvalc*(i-1) + 1
-            if (ltemp) then
+            if (istemp) then
                 ksp=debsp-1+i
                 call paeldt(kpg, ksp, fami, 'T', icdmat, materi, em, ep, nu, depsth)
                 cstpm(1) = ep
@@ -216,7 +273,7 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
     else if (compo.eq.'VMIS_CINE_LINE') then
         do i = 1, nf
             ivari = nbvalc* (i-1) + 1
-            if (ltemp) then
+            if (istemp) then
                 ksp=debsp-1+i
                 call paeldt(kpg, ksp, fami, 'T', icdmat, materi, em, ep, nu, depsth)
             endif
@@ -230,7 +287,7 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
     else if ((compo.eq.'VMIS_ISOT_LINE').or.(compo.eq.'VMIS_ISOT_TRAC')) then
         do i = 1, nf
             ivari = nbvalc* (i-1) + 1
-            if (ltemp) then
+            if (istemp) then
                 ksp=debsp-1+i
                 call paeldt(kpg, ksp, fami, 'T', icdmat, materi, em, ep, nu, depsth)
             endif
@@ -244,7 +301,7 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
     else if (compo.eq.'CORR_ACIER') then
         do i = 1, nf
             ivari = nbvalc* (i-1) + 1
-            if (ltemp) then
+            if (istemp) then
                 ksp=debsp-1+i
                 call paeldt(kpg, ksp, fami, 'T', icdmat, materi, em, ep, nu, depsth)
             endif
@@ -258,12 +315,12 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
 ! --------------------------------------------------------------------------------------------------
     else if ((compo.eq.'GRAN_IRRA_LOG').or.(compo.eq.'VISC_IRRA_LOG')) then
         if (algo(1:10) .eq. 'ANALYTIQUE') then
-            if (.not. ltemp) then
+            if (.not. istemp) then
                 call utmess('F', 'COMPOR5_40',sk=compo)
             endif
             do i = 1, nf
                 ivari = nbvalc* (i-1) + 1
-                if (ltemp) then
+                if (istemp) then
                     ksp=debsp-1+i
                     call paeldt(kpg, ksp, fami, 'T', icdmat, materi, em, ep, nu, depsth,&
                                 tmoins=tempm, tplus=tempp, trefer=tref)

@@ -15,15 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface 
-    subroutine tlambc(angmas, lambct, tlamct, aniso, ndim)
-        integer :: ndim
-        real(kind=8) :: angmas(3)
-        real(kind=8) :: lambct(4)
-        real(kind=8) :: tlamct(ndim, ndim)
-        integer :: aniso
+    subroutine tlambc(angl_naut, ndim, tlamct)
+        real(kind=8), intent(in) :: angl_naut(3)
+        integer, intent(in) :: ndim
+        real(kind=8), intent(out) :: tlamct(ndim, ndim)
     end subroutine tlambc
 end interface 

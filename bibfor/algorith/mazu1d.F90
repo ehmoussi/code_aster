@@ -62,8 +62,8 @@ subroutine mazu1d(ee, mazars, sigm, varm, epsm,&
 !     INDEX DES VARIABLES INTERNES
     integer :: icels, icelu
     parameter (icels=1,icelu=2)
-    integer :: idomm, iepsqt, iepsqc, irsigm, itemp, idissd
-    parameter (idomm=3,iepsqt=4,iepsqc=5,irsigm=6,itemp=7,idissd=8)
+    integer :: idomm, iepsqt, iepsqc, irsigm, idissd
+    parameter (idomm=3,iepsqt=4,iepsqc=5,irsigm=6,idissd=8)
 ! --- ------------------------------------------------------------------
     aster_logical :: rigi, resi
 !
@@ -186,7 +186,6 @@ subroutine mazu1d(ee, mazars, sigm, varm, epsm,&
         varp(idomm) = dommag
         varp(indxvp) = max( epseq, epsqtc )
         varp(irsigm) = rr
-        varp(itemp) = 0.0d0
 !        DISSIPATION IRREVERSIBLE
         xx1 = ee*(1.0d0-dommag)*deps
         varp(idissd) = varm(idissd) + (xx1-(sigp-sigm))*deps/2.0d0

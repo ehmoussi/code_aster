@@ -78,7 +78,7 @@ MASSE=ASSE_MATRICE(  MATR_ELEM=MASS_ELE,  NUME_DDL=NUMEDDL  )
 # CALCUL DES MODES AVEC BLOCAGE DES ANCRAGES:
 #---------------------------------------------
 MODE_MEC=CALC_MODES(MATR_RIGI=RIGIDITE,
-                    OPTION='PROCHE',
+                    OPTION='PROCHE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                     CALC_FREQ=_F(FREQ=( 4.77,),
                                  ),
                     TITRE='CAS TEST &CODE   COMMANDE &COMMANDE SANS L_TX !!',

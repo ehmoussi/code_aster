@@ -38,7 +38,7 @@ implicit none
 ! person_in_charge: mickael.abbas at edf.fr
 !
     character(len=8), intent(in) :: mesh
-    type(NL_DS_Contact), intent(in) :: ds_contact
+    type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -84,6 +84,7 @@ implicit none
 !
     armini = armin(mesh)
     epsint = 1.d-6*armini
+    ds_contact%arete_min  = armini
 !
 ! - Get parameters
 !

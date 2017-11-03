@@ -16,9 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-
 #
-
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), )
 
 
@@ -108,6 +106,8 @@ MAT1=DEFI_MATERIAU(
                              NU_LT = NU0,
                              NU_TN = NU0,
                              G_LT = G0,
+                             G_LN = G0,
+                             G_TN = G0,
                              ALPHA_L=1.E-05,
                              ALPHA_T=1.E-05,
                              ALPHA_N=1.E-05,
@@ -255,7 +255,8 @@ U0=STAT_NON_LINE(MODELE=MODELE,
                         _F(CHARGE=CLFMEC,),
                         _F(CHARGE=PRHAUT,),
                         _F(CHARGE=CLFT,FONC_MULT = EV_THER,),),
-                 COMPORTEMENT=_F(RELATION='KIT_THM',PARM_THETA=1.,
+                 SCHEMA_THM=_F(PARM_THETA=1.,),
+                 COMPORTEMENT=_F(RELATION='KIT_THM',
                               RELATION_KIT=('ELAS','LIQU_SATU','HYDR_UTIL'),),
                  INCREMENT=_F(LIST_INST=INST1,
                               INST_FIN=T1,
@@ -310,7 +311,8 @@ U1=STAT_NON_LINE(MODELE=MODELE,
                         _F(CHARGE=CLFMEC,),
                         _F(CHARGE=PRHAUT,),
                         _F(CHARGE=CLFT,FONC_MULT = EV_THER,),),
-                 COMPORTEMENT=_F(RELATION='KIT_THM',PARM_THETA=1.,
+                 SCHEMA_THM=_F(PARM_THETA=1.,),
+                 COMPORTEMENT=_F(RELATION='KIT_THM',
                               RELATION_KIT=('ELAS','LIQU_SATU','HYDR_UTIL'),),
                  INCREMENT=_F(LIST_INST=INST2,
                               INST_FIN=T1,

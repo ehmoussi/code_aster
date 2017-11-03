@@ -31,13 +31,12 @@ Vérifiez vos données.
 
 # Messages dans ace_mass_rep
     10 : _(u"""AFFE_CARA_ELEM / <%(k1)s> / occurrence %(i1)d
-Les mailles dans le groupe <%(k2)s> ne sont pas toutes de même dimension topologique.
+Une maille dans le groupe <%(k2)s> n'est pas de la bonne topologique.
+Vous êtes en 2D, la topologie des mailles doit être 1.
+Les mailles de <%(k2)s> doivent être des segments.
 
-Les mailles de <%(k2)s> doivent être des segments ou des éléments de surfaces.
-Il ne faut pas mélanger les dimensions topologique.
 Pour information :
- - dimension topologique de la 1ère maille du groupe : %(i2)d
- - maille incriminée                                 : %(k3)s
+ - nom de la maille incriminée                       : %(k3)s
  - dimension topologique de la maille incriminée     : %(i3)d
  - type de la maille incriminée                      : %(k4)s
 
@@ -166,6 +165,25 @@ Des éléments appartenant au GROUP_MA_POI1 <%(k2)s> ne sont pas dans le modèle
 
 Pour information :
  - maille détectée : %(k3)s
+
+Vérifiez vos données.
+"""),
+
+    23 : _(u"""AFFE_CARA_ELEM / <%(k1)s> / occurrence %(i1)d
+Une maille dans le groupe <%(k2)s> n'est pas de la bonne topologique.
+Vous êtes en 3D, la topologie des mailles dans le groupe doit être identique.
+
+Les mailles de <%(k2)s> doivent être des segments ou des éléments de surfaces.
+
+Pour information :
+ - nom de la maille incriminée                       : %(k3)s
+ - dimension topologique de la maille incriminée     : %(i3)d
+ - type de la maille incriminée                      : %(k4)s
+
+La topologie du groupe est déterminée par la 1ère maille du groupe.
+ - nom de la 1ère maille du groupe                   : %(k5)s
+ - dimension topologique du groupe                   : %(i2)d
+ - type de la 1ère maille du groupe                  : %(k6)s
 
 Vérifiez vos données.
 """),

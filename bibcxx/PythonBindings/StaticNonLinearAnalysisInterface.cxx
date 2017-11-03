@@ -25,6 +25,9 @@
 #include "PythonBindings/SharedPtrUtilities.h"
 #include <boost/python.hpp>
 
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(addBehaviourOnElements_overloads,
+    addBehaviourOnElements, 1, 2)
+
 void exportStaticNonLinearAnalysisToPython()
 {
     using namespace boost::python;
@@ -49,7 +52,8 @@ void exportStaticNonLinearAnalysisToPython()
         .staticmethod( "create" )
         .def( "execute", &StaticNonLinearAnalysisInstance::execute )
         .def( "addBehaviourOnElements",
-              &StaticNonLinearAnalysisInstance::addBehaviourOnElements )
+              &StaticNonLinearAnalysisInstance::addBehaviourOnElements,
+              addBehaviourOnElements_overloads())
         .def( "setNonLinearMethod",
               &StaticNonLinearAnalysisInstance::setNonLinearMethod )
         .def( "setLinearSolver", &StaticNonLinearAnalysisInstance::setLinearSolver )

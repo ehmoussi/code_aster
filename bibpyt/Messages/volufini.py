@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+# person_in_charge: sylvie.granet at edf.fr
 
 cata_msg = {
 
@@ -42,24 +42,7 @@ Le type de voisinage %(k1)s est inconnu.
     7 : _(u"""
 Le type de voisinage %(k1)s a une longueur %(i1)i trop grande
 """),
-    8 : _(u"""
-La loi de comportement  %(k1)s est inconnu
-"""),
-    9 : _(u"""
-Le type de modélisation volumes finis  %(i1)i  est inconnu.
-Ce message est un message d'erreur développeur.
-Contactez le support technique.
 
-"""),
-
-    11 : _(u"""
-L'option  %(k1)s est inconnue
-"""),
-    12 : _(u"""
-En 3D et en VF on peut utiliser uniquement des hexaèdres a 27 DDL et des tétraèdres a 27 DDL.
-Ce message est un message d'erreur développeur.
-Contactez le support technique.
-"""),
     13 : _(u"""
 L'élément %(k1)s et la face  %(i1)i est non plane
 """),

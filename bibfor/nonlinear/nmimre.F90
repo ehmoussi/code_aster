@@ -62,7 +62,8 @@ implicit none
         col_name        = ds_conv%list_resi(i_resi)%col_name
         col_name_locus  = ds_conv%list_resi(i_resi)%col_name_locus
         call nmimcr(ds_print, col_name      , vale_calc , l_affe = .true._1)
-        call nmimck(ds_print, col_name_locus, locus_calc, l_affe = .true._1)
+        if (i_resi .ne. 7) &
+             call nmimck(ds_print, col_name_locus, locus_calc, l_affe = .true._1)
     end do
 !
 end subroutine

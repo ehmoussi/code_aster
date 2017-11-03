@@ -100,34 +100,34 @@ subroutine op0180()
     data          aire  /'A1      '/
     data          effnor/'N       ','CONT_X  ','CONT_Y  '/
     data          typpar /'I ','K8','R ','R ','R ',&
-     &                    'K8','K8', 'I ','I ','R ','K24','K24','K24','K8'/
+                          'K8','K8', 'I ','I ','R ','K24','K24','K24','K8'/
     data          nompar /'NUME_CABLE              ',&
-     &                      'NOEUD_CABLE             ',&
-     &                      'ABSC_CURV               ',&
-     &                      'ALPHA                   ',&
-     &                      'TENSION                 ',&
-     &                      'MAILLE_BETON_VOISINE    ',&
-     &                      'NOEUD_BETON_VOISIN      ',&
-     &                      'INDICE_IMMERSION        ',&
-     &                      'INDICE_PROJECTION       ',&
-     &                      'EXCENTRICITE            ',&
-     &                      'NOM_CABLE               ',&
-     &                      'NOM_ANCRAGE1            ',&
-     &                      'NOM_ANCRAGE2            ',&
-     &                      'NOEUD_MILIEU'/
+                          'NOEUD_CABLE             ',&
+                          'ABSC_CURV               ',&
+                          'ALPHA                   ',&
+                          'TENSION                 ',&
+                          'MAILLE_BETON_VOISINE    ',&
+                          'NOEUD_BETON_VOISIN      ',&
+                          'INDICE_IMMERSION        ',&
+                          'INDICE_PROJECTION       ',&
+                          'EXCENTRICITE            ',&
+                          'NOM_CABLE               ',&
+                          'NOM_ANCRAGE1            ',&
+                          'NOM_ANCRAGE2            ',&
+                          'NOEUD_MILIEU'/
 !
     data          typpa2 /'K8','K8','K24','K8','K8','K24','R','R','K8','K8','I'/
     data          nompa2 /'TYPE_ANCRAGE1           ',&
-     &                      'TYPE_NOEUD1             ',&
-     &                      'NOM_ANCRAGE1            ',&
-     &                      'TYPE_ANCRAGE2           ',&
-     &                      'TYPE_NOEUD2             ',&
-     &                      'NOM_ANCRAGE2            ',&
-     &                      'TENSION                 ',&
-     &                      'RECUL_ANCRAGE           ',&
-     &                      'ADHERENT                ',&
-     &                      'TYPE_MAILLE             ',&
-     &                      'SENS                    '/
+                          'TYPE_NOEUD1             ',&
+                          'NOM_ANCRAGE1            ',&
+                          'TYPE_ANCRAGE2           ',&
+                          'TYPE_NOEUD2             ',&
+                          'NOM_ANCRAGE2            ',&
+                          'TENSION                 ',&
+                          'RECUL_ANCRAGE           ',&
+                          'ADHERENT                ',&
+                          'TYPE_MAILLE             ',&
+                          'SENS                    '/
 !
 !-------------------   DEBUT DU CODE EXECUTABLE    ---------------------
 !

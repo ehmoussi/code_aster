@@ -87,6 +87,7 @@ implicit none
     real(kind=8) :: troisk, nu
     real(kind=8) :: hydr, sech, sref, ptot
     integer :: k, iret
+    character(len=16) :: elas_keyword
     character(len=6), parameter :: epsa(6)=(/'EPSAXX','EPSAYY','EPSAZZ','EPSAXY','EPSAXZ','EPSAYZ'/)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -150,8 +151,9 @@ implicit none
                 biot = 0.d0
                 call utmess('I', 'COMPOR5_13')
             endif
+            call get_elas_id(j_mater, elas_id, elas_keyword)
             call get_elas_para(fami     , j_mater, poum, kpg, ksp, &
-                               elas_id,&
+                               elas_id  , elas_keyword,&
                                time     = instan,&
                                e   = e, nu = nu )
             troisk = e/(1.d0-2.d0*nu)

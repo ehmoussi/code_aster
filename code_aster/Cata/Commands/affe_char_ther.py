@@ -30,7 +30,7 @@ AFFE_CHAR_THER=OPER(nom="AFFE_CHAR_THER",op=34,sd_prod=char_ther
                           'ECHANGE_PAROI','PRE_GRAD_TEMP','LIAISON_DDL','LIAISON_GROUP',
                           'LIAISON_UNIF','LIAISON_CHAMNO','RAYONNEMENT','LIAISON_MAIL' ),),
          MODELE          =SIMP(statut='o',typ=(modele_sdaster) ),
-         EVOL_CHAR       =SIMP(statut='f',fr=tr("Champ d'échange thermique issu d'un autre calcul"),
+         EVOL_CHAR       =SIMP(statut='f',fr=tr("Champ d'échange thermique ou de flux issu d'un autre calcul"),
                                typ=evol_char,min=1,max=1),
 
 
@@ -215,7 +215,7 @@ AFFE_CHAR_THER=OPER(nom="AFFE_CHAR_THER",op=34,sd_prod=char_ther
                                  into=("TEMP","TEMP_MIL","TEMP_INF","TEMP_SUP") ),
          ),
 
-         LIAISON_CHAMNO  =FACT(statut='f',max='**',
+         LIAISON_CHAMNO  =FACT(statut='f',max=1,
            CHAM_NO         =SIMP(statut='o',typ=cham_no_sdaster),# CO()# "il faut definir une structure de donnee generique chamno"
            COEF_IMPO       =SIMP(statut='o',typ='R' ),
            NUME_LAGR       =SIMP(statut='f',typ='TXM',defaut="NORMAL",into=("NORMAL","APRES") ),

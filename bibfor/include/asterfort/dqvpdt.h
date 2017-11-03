@@ -15,15 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    function dqvpdt(coeps, alp12, t, dpvpt)
-        real(kind=8) :: coeps
-        real(kind=8) :: alp12
-        real(kind=8) :: t
-        real(kind=8) :: dpvpt
+    function dqvpdt(coeps, alp12, temp, dpvpt)
+        real(kind=8), intent(in) :: coeps, alp12
+        real(kind=8), intent(in) :: temp, dpvpt
         real(kind=8) :: dqvpdt
     end function dqvpdt
 end interface

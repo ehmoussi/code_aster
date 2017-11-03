@@ -158,6 +158,39 @@ TEST_RESU(RESU=(
                 ),
           );
 
+
+TEST_RESU(RESU=(
+                _F(RESULTAT=thnl,
+                   INST= 1.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N7',
+                   NOM_CMP='TEMP',
+                   VALE_CALC=29.90499961,
+                   ),
+                _F(RESULTAT=thnl,
+                   INST= 4.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N7',
+                   NOM_CMP='TEMP',
+                   VALE_CALC=139.458066818,
+                   ),
+                _F(RESULTAT=thnl,
+                   INST= 7.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N7',
+                   NOM_CMP='TEMP',
+                   VALE_CALC=567.040457129,
+                   ),
+                _F(RESULTAT=thnl,
+                   INST= 10.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N7',
+                   NOM_CMP='TEMP',
+                   VALE_CALC=999.12502482,
+                   ),
+                ),
+          );
+
 # Define HROM
 
 
@@ -190,13 +223,19 @@ chg_th_r=AFFE_CHAR_THER_F(MODELE=model_r,
                                     TEMP_EXT=T_im,),),);
 
 
+
 base_p=LIRE_RESU(TYPE_RESU  = 'MODE_EMPI',
                  FORMAT     = 'MED',
-                 MODELE     = model_r,
+                 MODELE     = model,
                  UNITE      = 70,
                  FORMAT_MED =_F(NOM_CHAM_MED = 'base_p__TEMP',
                                 NOM_CHAM     = 'TEMP',),
                  TOUT_ORDRE = 'OUI',);
+
+base_t=DEFI_BASE_REDUITE(OPERATION='TRONCATURE',
+                         MODELE_REDUIT = model_r, 
+                         BASE = base_p,
+                         INFO=2)
 
 redu=THER_NON_LINE(MODELE=model_r,
                     CHAM_MATER=chmat,
@@ -206,7 +245,7 @@ redu=THER_NON_LINE(MODELE=model_r,
                     METHODE='MODELE_REDUIT',
                     MODELE_REDUIT=_F(
                     REAC_ITER=1,
-                    BASE_PRIMAL     = base_p,
+                    BASE_PRIMAL     = base_t,
                     DOMAINE_REDUIT  = 'OUI',
                     GROUP_NO_INTERF = 'INF',
                     ),
@@ -255,6 +294,69 @@ TEST_RESU(RESU=(
                    VALE_REFE=999.349943608,
                    REFERENCE='AUTRE_ASTER',
                    PRECISION=5.E-6,
+                   ),
+                ),
+          );
+
+####################################################################################################
+#
+# Reconstruction du résultat complet par Gappy-POD
+#
+####################################################################################################
+
+
+# Gappy-POD (reconstruction tout le domaine)
+reduR = REST_REDUIT_COMPLET(
+    MODELE           = model,
+    RESULTAT_REDUIT  = redu, 
+    BASE_PRIMAL      = base_p,
+    REST_DUAL        = 'NON',
+    INFO             = 2,)
+
+
+TEST_RESU(RESU=(
+
+                _F(RESULTAT=reduR,
+                   INST= 1.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N7',
+                   NOM_CMP='TEMP',
+                   VALE_CALC=29.8989707789,
+                   VALE_REFE=29.90499961,
+                   REFERENCE='AUTRE_ASTER',
+                   PRECISION=0.00025,
+                   ),
+                _F(RESULTAT=reduR,
+                   INST= 4.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N7',
+                   NOM_CMP='TEMP',
+                   VALE_CALC=139.448567942,
+                   VALE_REFE=139.458066818,
+                   REFERENCE='AUTRE_ASTER',
+                   PRECISION=0.006,
+                   ),
+
+                _F(RESULTAT=reduR,
+                   INST= 7.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N7',
+                   NOM_CMP='TEMP',
+                   VALE_REFE=567.040457129,
+                   VALE_CALC=567.026071864,
+                   REFERENCE='AUTRE_ASTER',
+                   PRECISION=0.00003,
+                   ),
+
+                _F(RESULTAT=reduR,
+                   INST= 10.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N7',
+                   NOM_CMP='TEMP',
+                   VALE_REFE=999.12502482,
+                   VALE_CALC=999.103604755,
+                   REFERENCE='AUTRE_ASTER',
+                   PRECISION=0.00003,
                    ),
                 ),
           );

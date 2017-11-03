@@ -39,9 +39,6 @@ from cataelem.Options.options import OP
 #----------------
 
 
-CCOMPOR  = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
-    components=('RELCOM','NBVARI','DEFORM','INCELA','C_PLAN',))
-
 
 NDEPLAC  = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',
     components=('PRES','PHI',))
@@ -88,7 +85,7 @@ class MEFLQU4(Element):
         ),
 
         OP.FULL_MECA(te=253,
-            para_in=((OP.FULL_MECA.PCOMPOR, CCOMPOR), (SP.PDEPLMR, DDL_MECA),
+            para_in=((OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), ),
             para_out=((SP.PCODRET, LC.ECODRET), (SP.PMATUUR, MMATUUR),
@@ -124,7 +121,7 @@ class MEFLQU4(Element):
         ),
 
         OP.RAPH_MECA(te=253,
-            para_in=((OP.RAPH_MECA.PCOMPOR, CCOMPOR), (SP.PDEPLMR, DDL_MECA),
+            para_in=((OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), ),
             para_out=((SP.PCODRET, LC.ECODRET), (SP.PVECTUR, MVECTUR),
@@ -144,7 +141,7 @@ class MEFLQU4(Element):
         ),
 
         OP.RIGI_MECA_TANG(te=253,
-            para_in=((OP.RIGI_MECA_TANG.PCOMPOR, CCOMPOR), (SP.PDEPLMR, DDL_MECA),
+            para_in=((OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), ),
             para_out=((SP.PMATUUR, MMATUUR), ),

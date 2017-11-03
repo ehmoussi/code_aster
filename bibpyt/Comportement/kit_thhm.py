@@ -17,10 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'KIT_THHM',
+    lc_type        = ('KIT_THM',),
     doc            =   """KIT associé au comportement des milieux poreux (modélisations thermo-hydro-mécanique).
    Pour plus de détails sur les modélisations thermo-hydro-mécaniques et les modèles de comportement,
    on pourra consulter les documents [R7.01.10] et [R7.01.11], ainsi que la notice d'utilisation [U2.04.05].
@@ -38,17 +40,19 @@ loi = LoiComportement(
    un composant (en pratique de l'eau), mais que ce composant peut être sous forme liquide ou vapeur.
    Il n'y a alors qu'une équation de conservation de ce composant, donc un seul degré de liberté pression,
    mais il y a un flux liquide et un flux vapeur.
-   """      ,
+   """            ,
     num_lc         = 0,
     nb_vari        = 0,
     nom_vari       = None,
     mc_mater       = None,
     modelisation   = ('D_PLAN_THHM','D_PLAN_THHMS','D_PLAN_THHMD','AXIS_THHM','AXIS_THHMS',
         'AXIS_THHMD','3D_THHM','3D_THHMS','3D_THHMD','D_PLAN_THH2MD',
-        'AXIS_THH2MD','3D_THH2MD D_PLAN_THH2MS','AXIS_THH2MS','3D_THH2MS',),
+        'AXIS_THH2MD','3D_THH2MD','D_PLAN_THH2MS','AXIS_THH2MS','3D_THH2MS',
+        ),
     deformation    = ('PETIT',),
     algo_inte      = ('SANS_OBJET',),
     type_matr_tang = None,
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

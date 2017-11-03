@@ -36,10 +36,11 @@ def configure(self):
     # parallel must be set before calling intel.configure() to use MPI wrappers
     opts.parallel = True
     aster5.configure(self)
-    self.env['ADDMEM'] = 400
+    self.env['ADDMEM'] = 800
 
-    self.env.append_value('OPT_ENV', [
-        'module load intel_mpi/5.1.1.109'])
+    self.env.append_value('OPT_ENV_FOOTER', [
+        '. /etc/profile.d/lmod.sh',
+        'module load impi/2016.0.047'])
 
     self.env.prepend_value('LIBPATH', [
         YAMMROOT + '/prerequisites/Parmetis_aster-403_aster/lib',
@@ -63,3 +64,4 @@ def configure(self):
     self.env['CATALO_CMD'] = 'I_MPI_FABRICS=shm'
     # produce an executable file with symbols for INTEL16 with mpiifort wrapper
     self.env.append_value('LINKFLAGS', ('-nostrip'))
+    self.env.prepend_value('LINKFLAGS', ('-L/opt/intel/2016.0.047/impi/5.1.1.109/lib64'))

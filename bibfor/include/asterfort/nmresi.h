@@ -15,8 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 interface
     subroutine nmresi(noma  , mate   , numedd  , sdnume  , fonact,&
@@ -28,7 +27,7 @@ interface
         use Rom_Datastructure_type
         character(len=8) :: noma
         character(len=24) :: numedd
-        type(NL_DS_Contact), intent(in) :: ds_contact
+        type(NL_DS_Contact), intent(inout) :: ds_contact
         type(NL_DS_Conv), intent(inout) :: ds_conv
         character(len=24) :: mate
         character(len=19) :: sdnume

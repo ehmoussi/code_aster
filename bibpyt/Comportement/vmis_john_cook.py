@@ -17,11 +17,13 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'VMIS_JOHN_COOK',
-    doc            =   """Loi de plasticité de Von Mises à écrouissage de Johnson-Cook [R5.03.02]"""      ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """Loi de plasticité de Von Mises à écrouissage de Johnson-Cook [R5.03.02]"""            ,
     num_lc         = 54,
     nb_vari        = 5,
     nom_vari       = ('EPSPEQ','INDIPLAS','DEPSPEQ','DINSTM','DDISSM',
@@ -33,4 +35,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

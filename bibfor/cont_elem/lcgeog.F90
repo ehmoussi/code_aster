@@ -19,7 +19,7 @@
 subroutine lcgeog(elem_dime     , nb_lagr       , indi_lagc ,&
                   nb_node_slav  , nb_node_mast  , &
                   algo_reso_geom, elem_mast_coor, elem_slav_coor,&
-                  norm_smooth)
+                  norm_smooth, l_previous)
 !
 implicit none
 !
@@ -33,6 +33,7 @@ implicit none
     integer, intent(in) :: nb_node_slav
     integer, intent(in) :: nb_node_mast
     integer, intent(in) :: algo_reso_geom
+    aster_logical, intent(in) :: l_previous
     real(kind=8), intent(inout) :: elem_slav_coor(elem_dime, nb_node_slav)
     real(kind=8), intent(inout) :: elem_mast_coor(elem_dime, nb_node_mast)
     integer, intent(out) :: norm_smooth
@@ -59,7 +60,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: jpcf, jv_disp, jv_geom, jv_disp_incr
+    integer :: jpcf, jv_disp, jv_geom, jv_disp_incr, jv_ddisp
     real(kind=8):: coef_upda_geom
 !
 ! --------------------------------------------------------------------------------------------------
@@ -83,9 +84,18 @@ implicit none
 !
 ! - Get updated coordinates
 !
-    call lcreac(nb_lagr       , indi_lagc      , elem_dime   , coef_upda_geom,&
-                nb_node_slav  , nb_node_mast   ,&
-                jv_geom       , jv_disp        , jv_disp_incr,&
-                elem_slav_coor, elem_mast_coor)
+    if(l_previous) then 
+        call jevech('PDDEPLA', 'L', jv_ddisp)
+        call lcreac(nb_lagr       , indi_lagc      , elem_dime   , coef_upda_geom,&
+                    nb_node_slav  , nb_node_mast   ,&
+                    jv_geom       , jv_disp        , jv_disp_incr,&
+                    elem_slav_coor, elem_mast_coor , jv_ddisp)
+                    
+    else 
+        call lcreac(nb_lagr       , indi_lagc      , elem_dime   , coef_upda_geom,&
+                    nb_node_slav  , nb_node_mast   ,&
+                    jv_geom       , jv_disp        , jv_disp_incr,&
+                    elem_slav_coor, elem_mast_coor)
+    end if
 !
 end subroutine  

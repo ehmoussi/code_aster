@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine rrc_comp_dual(ds_para)
 !
 use Rom_Datastructure_type
@@ -29,17 +30,16 @@ implicit none
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/rsexch.h"
-#include "asterfort/jelira.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/select_dof_3.h"
 #include "blas/dgemm.h"
 #include "blas/dgesv.h"
 #include "asterfort/rsnoch.h"
 #include "asterfort/copisd.h"
+#include "asterfort/romBaseCreateMatrix.h"
+#include "asterfort/romResultSetZero.h"
+#include "asterfort/romEvalGappyPOD.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaRRC), intent(in) :: ds_para
+type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -54,21 +54,13 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_mode, nb_equa, nb_equa_rom, nb_cmp, nb_store
+    integer :: nb_mode, nb_equa, nb_equa_ridi, nb_cmp, nb_store
     integer :: iret, i_mode, i_equa, i_store, nume_store
-    integer(kind=4) :: info
     character(len=8) :: result_rom, result_dom
-    character(len=24) :: sigm_rom, mode
-    integer, pointer :: v_noeu_rid(:) => null()
-    real(kind=8), pointer :: v_mode(:) => null()
     real(kind=8), pointer :: v_dual(:) => null()
     real(kind=8), pointer :: v_dual_rom(:) => null()
-    real(kind=8), pointer :: v_sigm_rom(:) => null()
     real(kind=8), pointer :: v_sigm_dom(:) => null()
     real(kind=8), pointer :: v_cohr(:) => null()
-    real(kind=8), pointer :: v_matr(:) => null()
-    real(kind=8), pointer :: v_vect(:) => null()
-    integer(kind=4), pointer :: IPIV(:) => null()
     character(len=24) :: field_save
     real(kind=8), pointer :: v_field_save(:) => null()
 !
@@ -87,65 +79,33 @@ implicit none
     nb_cmp       = ds_para%ds_empi_dual%nb_cmp
     result_rom   = ds_para%result_rom
     result_dom   = ds_para%result_dom
+    nb_equa_ridi = ds_para%nb_equa_ridi
 !
-! - List of equations in RID
+! - Create [PHI] matrix for dual base
 !
-    AS_ALLOCATE(vi = v_noeu_rid, size = nb_equa)
-    call rsexch(' ', result_rom, ds_para%ds_empi_dual%field_name,&
-                1, sigm_rom, iret)
-    call jelira(sigm_rom(1:19)//'.VALE', 'LONMAX', nb_equa_rom)
-    call select_dof_3(sigm_rom, nb_cmp, v_noeu_rid)
+    call romBaseCreateMatrix(ds_para%ds_empi_dual, v_dual)
 !
-! - Get dual base
+! - Reduce [PHI] matrix on RID
 !
-    AS_ALLOCATE(vr = v_dual, size = nb_equa*nb_mode)
-    AS_ALLOCATE(vr = v_dual_rom, size = nb_equa_rom*nb_mode)
+    AS_ALLOCATE(vr = v_dual_rom, size = nb_equa_ridi*nb_mode)
     do i_mode = 1, nb_mode
-        call rsexch(' ', ds_para%ds_empi_dual%base, ds_para%ds_empi_dual%field_name,&
-                    i_mode, mode, iret)
-        ASSERT(iret .eq. 0)
-        call jeveuo(mode(1:19)//'.VALE', 'L', vr = v_mode)
         do i_equa = 1, nb_equa
-            v_dual(i_equa+nb_equa*(i_mode-1)) = v_mode(i_equa)
-            if (v_noeu_rid(i_equa) .ne. 0) then
-                v_dual_rom(v_noeu_rid(i_equa)+nb_equa_rom*(i_mode-1)) = v_mode(i_equa)
+            if (ds_para%v_equa_ridd(i_equa) .ne. 0) then
+                v_dual_rom(ds_para%v_equa_ridd(i_equa)+nb_equa_ridi*(i_mode-1)) = &
+                  v_dual(i_equa+nb_equa*(i_mode-1))
             endif 
         end do
     end do
 !
 ! - Gappy POD 
 !
-    AS_ALLOCATE(vr  = v_cohr, size = nb_mode*(nb_store-1))
-    AS_ALLOCATE(vr  = v_matr, size = nb_mode*nb_mode)
-    AS_ALLOCATE(vr  = v_vect, size = nb_mode)
-    AS_ALLOCATE(vi4 = IPIV  , size = nb_mode)
-    do i_store = 1, nb_store-1
-        nume_store = i_store
-        call rsexch(' ', result_rom, ds_para%ds_empi_dual%field_name,&
-                    nume_store, sigm_rom, iret)
-        ASSERT(iret .eq. 0)
-        call jeveuo(sigm_rom(1:19)//'.VALE', 'L', vr = v_sigm_rom)
-        call dgemm('T', 'N', nb_mode, 1, nb_equa_rom, 1.d0, v_dual_rom,&
-                    nb_equa_rom, v_sigm_rom, nb_equa_rom, 0.d0, v_vect, nb_mode)
-        call dgemm('T', 'N', nb_mode, nb_mode, nb_equa_rom, 1.d0, v_dual_rom,&
-                    nb_equa_rom, v_dual_rom, nb_equa_rom, 0.d0, v_matr, nb_mode)
-        call dgesv(nb_mode, 1, v_matr, nb_mode, IPIV, v_vect, nb_mode, info)
-        do i_mode = 1, nb_mode
-            v_cohr(i_mode+nb_mode*(i_store-1)) = v_vect(i_mode)
-        end do
-    end do
+    call romEvalGappyPOD(ds_para, result_rom, nb_store, v_dual_rom,&
+                         v_cohr , 1)
 !
 ! - Initial state
 !
     nume_store = 0
-    call rsexch(' ', result_dom, ds_para%ds_empi_dual%field_name,&
-                nume_store, field_save, iret)
-    ASSERT(iret .eq. 100)
-    call copisd('CHAMP_GD', 'G', ds_para%ds_empi_dual%field_refe, field_save)
-    call jeveuo(field_save(1:19)//'.VALE', 'E', vr = v_field_save)
-    v_field_save(1:nb_equa) = 0.d0
-    call rsnoch(result_dom, ds_para%ds_empi_dual%field_name,&
-                nume_store)
+    call romResultSetZero(result_dom, nume_store, ds_para%ds_empi_dual)
 !
 ! - Compute new field
 !
@@ -168,13 +128,9 @@ implicit none
 !
 ! - Clean
 !
-    AS_DEALLOCATE(vi  = v_noeu_rid)
     AS_DEALLOCATE(vr  = v_dual)
     AS_DEALLOCATE(vr  = v_dual_rom)
     AS_DEALLOCATE(vr  = v_cohr)
-    AS_DEALLOCATE(vr  = v_matr)
-    AS_DEALLOCATE(vr  = v_vect)
-    AS_DEALLOCATE(vi4 = IPIV)
     AS_DEALLOCATE(vr  = v_sigm_dom)
 !
 end subroutine
