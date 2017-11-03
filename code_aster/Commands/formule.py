@@ -58,7 +58,8 @@ class FormulaDefinition(ExecuteCommand):
                 in place.
         """
         # add in _ctxt all keywords but VALE, VALE_C, NOM_PARA.
-        for key in keywords.iterkeys():
+        keys = keywords.keys()
+        for key in keys:
             if key not in ('VALE', 'VALE_C', 'NOM_PARA'):
                 self._ctxt[key] = keywords.pop(key)
 
