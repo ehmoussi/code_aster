@@ -25,8 +25,11 @@
  */
 #include <string>
 #include <vector>
+#include <cstdio>
 #include <boost/shared_ptr.hpp>
 
+#include "astercxx.h"
+#include "definition.h"
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 
@@ -46,10 +49,14 @@ class FormulaInstance: public DataStructure
         JeveuxVectorChar24 _property;
         // Vecteur Jeveux '.VALE'
         JeveuxVectorChar8 _variables;
+        // Pointers to PyObject
+        JeveuxVectorLong _pointers;
         // Expression
         std::string _expression;
+        // Compiled expression
+        PyObject* _code;
         // Evaluation context
-        std::string _context;
+        PyObject* _context;
 
         void propertyAllocate()
         {
@@ -85,6 +92,8 @@ class FormulaInstance: public DataStructure
 
         FormulaInstance( const std::string jeveuxName );
 
+        ~FormulaInstance();
+
         /**
         * @brief Definition of the name of the variables
         * @param name name of the parameter
@@ -105,35 +114,47 @@ class FormulaInstance: public DataStructure
         * @type  expression string
         */
         void setExpression( const std::string expression )
-        {
-            _expression = expression;
-        }
+            throw(std::runtime_error);
 
         /**
         * @brief Return the expression of the formula.
-        * @return context as pickled string.
+        * @return expression of the formula.
         */
         std::string getExpression() const
         {
             return _expression;
         }
 
+        double evaluate( const std::vector< double > &values ) const
+            throw(std::runtime_error);
+
         /**
         * @brief Assign the context for evaluation
         * @param context context containing objects needed for evaluation.
         * @type  context string of pickled objects
         */
-        void setContext( const std::string context )
+        void setContext( PyObject* context ) throw(std::runtime_error)
         {
+            if ( ! PyDict_Check(context) ) {
+                throw std::runtime_error("Formula: 'dict' object is expected.");
+            }
+            Py_XDECREF(_context);
             _context = context;
+            (*_pointers)[1] = (long)_context;
+            Py_INCREF(_context);
         }
 
         /**
         * @brief Return the context needed to evaluate the formula.
         * @return context as pickled string.
         */
-        std::string getContext() const
+        PyObject* getContext()
         {
+            if (! _context ) {
+                _context = PyDict_New();
+                (*_pointers)[1] = (long)_context;
+            }
+            Py_INCREF(_context);
             return _context;
         }
 
@@ -164,10 +185,31 @@ class FormulaInstance: public DataStructure
 };
 
 /**
-* @typedef FormulaPtr
-* @brief  Pointer to a FormulaInstance
-* @author Mathieu Courtois
-*/
+ * @typedef FormulaPtr
+ * @brief  Pointer to a FormulaInstance
+ * @author Mathieu Courtois
+ */
 typedef boost::shared_ptr< FormulaInstance > FormulaPtr;
+
+/**
+ * @brief Evaluate Python code of a Formula
+ */
+double evaluate_formula( const PyObject* code, PyObject* globals,
+                         const std::vector< std::string > &variables,
+                         const std::vector< double > &values,
+                         int* retcode );
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void DEFPPSPPPP(EVAL_FORMULA, eval_formula,
+    ASTERINTEGER* pcode, ASTERINTEGER* pglobals,
+    char* array_vars, STRING_SIZE lenvars, ASTERDOUBLE* array_values,
+    ASTERINTEGER* nbvar, _OUT ASTERINTEGER* iret, _OUT ASTERDOUBLE* result );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* FORMULA_H_ */

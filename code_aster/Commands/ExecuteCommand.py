@@ -56,28 +56,31 @@ Base classes
 ============
 """
 
-import sys
-
 import aster
 from libaster import ResultNaming
+from Utilitai.as_timer import ASTER_TIMER
 
 from ..Cata import Commands
 from ..Cata.SyntaxChecker import CheckerError, checkCommandSyntax
 from ..Cata.SyntaxUtils import mixedcopy, remove_none
-from ..Objects import DataStructure
 from ..Supervis import CommandSyntax, logger
-from ..Utilities import (command_header, command_result, command_text,
-                         deprecated, import_object)
+from ..Utilities import Singleton, deprecated, import_object
+from ..Utilities.outputs import (command_header, command_result,
+                                 command_separator, command_text, command_time)
 
 
-class CommandCounter(object):
-    """Simple object to store the number of called Commands.
+class GlobalCommandsData(object):
+
+    """Store some objects shared by all Commands.
 
     Attributes:
         _counter (int): Number of Commands called.
     """
+    __metaclass__ = Singleton
+    _singleton_id = 'ExecuteCommand.GlobalCommandsData'
     # class attribute
     _counter = 0
+    _timer = None
 
     @classmethod
     def incr_counter(cls):
@@ -89,8 +92,21 @@ class CommandCounter(object):
         cls._counter += 1
         return cls._counter
 
+    @classmethod
+    def timer(cls):
+
+        """Return the timer object.
+
+        Returns:
+            *Timer*: Object that measures user/system/elapsed time.
+        """
+        if not cls._timer:
+            cls._timer = ASTER_TIMER(format="aster")
+        return cls._timer
+
 
 class ExecuteCommand(object):
+
     """This class implements an executor of commands.
 
     Commands executors are defined by subclassing this class and overloading
@@ -138,12 +154,14 @@ class ExecuteCommand(object):
         """
         cmd = cls(cls.command_name, cls.command_op)
         cmd._result = None
+        timer = GlobalCommandsData.timer()
         check_jeveux()
         if not cmd._op:
             logger.debug("ignore command {0}".format(cmd.name))
             return
 
-        cmd._counter = CommandCounter.incr_counter()
+        cmd._counter = GlobalCommandsData.incr_counter()
+        timer.Start(" . check syntax", num=1.1e6)
         cmd.adapt_syntax(keywords)
         try:
             cmd.check_syntax(keywords)
@@ -151,7 +169,11 @@ class ExecuteCommand(object):
             # in case of syntax error, show the syntax and raise the exception
             cmd.print_syntax(keywords)
             raise exc.original(exc.msg)
+        finally:
+            timer.Stop(" . check syntax")
         cmd.create_result(keywords)
+
+        timer.Start(str(cmd._counter), name=cmd.command_name)
         cmd.print_syntax(keywords)
         cmd.exec_(keywords)
         cmd.post_exec(keywords)
@@ -187,14 +209,19 @@ class ExecuteCommand(object):
         """
         printed_args = mixedcopy(keywords)
         remove_none(printed_args)
+        logger.info("\n" + command_separator())
         logger.info(command_header(self._counter))
-        logger.info(command_text(self.name, printed_args, self._res_syntax()))
+        logger.info(command_text(self.name, printed_args, self._res_syntax(),
+                                 limit=500))
 
     def print_result(self):
         """Print an echo of the result of the command."""
         if self._result:
             logger.info(command_result(self._counter, self.name,
                                        self._result.getName()))
+        timer = GlobalCommandsData.timer()
+        logger.info(command_time(*timer.StopAndGet(str(self._counter))))
+        logger.info(command_separator())
 
     def _res_syntax(self):
         """Return the name of the result for the echo of the Command.
@@ -229,8 +256,6 @@ class ExecuteCommand(object):
         """
         sd_type = self._cata.get_type_sd_prod(**keywords)
         if not sd_type:
-            type_name = ""
-            result_name = ""
             self._result = None
         else:
             raise NotImplementedError("Method 'create_result' must be "
@@ -291,6 +316,7 @@ def check_jeveux():
 
 
 class ExecuteCommandOps(ExecuteCommand):
+
     """This implements an executor of commands that use an
      `opsXXX` subroutine."""
 
@@ -304,6 +330,7 @@ class ExecuteCommandOps(ExecuteCommand):
 
 
 class ExecuteMacro(ExecuteCommand):
+
     """This implements an executor of *legacy* macro-commands.
 
     The OPS function of *legacy* macro-commands returns a return code and

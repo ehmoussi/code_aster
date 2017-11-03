@@ -29,6 +29,34 @@ class FormulaDefinition(ExecuteCommand):
     command_name = "FORMULE"
     command_op = 5
 
+    def __init__(self, command_name=None, command_op=None):
+        """Initialization"""
+        super(FormulaDefinition, self).__init__(command_name, command_op)
+        self._ctxt = self.initial_context()
+
+    @staticmethod
+    def initial_context():
+        """Returns `initial` Python context (independent of Stage and Command)
+
+        Returns:
+            dict: pairs of name per corresponding Python instance.
+        """
+        import math
+        context = {}
+        for func in dir(math):
+            if not func.startswith('_'):
+                context[func] = getattr(math, func)
+        return context
+
+    def adapt_syntax(self, keywords):
+        """Adapt syntax to store the evaluation context.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords, changed
+                in place.
+        """
+        # add in _ctxt all keywords but NOM_PARA, VALE, VALE_C, INFO...
+
     def create_result(self, keywords):
         """Initialize the result.
 
@@ -51,6 +79,9 @@ class FormulaDefinition(ExecuteCommand):
         self._result.setVariables(force_list(keywords['NOM_PARA']))
         expr = keywords.get('VALE') or keywords.get('VALE_C')
         self._result.setExpression("".join(expr.splitlines()))
+        self._result.setContext(self._ctxt)
+        # the context is hold by the Formula
+        self._ctxt = None
 
 
 FORMULE = FormulaDefinition.run
