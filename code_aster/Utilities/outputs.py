@@ -216,6 +216,14 @@ class CommandRepresentation(object):
         return convert("'<{0}>'".format(text.strip()))
 
 
+def command_separator():
+    """Return a separator line.
+
+    Returns:
+        str: A separator line.
+    """
+    return "{0:-^100}".format("")
+
 def command_header(counter):
     """Return the command header.
 
@@ -225,7 +233,7 @@ def command_header(counter):
     Returns:
         str: String representation.
     """
-    return "\n{0:-^100}\nCommand #{1:0>4}:".format("", counter)
+    return "Command #{0:0>4}:".format(counter)
 
 def command_result(counter, command_name, result_name):
     """Return the command footer.
@@ -238,8 +246,8 @@ def command_result(counter, command_name, result_name):
     Returns:
         str: String representation.
     """
-    return "\nResult of command #{1:0>4} ({2}): {3}\n{0:-^100}".format(
-        "", counter, command_name,
+    return "Result of command #{0:0>4} ({1}): {2}".format(
+        counter, command_name,
         CommandRepresentation.decorate_name(result_name))
 
 def command_text(command_name, keywords, result="", limit=0):
@@ -265,3 +273,18 @@ def command_text(command_name, keywords, result="", limit=0):
     text = export.get_text()
     text = export.clean(text)
     return text
+
+def command_time(cpu, system, elapsed):
+    """Return a representation of elapsed times in a command.
+
+    Arguments:
+        cpu (float): User time.
+        system (float): System time.
+        elapsed (float): Elapsed time.
+
+    Returns:
+        str: String representation.
+    """
+    txt = ("Statistics: user+syst:{0:12.2f}s (syst:{1:12.2f}s, "
+           "elaps:{2:12.2f}s)").format(cpu, system, elapsed)
+    return txt
