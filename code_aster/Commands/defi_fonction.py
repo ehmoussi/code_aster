@@ -21,7 +21,9 @@
 
 import numpy as np
 
-from ..Objects import Function
+from Utilitai.Utmess import UTMESS
+
+from ..Objects import Function, FunctionComplex
 from ..Utilities import unsupported
 from .ExecuteCommand import ExecuteCommand
 
@@ -37,7 +39,6 @@ class FunctionDefinition(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords, changed
                 in place.
         """
-        unsupported(keywords, "", "VALE_C")
         unsupported(keywords, "", "NOEUD_PARA")
 
     def create_result(self, keywords):
@@ -46,7 +47,10 @@ class FunctionDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = Function.create()
+        if keywords.get("VALE_C"):
+            self._result = FunctionComplex.create()
+        else:
+            self._result = Function.create()
 
     def exec_(self, keywords):
         """Execute the command.
@@ -54,34 +58,79 @@ class FunctionDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
+        funct = self._result
+        cmplx = False
+
         if keywords.get("ABSCISSE") is not None:
-            absc = np.array(keywords["ABSCISSE"])
-            ordo = np.array(keywords["ORDONNEE"])
+            abscissas = np.array(keywords["ABSCISSE"])
+            ordinates = np.array(keywords["ORDONNEE"])
+
         elif keywords.get("VALE") is not None:
             values = np.array(keywords["VALE"])
+            if values.size % 2 != 0:
+                UTMESS("F", "UTILITAI2_67")
             values = values.reshape((values.size / 2, 2))
-            absc = values[:, 0]
-            ordo = values[:, 1]
+            abscissas = values[:, 0]
+            ordinates = values[:, 1]
+
+        elif keywords.get("VALE_C") is not None:
+            cmplx = True
+            values = np.array(keywords["VALE_C"])
+            if values.size % 3 != 0:
+                UTMESS("F", "UTILITAI2_66")
+            values = values.reshape((values.size / 3, 3))
+            abscissas = values[:, 0]
+            ordinates = values[:, 1:].ravel()
+
         elif keywords.get("VALE_PARA") is not None:
-            absc = keywords["VALE_PARA"].getValues()
-            ordo = keywords["VALE_FONC"].getValues()
+            abscissas = keywords["VALE_PARA"].getValues()
+            ordinates = keywords["VALE_FONC"].getValues()
+
         else:
             raise SyntaxError("No keyword defining the values!")
 
+        if abscissas.shape[0] * (1 + int(cmplx)) != ordinates.shape[0]:
+            UTMESS("F", "UTILITAI2_77")
+        diff = abscissas[1:] - abscissas[:-1]
+        if keywords.get("VERIF") == "CROISSANT":
+            if diff.min() <= 0:
+                UTMESS("F", "FONCT0_44", valk=funct.getName())
+        else:
+            if not cmplx:
+                stack = np.vstack([abscissas, ordinates])
+                stack = stack[:, stack[0, :].argsort()]
+                abscissas, ordinates = stack
+            else:
+                ordinates.shape = (abscissas.size, 2)
+                stack = np.vstack([abscissas, ordinates.transpose()])
+                stack = stack[:, stack[0, :].argsort()]
+                abscissas = stack[0]
+                ordinates = stack[1:].transpose().ravel()
+
+        funct.setValues(abscissas, ordinates)
+
+        funct.setParameterName(keywords["NOM_PARA"])
         nom_resu = keywords.get("NOM_RESU", "TOUTRESU")
+        funct.setResultName(nom_resu)
+
         interpol = keywords.get("INTERPOL", ["LIN", "LIN"])
         if type(interpol) in (list, tuple):
             interpol = " ".join(interpol)
         if len(interpol.split()) == 1:
             interpol = interpol + " " + interpol
+        if interpol[:3] == "LOG":
+            if min(abscissas) <= 0.:
+                UTMESS("F", "UTILITAI2_71")
+        if interpol[4:] == "LOG":
+            if cmplx:
+                UTMESS("F", "UTILITAI5_92")
+            if min(funct.Ordo()) <= 0.:
+                UTMESS("F", "UTILITAI2_71")
+        funct.setInterpolation(interpol)
+
         prol_gauche = keywords.get("PROL_GAUCHE", "E")
         prol_droite = keywords.get("PROL_DROITE", "E")
-
-        self._result.setParameterName(keywords["NOM_PARA"])
-        self._result.setResultName(nom_resu)
-        self._result.setInterpolation(interpol)
-        self._result.setExtrapolation(prol_gauche[0] + prol_droite[0])
-        self._result.setValues(absc, ordo)
+        funct.setExtrapolation(prol_gauche[0] + prol_droite[0])
 
 
 DEFI_FONCTION = FunctionDefinition.run
