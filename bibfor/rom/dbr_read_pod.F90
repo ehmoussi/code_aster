@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine dbr_read_pod(operation, ds_para_pod)
 !
 use Rom_Datastructure_type
@@ -31,10 +32,8 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=16), intent(in) :: operation
-    type(ROM_DS_ParaDBR_POD), intent(inout) :: ds_para_pod
+character(len=16), intent(in) :: operation
+type(ROM_DS_ParaDBR_POD), intent(inout) :: ds_para_pod
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,6 +55,7 @@ implicit none
     character(len=8)  :: surf_num = ' '
     character(len=8)  :: base_type = ' '
     character(len=8)  :: result_in = ' '
+    integer :: nb_mode_maxi = 0
     type(ROM_DS_Snap) :: ds_snap
 !
 ! --------------------------------------------------------------------------------------------------
@@ -70,6 +70,13 @@ implicit none
     call getvid(' ', 'RESULTAT', scal = result_in)
     call getvtx(' ', 'NOM_CHAM', scal = field_name, nbret = nocc)
     ASSERT(nocc .eq. 1)
+!
+! - Maximum number of modes
+!
+    call getvis(' ', 'NB_MODE' , scal = nb_mode_maxi, nbret = nocc)
+    if (nocc .eq. 0) then
+        nb_mode_maxi = 0
+    endif
 !
 ! - Get parameters - Base type to numeration
 !
@@ -103,5 +110,6 @@ implicit none
     ds_para_pod%tole_svd     = tole_svd
     ds_para_pod%tole_incr    = tole_incr
     ds_para_pod%ds_snap      = ds_snap
+    ds_para_pod%nb_mode_maxi = nb_mode_maxi
 !
 end subroutine

@@ -36,6 +36,7 @@
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Utilities/GenericParameter.h"
+#include "Supervis/ResultNaming.h"
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
@@ -196,7 +197,7 @@ class BaseLinearSolverInstance: public DataStructure
          */
         BaseLinearSolverInstance( const LinearSolverEnum currentBaseLinearSolver = MultFront,
                                   const Renumbering currentRenumber = Metis ):
-                    DataStructure( getNewResultObjectName(), "SOLVEUR" ),
+                    DataStructure( ResultNaming::getNewResultName(), "SOLVEUR" ),
                     _linearSolver( currentBaseLinearSolver ),
                     _renumber( currentRenumber ),
                     _isEmpty( true ),
@@ -305,8 +306,8 @@ class BaseLinearSolverInstance: public DataStructure
             _listOfParameters.push_back( &_resolutionType );
             _listOfParameters.push_back( &_acceleration );
         };
-        /** @brief Returns a ListSyntaxMapContainer object "listsyntax", 
-            ready to be inserted  in a CommandSyntax object with the key SOLVEUR 
+        /** @brief Returns a ListSyntaxMapContainer object "listsyntax",
+            ready to be inserted  in a CommandSyntax object with the key SOLVEUR
         */
         ListSyntaxMapContainer buildListSyntax();
 

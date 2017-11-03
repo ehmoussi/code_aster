@@ -15,39 +15,33 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 interface
-    subroutine lc1058(fami, kpg, ksp, ndim, typmod,&
-                      imate, compor, crit, instam, instap,&
-                      neps, epsm, deps, nsig, sigm,&
-                      nvi, vim, option, angmas,&
-                      icomp, stress, statev, dsidep,&
-                      codret)
-        integer :: nvi
-        character(len=*) :: fami
-        integer :: kpg
-        integer :: ksp
-        integer :: ndim
-        character(len=8) :: typmod(*)
-        integer :: imate
-        character(len=16) :: compor(*)
-        real(kind=8) :: crit(*)
-        real(kind=8) :: instam
-        real(kind=8) :: instap
-        integer :: neps
-        real(kind=8) :: epsm(6)
-        real(kind=8) :: deps(6)
-        integer :: nsig
-        real(kind=8) :: sigm(6)
-        real(kind=8) :: vim(*)
-        character(len=16) :: option
-        real(kind=8) :: angmas(*)
-        integer :: icomp
-        real(kind=8) :: stress(6)
-        real(kind=8) :: statev(nvi)
-        real(kind=8) :: dsidep(6, 6)
-        integer :: codret
+    subroutine lc1058(fami , kpg   , ksp   , ndim  , typmod,&
+                      imate, compor, carcri, instam, instap,&
+                      neps , epsm  , deps  , nsig  , sigm  ,&
+                      nvi  , vim   , option, angmas, icomp ,&
+                      sigp , vip   , dsidep, codret)
+        character(len=*), intent(in) :: fami
+        integer, intent(in) :: kpg, ksp, ndim
+        character(len=8), intent(in) :: typmod(*)
+        integer, intent(in) :: imate
+        character(len=16), intent(in) :: compor(*)
+        real(kind=8), intent(in) :: carcri(*)
+        real(kind=8), intent(in) :: instam, instap
+        integer, intent(in) :: neps
+        real(kind=8), intent(in) :: epsm(6), deps(6)
+        integer, intent(in) :: nsig
+        real(kind=8), intent(in) :: sigm(6)
+        integer, intent(in) :: nvi
+        real(kind=8), intent(in) :: vim(*)
+        character(len=16), intent(in) :: option
+        real(kind=8), intent(in) :: angmas(*)
+        integer, intent(in) :: icomp     
+        real(kind=8), intent(out) :: sigp(6)
+        real(kind=8), intent(out) :: vip(nvi)
+        real(kind=8), intent(out) :: dsidep(6, 6)
+        integer, intent(out) :: codret
     end subroutine lc1058
 end interface

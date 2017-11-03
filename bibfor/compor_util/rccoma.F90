@@ -43,7 +43,6 @@ subroutine rccoma(jmat, mater_typez, iarret, mater_keyword, icodre)
 !      mater_type/mater_keyword
 !      'ELAS' -> / 'ELAS'
 !                / 'ELAS_ISTR'
-!                / 'ELAS_GONF'
 !                / ...
 !      'ECRO' -> / 'ECRO_PUIS'
 !                / 'ECRO_LINE'

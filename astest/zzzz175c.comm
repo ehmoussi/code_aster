@@ -101,7 +101,7 @@ MACR_ADAP_MAIL(MAILLAGE_N=M_0,
                NOMBRE='OUI',
                PROP_CALCUL='OUI',
                UNITE_HIST_OUT=41,);
-
+DETRUIRE(CONCEPT=_F(NOM=M_0))
 # 2.2. Du maillage de 1 vers 2 : uniforme sur les faces des pieds
 
 MACR_ADAP_MAIL(MAILLAGE_N=M_1,
@@ -166,6 +166,7 @@ MACR_ADAP_MAIL(MAILLAGE_N=M_1,
                NOMBRE='OUI',
                PROP_CALCUL='OUI',
                UNITE_HIST_OUT=42,);
+DETRUIRE(CONCEPT=_F(NOM=M_1))
 
 #IMPR_RESU(FORMAT='MED',RESU=_F(MAILLAGE=M_2,),);
 

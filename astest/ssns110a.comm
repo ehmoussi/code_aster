@@ -160,6 +160,27 @@ RESU = STAT_NON_LINE(MODELE        = MODE,
                      SOLVEUR       = _F(METHODE = 'MUMPS',
                                         PCENT_PIVOT = 20));
 
+# ajout de CREA_CHAMP/ASSE/SIEF_ELGA pour vérifier que la commande 
+# ne pose plus de problème en présence d'éléments d'interface
+
+SIG1=CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R',
+                OPERATION='EXTR',
+                RESULTAT=RESU,
+                NOM_CHAM='SIEF_ELGA',
+                INST=10.,
+                INFO=1,);
+
+INISIG2=CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R',
+                  OPTION='SIEF_ELGA',
+                  OPERATION='ASSE',
+                  MODELE=MODE,
+                  PROL_ZERO='OUI',
+                  ASSE=_F(GROUP_MA=('BETON',),
+                          CHAM_GD=SIG1,),
+                  INFO=1,);
+#
+
+
 # -----------------------------------------------------
 # POST-TRAITEMENT ET VALIDATION DES RESULTATS
 # -----------------------------------------------------

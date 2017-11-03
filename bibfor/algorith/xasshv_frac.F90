@@ -15,21 +15,22 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504,W1306
+! person_in_charge: daniele.colombo at ifpen.fr
+!
 subroutine xasshv_frac(nddls, nddlm, nnop, nnops,&
                        lact, elrefp, elrefc, elc, contac,&
                        dimuel, nface, npgf, nbspg, nptf,&
                        jcohes, jptint, igeom, jbasec,&
                        nlact, cface, rinstp,&
-                       rinstm, crit, fpg, ncompv, vect,&
+                       rinstm, carcri, fpg, ncompv, vect,&
                        compor, jmate, ndim, idepm, idepd, pla,&
                        algocr, rela, jheavn, ncompn, ifiss, nfiss,&
                        nfh, jheafa, ncomph, pos)
-    implicit none 
+implicit none 
     
 #include "jeveux.h"
 #include "asterfort/elrefe_info.h"
-#include "asterfort/thmlec.h"
 #include "asterfort/matini.h"
 #include "asterfort/vecini.h"
 #include "asterfort/xfract.h"
@@ -48,8 +49,13 @@ subroutine xasshv_frac(nddls, nddlm, nnop, nnops,&
 #include "asterfort/xmofhm.h"
 #include "asterfort/xsautl.h"
 #include "asterfort/xvinhm.h"
+#include "asterfort/thmGetParaBiot.h"
+#include "asterfort/thmGetBehaviourVari.h"
+#include "asterfort/thmGetBehaviour.h"
+#include "asterfort/thmGetParaCoupling.h"
+#include "asterfort/thmGetBehaviourChck.h"
+#include "asterfort/Behaviour_type.h"
 !
-! person_in_charge: daniele.colombo at ifpen.fr
 ! ======================================================================
 !
 ! ROUTINE MODELE HM-XFEM (CAS DE LA FRACTURE)
@@ -65,37 +71,46 @@ subroutine xasshv_frac(nddls, nddlm, nnop, nnops,&
     integer :: jptint, igeom, jbasec, nlact(2), nfiss, ibid, ino
     integer :: ifiss, nfh, jheafa, ncomph
     integer :: idepm, idepd
-    real(kind=8) :: dt, ta, ta1, cohes(5), lamb(3), g(3)
-    real(kind=8) :: rinstp, rinstm, crit(*), jac, r
+    real(kind=8) :: dt, parm_theta, ta1, cohes(5), lamb(3), g(3)
+    real(kind=8) :: rinstp, rinstm, carcri(*), jac, r
     real(kind=8) :: ffp(27), ffpc(27), ffc(16), dfdic(nnops,3)
     real(kind=8) :: dfbid(27,3), am(3), ad(3)
     real(kind=8) :: nd(3), tau1(3), tau2(3), raug, sigma(6), rho110
-    real(kind=8) :: vect(560), dffc(16,3), viscl, unsurk
+    real(kind=8) :: vect(560), dffc(16,3)
     real(kind=8) :: saut(3), gradpf(3), q1, q2, dpf
     real(kind=8) :: q1m, q2m, gradpfm(3), sautm(3)
     real(kind=8) :: w11m, rho11m, alpha(5), w11
-    real(kind=8) :: pf, psup, pinf, ffp2(27), t, vihydr(64)
+    real(kind=8) :: pf, psup, pinf, ffp2(27), t, vihydr(64), temp
     real(kind=8) :: rho11, wsaut(3), mu(3), wsautm(3)
     real(kind=8) :: dsidep(6,6), delta(6), rela, p(3,3)
-    real(kind=8) :: rbid1, rbid2, rbid3, rbid4, rbid5, rbid6, rbid7
-    real(kind=8) :: rbid9, rbid10, rbid11(3), rbid12(3,3)
-    real(kind=8) :: rbid13, rbid14, rbid15, rbid16, rbid17, rbid18
-    real(kind=8) :: rbid19, rbid20, rbid21, rbid22, rbid23, rbid24
-    real(kind=8) :: rbid25, rbid26, rbid27, rbid28(3,3), rbid29(3,3)
-    real(kind=8) :: rbid30, rbid31, rbid32, rbid33, rbid34, rbid35(3,3)
-    real(kind=8) :: rbid37, rbid38(3), rbid8(6)
     character(len=8) :: elrefp, elrefc, elc, fpg, job, champ
-    character(len=16):: compor(*), thmc, hydr, meca, zkbid
+    character(len=16):: compor(*)
 
 !   DETERMINATION DES CONSTANTES TEMPORELLES (INSTANT+THETA SCHEMA)
     dt = rinstp-rinstm
-    ta = crit(4)
-    ta1 = 1.d0-ta 
-    
-!   RECUPERATION DES DIFFERENTES RELATIONS DE COMPORTEMENT
-    thmc = compor( 8)
-    hydr = compor(10)
-    meca = compor(11)     
+    parm_theta = carcri(PARM_THETA_THM)
+    ta1 = 1.d0-parm_theta
+!
+! - Get parameters for behaviour
+!
+    call thmGetBehaviour(compor)
+!
+! - Get parameters for internal variables
+!
+    call thmGetBehaviourVari()
+!
+! - Some checks between behaviour and model
+!
+    call thmGetBehaviourChck()
+!
+! - Get parameters for coupling
+!
+    temp = 0.d0
+    call thmGetParaCoupling(zi(jmate), temp)
+!
+! - Get Biot parameters (for porosity evolution)
+!
+    call thmGetParaBiot(zi(jmate)) 
 !
     call matini(nnops, 3, 0.d0, dfdic)
     call matini(16, 3, 0.d0, dffc)
@@ -104,7 +119,6 @@ subroutine xasshv_frac(nddls, nddlm, nnop, nnops,&
     call vecini(16, 0.d0, ffc)
     call vecini(27, 0.d0, ffp2)
     call vecini(64, 0.d0, vihydr)
-    call vecini(3, 0.d0, rbid38)
 !    
 !   BOUCLE SUR LES FACETTES DE CONTACT 
     do ifa = 1 ,nface
@@ -148,7 +162,7 @@ subroutine xasshv_frac(nddls, nddlm, nnop, nnops,&
           call xmodfc(lact, nlact, nnops, dfdic, dffc, ndim)          
 !
           if (algocr.eq.3) then
-             if ((rela.eq.3.d0).or.(rela.eq.4.d0)) then 
+             if ((nint(rela) .eq. 3).or.(nint(rela) .eq. 4)) then 
 !
                   nvec=2
                   job='VECTEUR'
@@ -157,7 +171,7 @@ subroutine xasshv_frac(nddls, nddlm, nnop, nnops,&
                               ffp, ffc, dffc, saut, gradpf,&
                               q1, q2, dpf, q1m, q2m, sautm,&
                               gradpfm, pf, ffp2, psup, pinf,&
-                              job, zi(jmate), meca, hydr, thmc,&
+                              job, zi(jmate),&
                               t, dimuel, lamb, jheavn, ncompn,&
                               ifiss, nfiss, nfh, ifa, jheafa,&
                               ncomph, contac)
@@ -174,9 +188,9 @@ subroutine xasshv_frac(nddls, nddlm, nnop, nnops,&
 !                CIRCULANT DANS LA FRACTURE)
 !
                  job='VECTEUR'                    
-                 call xvinhm(zi(jmate), thmc, meca, hydr, ndim,&
+                 call xvinhm(zi(jmate), ndim,&
                             cohes, dpf, saut, sautm, nd, lamb,&
-                            w11m, rho11m, alpha, job, t, pf,&
+                            w11m, rho11m, alpha, job, pf,&
                             rho11, w11, ipgf, rela, dsidep,&
                             delta, r, am)
 !
@@ -184,13 +198,13 @@ subroutine xasshv_frac(nddls, nddlm, nnop, nnops,&
 !
                  call xvechm(nnops, nddls, nddlm, ndim, pla,&
                              saut, sautm, nd, ffc, w11, w11m, jac,&
-                             q1, dt, ta, q1m, ta1, q2, q2m, dffc,&
+                             q1, dt, parm_theta, q1m, ta1, q2, q2m, dffc,&
                              rho11, gradpf, rho11m, gradpfm, ffp2,&
-                             zi(jmate), thmc, meca, hydr, t, vect,&
+                             vect,&
                              ffp, nnop, delta, lamb, am, r, p,&
                              psup, pinf, pf, ncompn, jheavn, ifiss,&
                              nfiss, nfh, ifa, jheafa, ncomph)
-             else if (rela.eq.5.d0) then
+             else if (nint(rela) .eq. 5) then
                 nvec=2
                 job='VECTEUR'
                 call xfract(nvec, nnop, nnops, nddls, nddlm,&
@@ -198,7 +212,7 @@ subroutine xasshv_frac(nddls, nddlm, nnop, nnops,&
                             ffp, ffc, dffc, saut, gradpf,&
                             q1, q2, dpf, q1m, q2m, sautm,&
                             gradpfm, pf, ffp2, psup, pinf,&
-                            job, zi(jmate), meca, hydr, thmc,&
+                            job, zi(jmate),&
                             t, dimuel, lamb, jheavn, ncompn,&
                             ifiss, nfiss, nfh, ifa, jheafa,&
                             ncomph, contac)
@@ -237,7 +251,7 @@ subroutine xasshv_frac(nddls, nddlm, nnop, nnops,&
                    call xhmsa6(ndim, ipgf, zi(jmate), lamb, wsaut, nd,&
                                tau1, tau2, cohes, job, rela,&
                                alpha, dsidep, sigma, p, am, raug,&
-                               thmc, meca, hydr, wsautm, dpf, rho110)
+                               wsautm, dpf, rho110)
                    call xhvco4(ino, ndim, sigma, lamb, pla,&
                                jac, ffc, p, raug, vect)
                    vihydr(2*nnops*(pos(ino)-1)+2*(ino-1)+1) = alpha(4)
@@ -258,28 +272,16 @@ subroutine xasshv_frac(nddls, nddlm, nnop, nnops,&
                 end do
 !
 ! --- CALCUL DES MATRICES HYDROS
-!
-                zkbid = 'VIDE'                                          
-!                                                                   
-                call thmlec(zi(jmate), thmc, meca, hydr, zkbid,&            
-                            t, rbid1, rbid2, rbid3, rbid4,&             
-                            rbid5, rbid6, rbid7, rbid8, rbid9,&         
-                            rbid10, rbid11, rbid12, rbid13, rbid14,&    
-                            rbid15, rbid16, rbid17, rbid18, rbid19,&    
-                            rbid20, rbid21, rbid22, unsurk, rbid23,&    
-                            rbid24, rbid25, viscl, rbid26, rbid27,&     
-                            rbid28, rbid29, rbid30, rbid31, rbid32,&    
-                            rbid33, rbid34, rbid35, rbid37,&            
-                            rbid38, ibid, ndim)                         
+!              
 !
                 call xvecha(ndim, pla, nnops, saut,&
                             sautm, nd, ffc, w11, w11m, jac,&
-                            q1, q1m, q2, q2m, dt, ta, ta1,&
-                            dffc, rho11, viscl, gradpf, rho11m,&
+                            q1, q1m, q2, q2m, dt, parm_theta, ta1,&
+                            dffc, rho11, gradpf, rho11m,&
                             gradpfm, vect)
 !
                 call xvechb(nnops, nddls, nddlm, ndim,&
-                            ffp2, q1, dt, ta, jac, q1m, ta1,&
+                            ffp2, q1, dt, parm_theta, jac, q1m, ta1,&
                             q2, q2m, vect, ncompn, jheavn, ifiss,&
                             nfiss, nfh, ifa, jheafa, ncomph)
 !

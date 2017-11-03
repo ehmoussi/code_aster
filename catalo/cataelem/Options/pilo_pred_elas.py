@@ -73,6 +73,7 @@ PILO_PRED_ELAS = Option(
            PCFACE,
         SP.PCOHES,
            PCOMPOR,
+        SP.PCARCRI,
            PCONTMR,
         SP.PDDEPLR,
         SP.PDEPL0R,

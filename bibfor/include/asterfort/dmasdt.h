@@ -15,21 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    function dmasdt(rho12, rho21, sat, phi, pas,&
-                    h11, h12, t, alp21)
-        real(kind=8) :: rho12
-        real(kind=8) :: rho21
-        real(kind=8) :: sat
-        real(kind=8) :: phi
-        real(kind=8) :: pas
-        real(kind=8) :: h11
-        real(kind=8) :: h12
-        real(kind=8) :: t
-        real(kind=8) :: alp21
+    function dmasdt(rho12, rho21, alp21, h11, h12, &
+                    satur, phi  ,&
+                    pas  , temp )
+        real(kind=8), intent(in) :: rho12, rho21
+        real(kind=8), intent(in) :: satur, h11, h12
+        real(kind=8), intent(in) :: phi, alp21
+        real(kind=8), intent(in) :: temp, pas
         real(kind=8) :: dmasdt
     end function dmasdt
 end interface

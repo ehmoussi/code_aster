@@ -17,6 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine te0165(option, nomte)
+!
     implicit none
 #include "jeveux.h"
 #include "asterfort/fpouli.h"
@@ -26,6 +27,7 @@ subroutine te0165(option, nomte)
 #include "asterfort/utmess.h"
 #include "asterfort/verift.h"
 #include "blas/ddot.h"
+#include "asterfort/Behaviour_type.h"
 !
     character(len=16) :: option, nomte
 ! ......................................................................
@@ -59,11 +61,11 @@ subroutine te0165(option, nomte)
 !
 !
     call jevech('PCOMPOR', 'L', icompo)
-    if (zk16(icompo)(1:4) .ne. 'ELAS') then
-        call utmess('F', 'CALCULEL4_92', sk=zk16(icompo))
+    if (zk16(icompo-1+NAME)(1:4) .ne. 'ELAS') then
+        call utmess('F', 'CALCULEL4_92', sk=zk16(icompo-1+NAME))
     endif
-    if (zk16(icompo+1) .ne. 'GROT_GDEP') then
-        call utmess('F', 'CALCULEL4_93', sk=zk16(icompo+1))
+    if (zk16(icompo-1+DEFO) .ne. 'GROT_GDEP') then
+        call utmess('F', 'CALCULEL4_93', sk=zk16(icompo-1+DEFO))
     endif
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PMATERC', 'L', imate)

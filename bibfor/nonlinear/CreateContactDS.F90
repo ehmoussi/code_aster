@@ -126,6 +126,13 @@ implicit none
 !
     ds_contact%geom_maxi    = -1.d0
 !
+! - Penalization loop control
+!
+    ds_contact%estimated_coefficient    = 100.d0
+    ds_contact%calculated_penetration   = 1.d0
+    ds_contact%update_init_coefficient  = 0.d0
+    ds_contact%continue_pene            = 0.d0
+!
 ! - Get-off indicator
 !
     ds_contact%l_getoff     = .false._1

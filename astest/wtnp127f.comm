@@ -29,8 +29,6 @@ MODELISA = 'D_PLAN_HM_SI'
 #=============================================================
 #                     donnees
 #=============================================================
-# Le coefficient d'emmag n'est pas pris en compte ici car il y a de la meca
-EMMAG=1.E-10
 UN_SUR_K= 0
 
 
@@ -125,7 +123,6 @@ MATERIAU=DEFI_MATERIAU(
 
    THM_DIFFU=_F(
             R_GAZ      = 8.315,
-            EMMAG      = EMMAG,
             RHO        = 1.,
             BIOT_COEF  = 1.,
             PESA_X     = 0.0,
@@ -286,7 +283,7 @@ FLUXND = POST_ELEM(RESULTAT   = cal1,
               TYPE_MAILLE='1D'))
 
 TEST_TABLE(VALE_REFE=-2.0E-10,
-           VALE_CALC=-1.9986611593378E-10,
+           VALE_CALC=-2.0E-10,
            PRECISION=1.E-3,
            REFERENCE='ANALYTIQUE',
            NOM_PARA='INTE_FH11',
@@ -301,7 +298,7 @@ FLUXNM = POST_ELEM(RESULTAT   = cal1,
               TYPE_MAILLE='1D'))
 
 TEST_TABLE(VALE_REFE=-2.0E-10,
-           VALE_CALC=-1.9999946726071E-10,
+           VALE_CALC=-2.0E-10,
            PRECISION=1.E-3,
            REFERENCE='ANALYTIQUE',
            NOM_PARA='INTE_FH11',
@@ -316,7 +313,7 @@ FLUXNG = POST_ELEM(RESULTAT   = cal1,
               TYPE_MAILLE='1D'))
 
 TEST_TABLE(VALE_REFE=2.0E-10,
-           VALE_CALC=2.0013451401847E-10,
+           VALE_CALC=2.0E-10,
            PRECISION=1.E-3,
            REFERENCE='ANALYTIQUE',
            NOM_PARA='INTE_FH11',

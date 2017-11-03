@@ -134,8 +134,7 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
                 long taille = length;
                 const int intType = AllowedJeveuxType< ValueType >::numTypeJeveux;
                 std::string carac = strJeveuxBase + " V " + JeveuxTypesNames[intType];
-                CALL_WKVECTC( _name.c_str(), carac.c_str(),
-                              &taille, (void*)(&_valuePtr));
+                CALLO_WKVECTC( _name, carac, &taille, (void*)(&_valuePtr));
                 if ( _valuePtr == NULL ) return false;
             }
             else return false;
@@ -149,7 +148,7 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
         void deallocate()
         {
             if ( _name != "" )
-                CALL_JEDETR(  _name.c_str() );
+                CALLO_JEDETR( _name );
         };
 
         /**
@@ -166,11 +165,10 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
         std::string getInformationParameter() const
         {
             const std::string param( "DOCU" );
-            char* charval = MakeBlankFStr(4);
+            std::string charval(4, ' ');
             long valTmp;
-            CALL_JELIRA( _name.c_str(), param.c_str(), &valTmp, charval );
+            CALLO_JELIRA( _name, param, &valTmp, charval );
             std::string toReturn( charval );
-            FreeStr( charval );
             return toReturn;
         };
 
@@ -199,7 +197,7 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
             if( ! exists() ) return false;
 
             const std::string param( "DOCU" );
-            CALL_JEECRA_STRING_WRAP( _name.c_str(), param.c_str(), value.c_str() );
+            CALLO_JEECRA_STRING_WRAP( _name, param, value );
         };
 
         /**
@@ -211,9 +209,8 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
 
             long vectSize;
             JeveuxChar8 param( "LONMAX" );
-            // JeveuxChar32 dummy( " " );
-            char dummy[32] = " ";
-            CALL_JELIRA( _name.c_str(), param.c_str(), &vectSize, dummy );
+            JeveuxChar32 dummy( " " );
+            CALLO_JELIRA( _name, param, &vectSize, dummy );
             return vectSize;
         };
 
@@ -226,8 +223,8 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
             _valuePtr = NULL;
             if( ! exists() ) return false;
 
-            const char* tmp = "L";
-            CALL_JEVEUOC( _name.c_str(), tmp, (void*)(&_valuePtr) );
+            const std::string read( "L" );
+            CALLO_JEVEUOC( _name, read, (void*)(&_valuePtr) );
             if ( _valuePtr == NULL )
                 return false;
             return true;

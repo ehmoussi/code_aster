@@ -15,21 +15,21 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine ddi_kit_read(keywordfact, iocc, rela_flua, rela_plas, rela_cpla,&
-                        rela_coup)
+! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine ddi_kit_read(keywordfact, iocc     , l_etat_init,&
+                        rela_flua  , rela_plas, rela_cpla  , rela_coup)
 !
-#include "jeveux.h"
+implicit none
+!
+#include "asterf_types.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
     character(len=16), intent(in) :: keywordfact
     integer, intent(in) :: iocc
+    aster_logical, intent(in) :: l_etat_init
     character(len=16), intent(out) :: rela_flua
     character(len=16), intent(out) :: rela_plas
     character(len=16), intent(out) :: rela_cpla
@@ -43,12 +43,13 @@ subroutine ddi_kit_read(keywordfact, iocc, rela_flua, rela_plas, rela_cpla,&
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  keywordfact  : factor keyword to read (COMPORTEMENT)
-! In  iocc         : factor keyword index in COMPORTEMENT
-! Out rela_flua    : comportment relation for fluage
-! Out rela_plas    : comportment relation for plasticity
-! Out rela_cpla    : comportment relation for plane stress (GLRC)
-! Out rela_coup    : comportment relation for coupling (GLRC)
+! In  keywordfact      : factor keyword to read (COMPORTEMENT)
+! In  iocc             : factor keyword index in COMPORTEMENT
+! In  l_etat_init      : .true. if initial state is defined
+! Out rela_flua        : comportment relation for fluage
+! Out rela_plas        : comportment relation for plasticity
+! Out rela_cpla        : comportment relation for plane stress (GLRC)
+! Out rela_coup        : comportment relation for coupling (GLRC)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -89,7 +90,7 @@ subroutine ddi_kit_read(keywordfact, iocc, rela_flua, rela_plas, rela_cpla,&
         do ii = 1, dmflua
             if (rela_kit(ikit) .eq. poflua(ii)) then
                 rela_flua = rela_kit(ikit)
-                goto 10
+                cycle
             endif
         enddo
 !
@@ -98,10 +99,9 @@ subroutine ddi_kit_read(keywordfact, iocc, rela_flua, rela_plas, rela_cpla,&
         do ii = 1, dmplas
             if (rela_kit(ikit) .eq. poplas(ii)) then
                 rela_plas = rela_kit(ikit)
-                goto 10
+                cycle
             endif
         enddo
- 10     continue
     enddo
 !
 ! - Compatibility
@@ -123,7 +123,7 @@ subroutine ddi_kit_read(keywordfact, iocc, rela_flua, rela_plas, rela_cpla,&
         endif
     else if (rela_flua.eq.'FLUA_PORO_BETON') then
         if (rela_plas .ne. 'ENDO_PORO_BETON') then
-            call utmess('F', 'COMPOR3_3', sk=rela_plas)
+            call utmess('F', 'COMPOR3_7', sk=rela_plas)
         endif
     else
         call utmess('F', 'COMPOR3_6', sk=rela_flua)
@@ -138,9 +138,11 @@ subroutine ddi_kit_read(keywordfact, iocc, rela_flua, rela_plas, rela_cpla,&
 !
 ! - Alarm
 !
-    if (rela_flua .eq. 'BETON_UMLV') then
-        if (rela_plas .eq. 'ENDO_ISOT_BETON' .or. rela_plas .eq. 'MAZARS') then
-            call utmess('A', 'COMPOR3_83')
+    if (l_etat_init) then
+        if (rela_flua .eq. 'BETON_UMLV') then
+            if (rela_plas .eq. 'ENDO_ISOT_BETON' .or. rela_plas .eq. 'MAZARS') then
+                call utmess('A', 'COMPOR3_83')
+            endif
         endif
     endif
 !

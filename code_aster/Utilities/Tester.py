@@ -1,23 +1,29 @@
-# coding: utf-8
-
-# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
 #
-# This file is part of Code_Aster.
-#
-# Code_Aster is free software: you can redistribute it and/or modify
+# code_aster is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 2 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Code_Aster is distributed in the hope that it will be useful,
+# code_aster is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
 
-from functools import wraps
+"""
+:py:mod:`Tester` --- Checking code_aster execution of testcases
+***************************************************************
+
+"""
+
+from functools import partial, wraps
 import os.path as osp
 import re
 import unittest
@@ -27,8 +33,11 @@ from unittest.util import safe_repr
 
 # keep possible usage out of code_aster
 try:
-    from Deprecated import writeInMess, writeInResu
+    import aster
+    writeInMess = partial(aster.affiche, 'MESSAGE')
+    writeInResu = partial(aster.affiche, 'RESULTAT')
 except ImportError:
+    raise
     def writeInMess(text):
         print(text)
 
@@ -36,10 +45,9 @@ except ImportError:
         pass
 
 
-# TODO add more test methods
 # TODO use the logger object
 # TODO tell the RunManager to increase the exit status in case of failure
-#      (throug the logger) ?
+#      (through the logger) ?
 
 
 def addSuccess(method):

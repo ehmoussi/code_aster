@@ -15,11 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
 !
 interface
     subroutine get_elas_para(fami     , j_mater, poum, ipg, ispg, &
-                             elas_id,&
+                             elas_id  , elas_keyword,&
                              time     , temp,&
                              e   , nu  , g,&
                              e1  , e2  , e3,&
@@ -30,7 +30,8 @@ interface
         character(len=*), intent(in) :: poum
         integer, intent(in) :: ipg
         integer, intent(in) :: ispg
-        integer, intent(out) :: elas_id
+        integer, intent(in) :: elas_id
+        character(len=16), intent(in) :: elas_keyword
         real(kind=8), optional, intent(in) :: time
         real(kind=8), optional, intent(in) :: temp
         real(kind=8), optional, intent(out) :: e

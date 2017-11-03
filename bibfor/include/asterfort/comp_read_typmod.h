@@ -15,20 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine comp_read_typmod(mesh       , v_model_elem,&
-                                keywordfact, i_comp      , rela_comp ,&
-                                model_dim  , model_mfront, type_cpla_)
+    subroutine comp_read_typmod(mesh     , v_model_elem, elem_type    ,&
+                                keywf    , i_comp      , rela_comp    , type_cpla_in,&
+                                model_dim, model_mfront, type_cpla_out)
         character(len=8), intent(in) :: mesh
         integer, intent(in), pointer :: v_model_elem(:)
-        character(len=16), intent(in) :: keywordfact
+        integer, intent(in) :: elem_type 
+        character(len=16), intent(in) :: keywf
         integer, intent(in) :: i_comp
         character(len=16), intent(in) :: rela_comp
+        character(len=16), intent(in) :: type_cpla_in
         character(len=16), intent(out) :: model_mfront
         integer, intent(out) :: model_dim
-        character(len=16), optional, intent(out) :: type_cpla_
+        character(len=16), intent(out) :: type_cpla_out
     end subroutine comp_read_typmod
 end interface

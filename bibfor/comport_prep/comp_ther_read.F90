@@ -48,7 +48,7 @@ implicit none
 !
     character(len=16) :: keywordfact
     character(len=16) :: comp_code, rela_comp
-    integer :: iocc, nocc
+    integer :: iocc, nocc, idummy
     integer :: nume_comp, nb_vari
     integer :: j_lvali, j_lvalk
 !
@@ -71,7 +71,7 @@ implicit none
         call getvtx(keywordfact, 'RELATION', iocc = iocc, &
                     scal = rela_comp)
         call lccree(1, rela_comp, comp_code)
-        call lcinfo(comp_code, nume_comp, nb_vari)
+        call lcinfo(comp_code, nume_comp, nb_vari, idummy)
         call lcdiscard(comp_code)
 !
 ! ----- Save options in list

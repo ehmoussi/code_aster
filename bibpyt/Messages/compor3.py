@@ -22,35 +22,22 @@
 cata_msg = {
 
 
-    2 : _(u"""
- Dans le KIT_DDI, on ne peut pas coupler GRANGER avec %(k1)s.
-"""),
+    2 : _(u"""Dans le KIT_DDI, on ne peut pas coupler GRANGER avec %(k1)s."""),
 
-    3 : _(u"""
- Dans le KIT_DDI, on ne peut pas coupler BETON_UMLV avec %(k1)s.
-"""),
+    3 : _(u"""Dans le KIT_DDI, on ne peut pas coupler BETON_UMLV avec %(k1)s."""),
 
-    4 : _(u"""
- Dans le KIT_DDI, on ne peut pas coupler GLRC avec %(k1)s.
-"""),
+    4 : _(u"""Dans le KIT_DDI, on ne peut pas coupler GLRC avec %(k1)s."""),
 
-    6 : _(u"""
- La loi de fluage %(k1)s n'est pas autorisée dans le couplage fluage/fissuration (KIT_DDI).
-"""),
+    6 : _(u"""Dans le KIT_DDI, la loi de fluage %(k1)s n'est pas autorisée."""),
 
-    7 : _(u"""Dans le KIT_DDI, FLUA_PORO_BETON ne peux être couplé qu’avec le modèle d’endommagement ENDO_PORO_BETON. 
-"""),
+    7 : _(u"""Dans le KIT_DDI, FLUA_PORO_BETON ne peux être couplé qu’avec le modèle d’endommagement ENDO_PORO_BETON."""),
 
-    8 : _(u"""Vous avez demandé à utiliser un comportement avec des phases métallurgiques de type %(k1)s, mais le matériau est défini avec des variables de commande de type %(k2)s.
-"""),
+    8 : _(u"""Vous avez demandé à utiliser un comportement avec des phases métallurgiques de type %(k1)s, mais le matériau est défini avec des variables de commande de type %(k2)s."""),
 
-    49: _(u"""
- Pour un modèle de type GRAD_VARI, le KIT_DDI ne peut pas coupler le comportement <%(k1)s> avec <%(k2)s>.
-"""),
 
     83 : _(u"""
  Vous utilisez le modèle BETON_UMLV avec un modèle d'endommagement.
- Attention, la mise à jour des contraintes sera faite suivant les déformations totales et non pas suivant un schéma incrémental.
+ La mise à jour des contraintes sera faite suivant les déformations totales et non pas suivant un schéma incrémental.
 """),
 
     91 : _(u"""

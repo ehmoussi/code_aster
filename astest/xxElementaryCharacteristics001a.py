@@ -3,7 +3,11 @@
 import code_aster
 from code_aster.Commands import *
 
-MA=code_aster.Mesh.create()
+code_aster.init()
+
+test = code_aster.TestCase()
+
+MA = code_aster.Mesh.create()
 MA.readAsterMeshFile("xxElementaryCharacteristics001a.mail")
 
 BETON=DEFI_MATERIAU(ELAS=_F(E = 1.E9,NU = 0.3,),)
@@ -24,3 +28,9 @@ LACAR=AFFE_CARA_ELEM(MODELE=LEMOD,
                                ANGL_REP = (0.0, 0.0,),),),)
 
 LACAR.debugPrint()
+
+# add low level tests
+vale = LACAR.sdj.CARCOQUE.VALE.get()
+test.assertEqual(vale[0], 0.2)
+
+test.printSummary()

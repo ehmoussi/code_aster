@@ -2,6 +2,8 @@
 # coding: utf-8
 
 import code_aster
+code_aster.init()
+
 test = code_aster.TestCase()
 
 # Creation du maillage
@@ -18,7 +20,7 @@ monModel.build()
 
 # Definition d'un chargement de type FORCE_NODALE à partir d'une ForceDouble
 force = code_aster.ForceDouble.create()
-force.setValue( code_aster.Loads.Fz, 100.0 )
+force.setValue( code_aster.PhysicalQuantityComponent.Fz, 100.0 )
 
 print " >>>> Construction d'un chargement NodalForceDouble"
 CharMeca1 = code_aster.NodalForceDouble.create(monModel)
@@ -26,9 +28,6 @@ CharMeca1 = code_aster.NodalForceDouble.create(monModel)
 with test.assertRaises( RuntimeError ):
     CharMeca1.setValue( force, "UP" )
 
-# On ne peut pas imposer une force nodale sur tout le maillage
-with test.assertRaises( RuntimeError ):
-    CharMeca1.setValue( force )
 
 nameOfGroup = "A"
 CharMeca1.setValue( force, nameOfGroup )
@@ -40,9 +39,9 @@ test.assertTrue( ret )
 # Definition d'un chargement de type FORCE_NODALE à partir d'un StructuralForceDouble
 
 force_pour_structure = code_aster.StructuralForceDouble.create()
-force_pour_structure.setValue( code_aster.Loads.Mx, 10.0 )
-force_pour_structure.setValue( code_aster.Loads.My, 20.0 )
-force_pour_structure.setValue( code_aster.Loads.Mz, 30.0 )
+force_pour_structure.setValue( code_aster.PhysicalQuantityComponent.Mx, 10.0 )
+force_pour_structure.setValue( code_aster.PhysicalQuantityComponent.My, 20.0 )
+force_pour_structure.setValue( code_aster.PhysicalQuantityComponent.Mz, 30.0 )
 
 print " >>>> Construction d'un chargement NodalStructuralForceDouble"
 print "      Ce chargement est correct pour le catalogue mais conduit à une erreur Fortran "
@@ -61,8 +60,7 @@ with test.assertRaises( RuntimeError ):
 # Definition d'un chargement de type FORCE_FACE à partir d'un ForceDouble
 print " >>>> Construction d'un chargement ForceOnFaceDouble"
 
-CharMeca3 = code_aster.ForceOnFaceDouble.create()
-CharMeca3.setSupportModel(monModel)
+CharMeca3 = code_aster.ForceOnFaceDouble.create(monModel)
 nameOfGroup = "UP"
 CharMeca3.setValue( force, nameOfGroup )
 print "     sur le groupe : ", nameOfGroup
@@ -123,7 +121,7 @@ test.assertTrue( ret )
 print " >>>> Construction d'un chargement LocalForceOnBeamDouble"
 
 fpoutre = code_aster.LocalBeamForceDouble.create()
-fpoutre.setValue(code_aster.Loads.N, 5.0)
+fpoutre.setValue(code_aster.PhysicalQuantityComponent.N, 5.0)
 
 CharMeca9 = code_aster.LocalForceOnBeamDouble.create(monModel)
 nameOfGroup = "BOTTOM"
@@ -146,9 +144,9 @@ test.assertTrue( ret )
 print " >>>> Construction d'un chargement LocalForceOnShellDouble"
 
 fshell = code_aster.LocalShellForceDouble.create()
-fshell.setValue(code_aster.Loads.F1, 11.0)
-fshell.setValue(code_aster.Loads.F2, 12.0)
-fshell.setValue(code_aster.Loads.F3, 13.0)
+fshell.setValue(code_aster.PhysicalQuantityComponent.F1, 11.0)
+fshell.setValue(code_aster.PhysicalQuantityComponent.F2, 12.0)
+fshell.setValue(code_aster.PhysicalQuantityComponent.F3, 13.0)
 
 CharMeca11 = code_aster.LocalForceOnShellDouble.create(monModel)
 nameOfGroup = "UP"
@@ -161,7 +159,7 @@ test.assertTrue( ret )
 print " >>>> Construction d'un chargement PressureOnShellDouble"
 
 pression = code_aster.PressureDouble.create()
-pression.setValue(code_aster.Loads.Pres, 14.0)
+pression.setValue(code_aster.PhysicalQuantityComponent.Pres, 14.0)
 
 CharMeca12 = code_aster.PressureOnShellDouble.create(monModel)
 nameOfGroup = "UP"

@@ -15,19 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine iseven(sddisc, event_name_s_, lacti)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine iseven(sddisc, event_type_in, lacti)
 !
 implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/utdidt.h"
+#include "asterfort/getFailEvent.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=19), intent(in) :: sddisc
-    character(len=*), intent(in) :: event_name_s_
-    aster_logical :: lacti
+character(len=19), intent(in) :: sddisc
+integer, intent(in) :: event_type_in
+aster_logical :: lacti
 !
 ! ----------------------------------------------------------------------
 !
@@ -45,20 +45,17 @@ implicit none
 !
 ! ----------------------------------------------------------------------
 !
-    integer :: i_event, nb_event
-    character(len=16) :: event_name, event_name_s
+    integer :: i_fail, nb_fail
+    integer :: event_type
 !
 ! ----------------------------------------------------------------------
 !
     lacti = .false.
-    event_name_s = event_name_s_
-    call utdidt('L', sddisc, 'LIST', 'NECHEC',&
-                vali_ = nb_event)
+    call utdidt('L', sddisc, 'LIST', 'NECHEC', vali_ = nb_fail)
 !
-    do i_event = 1, nb_event
-        call utdidt('L', sddisc, 'ECHE', 'NOM_EVEN', index_ = i_event,&
-                    valk_ = event_name)
-        if (event_name .eq. event_name_s) then
+    do i_fail = 1, nb_fail
+        call getFailEvent(sddisc, i_fail, event_type)
+        if (event_type_in .eq. event_type_in) then
             lacti = .true.
         endif
     end do

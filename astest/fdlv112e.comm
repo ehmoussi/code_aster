@@ -65,7 +65,7 @@ mail=MODI_MAILLAGE(reuse =mail,
                                        VECT_NORM=(0.,0.,1.,),
                                        NOEUD='N1043',),),);
 
-IMPR_RESU(FORMAT="RESULTAT",RESU=_F(MAILLAGE=mail,));
+#IMPR_RESU(FORMAT="RESULTAT",RESU=_F(MAILLAGE=mail,));
 
 modele=AFFE_MODELE(MAILLAGE=mail,
                    AFFE=(_F(GROUP_MA='STRVOU2',
@@ -308,7 +308,7 @@ TABSOL=DEFI_SOL_MISS(MATERIAU=(_F(E=3.0e11,
 
 tfin = 0.2
 df = 1.0 / tfin
-fmax = 50.0
+fmax = 10.0, #50.0
 pas1 = 1.0E-2
 omega = 31.416
 
@@ -446,13 +446,13 @@ acce_z3 = EXTR_TABLE(TABLE     = tabctr,
                              _F(NOM_PARA   = 'NOM_PARA',
                                   VALE_K   = 'INST'),),)
 
-TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.98413987550154,
+TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.98413993987259,
                          VALE_PARA=0.05,
                          FONCTION=acce_z1,),
-                      _F(VALE_CALC=0.96177965999206,
+                      _F(VALE_CALC=0.96178015146713,
                          VALE_PARA=0.05,
                          FONCTION=acce_z2,),
-                      _F(VALE_CALC=0.95135164903814,
+                      _F(VALE_CALC=0.95135209480272,
                          VALE_PARA=0.05,
                          FONCTION=acce_z3,),
                       ),

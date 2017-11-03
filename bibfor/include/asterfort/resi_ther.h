@@ -15,13 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine resi_ther(model    , mate     , time     , compor    , temp_prev,&
                          temp_iter, hydr_prev, hydr_curr, dry_prev  , dry_curr ,&
-                         varc_curr, vect_elem)
+                         varc_curr, resu_elem, vect_elem, base)
         character(len=24), intent(in) :: model
         character(len=24), intent(in) :: time
         character(len=24), intent(in) :: mate
@@ -33,6 +31,8 @@ interface
         character(len=24), intent(in) :: dry_curr
         character(len=24), intent(in) :: compor
         character(len=19), intent(in) :: varc_curr    
-        character(len=24), intent(inout) :: vect_elem
+        character(len=19), intent(in) :: resu_elem
+        character(len=24), intent(in) :: vect_elem
+        character(len=1), intent(in) :: base
     end subroutine resi_ther
 end interface

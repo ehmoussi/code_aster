@@ -226,6 +226,7 @@ DEBUG(SDVERI='NON');
 CALC_ENR=CALC_CORR_SSD(MODELE_GENE=MODEGE,
                      RESU_GENE=RESGEN,
                      SHIFT=1.,
+                     SOLVEUR=_F(ELIM_LAGR='NON'),
                      UNITE=6)
 
 DEBUG(SDVERI='OUI');

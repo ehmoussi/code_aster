@@ -15,12 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine te0409(option, nomte)
 ! aslint: disable=W1501
-! person_in_charge: sebastien.fayolle at edf.fr
 !
-    implicit none
+subroutine te0409(option, nomte)
+!
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -52,7 +51,7 @@ subroutine te0409(option, nomte)
 #include "asterfort/jevech.h"
 #include "asterfort/jquad4.h"
 #include "asterfort/maglrc.h"
-#include "asterfort/nmcoup.h"
+#include "asterfort/kit_glrc_dm_vmis.h"
 #include "asterfort/pmrvec.h"
 #include "asterfort/q4gbc.h"
 #include "asterfort/r8inir.h"
@@ -65,6 +64,7 @@ subroutine te0409(option, nomte)
 #include "asterfort/utpvgl.h"
 #include "asterfort/utpvlg.h"
 #include "asterfort/utmess.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! TOUTES LES VARIABLES EN DEHORS 
 ! DE LA BOUCLE SUR LES POINTS DE GAUSS PEUVENT ETRE
@@ -154,7 +154,7 @@ subroutine te0409(option, nomte)
 !
     aster_logical :: t3g, q4g
     aster_logical :: leul, lrgm
-    aster_logical :: lbid, resi, rigi
+    aster_logical :: resi, rigi
     aster_logical :: q4gg
     aster_logical :: coupmf  = .false.
 !
@@ -170,7 +170,6 @@ subroutine te0409(option, nomte)
 !
     real(kind=8) :: delas(6, 6), dsidep(6, 6)
     real(kind=8) :: lambda, deuxmu, deumuf, lamf, gt, gc, gf, seuil, alphaf
-    real(kind=8) :: r8bid, win(1), wout(1)
     real(kind=8) :: alpha, beta
     real(kind=8) :: excen
 
@@ -186,8 +185,7 @@ subroutine te0409(option, nomte)
     real(kind=8) :: carat3(21), jacob(5), caraq4(25)
     real(kind=8) :: matr(50), sigm(8), alfmc
 !
-    character(len=8) :: k8bid
-    character(len=16) :: comp3, mult_comp
+    character(len=16) :: comp3, mult_comp, rela_plas
     character(len=24) :: valk(2)
 !
     integer      ::  codret2(1)
@@ -253,10 +251,10 @@ subroutine te0409(option, nomte)
             call jevech('PCARCRI', 'L', icarcr)
             call jevech('PVARIMR', 'L', ivarim)
             call jevech('PCOMPOR', 'L', icompo)
-            compor = zk16(icompo)
-            comp3 = zk16(icompo+3)
-            leul = zk16(icompo+2).eq.'GROT_GDEP'
-            read (zk16(icompo-1+2),'(I16)') nbvari
+            compor = zk16(icompo-1+NAME)
+            comp3 = zk16(icompo-1+INCRELAS)
+            leul = zk16(icompo-1+DEFO).eq.'GROT_GDEP'
+            read (zk16(icompo-1+NVAR),'(I16)') nbvari
 !           -- on verifie que le nombre de varint tient dans ecr
             ASSERT(nbvari.le.24)
 !
@@ -267,8 +265,9 @@ subroutine te0409(option, nomte)
             call jevech('PDEPLMR', 'L', ideplm)
             call jevech('PDEPLPR', 'L', ideplp)
 !
-            if (zk16(icompo+2)(6:10) .eq. '_REAC' .or. zk16(icompo+2) .eq. 'GROT_GDEP') then
-                if (zk16(icompo+2)(6:10) .eq. '_REAC') call utmess('F', 'ELEMENTS2_72')
+            if (zk16(icompo-1+DEFO)(6:10) .eq. '_REAC' .or.&
+                zk16(icompo-1+DEFO) .eq. 'GROT_GDEP') then
+                if (zk16(icompo-1+DEFO)(6:10) .eq. '_REAC') call utmess('F', 'ELEMENTS2_72')
 !
                 do i = 1, nno
                     i1 = 3* (i-1)
@@ -652,12 +651,10 @@ subroutine te0409(option, nomte)
                 call coqgth(zi(imate), compor, 'RIGI', ipg, ep, epsm, deps)
 !               -- endommagement plus plasticite
                 call r8inir(3, r8vide(), angmas, 1)
-                call nmcoup('RIGI', ipg, 1, 3, k8bid,&
-                            zi(imate), zk16(icompo), mult_comp, lbid, zr(icarcr), r8bid,&
-                            r8bid, 6, epsm, deps, 6,&
-                            sigm, ecr, option, angmas, 1,&
-                            win, sig, ecrp, 36, dsidep,&
-                            1, wout, codret)
+                rela_plas = zk16(icompo+PLAS_NAME-1)
+                call kit_glrc_dm_vmis(zi(imate)  , rela_plas, epsm, deps, ecr,&
+                                      option, sigm     , sig , ecrp , dsidep,&
+                                      zr(icarcr)  , codret)
             else
                 valk(1) = compor
                 call utmess('F', 'ELEMENTS4_79', nk=1, valk=valk)

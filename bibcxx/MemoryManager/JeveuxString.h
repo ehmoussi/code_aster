@@ -37,12 +37,12 @@
  * @brief Cette classe template permet de definir une chaine fortran rapidement manipulable
  * @author Nicolas Sellenet
  */
-template< int length >
+template< int lengthT >
 class JeveuxString
 {
     private:
         /** @brief Pointeur vers la chaine de caractere */
-        char currentValue[ length ];
+        char currentValue[ lengthT ];
 
         /**
          * @brief Recopie securisee d'un char*
@@ -51,14 +51,14 @@ class JeveuxString
          */
         inline void safeCopyFromChar( const char* chaine, const int size )
         {
-            if ( size < length )
+            if ( size < lengthT )
             {
-                memset( &currentValue, ' ', sizeof( char )*length );
+                memset( &currentValue, ' ', sizeof( char )*lengthT );
                 memcpy( &currentValue, chaine, sizeof( char )*size );
             }
             else
             {
-                memcpy( &currentValue, chaine, sizeof( char )*length );
+                memcpy( &currentValue, chaine, sizeof( char )*lengthT );
             }
         };
 
@@ -73,9 +73,9 @@ class JeveuxString
          * @brief Constructeur a partir d'un char*
          * @param chaine Chaine a recopier en style fortran
          */
-        inline JeveuxString( const JeveuxString< length >& chaine )
+        inline JeveuxString( const JeveuxString< lengthT >& chaine )
         {
-            memcpy( &currentValue, chaine.c_str(), sizeof( char )*length );
+            memcpy( &currentValue, chaine.c_str(), sizeof( char )*lengthT );
         };
 
         /**
@@ -111,9 +111,9 @@ class JeveuxString
          * @param chaine Recopie a partir d'un JeveuxString
          * @return Reference vers la chaine recopiee
          */
-        inline JeveuxString& operator=( const JeveuxString< length >& chaine )
+        inline JeveuxString& operator=( const JeveuxString< lengthT >& chaine )
         {
-            memcpy( &currentValue, &( chaine.currentValue ), sizeof( char )*length );
+            memcpy( &currentValue, &( chaine.currentValue ), sizeof( char )*lengthT );
             return *this;
         };
 
@@ -143,7 +143,7 @@ class JeveuxString
          * @brief Fonction permettant d'obtenir le pointeur vers le debut de la chaine
          * @return Pointeur vers le debut de la chaine. Attention pas de \0 a la fin !!
          */
-        inline const char* c_str() const
+        inline const char* c_str()
         {
             return currentValue;
         };
@@ -152,14 +152,14 @@ class JeveuxString
          * @brief Fonction permettant d'obtenir le pointeur vers le debut de la chaine
          * @return Pointeur vers le debut de la chaine. Attention pas de \0 a la fin !!
          */
-        inline const char* c_str()
+        inline const char* c_str() const
         {
             return currentValue;
         };
 
         std::string rstrip() const
         {
-            std::string buff ( currentValue, length );
+            std::string buff ( currentValue, lengthT );
             std::string whitespaces ( " \t\f\v\n\r" );
             std::size_t found = buff.find_last_not_of( whitespaces );
             if ( found != std::string::npos )
@@ -175,7 +175,16 @@ class JeveuxString
          */
         inline int size() const
         {
-            return length;
+            return lengthT;
+        };
+
+        /**
+         * @brief Fonction renvoyant la taille de la chaine (équivalent de 'size').
+         * @return un entier
+         */
+        inline int length() const
+        {
+            return lengthT;
         };
 
         /**
@@ -184,7 +193,7 @@ class JeveuxString
          */
         inline std::string toString() const
         {
-            return std::string( currentValue, length );
+            return std::string( currentValue, lengthT );
         };
 
         /**
@@ -197,9 +206,9 @@ class JeveuxString
 #endif
         {
 #ifndef NDEBUG
-            if ( strlen( chaine ) < length ) throw std::runtime_error( "String size error" );
+            if ( strlen( chaine ) < lengthT ) throw std::runtime_error( "String size error" );
 #endif
-            memcpy( &currentValue, chaine, sizeof( char )*length );
+            memcpy( &currentValue, chaine, sizeof( char )*lengthT );
         };
 };
 

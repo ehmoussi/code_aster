@@ -21,10 +21,8 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
-import os
 
-os.system("mfront --obuild DruckerPrager.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so DruckerPrager.so")
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=39)
 
 MATF=DEFI_MATERIAU(
                     ELAS=_F(E=1., NU=0.3),
@@ -50,7 +48,7 @@ E1=DEFI_FONCTION( NOM_PARA='INST',
 SOLMF=SIMU_POINT_MAT( MATER=MATF,
                 COMPORTEMENT=_F(RELATION='MFRONT',
                                 NOM_ROUTINE='asterdruckerprager',
-                                LIBRAIRIE='DruckerPrager.so',
+                                UNITE_LIBRAIRIE=39,
                                 RESI_INTE_MAXI=1.e-8,
                                     ),
                 INCREMENT=_F(  LIST_INST = LINST),

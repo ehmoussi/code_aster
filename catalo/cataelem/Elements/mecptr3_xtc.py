@@ -43,11 +43,6 @@ CCARCRI  = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
           'TSAMPL','TSRETOUR','POSTITER','LC_EXT[3]','MODECALC',))
 
 
-CCOMPOR  = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
-    components=('RELCOM','NBVARI','DEFORM','INCELA','C_PLAN',
-          'NUME_LC','SD_COMP','KIT[9]',))
-
-
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO', diff=True,
     components=(
     ('EN1',('DX','DY','K1','K2',
@@ -185,7 +180,7 @@ class MECPTR3_XTC(Element):
         OP.CALC_G(te=288,
             para_in=((OP.CALC_G.PAINTER, LC.E35NEUTR), (OP.CALC_G.PBASECO, LC.E28NEUTR),
                      (OP.CALC_G.PBASLOR, LC.N6NEUT_R), (OP.CALC_G.PCFACE, LC.E9NEUTI),
-                     (OP.CALC_G.PCNSETO, LC.E36NEUI), (OP.CALC_G.PCOMPOR, CCOMPOR),
+                     (OP.CALC_G.PCNSETO, LC.E36NEUI), (OP.CALC_G.PCOMPOR, LC.CCOMPOR),
                      (SP.PDEPLAR, DDL_MECA), (SP.PFRVOLU, NFORCER),
                      (SP.PGEOMER, NGEOMER), (OP.CALC_G.PHEAVTO, E6NEUTI),
                      (OP.CALC_G.PLONCHA, LC.E10NEUTI), (OP.CALC_G.PLONGCO, LC.E3NEUTI),
@@ -201,7 +196,7 @@ class MECPTR3_XTC(Element):
         OP.CALC_GTP(te=288,
             para_in=((OP.CALC_GTP.PAINTER, LC.E35NEUTR), (OP.CALC_GTP.PBASECO, LC.E28NEUTR),
                      (OP.CALC_GTP.PBASLOR, LC.N6NEUT_R), (OP.CALC_GTP.PCFACE, LC.E9NEUTI),
-                     (OP.CALC_GTP.PCNSETO, LC.E36NEUI), (OP.CALC_GTP.PCOMPOR, CCOMPOR),
+                     (OP.CALC_GTP.PCNSETO, LC.E36NEUI), (OP.CALC_GTP.PCOMPOR, LC.CCOMPOR),
                      (SP.PDEPLAR, DDL_MECA), (SP.PFRVOLU, NFORCER),
                      (SP.PGEOMER, NGEOMER), (OP.CALC_GTP.PHEAVTO, E6NEUTI),
                      (OP.CALC_GTP.PLONCHA, LC.E10NEUTI), (OP.CALC_GTP.PLONGCO, LC.E3NEUTI),
@@ -217,7 +212,7 @@ class MECPTR3_XTC(Element):
         OP.CALC_GTP_F(te=288,
             para_in=((OP.CALC_GTP_F.PAINTER, LC.E35NEUTR), (OP.CALC_GTP_F.PBASECO, LC.E28NEUTR),
                      (OP.CALC_GTP_F.PBASLOR, LC.N6NEUT_R), (OP.CALC_GTP_F.PCFACE, LC.E9NEUTI),
-                     (OP.CALC_GTP_F.PCNSETO, LC.E36NEUI), (OP.CALC_GTP_F.PCOMPOR, CCOMPOR),
+                     (OP.CALC_GTP_F.PCNSETO, LC.E36NEUI), (OP.CALC_GTP_F.PCOMPOR, LC.CCOMPOR),
                      (SP.PDEPLAR, DDL_MECA), (SP.PFFVOLU, CFORCEF),
                      (SP.PGEOMER, NGEOMER), (OP.CALC_GTP_F.PHEAVTO, E6NEUTI),
                      (OP.CALC_GTP_F.PLONCHA, LC.E10NEUTI), (OP.CALC_GTP_F.PLONGCO, LC.E3NEUTI),
@@ -234,7 +229,7 @@ class MECPTR3_XTC(Element):
         OP.CALC_G_F(te=288,
             para_in=((OP.CALC_G_F.PAINTER, LC.E35NEUTR), (OP.CALC_G_F.PBASECO, LC.E28NEUTR),
                      (OP.CALC_G_F.PBASLOR, LC.N6NEUT_R), (OP.CALC_G_F.PCFACE, LC.E9NEUTI),
-                     (OP.CALC_G_F.PCNSETO, LC.E36NEUI), (OP.CALC_G_F.PCOMPOR, CCOMPOR),
+                     (OP.CALC_G_F.PCNSETO, LC.E36NEUI), (OP.CALC_G_F.PCOMPOR, LC.CCOMPOR),
                      (SP.PDEPLAR, DDL_MECA), (SP.PFFVOLU, CFORCEF),
                      (SP.PGEOMER, NGEOMER), (OP.CALC_G_F.PHEAVTO, E6NEUTI),
                      (OP.CALC_G_F.PLONCHA, LC.E10NEUTI), (OP.CALC_G_F.PLONGCO, LC.E3NEUTI),
@@ -251,7 +246,7 @@ class MECPTR3_XTC(Element):
         OP.CALC_K_G(te=297,
             para_in=((OP.CALC_K_G.PAINTER, LC.E35NEUTR), (OP.CALC_K_G.PBASECO, LC.E28NEUTR),
                      (OP.CALC_K_G.PBASLOR, LC.N6NEUT_R), (OP.CALC_K_G.PCFACE, LC.E9NEUTI),
-                     (OP.CALC_K_G.PCNSETO, LC.E36NEUI), (OP.CALC_K_G.PCOMPOR, CCOMPOR),
+                     (OP.CALC_K_G.PCNSETO, LC.E36NEUI), (OP.CALC_K_G.PCOMPOR, LC.CCOMPOR),
                      (SP.PDEPLAR, DDL_MECA), (SP.PFRVOLU, NFORCER),
                      (SP.PGEOMER, NGEOMER), (OP.CALC_K_G.PHEAVTO, E6NEUTI),
                      (OP.CALC_K_G.PLONCHA, LC.E10NEUTI), (OP.CALC_K_G.PLONGCO, LC.E3NEUTI),
@@ -269,7 +264,7 @@ class MECPTR3_XTC(Element):
         OP.CALC_K_G_F(te=297,
             para_in=((OP.CALC_K_G_F.PAINTER, LC.E35NEUTR), (OP.CALC_K_G_F.PBASECO, LC.E28NEUTR),
                      (OP.CALC_K_G_F.PBASLOR, LC.N6NEUT_R), (OP.CALC_K_G_F.PCFACE, LC.E9NEUTI),
-                     (OP.CALC_K_G_F.PCNSETO, LC.E36NEUI), (OP.CALC_K_G_F.PCOMPOR, CCOMPOR),
+                     (OP.CALC_K_G_F.PCNSETO, LC.E36NEUI), (OP.CALC_K_G_F.PCOMPOR, LC.CCOMPOR),
                      (SP.PDEPLAR, DDL_MECA), (SP.PFFVOLU, CFORCEF),
                      (SP.PGEOMER, NGEOMER), (OP.CALC_K_G_F.PHEAVTO, E6NEUTI),
                      (OP.CALC_K_G_F.PLONCHA, LC.E10NEUTI), (OP.CALC_K_G_F.PLONGCO, LC.E3NEUTI),
@@ -372,7 +367,7 @@ class MECPTR3_XTC(Element):
         ),
 
         OP.ENEL_ELEM(te=565,
-            para_in=((OP.ENEL_ELEM.PCNSETO, LC.E36NEUI), (OP.ENEL_ELEM.PCOMPOR, CCOMPOR),
+            para_in=((OP.ENEL_ELEM.PCNSETO, LC.E36NEUI), (OP.ENEL_ELEM.PCOMPOR, LC.CCOMPOR),
                      (OP.ENEL_ELEM.PCONTPR, ECONTPG), (SP.PDEPLR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (OP.ENEL_ELEM.PLONCHA, LC.E10NEUTI),
                      (SP.PMATERC, LC.CMATERC), (OP.ENEL_ELEM.PPINTTO, LC.E6NEUTR),
@@ -384,7 +379,7 @@ class MECPTR3_XTC(Element):
 
         OP.FORC_NODA(te=542,
             para_in=((OP.FORC_NODA.PBASLOR, LC.N6NEUT_R), (OP.FORC_NODA.PCNSETO, LC.E36NEUI),
-                     (OP.FORC_NODA.PCOMPOR, CCOMPOR), (OP.FORC_NODA.PCONTMR, ECONTPG),
+                     (OP.FORC_NODA.PCOMPOR, LC.CCOMPOR), (OP.FORC_NODA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (OP.FORC_NODA.PHEAVTO, E6NEUTI), (OP.FORC_NODA.PHEA_NO, LC.N5NEUTI),
                      (OP.FORC_NODA.PLONCHA, LC.E10NEUTI), (OP.FORC_NODA.PLSN, LC.N1NEUT_R),
@@ -397,7 +392,7 @@ class MECPTR3_XTC(Element):
         OP.FULL_MECA(te=539,
             para_in=((OP.FULL_MECA.PBASLOR, LC.N6NEUT_R), (SP.PCAMASS, CCAMASS),
                      (SP.PCARCRI, CCARCRI), (OP.FULL_MECA.PCNSETO, LC.E36NEUI),
-                     (OP.FULL_MECA.PCOMPOR, CCOMPOR), (OP.FULL_MECA.PCONTMR, ECONTPG),
+                     (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (OP.FULL_MECA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (OP.FULL_MECA.PHEAVTO, E6NEUTI),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
@@ -449,7 +444,7 @@ class MECPTR3_XTC(Element):
 
         OP.RAPH_MECA(te=539,
             para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, CCARCRI),
-                     (OP.RAPH_MECA.PCOMPOR, CCOMPOR), (OP.RAPH_MECA.PCONTMR, ECONTPG),
+                     (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR), (OP.RAPH_MECA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
                      (SP.PINSTPR, CTEMPSR), (SP.PMATERC, LC.CMATERC),
@@ -492,7 +487,7 @@ class MECPTR3_XTC(Element):
         OP.RIGI_MECA_TANG(te=539,
             para_in=((OP.RIGI_MECA_TANG.PBASLOR, LC.N6NEUT_R), (SP.PCAMASS, CCAMASS),
                      (SP.PCARCRI, CCARCRI), (OP.RIGI_MECA_TANG.PCNSETO, LC.E36NEUI),
-                     (OP.RIGI_MECA_TANG.PCOMPOR, CCOMPOR), (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
+                     (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (OP.RIGI_MECA_TANG.PHEAVTO, E6NEUTI),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
@@ -642,4 +637,3 @@ class MECPQU8_XTC(MECPTR3_XTC):
             ElrefeLoc(MT.TR3, gauss = ('RIGI=FPG6','MASS=FPG6','XINT=FPG12',),),
             ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG2','MASS=FPG3','FPG2=FPG2','FPG3=FPG3','FPG4=FPG4','NOEU=NOEU','GAUSS=FPG3','SIMP=SIMP','COTES=COTES','SIMP1=SIMP1','COTES1=COTES1','COTES2=COTES2',),),
             )
-

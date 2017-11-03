@@ -115,8 +115,9 @@ Contactez le support technique.
 """),
 
     26: _(u"""
- Ce problème peut apparaître lorsqu'il y a des modes multiples (structure avec symétries)
- ou une forte densité modale.
+ Ce problème peut apparaître lorsqu'il y a des modes multiples (structure avec symétries),
+ une forte densité modale ou si vous avez juste choisi d'affiner quelques modes parmi un groupe
+ de modes (options PROCHE, SEPARE ou AJUSTE).
 """),
 
     27: _(u"""
@@ -396,6 +397,13 @@ Commande FACTORISER :
     changer de solveur linéaire : sous le mot-clé facteur SOLVEUR,
     utiliser 'MULT_FRONT' ou 'MUMPS'.
 """),
+   72: _(u"""
+    Par précaution, cette fonctionnalité est pour l'instant interdite avec le solveur linéaire MUMPS.
+
+    Conseil :
+    Changer de solveur linéaire : sous le mot-clé facteur SOLVEUR,
+    poser METHODE='MULT_FRONT'.
+"""),
 
     73: _(u"""
     On a besoin d'effectuer un calcul de déterminant.
@@ -445,8 +453,10 @@ Commande FACTORISER :
     77 : _(u"""
 Conseils :
 Si vous utilisez METHODE='SORENSEN' ou 'TRI_DIAG' ou 'JACOBI', vous pouvez améliorer cette norme :
- - en augmentant la valeur de COEF_DIM_ESPACE (la valeur par défaut est 4 pour 'TRI_DIAG' et 2 pour 'SORENSEN' et 'JACOBI'),
- - en réduisant le nombre de valeurs propres recherchées (%(k1)s ou taille de la BANDE).
+ - Si la dimension de l'espace réduit est inférieure à (nombre de degrés de liberté actifs - 2), augmenter la valeur de 
+   COEF_DIM_ESPACE (la valeur par défaut est 4 pour 'TRI_DIAG' et 2 pour 'SORENSEN' et 'JACOBI').
+ - Découper le calcul en plusieurs appels de manière à réduire le nombre de modes propres recherchés simultanément
+   (%(k1)s ou taille de la BANDE).
 """),
 
     78 : _(u"""

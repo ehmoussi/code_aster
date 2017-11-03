@@ -160,6 +160,12 @@ cata_msg = {
  convergence atteinte = %(r1)f
 """),
 
+    59 : _(u"""
+ La définition des paramètres du comportement %(k1)s n'a pas été trouvée
+ dans le champ de matériau %(k2)s
+"""),
+
+
     60 : _(u"""
  homogénéité du champ de matériaux pour WEIBULL
  nombre de RC WEIBULL trouvées =  %(i1)d

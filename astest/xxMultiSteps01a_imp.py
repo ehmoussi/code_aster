@@ -6,7 +6,7 @@ import numpy as np
 
 import code_aster
 
-fcos = code_aster.Function()
+fcos = code_aster.Function.create()
 fcos.setParameterName("INST")
 fcos.setResultName("TEMP")
 

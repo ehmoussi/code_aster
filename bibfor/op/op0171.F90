@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine op0171()
 !
 implicit none
@@ -42,7 +43,6 @@ implicit none
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/mecact.h"
-#include "asterfort/medith.h"
 #include "asterfort/load_neut_excl.h"
 #include "asterfort/ntdoth.h"
 #include "asterfort/nttain.h"
@@ -61,10 +61,6 @@ implicit none
 #include "asterfort/vtcopy.h"
 #include "asterfort/vtcreb.h"
 #include "asterfort/wkvect.h"
-!
-! person_in_charge: mickael.abbas at edf.fr
-!
-
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -89,7 +85,7 @@ implicit none
     character(len=24) :: model, mate, cara_elem
     character(len=24) :: nomch, vtemp, vtempm, vtempp, vec2nd
     character(len=24) :: result, ligrmo, tempev, tempin
-    character(len=24) :: time, mediri, matass, noojb, nume_dof
+    character(len=24) :: time, matass, noojb, nume_dof
     character(len=24) :: cndirp, cnchci, cnchtp
     character(len=24) :: chlapm, chlapp, cnresi, noobj
     character(len=76) :: fmt
@@ -104,7 +100,6 @@ implicit none
     data chlapm,chlapp          /'&&OP0171.CLPM','&&OP0171.CLPP'/
     data vtemp,vec2nd           /'&&OP0171.TH'  ,'&&OP0171.2ND'/
     data vtempm,vtempp          /'&&OP0171.THM' ,'&&OP0171.THP'/
-    data mediri                 /' '/
     data matass                 /'&&MTHASS'/
     data fmt                    /'(76(''*''))'/
 !
@@ -199,10 +194,6 @@ implicit none
 !
     tpsnp1 = 0.d0
     prem = .true.
-!
-! --- MATRICE DE RIGIDITE ASSOCIEE AUX LAGRANGE
-!
-    call medith(model, list_load, mediri)
 !
 ! ======================================================================
 !

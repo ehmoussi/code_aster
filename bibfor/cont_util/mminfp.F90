@@ -503,6 +503,13 @@ implicit none
         else
             ASSERT(.false.)
         endif
+    else if (question.eq.'PENE_MAXI') then
+        if (cont_form .eq. 2) then
+            call jeveuo(sdcont_caracf, 'L', vr = v_sdcont_caracf)
+            vale_r = v_sdcont_caracf(zcmcf*(i_zone-1)+14)
+        else
+            ASSERT(.false.)
+        endif
     else if (question.eq.'COEF_PENA_FROT') then
         if (cont_form .eq. 3) then
             call jeveuo(sdcont_caraxf, 'L', vr = v_sdcont_caraxf)

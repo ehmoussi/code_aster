@@ -36,7 +36,7 @@ cata_msg = {
 """),
 
     4: _(u"""
- il manque la donnée de la limite d'élasticité (SY_02 ou SY_MAX) pour le calcul du rochet thermique
+ il manque la donnée de la limite d'élasticité (SY_MAX ou SY_02) pour le calcul du rochet thermique
 """),
 
     5: _(u"""
@@ -74,8 +74,8 @@ cata_msg = {
 """),
 
     12: _(u"""
- "NUME_GROUPE" est obligatoire, il peut contenir 1 ou 2 valeurs qui 
- doivent être strictement positives
+ "NUME_GROUPE" est obligatoire, il doit contenir au moins 1 valeur qui 
+ doit être strictement positive
 """),
 
     13: _(u"""
@@ -161,12 +161,6 @@ cata_msg = {
  on ne peut pas avoir des charges de type "séisme" et "autre".
 """),
 
-    30: _(u"""
- problème pour récupérer l'occurrence de SEISME.
-Ce message est un message d'erreur développeur.
-Contactez le support technique.
-"""),
-
     31: _(u"""
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
@@ -186,8 +180,9 @@ Contactez le support technique.
 """),
 
     34: _(u"""
- "NUME_PASSAGE" contient les numéros des deux groupes la situation de passage, 
- ces numéros sont strictement positifs. Compatible avec au plus 5 groupes
+ "NUME_PASSAGE" contient les numéros des groupes reliés par la situation de passage, 
+ ces numéros sont strictement positifs et différents. La situation de passage doit également appartenir
+ à tous ces groupes.
 """),
 
     36: _(u"""
@@ -267,6 +262,50 @@ Contactez le support technique.
     47: _(u"""
  Afin de permettre l'interpolation, les températures sous TEMP_A et TEMP_B doivent être
     différentes.
+"""),
+
+    48: _(u"""
+ Deux situations ne peuvent avoir le même numéro.
+"""),
+
+    49: _(u"""
+ Le mot clé facteur RESU_MECA_UNIT n'a pas été renseigné.
+"""),
+
+    50: _(u"""
+ L'option 'PM_PB' pour un calcul en B3200 n'est compatible qu'avec des chargements unitaires.
+"""),
+
+    51: _(u"""
+ Le numéro de chargement sous CHAR_ETAT n'existe pas sous CHAR_MECA.
+"""),
+
+    52: _(u"""
+ Seules les 200 premières combinaisons interviennent dans le facteur d'usage.
+"""),
+
+    53: _(u"""
+ Les situations d'un groupe de partage devraient appartenir au même groupe de fonctionnement
+ et avoir le même nombre d'occurrences initial. 
+ Le groupe de partage doit avoir un numéro strictement positif.
+"""),
+
+    54: _(u"""
+ Il manque une donnée en fatigue environnementale. De plus, le FEN_INTEGRE doit être 
+ strictement positif. 
+"""),
+
+    55: _(u"""
+ Les instants des transitoires ne sont pas ordonnés de manière croissante. Cela peut 
+ nuire aux résultats sur les sous-cycles ou la fatigue environnementale. 
+"""),
+
+    56: _(u"""
+ Les sous-cycles ne seront pas pris en compte avec la méthode de sélection des instants 'TRESCA'. 
+"""),
+
+    57: _(u"""
+ Seuls les 100 premiers sous-cycles extraits seront pris en compte. 
 """),
 
 }

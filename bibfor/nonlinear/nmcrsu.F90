@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmcrsu(sddisc, lisins     , ds_conv, ds_algopara, l_implex,&
                   solveu, ds_contact_)
 !
@@ -24,6 +25,7 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
+#include "event_def.h"
 #include "jeveux.h"
 #include "asterfort/gettco.h"
 #include "asterc/r8vide.h"
@@ -39,14 +41,14 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/GetResi.h"
+#include "asterfort/getAdapEvent.h"
+#include "asterfort/getAdapAction.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=19) :: sddisc, lisins, solveu
-    type(NL_DS_Conv), intent(in) :: ds_conv
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    aster_logical :: l_implex
-    type(NL_DS_Contact), optional, intent(in) :: ds_contact_
+character(len=19) :: sddisc, lisins, solveu
+type(NL_DS_Conv), intent(in) :: ds_conv
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+aster_logical :: l_implex
+type(NL_DS_Contact), optional, intent(in) :: ds_contact_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -66,22 +68,21 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=16) :: metlis, modetp
+    character(len=16) :: metlis
     integer :: iret
     real(kind=8) :: pas_mini_elas, valr
-    integer :: nb_adapt, i_adapt
+    integer :: nb_adap, i_adap
     integer :: iter_glob_maxi, iter_glob_elas
     integer :: ifm, niv, itmx, vali
     aster_logical :: ldeco
     real(kind=8) :: resi_glob_maxi, resi_glob_rela, inikry
-    character(len=19) :: event_name
     character(len=16) :: typeco, nopara, decoup
     character(len=24) :: lisevr, lisevk, lisesu
-    character(len=24) :: lisavr, lisavk, listpr, listpk
+    character(len=24) :: lisavr, listpr, listpk
     character(len=24) :: tpsevr, tpsevk, tpsesu
-    character(len=24) :: tpsavr, tpsavk, tpstpr, tpstpk
+    character(len=24) :: tpsavr, tpstpr, tpstpk
     character(len=24) :: tpsext
-    integer :: jtpsex
+    integer :: jtpsex, event_type, action_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -102,10 +103,8 @@ implicit none
 !
     inikry = 0.9d0
     pas_mini_elas = 0.d0
-    call utdidt('L', sddisc, 'LIST', 'NADAPT',&
-                vali_ = nb_adapt)
-    call utdidt('L', sddisc, 'LIST', 'METHODE',&
-                valk_ = metlis)
+    call utdidt('L', sddisc, 'LIST', 'NADAPT', vali_ = nb_adap)
+    call utdidt('L', sddisc, 'LIST', 'METHODE', valk_ = metlis)
 !
 ! --- NOM SDS DE LA LISINS
 !
@@ -113,7 +112,6 @@ implicit none
     lisevk = lisins(1:8)//'.ECHE.EVENK'
     lisesu = lisins(1:8)//'.ECHE.SUBDR'
     lisavr = lisins(1:8)//'.ADAP.EVENR'
-    lisavk = lisins(1:8)//'.ADAP.EVENK'
     listpr = lisins(1:8)//'.ADAP.TPLUR'
     listpk = lisins(1:8)//'.ADAP.TPLUK'
 !
@@ -123,7 +121,6 @@ implicit none
     tpsevk = sddisc(1:19)//'.EEVK'
     tpsesu = sddisc(1:19)//'.ESUR'
     tpsavr = sddisc(1:19)//'.AEVR'
-    tpsavk = sddisc(1:19)//'.AEVK'
     tpstpr = sddisc(1:19)//'.ATPR'
     tpstpk = sddisc(1:19)//'.ATPK'
 !
@@ -143,9 +140,8 @@ implicit none
         call jedup1(lisevr, 'V', tpsevr)
         call jedup1(lisevk, 'V', tpsevk)
         call jedup1(lisesu, 'V', tpsesu)
-        if (nb_adapt .ne. 0) then
+        if (nb_adap .ne. 0) then
             call jedup1(lisavr, 'V', tpsavr)
-            call jedup1(lisavk, 'V', tpsavk)
             call jedup1(listpr, 'V', tpstpr)
             call jedup1(listpk, 'V', tpstpk)
         endif
@@ -153,8 +149,7 @@ implicit none
 !
 ! --- DECOUPAGE ACTIVE
 !
-    call utdidt('L', sddisc, 'LIST', 'EXIS_DECOUPE',&
-                valk_ = decoup)
+    call utdidt('L', sddisc, 'LIST', 'EXIS_DECOUPE', valk_ = decoup)
     ldeco = decoup.eq.'OUI'
 !
 ! - SI NEWTON/PREDICTION ='DEPL_CALCULE', ALORS ON INTERDIT LA SUBDIVISION
@@ -181,19 +176,18 @@ implicit none
 !
     if (metlis .eq. 'AUTO') then
         call getvis('CONVERGENCE', 'ITER_GLOB_MAXI', iocc=1, scal=itmx, nbret=iret)
-        do i_adapt = 1, nb_adapt
-            call utdidt('L', sddisc, 'ADAP', 'NOM_EVEN', index_ = i_adapt,&
-                        valk_ = event_name)
-            if (event_name .eq. 'SEUIL_SANS_FORMU') then
-                call utdidt('L', sddisc, 'ADAP', 'NOM_PARA', index_ = i_adapt,&
+        do i_adap = 1, nb_adap
+            call getAdapEvent(sddisc, i_adap, event_type)
+            if (event_type .eq. ADAP_EVT_TRIGGER) then
+                call utdidt('L', sddisc, 'ADAP', 'NOM_PARA', index_ = i_adap,&
                             valk_ = nopara)
                 if (nopara .eq. 'NB_ITER_NEWT') then
-                    call utdidt('L', sddisc, 'ADAP', 'VALE', index_ = i_adapt,&
+                    call utdidt('L', sddisc, 'ADAP', 'VALE', index_ = i_adap,&
                                 vali_ = vali)
                     if (vali .eq. 0) then
                         vali = itmx / 2
                         valr = vali
-                        call utdidt('E', sddisc, 'ADAP', 'VALE', index_ = i_adapt,&
+                        call utdidt('E', sddisc, 'ADAP', 'VALE', index_ = i_adap,&
                                     valr_ = valr)
                     endif
                 endif
@@ -204,10 +198,9 @@ implicit none
 ! --- VERIF COHERENCE AVEC IMPLEX
 !
     if (metlis .eq. 'AUTO') then
-        do i_adapt = 1, nb_adapt
-            call utdidt('L', sddisc, 'ADAP', 'METHODE', index_ = i_adapt,&
-                        valk_ = modetp)
-            if (modetp .eq. 'IMPLEX') then
+        do i_adap = 1, nb_adap
+            call getAdapAction(sddisc, i_adap, action_type)
+            if (action_type .eq. ADAP_ACT_IMPLEX) then
                 if (.not.l_implex) then
                     call utmess('F', 'MECANONLINE6_4')
                 endif

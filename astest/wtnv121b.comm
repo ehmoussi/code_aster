@@ -311,8 +311,8 @@ REPONSE=STAT_NON_LINE(
                            _F( CHARGE = CLIM),
                            _F( CHARGE = CHARGT,FONC_MULT=CAP)
                            ),
+                     SCHEMA_THM=_F(PARM_THETA=0.57,),
                      COMPORTEMENT  =_F(RELATION='KIT_HHM',
-                                    PARM_THETA=0.56999999999999995,
                                     DEFORMATION='PETIT',
                                     RELATION_KIT = (
                   'MAZARS',

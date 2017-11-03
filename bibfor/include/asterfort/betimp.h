@@ -15,19 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine betimp(nmat, mater, sig, vind, vinf,&
-                      elgeom, nseui1, nseui2, nseui3, nseui4,&
+                      nseui1, nseui2, nseui3, nseui4,&
                       sige, sigd)
         integer :: nmat
         real(kind=8) :: mater(nmat, 2)
         real(kind=8) :: sig(6)
         real(kind=8) :: vind(*)
         real(kind=8) :: vinf(*)
-        real(kind=8) :: elgeom(*)
         integer :: nseui1
         integer :: nseui2
         integer :: nseui3

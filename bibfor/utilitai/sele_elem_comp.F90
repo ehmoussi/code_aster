@@ -33,6 +33,7 @@ implicit none
 #include "asterfort/jexnum.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/etenca.h"
+#include "asterfort/Behaviour_type.h"
 !
 !
     character(len=*), intent(in) :: modelz
@@ -103,7 +104,7 @@ implicit none
                 idx_cmp     = comp_desc(3+2*nb_gd_max+idx_gd)
                 ASSERT(exisdg([idx_cmp], 1))
                 if (exisdg([idx_cmp], 1)) then
-                    defo_comp_f = comp_vale((idx_gd-1)*nb_cmp_max+3)
+                    defo_comp_f = comp_vale((idx_gd-1)*nb_cmp_max+DEFO)
                     if (defo_comp .eq. defo_comp_f) then
                         list_elem_comp(nume_elem) = 1
                     endif

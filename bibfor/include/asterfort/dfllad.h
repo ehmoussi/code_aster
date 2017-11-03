@@ -15,11 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine dfllad(sdlist)
-        character(len=8) :: sdlist
+        character(len=8), intent(in) :: sdlist
     end subroutine dfllad
 end interface

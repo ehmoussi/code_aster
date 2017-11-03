@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
 subroutine nmresi(noma  , mate   , numedd  , sdnume  , fonact,&
                   sddyna, ds_conv, ds_print, ds_contact,&
                   matass, numins , eta     , comref  , valinc,&
@@ -52,12 +54,11 @@ implicit none
 #include "asterfort/rescmp.h"
 #include "asterfort/romAlgoNLMecaResidual.h"
 #include "asterfort/asmpi_comm_vect.h"
-!
-! person_in_charge: mickael.abbas at edf.fr
+#include "asterfort/romAlgoNLCorrEFMecaResidual.h"
 !
     character(len=8) :: noma
     character(len=24) :: numedd
-    type(NL_DS_Contact), intent(in) :: ds_contact
+    type(NL_DS_Contact), intent(inout) :: ds_contact
     type(NL_DS_Conv), intent(inout) :: ds_conv
     type(NL_DS_Print), intent(inout) :: ds_print
     character(len=24) :: mate
@@ -103,8 +104,9 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: jccid=0, jdiri=0, jvcfo=0, jiner=0, ibid=0
+    integer :: jdiri=0, jvcfo=0, jiner=0, ibid=0
     integer :: ifm=0, niv=0
+    integer, pointer :: v_ccid(:) => null()
     integer :: neq=0
     character(len=8) :: noddlm=' '
     aster_logical :: ldyna, lstat, lcine, l_cont_cont, l_cont_lac, l_rom
@@ -121,6 +123,7 @@ implicit none
     integer :: irela=0, imaxi=0, iresi=0, irefe=0, ichar=0, icomp=0
     aster_logical :: lndepl=.false._1, lpilo=.false._1
     real(kind=8) :: resi_glob_rela, resi_glob_maxi
+    real(kind=8) :: vpene
     character(len=16) :: nfrot=' ', ngeom=' '
     character(len=24) :: sdnuco=' '
     integer :: jnuco=0
@@ -161,7 +164,6 @@ implicit none
     iresi = 0
     ichar = 0
     icomp = 0
-    jccid = 0
     call dismoi('NB_EQUA', numedd, 'NUME_DDL', repi=neq)
 !
 ! --- FONCTIONNALITES ACTIVEES
@@ -209,14 +211,19 @@ implicit none
                 cnfext, cnfint)
 
 ! --- COMPLETION DES CHAMPS PRODUITS PAR ASSEMBLAGE :
-    call cnoadd(cnfext,cnfexp)
-    call cnoadd(cnfint,cnfinp)
+#ifdef _USE_MPI
+    call cnoadd(cnfext, cnfexp)
+    call cnoadd(cnfint, cnfinp)
+#else
+    cnfexp = cnfext
+    cnfinp = cnfint
+#endif
 !
 ! --- POINTEUR SUR LES DDLS ELIMINES PAR AFFE_CHAR_CINE
 !
      if (lcine) then
          call nmpcin(matass)
-        call jeveuo(matass(1:19)//'.CCID', 'L', jccid)
+        call jeveuo(matass(1:19)//'.CCID', 'L', vi = v_ccid)
      endif
 
 !
@@ -282,7 +289,7 @@ implicit none
 ! ----- SI CHARGEMENT CINEMATIQUE: ON IGNORE LA VALEUR DU RESIDU
 !
         if (lcine) then
-            if (zi(jccid+ieq-1) .eq. 1) then
+            if (v_ccid(ieq) .eq. 1) then
                 goto 20
             endif
         endif
@@ -336,8 +343,13 @@ implicit none
 !
 ! - Evaluate residuals in applying HYPER-REDUCTION
 !
-    if (l_rom) then
-        call romAlgoNLMecaResidual(fint, fext, ds_algorom, vresi)
+    if (l_rom .and. ds_algorom%phase .eq. 'HROM') then
+        call romAlgoNLMecaResidual(fint, fext, ds_algorom, lcine, v_ccid,&
+                                   vresi)
+    endif
+    if (l_rom .and. ds_algorom%phase .eq. 'CORR_EF') then
+        call romAlgoNLCorrEFMecaResidual(fint, fext, ds_algorom, lcine, v_ccid,&
+                                         vresi)
     endif
 !
 ! --- SYNTHESE DES RESULTATS
@@ -362,14 +374,16 @@ implicit none
 !
     if (l_cont_cont .or. l_cont_lac) then
         call mmconv(noma , ds_contact, valinc, solalg, vfrot,&
-                    nfrot, vgeom     , ngeom)
+                    nfrot, vgeom     , ngeom, vpene)
+        if (nint(ds_contact%continue_pene) .eq. 3 .or. &
+            nint(ds_contact%continue_pene) .eq. 4 ) ds_conv%l_stop_pene = .false._1
     endif
 !
 ! - Save informations about residuals into convergence datastructure
 !
     call nmimre_dof(numedd, ds_conv, vrela, vmaxi, vrefe, &
                     vcomp , vfrot  , vgeom, irela, imaxi, &
-                    irefe , noddlm , icomp, nfrot, ngeom)
+                    irefe , noddlm , icomp, nfrot, ngeom, vpene)
 !
 ! - Set value of residuals informations in convergence table
 !

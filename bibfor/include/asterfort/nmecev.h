@@ -15,14 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine nmecev(sderro, acces, nomevd, action)
+    subroutine nmecev(sderro, acces, event_type, action_type)
         character(len=24) :: sderro
         character(len=1) :: acces
-        character(len=16) :: nomevd
-        character(len=16) :: action
+        integer, intent(inout) :: event_type
+        integer, intent(inout) :: action_type
     end subroutine nmecev
 end interface

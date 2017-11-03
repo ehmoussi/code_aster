@@ -15,13 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     function pdvc2d(v1, v2)
-        real(kind=8) :: v1(2)
-        real(kind=8) :: v2(2)
+        real(kind=8), intent(in) :: v1(2), v2(2)
         real(kind=8) :: pdvc2d
     end function pdvc2d
 end interface

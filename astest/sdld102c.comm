@@ -250,9 +250,7 @@ MODGLO=REST_SOUS_STRUC(   RESU_GENE=RESGEN,
 RESGEN2=CALC_MODES(MATR_RIGI=RIGGEN,
                    CALC_FREQ=_F(FREQ=( 1.21E-1,2.25E-1,2.94E-1,),
                                 ),
-                   OPTION='PROCHE',
-                   SOLVEUR=_F(METHODE='MULT_FRONT',
-                              ),
+                   OPTION='PROCHE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                    MATR_MASS=MASGEN,
                    )
 

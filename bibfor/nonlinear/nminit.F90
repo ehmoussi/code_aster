@@ -209,7 +209,7 @@ implicit none
 ! - Initialization for reduced method
 !
     if (ds_algorom%l_rom) then
-        call romAlgoNLInit('MECA', mesh, numedd, ds_inout%result, ds_algorom)
+        call romAlgoNLInit('MECA', model, mesh, numedd, ds_inout%result, ds_algorom)
     endif
 !
 ! - Prepare contact solving datastructure

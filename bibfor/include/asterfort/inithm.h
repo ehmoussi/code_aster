@@ -15,37 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
-#include "asterf_types.h"
 !
 interface 
-    subroutine inithm(imate, yachai, yamec, phi0, em,&
-                      cs, tbiot, t, epsv, depsv,&
-                      epsvm, angmas, aniso, mdal, dalal,&
-                      alphfi, cbiot, unsks, alpha0, ndim,&
-                      phenom)
-        integer :: imate
-        aster_logical :: yachai
-        integer :: yamec
-        real(kind=8) :: phi0
-        real(kind=8) :: em
-        real(kind=8) :: cs
-        real(kind=8) :: tbiot(6)
-        real(kind=8) :: t
-        real(kind=8) :: epsv
-        real(kind=8) :: depsv
-        real(kind=8) :: epsvm
-        real(kind=8) :: angmas(3)
-        integer :: aniso
-        real(kind=8) :: mdal(6)
-        real(kind=8) :: dalal
-        real(kind=8) :: alphfi
-        real(kind=8) :: cbiot
-        real(kind=8) :: unsks
-        real(kind=8) :: alpha0
-        integer :: ndim
-        character(len=*) :: phenom
+    subroutine inithm(angl_naut, tbiot , phi0 ,&
+                      epsv     , depsv ,&
+                      epsvm    , cs0   , mdal , dalal,&
+                      alpha0   , alphfi, cbiot, unsks)
+        real(kind=8), intent(in) :: angl_naut(3)
+        real(kind=8), intent(in) :: tbiot(6)
+        real(kind=8), intent(in) :: phi0
+        real(kind=8), intent(in) :: epsv, depsv
+        real(kind=8), intent(out) :: epsvm
+        real(kind=8), intent(out) :: cs0
+        real(kind=8), intent(out) :: dalal, mdal(6)
+        real(kind=8), intent(out) :: alphfi, alpha0
+        real(kind=8), intent(out) :: cbiot, unsks
     end subroutine inithm
 end interface 

@@ -35,7 +35,7 @@ subroutine jjldyn(imode, lmin, ltot)
 ! LIBERE LES SEGMENTS DE VALEURS ALLOUES DYNAMIQUEMENT
 !
 ! IN   IMODE :
-!              =1 ON NE TRAITE QUE LA BASE VOLATILEC
+!              =1 ON NE TRAITE QUE LA BASE VOLATILE
 !              =2 ON NE TRAITE QUE LES OBJETS XA
 !              =3 ON NE TRAITE QUE LES OBJETS XA DE LA BASE VOLATILE
 !              SINON ON EXAMINE TOUTE LA MEMOIRE
@@ -60,17 +60,17 @@ subroutine jjldyn(imode, lmin, ltot)
 !-----------------------------------------------------------------------
     parameter  ( n = 5 )
     common /jiatje/  jltyp(n), jlong(n), jdate(n), jiadd(n), jiadm(n),&
-     &                 jlono(n), jhcod(n), jcara(n), jluti(n), jmarq(n)
+     &               jlono(n), jhcod(n), jcara(n), jluti(n), jmarq(n)
     integer :: nblmax, nbluti, longbl, kitlec, kitecr, kiadm, iitlec, iitecr
     integer :: nitecr, kmarq
     common /ificje/  nblmax(n) , nbluti(n) , longbl(n) ,&
-     &                 kitlec(n) , kitecr(n) ,             kiadm(n) ,&
-     &                 iitlec(n) , iitecr(n) , nitecr(n) , kmarq(n)
+     &               kitlec(n) , kitecr(n) ,             kiadm(n) ,&
+     &               iitlec(n) , iitecr(n) , nitecr(n) , kmarq(n)
     character(len=2) :: dn2
     character(len=5) :: classe
     character(len=8) :: nomfic, kstout, kstini
     common /kficje/  classe    , nomfic(n) , kstout(n) , kstini(n) ,&
-     &                 dn2(n)
+     &               dn2(n)
     common /jkatje/  jgenr(n), jtype(n), jdocu(n), jorig(n), jrnom(n)
 !
     integer :: nrhcod, nremax, nreuti
@@ -83,6 +83,8 @@ subroutine jjldyn(imode, lmin, ltot)
     common /idynje/  ldyn , lgdyn , nbdyn , nbfree
     integer :: icdyn, mxltot
     common /xdynje/  icdyn , mxltot
+    integer :: indiq_jjldyn
+    common /idynqq/ indiq_jjldyn
     real(kind=8) :: mxdyn, mcdyn, mldyn, vmxdyn, vmet, lgio, cuvtrav
     common /r8dyje/ mxdyn, mcdyn, mldyn, vmxdyn, vmet, lgio(2), cuvtrav
     integer :: lbis, lois, lols, lor8, loc8
@@ -91,8 +93,7 @@ subroutine jjldyn(imode, lmin, ltot)
     common /iheuje/  datei
 ! ----------------------------------------------------------------------
     integer :: ivnmax, iddeso, idiadd, idiadm, idlono
-    parameter    ( ivnmax = 0 , iddeso = 1 , idiadd = 2 , idiadm = 3 ,&
-     &               idlono = 8    )
+    parameter    ( ivnmax = 0 , iddeso = 1 , idiadd = 2 , idiadm = 3 ,idlono = 8    )
 ! ----------------------------------------------------------------------
     character(len=1) :: cgenr
     character(len=8) :: nomk(5)
@@ -104,6 +105,7 @@ subroutine jjldyn(imode, lmin, ltot)
 !
     data nomk /'COUR_JV ','RLQ_MEM ','VMSIZE  ','MEM_TOTA','LIMIT_JV'/
 !
+    indiq_jjldyn = 1
     call uttcpu('CPU.MEMD.1', 'DEBUT', ' ')
 !
 !     ON LISTE LES OBJETS ALLOUES DYNAMIQUEMENT EN BALAYANT
@@ -189,13 +191,10 @@ subroutine jjldyn(imode, lmin, ltot)
 !     LE SEGMENT DE VALEURS EST MARQUE X D, IL FAUT D'ABORD L'ECRIRE
 !
                                     iaddi(1) = iszon( jiszon + ibiadd - 1 + 2*k-1)
-                                    iaddi(2) = iszon(jiszon + ibiadd - 1 + 2*k)
-                                    call jxecro(ic, iadmoc, iaddi, lsv, j,&
-                                                k)
-                                    iszon(jiszon + ibiadd -1 + 2*k-1)&
-                                    = iaddi(1)
-                                    iszon(jiszon + ibiadd -1 + 2*k&
-                                    ) = iaddi(2)
+                                    iaddi(2) = iszon( jiszon + ibiadd - 1 + 2*k  )
+                                    call jxecro(ic, iadmoc, iaddi, lsv, j,k)
+                                    iszon(jiszon + ibiadd -1 + 2*k-1) = iaddi(1)
+                                    iszon(jiszon + ibiadd -1 + 2*k)   = iaddi(2)
                                 endif
                                 lgs = iszon(jiszon+iadmoc-4) - iadmoc + 4
                                 mcdyn = mcdyn - lgs
@@ -204,14 +203,13 @@ subroutine jjldyn(imode, lmin, ltot)
                                 ltot = ltot + lgs
 !       WRITE(6,*) ' OC ',NOM32,' OBJET ',K,' LG =',LSV,LGS,LTOT
                                 iszon(jiszon + ibiadm - 1 +2*k-1) = 0
-                                iszon(jiszon + ibiadm - 1 +2*k&
-                                ) = 0
+                                iszon(jiszon + ibiadm - 1 +2*k  ) = 0
                                 if (lmin .gt. 0) then
                                     if (ltot .ge. lmin) then
-                                        lgio(1) = lgio(1)+1024*longbl( ic)*lois* (nbacce(2*ic-1)-&
-                                                  & nbioav(1))
-                                        lgio(2) = lgio(2)+1024*longbl( ic)*lois* (nbacce(2*ic )-n&
-                                                  &bioav(2))
+                                        lgio(1) = lgio(1)+1024*longbl( ic)*lois* &
+                                                  (nbacce(2*ic-1)-nbioav(1))
+                                        lgio(2) = lgio(2)+1024*longbl( ic)*lois* &
+                                                  (nbacce(2*ic ) -nbioav(2))
                                         goto 300
                                     endif
                                 endif
@@ -245,8 +243,7 @@ subroutine jjldyn(imode, lmin, ltot)
 !
                             iaddi(1) = iadd ( jiadd(ic)+2*j-1 )
                             iaddi(2) = iadd ( jiadd(ic)+2*j )
-                            call jxecro(ic, iadmi, iaddi, lsv, 0,&
-                                        j)
+                            call jxecro(ic, iadmi, iaddi, lsv, 0, j)
                             iadd( jiadd(ic)+2*j-1 ) = iaddi(1)
                             iadd( jiadd(ic)+2*j ) = iaddi(2)
                         endif
@@ -260,10 +257,8 @@ subroutine jjldyn(imode, lmin, ltot)
                         iadm(jiadm(ic)+2*j ) = 0
                         if (lmin .gt. 0) then
                             if (ltot .ge. lmin) then
-                                lgio(1) = lgio(1)+1024*longbl(ic)* lois* (nbacce(2*ic-1)-nbioav(1&
-                                          &))
-                                lgio(2) = lgio(2)+1024*longbl(ic)* lois* (nbacce(2*ic )-nbioav(2)&
-                                          &)
+                                lgio(1) = lgio(1)+1024*longbl(ic)* lois* (nbacce(2*ic-1)-nbioav(1))
+                                lgio(2) = lgio(2)+1024*longbl(ic)* lois* (nbacce(2*ic )-nbioav(2))
                                 goto 300
                             endif
                         endif
@@ -273,8 +268,7 @@ subroutine jjldyn(imode, lmin, ltot)
 205          continue
         end do
 !
-        lgio(1)=lgio(1)+1024*longbl(ic)*lois*(nbacce(2*ic-1)-nbioav(1)&
-        )
+        lgio(1)=lgio(1)+1024*longbl(ic)*lois*(nbacce(2*ic-1)-nbioav(1))
         lgio(2)=lgio(2)+1024*longbl(ic)*lois*(nbacce(2*ic )-nbioav(2))
 200      continue
     end do
@@ -313,5 +307,6 @@ subroutine jjldyn(imode, lmin, ltot)
     endif
 !
     call uttcpu('CPU.MEMD.1', 'FIN', ' ')
+    indiq_jjldyn = 0
 !
 end subroutine

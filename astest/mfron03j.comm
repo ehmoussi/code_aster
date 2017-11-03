@@ -25,13 +25,10 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
 
-import os
 import numpy as NP
 
-os.system("mfront --obuild GdefMonoCrystal.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so GdefMonoCrystal.so")
-os.system("mfront --obuild GdefMono_Jacnum.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so GdefMono_Jacnum.so")
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=40)
+CREA_LIB_MFRONT(UNITE_MFRONT=39,UNITE_LIBRAIRIE=41)
 
 
 N__=    10.  ;
@@ -373,7 +370,7 @@ SOLMF=STAT_NON_LINE(
 
                             _F( RELATION='MFRONT',
                                 NOM_ROUTINE='astergdefmonocrystal',
-                                LIBRAIRIE='GdefMonoCrystal.so',
+                                UNITE_LIBRAIRIE=40,
                                 DEFORMATION='SIMO_MIEHE',
                                 RESI_INTE_MAXI=1.E-10,
                                 ITER_INTE_MAXI=100,
@@ -505,7 +502,7 @@ SOLMFn=STAT_NON_LINE(
 
                             _F( RELATION='MFRONT',
                                 NOM_ROUTINE='astergdefmono_jacnum',
-                                LIBRAIRIE='GdefMono_Jacnum.so',
+                                UNITE_LIBRAIRIE=41,
                                 DEFORMATION='SIMO_MIEHE',
                                 RESI_INTE_MAXI=1.E-8,
                                  GROUP_MA='VOL',

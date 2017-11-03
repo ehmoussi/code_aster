@@ -26,7 +26,8 @@
 #include "astercxx.h"
 
 #include "LinearAlgebra/LinearSolver.h"
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
+#include "Supervis/ResultNaming.h"
 
 const std::set< Renumbering > WrapMultFront::setOfAllowedRenumbering( MultFrontRenumbering,
                                                                  MultFrontRenumbering + nbRenumberingMultFront );
@@ -50,7 +51,7 @@ ListSyntaxMapContainer BaseLinearSolverInstance::buildListSyntax()
     ListSyntaxMapContainer listeSolver;
     SyntaxMapContainer dict1 = buildSyntaxMapFromParamList( _listOfParameters );
     listeSolver.push_back( dict1 );
-    return listeSolver; 
+    return listeSolver;
 };
 
 bool BaseLinearSolverInstance::build()
@@ -59,16 +60,17 @@ bool BaseLinearSolverInstance::build()
     newName.resize( 19, ' ' );
 
     // Definition du bout de fichier de commande pour SOLVEUR
-    CommandSyntaxCython cmdSt( "SOLVEUR" );
+    CommandSyntax cmdSt( "SOLVEUR" );
     cmdSt.setResult( getName(), getType() );
 
     SyntaxMapContainer dict;
-    ListSyntaxMapContainer listeSolver = this->buildListSyntax(); 
+    ListSyntaxMapContainer listeSolver = this->buildListSyntax();
 
     dict.container[ "SOLVEUR" ] = listeSolver;
     cmdSt.define( dict );
 
-    CALL_CRESOL_WRAP( newName.c_str(), "G" );
+    std::string base("G");
+    CALLO_CRESOL_WRAP( newName, base );
     _isEmpty = false;
 
     return true;
@@ -88,11 +90,10 @@ bool BaseLinearSolverInstance::matrixFactorization( AssemblyMatrixDoublePtr curr
     const std::string matass = currentMatrix->getName();
 
     // AMUMPT appel getres
-    CommandSyntaxCython cmdSt( "AUTRE" );
+    CommandSyntax cmdSt( "AUTRE" );
     cmdSt.setResult( "AUCUN", "AUCUN" );
 
-    CALL_MATRIX_FACTOR( solverName.c_str(), base.c_str(), &cret, matpre.c_str(),
-                        matass.c_str(), &npvneg, &istop );
+    CALLO_MATRIX_FACTOR( solverName, base, &cret, matpre, matass, &npvneg, &istop );
     currentMatrix->_isFactorized = true;
 
     return true;
@@ -104,12 +105,12 @@ FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystemMatrixRHS
 {
     if( ! currentMatrix->_isFactorized )
         throw std::runtime_error( "Matrix not factorized" );
-    std::string newName( getNewResultObjectName() );
+    std::string newName( ResultNaming::getNewResultName() );
     newName.resize( 19, ' ' );
     FieldOnNodesDoublePtr returnField( new FieldOnNodesDoubleInstance( newName ) );
 
     // Definition du bout de fichier de commande correspondant a RESOUDRE
-    CommandSyntaxCython cmdSt( "RESOUDRE" );
+    CommandSyntax cmdSt( "RESOUDRE" );
     cmdSt.setResult( newName, "CHAM_NO" );
 
     SyntaxMapContainer dict;
@@ -148,10 +149,10 @@ FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystem(
     long nsecm = 0, prepos = 1, istop = 0, iret = 0;
     std::string base( JeveuxMemoryTypesNames[ result->getMemoryType() ] );
 
-    CALL_RESOUD_WRAP( currentMatrix->getName().c_str(), blanc.c_str(), getName().c_str(),
-                      kinematicsField->getName().c_str(), &nsecm, currentRHS->getName().c_str(),
-                      result->getName().c_str(), base.c_str(), blanc.c_str(),
-                      &prepos, &istop, &iret );
+    CALLO_RESOUD_WRAP( currentMatrix->getName(), blanc, getName(),
+                       kinematicsField->getName(), &nsecm, currentRHS->getName(),
+                       result->getName(), base, blanc,
+                       &prepos, &istop, &iret );
 
     return result;
 };

@@ -876,20 +876,20 @@ def post_mac3coeur_ops(self, **args):
         liste_out.append({'LISTE_R' : moyenneRhoCoeur, 'PARA' : 'moyRhoCoeur' })
         for typ in moyenneRhoParType.keys() :
             liste_out.append({'LISTE_R' : moyenneRhoParType[typ],
-                              'PARA'    : 'moyRho'+typ })
+                              'PARA'    : 'moR'+typ })
         liste_out.append({'LISTE_R' : maxRho, 'PARA' : 'maxRhoCoeur' })
         for typ in maxRhoParType.keys() :
             liste_out.append({'LISTE_R' : maxRhoParType[typ],
-                              'PARA'    : 'maxRho'+typ })
+                              'PARA'    : 'maR'+typ })
         liste_out.append({'LISTE_R' : moyenneGravite, 'PARA' : 'moyGravCoeur' })
         liste_out.append({'LISTE_R' : maxGravite,     'PARA' : 'maxGravCoeur' })
         liste_out.append({'LISTE_R' : sigmaGravite,   'PARA' : 'sigGravCoeur' })
         for typ in maxGraviteParType.keys() :
             liste_out.append({'LISTE_R' : maxGraviteParType[typ],
-                              'PARA'    : 'maxGrav'+typ })
+                              'PARA'    : 'maG'+typ })
         for typ in moyenneGraviteParType.keys() :
             liste_out.append({'LISTE_R' : moyenneGraviteParType[typ],
-                              'PARA'    : 'moyGrav'+typ })
+                              'PARA'    : 'moG'+typ })
         for i in xrange(2,len(maxDeplGrille)) :
             liste_out.append({'LISTE_R' : maxDeplGrille[i-1],
                               'PARA'    : 'maxDeplGrille%i'%i })

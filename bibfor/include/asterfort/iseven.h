@@ -15,15 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine iseven(sddisc, event_name_s_, lacti)
+    subroutine iseven(sddisc, event_type_in, lacti)
         character(len=19), intent(in) :: sddisc
-        character(len=*), intent(in) :: event_name_s_
+        integer, intent(in) :: event_type_in
         aster_logical :: lacti
     end subroutine iseven
 end interface

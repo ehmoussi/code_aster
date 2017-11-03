@@ -54,6 +54,11 @@ Contactez le support technique.
     8 : _(u"""
  La base  %(k1)s  a été constituée avec la version  %(k2)s
  et vous utilisez la version  %(k3)s
+
+Conseil :
+ En général, la base ne peut-être utilisée qu'avec la version du code l'ayant construite,
+ les catalogues d'éléments sont stockés dans la base lors de sa création, or certaines structures de 
+ données s'appuient sur leur description qui peut varier d'une version à l'autre.
 """),
 
     10 : _(u"""

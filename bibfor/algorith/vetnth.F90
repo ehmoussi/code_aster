@@ -15,42 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine vetnth(optioz, modelz, carelz, matcdz, instz,&
-                  chtnz, compoz, tpchiz, tpchfz, chhyz,&
-                  vecelz, veceiz, varc_curr)
-! CALCUL DES VECTEURS ELEMENTAIRES DUS AU CHAMP A L'INSTANT PRECEDENT
 !
-! IN  OPTIOZ  : OPTION CALCULEE: CHAR_THER_EVOL
-!                                CHAR_THER_EVOLNI
-! IN  MODELZ : NOM DU MODELE
-! IN  CARELZ : CHAMP DE CARA_ELEM
-! IN  MATCDZ : MATERIAU CODE
-! IN  INSTZ  : CARTE CONTENANT LA VALEUR DU TEMPS
-! IN  CHHYZ  : CHAMP D HYDRATATION A L'INSTANT PRECEDENT
-! . POUR LE CALCUL DE LA TEMPERATURE :
-! IN  CHTNZ  : CHAMP DE TEMPERATURE A L'INSTANT PRECEDENT
-! OUT VECEL/VECEI : VECT_ELEM
-!   -------------------------------------------------------------------
-!     SUBROUTINES APPELLEES:
-!       MESSAGE:INFNIV.
-!       JEVEUX:JEMARQ,JEDEMA,JEEXIN,WKVECT,JEVEUO,JEECRA.
-!       CALCUL: CALCUL.
-!       FICH COMM: GETRES.
-!       MANIP SD: RSEXCH,MEGEOM,MECARA,EXISD.
-!       DIVERS: GCNCO2,CORICH.
+subroutine vetnth(model    , cara_elem, mate     , time ,&
+                  temp_iter, varc_curr, vect_elem, base)
 !
-!     FONCTIONS INTRINSEQUES:
-!       AUCUNE.
-!----------------------------------------------------------------------
-! CORPS DU PROGRAMME
-    implicit none
-!
-! 0.1. ==> ARGUMENTS
+implicit none
 !
 #include "asterf_types.h"
-#include "jeveux.h"
-!
 #include "asterfort/assert.h"
 #include "asterfort/calcul.h"
 #include "asterfort/corich.h"
@@ -66,254 +37,121 @@ subroutine vetnth(optioz, modelz, carelz, matcdz, instz,&
 #include "asterfort/megeom.h"
 #include "asterfort/memare.h"
 #include "asterfort/reajre.h"
-    character(len=*) :: optioz, modelz, carelz, matcdz, instz, chtnz, vecelz
-    character(len=*) :: veceiz, compoz, tpchiz, tpchfz, chhyz
-    character(len=19), intent(in) :: varc_curr
+#include "asterfort/xajcin.h"
+#include "asterfort/inical.h"
 !
-! 0.2. ==> COMMUNS
+character(len=24), intent(in) :: model
+character(len=24), intent(in) :: cara_elem
+character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: time
+character(len=24), intent(in) :: temp_iter
+character(len=19), intent(in) :: varc_curr
+character(len=24), intent(in) :: vect_elem
+character(len=1), intent(in) :: base
 !
+! --------------------------------------------------------------------------------------------------
 !
-! 0.3. ==> VARIABLES LOCALES
+! Thermic - Residuals
+! 
+! Evolution for non-linear (CHAR_THER_EVOL)
 !
-    character(len=6) :: nompro
-    parameter (nompro='VETNTH')
-    integer :: nchinx, nchoux
-    parameter (nchinx=24,nchoux=2)
-    integer :: iret, ibid, nchin, nchout, i, ifm, niv
-    character(len=8) :: lpain(nchinx), lpaout(nchoux), newnom
+! --------------------------------------------------------------------------------------------------
+!
+! In  model            : name of the model
+! In  cara_elem        : name of elementary characteristics (field)
+! In  mate             : name of material characteristics (field)
+! In  time             : time (<CARTE>)
+! In  temp_iter        : temperature field at current Newton iteration
+! In  varc_curr        : command variable for current time
+! In  vect_elem        : name of vect_elem result
+! In  base             : JEVEUX base for object
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer , parameter :: nb_in_maxi = 24 
+    integer , parameter :: nbout = 1
+    character(len=8) :: lpain(nb_in_maxi), lpaout(nbout)
+    character(len=19) :: lchin(nb_in_maxi), lchout(nbout)
+    integer :: iret, ibid, nbin
+    character(len=8) :: newnom
     character(len=16) :: option
-    character(len=19) :: stano, pintto, cnseto, heavto, loncha, basloc
-    character(len=19) :: lsn, lst, hea_no
-    character(len=24) :: modele, carele, matcod, inst, chtn, vecel, vecei
-    character(len=24) :: compor, tmpchi, tmpchf, chhy, ligrmo, lchin(nchinx)
-    character(len=24) :: chgeom, lchout(nchoux), chcara(18)
-    aster_logical :: lnlin
+    character(len=24) :: ligrmo
+    character(len=19) :: resu_elem
+    character(len=24) :: chgeom, chcara(18)
+    aster_logical :: l_xfem
 !
+! --------------------------------------------------------------------------------------------------
 !
-! DEB ------------------------------------------------------------------
-!====
-! 1.1 PREALABLES LIES AUX OPTIONS
-!====
-    call infniv(ifm, niv)
-    do i = 1, nchinx
-        lpain(i) = '        '
-        lchin(i) = '                        '
-    end do
-    call jemarq()
-    newnom = '.0000000'
-    option = optioz
-    modele = modelz
-    carele = carelz
-    matcod = matcdz
-    inst = instz
-    chtn = chtnz
-    vecel = vecelz
-    vecei = veceiz
-    compor = compoz
-    tmpchi = tpchiz
-    tmpchf = tpchfz
-    chhy = chhyz
-    lnlin = .false.
-    if (option .eq. 'CHAR_THER_EVOLNI') then
-        lnlin = .true.
-    endif
-! AFFICHAGE
-    if (niv .eq. 2) then
-        write (ifm,*) '*******************************************'
-        write (ifm,*) ' CALCUL DE SECOND MEMBRE THERMIQUE: VETNTH'
-        write (ifm,*) ' CHAMP MATERIAU CODE  : ',matcod
-    endif
+    resu_elem = vect_elem(1:8)//'.0000000'
+    newnom    = '.0000000'
+    option    = 'CHAR_THER_EVOL'
+    ligrmo    = model(1:8)//'.MODELE'
+    call exixfe(model, iret)
+    l_xfem = (iret .ne. 0)
 !
-! CADRE X-FEM
-    call exixfe(modele, iret)
-    if (iret .ne. 0) then
-        stano = modele(1:8)//'.STNO'
-        pintto = modele(1:8)//'.TOPOSE.PIN'
-        cnseto = modele(1:8)//'.TOPOSE.CNS'
-        heavto = modele(1:8)//'.TOPOSE.HEA'
-        hea_no = modele(1:8)//'.TOPONO.HNO'
-        loncha = modele(1:8)//'.TOPOSE.LON'
-        basloc = modele(1:8)//'.BASLOC'
-        lsn = modele(1:8)//'.LNNO'
-        lst = modele(1:8)//'.LTNO'
-
-    else
-        stano = '&&VETNTH.STNO.BID'
-        pintto = '&&VETNTH.PINTTO.BID'
-        cnseto = '&&VETNTH.CNSETO.BID'
-        heavto = '&&VETNTH.HEAVTO.BID'
-        hea_no = '&&VETNTH.HEA_NO.BID'
-        loncha = '&&VETNTH.LONCHA.BID'
-        basloc = '&&VETNTH.BASLOC.BID'
-        lsn = '&&VETNTH.LNNO.BID'
-        lst = '&&VETNTH.LTNO.BID'
-    endif
+! - Init fields
 !
-!====
-! 1.2 PREALABLES LIES AU VECT_ELEM VECEL
-!====
+    call inical(nb_in_maxi, lpain, lchin, nbout, lpaout, lchout)
 !
-! RECHERCHE DU CHAMP DE GEOMETRIE CHGEOM ASSOCIE AU MODELE
-    call megeom(modele, chgeom)
-! RECHERCHE DES NOMS DES CARAELEM CHCARA DANS LA CARTE CARELE
-    call mecara(carele, chcara)
-! TEST D'EXISTENCE DE L'OBJET JEVEUX VECEL
-    call jeexin(vecel, iret)
+! - Prepare VECT_ELEM
+!
+    call jeexin(vect_elem(1:19)//'.RELR', iret)
     if (iret .eq. 0) then
-! L'OBJET VECEL N'EXISTE PAS
-! CREATION DE L'OBJET '.REFE_RESU' DE VECEL ASSOCIE AU MODELE, A
-! MATERIAU MATCODE, AU CARAELEM CARELE ET A LA SUR_OPTION 'MASS_THER'
-        vecel = '&&'//nompro//'           .RELR'
-        call memare('V', vecel, modele(1:8), matcod, carele,&
-                    'MASS_THER')
+        call memare(base, vect_elem, model, mate, cara_elem, 'MASS_THER')
     else
-! L'OBJET EXISTE
-        call jedetr(vecel)
-    endif
-    ligrmo = modele(1:8)//'.MODELE'
-!
-!====
-! 1.3 PREALABLES LIES A L OPTION 'CHAR_THER_EVOLNI'
-!====
-!
-    if (lnlin) then
-        call jeexin(vecei, iret)
-        if (iret .eq. 0) then
-            vecei = '&&VETNTI           .RELR'
-            call memare('V', vecei(1:8), modele(1:8), matcod, carele,&
-                        'MASS_THER')
-        else
-            call jedetr(vecei)
-        endif
+        call jedetr(vect_elem(1:19)//'.RELR')
     endif
 !
-!====
-! 2. PREPARATION DES CALCULS ELEMENTAIRES (TRONC COMMUN EN IN)
-!====
+! - Generate new RESU_ELEM name
 !
-! CHAMP LOCAL CONTENANT LA CARTE DES NOEUDS (X Y Z)
-    lpain(1) = 'PGEOMER'
-    lchin(1) = chgeom
-! ... LE CHAM_NO DE TEMPERATURE OU DE LA DERIVEE A L'INSTANT
-!     PRECEDENT (TEMP)
-    lpain(2) = 'PTEMPER'
-    lchin(2) = chtn
-! ... LA CARTE MATERIAU (I1) STD
-    lpain(3) = 'PMATERC'
-    lchin(3) = matcod
-! ... LA CARTE DES INSTANTS (INST DELTAT THETA KHI  R RHO)
-    lpain(4) = 'PTEMPSR'
-    lchin(4) = inst
-! ... CARTE LIEE A DES CARACTERISTIQUES DE COQUE
-    lpain(5) = 'PCACOQU'
-    lchin(5) = chcara(7)
-    lpain(6) = 'PVARCPR'
-    lchin(6) = varc_curr
-    nchin = 6
-!
-!====
-! 3. PREPARATION DES CALCULS ELEMENTAIRES (CAS PARTICULIERS EN IN)
-!====
-!
-    if (.not.lnlin) then
-        nchin = nchin + 1
-! ... CARTE LIEE AUX EF MASSIFS
-        lpain(nchin) = 'PCAMASS'
-        lchin(nchin) = chcara(12)
-! ... CHAMPS IN POUR X-FEM (SEULEMENT EN THERMIQUE LINEAIRE)
-        nchin = nchin + 1
-        lpain(nchin) = 'PSTANO'
-        lchin(nchin) = stano
-        nchin = nchin + 1
-        lpain(nchin) = 'PPINTTO'
-        lchin(nchin) = pintto
-        nchin = nchin + 1
-        lpain(nchin) = 'PCNSETO'
-        lchin(nchin) = cnseto
-        nchin = nchin + 1
-        lpain(nchin) = 'PHEAVTO'
-        lchin(nchin) = heavto
-        nchin = nchin + 1
-        lpain(nchin) = 'PLONCHA'
-        lchin(nchin) = loncha
-        nchin = nchin + 1
-        lpain(nchin) = 'PBASLOR'
-        lchin(nchin) = basloc
-        nchin = nchin + 1
-        lpain(nchin) = 'PLSN'
-        lchin(nchin) = lsn
-        nchin = nchin + 1
-        lpain(nchin) = 'PLST'
-        lchin(nchin) = lst
-        nchin = nchin + 1
-        lpain(nchin) = 'PHEA_NO'
-        lchin(nchin) = hea_no
-    else
-        nchin = nchin + 1
-        lpain(nchin) = 'PCOMPOR'
-        lchin(nchin) = compor
-        nchin = nchin + 1
-        lpain(nchin) = 'PTMPCHI'
-        lchin(nchin) = tmpchi
-        nchin = nchin + 1
-        lpain(nchin) = 'PTMPCHF'
-        lchin(nchin) = tmpchf
-    endif
-!
-! ... LE CHAMP RESULTAT
-    lpaout(1) = 'PVECTTR'
-    lchout(1) = '&&'//nompro//'.???????'
-!
-!====
-! 4. PREPA DES CALCULS ELEM EN OUT
-!    PRETRAITEMENTS POUR TENIR COMPTE DE FONC_MULT
-!====
+    newnom = resu_elem(10:16)
     call gcnco2(newnom)
-    lchout(1) (10:16) = newnom(2:8)
+    resu_elem(10:16) = newnom(2:8)
+!
+! - Geometry field
+!
+    call megeom(model, chgeom)
+!
+! - Elementary characteristics field
+!
+    call mecara(cara_elem, chcara)
+!
+! - Input fields
+!
+    lpain(1)  = 'PGEOMER'
+    lchin(1)  = chgeom(1:19)
+    lpain(2)  = 'PTEMPER'
+    lchin(2)  = temp_iter(1:19)
+    lpain(3)  = 'PMATERC'
+    lchin(3)  = mate(1:19)
+    lpain(4)  = 'PTEMPSR'
+    lchin(4)  = time(1:19)
+    lpain(5)  = 'PCACOQU'
+    lchin(5)  = chcara(7)(1:19)
+    lpain(6)  = 'PVARCPR'
+    lchin(6)  = varc_curr(1:19)
+    lpain(7)  = 'PCAMASS'
+    lchin(7)  = chcara(12)(1:19)
+    nbin = 7
+    if (l_xfem) then
+        call xajcin(model, option, nb_in_maxi, lchin, lpain,&
+                    nbin)
+    endif
+!
+! - Output fields
+!
+    lpaout(1) = 'PVECTTR'
+    lchout(1) = resu_elem
     call corich('E', lchout(1), -1, ibid)
 !
-    if (lnlin) then
-        lpaout(2) = 'PVECTTI'
-        lchout(2) = '&&'//nompro//'.???????'
-        call gcnco2(newnom)
-        lchout(2) (10:16) = newnom(2:8)
-        call corich('E', lchout(2), -1, ibid)
-        nchout = 2
-        nchin = nchin + 1
-        lpain(nchin) = 'PHYDRPM'
-        lchin(nchin) = chhy
-    else
-        nchout = 1
-    endif
+! - Compute
 !
-!====
-! 5. LANCEMENT DES CALCULS ELEMENTAIRES OPTION
-!====
-! TEST D'EXISTENCE DU CHAMP DE TEMP A L'INSTANT
-! PRECEDENT. SI IL EXISTE ON LANCE LE CALCUL SIN PB.
-    call exisd('CHAMP_GD', chtn(1:19), iret)
-    ASSERT(iret.gt.0)
-    if (niv .eq. 2) then
-        write (ifm,*) '-->  OPTION         :',option
-        do 20 i = 1, nchin
-            write (ifm,*) '     LPAIN/LCHIN    :',lpain(i),' ',lchin(i)
- 20     continue
-    endif
-!
-!C    PRINT * ,'DANS ',NOMPRO,' OPTION = ',OPTION,' ET STYPSE = ',STYPSE
-    call calcul('S', option, ligrmo, nchin, lchin,&
-                lpain, nchout, lchout, lpaout, 'V',&
+    call calcul('S'  , option, ligrmo, nbin  , lchin,&
+                lpain, nbout , lchout, lpaout, base ,&
                 'OUI')
 !
-! SI ON GENERE DE MANIERE EFFECTIVE UN RESULTAT LCHOUT(1) (VOIR (2))
-! INCREMENTATION DE LONUTI ET STOCKAGE DU RESULTAT
+! - Add RESU_ELEM in VECT_ELEM
 !
-    call reajre(vecel, lchout(1), 'V')
-    if (lnlin) then
-        call reajre(vecei, lchout(2), 'V')
-    endif
+    call reajre(vect_elem, lchout(1), base)
 !
-    vecelz = vecel
-! FIN ------------------------------------------------------------------
-    call jedema()
 end subroutine

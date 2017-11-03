@@ -49,7 +49,7 @@ implicit none
 !
     nb_vari_meta = 0
     call lccree(1, rela_meta, rela_meta_py)
-    call lcinfo(rela_meta_py, idummy, nb_vari_meta)
+    call lcinfo(rela_meta_py, idummy, nb_vari_meta, idummy)
     call lcdiscard(rela_meta_py)
 !
 end subroutine

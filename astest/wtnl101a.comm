@@ -78,10 +78,34 @@ MATERBF=DEFI_MATERIAU(ELAS=_F(E=2.166000000E9,
                               NU=0.29999999999999999,
                               RHO=2410.0,),)
 
-MATERBG=DEFI_MATERIAU(ELAS=_F(E=2.166000000E9,
-                              NU=0.29999999999999999,
-                              RHO=2410.0,
-                              ALPHA=1.0000000000000001E-05,),
+
+# Caractéristiques matériaux fonction bidon de NEUT1 pour tester AFFE_VARC en THM (fiche 26752)
+EL = DEFI_FONCTION  ( NOM_PARA   = 'NEUT1' ,
+             VALE = ( 0.    ,  2.166000000E9,
+                      1.    ,  2.166000000E9,  ),
+                        PROL_DROITE  ='CONSTANT' ,
+                        PROL_GAUCHE  ='CONSTANT' , );
+
+NU=DEFI_CONSTANTE(VALE=0.30,);
+
+RHO=DEFI_CONSTANTE(VALE=2410.0,);
+
+ALPHA = DEFI_CONSTANTE(VALE=1.E-05,);
+
+CHNEUT=CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_R',
+                  MAILLAGE=MAIL,
+                  OPERATION='AFFE',
+                  AFFE=_F(TOUT='OUI',
+                          NOM_CMP='X1',
+                          VALE=1.0),)
+
+MATERBG=DEFI_MATERIAU(
+                     ELAS_FO=_F(E=EL,
+                              NU=NU,
+                              RHO=RHO,
+                              ALPHA=ALPHA,
+                              TEMP_DEF_ALPHA = 0.,
+                              ),
                       COMP_THM = 'LIQU_SATU',
                       THM_LIQU=_F(RHO=1000.0,
                                   UN_SUR_K=5.0000000000000003E-10,
@@ -123,7 +147,10 @@ MATERBG=DEFI_MATERIAU(ELAS=_F(E=2.166000000E9,
 
 CHMAT0=AFFE_MATERIAU(MAILLAGE=MAIL,
                      AFFE=_F(GROUP_MA='BG',
-                             MATER=MATERBG,),);
+                             MATER=MATERBG,),
+                     AFFE_VARC=_F(TOUT='OUI',
+                                    CHAM_GD=CHNEUT,
+                                    NOM_VARC='NEUT1'));
 
 CALBORD=AFFE_CHAR_MECA(MODELE=MODELE,
                        DDL_IMPO=(_F(GROUP_NO='LGAUCHE',
@@ -150,7 +177,8 @@ U0=STAT_NON_LINE(MODELE=MODELE,
                         _F(CHARGE=CALHAUT,),
                         _F(CHARGE=CALBORD,),
                         _F(CHARGE=FLUXT,),),
-                 COMPORTEMENT=_F(RELATION='KIT_THM',PARM_THETA=0.56999999999999995,
+                 SCHEMA_THM=_F(PARM_THETA=0.57,),
+                 COMPORTEMENT=_F(RELATION='KIT_THM',
                               RELATION_KIT=('ELAS','LIQU_SATU','HYDR_UTIL'),),
                  INCREMENT=_F(LIST_INST=INST1,),
                  NEWTON=_F(MATRICE='TANGENTE',
@@ -242,8 +270,10 @@ CHMATM=AFFE_MATERIAU(MAILLAGE=MAIL,
                      AFFE=(_F(GROUP_MA='BG',
                              MATER=MATERBG,),
                            _F(GROUP_MA='BOX1',
-                             MATER=MATERBF,),)
-
+                             MATER=MATERBF,),),
+                     AFFE_VARC=_F(TOUT='OUI',
+                                    CHAM_GD=CHNEUT,
+                                    NOM_VARC='NEUT1'),
 
                      );
 
@@ -278,12 +308,12 @@ U0M=STAT_NON_LINE(MODELE=MODELM,
                         _F(CHARGE=CALHAUM,),
                         _F(CHARGE=CALBORM,),
                         _F(CHARGE=FLUXM,),),
+                 SCHEMA_THM=_F(PARM_THETA=0.57,),
                  COMPORTEMENT=(
                                _F(GROUP_MA='BOX1',
                                   RELATION='ELAS',),
                                _F(GROUP_MA='BOX2',
                                   RELATION='KIT_THM',
-                                  PARM_THETA=0.56999999999999995,
                                   RELATION_KIT=('ELAS','LIQU_SATU','HYDR_UTIL'),),
                               ),
 

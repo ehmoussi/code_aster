@@ -30,6 +30,7 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/mminfl.h"
 #include "asterfort/utmess.h"
+#include "asterfort/infniv.h"
 #include "asterc/r8prem.h"
 !
 ! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
@@ -62,10 +63,11 @@ implicit none
     real(kind=8) :: dire_excl_frot_i, dire_excl_frot(3)
     real(kind=8) :: coef_cont, coef_frot, seuil_init, coef_coul_frot
     real(kind=8) :: coef_augm_frot, coef_augm_cont
-    real(kind=8) :: coef_pena_frot, coef_pena_cont
+    real(kind=8) :: coef_pena_frot, coef_pena_cont,pene_maxi
     real(kind=8) :: algo_cont, algo_frot
     real(kind=8) :: type_inte, cont_init, seuil_auto
     integer :: inte_order
+    integer :: nbret=-3,niv, ifm
     aster_logical :: l_inte_node, l_frot, l_node_excl, l_frot_excl, l_dire_excl_frot
     aster_logical :: l_gliss, l_newt_geom, l_newt_cont
     integer :: zcmcf, zexcl
@@ -75,7 +77,10 @@ implicit none
     real(kind=8), pointer :: v_sdcont_exclfr(:) => null()
     character(len=24) :: sdcont_paraci
     integer, pointer :: v_sdcont_paraci(:) => null()
-    aster_logical ::  l_newt_fr, l_cont_cont
+    aster_logical ::  l_newt_fr = .false._1, l_cont_cont = .false._1,l_pena_cont = .false._1
+    character(len=24) :: sdcont_paracr
+    real(kind=8), pointer :: v_sdcont_paracr(:) => null()
+
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -106,6 +111,7 @@ implicit none
     l_newt_fr  = .false.
     l_cont_cont= .false.
     s_algo_frot       = ' '
+    pene_maxi         =1.d3
 !
 ! - Datastructure for contact
 !
@@ -113,9 +119,11 @@ implicit none
     sdcont_caracf = sdcont_defi(1:16)//'.CARACF'
     sdcont_exclfr = sdcont_defi(1:16)//'.EXCLFR'
     sdcont_paraci = sdcont_defi(1:16)//'.PARACI'
+    sdcont_paracr = sdcont_defi(1:16)//'.PARACR'
     call jeveuo(sdcont_caracf, 'E', vr = v_sdcont_caracf)
     call jeveuo(sdcont_exclfr, 'E', vr = v_sdcont_exclfr)
     call jeveuo(sdcont_paraci, 'E', vi = v_sdcont_paraci)
+    call jeveuo(sdcont_paracr, 'E', vr = v_sdcont_paracr)
     zcmcf = cfmmvd('ZCMCF')
     zexcl = cfmmvd('ZEXCL')
 !
@@ -126,6 +134,7 @@ implicit none
     l_newt_fr = cfdisl(sdcont_defi,'FROT_NEWTON')
     l_newt_geom = cfdisl(sdcont_defi,'GEOM_NEWTON')
     l_newt_cont = cfdisl(sdcont_defi,'CONT_NEWTON')
+    l_pena_cont = cfdisl(sdcont_defi,'EXIS_PENA')
 !
 ! - Integration scheme
 !
@@ -148,24 +157,57 @@ implicit none
     v_sdcont_caracf(zcmcf*(i_zone-1)+1) = type_inte
 !
 ! - Contact method
-!
+! - Traitement de PENE_MAXI :
+!      - Dans le cas  ADAPTATION=NON+PENALISATION,
+!        le critere PENE_MAXI n'a pas de sens. Au moment de la résolution,
+!        dans STAT_NON_LINE, on ne cherche pas à le vérifier. La parade c'est
+!        de prendre le critère volontairement tres grand pour ne pas avoir à le vérifier. 
+!      - Dans le cas STANDARD,LAC PENE_MAXI n'a pas de sens. Il ne sert qu'à initialiser
+!        la variable .PARACR(6) sinon bug dans certaines configurations multi-zone.
+
+
     call getvtx(keywf, 'ALGO_CONT', iocc=i_zone, scal=s_algo_cont)
+!    write (6,*) "algo_cont",s_algo_cont,s_algo_frot
     if (s_algo_cont .eq. 'STANDARD') then
         call getvr8(keywf, 'COEF_CONT', iocc=i_zone, scal=coef_augm_cont)
         algo_cont = 1.d0
         coef_cont = coef_augm_cont
+        pene_maxi = 1.d3
     else if (s_algo_cont .eq. 'PENALISATION') then
-        call getvr8(keywf, 'COEF_PENA_CONT', iocc=i_zone, scal=coef_pena_cont)
+        call getvtx(keywf, 'ADAPTATION', iocc=i_zone, scal=adaptation)
+        ! L'utilisateur peut ne pas renseigner pene_maxi
+        call getvr8(keywf, 'PENE_MAXI', iocc=i_zone, scal=pene_maxi,nbret=nbret)
+        if ((adaptation .eq. 'NON' .or. adaptation .eq. 'CYCLAGE') .and. (nbret .le. 0) )then
+            call getvr8(keywf, 'COEF_PENA_CONT', iocc=i_zone, scal=coef_pena_cont)
+            pene_maxi = 1.d3
+        elseif (adaptation .eq. 'ADAPT_COEF' .or. adaptation .eq. 'TOUT' .or.(nbret .ge. 1))then
+!            write (6,*) "nbret=",nbret
+            if (nbret .le. 0) then 
+                pene_maxi = -1
+                call infniv(ifm, niv)
+                if(niv .ge. 2) call utmess('I', 'CONTACT_21')
+            endif               
+            coef_pena_cont = 1.d2    
+        endif
         algo_cont = 3.d0
         coef_cont = coef_pena_cont
     else if (s_algo_cont .eq. 'LAC') then
         algo_cont = 5.d0
         coef_cont = coef_augm_cont
+        pene_maxi = 1.d3
     else
         ASSERT(.false.)
     endif
     v_sdcont_caracf(zcmcf*(i_zone-1)+2) = coef_cont
     v_sdcont_caracf(zcmcf*(i_zone-1)+3) = algo_cont
+    v_sdcont_caracf(zcmcf*(i_zone-1)+14) = pene_maxi
+! On cherche le minimum des pene_maxi.
+    if (i_zone .le. 1) then 
+        v_sdcont_paracr(6) = pene_maxi
+    else
+        v_sdcont_paracr(6) = min(pene_maxi,v_sdcont_paracr(6))
+    endif
+
 !
 ! - Friction method
 !
@@ -182,13 +224,13 @@ implicit none
         else
             ASSERT(.false.)
         endif
-        if (s_algo_cont .ne. s_algo_frot) then
-            if (s_algo_cont .eq. 'STANDARD' .and.&
-                s_algo_frot .eq. 'PENALISATION') then 
-            else 
-                call utmess('F', 'CONTACT_89')
-            endif
-        endif
+!        if (s_algo_cont .ne. s_algo_frot) then
+!            if (s_algo_cont .eq. 'STANDARD' .and.&
+!                s_algo_frot .eq. 'PENALISATION') then 
+!            else 
+!                call utmess('F', 'CONTACT_89')
+!            endif
+!        endif
     else
         coef_frot = 0.d0
         algo_frot = 0.d0
@@ -215,16 +257,16 @@ implicit none
 !
 ! - Check
 !
-    if (l_frot .and. (s_algo_cont.ne.s_algo_frot)) then
-        if (s_algo_cont .eq. 'STANDARD' .and.&
-            s_algo_frot .eq. 'PENALISATION') then 
-        else 
-            call utmess('F', 'CONTACT_89')
-        endif
-    endif
-    if ((s_algo_cont.eq.'PENALISATION') .and. l_newt_geom) then
-        call utmess('A', 'CONTACT_21')
-    endif
+!    if (l_frot .and. (s_algo_cont.ne.s_algo_frot)) then
+!        if (s_algo_cont .eq. 'STANDARD' .and.&
+!            s_algo_frot .eq. 'PENALISATION') then 
+!        else 
+!            call utmess('F', 'CONTACT_89')
+!        endif
+!    endif
+!    if ((s_algo_cont.eq.'PENALISATION') .and. l_newt_geom) then
+!        call utmess('A', 'CONTACT_21')
+!    endif
     if (l_newt_geom .and. (.not.l_newt_cont)) then
         call utmess('F', 'CONTACT_20')
     endif
@@ -329,76 +371,92 @@ implicit none
     v_sdcont_exclfr(zexcl*(i_zone-1)+2)  = dire_excl_frot(2)
     v_sdcont_exclfr(zexcl*(i_zone-1)+3)  = dire_excl_frot(3)
 !
-! - Adptation method
+! - Adptation method for Node-to-segment method only
 !
-    call getvtx(keywf, 'ADAPTATION', iocc=i_zone, scal=adaptation)
-    v_sdcont_paraci(20) = -1
+    if (s_algo_cont .ne. 'LAC') then 
+        call getvtx(keywf, 'ADAPTATION', iocc=i_zone, scal=adaptation)
+        v_sdcont_paraci(20) = -1
+        
+        if (adaptation .eq. 'NON') then
+        ! Aucun traitement adaptatif inactif
+             v_sdcont_paraci(20) = 0
+             
+             
+        else if (adaptation .eq. 'ADAPT_COEF') then
+        ! IL FAUT DISTINGUER 3 CAS DE FIGURES :
+        ! FROTTEMENT NEWTON ACTIF : ON ADAPTE COEF_FROT COMME DECRIT DANS LA DOC R + THESE DK
+        !                    PARACI = 1
+        !                    SI PENALISATION CONTACT COEF_CONT ADAPTE SELON BUSSETTA
+        !                    PARACI = 2
+        ! CONTACT PENALISE ACTIF FROTTEMENT TRESCA/NEWTON OU SANS : COEF_CONT ADAPTE SELON BUSSETTA
+        !                    PARACI = 3
+        ! CONTACT STANDARD ACTIF FROTTEMENT TRESCA ACTIF  : ON NE FAIT RIEN
+        !                    PARACI = 0
+            if (l_cont_cont) then
+                if (l_newt_fr) then 
+                    v_sdcont_paraci(20) = 1
+                    if (s_algo_cont .eq. 'PENALISATION')  v_sdcont_paraci(20) = 2
+                elseif (s_algo_cont .eq. 'PENALISATION'  ) then 
+                    v_sdcont_paraci(20) = 3
+                else
+                    v_sdcont_paraci(20) = 0 
+           !         write (6,*) "CONDITIONS D ADAPTATION NON VALIDE : IL FAUT QUE"
+           !         write (6,*) "Le mot-clef ADAPTATION pemret de contrôler COEF_CONT dans le cas"
+           !         write (6,*) "où la penalisation est active ou COEF_FROT uniquement dans le cas"
+           !         write (6,*) "ALGO_RESO_FROT='NEWTON' s'il y a frottement"
+           !         write (6,*) "si c'est uniquement le cyclage qui vous intéresse :"
+           !         write (6,*) "branchez ADAPTATION=CYCLAGE"
+                endif
+            endif
+            
+        else if (adaptation .eq. 'CYCLAGE') then
+            v_sdcont_paraci(20) = 4
+            
+        else if (adaptation .eq. 'TOUT') then
+        ! IL FAUT DISTINGUER 3 CAS DE FIGURES :
+        ! FROTTEMENT NEWTON ACTIF : ON ADAPTE COEF_FROT COMME DECRIT DANS LA DOC R + THESE DK
+        !                    PARACI = 1+4
+        !                    SI PENALISATION CONTACT COEF_CONT ADAPTE SELON BUSSETTA
+        !                    PARACI = 2+4
+        ! CONTACT PENALISE ACTIF  FROTTEMENT TRESCA OU NON   : COEF_CONT ADAPTE SELON BUSSETTA
+        !                    PARACI = 3+4
+        ! CONTACT STANDARD ACTIF FROTTEMENT TRESCA OU NON  : ON NE FAIT RIEN
+        !                    PARACI = 0+4
+            v_sdcont_paraci(20) = 4
+            if (l_cont_cont) then
+                if (l_newt_fr) then 
+                    v_sdcont_paraci(20) = 1+4
+                    if (s_algo_cont .eq. 'PENALISATION')  v_sdcont_paraci(20) = 2+4
+                else if (s_algo_cont .eq. 'PENALISATION' ) then 
+                    v_sdcont_paraci(20) = 3+4
+                else
+                    v_sdcont_paraci(20) = 0+4            
+         !           write (6,*) "CONDITIONS D ADAPTATION NON VALIDE : IL FAUT QUE"
+         !           write (6,*) "Le mot-clef ADAPTATION pemret de contrôler COEF_CONT dans le cas"
+         !           write (6,*) "où la penalisation est active ou COEF_FROT uniquement dans le cas"
+         !           write (6,*) "ALGO_RESO_FROT='NEWTON' s'il y a frottement"
+         !           write (6,*) "si c'est uniquement le cyclage qui vous intéresse :"
+         !           write (6,*) "branchez ADAPTATION=CYCLAGE"
+                endif
+            endif
+                         
+        else 
+            ASSERT(.false.)
+        endif
+    elseif  (s_algo_cont .eq. 'LAC') then 
+        
+        call getvtx(keywf, 'ADAPTATION', iocc=i_zone, scal=adaptation,nbret=nbret)
+        if ( nbret .le. 0 )  adaptation='NON'
+        v_sdcont_paraci(20) = 0
     
-    if (adaptation .eq. 'NON') then
-    ! Aucun traitement adaptatif inactif
-         v_sdcont_paraci(20) = 0
-         
-         
-    else if (adaptation .eq. 'ADAPT_COEF') then
-    ! IL FAUT DISTINGUER 3 CAS DE FIGURES :
-    ! FROTTEMENT NEWTON ACTIF : ON ADAPTE COEF_FROT COMME DECRIT DANS LA DOC R + THESE DK
-    !                    PARACI = 1
-    !                    SI PENALISATION CONTACT COEF_CONT ADAPTE SELON BUSSETTA
-    !                    PARACI = 2
-    ! CONTACT PENALISE ACTIF  FROTTEMENT TRESCA OU NEWTON OU SANS : COEF_CONT ADAPTE SELON BUSSETTA
-    !                    PARACI = 3
-    ! CONTACT STANDARD ACTIF FROTTEMENT TRESCA ACTIF  : ON NE FAIT RIEN
-    !                    PARACI = 0
-        if (l_cont_cont) then
-            if (l_newt_fr) then 
-                v_sdcont_paraci(20) = 1
-                if (s_algo_cont .eq. 'PENALISATION')  v_sdcont_paraci(20) = 2
-            elseif (s_algo_cont .eq. 'PENALISATION' .and. .not. l_frot  ) then 
-                v_sdcont_paraci(20) = 3
-            else
-                v_sdcont_paraci(20) = 0 
-       !         write (6,*) "CONDITIONS D ADAPTATION NON VALIDE : IL FAUT QUE"
-       !         write (6,*) "Le mot-clef ADAPTATION pemret de contrôler COEF_CONT dans le cas"
-       !         write (6,*) "où la penalisation est active ou COEF_FROT uniquement dans le cas"
-       !         write (6,*) "ALGO_RESO_FROT='NEWTON' s'il y a frottement"
-       !         write (6,*) "si c'est uniquement le cyclage qui vous intéresse :"
-       !         write (6,*) "branchez ADAPTATION=CYCLAGE"
-            endif
+        if (adaptation .eq. 'NON') then
+        ! Aucun traitement adaptatif inactif
+             v_sdcont_paraci(20) = 0
+        else if (adaptation .eq. 'CYCLAGE') then
+            v_sdcont_paraci(20) = 4
+        else 
+            ASSERT(.false.)
         endif
-        
-    else if (adaptation .eq. 'CYCLAGE') then
-        v_sdcont_paraci(20) = 4
-        
-    else if (adaptation .eq. 'TOUT') then
-    ! IL FAUT DISTINGUER 3 CAS DE FIGURES :
-    ! FROTTEMENT NEWTON ACTIF : ON ADAPTE COEF_FROT COMME DECRIT DANS LA DOC R + THESE DK
-    !                    PARACI = 1+4
-    !                    SI PENALISATION CONTACT COEF_CONT ADAPTE SELON BUSSETTA
-    !                    PARACI = 2+4
-    ! CONTACT PENALISE ACTIF  FROTTEMENT TRESCA OU NON   : COEF_CONT ADAPTE SELON BUSSETTA
-    !                    PARACI = 3+4
-    ! CONTACT STANDARD ACTIF FROTTEMENT TRESCA OU NON  : ON NE FAIT RIEN
-    !                    PARACI = 0+4
-        v_sdcont_paraci(20) = 4
-        if (l_cont_cont) then
-            if (l_newt_fr) then 
-                v_sdcont_paraci(20) = 1+4
-                if (s_algo_cont .eq. 'PENALISATION')  v_sdcont_paraci(20) = 2+4
-            else if (s_algo_cont .eq. 'PENALISATION' .and. .not. l_frot) then 
-                v_sdcont_paraci(20) = 3+4
-            else
-                v_sdcont_paraci(20) = 0+4            
-     !           write (6,*) "CONDITIONS D ADAPTATION NON VALIDE : IL FAUT QUE"
-     !           write (6,*) "Le mot-clef ADAPTATION pemret de contrôler COEF_CONT dans le cas"
-     !           write (6,*) "où la penalisation est active ou COEF_FROT uniquement dans le cas"
-     !           write (6,*) "ALGO_RESO_FROT='NEWTON' s'il y a frottement"
-     !           write (6,*) "si c'est uniquement le cyclage qui vous intéresse :"
-     !           write (6,*) "branchez ADAPTATION=CYCLAGE"
-            endif
-        endif
-        
-    else
-        ASSERT(.false.)
     endif
 !
 end subroutine

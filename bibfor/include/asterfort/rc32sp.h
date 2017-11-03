@@ -21,22 +21,17 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine rc32sp(ze200, lieu, numsip, numsiq, iocs, mse,&
-                      propi, propj, proqi, proqj, instsp, sp1, spme, mat1, mat2)
+    subroutine rc32sp(ze200, lieu, iocc1, iocc2, ns,&
+                      sp, spmeca, instsp, nbsscyc, spss)
         aster_logical :: ze200
         character(len=4) :: lieu
-        integer :: numsip
-        integer :: numsiq
-        integer :: iocs
-        real(kind=8) :: mse(12)
-        real(kind=8) :: propi(20)
-        real(kind=8) :: propj(20)
-        real(kind=8) :: proqi(20)
-        real(kind=8) :: proqj(20)
+        integer :: iocc1
+        integer :: iocc2
+        integer :: ns
+        real(kind=8) :: sp(2)
+        real(kind=8) :: spmeca(2)
         real(kind=8) :: instsp(4)
-        real(kind=8) :: sp1(2)
-        real(kind=8) :: spme(2)
-        real(kind=8) :: mat1(7)
-        real(kind=8) :: mat2(7)
+        integer :: nbsscyc
+        real(kind=8) :: spss(100)
     end subroutine rc32sp
 end interface

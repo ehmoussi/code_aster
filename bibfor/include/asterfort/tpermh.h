@@ -15,15 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface 
-    subroutine tpermh(angmas, permin, tperm, aniso, ndim)
-        integer :: ndim
-        real(kind=8) :: angmas(3)
-        real(kind=8) :: permin(4)
-        real(kind=8) :: tperm(ndim, ndim)
-        integer :: aniso
+    subroutine tpermh(ndim, angl_naut, aniso, perm_coef, tperm)
+        integer, intent(in) :: ndim
+        real(kind=8), intent(in) :: angl_naut(3)
+        integer, intent(in) :: aniso
+        real(kind=8), intent(in) :: perm_coef(4)
+        real(kind=8), intent(out) :: tperm(ndim, ndim)
     end subroutine tpermh
 end interface 

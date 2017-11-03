@@ -18,7 +18,7 @@
 
 subroutine nmelcm(phase    , mesh     , model    , mate     , ds_contact    ,&
                   disp_prev, vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
-                  matr_elem, time_prev, time_curr, ds_constitutive, l_xthm)
+                  disp_newt_curr,matr_elem, time_prev, time_curr, ds_constitutive, l_xthm)
 !
 use NonLin_Datastructure_type
 !
@@ -51,6 +51,7 @@ implicit none
     character(len=19), intent(in) :: acce_prev
     character(len=19), intent(in) :: vite_curr
     character(len=19), intent(in) :: disp_cumu_inst
+    character(len=19), intent(in) :: disp_newt_curr
     character(len=19), intent(out) :: matr_elem
     character(len=19), intent(in) :: time_prev
     character(len=19), intent(in) :: time_curr
@@ -85,7 +86,7 @@ implicit none
 !
     integer :: ifm, niv
     integer, parameter :: nbout = 3
-    integer, parameter :: nbin  = 35
+    integer, parameter :: nbin  = 36
     character(len=8) :: lpaout(nbout), lpain(nbin)
     character(len=19) :: lchout(nbout), lchin(nbin)
     character(len=1) :: base
@@ -132,7 +133,7 @@ implicit none
         call nmelco_prep(phase    , 'MATR'   ,&
                          mesh     , model    , mate     , ds_contact,&
                          disp_prev, vite_prev, acce_prev, vite_curr , disp_cumu_inst,&
-                         nbin     , lpain    , lchin    ,&
+                         disp_newt_curr,nbin     , lpain    , lchin    ,&
                          option   , time_prev, time_curr , ds_constitutive,&
                          ccohes   , xcohes)
 !

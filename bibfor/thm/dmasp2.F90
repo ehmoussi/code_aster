@@ -1,0 +1,59 @@
+! --------------------------------------------------------------------
+! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! This file is part of code_aster.
+!
+! code_aster is free software: you can redistribute it and/or modify
+! it under the terms of the GNU General Public License as published by
+! the Free Software Foundation, either version 3 of the License, or
+! (at your option) any later version.
+!
+! code_aster is distributed in the hope that it will be useful,
+! but WITHOUT ANY WARRANTY; without even the implied warranty of
+! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+! GNU General Public License for more details.
+!
+! You should have received a copy of the GNU General Public License
+! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+! --------------------------------------------------------------------
+!
+function dmasp2(rho11  , rho12, rho21,&
+                satur  , phi  , cs   , pres,&
+                l_emmag, em)
+!
+implicit none
+!
+#include "asterf_types.h"
+!
+real(kind=8), intent(in) :: rho11, rho12, rho21
+real(kind=8), intent(in) :: satur, phi, cs, pres, em
+aster_logical, intent(in) :: l_emmag
+real(kind=8) :: dmasp2
+!
+! --------------------------------------------------------------------------------------------------
+!
+! THM
+!
+! Derivative of quantity of mass of dry air by gaz pressure
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  rho11            : volumic mass of liquid
+! In  rho12            : volumic mass of steam
+! In  rho21            : volumic mass of dry air
+! In  satur            : saturation
+! In  phi              : porosity
+! In  cs               : Biot modulus of solid matrix
+! In  pres             : pressure of gaz
+! In  l_emmag          : .true. if use storage coefficient
+! In  em               : storage coefficient
+! Out dmasp2           : derivative of quantity of mass by gaz pressure
+!
+! --------------------------------------------------------------------------------------------------
+!
+    if (l_emmag) then
+        dmasp2 = rho21*((1.d0-satur)*em + phi*(1.d0-satur)*(rho11-rho12)/rho11/pres)
+    else
+        dmasp2 = rho21*((1.d0-satur)*cs + phi*(1.d0-satur)*(rho11-rho12)/rho11/pres)
+    endif
+!
+end function

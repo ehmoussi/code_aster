@@ -18,7 +18,7 @@
 
 subroutine pipeed(nno, npg, ipoids, ivf, idfde,&
                   geom, typmod, mate, lgpg, deplm,&
-                  vim, ddepl, ddepl0, ddepl1, dfdi,&
+                  vim, ddepl, ddepl0, ddepl1,&
                   dtau, copilo)
 !
 !
@@ -40,7 +40,7 @@ subroutine pipeed(nno, npg, ipoids, ivf, idfde,&
     real(kind=8) :: geom(2, 4), ddepl(2, 4), deplm(2, 4)
     real(kind=8) :: vim(lgpg, npg)
     real(kind=8) :: ddepl0(2, 4), ddepl1(2, 4)
-    real(kind=8) :: dtau, copilo(5, npg), dfdi(nno, 2)
+    real(kind=8) :: dtau, copilo(5, npg)
 !
 ! ----------------------------------------------------------------------
 !
@@ -72,7 +72,6 @@ subroutine pipeed(nno, npg, ipoids, ivf, idfde,&
 ! IN  IPOIDS : POIDS DES POINTS DE GAUSS
 ! IN  IVF    : VALEUR DES FONCTIONS DE FORME
 ! IN  IDFDE  : DERIVEE DES FONCTIONS DE FORME ELEMENT DE REFERENCE
-! IN  DFDI   : DERIVEE DES FONCTIONS DE FORME
 ! IN  LGPG   : "LONGUEUR" DES VARIABLES INTERNES POUR 1 POINT DE GAUSS
 !             CETTE LONGUEUR EST UN MAJORANT DU NBRE REEL DE VAR. INT.
 ! IN  GEOM   : COORDONNEES DES NOEUDS
@@ -97,6 +96,7 @@ subroutine pipeed(nno, npg, ipoids, ivf, idfde,&
 !
 !
     integer :: i, j, k, kont, n, kpg, spt
+    real(kind=8) :: dfdi(nno, 2)
     real(kind=8) :: up(8), ud(8), sm, rck, r, sigmc, gc, rac2, kappam, pkm, det
     real(kind=8) :: eta(2), poids, f(3, 3)
     real(kind=8) :: alfp(2), alfd(2), dist

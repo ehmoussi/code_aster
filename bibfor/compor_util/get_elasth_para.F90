@@ -87,7 +87,7 @@ implicit none
     real(kind=8) :: valres(nbresm)
 !
     character(len=8) :: para_name, materi
-    character(len=8) :: valk(2)
+    character(len=24) :: valk(2)
     real(kind=8) :: para_vale
     integer :: nbres, nb_para, i
     real(kind=8) :: alpha_c, alpha_f, alpha_a
@@ -138,8 +138,6 @@ implicit none
             if (present(deps_ch_tref_)) then
                 deps_ch_tref_ = deps_ch_tref
             endif
-            
-            
         else
             nbres     = 1
             nomres(1) = 'ALPHA'
@@ -179,7 +177,7 @@ implicit none
     do i = 1, nbres
         if (icodre(i).ne.0) then
             call tecael(iadzi, iazk24)
-            valk(1) = zk24(iazk24-1+3) (1:8)
+            valk(1) = zk24(iazk24-1+3)
             valk(2) = nomres(i)
             call utmess('F', 'COMPOR5_32', nk=2, valk=valk)
         endif

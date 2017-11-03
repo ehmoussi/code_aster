@@ -18,7 +18,7 @@
 
 subroutine edgrep(typmod, coord, anic, ani)
 !
-    implicit none
+implicit none
 !
 !
 #include "asterc/r8prem.h"

@@ -397,6 +397,15 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) > 1 and sys.argv[1] == '--pdb':
+        del sys.argv[1]
+        import pdb
+        pdb.run('start()')
+    elif len(sys.argv) > 1 and sys.argv[1] == '--pudb':
+        del sys.argv[1]
+        import pudb
+        pudb.runcall(main)
+    else:
+        main()
 #    import profile
 #    profile.run('main()')

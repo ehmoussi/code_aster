@@ -31,26 +31,21 @@
 
 TemporaryDataStructure tempName = TemporaryDataStructure();
 
-mapStrSD mapNameDataStructure = mapStrSD();
-
 DataStructure::DataStructure( const std::string name, const std::string type,
-                              const JeveuxMemory memType ): _name( name ), _type( type ),
-                                                            _memoryType( memType )
+                              const JeveuxMemory memType ):
+    _name( name ),
+    _type( type ),
+    _memoryType( memType )
 {
-    std::string nameWithoutBlanks = trim( name );
-    if ( nameWithoutBlanks != "" && memType == Permanent )
-        mapNameDataStructure.insert( mapStrSDValue( nameWithoutBlanks, this ) );
-};
+    CALLO_SETTCO(_name, _type);
+}
 
-DataStructure::DataStructure( const std::string type, const JeveuxMemory memType, int lenghtName ):
-        _name( DataStructureNaming::getNewName( memType, lenghtName ) ),
-        _type( type ),
-        _memoryType( memType )
+DataStructure::DataStructure( const std::string type,
+                              const JeveuxMemory memType, int nameLength ):
+    DataStructure::DataStructure( DataStructureNaming::getNewName( memType, nameLength ),
+                                  type, memType )
 {
-    std::string nameWithoutBlanks = trim( _name );
-    if ( nameWithoutBlanks != "" && memType == Permanent )
-        mapNameDataStructure.insert( mapStrSDValue( nameWithoutBlanks, this ) );
-};
+}
 
 DataStructure::~DataStructure()// throw ( std::runtime_error )
 {
@@ -60,18 +55,14 @@ DataStructure::~DataStructure()// throw ( std::runtime_error )
     std::string nameWithoutBlanks = trim( _name );
     if ( nameWithoutBlanks == "" || _memoryType == Temporary )
         return;
-    mapStrSDIterator curIter = mapNameDataStructure.find( nameWithoutBlanks );
-    if ( curIter == mapNameDataStructure.end() )
-        throw std::runtime_error( "Problem !!! " + nameWithoutBlanks );
-    mapNameDataStructure.erase( curIter );
 #ifdef _DEBUG_CXX
     std::string base( " " );
     long pos = 0;
     long nbval2 = 0;
     long retour = 0;
-    std::string nothing( "" );
-    CALL_JELSTC( base.c_str(), nameWithoutBlanks.c_str(), &pos,
-                 &nbval2, nothing.c_str(), &retour );
+    JeveuxChar24 nothing( " " );
+    CALLO_JELSTC( base, nameWithoutBlanks, &pos,
+                  &nbval2, nothing, &retour );
     if ( nbval2 != 0 )
         throw std::runtime_error( "Remaining jeveux objects in " + _name );
 #endif
@@ -88,21 +79,11 @@ void DataStructure::debugPrint( int logicalUnit ) const
     JeveuxString< 1 > base( " " );
     JeveuxString< 3 > no( "NON" );
     try {
-        CALL_UTIMSD( &unit, &niveau, &False, &True, this->getName().c_str(),
-                     &ipos, base.c_str(), no.c_str() );
+        CALLO_UTIMSD( &unit, &niveau, &False, &True, this->getName(),
+                      &ipos, base, no );
     }
     catch (...)
     {
         throw std::runtime_error( "debugPrint failed!" );
     }
-};
-
-char* getSDType( char* nom )
-{
-    std::string nameWithoutBlanks = trim( nom );
-    mapStrSDIterator curIter = mapNameDataStructure.find( nameWithoutBlanks );
-    if ( curIter == mapNameDataStructure.end() )
-        //~ throw std::runtime_error( "SD not registered: " + nameWithoutBlanks + " T" );
-        return const_cast< char* >(" ");
-    return const_cast< char* >( curIter->second->getType().c_str() );
 };

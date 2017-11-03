@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine dbr_read(ds_para)
 !
 use Rom_Datastructure_type
@@ -24,19 +25,17 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterc/getres.h"
-#include "asterc/gcucon.h"
 #include "asterfort/assert.h"
 #include "asterfort/dbr_read_pod.h"
 #include "asterfort/dbr_read_rb.h"
+#include "asterfort/dbr_read_tr.h"
+#include "asterfort/gcucon.h"
 #include "asterfort/getvtx.h"
-#include "asterfort/getvis.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaDBR), intent(inout) :: ds_para
+type(ROM_DS_ParaDBR), intent(inout) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,7 +52,7 @@ implicit none
     integer :: ifm, niv
     character(len=16) :: k16bid, operation = ' '
     character(len=8) :: result_out = ' '
-    integer :: ireuse, nb_mode_maxi, nocc
+    integer :: ireuse
     aster_logical :: l_reuse
 !
 ! --------------------------------------------------------------------------------------------------
@@ -72,13 +71,6 @@ implicit none
     call gcucon(result_out, 'MODE_EMPI', ireuse)
     l_reuse = ireuse .ne. 0
 !
-! - Maximum number of modes
-!
-    call getvis(' ', 'NB_MODE' , scal = nb_mode_maxi, nbret = nocc)
-    if (nocc .eq. 0) then
-        nb_mode_maxi = 0
-    endif
-!
 ! - Type of ROM methods
 !
     call getvtx(' ', 'OPERATION', scal = operation)
@@ -86,6 +78,8 @@ implicit none
         call dbr_read_pod(operation, ds_para%para_pod)
     elseif (operation .eq. 'GLOUTON') then
         call dbr_read_rb(ds_para%para_rb)
+    elseif (operation .eq. 'TRONCATURE') then
+        call dbr_read_tr(ds_para%para_tr)
     else
         ASSERT(.false.)
     endif
@@ -94,7 +88,6 @@ implicit none
 !
     ds_para%operation    = operation
     ds_para%result_out   = result_out
-    ds_para%nb_mode_maxi = nb_mode_maxi
     ds_para%l_reuse      = l_reuse
 !
 end subroutine

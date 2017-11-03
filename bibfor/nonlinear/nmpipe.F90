@@ -92,7 +92,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: nbout, nbin
-    parameter    (nbout=1, nbin=23)
+    parameter    (nbout=1, nbin=24)
     character(len=8) :: lpaout(nbout), lpain(nbin)
     character(len=19) :: lchout(nbout), lchin(nbin)
 !
@@ -241,6 +241,8 @@ implicit none
     lchin(22) = baseco
     lpain(23) = 'PCOHES'
     lchin(23) = xcohes(1:19)
+    lpain(24) = 'PCARCRI'
+    lchin(24) = ds_constitutive%carcri(1:19)
 !
 ! --- REMPLISSAGE DU CHAMP DE SORTIE
 !

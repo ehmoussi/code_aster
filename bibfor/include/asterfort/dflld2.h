@@ -15,13 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine dflld2(sdlist, ifm, iechec)
-        character(len=8) :: sdlist
-        integer :: ifm
-        integer :: iechec
+    subroutine dflld2(sdlist, i_fail)
+        character(len=8), intent(in) :: sdlist
+        integer, intent(in) :: i_fail
     end subroutine dflld2
 end interface

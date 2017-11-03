@@ -25,7 +25,7 @@ interface
                       compor, carcri, instam, instap, &
                       epsdt, depst, sigm,&
                       vim, option, angmas, sigp, vip,&
-                      dsidep, icomp, nvi, codret, mult_compor_, wkin_)
+                      dsidep, icomp, nvi, codret, mult_compor_)
         character(len=*), intent(in) :: fami
         integer, intent(in) :: kpg
         integer, intent(in) :: ksp
@@ -48,6 +48,5 @@ interface
         real(kind=8), intent(out) :: dsidep(6, *)
         integer, intent(out) :: codret
         character(len=16), optional, intent(in) :: mult_compor_
-        real(kind=8), optional, intent(in) :: wkin_(9)
     end subroutine plasti
 end interface

@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lcdsbe(fami, ndim, typmod, imate, compor,&
+subroutine lcdsbe(fami, ndim, imate,&
                   epstm, depst, vim, option, sig,&
                   vip, dsidpt, proj)
     implicit none
@@ -27,8 +27,7 @@ subroutine lcdsbe(fami, ndim, typmod, imate, compor,&
 #include "asterfort/r8inir.h"
 #include "blas/ddot.h"
     character(len=*) :: fami
-    character(len=8) :: typmod(2)
-    character(len=16) :: option, compor(*)
+    character(len=16) :: option
     integer :: ndim, imate
     real(kind=8) :: epstm(12), depst(12), vim(2)
     real(kind=8) :: sig(6), vip(2), dsidpt(6, 6, 2), proj(6, 6)
@@ -36,7 +35,6 @@ subroutine lcdsbe(fami, ndim, typmod, imate, compor,&
 !     LOI DE COMPORTEMENT ELASTIQUE ENDOMMAGEMENT BETON (EN DELOCALISE)
 !
 ! IN  NDIM    : DIMENSION DE L'ESPACE
-! IN  TYPMOD  : TYPE DE MODELISATION
 ! IN  IMATE   : NATURE DU MATERIAU
 ! IN  EPSM    : DEFORMATION EN T-
 ! IN  EPSRM   : DEFORMATION GENERALISEE EN T-
@@ -89,16 +87,16 @@ subroutine lcdsbe(fami, ndim, typmod, imate, compor,&
 !
 ! -- SEPARATION DE EPSM/EPSRM, DEPS/DEPSR DANS EPSTM,DEPST
 !
-    do 312 i = 1, ndimsi
+    do i = 1, ndimsi
         epsm(i)=epstm(i)
         epsrm(i)=epstm(i+6)
         deps(i)=depst(i)
         depsr(i)=depst(i+6)
-312 end do
+    end do
 !
 !    LECTURE DES CARACTERISTIQUES DU MATERIAU
 !
-    call lceib1(fami, 1, 1, imate, compor,&
+    call lceib1(fami, 1, 1, imate,&
                 ndim, epsrm, 0.d0, 0.d0, 0.d0,&
                 t, lambda, deuxmu, epsthe, kdess,&
                 bendo, gamma, seuil)
@@ -113,29 +111,29 @@ subroutine lcdsbe(fami, ndim, typmod, imate, compor,&
 !
     if (resi) then
 !      MISE A JOUR DES DEFORMATIONS MECANIQUES
-        do 10 k = 1, ndimsi
+        do k = 1, ndimsi
             eps(k) = epsm(k) + deps(k)
             epsr(k) = epsrm(k) + depsr(k)
- 10     continue
+        end do
     else
-        do 40 k = 1, ndimsi
+        do k = 1, ndimsi
             eps(k)=epsm(k)
             epsr(k) = epsrm(k)
- 40     continue
+        end do
         d=vim(1)
         fd = (1 - d) / (1 + gamma*d)
         elas=((nint(vim(2)).eq.0).or.(nint(vim(2)).eq.2))
     endif
 ! - ON MET DANS EPS LES DEFORMATIONS REELLES
-    do 45 k = 4, ndimsi
+    do k = 4, ndimsi
         eps(k) = eps(k)/rac2
         epsr(k) = epsr(k)/rac2
- 45 end do
+    end do
     if (ndimsi .lt. 6) then
-        do 46 k = ndimsi+1, 6
+        do k = ndimsi+1, 6
             eps(k)=0.d0
             epsr(k)=0.d0
- 46     continue
+        end do
     endif
 !     MATRICE TR = (XX XY XZ YY YZ ZZ)
 !
@@ -149,19 +147,19 @@ subroutine lcdsbe(fami, ndim, typmod, imate, compor,&
 ! -   CALCUL DES CONTRAINTES ELASTIQUES ASSOCIEE AUX DEFO GENERALISEES
     treps = eps(1)+eps(2)+eps(3)
     if (treps .gt. 0.d0) then
-        do 600 k = 1, 3
+        do k = 1, 3
             sigel(k) = lambda*treps
-600     continue
+        end do
     else
-        do 610 k = 1, 3
+        do k = 1, 3
             sigel(k) = 0.d0
-610     continue
+        end do
     endif
-    do 150 k = 1, 3
+    do k = 1, 3
         if (epsp(k) .gt. 0.d0) then
             sigel(k) = sigel(k) + deuxmu*epsp(k)
         endif
-150 continue
+    end do
     tr(1) = epsr(1)
     tr(2) = epsr(4)
     tr(3) = epsr(5)
@@ -172,19 +170,19 @@ subroutine lcdsbe(fami, ndim, typmod, imate, compor,&
 ! -   CALCUL DES CONTRAINTES ELASTIQUES ASSOCIEE AUX DEFO GENERALISEES
     treps = epsr(1)+epsr(2)+epsr(3)
     if (treps .gt. 0.d0) then
-        do 60 k = 1, 3
+        do k = 1, 3
             sigelr(k) = lambda*treps
- 60     continue
+        end do
     else
-        do 61 k = 1, 3
+        do k = 1, 3
             sigelr(k) = 0.d0
- 61     continue
+        end do
     endif
-    do 15 k = 1, 3
+    do k = 1, 3
         if (epsp(k) .gt. 0.d0) then
             sigelr(k) = sigelr(k) + deuxmu*epsp(k)
         endif
- 15 end do
+    end do
     ener = 0.5d0 * ddot(3,epsp,1,sigelr,1)
 !    CALCUL DE L'ETAT D'ENDOMMAGEMENT
     if (resi) then
@@ -250,9 +248,9 @@ subroutine lcdsbe(fami, ndim, typmod, imate, compor,&
         tr(5) = 0.d0
         tr(6) = 0.d0
         call bptobg(tr, sig, vecp)
-        do 18 k = 4, ndimsi
+        do k = 4, ndimsi
             sig(k)=rac2*sig(k)
- 18     continue
+        end do
     endif
 !
 ! - CALCUL DE LA MATRICE TANGENTE
@@ -282,9 +280,9 @@ subroutine lcdsbe(fami, ndim, typmod, imate, compor,&
         tr(5) = 0.d0
         tr(6) = 0.d0
         call bptobg(tr, sigel, vecp)
-        do 28 k = 4, ndimsi
+        do k = 4, ndimsi
             sigel(k)=rac2*sigel(k)
- 28     continue
+        end do
         tr(1) = sigelr(1)
         tr(2) = sigelr(2)
         tr(3) = sigelr(3)
@@ -292,44 +290,41 @@ subroutine lcdsbe(fami, ndim, typmod, imate, compor,&
         tr(5) = 0.d0
         tr(6) = 0.d0
         call bptobg(tr, sigelr, vecp)
-        do 280 k = 4, ndimsi
+        do k = 4, ndimsi
             sigelr(k)=rac2*sigelr(k)
-280     continue
-        do 100 k = 1, 3
-            do 110 l = 1, 3
+        end do
+        do k = 1, 3
+            do l = 1, 3
                 dspdep(k,l) = lambdd
-110         continue
-100     continue
-        do 120 k = 1, 3
+            end do
+        end do
+        do k = 1, 3
             dspdep(k,k) = dspdep(k,k) + deumud(k)
-120     continue
+        end do
         if (epsp(1)*epsp(2) .ge. 0.d0) then
             dspdep(4,4)=deumud(1)
         else
-            dspdep(4,4)=(deumud(1)*epsp(1)-deumud(2)*epsp(2)) /(epsp(&
-            1)-epsp(2))
+            dspdep(4,4)=(deumud(1)*epsp(1)-deumud(2)*epsp(2)) /(epsp(1)-epsp(2))
         endif
         if (epsp(1)*epsp(3) .ge. 0.d0) then
             dspdep(5,5)=deumud(1)
         else
-            dspdep(5,5)=(deumud(1)*epsp(1)-deumud(3)*epsp(3)) /(epsp(&
-            1)-epsp(3))
+            dspdep(5,5)=(deumud(1)*epsp(1)-deumud(3)*epsp(3)) /(epsp(1)-epsp(3))
         endif
         if (epsp(3)*epsp(2) .ge. 0.d0) then
             dspdep(6,6)=deumud(3)
         else
-            dspdep(6,6)=(deumud(3)*epsp(3)-deumud(2)*epsp(2)) /(epsp(&
-            3)-epsp(2))
+            dspdep(6,6)=(deumud(3)*epsp(3)-deumud(2)*epsp(2)) /(epsp(3)-epsp(2))
         endif
-        do 20 i = 1, 3
-            do 21 j = i, 3
+        do i = 1, 3
+            do j = i, 3
                 if (i .eq. j) then
                     rtemp3=1.d0
                 else
                     rtemp3=rac2
                 endif
-                do 22 k = 1, 3
-                    do 23 l = 1, 3
+                do k = 1, 3
+                    do l = 1, 3
                         if (t(i,j) .ge. t(k,l)) then
                             if (k .eq. l) then
                                 rtemp4=rtemp3
@@ -337,44 +332,37 @@ subroutine lcdsbe(fami, ndim, typmod, imate, compor,&
                                 rtemp4=rtemp3/rac2
                             endif
                             rtemp2=0.d0
-                            do 24 m = 1, 3
-                                do 25 n = 1, 3
-                                    rtemp2=rtemp2+vecp(k,m)* vecp(i,n)&
-                                    *vecp(j,n)*vecp(l,m)*dspdep(n,m)
- 25                             continue
- 24                         continue
-                            rtemp2=rtemp2+vecp(i,1)*vecp(j,2)*vecp(k,&
-                            1)*vecp(l,2)*dspdep(4,4)
-                            rtemp2=rtemp2+vecp(i,2)*vecp(j,1)*vecp(k,&
-                            2)*vecp(l,1)*dspdep(4,4)
-                            rtemp2=rtemp2+vecp(i,1)*vecp(j,3)*vecp(k,&
-                            1)*vecp(l,3)*dspdep(5,5)
-                            rtemp2=rtemp2+vecp(i,3)*vecp(j,1)*vecp(k,&
-                            3)*vecp(l,1)*dspdep(5,5)
-                            rtemp2=rtemp2+vecp(i,2)*vecp(j,3)*vecp(k,&
-                            2)*vecp(l,3)*dspdep(6,6)
-                            rtemp2=rtemp2+vecp(i,3)*vecp(j,2)*vecp(k,&
-                            3)*vecp(l,2)*dspdep(6,6)
-                            dsidpt(t(i,j),t(k,l),1)=dsidpt(t(i,j),t(k,&
-                            l),1)+rtemp2*rtemp4
+                            do m = 1, 3
+                                do n = 1, 3
+                                    rtemp2=rtemp2+&
+                                            vecp(k,m)* vecp(i,n)*vecp(j,n)*vecp(l,m)*dspdep(n,m)
+                                 end do
+                            end do
+                            rtemp2=rtemp2+vecp(i,1)*vecp(j,2)*vecp(k,1)*vecp(l,2)*dspdep(4,4)
+                            rtemp2=rtemp2+vecp(i,2)*vecp(j,1)*vecp(k,2)*vecp(l,1)*dspdep(4,4)
+                            rtemp2=rtemp2+vecp(i,1)*vecp(j,3)*vecp(k,1)*vecp(l,3)*dspdep(5,5)
+                            rtemp2=rtemp2+vecp(i,3)*vecp(j,1)*vecp(k,3)*vecp(l,1)*dspdep(5,5)
+                            rtemp2=rtemp2+vecp(i,2)*vecp(j,3)*vecp(k,2)*vecp(l,3)*dspdep(6,6)
+                            rtemp2=rtemp2+vecp(i,3)*vecp(j,2)*vecp(k,3)*vecp(l,2)*dspdep(6,6)
+                            dsidpt(t(i,j),t(k,l),1)=dsidpt(t(i,j),t(k,l),1)+rtemp2*rtemp4
                         endif
- 23                 continue
- 22             continue
- 21         continue
- 20     continue
-        do 26 i = 1, 6
-            do 27 j = i+1, 6
+                    end do
+                end do
+            end do
+        end do
+        do i = 1, 6
+            do j = i+1, 6
                 dsidpt(i,j,1)=dsidpt(j,i,1)
- 27         continue
- 26     continue
+            end do
+        end do
 ! -- CONTRIBUTION DISSIPATIVE
         if ((.not. elas) .and. (ener.gt.0.d0)) then
             coef = (1+gamma)/(2*gamma*(1+gamma*d)*ener)
-            do 200 k = 1, ndimsi
-                do 210 l = 1, ndimsi
+            do k = 1, ndimsi
+                do l = 1, ndimsi
                     dsidpt(k,l,2) = dsidpt(k,l,2)-coef*sigel(k)* sigelr(l)
-210             continue
-200         continue
+                end do
+            end do
         endif
 !
     endif

@@ -38,6 +38,7 @@ subroutine dtmforc(sd_dtm_, sd_int_, index, buffdtm, buffint, nlaccnt)
 #include "asterfort/dtmforc_rotf.h"
 #include "asterfort/dtmforc_yacs.h"
 #include "asterfort/dtmforc_lub.h"
+#include "asterfort/dtmforc_calcnoli.h"
 #include "asterfort/dtmget.h"
 #include "asterfort/dtmsav.h"
 #include "asterfort/intget.h"
@@ -45,6 +46,7 @@ subroutine dtmforc(sd_dtm_, sd_int_, index, buffdtm, buffint, nlaccnt)
 #include "asterfort/jeveuo.h"
 #include "asterfort/intbuff.h"
 #include "asterfort/intinivec.h"
+#include "asterfort/nlinivec.h"
 #include "asterfort/mdfedy.h"
 #include "asterfort/mdfext.h"
 #include "asterfort/nlget.h"
@@ -54,9 +56,16 @@ subroutine dtmforc(sd_dtm_, sd_int_, index, buffdtm, buffint, nlaccnt)
 #include "asterfort/uttcpr.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vecini.h"
-
-
+#include "asterfort/sdmpic.h"
+#include "asterfort/wkvect.h"
 !
+#include "asterc/asmpi_comm.h"
+#include "asterfort/asmpi_info.h"
+!
+#ifdef _USE_MPI
+#include "mpif.h"
+#include "asterf_mpi.h"
+#endif
 !   -0.1- Input/output arguments
     character(len=*) , intent(in) :: sd_dtm_
     character(len=*) , intent(in) :: sd_int_
@@ -69,10 +78,11 @@ subroutine dtmforc(sd_dtm_, sd_int_, index, buffdtm, buffint, nlaccnt)
 !   -0.2- Local variables
     aster_logical    :: instrum
     integer          :: nbmode, ntotex, nbnli, itime
-    integer          :: iret, i, nlcase, nlacc, nl_type, inl
+    integer          :: iret, i, nlcase, nlacc
     real(kind=8)     :: temps, dt, r8b, tps(7)
     character(len=7) :: casek7
     character(len=8) :: sd_dtm, sd_int, sd_nl
+    character(len=24) :: sd_fextnl_tmp
 !
     integer         , pointer :: idescf(:)  => null()
     integer         , pointer :: liad(:)    => null()
@@ -85,13 +95,19 @@ subroutine dtmforc(sd_dtm_, sd_int_, index, buffdtm, buffint, nlaccnt)
     real(kind=8)    , pointer :: vite(:)    => null()
     real(kind=8)    , pointer :: acce(:)    => null()
     real(kind=8)    , pointer :: fext(:)    => null()
+    real(kind=8)    , pointer :: fext_tmp(:)    => null()
     real(kind=8)    , pointer :: phi(:)     => null()
-    real(kind=8)    , pointer :: fext_nl(:) => null()
-    real(kind=8)    , pointer :: fext_tgt(:)=> null()
+!    real(kind=8)    , pointer :: fext_nl(:) => null()
+!    real(kind=8)    , pointer :: fext_tgt(:)=> null()
     real(kind=8)    , pointer :: fadd_nl(:) => null()
     real(kind=8)    , pointer :: coefm(:)   => null()
     character(len=8), pointer :: nomfon(:)  => null()
     integer, pointer          :: buffnl(:)  => null()
+    mpi_int :: i_proc, nb_proc, mpicou
+    aster_logical :: one_proc
+    integer :: nb_nbnli_mpi, nbr_nbnli_mpi, idx_start, idx_end
+    integer :: iret_mpi
+    character(len=16), pointer :: valk(:)=>null()
 
 !
 !   0 - Initializations
@@ -112,6 +128,7 @@ subroutine dtmforc(sd_dtm_, sd_int_, index, buffdtm, buffint, nlaccnt)
     call dtmget(sd_dtm, _NB_EXC_T, iscal=ntotex, buffer=buffdtm)
     call dtmget(sd_dtm, _NB_NONLI, iscal=nbnli , buffer=buffdtm)
 !
+
     call intget(sd_int, FORCE_EX, iocc=index, lonvec=iret, buffer=buffint)
     if (iret.eq.0) then
         call intinivec(sd_int, FORCE_EX, nbmode, iocc=index, vr=fext)
@@ -175,74 +192,52 @@ subroutine dtmforc(sd_dtm_, sd_int_, index, buffdtm, buffint, nlaccnt)
         call dtmget(sd_dtm, _SD_NONL  , kscal=sd_nl, buffer=buffdtm)
         call dtmget(sd_dtm, _NL_BUFFER, vi=buffnl  , buffer=buffdtm)
 
-        call nlget (sd_nl,  _F_TOT_WK , vr=fext_nl , buffer=buffnl)
-        call nlget (sd_nl,  _F_TAN_WK , vr=fext_tgt, buffer=buffnl)
+!        call nlget (sd_nl,  _F_TOT_WK , vr=fext_nl , buffer=buffnl)
+!        call nlget (sd_nl,  _F_TAN_WK , vr=fext_tgt, buffer=buffnl)
+!        call nlget(sd_nl, _FEXT_MPI, vr=fext_tmp,savejv=sd_fextnl_tmp)
+!        call vecini(nbmode, 0.d0, fext_tmp)
+!        write (6,*) "OBJET JEVEUX MPI" , sd_fextnl_tmp
 
-    
+        !
+        ! ----- Mpi informations
+        !
+            one_proc = .false.
+            call asmpi_comm('GET', mpicou)
+            call asmpi_info(mpicou,rank=i_proc , size=nb_proc)    
+            if(nb_proc .eq. 1 .or. nbnli .le. nb_proc) one_proc = .true.
 
-        do inl = 1, nbnli
-            call nlget(sd_nl, _NL_TYPE, iocc=inl, iscal=nl_type, buffer=buffnl)
-
-            select case (nl_type)
-!
-                case(NL_CHOC)
-                    call dtmforc_choc(inl, sd_dtm, sd_nl, buffdtm, buffnl,&
-                                      temps, depl, vite, fext_nl, fext_tgt)
-
-!                   --- Special case of choc nonlinearities that can be
-!                       implicitely treated
-                    if ((nlcase.eq.0).or.(nlacc.eq.1)) then
-                        do i=1, nbmode
-                            fext(i) = fext(i) + fext_nl(i)
-                        end do
-                    else
-                        do i=1, nbmode
-                            fext(i) = fext(i) + fext_tgt(i)
-                        end do
-                    end if
-    
-                case(NL_BUCKLING)
-                    call dtmforc_flam(inl, sd_dtm, sd_nl, buffdtm, buffnl,&
-                                      temps, depl, vite, fext)
-
-                case(NL_ANTI_SISMIC)
-                    call dtmforc_ants(inl, sd_dtm, sd_nl, buffdtm, buffnl,&
-                                      temps, depl, vite, fext)
-
-                case(NL_DIS_VISC)
-                    call dtmforc_dvis(inl, sd_dtm, sd_nl, buffdtm, buffnl,&
-                                      temps, dt, depl, vite, fext)
-
-                case(NL_DIS_ECRO_TRAC)
-                    call dtmforc_decr(inl, sd_dtm, sd_nl, buffdtm, buffnl,&
-                                      temps, dt, depl, vite, fext)
-
-                case(NL_CRACKED_ROTOR)
-                    call dtmforc_rotf(inl,sd_dtm, sd_nl, buffdtm, buffnl,&
-                                      temps, depl, fext)
-    ! !
-                ! TODO: change the name to NL_YACS
-                case(NL_LUBRICATION)
-                     ! we will deal with it later
-                     continue
-!
-                case(NL_YACS)
-                    ! we will deal with it later
-                    continue
-    ! 
-                case(NL_FX_RELATIONSHIP)
-                    call dtmforc_rede(inl, sd_dtm, sd_nl, buffdtm, buffnl,&
-                                      depl, fext)
-    ! ! 
-                case(NL_FV_RELATIONSHIP)
-                    call dtmforc_revi(inl, sd_dtm, sd_nl, buffdtm, buffnl,&
-                                      vite, fext)
-    !
-                case default
-                    ASSERT(.false.)
-    !
-            end select
-        end do
+            if (one_proc) then 
+                idx_start=1
+                idx_end  =nbnli
+                call dtmforc_calcnoli(sd_dtm, sd_nl, buffdtm, buffnl,&
+                                      temps,dt, depl, vite, fext,&
+                                      nbmode,nlacc,nlcase,idx_start,idx_end)
+            else 
+            ! ----- MPI initialisation
+            ! ----- Temporary non linear force 
+                call nlget(sd_nl, _FEXT_MPI, savejv=sd_fextnl_tmp,vr=fext_tmp)
+                call vecini(nbmode, 0.d0, fext_tmp)
+                call jeexin(sd_fextnl_tmp(1:20)//'.MPI',iret_mpi)
+                
+                if (iret_mpi .eq. 0) then
+                    call wkvect(sd_fextnl_tmp(1:20)//'.MPI','V V K16',1,vk16=valk)
+                else 
+                    call jeveuo(sd_fextnl_tmp(1:20)//'.MPI', 'E',vk16=valk)
+                endif   
+                valk(1)='MPI_INCOMPLET'
+                nb_nbnli_mpi  = int(nbnli/nb_proc)
+                nbr_nbnli_mpi = nbnli-nb_nbnli_mpi*nb_proc
+                idx_start   = 1+(i_proc)*nb_nbnli_mpi
+                idx_end     = idx_start+nb_nbnli_mpi-1+(nbr_nbnli_mpi*int((i_proc+1)/nb_proc))
+                call dtmforc_calcnoli(sd_dtm, sd_nl, buffdtm, buffnl,&
+                                      temps,dt, depl, vite, fext_tmp,&
+                                      nbmode,nlacc,nlcase,idx_start,idx_end)
+            !
+            ! - All-reduce _NL_FEXT_MPI
+            !
+                call sdmpic('&&OP29NL',sd_fextnl_tmp)
+                fext = fext + fext_tmp
+            endif
 
         ! we take care of everything
 !        print *, "calling dtmforc_lub"
@@ -273,6 +268,5 @@ subroutine dtmforc(sd_dtm_, sd_int_, index, buffdtm, buffint, nlaccnt)
         call uttcpr('CPU.DTMFORC', 7, tps)
         write(*,*) "ELPSD DTMFORC : ", tps(7)
     end if
-
 
 end subroutine

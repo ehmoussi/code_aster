@@ -25,10 +25,8 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='NON'),);
 
-import os
 
-os.system("mfront --obuild PolyCrystalDDCC.mfront --interface=aster")
-os.system("cp src/libAsterBehaviour.so PolyCrystalDDCC.so")
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=42)
 
 # SDVERI='NON' car la verification est trop couteuse en CPU
 
@@ -187,7 +185,7 @@ lvari=list(avari)
 SOLNL=SIMU_POINT_MAT(INFO=1,
                      COMPORTEMENT=_F(RELATION='MFRONT',
                                      NOM_ROUTINE='asterpolycrystalddcc',
-                                     LIBRAIRIE='PolyCrystalDDCC.so',
+                                     UNITE_LIBRAIRIE=42,
                                      RESI_INTE_MAXI=1.E-8,
                                      ITER_INTE_MAXI=100,),
                      NEWTON=_F(MATRICE='ELASTIQUE',

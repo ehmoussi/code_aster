@@ -122,10 +122,10 @@ subroutine vplecs(eigsol, itemax, maxitr, nbborn, nitv,&
     app2  =trim(zk24(eislvk-1+16))
     typeq2=''
     select case (metho2)
-        case('TRI_DIAG')
-        case('JACOBI')
-        case('SORENSEN')
-        case('QZ')
+    case('TRI_DIAG')
+    case('JACOBI')
+    case('SORENSEN')
+    case('QZ')
         typeq2=trim(zk24(eislvk-1+17))
     case default
         ASSERT(.false.)
@@ -143,15 +143,15 @@ subroutine vplecs(eigsol, itemax, maxitr, nbborn, nitv,&
     nperm =indf
     maxitr=indf
     select case (metho2)
-        case('TRI_DIAG')
+    case('TRI_DIAG')
         nborto=zi(eislvi-1+11)
         nitv  =zi(eislvi-1+12)
-        case('JACOBI')
+    case('JACOBI')
         itemax=zi(eislvi-1+11)
         nperm =zi(eislvi-1+12)
-        case('SORENSEN')
+    case('SORENSEN')
         maxitr=zi(eislvi-1+11)
-        case('QZ')
+    case('QZ')
     case default
         ASSERT(.false.)
     end select
@@ -170,33 +170,33 @@ subroutine vplecs(eigsol, itemax, maxitr, nbborn, nitv,&
     tolsor=undf
     alpha =undf
     select case (metho2)
-        case('TRI_DIAG')
+    case('TRI_DIAG')
         prorto=zr(eislvr-1+11)
         prsudg=zr(eislvr-1+12)
-        case('JACOBI')
+    case('JACOBI')
         tol   =zr(eislvr-1+11)
         toldyn=zr(eislvr-1+12)
-        case('SORENSEN')
+    case('SORENSEN')
         tolsor=zr(eislvr-1+11)
         alpha =zr(eislvr-1+12)
-        case('QZ')
+    case('QZ')
     case default
         ASSERT(.false.)
     end select
 !
 ! --  INIT. MATRA/B/C ET TYPEVP
     select case (typre2)
-        case('DYNAMIQUE')
+    case('DYNAMIQUE')
         matra ='MATR_RIGI'
         matrb ='MATR_MASS'
         matrc ='MATR_AMOR'
         typevp='FREQ'
-        case('MODE_FLAMB')
+    case('MODE_FLAMB')
         matra ='MATR_RIGI'
         matrb ='MATR_RIGI_GEOM'
         matrc =''
         typevp='CHAR_CRIT'
-        case('GENERAL')
+    case('GENERAL')
         matra ='MATR_A'
         matrb ='MATR_B'
         matrc ='MATR_C'

@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine rrc_comp_prim(ds_para)
 !
 use Rom_Datastructure_type
@@ -37,10 +38,11 @@ implicit none
 #include "asterfort/copisd.h"
 #include "asterfort/rsnoch.h"
 #include "blas/dgemm.h"
+#include "asterfort/romBaseCreateMatrix.h"
+#include "asterfort/romResultSetZero.h"
+#include "asterfort/romEvalGappyPOD.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaRRC), intent(in) :: ds_para
+type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,19 +59,21 @@ implicit none
     integer :: ifm, niv
     integer :: iret, jv_para
     integer :: nb_mode, nb_equa, nb_store
-    integer :: i_mode, i_equa, i_store
-    integer :: nume_store
+    integer :: i_equa, i_store
+    integer :: nume_store, nume_equa
     character(len=8) :: result_rom, result_dom
+    real(kind=8), pointer :: v_prim_rid(:) => null()
     real(kind=8), pointer :: v_prim(:) => null()
-    character(len=24) :: mode
-    real(kind=8), pointer :: v_mode(:) => null()
     real(kind=8), pointer :: v_cohr(:) => null()
-    real(kind=8), pointer :: v_depl(:) => null()
+    real(kind=8), pointer :: v_disp(:) => null()
     character(len=24) :: field_save
     real(kind=8), pointer :: v_field_save(:) => null()
+    character(len=24) :: disp_rid
+    real(kind=8), pointer :: v_disp_rid(:) => null()
     character(len=19) :: list_load
     character(len=24) :: materi, cara_elem, model_dom
     real(kind=8) :: time
+    aster_logical :: l_corr_ef
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -86,51 +90,70 @@ implicit none
     result_rom = ds_para%result_rom
     result_dom = ds_para%result_dom
     model_dom  = ds_para%model_dom
-    call jeveuo(ds_para%coor_redu, 'L', vr = v_cohr)
+    l_corr_ef  = ds_para%l_corr_ef 
 !
-! - Get primal base
+! - Create [PHI] matrix for primal base
 !
-    AS_ALLOCATE(vr = v_prim, size = nb_equa*nb_mode)
-    do i_mode = 1, nb_mode
-        call rsexch(' ', ds_para%ds_empi_prim%base, ds_para%ds_empi_prim%field_name,&
-                    i_mode, mode, iret)
-        ASSERT(iret .eq. 0)
-        call jeveuo(mode(1:19)//'.VALE', 'L', vr = v_mode)
-        do i_equa = 1, nb_equa
-            v_prim(i_equa+nb_equa*(i_mode-1)) = v_mode(i_equa)    
-        end do
-    end do
+    call romBaseCreateMatrix(ds_para%ds_empi_prim, v_prim)
+!
+! - Create [PHI] matrix for primal base on RID
+!
+    if (l_corr_ef) then
+        call romBaseCreateMatrix(ds_para%ds_empi_rid, v_prim_rid)
+    endif
 !
 ! - Initial state
 !
     nume_store = 0
-    call rsexch(' ', result_dom, ds_para%ds_empi_prim%field_name,&
-                nume_store, field_save, iret)
-    ASSERT(iret .eq. 100)
-    call copisd('CHAMP_GD', 'G', ds_para%ds_empi_prim%field_refe, field_save)
-    call jeveuo(field_save(1:19)//'.VALE', 'E', vr = v_field_save)
-    v_field_save(1:nb_equa) = 0.d0
-    call rsnoch(result_dom, ds_para%ds_empi_prim%field_name,&
-                nume_store)
+    call romResultSetZero(result_dom, nume_store, ds_para%ds_empi_prim)
+!
+! - Reduced coordinates: Gappy POD if necessary 
+!
+    if (l_corr_ef) then
+        call romEvalGappyPOD(ds_para, result_rom, nb_store, v_prim_rid,&
+                             v_cohr , 0)
+    else
+        call jeveuo(ds_para%coor_redu, 'L', vr = v_cohr)
+    endif
 !
 ! - Compute new fields
 !
-    AS_ALLOCATE(vr = v_depl, size = nb_equa*(nb_store-1))
+    AS_ALLOCATE(vr = v_disp, size = nb_equa*(nb_store-1))
     call dgemm('N', 'N', nb_equa, nb_store-1, nb_mode, 1.d0,&
-                v_prim, nb_equa, v_cohr, nb_mode, 0.d0, v_depl, nb_equa)
+                v_prim, nb_equa, v_cohr, nb_mode, 0.d0, v_disp, nb_equa)
 !
 ! - Compute new field
 !
     do i_store = 1, nb_store-1
+! ----- Get field to save
         nume_store = i_store
         call rsexch(' ', result_dom, ds_para%ds_empi_prim%field_name,&
                     nume_store, field_save, iret)
         ASSERT(iret .eq. 100)
         call copisd('CHAMP_GD', 'G', ds_para%ds_empi_prim%field_refe, field_save)
         call jeveuo(field_save(1:19)//'.VALE', 'E', vr = v_field_save)
-        do i_equa = 1, nb_equa
-            v_field_save(i_equa) = v_depl(i_equa+nb_equa*(nume_store-1))
-        enddo
+! ----- Get field on RID
+        if (l_corr_ef) then
+            call rsexch(' ', result_rom, ds_para%ds_empi_prim%field_name,&
+                        nume_store, disp_rid, iret)
+            ASSERT(iret .eq. 0)
+            call jeveuo(disp_rid(1:19)//'.VALE', 'L', vr = v_disp_rid)
+        endif
+! ----- Set field
+        if (l_corr_ef) then
+            do i_equa = 1, nb_equa
+                nume_equa = ds_para%v_equa_ridp(i_equa)
+                if (nume_equa.eq. 0) then
+                    v_field_save(i_equa) = v_disp(i_equa+nb_equa*(nume_store-1))
+                else
+                    v_field_save(i_equa) = v_disp_rid(nume_equa)
+                endif
+            enddo
+        else
+            do i_equa = 1, nb_equa
+                v_field_save(i_equa) = v_disp(i_equa+nb_equa*(nume_store-1))
+            enddo
+        endif
 ! ----- Get parameters
         call rslesd(result_rom , nume_store-1,&
                     materi_    = materi    ,&
@@ -149,7 +172,8 @@ implicit none
 !
 ! - Clean
 !
+    AS_DEALLOCATE(vr = v_prim_rid)
     AS_DEALLOCATE(vr = v_prim)
-    AS_DEALLOCATE(vr = v_depl)
+    AS_DEALLOCATE(vr = v_disp)
 !
 end subroutine

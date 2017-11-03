@@ -15,23 +15,21 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
 !
+#include "asterf_types.h"
 !
 interface
-    subroutine comp_read_exte(rela_comp   , kit_comp      ,&
+    subroutine comp_read_exte(rela_comp   , keywf         , i_comp       ,&
                               l_umat      , l_mfront_proto, l_mfront_offi,&
-                              libr_name   , subr_name     ,&
-                              keywordfact_, i_comp_       , nb_vari_umat_)
+                              libr_name   , subr_name     , nb_vari_umat)
         character(len=16), intent(in) :: rela_comp
-        character(len=16), intent(in) :: kit_comp(4)
-        aster_logical, intent(out) :: l_umat
-        aster_logical, intent(out) :: l_mfront_proto
-        aster_logical, intent(out) :: l_mfront_offi
+        character(len=16), intent(in) :: keywf
+        integer, intent(in) :: i_comp
+        aster_logical, intent(in) :: l_umat
+        aster_logical, intent(in) :: l_mfront_proto
+        aster_logical, intent(in) :: l_mfront_offi
         character(len=255), intent(out) :: libr_name
         character(len=255), intent(out) :: subr_name
-        character(len=16), optional, intent(in) :: keywordfact_
-        integer, optional, intent(in) :: i_comp_
-        integer, optional, intent(out) :: nb_vari_umat_
+        integer, intent(out) :: nb_vari_umat
     end subroutine comp_read_exte
 end interface

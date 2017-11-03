@@ -164,8 +164,8 @@ MOSOREN=CALC_MODES(MATR_RIGI=RIGHYST,
                                 ),
                    MATR_AMOR=AMOR,
                    MATR_MASS=MASS,
-                   SOLVEUR_MODAL=_F(APPROCHE='REEL',
-                                    ),
+                   SOLVEUR=_F(ELIM_LAGR='NON'),
+                   SOLVEUR_MODAL=_F(APPROCHE='REEL',),
                    )
 
 FRESOR=RECU_TABLE(CO=MOSOREN,

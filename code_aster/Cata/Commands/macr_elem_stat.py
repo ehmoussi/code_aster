@@ -28,6 +28,7 @@ MACR_ELEM_STAT=OPER(nom="MACR_ELEM_STAT",op=86,sd_prod=macr_elem_stat,reentrant=
         regles=(AU_MOINS_UN('DEFINITION','RIGI_MECA','MASS_MECA','CAS_CHARGE'),
                 ENSEMBLE('DEFINITION','EXTERIEUR'),),
          reuse=SIMP(statut='c', typ=CO),
+         MACR_ELEM  =SIMP(statut='f',typ=macr_elem_stat,fr=tr("Résultat utilisé en cas de réécriture")),
          DEFINITION      =FACT(statut='f',
            regles=(PRESENT_PRESENT('PROJ_MESU','MODE_MESURE'),),
            MODELE          =SIMP(statut='o',typ=modele_sdaster),

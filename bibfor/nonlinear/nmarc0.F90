@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmarc0(result, modele        , mate  , carele         , fonact,&
                   sdcrit, sddyna        , sdpost, ds_constitutive, sdcriq,&
                   sdpilo, list_load_resu, numarc, time_curr)
@@ -37,17 +38,16 @@ implicit none
 #include "asterfort/nmarcp.h"
 #include "asterfort/rsadpa.h"
 #include "asterfort/rssepa.h"
+#include "asterfort/Behaviour_type.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8) :: result
-    integer :: numarc
-    integer :: fonact(*)
-    real(kind=8) :: time_curr
-    character(len=19) :: sddyna, sdpost, sdpilo
-    character(len=19) :: list_load_resu, sdcrit
-    character(len=24) :: modele, mate, carele, sdcriq
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=8) :: result
+integer :: numarc
+integer :: fonact(*)
+real(kind=8) :: time_curr
+character(len=19) :: sddyna, sdpost, sdpilo
+character(len=19) :: list_load_resu, sdcrit
+character(len=24) :: modele, mate, carele, sdcriq
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 !
 ! ----------------------------------------------------------------------
 !
@@ -80,7 +80,7 @@ implicit none
     aster_logical :: lerrt, lthm, lflam, lstab, lpilo, ldyna
     aster_logical :: lvibr, lexge
     character(len=24) :: errthm, typsel, typpil
-    real(kind=8) :: taberr(2), theta, valr, chcrit, freqr, coef, chstab, time_prev
+    real(kind=8) :: taberr(2), parm_theta, valr, chcrit, freqr, coef, chstab, time_prev
     integer :: iret
     integer :: jv_para, jerrt
     real(kind=8), pointer :: v_carcri_valv(:) => null()
@@ -112,9 +112,9 @@ implicit none
 !
     if (lthm) then
         call jeveuo(ds_constitutive%carcri(1:19)//'.VALV', 'L', vr = v_carcri_valv)
-        theta = v_carcri_valv(4)
+        parm_theta = v_carcri_valv(PARM_THETA_THM)
         call rsadpa(result, 'E', 1, 'PARM_THETA', numarc, 0, sjv=jv_para)
-        zr(jv_para) = theta
+        zr(jv_para) = parm_theta
     endif
 !
 ! --- ARCHIVAGE DE LA CHARGE CRITIQUE DU MODE DE FLAMBEMENT

@@ -17,11 +17,13 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'POLYCRISTAL',
-    doc            =   """Comportement poly-cristallin homogénéisé, défini par DEFI_COMPOR"""      ,
+    lc_type        = ('MECANIQUE',),
+    doc            =   """Comportement poly-cristallin homogénéisé, défini par DEFI_COMPOR"""            ,
     num_lc         = 137,
     nb_vari        = 0,
     nom_vari       = None,
@@ -32,4 +34,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

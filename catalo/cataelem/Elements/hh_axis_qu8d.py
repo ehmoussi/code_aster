@@ -42,14 +42,6 @@ CCARCRI = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
                             'TSAMPL', 'TSRETOUR', 'POSTITER', 'LC_EXT[3]', 'MODECALC',
                             'ALPHA', 'LC_EXT2[2]',))
 
-
-CCOMPOR = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
-                            components=(
-                                'RELCOM', 'NBVARI', 'DEFORM', 'INCELA', 'C_PLAN',
-                            'NUME_LC', 'SD_COMP', 'KIT[9]', 'NVI_C', 'NVI_T',
-                            'NVI_H', 'NVI_M',))
-
-
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO', diff=True,
                              components=(
                              ('EN1', ('PRE[2]',)),
@@ -154,7 +146,7 @@ class HH_AXIS_QU8D(Element):
 
         OP.FULL_MECA(te=600,
                      para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, CCARCRI),
-                              (OP.FULL_MECA.PCOMPOR, CCOMPOR), (
+                              (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (
                               OP.FULL_MECA.PCONTMR, ECONTPG),
                               (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                               (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -179,7 +171,7 @@ class HH_AXIS_QU8D(Element):
 
         OP.RAPH_MECA(te=600,
                      para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, CCARCRI),
-                              (OP.RAPH_MECA.PCOMPOR, CCOMPOR), (
+                              (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR), (
                               OP.RAPH_MECA.PCONTMR, ECONTPG),
                               (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                               (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -203,7 +195,7 @@ class HH_AXIS_QU8D(Element):
         OP.RIGI_MECA_TANG(te=600,
                           para_in=(
                               (SP.PCAMASS, CCAMASS), (SP.PCARCRI, CCARCRI),
-                          (OP.RIGI_MECA_TANG.PCOMPOR, CCOMPOR), (
+                          (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (
                           OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
                               (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                           (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -244,7 +236,7 @@ class HH_AXIS_QU8D(Element):
 
         OP.VAEX_ELGA(te=549,
                      para_in=(
-                         (OP.VAEX_ELGA.PCOMPOR, CCOMPOR), (
+                         (OP.VAEX_ELGA.PCOMPOR, LC.CCOMPOR), (
                              SP.PNOVARI, E1NEUTK),
                      (SP.PVARIGR, ZVARIPG), ),
                      para_out=((SP.PVARIGS, LC.E1GNEUT), ),
@@ -252,7 +244,7 @@ class HH_AXIS_QU8D(Element):
 
         OP.VAEX_ELNO(te=549,
                      para_in=(
-                         (OP.VAEX_ELNO.PCOMPOR, CCOMPOR), (
+                         (OP.VAEX_ELNO.PCOMPOR, LC.CCOMPOR), (
                              SP.PNOVARI, E1NEUTK),
                      (OP.VAEX_ELNO.PVARINR, LC.ZVARINO), ),
                      para_out=((SP.PVARINS, LC.E1NNEUT), ),
@@ -260,7 +252,7 @@ class HH_AXIS_QU8D(Element):
 
         OP.VARI_ELNO(te=600,
                      para_in=(
-                         (OP.VARI_ELNO.PCOMPOR, CCOMPOR), (
+                         (OP.VARI_ELNO.PCOMPOR, LC.CCOMPOR), (
                              SP.PVARIGR, ZVARIPG),
                      ),
                      para_out=((OP.VARI_ELNO.PVARINR, LC.ZVARINO), ),

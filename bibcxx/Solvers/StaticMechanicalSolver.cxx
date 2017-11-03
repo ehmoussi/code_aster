@@ -26,7 +26,7 @@
 #include <stdexcept>
 
 #include "Solvers/StaticMechanicalSolver.h"
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
 #include "Discretization/DiscreteProblem.h"
 #include "Discretization/DOFNumbering.h"
 #include "DataStructures/TemporaryDataStructureName.h"

@@ -143,7 +143,11 @@ subroutine calcop(option, lisopt, resuin, resuou, lisord,&
             if ((zk16(icompo+43-1)(1:8) .eq. 'GDEF_LOG').or. &
                 (zk16(icompo+43-1)(1:10) .eq. 'SIMO_MIEHE'))then
                 valk(1) = zk16(icompo+43-1)
-                valk(2) = option(6:10)
+                if (zk16(icompo+43-1)(1:8) .eq. 'GDEF_LOG') then
+                    valk(2) = 'EPSL_'//option(6:10)
+                else
+                    valk(2) = 'EPSG_'//option(6:10)
+                endif
                 call utmess('A','CALCCHAMP_3',nk=2,valk=valk)
             endif
         endif

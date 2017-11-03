@@ -23,11 +23,12 @@
 #include "astercxx.h"
 
 #include "Discretization/DOFNumbering.h"
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
+#include "Supervis/ResultNaming.h"
 
 BaseDOFNumberingInstance::BaseDOFNumberingInstance( const std::string& type,
                                                     const JeveuxMemory memType ):
-            DataStructure( getNewResultObjectName(), type, memType ),
+            DataStructure( ResultNaming::getNewResultName(), type, memType ),
             _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + "      .NSLV" ) ),
             _globalNumbering( new GlobalEquationNumberingInstance( getName() + "      .NUME" ) ),
             _localNumbering( new LocalEquationNumberingInstance( getName() + "      .NUML" ) ),
@@ -63,12 +64,14 @@ bool BaseDOFNumberingInstance::computeNumerotation() throw ( std::runtime_error 
         jvListOfLoads->updateValuePointer();
         long nbLoad = jvListOfLoads->size();
 
-        CALL_NUMERO_WRAP( getName().c_str(), "VG", " ", " ",
-                          _supportModel->getName().c_str(), _listOfLoads->getName().c_str() );
+        const std::string base( "VG" );
+        const std::string null( " " );
+        CALLO_NUMERO_WRAP( getName(), base, null, null,
+                           _supportModel->getName(), _listOfLoads->getName() );
     }
     else if ( ! _supportMatrix.use_count() == 0 )
     {
-        CommandSyntaxCython cmdSt( "NUME_DDL" );
+        CommandSyntax cmdSt( "NUME_DDL" );
         cmdSt.setResult( getName(), getType() );
 
         SyntaxMapContainer dict;

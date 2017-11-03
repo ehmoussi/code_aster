@@ -23,11 +23,26 @@
 # de la division réelle pour les entiers, et non la division entière
 # 1/2=0.5 (et non 0). Comportement par défaut dans Python 3.0.
 from __future__ import division
-from math import sin, cos, tan, asin, acos, atan2, atan, sinh, cosh, tanh
-from math import pi, exp, log, log10, sqrt
+import pickle
 
 from N_ASSD import ASSD
 from N_info import message, SUPERV
+from N_Exception import AsException
+
+
+def initial_context():
+    """Returns `initial` Python context (independent of Stage and Command)
+
+    Returns:
+        dict: pairs of name per corresponding Python instance.
+    """
+    import math
+    context = {}
+    for func in dir(math):
+        if not func.startswith('_'):
+            context[func] = getattr(math, func)
+
+    return context
 
 
 class FONCTION(ASSD):
@@ -40,6 +55,8 @@ class formule(ASSD):
         ASSD.__init__(self, *args, **kwargs)
         self.nompar = None
         self.expression = None
+        self.code = None
+        self.ctxt = []
         ctxt = {}
         ctxt.update(getattr(self.parent, 'const_context', {}))
         ctxt.update(getattr(self.parent, 'macro_const_context', {}))
@@ -53,11 +70,12 @@ class formule(ASSD):
         # const_context
         context = getattr(self, 'parent_context') or getattr(
             self.parent, 'const_context', {})
+        if self.ctxt:
+            context.update(pickle.loads(self.ctxt))
         for param, value in zip(self.nompar, val):
             context[param] = value
         try:
-            # globals() pour math.*
-            res = eval(self.code, context, globals())
+            res = eval(self.code, context, initial_context())
         except Exception, exc:
             message.error(SUPERV, "ERREUR LORS DE L'ÉVALUATION DE LA FORMULE '%s' "
                           ":\n>> %s", self.nom, str(exc))
@@ -76,6 +94,10 @@ class formule(ASSD):
             message.error(SUPERV, "ERREUR LORS DE LA CREATION DE LA FORMULE '%s' "
                           ":\n>> %s", self.nom, str(exc))
             raise
+
+    def set_context(self, objects):
+        """Stocke des objets de contexte"""
+        self.ctxt = objects
 
     def __setstate__(self, state):
         """Cette methode sert a restaurer l'attribut code lors d'un unpickle."""
@@ -132,8 +154,7 @@ class formule(ASSD):
                 'PROL_GAUCHE': TypeProl['E'],
             }
         else:
-            raise Accas.AsException(
-                "Erreur dans fonction.Parametres en PAR_LOT='OUI'")
+            raise AsException("Erreur dans fonction.Parametres en PAR_LOT='OUI'")
         return dico
 
 

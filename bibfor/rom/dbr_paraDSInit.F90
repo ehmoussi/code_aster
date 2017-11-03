@@ -15,8 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine dbr_paraDSInit(ds_empi, ds_para_pod, ds_para_rb, ds_para)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine dbr_paraDSInit(ds_empi, ds_para_pod, ds_para_rb, ds_para_tr,&
+                          ds_para)
 !
 use Rom_Datastructure_type
 !
@@ -27,12 +29,11 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_Empi), intent(in) :: ds_empi
-    type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
-    type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
-    type(ROM_DS_ParaDBR), intent(out) :: ds_para
+type(ROM_DS_Empi), intent(in) :: ds_empi
+type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
+type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
+type(ROM_DS_ParaDBR_TR), intent(in) :: ds_para_tr
+type(ROM_DS_ParaDBR), intent(out) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -45,6 +46,7 @@ implicit none
 ! In  ds_empi          : datastructure for empiric modes
 ! In  ds_para_pod      : datastructure for POD parameters
 ! In  ds_para_rb       : datastructure for RB parameters
+! In  ds_para_tr       : datastructure for truncation parameters
 ! Out ds_para          : datastructure for parameters
 !
 ! --------------------------------------------------------------------------------------------------
@@ -63,9 +65,9 @@ implicit none
     ds_para%operation    = ' '
     ds_para%result_out   = ' '
     ds_para%field_iden   = ' '
-    ds_para%nb_mode_maxi = 0
     ds_para%para_pod     = ds_para_pod
     ds_para%para_rb      = ds_para_rb
+    ds_para%para_tr      = ds_para_tr
     ds_para%ds_empi      = ds_empi
     ds_para%l_reuse      = .false._1
 !

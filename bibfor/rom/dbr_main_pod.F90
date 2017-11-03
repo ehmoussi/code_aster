@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine dbr_main_pod(nb_mode_maxi, ds_para_pod, field_iden, ds_empi)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine dbr_main_pod(ds_para_pod, field_iden, ds_empi)
 !
 use Rom_Datastructure_type
 !
@@ -32,12 +33,9 @@ implicit none
 #include "asterfort/dbr_calcpod_redu.h"
 #include "asterfort/romTableSave.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer, intent(in) :: nb_mode_maxi
-    character(len=24), intent(in) :: field_iden
-    type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
-    type(ROM_DS_Empi), intent(inout) :: ds_empi
+character(len=24), intent(in) :: field_iden
+type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
+type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -47,14 +45,13 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  nb_mode_maxi     : maximum number of emprical modes
 ! In  field_iden       : identificator of field (name in results datastructure)
 ! In  ds_para_pod      : datastructure for parameters (POD)
 ! IO  ds_empi          : datastructure for empiric modes
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_sing, nb_mode, nb_snap_redu, nb_line_svd, i_snap
+    integer :: nb_sing, nb_mode, nb_snap_redu, nb_line_svd, i_snap, nb_mode_maxi
     real(kind=8), pointer :: q(:) => null()
     real(kind=8), pointer :: v(:) => null()
     real(kind=8), pointer :: s(:) => null() 
@@ -65,6 +62,7 @@ implicit none
 !
     tabl_name    = ds_para_pod%tabl_name
     nb_snap_redu = ds_para_pod%ds_snap%nb_snap
+    nb_mode_maxi = ds_para_pod%nb_mode_maxi
     nb_line_svd  = 0
 !
 ! - Create snapshots matrix Q

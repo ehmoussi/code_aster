@@ -21,25 +21,27 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine rk5app(nbeq, vparam_real, vparam_int, dtemps, yinit, dyinit,&
-                      rk5fct, solu, decoup)
-        integer         :: nbeq
-        real(kind=8)    :: vparam_real(*)
-        integer         :: vparam_int(*)
-        real(kind=8)    :: dtemps
-        real(kind=8)    :: yinit(nbeq)
-        real(kind=8)    :: dyinit(nbeq)
-        real(kind=8)    :: solu(3*nbeq)
-        aster_logical   :: decoup
+    subroutine rk5app(nbeq, vparam_real, vparam_int, vparam_car, dtemps, &
+                      yinit, dyinit, rk5fct, solu, decoup)
+        integer          :: nbeq
+        real(kind=8)     :: vparam_real(*)
+        integer          :: vparam_int(*)
+        character(len=*) :: vparam_car(*)
+        real(kind=8)     :: dtemps
+        real(kind=8)     :: yinit(nbeq)
+        real(kind=8)     :: dyinit(nbeq)
+        real(kind=8)     :: solu(3*nbeq)
+        aster_logical    :: decoup
 !
         interface
-            subroutine rk5fct(ppr, ppi, yy0, dy0, dyy, decoup)
-                real(kind=8) :: ppr(*)
-                integer      :: ppi(*)
-                real(kind=8) :: yy0(*)
-                real(kind=8) :: dy0(*)
-                real(kind=8) :: dyy(*)
-                aster_logical :: decoup
+            subroutine rk5fct(ppr, ppi, ppc, yy0, dy0, dyy, decoup)
+                real(kind=8)     :: ppr(*)
+                integer          :: ppi(*)
+                character(len=*) :: ppc(*)
+                real(kind=8)     :: yy0(*)
+                real(kind=8)     :: dy0(*)
+                real(kind=8)     :: dyy(*)
+                aster_logical    :: decoup
             end subroutine rk5fct
         end interface
 !

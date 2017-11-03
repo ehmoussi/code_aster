@@ -21,7 +21,7 @@
 interface
     subroutine nmimre_dof(nume_dof , ds_conv  , vale_rela, vale_maxi     , vale_refe     ,&
                           vale_comp, vale_frot, vale_geom, ieq_rela      , ieq_maxi      ,&
-                          ieq_refe , noddlm   , ieq_comp , name_node_frot, name_node_geom)
+                          ieq_refe , noddlm   , ieq_comp , name_node_frot, name_node_geom,vpene)
         use NonLin_Datastructure_type
         character(len=24), intent(in) :: nume_dof
         type(NL_DS_Conv), intent(inout) :: ds_conv
@@ -35,6 +35,7 @@ interface
         real(kind=8), intent(in) :: vale_comp
         real(kind=8), intent(in) :: vale_frot
         real(kind=8), intent(in) :: vale_geom
+        real(kind=8), intent(in) :: vpene
         character(len=8), intent(in) :: noddlm
         character(len=16), intent(in) :: name_node_frot
         character(len=16), intent(in) :: name_node_geom

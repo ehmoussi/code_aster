@@ -15,15 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine romAlgoNLCheck(phenom        , mesh_algo, ds_algorom,&
+    subroutine romAlgoNLCheck(phenom        , model_algoz, mesh_algoz, ds_algorom,&
                               l_line_search_)
         use Rom_Datastructure_type
         character(len=4), intent(in) :: phenom
-        character(len=8), intent(in) :: mesh_algo
+        character(len=*), intent(in) :: model_algoz
+        character(len=*), intent(in) :: mesh_algoz
         type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
         aster_logical, intent(in), optional :: l_line_search_
     end subroutine romAlgoNLCheck

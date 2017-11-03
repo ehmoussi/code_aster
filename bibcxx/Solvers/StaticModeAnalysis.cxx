@@ -29,7 +29,7 @@
 #include "Solvers/StaticModeAnalysis.h"
 #include <typeinfo>
 
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
 
 //StaticModeDeplInstance::StaticModeDeplInstance():  //?????
  //                                _supportModel( ModelPtr() ),
@@ -46,7 +46,7 @@ ResultsContainerPtr StaticModeDeplInstance::execute() throw ( std::runtime_error
     ResultsContainerPtr resultC( new ResultsContainerInstance ( std::string( "MODE_MECA" ) ) );
     std::string nameOfSD = resultC->getName();
 
-    CommandSyntaxCython cmdSt( "MODE_STATIQUE" );
+    CommandSyntax cmdSt( "MODE_STATIQUE" );
     cmdSt.setResult( nameOfSD, resultC->getType() );
 
     SyntaxMapContainer dict;
@@ -112,7 +112,7 @@ ResultsContainerPtr StaticModeForcInstance::execute() throw ( std::runtime_error
     ResultsContainerPtr resultC( new ResultsContainerInstance ( std::string( "MODE_MECA" ) ) );
     std::string nameOfSD = resultC->getName();
 
-    CommandSyntaxCython cmdSt( "MODE_STATIQUE" );
+    CommandSyntax cmdSt( "MODE_STATIQUE" );
     cmdSt.setResult( nameOfSD, resultC->getType() );
 
     SyntaxMapContainer dict;
@@ -181,7 +181,7 @@ ResultsContainerPtr StaticModePseudoInstance::execute() throw ( std::runtime_err
     ResultsContainerPtr resultC( new ResultsContainerInstance ( std::string( "MODE_MECA" ) ) );
     std::string nameOfSD = resultC->getName();
 
-    CommandSyntaxCython cmdSt( "MODE_STATIQUE" );
+    CommandSyntax cmdSt( "MODE_STATIQUE" );
     cmdSt.setResult( nameOfSD, resultC->getType() );
 
     SyntaxMapContainer dict;
@@ -256,7 +256,7 @@ ResultsContainerPtr StaticModeInterfInstance::execute() throw ( std::runtime_err
     ResultsContainerPtr resultC( new ResultsContainerInstance ( std::string( "MODE_MECA" ) ) );
     std::string nameOfSD = resultC->getName();
 
-    CommandSyntaxCython cmdSt( "MODE_STATIQUE" );
+    CommandSyntax cmdSt( "MODE_STATIQUE" );
     cmdSt.setResult( nameOfSD, resultC->getType() );
 
     SyntaxMapContainer dict;

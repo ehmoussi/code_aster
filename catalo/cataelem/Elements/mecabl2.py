@@ -33,10 +33,6 @@ CCAORIE  = LocatedComponents(phys=PHY.CAORIE, type='ELEM',
     components=('ALPHA','BETA','GAMMA',))
 
 
-CCOMPOR  = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
-    components=('RELCOM','DEFORM','INCELA',))
-
-
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO',
     components=('DX','DY','DZ',))
 
@@ -199,7 +195,7 @@ class MECABL2(Element):
         ),
 
         OP.FULL_MECA(te=160,
-            para_in=((SP.PCACABL, LC.CCACABL), (OP.FULL_MECA.PCOMPOR, CCOMPOR),
+            para_in=((SP.PCACABL, LC.CCACABL), (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PVARCMR, LC.ZVARCPG), (OP.FULL_MECA.PVARCPR, LC.ZVARCPG),
@@ -246,7 +242,7 @@ class MECABL2(Element):
         ),
 
         OP.RAPH_MECA(te=160,
-            para_in=((SP.PCACABL, LC.CCACABL), (OP.RAPH_MECA.PCOMPOR, CCOMPOR),
+            para_in=((SP.PCACABL, LC.CCACABL), (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PVARCMR, LC.ZVARCPG), (OP.RAPH_MECA.PVARCPR, LC.ZVARCPG),
@@ -280,7 +276,7 @@ class MECABL2(Element):
         ),
 
         OP.RIGI_MECA_TANG(te=160,
-            para_in=((SP.PCACABL, LC.CCACABL), (OP.RIGI_MECA_TANG.PCOMPOR, CCOMPOR),
+            para_in=((SP.PCACABL, LC.CCACABL), (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PVARCMR, LC.ZVARCPG), (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG),

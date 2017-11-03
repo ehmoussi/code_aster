@@ -29,6 +29,7 @@ implicit none
 #include "asterfort/dismoi.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/mm_cycl_crsd.h"
+#include "asterfort/mm_pene_crsd.h"
 #include "asterfort/mm_cycl_init.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/utmess.h"
@@ -66,6 +67,8 @@ implicit none
     real(kind=8), pointer :: v_sdcont_apjeu(:) => null()
     character(len=24) :: sdcont_vitini, sdcont_accini
     integer :: ztabf, zetat
+    aster_logical :: l_pena_cont
+
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -77,6 +80,7 @@ implicit none
 ! - Get parameters
 !
     nt_cont_poin = cfdisi(ds_contact%sdcont_defi,'NTPC')
+    l_pena_cont = cfdisl(ds_contact%sdcont_defi,'EXIS_PENA')
     l_dyna       = ndynlo(sddyna,'DYNAMIQUE')
 !
 ! - Create datastructure for general informations about contact
@@ -105,6 +109,15 @@ implicit none
 !
     call mm_cycl_crsd(ds_contact)
     call mm_cycl_init(ds_contact)
+!
+! - Create datastructure for penetration management detection and treatment
+!
+    if (l_pena_cont) then 
+        call mm_pene_crsd(ds_contact)
+    endif
+!
+
+
 !
 ! - Create datastructure to save gaps
 !

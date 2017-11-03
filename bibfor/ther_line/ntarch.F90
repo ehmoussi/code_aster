@@ -126,7 +126,9 @@ implicit none
 !
         if (present(ds_algorom_)) then
             if (ds_algorom_%l_rom) then
-                call romAlgoNLTableSave(nume_store, instan, ds_algorom_)
+                if (nume_store .gt. 0) then
+                    call romAlgoNLTableSave(nume_store, instan, ds_algorom_)
+                endif
             endif
         endif
     endif

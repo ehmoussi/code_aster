@@ -123,7 +123,7 @@ void StaticMechanicalAlgorithm< Stepper >::oneStep() throw( AlgoException& )
     chNoDir->addFieldOnNodes( *chNoLap );
     chNoDir->addFieldOnNodes( *chNoNeu );
 
-    CommandSyntaxCython cmdSt( "MECA_STATIQUE" );
+    CommandSyntax cmdSt( "MECA_STATIQUE" );
     cmdSt.setResult( _results->getName(), _results->getType() );
 
     FieldOnNodesDoublePtr kineLoadsFON = _discreteProblem->buildKinematicsLoad( dofNum1, _time,

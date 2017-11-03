@@ -122,6 +122,7 @@ DYN=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                           MATR_MASS=MASSE,   MATR_RIGI=RIGIDITE,
                           EXCIT=_F(  VECT_ASSE = VECTASS,
                                   FONC_MULT = FONC),
+                                  SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                          INCREMENT=_F( LIST_INST = TEMPLI),
                          SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
                         )

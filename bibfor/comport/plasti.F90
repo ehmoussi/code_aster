@@ -20,7 +20,7 @@ subroutine plasti(fami, kpg, ksp, typmod, imate,&
                   compor, carcri, instam, instap, &
                   epsdt, depst, sigm,&
                   vim, option, angmas, sigp, vip,&
-                  dsidep, icomp, nvi, codret, mult_compor_, wkin_)
+                  dsidep, icomp, nvi, codret, mult_compor_)
 !
 implicit none
 !
@@ -63,7 +63,6 @@ implicit none
     real(kind=8), intent(out) :: dsidep(6, *)
     integer, intent(out) :: codret
     character(len=16), optional, intent(in) :: mult_compor_
-    real(kind=8), optional, intent(in) :: wkin_(9)
 !
 !     INTEGRATION DE LOIS DE COMPORTEMENT ELASTO PLASTIQUE ET VISCO
 !     PLASTIQUE PAR UNE MATHODE DE NEWTON (DISCRETISATION IMPLICITE)
@@ -160,7 +159,7 @@ implicit none
     real(kind=8) :: toler, epsi, materd(nmat, 2), materf(nmat, 2)
     real(kind=8) :: epsd(9), deps(9)
     real(kind=8) :: seuil, theta, dt, devg(6), devgii
-    real(kind=8) :: vp(3), vecp(3, 3), pgl(3, 3), wkin(9)
+    real(kind=8) :: vp(3), vecp(3, 3), pgl(3, 3)
     real(kind=8) :: toutms(nfs, nsg, 6), hsr(nsg, nsg), drdy(nrm*nrm)
 
     real(kind=8) :: tempd, tempf, tref
@@ -185,10 +184,7 @@ implicit none
     if (present(mult_compor_)) then
         mult_compor = mult_compor_
     endif
-    wkin(:) = 0.d0
-    if (present(wkin_)) then
-        wkin = wkin_
-    endif
+
     mod = typmod(1)
     dt = instap - instam
     resi = option(1:9).eq.'RAPH_MECA' .or. option(1:9).eq.'FULL_MECA'
@@ -300,7 +296,7 @@ implicit none
                         vip, compor, nbcomm, cpmono, pgl,&
                         nfs, nsg, toutms, hsr, icomp,&
                         irtet, theta, vp, vecp, seuil,&
-                        devg, devgii, drdy, wkin, carcri)
+                        devg, devgii, drdy, carcri)
 !
 
             if (irtet .eq. 1) then

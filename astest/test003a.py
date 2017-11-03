@@ -6,6 +6,8 @@
 import code_aster
 import numpy as np
 
+code_aster.init()
+
 test=code_aster.TestCase()
 
 # Creation of the mesh
@@ -24,14 +26,17 @@ crack = code_aster.XfemCrack.create(mesh)
 
 shape = code_aster.CrackShape.create()
 rayon = 250.
-shape.setEllipseCrackShape(rayon, rayon, np.asarray((0., 0., 0.)), np.asarray((1., 0., 0. )), np.asarray((0., 1. , 0. )))
+shape.setEllipseCrackShape(rayon, rayon, [0., 0., 0.], [1., 0., 0.], [0., 1. , 0.], "IN")
 
 crack.setCrackShape(shape)
 crack.build()
 test.assertEqual( crack.getType(), "FISS_XFEM" )
 
+"""
+FIXME: enrichWithXfem does not exist!!
 # New xfem model
 xmodel = model.enrichWithXfem(crack)
+"""
 
 # Tests
 normalLevelSet=crack.getNormalLevelSetField()

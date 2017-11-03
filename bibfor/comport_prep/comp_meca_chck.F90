@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine comp_meca_chck(model         , mesh          , full_elem_s, l_etat_init,&
                           ds_compor_prep,&
                           l_auto_elas   , l_auto_deborst, l_comp_erre)
@@ -34,7 +35,6 @@ implicit none
 #include "asterfort/dismoi.h"
 #include "asterfort/nmdovd.h"
 #include "asterfort/nmdovm.h"
-#include "asterfort/thm_kit_chck.h"
 #include "asterfort/comp_read_mesh.h"
 #include "asterfort/utmess.h"
 !
@@ -46,16 +46,14 @@ implicit none
 #include "asterf_mpi.h"
 #endif
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: model
-    character(len=8), intent(in) :: mesh
-    character(len=19), intent(in) :: full_elem_s
-    aster_logical, intent(in) :: l_etat_init
-    type(NL_DS_ComporPrep), intent(inout) :: ds_compor_prep
-    aster_logical, intent(out) :: l_auto_elas
-    aster_logical, intent(out) :: l_auto_deborst
-    aster_logical, intent(out) :: l_comp_erre
+character(len=8), intent(in) :: model
+character(len=8), intent(in) :: mesh
+character(len=19), intent(in) :: full_elem_s
+aster_logical, intent(in) :: l_etat_init
+type(NL_DS_ComporPrep), intent(inout) :: ds_compor_prep
+aster_logical, intent(out) :: l_auto_elas
+aster_logical, intent(out) :: l_auto_deborst
+aster_logical, intent(out) :: l_comp_erre
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -80,14 +78,14 @@ implicit none
     character(len=24) :: list_elem_affe
     aster_logical :: l_affe_all
     integer :: nb_elem_affe
-    character(len=16) :: texte(2), type_model2
+    character(len=16) :: texte(2)
     character(len=16) :: defo_comp, rela_comp, rela_thmc, type_cpla
     character(len=16) :: rela_comp_py, defo_comp_py
     integer :: iret
     character(len=16) :: keywordfact
     integer :: i_comp, nb_comp
     character(len=8) :: repons
-    aster_logical :: l_kit_thm, l_one_elem, l_elem_bound
+    aster_logical :: l_one_elem, l_elem_bound
     character(len=24) :: ligrmo
     character(len=8) :: partit
     mpi_int :: nb_proc, mpicou
@@ -121,8 +119,6 @@ implicit none
 !
 ! ----- Detection of specific cases
 !              
-        call comp_meca_l(rela_comp, 'KIT_THM', l_kit_thm)
-!
         if (rela_comp .eq. 'ENDO_HETEROGENE') then 
             ligrmo = model//'.MODELE'
             call dismoi('PARTITION', ligrmo, 'LIGREL', repk=partit)
@@ -165,18 +161,11 @@ implicit none
             call utmess('F', 'COMPOR1_44', nk = 2, valk = texte)
         endif
 !
-! ----- Check comportment/model for THM (cannot use Comportement.py)
-!
-        if (l_kit_thm) then
-            call thm_kit_chck(model, l_affe_all, list_elem_affe, nb_elem_affe, rela_thmc)
-        endif
-!
 ! ----- Check deformation with Comportement.py
 !
         call nmdovd(model         , l_affe_all  , l_auto_deborst,&
                     list_elem_affe, nb_elem_affe, full_elem_s   ,&
-                    defo_comp     , defo_comp_py, type_model2)
-        ds_compor_prep%v_comp(i_comp)%type_model2 = type_model2
+                    defo_comp     , defo_comp_py)
 !
 ! ----- Check if COQUE_3D+GROT_GDEP is activated
 !

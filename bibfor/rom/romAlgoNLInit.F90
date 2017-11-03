@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine romAlgoNLInit(phenom        , mesh, nume_dof, result, ds_algorom,&
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine romAlgoNLInit(phenom        , model, mesh, nume_dof, result, ds_algorom,&
                          l_line_search_)
 !
 use Rom_Datastructure_type
@@ -26,21 +27,18 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/infniv.h"
 #include "asterfort/romEquationListCreate.h"
-#include "asterfort/romBaseCopy.h"
-#include "asterfort/romBaseTruncation.h"
 #include "asterfort/romAlgoNLCheck.h"
 #include "asterfort/romAlgoNLTableCreate.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=4), intent(in) :: phenom
-    character(len=8), intent(in) :: mesh
-    character(len=24), intent(in) :: nume_dof
-    character(len=8), intent(in) :: result
-    type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
-    aster_logical, intent(in), optional :: l_line_search_
+character(len=4), intent(in) :: phenom
+character(len=24), intent(in) :: model
+character(len=8), intent(in) :: mesh
+character(len=24), intent(in) :: nume_dof
+character(len=8), intent(in) :: result
+type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
+aster_logical, intent(in), optional :: l_line_search_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -51,6 +49,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  phenom           : phenomenon (MECA/THER)
+! In  model            : name of model
 ! In  mesh             : name of mesh
 ! In  nume_dof         : name of numbering (NUME_DDL)
 ! In  result           : name of datastructure for results
@@ -60,9 +59,8 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    aster_logical :: l_hrom
+    aster_logical :: l_hrom, l_hrom_corref
     integer :: nb_mode
-    character(len=8) :: base_rid
     character(len=24) :: gamma = ' '
     real(kind=8), pointer :: v_gamma(:) => null()   
 !
@@ -75,27 +73,31 @@ implicit none
 !
 ! - Get parameters
 !
-    l_hrom  = ds_algorom%l_hrom
-    nb_mode = ds_algorom%ds_empi%nb_mode
+    l_hrom        = ds_algorom%l_hrom
+    l_hrom_corref = ds_algorom%l_hrom_corref
+    nb_mode       = ds_algorom%ds_empi%nb_mode
 !
 ! - Check ROM algorithm datastructure
 !
-    call romAlgoNLCheck(phenom, mesh, ds_algorom, l_line_search_)
+    call romAlgoNLCheck(phenom, model, mesh, ds_algorom, l_line_search_)
 !
 ! - Prepare the list of equations at interface
 !
     if (l_hrom) then
-        call romEquationListCreate(ds_algorom%ds_empi   , nume_dof, ds_algorom%grnode_int,&
-                                   ds_algorom%v_equa_int)
+        call romEquationListCreate(ds_algorom%ds_empi, ds_algorom%v_equa_int, nume_dof,&
+                                   grnode_ = ds_algorom%grnode_int)
     endif
 !
-! - Truncation of empirical modes on RID
+! - Prepare the list of equation of internal interface
 !
-    if (l_hrom) then
-        base_rid = '&&TRUNC'
-        call romBaseCopy(ds_algorom%ds_empi, base_rid, ds_algorom%ds_empi_rid)
-        call romBaseTruncation(ds_algorom%ds_empi, nume_dof, 'V', ds_algorom%ds_empi_rid)
+    if (l_hrom_corref) then
+        call romEquationListCreate(ds_algorom%ds_empi, ds_algorom%v_equa_sub, nume_dof,&
+                                   grnode_ = ds_algorom%grnode_sub)
     endif
+!
+! - Initializations for EF correction
+!
+    ds_algorom%phase = 'HROM'
 !
 ! - Create object for reduced coordinates
 !

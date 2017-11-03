@@ -16,12 +16,12 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine jxecro(ic, iadmi, iaddi, lso, idco,&
-                  idos)
+subroutine jxecro(ic, iadmi, iaddi, lso, idco, idos)
 ! person_in_charge: j-pierre.lefebvre at edf.fr
     implicit none
 #include "asterf_types.h"
 #include "jeveux_private.h"
+#include "asterfort/jjagod.h"
 #include "asterfort/jxdeps.h"
 #include "asterfort/jxecrb.h"
 #include "asterfort/jxlirb.h"
@@ -51,10 +51,10 @@ subroutine jxecro(ic, iadmi, iaddi, lso, idco,&
 !-----------------------------------------------------------------------
     parameter  ( n = 5 )
     integer :: nblmax, nbluti, longbl, kitlec, kitecr, kiadm, iitlec, iitecr
-    integer :: nitecr, kmarq
+    integer :: nitecr, kmarq, ibc
     common /ificje/  nblmax(n) , nbluti(n) , longbl(n) ,&
-     &                 kitlec(n) , kitecr(n) ,             kiadm(n) ,&
-     &                 iitlec(n) , iitecr(n) , nitecr(n) , kmarq(n)
+     &               kitlec(n) , kitecr(n) ,             kiadm(n) ,&
+     &               iitlec(n) , iitecr(n) , nitecr(n) , kmarq(n)
     aster_logical :: litlec
     common /lficje/  litlec(n)
     integer :: idn, iext, nbenrg
@@ -62,6 +62,13 @@ subroutine jxecro(ic, iadmi, iaddi, lso, idco,&
     character(len=8) :: nombas
     common /kbasje/  nombas(n)
     common /jusadi/  jusadi(n)
+!
+    character(len=2) :: dn2
+    character(len=5) :: classe
+    character(len=8) :: nomfic, kstout, kstini
+    common /kficje/  classe, nomfic(n), kstout(n), kstini(n), dn2(n)
+    integer :: indiq_jjagod
+    common /idagod/ indiq_jjagod
 !     ------------------------------------------------------------------
     integer :: iadmo, kadd, ladd, nde, lgbl, lso2
     aster_logical :: lpetit
@@ -101,6 +108,18 @@ subroutine jxecro(ic, iadmi, iaddi, lso, idco,&
     lpetit = ( lso2 .lt. lgbl-nde*lois )
     if (iaddi(1) .eq. 0) then
 !
+!   on teste le taux de remplissage de la base et on double le nombre maximum
+!   d'enregistrements si ce taux est supérieur à 50%
+!
+        if ((100*nbluti(ic))/nblmax(ic) .gt. 50 ) then 
+          if (indiq_jjagod .eq. 0) then 
+             ibc = index ( classe , 'G')
+             call jjagod (ibc, 2*nblmax(ibc) )
+             ibc = index ( classe , 'V')
+             call jjagod (ibc, 2*nblmax(ibc) )
+          endif
+        endif
+!
 ! ----- PREMIER DECHARGEMENT
 !
         if (lpetit) then
@@ -117,8 +136,7 @@ subroutine jxecro(ic, iadmi, iaddi, lso, idco,&
                     iszon(jiecr ) = 0
                     iszon(jiecr+1) = 0
                     iszon(jiecr+2) = (lgbl-nitecr(ic))/lois-3
-                    call jxecrb(ic, iitecr(ic), kitecr(ic)+1, lgbl, 0,&
-                                0)
+                    call jxecrb(ic, iitecr(ic), kitecr(ic)+1, lgbl, 0, 0)
                 endif
                 do 101 kd = 1, nblmax(ic)
                     lsadi = jusadi(ic)+3*kd-2
@@ -211,8 +229,7 @@ subroutine jxecro(ic, iadmi, iaddi, lso, idco,&
             endif
             call utmess('F', 'JEVEUX_42', sk=nombas(ic), si=nblmax(ic))
 304         continue
-            call jxecrb(ic, kd, iadmo, lso2, idco,&
-                        idos)
+            call jxecrb(ic, kd, iadmo, lso2, idco, idos)
         endif
     else
 !
@@ -229,8 +246,7 @@ subroutine jxecro(ic, iadmi, iaddi, lso, idco,&
                 call jxdeps(iadmo, kitecr(ic)+ladd+1, lso)
             else
                 if (litlec(ic)) then
-                    call jxecrb(ic, iitlec(ic), kitlec(ic)+1, lgbl, 0,&
-                                0)
+                    call jxecrb(ic, iitlec(ic), kitlec(ic)+1, lgbl, 0, 0)
                 endif
                 call jxlirb(ic, kadd, kitlec(ic)+1, lgbl)
                 call jxdeps(iadmo, kitlec(ic)+ladd+1, lso)
@@ -241,8 +257,7 @@ subroutine jxecro(ic, iadmi, iaddi, lso, idco,&
 !
 ! ------- GROS  OBJET
 !
-            call jxecrb(ic, kadd, iadmo, lso2, idco,&
-                        idos)
+            call jxecrb(ic, kadd, iadmo, lso2, idco, idos)
         endif
     endif
 ! FIN ------------------------------------------------------------------

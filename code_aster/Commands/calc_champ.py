@@ -19,22 +19,40 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from code_aster.Supervis.libCommandSyntax import CommandSyntax
+from ..Utilities import required
+from .ExecuteCommand import ExecuteCommand
 
 
-def CALC_CHAMP(**curDict):
-    myResult=curDict["RESULTAT"]
-    name = myResult.getName()
-    type = myResult.getType()
+class ComputeAdditionalField(ExecuteCommand):
+    """Command that computes additional fields in a
+    :class:`~code_aster.Objects.ResultsContainer`.
+    """
+    command_name = "CALC_CHAMP"
 
-    syntax = CommandSyntax("CALC_CHAMP")
-    syntax.setResult(name, type)
-    syntax.define(curDict)
+    def adapt_syntax(self, keywords):
+        """Hook to adapt syntax from a old version or for compatibility reasons.
 
-    numOp = 52
-    python_execop(numOp)
-    syntax.free()
-    myResult.update()
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords, changed
+                in place.
+        """
+        required(keywords, "", "reuse")
 
-    return myResult
+    def create_result(self, keywords):
+        """Initialize the result.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = keywords["RESULTAT"]
+
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        self._result.update()
+
+
+CALC_CHAMP = ComputeAdditionalField.run

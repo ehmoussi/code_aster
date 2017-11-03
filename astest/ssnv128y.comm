@@ -71,8 +71,8 @@ CHMAT=AFFE_MATERIAU(MAILLAGE=MA,
 CHA1=DEFI_CONTACT(MODELE=MO,
                  FORMULATION    = 'CONTINUE',
                  FROTTEMENT     = 'COULOMB',
-                 ALGO_RESO_FROT = 'NEWTON',
-                 ALGO_RESO_GEOM = 'NEWTON',
+                 ALGO_RESO_FROT = 'NEWTON',#RESI_FROT=1.E-10,
+                 ALGO_RESO_GEOM = 'POINT_FIXE',REAC_GEOM='CONTROLE',NB_ITER_GEOM=2,
                  ALGO_RESO_CONT = 'NEWTON',
                  ZONE=_F(
                          GROUP_MA_MAIT = 'SBATI',
@@ -82,11 +82,13 @@ CHA1=DEFI_CONTACT(MODELE=MO,
                          SANS_GROUP_NO_FR= 'PP',
 
                          ALGO_CONT='PENALISATION',
-                         ALGO_FROT='PENALISATION',
-
+                         ALGO_FROT='STANDARD',
+                         #ALGO_FROT='PENALISATION',
+                         ADAPTATION='CYCLAGE',
                          COEF_PENA_CONT=1.E14,#1.E+5,
-                         COEF_PENA_FROT=1.E6,#1.E+1,
-                         ADAPTATION = 'ADAPT_COEF',
+                         #COEF_PENA_FROT=1.E7,#1.E+1,
+                         #ADAPTATION = 'ADAPT_COEF',
+                         #PENE_MAXI=1.E-5,
                  ),);
 CHA2=AFFE_CHAR_MECA(MODELE=MO,
                     DDL_IMPO=(_F(GROUP_NO = 'NENCA',  DX = 0., DY = 0., DZ=0.),
@@ -121,8 +123,8 @@ U2M=STAT_NON_LINE(MODELE   = MO,
                 NEWTON     = _F(REAC_ITER = 1),
                 INCREMENT  = _F(LIST_INST = L_INST),
                 SOLVEUR    = _F(METHODE='MUMPS',),
-                CONVERGENCE= _F(ARRET = 'OUI',
-                               ITER_GLOB_MAXI = 15,),);
+                CONVERGENCE= _F(ARRET = 'OUI',RESI_GLOB_RELA=1.E-10,
+                               ITER_GLOB_MAXI = 30,),);
 
 TEST_RESU(RESU=(_F(GROUP_NO='PPA',
                    INST=1.0,
@@ -130,7 +132,7 @@ TEST_RESU(RESU=(_F(GROUP_NO='PPA',
                    RESULTAT=U2M,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
-                   VALE_CALC=2.90548335846E-05,
+                   VALE_CALC=2.87140830195E-05,
                    VALE_REFE=2.8600000000000001E-05,
                    PRECISION=0.050000000000000003,
                    ),
@@ -140,7 +142,7 @@ TEST_RESU(RESU=(_F(GROUP_NO='PPA',
                    RESULTAT=U2M,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
-                   VALE_CALC=2.75827606059E-05,
+                   VALE_CALC=2.72420701055E-05,
                    VALE_REFE=2.72E-05,
                    PRECISION=0.050000000000000003,
                    ),
@@ -150,7 +152,7 @@ TEST_RESU(RESU=(_F(GROUP_NO='PPA',
                    RESULTAT=U2M,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
-                   VALE_CALC=2.30114238733E-05,
+                   VALE_CALC=2.26982719744E-05 ,
                    VALE_REFE=2.2799999999999999E-05,
                    PRECISION=0.050000000000000003,
                    ),
@@ -160,7 +162,7 @@ TEST_RESU(RESU=(_F(GROUP_NO='PPA',
                    RESULTAT=U2M,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
-                   VALE_CALC=1.99830656804E-05,
+                   VALE_CALC=1.96646126676E-05,
                    VALE_REFE=1.98E-05,
                    PRECISION=0.050000000000000003,
                    ),
@@ -170,7 +172,7 @@ TEST_RESU(RESU=(_F(GROUP_NO='PPA',
                    RESULTAT=U2M,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
-                   VALE_CALC=1.5649803526E-05,
+                   VALE_CALC=1.52965588508E-05,
                    VALE_REFE=1.5E-05,
                    PRECISION=0.050000000000000003,
                    ),
@@ -225,12 +227,12 @@ POSY=POST_RELEVE_T(ACTION=_F(INTITULE='LAMBDA',
                              NOM_CMP='DY',
                              OPERATION='EXTRACTION'));
 
-IMPR_TABLE(TABLE=PRFUS);
-IMPR_TABLE(TABLE=LAGSC);
-IMPR_TABLE(TABLE=LAGSF1);
-IMPR_TABLE(TABLE=LAGSF2);
-IMPR_TABLE(TABLE=POSX);
-IMPR_TABLE(TABLE=POSY);
+#IMPR_TABLE(TABLE=PRFUS);
+#IMPR_TABLE(TABLE=LAGSC);
+#IMPR_TABLE(TABLE=LAGSF1);
+#IMPR_TABLE(TABLE=LAGSF2);
+#IMPR_TABLE(TABLE=POSX);
+#IMPR_TABLE(TABLE=POSY);
 
 #IMPR_RESU(FORMAT='GMSH',UNITE=37,RESU=_F(RESULTAT=U2M));
 

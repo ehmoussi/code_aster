@@ -53,12 +53,20 @@ CA=AFFE_CARA_ELEM(   MODELE=MO,
        GROUP_MA = 'TOUT',
   EPAIS = 0.01)  )
 
-ASSEMBLAGE(   MODELE=MO,            CARA_ELEM=CA,
-                       CHARGE=CH,           CHAM_MATER=CHMAT,
-                      NUME_DDL=CO("NUM"),MATR_ASSE=(
-               _F(  MATRICE = CO("MATR"),  OPTION = 'RIGI_MECA'),
-                         _F(  MATRICE = CO("MATM"),  OPTION = 'MASS_MECA'))
-                   )
+
+ASSEMBLAGE(MODELE=MO, CARA_ELEM=CA,
+           CHARGE=CH, CHAM_MATER=CHMAT,
+           NUME_DDL=CO("NUM"),
+           MATR_ASSE=(_F( MATRICE = CO("MATM"), 
+                          OPTION = 'MASS_MECA'))
+           )
+
+ASSEMBLAGE(MODELE=MO, CARA_ELEM=CA,
+           CHARGE=CH, CHAM_MATER=CHMAT,
+           NUME_DDL=NUM,
+           MATR_ASSE=(_F( MATRICE = CO("MATR"), 
+                          OPTION = 'RIGI_MECA'))
+           )
 
 MODE=CALC_MODES(MATR_RIGI=MATR,
                 VERI_MODE=_F(SEUIL=1.E-5,

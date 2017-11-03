@@ -17,6 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='NON'))
 
 ####################################
@@ -67,7 +68,7 @@ MAIL=DEFI_GROUP(reuse =MAIL,
 MODELE=AFFE_MODELE(MAILLAGE=MAIL,
                    AFFE=_F(TOUT='OUI',
                            PHENOMENE='MECANIQUE',
-                           MODELISATION='D_PLAN_THHMD',),);
+                           MODELISATION='D_PLAN_THHD',),);
 
 UN=DEFI_CONSTANTE(VALE=1.0,);
 UNDEMI=DEFI_CONSTANTE(VALE=0.5,);
@@ -204,16 +205,13 @@ MATERBO=DEFI_MATERIAU(ELAS=_F(E=5.15000000E8,
                       THM_DIFFU=_F(R_GAZ=8.315,
                                    RHO=2200.0,
                                    CP=1050.0,
-                                   BIOT_L=1.0,
-                                   BIOT_T=1.0,
-                                   BIOT_N=1.0,
+                                   BIOT_COEF=1.0,
                                    SATU_PRES=SATUBO,
                                    D_SATU_PRES=DSATBO,
                                    PESA_X=0.0,
                                    PESA_Y=0.0,
                                    PESA_Z=0.0,
-                                   PERMIN_L=KINTBO,
-                                   PERMIN_T=KINTBO,
+                                   PERM_IN=KINTBO,
                                    PERM_LIQU=UN,
                                    D_PERM_LIQU_SATU=ZERO,
                                    PERM_GAZ=UN,
@@ -221,12 +219,10 @@ MATERBO=DEFI_MATERIAU(ELAS=_F(E=5.15000000E8,
                                    D_PERM_PRES_GAZ=ZERO,
                                    FICKV_T=DM8,
                                    FICKV_PV=FVPPV,
-                                   LAMB_TL=LAMBT,
-                                   LAMB_TT=LAMBT,
+                                   LAMB_T=LAMBT,
                                    LAMB_S=LAMBS,
                                    D_LB_S=DLS,
-                                   LAMB_C_L=0.5,
-                                   LAMB_C_T=0.5,
+                                   LAMB_CT=0.5,
         ),);
 
 CHMAT0=AFFE_MATERIAU(MAILLAGE=MAIL,
@@ -238,8 +234,8 @@ CHAMNO=CREA_CHAMP(MAILLAGE=MAIL,
                     OPERATION='AFFE',
                     TYPE_CHAM='NOEU_DEPL_R',
                     AFFE=(_F(TOUT='OUI',
-                             NOM_CMP=('DX','DY','PRE1','PRE2','TEMP'),
-                             VALE=(0.0,0.0,0.0,0.0,0.0,),),
+                             NOM_CMP=('PRE1','PRE2','TEMP'),
+                             VALE=(0.0,0.0,0.0,),),
                           _F(GROUP_NO='ROCHES',
                              NOM_CMP='TEMP',
                              VALE=0.0,),
@@ -252,13 +248,6 @@ FLUTH=AFFE_CHAR_MECA(MODELE=MODELE,
                        FLUX_THM_REP=_F(GROUP_MA=('GAUCHE','DROIT','BAS','HAUT'),
                                        FLUN=1.E6,
                                        FLUN_HYDR1=0.0,
-                                       ),
-                                      );
-
-CL_MECA=AFFE_CHAR_MECA(MODELE=MODELE,
-                       DDL_IMPO=_F(GROUP_NO='BO',
-                                       DX = 0.,
-                                       DY = 0. ,
                                        ),
                                       );
 
@@ -292,9 +281,9 @@ U0=STAT_NON_LINE(MODELE=MODELE,
                  CHAM_MATER=CHMAT0,
                  EXCIT=(
                  _F(CHARGE=FLUTH,),
-                 _F(CHARGE=CL_MECA,),
                                           ),
-                 COMPORTEMENT=_F(RELATION='KIT_THH',PARM_THETA=0.57,
+                 SCHEMA_THM=_F(PARM_THETA=0.57,),
+                 COMPORTEMENT=_F(RELATION='KIT_THH',
                               RELATION_KIT=('LIQU_VAPE_GAZ','HYDR_UTIL'),
                               ITER_INTE_MAXI=5,),
                  ETAT_INIT=_F(DEPL=CHAMNO,
@@ -426,14 +415,7 @@ TEST_RESU(RESU=(_F(INST=1.E4,
 MODELE2=AFFE_MODELE(MAILLAGE=MAIL,
                    AFFE=_F(GROUP_MA=('BO1','HAUT'),
                            PHENOMENE='MECANIQUE',
-                           MODELISATION='D_PLAN_THHMD',),);
-
-CL_MECA2=AFFE_CHAR_MECA(MODELE=MODELE2,
-                       DDL_IMPO=_F(GROUP_NO='BO',
-                                       DX = 0.,
-                                       DY = 0. ,
-                                       ),
-                                      );
+                           MODELISATION='D_PLAN_THHD',),);
 
 INST2=DEFI_LIST_REEL(DEBUT=0.0,
                      INTERVALLE=_F(
@@ -458,9 +440,9 @@ U2=STAT_NON_LINE(MODELE=MODELE2,
                  CHAM_MATER=CHMAT0,
                  EXCIT=(
                  _F(CHARGE=FLUTH2,),
-                 _F(CHARGE=CL_MECA2,),
                                           ),
-                 COMPORTEMENT=_F(RELATION='KIT_THH',PARM_THETA=0.57,
+                 SCHEMA_THM=_F(PARM_THETA=0.57,),
+                 COMPORTEMENT=_F(RELATION='KIT_THH',
                               RELATION_KIT=('LIQU_VAPE_GAZ','HYDR_UTIL'),
                               ITER_INTE_MAXI=5,),
                  INCREMENT=_F(LIST_INST=DEFLIST2,
@@ -478,9 +460,9 @@ U2=STAT_NON_LINE(reuse=U2,
                  CHAM_MATER=CHMAT0,
                  EXCIT=(
                  _F(CHARGE=FLUTH,),
-                 _F(CHARGE=CL_MECA,),
                                           ),
-                 COMPORTEMENT=_F(RELATION='KIT_THH',PARM_THETA=0.57,
+                 SCHEMA_THM=_F(PARM_THETA=0.57,),
+                 COMPORTEMENT=_F(RELATION='KIT_THH',
                               RELATION_KIT=('LIQU_VAPE_GAZ','HYDR_UTIL'),
                               ITER_INTE_MAXI=5,),
                  ETAT_INIT=_F(DEPL=CHAMNO,

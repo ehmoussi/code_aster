@@ -287,7 +287,7 @@ AFFE_CHAR_MECA=OPER(nom="AFFE_CHAR_MECA",op=   7,sd_prod=char_meca,
              PRE2            =SIMP(statut='f',typ='R' ),
            ),
 
-         CHAMNO_IMPO  =FACT(statut='f',max='**',
+         CHAMNO_IMPO  =FACT(statut='f',max=1,
              fr=tr("Impose des DDLs aux valeurs d'un concept cham_no_sdaster"),
 #  type de cham_no_sdaster CO()
              CHAM_NO         =SIMP(statut='o',typ=cham_no_sdaster), #CO()
@@ -516,7 +516,7 @@ AFFE_CHAR_MECA=OPER(nom="AFFE_CHAR_MECA",op=   7,sd_prod=char_meca,
              DDL             =SIMP(statut='o',typ='TXM',max='**'),
            ),
 
-         LIAISON_CHAMNO  =FACT(statut='f',max='**',
+         LIAISON_CHAMNO  =FACT(statut='f',max=1,
              fr=tr("Définit une relation linéaire entre tous les DDLs présents dans un concept CHAM_NO"),
 #  type de cham_no_sdaster CO()
              CHAM_NO         =SIMP(statut='o',typ=cham_no_sdaster), #CO()
@@ -613,7 +613,7 @@ AFFE_CHAR_MECA=OPER(nom="AFFE_CHAR_MECA",op=   7,sd_prod=char_meca,
              FZ              =SIMP(statut='f',typ='R' ),
            ),
 
-         PRE_SIGM   =FACT(statut='f',max='**',
+         PRE_SIGM   =FACT(statut='f',max=1,
              fr=tr("Applique des contraintes volumiques (2D ou 3D) à un domaine volumique"),
              #INST            =SIMP(statut='f',typ='R' ),
              SIGM            =SIMP(statut='o',typ=(cham_elem,carte_sdaster)),

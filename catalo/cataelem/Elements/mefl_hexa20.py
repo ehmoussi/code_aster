@@ -39,9 +39,6 @@ from cataelem.Options.options import OP
 #----------------
 
 
-CCOMPOR  = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
-    components=('RELCOM','NBVARI','DEFORM','INCELA','C_PLAN',))
-
 
 NDEPLAC  = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',
     components=('PRES','PHI',))
@@ -91,7 +88,7 @@ class MEFL_HEXA20(Element):
         ),
 
         OP.FULL_MECA(te=170,
-            para_in=((OP.FULL_MECA.PCOMPOR, CCOMPOR), (SP.PDEPLMR, DDL_MECA),
+            para_in=((OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), ),
             para_out=((SP.PCODRET, LC.ECODRET), (SP.PMATUUR, MMATUUR),
@@ -127,7 +124,7 @@ class MEFL_HEXA20(Element):
         ),
 
         OP.RAPH_MECA(te=170,
-            para_in=((OP.RAPH_MECA.PCOMPOR, CCOMPOR), (SP.PDEPLMR, DDL_MECA),
+            para_in=((OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), ),
             para_out=((SP.PCODRET, LC.ECODRET), (SP.PVECTUR, MVECTUR),
@@ -151,7 +148,7 @@ class MEFL_HEXA20(Element):
         ),
 
         OP.RIGI_MECA_TANG(te=170,
-            para_in=((OP.RIGI_MECA_TANG.PCOMPOR, CCOMPOR), (SP.PDEPLMR, DDL_MECA),
+            para_in=((OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), ),
             para_out=((SP.PMATUUR, MMATUUR), ),
@@ -214,6 +211,28 @@ class MEFL_PENTA6(MEFL_HEXA20):
     meshType = MT.PENTA6
     elrefe =(
             ElrefeLoc(MT.PE6, gauss = ('RIGI=FPG6','FPG1=FPG1',), mater=('FPG1',),),
+            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4',),),
+            ElrefeLoc(MT.TR3, gauss = ('RIGI=COT3',),),
+        )
+
+
+#------------------------------------------------------------
+class MEFL_PYRAM13(MEFL_HEXA20):
+    """Please document this element"""
+    meshType = MT.PYRAM13
+    elrefe =(
+            ElrefeLoc(MT.P13, gauss = ('RIGI=FPG27','FPG1=FPG1',), mater=('FPG1',),),
+            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9',),),
+            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG6',),),
+        )
+
+
+#------------------------------------------------------------
+class MEFL_PYRAM5(MEFL_HEXA20):
+    """Please document this element"""
+    meshType = MT.PYRAM5
+    elrefe =(
+            ElrefeLoc(MT.PY5, gauss = ('RIGI=FPG5','FPG1=FPG1',), mater=('FPG1',),),
             ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4',),),
             ElrefeLoc(MT.TR3, gauss = ('RIGI=COT3',),),
         )

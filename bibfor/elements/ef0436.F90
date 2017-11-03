@@ -47,7 +47,7 @@ subroutine ef0436(nomte)
     integer :: igeom, icacoq, imate, idepl
     real(kind=8) :: dff(2, 8), vff(8), b(3, 3, 8), jac
     real(kind=8) :: alpha, beta
-    real(kind=8) :: epsm(3), epsthe, sig(3), sigg(3, 9), rig(6, 6)
+    real(kind=8) :: epsm(3), epsthe, sig(3), sigg(3, 9), rig(3, 3)
 !----------------------------------------------------------------------------------
 !
 ! - NOMBRE DE COMPOSANTES DES TENSEURS

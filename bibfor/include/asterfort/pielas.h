@@ -15,12 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine pielas(ndim, npg, kpg, compor, typmod,&
-                      mate, elgeom, lgpg, vim, epsm,&
+                      mate, lgpg, vim, epsm,&
                       epsp, epsd, sigma, etamin, etamax,&
                       tau, copilo)
         integer :: lgpg
@@ -30,7 +28,6 @@ interface
         character(len=16) :: compor(*)
         character(len=8) :: typmod(*)
         integer :: mate
-        real(kind=8) :: elgeom(10, *)
         real(kind=8) :: vim(lgpg, npg)
         real(kind=8) :: epsm(6)
         real(kind=8) :: epsp(6)

@@ -24,12 +24,13 @@
 #include "Loads/ParallelMechanicalLoad.h"
 #include "Meshes/MeshExplorer.h"
 #include "ParallelUtilities/MPIInfos.h"
+#include "Supervis/ResultNaming.h"
 
 #ifdef _USE_MPI
 
 ParallelMechanicalLoadInstance::ParallelMechanicalLoadInstance( const GenericMechanicalLoadPtr& load,
                                                                 const ModelPtr& model ):
-    DataStructure( getNewResultObjectName(), "CHAR_MECA" ),
+    DataStructure( ResultNaming::getNewResultName(), "CHAR_MECA" ),
     _BaseFEDesc( load->getMechanicalLoadDescription()._FEDesc ),
     _FEDesc( new ParallelFiniteElementDescriptorInstance
                     ( getName() + ".CHME.LIGRE", _BaseFEDesc,

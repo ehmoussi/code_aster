@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! Person in charge: mickael.abbas at edf.fr
+!
 subroutine calyrc(load, mesh)
 !
 implicit none
@@ -52,10 +53,8 @@ implicit none
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
 !
-! Person in charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: load
-    character(len=8), intent(in) :: mesh
+character(len=8), intent(in) :: load
+character(len=8), intent(in) :: mesh
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -87,7 +86,7 @@ implicit none
     character(len=4) :: fonree
     character(len=4) :: typcoe, typlia
     character(len=8) :: model, m8blan
-    character(len=8) :: kbeta, nono1, nono2, cmp, ddl2, listyp(10)
+    character(len=8) :: kbeta, nono1, nono2, cmp, ddl2, listyp(11)
     character(len=16) :: motfac, cores1, cores2, tymocl(4), motcle(4)
     character(len=19) :: lisrel
     character(len=24) :: geom3
@@ -116,6 +115,8 @@ implicit none
     integer, pointer :: conb1(:) => null()
     integer, pointer :: conb2(:) => null()
     integer, pointer :: limanu1(:) => null()
+    aster_logical :: l_error
+    character(len=8) :: elem_error
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -153,7 +154,7 @@ implicit none
         listyp(2) = 'SEG3'
         listyp(3) = 'SEG4'
     else if (ndim.eq.3) then
-        nbtyp = 10
+        nbtyp = 11
         listyp(1) = 'TRIA3'
         listyp(2) = 'TRIA6'
         listyp(3) = 'TRIA9'
@@ -164,6 +165,7 @@ implicit none
         listyp(8) = 'SEG2'
         listyp(9) = 'SEG3'
         listyp(10) = 'SEG4'
+        listyp(11) = 'TRIA7'
     endif
 !
     call dismoi('NB_NO_MAILLA', mesh, 'MAILLAGE', repi=nnomx)
@@ -254,7 +256,10 @@ implicit none
 ! ---        DES MAILLES DE PEAU MAILLE_ESCL :
 !            -------------------------------
             call nbnlma(mesh, nbma3, limanu3, nbtyp, listyp,&
-                        nbno3)
+                        nbno3, l_error, elem_error)
+            if (l_error) then
+                call utmess('F', 'CHARGES6_5', sk = elem_error)
+            endif
 !
 ! ---        CALCUL DES NORMALES EN CHAQUE NOEUD :
 !            -----------------------------------

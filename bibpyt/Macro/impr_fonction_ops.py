@@ -36,9 +36,10 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
     from code_aster.Cata.Syntax import _F
     from code_aster.Cata.DataStructure import (nappe_sdaster, fonction_c,
                                                formule, formule_c)
-    from code_aster.Supervis import LogicalUnitFile, ReservedUnitUsed
+    from code_aster.RunManager import LogicalUnitFile, ReservedUnitUsed
     from Utilitai import Graph
     from Utilitai.Utmess import UTMESS
+    from Utilitai.utils import fmtF2PY
 
     ier = 0
     # La macro compte pour 1 dans la numerotation des commandes
@@ -406,13 +407,14 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
             'ccpara': args['COMM_PARA'],
             'cdeb': args['DEBUT_LIGNE'],
             'cfin': args['FIN_LIGNE'],
+            'formR': fmtF2PY(args['FORMAT_R'])
         }
 
     # 2.2. au format AGRAF
     elif FORMAT == 'AGRAF':
         nomdigr = None
         if args['UNITE_DIGR'] != 6:
-            nomdigr = LogicalUnitFile.filename_from_unit(args['UNITE'])
+            nomdigr = LogicalUnitFile.filename_from_unit(args['UNITE_DIGR'])
         kargs['FICHIER'] = [nomfich, nomdigr]
         kargs['dform'] = {'formR': '%12.5E'}
 
@@ -432,4 +434,4 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
     with ReservedUnitUsed(args['UNITE'], args.get('UNITE_DIGR')):
             graph.Trace(**kargs)
 
-    return ier
+    return

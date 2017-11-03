@@ -15,18 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine dimthm(ndlno, ndlnm, ndim)
+!
+subroutine dimthm(l_vf, ndim, ndlno, ndlnm)
+!
+use THM_type
+use THM_module
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/lteatt.h"
 !
-!
-    integer, intent(in)  :: ndim
-    integer, intent(out) :: ndlno
-    integer, intent(out) :: ndlnm
+aster_logical, intent(in) :: l_vf
+integer, intent(in)  :: ndim
+integer, intent(out) :: ndlno, ndlnm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -36,34 +37,36 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-!     NDDLNO NOMBRE DE DDL DES NOEUDS EXTREMITE DE SEGMENTS
-!     NDDLM  NOMBRE DE DDL DES NOEUDS MILIEU DE SEGMENTS OU FACE
+! In  l_vf             : flag for finite volumes
+! In  ndim             : dimension of space (2 or 3)
+! Out ndlno            : number of dof at vertex
+! Out ndlnm            : number of dof at middle vertex
 !
 ! --------------------------------------------------------------------------------------------------
 !
     ndlno = 0
     ndlnm = 0
-    if (lteatt('TYPMOD3','SUSHI')) then
+    if (l_vf) then
         ndlnm = 2
     else
-        if (lteatt('MECA','OUI')) then
+        if (ds_thm%ds_elem%l_dof_meca) then
             ndlnm = ndim
         endif
     endif
 !
-    if (lteatt('TYPMOD3','SUSHI')) then
+    if (l_vf) then
         ndlno = 0
     else
-        if (lteatt('MECA','OUI')) then
+        if (ds_thm%ds_elem%l_dof_meca) then
             ndlno = ndim
         endif
-        if (lteatt('THER','OUI')) then
+        if (ds_thm%ds_elem%l_dof_ther) then
             ndlno = ndlno + 1
         endif
-        if (lteatt('HYDR1','1') .or. lteatt('HYDR1','2')) then
+        if (ds_thm%ds_elem%l_dof_pre1) then
             ndlno = ndlno + 1
         endif
-        if (lteatt('HYDR2','1') .or. lteatt('HYDR2','2')) then
+        if (ds_thm%ds_elem%l_dof_pre2) then
             ndlno = ndlno + 1
         endif
     endif

@@ -22,7 +22,7 @@
 from code_aster import GeneralizedResultsContainer
 from code_aster.Cata import Commands, checkSyntax
 from code_aster.RunManager.AsterFortran import python_execop
-from code_aster.Supervis.libCommandSyntax import CommandSyntax
+from ..Supervis import CommandSyntax
 
 
 def PROJ_MESU_MODAL(**curDict):

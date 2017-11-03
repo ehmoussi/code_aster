@@ -136,7 +136,7 @@ implicit none
 !
 ! --- VERIFICATION DE CARA_ELEM : COEF_RIGI_DRZ INTERDIT EN NON-LINEAIRE
 !
-    if (nomcmd(6:13) .eq. 'NON_LINE' ) then
+    if (nomcmd(6:13) .eq. 'NON_LINE' .and. cara_elem .ne. ' ') then
         call gettco(cara_elem, typco)
         if (typco .eq. 'CARA_ELEM') then
             call verif_affe(model,cara_elem, non_lin = .true._1)

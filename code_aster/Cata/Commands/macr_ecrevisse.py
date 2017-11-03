@@ -294,6 +294,5 @@ MACR_ECREVISSE=MACRO(nom="MACR_ECREVISSE",
            CHARGE              =SIMP(statut='o',typ=(char_ther,char_cine_ther)),
            FONC_MULT           =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
          ),
-         PARM_THETA         =SIMP(statut='f',typ='R',defaut= 0.57),
 
 )

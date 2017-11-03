@@ -4,7 +4,7 @@
 /**
  * @file State.h
  * @brief Fichier entete de la classe State
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  * @section LICENCE
  *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
  *
@@ -35,10 +35,10 @@
 
 /**
  * @class StateInstance
- * @brief Cette classe permet de definir l'état d'une analyse (par exemple d'une analyse non-linéaire) 
- * L'algorithme (non-linéaire) permet de calculer l'état courant (i.e. la valeur des champs de déplacement, de contraintes, 
+ * @brief Cette classe permet de definir l'état d'une analyse (par exemple d'une analyse non-linéaire)
+ * L'algorithme (non-linéaire) permet de calculer l'état courant (i.e. la valeur des champs de déplacement, de contraintes,
  * de variables internes) à partir de l'état précédent (valeur des mêmes champs au pas précédent)
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  */
 class StateInstance
 {
@@ -46,46 +46,46 @@ class StateInstance
         /** @brief current index  */
         int _currentIndex;
         /** @brief current step */
-        double _currentStep; 
-        /** @brief Champ de déplacement */ 
+        double _currentStep;
+        /** @brief Champ de déplacement */
         FieldOnNodesDoublePtr _depl;
-        /** @brief Champ de contraintes */ 
+        /** @brief Champ de contraintes */
         //FieldOnGaussPointsTensorPtr _sigm;
         /** @brief Champ de variables internes */
         // _vari
-        
+
         GenParam _evolParam;
         GenParam _sourceStepParam;
         GenParam _sourceIndexParam;
         GenParam _DirichletSourceIndexParam;
         GenParam _currentStepParam;
-        GenParam _precisionParam; 
-        
+        GenParam _precisionParam;
+
         ListGenParam _listOfParameters;
     public:
         /**
          * @brief Constructeur
-         * @param step index (default value 0) 
+         * @param step index (default value 0)
          */
-        StateInstance( int index = 0, double step = 0.0 ): 
+        StateInstance( int index = 0, double step = 0.0 ):
           _currentIndex(index),
-          _currentStep(step), 
+          _currentStep(step),
           _evolParam("EVOL_NOLI", false),
           _sourceStepParam("INST", false),
-          _sourceIndexParam("NUME_ORDRE", false), 
-          _DirichletSourceIndexParam("NUME_DIDI", false), 
-          _currentStepParam("INST_ETAT_INIT", false), 
+          _sourceIndexParam("NUME_ORDRE", false),
+          _DirichletSourceIndexParam("NUME_DIDI", false),
+          _currentStepParam("INST_ETAT_INIT", false),
           _precisionParam("PRECISION", false)
-          
+
         {
-            _listOfParameters.push_back( &_evolParam ); 
-            _listOfParameters.push_back( &_sourceStepParam ); 
-            _listOfParameters.push_back( &_sourceIndexParam ); 
-            _listOfParameters.push_back( &_DirichletSourceIndexParam ); 
-            _listOfParameters.push_back( &_currentStepParam ); 
-            _listOfParameters.push_back( &_precisionParam ); 
+            _listOfParameters.push_back( &_evolParam );
+            _listOfParameters.push_back( &_sourceStepParam );
+            _listOfParameters.push_back( &_sourceIndexParam );
+            _listOfParameters.push_back( &_DirichletSourceIndexParam );
+            _listOfParameters.push_back( &_currentStepParam );
+            _listOfParameters.push_back( &_precisionParam );
         };
-         
+
         /**
          * @brief Destructeur
          */
@@ -93,12 +93,12 @@ class StateInstance
         {};
 
         /** @brief define the state from the result of a previous nonlinear anaysis
-            @todo réaliser l'extraction des champs depuis l'evol_noli et associer les pointeurs _depl etc 
+            @todo réaliser l'extraction des champs depuis l'evol_noli et associer les pointeurs _depl etc
         */
-        void setFromNonLinearEvolution( const NonLinearEvolutionContainerPtr&  evol_noli, 
+        void setFromNonLinearEvolution( const NonLinearEvolutionContainerPtr&  evol_noli,
                                         double sourceStep, double precision=1.E-06 )
         {
-            _evolParam =  evol_noli->getName();
+            _evolParam = evol_noli->getName();
             _sourceStepParam = sourceStep;
             _precisionParam = precision;
          // set default value of currentStepParam (INST_ETAT_INIT)
@@ -107,31 +107,31 @@ class StateInstance
         /** @brief define the state from the result of a previous nonlinear anaysis
         */
 
-        void setFromNonLinearEvolution( const NonLinearEvolutionContainerPtr&  evol_noli, 
+        void setFromNonLinearEvolution( const NonLinearEvolutionContainerPtr&  evol_noli,
                                         int sourceIndex )
         {
             _evolParam =  evol_noli->getName();
             _sourceIndexParam = sourceIndex;
             // set default value of currentStepParam & currentStepParam(INST_ETAT_INIT)
             //this-> setCurrentStep( sourceIndex );
-            _depl = evol_noli->getRealFieldOnNodes( "DEPL" , sourceIndex ); 
+            _depl = evol_noli->getRealFieldOnNodes( "DEPL" , sourceIndex );
 	};
         /**
         * L'état est défini à partir d'evol_noli. Si on ne précise ni instant (sourceStep)
-        * ni numéro d'ordre (sourceIndex), l'état est initialisé à partir du dernier 
-        * calcul effectué (de numéro d'ordre lastIndex dans la sd evol_noli) 
+        * ni numéro d'ordre (sourceIndex), l'état est initialisé à partir du dernier
+        * calcul effectué (de numéro d'ordre lastIndex dans la sd evol_noli)
         */
         void setFromNonLinearEvolution( const NonLinearEvolutionContainerPtr&  evol_noli )
         {
-            int lastIndex = evol_noli->getNumberOfRanks(); 
-            setFromNonLinearEvolution( evol_noli, lastIndex ); 
+            int lastIndex = evol_noli->getNumberOfRanks();
+            setFromNonLinearEvolution( evol_noli, lastIndex );
 	}
-        /** @brief set the value of the current step 
-        */ 
+        /** @brief set the value of the current step
+        */
         void setCurrentStep ( double step )
         {
-	        _currentStep = step; 
-            _currentStepParam = step; 
+	        _currentStep = step;
+            _currentStepParam = step;
         };
 
         /**
@@ -139,32 +139,32 @@ class StateInstance
         */
         void setDisplacement( FieldOnNodesDoublePtr depl )
         {
-            _depl = depl; 
+            _depl = depl;
         };
-        
-        /** 
-        * @brief get current step 
+
+        /**
+        * @brief get current step
         */
-        double getStep() const 
+        double getStep() const
         {
-            return _currentStep; 
-        }
-        /** 
-        * @brief get current index 
-        */
-        int getIndex() const 
-        {
-            return _currentIndex; 
+            return _currentStep;
         }
         /**
-        * @brief Get the  displacement field 
+        * @brief get current index
+        */
+        int getIndex() const
+        {
+            return _currentIndex;
+        }
+        /**
+        * @brief Get the  displacement field
         */
         FieldOnNodesDoublePtr getDisplacement() const
         {
-            return _depl; 
+            return _depl;
         };
         /**
-         * @brief Récupération de la liste des paramètres 
+         * @brief Récupération de la liste des paramètres
          * @return Liste constante des paramètres déclarés
          */
         const ListGenParam& getListOfParameters() const

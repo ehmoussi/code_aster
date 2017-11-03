@@ -104,16 +104,15 @@ public:
     };
 
     /**
-     * @brief 
-     * @return 
+     * @brief
+     * @return
      */
     SimpleFieldOnElementsValueTypePtr exportToSimpleFieldOnElements()
     {
         SimpleFieldOnElementsValueTypePtr toReturn( new SimpleFieldOnElementsValueTypeInstance( getMemoryType() ) );
         const std::string resultName = toReturn->getName();
         const std::string inName = getName();
-        CALL_CELCES( inName.c_str(), JeveuxMemoryTypesNames[ getMemoryType() ],
-                     resultName.c_str() );
+        CALLO_CELCES( inName, JeveuxMemoryTypesNames[ getMemoryType() ], resultName );
         return toReturn;
     };
 

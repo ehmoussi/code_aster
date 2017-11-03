@@ -7,5 +7,5 @@ P testlist verification sequential
 
 F comm mfron01h.comm D 1
 F mail mfron01h.mail D 20
-F nom  Plasticity.mfront   D 0
-F nom  SimoMieheVmis.mfront   D 0
+F libr  Plasticity.mfront   D 38
+F libr  SimoMieheVmis.mfront   D 39

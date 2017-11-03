@@ -15,15 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine cme_getpara(option      ,&
                            model       , cara_elem, mate, compor_mult,&
                            v_list_load8, nb_load  ,&
                            rigi_meca   , mass_meca,&
-                           time        , time_incr, nh       ,&
+                           time_curr   , time_incr, nh       ,&
                            sigm        , strx     , disp)
         character(len=16), intent(out) :: option
         character(len=8), intent(out) :: model
@@ -34,7 +32,7 @@ interface
         integer, intent(out) :: nb_load
         character(len=19), intent(out) :: rigi_meca
         character(len=19), intent(out) :: mass_meca
-        real(kind=8), intent(out) :: time
+        real(kind=8), intent(out) :: time_curr
         real(kind=8), intent(out) :: time_incr
         integer, intent(out) :: nh
         character(len=8), intent(out) :: sigm

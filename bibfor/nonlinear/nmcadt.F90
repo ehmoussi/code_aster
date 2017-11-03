@@ -15,12 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmcadt(sddisc, i_adapt, nume_inst, hval_incr, dtp)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine nmcadt(sddisc, i_adap, nume_inst, hval_incr, dtp)
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "event_def.h"
 #include "jeveux.h"
 #include "asterc/r8maem.h"
 #include "asterc/r8vide.h"
@@ -30,11 +32,13 @@ subroutine nmcadt(sddisc, i_adapt, nume_inst, hval_incr, dtp)
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/utdidt.h"
-        character(len=19), intent(in) :: sddisc
-        integer, intent(in) :: i_adapt
-        integer, intent(in) :: nume_inst
-        character(len=19), intent(in) :: hval_incr(*)
-        real(kind=8), intent(out) :: dtp
+#include "asterfort/getAdapAction.h"
+!
+character(len=19), intent(in) :: sddisc
+integer, intent(in) :: i_adap
+integer, intent(in) :: nume_inst
+character(len=19), intent(in) :: hval_incr(*)
+real(kind=8), intent(out) :: dtp
 !
 ! ----------------------------------------------------------------------
 !
@@ -54,10 +58,10 @@ subroutine nmcadt(sddisc, i_adapt, nume_inst, hval_incr, dtp)
 !
 !
 !
-    integer :: nit, nbiter
+    integer :: nit, nbiter, action_type
     real(kind=8) :: dtm, pcent, valref, dval
     character(len=8) :: typext
-    character(len=16) :: modetp, nocham, nocmp
+    character(len=16) :: nocham, nocmp
     real(kind=8) :: eta, etad
     character(len=24) :: tpsite
     integer :: jiter
@@ -73,31 +77,29 @@ subroutine nmcadt(sddisc, i_adapt, nume_inst, hval_incr, dtp)
 !
 ! --- METHODE DE CALCUL DE DT+
 !
-    call utdidt('L', sddisc, 'ADAP', 'METHODE', index_ = i_adapt,&
-                valk_ = modetp)
+    call getAdapAction(sddisc, i_adap, action_type)
 !
 ! --- PAS DE TEMPS PAR DEFAUT (LE DERNIER, SAUF SI JALON)
 !
-    call utdidt('L', sddisc, 'LIST', 'DT-',&
-                valr_ = dtm)
+    call utdidt('L', sddisc, 'LIST', 'DT-', valr_ = dtm)
 !
 !     ------------------------------------------------------------------
-    if (modetp .eq. 'FIXE') then
+    if (action_type .eq. ADAP_ACT_FIXE) then
 !     ------------------------------------------------------------------
 !
-        call utdidt('L', sddisc, 'ADAP', 'PCENT_AUGM', index_ = i_adapt,&
+        call utdidt('L', sddisc, 'ADAP', 'PCENT_AUGM', index_ = i_adap,&
                     valr_ = pcent)
         dtp = dtm * (1.d0 + pcent / 100.d0)
 !
 !     ------------------------------------------------------------------
-    else if (modetp.eq.'DELTA_GRANDEUR') then
+    else if (action_type .eq. ADAP_ACT_INCR_QUANT) then
 !     ------------------------------------------------------------------
 !
-        call utdidt('L', sddisc, 'ADAP', 'NOM_CHAM', index_ = i_adapt,&
+        call utdidt('L', sddisc, 'ADAP', 'NOM_CHAM', index_ = i_adap,&
                     valk_ = nocham)
-        call utdidt('L', sddisc, 'ADAP', 'NOM_CMP', index_ = i_adapt,&
+        call utdidt('L', sddisc, 'ADAP', 'NOM_CMP', index_ = i_adap,&
                     valk_ = nocmp)
-        call utdidt('L', sddisc, 'ADAP', 'VALE_REF', index_ = i_adapt,&
+        call utdidt('L', sddisc, 'ADAP', 'VALE_REF', index_ = i_adap,&
                     valr_ = valref)
         typext = 'MAX_ABS'
 !
@@ -116,16 +118,16 @@ subroutine nmcadt(sddisc, i_adapt, nume_inst, hval_incr, dtp)
         endif
 !
 !     ------------------------------------------------------------------
-    else if (modetp.eq.'ITER_NEWTON') then
+    else if (action_type .eq. ADAP_ACT_ITER) then
 !     ------------------------------------------------------------------
 !
-        call utdidt('L', sddisc, 'ADAP', 'NB_ITER_NEWTON_REF', index_ = i_adapt,&
+        call utdidt('L', sddisc, 'ADAP', 'NB_ITER_NEWTON_REF', index_ = i_adap,&
                     vali_ = nit)
         nbiter = zi(jiter-1+nume_inst)
         dtp = dtm * sqrt( dble(nit) / dble(nbiter+1) )
 !
 !     ------------------------------------------------------------------
-    else if (modetp.eq.'IMPLEX') then
+    else if (action_type .eq. ADAP_ACT_IMPLEX) then
 !     ------------------------------------------------------------------
 !
 ! ----- FACTEUR D'ACCELERATION ETA

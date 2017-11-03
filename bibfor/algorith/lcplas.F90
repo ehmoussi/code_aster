@@ -23,7 +23,7 @@ subroutine lcplas(fami, kpg, ksp, loi, toler,&
                   vinf, comp, nbcomm, cpmono, pgl,&
                   nfs, nsg, toutms, hsr, icomp,&
                   codret, theta, vp, vecp, seuil,&
-                  devg, devgii, drdy, tampon, crit)
+                  devg, devgii, drdy, crit)
 ! aslint: disable=W1504
     implicit none
 !     INTEGRATION IMPLICITE DES COMPORTEMENTS. CALCUL DE SIGF,VINF,DSDE
@@ -58,7 +58,6 @@ subroutine lcplas(fami, kpg, ksp, loi, toler,&
 !        THETA  :  PARAMETRE DE LA THETA-METHODE
 !        VP     :  VALEURS PROPRES DU DEVIATEUR ELASTIQUE(HOEK-BROWN)
 !        VECP   :  VECTEURS PROPRES DU DEVIATEUR ELASTIQUE(HOEK-BROWN)
-!        TAMPON : TABLEAU DE TRAVAIL EN ENTREE(SUIVANT MODELISATION)
 !        CRIT   : CRITERES DE CONVERGENCE LOCAUX
 !
 !    OUT SIGF   :  CONTRAINTE A T+DT
@@ -78,7 +77,7 @@ subroutine lcplas(fami, kpg, ksp, loi, toler,&
     real(kind=8) :: toler, theta
     real(kind=8) :: epsd(6), deps(6)
     real(kind=8) :: sigd(6), sigf(6)
-    real(kind=8) :: vind(*), vinf(*), tampon(*)
+    real(kind=8) :: vind(*), vinf(*)
     real(kind=8) :: materf(nmat, 2), materd(nmat, 2)
     real(kind=8) :: seuil, devg(*), devgii
     real(kind=8) :: vp(3), vecp(3, 3), drdy(nr, nr)
@@ -133,7 +132,7 @@ subroutine lcplas(fami, kpg, ksp, loi, toler,&
                     deps, epsd, sigd, vind, comp,&
                     nbcomm, cpmono, pgl, nfs, nsg,&
                     toutms, hsr, sigf, vinf, icomp,&
-                    irtet, drdy, tampon, crit)
+                    irtet, drdy, crit)
         if (irtet .eq. 1) then
             goto 1
         else if (irtet .eq. 2) then

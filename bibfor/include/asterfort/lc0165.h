@@ -23,30 +23,29 @@ interface
     subroutine lc0165(fami, kpg, ksp, ndim, imate,&
                       compor, carcri, instam, instap, epsm,&
                       deps, sigm, vim, option, angmas,&
-                      sigp, vip, wkin, typmod, icomp,&
+                      sigp, vip, wkin, typmod, &
                       nvi, dsidep, codret)
-        character(len=*) :: fami
-        integer :: kpg
-        integer :: ksp
-        integer :: ndim
-        integer :: imate
-        character(len=16) :: compor(*)
-        real(kind=8) :: carcri(*)
-        real(kind=8) :: instam
-        real(kind=8) :: instap
-        real(kind=8) :: epsm(6)
-        real(kind=8) :: deps(6)
-        real(kind=8) :: sigm(6)
-        real(kind=8) :: vim(*)
-        character(len=16) :: option
-        real(kind=8) :: angmas(*)
-        real(kind=8) :: sigp(6)
-        real(kind=8) :: vip(*)
-        real(kind=8) :: wkin(*)
-        character(len=8) :: typmod(*)
-        integer :: icomp
-        integer :: nvi
-        real(kind=8) :: dsidep(6, 6)
-        integer :: codret
+        character(len=*), intent(in) :: fami
+        integer, intent(in) :: kpg
+        integer, intent(in) :: ksp
+        integer, intent(in) :: ndim
+        integer, intent(in) :: imate
+        character(len=16), intent(in) :: compor(*)
+        real(kind=8), intent(in) :: carcri(*)
+        real(kind=8), intent(in) :: instam
+        real(kind=8), intent(in) :: instap
+        real(kind=8), intent(in) :: epsm(6)
+        real(kind=8), intent(in) :: deps(6)
+        real(kind=8), intent(in) :: sigm(6)
+        real(kind=8), intent(in) :: vim(*)
+        character(len=16), intent(in) :: option
+        real(kind=8), intent(in) :: angmas(*)
+        real(kind=8), intent(out) :: sigp(6)
+        real(kind=8), intent(out) :: vip(*)
+        real(kind=8), intent(out) :: wkin(*)
+        character(len=8), intent(in) :: typmod(*)
+        integer, intent(in) :: nvi
+        real(kind=8), intent(out) :: dsidep(6,6)
+        integer, intent(out) :: codret
     end subroutine lc0165
 end interface

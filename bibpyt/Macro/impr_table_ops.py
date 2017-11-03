@@ -31,10 +31,11 @@ def impr_table_ops(self, FORMAT, TABLE, INFO, **args):
     macro = 'IMPR_TABLE'
     import aster
     from code_aster.Cata.Syntax import _F
+    from code_aster.RunManager import LogicalUnitFile, ReservedUnitUsed
     from Utilitai.Utmess import UTMESS
-    from Utilitai.UniteAster import UniteAster
     from Utilitai.utils import fmtF2PY
-    ier = 0
+
+    args = _F(args)
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
 
@@ -45,14 +46,8 @@ def impr_table_ops(self, FORMAT, TABLE, INFO, **args):
 
     #----------------------------------------------
     # 0. Traitement des arguments, initialisations
-    # unité logique des fichiers réservés
-    ul_reserve = (8,)
-    UL = UniteAster()
-
     # 0.1. Fichier
-    nomfich = None
-    if args['UNITE'] and args['UNITE'] <> 6:
-        nomfich = UL.Nom(args['UNITE'])
+    nomfich = LogicalUnitFile.filename_from_unit(args['UNITE'])
     if nomfich and os.path.exists(nomfich) and os.stat(nomfich).st_size <> 0:
         if FORMAT == 'XMGRACE':
             UTMESS('A', 'TABLE0_6', valk=nomfich)
@@ -80,10 +75,6 @@ def impr_table_ops(self, FORMAT, TABLE, INFO, **args):
         nom_para = args['NOM_PARA']
     if not type(nom_para) in (list, tuple):
         nom_para = [nom_para, ]
-
-    # 0.4.2. Traiter le cas des UL réservées
-    if args['UNITE'] and args['UNITE'] in ul_reserve:
-        UL.Etat(args['UNITE'], etat='F')
 
     #----------------------------------------------
     # Boucle sur les tables
@@ -180,7 +171,8 @@ def impr_table_ops(self, FORMAT, TABLE, INFO, **args):
             if len(l_para_err) > 0:
                 UTMESS('A', 'TABLE0_8', valk=l_para_err)
 
-        timp.Impr(**kargs)
+        with ReservedUnitUsed(args['UNITE']):
+            timp.Impr(**kargs)
 
         # ----- 5. IMPR_FONCTION='OUI'
         if args['IMPR_FONCTION'] == 'OUI':
@@ -209,9 +201,8 @@ def impr_table_ops(self, FORMAT, TABLE, INFO, **args):
                         NOM_PARA_TABL=par,
                         TITRE='Fonction %s' % f,
                     )
-                    __fonc.Trace(**kfonc)
+                    with ReservedUnitUsed(args['UNITE']):
+                        __fonc.Trace(**kfonc)
                     DETRUIRE(CONCEPT=_F(NOM=(__fonc,),), INFO=1,)
 
-    # 99. Traiter le cas des UL réservées
-    UL.EtatInit()
-    return ier
+    return

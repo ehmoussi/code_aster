@@ -19,65 +19,51 @@
 subroutine lc0165(fami, kpg, ksp, ndim, imate,&
                   compor, carcri, instam, instap, epsm,&
                   deps, sigm, vim, option, angmas,&
-                  sigp, vip, wkin, typmod, icomp,&
+                  sigp, vip, wkin, typmod, &
                   nvi, dsidep, codret)
-    implicit none
+!
+implicit none
+!
 #include "asterfort/lcsflu.h"
-#include "asterfort/lcsend.h"
 !
 ! person_in_charge: etienne.grimal at edf.fr
 ! aslint: disable=W1504,W0104
-!.......................................................................
-!     BUT: LOI DE FLUAGE DE KIT_RGI
 !
-!          RELATION : 'FLUA_PORO_BETON'
-    integer :: imate, ndim, kpg, ksp, codret, icomp, nvi
-    real(kind=8) :: carcri(*), angmas(*)
-    real(kind=8) :: instam, instap, wkin(*)
-    real(kind=8) :: epsm(6), deps(6)
-    real(kind=8) :: sigm(6), sigp(6)
-    real(kind=8) :: vim(*), vip(*)
-    real(kind=8) :: dsidep(6, 6)
-    character(len=16) :: compor(*), option
-    character(len=8) :: typmod(*)
-    character(len=*) :: fami
+    character(len=*), intent(in) :: fami
+    integer, intent(in) :: kpg
+    integer, intent(in) :: ksp
+    integer, intent(in) :: ndim
+    integer, intent(in) :: imate
+    character(len=16), intent(in) :: compor(*)
+    real(kind=8), intent(in) :: carcri(*)
+    real(kind=8), intent(in) :: instam
+    real(kind=8), intent(in) :: instap
+    real(kind=8), intent(in) :: epsm(6)
+    real(kind=8), intent(in) :: deps(6)
+    real(kind=8), intent(in) :: sigm(6)
+    real(kind=8), intent(in) :: vim(*)
+    character(len=16), intent(in) :: option
+    real(kind=8), intent(in) :: angmas(*)
+    real(kind=8), intent(out) :: sigp(6)
+    real(kind=8), intent(out) :: vip(*)
+    real(kind=8), intent(out) :: wkin(*)
+    character(len=8), intent(in) :: typmod(*)
+    integer, intent(in) :: nvi
+    real(kind=8), intent(out) :: dsidep(6,6)
+    integer, intent(out) :: codret
 !
+! --------------------------------------------------------------------------------------------------
 !
-    if (compor(1) .eq. 'KIT_DDI') then
-! - si module de fluage associe au module d'endommagement
-        if ((option(1:9).eq.'RAPH_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
+! Behaviour
 !
+! FLUA_PORO_BETON
 !
-            call lcsflu(fami, kpg, ksp, ndim, imate,&
-                        compor, carcri, instam, instap, epsm,&
-                        deps, sigm, vim, option, angmas,&
-                        sigp, vip, wkin, typmod, icomp,&
-                        nvi, dsidep, codret)
+! --------------------------------------------------------------------------------------------------
 !
-!
-            call lcsend(fami, kpg, ksp, ndim, imate,&
-                        compor, carcri, instam, instap, epsm,&
-                        deps, sigm, vim, option, angmas,&
-                        sigp, vip, wkin, typmod, icomp,&
-                        nvi, dsidep, codret)
-!
-!
-        else if (option(1:9).eq.'RIGI_MECA') then
-            call lcsflu(fami, kpg, ksp, ndim, imate,&
-                        compor, carcri, instam, instap, epsm,&
-                        deps, sigm, vim, option, angmas,&
-                        sigp, vip, wkin, typmod, icomp,&
-                        nvi, dsidep, codret)
-!
-        endif
-    else
-! - si module de fluage seul
-        call lcsflu(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
-                    nvi, dsidep, codret)
-!
-    endif
+    call lcsflu(fami, kpg, ksp, ndim, imate,&
+                compor, carcri, instam, instap, epsm,&
+                deps, sigm, vim, option, angmas,&
+                sigp, vip, wkin, typmod, &
+                nvi, dsidep, codret)
 !
 end subroutine

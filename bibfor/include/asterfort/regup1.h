@@ -15,15 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine regup1(x0, y0, y0p, a, b)
-        real(kind=8) :: x0
-        real(kind=8) :: y0
-        real(kind=8) :: y0p
-        real(kind=8) :: a
-        real(kind=8) :: b
+    subroutine regup1(x0, y0, y0p,&
+                      a , b)
+        real(kind=8), intent(in) :: x0, y0, y0p
+        real(kind=8), intent(out) :: a, b
     end subroutine regup1
 end interface

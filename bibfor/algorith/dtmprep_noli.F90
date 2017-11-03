@@ -45,6 +45,7 @@ subroutine dtmprep_noli(sd_dtm_)
 #include "asterfort/dtmcase_coder.h"
 #include "asterfort/dtmget.h"
 #include "asterfort/dtminivec.h"
+#include "asterfort/nlinivec.h"
 #include "asterfort/dtmprep_noli_choc.h"
 #include "asterfort/dtmprep_noli_flam.h"
 #include "asterfort/dtmprep_noli_ants.h"
@@ -85,6 +86,7 @@ subroutine dtmprep_noli(sd_dtm_)
     character(len=19):: nomres
 !
     real(kind=8)     , pointer :: basev0(:)   => null()
+    real(kind=8)    , pointer :: fext_tmp(:)    => null()
 !
     data  nltypes /'DIS_CHOC        ', 'FLAMBAGE        ', 'ANTI_SISM       ',&
                    'DIS_VISC        ', 'DIS_ECRO_TRAC   ', 'ROTOR_FISS      ',&
@@ -227,7 +229,9 @@ subroutine dtmprep_noli(sd_dtm_)
         end if
 
     endif
-
+    
+    call nlinivec(sd_nl,  _FEXT_MPI , nbmode, vr=fext_tmp)
+    
 999 continue
     call jedema()
 end subroutine

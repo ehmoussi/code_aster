@@ -19,23 +19,21 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from code_aster.Supervis.libCommandSyntax import CommandSyntax
-from code_aster import Mesh
-from code_aster import Skeleton
-from code_aster import Grid
+from .ExecuteCommand import ExecuteCommand
 
 
-def DEFI_GROUP(**curDict):
-    returnMesh = curDict["MAILLAGE"]
-    name = returnMesh.getName()
-    type = returnMesh.getType()
-    syntax = CommandSyntax("DEFI_GROUP")
+class GroupDefinition(ExecuteCommand):
+    """Command that defines additional groups on a
+    :class:`~code_aster.Objects.Mesh`."""
+    command_name = "DEFI_GROUP"
 
-    syntax.setResult(name, type)
+    def create_result(self, keywords):
+        """Initialize the result.
 
-    syntax.define(curDict)
-    numOp = 104
-    python_execop(numOp)
-    syntax.free()
-    return returnMesh
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = keywords["MAILLAGE"]
+
+
+DEFI_GROUP = GroupDefinition.run

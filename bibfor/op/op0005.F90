@@ -90,7 +90,7 @@ subroutine op0005()
 !
         call jeveuo(matin//'.MATERIAU.NOMRC', 'L', jnorci)
         call jelira(matin//'.MATERIAU.NOMRC', 'LONMAX', nbmati)
-        do 10 irc = 1, nbrcme
+        do irc = 1, nbrcme
             nomrc = motcle(irc)
             ind = indk32 ( zk32(jnorci), nomrc, 1, nbmati )
             if (ind .ne. 0) then
@@ -98,13 +98,12 @@ subroutine op0005()
                 valk(2)=nomrc
                 call utmess('F', 'MODELISA9_9', nk=2, valk=valk)
             endif
-10      continue
+        enddo
 !
 ! ------ ON COPIE TOUT SUR LA VOLATILE
 !
         schout = '&&OP0005'
-        call jedupc('G', matin, 1, 'V', schout,&
-                    .false._1)
+        call jedupc('G', matin, 1, 'V', schout, .false._1)
         call jeveuo(schout//'.MATERIAU.NOMRC', 'L', jnorci)
         if (matout .eq. matin) call jedetc('G', matin, 1)
     endif
@@ -112,8 +111,7 @@ subroutine op0005()
 ! --- ON DUPLIQUE MATIN DANS MATOUT
 !
     if (nbmati .ne. 0) then
-        call jedupc('V', schout, 1, 'G', matout,&
-                    .false._1)
+        call jedupc('V', schout, 1, 'G', matout, .false._1)
         call jedetr(matout//'.MATERIAU.NOMRC')
     endif
 !
@@ -121,7 +119,7 @@ subroutine op0005()
 !
     do irc = 1, nbmati
         zk32(jnomrc+irc-1) = zk32(jnorci+irc-1)
-    end do
+    enddo
 !
     call wkvect('&&OP0005.NBOBJE', 'V V I', nbrcme, jnbobj)
     call wkvect('&&OP0005.TYPFON', 'V V L', nbrcme, jtypfo)
@@ -167,7 +165,7 @@ subroutine op0005()
         call jeecra(noobrc//'.VALR', 'LONUTI', nbr)
         call jeecra(noobrc//'.VALC', 'LONUTI', nbc)
         call jeecra(noobrc//'.VALK', 'LONUTI', nbr+nbc+2*nbk)
-    end do
+    enddo
 !
     call infmaj()
     call infniv(ifm, niv)
@@ -180,7 +178,7 @@ subroutine op0005()
     write (ifm,'(1X)')
 !   niv=2
     if (niv .eq. 2) then
-        do 200 k = 1, nbrcme
+        do k = 1, nbrcme
             call codent(k, 'D0', nom)
             noobrc=matout//'.CPT.'//nom
             call jeveuo(noobrc//'.VALR', 'L', jvalrm)
@@ -191,14 +189,14 @@ subroutine op0005()
             call jelira(noobrc//'.VALK', 'LONUTI', nbk2)
             nbk=(nbk2-nbr-nbc)/2
             write(ifm,'(1X,2A)') 'PARAMETRES DE LA RELATION : ',zk32(jnomrc+k-1)
-            write(ifm,'(5(3X,A16,5X))') (zk16(jvalkm-1+i),i=1,nbr)
-            write(ifm,'(5(3X,G13.6))')  (zr(jvalrm-1+i),i=1,nbr)
-            write(ifm,'(5(3X,A16,5X))') (zk16(jvalkm-1+i),i=nbr+1,nbr+nbc)
-            write(ifm,'(5(3X,2G13.6))') (zc(jvalcm-1+i),i=nbr+1,nbr+nbc)
-            write(ifm,'(5(3X,A16,5X))') (zk16(jvalkm-1+i),i=nbr+nbc+1,nbr+nbc+nbk)
-            write(ifm,'(5(3X,A16,5X))') (zk16(jvalkm-1+i),i=nbr+nbc+nbk+1,nbr+nbc+2*nbk)
+            write(ifm,'(5(3X,A16,5X))')     (zk16(jvalkm-1+i),i=1,nbr)
+            write(ifm,'(5(3X,G16.9,5X))')   (zr(jvalrm-1+i),i=1,nbr)
+            write(ifm,'(5(3X,A16,16X,5X))') (zk16(jvalkm-1+i),i=nbr+1,nbr+nbc)
+            write(ifm,'(5(3X,2G16.9))')     (zc(jvalcm-1+i),i=nbr+1,nbr+nbc)
+            write(ifm,'(5(3X,A16,5X))')     (zk16(jvalkm-1+i),i=nbr+nbc+1,nbr+nbc+nbk)
+            write(ifm,'(5(3X,A16,5X))')     (zk16(jvalkm-1+i),i=nbr+nbc+nbk+1,nbr+nbc+2*nbk)
             write(ifm,'(1X)')
-200      continue
+        enddo
     endif
 !
 !   Vérification que les paramètres matériaux de certaines lois sont corrects

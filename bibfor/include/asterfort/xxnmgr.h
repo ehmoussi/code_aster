@@ -23,7 +23,7 @@ interface
                       he, nfh, ddlc, ddlm, nfe,&
                       instam, instap, ideplp, sigm, vip,&
                       basloc, nnop, npg, typmod, option,&
-                      imate, compor, lgpg, idecpg, crit,&
+                      imate, compor, lgpg, idecpg, carcri,&
                       idepl, lsn, lst, nfiss, heavn,&
                       sigp, vi, matuu, ivectu, codret, jstno)
         integer :: nfiss
@@ -51,7 +51,7 @@ interface
         integer :: imate
         character(len=16) :: compor(4)
         integer :: idecpg
-        real(kind=8) :: crit(3)
+        real(kind=8) :: carcri(*)
         integer :: idepl
         real(kind=8) :: lsn(nnop)
         real(kind=8) :: lst(nnop)

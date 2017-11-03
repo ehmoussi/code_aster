@@ -36,10 +36,10 @@ def configure(self):
     # parallel must be set before calling intel.configure() to use MPI wrappers
     opts.parallel = True
     eole.configure(self)
-    self.env['ADDMEM'] = 800
+    self.env['ADDMEM'] = 900
 
     self.env.append_value('OPT_ENV_FOOTER', [
-        'module load impi/2016.3.068'])
+        'module load impi/2017.0.098'])
 
     self.env.prepend_value('LIBPATH', [
         YAMMROOT + '/prerequisites/Parmetis_aster-403_aster/lib',
@@ -63,4 +63,4 @@ def configure(self):
     self.env['CATALO_CMD'] = 'I_MPI_FABRICS=shm'
     # produce an executable file with symbols for INTEL16 with mpiifort wrapper
     self.env.append_value('LINKFLAGS', ('-nostrip'))
-    self.env.prepend_value('LINKFLAGS', ('-L/opt/intel/2016.0.047/impi/5.1.1.109/lib64'))
+    self.env.prepend_value('LINKFLAGS', ('-L/opt/impi-2017.0.098/lib64'))

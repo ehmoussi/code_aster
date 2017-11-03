@@ -4,6 +4,12 @@ P ncpus 1
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
 P testlist verification sequential
+#
+# L'argument max_base est ajouté pour couvrir l'appel à la routine jjagod, il n'est pas recommandé
+# d'utiliser cet argument, la valeur positionnée par défaut dans le code étant plus optimale.
+# Modifier cet argument peut entrainer un surcoût dans une étude.
+#
+A max_base 1000
 
 F comm sdlv128a.comm D 1
 F mmed sdlv128a.mmed D 20

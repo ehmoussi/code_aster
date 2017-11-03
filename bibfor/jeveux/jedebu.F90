@@ -133,6 +133,10 @@ subroutine jedebu(nbfi, mxzon, idb)
     real(kind=8) :: svuse, smxuse
     common /statje/  svuse,smxuse
     common /jiacce/  jiacce(n),nbacce(2*n)
+    integer :: indiq_jjldyn
+    common /idynqq/ indiq_jjldyn
+    integer :: indiq_jjagod
+    common /idagod/ indiq_jjagod
 ! --------------------------------- ------------------------------------
     integer :: mxlici, iret
     real(kind=8) :: rval(6)
@@ -149,9 +153,11 @@ subroutine jedebu(nbfi, mxzon, idb)
     zr(1)=r8nnem()
     zc(1)=dcmplx(zr(1),zr(1))
 ! -----------------  ENVIRONNEMENT MACHINE -----------------------------
+    indiq_jjldyn = 0
+    indiq_jjagod = 0
     do k=1,n
        lfic(k) = lofiem()
-    end do   
+    end do
     call gtoptr('maxbase', val, iret)
     if (val .le. 0 .or. iret .ne. 0) then
         mfic = mofiem()

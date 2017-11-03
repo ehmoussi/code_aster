@@ -29,12 +29,13 @@
 
 #include "Materials/MaterialOnMesh.h"
 #include "Utilities/SyntaxDictionary.h"
-#include "RunManager/CommandSyntaxCython.h"
+#include "Supervis/CommandSyntax.h"
+#include "Supervis/ResultNaming.h"
 
 
 MaterialOnMeshInstance::MaterialOnMeshInstance( const MeshPtr& mesh ):
                                 _supportMesh( mesh ),
-                                DataStructure( getNewResultObjectName(), "CHAM_MATER" ),
+                                DataStructure( ResultNaming::getNewResultName(), "CHAM_MATER" ),
                                 _listOfMaterials( PCFieldOnMeshChar8Ptr(
                                     new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
                                 _listOfTemperatures( PCFieldOnMeshDoublePtr(
@@ -44,7 +45,7 @@ MaterialOnMeshInstance::MaterialOnMeshInstance( const MeshPtr& mesh ):
 #ifdef _USE_MPI
 MaterialOnMeshInstance::MaterialOnMeshInstance( const ParallelMeshPtr& mesh ):
                                 _supportMesh( mesh ),
-                                DataStructure( getNewResultObjectName(), "CHAM_MATER" ),
+                                DataStructure( ResultNaming::getNewResultName(), "CHAM_MATER" ),
                                 _listOfMaterials( PCFieldOnMeshChar8Ptr(
                                     new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
                                 _listOfTemperatures( PCFieldOnMeshDoublePtr(
@@ -97,7 +98,7 @@ PyObject* MaterialOnMeshInstance::getCommandKeywords() throw ( std::runtime_erro
 
 bool MaterialOnMeshInstance::build() throw ( std::runtime_error )
 {
-    auto syntax = CommandSyntaxCython( "AFFE_MATERIAU" );
+    auto syntax = CommandSyntax( "AFFE_MATERIAU" );
     syntax.setResult( getName(), getType() );
     auto keywords = getCppCommandKeywords();
     syntax.define( keywords );

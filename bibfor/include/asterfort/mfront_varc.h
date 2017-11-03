@@ -17,24 +17,20 @@
 ! --------------------------------------------------------------------
 
 interface
-    subroutine mfront_varc(fami, kpg, ksp, imate, ifm, niv, idbg, &
-                           lvarc, nbvarc, temp, dtemp, &
-                           predef, dpred, neps, epsth, depsth )
-        character(len=*) :: fami
-        integer :: kpg
-        integer :: ksp
-        integer :: imate
-        integer :: ifm
-        integer :: niv
-        integer :: idbg, nkwin
-        character(len=8)  :: lvarc(8)
-        integer :: nbvarc
-        real(kind=8) :: temp
-        real(kind=8) :: dtemp
-        real(kind=8) :: predef(8)
-        real(kind=8) :: dpred(8)
-        integer :: neps
-        real(kind=8) :: epsth(neps)
-        real(kind=8) :: depsth(neps)
+    subroutine  mfront_varc(fami   , kpg      , ksp, imate, &
+                            nb_varc, list_varc, &
+                            temp   , dtemp    , &
+                            predef , dpred    , &
+                            neps   , epsth    , depsth)
+        character(len=*), intent(in) :: fami
+        integer, intent(in) :: kpg
+        integer, intent(in) :: ksp
+        integer, intent(in) :: imate
+        integer, intent(in) :: nb_varc
+        character(len=8), intent(in) :: list_varc(*)
+        real(kind=8), intent(out) :: temp, dtemp
+        real(kind=8), intent(out) :: predef(*), dpred(*)
+        integer, intent(in) :: neps
+        real(kind=8), intent(out) :: epsth(neps), depsth(neps)
     end subroutine mfront_varc
 end interface

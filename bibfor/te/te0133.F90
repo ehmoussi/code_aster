@@ -25,6 +25,7 @@ subroutine te0133(option, nomte)
 #include "asterfort/assert.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/jevech.h"
+#include "asterfort/lteatt.h"
 #include "asterfort/matrot.h"
 #include "asterfort/rcangm.h"
     character(len=16) :: option, nomte
@@ -42,12 +43,16 @@ subroutine te0133(option, nomte)
     real(kind=8) :: pgl(3, 3)
     real(kind=8) :: ux(3), uy(3), uz(3)
     real(kind=8) :: ang(7), bary(3)
+    aster_logical :: interf
 !
 !
     call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
   npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfdx,jgano=jgano)
     ASSERT(nnos.le.8)
 !
+    interf = lteatt('INTERFACE','OUI')
+    if (interf) ndim = ndim + 1
+    
     call jevech('PGEOMER', 'L', jgeom)
     call jevech('PREPLO1', 'E', jrepl1)
     call jevech('PREPLO2', 'E', jrepl2)
@@ -58,11 +63,12 @@ subroutine te0133(option, nomte)
     bary(1) = 0.d0
     bary(2) = 0.d0
     bary(3) = 0.d0
-    do 150 i = 1, nno
+    do 150 i = 1, nnos
         do 140 j = 1, ndim
-            bary(j) = bary(j)+zr(jgeom+j+ndim*(i-1)-1)/nno
+            bary(j) = bary(j)+zr(jgeom+j+ndim*(i-1)-1)/nnos
 140      continue
 150  end do
+
 !
 !     CALCUL DES ANGLES NAUTIQUES
     call rcangm(ndim, bary, ang)

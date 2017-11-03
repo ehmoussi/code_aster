@@ -1,8 +1,11 @@
+#!/usr/bin/python
+# coding: utf-8
 
+from math import pi
 import code_aster
 from code_aster.Commands import *
 
-from math import pi
+code_aster.init()
 
 test = code_aster.TestCase()
 

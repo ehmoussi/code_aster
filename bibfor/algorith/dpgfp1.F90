@@ -18,7 +18,7 @@
 
 function dpgfp1(biot, betam, pref, p1)
 ! DPGFP1 : CALCUL DERIVEE PRESSION DE GONFLEMENT
-! POUR ELAS_GONF
+! POUR GONF_ELAS
 !
     implicit none
     real(kind=8) :: biot, betam, pref, p1, dpgfp1

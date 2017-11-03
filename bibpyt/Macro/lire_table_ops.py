@@ -21,17 +21,20 @@
 
 import os.path as osp
 
+from code_aster.RunManager import LogicalUnitFile
 
-def lire_table_ops(self, UNITE, FORMAT, SEPARATEUR, NUME_TABLE, RENOMME_PARA,
-                   INFO, TITRE, **args):
+
+def lire_table_ops(self, UNITE, FORMAT, SEPARATEUR, NUME_TABLE, **args):
     """Méthode corps de la macro LIRE_TABLE
     """
     import aster
     from Utilitai.Utmess import UTMESS, raise_UTMESS
-    from Utilitai.UniteAster import UniteAster
     from Utilitai.TableReader import TableReaderFactory, unique_parameters
 
-    ier = 0
+    RENOMME_PARA = args.get('RENOMME_PARA')
+    TITRE = args.get('TITRE')
+    INFO = args.get('INFO')
+
     # On importe les definitions des commandes a utiliser dans la macro
     CREA_TABLE = self.get_cmd('CREA_TABLE')
 
@@ -39,14 +42,11 @@ def lire_table_ops(self, UNITE, FORMAT, SEPARATEUR, NUME_TABLE, RENOMME_PARA,
     self.set_icmd(1)
 
     # Lecture de la table dans un fichier d unité logique UNITE
-    UL = UniteAster()
-    nomfich = UL.Nom(UNITE)
+    nomfich = LogicalUnitFile.filename_from_unit(UNITE)
     if not osp.isfile(nomfich):
         UTMESS('F', 'FONCT0_41', valk=nomfich)
 
     texte = open(nomfich, 'r').read()
-    # remet UNITE dans son état initial
-    UL.EtatInit()
 
     check_para = None
     if RENOMME_PARA == "UNIQUE":
@@ -60,7 +60,7 @@ def lire_table_ops(self, UNITE, FORMAT, SEPARATEUR, NUME_TABLE, RENOMME_PARA,
     except aster.error, exc:
         raise_UTMESS(exc)
 
-    UTMESS('I', 'TABLE0_44', valk=(self.sd.nom, tab.titr),
+    UTMESS('I', 'TABLE0_44', valk=("", tab.titr),
            vali=(len(tab.rows), len(tab.para)))
 
     # création de la table ASTER :
@@ -70,4 +70,4 @@ def lire_table_ops(self, UNITE, FORMAT, SEPARATEUR, NUME_TABLE, RENOMME_PARA,
         motscles['TITRE'] = TITRE
     ut_tab = CREA_TABLE(**motscles)
 
-    return ier
+    return ut_tab

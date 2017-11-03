@@ -15,12 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine cme_getpara(option      ,&
                        model       , cara_elem, mate, compor_mult,&
                        v_list_load8, nb_load  ,&
                        rigi_meca   , mass_meca,&
-                       time        , time_incr, nh       ,&
+                       time_curr   , time_incr, nh       ,&
                        sigm        , strx     , disp)
 !
 implicit none
@@ -37,28 +37,45 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/get_load8.h"
 !
-!
-    character(len=16), intent(out) :: option
-    character(len=8), intent(out) :: model
-    character(len=8), intent(out) :: cara_elem
-    character(len=24), intent(out) :: mate
-    character(len=24), intent(out) :: compor_mult
-    character(len=8), intent(out), pointer :: v_list_load8(:)
-    integer, intent(out) :: nb_load
-    character(len=19), intent(out) :: rigi_meca
-    character(len=19), intent(out) :: mass_meca
-    real(kind=8), intent(out) :: time
-    real(kind=8), intent(out) :: time_incr
-    integer, intent(out) :: nh
-    character(len=8), intent(out) :: sigm
-    character(len=8), intent(out) :: strx
-    character(len=8), intent(out) :: disp
+character(len=16), intent(out) :: option
+character(len=8), intent(out) :: model
+character(len=8), intent(out) :: cara_elem
+character(len=24), intent(out) :: mate
+character(len=24), intent(out) :: compor_mult
+character(len=8), intent(out), pointer :: v_list_load8(:)
+integer, intent(out) :: nb_load
+character(len=19), intent(out) :: rigi_meca
+character(len=19), intent(out) :: mass_meca
+real(kind=8), intent(out) :: time_curr
+real(kind=8), intent(out) :: time_incr
+integer, intent(out) :: nh
+character(len=8), intent(out) :: sigm
+character(len=8), intent(out) :: strx
+character(len=8), intent(out) :: disp
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! CALC_MATR_ELEM
 !
 ! Get parameters
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Out option           : option to compute
+! Out model            : name of the model
+! Out cara_elem        : name of elementary characteristics (field)
+! Out mate             : name of material characteristics (field)
+! Out compor_mult      : multi-behaviours for multifibers beams (field)
+! Out v_list_load8     : pointer to list of loads (K8)
+! Out nb_load          : number of loads
+! Out rigi_meca        : option for mechanic rigidity (useful for damping)
+! Out mass_meca        : option for mechanic mass (useful for damping)
+! Out time_curr        : current time
+! Out time_incr        : time step
+! Out nh               : Fourier mode
+! Out sigm             : stress
+! Out strx             : fibers information
+! Out disp             : displacements
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -70,7 +87,7 @@ implicit none
     option       = ' '
     rigi_meca    = ' '
     mass_meca    = ' '
-    time         = 0.d0
+    time_curr    = 0.d0
     time_incr    = 0.d0
     nh           = 0
     model        = ' '
@@ -96,9 +113,9 @@ implicit none
     if (nocc .eq. 0) then
         mass_meca = ' '
     endif
-    call getvr8(' ', 'INST', scal=time, nbret=nocc)
+    call getvr8(' ', 'INST', scal=time_curr, nbret=nocc)
     if (nocc .eq. 0) then
-        time = 0.d0
+        time_curr = 0.d0
     endif
     call getvr8(' ', 'INCR_INST', scal=time_incr, nbret=nocc)
     if (nocc .eq. 0) then

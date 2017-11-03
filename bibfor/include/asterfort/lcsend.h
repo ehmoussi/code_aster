@@ -15,14 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
 !
 interface 
     subroutine lcsend(fami, kpg, ksp, ndim, imate,&
                       compor, crit, instam, instap, epsm,&
                       deps, sigm, vim, option, angmas,&
-                      sigp, vip, tampon, typmod, icomp,&
-                      nvi, dsidep, codret)
+                      sigp, vip, tampon, typmod, &
+                      dsidep, codret)
         character(len=*) :: fami
         integer :: kpg
         integer :: ksp
@@ -42,8 +42,6 @@ interface
         real(kind=8) :: vip(*)
         real(kind=8) :: tampon(*)
         character(len=8) :: typmod(*)
-        integer :: icomp
-        integer :: nvi
         real(kind=8) :: dsidep(6, 6)
         integer :: codret
     end subroutine lcsend

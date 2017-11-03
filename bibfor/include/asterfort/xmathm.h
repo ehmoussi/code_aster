@@ -15,22 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 interface
-    subroutine xmathm(jmate, thmc, meca, hydr, t, ndim,&
+    subroutine xmathm(ndim,&
                       nnops, nnop, nddls, nddlm, ffc,&
                       pla, nd, jac, ffp, ffp2, dt, ta, saut,&
                       dffc, rho11, gradpf, mmat,&
                       dsidep, p, r, jheavn, ncompn, ifiss,&
                       nfiss, nfh, ifa, jheafa, ncomph)
-                           
-        integer :: jmate
-        character(len=16) :: thmc
-        character(len=16) :: meca
-        character(len=16) :: hydr
-        real(kind=8) :: t
         integer :: ndim
         integer :: nnops
         integer :: nnop

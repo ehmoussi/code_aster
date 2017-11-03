@@ -557,26 +557,23 @@ MOM2_QZ=CALC_MODES(OPTION='PLUS_PETITE',
 
 #       3.2 CALC_MODES, METHODE DES ITERATIONS INVERSES:
 #       ---------------------
-
-MOM4=CALC_MODES(OPTION='PROCHE',
+# PROVISOIREMENT REMIS AVEC MF
+MOM4=CALC_MODES(OPTION='PROCHE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                 MATR_RIGI=RIGAS,
                 MATR_MASS=MASAS,
                 CALC_FREQ=_F(FREQ=(0.0062,0.0614,),),
-                SOLVEUR=_F(METHODE='MUMPS',),
                 INFO=1,)
 
-MOM5=CALC_MODES(OPTION='SEPARE',
+MOM5=CALC_MODES(OPTION='SEPARE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                 MATR_RIGI=RIGAS,
                 MATR_MASS=MASAS,
                 CALC_FREQ=_F(FREQ=(0.01,0.06,),),
-                SOLVEUR=_F(METHODE='MUMPS',),
                 INFO=1,)
 
-MOM6=CALC_MODES(OPTION='AJUSTE',
+MOM6=CALC_MODES(OPTION='AJUSTE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                 MATR_RIGI=RIGAS,
                 MATR_MASS=MASAS,
                 CALC_FREQ=_F(FREQ=(0.01,0.06,),),
-                SOLVEUR=_F(METHODE='MUMPS',),
                 INFO=1,)
 
 #-----------------------------------------------------------------------
@@ -784,12 +781,11 @@ MOC1M=CALC_MODES(OPTION='CENTRE',
                               NMAX_FREQ=2,),
                  SOLVEUR=_F(METHODE='MUMPS',),)
 
-MOC2M=CALC_MODES(OPTION='PROCHE',
+MOC2M=CALC_MODES(OPTION='PROCHE', SOLVEUR=_F(METHODE='MULT_FRONT'),
                  MATR_RIGI=RIGAS,
                  MATR_MASS=MASAS,
                  MATR_AMOR=AMORT,
                  CALC_FREQ=_F(FREQ=(0.0062,0.0614,),),
-                 SOLVEUR=_F(METHODE='MUMPS',),
                  VERI_MODE=_F(STOP_ERREUR='OUI',),)
 
 MOC3M=CALC_MODES(OPTION='CENTRE',

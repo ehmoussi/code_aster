@@ -347,7 +347,7 @@ subroutine vpsorn(lmasse, ldynfa, nbeq, nbvect, nfreq,&
                 nbeq)
 !
 ! RE-ORTHONORMALISATION SUIVANT IGS PAR RAPPORT A B
-    call vpgsmm(nbeq, nconv, vect, alpha, lmasse,&
+    call vpgsmm(nbeq, nfreq, nconv, vect, alpha, lmasse,&
                 1, vaux, ddlexc, workv, dsor,&
                 omecor)
 !

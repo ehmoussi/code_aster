@@ -233,7 +233,7 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
             i1 = i + 1
             mclf = COQUE[i]
             if mclf['EPAIS'] is not None:
-                vale =  mclf['EPAIS']            
+                vale =  mclf['EPAIS']
                 check( vale > 0.0, defErr, 'COQUE', i1, 'EPAIS')
             if mclf['A_CIS'] is not None:
                 vale =  mclf['A_CIS']
@@ -266,9 +266,6 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
             if 'SECTION' in mclf :
                 vale =  mclf['SECTION']
                 check( vale>=0.0, defErr, 'GRILLE', i1, 'SECTION')
-            if 'EXCENTREMENT' in mclf :
-                vale =  mclf['EXCENTREMENT']
-                check( vale>=0.0, defErr, 'GRILLE', i1, 'EXCENTREMENT')
     # - - - - - - - - - - - - - - -
     if MASS_REP != None:
         for i in range(len(MASS_REP)):

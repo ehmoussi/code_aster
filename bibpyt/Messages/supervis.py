@@ -49,6 +49,12 @@ Les commandes DEBUT et POURSUITE doivent être appelées une fois et une seule.
     6 : _(u"""
 Ces fichiers n'ont pas de sens lors d'un nouveau calcul (DEBUT)."""),
 
+    7: _(u"""
+Erreur lors du chargement du catalogue de loi de comportement :
+
+%(k1)s
+    """),
+
     8: _(u"""
   Un nom de concept intermédiaire doit commencer par '.' ou '_' et non :  %(k1)s
 """),

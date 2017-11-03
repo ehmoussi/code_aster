@@ -15,29 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine cafves(cont, tange, maxfa, nface, fks,&
-                      dfks1, dfks2, mobfa, dmob1, dmob2,&
-                      mob1f, mob2f, flux, dflx1, dflx2)
-        integer :: maxfa
-        aster_logical :: cont
-        aster_logical :: tange
-        integer :: nface
-        real(kind=8) :: fks(maxfa)
-        real(kind=8) :: dfks1(maxfa+1, maxfa)
-        real(kind=8) :: dfks2(maxfa+1, maxfa)
-        real(kind=8) :: mobfa(maxfa)
-        real(kind=8) :: dmob1(maxfa)
-        real(kind=8) :: dmob2(maxfa)
-        real(kind=8) :: mob1f(maxfa)
-        real(kind=8) :: mob2f(maxfa)
-        real(kind=8) :: flux
-        real(kind=8) :: dflx1(maxfa+1)
-        real(kind=8) :: dflx2(maxfa+1)
+    subroutine cafves(l_matr, maxfa , nface,&
+                      fks   , dfks1 , dfks2,&
+                      mobfa , dmob1 , dmob2,&
+                      dmob1f, dmob2f,&
+                      flux  , dflx1 , dflx2)
+        aster_logical, intent(in) :: l_matr
+        integer, intent(in) :: maxfa, nface
+        real(kind=8), intent(in) :: fks(maxfa), dfks1(maxfa+1, maxfa), dfks2(maxfa+1, maxfa)
+        real(kind=8), intent(in) :: mobfa(maxfa), dmob1(maxfa), dmob2(maxfa)
+        real(kind=8), intent(in) :: dmob1f(maxfa), dmob2f(maxfa)
+        real(kind=8), intent(inout) :: flux, dflx1(maxfa+1), dflx2(maxfa+1)
     end subroutine cafves
 end interface

@@ -115,7 +115,7 @@ implicit none
     data cn2mbr/'&&OP0186.2MBRE'/
     data dry_prev,dry_curr/'&&OP0186.TCHI','&&OP0186.TCHF'/
     data vhydr,vhydrp/'&&OP0186.HY','&&OP0186.HYP'/
-    data mediri/' '/
+    data mediri/'&&MEDIRI'/
     data matass/'&&MTHASS'/
     data fmt1/'(85(''-''))'/
     data fmt2/'(A,1X,A,6X,A,9X,A,6X,A,3X,A,3X,A,1X,A)'/
@@ -201,7 +201,7 @@ implicit none
 !
 ! - Elementary matrix for Dirichlet BC
 !
-    call medith(model, list_load, mediri)
+    call medith('V', 'ZERO', model, list_load, mediri)
 !
 ! **********************************************************************
 !                 BOUCLE SUR LES PAS DE TEMPS
@@ -360,7 +360,7 @@ implicit none
                 vtempp, cn2mbr_stat, mediri     , conver   , vhydr   ,&
                 vhydrp, dry_prev   , dry_curr   , compor   , vabtla  ,&
                 cnresi, ther_crit_i, ther_crit_r, reasma   , testr,&
-                testm , vnorm(1), ds_algorom )
+                testm , vnorm(1)   , ds_algorom )
 !
     vrela(1) = testr 
     vmaxi(1) = testm

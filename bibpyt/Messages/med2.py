@@ -52,11 +52,10 @@ format MED.
 """),
 
     7 : _(u"""
-  Il n'a pas été possible d'imprimer le champ %(k1)s en utilisant IMPR_NOM_VARI='OUI'.
+  Il n'a pas été possible d'imprimer le champ des variables internes en utilisant IMPR_NOM_VARI='OUI'.
   Cela est dû au fait que certains comportements  dans votre modèle ne sont pas imprimables avec cette option:
   - Le comportement a été défini avec MFRONT ou UMAT en mode prototype
-  - Le comportement contient a été défini sur une poutre multifibres
-  - Le comportement ne contient que des comportements élastiques
+  - Le comportement a été défini sur une poutre multifibres
 
   -> Conseils :
      - N'utilisez pas IMPR_NOM_VARI='OUI' pour imprimer ce champ

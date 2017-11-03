@@ -1135,8 +1135,8 @@ subroutine xprvit(noma, fiss, ndim, nvit, nbeta,&
 !
             endif
 !
-            if ((method.eq.'GEOMETRI'.and.operation.eq.'RIEN')&
-                .and. endpnt) then
+            if (((method.eq.'GEOMETRI' .or. method.eq.'SIMPLEXE') &
+                   .and.operation.eq.'RIEN') .and. endpnt) then
                 
 !
 !              NORMAL AXIS OF THE LOCAL BASE

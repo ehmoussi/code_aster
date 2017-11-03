@@ -60,6 +60,7 @@ CHA=AFFE_CHAR_MECA(DDL_IMPO=_F(GROUP_MA='ENCASTR',
 
 RESU=MECA_STATIQUE(CHAM_MATER=CHAM_MAT,
                    MODELE=MO,
+                   SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
                    CARA_ELEM=CAR_ELE,
                    EXCIT=_F(CHARGE=CHA,),);
 

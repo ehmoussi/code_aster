@@ -43,13 +43,6 @@ CCARCRI = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
                             'INTLOC', 'PERTURB', 'TOLDEBO', 'ITEDEBO', 'TSSEUIL',
                             'TSAMPL', 'TSRETOUR',))
 
-
-CCOMPOR = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
-                            components=(
-                                'RELCOM', 'NBVARI', 'DEFORM', 'INCELA', 'C_PLAN',
-                            'NUME_LC', 'SD_COMP', 'KIT[9]',))
-
-
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO', diff=True,
                              components=(
                              ('EN1', ('DX', 'DY', 'H1X', 'H1Y', 'LAGS_C',
@@ -288,7 +281,7 @@ class MEAXTR3_XHC(Element):
         OP.ENEL_ELEM(te=565,
                      para_in=(
                      (OP.ENEL_ELEM.PCNSETO, LC.E36NEUI), (
-                     OP.ENEL_ELEM.PCOMPOR, CCOMPOR),
+                     OP.ENEL_ELEM.PCOMPOR, LC.CCOMPOR),
                      (OP.ENEL_ELEM.PCONTPR, ECONTPG), (SP.PDEPLR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (
                      OP.ENEL_ELEM.PLONCHA, LC.E10NEUTI),
@@ -305,7 +298,7 @@ class MEAXTR3_XHC(Element):
                      para_in=(
                      (OP.FORC_NODA.PBASLOR, LC.N6NEUT_R), (
                      OP.FORC_NODA.PCNSETO, LC.E36NEUI),
-                     (OP.FORC_NODA.PCOMPOR, CCOMPOR), (
+                     (OP.FORC_NODA.PCOMPOR, LC.CCOMPOR), (
                      OP.FORC_NODA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (OP.FORC_NODA.PHEAVTO, E6NEUTI), (
@@ -325,7 +318,7 @@ class MEAXTR3_XHC(Element):
                      (OP.FULL_MECA.PBASLOR, LC.N6NEUT_R), (
                          SP.PCAMASS, CCAMASS),
                      (SP.PCARCRI, CCARCRI), (OP.FULL_MECA.PCNSETO, LC.E36NEUI),
-                     (OP.FULL_MECA.PCOMPOR, CCOMPOR), (
+                     (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (
                      OP.FULL_MECA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (OP.FULL_MECA.PHEAVTO, E6NEUTI),
@@ -410,7 +403,7 @@ class MEAXTR3_XHC(Element):
                      (OP.RAPH_MECA.PBASLOR, LC.N6NEUT_R), (
                          SP.PCAMASS, CCAMASS),
                      (SP.PCARCRI, CCARCRI), (OP.RAPH_MECA.PCNSETO, LC.E36NEUI),
-                     (OP.RAPH_MECA.PCOMPOR, CCOMPOR), (
+                     (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR), (
                      OP.RAPH_MECA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (OP.RAPH_MECA.PHEAVTO, E6NEUTI),
@@ -440,7 +433,7 @@ class MEAXTR3_XHC(Element):
                           (OP.REFE_FORC_NODA.PBASLOR, LC.N6NEUT_R), (
                           OP.REFE_FORC_NODA.PCFACE, LC.E9NEUTI),
                           (OP.REFE_FORC_NODA.PCNSETO, LC.E36NEUI), (
-                          OP.REFE_FORC_NODA.PCOMPOR, CCOMPOR),
+                          OP.REFE_FORC_NODA.PCOMPOR, LC.CCOMPOR),
                           (SP.PDEPLMR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                           (OP.REFE_FORC_NODA.PHEAVTO, E6NEUTI), (
                           OP.REFE_FORC_NODA.PLONCHA, LC.E10NEUTI),
@@ -503,7 +496,7 @@ class MEAXTR3_XHC(Element):
                           SP.PCAMASS, CCAMASS),
                           (SP.PCARCRI, CCARCRI), (
                           OP.RIGI_MECA_TANG.PCNSETO, LC.E36NEUI),
-                          (OP.RIGI_MECA_TANG.PCOMPOR, CCOMPOR), (
+                          (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (
                           OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
                           (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                           (SP.PGEOMER, NGEOMER), (

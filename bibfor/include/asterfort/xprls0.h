@@ -19,9 +19,8 @@
 !
 !
 interface
-    subroutine xprls0(fispre, noma, noesom, armin, cnsln,&
+    subroutine xprls0(noma, noesom, armin, cnsln,&
                       cnslt, isozro, levset, nodtor, eletor)
-        character(len=8) :: fispre
         character(len=8) :: noma
         character(len=19) :: noesom
         real(kind=8) :: armin

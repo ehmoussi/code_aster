@@ -33,6 +33,7 @@
 #include "Studies/FailureConvergenceManager.h"
 #include "Utilities/GenericParameter.h"
 #include "Results/ResultsContainer.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class TimeStepManagerInstance
@@ -74,7 +75,7 @@ public:
      * @brief Constructeur
      */
     TimeStepManagerInstance():
-        DataStructure( getNewResultObjectName(), "LIST_INST" ),
+        DataStructure( ResultNaming::getNewResultName(), "LIST_INST" ),
         _timeList( JeveuxVectorDouble( getName() + ".LIST.DITR" ) ),
         _infoList( JeveuxVectorDouble( getName() + ".LIST.INFOR" ) ),
         _doubleFailureManagerInfo( JeveuxVectorDouble( getName() + ".ECHE.EVENR" ) ),

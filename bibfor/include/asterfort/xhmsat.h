@@ -15,39 +15,27 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
 interface 
-    subroutine xhmsat(yachai, option, meca, thmc, ther,&
-                      hydr, imate, ndim, dimenr,&
-                      dimcon, nbvari, yamec, addeme,&
-                      adcome, advihy, advico, vihrho, vicphi,&
+    subroutine xhmsat(option,&
+                      ndim, dimenr,&
+                      dimcon, nbvari, addeme,&
+                      adcome,&
                       addep1, adcp11, congem, congep, vintm,&
-                      vintp, dsde, epsv, depsv, p1,&
-                      dp1, t, phi, rho11, phi0,&
-                      sat, retcom, tbiot, rinstp,&
-                      angmas, aniso, phenom, yaenrh, adenhy, nfh)
+                      vintp, dsde, epsv, depsv,&
+                      dp1, phi, rho11,&
+                      satur, retcom, tbiot,&
+                      angl_naut, yaenrh, adenhy, nfh)
         integer :: nbvari
         integer :: dimcon
         integer :: dimenr
-        aster_logical :: yachai
         character(len=16) :: option
-        character(len=16) :: meca
-        character(len=16) :: thmc
-        character(len=16) :: ther
-        character(len=16) :: hydr
-        integer :: imate
         integer :: ndim
-        integer :: yamec
         integer :: addeme
         integer :: adcome
-        integer :: advihy
-        integer :: advico
-        integer :: vihrho
-        integer :: vicphi
         integer :: addep1
         integer :: adcp11
         real(kind=8) :: congem(dimcon)
@@ -57,19 +45,13 @@ interface
         real(kind=8) :: dsde(dimcon, dimenr)
         real(kind=8) :: epsv
         real(kind=8) :: depsv
-        real(kind=8) :: p1
         real(kind=8) :: dp1
-        real(kind=8) :: t
         real(kind=8) :: phi
         real(kind=8) :: rho11
-        real(kind=8) :: phi0
-        real(kind=8) :: sat
+        real(kind=8) :: satur
         integer :: retcom
         real(kind=8) :: tbiot(6)
-        real(kind=8) :: rinstp
-        real(kind=8) :: angmas(3)
-        integer :: aniso
-        character(len=16) :: phenom
+        real(kind=8) :: angl_naut(3)
         integer :: yaenrh
         integer :: adenhy
         integer :: nfh

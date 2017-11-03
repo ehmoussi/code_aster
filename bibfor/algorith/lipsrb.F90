@@ -16,9 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lipsrb(nomres, matprj, sst1, sst2, intf1,&
+subroutine lipsrb(nomres, sst1, sst2, intf1,&
                   intf2, lino1, lino2, indin1, indin2,&
-                  ddlmas, ddlsla, nbmoma, nbmosl, imast,&
+                  ddlmas, ddlsla, nbmoma, imast,&
                   tramod)
     implicit none
 !    M. CORUS     DATE 04/02/10
@@ -76,8 +76,8 @@ subroutine lipsrb(nomres, matprj, sst1, sst2, intf1,&
 !
 !
 !-- VARIABLES EN ENTREES / SORTIE
-    integer :: ddlmas, ddlsla, nbmoma, nbmosl, imast
-    character(len=8) :: nomres, matprj, sst1, sst2, intf1, intf2
+    integer :: ddlmas, ddlsla, nbmoma, imast
+    character(len=8) :: nomres, sst1, sst2, intf1, intf2
     character(len=24) :: lino1, lino2, indin1, indin2
 !
 !-- VARIABLES DE LA ROUTINE
@@ -366,6 +366,9 @@ subroutine lipsrb(nomres, matprj, sst1, sst2, intf1,&
 !-- INITIALISER A CHAQUE FOIS, PUISQUE LA SVD ECRASE TOUT...
         do j1 = 1, dima*36
             mat_phir(j1)=0.d0
+        end do
+        do j1=1,36
+            zr(lmsm1u-1+j1) = 0.d0
         end do
 !
 !-- CONSTRUCTION DE LA MATRICE DE CORPS RIGIDE POUR LE NOEUD COURANT

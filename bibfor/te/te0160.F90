@@ -42,6 +42,7 @@ subroutine te0160(option, nomte)
 #include "asterfort/rcvalb.h"
 #include "asterfort/utmess.h"
 #include "asterfort/verift.h"
+#include "asterfort/Behaviour_type.h"
 !
     integer ::          icodre(2)
     real(kind=8) ::     valres(2)
@@ -69,14 +70,14 @@ subroutine te0160(option, nomte)
 ! --------------------------------------------------------------------------------------------------
 !   parametres en entree
     call jevech('PCOMPOR', 'L', icompo)
-    if (zk16(icompo+3) (1:9) .eq. 'COMP_INCR') then
-        call utmess('F', 'ELEMENTS3_36')
+    !if (zk16(icompo+3) (1:9) .eq. 'COMP_INCR') then
+    !    call utmess('F', 'ELEMENTS3_36')
+    !endif
+    if (zk16(icompo-1+NAME) (1:5) .ne. 'CABLE') then
+        call utmess('F', 'ELEMENTS3_37', sk = zk16(icompo-1+NAME))
     endif
-    if (zk16(icompo) (1:5) .ne. 'CABLE') then
-        call utmess('F', 'ELEMENTS3_37', sk=zk16(icompo))
-    endif
-    if (zk16(icompo+1) .ne. 'GROT_GDEP') then
-        call utmess('F', 'ELEMENTS3_38', sk=zk16(icompo+1))
+    if (zk16(icompo-1+DEFO) .ne. 'GROT_GDEP') then
+        call utmess('F', 'ELEMENTS3_38', sk = zk16(icompo-1+DEFO))
     endif
 !
     call jevech('PGEOMER', 'L', igeom)

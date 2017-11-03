@@ -38,10 +38,6 @@ cata_msg = {
  le type de spectre est incompatible avec la configuration étudiée
 """),
 
-    5: _(u"""
- problème rencontré lors de l'interpolation d'un interspectre
-"""),
-
     6: _(u"""
  nombre de noeuds insuffisant sur le maillage
 """),
