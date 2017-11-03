@@ -50,7 +50,12 @@ class ExtendedFormula(injector, Formula):
         Returns:
             float: Value of the formula for these parameters.
         """
-        return self.evaluate(force_list(val))
+        result = self.evaluate(force_list(val))
+        if self.getType() == "FORMULE_C":
+            result = complex(*result)
+        else:
+            result = result[0]
+        return result
 
     @property
     @deprecated(help="Use 'getVariables()' instead.")
@@ -58,6 +63,22 @@ class ExtendedFormula(injector, Formula):
         """Return the variables names."""
         return self.getVariables()
 
-
-class FormulaC(Formula):
-    """Complex formula."""
+    def Parametres(self):
+        """
+        Retourne un dictionnaire contenant les parametres de la fonction ;
+        le type jeveux (FONCTION, FONCT_C, NAPPE) n'est pas retourne,
+        le dictionnaire peut ainsi etre fourni a CALC_FONC_INTERP tel quel.
+        """
+        from Utilitai.Utmess import UTMESS
+        prol = self.sdj.PROL.get()
+        if prol == None:
+            objev = '%-19s.PROL' % self.get_name()
+            UTMESS('F', 'SDVERI_2', valk=[objev])
+        dico = {
+            'INTERPOL': ['LIN', 'LIN'],
+            'NOM_PARA': [i.strip() for i in self.sdj.NOVA.get()],
+            'NOM_RESU': prol[3][0:16].strip(),
+            'PROL_DROITE': "EXCLU",
+            'PROL_GAUCHE': "EXCLU",
+        }
+        return dico

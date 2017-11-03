@@ -112,35 +112,18 @@ class ExtendedFunction(injector, Function):
         le dictionnaire peut ainsi etre fourni a CALC_FONC_INTERP tel quel.
         """
         from Utilitai.Utmess import UTMESS
-        if self.accessible():
-            TypeProl = {'E': 'EXCLU', 'L': 'LINEAIRE', 'C': 'CONSTANT'}
-            objev = '%-19s.PROL' % self.get_name()
-            prol = self.sdj.PROL.get()
-            if prol == None:
-                UTMESS('F', 'SDVERI_2', valk=[objev])
-            dico = {
-                'INTERPOL': [prol[1][0:3], prol[1][4:7]],
-                'NOM_PARA': prol[2][0:16].strip(),
-                'NOM_RESU': prol[3][0:16].strip(),
-                'PROL_DROITE': TypeProl[prol[4][1]],
-                'PROL_GAUCHE': TypeProl[prol[4][0]],
-            }
-        elif hasattr(self, 'etape') and self.etape.nom == 'DEFI_FONCTION':
-            dico = {
-                'INTERPOL': self.etape['INTERPOL'],
-                'NOM_PARA': self.etape['NOM_PARA'],
-                'NOM_RESU': self.etape['NOM_RESU'],
-                'PROL_DROITE': self.etape['PROL_DROITE'],
-                'PROL_GAUCHE': self.etape['PROL_GAUCHE'],
-            }
-            if type(dico['INTERPOL']) == tuple:
-                dico['INTERPOL'] = list(dico['INTERPOL'])
-            elif type(dico['INTERPOL']) == str:
-                dico['INTERPOL'] = [dico['INTERPOL'], ]
-            if len(dico['INTERPOL']) == 1:
-                dico['INTERPOL'] = dico['INTERPOL'] * 2
-        else:
-            raise AsException("Erreur dans fonction.Parametres en PAR_LOT='OUI'")
+        TypeProl = {'E': 'EXCLU', 'L': 'LINEAIRE', 'C': 'CONSTANT'}
+        objev = '%-19s.PROL' % self.get_name()
+        prol = self.sdj.PROL.get()
+        if prol == None:
+            UTMESS('F', 'SDVERI_2', valk=[objev])
+        dico = {
+            'INTERPOL': [prol[1][0:3], prol[1][4:7]],
+            'NOM_PARA': prol[2][0:16].strip(),
+            'NOM_RESU': prol[3][0:16].strip(),
+            'PROL_DROITE': TypeProl[prol[4][1]],
+            'PROL_GAUCHE': TypeProl[prol[4][0]],
+        }
         return dico
 
     def Trace(self, FORMAT='TABLEAU', **kargs):

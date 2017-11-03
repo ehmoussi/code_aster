@@ -100,14 +100,14 @@ void FormulaInstance::setExpression( const std::string expression )
     }
 }
 
-double FormulaInstance::evaluate( const std::vector< double > &values ) const
+VectorDouble FormulaInstance::evaluate( const VectorDouble &values ) const
     throw ( std::runtime_error )
 {
     int iret = 0;
-    std::vector< std::string > variables = getVariables();
-    double result = evaluate_formula(_code, _context, variables, values, &iret);
+    std::vector< std::string > vars = getVariables();
+    VectorDouble result = evaluate_formula(_code, _context, vars, values, &iret);
     if ( iret == 1 ) {
-        const long nbvars = variables.size();
+        const long nbvars = vars.size();
         const long nbvalues = values.size();
         throw std::runtime_error("Expecting exactly " + std::to_string(nbvars)
                                 + " values, not " + std::to_string(nbvalues));
@@ -119,16 +119,15 @@ double FormulaInstance::evaluate( const std::vector< double > &values ) const
 
 
 /* functions shared with evaluation from Fortran */
-double evaluate_formula( const PyObject* code, PyObject* globals,
-                         const std::vector< std::string > &variables,
-                         const std::vector< double > &values,
-                         int* retcode )
+VectorDouble evaluate_formula( const PyObject* code, PyObject* globals,
+    const std::vector< std::string > &variables,
+    const VectorDouble &values, int* retcode )
 {
     const long nbvars = variables.size();
     const long nbvalues = values.size();
     if ( nbvalues != nbvars ) {
         *retcode = 1;
-        return 0.;
+        return VectorDouble(0., 0);
     }
 
     PyObject* locals = PyDict_New();
@@ -145,31 +144,50 @@ double evaluate_formula( const PyObject* code, PyObject* globals,
         PyObject_Print(locals, stdout, 0);
         std::cout << std::endl;
         *retcode = 4;
-        return 0.;
+        return VectorDouble(0., 0);
     }
-    double result = PyFloat_AsDouble(res);
+
+    VectorDouble result;
+    if ( PyTuple_Check(res) ) {
+        const long nbres = PyTuple_Size(res);
+        for ( long i = 0; i < nbres; ++ i ) {
+            result.push_back(PyFloat_AsDouble(PyTuple_GetItem(res, i)));
+        }
+    } else if ( PyComplex_Check(res) ) {
+        result.push_back(PyComplex_RealAsDouble(res));
+        result.push_back(PyComplex_ImagAsDouble(res));
+    } else {
+        result.push_back(PyFloat_AsDouble(res));
+    }
     Py_DECREF(res);
 
     return result;
 }
 
 /* Interface for Fortran calls */
-void DEFPPSPPPP(EVAL_FORMULA, eval_formula,
+void DEFPPSPPPPP(EVAL_FORMULA, eval_formula,
     ASTERINTEGER* pcode, ASTERINTEGER* pglobals,
     char* array_vars, STRING_SIZE lenvars, ASTERDOUBLE* array_values,
-    ASTERINTEGER* nbvar, _OUT ASTERINTEGER* iret, _OUT ASTERDOUBLE* result )
+    ASTERINTEGER* nbvar, _OUT ASTERINTEGER* iret,
+    _IN ASTERINTEGER* nbres, _OUT ASTERDOUBLE* result )
 {
     PyObject* code = (PyObject*)(*pcode);
     PyObject* globals = (PyObject*)(*pglobals);
 
     std::vector< std::string > vars;
-    std::vector< double > values;
+    VectorDouble values;
     for ( int i = 0; i < *nbvar; ++i ) {
         vars.push_back(std::string( array_vars + i * lenvars, lenvars ));
         values.push_back( array_values[i] );
     }
 
     int ret = 0;
-    *result = (ASTERDOUBLE)evaluate_formula(code, globals, vars, values, &ret);
+    VectorDouble retvalues = evaluate_formula(code, globals, vars, values, &ret);
     *iret = (ASTERINTEGER)ret;
+    if ( ret == 0 ) {
+        for ( long i = 0; i < retvalues.size() && i < (*nbres); ++i) {
+            result[i] = (ASTERDOUBLE)retvalues[i];
+        }
+    }
+    return;
 }
