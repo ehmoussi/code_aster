@@ -68,6 +68,48 @@ CHARTRAN=AFFE_CHAR_MECA(MODELE=BARRE,
                         FORCE_NODALE=_F( NOEUD = 'N11',  FY = -1000.))
 
 #
+# DEFINITION DE L'OBSTACLE
+#
+OBSTACLE=DEFI_OBSTACLE( TYPE='CERCLE')
+
+t_fin = 0.16
+
+F_UN = DEFI_FONCTION(NOM_PARA="INST", 
+                     VALE = (0., 1., t_fin, 1.),
+                     PROL_DROITE="CONSTANT",
+                     PROL_GAUCHE="CONSTANT")
+
+LIST_R2=DEFI_LIST_REEL(DEBUT=0.1310,
+                       INTERVALLE=_F(JUSQU_A = 0.16,
+                                     NOMBRE = 290),
+                       )
+
+TRAN_PH1=DYNA_LINE(TYPE_CALCUL='TRAN',
+                   BASE_CALCUL='GENE',
+                   SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE',),
+                   MODELE=BARRE,
+                   CHAM_MATER=CHMAT,
+                   CARA_ELEM=CARA,
+                   CHARGE=GUIDAGE,
+                   BANDE_ANALYSE=160.,
+                   ENRI_STAT='OUI',
+                   EXCIT=_F(CHARGE = CHARTRAN,
+                            FONC_MULT = F_UN),
+                   INCREMENT=_F(INST_INIT = 0.,
+                                INST_FIN = t_fin,
+                                PAS = 1.E-5),
+                   COMPORTEMENT=_F(RELATION='DIS_CHOC',
+                                   NOEUD_1 = 'N11',
+                                   OBSTACLE = OBSTACLE,
+                                   ORIG_OBST = (1., 0., 0.,),
+                                   NORM_OBST = (1., 0., 0.,),
+                                   JEU = 1.E-4,
+                                   RIGI_NOR = 1.E+8),
+                   ARCHIVAGE=_F(LIST_INST=LIST_R2, PAS_ARCH = 1.E8),
+                   )
+
+
+#
 ################################################################
 # CALCUL AVEC PROJECTION SUR BASE MODALE + 1 MODE STATIQUE     #
 ################################################################
@@ -119,19 +161,6 @@ MS=MODE_STATIQUE(MATR_RIGI=K_ASSE,
                                 ),
                  )
 #
-## ORTHOGONALISATION AVEC 'ORTHO'
-MODES1 = DEFI_BASE_MODALE(RITZ =(_F(MODE_MECA=MODES0,
-                                    NMAX_MODE=30),
-                                   _F(MODE_INTF=MS),
-                                ),
-                          NUME_REF=NUM,
-                          ORTHO='OUI',
-                          MATRICE=K_ASSE,
-                        #  MATRICE=M_ASSE,
-                          INFO=1
-                          );
-
-#
 ## ORTHOGONALISATION AVEC 'ORTHO_BASE'
 MODES20 = DEFI_BASE_MODALE(RITZ =(_F(MODE_MECA=MODES0,
                                      NMAX_MODE=30),
@@ -156,10 +185,6 @@ MODES3 = DEFI_BASE_MODALE(RITZ =(_F(MODE_MECA=MODES0,
 #
 # PROJECTIONS SUR BASE MODALE :
 #
-NUMEMOD1=NUME_DDL_GENE(BASE=MODES1,
-                       STOCKAGE='DIAG',
-                       )
-
 NUMEMOD2=NUME_DDL_GENE(BASE=MODES2,
                        STOCKAGE='DIAG')
 
@@ -172,10 +197,6 @@ NUMEMOD4=NUME_DDL_GENE(BASE=MODES0,
                        STOCKAGE='DIAG',)
 
 #
-K_PROJ1=PROJ_MATR_BASE(BASE=MODES1,
-                       NUME_DDL_GENE=NUMEMOD1,
-                       MATR_ASSE=K_ASSE)
-
 K_PROJ2=PROJ_MATR_BASE(BASE=MODES2,
                        NUME_DDL_GENE=NUMEMOD2,
                        MATR_ASSE=K_ASSE)
@@ -189,10 +210,6 @@ K_PROJ4=PROJ_MATR_BASE(BASE=MODES0,
                        MATR_ASSE=K_ASSE)
 
 #
-M_PROJ1=PROJ_MATR_BASE(BASE=MODES1,
-                       NUME_DDL_GENE=NUMEMOD1,
-                       MATR_ASSE=M_ASSE)
-
 M_PROJ2=PROJ_MATR_BASE(BASE=MODES2,
                        NUME_DDL_GENE=NUMEMOD2,
                        MATR_ASSE=M_ASSE)
@@ -206,10 +223,6 @@ M_PROJ4=PROJ_MATR_BASE(BASE=MODES0,
                        MATR_ASSE=M_ASSE)
 
 #
-F_PROJ1=PROJ_VECT_BASE(BASE=MODES1,
-                       NUME_DDL_GENE=NUMEMOD1,
-                       VECT_ASSE=V_ASSE)
-
 F_PROJ2=PROJ_VECT_BASE(BASE=MODES2,
                        NUME_DDL_GENE=NUMEMOD2,
                        VECT_ASSE=V_ASSE)
@@ -223,34 +236,8 @@ F_PROJ4=PROJ_VECT_BASE(BASE=MODES0,
                        VECT_ASSE=V_ASSE)
 
 #
-# DEFINITION DE L'OBSTACLE
-#
-OBSTACLE=DEFI_OBSTACLE( TYPE='CERCLE')
-
-#
 # CALCULS TRANSITOIRES SUR BASE MODALE
 #
-t_fin=0.16
-TRAN_GE1=DYNA_VIBRA(TYPE_CALCUL='TRAN',
-                    BASE_CALCUL='GENE',
-                    SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE',),
-                    MATR_MASS=M_PROJ1,
-                    MATR_RIGI=K_PROJ1,
-                    EXCIT=_F(VECT_ASSE_GENE = F_PROJ1,
-                             COEF_MULT = 1.),
-                    INCREMENT=_F(INST_INIT = 0.,
-                                 INST_FIN = t_fin,
-                                 PAS = 1.E-5),
-                 #   ARCHIVAGE=_F( PAS_ARCH = 10),
-                    COMPORTEMENT=_F(RELATION='DIS_CHOC',
-                            NOEUD_1 = 'N11',
-                            OBSTACLE = OBSTACLE,
-                            ORIG_OBST = (1., 0., 0.,),
-                            NORM_OBST = (1., 0., 0.,),
-                            JEU = 1.E-4,
-                            RIGI_NOR = 1.E+8)
-                           )
-
 TRAN_GE2=DYNA_VIBRA(TYPE_CALCUL='TRAN',
                     BASE_CALCUL='GENE',
                     SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE',),
@@ -314,18 +301,8 @@ TRAN_GE4=DYNA_VIBRA(TYPE_CALCUL='TRAN',
 #
 t_depl = 0.1315  # max depl
 t_vite = 0.1566  # max vite
-#t_fin = 0.16
-LIST_R2=DEFI_LIST_REEL(DEBUT=0.1310,
-                       INTERVALLE=_F(JUSQU_A = 0.16,
-                                     NOMBRE = 290),
-                       )
 
 #
-TRAN1=REST_GENE_PHYS(RESU_GENE=TRAN_GE1,
-                     TOUT_CHAM='OUI',
-                     LIST_INST=LIST_R2,
-                     INTERPOL='LIN')
-
 TRAN2=REST_GENE_PHYS(RESU_GENE=TRAN_GE2,
                      TOUT_CHAM='OUI',
                      LIST_INST=LIST_R2,
@@ -348,7 +325,7 @@ valrefv=-0.00463289359505   # a t_vite
 TEST_RESU(RESU=(
 ## Cas Projete avec mode statique + 'ortho'
                _F(INST=t_depl,
-                  RESULTAT=TRAN1,
+                  RESULTAT=TRAN_PH1,
                   NOM_CHAM='DEPL',
                   NOEUD='N11',
                   NOM_CMP='DY',
@@ -397,7 +374,7 @@ TEST_RESU(RESU=(
 
 # vitesse
                _F(INST=t_vite,
-                  RESULTAT=TRAN1,
+                  RESULTAT=TRAN_PH1,
                   NOM_CHAM='VITE',
                   NOEUD='N11',
                   NOM_CMP='DY',
@@ -407,6 +384,7 @@ TEST_RESU(RESU=(
                   PRECISION=1e-2,
                   LEGENDE='ortho (vit)',
                ),
+               
                _F(INST=t_vite,
                   RESULTAT=TRAN2,
                   NOM_CHAM='VITE',
