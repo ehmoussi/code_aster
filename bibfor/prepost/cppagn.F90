@@ -62,27 +62,29 @@ implicit none
 #include "asterfort/cpqu04.h"
 #include "asterfort/cppt6_1.h"
 #include "asterfort/cppt6_2.h"
+#include "asterfort/cppt15_1.h"
+#include "asterfort/cppt15_2.h"
 #include "asterfort/coppat.h"
 !
 !
-    character(len=8), intent(in) :: main 
+    character(len=8), intent(in) :: main
     character(len=8), intent(in) :: maout
     integer, intent(in) :: nbma
     integer, intent(in) :: lima(nbma)
     integer, intent(in) :: izone
     integer, intent(in) :: typ_dec
 !
-    
+
 ! -------------------------------------------------------------------------------------------------
 !        CREATION DES PATCHS ET MODIFICATION DU MAILLAGE
-!                   POUR LE CONTACT METHODE LAC 
+!                   POUR LE CONTACT METHODE LAC
 ! -------------------------------------------------------------------------------------------------
 ! IN        MAIN   K8  NOM DU MAILLAGE INITIAL
 ! IN/JXOUT  MAOUT  K8  NOM DU MAILLAGE TRANSFORME
 ! IN        NBMA    I  NOMBRE DE MAILLES A TRAITER
 ! IN        LIMA    I  NUMERO DES MAILLES A TRAITER
 ! IN        IZONE   I  NUMERO DE LA ZONE DE CONTACT
-! IN        TYP_DEC I  TYPE DE DECOUPE POUR LES HEXA 1:PYRA 2:HEXA     
+! IN        TYP_DEC I  TYPE DE DECOUPE POUR LES HEXA 1:PYRA 2:HEXA
 ! -------------------------------------------------------------------------------------------------
     integer :: inc, patch, nbnot, nbmat, info, nma, nbno, ind1, nbnwma, nbpain
     integer :: jdim, jrefe, macou, macsu, jcninv, jcivax, jcoor, jgmao
@@ -90,7 +92,7 @@ implicit none
     integer :: ind, res(1), ntrou, jtpmao, jtypma, aux, numa, laux(1)
     integer :: jcnmai, jcnmao, incc, ntrou1, jgma, jrgma
     integer :: conlen, cnlclg, idtpma(6), nbnoma(6), odcnpa, odcmpa,lenconloc, lenlimane, lenpat
-!     
+!
     character(len=24) :: nomnoi, nomnoe, limane, conloc
     character(len=24) :: nomnd, nomma, cninv, cnivax, rgma, gpptnn
     character(len=19) :: coordo
@@ -109,8 +111,8 @@ implicit none
     nbno = zi(info-1+1)
     nma = zi(info-1+3)
     call jeveuo(main//'.TYPMAIL','L',jtypma)
-    nbnot= nbno 
-    nbmat= nma 
+    nbnot= nbno
+    nbmat= nma
     conlen = 0
     cnlclg = 0
     lenconloc = 0
@@ -121,7 +123,7 @@ implicit none
     call cnmpmc(main,nbma, lima,zi(jcninv))
     do inc= 1, nbma
         macou=lima(inc)
-        macsu = zi(jcninv+inc-1)   
+        macsu = zi(jcninv+inc-1)
         call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+macsu-1)), typmail)
         select case (typmail)
 ! -------- CAS 2D
@@ -130,17 +132,17 @@ implicit none
                 nbnot = nbnot + 1
                 !nombre de mailles du maillage maout
                 nbmat = nbmat + 2
-                !nombre d'elements à ajouter a la connectivité du maillage maout 
+                !nombre d'elements à ajouter a la connectivité du maillage maout
                 conlen = conlen + 1*2 + 1*3
                 !dimension de la connectivité locale de transfert
                 lenconloc = lenconloc + 2*3 + 2*2
                 !nombre de de la connectivité locale de transfert
                 cnlclg = cnlclg + 4
-                !dimension de la connectivité  ancienne nouvelle maille 
+                !dimension de la connectivité  ancienne nouvelle maille
                 !(+ 1 pour le pacth sous jacent)
                 lenlimane = lenlimane + 3 + 2
                 !dimension du vecteur .patch
-                lenpat = lenpat + 2              
+                lenpat = lenpat + 2
             case ('QUAD4')
                 nbnot = nbnot + 4
                 nbmat = nbmat + 5
@@ -164,7 +166,7 @@ implicit none
                 lenconloc = lenconloc + 3 + 8
                 cnlclg = cnlclg + 2
                 lenlimane = lenlimane + 2 + 1
-                lenpat = lenpat + 2 
+                lenpat = lenpat + 2
 ! -------- CAS 3D
             case ('TETRA4')
                 nbnot = nbnot + 1
@@ -197,7 +199,7 @@ implicit none
                 nbmat = nbmat + 4
                 conlen = conlen + 2*6 + 2*10
                 cnlclg = cnlclg + 6
-                lenconloc = lenconloc + 3*6 + 3*10 
+                lenconloc = lenconloc + 3*6 + 3*10
                 lenlimane = lenlimane + 3 + 3 +1
                 lenpat = lenpat + 2
             case ('HEXA8')
@@ -244,7 +246,26 @@ implicit none
                 cnlclg = cnlclg + 2
                 lenlimane = lenlimane + 2 + 1
                 lenpat = lenpat + 2
+            case ('PENTA15')
+                if(zi(jtypma+macou-1).eq.9)then
+                    nbnot = nbnot + 7
+                    nbmat = nbmat + 5
+                    conlen = conlen + 2*6 + 3*13 + 1*10 - 15
+                    lenconloc = lenconloc + 3*6 + 3*13 + 1*10
+                    cnlclg = cnlclg + 7
+                    lenlimane = lenlimane + 3 + 4 +1
+                    lenpat = lenpat + 2
+                else
+                    nbnot = nbnot + 7
+                    nbmat = nbmat + 6
+                    conlen = conlen + 4*6 + 2*13 + 2*10 - 15 -8
+                    lenconloc = lenconloc + 4*6 + 2*13 + 2*10
+                    cnlclg = cnlclg + 8
+                    lenlimane = lenlimane + 8 +1
+                    lenpat = lenpat + 2
+                endif
             case default
+                call utmess('A', 'CREALAC_1')
                 ASSERT(.false.)
         end select
     enddo
@@ -271,7 +292,7 @@ implicit none
     call wkvect(maout//'.CONOPA', 'G V I',nbnot, jcnnpa)
     if (izone .ne. 1) then
         call jeveuo(main//'.CONOPA', 'L', odcnpa)
-        do inc=1,nbno 
+        do inc=1,nbno
             zi(jcnnpa+inc-1) = zi(odcnpa+inc-1)
         end do
     end if
@@ -315,7 +336,7 @@ implicit none
         call utlisi('INTER', laux, 1, lima, nbma, res, 1, ntrou)
         call utlisi('INTER', laux, 1, zi(jcninv), nbma, res, 1, ntrou1)
         if (ntrou .eq. 1) then
-            if (zi(jtypma+inc-1) .eq. 2) then 
+            if (zi(jtypma+inc-1) .eq. 2) then
                 do incc=1,nbma
                     if (lima(incc) .eq. inc) then
                         macsu=zi(jcninv+incc-1)
@@ -343,14 +364,16 @@ implicit none
                     call jeecra(jexnum(limane, inc), 'LONMAX', ival=4)
                     call jeecra(jexnum(limane, inc), 'LONUTI', ival=4)
                 case (12, 14)
-                    if (typ_dec.eq.0) then
+                    if (typ_dec.eq.0 .and. &
+                       (zi(jtypma+macsu-1).eq.25 .or.&
+                        zi(jtypma+macsu-1).eq.26) ) then
                         call jeecra(jexnum(limane, inc), 'LONMAX', ival=6)
                         call jeecra(jexnum(limane, inc), 'LONUTI', ival=6)
                     else
                         call jeecra(jexnum(limane, inc), 'LONMAX', ival=5)
                         call jeecra(jexnum(limane, inc), 'LONUTI', ival=5)
                     end if
-            end select 
+            end select
         elseif (ntrou1 .eq. 1) then
             select case (zi(jtypma+inc-1))
                 case (7)
@@ -373,10 +396,10 @@ implicit none
                         call jeecra(jexnum(limane, inc), 'LONMAX', ival=5)
                         call jeecra(jexnum(limane, inc), 'LONUTI', ival=5)
                     end if
-                case (20)
+                case (20, 21)
                     call jeecra(jexnum(limane, inc), 'LONMAX', ival=4)
                     call jeecra(jexnum(limane, inc), 'LONUTI', ival=4)
-            end select 
+            end select
         elseif (ntrou1.eq.0 .and. ntrou .eq. 0) then
             call jeecra(jexnum(limane, inc), 'LONMAX', ival=1)
             call jeecra(jexnum(limane, inc), 'LONUTI', ival=1)
@@ -388,8 +411,8 @@ implicit none
         macou = lima(inc)
         call jeveuo(jexnum(main//'.CONNEX',lima(inc)), 'L', jmacou)
         macsu = zi(jcninv+inc-1)
-        call jeveuo(jexnum(main//'.CONNEX',macsu), 'L', jmacsu)  
-        call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+macsu-1)), typmail)        
+        call jeveuo(jexnum(main//'.CONNEX',macsu), 'L', jmacsu)
+        call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+macsu-1)), typmail)
         select case (typmail)
 ! --- Cas 2D --------------------------------------------------------------------------------------
 ! --- CAS TRIA 3 ----------------------------------------------------------------------------------
@@ -416,16 +439,16 @@ implicit none
 ! --- Cas 3D --------------------------------------------------------------------------------------
 ! --- CAS TETRA 4 ---------------------------------------------------------------------------------
 
-            case ('TETRA4') 
+            case ('TETRA4')
                 call cpte04(main  , maout , inc+nbpain   , jcoor , jcnnpa, conloc,&
                             limane, nomnoe, nbno  , jmacou, jmacsu, macou ,&
                             macsu , ind   , ind1)
 ! --- CAS TETRA 10 --------------------------------------------------------------------------------
-            case ('TETRA10') 
+            case ('TETRA10')
                 call cpte10(main  , maout , inc+nbpain  , jcoor , jcnnpa, conloc,&
                             limane, nomnoe, nbno  , jmacou, jmacsu, macou ,&
                             macsu , ind   , ind1  )
-       
+
 ! --- CAS HEXA 8 ----------------------------------------------------------------------------------
             case ('HEXA8')
                 if (typ_dec.eq.0) then
@@ -437,7 +460,7 @@ implicit none
                                   limane, nomnoe, nbno  , jmacou, jmacsu, macou ,&
                                   macsu , ind   , ind1)
                 end if
-        
+
 ! --- CAS HEXA 20 ---------------------------------------------------------------------------------
            case ('HEXA20')
                 if (typ_dec.eq.0) then
@@ -449,7 +472,7 @@ implicit none
                                  limane, nomnoe, nbno  , jmacou, jmacsu, macou ,&
                                  macsu , ind   , ind1  )
                 end if
-        
+
 ! --- CAS HEXA 27 ---------------------------------------------------------------------------------
            case ('HEXA27')
                 call cphe27(maout , inc+nbpain, jcnnpa, conloc,&
@@ -465,43 +488,55 @@ implicit none
                     call cppt6_2(main  , maout , inc+nbpain   , jcoor , jcnnpa, conloc,&
                                  limane, nomnoe, nbno  , jmacou, jmacsu, macou ,&
                                  macsu , ind   , ind1  )
-                end if               
+                end if
+! --- CAS PENTA 15 ---------------------------------------------------------------------------------
+           case ('PENTA15')
+                if (zi(jtypma+macou-1).eq.9) then
+                    call cppt15_1(main  , maout , inc+nbpain   , jcoor , jcnnpa, conloc,&
+                                  limane, nomnoe, nbno  , jmacou, jmacsu, macou ,&
+                                  macsu , ind   , ind1  )
+                else
+                    call cppt15_2(main  , maout , inc+nbpain   , jcoor , jcnnpa, conloc,&
+                                  limane, nomnoe, nbno  , jmacou, jmacsu, macou ,&
+                                  macsu , ind   , ind1  )
+                end if
            case default
                 ASSERT(.false.)
         end select
-    end do 
+    end do
 ! -------------------------------------------------------------------------------------------------
 !      MISE A JOUR DES MAILLES ET DE LA CONNECTIVITE
 ! -------------------------------------------------------------------------------------------------
     call codent(izone, 'G', knuzo)
     call jedetr(maout//'.CONNEX')
-    call jedetr(maout//'.NOMMAI') 
+    call jedetr(maout//'.NOMMAI')
     call jecrec(maout//'.CONNEX', 'G V I', 'NU', 'CONTIG', 'VARIABLE',&
                 nbmat)
     call jedetr(maout//'.COMAPA')
     call wkvect(maout//'.COMAPA', 'G V I', nbmat, jcnmpa)
     if (izone .ne. 1) then
         call jeveuo(main//'.COMAPA', 'L', odcmpa)
-    end if    
+    end if
     call juveca(maout//'.TYPMAIL', nbmat)
     call jeecra(maout//'.TYPMAIL', 'LONUTI', nbmat)
     call jeveuo(maout//'.TYPMAIL','E',jtpmao)
     call jecreo(maout//'.NOMMAI', 'G N K8')
     call jeecra(maout//'.NOMMAI', 'NOMMAX', nbmat)
-!   
+!
     call jelira(main//'.CONNEX','LONT',aux)
     call jeecra(maout//'.CONNEX','LONT',aux+conlen)
     ind = 1
     ind1 = 1
+    macou = 0
     do inc = 1, nma
         laux(1)=inc
         call utlisi('INTER', laux, 1, lima, nbma, res, 1, ntrou)
         call utlisi('INTER', laux, 1, zi(jcninv), nbma, res, 1, ntrou1)
         if (ntrou .eq. 1 .or. ntrou1 .eq. 1) then
-            call jeveuo(jexnum(limane,inc),'E',jlimane)    
+            call jeveuo(jexnum(limane,inc),'E',jlimane)
     select case(ntrou)
        case(1)
-           if (zi(jtypma+inc-1) .eq. 2 .or. zi(jtypma+inc-1) .eq. 12) then 
+           if (zi(jtypma+inc-1) .eq. 2 .or. zi(jtypma+inc-1) .eq. 12) then
                do incc=1,nbma
                    if (lima(incc) .eq. inc) then
                        macsu=zi(jcninv+incc-1)
@@ -512,30 +547,30 @@ implicit none
                end do
            end if
            10 continue
-           ASSERT(macsu .ne. 0) 
+           ASSERT(macsu .ne. 0)
            !  TYPMAIL = MAILLE  A TRAITER
-           call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+inc-1)), typmail_trait)  
+           call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+inc-1)), typmail_trait)
            select case(typmail_trait)
-               case('SEG2')       
-                   call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+macsu-1)), typmail)   
+               case('SEG2')
+                   call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+macsu-1)), typmail)
                    if ( typmail .eq. 'TRIA3') then
                        nbnwma = 2
                        nbnoma(1:nbnwma) = 2
-                       idtpma(1:nbnwma) = 2                      
+                       idtpma(1:nbnwma) = 2
                    elseif (typmail .eq. 'QUAD4') then
                        nbnwma = 3
                        nbnoma(1:nbnwma) = 2
                        idtpma(1:nbnwma) = 2
                    end if
-               case ('SEG3') 
+               case ('SEG3')
                    nbnwma = 1
                    nbnoma(1:nbnwma) = 3
                    idtpma(1:nbnwma) = 4
-               case ('TRIA3') 
+               case ('TRIA3')
                    nbnwma = 3
                    nbnoma(1:nbnwma) = 3
                    idtpma(1:nbnwma) = 7
-               case ('TRIA6') 
+               case ('TRIA6')
                    nbnwma = 3
                    nbnoma(1:nbnwma) = 6
                    idtpma(1:nbnwma) = 9
@@ -550,7 +585,7 @@ implicit none
                        idtpma(1:nbnwma) = 7
                    endif
                case ('QUAD8')
-                   if (typ_dec.eq.0) then
+                   if (typ_dec.eq.0 .and. zi(jtypma+macsu-1) .ne. 21) then
                        nbnwma = 5
                        nbnoma(1:nbnwma) = 8
                        idtpma(1:nbnwma) = 14
@@ -559,16 +594,27 @@ implicit none
                        nbnoma(1:nbnwma) = 6
                        idtpma(1:nbnwma) = 9
                    end if
-               case ('QUAD9') 
+               case ('QUAD9')
                    nbnwma = 1
                    nbnoma(1:nbnwma) = 9
                    idtpma(1:nbnwma) = 16
-       
+
                case default
                    ASSERT(.false.)
            end select
        case default
-           call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+inc-1)), typmail_trait)                 
+           if (zi(jtypma+inc-1) .eq. 20 .or. zi(jtypma+inc-1) .eq. 21) then
+               do incc=1,nbma
+                   if (zi(jcninv+incc-1) .eq. inc) then
+                       macou=lima(incc)
+                       goto 20
+                   else
+                       macou=0
+                   end if
+               end do
+               20 continue
+           end if
+           call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+inc-1)), typmail_trait)
            select case (typmail_trait)
                case ('TRIA3')
                    nbnwma = 2
@@ -595,7 +641,7 @@ implicit none
                    nbnoma(1:nbnwma) = 10
                    idtpma(1:nbnwma) = 19
                case ('HEXA8')
-                   if (typ_dec.eq.0) then 
+                   if (typ_dec.eq.0) then
                        nbnwma = 6
                        nbnoma(1:nbnwma) = 8
                        idtpma(1:nbnwma) = 25
@@ -605,7 +651,7 @@ implicit none
                        idtpma(1:nbnwma) = 23
                    end if
                case ('PENTA6')
-                   if (zi(jtypma+inc-1).eq.7) then 
+                   if (zi(jtypma+macou-1).eq.7) then
                        nbnwma = 4
                        nbnoma(1:3) = 5
                        nbnoma(4) = 4
@@ -632,18 +678,31 @@ implicit none
                    nbnwma = 1
                    nbnoma(1:nbnwma) = 27
                    idtpma(1:nbnwma) = 27
+               case ('PENTA15')
+                   if (zi(jtypma+macou-1).eq.9) then
+                       nbnwma = 4
+                       nbnoma(1:3) = 13
+                       nbnoma(4) = 10
+                       idtpma(1:3) = 24
+                       idtpma(4) = 19
+                   else
+                       nbnwma = 4
+                       nbnoma(1:2) = 13
+                       nbnoma(3:4) = 10
+                       idtpma(1:2) = 24
+                       idtpma(3:4) = 19
+                   end if
                case default
-            call utmess('A', 'CREALAC_1')
            end select
    end select
             do incc= 0,nbnwma-1
                 call jeveuo(jexnum(conloc,zi(jlimane+incc)),'L',jconloc)
                 zi(jlimane+incc)=ind+incc
-! ---------------------- NOM DE LA MAILLE 
+! ---------------------- NOM DE LA MAILLE
                 if (nbnwma .eq. 1) then
                     call jenuno(jexnum(main//'.NOMMAI',inc),nomma)
-                    call jecroc(jexnom(maout//'.NOMMAI',nomma))                       
-                else                       
+                    call jecroc(jexnom(maout//'.NOMMAI',nomma))
+                else
                     call codent(nma+ind1, 'G', knume)
                     lgma = lxlgut(knume)
                     if (lgma+2 .gt. 8) then
@@ -652,25 +711,25 @@ implicit none
                     nomma = knuzo(1:1)//'Z'// knume
                     call jecroc(jexnom(maout//'.NOMMAI',nomma))
                     ind1=ind1+1
-                end if                          
+                end if
 ! ----------------------- CONNECTIVITE MAILLE-PATCH
                 if (ntrou .eq. 1) then
-                    zi(jcnmpa+ind+incc-1)=zi(jlimane-1+nbnwma+1)  
+                    zi(jcnmpa+ind+incc-1)=zi(jlimane-1+nbnwma+1)
                 endif
 ! ----------------------- NOUVELLES MAILLES
                 zi(jtpmao+ind+incc-1)=  idtpma(incc+1)
                 call jeecra(jexnum(maout//'.CONNEX',ind+incc),&
                             'LONMAX',nbnoma(incc+1))
                 call jeveuo(jexnum(maout//'.CONNEX',ind+incc),&
-                            'E', jcnmao)                        
+                            'E', jcnmao)
                 do inc2=1, nbnoma(incc+1)
                         zi(jcnmao+inc2-1)=zi(jconloc+inc2-1)
-                end do                   
+                end do
             end do
             ind=ind+nbnwma
         else
 ! --------------COPIE A L'IDENTIQUE
-            zi(jtpmao+ind-1)=zi(jtypma+inc-1)       
+            zi(jtpmao+ind-1)=zi(jtypma+inc-1)
             call jenuno(jexnum(main//'.NOMMAI',inc),nomma)
             call jecroc(jexnom(maout//'.NOMMAI',nomma))
             call jeveuo(jexnum(main//'.CONNEX',inc), 'L', jcnmai)
@@ -684,9 +743,9 @@ implicit none
                 if  (zi(odcmpa+inc-1) .ne. 0) then
                     zi(jcnmpa+ind-1) = zi(odcmpa+inc-1)
                 end if
-            end if 
-            ind=ind+1 
-        endif   
+            end if
+            ind=ind+1
+        endif
     end do
 ! ----------------------------------------------------------------------
 !      MISE A JOUR DES GROUPES DE MAILLE
@@ -712,22 +771,22 @@ implicit none
                 ntrou)
     call utlisi('INTER', zi(jgma), lgma, zi(jcninv), nbma, zi(jrgma), nbma,&
                  ntrou1)
-    call jecroc(jexnom(maout//'.GROUPEMA',nomma))  
+    call jecroc(jexnom(maout//'.GROUPEMA',nomma))
         if (ntrou .gt. 0 .or. ntrou1 .gt. 0 ) then
 ! ----- DIMENSION DU NOUVEAU GROUPE_MA ------------------------------------------------------------
-     nbnwma = 0 
+     nbnwma = 0
      call wkvect(cnivax,'V V I', nma, jcivax)
      call cnmpmc(main,lgma, zi(jgma),zi(jcivax))
      do incc =1, lgma
          macou = zi(jgma+incc-1)
-         
+
          call utlisi('INTER',  zi(jgma+incc-1), 1,lima, nbma, res, 1,&
                      ntrou)
          call utlisi('INTER',  zi(jgma+incc-1), 1, zi(jcninv), nbma, res, 1,&
                      ntrou1)
-                     
+
          if (ntrou .eq. 1) then
-             call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+macou-1)), typmail_trait) 
+             call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+macou-1)), typmail_trait)
              select case (typmail_trait)
                  case ('SEG2')
                      call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+zi(jcivax+incc-1)-1)), typmail)
@@ -736,12 +795,12 @@ implicit none
                      elseif (typmail.eq. 'QUAD4' ) then
                          nbnwma = nbnwma + 3
                      endif
-                 case ('SEG3', 'QUAD9') 
+                 case ('SEG3', 'QUAD9')
                      nbnwma = nbnwma + 1
-                 case ('TRIA3', 'TRIA6') 
+                 case ('TRIA3', 'TRIA6')
                      nbnwma = nbnwma + 3
                  case ('QUAD4', 'QUAD8')
-                     if (typ_dec.eq.0) then  
+                     if (typ_dec.eq.0) then
                          nbnwma = nbnwma + 5
                      else
                          nbnwma = nbnwma + 4
@@ -750,23 +809,23 @@ implicit none
                      ASSERT(.false.)
              end select
          elseif (ntrou1 .eq. 1) then
-             call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+macou-1)), typmail_trait) 
+             call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+macou-1)), typmail_trait)
              select case (typmail_trait)
                  case ('TRIA3')
                      nbnwma = nbnwma + 2
-                 case ('TRIA6', 'QUAD8', 'HEXA27') 
+                 case ('TRIA6', 'QUAD8', 'HEXA27')
                      nbnwma = nbnwma + 1
-                 case ('QUAD4') 
+                 case ('QUAD4')
                      nbnwma = nbnwma + 4
-                 case ('TETRA4', 'TETRA10') 
+                 case ('TETRA4', 'TETRA10')
                      nbnwma = nbnwma + 3
-                 case ('HEXA8', 'HEXA20') 
-                     if (typ_dec.eq.0) then  
+                 case ('HEXA8', 'HEXA20')
+                     if (typ_dec.eq.0) then
                          nbnwma = nbnwma + 6
                      else
                          nbnwma = nbnwma + 5
                      end if
-                 case ('PENTA6') 
+                 case ('PENTA6', 'PENTA15')
                      nbnwma = nbnwma + 4
                  case default
                      ASSERT(.false.)
@@ -780,7 +839,7 @@ implicit none
      call jeecra(jexnum(maout//'.GROUPEMA',inc),'LONMAX',&
                  nbnwma)
      call jeveuo(jexnum(maout//'.GROUPEMA',inc),'E',jgmao)
-! ----- REMPLISSAGE NOUVEAU GROUPE_MAI ------------------------------------------------------------ 
+! ----- REMPLISSAGE NOUVEAU GROUPE_MAI ------------------------------------------------------------
   do incc =1, lgma
       macou = zi(jgma+incc-1)
       call utlisi('INTER',  zi(jgma+incc-1), 1,lima, nbma, res, 1,&
@@ -789,7 +848,7 @@ implicit none
                   ntrou1)
       nbnwma = 1
       if (ntrou .eq. 1) then
-          call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+macou-1)), typmail_trait)                 
+          call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+macou-1)), typmail_trait)
           select case (typmail_trait)
 ! NTROU : MAILLES DE PEAU
            case ('SEG2')
@@ -799,12 +858,12 @@ implicit none
                elseif (typmail .eq. 'QUAD4' ) then
                    nbnwma = 3
                endif
-           case ('SEG3', 'QUAD9')               
+           case ('SEG3', 'QUAD9')
                nbnwma =  1
-           case ('TRIA3', 'TRIA6') 
+           case ('TRIA3', 'TRIA6')
                nbnwma = 3
-           case ('QUAD4', 'QUAD8') 
-               if (typ_dec.eq.0) then  
+           case ('QUAD4', 'QUAD8')
+               if (typ_dec.eq.0) then
                    nbnwma =  5
                else
                    nbnwma =  4
@@ -813,35 +872,35 @@ implicit none
                ASSERT(.false.)
      end select
     elseif (ntrou1 .eq. 1) then
-        call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+macou-1)), typmail_trait)   
+        call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+macou-1)), typmail_trait)
         select case (typmail_trait)
 ! NTROU1 : MAILLES DE CORPS
-            case ('TRIA3') 
+            case ('TRIA3')
                 nbnwma = 2
-            case ('TRIA6', 'QUAD8', 'HEXA27') 
+            case ('TRIA6', 'QUAD8', 'HEXA27')
                 nbnwma =  1
-            case ('QUAD4') 
+            case ('QUAD4')
                 nbnwma =  4
-            case ('TETRA4', 'TETRA10') 
+            case ('TETRA4', 'TETRA10')
                 nbnwma = 3
             case ('HEXA8', 'HEXA20')
-                if (typ_dec.eq.0) then  
+                if (typ_dec.eq.0) then
                    nbnwma =  6
                else
                    nbnwma =  5
                end if
-           case ('PENTA6') 
+           case ('PENTA6', 'PENTA15')
                nbnwma = 4
             case default
                 ASSERT(.false.)
         end select
     endif
-    if (nbnwma .gt. 1) then                              
+    if (nbnwma .gt. 1) then
     call jeveuo(jexnum(limane,macou),'L', jlimane)
         do ind1= 1, nbnwma
             zi(jgmao+ind-1+ind1-1)=zi(jlimane+ind1-1)
         end do
-    ind=ind+nbnwma                
+    ind=ind+nbnwma
     else
 ! ---------------------- RECOPIE A L'IDENTIQUE
                     call jenuno(jexnum(main//'.NOMMAI',zi(jgma+incc-1)),&
@@ -868,9 +927,9 @@ implicit none
     end do
 ! ---------------------------------------------------------------------
 !      DESTRUCTION DES VARIABLES AUXILIAIRES
-! --------------------------------------------------------------------- 
+! ---------------------------------------------------------------------
    call jedetr(limane)
    call jedetr(conloc)
-   call jedetr(cninv)      
+   call jedetr(cninv)
    call jedema()
 end subroutine

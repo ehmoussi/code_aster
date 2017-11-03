@@ -41,7 +41,7 @@ subroutine cpnoq(main,numa,coor,ind,nomnoe)
 !
 !
 ! ----------------------------------------------------------------------
-!         CREATION DES DDL SUPPLEMENTAIRES 
+!         CREATION DES DDL SUPPLEMENTAIRES
 !         SUR LA FACE DE LA ZONE DE CONTACT ESCLAVE
 ! ----------------------------------------------------------------------
 ! IN        MAIN    MAILLAGE INITIAL
@@ -83,17 +83,17 @@ subroutine cpnoq(main,numa,coor,ind,nomnoe)
     end do
 ! --- CALCUL DES COORDONNEES DES NOUVEAUX NOEUDS
 
-    call jeveuo(jexnum(main//'.CONNEX',numa),'L',jtab)  
+    call jeveuo(jexnum(main//'.CONNEX',numa),'L',jtab)
     do  inc1=1, 6
-        lino(inc1)= zi(jtab+inc1-1) 
+        lino(inc1)= zi(jtab+inc1-1)
     end do
     aux=1
     do inc1=1,6
         do inc2=1,3
-            tabar(aux+inc2-1) =  coor(inc2,lino(inc1))      
+            tabar(aux+inc2-1) =  coor(inc2,lino(inc1))
         end do
         aux=aux+3
-    end do 
+    end do
     eletyp='TR6'
 ! --- MILIEU DU SEGMENT [NOEUDS1 CENTRE DE GRAVITE]
     xp(1)=0.d0
@@ -137,7 +137,7 @@ subroutine cpnoq(main,numa,coor,ind,nomnoe)
     xe(3)=0.d0
     call reerel(eletyp, 6, 3, tabar, xe, xp)
     coor(1,ind+3) = xp(1)
-    coor(2,ind+3) = xp(2)  
+    coor(2,ind+3) = xp(2)
     coor(3,ind+3) = xp(3)
 !
 
