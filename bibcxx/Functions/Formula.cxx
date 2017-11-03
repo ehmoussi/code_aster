@@ -89,7 +89,10 @@ void FormulaInstance::setExpression( const std::string expression )
     const std::string name = "formula";
     _expression = expression;
     Py_XDECREF(_code);
-    _code = Py_CompileString(_expression.c_str(), name.c_str(), Py_eval_input);
+    PyCompilerFlags flags;
+    flags.cf_flags = CO_FUTURE_DIVISION;
+    _code = Py_CompileStringFlags(_expression.c_str(), name.c_str(),
+                                  Py_eval_input, &flags);
     (*_pointers)[0] = (long)_code;
     if ( _code == NULL ) {
         PyErr_Print();
