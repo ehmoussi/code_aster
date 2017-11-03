@@ -19,8 +19,15 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
+from ..Supervis import logger
+from .ExecuteCommand import GlobalCommandsData
 
-def FIN( **kwargs ):
-    """Does nothing. The memory manager is closed when :mod:`libaster`
-    is unloaded."""
-    return None
+
+def FIN(**keywords):
+    """Does nothing else printing some informations about the execution.
+    The memory manager is closed when :mod:`libaster` is unloaded.
+
+    Arguments:
+        keywords (dict): Ignored
+    """
+    logger.info(repr(GlobalCommandsData.timer()))

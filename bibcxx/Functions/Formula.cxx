@@ -24,10 +24,12 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <cstdio>
 
 #include "astercxx.h"
 #include "Functions/Formula.h"
 #include "Supervis/ResultNaming.h"
+#include "Utilities/Tools.h"
 
 
 FormulaInstance::FormulaInstance( const std::string jeveuxName ):
@@ -35,15 +37,24 @@ FormulaInstance::FormulaInstance( const std::string jeveuxName ):
     _jeveuxName( getName() ),
     _property( JeveuxVectorChar24( getName() + ".PROL" ) ),
     _variables( JeveuxVectorChar8( getName() + ".NOVA" ) ),
+    _pointers( JeveuxVectorLong( getName() + ".ADDR" ) ),
     _expression( "" ),
-    _context( "" )
+    _code( NULL ),
+    _context( NULL )
 {
+    propertyAllocate();
+    _pointers->allocate( Permanent, 2 );
 }
 
 FormulaInstance::FormulaInstance() :
     FormulaInstance::FormulaInstance( ResultNaming::getNewResultName() )
 {
-    propertyAllocate();
+}
+
+FormulaInstance::~FormulaInstance()
+{
+    Py_XDECREF(_code);
+    Py_XDECREF(_context);
 }
 
 void FormulaInstance::setVariables( const std::vector< std::string > &names )
@@ -63,11 +74,102 @@ void FormulaInstance::setVariables( const std::vector< std::string > &names )
 std::vector< std::string > FormulaInstance::getVariables() const
 {
     _variables->updateValuePointer();
-    long nbvar = _variables->size();
+    long nbvars = _variables->size();
     std::vector< std::string > vars;
-    for ( int i = 0; i < nbvar; ++i )
+    for ( int i = 0; i < nbvars; ++i )
     {
         vars.push_back( (*_variables)[i].rstrip() );
     }
     return vars;
+}
+
+void FormulaInstance::setExpression( const std::string expression )
+    throw(std::runtime_error)
+{
+    const std::string name = "formula";
+    _expression = expression;
+    Py_XDECREF(_code);
+    PyCompilerFlags flags;
+    flags.cf_flags = CO_FUTURE_DIVISION;
+    _code = Py_CompileStringFlags(_expression.c_str(), name.c_str(),
+                                  Py_eval_input, &flags);
+    (*_pointers)[0] = (long)_code;
+    if ( _code == NULL ) {
+        PyErr_Print();
+        throw std::runtime_error("Invalid syntax in expression.");
+    }
+}
+
+double FormulaInstance::evaluate( const std::vector< double > &values ) const
+    throw ( std::runtime_error )
+{
+    int iret = 0;
+    std::vector< std::string > variables = getVariables();
+    double result = evaluate_formula(_code, _context, variables, values, &iret);
+    if ( iret == 1 ) {
+        const long nbvars = variables.size();
+        const long nbvalues = values.size();
+        throw std::runtime_error("Expecting exactly " + std::to_string(nbvars)
+                                + " values, not " + std::to_string(nbvalues));
+    } else if ( iret == 4 ) {
+        throw std::runtime_error("Formula: Error during evaluation.");
+    }
+    return result;
+}
+
+
+/* functions shared with evaluation from Fortran */
+double evaluate_formula( const PyObject* code, PyObject* globals,
+                         const std::vector< std::string > &variables,
+                         const std::vector< double > &values,
+                         int* retcode )
+{
+    const long nbvars = variables.size();
+    const long nbvalues = values.size();
+    if ( nbvalues != nbvars ) {
+        *retcode = 1;
+        return 0.;
+    }
+
+    PyObject* locals = PyDict_New();
+    for ( int i = 0 ; i < nbvars; ++i ) {
+        PyDict_SetItemString(locals, trim(variables[i]).c_str(),
+                                     PyFloat_FromDouble(values[i]));
+    }
+
+    PyObject* res = PyEval_EvalCode((PyCodeObject*)code, globals, locals);
+    Py_DECREF(locals);
+    if ( res == NULL ) {
+        PyErr_Print();
+        std::cout << "Parameters values:";
+        PyObject_Print(locals, stdout, 0);
+        std::cout << std::endl;
+        *retcode = 4;
+        return 0.;
+    }
+    double result = PyFloat_AsDouble(res);
+    Py_DECREF(res);
+
+    return result;
+}
+
+/* Interface for Fortran calls */
+void DEFPPSPPPP(EVAL_FORMULA, eval_formula,
+    ASTERINTEGER* pcode, ASTERINTEGER* pglobals,
+    char* array_vars, STRING_SIZE lenvars, ASTERDOUBLE* array_values,
+    ASTERINTEGER* nbvar, _OUT ASTERINTEGER* iret, _OUT ASTERDOUBLE* result )
+{
+    PyObject* code = (PyObject*)(*pcode);
+    PyObject* globals = (PyObject*)(*pglobals);
+
+    std::vector< std::string > vars;
+    std::vector< double > values;
+    for ( int i = 0; i < *nbvar; ++i ) {
+        vars.push_back(std::string( array_vars + i * lenvars, lenvars ));
+        values.push_back( array_values[i] );
+    }
+
+    int ret = 0;
+    *result = (ASTERDOUBLE)evaluate_formula(code, globals, vars, values, &ret);
+    *iret = (ASTERINTEGER)ret;
 }

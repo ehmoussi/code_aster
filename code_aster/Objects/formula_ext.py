@@ -23,13 +23,9 @@
 ****************************************
 """
 
-from __future__ import division
-
-import pickle
-
 from libaster import Formula
 
-from ..Utilities import accept_array, deprecated
+from ..Utilities import deprecated, force_list
 
 
 class injector(object):
@@ -42,24 +38,8 @@ class injector(object):
             return type.__init__(self, name, bases, dict)
 
 
-def initial_context():
-    """Returns `initial` Python context (independent of Stage and Command)
-
-    Returns:
-        dict: pairs of name per corresponding Python instance.
-    """
-    import math
-    context = {}
-    for func in dir(math):
-        if not func.startswith('_'):
-            context[func] = getattr(math, func)
-
-    return context
-
 class ExtendedFormula(injector, Formula):
     cata_sdj = "SD.sd_fonction.sd_formule"
-    code = None
-    _initial_context = initial_context()
 
     def __call__(self, *val):
         """Evaluation of the formula.
@@ -70,21 +50,7 @@ class ExtendedFormula(injector, Formula):
         Returns:
             float: Value of the formula for these parameters.
         """
-        if not self.code:
-            expr = self.getExpression()
-            self.code = compile(expr, expr, "eval")
-        context = {}
-        ctxt = self.getContext()
-        if ctxt:
-            context.update(pickle.loads(ctxt))
-        for param, value in zip(self.getVariables(), val):
-            context[param] = value
-        try:
-            value = eval(self.code, context, self._initial_context)
-        except Exception, exc:
-            raise ValueError("Error evaluating the formula {0!r}:\n{1}".format(
-                self.getExpression(), str(exc)))
-        return value
+        return self.evaluate(force_list(val))
 
     @property
     @deprecated(help="Use 'getVariables()' instead.")
