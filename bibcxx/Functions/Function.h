@@ -32,13 +32,14 @@
 
 
 typedef std::vector< double > VectorDouble;
+typedef std::vector< std::complex< double > > VectorComplex;
 
 /**
-* class FunctionInstance
+* class BaseFunctionInstance
 *   Create a datastructure for a function with real values
 * @author Mathieu Courtois
 */
-class FunctionInstance: public DataStructure
+class BaseFunctionInstance: public DataStructure
 {
     private:
         // Nom Jeveux de la SD
@@ -46,8 +47,6 @@ class FunctionInstance: public DataStructure
         std::string  _jeveuxName;
         // Vecteur Jeveux '.PROL'
         JeveuxVectorChar24 _property;
-        // Vecteur Jeveux '.VALE'
-        JeveuxVectorDouble _value;
 
         void propertyAllocate()
         {
@@ -61,27 +60,23 @@ class FunctionInstance: public DataStructure
             (*_property)[5] = _jeveuxName;
         };
 
+    protected:
+        // Vecteur Jeveux '.VALE'
+        JeveuxVectorDouble _value;
+
     public:
         /**
-         * @typedef FunctionPtr
-         * @brief Pointeur intelligent vers un Function
+         * @typedef BaseFunctionPtr
+         * @brief Pointeur intelligent vers un BaseFunction
          */
-        typedef boost::shared_ptr< FunctionInstance > FunctionPtr;
-
-        /**
-         * @brief Constructeur
-         */
-        static FunctionPtr create()
-        {
-            return FunctionPtr( new FunctionInstance );
-        };
+        typedef boost::shared_ptr< BaseFunctionInstance > BaseFunctionPtr;
 
         /**
         * Constructeur
         */
-        FunctionInstance();
+        BaseFunctionInstance( const std::string type );
 
-        FunctionInstance( const std::string jeveuxName );
+        BaseFunctionInstance( const std::string jeveuxName, const std::string type );
 
         /**
         * @brief Definition of the name of the parameter (abscissa)
@@ -130,7 +125,8 @@ class FunctionInstance: public DataStructure
         * @param ord values of the ordinates
         * @type  ord vector of double
         */
-        void setValues( const VectorDouble &absc, const VectorDouble &ord ) throw ( std::runtime_error );
+        virtual void setValues( const VectorDouble &absc, const VectorDouble &ord )
+            throw ( std::runtime_error );
 
         /**
         * @brief Return the values of the function as an unidimensional vector
@@ -154,7 +150,7 @@ class FunctionInstance: public DataStructure
         /**
         * @brief Return the number of points of the function
         */
-        long size() const
+        virtual long size() const
         {
             return _value->size() / 2;
         }
@@ -186,10 +182,119 @@ class FunctionInstance: public DataStructure
 };
 
 /**
-* @typedef FunctionPtr
-* @brief  Pointer to a FunctionInstance
-* @author Mathieu Courtois
-*/
+ * class FunctionInstance
+ *   Create a datastructure for a function with real values
+ * @author Mathieu Courtois
+ */
+class FunctionInstance: public BaseFunctionInstance
+{
+
+public:
+    /**
+     * @typedef FunctionPtr
+     * @brief Pointeur intelligent vers un Function
+     */
+    typedef boost::shared_ptr< FunctionInstance > FunctionPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static FunctionPtr create()
+    {
+        return FunctionPtr( new FunctionInstance );
+    };
+
+    /**
+    * Constructeur
+    */
+    FunctionInstance():
+        BaseFunctionInstance( "FONCTION" )
+    {
+    };
+
+    FunctionInstance( const std::string jeveuxName ):
+        BaseFunctionInstance( jeveuxName, "FONCTION" )
+    {
+    };
+
+};
+
+
+/**
+ * class FunctionComplexInstance
+ *   Create a datastructure for a function with complex values
+ * @author Mathieu Courtois
+ */
+class FunctionComplexInstance: public BaseFunctionInstance
+{
+
+public:
+    /**
+     * @typedef FunctionPtr
+     * @brief Pointeur intelligent vers un FunctionComplex
+     */
+    typedef boost::shared_ptr< FunctionComplexInstance > FunctionComplexPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static FunctionComplexPtr create()
+    {
+        return FunctionComplexPtr( new FunctionComplexInstance );
+    };
+
+    /**
+    * Constructeur
+    */
+    FunctionComplexInstance():
+        BaseFunctionInstance( "FONCTION_C" )
+    {
+    };
+
+    FunctionComplexInstance( const std::string jeveuxName ):
+        BaseFunctionInstance( jeveuxName, "FONCTION_C" )
+    {
+    };
+
+    /**
+     * @brief Assign the values of the function
+     * @param absc values of the abscissa
+     * @type  absc vector of double
+     * @param ord values of the ordinates (real1, imag1, real2, imag2...)
+     * @type  ord vector of double
+     */
+    void setValues( const VectorDouble &absc, const VectorDouble &ord )
+        throw ( std::runtime_error );
+
+    /**
+     * @brief Assign the values of the function
+     * @param absc values of the abscissa
+     * @type  absc vector of double
+     * @param ord values of the ordinates
+     * @type  ord vector of complex
+     */
+    void setValues( const VectorDouble &absc, const VectorComplex &ord )
+        throw ( std::runtime_error );
+
+};
+
+
+/**
+ * @typedef BaseFunctionPtr
+ * @brief  Pointer to a BaseFunctionInstance
+ */
+typedef boost::shared_ptr< BaseFunctionInstance > BaseFunctionPtr;
+
+/**
+ * @typedef FunctionPtr
+ * @brief  Pointer to a FunctionInstance
+ */
 typedef boost::shared_ptr< FunctionInstance > FunctionPtr;
+
+/**
+ * @typedef FunctionComplexPtr
+ * @brief  Pointer to a FunctionComplexInstance
+ */
+typedef boost::shared_ptr< FunctionComplexInstance > FunctionComplexPtr;
 
 #endif /* FUNCTION_H_ */

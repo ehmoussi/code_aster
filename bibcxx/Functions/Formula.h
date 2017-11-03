@@ -118,6 +118,7 @@ class FormulaInstance: public DataStructure
             // because needed by gettco (in CALC_FONC_INTERP for example)
             setType("FORMULE_C");
         }
+
         /**
          * @brief Definition of the expression of the formula
          * @param expression expression of the formula
