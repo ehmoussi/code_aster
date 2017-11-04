@@ -56,75 +56,30 @@ VITES=AFFE_CHAR_MECA(
          MODELE=MO,
          VITE_FACE=_F( GROUP_MA = 'velo',
                   VNOR = -1.0),
-          IMPE_FACE=_F( GROUP_MA = 'velo',
-                    IMPE = -1000.)
          )
 
 IMPE=AFFE_CHAR_MECA(
          MODELE=MO,
-         IMPE_FACE=_F( GROUP_MA = 'impe',
-                   IMPE = -408.0)
+         IMPE_FACE=(_F( GROUP_MA = 'impe',
+                        IMPE = -408.0),
+                    _F( GROUP_MA = 'velo',
+                        IMPE = -1000.))
          )
 
-#
-# MATRICES ELEMENTAIRES
-#
-MK=CALC_MATR_ELEM(  MODELE=MO,
-                     CHAM_MATER=CHM,
-                      OPTION='RIGI_MECA',
-                      CHARGE=VITES
-                    )
 
-MM=CALC_MATR_ELEM(  MODELE=MO,
-                     CHAM_MATER=CHM,
-                      OPTION='MASS_MECA',
-                      CHARGE=VITES
-                    )
-
-MI=CALC_MATR_ELEM(  MODELE=MO,
-                     CHAM_MATER=CHM,
-                      OPTION='IMPE_MECA',
-                      CHARGE=(IMPE, VITES,)
-                    )
-
-VECEL=CALC_VECT_ELEM(
-         OPTION='CHAR_MECA',
-         CHAM_MATER=CHM,
-         CHARGE=VITES
-        )
-
-#
-# ASSEMBLAGE
-#
-NDDL=NUME_DDL(  MATR_RIGI=MK)
-
-MATK=ASSE_MATRICE(  MATR_ELEM=MK,
-                      NUME_DDL=NDDL)
-
-MATM=ASSE_MATRICE(  MATR_ELEM=MM,
-                      NUME_DDL=NDDL)
-
-MATA=ASSE_MATRICE(  MATR_ELEM=MI,
-                      NUME_DDL=NDDL)
-
-VECAS=ASSE_VECTEUR(
-         VECT_ELEM=VECEL,
-         NUME_DDL=NDDL
-        )
-
-#
 #  REPONSE HARMONIQUE
-#
-HARMO=DYNA_VIBRA(TYPE_CALCUL='HARM',BASE_CALCUL='PHYS',
-         MATR_MASS=MATM,
-         MATR_RIGI=MATK,
-         MATR_IMPE_PHI=MATA,
-         FREQ=500.0,
-         EXCIT=_F( VECT_ASSE = VECAS,
-               COEF_MULT = 1.0,
-               PHAS_DEG = 90.0,
-               PUIS_PULS = 1)
-         )
+
+HARMO=DYNA_LINE(TYPE_CALCUL='HARM',
+                 BASE_CALCUL='PHYS',
+                 MODELE=MO,
+                 CHAM_MATER=CHM,
+                 CHARGE=IMPE,
+                 FREQ=500.0,
+                 EXCIT=_F(CHARGE = VITES,
+                          COEF_MULT = 1.0,
+                          PHAS_DEG = 90.0,
+                          PUIS_PULS = 1)
+                 )
 
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    VALE_CALC_C=-289.77126857898+7.761767307327E-03j,
@@ -162,7 +117,6 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    NOM_CMP='PRES',),
                 ),
           )
-
 
 FIN()
 #

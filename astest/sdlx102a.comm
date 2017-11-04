@@ -81,25 +81,13 @@ CHAMPMAT=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
 # ----------------------------------------------------------------------
 #       CONDITIONS LIMITES
 
-CON_LIM=AFFE_CHAR_MECA(MODELE=MODELE,
-                       DDL_IMPO=(
-                                 _F(GROUP_NO='ENCASTRE',
-                                   DX=0.0,
-                                   DY=0.0,
-                                   DZ=0.0,
-                                   DRX=0.0,
-                                   DRY=0.0,
-                                   DRZ=0.0,),
-                                 _F(GROUP_NO='SBASF',
-                                   DX=0.0,
-                                   DY=0.0,
-                                   DZ=0.0,
-                                    ),
-                                 ),
-                       LIAISON_SOLIDE=(_F(GROUP_NO=('PA0','SBAS1',),),
-                                       _F(GROUP_NO=('PB0','SBAS2',),),
-                                      ),
-                      );
+                      
+CL_RIGID=AFFE_CHAR_MECA(MODELE=MODELE,
+                                    LIAISON_SOLIDE=(_F(GROUP_NO=('PA0','SBAS1',),),
+                                                   _F(GROUP_NO=('PB0','SBAS2',),),
+                                                  ),
+                                    )
+
 # FIN CONDITIONS LIMITES
 #
 #
@@ -172,106 +160,16 @@ CARA_ELE=AFFE_CARA_ELEM(MODELE=MODELE,
 # 
 # IMPR_TABLE(TABLE=MASSE_TO,);
 #
-# MATRICE DE RIGIDITE ELEMENTAIRE
-
-RIGI_ELE=CALC_MATR_ELEM(OPTION='RIGI_MECA',
-                        MODELE=MODELE,
-                        CHAM_MATER=CHAMPMAT,
-                        CARA_ELEM=CARA_ELE,
-                        CHARGE=CON_LIM,);
-#
-# NUMEROTATION DES DDL
-
-NUMEDDL=NUME_DDL(MATR_RIGI=RIGI_ELE,);
-#
-# MATRICE DE RIGIDITE GLOBALE
-
-RIGIDITE=ASSE_MATRICE(MATR_ELEM=RIGI_ELE,
-                      NUME_DDL=NUMEDDL,);
-#
-# MATRICE DE MASSE ELEMENTAIRE
-
-MASS_ELE=CALC_MATR_ELEM(OPTION='MASS_MECA',
-                        MODELE=MODELE,
-                        CHAM_MATER=CHAMPMAT,
-                        CARA_ELEM=CARA_ELE,
-                        CHARGE=CON_LIM,);
-#
-# MATRICE DE MASSE GLOBALE
-
-MASSE=ASSE_MATRICE(MATR_ELEM=MASS_ELE,
-                   NUME_DDL=NUMEDDL,);
-#
-# MODE MECANIQUE
-
-MODE=CALC_MODES(MATR_RIGI=RIGIDITE,
-                     MATR_MASS=MASSE,
-                     OPTION='BANDE',
-                     CALC_FREQ=_F(FREQ=(1.0,200.,600.0,),),
-                     IMPRESSION=_F(),);
-
-
-INTERDYN=DEFI_INTERF_DYNA(NUME_DDL=NUMEDDL,
-                          INTERFACE=_F(NOM='DROITE',
-                                       TYPE='CRAIGB',
-                                       GROUP_NO=('ENCASTRE','SBASF'),
-                                       ),
-                         );
-
-BAMO=DEFI_BASE_MODALE(CLASSIQUE=_F(INTERF_DYNA=INTERDYN,
-                                   MODE_MECA=MODE,
-                                   NMAX_MODE=999,),);
-
-MAEL=MACR_ELEM_DYNA(BASE_MODALE=BAMO,);
-
-FO1=DEFI_FONCTION(NOM_PARA='FREQ',
-                  VALE=(0.0,1.0,100.0,1.0,),);
 
 CHA1=AFFE_CHAR_MECA(MODELE=MODELE,
                     FORCE_NODALE=_F(NOEUD='NA1',
                                     FX=10000.0,),);
 
-VEC1_ELE=CALC_VECT_ELEM(OPTION='CHAR_MECA',
-                        CHARGE=CHA1,
-                        CHAM_MATER=CHAMPMAT,
-                        CARA_ELEM=CARA_ELE,);
-
-VECAS1=ASSE_VECTEUR(VECT_ELEM=VEC1_ELE,
-                    NUME_DDL=NUMEDDL,);
-#
-
 CHA2=AFFE_CHAR_MECA(MODELE=MODELE,
                     FORCE_NODALE=_F(NOEUD='NA1',
                                     FY=10000.0,),);
 
-VEC2_ELE=CALC_VECT_ELEM(OPTION='CHAR_MECA',
-                        CHARGE=CHA2,
-                        CHAM_MATER=CHAMPMAT,
-                        CARA_ELEM=CARA_ELE,);
-
-VECAS2=ASSE_VECTEUR(VECT_ELEM=VEC2_ELE,
-                    NUME_DDL=NUMEDDL,);
-#
-
 # Pour reference :
-TABSOL0 = DEFI_SOL_MISS(
-   TITRE="SOL DU TEST NUPEC",
-   MATERIAU=(
-      _F(E=9.7776e7,  NU=0.120, RHO=1.94e3, AMOR_HYST=0.10),
-      _F(E=6.1493e8,  NU=0.371, RHO=1.94e3, AMOR_HYST=0.10),
-      _F(E=1.0151e9,  NU=0.415, RHO=1.94e3, AMOR_HYST=0.04),
-      _F(E=1.019e10,  NU=0.386, RHO=2.21e3, AMOR_HYST=0.04),
-      _F(E=1.501e10,  NU=0.343, RHO=2.21e3, AMOR_HYST=0.04),
-   ),
-   COUCHE=(
-      _F(EPAIS=0.5, NUME_MATE=1, RECEPTEUR="OUI", SOURCE="OUI"),
-      _F(EPAIS=2.5, NUME_MATE=2,),
-      _F(EPAIS=3.0, NUME_MATE=3,),
-      _F(EPAIS=14., NUME_MATE=4,),
-      _F(SUBSTRATUM="OUI", NUME_MATE=5,),
-   ),
-   INFO=2,
-)
 TABSOL = DEFI_SOL_MISS(
    TITRE="SOL DU TEST NUPEC",
    MATERIAU=(
@@ -297,157 +195,121 @@ TABSOL = DEFI_SOL_MISS(
 # TRAITEMENT DE MISS3D PAR EXEC_LOGICIEL
 #---------------------------------------
 #
-# CALC_MISS(
-#     TABLE_SOL=TABSOL,
-#     TYPE_RESU='FICHIER',
-#     MACR_ELEM_DYNA=MAEL,
-#     GROUP_MA_INTERF='SBAST',
-#     PROJET = 'SDLX102A10',
-#               PARAMETRE=_F(
-#                FREQ_MIN=7.3,
-#                FREQ_MAX=10.4,
-#                FREQ_PAS=3.1,
-#                Z0= 0.,
-#                TYPE='BINAIRE',
-#                DREF=4.,
-#                SURF='OUI',
-#                # RFIC = 1.,
-#                ALGO = 'DEPL',
-#                OFFSET_MAX=30,
-#                OFFSET_NB=300,
-#               ),
-#                UNITE_RESU_IMPE=38,
-#                UNITE_RESU_FORC=28,
-#     INFO=1,
-# )
-dyge1=CALC_MISS(
-    TABLE_SOL=TABSOL,
-    TYPE_RESU='HARM_GENE',
-    MACR_ELEM_DYNA=MAEL,
-    BASE_MODALE=BAMO,
-    MATR_RIGI=RIGIDITE,
-    MATR_MASS=MASSE,
-    AMOR_REDUIT=0.01,
-    GROUP_MA_INTERF='SBAST',
-    MODELE=MODELE,
-    PROJET = 'SDLX102A1',
-    EXCIT_HARMO=(
-        _F(VECT_ASSE=VECAS1,
-           COEF_MULT=1.,),
-    ),
-              PARAMETRE=_F(
-               FREQ_MIN=7.3,
-               FREQ_MAX=10.4,
-               FREQ_PAS=3.1,
-               Z0= 0.,
-               TYPE='BINAIRE',
-               DREF=4.,
-               SURF='OUI',
-               ALGO = 'DEPL',
-               OFFSET_MAX=30,
-               OFFSET_NB=300,
-              ),
-               UNITE_RESU_IMPE=38,
-               UNITE_RESU_FORC=28,
-    INFO=1,
-)
-
-dyge2=CALC_MISS(
-    TABLE_SOL=TABSOL,
-    TYPE_RESU='HARM_GENE',
-    MACR_ELEM_DYNA=MAEL,
-    BASE_MODALE=BAMO,
-    MATR_RIGI=RIGIDITE,
-    MATR_MASS=MASSE,
-    AMOR_REDUIT=0.01,
-    GROUP_MA_INTERF='SBAST',
-    MODELE=MODELE,
-    PROJET = 'SDLX102A2',
-    EXCIT_HARMO=(
-        _F(VECT_ASSE=VECAS2,
-           COEF_MULT=1.,),
-    ),
-              PARAMETRE=_F(
-               FREQ_MIN=7.3,
-               FREQ_MAX=10.4,
-               FREQ_PAS=3.1,
-               Z0= 0.,
-               TYPE='BINAIRE',
-               DREF=4.,
-               SURF='OUI',
-               ALGO = 'DEPL',
-               OFFSET_MAX=30,
-               OFFSET_NB=300,
-              ),
-               UNITE_RESU_IMPE=38,
-               UNITE_RESU_FORC=28,
-    INFO=1,
-)
 
 
+LISTFREQ = DEFI_LIST_REEL(DEBUT=7.3,
+                          INTERVALLE=_F(JUSQU_A = 10.4,
+                                       PAS = 3.1))
+
+dyph1 = DYNA_LINE(ISS="OUI",
+                  MODELE=MODELE,
+                  CHAM_MATER=CHAMPMAT,
+                  CARA_ELEM=CARA_ELE,
+                  CHARGE=CL_RIGID,
+                  TYPE_CALCUL="HARM",
+                  BASE_CALCUL="GENE",
+                  BANDE_ANALYSE=600.0,
+                  LIST_FREQ=LISTFREQ,
+                  TABLE_SOL=TABSOL,
+                  GROUP_MA_INTERF='SBAST',
+                  GROUP_NO_INTERF=('ENCASTRE','SBASF'),
+                  AMORTISSEMENT=_F(TYPE_AMOR="MODAL",
+                                   AMOR_REDUIT=0.01),
+                  PARAMETRE=_F(Z0= 0.,
+                               DREF=4.,
+                               SURF='OUI',
+                               ALGO = 'DEPL',
+                               OFFSET_MAX=30,
+                               OFFSET_NB=300,),
+                  UNITE_RESU_IMPE=38,
+                  UNITE_RESU_FORC=28,
+                  
+                  EXCIT=(_F(CHARGE=CHA1,
+                            COEF_MULT=1.,),
+                            ),
+                  )
+
+dyph2 = DYNA_LINE(ISS="OUI",
+                  CALC_IMPE_FORC = 'NON',
+                  MODELE=MODELE,
+                  CHAM_MATER=CHAMPMAT,
+                  CARA_ELEM=CARA_ELE,
+                  CHARGE=CL_RIGID,
+                  TYPE_CALCUL="HARM",
+                  BASE_CALCUL="GENE",
+                  BANDE_ANALYSE=600.0,
+                  LIST_FREQ=LISTFREQ,
+                  GROUP_MA_INTERF='SBAST',
+                  GROUP_NO_INTERF=('ENCASTRE','SBASF'),
+                  AMORTISSEMENT=_F(TYPE_AMOR="MODAL",
+                                   AMOR_REDUIT=0.01),
+                  UNITE_RESU_IMPE=38,
+                  UNITE_RESU_FORC=28,
+                  EXCIT=(_F(CHARGE=CHA2,
+                            COEF_MULT=1.,),
+                            ),
+                  )
+
+DXA1_2=RECU_FONCTION(RESULTAT = dyph1,
+                     NOM_CHAM='DEPL',
+                     NOM_CMP='DX',
+                     NOEUD='NA1',);
+
+DYA1_2=RECU_FONCTION(RESULTAT = dyph2,
+                     NOM_CHAM='DEPL',
+                     NOM_CMP='DY',
+                     NOEUD='NA1',);
+
+MDXA1_2=CALC_FONCTION(EXTRACTION=_F(FONCTION=DXA1_2,
+                                    PARTIE='MODULE',),);
+
+MDYA1_2=CALC_FONCTION(EXTRACTION=_F(FONCTION=DYA1_2,
+                                    PARTIE='MODULE',),);
+
+DXB1_2=RECU_FONCTION(RESULTAT = dyph1,
+                     NOM_CHAM='DEPL',
+                     NOM_CMP='DX',
+                     NOEUD='NB1',);
 
 
-DXA1=RECU_FONCTION(RESU_GENE = dyge1,
-                   NOM_CHAM='DEPL',
-                   NOM_CMP='DX',
-                   NOEUD='NA1',);
-
-DYA1=RECU_FONCTION(RESU_GENE = dyge2,
-                   NOM_CHAM='DEPL',
-                   NOM_CMP='DY',
-                   NOEUD='NA1',);
-
-MDXA1=CALC_FONCTION(EXTRACTION=_F(FONCTION=DXA1,
-                                  PARTIE='MODULE',),);
+DYB1_2=RECU_FONCTION(RESULTAT = dyph2,
+                     NOM_CHAM='DEPL',
+                     NOM_CMP='DY',
+                     NOEUD='NB1',);
 
 
-MDYA1=CALC_FONCTION(EXTRACTION=_F(FONCTION=DYA1,
-                                  PARTIE='MODULE',),);
+MDXB1_2=CALC_FONCTION(EXTRACTION=_F(FONCTION=DXB1_2,
+                                    PARTIE='MODULE',),);
 
 
-DXB1=RECU_FONCTION(RESU_GENE = dyge1,
-                   NOM_CHAM='DEPL',
-                   NOM_CMP='DX',
-                   NOEUD='NB1',);
+MDYB1_2=CALC_FONCTION(EXTRACTION=_F(FONCTION=DYB1_2,
+                                    PARTIE='MODULE',),);
 
-
-DYB1=RECU_FONCTION(RESU_GENE = dyge2,
-                   NOM_CHAM='DEPL',
-                   NOM_CMP='DY',
-                   NOEUD='NB1',);
-
-
-MDXB1=CALC_FONCTION(EXTRACTION=_F(FONCTION=DXB1,
-                                  PARTIE='MODULE',),);
-
-
-MDYB1=CALC_FONCTION(EXTRACTION=_F(FONCTION=DYB1,
-                                  PARTIE='MODULE',),);
-
-TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.000113210871228,
+TEST_FONCTION(VALEUR=(
+                      _F(VALE_CALC=0.000113210871228,
                          VALE_REFE=1.13207E-4,
                          VALE_PARA=7.3,
                          REFERENCE='AUTRE_ASTER',
                          PRECISION=1.E-3,
-                         FONCTION=MDXA1,),
+                         FONCTION=MDXA1_2,),
                       _F(VALE_CALC=0.000112618510152,
                          VALE_REFE=1.12606E-4,
                          VALE_PARA=7.3,
                          REFERENCE='AUTRE_ASTER',
                          PRECISION=1.E-3,
-                         FONCTION=MDXB1,),
+                         FONCTION=MDXB1_2,),
                       _F(VALE_CALC=2.463929009375E-05,
                          VALE_REFE=2.5023499999999999E-05,
                          VALE_PARA=10.4,
                          REFERENCE='AUTRE_ASTER',
                          PRECISION=2.E-2,
-                         FONCTION=MDYA1,),
+                         FONCTION=MDYA1_2,),
                       _F(VALE_CALC=2.45365421447e-05,
                          VALE_REFE=2.4512399999999999E-05,
                          VALE_PARA=10.4,
                          REFERENCE='AUTRE_ASTER',
                          PRECISION=2.E-3,
-                         FONCTION=MDYB1,),
+                         FONCTION=MDYB1_2,),
                       ),
               )
 

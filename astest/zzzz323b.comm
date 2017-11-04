@@ -77,10 +77,10 @@ CARAELEM=AFFE_CARA_ELEM(
                                ),
                        GRILLE=_F(  GROUP_MA='GROUP_MA_GRILLE',
                                    SECTION = 0.1,
-                                   ANGL_REP=(45.0,-45.0),
+                                   ANGL_REP_1=(45.0,-45.0),
                                 ),
                        MEMBRANE=_F(MAILLE = 'MEMB4',
-                                   ANGL_REP=(45.0,-45.0),
+                                   ANGL_REP_1=(45.0,-45.0),
                                    EPAIS = 0.1,
                                 )
                          )

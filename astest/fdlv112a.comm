@@ -76,229 +76,51 @@ CONDLIM=AFFE_CHAR_MECA(MODELE=MODELE,
                                      _F(GROUP_NO=('BARFOND'),
                                         DDL='DZ',),),);
 
-RIGI_ELE=CALC_MATR_ELEM(OPTION='RIGI_MECA',
-                        MODELE=MODELE,
-                        CHAM_MATER=CHMAT,
-                        CHARGE=CONDLIM,);
-
-MASS_ELE=CALC_MATR_ELEM(OPTION='MASS_MECA',
-                        MODELE=MODELE,
-                        CHAM_MATER=CHMAT,
-                        CHARGE=CONDLIM,);
-
-NUMEDDL=NUME_DDL(MATR_RIGI=RIGI_ELE,);
-
-RIGIDITE=ASSE_MATRICE(MATR_ELEM=RIGI_ELE,
-                      NUME_DDL=NUMEDDL,);
-
-MASSE=ASSE_MATRICE(MATR_ELEM=MASS_ELE,
-                   NUME_DDL=NUMEDDL,);
-
-AMOR_ELE=CALC_MATR_ELEM(OPTION='AMOR_MECA',
-                        MODELE=MODELE,
-                        CHAM_MATER=CHMAT,
-                        RIGI_MECA=RIGI_ELE,
-                        MASS_MECA=MASS_ELE,
-                        CHARGE=CONDLIM,);
-
-AMOR=ASSE_MATRICE(MATR_ELEM=AMOR_ELE,
-                  NUME_DDL=NUMEDDL,);
-
-MODESSTA=MODE_STATIQUE(MATR_RIGI=RIGIDITE,
-                       MATR_MASS=MASSE,
-                       MODE_STAT=_F(NOEUD='NO130',
-                                   AVEC_CMP=('DX','DY','DZ'),),);
-
-MODE=CALC_MODES(MATR_RIGI=RIGIDITE,
-                OPTION='PLUS_PETITE',
-                CALC_FREQ=_F(NMAX_FREQ=20,
-                             ),
-                MATR_MASS=MASSE,
-                )
-
-
-NUMGEN=NUME_DDL_GENE(BASE=MODE,
-                     STOCKAGE='PLEIN',);
-
-MGENE=PROJ_MATR_BASE(BASE=MODE,
-                     NUME_DDL_GENE=NUMGEN,
-                     MATR_ASSE=MASSE,);
-
-RIGGEN=PROJ_MATR_BASE(BASE=MODE,
-                      NUME_DDL_GENE=NUMGEN,
-                      MATR_ASSE=RIGIDITE,);
-
-AMOGEN=PROJ_MATR_BASE(BASE=MODE,
-                      NUME_DDL_GENE=NUMGEN,
-                      MATR_ASSE=AMOR,);
-
-# CALCUL DE LA MASSE AJOUTEE MASSAJ
-
-MACRO_MATR_AJOU(MAILLAGE=MAILLAGE,
-                GROUP_MA_FLUIDE='RETENUE',
-                GROUP_MA_INTERF='BARRET',
-                MODELISATION='3D',
-                FLUIDE=_F(RHO=1000.0,
-                          TOUT='OUI',),
-                DDL_IMPO=_F(GROUP_NO='SURFLIBR',
-                            PRES_FLUIDE=0.0,),
-                MODE_MECA=MODE,
-                NUME_DDL_GENE=NUMGEN,
-                MATR_MASS_AJOU=CO('MASSAJ'),
-                MONO_APPUI = 'OUI',);
-
-MASTOT=COMB_MATR_ASSE(COMB_R=(_F(MATR_ASSE=MGENE,
-                                 COEF_R=1.0,),
-                              _F(MATR_ASSE=MASSAJ,
-                                 COEF_R=1.0,),),);
-
-MODHUMI=CALC_MODES(MATR_RIGI=RIGGEN,
-                   OPTION='PLUS_PETITE',
-                   CALC_FREQ=_F(NMAX_FREQ=20,
-                                ),
-                   MATR_MASS=MASTOT,
-                   )
-
-
-MODMECA=REST_GENE_PHYS(RESU_GENE=MODHUMI,);
-
-NUMGEN2=NUME_DDL_GENE(BASE=MODMECA,
-                      STOCKAGE='PLEIN',);
-
-MGENE2=PROJ_MATR_BASE(BASE=MODMECA,
-                      NUME_DDL_GENE=NUMGEN2,
-                      MATR_ASSE=MASSE,);
-
-RIGGEN2=PROJ_MATR_BASE(BASE=MODMECA,
-                       NUME_DDL_GENE=NUMGEN2,
-                       MATR_ASSE=RIGIDITE,);
-
-AMOGEN2=PROJ_MATR_BASE(BASE=MODMECA,
-                       NUME_DDL_GENE=NUMGEN2,
-                       MATR_ASSE=AMOR,);
-
-# CALCUL DE LA MASSE AJOUTEE MASSAJ2 ET
-# DE LA FORCE AJOUTEE
-
-MACRO_MATR_AJOU(MAILLAGE=MAILLAGE,
-                GROUP_MA_FLUIDE='RETENUE',
-                GROUP_MA_INTERF='BARRET',
-                MODELISATION='3D',
-                FLUIDE=_F(RHO=1000.0,
-                          TOUT='OUI',),
-                DDL_IMPO=_F(GROUP_NO='SURFLIBR',
-                            PRES_FLUIDE=0.0,),
-                MODE_MECA=MODMECA,
-                NUME_DDL_GENE=NUMGEN2,
-                MATR_MASS_AJOU=CO('MASSAJ2'),
-                MONO_APPUI ='OUI',
-                FORC_AJOU = (_F(VECTEUR =CO('VGENX'),
-                                DIRECTION =(1., 0., 0., ),
-                                 ),
-                              _F(VECTEUR =CO('VGENY'),
-                                DIRECTION =(0., 1., 0., ),
-                                 ),
-                              _F(VECTEUR =CO('VGENZ'),
-                                DIRECTION =(0., 0., 1., ),
-                                 ),),
-                );
-
-
-CHARSISX=CALC_CHAR_SEISME(MATR_MASS=MASSE,
-                          DIRECTION=(1.0,0.0,0.0),
-                          MODE_STAT=MODESSTA,
-                          NOEUD='NO130',);
-
-CHARSISY=CALC_CHAR_SEISME(MATR_MASS=MASSE,
-                          DIRECTION=(0.0,1.0,0.0),
-                          MODE_STAT=MODESSTA,
-                          NOEUD='NO130',);
-
-CHARSISZ=CALC_CHAR_SEISME(MATR_MASS=MASSE,
-                          DIRECTION=(0.0,0.0,1.0),
-                          MODE_STAT=MODESSTA,
-                          NOEUD='NO130',);
-
-CHARGENX=PROJ_VECT_BASE(BASE=MODMECA,
-                        NUME_DDL_GENE=NUMGEN2,
-                        VECT_ASSE=CHARSISX,);
-
-CHARGENY=PROJ_VECT_BASE(BASE=MODMECA,
-                        NUME_DDL_GENE=NUMGEN2,
-                        VECT_ASSE=CHARSISY,);
-
-CHARGENZ=PROJ_VECT_BASE(BASE=MODMECA,
-                        NUME_DDL_GENE=NUMGEN2,
-                        VECT_ASSE=CHARSISZ,);
-
 INCLUDE(UNITE=38,
         INFO=1,);
 
-MASTOT2=COMB_MATR_ASSE(COMB_R=(_F(MATR_ASSE=MGENE2,
-                                  COEF_R=1.0,),
-                               _F(MATR_ASSE=MASSAJ2,
-                                  COEF_R=1.0,),),);
+DYN2 = DYNA_LINE(TYPE_CALCUL='TRAN',
+                 BASE_CALCUL='GENE',
+                 MODELE=MODELE,
+                 CHAM_MATER=CHMAT,
+                 CHARGE=CONDLIM,
+                 AMORTISSEMENT=_F(TYPE_AMOR="MODAL",
+                                  AMOR_REDUIT=0.05,),
+                 SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE',),
+                 INCREMENT=_F(INST_INIT=0.0,
+                              INST_FIN=4.,
+                              PAS=2.E-3,),
+                 ARCHIVAGE=_F(PAS_ARCH=5),
+                 BANDE_ANALYSE=23,
+                 EXCIT=(_F(
+                           TYPE_APPUI = "MONO",
+                           DIRECTION =(1., 0., 0., ),
+                           NOEUD='NO130',
+                           FONC_MULT=ACC_X,
+                           ),
+                        _F(
+                           TYPE_APPUI = "MONO",
+                           DIRECTION =(0., 1., 0., ),
+                           NOEUD='NO130',
+                           FONC_MULT=ACC_Y,
+                           ),
+                        _F(
+                           TYPE_APPUI = "MONO",
+                           DIRECTION =(0., 0., 1., ),
+                           NOEUD='NO130',
+                           FONC_MULT=ACC_Z,
+                           ),),
+                 IFS='OUI',
+                 FORC_AJOU = 'OUI',
+                 GROUP_MA_FLUIDE='RETENUE',
+                 GROUP_MA_INTERF='BARRET',
+                 MODELISATION_FLU = '3D',
+                 RHO_FLUIDE = _F(RHO = 1000.0),
+                 PRESSION_FLU_IMPO = _F(PRES_FLUIDE = 0.0,
+                                        GROUP_NO    ='SURFLIBR'),
 
-MODHUMI2=CALC_MODES(MATR_RIGI=RIGGEN2,
-                    OPTION='PLUS_PETITE',
-                    CALC_FREQ=_F(NMAX_FREQ=20,
-                                 ),
-                    MATR_MASS=MASTOT2,
-                    )
+                 )
 
-
-DYNGEN=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
-                       MATR_MASS=MASTOT2,
-                       MATR_RIGI=RIGGEN2,
-                AMOR_MODAL=_F(AMOR_REDUIT=0.050000000000000003,),
-                SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE',),
-                       INCREMENT=_F(INST_INIT=0.0,
-                                    INST_FIN=4.,
-                                    PAS=2.E-3,),
-                       ARCHIVAGE=_F(PAS_ARCH=5,
-                       ),
-                       EXCIT=(
-                             _F(VECT_ASSE_GENE=CHARGENX,
-                                 FONC_MULT=ACC_X,),
-                              _F(VECT_ASSE_GENE=CHARGENY,
-                                 FONC_MULT=ACC_Y,),
-                              _F(VECT_ASSE_GENE=CHARGENZ,
-                                 FONC_MULT=ACC_Z,),
-                              _F(VECT_ASSE_GENE=VGENX,
-                                 FONC_MULT=ACC_X,),
-                              _F(VECT_ASSE_GENE=VGENY,
-                                 FONC_MULT=ACC_Y,),
-                              _F(VECT_ASSE_GENE=VGENZ,
-                                 FONC_MULT=ACC_Z,),
-                          ),);
-
-# ON PASSE EN SDVERI=NON LE TEMPS DE LA REST_GENE_PHYS
-# A CAUSE DU TEMPS CPU TROP IMPORTANT (FACTEUR +40)
-DEBUG(SDVERI='NON');
-
-DYN=REST_GENE_PHYS(RESU_GENE=DYNGEN,
-                   MODE_MECA=MODMECA,
-                   INTERPOL='LIN',
-                   LIST_INST = LIST_IN);
-DEBUG(SDVERI='OUI');
-
-DXR=RECU_FONCTION(RESULTAT=DYN,
-                  NOM_CHAM='ACCE',
-                  TOUT_ORDRE='OUI',
-                  NOM_CMP='DX',
-                  NOEUD='NO1909',);
-
-DYR=RECU_FONCTION(RESULTAT=DYN,
-                  NOM_CHAM='ACCE',
-                  TOUT_ORDRE='OUI',
-                  NOM_CMP='DY',
-                  NOEUD='NO1909',);
-
-DZR=RECU_FONCTION(RESULTAT=DYN,
-                  NOM_CHAM='ACCE',
-                  TOUT_ORDRE='OUI',
-                  NOM_CMP='DZ',
-                  NOEUD='NO1909',);
 
 FREQSPEC=DEFI_LIST_REEL(DEBUT=0.10000000000000001,
                         INTERVALLE=(_F(JUSQU_A=10.0,
@@ -308,47 +130,66 @@ FREQSPEC=DEFI_LIST_REEL(DEBUT=0.10000000000000001,
                                     _F(JUSQU_A=100.0,
                                        NOMBRE=80,),),);
 
-SPXR=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=DXR,
-                                AMOR_REDUIT=0.050000000000000003,
-                                LIST_FREQ=FREQSPEC,
-                                NORME=1.0,),);
 
-SPYR=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=DYR,
-                                AMOR_REDUIT=0.050000000000000003,
-                                LIST_FREQ=FREQSPEC,
-                                NORME=1.0,),);
+DXR2=RECU_FONCTION(RESULTAT=DYN2,
+                   NOM_CHAM='ACCE',
+                   TOUT_ORDRE='OUI',
+                   NOM_CMP='DX',
+                   NOEUD='NO1909',);
 
-SPZR=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=DZR,
-                                AMOR_REDUIT=0.050000000000000003,
-                                LIST_FREQ=FREQSPEC,
-                                NORME=1.0,),);
+DYR2=RECU_FONCTION(RESULTAT=DYN2,
+                   NOM_CHAM='ACCE',
+                   TOUT_ORDRE='OUI',
+                   NOM_CMP='DY',
+                   NOEUD='NO1909',);
+
+DZR2=RECU_FONCTION(RESULTAT=DYN2,
+                   NOM_CHAM='ACCE',
+                   TOUT_ORDRE='OUI',
+                   NOM_CMP='DZ',
+                   NOEUD='NO1909',);
+
+SPXR2=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=DXR2,
+                                 AMOR_REDUIT=0.050000000000000003,
+                                 LIST_FREQ=FREQSPEC,
+                                 NORME=1.0,),);
+
+SPYR2=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=DYR2,
+                                 AMOR_REDUIT=0.050000000000000003,
+                                 LIST_FREQ=FREQSPEC,
+                                 NORME=1.0,),);
+
+SPZR2=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=DZR2,
+                                 AMOR_REDUIT=0.050000000000000003,
+                                 LIST_FREQ=FREQSPEC,
+                                 NORME=1.0,),);
 
 TEST_FONCTION(VALEUR=(_F(VALE_CALC=5.858848554807,
                          VALE_PARA=1.0,
-                         FONCTION=DXR,
+                         FONCTION=DXR2,
                          ),
                       _F(VALE_CALC=17.57891868214,
                          VALE_PARA=(9.0, 0.05),
                          NOM_PARA=('FREQ', 'AMOR'),
-                         FONCTION=SPXR,
+                         FONCTION=SPXR2,
                          ),
                       _F(VALE_CALC=2.807564211514,
                          VALE_PARA=1.0,
-                         FONCTION=DYR,
+                         FONCTION=DYR2,
                          ),
                       _F(VALE_CALC=9.749478382075,
                          VALE_PARA=(9.0, 0.05),
                          NOM_PARA=('FREQ', 'AMOR'),
-                         FONCTION=SPYR,
+                         FONCTION=SPYR2,
                          ),
                       _F(VALE_CALC=-0.77467028853403,
                          VALE_PARA=1.02,
-                         FONCTION=DZR,
+                         FONCTION=DZR2,
                          ),
                       _F(VALE_CALC=3.805156796736,
                          VALE_PARA=(17.4, 0.05),
                          NOM_PARA=('FREQ', 'AMOR'),
-                         FONCTION=SPZR,
+                         FONCTION=SPZR2,
                          ),
                       ),
               )

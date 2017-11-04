@@ -78,7 +78,7 @@ CAOUT=DEFI_MATERIAU(ELAS=_F(E=young,
 CARA=AFFE_CARA_ELEM(MODELE=MODELE,
                     INFO=2,
                     MEMBRANE=_F(GROUP_MA='membrane',
-                                ANGL_REP=(0.0,0.0,),
+                                ANGL_REP_1=(0.0,0.0,),
                                 EPAIS=1.0,
                                 N_INIT=1.E-6,),);
 

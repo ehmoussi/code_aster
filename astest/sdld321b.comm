@@ -75,71 +75,13 @@ CONDLIM=AFFE_CHAR_MECA(  MODELE=MODELE,
                            DDL_IMPO=_F(  NOEUD = 'N1', DX = 0., DY = 0., DZ = 0.)
                         )
 
-#
+CH =AFFE_CHAR_MECA(MODELE=MODELE,
+                   FORCE_NODALE=_F(  NOEUD = 'N2',  FX = 5.),
+                   )
 
-RIGIELEM=CALC_MATR_ELEM(  MODELE=MODELE,  OPTION='RIGI_MECA',
-                             CARA_ELEM=ELEMNT,   CHARGE=CONDLIM )
-
-MASSELEM=CALC_MATR_ELEM(  MODELE=MODELE,  OPTION='MASS_MECA',
-                             CARA_ELEM=ELEMNT,   CHARGE=CONDLIM )
-
-AMORELEM=CALC_MATR_ELEM(  MODELE=MODELE,  OPTION='AMOR_MECA',
-                             CARA_ELEM=ELEMNT  )
-
-EFFOELEM=CALC_VECT_ELEM(  CHARGE=CONDLIM,  OPTION='CHAR_MECA',
-                             CARA_ELEM=ELEMNT                  )
-
-#
-#
-
-NUMEROTA=NUME_DDL(  MATR_RIGI=RIGIELEM  )
-
-#
-
-MATRRIGI=ASSE_MATRICE(  MATR_ELEM=RIGIELEM,  NUME_DDL=NUMEROTA  )
-
-MATRMASS=ASSE_MATRICE(  MATR_ELEM=MASSELEM,  NUME_DDL=NUMEROTA  )
-
-MATRAMOR=ASSE_MATRICE(  MATR_ELEM=AMORELEM,  NUME_DDL=NUMEROTA  )
-
-VECTASS=ASSE_VECTEUR(  VECT_ELEM=EFFOELEM,  NUME_DDL=NUMEROTA  )
-
-#
-#
-# CALCUL DE LA BASE MODALE COMPLETE
-# ---------------------------------
-#
-#
-
-MODES=CALC_MODES(MATR_RIGI=MATRRIGI,
-                 OPTION='CENTRE',
-                 CALC_FREQ=_F(NMAX_FREQ=3,
-                              FREQ=(10.,),
-                              ),
-                 MATR_MASS=MATRMASS,
-                 )
-
-#
-#
-# PROJECTION DANS LA BASE MODALE
-# ------------------------------
-#
-#
-PROJ_BASE(  BASE=MODES,
-            STOCKAGE = 'PLEIN',
-            MATR_ASSE_GENE=(
-             _F(
-                             MATRICE = CO("MASSEGEN"),
-                             MATR_ASSE = MATRMASS),
-             _F(
-                             MATRICE = CO("RIGIDGEN"),
-                             MATR_ASSE = MATRRIGI),
-             _F(
-                             MATRICE = CO("AMORTGEN"),
-                             MATR_ASSE = MATRAMOR,)),
-             VECT_ASSE_GENE=_F(
-                             VECTEUR = CO("EFFOGENE"),
-                             VECT_ASSE = VECTASS) )
+CL =AFFE_CHAR_MECA(MODELE=MODELE,
+                    DDL_IMPO=_F(  NOEUD = 'N1', DX = 0., DY = 0., DZ = 0.)
+                    )
 
 #
 # DEFINITION DE L'EXCITATION SINUSOIDALE
@@ -172,60 +114,82 @@ AR_LIST.sort()
 # 1- SCHEMA FU-DEVOGELAERE
 #
 
-DYNMODEV=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
-                              SCHEMA_TEMPS=_F(SCHEMA='DEVOGE',PAS_MINI=0.0001, PAS_MAXI=0.0001),
-                              MATR_MASS=MASSEGEN,  MATR_RIGI=RIGIDGEN,
-                        AMOR_MODAL=_F(AMOR_REDUIT=( 0., 0., 0.01, ),),
-                             EXCIT=_F(VECT_ASSE_GENE = EFFOGENE,
-                                      FONC_MULT = FONCMULT),
-                             INCREMENT=_F(
-                             INST_INIT = 0.,  INST_FIN = 5.,
-                             PAS = 0.0001),
-                             ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=1.E8) )
+DNPYDEV=DYNA_LINE(TYPE_CALCUL='TRAN',
+                  BASE_CALCUL='GENE',
+                  MODELE=MODELE,
+                  CARA_ELEM=ELEMNT,
+                  SCHEMA_TEMPS=_F(SCHEMA='DEVOGE',PAS_MINI=0.0001, PAS_MAXI=0.0001),
+                  CHARGE = CL,
+                  BANDE_ANALYSE=(.0,10.),
+                  AMORTISSEMENT=_F(TYPE_AMOR='MODAL',AMOR_REDUIT=( 0., 0., 0.01, ),),
+                  EXCIT=_F(CHARGE = CH, FONC_MULT = FONCMULT),
+                  INCREMENT=_F(INST_INIT = 0.,  INST_FIN = 5.,PAS = 0.0001),
+                  BASE_RESU = CO('MODES2'),
+                  RESU_GENE = CO('DNMODEV'),
+                  ENRI_STAT = 'NON',
+                  ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=1.E8),
+                 )
 
 #
 # 2- SCHEMA PAS ADAPTATIF
 #
 
-DYNMODAD=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
-                             SCHEMA_TEMPS=_F(SCHEMA='ADAPT_ORDRE2',
+DNPYDAD=DYNA_LINE(TYPE_CALCUL='TRAN',
+                  BASE_CALCUL='GENE',
+                  MODELE=MODELE,
+                  CARA_ELEM=ELEMNT,
+                  SCHEMA_TEMPS=_F(SCHEMA='ADAPT_ORDRE2',
 # POUR AMELIORER LE TEMPS CPU ON A IMPOSE UN PAS_MAXI PLUS GRAND QUE PAS
                                              PAS_MAXI = 0.00001,
                                              NMAX_ITER_PAS=50,),
-                             MATR_MASS=MASSEGEN,  MATR_RIGI=RIGIDGEN,
-                             MATR_AMOR=AMORTGEN,
-                             EXCIT=_F(  VECT_ASSE_GENE = EFFOGENE,
-#                                     FONC_MULT = FONCMULT),
-                                     FONC_MULT = SINOMEGT),
-                             INCREMENT=_F(INST_INIT = 0.,  INST_FIN = 5., PAS = 0.000005),
-                             ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=1.E8) )
+                  CHARGE = CL,
+                  BANDE_ANALYSE=(.0,10.),
+                  AMORTISSEMENT=_F(TYPE_AMOR='RAYLEIGH'),
+                  EXCIT=_F(CHARGE = CH, FONC_MULT = SINOMEGT),
+                  INCREMENT=_F(INST_INIT = 0.,  INST_FIN = 5.,PAS = 0.000005),
+                  BASE_RESU = CO('MODES3'),
+                  RESU_GENE = CO('DNMODAD'),
+                  ENRI_STAT = 'NON',
+                  ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=1.E8),
+                 )
 
 #
 # 3- SCHEMAS RUNGE-KUTTA
 #
-# MODES=NORM_MODE(reuse=MODES,  MODE=MODES,   NORME='RIGI_GENE' )
 
-DYNMO_54=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
-                             SCHEMA_TEMPS=_F(SCHEMA='RUNGE_KUTTA_54',TOLERANCE=1.0E-06, 
+DNPY_54=DYNA_LINE(TYPE_CALCUL='TRAN',
+                  BASE_CALCUL='GENE',
+                  MODELE=MODELE,
+                  CARA_ELEM=ELEMNT,
+                  SCHEMA_TEMPS=_F(SCHEMA='RUNGE_KUTTA_54',TOLERANCE=1.0E-06, 
                                              PAS_MAXI = 0.001,),
-                             MATR_MASS=MASSEGEN,  MATR_RIGI=RIGIDGEN,
-                             MATR_AMOR=AMORTGEN,
-                             EXCIT=_F(VECT_ASSE_GENE = EFFOGENE,
-                                      FONC_MULT = SINOMEGT),
-                             INCREMENT=_F(INST_INIT = 0.,  INST_FIN = 5.,
-                                          PAS = 0.00001,),
-                             ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=1.E8) )
+                  CHARGE = CL,
+                  BANDE_ANALYSE=(.0,10.),
+                  AMORTISSEMENT=_F(TYPE_AMOR='RAYLEIGH'),
+                  EXCIT=_F(CHARGE = CH, FONC_MULT = SINOMEGT),
+                  INCREMENT=_F(INST_INIT = 0.,  INST_FIN = 5.,PAS = 0.00001),
+                  BASE_RESU = CO('MODES4'),
+                  RESU_GENE = CO('DNMO_54'),
+                  ENRI_STAT = 'NON',
+                  ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=1.E8),
+                 )
 
-DYNMO_32=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
-                             SCHEMA_TEMPS=_F(SCHEMA='RUNGE_KUTTA_32',TOLERANCE=1.0E-06, 
+DNPY_32=DYNA_LINE(TYPE_CALCUL='TRAN',
+                  BASE_CALCUL='GENE',
+                  MODELE=MODELE,
+                  CARA_ELEM=ELEMNT,
+                  SCHEMA_TEMPS=_F(SCHEMA='RUNGE_KUTTA_32',TOLERANCE=1.0E-06, 
                                              PAS_MAXI = 0.001,),
-                             MATR_MASS=MASSEGEN,  MATR_RIGI=RIGIDGEN,
-                             MATR_AMOR=AMORTGEN,
-                             EXCIT=_F(VECT_ASSE_GENE = EFFOGENE,
-                                      FONC_MULT = SINOMEGT),
-                             INCREMENT=_F(INST_INIT = 0.,  INST_FIN = 5.,
-                                          PAS = 0.00001,),
-                             ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=1.E8) )
+                  CHARGE = CL,
+                  BANDE_ANALYSE=(.0,10.),
+                  AMORTISSEMENT=_F(TYPE_AMOR='RAYLEIGH'),
+                  EXCIT=_F(CHARGE = CH, FONC_MULT = SINOMEGT),
+                  INCREMENT=_F(INST_INIT = 0.,  INST_FIN = 5.,PAS = 0.00001),
+                  BASE_RESU = CO('MODES5'),
+                  RESU_GENE = CO('DNMO_32'),
+                  ENRI_STAT = 'NON',
+                  ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=1.E8),
+                 )
 
 #
 # DEFINITION DES INSTANTS DE CALCUL DE LA SOLUTION
@@ -236,30 +200,29 @@ LISTRV=DEFI_LIST_REEL(  VALE=L_REELV )
 #
 # RETOUR DANS L'ESPACE PHYSIQUE
 # -----------------------------
-#
-#
-DYTRAFUD=REST_GENE_PHYS(  RESU_GENE=DYNMODEV,    NOM_CHAM='DEPL',
+
+DTRAFUD=REST_GENE_PHYS(  RESU_GENE=DNMODEV,    NOM_CHAM='DEPL',
                             LIST_INST=LISTRD,   INTERPOL='NON'    )
 
-DYTRAADD=REST_GENE_PHYS(  RESU_GENE=DYNMODAD,    NOM_CHAM='DEPL',
+DTRAADD=REST_GENE_PHYS(  RESU_GENE=DNMODAD,    NOM_CHAM='DEPL',
                             LIST_INST=LISTRD,   INTERPOL='NON'    )
 
-DYTR_54D=REST_GENE_PHYS(  RESU_GENE=DYNMO_54,    NOM_CHAM='DEPL',
+DTR_54D=REST_GENE_PHYS(  RESU_GENE=DNMO_54,    NOM_CHAM='DEPL',
                             LIST_INST=LISTRD,   INTERPOL='NON'    )
 
-DYTR_32D=REST_GENE_PHYS(  RESU_GENE=DYNMO_32,    NOM_CHAM='DEPL',
+DTR_32D=REST_GENE_PHYS(  RESU_GENE=DNMO_32,    NOM_CHAM='DEPL',
                             LIST_INST=LISTRD,   INTERPOL='NON'    )
 
-DYTRAFUV=REST_GENE_PHYS(  RESU_GENE=DYNMODEV,    NOM_CHAM='VITE',
+DTRAFUV=REST_GENE_PHYS(  RESU_GENE=DNMODEV,    NOM_CHAM='VITE',
                             LIST_INST=LISTRV,   INTERPOL='NON'    )
 
-DYTRAADV=REST_GENE_PHYS(  RESU_GENE=DYNMODAD,    NOM_CHAM='VITE',
+DTRAADV=REST_GENE_PHYS(  RESU_GENE=DNMODAD,    NOM_CHAM='VITE',
                             LIST_INST=LISTRV,   INTERPOL='NON'    )
 
-DYTR_54V=REST_GENE_PHYS(  RESU_GENE=DYNMO_54,    NOM_CHAM='VITE',
+DTR_54V=REST_GENE_PHYS(  RESU_GENE=DNMO_54,    NOM_CHAM='VITE',
                             LIST_INST=LISTRV,   INTERPOL='NON'    )
 
-DYTR_32V=REST_GENE_PHYS(  RESU_GENE=DYNMO_32,    NOM_CHAM='VITE',
+DTR_32V=REST_GENE_PHYS(  RESU_GENE=DNMO_32,    NOM_CHAM='VITE',
                             LIST_INST=LISTRV,   INTERPOL='NON'    )
 
 #
@@ -269,7 +232,7 @@ DYTR_32V=REST_GENE_PHYS(  RESU_GENE=DYNMO_32,    NOM_CHAM='VITE',
 #DEPLACEMENTS
 #
 TEST_RESU(RESU=_F(INST=0.059999999999999998,
-                  RESULTAT=DYTRAFUD,
+                  RESULTAT=DTRAFUD,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -280,7 +243,7 @@ TEST_RESU(RESU=_F(INST=0.059999999999999998,
           )
 
 TEST_RESU(RESU=_F(INST=0.13,
-                  RESULTAT=DYTRAFUD,
+                  RESULTAT=DTRAFUD,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -291,7 +254,7 @@ TEST_RESU(RESU=_F(INST=0.13,
           )
 
 TEST_RESU(RESU=_F(INST=0.25,
-                  RESULTAT=DYTRAFUD,
+                  RESULTAT=DTRAFUD,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -302,7 +265,7 @@ TEST_RESU(RESU=_F(INST=0.25,
           )
 
 TEST_RESU(RESU=_F(INST=0.68999999999999995,
-                  RESULTAT=DYTRAFUD,
+                  RESULTAT=DTRAFUD,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -313,7 +276,7 @@ TEST_RESU(RESU=_F(INST=0.68999999999999995,
           )
 
 TEST_RESU(RESU=_F(INST=1.01,
-                  RESULTAT=DYTRAFUD,
+                  RESULTAT=DTRAFUD,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -324,7 +287,7 @@ TEST_RESU(RESU=_F(INST=1.01,
           )
 
 TEST_RESU(RESU=_F(INST=2.3199999999999998,
-                  RESULTAT=DYTRAFUD,
+                  RESULTAT=DTRAFUD,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -335,7 +298,7 @@ TEST_RESU(RESU=_F(INST=2.3199999999999998,
           )
 
 TEST_RESU(RESU=_F(INST=3.6400000000000001,
-                  RESULTAT=DYTRAFUD,
+                  RESULTAT=DTRAFUD,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -346,7 +309,7 @@ TEST_RESU(RESU=_F(INST=3.6400000000000001,
           )
 
 TEST_RESU(RESU=_F(INST=4.96,
-                  RESULTAT=DYTRAFUD,
+                  RESULTAT=DTRAFUD,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -357,7 +320,7 @@ TEST_RESU(RESU=_F(INST=4.96,
           )
 
 TEST_RESU(RESU=_F(INST=0.059999999999999998,
-                  RESULTAT=DYTRAADD,
+                  RESULTAT=DTRAADD,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -368,7 +331,7 @@ TEST_RESU(RESU=_F(INST=0.059999999999999998,
           )
 
 TEST_RESU(RESU=_F(INST=0.13,
-                  RESULTAT=DYTRAADD,
+                  RESULTAT=DTRAADD,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -379,7 +342,7 @@ TEST_RESU(RESU=_F(INST=0.13,
           )
 
 TEST_RESU(RESU=_F(INST=0.25,
-                  RESULTAT=DYTRAADD,
+                  RESULTAT=DTRAADD,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -390,7 +353,7 @@ TEST_RESU(RESU=_F(INST=0.25,
           )
 
 TEST_RESU(RESU=_F(INST=0.68999999999999995,
-                  RESULTAT=DYTRAADD,
+                  RESULTAT=DTRAADD,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -401,7 +364,7 @@ TEST_RESU(RESU=_F(INST=0.68999999999999995,
           )
 
 TEST_RESU(RESU=_F(INST=1.01,
-                  RESULTAT=DYTRAADD,
+                  RESULTAT=DTRAADD,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -412,7 +375,7 @@ TEST_RESU(RESU=_F(INST=1.01,
           )
 
 TEST_RESU(RESU=_F(INST=2.3199999999999998,
-                  RESULTAT=DYTRAADD,
+                  RESULTAT=DTRAADD,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -423,7 +386,7 @@ TEST_RESU(RESU=_F(INST=2.3199999999999998,
           )
 
 TEST_RESU(RESU=_F(INST=3.6400000000000001,
-                  RESULTAT=DYTRAADD,
+                  RESULTAT=DTRAADD,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -434,7 +397,7 @@ TEST_RESU(RESU=_F(INST=3.6400000000000001,
           )
 
 TEST_RESU(RESU=_F(INST=4.96,
-                  RESULTAT=DYTRAADD,
+                  RESULTAT=DTRAADD,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -445,7 +408,7 @@ TEST_RESU(RESU=_F(INST=4.96,
           )
 
 TEST_RESU(RESU=_F(INST=0.059999999999999998,
-                  RESULTAT=DYTR_54D,
+                  RESULTAT=DTR_54D,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -456,7 +419,7 @@ TEST_RESU(RESU=_F(INST=0.059999999999999998,
           )
 
 TEST_RESU(RESU=_F(INST=0.13,
-                  RESULTAT=DYTR_54D,
+                  RESULTAT=DTR_54D,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -467,7 +430,7 @@ TEST_RESU(RESU=_F(INST=0.13,
           )
 
 TEST_RESU(RESU=_F(INST=0.25,
-                  RESULTAT=DYTR_54D,
+                  RESULTAT=DTR_54D,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -478,7 +441,7 @@ TEST_RESU(RESU=_F(INST=0.25,
           )
 
 TEST_RESU(RESU=_F(INST=0.68999999999999995,
-                  RESULTAT=DYTR_54D,
+                  RESULTAT=DTR_54D,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -489,7 +452,7 @@ TEST_RESU(RESU=_F(INST=0.68999999999999995,
           )
 
 TEST_RESU(RESU=_F(INST=1.01,
-                  RESULTAT=DYTR_54D,
+                  RESULTAT=DTR_54D,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -500,7 +463,7 @@ TEST_RESU(RESU=_F(INST=1.01,
           )
 
 TEST_RESU(RESU=_F(INST=2.3199999999999998,
-                  RESULTAT=DYTR_54D,
+                  RESULTAT=DTR_54D,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -511,7 +474,7 @@ TEST_RESU(RESU=_F(INST=2.3199999999999998,
           )
 
 TEST_RESU(RESU=_F(INST=3.6400000000000001,
-                  RESULTAT=DYTR_54D,
+                  RESULTAT=DTR_54D,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -523,7 +486,7 @@ TEST_RESU(RESU=_F(INST=3.6400000000000001,
           )
 
 TEST_RESU(RESU=_F(INST=4.96,
-                  RESULTAT=DYTR_54D,
+                  RESULTAT=DTR_54D,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -535,7 +498,7 @@ TEST_RESU(RESU=_F(INST=4.96,
           )
 
 TEST_RESU(RESU=_F(INST=0.059999999999999998,
-                  RESULTAT=DYTR_32D,
+                  RESULTAT=DTR_32D,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -546,7 +509,7 @@ TEST_RESU(RESU=_F(INST=0.059999999999999998,
           )
 
 TEST_RESU(RESU=_F(INST=0.13,
-                  RESULTAT=DYTR_32D,
+                  RESULTAT=DTR_32D,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -557,7 +520,7 @@ TEST_RESU(RESU=_F(INST=0.13,
           )
 
 TEST_RESU(RESU=_F(INST=0.25,
-                  RESULTAT=DYTR_32D,
+                  RESULTAT=DTR_32D,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -568,7 +531,7 @@ TEST_RESU(RESU=_F(INST=0.25,
           )
 
 TEST_RESU(RESU=_F(INST=0.68999999999999995,
-                  RESULTAT=DYTR_32D,
+                  RESULTAT=DTR_32D,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -579,7 +542,7 @@ TEST_RESU(RESU=_F(INST=0.68999999999999995,
           )
 
 TEST_RESU(RESU=_F(INST=1.01,
-                  RESULTAT=DYTR_32D,
+                  RESULTAT=DTR_32D,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -591,7 +554,7 @@ TEST_RESU(RESU=_F(INST=1.01,
           )
 
 TEST_RESU(RESU=_F(INST=2.3199999999999998,
-                  RESULTAT=DYTR_32D,
+                  RESULTAT=DTR_32D,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -602,7 +565,7 @@ TEST_RESU(RESU=_F(INST=2.3199999999999998,
           )
 
 TEST_RESU(RESU=_F(INST=3.6400000000000001,
-                  RESULTAT=DYTR_32D,
+                  RESULTAT=DTR_32D,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -613,7 +576,7 @@ TEST_RESU(RESU=_F(INST=3.6400000000000001,
           )
 
 TEST_RESU(RESU=_F(INST=4.96,
-                  RESULTAT=DYTR_32D,
+                  RESULTAT=DTR_32D,
                   NOM_CHAM='DEPL',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -628,7 +591,7 @@ TEST_RESU(RESU=_F(INST=4.96,
 #VITESSES
 #
 TEST_RESU(RESU=_F(INST=0.04,
-                  RESULTAT=DYTRAFUV,
+                  RESULTAT=DTRAFUV,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -639,7 +602,7 @@ TEST_RESU(RESU=_F(INST=0.04,
           )
 
 TEST_RESU(RESU=_F(INST=0.1,
-                  RESULTAT=DYTRAFUV,
+                  RESULTAT=DTRAFUV,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -650,7 +613,7 @@ TEST_RESU(RESU=_F(INST=0.1,
           )
 
 TEST_RESU(RESU=_F(INST=0.22,
-                  RESULTAT=DYTRAFUV,
+                  RESULTAT=DTRAFUV,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -661,7 +624,7 @@ TEST_RESU(RESU=_F(INST=0.22,
           )
 
 TEST_RESU(RESU=_F(INST=0.66,
-                  RESULTAT=DYTRAFUV,
+                  RESULTAT=DTRAFUV,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -672,7 +635,7 @@ TEST_RESU(RESU=_F(INST=0.66,
           )
 
 TEST_RESU(RESU=_F(INST=1.04,
-                  RESULTAT=DYTRAFUV,
+                  RESULTAT=DTRAFUV,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -683,7 +646,7 @@ TEST_RESU(RESU=_F(INST=1.04,
           )
 
 TEST_RESU(RESU=_F(INST=2.3599999999999999,
-                  RESULTAT=DYTRAFUV,
+                  RESULTAT=DTRAFUV,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -694,7 +657,7 @@ TEST_RESU(RESU=_F(INST=2.3599999999999999,
           )
 
 TEST_RESU(RESU=_F(INST=3.68,
-                  RESULTAT=DYTRAFUV,
+                  RESULTAT=DTRAFUV,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -705,7 +668,7 @@ TEST_RESU(RESU=_F(INST=3.68,
           )
 
 TEST_RESU(RESU=_F(INST=5.0,
-                  RESULTAT=DYTRAFUV,
+                  RESULTAT=DTRAFUV,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -716,7 +679,7 @@ TEST_RESU(RESU=_F(INST=5.0,
           )
 
 TEST_RESU(RESU=_F(INST=0.040000000000000001,
-                  RESULTAT=DYTRAADV,
+                  RESULTAT=DTRAADV,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -727,7 +690,7 @@ TEST_RESU(RESU=_F(INST=0.040000000000000001,
           )
 
 TEST_RESU(RESU=_F(INST=0.1,
-                  RESULTAT=DYTRAADV,
+                  RESULTAT=DTRAADV,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -738,7 +701,7 @@ TEST_RESU(RESU=_F(INST=0.1,
           )
 
 TEST_RESU(RESU=_F(INST=0.22,
-                  RESULTAT=DYTRAADV,
+                  RESULTAT=DTRAADV,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -749,7 +712,7 @@ TEST_RESU(RESU=_F(INST=0.22,
           )
 
 TEST_RESU(RESU=_F(INST=0.66,
-                  RESULTAT=DYTRAADV,
+                  RESULTAT=DTRAADV,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -760,7 +723,7 @@ TEST_RESU(RESU=_F(INST=0.66,
           )
 
 TEST_RESU(RESU=_F(INST=1.04,
-                  RESULTAT=DYTRAADV,
+                  RESULTAT=DTRAADV,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -771,7 +734,7 @@ TEST_RESU(RESU=_F(INST=1.04,
           )
 
 TEST_RESU(RESU=_F(INST=2.3599999999999999,
-                  RESULTAT=DYTRAADV,
+                  RESULTAT=DTRAADV,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -782,7 +745,7 @@ TEST_RESU(RESU=_F(INST=2.3599999999999999,
           )
 
 TEST_RESU(RESU=_F(INST=3.6800000000000002,
-                  RESULTAT=DYTRAADV,
+                  RESULTAT=DTRAADV,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -793,7 +756,7 @@ TEST_RESU(RESU=_F(INST=3.6800000000000002,
           )
 
 TEST_RESU(RESU=_F(INST=5.0,
-                  RESULTAT=DYTRAADV,
+                  RESULTAT=DTRAADV,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -804,7 +767,7 @@ TEST_RESU(RESU=_F(INST=5.0,
           )
 
 TEST_RESU(RESU=_F(INST=0.040000000000000001,
-                  RESULTAT=DYTR_54V,
+                  RESULTAT=DTR_54V,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -815,7 +778,7 @@ TEST_RESU(RESU=_F(INST=0.040000000000000001,
           )
 
 TEST_RESU(RESU=_F(INST=0.10000000000000001,
-                  RESULTAT=DYTR_54V,
+                  RESULTAT=DTR_54V,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -826,7 +789,7 @@ TEST_RESU(RESU=_F(INST=0.10000000000000001,
           )
 
 TEST_RESU(RESU=_F(INST=0.22,
-                  RESULTAT=DYTR_54V,
+                  RESULTAT=DTR_54V,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -837,7 +800,7 @@ TEST_RESU(RESU=_F(INST=0.22,
           )
 
 TEST_RESU(RESU=_F(INST=0.66000000000000003,
-                  RESULTAT=DYTR_54V,
+                  RESULTAT=DTR_54V,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -848,7 +811,7 @@ TEST_RESU(RESU=_F(INST=0.66000000000000003,
           )
 
 TEST_RESU(RESU=_F(INST=1.04,
-                  RESULTAT=DYTR_54V,
+                  RESULTAT=DTR_54V,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -859,7 +822,7 @@ TEST_RESU(RESU=_F(INST=1.04,
           )
 
 TEST_RESU(RESU=_F(INST=2.3599999999999999,
-                  RESULTAT=DYTR_54V,
+                  RESULTAT=DTR_54V,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -870,7 +833,7 @@ TEST_RESU(RESU=_F(INST=2.3599999999999999,
           )
 
 TEST_RESU(RESU=_F(INST=3.6800000000000002,
-                  RESULTAT=DYTR_54V,
+                  RESULTAT=DTR_54V,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -881,7 +844,7 @@ TEST_RESU(RESU=_F(INST=3.6800000000000002,
           )
 
 TEST_RESU(RESU=_F(INST=5.0,
-                  RESULTAT=DYTR_54V,
+                  RESULTAT=DTR_54V,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -892,7 +855,7 @@ TEST_RESU(RESU=_F(INST=5.0,
           )
 
 TEST_RESU(RESU=_F(INST=0.040000000000000001,
-                  RESULTAT=DYTR_32V,
+                  RESULTAT=DTR_32V,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -903,7 +866,7 @@ TEST_RESU(RESU=_F(INST=0.040000000000000001,
           )
 
 TEST_RESU(RESU=_F(INST=0.10000000000000001,
-                  RESULTAT=DYTR_32V,
+                  RESULTAT=DTR_32V,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -914,7 +877,7 @@ TEST_RESU(RESU=_F(INST=0.10000000000000001,
           )
 
 TEST_RESU(RESU=_F(INST=0.22,
-                  RESULTAT=DYTR_32V,
+                  RESULTAT=DTR_32V,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -925,7 +888,7 @@ TEST_RESU(RESU=_F(INST=0.22,
           )
 
 TEST_RESU(RESU=_F(INST=0.66000000000000003,
-                  RESULTAT=DYTR_32V,
+                  RESULTAT=DTR_32V,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -936,7 +899,7 @@ TEST_RESU(RESU=_F(INST=0.66000000000000003,
           )
 
 TEST_RESU(RESU=_F(INST=1.04,
-                  RESULTAT=DYTR_32V,
+                  RESULTAT=DTR_32V,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -947,7 +910,7 @@ TEST_RESU(RESU=_F(INST=1.04,
           )
 
 TEST_RESU(RESU=_F(INST=2.3599999999999999,
-                  RESULTAT=DYTR_32V,
+                  RESULTAT=DTR_32V,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -958,7 +921,7 @@ TEST_RESU(RESU=_F(INST=2.3599999999999999,
           )
 
 TEST_RESU(RESU=_F(INST=3.6800000000000002,
-                  RESULTAT=DYTR_32V,
+                  RESULTAT=DTR_32V,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -968,8 +931,9 @@ TEST_RESU(RESU=_F(INST=3.6800000000000002,
                   PRECISION=5.E-3,),
           )
 
+
 TEST_RESU(RESU=_F(INST=5.0,
-                  RESULTAT=DYTR_32V,
+                  RESULTAT=DTR_32V,
                   NOM_CHAM='VITE',
                   NOEUD='N2',
                   NOM_CMP='DX',
@@ -979,5 +943,6 @@ TEST_RESU(RESU=_F(INST=5.0,
                   PRECISION=5.E-3,),
           )
 
+#--- FIN test DYNA_LINE 
 FIN( )
 #

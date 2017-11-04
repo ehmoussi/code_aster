@@ -85,7 +85,7 @@ CARX=AFFE_CARA_ELEM(MODELE=MODX,
                               ),),
                     GRILLE=(_F(GROUP_MA = 'COQ_X',
                               SECTION = .2,
-                              ANGL_REP = (0.0, 0.0,),
+                              ANGL_REP_1 = (0.0, 0.0,),
                               ),),)
 
 CARY=AFFE_CARA_ELEM(MODELE=MODY,
@@ -95,7 +95,7 @@ CARY=AFFE_CARA_ELEM(MODELE=MODY,
                               ),),
                     GRILLE=(_F(GROUP_MA = 'COQ_Y',
                               SECTION = .2,
-                              ANGL_REP = (90.0, 0.0,),),),)
+                              ANGL_REP_1= (90.0, 0.0,),),),)
 
 CARZ=AFFE_CARA_ELEM(MODELE=MODZ,
                     COQUE=(_F(GROUP_MA = 'DKT_Z',
@@ -104,7 +104,7 @@ CARZ=AFFE_CARA_ELEM(MODELE=MODZ,
                               ),),
                     GRILLE=(_F(GROUP_MA = 'COQ_Z',
                               SECTION = .2,
-                              ANGL_REP = (0.0, 90.0,),),),)
+                              ANGL_REP_1 = (0.0, 90.0,),),),)
 
 #-----------------------------------------------------------------------
 

@@ -111,11 +111,11 @@ LACAR=AFFE_CARA_ELEM(    MODELE=LEMOD,
                                _F( GROUP_MA = 'ACPLUS',
                                 SECTION = .2,
                                 EXCENTREMENT = .05,
-                                ANGL_REP=(0,0),),
+                                ANGL_REP_1=(0,0),),
                                _F( GROUP_MA = 'ACMOINS',
                                 SECTION = .2,
                                 EXCENTREMENT = -.05,
-                                ANGL_REP=(0,0),),
+                                ANGL_REP_1=(0,0),),
                               )
                         )
 
