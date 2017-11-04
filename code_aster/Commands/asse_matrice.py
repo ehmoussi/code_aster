@@ -19,21 +19,33 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import AssemblyMatrixDouble
+from ..Objects import AssemblyMatrixDouble
+from ..Supervis import logger
+from .ExecuteCommand import ExecuteCommand
 
 
-def ASSE_MATRICE(**curDict):
-    returnMatrix = AssemblyMatrixDouble.create()
-    name = returnMatrix.getName()
-    type = returnMatrix.getType()
-    syntax = CommandSyntax("ASSE_MATRICE")
+class MatrixAssembler(ExecuteCommand):
+    """Command that creates a
+    :class:`~code_aster.Objects.AssemblyMatrixDouble`."""
+    command_name = "ASSE_MATRICE"
 
-    syntax.setResult(name, type)
+    def create_result(self, keywords):
+        """Initialize the result.
 
-    syntax.define(curDict)
-    numOp = 12
-    python_execop(numOp)
-    syntax.free()
-    return returnMatrix
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = AssemblyMatrixDouble.create()
+
+    def check_syntax(self, keywords):
+        """Check the syntax passed to the command. *keywords* will contain
+        default keywords after executing this method.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords, changed
+                in place.
+        """
+        logger.warn("'check_syntax' is disabled in ASSE_MATRICE!")
+
+
+ASSE_MATRICE = MatrixAssembler.run

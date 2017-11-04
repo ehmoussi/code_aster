@@ -36,7 +36,7 @@ from .affe_char_cine import AFFE_CHAR_CINE
 from .affe_char_meca import AFFE_CHAR_MECA
 from .affe_materiau import AFFE_MATERIAU
 from .affe_modele import AFFE_MODELE
-# from .asse_matrice import ASSE_MATRICE
+from .asse_matrice import ASSE_MATRICE
 # from .asse_matr_gene import ASSE_MATR_GENE
 # from .asse_vect_gene import ASSE_VECT_GENE
 from .calc_champ import CALC_CHAMP
@@ -76,15 +76,13 @@ from .meca_statique import MECA_STATIQUE
 # from .mode_iter_cycl import MODE_ITER_CYCL
 from .mode_statique import MODE_STATIQUE
 from .modi_maillage import MODI_MAILLAGE
-# from .nume_ddl import NUME_DDL
+from .nume_ddl import NUME_DDL
 # from .nume_ddl_gene import NUME_DDL_GENE
 from .proj_champ import PROJ_CHAMP
 # from .stat_non_line import STAT_NON_LINE
 from .recu_fonction import RECU_FONCTION
 
-# from .macro_commands import (
-#    ASSEMBLAGE, DEBUT, IMPR_FONCTION,
-#)
+from .ExecuteCommand import CO
 
 
 # other commands are automatically added just using their catalog

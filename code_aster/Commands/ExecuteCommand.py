@@ -62,7 +62,7 @@ from Utilitai.as_timer import ASTER_TIMER
 
 from ..Cata import Commands
 from ..Cata.SyntaxChecker import CheckerError, checkCommandSyntax
-from ..Cata.SyntaxUtils import mixedcopy, remove_none
+from ..Cata.SyntaxUtils import mixedcopy, remove_none, search_for
 from ..Supervis import CommandSyntax, logger
 from ..Utilities import Singleton, deprecated, import_object
 from ..Utilities.outputs import (command_header, command_result,
@@ -341,7 +341,7 @@ class ExecuteMacro(ExecuteCommand):
     .. todo:: Associate additional results with ``CO()``.
     """
 
-    _store = None
+    _sdprods = None
 
     def __init__(self, command_name, command_op=None):
         """Initialization"""
@@ -364,9 +364,19 @@ class ExecuteMacro(ExecuteCommand):
         Returns:
             misc: Result of the Command, *None* if it returns no result.
         """
+        def _predicate(value):
+            return isinstance(value, CO)
+
+        self._sdprods = search_for(keywords, _predicate)
+
         outputs = self._op(self, **keywords)
         assert not isinstance(outputs, int), "OPS must now return results."
         self._result = outputs
+
+    @property
+    def sdprods(self):
+        """Attribute that holds the auxiliary results."""
+        return self._sdprods or []
 
     # create a sub-object?
     def get_cmd(self, name):
@@ -398,3 +408,27 @@ class ExecuteMacro(ExecuteCommand):
     @deprecated(True, help="Use the 'logger' object instead.")
     def cr(self):
         return logger
+
+
+class CO(object):
+    """Object that identify an auxiliary result of a Macro-Command."""
+    _name = None
+
+    def __init__(self, name):
+        """Initialization"""
+        self._name = name
+
+    def is_typco(self):
+        """Tell if it is an auxiliary result."""
+        return True
+
+    def getType(self):
+        """Return a type for syntax checking."""
+        return "CO"
+
+    def setType(self, typ):
+        """Declare the future type."""
+        pass
+
+    # used in AsterStudy as settype
+    settype = setType

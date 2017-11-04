@@ -51,7 +51,7 @@ def mixedcopy(obj):
     return new
 
 def remove_none(obj):
-    """"Remove None values from dict **in place**, do not change values of
+    """Remove None values from dict **in place**, do not change values of
     other types."""
     if isinstance(obj, (list, tuple)):
         for i in obj:
@@ -62,6 +62,20 @@ def remove_none(obj):
                 del obj[key]
             else:
                 remove_none(obj[key])
+
+def search_for(obj, predicate):
+    """Return all values that verify the predicate function."""
+    found = []
+    if isinstance(obj, (list, tuple)):
+        for i in obj:
+            found.extend(search_for(i, predicate))
+    elif isinstance(obj, dict):
+        for key, value in obj.items():
+            if predicate(value):
+                found.append(value)
+            else:
+                found.extend(search_for(obj[key], predicate))
+    return found
 
 def force_list(values):
     """Ensure `values` is iterable (list, tuple, array...) and return it as
