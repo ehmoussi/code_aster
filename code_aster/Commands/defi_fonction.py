@@ -86,8 +86,8 @@ class FunctionDefinition(ExecuteCommand):
             miny = min(values[:, 1])
 
         elif keywords.get("VALE_PARA") is not None:
-            abscissas = keywords["VALE_PARA"].getValues()
-            ordinates = keywords["VALE_FONC"].getValues()
+            abscissas = keywords["VALE_PARA"].getValuesAsArray()
+            ordinates = keywords["VALE_FONC"].getValuesAsArray()
 
         else:
             raise SyntaxError("No keyword defining the values!")
