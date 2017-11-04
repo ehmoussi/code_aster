@@ -16,7 +16,7 @@ dfc1 = DEFI_FONCTION(NOM_PARA='INST',
 
 test.assertEqual(dfc1.getType(), "FONCTION_C")
 prop = dfc1.getProperties()
-test.assertSequenceEqual( prop[0:5], ['FONCT_C', 'LIN LIN', 'INST', 'FREQ', 'EE'] )
+test.assertSequenceEqual( prop[:5], ['FONCT_C', 'LIN LIN', 'INST', 'FREQ', 'EE'] )
 
 test.assertEqual(dfc1.size(), 3)
 test.assertEqual(dfc1(1.), 3 + 4j)
@@ -29,6 +29,10 @@ labs = DEFI_LIST_REEL(VALE=(0., 1., 2., 3.))
 fctcpx = CALC_FONC_INTERP(FONCTION=frmcpx,
                           LIST_PARA=labs,
                           NOM_PARA='X', )
+
+test.assertEqual(fctcpx.getType(), "FONCTION_C")
+prop = fctcpx.getProperties()
+test.assertSequenceEqual( prop[:5], ['FONCT_C', 'LIN LIN', 'X', 'TOUTRESU', 'EE'] )
 
 IMPR_FONCTION(COURBE=_F(FONCTION=frmcpx,
                         LIST_PARA=labs,

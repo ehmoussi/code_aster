@@ -60,6 +60,8 @@ class FunctionDefinition(ExecuteCommand):
         """
         funct = self._result
         cmplx = False
+        minx = 1
+        miny = 1
 
         if keywords.get("ABSCISSE") is not None:
             abscissas = np.array(keywords["ABSCISSE"])
@@ -81,6 +83,7 @@ class FunctionDefinition(ExecuteCommand):
             values = values.reshape((values.size / 3, 3))
             abscissas = values[:, 0]
             ordinates = values[:, 1:].ravel()
+            miny = min(values[:, 1])
 
         elif keywords.get("VALE_PARA") is not None:
             abscissas = keywords["VALE_PARA"].getValues()
@@ -89,6 +92,9 @@ class FunctionDefinition(ExecuteCommand):
         else:
             raise SyntaxError("No keyword defining the values!")
 
+        minx = min(abscissas)
+        if not cmplx:
+            miny = min(ordinates)
         if abscissas.shape[0] * (1 + int(cmplx)) != ordinates.shape[0]:
             UTMESS("F", "UTILITAI2_77")
         diff = abscissas[1:] - abscissas[:-1]
@@ -119,12 +125,12 @@ class FunctionDefinition(ExecuteCommand):
         if len(interpol.split()) == 1:
             interpol = interpol + " " + interpol
         if interpol[:3] == "LOG":
-            if min(abscissas) <= 0.:
+            if minx <= 0.:
                 UTMESS("F", "UTILITAI2_71")
         if interpol[4:] == "LOG":
             if cmplx:
                 UTMESS("F", "UTILITAI5_92")
-            if min(funct.Ordo()) <= 0.:
+            if miny <= 0.:
                 UTMESS("F", "UTILITAI2_71")
         funct.setInterpolation(interpol)
 
