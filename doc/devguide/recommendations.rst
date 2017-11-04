@@ -99,9 +99,10 @@ Required changes
 - Tests on DataStructures types must be changed.
   For example:
 
-  Replace ``AsType(obj) is fonction_sdaster`` by ``obj.getType() == "FONCTION"``
+  Replace ``AsType(obj) is fonction_sdaster``, ``type(obj) is fonction_sdaster``
+  or ``isinstance(obj, fonction_sdaster)``
 
-  or ``type(obj) is fonction_sdaster`` by ``obj.getType() == "FONCTION"``
+  by ``obj.getType() == "FONCTION"``
 
 - Object ``MCLIST`` does not exist anymore. List of factor keywords is just a
   *list* or a *tuple*.

@@ -164,8 +164,8 @@ class ExtendedFunctionComplex(injectorC, FunctionComplex):
         """
         size = self.size()
         values = np.array(self.getValues())
-        abscissas = values[:3].transpose()
-        ordinates = values[3:].transpose()
+        abscissas = values[:size].transpose()
+        ordinates = values[size:].transpose()
         abscissas.shape = (size, 1)
         ordinates.shape = (size, 2)
         ordinates = ordinates
