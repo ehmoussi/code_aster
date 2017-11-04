@@ -19,21 +19,32 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import DOFNumbering
+from ..Objects import DOFNumbering
+from ..Supervis import logger
+from .ExecuteCommand import ExecuteCommand
 
 
-def NUME_DDL(**curDict):
-    returnDofNum = DOFNumbering.create()
-    name = returnDofNum.getName()
-    type = returnDofNum.getType()
-    syntax = CommandSyntax("NUME_DDL")
+class NumberingCreation(ExecuteCommand):
+    """Command that creates a :class:`~code_aster.Objects.DOFNumbering`."""
+    command_name = "NUME_DDL"
 
-    syntax.setResult(name, type)
+    def create_result(self, keywords):
+        """Initialize the result.
 
-    syntax.define(curDict)
-    numOp = 11
-    python_execop(numOp)
-    syntax.free()
-    return returnDofNum
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = DOFNumbering.create()
+
+    def check_syntax(self, keywords):
+        """Check the syntax passed to the command. *keywords* will contain
+        default keywords after executing this method.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords, changed
+                in place.
+        """
+        logger.warn("'check_syntax' is disabled in NUME_DDL!")
+
+
+NUME_DDL = NumberingCreation.run

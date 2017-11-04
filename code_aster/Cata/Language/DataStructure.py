@@ -72,6 +72,11 @@ class DataStructure(object):
                 copied.__dict__[k] = deepcopy(v, memodict)
         return copied
 
+    # for compatibility in sdprod functions
+    def is_typco(self):
+        """Tell if it is an auxiliary result."""
+        return False
+
 
 def AsType(obj):
     """Return the type of `obj`"""

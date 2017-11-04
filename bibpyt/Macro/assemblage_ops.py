@@ -18,14 +18,20 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: albert.alarcon at edf.fr
+from code_aster.Cata.SyntaxUtils import remove_none
 
 
-def assemblage_ops(
-    self, MODELE, CHAM_MATER, CARA_ELEM, CHARGE, MATR_ASSE, VECT_ASSE,
-          NUME_DDL, CHAR_CINE, INST, INFO, **args):
-#  """
-#     Ecriture de la macro MACRO_ASSE
-#  """
+def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
+    """
+        Ecriture de la macro MACRO_ASSE
+    """
+    CHAM_MATER = args.get("CHAM_MATER")
+    CARA_ELEM = args.get("CARA_ELEM")
+    CHARGE = args.get("CHARGE")
+    CHAR_CINE = args.get("CHAR_CINE")
+    INST = args.get("INST")
+    MATR_ASSE = args.get("MATR_ASSE")
+    VECT_ASSE = args.get("VECT_ASSE")
 
     ier = 0
     from Utilitai.Utmess import UTMESS
@@ -120,6 +126,7 @@ def assemblage_ops(
             except IndexError:
                 pass
 
+            remove_none(motscles)
             _a = CALC_MATR_ELEM(MODELE=MODELE, **motscles)
 
             if option == 'RIGI_MECA':
@@ -128,10 +135,10 @@ def assemblage_ops(
             if option == 'MASS_MECA':
                 masel = _a
                 lmasel = 1
-            
+
             if lnume == 0:
                 num = numeddl
-            
+
             # ici iocc est obligatoirement 1 vu le traitement précédent
             # et la non compatibilité des 4 options
             elif option in ('RIGI_MECA', 'RIGI_THER', 'RIGI_ACOU', 'RIGI_FLUI_STRU'):
@@ -140,7 +147,7 @@ def assemblage_ops(
 
             elif iocc == 1 and option not in (
                 'RIGI_MECA', 'RIGI_THER', 'RIGI_ACOU','RIGI_FLUI_STRU'):
-                
+
                 self.DeclareOut('num', numeddl)
                 if CHARGE != None:
                     num = NUME_DDL(MODELE=MODELE, CHARGE=CHARGE, INFO=info)
@@ -227,4 +234,4 @@ def assemblage_ops(
             # assemblage des vecteurs
             vv = ASSE_VECTEUR(VECT_ELEM=_b, NUME_DDL=numeddl)
 
-    return ier
+    return
