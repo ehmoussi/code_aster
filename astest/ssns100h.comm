@@ -83,7 +83,7 @@ MOD=AFFE_MODELE(    MAILLAGE=MAIL,
 CARGR=AFFE_CARA_ELEM(    MODELE=MOD,
                        GRILLE=_F( GROUP_MA = 'GEOB',
                                 SECTION = .01,
-                                ANGL_REP = (0.0, 0.0,),
+                                ANGL_REP_1 = (0.0, 0.0,),
                                 EXCENTREMENT = 0.0,
 #                                COEF_RIGI_DRZ : 0.00001
                               )

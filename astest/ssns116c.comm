@@ -77,7 +77,7 @@ CAOUT=DEFI_MATERIAU(ELAS=_F(E = young,  NU = poisson, RHO=rho,)
 CARA=AFFE_CARA_ELEM(MODELE = MODELE,
                     MEMBRANE =(_F(GROUP_MA     = 'membrane',
                                   EPAIS        = epais,
-                                  ANGL_REP     = (0., 0.,),
+                                  ANGL_REP_1     = (0., 0.,),
                                   N_INIT       = tensInit)))
 
 #

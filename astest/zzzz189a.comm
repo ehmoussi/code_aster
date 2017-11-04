@@ -23,10 +23,10 @@
 #   commande Aster suivante :
 #
 #      LIST_CARA_CIRCONF=(
-#              GROUP_MA   =SIMP(statut='o',typ=grma,max='**'),
-#              AXE         =SIMP(statut='o',typ='R',max=3,min=3),
-#              MAILLAGE         =SIMP(statut='o',typ=maillage_sdaster ),
-#              GRILLE         =FACT(statut='f',max=1,
+#                GROUP_MA        =SIMP(statut='o',typ=grma,max='**'),
+#                VECT_2          =SIMP(statut='o',typ='R',max=3,min=3),
+#                MAILLAGE        =SIMP(statut='o',typ=maillage_sdaster ),
+#                GRILLE          =FACT(statut='f',max=1,
 #                SECTION         =SIMP(statut='o',typ='R'),
 #                EXCENTREMENT    =SIMP(statut='f',typ='R'),
 #                COEF_RIGI_DRZ   =SIMP(statut='f',typ='R'),
@@ -54,7 +54,7 @@ def norm(x):
    return tmp
 
 
-def LIST_CARA_CIRCONF(GROUP_MA,AXE,MAILLAGE,**args):
+def LIST_CARA_CIRCONF(GROUP_MA,VECT_2,MAILLAGE,**args):
 
 
   """
@@ -81,7 +81,7 @@ def LIST_CARA_CIRCONF(GROUP_MA,AXE,MAILLAGE,**args):
   n1n3=NP.ones(3)
   vecX=NP.array([1.,0.,0.])
   vecY=NP.array([0.,1.,0.])
-  vecAxe=NP.array(AXE)
+  vecAxe=NP.array(VECT_2)
   normale=NP.ones(3)
   vrep=NP.ones(3)
 
@@ -112,7 +112,7 @@ def LIST_CARA_CIRCONF(GROUP_MA,AXE,MAILLAGE,**args):
          vecX1=copy.copy(vecV)
          vecX1[2]=0.
 
-         # On calcule les angles de ANGL_REP pour obtenir le vecteur vecV
+         # On calcule les angles de ANGL_REP_1 pour obtenir le vecteur vecV
          alpha=NP.arctan2(vecX1[1],vecX1[0])*180./NP.pi
          beta=-NP.arctan2(vecV[2],norm(vecX1))*180./NP.pi
 
@@ -128,7 +128,7 @@ def LIST_CARA_CIRCONF(GROUP_MA,AXE,MAILLAGE,**args):
          for cle in args["GRILLE"].keys():
             mon_dico[cle]=args["GRILLE"][cle]
          mon_dico["MAILLE"]=nom_maille
-         mon_dico["ANGL_REP"]=(alpha,beta)
+         mon_dico["ANGL_REP_1"]=(alpha,beta)
 
          LISTE_CARA.append(mon_dico)
 
@@ -176,7 +176,7 @@ MODEL=AFFE_MODELE(MAILLAGE=MAILL,
 
 # On cree les caracteristiques
 LIST_GRI=LIST_CARA_CIRCONF(GROUP_MA='GRILLE',
-                           AXE=(0.,0.,1.),
+                           VECT_2=(0.,0.,1.),
                      #    MODELE=MODEL,
                          MAILLAGE=MAILL,
                            GRILLE=_F(SECTION=20.,EXCENTREMENT=0.,));

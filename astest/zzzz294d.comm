@@ -37,7 +37,7 @@ PLAQUE=AFFE_CARA_ELEM(  MODELE=MO,
                         GRILLE = _F( GROUP_MA=('GROUP_MA_GRI'),
                                     SECTION = 0.01,
                                     EXCENTREMENT = 0.05,
-                                    ANGL_REP = (10,10),
+                                    ANGL_REP_1 = (10,10),
                                     ),
                     );
 

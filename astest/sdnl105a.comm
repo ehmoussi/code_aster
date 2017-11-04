@@ -83,80 +83,6 @@ CHARTRAN=AFFE_CHAR_MECA(MODELE=BARRE,
                                         FY=1000.,),);
 
 #
-
-K_ELEM=CALC_MATR_ELEM(OPTION='RIGI_MECA',
-                      MODELE=BARRE,
-                      CHAM_MATER=CHMAT,
-                      CARA_ELEM=CARA,
-                      CHARGE=GUIDAGE,);
-
-#
-
-M_ELEM=CALC_MATR_ELEM(OPTION='MASS_MECA',
-                      MODELE=BARRE,
-                      CHAM_MATER=CHMAT,
-                      CARA_ELEM=CARA,
-                      CHARGE=GUIDAGE,);
-
-#
-
-V_ELEM=CALC_VECT_ELEM(OPTION='CHAR_MECA',
-                      CHARGE=CHARTRAN,);
-
-#
-
-NUM=NUME_DDL(MATR_RIGI=K_ELEM,);
-
-#
-
-K_ASSE=ASSE_MATRICE(MATR_ELEM=K_ELEM,
-                    NUME_DDL=NUM,);
-
-M_ASSE=ASSE_MATRICE(MATR_ELEM=M_ELEM,
-                    NUME_DDL=NUM,);
-
-V_ASSE=ASSE_VECTEUR(VECT_ELEM=V_ELEM,
-                    NUME_DDL=NUM,);
-
-#
-
-MODES=CALC_MODES(MATR_RIGI=K_ASSE,
-                 MATR_MASS=M_ASSE,
-                 CALC_FREQ=_F(NMAX_FREQ=15,
-                              ),
-                 )
-
-
-#
-###
-###### PROJECTIONS SUR BASE MODALE :
-###
-
-
-#
-
-NUMEMODE=NUME_DDL_GENE(BASE=MODES,
-                       STOCKAGE='DIAG',);
-
-#
-
-K_PROJ=PROJ_MATR_BASE(BASE=MODES,
-                      NUME_DDL_GENE=NUMEMODE,
-                      MATR_ASSE=K_ASSE,);
-
-#
-
-M_PROJ=PROJ_MATR_BASE(BASE=MODES,
-                      NUME_DDL_GENE=NUMEMODE,
-                      MATR_ASSE=M_ASSE,);
-
-#
-
-F_PROJ=PROJ_VECT_BASE(BASE=MODES,
-                      NUME_DDL_GENE=NUMEMODE,
-                      VECT_ASSE=V_ASSE,);
-
-#
 # DEFINITION DE L'OBSTACLE
 
 OBSTACLE=DEFI_OBSTACLE(TYPE='BI_PLAN_Y',);
@@ -171,43 +97,54 @@ LISTINST=DEFI_LIST_REEL(DEBUT=0.,
                         INTERVALLE=_F(JUSQU_A=1.,
                                       NOMBRE=250,),);
 #
-TRAN_GE1=DYNA_VIBRA( TYPE_CALCUL='TRAN',
-                   BASE_CALCUL='GENE',
-                   SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE',),
-                         MATR_MASS=M_PROJ,
-                         MATR_RIGI=K_PROJ,
-                         INCREMENT=_F(INST_INIT=0.,
-                                      INST_FIN=1.,
-                                      PAS=2.E-4,),
-                         ARCHIVAGE=_F(PAS_ARCH=10, LIST_INST=LISTINST),
-                         EXCIT=_F(VECT_ASSE_GENE=F_PROJ,
-                                  COEF_MULT=1000.,),
-                         COMPORTEMENT=_F(RELATION='DIS_CHOC',
-                                         INTITULE='CHOC1_2',
-                                         GROUP_MA='GROUP_MA_GMC12',
-                                         OBSTACLE=OBSTACLE,
-                                         NORM_OBST=(1.,0.,0.,),
-                                         DIST_1=0.0995,
-                                         DIST_2=0.0995,
-                                         RIGI_NOR=1.E+8,),
-                         # VERI_CHOC=_F(STOP_CRITERE='OUI',
-                         #              SEUIL=0.2,),
-                         SOLVEUR=_F(METHODE='MULT_FRONT',),
-                         INFO=2,);
+###
+###### CALCULS TRANSITOIRES AVEC DYNA_LINE
+###
 
+FM = DEFI_CONSTANTE(VALE = 1000.)
+
+TRANLIN1 =DYNA_LINE(TYPE_CALCUL='TRAN',
+                    BASE_CALCUL='GENE',
+                    
+                    SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE',),
+                    MODELE = BARRE,
+                    CARA_ELEM = CARA,
+                    CHAM_MATER = CHMAT,
+                    CHARGE=GUIDAGE,
+
+                    ENRI_STAT='NON',
+                    BANDE_ANALYSE=35.,
+                    EXCIT=_F(CHARGE = CHARTRAN,FONC_MULT = FM),
+                    COMPORTEMENT=_F(RELATION='DIS_CHOC',
+                                 INTITULE='CHOC1_2',
+                                 GROUP_MA='GROUP_MA_GMC12',
+                                 OBSTACLE=OBSTACLE,
+                                 NORM_OBST=(1.,0.,0.,),
+                                 DIST_1=0.0995,
+                                 DIST_2=0.0995,
+                                 RIGI_NOR=1.E+8,),
+                    INCREMENT=_F(INST_INIT=0.,
+                              INST_FIN=1.,
+                              PAS=2.E-4,),
+                    ARCHIVAGE=_F(PAS_ARCH=10, LIST_INST=LISTINST),
+
+                    RESU_GENE     = CO("TRAN_GE1"),
+                     )
 #
-TRAN_GE2=DYNA_VIBRA( TYPE_CALCUL='TRAN',
-                   BASE_CALCUL='GENE',
-                   SCHEMA_TEMPS=_F(SCHEMA='DEVOGE', PAS_MAXI=4.E-4),
-                         MATR_MASS=M_PROJ,
-                         MATR_RIGI=K_PROJ,
-                         INCREMENT=_F(INST_INIT=0.,
-                                      INST_FIN=1.,
-                                      PAS=2.E-4,),
-                         ARCHIVAGE=_F(PAS_ARCH=5, LIST_INST=LISTINST),
-                         EXCIT=_F(VECT_ASSE_GENE=F_PROJ,
-                                  COEF_MULT=1000.,),
-                         COMPORTEMENT=(
+
+TRANLIN2 =DYNA_LINE(TYPE_CALCUL='TRAN',
+                    BASE_CALCUL='GENE',
+                    
+                    SCHEMA_TEMPS=_F(SCHEMA='DEVOGE', PAS_MAXI=4.E-4),
+                    MODELE = BARRE,
+                    CARA_ELEM = CARA,
+                    CHAM_MATER = CHMAT,
+                    CHARGE=GUIDAGE,
+
+                    ENRI_STAT='NON',
+                    BANDE_ANALYSE=35.,
+                    EXCIT=_F(CHARGE = CHARTRAN,FONC_MULT = FM),
+                    COMPORTEMENT=(
                                _F(RELATION='DIS_CHOC',
                                   INTITULE='CHOC1',
                                   NOEUD_1='N8',
@@ -225,189 +162,168 @@ TRAN_GE2=DYNA_VIBRA( TYPE_CALCUL='TRAN',
                                   NORM_OBST=(1.,0.,0.,),
                                   DIST_1=0.0995,
                                   DIST_2=0.0995,
-                                  RIGI_NOR=1.E+8,),),);
+                                  RIGI_NOR=1.E+8,),),
+                    INCREMENT=_F(INST_INIT=0.,
+                                 INST_FIN=1.,
+                                 PAS=2.E-4,),
+                    ARCHIVAGE=_F(PAS_ARCH=5, LIST_INST=LISTINST),
 
+                     )
 #
-TRAN_GE3=DYNA_VIBRA( TYPE_CALCUL='TRAN',
-                   BASE_CALCUL='GENE',
+
+TRANLIN3 =DYNA_LINE(TYPE_CALCUL='TRAN',
+                    BASE_CALCUL='GENE',
                    SCHEMA_TEMPS=_F(SCHEMA='ADAPT_ORDRE2',
 # ON IMPOSE PAS_MAXI = PAS POUR RETROUVER LES ANCIENS RESULTATS
 # POUR AMELIORER LE TEMPS CPU IL VAUT MIEUX TESTER AVEC UN PAS_MAXI PLUS GRAND
                                       PAS_MAXI=2.E-4,),
-                         MATR_MASS=M_PROJ,
-                         MATR_RIGI=K_PROJ,
-                         INCREMENT=_F(INST_INIT=0.,
-                                      INST_FIN=1.,
-                                      PAS=2.E-4),
-                         ARCHIVAGE=_F(PAS_ARCH=5, LIST_INST=LISTINST),
-                         EXCIT=_F(VECT_ASSE_GENE=F_PROJ,
-                                  COEF_MULT=1000.,),
-                         COMPORTEMENT=_F(RELATION='DIS_CHOC',
-                                         INTITULE='CHOC1_2',
-                                         MAILLE=('MC1','MC2',),
-                                         OBSTACLE=OBSTACLE,
-                                         NORM_OBST=(1.,0.,0.,),
-                                         DIST_1=0.0995,
-                                         DIST_2=0.0995,
-                                         RIGI_NOR=1.E+8,),
-                         VERI_CHOC=_F(STOP_CRITERE='NON',),
-                         INFO=2);
+                    MODELE = BARRE,
+                    CARA_ELEM = CARA,
+                    CHAM_MATER = CHMAT,
+                    CHARGE=GUIDAGE,
 
+                    ENRI_STAT='NON',
+                    BANDE_ANALYSE=35.,
+                    EXCIT=_F(CHARGE = CHARTRAN,FONC_MULT = FM),
+                    COMPORTEMENT=_F(RELATION='DIS_CHOC',
+                                     INTITULE='CHOC1_2',
+                                     MAILLE=('MC1','MC2',),
+                                     OBSTACLE=OBSTACLE,
+                                     NORM_OBST=(1.,0.,0.,),
+                                     DIST_1=0.0995,
+                                     DIST_2=0.0995,
+                                     RIGI_NOR=1.E+8,),
+                    INCREMENT=_F(INST_INIT=0.,
+                                 INST_FIN=1.,
+                                 PAS=2.E-4,),
+                    ARCHIVAGE=_F(PAS_ARCH=5, LIST_INST=LISTINST),
+
+                     )
 #
 
-LIST_R=DEFI_LIST_REEL(DEBUT=0.,
-                      INTERVALLE=_F(JUSQU_A=1.,
-                                    NOMBRE=10,),);
-
-#
-
-TRAN1=REST_GENE_PHYS(RESU_GENE=TRAN_GE1,
-                     LIST_INST=LIST_R,
-                     INTERPOL='LIN',
-                     TOUT_CHAM='OUI',);
-
-CALC_CHAMP(reuse = TRAN1,
-           RESULTAT = TRAN1,
-           FORCE = 'REAC_NODA',
-           MODELE = BARRE,
-           CARA_ELEM = CARA ,
-           CHAM_MATER= CHMAT,);
-#
-
-TRAN2=REST_GENE_PHYS(RESU_GENE=TRAN_GE2,
-                     LIST_INST=LIST_R,
-                     INTERPOL='LIN',
-                     TOUT_CHAM='OUI',);
-#
-
-TRAN3=REST_GENE_PHYS(RESU_GENE=TRAN_GE3,
-                     LIST_INST=LIST_R,
-                     INTERPOL='LIN',
-                     TOUT_CHAM='OUI',);
-#
-
+# Test DYNA_LINE
 TEST_RESU(RESU=(
                _F(INST=1.0,
-                  RESULTAT=TRAN1,
+                  RESULTAT=TRANLIN1,
                   NOM_CHAM='DEPL',
                   NOEUD='N8',
                   NOM_CMP='DY',
                   VALE_CALC=0.0164294825672,
                   ),
                _F(INST=1.0,
-                  RESULTAT=TRAN1,
+                  RESULTAT=TRANLIN1,
                   NOM_CHAM='VITE',
                   NOEUD='N8',
                   NOM_CMP='DY',
                   VALE_CALC=0.025415803242,
                   ),
                _F(INST=1.0,
-                  RESULTAT=TRAN1,
+                  RESULTAT=TRANLIN1,
                   NOM_CHAM='DEPL',
                   NOEUD='M8',
                   NOM_CMP='DY',
                   VALE_CALC=0.0111676958599,
                   ),
                _F(INST=1.0,
-                  RESULTAT=TRAN1,
+                  RESULTAT=TRANLIN1,
                   NOM_CHAM='VITE',
                   NOEUD='M8',
                   NOM_CMP='DY',
                   VALE_CALC=0.0442640030056,
                   ),
                _F(INST=1.0,
-                  RESULTAT=TRAN1,
+                  RESULTAT=TRANLIN1,
                   NOM_CHAM='DEPL',
                   NOEUD='O8',
                   NOM_CMP='DY',
                   VALE_CALC=0.00589756727752,
                   ),
                _F(INST=1.0,
-                  RESULTAT=TRAN1,
+                  RESULTAT=TRANLIN1,
                   NOM_CHAM='VITE',
                   NOEUD='O8',
                   NOM_CMP='DY',
                   VALE_CALC=0.104582587323,
                   ),
                _F(INST=1.0,
-                  RESULTAT=TRAN2,
+                  RESULTAT=TRANLIN2,
                   NOM_CHAM='DEPL',
                   NOEUD='N8',
                   NOM_CMP='DY',
                   VALE_CALC=0.0164264176874,
                   ),
                _F(INST=1.0,
-                  RESULTAT=TRAN2,
+                  RESULTAT=TRANLIN2,
                   NOM_CHAM='VITE',
                   NOEUD='N8',
                   NOM_CMP='DY',
-                  VALE_CALC=0.0254153464247,
+                  VALE_CALC=0.0254153737301,
                   ),
                _F(INST=1.0,
-                  RESULTAT=TRAN2,
+                  RESULTAT=TRANLIN2,
                   NOM_CHAM='DEPL',
                   NOEUD='M8',
                   NOM_CMP='DY',
                   VALE_CALC=0.0111626966324,
                   ),
                _F(INST=1.0,
-                  RESULTAT=TRAN2,
+                  RESULTAT=TRANLIN2,
                   NOM_CHAM='VITE',
                   NOEUD='M8',
                   NOM_CMP='DY',
-                  VALE_CALC=0.0441198917066,
+                  VALE_CALC=0.0441198407461,
                   ),
                _F(INST=1.0,
-                  RESULTAT=TRAN2,
+                  RESULTAT=TRANLIN2,
                   NOM_CHAM='DEPL',
                   NOEUD='O8',
                   NOM_CMP='DY',
                   VALE_CALC=0.00588734022575,
                   ),
                _F(INST=1.0,
-                  RESULTAT=TRAN2,
+                  RESULTAT=TRANLIN2,
                   NOM_CHAM='VITE',
                   NOEUD='O8',
                   NOM_CMP='DY',
                   VALE_CALC=0.104549304707,
                   ),
                _F(INST=1.0,
-                  RESULTAT=TRAN3,
+                  RESULTAT=TRANLIN3,
                   NOM_CHAM='DEPL',
                   NOEUD='N8',
                   NOM_CMP='DY',
                   VALE_CALC=0.0164269414073,
                   ),
                _F(INST=1.0,
-                  RESULTAT=TRAN3,
+                  RESULTAT=TRANLIN3,
                   NOM_CHAM='VITE',
                   NOEUD='N8',
                   NOM_CMP='DY',
                   VALE_CALC=0.0254199740922,
                   ),
                _F(INST=1.0,
-                  RESULTAT=TRAN3,
+                  RESULTAT=TRANLIN3,
                   NOM_CHAM='DEPL',
                   NOEUD='M8',
                   NOM_CMP='DY',
                   VALE_CALC=0.0111632618559,
                   ),
                _F(INST=1.0,
-                  RESULTAT=TRAN3,
+                  RESULTAT=TRANLIN3,
                   NOM_CHAM='VITE',
                   NOEUD='M8',
                   NOM_CMP='DY',
                   VALE_CALC=0.0442678798215,
                   ),
                _F(INST=1.0,
-                  RESULTAT=TRAN3,
+                  RESULTAT=TRANLIN3,
                   NOM_CHAM='DEPL',
                   NOEUD='O8',
                   NOM_CMP='DY',
                   VALE_CALC=0.00588711620276,
                   ),
                _F(INST=1.0,
-                  RESULTAT=TRAN3,
+                  RESULTAT=TRANLIN3,
                   NOM_CHAM='VITE',
                   NOEUD='O8',
                   NOM_CMP='DY',

@@ -77,7 +77,7 @@ MODX=AFFE_MODELE(MAILLAGE=MA,
 
 CARX=AFFE_CARA_ELEM(MODELE=MODX,
                     MEMBRANE=(_F(GROUP_MA = 'GRILLE',
-                              ANGL_REP = (0.0, 0.0,),
+                              ANGL_REP_1 = (0.0, 0.0,),
                               EPAIS = 1.0
                               ),),)
 

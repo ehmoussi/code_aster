@@ -1,0 +1,164 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
+#
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+MAIL=LIRE_MAILLAGE(VERI_MAIL=_F(VERIF='OUI'),FORMAT='MED',);
+
+MODMECA=AFFE_MODELE(MAILLAGE=MAIL,
+                    AFFE=_F(TOUT='OUI',
+                            PHENOMENE='MECANIQUE',
+                            MODELISATION='COQUE_AXIS',),);
+
+MODI_MAILLAGE(reuse =MAIL,
+              MAILLAGE=MAIL,
+              ORIE_LIGNE=_F(GROUP_MA=('AB',),
+                            GROUP_NO='A',
+                            VECT_TANG=(0.,-1.),),);
+
+CARELEM=AFFE_CARA_ELEM(MODELE=MODMECA,
+                       COQUE=_F(GROUP_MA = 'TOUT',
+                                EPAIS = 0.25,
+                                A_CIS = 2.5E4,
+                                ) )
+
+MATE=DEFI_MATERIAU( ELAS=_F(E  = 1.0,
+                            NU = 0.3, ),);
+
+CHMAT=AFFE_MATERIAU(MAILLAGE=MAIL,
+                    AFFE=_F(TOUT='OUI',
+                            MATER=MATE,),);
+
+
+BLOCAGE=AFFE_CHAR_MECA(MODELE=MODMECA,
+                       DDL_IMPO=(_F(GROUP_NO='A',
+                                    DY=0.0,)
+                                  ),)
+
+PRESSION=AFFE_CHAR_MECA(MODELE=MODMECA,
+                        PRES_REP=(_F(GROUP_MA='AB',PRES = 1.0)));
+
+ELAS=MECA_STATIQUE(MODELE=MODMECA,
+                   CHAM_MATER=CHMAT,
+                   CARA_ELEM=CARELEM,
+                   EXCIT=(_F(CHARGE=BLOCAGE,),
+                          _F(CHARGE=PRESSION,),),
+                   );
+
+CALC_CHAMP(reuse=ELAS,
+           RESULTAT=ELAS,
+           CONTRAINTE=('EFGE_NOEU'))
+
+TEST_RESU(RESU=(_F(NUME_ORDRE=1,
+                   GROUP_NO='A',
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=ELAS,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DX',
+                   VALE_CALC=63.9125130686,
+                   VALE_REFE=63.9488,
+                   ),
+                _F(NUME_ORDRE=1,
+                   GROUP_NO='B',
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=ELAS,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DX',
+                   VALE_CALC=32.0000004875,
+                   VALE_REFE=32.000,
+                   ),
+                _F(NUME_ORDRE=1,
+                   GROUP_NO='C',
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=ELAS,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DX',
+                   CRITERE='ABSOLU',
+                   VALE_CALC=0.0874858211644,
+                   VALE_REFE=0.05120,
+                   PRECISION=5.E-2,
+                   ),
+                )
+          )
+
+TEST_RESU(RESU=(_F(NUME_ORDRE=1,
+                   GROUP_NO='A',
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=ELAS,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DRZ',
+                   CRITERE='ABSOLU',
+                   VALE_CALC=0.0394482935134,
+                   VALE_REFE=0.06583,
+                   PRECISION=5.E-2,
+                   ),
+                _F(NUME_ORDRE=1,
+                   GROUP_NO='B',
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=ELAS,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DRZ',
+                   VALE_CALC=41.1610104874,
+                   VALE_REFE=41.133,
+                   ),
+                )
+          )
+
+TEST_RESU(RESU=(_F(NUME_ORDRE=1,
+                   GROUP_NO='B',
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=ELAS,
+                   NOM_CHAM='EFGE_NOEU',
+                   NOM_CMP='NYY',
+                   VALE_CALC=2.0000000305,
+                   VALE_REFE=2.,
+                   MAILLE="M50",
+                   SOUS_POINT=2,
+                   ),
+                _F(NUME_ORDRE=1,
+                   GROUP_NO='B1',
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=ELAS,
+                   NOM_CHAM='EFGE_NOEU',
+                   NOM_CMP='NYY',
+                   VALE_CALC=3.84512220838,
+                   VALE_REFE=3.84429,
+                   MAILLE="M40",
+                   SOUS_POINT=2,
+                   ),
+                )
+          )
+
+TEST_RESU(RESU=(_F(NUME_ORDRE=1,
+                   GROUP_NO='B1',
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=ELAS,
+                   NOM_CHAM='EFGE_NOEU',
+                   NOM_CMP='MXX',
+                   VALE_CALC=-0.0401292656718,
+                   VALE_REFE=-4.01497E-2,
+                   MAILLE="M40",
+                   SOUS_POINT=2,
+                   ),
+                )
+          )
+
+FIN();

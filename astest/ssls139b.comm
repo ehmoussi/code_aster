@@ -82,12 +82,12 @@ COUPLE=AFFE_CHAR_MECA_F(MODELE   = MODE,
                                       FX       = F_FORCE))
 
 ORI_GRIL=AFFE_CARA_ELEM(MODELE = MODE,
-                        GRILLE =(_F(GROUP_MA = 'MEMBRA',
-                                    SECTION  = section/pas,
-                                    ANGL_REP = (0., 0.,),),
-                                _F(GROUP_MA = 'MEMBRA_T',
-                                    SECTION  = section/pas,
-                                    ANGL_REP = (90., 0.,),),));
+                        GRILLE =(_F(GROUP_MA   = 'MEMBRA',
+                                    SECTION    = section/pas,
+                                    ANGL_REP_1 = (0., 0.,),),
+                                _F(GROUP_MA    = 'MEMBRA_T',
+                                    SECTION    = section/pas,
+                                    ANGL_REP_1 = (90., 0.,),),));
 
 #
 # ----------------------------------------------

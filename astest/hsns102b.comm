@@ -71,7 +71,7 @@ LECAR=AFFE_CARA_ELEM(
                     MODELE=LEMOD,
                     GRILLE=_F(GROUP_MA = 'GEOA',
                               SECTION = .01,
-                              ANGL_REP=(0,0),
+                              ANGL_REP_1=(0,0),
                               )
                  )
 # -------------------------------------------------

@@ -96,61 +96,12 @@ BND_COND = AFFE_CHAR_MECA(MODELE   = MODEL,
 
 ##########################################################
 
-K_ELEM   = CALC_MATR_ELEM(MODELE    = MODEL,
-                          CHARGE    = (COND_2D, BND_COND),
-                          CARA_ELEM = ELEM_CH,
-                          OPTION    = 'RIGI_MECA')
-
-M_ELEM   = CALC_MATR_ELEM(MODELE    = MODEL,
-                          CHARGE    = (COND_2D, BND_COND),
-                          CARA_ELEM = ELEM_CH,
-                          OPTION    = 'MASS_MECA')
-
-EQ_NBRG  = NUME_DDL      (MATR_RIGI = K_ELEM)
-
-MAT_K    = ASSE_MATRICE  (MATR_ELEM = K_ELEM,
-                          NUME_DDL  = EQ_NBRG)
-
-MAT_M    = ASSE_MATRICE  (MATR_ELEM = M_ELEM,
-                          NUME_DDL  = EQ_NBRG)
-
-BASIS    = CALC_MODES    (MATR_RIGI = MAT_K,
-                          MATR_MASS = MAT_M,
-                          OPTION    = 'PLUS_PETITE',
-                          CALC_FREQ = _F(NMAX_FREQ = 5))
-
-RED_NBRG = NUME_DDL_GENE (BASE      = BASIS,
-                          STOCKAGE  = 'DIAG' )
-
-##########################################################
-
 CHAR_UFX = AFFE_CHAR_MECA(MODELE       = MODEL,
                           FORCE_NODALE = _F(GROUP_NO = 'CENTER',
                                             FX       = 1.))
 
 VECT_UFX = CALC_VECT_ELEM(CHARGE    = CHAR_UFX,
                           OPTION    = 'CHAR_MECA')
-
-UNIT_FX  = ASSE_VECTEUR  (VECT_ELEM = VECT_UFX,
-                          NUME_DDL  = EQ_NBRG)
-
-UFX_RED  = PROJ_VECT_BASE(BASE          = BASIS,
-                          VECT_ASSE     = UNIT_FX,
-                          NUME_DDL_GENE = RED_NBRG,
-                          TYPE_VECT     = 'FORC')
-
-M_RED    = PROJ_MATR_BASE(BASE          = BASIS,
-                          MATR_ASSE     = MAT_M,
-                          NUME_DDL_GENE = RED_NBRG)
-
-K_RED    = PROJ_MATR_BASE(BASE          = BASIS,
-                          MATR_ASSE     = MAT_K,
-                          NUME_DDL_GENE = RED_NBRG)
-
-
-FLOOR    = DEFI_OBSTACLE (TYPE          = 'BI_PLAN_Y')
-
-
 
 SINE_FOR = FORMULE       (NOM_PARA = 'INST',
                           VALE     = 'ampl * sin ( om*INST )')
@@ -169,42 +120,85 @@ FX_REL   = DEFI_FONCTION(NOM_RESU = 'FORC',
                          VALE     = ( 0. ,  0., 
                                       1. , -K3))
 
-INTEGR   = DYNA_VIBRA    (TYPE_CALCUL   =  'TRAN',
-                          BASE_CALCUL   =  'GENE',
-                          SCHEMA_TEMPS  =  _F(SCHEMA = 'DIFF_CENTRE'),
-                          MATR_MASS     =  M_RED,
-                          MATR_RIGI     =  K_RED,
-                          AMOR_MODAL    =  _F(AMOR_REDUIT = 0.),
-                          INCREMENT     =  _F(INST_INIT   = t0,
-                                              INST_FIN    = t1,
-                                              PAS         = dt),
-                          EXCIT         =  _F(VECT_ASSE_GENE = UFX_RED,
-                                              FONC_MULT      = FX_TFUNC),
-                          COMPORTEMENT  = (_F(RELATION    = 'RELA_EFFO_DEPL',
-                                              GROUP_NO    = 'CENTER',
-                                              FONCTION    = FX_REL,
-                                              NOM_CMP     = 'DX')),
-                          ARCHIVAGE     =  _F(PAS_ARCH = 10),
-                          TRAITEMENT_NONL = 'EXPLICITE', INFO=2)
+DYN_LIN = DYNA_LINE(TYPE_CALCUL   = 'TRAN',
+                    BASE_CALCUL   = 'GENE',
+                    MODELE        = MODEL,
+                    CARA_ELEM     = ELEM_CH,
+                    CHARGE        = (COND_2D, BND_COND),
+                    SCHEMA_TEMPS  = _F(SCHEMA = 'DIFF_CENTRE'),
+                    ENRI_STAT     = "NON",
+                    RESU_GENE     = CO("INTEGR3"),
+                    BANDE_ANALYSE = 28.,
+                    AMORTISSEMENT = _F(TYPE_AMOR = "MODAL",
+                                       AMOR_REDUIT = 0.),
+                    INCREMENT     = _F(INST_INIT   = t0,
+                                       INST_FIN    = t1,
+                                       PAS         = dt),
+                    EXCIT         = _F(CHARGE = CHAR_UFX,
+                                       FONC_MULT = FX_TFUNC),
+                    COMPORTEMENT  =(_F(RELATION    = 'RELA_EFFO_DEPL',
+                                       GROUP_NO    = 'CENTER',
+                                       FONCTION    = FX_REL,
+                                       NOM_CMP     = 'DX')),
+                    ARCHIVAGE     = _F(PAS_ARCH = 10000),
+                    )
 
-INTEGR.INFO_NONL()
-FX_RELA  = RECU_FONCTION(RESU_GENE=INTEGR, GROUP_NO_CHOC='CENTER', INTITULE='N03     DX      FX_REL  ', PARA_X='INST', PARA_Y='VINT2')
+INTEGR3.INFO_NONL()
+
+FX_RELA3  = RECU_FONCTION(RESU_GENE=INTEGR3, GROUP_NO_CHOC='CENTER', INTITULE='N03     DX      FX_REL  ', PARA_X='INST', PARA_Y='VINT2')
 
 TEST_FONCTION(VALEUR=(_F(VALE_CALC  = -1.203031272384,
                          CRITERE    = 'RELATIF',
                          VALE_PARA  = 0.5,
-                         FONCTION   = FX_RELA)))
-
+                         FONCTION   = FX_RELA3)))
 
 IMPR_FONCTION(FORMAT='XMGRACE', 
               # PILOTE='INTERACTIF',
-              COURBE=(_F(FONCTION=FX_RELA)))
+              COURBE=(_F(FONCTION=FX_RELA3)))
 
 
-F_REL = INTEGR.FORCE_RELATION()
+F_REL = INTEGR3.FORCE_RELATION()
 np.savetxt("fx.csv", F_REL, delimiter=",")
 
+#---------------------------------------------------
+# CALCUL DYNA_LINE AVEC CORRECTION STATIQUE
+#---------------------------------------------------
+DYN_LINA = DYNA_LINE(TYPE_CALCUL   = 'TRAN',
+                    BASE_CALCUL   = 'GENE',
+                    MODELE        = MODEL,
+                    CARA_ELEM     = ELEM_CH,
+                    CHARGE        = (COND_2D, BND_COND),
+                    SCHEMA_TEMPS  = _F(SCHEMA = 'DIFF_CENTRE'),
+                    ENRI_STAT     = "OUI",
+                    ORTHO         = "OUI",
+                    RESU_GENE     = CO("INTEGR3A"),
+                    BANDE_ANALYSE = 28.,
+                    AMORTISSEMENT = _F(TYPE_AMOR = "MODAL",
+                                       AMOR_REDUIT = 0.),
+                    INCREMENT     = _F(INST_INIT   = t0,
+                                       INST_FIN    = t1,
+                                       PAS         = dt),
+                    EXCIT         = _F(CHARGE = CHAR_UFX,
+                                       FONC_MULT = FX_TFUNC),
+                    COMPORTEMENT  =(_F(RELATION    = 'RELA_EFFO_DEPL',
+                                       GROUP_NO    = 'CENTER',
+                                       FONCTION    = FX_REL,
+                                       NOM_CMP     = 'DX')),
+                    ARCHIVAGE     = _F(PAS_ARCH = 10000),
+                    )
+                    
+FX_RELAA  = RECU_FONCTION(RESU_GENE=INTEGR3A, GROUP_NO_CHOC='CENTER', INTITULE='N03     DX      FX_REL  ', PARA_X='INST', PARA_Y='VINT2')
 
+TEST_FONCTION(VALEUR=(_F(VALE_CALC  = -1.203031272384,
+                         CRITERE    = 'RELATIF',
+                         VALE_PARA  = 0.5,
+                         FONCTION   = FX_RELAA)))
+
+
+#
+#
+#
+#
 ELEM_CH2 = AFFE_CARA_ELEM(MODELE  = MODEL,
                           DISCRET = (_F(GROUP_MA = 'CENTER',
                                         CARA     = 'M_T_D_N', 
@@ -287,7 +281,7 @@ INTEGR2  = DYNA_VIBRA    (TYPE_CALCUL   =  'TRAN',
                           ARCHIVAGE     =  _F(PAS_ARCH = 10),
                           TRAITEMENT_NONL = 'EXPLICITE', INFO=2)
 
-DX_CENT  = RECU_FONCTION(RESU_GENE=INTEGR , GROUP_NO     ='CENTER', NOM_CHAM='DEPL', NOM_CMP='DX')
+DX_CENT  = RECU_FONCTION(RESU_GENE=INTEGR3A, GROUP_NO     ='CENTER', NOM_CHAM='DEPL', NOM_CMP='DX')
 DX_CENT2 = RECU_FONCTION(RESU_GENE=INTEGR2, GROUP_NO     ='CENTER', NOM_CHAM='DEPL', NOM_CMP='DX')
 
 IMPR_FONCTION(FORMAT='XMGRACE', 

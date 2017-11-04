@@ -99,6 +99,7 @@ GRICA=AFFE_CARA_ELEM( MODELE=MOGRI,
                         GRILLE=_F(  GROUP_MA=('COQUE'),
                                    SECTION = 1.0,
                                    EXCENTREMENT= 0.5,
+                                   ANGL_REP_1 = (0.,0.),
 
                                     ),
                     );
