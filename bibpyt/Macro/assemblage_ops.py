@@ -142,17 +142,19 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
             # ici iocc est obligatoirement 1 vu le traitement précédent
             # et la non compatibilité des 4 options
             elif option in ('RIGI_MECA', 'RIGI_THER', 'RIGI_ACOU', 'RIGI_FLUI_STRU'):
-                self.DeclareOut('num', numeddl)
+                # self.DeclareOut('num', numeddl)
                 num = NUME_DDL(MATR_RIGI=_a, INFO=info)
+                self.register_result(num, numeddl)
 
             elif iocc == 1 and option not in (
                 'RIGI_MECA', 'RIGI_THER', 'RIGI_ACOU','RIGI_FLUI_STRU'):
 
-                self.DeclareOut('num', numeddl)
+                # self.DeclareOut('num', numeddl)
                 if CHARGE != None:
                     num = NUME_DDL(MODELE=MODELE, CHARGE=CHARGE, INFO=info)
                 else:
                     num = NUME_DDL(MODELE=MODELE, INFO=info)
+                self.register_result(num, numeddl)
 
             self.DeclareOut('mm', m['MATRICE'])
             motscles = {'OPTION': option}
@@ -161,6 +163,7 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
                     MATR_ELEM=_a, NUME_DDL=num, CHAR_CINE=CHAR_CINE)
             else:
                 mm = ASSE_MATRICE(MATR_ELEM=_a, NUME_DDL=num)
+            self.register_result(mm, m['MATRICE'])
 
 # ASSEMBLAGE DES VECTEURS
     if VECT_ASSE != None:
@@ -230,8 +233,8 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
             _b = CALC_VECT_ELEM(**motscles)
 
             # les vecteurs assembles sont des concepts sortants.
-            self.DeclareOut('vv', v['VECTEUR'])
+            # self.DeclareOut('vv', v['VECTEUR'])
             # assemblage des vecteurs
             vv = ASSE_VECTEUR(VECT_ELEM=_b, NUME_DDL=numeddl)
-
+            self.register_result(vv, v['VECTEUR'])
     return
