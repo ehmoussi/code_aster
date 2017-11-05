@@ -113,3 +113,16 @@ Required changes
   Replace ``POUTRE.List_F()`` by ``force_list(POUTRE)``.
 
 - Usage of logical units: See :mod:`code_aster.RunManager.LogicalUnit`.
+
+- Additional results (**CO()** objects):
+
+  They must be registered with
+  :meth:`~code_aster.Commands.ExecuteCommand.ExecuteMacro.register_result`.
+  It replaces *DeclareOut()* but must be called **after** the result creation.
+
+  .. code-block:: diff
+
+        -          self.DeclareOut('num', numeddl)
+        +          # self.DeclareOut('num', numeddl)
+                   num = NUME_DDL(MATR_RIGI=_a, INFO=info)
+        +          self.register_result(num, numeddl)
