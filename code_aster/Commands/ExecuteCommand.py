@@ -344,8 +344,6 @@ class ExecuteMacro(ExecuteCommand):
 
     Now the results must be directly returned by the OPS function.
 
-    .. todo:: Associate additional results with ``CO()``.
-
     Long term: ``result = MACRO_COMMAND(**keywords)`` where ``result`` is
     a *DataStructure* object (for one result) or a *namedtuple* (for several
     results). ``result`` is created by the *ops* function.
