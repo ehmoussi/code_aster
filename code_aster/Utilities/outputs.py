@@ -90,6 +90,7 @@ class CommandRepresentation(object):
         Arguments:
             name (str): Command name.
             keywords (dict): Dict of keywords.
+            result (str): Name of the result.
         """
         self._newline()
         if result:
@@ -212,7 +213,11 @@ class CommandRepresentation(object):
 
     @classmethod
     def decorate_name(cls, text):
-        """Decorate a DataStructure's name."""
+        """Decorate a DataStructure's name.
+
+        Arguments:
+            text (str): Name of the object.
+        """
         return convert("'<{0}>'".format(text.strip()))
 
 

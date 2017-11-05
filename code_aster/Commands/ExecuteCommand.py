@@ -56,6 +56,8 @@ Base classes
 ============
 """
 
+from collections import namedtuple
+
 import aster
 from libaster import ResultNaming
 from Utilitai.as_timer import ASTER_TIMER
@@ -219,6 +221,10 @@ class ExecuteCommand(object):
         if self._result:
             logger.info(command_result(self._counter, self.name,
                                        self._result.getName()))
+        self._print_timer()
+
+    def _print_timer(self):
+        """Print the timer informations."""
         timer = GlobalCommandsData.timer()
         logger.info(command_time(*timer.StopAndGet(str(self._counter))))
         logger.info(command_separator())
@@ -339,9 +345,25 @@ class ExecuteMacro(ExecuteCommand):
     Now the results must be directly returned by the OPS function.
 
     .. todo:: Associate additional results with ``CO()``.
+
+    Long term: ``result = MACRO_COMMAND(**keywords)`` where ``result`` is
+    a *DataStructure* object (for one result) or a *namedtuple* (for several
+    results). ``result`` is created by the *ops* function.
+
+    For compatibility: :meth:`.create_result` builds the type of the
+    *namedtuple*. The *ops* function returns the "main" result and registers
+    others with :meth:`register_result`.
+    :meth:`exec_` adds it at first position of the *namedtuple* under the
+    name "main".
+
+    Attributes:
+        _sdprods (list[CO]): List of CO objects.
+        _result_type (type): *namedtuple* type.
+        _result_names (list[str]): List of expected results names.
+        _add_results (dict): Dict of additional results.
     """
 
-    _sdprods = None
+    _sdprods = _result_type = _result_names = _add_results = None
 
     def __init__(self, command_name, command_op=None):
         """Initialization"""
@@ -354,24 +376,56 @@ class ExecuteMacro(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-
-    def exec_(self, keywords):
-        """Execute the command.
-
-        Arguments:
-            keywords (dict): User's keywords.
-
-        Returns:
-            misc: Result of the Command, *None* if it returns no result.
-        """
         def _predicate(value):
             return isinstance(value, CO)
 
         self._sdprods = search_for(keywords, _predicate)
+        if self._sdprods:
+            names = [i.getName() for i in self._sdprods]
+            self._result_type = namedtuple("Result", ["main"] + names)
+            self._result_names = names
+            self._add_results = {}
 
-        outputs = self._op(self, **keywords)
-        assert not isinstance(outputs, int), "OPS must now return results."
-        self._result = outputs
+    def print_result(self):
+        """Print an echo of the result of the command."""
+        if self._result:
+            logger.info(command_result(self._counter, self.name,
+                                       self._result.getName()))
+        if self._result_names:
+            logger.info(command_result(self._counter, self.name,
+                                       str(self._result_names)))
+        self._print_timer()
+
+    def exec_(self, keywords):
+        """Execute the command and fill the *_result* attribute.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        output = self._op(self, **keywords)
+        assert not isinstance(output, int), \
+            "OPS must now return results, not 'int'."
+        if not self._sdprods:
+            self._result = output
+        else:
+            dres = dict(main=output)
+            dres.update(self._add_results)
+            missing = set(self._result_names).difference(dres.keys())
+            if missing:
+                raise ValueError("Missing results: {0}".format(tuple(missing)))
+            self._result = self._result_type(**dres)
+
+    def register_result(self, result, target):
+        """Register an additional result.
+
+        Similar to the old *DeclareOut* method but it must called **after** that
+        the result has been created.
+
+        Arguments:
+            result (*DataStructure*): Result object to register.
+            target (:class:`CO`): CO object.
+        """
+        self._add_results[target.getName()] = result
 
     @property
     def sdprods(self):
@@ -389,7 +443,7 @@ class ExecuteMacro(ExecuteCommand):
         """Does nothing, kept for compatibility."""
         return
 
-    @deprecated(False)
+    @deprecated(help="Results have to be register using 'register_result'.")
     def DeclareOut(self, result, target):
         """Register a result of the macro-command."""
         pass
@@ -417,6 +471,10 @@ class CO(object):
     def __init__(self, name):
         """Initialization"""
         self._name = name
+
+    def getName(self):
+        """Return the CO name."""
+        return self._name
 
     def is_typco(self):
         """Tell if it is an auxiliary result."""
