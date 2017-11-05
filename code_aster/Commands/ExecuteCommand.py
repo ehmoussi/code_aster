@@ -386,7 +386,7 @@ class ExecuteMacro(ExecuteCommand):
 
     def print_result(self):
         """Print an echo of the result of the command."""
-        if self._result:
+        if not self._sdprods and self._result:
             logger.info(command_result(self._counter, self.name,
                                        self._result.getName()))
         if self._result_names:
