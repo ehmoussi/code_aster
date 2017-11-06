@@ -19,32 +19,22 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import StaticNonLinearAnalysis
-from code_aster import NonLinearEvolutionContainer
+from ..Objects import NonLinearEvolutionContainer
+from .ExecuteCommand import ExecuteCommand
 
 
-def STAT_NON_LINE(**curDict):
-    returnAnalysis = NonLinearEvolutionContainer.create()
-    name = returnAnalysis.getName()
-    type = returnAnalysis.getType()
+class StaticNonLinearAnalysisBuild(ExecuteCommand):
+    """Command that defines :class:`~code_aster.Objects.NonLinearEvolutionContainer`.
+    """
+    command_name = "STAT_NON_LINE"
 
-    syntax = CommandSyntax("STAT_NON_LINE")
-    syntax.setResult(name, type)
-    syntax.define(curDict)
+    def create_result(self, keywords):
+        """Initialize the result.
 
-    numOp = 70
-    python_execop(numOp)
-    syntax.free()
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = NonLinearEvolutionContainer.create()
 
-    localSolver=StaticNonLinearAnalysis.create()
-    localSolver.setSupportModel(curDict["MODELE"])
-    localSolver.setMaterialOnMesh(curDict["CHAM_MATER"])
-    localSolver.setLoadStepManager(curDict["INCREMENT"]["LIST_INST"])
-    if (len(curDict['EXCIT']) == 1):
-        localSolver.addStandardExcitation(curDict["EXCIT"]["CHARGE"],curDict["EXCIT"]["TYPE_CHARGE"],curDict["EXCIT"]["FONC_MULT"])
-    else:
-        (localSolver.addStandardExcitation(load["CHARGE"],curDict["EXCIT"]["TYPE_CHARGE"],curDict["EXCIT"]["FONC_MULT"]) for load in curDict["EXCIT"])
 
-    return returnAnalysis
+STAT_NON_LINE = StaticNonLinearAnalysisBuild.run

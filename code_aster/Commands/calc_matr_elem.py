@@ -55,4 +55,4 @@ class ComputeElementaryMatrix(ExecuteCommand):
 
         self._result=ElementaryMatrix.create(myType)
 
-CALC_MATR_ELEM = ComputeElementaryMatrix()
+CALC_MATR_ELEM = ComputeElementaryMatrix.run
