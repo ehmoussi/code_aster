@@ -50,4 +50,4 @@ class VibrationDynamics(ExecuteCommand):
         self._result.update()
 
 
-DYNA_VIBRA = VibrationDynamics()
+DYNA_VIBRA = VibrationDynamics.run

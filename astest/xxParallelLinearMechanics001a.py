@@ -21,23 +21,20 @@ monModel.build()
 testMesh = monModel.getSupportMesh()
 test.assertEqual(testMesh.getType(), "MAILLAGE_P")
 
-acier = code_aster.Material.create()
-
 elas = code_aster.ElasMaterialBehaviour.create()
 elas.setDoubleValue("E", 2.e11)
 elas.setDoubleValue("Nu", 0.3)
 
+acier = code_aster.Material.create()
 acier.addMaterialBehaviour(elas)
 acier.build()
 
-affectMat = code_aster.MaterialOnMesh.create()
-affectMat.setSupportMesh(pMesh)
+affectMat = code_aster.MaterialOnMesh.create(pMesh)
+affectMat.addMaterialOnAllMesh( acier )
+affectMat.build()
 
 testMesh2 = affectMat.getSupportMesh()
 test.assertEqual(testMesh2.getType(), "MAILLAGE_P")
-
-affectMat.addMaterialOnAllMesh(acier)
-affectMat.build()
 
 charCine = code_aster.KinematicsLoad.create()
 charCine.setSupportModel(monModel)
