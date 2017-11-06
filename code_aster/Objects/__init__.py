@@ -45,4 +45,12 @@ from .timestepmanager_ext import TimeStepManager
 # objects without C++ mirror
 from .listoffloats import ListOfFloats
 
+
+try:
+    ParallelMechanicalLoad
+except NameError:
+    class ParallelMechanicalLoad(object):
+        pass
+
+
 ALL_DS = objects_from_context(globals(), DataStructure)
