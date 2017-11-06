@@ -19,8 +19,7 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
-from ..Supervis import logger
-from .ExecuteCommand import GlobalCommandsData
+from ..Supervis import ExecutionParameter, logger
 
 
 def FIN(**keywords):
@@ -30,4 +29,4 @@ def FIN(**keywords):
     Arguments:
         keywords (dict): Ignored
     """
-    logger.info(repr(GlobalCommandsData.timer()))
+    logger.info(repr(ExecutionParameter().get_option("timer")))

@@ -42,8 +42,9 @@ import sys
 import warnings
 
 import aster_pkginfo
+from Utilitai.as_timer import ASTER_TIMER
 
-from ..Utilities import convert, Singleton
+from ..Utilities import Singleton, convert
 from .logger import logger, setlevel
 
 
@@ -90,6 +91,7 @@ class ExecutionParameter(object):
         self._args['repdex'] = '.'
 
         self._args['deprecated'] = 0
+        self._args['use_legacy_mode'] = 0
         self._computed()
 
     def _computed(self):
@@ -116,6 +118,9 @@ class ExecutionParameter(object):
         self._args['exploit'] = aster_pkginfo.version_info.branch.startswith('v')
         self._args['versionD0'] = '%d.%02d.%02d' % version
         self._args['versLabel'] = aster_pkginfo.get_version_desc()
+
+        self._args['timer'] = ASTER_TIMER(format="aster")
+        self._args['command_counter'] = 0
 
     def set_option(self, option, value):
         """Set the value of an execution parameter"""
@@ -193,6 +198,10 @@ class ExecutionParameter(object):
             action='store', metavar='DIR', default='.',
             help="directory of external datas (geometrical datas or properties...)")
 
+        parser.add_argument('--use_legacy_mode',
+            action='store', default=1,
+            help="use (=1) or not (=0) the legacy mode for macro-commands "
+                 "results. (default: 1)")
         parser.add_argument('--deprecated',
             action='store_const', const=1, default=0,
             help="turn on deprecation warnings")
@@ -214,6 +223,15 @@ class ExecutionParameter(object):
     def sub_tpmax(self, tsub):
         """Reduce the cpu time limit of `tsub`."""
         self.set_option('tpmax', self.get_option('tpmax') - tsub)
+
+    def incr_command_counter(self):
+        """Increment the counter of Commands.
+
+        Returns:
+            int: Current value of the counter.
+        """
+        self._args["command_counter"] += 1
+        return self._args["command_counter"]
 
     # register objects callable from libaster
     @property
