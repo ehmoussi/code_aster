@@ -390,7 +390,8 @@ class ExecuteMacro(ExecuteCommand):
             "OPS must now return results, not 'int'."
         if ExecutionParameter().get_option("use_legacy_mode"):
             self._result = output
-            self._caller["context"].update(self._add_results)
+            if self._add_results:
+                self._caller["context"].update(self._add_results)
             return
 
         if not self._sdprods:
