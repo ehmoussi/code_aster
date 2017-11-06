@@ -156,14 +156,19 @@ use petsc_data_module
             jcoll = zi(jmdla + ipos*2)
             imult = zi(jmdla + ipos*2 + 1)
             jcolg = zi(jnugll + jcoll - 1)
-            write(6,*)'TEST3', jcolg, imult - 1
             zi4(jidxo + jcolg - low) = zi4(jidxo + jcolg - low) + imult
+! nsellenet
+        write(*, *) "jcolg, imult", jcolg, imult
+! nsellenet
         enddo
     endif
 
     jcolg = zi(jnugll)
     if (zi(jprddl) .eq. rang) then
         zi4(jidxd + jcolg - low) = zi4(jidxd + jcolg - low) + 1
+! nsellenet
+        write(13, *) "i,j", jcolg, jcolg
+! nsellenet
     endif
 !
 !   On commence par s'occuper du nombre de NZ par ligne
@@ -187,17 +192,29 @@ use petsc_data_module
             endif
             if (procol .eq. rang .and. prolig .eq. rang) then
                 zi4(jidxd + iligg - low) = zi4(jidxd + iligg - low) + 1
+! nsellenet
+        write(13, *) "i,j", iligg, jcolg
+! nsellenet
                 if (iligg .ne. jcolg) then
                     zi4(jidxd + jcolg - low) = zi4(jidxd + jcolg - low) + 1
+! nsellenet
+        write(13, *) "i,j", jcolg, iligg
+! nsellenet
                 endif
             else if (procol .ne. rang .and. prolig .eq. rang) then
                 zi4(jidxo + iligg - low) = zi4(jidxo + iligg - low) + 1
+! nsellenet
+        write(13, *) "i,j", iligg, jcolg
+! nsellenet
 !                if( nuno1.eq.0 .or. nuno2.eq.0 ) then
 !                    write(6,*)'TEST4', rang, iligg
 !                    zi4(jidxo + jcolg - low) = zi4(jidxo + jcolg - low) + 1
 !                endif
             else if (procol .eq. rang .and. prolig .ne. rang) then
                 zi4(jidxo + jcolg - low) = zi4(jidxo + jcolg - low) + 1
+! nsellenet
+        write(13, *) "i,j", jcolg, iligg
+! nsellenet
 !                if( nuno1.eq.0 .or. nuno2.eq.0 ) then
 !                    write(6,*)'TEST5', rang, jcolg
 !                    zi4(jidxo + iligg - low) = zi4(jidxo + iligg - low) + 1

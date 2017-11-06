@@ -23,7 +23,6 @@ subroutine cnoadd(chno, chnop)
 ! pour un cham_no (chno) provenant d'un assemblage,
 ! on met à zéro les entrées dont on n'est pas strictement propriétaires
 !----------------------------------------------------------------
-#ifdef _USE_MPI
 #include "asterf_config.h"
 #include "asterf.h"
 #include "asterf_types.h"
@@ -38,6 +37,8 @@ subroutine cnoadd(chno, chnop)
 #include "asterfort/jelira.h"
 #include "asterfort/gettco.h"
 #include "asterfort/assert.h"
+#include "asterfort/asmpi_comm_vect.h"
+#ifdef _USE_MPI
       integer :: jnbjoi,nbjoin,numpro,jjointe,jjointr
       integer :: lgenvo,jtmpe,jtmpr,iaux,jaux,neq,lgrecep
       integer :: ibid,jvale,k
@@ -86,7 +87,7 @@ subroutine cnoadd(chno, chnop)
         if ( numpro.eq.-1 ) goto 10
 
         call codent(iaux-1,'G',chnbjo)
-        nojoinr = numddl//'.NUME.R'//chnbjo(1:3)
+        nojoinr = numddl//'.NUMER'//chnbjo(1:3)
         call jeveuo(nojoinr, 'L', jjointr)
         call jelira(nojoinr, 'LONMAX', lgrecep, k8bid)
         ASSERT(lgrecep .gt. 0)
