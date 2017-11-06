@@ -65,7 +65,7 @@ fsin = DEFI_FONCTION(NOM_PARA="INST",
                      NOM_RESU="TEMP",
                      ABSCISSE=valx,
                      ORDONNEE=valy,
-                     INTERPOL=("LIN", "LOG"),)
+                     INTERPOL=("LIN", "LIN"),)
 
 lvalx = DEFI_LIST_REEL(VALE=valx)
 lvaly = DEFI_LIST_REEL(VALE=valy)
@@ -74,7 +74,7 @@ fsin = DEFI_FONCTION(NOM_PARA="INST",
                      NOM_RESU="TEMP",
                      VALE_PARA=lvalx,
                      VALE_FONC=lvaly,
-                     INTERPOL=("LIN", "LOG"),)
+                     INTERPOL=("LIN", "LIN"),)
 
 values = []
 for x, y in zip(valx, valy):
@@ -83,14 +83,14 @@ for x, y in zip(valx, valy):
 fsin = DEFI_FONCTION(NOM_PARA="INST",
                      NOM_RESU="TEMP",
                      VALE=values,
-                     INTERPOL=("LIN", "LOG"),)
+                     INTERPOL=("LIN", "LIN"),)
 
-with test.assertRaisesRegexp(RuntimeError, "length.*must be equal"):
+with test.assertRaisesRegexp(code_aster.CodeAsterError, "listes.*longueurs"):
     fsin = DEFI_FONCTION(NOM_PARA="INST",
                          NOM_RESU="TEMP",
                          ABSCISSE=valx,
                          ORDONNEE=np.arange( n - 1. ),
-                         INTERPOL=("LIN", "LOG"),)
+                         INTERPOL=("LIN", "LIN"),)
 
 with test.assertRaisesRegexp(TypeError, "Unexpected type.*str"):
     bad_type = valy.tolist()

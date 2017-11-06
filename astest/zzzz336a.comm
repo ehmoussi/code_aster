@@ -73,7 +73,7 @@ exc=-epai/2.+enro
 
 CA1=AFFE_CARA_ELEM(MODELE=MO1,
                    COQUE=_F(GROUP_MA='SDAL',EPAIS=epai,COQUE_NCOU=10),
-                                 GRILLE=_F(GROUP_MA='ARMA',SECTION=sa,EXCENTREMENT=exc,ANGL_REP=(0.,0.)),
+                                 GRILLE=_F(GROUP_MA='ARMA',SECTION=sa,EXCENTREMENT=exc,ANGL_REP_1=(0.,0.)),
                                  )
 
 BETON=DEFI_MATERIAU(ELAS=_F(E=3.E10, NU=0.2, ALPHA=1.E-5))

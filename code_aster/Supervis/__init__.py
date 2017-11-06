@@ -27,3 +27,6 @@ objects.
 from .CommandSyntax import CommandSyntax
 from .ExecutionParameter import ExecutionParameter
 from .logger import logger
+
+# TODO create a module dedicated to error management
+from Execution.E_Exception import error as CodeAsterError

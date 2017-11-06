@@ -34,11 +34,13 @@
 #include "MemoryManager/JeveuxVector.h"
 
 
+typedef std::vector< double > VectorDouble;
+
 /**
-* class FormulaInstance
-*   Create a datastructure for a formula with real values
-* @author Mathieu Courtois
-*/
+ * class FormulaInstance
+ *   Create a datastructure for a formula with real values
+ * @author Mathieu Courtois
+ */
 class FormulaInstance: public DataStructure
 {
     private:
@@ -86,8 +88,8 @@ class FormulaInstance: public DataStructure
         };
 
         /**
-        * Constructeur
-        */
+         * Constructeur
+         */
         FormulaInstance();
 
         FormulaInstance( const std::string jeveuxName );
@@ -95,44 +97,53 @@ class FormulaInstance: public DataStructure
         ~FormulaInstance();
 
         /**
-        * @brief Definition of the name of the variables
-        * @param name name of the parameter
-        * @type  name string
-        */
+         * @brief Definition of the name of the variables
+         * @param name name of the parameter
+         * @type  name string
+         */
         void setVariables( const std::vector< std::string > &varnames )
             throw ( std::runtime_error );
 
         /**
-        * @brief Return the name of the variables
-        * @return name of the variables
-        */
+         * @brief Return the name of the variables
+         * @return name of the variables
+         */
         std::vector< std::string > getVariables() const;
 
         /**
-        * @brief Definition of the expression of the formula
-        * @param expression expression of the formula
-        * @type  expression string
-        */
+         * @brief Mark formula as a complex one.
+         */
+        void setComplex()
+        {
+            // because needed by gettco (in CALC_FONC_INTERP for example)
+            setType("FORMULE_C");
+        }
+
+        /**
+         * @brief Definition of the expression of the formula
+         * @param expression expression of the formula
+         * @type  expression string
+         */
         void setExpression( const std::string expression )
             throw(std::runtime_error);
 
         /**
-        * @brief Return the expression of the formula.
-        * @return expression of the formula.
-        */
+         * @brief Return the expression of the formula.
+         * @return expression of the formula.
+         */
         std::string getExpression() const
         {
             return _expression;
         }
 
-        double evaluate( const std::vector< double > &values ) const
+        VectorDouble evaluate( const VectorDouble &values ) const
             throw(std::runtime_error);
 
         /**
-        * @brief Assign the context for evaluation
-        * @param context context containing objects needed for evaluation.
-        * @type  context string of pickled objects
-        */
+         * @brief Assign the context for evaluation
+         * @param context context containing objects needed for evaluation.
+         * @type  context string of pickled objects
+         */
         void setContext( PyObject* context ) throw(std::runtime_error)
         {
             if ( ! PyDict_Check(context) ) {
@@ -145,9 +156,9 @@ class FormulaInstance: public DataStructure
         }
 
         /**
-        * @brief Return the context needed to evaluate the formula.
-        * @return context as pickled string.
-        */
+         * @brief Return the context needed to evaluate the formula.
+         * @return context as pickled string.
+         */
         PyObject* getContext()
         {
             if (! _context ) {
@@ -159,9 +170,9 @@ class FormulaInstance: public DataStructure
         }
 
         /**
-        * @brief Return the properties of the function
-        * @return vector of strings
-        */
+         * @brief Return the properties of the function
+         * @return vector of strings
+         */
         std::vector< std::string > getProperties() const
         {
             _property->updateValuePointer();
@@ -194,19 +205,19 @@ typedef boost::shared_ptr< FormulaInstance > FormulaPtr;
 /**
  * @brief Evaluate Python code of a Formula
  */
-double evaluate_formula( const PyObject* code, PyObject* globals,
-                         const std::vector< std::string > &variables,
-                         const std::vector< double > &values,
-                         int* retcode );
+VectorDouble evaluate_formula( const PyObject* code, PyObject* globals,
+        const std::vector< std::string > &variables,
+        const VectorDouble &values, int* retcode );
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void DEFPPSPPPP(EVAL_FORMULA, eval_formula,
+void DEFPPSPPPPP(EVAL_FORMULA, eval_formula,
     ASTERINTEGER* pcode, ASTERINTEGER* pglobals,
     char* array_vars, STRING_SIZE lenvars, ASTERDOUBLE* array_values,
-    ASTERINTEGER* nbvar, _OUT ASTERINTEGER* iret, _OUT ASTERDOUBLE* result );
+    ASTERINTEGER* nbvar, _OUT ASTERINTEGER* iret,
+    ASTERINTEGER* nbres, _OUT ASTERDOUBLE* result );
 
 #ifdef __cplusplus
 }

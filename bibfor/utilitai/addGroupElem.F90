@@ -67,8 +67,8 @@ implicit none
     if (iret .eq. 0) then
         call jedetr(gpptnm)
         call jecreo(gpptnm, 'G N K24')
-        call jeecra(gpptnm, 'NOMMAX', 1, ' ')
-        call jecrec(grpmai, 'G V I', 'NO '//gpptnm, 'DISPERSE', 'VARIABLE', 1)
+        call jeecra(gpptnm, 'NOMMAX', nb_add, ' ')
+        call jecrec(grpmai, 'G V I', 'NO '//gpptnm, 'DISPERSE', 'VARIABLE', nb_add)
     else
         call jelira(grpmai, 'NOMUTI', nb_group)
         nb_group_new = nb_group + nb_add

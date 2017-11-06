@@ -252,6 +252,34 @@ RESULT= CALC_CHAMP   (reuse=RESULT ,
                   TOUT_ORDRE = 'OUI',
                              );
 
+RESULT2= CALC_CHAMP   (
+                  FORCE='REAC_NODA',
+                  RESULTAT   = RESULT,
+                  TOUT_ORDRE = 'OUI',
+                  EXCIT=(
+                               _F( CHARGE = CON_LIM),
+                                     _F( CHARGE = PERTUR,
+                                      FONC_MULT = F_PERT),
+                                     _F( CHARGE = CHARGE,
+                                      TYPE_CHARGE = 'FIXE_PILO'
+                                      )),
+                             );
+# verification de la prise en compte de TYPE_CHARGE = 'FIXE_PILO' dans CALC_CHAMP
+# le test est faux si on commente la ligne TYPE_CHARGE = 'FIXE_PILO'
+
+TEST_RESU(RESU=(_F(NUME_ORDRE=0,
+                   RESULTAT=RESULT2,
+                   NOM_CHAM='REAC_NODA',
+                   NOEUD='N1',
+                   NOM_CMP='DZ',
+                   VALE_CALC=0.,
+                   VALE_REFE=0.,
+                   REFERENCE = 'ANALYTIQUE',
+                   PRECISION=1.E-3,
+                   CRITERE='ABSOLU',
+                   ),
+                 ),
+                )
 
 ETA=RECU_FONCTION (   RESULTAT = RESULT,
                           NOM_PARA_RESU = 'ETA_PILOTAGE',

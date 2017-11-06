@@ -23,10 +23,10 @@
 ****************************************
 """
 
-import numpy as NP
+import numpy as np
 
 import aster
-from libaster import Function
+from libaster import Function, FunctionComplex
 
 from ..Utilities import accept_array
 
@@ -54,7 +54,7 @@ class ExtendedFunction(injector, Function):
         """
         new = Function.create()
         absc, ordo = self.Valeurs()
-        new.setValues(absc, NP.abs(ordo))
+        new.setValues(absc, np.abs(ordo))
         return new
 
     def getValuesAsArray(self):
@@ -64,7 +64,7 @@ class ExtendedFunction(injector, Function):
             numpy.array: Array containing the values.
         """
         size = self.size()
-        values = NP.array(self.getValues())
+        values = np.array(self.getValues())
         values.shape = (2, size)
         return values.transpose()
 
@@ -112,35 +112,141 @@ class ExtendedFunction(injector, Function):
         le dictionnaire peut ainsi etre fourni a CALC_FONC_INTERP tel quel.
         """
         from Utilitai.Utmess import UTMESS
-        if self.accessible():
-            TypeProl = {'E': 'EXCLU', 'L': 'LINEAIRE', 'C': 'CONSTANT'}
-            objev = '%-19s.PROL' % self.get_name()
-            prol = self.sdj.PROL.get()
-            if prol == None:
-                UTMESS('F', 'SDVERI_2', valk=[objev])
-            dico = {
-                'INTERPOL': [prol[1][0:3], prol[1][4:7]],
-                'NOM_PARA': prol[2][0:16].strip(),
-                'NOM_RESU': prol[3][0:16].strip(),
-                'PROL_DROITE': TypeProl[prol[4][1]],
-                'PROL_GAUCHE': TypeProl[prol[4][0]],
-            }
-        elif hasattr(self, 'etape') and self.etape.nom == 'DEFI_FONCTION':
-            dico = {
-                'INTERPOL': self.etape['INTERPOL'],
-                'NOM_PARA': self.etape['NOM_PARA'],
-                'NOM_RESU': self.etape['NOM_RESU'],
-                'PROL_DROITE': self.etape['PROL_DROITE'],
-                'PROL_GAUCHE': self.etape['PROL_GAUCHE'],
-            }
-            if type(dico['INTERPOL']) == tuple:
-                dico['INTERPOL'] = list(dico['INTERPOL'])
-            elif type(dico['INTERPOL']) == str:
-                dico['INTERPOL'] = [dico['INTERPOL'], ]
-            if len(dico['INTERPOL']) == 1:
-                dico['INTERPOL'] = dico['INTERPOL'] * 2
+        TypeProl = {'E': 'EXCLU', 'L': 'LINEAIRE', 'C': 'CONSTANT'}
+        objev = '%-19s.PROL' % self.get_name()
+        prol = self.sdj.PROL.get()
+        if prol == None:
+            UTMESS('F', 'SDVERI_2', valk=[objev])
+        dico = {
+            'INTERPOL': [prol[1][0:3], prol[1][4:7]],
+            'NOM_PARA': prol[2][0:16].strip(),
+            'NOM_RESU': prol[3][0:16].strip(),
+            'PROL_DROITE': TypeProl[prol[4][1]],
+            'PROL_GAUCHE': TypeProl[prol[4][0]],
+        }
+        return dico
+
+    def Trace(self, FORMAT='TABLEAU', **kargs):
+        """Tracé d'une fonction"""
+        if not self.accessible():
+            raise AsException("Erreur dans fonction.Trace en PAR_LOT='OUI'")
+        from Utilitai.Graph import Graph
+        gr = Graph()
+        gr.AjoutCourbe(Val=self.Valeurs(),
+                       Lab=[
+            self.Parametres(
+            )['NOM_PARA'], self.Parametres()['NOM_RESU']],
+            Leg=os.linesep.join(self.sdj.TITR.get()))
+        gr.Trace(FORMAT=FORMAT, **kargs)
+
+
+
+class injectorC(object):
+    class __metaclass__(FunctionComplex.__class__):
+        def __init__(self, name, bases, dict):
+            for b in bases:
+                if type(b) not in (self, type):
+                    for k, v in dict.items():
+                        setattr(b, k, v)
+            return type.__init__(self, name, bases, dict)
+
+
+class ExtendedFunctionComplex(injectorC, FunctionComplex):
+    cata_sdj = "SD.sd_fonction.sd_fonction_aster"
+
+    setValues = accept_array(FunctionComplex.setValues)
+
+    def getValuesAsArray(self):
+        """Return the values of the function as a `numpy.array` of shape (N, 3).
+
+        Returns:
+            numpy.array: Array containing the values.
+        """
+        size = self.size()
+        values = np.array(self.getValues())
+        abscissas = values[:size].transpose()
+        ordinates = values[size:].transpose()
+        abscissas.shape = (size, 1)
+        ordinates.shape = (size, 2)
+        ordinates = ordinates
+        return np.hstack([abscissas, ordinates])
+
+    def Valeurs(self):
+        """
+        Retourne trois listes de valeurs : abscisses, parties reelles et imaginaires.
+        """
+        values = self.getValuesAsArray()
+        return values[:, 0], values[:, 1], values[:, 2]
+
+    def Absc(self):
+        """Retourne la liste des abscisses"""
+        return self.Valeurs()[0]
+
+    def Ordo(self):
+        """Retourne la liste des parties réelles des ordonnées"""
+        return self.Valeurs()[1]
+
+    def OrdoImg(self):
+        """Retourne la liste des parties imaginaires des ordonnées"""
+        return self.Valeurs()[2]
+
+    def convert(self, arg='real'):
+        """
+        Retourne un objet de la classe t_fonction ou t_fonction_c,
+        représentation python de la fonction complexe
+        """
+        import numpy
+        from Cata_Utils.t_fonction import t_fonction, t_fonction_c
+        class_fonction = t_fonction
+        if arg == 'complex':
+            class_fonction = t_fonction_c
+        absc = self.Absc()
+        para = self.Parametres()
+        if arg == 'real':
+            ordo = self.Ordo()
+        elif arg == 'imag':
+            ordo = self.OrdoImg()
+        elif arg == 'modul':
+            ordo = numpy.sqrt(
+                numpy.array(self.Ordo())**2 + numpy.array(self.OrdoImg())**2)
+        elif arg == 'phase':
+            ordo = numpy.arctan2(
+                numpy.array(self.OrdoImg()), numpy.array(self.Ordo())) * 180. / pi
+        elif arg == 'complex':
+            ordo = map(complex, self.Ordo(), self.OrdoImg())
         else:
-            raise AsException("Erreur dans fonction.Parametres en PAR_LOT='OUI'")
+            assert False, 'unexpected value for arg: %r' % arg
+        return class_fonction(self.Absc(), ordo, self.Parametres(), nom=self.nom)
+
+    def __call__(self, val, tol=1.e-6):
+        """Evaluate a function at 'val'. If provided, 'tol' is a relative
+        tolerance to match an abscissa value."""
+        try:
+            val = val.valeur
+        except AttributeError:
+            val = float(val)
+        __ff = self.convert(arg='complex')
+        return __ff(val, tol=tol)
+
+    def Parametres(self):
+        """
+        Retourne un dictionnaire contenant les parametres de la fonction ;
+        le type jeveux (FONCTION, FONCT_C, NAPPE) n'est pas retourne,
+        le dictionnaire peut ainsi etre fourni a CALC_FONC_INTERP tel quel.
+        """
+        from Utilitai.Utmess import UTMESS
+        TypeProl = {'E': 'EXCLU', 'L': 'LINEAIRE', 'C': 'CONSTANT'}
+        objev = '%-19s.PROL' % self.get_name()
+        prol = self.sdj.PROL.get()
+        if prol == None:
+            UTMESS('F', 'SDVERI_2', valk=[objev])
+        dico = {
+            'INTERPOL': [prol[1][0:3], prol[1][4:7]],
+            'NOM_PARA': prol[2][0:16].strip(),
+            'NOM_RESU': prol[3][0:16].strip(),
+            'PROL_DROITE': TypeProl[prol[4][1]],
+            'PROL_GAUCHE': TypeProl[prol[4][0]],
+        }
         return dico
 
     def Trace(self, FORMAT='TABLEAU', **kargs):

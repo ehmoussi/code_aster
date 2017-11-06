@@ -96,7 +96,7 @@ CARX=AFFE_CARA_ELEM(MODELE=MODX,
                               ANGL_REP = (0.0, 0.0,),
                               ),),
                     MEMBRANE=(_F(GROUP_MA = 'COQ_X',
-                              ANGL_REP = (0.0, 0.0,),
+                              ANGL_REP_1 = (0.0, 0.0,),
                               EPAIS = 1.0
                               ),),)
 
@@ -106,7 +106,7 @@ CARY=AFFE_CARA_ELEM(MODELE=MODY,
                               ANGL_REP = (0.0, 0.0,),
                               ),),
                     MEMBRANE=(_F(GROUP_MA = 'COQ_Y',
-                              ANGL_REP = (90.0, 0.0,),
+                              ANGL_REP_1 = (90.0, 0.0,),
                               EPAIS = 1.0),),)
 
 CARZ=AFFE_CARA_ELEM(MODELE=MODZ,
@@ -115,7 +115,7 @@ CARZ=AFFE_CARA_ELEM(MODELE=MODZ,
                               ANGL_REP = (45.0, 0.0,),
                               ),),
                     MEMBRANE=(_F(GROUP_MA = 'COQ_Z',
-                              ANGL_REP = (0.0, 90.0,),
+                              ANGL_REP_1 = (0.0, 90.0,),
                               EPAIS = 1.0),),)
 
 #-----------------------------------------------------------------------

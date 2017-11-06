@@ -102,8 +102,8 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                     break
             if obj == None:
                 UTMESS('S', 'SUPERVIS_56')
-            if typi == 'FONCTION' or typi == 'NAPPE' or typi =='NAPPE_LISSEE' :
-                if isinstance(obj, nappe_sdaster):
+            if typi in ('FONCTION', 'NAPPE', 'NAPPE_LISSEE') :
+                if obj.getType() == "NAPPE":
                     lpar, lval = obj.Valeurs()
                     linterp = lval[0][0]
                 else:
@@ -141,15 +141,15 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
         # 1.2. Extraction des valeurs
 
         # 1.2.1. Mot-clé FONCTION
-        if typi == 'FONCTION' or typi=='NAPPE' or typi=='NAPPE_LISSEE' :
+        if typi in ('FONCTION', 'NAPPE', 'NAPPE_LISSEE'):
             # formule à un paramètre seulement
-            if isinstance(obj, formule):
+            if obj.getType() in ("FORMULE", "FORMULE_C"):
                 dpar = obj.Parametres()
                 if len(dpar['NOM_PARA']) != 1:
                     UTMESS(
                         'S', 'FONCT0_50', valk=obj.nom, vali=len(dpar['NOM_PARA']))
 
-            if isinstance(obj, nappe_sdaster):
+            if obj.getType() == "NAPPE":
                 lpar, lval = obj.Valeurs()
                 dico, ldicf = obj.Parametres()
                 Leg = dCi['LEGENDE']
@@ -236,10 +236,10 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                 lval = __ftmp.Valeurs()
                 lx = lval[0]
                 lr = lval[1]
-                if isinstance(obj, (fonction_c, formule_c)) and dCi.get('PARTIE') == 'IMAG':
+                if obj.getType() in ("FONCTION_C", "FORMULE_C") and dCi.get('PARTIE') == 'IMAG':
                     lr = lval[2]
                 # on stocke les données dans le Graph
-                if isinstance(obj, (fonction_c, formule_c)) and not dCi.has_key('PARTIE'):
+                if obj.getType() == ("FONCTION_C", "FORMULE_C") and not dCi.has_key('PARTIE'):
                     nomresu = dpar['NOM_RESU'].strip() + '_' + str(
                         len(graph.Legendes))
                     dicC = {
@@ -278,7 +278,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
         elif typi == 'FONC_X':
             ob2 = dCi['FONC_Y']
             # peut-on blinder au niveau du catalogue
-            if isinstance(obj, nappe_sdaster) or isinstance(ob2, nappe_sdaster):
+            if obj.getType() == "NAPPE" or ob2.getType() == "NAPPE":
                 UTMESS('S', 'FONCT0_4')
             if interp and iocc > 0:
                 UTMESS('S', 'FONCT0_5')

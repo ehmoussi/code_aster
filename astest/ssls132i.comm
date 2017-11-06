@@ -104,13 +104,13 @@ LEMOD=AFFE_MODELE(MAILLAGE=MAILTOT,
 LACAR=AFFE_CARA_ELEM(MODELE=LEMOD,
                      MEMBRANE=(
                                 _F( GROUP_MA = 'ACMOINS',
-                                 ANGL_REP=(0.,0.),
+                                 ANGL_REP_1=(0.,0.),
                                  EPAIS = 1.0),
                                ),
                      GRILLE=(
                                 _F(GROUP_MA='ACPLUS',
                                 SECTION=section_l,
-                                ANGL_REP=(0,0,),
+                                ANGL_REP_1=(0,0,),
                                 ),),);
 
 # ----------------------------------------------

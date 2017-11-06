@@ -102,6 +102,80 @@ MAILLAGE=MAILLAGE,
                          AFFE=_F(  TOUT = 'OUI',  NOM_CMP = 'DX',  VALE = V0)
                         )
 
+L_RECU=DEFI_LIST_REEL(  DEBUT=0.,INTERVALLE=(
+                      _F(  JUSQU_A = 2.,   PAS = 2.),
+                      _F(  JUSQU_A = DER,  PAS = 4.)) )
+
+TRAN_PHE=DYNA_LINE(TYPE_CALCUL='TRAN',
+                   BASE_CALCUL='GENE',
+                   MODELE=MODELE,
+                   CARA_ELEM=CARA_ELE,
+                   CHARGE=CON_LIM,
+                   SCHEMA_TEMPS=_F(SCHEMA=METHOD1,),
+                   ETAT_INIT=_F(VITE = VIT_INIT),
+                   ENRI_STAT='NON',
+                   BANDE_ANALYSE=2.5,
+                   EXCIT=_F(DIRECTION=(-1., 0., 0.,),
+                            TYPE_APPUI="MONO",
+                            FONC_MULT = ACCE_X),
+                   COMPORTEMENT=_F(RELATION='RELA_EFFO_DEPL',
+                                   NOEUD = 'N01',
+                                   NOM_CMP = 'DX',
+                                   FONCTION = FOR_EFDE),
+                   INCREMENT=_F(INST_INIT = 0.,
+                                INST_FIN = DER,
+                                PAS = PAS),
+                   ARCHIVAGE=_F(LIST_INST=L_RECU, PAS_ARCH = 1e8),
+                   BASE_RESU = CO('MODE_ME2'),
+                   )
+
+# AVEC CORRECTION STATIQUE
+TRAN_PHS=DYNA_LINE(TYPE_CALCUL='TRAN',
+                   BASE_CALCUL='GENE',
+                   MODELE=MODELE,
+                   CARA_ELEM=CARA_ELE,
+                   CHARGE=CON_LIM,
+                   SCHEMA_TEMPS=_F(SCHEMA=METHOD1,),
+                   ETAT_INIT=_F(VITE = VIT_INIT),
+                   ENRI_STAT='OUI',
+                   ORTHO='OUI',
+                   BANDE_ANALYSE=2.5,
+                   EXCIT=_F(DIRECTION=(-1., 0., 0.,),
+                            TYPE_APPUI="MONO",
+                            FONC_MULT = ACCE_X),
+                   COMPORTEMENT=_F(RELATION='RELA_EFFO_DEPL',
+                                   NOEUD = 'N01',
+                                   NOM_CMP = 'DX',
+                                   FONCTION = FOR_EFDE),
+                   INCREMENT=_F(INST_INIT = 0.,
+                                INST_FIN = DER,
+                                PAS = PAS),
+                   ARCHIVAGE=_F(LIST_INST=L_RECU, PAS_ARCH = 1e8),
+                   BASE_RESU = CO('MODE_ME'),
+                   )
+
+TRAN_PHD=DYNA_LINE(TYPE_CALCUL='TRAN',
+                   BASE_CALCUL='GENE',
+                   MODELE=MODELE,
+                   CARA_ELEM=CARA_ELE,
+                   CHARGE=CON_LIM,
+                   SCHEMA_TEMPS=_F(SCHEMA=METHOD2, PAS_MAXI=PAS),
+                   ETAT_INIT=_F(VITE = VIT_INIT),
+                   ENRI_STAT='NON',
+                   BANDE_ANALYSE=2.5,
+                   EXCIT=_F(DIRECTION=(-1., 0., 0.,),
+                            TYPE_APPUI="MONO",
+                            FONC_MULT = ACCE_X),
+                   COMPORTEMENT=_F(RELATION='RELA_EFFO_DEPL',
+                                   NOEUD = 'N01',
+                                   NOM_CMP = 'DX',
+                                   FONCTION = FOR_EFDE),
+                   INCREMENT=_F(INST_INIT = 0.,
+                                INST_FIN = DER,
+                                PAS = PAS),
+                   ARCHIVAGE=_F(LIST_INST=L_RECU, PAS_ARCH = 1e8),
+                   )
+
 #
 MODE_MEC=CALC_MODES(MATR_RIGI=RIGIDITE,
                     OPTION='PLUS_PETITE',
@@ -135,131 +209,139 @@ PROJ_BASE(BASE=MODE_MEC,
                )
 
 #
-# CALCUL TRANSITOIRE PAR SUPERPOSITION MODALE
-# -------------------------------------------
-TRAN_GEE=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
-                 MATR_MASS=MASS_GEN,   MATR_RIGI=RIGI_GEN,
-                 SCHEMA_TEMPS=_F(SCHEMA=METHOD1,),
-                 ETAT_INIT=_F( VITE = VECT_GEN),
-                EXCIT=_F( VECT_ASSE_GENE = VECT_X,  FONC_MULT = ACCE_X),
-                COMPORTEMENT=_F(RELATION='RELA_EFFO_DEPL',  NOEUD = 'N01',  NOM_CMP = 'DX',
-                                 FONCTION = FOR_EFDE),
-                 INCREMENT=_F( INST_INIT = 0., INST_FIN = DER, PAS = PAS)
-                )
-
-#
-L_RECU=DEFI_LIST_REEL(  DEBUT=0.,INTERVALLE=(
-                      _F(  JUSQU_A = 2.,   PAS = 2.),
-                      _F(  JUSQU_A = DER,  PAS = 4.)) )
-
-#
-TRAN_GED=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
-                 MATR_MASS=MASS_GEN,   MATR_RIGI=RIGI_GEN,
-                 SCHEMA_TEMPS=_F(SCHEMA=METHOD2, PAS_MAXI=PAS),
-                 ETAT_INIT=_F( VITE= VECT_GEN),
-                EXCIT=_F( VECT_ASSE_GENE = VECT_X,  FONC_MULT = ACCE_X),
-                COMPORTEMENT=_F(RELATION='RELA_EFFO_DEPL',  NOEUD = 'N01',  NOM_CMP = 'DX',
-                                 FONCTION = FOR_EFDE),
-                 INCREMENT=_F( INST_INIT = 0., INST_FIN = DER, PAS = PAS),
-                 ARCHIVAGE=_F(LIST_INST=L_RECU)
-                )
-
-#
-TABLE=POST_DYNA_MODA_T(  RESU_GENE=TRAN_GED,
-                 RELA_EFFO_DEPL=_F(  NOEUD = 'N01', NOM_CMP = 'DX') )
-
-#
-TT=POST_DYNA_MODA_T(  RESU_GENE=TRAN_GEE,
-                 RELA_EFFO_DEPL=_F(  NOEUD = 'N01', NOM_CMP = 'DX') )
-#
-
 #
 # RECUPERATION DES DEPLACEMENTS RELATIFS CALCULES
 # -----------------------------------------------
-F_E=RECU_FONCTION(  NOEUD='N01',  NOM_CMP='DX',  NOM_CHAM='DEPL',
-            RESU_GENE=TRAN_GEE,    LIST_INST=L_RECU
+
+F_E2=RECU_FONCTION(  NOEUD='N01',  NOM_CMP='DX',  NOM_CHAM='DEPL',
+            RESULTAT=TRAN_PHE,    LIST_INST=L_RECU
                     )
 
-F_D=RECU_FONCTION(  NOEUD='N01',  NOM_CMP='DX',  NOM_CHAM='DEPL',
-            RESU_GENE=TRAN_GED,    LIST_INST=L_RECU
+F_D2=RECU_FONCTION(  NOEUD='N01',  NOM_CMP='DX',  NOM_CHAM='DEPL',
+            RESULTAT=TRAN_PHD,    LIST_INST=L_RECU
+                    )
+F_ES=RECU_FONCTION(  NOEUD='N01',  NOM_CMP='DX',  NOM_CHAM='DEPL',
+            RESULTAT=TRAN_PHS,    LIST_INST=L_RECU
                     )
 
 #
-TEST_FONCTION(VALEUR=(_F(VALE_REFE=1.E-2,
+TEST_FONCTION(VALEUR=(
+                      
+                       # DYNA_LINE : F_E2
+                      _F(VALE_REFE=1.E-2,
                          PRECISION=1.E-3,
                          REFERENCE='ANALYTIQUE',
                          VALE_CALC=9.999883729946E-03,
                          VALE_PARA=2.0,
-                         FONCTION=F_E,),
+                         FONCTION=F_E2,),
                       _F(VALE_REFE=-1.E-2,
                          PRECISION=1.E-3,
                          REFERENCE='ANALYTIQUE',
                          VALE_CALC=-9.999848874655E-03,
                          VALE_PARA=6.0,
-                         FONCTION=F_E,),
+                         FONCTION=F_E2,),
                       _F(VALE_REFE=1.E-2,
                          PRECISION=1.E-3,
                          REFERENCE='ANALYTIQUE',
                          VALE_CALC=9.999902314109E-03,
                          VALE_PARA=10.0,
-                         FONCTION=F_E,),
+                         FONCTION=F_E2,),
                       _F(VALE_REFE=-1.E-2,
                          PRECISION=1.E-3,
                          REFERENCE='ANALYTIQUE',
                          VALE_CALC=-9.999855237058E-03,
                          VALE_PARA=14.0,
-                         FONCTION=F_E,),
+                         FONCTION=F_E2,),
                       _F(VALE_REFE=1.E-2,
                          PRECISION=1.E-3,
                          REFERENCE='ANALYTIQUE',
                          VALE_CALC=9.999873975236E-03,
                          VALE_PARA=18.0,
-                         FONCTION=F_E,),
+                         FONCTION=F_E2,),
                       ),
               )
 
 #
-TEST_FONCTION(VALEUR=(_F(VALE_REFE=1.E-2,
+TEST_FONCTION(VALEUR=(
+                         
+                     # DYNA_LINE : F_D2
+                     _F(VALE_REFE=1.E-2,
                          PRECISION=1.E-3,
                          REFERENCE='ANALYTIQUE',
                          VALE_CALC=9.999876897338E-03,
                          VALE_PARA=2.0,
-                         FONCTION=F_D,),
+                         FONCTION=F_D2,),
                       _F(VALE_REFE=-1.E-2,
                          PRECISION=1.E-3,
                          REFERENCE='ANALYTIQUE',
                          VALE_CALC=-9.999869269610E-03,
                          VALE_PARA=6.0,
-                         FONCTION=F_D,),
+                         FONCTION=F_D2,),
                       _F(VALE_REFE=1.E-2,
                          PRECISION=1.E-3,
                          REFERENCE='ANALYTIQUE',
                          VALE_CALC=9.999879054771E-03,
                          VALE_PARA=10.0,
-                         FONCTION=F_D,),
+                         FONCTION=F_D2,),
                       _F(VALE_REFE=-1.E-2,
                          PRECISION=1.E-3,
                          REFERENCE='ANALYTIQUE',
                          VALE_CALC=-9.999874216933E-03,
                          VALE_PARA=14.0,
-                         FONCTION=F_D,),
+                         FONCTION=F_D2,),
                       _F(VALE_REFE=1.E-2,
                          PRECISION=1.E-3,
                          REFERENCE='ANALYTIQUE',
                          VALE_CALC=9.999870598095E-03 ,
                          VALE_PARA=18.0,
-                         FONCTION=F_D,),
+                         FONCTION=F_D2,),
+                         
+                      ),
+              )
+
+#
+TEST_FONCTION(# DYNA_LINE : F_ES
+              VALEUR=(_F(VALE_REFE=1.E-2,
+                         PRECISION=5.E-2,
+                         REFERENCE='ANALYTIQUE',
+                         VALE_CALC=9.811052052689E-03,
+                         VALE_PARA=2.0,
+                         FONCTION=F_ES,),
+                      _F(VALE_REFE=-1.E-2,
+                         PRECISION=5.E-2,
+                         REFERENCE='ANALYTIQUE',
+                         VALE_CALC=-0.01049192109356,
+                         VALE_PARA=6.0,
+                         FONCTION=F_ES,),
+                      _F(VALE_REFE=1.E-2,
+                         PRECISION=6.E-2,
+                         REFERENCE='ANALYTIQUE',
+                         VALE_CALC=9.447050059545E-03,
+                         VALE_PARA=10.0,
+                         FONCTION=F_ES,),
+                      _F(VALE_REFE=-1.E-2,
+                         PRECISION=5.E-2,
+                         REFERENCE='ANALYTIQUE',
+                         VALE_CALC=-0.01036364915865,
+                         VALE_PARA=14.0,
+                         FONCTION=F_ES,),
+                      _F(VALE_REFE=1.E-2,
+                         PRECISION=5.E-2,
+                         REFERENCE='ANALYTIQUE',
+                         VALE_CALC=0.01000863080201,
+                         VALE_PARA=18.0,
+                         FONCTION=F_ES,),
                       ),
               )
 
 #
 
-TR_PH_D=REST_GENE_PHYS(  RESU_GENE=TRAN_GEE,  LIST_INST=L_RECU,
-                              PRECISION=1.E-06,   NOM_CHAM='DEPL'    )
-
-#
-
 DEPL_R = FORMULE(NOM_PARA='INST',VALE='A0 * sin(W0*INST) ')
+
+
+VITE_R = FORMULE(NOM_PARA='INST',VALE='A0 * W0 * cos(W0*INST) ')
+
+ACCE_R = FORMULE(NOM_PARA='INST',VALE='-A0*W0*W0*sin(W0*INST) ')
 
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    PARA='FREQ',
@@ -268,8 +350,22 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    VALE_REFE= 2.37254,
                    PRECISION=1.E-3,
                    VALE_CALC=2.37254181139,),
+                ),
+          )
+
+#=======================================================================
+
+# Test DYNA_LINE
+
+TEST_RESU(RESU=(_F(NUME_ORDRE=1,
+                   PARA='FREQ',
+                   RESULTAT=MODE_ME2,
+                   REFERENCE='ANALYTIQUE',
+                   VALE_REFE= 2.37254,
+                   PRECISION=1.E-3,
+                   VALE_CALC=2.37254181139,),
                 _F(NUME_ORDRE=1,
-                   RESULTAT=TR_PH_D,
+                   RESULTAT=TRAN_PHE,
                    NOM_CHAM='DEPL',
                    NOEUD='N01',
                    NOM_CMP='DX',
@@ -278,7 +374,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    PRECISION=1.E-3,
                    VALE_CALC=0.00999988372995,),
                 _F(NUME_ORDRE=2,
-                   RESULTAT=TR_PH_D,
+                   RESULTAT=TRAN_PHE,
                    NOM_CHAM='DEPL',
                    NOEUD='N01',
                    NOM_CMP='DX',
@@ -287,7 +383,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    PRECISION=1.E-3,
                    VALE_CALC=-0.00999984887465,),
                 _F(NUME_ORDRE=3,
-                   RESULTAT=TR_PH_D,
+                   RESULTAT=TRAN_PHE,
                    NOM_CHAM='DEPL',
                    NOEUD='N01',
                    NOM_CMP='DX',
@@ -296,7 +392,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    PRECISION=1.E-3,
                    VALE_CALC=0.00999990231411,),
                 _F(NUME_ORDRE=4,
-                   RESULTAT=TR_PH_D,
+                   RESULTAT=TRAN_PHE,
                    NOM_CHAM='DEPL',
                    NOEUD='N01',
                    NOM_CMP='DX',
@@ -305,7 +401,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    PRECISION=1.E-3,
                    VALE_CALC=-0.00999985523706,),
                 _F(NUME_ORDRE=5,
-                   RESULTAT=TR_PH_D,
+                   RESULTAT=TRAN_PHE,
                    NOM_CHAM='DEPL',
                    NOEUD='N01',
                    NOM_CMP='DX',
@@ -316,24 +412,16 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                 ),
           )
 
-#
-
-TR_PH_V=REST_GENE_PHYS(  RESU_GENE=TRAN_GEE,  LIST_INST=L_RECU,
-                              PRECISION=1.E-06,   NOM_CHAM='VITE'    )
-
-#
-
-VITE_R = FORMULE(NOM_PARA='INST',VALE='A0 * W0 * cos(W0*INST) ')
 
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    PARA='FREQ',
-                   RESULTAT=MODE_MEC,
+                   RESULTAT=MODE_ME2,
                    REFERENCE='ANALYTIQUE',
                    VALE_REFE= 2.37254,
                    PRECISION=1.E-3,
                    VALE_CALC=2.37254181139,),
                 _F(NUME_ORDRE=1,
-                   RESULTAT=TR_PH_V,
+                   RESULTAT=TRAN_PHE,
                    NOM_CHAM='VITE',
                    NOEUD='N01',
                    NOM_CMP='DX',
@@ -343,7 +431,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    VALE_CALC=6.13434621666E-05,
                    CRITERE='ABSOLU',),
                 _F(NUME_ORDRE=2,
-                   RESULTAT=TR_PH_V,
+                   RESULTAT=TRAN_PHE,
                    NOM_CHAM='VITE',
                    NOEUD='N01',
                    NOM_CMP='DX',
@@ -353,7 +441,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    VALE_CALC=-6.18289681175E-05,
                    CRITERE='ABSOLU',),
                 _F(NUME_ORDRE=3,
-                   RESULTAT=TR_PH_V,
+                   RESULTAT=TRAN_PHE,
                    NOM_CHAM='VITE',
                    NOEUD='N01',
                    NOM_CMP='DX',
@@ -363,7 +451,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    VALE_CALC=6.17987644848E-05,
                    CRITERE='ABSOLU',),
                 _F(NUME_ORDRE=4,
-                   RESULTAT=TR_PH_V,
+                   RESULTAT=TRAN_PHE,
                    NOM_CHAM='VITE',
                    NOEUD='N01',
                    NOM_CMP='DX',
@@ -373,7 +461,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    VALE_CALC=-6.13595659487E-05,
                    CRITERE='ABSOLU',),
                 _F(NUME_ORDRE=5,
-                   RESULTAT=TR_PH_V,
+                   RESULTAT=TRAN_PHE,
                    NOM_CHAM='VITE',
                    NOEUD='N01',
                    NOM_CMP='DX',
@@ -385,24 +473,16 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                 ),
           )
 
-#
-
-TR_PH_A=REST_GENE_PHYS(  RESU_GENE=TRAN_GEE,  LIST_INST=L_RECU,
-                              PRECISION=1.E-06,   NOM_CHAM='ACCE'    )
-
-#
-
-ACCE_R = FORMULE(NOM_PARA='INST',VALE='-A0*W0*W0*sin(W0*INST) ')
 
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    PARA='FREQ',
-                   RESULTAT=MODE_MEC,
+                   RESULTAT=MODE_ME2,
                    REFERENCE='ANALYTIQUE',
                    VALE_REFE= 2.37254,
                    PRECISION=1.E-3,
                    VALE_CALC=2.37254181139,),
                 _F(NUME_ORDRE=1,
-                   RESULTAT=TR_PH_A,
+                   RESULTAT=TRAN_PHE,
                    NOM_CHAM='ACCE',
                    NOEUD='N01',
                    NOM_CMP='DX',
@@ -411,7 +491,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    PRECISION=1.E-3,
                    VALE_CALC=-0.00617005445271,),
                 _F(NUME_ORDRE=2,
-                   RESULTAT=TR_PH_A,
+                   RESULTAT=TRAN_PHE,
                    NOM_CHAM='ACCE',
                    NOEUD='N01',
                    NOM_CMP='DX',
@@ -420,7 +500,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    PRECISION=1.E-3,
                    VALE_CALC=0.00616385785824,),
                 _F(NUME_ORDRE=3,
-                   RESULTAT=TR_PH_A,
+                   RESULTAT=TRAN_PHE,
                    NOM_CHAM='ACCE',
                    NOEUD='N01',
                    NOM_CMP='DX',
@@ -429,7 +509,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    PRECISION=1.E-3,
                    VALE_CALC=-0.00617335835406,),
                 _F(NUME_ORDRE=4,
-                   RESULTAT=TR_PH_A,
+                   RESULTAT=TRAN_PHE,
                    NOM_CHAM='ACCE',
                    NOEUD='N01',
                    NOM_CMP='DX',
@@ -438,7 +518,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    PRECISION=1.E-3,
                    VALE_CALC=0.00616498897043,),
                 _F(NUME_ORDRE=5,
-                   RESULTAT=TR_PH_A,
+                   RESULTAT=TRAN_PHE,
                    NOM_CHAM='ACCE',
                    NOEUD='N01',
                    NOM_CMP='DX',

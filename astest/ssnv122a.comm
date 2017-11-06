@@ -200,11 +200,22 @@ V=STAT_NON_LINE( reuse=V,
 
 # POST-TRAITEMENT
 
-V=CALC_CHAMP(
-             reuse=V,
+# verification de la prise en compte de TYPE_CHARGE SUIV et DIDI dans CALC_CHAMP
+# le test est NOOK si on commente TYPE_CHARGE='SUIV'
+VV=CALC_CHAMP(
+             
                 RESULTAT=V,
                   FORCE='REAC_NODA',
+                EXCIT=(
+                      _F(CHARGE = CHR_PLAN), 
+                      _F(CHARGE = LIAISON,
+                         TYPE_CHARGE = 'DIDI'
+                         ), 
+                      _F(CHARGE = CHR_PRES,
+                         TYPE_CHARGE = 'SUIV',
+                         FONC_MULT = F_CHAR)),
              )
+
 
 V=CALC_CHAMP(
              reuse=V,
@@ -298,7 +309,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=7,
                    PRECISION=1.0,
                    MAILLE='MA1',),
                 _F(NUME_ORDRE=7,
-                   RESULTAT=V,
+                   RESULTAT=VV,
                    NOM_CHAM='REAC_NODA',
                    NOEUD='NO3',
                    NOM_CMP='DX',
@@ -308,7 +319,17 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=7,
                    REFERENCE = 'ANALYTIQUE',
                    PRECISION=1.6,),
                 _F(NUME_ORDRE=7,
-                   RESULTAT=V,
+                   RESULTAT=VV,
+                   NOM_CHAM='REAC_NODA',
+                   NOEUD='NO4',
+                   NOM_CMP='DX',
+                   VALE_CALC=0.,
+                   VALE_REFE=0.0,
+                   CRITERE='ABSOLU',
+                   REFERENCE = 'ANALYTIQUE',
+                   PRECISION=1.6,),
+                _F(NUME_ORDRE=7,
+                   RESULTAT=VV,
                    NOM_CHAM='REAC_NODA',
                    NOEUD='NO3',
                    NOM_CMP='DY',
@@ -318,7 +339,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=7,
                    PRECISION=1.E-3,
                    ),
                 _F(NUME_ORDRE=7,
-                   RESULTAT=V,
+                   RESULTAT=VV,
                    NOM_CHAM='REAC_NODA',
                    NOEUD='NO3',
                    NOM_CMP='DZ',

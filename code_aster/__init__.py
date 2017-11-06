@@ -48,6 +48,8 @@ __all__ = []
 # import libaster to call initAsterModules
 import libaster
 
+from .Supervis import CodeAsterError
+
 # import datastructures enriched by pure python extensions
 from .Objects import *
 
