@@ -134,16 +134,15 @@ class ExecuteCommand(object):
           the main function. Does nothing by default.
     """
     # class attributes
-    command_name = command_op = None
+    command_name = command_op = command_cata = None
 
     _cata = _op = _result = _counter = None
 
-    def __init__(self, command_name=None, command_op=None):
+    def __init__(self):
         """Initialization"""
-        command_name = command_name or self.command_name
-        assert command_name, "'command_name' attribute/argument not defined!"
-        self._cata = getattr(Commands, command_name)
-        self._op = command_op or self._cata.definition['op']
+        assert self.command_name, "'command_name' attribute is not defined!"
+        self._cata = self.command_cata or getattr(Commands, self.command_name)
+        self._op = self.command_op or self._cata.definition['op']
         self._result = None
         self._counter = 0
 
@@ -154,7 +153,7 @@ class ExecuteCommand(object):
         Arguments:
             keywords (dict): User keywords
         """
-        cmd = cls(cls.command_name, cls.command_op)
+        cmd = cls()
         cmd._result = None
         timer = GlobalCommandsData.timer()
         check_jeveux()
@@ -363,10 +362,10 @@ class ExecuteMacro(ExecuteCommand):
 
     _sdprods = _result_type = _result_names = _add_results = None
 
-    def __init__(self, command_name, command_op=None):
+    def __init__(self):
         """Initialization"""
-        super(ExecuteMacro, self).__init__(command_name)
-        self._op = command_op or import_object(self._op)
+        super(ExecuteMacro, self).__init__()
+        self._op = self.command_op or import_object(self._op)
 
     def create_result(self, keywords):
         """Macro-commands create their results in the *exec_* method.

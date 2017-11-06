@@ -29,9 +29,9 @@ class FormulaDefinition(ExecuteCommand):
     command_name = "FORMULE"
     command_op = 5
 
-    def __init__(self, command_name=None, command_op=None):
+    def __init__(self):
         """Initialization"""
-        super(FormulaDefinition, self).__init__(command_name, command_op)
+        super(FormulaDefinition, self).__init__()
         self._ctxt = self.initial_context()
 
     @staticmethod
