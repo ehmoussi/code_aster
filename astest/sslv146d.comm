@@ -84,13 +84,13 @@ LACAR=AFFE_CARA_ELEM(    MODELE=LEMOD,
                        GRILLE=(
                                _F( GROUP_MA = 'GEOX',
                                 SECTION = .01,
-                                ANGL_REP=(30,0),),
+                                ANGL_REP_1=(30,0),),
                                _F( GROUP_MA = 'GEOY',
                                 SECTION = .02,
-                                ANGL_REP=(0,40),),
+                                ANGL_REP_1=(0,40),),
                                _F( GROUP_MA = 'GEOZ',
                                 SECTION = .03,
-                                ANGL_REP=(15,70),),
+                                ANGL_REP_1=(15,70),),
                               )
                         )
 

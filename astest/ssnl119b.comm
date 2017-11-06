@@ -139,7 +139,7 @@ CAEL=AFFE_CARA_ELEM(MODELE=MO,
                              INER_ROTA='OUI',),
                     GRILLE=_F(GROUP_MA='RENF_H',
                               SECTION=section_acier_suppl,
-                              ANGL_REP=(0.0,0.0,),
+                              ANGL_REP_1=(0.0,0.0,),
                               EXCENTREMENT=-excentr,),);
 
 #-----------------------------------------------

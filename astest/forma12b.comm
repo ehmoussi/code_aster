@@ -37,10 +37,6 @@ rho = 8000.0;
 nu = 0.3;
 
 
-LISTR=DEFI_LIST_REEL(DEBUT=0.,
-                     INTERVALLE=_F(JUSQU_A=tfin,
-                                   PAS=(1.0 * pa),),);
-
 MAIL=LIRE_MAILLAGE(UNITE=20,
                    FORMAT='MED',);
 
@@ -67,89 +63,58 @@ BLOCAGE=AFFE_CHAR_MECA(MODELE=MODELE,
                        DDL_IMPO=_F(GROUP_MA='ENCAS',
                                    LIAISON='ENCASTRE',),);
 
-ASSEMBLAGE(MODELE=MODELE,
-           CHAM_MATER=CHMAT,
-           CHARGE=BLOCAGE,
-           NUME_DDL=CO('NUMEDDL'),
-           MATR_ASSE=(_F(MATRICE=CO('RIGIDITE'),
-                         OPTION='RIGI_MECA',),
-                      _F(MATRICE=CO('MASSE'),
-                         OPTION='MASS_MECA',),),);
-
-MODES=CALC_MODES(MATR_RIGI=RIGIDITE,
-                 OPTION='BANDE',
-                 CALC_FREQ=_F(FREQ=(0,50.0,),
-                              ),
-                 MATR_MASS=MASSE,
-                 )
-
-MODES=NORM_MODE(reuse =MODES,
-                MODE=MODES,
-                NORME='MASS_GENE',);
-
-MODEE=EXTR_MODE(FILTRE_MODE=_F(MODE=MODES,
-                               FREQ_MIN=0.0,
-                               FREQ_MAX=100.0,),
-                IMPRESSION=_F(CUMUL='OUI',),);
-
-MODEF=EXTR_MODE(FILTRE_MODE=_F(MODE=MODES,
-                               FREQ_MIN=0.0,
-                               FREQ_MAX=(4.0 * fc),),
-                IMPRESSION=_F(CUMUL='OUI',),);
 
 GRAV=AFFE_CHAR_MECA(MODELE=MODELE,
                     PESANTEUR=_F(GRAVITE=300.,
                                  DIRECTION=(-1.,0,1,),),);
 
-PESELEM=CALC_VECT_ELEM(OPTION='CHAR_MECA',
-                       CHARGE=GRAV,
-                       CHAM_MATER=CHMAT,);
-
-PESA=ASSE_VECTEUR(VECT_ELEM=PESELEM,
-                  NUME_DDL=NUMEDDL,);
 
 sinom = FORMULE(VALE='sin(om*INST)',
                 NOM_PARA='INST',);
 
 
-TRANSD=DYNA_VIBRA(TYPE_CALCUL='TRAN', BASE_CALCUL='PHYS',
-                  MATR_MASS=MASSE,
-                  MATR_RIGI=RIGIDITE,
-                  SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
-                  EXCIT=_F(VECT_ASSE=PESA,
-                           FONC_MULT=sinom,),
-                  INCREMENT=_F(LIST_INST=LISTR,),);
+TRANSD = DYNA_LINE(TYPE_CALCUL="TRAN",
+                 BASE_CALCUL="PHYS",
+                 MODELE=MODELE,
+                 CHAM_MATER=CHMAT,
+                 CHARGE=BLOCAGE,
+                 EXCIT=_F(CHARGE=GRAV, FONC_MULT=sinom,),
+                 BANDE_ANALYSE=1./(5.*pa),
+                 SCHEMA_TEMPS=_F(SCHEMA ='NEWMARK'),
+                 INCREMENT=_F(INST_FIN=tfin,
+                               PAS=(1.0 * pa),),)
+                  
 
-DEPLPDZd=RECU_FONCTION(RESULTAT=TRANSD,
+DEPLPDZ=RECU_FONCTION(RESULTAT=TRANSD,
                        NOM_CHAM='DEPL',
                        NOM_CMP='DZ',
                        GROUP_NO='P',);
 
-DEPLPDXd=RECU_FONCTION(RESULTAT=TRANSD,
+DEPLPDX=RECU_FONCTION(RESULTAT=TRANSD,
                        NOM_CHAM='DEPL',
                        NOM_CMP='DX',
                        GROUP_NO='P',);
 
 IMPR_FONCTION(FORMAT='XMGRACE',
               UNITE=29,
-              COURBE=( _F(FONCTION=DEPLPDZd, MARQUEUR=0,),),);
+              COURBE=( _F(FONCTION=DEPLPDZ, MARQUEUR=0,),),);
 
 IMPR_FONCTION(FORMAT='XMGRACE',
               UNITE=30,
-              COURBE=( _F(FONCTION=DEPLPDXd, MARQUEUR=0,),),);
+              COURBE=( _F(FONCTION=DEPLPDX, MARQUEUR=0,),),);
 
 
 
 TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.14537012,
                          VALE_PARA=0.05,
-                         FONCTION=DEPLPDZd,
+                         FONCTION=DEPLPDZ,
                          ),
               ))
 
 TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.00017243164,
                          VALE_PARA=0.05,
-                         FONCTION=DEPLPDXd,
+                         FONCTION=DEPLPDX,
                          ),
               ))
-
+              
 FIN();

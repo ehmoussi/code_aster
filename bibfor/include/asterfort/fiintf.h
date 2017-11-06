@@ -16,17 +16,15 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-!
-!
 interface
     subroutine fiintf(nomfon, nbpu, param, val, iret,&
                       coderr, resu)
-        character(len=*) :: nomfon
-        integer :: nbpu
-        character(len=*) :: param(*)
-        real(kind=8) :: val(*)
-        integer :: iret
-        character(len=*) :: coderr
-        real(kind=8) :: resu
+        character(len=*), intent(in) :: nomfon
+        integer, intent(in) :: nbpu
+        character(len=*), intent(in) :: param(*)
+        real(kind=8), intent(in) :: val(*)
+        integer, intent(out) :: iret
+        character(len=*), intent(in) :: coderr
+        real(kind=8), intent(out) :: resu(:)
     end subroutine fiintf
 end interface

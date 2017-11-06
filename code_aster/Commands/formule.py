@@ -19,7 +19,7 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
-from ..Objects import Formula, FormulaC
+from ..Objects import Formula
 from ..Utilities import force_list
 from .ExecuteCommand import ExecuteCommand
 
@@ -41,8 +41,10 @@ class FormulaDefinition(ExecuteCommand):
         Returns:
             dict: pairs of name per corresponding Python instance.
         """
+        import __builtin__
         import math
         context = {}
+        context.update(__builtin__.__dict__)
         for func in dir(math):
             if not func.startswith('_'):
                 context[func] = getattr(math, func)
@@ -55,7 +57,11 @@ class FormulaDefinition(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords, changed
                 in place.
         """
-        # add in _ctxt all keywords but NOM_PARA, VALE, VALE_C, INFO...
+        # add in _ctxt all keywords but VALE, VALE_C, NOM_PARA.
+        keys = keywords.keys()
+        for key in keys:
+            if key not in ('VALE', 'VALE_C', 'NOM_PARA'):
+                self._ctxt[key] = keywords.pop(key)
 
     def create_result(self, keywords):
         """Initialize the result.
@@ -63,12 +69,9 @@ class FormulaDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        if keywords.get('VALE'):
-            self._result = Formula.create()
-        elif keywords.get('VALE_C'):
-            self._result = FormulaC.create()
-        else:
-            raise KeyError("Expecting 'VALE' or 'VALE_C'")
+        self._result = Formula.create()
+        if keywords.get('VALE_C'):
+            self._result.setComplex()
 
     def exec_(self, keywords):
         """Execute the command.

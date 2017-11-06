@@ -56,7 +56,7 @@ CARA_COQ=AFFE_CARA_ELEM(MODELE=MODEL,
                                  COEF_RIGI_DRZ=0.,),
                         GRILLE=_F(GROUP_MA='GRILLE',
                                   SECTION=20.,
-                                  AXE=(0,1,0,),),);
+                                  VECT_2=(0,1,0,),),);
 
 CHARGE=AFFE_CHAR_MECA(MODELE=MODEL,
                       DDL_IMPO=(_F(GROUP_NO='BCSANSBC',

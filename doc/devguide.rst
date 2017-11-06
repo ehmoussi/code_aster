@@ -28,11 +28,20 @@ Development rules
 
     - Check that the documentation can be built without warnings/errors.
 
-    - All the *asterxx* testcases must be run before every push using:
+    - All the *asterxx* testcases must be run before every push.
+
+      Check the sequential testcases:
 
       .. code-block:: sh
 
-        run_testcases --root=..  --testlist=asterxx --resutest=../resutest
+        run_testcases --root=.. --testlist=asterxx --resutest=../resutest
+
+      and the parallel ones:
+
+      .. code-block:: sh
+
+        run_testcases --root=.. --builddir=build/mpi --testlist=asterxx --resutest=../resutest
+
 
     - List of testcases currently in failure :
 

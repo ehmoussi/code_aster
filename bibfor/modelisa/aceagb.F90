@@ -21,6 +21,7 @@ subroutine aceagb(nomu, noma, lmax, locamb, nbocc)
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8rddg.h"
+#include "asterc/r8dgrd.h"
 #include "asterfort/alcart.h"
 #include "asterfort/angvx.h"
 #include "asterfort/dismoi.h"
@@ -58,11 +59,12 @@ subroutine aceagb(nomu, noma, lmax, locamb, nbocc)
 !     LOCAMB : SI ELEMENTS MEMBRANE DANS LA MODELISATION
 !     NBOCC  : NOMBRE D'OCCURENCES DU MOT CLE GRILLE
 ! ----------------------------------------------------------------------
-    integer :: jdcc, jdvc, jdls, ioc, ng, nm, n1, n2, n3, n4, n5, jdls2
-    integer :: i, nbmat, nbma, n1f, n3f, iret
+    integer :: jdcc, jdvc, jdls, ioc, ng, nm, jdls2
+    integer :: n1, n2, n3, n4, n5, n6, n7
+    integer :: i, nbmat, nbma, n1f, n4f, iret
     integer :: ima, nbno, adrm, numa, jgrma, igr, nbmat0
     integer :: noe1, noe2, noe3, iarg, jdccf, jdvcf
-    real(kind=8) :: ang(2), sl, ez, ctr, axey(3), xnorm, epsi
+    real(kind=8) :: ang(2), angx(2), sl, ez, ctr, axey(3), xnorm, epsi
     real(kind=8) :: axex(3), vn1n2(3), vn1n3(3), vecnor(3)
     character(len=8) :: slf, ezf
     character(len=19) :: cartgr, cartcf
@@ -108,8 +110,8 @@ subroutine aceagb(nomu, noma, lmax, locamb, nbocc)
 ! ------ DOIT-ON CREER LA CARTE DE FONCTION
         do ioc = 1, nbocc
             call getvid('GRILLE', 'SECTION_FO', iocc=ioc, scal=slf, nbret=n1f)
-            call getvid('GRILLE', 'EXCENTREMENT_FO', iocc=ioc, scal=ezf, nbret=n3f)
-            if (n1f+n3f .ne. 0) then
+            call getvid('GRILLE', 'EXCENTREMENT_FO', iocc=ioc, scal=ezf, nbret=n4f)
+            if (n1f+n4f .ne. 0) then
                 lcartf = .true.
                 goto 110
             endif
@@ -152,34 +154,53 @@ subroutine aceagb(nomu, noma, lmax, locamb, nbocc)
 !
         call getvr8('GRILLE', 'SECTION', iocc=ioc, scal=sl, nbret=n1)
         call getvid('GRILLE', 'SECTION_FO', iocc=ioc, scal=slf, nbret=n1f)
-        call getvr8('GRILLE', 'ANGL_REP', iocc=ioc, nbval=2, vect=ang,&
+        call getvr8('GRILLE', 'ANGL_REP_1', iocc=ioc, nbval=2, vect=ang,&
                     nbret=n2)
-        call getvr8('GRILLE', 'EXCENTREMENT', iocc=ioc, scal=ez, nbret=n3)
-        call getvid('GRILLE', 'EXCENTREMENT_FO', iocc=ioc, scal=ezf, nbret=n3f)
-        call getvr8('GRILLE', 'COEF_RIGI_DRZ', iocc=ioc, scal=ctr, nbret=n4)
-        call getvr8('GRILLE', 'AXE', iocc=ioc, nbval=3, vect=axey,&
-                    nbret=n5)
+        call getvr8('GRILLE', 'ANGL_REP_2', iocc=ioc, nbval=2, vect=ang,&
+                    nbret=n3)
+        call getvr8('GRILLE', 'EXCENTREMENT', iocc=ioc, scal=ez, nbret=n4)
+        call getvid('GRILLE', 'EXCENTREMENT_FO', iocc=ioc, scal=ezf, nbret=n4f)
+        call getvr8('GRILLE', 'COEF_RIGI_DRZ', iocc=ioc, scal=ctr, nbret=n5)
+        call getvr8('GRILLE', 'VECT_1', iocc=ioc, nbval=3, vect=axex,&
+                    nbret=n6)
+        call getvr8('GRILLE', 'VECT_2', iocc=ioc, nbval=3, vect=axey,&
+                    nbret=n7)
 !
         zr(jdvc ) = sl
-        zr(jdvc+1) = ang(1)
-        zr(jdvc+2) = ang(2)
         zr(jdvc+3) = ez
         zr(jdvc+4) = ctr
 !
-        if (lcartf) then
-            zk8(jdvcf) = '&&ACEAGB'
-            zk8(jdvcf+1) = '&&ACEAGB'
-        endif
-        if (n1f .ne. 0) then
-            zr(jdvc ) = 0.0d0
-            if (lcartf) zk8(jdvcf) = slf
-        endif
-        if (n3f .ne. 0) then
-            zr(jdvc+3) = 0.0d0
-            if (lcartf) zk8(jdvcf+1) = ezf
-        endif
+!       SI ANGL_REP_1 OU VECT_1 SONT RENSEIGNES
+        if ((n3 .eq. 0) .and. (n7 .eq. 0)) then
+!           SI ANGL_REP_1 EST RENSEIGNE
+            if (n6 .eq. 0) then
+                zr(jdvc+1) = ang(1)
+                zr(jdvc+2) = ang(2)
+            endif
+!           SI VECT_1 EST RENSEIGNE
+            if (n2 .eq. 0) then
+                call normev(axex, xnorm)
+                if (xnorm .lt. epsi) then
+                    call utmess('F', 'MODELISA_10')
+                endif
+                call angvx(axex, angx(1), angx(2))
+                zr(jdvc+1) = angx(1)*r8rddg()
+                zr(jdvc+2) = angx(2)*r8rddg()
+            endif
 !
-        if (n5 .eq. 0) then
+            if (lcartf) then
+                zk8(jdvcf) = '&&ACEAGB'
+                zk8(jdvcf+1) = '&&ACEAGB'
+            endif
+            if (n1f .ne. 0) then
+                zr(jdvc ) = 0.0d0
+                if (lcartf) zk8(jdvcf) = slf
+            endif
+            if (n4f .ne. 0) then
+                zr(jdvc+3) = 0.0d0
+                if (lcartf) zk8(jdvcf+1) = ezf
+            endif
+!
 ! ---       "GROUP_MA" = TOUTES LES MAILLES DE LA LISTE
             if (ng .gt. 0) then
                 do i = 1, ng
@@ -200,7 +221,10 @@ subroutine aceagb(nomu, noma, lmax, locamb, nbocc)
                                 limano=zk8(jdls2))
                 endif
             endif
-        else
+        endif
+!
+!       SI ANGL_REP_2 OU VECT_2 SONT RENSEIGNES
+        if ((n2 .eq. 0) .and. (n6 .eq. 0)) then
             if (ng .gt. 0) then
                 nbmat = 0
                 numa = -1
@@ -222,16 +246,20 @@ subroutine aceagb(nomu, noma, lmax, locamb, nbocc)
                 end do
             endif
 !
-            call normev(axey, xnorm)
-            if (xnorm .lt. epsi) then
-                call utmess('F', 'MODELISA_10')
+!           SI VECT_2 EST RENSEIGNE
+            if (n3 .eq. 0) then
+                call normev(axey, xnorm)
+                if (xnorm .lt. epsi) then
+                    call utmess('F', 'MODELISA_10')
+                endif
             endif
+!
             do ima = 1, nbmat
+!               CALCUL DE LA NORMALE : VECTEUR Z LOCAL
                 numa = nume_ma(ima)
                 kjexn = jexnum(connex,numa)
                 call jelira(kjexn, 'LONMAX', nbno)
                 call jeveuo(kjexn, 'L', adrm)
-!              CALCUL DE LA NORMALE : VECTEUR Z LOCAL
                 noe1 = zi(adrm+1-1)
                 noe2 = zi(adrm+2-1)
                 noe3 = zi(adrm+3-1)
@@ -245,7 +273,19 @@ subroutine aceagb(nomu, noma, lmax, locamb, nbocc)
                 vecnor(2) = vn1n2(3)*vn1n3(1) - vn1n2(1)*vn1n3(3)
                 vecnor(3) = vn1n2(1)*vn1n3(2) - vn1n2(2)*vn1n3(1)
                 call normev(vecnor, xnorm)
-!              CALCUL DE LA DIRECTION DES ARMATURES : XLOCAL
+!
+!               SI ANGL_REP_2 EST RENSEIGNE
+                if (n7 .eq. 0) then
+                    axey(1) = cos(ang(1)*r8dgrd())*cos(ang(2)*r8dgrd())
+                    axey(2) = sin(ang(1)*r8dgrd())*cos(ang(2)*r8dgrd())
+                    axey(3) = sin(ang(2)*r8dgrd())
+                    call normev(axey, xnorm)
+                    if (xnorm .lt. epsi) then
+                        call utmess('F', 'MODELISA_10')
+                    endif
+                endif
+!
+!              CALCUL DE LA DIRECTION DES ARMATURES : X LOCAL
                 axex(1) = axey(2)*vecnor(3) - axey(3)*vecnor(2)
                 axex(2) = axey(3)*vecnor(1) - axey(1)*vecnor(3)
                 axex(3) = axey(1)*vecnor(2) - axey(2)*vecnor(1)
@@ -253,10 +293,10 @@ subroutine aceagb(nomu, noma, lmax, locamb, nbocc)
                 if (xnorm .lt. epsi) then
                     call utmess('F', 'MODELISA_11')
                 endif
-                call angvx(axex, ang(1), ang(2))
-!
-                zr(jdvc+1) = ang(1) * r8rddg()
-                zr(jdvc+2) = ang(2) * r8rddg()
+                call angvx(axex, angx(1), angx(2))
+                zr(jdvc+1) = angx(1) * r8rddg()
+                zr(jdvc+2) = angx(2) * r8rddg()
+                
                 call nocart(cartgr, 3, 5, mode='NUM', nma=1,&
                             limanu=[numa])
                 if (lcartf) then
@@ -265,7 +305,6 @@ subroutine aceagb(nomu, noma, lmax, locamb, nbocc)
                 endif
             end do
         endif
-!
     end do
 !
     AS_DEALLOCATE(vi=nume_ma)

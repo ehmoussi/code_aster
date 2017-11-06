@@ -30,20 +30,23 @@
 #include "Supervis/ResultNaming.h"
 
 
-FunctionInstance::FunctionInstance( const std::string jeveuxName ):
-    DataStructure( jeveuxName + "           ", "FONCTION" ),
+BaseFunctionInstance::BaseFunctionInstance( const std::string jeveuxName,
+                                            const std::string type ):
+    DataStructure( jeveuxName + "           ", type ),
     _jeveuxName( getName() ),
     _property( JeveuxVectorChar24( getName() + ".PROL" ) ),
-    _value( JeveuxVectorDouble( getName() + ".VALE" ) )
+    _value( JeveuxVectorDouble( getName() + ".VALE" ) ),
+    _funct_type( type )
 {
 }
 
-FunctionInstance::FunctionInstance() :
-    FunctionInstance::FunctionInstance( ResultNaming::getNewResultName() )
+BaseFunctionInstance::BaseFunctionInstance( const std::string type ) :
+    BaseFunctionInstance::BaseFunctionInstance( ResultNaming::getNewResultName(), type )
 {
 }
 
-void FunctionInstance::setValues( const VectorDouble &absc, const VectorDouble &ordo ) throw ( std::runtime_error )
+void BaseFunctionInstance::setValues( const VectorDouble &absc, const VectorDouble &ordo )
+    throw ( std::runtime_error )
 {
     if ( absc.size() != ordo.size() )
         throw std::runtime_error( "Function: length of abscissa and ordinates must be equal" );
@@ -64,7 +67,8 @@ void FunctionInstance::setValues( const VectorDouble &absc, const VectorDouble &
     }
 }
 
-void FunctionInstance::setInterpolation( const std::string type ) throw ( std::runtime_error )
+void BaseFunctionInstance::setInterpolation( const std::string type )
+    throw ( std::runtime_error )
 {
     std::string interp;
     if( !_property->isAllocated() )
@@ -84,7 +88,8 @@ void FunctionInstance::setInterpolation( const std::string type ) throw ( std::r
     (*_property)[1] = type.c_str();
 }
 
-void FunctionInstance::setExtrapolation( const std::string type ) throw ( std::runtime_error )
+void BaseFunctionInstance::setExtrapolation( const std::string type )
+    throw ( std::runtime_error )
 {
     if( !_property->isAllocated() )
         propertyAllocate();
@@ -100,4 +105,37 @@ void FunctionInstance::setExtrapolation( const std::string type ) throw ( std::r
         throw std::runtime_error("Function: invalid extrapolation for ordinates.");
 
     (*_property)[4] = type.c_str();
+}
+
+/* Complex function */
+void FunctionComplexInstance::setValues( const VectorDouble &absc,
+                                         const VectorDouble &ordo )
+    throw ( std::runtime_error )
+{
+    if ( absc.size() * 2 != ordo.size() )
+        throw std::runtime_error( "Function: The length of ordinates must be twice that of abscissas." );
+
+    // Create Jeveux vector ".VALE"
+    const int nbpts = absc.size();
+    _value->allocate( Permanent, 3 * nbpts );
+
+    // Loop on the points
+    VectorDouble::const_iterator abscIt = absc.begin();
+    VectorDouble::const_iterator ordoIt = ordo.begin();
+    int idx = 0;
+    for ( ; abscIt != absc.end(); ++abscIt, ++ordoIt )
+    {
+        (*_value)[idx] = *abscIt;
+        (*_value)[nbpts + 2 * idx] = *ordoIt;
+        ++ordoIt;
+        (*_value)[nbpts + 2 * idx + 1] = *ordoIt;
+        ++idx;
+    }
+}
+
+void FunctionComplexInstance::setValues( const VectorDouble &absc,
+                                         const VectorComplex &ordo )
+    throw ( std::runtime_error )
+{
+    throw std::runtime_error( "Not yet implemented!" );
 }

@@ -30,18 +30,37 @@ void exportFunctionToPython()
 {
     using namespace boost::python;
 
-    class_< FunctionInstance, FunctionInstance::FunctionPtr,
-            bases< DataStructure > > ( "Function", no_init )
-        .def( "create", &FunctionInstance::create )
-        .staticmethod( "create" )
-//         .def( "__getnewargs__", &FunctionInstance::getnewargs )
+    class_< BaseFunctionInstance, BaseFunctionInstance::BaseFunctionPtr,
+            bases< DataStructure > > ( "BaseFunction", no_init )
         .def( "setParameterName", &FunctionInstance::setParameterName )
         .def( "setResultName", &FunctionInstance::setResultName )
         .def( "setInterpolation", &FunctionInstance::setInterpolation )
         .def( "setExtrapolation", &FunctionInstance::setExtrapolation )
         .def( "setValues", &FunctionInstance::setValues )
-        .def( "size", &FunctionInstance::size )
         .def( "getProperties", &FunctionInstance::getProperties )
         .def( "getValues", &FunctionInstance::getValues )
+    ;
+
+    class_< FunctionInstance, FunctionInstance::FunctionPtr,
+            bases< BaseFunctionInstance > > ( "Function", no_init )
+        .def( "create", &FunctionInstance::create )
+        .staticmethod( "create" )
+        .def( "setValues", &FunctionInstance::setValues )
+        .def( "size", &FunctionInstance::size )
+    ;
+
+    // Candidates for setValues
+    void (FunctionComplexInstance::*c1)(const VectorDouble &absc, const VectorDouble &ord) =
+        &FunctionComplexInstance::setValues;
+    void (FunctionComplexInstance::*c2)(const VectorDouble &absc, const VectorComplex &ord) =
+        &FunctionComplexInstance::setValues;
+
+    class_< FunctionComplexInstance, FunctionComplexInstance::FunctionComplexPtr,
+            bases< BaseFunctionInstance > > ( "FunctionComplex", no_init )
+        .def( "create", &FunctionComplexInstance::create )
+        .staticmethod( "create" )
+        .def( "setValues", c1 )
+        .def( "setValues", c2 )
+        .def( "size", &FunctionComplexInstance::size )
     ;
 };
