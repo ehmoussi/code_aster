@@ -78,12 +78,15 @@ class GlobalCommandsData(object):
 
     Attributes:
         _counter (int): Number of Commands called.
+        _timer (*ASTER_TIMER*): Global timer objects.
+        _use_legacy_mode (bool): Use or not the legacy mode for macro results.
     """
     __metaclass__ = Singleton
     _singleton_id = 'ExecuteCommand.GlobalCommandsData'
-    # class attribute
+    # class attributes
     _counter = 0
     _timer = None
+    _use_legacy_mode = True
 
     @classmethod
     def incr_counter(cls):
@@ -97,7 +100,6 @@ class GlobalCommandsData(object):
 
     @classmethod
     def timer(cls):
-
         """Return the timer object.
 
         Returns:
@@ -106,6 +108,25 @@ class GlobalCommandsData(object):
         if not cls._timer:
             cls._timer = ASTER_TIMER(format="aster")
         return cls._timer
+
+    @classmethod
+    def use_legacy_mode(cls, mode=None):
+        """Tell or set if macro-commands should use *legacy* mode for
+        returning results.
+
+        In the standard mode all results are returned as a *namedtuple*.
+        In *legacy* mode additional results are automatically added into
+        the context of the caller.
+
+        Arguments:
+            mode (bool, optional): If provided, this is the new mode to be used.
+
+        Returns:
+            bool: *True* if the legace mode
+        """
+        if mode is not None:
+            cls._use_legacy_mode = mode
+        return cls._use_legacy_mode
 
 
 class ExecuteCommand(object):
@@ -413,7 +434,7 @@ class ExecuteMacro(ExecuteCommand):
                                        self._result.getName()))
         if self._result_names:
             logger.info(command_result(self._counter, self.name,
-                                       str(self._result_names)))
+                                       self._result_names))
         self._print_timer()
 
     def exec_(self, keywords):
@@ -425,6 +446,11 @@ class ExecuteMacro(ExecuteCommand):
         output = self._op(self, **keywords)
         assert not isinstance(output, int), \
             "OPS must now return results, not 'int'."
+        if GlobalCommandsData.use_legacy_mode():
+            self._result = output
+            self._caller["context"].update(self._add_results)
+            return
+
         if not self._sdprods:
             self._result = output
         else:

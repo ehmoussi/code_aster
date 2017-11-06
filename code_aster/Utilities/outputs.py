@@ -252,9 +252,12 @@ def command_result(counter, command_name, result_name):
     Returns:
         str: String representation.
     """
+    if isinstance(result_name, str):
+        show_name = CommandRepresentation.decorate_name(result_name)
+    else:
+        show_name = str(result_name)
     return "Result of command #{0:0>4} ({1}): {2}".format(
-        counter, command_name,
-        CommandRepresentation.decorate_name(result_name))
+        counter, command_name, show_name)
 
 def command_text(command_name, keywords, result="", limit=0):
     """Return a text representation of a command.
