@@ -61,7 +61,6 @@ from collections import namedtuple
 
 import aster
 from libaster import ResultNaming
-from Utilitai.as_timer import ASTER_TIMER
 
 from ..Cata import Commands
 from ..Cata.SyntaxChecker import CheckerError, checkCommandSyntax
@@ -70,63 +69,6 @@ from ..Supervis import CommandSyntax, ExecutionParameter, logger
 from ..Utilities import Singleton, deprecated, import_object
 from ..Utilities.outputs import (command_header, command_result,
                                  command_separator, command_text, command_time)
-
-
-class GlobalCommandsData(object):
-
-    """Store some objects shared by all Commands.
-
-    Attributes:
-        _counter (int): Number of Commands called.
-        _timer (*ASTER_TIMER*): Global timer objects.
-        _use_legacy_mode (bool): Use or not the legacy mode for macro results.
-    """
-    __metaclass__ = Singleton
-    _singleton_id = 'ExecuteCommand.GlobalCommandsData'
-    # class attributes
-    _counter = 0
-    _timer = None
-    _use_legacy_mode = True
-
-    @classmethod
-    def incr_counter(cls):
-        """Increment the counter.
-
-        Returns:
-            int: Current value of the counter.
-        """
-        cls._counter += 1
-        return cls._counter
-
-    @classmethod
-    def timer(cls):
-        """Return the timer object.
-
-        Returns:
-            *Timer*: Object that measures user/system/elapsed time.
-        """
-        if not cls._timer:
-            cls._timer = ASTER_TIMER(format="aster")
-        return cls._timer
-
-    @classmethod
-    def use_legacy_mode(cls, mode=None):
-        """Tell or set if macro-commands should use *legacy* mode for
-        returning results.
-
-        In the standard mode all results are returned as a *namedtuple*.
-        In *legacy* mode additional results are automatically added into
-        the context of the caller.
-
-        Arguments:
-            mode (bool, optional): If provided, this is the new mode to be used.
-
-        Returns:
-            bool: *True* if the legace mode
-        """
-        if mode is not None:
-            cls._use_legacy_mode = mode
-        return cls._use_legacy_mode
 
 
 class ExecuteCommand(object):
@@ -177,13 +119,13 @@ class ExecuteCommand(object):
         """
         cmd = cls()
         cmd.keep_caller_infos()
-        timer = GlobalCommandsData.timer()
+        timer = ExecutionParameter().get_option("timer")
         check_jeveux()
         if not cmd._op:
             logger.debug("ignore command {0}".format(cmd.name))
             return
 
-        cmd._counter = GlobalCommandsData.incr_counter()
+        cmd._counter = ExecutionParameter().incr_command_counter()
         timer.Start(" . check syntax", num=1.1e6)
         cmd.adapt_syntax(keywords)
         try:
@@ -251,7 +193,7 @@ class ExecuteCommand(object):
 
     def _print_timer(self):
         """Print the timer informations."""
-        timer = GlobalCommandsData.timer()
+        timer = ExecutionParameter().get_option("timer")
         logger.info(command_time(*timer.StopAndGet(str(self._counter))))
         logger.info(command_separator())
 
@@ -446,7 +388,7 @@ class ExecuteMacro(ExecuteCommand):
         output = self._op(self, **keywords)
         assert not isinstance(output, int), \
             "OPS must now return results, not 'int'."
-        if GlobalCommandsData.use_legacy_mode():
+        if ExecutionParameter().get_option("use_legacy_mode"):
             self._result = output
             self._caller["context"].update(self._add_results)
             return
