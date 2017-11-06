@@ -30,13 +30,7 @@ class ElementaryCharacteristicsAssignment(ExecuteCommand):
     :class:`~code_aster.Objects.ElementaryCharacteristics` on a
     :class:`~code_aster.Objects.Mesh`."""
     command_name = "CARA_ELEM"
-
-    def __init__(self, command_name=None, command_op=None):
-        """Initialization"""
-        self._cata = CATA_CARA_ELEM
-        self._op = self._cata.definition['op']
-        self._result = None
-        self._counter = 0
+    command_cata = CATA_CARA_ELEM
 
     def create_result(self, keywords):
         """Initialize the result.

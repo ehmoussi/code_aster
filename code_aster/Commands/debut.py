@@ -84,7 +84,7 @@ class Starter(ExecuteCommand):
         Arguments:
             keywords (dict): User keywords
         """
-        cmd = cls(cls.command_name, cls.command_op)
+        cmd = cls()
         cmd._result = None
         cmd.exec_(keywords)
 
