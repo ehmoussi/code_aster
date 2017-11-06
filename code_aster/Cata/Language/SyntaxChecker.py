@@ -184,9 +184,10 @@ class SyntaxCheckerVisitor(object):
         self._parent_context.pop()
         try:
             step.get_type_sd_prod(**keywords)
-        except:
+        except Exception as exc:
             self.error(TypeError,
-                       'Cannot type result of the command {}'.format(step.name))
+                       ("Cannot type result of the command {0}\n"
+                        "Exception raised: {1})").format(step.name, repr(exc)))
 
     def visitBloc(self, step, userDict=None):
         """Visit a Bloc object"""

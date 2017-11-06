@@ -200,6 +200,32 @@ class UIDMixing(object):
         return 0
 
 
+class _F(dict):
+    """Wrapper to add transitional methods to emulate old *MCCOMPO* objects"""
+
+    def __getitem__(self, keyword):
+        """Operator `[]` but without failure if the *keyword* is not set.
+        Same as `get()`.
+
+        Arguments:
+            keyword (str): Simple keyword.
+
+        Returns:
+            *misc*: Value of the keyword or *None*.
+        """
+        # for backward compatibility
+        if keyword == 0:
+            return self
+        return self.get(keyword)
+
+    def cree_dict_valeurs(self, *args, **kwargs):
+        return self
+
+    @property
+    def mc_liste(self):
+        return self.keys()
+
+
 class PartOfSyntax(UIDMixing):
 
     """
@@ -540,7 +566,7 @@ class FactorKeyword(PartOfSyntax):
             return None
         if self.is_list():
             return []
-        return {}
+        return _F()
 
 
 class Bloc(PartOfSyntax):
