@@ -64,6 +64,8 @@ implicit none
 #include "asterfort/cppt6_2.h"
 #include "asterfort/cppt15_1.h"
 #include "asterfort/cppt15_2.h"
+#include "asterfort/cppy5_1.h"
+#include "asterfort/cppy5_2.h"
 #include "asterfort/coppat.h"
 !
 !
@@ -192,6 +194,24 @@ implicit none
                     lenconloc = lenconloc + 4*3 + 2*5 + 2*4
                     cnlclg = cnlclg + 8
                     lenlimane = lenlimane + 8 +1
+                    lenpat = lenpat + 2
+                endif
+            case ('PYRAM5')
+                if(zi(jtypma+macou-1).eq.12)then
+                    nbnot = nbnot + 1
+                    nbmat = nbmat + 6
+                    conlen = conlen + 4*3 + 4*4 - 4 - 5
+                    lenconloc = lenconloc + 4*3 + 4*4
+                    cnlclg = cnlclg + 8
+                    lenlimane = lenlimane + 4 + 4 +1
+                    lenpat = lenpat + 2
+                else
+                    nbnot = nbnot + 1
+                    nbmat = nbmat + 5
+                    conlen = conlen + 3*3 + 1*5 + 3*4 - 3 - 5
+                    lenconloc = lenconloc + 3*3 + 1*5 + 3*4
+                    cnlclg = cnlclg + 7
+                    lenlimane = lenlimane + 7 +1
                     lenpat = lenpat + 2
                 endif
             case ('TETRA10')
@@ -396,7 +416,7 @@ implicit none
                         call jeecra(jexnum(limane, inc), 'LONMAX', ival=5)
                         call jeecra(jexnum(limane, inc), 'LONUTI', ival=5)
                     end if
-                case (20, 21)
+                case (20, 21, 23, 24)
                     call jeecra(jexnum(limane, inc), 'LONMAX', ival=4)
                     call jeecra(jexnum(limane, inc), 'LONUTI', ival=4)
             end select
@@ -500,7 +520,18 @@ implicit none
                                   limane, nomnoe, nbno  , jmacou, jmacsu, macou ,&
                                   macsu , ind   , ind1  )
                 end if
-           case default
+        ! --- CAS PYRA 5 -----------------------------------------------------------------------
+           case ('PYRAM5')
+                if (zi(jtypma+macou-1).eq.12) then
+                    call cppy5_1(main  , maout , inc+nbpain   , jcoor , jcnnpa, conloc,&
+                                 limane, nomnoe, nbno  , jmacou, jmacsu, macou ,&
+                                 macsu , ind   , ind1  )
+                else
+                    call cppy5_2(main  , maout , inc+nbpain   , jcoor , jcnnpa, conloc,&
+                                 limane, nomnoe, nbno  , jmacou, jmacsu, macou ,&
+                                 macsu , ind   , ind1  )
+                end if
+            case default
                 ASSERT(.false.)
         end select
     end do
@@ -536,7 +567,8 @@ implicit none
             call jeveuo(jexnum(limane,inc),'E',jlimane)
     select case(ntrou)
        case(1)
-           if (zi(jtypma+inc-1) .eq. 2 .or. zi(jtypma+inc-1) .eq. 12) then
+           if (zi(jtypma+inc-1) .eq. 2 .or. zi(jtypma+inc-1) .eq. 12 .or. &
+               zi(jtypma+inc-1) .eq. 14) then
                do incc=1,nbma
                    if (lima(incc) .eq. inc) then
                        macsu=zi(jcninv+incc-1)
@@ -575,7 +607,7 @@ implicit none
                    nbnoma(1:nbnwma) = 6
                    idtpma(1:nbnwma) = 9
                case ('QUAD4')
-                   if (typ_dec.eq.0 .and. zi(jtypma+macsu-1) .ne. 20) then
+                   if (typ_dec.eq.0 .and. zi(jtypma+macsu-1) .eq. 25 ) then
                        nbnwma = 5
                        nbnoma(1:nbnwma) = 4
                        idtpma(1:nbnwma) = 12
@@ -585,7 +617,7 @@ implicit none
                        idtpma(1:nbnwma) = 7
                    endif
                case ('QUAD8')
-                   if (typ_dec.eq.0 .and. zi(jtypma+macsu-1) .ne. 21) then
+                   if (typ_dec.eq.0 .and. zi(jtypma+macsu-1) .eq. 26 ) then
                        nbnwma = 5
                        nbnoma(1:nbnwma) = 8
                        idtpma(1:nbnwma) = 14
@@ -603,7 +635,8 @@ implicit none
                    ASSERT(.false.)
            end select
        case default
-           if (zi(jtypma+inc-1) .eq. 20 .or. zi(jtypma+inc-1) .eq. 21) then
+           if (zi(jtypma+inc-1) .eq. 20 .or. zi(jtypma+inc-1) .eq. 21 .or.&
+               zi(jtypma+inc-1) .eq. 23 .or. zi(jtypma+inc-1) .eq. 24) then
                do incc=1,nbma
                    if (zi(jcninv+incc-1) .eq. inc) then
                        macou=lima(incc)
@@ -663,6 +696,18 @@ implicit none
                        nbnoma(3:4) = 4
                        idtpma(1:2) = 23
                        idtpma(3:4) = 18
+                   end if
+                case ('PYRAM5')
+                   if (zi(jtypma+macou-1).eq.12) then
+                       nbnwma = 4
+                       nbnoma(1:4) = 4
+                       idtpma(1:4) = 18
+                   else
+                       nbnwma = 4
+                       nbnoma(1) = 5
+                       nbnoma(2:4) = 4
+                       idtpma(1) = 23
+                       idtpma(2:4) = 18
                    end if
                case ('HEXA20')
                    if (typ_dec.eq.0) then
@@ -800,7 +845,9 @@ implicit none
                  case ('TRIA3', 'TRIA6')
                      nbnwma = nbnwma + 3
                  case ('QUAD4', 'QUAD8')
-                     if (typ_dec.eq.0) then
+                     if (typ_dec.eq.0 .and.&
+                         (zi(jtypma+zi(jcivax+incc-1)-1) .eq. 25.or.&
+                          zi(jtypma+zi(jcivax+incc-1)-1) .eq. 26)) then
                          nbnwma = nbnwma + 5
                      else
                          nbnwma = nbnwma + 4
@@ -825,7 +872,7 @@ implicit none
                      else
                          nbnwma = nbnwma + 5
                      end if
-                 case ('PENTA6', 'PENTA15')
+                 case ('PENTA6', 'PENTA15','PYRAM5', 'PYRA13')
                      nbnwma = nbnwma + 4
                  case default
                      ASSERT(.false.)
@@ -863,7 +910,9 @@ implicit none
            case ('TRIA3', 'TRIA6')
                nbnwma = 3
            case ('QUAD4', 'QUAD8')
-               if (typ_dec.eq.0) then
+               if (typ_dec.eq.0 .and. &
+                   (zi(jtypma+zi(jcivax+incc-1)-1) .eq. 25 .or.&
+                    zi(jtypma+zi(jcivax+incc-1)-1) .eq. 26)) then
                    nbnwma =  5
                else
                    nbnwma =  4
@@ -889,7 +938,7 @@ implicit none
                else
                    nbnwma =  5
                end if
-           case ('PENTA6', 'PENTA15')
+           case ('PENTA6', 'PENTA15','PYRAM5','PYRA13')
                nbnwma = 4
             case default
                 ASSERT(.false.)
