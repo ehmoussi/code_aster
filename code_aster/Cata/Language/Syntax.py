@@ -32,34 +32,10 @@ from .DataStructure import AsType
 from .Rules import (AllTogether, AtLeastOne, AtMostOne, ExactlyOne,
                     IfFirstAllPresent, OnlyFirstPresent)
 from .SyntaxChecker import SyntaxCheckerVisitor
-from .SyntaxObjects import (Bloc, CataError, FactorKeyword, Formule, Macro,
+from .SyntaxObjects import (_F, Bloc, CataError, FactorKeyword, Formule, Macro,
                             Operator, Procedure, SimpleKeyword)
 from .Validators import (Absent, AndVal, Compulsory, LongStr, NoRepeat,
                          NotEqualTo, OrdList, OrVal, Together)
-
-
-class _F(dict):
-    """Wrapper to add transitional methods to emulate old *MCCOMPO* objects"""
-
-    def __getitem__(self, keyword):
-        """Operator `[]` but without failure if the *keyword* is not set.
-        Same as `get()`.
-
-        Arguments:
-            keyword (str): Simple keyword.
-
-        Returns:
-            *misc*: Value of the keyword or *None*.
-        """
-        return self.get(keyword)
-
-    def cree_dict_valeurs(self, *args, **kwargs):
-        return self
-
-    @property
-    def mc_liste(self):
-        return self.keys()
-
 
 __builtin__._F = _F
 
