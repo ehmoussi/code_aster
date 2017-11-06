@@ -53,7 +53,7 @@ class MechanicalSolver(ExecuteCommand):
             mechaSolv.addKinematicsLoad(load)
         elif isinstance(load, GenericMechanicalLoad):
             mechaSolv.addMechanicalLoad(load)
-        elif isinstance( load, ParallelMechanicalLoad ):
+        elif isinstance(load, ParallelMechanicalLoad):
             mechaSolv.addParallelMechanicalLoad(load)
         else:
             assert False
