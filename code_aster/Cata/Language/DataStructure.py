@@ -360,6 +360,9 @@ class maillage_sdaster(ASSD):
 class maillage_p_sdaster(maillage_sdaster):
     pass
 
+class maillage_partiel_sdaster(maillage_sdaster):
+    pass
+
 class grille_sdaster(maillage_sdaster):
     pass
 

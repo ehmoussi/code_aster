@@ -33,7 +33,7 @@ void exportPartialMeshToPython()
 
 #ifdef _USE_MPI
     class_< PartialMeshInstance, PartialMeshInstance::PartialMeshPtr,
-            bases< DataStructure > >( "PartialMesh", no_init )
+            bases< BaseMeshInstance > >( "PartialMesh", no_init )
         .def( "create", &createSharedPtr< PartialMeshInstance,
                                           ParallelMeshPtr&, const VectorString& > )
         .staticmethod( "create" )
