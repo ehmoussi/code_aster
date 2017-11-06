@@ -51,8 +51,8 @@ def create_solver(solver_keyword):
             unsupported(solver_keyword, "", key, warning=True)
     method = solver_keyword["METHODE"]
     renum = solver_keyword["RENUM"]
-    precond = fkwSolv["PRE_COND"]
-    resiRela = fkwSolv["RESI_RELA"]
+    precond = solver_keyword["PRE_COND"]
+    resiRela = solver_keyword["RESI_RELA"]
 
     glossary = getGlossary()
     solverInt = glossary.getSolver(method)

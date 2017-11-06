@@ -45,7 +45,7 @@ class KinematicsLoadDefinition(ExecuteCommand):
         """
         fkwMecaImpo = keywords.get( "MECA_IMPO" )
         if fkwMecaImpo != None:
-            if type( fkwMecaImpo ) == tuple:
+            if type( fkwMecaImpo ) in (tuple, list):
                 for curDict in fkwMecaImpo:
                     self._addLoad(curDict, "MECA_IMPO")
             elif type( fkwMecaImpo ) == dict:
@@ -53,7 +53,7 @@ class KinematicsLoadDefinition(ExecuteCommand):
 
         fkwTherImpo = keywords.get("THER_IMPO")
         if fkwTherImpo != None:
-            if type( fkwTherImpo ) == tuple:
+            if type( fkwTherImpo ) in (tuple, list):
                 for curDict in fkwTherImpo:
                     self._addLoad(curDict, "THER_IMPO")
             elif type( fkwTherImpo ) == dict:
@@ -61,7 +61,7 @@ class KinematicsLoadDefinition(ExecuteCommand):
 
         fkwAcouImpo = keywords.get("ACOU_IMPO")
         if fkwAcouImpo != None:
-            if type( fkwAcouImpo ) == tuple:
+            if type( fkwAcouImpo ) in (tuple, list):
                 for curDict in fkwAcouImpo:
                     self._addLoad(curDict, "ACOU_IMPO")
             elif type( fkwAcouImpo ) == dict:

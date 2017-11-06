@@ -21,6 +21,7 @@
 
 from ..Objects import (GenericMechanicalLoad, KinematicsLoad,
                        StaticMechanicalSolver)
+from ..Objects import ParallelMechanicalLoad
 from ..Utilities import unsupported
 from .ExecuteCommand import ExecuteCommand
 from .common_keywords import create_solver
@@ -52,6 +53,8 @@ class MechanicalSolver(ExecuteCommand):
             mechaSolv.addKinematicsLoad(load)
         elif isinstance(load, GenericMechanicalLoad):
             mechaSolv.addMechanicalLoad(load)
+        elif isinstance( load, ParallelMechanicalLoad ):
+            mechaSolv.addParallelMechanicalLoad(load)
         else:
             assert False
 
