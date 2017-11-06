@@ -229,7 +229,7 @@ def command_separator():
     """
     return "{0:-^100}".format("")
 
-def command_header(counter):
+def command_header(counter, filename, lineno):
     """Return the command header.
 
     Arguments:
@@ -238,7 +238,8 @@ def command_header(counter):
     Returns:
         str: String representation.
     """
-    return "Command #{0:0>4}:".format(counter)
+    return ("Command #{0:0>4} from file {1!r}, line {2}:"
+            .format(counter, filename, lineno))
 
 def command_result(counter, command_name, result_name):
     """Return the command footer.

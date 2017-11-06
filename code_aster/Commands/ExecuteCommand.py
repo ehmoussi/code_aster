@@ -56,6 +56,7 @@ Base classes
 ============
 """
 
+import inspect
 from collections import namedtuple
 
 import aster
@@ -65,7 +66,7 @@ from Utilitai.as_timer import ASTER_TIMER
 from ..Cata import Commands
 from ..Cata.SyntaxChecker import CheckerError, checkCommandSyntax
 from ..Cata.SyntaxUtils import mixedcopy, remove_none, search_for
-from ..Supervis import CommandSyntax, logger
+from ..Supervis import CommandSyntax, ExecutionParameter, logger
 from ..Utilities import Singleton, deprecated, import_object
 from ..Utilities.outputs import (command_header, command_result,
                                  command_separator, command_text, command_time)
@@ -136,7 +137,7 @@ class ExecuteCommand(object):
     # class attributes
     command_name = command_op = command_cata = None
 
-    _cata = _op = _result = _counter = None
+    _cata = _op = _result = _counter = _caller = None
 
     def __init__(self):
         """Initialization"""
@@ -154,7 +155,7 @@ class ExecuteCommand(object):
             keywords (dict): User keywords
         """
         cmd = cls()
-        cmd._result = None
+        cmd.keep_caller_infos()
         timer = GlobalCommandsData.timer()
         check_jeveux()
         if not cmd._op:
@@ -169,6 +170,9 @@ class ExecuteCommand(object):
         except CheckerError as exc:
             # in case of syntax error, show the syntax and raise the exception
             cmd.print_syntax(keywords)
+            if ExecutionParameter().get_option("debug"):
+                logger.error(exc.msg)
+                raise
             raise exc.original(exc.msg)
         finally:
             timer.Stop(" . check syntax")
@@ -210,8 +214,10 @@ class ExecuteCommand(object):
         """
         printed_args = mixedcopy(keywords)
         remove_none(printed_args)
+        filename = self._caller["filename"]
+        lineno = self._caller["lineno"]
         logger.info("\n" + command_separator())
-        logger.info(command_header(self._counter))
+        logger.info(command_header(self._counter, filename, lineno))
         logger.info(command_text(self.name, printed_args, self._res_syntax(),
                                  limit=500))
 
@@ -311,6 +317,23 @@ class ExecuteCommand(object):
             # use an automatic naming
             sd_name = ResultNaming.getNewResultName()
         return sd_name
+
+    def keep_caller_infos(self, level=2):
+        """Register the caller frame infos.
+
+        Arguments:
+            caller (*frame*): The caller frame.
+        """
+        self._caller = {"filename": "unknown", "lineno": 0, "context": {}}
+        try:
+            caller = inspect.currentframe()
+            for i in range(level):
+                caller = caller.f_back
+            self._caller["filename"] = caller.f_code.co_filename
+            self._caller["lineno"] = caller.f_lineno
+            self._caller["context"] = caller.f_globals
+        finally:
+            del caller
 
 
 def check_jeveux():
