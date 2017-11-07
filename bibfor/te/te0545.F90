@@ -52,7 +52,7 @@ subroutine te0545(option, nomte)
     integer :: ipoids, ivf, idfde, ivfb, idfdeb
     integer :: imate, icontm, ivarim, iinstm, iinstp, ideplm, ideplp, icompo
     integer :: ivectu, icontp, ivarip, imatuu, icarcr, ivarix, igeom, icoret
-    integer :: iret, nnos, jgano, jganob, jtab(7)
+    integer :: iret, nnos, jgano, jganob, itab(7)
     integer :: i
     real(kind=8) :: xyz(3)=0.d0, angmas(7)
     real(kind=8),allocatable:: b(:,:,:), w(:,:),ni2ldc(:,:)
@@ -74,7 +74,7 @@ subroutine te0545(option, nomte)
 
 !
 !
-! - PARAMETRES EN ENTREE
+! - PARAMETRES EN ENTREE ET DIMENSION
 !
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PMATERC', 'L', imate)
@@ -86,6 +86,9 @@ subroutine te0545(option, nomte)
     call jevech('PCARCRI', 'L', icarcr)
     call jevech('PINSTMR', 'L', iinstm)
     call jevech('PINSTPR', 'L', iinstp)
+
+    call tecach('OOO', 'PDEPLPR', 'L', iret, nval=2, itab=itab)
+    nddl = itab(2)
 !
 !
 ! - PARAMETRES EN SORTIE
@@ -115,8 +118,8 @@ subroutine te0545(option, nomte)
 !
 !    NOMBRE DE VARIABLES INTERNES
     call tecach('OOO', 'PVARIMR', 'L', iret, nval=7,&
-                itab=jtab)
-    lgpg = max(jtab(6),1)*jtab(7)
+                itab=itab)
+    lgpg = max(itab(6),1)*itab(7)
 !
 !
 !    ESTIMATION VARIABLES INTERNES A L'ITERATION PRECEDENTE
@@ -138,7 +141,6 @@ subroutine te0545(option, nomte)
 !
      if (zk16(icompo+2) (1:8).eq.'GDEF_LOG') then
         if (lteatt('INCO','C5GV')) then
-            nddl = nno*ndim+4*nnob
             call nglgic('RIGI', option, typmod, ndim, nno,nnob,&
                        npg,nddl, ipoids, zr(ivf), zr(ivfb),idfde,idfdeb,&
                        zr(igeom),zk16(icompo), zi(imate), lgpg,&
@@ -150,7 +152,6 @@ subroutine te0545(option, nomte)
 
 
         else
-            nddl = nno*ndim+2*nnob
             neps = 3*ndim +2
             call ngvlog('RIGI', option, typmod, ndim, nno,nnob,neps,&
                    npg,nddl, ipoids, zr(ivf), zr(ivfb),idfde,idfdeb,&

@@ -132,6 +132,9 @@ subroutine ngvlog(fami, option, typmod, ndim, nno,nnob,neps,&
 #define uu1(n,i)  (n-1)*ndim+i
 ! ----------------------------------------------------------------------
 
+! Tests de coherence
+    ASSERT(nddl.eq.nno*ndim + nnob*2)
+
 ! - INITIALISATION 
 
     axi  = typmod(1).eq.'AXIS'

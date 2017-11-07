@@ -146,6 +146,10 @@ use bloc_fe_module, only: prod_bd, prod_sb, prod_bkb, add_fint, add_matr
 ! Deformations ldc  : R2*EPXX, ..., R2*EPZZ, A, L, GX, ..., GZ 
 
 
+! Tests de coherence
+    ASSERT(nddl.eq.nno*ndim + nnob*4)
+
+
 ! --- INITIALISATION ---
 
     axi  = typmod(1).eq.'AXIS'

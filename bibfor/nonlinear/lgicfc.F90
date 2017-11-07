@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lgicfc(ndim, nno, nnob, npg, nddl, axi, &
+subroutine lgicfc(refe,ndim, nno, nnob, npg, nddl, axi, &
                   geom,ddl, vff, vffb, idff, idffb,&
                   iw, sief,fint)
 
@@ -28,7 +28,7 @@ use bloc_fe_module, only: prod_sb, add_fint
 #include "asterfort/dfdmip.h"
 #include "asterfort/nmbeps.h"
 #include "blas/dgemv.h"
-    aster_logical :: axi
+    aster_logical :: refe,axi
     integer       :: ndim, nno, nnob, npg, nddl, idff, idffb, iw
     real(kind=8)  :: geom(ndim,nno),ddl(nddl),vff(nno, npg), vffb(nnob, npg)
     real(kind=8)  :: sief(3*ndim+4,npg)
@@ -36,6 +36,7 @@ use bloc_fe_module, only: prod_sb, add_fint
 ! ----------------------------------------------------------------------
 !  CALCUL DES ELEMENTS CINEMATIQUES POUR LA MODELISATION GRAD_VARI_INCO
 ! ----------------------------------------------------------------------
+! IN  REFE   .true. si REFE_FORC_NODA, .false. si FORC_NODA
 ! IN  NDIM   DIMENSION DE L'ESPACE
 ! IN  NNO1   NOMBRE DE NOEUDS TOTAL (SUPPORT DES DEPLACEMENTS)
 ! IN  NNO2   NOMBRE DE NOEUDS SOMMETS (SUPPORT DE VI ET LAGRANGE)
@@ -68,6 +69,8 @@ use bloc_fe_module, only: prod_sb, add_fint
 
 ! ----------------------------------------------------------------------
 
+!   Tests de coherence
+    ASSERT(nddl.eq.nno*ndim + nnob*4)
 
 !   Initialisation
     nnu = nno
@@ -121,6 +124,13 @@ use bloc_fe_module, only: prod_sb, add_fint
         siefu = sief(1:neu,g)*vrac2(1:neu)
         siefq = sief(neu+1:neu+neq,g)
         siefg = sief(neu+neq+1:neu+neq+neg,g)
+
+        ! Matrices corrigees si REFE_FORC_NODA
+        if (refe) then
+            bu = abs(bu)
+            bg = abs(bg)
+            bq = abs(bq)
+        end if
 
         ! Calcul des contributions aux forces interieures
         call add_fint(fint,xu,poids_def*prod_sb(siefu,bu))

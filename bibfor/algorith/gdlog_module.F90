@@ -114,7 +114,7 @@ subroutine gdlog_defo(self, f, eps, iret)
 ! ----------------------------------------------------------------------
 !     in    f     gradient de la transformation sur la config initiale
 !     out   eps   def. log.
-!     out   iret  0=ok, 1=vp(ft.f) trop petites (compression infinie)
+!     out   iret  0=ok, 1=vp(ft.f) trop petites (compression infinie) ou jac<0
 ! ----------------------------------------------------------------------
 
     implicit none
@@ -123,7 +123,7 @@ subroutine gdlog_defo(self, f, eps, iret)
     real(kind=8),intent(out):: eps(:)
     integer,intent(out)     :: iret
 ! ----------------------------------------------------------------------
-    real(kind=8):: eps6(6)
+    real(kind=8):: eps6(6),jac
 ! ----------------------------------------------------------------------
 
     ! initialisation
@@ -134,6 +134,10 @@ subroutine gdlog_defo(self, f, eps, iret)
     ASSERT(self%init_ds)
     ASSERT(size(eps).eq.2*self%ndim)
 
+    ! Controle numerique 
+    call lcdetf(self%ndim, f, jac)
+    iret = merge(1,0,jac.le.0.d0)
+    if (iret.ne.0) goto 999
 
     ! Calcul des elements cinematiques et des deformations
     call deflog(self%ndim, f, eps6, self%gn, self%lamb,self%logl, iret)
