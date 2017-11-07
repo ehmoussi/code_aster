@@ -188,7 +188,6 @@ function lcgtn_compute(resi,rigi,elas, itemax, prec, m, dt, eps, phi, ep, ka, f,
         goto 999
     end if
     
-    write (6,*) 'Regime ecoulement singulier'
     ep  = ep + deph*kr + depd
     t   = 0
     state = 2

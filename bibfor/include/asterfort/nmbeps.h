@@ -17,13 +17,11 @@
 ! --------------------------------------------------------------------
 
 interface
-    subroutine lgicfc(ndim, nno, nnob, npg, nddl, axi, &
-                  geom,ddl, vff, vffb, idff, idffb,&
-                  iw, sief,fint)
+    subroutine nmbeps(axi,r,vff,dff,b)
         aster_logical :: axi
-        integer       :: ndim, nno, nnob, npg, nddl, idff, idffb, iw
-        real(kind=8)  :: geom(ndim,nno),ddl(nddl),vff(nno, npg), vffb(nnob, npg)
-        real(kind=8)  :: sief(3*ndim+4,npg)
-        real(kind=8)  :: fint(nddl)
-    end subroutine lgicfc
+        real(kind=8)  :: r
+        real(kind=8)  :: vff(:)
+        real(kind=8)  :: dff(:,:)
+        real(kind=8)  :: b(:,:,:)
+    end subroutine nmbeps
 end interface
