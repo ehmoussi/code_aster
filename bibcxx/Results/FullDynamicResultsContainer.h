@@ -42,7 +42,7 @@ public:
      * @brief Constructeur
      * @todo  Ajouter les objets Jeveux de la SD
      */
-    FullDynamicResultsContainerInstance(): DynamicResultsContainerInstance( "DYNA_TRAN" )
+    FullDynamicResultsContainerInstance(): DynamicResultsContainerInstance( "DYNA_TRANS" )
     {};
 
 };
