@@ -250,6 +250,8 @@ void DEFPSSSSSSPS(ASMATR,asmatr, ASTERINTEGER *, const char*, STRING_SIZE,
 #ifdef _HAVE_PETSC
 #define CALLO_MATASS2PETSC(a, b, c) \
     CALLOPP(MATASS2PETSC, matass2petsc, a, b, c )
+#define CALL_MATASS2PETSC(a, b, c) \
+    CALLSPP(MATASS2PETSC, matass2petsc, a, b, c )
 void DEFSPP(MATASS2PETSC,matass2petsc, const char*, STRING_SIZE,
                                   Mat *, PetscErrorCode *);
 #endif
