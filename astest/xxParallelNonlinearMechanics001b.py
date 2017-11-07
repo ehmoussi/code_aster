@@ -30,11 +30,11 @@ materElas = code_aster.ElasMaterialBehaviour.create()
 materElas.setDoubleValue( "E", YOUNG )
 materElas.setDoubleValue( "Nu", POISSON )
 
-acier = code_aster.Material.create(materElas)
+acier = code_aster.Material.create()
+acier.addMaterialBehaviour( materElas )
 acier.build()
 
-affectMat = code_aster.MaterialOnMesh.create()
-affectMat.setSupportMesh( monMaillage )
+affectMat = code_aster.MaterialOnMesh.create(monMaillage)
 affectMat.addMaterialOnAllMesh( acier )
 affectMat.build()
 

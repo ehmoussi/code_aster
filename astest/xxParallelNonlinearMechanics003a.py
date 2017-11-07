@@ -4,6 +4,8 @@
 import code_aster
 from code_aster.Commands import *
 
+code_aster.init()
+
 test = code_aster.TestCase()
 
 monMaillage = code_aster.ParallelMesh.create()
@@ -73,9 +75,9 @@ resu=STAT_NON_LINE( MODELE=monModel,
                                     ),
                     SOLVEUR=_F(METHODE='PETSC', PRE_COND='GAMG'),
                     INCREMENT=_F(   LIST_INST = timeList,),
-                                    NEWTON=_F(  MATRICE = 'TANGENTE',
-                                                REAC_INCR = 1,
-                                                REAC_ITER = 1,),
+                    NEWTON=_F(  MATRICE = 'TANGENTE',
+                                REAC_INCR = 1,
+                                REAC_ITER = 1,),
                     INFO=2,
                          )
 #resu.debugPrint( 6 )

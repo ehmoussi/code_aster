@@ -19,14 +19,13 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import NonLinearEvolutionContainer
+from ..Objects import FullDynamicResultsContainer
 from .ExecuteCommand import ExecuteCommand
 
 
-class StaticNonLinearAnalysisBuild(ExecuteCommand):
-    """Command that defines :class:`~code_aster.Objects.NonLinearEvolutionContainer`.
-    """
-    command_name = "STAT_NON_LINE"
+class VibrationDynamics(ExecuteCommand):
+    """Command to solve linear vibration dynamics problem, on physical or modal bases, for harmonic or transient analysis."""
+    command_name = "DYNA_VIBRA"
 
     def create_result(self, keywords):
         """Initialize the result.
@@ -34,7 +33,21 @@ class StaticNonLinearAnalysisBuild(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = NonLinearEvolutionContainer.create()
+        base = keywords["BASE_CALCUL"]
+        typ  = keywords["TYPE_CALCUL"]
+        if base == "PHYS" and typ == "TRAN":
+            self._result = FullDynamicResultsContainer.create()
+        else:
+            raise NotImplementedError("Types of analysis {0!r} and {0!r} not yet "
+                                      "implemented".format(typ, base))
+
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        self._result.update()
 
 
-STAT_NON_LINE = StaticNonLinearAnalysisBuild.run
+DYNA_VIBRA = VibrationDynamics.run

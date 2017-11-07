@@ -19,14 +19,14 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import NonLinearEvolutionContainer
+from ..Objects import GenericMechanicalLoad
 from .ExecuteCommand import ExecuteCommand
 
 
-class StaticNonLinearAnalysisBuild(ExecuteCommand):
-    """Command that defines :class:`~code_aster.Objects.NonLinearEvolutionContainer`.
+class MechanicalLoadDefinition(ExecuteCommand):
+    """Command that defines :class:`~code_aster.Objects.GenericMechanicalLoad`.
     """
-    command_name = "STAT_NON_LINE"
+    command_name = "AFFE_CHAR_MECA_F"
 
     def create_result(self, keywords):
         """Initialize the result.
@@ -34,7 +34,7 @@ class StaticNonLinearAnalysisBuild(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = NonLinearEvolutionContainer.create()
+        self._result = GenericMechanicalLoad.create(keywords["MODELE"])
 
 
-STAT_NON_LINE = StaticNonLinearAnalysisBuild.run
+AFFE_CHAR_MECA_F = MechanicalLoadDefinition.run
