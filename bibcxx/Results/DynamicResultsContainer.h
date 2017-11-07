@@ -28,7 +28,7 @@
 
 #include "astercxx.h"
 
-#include "DataStructures/DataStructure.h"
+#include "Results/ResultsContainer.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
 
@@ -39,7 +39,7 @@
  * dynamique sur base physique ou base généralisée.
  * @author Natacha Béreux
  */
-class DynamicResultsContainerInstance: public DataStructure
+class DynamicResultsContainerInstance: public ResultsContainerInstance
 {
 private:
     /** @brief Collection '.REFD' */
@@ -62,7 +62,7 @@ public:
      * @brief Constructeur
      */
     DynamicResultsContainerInstance( std::string sd_type="SD_DYNA" ):
-            DataStructure( sd_type , Permanent ),
+            ResultsContainerInstance( sd_type ),
             _refd( JeveuxCollectionChar24( getName() + ".REFD" ) ),
             _indi( JeveuxVectorLong( getName() + ".INDI" ) )
     {};

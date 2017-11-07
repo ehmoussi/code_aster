@@ -32,6 +32,7 @@ void exportFullDynamicResultsContainerToPython()
     class_< FullDynamicResultsContainerInstance, FullDynamicResultsContainerPtr,
             bases< DynamicResultsContainerInstance > > ( "FullDynamicResultsContainer", no_init )
         .def( "create", &createSharedPtr< FullDynamicResultsContainerInstance > )
+        .def( "printMedFile", &FullDynamicResultsContainerInstance::printMedFile )
         .staticmethod( "create" )
     ;
 };
