@@ -66,6 +66,8 @@ implicit none
 #include "asterfort/cppt15_2.h"
 #include "asterfort/cppy5_1.h"
 #include "asterfort/cppy5_2.h"
+#include "asterfort/cppy13_1.h"
+#include "asterfort/cppy13_2.h"
 #include "asterfort/coppat.h"
 !
 !
@@ -282,6 +284,24 @@ implicit none
                     lenconloc = lenconloc + 4*6 + 2*13 + 2*10
                     cnlclg = cnlclg + 8
                     lenlimane = lenlimane + 8 +1
+                    lenpat = lenpat + 2
+                endif
+            case ('PYRAM13')
+                if(zi(jtypma+macou-1).eq.14)then
+                    nbnot = nbnot + 6
+                    nbmat = nbmat + 6
+                    conlen = conlen + 4*6 + 4*10 - 8 - 13
+                    lenconloc = lenconloc + 4*6 + 4*10
+                    cnlclg = cnlclg + 8
+                    lenlimane = lenlimane + 4 + 4 +1
+                    lenpat = lenpat + 2
+                else
+                    nbnot = nbnot + 6
+                    nbmat = nbmat + 5
+                    conlen = conlen + 3*6 + 1*13 + 3*10 - 6 - 13
+                    lenconloc = lenconloc + 3*6 + 1*13 + 3*10
+                    cnlclg = cnlclg + 7
+                    lenlimane = lenlimane + 7 +1
                     lenpat = lenpat + 2
                 endif
             case default
@@ -520,7 +540,7 @@ implicit none
                                   limane, nomnoe, nbno  , jmacou, jmacsu, macou ,&
                                   macsu , ind   , ind1  )
                 end if
-        ! --- CAS PYRA 5 -----------------------------------------------------------------------
+! --- CAS PYRA 5 -----------------------------------------------------------------------
            case ('PYRAM5')
                 if (zi(jtypma+macou-1).eq.12) then
                     call cppy5_1(main  , maout , inc+nbpain   , jcoor , jcnnpa, conloc,&
@@ -528,6 +548,17 @@ implicit none
                                  macsu , ind   , ind1  )
                 else
                     call cppy5_2(main  , maout , inc+nbpain   , jcoor , jcnnpa, conloc,&
+                                 limane, nomnoe, nbno  , jmacou, jmacsu, macou ,&
+                                 macsu , ind   , ind1  )
+                end if
+! --- CAS PYRA 13 -----------------------------------------------------------------------
+           case ('PYRAM13')
+                if (zi(jtypma+macou-1).eq.14) then
+                    call cppy13_1(main  , maout , inc+nbpain   , jcoor , jcnnpa, conloc,&
+                                 limane, nomnoe, nbno  , jmacou, jmacsu, macou ,&
+                                 macsu , ind   , ind1  )
+                else
+                    call cppy13_2(main  , maout , inc+nbpain   , jcoor , jcnnpa, conloc,&
                                  limane, nomnoe, nbno  , jmacou, jmacsu, macou ,&
                                  macsu , ind   , ind1  )
                 end if
@@ -737,6 +768,18 @@ implicit none
                        idtpma(1:2) = 24
                        idtpma(3:4) = 19
                    end if
+               case ('PYRAM13')
+                   if (zi(jtypma+macou-1).eq.14) then
+                       nbnwma = 4
+                       nbnoma(1:4) = 10
+                       idtpma(1:4) = 19
+                   else
+                       nbnwma = 4
+                       nbnoma(1) = 13
+                       nbnoma(2:4) = 10
+                       idtpma(1) = 24
+                       idtpma(2:4) = 19
+                   end if
                case default
            end select
    end select
@@ -872,7 +915,7 @@ implicit none
                      else
                          nbnwma = nbnwma + 5
                      end if
-                 case ('PENTA6', 'PENTA15','PYRAM5', 'PYRA13')
+                 case ('PENTA6', 'PENTA15','PYRAM5', 'PYRAM13')
                      nbnwma = nbnwma + 4
                  case default
                      ASSERT(.false.)
@@ -938,7 +981,7 @@ implicit none
                else
                    nbnwma =  5
                end if
-           case ('PENTA6', 'PENTA15','PYRAM5','PYRA13')
+           case ('PENTA6', 'PENTA15','PYRAM5','PYRAM13')
                nbnwma = 4
             case default
                 ASSERT(.false.)
