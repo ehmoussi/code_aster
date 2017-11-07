@@ -1,11 +1,11 @@
-P time_limit 200
+P time_limit 90
 P memory_limit 256
 P ncpus 1
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
 P testlist verification sequential
 
-F comm ssnv255a.comm D 1
-F mmed ssnv254a.mmed D 20
+F comm ssnv252c.comm D 1
+F mmed ssnv250a.mmed D 20
 
 

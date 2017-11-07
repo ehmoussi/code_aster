@@ -47,7 +47,7 @@ subroutine te0508(option, nomte)
     aster_logical :: axi,grand
     integer :: nno, nnob, npg, ndim, nddl, neps
     integer :: iret, nnos, jgano, ipoids, ivf, idfde, ivfb, idfdeb, jganob
-    integer :: igeom, icontm, ivectu, ideplm, icompo
+    integer :: igeom, icont, ivectu, idepl, icompo
     real(kind=8) :: sigref, varref, lagref,epsref, sref(13)
     real(kind=8),allocatable:: b(:,:,:), w(:,:),ni2ldc(:,:)
     
@@ -70,21 +70,20 @@ subroutine te0508(option, nomte)
     call jevech('PCOMPOR', 'L', icompo)
     call jevech('PVECTUR', 'E', ivectu)
     if (option.eq.'FORC_NODA') then
-        call jevech('PCONTMR', 'L', icontm)
-        call jevech('PDEPLMR', 'L', ideplm) 
+        call jevech('PCONTMR', 'L', icont)
+        call jevech('PDEPLMR', 'L', idepl) 
     end if
    
 
 !   GRAD_VARI + GDEF_LOG + INCO
 
     if (lteatt('INCO','C5GV').and.zk16(icompo+2) (1:8).eq.'GDEF_LOG') then  
-         nddl = nno*ndim + nnob*4
+        nddl = nno*ndim + nnob*4
          
-         if (option .eq. 'FORC_NODA') then
-             grand = .true._1 
-             call lgicfc(ndim, nno, nnob, npg, nddl, axi,grand,&
-                       zr(igeom),zr(ideplm), zr(ivf),zr(ivfb), idfde, idfdeb,&
-                       ipoids,zr(icontm),zr(ivectu))
+        if (option .eq. 'FORC_NODA') then
+            call lgicfc(ndim, nno, nnob, npg, nddl, axi, &
+                        zr(igeom),zr(idepl), zr(ivf),zr(ivfb), idfde, idfdeb,&
+                        ipoids,zr(icont),zr(ivectu))
         
         else if (option .eq. 'REFE_FORC_NODA') then
             call terefe('SIGM_REFE', 'MECA_GRADVARI', sigref)
@@ -102,7 +101,7 @@ subroutine te0508(option, nomte)
             stop 'not implemented te0508'
             stop 'DEPLM non fourni'
 !            call lgicfr(ndim, nno, nnob, npg, nddl, axi,.true._1,&
-!                        zr(igeom),zr(ideplm), zr(ivf),zr(ivfb), idfde, idfdeb,&
+!                        zr(igeom),zr(idepl), zr(ivf),zr(ivfb), idfde, idfdeb,&
 !                        ipoids,sref,zr(ivectu))
         endif
         goto 9999
@@ -120,7 +119,7 @@ subroutine te0508(option, nomte)
     else if (zk16(icompo+2) (1:8).eq.'GDEF_LOG') then
         call nmgvmb(ndim, nno, nnob, npg, axi,.true._1,&
                     zr(igeom), zr(ivf), zr(ivfb), idfde, idfdeb,&
-                    ipoids, nddl, neps, b, w,ni2ldc, zr(ideplm))
+                    ipoids, nddl, neps, b, w,ni2ldc, zr(idepl))
                     
     else
         ASSERT(.false.)
@@ -128,7 +127,7 @@ subroutine te0508(option, nomte)
 ! 
 
     if (option .eq. 'FORC_NODA') then
-        call ngforc(w, b, ni2ldc, zr(icontm), zr(ivectu))
+        call ngforc(w, b, ni2ldc, zr(icont), zr(ivectu))
 !
 ! - OPTION REFE_FORC_NODA
 !

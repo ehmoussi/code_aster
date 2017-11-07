@@ -21,10 +21,10 @@
 # CAS_TEST__: GTN002e: TRACTION BIAXIAL
 # ----------------------------------------------------------------------
 # GEOMETRIE           : BARREAU
-# MODELISATION        : 3D_SI
+# MODELISATION        : 3D_GRAD_INCO
 # MAILLAGE            : MED (ISSU DE SALOME)
 # CL ET CHARGEMENT    : TRACTION BIAXIAL
-# LOI D'ENDOMMAGEMENT : GTN NON LOCAL A 3 CHAMPS
+# LOI D'ENDOMMAGEMENT : GTN 
 # ----------------------------------------------------------------------
 # i = [|0,20|], j = [|0,9|]
 # GROUPES DE NOEUDS: F_Couche_i, F_Element_j, Fixe, V_Bar3D
@@ -77,7 +77,7 @@ MAIL=LIRE_MAILLAGE(FORMAT='MED', UNITE=20)
 MODE=AFFE_MODELE(MAILLAGE = MAIL,
            AFFE     = _F(TOUT         = 'OUI',
                    PHENOMENE    = 'MECANIQUE',
-                          MODELISATION = '3D_GRAD_VARI',
+                          MODELISATION = '3D_GRAD_INCO',
                                ),
                   )                   
 

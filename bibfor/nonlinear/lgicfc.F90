@@ -16,28 +16,23 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lgicfc(ndim, nno1, nno2, npg, nddl, axi,grand,&
-                  geoi,ddlm, vff1, vff2, idfde1, idfde2,&
-                  iw, sigmag,fint)
-!
+subroutine lgicfc(ndim, nno, nnob, npg, nddl, axi, &
+                  geom,ddl, vff, vffb, idff, idffb,&
+                  iw, sief,fint)
+
+use bloc_fe_module, only: prod_sb, add_fint
+
     implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/dfdmip.h"
-#include "asterfort/r8inir.h"
-#include "asterfort/nmepsi.h"
-#include "blas/dcopy.h"
-#include "blas/daxpy.h"
-#include "blas/dscal.h"
+#include "asterfort/nmbeps.h"
 #include "blas/dgemv.h"
-#include "blas/ddot.h"
-    aster_logical :: axi,grand
-    integer :: ndim, nno1, nno2, npg, idfde1, idfde2, iw
-    real(kind=8) ::vff1(nno1, npg), vff2(nno2, npg)
-    integer :: nddl,neps,nepg
-    real(kind=8) :: b(3*ndim+4, npg, nddl),sigmag(3*ndim+2,npg),sigfint(3*ndim+4,npg)
-    real(kind=8) :: w(npg),wdef(npg)
-    real(kind=8) ::  geom(ndim*nno1), ddlm(nddl),geoi(ndim*nno1),depl(ndim*nno1)
+    aster_logical :: axi
+    integer       :: ndim, nno, nnob, npg, nddl, idff, idffb, iw
+    real(kind=8)  :: geom(ndim,nno),ddl(nddl),vff(nno, npg), vffb(nnob, npg)
+    real(kind=8)  :: sief(3*ndim+4,npg)
+    real(kind=8)  :: fint(nddl)
 ! ----------------------------------------------------------------------
 !  CALCUL DES ELEMENTS CINEMATIQUES POUR LA MODELISATION GRAD_VARI_INCO
 ! ----------------------------------------------------------------------
@@ -58,156 +53,81 @@ subroutine lgicfc(ndim, nno1, nno2, npg, nddl, axi,grand,&
 ! OUT W      POIDS DES POINTS DE GAUSS REELS
 ! OUT NI2LDC CONVERSION CONTRAINTE STOCKEE -> CONTRAINTE LDC (AVEC RAC2)
 ! ----------------------------------------------------------------------
-    integer :: g,n,i,kl
-    real(kind=8) :: rac2, r2, r, dfdi1(27*3), dfdi2(8*3), unsurr, gm, pm, jm
-    real(kind=8) :: tauhy, taufint(6), kr(6), tau(6),fint(nddl)
-    real(kind=8) :: presm(nno2),gonfm(nno2),fm(3,3),epsm(6)
+    aster_logical, parameter:: grand=ASTER_TRUE
+    real(kind=8), parameter :: vrac2(6) = (/ 1.d0,1.d0,1.d0,sqrt(2.d0),sqrt(2.d0),sqrt(2.d0) /)
 ! ----------------------------------------------------------------------
-#define    iu1(n,i)  (n-1)*(ndim+4) + i
-#define    iu2(n,i)  nno2*4 + (n-1)*ndim + i
+    integer       :: g,n,i
+    integer       :: nnu,nng,nnq,ndu,ndg,ndq,neu,neg,neq
+    integer       :: xu(ndim,nno),xg(2,nnob),xq(2,nnob)
+    real(kind=8)  :: depl(ndim,nno)
+    real(kind=8)  :: dffb(nnob,ndim)
+    real(kind=8)  :: r_ini,r_def,dff_ini(nno,ndim),dff_def(nno,ndim),poids_ini,poids_def
+    real(kind=8)  :: bu(2*ndim,ndim,nno),bg(2+ndim,2,nnob),bq(2,2,nnob)
+    real(kind=8)  :: siefu(2*ndim),siefg(2+ndim),siefq(2)
+    real(kind=8)  :: rbid=0.d0
 
-#define    ip(n)  (n-1)*(ndim+4) + ndim + 1
-#define    ig(n)  (n-1)*(ndim+4) + ndim + 2
-#define    ia(n)  (n-1)*(ndim+4) + ndim + 3
-#define    il(n)  (n-1)*(ndim+4) + ndim + 4
-#define    dff1(n,i)  dfdi1(nno1*(i-1) + n)
-#define    dff2(n,i)  dfdi2(nno2*(i-1) + n)
-
-    data         kr   / 1.d0, 1.d0, 1.d0, 0.d0, 0.d0, 0.d0/
 ! ----------------------------------------------------------------------
-    ASSERT(nno1.le.27)
-    ASSERT(nno2.le.8)
-    rac2 = sqrt(2.d0)
-    r2 = sqrt(2.d0)/2
-    taufint = 0.0
-    tau =0.0
-    presm = 0.0
-    gonfm = 0.0
-    geom = 0.0
-    neps = 3*ndim + 4
-    nepg = neps*npg
-
-    call r8inir(nepg*nddl, 0.d0, b, 1)
-    call dcopy(ndim*nno1, geoi, 1, geom, 1)
-
-    if (grand) then
-        do 4 n = 1, nno2
-            call dcopy(ndim, ddlm((ndim+4)*(n-1)+1), 1, depl(ndim*(n-1)+1), 1)
-            presm(n) = ddlm((ndim+4)*(n-1)+ndim+1)       
-            gonfm(n) = ddlm((ndim+4)*(n-1)+ndim+2)
-4       end do
-        call dcopy(ndim*(nno1-nno2), ddlm((ndim+4)*nno2+1), 1, depl(ndim*nno2+1), 1)
-        call daxpy(ndim*nno1, 1.d0, depl, 1, geom,1)
-    end if
 
 
+!   Initialisation
+    nnu = nno
+    nng = nnob
+    nnq = nnob
+    ndu = ndim
+    ndg = 2
+    ndq = 2
+    neu = 2*ndim
+    neg = 2+ndim
+    neq = 2
 
-! - AFFECTATION DE LA MATRICE CINEMATIQUE B
+    fint = 0
 
-    do 1000 g = 1, npg
+    ! tableaux de reference bloc (depl,inco,grad) -> numero du ddl
+    forall (i=1:ndg,n=1:nng) xg(i,n) = (n-1)*(ndu+ndg+ndq) + ndu + ndq + i
+    forall (i=1:ndq,n=1:nnq) xq(i,n) = (n-1)*(ndu+ndg+ndq) + ndu + i
+    forall (i=1:ndu,n=1:nng) xu(i,n) = (n-1)*(ndu+ndg+ndq) + i
+    forall (i=1:ndu,n=nng+1:nnu) xu(i,n) = (ndu+ndg+ndq)*nng + (n-1-nng)*ndu + i
 
-        call dfdmip(ndim, nno2, axi, geoi, g,iw, vff2(1, g), idfde2, r, w(g), dfdi2)
-
-        call dfdmip(ndim, nno1, axi, geoi, g,iw, vff1(1, g), idfde1, r, w(g), dfdi1)
-
-        call nmepsi(ndim, nno1, axi, grand, vff1(1,g), r, dfdi1, depl, fm, epsm)
-
-        call dfdmip(ndim, nno1, axi, geom, g, iw, vff1(1, g), idfde1, r, wdef(g),dfdi1)
-
-        jm = fm(1,1)*(fm(2,2)*fm(3,3)-fm(2,3)*fm(3,2))&
-           - fm(2,1)*(fm(1,2)*fm(3,3)-fm(1,3)*fm(3,2))&
-           + fm(3,1)*(fm(1,2)*fm(2,3)-fm(1,3)*fm(2,2))
+    ! Decompactage du deplacement
+    forall (i=1:ndu, n=1:nnu) depl(i,n) = ddl(xu(i,n))
 
 
+    gauss: do g = 1,npg
 
-! - CALCUL DE LA PRESSION ET DU GONFLEMENT
-        gm = ddot(nno2,vff2(1,g),1,gonfm,1)
-        pm = ddot(nno2,vff2(1,g),1,presm,1)
+        ! Calcul des derivees des fonctions de forme P1 (geometrie initiale)
+        call dfdmip(ndim, nnob, axi, geom, g, iw, vffb(1,g), idffb, rbid, rbid,dffb)
 
-        tau(1:2*ndim) = sigmag(1:2*ndim,g)*jm
-        tauhy = (tau(1)+tau(2)+tau(3))/3.d0
-        do kl = 1, 6
-            taufint(kl) = tau(kl) + (pm- tauhy)*kr(kl)
-        end do
-        do 5 i = 4, 2*ndim
-            taufint(i) = taufint(i)*rac2
- 5      end do
+        ! Calcul du poids d'integration (geometrie initiale)
+        call dfdmip(ndim, nno, axi, geom, g, iw, vff(1, g), idff, r_ini, poids_ini, dff_ini)
 
-        sigfint(1:2*ndim,g) = taufint(1:2*ndim)
-        sigfint(2*ndim+1,g) = log(jm) - gm
-        sigfint(2*ndim+2,g) = tauhy - pm
-        sigfint(2*ndim+3:3*ndim+4,g) = sigmag(2*ndim+1:3*ndim+2,g)
+        ! Calcul des derivees des fonctions de forme P2, du rayon et du poids (geometrie deformee)
+        call dfdmip(ndim, nno, axi, geom+depl, g, iw, vff(1, g), idff, r_def, poids_def, dff_def)
 
-        if (ndim .eq. 2) then
-            if (axi) then
-                unsurr = 1/r
-            else
-                unsurr = 0
-            endif
-!
-            do 10 n = 1, nno2
-                b(1,g,iu1(n,1)) = dff1(n,1)
-                b(2,g,iu1(n,2)) = dff1(n,2)
-                b(3,g,iu1(n,1)) = vff1(n,g)*unsurr
-                b(4,g,iu1(n,1)) = r2*dff1(n,2)
-                b(4,g,iu1(n,2)) = r2*dff1(n,1)
-                b(5,g,ip(n)) = vff2(n,g)
-                b(6,g,ig(n)) = vff2(n,g)
-                b(7,g,ia(n)) = vff2(n,g)
-                b(8,g,il(n)) = vff2(n,g)
-                b(9,g,ia(n)) = dff2(n,1)
-                b(10,g,ia(n)) = dff2(n,2)
-10          continue
-!
-            do 20 n = nno2+1, nno1
-                b(1,g,iu2(n,1)) = dff1(n,1)
-                b(2,g,iu2(n,2)) = dff1(n,2)
-                b(3,g,iu2(n,1)) = vff1(n,g)*unsurr
-                b(4,g,iu2(n,1)) = r2*dff1(n,2)
-                b(4,g,iu2(n,2)) = r2*dff1(n,1)
-20          continue
-!
-        else if (ndim.eq.3) then
-            do 30 n = 1, nno2
-                b(1,g,iu1(n,1)) = dff1(n,1)
-                b(2,g,iu1(n,2)) = dff1(n,2)
-                b(3,g,iu1(n,3)) = dff1(n,3)
-                b(4,g,iu1(n,1)) = r2*dff1(n,2)
-                b(4,g,iu1(n,2)) = r2*dff1(n,1)
-                b(5,g,iu1(n,1)) = r2*dff1(n,3)
-                b(5,g,iu1(n,3)) = r2*dff1(n,1)
-                b(6,g,iu1(n,2)) = r2*dff1(n,3)
-                b(6,g,iu1(n,3)) = r2*dff1(n,2)
-                b(7,g,ip(n)) = vff2(n,g)
-                b(8,g,ig(n)) = vff2(n,g)
-                b(9,g,ia(n)) = vff2(n,g)
-                b(10,g,il(n)) = vff2(n,g)
-                b(11,g,ia(n)) = dff2(n,1)
-                b(12,g,ia(n)) = dff2(n,2)
-                b(13,g,ia(n)) = dff2(n,3)
-30          continue
-!
-            do 40 n = nno2+1, nno1
-                b(1,g,iu2(n,1)) = dff1(n,1)
-                b(2,g,iu2(n,2)) = dff1(n,2)
-                b(3,g,iu2(n,3)) = dff1(n,3)
-                b(4,g,iu2(n,1)) = r2*dff1(n,2)
-                b(4,g,iu2(n,2)) = r2*dff1(n,1)
-                b(5,g,iu2(n,1)) = r2*dff1(n,3)
-                b(5,g,iu2(n,3)) = r2*dff1(n,1)
-                b(6,g,iu2(n,2)) = r2*dff1(n,3)
-                b(6,g,iu2(n,3)) = r2*dff1(n,2)
-40          continue
-        endif
-1000  end do
+        ! Calcul de la matrice BU (geometrie deformee)
+        call nmbeps(axi,r_def,vff(:,g),dff_def,bu)
 
-    do 2000 g = 1, npg
-        sigfint(1:neps,g) = sigfint(1:neps,g)*w(g)
-2000  end do
+        ! Matrice BG (geometrie initiale)
+        bg = 0
+        bg(1,1,:) = vffb(:,g)
+        bg(2,2,:) = vffb(:,g)
+        bg(3:neg,1,:) = transpose(dffb)
 
-    call dgemv('T', nepg, nddl, 1.d0, b,&
-               nepg, sigfint, 1, 0.d0, fint,&
-               1)
+        ! Matrice BQ (geometrie initiale)
+        bq = 0
+        bq(1,1,:) = vffb(:,g)
+        bq(2,2,:) = vffb(:,g)
 
+        ! Extraction des blocs de contraintes generalisees (dont contrainte mecanique de Cauchy)
+        siefu = sief(1:neu,g)*vrac2(1:neu)
+        siefq = sief(neu+1:neu+neq,g)
+        siefg = sief(neu+neq+1:neu+neq+neg,g)
+
+        ! Calcul des contributions aux forces interieures
+        call add_fint(fint,xu,poids_def*prod_sb(siefu,bu))
+        call add_fint(fint,xg,poids_ini*prod_sb(siefg,bg))
+        call add_fint(fint,xq,poids_ini*prod_sb(siefq,bq))
+
+
+    end do gauss
 
 end subroutine

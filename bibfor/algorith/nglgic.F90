@@ -27,6 +27,9 @@ subroutine nglgic(fami, option, typmod, ndim, nno, &
 use gdlog_module, only: GDLOG_DS, gdlog_init, gdlog_defo, gdlog_matb,  &
                         gdlog_rigeo, gdlog_nice_cauchy, gdlog_delete
  
+use bloc_fe_module, only: prod_bd, prod_sb, prod_bkb, add_fint, add_matr
+
+
     implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
@@ -34,8 +37,7 @@ use gdlog_module, only: GDLOG_DS, gdlog_init, gdlog_defo, gdlog_matb,  &
 #include "asterfort/dfdmip.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmepsi.h"
-#include "blas/dgemv.h"
-#include "blas/dgemm.h"
+
 
 ! aslint: disable=W1504
 
@@ -146,6 +148,10 @@ use gdlog_module, only: GDLOG_DS, gdlog_init, gdlog_defo, gdlog_matb,  &
 
 ! --- INITIALISATION ---
 
+    axi  = typmod(1).eq.'AXIS'
+    resi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RAPH_MECA'
+    rigi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RIGI_MECA'
+
     nnu = nno
     nng = nnob
     nnq = nnob
@@ -159,15 +165,11 @@ use gdlog_module, only: GDLOG_DS, gdlog_init, gdlog_defo, gdlog_matb,  &
     hyd = projhyd(1:neu)
     dev = projdev(1:neu,1:neu)
 
-    axi  = typmod(1).eq.'AXIS'
-    resi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RAPH_MECA'
-    rigi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RIGI_MECA'
-    cod = 0  
-
     call gdlog_init(gdlm,ndu,nnu,axi,rigi)
     call gdlog_init(gdlp,ndu,nnu,axi,rigi)
     if (resi) fint = 0
     if (rigi) matr = 0
+    cod = 0  
 
     ! tableaux de reference bloc (depl,inco,grad) -> numero du ddl
     forall (i=1:ndg,n=1:nng) xg(i,n) = (n-1)*(ndu+ndg+ndq) + ndu + ndq + i
@@ -211,7 +213,7 @@ use gdlog_module, only: GDLOG_DS, gdlog_init, gdlog_defo, gdlog_matb,  &
         bg = 0
         bg(1,1,:) = vffb(:,g)
         bg(2,2,:) = vffb(:,g)
-        bg(:,1,:) = transpose(dffb)
+        bg(3:neg,1,:) = transpose(dffb)
         bq = 0
         bq(1,1,:) = vffb(:,g)
         bq(2,2,:) = vffb(:,g)
@@ -290,7 +292,7 @@ use gdlog_module, only: GDLOG_DS, gdlog_init, gdlog_defo, gdlog_matb,  &
             end if
 
             ! Rigidite geometrique
-            call add_matr(matr,xu,xu,gdlog_rigeo(gdlp,siefup))
+            call add_matr(matr,xu,xu,poids*gdlog_rigeo(gdlp,siefup))
 
             ! Blocs de la matrice tangente du comportement
             dee = dsde(1:neu,1:neu)
@@ -340,102 +342,5 @@ use gdlog_module, only: GDLOG_DS, gdlog_init, gdlog_defo, gdlog_matb,  &
     if (resi) call codere(cod, npg, codret)
     call gdlog_delete(gdlm)
     call gdlog_delete(gdlp)
-
-
-
-contains
-
-
-function prod_bd(b,d) result(bd)
-    implicit none
-    real(kind=8):: b(:,:,:),d(:,:)
-    real(kind=8):: bd(size(b,1))
-    ! -------------------------------------------------------------------------
-    integer:: neps,ndim,nno
-    ! -------------------------------------------------------------------------
-    neps = size(b,1)
-    ndim = size(b,2)
-    nno  = size(b,3)
-    ASSERT(size(d,1).eq.ndim)
-    ASSERT(size(d,2).eq.nno)
-    call dgemv('n',neps,ndim*nno,1.d0,b,neps,d,1,0.d0,bd,1)
-end function prod_bd
-
-
-
-function prod_sb(s,b) result(sb)
-    implicit none
-    real(kind=8)::s(:),b(:,:,:)
-    real(kind=8)::sb(size(b,2),size(b,3))
-    ! -------------------------------------------------------------------------
-    integer:: ndim,nno,neu
-    ! -------------------------------------------------------------------------
-    ndim = size(b,2)
-    nno  = size(b,3)
-    neu = size(s)
-    ASSERT(neu.eq.size(b,1))
-    call dgemv('t',neu,ndim*nno,1.d0,b,neu,s,1,0.d0,sb,1)
-end function prod_sb
-
-
-function prod_bkb(bin,kinjm,bjm) result(bkb)
-    implicit none
-    real(kind=8),intent(in):: bin(:,:,:),bjm(:,:,:),kinjm(:,:)
-    real(kind=8)           :: bkb(size(bin,1),size(bin,2),size(bjm,1),size(bjm,2))
-    ! -------------------------------------------------------------------------
-    integer:: ndim1,ndim2,nno1,nno2,neps1,neps2
-    real(kind=8)::kbjm(size(bin,1),size(bjm,2),size(bjm,3))
-    ! -------------------------------------------------------------------------
-    neps1 = size(bin,1)
-    ndim1 = size(bin,2)
-    nno1  = size(bin,3)
-    neps2 = size(bjm,1)
-    ndim2 = size(bjm,2)
-    nno2  = size(bjm,3)
-    ASSERT(size(kinjm,1).eq.neps1)
-    ASSERT(size(kinjm,2).eq.neps2)
-    call dgemm('n','n',neps1,ndim2*nno2,neps2,1.d0,kinjm,neps1,bjm,neps2,0.d0,kbjm,neps1)
-    call dgemm('t','n',ndim1*nno1,ndim2*nno2,neps1,1.d0,bin,neps1,kbjm,neps1,0.d0,bkb,ndim1*nno1)
-end function prod_bkb
-
-
-subroutine add_fint(fint,xin,fin)
-    ! Contribution d'un bloc de forces au vecteur des forces interieures
-    implicit none
-    integer,intent(in)        :: xin(:,:)
-    real(kind=8),intent(in)   :: fin(:,:)
-    real(kind=8),intent(inout):: fint(:)
-    ! -------------------------------------------------------------------------
-    integer:: ndim,nno,i,n
-    ! -------------------------------------------------------------------------
-    ndim = size(fin,1)
-    nno  = size(fin,2)
-    ASSERT(ndim.eq.size(xin,1))
-    ASSERT(nno .eq.size(xin,2))
-    forall (i=1:ndim,n=1:nno) fint(xin(i,n)) = fint(xin(i,n)) + fin(i,n)
-end subroutine add_fint
-
-
-subroutine add_matr(matr,xin,xjm,kinjm)
-    ! Contribution d'un bloc de matrice a la matrice tangente (stockage j,m,i,n)
-    implicit none
-    integer,intent(in)        :: xin(:,:),xjm(:,:)
-    real(kind=8),intent(in)   :: kinjm(:,:,:,:)
-    real(kind=8),intent(inout):: matr(:,:)
-    ! -------------------------------------------------------------------------
-    integer:: ndimin,nnoin,ndimjm,nnojm,i,n,j,m
-    ! -------------------------------------------------------------------------
-    ndimin = size(kinjm,1)
-    nnoin  = size(kinjm,2)
-    ndimjm = size(kinjm,3)
-    nnojm  = size(kinjm,4)
-    ASSERT(ndimin.eq.size(xin,1))
-    ASSERT(nnoin .eq.size(xin,2))
-    ASSERT(ndimjm.eq.size(xjm,1))
-    ASSERT(nnojm .eq.size(xjm,2))
-    forall (i=1:ndimin,n=1:nnoin,j=1:ndimjm,m=1:nnojm) matr(xjm(j,m),xin(i,n)) = &
-        matr(xjm(j,m),xin(i,n)) + kinjm(i,n,j,m)
-end subroutine add_matr
-
 
 end subroutine

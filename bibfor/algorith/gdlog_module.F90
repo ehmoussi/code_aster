@@ -260,6 +260,7 @@ function gdlog_rigeo(self,t) result(matr)
 ! Rigidite geometrique a partie de de:L:de et S:d2e
 
     ! Terme axi : S(3) * Nn/r * Nm/r (termes i=j=1)
+    maax = 0
     call dger(nno,nno,pk2(3),self%axf,1,self%axf,1,maax,nno)
             
     ! Terme S(kl).PFF(kl,n,m) (termes i=j)
