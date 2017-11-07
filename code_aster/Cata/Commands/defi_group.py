@@ -27,6 +27,7 @@ def defi_group_prod(MAILLAGE,GRILLE,**args):
   if ( MAILLAGE != None ) :
      if AsType(MAILLAGE) == maillage_sdaster : return maillage_sdaster
      if AsType(MAILLAGE) == squelette : return squelette
+     if AsType(MAILLAGE) == maillage_p_sdaster : return maillage_p_sdaster
   if ( GRILLE != None ) :
      return grille_sdaster
   raise AsException("type de concept resultat non prevu")
