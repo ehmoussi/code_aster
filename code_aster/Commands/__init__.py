@@ -34,6 +34,7 @@ using their catalog definition.
 # please keep alphabetical order
 from .affe_char_cine import AFFE_CHAR_CINE
 from .affe_char_meca import AFFE_CHAR_MECA
+from .affe_char_meca_f import AFFE_CHAR_MECA_F
 from .affe_materiau import AFFE_MATERIAU
 from .affe_modele import AFFE_MODELE
 from .asse_matrice import ASSE_MATRICE
@@ -66,6 +67,7 @@ from .defi_materiau import DEFI_MATERIAU
 from .defi_nappe import DEFI_NAPPE
 # from .defi_squelette import DEFI_SQUELETTE
 # from .defi_spec_turb import DEFI_SPEC_TURB
+from .dyna_vibra import DYNA_VIBRA
 from .fin import FIN
 from .formule import FORMULE
 from .lire_maillage import LIRE_MAILLAGE
@@ -79,7 +81,7 @@ from .modi_maillage import MODI_MAILLAGE
 from .nume_ddl import NUME_DDL
 # from .nume_ddl_gene import NUME_DDL_GENE
 from .proj_champ import PROJ_CHAMP
-# from .stat_non_line import STAT_NON_LINE
+from .stat_non_line import STAT_NON_LINE
 from .recu_fonction import RECU_FONCTION
 
 from .ExecuteCommand import CO

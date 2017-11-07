@@ -1,6 +1,6 @@
 /**
- * @file ElementaryMatrixInterface.cxx
- * @brief Interface python de ElementaryMatrix
+ * @file FullDynamicResultsContainerInterface.cxx
+ * @brief Interface python de FullDynamicResultsContainer
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,20 +21,17 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: nicolas.sellenet at edf.fr */
-
-#include "PythonBindings/ElementaryMatrixInterface.h"
+#include "PythonBindings/FullDynamicResultsContainerInterface.h"
+#include "PythonBindings/SharedPtrUtilities.h"
 #include <boost/python.hpp>
 
-BOOST_PYTHON_FUNCTION_OVERLOADS(create_overloads, ElementaryMatrixInstance::create, 0, 1)
-
-void exportElementaryMatrixToPython()
+void exportFullDynamicResultsContainerToPython()
 {
     using namespace boost::python;
 
-    class_< ElementaryMatrixInstance, ElementaryMatrixInstance::ElementaryMatrixPtr,
-            bases< DataStructure > > ( "ElementaryMatrix", no_init )
-        .def( "create", &ElementaryMatrixInstance::create, create_overloads())
+    class_< FullDynamicResultsContainerInstance, FullDynamicResultsContainerPtr,
+            bases< DynamicResultsContainerInstance > > ( "FullDynamicResultsContainer", no_init )
+        .def( "create", &createSharedPtr< FullDynamicResultsContainerInstance > )
         .staticmethod( "create" )
     ;
 };

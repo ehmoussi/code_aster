@@ -24,13 +24,12 @@ from ..Supervis import logger
 from .ExecuteCommand import ExecuteCommand
 
 
-class MatrixAssembler(ExecuteCommand):
-    """Command that creates a
-    :class:`~code_aster.Objects.AssemblyMatrixDouble`."""
+class AssembleMatrixOperator(ExecuteCommand):
+    """Execute legacy operator ASSE_MATRICE."""
     command_name = "ASSE_MATRICE"
 
     def create_result(self, keywords):
-        """Initialize the result.
+        """Create the result.
 
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
@@ -48,4 +47,4 @@ class MatrixAssembler(ExecuteCommand):
         logger.warn("'check_syntax' is disabled in ASSE_MATRICE!")
 
 
-ASSE_MATRICE = MatrixAssembler.run
+ASSE_MATRICE = AssembleMatrixOperator.run

@@ -65,9 +65,16 @@ public:
     /**
      * @brief Constructeur
      */
-    static ElementaryMatrixPtr create()
+    static ElementaryMatrixPtr create(std::string type="")
     {
-        return ElementaryMatrixPtr( new ElementaryMatrixInstance );
+        if (type.size() == 0)
+            return ElementaryMatrixPtr( new ElementaryMatrixInstance );
+        else
+        {
+            if (!(type=="DEPL_R"||type=="DEPL_C"||type=="TEMP_R"||type=="PRES_C"))
+                throw std::runtime_error( "Type "+type+" not supported" );
+            return ElementaryMatrixPtr( new ElementaryMatrixInstance ( type ) );
+        }
     };
 
     /**

@@ -57,3 +57,7 @@ resu = MECA_STATIQUE(CHAM_MATER=AFFMAT,
                                 RESI_RELA=1.E-10,),)
 
 resu.printMedFile("test"+str(rank)+".med")
+
+# at least it passes here!
+test.assertTrue( True )
+test.printSummary()
