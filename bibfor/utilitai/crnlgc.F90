@@ -349,8 +349,6 @@ subroutine crnlgc(numddl)
                             zi(jnujoi1+jaux-1) = zi(jnugll - 1 + nddll)
                         enddo
                         n4e = nbnoee
-                        call asmpi_send_i(zi(jnujoi1), n4e, numpr4, num4, mpicou)
-                        call jedetr('&&CRNUGL.NUM_DDL_GLOB_E')
                     endif
 
                     call jeexin(nojoir, iret2)

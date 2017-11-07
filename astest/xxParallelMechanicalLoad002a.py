@@ -55,9 +55,18 @@ resu = MECA_STATIQUE(CHAM_MATER=AFFMAT,
                      SOLVEUR=_F(METHODE='PETSC',
                                 PRE_COND='SANS',
                                 RESI_RELA=1.E-10,),)
+resu.debugPrint(10+rank)
 
 resu.printMedFile("test"+str(rank)+".med")
 
-# at least it passes here!
-test.assertTrue( True )
+MyFieldOnNodes = resu.getRealFieldOnNodes("DEPL", 0)
+sfon = MyFieldOnNodes.exportToSimpleFieldOnNodes()
+sfon.debugPrint(10+rank)
+sfon.updateValuePointers()
+
+value = [1., 1., 0., 0.]
+test.assertAlmostEqual(sfon.getValue(0, 0), value[rank])
+value = [0.0712953407513, 0.0609114486676, -0.00116776983364, 0.000584732584462]
+test.assertAlmostEqual(sfon.getValue(240, 0), value[rank])
+
 test.printSummary()
