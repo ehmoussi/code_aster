@@ -1,0 +1,173 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+#
+
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
+      DEBUG=_F(SDVERI='OUI',),
+      INFO=1,);
+
+lisi=DEFI_LIST_REEL(DEBUT=0,
+                    INTERVALLE=_F(JUSQU_A=1,
+                                  PAS=1,),);
+LINST=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=lisi,),
+                         ECHEC=_F(EVENEMENT='ERREUR',
+                         ACTION='DECOUPE',),);
+RAMPE=DEFI_FONCTION(NOM_PARA='INST',VALE=(0,0,1,1),);
+
+Mail=[None]*8
+
+Mail[0]=LIRE_MAILLAGE(UNITE=20,
+                   FORMAT='MED',);
+Mail[1]=LIRE_MAILLAGE(UNITE=21,
+                   FORMAT='MED',);
+Mail[2]=LIRE_MAILLAGE(UNITE=22,
+                   FORMAT='MED',);
+Mail[3]=LIRE_MAILLAGE(UNITE=23,
+                   FORMAT='MED',);
+Mail[4]=LIRE_MAILLAGE(UNITE=24,
+                   FORMAT='MED',);
+Mail[5]=LIRE_MAILLAGE(UNITE=25,
+                   FORMAT='MED',);
+Mail[6]=LIRE_MAILLAGE(UNITE=26,
+                   FORMAT='MED',);
+Mail[7]=LIRE_MAILLAGE(UNITE=27,
+                   FORMAT='MED',);
+
+mat1=DEFI_MATERIAU(ELAS=_F(E=2000,
+                           NU=0.3,),);
+for i in range(8):
+    MESH=CREA_MAILLAGE(MAILLAGE=Mail[i],
+                        DECOUPE_LAC=_F(GROUP_MA_ESCL='cont_escl',),)
+
+    MODI=AFFE_MODELE(MAILLAGE=MESH,
+                        AFFE=_F(TOUT='OUI',
+                             PHENOMENE='MECANIQUE',
+                             MODELISATION='3D',),);
+
+    AFFE=AFFE_MATERIAU(MAILLAGE=MESH,
+                       MODELE=MODI,
+                       AFFE=_F(TOUT='OUI',
+                               MATER=mat1,),);
+
+    DEFICO=DEFI_CONTACT(MODELE=MODI,
+                        INFO=1,
+                        FORMULATION='CONTINUE',
+                        ALGO_RESO_GEOM='NEWTON',
+                        ALGO_RESO_CONT='NEWTON',
+                        ZONE=_F(APPARIEMENT='MORTAR',
+                                GROUP_MA_MAIT='cont_mait',
+                                GROUP_MA_ESCL='cont_escl',
+                                ALGO_CONT='LAC',
+                                TYPE_APPA="ROBUSTE",),);
+
+    CHAR1=AFFE_CHAR_CINE(MODELE=MODI,
+                         MECA_IMPO=(_F(GROUP_MA='symx',
+                                       DX=0,),
+                                    _F(GROUP_MA='symy',
+                                       DY=0,),
+                                    _F(GROUP_MA='base',
+                                       DZ=0,),),);
+    CHAR2= AFFE_CHAR_MECA(MODELE=MODI,
+                                 PRES_REP=_F(GROUP_MA='press',
+                                 PRES=25,), );
+
+
+
+    RES=STAT_NON_LINE(AFFICHAGE=_F(INFO_RESIDU='OUI',),
+                      MODELE=MODI,
+                      CHAM_MATER=AFFE,
+                      EXCIT=(_F(CHARGE=CHAR1,
+                                  FONC_MULT=RAMPE),
+                             _F(CHARGE=CHAR2,
+                                  FONC_MULT=RAMPE,
+                                #TYPE_CHARGE='SUIV',
+                                ), ),
+                      CONTACT=DEFICO,
+                      NEWTON=_F(MATRICE='TANGENTE',
+                                REAC_ITER=1,),
+                      COMPORTEMENT=_F(RELATION='ELAS',
+                                        DEFORMATION='PETIT',
+                                      TOUT='OUI',),
+                      INCREMENT=_F(LIST_INST=LINST,),
+                      SOLVEUR=_F(ELIM_LAGR='NON',
+                                 METHODE='MUMPS',
+                                 RESI_RELA=1.E-6,
+                                 PCENT_PIVOT= 30,),
+                      CONVERGENCE=_F(RESI_GLOB_RELA=1.E-6,
+                                     ITER_GLOB_MAXI=50,));
+
+    CALC_CHAMP(reuse=RES,
+               RESULTAT=RES,
+               CONTRAINTE=('SIEF_NOEU'),);
+
+
+
+    TEST_RESU(RESU=(_F(INST=1.0,
+                       TYPE_TEST='MIN',
+                       RESULTAT=RES,
+                       REFERENCE = 'ANALYTIQUE',
+                       NOM_CHAM='SIEF_NOEU',
+                       LEGENDE='CALC_PRESSION',
+                       NOM_CMP='SIZZ',
+                       VALE_REFE=-25.0,
+                       VALE_CALC=-25.0,
+                       ),
+                    _F(INST=1.0,
+                       TYPE_TEST='MAX',
+                       RESULTAT=RES,
+                       REFERENCE = 'ANALYTIQUE',
+                       NOM_CHAM='SIEF_NOEU',
+                       LEGENDE='CALC_PRESSION',
+                       NOM_CMP='SIZZ',
+                       VALE_REFE=-25.0,
+                       VALE_CALC=-25.00,
+                       ),
+                    _F(INST=1.0,
+                       TYPE_TEST='MIN',
+                       RESULTAT=RES,
+                       REFERENCE = 'ANALYTIQUE',
+                       NOM_CHAM='DEPL',
+                       LEGENDE='LAGS_C',
+                       NOM_CMP='LAGS_C',
+                       VALE_REFE=-25.0,
+                       VALE_CALC=-25.0,
+                       ),
+                    _F(INST=1.0,
+                       TYPE_TEST='MAX',
+                       RESULTAT=RES,
+                       REFERENCE = 'ANALYTIQUE',
+                       NOM_CHAM='DEPL',
+                       LEGENDE='LAGS_C',
+                       NOM_CMP='LAGS_C',
+                       VALE_REFE=-25.0,
+                       VALE_CALC=-25.0,
+                       ),
+                    ),
+              );
+    DETRUIRE(CONCEPT=(_F(NOM=RES),
+                      _F(NOM=CHAR1),
+                      _F(NOM=CHAR2),
+                      _F(NOM=DEFICO),
+                      _F(NOM=AFFE),
+                      _F(NOM=MODI),
+                      _F(NOM=MESH),
+                      ),)
+FIN()
