@@ -19,21 +19,20 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import TurbulentSpectrum
+from .ExecuteCommand import ExecuteCommand
+from ..Objects import TurbulentSpectrum
 
 
-def DEFI_SPEC_TURB(**curDict):
-    returnMatrix = TurbulentSpectrum.create()
-    name = returnMatrix.getName()
-    type = returnMatrix.getType()
-    syntax = CommandSyntax("DEFI_SPEC_TURB")
+class TurbulentSpectrumDefinition(ExecuteCommand):
+    """Execute legacy operator DEFI_SPEC_TURB."""
+    command_name = "DEFI_SPEC_TURB"
 
-    syntax.setResult(name, type)
+    def create_result(self, keywords):
+        """Create the result.
 
-    syntax.define(curDict)
-    numOp = 145
-    python_execop(numOp)
-    syntax.free()
-    return returnMatrix
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = TurbulentSpectrum.create()
+
+DEFI_SPEC_TURB = TurbulentSpectrumDefinition.run

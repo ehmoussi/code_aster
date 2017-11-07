@@ -19,21 +19,20 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import Function
+from ..Objects import Function
+from .ExecuteCommand import ExecuteCommand
 
 
-def DEFI_FONC_FLUI(**curDict):
-    returnFunction = Function.create()
-    name = returnFunction.getName()
-    type = returnFunction.getType()
-    syntax = CommandSyntax("DEFI_FONC_FLUI")
+class FluidFonctionDefinition(ExecuteCommand):
+    """Execute legacy operator DEFI_FONC_FLUI."""
+    command_name = "DEFI_FONC_FLUI"
 
-    syntax.setResult(name, type)
+    def create_result(self, keywords):
+        """Create the result.
 
-    syntax.define(curDict)
-    numOp = 142
-    python_execop(numOp)
-    syntax.free()
-    return returnFunction
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = Function.create()
+
+DEFI_FONC_FLUI = FluidFonctionDefinition.run

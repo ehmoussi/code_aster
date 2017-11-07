@@ -52,8 +52,8 @@ from .defi_compor import DEFI_COMPOR
 from .defi_constante import DEFI_CONSTANTE
 from .defi_fichier import DEFI_FICHIER
 # from .defi_fiss_xfem import DEFI_FISS_XFEM
-# from .defi_flui_stru import DEFI_FLUI_STRU
-# from .defi_fonc_flui import DEFI_FONC_FLUI
+from .defi_flui_stru import DEFI_FLUI_STRU
+from .defi_fonc_flui import DEFI_FONC_FLUI
 from .defi_fonction import DEFI_FONCTION
 from .defi_fond_fiss import DEFI_FOND_FISS
 from .defi_geom_fibre import DEFI_GEOM_FIBRE
@@ -66,7 +66,7 @@ from .defi_materiau import DEFI_MATERIAU
 # from .defi_modele_gene import DEFI_MODELE_GENE
 from .defi_nappe import DEFI_NAPPE
 # from .defi_squelette import DEFI_SQUELETTE
-# from .defi_spec_turb import DEFI_SPEC_TURB
+from .defi_spec_turb import DEFI_SPEC_TURB
 from .dyna_vibra import DYNA_VIBRA
 from .fin import FIN
 from .formule import FORMULE
