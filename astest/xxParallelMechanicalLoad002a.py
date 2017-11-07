@@ -39,7 +39,7 @@ char_meca1 = AFFE_CHAR_MECA(MODELE=model1,
                             DDL_IMPO=_F(GROUP_NO="A",DX=1.0))
 
 char_meca = code_aster.ParallelMechanicalLoad.create(char_meca1, model)
-#char_meca.debugPrint(10+rank)
+char_meca.debugPrint(10+rank)
 
 MATER1 = DEFI_MATERIAU(ELAS=_F(E=200000.0,
                                NU=0.3,),)

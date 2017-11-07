@@ -56,6 +56,8 @@ protected:
     JeveuxVectorLong                 _owner;
     /** @brief Number of elements in which a given node is located */
     JeveuxVectorLong                 _multiplicity;
+    /** @brief Number of non local elements in which a given node is located */
+    JeveuxVectorLong                 _outerMultiplicity;
     /** @brief Communication graph */
     CommunicationGraphPtr            _commGraph;
 

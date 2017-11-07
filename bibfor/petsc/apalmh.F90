@@ -51,7 +51,7 @@ use petsc_data_module
     integer :: i, k, nzdeb, nzfin, jidxo, jaux, jdelg, jmdla
     integer :: jnequ, iligl, jcoll, iligg, jcolg, numloc, numglo
     integer :: rang, nbproc, jprddl, jnugll, nloc, nglo, jidxdc
-    integer :: nuno1, nuno2, num_ddl_max, imult, ipos
+    integer :: nuno1, nuno2, num_ddl_max, imult, ipos, ibid
     integer :: num_ddl_min, jslvi, tbloc, iret, nblag, jdeeq
 !
     integer(kind=4) :: mpicou
@@ -144,31 +144,10 @@ use petsc_data_module
 !
     call wkvect(idxd, 'V V S', ndprop, jidxd)
     call wkvect(idxo, 'V V S', ndprop, jidxo)
-!
-    call jeexin(nonu//'.NUME.MDLA', iret)
-    jmdla = 0
-    nblag = 0
-    if( iret.ne.0 ) then
-        call jeveuo(nonu//'.NUME.MDLA', 'L', jmdla)
-        call jelira(nonu//'.NUME.MDLA', 'LONMAX', nblag)
-        nblag = nblag/2
-        do ipos = 0, nblag-1
-            jcoll = zi(jmdla + ipos*2)
-            imult = zi(jmdla + ipos*2 + 1)
-            jcolg = zi(jnugll + jcoll - 1)
-            zi4(jidxo + jcolg - low) = zi4(jidxo + jcolg - low) + imult
-! nsellenet
-        write(*, *) "jcolg, imult", jcolg, imult
-! nsellenet
-        enddo
-    endif
 
     jcolg = zi(jnugll)
     if (zi(jprddl) .eq. rang) then
         zi4(jidxd + jcolg - low) = zi4(jidxd + jcolg - low) + 1
-! nsellenet
-        write(13, *) "i,j", jcolg, jcolg
-! nsellenet
     endif
 !
 !   On commence par s'occuper du nombre de NZ par ligne
@@ -192,36 +171,32 @@ use petsc_data_module
             endif
             if (procol .eq. rang .and. prolig .eq. rang) then
                 zi4(jidxd + iligg - low) = zi4(jidxd + iligg - low) + 1
-! nsellenet
-        write(13, *) "i,j", iligg, jcolg
-! nsellenet
                 if (iligg .ne. jcolg) then
                     zi4(jidxd + jcolg - low) = zi4(jidxd + jcolg - low) + 1
-! nsellenet
-        write(13, *) "i,j", jcolg, iligg
-! nsellenet
                 endif
             else if (procol .ne. rang .and. prolig .eq. rang) then
                 zi4(jidxo + iligg - low) = zi4(jidxo + iligg - low) + 1
-! nsellenet
-        write(13, *) "i,j", iligg, jcolg
-! nsellenet
-!                if( nuno1.eq.0 .or. nuno2.eq.0 ) then
-!                    write(6,*)'TEST4', rang, iligg
-!                    zi4(jidxo + jcolg - low) = zi4(jidxo + jcolg - low) + 1
-!                endif
             else if (procol .eq. rang .and. prolig .ne. rang) then
                 zi4(jidxo + jcolg - low) = zi4(jidxo + jcolg - low) + 1
-! nsellenet
-        write(13, *) "i,j", jcolg, iligg
-! nsellenet
-!                if( nuno1.eq.0 .or. nuno2.eq.0 ) then
-!                    write(6,*)'TEST5', rang, jcolg
-!                    zi4(jidxo + iligg - low) = zi4(jidxo + iligg - low) + 1
-!                endif
             endif
         end do
     end do
+!
+    call jeexin(nonu//'.NUME.MDLA', iret)
+    jmdla = 0
+    nblag = 0
+    if( iret.ne.0 ) then
+        call jeveuo(nonu//'.NUME.MDLA', 'L', jmdla)
+        call jelira(nonu//'.NUME.MDLA', 'LONMAX', nblag)
+        nblag = nblag/2
+        do ipos = 0, nblag-1
+            jcoll = zi(jmdla + ipos*2)
+            imult = zi(jmdla + ipos*2 + 1)
+            jcolg = zi(jnugll + jcoll - 1)
+            ibid = zi4(jidxd + jcolg - low)*(imult)
+            zi4(jidxo + jcolg - low) = zi4(jidxo + jcolg - low) + ibid
+        enddo
+    endif
 
     call MatMPIAIJSetPreallocation(a, PETSC_NULL_INTEGER, zi4(jidxd),&
                                    PETSC_NULL_INTEGER, zi4(jidxo), ierr)
