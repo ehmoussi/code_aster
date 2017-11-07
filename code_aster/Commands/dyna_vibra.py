@@ -41,13 +41,5 @@ class VibrationDynamics(ExecuteCommand):
             raise NotImplementedError("Types of analysis {0!r} and {0!r} not yet "
                                       "implemented".format(typ, base))
 
-    def post_exec(self, keywords):
-        """Execute the command.
-
-        Arguments:
-            keywords (dict): User's keywords.
-        """
-        self._result.update()
-
 
 DYNA_VIBRA = VibrationDynamics.run
