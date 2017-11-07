@@ -5,7 +5,9 @@ from code_aster.Commands import *
 
 code_aster.init()
 
-POUTRE=code_aster.Mesh.create()
+test = code_aster.TestCase()
+
+POUTRE = code_aster.Mesh.create()
 POUTRE.readAsterMeshFile("sdll117a.mail")
 
 POUTRE=MODI_MAILLAGE(MAILLAGE=POUTRE,ABSC_CURV=_F(NOEUD_ORIG='N001',TOUT='OUI'))
@@ -83,3 +85,7 @@ SPECTR7=DEFI_SPEC_TURB(
                   LONG_COR = 3.4,
                   PROF_VITE_FLUI = PROFVI7)
                            )
+
+# at least it pass here!
+test.assertTrue( True )
+test.printSummary()
