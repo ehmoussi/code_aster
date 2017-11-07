@@ -49,7 +49,10 @@ Development rules
 
         .. code-block:: none
 
-            xxFlow001a   <S>_ERROR              DEFI_FLUI_STRU ?
+            xxFlow001a   <S>_ERROR
+            xxFourierCombination001a <S>_ERROR
+            xxLinearMechanics001a <S>_ERROR
+            xxModeStatique01a <S>_ERROR
             xxMultiSteps01a <S>_ERROR
 
     - Currently, these testcases have been partially truncated because of
