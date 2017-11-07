@@ -34,7 +34,8 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
                     _BaseFEDesc( FEDesc ),
                     _joins( JeveuxVectorLong( getName() + ".DOMJ" ) ),
                     _owner( JeveuxVectorLong( getName() + ".PNOE" ) ),
-                    _multiplicity( JeveuxVectorLong( getName() + ".MULT" ) )
+                    _multiplicity( JeveuxVectorLong( getName() + ".MULT" ) ),
+                    _outerMultiplicity( JeveuxVectorLong( getName() + ".MUL2" ) )
 {
     const int rank = getMPIRank();
     const int nbProcs = getMPINumberOfProcs();
@@ -157,6 +158,7 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
     {
         _owner->allocate( Permanent, nbDelayedNodes );
         _multiplicity->allocate( Permanent, nbDelayedNodes );
+        _outerMultiplicity->allocate( Permanent, nbDelayedNodes );
         int i = 0, nbJoins = 0, j = 0;
         std::vector< VectorLong > toSend( nbProcs );
         std::vector< VectorLong > toReceive( nbProcs );
@@ -175,6 +177,10 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
                     toReceive[delayedNodesOwner[i]].push_back(-delayedNodesNumbering[i]-1);
                 }
                 (*_owner)[j] = delayedNodesOwner[i];
+                int count = 0;
+                for( const auto& proc : curSet )
+                    if( proc != rank ) ++count;
+                (*_outerMultiplicity)[j] = count;
                 (*_multiplicity)[j] = delayedNodesMult[i];
                 ++j;
             }
