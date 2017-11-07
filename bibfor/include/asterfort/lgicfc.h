@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 
 interface
-    subroutine lgicfc(ndim, nno, nnob, npg, nddl, axi, &
+    subroutine lgicfc(refe,ndim, nno, nnob, npg, nddl, axi, &
                   geom,ddl, vff, vffb, idff, idffb,&
                   iw, sief,fint)
-        aster_logical :: axi
+        aster_logical :: refe,axi
         integer       :: ndim, nno, nnob, npg, nddl, idff, idffb, iw
         real(kind=8)  :: geom(ndim,nno),ddl(nddl),vff(nno, npg), vffb(nnob, npg)
         real(kind=8)  :: sief(3*ndim+4,npg)
