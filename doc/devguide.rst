@@ -42,19 +42,6 @@ Development rules
 
         run_testcases --root=.. --builddir=build/mpi --testlist=asterxx --resutest=../resutest
 
-
-    - List of testcases currently in failure :
-
-      .. todo::
-
-        .. code-block:: none
-
-            xxFlow001a   <S>_ERROR
-            xxFourierCombination001a <S>_ERROR
-            xxLinearMechanics001a <S>_ERROR
-            xxModeStatique01a <S>_ERROR
-            xxMultiSteps01a <S>_ERROR
-
     - Currently, these testcases have been partially truncated because of
       unsupported features:
 
@@ -67,6 +54,8 @@ Development rules
 
         - xxFourierCombination001a: ``type(resu)`` is `evol_elas` but only
           `fourier_elas` or `fourier_ther` is expected.
+
+        - xxMultiSteps01a is currently skipped, cf. `issue27123 <http://aster-rex.der.edf.fr/roundup/REX/issue27123>`_.
 
 
 ****************
