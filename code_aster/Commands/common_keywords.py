@@ -57,7 +57,6 @@ def create_solver(solver_keyword):
     glossary = getGlossary()
     solverInt = glossary.getSolver(method)
     renumInt = glossary.getRenumbering(renum)
-    precondInt = glossary.getPreconditioning(precond)
 
     selected_solver = {"MULT_FRONT": MultFrontSolver, "LDLT": LdltSolver,
                        "MUMPS": MumpsSolver, "PETSC": PetscSolver,
@@ -67,6 +66,10 @@ def create_solver(solver_keyword):
         solver = selected_solver.create(renumInt)
     else:
         solver = None
-    solver.setPreconditioning(precondInt)
-    solver.setSolverResidual(resiRela)
+
+    if precond != None:
+        precondInt = glossary.getPreconditioning(precond)
+        solver.setPreconditioning(precondInt)
+    if resiRela != None:
+        solver.setSolverResidual(resiRela)
     return solver
