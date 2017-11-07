@@ -19,21 +19,19 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import FluidStructureInteraction
+from .ExecuteCommand import ExecuteCommand
+from ..Objects import FluidStructureInteraction
 
+class FluidStructureDefinition(ExecuteCommand):
+    """Execute legacy operator DEFI_FLUI_STRU."""
+    command_name = "DEFI_FLUI_STRU"
 
-def DEFI_FLUI_STRU(**curDict):
-    returnFSD = FluidStructureInteraction.create()
-    name = returnFSD.getName()
-    type = returnFSD.getType()
-    syntax = CommandSyntax("DEFI_FLUI_STRU")
+    def create_result(self, keywords):
+        """Create the result.
 
-    syntax.setResult(name, type)
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = FluidStructureInteraction.create()
 
-    syntax.define(curDict)
-    numOp = 143
-    python_execop(numOp)
-    syntax.free()
-    return returnFSD
+DEFI_FLUI_STRU = FluidStructureDefinition.run
