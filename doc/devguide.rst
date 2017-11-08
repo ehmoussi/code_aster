@@ -40,7 +40,7 @@ Development rules
 
       .. code-block:: sh
 
-        run_testcases --root=.. --builddir=build/mpi --testlist=asterxx --resutest=../resutest
+        run_testcases --root=.. --builddir=build/mpi --testlist=asterxx --resutest=../resutest_mpi
 
     - Currently, these testcases have been partially truncated because of
       unsupported features:
