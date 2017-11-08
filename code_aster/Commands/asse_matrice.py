@@ -36,15 +36,5 @@ class AssembleMatrixOperator(ExecuteCommand):
         """
         self._result = AssemblyMatrixDouble.create()
 
-    def check_syntax(self, keywords):
-        """Check the syntax passed to the command. *keywords* will contain
-        default keywords after executing this method.
-
-        Arguments:
-            keywords (dict): Keywords arguments of user's keywords, changed
-                in place.
-        """
-        logger.warn("'check_syntax' is disabled in ASSE_MATRICE!")
-
 
 ASSE_MATRICE = AssembleMatrixOperator.run

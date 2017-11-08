@@ -23,8 +23,6 @@
 :py:mod:`operator` --- Generic operators
 ****************************************
 
-.. warning:: Removed!
-
 The function :py:func:`define_operators` automatically creates executors objects
 (:py:class:`~code_aster.Commands.ExecuteCommand.ExecuteCommand` or
 :py:class:`~code_aster.Commands.ExecuteCommand.ExecuteMacro`) for operators that

@@ -22,7 +22,9 @@
 from ..Objects import ElementaryMatrix
 from .ExecuteCommand import ExecuteCommand
 
+
 class ComputeElementaryMatrix(ExecuteCommand):
+
     """Command that creates evolutive results."""
     command_name = "CALC_MATR_ELEM"
 
@@ -32,27 +34,19 @@ class ComputeElementaryMatrix(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        myOption=keywords["OPTION"]
-        if myOption == "RIGI_MECA"        : myType = "DEPL_R"
-        elif myOption == "RIGI_FLUI_STRU"   : myType = "DEPL_R"
-        elif myOption == "MASS_MECA"        : myType = "DEPL_R"
-        elif myOption == "MASS_FLUI_STRU"   : myType = "DEPL_R"
-        elif myOption == "RIGI_GEOM"        : myType = "DEPL_R"
-        elif myOption == "RIGI_ROTA"        : myType = "DEPL_R"
-        elif myOption == "MECA_GYRO"        : myType = "DEPL_R"
-        elif myOption == "RIGI_GYRO"        : myType = "DEPL_R"
-        elif myOption == "AMOR_MECA"        : myType = "DEPL_R"
-        elif myOption == "IMPE_MECA"        : myType = "DEPL_R"
-        elif myOption == "ONDE_FLUI"        : myType = "DEPL_R"
-        elif myOption == "AMOR_MECA_ABSO"   : myType = "DEPL_R"
-        elif myOption == "RIGI_MECA_HYST"   : myType = "DEPL_C"
-        elif myOption == "RIGI_THER"        : myType = "TEMP_R"
-        elif myOption == "MASS_THER"        : myType = "TEMP_R"
-        elif myOption == "MASS_MECA_DIAG"   : myType = "DEPL_R"
-        elif myOption == "RIGI_ACOU"        : myType = "PRES_C"
-        elif myOption == "MASS_ACOU"        : myType = "PRES_C"
-        elif myOption == "AMOR_ACOU"        : myType = "PRES_C"
+        myOption = keywords["OPTION"]
+        if myOption in ('AMOR_MECA', 'AMOR_MECA_ABSO', 'IMPE_MECA',
+                        'MASS_FLUI_STRU', 'MASS_MECA', 'MASS_MECA_DIAG',
+                        'MECA_GYRO', 'ONDE_FLUI', 'RIGI_FLUI_STRU', 'RIGI_GEOM',
+                        'RIGI_GYRO', 'RIGI_MECA', 'RIGI_ROTA'):
+            myType = "DEPL_R"
+        elif myOption == "RIGI_MECA_HYST":
+            myType = "DEPL_C"
+        elif myOption in ("RIGI_THER", "MASS_THER"):
+            myType = "TEMP_R"
+        elif myOption in ("RIGI_ACOU", "MASS_ACOU", "AMOR_ACOU"):
+            myType = "PRES_C"
 
-        self._result=ElementaryMatrix.create(myType)
+        self._result = ElementaryMatrix.create(myType)
 
 CALC_MATR_ELEM = ComputeElementaryMatrix.run
