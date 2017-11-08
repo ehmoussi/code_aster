@@ -19,8 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from libaster import getGlossary
-from ..Objects import KinematicsLoad
+from ..Objects import getGlossary, KinematicsLoad
 from .ExecuteCommand import ExecuteCommand
 
 
