@@ -38,6 +38,7 @@
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "Loads/ListOfLoads.h"
 #include "Supervis/CommandSyntax.h"
+#include "Utilities/Tools.h"
 #ifdef _HAVE_PETSC4PY
 #if _HAVE_PETSC4PY == 1
 #include <petscmat.h>
@@ -72,7 +73,7 @@ class AssemblyMatrixInstance: public DataStructure
         /** @brief Objet '.CONL' */
         JeveuxVectorDouble            _scaleFactorLagrangian;
         /** @brief ElementaryMatrix sur lesquelles sera construit la matrice */
-        ElementaryMatrixPtr           _elemMatrix;
+        std::vector< ElementaryMatrixPtr > _elemMatrix;
         /** @brief Objet nume_ddl */
         BaseDOFNumberingPtr           _dofNum;
         /** @brief La matrice est elle vide ? */
@@ -199,9 +200,9 @@ class AssemblyMatrixInstance: public DataStructure
          * @brief Methode permettant de definir les matrices elementaires
          * @param currentElemMatrix objet ElementaryMatrix
          */
-        void setElementaryMatrix( const ElementaryMatrixPtr& currentElemMatrix )
+        void appendElementaryMatrix( const ElementaryMatrixPtr& currentElemMatrix )
         {
-            _elemMatrix = currentElemMatrix;
+            _elemMatrix.push_back( currentElemMatrix );
         };
 
         /**
@@ -248,19 +249,25 @@ AssemblyMatrixInstance< ValueType >::AssemblyMatrixInstance( const std::string& 
 template< class ValueType >
 bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
 {
-    if ( ( ! _elemMatrix ) || _elemMatrix->isEmpty() )
-        throw std::runtime_error( "Elementary matrix is empty" );
-    long type = 1;
-    if ( _elemMatrix->getType() == "MATR_ELEM_DEPL_R" )
-    {
-        type = 1;
-        setType( getType() + "_DEPL_R" );
-    }
-    else
-        throw std::runtime_error( "Not yet implemented" );
-
     if ( _dofNum->isEmpty() )
         throw std::runtime_error( "Numbering is empty" );
+
+    if ( _elemMatrix.size() == 0 )
+        throw std::runtime_error( "Elementary matrix is empty" );
+
+    long typscal = 1;
+    VectorString names;
+    std::vector< ElementaryMatrixPtr >::const_iterator elemIt = _elemMatrix.begin();
+    for ( ; elemIt != _elemMatrix.end(); ++elemIt ) {
+        names.push_back( (*elemIt)->getName() );
+        if ( (*elemIt)->getType() == "MATR_ELEM_DEPL_R" ) {
+            typscal = -1;
+        }
+    }
+    if ( typscal < 0 ) {
+        throw std::runtime_error( "Only MATR_ASSE_DEPL_R is currently supported." );
+    }
+    char *tabNames = vectorStringAsFStrArray( names, 8 );
 
     std::string base( "G" );
     std::string blanc( " " );
@@ -268,10 +275,11 @@ bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
     if( _listOfLoads->isEmpty() && _listOfLoads->size() != 0 )
         _listOfLoads->build();
     long nbMatrElem = 1;
-    CALLO_ASMATR( &nbMatrElem, _elemMatrix->getName(), blanc,
-                  _dofNum->getName(), _listOfLoads->getName(),
-                  cumul, base, &type, getName() );
+    CALL_ASMATR( &nbMatrElem, tabNames, blanc.c_str(),
+                 _dofNum->getName().c_str(), _listOfLoads->getName().c_str(),
+                 cumul.c_str(), base.c_str(), &typscal, getName().c_str() );
     _isEmpty = false;
+    FreeStr( tabNames );
 
     return true;
 };

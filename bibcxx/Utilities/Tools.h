@@ -26,7 +26,17 @@
 
 #include <string>
 
+#include "astercxx.h"
+
+
 std::string trim( const std::string& str,
                   const std::string& whitespace = " \t" );
+
+
+/**
+ * @brief vectorStringToFStr Create an array of Fortran strings from a vector of strings.
+ *      The output array must be freed by the caller.
+ */
+char* vectorStringAsFStrArray( const VectorString &vector, const int size );
 
 #endif /* TOOLS_H_ */

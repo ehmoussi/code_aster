@@ -39,7 +39,7 @@ void exportAssemblyMatrixToPython()
         .def( "factorization", &AssemblyMatrixDoubleInstance::factorization )
         .def( "getDOFNumbering", &AssemblyMatrixDoubleInstance::getDOFNumbering )
         .def( "setDOFNumbering", &AssemblyMatrixDoubleInstance::setDOFNumbering )
-        .def( "setElementaryMatrix", &AssemblyMatrixDoubleInstance::setElementaryMatrix )
+        .def( "appendElementaryMatrix", &AssemblyMatrixDoubleInstance::appendElementaryMatrix )
     ;
 
     class_< AssemblyMatrixComplexInstance, AssemblyMatrixComplexPtr,
@@ -52,6 +52,6 @@ void exportAssemblyMatrixToPython()
         .def( "factorization", &AssemblyMatrixComplexInstance::factorization )
         .def( "getDOFNumbering", &AssemblyMatrixComplexInstance::getDOFNumbering )
         .def( "setDOFNumbering", &AssemblyMatrixComplexInstance::setDOFNumbering )
-        .def( "setElementaryMatrix", &AssemblyMatrixComplexInstance::setElementaryMatrix )
+        .def( "appendElementaryMatrix", &AssemblyMatrixComplexInstance::appendElementaryMatrix )
     ;
 };

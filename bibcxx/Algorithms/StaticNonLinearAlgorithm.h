@@ -4,7 +4,7 @@
 /**
  * @file StaticNonLinearAlgorithm.h
  * @brief Fichier entete de la classe StaticNonLinearAlgorithm
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  * @section LICENCE
  *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
  *
@@ -37,7 +37,7 @@
 /**
  * @class StaticNonLinearAlgorithm
  * @brief Un pas de l'algorithme de l'opérateur de mécanique statique nonlinéaire
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  */
 template< class Stepper >
 class StaticNonLinearAlgorithm: public GenericUnitaryAlgorithm< Stepper >
@@ -87,9 +87,9 @@ class StaticNonLinearAlgorithm: public GenericUnitaryAlgorithm< Stepper >
          * @param curStep Iterateur courant issu du Stepper
          */
         void prepareStep( AlgorithmStepperIter& curStep ) throw( AlgoException& );
-        
-        void doPrediction( DiscreteProblemPtr dProblem, BaseLinearSolverPtr linSolv, FieldOnNodesDoublePtr uField ); 
-        
+
+        void doPrediction( DiscreteProblemPtr dProblem, BaseLinearSolverPtr linSolv, FieldOnNodesDoublePtr uField );
+
         void doCorrection( DiscreteProblemPtr _discreteProblem, FieldOnNodesDoublePtr duField, int nIter );
 };
 
@@ -103,54 +103,54 @@ void StaticNonLinearAlgorithm< Stepper >::oneStep() throw( AlgoException& )
 {
  /*
 
-    // Préparation du pas courant 
-    int nIter(0); 
+    // Préparation du pas courant
+    int nIter(0);
     DOFNumberingPtr dofNum1 = _results->getLastDOFNumbering();
-    // Reinit log 
-    //_nonLinearMethod -> cleanLog(); 
+    // Reinit log
+    //_nonLinearMethod -> cleanLog();
     // Linear Solver
    // BaseLinearSolverPtr linSolv(_nonLinearMethod->getBaseLinearSolver());
-    // C'est dans le résultat qu'on trouve le 
-    // champ aux noeuds contenant les déplacements 
+    // C'est dans le résultat qu'on trouve le
+    // champ aux noeuds contenant les déplacements
     FieldOnNodesDoublePtr uField = _results->getEmptyFieldOnNodesDouble( "DEPL", _loadStep );
     // Il est initialisé au déplacement au pas de chargement précédent
     // uField = copy ( _results->getEmptyFieldOnNodesDouble( "DEPL", _lastLoadStep );
     //
     // TODO pour un calcul non linéaire plus compliqué on devra aussi stocker le champ de contraintes
-    // et le champ de variables internes 
-    // => utiliser des objets "state" avec 3 champs 
+    // et le champ de variables internes
+    // => utiliser des objets "state" avec 3 champs
     //
     // On crée un champ aux noeuds de même profil que le champ de déplacement.
     // Il contient l'incrément de déplacement
     // duField = uField->clone()
     // dUField -> zero()
-    FieldOnNodesDoublePtr duField; 
-    // ******************* 
+    FieldOnNodesDoublePtr duField;
+    // *******************
     // Etape de prédiction
-    // ******************* 
+    // *******************
     doPrediction(_discreteProblem, linSolv, duField );
-    // Add current displacement increment 
+    // Add current displacement increment
      uField->addFieldOnNodes( *duField );
-    // and check if it is a satisfactory solution 
+    // and check if it is a satisfactory solution
     ConvergenceState status = _nonLinearMethod->check( _discreteProblem, uField, nIter );
-    // If uField is not satisfactory, proceed to the correction steps 
-    // 
-    
-    while ( status == iterate ) 
+    // If uField is not satisfactory, proceed to the correction steps
+    //
+
+    while ( status == iterate )
         {
-        ++nIter; 
-        // Compute a displacement increment 
-        // ******************* 
+        ++nIter;
+        // Compute a displacement increment
+        // *******************
         // Etape de correction
-        // ******************* 
+        // *******************
         doCorrection(_discreteProblem, duField, nIter );
-        // Add it to the current displacement field 
-        // C'est ici que serait effectuée l'étape de recherche linéaire 
+        // Add it to the current displacement field
+        // C'est ici que serait effectuée l'étape de recherche linéaire
         uField->addFieldOnNodes( *duField );
-        // and check if it is a satisfactory solution 
+        // and check if it is a satisfactory solution
         ConvergenceState status = _nonLinearMethod->check( _discreteProblem, uField, nIter );
         }
-    if ( status == failure ) 
+    if ( status == failure )
         {
         throw std::runtime_error( " Step failed " );
         }
@@ -165,7 +165,7 @@ void StaticNonLinearAlgorithm< Stepper >::doPrediction( DiscreteProblemPtr dProb
     ElementaryMatrixPtr matrElem = _discreteProblem->buildElementaryTangentMatrix( _loadStep );
     // Build assembly matrix
     AssemblyMatrixDoublePtr aMatrix( new AssemblyMatrixDoubleInstance( Temporary ) );
-    aMatrix->setElementaryMatrix( matrElem );
+    aMatrix->appendElementaryMatrix( matrElem );
     aMatrix->setDOFNumbering( dofNum1 );
     aMatrix->setListOfLoads( _listOfLoads );
     aMatrix->setLinearSolver( linSolv );
@@ -206,7 +206,7 @@ void StaticNonLinearAlgorithm< Stepper >::doPrediction( DiscreteProblemPtr dProb
 template< class Stepper >
 void StaticNonLinearAlgorithm< Stepper >::doCorrection( DiscreteProblemPtr _discreteProblem, FieldOnNodesDoublePtr duField, int nIter )
 {
-    std::cout << " Etape de correction : " << nIter << std::endl; 
+    std::cout << " Etape de correction : " << nIter << std::endl;
 }
 
 template< class Stepper >
@@ -214,7 +214,7 @@ void StaticNonLinearAlgorithm< Stepper >::prepareStep( AlgorithmStepperIter& cur
     throw( AlgoException& )
 {
     _loadStep = *curStep;
-    
+
 };
 
 #endif /* STATICNONLINEARALGORITHM_H_ */

@@ -96,7 +96,7 @@ void StaticMechanicalAlgorithm< Stepper >::oneStep() throw( AlgoException& )
 
     // Build assembly matrix
     AssemblyMatrixDoublePtr aMatrix( new AssemblyMatrixDoubleInstance( Temporary ) );
-    aMatrix->setElementaryMatrix( matrElem );
+    aMatrix->appendElementaryMatrix( matrElem );
     aMatrix->setDOFNumbering( dofNum1 );
     aMatrix->setListOfLoads( _listOfLoads );
     aMatrix->build();
