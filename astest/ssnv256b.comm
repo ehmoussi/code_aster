@@ -44,7 +44,7 @@ nb_pas = 500
 nb_arch = 100
 
 # INSTANT DE FIN <= DERNIER INSTANT
-inst_fin = 0.500 # max=1
+inst_fin = 0.100 # max=1
 
 # DERNIER INSTANT
 inst_total = 1
@@ -155,12 +155,12 @@ for i in range (len(COORX)):
 #--------------------------------------------------------------------------------------------------------------- 
 # ATTENTION: LA DISTRIBUTION DE SIYY N'EST PAS DU TOUT HOMOGENE!!! 
 
-# INST1 = 0.45     (INST_TOTAL = 1.00)
+# INST1 = 0.10     (INST_TOTAL = 1.00)
 SIGMA1 = CREA_CHAMP(TYPE_CHAM = 'ELGA_SIEF_R',
                  OPERATION = 'EXTR',
                    RESULTAT  = RESU,
                    NOM_CHAM  = 'SIEF_ELGA',
-                   INST      = 0.45,
+                   INST      = 0.10,
                    )
 
 SIYY1 = SIGMA1.EXTR_COMP('SIYY',['NT4']).valeurs
@@ -171,42 +171,14 @@ SXX12 = CREA_TABLE(LISTE = (_F(PARA='SIYY',LISTE_R = SIYY1[k])))
 TEST_TABLE(TABLE = SXX11,
        NOM_PARA = 'SIYY',
            TYPE_TEST = 'MAX',
-           VALE_CALC= 1493.16312546,
+           VALE_CALC = 1202.77748324,
            #REFERENCE= 'SOURCE_EXTERNE',
            #VALE_REFE= 673.733259364634,
            )
 TEST_TABLE(TABLE = SXX12,
        NOM_PARA = 'SIYY',
            TYPE_TEST = 'MAX',
-           VALE_CALC= 1313.06814522,
-           #REFERENCE= 'SOURCE_EXTERNE',
-           #VALE_REFE= 673.733259364634,
-           )
-
-# INST2 = 0.50     (INST_TOTAL = 1.00)
-SIGMA2 = CREA_CHAMP(TYPE_CHAM = 'ELGA_SIEF_R',
-                 OPERATION = 'EXTR',
-                   RESULTAT  = RESU,
-                   NOM_CHAM  = 'SIEF_ELGA',
-                   INST      = 0.50,
-                   )
-
-SIYY2 = SIGMA2.EXTR_COMP('SIYY',['NT4']).valeurs
-
-SXX21 = CREA_TABLE(LISTE = (_F(PARA='SIYY',LISTE_R = SIYY2[j])))
-SXX22 = CREA_TABLE(LISTE = (_F(PARA='SIYY',LISTE_R = SIYY2[k])))
-
-TEST_TABLE(TABLE = SXX21,
-       NOM_PARA = 'SIYY',
-           TYPE_TEST = 'MAX',
-           VALE_CALC= 0.0,
-           #REFERENCE= 'SOURCE_EXTERNE',
-           #VALE_REFE= 673.733259364634,
-           )
-TEST_TABLE(TABLE = SXX22,
-       NOM_PARA = 'SIYY',
-           TYPE_TEST = 'MAX',
-           VALE_CALC= 1420.39083329,
+           VALE_CALC = 1051.33545226,
            #REFERENCE= 'SOURCE_EXTERNE',
            #VALE_REFE= 673.733259364634,
            )
@@ -217,14 +189,14 @@ TEST_TABLE(TABLE = SXX22,
 #--------------------------------------------------------------------------------------------------------------- 
 
 ###
-### INST1 = 0.45     (INST_TOTAL = 1.00)
+### INST1 = 0.10     (INST_TOTAL = 1.00)
 ###
 
 VI1 = CREA_CHAMP(TYPE_CHAM = 'ELGA_VARI_R',
                OPERATION = 'EXTR',
                  RESULTAT  = RESU,
                  NOM_CHAM  = 'VARI_ELGA',
-                 INST      = 0.45,
+                 INST      = 0.10,
                  )
 
 #   VARIABLE D'ECROUISSAGE
@@ -235,14 +207,14 @@ V112 = CREA_TABLE(LISTE = (_F(PARA='V1',LISTE_R = V11[k])))
 TEST_TABLE(TABLE = V111,
        NOM_PARA = 'V1',
            TYPE_TEST = 'MAX',
-           VALE_CALC= 0.555992976222,
+           VALE_CALC = 0.0674491210842,
            #REFERENCE= 'SOURCE_EXTERNE',
            #VALE_REFE= 673.733259364634,
            )
 TEST_TABLE(TABLE = V112,
        NOM_PARA = 'V1',
            TYPE_TEST = 'MAX',
-           VALE_CALC=0.492046260327,
+           VALE_CALC = 0.0695279435496,
            #REFERENCE= 'SOURCE_EXTERNE',
            #VALE_REFE= 673.733259364634,
            )
@@ -255,65 +227,14 @@ V122 = CREA_TABLE(LISTE = (_F(PARA='V2',LISTE_R = V12[k])))
 TEST_TABLE(TABLE = V121,
        NOM_PARA = 'V2',
            TYPE_TEST = 'MAX',
-           VALE_CALC= 0.0163215414046,
+           VALE_CALC = 0.000329084752038,
            #REFERENCE= 'SOURCE_EXTERNE',
            #VALE_REFE= 673.733259364634,
            )
 TEST_TABLE(TABLE = V122,
        NOM_PARA = 'V2',
            TYPE_TEST = 'MAX',
-           VALE_CALC= 0.00258833995973,
-           #REFERENCE= 'SOURCE_EXTERNE',
-           #VALE_REFE= 673.733259364634,
-           )
-
-###
-### INST1 = 0.50     (INST_TOTAL = 1.00)
-###
-
-VI2 = CREA_CHAMP(TYPE_CHAM = 'ELGA_VARI_R',
-               OPERATION = 'EXTR',
-                 RESULTAT  = RESU,
-                 NOM_CHAM  = 'VARI_ELGA',
-                 INST      = 0.50,
-                 )
-
-#   VARIABLE D'ECROUISSAGE
-V21 = VI2.EXTR_COMP('V1',['NT4']).valeurs
-V211 = CREA_TABLE(LISTE = (_F(PARA='V1',LISTE_R = V21[j])))
-V212 = CREA_TABLE(LISTE = (_F(PARA='V1',LISTE_R = V21[k])))
-
-TEST_TABLE(TABLE = V211,
-       NOM_PARA = 'V1',
-           TYPE_TEST = 'MAX',
-           VALE_CALC= 0.879320835858,
-           #REFERENCE= 'SOURCE_EXTERNE',
-           #VALE_REFE= 673.733259364634,
-           )
-TEST_TABLE(TABLE = V212,
-       NOM_PARA = 'V1',
-           TYPE_TEST = 'MAX',
-           VALE_CALC= 0.607581368479,
-           #REFERENCE= 'SOURCE_EXTERNE',
-           #VALE_REFE= 673.733259364634,
-           )
-
-#  POROSITE
-V22 = VI2.EXTR_COMP('V2',['NT4']).valeurs
-V221 = CREA_TABLE(LISTE = (_F(PARA='V2',LISTE_R = V22[j])))
-V222 = CREA_TABLE(LISTE = (_F(PARA='V2',LISTE_R = V22[k])))
-
-TEST_TABLE(TABLE = V221,
-       NOM_PARA = 'V2',
-           TYPE_TEST = 'MAX',
-           VALE_CALC= 0.255555555556,
-           #REFERENCE= 'SOURCE_EXTERNE',
-           #VALE_REFE= 673.733259364634,
-           )
-TEST_TABLE(TABLE = V222,
-       NOM_PARA = 'V2',
-           TYPE_TEST = 'MAX',
-           VALE_CALC= 0.00534513348004,
+           VALE_CALC = 0.000280744003609,
            #REFERENCE= 'SOURCE_EXTERNE',
            #VALE_REFE= 673.733259364634,
            )
