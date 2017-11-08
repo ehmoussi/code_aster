@@ -101,7 +101,7 @@ test.assertEqual( vectElem.getType(), "VECT_ELEM_DEPL_R" )
 retour = vectElem.assembleVector( numeDDL )
 
 matrAsse = code_aster.AssemblyMatrixDouble.create()
-matrAsse.setElementaryMatrix( matr_elem )
+matrAsse.appendElementaryMatrix( matr_elem )
 matrAsse.setDOFNumbering( numeDDL )
 matrAsse.build()
 

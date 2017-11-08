@@ -260,7 +260,7 @@ bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
     std::vector< ElementaryMatrixPtr >::const_iterator elemIt = _elemMatrix.begin();
     for ( ; elemIt != _elemMatrix.end(); ++elemIt ) {
         names.push_back( (*elemIt)->getName() );
-        if ( (*elemIt)->getType() == "MATR_ELEM_DEPL_R" ) {
+        if ( (*elemIt)->getType() != "MATR_ELEM_DEPL_R" ) {
             typscal = -1;
         }
     }
