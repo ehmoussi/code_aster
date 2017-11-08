@@ -68,7 +68,8 @@ from ..Cata.SyntaxUtils import mixedcopy, remove_none, search_for
 from ..Supervis import CommandSyntax, ExecutionParameter, logger
 from ..Utilities import Singleton, deprecated, import_object
 from ..Utilities.outputs import (command_header, command_result,
-                                 command_separator, command_text, command_time)
+                                 command_separator, command_text, command_time,
+                                 decorate_name)
 
 
 class ExecuteCommand(object):
@@ -375,8 +376,11 @@ class ExecuteMacro(ExecuteCommand):
             logger.info(command_result(self._counter, self.name,
                                        self._result.getName()))
         if self._result_names:
+            names = ["{0} {1}".format(
+                i, decorate_name(self._add_results[i].getName()))
+                for i in self._result_names]
             logger.info(command_result(self._counter, self.name,
-                                       self._result_names))
+                                       names))
         self._print_timer()
 
     def exec_(self, keywords):
@@ -454,6 +458,7 @@ class ExecuteMacro(ExecuteCommand):
 
 
 class CO(object):
+
     """Object that identify an auxiliary result of a Macro-Command."""
     _name = None
 
