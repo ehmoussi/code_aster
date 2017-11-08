@@ -65,7 +65,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call lcesgv(fami, kpg, ksp, neps, typmod, option, imate, lcmfma, lcmfga, &
+    call lcesgv(fami, kpg, ksp, ndim, neps, typmod, option, imate, lcmfma, lcmfga, &
                 epsm, deps, vim, nint(carcri(1)), carcri(3), sigp, &
                 vip, dsidep,codret)
 

@@ -16,9 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine nmgvmb(ndim, nno1, nno2, npg, axi, grand, &
+subroutine nmgvmb(ndim, nno1, nno2, npg, axi, &
                   geoi, vff1, vff2, idfde1, idfde2, &
-                  iw, nddl, neps, b, w, ni2ldc, ddlm)
+                  iw, nddl, neps, b, w, ni2ldc)
 !
     implicit none
 #include "asterf_types.h"
@@ -27,14 +27,13 @@ subroutine nmgvmb(ndim, nno1, nno2, npg, axi, grand, &
 #include "asterfort/r8inir.h"
 #include "blas/dcopy.h"
 #include "blas/daxpy.h"
-    aster_logical,intent(in) :: axi,grand
+    aster_logical,intent(in) :: axi
     integer,intent(in) :: ndim, nno1, nno2, npg, idfde1, idfde2, iw
     real(kind=8),intent(in) :: geoi(ndim,nno1)
     real(kind=8),intent(in) :: vff1(nno1,npg), vff2(nno2,npg)
     integer,intent(out) :: nddl,neps
     real(kind=8),intent(out),allocatable :: b(:,:,:)
     real(kind=8),intent(out),allocatable :: w(:,:),ni2ldc(:,:)
-    real(kind=8),intent(in),optional :: ddlm(nno1*ndim + nno2*2)
 ! ----------------------------------------------------------------------
 !  CALCUL DES ELEMENTS CINEMATIQUES POUR LA MODELISATION GRAD_VARI
 ! ----------------------------------------------------------------------
@@ -58,9 +57,8 @@ subroutine nmgvmb(ndim, nno1, nno2, npg, axi, grand, &
     real(kind=8),parameter :: rac2=sqrt(2.d0), r2=0.5*rac2
     real(kind=8),parameter :: vrac2(6)=[1.d0,1.d0,1.d0,rac2,rac2,rac2]
 ! ----------------------------------------------------------------------
-    integer      :: g, ofs, i, n
-    real(kind=8) :: r, unsurr,w0,wdef
-    real(kind=8) :: geom(ndim,nno1),depl(ndim,nno1),jac(npg)
+    integer      :: g, i, n
+    real(kind=8) :: r, unsurr,w0
     real(kind=8),allocatable:: dff1(:,:), dff2(:,:)
 ! ----------------------------------------------------------------------
 
@@ -69,12 +67,6 @@ subroutine nmgvmb(ndim, nno1, nno2, npg, axi, grand, &
 # define iu2(n,i) nno2*2 + (n-1)*ndim + i
 # define ia(n)    (n-1)*(ndim+2) + ndim + 1
 # define il(n)    (n-1)*(ndim+2) + ndim + 2
-
-!    integer :: iu1, iu2, ia, il, n, i
-!    iu1(n,i) = (n-1)*(ndim+2) + i
-!    iu2(n,i) = nno2*2 + (n-1)*ndim + i
-!    ia(n) = (n-1)*(ndim+2) + ndim + 1
-!    il(n) = (n-1)*(ndim+2) + ndim + 2
 ! ----------------------------------------------------------------------
     
     nddl = nno1*ndim + nno2*2
@@ -82,16 +74,6 @@ subroutine nmgvmb(ndim, nno1, nno2, npg, axi, grand, &
     allocate(b(neps,npg,nddl),w(neps,npg),ni2ldc(neps,npg))
     allocate(dff1(nno1,ndim),dff2(nno2,ndim))
 
-    
-!   GEOMETRIE ACTUALISEE    
-    if (grand) then
-        do i = 1,ndim
-            ofs = (ndim+2)*nno2
-            depl(i,1:nno2)      = ddlm(i:i+(nno2-1)*(ndim+2):ndim+2)
-            depl(i,nno2+1:nno1) = ddlm(ofs+i:nddl-ndim+i:ndim)
-        end do
-        geom = geoi + depl
-    end if
 
 
 !
@@ -105,25 +87,10 @@ subroutine nmgvmb(ndim, nno1, nno2, npg, axi, grand, &
                     iw, vff2(1, g), idfde2, r, w0,&
                     dff2)
                     
-        if (grand) then
-        
-!           Poids des points de Gauss dans la configuration initiale        
-            call dfdmip(ndim, nno1, axi, geoi, g,&
-                        iw, vff1(1, g), idfde1, r, w0,&
-                            dff1)
-                            
-!           Poids des points de Gauss, rayon et derivee des ff1 deformee
-            call dfdmip(ndim, nno1, axi, geom, g,&
-                        iw, vff1(1, g), idfde1, r, wdef,&
-                            dff1)
-            jac(g) = wdef/w0
-        else
-!           Derivee des fonctions de forme no 1, rayon et poids
-            call dfdmip(ndim, nno1, axi, geoi, g,&
-                        iw, vff1(1, g), idfde1, r, w0,&
-                            dff1)
-            jac(g) = 1.d0
-        end if
+!       Derivee des fonctions de forme no 1, rayon et poids
+        call dfdmip(ndim, nno1, axi, geoi, g,&
+                    iw, vff1(1, g), idfde1, r, w0,&
+                        dff1)
         w(:,g) = w0
 
         if (ndim .eq. 2) then
@@ -188,7 +155,7 @@ subroutine nmgvmb(ndim, nno1, nno2, npg, axi, grand, &
 
 ! - AFFECTATION DE LA FONCTION DE TRANSFERT SIGMA NICE --> SIGMA LDC
     do g = 1,npg
-        ni2ldc(1:2*ndim,g) = vrac2(1:2*ndim)*jac(g)
+        ni2ldc(1:2*ndim,g) = vrac2(1:2*ndim)
     end do
     ni2ldc(2*ndim+1:neps,:) = 1.d0
 !

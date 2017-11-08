@@ -162,7 +162,7 @@ subroutine te0508(option, nomte)
 ! -------------------------!
 
     else if (.not.inco .and. .not.grand) then  
-        call nmgvmb(ndim, nno, nnob, npg, axi,ASTER_FALSE,&
+        call nmgvmb(ndim, nno, nnob, npg, axi,&
                     zr(igeom), zr(ivf), zr(ivfb), idfde, idfdeb,&
                     ipoids, nddl, neps, b, w,ni2ldc)
 

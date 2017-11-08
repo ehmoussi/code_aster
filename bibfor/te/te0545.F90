@@ -95,7 +95,9 @@ subroutine te0545(option, nomte)
 !
 
     if (rigi) then
-        call nmtstm(zr(icarcr), imatuu, matsym)
+!         call nmtstm(zr(icarcr), imatuu, matsym)
+        matsym = .false.
+        call jevech('PMATUNS','E',imatuu)
     else
         imatuu = 1
     endif
@@ -161,7 +163,7 @@ subroutine te0545(option, nomte)
 
 
      else if (zk16(icompo+2) (1:5) .eq. 'PETIT') then
-        call nmgvmb(ndim, nno, nnob, npg, axi,.false._1,&
+        call nmgvmb(ndim, nno, nnob, npg, axi,&
                     zr(igeom), zr(ivf), zr(ivfb), idfde, idfdeb,&
                     ipoids, nddl, neps, b, w,&
                     ni2ldc)
@@ -173,7 +175,9 @@ subroutine te0545(option, nomte)
                     zr(ivarim), zr(icontp), zr(ivarip), zr(ivectu), zr(imatuu),&
                     zi(icoret))
 
-        deallocate(b,w,ni2ldc)
+        deallocate(b)
+        deallocate(w)
+        deallocate(ni2ldc)
      endif
 !
 end subroutine

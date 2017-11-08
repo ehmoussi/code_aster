@@ -63,8 +63,8 @@ integer, intent(in) :: ndsde
 ! --------------------------------------------------------------------------------------------------
 !
     codret   = 0
-    call lceigv(fami, kpg, ksp, neps, imate,&
-                epsm, deps, vim, option,&
+    call lceigv(fami, kpg, ksp, ndim, neps, &
+                imate, epsm, deps, vim, option,&
                 sigp, vip, dsidep)
 !
 end subroutine

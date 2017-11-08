@@ -21,16 +21,15 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nmgvmb(ndim, nno1, nno2, npg, axi, grand, &
+    subroutine nmgvmb(ndim, nno1, nno2, npg, axi, &
                   geoi, vff1, vff2, idfde1, idfde2, &
-                  iw, nddl, neps, b, w, ni2ldc, ddlm)
-        aster_logical,intent(in) :: axi,grand
+                  iw, nddl, neps, b, w, ni2ldc)
+        aster_logical,intent(in) :: axi
         integer,intent(in) :: ndim, nno1, nno2, npg, idfde1, idfde2, iw
         real(kind=8),intent(in) :: geoi(ndim,nno1)
         real(kind=8),intent(in) :: vff1(nno1,npg), vff2(nno2,npg)
         integer,intent(out) :: nddl,neps
         real(kind=8),intent(out),allocatable :: b(:,:,:)
         real(kind=8),intent(out),allocatable :: w(:,:),ni2ldc(:,:)
-        real(kind=8),intent(in),optional :: ddlm(nno1*ndim + nno2*2)
     end subroutine nmgvmb
 end interface

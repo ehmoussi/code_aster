@@ -16,8 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lceigv(fami, kpg, ksp, neps, imate,&
-                  epsm, deps, vim, option,&
+subroutine lceigv(fami, kpg, ksp, ndim, neps, &
+                  imate, epsm, deps, vim, option,&
                   sig, vip, dsidep)
     implicit none
 #include "asterf_types.h"
@@ -31,7 +31,7 @@ subroutine lceigv(fami, kpg, ksp, neps, imate,&
 #include "blas/ddot.h"
     character(len=16) :: option
     character(len=*) :: fami
-    integer :: neps, imate, ksp, kpg
+    integer :: ndim, neps, imate, ksp, kpg
     real(kind=8) :: epsm(neps), deps(neps), vim(2)
     real(kind=8) :: sig(neps), vip(2), dsidep(neps, neps)
 ! ----------------------------------------------------------------------
@@ -60,7 +60,7 @@ subroutine lceigv(fami, kpg, ksp, neps, imate,&
 ! ----------------------------------------------------------------------
 ! LOC EDFRC1  COMMON CARACTERISTIQUES DU MATERIAU (AFFECTE DANS EDFRMA)
     aster_logical :: rigi, resi, elas, coup, secant
-    integer :: ndim, ndimsi, k, l, i, j, m, n, t(3, 3), iret, nrac, iok(2)
+    integer :: ndimsi, k, l, i, j, m, n, t(3, 3), iret, nrac, iok(2)
     real(kind=8) :: eps(6), treps, sigel(6), sigma(6), kron(6)
     real(kind=8) :: rac2
     real(kind=8) :: rigmin, told, fd, d, ener
@@ -72,7 +72,7 @@ subroutine lceigv(fami, kpg, ksp, neps, imate,&
     real(kind=8) :: phi, q2, q1, q0, etat, fel, fsat, rac(3)
     real(kind=8) :: coef1, coef2, coef3
     real(kind=8) :: hydrm, hydrp, sechm, sechp, sref
-    real(kind=8) :: r, c, grad(3), ktg(6, 6, 4), apg, lag, valnl(2)
+    real(kind=8) :: r, c, grad(ndim), ktg(6, 6, 4), apg, lag, valnl(2)
     character(len=1) :: poum
     character(len=16) :: nomnl(2)
     parameter  (rigmin = 1.d-5)
@@ -90,7 +90,6 @@ subroutine lceigv(fami, kpg, ksp, neps, imate,&
     resi = (option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL')
     coup = (option(6:9).eq.'COUP')
     if (coup) rigi=.true.
-    ndim = (neps-2)/3
     ndimsi = 2*ndim
     rac2=sqrt(2.d0)
     secant=.false.
@@ -457,7 +456,7 @@ subroutine lceigv(fami, kpg, ksp, neps, imate,&
 !
 !
 99 continue
-    call lcgrad(resi, rigi, sigma, apg, lag, &
+    call lcgrad(resi, rigi, sigma(1:ndimsi), apg, lag, &
                 grad, d, r, c, ktg(1:ndimsi,1:ndimsi,1), &
                 ktg(1:ndimsi,1,2),ktg(1:ndimsi,1,3),ktg(1,1,4),sig, dsidep)
 !
