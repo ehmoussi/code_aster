@@ -28,10 +28,9 @@ subroutine te0508(option, nomte)
 #include "asterfort/jevech.h"
 #include "asterfort/lteatt.h"
 #include "asterfort/ngforc.h"
-#include "asterfort/ngfore.h"
 #include "asterfort/nmgvmb.h"
+#include "asterfort/lggvfc.h"
 #include "asterfort/lgicfc.h"
-!#include "asterfort/lgicfr.h"
 #include "asterfort/teattr.h"
 #include "asterfort/tecach.h"
 #include "asterfort/terefe.h"
@@ -45,7 +44,7 @@ subroutine te0508(option, nomte)
 !                      NOMTE        -->  NOM DU TYPE ELEMENT
 ! ......................................................................
     character(len=8) :: typmod
-    aster_logical :: axi
+    aster_logical :: axi,grand,inco,refe
     integer :: nno, nnob, npg, ndim, nddl, neps,itab(2)
     integer :: iret, nnos, jgano, ipoids, ivf, idfde, ivfb, idfdeb, jganob
     integer :: igeom, icont, ivectu, idepl, icompo
@@ -55,49 +54,53 @@ subroutine te0508(option, nomte)
     real(kind=8),allocatable:: ddl(:)
     
 ! ----------------------------------------------------------------------
-    
-   
-! - INITIALISATION
 
+! Option calculee et nature de l'element fini
     call teattr('S', 'TYPMOD', typmod, iret)
-    axi = typmod.eq.'AXIS'
-!
+    inco  = lteatt('INCO','C5GV')
+    axi   = typmod.eq.'AXIS'
+    refe  = option.eq.'REFE_FORC_NODA'
+
+
+! - Caracteristiques de l'element
     call elrefv(nomte, 'RIGI', ndim, nno, nnob,&
                 nnos, npg, ipoids, ivf, ivfb,&
                 idfde, idfdeb, jgano, jganob)
+    neps = merge(3*ndim+4,3*ndim+2,inco)
 
 
-! - Parametres des options et nbr ddl
+! Parametres de l'option et nbr de ddl
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PCOMPOR', 'L', icompo)
-    if (option.eq.'FORC_NODA') then
-        call jevech('PCONTMR', 'L', icont)
-        call jevech('PDEPLMR', 'L', idepl) 
-    end if
     call tecach('OOO', 'PVECTUR', 'E', iret, nval=2, itab=itab)
     ivectu = itab(1)
     nddl = itab(2)
+    if (.not.refe) then
+        call jevech('PCONTMR', 'L', icont)
+        call jevech('PDEPLMR', 'L', idepl) 
+    else
+        allocate(sref(neps))
+        ! En attendant de lire le deplacement dans l'option REFE_FORC_NODA
+        allocate(ddl(nddl))
+        ddl = 0
+    end if
+
+    grand = zk16(icompo+2)(1:8).eq.'GDEF_LOG'
 
 
-! --------------!
-!   GRAD_INCO   !
-! --------------!
 
-    if (lteatt('INCO','C5GV').and.zk16(icompo+2) (1:8).eq.'GDEF_LOG') then  
+! -------------------------!
+!   GRAD_INCO + GDEF_LOG   !
+! -------------------------!
+
+    if (inco .and. grand) then  
          
-        if (option .eq. 'FORC_NODA') then
-            call lgicfc(ASTER_FALSE,ndim, nno, nnob, npg, nddl, axi, &
-                        zr(igeom),zr(idepl), zr(ivf),zr(ivfb), idfde, idfdeb,&
-                        ipoids,zr(icont),zr(ivectu))
-        
-        else if (option .eq. 'REFE_FORC_NODA') then
+        if (refe) then 
             call terefe('SIGM_REFE', 'MECA_GRADVARI', sigref)
             call terefe('VARI_REFE', 'MECA_GRADVARI', varref)
             call terefe('LAGR_REFE', 'MECA_GRADVARI', lagref)
-            call terefe('EPSI_REFE', 'MECA_INCO', epsref)
+            call terefe('EPSI_REFE', 'MECA_INCO',     epsref)
 
-            neps = 3*ndim+4
-            allocate(sref(neps))
             if (ndim .eq. 2) then
                 sref(1:neps) = [sigref,sigref,sigref,sigref,epsref, &
                               sigref,lagref,varref, 0.d0, 0.d0]
@@ -107,67 +110,95 @@ subroutine te0508(option, nomte)
                               0.d0, 0.d0, 0.d0]
             endif
 
-            ! En attendant que le deplacement soit transmis dans REFE_FORC_NODA
-            allocate(ddl(nddl))
-            ddl = 0
-
-            call lgicfc(ASTER_TRUE,ndim, nno, nnob, npg, nddl, axi, &
+            call lgicfc(refe,ndim, nno, nnob, npg, nddl, axi, &
                         zr(igeom),ddl, zr(ivf),zr(ivfb), idfde, idfdeb,&
                         ipoids,transpose(spread(sref,1,npg)),&
                         zr(ivectu))
-            deallocate(ddl)
 
-            deallocate(sref)
-
+        else
+            call lgicfc(refe,ndim, nno, nnob, npg, nddl, axi, &
+                        zr(igeom),zr(idepl), zr(ivf),zr(ivfb), idfde, idfdeb,&
+                        ipoids,zr(icont),zr(ivectu))
+        
         endif
-        goto 999
-    end if
+
+
+
+! -------------------------!
+!   GRAD_VARI + GDEF_LOG   !
+! -------------------------!
+
+    else if (.not.inco .and. grand) then  
+         
+        if (refe) then
+            call terefe('SIGM_REFE', 'MECA_GRADVARI', sigref)
+            call terefe('VARI_REFE', 'MECA_GRADVARI', varref)
+            call terefe('LAGR_REFE', 'MECA_GRADVARI', lagref)
+
+            if (ndim .eq. 2) then
+                sref(1:neps) = [sigref,sigref,sigref,sigref,lagref, &
+                            varref,0.d0,0.d0]
+            else if (ndim.eq.3) then
+                sref(1:neps) = [sigref,sigref,sigref,sigref,sigref, &
+                            sigref,lagref,varref,0.d0,0.d0,0.d0]
+            endif
+
+            call lggvfc(refe,ndim, nno, nnob, npg, nddl, axi, &
+                        zr(igeom),ddl, zr(ivf),zr(ivfb), idfde, idfdeb,&
+                        ipoids,transpose(spread(sref,1,npg)),&
+                        zr(ivectu))
+
+        else
+            call lggvfc(refe,ndim, nno, nnob, npg, nddl, axi, &
+                        zr(igeom),zr(idepl), zr(ivf),zr(ivfb), idfde, idfdeb,&
+                        ipoids,zr(icont),zr(ivectu))
+       
+        endif
     
-    
-!   GRAD_VARI + HPP  ET/OU  GRAD_VARI + GDEF_LOG
-    if (zk16(icompo+2) (1:5) .eq. 'PETIT' .or. option.eq.'REFE_FORC_NODA') then  ! temporaire
-        call nmgvmb(ndim, nno, nnob, npg, axi,.false._1,&
+
+
+! -------------------------!
+!   GRAD_VARI + PETIT      !
+! -------------------------!
+
+    else if (.not.inco .and. .not.grand) then  
+        call nmgvmb(ndim, nno, nnob, npg, axi,ASTER_FALSE,&
                     zr(igeom), zr(ivf), zr(ivfb), idfde, idfdeb,&
                     ipoids, nddl, neps, b, w,ni2ldc)
 
+        if (refe) then
+            call terefe('SIGM_REFE', 'MECA_GRADVARI', sigref)
+            call terefe('VARI_REFE', 'MECA_GRADVARI', varref)
+            call terefe('LAGR_REFE', 'MECA_GRADVARI', lagref)
+            
+            if (ndim .eq. 2) then
+                sref(1:neps) = [sigref,sigref,sigref,sigref,lagref, &
+                            varref,0.d0,0.d0]
+            else if (ndim.eq.3) then
+                sref(1:neps) = [sigref,sigref,sigref,sigref,sigref, &
+                            sigref,lagref,varref,0.d0,0.d0,0.d0]
+            endif
 
-!   GRAD_VARI + GDEF_LOG 
-    else if (zk16(icompo+2) (1:8).eq.'GDEF_LOG') then
-        call nmgvmb(ndim, nno, nnob, npg, axi,.true._1,&
-                    zr(igeom), zr(ivf), zr(ivfb), idfde, idfdeb,&
-                    ipoids, nddl, neps, b, w,ni2ldc, zr(idepl))
-                    
+            call ngforc(w,abs(b),ni2ldc,transpose(spread(sref(1:neps),1,npg)),zr(ivectu))
+
+        else
+            call ngforc(w, b, ni2ldc, zr(icont), zr(ivectu))
+
+        end if
+
+        deallocate(b,w,ni2ldc)
+
+
     else
-        ASSERT(.false.)
+        ! Combinaison inconnue
+        ASSERT(ASTER_FALSE)
     end if
-! 
 
-    if (option .eq. 'FORC_NODA') then
-        call ngforc(w, b, ni2ldc, zr(icont), zr(ivectu))
-!
-! - OPTION REFE_FORC_NODA
-!
-    else if (option .eq. 'REFE_FORC_NODA') then
 
-!      LECTURE DES COMPOSANTES DE REFERENCE
-        call terefe('SIGM_REFE', 'MECA_GRADVARI', sigref)
-        call terefe('VARI_REFE', 'MECA_GRADVARI', varref)
-        call terefe('LAGR_REFE', 'MECA_GRADVARI', lagref)
-        
-!      AFFECTATION DES CONTRAINTES GENERALISEES DE REFERENCE
-        neps = 3*ndim+2
-        allocate(sref(neps))
-        if (ndim .eq. 2) then
-            sref(1:neps) = [sigref,sigref,sigref,sigref,lagref, &
-                         varref,0.d0,0.d0]
-        else if (ndim.eq.3) then
-            sref(1:neps) = [sigref,sigref,sigref,sigref,sigref, &
-                          sigref,lagref,varref,0.d0,0.d0,0.d0]
-        endif
-        call ngfore(w,b,ni2ldc,sref,zr(ivectu))
+
+    if (refe) then
+        deallocate(ddl)
         deallocate(sref)
-    endif
-    deallocate(b,w,ni2ldc)
-    
-999 continue
+    end if
+
 end subroutine

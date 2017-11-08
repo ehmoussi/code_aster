@@ -44,7 +44,7 @@ nb_pas = 500
 nb_arch = 100
 
 # INSTANT DE FIN <= DERNIER INSTANT
-inst_fin = 0.520 # max=1
+inst_fin = 0.500 # max=1
 
 # DERNIER INSTANT
 inst_total = 1
@@ -183,12 +183,12 @@ TEST_TABLE(TABLE = SXX12,
            #VALE_REFE= 673.733259364634,
            )
 
-# INST2 = 0.52     (INST_TOTAL = 1.00)
+# INST2 = 0.50     (INST_TOTAL = 1.00)
 SIGMA2 = CREA_CHAMP(TYPE_CHAM = 'ELGA_SIEF_R',
                  OPERATION = 'EXTR',
                    RESULTAT  = RESU,
                    NOM_CHAM  = 'SIEF_ELGA',
-                   INST      = 0.52,
+                   INST      = 0.50,
                    )
 
 SIYY2 = SIGMA2.EXTR_COMP('SIYY',['NT4']).valeurs
@@ -268,14 +268,14 @@ TEST_TABLE(TABLE = V122,
            )
 
 ###
-### INST1 = 0.52     (INST_TOTAL = 1.00)
+### INST1 = 0.50     (INST_TOTAL = 1.00)
 ###
 
 VI2 = CREA_CHAMP(TYPE_CHAM = 'ELGA_VARI_R',
                OPERATION = 'EXTR',
                  RESULTAT  = RESU,
                  NOM_CHAM  = 'VARI_ELGA',
-                 INST      = 0.52,
+                 INST      = 0.50,
                  )
 
 #   VARIABLE D'ECROUISSAGE

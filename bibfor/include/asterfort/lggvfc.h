@@ -16,12 +16,14 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-!
-!
 interface
-    subroutine ngfore(w, b, ni2ldc, sref, fref)
-        real(kind=8),intent(in) :: w(:,:), ni2ldc(:,:), b(:,:,:)
-        real(kind=8),intent(in) :: sref(:) 
-        real(kind=8) :: fref(*)
-    end subroutine ngfore
+    subroutine lggvfc(refe,ndim, nno, nnob, npg, nddl, axi, &
+                  geom,ddl, vff, vffb, idff, idffb,&
+                  iw, sief,fint)
+        aster_logical :: refe,axi
+        integer       :: ndim, nno, nnob, npg, nddl, idff, idffb, iw
+        real(kind=8)  :: geom(ndim,nno),ddl(nddl),vff(nno, npg), vffb(nnob, npg)
+        real(kind=8)  :: sief(3*ndim+2,npg)
+        real(kind=8)  :: fint(nddl)
+    end subroutine lggvfc
 end interface
