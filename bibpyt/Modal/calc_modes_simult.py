@@ -18,17 +18,42 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: nicolas.brie at edf.fr
+from code_aster.Commands.ExecuteCommand import ExecuteCommand
+from code_aster.Objects import MechanicalModeContainer
+from Modal.mode_iter_simult import MODE_ITER_SIMULT as MODE_ITER_SIMULT_CATA
 
 
-def calc_modes_simult(self, TYPE_RESU, OPTION, SOLVEUR_MODAL,
-                      SOLVEUR, VERI_MODE, stop_erreur, sturm, INFO, TITRE, **args):
+class ModalCalculationSimult(ExecuteCommand):
+    """Internal (non public) command to call the underlying operator."""
+    command_name = "MODE_ITER_SIMULT"
+    command_cata = MODE_ITER_SIMULT_CATA
+
+    def create_result(self, keywords):
+        """Initialize the result.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        if keywords.get("TYPE_RESU") in ("MODE_FLAMB", "GENERAL"):
+            raise NotImplementedError("Unsupported value: {0}"
+                                      .format(keywords["TYPE_RESU"]))
+        self._result = MechanicalModeContainer.create()
+
+
+MODE_ITER_SIMULT = ModalCalculationSimult.run
+
+
+def calc_modes_simult(self, stop_erreur, sturm, TYPE_RESU, OPTION, INFO, **args):
     """
        Macro-command CALC_MODES, case of the simultaneous iterations method
     """
-
     from code_aster.Cata.Syntax import _F
-    from Modal.mode_iter_simult import MODE_ITER_SIMULT
 
+    args = _F(args)
+    SOLVEUR = args.get("SOLVEUR")
+    SOLVEUR_MODAL = args.get("SOLVEUR_MODAL")
+    VERI_MODE = args.get("VERI_MODE")
+    TITRE = args.get("TITRE")
 
     motcles = {}
     matrices = {}

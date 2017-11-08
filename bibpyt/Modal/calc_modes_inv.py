@@ -20,15 +20,18 @@
 # person_in_charge: nicolas.brie at edf.fr
 
 
-def calc_modes_inv(self, TYPE_RESU, OPTION, SOLVEUR_MODAL,
-                   SOLVEUR, VERI_MODE, stop_erreur, sturm, INFO, TITRE, **args):
+def calc_modes_inv(self, stop_erreur, sturm, TYPE_RESU, OPTION,  INFO, **args):
     """
        Macro-command CALC_MODES, case of the inverse iterations method
     """
-
     from code_aster.Cata.Syntax import _F
     from Modal.mode_iter_inv import MODE_ITER_INV
 
+    args = _F(args)
+    SOLVEUR = args.get("SOLVEUR")
+    SOLVEUR_MODAL = args.get("SOLVEUR_MODAL")
+    VERI_MODE = args.get("VERI_MODE")
+    TITRE = args.get("TITRE")
 
     motcles = {}
     matrices = {}

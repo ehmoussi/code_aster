@@ -36,5 +36,7 @@ class AssembleMatrixOperator(ExecuteCommand):
         """
         self._result = AssemblyMatrixDouble.create()
 
+    def post_exec(self, keywords):
+        self._result._ref = [keywords['MATR_ELEM'], ]
 
 ASSE_MATRICE = AssembleMatrixOperator.run

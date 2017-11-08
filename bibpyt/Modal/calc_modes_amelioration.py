@@ -20,17 +20,20 @@
 # person_in_charge: nicolas.brie at edf.fr
 
 
-def calc_modes_amelioration(self, modes, TYPE_RESU,
-                                  SOLVEUR_MODAL, SOLVEUR, VERI_MODE,
-                                  INFO, TITRE, **args):
+def calc_modes_amelioration(self, modes, TYPE_RESU, INFO, **args):
     """
        Macro-command CALC_MODES, file for improving the quality of the eigenmodes
     """
-
     import aster
     from code_aster.Cata.Syntax import _F
     from Noyau.N_utils import AsType
     from Utilitai.Utmess import UTMESS
+
+    args = _F(args)
+    SOLVEUR = args.get("SOLVEUR")
+    SOLVEUR_MODAL = args.get("SOLVEUR_MODAL")
+    VERI_MODE = args.get("VERI_MODE")
+    TITRE = args.get("TITRE")
 
 
     # import the definitions of the commands to use in the macro-command
@@ -100,13 +103,13 @@ def calc_modes_amelioration(self, modes, TYPE_RESU,
 
 
     ##############################################################################
-    # 2. PERFORM THE IMPROVEMENT OF THE MODES WITH MODE_ITER_INV / OPTION='PROCHE'        
+    # 2. PERFORM THE IMPROVEMENT OF THE MODES WITH MODE_ITER_INV / OPTION='PROCHE'
     DETRUIRE( CONCEPT=_F(NOM = modes),
               INFO=1 )
 
     motcles  = {}
     matrices = {}
-    
+
     # read the input matrices
     if TYPE_RESU == 'DYNAMIQUE':
         type_vp = 'FREQ'
@@ -114,29 +117,29 @@ def calc_modes_amelioration(self, modes, TYPE_RESU,
         matrices['MATR_MASS']   = args['MATR_MASS']
         if args['MATR_AMOR']!=None:
             matrices['MATR_AMOR']= args['MATR_AMOR']
-    
+
     elif TYPE_RESU == 'MODE_FLAMB':
         type_vp = 'CHAR_CRIT'
         matrices['MATR_RIGI']      = args['MATR_RIGI']
         matrices['MATR_RIGI_GEOM'] = args['MATR_RIGI_GEOM']
-    
+
     elif TYPE_RESU == 'GENERAL':
         type_vp = 'CHAR_CRIT'
         matrices['MATR_A'] = args['MATR_A']
         matrices['MATR_B'] = args['MATR_B']
-    
+
     motcles.update(matrices)
-    
+
     #################################################################
-    
+
     motcles_calc_vp = {}
-    
+
     motcles_calc_vp[type_vp] = list_vp
-    
+
     motcles['CALC_'+type_vp] = _F(OPTION = 'PROCHE',
                                   **motcles_calc_vp
                                   )
-    
+
     #################################################################
     # read the keyword SOLVEUR (linear solver)
     solveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)
@@ -148,8 +151,8 @@ def calc_modes_amelioration(self, modes, TYPE_RESU,
         solveur.pop('FREQ')
     motcles['SOLVEUR']=_F(**solveur) # if this line is commented,
                                       # one will use the default keywords for SOLVEUR
-    
-    
+
+
     #################################################################
     # read the keyword VERI_MODE
 #
@@ -171,12 +174,12 @@ def calc_modes_amelioration(self, modes, TYPE_RESU,
     #################################################################
     if TITRE != None:
         motcles['TITRE'] = TITRE
-    
+
     #################################################################
-    
+
     modes=MODE_ITER_INV( TYPE_RESU = TYPE_RESU,
                          INFO      = INFO,
                          **motcles
                         )
-    
+
     return modes

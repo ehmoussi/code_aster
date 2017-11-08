@@ -20,15 +20,10 @@
 # person_in_charge: nicolas.brie at edf.fr
 
 
-def calc_modes_ops(self, TYPE_RESU, OPTION,
-                         SOLVEUR_MODAL, SOLVEUR, VERI_MODE, AMELIORATION,
-                         INFO, TITRE, **args):
+def calc_modes_ops(self, TYPE_RESU, OPTION, AMELIORATION, INFO, **args):
     """
        Macro-command CALC_MODES, main file
     """
-
-    ier=0
-
     import aster
     from code_aster.Cata.Syntax import _F
     from Noyau.N_utils import AsType
@@ -38,7 +33,13 @@ def calc_modes_ops(self, TYPE_RESU, OPTION,
     from Modal.calc_modes_amelioration import calc_modes_amelioration
     from Modal.calc_modes_post import calc_modes_post
     from Utilitai.Utmess import MasquerAlarme, RetablirAlarme
-    
+
+    args = _F(args)
+    SOLVEUR = args.get("SOLVEUR")
+    SOLVEUR_MODAL = args.get("SOLVEUR_MODAL")
+    VERI_MODE = args.get("VERI_MODE")
+    TITRE = args.get("TITRE")
+
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
 
@@ -52,7 +53,7 @@ def calc_modes_ops(self, TYPE_RESU, OPTION,
     sturm     = None
     if (AMELIORATION=='OUI'):
         if OPTION in ('SEPARE', 'AJUSTE', 'PROCHE'):
-          assert(False)   
+          assert(False)
         stop_erreur='NON'
         sturm      ='NON'
         # Warnings from op/op0045.F90 & algeline/vpcntl.F90
@@ -82,19 +83,19 @@ def calc_modes_ops(self, TYPE_RESU, OPTION,
                 l_multi_bandes = True
                 # modes computation over several frequency bands,
                 # with optional parallelization of the bands
-                modes = calc_modes_multi_bandes(self, SOLVEUR_MODAL, SOLVEUR,
-                                                VERI_MODE, stop_erreur, sturm, INFO, TITRE, **args)
+                modes = calc_modes_multi_bandes(self, stop_erreur,
+                                                sturm, INFO, **args)
 
     if not l_multi_bandes:
         if OPTION in ('PLUS_PETITE', 'PLUS_GRANDE', 'CENTRE', 'BANDE', 'TOUT'):
             # call the MODE_ITER_SIMULT command
-            modes = calc_modes_simult(self, TYPE_RESU, OPTION, SOLVEUR_MODAL,
-                                      SOLVEUR, VERI_MODE, stop_erreur, sturm, INFO, TITRE, **args)
+            modes = calc_modes_simult(self, stop_erreur, sturm, TYPE_RESU,
+                                      OPTION, INFO, **args)
 
         elif OPTION in ('SEPARE', 'AJUSTE', 'PROCHE'):
             # call the MODE_ITER_INV command
-            modes = calc_modes_inv(self, TYPE_RESU, OPTION, SOLVEUR_MODAL,
-                                   SOLVEUR, VERI_MODE, stop_erreur, sturm, INFO, TITRE, **args)
+            modes = calc_modes_inv(self, stop_erreur, sturm, TYPE_RESU, OPTION,
+                                   INFO, **args)
 
     if AMELIORATION=='OUI':
         # after a 1st modal computation, achieve a 2nd computation with MODE_ITER_INV
@@ -113,10 +114,7 @@ def calc_modes_ops(self, TYPE_RESU, OPTION,
         RetablirAlarme('ALGELINE5_78')
         RetablirAlarme('ALGELINE6_23')
         RetablirAlarme('ALGELINE6_24')
-        modes = calc_modes_amelioration(self, modes, TYPE_RESU, SOLVEUR_MODAL,
-                                        SOLVEUR, VERI_MODE, INFO, TITRE, **args)
-
-
+        modes = calc_modes_amelioration(self, modes, TYPE_RESU, INFO, **args)
 
     ##################
     # post-traitements
@@ -124,9 +122,7 @@ def calc_modes_ops(self, TYPE_RESU, OPTION,
     if (TYPE_RESU == 'DYNAMIQUE'):
 
         lmatphys = False # logical indicating if the matrices are physical or not (generalized)
-        iret, ibid, nom_matrrigi = aster.dismoi('REF_RIGI_PREM', modes.nom, 'RESU_DYNA', 'F')
-        matrrigi = self.get_concept(nom_matrrigi)
-        if AsType(matrrigi).__name__ == 'matr_asse_depl_r':
+        if args["MATR_RIGI"].getType() == "MATR_ASSE_DEPL_R":
             lmatphys = True
 
         if lmatphys:
@@ -142,5 +138,4 @@ def calc_modes_ops(self, TYPE_RESU, OPTION,
             if (norme_mode != None) or (filtre_mode != None) or (impression != None):
                 modes = calc_modes_post(self, modes, lmatphys, norme_mode, filtre_mode, impression)
 
-
-    return ier
+    return modes

@@ -25,13 +25,17 @@ from Noyau.N_utils import AsType
 from code_aster.Cata.DataStructure import matr_asse_depl_r
 
 
-def calc_modes_multi_bandes( self, SOLVEUR_MODAL, SOLVEUR,
-                                   VERI_MODE, stop_erreur, sturm, INFO, TITRE, **args):
+def calc_modes_multi_bandes( self, stop_erreur, sturm, INFO, **args):
     """
        Macro-command CALC_MODES, case of the simultaneous iterations method
        over several frequency bands, with optional parallelization.
        Can be used only in the case of vibration modes (TYPE_RESU='DYNAMIQUE')
     """
+    args = _F(args)
+    SOLVEUR = args.get("SOLVEUR")
+    SOLVEUR_MODAL = args.get("SOLVEUR_MODAL")
+    VERI_MODE = args.get("VERI_MODE")
+    TITRE = args.get("TITRE")
 
     MATR_RIGI = args['MATR_RIGI']
     MATR_MASS = args['MATR_MASS']
@@ -399,7 +403,7 @@ def calc_modes_multi_bandes( self, SOLVEUR_MODAL, SOLVEUR,
             aster.affiche('MESSAGE', 72 * '-')
     else:
         assert(False)  # Pb parametrage STURM
- 
+
     #-----------------------------------------------------------------------
     #
     # 3b. Concaténation des résultats

@@ -17,21 +17,29 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: mathieu.courtois@edf.fr
+# person_in_charge: mathieu.courtois at edf.fr
 
 """
-This module gives common utilities.
-
-No external import of other :py:mod:`code_aster` packages.
+:py:mod:`injector` --- Methods injection in Boost Objects
+*********************************************************
 """
 
-from .Tester import TestCase
+def injector(boost_class):
+    """Return a class object to inject methods into boost objects.
 
-from .base_utils import (accept_array, array_to_list, force_list, force_tuple,
-                         import_object, is_complex, is_float, is_int, is_str,
-                         objects_from_context, Singleton, value_is_sequence)
-from .compatibility import (compat_listr8, deprecated, remove_keyword,
-                            required, unsupported)
-from .injector import injector
-from .i18n import localization
-from .strfunc import convert, from_unicode, get_encoding, to_unicode
+    Arguments:
+        boost_class (*boost-python class*): Boost-Python class to enrich.
+
+    Returns:
+        class: Injector.
+    """
+    class injector_class(object):
+        class __metaclass__(boost_class.__class__):
+            def __init__(self, name, bases, dict):
+                for b in bases:
+                    if type(b) not in (self, type):
+                        for k, v in dict.items():
+                            setattr(b, k, v)
+                return type.__init__(self, name, bases, dict)
+
+    return injector_class
