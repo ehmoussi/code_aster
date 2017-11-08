@@ -28,9 +28,8 @@ It reflects the common catalog definitions available from
 :mod:`code_aster.Cata.Commons`.
 """
 
-from libaster import getGlossary
-from ..Objects import (MultFrontSolver, LdltSolver, MumpsSolver,
-                       PetscSolver, GcpcSolver)
+from ..Objects import (GcpcSolver, LdltSolver, MultFrontSolver, MumpsSolver,
+                       PetscSolver, getGlossary)
 from ..Utilities import unsupported
 
 

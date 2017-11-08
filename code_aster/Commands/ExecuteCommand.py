@@ -60,11 +60,11 @@ import inspect
 from collections import namedtuple
 
 import aster
-from libaster import ResultNaming
 
 from ..Cata import Commands
 from ..Cata.SyntaxChecker import CheckerError, checkCommandSyntax
 from ..Cata.SyntaxUtils import mixedcopy, remove_none, search_for
+from ..Objects import ResultNaming
 from ..Supervis import CommandSyntax, ExecutionParameter, logger
 from ..Utilities import Singleton, deprecated, import_object
 from ..Utilities.outputs import (command_header, command_result,

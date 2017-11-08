@@ -20,7 +20,6 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import AssemblyMatrixDouble
-from ..Supervis import logger
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -37,6 +36,12 @@ class AssembleMatrixOperator(ExecuteCommand):
         self._result = AssemblyMatrixDouble.create()
 
     def post_exec(self, keywords):
-        self._result._ref = [keywords['MATR_ELEM'], ]
+        """Store references to ElementaryMatrix objects.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords, changed
+                in place.
+        """
+        self._result.appendElementaryMatrix(keywords['MATR_ELEM'])
 
 ASSE_MATRICE = AssembleMatrixOperator.run
