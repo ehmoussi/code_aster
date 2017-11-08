@@ -259,6 +259,11 @@ class ExecuteCommand(object):
     def post_exec(self, keywords):
         """Hook that allows to add post-treatments after the *exec* function.
 
+        .. note:: If the Command executes the *op* fortran subroutine and if
+            the result DataStructure references input in a Jeveux object,
+            pointers on these inputs must be explicitly references into
+            the result.
+
         Arguments:
             keywords (dict): Keywords arguments of user's keywords, changed
                 in place.

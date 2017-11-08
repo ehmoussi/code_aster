@@ -21,6 +21,7 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "aster_utils.h"
 #include "Utilities/Tools.h"
 
 std::string trim( const std::string& str,
@@ -35,3 +36,15 @@ std::string trim( const std::string& str,
 
     return str.substr(strBegin, strRange);
 };
+
+char* vectorStringAsFStrArray( const VectorString &vector, const int size )
+{
+    char * tabFStr = MakeTabFStr( vector.size(), size );
+    VectorString::const_iterator vecIt = vector.begin();
+    int i = 0;
+    for ( ; vecIt != vector.end(); ++vecIt ) {
+        SetTabFStr( tabFStr, i, (char*)vecIt->c_str(), size );
+        ++i;
+    }
+    return tabFStr;
+}
