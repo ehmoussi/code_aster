@@ -36,15 +36,5 @@ class NumberingCreation(ExecuteCommand):
         """
         self._result = DOFNumbering.create()
 
-    def check_syntax(self, keywords):
-        """Check the syntax passed to the command. *keywords* will contain
-        default keywords after executing this method.
-
-        Arguments:
-            keywords (dict): Keywords arguments of user's keywords, changed
-                in place.
-        """
-        logger.warn("'check_syntax' is disabled in NUME_DDL!")
-
 
 NUME_DDL = NumberingCreation.run
