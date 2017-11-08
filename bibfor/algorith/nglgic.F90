@@ -186,8 +186,8 @@ use bloc_fe_module, only: prod_bd, prod_sb, prod_bkb, add_fint, add_matr
     forall (i=1:ndg, n=1:nng) dgm(i,n) = ddlm(xg(i,n))
     forall (i=1:ndq, n=1:nnq) dqm(i,n) = ddlm(xq(i,n))
     forall (i=1:ndu, n=1:nnu) dup(i,n) = dum(i,n) + ddld(xu(i,n))
-    forall (i=1:ndq, n=1:nnq) dgp(i,n) = dgm(i,n) + ddld(xg(i,n))
-    forall (i=1:ndg, n=1:nng) dqp(i,n) = dqm(i,n) + ddld(xq(i,n))
+    forall (i=1:ndg, n=1:nng) dgp(i,n) = dgm(i,n) + ddld(xg(i,n))
+    forall (i=1:ndq, n=1:nnq) dqp(i,n) = dqm(i,n) + ddld(xq(i,n))
 
     
     gauss: do g = 1, npg

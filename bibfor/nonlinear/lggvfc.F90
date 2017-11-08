@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lgicfc(refe,ndim, nno, nnob, npg, nddl, axi, &
+subroutine lggvfc(refe,ndim, nno, nnob, npg, nddl, axi, &
                   geom,ddl, vff, vffb, idff, idffb,&
                   iw, sief,fint)
 
@@ -31,7 +31,7 @@ use bloc_fe_module, only: prod_sb, add_fint
     aster_logical :: refe,axi
     integer       :: ndim, nno, nnob, npg, nddl, idff, idffb, iw
     real(kind=8)  :: geom(ndim,nno),ddl(nddl),vff(nno, npg), vffb(nnob, npg)
-    real(kind=8)  :: sief(3*ndim+4,npg)
+    real(kind=8)  :: sief(3*ndim+2,npg)
     real(kind=8)  :: fint(nddl)
 ! ----------------------------------------------------------------------
 !  CALCUL DES ELEMENTS CINEMATIQUES POUR LA MODELISATION GRAD_VARI_INCO
@@ -57,38 +57,34 @@ use bloc_fe_module, only: prod_sb, add_fint
     real(kind=8), parameter :: vrac2(6) = (/ 1.d0,1.d0,1.d0,sqrt(2.d0),sqrt(2.d0),sqrt(2.d0) /)
 ! ----------------------------------------------------------------------
     integer       :: g,n,i
-    integer       :: nnu,nng,nnq,ndu,ndg,ndq,neu,neg,neq
-    integer       :: xu(ndim,nno),xg(2,nnob),xq(2,nnob)
+    integer       :: nnu,nng,ndu,ndg,neu,neg
+    integer       :: xu(ndim,nno),xg(2,nnob)
     real(kind=8)  :: depl(ndim,nno)
     real(kind=8)  :: dffb(nnob,ndim)
     real(kind=8)  :: r_ini,r_def,dff_ini(nno,ndim),dff_def(nno,ndim),poids_ini,poids_def
-    real(kind=8)  :: bu(2*ndim,ndim,nno),bg(2+ndim,2,nnob),bq(2,2,nnob)
-    real(kind=8)  :: siefu(2*ndim),siefg(2+ndim),siefq(2)
+    real(kind=8)  :: bu(2*ndim,ndim,nno),bg(2+ndim,2,nnob)
+    real(kind=8)  :: siefu(2*ndim),siefg(2+ndim)
     real(kind=8)  :: rbid=0.d0
 
 ! ----------------------------------------------------------------------
 
 !   Tests de coherence
-    ASSERT(nddl.eq.nno*ndim + nnob*4)
+    ASSERT(nddl.eq.nno*ndim + nnob*2)
 
 !   Initialisation
     nnu = nno
     nng = nnob
-    nnq = nnob
     ndu = ndim
     ndg = 2
-    ndq = 2
     neu = 2*ndim
     neg = 2+ndim
-    neq = 2
 
     fint = 0
 
     ! tableaux de reference bloc (depl,inco,grad) -> numero du ddl
-    forall (i=1:ndg,n=1:nng) xg(i,n) = (n-1)*(ndu+ndg+ndq) + ndu + ndq + i
-    forall (i=1:ndq,n=1:nnq) xq(i,n) = (n-1)*(ndu+ndg+ndq) + ndu + i
-    forall (i=1:ndu,n=1:nng) xu(i,n) = (n-1)*(ndu+ndg+ndq) + i
-    forall (i=1:ndu,n=nng+1:nnu) xu(i,n) = (ndu+ndg+ndq)*nng + (n-1-nng)*ndu + i
+    forall (i=1:ndg,n=1:nng) xg(i,n) = (n-1)*(ndu+ndg) + ndu + i
+    forall (i=1:ndu,n=1:nng) xu(i,n) = (n-1)*(ndu+ndg) + i
+    forall (i=1:ndu,n=nng+1:nnu) xu(i,n) = (ndu+ndg)*nng + (n-1-nng)*ndu + i
 
     ! Decompactage du deplacement
     forall (i=1:ndu, n=1:nnu) depl(i,n) = ddl(xu(i,n))
@@ -114,27 +110,19 @@ use bloc_fe_module, only: prod_sb, add_fint
         bg(2,2,:) = vffb(:,g)
         bg(3:neg,1,:) = transpose(dffb)
 
-        ! Matrice BQ (geometrie initiale)
-        bq = 0
-        bq(1,1,:) = vffb(:,g)
-        bq(2,2,:) = vffb(:,g)
-
         ! Extraction des blocs de contraintes generalisees (dont contrainte mecanique de Cauchy)
         siefu = sief(1:neu,g)*vrac2(1:neu)
-        siefq = sief(neu+1:neu+neq,g)
-        siefg = sief(neu+neq+1:neu+neq+neg,g)
+        siefg = sief(neu+1:neu+neg,g)
 
         ! Matrices corrigees si REFE_FORC_NODA
         if (refe) then
             bu = abs(bu)
             bg = abs(bg)
-            bq = abs(bq)
         end if
 
         ! Calcul des contributions aux forces interieures
         call add_fint(fint,xu,poids_def*prod_sb(siefu,bu))
         call add_fint(fint,xg,poids_ini*prod_sb(siefg,bg))
-        call add_fint(fint,xq,poids_ini*prod_sb(siefq,bq))
 
 
     end do gauss

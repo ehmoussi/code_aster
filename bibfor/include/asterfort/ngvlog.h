@@ -19,43 +19,24 @@
 ! aslint: disable=W1504
 
 interface
-    subroutine ngvlog(fami,option, typmod, ndim, nno,nnob,neps,&
-                      npg, nddl, iw, vff,vffb, idff,idffb,&
-                      geomi, compor, mate, lgpg,&
-                      crit, angmas, instm, instp, matsym,&
-                      ddlm, ddld, sigmg, vim, sigpg,&
-                      vipout, fint,matr, codret)
-        character(len=*) :: fami              
-        character(len=16) :: option
-        character(len=8) :: typmod(*)
-        integer :: ndim     
-        integer :: nno
-        integer :: nnob
-        integer :: neps        
-        integer :: npg
-        integer :: nddl
-        integer :: iw
-        real(kind=8) :: vff(nno, npg)
-        real(kind=8) :: vffb(nnob, npg)      
-        integer :: idff 
-        integer :: idffb
-        real(kind=8) :: geomi(ndim,nno)
-        character(len=16) :: compor(*)
-        integer :: mate
-        integer :: lgpg
-        real(kind=8) :: crit(*)
-        real(kind=8) :: angmas(3)
-        real(kind=8) :: instm
-        real(kind=8) :: instp
-        aster_logical :: matsym
-        real(kind=8) :: ddlm(nddl)
-        real(kind=8) :: ddld(nddl)
-        real(kind=8) :: sigmg(neps,npg)
-        real(kind=8) :: vim(lgpg, npg)
-        real(kind=8) :: sigpg(neps,npg)
-        real(kind=8) :: vipout(lgpg, npg)
-        real(kind=8) :: fint(nddl)
-        real(kind=8) :: matr(nddl, nddl)
-        integer :: codret
+    subroutine ngvlog(fami, option, typmod, ndim, nno, &
+                    nnob,npg, nddl, iw, vff, &
+                    vffb, idff,idffb,geomi, compor, &
+                    mate, lgpg,crit, angmas, instm, &
+                    instp, matsym,ddlm, ddld, siefm, &
+                    vim, siefp,vip, fint, matr, &
+                    codret)
+        aster_logical,intent(in)    :: matsym
+        character(len=8),intent(in) :: typmod(*)
+        character(len=*),intent(in) :: fami
+        character(len=16),intent(in):: option, compor(*)
+        integer,intent(in)          :: ndim,nno,nnob,npg,nddl,lgpg
+        integer,intent(in)          :: mate,iw,idff,idffb
+        real(kind=8),intent(in)     :: geomi(ndim,nno), crit(*), instm, instp
+        real(kind=8),intent(in)     :: vff(nno, npg),vffb(nnob, npg)
+        real(kind=8),intent(in)     :: angmas(3), ddlm(nddl), ddld(nddl), siefm(3*ndim+2, npg)
+        real(kind=8),intent(in)     :: vim(lgpg, npg)
+        real(kind=8),intent(out)    :: fint(nddl),matr(nddl,nddl),siefp(3*ndim+2, npg),vip(lgpg,npg)
+        integer,intent(out)         :: codret
     end subroutine ngvlog
 end interface

@@ -96,10 +96,7 @@ subroutine te0545(option, nomte)
 
     if (rigi) then
         call nmtstm(zr(icarcr), imatuu, matsym)
-!         call jevech('PMATUNS', 'E', imatuu)
-!         matsym = .false.
     else
-!         matsym = .false.
         imatuu = 1
     endif
 !
@@ -152,8 +149,7 @@ subroutine te0545(option, nomte)
 
 
         else
-            neps = 3*ndim +2
-            call ngvlog('RIGI', option, typmod, ndim, nno,nnob,neps,&
+            call ngvlog('RIGI', option, typmod, ndim, nno,nnob,&
                    npg,nddl, ipoids, zr(ivf), zr(ivfb),idfde,idfdeb,&
                    zr(igeom),zk16(icompo), zi(imate), lgpg,&
                    zr(icarcr), angmas, zr(iinstm), zr(iinstp), matsym,&
