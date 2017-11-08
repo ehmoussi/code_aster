@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lcesgv(fami, kpg, ksp, neps, typmod,&
+subroutine lcesgv(fami, kpg, ksp, ndim, neps, typmod,&
                   option, mat, lccrma, lcesga, epsm,&
                   deps, vim, itemax, precvg, sig,&
                   vip, dsidep, iret)
@@ -51,7 +51,7 @@ subroutine lcesgv(fami, kpg, ksp, neps, typmod,&
     character(len=8) :: typmod(*)
     character(len=16) :: option
     character(len=*) :: fami
-    integer :: neps, mat, iret, kpg, ksp, itemax
+    integer :: ndim, neps, mat, iret, kpg, ksp, itemax
     real(kind=8) :: epsm(neps), deps(neps), vim(*), precvg
     real(kind=8) :: vip(*), sig(neps), dsidep(neps, neps)
 ! --------------------------------------------------------------------------------------------------
@@ -81,8 +81,8 @@ subroutine lcesgv(fami, kpg, ksp, neps, typmod,&
     real(kind=8), dimension(6), parameter :: kr = (/1.d0, 1.d0, 1.d0, 0.d0, 0.d0, 0.d0/)
 ! --------------------------------------------------------------------------------------------------
     aster_logical :: cplan, rigi, resi, elas
-    integer :: ndim, ndimsi, ij, kl, etat
-    real(kind=8) :: phi, lag, apg, grad(3)
+    integer :: ndimsi, ij, kl, etat
+    real(kind=8) :: phi, lag, apg, grad(ndim)
     real(kind=8) :: coplan, cor33, vplan(6), eps(6), sigel(6), treps
     real(kind=8) :: sigma(6), a, drda, drdae, drdas, gel, gsat, ktg(6, 6, 4)
     real(kind=8) :: ra, fd, d2rda2, dgda, gameps, dgamde(6), coefg
@@ -109,7 +109,6 @@ subroutine lcesgv(fami, kpg, ksp, neps, typmod,&
     elas = option(11:14).eq.'ELAS'
     rigi = option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL'
     resi = option(1:4).eq.'FULL' .or. option(1:4).eq.'RAPH'
-    ndim = (neps-2)/3
     eps(5) = 0
     eps(6) = 0
     ndimsi = 2*ndim
@@ -322,7 +321,7 @@ subroutine lcesgv(fami, kpg, ksp, neps, typmod,&
 ! -- PRISE EN CHARGE DES TERMES DU LAGRANGIEN AUGMENTE
 !
 800 continue
-    call lcgrad(resi, rigi, sigma, apg, lag, &
+    call lcgrad(resi, rigi, sigma(1:ndimsi), apg, lag, &
                 grad, a, pr, pc, ktg(1:ndimsi,1:ndimsi,1), &
                 ktg(1:ndimsi,1,2),ktg(1:ndimsi,1,3),ktg(1,1,4),sig, dsidep)
 !

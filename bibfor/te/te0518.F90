@@ -60,7 +60,7 @@ subroutine te0518(option, nomte)
 !
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PDEPLMR', 'L', iddlm)
-    call nmgvmb(ndim, nno, nnob, npg, axi,.false._1,&
+    call nmgvmb(ndim, nno, nnob, npg, axi,&
                 zr(igeom),zr(ivf), zr(ivfb), idfde, idfdeb,&
                 ipoids, nddl, neps, b, w, ni2ldc)
                 

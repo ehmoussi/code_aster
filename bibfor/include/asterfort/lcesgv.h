@@ -22,7 +22,7 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine lcesgv(fami, kpg, ksp, neps, typmod, option, mat, lccrma, lcesga, epsm,&
+    subroutine lcesgv(fami, kpg, ksp, ndim, neps, typmod, option, mat, lccrma, lcesga, epsm,&
                       deps, vim, itemax, precvg, sig, &
                       vip, dsidep, iret)
         interface
@@ -43,7 +43,7 @@ interface
         character(len=8) :: typmod(*)
         character(len=16) :: option
         character(len=*) :: fami
-        integer :: neps, mat, iret, kpg, ksp, itemax
+        integer :: ndim, neps, mat, iret, kpg, ksp, itemax
         real(kind=8) :: epsm(neps), deps(neps), vim(*), precvg
         real(kind=8) :: vip(*), sig(neps), dsidep(neps, neps)
     end subroutine lcesgv
