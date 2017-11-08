@@ -25,10 +25,10 @@
 
 from libaster import AssemblyMatrixDouble
 
-from ..Utilities import deprecated, import_object, injector
-
+from ..Utilities import injector
 
 _orig_getType = AssemblyMatrixDouble.getType
+
 
 class ExtendedAssemblyMatrixDouble(injector(AssemblyMatrixDouble),
                                    AssemblyMatrixDouble):
@@ -46,7 +46,7 @@ class ExtendedAssemblyMatrixDouble(injector(AssemblyMatrixDouble),
         typ = _orig_getType(self).replace("_DEPL_R_DEPL_R", "_DEPL_R")
         return typ
 
-    def EXTR_MATR(self, sparse=False) :
+    def EXTR_MATR(self, sparse=False):
         """Retourne les valeurs de la matrice dans un format numpy
         Si sparse=True, la valeur de retour est un triplet de numpy.array.
         Attributs retourne si sparse=False:
@@ -60,17 +60,18 @@ class ExtendedAssemblyMatrixDouble(injector(AssemblyMatrixDouble),
         import numpy as NP
         from SD.sd_stoc_morse import sd_stoc_morse
         if not self.accessible():
-            raise Accas.AsException("Erreur dans matr_asse.EXTR_MATR en PAR_LOT='OUI'")
+            raise Accas.AsException(
+                "Erreur dans matr_asse.EXTR_MATR en PAR_LOT='OUI'")
         refa = NP.array(self.sdj.REFA.get())
         ma = refa[0]
         nu = refa[1]
-        smos = sd_stoc_morse(nu[:14]+'.SMOS')
+        smos = sd_stoc_morse(nu[:14] + '.SMOS')
         valm = self.sdj.VALM.get()
         smhc = smos.SMHC.get()
         smdi = smos.SMDI.get()
         sym = len(valm) == 1
         dim = len(smdi)
-        nnz = smdi[dim-1]
+        nnz = smdi[dim - 1]
         triang_sup = NP.array(valm[1])
         if sym:
             triang_inf = triang_sup
@@ -78,22 +79,25 @@ class ExtendedAssemblyMatrixDouble(injector(AssemblyMatrixDouble),
             triang_inf = NP.array(valm[2])
         if type(valm[1][0]) == complex:
             dtype = complex
-        else :
+        else:
             dtype = float
 
-        if sparse :
-            smhc = NP.array(smhc)-1
-            smdi = NP.array(smdi)-1
-            class SparseMatrixIterator :
-                """classe d'itération pour la liste de la colonne"""
-                def __init__(self) :
-                    self.jcol=0
-                    self.kterm=0
+        if sparse:
+            smhc = NP.array(smhc) - 1
+            smdi = NP.array(smdi) - 1
 
-                def __iter__(self) :
+            class SparseMatrixIterator:
+
+                """classe d'itération pour la liste de la colonne"""
+
+                def __init__(self):
+                    self.jcol = 0
+                    self.kterm = 0
+
+                def __iter__(self):
                     return self
 
-                def next(self) :
+                def next(self):
                     if self.kterm == 0:
                         self.kterm += 1
                         return self.jcol
@@ -114,17 +118,17 @@ class ExtendedAssemblyMatrixDouble(injector(AssemblyMatrixDouble),
             smhc_inf = NP.delete(smhc_inf, indices_to_filter)
             triang_inf = NP.delete(triang_inf, indices_to_filter)
             # joindre les listes
-            lignes = NP.concatenate((cols,smdi_inf))
-            colonnes = NP.concatenate((smhc,smhc_inf))
+            lignes = NP.concatenate((cols, smdi_inf))
+            colonnes = NP.concatenate((smhc, smhc_inf))
             valeurs = NP.concatenate((triang_sup, triang_inf))
             return valeurs, lignes, colonnes, dim
-        else :
+        else:
             valeur = NP.zeros([dim, dim], dtype=dtype)
             jcol = 1
-            for kterm in xrange(1,nnz+1):
-                ilig=smhc[kterm-1]
-                if smdi[jcol-1] < kterm:
+            for kterm in xrange(1, nnz + 1):
+                ilig = smhc[kterm - 1]
+                if smdi[jcol - 1] < kterm:
                     jcol += 1
-                valeur[jcol-1,ilig-1] = triang_inf[kterm-1]
-                valeur[ilig-1,jcol-1] = triang_sup[kterm-1]
+                valeur[jcol - 1, ilig - 1] = triang_inf[kterm - 1]
+                valeur[ilig - 1, jcol - 1] = triang_sup[kterm - 1]
             return valeur

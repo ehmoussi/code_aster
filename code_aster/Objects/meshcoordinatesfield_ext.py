@@ -25,23 +25,12 @@
 
 from libaster import MeshCoordinatesField
 
-from ..Utilities import deprecated, import_object
+from ..Utilities import injector
 from .fieldonnodes_ext import post_comp_cham_no
 
 
-class injector(object):
-
-    class __metaclass__(MeshCoordinatesField.__class__):
-
-        def __init__(self, name, bases, dict):
-            for b in bases:
-                if type(b) not in (self, type):
-                    for k, v in dict.items():
-                        setattr(b, k, v)
-            return type.__init__(self, name, bases, dict)
-
-
-class ExtendedMeshCoordinatesField(injector, MeshCoordinatesField):
+class ExtendedMeshCoordinatesField(injector(MeshCoordinatesField),
+                                   MeshCoordinatesField):
     cata_sdj = "SD.sd_champ.sd_cham_no_class"
 
     def EXTR_COMP(self, comp=' ', lgno=[], topo=0):
