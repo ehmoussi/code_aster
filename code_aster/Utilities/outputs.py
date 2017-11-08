@@ -94,7 +94,7 @@ class CommandRepresentation(object):
         """
         self._newline()
         if result:
-            self._curline.extend([self.decorate_name(result), " = "])
+            self._curline.extend([decorate_name(result), " = "])
         self._curline.extend([name, "("])
         self._add_indent()
         self.repr_keywords(keywords)
@@ -166,7 +166,7 @@ class CommandRepresentation(object):
         if isinstance(value, basestring):
             self._curline.append("{0!r}".format(convert(value)))
         elif hasattr(value, "getName"):
-            self._curline.append(self.decorate_name(value.getName()))
+            self._curline.append(decorate_name(value.getName()))
         elif isinstance(value, numpy.ndarray):
             self._curline.append("{0!r}".format(value))
         elif isinstance(value, (list, tuple)):
@@ -211,14 +211,13 @@ class CommandRepresentation(object):
         text = text.replace(cls.interrupt_fact, "...")
         return text
 
-    @classmethod
-    def decorate_name(cls, text):
-        """Decorate a DataStructure's name.
+def decorate_name(name):
+    """Decorate a DataStructure's name.
 
-        Arguments:
-            text (str): Name of the object.
-        """
-        return convert("'<{0}>'".format(text.strip()))
+    Arguments:
+        name (str): Name of the object.
+    """
+    return convert("'<{0}>'".format(name.strip()))
 
 
 def command_separator():
@@ -253,10 +252,10 @@ def command_result(counter, command_name, result_name):
         str: String representation.
     """
     if isinstance(result_name, str):
-        show_name = CommandRepresentation.decorate_name(result_name)
+        show_name = decorate_name(result_name)
     else:
         show_name = str(result_name)
-    return "Result of command #{0:0>4} ({1}): {2}".format(
+    return "\nResult of command #{0:0>4} ({1}): {2}".format(
         counter, command_name, show_name)
 
 def command_text(command_name, keywords, result="", limit=0):
