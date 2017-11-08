@@ -24,22 +24,14 @@
 """
 
 from libaster import AssemblyMatrixDouble
-from ..Utilities import deprecated, import_object
 
-
-class injector(object):
-    class __metaclass__(AssemblyMatrixDouble.__class__):
-        def __init__(self, name, bases, dict):
-            for b in bases:
-                if type(b) not in (self, type):
-                    for k, v in dict.items():
-                        setattr(b, k, v)
-            return type.__init__(self, name, bases, dict)
+from ..Utilities import deprecated, import_object, injector
 
 
 _orig_getType = AssemblyMatrixDouble.getType
 
-class ExtendedAssemblyMatrixDouble(injector, AssemblyMatrixDouble):
+class ExtendedAssemblyMatrixDouble(injector(AssemblyMatrixDouble),
+                                   AssemblyMatrixDouble):
     cata_sdj = "SD.sd_matr_asse.sd_matr_asse"
 
     def getType(self):
