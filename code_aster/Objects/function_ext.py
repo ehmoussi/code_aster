@@ -28,20 +28,10 @@ import numpy as np
 import aster
 from libaster import Function, FunctionComplex
 
-from ..Utilities import accept_array
+from ..Utilities import accept_array, injector
 
 
-class injector(object):
-    class __metaclass__(Function.__class__):
-        def __init__(self, name, bases, dict):
-            for b in bases:
-                if type(b) not in (self, type):
-                    for k, v in dict.items():
-                        setattr(b, k, v)
-            return type.__init__(self, name, bases, dict)
-
-
-class ExtendedFunction(injector, Function):
+class ExtendedFunction(injector(Function), Function):
     cata_sdj = "SD.sd_fonction.sd_fonction_aster"
 
     setValues = accept_array(Function.setValues)
@@ -141,17 +131,7 @@ class ExtendedFunction(injector, Function):
 
 
 
-class injectorC(object):
-    class __metaclass__(FunctionComplex.__class__):
-        def __init__(self, name, bases, dict):
-            for b in bases:
-                if type(b) not in (self, type):
-                    for k, v in dict.items():
-                        setattr(b, k, v)
-            return type.__init__(self, name, bases, dict)
-
-
-class ExtendedFunctionComplex(injectorC, FunctionComplex):
+class ExtendedFunctionComplex(injector(FunctionComplex), FunctionComplex):
     cata_sdj = "SD.sd_fonction.sd_fonction_aster"
 
     setValues = accept_array(FunctionComplex.setValues)

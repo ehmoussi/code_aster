@@ -23,21 +23,13 @@
 **********************************************
 """
 
-from libaster import Table
 import aster
+from libaster import Table
+
+from ..Utilities import injector
 
 
-class injector(object):
-    class __metaclass__(Table.__class__):
-        def __init__(self, name, bases, dict):
-            for b in bases:
-                if type(b) not in (self, type):
-                    for k, v in dict.items():
-                        setattr(b, k, v)
-            return type.__init__(self, name, bases, dict)
-
-
-class ExtendedTable(injector, Table):
+class ExtendedTable(injector(Table), Table):
     cata_sdj = "SD.sd_table.sd_table"
 
     def __getitem__(self, key):

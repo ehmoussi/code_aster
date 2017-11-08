@@ -30,9 +30,7 @@ import types
 import traceback
 import os.path as osp
 
-from libaster import ResultNaming
-
-from ..Objects import DataStructure
+from ..Objects import DataStructure, ResultNaming
 from ..Supervis.logger import logger
 
 

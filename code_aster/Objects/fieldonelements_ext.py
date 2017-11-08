@@ -24,22 +24,11 @@
 """
 
 from libaster import FieldOnElementsDouble
-from ..Utilities import deprecated, import_object
+from ..Utilities import injector
 
 
-class injector(object):
-
-    class __metaclass__(FieldOnElementsDouble.__class__):
-
-        def __init__(self, name, bases, dict):
-            for b in bases:
-                if type(b) not in (self, type):
-                    for k, v in dict.items():
-                        setattr(b, k, v)
-            return type.__init__(self, name, bases, dict)
-
-
-class ExtendedFieldOnElementsDouble(injector, FieldOnElementsDouble):
+class ExtendedFieldOnElementsDouble(injector(FieldOnElementsDouble),
+                                    FieldOnElementsDouble):
     cata_sdj = "SD.sd_champ.sd_cham_elem_class"
 
     def EXTR_COMP(self, comp, lgma=[], topo=0):

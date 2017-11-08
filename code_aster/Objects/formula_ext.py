@@ -25,20 +25,10 @@
 
 from libaster import Formula
 
-from ..Utilities import deprecated, force_list
+from ..Utilities import deprecated, force_list, injector
 
 
-class injector(object):
-    class __metaclass__(Formula.__class__):
-        def __init__(self, name, bases, dict):
-            for b in bases:
-                if type(b) not in (self, type):
-                    for k, v in dict.items():
-                        setattr(b, k, v)
-            return type.__init__(self, name, bases, dict)
-
-
-class ExtendedFormula(injector, Formula):
+class ExtendedFormula(injector(Formula), Formula):
     cata_sdj = "SD.sd_fonction.sd_formule"
 
     def __call__(self, *val):

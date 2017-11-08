@@ -23,24 +23,11 @@
 ****************************************************************
 """
 
-import numpy as NP
-
 from libaster import TimeStepManager
-import aster
 
-from ..Utilities import accept_array
-
-
-class injector(object):
-    class __metaclass__(TimeStepManager.__class__):
-        def __init__(self, name, bases, dict):
-            for b in bases:
-                if type(b) not in (self, type):
-                    for k, v in dict.items():
-                        setattr(b, k, v)
-            return type.__init__(self, name, bases, dict)
+from ..Utilities import accept_array, injector
 
 
-class ExtendedTimeStepManager(injector, TimeStepManager):
+class ExtendedTimeStepManager(injector(TimeStepManager), TimeStepManager):
 
     setTimeList = accept_array(TimeStepManager.setTimeList)

@@ -25,20 +25,10 @@
 
 
 from libaster import DataStructure
-from ..Utilities import deprecated, import_object
+from ..Utilities import deprecated, import_object, injector
 
 
-class injector(object):
-    class __metaclass__(DataStructure.__class__):
-        def __init__(self, name, bases, dict):
-            for b in bases:
-                if issubclass(b, DataStructure):
-                    for k, v in dict.items():
-                        setattr(b, k, v)
-            return type.__init__(self, name, bases, dict)
-
-
-class ExtendedDataStructure(injector, DataStructure):
+class ExtendedDataStructure(injector(DataStructure), DataStructure):
     """This class defines the base class of the DataStructures.
     """
     cata_sdj = None
