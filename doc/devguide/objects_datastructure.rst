@@ -56,6 +56,15 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.BaseFunction` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.BaseFunction
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.BaseLinearSolver` object
 ================================================================================
 
@@ -272,6 +281,15 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.Formula` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.Formula
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.FourierCombination` object
 ================================================================================
 
@@ -281,10 +299,28 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.FullDynamicResultsContainer` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.FullDynamicResultsContainer
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.Function` object
 ================================================================================
 
 .. autoclass:: code_aster.Objects.Function
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.FunctionComplex` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.FunctionComplex
    :show-inheritance:
    :members:
 

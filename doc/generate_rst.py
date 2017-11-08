@@ -22,6 +22,9 @@ from glob import glob
 import os
 import os.path as osp
 
+# Objects depending on conditional build
+IN_CONDITIONAL_BUILD = ["ParallelMechanicalLoad", ]
+
 automodule_block = \
 """.. automodule:: {0}
    :show-inheritance:
@@ -106,8 +109,8 @@ def all_objects(destdir):
                 found = True
                 # print "Found:", name ,">>>", subtyp
                 break
-        if not found:
-            raise KeyError("Not found: {0}".format(obj.mro()))
+        if not found and name not in IN_CONDITIONAL_BUILD:
+            raise KeyError("Boost class not found: {0}".format(obj.mro()))
 
     dicttext = OrderedDict()
     for subtyp, objs in dictobj.items():
@@ -164,6 +167,7 @@ Documentation of all other types.
 
 
 def main():
+    default_dest = osp.join(osp.dirname(__file__), "devguide")
     parser = argparse.ArgumentParser(
         description=__doc__,
         epilog = EPILOG,
@@ -171,6 +175,7 @@ def main():
     parser.add_argument('--objects', action='store_true',
                         help='for C++ only objects (needs to import libaster)')
     parser.add_argument('-d', '--destdir', action='store', metavar='DIR',
+                        default=default_dest,
                         help='directory where `rst` files will be written')
     parser.add_argument('file', metavar='FILE', nargs='*',
                         help='file to analyse')
