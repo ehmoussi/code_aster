@@ -100,14 +100,14 @@ class Pickler(object):
                 objects.append(obj)
         except EOFError:
             # return management objects from the end of the end
-            lastId = objects.pop()
+            lastId = int(objects.pop(), 16)
             objList = objects.pop()
         pick.close()
         assert len(objects) == len(objList), (objects, objList)
         for name, obj in zip(objList, objects):
             self._ctxt[name] = obj
-        # raise NotImplementedError("resultNaming.initCounter")
-        # resultNaming.initCounter(lastId)
+        # restore the objects counter
+        ResultNaming.initCounter(lastId)
 
 
 def _filteringContext(context):
@@ -117,9 +117,9 @@ def _filteringContext(context):
     - ..."""
     ctxt = {}
     for name, obj in context.items():
-        if (name in ('code_aster', ) or name.startswith('__') or
-            type(obj) in (types.ModuleType, types.ClassType, types.FunctionType)
-            or issubclass(type(obj), types.TypeType)):
+        if name in ('code_aster', ) or name.startswith('__'):
+            continue
+        if type(obj) in (types.ModuleType, types.ClassType, types.MethodType):
             continue
         ctxt[name] = obj
     return ctxt

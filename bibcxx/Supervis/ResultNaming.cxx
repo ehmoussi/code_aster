@@ -26,7 +26,12 @@
 
 #include "ResultNaming.h"
 
-int ResultNaming::numberOfObjects = 0;
+long ResultNaming::numberOfObjects = 0;
+
+void ResultNaming::initCounter( const long initValue )
+{
+    numberOfObjects = initValue;
+}
 
 std::string ResultNaming::getCurrentName()
 {

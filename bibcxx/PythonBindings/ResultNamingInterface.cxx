@@ -30,6 +30,8 @@ void exportResultNamingToPython()
     using namespace boost::python;
 
     class_< ResultNaming > ( "ResultNaming", no_init )
+        .def( "initCounter", &ResultNaming::initCounter )
+        .staticmethod( "initCounter" )
         .def( "getNewResultName", &ResultNaming::getNewResultName )
         .staticmethod( "getNewResultName" )
         .def( "getCurrentName", &ResultNaming::getCurrentName )
