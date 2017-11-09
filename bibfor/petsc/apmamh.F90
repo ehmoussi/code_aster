@@ -176,12 +176,12 @@ use petsc_data_module
             iligg = zi(jnugll + iligl - 1)
             valm = zr(jvalm + k - 1)
             valm2 = valm
-            if( .not.lmnsy ) valm2 = zr(jvalm2 + k - 1)
+            if( lmnsy ) valm2 = zr(jvalm2 + k - 1)
             nuno1 = 0
             if( zi(jdeeq + (iligl - 1) * 2).gt.0 ) then
                 nuno1 = 1
             endif
-            if( (nuno1.ne.0.and.nuno2.ne.0) ) then
+            if( nuno1.ne.0.and.nuno2.ne.0 ) then
                 if( prolig .eq. rang ) then
                     jterm = jterm + 1
                     zr(jdval2 + jterm - 1) = valm
