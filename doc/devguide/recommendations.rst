@@ -50,10 +50,6 @@ Source: `Boost Python Overloads <http://www.boost.org/doc/libs/1_65_1/libs/pytho
 Converting Macro-Commands
 =========================
 
-*Work is still in progress*...
-
-.. warning: ``CO()`` results are not yet supported.
-
 Legacy Macro-commands do not work as is.
 
 #. There is no need to define an executor manually.
@@ -66,7 +62,8 @@ Legacy Macro-commands do not work as is.
    factory.
 
 #. Results of macro-commands are created directly by the ``ops()`` function
-   (called by ``exec_()``). ``create_result()`` method does nothing.
+   (called by ``exec_()``). ``create_result()`` method does nothing else
+   registering the additional results (declared with ``CO()``).
 
 #. The ``ops()`` function must now returns the result object it creates.
 

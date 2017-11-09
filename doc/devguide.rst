@@ -95,6 +95,7 @@ Contents
 
     devguide/commands
     devguide/datastructures
+    devguide/boost
     devguide/supervis
     devguide/utilities
 
