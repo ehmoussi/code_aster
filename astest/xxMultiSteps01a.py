@@ -11,7 +11,7 @@ code_aster.init("--debug")
 
 test = code_aster.TestCase()
 
-fsin = code_aster.Function.create()
+fsin = code_aster.Function()
 fsin.setParameterName("INST")
 fsin.setResultName("TEMP")
 
@@ -33,6 +33,4 @@ code_aster.saveObjects()
 test.assertIsNone(fcos)
 test.assertIsNone(fsin)
 
-# temporary skip this testcase
-test.assertTrue(True)
 test.printSummary()
