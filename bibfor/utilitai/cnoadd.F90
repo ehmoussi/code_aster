@@ -82,21 +82,20 @@ subroutine cnoadd(chno, chnop)
 
 !     on annule les ddl que l'on ne possède pas (les valeurs sont fausses)
 !     --------------------------------------------------------------------
-      do 10, iaux=1,nbjoin
+    do iaux=1,nbjoin
         numpro=zi(jnbjoi+iaux)
-        if ( numpro.eq.-1 ) goto 10
+        if ( numpro.ne.-1 ) then
+            call codent(iaux-1,'G',chnbjo)
+            nojoinr = numddl//'.NUMER'//chnbjo(1:3)
+            call jeveuo(nojoinr, 'L', jjointr)
+            call jelira(nojoinr, 'LONMAX', lgrecep, k8bid)
+            ASSERT(lgrecep .gt. 0)
 
-        call codent(iaux-1,'G',chnbjo)
-        nojoinr = numddl//'.NUMER'//chnbjo(1:3)
-        call jeveuo(nojoinr, 'L', jjointr)
-        call jelira(nojoinr, 'LONMAX', lgrecep, k8bid)
-        ASSERT(lgrecep .gt. 0)
-
-        do 50, k=1,lgrecep
-          zr(jvale-1+zi(jjointr-1+k))=0.d0
-  50    continue
-
-  10  continue
+            do k=1,lgrecep
+                zr(jvale-1+zi(jjointr-1+k))=0.d0
+            enddo
+        endif
+    enddo
 
 
 9999 continue
