@@ -32,6 +32,6 @@ class ExtractFunction(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = Function.create()
+        self._result = Function()
 
 RECU_FONCTION = ExtractFunction.run

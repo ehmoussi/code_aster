@@ -24,6 +24,8 @@
 #include <stdexcept>
 #include <string>
 
+#include "aster_fort.h"
+
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxString.h"
 #include "DataStructures/TemporaryDataStructureName.h"
@@ -63,6 +65,10 @@ DataStructure::~DataStructure()// throw ( std::runtime_error )
     if ( nameWithoutBlanks == "" || _memoryType == Temporary )
         return;
 #ifdef _DEBUG_CXX
+    std::string name19 = _name;
+    name19.resize(19, ' ');
+    CALLO_JEDETR( name19 + "_TCO" );
+
     std::string base( " " );
     long pos = 0;
     long nbval2 = 0;

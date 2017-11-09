@@ -33,7 +33,7 @@ class ConstantAsFunction(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = Function.create()
+        self._result = Function()
 
     def exec_(self, keywords):
         """Execute the command.

@@ -33,6 +33,6 @@ class FluidFonctionDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = Function.create()
+        self._result = Function()
 
 DEFI_FONC_FLUI = FluidFonctionDefinition.run

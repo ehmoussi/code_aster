@@ -59,7 +59,7 @@ timeList.addErrorManager( error1 )
 timeList.build()
 #timeList.debugPrint( 6 )
 
-fMult = code_aster.Function.create()
+fMult = code_aster.Function()
 fMult.setParameterName("INST")
 fMult.setValues([0.,1.], [0.,1.])
 #fMult.debugPrint( 6 )

@@ -48,9 +48,9 @@ class FunctionDefinition(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         if keywords.get("VALE_C"):
-            self._result = FunctionComplex.create()
+            self._result = FunctionComplex()
         else:
-            self._result = Function.create()
+            self._result = Function()
 
     def exec_(self, keywords):
         """Execute the command.
