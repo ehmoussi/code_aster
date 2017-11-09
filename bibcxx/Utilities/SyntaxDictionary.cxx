@@ -96,12 +96,12 @@ PyObject* SyntaxMapContainer::convertToPythonDictionnary( PyObject* returnDict )
             PyDict_SetItemString( returnDict, (*curIter).first.c_str(),
                                   PyComplex_FromDoubles( tmp.real(), tmp.imag() ) );
         }
-        else if ( (*curIter).second.type() == typeid( VectorDoubleComplex ) )
+        else if ( (*curIter).second.type() == typeid( VectorComplex ) )
         {
-            const VectorDoubleComplex& currentList = boost::get< VectorDoubleComplex >( (*curIter).second );
+            const VectorComplex& currentList = boost::get< VectorComplex >( (*curIter).second );
             PyObject* listValues = PyList_New( currentList.size() );
             int count = 0;
-            for ( VectorDoubleComplexCIter iter = currentList.begin();
+            for ( VectorComplexCIter iter = currentList.begin();
                   iter != currentList.end();
                   ++iter )
             {
@@ -133,7 +133,6 @@ PyObject* SyntaxMapContainer::convertToPythonDictionnary( PyObject* returnDict )
 SyntaxMapContainer operator+( const SyntaxMapContainer& toAdd1, const SyntaxMapContainer& toAdd2 )
 {
     SyntaxMapContainer retour = toAdd1;
-    retour += toAdd2; 
+    retour += toAdd2;
     return retour;
 };
-

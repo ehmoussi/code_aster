@@ -25,12 +25,12 @@
  */
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
+#include "astercxx.h"
 
 #include "MemoryManager/JeveuxVector.h"
 #include "DataStructures/DataStructure.h"
 #include "Algorithms/GenericStepper.h"
 
-typedef std::vector< double > VectorDouble;
 typedef VectorDouble::const_iterator VectorDoubleCIter;
 
 /**
@@ -131,8 +131,8 @@ class TimeStepperInstance: public DataStructure, public GenericStepper
         };
 
         /**
-         * @brief 
-         * @return 
+         * @brief
+         * @return
          */
         const_iterator begin() const
         {
@@ -140,8 +140,8 @@ class TimeStepperInstance: public DataStructure, public GenericStepper
         };
 
         /**
-         * @brief 
-         * @return 
+         * @brief
+         * @return
          */
         const_iterator end() const
         {

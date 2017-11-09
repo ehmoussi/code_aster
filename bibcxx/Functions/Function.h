@@ -31,9 +31,6 @@
 #include "MemoryManager/JeveuxVector.h"
 
 
-typedef std::vector< double > VectorDouble;
-typedef std::vector< std::complex< double > > VectorComplex;
-
 /**
  * class BaseFunctionInstance
  *   Create a datastructure for a function with real values

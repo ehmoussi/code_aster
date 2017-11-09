@@ -49,7 +49,6 @@ typedef ListSyntaxMapContainer::const_iterator ListSyntaxMapContainerCIter;
  * @typedef VectorInt
  * @brief Vecteur STL d'entiers
  */
-typedef std::vector< int > VectorInt;
 typedef VectorInt::iterator VectorIntIter;
 typedef VectorInt::const_iterator VectorIntCIter;
 
@@ -57,7 +56,6 @@ typedef VectorInt::const_iterator VectorIntCIter;
  * @typedef VectorString
  * @brief Vecteur STL de chaines
  */
-typedef std::vector< std::string > VectorString;
 typedef VectorString::iterator VectorStringIter;
 typedef VectorString::const_iterator VectorStringCIter;
 
@@ -65,17 +63,15 @@ typedef VectorString::const_iterator VectorStringCIter;
  * @typedef VectorDouble
  * @brief Vecteur STL de doubles
  */
-typedef std::vector< double > VectorDouble;
 typedef VectorDouble::iterator VectorDoubleIter;
 typedef VectorDouble::const_iterator VectorDoubleCIter;
 
 /**
- * @typedef VectorDoubleComplex
+ * @typedef VectorComplex
  * @brief Vecteur STL de doubles
  */
-typedef std::vector< DoubleComplex > VectorDoubleComplex;
-typedef VectorDoubleComplex::iterator VectorDoubleComplexIter;
-typedef VectorDoubleComplex::const_iterator VectorDoubleComplexCIter;
+typedef VectorComplex::iterator VectorComplexIter;
+typedef VectorComplex::const_iterator VectorComplexCIter;
 
 /**
  * @class SyntaxMapContainer
@@ -88,7 +84,7 @@ public:
     /** @brief Typedef definissant un map associant une chaine a divers types */
     typedef std::map< std::string, boost::variant< int, std::string, double, DoubleComplex,
                                                    VectorInt, VectorString, VectorDouble,
-                                                   VectorDoubleComplex,
+                                                   VectorComplex,
                                                    ListSyntaxMapContainer > > SyntaxMap;
     typedef SyntaxMap::iterator SyntaxMapIter;
     typedef SyntaxMap::const_iterator SyntaxMapCIter;
@@ -99,7 +95,7 @@ public:
     /**
     * @brief Opérateur +=
     * @param toAdd SyntaxMapContainer à ajouter
-    * @return reference to the current object 
+    * @return reference to the current object
     */
     SyntaxMapContainer& operator+=( const SyntaxMapContainer& toAdd )
     {

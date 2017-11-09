@@ -28,9 +28,6 @@
 
 #include "astercxx.h"
 
-typedef std::vector< double > VectorDouble;
-typedef std::vector< std::string > VectorString;
-
 /**
  * @class CrackShape
  * @brief Class to store the nature of the crack shape
@@ -195,4 +192,3 @@ typedef boost::shared_ptr< CrackShapeInstance > CrackShapePtr;
 
 
 #endif /* CRACKSHAPE_H_ */
-

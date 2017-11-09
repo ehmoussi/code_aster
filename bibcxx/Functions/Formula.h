@@ -34,8 +34,6 @@
 #include "MemoryManager/JeveuxVector.h"
 
 
-typedef std::vector< double > VectorDouble;
-
 /**
  * class FormulaInstance
  *   Create a datastructure for a formula with real values
