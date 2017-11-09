@@ -32,7 +32,7 @@
 
 BaseFunctionInstance::BaseFunctionInstance( const std::string jeveuxName,
                                             const std::string type ):
-    DataStructure( jeveuxName + "           ", type ),
+    DataStructure( jeveuxName, 8, type ),
     _jeveuxName( getName() ),
     _property( JeveuxVectorChar24( getName() + ".PROL" ) ),
     _value( JeveuxVectorDouble( getName() + ".VALE" ) ),

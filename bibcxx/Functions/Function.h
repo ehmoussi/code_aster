@@ -196,14 +196,6 @@ public:
     typedef boost::shared_ptr< FunctionInstance > FunctionPtr;
 
     /**
-     * @brief Constructeur
-     */
-    static FunctionPtr create()
-    {
-        return FunctionPtr( new FunctionInstance );
-    };
-
-    /**
     * Constructeur
     */
     FunctionInstance():
@@ -233,14 +225,6 @@ public:
      * @brief Pointeur intelligent vers un FunctionComplex
      */
     typedef boost::shared_ptr< FunctionComplexInstance > FunctionComplexPtr;
-
-    /**
-     * @brief Constructeur
-     */
-    static FunctionComplexPtr create()
-    {
-        return FunctionComplexPtr( new FunctionComplexInstance );
-    };
 
     /**
     * Constructeur

@@ -23,8 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/FunctionInterface.h"
 #include <boost/python.hpp>
+#include "PythonBindings/factory.h"
+#include "PythonBindings/FunctionInterface.h"
+
 
 void exportFunctionToPython()
 {
@@ -43,8 +45,12 @@ void exportFunctionToPython()
 
     class_< FunctionInstance, FunctionInstance::FunctionPtr,
             bases< BaseFunctionInstance > > ( "Function", no_init )
-        .def( "create", &FunctionInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< FunctionInstance,
+                      FunctionInstance::FunctionPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Name< FunctionInstance,
+                          FunctionInstance::FunctionPtr >) )
         .def( "setValues", &FunctionInstance::setValues )
         .def( "size", &FunctionInstance::size )
     ;
@@ -57,8 +63,12 @@ void exportFunctionToPython()
 
     class_< FunctionComplexInstance, FunctionComplexInstance::FunctionComplexPtr,
             bases< BaseFunctionInstance > > ( "FunctionComplex", no_init )
-        .def( "create", &FunctionComplexInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< FunctionComplexInstance,
+                      FunctionComplexInstance::FunctionComplexPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Name< FunctionComplexInstance,
+                          FunctionComplexInstance::FunctionComplexPtr >) )
         .def( "setValues", c1 )
         .def( "setValues", c2 )
         .def( "size", &FunctionComplexInstance::size )

@@ -64,6 +64,10 @@ class DataStructure
          * @param name Nom Jeveux de la sd
          * @param type Type Aster de la sd
          */
+        DataStructure( const std::string name, const int nameLength = 8,
+                       const std::string type = "",
+                       const JeveuxMemory memType = Permanent );
+
         DataStructure( const std::string name, const std::string type = "",
                        const JeveuxMemory memType = Permanent );
 

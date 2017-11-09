@@ -1,6 +1,9 @@
+#ifndef FACTORY_H_
+#define FACTORY_H_
+
 /**
- * @file DataStructureInterface.cxx
- * @brief Interface python de DataStructure
+ * @file FunctionInterface.h
+ * @brief Fichier entete de la classe FunctionInterface
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,23 +24,19 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: nicolas.sellenet at edf.fr */
-
-#include "PythonBindings/DataStructureInterface.h"
 #include <boost/python.hpp>
+#include "astercxx.h"
 
-void exportDataStructureToPython()
+template< typename DSType, typename DSTypePtr >
+static DSTypePtr factory0()
 {
-    using namespace boost::python;
+    return DSTypePtr( new DSType() );
+}
 
-    void (DataStructure::*c1)(const int) const = &DataStructure::debugPrint;
-    void (DataStructure::*c2)() const = &DataStructure::debugPrint;
+template< typename DSType, typename DSTypePtr >
+static DSTypePtr factory0Name( const std::string &jeveuxName )
+{
+    return DSTypePtr( new DSType( jeveuxName ) );
+}
 
-    class_< DataStructure, DataStructure::DataStructurePtr >( "DataStructure", no_init )
-        .enable_pickling()
-        .def( "getName", &DataStructure::getName, return_value_policy<return_by_value>() )
-        .def( "getType", &DataStructure::getType, return_value_policy<return_by_value>() )
-        .def( "debugPrint", c1 )
-        .def( "debugPrint", c2 )
-    ;
-};
+#endif /* FACTORY_H_ */
