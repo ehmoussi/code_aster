@@ -121,7 +121,8 @@ class ExecuteCommand(object):
         cmd = cls()
         cmd.keep_caller_infos()
         timer = ExecutionParameter().get_option("timer")
-        check_jeveux()
+        if cls.command_name not in ("DEBUT", "POURSUITE"):
+            check_jeveux()
         if not cmd._op:
             logger.debug("ignore command {0}".format(cmd.name))
             return
