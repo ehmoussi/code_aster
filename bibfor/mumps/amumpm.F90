@@ -87,7 +87,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
     integer :: sym, iret, jcoll, iligl, jnulogl, ltot, iok, iok2, coltmp
     integer :: kzero, ibid, ifiltr, vali(2), nbproc, nfilt1, nfilt2
     integer :: nfilt3, isizemu, nsizemu, rang, esizemu, jpddl, jdeeq
-    integer :: nuno1, nuno2, procol, prolig
+    integer :: nuno1, nuno2, procol, prolig, jnugll
     mumps_int :: nbeq, nz2, iligg, jcolg
     character(len=4) :: etam
     character(len=8) :: k8bid
@@ -294,6 +294,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
         if(lmhpc) then
             call jeveuo(nonu//'.NUME.PDLL', 'L', jpddl)
             call jeveuo(nonu//'.NUME.DEEQ', 'L', jdeeq)
+            call jeveuo(nonu//'.NUME.NULG', 'L', jnugll)
         endif
 !
 ! --- VECTEURS AUXILIAIRES POUR FILTRER LES TERMES MATRICIELS
@@ -599,6 +600,30 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
 !
             if (smdi(jcoll) .lt. kterm) jcoll=jcoll+1
             iligl=zi4(jsmhc-1+kterm)
+            if(lmhpc) then
+                nuno1 = 0
+                if( zi(jdeeq + (iligl - 1) * 2).gt.0 ) then
+                    nuno1 = 1
+                endif
+                nuno2 = 0
+                if( zi(jdeeq + (jcoll - 1) * 2).gt.0 ) then
+                    nuno2 = 1
+                endif
+                procol = zi(jpddl + jcoll - 1)
+                prolig = zi(jpddl + iligl - 1)
+                if( nuno1.ne.0.or.nuno2.ne.0 ) then
+                    lgive = (nuno1.eq.0.and.procol.eq.rang).or.&
+                            (nuno2.eq.0.and.prolig.eq.rang).or.&
+                            (nuno1.eq.0.and.nuno2.eq.0)
+                    if( .not.lgive ) then
+                        cycle
+                    endif
+                else
+                    if( prolig.ne.rang ) then
+                        cycle
+                    endif
+                endif
+            endif
             lnn=.false.
 ! --- PARTIE TRIANGULAIRE INF. SI REEL
             if (ltypr) then
@@ -622,7 +647,10 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                 sign(1.d0,imag(caux)))
                 endif
             endif
-            if (lmd) then
+            if (lmhpc) then
+                iligg=to_mumps_int(zi(jnugll+iligl-1))
+                jcolg=to_mumps_int(zi(jnugll+jcoll-1))
+            else if (lmd) then
                 iligg=to_mumps_int(zi(jnulogl+iligl-1))
                 jcolg=to_mumps_int(zi(jnulogl+jcoll-1))
             else
@@ -701,6 +729,14 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                     endif
                 endif
             endif
+
+            if(lmhpc) then
+                if( nuno1.eq.0.and.nuno2.eq.0 ) then
+                    if( procol.ne.rang ) then
+                        cycle
+                    endif
+                endif
+            endif
 !
 ! --- PARTIE TRIANGULAIRE SUP. SI REEL
             if ((sym.eq.0) .and. (iligl.ne.jcoll)) then
@@ -731,7 +767,10 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
 ! ---- PARTIE TRIANGULAIRE SUP. TERME NON NUL
                 if (lnn) then
                     iterm=iterm+1
-                    if (lmd) then
+                    if (lmhpc) then
+                        iligg=to_mumps_int(zi(jnugll+iligl-1))
+                        jcolg=to_mumps_int(zi(jnugll+jcoll-1))
+                    else if (lmd) then
                         iligg=to_mumps_int(zi(jnulogl+iligl-1))
                         jcolg=to_mumps_int(zi(jnulogl+jcoll-1))
                     else
