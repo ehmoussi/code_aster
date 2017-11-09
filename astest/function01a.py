@@ -10,7 +10,7 @@ code_aster.init()
 
 test = code_aster.TestCase()
 
-fsin = code_aster.Function.create()
+fsin = code_aster.Function()
 fsin.setParameterName("INST")
 fsin.setResultName("TEMP")
 fsin.setInterpolation("LIN LOG")

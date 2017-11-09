@@ -42,7 +42,7 @@ class ExtendedFunction(injector(Function), Function):
         Returns:
             (Function): Absolute value of the function.
         """
-        new = Function.create()
+        new = Function()
         absc, ordo = self.Valeurs()
         new.setValues(absc, np.abs(ordo))
         return new
