@@ -114,6 +114,16 @@ using namespace boost::python;
 
 #include "shared_vars.h"
 #include "aster_init.h"
+
+static void libaster_finalize()
+{
+    int a = get_sh_jeveux_status();
+    if( a != 1 )
+        return;
+    CALL_OP9999();
+    register_sh_jeveux_status( 0 );
+};
+
 struct LibAsterInitializer
 {
     LibAsterInitializer()
@@ -123,11 +133,7 @@ struct LibAsterInitializer
 
     ~LibAsterInitializer()
     {
-        int a = get_sh_jeveux_status();
-        if( a != 1 )
-            return;
-        CALL_OP9999();
-        register_sh_jeveux_status( 0 );
+        libaster_finalize();
     };
 };
 
@@ -139,6 +145,7 @@ BOOST_PYTHON_MODULE(libaster)
             boost::noncopyable >("LibAsterInitializer", no_init);
 
     scope().attr("__libguard") = libGuard;
+    scope().attr("finalize") = libaster_finalize;
 
     exportVectorUtilitiesToPython();
     exportDataStructureToPython();
