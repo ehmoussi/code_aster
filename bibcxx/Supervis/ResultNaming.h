@@ -30,9 +30,14 @@ class ResultNaming
 {
     public:
         // up to 4294967295 objects can be base 16 encoded on 8 chars.
-        static int numberOfObjects;
+        static long numberOfObjects;
 
         /**
+         * @brief Initialize the counter.
+         */
+        static void initCounter( const long );
+
+                /**
          * @brief Static member that returns the current result name.
          * @return Name for the current object that is being created.
          */
