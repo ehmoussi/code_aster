@@ -87,7 +87,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
     integer :: sym, iret, jcoll, iligl, jnulogl, ltot, iok, iok2, coltmp
     integer :: kzero, ibid, ifiltr, vali(2), nbproc, nfilt1, nfilt2
     integer :: nfilt3, isizemu, nsizemu, rang, esizemu, jpddl, jdeeq
-    integer :: nuno1, nuno2
+    integer :: nuno1, nuno2, procol, prolig
     mumps_int :: nbeq, nz2, iligg, jcolg
     character(len=4) :: etam
     character(len=8) :: k8bid
@@ -98,6 +98,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
     real(kind=8) :: raux, rfiltr, epsmac, rmax, rmin, rtest
     complex(kind=8) :: caux
     aster_logical :: lmnsy, ltypr, lnn, lfiltr, lspd, eli2lg, lsimpl, lcmde
+    aster_logical :: lgive
     integer, pointer :: smdi(:) => null()
     integer, pointer :: nequ(:) => null()
 !
@@ -337,10 +338,17 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                 if( zi(jdeeq + (jcoll - 1) * 2).gt.0 ) then
                     nuno2 = 1
                 endif
-                if( nuno1.eq.0 .or. nuno2.eq.0 ) then
-                    
+                procol = zi(jpddl + jcoll - 1)
+                prolig = zi(jpddl + iligl - 1)
+                if( nuno1.ne.0.or.nuno2.ne.0 ) then
+                    lgive = (nuno1.eq.0.and.procol.eq.rang).or.&
+                            (nuno2.eq.0.and.prolig.eq.rang).or.&
+                            (nuno1.eq.0.and.nuno2.eq.0)
+                    if( .not.lgive ) then
+                        cycle
+                    endif
                 else
-                    if(zi(jpddl+iligl-1).ne.rang) then
+                    if( prolig.ne.rang ) then
                         cycle
                     endif
                 endif
@@ -395,6 +403,14 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                 else
 ! ---   TERME RIGOUREUSEMENT NUL
                     nfilt1=nfilt1+1
+                endif
+            endif
+
+            if(lmhpc) then
+                if( nuno1.eq.0.and.nuno2.eq.0 ) then
+                    if( procol.ne.rang ) then
+                        cycle
+                    endif
                 endif
             endif
 !
