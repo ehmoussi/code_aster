@@ -40,6 +40,13 @@ DataStructure::DataStructure( const std::string name, const std::string type,
     CALLO_SETTCO(_name, _type);
 }
 
+DataStructure::DataStructure( const std::string name, const int nameLength,
+                              const std::string type, const JeveuxMemory memType ):
+    DataStructure::DataStructure( name, type, memType )
+{
+    _name.resize(nameLength, ' ');
+}
+
 DataStructure::DataStructure( const std::string type,
                               const JeveuxMemory memType, int nameLength ):
     DataStructure::DataStructure( DataStructureNaming::getNewName( memType, nameLength ),
