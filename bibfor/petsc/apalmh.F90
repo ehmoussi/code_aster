@@ -53,6 +53,7 @@ use petsc_data_module
     integer :: rang, nbproc, jprddl, jnugll, nloc, nglo, jidxdc
     integer :: nuno1, nuno2, num_ddl_max, imult, ipos, ibid
     integer :: num_ddl_min, jslvi, tbloc, iret, nblag, jdeeq
+    integer :: imults
 !
     integer(kind=4) :: mpicou
     mpi_int :: mrank, msize
@@ -188,12 +189,22 @@ use petsc_data_module
     if( iret.ne.0 ) then
         call jeveuo(nonu//'.NUME.MDLA', 'L', jmdla)
         call jelira(nonu//'.NUME.MDLA', 'LONMAX', nblag)
-        nblag = nblag/2
+        nblag = nblag/3
         do ipos = 0, nblag-1
-            jcoll = zi(jmdla + ipos*2)
-            imult = zi(jmdla + ipos*2 + 1)
+            jcoll = zi(jmdla + ipos*3)
+            imult = zi(jmdla + ipos*3 + 1)
+            imults = zi(jmdla + ipos*3 + 2)-imult
             jcolg = zi(jnugll + jcoll - 1)
-            ibid = zi4(jidxd + jcolg - low)*(imult)
+!           Le but ici est de rajouter juste le bon nombre de termes
+!           On utilise le nombre de fois qu'apparaissent les noeuds de Lagrange
+!           dans des mailles tardives (sur tous les procs et sur les autres procs
+!           que le proc courant)
+!           On suppose qu'un ddl de Lagrange sera connecte aux autres ddl de la
+!           même maniere que sur le proc qui les possede
+!           C'est pour cette raison qu'on utilise zi4(jidxd + jcolg - low)
+!           divise par le nombre de fois qu'apparait un noeud de Lagrange sur le
+!           proc courant
+            ibid = (zi4(jidxd + jcolg - low)/imults)*(imult)
             zi4(jidxo + jcolg - low) = zi4(jidxo + jcolg - low) + ibid
         enddo
     endif

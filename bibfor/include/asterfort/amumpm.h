@@ -22,7 +22,7 @@
 interface
     subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                       klag2, type, lmd, epsmat, ktypr,&
-                      lpreco)
+                      lpreco, lmhpc)
         aster_logical :: ldist
         integer :: kxmps
         character(len=24) :: kmonit(12)
@@ -34,5 +34,6 @@ interface
         real(kind=8) :: epsmat
         character(len=8) :: ktypr
         aster_logical :: lpreco
+        aster_logical :: lmhpc
     end subroutine amumpm
 end interface

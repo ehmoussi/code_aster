@@ -18,7 +18,7 @@
 
 subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                   klag2, type, lmd, epsmat, ktypr,&
-                  lpreco)
+                  lpreco, lmhpc)
 !
 !
     implicit none
@@ -64,7 +64,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
     integer :: kxmps, ifmump
-    aster_logical :: ldist, lmd, lpreco
+    aster_logical :: ldist, lmd, lpreco, lmhpc
     real(kind=8) :: epsmat
     character(len=1) :: type
     character(len=5) :: klag2
@@ -86,7 +86,8 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
     integer :: nlong, jvale2, nzloc, kterm, iterm, ifm, niv, k
     integer :: sym, iret, jcoll, iligl, jnulogl, ltot, iok, iok2, coltmp
     integer :: kzero, ibid, ifiltr, vali(2), nbproc, nfilt1, nfilt2
-    integer :: nfilt3, isizemu, nsizemu, rang, esizemu
+    integer :: nfilt3, isizemu, nsizemu, rang, esizemu, jpddl, jdeeq
+    integer :: nuno1, nuno2
     mumps_int :: nbeq, nz2, iligg, jcolg
     character(len=4) :: etam
     character(len=8) :: k8bid
@@ -193,7 +194,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
 !       ------------------------------------------------
 !        lecture d'adresses et de parametres preliminaires
 !       ------------------------------------------------
-    if (((rang.eq.0).and.(.not.ldist)) .or. (ldist)) then
+    if (((rang.eq.0).and.(.not.ldist)) .or. (ldist) .or. (lmhpc)) then
         call jeveuo(nonu//'.SMOS.SMDI', 'L', vi=smdi)
         call jelira(nonu//'.SMOS.SMDI', 'LONMAX', nsmdi)
         call jeveuo(nonu//'.SMOS.SMHC', 'L', jsmhc)
@@ -206,7 +207,11 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
             call jelira(nonu//'.NUME.DELG', 'LONMAX', n1)
         endif
         call jeveuo(nonu//'.NUME.NEQU', 'L', vi=nequ)
-        nbeq=to_mumps_int(nequ(1))
+        if(lmhpc) then
+            nbeq=to_mumps_int(nequ(2))
+        else
+            nbeq=to_mumps_int(nequ(1))
+        endif
         ASSERT(n1.eq.nsmdi)
 ! --- CALCUL DE N
         n=nsmdi
@@ -284,7 +289,11 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
 !         DONT IL A LA RESPONSABILITE.
 !       ------------------------------------------------
 !
-    if (((rang.eq.0).and.(.not.ldist)) .or. (ldist)) then
+    if (((rang.eq.0).and.(.not.ldist)) .or. (ldist) .or. (lmhpc)) then
+        if(lmhpc) then
+            call jeveuo(nonu//'.NUME.PDLL', 'L', jpddl)
+            call jeveuo(nonu//'.NUME.DEEQ', 'L', jdeeq)
+        endif
 !
 ! --- VECTEURS AUXILIAIRES POUR FILTRER LES TERMES MATRICIELS
 ! --- KPIV: PROFIL TRIANGULAIRE INF
@@ -319,6 +328,23 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
 ! --- PREPARATION DES DONNES (NUM DE COLONNE, TERME DE FILTRAGE...)
             if (smdi(jcoll) .lt. kterm) jcoll=jcoll+1
             iligl=zi4(jsmhc-1+kterm)
+            if(lmhpc) then
+                nuno1 = 0
+                if( zi(jdeeq + (iligl - 1) * 2).gt.0 ) then
+                    nuno1 = 1
+                endif
+                nuno2 = 0
+                if( zi(jdeeq + (jcoll - 1) * 2).gt.0 ) then
+                    nuno2 = 1
+                endif
+                if( nuno1.eq.0 .or. nuno2.eq.0 ) then
+                    
+                else
+                    if(zi(jpddl+iligl-1).ne.rang) then
+                        cycle
+                    endif
+                endif
+            endif
             if (lfiltr) then
                 rfiltr=zr(ifiltr-1+iligl)+zr(ifiltr-1+jcoll)
             else
