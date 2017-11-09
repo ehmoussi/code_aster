@@ -63,7 +63,7 @@ from .Commands.debut import init
 # localization.install()
 #
 # # import general purpose functions
-# from .RunManager.saving import saveObjects
+from .RunManager import saveObjects
 from .Utilities import TestCase
 #
 # # each package is responsible to export only the relevant objects

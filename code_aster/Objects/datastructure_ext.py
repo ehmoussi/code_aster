@@ -47,6 +47,24 @@ class ExtendedDataStructure(injector(DataStructure), DataStructure):
             self.ptr_sdj = self.ptr_class_sdj(nomj=self.getName())
         return self.ptr_sdj
 
+    __getstate_manages_dict__ = 1
+
+    def __getstate__(self):
+        """Extract informations to save the object.
+
+        Returns:
+            dict: Content that will allow to restore the object.
+        """
+        infos = {"jeveux_name": self.getName()}
+        return infos
+
+    def __setstate__(self, state):
+        """Restore the content of an object.
+
+        Arguments:
+            state (dict): Informations needed to reinitialize the object.
+        """
+
     # transitional functions - to remove later
     @staticmethod
     @deprecated(False)

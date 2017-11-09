@@ -38,7 +38,7 @@ import aster
 import aster_core
 from Comportement import catalc
 
-from ..RunManager import LogicalUnitFile
+from ..RunManager import LogicalUnitFile, Pickler, loadObjects
 from ..Supervis import CommandSyntax, ExecutionParameter, logger
 from ..Supervis.logger import setlevel
 from ..Utilities import import_object
@@ -49,7 +49,7 @@ from .ExecuteCommand import ExecuteCommand
 class Starter(ExecuteCommand):
     """Define the command DEBUT."""
     command_name = "DEBUT"
-    params = _is_initialized = None
+    params = _is_initialized = _restart = None
 
     @classmethod
     def init(cls, argv):
@@ -78,7 +78,7 @@ class Starter(ExecuteCommand):
         super(Starter, cls).run(**keywords)
 
     @classmethod
-    def run_with_argv(cls, **keywords):
+    def run_with_argv(cls, restart=False, **keywords):
         """Run the macro-command with the arguments from the command line.
 
         Arguments:
@@ -86,6 +86,7 @@ class Starter(ExecuteCommand):
         """
         cmd = cls()
         cmd._result = None
+        cmd._restart = restart
         cmd.exec_(keywords)
 
     def _call_oper(self, syntax):
@@ -94,7 +95,10 @@ class Starter(ExecuteCommand):
         Arguments:
             syntax (*CommandSyntax*): Syntax description with user keywords.
         """
-        return aster.debut(syntax)
+        if not self._restart:
+            return aster.debut(syntax)
+        else:
+            return aster.poursu(syntax)
 
 
 DEBUT = Starter.run
@@ -112,4 +116,11 @@ def init(*argv, **kwargs):
             setlevel()
         del kwargs['debug']
     Starter.init(argv)
-    Starter.run_with_argv(**kwargs)
+
+    restart = Pickler.canRestart()
+    if restart:
+        logger.info( "restarting from a previous execution..." )
+    Starter.run_with_argv(restart=restart, **kwargs)
+
+    if restart:
+        loadObjects(level=2)

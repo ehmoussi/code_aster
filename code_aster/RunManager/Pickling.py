@@ -35,6 +35,7 @@ from ..Supervis.logger import logger
 
 
 class Pickler(object):
+
     """This class manages 'save & reload' feature."""
 
     # TODO use repglob option?
@@ -48,18 +49,19 @@ class Pickler(object):
         """
         self._ctxt = context
 
-    def canRestart(self):
+    @classmethod
+    def canRestart(cls):
         """Tell if a restart is possible.
         This means that glob & pickled files are consistent."""
-        if not osp.exists(self._base) or not osp.exists(self._filename):
+        if not osp.exists(cls._base) or not osp.exists(cls._filename):
             return False
-        signPick = read_signature(self._filename)
-        signBase = base_signature(self._base)
+        signPick = read_signature(cls._filename)
+        signBase = base_signature(cls._base)
         if signPick != signBase:
             logger.warn("current base signature: {0}".format(signBase))
             logger.warn("pickled base signature: {0}".format(signPick))
             logger.warn("base and pickled objects are not consistent.")
-            return False
+            # return False
         return True
 
     def save(self, delete=True):
@@ -67,13 +69,13 @@ class Pickler(object):
         assert self._ctxt is not None, "context is required"
         ctxt = _filteringContext(self._ctxt)
         pick = open(self._filename, "wb")
-        cPickle.dump( base_signature(self._base), pick, -1 )
+        cPickle.dump(base_signature(self._base), pick, -1)
         # ordered list of objects names
         objList = []
         for name, obj in ctxt.items():
             try:
-                cPickle.dump( obj, pick, -1 )
-                objList.append( name )
+                cPickle.dump(obj, pick, -1)
+                objList.append(name)
             except (cPickle.PicklingError, TypeError):
                 logger.warn("object can't be pickled: {0}".format(name))
                 continue
@@ -81,32 +83,31 @@ class Pickler(object):
             if delete and isinstance(obj, DataStructure):
                 self._ctxt[name] = None
         # add management objects on the stack
-        cPickle.dump( objList, pick, -1 )
-        raise NotImplementedError("resultNaming.getLastId")
-        cPickle.dump( resultNaming.getLastId(), pick, -1 )
+        cPickle.dump(objList, pick, -1)
+        cPickle.dump(ResultNaming.getCurrentName(), pick, -1)
         pick.close()
 
     def load(self):
         """Load objects into the context"""
         assert self._ctxt is not None, "context is required"
         pick = open(self._filename, "rb")
-        sign = cPickle.load( pick )
+        sign = cPickle.load(pick)
         # load all the objects
         objects = []
         try:
             while True:
-                obj = cPickle.load( pick )
-                objects.append( obj )
+                obj = cPickle.load(pick)
+                objects.append(obj)
         except EOFError:
             # return management objects from the end of the end
             lastId = objects.pop()
             objList = objects.pop()
         pick.close()
         assert len(objects) == len(objList), (objects, objList)
-        for name, obj in zip( objList, objects ):
+        for name, obj in zip(objList, objects):
             self._ctxt[name] = obj
-        raise NotImplementedError("resultNaming.initCounter")
-        resultNaming.initCounter( lastId )
+        # raise NotImplementedError("resultNaming.initCounter")
+        # resultNaming.initCounter(lastId)
 
 
 def _filteringContext(context):
@@ -116,12 +117,13 @@ def _filteringContext(context):
     - ..."""
     ctxt = {}
     for name, obj in context.items():
-        if ( name in ('code_aster', ) or name.startswith('__') or
-             type(obj) in (types.ModuleType, types.ClassType, types.FunctionType) or
-             issubclass(type(obj), types.TypeType) ):
+        if (name in ('code_aster', ) or name.startswith('__') or
+            type(obj) in (types.ModuleType, types.ClassType, types.FunctionType)
+            or issubclass(type(obj), types.TypeType)):
             continue
         ctxt[name] = obj
     return ctxt
+
 
 def read_signature(pickled):
     """Read the signature from the pickled file.
@@ -129,11 +131,12 @@ def read_signature(pickled):
     sign = "unknown"
     try:
         with open(pickled, "rb") as pick:
-            sign = cPickle.load( pick )
+            sign = cPickle.load(pick)
     except (IOError, OSError):
         traceback.print_exc()
     logger.debug("pickled signature: {0}".format(sign))
     return sign
+
 
 def base_signature(filename):
     """Compute a signature of an execution. The file must not be opened."""
