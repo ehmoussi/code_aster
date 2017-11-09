@@ -87,10 +87,13 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
                 {
                     // ... et qu'il faut conserver l'element
                     // Alors on conserve les noeuds tardifs aussi
-                    delayedNodesToKeep[ -numNode - 1 ] = rank;
-                    delayedNodesNumbering[ -numNode - 1 ] = nbDelayedNodes;
-                    ++nbDelayedNodes;
+                    if( delayedNodesToKeep[ -numNode - 1 ] == -1 )
+                    {
+                        delayedNodesNumbering[ -numNode - 1 ] = nbDelayedNodes;
+                        ++nbDelayedNodes;
+                    }
                     ++totalSizeToKeep;
+                    delayedNodesToKeep[ -numNode - 1 ] = rank;
                 }
                 // On cherche a equilibrer la charge des noeuds tardifs
                 auto curOwner2 = delayedNodesOwner[ -numNode - 1 ];
