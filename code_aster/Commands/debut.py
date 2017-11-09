@@ -49,7 +49,7 @@ from .ExecuteCommand import ExecuteCommand
 class Starter(ExecuteCommand):
     """Define the command DEBUT."""
     command_name = "DEBUT"
-    params = _is_initialized = _restart = None
+    params = _is_initialized = None
 
     @classmethod
     def init(cls, argv):
@@ -78,7 +78,7 @@ class Starter(ExecuteCommand):
         super(Starter, cls).run(**keywords)
 
     @classmethod
-    def run_with_argv(cls, restart=False, **keywords):
+    def run_with_argv(cls, **keywords):
         """Run the macro-command with the arguments from the command line.
 
         Arguments:
@@ -86,7 +86,6 @@ class Starter(ExecuteCommand):
         """
         cmd = cls()
         cmd._result = None
-        cmd._restart = restart
         cmd.exec_(keywords)
 
     def _call_oper(self, syntax):
@@ -95,13 +94,24 @@ class Starter(ExecuteCommand):
         Arguments:
             syntax (*CommandSyntax*): Syntax description with user keywords.
         """
-        if not self._restart:
+        restart = self.params.get_option("continue") and Pickler.canRestart()
+        if not restart:
+            logger.info( "starting the execution..." )
+            self.params.set_option("continue", 0)
             return aster.debut(syntax)
         else:
+            logger.info( "restarting from a previous execution..." )
             return aster.poursu(syntax)
 
 
+class Restarter(Starter):
+    """Define the command POURSUITE."""
+    command_name = "POURSUITE"
+
+
 DEBUT = Starter.run
+POURSUITE = Restarter.run
+
 
 def init(*argv, **kwargs):
     """Initialize code_aster as `DEBUT` command does + command line options.
@@ -117,10 +127,8 @@ def init(*argv, **kwargs):
         del kwargs['debug']
     Starter.init(argv)
 
-    restart = Pickler.canRestart()
-    if restart:
-        logger.info( "restarting from a previous execution..." )
-    Starter.run_with_argv(restart=restart, **kwargs)
-
-    if restart:
+    if Starter.params.get_option("continue"):
+        Restarter.run_with_argv(**kwargs)
         loadObjects(level=2)
+    else:
+        Starter.run_with_argv(**kwargs)

@@ -90,6 +90,7 @@ class ExecutionParameter(object):
         self._args['repmat'] = '.'
         self._args['repdex'] = '.'
 
+        self._args['continue'] = 0
         self._args['deprecated'] = 0
         self._args['use_legacy_mode'] = 0
         self._computed()
@@ -198,6 +199,9 @@ class ExecutionParameter(object):
             action='store', metavar='DIR', default='.',
             help="directory of external datas (geometrical datas or properties...)")
 
+        parser.add_argument('--continue',
+            action='store_const', const=1, default=0,
+            help="turn on to continue a previous execution")
         parser.add_argument('--use_legacy_mode',
             action='store', default=1,
             help="use (=1) or not (=0) the legacy mode for macro-commands "
