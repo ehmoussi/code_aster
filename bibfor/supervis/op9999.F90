@@ -65,12 +65,12 @@ subroutine op9999()
 
     call asmpi_info(rank=mrank, size=msize)
     nbrank = to_aster_int(mrank)
-!       
+!
 !   --- PROC0 = 'OUI' pour effectuer les ecritures uniquement sur le processeur de rang 0 ---
-!       si PROC0 = 'NON' on force nbrank=0 
+!       si PROC0 = 'NON' on force nbrank=0
     proc = 'OUI'
-    if ( proc .eq. 'NON' ) then 
-      nbrank = 0 
+    if ( proc .eq. 'NON' ) then
+      nbrank = 0
     endif
     iret = 0
     bool = iret == ST_ER .or. iret == ST_OK .or. iret == ST_ER_PR0 .or. &
@@ -117,7 +117,7 @@ subroutine op9999()
 !
 ! --- IMPRESSION DE LA TAILLE DES CONCEPTS DE LA BASE GLOBALE
 !
-!      call uimpba('G', iunmes)
+      call uimpba('G', iunmes)
 !
 ! --- RETASSAGE EVENTUEL DE LA GLOBALE
 !
@@ -139,7 +139,7 @@ subroutine op9999()
         endif
      endif
    endif
-     
+
 !
 ! --- RECUPERE LA POSITION D'UN ENREGISTREMENT SYSTEME CARACTERISTIQUE
 !
@@ -176,7 +176,7 @@ subroutine op9999()
       !call utmess('I', 'SUPERVIS2_97')
       if (iunerr .gt. 0) write(iunerr, *) '<I> <FIN> ARRET NORMAL DANS "FIN" PAR APPEL A "JEFINI".'
       if (iunres .gt. 0) write(iunres, *) '<I> <FIN> ARRET NORMAL DANS "FIN" PAR APPEL A "JEFINI".'
-    endif  
+    endif
     call jedema()
 !
 ! --- CLOTURE DE JEVEUX
