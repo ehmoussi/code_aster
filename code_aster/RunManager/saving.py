@@ -19,6 +19,8 @@
 
 import inspect
 
+import libaster
+
 from ..Supervis.logger import logger
 from .Pickling import Pickler
 
@@ -34,5 +36,6 @@ def saveObjects(level=1, delete=True):
         logger.debug("frame saved: {0}".format(context['__name__']))
     finally:
         del caller
-    # finalize()
+    # close Jeveux files
+    libaster.finalize()
     Pickler(context).save(delete=delete)
