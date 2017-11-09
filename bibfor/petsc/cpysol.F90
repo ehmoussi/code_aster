@@ -1,3 +1,20 @@
+! --------------------------------------------------------------------
+! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! This file is part of code_aster.
+!
+! code_aster is free software: you can redistribute it and/or modify
+! it under the terms of the GNU General Public License as published by
+! the Free Software Foundation, either version 3 of the License, or
+! (at your option) any later version.
+!
+! code_aster is distributed in the hope that it will be useful,
+! but WITHOUT ANY WARRANTY; without even the implied warranty of
+! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+! GNU General Public License for more details.
+!
+! You should have received a copy of the GNU General Public License
+! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+! --------------------------------------------------------------------
 subroutine cpysol(numddl, rsolu, debglo, vecpet, nbval)
     implicit none
 #include "asterf_config.h"
@@ -11,6 +28,10 @@ subroutine cpysol(numddl, rsolu, debglo, vecpet, nbval)
 #include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/jeexin.h"
+#include "asterfort/jenuno.h"
+#include "asterfort/jexatr.h"
+#include "asterfort/jexnum.h"
 #include "asterc/loisem.h"
 #include "asterfort/wkvect.h"
 #include "asterc/asmpi_comm.h"
@@ -25,8 +46,12 @@ subroutine cpysol(numddl, rsolu, debglo, vecpet, nbval)
 #include "mpif.h"
 !
     integer :: rang, nbproc, jnbjoi, nbjoin, numpro, jjointr, jjointe
-    integer :: lgenvo, lgrecep, jvaleue, jvaleur, iaux, jaux, jnulg, jprddl, jnequ, nloc
+    integer :: lgenvo, lgrecep, jvaleue, jvaleur, iaux, jaux, jnulg
+    integer :: jprddl, jnequ, nloc, nlili, ili, iret, jjoin, ijoin
     integer :: numglo, jdeeq, jrefn, jmlogl, nuno1, nucmp1, numloc
+    integer :: iret1, iret2, jjoine, nbnoee, idprn1, idprn2, nec, dime
+    integer :: nunoel, l, jjoinr, jnujoi1, jnujoi2, nbnoer, nddll, ntot
+    integer :: numnoe
 !
     integer(kind=4) :: n4r, n4e, iaux4, num4, numpr4
     mpi_int :: mrank, msize, iermpi, mpicou
@@ -34,8 +59,21 @@ subroutine cpysol(numddl, rsolu, debglo, vecpet, nbval)
 !
     character(len=4) :: chnbjo
     character(len=8) :: k8bid, noma
-    character(len=24) :: nonbjo, nojoinr, nojoine, nonulg
+    character(len=19) :: nomlig
+    character(len=24) :: nonbjo, nojoinr, nojoine, nonulg, join
 !----------------------------------------------------------------------
+    integer :: zzprno
+!
+!---- FONCTION D ACCES AUX ELEMENTS DES CHAMPS PRNO DES S.D. LIGREL
+!     REPERTORIEES DANS LE CHAMP LILI DE NUME_DDL ET A LEURS ADRESSES
+!     ZZPRNO(ILI,NUNOEL,1) = NUMERO DE L'EQUATION ASSOCIEES AU 1ER DDL
+!                            DU NOEUD NUNOEL DANS LA NUMEROTATION LOCALE
+!                            AU LIGREL ILI DE .LILI
+!     ZZPRNO(ILI,NUNOEL,2) = NOMBRE DE DDL PORTES PAR LE NOEUD NUNOEL
+!     ZZPRNO(ILI,NUNOEL,2+1) = 1ER CODE
+!     ZZPRNO(ILI,NUNOEL,2+NEC) = NEC IEME CODE
+!
+    zzprno(ili,nunoel,l) = zi(idprn1-1+zi(idprn2+ili-1)+ (nunoel-1)* (nec+2)+l-1)
 !
     call jemarq()
 !
@@ -113,6 +151,87 @@ subroutine cpysol(numddl, rsolu, debglo, vecpet, nbval)
             enddo
             call jedetr('&&CPYSOL.TMP1E')
             call jedetr('&&CPYSOL.TMP1R')
+        endif
+    enddo
+
+!   RECHERCHE DES ADRESSES DU .PRNO DE .NUME
+    call jeveuo(numddl//'.NUME.PRNO', 'E', idprn1)
+    call jeveuo(jexatr(numddl//'.NUME.PRNO', 'LONCUM'), 'L', idprn2)
+    call jelira(jexnum(numddl//'.NUME.PRNO', 1), 'LONMAX', ntot, k8bid)
+
+!   RECUPERATION DU NOM DU MAILLAGE DANS LE BUT D'OBTENIR LE JOINT
+    call jeveuo(numddl//'.NUME.REFN', 'L', jrefn)
+    noma = zk24(jrefn)
+
+    call jeveuo(noma//'.DIME', 'L', dime)
+
+!   !!! VERIFIER QU'IL N'Y A PAS DE MACRO-ELTS
+!   CALCUL DU NOMBRE D'ENTIERS CODES A PARTIR DE LONMAX
+    nec = ntot/zi(dime) - 2
+    call jelira(numddl//'.NUME.PRNO', 'NMAXOC', nlili, k8bid)
+    do ili = 2, nlili
+        call jeexin(jexnum(numddl//'.NUME.PRNO', ili), iret)
+        if( iret.ne.0 ) then
+            call jenuno(jexnum(numddl//'.NUME.LILI', ili), nomlig)
+            join = nomlig//".NBJO"
+            call jeveuo(join, 'L', jjoin)
+            call jelira(join, 'LONMAX', nbjoin)
+            do ijoin = 1, nbjoin
+                numpro = zi(jjoin+ijoin-1)
+                if( numpro.ne.-1 ) then
+                    numpr4 = numpro
+                    num4 = ijoin
+                    call codent(numpro, 'G', chnbjo)
+                    nojoine = nomlig//'.E'//chnbjo
+                    nojoinr = nomlig//'.R'//chnbjo
+
+                    call jeexin(nojoine, iret1)
+                    if( iret1.ne.0 ) then
+                        call jeveuo(nojoine, 'L', jjoine)
+                        call jelira(nojoine, 'LONMAX', nbnoee, k8bid)
+                        call wkvect('&&CRNUGL.NUM_DDL_GLOB_E', 'V V R', nbnoee, jnujoi1)
+                        do jaux = 1, nbnoee
+                            numnoe = -zi(jjoine+jaux-1)
+                            nddll = zzprno(ili, numnoe, 1)
+                            zr(jnujoi1+jaux-1) = rsolu(nddll)
+                        enddo
+                        n4e = nbnoee
+                    endif
+
+                    call jeexin(nojoinr, iret2)
+                    if( iret2.ne.0 ) then
+                        call jeveuo(nojoinr, 'L', jjoinr)
+                        call jelira(nojoinr, 'LONMAX', nbnoer, k8bid)
+                        call wkvect('&&CRNUGL.NUM_DDL_GLOB_R', 'V V R', nbnoer, jnujoi2)
+                    endif
+
+                    if (rang .lt. numpro) then
+                        if( iret1.ne.0 ) then
+                            call asmpi_send_r(zr(jnujoi1), n4e, numpr4, num4, mpicou)
+                        endif
+                        if( iret2.ne.0 ) then
+                            call asmpi_recv_r(zr(jnujoi2), n4r, numpr4, num4, mpicou)
+                        endif
+                    else if (rang.gt.numpro) then
+                        if( iret2.ne.0 ) then
+                            call asmpi_recv_r(zr(jnujoi2), n4r, numpr4, num4, mpicou)
+                        endif
+                        if( iret1.ne.0 ) then
+                            call asmpi_send_r(zr(jnujoi1), n4e, numpr4, num4, mpicou)
+                        endif
+                    endif
+
+                    if( iret2.ne.0 ) then
+                        do jaux = 1, nbnoer
+                            numnoe = -zi(jjoinr+jaux-1)
+                            nddll = zzprno(ili, numnoe, 1)
+                            rsolu(nddll) = zr(jnujoi2+jaux-1)
+                        enddo
+                    endif
+                    call jedetr('&&CRNUGL.NUM_DDL_GLOB_E')
+                    call jedetr('&&CRNUGL.NUM_DDL_GLOB_R')
+                endif
+            enddo
         endif
     enddo
 ! nsellenet

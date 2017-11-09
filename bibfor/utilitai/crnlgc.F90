@@ -137,7 +137,8 @@ subroutine crnlgc(numddl)
     do iproc1 = 0, nbproc - 1
         do iproc2 = 0, nbproc - 1
             posit = iproc1*nbproc + iproc2
-            if (zi(jgraco + posit) .eq. 1 .and. zi(jtmp + iproc1) .eq. 0 .and. zi(jtmp + iproc2) .eq. 0) then
+            if (zi(jgraco + posit) .eq. 1 .and. zi(jtmp + iproc1) .eq. 0 &
+                .and. zi(jtmp + iproc2) .eq. 0) then
                 zi(jgraco + posit) = 0
                 zi(jmasqu + posit) = nmatch
                 posit = iproc2*nbproc + iproc1
@@ -349,8 +350,6 @@ subroutine crnlgc(numddl)
                             zi(jnujoi1+jaux-1) = zi(jnugll - 1 + nddll)
                         enddo
                         n4e = nbnoee
-                        call asmpi_send_i(zi(jnujoi1), n4e, numpr4, num4, mpicou)
-                        call jedetr('&&CRNUGL.NUM_DDL_GLOB_E')
                     endif
 
                     call jeexin(nojoir, iret2)

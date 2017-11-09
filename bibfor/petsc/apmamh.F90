@@ -23,7 +23,6 @@ subroutine apmamh(kptsc)
 !
 !
 ! person_in_charge: natacha.bereux at edf.fr
-! aslint:disable=C1308
 
 use petsc_data_module
 
@@ -164,7 +163,6 @@ use petsc_data_module
 !         nucmp2 = zi(jdeeq + 1)
 !!         write(12+rang, 1000) nuno2, nucmp2, nuno1, nucmp1, jcolg, iligg, zr(jvalm)
 !         write(12+rang, 2000) nuno2, nucmp2, nuno1, nucmp1, zr(jvalm)
-        write(12, *) "i,j", zi(jnugll), zi(jnugll)
 ! nsellenet
         tmp = zi(jnugll)
         call MatSetValue(a, tmp, tmp, zr(jvalm),&
@@ -173,7 +171,7 @@ use petsc_data_module
 !
 !   On commence par s'occuper du nombres de NZ par ligne
 !   dans le bloc diagonal
-    call MatSetOption(a, MAT_NEW_NONZERO_ALLOCATION_ERR, PETSC_FALSE, ierr)
+!    call MatSetOption(a, MAT_NEW_NONZERO_ALLOCATION_ERR, PETSC_FALSE, ierr)
     un = 1
     do jcoll = 2, nloc
         nzdeb = zi(jsmdi + jcoll - 2) + 1
@@ -204,9 +202,6 @@ use petsc_data_module
                 jterm = jterm + 1
                 zr(jdval2 + jterm - 1) = valm
                 zi4(jdxi2 + jterm - 1) = iligg
-! nsellenet
-        write(12, *) "i,j", iligg, jcolg
-! nsellenet
                 if ( procol .eq. rang ) then
 ! nsellenet
 !!         write(12+rang, 1000) nuno2, nucmp2, nuno1, nucmp1, jcolg, iligg, valm
@@ -219,7 +214,6 @@ use petsc_data_module
 ! nsellenet
 !!         write(12+rang, 1000) nuno1, nucmp1, nuno2, nucmp2, jcolg, iligg, valm
 !         write(12+rang, 2000) nuno1, nucmp1, nuno2, nucmp2, valm
-        write(12, *) "i,j", jcolg, iligg
 ! nsellenet
                     endif
                 else
@@ -227,9 +221,6 @@ use petsc_data_module
                         iterm = iterm + 1
                         zr(jdval1 + iterm - 1) = valm
                         zi4(jdxi1 + iterm - 1) = iligg
-! nsellenet
-        write(12, *) "i,j", jcolg, iligg
-! nsellenet
                     endif
 ! nsellenet
 !!         write(12+rang, 1000) nuno2, nucmp2, nuno1, nucmp1, jcolg, iligg, valm
@@ -244,9 +235,6 @@ use petsc_data_module
                         jterm = jterm + 1
                         zr(jdval2 + jterm - 1) = valm
                         zi4(jdxi2 + jterm - 1) = iligg
-! nsellenet
-        write(12, *) "i,j", iligg, jcolg
-! nsellenet
                     endif
 ! nsellenet
 !!         write(12+rang, 1000) nuno1, nucmp1, nuno2, nucmp2, jcolg, iligg, valm
@@ -258,24 +246,15 @@ use petsc_data_module
                 iterm = iterm + 1
                 zr(jdval1 + iterm - 1) = valm
                 zi4(jdxi1 + iterm - 1) = iligg
-! nsellenet
-        write(12, *) "i,j", jcolg, iligg
-! nsellenet
             else
                 if( nuno1.eq.0 .or. nuno2.eq.0 ) then
                     jterm = jterm + 1
                     zr(jdval2 + jterm - 1) = valm
                     zi4(jdxi2 + jterm - 1) = iligg
-! nsellenet
-        write(12, *) "i,j", iligg, jcolg
-! nsellenet
                     if( iligg.ne.jcolg ) then
                         iterm = iterm + 1
                         zr(jdval1 + iterm - 1) = valm
                         zi4(jdxi1 + iterm - 1) = iligg
-! nsellenet
-        write(12, *) "i,j", jcolg, iligg
-! nsellenet
                     endif
                 endif
 ! nsellenet
