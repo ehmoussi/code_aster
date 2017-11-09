@@ -47,7 +47,7 @@ from .crea_champ import CREA_CHAMP
 # from .crea_maillage import CREA_MAILLAGE
 from .crea_resu import CREA_RESU
 from .crea_table import CREA_TABLE
-from .debut import DEBUT
+from .debut import DEBUT, POURSUITE
 from .defi_compor import DEFI_COMPOR
 from .defi_constante import DEFI_CONSTANTE
 from .defi_fichier import DEFI_FICHIER
