@@ -68,7 +68,7 @@ public:
         * @brief Constructeur
         */
     ListOfLinearRelationsInstance( const std::string name ) throw( std::runtime_error ):
-        DataStructure( name, "LISTE_RELA" ),
+        DataStructure( name, 19, "LISTE_RELA" ),
         _coefficients( JeveuxVector< ValueType >( getName() + ".RLCO" ) ),
         _rhs( JeveuxVector< ValueType >( getName() + ".RLBE" ) ),
         _componentsNames( JeveuxVectorChar8( getName() + ".RLDD" ) ),

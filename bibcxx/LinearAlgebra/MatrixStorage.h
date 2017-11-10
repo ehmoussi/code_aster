@@ -47,7 +47,7 @@ public:
      * @brief Constructeur
      */
     MatrixStorageInstance( const std::string& name ):
-        DataStructure( name, "STOCKAGE", Permanent )
+        DataStructure( name, 14, "STOCKAGE", Permanent )
     {};
 };
 

@@ -79,7 +79,7 @@ public:
      * @param name Nom Jeveux du champ aux éléments
      */
     SimpleFieldOnElementsInstance( const std::string name ):
-                    DataStructure( name, "CHAM_ELEM_S" ),
+                    DataStructure( name, 19, "CHAM_ELEM_S" ),
                     _descriptor( JeveuxVectorChar8( getName() + ".CESK" ) ),
                     _size( JeveuxVectorLong( getName() + ".CESD" ) ),
                     _component( JeveuxVectorChar8( getName() + ".CESC" ) ),

@@ -30,7 +30,7 @@
 
 ParallelMechanicalLoadInstance::ParallelMechanicalLoadInstance( const GenericMechanicalLoadPtr& load,
                                                                 const ModelPtr& model ):
-    DataStructure( ResultNaming::getNewResultName(), "CHAR_MECA" ),
+    DataStructure( ResultNaming::getNewResultName(), 8, "CHAR_MECA" ),
     _BaseFEDesc( load->getMechanicalLoadDescription()._FEDesc ),
     _FEDesc( new ParallelFiniteElementDescriptorInstance
                     ( getName() + ".CHME.LIGRE", _BaseFEDesc,

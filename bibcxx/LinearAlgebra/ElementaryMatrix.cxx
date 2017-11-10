@@ -28,15 +28,15 @@
 #include "Supervis/CommandSyntax.h"
 
 ElementaryMatrixInstance::ElementaryMatrixInstance( const JeveuxMemory memType ):
-                DataStructure( "MATR_ELEM", memType ),
-                _description( JeveuxVectorChar24( getName() + "           .RERR" ) ),
-                _listOfElementaryResults( JeveuxVectorChar24( getName() + "           .RELR" ) ),
-                _isEmpty( true )
+    DataStructure( "MATR_ELEM", memType, 19 ),
+    _description( JeveuxVectorChar24( getName() + ".RERR" ) ),
+    _listOfElementaryResults( JeveuxVectorChar24( getName() + ".RELR" ) ),
+    _isEmpty( true )
 {};
 
 ElementaryMatrixInstance::ElementaryMatrixInstance( std::string type, const JeveuxMemory memType ):
-                DataStructure( "MATR_ELEM_" + type, memType ),
-                _description( JeveuxVectorChar24( getName() + "           .RERR" ) ),
-                _listOfElementaryResults( JeveuxVectorChar24( getName() + "           .RELR" ) ),
-                _isEmpty( true )
+    DataStructure( "MATR_ELEM_" + type, memType, 19 ),
+    _description( JeveuxVectorChar24( getName() + ".RERR" ) ),
+    _listOfElementaryResults( JeveuxVectorChar24( getName() + ".RELR" ) ),
+    _isEmpty( true )
 {};

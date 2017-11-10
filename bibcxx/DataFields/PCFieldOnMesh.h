@@ -285,7 +285,7 @@ class PCFieldOnMeshInstance: public DataStructure
          * @param mesh Maillage support
          */
         PCFieldOnMeshInstance( const std::string& name, const BaseMeshPtr& mesh ):
-            DataStructure( name, "CART_" ),
+            DataStructure( name, 19, "CART_" ),
             _meshName( JeveuxVectorChar8( name + ".NOMA" ) ),
             _descriptor( JeveuxVectorLong( name + ".DESC" ) ),
             _nameOfLigrels( JeveuxVectorChar24( name + ".NOLI" ) ),
@@ -307,7 +307,7 @@ class PCFieldOnMeshInstance: public DataStructure
          */
         PCFieldOnMeshInstance( std::string name,
                                const FiniteElementDescriptorPtr& ligrel ):
-            DataStructure( name, "CART_" ),
+            DataStructure( name, 19, "CART_" ),
             _meshName( JeveuxVectorChar8( name + ".NOMA" ) ),
             _descriptor( JeveuxVectorLong( name + ".DESC" ) ),
             _nameOfLigrels( JeveuxVectorChar24( name + ".NOLI" ) ),
@@ -474,7 +474,7 @@ class PCFieldOnMeshInstance: public DataStructure
                 const auto numGrp = (*_descriptor)[ 4 + 2*position ];
                 const auto& map = _supportMesh->getGroupOfNodesNames();
                 const auto name = map->findStringOfElement( numGrp );
-                return PCFieldZone( _supportMesh, 
+                return PCFieldZone( _supportMesh,
                                     GroupOfElementsPtr( new GroupOfElements( name ) ) );
             }
             else if( code == 3 )

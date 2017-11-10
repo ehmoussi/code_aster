@@ -76,12 +76,12 @@ public:
     /**
      * @brief Constructeur
      */
-    CyclicSymmetryModeInstance(): 
-        DataStructure( "MOD_CYCL", Permanent ),
+    CyclicSymmetryModeInstance():
+        DataStructure( "MOD_CYCL", Permanent, 8 ),
         _type( JeveuxVectorChar8( getName() + ".CYCL_TYPE" ) ),
         _desc( JeveuxVectorLong( getName() + ".CYCL_DESC" ) ),
         _diam( JeveuxVectorLong( getName() +"CYCL_DIAM" ) ),
-        _numberOfSectors( JeveuxVectorLong( getName() + ".CYCL_NBSC" ) ), 
+        _numberOfSectors( JeveuxVectorLong( getName() + ".CYCL_NBSC" ) ),
         _refe( JeveuxVectorChar24( getName() + ".CYCL_REFE" ) ),
         _cFreq( JeveuxVectorComplex( getName() + ".CYCL_FREQ" ) ),
         _interfaceIndices( JeveuxVectorLong( getName() + ".CYCL_NUIN") ),
@@ -90,7 +90,7 @@ public:
         _supportMesh( MeshPtr() ),
         _structInterf( StructureInterfacePtr() ),
         _modalBasis( StandardModalBasisPtr())
-         
+
     {};
 
 

@@ -29,9 +29,9 @@
 #include "Supervis/ResultNaming.h"
 
 ThermalLoadInstance::ThermalLoadInstance():
-                    DataStructure( ResultNaming::getNewResultName(), "CHAR_THER" ),
-                    _supportModel( ModelPtr() ),
-                    _isEmpty( true )
+    DataStructure( ResultNaming::getNewResultName(), 8, "CHAR_THER" ),
+    _supportModel( ModelPtr() ),
+    _isEmpty( true )
 {};
 
 bool ThermalLoadInstance::build() throw ( std::runtime_error )

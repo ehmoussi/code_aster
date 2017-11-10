@@ -29,10 +29,11 @@
 #include "Materials/Material.h"
 #include "Supervis/ResultNaming.h"
 
-MaterialInstance::MaterialInstance(): DataStructure( ResultNaming::getNewResultName(), "MATER" ),
-                    _jeveuxName( ResultNaming::getCurrentName() ),
-                    _materialBehaviourNames( JeveuxVectorChar32( _jeveuxName + ".MATERIAU.NOMRC " ) ),
-                    _nbMaterialBehaviour( 0 )
+MaterialInstance::MaterialInstance():
+    DataStructure( ResultNaming::getNewResultName(), 8, "MATER" ),
+    _jeveuxName( ResultNaming::getCurrentName() ),
+    _materialBehaviourNames( JeveuxVectorChar32( _jeveuxName + ".MATERIAU.NOMRC " ) ),
+    _nbMaterialBehaviour( 0 )
 {};
 
 bool MaterialInstance::build() throw( std::runtime_error )

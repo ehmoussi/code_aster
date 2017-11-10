@@ -30,9 +30,9 @@
 #include "Supervis/ResultNaming.h"
 
 KinematicsLoadInstance::KinematicsLoadInstance():
-                    DataStructure( ResultNaming::getNewResultName(), "CHAR_CINE" ),
-                    _supportModel( ModelPtr() ),
-                    _isEmpty( true )
+    DataStructure( ResultNaming::getNewResultName(), 8, "CHAR_CINE" ),
+    _supportModel( ModelPtr() ),
+    _isEmpty( true )
 {};
 
 bool KinematicsLoadInstance::build() throw ( std::runtime_error )

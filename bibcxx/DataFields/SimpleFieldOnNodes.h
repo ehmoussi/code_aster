@@ -79,7 +79,7 @@ public:
      * @param name Nom Jeveux du champ aux noeuds
      */
     SimpleFieldOnNodesInstance( const std::string name ):
-                    DataStructure( name, "CHAM_NO_S" ),
+                    DataStructure( name, 19, "CHAM_NO_S" ),
                     _descriptor( JeveuxVectorChar8( getName() + ".CNSK" ) ),
                     _size( JeveuxVectorLong( getName() + ".CNSD" ) ),
                     _component( JeveuxVectorChar8( getName() + ".CNSC" ) ),

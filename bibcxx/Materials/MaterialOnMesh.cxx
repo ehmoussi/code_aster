@@ -34,22 +34,22 @@
 
 
 MaterialOnMeshInstance::MaterialOnMeshInstance( const MeshPtr& mesh ):
-                                _supportMesh( mesh ),
-                                DataStructure( ResultNaming::getNewResultName(), "CHAM_MATER" ),
-                                _listOfMaterials( PCFieldOnMeshChar8Ptr(
-                                    new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
-                                _listOfTemperatures( PCFieldOnMeshDoublePtr(
-                                    new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) )
+    _supportMesh( mesh ),
+    DataStructure( ResultNaming::getNewResultName(), 8, "CHAM_MATER" ),
+    _listOfMaterials( PCFieldOnMeshChar8Ptr(
+        new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
+    _listOfTemperatures( PCFieldOnMeshDoublePtr(
+        new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) )
 {};
 
 #ifdef _USE_MPI
 MaterialOnMeshInstance::MaterialOnMeshInstance( const ParallelMeshPtr& mesh ):
-                                _supportMesh( mesh ),
-                                DataStructure( ResultNaming::getNewResultName(), "CHAM_MATER" ),
-                                _listOfMaterials( PCFieldOnMeshChar8Ptr(
-                                    new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
-                                _listOfTemperatures( PCFieldOnMeshDoublePtr(
-                                    new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) )
+    _supportMesh( mesh ),
+    DataStructure( ResultNaming::getNewResultName(), 8, "CHAM_MATER" ),
+    _listOfMaterials( PCFieldOnMeshChar8Ptr(
+        new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
+    _listOfTemperatures( PCFieldOnMeshDoublePtr(
+        new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) )
 {};
 #endif /* _USE_MPI */
 

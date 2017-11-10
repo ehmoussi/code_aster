@@ -30,7 +30,7 @@
 #include "Supervis/ResultNaming.h"
 
 ElementaryCharacteristicsInstance::ElementaryCharacteristicsInstance( const ModelPtr& model ):
-    DataStructure( ResultNaming::getNewResultName(), "CARA_ELEM" ),
+    DataStructure( ResultNaming::getNewResultName(), 8, "CARA_ELEM" ),
     _model( model ),
     _mesh( model->getSupportMesh() ),
     _numberOfSubpoints( new PCFieldOnMeshLongInstance( getName() + ".CANBSP", _mesh ) ),

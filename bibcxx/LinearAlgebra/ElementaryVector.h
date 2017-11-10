@@ -90,6 +90,14 @@ public:
 #endif
     };
 
+    /* FIXME: temporay for _corich .REPT initialiezation! */
+    const std::string getName8() const
+    {
+        std::string name8 = getName();
+        name8.resize(8, ' ');
+        return name8;
+    };
+
     /**
      * @brief Ajouter une charge mecanique
      * @param currentLoad objet MechanicalLoad

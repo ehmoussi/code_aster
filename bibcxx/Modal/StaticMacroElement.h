@@ -61,8 +61,8 @@ public:
     /**
      * @brief Constructeur
      */
-    ProjMesuInstance( const std::string& name ): 
-        DataStructure( name, "PROJ_MESU", Permanent ),
+    ProjMesuInstance( const std::string& name ):
+        DataStructure( name, 18, "PROJ_MESU", Permanent ),
         _pjmno( JeveuxVectorLong( getName() + ".PJMNO" ) ),
         _pjmrg( JeveuxVectorChar8( getName() + ".PJMRG" ) ),
         _pjmbp( JeveuxVectorDouble( getName() + ".PJMBP" ) ),
@@ -127,8 +127,8 @@ public:
     /**
      * @brief Constructeur
      */
-    StaticMacroElementInstance(): 
-        DataStructure( "MACR_ELEM_STAT", Permanent ),
+    StaticMacroElementInstance():
+        DataStructure( "MACR_ELEM_STAT", Permanent, 8 ),
         _desm( JeveuxVectorLong( getName() + ".DESM" ) ),
         _lino( JeveuxVectorLong( getName() + ".LINO" ) ),
         _refm( JeveuxVectorChar8( getName() + ".REFM" ) ),

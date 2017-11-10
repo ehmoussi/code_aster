@@ -93,8 +93,8 @@ public:
     /**
      * @brief Constructeur
      */
-    DynamicMacroElementInstance(): 
-        DataStructure( "MACR_ELEM_DYNA", Permanent ),
+    DynamicMacroElementInstance():
+        DataStructure( "MACR_ELEM_DYNA", Permanent, 8 ),
         _desm( JeveuxVectorLong( getName() + ".DESM" ) ),
         _refm( JeveuxVectorChar8( getName() + ".REFM" ) ),
         _conx( JeveuxVectorLong( getName() + ".CONX" ) ),

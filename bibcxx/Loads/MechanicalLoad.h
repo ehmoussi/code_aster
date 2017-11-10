@@ -400,14 +400,14 @@ public:
          * @brief Constructor
          */
         GenericMechanicalLoadInstance( const ModelPtr& currentModel ):
-                        DataStructure( ResultNaming::getNewResultName(), "CHAR_MECA" ),
-                        _mecaLoad( getName() + ".CHME", currentModel ),
-                        _type( getName() + ".TYPE" ),
-                        _lisma01( getName() + ".LISMA01" ),
-                        _lisma02( getName() + ".LISMA02" ),
-                        _trans01( getName() + ".TRANS01" ),
-                        _trans02( getName() + ".TRANS02" ),
-                        _poidsMaille( getName() + ".POIDS_MAILLE" )
+            DataStructure( ResultNaming::getNewResultName(), 8, "CHAR_MECA" ),
+            _mecaLoad( getName() + ".CHME", currentModel ),
+            _type( getName() + ".TYPE" ),
+            _lisma01( getName() + ".LISMA01" ),
+            _lisma02( getName() + ".LISMA02" ),
+            _trans01( getName() + ".TRANS01" ),
+            _trans02( getName() + ".TRANS02" ),
+            _poidsMaille( getName() + ".POIDS_MAILLE" )
         {};
 
         /**

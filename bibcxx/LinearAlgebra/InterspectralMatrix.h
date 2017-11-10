@@ -80,8 +80,8 @@ public:
     /**
      * @brief Constructeur
      */
-    InterspectralMatrixInstance(): 
-        DataStructure( "INTERSPECTRE", Permanent ),
+    InterspectralMatrixInstance():
+        DataStructure( "INTERSPECTRE", Permanent, 8 ),
         _refe( JeveuxVectorChar16( getName() + ".REFE" ) ),
         _disc( JeveuxVectorDouble( getName() + ".DISC" ) ),
         _vale( JeveuxCollectionDouble( getName() + ".VALE" ) ),
