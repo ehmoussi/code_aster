@@ -54,6 +54,7 @@ function lcgtn_material(fami,kpg,ksp,imate,resi,grvi) result(mat)
     call rcvalb(fami,kpg,ksp,poum,imate,' ','ELAS',0,' ',[0.d0],nbel,nomel,valel,iok,2)
     mat%lambda = valel(1)*valel(2)/((1+valel(2))*(1-2*valel(2)))
     mat%deuxmu = valel(1)/(1+valel(2))
+    mat%troismu = 1.5d0*mat%deuxmu
     mat%troisk = valel(1)/(1.d0-2.d0*valel(2))
 
 !  Hardening
