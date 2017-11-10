@@ -226,24 +226,24 @@ typedef boost::shared_ptr< AssemblyMatrixComplexInstance > AssemblyMatrixComplex
 
 template< class ValueType >
 AssemblyMatrixInstance< ValueType >::AssemblyMatrixInstance( const JeveuxMemory memType ):
-                DataStructure( "MATR_ASSE_DEPL_R", memType ),
-                _description( JeveuxVectorChar24( getName() + "           .REFA" ) ),
-                _matrixValues( JeveuxCollection< ValueType >( getName() + "           .VALM" ) ),
-                _scaleFactorLagrangian( JeveuxVectorDouble( getName() + "           .CONL" ) ),
-                _isEmpty( true ),
-                _isFactorized( false ),
-                _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance( memType ) ) )
+    DataStructure( "MATR_ASSE_DEPL_R", memType, 19 ),
+    _description( JeveuxVectorChar24( getName() + ".REFA" ) ),
+    _matrixValues( JeveuxCollection< ValueType >( getName() + ".VALM" ) ),
+    _scaleFactorLagrangian( JeveuxVectorDouble( getName() + ".CONL" ) ),
+    _isEmpty( true ),
+    _isFactorized( false ),
+    _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance( memType ) ) )
 {};
 
 template< class ValueType >
 AssemblyMatrixInstance< ValueType >::AssemblyMatrixInstance( const std::string& name ):
-                DataStructure( name, "MATR_ASSE_DEPL_R" ),
-                _description( JeveuxVectorChar24( getName() + "           .REFA" ) ),
-                _matrixValues( JeveuxCollection< ValueType >( getName() + "           .VALM" ) ),
-                _scaleFactorLagrangian( JeveuxVectorDouble( getName() + "           .CONL" ) ),
-                _isEmpty( true ),
-                _isFactorized( false ),
-                _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) )
+    DataStructure( name, 19, "MATR_ASSE_DEPL_R" ),
+    _description( JeveuxVectorChar24( getName() + ".REFA" ) ),
+    _matrixValues( JeveuxCollection< ValueType >( getName() + ".VALM" ) ),
+    _scaleFactorLagrangian( JeveuxVectorDouble( getName() + ".CONL" ) ),
+    _isEmpty( true ),
+    _isFactorized( false ),
+    _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) )
 {};
 
 template< class ValueType >

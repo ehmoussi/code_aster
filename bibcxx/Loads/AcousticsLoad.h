@@ -156,7 +156,7 @@ public:
     };
 
     AcousticsLoadInstance( const ModelPtr& model ):
-        DataStructure( ResultNaming::getNewResultName(), "CHAR_ACOU" ),
+        DataStructure( ResultNaming::getNewResultName(), 8, "CHAR_ACOU" ),
         _supportModel( model ),
         _mesh( model->getSupportMesh() ),
         _modelName( JeveuxVectorChar8( getName() + ".CHAC.MODEL.NOMO" ) ),

@@ -63,7 +63,7 @@ class TimeStepperInstance: public DataStructure, public GenericStepper
          * @brief Constructeur
          */
         TimeStepperInstance( JeveuxMemory memType = Permanent ):
-            DataStructure( "LIST_INST", memType ),
+            DataStructure( "LIST_INST", memType, 8 ),
             _values( getName() + ".LIST" )
         {
             VectorDouble tmp( 1, 0. );

@@ -32,7 +32,7 @@
 #include "Modeling/CrackShape.h"
 
 XfemCrackInstance::XfemCrackInstance(MeshPtr supportMesh):
-    DataStructure( ResultNaming::getNewResultName(), "FISS_XFEM" ),
+    DataStructure( ResultNaming::getNewResultName(), 8, "FISS_XFEM" ),
     _jeveuxName( ResultNaming::getCurrentName() ),
     _supportMesh(supportMesh),
     _auxiliaryGrid(MeshPtr()),
@@ -64,7 +64,6 @@ XfemCrackInstance::XfemCrackInstance(MeshPtr supportMesh):
     _heavisideElements(JeveuxVectorLong( _jeveuxName + ".MAILFISS.HEAV" ) ),
     _crackTipAndHeavisideElements(JeveuxVectorLong( _jeveuxName + ".MAILFISS.HECT" ) )
 {
-    assert(_jeveuxName.size() == 8);
 };
 
 

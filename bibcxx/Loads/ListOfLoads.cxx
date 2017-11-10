@@ -29,11 +29,11 @@
 #include "Supervis/CommandSyntax.h"
 
 ListOfLoadsInstance::ListOfLoadsInstance( const JeveuxMemory memType ):
-                    DataStructure( "L_CHARGES", memType ),
-                    _loadInformations( JeveuxVectorLong( getName() + "           .INFC" ) ),
-                    _list( JeveuxVectorChar24( getName() + "           .LCHA" ) ),
-                    _listOfFunctions( JeveuxVectorChar24( getName() + "           .FCHA" ) ),
-                    _isEmpty( true )
+    DataStructure( "L_CHARGES", memType, 19 ),
+    _loadInformations( JeveuxVectorLong( getName() + ".INFC" ) ),
+    _list( JeveuxVectorChar24( getName() + ".LCHA" ) ),
+    _listOfFunctions( JeveuxVectorChar24( getName() + ".FCHA" ) ),
+    _isEmpty( true )
 {};
 
 bool ListOfLoadsInstance::build() throw ( std::runtime_error )

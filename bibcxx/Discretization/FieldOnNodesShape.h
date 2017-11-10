@@ -46,7 +46,8 @@ public:
     /**
      * @brief Constructeur
      */
-    FieldOnNodesShapeInstance()
+    FieldOnNodesShapeInstance():
+        DataStructure("", Permanent, 8)
     {};
 
     /**

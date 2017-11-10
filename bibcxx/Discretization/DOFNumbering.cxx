@@ -28,28 +28,26 @@
 
 BaseDOFNumberingInstance::BaseDOFNumberingInstance( const std::string& type,
                                                     const JeveuxMemory memType ):
-            DataStructure( ResultNaming::getNewResultName(), type, memType ),
-            _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + "      .NSLV" ) ),
-            _globalNumbering( new GlobalEquationNumberingInstance( getName() + "      .NUME" ) ),
-            _localNumbering( new LocalEquationNumberingInstance( getName() + "      .NUML" ) ),
-            _supportModel( ModelPtr() ),
-            _listOfLoads( new ListOfLoadsInstance() ),
-            _isEmpty( true )
+    DataStructure( ResultNaming::getNewResultName(), 14, type, memType ),
+    _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + ".NSLV" ) ),
+    _globalNumbering( new GlobalEquationNumberingInstance( getName() + ".NUME" ) ),
+    _localNumbering( new LocalEquationNumberingInstance( getName() + ".NUML" ) ),
+    _supportModel( ModelPtr() ),
+    _listOfLoads( new ListOfLoadsInstance() ),
+    _isEmpty( true )
 {};
 
 BaseDOFNumberingInstance::BaseDOFNumberingInstance( const std::string name,
                                                     const std::string& type,
                                                     const JeveuxMemory memType ):
-            DataStructure( name, type, memType ),
-            _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + ".NSLV" ) ),
-            _globalNumbering( new GlobalEquationNumberingInstance( getName() + ".NUME" ) ),
-            _localNumbering( new LocalEquationNumberingInstance( getName() + ".NUML" ) ),
-            _supportModel( ModelPtr() ),
-            _listOfLoads( new ListOfLoadsInstance() ),
-            _isEmpty( true )
+    DataStructure( name, 14, type, memType ),
+    _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + ".NSLV" ) ),
+    _globalNumbering( new GlobalEquationNumberingInstance( getName() + ".NUME" ) ),
+    _localNumbering( new LocalEquationNumberingInstance( getName() + ".NUML" ) ),
+    _supportModel( ModelPtr() ),
+    _listOfLoads( new ListOfLoadsInstance() ),
+    _isEmpty( true )
 {
-    if ( name.size() != 14 )
-        throw std::runtime_error( "Catastrophic error" );
 };
 
 bool BaseDOFNumberingInstance::computeNumerotation() throw ( std::runtime_error )

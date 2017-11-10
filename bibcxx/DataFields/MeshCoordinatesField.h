@@ -66,7 +66,7 @@ public:
      * @param name Nom Jeveux du champ aux noeuds
      */
     MeshCoordinatesFieldInstance( const std::string& name ):
-                    DataStructure( name, "CHAM_NO" ),
+                    DataStructure( name, 19, "CHAM_NO" ),
                     _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
                     _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
                     _valuesList( JeveuxVectorDouble( getName() + ".VALE" ) )

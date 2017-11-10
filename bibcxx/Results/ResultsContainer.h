@@ -98,13 +98,13 @@ public:
      * @brief Constructeur
      */
     ResultsContainerInstance( const std::string resuTyp = "???" ):
-            DataStructure( ResultNaming::getNewResultName(), resuTyp ),
-            _symbolicNamesOfFields( JeveuxBidirectionalMapChar16( getName() + "           .DESC" ) ),
-            _namesOfFields( JeveuxCollectionChar24( getName() + "           .TACH" ) ),
-            _accessVariables( JeveuxBidirectionalMapChar16( getName() + "           .NOVA" ) ),
-            _calculationParameter( JeveuxCollectionChar8( getName() + "           .TAVA" ) ),
-            _serialNumber( JeveuxVectorLong( getName() + "           .ORDR" ) ),
-            _nbRanks( 0 )
+        DataStructure( ResultNaming::getNewResultName(), 8, resuTyp ),
+        _symbolicNamesOfFields( JeveuxBidirectionalMapChar16( getName() + ".DESC" ) ),
+        _namesOfFields( JeveuxCollectionChar24( getName() + ".TACH" ) ),
+        _accessVariables( JeveuxBidirectionalMapChar16( getName() + ".NOVA" ) ),
+        _calculationParameter( JeveuxCollectionChar8( getName() + ".TAVA" ) ),
+        _serialNumber( JeveuxVectorLong( getName() + ".ORDR" ) ),
+        _nbRanks( 0 )
     {};
 
     /**

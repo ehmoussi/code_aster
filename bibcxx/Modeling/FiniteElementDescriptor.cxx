@@ -24,10 +24,11 @@
 #include "Modeling/FiniteElementDescriptor.h"
 #include <algorithm>
 
-FiniteElementDescriptorInstance::FiniteElementDescriptorInstance( const std::string& name,
-                                                                  const BaseMeshPtr mesh,
-                                                                  const JeveuxMemory memType ):
-    DataStructure( name, "LIGREL", memType ),
+FiniteElementDescriptorInstance::FiniteElementDescriptorInstance(
+            const std::string& name,
+            const BaseMeshPtr mesh,
+            const JeveuxMemory memType ):
+    DataStructure( name, 19, "LIGREL", memType ),
     _numberOfDelayedNumberedConstraintNodes( getName() + ".NBNO" ),
     _parameters( getName() + ".LGRF" ),
     _dofDescriptor( getName() + ".PRNM" ),
@@ -42,6 +43,4 @@ FiniteElementDescriptorInstance::FiniteElementDescriptorInstance( const std::str
     _explorer( ConnectivityDelayedElementsExplorer( _delayedNumberedConstraintElementsDescriptor ) ),
     _explorer2( ConnectivityDelayedElementsExplorer( _listOfGroupOfElements ) )
 {
-    if( getName().size() != 19 )
-        throw std::runtime_error( "Naming problem" );
 };

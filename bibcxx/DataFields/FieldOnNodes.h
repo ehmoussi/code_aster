@@ -98,7 +98,7 @@ public:
      * @param name Nom Jeveux du champ aux noeuds
      */
     FieldOnNodesInstance( const std::string name ):
-                    DataStructure( name, "CHAM_NO" ),
+                    DataStructure( name, 19, "CHAM_NO" ),
                     _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
                     _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
                     _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) )
@@ -123,7 +123,7 @@ public:
      * @brief Constructeur from a MeshCoordinatesFieldPtr&
      */
     FieldOnNodesInstance( MeshCoordinatesFieldPtr& toCopy ):
-                    DataStructure( "CHAM_NO", toCopy->getMemoryType() ),
+                    DataStructure( "CHAM_NO", toCopy->getMemoryType(), 19 ),
                     _descriptor( toCopy->_descriptor ),
                     _reference( toCopy->_reference ),
                     _valuesList( toCopy->_valuesList )

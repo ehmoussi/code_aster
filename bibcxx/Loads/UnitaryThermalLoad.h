@@ -57,7 +57,8 @@ public:
     /**
      * @brief Constructeur
      */
-    UnitaryThermalLoadInstance()
+    UnitaryThermalLoadInstance():
+        DataStructure("", Permanent, 8)
     {};
 };
 

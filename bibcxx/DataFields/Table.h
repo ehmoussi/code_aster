@@ -67,27 +67,28 @@ public:
         return TablePtr( new TableInstance );
     };
 
+    // TODO: Development documentation says 17 chars + "  ", for 'LG' logicals.
+
     /**
      * @brief Constructeur
      * @param name Nom Jeveux du champ aux noeuds
      */
     TableInstance( const std::string& name ) throw( std::runtime_error ):
-        DataStructure( name, "TABLE" ),
+        DataStructure( name, 19, "TABLE" ),
         _memoryLocation( JeveuxVectorChar8( getName() + ".TBBA" ) ),
         _description( JeveuxVectorLong( getName() + ".TBNP" ) ),
         _parameterDescription( JeveuxVectorChar24( getName() + ".TBLP" ) )
     {
-        if( getName().size() != 19 )
-            throw std::runtime_error( "Bad name size" );
     };
 
     /**
      * @brief Constructeur
      */
-    TableInstance(): DataStructure( ResultNaming::getNewResultName(), "TABLE" ),
-                     _memoryLocation( JeveuxVectorChar8( getName() + "           .TBBA" ) ),
-                     _description( JeveuxVectorLong( getName() + "           .TBNP" ) ),
-                     _parameterDescription( JeveuxVectorChar24( getName() + "           .TBLP" ) )
+    TableInstance():
+        DataStructure( ResultNaming::getNewResultName(), 19, "TABLE" ),
+        _memoryLocation( JeveuxVectorChar8( getName() + ".TBBA" ) ),
+        _description( JeveuxVectorLong( getName() + ".TBNP" ) ),
+        _parameterDescription( JeveuxVectorChar24( getName() + ".TBLP" ) )
     {};
 
     ~TableInstance()

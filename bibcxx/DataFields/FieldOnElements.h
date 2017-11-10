@@ -75,7 +75,7 @@ public:
      * @param name Nom Jeveux du champ aux éléments
      */
     FieldOnElementsInstance( const std::string name ):
-                    DataStructure( name, "CHAM_ELEM" ),
+                    DataStructure( name, 19, "CHAM_ELEM" ),
                     _descriptor( JeveuxVectorLong( getName() + ".CELD" ) ),
                     _reference( JeveuxVectorChar24( getName() + ".CELK" ) ),
                     _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) )

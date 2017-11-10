@@ -75,7 +75,7 @@ public:
      * @brief Constructeur
      */
     TimeStepManagerInstance():
-        DataStructure( ResultNaming::getNewResultName(), "LIST_INST" ),
+        DataStructure( ResultNaming::getNewResultName(), 8, "LIST_INST" ),
         _timeList( JeveuxVectorDouble( getName() + ".LIST.DITR" ) ),
         _infoList( JeveuxVectorDouble( getName() + ".LIST.INFOR" ) ),
         _doubleFailureManagerInfo( JeveuxVectorDouble( getName() + ".ECHE.EVENR" ) ),

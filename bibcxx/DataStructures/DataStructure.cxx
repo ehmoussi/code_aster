@@ -33,32 +33,27 @@
 
 TemporaryDataStructure tempName = TemporaryDataStructure();
 
-DataStructure::DataStructure( const std::string name, const std::string type,
-                              const JeveuxMemory memType ):
-    _name( name ),
-    _type( type ),
-    _memoryType( memType )
-{
-    std::string name19 = _name;
-    name19.resize(19, ' ');
-    _tco = JeveuxVectorChar24( name19 + "_TCO" );
-    if ( ! _tco->exists() ) {
-        _tco->allocate( _memoryType, 1 );
-        (*_tco)[0] = type;
-    }
-}
-
 DataStructure::DataStructure( const std::string name, const int nameLength,
                               const std::string type, const JeveuxMemory memType ):
-    DataStructure::DataStructure( name, type, memType )
+    _name( name ),
+    _memoryType( memType )
 {
     _name.resize(nameLength, ' ');
+
+    std::string name19( _name );
+    name19.resize(19, ' ');
+    _tco = JeveuxVectorChar24( name19 + "._TCO" );
+    if ( ! _tco->isAllocated() ) {
+        _tco->allocate( _memoryType, 1 );
+        std::cout << "settco: '" << name19 + "._TCO" << "', type: '" << type << "'" << std::endl;
+        (*_tco)[0] = type;
+    }
 }
 
 DataStructure::DataStructure( const std::string type,
                               const JeveuxMemory memType, int nameLength ):
     DataStructure::DataStructure( DataStructureNaming::getNewName( memType, nameLength ),
-                                  type, memType )
+                                  nameLength, type, memType )
 {
 }
 
@@ -71,10 +66,6 @@ DataStructure::~DataStructure()// throw ( std::runtime_error )
     if ( nameWithoutBlanks == "" || _memoryType == Temporary )
         return;
 #ifdef _DEBUG_CXX
-    std::string name19 = _name;
-    name19.resize(19, ' ');
-    CALLO_JEDETR( name19 + "_TCO" );
-
     std::string base( " " );
     long pos = 0;
     long nbval2 = 0;

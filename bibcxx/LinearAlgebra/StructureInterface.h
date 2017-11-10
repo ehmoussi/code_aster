@@ -129,7 +129,7 @@ public:
      * @brief Constructeur
      */
     StructureInterfaceInstance():
-        DataStructure( "INTERF_DYNA_CLAS", Permanent ),
+        DataStructure( "INTERF_DYNA_CLAS", Permanent, 8 ),
         _frequency( 1. ),
         _isEmpty( true ),
         _codingNumbers( JeveuxCollectionLong( getName() + ".IDC_DDAC" ) ),
@@ -146,7 +146,7 @@ public:
      * @brief Constructeur
      */
     StructureInterfaceInstance( const DOFNumberingPtr& curDof ):
-        DataStructure( "INTERF_DYNA_CLAS", Permanent ),
+        DataStructure( "INTERF_DYNA_CLAS", Permanent, 8 ),
         _dofNum( curDof ),
         _frequency( 1. ),
         _isEmpty( true ),

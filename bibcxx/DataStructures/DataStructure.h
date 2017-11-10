@@ -51,8 +51,6 @@ class DataStructure
         /** @brief Nom de la sd */
         /** @todo remettre le const */
         std::string  _name;
-        /** @brief Type de la sd */
-        std::string  _type;
         /** @brief Type of memory allocation */
         JeveuxMemory _memoryType;
         /** @brief Object that stores the DataStructure type for jeveux requests */
@@ -64,23 +62,23 @@ class DataStructure
 
         /**
          * @brief Constructeur
-         * @param name Nom Jeveux de la sd
-         * @param type Type Aster de la sd
+         * @param name Name of the jeveux datastructure
+         * @param nameLength Length of the jeveux basename
+         * @param type code_aster type of the datastructure
+         * @param memType Jeveux memory type
          */
-        DataStructure( const std::string name, const int nameLength = 8,
+        DataStructure( const std::string name, const int nameLength,
                        const std::string type = "",
-                       const JeveuxMemory memType = Permanent );
-
-        DataStructure( const std::string name, const std::string type = "",
                        const JeveuxMemory memType = Permanent );
 
         /**
          * @brief Constructeur
-         * @param type Type Aster de la sd
-         * @param memType Mémoire Jeveux de création de l'objet
+         * @param type code_aster type of the datastructure
+         * @param memType Jeveux memory type
+         * @param nameLength Length of the jeveux basename
          */
-        DataStructure( const std::string type = "", const JeveuxMemory memType = Permanent,
-                       int nameLength = 8 );
+        DataStructure( const std::string type, const JeveuxMemory memType,
+                       int nameLength );
 
         /**
          * @brief Destructeur
@@ -109,9 +107,10 @@ class DataStructure
          * @brief Function membre getType
          * @return le type de la sd
          */
-        const std::string& getType() const
+        const std::string getType() const
         {
-            return _type;
+            _tco->updateValuePointer();
+            return (*_tco)[0].rstrip();
         };
 
         /**
@@ -135,7 +134,7 @@ class DataStructure
          */
         void setType( const std::string newType )
         {
-            _type = newType;
+            _tco->updateValuePointer();
             (*_tco)[0] = newType;
         };
 };

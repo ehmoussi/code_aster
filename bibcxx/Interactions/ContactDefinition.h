@@ -302,10 +302,11 @@ public:
     /**
      * @brief Constructeur
      */
-    ContactDefinition(): DataStructure( ResultNaming::getNewResultName(), "CONTACT" ),
-                         _isEmpty( true ),
-                         _formulation( formulation ),
-                         _friction( WithoutFriction )
+    ContactDefinition():
+        DataStructure( ResultNaming::getNewResultName(), 8, "CONTACT" ),
+        _isEmpty( true ),
+        _formulation( formulation ),
+        _friction( WithoutFriction )
     {
         _toCapyConverter.add( new CapyConvertibleValue< ContactFormulationEnum >
                                                       ( true, "FORMULATION",
