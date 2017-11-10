@@ -222,8 +222,20 @@ function lcgtn_compute(resi,rigi,elas, itemax, prec, m, dt, eps, phi, ep, ka, f,
 
 ! 2. Resolution du systeme non lineaire de deux equations
 
-    ! Estimation initiale
+    ! Estimation initiale par resolution du probleme de von Mises
     ts = tels
+    do iteint = 1,itemax
+        ka = kam + jac/m%troismu*(tels-ts)
+        equ   = ts - f_ts_hat(ka)
+        if (abs(equ).le.presig) exit
+        d_equ = 1 + jac/m%troismu*dka_ts_hat(ka)
+        ts = utnewt(ts,equ,d_equ,iteint,mem,xmin=0.d0,xmax=tels)
+    end do
+    if (iteint.gt.itemax) then
+        iret = 1
+        goto 999
+    end if        
+
 
     ! Resolution de M_hat(p(ts),ts) == 0
     do iteext = 1,itemax
@@ -439,7 +451,7 @@ function lcgtn_compute(resi,rigi,elas, itemax, prec, m, dt, eps, phi, ep, ka, f,
  
         ! Variations des invariants par rapport a epsilon
         deps_teh = m%troisk/3.d0 * kr
-        deps_teq = 1.5d0*m%deuxmu*teld/telq
+        deps_teq = m%troismu*teld/telq
         deps_jac = jac*kr
 
         ! dt/deps
@@ -617,7 +629,7 @@ end function dy_theta
 real(kind=8) function f_q_hat(p,ts)
     real(kind=8)::p,ts
     real(kind=8)::muk,num,den
-    muk = 1.5d0*m%deuxmu/m%troisk
+    muk = m%troismu/m%troisk
     num = ts*f_lambda(telh*p/ts)
     den = num + muk*telh*(1-p)
     f_q_hat = num/den
@@ -626,7 +638,7 @@ end function f_q_hat
 real(kind=8) function dp_q_hat(p,ts)
     real(kind=8)::p,ts
     real(kind=8)::muk,num,den,d_num,d_den
-    muk = 1.5d0*m%deuxmu/m%troisk
+    muk = m%troismu/m%troisk
     num = ts*f_lambda(telh*p/ts)
     den = num + muk*telh*(1-p)
     d_num = dx_lambda(telh*p/ts)*telh
@@ -637,7 +649,7 @@ end function dp_q_hat
 real(kind=8) function dts_q_hat(p,ts)
     real(kind=8)::p,ts
     real(kind=8)::muk,num,den,lbd,d_num,d_den
-    muk = 1.5d0*m%deuxmu/m%troisk
+    muk = m%troismu/m%troisk
     lbd = f_lambda(telh*p/ts)
     num = ts*lbd
     den = num + muk*telh*(1-p)
@@ -649,7 +661,7 @@ end function dts_q_hat
 real(kind=8) function dteh_q_hat(p,ts)
     real(kind=8)::p,ts
     real(kind=8)::muk,w,num,d_num,den,d_den,lbd0,a0p,seuil
-    muk = 1.5d0*m%deuxmu/m%troisk
+    muk = m%troismu/m%troisk
     w   = 1.5d0*m%q2*telh*p/ts
     seuil = (r8prem()*1200)**0.25d0
     if (abs(w).le.seuil) then
@@ -868,7 +880,7 @@ real(kind=8) function bnd_pmax(ts)
     pmax1 = min(1.d0,2*ts/(3*m%q2)*acosh(1+(1-q1f)**2/(2*q1f)))
     if ((1-q1f)*ts.lt.telq) then
         qmx = ts*(1-q1f)/telq
-        muk = 1.5d0*m%deuxmu/m%troisk
+        muk = m%troismu/m%troisk
         b   = muk*abs(telh)/ts * qmx/(1-qmx) / (0.5d0*m%q2*q1f)
         al  = 1.5d0*m%q2*abs(telh)/ts
         pmax2  = b/(al+b)
