@@ -33,8 +33,6 @@
 #include "aster_utils.h"
 #include "aster_exceptions.h"
 
-#include "DataStructures/DataStructure.h"
-
 #ifdef _HAVE_PETSC
 #include "petsc.h"
 

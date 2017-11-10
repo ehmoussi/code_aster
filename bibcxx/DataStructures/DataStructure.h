@@ -34,6 +34,7 @@
 #include "astercxx.h"
 #include "aster_fort.h"
 
+#include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxAllowedTypes.h"
 #include "DataStructures/DataStructureNaming.h"
 
@@ -52,8 +53,10 @@ class DataStructure
         std::string  _name;
         /** @brief Type de la sd */
         std::string  _type;
-        /** @brief Type de la sd */
+        /** @brief Type of memory allocation */
         JeveuxMemory _memoryType;
+        /** @brief Object that stores the DataStructure type for jeveux requests */
+        JeveuxVectorChar24 _tco;
 
     public:
         /** @typedef shared_ptr d'une DataStructure */
@@ -133,16 +136,9 @@ class DataStructure
         void setType( const std::string newType )
         {
             _type = newType;
-            CALLO_SETTCO(_name, _type);
+            (*_tco)[0] = newType;
         };
 };
-
-/** @typedef std::map d'une chaine et des pointers vers toutes les DataStructure */
-typedef std::map< std::string, DataStructure* > mapStrSD;
-/** @typedef Iterateur sur le std::map */
-typedef mapStrSD::iterator mapStrSDIterator;
-/** @typedef Valeur contenue dans mapStrSD */
-typedef mapStrSD::value_type mapStrSDValue;
 
 #endif
 

@@ -39,7 +39,13 @@ DataStructure::DataStructure( const std::string name, const std::string type,
     _type( type ),
     _memoryType( memType )
 {
-    CALLO_SETTCO(_name, _type);
+    std::string name19 = _name;
+    name19.resize(19, ' ');
+    _tco = JeveuxVectorChar24( name19 + "_TCO" );
+    if ( ! _tco->exists() ) {
+        _tco->allocate( _memoryType, 1 );
+        (*_tco)[0] = type;
+    }
 }
 
 DataStructure::DataStructure( const std::string name, const int nameLength,

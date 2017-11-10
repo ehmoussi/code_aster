@@ -247,7 +247,15 @@ class JeveuxVector
         JeveuxVectorTypePtr _jeveuxVectorPtr;
 
     public:
-        JeveuxVector(std::string nom): _jeveuxVectorPtr( new JeveuxVectorInstance< ValueType > (nom) )
+        /* Default constructor to be initialized with a null pointer
+         * and really created later.
+         */
+        JeveuxVector():
+            _jeveuxVectorPtr( nullptr )
+        {};
+
+        JeveuxVector(std::string nom):
+            _jeveuxVectorPtr( new JeveuxVectorInstance< ValueType > (nom) )
         {};
 
         ~JeveuxVector()
