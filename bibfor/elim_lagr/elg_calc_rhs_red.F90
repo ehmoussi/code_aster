@@ -20,9 +20,10 @@ subroutine elg_calc_rhs_red(matas1, nsecm, secm, solu2)
 #include "asterf_types.h"
 #include "asterf_petsc.h"
 !
+use aster_petsc_module
 use elim_lagr_data_module
     implicit none
-! person_in_charge: jacques.pellet at edf.fr
+! person_in_charge: natacha.bereux at edf.fr
 !
 #include "jeveux.h"
 #include "asterfort/assert.h"

@@ -23,8 +23,8 @@ subroutine apbloc(kptsc)
 !
 !
 ! person_in_charge: natacha.bereux at edf.fr
-! aslint:disable=
 !
+use aster_petsc_module
 use petsc_data_module
 !
     implicit none

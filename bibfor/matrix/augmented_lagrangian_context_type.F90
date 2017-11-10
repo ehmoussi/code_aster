@@ -37,9 +37,9 @@ module augmented_lagrangian_context_type
 #include "asterf_types.h"
 #include "asterf_petsc.h"
 !
-!
 ! person_in_charge: natacha.bereux at edf.fr
 !
+use aster_petsc_module
 use matrasse_module
 use saddle_point_context_type
 !
@@ -137,11 +137,8 @@ subroutine set_precond_data( ctxt )
     ! Compute block of physical dofs m_mat
     !
     ! m_mat = c^T c
-#if PETSC_VERSION_LT(3,5,0)
-    aster_petsc_real = PETSC_DEFAULT_DOUBLE_PRECISION
-#else
+
     aster_petsc_real = PETSC_DEFAULT_REAL
-#endif
     call MatTransposeMatMult(sp_ctxt%c_mat,sp_ctxt%c_mat,                  &
    &   MAT_INITIAL_MATRIX,aster_petsc_real, ctxt%m_mat ,ierr)
     ASSERT( ierr == 0 )

@@ -23,7 +23,7 @@ subroutine apksp(kptsc)
 !
 !
 ! person_in_charge: natacha.bereux at edf.fr
-! aslint:disable=
+use aster_petsc_module
 use petsc_data_module
 !
     implicit none
@@ -61,20 +61,13 @@ use petsc_data_module
     PetscReal :: rtol, atol, dtol, aster_petsc_real
     Mat :: a
     KSP :: ksp
-#if PETSC_VERSION_LT(3,7,0)
-#else
     PetscViewerAndFormat :: vf
-#endif
 !=================================================================
     call jemarq()
 !
     call infniv(ifm, niv)
 !
-#if PETSC_VERSION_LT(3,5,0)
-    aster_petsc_real = PETSC_DEFAULT_DOUBLE_PRECISION
-#else
     aster_petsc_real = PETSC_DEFAULT_REAL
-#endif
 !     -- LECTURE DU COMMUN
     nomat = nomat_courant
     nonu = nonu_courant
@@ -131,21 +124,16 @@ use petsc_data_module
 !
     call KSPSetTolerances(ksp, rtol, atol, dtol, maxits, ierr)
     ASSERT(ierr.eq.0)
-
+    print *, "appel de KSPSetUp"
     call KSPSetUp( ksp, ierr )
     ASSERT( ierr == 0 )
 !
 !     - pour suivre les itérations de Krylov
 !     --------------------------------------
     if (niv .ge. 2) then
-#if PETSC_VERSION_LT(3,7,0)
-        call KSPMonitorSet(ksp, KSPMonitorTrueResidualNorm, PETSC_NULL_OBJECT,&
-                           PETSC_NULL_FUNCTION, ierr)
-#else
          call PetscViewerAndFormatCreate(PETSC_VIEWER_STDOUT_WORLD, PETSC_VIEWER_DEFAULT, vf,ierr)
          call KSPMonitorSet(ksp,KSPMonitorTrueResidualNorm, vf, PetscViewerAndFormatDestroy,&
                             ierr)
-#endif
         ASSERT(ierr.eq.0)
     endif
 !

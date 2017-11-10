@@ -23,7 +23,7 @@ subroutine apalmd(kptsc)
 !
 !
 ! person_in_charge: nicolas.sellenet at edf.fr
-! aslint:disable=
+use aster_petsc_module
 use petsc_data_module
 
     implicit none
@@ -75,7 +75,7 @@ use petsc_data_module
 !
 !----------------------------------------------------------------
 !     Variables PETSc
-    PetscInt :: low, high
+    PetscInt :: low, high, unused_nz
     PetscErrorCode ::  ierr
     integer :: neql, neqg, bs
     Vec :: tmp
@@ -257,24 +257,14 @@ use petsc_data_module
     call MatSetType(ap(kptsc), MATMPIAIJ, ierr)
     ASSERT(ierr.eq.0)
 !
-#if PETSC_VERSION_GE(3,3,0)
-!     AVEC PETSc >= 3.3
-!     IL FAUT APPELER MATSETBLOCKSIZE *AVANT* MAT*SETPREALLOCATION
     call MatSetBlockSize(ap(kptsc), to_petsc_int(bs), ierr)
     ASSERT(ierr.eq.0)
-#endif
     !
-    call MatMPIAIJSetPreallocation(ap(kptsc), PETSC_NULL_INTEGER, zi4(jidxd),&
-                                       PETSC_NULL_INTEGER, zi4(jidxo), ierr)
+    unused_nz = -1
+    call MatMPIAIJSetPreallocation(ap(kptsc), unused_nz, zi4(jidxd-1+1:jidxd-1+ndprop),&
+                                      unused_nz, zi4(jidxo-1+1:jidxo-1+ndprop), ierr)
     ASSERT(ierr.eq.0)
     !
-#if PETSC_VERSION_LT(3,3,0)
-!     AVEC PETSc <= 3.2
-!     LE BS DOIT ABSOLUMENT ETRE DEFINI ICI
-      call MatSetBlockSize(ap(kptsc), to_petsc_int(bs), ierr)
-      ASSERT(ierr.eq.0)
-!     RQ : A PARTIR DE LA VERSION V 3.3 IL DOIT PRECEDER LA PREALLOCATION
-#endif
 !
     call jedetr(idxd)
     call jedetr(idxo)

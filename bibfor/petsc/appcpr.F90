@@ -19,10 +19,8 @@
 subroutine appcpr(kptsc)
 !
 #include "asterf_petsc.h"
-!
-!
 ! person_in_charge: natacha.bereux at edf.fr
-! aslint:disable=
+use aster_petsc_module
 use petsc_data_module
 use augmented_lagrangian_module, only : augmented_lagrangian_apply, &
     augmented_lagrangian_setup, augmented_lagrangian_destroy
@@ -177,8 +175,6 @@ implicit none
         endif
     endif
 
-#if PETSC_VERSION_LT(3,5,0)
-#else
     if (precon == 'GAMG') then
 !       -- CREATION DES MOUVEMENTS DE CORPS RIGIDE --
 !           * VECTEUR RECEPTABLE DES COORDONNEES AVEC TAILLE DE BLOC
@@ -275,7 +271,6 @@ implicit none
         endif
 ! Si dimgeo /= 3 on ne pré-calcule pas les modes de corps rigides
         endif
-#endif
 
 !
 !     -- CHOIX DU PRECONDITIONNEUR :
@@ -369,15 +364,15 @@ implicit none
         endif
         ASSERT(ierr == 0)
 !        CHOIX DE LA RESTRICTION (UNCOUPLED UNIQUEMENT ACTUELLEMENT)
-#if PETSC_VERSION_LT(3,7,0)
-        call PetscOptionsSetValue('-pc_ml_CoarsenScheme', 'Uncoupled', ierr)
-        ASSERT(ierr == 0)
-        call PetscOptionsSetValue('-pc_ml_PrintLevel', '0', ierr)
-        ASSERT(ierr == 0)
-#else
+#if PETSC_VERSION_LT(3,8,0)
         call PetscOptionsSetValue(PETSC_NULL_OBJECT, '-pc_ml_CoarsenScheme', 'Uncoupled', ierr)
         ASSERT(ierr == 0)
         call PetscOptionsSetValue(PETSC_NULL_OBJECT, '-pc_ml_PrintLevel', '0', ierr)
+        ASSERT(ierr == 0)
+#else
+        call PetscOptionsSetValue(PETSC_NULL_OPTIONS, '-pc_ml_CoarsenScheme', 'Uncoupled', ierr)
+        ASSERT(ierr == 0)
+        call PetscOptionsSetValue(PETSC_NULL_OPTIONS, '-pc_ml_PrintLevel', '0', ierr)
         ASSERT(ierr == 0)
 #endif
 !        APPEL OBLIGATOIRE POUR PRENDRE EN COMPTE LES AJOUTS CI-DESSUS
@@ -389,18 +384,7 @@ implicit none
         if (ierr .ne. 0) then
             call utmess('F', 'PETSC_19', sk=precon)
         endif
-#if PETSC_VERSION_LT(3,7,0)
-        call PetscOptionsSetValue('-pc_hypre_type', 'boomeramg', ierr)
-        ASSERT(ierr == 0)
-!        CHOIX DE LA RESTRICTION (PMIS UNIQUEMENT ACTUELLEMENT)
-        call PetscOptionsSetValue('-pc_hypre_boomeramg_coarsen_type', 'PMIS', ierr)
-        ASSERT(ierr == 0)
-!        CHOIX DU LISSAGE (SOR UNIQUEMENT POUR LE MOMENT)
-        call PetscOptionsSetValue('-pc_hypre_boomeramg_relax_type_all', 'SOR/Jacobi', ierr)
-        ASSERT(ierr == 0)
-        call PetscOptionsSetValue('-pc_hypre_boomeramg_print_statistics', '0', ierr)
-        ASSERT(ierr == 0)
-#else
+#if PETSC_VERSION_LT(3,8,0)
         call PetscOptionsSetValue(PETSC_NULL_OBJECT,'-pc_hypre_type', 'boomeramg', ierr)
         ASSERT(ierr == 0)
 !        CHOIX DE LA RESTRICTION (PMIS UNIQUEMENT ACTUELLEMENT)
@@ -414,13 +398,25 @@ implicit none
         call PetscOptionsSetValue(PETSC_NULL_OBJECT, &
              & '-pc_hypre_boomeramg_print_statistics', '0', ierr)
         ASSERT(ierr == 0)
+#else
+        call PetscOptionsSetValue(PETSC_NULL_OPTIONS,'-pc_hypre_type', 'boomeramg', ierr)
+        ASSERT(ierr == 0)
+!        CHOIX DE LA RESTRICTION (PMIS UNIQUEMENT ACTUELLEMENT)
+        call PetscOptionsSetValue(PETSC_NULL_OPTIONS, &
+             &   '-pc_hypre_boomeramg_coarsen_type', 'PMIS', ierr)
+        ASSERT(ierr == 0)
+!        CHOIX DU LISSAGE (SOR UNIQUEMENT POUR LE MOMENT)
+        call PetscOptionsSetValue(PETSC_NULL_OPTIONS, &
+             &   '-pc_hypre_boomeramg_relax_type_all', 'SOR/Jacobi', ierr)
+        ASSERT(ierr == 0)
+        call PetscOptionsSetValue(PETSC_NULL_OPTIONS, &
+             & '-pc_hypre_boomeramg_print_statistics', '0', ierr)
+        ASSERT(ierr == 0)
 #endif
 !        APPEL OBLIGATOIRE POUR PRENDRE EN COMPTE LES AJOUTS CI-DESSUS
         call PCSetFromOptions(pc, ierr)
         ASSERT(ierr == 0)
 !-----------------------------------------------------------------------
-#if PETSC_VERSION_LT(3,3,0)
-#else
      else if (precon == 'GAMG') then
         call PCSetType(pc, PCGAMG, ierr)
         if (ierr .ne. 0) then
@@ -434,17 +430,16 @@ implicit none
         call PCGAMGSetNSmooths(pc, nsmooth, ierr)
         ASSERT(ierr == 0)
 !
-#if PETSC_VERSION_LT(3,7,0)
-        call PetscOptionsSetValue('-pc_gamg_verbose', '2', ierr)
-#else
+#if PETSC_VERSION_LT(3,8,0)
         call PetscOptionsSetValue( PETSC_NULL_OBJECT,'-pc_gamg_verbose', '2', ierr)
+#else
+        call PetscOptionsSetValue( PETSC_NULL_OPTIONS,'-pc_gamg_verbose', '2', ierr)
 #endif
         ASSERT(ierr == 0)
 !       APPEL OBLIGATOIRE POUR PRENDRE EN COMPTE LES AJOUTS CI-DESSUS
         call PCSetFromOptions(pc, ierr)
         ASSERT(ierr == 0)
 
-#endif
 !-----------------------------------------------------------------------
     else if (precon == 'SANS') then
         call PCSetType(pc, PCNONE, ierr)

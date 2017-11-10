@@ -20,6 +20,7 @@ subroutine skeleton_of_nullbasis( mat_c, mat_z, nnzmax )
 #include "asterf_types.h"
 #include "asterf_petsc.h"
 !
+use aster_petsc_module
 implicit none
 !
 ! person_in_charge: natacha.bereux at edf.fr
