@@ -17,9 +17,11 @@
 ! --------------------------------------------------------------------
 
 subroutine elg_calc_matk_red(mat1z, solv1z, mat2z, bas1)
+#include "asterf_petsc.h"
+use aster_petsc_module
     implicit none
 ! aslint: disable=W0104
-! person_in_charge: jacques.pellet at edf.fr
+! person_in_charge: natacha.bereux at edf.fr
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/apetsc.h"

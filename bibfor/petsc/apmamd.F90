@@ -21,7 +21,7 @@ subroutine apmamd(kptsc)
 #include "asterf_types.h"
 #include "asterf_petsc.h"
 !
-!
+use aster_petsc_module
 use petsc_data_module
 
     implicit none
@@ -73,6 +73,7 @@ use petsc_data_module
     integer :: k, iligl, jcoll, nzdeb, nzfin
     integer :: iterm, jterm, jcolg, iligg, jnugll
     integer :: jnequ, nloc, nglo, jnequl
+    PetscInt :: mm, nn 
 !
     character(len=19) :: nomat, nosolv
     character(len=16) :: idxi1, idxi2, trans1, trans2
@@ -191,12 +192,14 @@ use petsc_data_module
             endif
         end do
 ! Envoi de la colonne jcolg
-        call MatSetValues(a, to_petsc_int(iterm), zi4(jdxi1), one, [to_petsc_int(jcolg-1)],&
-                          zr(jdval1), ADD_VALUES, ierr)
+        mm = to_petsc_int(iterm)
+        call MatSetValues(a, mm, zi4(jdxi1-1+1:jdxi1-1+mm), one, [to_petsc_int(jcolg-1)],&
+                          zr(jdval1-1+1:jdval1-1+mm), ADD_VALUES, ierr)
         ASSERT(ierr==0)
 ! Envoi de la ligne jcolg
-        call MatSetValues(a, one, [to_petsc_int(jcolg-1)], to_petsc_int(jterm), zi4(jdxi2),&
-                          zr(jdval2), ADD_VALUES, ierr)
+        nn = to_petsc_int(jterm)
+        call MatSetValues(a, one, [to_petsc_int(jcolg-1)], nn , zi4(jdxi2-1+1:jdxi2-1+nn),&
+                          zr(jdval2-1+1:jdval2-1+nn), ADD_VALUES, ierr)
         ASSERT(ierr==0)
         iterm=0
         jterm=0

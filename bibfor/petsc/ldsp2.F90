@@ -19,15 +19,15 @@
 subroutine ldsp2(pc, x1, y, ierr)
 !
 #include "asterf_petsc.h"
-!
-!
+use aster_petsc_module
 use petsc_data_module
+!
     implicit none
 ! person_in_charge: natacha.bereux at edf.fr
-! aslint:disable=
 !
 #include "asterfort/amumph.h"
 #include "asterfort/assert.h"
+
 #ifdef _HAVE_PETSC
     complex(kind=8) :: cbid
     integer :: iret

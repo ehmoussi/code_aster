@@ -21,7 +21,7 @@ subroutine apmain(action, kptsc, rsolu, vcine, istop,&
 !
 #include "asterf_types.h"
 #include "asterf_petsc.h"
-
+use aster_petsc_module
 use petsc_data_module
 use saddle_point_module
 use lmp_module, only : lmp_update
@@ -193,11 +193,7 @@ use lmp_module, only : lmp_update
         call KSPCreate(mpicomm, kp(kptsc), ierr)
         ASSERT(ierr.eq.0)
         !
-#if PETSC_VERSION_LT(3,5,0)
-        call KSPSetOperators( kp(kptsc), ap(kptsc), ap(kptsc), DIFFERENT_NONZERO_PATTERN, ierr)
-#else
         call KSPSetOperators( kp(kptsc), ap(kptsc), ap(kptsc), ierr )
-#endif
 
         ASSERT(ierr == 0)
         !
@@ -338,11 +334,7 @@ use lmp_module, only : lmp_update
 !              PRECONDITIONNEUR NON DEFINI
                 call utmess('F', 'PETSC_10')
 !
-#if PETSC_VERSION_LT(3,4,0)
-            else if (indic.eq.KSP_DIVERGED_NAN) then
-#else
             else if (indic.eq.KSP_DIVERGED_NANORINF) then
-#endif
 !               NANORINF
                 if ( istop == 0 ) then
 !                  ERREUR <F>
@@ -450,13 +442,25 @@ use lmp_module, only : lmp_update
 !
             call VecDestroy(xlocal, ierr)
             ASSERT(ierr.eq.0)
+#if PETSC_VERSION_LT(3,8,0) 
+            xlocal = PETSC_NULL_OBJECT
+#else
+            xlocal = PETSC_NULL_VEC
+#endif
             call VecDestroy(xglobal, ierr)
-            ASSERT(ierr.eq.0)
+            ASSERT( ierr == 0 )
+#if PETSC_VERSION_LT(3,8,0) 
+            xglobal = PETSC_NULL_OBJECT
+#else
+            xglobal = PETSC_NULL_VEC
+#endif
             call VecScatterDestroy(xscatt, ierr)
-            ASSERT(ierr.eq.0)
-            xlocal = 0
-            xglobal = 0
-            xscatt = 0
+            ASSERT( ierr == 0 )
+#if PETSC_VERSION_LT(3,8,0) 
+            xscatt = PETSC_NULL_OBJECT
+#else
+            xscatt = PETSC_NULL_VECSCATTER
+#endif
 !           ON STOCKE LE NOMBRE D'ITERATIONS DU KSP
             call KSPGetIterationNumber(ksp, maxits, ierr)
             ASSERT(ierr.eq.0)
@@ -480,16 +484,28 @@ use lmp_module, only : lmp_update
 !        -- DESTRUCTION DES OBJETS PETSC GENERAUX
         call MatDestroy(a, ierr)
         ASSERT(ierr.eq.0)
+! 
+#if PETSC_VERSION_LT(3,8,0) 
         call KSPDestroy(ksp, ierr)
         ASSERT(ierr.eq.0)
-
+#else
+        if ( ksp /= PETSC_NULL_KSP) then 
+           call KSPDestroy(ksp, ierr)
+           ASSERT(ierr.eq.0)
+        endif
+#endif         
 !
 !        -- SUPRESSION DE L'INSTANCE PETSC
         nomats(kptsc) = ' '
         nosols(kptsc) = ' '
         nonus(kptsc) = ' '
-        ap(kptsc) = 0
-        kp(kptsc) = 0
+#if PETSC_VERSION_LT(3,8,0)
+        ap(kptsc) = PETSC_NULL_OBJECT
+        kp(kptsc) = PETSC_NULL_OBJECT
+#else
+        ap(kptsc) = PETSC_NULL_MAT
+        kp(kptsc) = PETSC_NULL_KSP
+#endif
         tblocs(kptsc) = -1
         if (fictifs(kptsc).eq.1) then
             deallocate(new_ieqs(kptsc)%pi4)

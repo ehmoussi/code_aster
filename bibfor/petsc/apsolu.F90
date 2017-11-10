@@ -27,6 +27,7 @@ subroutine apsolu(kptsc, lmd, rsolu)
 !
 ! person_in_charge: natacha.bereux at edf.fr
 !
+use aster_petsc_module
 use petsc_data_module
 use saddle_point_module, only : update_double_lagrange
 

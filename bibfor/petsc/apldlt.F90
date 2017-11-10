@@ -22,6 +22,7 @@ subroutine apldlt(kptsc, action, prepost, rsolu, vcine, nbsol)
 #include "asterf_petsc.h"
 !
 !
+use aster_petsc_module
 use petsc_data_module
     implicit none
 !

@@ -22,7 +22,7 @@
 interface
     subroutine compress_sparse_pattern(a)
 # ifdef _HAVE_PETSC
-
+      use aster_petsc_module
       Mat, intent(inout)  :: a
 #else
       integer, intent(inout)  :: a

@@ -25,6 +25,7 @@ subroutine apetsc(action, solvez, matasz, rsolu, vcinez,&
 !
 ! person_in_charge: natacha.bereux at edf.fr
 !
+use aster_petsc_module
 use petsc_data_module
 use elim_lagr_comp_module
 !
@@ -105,8 +106,6 @@ use elim_lagr_comp_module
 !
 !     Variables PETSc
     PetscErrorCode :: ierr
-    Mat :: mbid
-    Vec :: vbid
     PetscScalar :: sbid
     PetscOffset :: offbid
     PetscReal :: rbid
@@ -143,8 +142,6 @@ use elim_lagr_comp_module
 !        -- quelques verifications sur la coherence Aster / Petsc :
         ASSERT(kind(rbid).eq.kind(r8))
         ASSERT(kind(sbid).eq.kind(r8))
-        ASSERT(kind(mbid).eq.kind(np))
-        ASSERT(kind(vbid).eq.kind(np))
         ASSERT(kind(offbid).eq.kind(np))
 !
         call PetscInitialize(PETSC_NULL_CHARACTER, ierr)
@@ -152,8 +149,13 @@ use elim_lagr_comp_module
         call PetscInitializeFortran(ierr)
         ASSERT(ierr .eq. 0)
         do k = 1, nmxins
-            ap(k) = 0
-            kp(k) = 0
+#if PETSC_VERSION_LT(3,8,0) 
+            ap(k) = PETSC_NULL_OBJECT
+            kp(k) = PETSC_NULL_OBJECT
+#else
+            ap(k) = PETSC_NULL_MAT
+            kp(k) = PETSC_NULL_KSP
+#endif
             nomats(k) = ' '
             nosols(k) = ' '
             nonus(k) = ' '
@@ -164,9 +166,25 @@ use elim_lagr_comp_module
             endif
             fictifs(k) = -1
         enddo
-        xlocal = 0
-        xglobal = 0
-        xscatt = 0
+#if PETSC_VERSION_LT(3,8,0) 
+  xlocal = PETSC_NULL_OBJECT
+#else
+  xlocal = PETSC_NULL_VEC
+#endif
+  call VecDestroy(xglobal, ierr)
+  ASSERT( ierr == 0 )
+#if PETSC_VERSION_LT(3,8,0) 
+  xglobal = PETSC_NULL_OBJECT
+#else
+  xglobal = PETSC_NULL_VEC
+#endif
+  call VecScatterDestroy(xscatt, ierr)
+  ASSERT( ierr == 0 )
+#if PETSC_VERSION_LT(3,8,0) 
+  xscatt = PETSC_NULL_OBJECT
+#else
+  xscatt = PETSC_NULL_VECSCATTER
+#endif
         spsomu = ' '
         spmat = ' '
         spsolv = ' '

@@ -20,9 +20,11 @@ subroutine elg_calcxl(x1, vlag)
 #include "asterf_types.h"
 #include "asterf_petsc.h"
 !
+use aster_petsc_module
 use elim_lagr_data_module
+
     implicit none
-! person_in_charge: jacques.pellet at edf.fr
+! person_in_charge: natacha.bereux at edf.fr
 ! aslint:disable=
 #include "jeveux.h"
 #include "asterc/asmpi_comm.h"
@@ -84,11 +86,7 @@ use elim_lagr_data_module
     call asmpi_comm('GET_WORLD', mpicomm)
     call asmpi_info(rank=rang, size=nbproc)
 !
-#if PETSC_VERSION_LT(3,5,0)
-    aster_petsc_real = PETSC_DEFAULT_DOUBLE_PRECISION
-#else
     aster_petsc_real = PETSC_DEFAULT_REAL
-#endif
 !
 !     -- dimensions :
 !       n1 : # ddls physiques
@@ -124,13 +122,8 @@ use elim_lagr_data_module
 !
 !   Calcul de A*A'
 
-#if PETSC_VERSION_LT(3,3,0)
-    call MatMatMultTranspose(elg_context(ke)%ctrans, elg_context(ke)%ctrans, MAT_INITIAL_MATRIX, &
-         PETSC_DEFAULT_DOUBLE_PRECISION, cct, ierr)
-#else
     call MatTransposeMatMult(elg_context(ke)%ctrans, elg_context(ke)%ctrans, MAT_INITIAL_MATRIX, &
          aster_petsc_real, cct, ierr)
-#endif
     ASSERT( ierr==0 )
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !                      Solve the linear system
@@ -152,11 +145,7 @@ use elim_lagr_data_module
 !
 !   -- Set linear system
 !
-#if PETSC_VERSION_LT(3,5,0)
-      call KSPSetOperators(ksp, cct, cct, SAME_PRECONDITIONER, ierr)
-#else
       call KSPSetOperators(ksp, cct , cct, ierr)
-#endif
 !
 !   -- Solve the linear system
       call KSPSolve( ksp, ay, vlag, ierr)

@@ -22,6 +22,7 @@
 interface
     subroutine ldsp1( pc, ierr)
 #ifdef _HAVE_PETSC
+       use aster_petsc_module
        PC, intent(inout)      :: pc 
        PetscErrorCode, intent(out) :: ierr
 #else

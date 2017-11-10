@@ -24,7 +24,7 @@ subroutine apmamc(kptsc)
 !
 ! person_in_charge: natacha.bereux at edf.fr
 ! aslint:disable=W1304,W1003
-
+use aster_petsc_module
 use petsc_data_module
 
     implicit none
@@ -85,8 +85,9 @@ use petsc_data_module
 !----------------------------------------------------------------
 !     Variables PETSc
     PetscInt :: low2, high2, neq, jcol1, jcol2, low1
+    PetscInt :: mm, nn 
     PetscErrorCode ::  ierr
-    PetscInt :: one = 1, zero = 0
+    PetscInt, parameter :: ione = 1
     Mat :: a
 !----------------------------------------------------------------
     call jemarq()
@@ -245,17 +246,19 @@ use petsc_data_module
 
 
 !           -- Valeurs de D => on envoie les valeurs de la colonne jcol2
-            call MatSetValues(a, to_petsc_int(iterm), zi4(jdxi1), one, [to_petsc_int(jcol2)],&
-                              zr(jdval1), INSERT_VALUES, ierr)
+            mm = to_petsc_int(iterm)
+            call MatSetValues(a, mm, zi4(jdxi1-1+1:jdxi1-1+mm), ione, [to_petsc_int(jcol2)],&
+                              zr(jdval1-1+1:jdval1-1+mm), INSERT_VALUES, ierr)
             ASSERT(ierr.eq.0)
 
 !           -- Valeurs de C => on envoie les valeurs de la ligne jcol2
-            call MatSetValues(a, one, [to_petsc_int(jcol2)], to_petsc_int(jterm), zi4(jdxi2),&
-                              zr(jdval2), INSERT_VALUES, ierr)
+            nn = to_petsc_int(jterm)
+            call MatSetValues(a, ione, [to_petsc_int(jcol2)], nn , zi4(jdxi2-1+1:jdxi2-1+nn),&
+                              zr(jdval2-1+1:jdval2-1+nn), INSERT_VALUES, ierr)
             ASSERT(ierr.eq.0)
         else
 !           -- pour un ddl fictif, on se contente d'ajouter un 1. sur la diagonale :
-            call MatSetValues(a, one, [to_petsc_int(jcol2)], one, [to_petsc_int(jcol2)],&
+            call MatSetValues(a, ione, [to_petsc_int(jcol2)], ione, [to_petsc_int(jcol2)],&
                               [1.d0], INSERT_VALUES, ierr)
         endif
     end do
@@ -294,8 +297,10 @@ use petsc_data_module
             endif
         end do
 !       -- Valeurs de E => on envoie les valeurs de la colonne jcol2
-        call MatSetValues(a, to_petsc_int(iterm), zi4(jdxi1), one, [to_petsc_int(jcol2)],&
-                          zr(jdval1), INSERT_VALUES, ierr)
+        mm = to_petsc_int(iterm)
+        nn = to_petsc_int(jcol2)
+        call MatSetValues(a, mm , zi4(jdxi1-1+1:jdxi1-1+mm), ione, [nn],&
+                          zr(jdval1-1+1:jdval1-1+nn), INSERT_VALUES, ierr)
     end do
 
     call jelibe(nonu//'.SMOS.SMDI')

@@ -25,6 +25,7 @@ module elim_lagr_data_module
 ! aslint:disable=W1304
 !
 !
+use aster_petsc_module
 use elim_lagr_context_type
 use petsc_data_module
 use saddle_point_context_type

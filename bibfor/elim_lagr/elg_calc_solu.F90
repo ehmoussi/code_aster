@@ -20,6 +20,7 @@ subroutine elg_calc_solu(matas1, nsecm, rsolu2, rsolu1)
 #include "asterf_types.h"
 #include "asterf_petsc.h"
 !
+use aster_petsc_module
 use elim_lagr_data_module
     implicit none
 ! person_in_charge: natacha.bereux at edf.fr

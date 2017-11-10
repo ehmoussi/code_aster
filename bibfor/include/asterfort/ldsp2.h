@@ -15,12 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
 !
 !
 interface
     subroutine ldsp2( pc, x1, y, ierr )
 #ifdef _HAVE_PETSC
+       use aster_petsc_module
        PC, intent(in)              ::  pc
        Vec, intent(in)             ::  x1
        Vec, intent(inout)          ::  y
