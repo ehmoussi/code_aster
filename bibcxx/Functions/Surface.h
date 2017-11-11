@@ -31,6 +31,7 @@
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
+#include "Supervis/ResultNaming.h"
 
 
 /**
@@ -58,16 +59,15 @@ public:
     /**
      * @brief Constructeur
      */
-    static SurfacePtr create()
-    {
-        return SurfacePtr( new SurfaceInstance );
-    };
+    SurfaceInstance():
+        SurfaceInstance( ResultNaming::getNewResultName() )
+    {};
 
     /**
      * @brief Constructeur
      */
-    SurfaceInstance():
-        DataStructure( "NAPPE", Permanent, 19 ),
+    SurfaceInstance( const std::string name ):
+        DataStructure( name, 19, "NAPPE", Permanent ),
         _property( JeveuxVectorChar24( getName() + ".PROL" ) ),
         _parameters( JeveuxVectorDouble( getName() + ".PARA" ) ),
         _value( JeveuxCollectionDouble( getName() + ".VALE" ) )

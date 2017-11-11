@@ -294,16 +294,15 @@ public:
     /**
      * @brief Constructeur
      */
-    static ContactDefinitionPtr create()
-    {
-        return ContactDefinitionPtr( new ContactDefinition );
-    };
+    ContactDefinition():
+        ContactDefinition( ResultNaming::getNewResultName() )
+    {};
 
     /**
      * @brief Constructeur
      */
-    ContactDefinition():
-        DataStructure( ResultNaming::getNewResultName(), 8, "CONTACT" ),
+    ContactDefinition( const std::string name ):
+        DataStructure( name, 8, "CONTACT" ),
         _isEmpty( true ),
         _formulation( formulation ),
         _friction( WithoutFriction )

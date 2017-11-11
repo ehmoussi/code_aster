@@ -23,8 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/SurfaceInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/SurfaceInterface.h"
+
 
 void exportSurfaceToPython()
 {
@@ -32,7 +34,11 @@ void exportSurfaceToPython()
 
     class_< SurfaceInstance, SurfaceInstance::SurfacePtr,
             bases< DataStructure > > ( "Surface", no_init )
-        .def( "create", &SurfaceInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< SurfaceInstance,
+                      SurfaceInstance::SurfacePtr >) )
+        .def( "__init__", make_constructor(
+            factory0Name< SurfaceInstance,
+                          SurfaceInstance::SurfacePtr >) )
     ;
 };

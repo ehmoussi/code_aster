@@ -23,8 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/AssemblyMatrixInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/AssemblyMatrixInterface.h"
+
 
 void exportAssemblyMatrixToPython()
 {
@@ -32,8 +34,12 @@ void exportAssemblyMatrixToPython()
     class_< AssemblyMatrixDoubleInstance, AssemblyMatrixDoublePtr,
             bases< DataStructure > >
         ( "AssemblyMatrixDouble", no_init )
-        .def( "create", &AssemblyMatrixDoubleInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< AssemblyMatrixDoubleInstance,
+                      AssemblyMatrixDoublePtr >) )
+        .def( "__init__", make_constructor(
+            factory0Name< AssemblyMatrixDoubleInstance,
+                          AssemblyMatrixDoublePtr >) )
         .def( "addKinematicsLoad", &AssemblyMatrixDoubleInstance::addKinematicsLoad )
         .def( "build", &AssemblyMatrixDoubleInstance::build )
         .def( "factorization", &AssemblyMatrixDoubleInstance::factorization )
@@ -45,8 +51,12 @@ void exportAssemblyMatrixToPython()
     class_< AssemblyMatrixComplexInstance, AssemblyMatrixComplexPtr,
             bases< DataStructure > >
         ( "AssemblyMatrixComplex", no_init )
-        .def( "create", &AssemblyMatrixComplexInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< AssemblyMatrixComplexInstance,
+                      AssemblyMatrixComplexPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Name< AssemblyMatrixComplexInstance,
+                          AssemblyMatrixComplexPtr >) )
         .def( "addKinematicsLoad", &AssemblyMatrixComplexInstance::addKinematicsLoad )
         .def( "build", &AssemblyMatrixComplexInstance::build )
         .def( "factorization", &AssemblyMatrixComplexInstance::factorization )

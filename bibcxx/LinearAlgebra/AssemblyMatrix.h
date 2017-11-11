@@ -95,14 +95,6 @@ class AssemblyMatrixInstance: public DataStructure
         /**
          * @brief Constructeur
          */
-        static AssemblyMatrixPtr create()
-        {
-            return AssemblyMatrixPtr( new AssemblyMatrixInstance );
-        };
-
-        /**
-         * @brief Constructeur
-         */
         AssemblyMatrixInstance( const JeveuxMemory memType = Permanent );
         /**
          * @brief Constructeur

@@ -23,11 +23,13 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+
 #include "PythonBindings/ParallelDOFNumberingInterface.h"
 
-#ifdef _USE_MPI
 
-#include <boost/python.hpp>
+#ifdef _USE_MPI
 
 void exportParallelDOFNumberingToPython()
 {
@@ -35,8 +37,12 @@ void exportParallelDOFNumberingToPython()
 
     class_< ParallelDOFNumberingInstance, ParallelDOFNumberingInstance::ParallelDOFNumberingPtr,
             bases< BaseDOFNumberingInstance > > ( "ParallelDOFNumbering", no_init )
-        .def( "create", &ParallelDOFNumberingInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< ParallelDOFNumberingInstance,
+                      ParallelDOFNumberingInstance::ParallelDOFNumberingPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Name< ParallelDOFNumberingInstance,
+                          ParallelDOFNumberingInstance::ParallelDOFNumberingPtr >) )
     ;
 };
 

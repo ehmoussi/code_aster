@@ -215,11 +215,6 @@ public:
     /**
      * @brief Constructeur
      */
-    static ContactZonePtr create()
-    {
-        return ContactZonePtr( new ContactZoneInstance );
-    };
-
     ContactZoneInstance(): _normType( MasterNorm ),
                            _vectMait( 0 ),
                            _vectEscl( 0 ),

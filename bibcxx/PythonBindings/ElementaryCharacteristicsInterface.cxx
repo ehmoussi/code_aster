@@ -23,8 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/ElementaryCharacteristicsInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/ElementaryCharacteristicsInterface.h"
+
 
 void exportElementaryCharacteristicsToPython()
 {
@@ -32,7 +34,13 @@ void exportElementaryCharacteristicsToPython()
 
     class_< ElementaryCharacteristicsInstance, ElementaryCharacteristicsInstance::ElementaryCharacteristicsPtr,
             bases< DataStructure > > ( "ElementaryCharacteristics", no_init )
-        .def( "create", &ElementaryCharacteristicsInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0Arg< ElementaryCharacteristicsInstance,
+                         ElementaryCharacteristicsInstance::ElementaryCharacteristicsPtr,
+                         ModelPtr >) )
+        .def( "__init__", make_constructor(
+            factory0NameArg< ElementaryCharacteristicsInstance,
+                             ElementaryCharacteristicsInstance::ElementaryCharacteristicsPtr,
+                             ModelPtr >) )
     ;
 };

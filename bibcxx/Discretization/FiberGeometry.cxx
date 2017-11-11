@@ -23,19 +23,4 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "astercxx.h"
-
 #include "Discretization/FiberGeometry.h"
-#include "Supervis/ResultNaming.h"
-
-FiberGeometryInstance::FiberGeometryInstance():
-    DataStructure( ResultNaming::getNewResultName(), 8, "GFIBRE" ),
-    _nomsGroupes( JeveuxBidirectionalMapChar24( getName() + ".NOMS_GROUPES" ) ),
-    _nbFibreGroupe( JeveuxVectorLong( getName() + ".NB_FIBRE_GROUPE" ) ),
-    _pointeur( JeveuxVectorLong( getName() + ".POINTEUR" ) ),
-    _typeGroupe( JeveuxVectorLong( getName() + ".TYPE_GROUPE" ) ),
-    _carfi( JeveuxVectorDouble( getName() + ".CARFI" ) ),
-    _gfma( JeveuxVectorChar8( getName() + ".GFMA" ) ),
-    _caracsd( JeveuxVectorLong( getName() + ".CARACSD" ) ),
-    _isEmpty( true )
-{};

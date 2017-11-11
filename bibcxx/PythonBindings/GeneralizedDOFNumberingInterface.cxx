@@ -23,8 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/GeneralizedDOFNumberingInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/GeneralizedDOFNumberingInterface.h"
+
 
 void exportGeneralizedDOFNumberingToPython()
 {
@@ -32,7 +34,11 @@ void exportGeneralizedDOFNumberingToPython()
 
     class_< GeneralizedDOFNumberingInstance, GeneralizedDOFNumberingInstance::GeneralizedDOFNumberingPtr,
             bases< DataStructure > > ( "GeneralizedDOFNumbering", no_init )
-        .def( "create", &GeneralizedDOFNumberingInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< GeneralizedDOFNumberingInstance,
+                      GeneralizedDOFNumberingInstance::GeneralizedDOFNumberingPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Name< GeneralizedDOFNumberingInstance,
+                          GeneralizedDOFNumberingInstance::GeneralizedDOFNumberingPtr >) )
     ;
 };

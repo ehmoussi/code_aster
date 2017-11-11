@@ -31,6 +31,7 @@
 #include "DataStructures/DataStructure.h"
 #include "DataFields/PCFieldOnMesh.h"
 #include "Modeling/Model.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class ElementaryCharacteristicsInstance
@@ -84,15 +85,16 @@ public:
     /**
      * @brief Constructeur
      */
-    static ElementaryCharacteristicsPtr create( const ModelPtr& model )
-    {
-        return ElementaryCharacteristicsPtr( new ElementaryCharacteristicsInstance( model ) );
-    };
+    ElementaryCharacteristicsInstance( const std::string name,
+                                       const ModelPtr& model );
 
     /**
      * @brief Constructeur
      */
-    ElementaryCharacteristicsInstance( const ModelPtr& model );
+    ElementaryCharacteristicsInstance( const ModelPtr& model ):
+        ElementaryCharacteristicsInstance( ResultNaming::getNewResultName(), model )
+    {
+    };
 
     /**
      * @brief Destructeur

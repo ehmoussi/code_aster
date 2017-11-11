@@ -52,14 +52,6 @@ public:
     /**
      * @brief Constructeur
      */
-    static ParallelDOFNumberingPtr create()
-    {
-        return ParallelDOFNumberingPtr( new ParallelDOFNumberingInstance );
-    };
-
-    /**
-     * @brief Constructeur
-     */
     ParallelDOFNumberingInstance( const JeveuxMemory memType = Permanent ):
         BaseDOFNumberingInstance( "NUME_DDL_P", memType )
     {};
