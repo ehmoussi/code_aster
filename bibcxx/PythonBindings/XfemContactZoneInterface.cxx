@@ -23,8 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/XfemContactZoneInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/XfemContactZoneInterface.h"
+
 
 void exportXfemContactZoneToPython()
 {
@@ -49,8 +51,9 @@ void exportXfemContactZoneToPython()
     class_< XfemContactZoneInstance, XfemContactZonePtr,
             bases< GenericContactZoneInstance > >
         ( "XfemContactZone", no_init )
-        .def( "create", &XfemContactZoneInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< XfemContactZoneInstance,
+                      XfemContactZonePtr >) )
         .def( "addFriction", &XfemContactZoneInstance::addFriction )
         .def( "disableSlidingContact",
               &XfemContactZoneInstance::disableSlidingContact )

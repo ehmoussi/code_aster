@@ -248,14 +248,6 @@ public:
     /**
      * @brief Constructeur
      */
-    static DOFNumberingPtr create()
-    {
-        return DOFNumberingPtr( new DOFNumberingInstance );
-    };
-
-    /**
-     * @brief Constructeur
-     */
     DOFNumberingInstance( const JeveuxMemory memType = Permanent ):
         BaseDOFNumberingInstance( "NUME_DDL", memType )
     {};

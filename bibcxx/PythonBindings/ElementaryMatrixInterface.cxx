@@ -23,10 +23,21 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/ElementaryMatrixInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/ElementaryMatrixInterface.h"
 
-BOOST_PYTHON_FUNCTION_OVERLOADS(create_overloads, ElementaryMatrixInstance::create, 0, 1)
+
+/** @brief Pickler class that defines a `__getinitargs__` method to allow
+ *  to recreate an ElementaryMatrix after unpickling.
+ */
+struct ElementaryMatrix_pickler: boost::python::pickle_suite
+{
+    static boost::python::tuple getinitargs(ElementaryMatrixInstance const& ds)
+    {
+        return boost::python::make_tuple(ds.getName(), ds.getType());
+    }
+};
 
 void exportElementaryMatrixToPython()
 {
@@ -34,7 +45,17 @@ void exportElementaryMatrixToPython()
 
     class_< ElementaryMatrixInstance, ElementaryMatrixInstance::ElementaryMatrixPtr,
             bases< DataStructure > > ( "ElementaryMatrix", no_init )
-        .def( "create", &ElementaryMatrixInstance::create, create_overloads())
-        .staticmethod( "create" )
+        .def_pickle(ElementaryMatrix_pickler())
+        .def( "__init__", make_constructor(
+            factory0< ElementaryMatrixInstance,
+                      ElementaryMatrixInstance::ElementaryMatrixPtr >) )
+        // not for the name, it is the type
+        .def( "__init__", make_constructor(
+            factory0Name< ElementaryMatrixInstance,
+                             ElementaryMatrixInstance::ElementaryMatrixPtr >) )
+        .def( "__init__", make_constructor(
+            factory0NameArg< ElementaryMatrixInstance,
+                             ElementaryMatrixInstance::ElementaryMatrixPtr,
+                             const std::string >) )
     ;
 };

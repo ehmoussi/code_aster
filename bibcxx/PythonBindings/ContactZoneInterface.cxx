@@ -23,8 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/ContactZoneInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/ContactZoneInterface.h"
+
 
 void exportContactZoneToPython()
 {
@@ -83,8 +85,9 @@ void exportContactZoneToPython()
             DiscretizedContactZoneInstance::ContactZonePtr,
             bases< GenericContactZoneInstance > >
         ( "DiscretizedContactZone", no_init )
-        .def( "create", &DiscretizedContactZoneInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< DiscretizedContactZoneInstance,
+                      DiscretizedContactZoneInstance::ContactZonePtr >) )
         .def( "addBeamDescription", &DiscretizedContactZoneInstance::addBeamDescription )
         .def( "addFriction", &DiscretizedContactZoneInstance::addFriction<Discretized> )
         .def( "addPlateDescription",
@@ -124,8 +127,9 @@ void exportContactZoneToPython()
             ContinuousContactZoneInstance::ContactZonePtr,
             bases< GenericContactZoneInstance > >
         ( "ContinuousContactZone", no_init )
-        .def( "create", &ContinuousContactZoneInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< ContinuousContactZoneInstance,
+                      ContinuousContactZoneInstance::ContactZonePtr >) )
         .def( "addBeamDescription", &ContinuousContactZoneInstance::addBeamDescription )
         .def( "addFriction", &ContinuousContactZoneInstance::addFriction<Continuous> )
         .def( "addPlateDescription",

@@ -31,6 +31,7 @@
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxBidirectionalMap.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class FiberGeometryInstance
@@ -68,15 +69,25 @@ public:
     /**
      * @brief Constructeur
      */
-    static FiberGeometryPtr create()
+    FiberGeometryInstance():
+        FiberGeometryInstance( ResultNaming::getNewResultName() )
     {
-        return FiberGeometryPtr( new FiberGeometryInstance );
     };
 
     /**
      * @brief Constructeur
      */
-    FiberGeometryInstance();
+    FiberGeometryInstance( const std::string name ):
+        DataStructure( name, 8, "GFIBRE" ),
+        _nomsGroupes( JeveuxBidirectionalMapChar24( getName() + ".NOMS_GROUPES" ) ),
+        _nbFibreGroupe( JeveuxVectorLong( getName() + ".NB_FIBRE_GROUPE" ) ),
+        _pointeur( JeveuxVectorLong( getName() + ".POINTEUR" ) ),
+        _typeGroupe( JeveuxVectorLong( getName() + ".TYPE_GROUPE" ) ),
+        _carfi( JeveuxVectorDouble( getName() + ".CARFI" ) ),
+        _gfma( JeveuxVectorChar8( getName() + ".GFMA" ) ),
+        _caracsd( JeveuxVectorLong( getName() + ".CARACSD" ) ),
+        _isEmpty( true )
+    {};
 
     /**
      * @brief Destructeur

@@ -23,8 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/FiberGeometryInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/FiberGeometryInterface.h"
+
 
 void exportFiberGeometryToPython()
 {
@@ -32,7 +34,11 @@ void exportFiberGeometryToPython()
 
     class_< FiberGeometryInstance, FiberGeometryInstance::FiberGeometryPtr,
             bases< DataStructure > > ( "FiberGeometry", no_init )
-        .def( "create", &FiberGeometryInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< FiberGeometryInstance,
+                      FiberGeometryInstance::FiberGeometryPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Name< FiberGeometryInstance,
+                          FiberGeometryInstance::FiberGeometryPtr >) )
     ;
 };

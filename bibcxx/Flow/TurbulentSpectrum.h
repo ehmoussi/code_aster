@@ -30,7 +30,7 @@
 
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
-
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class TurbulentSpectrumInstance
@@ -59,16 +59,15 @@ public:
     /**
      * @brief Constructeur
      */
-    static TurbulentSpectrumPtr create()
-    {
-        return TurbulentSpectrumPtr( new TurbulentSpectrumInstance );
-    };
+    TurbulentSpectrumInstance():
+        TurbulentSpectrumInstance( ResultNaming::getNewResultName() )
+    {};
 
     /**
      * @brief Constructeur
      */
-    TurbulentSpectrumInstance(): 
-        DataStructure( "SPECTRE", Permanent, 19 ),
+    TurbulentSpectrumInstance( const std::string name ):
+        DataStructure( name, 19, "SPECTRE", Permanent ),
         _vain( JeveuxVectorLong( getName() + ".REFE" ) ),
         _vare( JeveuxVectorDouble( getName() + ".DISC" ) ),
         _vate( JeveuxVectorChar16( getName() + ".VALE" ) ),

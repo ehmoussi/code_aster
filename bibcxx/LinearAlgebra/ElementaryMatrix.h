@@ -65,27 +65,36 @@ public:
     /**
      * @brief Constructeur
      */
-    static ElementaryMatrixPtr create(std::string type="")
-    {
-        if (type.size() == 0)
-            return ElementaryMatrixPtr( new ElementaryMatrixInstance );
-        else
-        {
-            if (!(type=="DEPL_R"||type=="DEPL_C"||type=="TEMP_R"||type=="PRES_C"))
-                throw std::runtime_error( "Type "+type+" not supported" );
-            return ElementaryMatrixPtr( new ElementaryMatrixInstance ( type ) );
-        }
-    };
+    ElementaryMatrixInstance( const std::string name,
+                              const std::string type,
+                              const JeveuxMemory memType ):
+        DataStructure( name, 19, type, memType ),
+        _description( JeveuxVectorChar24( getName() + ".RERR" ) ),
+        _listOfElementaryResults( JeveuxVectorChar24( getName() + ".RELR" ) ),
+        _isEmpty( true )
+    {};
 
     /**
      * @brief Constructeur
      */
-    ElementaryMatrixInstance( const JeveuxMemory memType = Permanent );
+    ElementaryMatrixInstance( const std::string name, const std::string type ):
+        ElementaryMatrixInstance( name, type, Permanent )
+    {};
+
+    /**
+     * @brief Constructeur: 'type' should be the full type
+     */
+    ElementaryMatrixInstance( std::string type, const JeveuxMemory memType = Permanent ):
+        ElementaryMatrixInstance( ResultNaming::getNewResultName(),
+                                  "MATR_ELEM" + type, memType )
+    {};
 
     /**
      * @brief Constructeur
      */
-    ElementaryMatrixInstance( std::string type, const JeveuxMemory memType = Permanent );
+    ElementaryMatrixInstance( const JeveuxMemory memType = Permanent ):
+        ElementaryMatrixInstance( ResultNaming::getNewResultName(), "MATR_ELEM", memType )
+    {};
 
     /**
      * @brief Destructeur

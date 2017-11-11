@@ -21,22 +21,4 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdexcept>
-#include "astercxx.h"
-
 #include "LinearAlgebra/ElementaryMatrix.h"
-#include "Supervis/CommandSyntax.h"
-
-ElementaryMatrixInstance::ElementaryMatrixInstance( const JeveuxMemory memType ):
-    DataStructure( "MATR_ELEM", memType, 19 ),
-    _description( JeveuxVectorChar24( getName() + ".RERR" ) ),
-    _listOfElementaryResults( JeveuxVectorChar24( getName() + ".RELR" ) ),
-    _isEmpty( true )
-{};
-
-ElementaryMatrixInstance::ElementaryMatrixInstance( std::string type, const JeveuxMemory memType ):
-    DataStructure( "MATR_ELEM_" + type, memType, 19 ),
-    _description( JeveuxVectorChar24( getName() + ".RERR" ) ),
-    _listOfElementaryResults( JeveuxVectorChar24( getName() + ".RELR" ) ),
-    _isEmpty( true )
-{};

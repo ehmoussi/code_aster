@@ -32,6 +32,7 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "LinearAlgebra/MatrixStorage.h"
+#include "Supervis/ResultNaming.h"
 
 
 /**
@@ -81,16 +82,15 @@ public:
     /**
      * @brief Constructeur
      */
-    static GeneralizedDOFNumberingPtr create()
-    {
-        return GeneralizedDOFNumberingPtr( new GeneralizedDOFNumberingInstance );
-    };
+    GeneralizedDOFNumberingInstance():
+        GeneralizedDOFNumberingInstance( ResultNaming::getNewResultName() )
+    {};
 
     /**
      * @brief Constructeur
      */
-    GeneralizedDOFNumberingInstance(): 
-        DataStructure( "NUME_DDL_GENE", Permanent, 14 ),
+    GeneralizedDOFNumberingInstance( const std::string name ):
+        DataStructure( name, 14, "NUME_DDL_GENE", Permanent ),
         _desc( JeveuxVectorLong( getName() + ".DESC" ) ),
         _nequ( JeveuxVectorLong( getName() + ".NEQU" ) ),
         _refn( JeveuxVectorChar24( getName() + ".REFN" ) ),

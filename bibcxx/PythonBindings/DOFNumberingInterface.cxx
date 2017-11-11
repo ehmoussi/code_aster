@@ -23,8 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/DOFNumberingInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/DOFNumberingInterface.h"
+
 
 void exportDOFNumberingToPython()
 {
@@ -41,8 +43,12 @@ void exportDOFNumberingToPython()
 
     class_< DOFNumberingInstance, DOFNumberingInstance::DOFNumberingPtr,
             bases< BaseDOFNumberingInstance > > ( "DOFNumbering", no_init )
-        .def( "create", &DOFNumberingInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< DOFNumberingInstance,
+                      DOFNumberingInstance::DOFNumberingPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Name< DOFNumberingInstance,
+                          DOFNumberingInstance::DOFNumberingPtr >) )
         .def( "setSupportModel", &DOFNumberingInstance::setSupportModel )
     ;
 };

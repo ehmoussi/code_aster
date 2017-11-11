@@ -23,8 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/TurbulentSpectrumInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/TurbulentSpectrumInterface.h"
+
 
 void exportTurbulentSpectrumToPython()
 {
@@ -33,7 +35,11 @@ void exportTurbulentSpectrumToPython()
     class_< TurbulentSpectrumInstance,
             TurbulentSpectrumInstance::TurbulentSpectrumPtr,
             bases< DataStructure > > ( "TurbulentSpectrum", no_init )
-        .def( "create", &TurbulentSpectrumInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< TurbulentSpectrumInstance,
+                      TurbulentSpectrumInstance::TurbulentSpectrumPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Name< TurbulentSpectrumInstance,
+                          TurbulentSpectrumInstance::TurbulentSpectrumPtr >) )
     ;
 };

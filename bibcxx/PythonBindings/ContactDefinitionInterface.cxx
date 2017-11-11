@@ -23,8 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/ContactDefinitionInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/ContactDefinitionInterface.h"
+
 
 void exportContactDefinitionToPython()
 {
@@ -53,8 +55,12 @@ void exportContactDefinitionToPython()
 
     class_< DiscretizedContactInstance, DiscretizedContactPtr,
             bases< DataStructure > > ( "DiscretizedContact", no_init )
-        .def( "create", &DiscretizedContactInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< DiscretizedContactInstance,
+                      DiscretizedContactPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Name< DiscretizedContactInstance,
+                          DiscretizedContactPtr >) )
         .def( "addContactZone", &DiscretizedContactInstance::addContactZone )
         .def( "build", &DiscretizedContactInstance::build )
         .def( "setModel", &DiscretizedContactInstance::setModel )
@@ -93,19 +99,31 @@ void exportContactDefinitionToPython()
 
     class_< ContinuousContactInstance, ContinuousContactPtr,
             bases< DataStructure > > ( "ContinuousContact", no_init )
-        .def( "create", &ContinuousContactInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< ContinuousContactInstance,
+                      ContinuousContactPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Name< ContinuousContactInstance,
+                          ContinuousContactPtr >) )
     ;
 
     class_< XfemContactInstance, XfemContactPtr,
             bases< DataStructure > > ( "XfemContact", no_init )
-        .def( "create", &XfemContactInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< XfemContactInstance,
+                      XfemContactPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Name< XfemContactInstance,
+                          XfemContactPtr >) )
     ;
 
     class_< UnilateralConnexionInstance, UnilateralConnexionPtr,
             bases< DataStructure > > ( "UnilateralConnexion", no_init )
-        .def( "create", &UnilateralConnexionInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< UnilateralConnexionInstance,
+                      UnilateralConnexionPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Name< UnilateralConnexionInstance,
+                          UnilateralConnexionPtr >) )
     ;
 };

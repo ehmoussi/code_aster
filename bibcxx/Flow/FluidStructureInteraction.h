@@ -30,6 +30,7 @@
 
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
+#include "Supervis/ResultNaming.h"
 
 
 /**
@@ -69,16 +70,14 @@ public:
     /**
      * @brief Constructeur
      */
-    static FluidStructureInteractionPtr create()
-    {
-        return FluidStructureInteractionPtr( new FluidStructureInteractionInstance );
-    };
-
+    FluidStructureInteractionInstance():
+        FluidStructureInteractionInstance( ResultNaming::getNewResultName() )
+    {};
     /**
      * @brief Constructeur
      */
-    FluidStructureInteractionInstance(): 
-        DataStructure( "TYPE_FLUI_STRU", Permanent, 8 ),
+    FluidStructureInteractionInstance( const std::string name ):
+        DataStructure( name, 8, "TYPE_FLUI_STRU", Permanent ),
         _fsic( JeveuxVectorLong( getName() + "           .FSIC" ) ),
         _fsvi( JeveuxVectorLong( getName() + "           .FSVI" ) ),
         _fsvk( JeveuxVectorChar8( getName() + "           .FSVK" ) ),

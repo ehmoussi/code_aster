@@ -23,8 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/FluidStructureInteractionInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/FluidStructureInteractionInterface.h"
+
 
 void exportFluidStructureInteractionToPython()
 {
@@ -33,7 +35,11 @@ void exportFluidStructureInteractionToPython()
     class_< FluidStructureInteractionInstance,
             FluidStructureInteractionInstance::FluidStructureInteractionPtr,
             bases< DataStructure > > ( "FluidStructureInteraction", no_init )
-        .def( "create", &FluidStructureInteractionInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< FluidStructureInteractionInstance,
+                      FluidStructureInteractionInstance::FluidStructureInteractionPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Name< FluidStructureInteractionInstance,
+                          FluidStructureInteractionInstance::FluidStructureInteractionPtr >) )
     ;
 };

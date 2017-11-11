@@ -79,20 +79,15 @@ public:
     /**
      * @brief Constructeur
      */
-    static ContactZonePtr create()
-    {
-        return ContactZonePtr( new XfemContactZoneInstance );
-    };
-
     XfemContactZoneInstance(): _toleProjExt( 0.5 ),
-                           _integration( GaussIntegration ),
-                           _ordreInt( 6 ),
-                           _algoLagr( AutomaticLagrangeAlgorithm ),
-                           _algoCont( StandardContact ),
-                           _contactInit( false ),
-                           _glissiere( false ),
-                           _coefCont( 100. ),
-                           _seuilInit( 0. )
+                               _integration( GaussIntegration ),
+                               _ordreInt( 6 ),
+                               _algoLagr( AutomaticLagrangeAlgorithm ),
+                               _algoCont( StandardContact ),
+                               _contactInit( false ),
+                               _glissiere( false ),
+                               _coefCont( 100. ),
+                               _seuilInit( 0. )
     {
         _toCapyConverter.add( new CapyConvertibleValue< XfemCrackPtr >
                                     ( true, "FISS_MAIT", _crack, false ) );
