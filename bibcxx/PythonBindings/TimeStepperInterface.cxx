@@ -40,7 +40,7 @@ void exportTimeStepperToPython()
             factory0< TimeStepperInstance,
                       TimeStepperInstance::TimeStepperPtr >) )
         .def( "__init__", make_constructor(
-            factory0Name< TimeStepperInstance,
+            factory0Str< TimeStepperInstance,
                           TimeStepperInstance::TimeStepperPtr >) )
         .def( "setValues", &TimeStepperInstance::setValues )
     ;

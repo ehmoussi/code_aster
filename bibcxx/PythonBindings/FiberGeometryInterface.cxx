@@ -38,7 +38,7 @@ void exportFiberGeometryToPython()
             factory0< FiberGeometryInstance,
                       FiberGeometryInstance::FiberGeometryPtr >) )
         .def( "__init__", make_constructor(
-            factory0Name< FiberGeometryInstance,
+            factory0Str< FiberGeometryInstance,
                           FiberGeometryInstance::FiberGeometryPtr >) )
     ;
 };

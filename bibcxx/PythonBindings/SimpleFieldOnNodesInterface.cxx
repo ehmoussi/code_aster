@@ -38,7 +38,7 @@ void exportSimpleFieldOnNodesToPython()
             factory0< SimpleFieldOnNodesDoubleInstance,
                       SimpleFieldOnNodesDoublePtr >) )
         .def( "__init__", make_constructor(
-            factory0Name< SimpleFieldOnNodesDoubleInstance,
+            factory0Str< SimpleFieldOnNodesDoubleInstance,
                           SimpleFieldOnNodesDoublePtr >) )
         .def( "getValue", &SimpleFieldOnNodesDoubleInstance::getValue,
               return_value_policy< return_by_value >() )

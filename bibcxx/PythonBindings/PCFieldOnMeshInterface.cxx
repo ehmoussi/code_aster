@@ -39,8 +39,8 @@ void exportPCFieldOnMeshToPython()
                          PCFieldOnMeshDoublePtr,
                          BaseMeshPtr >) )
         .def( "__init__", make_constructor(
-            factory0NameArg< PCFieldOnMeshDoubleInstance,
-                             PCFieldOnMeshDoublePtr,
-                             BaseMeshPtr >) )
+            factory0StrArg< PCFieldOnMeshDoubleInstance,
+                            PCFieldOnMeshDoublePtr,
+                            BaseMeshPtr >) )
     ;
 };

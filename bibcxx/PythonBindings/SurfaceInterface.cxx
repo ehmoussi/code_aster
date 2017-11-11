@@ -38,7 +38,7 @@ void exportSurfaceToPython()
             factory0< SurfaceInstance,
                       SurfaceInstance::SurfacePtr >) )
         .def( "__init__", make_constructor(
-            factory0Name< SurfaceInstance,
+            factory0Str< SurfaceInstance,
                           SurfaceInstance::SurfacePtr >) )
     ;
 };

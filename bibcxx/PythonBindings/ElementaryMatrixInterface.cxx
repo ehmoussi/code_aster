@@ -51,11 +51,11 @@ void exportElementaryMatrixToPython()
                       ElementaryMatrixInstance::ElementaryMatrixPtr >) )
         // not for the name, it is the type
         .def( "__init__", make_constructor(
-            factory0Name< ElementaryMatrixInstance,
+            factory0Str< ElementaryMatrixInstance,
                              ElementaryMatrixInstance::ElementaryMatrixPtr >) )
         .def( "__init__", make_constructor(
-            factory0NameArg< ElementaryMatrixInstance,
-                             ElementaryMatrixInstance::ElementaryMatrixPtr,
-                             const std::string >) )
+            factory0StrArg< ElementaryMatrixInstance,
+                            ElementaryMatrixInstance::ElementaryMatrixPtr,
+                            const std::string >) )
     ;
 };

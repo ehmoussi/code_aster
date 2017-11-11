@@ -50,7 +50,7 @@ void exportFunctionToPython()
             factory0< FunctionInstance,
                       FunctionInstance::FunctionPtr >) )
         .def( "__init__", make_constructor(
-            factory0Name< FunctionInstance,
+            factory0Str< FunctionInstance,
                           FunctionInstance::FunctionPtr >) )
         .def( "setValues", &FunctionInstance::setValues )
         .def( "size", &FunctionInstance::size )
@@ -68,7 +68,7 @@ void exportFunctionToPython()
             factory0< FunctionComplexInstance,
                       FunctionComplexInstance::FunctionComplexPtr >) )
         .def( "__init__", make_constructor(
-            factory0Name< FunctionComplexInstance,
+            factory0Str< FunctionComplexInstance,
                           FunctionComplexInstance::FunctionComplexPtr >) )
         .def( "setValues", c1 )
         .def( "setValues", c2 )

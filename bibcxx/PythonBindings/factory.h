@@ -39,7 +39,7 @@ static DSTypePtr factory0()
  * as argument, needed for unpickling.
  */
 template< typename DSType, typename DSTypePtr >
-static DSTypePtr factory0Name( const std::string &jeveuxName )
+static DSTypePtr factory0Str( const std::string &jeveuxName )
 {
     return DSTypePtr( new DSType( jeveuxName ) );
 }
@@ -56,8 +56,8 @@ static DSTypePtr factory0Arg( const Arg1 &arg1 )
  * and another argument, needed for unpickling.
  */
 template< typename DSType, typename DSTypePtr, typename Arg1 >
-static DSTypePtr factory0NameArg( const std::string &jeveuxName,
-                                  const Arg1 &arg1 )
+static DSTypePtr factory0StrArg( const std::string &jeveuxName,
+                                 const Arg1 &arg1 )
 {
     return DSTypePtr( new DSType( jeveuxName, arg1 ) );
 }

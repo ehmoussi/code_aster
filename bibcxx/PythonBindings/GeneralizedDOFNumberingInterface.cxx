@@ -38,7 +38,7 @@ void exportGeneralizedDOFNumberingToPython()
             factory0< GeneralizedDOFNumberingInstance,
                       GeneralizedDOFNumberingInstance::GeneralizedDOFNumberingPtr >) )
         .def( "__init__", make_constructor(
-            factory0Name< GeneralizedDOFNumberingInstance,
+            factory0Str< GeneralizedDOFNumberingInstance,
                           GeneralizedDOFNumberingInstance::GeneralizedDOFNumberingPtr >) )
     ;
 };

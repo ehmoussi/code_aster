@@ -39,7 +39,7 @@ void exportFluidStructureInteractionToPython()
             factory0< FluidStructureInteractionInstance,
                       FluidStructureInteractionInstance::FluidStructureInteractionPtr >) )
         .def( "__init__", make_constructor(
-            factory0Name< FluidStructureInteractionInstance,
+            factory0Str< FluidStructureInteractionInstance,
                           FluidStructureInteractionInstance::FluidStructureInteractionPtr >) )
     ;
 };

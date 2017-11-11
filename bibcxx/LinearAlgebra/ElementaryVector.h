@@ -70,15 +70,22 @@ public:
     /**
      * @brief Constructeur
      */
-    static ElementaryVectorPtr create()
-    {
-        return ElementaryVectorPtr( new ElementaryVectorInstance );
-    };
+    ElementaryVectorInstance( const std::string name,
+                              const JeveuxMemory memType  = Permanent ):
+        DataStructure( name, 19, "VECT_ELEM", memType ),
+        _description( JeveuxVectorChar24( getName() + ".RERR" ) ),
+        _listOfElementaryResults( JeveuxVectorChar24( getName() + ".RELR" ) ),
+        _isEmpty( true ),
+        _listOfLoads( new ListOfLoadsInstance( memType ) ),
+        _corichRept( JeveuxBidirectionalMapChar24( "&&CORICH." + getName8() + ".REPT" ) )
+    {};
 
     /**
      * @brief Constructeur
      */
-    ElementaryVectorInstance( const JeveuxMemory memType = Permanent );
+    ElementaryVectorInstance( const JeveuxMemory memType = Permanent ):
+        ElementaryVectorInstance( ResultNaming::getNewResultName(), memType )
+    {};
 
     /**
      * @brief Destructeur

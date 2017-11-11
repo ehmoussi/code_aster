@@ -38,7 +38,7 @@ void exportFormulaToPython()
             factory0< FormulaInstance,
                       FormulaInstance::FormulaPtr >) )
         .def( "__init__", make_constructor(
-            factory0Name< FormulaInstance,
+            factory0Str< FormulaInstance,
                           FormulaInstance::FormulaPtr >) )
         .def( "setVariables", &FormulaInstance::setVariables )
         .def( "setExpression", &FormulaInstance::setExpression )

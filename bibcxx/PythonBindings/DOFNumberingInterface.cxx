@@ -47,7 +47,7 @@ void exportDOFNumberingToPython()
             factory0< DOFNumberingInstance,
                       DOFNumberingInstance::DOFNumberingPtr >) )
         .def( "__init__", make_constructor(
-            factory0Name< DOFNumberingInstance,
+            factory0Str< DOFNumberingInstance,
                           DOFNumberingInstance::DOFNumberingPtr >) )
         .def( "setSupportModel", &DOFNumberingInstance::setSupportModel )
     ;
