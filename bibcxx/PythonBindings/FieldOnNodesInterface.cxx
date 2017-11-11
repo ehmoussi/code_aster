@@ -55,7 +55,7 @@ void exportFieldOnNodesToPython()
         .def( "__init__", make_constructor(
             factory0< FieldOnNodesDoubleInstance, FieldOnNodesDoublePtr >) )
         .def( "__init__", make_constructor(
-            factory0Name< FieldOnNodesDoubleInstance, FieldOnNodesDoublePtr >) )
+            factory0Str< FieldOnNodesDoubleInstance, FieldOnNodesDoublePtr >) )
 
         .def( "exportToSimpleFieldOnNodes", &FieldOnNodesDoubleInstance::exportToSimpleFieldOnNodes )
 //         .def( "__getitem__", &FieldOnNodesDoubleInstance::operator[] )

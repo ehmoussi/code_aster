@@ -39,7 +39,7 @@ void exportTableToPython()
             factory0< TableInstance,
                       TableInstance::TablePtr >) )
         .def( "__init__", make_constructor(
-            factory0Name< TableInstance,
+            factory0Str< TableInstance,
                           TableInstance::TablePtr >) )
     ;
 };

@@ -23,8 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/ElementaryVectorInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/ElementaryVectorInterface.h"
+
 
 void exportElementaryVectorToPython()
 {
@@ -39,8 +41,12 @@ void exportElementaryVectorToPython()
 
     class_< ElementaryVectorInstance, ElementaryVectorInstance::ElementaryVectorPtr,
             bases< DataStructure > > ( "ElementaryVector", no_init )
-        .def( "create", &ElementaryVectorInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< ElementaryVectorInstance,
+                      ElementaryVectorInstance::ElementaryVectorPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Str< ElementaryVectorInstance,
+                         ElementaryVectorInstance::ElementaryVectorPtr >) )
         .def( "addMechanicalLoad", &ElementaryVectorInstance::addMechanicalLoad )
         .def( "assembleVector", c1 )
 #ifdef _USE_MPI

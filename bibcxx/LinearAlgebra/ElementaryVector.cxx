@@ -27,14 +27,6 @@
 #include "LinearAlgebra/ElementaryVector.h"
 #include "Supervis/CommandSyntax.h"
 
-ElementaryVectorInstance::ElementaryVectorInstance( const JeveuxMemory memType ):
-    DataStructure( "VECT_ELEM", memType, 19 ),
-    _description( JeveuxVectorChar24( getName() + ".RERR" ) ),
-    _listOfElementaryResults( JeveuxVectorChar24( getName() + ".RELR" ) ),
-    _isEmpty( true ),
-    _listOfLoads( new ListOfLoadsInstance( memType ) ),
-    _corichRept( JeveuxBidirectionalMapChar24( "&&CORICH." + getName8() + ".REPT" ) )
-{};
 
 FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const BaseDOFNumberingPtr& currentNumerotation,
                                                                 const double& time,

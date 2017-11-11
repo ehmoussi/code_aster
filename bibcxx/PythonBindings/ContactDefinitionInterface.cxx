@@ -59,7 +59,7 @@ void exportContactDefinitionToPython()
             factory0< DiscretizedContactInstance,
                       DiscretizedContactPtr >) )
         .def( "__init__", make_constructor(
-            factory0Name< DiscretizedContactInstance,
+            factory0Str< DiscretizedContactInstance,
                           DiscretizedContactPtr >) )
         .def( "addContactZone", &DiscretizedContactInstance::addContactZone )
         .def( "build", &DiscretizedContactInstance::build )
@@ -103,7 +103,7 @@ void exportContactDefinitionToPython()
             factory0< ContinuousContactInstance,
                       ContinuousContactPtr >) )
         .def( "__init__", make_constructor(
-            factory0Name< ContinuousContactInstance,
+            factory0Str< ContinuousContactInstance,
                           ContinuousContactPtr >) )
     ;
 
@@ -113,7 +113,7 @@ void exportContactDefinitionToPython()
             factory0< XfemContactInstance,
                       XfemContactPtr >) )
         .def( "__init__", make_constructor(
-            factory0Name< XfemContactInstance,
+            factory0Str< XfemContactInstance,
                           XfemContactPtr >) )
     ;
 
@@ -123,7 +123,7 @@ void exportContactDefinitionToPython()
             factory0< UnilateralConnexionInstance,
                       UnilateralConnexionPtr >) )
         .def( "__init__", make_constructor(
-            factory0Name< UnilateralConnexionInstance,
+            factory0Str< UnilateralConnexionInstance,
                           UnilateralConnexionPtr >) )
     ;
 };

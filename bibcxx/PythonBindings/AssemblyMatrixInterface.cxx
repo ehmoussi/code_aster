@@ -38,7 +38,7 @@ void exportAssemblyMatrixToPython()
             factory0< AssemblyMatrixDoubleInstance,
                       AssemblyMatrixDoublePtr >) )
         .def( "__init__", make_constructor(
-            factory0Name< AssemblyMatrixDoubleInstance,
+            factory0Str< AssemblyMatrixDoubleInstance,
                           AssemblyMatrixDoublePtr >) )
         .def( "addKinematicsLoad", &AssemblyMatrixDoubleInstance::addKinematicsLoad )
         .def( "build", &AssemblyMatrixDoubleInstance::build )
@@ -55,7 +55,7 @@ void exportAssemblyMatrixToPython()
             factory0< AssemblyMatrixComplexInstance,
                       AssemblyMatrixComplexPtr >) )
         .def( "__init__", make_constructor(
-            factory0Name< AssemblyMatrixComplexInstance,
+            factory0Str< AssemblyMatrixComplexInstance,
                           AssemblyMatrixComplexPtr >) )
         .def( "addKinematicsLoad", &AssemblyMatrixComplexInstance::addKinematicsLoad )
         .def( "build", &AssemblyMatrixComplexInstance::build )

@@ -39,8 +39,8 @@ void exportElementaryCharacteristicsToPython()
                          ElementaryCharacteristicsInstance::ElementaryCharacteristicsPtr,
                          ModelPtr >) )
         .def( "__init__", make_constructor(
-            factory0NameArg< ElementaryCharacteristicsInstance,
-                             ElementaryCharacteristicsInstance::ElementaryCharacteristicsPtr,
-                             ModelPtr >) )
+            factory0StrArg< ElementaryCharacteristicsInstance,
+                            ElementaryCharacteristicsInstance::ElementaryCharacteristicsPtr,
+                            ModelPtr >) )
     ;
 };

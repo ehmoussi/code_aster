@@ -38,7 +38,7 @@ void exportSimpleFieldOnElementsToPython()
             factory0< SimpleFieldOnElementsDoubleInstance,
                       SimpleFieldOnElementsDoublePtr >) )
         .def( "__init__", make_constructor(
-            factory0Name< SimpleFieldOnElementsDoubleInstance,
+            factory0Str< SimpleFieldOnElementsDoubleInstance,
                           SimpleFieldOnElementsDoublePtr >) )
 
         .def( "getValue", &SimpleFieldOnElementsDoubleInstance::getValue,

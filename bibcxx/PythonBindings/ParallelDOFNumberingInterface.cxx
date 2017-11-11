@@ -41,7 +41,7 @@ void exportParallelDOFNumberingToPython()
             factory0< ParallelDOFNumberingInstance,
                       ParallelDOFNumberingInstance::ParallelDOFNumberingPtr >) )
         .def( "__init__", make_constructor(
-            factory0Name< ParallelDOFNumberingInstance,
+            factory0Str< ParallelDOFNumberingInstance,
                           ParallelDOFNumberingInstance::ParallelDOFNumberingPtr >) )
     ;
 };

@@ -38,6 +38,6 @@ void exportFieldOnElementsToPython()
         .def( "__init__", make_constructor(
             factory0< FieldOnElementsDoubleInstance, FieldOnElementsDoublePtr >) )
         .def( "__init__", make_constructor(
-            factory0Name< FieldOnElementsDoubleInstance, FieldOnElementsDoublePtr >) )
+            factory0Str< FieldOnElementsDoubleInstance, FieldOnElementsDoublePtr >) )
         ;
 };

@@ -39,7 +39,7 @@ void exportTurbulentSpectrumToPython()
             factory0< TurbulentSpectrumInstance,
                       TurbulentSpectrumInstance::TurbulentSpectrumPtr >) )
         .def( "__init__", make_constructor(
-            factory0Name< TurbulentSpectrumInstance,
+            factory0Str< TurbulentSpectrumInstance,
                           TurbulentSpectrumInstance::TurbulentSpectrumPtr >) )
     ;
 };
