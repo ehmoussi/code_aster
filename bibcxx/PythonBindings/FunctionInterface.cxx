@@ -24,6 +24,7 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
 #include "PythonBindings/factory.h"
 #include "PythonBindings/FunctionInterface.h"
 

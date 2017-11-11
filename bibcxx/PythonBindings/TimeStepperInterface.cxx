@@ -23,9 +23,12 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include <boost/python.hpp>
+
+#include <PythonBindings/factory.h>
 #include "PythonBindings/TimeStepperInterface.h"
 #include "PythonBindings/DataStructureInterface.h"
-#include <boost/python.hpp>
+
 
 void exportTimeStepperToPython()
 {
@@ -33,8 +36,12 @@ void exportTimeStepperToPython()
 
     class_< TimeStepperInstance, TimeStepperInstance::TimeStepperPtr,
             bases< DataStructure > >( "TimeStepper", no_init )
-        .def( "create", &TimeStepperInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< TimeStepperInstance,
+                      TimeStepperInstance::TimeStepperPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Name< TimeStepperInstance,
+                          TimeStepperInstance::TimeStepperPtr >) )
         .def( "setValues", &TimeStepperInstance::setValues )
     ;
 };

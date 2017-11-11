@@ -23,8 +23,10 @@
 
 /* person_in_charge: mathieu.courtois@edf.fr */
 
-#include "PythonBindings/FormulaInterface.h"
 #include <boost/python.hpp>
+
+#include <PythonBindings/factory.h>
+#include "PythonBindings/FormulaInterface.h"
 
 void exportFormulaToPython()
 {
@@ -32,8 +34,12 @@ void exportFormulaToPython()
 
     class_< FormulaInstance, FormulaInstance::FormulaPtr,
             bases< DataStructure > > ( "Formula", no_init )
-        .def( "create", &FormulaInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< FormulaInstance,
+                      FormulaInstance::FormulaPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Name< FormulaInstance,
+                          FormulaInstance::FormulaPtr >) )
         .def( "setVariables", &FormulaInstance::setVariables )
         .def( "setExpression", &FormulaInstance::setExpression )
         .def( "setComplex", &FormulaInstance::setComplex )

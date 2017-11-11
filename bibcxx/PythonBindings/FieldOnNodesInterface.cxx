@@ -22,12 +22,14 @@
  */
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
+#include <boost/python.hpp>
+#include <PythonBindings/factory.h>
 
 #include "PythonBindings/DataStructureInterface.h"
 #include "PythonBindings/FieldOnNodesInterface.h"
 #include "DataFields/MeshCoordinatesField.h"
 #include "PythonBindings/ConstViewerUtilities.h"
-#include <boost/python.hpp>
+
 
 void exportFieldOnNodesToPython()
 {
@@ -50,8 +52,11 @@ void exportFieldOnNodesToPython()
 
     class_< FieldOnNodesDoubleInstance, FieldOnNodesDoublePtr,
             bases< DataStructure > >("FieldOnNodesDouble", no_init)
-        .def( "create", &FieldOnNodesDoubleInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< FieldOnNodesDoubleInstance, FieldOnNodesDoublePtr >) )
+        .def( "__init__", make_constructor(
+            factory0Name< FieldOnNodesDoubleInstance, FieldOnNodesDoublePtr >) )
+
         .def( "exportToSimpleFieldOnNodes", &FieldOnNodesDoubleInstance::exportToSimpleFieldOnNodes )
 //         .def( "__getitem__", &FieldOnNodesDoubleInstance::operator[] )
         .def( "__getitem__", +[](const FieldOnNodesDoubleInstance& v, int i)

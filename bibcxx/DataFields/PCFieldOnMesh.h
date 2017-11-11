@@ -272,15 +272,6 @@ class PCFieldOnMeshInstance: public DataStructure
 
         /**
          * @brief Constructeur
-         */
-        static PCFieldOnBaseMeshPtr create( const BaseMeshPtr& mesh )
-        {
-            return PCFieldOnBaseMeshPtr( new PCFieldOnMeshInstance( ResultNaming::getNewResultName(),
-                                                                    mesh ) );
-        };
-
-        /**
-         * @brief Constructeur
          * @param name Nom Jeveux de la carte
          * @param mesh Maillage support
          */
@@ -297,7 +288,6 @@ class PCFieldOnMeshInstance: public DataStructure
             _componentNames( name + ".NCMP" ),
             _valuesListTmp( name + ".VALV" )
         {
-            assert( name.size() == 19 );
         };
 
         /**
@@ -319,7 +309,6 @@ class PCFieldOnMeshInstance: public DataStructure
             _componentNames( name + ".NCMP" ),
             _valuesListTmp( name + ".VALV" )
         {
-            assert( name.size() == 19 );
         };
 
         /**
@@ -341,7 +330,6 @@ class PCFieldOnMeshInstance: public DataStructure
             _componentNames( getName() + ".NCMP" ),
             _valuesListTmp( getName() + ".VALV" )
         {
-            assert( getName().size() == 19 );
         };
 
         /**
@@ -363,7 +351,6 @@ class PCFieldOnMeshInstance: public DataStructure
             _componentNames( getName() + ".NCMP" ),
             _valuesListTmp( getName() + ".VALV" )
         {
-            assert( getName().size() == 19 );
         };
 
         typedef boost::shared_ptr< PCFieldOnMeshInstance< ValueType > > PCFieldOnMeshValueTypePtr;

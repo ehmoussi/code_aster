@@ -87,14 +87,6 @@ public:
 
     /**
      * @brief Constructeur
-     */
-    static FieldOnNodesPtr create()
-    {
-        return FieldOnNodesPtr( new FieldOnNodesInstance );
-    };
-
-    /**
-     * @brief Constructeur
      * @param name Nom Jeveux du champ aux noeuds
      */
     FieldOnNodesInstance( const std::string name ):
@@ -103,7 +95,6 @@ public:
                     _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
                     _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) )
     {
-        assert( name.size() == 19 );
     };
 
     /**
@@ -116,7 +107,6 @@ public:
                     _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
                     _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) )
     {
-        assert( getName().size() == 19 );
     };
 
     /**
