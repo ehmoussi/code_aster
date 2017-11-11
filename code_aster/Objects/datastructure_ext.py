@@ -47,14 +47,6 @@ class ExtendedDataStructure(injector(DataStructure), DataStructure):
             self.ptr_sdj = self.ptr_class_sdj(nomj=self.getName())
         return self.ptr_sdj
 
-    def __getinitargs__(self):
-        """Return arguments needed to unpickle the object.
-
-        Returns:
-            tuple: Arguments to reinitialize the object.
-        """
-        return (self.getName(), )
-
     # transitional functions - to remove later
     @staticmethod
     @deprecated(False)

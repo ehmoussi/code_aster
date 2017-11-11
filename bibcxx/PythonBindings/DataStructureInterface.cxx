@@ -26,6 +26,18 @@
 #include "PythonBindings/DataStructureInterface.h"
 #include <boost/python.hpp>
 
+/** @brief Pickler class that defines a `__getinitargs__` method to allow
+ *  to recreate DataStructure after unpickling.
+ */
+struct DataStructure_pickler: boost::python::pickle_suite
+{
+    static boost::python::tuple getinitargs(DataStructure const& ds)
+    {
+        return boost::python::make_tuple(ds.getName());
+    }
+};
+
+
 void exportDataStructureToPython()
 {
     using namespace boost::python;
@@ -34,7 +46,7 @@ void exportDataStructureToPython()
     void (DataStructure::*c2)() const = &DataStructure::debugPrint;
 
     class_< DataStructure, DataStructure::DataStructurePtr >( "DataStructure", no_init )
-        .enable_pickling()
+        .def_pickle(DataStructure_pickler())
         .def( "getName", &DataStructure::getName, return_value_policy<return_by_value>() )
         .def( "getType", &DataStructure::getType, return_value_policy<return_by_value>() )
         .def( "debugPrint", c1 )
