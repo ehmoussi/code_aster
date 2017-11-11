@@ -23,17 +23,23 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include <boost/python.hpp>
+#include <PythonBindings/factory.h>
 #include "PythonBindings/DataStructureInterface.h"
 #include "PythonBindings/SimpleFieldOnNodesInterface.h"
-#include <boost/python.hpp>
+
 
 void exportSimpleFieldOnNodesToPython()
 {
     using namespace boost::python;
     class_< SimpleFieldOnNodesDoubleInstance, SimpleFieldOnNodesDoublePtr,
             bases< DataStructure > >("SimpleFieldOnNodesDouble", no_init)
-        .def( "create", &SimpleFieldOnNodesDoubleInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< SimpleFieldOnNodesDoubleInstance,
+                      SimpleFieldOnNodesDoublePtr >) )
+        .def( "__init__", make_constructor(
+            factory0Name< SimpleFieldOnNodesDoubleInstance,
+                          SimpleFieldOnNodesDoublePtr >) )
         .def( "getValue", &SimpleFieldOnNodesDoubleInstance::getValue,
               return_value_policy< return_by_value >() )
         .def( "updateValuePointers", &SimpleFieldOnNodesDoubleInstance::updateValuePointers )

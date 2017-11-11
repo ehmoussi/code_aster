@@ -23,9 +23,11 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include <boost/python.hpp>
+#include <PythonBindings/factory.h>
 #include "PythonBindings/TableInterface.h"
 #include "PythonBindings/DataStructureInterface.h"
-#include <boost/python.hpp>
+
 
 void exportTableToPython()
 {
@@ -33,7 +35,11 @@ void exportTableToPython()
 
     class_< TableInstance, TableInstance::TablePtr,
             bases< DataStructure > >( "Table", no_init )
-        .def( "create", &TableInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< TableInstance,
+                      TableInstance::TablePtr >) )
+        .def( "__init__", make_constructor(
+            factory0Name< TableInstance,
+                          TableInstance::TablePtr >) )
     ;
 };

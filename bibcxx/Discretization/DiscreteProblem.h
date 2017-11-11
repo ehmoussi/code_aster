@@ -66,17 +66,9 @@ public:
 
     /**
      * @brief Constructeur
-     */
-    static DiscreteProblemPtr create( StudyDescriptionPtr& currentStudy )
-    {
-        return DiscreteProblemPtr( new DiscreteProblemInstance( currentStudy ) );
-    };
-
-    /**
-     * @brief Constructeur
      * @param StudyDescriptionPtr Etude utilisateur
      */
-    DiscreteProblemInstance( StudyDescriptionPtr& currentStudy ):
+    DiscreteProblemInstance( const StudyDescriptionPtr& currentStudy ):
         _study( currentStudy )
     {};
 
@@ -123,7 +115,7 @@ public:
     ElementaryMatrixPtr buildElementaryRigidityMatrix( double time = 0. );
     /**
      * @brief Fonction permettant de calculer les matrices élémentaires pour la matrice tangente
-     * utilisée pour l'étape de prédiction de la méthode de Newton 
+     * utilisée pour l'étape de prédiction de la méthode de Newton
      * @param time Instant de calcul
      * @return Matrice élémentaire contenant la rigidité mécanique
      */

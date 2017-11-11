@@ -23,8 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/DiscreteProblemInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/DiscreteProblemInterface.h"
+
 
 void exportDiscreteProblemToPython()
 {
@@ -32,8 +34,10 @@ void exportDiscreteProblemToPython()
 
     class_< DiscreteProblemInstance, DiscreteProblemInstance::DiscreteProblemPtr >
             ( "DiscreteProblem", no_init )
-        .def( "create", &DiscreteProblemInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0Arg< DiscreteProblemInstance,
+                         DiscreteProblemInstance::DiscreteProblemPtr,
+                         StudyDescriptionPtr >) )
         .def( "buildElementaryMechanicalLoadsVector",
               &DiscreteProblemInstance::buildElementaryMechanicalLoadsVector )
         .def( "buildElementaryDirichletVector",

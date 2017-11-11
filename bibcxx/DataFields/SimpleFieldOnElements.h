@@ -68,14 +68,6 @@ public:
 
     /**
      * @brief Constructeur
-     */
-    static SimpleFieldOnElementsPtr create()
-    {
-        return SimpleFieldOnElementsPtr( new SimpleFieldOnElementsInstance );
-    };
-
-    /**
-     * @brief Constructeur
      * @param name Nom Jeveux du champ aux éléments
      */
     SimpleFieldOnElementsInstance( const std::string name ):
@@ -88,7 +80,6 @@ public:
                     _nbNodes( 0 ),
                     _nbComp( 0 )
     {
-        assert( name.size() == 19 );
     };
 
     /**
@@ -105,7 +96,6 @@ public:
                     _nbNodes( 0 ),
                     _nbComp( 0 )
     {
-        assert( getName().size() == 19 );
     };
 
     ~SimpleFieldOnElementsInstance()

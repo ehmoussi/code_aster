@@ -64,14 +64,6 @@ public:
 
     /**
      * @brief Constructeur
-     */
-    static FieldOnElementsPtr create()
-    {
-        return FieldOnElementsPtr( new FieldOnElementsInstance );
-    };
-
-    /**
-     * @brief Constructeur
      * @param name Nom Jeveux du champ aux éléments
      */
     FieldOnElementsInstance( const std::string name ):
@@ -80,7 +72,6 @@ public:
                     _reference( JeveuxVectorChar24( getName() + ".CELK" ) ),
                     _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) )
     {
-        assert( name.size() == 19 );
     };
 
     /**
@@ -93,7 +84,6 @@ public:
                     _reference( JeveuxVectorChar24( getName() + ".CELK" ) ),
                     _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) )
     {
-        assert( getName().size() == 19 );
     };
 
     ~FieldOnElementsInstance()

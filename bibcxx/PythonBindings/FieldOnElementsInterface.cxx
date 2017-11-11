@@ -23,16 +23,21 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+
 #include "PythonBindings/DataStructureInterface.h"
 #include "PythonBindings/FieldOnElementsInterface.h"
-#include <boost/python.hpp>
+
 
 void exportFieldOnElementsToPython()
 {
     using namespace boost::python;
     class_< FieldOnElementsDoubleInstance, FieldOnElementsDoublePtr,
             bases< DataStructure > >("FieldOnElementsDouble", no_init)
-        .def( "create", &FieldOnElementsDoubleInstance::create )
-        .staticmethod( "create" )
-    ;
+        .def( "__init__", make_constructor(
+            factory0< FieldOnElementsDoubleInstance, FieldOnElementsDoublePtr >) )
+        .def( "__init__", make_constructor(
+            factory0Name< FieldOnElementsDoubleInstance, FieldOnElementsDoublePtr >) )
+        ;
 };

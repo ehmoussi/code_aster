@@ -23,16 +23,24 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include <boost/python.hpp>
+#include <PythonBindings/factory.h>
 #include "PythonBindings/DataStructureInterface.h"
 #include "PythonBindings/PCFieldOnMeshInterface.h"
-#include <boost/python.hpp>
+
 
 void exportPCFieldOnMeshToPython()
 {
     using namespace boost::python;
     class_< PCFieldOnMeshDoubleInstance, PCFieldOnMeshDoublePtr,
             bases< DataStructure > >("PCFieldOnMeshDouble", no_init)
-        .def( "create", &PCFieldOnMeshDoubleInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0Arg< PCFieldOnMeshDoubleInstance,
+                         PCFieldOnMeshDoublePtr,
+                         BaseMeshPtr >) )
+        .def( "__init__", make_constructor(
+            factory0NameArg< PCFieldOnMeshDoubleInstance,
+                             PCFieldOnMeshDoublePtr,
+                             BaseMeshPtr >) )
     ;
 };

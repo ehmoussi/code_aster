@@ -59,15 +59,7 @@ public:
      */
     typedef boost::shared_ptr< TableInstance > TablePtr;
 
-    /**
-     * @brief Constructeur
-     */
-    static TablePtr create()
-    {
-        return TablePtr( new TableInstance );
-    };
-
-    // TODO: Development documentation says 17 chars + "  ", for 'LG' logicals.
+    // FIXME: Development documentation says 17 chars + "  ", for 'LG' logicals.
 
     /**
      * @brief Constructeur

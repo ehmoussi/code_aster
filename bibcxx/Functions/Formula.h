@@ -78,14 +78,6 @@ class FormulaInstance: public DataStructure
         typedef boost::shared_ptr< FormulaInstance > FormulaPtr;
 
         /**
-         * @brief Constructeur
-         */
-        static FormulaPtr create()
-        {
-            return FormulaPtr( new FormulaInstance );
-        };
-
-        /**
          * Constructeur
          */
         FormulaInstance();

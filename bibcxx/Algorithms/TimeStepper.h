@@ -54,20 +54,22 @@ class TimeStepperInstance: public DataStructure, public GenericStepper
         /**
          * @brief Constructeur
          */
-        static TimeStepperPtr create()
+        TimeStepperInstance( const std::string jeveuxName,
+                             const JeveuxMemory memType = Permanent ):
+            DataStructure( jeveuxName, 8, "LIST_INST", memType ),
+            _values( getName() + ".LIST" )
         {
-            return TimeStepperPtr( new TimeStepperInstance );
+            VectorDouble tmp( 1, 0. );
+            setValues( tmp );
         };
 
         /**
          * @brief Constructeur
          */
         TimeStepperInstance( JeveuxMemory memType = Permanent ):
-            DataStructure( "LIST_INST", memType, 8 ),
-            _values( getName() + ".LIST" )
+            TimeStepperInstance( DataStructureNaming::getNewName( memType, 8 ),
+                                 memType )
         {
-            VectorDouble tmp( 1, 0. );
-            setValues( tmp );
         };
 
         /**
