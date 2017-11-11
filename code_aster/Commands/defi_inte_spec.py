@@ -33,6 +33,6 @@ class InterspectralDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = InterspectralMatrix.create()
+        self._result = InterspectralMatrix()
 
 DEFI_INTE_SPEC = InterspectralDefinition.run

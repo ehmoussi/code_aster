@@ -33,7 +33,7 @@ params.set_option("use_legacy_mode", 0)
 test.assertEqual(params.get_option("use_legacy_mode"), 0)
 
 # MAIL = LIRE_MAILLAGE(UNITE=20, FORMAT='MED',)
-MAIL = code_aster.Mesh.create()
+MAIL = code_aster.Mesh()
 MAIL.readMedFile('zzzz351a.mmed')
 
 MODELE = AFFE_MODELE(MAILLAGE=MAIL,

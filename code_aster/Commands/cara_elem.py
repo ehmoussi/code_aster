@@ -38,7 +38,7 @@ class ElementaryCharacteristicsAssignment(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = ElementaryCharacteristics.create(keywords["MODELE"])
+        self._result = ElementaryCharacteristics(keywords["MODELE"])
 
 
 CARA_ELEM = ElementaryCharacteristicsAssignment.run

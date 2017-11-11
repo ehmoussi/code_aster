@@ -28,11 +28,11 @@ from code_aster import GeneralizedAssemblyMatrixComplex
 def ASSE_MATR_GENE(**curDict):
     returnMatrix = None
     if curDict["METHODE"] == "INITIAL":
-        returnMatrix = GeneralizedAssemblyMatrixDouble.create()
+        returnMatrix = GeneralizedAssemblyMatrixDouble()
     elif curDict['OPTION'] == "RIGI_GENE_C":
-        returnMatrix = GeneralizedAssemblyMatrixComplex.create()
+        returnMatrix = GeneralizedAssemblyMatrixComplex()
     else:
-        returnMatrix = GeneralizedAssemblyMatrixDouble.create()
+        returnMatrix = GeneralizedAssemblyMatrixDouble()
     name = returnMatrix.getName()
     type = returnMatrix.getType()
     syntax = CommandSyntax("ASSE_MATR_GENE")

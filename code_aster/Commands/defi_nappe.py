@@ -33,6 +33,6 @@ class SurfaceDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = Surface.create()
+        self._result = Surface()
 
 DEFI_NAPPE = SurfaceDefinition.run

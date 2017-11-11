@@ -8,7 +8,7 @@ code_aster.init()
 
 test = code_aster.TestCase()
 
-MASEC1 = code_aster.Mesh.create()
+MASEC1 = code_aster.Mesh()
 MASEC1.readGibiFile("zzzz330a.18")
 MASEC1.debugPrint()
 

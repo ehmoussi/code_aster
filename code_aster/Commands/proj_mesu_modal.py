@@ -32,7 +32,7 @@ def PROJ_MESU_MODAL(**curDict):
     mesure = kwargs["MESURE"]
 # TODO tester si on a un concept dyna_trans ou dyna_harmo
 # si dyna_trans
-    returnGeneResult = TransientGeneralizedResultsContainer.create()
+    returnGeneResult = TransientGeneralizedResultsContainer()
     name = returnGeneResult.getName()
     type = returnGeneResult.getType()
     syntax = CommandSyntax("PROJ_MESU_MODAL")

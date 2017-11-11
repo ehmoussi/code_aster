@@ -11,20 +11,20 @@ code_aster.init()
 test=code_aster.TestCase()
 
 # Creation of the mesh
-mesh = code_aster.Mesh.create()
+mesh = code_aster.Mesh()
 mesh.readMedFile("zzzz255a.mmed")
 
 # Creation of the model
-model = code_aster.Model.create()
+model = code_aster.Model()
 model.setSupportMesh(mesh)
 model.addModelingOnGroupOfElements(code_aster.Physics.Mechanics,
                                    code_aster.Modelings.Tridimensional,"ALL")
 model.build()
 
 # Creation of the crack
-crack = code_aster.XfemCrack.create(mesh)
+crack = code_aster.XfemCrack(mesh)
 
-shape = code_aster.CrackShape.create()
+shape = code_aster.CrackShape()
 rayon = 250.
 shape.setEllipseCrackShape(rayon, rayon, [0., 0., 0.], [1., 0., 0.], [0., 1. , 0.], "IN")
 

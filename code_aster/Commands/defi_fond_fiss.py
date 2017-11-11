@@ -33,6 +33,6 @@ class CrackDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = CrackTip.create()
+        self._result = CrackTip()
 
 DEFI_FOND_FISS = CrackDefinition.run

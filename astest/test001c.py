@@ -6,13 +6,13 @@ code_aster.init()
 test = code_aster.TestCase()
 
 # Creation du maillage
-monMaillage = code_aster.Mesh.create()
+monMaillage = code_aster.Mesh()
 
 # test de relecture d'un fichier Gmsh
 monMaillage.readGmshFile("ssnv187a.msh")
 
 # test du format Gibi
-mtest = code_aster.Mesh.create()
+mtest = code_aster.Mesh()
 mtest.readGibiFile("zzzz364a.mgib")
 
 coord = monMaillage.getCoordinates()
@@ -25,7 +25,7 @@ with test.assertRaises(TypeError):
     coord[3] = 5.0
 
 # Definition du modele Aster
-monModel = code_aster.Model.create()
+monModel = code_aster.Model()
 monModel.setSupportMesh(monMaillage)
 monModel.addModelingOnAllMesh(code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
 

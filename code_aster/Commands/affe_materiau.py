@@ -42,7 +42,7 @@ class MaterialAssignment(ExecuteCommand):
             mesh = keywords["MAILLAGE"]
         else:
             mesh = keywords["MODELE"].getSupportMesh()
-        self._result = MaterialOnMesh.create(mesh)
+        self._result = MaterialOnMesh(mesh)
 
     def adapt_syntax(self, keywords):
         """Hook to adapt syntax from a old version or for compatibility reasons.

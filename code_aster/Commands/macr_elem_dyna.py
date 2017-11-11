@@ -25,7 +25,7 @@ from code_aster import DynamicMacroElement
 
 
 def MACR_ELEM_DYNA(**curDict):
-    returnMacroElement = DynamicMacroElement.create()
+    returnMacroElement = DynamicMacroElement()
     name = returnMacroElement.getName()
     type = returnMacroElement.getType()
     syntax = CommandSyntax("MACR_ELEM_DYNA")

@@ -64,7 +64,7 @@ class MechanicalSolver(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        mechaSolv = StaticMechanicalSolver.create()
+        mechaSolv = StaticMechanicalSolver()
 
         model = keywords["MODELE"]
         matOnMesh = keywords["CHAM_MATER"]

@@ -34,7 +34,7 @@ class NumberingCreation(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = DOFNumbering.create()
+        self._result = DOFNumbering()
 
 
 NUME_DDL = NumberingCreation.run

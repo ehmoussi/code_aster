@@ -34,7 +34,7 @@ class MechanicalLoadDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = GenericMechanicalLoad.create(keywords["MODELE"])
+        self._result = GenericMechanicalLoad(keywords["MODELE"])
 
 
 AFFE_CHAR_MECA_F = MechanicalLoadDefinition.run

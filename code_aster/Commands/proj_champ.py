@@ -39,7 +39,7 @@ class FieldProjector(ExecuteCommand):
         if keywords.has_key("CHAM_GD"):
             raise NotImplementedError("{0!r} is not yet implemented"
                                       .format("CHAM_GD"))
-        self._result = MatchingMeshes.create()
+        self._result = MatchingMeshes()
 
 
 PROJ_CHAMP = FieldProjector.run

@@ -26,7 +26,7 @@ from code_aster import CyclicSymmetryMode
 
 
 def MODE_ITER_CYCL(**curDict):
-    returnCyclicMode = CyclicSymmetryMode.create()
+    returnCyclicMode = CyclicSymmetryMode()
     name = returnCyclicMode.getName()
     type = returnCyclicMode.getType()
 

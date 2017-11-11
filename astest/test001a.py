@@ -7,7 +7,7 @@ code_aster.init()
 test = code_aster.TestCase()
 
 # Creation du maillage
-mesh = code_aster.Mesh.create()
+mesh = code_aster.Mesh()
 test.assertEqual( mesh.getType(), 'MAILLAGE' )
 
 # Relecture du fichier MED
@@ -27,7 +27,7 @@ with test.assertRaises(TypeError):
     coord[3] = 5.0
 
 # Definition du modele Aster
-model = code_aster.Model.create()
+model = code_aster.Model()
 test.assertEqual( model.getType(), "MODELE" )
 model.setSupportMesh(mesh)
 model.addModelingOnAllMesh(code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
@@ -41,7 +41,7 @@ test.assertEqual(model.getSplittingMethod(),code_aster.ModelSplitingMethod.Centr
 model.build()
 
 # Definition du modele Aster
-model2 = code_aster.Model.create()
+model2 = code_aster.Model()
 model2.setSupportMesh(mesh)
 
 with test.assertRaisesRegexp(RuntimeError, 'not allowed'):

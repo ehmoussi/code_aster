@@ -33,6 +33,6 @@ class GridDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = FiberGeometry.create()
+        self._result = FiberGeometry()
 
 DEFI_GRILLE = GridDefinition.run

@@ -8,7 +8,7 @@ code_aster.init()
 
 test = code_aster.TestCase()
 
-MAILLA = code_aster.Mesh.create()
+MAILLA = code_aster.Mesh()
 MAILLA.readMedFile("xxMechanicalLoad001a.mmed")
 
 MODELE=AFFE_MODELE(MAILLAGE=MAILLA,

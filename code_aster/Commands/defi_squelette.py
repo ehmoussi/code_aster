@@ -25,7 +25,7 @@ from code_aster import Skeleton
 
 
 def DEFI_SQUELETTE(**curDict):
-    returnSkeleton = Skeleton.create()
+    returnSkeleton = Skeleton()
     name = returnSkeleton.getName()
     type = returnSkeleton.getType()
     syntax = CommandSyntax("DEFI_SQUELETTE")

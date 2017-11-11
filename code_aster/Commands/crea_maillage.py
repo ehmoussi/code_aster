@@ -25,7 +25,7 @@ from code_aster import Mesh
 
 
 def CREA_MAILLAGE(**curDict):
-    toReturn = Mesh.create()
+    toReturn = Mesh()
     name = toReturn.getName()
     type = toReturn.getType()
 

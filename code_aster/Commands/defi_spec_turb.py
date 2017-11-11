@@ -33,6 +33,6 @@ class TurbulentSpectrumDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = TurbulentSpectrum.create()
+        self._result = TurbulentSpectrum()
 
 DEFI_SPEC_TURB = TurbulentSpectrumDefinition.run
