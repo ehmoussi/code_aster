@@ -7,7 +7,7 @@ code_aster.init()
 
 test = code_aster.TestCase()
 
-POUTRE = code_aster.Mesh.create()
+POUTRE = code_aster.Mesh()
 POUTRE.readAsterMeshFile("sdll117a.mail")
 
 POUTRE=MODI_MAILLAGE(MAILLAGE=POUTRE,ABSC_CURV=_F(NOEUD_ORIG='N001',TOUT='OUI'))

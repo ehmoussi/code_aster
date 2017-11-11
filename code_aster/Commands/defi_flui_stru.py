@@ -32,6 +32,6 @@ class FluidStructureDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = FluidStructureInteraction.create()
+        self._result = FluidStructureInteraction()
 
 DEFI_FLUI_STRU = FluidStructureDefinition.run

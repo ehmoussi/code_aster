@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -30,7 +30,7 @@ def DEFI_FISS_XFEM( **kwargs ):
 
     glossary = getGlossary()
 
-    crack = XfemCrack.create(kwargs[ "MAILLAGE" ])
+    crack = XfemCrack(kwargs[ "MAILLAGE" ])
 
     if kwargs[ "MAILLAGE_GRILLE" ] != None:
         crack.setAuxiliaryGrid(kwargs[ "MAILLAGE_GRILLE" ])
@@ -44,7 +44,7 @@ def DEFI_FISS_XFEM( **kwargs ):
     shapeName = fkwDefi.get("FORM_FISS")
 
     if fkwDefi.get("FORM_FISS") != None:
-        crackShape=CrackShape.create()
+        crackShape=CrackShape()
 
     if shapeName == "ELLIPSE":
         crackShape.setEllipseCrackShape(fkwDefi.get("DEMI_GRAND_AXE"), fkwDefi.get("DEMI_PETIT_AXE"), fkwDefi.get("CENTRE"), fkwDefi.get("VECT_X"), fkwDefi.get("VECT_Y"), fkwDefi.get("COTE_FISS"))

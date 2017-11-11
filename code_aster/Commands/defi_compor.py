@@ -33,6 +33,6 @@ class BehaviourDefinitionOperator(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = BehaviourDefinition.create()
+        self._result = BehaviourDefinition()
 
 DEFI_COMPOR = BehaviourDefinitionOperator.run

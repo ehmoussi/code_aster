@@ -9,7 +9,7 @@ test = code_aster.TestCase()
 
 # Définition d'une force
 
-traction=code_aster.ForceDouble.create()
+traction=code_aster.ForceDouble()
 # Affecter composantes/valeurs
 traction.setValue(code_aster.PhysicalQuantityComponent.Fx, 1.0 )
 traction.setValue(code_aster.PhysicalQuantityComponent.Fy, 2.0 )

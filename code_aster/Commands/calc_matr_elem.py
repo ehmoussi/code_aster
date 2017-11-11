@@ -47,6 +47,6 @@ class ComputeElementaryMatrix(ExecuteCommand):
         elif myOption in ("RIGI_ACOU", "MASS_ACOU", "AMOR_ACOU"):
             myType = "PRES_C"
 
-        self._result = ElementaryMatrix.create(myType)
+        self._result = ElementaryMatrix(myType)
 
 CALC_MATR_ELEM = ComputeElementaryMatrix.run

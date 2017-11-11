@@ -38,7 +38,7 @@ For convenience the objects are direcly available here:
 .. code-block:: python
 
     import code_aster
-    mymesh = code_aster.Mesh.create()
+    mymesh = code_aster.Mesh()
 
 """
 

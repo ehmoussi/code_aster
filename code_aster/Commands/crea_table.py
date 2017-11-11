@@ -33,6 +33,6 @@ class TableCreation(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = Table.create()
+        self._result = Table()
 
 CREA_TABLE = TableCreation.run

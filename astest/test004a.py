@@ -7,10 +7,10 @@ code_aster.init()
 
 test = code_aster.TestCase()
 
-monMaillage = code_aster.Mesh.create()
+monMaillage = code_aster.Mesh()
 monMaillage.readMedFile( "test001f.mmed" )
 
-monModel = code_aster.Model.create()
+monModel = code_aster.Model()
 monModel.setSupportMesh( monMaillage )
 monModel.addModelingOnAllMesh( code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional )
 monModel.build()
@@ -18,40 +18,40 @@ monModel.build()
 YOUNG = 200000.0;
 POISSON = 0.3;
 
-materElas = code_aster.ElasMaterialBehaviour.create()
+materElas = code_aster.ElasMaterialBehaviour()
 materElas.setDoubleValue( "E", YOUNG )
 materElas.setDoubleValue( "Nu", POISSON )
 
-acier = code_aster.Material.create()
+acier = code_aster.Material()
 acier.addMaterialBehaviour(materElas)
 acier.build()
 acier.debugPrint(6)
 
-affectMat = code_aster.MaterialOnMesh.create(monMaillage)
+affectMat = code_aster.MaterialOnMesh(monMaillage)
 affectMat.addMaterialOnAllMesh( acier )
 affectMat.build()
 
-charMeca1 = code_aster.KinematicsLoad.create()
+charMeca1 = code_aster.KinematicsLoad()
 charMeca1.setSupportModel(monModel)
 charMeca1.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dx, 0., "Bas")
 charMeca1.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dy, 0., "Bas")
 charMeca1.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dz, 0., "Bas")
 charMeca1.build()
 
-imposedPres1 = code_aster.PressureDouble.create()
+imposedPres1 = code_aster.PressureDouble()
 imposedPres1.setValue( code_aster.PhysicalQuantityComponent.Pres, 1000. )
-charMeca2 = code_aster.DistributedPressureDouble.create(monModel)
+charMeca2 = code_aster.DistributedPressureDouble(monModel)
 charMeca2.setValue( imposedPres1, "Haut" )
 charMeca2.build()
 
 # Define the nonlinear method that will be used
-#monSolver = code_aster.MumpsSolver.create(code_aster.Renumbering.Metis)
-monSolver = code_aster.PetscSolver.create( code_aster.Renumbering.Sans )
+#monSolver = code_aster.MumpsSolver(code_aster.Renumbering.Metis)
+monSolver = code_aster.PetscSolver( code_aster.Renumbering.Sans )
 monSolver.setPreconditioning(code_aster.Preconditioning.Ml)
-lineSearch = code_aster.LineSearchMethod.create(code_aster.LineSearchEnum.Corde )
+lineSearch = code_aster.LineSearchMethod(code_aster.LineSearchEnum.Corde )
 
 # Define a nonlinear Analysis
-statNonLine = code_aster.StaticNonLinearAnalysis.create()
+statNonLine = code_aster.StaticNonLinearAnalysis()
 statNonLine.addStandardExcitation( charMeca1 )
 statNonLine.addStandardExcitation( charMeca2 )
 statNonLine.setSupportModel( monModel )
@@ -63,11 +63,11 @@ statNonLine.setLinearSolver( monSolver )
 #statNonLine.addBehaviourOnElements( Elas );
 
 temps = [0., 0.5, 1.]
-timeList = code_aster.TimeStepManager.create()
+timeList = code_aster.TimeStepManager()
 timeList.setTimeList( temps )
 
-error1 = code_aster.ConvergenceError.create()
-action1 = code_aster.SubstepingOnError.create()
+error1 = code_aster.ConvergenceError()
+action1 = code_aster.SubstepingOnError()
 action1.setAutomatic( False )
 error1.setAction( action1 )
 timeList.addErrorManager( error1 )

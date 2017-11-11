@@ -33,7 +33,7 @@ class AssembleMatrixOperator(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = AssemblyMatrixDouble.create()
+        self._result = AssemblyMatrixDouble()
 
     def post_exec(self, keywords):
         """Store references to ElementaryMatrix objects.

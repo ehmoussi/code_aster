@@ -8,7 +8,7 @@ code_aster.init()
 
 test = code_aster.TestCase()
 
-MESH = code_aster.Mesh.create()
+MESH = code_aster.Mesh()
 MESH.readMedFile("xxEvolutiveLoad001a.med")
 
 MODEL=AFFE_MODELE(MAILLAGE=MESH, AFFE=_F(TOUT='OUI', PHENOMENE='THERMIQUE', MODELISATION='AXIS') )

@@ -33,6 +33,6 @@ class FiberGeometryDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = FiberGeometry.create()
+        self._result = FiberGeometry()
 
 DEFI_GEOM_FIBRE = FiberGeometryDefinition.run

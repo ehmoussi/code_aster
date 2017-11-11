@@ -46,10 +46,10 @@ class FieldCreator(ExecuteCommand):
                 mesh = keywords["MAILLAGE"]
             else:
                 mesh = keywords["MODELE"].getSupportMesh()
-            self._result = PCFieldOnMeshDouble.create(mesh)
+            self._result = PCFieldOnMeshDouble(mesh)
         else:
             # NOEU_
-            self._result = FieldOnNodesDouble.create()
+            self._result = FieldOnNodesDouble()
 
 
 CREA_CHAMP = FieldCreator.run

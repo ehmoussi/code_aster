@@ -34,7 +34,7 @@ class ModelAssignment(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = Model.create()
+        self._result = Model()
 
     def post_exec(self, keywords):
         """Execute the command.

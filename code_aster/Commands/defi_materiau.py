@@ -35,7 +35,7 @@ class MaterialDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = Material.create()
+        self._result = Material()
 
     def exec_(self, keywords):
         """Execute the command.
@@ -52,7 +52,7 @@ class MaterialDefinition(ExecuteCommand):
             if not klass:
                 raise NotImplementedError("Unsupported behaviour: '{0}'"
                                           .format(fkwName))
-            matBehav = klass.create()
+            matBehav = klass()
             for skwName, skw in fkw.iteritems():
                 if type( skw ) is float:
                     iName = skwName.capitalize()
@@ -84,7 +84,7 @@ class MaterialDefinition(ExecuteCommand):
                 continue
             if not issubclass(obj, GeneralMaterialBehaviour):
                 continue
-            key = obj.create().getAsterName()
+            key = obj().getAsterName()
             objects[key] = obj
         return objects
 

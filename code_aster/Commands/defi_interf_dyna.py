@@ -25,7 +25,7 @@ from code_aster import StructureInterface
 
 
 def DEFI_INTERF_DYNA(**curDict):
-    returnStructureInterface = StructureInterface.create()
+    returnStructureInterface = StructureInterface()
     name = returnStructureInterface.getName()
     type = returnStructureInterface.getType()
 

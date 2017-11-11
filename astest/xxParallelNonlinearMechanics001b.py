@@ -12,13 +12,13 @@ test = code_aster.TestCase()
 parallel=True
 
 if (parallel):
-    monMaillage = code_aster.ParallelMesh.create()
+    monMaillage = code_aster.ParallelMesh()
     monMaillage.readMedFile( "xxParallelNonlinearMechanics001a" )
 else:
-    monMaillage = code_aster.Mesh.create()
+    monMaillage = code_aster.Mesh()
     monMaillage.readMedFile("xxParallelNonlinearMechanics001a.med")
 
-monModel = code_aster.Model.create()
+monModel = code_aster.Model()
 monModel.setSupportMesh( monMaillage )
 monModel.addModelingOnAllMesh( code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional )
 monModel.build()
@@ -26,42 +26,42 @@ monModel.build()
 YOUNG = 200000.0;
 POISSON = 0.3;
 
-materElas = code_aster.ElasMaterialBehaviour.create()
+materElas = code_aster.ElasMaterialBehaviour()
 materElas.setDoubleValue( "E", YOUNG )
 materElas.setDoubleValue( "Nu", POISSON )
 
-acier = code_aster.Material.create()
+acier = code_aster.Material()
 acier.addMaterialBehaviour( materElas )
 acier.build()
 
-affectMat = code_aster.MaterialOnMesh.create(monMaillage)
+affectMat = code_aster.MaterialOnMesh(monMaillage)
 affectMat.addMaterialOnAllMesh( acier )
 affectMat.build()
 
-charMeca1 = code_aster.KinematicsLoad.create()
+charMeca1 = code_aster.KinematicsLoad()
 charMeca1.setSupportModel(monModel)
 charMeca1.addImposedMechanicalDOFOnElements(code_aster.PhysicalQuantityComponent.Dx, 0., "COTE_B")
 charMeca1.addImposedMechanicalDOFOnElements(code_aster.PhysicalQuantityComponent.Dy, 0., "COTE_B")
 charMeca1.addImposedMechanicalDOFOnElements(code_aster.PhysicalQuantityComponent.Dz, 0., "COTE_B")
 charMeca1.build()
 
-charMeca2 = code_aster.KinematicsLoad.create()
+charMeca2 = code_aster.KinematicsLoad()
 charMeca2.setSupportModel(monModel)
 charMeca2.addImposedMechanicalDOFOnElements(code_aster.PhysicalQuantityComponent.Dy, 0.1, "COTE_H")
 charMeca2.addImposedMechanicalDOFOnElements(code_aster.PhysicalQuantityComponent.Dz, 0.1, "COTE_H")
 charMeca2.build()
 
 # Define the nonlinear method that will be used
-monSolver = code_aster.PetscSolver.create( code_aster.Renumbering.Sans )
+monSolver = code_aster.PetscSolver( code_aster.Renumbering.Sans )
 monSolver.setPreconditioning(code_aster.Preconditioning.Ml)
 
 # Define a nonlinear Analysis
 temps = [0., 0.5, 1.]
-timeList = code_aster.TimeStepManager.create()
+timeList = code_aster.TimeStepManager()
 timeList.setTimeList( temps )
 
-error1 = code_aster.ConvergenceError.create()
-action1 = code_aster.SubstepingOnError.create()
+error1 = code_aster.ConvergenceError()
+action1 = code_aster.SubstepingOnError()
 action1.setAutomatic( False )
 error1.setAction( action1 )
 timeList.addErrorManager( error1 )

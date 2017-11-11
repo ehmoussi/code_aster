@@ -9,7 +9,7 @@ code_aster.init()
 
 test = code_aster.TestCase()
 
-MAIL = code_aster.ParallelMesh.create()
+MAIL = code_aster.ParallelMesh()
 MAIL.readMedFile("xxParallelMesh002a")
 #MAIL.debugPrint()
 
@@ -18,7 +18,7 @@ MATER=DEFI_MATERIAU(ELAS=_F(E=10000.0,
                             RHO=1.0,),
                             );
 
-affectMat = code_aster.MaterialOnMesh.create(MAIL)
+affectMat = code_aster.MaterialOnMesh(MAIL)
 affectMat.addMaterialOnAllMesh(MATER)
 affectMat.build()
 
@@ -28,13 +28,13 @@ MODT=AFFE_MODELE(MAILLAGE=MAIL,
                          MODELISATION='D_PLAN',),
                  DISTRIBUTION=_F(METHODE='CENTRALISE',),);
 
-#MODT = code_aster.Model.create()
+#MODT = code_aster.Model()
 #MODT.setSupportMesh(MAIL)
 #MODT.addModelingOnAllMesh(code_aster.Physics.Mechanics,code_aster.Modelings.PlaneStrain)
 #MODT.build()
 #MODT.debugPrint()
 
-charCine = code_aster.KinematicsLoad.create()
+charCine = code_aster.KinematicsLoad()
 charCine.setSupportModel(MODT)
 charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dx, 0., "EncastN")
 charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dy, 0., "EncastN")
@@ -46,22 +46,22 @@ CHT1 = AFFE_CHAR_MECA(MODELE=MODT,
                       INFO=1,
                       VERI_NORM='NON',)
 
-study = code_aster.StudyDescription.create(MODT, affectMat)
+study = code_aster.StudyDescription(MODT, affectMat)
 study.addKinematicsLoad(charCine)
 study.addMechanicalLoad(CHT1)
-dProblem = code_aster.DiscreteProblem.create(study)
+dProblem = code_aster.DiscreteProblem(study)
 vect_elem = dProblem.buildElementaryMechanicalLoadsVector()
 matr_elem = dProblem.computeMechanicalRigidityMatrix()
 
-monSolver = code_aster.PetscSolver.create( code_aster.Renumbering.Sans )
+monSolver = code_aster.PetscSolver( code_aster.Renumbering.Sans )
 monSolver.setPreconditioning(code_aster.Preconditioning.Without)
 
-numeDDL = code_aster.ParallelDOFNumbering.create()
+numeDDL = code_aster.ParallelDOFNumbering()
 numeDDL.setElementaryMatrix(matr_elem)
 numeDDL.computeNumerotation()
 #numeDDL.debugPrint()
 
-matrAsse = code_aster.AssemblyMatrixDouble.create()
+matrAsse = code_aster.AssemblyMatrixDouble()
 matrAsse.appendElementaryMatrix(matr_elem)
 matrAsse.setDOFNumbering(numeDDL)
 matrAsse.addKinematicsLoad(charCine)

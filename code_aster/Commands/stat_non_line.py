@@ -34,7 +34,7 @@ class StaticNonLinearAnalysisBuild(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = NonLinearEvolutionContainer.create()
+        self._result = NonLinearEvolutionContainer()
 
 
 STAT_NON_LINE = StaticNonLinearAnalysisBuild.run

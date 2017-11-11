@@ -34,7 +34,7 @@ class MeshReader(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = Mesh.create()
+        self._result = Mesh()
 
     def exec_(self, keywords):
         """Execute the command.

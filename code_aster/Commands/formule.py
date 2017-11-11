@@ -69,7 +69,7 @@ class FormulaDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = Formula.create()
+        self._result = Formula()
         if keywords.get('VALE_C'):
             self._result.setComplex()
 

@@ -33,7 +33,7 @@ class KinematicsLoadDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = KinematicsLoad.create()
+        self._result = KinematicsLoad()
         self._result.setSupportModel(keywords["MODELE"])
 
     def exec_(self, keywords):

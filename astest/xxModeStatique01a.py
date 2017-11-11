@@ -8,11 +8,11 @@ code_aster.init()
 
 test = code_aster.TestCase()
 
-monMaillage = code_aster.Mesh.create()
+monMaillage = code_aster.Mesh()
 monMaillage.readMedFile("test001f.mmed")
 
 
-monModel = code_aster.Model.create()
+monModel = code_aster.Model()
 monModel.setSupportMesh(monMaillage)
 monModel.addModelingOnAllMesh(code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
 monModel.build()
@@ -21,69 +21,69 @@ monModel.build()
 YOUNG = 200000.0
 POISSON = 0.3
 
-materElas = code_aster.ElasMaterialBehaviour.create()
+materElas = code_aster.ElasMaterialBehaviour()
 materElas.setDoubleValue("E", YOUNG)
 materElas.setDoubleValue("Nu", POISSON)
 
 
-acier = code_aster.Material.create()
+acier = code_aster.Material()
 acier.addMaterialBehaviour(materElas)
 acier.build()
 
-affeMat = code_aster.MaterialOnMesh.create(monMaillage)
+affeMat = code_aster.MaterialOnMesh(monMaillage)
 affeMat.addMaterialOnAllMesh(acier)
 affeMat.build()
 
-imposedDof1 = code_aster.DisplacementDouble.create()
+imposedDof1 = code_aster.DisplacementDouble()
 imposedDof1.setValue(code_aster.PhysicalQuantityComponent.Dx, 0.0)
 imposedDof1.setValue(code_aster.PhysicalQuantityComponent.Dy, 0.0)
 imposedDof1.setValue(code_aster.PhysicalQuantityComponent.Dz, 0.0)
 
-CharMeca1 = code_aster.ImposedDisplacementDouble.create(monModel)
+CharMeca1 = code_aster.ImposedDisplacementDouble(monModel)
 CharMeca1.setValue(imposedDof1, "Bas")
 CharMeca1.build()
 
-imposedPres1 = code_aster.PressureDouble.create()
+imposedPres1 = code_aster.PressureDouble()
 imposedPres1.setValue(code_aster.PhysicalQuantityComponent.Pres, 1000.)
 
-CharMeca2 = code_aster.DistributedPressureDouble.create(monModel)
+CharMeca2 = code_aster.DistributedPressureDouble(monModel)
 CharMeca2.setValue(imposedPres1, "Haut")
 CharMeca2.build()
 
-study = code_aster.StudyDescription.create(monModel, affeMat)
+study = code_aster.StudyDescription(monModel, affeMat)
 study.addMechanicalLoad(CharMeca1)
 study.addMechanicalLoad(CharMeca2)
-dProblem = code_aster.DiscreteProblem.create(study)
+dProblem = code_aster.DiscreteProblem(study)
 
 matr_elemK = dProblem.computeMechanicalRigidityMatrix()
 matr_elemM = dProblem.computeMechanicalMassMatrix()
 
 
-monSolver = code_aster.MumpsSolver.create( code_aster.Renumbering.Metis )
+monSolver = code_aster.MumpsSolver( code_aster.Renumbering.Metis )
 
 
-numeDDLK = code_aster.DOFNumbering.create()
+numeDDLK = code_aster.DOFNumbering()
 numeDDLK.setElementaryMatrix(matr_elemK)
 numeDDLK.computeNumerotation()
 
-numeDDLM = code_aster.DOFNumbering.create()
+numeDDLM = code_aster.DOFNumbering()
 numeDDLM.setElementaryMatrix(matr_elemM)
 numeDDLM.computeNumerotation()
 
 
-matrAsseK = code_aster.AssemblyMatrixDouble.create()
+matrAsseK = code_aster.AssemblyMatrixDouble()
 matrAsseK.appendElementaryMatrix(matr_elemK)
 matrAsseK.setDOFNumbering(numeDDLK)
 matrAsseK.build()
 
-matrAsseM = code_aster.AssemblyMatrixDouble.create()
+matrAsseM = code_aster.AssemblyMatrixDouble()
 matrAsseM.appendElementaryMatrix(matr_elemM)
 matrAsseM.setDOFNumbering(numeDDLK)
 matrAsseM.build()
 
 print "mode_statique python debut"
 
-mode_stat1 = code_aster.StaticModeDepl.create()
+mode_stat1 = code_aster.StaticModeDepl()
 mode_stat1.setStiffMatrix(matrAsseK)
 mode_stat1.setLinearSolver(monSolver)
 mode_stat1.enableOnAllMesh()
@@ -91,14 +91,14 @@ mode_stat1.WantedComponent(['DX', 'DY'])
 resu = mode_stat1.execute()
 
 
-mode_stat2 = code_aster.StaticModeForc.create()
+mode_stat2 = code_aster.StaticModeForc()
 mode_stat2.setStiffMatrix(matrAsseK)
 mode_stat2.enableOnAllMesh()
 mode_stat2.setLinearSolver(monSolver)
 mode_stat2.WantedComponent(['DX',])
 mode_stat2.execute()
 
-mode_stat3 = code_aster.StaticModePseudo.create()
+mode_stat3 = code_aster.StaticModePseudo()
 mode_stat3.setStiffMatrix(matrAsseK)
 mode_stat3.setMassMatrix(matrAsseM)
 mode_stat3.enableOnAllMesh()
@@ -106,7 +106,7 @@ mode_stat3.setLinearSolver(monSolver)
 mode_stat3.WantedAxe(['X', 'Y', 'Z'])
 mode_stat3.execute()
 
-mode_stat4 = code_aster.StaticModeInterf.create()
+mode_stat4 = code_aster.StaticModeInterf()
 mode_stat4.setStiffMatrix(matrAsseK)
 mode_stat4.setMassMatrix(matrAsseM)
 mode_stat4.enableOnAllMesh()

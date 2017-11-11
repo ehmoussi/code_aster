@@ -52,16 +52,16 @@ class StaticModeCalculation(ExecuteCommand):
         """
         if keywords.get("MODE_STAT"):
             self._case = Case.MODE_STAT
-            self._solv = StaticModeDepl.create()
+            self._solv = StaticModeDepl()
         elif keywords.get("FORCE_NODALE"):
             self._case = Case.FORCE_NODALE
-            self._solv = StaticModeForc.create()
+            self._solv = StaticModeForc()
         elif keywords.get("PSEUDO_MODE"):
             self._case = Case.PSEUDO_MODE
-            self._solv = StaticModePseudo.create()
+            self._solv = StaticModePseudo()
         elif keywords.get("MODE_INTERF"):
             self._case = Case.MODE_INTERF
-            self._solv = StaticModeInterf.create()
+            self._solv = StaticModeInterf()
         else:
             raise SyntaxError("MODE_STATIQUE Commmand and catalog definition "
                               "are not consistent.")

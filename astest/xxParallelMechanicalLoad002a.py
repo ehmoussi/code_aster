@@ -7,7 +7,7 @@ test = code_aster.TestCase()
 
 code_aster.init()
 
-pMesh2 = code_aster.ParallelMesh.create()
+pMesh2 = code_aster.ParallelMesh()
 pMesh2.readMedFile("xxParallelMesh001a")
 rank = code_aster.getMPIRank()
 
@@ -21,9 +21,9 @@ char_cin = AFFE_CHAR_CINE(MODELE=model,
                           MECA_IMPO=_F(GROUP_NO="COTE_H",
                                        DX=0.,DY=0.,DZ=0.,),)
 
-b = code_aster.PartialMesh.create(pMesh2, ["COTE_B", "COTE_H"])
+b = code_aster.PartialMesh(pMesh2, ["COTE_B", "COTE_H"])
 
-a = code_aster.PartialMesh.create(pMesh2, ["A", "B"])
+a = code_aster.PartialMesh(pMesh2, ["A", "B"])
 
 model1 = AFFE_MODELE(MAILLAGE=a,
                      AFFE=_F(TOUT='OUI',
@@ -38,7 +38,7 @@ char_meca1 = AFFE_CHAR_MECA(MODELE=model1,
                                            COEF_IMPO=0,),
                             DDL_IMPO=_F(GROUP_NO="A",DX=1.0))
 
-char_meca = code_aster.ParallelMechanicalLoad.create(char_meca1, model)
+char_meca = code_aster.ParallelMechanicalLoad(char_meca1, model)
 char_meca.debugPrint(10+rank)
 
 MATER1 = DEFI_MATERIAU(ELAS=_F(E=200000.0,

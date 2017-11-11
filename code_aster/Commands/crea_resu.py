@@ -36,11 +36,11 @@ class ResultCreator(ExecuteCommand):
         """
         typ = keywords["TYPE_RESU"]
         if typ == "EVOL_CHAR":
-            self._result = EvolutiveLoad.create()
+            self._result = EvolutiveLoad()
         elif typ == "EVOL_THER":
-            self._result = EvolutiveThermalLoad.create()
+            self._result = EvolutiveThermalLoad()
         elif typ == "EVOL_ELAS":
-            self._result = LinearDisplacementEvolutionContainer.create()
+            self._result = LinearDisplacementEvolutionContainer()
         else:
             raise NotImplementedError("Type of result {0!r} not yet "
                                       "implemented".format(typ))

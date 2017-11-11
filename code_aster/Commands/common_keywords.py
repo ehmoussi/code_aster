@@ -62,7 +62,7 @@ def create_solver(solver_keyword):
                        "GCPC": GcpcSolver
                        }.get(method)
     if selected_solver:
-        solver = selected_solver.create(renumInt)
+        solver = selected_solver(renumInt)
     else:
         solver = None
 

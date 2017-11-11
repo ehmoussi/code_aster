@@ -8,10 +8,10 @@ code_aster.init()
 
 test = code_aster.TestCase()
 
-monMaillage = code_aster.ParallelMesh.create()
+monMaillage = code_aster.ParallelMesh()
 monMaillage.readMedFile( "xxParallelNonlinearMechanics003a" )
 
-monModel = code_aster.Model.create()
+monModel = code_aster.Model()
 monModel.setSupportMesh( monMaillage )
 monModel.addModelingOnAllMesh( code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional )
 #monModel.addModelingOnGroupOfElements(code_aster.Physics.Mechanics,
@@ -25,34 +25,34 @@ acier=DEFI_MATERIAU(ELAS=_F(E=200000.,
                     ECRO_LINE=_F(D_SIGM_EPSI=2000.,
                                  SY=200.,),);
 
-affectMat = code_aster.MaterialOnMesh.create(monMaillage)
+affectMat = code_aster.MaterialOnMesh(monMaillage)
 affectMat.addMaterialOnAllMesh( acier )
 affectMat.build()
 
-charMeca1 = code_aster.KinematicsLoad.create()
+charMeca1 = code_aster.KinematicsLoad()
 charMeca1.setSupportModel(monModel)
 charMeca1.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dx, 0., "Surf6N")
 charMeca1.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dy, 0., "Surf6N")
 charMeca1.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dz, 0., "Surf6N")
 charMeca1.build()
 
-imposedPres1 = code_aster.PressureDouble.create()
+imposedPres1 = code_aster.PressureDouble()
 imposedPres1.setValue( code_aster.PhysicalQuantityComponent.Pres, 1. )
-charMeca2 = code_aster.DistributedPressureDouble.create(monModel)
+charMeca2 = code_aster.DistributedPressureDouble(monModel)
 charMeca2.setValue( imposedPres1, "Surf5" )
 charMeca2.build()
 
 # Define the nonlinear method that will be used
-monSolver = code_aster.PetscSolver.create( code_aster.Renumbering.Sans )
+monSolver = code_aster.PetscSolver( code_aster.Renumbering.Sans )
 monSolver.setPreconditioning(code_aster.Preconditioning.Gamg)
 
 # Define a nonlinear Analysis
 temps = [0., 0.5, 1.]
-timeList = code_aster.TimeStepManager.create()
+timeList = code_aster.TimeStepManager()
 timeList.setTimeList( temps )
 
-error1 = code_aster.ConvergenceError.create()
-action1 = code_aster.SubstepingOnError.create()
+error1 = code_aster.ConvergenceError()
+action1 = code_aster.SubstepingOnError()
 action1.setAutomatic( False )
 error1.setAction( action1 )
 timeList.addErrorManager( error1 )
