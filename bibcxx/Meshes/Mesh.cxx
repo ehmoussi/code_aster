@@ -33,26 +33,6 @@
 #include "Supervis/ResultNaming.h"
 #include "RunManager/LogicalUnitManagerCython.h"
 
-BaseMeshInstance::BaseMeshInstance( const std::string& type ):
-    DataStructure( ResultNaming::getNewResultName(), 8, type ),
-    _dimensionInformations( JeveuxVectorLong( getName() + ".DIME      " ) ),
-    _nameOfNodes( JeveuxBidirectionalMapChar8( getName() + ".NOMNOE    " ) ),
-    _coordinates( new MeshCoordinatesFieldInstance( getName() + ".COORDO    " ) ),
-    _nameOfGrpNodes( JeveuxBidirectionalMapChar24( getName() + ".PTRNOMNOE " ) ),
-    _groupsOfNodes( JeveuxCollectionLongNamePtr( getName() + ".GROUPENO  ",
-                                                    _nameOfGrpNodes ) ),
-    _connectivity( JeveuxCollectionLong( getName() + ".CONNEX    " ) ),
-    _nameOfElements( JeveuxBidirectionalMapChar8( getName() + ".NOMMAI    " ) ),
-    _elementsType( JeveuxVectorLong( getName() + ".TYPMAIL   " ) ),
-    _nameOfGrpElements( JeveuxBidirectionalMapChar24( getName() + ".PTRNOMMAI " ) ),
-    _groupsOfElements( JeveuxCollectionLongNamePtr( getName() + ".GROUPEMA  ",
-                                                    _nameOfGrpElements ) ),
-    _isEmpty( true ),
-    _explorer( ConnectivityMeshExplorer( _connectivity, _elementsType ) )
-{
-    assert(getName().size() == 8);
-};
-
 bool MeshInstance::addGroupOfNodesFromNodes( const std::string& name, const VectorString& vec )
     throw( std::runtime_error )
 {

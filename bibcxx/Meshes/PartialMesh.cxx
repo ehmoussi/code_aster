@@ -27,13 +27,14 @@
 
 #ifdef _USE_MPI
 
-PartialMeshInstance::PartialMeshInstance( const ParallelMeshPtr& mesh,
+PartialMeshInstance::PartialMeshInstance( const std::string& name,
+                                          const ParallelMeshPtr& mesh,
                                           const VectorString& toFind ):
-                        BaseMeshInstance( "MAILLAGE_PARTIEL" ),
-                        _pMesh( mesh ),
-                        _localNumbering( getName() + ".LOCAL" ),
-                        _globalNumbering( getName() + ".GLOBAL" ),
-                        _owner( getName() + ".POSSESSEUR" )
+    BaseMeshInstance( name, "MAILLAGE_PARTIEL" ),
+    _pMesh( mesh ),
+    _localNumbering( getName() + ".LOCAL" ),
+    _globalNumbering( getName() + ".GLOBAL" ),
+    _owner( getName() + ".POSSESSEUR" )
 {
     aster_comm_t* commWorld = aster_get_comm_world();
 

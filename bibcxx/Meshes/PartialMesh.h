@@ -8,7 +8,7 @@
 
 /**
  * @file TestMesh.h
- * @brief Fichier entete de la classe 
+ * @brief Fichier entete de la classe
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -35,6 +35,7 @@
 #include "definition.h"
 #include "Meshes/Mesh.h"
 #include "Meshes/ParallelMesh.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class PartialMeshInstance
@@ -64,7 +65,16 @@ public:
     /**
      * @brief Constructeur
      */
-    PartialMeshInstance( const ParallelMeshPtr&, const VectorString& );
+    PartialMeshInstance( const ParallelMeshPtr& mesh,
+                         const VectorString& toFind ):
+        PartialMeshInstance( ResultNaming::getNewResultName(), mesh, toFind )
+    {};
+
+    /**
+     * @brief Constructeur
+     */
+    PartialMeshInstance( const std::string& name,
+                         const ParallelMeshPtr&, const VectorString& );
 
     /**
      * @brief Constructeur

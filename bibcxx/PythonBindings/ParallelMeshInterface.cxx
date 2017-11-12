@@ -23,20 +23,25 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include <boost/python.hpp>
+#include <PythonBindings/factory.h>
 #include "PythonBindings/ParallelMeshInterface.h"
 #include "PythonBindings/SharedPtrUtilities.h"
 
-#ifdef _USE_MPI
 
-#include <boost/python.hpp>
+#ifdef _USE_MPI
 
 void exportParallelMeshToPython()
 {
     using namespace boost::python;
     class_< ParallelMeshInstance, ParallelMeshInstance::ParallelMeshPtr,
             bases< BaseMeshInstance > >( "ParallelMesh", no_init )
-        .def( "create", &createSharedPtr< ParallelMeshInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< ParallelMeshInstance,
+                      ParallelMeshInstance::ParallelMeshPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Str< ParallelMeshInstance,
+                         ParallelMeshInstance::ParallelMeshPtr >) )
         .def( "readMedFile", &ParallelMeshInstance::readMedFile )
     ;
 };
