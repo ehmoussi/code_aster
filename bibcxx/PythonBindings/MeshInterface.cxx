@@ -23,10 +23,12 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include <boost/python.hpp>
+#include <PythonBindings/factory.h>
 #include "PythonBindings/MeshInterface.h"
 #include "PythonBindings/SharedPtrUtilities.h"
 #include "PythonBindings/ConstViewerUtilities.h"
-#include <boost/python.hpp>
+
 
 void exportMeshToPython()
 {
@@ -42,8 +44,12 @@ void exportMeshToPython()
 
     class_< MeshInstance, MeshInstance::MeshPtr,
             bases< BaseMeshInstance > >( "Mesh", no_init )
-        .def( "create", &createSharedPtr< MeshInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< MeshInstance,
+                      MeshInstance::MeshPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Str< MeshInstance,
+                         MeshInstance::MeshPtr >) )
         .def( "addGroupOfNodesFromNodes", &MeshInstance::addGroupOfNodesFromNodes )
         .def( "hasGroupOfElements", &MeshInstance::hasGroupOfElements )
         .def( "hasGroupOfNodes", &MeshInstance::hasGroupOfNodes )

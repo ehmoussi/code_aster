@@ -37,6 +37,15 @@ void exportPartialMeshToPython()
         .def( "create", &createSharedPtr< PartialMeshInstance,
                                           ParallelMeshPtr&, const VectorString& > )
         .staticmethod( "create" )
+#include <PythonBindings/factory.h>
+        .def( "__init__", make_constructor(
+            factory0Arg< PartialMeshInstance,
+                         PartialMeshInstance::PartialMeshPtr,
+                         ParallelMeshPtr >) )
+        .def( "__init__", make_constructor(
+            factory0StrArg< PartialMeshInstance,
+                            PartialMeshInstance::PartialMeshPtr,
+                            ParallelMeshPtr >) )
     ;
 #endif /* _USE_MPI */
 };

@@ -26,15 +26,18 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include <assert.h>
+
 #include "astercxx.h"
 #include "definition.h"
+
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxBidirectionalMap.h"
 #include "DataFields/MeshCoordinatesField.h"
 #include "Meshes/MeshEntities.h"
 #include "Meshes/MeshExplorer.h"
 #include "RunManager/LogicalUnitManagerCython.h"
-#include <assert.h>
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class BaseMeshInstance
@@ -83,9 +86,28 @@ protected:
 
     /**
      * @brief Constructeur
+     * @param name nom jeveux de l'objet
      * @param type jeveux de l'objet
      */
-    BaseMeshInstance( const std::string& type );
+    BaseMeshInstance( const std::string& name,
+                      const std::string& type ):
+        DataStructure( name, 8, type ),
+        _dimensionInformations( JeveuxVectorLong( getName() + ".DIME      " ) ),
+        _nameOfNodes( JeveuxBidirectionalMapChar8( getName() + ".NOMNOE    " ) ),
+        _coordinates( new MeshCoordinatesFieldInstance( getName() + ".COORDO    " ) ),
+        _nameOfGrpNodes( JeveuxBidirectionalMapChar24( getName() + ".PTRNOMNOE " ) ),
+        _groupsOfNodes( JeveuxCollectionLongNamePtr( getName() + ".GROUPENO  ",
+                                                        _nameOfGrpNodes ) ),
+        _connectivity( JeveuxCollectionLong( getName() + ".CONNEX    " ) ),
+        _nameOfElements( JeveuxBidirectionalMapChar8( getName() + ".NOMMAI    " ) ),
+        _elementsType( JeveuxVectorLong( getName() + ".TYPMAIL   " ) ),
+        _nameOfGrpElements( JeveuxBidirectionalMapChar24( getName() + ".PTRNOMMAI " ) ),
+        _groupsOfElements( JeveuxCollectionLongNamePtr( getName() + ".GROUPEMA  ",
+                                                        _nameOfGrpElements ) ),
+        _isEmpty( true ),
+        _explorer( ConnectivityMeshExplorer( _connectivity, _elementsType ) )
+    {};
+
 
 public:
     /**
@@ -217,16 +239,16 @@ public:
     /**
      * @brief Constructeur
      */
-    MeshInstance(): BaseMeshInstance( "MAILLAGE" )
+    MeshInstance():
+        BaseMeshInstance( ResultNaming::getNewResultName(), "MAILLAGE" )
     {};
 
     /**
      * @brief Constructeur
      */
-    static MeshPtr create()
-    {
-        return MeshPtr( new MeshInstance );
-    };
+    MeshInstance( const std::string name ):
+        BaseMeshInstance( name, "MAILLAGE" )
+    {};
 
     /**
      * @brief Ajout d'un groupe de noeuds au maillage en partant d'une liste noeuds

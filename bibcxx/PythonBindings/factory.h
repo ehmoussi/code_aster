@@ -46,10 +46,10 @@ static DSTypePtr factory0Str( const std::string &jeveuxName )
 
 /** @brief 'factory for __init__', variant with an argument.
  */
-template< typename DSType, typename DSTypePtr, typename Arg1 >
-static DSTypePtr factory0Arg( const Arg1 &arg1 )
+template< typename DSType, typename DSTypePtr, typename... Targs >
+static DSTypePtr factory0Arg( Targs... args )
 {
-    return DSTypePtr( new DSType( arg1 ) );
+    return DSTypePtr( new DSType( args... ) );
 }
 
 /** @brief 'factory for __init__', variant with the jeveux datastructure name

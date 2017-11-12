@@ -79,15 +79,23 @@ public:
     /**
      * @brief Constructeur
      */
-    static ParallelMeshPtr create()
-    {
-        return ParallelMeshPtr( new ParallelMeshInstance );
-    };
+    ParallelMeshInstance():
+        ParallelMeshInstance( ResultNaming::getNewResultName() )
+    {};
 
     /**
      * @brief Constructeur
      */
-    ParallelMeshInstance();
+    ParallelMeshInstance( const std::string& name ):
+        BaseMeshInstance( name, "MAILLAGE_P" ),
+        _allGroupOfNodes( getName() + ".PAR_GRPNOE" ),
+        _allGroupOfEements( getName() + ".PAR_GRPMAI" ),
+        _outerNodes( getName() + ".NOEX" ),
+        _globalNumbering( getName() + ".NULOGL" ),
+        _listOfSendingJoins( getName() + ".NO_JO_ENV" ),
+        _listOfReceivingJoins( getName() + ".NO_JO_REC" ),
+        _listOfOppositeDomain( getName() + ".DOMJOINTS" )
+    {};
 
     /**
      * @brief Destructeur
