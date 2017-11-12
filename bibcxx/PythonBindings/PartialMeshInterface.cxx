@@ -39,13 +39,14 @@ void exportPartialMeshToPython()
         .staticmethod( "create" )
 #include <PythonBindings/factory.h>
         .def( "__init__", make_constructor(
-            factory0Arg< PartialMeshInstance,
-                         PartialMeshInstance::PartialMeshPtr,
-                         ParallelMeshPtr >) )
+            init_factory< PartialMeshInstance,
+                          PartialMeshInstance::PartialMeshPtr,
+                          ParallelMeshPtr >) )
         .def( "__init__", make_constructor(
-            factory0StrArg< PartialMeshInstance,
-                            PartialMeshInstance::PartialMeshPtr,
-                            ParallelMeshPtr >) )
+            init_factory< PartialMeshInstance,
+                          PartialMeshInstance::PartialMeshPtr,
+                          std::string,
+                          ParallelMeshPtr >) )
     ;
 #endif /* _USE_MPI */
 };

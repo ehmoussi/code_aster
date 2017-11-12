@@ -35,10 +35,11 @@ void exportSurfaceToPython()
     class_< SurfaceInstance, SurfaceInstance::SurfacePtr,
             bases< DataStructure > > ( "Surface", no_init )
         .def( "__init__", make_constructor(
-            factory0< SurfaceInstance,
-                      SurfaceInstance::SurfacePtr >) )
-        .def( "__init__", make_constructor(
-            factory0Str< SurfaceInstance,
+            init_factory< SurfaceInstance,
                           SurfaceInstance::SurfacePtr >) )
+        .def( "__init__", make_constructor(
+            init_factory< SurfaceInstance,
+                          SurfaceInstance::SurfacePtr,
+                          std::string >) )
     ;
 };

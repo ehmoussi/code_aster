@@ -30,23 +30,13 @@
 #include <typeinfo>
 
 #include "Supervis/CommandSyntax.h"
-#include "Supervis/ResultNaming.h"
+
 
 const char* const ModelSplitingMethodNames[nbModelSplitingMethod] = { "CENTRALISE",
                                                                         "SOUS_DOMAINE",
                                                                         "GROUP_ELEM" };
 const char* const GraphPartitionerNames[nbGraphPartitioner] = { "SCOTCH", "METIS" };
 
-ModelInstance::ModelInstance():
-    DataStructure( ResultNaming::getNewResultName(), 8, "MODELE" ),
-    _typeOfElements( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
-    _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
-    _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ),
-    _supportBaseMesh( MeshPtr() ),
-    _splitMethod( SubDomain ),
-    _graphPartitioner( MetisPartitioner ),
-    _isEmpty( true )
-{};
 
 SyntaxMapContainer ModelInstance::buildModelingsSyntaxMapContainer() const
 {

@@ -35,11 +35,12 @@ void exportFormulaToPython()
     class_< FormulaInstance, FormulaInstance::FormulaPtr,
             bases< DataStructure > > ( "Formula", no_init )
         .def( "__init__", make_constructor(
-            factory0< FormulaInstance,
-                      FormulaInstance::FormulaPtr >) )
-        .def( "__init__", make_constructor(
-            factory0Str< FormulaInstance,
+            init_factory< FormulaInstance,
                           FormulaInstance::FormulaPtr >) )
+        .def( "__init__", make_constructor(
+            init_factory< FormulaInstance,
+                          FormulaInstance::FormulaPtr,
+                          std::string >) )
         .def( "setVariables", &FormulaInstance::setVariables )
         .def( "setExpression", &FormulaInstance::setExpression )
         .def( "setComplex", &FormulaInstance::setComplex )
