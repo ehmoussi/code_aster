@@ -54,16 +54,15 @@ public:
     /**
      * @brief Constructeur
      */
-    static GenericModalBasisPtr create()
-    {
-        return GenericModalBasisPtr( new GenericModalBasisInstance );
-    };
+    GenericModalBasisInstance():
+        GenericModalBasisInstance( ResultNaming::getNewResultName() )
+    {};
 
     /**
      * @brief Constructeur
      */
-    GenericModalBasisInstance():
-        DataStructure( "MODE_MECA", Permanent, 8 ),
+    GenericModalBasisInstance( const std::string name ):
+        DataStructure( name, 8, "MODE_MECA", Permanent ),
         _isEmpty( true )
     {};
 
@@ -219,15 +218,14 @@ public:
     /**
      * @brief Constructeur
      */
-    static StandardModalBasisPtr create()
-    {
-        return StandardModalBasisPtr( new StandardModalBasisInstance );
-    };
+    StandardModalBasisInstance()
+    {};
 
     /**
      * @brief Constructeur
      */
-    StandardModalBasisInstance()
+    StandardModalBasisInstance( const std::string name ):
+        GenericModalBasisInstance( name )
     {};
 
     void setModalBasis( const StructureInterfacePtr& structInterf,
@@ -268,15 +266,17 @@ public:
     /**
      * @brief Constructeur
      */
-    static RitzBasisPtr create()
-    {
-        return RitzBasisPtr( new RitzBasisInstance );
-    };
+    RitzBasisInstance():
+        RitzBasisInstance( ResultNaming::getNewResultName() )
+    {};
 
     /**
      * @brief Constructeur
      */
-    RitzBasisInstance(): _reortho( false )
+
+    RitzBasisInstance( const std::string name ):
+        GenericModalBasisInstance( name ),
+        _reortho( false )
     {
         _container.add( new CapyConvertibleValue< bool >
                                 ( false, "ORTHO", _reortho,
@@ -373,28 +373,19 @@ public:
     /**
      * @brief Constructeur
      */
-    static OrthonormalizedBasisPtr create( const MechanicalModeContainerPtr& basis,
-                                           const AssemblyMatrixDoublePtr& matr )
-    {
-        return OrthonormalizedBasisPtr( new OrthonormalizedBasisInstance( basis,
-                                                                          matr ) );
-    };
-
-    /**
-     * @brief Constructeur
-     */
-    static OrthonormalizedBasisPtr create( const MechanicalModeContainerPtr& basis,
-                                           const AssemblyMatrixComplexPtr& matr )
-    {
-        return OrthonormalizedBasisPtr( new OrthonormalizedBasisInstance( basis,
-                                                                          matr ) );
-    };
-
-    /**
-     * @brief Constructeur
-     */
     OrthonormalizedBasisInstance( const MechanicalModeContainerPtr& basis,
                                   const AssemblyMatrixDoublePtr& matr ):
+        OrthonormalizedBasisInstance( ResultNaming::getNewResultName(),
+                                      basis, matr )
+    {};
+
+    /**
+     * @brief Constructeur
+     */
+    OrthonormalizedBasisInstance( const std::string name,
+                                  const MechanicalModeContainerPtr& basis,
+                                  const AssemblyMatrixDoublePtr& matr ):
+        GenericModalBasisInstance( name ),
         _basis( basis ),
         _matrD( matr )
     {
@@ -406,6 +397,17 @@ public:
      */
     OrthonormalizedBasisInstance( const MechanicalModeContainerPtr& basis,
                                   const AssemblyMatrixComplexPtr& matr ):
+        OrthonormalizedBasisInstance( ResultNaming::getNewResultName(),
+                                      basis, matr )
+    {};
+
+    /**
+     * @brief Constructeur
+     */
+    OrthonormalizedBasisInstance( const std::string name,
+                                  const MechanicalModeContainerPtr& basis,
+                                  const AssemblyMatrixComplexPtr& matr ):
+        GenericModalBasisInstance( name ),
         _basis( basis ),
         _matrC( matr )
     {
@@ -429,18 +431,19 @@ public:
     /**
      * @brief Constructeur
      */
-    static OrthogonalBasisWithoutMassPtr create( const MechanicalModeContainerPtr& basis,
-                                                 const VectorOfMechaModePtr& vec )
-    {
-        return OrthogonalBasisWithoutMassPtr( new OrthogonalBasisWithoutMassInstance( basis,
-                                                                                      vec ) );
-    };
+    OrthogonalBasisWithoutMassInstance( const MechanicalModeContainerPtr& basis,
+                                        const VectorOfMechaModePtr& vec ):
+        OrthogonalBasisWithoutMassInstance( ResultNaming::getNewResultName(),
+                                            basis, vec )
+    {};
 
     /**
      * @brief Constructeur
      */
-    OrthogonalBasisWithoutMassInstance( const MechanicalModeContainerPtr& basis,
+    OrthogonalBasisWithoutMassInstance( const std::string name,
+                                        const MechanicalModeContainerPtr& basis,
                                         const VectorOfMechaModePtr& vec ):
+        GenericModalBasisInstance( name ),
         _modeStat( basis ),
         _modeMeca( vec )
     {

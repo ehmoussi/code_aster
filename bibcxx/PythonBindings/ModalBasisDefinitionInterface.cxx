@@ -23,8 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/ModalBasisDefinitionInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/ModalBasisDefinitionInterface.h"
+
 
 void exportModalBasisDefinitionToPython()
 {
@@ -35,8 +37,22 @@ void exportModalBasisDefinitionToPython()
     ;
 
     class_< StandardModalBasisInstance, StandardModalBasisInstance::StandardModalBasisPtr,
-            bases< DataStructure > > ( "StandardModalBasis", no_init )
-        .def( "create", &StandardModalBasisInstance::create )
-        .staticmethod( "create" )
+            bases< GenericModalBasisInstance > > ( "StandardModalBasis", no_init )
+        .def( "__init__", make_constructor(
+            factory0< StandardModalBasisInstance,
+                      StandardModalBasisInstance::StandardModalBasisPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Str< StandardModalBasisInstance,
+                         StandardModalBasisInstance::StandardModalBasisPtr >) )
+    ;
+
+    class_< RitzBasisInstance, RitzBasisInstance::RitzBasisPtr,
+            bases< GenericModalBasisInstance > > ( "RitzBasis", no_init )
+        .def( "__init__", make_constructor(
+            factory0< RitzBasisInstance,
+                      RitzBasisInstance::RitzBasisPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Str< RitzBasisInstance,
+                         RitzBasisInstance::RitzBasisPtr >) )
     ;
 };

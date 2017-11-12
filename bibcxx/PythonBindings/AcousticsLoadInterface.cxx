@@ -21,8 +21,10 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/AcousticsLoadInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/AcousticsLoadInterface.h"
+
 
 void exportAcousticsLoadToPython()
 {
@@ -30,8 +32,14 @@ void exportAcousticsLoadToPython()
 
     class_< AcousticsLoadInstance, AcousticsLoadInstance::AcousticsLoadPtr,
             bases< DataStructure > > ( "AcousticsLoad", no_init )
-        .def( "create", &AcousticsLoadInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0Arg< AcousticsLoadInstance,
+                         AcousticsLoadInstance::AcousticsLoadPtr,
+                         ModelPtr >) )
+        .def( "__init__", make_constructor(
+            factory0StrArg< AcousticsLoadInstance,
+                            AcousticsLoadInstance::AcousticsLoadPtr,
+                            ModelPtr >) )
         .def( "addImposedNormalSpeedOnAllMesh",
               &AcousticsLoadInstance::addImposedNormalSpeedOnAllMesh )
         .def( "addImposedNormalSpeedOnGroupsOfElements",
