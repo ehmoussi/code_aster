@@ -389,18 +389,19 @@ public:
         typedef boost::shared_ptr< GenericMechanicalLoadInstance > GenericMechanicalLoadPtr;
 
         /**
-         * @brief Constructeur
+         * @brief Constructor
          */
-        static GenericMechanicalLoadPtr create( const ModelPtr& model )
-        {
-            return GenericMechanicalLoadPtr( new GenericMechanicalLoadInstance( model ) );
-        };
+        GenericMechanicalLoadInstance( const ModelPtr& currentModel ):
+            GenericMechanicalLoadInstance( ResultNaming::getNewResultName(),
+                                           currentModel )
+        {};
 
         /**
          * @brief Constructor
          */
-        GenericMechanicalLoadInstance( const ModelPtr& currentModel ):
-            DataStructure( ResultNaming::getNewResultName(), 8, "CHAR_MECA" ),
+        GenericMechanicalLoadInstance( const std::string name,
+                                       const ModelPtr& currentModel ):
+            DataStructure( name, 8, "CHAR_MECA" ),
             _mecaLoad( getName() + ".CHME", currentModel ),
             _type( getName() + ".TYPE" ),
             _lisma01( getName() + ".LISMA01" ),
@@ -469,18 +470,17 @@ class MechanicalLoadInstance: public GenericMechanicalLoadInstance
                                                      Load > > MechanicalLoadPtr;
 
     /**
-     * @brief Constructeur
+     * @brief Constructor
      */
-    static MechanicalLoadPtr create( const ModelPtr& model )
-    {
-        return MechanicalLoadPtr( new MechanicalLoadInstance( model ) );
-    };
+    MechanicalLoadInstance( const ModelPtr& model ):
+        GenericMechanicalLoadInstance( model )
+    {};
 
     /**
      * @brief Constructor
      */
-    MechanicalLoadInstance( const ModelPtr& model ):
-        GenericMechanicalLoadInstance(model)
+    MechanicalLoadInstance( const std::string name, const ModelPtr& model ):
+        GenericMechanicalLoadInstance( name, model )
     {};
 
     /**

@@ -150,13 +150,15 @@ public:
     /**
      * @brief Constructeur
      */
-    static AcousticsLoadPtr create( const ModelPtr& model )
-    {
-        return AcousticsLoadPtr( new AcousticsLoadInstance( model ) );
-    };
-
     AcousticsLoadInstance( const ModelPtr& model ):
-        DataStructure( ResultNaming::getNewResultName(), 8, "CHAR_ACOU" ),
+        AcousticsLoadInstance( ResultNaming::getNewResultName(), model )
+    {};
+
+    /**
+     * @brief Constructeur
+     */
+    AcousticsLoadInstance( const std::string name, const ModelPtr& model ):
+        DataStructure( name, 8, "CHAR_ACOU" ),
         _supportModel( model ),
         _mesh( model->getSupportMesh() ),
         _modelName( JeveuxVectorChar8( getName() + ".CHAC.MODEL.NOMO" ) ),

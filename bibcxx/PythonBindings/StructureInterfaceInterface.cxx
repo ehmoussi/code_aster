@@ -21,8 +21,11 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/StructureInterfaceInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/StructureInterfaceInterface.h"
+
+
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(StructureInterfaceInstance_overloads, addInterface, 3, 4)
 
 void exportStructureInterfaceToPython()
@@ -36,19 +39,23 @@ void exportStructureInterfaceToPython()
         .value( "None", NoInterfaceType )
         ;
 
-    StructureInterfaceInstance::StructureInterfacePtr
-        (*c1)(const DOFNumberingPtr& curDof) =
-            &StructureInterfaceInstance::create;
-    StructureInterfaceInstance::StructureInterfacePtr
-        (*c2)() = &StructureInterfaceInstance::create;
-
-   
-
     class_< StructureInterfaceInstance, StructureInterfaceInstance::StructureInterfacePtr,
             bases< DataStructure > > ( "StructureInterface", no_init )
-        .def( "create", c1 )
-        .def( "create", c2 )
-        .staticmethod( "create" )
-	.def( "addInterface", &StructureInterfaceInstance::addInterface, StructureInterfaceInstance_overloads() )
+        .def( "__init__", make_constructor(
+            factory0< StructureInterfaceInstance,
+                      StructureInterfaceInstance::StructureInterfacePtr >) )
+        .def( "__init__", make_constructor(
+            factory0Str< StructureInterfaceInstance,
+                         StructureInterfaceInstance::StructureInterfacePtr >) )
+        .def( "__init__", make_constructor(
+            factory0Arg< StructureInterfaceInstance,
+                         StructureInterfaceInstance::StructureInterfacePtr,
+                         DOFNumberingPtr >) )
+        .def( "__init__", make_constructor(
+            factory0StrArg< StructureInterfaceInstance,
+                            StructureInterfaceInstance::StructureInterfacePtr,
+                            DOFNumberingPtr >) )
+	    .def( "addInterface", &StructureInterfaceInstance::addInterface,
+                              StructureInterfaceInstance_overloads() )
     ;
 };
