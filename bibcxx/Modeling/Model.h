@@ -26,17 +26,18 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include <map>
 #include <stdexcept>
 #include "astercxx.h"
+
 #include "DataStructures/DataStructure.h"
 #include "Meshes/Mesh.h"
 #include "Meshes/ParallelMesh.h"
 #include "Meshes/PartialMesh.h"
 #include "Modeling/ElementaryModeling.h"
-#include <map>
-
 #include "Loads/PhysicalQuantity.h"
 #include "Utilities/SyntaxDictionary.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @enum ModelSplitingMethod
@@ -130,7 +131,23 @@ class ModelInstance: public DataStructure
         /**
          * @brief Constructeur
          */
-        ModelInstance();
+        ModelInstance():
+            ModelInstance( ResultNaming::getNewResultName() )
+        {};
+
+        /**
+         * @brief Constructeur
+         */
+        ModelInstance( const std::string name ):
+            DataStructure( name, 8, "MODELE" ),
+            _typeOfElements( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
+            _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
+            _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ),
+            _supportBaseMesh( MeshPtr() ),
+            _splitMethod( SubDomain ),
+            _graphPartitioner( MetisPartitioner ),
+            _isEmpty( true )
+        {};
 
         /**
          * @brief Ajout d'une nouvelle modelisation sur tout le maillage

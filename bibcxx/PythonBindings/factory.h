@@ -25,42 +25,13 @@
  */
 
 #include <boost/python.hpp>
-#include "astercxx.h"
 
-/** @brief 'factory0' means 'factory for __init__', variant without argument.
- */
-template< typename DSType, typename DSTypePtr >
-static DSTypePtr factory0()
-{
-    return DSTypePtr( new DSType() );
-}
-
-/** @brief 'factory for __init__', variant with the jeveux datastructure name
- * as argument, needed for unpickling.
- */
-template< typename DSType, typename DSTypePtr >
-static DSTypePtr factory0Str( const std::string &jeveuxName )
-{
-    return DSTypePtr( new DSType( jeveuxName ) );
-}
-
-/** @brief 'factory for __init__', variant with an argument.
+/** @brief Factory for '__init__' constructors.
  */
 template< typename DSType, typename DSTypePtr, typename... Targs >
-static DSTypePtr factory0Arg( Targs... args )
+static DSTypePtr init_factory( Targs... args )
 {
     return DSTypePtr( new DSType( args... ) );
 }
-
-/** @brief 'factory for __init__', variant with the jeveux datastructure name
- * and another argument, needed for unpickling.
- */
-template< typename DSType, typename DSTypePtr, typename Arg1 >
-static DSTypePtr factory0StrArg( const std::string &jeveuxName,
-                                 const Arg1 &arg1 )
-{
-    return DSTypePtr( new DSType( jeveuxName, arg1 ) );
-}
-
 
 #endif /* FACTORY_H_ */

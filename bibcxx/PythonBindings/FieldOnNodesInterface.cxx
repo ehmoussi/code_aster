@@ -53,9 +53,12 @@ void exportFieldOnNodesToPython()
     class_< FieldOnNodesDoubleInstance, FieldOnNodesDoublePtr,
             bases< DataStructure > >("FieldOnNodesDouble", no_init)
         .def( "__init__", make_constructor(
-            factory0< FieldOnNodesDoubleInstance, FieldOnNodesDoublePtr >) )
+            init_factory< FieldOnNodesDoubleInstance,
+                          FieldOnNodesDoublePtr >) )
         .def( "__init__", make_constructor(
-            factory0Str< FieldOnNodesDoubleInstance, FieldOnNodesDoublePtr >) )
+            init_factory< FieldOnNodesDoubleInstance,
+                          FieldOnNodesDoublePtr,
+                          std::string >) )
 
         .def( "exportToSimpleFieldOnNodes", &FieldOnNodesDoubleInstance::exportToSimpleFieldOnNodes )
 //         .def( "__getitem__", &FieldOnNodesDoubleInstance::operator[] )

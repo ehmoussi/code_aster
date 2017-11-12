@@ -42,19 +42,21 @@ void exportStructureInterfaceToPython()
     class_< StructureInterfaceInstance, StructureInterfaceInstance::StructureInterfacePtr,
             bases< DataStructure > > ( "StructureInterface", no_init )
         .def( "__init__", make_constructor(
-            factory0< StructureInterfaceInstance,
-                      StructureInterfaceInstance::StructureInterfacePtr >) )
+            init_factory< StructureInterfaceInstance,
+                          StructureInterfaceInstance::StructureInterfacePtr >) )
         .def( "__init__", make_constructor(
-            factory0Str< StructureInterfaceInstance,
-                         StructureInterfaceInstance::StructureInterfacePtr >) )
+            init_factory< StructureInterfaceInstance,
+                          StructureInterfaceInstance::StructureInterfacePtr,
+                          std::string >) )
         .def( "__init__", make_constructor(
-            factory0Arg< StructureInterfaceInstance,
-                         StructureInterfaceInstance::StructureInterfacePtr,
-                         DOFNumberingPtr >) )
+            init_factory< StructureInterfaceInstance,
+                          StructureInterfaceInstance::StructureInterfacePtr,
+                          DOFNumberingPtr >) )
         .def( "__init__", make_constructor(
-            factory0StrArg< StructureInterfaceInstance,
-                            StructureInterfaceInstance::StructureInterfacePtr,
-                            DOFNumberingPtr >) )
+            init_factory< StructureInterfaceInstance,
+                          StructureInterfaceInstance::StructureInterfacePtr,
+                          std::string,
+                          DOFNumberingPtr >) )
 	    .def( "addInterface", &StructureInterfaceInstance::addInterface,
                               StructureInterfaceInstance_overloads() )
     ;

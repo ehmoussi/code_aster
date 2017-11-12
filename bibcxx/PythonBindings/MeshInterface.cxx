@@ -45,11 +45,12 @@ void exportMeshToPython()
     class_< MeshInstance, MeshInstance::MeshPtr,
             bases< BaseMeshInstance > >( "Mesh", no_init )
         .def( "__init__", make_constructor(
-            factory0< MeshInstance,
-                      MeshInstance::MeshPtr >) )
+            init_factory< MeshInstance,
+                          MeshInstance::MeshPtr >) )
         .def( "__init__", make_constructor(
-            factory0Str< MeshInstance,
-                         MeshInstance::MeshPtr >) )
+            init_factory< MeshInstance,
+                          MeshInstance::MeshPtr,
+                          std::string >) )
         .def( "addGroupOfNodesFromNodes", &MeshInstance::addGroupOfNodesFromNodes )
         .def( "hasGroupOfElements", &MeshInstance::hasGroupOfElements )
         .def( "hasGroupOfNodes", &MeshInstance::hasGroupOfNodes )

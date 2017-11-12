@@ -37,11 +37,12 @@ void exportParallelMeshToPython()
     class_< ParallelMeshInstance, ParallelMeshInstance::ParallelMeshPtr,
             bases< BaseMeshInstance > >( "ParallelMesh", no_init )
         .def( "__init__", make_constructor(
-            factory0< ParallelMeshInstance,
-                      ParallelMeshInstance::ParallelMeshPtr >) )
+            init_factory< ParallelMeshInstance,
+                          ParallelMeshInstance::ParallelMeshPtr >) )
         .def( "__init__", make_constructor(
-            factory0Str< ParallelMeshInstance,
-                         ParallelMeshInstance::ParallelMeshPtr >) )
+            init_factory< ParallelMeshInstance,
+                          ParallelMeshInstance::ParallelMeshPtr,
+                          std::string >) )
         .def( "readMedFile", &ParallelMeshInstance::readMedFile )
     ;
 };

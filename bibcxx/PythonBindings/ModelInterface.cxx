@@ -21,9 +21,11 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <boost/python.hpp>
+#include <PythonBindings/factory.h>
 #include "PythonBindings/ModelInterface.h"
 #include "PythonBindings/SharedPtrUtilities.h"
-#include <boost/python.hpp>
+
 
 void exportModelToPython()
 {
@@ -57,8 +59,13 @@ void exportModelToPython()
 
     class_< ModelInstance, ModelInstance::ModelPtr,
             bases< DataStructure > > ( "Model", no_init )
-        .def( "create", &createSharedPtr< ModelInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            init_factory< ModelInstance,
+                          ModelInstance::ModelPtr >) )
+        .def( "__init__", make_constructor(
+            init_factory< ModelInstance,
+                          ModelInstance::ModelPtr,
+                          std::string >) )
         .def( "addModelingOnAllMesh", &ModelInstance::addModelingOnAllMesh )
         .def( "addModelingOnGroupOfElements", &ModelInstance::addModelingOnGroupOfElements )
         .def( "addModelingOnGroupOfNodes", &ModelInstance::addModelingOnGroupOfNodes )

@@ -35,9 +35,9 @@ void exportDiscreteProblemToPython()
     class_< DiscreteProblemInstance, DiscreteProblemInstance::DiscreteProblemPtr >
             ( "DiscreteProblem", no_init )
         .def( "__init__", make_constructor(
-            factory0Arg< DiscreteProblemInstance,
-                         DiscreteProblemInstance::DiscreteProblemPtr,
-                         StudyDescriptionPtr >) )
+            init_factory< DiscreteProblemInstance,
+                          DiscreteProblemInstance::DiscreteProblemPtr,
+                          StudyDescriptionPtr >) )
         .def( "buildElementaryMechanicalLoadsVector",
               &DiscreteProblemInstance::buildElementaryMechanicalLoadsVector )
         .def( "buildElementaryDirichletVector",

@@ -56,11 +56,12 @@ void exportContactDefinitionToPython()
     class_< DiscretizedContactInstance, DiscretizedContactPtr,
             bases< DataStructure > > ( "DiscretizedContact", no_init )
         .def( "__init__", make_constructor(
-            factory0< DiscretizedContactInstance,
-                      DiscretizedContactPtr >) )
-        .def( "__init__", make_constructor(
-            factory0Str< DiscretizedContactInstance,
+            init_factory< DiscretizedContactInstance,
                           DiscretizedContactPtr >) )
+        .def( "__init__", make_constructor(
+            init_factory< DiscretizedContactInstance,
+                          DiscretizedContactPtr,
+                          std::string >) )
         .def( "addContactZone", &DiscretizedContactInstance::addContactZone )
         .def( "build", &DiscretizedContactInstance::build )
         .def( "setModel", &DiscretizedContactInstance::setModel )
@@ -100,30 +101,33 @@ void exportContactDefinitionToPython()
     class_< ContinuousContactInstance, ContinuousContactPtr,
             bases< DataStructure > > ( "ContinuousContact", no_init )
         .def( "__init__", make_constructor(
-            factory0< ContinuousContactInstance,
-                      ContinuousContactPtr >) )
-        .def( "__init__", make_constructor(
-            factory0Str< ContinuousContactInstance,
+            init_factory< ContinuousContactInstance,
                           ContinuousContactPtr >) )
+        .def( "__init__", make_constructor(
+            init_factory< ContinuousContactInstance,
+                          ContinuousContactPtr,
+                          std::string >) )
     ;
 
     class_< XfemContactInstance, XfemContactPtr,
             bases< DataStructure > > ( "XfemContact", no_init )
         .def( "__init__", make_constructor(
-            factory0< XfemContactInstance,
-                      XfemContactPtr >) )
-        .def( "__init__", make_constructor(
-            factory0Str< XfemContactInstance,
+            init_factory< XfemContactInstance,
                           XfemContactPtr >) )
+        .def( "__init__", make_constructor(
+            init_factory< XfemContactInstance,
+                          XfemContactPtr,
+                          std::string >) )
     ;
 
     class_< UnilateralConnexionInstance, UnilateralConnexionPtr,
             bases< DataStructure > > ( "UnilateralConnexion", no_init )
         .def( "__init__", make_constructor(
-            factory0< UnilateralConnexionInstance,
-                      UnilateralConnexionPtr >) )
-        .def( "__init__", make_constructor(
-            factory0Str< UnilateralConnexionInstance,
+            init_factory< UnilateralConnexionInstance,
                           UnilateralConnexionPtr >) )
+        .def( "__init__", make_constructor(
+            init_factory< UnilateralConnexionInstance,
+                          UnilateralConnexionPtr,
+                          std::string >) )
     ;
 };

@@ -36,10 +36,11 @@ void exportTableToPython()
     class_< TableInstance, TableInstance::TablePtr,
             bases< DataStructure > >( "Table", no_init )
         .def( "__init__", make_constructor(
-            factory0< TableInstance,
-                      TableInstance::TablePtr >) )
-        .def( "__init__", make_constructor(
-            factory0Str< TableInstance,
+            init_factory< TableInstance,
                           TableInstance::TablePtr >) )
+        .def( "__init__", make_constructor(
+            init_factory< TableInstance,
+                          TableInstance::TablePtr,
+                          std::string >) )
     ;
 };
