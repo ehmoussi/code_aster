@@ -72,16 +72,15 @@ public:
     /**
      * @brief Constructeur
      */
-    static InterspectralMatrixPtr create()
-    {
-        return InterspectralMatrixPtr( new InterspectralMatrixInstance );
-    };
+    InterspectralMatrixInstance():
+        InterspectralMatrixInstance( ResultNaming::getNewResultName() )
+    {};
 
     /**
      * @brief Constructeur
      */
-    InterspectralMatrixInstance():
-        DataStructure( "INTERSPECTRE", Permanent, 8 ),
+    InterspectralMatrixInstance( const std::string name ):
+        DataStructure( name, 8, "INTERSPECTRE", Permanent ),
         _refe( JeveuxVectorChar16( getName() + ".REFE" ) ),
         _disc( JeveuxVectorDouble( getName() + ".DISC" ) ),
         _vale( JeveuxCollectionDouble( getName() + ".VALE" ) ),

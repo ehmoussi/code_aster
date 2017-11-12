@@ -57,8 +57,9 @@ public:
     /**
      * @brief Constructeur
      */
-    GenericGeneralizedAssemblyMatrixInstance(): 
-        DataStructure( "MATR_ASSE_GENE", Permanent, 19 ),
+    GenericGeneralizedAssemblyMatrixInstance( const std::string name ):
+        DataStructure( name, 19, "MATR_ASSE_GENE", Permanent ),
+        // FIXME: is it not ".DESC" (cf. sd_matr_asse_gene.py) ?
         _desc( JeveuxVectorDouble( getName() + ".DISC" ) ),
         _refe( JeveuxVectorChar24( getName() + ".REFE" ) )
     {};
@@ -107,15 +108,15 @@ public:
     /**
      * @brief Constructeur
      */
-    static GeneralizedAssemblyMatrixPtr create()
-    {
-        return GeneralizedAssemblyMatrixPtr( new GeneralizedAssemblyMatrixInstance );
-    };
+    GeneralizedAssemblyMatrixInstance():
+        GeneralizedAssemblyMatrixInstance( ResultNaming::getNewResultName() )
+    {};
 
     /**
      * @brief Constructeur
      */
-    GeneralizedAssemblyMatrixInstance():
+    GeneralizedAssemblyMatrixInstance( const std::string name ):
+        GenericGeneralizedAssemblyMatrixInstance( name ),
         _valm( JeveuxVector< ValueType >( getName() + ".VALM" ) )
     {
         GeneralizedAssemblyMatrixInstance< ValueType >::setMatrixType();

@@ -23,8 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/InterspectralMatrixInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/InterspectralMatrixInterface.h"
+
 
 void exportInterspectralMatrixToPython()
 {
@@ -32,7 +34,11 @@ void exportInterspectralMatrixToPython()
 
     class_< InterspectralMatrixInstance, InterspectralMatrixInstance::InterspectralMatrixPtr,
             bases< DataStructure > > ( "InterspectralMatrix", no_init )
-        .def( "create", &InterspectralMatrixInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< InterspectralMatrixInstance,
+                      InterspectralMatrixInstance::InterspectralMatrixPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Str< InterspectralMatrixInstance,
+                         InterspectralMatrixInstance::InterspectralMatrixPtr >) )
     ;
 };

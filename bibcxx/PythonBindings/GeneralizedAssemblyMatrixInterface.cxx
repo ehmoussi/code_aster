@@ -23,8 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/GeneralizedAssemblyMatrixInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/GeneralizedAssemblyMatrixInterface.h"
+
 
 void exportGeneralizedAssemblyMatrixToPython()
 {
@@ -39,15 +41,23 @@ void exportGeneralizedAssemblyMatrixToPython()
             GeneralizedAssemblyMatrixDoublePtr,
             bases< GenericGeneralizedAssemblyMatrixInstance > >
             ( "GeneralizedAssemblyMatrixDouble", no_init )
-        .def( "create", &GeneralizedAssemblyMatrixDoubleInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< GeneralizedAssemblyMatrixDoubleInstance,
+                      GeneralizedAssemblyMatrixDoublePtr >) )
+        .def( "__init__", make_constructor(
+            factory0Str< GeneralizedAssemblyMatrixDoubleInstance,
+                         GeneralizedAssemblyMatrixDoublePtr >) )
     ;
 
     class_< GeneralizedAssemblyMatrixComplexInstance,
             GeneralizedAssemblyMatrixComplexPtr,
             bases< GenericGeneralizedAssemblyMatrixInstance > >
             ( "GeneralizedAssemblyMatrixComplex", no_init )
-        .def( "create", &GeneralizedAssemblyMatrixComplexInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< GeneralizedAssemblyMatrixComplexInstance,
+                      GeneralizedAssemblyMatrixComplexPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Str< GeneralizedAssemblyMatrixComplexInstance,
+                         GeneralizedAssemblyMatrixComplexPtr >) )
     ;
 };
