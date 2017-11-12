@@ -23,19 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/LinearSolverInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/LinearSolverInterface.h"
 
-BOOST_PYTHON_FUNCTION_OVERLOADS(MultFrontSolvercreate,
-                                MultFrontSolverInstance::create, 0, 1)
-BOOST_PYTHON_FUNCTION_OVERLOADS(LdltSolvercreate,
-                                LdltSolverInstance::create, 0, 1)
-BOOST_PYTHON_FUNCTION_OVERLOADS(MumpsSolvercreate,
-                                MumpsSolverInstance::create, 0, 1)
-BOOST_PYTHON_FUNCTION_OVERLOADS(PetscSolvercreate,
-                                PetscSolverInstance::create, 0, 1)
-BOOST_PYTHON_FUNCTION_OVERLOADS(GcpcSolvercreate,
-                                GcpcSolverInstance::create, 0, 1)
 
 void exportLinearSolverToPython()
 {
@@ -133,36 +124,91 @@ void exportLinearSolverToPython()
 
     class_< MultFrontSolverInstance, MultFrontSolverPtr,
             bases< BaseLinearSolverInstance > > ( "MultFrontSolver", no_init )
-        .def( "create", &MultFrontSolverInstance::create,
-              MultFrontSolvercreate() )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< MultFrontSolverInstance,
+                      MultFrontSolverPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Str< MultFrontSolverInstance,
+                         MultFrontSolverPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Arg< MultFrontSolverInstance,
+                         MultFrontSolverPtr,
+                         Renumbering >) )
+        .def( "__init__", make_constructor(
+            factory0StrArg< MultFrontSolverInstance,
+                            MultFrontSolverPtr,
+                            Renumbering >) )
     ;
 
     class_< LdltSolverInstance, LdltSolverPtr,
             bases< BaseLinearSolverInstance > > ( "LdltSolver", no_init )
-        .def( "create", &LdltSolverInstance::create,
-              LdltSolvercreate() )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< LdltSolverInstance,
+                      LdltSolverPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Str< LdltSolverInstance,
+                         LdltSolverPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Arg< LdltSolverInstance,
+                         LdltSolverPtr,
+                         Renumbering >) )
+        .def( "__init__", make_constructor(
+            factory0StrArg< LdltSolverInstance,
+                            LdltSolverPtr,
+                            Renumbering >) )
     ;
 
     class_< MumpsSolverInstance, MumpsSolverPtr,
             bases< BaseLinearSolverInstance > > ( "MumpsSolver", no_init )
-        .def( "create", &MumpsSolverInstance::create,
-              MumpsSolvercreate() )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< MumpsSolverInstance,
+                      MumpsSolverPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Str< MumpsSolverInstance,
+                         MumpsSolverPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Arg< MumpsSolverInstance,
+                         MumpsSolverPtr,
+                         Renumbering >) )
+        .def( "__init__", make_constructor(
+            factory0StrArg< MumpsSolverInstance,
+                            MumpsSolverPtr,
+                            Renumbering >) )
     ;
 
     class_< PetscSolverInstance, PetscSolverPtr,
             bases< BaseLinearSolverInstance > > ( "PetscSolver", no_init )
-        .def( "create", &PetscSolverInstance::create,
-              PetscSolvercreate() )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< PetscSolverInstance,
+                      PetscSolverPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Str< PetscSolverInstance,
+                         PetscSolverPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Arg< PetscSolverInstance,
+                         PetscSolverPtr,
+                         Renumbering >) )
+        .def( "__init__", make_constructor(
+            factory0StrArg< PetscSolverInstance,
+                            PetscSolverPtr,
+                            Renumbering >) )
     ;
 
     class_< GcpcSolverInstance, GcpcSolverPtr,
             bases< BaseLinearSolverInstance > > ( "GcpcSolver", no_init )
-        .def( "create", &GcpcSolverInstance::create,
-              GcpcSolvercreate() )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< GcpcSolverInstance,
+                      GcpcSolverPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Str< GcpcSolverInstance,
+                         GcpcSolverPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Arg< GcpcSolverInstance,
+                         GcpcSolverPtr,
+                         Renumbering >) )
+        .def( "__init__", make_constructor(
+            factory0StrArg< GcpcSolverInstance,
+                            GcpcSolverPtr,
+                            Renumbering >) )
     ;
 };

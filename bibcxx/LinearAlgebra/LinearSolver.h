@@ -197,7 +197,22 @@ class BaseLinearSolverInstance: public DataStructure
          */
         BaseLinearSolverInstance( const LinearSolverEnum currentBaseLinearSolver = MultFront,
                                   const Renumbering currentRenumber = Metis ):
-            DataStructure( ResultNaming::getNewResultName(), 19, "SOLVEUR" ),
+            BaseLinearSolverInstance( ResultNaming::getNewResultName(),
+                                      currentBaseLinearSolver,
+                                      currentRenumber )
+        {};
+
+        /**
+         * @brief Constructeur
+         * @param name Name of the DataStructure
+         * @param currentBaseLinearSolver Type de solveur
+         * @param currentRenumber Type de renumeroteur
+         * @todo recuperer le code retour de isAllowedRenumberingForSolver
+         */
+        BaseLinearSolverInstance( const std::string name,
+                                  const LinearSolverEnum currentBaseLinearSolver = MultFront,
+                                  const Renumbering currentRenumber = Metis ):
+            DataStructure( name, 19, "SOLVEUR" ),
             _linearSolver( currentBaseLinearSolver ),
             _renumber( currentRenumber ),
             _isEmpty( true ),
@@ -560,13 +575,13 @@ public:
     /**
      * @brief Constructeur
      */
-    static LinearSolverPtr create( const Renumbering currentRenumber = linSolvWrap::defaultRenumbering )
-    {
-        return LinearSolverPtr( new LinearSolverInstance< linSolvWrap >( currentRenumber ) );
-    };
-
     LinearSolverInstance( const Renumbering currentRenumber = Metis ):
-        BaseLinearSolverInstance( linSolvWrap::solverType, currentRenumber )
+        LinearSolverInstance( ResultNaming::getNewResultName() )
+    {};
+
+    LinearSolverInstance( const std::string name,
+                          const Renumbering currentRenumber = Metis ):
+        BaseLinearSolverInstance( name, linSolvWrap::solverType, currentRenumber )
     {
         RenumberingChecker< linSolvWrap >::isAllowedRenumbering( currentRenumber );
     };

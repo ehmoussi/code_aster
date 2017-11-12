@@ -23,8 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/GeneralizedAssemblyVectorInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/GeneralizedAssemblyVectorInterface.h"
+
 
 void exportGeneralizedAssemblyVectorToPython()
 {
@@ -39,15 +41,24 @@ void exportGeneralizedAssemblyVectorToPython()
             GeneralizedAssemblyVectorDoublePtr,
             bases< GenericGeneralizedAssemblyVectorInstance > >
             ( "GeneralizedAssemblyVectorDouble", no_init )
-        .def( "create", &GeneralizedAssemblyVectorDoubleInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            factory0< GeneralizedAssemblyVectorDoubleInstance,
+                      GeneralizedAssemblyVectorDoublePtr >) )
+        .def( "__init__", make_constructor(
+            factory0Str< GeneralizedAssemblyVectorDoubleInstance,
+                         GeneralizedAssemblyVectorDoublePtr >) )
     ;
 
     class_< GeneralizedAssemblyVectorComplexInstance,
             GeneralizedAssemblyVectorComplexPtr,
             bases< GenericGeneralizedAssemblyVectorInstance > >
             ( "GeneralizedAssemblyVectorComplex", no_init )
-        .def( "create", &GeneralizedAssemblyVectorComplexInstance::create )
-        .staticmethod( "create" )
+#include <PythonBindings/factory.h>
+        .def( "__init__", make_constructor(
+            factory0< GeneralizedAssemblyVectorComplexInstance,
+                      GeneralizedAssemblyVectorComplexPtr >) )
+        .def( "__init__", make_constructor(
+            factory0Str< GeneralizedAssemblyVectorComplexInstance,
+                         GeneralizedAssemblyVectorComplexPtr >) )
     ;
 };

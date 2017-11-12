@@ -51,8 +51,8 @@ public:
     /**
      * @brief Constructeur
      */
-    GenericGeneralizedAssemblyVectorInstance(): 
-        DataStructure( "MATR_ASSE_GENE", Permanent, 19 ),
+    GenericGeneralizedAssemblyVectorInstance( const std::string name ):
+        DataStructure( name, 19, "MATR_ASSE_GENE", Permanent ),
         _desc( JeveuxVectorDouble( getName() + ".DISC" ) ),
         _refe( JeveuxVectorChar24( getName() + ".REFE" ) )
     {};
@@ -101,15 +101,16 @@ public:
     /**
      * @brief Constructeur
      */
-    static GeneralizedAssemblyVectorPtr create()
-    {
-        return GeneralizedAssemblyVectorPtr( new GeneralizedAssemblyVectorInstance );
-    };
+    GeneralizedAssemblyVectorInstance():
+        GeneralizedAssemblyVectorInstance( ResultNaming::getNewResultName() )
+    {};
 
     /**
      * @brief Constructeur
      */
-    GeneralizedAssemblyVectorInstance():
+
+    GeneralizedAssemblyVectorInstance( const std::string name ):
+        GenericGeneralizedAssemblyVectorInstance( name ),
         _valm( JeveuxVector< ValueType >( getName() + ".VALE" ) )
     {
         GeneralizedAssemblyVectorInstance< ValueType >::setMatrixType();
