@@ -21,8 +21,10 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/MaterialInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/MaterialInterface.h"
+
 
 void exportMaterialToPython()
 {
@@ -30,8 +32,13 @@ void exportMaterialToPython()
 
     class_< MaterialInstance, MaterialInstance::MaterialPtr,
             bases< DataStructure > > ( "Material", no_init )
-        .def( "create", &MaterialInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            init_factory< MaterialInstance,
+                          MaterialInstance::MaterialPtr >) )
+        .def( "__init__", make_constructor(
+            init_factory< MaterialInstance,
+                          MaterialInstance::MaterialPtr,
+                          std::string >) )
         .def( "addMaterialBehaviour", &MaterialInstance::addMaterialBehaviour )
         .def( "build", &MaterialInstance::build )
     ;

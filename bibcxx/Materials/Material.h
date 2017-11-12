@@ -67,15 +67,16 @@ class MaterialInstance: public DataStructure
         /**
          * @brief Constructeur
          */
-        static MaterialPtr create()
-        {
-            return MaterialPtr( new MaterialInstance );
-        };
+        MaterialInstance():
+            MaterialInstance( ResultNaming::getNewResultName() )
+        {};
 
-        /**
-         * @brief Constructeur
-         */
-        MaterialInstance();
+        MaterialInstance( const std::string& name ):
+            DataStructure( name, 8, "MATER" ),
+            _jeveuxName( ResultNaming::getCurrentName() ),
+            _materialBehaviourNames( JeveuxVectorChar32( _jeveuxName + ".MATERIAU.NOMRC " ) ),
+            _nbMaterialBehaviour( 0 )
+        {};
 
         /**
          * @brief Ajout d'un GeneralMaterialBehaviourPtr
