@@ -21,8 +21,10 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/BehaviourDefinitionInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/BehaviourDefinitionInterface.h"
+
 
 void exportBehaviourDefinitionToPython()
 {
@@ -30,7 +32,12 @@ void exportBehaviourDefinitionToPython()
 
     class_< BehaviourDefinitionInstance, BehaviourDefinitionInstance::BehaviourDefinitionPtr,
             bases< DataStructure > > ( "BehaviourDefinition", no_init )
-        .def( "create", &BehaviourDefinitionInstance::create )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &init_factory< BehaviourDefinitionInstance,
+                           BehaviourDefinitionInstance::BehaviourDefinitionPtr >) )
+        .def( "__init__", make_constructor(
+            &init_factory< BehaviourDefinitionInstance,
+                           BehaviourDefinitionInstance::BehaviourDefinitionPtr,
+                           std::string >) )
     ;
 };
