@@ -33,12 +33,12 @@ void exportMaterialToPython()
     class_< MaterialInstance, MaterialInstance::MaterialPtr,
             bases< DataStructure > > ( "Material", no_init )
         .def( "__init__", make_constructor(
-            init_factory< MaterialInstance,
-                          MaterialInstance::MaterialPtr >) )
+            &init_factory< MaterialInstance,
+                           MaterialInstance::MaterialPtr >) )
         .def( "__init__", make_constructor(
-            init_factory< MaterialInstance,
-                          MaterialInstance::MaterialPtr,
-                          std::string >) )
+            &init_factory< MaterialInstance,
+                           MaterialInstance::MaterialPtr,
+                           std::string >) )
         .def( "addMaterialBehaviour", &MaterialInstance::addMaterialBehaviour )
         .def( "build", &MaterialInstance::build )
     ;

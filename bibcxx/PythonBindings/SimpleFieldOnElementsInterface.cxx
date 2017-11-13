@@ -35,12 +35,12 @@ void exportSimpleFieldOnElementsToPython()
     class_< SimpleFieldOnElementsDoubleInstance, SimpleFieldOnElementsDoublePtr,
             bases< DataStructure > >("SimpleFieldOnElementsDouble", no_init)
         .def( "__init__", make_constructor(
-            init_factory< SimpleFieldOnElementsDoubleInstance,
-                          SimpleFieldOnElementsDoublePtr >) )
+            &init_factory< SimpleFieldOnElementsDoubleInstance,
+                           SimpleFieldOnElementsDoublePtr >) )
         .def( "__init__", make_constructor(
-            init_factory< SimpleFieldOnElementsDoubleInstance,
-                          SimpleFieldOnElementsDoublePtr,
-                          std::string >) )
+            &init_factory< SimpleFieldOnElementsDoubleInstance,
+                           SimpleFieldOnElementsDoublePtr,
+                           std::string >) )
 
         .def( "getValue", &SimpleFieldOnElementsDoubleInstance::getValue,
               return_value_policy< return_by_value >() )

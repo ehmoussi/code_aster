@@ -39,22 +39,22 @@ void exportModalBasisDefinitionToPython()
     class_< StandardModalBasisInstance, StandardModalBasisInstance::StandardModalBasisPtr,
             bases< GenericModalBasisInstance > > ( "StandardModalBasis", no_init )
         .def( "__init__", make_constructor(
-            init_factory< StandardModalBasisInstance,
-                          StandardModalBasisInstance::StandardModalBasisPtr >) )
+            &init_factory< StandardModalBasisInstance,
+                           StandardModalBasisInstance::StandardModalBasisPtr >) )
         .def( "__init__", make_constructor(
-            init_factory< StandardModalBasisInstance,
-                          StandardModalBasisInstance::StandardModalBasisPtr,
-                          std::string >) )
+            &init_factory< StandardModalBasisInstance,
+                           StandardModalBasisInstance::StandardModalBasisPtr,
+                           std::string >) )
     ;
 
     class_< RitzBasisInstance, RitzBasisInstance::RitzBasisPtr,
             bases< GenericModalBasisInstance > > ( "RitzBasis", no_init )
         .def( "__init__", make_constructor(
-            init_factory< RitzBasisInstance,
-                          RitzBasisInstance::RitzBasisPtr >) )
+            &init_factory< RitzBasisInstance,
+                           RitzBasisInstance::RitzBasisPtr >) )
         .def( "__init__", make_constructor(
-            init_factory< RitzBasisInstance,
-                          RitzBasisInstance::RitzBasisPtr,
-                          std::string >) )
+            &init_factory< RitzBasisInstance,
+                           RitzBasisInstance::RitzBasisPtr,
+                           std::string >) )
     ;
 };

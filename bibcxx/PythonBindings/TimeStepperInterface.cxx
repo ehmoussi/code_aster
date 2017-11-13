@@ -37,12 +37,12 @@ void exportTimeStepperToPython()
     class_< TimeStepperInstance, TimeStepperInstance::TimeStepperPtr,
             bases< DataStructure > >( "TimeStepper", no_init )
         .def( "__init__", make_constructor(
-            init_factory< TimeStepperInstance,
-                          TimeStepperInstance::TimeStepperPtr >) )
+            &init_factory< TimeStepperInstance,
+                           TimeStepperInstance::TimeStepperPtr >) )
         .def( "__init__", make_constructor(
-            init_factory< TimeStepperInstance,
-                          TimeStepperInstance::TimeStepperPtr,
-                          std::string >) )
+            &init_factory< TimeStepperInstance,
+                           TimeStepperInstance::TimeStepperPtr,
+                           std::string >) )
         .def( "setValues", &TimeStepperInstance::setValues )
     ;
 };

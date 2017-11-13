@@ -35,13 +35,13 @@ void exportPCFieldOnMeshToPython()
     class_< PCFieldOnMeshDoubleInstance, PCFieldOnMeshDoublePtr,
             bases< DataStructure > >("PCFieldOnMeshDouble", no_init)
         .def( "__init__", make_constructor(
-            init_factory< PCFieldOnMeshDoubleInstance,
-                          PCFieldOnMeshDoublePtr,
-                          BaseMeshPtr >) )
+            &init_factory< PCFieldOnMeshDoubleInstance,
+                           PCFieldOnMeshDoublePtr,
+                           BaseMeshPtr >) )
         .def( "__init__", make_constructor(
-            init_factory< PCFieldOnMeshDoubleInstance,
-                          PCFieldOnMeshDoublePtr,
-                          std::string,
-                          BaseMeshPtr >) )
+            &init_factory< PCFieldOnMeshDoubleInstance,
+                           PCFieldOnMeshDoublePtr,
+                           std::string,
+                           BaseMeshPtr >) )
     ;
 };

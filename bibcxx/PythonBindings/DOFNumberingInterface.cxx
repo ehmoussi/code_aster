@@ -44,12 +44,12 @@ void exportDOFNumberingToPython()
     class_< DOFNumberingInstance, DOFNumberingInstance::DOFNumberingPtr,
             bases< BaseDOFNumberingInstance > > ( "DOFNumbering", no_init )
         .def( "__init__", make_constructor(
-            init_factory< DOFNumberingInstance,
-                          DOFNumberingInstance::DOFNumberingPtr >) )
+            &init_factory< DOFNumberingInstance,
+                           DOFNumberingInstance::DOFNumberingPtr >) )
         .def( "__init__", make_constructor(
-            init_factory< DOFNumberingInstance,
-                          DOFNumberingInstance::DOFNumberingPtr,
-                          std::string >) )
+            &init_factory< DOFNumberingInstance,
+                           DOFNumberingInstance::DOFNumberingPtr,
+                           std::string >) )
         .def( "setSupportModel", &DOFNumberingInstance::setSupportModel )
     ;
 };
