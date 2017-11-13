@@ -36,7 +36,7 @@ MAT_MASS=DEFI_MATERIAU(ELAS=_F(E=2.1E11,
                                ALPHA=0.,),
                        ECRO_LINE=_F(D_SIGM_EPSI=0,
                                     SY=870.E6,),);
-                                    
+
 ####################################################################
 #Definition des parametres temps du calcul et de la force appliquee#
 ####################################################################
@@ -75,8 +75,8 @@ LIMP=DEFI_LIST_REEL(DEBUT=0.0,
                                #    NOMBRE=1,),
                                  _F(JUSQU_A=T2,
                                    PAS=PAS_TP,),
-                                ),);                             
-                                    
+                                ),);
+
 #Force appliquee
 Pmax=5E9;
 PRESSION=DEFI_FONCTION(NOM_PARA='INST',
@@ -86,19 +86,19 @@ PRESSION=DEFI_FONCTION(NOM_PARA='INST',
                              T1+2*T0a,0.,
                              T2,0.,),
                        PROL_DROITE='CONSTANT',);
-                    
+
 #-------------------------------------------------------------#
 #    DEFINITION DU MAILLAGE INITIAL ET DU MODELE INITIAL      #
 #-------------------------------------------------------------#
 
 MA=LIRE_MAILLAGE(FORMAT='MED',UNITE=20,);
 
-#Reorientation des normales 
+#Reorientation des normales
 MA=MODI_MAILLAGE(reuse=MA,
                  MAILLAGE=MA,
                  ORIE_PEAU_2D=_F(GROUP_MA=('HAUT','IMP'),),);
-                               
-#Definition du modele initial                               
+
+#Definition du modele initial
 MO=AFFE_MODELE(MAILLAGE=MA,
                AFFE=_F(TOUT='OUI',
                        PHENOMENE='MECANIQUE',
@@ -109,34 +109,35 @@ CHMAT=AFFE_MATERIAU(MAILLAGE=MA,
                     AFFE=(_F(TOUT='OUI',
                              MATER=MAT_MASS,),),);
 
-#Definition des conditions limites 
+#Definition des conditions limites
 CLIM=AFFE_CHAR_CINE(MODELE=MO,
                     MECA_IMPO=(_F(GROUP_NO='BAS',
                                   DY=0.0,),
                                _F(GROUP_NO='AXE',
                                   DX=0.0,),),);
 
-#Definition du chargement                                 
+#Definition du chargement
 CHOC=AFFE_CHAR_MECA_F(MODELE=MO,
                       PRES_REP=(_F(GROUP_MA='IMP',
-                                   PRES=PRESSION,),),);                                 
+                                   PRES=PRESSION,),),);
 
 #-------------------------------------------------------------#
 #                     CALCUL DYNAMIQUE                        #
 #-------------------------------------------------------------#
 RESU=DYNA_NON_LINE(MODELE=MO,
-                   CHAM_MATER=CHMAT,                              
-                   EXCIT=(_F(CHARGE=CLIM,),                       
-                          _F(CHARGE=CHOC,),),                     
-                   COMPORTEMENT=(_F(RELATION='VMIS_ISOT_LINE',       
-                                 DEFORMATION='PETIT',             
-                                 GROUP_MA='CIBLE',),),            
-                   INCREMENT=_F(LIST_INST=LIMP,                   
-                                INST_FIN=T2,),                    
-                   SCHEMA_TEMPS=_F(SCHEMA='HHT',               
+                   CHAM_MATER=CHMAT,
+                   EXCIT=(_F(CHARGE=CLIM,),
+                          _F(CHARGE=CHOC,),),
+                   COMPORTEMENT=(_F(RELATION='VMIS_ISOT_LINE',
+                                 DEFORMATION='PETIT',
+                                 GROUP_MA='CIBLE',),),
+                   INCREMENT=_F(LIST_INST=LIMP,
+                                INST_FIN=T2,),
+                   SOLVEUR=_F(METHODE='MULT_FRONT'),
+                   SCHEMA_TEMPS=_F(SCHEMA='HHT',
                                    FORMULATION='DEPLACEMENT',
-                                   MODI_EQUI='OUI',),                                                                     
-                   NEWTON=_F(MATRICE='TANGENTE',                  
+                                   MODI_EQUI='OUI',),
+                   NEWTON=_F(MATRICE='TANGENTE',
                              REAC_ITER=1,),
                              );
 
@@ -148,13 +149,13 @@ RESU=CALC_CHAMP(reuse=RESU,
                 CRITERES  ='SIEQ_NOEU',
                 );
 
-#IMPRESSION DES RESULTATS                                                                                                                             
-#SIG_AXE=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',                                                             
-#                                 INTITULE='SIEF_NOEU',                                                              
-#                                 RESULTAT=RESU,                                                                 
-#                                 NOM_CHAM='SIEF_NOEU',                                                                     
-#                                 GROUP_NO='AXE',                                                                   
-#                                 NOM_CMP='SIYY',                                                    
+#IMPRESSION DES RESULTATS
+#SIG_AXE=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
+#                                 INTITULE='SIEF_NOEU',
+#                                 RESULTAT=RESU,
+#                                 NOM_CHAM='SIEF_NOEU',
+#                                 GROUP_NO='AXE',
+#                                 NOM_CMP='SIYY',
 #                                 REPERE='GLOBAL',),);
 
 #IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=RESU,
@@ -162,7 +163,7 @@ RESU=CALC_CHAMP(reuse=RESU,
 #                  INST=22.E-9,
 #                  NOM_CMP='SIYY',
 #                  GROUP_NO='P1',),);
-                  
+
 #IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=RESU,
 #                  NOM_CHAM='SIEF_NOEU',
 #                  INST=22.E-9,
@@ -179,9 +180,9 @@ RESU=CALC_CHAMP(reuse=RESU,
 #                  NOM_CHAM='SIEF_NOEU',
 #                  INST=22.E-9,
 #                  NOM_CMP='SIYY',
-#                  GROUP_NO='P4',),);                  
-                                    
-                  
+#                  GROUP_NO='P4',),);
+
+
 #REFE=DEFI_FONCTION(NOM_PARA='DY',
 #                   VALE=(0.,0.,
 #                         9.4E-6,0.,
@@ -200,16 +201,16 @@ RESU=CALC_CHAMP(reuse=RESU,
 
 #ABSOLU2=FORMULE(NOM_PARA='COOR_Y',
 #               VALE='abs(COOR_Y)',);
-                              
+
 #ABS_SIG=CALC_TABLE(TABLE=SIG_AXE,
 #                   ACTION=(_F(OPERATION='OPER',
 #                             FORMULE=ABSOLU1,
 #                             NOM_PARA='ABS_SIYY',),
 #                           _F(OPERATION='OPER',
 #                             FORMULE=ABSOLU2,
-#                             NOM_PARA='ABS_COOR',),)  
+#                             NOM_PARA='ABS_COOR',),)
 #                             );
-                  
+
 #IMPR_TABLE(TABLE=ABS_SIG,
 #           FORMAT='XMGRACE',
 #           NOM_PARA=('ABS_COOR','ABS_SIYY'),
@@ -217,8 +218,8 @@ RESU=CALC_CHAMP(reuse=RESU,
 #                  ORDRE='CROISSANT'),
 #           LEGENDE_X='PROFONDEUR (m)',
 #           LEGENDE_Y='CONTRAINTE SIYY (Pa)',
-#           );                       
-                       
+#           );
+
 #IMPR_FONCTION(COURBE=_F(FONCTION=REFE,),
 #              FORMAT='XMGRACE',
 #              LEGENDE_X='PROFONDEUR (m)',
@@ -253,7 +254,7 @@ TEST_RESU(RESU=(
                    REFERENCE='ANALYTIQUE',
                      PRECISION=15.E-2,
                    VALE_REFE=-1.468526E9,
-                   VALE_CALC=-1598970158.07 ),                   
+                   VALE_CALC=-1598970158.07 ),
                 _F(GROUP_NO='P4',
                    INST=22.E-9,
                    RESULTAT=RESU,
@@ -262,9 +263,9 @@ TEST_RESU(RESU=(
                    REFERENCE='ANALYTIQUE',
                      PRECISION=8.E-2,
                    VALE_REFE=-1.468526E9,
-                   VALE_CALC=-1560774205.69 ),                                                                       
+                   VALE_CALC=-1560774205.69 ),
                 ),
-          );                                                 
+          );
 
 
 #IMPR_RESU(FORMAT="RESULTAT",FORMAT='MED',UNITE=80,RESU=_F(RESULTAT=RESU,));
