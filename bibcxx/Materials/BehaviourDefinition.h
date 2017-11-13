@@ -29,6 +29,7 @@
 #include "astercxx.h"
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class BehaviourDefinitionInstance
@@ -55,15 +56,19 @@ public:
     /**
      * @brief Constructeur
      */
-    static BehaviourDefinitionPtr create()
-    {
-        return BehaviourDefinitionPtr( new BehaviourDefinitionInstance );
-    };
+    BehaviourDefinitionInstance():
+        BehaviourDefinitionInstance( ResultNaming::getNewResultName() )
+    {};
 
     /**
      * @brief Constructeur
      */
-    BehaviourDefinitionInstance();
+    BehaviourDefinitionInstance( const std::string &name ):
+        DataStructure( name, 19, "COMPOR", Permanent ),
+        _cprk( JeveuxVectorChar24( getName() + ".CPRK" ) ),
+        _cprr( JeveuxVectorDouble( getName() + ".CPRR" ) ),
+        _cpri( JeveuxVectorLong( getName() + ".CPRI" ) )
+    {};
 };
 
 /**

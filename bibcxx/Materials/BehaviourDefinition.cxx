@@ -24,10 +24,3 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "Materials/BehaviourDefinition.h"
-
-BehaviourDefinitionInstance::BehaviourDefinitionInstance():
-    DataStructure( "COMPOR", Permanent, 19 ),
-    _cprk( JeveuxVectorChar24( getName() + ".CPRK" ) ),
-    _cprr( JeveuxVectorDouble( getName() + ".CPRR" ) ),
-    _cpri( JeveuxVectorLong( getName() + ".CPRI" ) )
-{};
