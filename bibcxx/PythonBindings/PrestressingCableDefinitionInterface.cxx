@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/PrestressingCableDefinitionInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportPrestressingCableDefinitionToPython()
@@ -32,7 +32,7 @@ void exportPrestressingCableDefinitionToPython()
     class_< PrestressingCableDefinitionInstance,
             PrestressingCableDefinitionInstance::PrestressingCableDefinitionPtr,
             bases< DataStructure > > ( "PrestressingCableDefinition", no_init )
-        .def( "create", &createSharedPtr< PrestressingCableDefinitionInstance, const MeshPtr& > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< PrestressingCableDefinitionInstance, const MeshPtr& > ) )
     ;
 };

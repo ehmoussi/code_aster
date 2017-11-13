@@ -42,12 +42,10 @@ void exportElementaryVectorToPython()
     class_< ElementaryVectorInstance, ElementaryVectorInstance::ElementaryVectorPtr,
             bases< DataStructure > > ( "ElementaryVector", no_init )
         .def( "__init__", make_constructor(
-            &init_factory< ElementaryVectorInstance,
-                           ElementaryVectorInstance::ElementaryVectorPtr >) )
+            &initFactoryPtr< ElementaryVectorInstance >) )
         .def( "__init__", make_constructor(
-            &init_factory< ElementaryVectorInstance,
-                           ElementaryVectorInstance::ElementaryVectorPtr,
-                           std::string >) )
+            &initFactoryPtr< ElementaryVectorInstance,
+                             std::string >) )
         .def( "addMechanicalLoad", &ElementaryVectorInstance::addMechanicalLoad )
         .def( "assembleVector", c1 )
 #ifdef _USE_MPI

@@ -26,7 +26,7 @@
 #include <boost/python.hpp>
 #include <PythonBindings/factory.h>
 #include "PythonBindings/ParallelMeshInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 
 
 #ifdef _USE_MPI
@@ -37,12 +37,10 @@ void exportParallelMeshToPython()
     class_< ParallelMeshInstance, ParallelMeshInstance::ParallelMeshPtr,
             bases< BaseMeshInstance > >( "ParallelMesh", no_init )
         .def( "__init__", make_constructor(
-            &init_factory< ParallelMeshInstance,
-                           ParallelMeshInstance::ParallelMeshPtr >) )
+            &initFactoryPtr< ParallelMeshInstance >) )
         .def( "__init__", make_constructor(
-            &init_factory< ParallelMeshInstance,
-                           ParallelMeshInstance::ParallelMeshPtr,
-                           std::string >) )
+            &initFactoryPtr< ParallelMeshInstance,
+                             std::string >) )
         .def( "readMedFile", &ParallelMeshInstance::readMedFile )
     ;
 };

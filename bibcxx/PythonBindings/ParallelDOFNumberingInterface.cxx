@@ -38,12 +38,10 @@ void exportParallelDOFNumberingToPython()
     class_< ParallelDOFNumberingInstance, ParallelDOFNumberingInstance::ParallelDOFNumberingPtr,
             bases< BaseDOFNumberingInstance > > ( "ParallelDOFNumbering", no_init )
         .def( "__init__", make_constructor(
-            &init_factory< ParallelDOFNumberingInstance,
-                           ParallelDOFNumberingInstance::ParallelDOFNumberingPtr >) )
+            &initFactoryPtr< ParallelDOFNumberingInstance >) )
         .def( "__init__", make_constructor(
-            &init_factory< ParallelDOFNumberingInstance,
-                           ParallelDOFNumberingInstance::ParallelDOFNumberingPtr,
-                           std::string >) )
+            &initFactoryPtr< ParallelDOFNumberingInstance,
+                             std::string >) )
     ;
 };
 

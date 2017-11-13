@@ -86,8 +86,7 @@ void exportContactZoneToPython()
             bases< GenericContactZoneInstance > >
         ( "DiscretizedContactZone", no_init )
         .def( "__init__", make_constructor(
-            &init_factory< DiscretizedContactZoneInstance,
-                           DiscretizedContactZoneInstance::ContactZonePtr >) )
+            &initFactoryPtr< DiscretizedContactZoneInstance >) )
         .def( "addBeamDescription", &DiscretizedContactZoneInstance::addBeamDescription )
         .def( "addFriction", &DiscretizedContactZoneInstance::addFriction<Discretized> )
         .def( "addPlateDescription",
@@ -128,8 +127,7 @@ void exportContactZoneToPython()
             bases< GenericContactZoneInstance > >
         ( "ContinuousContactZone", no_init )
         .def( "__init__", make_constructor(
-            &init_factory< ContinuousContactZoneInstance,
-                           ContinuousContactZoneInstance::ContactZonePtr >) )
+            &initFactoryPtr< ContinuousContactZoneInstance >) )
         .def( "addBeamDescription", &ContinuousContactZoneInstance::addBeamDescription )
         .def( "addFriction", &ContinuousContactZoneInstance::addFriction<Continuous> )
         .def( "addPlateDescription",

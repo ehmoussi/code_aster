@@ -26,12 +26,13 @@
 
 #include <boost/python.hpp>
 
-/** @brief Factory for '__init__' constructors.
+
+/** @brief Factory for '__init__' constructor without 'DSTypePtr'.
  */
-template< typename DSType, typename DSTypePtr, typename... Targs >
-static DSTypePtr init_factory( Targs... args )
+template< typename DSType, typename... Args >
+static boost::shared_ptr<DSType> initFactoryPtr( Args... args )
 {
-    return DSTypePtr( new DSType( args... ) );
-}
+    return boost::shared_ptr<DSType>( new DSType( args... ) );
+};
 
 #endif /* FACTORY_H_ */

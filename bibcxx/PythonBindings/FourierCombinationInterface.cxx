@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/FourierCombinationInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportFourierCombinationToPython()
@@ -31,7 +31,7 @@ void exportFourierCombinationToPython()
 
     class_< FourierCombinationInstance, FourierCombinationPtr,
             bases< ResultsContainerInstance > > ( "FourierCombination", no_init )
-        .def( "create", &createSharedPtr< FourierCombinationInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< FourierCombinationInstance > ) )
     ;
 };

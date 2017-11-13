@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/MaterialOnMeshInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportMaterialOnMeshToPython()
@@ -31,11 +31,12 @@ void exportMaterialOnMeshToPython()
 
     class_< MaterialOnMeshInstance, MaterialOnMeshInstance::MaterialOnMeshPtr,
             bases< DataStructure > > ( "MaterialOnMesh", no_init )
-        .def( "create", &createSharedPtr< MaterialOnMeshInstance, const MeshPtr& > )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< MaterialOnMeshInstance, const MeshPtr& > ) )
 #ifdef _USE_MPI
-        .def( "create", &createSharedPtr< MaterialOnMeshInstance, const ParallelMeshPtr& > )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< MaterialOnMeshInstance, const ParallelMeshPtr& > ) )
 #endif /* _USE_MPI */
-        .staticmethod( "create" )
         .def( "addMaterialOnAllMesh", &MaterialOnMeshInstance::addMaterialOnAllMesh )
         .def( "addMaterialOnGroupOfElements",
               &MaterialOnMeshInstance::addMaterialOnGroupOfElements )

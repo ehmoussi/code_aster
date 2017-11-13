@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/CyclicSymmetryModeInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportCyclicSymmetryModeToPython()
@@ -31,7 +31,7 @@ void exportCyclicSymmetryModeToPython()
 
     class_< CyclicSymmetryModeInstance, CyclicSymmetryModeInstance::CyclicSymmetryModePtr,
             bases< DataStructure > > ( "CyclicSymmetryMode", no_init )
-        .def( "create", &createSharedPtr< CyclicSymmetryModeInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< CyclicSymmetryModeInstance > ) )
     ;
 };

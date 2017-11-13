@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/FailureConvergenceManagerInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportFailureConvergenceManagerToPython()
@@ -35,22 +35,22 @@ void exportFailureConvergenceManagerToPython()
     class_< StopOnErrorInstance, StopOnErrorPtr,
             bases< GenericActionInstance > >
         ( "StopOnError", no_init )
-        .def( "create", &createSharedPtr< StopOnErrorInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< StopOnErrorInstance > ) )
     ;
 
     class_< ContinueOnErrorInstance, ContinueOnErrorPtr,
             bases< GenericActionInstance > >
         ( "ContinueOnError", no_init )
-        .def( "create", &createSharedPtr< ContinueOnErrorInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< ContinueOnErrorInstance > ) )
     ;
 
     class_< GenericSubstepingOnErrorInstance, GenericSubstepingOnErrorPtr,
             bases< GenericActionInstance > >
         ( "GenericSubstepingOnError", no_init )
-        .def( "create", &createSharedPtr< GenericSubstepingOnErrorInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< GenericSubstepingOnErrorInstance > ) )
         .def( "setAutomatic", &GenericSubstepingOnErrorInstance::setAutomatic )
         .def( "setLevel", &GenericSubstepingOnErrorInstance::setLevel )
         .def( "setMinimumStep", &GenericSubstepingOnErrorInstance::setMinimumStep )
@@ -60,15 +60,15 @@ void exportFailureConvergenceManagerToPython()
     class_< SubstepingOnErrorInstance, SubstepingOnErrorPtr,
             bases< GenericSubstepingOnErrorInstance > >
         ( "SubstepingOnError", no_init )
-        .def( "create", &createSharedPtr< SubstepingOnErrorInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< SubstepingOnErrorInstance > ) )
     ;
 
     class_< AddIterationOnErrorInstance, AddIterationOnErrorPtr,
             bases< GenericSubstepingOnErrorInstance > >
         ( "AddIterationOnError", no_init )
-        .def( "create", &createSharedPtr< AddIterationOnErrorInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< AddIterationOnErrorInstance > ) )
         .def( "setPourcentageOfAddedIteration",
               &AddIterationOnErrorInstance::setPourcentageOfAddedIteration )
     ;
@@ -76,8 +76,8 @@ void exportFailureConvergenceManagerToPython()
     class_< SubstepingOnContactInstance, SubstepingOnContactPtr,
             bases< GenericActionInstance > >
         ( "SubstepingOnContact", no_init )
-        .def( "create", &createSharedPtr< SubstepingOnContactInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< SubstepingOnContactInstance > ) )
         .def( "setSubstepDuration", &SubstepingOnContactInstance::setSubstepDuration )
         .def( "setTimeStepSubstep", &SubstepingOnContactInstance::setTimeStepSubstep )
     ;
@@ -85,15 +85,15 @@ void exportFailureConvergenceManagerToPython()
     class_< PilotageErrorInstance, PilotageErrorPtr,
             bases< GenericSubstepingOnErrorInstance > >
         ( "PilotageError", no_init )
-        .def( "create", &createSharedPtr< PilotageErrorInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< PilotageErrorInstance > ) )
     ;
 
     class_< ChangePenalisationOnErrorInstance, ChangePenalisationOnErrorPtr,
             bases< GenericActionInstance > >
         ( "ChangePenalisationOnError", no_init )
-        .def( "create", &createSharedPtr< ChangePenalisationOnErrorInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< ChangePenalisationOnErrorInstance > ) )
         .def( "setMaximumPenalisationCoefficient",
               &ChangePenalisationOnErrorInstance::setMaximumPenalisationCoefficient )
     ;
@@ -109,44 +109,44 @@ void exportFailureConvergenceManagerToPython()
     class_< ConvergenceErrorInstance, ConvergenceErrorPtr,
             bases< GenericConvergenceErrorInstance > >
         ( "ConvergenceError", no_init )
-        .def( "create", &createSharedPtr< ConvergenceErrorInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< ConvergenceErrorInstance > ) )
     ;
 
     class_< ResidualDivergenceErrorInstance, ResidualDivergenceErrorPtr,
             bases< GenericConvergenceErrorInstance > >
         ( "ResidualDivergenceError", no_init )
-        .def( "create", &createSharedPtr< ResidualDivergenceErrorInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< ResidualDivergenceErrorInstance > ) )
     ;
 
     class_< IncrementOverboundErrorInstance, IncrementOverboundErrorPtr,
             bases< GenericConvergenceErrorInstance > >
         ( "IncrementOverboundError", no_init )
-        .def( "create", &createSharedPtr< IncrementOverboundErrorInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< IncrementOverboundErrorInstance > ) )
         .def( "setValueToInspect", &IncrementOverboundErrorInstance::setValueToInspect )
     ;
 
     class_< ContactDetectionErrorInstance, ContactDetectionErrorPtr,
             bases< GenericConvergenceErrorInstance > >
         ( "ContactDetectionError", no_init )
-        .def( "create", &createSharedPtr< ContactDetectionErrorInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< ContactDetectionErrorInstance > ) )
     ;
 
     class_< InterpenetrationErrorInstance, InterpenetrationErrorPtr,
             bases< GenericConvergenceErrorInstance > >
         ( "InterpenetrationError", no_init )
-        .def( "create", &createSharedPtr< InterpenetrationErrorInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< InterpenetrationErrorInstance > ) )
         .def( "setMaximalPenetration", &InterpenetrationErrorInstance::setMaximalPenetration )
     ;
 
     class_< InstabilityErrorInstance, InstabilityErrorPtr,
             bases< GenericConvergenceErrorInstance > >
         ( "InstabilityError", no_init )
-        .def( "create", &createSharedPtr< InstabilityErrorInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< InstabilityErrorInstance > ) )
     ;
 };

@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/DrivingInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportDrivingToPython()
@@ -40,8 +40,8 @@ void exportDrivingToPython()
         ;
 
     class_< DrivingInstance, DrivingPtr > ( "Driving", no_init )
-        .def( "create", &createSharedPtr< DrivingInstance, DrivingTypeEnum > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< DrivingInstance, DrivingTypeEnum > ) )
         .def( "addObservationGroupOfNodes", &DrivingInstance::addObservationGroupOfNodes )
         .def( "addObservationGroupOfElements",
               &DrivingInstance::addObservationGroupOfElements )

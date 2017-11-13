@@ -24,7 +24,7 @@
 #include <boost/python.hpp>
 #include <PythonBindings/factory.h>
 #include "PythonBindings/ModelInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 
 
 void exportModelToPython()
@@ -60,12 +60,10 @@ void exportModelToPython()
     class_< ModelInstance, ModelInstance::ModelPtr,
             bases< DataStructure > > ( "Model", no_init )
         .def( "__init__", make_constructor(
-            &init_factory< ModelInstance,
-                           ModelInstance::ModelPtr >) )
+            &initFactoryPtr< ModelInstance >) )
         .def( "__init__", make_constructor(
-            &init_factory< ModelInstance,
-                           ModelInstance::ModelPtr,
-                           std::string >) )
+            &initFactoryPtr< ModelInstance,
+                             std::string >) )
         .def( "addModelingOnAllMesh", &ModelInstance::addModelingOnAllMesh )
         .def( "addModelingOnGroupOfElements", &ModelInstance::addModelingOnGroupOfElements )
         .def( "addModelingOnGroupOfNodes", &ModelInstance::addModelingOnGroupOfNodes )

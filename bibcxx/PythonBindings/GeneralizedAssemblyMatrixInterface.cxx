@@ -42,12 +42,10 @@ void exportGeneralizedAssemblyMatrixToPython()
             bases< GenericGeneralizedAssemblyMatrixInstance > >
             ( "GeneralizedAssemblyMatrixDouble", no_init )
         .def( "__init__", make_constructor(
-            &init_factory< GeneralizedAssemblyMatrixDoubleInstance,
-                           GeneralizedAssemblyMatrixDoublePtr >) )
+            &initFactoryPtr< GeneralizedAssemblyMatrixDoubleInstance >) )
         .def( "__init__", make_constructor(
-            &init_factory< GeneralizedAssemblyMatrixDoubleInstance,
-                           GeneralizedAssemblyMatrixDoublePtr,
-                           std::string >) )
+            &initFactoryPtr< GeneralizedAssemblyMatrixDoubleInstance,
+                             std::string >) )
     ;
 
     class_< GeneralizedAssemblyMatrixComplexInstance,
@@ -55,11 +53,9 @@ void exportGeneralizedAssemblyMatrixToPython()
             bases< GenericGeneralizedAssemblyMatrixInstance > >
             ( "GeneralizedAssemblyMatrixComplex", no_init )
         .def( "__init__", make_constructor(
-            &init_factory< GeneralizedAssemblyMatrixComplexInstance,
-                           GeneralizedAssemblyMatrixComplexPtr >) )
+            &initFactoryPtr< GeneralizedAssemblyMatrixComplexInstance >) )
         .def( "__init__", make_constructor(
-            &init_factory< GeneralizedAssemblyMatrixComplexInstance,
-                           GeneralizedAssemblyMatrixComplexPtr,
-                           std::string >) )
+            &initFactoryPtr< GeneralizedAssemblyMatrixComplexInstance,
+                             std::string >) )
     ;
 };

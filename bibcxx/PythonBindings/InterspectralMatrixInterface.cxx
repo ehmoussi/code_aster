@@ -35,11 +35,9 @@ void exportInterspectralMatrixToPython()
     class_< InterspectralMatrixInstance, InterspectralMatrixInstance::InterspectralMatrixPtr,
             bases< DataStructure > > ( "InterspectralMatrix", no_init )
         .def( "__init__", make_constructor(
-            &init_factory< InterspectralMatrixInstance,
-                           InterspectralMatrixInstance::InterspectralMatrixPtr >) )
+            &initFactoryPtr< InterspectralMatrixInstance >) )
         .def( "__init__", make_constructor(
-            &init_factory< InterspectralMatrixInstance,
-                           InterspectralMatrixInstance::InterspectralMatrixPtr,
-                           std::string >) )
+            &initFactoryPtr< InterspectralMatrixInstance,
+                             std::string >) )
     ;
 };

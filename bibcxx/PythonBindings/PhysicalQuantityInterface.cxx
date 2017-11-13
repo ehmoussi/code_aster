@@ -65,7 +65,6 @@ void exportPhysicalQuantityToPython()
     class_< ForceDoubleInstance,
             ForceDoubleInstance::PhysicalQuantityPtr > ( "ForceDouble", no_init )
         .def( "create", &ForceDoubleInstance::create )
-        .staticmethod( "create" )
         .def( "debugPrint", &ForceDoubleInstance::debugPrint )
         .def( "setValue", &ForceDoubleInstance::setValue )
     ;
@@ -73,7 +72,6 @@ void exportPhysicalQuantityToPython()
     class_< StructuralForceDoubleInstance,
             StructuralForceDoubleInstance::PhysicalQuantityPtr > ( "StructuralForceDouble", no_init )
         .def( "create", &StructuralForceDoubleInstance::create )
-        .staticmethod( "create" )
         .def( "debugPrint", &StructuralForceDoubleInstance::debugPrint )
         .def( "setValue", &StructuralForceDoubleInstance::setValue )
     ;
@@ -81,7 +79,6 @@ void exportPhysicalQuantityToPython()
     class_< LocalBeamForceDoubleInstance,
             LocalBeamForceDoubleInstance::PhysicalQuantityPtr > ( "LocalBeamForceDouble", no_init )
         .def( "create", &LocalBeamForceDoubleInstance::create )
-        .staticmethod( "create" )
         .def( "debugPrint", &LocalBeamForceDoubleInstance::debugPrint )
         .def( "setValue", &LocalBeamForceDoubleInstance::setValue )
     ;
@@ -89,7 +86,6 @@ void exportPhysicalQuantityToPython()
     class_< LocalShellForceDoubleInstance,
             LocalShellForceDoubleInstance::PhysicalQuantityPtr > ( "LocalShellForceDouble", no_init )
         .def( "create", &LocalShellForceDoubleInstance::create )
-        .staticmethod( "create" )
         .def( "debugPrint", &LocalShellForceDoubleInstance::debugPrint )
         .def( "setValue", &LocalShellForceDoubleInstance::setValue )
     ;
@@ -97,7 +93,6 @@ void exportPhysicalQuantityToPython()
     class_< DisplacementDoubleInstance,
             DisplacementDoubleInstance::PhysicalQuantityPtr > ( "DisplacementDouble", no_init )
         .def( "create", &DisplacementDoubleInstance::create )
-        .staticmethod( "create" )
         .def( "debugPrint", &DisplacementDoubleInstance::debugPrint )
         .def( "setValue", &DisplacementDoubleInstance::setValue )
     ;
@@ -105,7 +100,6 @@ void exportPhysicalQuantityToPython()
     class_< PressureDoubleInstance,
             PressureDoubleInstance::PhysicalQuantityPtr > ( "PressureDouble", no_init )
         .def( "create", &PressureDoubleInstance::create )
-        .staticmethod( "create" )
         .def( "debugPrint", &PressureDoubleInstance::debugPrint )
         .def( "setValue", &PressureDoubleInstance::setValue )
     ;
@@ -113,7 +107,6 @@ void exportPhysicalQuantityToPython()
     class_< ImpedanceDoubleInstance,
             ImpedanceDoubleInstance::PhysicalQuantityPtr > ( "ImpedanceDouble", no_init )
         .def( "create", &ImpedanceDoubleInstance::create )
-        .staticmethod( "create" )
         .def( "debugPrint", &ImpedanceDoubleInstance::debugPrint )
         .def( "setValue", &ImpedanceDoubleInstance::setValue )
     ;
@@ -121,7 +114,6 @@ void exportPhysicalQuantityToPython()
     class_< NormalSpeedDoubleInstance,
             NormalSpeedDoubleInstance::PhysicalQuantityPtr > ( "NormalSpeedDouble", no_init )
         .def( "create", &NormalSpeedDoubleInstance::create )
-        .staticmethod( "create" )
         .def( "debugPrint", &NormalSpeedDoubleInstance::debugPrint )
         .def( "setValue", &NormalSpeedDoubleInstance::setValue )
     ;
@@ -129,7 +121,6 @@ void exportPhysicalQuantityToPython()
     class_< HeatFluxDoubleInstance,
             HeatFluxDoubleInstance::PhysicalQuantityPtr > ( "HeatFluxDouble", no_init )
         .def( "create", &HeatFluxDoubleInstance::create )
-        .staticmethod( "create" )
         .def( "debugPrint", &HeatFluxDoubleInstance::debugPrint )
         .def( "setValue", &HeatFluxDoubleInstance::setValue )
     ;
@@ -137,7 +128,6 @@ void exportPhysicalQuantityToPython()
     class_< HydraulicFluxDoubleInstance,
             HydraulicFluxDoubleInstance::PhysicalQuantityPtr > ( "HydraulicFluxDouble", no_init )
         .def( "create", &HydraulicFluxDoubleInstance::create )
-        .staticmethod( "create" )
         .def( "debugPrint", &HydraulicFluxDoubleInstance::debugPrint )
         .def( "setValue", &HydraulicFluxDoubleInstance::setValue )
     ;

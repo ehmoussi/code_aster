@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/LinearDisplacementEvolutionContainerInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportLinearDisplacementEvolutionContainerToPython()
@@ -31,7 +31,7 @@ void exportLinearDisplacementEvolutionContainerToPython()
 
     class_< LinearDisplacementEvolutionContainerInstance, LinearDisplacementEvolutionContainerPtr,
             bases< ResultsContainerInstance > > ( "LinearDisplacementEvolutionContainer", no_init )
-        .def( "create", &createSharedPtr< LinearDisplacementEvolutionContainerInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< LinearDisplacementEvolutionContainerInstance > ) )
     ;
 };

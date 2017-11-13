@@ -97,8 +97,16 @@ public:
     /**
      * @brief Constructeur
      */
-    ResultsContainerInstance( const std::string resuTyp = "???" ):
-        DataStructure( ResultNaming::getNewResultName(), 19, resuTyp ),
+    ResultsContainerInstance( const std::string resuTyp ):
+        ResultsContainerInstance( ResultNaming::getNewResultName(), resuTyp )
+    {};
+
+    /**
+     * @brief Constructeur
+     */
+    ResultsContainerInstance( const std::string &name,
+                              const std::string resuTyp ):
+        DataStructure( name, 19, resuTyp ),
         _symbolicNamesOfFields( JeveuxBidirectionalMapChar16( getName() + ".DESC" ) ),
         _namesOfFields( JeveuxCollectionChar24( getName() + ".TACH" ) ),
         _accessVariables( JeveuxBidirectionalMapChar16( getName() + ".NOVA" ) ),

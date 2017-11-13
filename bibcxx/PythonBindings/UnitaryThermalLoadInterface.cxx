@@ -93,7 +93,6 @@ void exportUnitaryThermalLoadToPython()
             bases< UnitaryThermalLoadInstance > > ( "DoubleImposedTemperature", no_init )
         .def( "create", &DoubleImposedTemperatureInstance::create,
               DoubleImposedTemperaturecreate() )
-        .staticmethod( "create" )
         .def( "addGroupOfNodes", &DoubleImposedTemperatureInstance::addGroupOfNodes )
     ;
 
@@ -101,7 +100,6 @@ void exportUnitaryThermalLoadToPython()
             bases< UnitaryThermalLoadInstance > > ( "DoubleDistributedFlow", no_init )
         .def( "create", &DoubleDistributedFlowInstance::create,
               DoubleDistributedFlowcreate() )
-        .staticmethod( "create" )
         .def( "addGroupOfElements", &DoubleDistributedFlowInstance::addGroupOfElements )
         .def( "setNormalFlow", &DoubleDistributedFlowInstance::setNormalFlow,
               DistributedFlowsetNormalFlow() )
@@ -117,7 +115,6 @@ void exportUnitaryThermalLoadToPython()
             bases< UnitaryThermalLoadInstance > > ( "DoubleNonLinearFlow", no_init )
         .def( "create", &DoubleNonLinearFlowInstance::create,
               DoubleNonLinearFlowcreate() )
-        .staticmethod( "create" )
         .def( "addGroupOfElements", &DoubleNonLinearFlowInstance::addGroupOfElements )
         .def( "setFlow", &DoubleNonLinearFlowInstance::setFlow,
               DoubleNonLinearFlowsetFlow() )
@@ -126,7 +123,6 @@ void exportUnitaryThermalLoadToPython()
     class_< DoubleExchangeInstance, DoubleExchangePtr,
             bases< UnitaryThermalLoadInstance > > ( "DoubleExchange", no_init )
         .def( "create", &DoubleExchangeInstance::create, DoubleExchangecreate() )
-        .staticmethod( "create" )
         .def( "addGroupOfElements", &DoubleExchangeInstance::addGroupOfElements )
         .def( "setExchangeCoefficient",
               &DoubleExchangeInstance::setExchangeCoefficient,
@@ -146,7 +142,6 @@ void exportUnitaryThermalLoadToPython()
             bases< UnitaryThermalLoadInstance > > ( "DoubleExchangeWall", no_init )
         .def( "create", &DoubleExchangeWallInstance::create,
               DoubleExchangeWallcreate() )
-        .staticmethod( "create" )
         .def( "addGroupOfElements", &DoubleExchangeWallInstance::addGroupOfElements )
         .def( "setExchangeCoefficient",
               &DoubleExchangeWallInstance::setExchangeCoefficient,
@@ -158,7 +153,6 @@ void exportUnitaryThermalLoadToPython()
             bases< UnitaryThermalLoadInstance > > ( "DoubleSource", no_init )
         .def( "create", &DoubleSourceInstance::create,
               DoubleSourcecreate() )
-        .staticmethod( "create" )
         .def( "addGroupOfElements", &DoubleSourceInstance::addGroupOfElements )
         .def( "setSource", &DoubleSourceInstance::setSource,
               DoubleSourcesetSource() )
@@ -168,7 +162,6 @@ void exportUnitaryThermalLoadToPython()
             bases< UnitaryThermalLoadInstance > > ( "DoubleNonLinearSource", no_init )
         .def( "create", &DoubleNonLinearSourceInstance::create,
               DoubleNonLinearSourcecreate() )
-        .staticmethod( "create" )
         .def( "addGroupOfElements", &DoubleNonLinearSourceInstance::addGroupOfElements )
         .def( "setSource", &DoubleNonLinearSourceInstance::setSource,
               DoubleNonLinearSourcesetSource() )
@@ -178,7 +171,6 @@ void exportUnitaryThermalLoadToPython()
             bases< UnitaryThermalLoadInstance > > ( "DoubleThermalRadiation", no_init )
         .def( "create", &DoubleThermalRadiationInstance::create,
               DoubleThermalRadiationcreate() )
-        .staticmethod( "create" )
         .def( "addGroupOfElements", &DoubleThermalRadiationInstance::addGroupOfElements )
         .def( "setExternalTemperature",
               &DoubleThermalRadiationInstance::setExternalTemperature,
@@ -193,7 +185,6 @@ void exportUnitaryThermalLoadToPython()
             bases< UnitaryThermalLoadInstance > > ( "DoubleThermalGradient", no_init )
         .def( "create", &DoubleThermalGradientInstance::create,
               DoubleThermalGradientcreate() )
-        .staticmethod( "create" )
         .def( "addGroupOfElements", &DoubleThermalGradientInstance::addGroupOfElements )
         .def( "setFlowXYZ", &DoubleThermalGradientInstance::setFlowXYZ,
               DoubleThermalGradientsetFlowXYZ() )

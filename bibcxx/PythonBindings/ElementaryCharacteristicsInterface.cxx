@@ -35,13 +35,11 @@ void exportElementaryCharacteristicsToPython()
     class_< ElementaryCharacteristicsInstance, ElementaryCharacteristicsInstance::ElementaryCharacteristicsPtr,
             bases< DataStructure > > ( "ElementaryCharacteristics", no_init )
         .def( "__init__", make_constructor(
-            &init_factory< ElementaryCharacteristicsInstance,
-                           ElementaryCharacteristicsInstance::ElementaryCharacteristicsPtr,
-                           ModelPtr >) )
+            &initFactoryPtr< ElementaryCharacteristicsInstance,
+                             ModelPtr >) )
         .def( "__init__", make_constructor(
-            &init_factory< ElementaryCharacteristicsInstance,
-                           ElementaryCharacteristicsInstance::ElementaryCharacteristicsPtr,
-                           std::string,
-                           ModelPtr >) )
+            &initFactoryPtr< ElementaryCharacteristicsInstance,
+                             std::string,
+                             ModelPtr >) )
     ;
 };

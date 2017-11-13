@@ -34,7 +34,6 @@ void exportParallelMechanicalLoadToPython()
             ParallelMechanicalLoadInstance::ParallelMechanicalLoadPtr,
             bases< DataStructure > > ( "ParallelMechanicalLoad", no_init )
         .def( "create", &ParallelMechanicalLoadInstance::create )
-        .staticmethod( "create" )
     ;
 };
 

@@ -51,7 +51,6 @@ void exportGeneralizedResultsContainerToPython()
             bases< GeneralizedResultsContainerDoubleInstance > >
             ( "TransientGeneralizedResultsContainer", no_init )
             .def( "create", &TransientGeneralizedResultsContainerInstance::create )
-            .staticmethod( "create" )
     ;
 
     class_< HarmoGeneralizedResultsContainerInstance,
@@ -59,6 +58,5 @@ void exportGeneralizedResultsContainerToPython()
             bases< GeneralizedResultsContainerComplexInstance > >
             ( "HarmoGeneralizedResultsContainer", no_init )
             .def( "create", &HarmoGeneralizedResultsContainerInstance::create )
-            .staticmethod( "create" )
     ;
 };

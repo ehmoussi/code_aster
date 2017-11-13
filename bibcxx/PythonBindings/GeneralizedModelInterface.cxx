@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/GeneralizedModelInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportGeneralizedModelToPython()
@@ -31,7 +31,7 @@ void exportGeneralizedModelToPython()
 
     class_< GeneralizedModelInstance, GeneralizedModelInstance::GeneralizedModelPtr,
             bases< DataStructure > > ( "GeneralizedModel", no_init )
-        .def( "create", &createSharedPtr< GeneralizedModelInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< GeneralizedModelInstance > ) )
     ;
 };

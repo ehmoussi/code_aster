@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/NonLinearEvolutionContainerInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportNonLinearEvolutionContainerToPython()
@@ -31,7 +31,7 @@ void exportNonLinearEvolutionContainerToPython()
 
     class_< NonLinearEvolutionContainerInstance, NonLinearEvolutionContainerPtr,
             bases< ResultsContainerInstance > > ( "NonLinearEvolutionContainer", no_init )
-        .def( "create", &createSharedPtr< NonLinearEvolutionContainerInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< NonLinearEvolutionContainerInstance > ) )
     ;
 };

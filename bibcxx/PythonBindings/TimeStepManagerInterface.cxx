@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/TimeStepManagerInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportTimeStepManagerToPython()
@@ -32,8 +32,8 @@ void exportTimeStepManagerToPython()
     class_< TimeStepManagerInstance, TimeStepManagerPtr,
             bases< DataStructure > >
         ( "TimeStepManager", no_init )
-        .def( "create", &createSharedPtr< TimeStepManagerInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< TimeStepManagerInstance > ) )
         .def( "addErrorManager", &TimeStepManagerInstance::addErrorManager )
         .def( "build", &TimeStepManagerInstance::build )
         .def( "setAutomaticManagement", &TimeStepManagerInstance::setAutomaticManagement )

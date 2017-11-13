@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/XfemCrackInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportXfemCrackToPython()
@@ -32,8 +32,8 @@ void exportXfemCrackToPython()
     class_< XfemCrackInstance,
             XfemCrackInstance::XfemCrackPtr,
             bases< DataStructure > > ( "XfemCrack", no_init )
-        .def( "create", &createSharedPtr< XfemCrackInstance, MeshPtr > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< XfemCrackInstance, MeshPtr > ) )
         .def( "build", &XfemCrackInstance::build )
         .def( "enrichModelWithXfem", &XfemCrackInstance::enrichModelWithXfem )
         .def( "getSupportMesh", &XfemCrackInstance::getSupportMesh )

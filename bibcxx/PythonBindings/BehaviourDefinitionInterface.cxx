@@ -33,11 +33,9 @@ void exportBehaviourDefinitionToPython()
     class_< BehaviourDefinitionInstance, BehaviourDefinitionInstance::BehaviourDefinitionPtr,
             bases< DataStructure > > ( "BehaviourDefinition", no_init )
         .def( "__init__", make_constructor(
-            &init_factory< BehaviourDefinitionInstance,
-                           BehaviourDefinitionInstance::BehaviourDefinitionPtr >) )
+            &initFactoryPtr< BehaviourDefinitionInstance >) )
         .def( "__init__", make_constructor(
-            &init_factory< BehaviourDefinitionInstance,
-                           BehaviourDefinitionInstance::BehaviourDefinitionPtr,
-                           std::string >) )
+            &initFactoryPtr< BehaviourDefinitionInstance,
+                             std::string >) )
     ;
 };

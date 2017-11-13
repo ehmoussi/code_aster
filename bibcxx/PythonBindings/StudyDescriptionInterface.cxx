@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/StudyDescriptionInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportStudyDescriptionToPython()
@@ -31,9 +31,8 @@ void exportStudyDescriptionToPython()
 
     class_< StudyDescriptionInstance, StudyDescriptionPtr >
         ( "StudyDescription", no_init )
-        .def( "create", &createSharedPtr< StudyDescriptionInstance,
+        .def( "create", &initFactoryPtr< StudyDescriptionInstance,
                                           const ModelPtr&, const MaterialOnMeshPtr& > )
-        .staticmethod( "create" )
         .def( "addKinematicsLoad", &StudyDescriptionInstance::addKinematicsLoad )
         .def( "addMechanicalLoad", &StudyDescriptionInstance::addMechanicalLoad )
     ;

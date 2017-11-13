@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/CppToFortranGlossaryInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportCppToFortranGlossaryToPython()

@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/StaticMacroElementInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportStaticMacroElementToPython()
@@ -31,7 +31,7 @@ void exportStaticMacroElementToPython()
 
     class_< StaticMacroElementInstance, StaticMacroElementInstance::StaticMacroElementPtr,
             bases< DataStructure > > ( "StaticMacroElement", no_init )
-        .def( "create", &createSharedPtr< StaticMacroElementInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< StaticMacroElementInstance > ) )
     ;
 };

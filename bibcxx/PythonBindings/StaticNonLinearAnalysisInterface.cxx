@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/StaticNonLinearAnalysisInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(addBehaviourOnElements_overloads,
@@ -48,8 +48,8 @@ void exportStaticNonLinearAnalysisToPython()
 
     class_< StaticNonLinearAnalysisInstance, StaticNonLinearAnalysisPtr >
         ( "StaticNonLinearAnalysis", no_init )
-        .def( "create", &createSharedPtr< StaticNonLinearAnalysisInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< StaticNonLinearAnalysisInstance > ) )
         .def( "execute", &StaticNonLinearAnalysisInstance::execute )
         .def( "addBehaviourOnElements",
               &StaticNonLinearAnalysisInstance::addBehaviourOnElements,

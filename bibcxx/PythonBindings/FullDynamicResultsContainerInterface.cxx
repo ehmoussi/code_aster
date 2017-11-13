@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/FullDynamicResultsContainerInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportFullDynamicResultsContainerToPython()
@@ -31,8 +31,8 @@ void exportFullDynamicResultsContainerToPython()
 
     class_< FullDynamicResultsContainerInstance, FullDynamicResultsContainerPtr,
             bases< DynamicResultsContainerInstance > > ( "FullDynamicResultsContainer", no_init )
-        .def( "create", &createSharedPtr< FullDynamicResultsContainerInstance > )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< FullDynamicResultsContainerInstance > ) )
         .def( "printMedFile", &FullDynamicResultsContainerInstance::printMedFile )
-        .staticmethod( "create" )
     ;
 };
