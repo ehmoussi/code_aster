@@ -10,10 +10,6 @@ code_aster.init("--continue")
 
 test = code_aster.TestCase()
 
-# temporary skip this testcase
-test.assertTrue(True)
-test.printSummary()
-
 test.assertTrue(isinstance(fsin, code_aster.Function))
 test.assertTrue(isinstance(fcos, code_aster.Function))
 
