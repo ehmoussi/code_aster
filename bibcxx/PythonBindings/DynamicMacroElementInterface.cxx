@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/DynamicMacroElementInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportDynamicMacroElementToPython()
@@ -31,7 +31,7 @@ void exportDynamicMacroElementToPython()
 
     class_< DynamicMacroElementInstance, DynamicMacroElementInstance::DynamicMacroElementPtr,
             bases< DataStructure > > ( "DynamicMacroElement", no_init )
-        .def( "create", &createSharedPtr< DynamicMacroElementInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< DynamicMacroElementInstance > ) )
     ;
 };

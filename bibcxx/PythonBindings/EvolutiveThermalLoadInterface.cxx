@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/EvolutiveThermalLoadInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportEvolutiveThermalLoadToPython()
@@ -31,7 +31,7 @@ void exportEvolutiveThermalLoadToPython()
 
     class_< EvolutiveThermalLoadInstance, EvolutiveThermalLoadPtr,
             bases< ResultsContainerInstance > > ( "EvolutiveThermalLoad", no_init )
-        .def( "create", &createSharedPtr< EvolutiveThermalLoadInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< EvolutiveThermalLoadInstance > ) )
     ;
 };

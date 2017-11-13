@@ -36,11 +36,9 @@ void exportFluidStructureInteractionToPython()
             FluidStructureInteractionInstance::FluidStructureInteractionPtr,
             bases< DataStructure > > ( "FluidStructureInteraction", no_init )
         .def( "__init__", make_constructor(
-            &init_factory< FluidStructureInteractionInstance,
-                           FluidStructureInteractionInstance::FluidStructureInteractionPtr >) )
+            &initFactoryPtr< FluidStructureInteractionInstance >) )
         .def( "__init__", make_constructor(
-            &init_factory< FluidStructureInteractionInstance,
-                           FluidStructureInteractionInstance::FluidStructureInteractionPtr,
-                           std::string >) )
+            &initFactoryPtr< FluidStructureInteractionInstance,
+                             std::string >) )
     ;
 };

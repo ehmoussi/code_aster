@@ -35,12 +35,10 @@ void exportAssemblyMatrixToPython()
             bases< DataStructure > >
         ( "AssemblyMatrixDouble", no_init )
         .def( "__init__", make_constructor(
-            &init_factory< AssemblyMatrixDoubleInstance,
-                           AssemblyMatrixDoublePtr >) )
+            &initFactoryPtr< AssemblyMatrixDoubleInstance >) )
         .def( "__init__", make_constructor(
-            &init_factory< AssemblyMatrixDoubleInstance,
-                           AssemblyMatrixDoublePtr,
-                           std::string >) )
+            &initFactoryPtr< AssemblyMatrixDoubleInstance,
+                             std::string >) )
         .def( "addKinematicsLoad", &AssemblyMatrixDoubleInstance::addKinematicsLoad )
         .def( "build", &AssemblyMatrixDoubleInstance::build )
         .def( "factorization", &AssemblyMatrixDoubleInstance::factorization )
@@ -53,12 +51,10 @@ void exportAssemblyMatrixToPython()
             bases< DataStructure > >
         ( "AssemblyMatrixComplex", no_init )
         .def( "__init__", make_constructor(
-            &init_factory< AssemblyMatrixComplexInstance,
-                           AssemblyMatrixComplexPtr >) )
+            &initFactoryPtr< AssemblyMatrixComplexInstance >) )
         .def( "__init__", make_constructor(
-            &init_factory< AssemblyMatrixComplexInstance,
-                           AssemblyMatrixComplexPtr,
-                           std::string >) )
+            &initFactoryPtr< AssemblyMatrixComplexInstance ,
+                             std::string >) )
         .def( "addKinematicsLoad", &AssemblyMatrixComplexInstance::addKinematicsLoad )
         .def( "build", &AssemblyMatrixComplexInstance::build )
         .def( "factorization", &AssemblyMatrixComplexInstance::factorization )

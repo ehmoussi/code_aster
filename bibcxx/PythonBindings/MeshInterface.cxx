@@ -26,7 +26,7 @@
 #include <boost/python.hpp>
 #include <PythonBindings/factory.h>
 #include "PythonBindings/MeshInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include "PythonBindings/ConstViewerUtilities.h"
 
 
@@ -45,12 +45,10 @@ void exportMeshToPython()
     class_< MeshInstance, MeshInstance::MeshPtr,
             bases< BaseMeshInstance > >( "Mesh", no_init )
         .def( "__init__", make_constructor(
-            &init_factory< MeshInstance,
-                           MeshInstance::MeshPtr >) )
+            &initFactoryPtr< MeshInstance >) )
         .def( "__init__", make_constructor(
-            &init_factory< MeshInstance,
-                           MeshInstance::MeshPtr,
-                           std::string >) )
+            &initFactoryPtr< MeshInstance,
+                             std::string >) )
         .def( "addGroupOfNodesFromNodes", &MeshInstance::addGroupOfNodesFromNodes )
         .def( "hasGroupOfElements", &MeshInstance::hasGroupOfElements )
         .def( "hasGroupOfNodes", &MeshInstance::hasGroupOfNodes )

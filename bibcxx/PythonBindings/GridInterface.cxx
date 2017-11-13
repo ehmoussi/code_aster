@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/GridInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportGridToPython()
@@ -31,7 +31,7 @@ void exportGridToPython()
 
     class_< GridInstance, GridInstance::GridPtr,
             bases< DataStructure > > ( "Grid", no_init )
-        .def( "create", &createSharedPtr< GridInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< GridInstance > ) )
     ;
 };

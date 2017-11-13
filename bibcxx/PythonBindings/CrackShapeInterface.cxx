@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/CrackShapeInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportCrackShapeToPython()
@@ -30,8 +30,8 @@ void exportCrackShapeToPython()
     using namespace boost::python;
 
     class_< CrackShapeInstance, CrackShapeInstance::CrackShapePtr > ( "CrackShape", no_init )
-        .def( "create", &createSharedPtr< CrackShapeInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< CrackShapeInstance > ) )
         .def( "setEllipseCrackShape", &CrackShapeInstance::setEllipseCrackShape )
         .def( "setSquareCrackShape", &CrackShapeInstance::setSquareCrackShape )
         .def( "setCylinderCrackShape", &CrackShapeInstance::setCylinderCrackShape )

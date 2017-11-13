@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/ResultsContainerInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportResultsContainerToPython()
@@ -31,8 +31,12 @@ void exportResultsContainerToPython()
 
     class_< ResultsContainerInstance, ResultsContainerInstance::ResultsContainerPtr,
             bases< DataStructure > > ( "ResultsContainer", no_init )
-        .def( "create", &createSharedPtr< ResultsContainerInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< ResultsContainerInstance,
+                             std::string > ) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< ResultsContainerInstance,
+                             std::string, std::string > ) )
         .def( "getRealFieldOnNodes", &ResultsContainerInstance::getRealFieldOnNodes )
         .def( "getRealFieldOnElements", &ResultsContainerInstance::getRealFieldOnElements )
         .def( "printMedFile", &ResultsContainerInstance::printMedFile )

@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/BehaviourInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportBehaviourToPython()
@@ -30,8 +30,11 @@ void exportBehaviourToPython()
     using namespace boost::python;
 
     class_< BehaviourInstance, BehaviourPtr > ( "Behaviour", no_init )
-        .def( "create", &createSharedPtr< BehaviourInstance,
-                                          int, int >)
-        .staticmethod( "create" )
+        // .def( "__init__", make_constructor(
+        //     &initFactoryPtr< BehaviourInstance >) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< BehaviourInstance, int >) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< BehaviourInstance, int, int >) )
     ;
 };

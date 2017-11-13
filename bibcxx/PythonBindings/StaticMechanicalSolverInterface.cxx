@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/StaticMechanicalSolverInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportStaticMechanicalSolverToPython()
@@ -31,8 +31,8 @@ void exportStaticMechanicalSolverToPython()
 
     class_< StaticMechanicalSolverInstance, StaticMechanicalSolverPtr >
         ( "StaticMechanicalSolver", no_init )
-        .def( "create", &createSharedPtr< StaticMechanicalSolverInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< StaticMechanicalSolverInstance > ) )
         .def( "addKinematicsLoad", &StaticMechanicalSolverInstance::addKinematicsLoad )
         .def( "addMechanicalLoad", &StaticMechanicalSolverInstance::addMechanicalLoad )
 #ifdef _USE_MPI

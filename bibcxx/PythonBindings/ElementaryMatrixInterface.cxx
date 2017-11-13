@@ -47,16 +47,13 @@ void exportElementaryMatrixToPython()
             bases< DataStructure > > ( "ElementaryMatrix", no_init )
         .def_pickle(ElementaryMatrix_pickler())
         .def( "__init__", make_constructor(
-            &init_factory< ElementaryMatrixInstance,
-                           ElementaryMatrixInstance::ElementaryMatrixPtr >) )
+            &initFactoryPtr< ElementaryMatrixInstance >) )
         .def( "__init__", make_constructor(
-            &init_factory< ElementaryMatrixInstance,
-                           ElementaryMatrixInstance::ElementaryMatrixPtr,
-                           std::string >) )
+            &initFactoryPtr< ElementaryMatrixInstance,
+                             std::string >) )
         .def( "__init__", make_constructor(
-            &init_factory< ElementaryMatrixInstance,
-                           ElementaryMatrixInstance::ElementaryMatrixPtr,
-                           std::string,
-                           std::string >) )
+            &initFactoryPtr< ElementaryMatrixInstance,
+                             std::string,
+                             std::string >) )
     ;
 };

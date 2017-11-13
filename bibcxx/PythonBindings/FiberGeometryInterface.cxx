@@ -35,11 +35,9 @@ void exportFiberGeometryToPython()
     class_< FiberGeometryInstance, FiberGeometryInstance::FiberGeometryPtr,
             bases< DataStructure > > ( "FiberGeometry", no_init )
         .def( "__init__", make_constructor(
-            &init_factory< FiberGeometryInstance,
-                           FiberGeometryInstance::FiberGeometryPtr >) )
+            &initFactoryPtr< FiberGeometryInstance >) )
         .def( "__init__", make_constructor(
-            &init_factory< FiberGeometryInstance,
-                           FiberGeometryInstance::FiberGeometryPtr,
-                           std::string >) )
+            &initFactoryPtr< FiberGeometryInstance,
+                             std::string >) )
     ;
 };

@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/MechanicalModeContainerInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportMechanicalModeContainerToPython()
@@ -31,7 +31,7 @@ void exportMechanicalModeContainerToPython()
 
     class_< MechanicalModeContainerInstance, MechanicalModeContainerPtr,
             bases< ResultsContainerInstance > > ( "MechanicalModeContainer", no_init )
-        .def( "create", &createSharedPtr< MechanicalModeContainerInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< MechanicalModeContainerInstance > ) )
     ;
 };

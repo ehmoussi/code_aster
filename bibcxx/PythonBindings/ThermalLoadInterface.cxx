@@ -31,7 +31,6 @@ void exportThermalLoadToPython()
     class_< ThermalLoadInstance, ThermalLoadInstance::ThermalLoadPtr,
             bases< DataStructure > > ( "ThermalLoad", no_init )
         .def( "create", &ThermalLoadInstance::create )
-        .staticmethod( "create" )
         .def( "addUnitaryThermalLoad",
               &ThermalLoadInstance::addUnitaryThermalLoad )
         .def( "build", &ThermalLoadInstance::build )

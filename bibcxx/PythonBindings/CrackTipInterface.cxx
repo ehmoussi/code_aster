@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/CrackTipInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportCrackTipToPython()
@@ -31,7 +31,7 @@ void exportCrackTipToPython()
 
     class_< CrackTipInstance, CrackTipInstance::CrackTipPtr,
             bases< DataStructure > > ( "CrackTip", no_init )
-        .def( "create", &createSharedPtr< CrackTipInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< CrackTipInstance > ) )
     ;
 };

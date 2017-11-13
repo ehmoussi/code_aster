@@ -42,12 +42,10 @@ void exportGeneralizedAssemblyVectorToPython()
             bases< GenericGeneralizedAssemblyVectorInstance > >
             ( "GeneralizedAssemblyVectorDouble", no_init )
         .def( "__init__", make_constructor(
-            &init_factory< GeneralizedAssemblyVectorDoubleInstance,
-                           GeneralizedAssemblyVectorDoublePtr >) )
+            &initFactoryPtr< GeneralizedAssemblyVectorDoubleInstance >) )
         .def( "__init__", make_constructor(
-            &init_factory< GeneralizedAssemblyVectorDoubleInstance,
-                           GeneralizedAssemblyVectorDoublePtr,
-                           std::string >) )
+            &initFactoryPtr< GeneralizedAssemblyVectorDoubleInstance,
+                             std::string >) )
     ;
 
     class_< GeneralizedAssemblyVectorComplexInstance,
@@ -56,11 +54,9 @@ void exportGeneralizedAssemblyVectorToPython()
             ( "GeneralizedAssemblyVectorComplex", no_init )
 #include <PythonBindings/factory.h>
         .def( "__init__", make_constructor(
-            &init_factory< GeneralizedAssemblyVectorComplexInstance,
-                           GeneralizedAssemblyVectorComplexPtr >) )
+            &initFactoryPtr< GeneralizedAssemblyVectorComplexInstance >) )
         .def( "__init__", make_constructor(
-            &init_factory< GeneralizedAssemblyVectorComplexInstance,
-                           GeneralizedAssemblyVectorComplexPtr,
-                           std::string >) )
+            &initFactoryPtr< GeneralizedAssemblyVectorComplexInstance,
+                             std::string >) )
     ;
 };

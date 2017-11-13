@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/SkeletonInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportSkeletonToPython()
@@ -31,7 +31,7 @@ void exportSkeletonToPython()
 
     class_< SkeletonInstance, SkeletonInstance::SkeletonPtr,
             bases< DataStructure > > ( "Skeleton", no_init )
-        .def( "create", &createSharedPtr< SkeletonInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< SkeletonInstance > ) )
     ;
 };

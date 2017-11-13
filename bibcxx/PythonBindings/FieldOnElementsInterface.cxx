@@ -36,11 +36,9 @@ void exportFieldOnElementsToPython()
     class_< FieldOnElementsDoubleInstance, FieldOnElementsDoublePtr,
             bases< DataStructure > >("FieldOnElementsDouble", no_init)
         .def( "__init__", make_constructor(
-            &init_factory< FieldOnElementsDoubleInstance,
-                           FieldOnElementsDoublePtr >) )
+            &initFactoryPtr< FieldOnElementsDoubleInstance >) )
         .def( "__init__", make_constructor(
-            &init_factory< FieldOnElementsDoubleInstance,
-                           FieldOnElementsDoublePtr,
-                           std::string >) )
+            &initFactoryPtr< FieldOnElementsDoubleInstance,
+                             std::string >) )
         ;
 };

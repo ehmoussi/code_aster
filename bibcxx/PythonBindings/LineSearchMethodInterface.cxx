@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/LineSearchMethodInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportLineSearchMethodToPython()
@@ -36,7 +36,7 @@ void exportLineSearchMethodToPython()
         ;
 
     class_< LineSearchMethodInstance, LineSearchMethodPtr > ( "LineSearchMethod", no_init )
-        .def( "create", &createSharedPtr< LineSearchMethodInstance, LineSearchEnum > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< LineSearchMethodInstance, LineSearchEnum > ) )
     ;
 };

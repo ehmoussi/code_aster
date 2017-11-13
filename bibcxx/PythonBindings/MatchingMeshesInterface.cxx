@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/MatchingMeshesInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportMatchingMeshesToPython()
@@ -31,7 +31,7 @@ void exportMatchingMeshesToPython()
 
     class_< MatchingMeshesInstance, MatchingMeshesInstance::MatchingMeshesPtr,
             bases< DataStructure > > ( "MatchingMeshes", no_init )
-        .def( "create", &createSharedPtr< MatchingMeshesInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< MatchingMeshesInstance > ) )
     ;
 };

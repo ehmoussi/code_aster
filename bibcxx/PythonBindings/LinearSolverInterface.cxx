@@ -125,100 +125,80 @@ void exportLinearSolverToPython()
     class_< MultFrontSolverInstance, MultFrontSolverPtr,
             bases< BaseLinearSolverInstance > > ( "MultFrontSolver", no_init )
         .def( "__init__", make_constructor(
-            &init_factory< MultFrontSolverInstance,
-                           MultFrontSolverPtr >) )
+            &initFactoryPtr< MultFrontSolverInstance >) )
         .def( "__init__", make_constructor(
-            &init_factory< MultFrontSolverInstance,
-                           MultFrontSolverPtr,
-                           std::string >) )
+            &initFactoryPtr< MultFrontSolverInstance,
+                             std::string >) )
         .def( "__init__", make_constructor(
-            &init_factory< MultFrontSolverInstance,
-                           MultFrontSolverPtr,
-                           Renumbering >) )
+            &initFactoryPtr< MultFrontSolverInstance,
+                             Renumbering >) )
         .def( "__init__", make_constructor(
-            &init_factory< MultFrontSolverInstance,
-                           MultFrontSolverPtr,
-                           std::string,
-                           Renumbering >) )
+            &initFactoryPtr< MultFrontSolverInstance,
+                             std::string,
+                             Renumbering >) )
     ;
 
     class_< LdltSolverInstance, LdltSolverPtr,
             bases< BaseLinearSolverInstance > > ( "LdltSolver", no_init )
         .def( "__init__", make_constructor(
-            &init_factory< LdltSolverInstance,
-                           LdltSolverPtr >) )
+            &initFactoryPtr< LdltSolverInstance >) )
         .def( "__init__", make_constructor(
-            &init_factory< LdltSolverInstance,
-                           LdltSolverPtr,
-                           std::string >) )
+            &initFactoryPtr< LdltSolverInstance,
+                             std::string >) )
         .def( "__init__", make_constructor(
-            &init_factory< LdltSolverInstance,
-                           LdltSolverPtr,
-                           Renumbering >) )
+            &initFactoryPtr< LdltSolverInstance,
+                             Renumbering >) )
         .def( "__init__", make_constructor(
-            &init_factory< LdltSolverInstance,
-                           LdltSolverPtr,
-                           std::string,
-                           Renumbering >) )
+            &initFactoryPtr< LdltSolverInstance,
+                             std::string,
+                             Renumbering >) )
     ;
 
     class_< MumpsSolverInstance, MumpsSolverPtr,
             bases< BaseLinearSolverInstance > > ( "MumpsSolver", no_init )
         .def( "__init__", make_constructor(
-            &init_factory< MumpsSolverInstance,
-                           MumpsSolverPtr >) )
+            &initFactoryPtr< MumpsSolverInstance >) )
         .def( "__init__", make_constructor(
-            &init_factory< MumpsSolverInstance,
-                           MumpsSolverPtr,
-                           std::string >) )
+            &initFactoryPtr< MumpsSolverInstance,
+                             std::string >) )
         .def( "__init__", make_constructor(
-            &init_factory< MumpsSolverInstance,
-                           MumpsSolverPtr,
-                           Renumbering >) )
+            &initFactoryPtr< MumpsSolverInstance,
+                             Renumbering >) )
         .def( "__init__", make_constructor(
-            &init_factory< MumpsSolverInstance,
-                           MumpsSolverPtr,
-                           std::string,
-                           Renumbering >) )
+            &initFactoryPtr< MumpsSolverInstance,
+                             std::string,
+                             Renumbering >) )
     ;
 
     class_< PetscSolverInstance, PetscSolverPtr,
             bases< BaseLinearSolverInstance > > ( "PetscSolver", no_init )
         .def( "__init__", make_constructor(
-            &init_factory< PetscSolverInstance,
-                           PetscSolverPtr >) )
+            &initFactoryPtr< PetscSolverInstance >) )
         .def( "__init__", make_constructor(
-            &init_factory< PetscSolverInstance,
-                           PetscSolverPtr,
-                           std::string >) )
+            &initFactoryPtr< PetscSolverInstance,
+                             std::string >) )
         .def( "__init__", make_constructor(
-            &init_factory< PetscSolverInstance,
-                           PetscSolverPtr,
-                           Renumbering >) )
+            &initFactoryPtr< PetscSolverInstance,
+                             Renumbering >) )
         .def( "__init__", make_constructor(
-            &init_factory< PetscSolverInstance,
-                           PetscSolverPtr,
-                           std::string,
-                           Renumbering >) )
+            &initFactoryPtr< PetscSolverInstance,
+                             std::string,
+                             Renumbering >) )
     ;
 
     class_< GcpcSolverInstance, GcpcSolverPtr,
             bases< BaseLinearSolverInstance > > ( "GcpcSolver", no_init )
         .def( "__init__", make_constructor(
-            &init_factory< GcpcSolverInstance,
-                           GcpcSolverPtr >) )
+            &initFactoryPtr< GcpcSolverInstance >) )
         .def( "__init__", make_constructor(
-            &init_factory< GcpcSolverInstance,
-                           GcpcSolverPtr,
-                           std::string >) )
+            &initFactoryPtr< GcpcSolverInstance,
+                             std::string >) )
         .def( "__init__", make_constructor(
-            &init_factory< GcpcSolverInstance,
-                           GcpcSolverPtr,
-                           Renumbering >) )
+            &initFactoryPtr< GcpcSolverInstance,
+                             Renumbering >) )
         .def( "__init__", make_constructor(
-            &init_factory< GcpcSolverInstance,
-                           GcpcSolverPtr,
-                           std::string,
-                           Renumbering >) )
+            &initFactoryPtr< GcpcSolverInstance,
+                             std::string,
+                             Renumbering >) )
     ;
 };

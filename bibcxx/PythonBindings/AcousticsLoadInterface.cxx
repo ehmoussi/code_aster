@@ -33,14 +33,12 @@ void exportAcousticsLoadToPython()
     class_< AcousticsLoadInstance, AcousticsLoadInstance::AcousticsLoadPtr,
             bases< DataStructure > > ( "AcousticsLoad", no_init )
         .def( "__init__", make_constructor(
-            &init_factory< AcousticsLoadInstance,
-                           AcousticsLoadInstance::AcousticsLoadPtr,
-                           ModelPtr >) )
+            &initFactoryPtr< AcousticsLoadInstance,
+                             ModelPtr >) )
         .def( "__init__", make_constructor(
-            &init_factory< AcousticsLoadInstance,
-                           AcousticsLoadInstance::AcousticsLoadPtr,
-                           std::string,
-                           ModelPtr >) )
+            &initFactoryPtr< AcousticsLoadInstance,
+                             std::string,
+                             ModelPtr >) )
         .def( "addImposedNormalSpeedOnAllMesh",
               &AcousticsLoadInstance::addImposedNormalSpeedOnAllMesh )
         .def( "addImposedNormalSpeedOnGroupsOfElements",

@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/StateInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 
@@ -38,10 +38,12 @@ void exportStateToPython()
             &StateInstance::setFromNonLinearEvolution;
 
     class_< StateInstance, StatePtr > ( "State", no_init )
-        .def( "create", &createSharedPtr< StateInstance, int, double > )
-        .def( "create", &createSharedPtr< StateInstance, int > )
-        .def( "create", &createSharedPtr< StateInstance, double > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< StateInstance, int, double > ) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< StateInstance, int > ) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< StateInstance, double > ) )
         .def( "setFromNonLinearEvolution", c1 )
         .def( "setFromNonLinearEvolution", c3 )
         .def( "setFromNonLinearEvolution", c4 )

@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/NonLinearMethodInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportNonLinearMethodToPython()
@@ -48,8 +48,8 @@ void exportNonLinearMethodToPython()
         ;
 
     class_< NonLinearMethodInstance, NonLinearMethodPtr > ( "NonLinearMethod", no_init )
-        .def( "create", &createSharedPtr< NonLinearMethodInstance, NonLinearMethodEnum > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< NonLinearMethodInstance, NonLinearMethodEnum > ) )
         .def( "setPrediction", &NonLinearMethodInstance::setPrediction )
         .def( "setMatrix", &NonLinearMethodInstance::setMatrix )
         .def( "forceStiffnessSymetry", &NonLinearMethodInstance::forceStiffnessSymetry )

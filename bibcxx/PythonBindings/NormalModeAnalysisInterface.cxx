@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/NormalModeAnalysisInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportNormalModeAnalysisToPython()
@@ -31,8 +31,8 @@ void exportNormalModeAnalysisToPython()
 
     class_< NormalModeAnalysisInstance, NormalModeAnalysisPtr >
         ( "NormalModeAnalysis", no_init )
-        .def( "create", &createSharedPtr< NormalModeAnalysisInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< NormalModeAnalysisInstance > ) )
         .def( "execute", &NormalModeAnalysisInstance::execute )
         .def( "setMassMatrix", &NormalModeAnalysisInstance::setMassMatrix )
         .def( "setNumberOfFrequencies", &NormalModeAnalysisInstance::setNumberOfFrequencies )

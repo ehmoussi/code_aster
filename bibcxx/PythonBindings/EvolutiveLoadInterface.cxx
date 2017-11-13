@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/EvolutiveLoadInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportEvolutiveLoadToPython()
@@ -31,7 +31,7 @@ void exportEvolutiveLoadToPython()
 
     class_< EvolutiveLoadInstance, EvolutiveLoadPtr,
             bases< ResultsContainerInstance > > ( "EvolutiveLoad", no_init )
-        .def( "create", &createSharedPtr< EvolutiveLoadInstance > )
-        .staticmethod( "create" )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< EvolutiveLoadInstance > ) )
     ;
 };
