@@ -36,11 +36,11 @@ void exportTurbulentSpectrumToPython()
             TurbulentSpectrumInstance::TurbulentSpectrumPtr,
             bases< DataStructure > > ( "TurbulentSpectrum", no_init )
         .def( "__init__", make_constructor(
-            init_factory< TurbulentSpectrumInstance,
-                          TurbulentSpectrumInstance::TurbulentSpectrumPtr >) )
+            &init_factory< TurbulentSpectrumInstance,
+                           TurbulentSpectrumInstance::TurbulentSpectrumPtr >) )
         .def( "__init__", make_constructor(
-            init_factory< TurbulentSpectrumInstance,
-                          TurbulentSpectrumInstance::TurbulentSpectrumPtr,
-                          std::string >) )
+            &init_factory< TurbulentSpectrumInstance,
+                           TurbulentSpectrumInstance::TurbulentSpectrumPtr,
+                           std::string >) )
     ;
 };

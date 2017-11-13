@@ -35,11 +35,11 @@ void exportGeneralizedDOFNumberingToPython()
     class_< GeneralizedDOFNumberingInstance, GeneralizedDOFNumberingInstance::GeneralizedDOFNumberingPtr,
             bases< DataStructure > > ( "GeneralizedDOFNumbering", no_init )
         .def( "__init__", make_constructor(
-            init_factory< GeneralizedDOFNumberingInstance,
-                          GeneralizedDOFNumberingInstance::GeneralizedDOFNumberingPtr >) )
+            &init_factory< GeneralizedDOFNumberingInstance,
+                           GeneralizedDOFNumberingInstance::GeneralizedDOFNumberingPtr >) )
         .def( "__init__", make_constructor(
-            init_factory< GeneralizedDOFNumberingInstance,
-                          GeneralizedDOFNumberingInstance::GeneralizedDOFNumberingPtr,
-                          std::string >) )
+            &init_factory< GeneralizedDOFNumberingInstance,
+                           GeneralizedDOFNumberingInstance::GeneralizedDOFNumberingPtr,
+                           std::string >) )
     ;
 };

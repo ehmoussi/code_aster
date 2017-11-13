@@ -60,12 +60,12 @@ void exportModelToPython()
     class_< ModelInstance, ModelInstance::ModelPtr,
             bases< DataStructure > > ( "Model", no_init )
         .def( "__init__", make_constructor(
-            init_factory< ModelInstance,
-                          ModelInstance::ModelPtr >) )
+            &init_factory< ModelInstance,
+                           ModelInstance::ModelPtr >) )
         .def( "__init__", make_constructor(
-            init_factory< ModelInstance,
-                          ModelInstance::ModelPtr,
-                          std::string >) )
+            &init_factory< ModelInstance,
+                           ModelInstance::ModelPtr,
+                           std::string >) )
         .def( "addModelingOnAllMesh", &ModelInstance::addModelingOnAllMesh )
         .def( "addModelingOnGroupOfElements", &ModelInstance::addModelingOnGroupOfElements )
         .def( "addModelingOnGroupOfNodes", &ModelInstance::addModelingOnGroupOfNodes )

@@ -52,8 +52,8 @@ void exportXfemContactZoneToPython()
             bases< GenericContactZoneInstance > >
         ( "XfemContactZone", no_init )
         .def( "__init__", make_constructor(
-            init_factory< XfemContactZoneInstance,
-                          XfemContactZonePtr >) )
+            &init_factory< XfemContactZoneInstance,
+                           XfemContactZonePtr >) )
         .def( "addFriction", &XfemContactZoneInstance::addFriction )
         .def( "disableSlidingContact",
               &XfemContactZoneInstance::disableSlidingContact )

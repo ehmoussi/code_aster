@@ -47,12 +47,12 @@ void exportFunctionToPython()
     class_< FunctionInstance, FunctionInstance::FunctionPtr,
             bases< BaseFunctionInstance > > ( "Function", no_init )
         .def( "__init__", make_constructor(
-            init_factory< FunctionInstance,
-                          FunctionInstance::FunctionPtr >) )
+            &init_factory< FunctionInstance,
+                           FunctionInstance::FunctionPtr >) )
         .def( "__init__", make_constructor(
-            init_factory< FunctionInstance,
-                          FunctionInstance::FunctionPtr,
-                          std::string >) )
+            &init_factory< FunctionInstance,
+                           FunctionInstance::FunctionPtr,
+                           std::string >) )
         .def( "setValues", &FunctionInstance::setValues )
         .def( "size", &FunctionInstance::size )
     ;
@@ -66,12 +66,12 @@ void exportFunctionToPython()
     class_< FunctionComplexInstance, FunctionComplexInstance::FunctionComplexPtr,
             bases< BaseFunctionInstance > > ( "FunctionComplex", no_init )
         .def( "__init__", make_constructor(
-            init_factory< FunctionComplexInstance,
-                          FunctionComplexInstance::FunctionComplexPtr >) )
+            &init_factory< FunctionComplexInstance,
+                           FunctionComplexInstance::FunctionComplexPtr >) )
         .def( "__init__", make_constructor(
-            init_factory< FunctionComplexInstance,
-                          FunctionComplexInstance::FunctionComplexPtr,
-                          std::string >) )
+            &init_factory< FunctionComplexInstance,
+                           FunctionComplexInstance::FunctionComplexPtr,
+                           std::string >) )
         .def( "setValues", c1 )
         .def( "setValues", c2 )
         .def( "size", &FunctionComplexInstance::size )
