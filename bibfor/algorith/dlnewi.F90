@@ -151,7 +151,7 @@ implicit none
     integer :: jnoacc, jnodep, jnovit, jpsdel
     integer :: jrefs
     integer :: n1, na, nbexci, nbexcl, nbgrel, nbgrpa, nbmat, nbordr
-    integer :: nbptpa, nbv, nd, nel, nmodam, npatot, nv
+    integer :: nbptpa, nbv, nd, nel, nmodam, npatot, nv, ierc
     character(len=3) :: repk
     character(len=4) :: typ1(nbtyar), typmat
     character(len=8) :: k8b, matres, modsta
@@ -245,8 +245,14 @@ implicit none
 !
 ! 1.4. ==> ???
 !
-    k8b = ' '
-    call dismoi('CHAM_MATER', rigid, 'MATR_ASSE', repk=k8b)
+    
+    ! call dismoi('CHAM_MATER', rigid, 'MATR_ASSE', repk=k8b)
+    call dismoi('CHAM_MATER', rigid, 'MATR_ASSE', repk=k8b, arret = 'C', ier = ierc)
+    ! call dismoi('CHAM_MATER', rigid, 'MATR_ASSE', repk=materi)
+    if (ierc .ne. 0) then
+        k8b = ' '
+    endif
+
     if (k8b .eq. ' ') limped = .false.
 !
     if (limped) then
