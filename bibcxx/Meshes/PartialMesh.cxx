@@ -196,7 +196,6 @@ PartialMeshInstance::PartialMeshInstance( const std::string& name,
         (*_elementsType)[ position-1 ] = 1;
     }
     CALLO_CARGEO( getName() );
-    _isEmpty = false;
 };
 
 #endif /* _USE_MPI */

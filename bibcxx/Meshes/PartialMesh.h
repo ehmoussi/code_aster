@@ -76,14 +76,6 @@ public:
     PartialMeshInstance( const std::string& name,
                          const ParallelMeshPtr&, const VectorString& );
 
-    /**
-     * @brief Constructeur
-     */
-    static PartialMeshPtr create( const ParallelMeshPtr& a, const VectorString& b )
-    {
-        return PartialMeshPtr( new PartialMeshInstance( a, b ) );
-    };
-
     const JeveuxVectorLong& getGlobalNumbering() const
     {
         return _globalNumbering;
