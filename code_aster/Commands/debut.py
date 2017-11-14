@@ -36,6 +36,7 @@ passed during the initialization to the
 
 import aster
 import aster_core
+import libaster
 from Comportement import catalc
 
 from ..RunManager import LogicalUnitFile, Pickler, loadObjects
@@ -132,6 +133,8 @@ class Restarter(Starter):
         else:
             logger.info("restarting from a previous execution...")
             aster.poursu(syntax)
+            if ExecutionStarter.params.get_option("debug"):
+                libaster.debugJeveuxContent("Reloaded jeveux objects:")
             # 1:_call_oper, 2:exec_, 3:Restarter.run, 4:ExecuteCommand.run, 5:user
             # 1:_call_oper, 2:exec_, 3:run_with_argv, 4:init, 5:user
             loadObjects(level=5)

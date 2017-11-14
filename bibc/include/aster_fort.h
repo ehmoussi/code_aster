@@ -103,6 +103,10 @@ extern void DEF0(IBMAIN,ibmain);
 #define CALL_POURSU() CALL0(POURSU,poursu)
 extern void DEF0(POURSU,poursu);
 
+#define CALLO_JEIMPR(a,b,c) CALLPOO(JEIMPR,jeimpr,a,b,c)
+extern void DEFPSS(JEIMPR, jeimpr, _IN ASTERINTEGER*, const char*, STRING_SIZE,
+                                   const char *,STRING_SIZE);
+
 #define CALL_ASABRT(a) CALLP(ASABRT,asabrt,a)
 extern void DEFP(ASABRT, asabrt, _IN ASTERINTEGER *);
 
