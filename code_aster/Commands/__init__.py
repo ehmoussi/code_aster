@@ -90,3 +90,4 @@ from .ExecuteCommand import CO
 # other commands are automatically added just using their catalog
 from .operator import define_operators
 define_operators(globals())
+del define_operators

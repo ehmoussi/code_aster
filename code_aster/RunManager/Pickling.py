@@ -25,13 +25,16 @@
 
 """
 
-import pickle
-import types
-import traceback
+import inspect
 import os.path as osp
+import pickle
+import traceback
+import types
+
+import libaster
 
 from ..Objects import DataStructure, ResultNaming
-from ..Supervis.logger import logger
+from ..Supervis import ExecutionParameter, logger
 
 
 class Pickler(object):
@@ -64,10 +67,16 @@ class Pickler(object):
             # FIXME return False
         return True
 
-    def save(self, delete=True):
-        """Save objects of the context."""
+    def save(self):
+        """Save objects of the context.
+
+        Returns:
+            list[str]: List of the names of the DataStructure objects actually
+            saved.
+        """
         assert self._ctxt is not None, "context is required"
         ctxt = _filteringContext(self._ctxt)
+        saved = []
         with open(self._filename, "wb") as pick:
             pickler = pickle.Pickler(pick)
             pickler.dump(base_signature(self._base))
@@ -82,12 +91,12 @@ class Pickler(object):
                 except (pickle.PicklingError, TypeError):
                     logger.warn("object can't be pickled: {0}".format(name))
                     continue
-                # delete (set to None) Code_Aster objects, not all!
-                if delete and isinstance(obj, DataStructure):
-                    self._ctxt[name] = None
+                if isinstance(obj, DataStructure):
+                    saved.append(name)
             # add management objects on the stack
             pickler.dump(objList)
             pickler.dump(ResultNaming.getCurrentName())
+        return saved
 
     def load(self):
         """Load objects into the context"""
@@ -113,6 +122,51 @@ class Pickler(object):
                 logger.info("{0:<24s} {1}".format(name, type(obj)))
             # restore the objects counter
             ResultNaming.initCounter(lastId)
+
+    def delete(self, object_names):
+        """Delete given objects from the initial context."""
+        for name in object_names:
+            self._ctxt[name] = None
+
+
+def saveObjects(level=1, delete=True):
+    """Save objects of the caller context in a file.
+
+    Arguments:
+        delete (bool): If *True* the saved objects are deleted from the context.
+    """
+    caller = inspect.currentframe()
+    for i in range(level):
+        caller = caller.f_back
+    try:
+        context = caller.f_globals
+        logger.debug("frame saved: {0}".format(context['__name__']))
+    finally:
+        del caller
+
+    pickler = Pickler(context)
+    saved = pickler.save()
+    # close Jeveux files (should not be done before pickling)
+    if ExecutionParameter().get_option("debug"):
+        libaster.debugJeveuxContent("Saved jeveux objects:")
+    libaster.finalize()
+    if delete:
+        pickler.delete(saved)
+
+
+def loadObjects(level=1):
+    """Load objects from a file in the caller context"""
+    caller = inspect.currentframe()
+    for i in range(level):
+        caller = caller.f_back
+    try:
+        context = caller.f_globals
+        logger.debug("load objects in frame: {0}".format(context['__name__']))
+    finally:
+        del caller
+    if ExecutionParameter().get_option("debug"):
+        libaster.debugJeveuxContent("Reloaded jeveux objects:")
+    Pickler(context).load()
 
 
 def _filteringContext(context):
