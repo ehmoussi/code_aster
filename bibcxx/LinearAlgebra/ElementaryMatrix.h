@@ -86,7 +86,7 @@ public:
      */
     ElementaryMatrixInstance( std::string type, const JeveuxMemory memType = Permanent ):
         ElementaryMatrixInstance( ResultNaming::getNewResultName(),
-                                  "MATR_ELEM" + type, memType )
+                                  "MATR_ELEM_" + type, memType )
     {};
 
     /**
