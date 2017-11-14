@@ -20,6 +20,7 @@
 # person_in_charge: mathieu.courtois@edf.fr
 
 from ..Supervis import ExecutionParameter, logger
+from ..RunManager import saveObjects
 
 
 def FIN(**keywords):
@@ -29,4 +30,5 @@ def FIN(**keywords):
     Arguments:
         keywords (dict): Ignored
     """
+    saveObjects(level=2)
     logger.info(repr(ExecutionParameter().get_option("timer")))
