@@ -25,7 +25,7 @@
 
 """
 
-import cPickle
+import pickle
 import types
 import traceback
 import os.path as osp
@@ -61,53 +61,58 @@ class Pickler(object):
             logger.warn("current base signature: {0}".format(signBase))
             logger.warn("pickled base signature: {0}".format(signPick))
             logger.warn("base and pickled objects are not consistent.")
-            # return False
+            # FIXME return False
         return True
 
     def save(self, delete=True):
         """Save objects of the context."""
         assert self._ctxt is not None, "context is required"
         ctxt = _filteringContext(self._ctxt)
-        pick = open(self._filename, "wb")
-        cPickle.dump(base_signature(self._base), pick, -1)
-        # ordered list of objects names
-        objList = []
-        for name, obj in ctxt.items():
-            try:
-                cPickle.dump(obj, pick, -1)
-                objList.append(name)
-            except (cPickle.PicklingError, TypeError):
-                logger.warn("object can't be pickled: {0}".format(name))
-                continue
-            # delete (set to None) Code_Aster objects, not all!
-            if delete and isinstance(obj, DataStructure):
-                self._ctxt[name] = None
-        # add management objects on the stack
-        cPickle.dump(objList, pick, -1)
-        cPickle.dump(ResultNaming.getCurrentName(), pick, -1)
-        pick.close()
+        with open(self._filename, "wb") as pick:
+            pickler = pickle.Pickler(pick)
+            pickler.dump(base_signature(self._base))
+            # ordered list of objects names
+            logger.info("Saving objects...")
+            objList = []
+            for name, obj in ctxt.items():
+                try:
+                    logger.info("{0:<24s} {1}".format(name, type(obj)))
+                    pickler.dump(obj)
+                    objList.append(name)
+                except (pickle.PicklingError, TypeError):
+                    logger.warn("object can't be pickled: {0}".format(name))
+                    continue
+                # delete (set to None) Code_Aster objects, not all!
+                if delete and isinstance(obj, DataStructure):
+                    self._ctxt[name] = None
+            # add management objects on the stack
+            pickler.dump(objList)
+            pickler.dump(ResultNaming.getCurrentName())
 
     def load(self):
         """Load objects into the context"""
         assert self._ctxt is not None, "context is required"
-        pick = open(self._filename, "rb")
-        sign = cPickle.load(pick)
-        # load all the objects
-        objects = []
-        try:
-            while True:
-                obj = cPickle.load(pick)
-                objects.append(obj)
-        except EOFError:
-            # return management objects from the end of the end
-            lastId = int(objects.pop(), 16)
-            objList = objects.pop()
-        pick.close()
-        assert len(objects) == len(objList), (objects, objList)
-        for name, obj in zip(objList, objects):
-            self._ctxt[name] = obj
-        # restore the objects counter
-        ResultNaming.initCounter(lastId)
+        with open(self._filename, "rb") as pick:
+            unpickler = pickle.Unpickler(pick)
+            sign = unpickler.load()
+            # load all the objects
+            objects = []
+            try:
+                while True:
+                    obj = unpickler.load()
+                    objects.append(obj)
+            except EOFError:
+                # return management objects from the end of the end
+                lastId = int(objects.pop(), 16)
+                objList = objects.pop()
+            pick.close()
+            assert len(objects) == len(objList), (objects, objList)
+            logger.info("Restored objects:")
+            for name, obj in zip(objList, objects):
+                self._ctxt[name] = obj
+                logger.info("{0:<24s} {1}".format(name, type(obj)))
+            # restore the objects counter
+            ResultNaming.initCounter(lastId)
 
 
 def _filteringContext(context):
@@ -131,7 +136,7 @@ def read_signature(pickled):
     sign = "unknown"
     try:
         with open(pickled, "rb") as pick:
-            sign = cPickle.load(pick)
+            sign = pickle.Unpickler(pick).load()
     except (IOError, OSError):
         traceback.print_exc()
     logger.debug("pickled signature: {0}".format(sign))
