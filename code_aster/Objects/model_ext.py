@@ -35,11 +35,8 @@ class ExtendedModel(injector(Model), Model):
     def __getstate__(self):
         odict = self.__dict__.copy()
         ptrs = {"_supportBaseMesh": self.getSupportMesh()}
-        print "DEBUG: saved state:", odict, ptrs, ptrs["_supportBaseMesh"].getName()
         return odict, ptrs
 
     def __setstate__(self, state):
         odict, ptrs = state
-        print "DEBUG: loaded state:", odict, ptrs, ptrs["_supportBaseMesh"].getName()
-        # self.setSupportMesh(ptrs["_supportBaseMesh"])
-        self._mesh = ptrs["_supportBaseMesh"]
+        self.setSupportMesh(ptrs["_supportBaseMesh"])

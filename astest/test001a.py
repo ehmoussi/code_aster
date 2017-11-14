@@ -66,6 +66,6 @@ mesh2.debugPrint(66)
 del coord
 import libaster
 libaster.debugJeveuxContent("Saved jeveux objects:")
-code_aster.saveObjects()
+code_aster.saveObjects(delete=False)
 
 test.printSummary()
