@@ -34,11 +34,13 @@ from .datastructure_ext import DataStructure
 # extend DataStructures using metaclasses
 from .assemblymatrix_ext import AssemblyMatrixDouble
 from .elementarycharacteristics_ext import ElementaryCharacteristics
+from .elementarymatrix_ext import ElementaryMatrix
 from .fieldonelements_ext import FieldOnElementsDouble
 from .fieldonnodes_ext import FieldOnNodesDouble
 from .formula_ext import Formula
 from .function_ext import Function
 from .meshcoordinatesfield_ext import MeshCoordinatesField
+from .model_ext import Model
 from .table_ext import Table
 from .timestepmanager_ext import TimeStepManager
 
