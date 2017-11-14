@@ -13,7 +13,7 @@ into the ``libaster.so``. The main file is
 :file:`bibcxx/PythonBindings/LibAster.cxx` that exports all symbols.
 
 By convention, one file is created per derivated *DataStructure* object named
-:file:`<DataStructure object>Interface.{h,cxx}`.
+:file:`<DataStructure object>Interface.{{h,cxx}}`.
 
 
 Exported methods
@@ -72,3 +72,15 @@ Other methods
 -------------
 
 See :ref:`devguide-recommendations` for methods with default arguments.
+
+
+Pickling support
+================
+
+- Delegated to Python objects.
+
+- Constructors arguments defined by :meth:`__getinitargs__` implemented in
+  :mod:`code_aster.Objects.datastructure_ext` for most of the classes.
+
+- If needed, subclasses should defined their own :meth:`__getstate__`
+  and :meth:`__setstate__` methods.
