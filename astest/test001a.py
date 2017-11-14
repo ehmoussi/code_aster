@@ -64,8 +64,6 @@ test.assertTrue(mesh2.hasGroupOfElements('Tout'))
 mesh2.debugPrint(66)
 
 del coord
-import libaster
-libaster.debugJeveuxContent("Saved jeveux objects:")
 code_aster.saveObjects()
 
 test.printSummary()
