@@ -72,8 +72,6 @@ protected:
     JeveuxBidirectionalMapChar24   _nameOfGrpElements;
     /** @brief Objet Jeveux '.GROUPEMA' */
     JeveuxCollectionLongNamePtr    _groupsOfElements;
-    /** @brief Booleen indiquant si le maillage est vide */
-    bool                           _isEmpty;
     /** @brief Object to allow loop over connectivity */
     const ConnectivityMeshExplorer _explorer;
 
@@ -104,7 +102,6 @@ protected:
         _nameOfGrpElements( JeveuxBidirectionalMapChar24( getName() + ".PTRNOMMAI " ) ),
         _groupsOfElements( JeveuxCollectionLongNamePtr( getName() + ".GROUPEMA  ",
                                                         _nameOfGrpElements ) ),
-        _isEmpty( true ),
         _explorer( ConnectivityMeshExplorer( _connectivity, _elementsType ) )
     {};
 
@@ -170,7 +167,7 @@ public:
      */
     int getNumberOfNodes() const
     {
-        if( _isEmpty )
+        if( isEmpty() )
             return 0;
         if( ! _dimensionInformations->updateValuePointer() )
             return 0;
@@ -203,7 +200,7 @@ public:
      */
     bool isEmpty() const
     {
-        return _isEmpty;
+        return ! _dimensionInformations->exists();
     };
 
     /**

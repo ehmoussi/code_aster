@@ -136,7 +136,6 @@ bool BaseMeshInstance::readMeshFile( const std::string& fileName, const std::str
             throw;
         }
     }
-    _isEmpty = false;
 
     return true;
 };

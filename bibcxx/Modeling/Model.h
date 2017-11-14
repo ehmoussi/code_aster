@@ -107,8 +107,6 @@ class ModelInstance: public DataStructure
         ModelSplitingMethod _splitMethod;
         /** @brief Graph partitioning */
         GraphPartitioner     _graphPartitioner;
-        /** @brief Booleen indiquant si la sd a deja ete remplie */
-        bool                 _isEmpty;
 
         /**
          * @brief Ajout d'une nouvelle modelisation sur tout le maillage
@@ -145,8 +143,7 @@ class ModelInstance: public DataStructure
             _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ),
             _supportBaseMesh( MeshPtr() ),
             _splitMethod( SubDomain ),
-            _graphPartitioner( MetisPartitioner ),
-            _isEmpty( true )
+            _graphPartitioner( MetisPartitioner )
         {};
 
         /**
