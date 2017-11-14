@@ -23,9 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/PartialMeshInterface.h"
-#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
+#include "PythonBindings/factory.h"
+#include "PythonBindings/PartialMeshInterface.h"
+
 
 void exportPartialMeshToPython()
 {
@@ -34,16 +35,15 @@ void exportPartialMeshToPython()
 #ifdef _USE_MPI
     class_< PartialMeshInstance, PartialMeshInstance::PartialMeshPtr,
             bases< BaseMeshInstance > >( "PartialMesh", no_init )
-        .def( "create", &initFactoryPtr< PartialMeshInstance,
-                                          ParallelMeshPtr&, const VectorString& > )
-#include <PythonBindings/factory.h>
         .def( "__init__", make_constructor(
             &initFactoryPtr< PartialMeshInstance,
-                             ParallelMeshPtr >) )
+                             ParallelMeshPtr,
+                             VectorString >) )
         .def( "__init__", make_constructor(
             &initFactoryPtr< PartialMeshInstance,
                              std::string,
-                             ParallelMeshPtr >) )
+                             ParallelMeshPtr,
+                             VectorString >) )
     ;
 #endif /* _USE_MPI */
 };
