@@ -90,7 +90,6 @@ bool ModelInstance::buildWithSyntax( SyntaxMapContainer& dict )
     {
         throw;
     }
-    _isEmpty = false;
     // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
     _typeOfElements->updateValuePointer();
 
