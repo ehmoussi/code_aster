@@ -35,6 +35,16 @@ class ExtendedDataStructure(injector(DataStructure), DataStructure):
     ptr_class_sdj = None
     ptr_sdj = None
 
+    def __getinitargs__(self):
+        """Returns the argument required to reinitialize a derivated
+        DataStructure object during unpickling.
+
+        .. note:: This implementation does not satisfy any constructor of the
+            base DataStructure. But most of the derivated class should have
+            a constructor accepting the Jeveux name.
+        """
+        return (self.getName(), )
+
     @property
     def sdj(self):
         """Return the DataStructure catalog."""

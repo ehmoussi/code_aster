@@ -28,24 +28,12 @@
 #include "PythonBindings/ElementaryMatrixInterface.h"
 
 
-/** @brief Pickler class that defines a `__getinitargs__` method to allow
- *  to recreate an ElementaryMatrix after unpickling.
- */
-struct ElementaryMatrix_pickler: boost::python::pickle_suite
-{
-    static boost::python::tuple getinitargs(ElementaryMatrixInstance const& ds)
-    {
-        return boost::python::make_tuple(ds.getName(), ds.getType());
-    }
-};
-
 void exportElementaryMatrixToPython()
 {
     using namespace boost::python;
 
     class_< ElementaryMatrixInstance, ElementaryMatrixInstance::ElementaryMatrixPtr,
             bases< DataStructure > > ( "ElementaryMatrix", no_init )
-        .def_pickle(ElementaryMatrix_pickler())
         .def( "__init__", make_constructor(
             &initFactoryPtr< ElementaryMatrixInstance >) )
         .def( "__init__", make_constructor(
