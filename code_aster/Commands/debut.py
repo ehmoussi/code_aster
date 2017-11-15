@@ -141,7 +141,8 @@ POURSUITE = Restarter.run
 
 
 def init(*argv, **kwargs):
-    """Initialize code_aster as `DEBUT` command does + command line options.
+    """Initialize code_aster as `DEBUT`/`POURSUITE` command does + command
+    line options.
 
     Arguments:
         argv (list): List of command line arguments.

@@ -57,13 +57,3 @@ Detailed description
    :show-inheritance:
    :members:
    :special-members: __init__
-
-.. automodule:: code_aster.RunManager.loading
-   :show-inheritance:
-   :members:
-   :special-members: __init__
-
-.. automodule:: code_aster.RunManager.saving
-   :show-inheritance:
-   :members:
-   :special-members: __init__
