@@ -21,8 +21,10 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/ThermalLoadInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/ThermalLoadInterface.h"
+
 
 void exportThermalLoadToPython()
 {
@@ -30,7 +32,11 @@ void exportThermalLoadToPython()
 
     class_< ThermalLoadInstance, ThermalLoadInstance::ThermalLoadPtr,
             bases< DataStructure > > ( "ThermalLoad", no_init )
-        .def( "create", &ThermalLoadInstance::create )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< ThermalLoadInstance >) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< ThermalLoadInstance,
+                             std::string >) )
         .def( "addUnitaryThermalLoad",
               &ThermalLoadInstance::addUnitaryThermalLoad )
         .def( "build", &ThermalLoadInstance::build )

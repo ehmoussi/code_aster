@@ -22,8 +22,10 @@
  */
 
 
-#include "PythonBindings/GeneralizedResultsContainerInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/GeneralizedResultsContainerInterface.h"
+
 
 void exportGeneralizedResultsContainerToPython()
 {
@@ -50,13 +52,21 @@ void exportGeneralizedResultsContainerToPython()
             TransientGeneralizedResultsContainerPtr,
             bases< GeneralizedResultsContainerDoubleInstance > >
             ( "TransientGeneralizedResultsContainer", no_init )
-            .def( "create", &TransientGeneralizedResultsContainerInstance::create )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< TransientGeneralizedResultsContainerInstance >) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< TransientGeneralizedResultsContainerInstance,
+                             std::string >) )
     ;
 
     class_< HarmoGeneralizedResultsContainerInstance,
             HarmoGeneralizedResultsContainerPtr,
             bases< GeneralizedResultsContainerComplexInstance > >
             ( "HarmoGeneralizedResultsContainer", no_init )
-            .def( "create", &HarmoGeneralizedResultsContainerInstance::create )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< HarmoGeneralizedResultsContainerInstance >) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< HarmoGeneralizedResultsContainerInstance,
+                             std::string >) )
     ;
 };

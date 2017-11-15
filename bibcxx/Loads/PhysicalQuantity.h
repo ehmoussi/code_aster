@@ -27,7 +27,7 @@
 #include <list>
 #include <map>
 #include <set>
-#include <stdexcept> 
+#include <stdexcept>
 #include <string>
 #include <iterator>
 
@@ -51,14 +51,14 @@ const int nbPhysicalQuantities = 11;
 extern const char* PhysicalQuantityNames[nbPhysicalQuantities];
 
 /**
- * @enum PhysicalQuantityComponent 
- * @brief Inventory of components of the physical quantities listed in PhysicalQuantityEnum 
+ * @enum PhysicalQuantityComponent
+ * @brief Inventory of components of the physical quantities listed in PhysicalQuantityEnum
  */
 enum PhysicalQuantityComponent { Dx, Dy, Dz, Drx, Dry, Drz, Temp, MiddleTemp, Pres,
     Fx, Fy, Fz, Mx, My, Mz, N, Vy, Vz, Mt, Mfy, Mfz, F1, F2, F3, Mf1, Mf2,
     Impe, Vnor, Flun, FlunHydr1, FlunHydr2 };
 
-extern const int nbComponent; 
+extern const int nbComponent;
 /**
 * @def ComponentNames
 * @brief Aster names of the components of the physical quantities
@@ -82,7 +82,7 @@ const std::string& value(const std::pair<PhysicalQuantityComponent,
 /*
 /*************************************************************************/
 
-template < PhysicalQuantityEnum PQ > struct PhysicalQuantityTraits; 
+template < PhysicalQuantityEnum PQ > struct PhysicalQuantityTraits;
 
 /****************************************/
 /*            Force                     */
@@ -90,19 +90,19 @@ template < PhysicalQuantityEnum PQ > struct PhysicalQuantityTraits;
 
 /**
  * @def nbForceComponents
- * @brief Number of components specifying a force 
+ * @brief Number of components specifying a force
  */
 const int nbForceComponents = 3;
 /**
  * @def ForceComponents
- * @brief Declare Force Components 
+ * @brief Declare Force Components
  */
 extern const PhysicalQuantityComponent ForceComponents[nbForceComponents];
 
 /** @def PhysicalQuantityTraits <Force>
-*  @brief Declare specialization for Force 
+*  @brief Declare specialization for Force
 *  A Force is defined by its 3 components in the global basis.
-*  It is applied to a 3D (or 2D) domain. 
+*  It is applied to a 3D (or 2D) domain.
 */
 
 template <> struct PhysicalQuantityTraits< Force >
@@ -118,12 +118,12 @@ template <> struct PhysicalQuantityTraits< Force >
 
 /**
  * @def nbStructuralForceComponents
- * @brief Number of components specifying a StructuralForce 
+ * @brief Number of components specifying a StructuralForce
  */
 const int nbStructuralForceComponents = 6;
 /**
  * @def StructuralForceComponents
- * @brief Declare StructuralForce Components 
+ * @brief Declare StructuralForce Components
  */
 extern const PhysicalQuantityComponent StructuralForceComponents[nbStructuralForceComponents];
 
@@ -146,12 +146,12 @@ template <> struct PhysicalQuantityTraits< StructuralForce >
 
 /**
  * @def nbLocalBeamForceComponents
- * @brief Number of components specifying a LocalBeamForce 
+ * @brief Number of components specifying a LocalBeamForce
  */
 const int nbLocalBeamForceComponents = 6;
 /**
  * @def LocalBeamForceComponents
- * @brief Declare Force Components 
+ * @brief Declare Force Components
  */
 extern const PhysicalQuantityComponent LocalBeamForceComponents[nbLocalBeamForceComponents];
 
@@ -173,12 +173,12 @@ template <> struct PhysicalQuantityTraits< LocalBeamForce >
 
 /**
  * @def nbLocalShellForceComponents
- * @brief Number of components specifying a LocalShellForce 
+ * @brief Number of components specifying a LocalShellForce
  */
 const int nbLocalShellForceComponents = 5;
 /**
  * @def LocalShellForceComponents
- * @brief Declare Force Components 
+ * @brief Declare Force Components
  */
 extern const PhysicalQuantityComponent LocalShellForceComponents[nbLocalShellForceComponents];
 
@@ -202,13 +202,13 @@ template <> struct PhysicalQuantityTraits< LocalShellForce >
 
 /**
  * @def nbDisplComponents
- * @brief Number of components specifying a displacement 
+ * @brief Number of components specifying a displacement
  */
 const int nbDisplacementComponents = 6;
 
 /**
  * @def DisplComponents
- * @brief Declare Displacement Components 
+ * @brief Declare Displacement Components
  */
 extern const PhysicalQuantityComponent DisplacementComponents[nbDisplacementComponents];
 
@@ -231,7 +231,7 @@ const int nbPressureComponents = 1;
 
 /**
  * @def PressureComponents
- * @brief Declare Pressure Components 
+ * @brief Declare Pressure Components
  */
 extern const PhysicalQuantityComponent PressureComponents[nbPressureComponents];
 
@@ -254,7 +254,7 @@ const int nbTemperatureComponents = 2;
 
 /**
  * @def TemperatureComponents
- * @brief Declare Temperature Components 
+ * @brief Declare Temperature Components
  */
 extern const PhysicalQuantityComponent TemperatureComponents[nbTemperatureComponents];
 
@@ -277,7 +277,7 @@ const int nbImpedanceComponents = 1;
 
 /**
  * @def ImpedanceComponents
- * @brief Declare Impedance Components 
+ * @brief Declare Impedance Components
  */
 extern const PhysicalQuantityComponent ImpedanceComponents[nbImpedanceComponents];
 
@@ -300,7 +300,7 @@ const int nbNormalSpeedComponents = 1;
 
 /**
  * @def NormalSpeedComponents
- * @brief Declare NormalSpeed Components 
+ * @brief Declare NormalSpeed Components
  */
 extern const PhysicalQuantityComponent NormalSpeedComponents[nbNormalSpeedComponents];
 
@@ -323,7 +323,7 @@ const int nbHeatFluxComponents = 1;
 
 /**
  * @def HeatFluxComponents
- * @brief Declare HeatFlux Components 
+ * @brief Declare HeatFlux Components
  */
 extern const PhysicalQuantityComponent HeatFluxComponents[nbHeatFluxComponents];
 
@@ -346,7 +346,7 @@ const int nbHydraulicFluxComponents = 2;
 
 /**
  * @def HydraulicFluxComponents
- * @brief Declare HydraulicFlux Components 
+ * @brief Declare HydraulicFlux Components
  */
 extern const PhysicalQuantityComponent HydraulicFluxComponents[nbHydraulicFluxComponents];
 
@@ -360,7 +360,7 @@ template <> struct PhysicalQuantityTraits< HydraulicFlux >
 
 /******************************************/
 /* @class PhysicalQuantityInstance
-/* @brief Defines a physical quantity 
+/* @brief Defines a physical quantity
 /******************************************/
 
 template< class ValueType, PhysicalQuantityEnum PhysicalQuantity >
@@ -377,14 +377,6 @@ class PhysicalQuantityInstance
     typedef boost::shared_ptr< PhysicalQuantityInstance<ValueType,
                                                       PhysicalQuantity> > PhysicalQuantityPtr;
 
-    /**
-     * @brief Constructeur
-     */
-    static PhysicalQuantityPtr create()
-    {
-        return PhysicalQuantityPtr( new PhysicalQuantityInstance );
-    };
-
     /** @typedef Define the Traits type */
     typedef PhysicalQuantityTraits<PhysicalQuantity> Traits;
     /** @typedef Value type of the physical quantity (double, function ...) */
@@ -398,7 +390,7 @@ class PhysicalQuantityInstance
     MapOfCompAndVal          _compAndVal;
     std::vector< ValueType > _values;
 
-    /** 
+    /**
     * @brief Constructor
     */
     PhysicalQuantityInstance(){};
@@ -421,17 +413,17 @@ class PhysicalQuantityInstance
     void setValue( PhysicalQuantityComponent comp, QuantityType val )
         throw( std::runtime_error )
     {
-        if ( ! hasComponent( comp ) ) 
+        if ( ! hasComponent( comp ) )
         {
             throw std::runtime_error( "This component is not allowed for the current Physical Quantity" );
         }
-        // On teste le retour de map.insert pour savoir si le terme existe déjà */ 
+        // On teste le retour de map.insert pour savoir si le terme existe déjà */
         std::pair< MapIt , bool> ret = _compAndVal.insert( CompAndVal( comp, val ) );
         if (! ret.second )
         {
             // S'il existe déjà, on le retire et on le remplace par un nouveau */
             _compAndVal.erase( comp );
-            _compAndVal.insert( CompAndVal( comp, val ) ); 
+            _compAndVal.insert( CompAndVal( comp, val ) );
         }
         _values.push_back( val );
         std::string name =  ComponentNames.find(comp)->second;
@@ -441,11 +433,11 @@ class PhysicalQuantityInstance
     }
 
     /**
-     * @brief debugPrint 
+     * @brief debugPrint
      */
     void debugPrint() const
     {
-        std::cout << "Nom de la grandeur physique : " << Traits::name << std::endl; 
+        std::cout << "Nom de la grandeur physique : " << Traits::name << std::endl;
         std::cout << "Nb de composantes   : " << Traits::components.size() << std::endl;
         std::cout << "Nom des composantes : " ;
         for (std::set<PhysicalQuantityComponent>::iterator it(Traits::components.begin());
@@ -453,17 +445,17 @@ class PhysicalQuantityInstance
         {
             std::cout << ComponentNames.find(*it)->second << " , " ;
         }
-        std::cout << std::endl; 
+        std::cout << std::endl;
         for ( typename MapOfCompAndVal::const_iterator it(_compAndVal.begin());
               it!= _compAndVal.end(); it++)
         {
-            std::cout << ComponentNames.find(it->first)->second << " : " << it->second << std::endl; 
+            std::cout << ComponentNames.find(it->first)->second << " : " << it->second << std::endl;
         }
     };
 
     /**
      * @brief getMap
-     * @return Map storing components and values of the physical quantity 
+     * @return Map storing components and values of the physical quantity
      */
     const MapOfCompAndVal& getMap() const
     {
@@ -480,7 +472,7 @@ class PhysicalQuantityInstance
     */
     std::string getName() const
     {
-        return Traits::name; 
+        return Traits::name;
     };
 };
 
@@ -490,72 +482,72 @@ class PhysicalQuantityInstance
 /**********************************************************/
 
 /** @typedef ForceDouble FORC_R */
-template class PhysicalQuantityInstance< double, Force >; 
+template class PhysicalQuantityInstance< double, Force >;
 typedef PhysicalQuantityInstance< double, Force > ForceDoubleInstance;
-typedef boost::shared_ptr< ForceDoubleInstance > ForceDoublePtr; 
+typedef boost::shared_ptr< ForceDoubleInstance > ForceDoublePtr;
 
 /** @typedef StructuralForceDouble  */
-template class PhysicalQuantityInstance< double, StructuralForce >; 
+template class PhysicalQuantityInstance< double, StructuralForce >;
 typedef PhysicalQuantityInstance< double, StructuralForce > StructuralForceDoubleInstance;
-typedef boost::shared_ptr< StructuralForceDoubleInstance > StructuralForceDoublePtr; 
+typedef boost::shared_ptr< StructuralForceDoubleInstance > StructuralForceDoublePtr;
 
 /** @typedef LocalBeamForceDouble  */
-template class PhysicalQuantityInstance< double, LocalBeamForce >; 
+template class PhysicalQuantityInstance< double, LocalBeamForce >;
 typedef PhysicalQuantityInstance< double, LocalBeamForce > LocalBeamForceDoubleInstance;
-typedef boost::shared_ptr< LocalBeamForceDoubleInstance > LocalBeamForceDoublePtr; 
+typedef boost::shared_ptr< LocalBeamForceDoubleInstance > LocalBeamForceDoublePtr;
 
 /** @typedef LocalShellForceDouble  */
-template class PhysicalQuantityInstance< double, LocalShellForce >; 
+template class PhysicalQuantityInstance< double, LocalShellForce >;
 typedef PhysicalQuantityInstance< double, LocalShellForce > LocalShellForceDoubleInstance;
-typedef boost::shared_ptr< LocalShellForceDoubleInstance > LocalShellForceDoublePtr; 
+typedef boost::shared_ptr< LocalShellForceDoubleInstance > LocalShellForceDoublePtr;
 
 /** @typedef DisplacementDouble DEPL_R */
-template class PhysicalQuantityInstance< double, Displacement >; 
+template class PhysicalQuantityInstance< double, Displacement >;
 typedef PhysicalQuantityInstance< double, Displacement > DisplacementDoubleInstance;
-typedef boost::shared_ptr< DisplacementDoubleInstance > DisplacementDoublePtr; 
+typedef boost::shared_ptr< DisplacementDoubleInstance > DisplacementDoublePtr;
 
 /** @typedef PressureDouble Pression */
-template class PhysicalQuantityInstance< double, Pressure >; 
+template class PhysicalQuantityInstance< double, Pressure >;
 typedef PhysicalQuantityInstance< double, Pressure > PressureDoubleInstance;
-typedef boost::shared_ptr< PressureDoubleInstance > PressureDoublePtr; 
+typedef boost::shared_ptr< PressureDoubleInstance > PressureDoublePtr;
 
 /** @typedef PressureComplex Pression */
-template class PhysicalQuantityInstance< DoubleComplex, Pressure >; 
+template class PhysicalQuantityInstance< DoubleComplex, Pressure >;
 typedef PhysicalQuantityInstance< DoubleComplex, Pressure > PressureComplexInstance;
-typedef boost::shared_ptr< PressureComplexInstance > PressureComplexPtr; 
+typedef boost::shared_ptr< PressureComplexInstance > PressureComplexPtr;
 
 /** @typedef TemperatureDouble Temperature */
-template class PhysicalQuantityInstance< double, Temperature >; 
+template class PhysicalQuantityInstance< double, Temperature >;
 typedef PhysicalQuantityInstance< double, Temperature > TemperatureDoubleInstance;
 typedef boost::shared_ptr< TemperatureDoubleInstance > TemperatureDoublePtr;
 
 /** @typedef ImpedanceDouble Impedance */
-template class PhysicalQuantityInstance< double, Impedance >; 
+template class PhysicalQuantityInstance< double, Impedance >;
 typedef PhysicalQuantityInstance< double, Impedance > ImpedanceDoubleInstance;
 typedef boost::shared_ptr< ImpedanceDoubleInstance > ImpedanceDoublePtr;
 
 /** @typedef ImpedanceComplex Impedance */
-template class PhysicalQuantityInstance< DoubleComplex, Impedance >; 
+template class PhysicalQuantityInstance< DoubleComplex, Impedance >;
 typedef PhysicalQuantityInstance< DoubleComplex, Impedance > ImpedanceComplexInstance;
-typedef boost::shared_ptr< ImpedanceComplexInstance > ImpedanceComplexPtr; 
+typedef boost::shared_ptr< ImpedanceComplexInstance > ImpedanceComplexPtr;
 
 /** @typedef NormalSpeedDouble Normal Speed  */
-template class PhysicalQuantityInstance< double, NormalSpeed >; 
+template class PhysicalQuantityInstance< double, NormalSpeed >;
 typedef PhysicalQuantityInstance< double, NormalSpeed > NormalSpeedDoubleInstance;
-typedef boost::shared_ptr< NormalSpeedDoubleInstance > NormalSpeedDoublePtr; 
+typedef boost::shared_ptr< NormalSpeedDoubleInstance > NormalSpeedDoublePtr;
 
 /** @typedef NormalSpeedComplex Normal Speed  */
-template class PhysicalQuantityInstance< DoubleComplex, NormalSpeed >; 
+template class PhysicalQuantityInstance< DoubleComplex, NormalSpeed >;
 typedef PhysicalQuantityInstance< DoubleComplex, NormalSpeed > NormalSpeedComplexInstance;
-typedef boost::shared_ptr< NormalSpeedComplexInstance > NormalSpeedComplexPtr; 
+typedef boost::shared_ptr< NormalSpeedComplexInstance > NormalSpeedComplexPtr;
 
 /** @typedef HeatFluxDouble Normal Speed  */
-template class PhysicalQuantityInstance< double, HeatFlux >; 
+template class PhysicalQuantityInstance< double, HeatFlux >;
 typedef PhysicalQuantityInstance< double, HeatFlux > HeatFluxDoubleInstance;
-typedef boost::shared_ptr< HeatFluxDoubleInstance > HeatFluxDoublePtr; 
+typedef boost::shared_ptr< HeatFluxDoubleInstance > HeatFluxDoublePtr;
 
 /** @typedef HydraulicFluxDouble Normal Speed  */
-template class PhysicalQuantityInstance< double, HydraulicFlux >; 
+template class PhysicalQuantityInstance< double, HydraulicFlux >;
 typedef PhysicalQuantityInstance< double, HydraulicFlux > HydraulicFluxDoubleInstance;
-typedef boost::shared_ptr< HydraulicFluxDoubleInstance > HydraulicFluxDoublePtr; 
+typedef boost::shared_ptr< HydraulicFluxDoubleInstance > HydraulicFluxDoublePtr;
 #endif /* PHYSICALQUANTITY_H_ */

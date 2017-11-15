@@ -68,15 +68,18 @@ public:
     /**
      * @brief Constructeur
      */
-    static ThermalLoadPtr create()
-    {
-        return ThermalLoadPtr( new ThermalLoadInstance );
-    };
+    ThermalLoadInstance():
+        ThermalLoadInstance( ResultNaming::getNewResultName() )
+    {};
 
     /**
      * @brief Constructeur
      */
-    ThermalLoadInstance();
+    ThermalLoadInstance( const std::string name ):
+        DataStructure( name, 8, "CHAR_THER" ),
+        _supportModel( ModelPtr() ),
+        _isEmpty( true )
+    {};
 
     /**
      * @brief Ajout d'une valeur acoustique imposee sur un groupe de mailles

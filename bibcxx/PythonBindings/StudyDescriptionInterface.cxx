@@ -21,9 +21,10 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/StudyDescriptionInterface.h"
-#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
+#include "PythonBindings/factory.h"
+#include "PythonBindings/StudyDescriptionInterface.h"
+
 
 void exportStudyDescriptionToPython()
 {
@@ -31,8 +32,9 @@ void exportStudyDescriptionToPython()
 
     class_< StudyDescriptionInstance, StudyDescriptionPtr >
         ( "StudyDescription", no_init )
-        .def( "create", &initFactoryPtr< StudyDescriptionInstance,
-                                          const ModelPtr&, const MaterialOnMeshPtr& > )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< StudyDescriptionInstance,
+                             ModelPtr, MaterialOnMeshPtr >) )
         .def( "addKinematicsLoad", &StudyDescriptionInstance::addKinematicsLoad )
         .def( "addMechanicalLoad", &StudyDescriptionInstance::addMechanicalLoad )
     ;

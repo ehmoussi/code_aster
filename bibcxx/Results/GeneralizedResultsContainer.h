@@ -4,7 +4,7 @@
 /**
  * @file GeneralizedResultsContainer.h
  * @brief Fichier entete de la classe GeneralizedResultsContainer
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
  *
@@ -34,11 +34,11 @@
 /**
  * @class GeneralizedResultsContainerInstance
  * @brief Cette classe correspond a la sd_dyna_gene de Code_Aster.
- * Un objet sd_dyna_gene est un concept produit par un opérateur 
+ * Un objet sd_dyna_gene est un concept produit par un opérateur
  * dynamique sur base généralisée.
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  */
-template <class ValueType>  
+template <class ValueType>
 class GeneralizedResultsContainerInstance: public DynamicResultsContainerInstance
 {
 private:
@@ -59,8 +59,11 @@ private:
     ProjMesuPtr               _projM;
 
 public:
-     GeneralizedResultsContainerInstance():
-        DynamicResultsContainerInstance( "SD_DYNA_GENE" ),
+    /**
+     * @brief Constructeur
+     */
+    GeneralizedResultsContainerInstance( const std::string &name ):
+        DynamicResultsContainerInstance( name, "SD_DYNA_GENE" ),
             _desc( JeveuxVectorLong( getName() + ".DESC" ) ),
             _abscissasOfSamples( JeveuxVectorDouble( getName() +".DISC"  ) ),
             _indicesOfSamples( JeveuxVectorLong ( getName() +".ORDR"  ) ),
@@ -69,9 +72,8 @@ public:
             _acceleration( JeveuxVector<ValueType>( getName() +".ACCE"  ) ),
             _projM( new ProjMesuInstance( getName() + ".PROJM" ))
     {};
-
 };
-     
+
 /** @typedef Définition d'un résultat généralisé à valeurs réelles */
 template class GeneralizedResultsContainerInstance< double >;
 typedef GeneralizedResultsContainerInstance< double > GeneralizedResultsContainerDoubleInstance;
@@ -86,9 +88,9 @@ typedef boost::shared_ptr< GeneralizedResultsContainerComplexInstance > Generali
  * @class TransientGeneralizedResultsContainerInstance
  * @brief Cette classe correspond aux concepts  tran_gene,
  * résultats de calcul dynamique transitoire sur base généralisée
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  */
-/* TODO template <class ValueType>  pour traiter DEPL/VITE/ACCE reel et complexe */ 
+/* TODO template <class ValueType>  pour traiter DEPL/VITE/ACCE reel et complexe */
 class TransientGeneralizedResultsContainerInstance: public GeneralizedResultsContainerDoubleInstance
 {
 private:
@@ -117,20 +119,20 @@ public:
      * @brief Constructeur
      */
     TransientGeneralizedResultsContainerInstance():
-             GeneralizedResultsContainerDoubleInstance(),
-             _timeSteps( JeveuxVectorDouble( getName() +".PTEM"  ) ),
-             _acceExcitFunction(  JeveuxVectorChar8( getName() +".FACC"  ) ),
-             _veloExcitFunction(  JeveuxVectorChar8( getName() +".FVIT"  ) ),
-             _displExcitFunction(  JeveuxVectorChar8( getName() +".FDEP"  ) ),
-             _ipsd( JeveuxVectorLong( getName() + ".IPSD" ) )
-    {}; 
+        TransientGeneralizedResultsContainerInstance( ResultNaming::getNewResultName() )
+    {};
+
     /**
      * @brief Constructeur
      */
-    static TransientGeneralizedResultsContainerPtr create()
-    {
-        return TransientGeneralizedResultsContainerPtr( new TransientGeneralizedResultsContainerInstance() );
-    };
+    TransientGeneralizedResultsContainerInstance( const std::string &name ):
+        GeneralizedResultsContainerDoubleInstance( name ),
+        _timeSteps( JeveuxVectorDouble( getName() +".PTEM"  ) ),
+        _acceExcitFunction(  JeveuxVectorChar8( getName() +".FACC"  ) ),
+        _veloExcitFunction(  JeveuxVectorChar8( getName() +".FVIT"  ) ),
+        _displExcitFunction(  JeveuxVectorChar8( getName() +".FDEP"  ) ),
+        _ipsd( JeveuxVectorLong( getName() + ".IPSD" ) )
+    {};
 };
 typedef boost::shared_ptr< TransientGeneralizedResultsContainerInstance > TransientGeneralizedResultsContainerPtr;
 
@@ -138,7 +140,7 @@ typedef boost::shared_ptr< TransientGeneralizedResultsContainerInstance > Transi
  * @class HarmoGeneralizedResultsContainerInstance
  * @brief Cette classe correspond aux concepts  harm_gene,
  * résultats de calcul dynamique harmonique sur base généralisée
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  */
 class HarmoGeneralizedResultsContainerInstance: public GeneralizedResultsContainerComplexInstance
 {
@@ -154,16 +156,15 @@ public:
      * @brief Constructeur
      */
     HarmoGeneralizedResultsContainerInstance():
-             GeneralizedResultsContainerComplexInstance()
-    {}; 
-    
+        HarmoGeneralizedResultsContainerInstance( ResultNaming::getNewResultName() )
+    {};
+
     /**
      * @brief Constructeur
      */
-      static HarmoGeneralizedResultsContainerPtr create()
-    {
-        return HarmoGeneralizedResultsContainerPtr( new HarmoGeneralizedResultsContainerInstance() );
-    };
+    HarmoGeneralizedResultsContainerInstance( const std::string &name ):
+        GeneralizedResultsContainerComplexInstance( name )
+    {};
 };
 
 typedef boost::shared_ptr< HarmoGeneralizedResultsContainerInstance > HarmoGeneralizedResultsContainerPtr;

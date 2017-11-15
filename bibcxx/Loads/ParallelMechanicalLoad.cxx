@@ -28,9 +28,11 @@
 
 #ifdef _USE_MPI
 
-ParallelMechanicalLoadInstance::ParallelMechanicalLoadInstance( const GenericMechanicalLoadPtr& load,
-                                                                const ModelPtr& model ):
-    DataStructure( ResultNaming::getNewResultName(), 8, "CHAR_MECA" ),
+ParallelMechanicalLoadInstance::ParallelMechanicalLoadInstance(
+        const std::string& name,
+        const GenericMechanicalLoadPtr& load,
+        const ModelPtr& model ):
+    DataStructure( name, 8, "CHAR_MECA" ),
     _BaseFEDesc( load->getMechanicalLoadDescription()._FEDesc ),
     _FEDesc( new ParallelFiniteElementDescriptorInstance
                     ( getName() + ".CHME.LIGRE", _BaseFEDesc,
