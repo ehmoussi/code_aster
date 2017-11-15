@@ -21,6 +21,13 @@
 
 cata_msg = {
 
+    4 : _(u"""
+ Le calcul ne peut aboutir.
+
+ Conseil :
+ Vous devez augmenter la valeur de RAYON_MOBILE ou celle de LARGEUR_OBST.
+"""),
+
     5 : _(u"""
  l'option  %(k1)s n'a pas été calculée pour la SD  %(k2)s
 """),
