@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine ddr_prep(ds_para, v_list_prim, v_list_dual, v_list_rid, nb_node_rid)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine ddr_prep(ds_para, v_equa_prim, v_equa_dual, v_node_rid, nb_node_rid)
 !
 use Rom_Datastructure_type
 !
@@ -31,13 +32,11 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/utlisi.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaDDR), intent(in) :: ds_para
-    integer, intent(in), pointer :: v_list_prim(:)
-    integer, intent(in), pointer :: v_list_dual(:)
-    integer, intent(out), pointer :: v_list_rid(:)
-    integer, intent(out) :: nb_node_rid
+type(ROM_DS_ParaDDR), intent(in) :: ds_para
+integer, intent(in), pointer :: v_equa_prim(:)
+integer, intent(in), pointer :: v_equa_dual(:)
+integer, intent(out), pointer :: v_node_rid(:)
+integer, intent(out) :: nb_node_rid
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,9 +47,9 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ds_para          : datastructure for parameters of EIM computation
-! In  v_list_prim      : list of 'magic" points for primal base
-! In  v_list_dual      : list of 'magic" points for dual base
-! Out v_list_rid       : list of nodes in RID (absolute number from mesh)
+! In  v_equa_prim      : list of equations selected by DEIM method (magic points) - Primal
+! In  v_equa_dual      : list of equations selected by DEIM method (magic points) - Dual
+! Out v_node_rid       : list of nodes in RID (absolute number from mesh)
 ! Out nb_node_rid      : number of nodes in RID
 !
 ! --------------------------------------------------------------------------------------------------
@@ -84,18 +83,18 @@ implicit none
     AS_ALLOCATE(vi = v_list_unio1, size = nb_mode_total)
     AS_ALLOCATE(vi = v_list_unio2, size = nb_mode_total+nb_rid_mini)
 !
-! - "convert" magic points to nodes
+! - "convert" equations to nodes
 !    
     if (nb_cmp_prim .ne. 1) then
-        v_list_prim = v_list_prim/nb_cmp_prim + 1
+        v_equa_prim = v_equa_prim/nb_cmp_prim + 1
     endif
-    v_list_dual = (v_list_dual-1)/nb_cmp_dual + 1
+    v_equa_dual = (v_equa_dual-1)/nb_cmp_dual + 1
 !
 ! - Assembling the two lists to find a list of interpolated points
 !
     call utlisi('UNION'     ,&
-                v_list_prim , nb_mode_prim ,&
-                v_list_dual , nb_mode_dual ,&
+                v_equa_prim , nb_mode_prim ,&
+                v_equa_dual , nb_mode_dual ,&
                 v_list_unio1, nb_mode_total, nb_node_rid)
 !
 ! - Assembling the two lists to find a list of interpolated points
@@ -109,12 +108,12 @@ implicit none
 !
 ! - List of nodes in RID
 !
-    AS_ALLOCATE(vi = v_list_rid , size = nb_node_rid)
+    AS_ALLOCATE(vi = v_node_rid , size = nb_node_rid)
     do i_node_rid = 1, nb_node_rid
         if (nb_rid_mini .eq. 0) then
-            v_list_rid(i_node_rid) = v_list_unio1(i_node_rid)
+            v_node_rid(i_node_rid) = v_list_unio1(i_node_rid)
         else
-            v_list_rid(i_node_rid) = v_list_unio2(i_node_rid)
+            v_node_rid(i_node_rid) = v_list_unio2(i_node_rid)
         endif
     enddo
     if (niv .ge. 2) then

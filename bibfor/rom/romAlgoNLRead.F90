@@ -83,7 +83,7 @@ implicit none
             l_hrom_corref = answer .eq. 'OUI'
             if (l_hrom_corref) then
                 call getvtx(keywf,'GROUP_NO_ENCASTRE', iocc=1, scal = grnode_sub)
-                call getvr8(keywf,'VALE_PENA'        , iocc=1, scal = coef_pena)
+                call getvr8(keywf,'COEF_PENA'        , iocc=1, scal = coef_pena)
             endif
         endif
     endif

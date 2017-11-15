@@ -54,4 +54,6 @@ cata_msg = {
    27 : _(u"""Il n'y a aucun noeud dans la zone d'interface."""),
 
    28 : _(u"""Il n'y a aucun noeud dans la zone rigide pour le correcteur éléments finis."""),
+
+   29 : _(u"""Nombre de noeuds dans le domaine réduit: %(i1)d"""), 
 }
