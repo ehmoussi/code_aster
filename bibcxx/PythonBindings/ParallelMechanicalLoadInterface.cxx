@@ -21,8 +21,10 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/ParallelMechanicalLoadInterface.h"
 #include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/ParallelMechanicalLoadInterface.h"
+
 
 #ifdef _USE_MPI
 
@@ -33,7 +35,15 @@ void exportParallelMechanicalLoadToPython()
     class_< ParallelMechanicalLoadInstance,
             ParallelMechanicalLoadInstance::ParallelMechanicalLoadPtr,
             bases< DataStructure > > ( "ParallelMechanicalLoad", no_init )
-        .def( "create", &ParallelMechanicalLoadInstance::create )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< ParallelMechanicalLoadInstance,
+                             GenericMechanicalLoadPtr,
+                             ModelPtr >) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< ParallelMechanicalLoadInstance,
+                             std::string,
+                             GenericMechanicalLoadPtr,
+                             ModelPtr >) )
     ;
 };
 

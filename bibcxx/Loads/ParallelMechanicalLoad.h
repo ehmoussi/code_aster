@@ -69,6 +69,16 @@ public:
      * @brief Constructeur
      */
     ParallelMechanicalLoadInstance( const GenericMechanicalLoadPtr& load,
+                                    const ModelPtr& model ):
+        ParallelMechanicalLoadInstance( ResultNaming::getNewResultName(),
+                                        load, model )
+    {};
+
+    /**
+     * @brief Constructeur
+     */
+    ParallelMechanicalLoadInstance( const std::string& name,
+                                    const GenericMechanicalLoadPtr& load,
                                     const ModelPtr& model );
 
     /**
@@ -76,15 +86,6 @@ public:
      * @brief Pointeur intelligent vers un ParallelMechanicalLoad
      */
     typedef boost::shared_ptr< ParallelMechanicalLoadInstance > ParallelMechanicalLoadPtr;
-
-    /**
-     * @brief Constructeur
-     */
-    static ParallelMechanicalLoadPtr create( const GenericMechanicalLoadPtr& load,
-                                             const ModelPtr& model )
-    {
-        return ParallelMechanicalLoadPtr( new ParallelMechanicalLoadInstance( load, model ) );
-    };
 };
 
 /**

@@ -61,10 +61,18 @@ public:
     /**
      * @brief Constructeur
      */
-    DynamicResultsContainerInstance( std::string sd_type="SD_DYNA" ):
-            ResultsContainerInstance( sd_type ),
-            _refd( JeveuxCollectionChar24( getName() + ".REFD" ) ),
-            _indi( JeveuxVectorLong( getName() + ".INDI" ) )
+    DynamicResultsContainerInstance( std::string sd_type ):
+        DynamicResultsContainerInstance( ResultNaming::getNewResultName(), sd_type )
+    {};
+
+    /**
+     * @brief Constructeur
+     */
+    DynamicResultsContainerInstance( const std::string &name,
+                                     std::string sd_type ):
+        ResultsContainerInstance( name, sd_type ),
+        _refd( JeveuxCollectionChar24( getName() + ".REFD" ) ),
+        _indi( JeveuxVectorLong( getName() + ".INDI" ) )
     {};
 };
 

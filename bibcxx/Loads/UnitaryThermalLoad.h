@@ -49,14 +49,6 @@ public:
     /**
      * @brief Constructeur
      */
-    static UnitaryThermalLoadPtr create()
-    {
-        return UnitaryThermalLoadPtr( new UnitaryThermalLoadInstance );
-    };
-
-    /**
-     * @brief Constructeur
-     */
     UnitaryThermalLoadInstance():
         DataStructure("", Permanent, 8)
     {};
@@ -87,16 +79,8 @@ public:
     /**
      * @brief Constructeur
      */
-    static ImposedTemperaturePtr create(ValueType val=100.)
-    {
-        return ImposedTemperaturePtr( new ImposedTemperatureInstance(val) );
-    };
-
-    /**
-     * @brief Constructeur
-     */
     ImposedTemperatureInstance(ValueType val=100.) :
-    _value(val)
+        _value(val)
     {};
 
     void addGroupOfNodes( const std::string& nameOfGroup )
@@ -130,16 +114,8 @@ public:
     /**
      * @brief Constructeur
      */
-    static DistributedFlowPtr create(ValueType val=200.)
-    {
-        return DistributedFlowPtr( new DistributedFlowInstance(val) );
-    };
-
-    /**
-     * @brief Constructeur
-     */
     DistributedFlowInstance(ValueType val=200.) :
-    _fluxn(val)
+        _fluxn(val)
     {
        _toCapyConverter.add( new CapyConvertibleValue< double >  (true, "FLUX_REP", _fluxn,  false ) );
 	};
@@ -203,16 +179,8 @@ public:
     /**
      * @brief Constructeur
      */
-    static NonLinearFlowPtr create(ValueType val=200.)
-    {
-        return NonLinearFlowPtr( new NonLinearFlowInstance(val) );
-    };
-
-    /**
-     * @brief Constructeur
-     */
     NonLinearFlowInstance(ValueType val=200.) :
-    _fluxn(val)
+        _fluxn(val)
     {};
 
     void addGroupOfElements( const std::string& nameOfGroup )
@@ -251,17 +219,9 @@ public:
     /**
      * @brief Constructeur
      */
-    static ExchangePtr create(ValueType val1=20.0 , ValueType val2= 15.0)
-    {
-        return ExchangePtr( new ExchangeInstance(val1, val2) );
-    };
-
-    /**
-     * @brief Constructeur
-     */
     ExchangeInstance(ValueType val1=20.0 , ValueType val2= 15.0) :
-    _coef_h(val1),
-    _temp_ext(val2)
+        _coef_h(val1),
+        _temp_ext(val2)
     {};
 
     void addGroupOfElements( const std::string& nameOfGroup )
@@ -324,16 +284,8 @@ public:
     /**
      * @brief Constructeur
      */
-    static ExchangeWallPtr create(ValueType val=20.0)
-    {
-        return ExchangeWallPtr( new ExchangeWallInstance(val) );
-    };
-
-    /**
-     * @brief Constructeur
-     */
     ExchangeWallInstance(ValueType val=20.0 ) :
-    _coef_h(val)
+        _coef_h(val)
     {};
 
     void setExchangeCoefficient ( ValueType val=0.0 ) throw ( std::runtime_error )
@@ -381,16 +333,8 @@ public:
     /**
      * @brief Constructeur
      */
-    static SourcePtr create(ValueType val=0.0)
-    {
-        return SourcePtr( new SourceInstance(val) );
-    };
-
-    /**
-     * @brief Constructeur
-     */
     SourceInstance(ValueType val=0.0 ) :
-    _source(val)
+        _source(val)
     {};
 
     void setSource ( ValueType val=0.0 ) throw ( std::runtime_error )
@@ -429,16 +373,8 @@ public:
     /**
      * @brief Constructeur
      */
-    static NonLinearSourcePtr create(ValueType val=0.0)
-    {
-        return NonLinearSourcePtr( new NonLinearSourceInstance(val) );
-    };
-
-    /**
-     * @brief Constructeur
-     */
     NonLinearSourceInstance(ValueType val=0.0 ) :
-    _source(val)
+        _source(val)
     {};
 
     void setSource ( ValueType val=0.0 ) throw ( std::runtime_error )
@@ -477,20 +413,11 @@ public:
     /**
      * @brief Constructeur
      */
-    static ThermalRadiationPtr create(ValueType val1=20.0 , ValueType val2= 1.0,
-                                      ValueType val3= 15.0)
-    {
-        return ThermalRadiationPtr( new ThermalRadiationInstance(val1, val2, val3) );
-    };
-
-    /**
-     * @brief Constructeur
-     */
     ThermalRadiationInstance(ValueType val1=20.0 , ValueType val2= 1.0,
                              ValueType val3= 15.0):
-    _sigma(val1),
-    _epsilon(val2),
-    _temp_ext(val3)
+        _sigma(val1),
+        _epsilon(val2),
+        _temp_ext(val3)
     {};
 
     void setExternalTemperature ( ValueType val=20.0 ) throw ( std::runtime_error )
@@ -541,19 +468,10 @@ public:
     /**
      * @brief Constructeur
      */
-    static ThermalGradientPtr create(ValueType val1=0.0, ValueType val2=0.0,
-                                     ValueType val3=0.0)
-    {
-        return ThermalGradientPtr( new ThermalGradientInstance(val1, val2, val3) );
-    };
-
-    /**
-     * @brief Constructeur
-     */
     ThermalGradientInstance(ValueType val1=0.0 , ValueType val2=0.0, ValueType val3=0.0):
-    _fluxx(val1),
-    _fluxy(val2),
-    _fluxz(val3)
+        _fluxx(val1),
+        _fluxy(val2),
+        _fluxz(val3)
     {};
 
     void setFlowXYZ( ValueType valx=0.0, ValueType valy=0.0, ValueType valz=0.0) throw ( std::runtime_error )
