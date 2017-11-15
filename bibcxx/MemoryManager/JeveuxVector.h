@@ -27,6 +27,7 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "astercxx.h"
+#include "shared_vars.h"
 #include "aster_fort.h"
 #include "aster_utils.h"
 
@@ -147,7 +148,7 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
          */
         void deallocate()
         {
-            if ( _name != "" )
+            if ( _name != ""  && get_sh_jeveux_status() == 1 )
                 CALLO_JEDETR( _name );
         };
 
