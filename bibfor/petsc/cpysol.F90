@@ -174,6 +174,8 @@ subroutine cpysol(numddl, rsolu, debglo, vecpet, nbval)
         if( iret.ne.0 ) then
             call jenuno(jexnum(numddl//'.NUME.LILI', ili), nomlig)
             join = nomlig//".NBJO"
+            call jeexin(join, iret)
+            if( iret.eq.0 ) cycle
             call jeveuo(join, 'L', jjoin)
             call jelira(join, 'LONMAX', nbjoin)
             do ijoin = 1, nbjoin

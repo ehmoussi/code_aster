@@ -85,7 +85,7 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
     integer :: rang, nbproc, niv, ifm, ibid, ietdeb, ifactm, nbfact
     integer :: ietrat, nprec, ifact, iaux, iaux1, vali(4), pcpi
     character(len=1) :: rouc, type, prec
-    character(len=3) :: matd
+    character(len=3) :: matd, mathpc
     character(len=5) :: etam, klag2
     character(len=8) :: ktypr
     character(len=12) :: usersm, k12bid
@@ -95,7 +95,7 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
     real(kind=8) :: epsmax, valr(2), rctdeb, temps(6), epsmat
     complex(kind=8) :: cbid(1)
     aster_logical :: lquali, ldist, lresol, lmd, lbid, lpreco, lbis, lpb13, ldet
-    aster_logical :: lopfac
+    aster_logical :: lopfac, lmhpc
     integer, pointer :: slvi(:) => null()
     character(len=24), pointer :: refa(:) => null()
     character(len=24), pointer :: slvk(:) => null()
@@ -167,6 +167,10 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
     call dismoi('MATR_DISTRIBUEE', nomat, 'MATR_ASSE', repk=matd)
     lmd = matd.eq.'OUI'
 !
+! --- MATRICE ASTER HPC ?
+    call dismoi('MATR_HPC', nomat, 'MATR_ASSE', repk=mathpc)
+    lmhpc = mathpc.eq.'OUI'
+!
 ! --- MUMPS EST-IL UTILISE COMME PRECONDITIONNEUR ?
 ! --- SI OUI, ON DEBRANCHE LES ALARMES ET INFO (PAS LES UTMESS_F)
     lpreco = slvk(8)(1:3).eq.'OUI'
@@ -234,7 +238,7 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
                     rctdeb, ldist)
         call amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                     klag2, type, lmd, epsmat, ktypr,&
-                    lpreco)
+                    lpreco, lmhpc)
 !
 !       -----------------------------------------------------
 !       CONSERVE-T-ON LES FACTEURS OU NON ?

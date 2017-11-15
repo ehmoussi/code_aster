@@ -43,6 +43,7 @@ from .asse_matrice import ASSE_MATRICE
 from .calc_champ import CALC_CHAMP
 from .calc_fonc_interp import CALC_FONC_INTERP
 from .calc_matr_elem import CALC_MATR_ELEM
+from .calc_vect_elem import CALC_VECT_ELEM
 from .crea_champ import CREA_CHAMP
 # from .crea_maillage import CREA_MAILLAGE
 from .crea_resu import CREA_RESU
