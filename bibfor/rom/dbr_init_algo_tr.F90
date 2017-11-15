@@ -33,7 +33,6 @@ implicit none
 #include "asterfort/numero.h"
 #include "asterfort/modelNodeEF.h"
 #include "asterfort/romEquationListCreate.h"
-#include "asterfort/vtcreb.h"
 !
 type(ROM_DS_ParaDBR_TR), intent(inout) :: ds_para_tr
 !
@@ -52,8 +51,7 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: ds_para_tr
     integer :: ifm, niv
     integer :: nb_equa_rom, nb_node_rom
     character(len=8) :: model_rom, model_dom
-    character(len=24) :: nume_rom, nume_dom
-    character(len=24) :: noojb, prof_chno_rom, mode_rom
+    character(len=24) :: nume_rom, nume_dom, noojb
     integer, pointer :: v_node_rom(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -68,7 +66,6 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: ds_para_tr
     noojb     = '12345678.00000.NUME.PRNO'
     model_dom = ds_para_tr%ds_empi_init%model
     model_rom = ds_para_tr%model_rom
-    mode_rom  = ds_para_tr%mode_rom
 !
 ! - Create numbering
 !
@@ -78,12 +75,11 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: ds_para_tr
     nume_rom = '12345678.NUMED'
     call gnomsd(' ', noojb, 10, 14)
     nume_rom = noojb(1:14)
-    call numero(nume_rom, 'GV', modelz = model_rom)
+    call numero(nume_rom, 'VV', modelz = model_rom)
     nume_dom = '12345678.NUMED'
     call gnomsd(' ', noojb, 10, 14)
     nume_dom = noojb(1:14)
     call numero(nume_dom, 'VV', modelz = model_dom)
-    call dismoi('PROF_CHNO', nume_rom, 'NUME_DDL', repk=prof_chno_rom)
     call dismoi('NB_EQUA'  , nume_rom, 'NUME_DDL', repi=nb_equa_rom)
 !
 ! - Extract list of nodes on reduced model
@@ -98,14 +94,8 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: ds_para_tr
                                nb_node_     = nb_node_rom,&
                                v_list_node_ = v_node_rom)
 !
-! - Create reference field for rom
-!
-    call vtcreb(mode_rom, 'V', 'R', nume_ddlz=nume_rom)
-!
 ! - Save parameters
 !
-    ds_para_tr%nume_rom      = nume_rom(1:14)
-    ds_para_tr%prof_chno_rom = prof_chno_rom
     ds_para_tr%nb_equa_rom   = nb_equa_rom
 !
 end subroutine

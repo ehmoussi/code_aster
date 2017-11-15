@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='NON'));
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
 
 mesh=LIRE_MAILLAGE(FORMAT='MED',);
 
@@ -196,7 +196,7 @@ base_p=LIRE_RESU(TYPE_RESU  = 'MODE_EMPI',
                  UNITE      = 70,
                  FORMAT_MED =_F(NOM_CHAM_MED = 'base_p__DEPL',
                                 NOM_CHAM     = 'DEPL',),
-                 TOUT_ORDRE = 'OUI',);
+                 NUME_ORDRE=(1,2,3),);
 
 # Récupère base duale
 base_d=LIRE_RESU(TYPE_RESU  = 'MODE_EMPI',
@@ -205,7 +205,7 @@ base_d=LIRE_RESU(TYPE_RESU  = 'MODE_EMPI',
                  UNITE      = 71,
                  FORMAT_MED = _F(NOM_CHAM_MED = 'base_d__SIEF_NOEU',
                                  NOM_CHAM     = 'SIEF_NOEU',),
-                 TOUT_ORDRE = 'OUI',);
+                 NUME_ORDRE=(1,2,3),);
 
 # Define HROM
 mesh=DEFI_GROUP(reuse=mesh,

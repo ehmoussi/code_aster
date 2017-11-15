@@ -19,7 +19,7 @@
 
 #
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),);
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
 
 # Read the mesh
 mesh=LIRE_MAILLAGE(FORMAT='MED',);
@@ -230,7 +230,8 @@ base_p=LIRE_RESU(TYPE_RESU  = 'MODE_EMPI',
                  UNITE      = 70,
                  FORMAT_MED =_F(NOM_CHAM_MED = 'base_p__TEMP',
                                 NOM_CHAM     = 'TEMP',),
-                 TOUT_ORDRE = 'OUI',);
+                 NUME_ORDRE=(1,2,3),
+                 );
 
 base_t=DEFI_BASE_REDUITE(OPERATION='TRONCATURE',
                          MODELE_REDUIT = model_r, 
