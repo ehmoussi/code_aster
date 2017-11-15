@@ -6,4 +6,4 @@ P mpi_nbnoeud 1
 P testlist asterxx verification sequential
 
 F comm xxElementaryVector001a.py  D 1
-F nom  xxElementaryVector001a.med D 0
+F nom  zzzz104a.mmed D 0
