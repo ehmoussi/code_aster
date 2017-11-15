@@ -1,6 +1,6 @@
 subroutine matass2petsc(matasz, petscMatz, iret)
 !
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -23,6 +23,7 @@ subroutine matass2petsc(matasz, petscMatz, iret)
 #ifdef _HAVE_PETSC
 #include "asterf_petsc.h"
 #endif
+use aster_petsc_module
 use petsc_data_module
 use elim_lagr_comp_module
 !
@@ -87,7 +88,7 @@ use elim_lagr_comp_module
     call jemarq()
 !
     matas = matasz
-    
+
 !   -- Creation d'un solveur bidon
     solvbd='&&MAT2PET'
     call crsmsp(solvbd, matas, 50,'IN_CORE')
@@ -97,7 +98,7 @@ use elim_lagr_comp_module
 !   -- Conversion de matass vers petsc
     call apetsc('PRERES', solvbd, matas, [0.d0], ' ',&
                 0, ibid, ierror )
-    k = get_mat_id( matas ) 
+    k = get_mat_id( matas )
     call MatDuplicate(ap(k), MAT_COPY_VALUES, petscMatz, ierr)
     ASSERT(ierr.eq.0)
 
@@ -107,7 +108,7 @@ use elim_lagr_comp_module
                 0, ibid, ierror)
 !   Destruction du solveur bidon
     call detrsd('SOLVEUR', solvbd)
-    
+
 999 continue
     call jedema()
 #else
