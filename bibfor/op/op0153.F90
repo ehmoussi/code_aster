@@ -270,6 +270,11 @@ subroutine op0153()
         endif
         do i = 1, nbsect
             do k = 1, nbinst
+                if (rayot* rayot-2.d0*zr(ivustu+(k-1)*nbsect+i-1)/&
+                   (haut*(zr( idangt+i)-zr(idangt+i-1))).lt. 0.d0) then
+                    call utmess('F', 'PREPOST4_4')
+                endif
+                
                 zr(iprfut+(k-1)*nbsect+i-1) = rayot - sqrt(&
                                               rayot* rayot-2.d0*zr(&
                                               ivustu+(k-1)*nbsect+i-1)/ (haut*(zr( idangt+i)-zr(i&
