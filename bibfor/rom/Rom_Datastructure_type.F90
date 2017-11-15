@@ -266,14 +266,12 @@ implicit none
         character(len=8)        :: model_rom
 ! ----- List of equations into RID
         integer, pointer        :: v_equa_rom(:)
-! ----- Numbering for truncation
-        character(len=14)       :: nume_rom
 ! ----- Profile of nodal field 
         character(len=24)       :: prof_chno_rom
-! ----- Reduced mode (reference)
-        character(len=24)       :: mode_rom
 ! ----- Number of equation for RID
         integer                 :: nb_equa_rom
+! ----- Index of GRANDEUR
+        integer                 :: idx_gd
     end type ROM_DS_ParaDBR_TR
 !
 ! - Parameters for DEFI_BASE_REDUITE operator

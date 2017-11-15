@@ -130,4 +130,6 @@ cata_msg = {
 
    54 : _(u"""Norme du résidu initial: %(r1)19.12e."""),
 
+   55 : _(u"""Création du nouveau profil de numérotation du champ tronqué."""),
+
 }
