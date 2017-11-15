@@ -22,7 +22,9 @@
 from ..Objects import ElementaryVector
 from .ExecuteCommand import ExecuteCommand
 
+
 class ComputeElementaryVector(ExecuteCommand):
+
     """Command that creates elementary vectors."""
     command_name = "CALC_VECT_ELEM"
 
@@ -32,6 +34,6 @@ class ComputeElementaryVector(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result=ElementaryVector.create()
+        self._result = ElementaryVector()
 
 CALC_VECT_ELEM = ComputeElementaryVector.run
