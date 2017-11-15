@@ -10,8 +10,8 @@ test = code_aster.TestCase()
 
 # test inspire de zzzz104b
 
-MAIL = code_aster.Mesh.create()
-MAIL.readMedFile("xxElementaryVector001a.med")
+MAIL = code_aster.Mesh()
+MAIL.readMedFile("zzzz104a.mmed")
 
 
 MOD=AFFE_MODELE(MAILLAGE=MAIL,
@@ -59,3 +59,7 @@ matass    = ASSE_MATRICE(MATR_ELEM=rigiel , NUME_DDL=numeddl)
 
 #matass    = FACTORISER(reuse=matass, MATR_ASSE=matass)
 #matass.factorization()
+
+# at least pass here
+test.assertTrue(True)
+test.printSummary()
