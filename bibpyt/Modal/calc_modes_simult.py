@@ -37,7 +37,7 @@ class ModalCalculationSimult(ExecuteCommand):
         if keywords.get("TYPE_RESU") in ("MODE_FLAMB", "GENERAL"):
             raise NotImplementedError("Unsupported value: {0}"
                                       .format(keywords["TYPE_RESU"]))
-        self._result = MechanicalModeContainer.create()
+        self._result = MechanicalModeContainer()
 
 
 MODE_ITER_SIMULT = ModalCalculationSimult.run
