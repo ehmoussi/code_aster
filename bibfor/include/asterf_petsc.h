@@ -22,44 +22,25 @@
 #include "asterf_types.h"
 
 #ifdef _HAVE_PETSC
-!
-!    include necessaire a la gestion des instances PETSC
-!----------------------------------------------------------------
-!
 #include <petscversion.h>
 
-! Inclusion des interfaces Fortran de PETSc définies
-! dans la librairie
-#if PETSC_VERSION_LT(3,6,0)
-#include <finclude/petscsys.h>
-#include <finclude/petscvec.h>
-#include <finclude/petscvec.h90>
-#include <finclude/petscmat.h>
-#include <finclude/petscmat.h90>
-#include <finclude/petscpc.h>
-#include <finclude/petscpc.h90>
-#include <finclude/petscksp.h>
-#include <finclude/petscksp.h90>
-#include <finclude/petscviewer.h>
-#include <finclude/petscviewer.h90>
+! Inclusion des interfaces Fortran de PETSc
 
-#else
-#ifndef PETSC_USE_FORTRAN_MODULES
-#define PETSC_USE_FORTRAN_MODULES
-#endif
+#if PETSC_VERSION_LT(3,8,0) 
 #include <petsc/finclude/petscsysdef.h>
 #include <petsc/finclude/petscvecdef.h>
 #include <petsc/finclude/petscmatdef.h>
 #include <petsc/finclude/petscpcdef.h>
 #include <petsc/finclude/petsckspdef.h>
 #include <petsc/finclude/petscviewerdef.h>
-use petscsys
-use petscvec
-use petscmat
-use petscpc
-use petscksp
-!
+#else
+#include <petsc/finclude/petscsys.h>
+#include <petsc/finclude/petscvec.h>
+#include <petsc/finclude/petscmat.h>
+#include <petsc/finclude/petscpc.h>
+#include <petsc/finclude/petscksp.h>
+#include <petsc/finclude/petscviewer.h>
 #endif
 !
 #endif
-#endif
+#endif 

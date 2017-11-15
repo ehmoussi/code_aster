@@ -52,8 +52,9 @@ EVOL=STAT_NON_LINE(CHAM_MATER=CHMAT,
                    NEWTON=_F(REAC_ITER=1,
                              REAC_INCR=1,),
                    EXCIT=_F(CHARGE=TRACTION,
-                            FONC_MULT=RAMPE,),);
-
+                            FONC_MULT=RAMPE,),
+                   SOLVEUR=_F(METHODE='MULT_FRONT',),
+);
 EVOL=CALC_CHAMP(reuse=EVOL,
                RESULTAT=EVOL,
                CHAM_MATER=CHMAT,

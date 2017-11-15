@@ -19,9 +19,12 @@
 !
 !
 interface
-    subroutine rcmo02(etat, numsit, vale)
-        character(len=1) :: etat
-        integer :: numsit
-        real(kind=8) :: vale(*)
-    end subroutine rcmo02
+    subroutine cpncpt15(main,numa,coor,ind,nomnoe, conneo)
+        integer, intent(in) :: ind
+        integer, intent(in) :: numa
+        real(kind=8),intent(out) :: coor(3, *)
+        character(len=8), intent(in) :: main
+        character(len=24), intent(in) :: nomnoe
+        integer, intent(in) :: conneo(*)
+    end subroutine cpncpt15
 end interface

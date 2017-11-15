@@ -37,9 +37,9 @@ module saddle_point_context_type
 #include "asterf_types.h"
 #include "asterf_petsc.h"
 !
+! aslint:disable=W1003,W1304,C1308
 !
-! aslint:disable=W1003,W1304
-!
+use aster_petsc_module
 use matrasse_module
 !
 implicit none
@@ -197,21 +197,37 @@ subroutine set_matrix_data( a_mat, ak_mat,  ctxt)
     ASSERT( .not. ctxt%data_setup )
     ! Définition du bloc k_mat : nouvelle matrice PETSc contenant
     ! les interactions des ddls "physiques" du modèle
+#if PETSC_VERSION_LT(3,8,0)
     call MatGetSubMatrix(a_mat, ctxt%is_phys, ctxt%is_phys, &
     MAT_INITIAL_MATRIX, ctxt%k_mat, ierr)
+#else
+    call MatCreateSubMatrix(a_mat, ctxt%is_phys, ctxt%is_phys, &
+    MAT_INITIAL_MATRIX, ctxt%k_mat, ierr)
+#endif 
     ASSERT(ierr == 0)
+
     !
     ! Définition du bloc c_mat des contraintes: nouvelle matrice PETSc
     ! contenant les interactions des ddls lagrange1 (lignes) avec les ddls
     ! physiques (colonnes)
     ! Attention ! il faut peut-être utiliser la matrice de rigidité
     !
+#if PETSC_VERSION_LT(3,8,0)
     call MatGetSubMatrix(ak_mat, ctxt%is_lag1, ctxt%is_phys, &
     MAT_INITIAL_MATRIX, ctxt%c_mat, ierr)
+#else
+    call MatCreateSubMatrix(ak_mat, ctxt%is_lag1, ctxt%is_phys, &
+    MAT_INITIAL_MATRIX, ctxt%c_mat, ierr)
+#endif
     ASSERT(ierr == 0)
     !
+#if PETSC_VERSION_LT(3,8,0)
     call MatGetSubMatrix(ak_mat, ctxt%is_lag2, ctxt%is_phys, &
     MAT_INITIAL_MATRIX, ctxt%d_mat, ierr)
+#else
+    call MatCreateSubMatrix(ak_mat, ctxt%is_lag2, ctxt%is_phys, &
+    MAT_INITIAL_MATRIX, ctxt%d_mat, ierr)
+#endif
     ASSERT(ierr == 0)
     !
     ctxt%data_setup = .true.
@@ -229,19 +245,23 @@ subroutine set_workspace( ctxt )
     ASSERT( ctxt%data_setup )
     ASSERT( .not. ctxt%work_setup )
     !
-#if PETSC_VERSION_LT(3,6,0)
-    call MatGetVecs( ctxt%k_mat, ctxt%x1, ctxt%y1, ierr )
-#else
     call MatCreateVecs( ctxt%k_mat, ctxt%x1, ctxt%y1, ierr )
-#endif
     ASSERT( ierr == 0 )
     call VecDuplicate( ctxt%x1, ctxt%xtmp, ierr )
     ASSERT( ierr == 0 )
+#if PETSC_VERSION_LT(3,8,0) 
     call MatCreateVecs( ctxt%c_mat, PETSC_NULL_OBJECT, ctxt%x2, ierr )
+#else
+    call MatCreateVecs( ctxt%c_mat, PETSC_NULL_VEC, ctxt%x2, ierr )
+#endif
     ASSERT( ierr == 0 )
     call VecDuplicate( ctxt%x2, ctxt%y2, ierr )
     ASSERT( ierr == 0 )
+#if PETSC_VERSION_LT(3,8,0) 
     call MatCreateVecs( ctxt%d_mat, PETSC_NULL_OBJECT, ctxt%x3, ierr )
+#else
+    call MatCreateVecs( ctxt%d_mat, PETSC_NULL_VEC, ctxt%x3, ierr )
+#endif
     ASSERT( ierr == 0 )
     call VecDuplicate( ctxt%x3, ctxt%y3, ierr )
     ASSERT( ierr == 0 )
@@ -267,17 +287,29 @@ subroutine set_scatter( a_mat, ctxt )
     ASSERT( ctxt%work_setup )
     ASSERT( .not. ctxt%scatter_setup )
     !
-#if PETSC_VERSION_LT(3,6,0)
-    call MatGetVecs( a_mat, x, PETSC_NULL_OBJECT, ierr )
-#else
+#if PETSC_VERSION_LT(3,8,0) 
     call MatCreateVecs( a_mat, x, PETSC_NULL_OBJECT, ierr )
+#else
+    call MatCreateVecs( a_mat, x, PETSC_NULL_VEC, ierr )
 #endif
     ASSERT( ierr == 0 )
+#if PETSC_VERSION_LT(3,8,0) 
     call VecScatterCreate(ctxt%x1,PETSC_NULL_OBJECT,x, ctxt%is_phys, ctxt%scatter_to_phys, ierr)
+#else
+    call VecScatterCreate(ctxt%x1,PETSC_NULL_IS,x, ctxt%is_phys, ctxt%scatter_to_phys, ierr)
+#endif
     ASSERT( ierr == 0 )
+#if PETSC_VERSION_LT(3,8,0) 
     call VecScatterCreate(ctxt%x2,PETSC_NULL_OBJECT,x, ctxt%is_lag1, ctxt%scatter_to_lag1, ierr)
+#else
+    call VecScatterCreate(ctxt%x2,PETSC_NULL_IS,x, ctxt%is_lag1, ctxt%scatter_to_lag1, ierr)
+#endif
     ASSERT( ierr == 0 )
+#if PETSC_VERSION_LT(3,8,0)
     call VecScatterCreate(ctxt%x3,PETSC_NULL_OBJECT,x, ctxt%is_lag2, ctxt%scatter_to_lag2, ierr)
+#else 
+    call VecScatterCreate(ctxt%x3,PETSC_NULL_IS,x, ctxt%is_lag2, ctxt%scatter_to_lag2, ierr)
+#endif
     ASSERT( ierr == 0 )
     !
     call VecDestroy( x, ierr )

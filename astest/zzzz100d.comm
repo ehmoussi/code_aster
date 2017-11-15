@@ -461,6 +461,8 @@ FONCT1b=RECU_FONCTION(  TABLE=ACCE1b,
 
 SRO1a=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=FONCT1a, LIST_FREQ = L_FREQ1, METHODE='NIGAM',
                       NORME=9.81, AMOR_REDUIT=(amor,),),);
+SRO1aa=CALC_FONCTION(SPEC_OSCI=_F(TYPE_RESU='FONCTION', FONCTION=FONCT1a, LIST_FREQ = L_FREQ1, METHODE='NIGAM',
+                      NORME=9.81, AMOR_REDUIT=(amor,),),);
 SRO1b=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=FONCT1b, LIST_FREQ = L_FREQ1, METHODE='NIGAM',
                       NORME=9.81, AMOR_REDUIT=(amor,),),);
 
@@ -501,6 +503,17 @@ TEST_FONCTION(VALEUR=( _F(VALE_CALC=7.030576587190E-03   ,  #signal corrige sans
 
 
 ),);
+
+# on verifie que la sd produit est bien une fonction avec TYPE_RESU="FONCTION"
+TA_SRO1a = CREA_TABLE(FONCTION=_F(FONCTION=SRO1aa))
+
+TEST_TABLE(VALE_CALC=0.18201100855587,
+           NOM_PARA='ACCE',
+           TABLE=TA_SRO1a,
+           FILTRE=_F(NOM_PARA='FREQ',
+                     VALE = 40.0,
+           ))
+
 
 # TEST PROL_SPEC_OSCI
 ##--------------------------------------------------------

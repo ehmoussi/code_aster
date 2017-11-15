@@ -135,7 +135,7 @@ TBL=CREA_TABLE(LISTE=(_F(LISTE_R=[ fval ],
 
 TEST_TABLE(TABLE=TBL,
            NOM_PARA='FVAL',
-           VALE_CALC= 620.16451635,
+           VALE_CALC= 620.164494348,
            CRITERE='ABSOLU',
            );
 

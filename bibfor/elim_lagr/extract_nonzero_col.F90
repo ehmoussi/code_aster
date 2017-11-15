@@ -18,9 +18,11 @@
 
 subroutine extract_nonzero_col(a, acnz, icolnz_c)
 ! person_in_charge: natacha.bereux at edf.fr
+! aslint:disable=C1308
 #include "asterf_types.h"
 #include "asterf_petsc.h"
 !
+use aster_petsc_module
 implicit none
 #include "jeveux.h"
 #include "asterc/asmpi_comm.h"
@@ -89,8 +91,13 @@ implicit none
 !   -- isall index set de toutes les lignes de Atmp
     call ISCreateStride( mpicomm, ma, izero, ione, isall, ierr )
 !   -- extraction des colonnes non-nulles de Atmp => Anz
+#if PETSC_VERSION_LT(3,8,0)
     call MatGetSubMatrix( a, isall, isnz , MAT_INITIAL_MATRIX, &
         acnz, ierr)
+#else
+    call MatCreateSubMatrix( a, isall, isnz , MAT_INITIAL_MATRIX, &
+        acnz, ierr)
+#endif
 !
     if (verbose) then
         call MatGetSize( acnz, ma, nacnz, ierr)

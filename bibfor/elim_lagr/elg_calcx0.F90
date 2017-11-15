@@ -20,6 +20,7 @@ subroutine elg_calcx0()
 #include "asterf_types.h"
 #include "asterf_petsc.h"
 !
+use aster_petsc_module
 use elim_lagr_data_module
     implicit none
 ! person_in_charge: natacha.bereux at edf.fr
@@ -80,11 +81,7 @@ use elim_lagr_data_module
     call jemarq()
     call infniv(ifm, niv)
     info=niv.eq.2
-#if PETSC_VERSION_LT(3,5,0)
-    aster_petsc_real = PETSC_DEFAULT_DOUBLE_PRECISION
-#else
     aster_petsc_real = PETSC_DEFAULT_REAL
-#endif
     !
 !   -- COMMUNICATEUR MPI DE TRAVAIL
     call asmpi_comm('GET_WORLD', mpicomm)
@@ -95,13 +92,9 @@ use elim_lagr_data_module
     ASSERT( mm > nn )
 !   -- Calcul de CCT = C * transpose(C)
 
-#if PETSC_VERSION_LT(3,3,0)
-!   TODO
-    ASSERT(.false.)
-#else
+
     call MatTransposeMatMult(elg_context(ke)%ctrans, elg_context(ke)%ctrans,&
         MAT_INITIAL_MATRIX, aster_petsc_real, cct, ierr)
-#endif
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !         Create the linear solver and set options
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -111,11 +104,7 @@ use elim_lagr_data_module
 !  Set operators. Here the matrix that defines the linear system
 !  also serves as the preconditioning matrix.
 !
-#if PETSC_VERSION_LT(3,5,0)
-    call KSPSetOperators(ksp, cct, cct, SAME_PRECONDITIONER, ierr)
-#else
     call KSPSetOperators(ksp, cct, cct, ierr)
-#endif
 !
 !  Set linear solver options : here we choose CG solver
       call KSPSetType(ksp, KSPCG, ierr)

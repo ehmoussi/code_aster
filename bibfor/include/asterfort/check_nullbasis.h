@@ -23,6 +23,7 @@
 interface
    function check_nullbasis( vec_c, mat_z, tol )
 # ifdef _HAVE_PETSC
+       use aster_petsc_module
        Vec, intent(in) :: vec_c
        Mat, intent(in) :: mat_z
        PetscScalar, optional, intent(in)  :: tol

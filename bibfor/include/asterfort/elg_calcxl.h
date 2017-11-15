@@ -15,11 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+#include "asterf_petsc.h"
 !
 interface
     subroutine elg_calcxl(x1, vlag)
 # ifdef _HAVE_PETSC
+        use aster_petsc_module
         Vec :: x1, vlag
 # else
         integer :: x1, vlag
