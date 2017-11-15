@@ -129,7 +129,8 @@ class LogicalUnitFile(object):
             LogicalUnitFile: New logical unit.
         """
         unit = cls._get_free_number()
-        return cls(unit, filename, Action.Register)
+        return cls(unit, filename, Action.Register, FileType.Ascii,
+                   FileAccess.Old)
 
     @staticmethod
     def register(unit, filename, action,

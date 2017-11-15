@@ -19,8 +19,8 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 """
-:py:class:`Model` --- Modelling definition
-******************************************
+:py:class:`Model` --- Modeling definition
+*****************************************
 """
 
 import aster

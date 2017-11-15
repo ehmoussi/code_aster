@@ -77,10 +77,18 @@ See :ref:`devguide-recommendations` for methods with default arguments.
 Pickling support
 ================
 
+See :py:mod:`code_aster.RunManager.Pickling` module for the serialization
+management.
+
 - Delegated to Python objects.
 
-- Constructors arguments defined by :meth:`__getinitargs__` implemented in
-  :mod:`code_aster.Objects.datastructure_ext` for most of the classes.
+- Constructors arguments defined by :py:meth:`__getinitargs__` implemented in
+  :py:mod:`code_aster.Objects.DataStructure` for most of the classes.
 
-- If needed, subclasses should defined their own :meth:`__getstate__`
-  and :meth:`__setstate__` methods.
+  Example: :py:class:`~code_aster.Objects.ElementaryMatrix` defines its own
+  arguments.
+
+- If needed, subclasses should defined their own :py:meth:`__getstate__`
+  and :py:meth:`__setstate__` methods.
+
+  Example: :py:class:`~code_aster.Objects.Model`.
