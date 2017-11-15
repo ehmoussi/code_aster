@@ -87,10 +87,13 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
                 {
                     // ... et qu'il faut conserver l'element
                     // Alors on conserve les noeuds tardifs aussi
-                    delayedNodesToKeep[ -numNode - 1 ] = rank;
-                    delayedNodesNumbering[ -numNode - 1 ] = nbDelayedNodes;
-                    ++nbDelayedNodes;
+                    if( delayedNodesToKeep[ -numNode - 1 ] == -1 )
+                    {
+                        delayedNodesNumbering[ -numNode - 1 ] = nbDelayedNodes;
+                        ++nbDelayedNodes;
+                    }
                     ++totalSizeToKeep;
+                    delayedNodesToKeep[ -numNode - 1 ] = rank;
                 }
                 // On cherche a equilibrer la charge des noeuds tardifs
                 auto curOwner2 = delayedNodesOwner[ -numNode - 1 ];
@@ -237,7 +240,7 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
 
         const auto& liel = FEDesc->getListOfGroupOfElements();
         int nbCollObj = 0, totalCollSize = 0;
-        std::vector< VectorLong > toLiel( 1, VectorLong() );
+        std::vector< VectorLong > toLiel( liel.size(), VectorLong() );
         long type = 0;
         nbCollObj = 1;
         for( const auto& colObj : liel )
@@ -248,7 +251,7 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
             {
                 if( _delayedElemToKeep[-val-1] != 1 )
                 {
-                    toLiel[0].push_back(_delayedElemToKeep[-val-1]);
+                    toLiel[nbCollObj-1].push_back(_delayedElemToKeep[-val-1]);
                     addedElem = true;
                     ++totalCollSize;
                 }
@@ -256,9 +259,10 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
             if( addedElem )
             {
                 type = colObj.getType();
+                toLiel[nbCollObj-1].push_back(type);
+                ++nbCollObj;
             }
         }
-        toLiel[0].push_back(type);
 
         _listOfGroupOfElements->allocateContiguous( memType, nbCollObj,
                                                     totalCollSize+nbCollObj, Numbered );

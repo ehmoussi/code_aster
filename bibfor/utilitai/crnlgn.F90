@@ -44,14 +44,14 @@ subroutine crnlgn(numddl)
     integer :: nbddll, iaux, jposdd, jnequ, jnoext, ino, jnugll, iret, nbcmp
     integer :: numero_noeud, numero_cmp, rang, nbproc, jrefn, jown, jprno
     integer :: jnbddl, nec, numglo, dime, jmult, jmult2, nbddl_lag, jmdlag
-    integer :: pos, jdelg
+    integer :: pos, jdelg, jmults, jmult1
     integer(kind=4) :: un, iaux4
     mpi_int :: mrank, msize, mpicou
 !
     character(len=4) :: chnbjo
     character(len=8) :: k8bid, noma
     character(len=19) :: nomlig
-    character(len=24) :: owner, mult
+    character(len=24) :: owner, mult1, mult2
 !
 !----------------------------------------------------------------------
     integer :: zzprno
@@ -95,6 +95,7 @@ subroutine crnlgn(numddl)
     call wkvect(numddl//'.NUME.NULG', 'G V I', nbddll, jnugll)
     call wkvect(numddl//'.NUME.PDDL', 'G V I', nbddll, jposdd)
     call wkvect('&&CRNUGL.MULT_DDL', 'V V I', nbddll, jmult)
+    call wkvect('&&CRNUGL.MULT_DDL2', 'V V I', nbddll, jmults)
     do iaux = 0, nbddll - 1
         zi(jnugll + iaux) = -1
         zi(jposdd + iaux) = -1
@@ -126,9 +127,11 @@ subroutine crnlgn(numddl)
             nbno_prno = lonmax/(nec+2)
             call jenuno(jexnum(numddl//'.NUME.LILI', ili), nomlig)
             owner = nomlig//".PNOE"
-            mult = nomlig//".MUL2"
+            mult1 = nomlig//".MULT"
+            mult2 = nomlig//".MUL2"
             call jeveuo(owner, 'L', jown)
-            call jeveuo(mult, 'L', jmult2)
+            call jeveuo(mult1, 'L', jmult1)
+            call jeveuo(mult2, 'L', jmult2)
             do ino = 1, nbno_prno
                 if( zi(jown+ino-1).eq.rang ) then
                     iaux = zzprno(ili, ino, 1)-1
@@ -137,6 +140,7 @@ subroutine crnlgn(numddl)
                     zi(jnugll + iaux) = numglo
                     zi(jposdd + iaux) = rang
                     zi(jmult + iaux) = zi(jmult2+ino-1)
+                    zi(jmults + iaux) = zi(jmult1+ino-1)
                     nbddl_lag = nbddl_lag + 1
                     numglo = numglo + 1
                 endif
@@ -164,15 +168,16 @@ subroutine crnlgn(numddl)
     zi(jnbddl) = 0
     jmdlag = 0
     if( nbddl_lag.ne.0 ) then
-        call wkvect(numddl//'.NUME.MDLA', 'G V I', 2*nbddl_lag, jmdlag)
+        call wkvect(numddl//'.NUME.MDLA', 'G V I', 3*nbddl_lag, jmdlag)
     endif
 
     pos = 0
 !   Decalage de la numerotation
     do iaux = 0, nbddll - 1
         if ( zi(jdelg + iaux) .ne. 0 .and. zi(jposdd + iaux) .eq. rang ) then
-            zi(jmdlag + 2*pos) = iaux+1
-            zi(jmdlag + 2*pos + 1) = zi(jmult + iaux)
+            zi(jmdlag + 3*pos) = iaux+1
+            zi(jmdlag + 3*pos + 1) = zi(jmult + iaux)
+            zi(jmdlag + 3*pos + 2) = zi(jmults + iaux)
             pos = pos + 1
         endif
         if ( zi(jnugll + iaux) .ne. -1 ) then

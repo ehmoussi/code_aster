@@ -18,7 +18,7 @@
 
 subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                   klag2, type, lmd, epsmat, ktypr,&
-                  lpreco)
+                  lpreco, lmhpc)
 !
 !
     implicit none
@@ -64,7 +64,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
     integer :: kxmps, ifmump
-    aster_logical :: ldist, lmd, lpreco
+    aster_logical :: ldist, lmd, lpreco, lmhpc
     real(kind=8) :: epsmat
     character(len=1) :: type
     character(len=5) :: klag2
@@ -86,7 +86,8 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
     integer :: nlong, jvale2, nzloc, kterm, iterm, ifm, niv, k
     integer :: sym, iret, jcoll, iligl, jnulogl, ltot, iok, iok2, coltmp
     integer :: kzero, ibid, ifiltr, vali(2), nbproc, nfilt1, nfilt2
-    integer :: nfilt3, isizemu, nsizemu, rang, esizemu
+    integer :: nfilt3, isizemu, nsizemu, rang, esizemu, jpddl, jdeeq
+    integer :: nuno1, nuno2, procol, prolig, jnugll
     mumps_int :: nbeq, nz2, iligg, jcolg
     character(len=4) :: etam
     character(len=8) :: k8bid
@@ -97,6 +98,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
     real(kind=8) :: raux, rfiltr, epsmac, rmax, rmin, rtest
     complex(kind=8) :: caux
     aster_logical :: lmnsy, ltypr, lnn, lfiltr, lspd, eli2lg, lsimpl, lcmde
+    aster_logical :: lgive
     integer, pointer :: smdi(:) => null()
     integer, pointer :: nequ(:) => null()
 !
@@ -193,7 +195,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
 !       ------------------------------------------------
 !        lecture d'adresses et de parametres preliminaires
 !       ------------------------------------------------
-    if (((rang.eq.0).and.(.not.ldist)) .or. (ldist)) then
+    if (((rang.eq.0).and.(.not.ldist)) .or. (ldist) .or. (lmhpc)) then
         call jeveuo(nonu//'.SMOS.SMDI', 'L', vi=smdi)
         call jelira(nonu//'.SMOS.SMDI', 'LONMAX', nsmdi)
         call jeveuo(nonu//'.SMOS.SMHC', 'L', jsmhc)
@@ -206,7 +208,11 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
             call jelira(nonu//'.NUME.DELG', 'LONMAX', n1)
         endif
         call jeveuo(nonu//'.NUME.NEQU', 'L', vi=nequ)
-        nbeq=to_mumps_int(nequ(1))
+        if(lmhpc) then
+            nbeq=to_mumps_int(nequ(2))
+        else
+            nbeq=to_mumps_int(nequ(1))
+        endif
         ASSERT(n1.eq.nsmdi)
 ! --- CALCUL DE N
         n=nsmdi
@@ -284,7 +290,12 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
 !         DONT IL A LA RESPONSABILITE.
 !       ------------------------------------------------
 !
-    if (((rang.eq.0).and.(.not.ldist)) .or. (ldist)) then
+    if (((rang.eq.0).and.(.not.ldist)) .or. (ldist) .or. (lmhpc)) then
+        if(lmhpc) then
+            call jeveuo(nonu//'.NUME.PDLL', 'L', jpddl)
+            call jeveuo(nonu//'.NUME.DEEQ', 'L', jdeeq)
+            call jeveuo(nonu//'.NUME.NULG', 'L', jnugll)
+        endif
 !
 ! --- VECTEURS AUXILIAIRES POUR FILTRER LES TERMES MATRICIELS
 ! --- KPIV: PROFIL TRIANGULAIRE INF
@@ -319,6 +330,30 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
 ! --- PREPARATION DES DONNES (NUM DE COLONNE, TERME DE FILTRAGE...)
             if (smdi(jcoll) .lt. kterm) jcoll=jcoll+1
             iligl=zi4(jsmhc-1+kterm)
+            if(lmhpc) then
+                nuno1 = 0
+                if( zi(jdeeq + (iligl - 1) * 2).gt.0 ) then
+                    nuno1 = 1
+                endif
+                nuno2 = 0
+                if( zi(jdeeq + (jcoll - 1) * 2).gt.0 ) then
+                    nuno2 = 1
+                endif
+                procol = zi(jpddl + jcoll - 1)
+                prolig = zi(jpddl + iligl - 1)
+                if( nuno1.ne.0.or.nuno2.ne.0 ) then
+                    lgive = (nuno1.eq.0.and.procol.eq.rang).or.&
+                            (nuno2.eq.0.and.prolig.eq.rang).or.&
+                            (nuno1.eq.0.and.nuno2.eq.0)
+                    if( .not.lgive ) then
+                        cycle
+                    endif
+                else
+                    if( prolig.ne.rang ) then
+                        cycle
+                    endif
+                endif
+            endif
             if (lfiltr) then
                 rfiltr=zr(ifiltr-1+iligl)+zr(ifiltr-1+jcoll)
             else
@@ -369,6 +404,14 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                 else
 ! ---   TERME RIGOUREUSEMENT NUL
                     nfilt1=nfilt1+1
+                endif
+            endif
+
+            if(lmhpc) then
+                if( nuno1.eq.0.and.nuno2.eq.0 ) then
+                    if( procol.ne.rang ) then
+                        cycle
+                    endif
                 endif
             endif
 !
@@ -557,6 +600,30 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
 !
             if (smdi(jcoll) .lt. kterm) jcoll=jcoll+1
             iligl=zi4(jsmhc-1+kterm)
+            if(lmhpc) then
+                nuno1 = 0
+                if( zi(jdeeq + (iligl - 1) * 2).gt.0 ) then
+                    nuno1 = 1
+                endif
+                nuno2 = 0
+                if( zi(jdeeq + (jcoll - 1) * 2).gt.0 ) then
+                    nuno2 = 1
+                endif
+                procol = zi(jpddl + jcoll - 1)
+                prolig = zi(jpddl + iligl - 1)
+                if( nuno1.ne.0.or.nuno2.ne.0 ) then
+                    lgive = (nuno1.eq.0.and.procol.eq.rang).or.&
+                            (nuno2.eq.0.and.prolig.eq.rang).or.&
+                            (nuno1.eq.0.and.nuno2.eq.0)
+                    if( .not.lgive ) then
+                        cycle
+                    endif
+                else
+                    if( prolig.ne.rang ) then
+                        cycle
+                    endif
+                endif
+            endif
             lnn=.false.
 ! --- PARTIE TRIANGULAIRE INF. SI REEL
             if (ltypr) then
@@ -580,7 +647,10 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                 sign(1.d0,imag(caux)))
                 endif
             endif
-            if (lmd) then
+            if (lmhpc) then
+                iligg=to_mumps_int(zi(jnugll+iligl-1))
+                jcolg=to_mumps_int(zi(jnugll+jcoll-1))
+            else if (lmd) then
                 iligg=to_mumps_int(zi(jnulogl+iligl-1))
                 jcolg=to_mumps_int(zi(jnulogl+jcoll-1))
             else
@@ -659,6 +729,14 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                     endif
                 endif
             endif
+
+            if(lmhpc) then
+                if( nuno1.eq.0.and.nuno2.eq.0 ) then
+                    if( procol.ne.rang ) then
+                        cycle
+                    endif
+                endif
+            endif
 !
 ! --- PARTIE TRIANGULAIRE SUP. SI REEL
             if ((sym.eq.0) .and. (iligl.ne.jcoll)) then
@@ -689,7 +767,10 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
 ! ---- PARTIE TRIANGULAIRE SUP. TERME NON NUL
                 if (lnn) then
                     iterm=iterm+1
-                    if (lmd) then
+                    if (lmhpc) then
+                        iligg=to_mumps_int(zi(jnugll+iligl-1))
+                        jcolg=to_mumps_int(zi(jnugll+jcoll-1))
+                    else if (lmd) then
                         iligg=to_mumps_int(zi(jnulogl+iligl-1))
                         jcolg=to_mumps_int(zi(jnulogl+jcoll-1))
                     else
