@@ -118,8 +118,7 @@ using namespace boost::python;
 
 static void libaster_finalize()
 {
-    int a = get_sh_jeveux_status();
-    if( a != 1 )
+    if( get_sh_jeveux_status() != 1 )
         return;
     CALL_OP9999();
     register_sh_jeveux_status( 0 );

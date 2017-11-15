@@ -24,7 +24,8 @@ from code_aster.Supervis.ExecutionParameter import ExecutionParameter
 test = code_aster.TestCase()
 
 # extract from zzzz351a
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
+# DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
+code_aster.init("--abort")
 
 params = ExecutionParameter()
 
@@ -78,6 +79,6 @@ MODE1 = CALC_MODES(OPTION='BANDE',
 TEST_RESU(RESU=_F(RESULTAT=MODE1, NUME_MODE=2,
                   PARA='FREQ', VALE_CALC=85.631015163879, ))
 
-# FIN()
+FIN()
 
 test.printSummary()
