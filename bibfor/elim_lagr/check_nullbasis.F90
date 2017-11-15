@@ -19,6 +19,7 @@
 function check_nullbasis( vec_c, mat_z, tol ) result ( is_ok )
 !
 #include "asterf_petsc.h"
+use aster_petsc_module
 
 implicit none
 !
@@ -55,10 +56,10 @@ implicit none
      tol_loc = tolmax
   endif
 ! Allocation d'un vecteur de travail pour calculer le produit vec_c * mat_z
-#if PETSC_VERSION_LT(3,6,0)
-  call MatGetVecs(mat_z, vec_cz, PETSC_NULL_OBJECT, ierr)
-#else
+#if PETSC_VERSION_LT(3,8,0)
   call MatCreateVecs( mat_z, vec_cz, PETSC_NULL_OBJECT, ierr)
+#else
+  call MatCreateVecs( mat_z, vec_cz, PETSC_NULL_VEC, ierr)
 #endif
   ASSERT(ierr == 0)
   call MatMultTranspose(mat_z, vec_c, vec_cz, ierr)

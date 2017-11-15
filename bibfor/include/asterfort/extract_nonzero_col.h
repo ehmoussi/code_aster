@@ -22,6 +22,7 @@
 interface
     subroutine extract_nonzero_col(a, acnz, icolnz_c)
 #ifdef _HAVE_PETSC
+      use aster_petsc_module
       Mat, intent(in)  :: a
       Mat, intent(out) :: acnz
       PetscInt, dimension(:), pointer :: icolnz_c

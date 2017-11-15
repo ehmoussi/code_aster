@@ -29,10 +29,9 @@ module lmp_context_type
 #include "asterf_types.h"
 #include "asterf_petsc.h"
 !
-!
 ! person_in_charge: natacha.bereux at edf.fr
 !
-!
+use aster_petsc_module
 implicit none
 !
 private
@@ -124,7 +123,11 @@ subroutine build_lmp_context( ksp, ctxt )
     Mat :: amat
     PetscScalar :: norm
     !
+#if PETSC_VERSION_LT(3,8,0)
     call KSPGetOperators( ksp, amat, PETSC_NULL_OBJECT, ierr )
+#else
+    call KSPGetOperators( ksp, amat, PETSC_NULL_MAT, ierr )
+#endif
     ASSERT( ierr == 0 )
     ! On calcule les vecteurs de Ritz de plus petit module pour definir le LMP
     ! allocation des vecteurs PETSc à partir du vecteur solution du ksp

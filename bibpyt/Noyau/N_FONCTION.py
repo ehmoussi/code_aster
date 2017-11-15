@@ -51,6 +51,8 @@ class FONCTION(ASSD):
 
 class formule(ASSD):
 
+    _initial_context = initial_context()
+
     def __init__(self, *args, **kwargs):
         ASSD.__init__(self, *args, **kwargs)
         self.nompar = None
@@ -75,7 +77,7 @@ class formule(ASSD):
         for param, value in zip(self.nompar, val):
             context[param] = value
         try:
-            res = eval(self.code, context, initial_context())
+            res = eval(self.code, context, self._initial_context)
         except Exception, exc:
             message.error(SUPERV, "ERREUR LORS DE L'ÉVALUATION DE LA FORMULE '%s' "
                           ":\n>> %s", self.nom, str(exc))

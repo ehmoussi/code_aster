@@ -19,10 +19,8 @@
 subroutine ldsp1(pc, ierr)
 !
 #include "asterf_petsc.h"
-!
-!
 ! person_in_charge: natacha.bereux at edf.fr
-
+use aster_petsc_module
 use petsc_data_module
 use lmp_module, only : lmp_destroy
 

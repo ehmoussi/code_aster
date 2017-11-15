@@ -59,7 +59,7 @@ subroutine cphe08(main  , maout , inc   , jcoor , jcnnpa, conloc,&
     integer, intent(out) :: ind 
     integer, intent(out) :: ind1     
 ! -------------------------------------------------------------------------------------------------
-!        CREATION DES NOUVEAUS NOUEDS ET NOUVELLE MAILLE CAS TETRA 10
+!        CREATION DES NOUVEAUX NOEUDS ET NOUVELLES MAILLES CAS HEXA 08
 ! -------------------------------------------------------------------------------------------------
 ! -------------------------------------------------------------------------------------------------
     integer :: patch

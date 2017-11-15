@@ -57,7 +57,7 @@ subroutine cpte04(main  , maout , inc   , jcoor , jcnnpa, conloc,&
     integer, intent(out) :: ind 
     integer, intent(out) :: ind1      
 ! -------------------------------------------------------------------------------------------------
-!        CREATION DES NOUVEAUS NOUEDS ET NOUVELLE MAILLE CAS TETRA 10
+!        CREATION DES NOUVEAUX NOEUDS ET NOUVELLES MAILLES CAS TETRA 04
 ! -------------------------------------------------------------------------------------------------
 ! -------------------------------------------------------------------------------------------------
     integer :: patch, linop(3), linoc(1), ntrou

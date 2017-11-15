@@ -21,6 +21,7 @@ subroutine elg_allocvr(vect1, n1)
 #include "asterf_types.h"
 #include "asterf_petsc.h"
 !
+use aster_petsc_module
 implicit none
 ! person_in_charge: natacha.bereux@edf.fr
 !

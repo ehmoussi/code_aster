@@ -102,6 +102,9 @@ implicit none
     epsth           = 0.d0
     epsth_anis(1:3) = 0.d0
     epsth_meta      = 0.d0
+    temp_refe       = 0.d0
+    temp_curr       = 0.d0
+    temp_prev       = 0.d0
 !
 ! - No temperature -> thermic strain is zero
 !

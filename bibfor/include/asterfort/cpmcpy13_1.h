@@ -19,9 +19,11 @@
 !
 !
 interface
-    subroutine rcma02(etat, iocc, vale)
-        character(len=1) :: etat
-        integer :: iocc
-        real(kind=8) :: vale(*)
-    end subroutine rcma02
+    subroutine cpmcpy13_1(conloc, jmacsu, indno, indma, conneo)
+        integer, intent(in) :: indma
+        integer, intent(in) :: indno
+        integer, intent(in) :: jmacsu
+        integer, intent(in) :: conneo(*)
+        character(len=24), intent(in) :: conloc
+    end subroutine cpmcpy13_1
 end interface

@@ -21,10 +21,12 @@ subroutine nullbasis( mat_c, mat_z, nbnvco, nvco_c)
 #include "asterf_types.h"
 #include "asterf_petsc.h"
 !
+use aster_petsc_module
   implicit none
 !
 ! person_in_charge: natacha.bereux at edf.fr
-! aslint:disable=W1003
+! aslint:disable=W1003,C1308
+
 #include "jeveux.h"
 #include "asterc/asmpi_comm.h"
 #include "asterc/r8prem.h"
@@ -112,8 +114,13 @@ subroutine nullbasis( mat_c, mat_z, nbnvco, nvco_c)
 ! (en conservant la structure creuse)
     call MatSetOption(mat_z,MAT_KEEP_NONZERO_PATTERN,PETSC_TRUE, ierr)
     ASSERT( ierr == 0 )
+#if PETSC_VERSION_LT(3,8,0)
     call MatZeroRows(mat_z, nc ,(/(ii, ii=0, nc-1)/), rone, PETSC_NULL_OBJECT,&
-    PETSC_NULL_OBJECT, ierr )
+    PETSC_NULL_OBJECT,  ierr )
+#else
+    call MatZeroRows(mat_z, nc ,(/(ii, ii=0, nc-1)/), rone, PETSC_NULL_VEC,&
+    PETSC_NULL_VEC,  ierr )
+#endif
     ASSERT ( ierr == 0 )
 !
     allocate( val(nc), stat = ierr)
@@ -296,7 +303,7 @@ subroutine nullbasis( mat_c, mat_z, nbnvco, nvco_c)
                          idfree_c(1:nfree), [rzero], INSERT_VALUES, ierr )
                ASSERT( ierr == 0 )
                call MatSetValues( mat_z, ione, idfree_c(ii), ione, &
-                         idfree_c(ii), [rone], INSERT_VALUES, ierr )
+                         (/idfree_c(ii)/), [rone], INSERT_VALUES, ierr )
                ASSERT( ierr == 0 )
              enddo
              call MatAssemblyBegin( mat_z, MAT_FINAL_ASSEMBLY, ierr )
@@ -347,14 +354,19 @@ subroutine nullbasis( mat_c, mat_z, nbnvco, nvco_c)
   call VecGetSubVector(vec_c, is_elim, c_elim, ierr)
   ASSERT( ierr == 0 )
 ! Et de la matrice Z la sous-matrice Z_elim_elim correspondant à is_elim x is_elim
+#if PETSC_VERSION_LT(3,8,0) 
   call MatGetSubMatrix(mat_z, is_elim, is_elim, MAT_INITIAL_MATRIX, z_elim_elim,&
           ierr)
+#else
+  call MatCreateSubMatrix(mat_z, is_elim, is_elim, MAT_INITIAL_MATRIX, z_elim_elim,&
+          ierr)
+#endif
   ASSERT( ierr == 0 )
 ! Calcul de cz_elim = c_elim * z_elim_elim
-#if PETSC_VERSION_LT(3,6,0)
-  call MatGetVecs(z_elim_elim, PETSC_NULL_OBJECT, cz_elim, ierr)
-#else
+#if PETSC_VERSION_LT(3,8,0) 
   call MatCreateVecs( z_elim_elim, PETSC_NULL_OBJECT, cz_elim, ierr)
+#else
+  call MatCreateVecs( z_elim_elim, PETSC_NULL_VEC, cz_elim, ierr)
 #endif
   ASSERT( ierr == 0 )
   call MatMultTranspose(z_elim_elim, c_elim, cz_elim, ierr)
@@ -375,8 +387,8 @@ subroutine nullbasis( mat_c, mat_z, nbnvco, nvco_c)
   ASSERT( ierr == 0 )
   call ISGetIndices(is_elim, nn_is, nn_i, ierr)
   ASSERT( ierr == 0 )
-  call MatSetValues(mat_z, ione, [maxloc_free_c], nelim, nn_is(nn_i+1),&
-        xx_v(xx_i+1), INSERT_VALUES, ierr )
+  call MatSetValues(mat_z, ione, [maxloc_free_c], nelim, nn_is(nn_i+1:nn_i+nelim),&
+        xx_v(xx_i+1:xx_i+nelim), INSERT_VALUES, ierr )
   ASSERT( ierr == 0 )
   call ISRestoreIndices(is_elim, nn_is, nn_i, ierr)
   ASSERT( ierr == 0 )
@@ -447,7 +459,7 @@ subroutine nullbasis( mat_c, mat_z, nbnvco, nvco_c)
     call MatSetValues( mat_z, ione, idfree_c(ii), nfree, idfree_c(1:nfree), &
            (/( rzero, jj=1,nfree)/), INSERT_VALUES, ierr )
     ASSERT( ierr == 0 )
-    call MatSetValues( mat_z, ione, idfree_c(ii), ione, idfree_c(ii), &
+    call MatSetValues( mat_z, ione, idfree_c(ii), ione, (/idfree_c(ii)/), &
            [rone], INSERT_VALUES, ierr )
     ASSERT( ierr == 0 )
     enddo

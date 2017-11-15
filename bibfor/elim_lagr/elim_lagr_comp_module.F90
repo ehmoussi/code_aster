@@ -21,10 +21,10 @@ module elim_lagr_comp_module
 #include "asterf_types.h"
 #include "asterf_petsc.h"
 !
-!
 ! person_in_charge: natacha.bereux at edf.fr
-! aslint:disable=W1003
+! aslint:disable=W1003,C1308
 !
+use aster_petsc_module
 use elim_lagr_context_type
 use elim_lagr_data_module
 use petsc_data_module
@@ -224,19 +224,21 @@ subroutine build_tfinal( idphys_c, elg_ctxt )
     call infniv(ifm, niv)
     verbose= ( niv == 2 )
     !
-#if PETSC_VERSION_LT(3,5,0)
-    aster_petsc_real = PETSC_DEFAULT_DOUBLE_PRECISION
-#else
     aster_petsc_real = PETSC_DEFAULT_REAL
-#endif
     !
     ! Allocation et initialisation de T à l'identite
     call MatDuplicate( elg_ctxt%matb, MAT_DO_NOT_COPY_VALUES, &
         &     elg_ctxt%tfinal, ierr )
     ASSERT( ierr == 0 )
+#if PETSC_VERSION_LT(3,8,0)
     call MatZeroRows( elg_ctxt%tfinal, elg_ctxt%nphys, &
        (/ (i, i=0, elg_ctxt%nphys-1)/), &
      &    rone, PETSC_NULL_OBJECT, PETSC_NULL_OBJECT, ierr )
+#else
+    call MatZeroRows( elg_ctxt%tfinal, elg_ctxt%nphys, &
+       (/ (i, i=0, elg_ctxt%nphys-1)/), &
+     &    rone, PETSC_NULL_VEC, PETSC_NULL_VEC, ierr )
+#endif
     ASSERT( ierr == 0 )
 !
 !----------------------------------------------------!
@@ -296,8 +298,13 @@ subroutine build_tfinal( idphys_c, elg_ctxt )
         call ISCreateStride(mpicomm, to_petsc_int(elg_ctxt%nphys), izero, ione, &
             isall, ierr)
         ASSERT( ierr == 0 )
+#if PETSC_VERSION_LT(3,8,0) 
         call MatGetSubMatrix(mat_tmp, isnvco, isall, MAT_INITIAL_MATRIX, mat_c,&
                              ierr)
+#else
+        call MatCreateSubMatrix(mat_tmp, isnvco, isall, MAT_INITIAL_MATRIX, mat_c,&
+                             ierr)
+#endif
         ASSERT( ierr == 0 )
         call MatDestroy(mat_tmp, ierr)
         ASSERT( ierr == 0 )
@@ -350,15 +357,8 @@ subroutine build_tfinal( idphys_c, elg_ctxt )
     ASSERT( ierr == 0 )
 !
 !   -- calcul de T^T C^T = (CT)^T
-!-- Changement de version PETSc 3.2 -> 3.3
-!   Renamed MatMatMultTranspose() for C=A^T*B to MatTransposeMatMult()
-#if PETSC_VERSION_LT(3,3,0)
-    call MatMatMultTranspose(elg_ctxt%tfinal, elg_ctxt%ctrans, MAT_INITIAL_MATRIX, &
-                                     PETSC_DEFAULT_DOUBLE_PRECISION, mat_tmp, ierr)
-#else
     call MatTransposeMatMult(elg_ctxt%tfinal,elg_ctxt%ctrans,MAT_INITIAL_MATRIX, &
                            aster_petsc_real, mat_tmp,ierr)
-#endif
 !
     ASSERT( ierr == 0 )
 !     -- calcul de la norme de chaque ligne de CT

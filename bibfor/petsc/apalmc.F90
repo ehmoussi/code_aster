@@ -23,7 +23,8 @@ subroutine apalmc(kptsc)
 !
 !
 ! person_in_charge: natacha.bereux at edf.fr
-! aslint:disable=
+! aslint:disable=C1308
+use aster_petsc_module
 use petsc_data_module
     implicit none
 
@@ -53,6 +54,7 @@ use petsc_data_module
     integer :: nsmdi, nsmhc, nz, bs, nblloc2, fictif
     integer :: jidxd, jidxo
     integer :: i, k, ilig1, jcol1, ilig2,jcol2,nbo, nbd, nzdeb, nzfin, nbterm
+    PetscInt :: mm 
     mpi_int :: mpicou
     integer(kind=4), pointer :: new_ieq(:) => null()
     integer(kind=4), pointer :: old_ieq(:) => null()
@@ -68,7 +70,7 @@ use petsc_data_module
 !
 !----------------------------------------------------------------
 !     Variables PETSc
-    PetscInt :: low2, high2, low1, high1
+    PetscInt :: low2, high2, low1, high1, unused_nz
     PetscErrorCode ::  ierr
     integer :: neq, neq2
     Vec :: vtmp
@@ -221,32 +223,25 @@ use petsc_data_module
                      ierr)
     ASSERT(ierr.eq.0)
 !
-#if PETSC_VERSION_GE(3,3,0)
-!   AVEC PETSc >= 3.3
-!   IL FAUT APPELER MATSETBLOCKSIZE *AVANT* MAT*SETPREALLOCATION
     call MatSetBlockSize(a, to_petsc_int(bs), ierr)
     ASSERT(ierr.eq.0)
-#endif
 
     if (nbproc .eq. 1) then
         call MatSetType(a, MATSEQAIJ, ierr)
         ASSERT(ierr.eq.0)
-        call MatSEQAIJSetPreallocation(a, PETSC_NULL_INTEGER, zi4( jidxd), ierr)
+        mm = to_petsc_int(nblloc2)
+        unused_nz = -1
+        call MatSeqAIJSetPreallocation(a, unused_nz, zi4(jidxd-1+1:jidxd-1+mm), ierr)
         ASSERT(ierr.eq.0)
     else
         call MatSetType(a, MATMPIAIJ, ierr)
         ASSERT(ierr.eq.0)
-        call MatMPIAIJSetPreallocation(a, PETSC_NULL_INTEGER, zi4( jidxd),&
-                                       PETSC_NULL_INTEGER, zi4(jidxo), ierr)
+        mm = to_petsc_int(nblloc2)
+        unused_nz = -1
+        call MatMPIAIJSetPreallocation(a, unused_nz, zi4(jidxd-1+1:jidxd-1+mm),&
+                                       unused_nz, zi4(jidxo-1+1:jidxd-1+mm), ierr)
         ASSERT(ierr.eq.0)
     endif
-!
-#if PETSC_VERSION_LT(3,3,0)
-!      LE BS DOIT ABSOLUMENT ETRE DEFINI ICI
-    call MatSetBlockSize(a, to_petsc_int(bs), ierr)
-    ASSERT(ierr.eq.0)
-!   RQ : A PARTIR DE LA VERSION V 3.3 IL DOIT PRECEDER LA PREALLOCATION
-#endif
 !
     ap(kptsc)=a
 

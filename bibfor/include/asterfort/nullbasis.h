@@ -22,6 +22,7 @@
 interface
     subroutine nullbasis( mat_c, mat_z, nbnvco, nvco_c)
 # ifdef _HAVE_PETSC
+        use aster_petsc_module
         Mat, intent(in)                      :: mat_c
         Mat, intent(out)                     :: mat_z
         PetscInt, intent(out)                 :: nbnvco

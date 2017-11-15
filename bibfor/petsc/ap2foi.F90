@@ -20,12 +20,11 @@ subroutine ap2foi(kptsc, mpicou, nosolv, lmd, indic,&
    its)
 #include "asterf_types.h"
 #include "asterf_petsc.h"
-!
-!
 ! person_in_charge: natacha.bereux at edf.fr
-! aslint:disable=
+use aster_petsc_module
 use petsc_data_module
 use lmp_module, only : lmp_destroy
+
 implicit none
 #include "jeveux.h"
 #include "asterf_petsc.h"
@@ -47,7 +46,6 @@ implicit none
 !---------------------------------------------------------------
 !
 #ifdef _HAVE_PETSC
-
   !
   integer :: kptsc
   mpi_int :: mpicou
@@ -80,12 +78,8 @@ implicit none
     call KSPCreate(mpicou, kp(kptsc), ierr)
     ksp=kp(kptsc)
     ASSERT(ierr.eq.0)
-#if PETSC_VERSION_LT(3,5,0)
-    call KSPSetOperators(kp(kptsc), ap(kptsc), ap(kptsc), DIFFERENT_NONZERO_PATTERN, ierr)
-#else
     call KSPSetOperators(kp(kptsc), ap(kptsc), ap(kptsc), ierr)
-#endif
-  ASSERT(ierr.eq.0)
+    ASSERT(ierr.eq.0)
   !
   !   slvi(5) = nombre d'itérations pour atteindre la convergence du solveur linéaire.
   !   si :
@@ -114,19 +108,34 @@ implicit none
   !   -- 2eme resolution :
   !   ---------------------
   call VecDestroy(xlocal, ierr)
+  ASSERT( ierr == 0 )
+#if PETSC_VERSION_LT(3,8,0) 
+  xlocal = PETSC_NULL_OBJECT
+#else
+  xlocal = PETSC_NULL_VEC
+#endif
   call VecDestroy(xglobal, ierr)
+  ASSERT( ierr == 0 )
+#if PETSC_VERSION_LT(3,8,0) 
+  xglobal = PETSC_NULL_OBJECT
+#else
+  xglobal = PETSC_NULL_VEC
+#endif
   call VecScatterDestroy(xscatt, ierr)
-  xlocal=0
-  xglobal=0
-  xscatt=0
+  ASSERT( ierr == 0 )
+#if PETSC_VERSION_LT(3,8,0) 
+  xscatt = PETSC_NULL_OBJECT
+#else
+  xscatt = PETSC_NULL_VECSCATTER
+#endif
   call apksp(kptsc)
   call appcrs(kptsc, lmd)
   call KSPSolve(ksp, b, x, ierr)
   ASSERT(ierr.eq.0)
   call KSPGetConvergedReason(ksp, indic, ierr)
+  ASSERT(ierr.eq.0)
   call KSPGetIterationNumber(ksp, its, ierr)
-
-
+  ASSERT(ierr.eq.0)
   !
   !
   !   -- bascule pour la mesure du temps CPU : PRERES -> RESOUD :

@@ -21,9 +21,9 @@ module saddle_point_module
 #include "asterf_types.h"
 #include "asterf_petsc.h"
 !
-!
 ! person_in_charge: natacha.bereux at edf.fr
 !
+use aster_petsc_module
 use saddle_point_context_type
 !
 implicit none

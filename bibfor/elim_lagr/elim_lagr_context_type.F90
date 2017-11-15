@@ -22,10 +22,10 @@ module elim_lagr_context_type
 #include "asterf_petsc.h"
 !
 !
-!
 ! person_in_charge: natacha.bereux at edf.fr
 ! aslint:disable=W1304,W1003
 !
+use aster_petsc_module
 implicit none
 !
 private
@@ -44,7 +44,6 @@ type, public ::  elim_lagr_ctxt
     Mat :: kproj
     Mat :: ctrans
     Mat :: tfinal
-    Mat :: rct
     Mat :: matb
     Vec :: vx0
     Vec :: vecb
@@ -83,14 +82,23 @@ function new_elim_lagr_context() result ( elg_ctxt )
   elg_ctxt%full_matas=' '
   elg_ctxt%reduced_matas=' '
   elg_ctxt%k_matas=' '
-  elg_ctxt%kproj=0
-  elg_ctxt%ctrans=0
-  elg_ctxt%tfinal=0
-  elg_ctxt%rct=0
-  elg_ctxt%matb=0
-  elg_ctxt%vx0=0
-  elg_ctxt%vecb=0
-  elg_ctxt%vecc=0
+#if PETSC_VERSION_LT(3,8,0)
+  elg_ctxt%kproj=PETSC_NULL_OBJECT
+  elg_ctxt%ctrans=PETSC_NULL_OBJECT
+  elg_ctxt%tfinal=PETSC_NULL_OBJECT
+  elg_ctxt%matb=PETSC_NULL_OBJECT
+  elg_ctxt%vx0=PETSC_NULL_OBJECT
+  elg_ctxt%vecb=PETSC_NULL_OBJECT
+  elg_ctxt%vecc=PETSC_NULL_OBJECT
+#else
+  elg_ctxt%kproj=PETSC_NULL_MAT
+  elg_ctxt%ctrans=PETSC_NULL_MAT
+  elg_ctxt%tfinal=PETSC_NULL_MAT
+  elg_ctxt%matb=PETSC_NULL_MAT
+  elg_ctxt%vx0=PETSC_NULL_VEC
+  elg_ctxt%vecb=PETSC_NULL_VEC
+  elg_ctxt%vecc=PETSC_NULL_VEC
+#endif
   nullify(elg_ctxt%indred)
   !
 end function new_elim_lagr_context
@@ -112,8 +120,6 @@ subroutine free_elim_lagr_context( elg_ctxt )
     ASSERT( ierr == 0 )
     call MatDestroy(elg_ctxt%tfinal, ierr)
     ASSERT( ierr == 0 )
-    call MatDestroy(elg_ctxt%rct, ierr)
-    ASSERT( ierr == 0 )
     call MatDestroy(elg_ctxt%matb, ierr)
     ASSERT( ierr == 0 )
     call VecDestroy(elg_ctxt%vx0, ierr)
@@ -122,18 +128,28 @@ subroutine free_elim_lagr_context( elg_ctxt )
     ASSERT( ierr == 0 )
     call VecDestroy(elg_ctxt%vecc, ierr)
     ASSERT( ierr == 0 )
+!
     if (associated(elg_ctxt%indred)) then
     deallocate(elg_ctxt%indred)
         nullify(elg_ctxt%indred)
     endif
-    elg_ctxt%kproj=0
-    elg_ctxt%ctrans=0
-    elg_ctxt%tfinal=0
-    elg_ctxt%rct=0
-    elg_ctxt%matb=0
-    elg_ctxt%vx0=0
-    elg_ctxt%vecb=0
-    elg_ctxt%vecc=0
+#if PETSC_VERSION_LT(3,8,0)
+  elg_ctxt%kproj=PETSC_NULL_OBJECT
+  elg_ctxt%ctrans=PETSC_NULL_OBJECT
+  elg_ctxt%tfinal=PETSC_NULL_OBJECT
+  elg_ctxt%matb=PETSC_NULL_OBJECT
+  elg_ctxt%vx0=PETSC_NULL_OBJECT
+  elg_ctxt%vecb=PETSC_NULL_OBJECT
+  elg_ctxt%vecc=PETSC_NULL_OBJECT
+#else
+  elg_ctxt%kproj=PETSC_NULL_MAT
+  elg_ctxt%ctrans=PETSC_NULL_MAT
+  elg_ctxt%tfinal=PETSC_NULL_MAT
+  elg_ctxt%matb=PETSC_NULL_MAT
+  elg_ctxt%vx0=PETSC_NULL_VEC
+  elg_ctxt%vecb=PETSC_NULL_VEC
+  elg_ctxt%vecc=PETSC_NULL_VEC
+#endif
 !
 end subroutine free_elim_lagr_context
 !
