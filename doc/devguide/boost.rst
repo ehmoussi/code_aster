@@ -34,24 +34,17 @@ The final user must not call this constructor.
 For the creation of the *DataStructure* from Python, we also need a *default*
 constructor (with or without any argument).
 
-.. note:: These constructors are defined using factory functions, named
-    ``make<DataStructure>()`` and ``make<DataStructure>Jeveux()``.
+.. note:: These constructors are defined using factory functions by
+    templating ``initFactoryPtr``.
 
 
-Example
--------
+Examples
+--------
+
+In this simple example one defines a *default* constructor (without argument)
+and the constructor used during unpickling that accepts the *Jeveux* name:
 
 .. code-block:: c++
-
-    static FunctionPtr makeFunction()
-    {
-        return FunctionPtr( new FunctionInstance() );
-    }
-
-    static FunctionPtr makeFunctionJeveux( const std::string& jeveuxName )
-    {
-        return FunctionPtr( new FunctionInstance(jeveuxName) );
-    }
 
     void exportFunctionToPython()
     {
@@ -60,12 +53,37 @@ Example
 
         class_< FunctionInstance, FunctionInstance::FunctionPtr,
                 bases< BaseFunctionInstance > > ( "Function", no_init )
-            .def( "__init__", make_constructor(makeFunction) )
-            .def( "__init__", make_constructor(makeFunctionJeveux) )
+            .def( "__init__", make_constructor(
+                &initFactoryPtr< FunctionInstance >) )
+            .def( "__init__", make_constructor(
+                &initFactoryPtr< FunctionInstance,
+                                 std::string >) )
             .def( "setValues", &FunctionInstance::setValues )
             ...
         ;
     }
+
+A more complex example where the constructor needs another object. So the
+*default* constructor needs a pointer on a :class:`~code_aster.Objects.Model`
+and another that takes the *Jeveux* name and this pointer:
+
+.. code-block:: c++
+
+    void exportElementaryCharacteristicsToPython()
+    {
+        using namespace boost::python;
+
+        class_< ElementaryCharacteristicsInstance, ElementaryCharacteristicsInstance::ElementaryCharacteristicsPtr,
+                bases< DataStructure > > ( "ElementaryCharacteristics", no_init )
+            .def( "__init__", make_constructor(
+                &initFactoryPtr< ElementaryCharacteristicsInstance,
+                                 ModelPtr >) )
+            .def( "__init__", make_constructor(
+                &initFactoryPtr< ElementaryCharacteristicsInstance,
+                                 std::string,
+                                 ModelPtr >) )
+        ;
+    };
 
 
 Other methods
