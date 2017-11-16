@@ -1,0 +1,362 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+#
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
+
+# Read the mesh
+mesh=LIRE_MAILLAGE(FORMAT='MED',);
+
+# Thermal conductivity depending by the temperature (W.mm-1.K-1)
+Lambda=DEFI_FONCTION(
+                     NOM_PARA='TEMP',
+                     VALE=(20.0 ,0.014 ,
+                           100.0 ,0.0152 ,
+                           200.0 ,0.0166 ,
+                           300.0 ,0.0179 ,
+                           400.0 ,0.019 ,
+                           500.0 ,0.0206 ,
+                           600.0 ,0.0218 ,
+                           700.0 ,0.0231 ,
+                           800.0 ,0.0243 ,
+                           900.0 ,0.026 ,
+                           1000.0 ,0.0273 ,
+                           1200.0 ,0.0299 ,),
+                     PROL_DROITE='LINEAIRE',
+                     PROL_GAUCHE='LINEAIRE',);
+
+# Volumetric heat capacity depending by the temperature (J.mm-3.K-1)
+rho_cp=DEFI_FONCTION(
+                     NOM_PARA='TEMP',
+                     VALE=(20.0 ,0.0036 ,
+                           100.0 ,0.0039053 ,
+                           200.0 ,0.0041685 ,
+                           300.0 ,0.0043 ,
+                           400.0 ,0.004396 ,
+                           500.0 ,0.004446 ,
+                           600.0 ,0.004495 ,
+                           700.0 ,0.0045815 ,
+                           800.0 ,0.0047875 ,
+                           900.0 ,0.0049465 ,
+                           1000.0 ,0.0049962 ,
+                           1200.0 ,0.00504365 ,),
+                     PROL_DROITE='LINEAIRE',
+                     PROL_GAUCHE='LINEAIRE',);
+# Heat transfer coefficient with air (W.mm-2.K-1)
+C_echang=DEFI_CONSTANTE(VALE=1.5e-05,);
+# Heat transfer coefficient with one face of the cube (W.mm-2.K-1)
+C_echanf=DEFI_CONSTANTE(VALE=1.0,);
+# Ambient temperature
+T_ex=DEFI_CONSTANTE(VALE=20.0,);
+# Temperature of one face of the cube
+T_im=DEFI_FONCTION(
+                   NOM_PARA='INST',
+                   VALE=(0.0 ,20.0 ,
+                         1.0 ,30.0 ,
+                         2.0 ,50.0 ,
+                         3.0 ,90.0 ,
+                         4.0 ,140.0 ,
+                         5.0 ,240.0 ,
+                         6.0 ,350.0 ,
+                         7.0 ,570.0 ,
+                         8.0 ,800.0 ,
+                         9.0 ,1000.0 ,),
+                   PROL_DROITE='CONSTANT',
+                   PROL_GAUCHE='LINEAIRE',);
+# Emissivity
+C_epsi=DEFI_CONSTANTE(VALE=0.75,);
+# Stefan–Boltzmann constant (J.mm-2.s-1.K-4)
+C_sigma=DEFI_CONSTANTE(VALE=5.67e-14,);
+# Define the material
+steel=DEFI_MATERIAU(THER_NL=_F(LAMBDA=Lambda,
+                             RHO_CP=rho_cp,),);
+# Define the material field
+chmat=AFFE_MATERIAU(MAILLAGE=mesh,
+                    AFFE=_F(TOUT='OUI',
+                            MATER=steel,),);
+# Thermic model
+model=AFFE_MODELE(MAILLAGE=mesh,
+               AFFE=_F(TOUT='OUI',
+                       PHENOMENE='THERMIQUE',
+                       MODELISATION='3D',),);
+# Limit condition
+chg_th=AFFE_CHAR_THER_F(MODELE=model,
+                        RAYONNEMENT=_F(GROUP_MA='S_e',
+                                       SIGMA=C_sigma,
+                                       EPSILON=C_epsi,
+                                       TEMP_EXT=T_ex,),
+                        ECHANGE=(_F(GROUP_MA='S_e',
+                                    COEF_H=C_echang,
+                                    TEMP_EXT=T_ex,),
+                                 _F(GROUP_MA='S_f',
+                                    COEF_H=C_echanf,
+                                    TEMP_EXT=T_im,),),);
+list_t=DEFI_LIST_REEL(DEBUT=0.0,
+                      INTERVALLE=_F(JUSQU_A=10.0,
+                                    PAS=1.0,),);
+
+list_i=DEFI_LIST_INST(METHODE='MANUEL',
+                      DEFI_LIST=_F(LIST_INST=list_t,),);
+
+thnl=THER_NON_LINE(MODELE=model,
+                   CHAM_MATER=chmat,
+                   EXCIT=_F(CHARGE=chg_th,),
+                   INCREMENT=_F(LIST_INST=list_i,),
+                   ETAT_INIT=_F(VALE=20.0,),
+                   NEWTON=_F(REAC_ITER=1,
+                             ITER_LINE_MAXI=3,),
+                   CONVERGENCE=_F(RESI_GLOB_MAXI=1e-5,),);
+
+# Valeurs de référence (calcul complet) - Dans RID
+
+TEST_RESU(RESU=(
+                _F(RESULTAT=thnl,
+                   INST= 1.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N206',
+                   NOM_CMP='TEMP',
+                   VALE_CALC=29.9070478306,
+                   ),
+                _F(RESULTAT=thnl,
+                   INST= 4.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N206',
+                   NOM_CMP='TEMP',
+                   VALE_CALC=139.467784038,
+                   ),
+                _F(RESULTAT=thnl,
+                   INST= 7.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N206',
+                   NOM_CMP='TEMP',
+                   VALE_CALC=567.145887211,
+                   ),
+                _F(RESULTAT=thnl,
+                   INST= 10.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N206',
+                   NOM_CMP='TEMP',
+                   VALE_CALC=999.500384048,
+                   ),
+                ),
+          );
+
+# Valeurs de référence (calcul complet) - Hors RID
+
+TEST_RESU(RESU=(
+                _F(RESULTAT=thnl,
+                   INST= 1.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N114',
+                   NOM_CMP='TEMP',
+                   VALE_CALC=22.6152896917,
+                   ),
+                _F(RESULTAT=thnl,
+                   INST= 4.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N114',
+                   NOM_CMP='TEMP',
+                   VALE_CALC=90.756408026,
+                   ),
+                _F(RESULTAT=thnl,
+                   INST= 7.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N114',
+                   NOM_CMP='TEMP',
+                   VALE_CALC=380.605752326,
+                   ),
+                _F(RESULTAT=thnl,
+                   INST= 10.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N114',
+                   NOM_CMP='TEMP',
+                   VALE_CALC=931.460613403,
+                   ),
+                ),
+          );
+
+# Define HROM
+
+
+mesh=DEFI_GROUP(reuse=mesh,
+                MAILLAGE=mesh,
+                CREA_GROUP_MA=_F(NOM='S_e_rid',
+                               INTERSEC=('RID','S_e',),),);
+
+mesh=DEFI_GROUP(reuse=mesh,
+                MAILLAGE=mesh,
+                CREA_GROUP_MA=_F(NOM='S_f_rid',
+                                 INTERSEC=('RID','S_f',),),);
+
+# Thermic model
+model_r=AFFE_MODELE(MAILLAGE=mesh,
+                  AFFE=_F(GROUP_MA='RID',
+                          PHENOMENE='THERMIQUE',
+                          MODELISATION='3D',),);
+# Limit condition
+chg_th_r=AFFE_CHAR_THER_F(MODELE=model_r,
+                        RAYONNEMENT=_F(GROUP_MA='S_e_rid',
+                                       SIGMA=C_sigma,
+                                       EPSILON=C_epsi,
+                                       TEMP_EXT=T_ex,),
+                        ECHANGE=(_F(GROUP_MA='S_e_rid',
+                                    COEF_H=C_echang,
+                                    TEMP_EXT=T_ex,),
+                                 _F(GROUP_MA='S_f_rid',
+                                    COEF_H=C_echanf,
+                                    TEMP_EXT=T_im,),),);
+
+
+
+base_p=LIRE_RESU(TYPE_RESU  = 'MODE_EMPI',
+                 FORMAT     = 'MED',
+                 MODELE     = model,
+                 UNITE      = 70,
+                 FORMAT_MED =_F(NOM_CHAM_MED = 'base_p__TEMP',
+                                NOM_CHAM     = 'TEMP',),
+                 NUME_ORDRE=(1,2,3),
+                 );
+
+base_t=DEFI_BASE_REDUITE(OPERATION='TRONCATURE',
+                         MODELE_REDUIT = model_r, 
+                         BASE = base_p,
+                         INFO=2)
+
+redu=THER_NON_LINE(MODELE=model_r,
+                    CHAM_MATER=chmat,
+                    EXCIT=_F(CHARGE=chg_th_r,),
+                    INCREMENT=_F(LIST_INST=list_i,),
+                    ETAT_INIT=_F(VALE=20.0,),
+                    METHODE='MODELE_REDUIT',
+                    MODELE_REDUIT=_F(
+                              REAC_ITER         = 1,
+                              BASE_PRIMAL       = base_t,
+                              DOMAINE_REDUIT    = 'OUI',
+                              GROUP_NO_INTERF   = 'INF',
+                              CORR_COMPLET      = 'OUI',
+                              GROUP_NO_ENCASTRE = 'SUB',
+                              COEF_PENA         = 1.E5,
+                    ),
+                   CONVERGENCE=_F(RESI_GLOB_MAXI=1e-5,),);
+
+
+# Gappy-POD (reconstruction tout le domaine)
+reduR = REST_REDUIT_COMPLET(
+    MODELE           = model,
+    RESULTAT_REDUIT  = redu, 
+    BASE_PRIMAL      = base_p,
+    REST_DUAL        = 'NON',
+    INFO             = 2,
+    CORR_COMPLET     = 'OUI',
+)
+
+# Valeurs de référence (calcul complet) - Dans RID
+
+TEST_RESU(RESU=(
+                _F(RESULTAT=redu,
+                   INST= 1.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N206',
+                   NOM_CMP='TEMP',
+                   VALE_REFE=29.9070478306,
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=29.9052354899,
+                   PRECISION = 0.00007
+                   ),
+                _F(RESULTAT=redu,
+                   INST= 4.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N206',
+                   NOM_CMP='TEMP',
+                   VALE_REFE=139.467784038,
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=139.465328829,
+                   PRECISION = 0.00002
+                   ),
+                _F(RESULTAT=redu,
+                   INST= 7.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N206',
+                   NOM_CMP='TEMP',
+                   VALE_REFE=567.145887211,
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=567.143903977,
+                   PRECISION = 0.000004
+                   ),
+                _F(RESULTAT=redu,
+                   INST= 10.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N206',
+                   NOM_CMP='TEMP',
+                   VALE_REFE=999.500384048,
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=999.494414852,
+                   PRECISION = 0.000006
+                   ),
+                ),
+          );
+
+# Valeurs de référence (calcul complet) - Hors RID
+
+TEST_RESU(RESU=(
+                _F(RESULTAT=reduR,
+                   INST= 1.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N114',
+                   NOM_CMP='TEMP',
+                   VALE_REFE=22.6152896917,
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=22.5163496535,
+                   PRECISION = 0.0045
+                   ),
+                _F(RESULTAT=reduR,
+                   INST= 4.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N114',
+                   NOM_CMP='TEMP',
+                   VALE_REFE=90.756408026,
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=90.7128302048,
+                   PRECISION = 0.0005
+                   ),
+                _F(RESULTAT=reduR,
+                   INST= 7.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N114',
+                   NOM_CMP='TEMP',
+                   VALE_REFE=380.605752326,
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=380.582863049,
+                   PRECISION = 0.00007
+                   ),
+                _F(RESULTAT=reduR,
+                   INST= 10.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N114',
+                   NOM_CMP='TEMP',
+                   VALE_REFE=931.460613403,
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=931.339805173,
+                   PRECISION = 0.00015
+                   ),
+                ),
+          );
+
+FIN();
