@@ -43,7 +43,6 @@ The macro generates a wrapper with between 1 and 2 arguments.
                   addBehaviourOnElements_overloads())
 
 
-
 Source: `Boost Python Overloads <http://www.boost.org/doc/libs/1_65_1/libs/python/doc/html/reference/function_invocation_and_creation/boost_python_overloads_hpp.html#function_invocation_and_creation.boost_python_overloads_hpp.macros>`_.
 
 
@@ -123,3 +122,24 @@ Required changes
         +          # self.DeclareOut('num', numeddl)
                    num = NUME_DDL(MATR_RIGI=_a, INFO=info)
         +          self.register_result(num, numeddl)
+
+
+Commons errors
+==============
+
+- The compilation works but ``waf install_debug`` ends with
+  ``stderr: Segmentation fault`` during the compilation of elements catalogs.
+
+  **Explanation**: It may be an error in a Python function called from a C or
+  Fortran function.
+  Check it by manually importing the module in a Python interpreter:
+
+  .. code-block:: sh
+
+      $ cp ../src/build/debug/catalo/cata_ele.ojb fort.4
+      $ python
+      >>> import code_aster
+      >>> code_aster.init(CATALOGUE={"FICHIER": "CATAELEM", "UNITE": 4})
+      >>> from code_aster.Commands import MAJ_CATA
+      >>> MAJ_CATA(ELEMENT={})
+      >>> exit()
