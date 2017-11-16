@@ -23,7 +23,7 @@
 interface
     subroutine amumpp(option, nbsol, kxmps, ldist, type,&
                       impr, ifmump, eli2lg, rsolu, csolu,&
-                      vcine, prepos, lpreco)
+                      vcine, prepos, lpreco, lmhpc)
         integer :: option
         integer :: nbsol
         integer :: kxmps
@@ -37,5 +37,6 @@ interface
         character(len=19) :: vcine
         aster_logical :: prepos
         aster_logical :: lpreco
+        aster_logical :: lmhpc
     end subroutine amumpp
 end interface

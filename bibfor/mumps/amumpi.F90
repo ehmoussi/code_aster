@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine amumpi(option, lquali, ldist, kxmps, type)
+subroutine amumpi(option, lquali, ldist, kxmps, type, lmhpc)
 !
 !
     implicit none
@@ -43,7 +43,7 @@ subroutine amumpi(option, lquali, ldist, kxmps, type)
 #include "asterfort/jeveuo.h"
 #include "asterfort/utmess.h"
     integer :: kxmps, option
-    aster_logical :: lquali, ldist
+    aster_logical :: lquali, ldist, lmhpc
     character(len=1) :: type
 !
 #ifdef _HAVE_MUMPS
@@ -425,7 +425,7 @@ subroutine amumpi(option, lquali, ldist, kxmps, type)
         cntl(4)=-1.d0
 !
 ! ---     PARALLELISME/DISTRIBUTION SECOND MEMBRE/SOLUTION
-        if (ldist) then
+        if (ldist.or.lmhpc) then
             icntl(18)=3
         else
             icntl(18)=0

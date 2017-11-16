@@ -208,7 +208,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
             call jelira(nonu//'.NUME.DELG', 'LONMAX', n1)
         endif
         call jeveuo(nonu//'.NUME.NEQU', 'L', vi=nequ)
-        if(lmhpc) then
+        if (lmhpc) then
             nbeq=to_mumps_int(nequ(2))
         else
             nbeq=to_mumps_int(nequ(1))
@@ -291,8 +291,8 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
 !       ------------------------------------------------
 !
     if (((rang.eq.0).and.(.not.ldist)) .or. (ldist) .or. (lmhpc)) then
-        if(lmhpc) then
-            call jeveuo(nonu//'.NUME.PDLL', 'L', jpddl)
+        if (lmhpc) then
+            call jeveuo(nonu//'.NUME.PDDL', 'L', jpddl)
             call jeveuo(nonu//'.NUME.DEEQ', 'L', jdeeq)
             call jeveuo(nonu//'.NUME.NULG', 'L', jnugll)
         endif
@@ -330,26 +330,26 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
 ! --- PREPARATION DES DONNES (NUM DE COLONNE, TERME DE FILTRAGE...)
             if (smdi(jcoll) .lt. kterm) jcoll=jcoll+1
             iligl=zi4(jsmhc-1+kterm)
-            if(lmhpc) then
+            if (lmhpc) then
                 nuno1 = 0
-                if( zi(jdeeq + (iligl - 1) * 2).gt.0 ) then
+                if (zi(jdeeq + (iligl - 1) * 2).gt.0) then
                     nuno1 = 1
                 endif
                 nuno2 = 0
-                if( zi(jdeeq + (jcoll - 1) * 2).gt.0 ) then
+                if (zi(jdeeq + (jcoll - 1) * 2).gt.0) then
                     nuno2 = 1
                 endif
                 procol = zi(jpddl + jcoll - 1)
                 prolig = zi(jpddl + iligl - 1)
-                if( nuno1.ne.0.or.nuno2.ne.0 ) then
+                if (nuno1.eq.0.or.nuno2.eq.0) then
                     lgive = (nuno1.eq.0.and.procol.eq.rang).or.&
                             (nuno2.eq.0.and.prolig.eq.rang).or.&
                             (nuno1.eq.0.and.nuno2.eq.0)
-                    if( .not.lgive ) then
+                    if (.not.lgive) then
                         cycle
                     endif
                 else
-                    if( prolig.ne.rang ) then
+                    if (prolig.ne.rang) then
                         cycle
                     endif
                 endif
@@ -407,9 +407,9 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                 endif
             endif
 
-            if(lmhpc) then
-                if( nuno1.eq.0.and.nuno2.eq.0 ) then
-                    if( procol.ne.rang ) then
+            if (lmhpc) then
+                if (nuno1.ne.0.and.nuno2.ne.0) then
+                    if (procol.ne.rang) then
                         cycle
                     endif
                 endif
@@ -492,10 +492,10 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
         zi(isizemu+k-1)=0
     enddo
     nsizemu=0
-    if ((( rang.eq.0).and.(.not.ldist)) .or. (ldist)) then
-        if (ldist) then
+    if ((( rang.eq.0).and.(.not.ldist)) .or. (ldist) .or. (lmhpc)) then
+        if (ldist.or.lmhpc) then
             if (type .eq. 'S') then
-                if (lmd) then
+                if (lmd.or.lmhpc) then
                     smpsk%n=nbeq
                 else
                     smpsk%n=to_mumps_int(n)
@@ -511,7 +511,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                 allocate(cmpsk%jcn_loc(nz2))
                 allocate(cmpsk%a_loc(nz2))
             else if (type.eq.'D') then
-                if (lmd) then
+                if (lmd.or.lmhpc) then
                     dmpsk%n=nbeq
                 else
                     dmpsk%n=to_mumps_int(n)
@@ -600,7 +600,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
 !
             if (smdi(jcoll) .lt. kterm) jcoll=jcoll+1
             iligl=zi4(jsmhc-1+kterm)
-            if(lmhpc) then
+            if (lmhpc) then
                 nuno1 = 0
                 if( zi(jdeeq + (iligl - 1) * 2).gt.0 ) then
                     nuno1 = 1
@@ -611,11 +611,11 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                 endif
                 procol = zi(jpddl + jcoll - 1)
                 prolig = zi(jpddl + iligl - 1)
-                if( nuno1.ne.0.or.nuno2.ne.0 ) then
+                if (nuno1.eq.0.or.nuno2.eq.0) then
                     lgive = (nuno1.eq.0.and.procol.eq.rang).or.&
                             (nuno2.eq.0.and.prolig.eq.rang).or.&
                             (nuno1.eq.0.and.nuno2.eq.0)
-                    if( .not.lgive ) then
+                    if (.not.lgive) then
                         cycle
                     endif
                 else
@@ -648,8 +648,8 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                 endif
             endif
             if (lmhpc) then
-                iligg=to_mumps_int(zi(jnugll+iligl-1))
-                jcolg=to_mumps_int(zi(jnugll+jcoll-1))
+                iligg=to_mumps_int(zi(jnugll+iligl-1)+1)
+                jcolg=to_mumps_int(zi(jnugll+jcoll-1)+1)
             else if (lmd) then
                 iligg=to_mumps_int(zi(jnulogl+iligl-1))
                 jcolg=to_mumps_int(zi(jnulogl+jcoll-1))
@@ -666,7 +666,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
 ! ---- PARTIE TRIANGULAIRE INF. TERME NON NUL
             if (lnn) then
                 iterm=iterm+1
-                if (ldist) then
+                if (ldist.or.lmhpc) then
                     if (type .eq. 'S') then
                         smpsk%irn_loc(iterm)=iligg
                         smpsk%jcn_loc(iterm)=jcolg
@@ -730,9 +730,9 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                 endif
             endif
 
-            if(lmhpc) then
-                if( nuno1.eq.0.and.nuno2.eq.0 ) then
-                    if( procol.ne.rang ) then
+            if (lmhpc) then
+                if (nuno1.ne.0.and.nuno2.ne.0) then
+                    if (procol.ne.rang) then
                         cycle
                     endif
                 endif
@@ -768,8 +768,8 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                 if (lnn) then
                     iterm=iterm+1
                     if (lmhpc) then
-                        iligg=to_mumps_int(zi(jnugll+iligl-1))
-                        jcolg=to_mumps_int(zi(jnugll+jcoll-1))
+                        iligg=to_mumps_int(zi(jnugll+iligl-1)+1)
+                        jcolg=to_mumps_int(zi(jnugll+jcoll-1)+1)
                     else if (lmd) then
                         iligg=to_mumps_int(zi(jnulogl+iligl-1))
                         jcolg=to_mumps_int(zi(jnulogl+jcoll-1))
@@ -777,7 +777,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                         iligg=to_mumps_int(iligl)
                         jcolg=to_mumps_int(jcoll)
                     endif
-                    if (ldist) then
+                    if (ldist.or.lmhpc) then
                         if (type .eq. 'S') then
                             smpsk%irn_loc(iterm)=jcolg
                             smpsk%jcn_loc(iterm)=iligg
@@ -834,7 +834,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
 !
         ASSERT(iterm.le.nz2)
         nz2=to_mumps_int(iterm)
-        if (ldist) then
+        if (ldist.or.lmhpc) then
             if (type .eq. 'S') then
                 smpsk%nz_loc=nz2
             else if (type.eq.'C') then
@@ -899,16 +899,22 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
 !       IMPRESSION DE LA MATRICE (SI DEMANDEE) :
 !       ------------------------------------------------
         if (impr(1:3) .eq. 'OUI') then
-            write(ifmump,*)sym,'   : SYM', rang,'   : RANG'
-            write(ifmump,*)n,'   : N'
-            if (ldist) then
-                write(ifmump,*)nz2,'   : NZ_loc'
+            if (lmhpc) then
+                write(ifmump+rang,*)sym,'   : SYM', rang,'   : RANG'
+                write(ifmump+rang,*)n,'   : N'
+                write(ifmump+rang,*)nz2,'   : NZ_loc'
             else
-                write(ifmump,*)nz2,'   : NZ'
+                write(ifmump,*)sym,'   : SYM', rang,'   : RANG'
+                write(ifmump,*)n,'   : N'
+                if (ldist) then
+                    write(ifmump,*)nz2,'   : NZ_loc'
+                else
+                    write(ifmump,*)nz2,'   : NZ'
+                endif
             endif
             if (type .eq. 'S') then
                 do k = 1, nz2
-                    if (ldist) then
+                    if (ldist.or.lmhpc) then
                         write(ifmump,*)smpsk%irn_loc(k),smpsk%jcn_loc(k),&
                     smpsk%a_loc(k)
                     else
@@ -918,7 +924,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                 enddo
             else if (type.eq.'C') then
                 do k = 1, nz2
-                    if (ldist) then
+                    if (ldist.or.lmhpc) then
                         write(ifmump,*)cmpsk%irn_loc(k),cmpsk%jcn_loc(k),&
                     cmpsk%a_loc(k)
                     else
@@ -938,7 +944,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                 enddo
             else if (type.eq.'Z') then
                 do k = 1, nz2
-                    if (ldist) then
+                    if (ldist.or.lmhpc) then
                         write(ifmump,*)zmpsk%irn_loc(k),zmpsk%jcn_loc(k),&
                     zmpsk%a_loc(k)
                     else
@@ -951,6 +957,8 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
             endif
             if (ldist) then
                 write(ifmump,*) 'MUMPS FIN A_loc'
+            else if (lmhpc) then
+                write(ifmump+rang,*) 'MUMPS FIN A_loc'
             else
                 write(ifmump,*) 'MUMPS FIN A'
             endif
@@ -962,7 +970,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
     call asmpi_comm_jev('MPI_SUM', ksizemu)
 !
 ! --- NETTOYAGE VECTEURS TEMPORAIRES LOCAUX
-    if (((rang.eq.0).and.(.not.ldist)) .or. (ldist)) then
+    if (((rang.eq.0).and.(.not.ldist)) .or. (ldist) .or. (lmhpc)) then
         call jeexin(kfiltr, iret)
         if (iret .ne. 0) call jedetr(kfiltr)
         call jedetr(kpiv)
@@ -970,18 +978,20 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
     endif
 !
 ! --- DECHARGEMENT CIBLE D'OBJETS JEVEUX
-    call jelibd(nonu//'.SMOS.SMDI', ltot)
-    call jelibd(nonu//'.SMOS.SMHC', ltot)
-    call jelibd(nonu//'.NUME.DEEQ', ltot)
-    call jelibd(nonu//'.NUME.NUEQ', ltot)
-    call jelibd(nonu//'.NUME.LILI', ltot)
-    call jelibd(jexnum(nomat//'.VALM', 1), ltot)
-    if (lmnsy) call jelibd(jexnum(nomat//'.VALM', 2), ltot)
-    if (lmd) then
-        call jelibd(nonu//'.NUML.NULG', ltot)
-        call jelibd(nonu//'.NUML.DELG', ltot)
-    else
-        call jelibd(nonu//'.NUME.DELG', ltot)
+    if(.not.lmhpc) then
+        call jelibd(nonu//'.SMOS.SMDI', ltot)
+        call jelibd(nonu//'.SMOS.SMHC', ltot)
+        call jelibd(nonu//'.NUME.DEEQ', ltot)
+        call jelibd(nonu//'.NUME.NUEQ', ltot)
+        call jelibd(nonu//'.NUME.LILI', ltot)
+        call jelibd(jexnum(nomat//'.VALM', 1), ltot)
+        if (lmnsy) call jelibd(jexnum(nomat//'.VALM', 2), ltot)
+        if (lmd) then
+            call jelibd(nonu//'.NUML.NULG', ltot)
+            call jelibd(nonu//'.NUML.DELG', ltot)
+        else
+            call jelibd(nonu//'.NUME.DELG', ltot)
+        endif
     endif
 !
     call jedema()
