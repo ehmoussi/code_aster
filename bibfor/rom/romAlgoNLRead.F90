@@ -78,13 +78,11 @@ implicit none
     l_hrom = answer .eq. 'OUI'
     if (l_hrom) then
         call getvtx(keywf,'GROUP_NO_INTERF', iocc=1, scal = grnode_int)
-        if (phenom .eq. 'MECA') then
-            call getvtx(keywf,'CORR_COMPLET', iocc=1, scal = answer)
-            l_hrom_corref = answer .eq. 'OUI'
-            if (l_hrom_corref) then
-                call getvtx(keywf,'GROUP_NO_ENCASTRE', iocc=1, scal = grnode_sub)
-                call getvr8(keywf,'COEF_PENA'        , iocc=1, scal = coef_pena)
-            endif
+        call getvtx(keywf,'CORR_COMPLET', iocc=1, scal = answer)
+        l_hrom_corref = answer .eq. 'OUI'
+        if (l_hrom_corref) then
+            call getvtx(keywf,'GROUP_NO_ENCASTRE', iocc=1, scal = grnode_sub)
+            call getvr8(keywf,'COEF_PENA'        , iocc=1, scal = coef_pena)
         endif
     endif
     call romBaseRead(ds_empi_name, ds_empi)
