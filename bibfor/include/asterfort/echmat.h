@@ -21,9 +21,10 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine echmat(matz, ldist, rmin, rmax)
+    subroutine echmat(matz, ldist, lmhpc, rmin, rmax)
         character(len=*) :: matz
         aster_logical :: ldist
+        aster_logical :: lmhpc
         real(kind=8) :: rmin
         real(kind=8) :: rmax
     end subroutine echmat

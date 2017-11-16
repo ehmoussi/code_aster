@@ -123,9 +123,10 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: reasma, renume
+    aster_logical :: reasma, renume, lmhpc
     aster_logical :: lcrigi, lcfint, lcamor, larigi
     aster_logical :: ldyna, lamor, l_neum_undead, l_diri_undead, l_rom
+    character(len=3) :: mathpc
     character(len=16) :: metcor, metpre
     character(len=16) :: optrig, optamo
     integer :: ifm, niv, ibid
@@ -279,7 +280,9 @@ implicit none
             if (kmpic1 .eq. 'NON') then 
                 call sdmpic('MATR_ASSE', matass)
             endif
-            call echmat(matass, .false._1, minmat, maxmat) 
+            call dismoi('MATR_HPC', matass, 'MATR_ASSE', repk=mathpc)
+            lmhpc = mathpc.eq.'OUI'
+            call echmat(matass, .false._1, lmhpc, minmat, maxmat) 
             ds_contact%max_coefficient = maxmat
             if (abs(log(minmat)) .ne. 0.0) then 
             

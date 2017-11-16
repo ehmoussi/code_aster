@@ -24,6 +24,7 @@ subroutine nmflin(sdpost, matass, freqr, linsta)
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/echmat.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
@@ -52,8 +53,9 @@ subroutine nmflin(sdpost, matass, freqr, linsta)
 !
 !
 !
-    aster_logical :: valtst, ldist
+    aster_logical :: valtst, ldist, lmhpc
     character(len=24) :: k24bid
+    character(len=3) :: mathpc
     real(kind=8) :: freqr0, prec, r8bid, minmat, maxmat
     character(len=16) :: optrig, sign
     integer :: ibid
@@ -87,7 +89,9 @@ subroutine nmflin(sdpost, matass, freqr, linsta)
             call utmess('F', 'MECANONLINE6_13')
         endif
         ldist = .false.
-        call echmat(matass, ldist, minmat, maxmat)
+        call dismoi('MATR_HPC', matass, 'MATR_ASSE', repk=mathpc)
+        lmhpc = mathpc.eq.'OUI'
+        call echmat(matass, ldist, lmhpc, minmat, maxmat)
         if (((freqr0*freqr).lt.0.d0) .or. (abs(freqr).lt.(prec*minmat))) then
             linsta = .true.
         endif
