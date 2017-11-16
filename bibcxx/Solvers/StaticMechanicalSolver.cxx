@@ -54,18 +54,20 @@ ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runti
     // Define the study
     StudyDescriptionPtr study( new StudyDescriptionInstance( _supportModel, _materialOnMesh ) );
 
-    // Add Loads to the study
     const ListMecaLoad& mecaList = _listOfLoads->getListOfMechanicalLoads();
+#ifdef _USE_MPI
     bool mecaLoads = ( mecaList.size() == 0 ? false : true );
+    if( mecaLoads )
+        throw std::runtime_error( "MechanicalLoad not allowed use ParallelMechanicalLoad" );
+    const auto& pMecaList = _listOfLoads->getListOfParallelMechanicalLoads();
+    for ( const auto& curIter : pMecaList )
+        study->addParallelMechanicalLoad( curIter );
+#else
+    // Add Loads to the study
     for ( ListMecaLoadCIter curIter = mecaList.begin();
           curIter != mecaList.end();
           ++curIter )
         study->addMechanicalLoad( *curIter );
-
-#ifdef _USE_MPI
-    const auto& pMecaList = _listOfLoads->getListOfParallelMechanicalLoads();
-    for ( const auto& curIter : pMecaList )
-        study->addParallelMechanicalLoad( curIter );
 #endif /* _USE_MPI */
 
     const ListKineLoad& kineList = _listOfLoads->getListOfKinematicsLoads();

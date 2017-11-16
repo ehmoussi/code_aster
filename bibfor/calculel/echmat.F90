@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine echmat(matz, ldist, rmin, rmax)
+subroutine echmat(matz, ldist, lmhpc, rmin, rmax)
 ! person_in_charge: jacques.pellet at edf.fr
     implicit none
 #include "asterf_types.h"
@@ -25,7 +25,6 @@ subroutine echmat(matz, ldist, rmin, rmax)
 #include "asterc/r8prem.h"
 #include "asterfort/asmpi_comm_vect.h"
 #include "asterfort/assert.h"
-#include "asterfort/dismoi.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jelira.h"
@@ -37,7 +36,7 @@ subroutine echmat(matz, ldist, rmin, rmax)
 !
     character(len=*) :: matz
     real(kind=8) :: rmin, rmax
-    aster_logical :: ldist
+    aster_logical :: ldist, lmhpc
 ! ---------------------------------------------------------------------
 ! BUT: DONNER LES VALEURS EXTREMES DES VALEURS ABSOLUES
 !      DES TERMES NON NULS DE LA DIAGONALE D'UNE MATR_ASSE
@@ -64,11 +63,9 @@ subroutine echmat(matz, ldist, rmin, rmax)
     integer :: jcol, nlong, jvalm1, jcolg
     real(kind=8) :: rminc(1), rmaxc(1)
     character(len=1) :: ktyp, base1
-    character(len=3) :: mathpc
     character(len=14) :: nonu
     character(len=19) :: mat19
     character(len=24), pointer :: refa(:) => null()
-    aster_logical :: lmhpc
     integer, pointer :: smdi(:) => null()
     real(kind=8), pointer :: rdiag(:) => null()
     complex(kind=8), pointer :: zdiag(:) => null()
@@ -101,9 +98,6 @@ subroutine echmat(matz, ldist, rmin, rmax)
     if (imatd .ne. 0) then
         call jeveuo(nonu//'.NUML.NLGP', 'L', vi=nlgp)
     endif
-!
-    call dismoi('MATR_HPC', mat19, 'MATR_ASSE', repk=mathpc)
-    lmhpc = mathpc.eq.'OUI'
 !
     call jelira(mat19//'.VALM', 'TYPE', cval=ktyp)
     call jelira(mat19//'.VALM', 'CLAS', cval=base1)
