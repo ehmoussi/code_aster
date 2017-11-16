@@ -25,6 +25,7 @@ subroutine echmat(matz, ldist, rmin, rmax)
 #include "asterc/r8prem.h"
 #include "asterfort/asmpi_comm_vect.h"
 #include "asterfort/assert.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jelira.h"
@@ -61,10 +62,13 @@ subroutine echmat(matz, ldist, rmin, rmax)
 !     ------------------------------------------------------------------
     integer :: nsmhc, jdelgg, jdelgl, jsmhc, ng, nz, n, imatd
     integer :: jcol, nlong, jvalm1, jcolg
+    real(kind=8) :: rminc(1), rmaxc(1)
     character(len=1) :: ktyp, base1
+    character(len=3) :: mathpc
     character(len=14) :: nonu
     character(len=19) :: mat19
     character(len=24), pointer :: refa(:) => null()
+    aster_logical :: lmhpc
     integer, pointer :: smdi(:) => null()
     real(kind=8), pointer :: rdiag(:) => null()
     complex(kind=8), pointer :: zdiag(:) => null()
@@ -97,6 +101,9 @@ subroutine echmat(matz, ldist, rmin, rmax)
     if (imatd .ne. 0) then
         call jeveuo(nonu//'.NUML.NLGP', 'L', vi=nlgp)
     endif
+!
+    call dismoi('MATR_HPC', mat19, 'MATR_ASSE', repk=mathpc)
+    lmhpc = mathpc.eq.'OUI'
 !
     call jelira(mat19//'.VALM', 'TYPE', cval=ktyp)
     call jelira(mat19//'.VALM', 'CLAS', cval=base1)
@@ -148,7 +155,7 @@ subroutine echmat(matz, ldist, rmin, rmax)
             call asmpi_comm_vect('MPI_SUM', 'R', nbval=ng, vr=rdiag)
         else
             call asmpi_comm_vect('MPI_SUM', 'C', nbval=ng, vc=zdiag)
-        endif 
+        endif
     endif
 !
 !   Tous les procs possèdent les termes qui correspondent à des ddls physiques. 
@@ -160,6 +167,17 @@ subroutine echmat(matz, ldist, rmin, rmax)
     else
         rmax = maxval(abs(zdiag))
         rmin = minval(abs(zdiag), mask = abs(zdiag) > r8prem())
+    endif
+!
+    if (lmhpc) then
+        if (ktyp .eq. 'R') then
+            rminc(1) = rmin
+            rmaxc(1) = rmax
+            call asmpi_comm_vect('MPI_MIN', 'R', nbval=1, vr=rminc)
+            call asmpi_comm_vect('MPI_MAX', 'R', nbval=1, vr=rmaxc)
+        else
+            ASSERT(.false.)
+        endif 
     endif
 !
 !   Libération de la mémoire

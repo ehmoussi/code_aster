@@ -196,7 +196,7 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
 !       ------------------------------------------------
 !        INITIALISATION DE L'OCCURENCE MUMPS KXMPS:
 !       ------------------------------------------------
-        call amumpi(0, lquali, ldist, kxmps, type)
+        call amumpi(0, lquali, ldist, kxmps, type, lmhpc)
         call dmumps(dmpsk)
         rang=dmpsk%myid
         nbproc=dmpsk%nprocs
@@ -206,7 +206,7 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
 !       --------------------------------------------------------------
 !        CHOIX ICNTL VECTEUR DE PARAMETRES POUR MUMPS (ANALYSE+FACTO):
 !       --------------------------------------------------------------
-        call amumpi(2, lquali, ldist, kxmps, type)
+        call amumpi(2, lquali, ldist, kxmps, type, lmhpc)
 !
 !       ----------------------------------------------------------
 !        ON RECUPERE ET STOCKE DS SD_SOLVEUR LE NUMERO DE VERSION
@@ -445,9 +445,9 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
 !
 !       ON SOULAGE LA MEMOIRE JEVEUX DES QUE POSSIBLE D'OBJETS MUMPS
 !       INUTILES
-        if ((( rang.eq.0).and.(.not.ldist)) .or. (ldist)) then
+        if ((( rang.eq.0).and.(.not.ldist)) .or. (ldist) .or. (lmhpc)) then
             if (.not.(lquali).and.(posttrait(1:4).ne.'MINI') .and. .not.lopfac) then
-                if (ldist) then
+                if (ldist.or.lmhpc) then
                     deallocate(dmpsk%a_loc,stat=ibid)
                     deallocate(dmpsk%irn_loc,stat=ibid)
                     deallocate(dmpsk%jcn_loc,stat=ibid)
@@ -473,12 +473,12 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
                     rctdeb, ldist)
         call amumpp(0, nbsol, kxmps, ldist, type,&
                     impr, ifmump, lbis, rsolu, cbid,&
-                    vcine, prepos, lpreco)
+                    vcine, prepos, lpreco, lmhpc)
 !
 !       --------------------------------------------------------------
 !        CHOIX ICNTL VECTEUR DE PARAMETRES POUR MUMPS (SOLVE):
 !       --------------------------------------------------------------
-        call amumpi(3, lquali, ldist, kxmps, type)
+        call amumpi(3, lquali, ldist, kxmps, type, lmhpc)
 !
 !       ------------------------------------------------
 !        RESOLUTION MUMPS :
@@ -530,7 +530,7 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
 !       ------------------------------------------------
         call amumpp(2, nbsol, kxmps, ldist, type,&
                     impr, ifmump, lbis, rsolu, cbid,&
-                    vcine, prepos, lpreco)
+                    vcine, prepos, lpreco, lmhpc)
 !
 !       ------------------------------------------------
 !        AFFICHAGE DU MONITORING :
@@ -549,8 +549,8 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
 !        MENAGE ASTER ET MUMPS:
 !       ------------------------------------------------
         if (nomats(kxmps) .ne. ' ') then
-            if ((( rang.eq.0).and.(.not.ldist)) .or. (ldist)) then
-                if (ldist) then
+            if ((( rang.eq.0).and.(.not.ldist)) .or. (ldist) .or. (lmhpc)) then
+                if (ldist.or.lmhpc) then
                     deallocate(dmpsk%a_loc,stat=ibid)
                     deallocate(dmpsk%irn_loc,stat=ibid)
                     deallocate(dmpsk%jcn_loc,stat=ibid)

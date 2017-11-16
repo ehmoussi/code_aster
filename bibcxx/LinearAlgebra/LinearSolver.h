@@ -74,7 +74,7 @@ struct WrapMumps
 {
     static const LinearSolverEnum solverType = Mumps;
     static const std::set< Renumbering > setOfAllowedRenumbering;
-    static const bool isHPCCompliant = false;
+    static const bool isHPCCompliant = true;
     static const Renumbering defaultRenumbering = Auto;
 };
 

@@ -63,15 +63,13 @@ use petsc_data_module
     integer :: jsmdi, jsmhc, jdxi1, jdxi2, jdval1, jdval2, jvalm, jvalm2
     integer :: k, iligl, jcoll, nzdeb, nzfin, nuno1, nucmp1, nuno2, nbproc
     integer :: jcolg, iligg, jnugll, nucmp2, procol, jprddl
-    integer :: jnequ, nloc, nglo, jdeeq, jrefn, prolig, rang, ibid, jmlogl
+    integer :: jnequ, nloc, nglo, jdeeq, prolig, rang, ibid
     integer(kind=4) :: tmp, jterm, un, jcolg4(1), iterm
     mpi_int :: mrank, msize
 !
-    character(len=24) :: nonulg
     character(len=19) :: nomat, nosolv
     character(len=16) :: idxi1, idxi2, trans1, trans2
     character(len=14) :: nonu
-    character(len=8) :: noma
     character(len=4) :: kbid
 !
     logical :: lmnsy, lgive
@@ -103,14 +101,10 @@ use petsc_data_module
     call jeveuo(nonu//'.NUME.NEQU', 'L', jnequ)
     call jeveuo(nonu//'.NUME.NULG', 'L', jnugll)
     call jeveuo(nonu//'.NUME.DEEQ', 'L', jdeeq)
-    call jeveuo(nonu//'.NUME.REFN', 'L', jrefn)
     call jeveuo(nonu//'.NUME.PDDL', 'L', jprddl)
     call asmpi_info(rank = mrank, size = msize)
     rang = to_aster_int(mrank)
     nbproc = to_aster_int(msize)
-    noma = zk24(jrefn)
-    nonulg = noma//'.NULOGL'
-    call jeveuo(nonulg, 'L', jmlogl)
     nloc = zi(jnequ)
     nglo = zi(jnequ+1)
     neql = nloc
@@ -151,7 +145,18 @@ use petsc_data_module
     jterm = 0
 !
 !   Cas ou on possede le premier bloc de lignes
-    if ( zi(jprddl) .eq. rang ) then
+    nuno1 = 0
+    if ( zi(jdeeq).gt.0 ) then
+        nuno1 = 1
+    endif
+    if ( nuno1.ne.0 ) then
+        procol = zi(jprddl)
+        if ( procol .eq. rang ) then
+            tmp = zi(jnugll)
+            call MatSetValue(a, tmp, tmp, zr(jvalm),&
+                            INSERT_VALUES, ierr)
+        endif
+    else
         tmp = zi(jnugll)
         call MatSetValue(a, tmp, tmp, zr(jvalm),&
                          INSERT_VALUES, ierr)
