@@ -94,7 +94,7 @@ real(kind=8), intent(out) :: vari_curr(4)
 !
 ! - Get previous phases
 !
-    zalphm = vari_prev(1)+vari_prev(2)
+    zalphm = vari_prev(PALPHA1)+vari_prev(PALPHA2)
     zbetam = 1.d0-zalphm
     if (abs(zbetam) .le. zero) then
         zbetam = 0.d0
@@ -133,7 +133,7 @@ real(kind=8), intent(out) :: vari_curr(4)
 !
 ! - Evaluate value of time for temperature of transformation
 !
-    time_tran_p = vari_prev(4)
+    time_tran_p = vari_prev(TIME_TRAN)
     call metaZircGetTime(zbetam   ,&
                          t1c      , t2c  ,&
                          t1r      , t2r  ,&
@@ -245,9 +245,9 @@ real(kind=8), intent(out) :: vari_curr(4)
 !
 ! - Update internal variables
 !
-    vari_curr(1) = zalph1p
-    vari_curr(2) = zalph2p
-    vari_curr(3) = tp
-    vari_curr(4) = time_tran
+    vari_curr(PALPHA1)   = zalph1p
+    vari_curr(PALPHA2)   = zalph2p
+    vari_curr(ZIRC_TEMP) = tp
+    vari_curr(TIME_TRAN) = time_tran
 !
 end subroutine
