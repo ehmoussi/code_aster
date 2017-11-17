@@ -48,7 +48,7 @@ character(len=16) :: option, nomte
     real(kind=8) :: dt10, dt21, instp
     real(kind=8) :: tno1, tno0, tno2
     real(kind=8) :: metaac(63), metazi(36)
-    integer :: nno, i_node, i, itempe, itempa, itemps, iadtrc
+    integer :: nno, i_node, i_vari, itempe, itempa, itemps, iadtrc
     integer :: imate
     integer :: nb_hist, itempi, nbtrc, iadckm
     integer :: ipftrc, jftrc, jtrc, iphasi, iphasn, icompo
@@ -99,8 +99,9 @@ character(len=16) :: option, nomte
                         tno0, tno1, tno2,&
                         dt10, dt21,&
                         zr(iphasi+STEEL_NBVARI*(i_node-1)), metaac(1+STEEL_NBVARI*(i_node-1)))
-            do i = 1, STEEL_NBVARI
-                zr(iphasn+STEEL_NBVARI*(i_node-1)+i-1) = metaac(1+STEEL_NBVARI*(i_node-1)+i-1)
+            do i_vari = 1, STEEL_NBVARI
+                zr(iphasn+STEEL_NBVARI*(i_node-1)+i_vari-1) =&
+                    metaac(1+STEEL_NBVARI*(i_node-1)+i_vari-1)
             end do
         end do
     else if (compor(1)(1:4).eq.'ZIRC') then
@@ -110,10 +111,13 @@ character(len=16) :: option, nomte
         do i_node = 1, nno
             tno1 = zr(itempe+i_node-1)
             tno2 = zr(itempi+i_node-1)
-            call zedgar(jv_mater, tno1, tno2, instp, dt21,&
-                        zr(iphasi+4*(i_node-1) ), metazi(1+4*(i_node-1)))
-            do i = 1, 4
-                zr(iphasn+4*(i_node-1)+i-1) = metazi(1+4*(i_node-1)+i-1)
+            call zedgar(jv_mater,&
+                        tno1, tno2,&
+                        instp, dt21,&
+                        zr(iphasi+ZIRC_NBVARI*(i_node-1) ), metazi(1+ZIRC_NBVARI*(i_node-1)))
+            do i_vari = 1, ZIRC_NBVARI
+                zr(iphasn+ZIRC_NBVARI*(i_node-1)+i_vari-1) =&
+                    metazi(1+ZIRC_NBVARI*(i_node-1)+i_vari-1)
             end do
         end do
     endif

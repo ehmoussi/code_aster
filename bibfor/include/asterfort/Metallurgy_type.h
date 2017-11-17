@@ -34,6 +34,10 @@
 ! - Phases for zircaloy
 !
 #define ZIRC_NBVARI      4
+#define PALPHA1          1
+#define PALPHA2          2
+#define ZIRC_TEMP        3
+#define TIME_TRAN        4
 !
 ! - Kinetic
 !
