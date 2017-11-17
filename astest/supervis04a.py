@@ -50,37 +50,6 @@ elem = CALC_MATR_ELEM(CHAM_MATER=CHMAT,
 
 test.assertEqual(elem.getType(), "MATR_ELEM_DEPL_R")
 
-# asse = ASSEMBLAGE(MODELE=MODELE,
-#                   CHAM_MATER=CHMAT,
-#                   CHARGE=BLOCAGE,
-#                   NUME_DDL=CO('NUMEDDL'),
-#                   MATR_ASSE=(_F(MATRICE=CO('K1'),
-#                                 OPTION='RIGI_MECA',),
-#                              _F(MATRICE=CO('M1'),
-#                                 OPTION='MASS_MECA',),),)
-# test.assertEqual(len(asse), 4)
-# test.assertIsNone(asse.main)
-
-# NUMEDDL = asse.NUMEDDL
-# K1 = asse.K1
-# M1 = asse.M1
-
-# # 1. Calcul de reference avec les matrices "completes" :
-# #--------------------------------------------------------
-# MODE1 = CALC_MODES(OPTION='BANDE',
-#                    MATR_RIGI=K1,
-#                    MATR_MASS=M1,
-#                    CALC_FREQ=_F(FREQ=(10., 250.)),
-#                    VERI_MODE=_F(SEUIL=1e-03)
-#                    )
-
-# TEST_RESU(RESU=_F(RESULTAT=MODE1, NUME_MODE=2,
-#                   PARA='FREQ', VALE_CALC=85.631015163879, ))
-
-# waiting for #26618
-del CHMAT
-del BLOCAGE
-
 FIN()
 
 test.printSummary()

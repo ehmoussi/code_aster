@@ -32,10 +32,20 @@ void exportMaterialOnMeshToPython()
     class_< MaterialOnMeshInstance, MaterialOnMeshInstance::MaterialOnMeshPtr,
             bases< DataStructure > > ( "MaterialOnMesh", no_init )
         .def( "__init__", make_constructor(
-            &initFactoryPtr< MaterialOnMeshInstance, const MeshPtr& > ) )
+            &initFactoryPtr< MaterialOnMeshInstance,
+                             const MeshPtr& > ) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< MaterialOnMeshInstance,
+                             const std::string&,
+                             const MeshPtr& > ) )
 #ifdef _USE_MPI
         .def( "__init__", make_constructor(
-            &initFactoryPtr< MaterialOnMeshInstance, const ParallelMeshPtr& > ) )
+            &initFactoryPtr< MaterialOnMeshInstance,
+                             const ParallelMeshPtr& > ) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< MaterialOnMeshInstance,
+                             const std::string&,
+                             const ParallelMeshPtr& > ) )
 #endif /* _USE_MPI */
         .def( "addMaterialOnAllMesh", &MaterialOnMeshInstance::addMaterialOnAllMesh )
         .def( "addMaterialOnGroupOfElements",
