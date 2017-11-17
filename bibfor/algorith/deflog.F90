@@ -88,7 +88,7 @@ subroutine deflog(ndim, f, epsl, gn, lamb,&
     do i = 1, nbvec
         if (lamb(i) .le. r8miem()) then
             iret=1
-            goto 9999
+            goto 999
         endif
         logl(i)=log(lamb(i))*0.5d0
     end do
@@ -106,5 +106,5 @@ subroutine deflog(ndim, f, epsl, gn, lamb,&
     end do
     call tnsvec(3, 3, epsl33, epsl, sqrt(2.d0))
 !
-9999  continue
+999 continue
 end subroutine

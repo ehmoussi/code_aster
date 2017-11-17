@@ -94,13 +94,13 @@ for i in range(nbc):
                              R2 = 238.731127339,
                              GAMMA_2 = 10.386585592,
                              ),
-                               GTN_ASTER = _F(Q1 = 1.5,
+                               GTN = _F(Q1 = 1.5,
                                               Q2 = 1.07,
-                                             PORO_INI = f0,
-                                              PORO_COA = 0.05, 
-                                             COAL_ACC = 3,
-                                             NUCL_POR = 0.0,
-                                             NUCL_PLA = 0.6,
+                                             PORO_INIT = f0,
+                                              COAL_PORO = 0.05, 
+                                             COAL_ACCE = 3,
+                                             NUCL_PORO = 0.0,
+                                             NUCL_PLAS = 0.6,
                                              NUCL_DEV = 0.01,
                              ), 
                      NON_LOCAL = _F(C_GRAD_VARI = 1,
@@ -171,7 +171,7 @@ RESU = STAT_NON_LINE (MODELE       = MODE,
                 CHAM_MATER   = MATE ,
                 EXCIT        = (_F(CHARGE = CL),
                                 _F(CHARGE = CHARGE, FONC_MULT=FONC),),
-                    COMPORTEMENT = _F(TOUT = 'OUI', RELATION='GTN_ASTER', DEFORMATION='GDEF_LOG'),
+                    COMPORTEMENT = _F(TOUT = 'OUI', RELATION='GTN', DEFORMATION='GDEF_LOG'),
                       INCREMENT    = _F(LIST_INST = INST_CAL, INST_FIN=inst_fin),
                       CONVERGENCE  = _F(
                           ITER_GLOB_MAXI= 20,
@@ -188,7 +188,7 @@ RESU = STAT_NON_LINE (MODELE       = MODE,
 # COORDONNEES DES POINTS DE GAUSS
 
 COOR = CALC_CHAM_ELEM(MODELE = MODE,
-  		      OPTION = 'COOR_ELGA',)
+                OPTION = 'COOR_ELGA',)
 
 COORX = COOR.EXTR_COMP('X',['V_Bar3D']).valeurs
 COORY = COOR.EXTR_COMP('Y',['V_Bar3D']).valeurs
@@ -197,11 +197,11 @@ COORZ = COOR.EXTR_COMP('Z',['V_Bar3D']).valeurs
     # PREMIER POINT A TESTER: PG LE PLUS ELOIGNE DE L'ORIGINE j
     # DEUXIEME POINT A TESTER: PG LE PLUS PROCHE DE L'ORIGINE k
 for i in range (len(COORX)): 
-	if(COORX[i]>0.5 and COORY[i]>0.5 and COORZ[i]>9.5):
-		j = i
-	if(COORX[i]<0.5 and COORY[i]<0.5 and COORZ[i]<0.5):
-		k = i
-	
+    if(COORX[i]>0.5 and COORY[i]>0.5 and COORZ[i]>9.5):
+        j = i
+    if(COORX[i]<0.5 and COORY[i]<0.5 and COORZ[i]<0.5):
+        k = i
+    
 
 #--------------------------------------------------------------------------------------------------------------- 
 #------------------------------------------ TEST SUR SIXX-------------------------------------------------------
@@ -210,7 +210,7 @@ for i in range (len(COORX)):
 
 # INST1 = 0.50     (INST_TOTAL = 1.00)
 SIGMA1 = CREA_CHAMP(TYPE_CHAM = 'ELGA_SIEF_R',
-  	           OPERATION = 'EXTR',
+                 OPERATION = 'EXTR',
                    RESULTAT  = RESU,
                    NOM_CHAM  = 'SIEF_ELGA',
                    INST      = 0.50,
@@ -222,25 +222,25 @@ SXX11 = CREA_TABLE(LISTE = (_F(PARA='SIXX',LISTE_R = SIXX1[j])))
 SXX12 = CREA_TABLE(LISTE = (_F(PARA='SIXX',LISTE_R = SIXX1[k])))
 
 TEST_TABLE(TABLE = SXX11,
-	   NOM_PARA = 'SIXX',
+       NOM_PARA = 'SIXX',
            TYPE_TEST = 'MAX',
            VALE_CALC = 726.188718907,
            REFERENCE= 'SOURCE_EXTERNE',
            VALE_REFE= 7.262872e+02,
-	   PRECISION = 0.01,
+       PRECISION = 0.01,
            )
 TEST_TABLE(TABLE = SXX12,
-	   NOM_PARA = 'SIXX',
+       NOM_PARA = 'SIXX',
            TYPE_TEST = 'MAX',
            VALE_CALC = 891.417579595,
            REFERENCE= 'SOURCE_EXTERNE',
            VALE_REFE= 8.913942e+02,
-	   PRECISION = 0.01,
+       PRECISION = 0.01,
            )
 
 # INST2 = 0.80     (INST_TOTAL = 1.00)
 SIGMA2 = CREA_CHAMP(TYPE_CHAM = 'ELGA_SIEF_R',
-  	           OPERATION = 'EXTR',
+                 OPERATION = 'EXTR',
                    RESULTAT  = RESU,
                    NOM_CHAM  = 'SIEF_ELGA',
                    INST      = 0.80,
@@ -252,20 +252,20 @@ SXX21 = CREA_TABLE(LISTE = (_F(PARA='SIXX',LISTE_R = SIXX2[j])))
 SXX22 = CREA_TABLE(LISTE = (_F(PARA='SIXX',LISTE_R = SIXX2[k])))
 
 TEST_TABLE(TABLE = SXX21,
-	   NOM_PARA = 'SIXX',
+       NOM_PARA = 'SIXX',
            TYPE_TEST = 'MAX',
            VALE_CALC = 128.213767019,
            REFERENCE= 'SOURCE_EXTERNE',
            VALE_REFE= 1.284041e+02,
-	   PRECISION = 0.01,
+       PRECISION = 0.01,
            )
 TEST_TABLE(TABLE = SXX22,
-	   NOM_PARA = 'SIXX',
+       NOM_PARA = 'SIXX',
            TYPE_TEST = 'MAX',
            VALE_CALC = 867.269785025,
            REFERENCE= 'SOURCE_EXTERNE',
            VALE_REFE= 8.672785e+02,
-	   PRECISION = 0.01,
+       PRECISION = 0.01,
            )
 
 
@@ -278,7 +278,7 @@ TEST_TABLE(TABLE = SXX22,
 ###
 
 VI1 = CREA_CHAMP(TYPE_CHAM = 'ELGA_VARI_R',
-  	         OPERATION = 'EXTR',
+               OPERATION = 'EXTR',
                  RESULTAT  = RESU,
                  NOM_CHAM  = 'VARI_ELGA',
                  INST      = 0.50,
@@ -291,20 +291,20 @@ V111 = CREA_TABLE(LISTE = (_F(PARA='V1',LISTE_R = V11[j])))
 V112 = CREA_TABLE(LISTE = (_F(PARA='V1',LISTE_R = V11[k])))
 
 TEST_TABLE(TABLE = V111,
-	   NOM_PARA = 'V1',
+       NOM_PARA = 'V1',
            TYPE_TEST = 'MAX',
            VALE_CALC = 1.40848599416,
            REFERENCE= 'SOURCE_EXTERNE',
            VALE_REFE= 1.407362e+00,
-	   PRECISION = 0.01,
+       PRECISION = 0.01,
            )
 TEST_TABLE(TABLE = V112,
-	   NOM_PARA = 'V1',
+       NOM_PARA = 'V1',
            TYPE_TEST = 'MAX',
            VALE_CALC = 1.44186569463,
            REFERENCE= 'SOURCE_EXTERNE',
            VALE_REFE=  1.438084e+00,
-	   PRECISION = 0.01,
+       PRECISION = 0.01,
            )
 
 #  POROSITE
@@ -313,20 +313,20 @@ V121 = CREA_TABLE(LISTE = (_F(PARA='V2',LISTE_R = V12[j])))
 V122 = CREA_TABLE(LISTE = (_F(PARA='V2',LISTE_R = V12[k])))
 
 TEST_TABLE(TABLE = V121,
-	   NOM_PARA = 'V2',
+       NOM_PARA = 'V2',
            TYPE_TEST = 'MAX',
            VALE_CALC = 0.0666306130264,
            REFERENCE= 'SOURCE_EXTERNE',
            VALE_REFE=   6.660734e-02,
-	   PRECISION = 0.01,
+       PRECISION = 0.01,
            )
 TEST_TABLE(TABLE = V122,
-	   NOM_PARA = 'V2',
+       NOM_PARA = 'V2',
            TYPE_TEST = 'MAX',
            VALE_CALC = 0.00731159094135,
            REFERENCE= 'SOURCE_EXTERNE',
            VALE_REFE=  7.312952e-03,
-	   PRECISION = 0.01,
+       PRECISION = 0.01,
            )
 
 ###
@@ -334,7 +334,7 @@ TEST_TABLE(TABLE = V122,
 ###
          
 VI2 = CREA_CHAMP(TYPE_CHAM = 'ELGA_VARI_R',
-  	         OPERATION = 'EXTR',
+               OPERATION = 'EXTR',
                  RESULTAT  = RESU,
                  NOM_CHAM  = 'VARI_ELGA',
                  INST      = 0.80,
@@ -346,20 +346,20 @@ V211 = CREA_TABLE(LISTE = (_F(PARA='V1',LISTE_R = V21[j])))
 V212 = CREA_TABLE(LISTE = (_F(PARA='V1',LISTE_R = V21[k])))
 
 TEST_TABLE(TABLE = V211,
-	   NOM_PARA = 'V1',
+       NOM_PARA = 'V1',
            TYPE_TEST = 'MAX',
            VALE_CALC = 1.64226535859,
            REFERENCE= 'SOURCE_EXTERNE',
            VALE_REFE= 1.641179e+00,
-	   PRECISION = 0.01,
+       PRECISION = 0.01,
            )
 TEST_TABLE(TABLE = V212,
-	   NOM_PARA = 'V1',
+       NOM_PARA = 'V1',
            TYPE_TEST = 'MAX',
            VALE_CALC = 1.84881556535,
            REFERENCE= 'SOURCE_EXTERNE',
            VALE_REFE= 1.843949e+00 ,
-	   PRECISION = 0.01,
+       PRECISION = 0.01,
            )
 
 #  POROSITE
@@ -368,20 +368,20 @@ V221 = CREA_TABLE(LISTE = (_F(PARA='V2',LISTE_R = V22[j])))
 V222 = CREA_TABLE(LISTE = (_F(PARA='V2',LISTE_R = V22[k])))
 
 TEST_TABLE(TABLE = V221,
-	   NOM_PARA = 'V2',
+       NOM_PARA = 'V2',
            TYPE_TEST = 'MAX',
            VALE_CALC = 0.216671367083,
            REFERENCE= 'SOURCE_EXTERNE',
            VALE_REFE=2.166102e-01 ,
-	   PRECISION = 0.01,
+       PRECISION = 0.01,
            )
 TEST_TABLE(TABLE = V222,
-	   NOM_PARA = 'V2',
+       NOM_PARA = 'V2',
            TYPE_TEST = 'MAX',
            VALE_CALC = 0.0199652877319,
            REFERENCE= 'SOURCE_EXTERNE',
            VALE_REFE= 1.996904e-02   ,
-	   PRECISION = 0.01,
+       PRECISION = 0.01,
            )
 FIN()
       

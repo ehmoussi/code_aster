@@ -20,7 +20,7 @@
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
-   nom            = 'GTN_ASTER',
+   nom            = 'GTN',
    doc = """Loi de plasticité de Gurson Tvergaard Needleman [R5.03.XX]""",
    num_lc         = 75,
    nb_vari        = 9,

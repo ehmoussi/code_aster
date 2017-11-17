@@ -63,28 +63,28 @@ MAIL = LIRE_MAILLAGE(FORMAT='MED', UNITE = 20)
 # AFFECTATION DU MODELE
 MODE = AFFE_MODELE(MAILLAGE = MAIL,
                    AFFE     = _F(TOUT     = 'OUI',
-                 	         PHENOMENE= 'MECANIQUE',
-                 	         MODELISATION = ('3D_SI'),),)                   
+                              PHENOMENE= 'MECANIQUE',
+                              MODELISATION = ('3D_SI'),),)                   
 
 # MODELISATION DU MATERIAU 
 # LES PARAMETRES UTILISES CI-DESSOUS VIENNENT DE LA THESE DE YI ZHANG(2016)
 ACIER = DEFI_MATERIAU(ELAS = _F(E=190000.0, NU=0.3),
-		      ECRO_NL  = _F(R0 = 488.361123569,
-				    RH = 0,
-				    R1 = 57.1333673502,
-				    GAMMA_1 = 8613.0,
-				    R2 = 238.731127339,
-				    GAMMA_2 = 10.386585592,
-				    ),
-                      GTN_ASTER = _F(Q1 = 1.5,
+              ECRO_NL  = _F(R0 = 488.361123569,
+                    RH = 0,
+                    R1 = 57.1333673502,
+                    GAMMA_1 = 8613.0,
+                    R2 = 238.731127339,
+                    GAMMA_2 = 10.386585592,
+                    ),
+                      GTN = _F(Q1 = 1.5,
                                      Q2 = 1.07,
-                                     PORO_INI = 1.e-2,
-                                     PORO_COA = 0.05, 
-                                     COAL_ACC = 3,
-                                     NUCL_POR = 0.0,
-                                     NUCL_PLA = 0.6,
+                                     PORO_INIT = 1.e-2,
+                                     COAL_PORO = 0.05, 
+                                     COAL_ACCE = 3,
+                                     NUCL_PORO = 0.0,
+                                     NUCL_PLAS = 0.6,
                                      NUCL_DEV = 0.01,
-				     ),                
+                     ),                
                       ) 
                                  
 # AFFECTATION DES MATERIAUX                               
@@ -96,10 +96,10 @@ MATE = AFFE_MATERIAU (MAILLAGE = MAIL,
 
 CL = AFFE_CHAR_MECA(MODELE    = MODE,
                     DDL_IMPO = (_F(GROUP_NO = 'AXE',  DX = 0   ),
-				_F(GROUP_NO = 'SYM',  DZ = 0   ),
+                _F(GROUP_NO = 'SYM',  DZ = 0   ),
                                  ),                                
                     LIAISON_UNIF = (_F(GROUP_NO='LATERAL', DDL='DX'),
-			            _F(GROUP_NO='LATERAL2',DDL='DZ'),),
+                        _F(GROUP_NO='LATERAL2',DDL='DZ'),),
                     )
 DEFY = DEFI_FONCTION(NOM_PARA = 'Y',
                      VALE = (0,0,0.05,deply),)
@@ -128,16 +128,16 @@ FONC = DEFI_FONCTION(NOM_PARA = 'INST',
 RESU = STAT_NON_LINE (MODELE       = MODE,
                       CHAM_MATER   = MATE ,
                       EXCIT        = (_F(CHARGE = CL),
-			              _F(CHARGE = CHAR, FONC_MULT=FONC),),
-                      COMPORTEMENT = _F(GROUP_MA='SPECIMEN', RELATION='GTN_ASTER', DEFORMATION='GDEF_LOG'),
+                          _F(CHARGE = CHAR, FONC_MULT=FONC),),
+                      COMPORTEMENT = _F(GROUP_MA='SPECIMEN', RELATION='GTN', DEFORMATION='GDEF_LOG'),
                       INCREMENT    = _F(LIST_INST = INST_CAL, INST_FIN=inst_fin),
                       CONVERGENCE  = _F(ITER_GLOB_MAXI= 20,
-					RESI_GLOB_MAXI=1.E-3,
-					),
+                    RESI_GLOB_MAXI=1.E-3,
+                    ),
                       NEWTON       = _F(MATRICE='TANGENTE',REAC_ITER=1,REAC_INCR=1),
                       SOLVEUR      = _F(METHODE='MUMPS', PCENT_PIVOT=20, MATR_DISTRIBUEE='OUI',),
                       ARCHIVAGE    = _F(LIST_INST=REEL_ARC,),
-			) 
+            ) 
 
 # TEST SUR SIYY
 TEST_RESU(RESU=(_F(RESULTAT = RESU,

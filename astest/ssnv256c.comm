@@ -72,9 +72,9 @@ MAIL=LIRE_MAILLAGE(FORMAT='MED', UNITE=20)
 
 # AFFECTATION DU MODELE
 MODE=AFFE_MODELE(MAILLAGE = MAIL,
-  		 AFFE     = _F(TOUT         = 'OUI',
-			       PHENOMENE    = 'MECANIQUE',
-    		   	       MODELISATION = 'AXIS_GRAD_VARI',
+           AFFE     = _F(TOUT         = 'OUI',
+                   PHENOMENE    = 'MECANIQUE',
+                          MODELISATION = 'AXIS_GRAD_VARI',
                                ),
                   )                   
 
@@ -84,24 +84,24 @@ f_0 = 2e-4;
 for i in range(nbc):
     f0 = f_0 + i*f_0
     ACIER[i] = DEFI_MATERIAU(ELAS       = _F(E=190000, NU=0.3),
-		      	     ECRO_NL    = _F(R0 = 488.361123569,
-				             RH = 0,
-				             R1 = 57.1333673502,
-				    	     GAMMA_1 = 8613.0,
-				    	     R2 = 238.731127339,
-				    	     GAMMA_2 = 10.386585592,
-				    	     ),
-                     	      GTN_ASTER = _F(Q1 = 1.5,
-                                     	     Q2 = 1.07,
-                                             PORO_INI = f0,
-                                     	     PORO_COA = 0.05, 
-                                             COAL_ACC = 3,
-                                             NUCL_POR = 0.0,
-                                             NUCL_PLA = 0.6,
+                       ECRO_NL    = _F(R0 = 488.361123569,
+                             RH = 0,
+                             R1 = 57.1333673502,
+                             GAMMA_1 = 8613.0,
+                             R2 = 238.731127339,
+                             GAMMA_2 = 10.386585592,
+                             ),
+                               GTN = _F(Q1 = 1.5,
+                                              Q2 = 1.07,
+                                             PORO_INIT = f0,
+                                              COAL_PORO = 0.05, 
+                                             COAL_ACCE = 3,
+                                             NUCL_PORO = 0.0,
+                                             NUCL_PLAS = 0.6,
                                              NUCL_DEV = 0.01,
-				             ), 
-		             NON_LOCAL = _F(C_GRAD_VARI = 1,
-				            PENA_LAGR   =5000,),  
+                             ), 
+                     NON_LOCAL = _F(C_GRAD_VARI = 1,
+                            PENA_LAGR   =5000,),  
                                )
  
 
@@ -162,24 +162,24 @@ FONC = DEFI_FONCTION(NOM_PARA = 'INST',
 # CALCUL NON LINEAIRE
 
 RESU = STAT_NON_LINE (MODELE       = MODE,
-  		      CHAM_MATER   = MATE ,
-  		      EXCIT        = (_F(CHARGE = CL),
-                  		      _F(CHARGE = CHARGE, FONC_MULT=FONC),),
-  	              COMPORTEMENT = _F(TOUT = 'OUI', RELATION='GTN_ASTER', DEFORMATION='GDEF_LOG'),
+                CHAM_MATER   = MATE ,
+                EXCIT        = (_F(CHARGE = CL),
+                                _F(CHARGE = CHARGE, FONC_MULT=FONC),),
+                    COMPORTEMENT = _F(TOUT = 'OUI', RELATION='GTN', DEFORMATION='GDEF_LOG'),
                       INCREMENT    = _F(LIST_INST = INST_CAL, INST_FIN=inst_fin),
                       CONVERGENCE  = _F(ITER_GLOB_MAXI= 20,
-					RESI_GLOB_MAXI=1.E-3,
-					),
+                    RESI_GLOB_MAXI=1.E-3,
+                    ),
                       NEWTON       = _F(MATRICE='TANGENTE',REAC_ITER=1),
                       SOLVEUR      = _F(METHODE='MUMPS', PCENT_PIVOT=20, MATR_DISTRIBUEE='OUI',),
                       ARCHIVAGE    = _F(LIST_INST=REEL_ARC),
-		      ) 
+              ) 
 
 
 # COORDONNEES DES POINTS DE GAUSS
 
 COOR = CALC_CHAM_ELEM(MODELE = MODE,
-  		      OPTION = 'COOR_ELGA',)
+                OPTION = 'COOR_ELGA',)
 
 COORX = COOR.EXTR_COMP('X',['F_Bar2D']).valeurs
 COORY = COOR.EXTR_COMP('Y',['F_Bar2D']).valeurs
@@ -187,11 +187,11 @@ COORY = COOR.EXTR_COMP('Y',['F_Bar2D']).valeurs
     # PREMIER POINT A TESTER: PG LE PLUS ELOIGNE DE L'ORIGINE j
     # DEUXIEME POINT A TESTER: PG LE PLUS PROCHE DE L'ORIGINE k
 for i in range (len(COORX)): 
-	if(COORX[i]>0.5 and COORY[i]>9.5):
-		j = i
-	if(COORX[i]<0.5 and COORY[i]<0.5):
-		k = i
-	
+    if(COORX[i]>0.5 and COORY[i]>9.5):
+        j = i
+    if(COORX[i]<0.5 and COORY[i]<0.5):
+        k = i
+    
 
 #--------------------------------------------------------------------------------------------------------------- 
 #------------------------------------------ TEST SUR SIXX-------------------------------------------------------
@@ -200,7 +200,7 @@ for i in range (len(COORX)):
  
 # INST1 = 0.50     (INST_TOTAL = 1.00)
 SIGMA1 = CREA_CHAMP(TYPE_CHAM = 'ELGA_SIEF_R',
-  	           OPERATION = 'EXTR',
+                 OPERATION = 'EXTR',
                    RESULTAT  = RESU,
                    NOM_CHAM  = 'SIEF_ELGA',
                    INST      = 0.50,
@@ -212,19 +212,19 @@ SXX11 = CREA_TABLE(LISTE = (_F(PARA='SIXX',LISTE_R = SIXX1[j])))
 SXX12 = CREA_TABLE(LISTE = (_F(PARA='SIXX',LISTE_R = SIXX1[k])))
 
 TEST_TABLE(TABLE = SXX11,
-	   NOM_PARA = 'SIXX',
+       NOM_PARA = 'SIXX',
            TYPE_TEST = 'MAX',
            VALE_CALC = 724.421547331,
            )
 TEST_TABLE(TABLE = SXX12,
-	   NOM_PARA = 'SIXX',
+       NOM_PARA = 'SIXX',
            TYPE_TEST = 'MAX',
            VALE_CALC = 776.593909352,
            )
 
 # INST2 = 0.80     (INST_TOTAL = 1.00)
 SIGMA2 = CREA_CHAMP(TYPE_CHAM = 'ELGA_SIEF_R',
-  	           OPERATION = 'EXTR',
+                 OPERATION = 'EXTR',
                    RESULTAT  = RESU,
                    NOM_CHAM  = 'SIEF_ELGA',
                    INST      = 0.80,
@@ -236,12 +236,12 @@ SXX21 = CREA_TABLE(LISTE = (_F(PARA='SIXX',LISTE_R = SIXX2[j])))
 SXX22 = CREA_TABLE(LISTE = (_F(PARA='SIXX',LISTE_R = SIXX2[k])))
 
 TEST_TABLE(TABLE = SXX21,
-	   NOM_PARA = 'SIXX',
+       NOM_PARA = 'SIXX',
            TYPE_TEST = 'MAX',
            VALE_CALC = 410.071451584,
            )
 TEST_TABLE(TABLE = SXX22,
-	   NOM_PARA = 'SIXX',
+       NOM_PARA = 'SIXX',
            TYPE_TEST = 'MAX',
            VALE_CALC = 758.512748577,
            )
@@ -256,7 +256,7 @@ TEST_TABLE(TABLE = SXX22,
 ###
 
 VI1 = CREA_CHAMP(TYPE_CHAM = 'ELGA_VARI_R',
-  	         OPERATION = 'EXTR',
+               OPERATION = 'EXTR',
                  RESULTAT  = RESU,
                  NOM_CHAM  = 'VARI_ELGA',
                  INST      = 0.50,
@@ -268,12 +268,12 @@ V111 = CREA_TABLE(LISTE = (_F(PARA='V1',LISTE_R = V11[j])))
 V112 = CREA_TABLE(LISTE = (_F(PARA='V1',LISTE_R = V11[k])))
 
 TEST_TABLE(TABLE = V111,
-	   NOM_PARA = 'V1',
+       NOM_PARA = 'V1',
            TYPE_TEST = 'MAX',
            VALE_CALC = 0.932956293834,
            )
 TEST_TABLE(TABLE = V112,
-	   NOM_PARA = 'V1',
+       NOM_PARA = 'V1',
            TYPE_TEST = 'MAX',
            VALE_CALC = 0.947931301639,
            )
@@ -284,12 +284,12 @@ V121 = CREA_TABLE(LISTE = (_F(PARA='V2',LISTE_R = V12[j])))
 V122 = CREA_TABLE(LISTE = (_F(PARA='V2',LISTE_R = V12[k])))
 
 TEST_TABLE(TABLE = V121,
-	   NOM_PARA = 'V2',
+       NOM_PARA = 'V2',
            TYPE_TEST = 'MAX',
            VALE_CALC = 0.0329235483441,
            )
 TEST_TABLE(TABLE = V122,
-	   NOM_PARA = 'V2',
+       NOM_PARA = 'V2',
            TYPE_TEST = 'MAX',
            VALE_CALC = 0.00366818227864,
            )
@@ -300,7 +300,7 @@ TEST_TABLE(TABLE = V122,
 ###
 
 VI2 = CREA_CHAMP(TYPE_CHAM = 'ELGA_VARI_R',
-  	         OPERATION = 'EXTR',
+               OPERATION = 'EXTR',
                  RESULTAT  = RESU,
                  NOM_CHAM  = 'VARI_ELGA',
                  INST      = 0.80,
@@ -312,12 +312,12 @@ V211 = CREA_TABLE(LISTE = (_F(PARA='V1',LISTE_R = V21[j])))
 V212 = CREA_TABLE(LISTE = (_F(PARA='V1',LISTE_R = V21[k])))
 
 TEST_TABLE(TABLE = V211,
-	   NOM_PARA = 'V1',
+       NOM_PARA = 'V1',
            TYPE_TEST = 'MAX',
            VALE_CALC = 1.2815367262,
            )
 TEST_TABLE(TABLE = V212,
-	   NOM_PARA = 'V1',
+       NOM_PARA = 'V1',
            TYPE_TEST = 'MAX',
            VALE_CALC = 1.35471600569,
            )
@@ -328,12 +328,12 @@ V221 = CREA_TABLE(LISTE = (_F(PARA='V2',LISTE_R = V22[j])))
 V222 = CREA_TABLE(LISTE = (_F(PARA='V2',LISTE_R = V22[k])))
 
 TEST_TABLE(TABLE = V221,
-	   NOM_PARA = 'V2',
+       NOM_PARA = 'V2',
            TYPE_TEST = 'MAX',
            VALE_CALC = 0.117433231099,
            )
 TEST_TABLE(TABLE = V222,
-	   NOM_PARA = 'V2',
+       NOM_PARA = 'V2',
            TYPE_TEST = 'MAX',
            VALE_CALC = 0.0125635616053,
            )

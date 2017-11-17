@@ -110,7 +110,7 @@ def C_RELATION( COMMAND ):
                                         "FLUA_PORO_BETON",
                                         "GLRC_DAMAGE",
                                         "GLRC_DM",
-                                        "GTN_ASTER",
+                                        "GTN",
                                         "DHRC",
                                         "BETON_GRANGER",
                                         "BETON_GRANGER_V",

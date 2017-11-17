@@ -73,9 +73,9 @@ MAIL=LIRE_MAILLAGE(FORMAT='MED', UNITE=20)
 
 # AFFECTATION DU MODELE
 MODE=AFFE_MODELE(MAILLAGE = MAIL,
-  		 AFFE     = _F(TOUT         = 'OUI',
-			       PHENOMENE    = 'MECANIQUE',
-    		   	       MODELISATION = 'D_PLAN_GRAD_VARI',
+           AFFE     = _F(TOUT         = 'OUI',
+                   PHENOMENE    = 'MECANIQUE',
+                          MODELISATION = 'D_PLAN_GRAD_VARI',
                                ),
                   )                   
 
@@ -85,24 +85,24 @@ f_0 = 2e-4;
 for i in range(nbc):
     f0 = f_0 + i*f_0
     ACIER[i] = DEFI_MATERIAU(ELAS       = _F(E=190000, NU=0.3),
-		      	     ECRO_NL    = _F(R0 = 488.361123569,
-				             RH = 0,
-				             R1 = 57.1333673502,
-				    	     GAMMA_1 = 8613.0,
-				    	     R2 = 238.731127339,
-				    	     GAMMA_2 = 10.386585592,
-				    	     ),
-                     	      GTN_ASTER = _F(Q1 = 1.5,
-                                     	     Q2 = 1.07,
-                                             PORO_INI = f0,
-                                     	     PORO_COA = 0.05, 
-                                             COAL_ACC = 3,
-                                             NUCL_POR = 0.0,
-                                             NUCL_PLA = 0.6,
+                       ECRO_NL    = _F(R0 = 488.361123569,
+                             RH = 0,
+                             R1 = 57.1333673502,
+                             GAMMA_1 = 8613.0,
+                             R2 = 238.731127339,
+                             GAMMA_2 = 10.386585592,
+                             ),
+                               GTN = _F(Q1 = 1.5,
+                                              Q2 = 1.07,
+                                             PORO_INIT = f0,
+                                              COAL_PORO = 0.05, 
+                                             COAL_ACCE = 3,
+                                             NUCL_PORO = 0.0,
+                                             NUCL_PLAS = 0.6,
                                              NUCL_DEV = 0.01,
-				             ), 
-		             NON_LOCAL = _F(C_GRAD_VARI = 1,
-				            PENA_LAGR   =5000,), 
+                             ), 
+                     NON_LOCAL = _F(C_GRAD_VARI = 1,
+                            PENA_LAGR   =5000,), 
                                )
  
 
@@ -163,18 +163,18 @@ FONC = DEFI_FONCTION(NOM_PARA = 'INST',
 # CALCUL NON LINEAIRE
 
 RESU = STAT_NON_LINE (MODELE       = MODE,
-  		      CHAM_MATER   = MATE ,
-  		      EXCIT        = (_F(CHARGE = CL),
-                  		      _F(CHARGE = CHARGE, FONC_MULT=FONC),),
-  	              COMPORTEMENT = _F(TOUT = 'OUI', RELATION='GTN_ASTER', DEFORMATION='GDEF_LOG'),
+                CHAM_MATER   = MATE ,
+                EXCIT        = (_F(CHARGE = CL),
+                                _F(CHARGE = CHARGE, FONC_MULT=FONC),),
+                    COMPORTEMENT = _F(TOUT = 'OUI', RELATION='GTN', DEFORMATION='GDEF_LOG'),
                       INCREMENT    = _F(LIST_INST = INST_CAL, INST_FIN=inst_fin),
                       CONVERGENCE  = _F(ITER_GLOB_MAXI= 20,
-					RESI_GLOB_MAXI=1.E-3,
-					),
+                    RESI_GLOB_MAXI=1.E-3,
+                    ),
                       NEWTON       = _F(MATRICE='TANGENTE',REAC_ITER=1),
                       SOLVEUR      = _F(METHODE='MUMPS', PCENT_PIVOT=20, MATR_DISTRIBUEE='OUI',),
                       ARCHIVAGE    = _F(LIST_INST=REEL_ARC),
-		      ) 
+              ) 
 
 
 # COORDONNEES DES POINTS DE GAUSS
