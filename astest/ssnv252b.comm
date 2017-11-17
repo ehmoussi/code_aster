@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 
-# CAS_TEST__: GTN001h : CISAILLEMENT PUR
+# CAS_TEST__ : CISAILLEMENT SIMPLE
 # ----------------------------------------------------------------------
 # GEOMETRIE           : ELEMENT VOLUME
 # MODELISATION        : D_PLAN_GRAD_VARI
@@ -140,7 +140,7 @@ TEST_RESU(RESU=(_F(RESULTAT = RESU,
            NOM_CHAM = 'SIEF_ELGA',
            NOM_CMP  = 'SIXX',
                    TYPE_TEST= 'MIN',
-                   VALE_CALC = 332.278833249,
+                   VALE_CALC = 332.278833265,
            REFERENCE= 'SOURCE_EXTERNE',
                    VALE_REFE= 3.322786e+02  ,
            PRECISION=0.01,
@@ -153,7 +153,7 @@ TEST_RESU(RESU=(_F(RESULTAT = RESU,
            NOM_CHAM = 'SIEF_ELGA',
            NOM_CMP  = 'SIXX',
                    TYPE_TEST= 'MIN',
-                   VALE_CALC = 368.397399207,
+                   VALE_CALC = 368.397400207,
            REFERENCE= 'SOURCE_EXTERNE',
                    VALE_REFE=  3.684003e+02  ,
            PRECISION=0.01,
@@ -179,7 +179,7 @@ TEST_RESU(RESU=(_F(RESULTAT = RESU,
            NOM_CHAM = 'VARI_ELGA',
            NOM_CMP  = 'V1',
                    TYPE_TEST= 'MAX',
-                   VALE_CALC = 2.53563265166,
+                   VALE_CALC = 2.53563265165,
            REFERENCE= 'SOURCE_EXTERNE',
                    VALE_REFE= 2.561245e+00,
            PRECISION=0.01,

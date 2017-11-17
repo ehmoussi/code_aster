@@ -18,12 +18,12 @@
 # --------------------------------------------------------------------
 
 
-# CAS_TEST__: GTN002e: TRACTION BIAXIAL
+# CAS_TEST__: TRACTION UNIAXIAL
 # ----------------------------------------------------------------------
 # GEOMETRIE           : BARREAU
 # MODELISATION        : 3D_GRAD_INCO
 # MAILLAGE            : MED (ISSU DE SALOME)
-# CL ET CHARGEMENT    : TRACTION BIAXIAL
+# CL ET CHARGEMENT    : TRACTION UNIAXIAL
 # LOI D'ENDOMMAGEMENT : GTN 
 # ----------------------------------------------------------------------
 # i = [|0,20|], j = [|0,9|]
@@ -33,9 +33,9 @@
 
 DEBUT(PAR_LOT='NON',CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
-
 import math
 import numpy as np
+
 # -------------------------------------------------------------------------
 # PARAMETRES
 # -------------------------------------------------------------------------
@@ -46,7 +46,8 @@ nb_pas = 1000
 nb_arch = 100
 
 # INSTANT DE FIN <= DERNIER INSTANT DE CALCUL
-inst_fin = 0.800 # max=0.999
+inst_fin = 0.800 # max=0.871
+
 
 # DERNIER INSTANT
 inst_total = 1.00
@@ -54,9 +55,9 @@ inst_total = 1.00
 # NOMBRE DE COUCHES
 nbc = 10
 
-# CAS AXIS-LIKE
-alpha = 1
-beta = 1.22
+# CAS DPLAN-LIKE
+alpha = 0
+beta = 5
 
 # LONGEUR DE CHAQUE BRIQUE
 lx = 1
@@ -79,12 +80,9 @@ MODE=AFFE_MODELE(MAILLAGE = MAIL,
                    PHENOMENE    = 'MECANIQUE',
                           MODELISATION = '3D_GRAD_INCO',
                                ),
-                  )                   
+                 )                   
 
 # MODELISATION DU MATERIAU 20 MnMoNi 5-5  (MAQUETTE)  
-
-
-
 f_0 = 2e-4; 
 for i in range(nbc):
     f0 = f_0 + i*f_0
@@ -157,7 +155,7 @@ CHARGE = AFFE_CHAR_MECA_F(MODELE    = MODE,
 REEL_CAL = DEFI_LIST_REEL(DEBUT      = 0,
                           INTERVALLE = _F(JUSQU_A=inst_total, NOMBRE=nb_pas),)
                           
-INST_CAL = DEFI_LIST_INST(DEFI_LIST = _F(LIST_INST=REEL_CAL))
+INST_CAL = DEFI_LIST_INST(DEFI_LIST = _F(LIST_INST=REEL_CAL),METHODE='AUTO')
 
 REEL_ARC = DEFI_LIST_REEL(DEBUT      = 0,
                           INTERVALLE = _F(JUSQU_A=inst_total, NOMBRE=nb_arch),)
@@ -175,19 +173,22 @@ RESU = STAT_NON_LINE (MODELE       = MODE,
                                 _F(CHARGE = CHARGE, FONC_MULT=FONC),),
                     COMPORTEMENT = _F(TOUT = 'OUI', RELATION='GTN_ASTER', DEFORMATION='GDEF_LOG'),
                       INCREMENT    = _F(LIST_INST = INST_CAL, INST_FIN=inst_fin),
-                      CONVERGENCE  = _F(ITER_GLOB_MAXI= 20,
-                    RESI_GLOB_MAXI=1.E-3,
-                    ),
+                      CONVERGENCE  = _F(
+                          ITER_GLOB_MAXI= 20,
+                          RESI_REFE_RELA=1.E-3,
+                          SIGM_REFE     = 500,
+                          EPSI_REFE     = 0.01,
+                          VARI_REFE     = 0.01,
+                          LAGR_REFE     = 500,
+                          ),
                       NEWTON       = _F(MATRICE='TANGENTE',REAC_ITER=1),
                       SOLVEUR      = _F(METHODE='MUMPS', PCENT_PIVOT=20, MATR_DISTRIBUEE='OUI',),
                       ARCHIVAGE    = _F(LIST_INST=REEL_ARC),
               ) 
-
-
 # COORDONNEES DES POINTS DE GAUSS
 
 COOR = CALC_CHAM_ELEM(MODELE = MODE,
-                OPTION = 'COOR_ELGA',)
+  		      OPTION = 'COOR_ELGA',)
 
 COORX = COOR.EXTR_COMP('X',['V_Bar3D']).valeurs
 COORY = COOR.EXTR_COMP('Y',['V_Bar3D']).valeurs
@@ -196,11 +197,11 @@ COORZ = COOR.EXTR_COMP('Z',['V_Bar3D']).valeurs
     # PREMIER POINT A TESTER: PG LE PLUS ELOIGNE DE L'ORIGINE j
     # DEUXIEME POINT A TESTER: PG LE PLUS PROCHE DE L'ORIGINE k
 for i in range (len(COORX)): 
-    if(COORX[i]>0.5 and COORY[i]>0.5 and COORZ[i]>9.5):
-        j = i
-    if(COORX[i]<0.5 and COORY[i]<0.5 and COORZ[i]<0.5):
-        k = i
-    
+	if(COORX[i]>0.5 and COORY[i]>0.5 and COORZ[i]>9.5):
+		j = i
+	if(COORX[i]<0.5 and COORY[i]<0.5 and COORZ[i]<0.5):
+		k = i
+	
 
 #--------------------------------------------------------------------------------------------------------------- 
 #------------------------------------------ TEST SUR SIXX-------------------------------------------------------
@@ -209,7 +210,7 @@ for i in range (len(COORX)):
 
 # INST1 = 0.50     (INST_TOTAL = 1.00)
 SIGMA1 = CREA_CHAMP(TYPE_CHAM = 'ELGA_SIEF_R',
-                 OPERATION = 'EXTR',
+  	           OPERATION = 'EXTR',
                    RESULTAT  = RESU,
                    NOM_CHAM  = 'SIEF_ELGA',
                    INST      = 0.50,
@@ -221,23 +222,25 @@ SXX11 = CREA_TABLE(LISTE = (_F(PARA='SIXX',LISTE_R = SIXX1[j])))
 SXX12 = CREA_TABLE(LISTE = (_F(PARA='SIXX',LISTE_R = SIXX1[k])))
 
 TEST_TABLE(TABLE = SXX11,
-       NOM_PARA = 'SIXX',
+	   NOM_PARA = 'SIXX',
            TYPE_TEST = 'MAX',
-           VALE_CALC = 723.404219521,
-           #REFERENCE= 'SOURCE_EXTERNE',
-           #VALE_REFE= 7.310701e+02,
+           VALE_CALC = 726.188718907,
+           REFERENCE= 'SOURCE_EXTERNE',
+           VALE_REFE= 7.262872e+02,
+	   PRECISION = 0.01,
            )
 TEST_TABLE(TABLE = SXX12,
-       NOM_PARA = 'SIXX',
+	   NOM_PARA = 'SIXX',
            TYPE_TEST = 'MAX',
-           VALE_CALC = 777.723473181,
-           #REFERENCE= 'SOURCE_EXTERNE',
-           #VALE_REFE= 673.733259364634,
+           VALE_CALC = 891.417579595,
+           REFERENCE= 'SOURCE_EXTERNE',
+           VALE_REFE= 8.913942e+02,
+	   PRECISION = 0.01,
            )
 
 # INST2 = 0.80     (INST_TOTAL = 1.00)
 SIGMA2 = CREA_CHAMP(TYPE_CHAM = 'ELGA_SIEF_R',
-                 OPERATION = 'EXTR',
+  	           OPERATION = 'EXTR',
                    RESULTAT  = RESU,
                    NOM_CHAM  = 'SIEF_ELGA',
                    INST      = 0.80,
@@ -249,18 +252,20 @@ SXX21 = CREA_TABLE(LISTE = (_F(PARA='SIXX',LISTE_R = SIXX2[j])))
 SXX22 = CREA_TABLE(LISTE = (_F(PARA='SIXX',LISTE_R = SIXX2[k])))
 
 TEST_TABLE(TABLE = SXX21,
-       NOM_PARA = 'SIXX',
+	   NOM_PARA = 'SIXX',
            TYPE_TEST = 'MAX',
-           VALE_CALC = 403.362194555,
-           #REFERENCE= 'SOURCE_EXTERNE',
-           #VALE_REFE= 673.733259364634,
+           VALE_CALC = 128.213767019,
+           REFERENCE= 'SOURCE_EXTERNE',
+           VALE_REFE= 1.284041e+02,
+	   PRECISION = 0.01,
            )
 TEST_TABLE(TABLE = SXX22,
-       NOM_PARA = 'SIXX',
+	   NOM_PARA = 'SIXX',
            TYPE_TEST = 'MAX',
-           VALE_CALC = 762.03059551,
-           #REFERENCE= 'SOURCE_EXTERNE',
-           #VALE_REFE= 673.733259364634,
+           VALE_CALC = 867.269785025,
+           REFERENCE= 'SOURCE_EXTERNE',
+           VALE_REFE= 8.672785e+02,
+	   PRECISION = 0.01,
            )
 
 
@@ -269,15 +274,16 @@ TEST_TABLE(TABLE = SXX22,
 #--------------------------------------------------------------------------------------------------------------- 
 
 ###
-### INST1 = 50     (INST_TOTAL = 100)
+### INST1 = 0.50     (INST_TOTAL = 1.00)
 ###
 
 VI1 = CREA_CHAMP(TYPE_CHAM = 'ELGA_VARI_R',
-               OPERATION = 'EXTR',
+  	         OPERATION = 'EXTR',
                  RESULTAT  = RESU,
                  NOM_CHAM  = 'VARI_ELGA',
                  INST      = 0.50,
                  )
+
 
 #   VARIABLE D'ECROUISSAGE
 V11 = VI1.EXTR_COMP('V1',['V_Bar3D']).valeurs
@@ -285,18 +291,20 @@ V111 = CREA_TABLE(LISTE = (_F(PARA='V1',LISTE_R = V11[j])))
 V112 = CREA_TABLE(LISTE = (_F(PARA='V1',LISTE_R = V11[k])))
 
 TEST_TABLE(TABLE = V111,
-       NOM_PARA = 'V1',
+	   NOM_PARA = 'V1',
            TYPE_TEST = 'MAX',
-           VALE_CALC = 0.932833473238,
-           #REFERENCE= 'SOURCE_EXTERNE',
-           #VALE_REFE= 673.733259364634,
+           VALE_CALC = 1.40848599416,
+           REFERENCE= 'SOURCE_EXTERNE',
+           VALE_REFE= 1.407362e+00,
+	   PRECISION = 0.01,
            )
 TEST_TABLE(TABLE = V112,
-       NOM_PARA = 'V1',
+	   NOM_PARA = 'V1',
            TYPE_TEST = 'MAX',
-           VALE_CALC = 0.948050033788,
-           #REFERENCE= 'SOURCE_EXTERNE',
-           #VALE_REFE= 673.733259364634,
+           VALE_CALC = 1.44186569463,
+           REFERENCE= 'SOURCE_EXTERNE',
+           VALE_REFE=  1.438084e+00,
+	   PRECISION = 0.01,
            )
 
 #  POROSITE
@@ -305,49 +313,53 @@ V121 = CREA_TABLE(LISTE = (_F(PARA='V2',LISTE_R = V12[j])))
 V122 = CREA_TABLE(LISTE = (_F(PARA='V2',LISTE_R = V12[k])))
 
 TEST_TABLE(TABLE = V121,
-       NOM_PARA = 'V2',
+	   NOM_PARA = 'V2',
            TYPE_TEST = 'MAX',
-           VALE_CALC = 0.0331430999518,
-           #REFERENCE= 'SOURCE_EXTERNE',
-           #VALE_REFE= 673.733259364634,
+           VALE_CALC = 0.0666306130264,
+           REFERENCE= 'SOURCE_EXTERNE',
+           VALE_REFE=   6.660734e-02,
+	   PRECISION = 0.01,
            )
 TEST_TABLE(TABLE = V122,
-       NOM_PARA = 'V2',
+	   NOM_PARA = 'V2',
            TYPE_TEST = 'MAX',
-           VALE_CALC = 0.00351754066034,
-           #REFERENCE= 'SOURCE_EXTERNE',
-           #VALE_REFE= 673.733259364634,
+           VALE_CALC = 0.00731159094135,
+           REFERENCE= 'SOURCE_EXTERNE',
+           VALE_REFE=  7.312952e-03,
+	   PRECISION = 0.01,
            )
 
 ###
 ### INST1 = 0.80     (INST_TOTAL = 1.00)
 ###
-
+         
 VI2 = CREA_CHAMP(TYPE_CHAM = 'ELGA_VARI_R',
-               OPERATION = 'EXTR',
+  	         OPERATION = 'EXTR',
                  RESULTAT  = RESU,
                  NOM_CHAM  = 'VARI_ELGA',
                  INST      = 0.80,
                  )
-
+    
 #   VARIABLE D'ECROUISSAGE
 V21 = VI2.EXTR_COMP('V1',['V_Bar3D']).valeurs
 V211 = CREA_TABLE(LISTE = (_F(PARA='V1',LISTE_R = V21[j])))
 V212 = CREA_TABLE(LISTE = (_F(PARA='V1',LISTE_R = V21[k])))
 
 TEST_TABLE(TABLE = V211,
-       NOM_PARA = 'V1',
+	   NOM_PARA = 'V1',
            TYPE_TEST = 'MAX',
-           VALE_CALC = 1.28045142623,
-           #REFERENCE= 'SOURCE_EXTERNE',
-           #VALE_REFE= 673.733259364634,
+           VALE_CALC = 1.64226535859,
+           REFERENCE= 'SOURCE_EXTERNE',
+           VALE_REFE= 1.641179e+00,
+	   PRECISION = 0.01,
            )
 TEST_TABLE(TABLE = V212,
-       NOM_PARA = 'V1',
+	   NOM_PARA = 'V1',
            TYPE_TEST = 'MAX',
-           VALE_CALC = 1.35506107407,
-           #REFERENCE= 'SOURCE_EXTERNE',
-           #VALE_REFE= 673.733259364634,
+           VALE_CALC = 1.84881556535,
+           REFERENCE= 'SOURCE_EXTERNE',
+           VALE_REFE= 1.843949e+00 ,
+	   PRECISION = 0.01,
            )
 
 #  POROSITE
@@ -356,18 +368,20 @@ V221 = CREA_TABLE(LISTE = (_F(PARA='V2',LISTE_R = V22[j])))
 V222 = CREA_TABLE(LISTE = (_F(PARA='V2',LISTE_R = V22[k])))
 
 TEST_TABLE(TABLE = V221,
-       NOM_PARA = 'V2',
+	   NOM_PARA = 'V2',
            TYPE_TEST = 'MAX',
-           VALE_CALC = 0.118529510144,
-           #REFERENCE= 'SOURCE_EXTERNE',
-           #VALE_REFE= 673.733259364634,
+           VALE_CALC = 0.216671367083,
+           REFERENCE= 'SOURCE_EXTERNE',
+           VALE_REFE=2.166102e-01 ,
+	   PRECISION = 0.01,
            )
 TEST_TABLE(TABLE = V222,
-       NOM_PARA = 'V2',
+	   NOM_PARA = 'V2',
            TYPE_TEST = 'MAX',
-           VALE_CALC = 0.011918068698,
-           #REFERENCE= 'SOURCE_EXTERNE',
-           #VALE_REFE= 673.733259364634,
+           VALE_CALC = 0.0199652877319,
+           REFERENCE= 'SOURCE_EXTERNE',
+           VALE_REFE= 1.996904e-02   ,
+	   PRECISION = 0.01,
            )
 FIN()
-            
+      
