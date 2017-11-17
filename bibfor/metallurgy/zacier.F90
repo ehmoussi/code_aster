@@ -30,6 +30,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/metaSteelGetParameters.h"
+#include "asterfort/assert.h"
 #include "asterfort/smcarc.h"
 #include "asterfort/utmess.h"
 #include "asterfort/metaSteelGrainSize.h"
@@ -70,30 +71,6 @@ real(kind=8), intent(out) :: vari_curr(7)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-!
-!       EVOLUTION METALLURGIQUE POUR ACIER
-!
-!   - FONCTION :                                                       C
-!       CALCUL DE Z(N+1) CONNAISSANT T(N), TPOINT(N), Z(N) ET T(N+1)
-!   - ENTREES :
-!       NBHIST           : NBRE D HISTOIRES EXPERIMENTALE DE DEFI_TRC  C
-!       FTRC(3*NBHIST,3) : VECTEUR DZ/DT EXPERIMENTAUX (VIDE EN ENTREE)C
-!       TRC (3*NBHIST,5) : VECTEUR Z,T EXPERIMENTAUX (VIDE EN ENTREE)  C
-!       FMOD(*)          : ENSEMBLE DES HISTOIRES EXPERIMENTALES       C
-!       CKM(6*NBTRC)     : VECTEUR DES LOIS MS(Z) SEUIL,AKM,BKM,TPLM C
-!                          ET TAILLE DE GRAIN AUSTENITIQUE DREF,A     C
-!       NBTRC            : NBRE DE LOIS MS(Z)                          C
-!       TPG0             : TEMPERATURE AU POINT DE GAUSS INSTANT N-1   C
-!       TPG1             : TEMPERATURE AU POINT DE GAUSS INSTANT N     C
-!       TPG2             : TEMPERATURE AU POINT DE GAUSS INSTANT N+1   C
-!       DT10             : DELTATT ENTRE N-1 ET N                      C
-!       DT21             : DELTATT ENTRE N  ET N+                      C
-!       TAMP(7)          : PHASMETA(N) ZF,ZP,ZB,ZM,P,T,MS           C
-!   - SORTIES :                                                        C
-!       METAPG(7)          : PHASMETA(N+1) ZF,ZP,ZB,ZM,P,T,MS          C
-!
-! --------------------------------------------------------------------------------------------------
-!
     real(kind=8) :: vari_dumm(7)
     real(kind=8) :: dmoins
     real(kind=8) :: tpoint, zero, ti, tpi
@@ -109,6 +86,7 @@ real(kind=8), intent(out) :: vari_curr(7)
     zero = 0.d0
     epsi = 1.d-10
     un   = 1.d0
+    ASSERT(STEEL_NBVARI .eq. 7)
 !
 ! - Get material parameters for steel
 !
@@ -116,7 +94,7 @@ real(kind=8), intent(out) :: vari_curr(7)
 !
 ! - Temperature
 !
-    vari_curr(TEMP_PG) = tpg2
+    vari_curr(STEEL_TEMP) = tpg2
     vari_curr(TEMP_MARTENSITE) = vari_prev(TEMP_MARTENSITE)
     tpoint = (tpg1-tpg0)/dt10
 !
@@ -149,9 +127,9 @@ real(kind=8), intent(out) :: vari_curr(7)
             dt21_mod     = dt21/dble(nbpas)
             vari_dumm(:) = vari_prev(:)
             do i = 1, nbpas
-                ti                 = tpg1+(tpg2-tpg1)*dble(i-1)/dble(nbpas)
-                vari_curr(TEMP_PG) = tpg1+(dble(i)*(tpg2-tpg1))/dble(nbpas)
-                tpi                = (vari_curr(TEMP_PG)-ti)/dt21_mod
+                ti                    = tpg1+(tpg2-tpg1)*dble(i-1)/dble(nbpas)
+                vari_curr(STEEL_TEMP) = tpg1+(dble(i)*(tpg2-tpg1))/dble(nbpas)
+                tpi                   = (vari_curr(STEEL_TEMP)-ti)/dt21_mod
                 call smcarc(nb_hist      , ftrc     , trc ,&
                             coef         , fmod     ,&
                             metaSteelPara, nbtrc    , ckm ,&
