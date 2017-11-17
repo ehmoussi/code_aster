@@ -42,7 +42,7 @@ function lcgtn_material(fami,kpg,ksp,imate,resi,grvi) result(mat)
     character(len=1) :: poum
 ! ----------------------------------------------------------------------
     data nomel /'E','NU'/
-    data nomen /'Q1','Q2','PORO_INI','PORO_COA','COAL_ACC','NUCL_POR','NUCL_PLA','NUCL_DEV'/
+    data nomen /'Q1','Q2','PORO_INIT','COAL_PORO','COAL_ACCE','NUCL_PORO','NUCL_PLAS','NUCL_DEV'/
     data nomec /'R0','RH','R1','GAMMA_1','R2','GAMMA_2','RK','P0','GAMMA_M'/
     data nomnl /'C_GRAD_VARI','PENA_LAGR'/
     data nomvs /'SIGM_0','EPSI_0','M','DELTA'/
@@ -70,7 +70,7 @@ function lcgtn_material(fami,kpg,ksp,imate,resi,grvi) result(mat)
     mat%gk = valec(9)
     
 !  GTN
-    call rcvalb(fami,kpg,ksp,poum,imate,' ','GTN_ASTER', 0,' ',[0.d0],nben,nomen,valen,iok,2)
+    call rcvalb(fami,kpg,ksp,poum,imate,' ','GTN', 0,' ',[0.d0],nben,nomen,valen,iok,2)
     mat%q1 = valen(1)
     mat%q2 = valen(2)
     mat%f0 = valen(3)
@@ -81,7 +81,7 @@ function lcgtn_material(fami,kpg,ksp,imate,resi,grvi) result(mat)
     mat%sn = valen(8)
 
 !  Viscosity
-    call rcvalb(fami,kpg,ksp,poum,imate,' ','VISC_REG',0,' ',[0.d0],nbvs,nomvs,valvs,iok,0)
+    call rcvalb(fami,kpg,ksp,poum,imate,' ','VISC_SINH_REG',0,' ',[0.d0],nbvs,nomvs,valvs,iok,0)
     mat%vs0 = merge(valvs(1),0.d0,iok(1).eq.0)
     mat%ve0 = merge(valvs(2),1.d0,iok(2).eq.0)
     mat%vm  = merge(valvs(3),0.5d0,iok(3).eq.0)

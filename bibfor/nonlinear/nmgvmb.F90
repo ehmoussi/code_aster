@@ -57,7 +57,7 @@ subroutine nmgvmb(ndim, nno1, nno2, npg, axi, &
     real(kind=8),parameter :: rac2=sqrt(2.d0), r2=0.5*rac2
     real(kind=8),parameter :: vrac2(6)=[1.d0,1.d0,1.d0,rac2,rac2,rac2]
 ! ----------------------------------------------------------------------
-    integer      :: g, i, n
+    integer      :: g,  n
     real(kind=8) :: r, unsurr,w0
     real(kind=8),allocatable:: dff1(:,:), dff2(:,:)
 ! ----------------------------------------------------------------------
