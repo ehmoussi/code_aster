@@ -6,6 +6,4 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm ssnv255b.comm D 1
-F mmed ssnv254a.mmed D 20
-
-
+F mmed ssnv255a.mmed D 20

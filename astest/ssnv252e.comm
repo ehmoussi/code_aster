@@ -1,0 +1,217 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+
+# CAS_TEST__ : CISAILLEMENT PUR
+# ----------------------------------------------------------------------
+# GEOMETRIE           : ELEMENT VOLUME
+# MODELISATION        : D_PLAN_GRAD_VARI
+# MAILLAGE            : MED (ISSU DE SALOME)
+# CL ET CHARGEMENT    : CISAILLEMENT PUR
+# LOI D'ENDOMMAGEMENT : GTN LOCAL
+# ----------------------------------------------------------------------
+# GROUPES DE NOEUDS: AXE, SPECIMEN, LATERAL, FIXE, SYME, TOP, DEPL, FIXE2
+# GROUPES DE MAILLES:  TOP, SYME, LATERAL, AXE, SPECIMEN
+# ----------------------------------------------------------------------
+#
+DEBUT(PAR_LOT='NON',CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+import math
+import numpy as np
+
+# -------------------------------------------------------------------------
+# PARAMETRES
+# -------------------------------------------------------------------------
+# NOMBRE DU PAS DE CALCUL
+nb_pas = 1000
+
+# NOMBRE DU PAS D'ARCHIVAGE 
+nb_arch = 100
+
+# INSTANT DE FIN <= DERNIER INSTANT
+inst_fin =1
+
+# DERNIER INSTANT
+inst_total = 1
+
+# DEPLACEMENT EN HAUT
+depl = 0.5
+deplx = depl
+
+# -------------------------------------------------------------------------
+# OBJET ASTER
+# -------------------------------------------------------------------------
+
+# LECTURE DU MAILLAGE
+MAIL = LIRE_MAILLAGE(FORMAT='MED', UNITE = 20)
+
+# AFFECTATION DU MODELE
+MODE = AFFE_MODELE(MAILLAGE = MAIL,
+                   AFFE     = _F(TOUT     = 'OUI',
+                 	         PHENOMENE= 'MECANIQUE',
+                 	         MODELISATION = ('3D_GRAD_VARI'),),)                   
+
+# MODELISATION DU MATERIAU 
+# LES PARAMETRES UTILISES CI-DESSOUS VIENNENT DE LA THESE DE YI ZHANG(2016)
+ACIER = DEFI_MATERIAU(ELAS = _F(E=190000.0, NU=0.3),
+		      ECRO_NL  = _F(R0 = 488.361123569,
+				    RH = 0,
+				    R1 = 57.1333673502,
+				    GAMMA_1 = 8613.0,
+				    R2 = 238.731127339,
+				    GAMMA_2 = 10.386585592,
+				    ),
+                      GTN_ASTER = _F(Q1 = 1.5,
+                                     Q2 = 1.07,
+                                     PORO_INI = 1.e-2, #2.e-4,
+                                     PORO_COA = 0.05, 
+                                     COAL_ACC = 3,
+                                     NUCL_POR = 0.0,
+                                     NUCL_PLA = 0.6,
+                                     NUCL_DEV = 0.01,
+				     ),     
+		      NON_LOCAL = _F(C_GRAD_VARI = 2.22, 
+				     PENA_LAGR   =5000,),             
+                      ) 
+                                 
+# AFFECTATION DES MATERIAUX                               
+MATE = AFFE_MATERIAU (MAILLAGE = MAIL,
+                      AFFE     = _F(GROUP_MA='SPECIMEN', MATER = ACIER),)
+
+# CONDITIONS AUX LIMITES ET CHARGEMENTS
+
+CL = AFFE_CHAR_MECA(MODELE   = MODE,
+                      DDL_IMPO = (_F(GROUP_MA = 'SPECIMEN',  DY=0),
+				  _F(GROUP_MA = 'SPECIMEN', DZ=0),),
+                      )
+
+DEFX = DEFI_FONCTION(NOM_PARA = 'Y',
+                     VALE = (0,0,0.05,deplx),)
+
+CHAR = AFFE_CHAR_MECA_F(MODELE   = MODE,
+                      DDL_IMPO = (_F(GROUP_MA = 'SPECIMEN',  DX=DEFX),),
+                      )
+
+# LISTE DES INSTANTS DE CALCUL
+REEL_CAL = DEFI_LIST_REEL(DEBUT      = 0,
+                          INTERVALLE = _F(JUSQU_A=inst_total, NOMBRE=nb_pas),)
+                          
+INST_CAL = DEFI_LIST_INST(DEFI_LIST = _F(LIST_INST=REEL_CAL),METHODE='AUTO')
+
+REEL_ARC = DEFI_LIST_REEL(DEBUT      = 0,
+                          INTERVALLE = _F(JUSQU_A=inst_total, NOMBRE=nb_arch),)
+
+FONC = DEFI_FONCTION(NOM_PARA = 'INST',
+                     VALE     = (0.0, 0.0 ,inst_total,1.0),
+                     PROL_DROITE = 'LINEAIRE',)
+
+
+# CALCUL NON LINEAIRE
+RESU = STAT_NON_LINE (MODELE       = MODE,
+                      CHAM_MATER   = MATE ,
+                      EXCIT        = (_F(CHARGE = CL),
+			              _F(CHARGE = CHAR, FONC_MULT=FONC),),
+                      COMPORTEMENT = _F(GROUP_MA='SPECIMEN', RELATION='GTN_ASTER', DEFORMATION='GDEF_LOG'),
+                      INCREMENT    = _F(LIST_INST = INST_CAL, INST_FIN=inst_fin),
+                      CONVERGENCE  = _F(ITER_GLOB_MAXI= 20,
+					RESI_GLOB_MAXI=1.E-3,
+					),
+                      NEWTON       = _F(MATRICE='TANGENTE',REAC_ITER=1,REAC_INCR=1),
+                      SOLVEUR      = _F(METHODE='MUMPS', PCENT_PIVOT=20, MATR_DISTRIBUEE='OUI',),
+                      ARCHIVAGE    = _F(LIST_INST=REEL_ARC,),
+			) 
+# TEST SUR SIXX
+TEST_RESU(RESU=(_F(RESULTAT = RESU,
+                   INST     = 0.50,
+           NOM_CHAM = 'SIEF_ELGA',
+           NOM_CMP  = 'SIXX',
+                   TYPE_TEST= 'MIN',
+                   VALE_CALC = 332.273979775,
+           REFERENCE= 'SOURCE_EXTERNE',
+                   VALE_REFE= 3.322786e+02  ,
+           PRECISION=0.01,
+           ),
+        ),
+           )
+
+TEST_RESU(RESU=(_F(RESULTAT = RESU,
+                   INST     = 0.70,
+           NOM_CHAM = 'SIEF_ELGA',
+           NOM_CMP  = 'SIXX',
+                   TYPE_TEST= 'MIN',
+                   VALE_CALC = 368.397398768,
+           REFERENCE= 'SOURCE_EXTERNE',
+                   VALE_REFE=  3.684003e+02  ,
+           PRECISION=0.01,
+           ),
+        ),
+           )
+  
+# TEST SUR VARIABLE D'ECROUISSAGE V1
+TEST_RESU(RESU=(_F(RESULTAT = RESU,
+                   INST     = 0.50,
+           NOM_CHAM = 'VARI_ELGA',
+           NOM_CMP  = 'V1',
+                   TYPE_TEST= 'MAX',
+                   VALE_CALC = 2.11733469593,
+           REFERENCE= 'SOURCE_EXTERNE',
+                   VALE_REFE=  2.138722e+00,
+           PRECISION=0.11,
+           ),
+        ),
+           )
+TEST_RESU(RESU=(_F(RESULTAT = RESU,
+                   INST     = 0.70,
+           NOM_CHAM = 'VARI_ELGA',
+           NOM_CMP  = 'V1',
+                   TYPE_TEST= 'MAX',
+                   VALE_CALC = 2.5356326517,
+           REFERENCE= 'SOURCE_EXTERNE',
+                   VALE_REFE= 2.561245e+00,
+           PRECISION=0.01,
+           ),
+        ),
+           )
+
+# TEST SUR POROSITE V2
+TEST_RESU(RESU=(_F(RESULTAT = RESU,
+                   INST     = 0.50,
+           NOM_CHAM = 'VARI_ELGA',
+           NOM_CMP  = 'V2',
+                   TYPE_TEST= 'MAX',
+                   VALE_CALC = 0.0100000000001,
+           REFERENCE= 'SOURCE_EXTERNE',
+                   VALE_REFE= 1.000000e-02,
+           PRECISION=0.01,
+           ),
+        ),
+           )
+TEST_RESU(RESU=(_F(RESULTAT = RESU,
+                   INST     = 0.70,
+           NOM_CHAM = 'VARI_ELGA',
+           NOM_CMP  = 'V2',
+                   TYPE_TEST= 'MAX',
+                   VALE_CALC = 0.0100000000003,
+           REFERENCE= 'SOURCE_EXTERNE',
+                   VALE_REFE= 1.000000e-02,
+           PRECISION=0.01,
+           ),
+        ),
+           )
+FIN()
