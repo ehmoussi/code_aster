@@ -9,10 +9,10 @@ code_aster.init()
 test = code_aster.TestCase()
 
 rank = code_aster.getMPIRank()
-pMesh = code_aster.ParallelMesh.create()
+pMesh = code_aster.ParallelMesh()
 pMesh.readMedFile("xxParallelMesh001a")
 
-monModel = code_aster.Model.create()
+monModel = code_aster.Model()
 monModel.setSupportMesh(pMesh)
 monModel.addModelingOnAllMesh(code_aster.Physics.Mechanics,
                               code_aster.Modelings.Tridimensional)
@@ -21,29 +21,29 @@ monModel.build()
 testMesh = monModel.getSupportMesh()
 test.assertEqual(testMesh.getType(), "MAILLAGE_P")
 
-elas = code_aster.ElasMaterialBehaviour.create()
+elas = code_aster.ElasMaterialBehaviour()
 elas.setDoubleValue("E", 2.e11)
 elas.setDoubleValue("Nu", 0.3)
 
-acier = code_aster.Material.create()
+acier = code_aster.Material()
 acier.addMaterialBehaviour(elas)
 acier.build()
 
-affectMat = code_aster.MaterialOnMesh.create(pMesh)
+affectMat = code_aster.MaterialOnMesh(pMesh)
 affectMat.addMaterialOnAllMesh( acier )
 affectMat.build()
 
 testMesh2 = affectMat.getSupportMesh()
 test.assertEqual(testMesh2.getType(), "MAILLAGE_P")
 
-charCine = code_aster.KinematicsLoad.create()
+charCine = code_aster.KinematicsLoad()
 charCine.setSupportModel(monModel)
 charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dx, 0., "COTE_B")
 charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dy, 0., "COTE_B")
 charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dz, 0., "COTE_B")
 charCine.build()
 
-a = code_aster.PartialMesh.create(pMesh, ["COTE_H"])
+a = code_aster.PartialMesh(pMesh, ["COTE_H"])
 if( rank == 0 ): a.debugPrint(8)
 
 model1 = AFFE_MODELE(MAILLAGE=a,
@@ -56,11 +56,11 @@ charMeca1 = AFFE_CHAR_MECA(MODELE=model1,
                            DDL_IMPO=_F(GROUP_NO=("COTE_H"),
                                        DZ=1.0,),)
 
-charMeca = code_aster.ParallelMechanicalLoad.create(charMeca1, monModel)
+charMeca = code_aster.ParallelMechanicalLoad(charMeca1, monModel)
 
-monSolver = code_aster.MumpsSolver.create(code_aster.Renumbering.Metis)
+monSolver = code_aster.MumpsSolver(code_aster.Renumbering.Metis)
 
-mecaStatique = code_aster.StaticMechanicalSolver.create()
+mecaStatique = code_aster.StaticMechanicalSolver()
 mecaStatique.addKinematicsLoad(charCine)
 mecaStatique.addParallelMechanicalLoad(charMeca)
 mecaStatique.setSupportModel(monModel)
