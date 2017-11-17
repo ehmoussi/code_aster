@@ -22,10 +22,11 @@
 !
 ! - Phases for steel
 !
-#define PFERRITE 1
-#define PPERLITE 2
-#define PBAINITE 3
-#define PMARTENS 4
+#define STEEL_NBVARI     7
+#define PFERRITE         1
+#define PPERLITE         2
+#define PBAINITE         3
+#define PMARTENS         4
 #define SIZE_GRAIN       5
-#define TEMP_PG          6
+#define STEEL_TEMP       6
 #define TEMP_MARTENSITE  7

@@ -116,14 +116,14 @@ real(kind=8), intent(out) :: vari_curr(:)
                             ftrc, trc)
                 if (temp_incr_eff .gt. (trc(1,4)*(un+epsi))) then
 ! ----------------- Before first value from TRC diagrams
-                    dz(PFERRITE) = ftrc(1,PFERRITE)*(vari_curr(TEMP_PG)-temp_curr)
-                    dz(PPERLITE) = ftrc(1,PPERLITE)*(vari_curr(TEMP_PG)-temp_curr)
-                    dz(PBAINITE) = ftrc(1,PBAINITE)*(vari_curr(TEMP_PG)-temp_curr)
+                    dz(PFERRITE) = ftrc(1,PFERRITE)*(vari_curr(STEEL_TEMP)-temp_curr)
+                    dz(PPERLITE) = ftrc(1,PPERLITE)*(vari_curr(STEEL_TEMP)-temp_curr)
+                    dz(PBAINITE) = ftrc(1,PBAINITE)*(vari_curr(STEEL_TEMP)-temp_curr)
                 elseif (temp_incr_eff .lt. (trc(nb_hist,4)*(un-epsi))) then
 ! ----------------- After last value from TRC diagrams
-                    dz(PFERRITE) = ftrc(nb_hist,PFERRITE)*(vari_curr(TEMP_PG)-temp_curr)
-                    dz(PPERLITE) = ftrc(nb_hist,PPERLITE)*(vari_curr(TEMP_PG)-temp_curr)
-                    dz(PBAINITE) = ftrc(nb_hist,PBAINITE)*(vari_curr(TEMP_PG)-temp_curr)
+                    dz(PFERRITE) = ftrc(nb_hist,PFERRITE)*(vari_curr(STEEL_TEMP)-temp_curr)
+                    dz(PPERLITE) = ftrc(nb_hist,PPERLITE)*(vari_curr(STEEL_TEMP)-temp_curr)
+                    dz(PBAINITE) = ftrc(nb_hist,PBAINITE)*(vari_curr(STEEL_TEMP)-temp_curr)
                 else
 ! ----------------- Find the six nearest TRC curves
                     x(1) = vari_prev(PFERRITE)
@@ -135,14 +135,14 @@ real(kind=8), intent(out) :: vari_curr(:)
 ! ----------------- Compute barycenter and update increments of phases
                     call smcaba(x , nb_hist, trc, ftrc, ind,&
                                 dz)
-                    if ((vari_curr(TEMP_PG)-temp_curr) .gt. zero) then
+                    if ((vari_curr(STEEL_TEMP)-temp_curr) .gt. zero) then
                         dz(PFERRITE) = zero
                         dz(PPERLITE) = zero
                         dz(PBAINITE) = zero
                     else
-                        dz(PFERRITE) = dz(PFERRITE)*(vari_curr(TEMP_PG)-temp_curr)
-                        dz(PPERLITE) = dz(PPERLITE)*(vari_curr(TEMP_PG)-temp_curr)
-                        dz(PBAINITE) = dz(PBAINITE)*(vari_curr(TEMP_PG)-temp_curr)
+                        dz(PFERRITE) = dz(PFERRITE)*(vari_curr(STEEL_TEMP)-temp_curr)
+                        dz(PPERLITE) = dz(PPERLITE)*(vari_curr(STEEL_TEMP)-temp_curr)
+                        dz(PBAINITE) = dz(PBAINITE)*(vari_curr(STEEL_TEMP)-temp_curr)
                     endif
                 endif
             endif
@@ -156,7 +156,7 @@ real(kind=8), intent(out) :: vari_curr(:)
             endif
 ! --------- Compute proportion of martensite
             zmartensite = 1.d0 - z13
-            if ((vari_curr(TEMP_PG) .gt. vari_curr(TEMP_MARTENSITE)) .or.&
+            if ((vari_curr(STEEL_TEMP) .gt. vari_curr(TEMP_MARTENSITE)) .or.&
                 (zmartensite.lt.0.01d0)) then
                 vari_curr(PMARTENS) = vari_prev(PMARTENS)
             else
@@ -167,7 +167,7 @@ real(kind=8), intent(out) :: vari_curr(:)
                 else
                     vari_curr(PMARTENS) = zmartensite*&
                                      (un-exp(metaSteelPara%alpha*&
-                                      (vari_curr(TEMP_MARTENSITE)-vari_curr(TEMP_PG))))
+                                      (vari_curr(TEMP_MARTENSITE)-vari_curr(STEEL_TEMP))))
                 endif
             endif
             dz(PMARTENS) = vari_curr(PMARTENS)-vari_prev(PMARTENS)
