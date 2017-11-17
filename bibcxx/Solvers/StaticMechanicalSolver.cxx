@@ -38,7 +38,7 @@ StaticMechanicalSolverInstance::StaticMechanicalSolverInstance():
     _materialOnMesh( MaterialOnMeshPtr() ),
     _linearSolver( BaseLinearSolverPtr() ),
     _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) ),
-    _timeStep( TimeStepperPtr( new TimeStepperInstance( Permanent ) ) )
+    _timeStep( TimeStepperPtr( nullptr ) )
 {};
 
 ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runtime_error )
@@ -46,7 +46,9 @@ ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runti
     ResultsContainerPtr resultC( new ResultsContainerInstance ( std::string( "EVOL_ELAS" ) ) );
     std::string nameOfSD = resultC->getName();
 
-    if ( _timeStep->size() == 0 )
+    if( !_timeStep )
+        throw std::runtime_error( "No list of time" );
+    if( _timeStep->size() == 0 )
         resultC->allocate( 1 );
     else
         resultC->allocate( _timeStep->size() );
