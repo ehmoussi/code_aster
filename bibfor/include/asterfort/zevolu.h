@@ -17,20 +17,20 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine zevolu(cine, zbeta, zbetam, dinst, tp,&
-                      k, n, tdeq, tfeq, coeffc,&
-                      m, ar, br, g, dg)
-        integer :: cine
+    subroutine zevolu(kine_type,&
+                      zbeta    , zbetam,&
+                      dinst    , tp    ,&
+                      k        , n     ,&
+                      tdeq     , tfeq  ,&
+                      coeffc   ,&
+                      m        , ar    , br,&
+                      g        , dg)
+        integer, intent(in) :: kine_type
         real(kind=8), intent(in) :: zbeta, zbetam
         real(kind=8), intent(in) :: tdeq, tfeq
         real(kind=8), intent(in) :: k, n
-        real(kind=8) :: dinst
-        real(kind=8) :: tp
-        real(kind=8) :: coeffc
-        real(kind=8) :: m
-        real(kind=8) :: ar
-        real(kind=8) :: br
-        real(kind=8) :: g
-        real(kind=8) :: dg
+        real(kind=8), intent(in) :: dinst, tp
+        real(kind=8), intent(in) :: coeffc, m, ar, br
+        real(kind=8), intent(out) :: g, dg
     end subroutine zevolu
 end interface
