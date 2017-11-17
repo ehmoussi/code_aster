@@ -30,3 +30,12 @@
 #define SIZE_GRAIN       5
 #define STEEL_TEMP       6
 #define TEMP_MARTENSITE  7
+!
+! - Phases for zircaloy
+!
+#define ZIRC_NBVARI      4
+!
+! - Kinetic
+!
+#define COOLING          0
+#define HEATING          1

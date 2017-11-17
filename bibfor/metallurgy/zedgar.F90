@@ -66,10 +66,9 @@ real(kind=8) :: tm, tp, instp, dinst, vim(4), vip(4)
     real(kind=8) :: tdeq, tfeq, k, n, t1c, t2c, ac, m, qsr, coeffc
     real(kind=8) :: t1r, t2r, ar, br, tabs, tk, tc, tr
     real(kind=8) :: vitesc, vitesr, dtemp
-    real(kind=8) :: zp, zm, zeq, zinf, zsup, g, dg, zalphm, zalphp
+    real(kind=8) :: zbetap, zbetam, zeq, zinf, zsup, g, dg, zalphm, zalphp
     real(kind=8) :: zero
-    integer :: cine, chau, refr
-    parameter     (chau=1,refr=0)
+    integer :: kine_type
     type(META_ZircParameters) :: metaZircPara
 !
 ! --------------------------------------------------------------------------------------------------
@@ -100,13 +99,13 @@ real(kind=8) :: tm, tp, instp, dinst, vim(4), vip(4)
 ! 2 - PREPARATION - Z = FRACTION DE PHASE BETA
 ! 2.1 - CALCUL DE LA FRACTION DE Z A L INSTANT MOINS
 !
-    zalphm=vim(1)+vim(2)
-    zm = 1.d0-zalphm
+    zalphm = vim(1)+vim(2)
+    zbetam = 1.d0-zalphm
 
 !
-    if (abs(zm) .le. zero) zm=0.d0
-    if (abs(zalphm) .le. zero) zm=1.d0
-    if ((zm.le.1.d-05) .and. (tp.le.tdeq)) zm=0.d0
+    if (abs(zbetam) .le. zero) zbetam=0.d0
+    if (abs(zalphm) .le. zero) zbetam=1.d0
+    if ((zbetam.le.1.d-05) .and. (tp.le.tdeq)) zbetam=0.d0
 !
 ! 2.2 - CALCUL DE LA TEMPERATURE A L EQUILIBRE DE FIN DE TRANSFOR
 !       CORRESPONDANT A 0.99 DE Z
@@ -123,18 +122,18 @@ real(kind=8) :: tm, tp, instp, dinst, vim(4), vip(4)
         zeq=1.d0
     endif
 !
-! 2.4 - SENS DE L'EVOLUTION METALLURGIQUE
+! - Type of kinematic
 !
-    if (zm .le. 0.d0) then
-        cine = chau
-    else if ((zm .gt. 0.d0).and.(zm .lt. 1.d0)) then
-        if (zm .lt. zeq) then
-            cine = chau
+    if (zbetam .le. 0.d0) then
+        kine_type = HEATING
+    else if ((zbetam .gt. 0.d0) .and. (zbetam .lt. 1.d0)) then
+        if (zbetam .lt. zeq) then
+            kine_type = HEATING
         else
-            cine = refr
+            kine_type = COOLING
         endif
-    else if (zm .ge. 1.d0) then
-        cine = refr
+    else if (zbetam .ge. 1.d0) then
+        kine_type = COOLING
     endif
 !
 ! 3 - SI ZM=0 OU ZM=1
@@ -155,7 +154,7 @@ real(kind=8) :: tm, tp, instp, dinst, vim(4), vip(4)
 !
 ! 3 - RECHERCHE DE L INSTANT CORRESPONDANT A TDEQ ET TFEQ
 !
-    if (zm .eq. 0.d0) then
+    if (zbetam .eq. 0.d0) then
         if ((tdeq .ge. tm) .and. (tdeq .le. tp)) then
             if (tp .eq. tm) then
                 vip(4)=instp
@@ -186,7 +185,7 @@ real(kind=8) :: tm, tp, instp, dinst, vim(4), vip(4)
         endif
     endif
 !
-    if (zm .eq. 1.d0) then
+    if (zbetam .eq. 1.d0) then
         if ((tfeq .ge. tp) .and. (tfeq .le. tm)) then
             if (tp .eq. tm) then
                 vip(4)=instp
@@ -218,24 +217,29 @@ real(kind=8) :: tm, tp, instp, dinst, vim(4), vip(4)
         endif
     endif
 !
-    if ((zm.ne.0.d0) .and. (zm.ne.1.d0)) vip(4)=vim(4)
+    if ((zbetam.ne.0.d0) .and. (zbetam.ne.1.d0)) vip(4)=vim(4)
 !
 ! 4 - DETERMINSATION DE ZP
 !
     if (test .eq. 1) then
-        if (zm .eq. 0.d0) zp=0.d0
-        if (zm .eq. 1.d0) zp=1.d0
+        if (zbetam .eq. 0.d0) zbetap=0.d0
+        if (zbetam .eq. 1.d0) zbetap=1.d0
     else
 !
 ! 4.1 - CAS PARTICULIER
 !
-        if (cine .eq. chau) then
+        if (kine_type .eq. HEATING) then
             if (zeq .gt. 0.99d0) then
-                call zevolu(cine, 0.99d0, zm, dinst, tp,&
-                            k, n, tdeq, tfeq, coeffc,&
-                            m, ar, br, g, dg)
+                call zevolu(kine_type,&
+                            0.99d0   , zbetam,&
+                            dinst    , tp    ,&
+                            k        , n     ,&
+                            tdeq     , tfeq  ,&
+                            coeffc   ,&
+                            m        , ar    , br,&
+                            g        , dg)
                 if (g .lt. 0.d0) then
-                    zp=1.d0
+                    zbetap = 1.d0
                     goto 100
                 endif
             endif
@@ -244,53 +248,62 @@ real(kind=8) :: tm, tp, instp, dinst, vim(4), vip(4)
 ! 4.2 - METODE DE NEWTON AVEC BORNES CONTROLEES
 ! 4.2.1 - MINORANT ET MAJORANT
 !
-        if (cine .eq. chau) then
-            zinf=zm
+        if (kine_type .eq. HEATING) then
+            zinf=zbetam
             zsup=zeq
         else
             zinf=zeq
-            zsup=zm
+            zsup=zbetam
         endif
 !
 ! 4.2.2 - INITIALISATION
 !
-        zp=zm
-        if (zm .eq. 0.d0) zp=zeq/2.d0
-        if (zm .eq. 1.d0) zp=(zm+zeq)/2.d0
+        zbetap=zbetam
+        if (zbetam .eq. 0.d0) zbetap=zeq/2.d0
+        if (zbetam .eq. 1.d0) zbetap=(zbetam+zeq)/2.d0
 !
-        call zevolu(cine, zp, zm, dinst, tp,&
-                    k, n, tdeq, tfeq, coeffc,&
-                    m, ar, br, g, dg)
+        call zevolu(kine_type,&
+                    zbetap   , zbetam,&
+                    dinst    , tp    ,&
+                    k        , n     ,&
+                    tdeq     , tfeq  ,&
+                    coeffc   ,&
+                    m        , ar    , br,&
+                    g        , dg)
 !
 ! 4.2.3 - RESOLUTION PAR UNE METHODE DE NEWTON ENTRE LES BORNES
 !
-        do 10 iter = 1, 15
+        do iter = 1, 15
             if (abs(g) .le. 1.d-06) exit
 !
             if (dg .eq. 0.d0) then
                 call utmess('F', 'ALGORITH16_96')
             endif
-            zp = zp - g/dg
-            if (zp .le. zinf .or. zp .ge. zsup) zp=(zinf+zsup)/2.d0
+            zbetap = zbetap - g/dg
+            if (zbetap .le. zinf .or. zbetap .ge. zsup) zbetap=(zinf+zsup)/2.d0
 !
-            call zevolu(cine, zp, zm, dinst, tp,&
-                        k, n, tdeq, tfeq, coeffc,&
-                        m, ar, br, g, dg)
+            call zevolu(kine_type,&
+                        zbetap   , zbetam,&
+                        dinst    , tp    ,&
+                        k        , n     ,&
+                        tdeq     , tfeq  ,&
+                        coeffc   ,&
+                        m        , ar    , br,&
+                        g        , dg)
 !
-            if (g .ge. 0.d0) zsup = zp
-            if (g .le. 0.d0) zinf = zp
-!
-10      continue
+            if (g .ge. 0.d0) zsup = zbetap
+            if (g .le. 0.d0) zinf = zbetap
+        end do
         ASSERT(.false.)
 100      continue
     endif
 !
     vip(3)=tp
-    zalphp=1.d0-zp
+    zalphp=1.d0-zbetap
 !
 ! 6 - CREATION DES DEUX PHASES
 !
-    if (zp .gt. 0.1d0) then
+    if (zbetap .gt. 0.1d0) then
         vip(1) =0.d0
     else
         vip(1)=10.d0*(zalphp-0.9d0)*zalphp

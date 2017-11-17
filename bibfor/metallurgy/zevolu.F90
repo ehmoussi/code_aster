@@ -15,61 +15,52 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine zevolu(cine, zbeta, zbetam, dinst, tp,&
-                  k, n, tdeq, tfeq, coeffc,&
-                  m, ar, br, g, dg)
+!
+subroutine zevolu(kine_type,&
+                  zbeta    , zbetam,&
+                  dinst    , tp    ,&
+                  k        , n     ,&
+                  tdeq     , tfeq  ,&
+                  coeffc   ,&
+                  m        , ar    , br,&
+                  g        , dg)
 !
 implicit none
 !
 #include "asterfort/tempeq.h"
+#include "asterfort/Metallurgy_type.h"
 !
+integer, intent(in) :: kine_type
 real(kind=8), intent(in) :: zbeta, zbetam
 real(kind=8), intent(in) :: tdeq, tfeq
 real(kind=8), intent(in) :: k, n
-real(kind=8) :: dinst, tp
-real(kind=8) :: coeffc, m, ar, br
-real(kind=8) :: g, dg
-integer :: cine, chau
-parameter     (chau=1)
+real(kind=8), intent(in) :: dinst, tp
+real(kind=8), intent(in) :: coeffc, m, ar, br
+real(kind=8), intent(out) :: g, dg
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! METALLURGY -  Compute phase (zircaloy)
 !
-! Compute G function
+! Compute G function (evolution of beta phase)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  kine_type           : type of kinematic (heating or cooling)
 ! In  zbeta               : proportion of beta phase (current)
 ! In  zbetam              : proportion of beta phase (previous)
-! In  tdeq                : transformation temperature - Begin
-! In  tfeq                : transformation temperature - End
+! In  dinst               : increment of time
+! In  tp                  : current temperature
 ! In  k                   : material parameter (META_ZIRC)
 ! In  n                   : material parameter (META_ZIRC)
-!
-! --------------------------------------------------------------------------------------------------
-!
-!
-!............................................
-! CALCUL PHASE METALLURGIQUE POUR EDGAR
-! CALCUL DE LA FONCTION G ET DE SA DERIVEE
-!............................................
-!
-! IN   CINE     : CINTETIQUE A INTEGRER
-!                 'CHAU' : CINETIQUE AU CHAUFFAGE
-!                 'REFR' : CINETIQUE AU REFROIDISSEMENT
-! IN   Z        : PROPORTION DE PHASE BETA
-! IN   ZM       : PROPORTION DE PHASE BETA A INSTANT MOINS
-! IN   DINST    : INCREMENT DE TEMPS ENTRE PLUS ET MOINS
-! IN   TP       : TEMPERATURE
-! IN   K,N      : PARAMETRES MATERIAU POUR MODELE A L EQUILIBRE
-! IN   TDEQ     : TEMPERATURE A L EQUILIBRE DE DEBUT DE TRANSF.
-! IN   TFEQ     : TEMPERATURE QUASISTATIQUE DE FIN DE TRANSF.
-! IN   COEFFC,M : PARAMETRES MATERIAU POUR MODELE AU CHAUFFAGE
-! IN   AR,BR    : PARAMETRES MATERIAU POUR MODELE AU REFROIDISSEMENT
-! OUT  G        : LOI D EVOLUTION DE LA PROPORTION DE LA PHASE BETA
-! OUT  DG       : DERIVEE DE LA FONCTION G PAR RAPPORT A Z
+! In  tdeq                : transformation temperature - Begin
+! In  tfeq                : transformation temperature - End
+! In  coeffc              : coefficient from material parameters ac*exp(-qsr/tk)
+! In  m                   : material parameter (META_ZIRC)
+! In  ar                  : material parameter (META_ZIRC)
+! In  br                  : material parameter (META_ZIRC)
+! Out g                   : g function for evolution of beta phase
+! Out dg                  : derivative (by phase) of g function for evolution of beta phase
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -77,7 +68,8 @@ parameter     (chau=1)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-
+    g  = 0.d0
+    dg = 0.d0
 ! 
 ! - Evaluate equivalent temperature
 !
@@ -86,17 +78,16 @@ parameter     (chau=1)
                 k    , n    ,&
                 teq  , dvteq)
 !
-! 2 - CALCUL DE LA FONCTION G ET DE SA DERIVEE
+! - Compute G function
 !
-    if (cine .eq. chau) then
-        g=zbeta-zbetam-dinst*coeffc*((abs(tp-teq))**m)
-        dg=1.d0+m*dinst*coeffc*((abs(tp-teq))**(m-1.d0))*dvteq
+    if (kine_type .eq. HEATING) then
+        g  = zbeta-zbetam-dinst*coeffc*((abs(tp-teq))**m)
+        dg = 1.d0+m*dinst*coeffc*((abs(tp-teq))**(m-1.d0))*dvteq
     else
-! CINE .EQ. REFR
-        g=dinst*exp(ar+br*abs(tp-teq))
-        dg=1.d0+abs(tp-teq)*g*(1.d0-2.d0*zbeta)
-        dg=dg+dvteq*g*zbeta*(1.d0-zbeta)*(1.d0+br*abs(tp-teq))
-        g=zbeta-zbetam+abs(tp-teq)*g*zbeta*(1.d0-zbeta)
+        g  = dinst*exp(ar+br*abs(tp-teq))
+        dg = 1.d0+abs(tp-teq)*g*(1.d0-2.d0*zbeta)
+        dg = dg+dvteq*g*zbeta*(1.d0-zbeta)*(1.d0+br*abs(tp-teq))
+        g  = zbeta-zbetam+abs(tp-teq)*g*zbeta*(1.d0-zbeta)
     endif
 !
 end subroutine
