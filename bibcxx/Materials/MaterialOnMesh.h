@@ -34,6 +34,7 @@
 #include "Materials/Material.h"
 #include "DataFields/PCFieldOnMesh.h"
 #include "Meshes/ParallelMesh.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class MaterialOnMeshInstance
@@ -79,13 +80,27 @@ class MaterialOnMeshInstance: public DataStructure
         /**
          * @brief Constructeur
          */
-        MaterialOnMeshInstance( const MeshPtr& );
+        MaterialOnMeshInstance( const MeshPtr& mesh ):
+            MaterialOnMeshInstance( ResultNaming::getNewResultName(), mesh )
+        {};
+
+        /**
+         * @brief Constructeur
+         */
+        MaterialOnMeshInstance( const std::string &, const MeshPtr& );
 
 #ifdef _USE_MPI
         /**
          * @brief Constructeur
          */
-        MaterialOnMeshInstance( const ParallelMeshPtr& );
+        MaterialOnMeshInstance( const ParallelMeshPtr& mesh ):
+            MaterialOnMeshInstance( ResultNaming::getNewResultName(), mesh )
+        {};
+
+        /**
+         * @brief Constructeur
+         */
+        MaterialOnMeshInstance( const std::string &, const ParallelMeshPtr& );
 #endif /* _USE_MPI */
 
         /**

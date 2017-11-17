@@ -6,5 +6,5 @@ P mpi_nbnoeud 1
 P testlist asterxx verification sequential
 
 F comm supervis04a.py D 1
-F nom  supervis04a_step2.py D 0
+F comm supervis04a_step2.py D 1
 F nom  zzzz351a.mmed D 0

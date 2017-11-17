@@ -121,8 +121,9 @@ class Pickler(object):
                     logger.info("{0:<24s} {1}".format(name, type(obj)))
                     pickler.dump(obj)
                     objList.append(name)
-                except (pickle.PicklingError, TypeError):
+                except (pickle.PicklingError, TypeError) as exc:
                     logger.warn("object can't be pickled: {0}".format(name))
+                    logger.debug(str(exc))
                     continue
                 if isinstance(obj, DataStructure):
                     saved.append(name)
