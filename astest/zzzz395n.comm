@@ -334,86 +334,85 @@ TEST_RESU(RESU=(
 
 
 # Gappy-POD (reconstruction tout le domaine)
-#reduR = REST_REDUIT_COMPLET(
-#    MODELE           = model,
-#    RESULTAT_REDUIT  = redu, 
-#    BASE_PRIMAL      = base_p,
-#    BASE_DUAL        = base_d,
-#    REST_DUAL        = 'OUI',
-#    INFO             = 2,
-#    GROUP_NO_INTERF  = 'INF',
-#    CORR_COMPLET     = 'OUI',
-#    BASE_DOMAINE     = base_t,
-#)
+reduR = REST_REDUIT_COMPLET(
+    MODELE           = model,
+    RESULTAT_REDUIT  = redu, 
+    BASE_PRIMAL      = base_p,
+    BASE_DUAL        = base_d,
+    REST_DUAL        = 'OUI',
+    INFO             = 2,
+    GROUP_NO_INTERF  = 'INF',
+    CORR_COMPLET     = 'OUI',
+)
 
 # Test calcul hyper-réduit/complet - Hors RID
-#TEST_RESU(RESU=(
-#                _F(RESULTAT=reduR,
-#                   NUME_ORDRE= 10,
-#                   NOM_CHAM='DEPL',
-#                   NOEUD='N168',
-#                   NOM_CMP='DX',
-#                   REFERENCE='AUTRE_ASTER',
-#                   VALE_REFE=0.497612858925,
-#                   VALE_CALC=-0.414665551489,
-#                   PRECISION = 0.005
-#                   ),
-#                _F(RESULTAT=reduR,
-#                   NUME_ORDRE= 10,
-#                   NOM_CHAM='DEPL',
-#                   NOEUD='N168',
-#                   NOM_CMP='DY',
-#                   REFERENCE='AUTRE_ASTER',
-#                   VALE_REFE=-0.736173981172,
-#                   VALE_CALC=-0.150363569749,
-#                   PRECISION=0.007
-#                   ),
-#                _F(RESULTAT=reduR,
-#                   NUME_ORDRE= 10,
-#                   NOM_CHAM='DEPL',
-#                   NOEUD='N168',
-#                   NOM_CMP='DZ',
-#                   REFERENCE='AUTRE_ASTER',
-#                   VALE_REFE=1.5401647755,
-#                   VALE_CALC=0.308149611227,
-#                   PRECISION=0.006
-#                   ),
-#                ),
-#          );
+TEST_RESU(RESU=(
+                _F(RESULTAT=reduR,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N168',
+                   NOM_CMP='DX',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=0.497612858925,
+                   VALE_CALC=0.500115502937,
+                   PRECISION = 0.0055
+                   ),
+                _F(RESULTAT=reduR,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N168',
+                   NOM_CMP='DY',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=-0.736173981172,
+                   VALE_CALC=-0.740033569251,
+                   PRECISION=0.0055
+                   ),
+                _F(RESULTAT=reduR,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N168',
+                   NOM_CMP='DZ',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=1.5401647755,
+                   VALE_CALC=1.54821923637,
+                   PRECISION=0.0055
+                   ),
+                ),
+          );
 
-#TEST_RESU(RESU=(
-#                _F(RESULTAT=reduR,
-#                   NUME_ORDRE= 10,
-#                   NOM_CHAM='SIEF_NOEU',
-#                   NOEUD='N143',
-#                   NOM_CMP='SIXX',
-#                   REFERENCE='AUTRE_ASTER',
-#                   VALE_CALC=-2610.71242438,
-#                   VALE_REFE=-2526.26537982,
-#                   PRECISION=0.0015
-#                   ),
-#                _F(RESULTAT=reduR,
-#                   NUME_ORDRE= 10,
-#                   NOM_CHAM='SIEF_NOEU',
-#                   NOEUD='N143',
-#                   NOM_CMP='SIYY',
-#                   REFERENCE='AUTRE_ASTER',
-#                   VALE_CALC=-2610.01993457,
-#                   VALE_REFE=-2524.79824979,
-#                   PRECISION=0.0013
-#                   ),
-#                _F(RESULTAT=reduR,
-#                   NUME_ORDRE= 10,
-#                   NOM_CHAM='SIEF_NOEU',
-#                   NOEUD='N143',
-#                   NOM_CMP='SIZZ',
-#                   REFERENCE='AUTRE_ASTER',
-#                   VALE_CALC=-2458.28323341,
-#                   VALE_REFE=-2327.65322131,
-#                   PRECISION=0.0013
-#                   ),
-#                ),
-#          );
+TEST_RESU(RESU=(
+                _F(RESULTAT=reduR,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N143',
+                   NOM_CMP='SIXX',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=-2531.65556515,
+                   VALE_REFE=-2526.26537982,
+                   PRECISION=0.0022
+                   ),
+                _F(RESULTAT=reduR,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N143',
+                   NOM_CMP='SIYY',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=-2530.01379624,
+                   VALE_REFE=-2524.79824979,
+                   PRECISION=0.0021
+                   ),
+                _F(RESULTAT=reduR,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N143',
+                   NOM_CMP='SIZZ',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=-2337.63426835,
+                   VALE_REFE=-2327.65322131,
+                   PRECISION=0.0043
+                   ),
+                ),
+          );
 
 IMPR_RESU(FORMAT='MED', UNITE = 85, RESU=_F(RESULTAT = redu))
 
