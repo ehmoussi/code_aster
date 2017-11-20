@@ -115,6 +115,15 @@ public:
     };
 
     /**
+     * @brief Reset new type (double, complex, ...)
+     * @param newType
+     */
+    void setType( const std::string newType )
+    {
+        DataStructure::setType( newType );
+    };
+
+    /**
      * @brief Assembler les vecteurs elementaires en se fondant sur currentNumerotation
      * @param currentNumerotation objet DOFNumbering
      * @todo prendre en compte les fonctions multiplicatrices
