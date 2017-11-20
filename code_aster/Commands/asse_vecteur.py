@@ -33,6 +33,6 @@ class AssembleVectorOperator(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = FieldOnNodesDouble.create()
+        self._result = FieldOnNodesDouble()
 
 ASSE_VECTEUR = AssembleVectorOperator.run
