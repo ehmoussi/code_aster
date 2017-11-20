@@ -58,14 +58,14 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
     integer :: ifm, niv
     integer :: iret, jv_para
-    integer :: nb_mode, nb_equa, nb_store
-    integer :: i_equa, i_store
+    integer :: nb_mode, nb_equa, nb_store, nb_equa_ridp
+    integer :: i_mode, i_equa, i_store
     integer :: nume_store, nume_equa
     character(len=8) :: result_rom, result_dom
-    real(kind=8), pointer :: v_prim_rid(:) => null()
+    real(kind=8), pointer :: v_prim_rom(:) => null()
     real(kind=8), pointer :: v_prim(:) => null()
     real(kind=8), pointer :: v_cohr(:) => null()
-    real(kind=8), pointer :: v_disp(:) => null()
+    real(kind=8), pointer :: v_disp_dom(:) => null()
     character(len=24) :: field_save
     real(kind=8), pointer :: v_field_save(:) => null()
     character(len=24) :: disp_rid
@@ -84,13 +84,14 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! - Get parameters
 !
-    nb_store   = ds_para%nb_store
-    nb_mode    = ds_para%ds_empi_prim%nb_mode
-    nb_equa    = ds_para%ds_empi_prim%nb_equa
-    result_rom = ds_para%result_rom
-    result_dom = ds_para%result_dom
-    model_dom  = ds_para%model_dom
-    l_corr_ef  = ds_para%l_corr_ef 
+    nb_store     = ds_para%nb_store
+    nb_mode      = ds_para%ds_empi_prim%nb_mode
+    nb_equa      = ds_para%ds_empi_prim%nb_equa
+    nb_equa_ridp = ds_para%nb_equa_ridp
+    result_rom   = ds_para%result_rom
+    result_dom   = ds_para%result_dom
+    model_dom    = ds_para%model_dom
+    l_corr_ef    = ds_para%l_corr_ef
 !
 ! - Create [PHI] matrix for primal base
 !
@@ -99,7 +100,15 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 ! - Create [PHI] matrix for primal base on RID
 !
     if (l_corr_ef) then
-        call romBaseCreateMatrix(ds_para%ds_empi_rid, v_prim_rid)
+        AS_ALLOCATE(vr = v_prim_rom, size = nb_equa_ridp*nb_mode)
+        do i_mode = 1, nb_mode
+            do i_equa = 1, nb_equa
+                if (ds_para%v_equa_ridp(i_equa) .ne. 0) then
+                    v_prim_rom(ds_para%v_equa_ridp(i_equa)+nb_equa_ridp*(i_mode-1)) = &
+                               v_prim(i_equa+nb_equa*(i_mode-1))
+                endif
+            enddo
+        enddo
     endif
 !
 ! - Initial state
@@ -110,7 +119,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 ! - Reduced coordinates: Gappy POD if necessary 
 !
     if (l_corr_ef) then
-        call romEvalGappyPOD(ds_para, result_rom, nb_store, v_prim_rid,&
+        call romEvalGappyPOD(ds_para, result_rom, nb_store, v_prim_rom,&
                              v_cohr , 0)
     else
         call jeveuo(ds_para%coor_redu, 'L', vr = v_cohr)
@@ -118,9 +127,9 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! - Compute new fields
 !
-    AS_ALLOCATE(vr = v_disp, size = nb_equa*(nb_store-1))
+    AS_ALLOCATE(vr = v_disp_dom, size = nb_equa*(nb_store-1))
     call dgemm('N', 'N', nb_equa, nb_store-1, nb_mode, 1.d0,&
-                v_prim, nb_equa, v_cohr, nb_mode, 0.d0, v_disp, nb_equa)
+                v_prim, nb_equa, v_cohr, nb_mode, 0.d0, v_disp_dom, nb_equa)
 !
 ! - Compute new field
 !
@@ -133,27 +142,19 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
         call copisd('CHAMP_GD', 'G', ds_para%ds_empi_prim%field_refe, field_save)
         call jeveuo(field_save(1:19)//'.VALE', 'E', vr = v_field_save)
 ! ----- Get field on RID
-        if (l_corr_ef) then
-            call rsexch(' ', result_rom, ds_para%ds_empi_prim%field_name,&
-                        nume_store, disp_rid, iret)
-            ASSERT(iret .eq. 0)
-            call jeveuo(disp_rid(1:19)//'.VALE', 'L', vr = v_disp_rid)
-        endif
+        call rsexch(' ', result_rom, ds_para%ds_empi_prim%field_name,&
+                    nume_store, disp_rid, iret)
+        ASSERT(iret .eq. 0)
+        call jeveuo(disp_rid(1:19)//'.VALE', 'L', vr = v_disp_rid)
 ! ----- Set field
-        if (l_corr_ef) then
-            do i_equa = 1, nb_equa
-                nume_equa = ds_para%v_equa_ridp(i_equa)
-                if (nume_equa.eq. 0) then
-                    v_field_save(i_equa) = v_disp(i_equa+nb_equa*(nume_store-1))
-                else
-                    v_field_save(i_equa) = v_disp_rid(nume_equa)
-                endif
-            enddo
-        else
-            do i_equa = 1, nb_equa
-                v_field_save(i_equa) = v_disp(i_equa+nb_equa*(nume_store-1))
-            enddo
-        endif
+        do i_equa = 1, nb_equa
+            nume_equa = ds_para%v_equa_ridp(i_equa)
+            if (nume_equa.eq. 0) then
+                v_field_save(i_equa) = v_disp_dom(i_equa+nb_equa*(nume_store-1))
+            else
+                v_field_save(i_equa) = v_disp_rid(nume_equa)
+            endif
+        enddo
 ! ----- Get parameters
         call rslesd(result_rom , nume_store-1,&
                     materi_    = materi    ,&
@@ -172,8 +173,11 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! - Clean
 !
-    AS_DEALLOCATE(vr = v_prim_rid)
+    if (l_corr_ef) then
+        AS_DEALLOCATE(vr = v_prim_rom)
+        AS_DEALLOCATE(vr = v_cohr)
+    endif
     AS_DEALLOCATE(vr = v_prim)
-    AS_DEALLOCATE(vr = v_disp)
+    AS_DEALLOCATE(vr = v_disp_dom)
 !
 end subroutine

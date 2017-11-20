@@ -125,8 +125,6 @@ implicit none
         integer, pointer  :: v_equa_ridp(:)
 ! ----- Flag for EF corrector?
         aster_logical     :: l_corr_ef
-! ----- Datastructure for empiric modes on RID (primal)
-        type(ROM_DS_Empi) :: ds_empi_rid
     end type ROM_DS_ParaRRC
 !
 ! - Parameters for definition of multiparametric reduced problem - Evaluation

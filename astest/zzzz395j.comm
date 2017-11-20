@@ -505,7 +505,7 @@ TEST_RESU(RESU=(
                    NOEUD='N23',
                    NOM_CMP='SIXX',
                    REFERENCE='AUTRE_ASTER',
-                   VALE_CALC=13275.8395843,
+                   VALE_CALC=13275.5982813,
                    VALE_REFE=13300.4780377,
                    PRECISION=0.002
                    ),
@@ -515,7 +515,7 @@ TEST_RESU(RESU=(
                    NOEUD='N23',
                    NOM_CMP='SIYY',
                    REFERENCE='AUTRE_ASTER',
-                   VALE_CALC=13275.728917,
+                   VALE_CALC=13275.368448,
                    VALE_REFE=13300.3220671,
                    PRECISION=0.002
                    ),
@@ -525,7 +525,7 @@ TEST_RESU(RESU=(
                    NOEUD='N23',
                    NOM_CMP='SIZZ',
                    REFERENCE='AUTRE_ASTER',
-                   VALE_CALC=13342.280783,
+                   VALE_CALC=13343.5824913,
                    VALE_REFE=13368.1442621,
                    PRECISION=0.002
                    ),
