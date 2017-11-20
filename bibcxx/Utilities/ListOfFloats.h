@@ -1,9 +1,9 @@
-#ifndef LISTOFDOUBLE_H_
-#define LISTOFDOUBLE_H_
+#ifndef LISTOFFLOATS_H_
+#define LISTOFFLOATS_H_
 
 /**
- * @file ListOfDouble.h
- * @brief Fichier entete de la classe ListOfDouble
+ * @file ListOfFloats.h
+ * @brief Fichier entete de la classe ListOfFloats
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -32,11 +32,11 @@
 #include "MemoryManager/JeveuxVector.h"
 
 /**
- * @class ListOfDoubleInstance
+ * @class ListOfFloatsInstance
  * @brief Cette classe correspond a une listr8
  * @author Nicolas Sellenet
  */
-class ListOfDoubleInstance: public DataStructure
+class ListOfFloatsInstance: public DataStructure
 {
 private:
     /** @brief Objet Jeveux '.BINT' */
@@ -50,22 +50,22 @@ private:
 
 public:
     /**
-     * @typedef ListOfDoublePtr
-     * @brief Pointeur intelligent vers un ListOfDouble
+     * @typedef ListOfFloatsPtr
+     * @brief Pointeur intelligent vers un ListOfFloats
      */
-    typedef boost::shared_ptr< ListOfDoubleInstance > ListOfDoublePtr;
+    typedef boost::shared_ptr< ListOfFloatsInstance > ListOfFloatsPtr;
 
     /**
      * @brief Constructeur
      */
-    ListOfDoubleInstance():
-        ListOfDoubleInstance( ResultNaming::getNewResultName() )
+    ListOfFloatsInstance():
+        ListOfFloatsInstance( ResultNaming::getNewResultName() )
     {};
 
     /**
      * @brief Constructeur
      */
-    ListOfDoubleInstance( const std::string name ):
+    ListOfFloatsInstance( const std::string name ):
         DataStructure( name, 19, "LISTR8", Permanent ),
         _bint( JeveuxVectorDouble( getName() + ".BINT" ) ),
         _lpas( JeveuxVectorDouble( getName() + ".LPAS" ) ),
@@ -74,12 +74,16 @@ public:
     {};
 
     VectorDouble getValues() const throw( std::runtime_error );
+
+    void setVectorValues( const VectorDouble& ) throw( std::runtime_error );
+
+    int size();
 };
 
 /**
- * @typedef ListOfDoublePtr
- * @brief Pointeur intelligent vers un ListOfDoubleInstance
+ * @typedef ListOfFloatsPtr
+ * @brief Pointeur intelligent vers un ListOfFloatsInstance
  */
-typedef boost::shared_ptr< ListOfDoubleInstance > ListOfDoublePtr;
+typedef boost::shared_ptr< ListOfFloatsInstance > ListOfFloatsPtr;
 
-#endif /* LISTOFDOUBLE_H_ */
+#endif /* LISTOFFLOATS_H_ */

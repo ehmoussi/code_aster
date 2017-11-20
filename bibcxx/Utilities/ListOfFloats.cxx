@@ -1,6 +1,6 @@
 /**
- * @file ListOfDoubleInterface.cxx
- * @brief Interface python de ListOfDouble
+ * @file ListOfFloats.cxx
+ * @brief Implementation de ListOfFloats
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -23,23 +23,28 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include <boost/python.hpp>
-#include <PythonBindings/factory.h>
-#include "PythonBindings/ListOfDoubleInterface.h"
+#include "Utilities/ListOfFloats.h"
 
-
-void exportListOfDoubleToPython()
+VectorDouble ListOfFloatsInstance::getValues() const throw( std::runtime_error )
 {
-    using namespace boost::python;
+    if( !_vale->exists() )
+        throw std::runtime_error( "No list of values in ListOfFloats" );
 
-    class_< ListOfDoubleInstance,
-            ListOfDoubleInstance::ListOfDoublePtr,
-            bases< DataStructure > > ( "ListOfDouble", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ListOfDoubleInstance >) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ListOfDoubleInstance,
-                             std::string >) )
-        .def( "getValues", &ListOfDoubleInstance::getValues )
-    ;
+    _vale->updateValuePointer();
+    VectorDouble toReturn;
+    auto size = _vale->size();
+    for( int pos = 0; pos < size; ++pos )
+        toReturn.push_back( (*_vale)[pos] );
+    return toReturn;
+};
+
+void ListOfFloatsInstance::setVectorValues( const VectorDouble& vec ) throw( std::runtime_error )
+{
+    (*_vale) = vec;
+};
+
+int ListOfFloatsInstance::size()
+{
+    _vale->updateValuePointer();
+    return _vale->size();
 };

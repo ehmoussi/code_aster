@@ -1,6 +1,9 @@
+#ifndef LISTOFFLOATSINTERFACE_H_
+#define LISTOFFLOATSINTERFACE_H_
+
 /**
- * @file FluidStructureInteraction.cxx
- * @brief Implementation de FluidStructureInteraction
+ * @file ListOfFloatsInterface.h
+ * @brief Fichier entete de la classe ListOfFloatsInterface
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,19 +24,9 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: nicolas.sellenet at edf.fr */
+#include "astercxx.h"
+#include "Utilities/ListOfFloats.h"
 
-#include "Utilities/ListOfDouble.h"
+void exportListOfFloatsToPython();
 
-VectorDouble ListOfDoubleInstance::getValues() const throw( std::runtime_error )
-{
-    if( !_vale->exists() )
-        throw std::runtime_error( "No list of values in ListOfDouble" );
-
-    _vale->updateValuePointer();
-    VectorDouble toReturn;
-    auto size = _vale->size();
-    for( int pos = 0; pos < size; ++pos )
-        toReturn.push_back( (*_vale)[pos] );
-    return toReturn;
-};
+#endif /* LISTOFFLOATSINTERFACE_H_ */

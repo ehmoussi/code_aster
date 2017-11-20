@@ -25,53 +25,27 @@
 
 import numpy as np
 
-from libaster import ResultNaming
+import aster
+from libaster import ListOfFloats
+
+from ..Utilities import accept_array, injector
 from ..Utilities import deprecated
-from .datastructure_ext import DataStructure
 
 
-class ListOfFloats(DataStructure):
-    """Object that defines a list of float numbers as a *proxy* to a
-    :py:class:`numpy.array`.
-
-    .. note::
-        Even if :class:`ListOfFloats` is derivated from
-        :class:`~code_aster.Objects.DataStructure`, it has no C++ implementation
-        and no associated Fortran objects.
-
-    .. todo::
-        The '.VALE' will be required by some fortran subroutines...
-    """
-    _array = _name = None
-
-    def __init__(self):
-        """Initialization"""
-        self._name = ResultNaming.getNewResultName()
-        self._array = np.array([])
-
-    def getName(self):
-        """Override :py:meth:`code_aster.Objects.DataStructure.getName`."""
-        return self._name
-
-    def getType(self):
-        """Override :py:meth:`code_aster.Objects.DataStructure.getType`."""
-        return "LISTR8"
-
-    def debugPrint(self, unit):
-        """Does nothing for this object."""
+class ExtendedListOfFloats(injector(ListOfFloats), ListOfFloats):
 
     def __getattr__(self, attr):
         """Returns the attribute of the underlying :py:class:`numpy.array`
         object if it does not exist."""
-        return getattr(self._array, attr)
+        return getattr(np.array(self.getValues()), attr)
 
     def __len__(self):
         """Returns the number of values in the list.
 
         Returns:
-            int: NUmber of values.
+            int: Number of values.
         """
-        return len(self._array)
+        return self.size
 
     def getValuesAsArray(self) :
         """Returns the values as a :py:class:`numpy.array`.
@@ -80,41 +54,17 @@ class ListOfFloats(DataStructure):
             list: The :py:class:`numpy.array` containing the values (by
                 reference).
         """
-        return self._array
+        return np.array(self.getValues())
 
-    def getValues(self) :
-        """Returns the values as a list.
+    def setValues(self, array) :
+        """Returns the values as a :py:class:`numpy.array`.
 
         Returns:
-            list: A Python *list* of the values.
+            list: The :py:class:`numpy.array` containing the values (by
+                reference).
         """
-        return self._array.tolist()
-
-    def setValues(self, values) :
-        """Set new values for the list.
-
-        If *values* is :py:class:`numpy.array` it is referenced (without making
-        a copy).
-
-        Arguments:
-            values (list or numpy.array): New values as a Python *list* or as
-                a 1D-:py:class:`numpy.array`.
-        """
-        if isinstance(values, np.ndarray):
-            pass
-        elif isinstance(values, (list, tuple, array)):
-            values = np.array(values)
-        else:
-            raise TypeError("unsupported object: {0}".format(type(values)))
-        if not np.issubdtype(values.dtype, float):
-            raise TypeError("Only support float values, not: {0}"
-                            .format(values.dtype))
-        if len(values.shape) != 1:
-            raise ValueError("Expecting unidimensional array, not: {0}"
-                             .format(values.shape))
-        self._array = values
-
+        return self.setVectorValues(list(array))
 
     @deprecated(help="Use `getValues()` instead.")
     def Valeurs(self):
-        return self.values()
+        return self.getValues()
