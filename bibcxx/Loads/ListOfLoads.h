@@ -32,7 +32,42 @@
 #include "Loads/MechanicalLoad.h"
 #include "Loads/ParallelMechanicalLoad.h"
 #include "Loads/KinematicsLoad.h"
+#include "Functions/Function.h"
+#include "Functions/Formula.h"
+#include "Functions/Surface.h"
+#include "boost/variant.hpp"
 #include "MemoryManager/JeveuxVector.h"
+
+class GenericLoadFunction
+{
+private:
+    boost::variant< FunctionPtr, FormulaPtr, SurfacePtr > _generic;
+
+public:
+    GenericLoadFunction( const FunctionPtr& func ):
+        _generic( func )
+    {};
+
+    GenericLoadFunction( const FormulaPtr& func ):
+        _generic( func )
+    {};
+
+    GenericLoadFunction( const SurfacePtr& func ):
+        _generic( func )
+    {};
+
+    std::string getName() const
+    {
+        if ( _generic.type() == typeid( FunctionPtr ) )
+            return boost::get< FunctionPtr >( _generic )->getName();
+        if ( _generic.type() == typeid( FormulaPtr ) )
+            return boost::get< FormulaPtr >( _generic )->getName();
+        if ( _generic.type() == typeid( SurfacePtr ) )
+            return boost::get< SurfacePtr >( _generic )->getName();
+    };
+};
+
+typedef std::list< GenericLoadFunction > ListOfLoadFunctions;
 
 /**
  * @class ListOfLoadInstance
@@ -43,21 +78,23 @@ class ListOfLoadsInstance: public DataStructure
 {
     private:
         /** @brief Chargements cinematiques */
-        ListKineLoad       _listOfKinematicsLoads;
+        ListKineLoad        _listOfKinematicsLoads;
+        /** @brief List of functions for KinematicsLoads */
+        ListOfLoadFunctions _listOfKineFun;
         /** @brief Chargements Mecaniques */
-        ListMecaLoad       _listOfMechanicalLoads;
+        ListMecaLoad        _listOfMechanicalLoads;
 #ifdef _USE_MPI
         /** @brief Chargements Mecaniques paralleles */
-        ListParaMecaLoad   _listOfParallelMechanicalLoads;
+        ListParaMecaLoad    _listOfParallelMechanicalLoads;
 #endif /* _USE_MPI */
         /** @brief .INFC */
-        JeveuxVectorLong   _loadInformations;
+        JeveuxVectorLong    _loadInformations;
         /** @brief .LCHA */
-        JeveuxVectorChar24 _list;
+        JeveuxVectorChar24  _list;
         /** @brief .FCHA */
-        JeveuxVectorChar24 _listOfFunctions;
+        JeveuxVectorChar24  _listOfFunctions;
         /** @brief La chargement est-il vide ? */
-        bool               _isEmpty;
+        bool                _isEmpty;
 
     public:
         /**
@@ -68,11 +105,40 @@ class ListOfLoadsInstance: public DataStructure
         /**
          * @brief Function d'ajout d'une charge cinematique
          * @param currentLoad charge a ajouter a la sd
+         * @param func multiplier function
          */
-        void addKinematicsLoad( const KinematicsLoadPtr& currentLoad )
+        void addKinematicsLoad( const KinematicsLoadPtr& currentLoad,
+                                const FunctionPtr& func = emptyDoubleFunction )
         {
             _isEmpty = true;
             _listOfKinematicsLoads.push_back( currentLoad );
+            _listOfKineFun.push_back( func );
+        };
+
+        /**
+         * @brief Function d'ajout d'une charge cinematique
+         * @param currentLoad charge a ajouter a la sd
+         * @param func multiplier formula
+         */
+        void addKinematicsLoad( const KinematicsLoadPtr& currentLoad,
+                                const FormulaPtr& func )
+        {
+            _isEmpty = true;
+            _listOfKinematicsLoads.push_back( currentLoad );
+            _listOfKineFun.push_back( func );
+        };
+
+        /**
+         * @brief Function d'ajout d'une charge cinematique
+         * @param currentLoad charge a ajouter a la sd
+         * @param func multiplier surface
+         */
+        void addKinematicsLoad( const KinematicsLoadPtr& currentLoad,
+                                const SurfacePtr& func )
+        {
+            _isEmpty = true;
+            _listOfKinematicsLoads.push_back( currentLoad );
+            _listOfKineFun.push_back( func );
         };
 
         /**

@@ -43,7 +43,7 @@ DataStructure::DataStructure( const std::string name, const int nameLength,
     std::string name19( _name );
     name19.resize(19, ' ');
     _tco = JeveuxVectorChar24( name19 + "._TCO" );
-    if ( ! _tco->isAllocated() ) {
+    if ( ! _tco->isAllocated() && name != "" ) {
         _tco->allocate( _memoryType, 1 );
         (*_tco)[0] = type;
     }

@@ -109,7 +109,7 @@
 #include "PythonBindings/LinearDisplacementEvolutionContainerInterface.h"
 #include "PythonBindings/MeshCoordinatesFieldInterface.h"
 #include "PythonBindings/FullDynamicResultsContainerInterface.h"
-#include "PythonBindings/ListOfDoubleInterface.h"
+#include "PythonBindings/ListOfFloatsInterface.h"
 
 using namespace boost::python;
 
@@ -244,5 +244,5 @@ BOOST_PYTHON_MODULE(libaster)
 
     exportPartialMeshToPython();
     exportResultNamingToPython();
-    exportListOfDoubleToPython();
+    exportListOfFloatsToPython();
 };
