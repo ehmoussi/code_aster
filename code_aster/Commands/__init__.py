@@ -38,6 +38,7 @@ from .affe_char_meca_f import AFFE_CHAR_MECA_F
 from .affe_materiau import AFFE_MATERIAU
 from .affe_modele import AFFE_MODELE
 from .asse_matrice import ASSE_MATRICE
+from .asse_vecteur import ASSE_VECTEUR
 # from .asse_matr_gene import ASSE_MATR_GENE
 # from .asse_vect_gene import ASSE_VECT_GENE
 from .calc_champ import CALC_CHAMP

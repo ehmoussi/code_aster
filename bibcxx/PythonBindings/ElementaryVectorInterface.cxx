@@ -48,6 +48,7 @@ void exportElementaryVectorToPython()
                              std::string >) )
         .def( "addMechanicalLoad", &ElementaryVectorInstance::addMechanicalLoad )
         .def( "assembleVector", c1 )
+        .def( "setType", &ElementaryVectorInstance::setType )
 #ifdef _USE_MPI
         .def( "assembleVector", c2 )
 #endif /* _USE_MPI */

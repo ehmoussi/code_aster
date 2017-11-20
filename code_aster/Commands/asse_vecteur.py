@@ -19,25 +19,20 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import ElementaryVector
+from ..Objects import FieldOnNodesDouble
 from .ExecuteCommand import ExecuteCommand
 
 
-class ComputeElementaryVector(ExecuteCommand):
-
-    """Command that creates elementary vectors."""
-    command_name = "CALC_VECT_ELEM"
+class AssembleVectorOperator(ExecuteCommand):
+    """Execute legacy operator ASSE_VECTEUR."""
+    command_name = "ASSE_VECTEUR"
 
     def create_result(self, keywords):
-        """Initialize the result.
+        """Create the result.
 
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = ElementaryVector.create()
-        if keywords['OPTION'] == "CHAR_MECA": self._result.setType('VECT_ELEM_DEPL_R')
-        elif keywords['OPTION'] == "CHAR_THER": self._result.setType('VECT_ELEM_TEMP_R')
-        elif keywords['OPTION'] == "CHAR_ACOU": self._result.setType('VECT_ELEM_PRES_C')
-        else: raise NotImplementedError("Must be implemented")
+        self._result = FieldOnNodesDouble.create()
 
-CALC_VECT_ELEM = ComputeElementaryVector.run
+ASSE_VECTEUR = AssembleVectorOperator.run

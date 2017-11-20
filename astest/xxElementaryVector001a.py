@@ -42,11 +42,11 @@ CHMAT=AFFE_MATERIAU(MAILLAGE=MAIL,
 
 BLOQ=AFFE_CHAR_MECA(MODELE=MOD,
                      DDL_IMPO=(_F(GROUP_MA=('ENCNEG',),
-                                  DX=0.0,
-                                  DY=0.0,
+                                  DX=1.0,
+                                  DY=2.0,
                                   ),
                                _F(GROUP_MA=('ENCPOS',),
-                                  DY=0.0,
+                                  DY=3.0,
                                   ),
                                 ),
                                );
@@ -56,6 +56,7 @@ rigiel    = CALC_MATR_ELEM(MODELE=MOD, CHAM_MATER=CHMAT, OPTION='RIGI_MECA', CHA
 vecel     = CALC_VECT_ELEM(CHARGE=BLOQ, INST=1.0, CHAM_MATER=CHMAT, OPTION='CHAR_MECA')
 numeddl   = NUME_DDL(MATR_RIGI = rigiel)
 matass    = ASSE_MATRICE(MATR_ELEM=rigiel , NUME_DDL=numeddl)
+vecass    = ASSE_VECTEUR(VECT_ELEM=vecel, NUME_DDL=numeddl)
 
 #matass    = FACTORISER(reuse=matass, MATR_ASSE=matass)
 #matass.factorization()
