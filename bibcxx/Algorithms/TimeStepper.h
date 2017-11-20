@@ -58,10 +58,7 @@ class TimeStepperInstance: public DataStructure, public GenericStepper
                              const JeveuxMemory memType = Permanent ):
             DataStructure( jeveuxName, 8, "LIST_INST", memType ),
             _values( getName() + ".LIST" )
-        {
-            VectorDouble tmp( 1, 0. );
-            setValues( tmp );
-        };
+        {};
 
         /**
          * @brief Constructeur
@@ -69,8 +66,7 @@ class TimeStepperInstance: public DataStructure, public GenericStepper
         TimeStepperInstance( JeveuxMemory memType = Permanent ):
             TimeStepperInstance( DataStructureNaming::getNewName( memType, 8 ),
                                  memType )
-        {
-        };
+        {};
 
         /**
          * @brief Destructeur

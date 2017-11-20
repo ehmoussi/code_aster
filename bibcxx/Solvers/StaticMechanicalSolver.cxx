@@ -38,8 +38,10 @@ StaticMechanicalSolverInstance::StaticMechanicalSolverInstance():
     _materialOnMesh( MaterialOnMeshPtr() ),
     _linearSolver( BaseLinearSolverPtr() ),
     _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) ),
-    _timeStep( TimeStepperPtr( nullptr ) )
-{};
+    _timeStep( TimeStepperPtr( new TimeStepperInstance() ) )
+{
+    _timeStep->setValues( VectorDouble( 1, 0. ) );
+};
 
 ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runtime_error )
 {
@@ -47,7 +49,7 @@ ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runti
     std::string nameOfSD = resultC->getName();
 
     if( !_timeStep )
-        throw std::runtime_error( "No list of time" );
+        throw std::runtime_error( "No time list" );
     if( _timeStep->size() == 0 )
         resultC->allocate( 1 );
     else
