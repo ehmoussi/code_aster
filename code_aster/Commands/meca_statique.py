@@ -70,6 +70,12 @@ class MechanicalSolver(ExecuteCommand):
         matOnMesh = keywords["CHAM_MATER"]
         mechaSolv.setSupportModel(model)
         mechaSolv.setMaterialOnMesh(matOnMesh)
+        inst = keywords.get("INST")
+        if inst != None:
+            mechaSolv.setTimeStepManager(list(inst))
+        listInst = keywords.get("LIST_INST")
+        if listInst != None:
+            mechaSolv.setTimeStepManager(list(listInst))
 
         unsupported(keywords, "EXCIT", "FONC_MULT")
         fkw = keywords["EXCIT"]
