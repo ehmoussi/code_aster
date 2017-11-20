@@ -76,6 +76,7 @@ resu = monSolver.solveDoubleLinearSystem( matrAsse, retour )
 
 try:
     import petsc4py
+    import code_aster.LinearAlgebra
 except ImportError:
     pass
 else:
