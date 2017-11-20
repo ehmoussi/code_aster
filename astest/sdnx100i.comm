@@ -186,7 +186,7 @@ TEST_TABLE(  TABLE=T_resu,
                        VALE_K='COUCH2A',
                        CRITERE='RELATIF',
                        ),
-             VALE_CALC=( 0.683807  , ),
+             VALE_CALC=( 0.6852491  , ),
              VALE_ABS='NON',)
 
             
@@ -196,7 +196,7 @@ TEST_TABLE(  TABLE=T_resu,
                        VALE_K='COUCH4A',
                        CRITERE='RELATIF',
                        ),
-             VALE_CALC=(      0.721935  , ),
+             VALE_CALC=(      0.72368654  , ),
              VALE_ABS='NON',)      
 
 TEST_TABLE(  TABLE=T_resu,
@@ -205,7 +205,7 @@ TEST_TABLE(  TABLE=T_resu,
                        VALE_K='COUCH4A',
                        CRITERE='RELATIF',
                        ),
-             VALE_CALC=(  0.0626729  ),
+             VALE_CALC=(  0.062506044  ),
              VALE_ABS='NON',)
              
 TEST_TABLE(  TABLE=T_resu,
@@ -214,7 +214,7 @@ TEST_TABLE(  TABLE=T_resu,
                        VALE_K='COUCH2A',
                        CRITERE='RELATIF',
                        ),
-             VALE_CALC=(  0.0586774   , ),
+             VALE_CALC=(  0.058597272   , ),
              VALE_ABS='NON',)  
 
 TEST_TABLE(  TABLE=T_resu,
@@ -223,7 +223,7 @@ TEST_TABLE(  TABLE=T_resu,
                        VALE_K='COUCH4A',
                        CRITERE='RELATIF',
                        ),
-             VALE_CALC=(  0.00018031   , ),
+             VALE_CALC=(  0.00017851907   , ),
              CRITERE='RELATIF',
              VALE_ABS='NON',)
              
@@ -233,7 +233,7 @@ TEST_TABLE(  TABLE=T_resu,
                        VALE_K='COUCH2A',
                        CRITERE='RELATIF',
                        ),
-             VALE_CALC=(  0.000416505   , ),
+             VALE_CALC=(  0.00041247863   , ),
              CRITERE='RELATIF',
              VALE_ABS='NON',)
 
@@ -249,7 +249,7 @@ TEST_TABLE(  TABLE=T_SPEC,
                        VALE=8.50000E+00,
                        CRITERE='RELATIF',
                        ),
-             VALE_CALC=( 0.616363  , ),
+             VALE_CALC=( 0.611206  , ),
              CRITERE='RELATIF',
              VALE_ABS='NON',)
 
@@ -259,7 +259,7 @@ TEST_TABLE(  TABLE=T_SPEC,
                        VALE=2.50000E+00,
                        CRITERE='RELATIF',
                        ),
-             VALE_CALC=( 0.44579, ),
+             VALE_CALC=( 0.443876, ),
              CRITERE='RELATIF',
              VALE_ABS='NON',)
 

@@ -86,7 +86,7 @@ DEFI_SOL_EQUI = MACRO(nom="DEFI_SOL_EQUI",
    
       NOM_CMP    =SIMP(statut='f',typ='TXM',into=("DX","DY",),
                        defaut="DX",fr=tr("sollicitation horizontale"),),
-      TOUT_CHAM     =SIMP(statut='f',typ='TXM',into=("OUI","NON",),defaut="OUI"),
+      TOUT_CHAM     =SIMP(statut='f',typ='TXM',into=("OUI","NON",),defaut="NON"),
       GROUP_MA_DROITE =SIMP(statut='f',typ=grma,),
       GROUP_MA_GAUCHE =SIMP(statut='f',typ=grma,),
       GROUP_MA_LIGNE  = SIMP(statut='f',typ=grma,),
