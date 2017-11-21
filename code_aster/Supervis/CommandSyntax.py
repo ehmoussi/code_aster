@@ -543,6 +543,8 @@ class CommandSyntax(object):
                 pass
             elif is_str(obj) and typ == 'TX':
                 pass
+            elif is_str(obj) and 'FORMULE' in typ:
+                typ = typ[0]
             elif isinstance(obj, DataStructure):
                 typ = obj.getType()
             else:

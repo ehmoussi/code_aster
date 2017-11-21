@@ -34,6 +34,7 @@
 #include "astercxx.h"
 
 #include "Utilities/CapyConvertibleValue.h"
+#include "Functions/Function.h"
 
 /**
  * @enum PhysicalQuantityEnum
@@ -520,6 +521,11 @@ typedef boost::shared_ptr< PressureComplexInstance > PressureComplexPtr;
 template class PhysicalQuantityInstance< double, Temperature >;
 typedef PhysicalQuantityInstance< double, Temperature > TemperatureDoubleInstance;
 typedef boost::shared_ptr< TemperatureDoubleInstance > TemperatureDoublePtr;
+
+/** @typedef TemperatureFunction Temperature */
+template class PhysicalQuantityInstance< FunctionPtr, Temperature >;
+typedef PhysicalQuantityInstance< FunctionPtr, Temperature > TemperatureFunctionInstance;
+typedef boost::shared_ptr< TemperatureFunctionInstance > TemperatureFunctionPtr;
 
 /** @typedef ImpedanceDouble Impedance */
 template class PhysicalQuantityInstance< double, Impedance >;

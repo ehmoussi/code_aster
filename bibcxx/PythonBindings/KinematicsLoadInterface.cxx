@@ -64,7 +64,11 @@ void exportKinematicsLoadToPython()
                                        const double&,
                                        const std::vector< std::string >&) =
             &KinematicsLoadInstance::addImposedThermalDOFOnNodes;
-
+    bool (KinematicsLoadInstance::*c9)(const PhysicalQuantityComponent&,
+                                       const FunctionPtr&,
+                                       const std::vector< std::string >&) =
+            &KinematicsLoadInstance::addImposedThermalDOFOnNodes;
+            
     class_< KinematicsLoadInstance, KinematicsLoadInstance::KinematicsLoadPtr,
             bases< DataStructure > > ( "KinematicsLoad", no_init )
         .def( "__init__", make_constructor(
@@ -77,6 +81,7 @@ void exportKinematicsLoadToPython()
         .def( "addImposedThermalDOFOnElements", c6 )
         .def( "addImposedThermalDOFOnNodes", c7 )
         .def( "addImposedThermalDOFOnNodes", c8 )
+        .def( "addImposedThermalDOFOnNodes", c9 )
         .def( "build", &KinematicsLoadInstance::build )
         .def( "setSupportModel", &KinematicsLoadInstance::setSupportModel )
         .def( "setType", &KinematicsLoadInstance::setType )
