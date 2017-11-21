@@ -67,7 +67,7 @@ public:
     };
 };
 
-typedef std::list< GenericLoadFunction > ListOfLoadFunctions;
+typedef std::vector< GenericLoadFunction > ListOfLoadFunctions;
 
 /**
  * @class ListOfLoadInstance
