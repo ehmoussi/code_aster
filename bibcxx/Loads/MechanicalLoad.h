@@ -474,14 +474,20 @@ class MechanicalLoadInstance: public GenericMechanicalLoadInstance
      */
     MechanicalLoadInstance( const ModelPtr& model ):
         GenericMechanicalLoadInstance( model )
-    {};
+    {
+        if( model->getSupportMesh()->isParallel() )
+            throw std::runtime_error( "Sequential MechanicalLoad not allowed with ParalleMesh" );
+    };
 
     /**
      * @brief Constructor
      */
     MechanicalLoadInstance( const std::string name, const ModelPtr& model ):
         GenericMechanicalLoadInstance( name, model )
-    {};
+    {
+        if( model->getSupportMesh()->isParallel() )
+            throw std::runtime_error( "Sequential MechanicalLoad not allowed with ParalleMesh" );
+    };
 
     /**
      * @brief Destructor

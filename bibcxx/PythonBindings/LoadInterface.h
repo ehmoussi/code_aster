@@ -29,6 +29,7 @@
 #include <boost/python.hpp>
 #include "Loads/KinematicsLoad.h"
 #include "Loads/MechanicalLoad.h"
+#include "Loads/ParallelMechanicalLoad.h"
 
 template< class firstClass, typename... Args >
 void addKinematicsLoadToInterface( boost::python::class_< firstClass, Args... > myInstance )
@@ -75,5 +76,30 @@ void addMechanicalLoadToInterface( boost::python::class_< firstClass, Args... > 
     myInstance.def( "addMechanicalLoad", c7 );
     myInstance.def( "addMechanicalLoad", c8 );
 };
+
+#ifdef _USE_MPI
+template< class firstClass, typename... Args >
+void addParallelMechanicalLoadToInterface( boost::python::class_< firstClass, Args... > myInstance )
+{
+    typedef firstClass myClass;
+
+    void (myClass::*c5)(const ParallelMechanicalLoadPtr&) =
+            &myClass::addLoad;
+    void (myClass::*c6)(const ParallelMechanicalLoadPtr& currentLoad,
+                        const FunctionPtr& func) =
+            &myClass::addLoad;
+    void (myClass::*c7)(const ParallelMechanicalLoadPtr& currentLoad,
+                        const FormulaPtr& func) =
+            &myClass::addLoad;
+    void (myClass::*c8)(const ParallelMechanicalLoadPtr& currentLoad,
+                        const SurfacePtr& func) =
+            &myClass::addLoad;
+
+    myInstance.def( "addParallelMechanicalLoad", c5 );
+    myInstance.def( "addParallelMechanicalLoad", c6 );
+    myInstance.def( "addParallelMechanicalLoad", c7 );
+    myInstance.def( "addParallelMechanicalLoad", c8 );
+};
+#endif /* _USE_MPI */
 
 #endif /* LOADINTERFACE_H_ */

@@ -85,17 +85,6 @@ class StaticMechanicalSolverInstance: public GenericSolver
             _study->addLoad( a... );
         };
 
-#ifdef _USE_MPI
-        /**
-         * @brief Function d'ajout d'une charge mecanique parallele
-         * @param currentLoad charge a ajouter a la sd
-         */
-        void addParallelMechanicalLoad( const ParallelMechanicalLoadPtr& currentLoad )
-        {
-            _study->addParallelMechanicalLoad( currentLoad );
-        };
-#endif /* _USE_MPI */
-
         /**
          * @brief Lancement de la resolution
          */
