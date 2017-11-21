@@ -40,5 +40,7 @@ void exportFieldOnElementsToPython()
         .def( "__init__", make_constructor(
             &initFactoryPtr< FieldOnElementsDoubleInstance,
                              std::string >) )
+        .def( "setModel",
+              &FieldOnElementsDoubleInstance::setModel )
         ;
 };

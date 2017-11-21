@@ -35,6 +35,8 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "DataStructures/DataStructure.h"
 #include "DataFields/SimpleFieldOnElements.h"
+#include "DataFields/SimpleFieldOnElements.h"
+#include "Modeling/Model.h"
 
 /**
  * @class FieldOnElementsInstance
@@ -54,7 +56,9 @@ private:
     JeveuxVectorChar24      _reference;
     /** @brief Vecteur Jeveux '.CELV' */
     JeveuxVector<ValueType> _valuesList;
-
+    /** @brief Modele support */
+    ModelPtr           _supportModel;
+    
 public:
     /**
      * @typedef FieldOnElementsPtr
@@ -70,7 +74,8 @@ public:
                     DataStructure( name, 19, "CHAM_ELEM" ),
                     _descriptor( JeveuxVectorLong( getName() + ".CELD" ) ),
                     _reference( JeveuxVectorChar24( getName() + ".CELK" ) ),
-                    _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) )
+                    _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) ),
+                    _supportModel( ModelPtr() )
     {
     };
 
@@ -82,7 +87,8 @@ public:
                     DataStructure( "CHAM_ELEM", memType, 19 ),
                     _descriptor( JeveuxVectorLong( getName() + ".CELD" ) ),
                     _reference( JeveuxVectorChar24( getName() + ".CELK" ) ),
-                    _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) )
+                    _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) ),
+                    _supportModel( ModelPtr() )
     {
     };
 
@@ -116,6 +122,17 @@ public:
         retour = ( retour && _reference->updateValuePointer() );
         retour = ( retour && _valuesList->updateValuePointer() );
         return retour;
+    };
+    /**
+     * @brief Definition du modele support
+     * @param currentMesh objet Model sur lequel la charge reposera
+     */
+    bool setModel( ModelPtr& currentModel )
+    {
+        if ( currentModel->isEmpty() )
+            throw std::runtime_error( "Model is empty" );
+        _supportModel = currentModel;
+        return true;
     };
 };
 
