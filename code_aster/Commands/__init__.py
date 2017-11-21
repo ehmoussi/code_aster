@@ -32,6 +32,7 @@ using their catalog definition.
 """
 
 # please keep alphabetical order
+from .affe_cara_elem import AFFE_CARA_ELEM
 from .affe_char_acou import AFFE_CHAR_ACOU
 from .affe_char_cine import AFFE_CHAR_CINE
 from .affe_char_cine_f import AFFE_CHAR_CINE_F
