@@ -88,7 +88,7 @@ subroutine dltlec(result, modele, numedd, materi, mate,&
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
     integer :: imat(3)
-    integer :: nveca, nchar
+    integer :: nveca, nchar, ierc
     integer :: iaadve, ialifo, iondp, iener
     integer :: iinteg, nondp
     integer :: nume, numrep
@@ -288,7 +288,11 @@ subroutine dltlec(result, modele, numedd, materi, mate,&
     call dismoi('NOM_MODELE', rigid, 'MATR_ASSE', repk=modele)
     call dismoi('CARA_ELEM', rigid, 'MATR_ASSE', repk=carael)
     materi = ' '
-    call dismoi('CHAM_MATER', rigid, 'MATR_ASSE', repk=materi)
+    call dismoi('CHAM_MATER', rigid, 'MATR_ASSE', repk=materi, arret = 'C', ier = ierc)
+    ! call dismoi('CHAM_MATER', rigid, 'MATR_ASSE', repk=materi)
+    if (ierc .ne. 0) then
+        materi = ' '
+    endif
     if (materi .ne. ' ') then
         call rcmfmc(materi, mate)
     endif

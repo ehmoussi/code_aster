@@ -102,7 +102,7 @@ subroutine comdlh()
     integer :: nbsym, i, n1, n2
     integer :: lamor1, lamor, limpe, lfreq, nbfreq
     integer :: neq, nbmat, ifm, niv
-    integer :: ifreq, ieq, inom, ier
+    integer :: ifreq, ieq, inom, ier, ierc
     integer :: lsecmb, jvezer, nbmodi, nbmody, nbbas, j
     integer :: icoef, icode, nbmode, jrefe
     integer :: linst, iret, ladpa, dec
@@ -723,7 +723,8 @@ subroutine comdlh()
 !
     if (.not.calgen) then
         call dismoi('NOM_MODELE', raide, 'MATR_ASSE', repk=nomo)
-        call dismoi('CHAM_MATER', raide, 'MATR_ASSE', repk=mate)
+        call dismoi('CHAM_MATER', raide, 'MATR_ASSE', repk=mate, arret = 'C', ier = ierc)
+        ! call dismoi('CHAM_MATER', raide, 'MATR_ASSE', repk=mate)
         call dismoi('CARA_ELEM', raide, 'MATR_ASSE', repk=carele)
         call jeveuo(result//'           .ORDR', 'L', vi=ordr)
         call jelira(result//'           .ORDR', 'LONUTI', nbord)
@@ -731,9 +732,14 @@ subroutine comdlh()
             call rsadpa(result, 'E', 1, 'MODELE', ordr(i),&
                         0, sjv=ladpa, styp=k8bid)
             zk8(ladpa) = nomo
-            call rsadpa(result, 'E', 1, 'CHAMPMAT', ordr(i),&
+            if (ierc.ne.0) then
+                call utmess('A', 'CHAMPS_21')
+            else
+                call rsadpa(result, 'E', 1, 'CHAMPMAT', ordr(i),&
                         0, sjv=ladpa, styp=k8bid)
-            zk8(ladpa) = mate(1:8)
+                zk8(ladpa) = mate(1:8)
+            endif
+            
             call rsadpa(result, 'E', 1, 'CARAELEM', ordr(i),&
                         0, sjv=ladpa, styp=k8bid)
             zk8(ladpa) = carele(1:8)
