@@ -51,11 +51,9 @@ charCine2.build()
 monSolver = code_aster.PetscSolver(code_aster.Renumbering.Sans)
 monSolver.setPreconditioning(code_aster.Preconditioning.Sor)
 
-mecaStatique = code_aster.StaticMechanicalSolver()
+mecaStatique = code_aster.StaticMechanicalSolver(monModel, affectMat)
 mecaStatique.addKinematicsLoad(charCine)
 mecaStatique.addKinematicsLoad(charCine2)
-mecaStatique.setSupportModel(monModel)
-mecaStatique.setMaterialOnMesh(affectMat)
 mecaStatique.setLinearSolver(monSolver)
 
 resu = mecaStatique.execute()

@@ -106,12 +106,13 @@ public:
     };
 
     /**
-     * @brief Ajouter une charge mecanique
-     * @param currentLoad objet MechanicalLoad
+     * @brief Function d'ajout d'un chargement
+     * @param Args... Liste d'arguments template
      */
-    void addMechanicalLoad( const GenericMechanicalLoadPtr& currentLoad )
+    template< typename... Args >
+    void addLoad( const Args&... a )
     {
-        _listOfLoads->addMechanicalLoad( currentLoad );
+        _listOfLoads->addLoad( a... );
     };
 
     /**

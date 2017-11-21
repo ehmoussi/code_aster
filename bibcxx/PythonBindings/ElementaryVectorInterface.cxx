@@ -39,6 +39,9 @@ void exportElementaryVectorToPython()
             &ElementaryVectorInstance::assembleVector;
 #endif /* _USE_MPI */
 
+    void (ElementaryVectorInstance::*c3)(const GenericMechanicalLoadPtr&) =
+            &ElementaryVectorInstance::addLoad;
+
     class_< ElementaryVectorInstance, ElementaryVectorInstance::ElementaryVectorPtr,
             bases< DataStructure > > ( "ElementaryVector", no_init )
         .def( "__init__", make_constructor(
@@ -46,7 +49,7 @@ void exportElementaryVectorToPython()
         .def( "__init__", make_constructor(
             &initFactoryPtr< ElementaryVectorInstance,
                              std::string >) )
-        .def( "addMechanicalLoad", &ElementaryVectorInstance::addMechanicalLoad )
+        .def( "addMechanicalLoad", c3 )
         .def( "assembleVector", c1 )
         .def( "setType", &ElementaryVectorInstance::setType )
 #ifdef _USE_MPI
