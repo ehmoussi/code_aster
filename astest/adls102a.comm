@@ -77,6 +77,15 @@ CHAMPMAT=AFFE_MATERIAU(   MAILLAGE=MAYA,AFFE=(
                                           MATER = FICTIF),
                _F(  GROUP_MA = 'E_PISTON', MATER = ACIER),),
                       )
+
+CHAMPMA2=AFFE_MATERIAU(   MAILLAGE=MAYA,AFFE=(
+               _F(  GROUP_MA = 'EFLUIDE', MATER = EAU),
+               _F(  GROUP_MA = ('EFS_P_IN','EFS_PIST','EFS_P_OU'),
+                                          MATER = EAU),
+               _F(  GROUP_MA = ('E_P_IN','ES_P_IN','E_P_OU'),
+                                          MATER = FICTIF),
+               _F(  GROUP_MA = 'E_PISTON', MATER = ACIER),),
+                      )
 #
 # ----------------------------------------------------------------------
 # AFFECTATION DES CARACTERISTIQUES ELEMENTAIRES
@@ -115,10 +124,16 @@ CHARGS=AFFE_CHAR_MECA( MODELE=MODELE,
 #
 # ----------------------------------------------------------------------
 #
-KE=CALC_MATR_ELEM(  MODELE=MODELE,
+KE1=CALC_MATR_ELEM(  MODELE=MODELE,
                     OPTION='RIGI_MECA',
                     CHARGE=CHARGS,
                     CHAM_MATER=CHAMPMAT,
+                    CARA_ELEM=CARA_ELE,
+                 )
+KE2=CALC_MATR_ELEM(  MODELE=MODELE,
+                    OPTION='RIGI_MECA',
+                    CHARGE=CHARGS,
+                    CHAM_MATER=CHAMPMA2,
                     CARA_ELEM=CARA_ELE,
                  )
 
@@ -131,7 +146,7 @@ ME=CALC_MATR_ELEM( MODELE=MODELE,
 
 AE=CALC_MATR_ELEM( MODELE=MODELE,
                    OPTION='AMOR_MECA',
-                   RIGI_MECA=KE,
+                   RIGI_MECA=KE1,
                    MASS_MECA=ME,
                    CHAM_MATER=CHAMPMAT,
                    CARA_ELEM=CARA_ELE,
@@ -145,9 +160,13 @@ VE=CALC_VECT_ELEM(
                    CARA_ELEM=CARA_ELE,
                  )
 
-NUM=NUME_DDL(  MATR_RIGI=KE ,)
+NUM=NUME_DDL(  MATR_RIGI=KE1 ,)
 
-STIFF=ASSE_MATRICE(  MATR_ELEM=KE,  NUME_DDL=NUM ,)
+STIFF1=ASSE_MATRICE(  MATR_ELEM=KE1,  NUME_DDL=NUM ,)
+STIFF2=ASSE_MATRICE(  MATR_ELEM=KE2,  NUME_DDL=NUM ,)
+
+STIFF=COMB_MATR_ASSE(COMB_R=(_F( MATR_ASSE = STIFF1,COEF_R = 1.),
+                            _F( MATR_ASSE = STIFF2,COEF_R = 0.)))
 
 MASS=ASSE_MATRICE(  MATR_ELEM=ME,  NUME_DDL=NUM ,)
 

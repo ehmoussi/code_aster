@@ -15,12 +15,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
-# --------------------------------------------------------------------
-
+# ======================================================================
 # E.F. VIBRO-ACOUSTIQUES HEXA8 ET QUAD4
 # VALIDATION INDEPENDANTE PAR LMS_NT (J.P.ROSSION)
 #
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'),IMPR_MACRO='OUI')
 #
 MA=LIRE_MAILLAGE(FORMAT='MED',)
 
@@ -62,6 +61,14 @@ CHM=AFFE_MATERIAU(
               MATER = ACIER))
          )
 
+CHM2=AFFE_MATERIAU(
+         MAILLAGE=MA,AFFE=(
+         _F( GROUP_MA = ('FLUIDE', 'INTER',),
+              MATER = AIR),
+         _F( GROUP_MA = 'PLAQUE',
+              MATER = ACIER))
+         )
+
 #
 # CONDITIONS AUX LIMITES
 #
@@ -77,13 +84,22 @@ FORCE=AFFE_CHAR_MECA(
                       FZ = 1.)
          )
 
+
 #
 # MATRICES ELEMENTAIRES
 #
-MK=CALC_MATR_ELEM(
+MK1=CALC_MATR_ELEM(
          OPTION='RIGI_MECA',
          MODELE=MO,
          CHAM_MATER=CHM,
+         CARA_ELEM=CARAPLA,
+         CHARGE=(DDLIMP, FORCE,)
+        )
+
+MK2=CALC_MATR_ELEM(
+         OPTION='RIGI_MECA',
+         MODELE=MO,
+         CHAM_MATER=CHM2,
          CARA_ELEM=CARAPLA,
          CHARGE=(DDLIMP, FORCE,)
         )
@@ -97,7 +113,7 @@ MM=CALC_MATR_ELEM(
         )
 
 NDDL=NUME_DDL(
-         MATR_RIGI=MK,
+         MATR_RIGI=MK1,
         )
 
 VECTELEM=CALC_VECT_ELEM(
@@ -109,10 +125,18 @@ VECTELEM=CALC_VECT_ELEM(
 #
 # ASSEMBLAGE
 #
-MATK=ASSE_MATRICE(
-         MATR_ELEM=MK,
+MATK1=ASSE_MATRICE(
+         MATR_ELEM=MK1,
          NUME_DDL=NDDL
         )
+
+MATK2=ASSE_MATRICE(
+         MATR_ELEM=MK2,
+         NUME_DDL=NDDL
+        )
+
+MATK=COMB_MATR_ASSE(COMB_R=(_F( MATR_ASSE = MATK1,COEF_R = 1.),
+                           _F( MATR_ASSE = MATK2,COEF_R = 0.)))
 
 MATM=ASSE_MATRICE(
          MATR_ELEM=MM,
@@ -127,6 +151,7 @@ VECTASS=ASSE_VECTEUR(
 #
 # REPONSE HARMONIQUE
 #
+
 DYNAHARM=DYNA_VIBRA(TYPE_CALCUL='HARM',BASE_CALCUL='PHYS',
                MATR_RIGI=MATK,
                MATR_MASS=MATM,
@@ -136,6 +161,7 @@ DYNAHARM=DYNA_VIBRA(TYPE_CALCUL='HARM',BASE_CALCUL='PHYS',
                       PUIS_PULS = 0,
                       PHAS_DEG = 0.)
            )
+
 
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    VALE_CALC_C=-0.0685016+0j,

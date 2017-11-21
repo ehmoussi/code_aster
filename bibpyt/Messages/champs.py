@@ -129,4 +129,9 @@ Erreur utilisateur :
  Contactez le support.
 """),
 
+    21 : _(u"""
+ Le modèle contient plusieurs 'CHAM_MATER'. Aucun n'a été stocké dans le concept résultat. 
+  aucun post-traitement lié à CHAM_MATER ne sera possible
+"""),
+
 }
