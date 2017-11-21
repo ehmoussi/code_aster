@@ -88,10 +88,10 @@ subroutine op0038()
         call utmess('A', 'CALCULEL3_96')
     endif
 !
-    call utalrm('OFF', 'CALCULEL3_40')
+    !call utalrm('OFF', 'CALCULEL3_40')
     call medom1(modele, mate, cara, kcha, nchar,&
                 ctyp, blan8, 1)
-    call utalrm('ON', 'CALCULEL3_40')
+    !call utalrm('ON', 'CALCULEL3_40')
     call jeveuo(kcha//'.LCHA', 'E', jcha)
 !
     call exlima(' ', 0, 'G', modele, ligrel)
