@@ -20,7 +20,7 @@
 """
 This package is only used to check the *legacy* syntax.
 
-It is not important to use the real class (defined in Cython).
+It is not important to use the real class (defined in Boost-Python).
 Boost-Python objects must defined a `getType()` function that is compared to
 the return of the class method `getType()` of datastructures.
 
@@ -37,6 +37,7 @@ class DataStructure(object):
     @classmethod
     def getType(cls):
         """Return the type of DataStructure"""
+        # use for static checking (with fake datastructures)
         return cls.__name__.replace("_sdaster", "").upper()
 
     @classmethod

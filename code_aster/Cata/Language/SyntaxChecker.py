@@ -150,6 +150,7 @@ class SyntaxCheckerVisitor(object):
         """Initialization"""
         self._stack = []
         self._parent_context = []
+        self._default_command = False
 
     @property
     def stack(self):
@@ -177,6 +178,7 @@ class SyntaxCheckerVisitor(object):
                          "_RESULT_OF_MACRO"):
             return
         keywords = mixedcopy(userDict)
+        self._default_command = True
         step.addDefaultKeywords(keywords)
         debug_message2("checking syntax of", step.name, "with", keywords)
         self._parent_context.append(keywords)
@@ -347,6 +349,9 @@ class SyntaxCheckerVisitor(object):
         # loop on occurrences filled by the user
         for userOcc in userDict:
             ctxt = self._parent_context[-1] if self._parent_context else {}
+            if not self._default_command:
+                userOcc = mixedcopy(userOcc)
+                step.addDefaultKeywords(userOcc, ctxt)
             # check rules
             for rule in step.getRules(userOcc, ctxt):
                 self._stack.append(rule)
