@@ -88,6 +88,8 @@ class ListOfLoadsInstance: public DataStructure
 #ifdef _USE_MPI
         /** @brief Chargements Mecaniques paralleles */
         ListParaMecaLoad    _listOfParallelMechanicalLoads;
+        /** @brief List of functions for ParallelMechanicalLoads */
+        ListOfLoadFunctions _listOfParaMechaFun;
 #endif /* _USE_MPI */
         /** @brief .INFC */
         JeveuxVectorLong    _loadInformations;
@@ -184,13 +186,42 @@ class ListOfLoadsInstance: public DataStructure
 
 #ifdef _USE_MPI
         /**
-         * @brief Function d'ajout d'une charge mecanique
+         * @brief Function d'ajout d'une charge mécanique
          * @param currentLoad charge a ajouter a la sd
+         * @param func multiplier function
          */
-        void addParallelMechanicalLoad( const ParallelMechanicalLoadPtr& currentLoad )
+        void addLoad( const ParallelMechanicalLoadPtr& currentLoad,
+                      const FunctionPtr& func = emptyDoubleFunction )
         {
             _isEmpty = true;
             _listOfParallelMechanicalLoads.push_back( currentLoad );
+            _listOfParaMechaFun.push_back( func );
+        };
+
+        /**
+         * @brief Function d'ajout d'une charge mécanique
+         * @param currentLoad charge a ajouter a la sd
+         * @param func multiplier formula
+         */
+        void addLoad( const ParallelMechanicalLoadPtr& currentLoad,
+                      const FormulaPtr& func )
+        {
+            _isEmpty = true;
+            _listOfParallelMechanicalLoads.push_back( currentLoad );
+            _listOfParaMechaFun.push_back( func );
+        };
+
+        /**
+         * @brief Function d'ajout d'une charge mécanique
+         * @param currentLoad charge a ajouter a la sd
+         * @param func multiplier surface
+         */
+        void addLoad( const ParallelMechanicalLoadPtr& currentLoad,
+                      const SurfacePtr& func )
+        {
+            _isEmpty = true;
+            _listOfParallelMechanicalLoads.push_back( currentLoad );
+            _listOfParaMechaFun.push_back( func );
         };
 #endif /* _USE_MPI */
 

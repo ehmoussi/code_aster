@@ -29,7 +29,6 @@
 #include "Supervis/CommandSyntax.h"
 #include "Discretization/DiscreteProblem.h"
 #include "Discretization/DOFNumbering.h"
-#include "Studies/StudyDescription.h"
 #include "DataStructures/TemporaryDataStructureName.h"
 #include "Algorithms/GenericAlgorithm.h"
 #include "Algorithms/StaticMechanicalAlgorithm.h"
@@ -57,28 +56,6 @@ ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runti
         resultC->allocate( 1 );
     else
         resultC->allocate( _timeStep->size() );
-
-//     const ListMecaLoad& mecaList = _listOfLoads->getListOfMechanicalLoads();
-// #ifdef _USE_MPI
-//     bool mecaLoads = ( mecaList.size() == 0 ? false : true );
-//     if( mecaLoads )
-//         throw std::runtime_error( "MechanicalLoad not allowed use ParallelMechanicalLoad" );
-//     const auto& pMecaList = _listOfLoads->getListOfParallelMechanicalLoads();
-//     for ( const auto& curIter : pMecaList )
-//         _study->addParallelMechanicalLoad( curIter );
-// #else
-//     // Add Loads to the _study
-//     for ( ListMecaLoadCIter curIter = mecaList.begin();
-//           curIter != mecaList.end();
-//           ++curIter )
-//         _study->addLoad( *curIter );
-// #endif /* _USE_MPI */
-// 
-//     const ListKineLoad& kineList = _listOfLoads->getListOfKinematicsLoads();
-//     for ( ListKineLoadCIter curIter = kineList.begin();
-//           curIter != kineList.end();
-//           ++curIter )
-//         _study->addLoad( *curIter );
 
     // Define the discrete problem
     DiscreteProblemPtr dProblem( new DiscreteProblemInstance( _study ) );
