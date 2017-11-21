@@ -22,6 +22,7 @@
  */
 
 #include "PythonBindings/StaticMechanicalSolverInterface.h"
+#include "PythonBindings/LoadInterface.h"
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
@@ -30,17 +31,15 @@ void exportStaticMechanicalSolverToPython()
     using namespace boost::python;
 
     class_< StaticMechanicalSolverInstance, StaticMechanicalSolverPtr >
-        ( "StaticMechanicalSolver", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< StaticMechanicalSolverInstance > ) )
-        .def( "addKinematicsLoad", &StaticMechanicalSolverInstance::addKinematicsLoad )
-        .def( "addMechanicalLoad", &StaticMechanicalSolverInstance::addMechanicalLoad )
+        c1( "StaticMechanicalSolver", no_init );
+    c1.def( "__init__", make_constructor(
+            &initFactoryPtr< StaticMechanicalSolverInstance,
+                             ModelPtr, MaterialOnMeshPtr > ) );
+    addKinematicsLoadToInterface( c1 );
+    addMechanicalLoadToInterface( c1 );
 #ifdef _USE_MPI
-        .def( "addParallelMechanicalLoad", &StaticMechanicalSolverInstance::addParallelMechanicalLoad )
+    c1.def( "addParallelMechanicalLoad", &StaticMechanicalSolverInstance::addParallelMechanicalLoad );
 #endif /* _USE_MPI */
-        .def( "execute", &StaticMechanicalSolverInstance::execute )
-        .def( "setLinearSolver", &StaticMechanicalSolverInstance::setLinearSolver )
-        .def( "setMaterialOnMesh", &StaticMechanicalSolverInstance::setMaterialOnMesh )
-        .def( "setSupportModel", &StaticMechanicalSolverInstance::setSupportModel )
-    ;
+    c1.def( "execute", &StaticMechanicalSolverInstance::execute );
+    c1.def( "setLinearSolver", &StaticMechanicalSolverInstance::setLinearSolver );
 };

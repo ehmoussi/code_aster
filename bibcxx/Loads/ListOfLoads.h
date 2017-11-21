@@ -83,6 +83,8 @@ class ListOfLoadsInstance: public DataStructure
         ListOfLoadFunctions _listOfKineFun;
         /** @brief Chargements Mecaniques */
         ListMecaLoad        _listOfMechanicalLoads;
+        /** @brief List of functions for MechanicalLoads */
+        ListOfLoadFunctions _listOfMechaFun;
 #ifdef _USE_MPI
         /** @brief Chargements Mecaniques paralleles */
         ListParaMecaLoad    _listOfParallelMechanicalLoads;
@@ -107,8 +109,8 @@ class ListOfLoadsInstance: public DataStructure
          * @param currentLoad charge a ajouter a la sd
          * @param func multiplier function
          */
-        void addKinematicsLoad( const KinematicsLoadPtr& currentLoad,
-                                const FunctionPtr& func = emptyDoubleFunction )
+        void addLoad( const KinematicsLoadPtr& currentLoad,
+                      const FunctionPtr& func = emptyDoubleFunction )
         {
             _isEmpty = true;
             _listOfKinematicsLoads.push_back( currentLoad );
@@ -120,8 +122,8 @@ class ListOfLoadsInstance: public DataStructure
          * @param currentLoad charge a ajouter a la sd
          * @param func multiplier formula
          */
-        void addKinematicsLoad( const KinematicsLoadPtr& currentLoad,
-                                const FormulaPtr& func )
+        void addLoad( const KinematicsLoadPtr& currentLoad,
+                      const FormulaPtr& func )
         {
             _isEmpty = true;
             _listOfKinematicsLoads.push_back( currentLoad );
@@ -133,8 +135,8 @@ class ListOfLoadsInstance: public DataStructure
          * @param currentLoad charge a ajouter a la sd
          * @param func multiplier surface
          */
-        void addKinematicsLoad( const KinematicsLoadPtr& currentLoad,
-                                const SurfacePtr& func )
+        void addLoad( const KinematicsLoadPtr& currentLoad,
+                      const SurfacePtr& func )
         {
             _isEmpty = true;
             _listOfKinematicsLoads.push_back( currentLoad );
@@ -142,13 +144,42 @@ class ListOfLoadsInstance: public DataStructure
         };
 
         /**
-         * @brief Function d'ajout d'une charge mecanique
+         * @brief Function d'ajout d'une charge mécanique
          * @param currentLoad charge a ajouter a la sd
+         * @param func multiplier function
          */
-        void addMechanicalLoad( const GenericMechanicalLoadPtr& currentLoad )
+        void addLoad( const GenericMechanicalLoadPtr& currentLoad,
+                      const FunctionPtr& func = emptyDoubleFunction )
         {
             _isEmpty = true;
             _listOfMechanicalLoads.push_back( currentLoad );
+            _listOfMechaFun.push_back( func );
+        };
+
+        /**
+         * @brief Function d'ajout d'une charge mécanique
+         * @param currentLoad charge a ajouter a la sd
+         * @param func multiplier formula
+         */
+        void addLoad( const GenericMechanicalLoadPtr& currentLoad,
+                      const FormulaPtr& func )
+        {
+            _isEmpty = true;
+            _listOfMechanicalLoads.push_back( currentLoad );
+            _listOfMechaFun.push_back( func );
+        };
+
+        /**
+         * @brief Function d'ajout d'une charge mécanique
+         * @param currentLoad charge a ajouter a la sd
+         * @param func multiplier surface
+         */
+        void addLoad( const GenericMechanicalLoadPtr& currentLoad,
+                      const SurfacePtr& func )
+        {
+            _isEmpty = true;
+            _listOfMechanicalLoads.push_back( currentLoad );
+            _listOfMechaFun.push_back( func );
         };
 
 #ifdef _USE_MPI

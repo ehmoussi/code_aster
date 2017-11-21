@@ -26,20 +26,19 @@
 #include <boost/python.hpp>
 #include <PythonBindings/factory.h>
 #include "PythonBindings/DOFNumberingInterface.h"
-
+#include "PythonBindings/LoadInterface.h"
 
 void exportDOFNumberingToPython()
 {
     using namespace boost::python;
 
     class_< BaseDOFNumberingInstance, BaseDOFNumberingInstance::BaseDOFNumberingPtr,
-            bases< DataStructure > > ( "BaseDOFNumbering", no_init )
-        .def( "addKinematicsLoad", &BaseDOFNumberingInstance::addKinematicsLoad )
-        .def( "addMechanicalLoad", &BaseDOFNumberingInstance::addMechanicalLoad )
-        .def( "computeNumerotation", &BaseDOFNumberingInstance::computeNumerotation )
-        .def( "isParallel", &BaseDOFNumberingInstance::isParallel )
-        .def( "setElementaryMatrix", &BaseDOFNumberingInstance::setElementaryMatrix )
-    ;
+            bases< DataStructure > > c1( "BaseDOFNumbering", no_init );
+    c1.def( "computeNumerotation", &BaseDOFNumberingInstance::computeNumerotation );
+    c1.def( "isParallel", &BaseDOFNumberingInstance::isParallel );
+    c1.def( "setElementaryMatrix", &BaseDOFNumberingInstance::setElementaryMatrix );
+    addKinematicsLoadToInterface( c1 );
+    addMechanicalLoadToInterface( c1 );
 
     class_< DOFNumberingInstance, DOFNumberingInstance::DOFNumberingPtr,
             bases< BaseDOFNumberingInstance > > ( "DOFNumbering", no_init )

@@ -24,6 +24,7 @@
 #include <boost/python.hpp>
 #include "PythonBindings/factory.h"
 #include "PythonBindings/StudyDescriptionInterface.h"
+#include "PythonBindings/LoadInterface.h"
 
 
 void exportStudyDescriptionToPython()
@@ -31,11 +32,10 @@ void exportStudyDescriptionToPython()
     using namespace boost::python;
 
     class_< StudyDescriptionInstance, StudyDescriptionPtr >
-        ( "StudyDescription", no_init )
-        .def( "__init__", make_constructor(
+        c1( "StudyDescription", no_init );
+    c1.def( "__init__", make_constructor(
             &initFactoryPtr< StudyDescriptionInstance,
-                             ModelPtr, MaterialOnMeshPtr >) )
-        .def( "addKinematicsLoad", &StudyDescriptionInstance::addKinematicsLoad )
-        .def( "addMechanicalLoad", &StudyDescriptionInstance::addMechanicalLoad )
-    ;
+                             ModelPtr, MaterialOnMeshPtr >) );
+    addKinematicsLoadToInterface( c1 );
+    addMechanicalLoadToInterface( c1 );
 };

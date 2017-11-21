@@ -157,21 +157,13 @@ public:
     typedef boost::shared_ptr< BaseDOFNumberingInstance > BaseDOFNumberingPtr;
 
     /**
-     * @brief Function d'ajout d'une charge cinematique
-     * @param currentLoad charge a ajouter a la sd
+     * @brief Function d'ajout d'un chargement
+     * @param Args... Liste d'arguments template
      */
-    void addKinematicsLoad( const KinematicsLoadPtr& currentLoad )
+    template< typename... Args >
+    void addLoad( const Args&... a )
     {
-        _listOfLoads->addKinematicsLoad( currentLoad );
-    };
-
-    /**
-     * @brief Function d'ajout d'une charge mecanique
-     * @param currentLoad charge a ajouter a la sd
-     */
-    void addMechanicalLoad( const GenericMechanicalLoadPtr& currentLoad )
-    {
-        _listOfLoads->addMechanicalLoad( currentLoad );
+        _listOfLoads->addLoad( a... );
     };
 
     /**

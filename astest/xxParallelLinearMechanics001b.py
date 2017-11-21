@@ -50,11 +50,9 @@ charCine2.build()
 
 monSolver = code_aster.MumpsSolver(code_aster.Renumbering.Metis)
 
-mecaStatique = code_aster.StaticMechanicalSolver()
+mecaStatique = code_aster.StaticMechanicalSolver(monModel, affectMat)
 mecaStatique.addKinematicsLoad(charCine)
 mecaStatique.addKinematicsLoad(charCine2)
-mecaStatique.setSupportModel(monModel)
-mecaStatique.setMaterialOnMesh(affectMat)
 mecaStatique.setLinearSolver(monSolver)
 
 resu = mecaStatique.execute()

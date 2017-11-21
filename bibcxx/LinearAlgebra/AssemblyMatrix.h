@@ -112,12 +112,13 @@ class AssemblyMatrixInstance: public DataStructure
         };
 
         /**
-         * @brief Methode permettant d'ajouter un chargement
-         * @param currentLoad objet MechanicalLoad
+         * @brief Function d'ajout d'un chargement
+         * @param Args... Liste d'arguments template
          */
-        void addKinematicsLoad( const KinematicsLoadPtr& currentLoad )
+        template< typename... Args >
+        void addLoad( const Args&... a )
         {
-            _listOfLoads->addKinematicsLoad( currentLoad );
+            _listOfLoads->addLoad( a... );
         };
 
         /**

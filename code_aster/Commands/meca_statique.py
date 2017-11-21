@@ -64,12 +64,11 @@ class MechanicalSolver(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        mechaSolv = StaticMechanicalSolver()
-
         model = keywords["MODELE"]
         matOnMesh = keywords["CHAM_MATER"]
-        mechaSolv.setSupportModel(model)
-        mechaSolv.setMaterialOnMesh(matOnMesh)
+
+        mechaSolv = StaticMechanicalSolver(model, matOnMesh)
+
         inst = keywords.get("INST")
         if inst != None:
             mechaSolv.setTimeStepManager(list(inst))

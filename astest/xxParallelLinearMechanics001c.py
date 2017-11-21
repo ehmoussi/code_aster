@@ -60,11 +60,9 @@ charMeca = code_aster.ParallelMechanicalLoad(charMeca1, monModel)
 
 monSolver = code_aster.MumpsSolver(code_aster.Renumbering.Metis)
 
-mecaStatique = code_aster.StaticMechanicalSolver()
+mecaStatique = code_aster.StaticMechanicalSolver(monModel, affectMat)
 mecaStatique.addKinematicsLoad(charCine)
 mecaStatique.addParallelMechanicalLoad(charMeca)
-mecaStatique.setSupportModel(monModel)
-mecaStatique.setMaterialOnMesh(affectMat)
 mecaStatique.setLinearSolver(monSolver)
 
 resu = mecaStatique.execute()
