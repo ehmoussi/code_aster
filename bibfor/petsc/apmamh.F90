@@ -83,7 +83,7 @@ use petsc_data_module
 !
 !----------------------------------------------------------------
 !     Variables PETSc
-    PetscInt :: low, high, neql, neqg, ierr
+    PetscInt :: low, high, neql, neqg, ierr, mm, nn
     Mat :: a
 !----------------------------------------------------------------
     call jemarq()
@@ -222,13 +222,15 @@ use petsc_data_module
             endif
         end do
         jcolg4(1) = jcolg
+        mm = to_petsc_int(jterm)
 !       Ici zi4(jdxi2) donne le numero de ligne
 !       Donc on donne ici le bloc triangulaire superieur
-        call MatSetValues(a, jterm, zi4(jdxi2), un, jcolg4,&
-                          zr(jdval2), INSERT_VALUES, ierr)
+        call MatSetValues(a, jterm, zi4(jdxi2:jdxi2+mm), un, [to_petsc_int(jcolg4)],&
+                          zr(jdval2:jdval2+mm), INSERT_VALUES, ierr)
+        nn = to_petsc_int(iterm)
 !       on donne ici le bloc triangulaire inferieur
-        call MatSetValues(a, un, jcolg4, iterm, zi4(jdxi1),&
-                          zr(jdval1), INSERT_VALUES, ierr)
+        call MatSetValues(a, un, [to_petsc_int(jcolg4)], iterm, zi4(jdxi1:jdxi1+nn),&
+                          zr(jdval1:jdval1+nn), INSERT_VALUES, ierr)
         iterm = 0
         jterm = 0
     end do
