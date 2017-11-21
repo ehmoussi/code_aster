@@ -101,6 +101,7 @@ class UnitaryLoad
 typedef UnitaryLoad< DisplacementDoubleInstance > DoubleLoadDisplacement;
 /** @typedef Definition d'un chargement sur TEMP_R */
 typedef UnitaryLoad< TemperatureDoubleInstance > DoubleLoadTemperature;
+typedef UnitaryLoad< TemperatureFunctionInstance > FunctionLoadTemperature;
 /** @typedef Definition d'un chargement pression */
 typedef UnitaryLoad< PressureDoubleInstance > DoubleLoadPressure;
 #endif /* UNITARYLOAD_H_ */

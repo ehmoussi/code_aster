@@ -23,6 +23,7 @@
 
 #include <stdexcept>
 #include <typeinfo>
+#include <string>
 #include "astercxx.h"
 
 #include "Loads/KinematicsLoad.h"
@@ -40,12 +41,16 @@ bool KinematicsLoadInstance::build() throw ( std::runtime_error )
     std::string typSd = getType();
     if ( _listOfDoubleImposedDisplacement.size() != 0 )
         typSd.insert( 9, "_MECA" );
-    else if ( _listOfDoubleImposedTemperature.size() != 0 )
+    else if ( _listOfDoubleImposedTemperature.size() != 0 or 
+              _listOfFunctionImposedTemperature.size() != 0)
         typSd.insert( 9, "_THER");
     else
         throw std::runtime_error( "KinematicsLoad empty" );
     setType( typSd );
-    CommandSyntax cmdSt( "AFFE_CHAR_CINE" );
+    std::string cmd = "AFFE_CHAR_CINE";
+    if (_listOfFunctionImposedTemperature.size() != 0)
+        cmd += "_F";
+    CommandSyntax cmdSt( cmd );
     cmdSt.setResult( ResultNaming::getCurrentName(), typSd );
 
     SyntaxMapContainer dict;
@@ -82,6 +87,34 @@ bool KinematicsLoadInstance::build() throw ( std::runtime_error )
         }
 
         dict.container[ "MECA_IMPO" ] = listeMecaImpo;
+    }
+    if ( _listOfFunctionImposedTemperature.size() != 0 )
+    {
+        ListSyntaxMapContainer listeTempImpo;
+        for ( ListFunctionTemp::iterator curIter = _listOfFunctionImposedTemperature.begin();
+              curIter != _listOfFunctionImposedTemperature.end();
+              ++curIter )
+        {
+            SyntaxMapContainer dict2;
+            const MeshEntityPtr& tmp = curIter->getMeshEntityPtr();
+            if ( tmp->getType() == AllMeshEntitiesType )
+            {
+                dict2.container[ "TOUI" ] = "OUI";
+            }
+            else
+            {
+                if ( tmp->getType() == GroupOfNodesType )
+                    dict2.container[ "GROUP_NO" ] = tmp->getName();
+                else if ( tmp->getType() == GroupOfElementsType )
+                    dict2.container[ "GROUP_MA" ] = tmp->getName();
+            }
+            const std::string nomComp = curIter->getAsterCoordinateName();
+            dict2.container[ nomComp ] = curIter->getValue()->getName();
+
+            listeTempImpo.push_back( dict2 );
+        }
+
+        dict.container[ "THER_IMPO" ] = listeTempImpo;
     }
     cmdSt.define( dict );
 
