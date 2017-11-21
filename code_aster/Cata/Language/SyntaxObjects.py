@@ -106,7 +106,9 @@ class CataDefinition(OrderedDict):
             dict: dict of all entities (keywords and conditional blocks) of the
             object.
         """
-        return self._filter_entities((SimpleKeyword, Bloc, FactorKeyword))
+        kws = self._filter_entities((SimpleKeyword, Bloc, FactorKeyword),
+                                    with_block=False)
+        return sorted_dict(kws)
 
     @property
     def keywords(self):
@@ -144,7 +146,7 @@ class CataDefinition(OrderedDict):
         kws = self._filter_entities((SimpleKeyword, ))
         return sorted_dict(kws)
 
-    def _filter_entities(self, typeslist):
+    def _filter_entities(self, typeslist, with_block=True):
         """Filter entities by type recursively.
 
         Returns:
@@ -154,7 +156,7 @@ class CataDefinition(OrderedDict):
         for key, value in self.items():
             if isinstance(value, typeslist):
                 entities[key] = value
-            elif isinstance(value, Bloc):
+            elif with_block and isinstance(value, Bloc):
                 entities.update(value.definition._filter_entities(typeslist))
         return entities
 
