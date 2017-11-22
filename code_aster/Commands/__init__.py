@@ -94,6 +94,7 @@ from .proj_champ import PROJ_CHAMP
 from .resoudre import RESOUDRE
 from .stat_non_line import STAT_NON_LINE
 from .recu_fonction import RECU_FONCTION
+from .recu_table import RECU_TABLE
 
 from .ExecuteCommand import CO
 
