@@ -34,6 +34,9 @@
 #include "Loads/ListOfLinearRelations.h"
 #include "DataFields/PCFieldOnMesh.h"
 #include "Meshes/Mesh.h"
+#include "Modeling/Model.h"
+#include "Discretization/ElementaryCharacteristics.h"
+#include "Materials/MaterialOnMesh.h"
 
 /**
  * @class PrestressingCableDefinitionInstance
@@ -44,6 +47,9 @@
 class PrestressingCableDefinitionInstance: public DataStructure
 {
 private:
+    ModelPtr _model;
+    ElementaryCharacteristicsPtr _cara;
+    MaterialOnMeshPtr _mater;
     MeshPtr                        _mesh;
     /** @brief Carte '.CHME.SIGIN' */
     PCFieldOnMeshDoublePtr         _sigin;
@@ -66,7 +72,9 @@ public:
     /**
      * @brief Constructeur
      */
-    PrestressingCableDefinitionInstance( const MeshPtr& );
+    PrestressingCableDefinitionInstance( const ModelPtr&,
+                                         const MaterialOnMeshPtr&,
+                                         const ElementaryCharacteristicsPtr& );
 
     /**
      * @brief Methode permettant de savoir si l'objet est vide

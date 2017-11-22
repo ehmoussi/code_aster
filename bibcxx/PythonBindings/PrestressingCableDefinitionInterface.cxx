@@ -33,6 +33,8 @@ void exportPrestressingCableDefinitionToPython()
             PrestressingCableDefinitionInstance::PrestressingCableDefinitionPtr,
             bases< DataStructure > > ( "PrestressingCableDefinition", no_init )
         .def( "__init__", make_constructor(
-            &initFactoryPtr< PrestressingCableDefinitionInstance, const MeshPtr& > ) )
+            &initFactoryPtr< PrestressingCableDefinitionInstance, const ModelPtr&,
+                                                                  const MaterialOnMeshPtr&,
+                                                                  const ElementaryCharacteristicsPtr& > ) )
     ;
 };

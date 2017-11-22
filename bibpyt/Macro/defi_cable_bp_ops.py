@@ -47,7 +47,7 @@
 
 def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
                       DEFI_CABLE, ADHERENT, TYPE_ANCRAGE, TENSION_INIT,
-                      RECUL_ANCRAGE, TYPE_RELAX, TITRE, INFO, CONE=None,
+                      RECUL_ANCRAGE, TYPE_RELAX, INFO, CONE=None,
                       **args):
     """
        Ecriture de la macro DEFI_CABLE_BP
@@ -62,7 +62,7 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
     # On importe les definitions des commandes a utiliser dans la macro
     DEFI_GROUP = self.get_cmd('DEFI_GROUP')
     IMPR_RESU = self.get_cmd('IMPR_RESU')
-    from Contrib.defi_cable_op import DEFI_CABLE_OP
+    from code_aster.Commands.defi_cable_op import DEFI_CABLE_OP
 
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
@@ -334,4 +334,4 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
 #                       **motscles
 #                       );
 
-    return ier
+    return __DC

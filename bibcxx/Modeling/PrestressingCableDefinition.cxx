@@ -28,10 +28,15 @@
 #include "Modeling/PrestressingCableDefinition.h"
 #include "Supervis/ResultNaming.h"
 
-PrestressingCableDefinitionInstance::PrestressingCableDefinitionInstance( const MeshPtr& mesh ):
+PrestressingCableDefinitionInstance::PrestressingCableDefinitionInstance( const ModelPtr& model,
+                                                                          const MaterialOnMeshPtr& mater,
+                                                                          const ElementaryCharacteristicsPtr& cara ):
     DataStructure( ResultNaming::getNewResultName(), 8, "CABL_PRECONT" ),
-    _mesh( mesh ),
-    _sigin( new PCFieldOnMeshDoubleInstance( getName() + ".CHME.SIGIN", mesh ) ),
+    _model( model ),
+    _mater( mater ),
+    _cara( cara ),
+    _mesh( boost::static_pointer_cast<MeshInstance>(_model->getSupportMesh()) ),
+    _sigin( new PCFieldOnMeshDoubleInstance( getName() + ".CHME.SIGIN", _mesh ) ),
     _cableBP( new TableInstance( getName() + "CABLEBP    " ) ),
     _cableGL( new TableInstance( getName() + "CABLEGL    " ) ),
     _lirela( new ListOfLinearRelationsDouble( getName() + ".LIRELA    " ) ),
