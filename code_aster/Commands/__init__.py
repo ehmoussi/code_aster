@@ -46,6 +46,7 @@ from .asse_vecteur import ASSE_VECTEUR
 from .calc_champ import CALC_CHAMP
 from .calc_char_cine import CALC_CHAR_CINE
 from .calc_cham_elem import CALC_CHAM_ELEM
+from .calc_char_cine import CALC_CHAR_CINE
 from .calc_fonction import CALC_FONCTION
 from .calc_fonc_interp import CALC_FONC_INTERP
 from .calc_matr_elem import CALC_MATR_ELEM
