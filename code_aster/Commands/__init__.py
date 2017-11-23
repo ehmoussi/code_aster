@@ -98,6 +98,7 @@ from .resoudre import RESOUDRE
 from .stat_non_line import STAT_NON_LINE
 from .recu_fonction import RECU_FONCTION
 from .recu_table import RECU_TABLE
+from .test_resu import TEST_RESU
 from .test_table import TEST_TABLE
 
 from .ExecuteCommand import CO
