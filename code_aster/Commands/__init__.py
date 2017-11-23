@@ -80,6 +80,7 @@ from .defi_nappe import DEFI_NAPPE
 from .defi_spec_turb import DEFI_SPEC_TURB
 from .dyna_vibra import DYNA_VIBRA
 from .extr_table import EXTR_TABLE
+from .factoriser import FACTORISER
 from .fin import FIN
 from .formule import FORMULE
 from .impr_fonction import IMPR_FONCTION
@@ -100,6 +101,7 @@ from .resoudre import RESOUDRE
 from .stat_non_line import STAT_NON_LINE
 from .recu_fonction import RECU_FONCTION
 from .recu_table import RECU_TABLE
+from .resoudre import RESOUDRE
 from .test_resu import TEST_RESU
 from .test_table import TEST_TABLE
 
