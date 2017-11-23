@@ -82,7 +82,9 @@ from .dyna_vibra import DYNA_VIBRA
 from .extr_table import EXTR_TABLE
 from .fin import FIN
 from .formule import FORMULE
+from .impr_fonction import IMPR_FONCTION
 from .impr_table import IMPR_TABLE
+from .impr_resu import IMPR_RESU
 from .lire_maillage import LIRE_MAILLAGE
 # from .macr_elem_dyna import MACR_ELEM_DYNA
 # from .macr_elem_stat import MACR_ELEM_STAT
