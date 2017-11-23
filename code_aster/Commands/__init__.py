@@ -82,6 +82,7 @@ from .dyna_vibra import DYNA_VIBRA
 from .extr_table import EXTR_TABLE
 from .fin import FIN
 from .formule import FORMULE
+from .impr_table import IMPR_TABLE
 from .lire_maillage import LIRE_MAILLAGE
 # from .macr_elem_dyna import MACR_ELEM_DYNA
 # from .macr_elem_stat import MACR_ELEM_STAT
@@ -97,6 +98,7 @@ from .resoudre import RESOUDRE
 from .stat_non_line import STAT_NON_LINE
 from .recu_fonction import RECU_FONCTION
 from .recu_table import RECU_TABLE
+from .test_table import TEST_TABLE
 
 from .ExecuteCommand import CO
 
