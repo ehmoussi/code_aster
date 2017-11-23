@@ -18,9 +18,10 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nmdoch_wrap(list_load, l_load_user, list_load_resu)
+    subroutine nmdoch_wrap(list_load, l_load_user, list_load_resu, base)
         integer, intent(in) :: l_load_user
         character(len=19), intent(in) :: list_load
         character(len=19), intent(in) :: list_load_resu
+        character(len=1), intent(in) :: base
     end subroutine nmdoch_wrap
 end interface

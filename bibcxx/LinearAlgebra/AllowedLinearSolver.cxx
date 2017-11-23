@@ -33,6 +33,8 @@ const char* MatrixTypeNames[nbMatrixTypes] = { "NONSYM", "SYMGEN", "SYMDEF", "AU
 const char* IterativeSolverAlgorithmNames[nbIterativeSolverAlgorithms] = { "CG", "CR", "GMRES", "GCR", "FGMRES" };
 const char* LagrangeTreatmentNames[nbLagrangeTreatments] = { "OUI", "NON", "LAGR2" };
 const char* MemoryManagementNames[nbMemoryManagements] = { "IN_CORE", "OUT_OF_CORE", "AUTO", "EVAL" };
+const char* MumpsPostTreatmentNames[nbMumpsPostTreatments] = { "SANS", "AUTO", "FORCE", "MINI" };
+const char* MumpsAccelerationNames[nbMumpsAcceleration] = { "AUTO", "FR", "FR+", "LR", "LR+" };
 
 
 const Renumbering MultFrontRenumbering[nbRenumberingMultFront] = { MD, MDA, Metis };

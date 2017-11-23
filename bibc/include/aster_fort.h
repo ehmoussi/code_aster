@@ -236,9 +236,9 @@ void DEFSSSSSS(NUMERO_WRAP,numero_wrap, const char*, STRING_SIZE, const char*, S
 void DEFSSPP(GNOMSD,gnomsd, const char*, STRING_SIZE, const char*, STRING_SIZE, ASTERINTEGER *,
              ASTERINTEGER *);
 
-#define CALLO_NMDOCH_WRAP(a, b, c) CALLOPO(NMDOCH_WRAP, nmdoch_wrap, a, b, c)
-void DEFSPS(NMDOCH_WRAP,nmdoch_wrap, const char*, STRING_SIZE, ASTERINTEGER *,
-            const char*, STRING_SIZE);
+#define CALLO_NMDOCH_WRAP(a, b, c, d) CALLOPOO(NMDOCH_WRAP, nmdoch_wrap, a, b, c, d)
+void DEFSPSS(NMDOCH_WRAP,nmdoch_wrap, const char*, STRING_SIZE, ASTERINTEGER *,
+             const char*, STRING_SIZE, const char*, STRING_SIZE);
 
 #define CALL_ASMATR(a, b, c, d, e, f, g, h, i) \
     CALLPSSSSSSPS(ASMATR, asmatr, a, b, c, d, e, f, g, h, i)

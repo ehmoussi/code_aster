@@ -38,7 +38,6 @@ StaticMechanicalSolverInstance::StaticMechanicalSolverInstance( const ModelPtr& 
     _supportModel( model ),
     _materialOnMesh( mater ),
     _linearSolver( BaseLinearSolverPtr() ),
-    _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) ),
     _timeStep( TimeStepperPtr( new TimeStepperInstance() ) ),
     _study( new StudyDescriptionInstance( _supportModel, _materialOnMesh ) )
 {

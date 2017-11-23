@@ -25,22 +25,12 @@ from ..Objects import ParallelMechanicalLoad
 from ..Utilities import unsupported
 from .ExecuteCommand import ExecuteCommand
 from .common_keywords import create_solver
+from .calc_champ import CALC_CHAMP
 
 
 class MechanicalSolver(ExecuteCommand):
     """Solver for static linear mechanical problems."""
     command_name = "MECA_STATIQUE"
-
-    def adapt_syntax(self, keywords):
-        """Hook to adapt syntax from a old version or for compatibility reasons.
-
-        Arguments:
-            keywords (dict): Keywords arguments of user's keywords, changed
-                in place.
-        """
-        unsupported(keywords, "", "CARA_ELEM")
-        unsupported(keywords, "", "LIST_INST")
-        unsupported(keywords, "", "INST_FIN")
 
     def create_result(self, keywords):
         """Does nothing, creating by *exec*."""
@@ -87,6 +77,10 @@ class MechanicalSolver(ExecuteCommand):
         if listInst != None:
             mechaSolv.setTimeStepManager(list(listInst))
 
+        caraElem = keywords.get("CARA_ELEM")
+        if caraElem != None:
+            mechaSolv.setElementaryCharacteristics(caraElem)
+
         unsupported(keywords, "EXCIT", "FONC_MULT")
         fkw = keywords["EXCIT"]
         if isinstance(fkw, dict):
@@ -100,13 +94,18 @@ class MechanicalSolver(ExecuteCommand):
         solver = create_solver(keywords.get("SOLVEUR"))
         mechaSolv.setLinearSolver(solver)
         self._result = mechaSolv.execute()
-    
+
     def post_exec(self, keywords):
         """Execute the command.
 
         Arguments:
             keywords (dict): User's keywords.
         """
+        if keywords.get("OPTION") == "SIEF_ELGA":
+            CALC_CHAMP(reuse=self._result,
+                       RESULTAT=self._result,
+                       CONTRAINTE=("SIEF_ELGA",),)
+
         self._result.setModel(keywords["MODELE"])
 
 MECA_STATIQUE = MechanicalSolver.run

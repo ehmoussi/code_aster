@@ -41,5 +41,8 @@ void exportStaticMechanicalSolverToPython()
     addParallelMechanicalLoadToInterface( c1 );
 #endif /* _USE_MPI */
     c1.def( "execute", &StaticMechanicalSolverInstance::execute );
+    c1.def( "setElementaryCharacteristics",
+            &StaticMechanicalSolverInstance::setElementaryCharacteristics );
     c1.def( "setLinearSolver", &StaticMechanicalSolverInstance::setLinearSolver );
+    c1.def( "setTimeStepManager", &StaticMechanicalSolverInstance::setTimeStepManager );
 };

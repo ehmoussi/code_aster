@@ -423,6 +423,13 @@ class BaseLinearSolverInstance: public DataStructure
             _prePro = "SANS";
         };
 
+        void setAcceleration( MumpsAcceleration post )
+        {
+            if ( _linearSolver != Mumps )
+                throw std::runtime_error( "Only allowed with Mumps" );
+            _acceleration = MumpsAccelerationNames[ (int)post ];
+        };
+
         void setAlgorithm( IterativeSolverAlgorithm algo ) throw ( std::runtime_error )
         {
             if ( _linearSolver != Petsc )
@@ -446,6 +453,15 @@ class BaseLinearSolverInstance: public DataStructure
                 _stopSingular = "OUI";
             else
                 _stopSingular = "NON";
+        };
+
+        void setFilling( double filLevel ) throw ( std::runtime_error )
+        {
+            if ( _linearSolver != Petsc && _linearSolver != Gcpc )
+                throw std::runtime_error( "Filling level only allowed with Gcpc or Petsc" );
+            if ( _preconditioning != IncompleteLdlt )
+                throw std::runtime_error( "Filling level only allowed with IncompleteLdlt" );
+            _filling = filLevel;
         };
 
         void setFillingLevel( int filLevel ) throw ( std::runtime_error )
@@ -494,6 +510,18 @@ class BaseLinearSolverInstance: public DataStructure
             _memory = MemoryManagementNames[ (int)memManagt ];
         };
 
+        void setPivotingMemory( int mem )
+        {
+            _pivotPourcent = mem;
+        };
+
+        void setPostTreatment( MumpsPostTreatment post )
+        {
+            if ( _linearSolver != Mumps )
+                throw std::runtime_error( "Only allowed with Mumps" );
+            _postPro = MumpsPostTreatmentNames[ (int)post ];
+        };
+
         void setPrecisionMix( bool precMix ) throw ( std::runtime_error )
         {
             if ( _linearSolver != Petsc && _linearSolver != Mumps )
@@ -533,6 +561,11 @@ class BaseLinearSolverInstance: public DataStructure
         void setRenumbering( Renumbering reum )
         {
             _renumber = reum;
+        };
+
+        void setSingularityDetectionThreshold( int nprec )
+        {
+            _nPrec = nprec;
         };
 
         void setSolverResidual( double residual )

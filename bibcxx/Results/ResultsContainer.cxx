@@ -43,6 +43,7 @@ void ResultsContainerInstance::addElementaryCharacteristics( const ElementaryCha
                                                              int rank )
     throw ( std::runtime_error )
 {
+    _mapElemCara[rank] = cara;
     long rang = rank;
     std::string type("CARAELEM");
     CALLO_RSADPA_ZK8_WRAP( getName(), &rang, cara->getName(), type );
@@ -51,14 +52,25 @@ void ResultsContainerInstance::addElementaryCharacteristics( const ElementaryCha
 void ResultsContainerInstance::addListOfLoads( const ListOfLoadsPtr& load,
                                                int rank ) throw ( std::runtime_error )
 {
+    _mapLoads[rank] = load;
     long rang = rank;
     std::string type("EXCIT");
     CALLO_RSADPA_ZK24_WRAP( getName(), &rang, load->getName(), type );
 };
 
+ListOfLoadsPtr ResultsContainerInstance::getListOfLoads( int rank )
+    throw ( std::runtime_error )
+{
+    auto curIter = _mapLoads.find( rank );
+    if( curIter == _mapLoads.end() )
+        throw std::runtime_error( "Rank not find" );
+    return (*curIter).second;
+};
+
 void ResultsContainerInstance::addMaterialOnMesh( const MaterialOnMeshPtr& mater,
                                                   int rank ) throw ( std::runtime_error )
 {
+    _mapMaterial[rank] = mater;
     long rang = rank;
     std::string type("CHAMPMAT");
     CALLO_RSADPA_ZK8_WRAP( getName(), &rang, mater->getName(), type );
@@ -67,6 +79,7 @@ void ResultsContainerInstance::addMaterialOnMesh( const MaterialOnMeshPtr& mater
 void ResultsContainerInstance::addModel( const ModelPtr& model,
                                          int rank ) throw ( std::runtime_error )
 {
+    _mapModel[rank] = model;
     long rang = rank;
     std::string type("MODELE");
     CALLO_RSADPA_ZK8_WRAP( getName(), &rang, model->getName(), type );

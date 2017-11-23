@@ -87,8 +87,9 @@ void DataStructure::debugPrint( int logicalUnit ) const
     ipos = 1;
     JeveuxString< 1 > base( " " );
     JeveuxString< 3 > no( "NON" );
+    std::string nameWithoutBlanks = trim( _name );
     try {
-        CALLO_UTIMSD( &unit, &niveau, &False, &True, this->getName(),
+        CALLO_UTIMSD( &unit, &niveau, &False, &True, nameWithoutBlanks,
                       &ipos, base, no );
     }
     catch (...)

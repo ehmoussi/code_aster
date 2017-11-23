@@ -47,6 +47,14 @@ class Glossary
         typedef MapStrInt::iterator MapStrIntIter;
 
         MapStrInt _strToInt;
+        MapStrInt _memManagement;
+        MapStrInt _renum;
+        MapStrInt _precond;
+        MapStrInt _lagrTreatment;
+        MapStrInt _matrTyp;
+        MapStrInt _algo;
+        MapStrInt _post;
+        MapStrInt _acce;
 
     public:
         /**
@@ -75,6 +83,53 @@ class Glossary
         };
 
         /**
+         * @brief getIterativeSolverAlgorithm
+         */
+        IterativeSolverAlgorithm getIterativeSolverAlgorithm( std::string searchMod )
+            throw( std::runtime_error )
+        {
+            MapStrIntIter curIter = _algo.find( searchMod );
+            if( curIter == _algo.end() )
+                throw std::runtime_error( "Unknown iterative solver algorithm" );
+            return ( IterativeSolverAlgorithm )( curIter->second );
+        };
+
+        /**
+         * @brief getLagrangeTreatment
+         */
+        LagrangeTreatment getLagrangeTreatment( std::string searchMod )
+            throw( std::runtime_error )
+        {
+            MapStrIntIter curIter = _lagrTreatment.find( searchMod );
+            if( curIter == _lagrTreatment.end() )
+                throw std::runtime_error( "Unknown Lagrange treatment" );
+            return ( LagrangeTreatment )( curIter->second );
+        };
+
+        /**
+         * @brief getMatrixType
+         */
+        MatrixType getMatrixType( std::string searchMod ) throw( std::runtime_error )
+        {
+            MapStrIntIter curIter = _matrTyp.find( searchMod );
+            if( curIter == _matrTyp.end() )
+                throw std::runtime_error( "Unknown matrix type" );
+            return ( MatrixType )( curIter->second );
+        };
+
+        /**
+         * @brief getMemoryManagement
+         */
+        MemoryManagement getMemoryManagement( std::string searchMod )
+            throw( std::runtime_error )
+        {
+            MapStrIntIter curIter = _memManagement.find( searchMod );
+            if( curIter == _memManagement.end() )
+                throw std::runtime_error( "Unknown memory management" );
+            return ( MemoryManagement )( curIter->second );
+        };
+
+        /**
          * @brief getModeling
          * @param searchMod Nom d'une physique dans le fichier de commande
          * @return une valeur dans l'enum Modelings
@@ -85,6 +140,30 @@ class Glossary
             if( curIter == _strToInt.end() )
                 throw std::runtime_error( "Unknown modeling" );
             return ( Modelings )( curIter->second );
+        };
+
+        /**
+         * @brief getMumpsAcceleration
+         */
+        MumpsAcceleration getMumpsAcceleration( std::string searchMod )
+            throw( std::runtime_error )
+        {
+            MapStrIntIter curIter = _acce.find( searchMod );
+            if( curIter == _acce.end() )
+                throw std::runtime_error( "Unknown acceleration" );
+            return ( MumpsAcceleration )( curIter->second );
+        };
+
+        /**
+         * @brief getMumpsPostTreatment
+         */
+        MumpsPostTreatment getMumpsPostTreatment( std::string searchMod )
+            throw( std::runtime_error )
+        {
+            MapStrIntIter curIter = _post.find( searchMod );
+            if( curIter == _post.end() )
+                throw std::runtime_error( "Unknown post treatment" );
+            return ( MumpsPostTreatment )( curIter->second );
         };
 
         /**
@@ -107,8 +186,8 @@ class Glossary
          */
         Renumbering getRenumbering( std::string searchRenum ) throw( std::runtime_error )
         {
-            MapStrIntIter curIter = _strToInt.find( searchRenum );
-            if( curIter == _strToInt.end() )
+            MapStrIntIter curIter = _renum.find( searchRenum );
+            if( curIter == _renum.end() )
                 throw std::runtime_error( "Unknown renumbering" );
             return ( Renumbering )( curIter->second );
         };
@@ -118,10 +197,11 @@ class Glossary
          * @param searchPrecond Nom d'un solveur dans le fichier de commande
          * @return une valeur dans l'enum Preconditioning
          */
-        Preconditioning getPreconditioning( std::string searchPrecond ) throw( std::runtime_error )
+        Preconditioning getPreconditioning( std::string searchPrecond )
+            throw( std::runtime_error )
         {
-            MapStrIntIter curIter = _strToInt.find( searchPrecond );
-            if( curIter == _strToInt.end() )
+            MapStrIntIter curIter = _precond.find( searchPrecond );
+            if( curIter == _precond.end() )
                 throw std::runtime_error( "Unknown preconditioning" );
             return ( Preconditioning )( curIter->second );
         };
