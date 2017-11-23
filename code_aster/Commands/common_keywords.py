@@ -46,12 +46,19 @@ def create_solver(solver_keyword):
     if not solver_keyword:
         return None
     for key, value in solver_keyword.iteritems():
-        if key not in ("METHODE", "RENUM", "PRE_COND", "RESI_RELA"):
+        if key not in ("METHODE", "RENUM", "PRE_COND", "RESI_RELA",
+                       "STOP_SINGULIER", "ELIM_LAGR", "TYPE_RESOL",
+                       "MATR_DISTRIBUEE", "GESTION_MEMOIRE",
+                       "LOW_RANK_SEUIL", "NPREC", "PCENT_PIVOT",
+                       "PRETRAITEMENTS", "ALGORITHME",
+                       "FILTRAGE_MATRICE", "LOW_RANK_TAILLE"
+                       "MIXER_PRECISION", "NIVE_REMPLISSAGE",
+                       "NMAX_ITER", "REAC_PRECOND", "RESI_RELA_PC",
+                       "POSTTRAITEMENTS", "ACCELERATION"):
             unsupported(solver_keyword, "", key, warning=True)
+
     method = solver_keyword["METHODE"]
     renum = solver_keyword["RENUM"]
-    precond = solver_keyword["PRE_COND"]
-    resiRela = solver_keyword["RESI_RELA"]
 
     glossary = getGlossary()
     solverInt = glossary.getSolver(method)
@@ -66,9 +73,87 @@ def create_solver(solver_keyword):
     else:
         solver = None
 
-    if precond != None:
-        precondInt = glossary.getPreconditioning(precond)
+    if solver_keyword.has_key("PRE_COND"):
+        precondInt = glossary.getPreconditioning(solver_keyword["PRE_COND"])
         solver.setPreconditioning(precondInt)
-    if resiRela != None:
-        solver.setSolverResidual(resiRela)
+
+    if solver_keyword.has_key("RESI_RELA"):
+        solver.setSolverResidual(solver_keyword["RESI_RELA"])
+
+    if solver_keyword.has_key("STOP_SINGULIER"):
+        value = True
+        if solver_keyword["STOP_SINGULIER"] == "NON":
+            value = False
+        solver.setErrorOnMatrixSingularity(value)
+
+    if solver_keyword.has_key("ELIM_LAGR"):
+        value = glossary.getLagrangeTreatment(solver_keyword["ELIM_LAGR"])
+        solver.setLagrangeElimination(value)
+
+    if solver_keyword.has_key("TYPE_RESOL"):
+        value = glossary.getMatrixType(solver_keyword["TYPE_RESOL"])
+        solver.setMatrixType(value)
+
+    if solver_keyword.has_key("MATR_DISTRIBUEE"):
+        value = True
+        if solver_keyword["MATR_DISTRIBUEE"] == "NON":
+            value = False
+        solver.setDistributedMatrix(value)
+
+    if solver_keyword.has_key("GESTION_MEMOIRE"):
+        value = glossary.getMemoryManagement(solver_keyword["GESTION_MEMOIRE"])
+        solver.setMemoryManagement(value)
+
+    if solver_keyword.has_key("LOW_RANK_TAILLE"):
+        solver.setLowRankSize(solver_keyword["LOW_RANK_TAILLE"])
+
+    if solver_keyword.has_key("LOW_RANK_SEUIL"):
+        solver.setLowRankThreshold(solver_keyword["LOW_RANK_SEUIL"])
+
+    if solver_keyword.has_key("NPREC"):
+        solver.setSingularityDetectionThreshold(solver_keyword["NPREC"])
+
+    if solver_keyword.has_key("PCENT_PIVOT"):
+        solver.setPivotingMemory(solver_keyword["PCENT_PIVOT"])
+
+    if solver_keyword.has_key("PRETRAITEMENTS"):
+        if solver_keyword["PRETRAITEMENTS"] == "SANS":
+            solver.disablePreprocessing()
+
+    if solver_keyword.has_key("ALGORITHME"):
+        value = glossary.getIterativeSolverAlgorithm(solver_keyword["ALGORITHME"])
+        solver.setAlgorithm(value)
+
+    if solver_keyword.has_key("FILTRAGE_MATRICE"):
+        solver.setMatrixFilter(solver_keyword["FILTRAGE_MATRICE"])
+
+    if solver_keyword.has_key("MIXER_PRECISION"):
+        value = True
+        if solver_keyword["MIXER_PRECISION"] == "NON":
+            value = False
+        solver.setPrecisionMix(value)
+
+    if solver_keyword.has_key("REMPLISSAGE"):
+        solver.setFilling(solver_keyword["REMPLISSAGE"])
+
+    if solver_keyword.has_key("NIVE_REMPLISSAGE"):
+        solver.setFillingLevel(solver_keyword["NIVE_REMPLISSAGE"])
+
+    if solver_keyword.has_key("NMAX_ITER"):
+        solver.setMaximumNumberOfIteration(solver_keyword["NMAX_ITER"])
+
+    if solver_keyword.has_key("REAC_PRECOND"):
+        solver.setUpdatePreconditioningParameter(solver_keyword["REAC_PRECOND"])
+
+    if solver_keyword.has_key("RESI_RELA_PC"):
+        solver.setPreconditioningResidual(solver_keyword["RESI_RELA_PC"])
+
+    if solver_keyword.has_key("POSTTRAITEMENTS"):
+        value = glossary.getMumpsPostTreatment(solver_keyword["POSTTRAITEMENTS"])
+        solver.setPostTreatment(value)
+
+    if solver_keyword.has_key("ACCELERATION"):
+        value = glossary.getMumpsAcceleration(solver_keyword["ACCELERATION"])
+        solver.setAcceleration(value)
+
     return solver

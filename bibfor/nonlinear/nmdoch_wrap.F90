@@ -1,4 +1,4 @@
-subroutine nmdoch_wrap(list_load0, l_load_user0, list_load_resu0)
+subroutine nmdoch_wrap(list_load0, l_load_user0, list_load_resu0, base)
 !
 implicit none
 !
@@ -27,6 +27,7 @@ implicit none
     integer :: l_load_user0
     character(len=*) :: list_load0
     character(len=*) :: list_load_resu0
+    character(len=*) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -51,5 +52,5 @@ implicit none
     l_load_user = int_to_logical(l_load_user0)
     list_load = list_load0
     list_load_resu = list_load_resu0
-    call nmdoch(list_load, l_load_user, list_load_resu)
+    call nmdoch(list_load, l_load_user, list_load_resu, base)
 end subroutine

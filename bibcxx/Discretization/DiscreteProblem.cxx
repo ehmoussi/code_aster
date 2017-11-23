@@ -119,12 +119,16 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryNeumannVector( const
     std::string resultName( retour->getName() );
     std::string materName( curMater->getName() + "                " );
 
+    std::string caraName( blanc );
+    const auto& caraElem = _study->getElementaryCharacteristics();
+    if( caraElem != nullptr ) caraName = caraElem->getName();
+
     // CORICH appel getres
     CommandSyntax cmdSt( "MECA_STATIQUE" );
     cmdSt.setResult( resultName, "AUCUN" );
 
     CALLO_VECHME_WRAP( stop, modelName, nameLcha, nameInfc, &inst,
-                       blanc, materName, retour->getName(), blanc );
+                       caraName, materName, retour->getName(), blanc );
     retour->setEmpty( false );
 
     retour->setListOfLoads( _study->getListOfLoads() );
@@ -152,6 +156,10 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix( doub
     long thm = 0;
     CALLO_RCMFMC_WRAP( materName, mate, &thm );
 
+    std::string caraName( blanc );
+    const auto& caraElem = _study->getElementaryCharacteristics();
+    if( caraElem != nullptr ) caraName = caraElem->getName();
+
     // MERIME appel getres
     CommandSyntax cmdSt( "MECA_STATIQUE" );
     cmdSt.setResult( "AUCUN", "AUCUN" );
@@ -161,7 +169,7 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix( doub
     // const JeveuxVectorChar24 loads = jvListOfLoads->getDataPtr();
 
     CALLO_MERIME_WRAP( modelName, &nbLoad, *(jvListOfLoads->getDataPtr()),
-                       mate, blanc, &time,
+                       mate, caraName, &time,
                        blanc, retour->getName(), &nh, JeveuxMemoryTypesNames[0] );
 
     retour->setEmpty( false );

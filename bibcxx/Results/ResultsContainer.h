@@ -60,6 +60,15 @@ private:
     /** @typedef Valeur contenue dans mapStrVOFN */
     typedef mapStrVOFN::value_type mapStrVOFNValue;
 
+    /** @typedef std::map du rang et des pointers vers ElementaryCharacteristicsPtr */
+    typedef std::map< int, ElementaryCharacteristicsPtr > mapRankCaraElem;
+    /** @typedef std::map du rang et des pointers vers ListOfLoadsPtr */
+    typedef std::map< int, ListOfLoadsPtr > mapRankLoads;
+    /** @typedef std::map du rang et des pointers vers MaterialOnMeshPtr */
+    typedef std::map< int, MaterialOnMeshPtr > mapRankMaterial;
+    /** @typedef std::map du rang et des pointers vers ModelPtr */
+    typedef std::map< int, ModelPtr > mapRankModel;
+
     /** @typedef std::map d'une chaine et des pointers vers toutes les DataStructure */
     typedef std::map< std::string, VectorOfFieldsElements > mapStrVOFE;
     /** @typedef Iterateur sur le std::map */
@@ -82,11 +91,19 @@ private:
     int                          _nbRanks;
 
     /** @brief Liste des champs aux noeuds */
-    mapStrVOFN                           _dictOfVectorOfFieldsNodes;
+    mapStrVOFN                         _dictOfVectorOfFieldsNodes;
     /** @brief Liste des champs aux éléments */
-    mapStrVOFE                           _dictOfVectorOfFieldsElements;
+    mapStrVOFE                         _dictOfVectorOfFieldsElements;
     /** @brief Liste des NUME_DDL */
-    std::vector< BaseDOFNumberingPtr >   _listOfDOFNum;
+    std::vector< BaseDOFNumberingPtr > _listOfDOFNum;
+    /** @brief List of ElementaryCharacteristicsPtr */
+    mapRankCaraElem                    _mapElemCara;
+    /** @brief List of ListOfLoadsPtr */
+    mapRankLoads                       _mapLoads;
+    /** @brief List of MaterialOnMeshPtr */
+    mapRankMaterial                    _mapMaterial;
+    /** @brief List of ModelPtr */
+    mapRankModel                       _mapModel;
 
 public:
     /**
@@ -200,6 +217,12 @@ public:
     {
         return _listOfDOFNum[ _listOfDOFNum.size() - 1 ];
     };
+
+    /**
+     * @brief Add elementary characteristics to container
+     * @param rank
+     */
+    ListOfLoadsPtr getListOfLoads( int rank ) throw ( std::runtime_error );
 
     /**
      * @brief Obtenir un champ aux noeuds réel à partir de son nom et de son numéro d'ordre

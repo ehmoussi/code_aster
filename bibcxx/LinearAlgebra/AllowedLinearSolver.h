@@ -103,4 +103,22 @@ enum MatrixType { NonSymetric, Symetric, SymetricPositiveDefinite, Undefined };
 const int nbMatrixTypes = 4;
 extern const char* MatrixTypeNames[nbMatrixTypes];
 
+/**
+ * @enum MumpsPosttreatment
+ * @author Nicolas Sellenet
+ */
+enum MumpsPostTreatment { WithoutPostTreatment, AutomaticPostTreatment,
+                          ForcedPostTreatment, MinimalPostTreatment };
+const int nbMumpsPostTreatments = 4;
+extern const char* MumpsPostTreatmentNames[nbMumpsPostTreatments];
+
+/**
+ * @enum MumpsAcceleration
+ * @author Nicolas Sellenet
+ */
+enum MumpsAcceleration { AutomaticAcceleration, FullRank, FullRankPlus,
+                         LowRank, LowRankPlus };
+const int nbMumpsAcceleration = 5;
+extern const char* MumpsAccelerationNames[nbMumpsAcceleration];
+
 #endif /* ALLOWEDLINEARSOLVER_H_ */

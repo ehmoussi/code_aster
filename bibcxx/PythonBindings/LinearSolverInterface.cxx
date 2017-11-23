@@ -95,7 +95,20 @@ void exportLinearSolverToPython()
         .value( "Undefined", Undefined )
         ;
 
+    enum_< MumpsPostTreatment >( "MumpsPostTreatment" )
+        .value( "WithoutPostTreatment", WithoutPostTreatment )
+        .value( "AutomaticPostTreatment", AutomaticPostTreatment )
+        .value( "ForcedPostTreatment", ForcedPostTreatment )
+        .value( "MinimalPostTreatment", MinimalPostTreatment )
+        ;
 
+    enum_< MumpsAcceleration >( "MumpsAcceleration" )
+        .value( "AutomaticAcceleration", AutomaticAcceleration )
+        .value( "FullRank", FullRank )
+        .value( "FullRankPlus", FullRankPlus )
+        .value( "LowRank", LowRank )
+        .value( "LowRankPlus", LowRankPlus )
+        ;
 
     class_< BaseLinearSolverInstance, BaseLinearSolverInstance::BaseLinearSolverPtr,
             bases< DataStructure > > ( "BaseLinearSolver", no_init )
@@ -109,6 +122,7 @@ void exportLinearSolverToPython()
         .def( "setDistributedMatrix", &BaseLinearSolverInstance::setDistributedMatrix )
         .def( "setErrorOnMatrixSingularity",
               &BaseLinearSolverInstance::setErrorOnMatrixSingularity )
+        .def( "setFilling", &BaseLinearSolverInstance::setFilling )
         .def( "setFillingLevel", &BaseLinearSolverInstance::setFillingLevel )
         .def( "setLagrangeElimination", &BaseLinearSolverInstance::setLagrangeElimination )
         .def( "setLowRankSize", &BaseLinearSolverInstance::setLowRankSize )
@@ -118,10 +132,13 @@ void exportLinearSolverToPython()
         .def( "setMaximumNumberOfIteration",
               &BaseLinearSolverInstance::setMaximumNumberOfIteration )
         .def( "setMemoryManagement", &BaseLinearSolverInstance::setMemoryManagement )
+        .def( "setPivotingMemory", &BaseLinearSolverInstance::setPivotingMemory )
         .def( "setPrecisionMix", &BaseLinearSolverInstance::setPrecisionMix )
         .def( "setPreconditioning", &BaseLinearSolverInstance::setPreconditioning )
         .def( "setPreconditioningResidual",
               &BaseLinearSolverInstance::setPreconditioningResidual )
+        .def( "setSingularityDetectionThreshold",
+              &BaseLinearSolverInstance::setSingularityDetectionThreshold )
         .def( "setSolverResidual", &BaseLinearSolverInstance::setSolverResidual )
         .def( "setUpdatePreconditioningParameter",
               &BaseLinearSolverInstance::setUpdatePreconditioningParameter )
@@ -173,6 +190,8 @@ void exportLinearSolverToPython()
             &initFactoryPtr< MumpsSolverInstance,
                              std::string,
                              Renumbering >) )
+        .def( "setAcceleration", &BaseLinearSolverInstance::setAcceleration )
+        .def( "setPostTreatment", &BaseLinearSolverInstance::setPostTreatment )
     ;
 
     class_< PetscSolverInstance, PetscSolverPtr,

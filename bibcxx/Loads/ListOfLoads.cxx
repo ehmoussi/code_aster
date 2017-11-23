@@ -83,7 +83,8 @@ bool ListOfLoadsInstance::build() throw ( std::runtime_error )
     name.resize( 19, ' ' );
     std::string blank( " " );
     blank.resize( 19, ' ' );
-    CALLO_NMDOCH_WRAP( name, &iexcit, blank );
+    std::string base( JeveuxMemoryTypesNames[ (int)getMemoryType() ] );
+    CALLO_NMDOCH_WRAP( name, &iexcit, blank, base );
     _isEmpty = false;
     return true;
 };
