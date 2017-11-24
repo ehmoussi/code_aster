@@ -76,9 +76,7 @@ class StaticMechanicalAlgorithm: public GenericUnitaryAlgorithm< Stepper >
             _rank( 0 ),
             _aMatrix( new AssemblyMatrixDoubleInstance( Temporary ) ),
             _isConst( _discreteProblem->getStudyDescription()->getCodedMaterial()->constant() )
-        {
-            
-        };
+        {};
 
         /**
          * @brief Avancer d'un pas dans un algorithme
@@ -113,7 +111,6 @@ void StaticMechanicalAlgorithm< Stepper >::oneStep() throw( AlgoException& )
 
         // Matrix factorization
         _linearSolver->matrixFactorization( _aMatrix );
-        _aMatrix->debugPrint(6);
     }
 
     // Build Dirichlet loads
