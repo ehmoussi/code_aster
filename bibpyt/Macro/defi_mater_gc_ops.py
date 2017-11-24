@@ -425,7 +425,7 @@ def Endo_Fiss_Exp(DMATER,args):
     return mclef
 
 
-def defi_mater_gc_ops(self, MAZARS, ACIER, ENDO_FISS_EXP, **args):
+def defi_mater_gc_ops(self, MAZARS=None, ACIER=None, ENDO_FISS_EXP=None, **args):
     """
     C'est : un parmi : ACIER  MAZARS  ENDO_FISS_EXP
     """
@@ -446,3 +446,4 @@ def defi_mater_gc_ops(self, MAZARS, ACIER, ENDO_FISS_EXP, **args):
         mclef = Endo_Fiss_Exp(ENDO_FISS_EXP[0], args)
     # Définition du matériau
     Materiau = DEFI_MATERIAU(**mclef)
+    return Materiau
