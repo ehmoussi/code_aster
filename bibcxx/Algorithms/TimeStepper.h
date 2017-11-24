@@ -102,6 +102,7 @@ class TimeStepperInstance: public DataStructure, public GenericStepper
             inline const_iterator& operator++()
             {
                 ++position;
+                ++rank;
                 return *this;
             };
 
@@ -166,7 +167,7 @@ class TimeStepperInstance: public DataStructure, public GenericStepper
          * @brief Fonction permettant de connaître le nombre de pas de temps
          * @return nombre de pas de temps
          */
-        bool size() const
+        long size() const
         {
             return _values->size();
         };

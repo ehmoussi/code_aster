@@ -31,6 +31,7 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "Modeling/Model.h"
 #include "Materials/MaterialOnMesh.h"
+#include "Materials/CodedMaterial.h"
 #include "Loads/MechanicalLoad.h"
 #include "Loads/KinematicsLoad.h"
 #include "Loads/ListOfLoads.h"
@@ -53,6 +54,8 @@ class StudyDescriptionInstance
         ListOfLoadsPtr               _listOfLoads;
         /** @brief Liste des chargements */
         ElementaryCharacteristicsPtr _elemChara;
+        /** @brief coded material */
+        CodedMaterialPtr             _codedMater;
 
     public:
         /**
@@ -65,7 +68,8 @@ class StudyDescriptionInstance
             _supportModel( curModel ),
             _materialOnMesh( curMat ),
             _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) ),
-            _elemChara( ElementaryCharacteristicsPtr( nullptr ) )
+            _elemChara( ElementaryCharacteristicsPtr( nullptr ) ),
+            _codedMater( new CodedMaterialInstance( _materialOnMesh, _supportModel ) )
         {};
 
         ~StudyDescriptionInstance()
@@ -96,6 +100,14 @@ class StudyDescriptionInstance
         const ElementaryCharacteristicsPtr& getElementaryCharacteristics() const
         {
             return _elemChara;
+        };
+
+        /**
+         * @brief Get the build coded material
+         */
+        const CodedMaterialPtr& getCodedMaterial() const
+        {
+            return _codedMater;
         };
 
         /**

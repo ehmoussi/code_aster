@@ -150,11 +150,8 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix( doub
     std::string blanc( 24, ' ' );
     std::string modelName = curModel->getName();
     modelName.resize(24, ' ');
-    std::string materName = curMater->getName();
-    materName.resize(24, ' ');
-    std::string mate = blanc;
-    long thm = 0;
-    CALLO_RCMFMC_WRAP( materName, mate, &thm );
+
+    const auto& codedMater = _study->getCodedMaterial()->getCodedMaterialField();
 
     std::string caraName( blanc );
     const auto& caraElem = _study->getElementaryCharacteristics();
@@ -165,11 +162,9 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix( doub
     cmdSt.setResult( "AUCUN", "AUCUN" );
 
     long nh = 0;
-    // jvListOfLoads->getDataPtr()->c_str()
-    // const JeveuxVectorChar24 loads = jvListOfLoads->getDataPtr();
 
     CALLO_MERIME_WRAP( modelName, &nbLoad, *(jvListOfLoads->getDataPtr()),
-                       mate, caraName, &time,
+                       codedMater->getName(), caraName, &time,
                        blanc, retour->getName(), &nh, JeveuxMemoryTypesNames[0] );
 
     retour->setEmpty( false );

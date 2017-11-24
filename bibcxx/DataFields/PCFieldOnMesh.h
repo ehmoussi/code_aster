@@ -275,20 +275,20 @@ class PCFieldOnMeshInstance: public DataStructure
          * @param name Nom Jeveux de la carte
          * @param mesh Maillage support
          */
-        PCFieldOnMeshInstance( const std::string& name, const BaseMeshPtr& mesh ):
-            DataStructure( name, 19, "CART_" ),
-            _meshName( JeveuxVectorChar8( name + ".NOMA" ) ),
-            _descriptor( JeveuxVectorLong( name + ".DESC" ) ),
-            _nameOfLigrels( JeveuxVectorChar24( name + ".NOLI" ) ),
-            _listOfMeshElements( JeveuxCollectionLong( name + ".LIMA" ) ),
-            _valuesList( JeveuxVector<ValueType>( name + ".VALE" ) ),
+        PCFieldOnMeshInstance( const std::string& name, const BaseMeshPtr& mesh,
+                               const JeveuxMemory memType = Permanent ):
+            DataStructure( name, 19, "CART_", memType ),
+            _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
+            _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
+            _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
+            _listOfMeshElements( JeveuxCollectionLong( getName() + ".LIMA" ) ),
+            _valuesList( JeveuxVector<ValueType>( getName() + ".VALE" ) ),
             _supportMesh( mesh ),
             _FEDesc( FiniteElementDescriptorPtr() ),
             _isAllocated( false ),
-            _componentNames( name + ".NCMP" ),
-            _valuesListTmp( name + ".VALV" )
-        {
-        };
+            _componentNames( getName() + ".NCMP" ),
+            _valuesListTmp( getName() + ".VALV" )
+        {};
 
         /**
          * @brief Constructeur
@@ -296,20 +296,20 @@ class PCFieldOnMeshInstance: public DataStructure
          * @param ligrel Ligrel support
          */
         PCFieldOnMeshInstance( std::string name,
-                               const FiniteElementDescriptorPtr& ligrel ):
-            DataStructure( name, 19, "CART_" ),
-            _meshName( JeveuxVectorChar8( name + ".NOMA" ) ),
-            _descriptor( JeveuxVectorLong( name + ".DESC" ) ),
-            _nameOfLigrels( JeveuxVectorChar24( name + ".NOLI" ) ),
-            _listOfMeshElements( JeveuxCollectionLong( name + ".LIMA" ) ),
-            _valuesList( JeveuxVector<ValueType>( name + ".VALE" ) ),
+                               const FiniteElementDescriptorPtr& ligrel,
+                               const JeveuxMemory memType = Permanent ):
+            DataStructure( name, 19, "CART_", memType ),
+            _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
+            _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
+            _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
+            _listOfMeshElements( JeveuxCollectionLong( getName() + ".LIMA" ) ),
+            _valuesList( JeveuxVector<ValueType>( getName() + ".VALE" ) ),
             _supportMesh( ligrel->getSupportMesh() ),
             _FEDesc( ligrel ),
             _isAllocated( false ),
-            _componentNames( name + ".NCMP" ),
-            _valuesListTmp( name + ".VALV" )
-        {
-        };
+            _componentNames( getName() + ".NCMP" ),
+            _valuesListTmp( getName() + ".VALV" )
+        {};
 
         /**
          * @brief Constructeur
@@ -329,8 +329,7 @@ class PCFieldOnMeshInstance: public DataStructure
             _isAllocated( false ),
             _componentNames( getName() + ".NCMP" ),
             _valuesListTmp( getName() + ".VALV" )
-        {
-        };
+        {};
 
         /**
          * @brief Constructeur
@@ -350,8 +349,7 @@ class PCFieldOnMeshInstance: public DataStructure
             _isAllocated( false ),
             _componentNames( getName() + ".NCMP" ),
             _valuesListTmp( getName() + ".VALV" )
-        {
-        };
+        {};
 
         typedef boost::shared_ptr< PCFieldOnMeshInstance< ValueType > > PCFieldOnMeshValueTypePtr;
 

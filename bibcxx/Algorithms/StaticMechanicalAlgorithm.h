@@ -42,17 +42,21 @@ class StaticMechanicalAlgorithm: public GenericUnitaryAlgorithm< Stepper >
 {
     private:
         /** @brief Problème discret */
-        DiscreteProblemPtr  _discreteProblem;
+        DiscreteProblemPtr      _discreteProblem;
         /** @brief Solveur linéaire */
-        BaseLinearSolverPtr _linearSolver;
+        BaseLinearSolverPtr     _linearSolver;
         /** @brief Sd de stockage des résultats */
-        ResultsContainerPtr _results;
+        ResultsContainerPtr     _results;
         /** @brief Chargements */
-        ListOfLoadsPtr      _listOfLoads;
+        ListOfLoadsPtr          _listOfLoads;
         /** @brief Pas de temps courant */
-        double              _time;
+        double                  _time;
         /** @brief rank */
-        int                 _rank;
+        int                     _rank;
+        /** @brief Assembly matrix */
+        AssemblyMatrixDoublePtr _aMatrix;
+        /** @brief Are elastic properties constant */
+        bool                    _isConst;
 
     public:
         /**
@@ -69,8 +73,12 @@ class StaticMechanicalAlgorithm: public GenericUnitaryAlgorithm< Stepper >
             _listOfLoads( _discreteProblem->getStudyDescription()->getListOfLoads() ),
             _results( container ),
             _time( 0. ),
-            _rank( 0 )
-        {};
+            _rank( 0 ),
+            _aMatrix( new AssemblyMatrixDoubleInstance( Temporary ) ),
+            _isConst( _discreteProblem->getStudyDescription()->getCodedMaterial()->constant() )
+        {
+            
+        };
 
         /**
          * @brief Avancer d'un pas dans un algorithme
@@ -92,17 +100,21 @@ void StaticMechanicalAlgorithm< Stepper >::oneStep() throw( AlgoException& )
 {
     BaseDOFNumberingPtr dofNum1 = _results->getLastDOFNumbering();
 
-    ElementaryMatrixPtr matrElem = _discreteProblem->buildElementaryRigidityMatrix( _time );
+    if( _rank == 0 || !_isConst )
+    {
+        ElementaryMatrixPtr matrElem = _discreteProblem->buildElementaryRigidityMatrix( _time );
 
-    // Build assembly matrix
-    AssemblyMatrixDoublePtr aMatrix( new AssemblyMatrixDoubleInstance( Temporary ) );
-    aMatrix->appendElementaryMatrix( matrElem );
-    aMatrix->setDOFNumbering( dofNum1 );
-    aMatrix->setListOfLoads( _listOfLoads );
-    aMatrix->build();
+        // Build assembly matrix
+        _aMatrix->clearElementaryMatrix();
+        _aMatrix->appendElementaryMatrix( matrElem );
+        _aMatrix->setDOFNumbering( dofNum1 );
+        _aMatrix->setListOfLoads( _listOfLoads );
+        _aMatrix->build();
 
-    // Matrix factorization
-    _linearSolver->matrixFactorization( aMatrix );
+        // Matrix factorization
+        _linearSolver->matrixFactorization( _aMatrix );
+        _aMatrix->debugPrint(6);
+    }
 
     // Build Dirichlet loads
     ElementaryVectorPtr vectElem1 = _discreteProblem->buildElementaryDirichletVector( _time );
@@ -129,9 +141,9 @@ void StaticMechanicalAlgorithm< Stepper >::oneStep() throw( AlgoException& )
     FieldOnNodesDoublePtr kineLoadsFON = _discreteProblem->buildKinematicsLoad( dofNum1, _time,
                                                                                 Temporary );
 
-    FieldOnNodesDoublePtr resultField = _results->getEmptyFieldOnNodesDouble( "DEPL", 0 );
+    FieldOnNodesDoublePtr resultField = _results->getEmptyFieldOnNodesDouble( "DEPL", _rank );
 
-    resultField = _linearSolver->solveDoubleLinearSystem( aMatrix, kineLoadsFON,
+    resultField = _linearSolver->solveDoubleLinearSystem( _aMatrix, kineLoadsFON,
                                                           chNoDir, resultField );
 
     /** @todo rajouter un rsadpa */

@@ -75,13 +75,12 @@ class MechanicalSolver(ExecuteCommand):
             mechaSolv.setTimeStepManager(list(inst))
         listInst = keywords.get("LIST_INST")
         if listInst != None:
-            mechaSolv.setTimeStepManager(list(listInst))
+            mechaSolv.setTimeStepManager(listInst.getValues())
 
         caraElem = keywords.get("CARA_ELEM")
         if caraElem != None:
             mechaSolv.setElementaryCharacteristics(caraElem)
 
-        unsupported(keywords, "EXCIT", "FONC_MULT")
         fkw = keywords["EXCIT"]
         if isinstance(fkw, dict):
             self._addLoad(mechaSolv, fkw)
