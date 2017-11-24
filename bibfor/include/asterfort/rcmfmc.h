@@ -21,9 +21,10 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine rcmfmc(chmatz, chmacz, l_thm_)
+    subroutine rcmfmc(chmatz, chmacz, l_thm_, basename)
         character(len=*), intent(in) :: chmatz
         character(len=*), intent(out) :: chmacz
         aster_logical, intent(in), optional :: l_thm_
+        character(len=*), intent(inout), optional :: basename
     end subroutine rcmfmc
 end interface

@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine rcmfmc(chmatz, chmacz, l_thm_)
+subroutine rcmfmc(chmatz, chmacz, l_thm_, basename)
 !
 implicit none
 !
@@ -45,6 +45,7 @@ implicit none
     character(len=*), intent(in) :: chmatz
     character(len=*), intent(out) :: chmacz
     aster_logical, intent(in), optional :: l_thm_
+    character(len=*), intent(inout), optional :: basename
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -77,7 +78,11 @@ implicit none
 !
     chmat  = chmatz
     chemat = chmat//'.CHAMP_MAT'
-    chmace = chmat//'.MATE_CODE'
+    if( present(basename) ) then
+        chmace = basename//'.MATE_CODE'
+    else
+        chmace = chmat//'.MATE_CODE'
+    endif
 !
     if (present(l_thm_)) then
         l_thm = l_thm_

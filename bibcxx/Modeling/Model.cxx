@@ -117,3 +117,17 @@ bool ModelInstance::build() throw ( std::runtime_error )
 
     return buildWithSyntax( dict );
 };
+
+bool ModelInstance::existsThm()
+{
+    const std::string typeco( "MODELE" );
+    long repi = 0, ier = 0;
+    JeveuxChar32 repk(" ");
+    const std::string arret( "C" );
+    const std::string questi( "EXI_THM" );
+
+    CALLO_DISMOI( questi, getName(), typeco, &repi, repk, arret, &ier );
+    auto retour = trim( repk.toString() );
+    if( retour == "OUI" ) return true;
+    return false;
+};

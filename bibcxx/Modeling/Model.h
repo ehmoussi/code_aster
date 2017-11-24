@@ -198,6 +198,12 @@ class ModelInstance: public DataStructure
          */
         virtual bool build() throw ( std::runtime_error );
 
+        /**
+         * @brief Is THM present in model
+         * @return true if thm
+         */
+        bool existsThm();
+
         BaseMeshPtr getSupportMesh() throw ( std::runtime_error )
         {
             if ( ( ! _supportBaseMesh ) || _supportBaseMesh->isEmpty() )

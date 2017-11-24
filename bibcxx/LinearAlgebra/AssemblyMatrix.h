@@ -199,6 +199,14 @@ class AssemblyMatrixInstance: public DataStructure
         };
 
         /**
+         * @brief Clear all ElementaryMatrixPtr
+         */
+        void clearElementaryMatrix()
+        {
+            _elemMatrix.clear();
+        };
+
+        /**
          * @brief Methode permettant de definir la liste de chargement
          * @param lLoads objet de type ListOfLoadsPtr
          */
