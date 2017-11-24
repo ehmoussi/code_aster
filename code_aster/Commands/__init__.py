@@ -78,6 +78,7 @@ from .defi_materiau import DEFI_MATERIAU
 from .defi_nappe import DEFI_NAPPE
 # from .defi_squelette import DEFI_SQUELETTE
 from .defi_spec_turb import DEFI_SPEC_TURB
+from .detruire import DETRUIRE
 from .dyna_vibra import DYNA_VIBRA
 from .extr_table import EXTR_TABLE
 from .factoriser import FACTORISER
