@@ -39,7 +39,7 @@ def configure(self):
     self.env['ADDMEM'] = 900
 
     self.env.append_value('OPT_ENV_FOOTER', [
-        'module load impi/2017.0.098'])
+        'module load mkl/2017.0.098 impi/2017.0.098'])
 
     self.env.prepend_value('LIBPATH', [
         YAMMROOT + '/prerequisites/Parmetis_aster-403_aster/lib',
