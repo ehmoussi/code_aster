@@ -351,4 +351,8 @@ mot-clé COMPORTEMENT pour cette loi.
 """),
 
     58:  _(u"""Le mot-clé '%(k1)s' n'est pas renseigné sous le mot-clé facteur '%(k2)s'."""),
+
+    59:  _(u"""
+La commande CALC_EUROPLEXUS ne peut pas fonctionner en parallèle.
+"""),
 }
