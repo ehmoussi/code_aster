@@ -52,6 +52,7 @@ from .calc_fonc_interp import CALC_FONC_INTERP
 from .calc_matr_elem import CALC_MATR_ELEM
 from .calc_table import CALC_TABLE
 from .calc_vect_elem import CALC_VECT_ELEM
+from .copier import COPIER
 from .crea_champ import CREA_CHAMP
 # from .crea_maillage import CREA_MAILLAGE
 from .crea_resu import CREA_RESU
