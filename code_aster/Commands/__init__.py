@@ -61,6 +61,7 @@ from .debut import DEBUT, POURSUITE
 from .defi_cable_bp import DEFI_CABLE_BP
 from .defi_cable_op import DEFI_CABLE_OP
 from .defi_compor import DEFI_COMPOR
+from .defi_composite import DEFI_COMPOSITE
 from .defi_constante import DEFI_CONSTANTE
 from .defi_fichier import DEFI_FICHIER
 from .defi_fiss_xfem import DEFI_FISS_XFEM
