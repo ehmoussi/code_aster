@@ -63,7 +63,7 @@ subroutine utmess_core(typ, idmess, nk, valk, ni,&
     integer :: numex
 !
     aster_logical :: isFirst=ASTER_TRUE
-    type(Message) :: firstMsg
+    type(Message) :: firstMsg, excMsg
 !
     save             recurs, firstMsg, isFirst
 !
@@ -221,6 +221,7 @@ subroutine utmess_core(typ, idmess, nk, valk, ni,&
             endif
 !
 !           AVERTIR LE PROC #0 QU'ON A RENCONTRE UN PROBLEME !
+            excMsg = firstMsg
             call asmpi_warn(1)
 !
 !           ON REMONTE UNE EXCEPTION AU LIEU DE FERMER LES BASES
@@ -231,8 +232,9 @@ subroutine utmess_core(typ, idmess, nk, valk, ni,&
                 isFirst = ASTER_TRUE
                 call ib1mai()
                 call superv_after(exception=.true.)
-                call uexcep(numex, firstMsg%id, firstMsg%nk, firstMsg%valk, firstMsg%ni,&
-                            firstMsg%vali, firstMsg%nr, firstMsg%valr)
+                call uexcep(numex, excMsg%id, excMsg%nk, excMsg%valk, excMsg%ni,&
+                            excMsg%vali, excMsg%nr, excMsg%valr)
+                call free_message(excMsg)
                 call free_message(firstMsg)
             endif
         else
