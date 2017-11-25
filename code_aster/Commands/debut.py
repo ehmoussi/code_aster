@@ -37,7 +37,7 @@ import aster
 import aster_core
 from Comportement import catalc
 
-from ..RunManager import LogicalUnitFile, Pickler, loadObjects
+from ..RunManager import LogicalUnitFile, Serializer, loadObjects
 from ..Supervis import CommandSyntax, ExecutionParameter, logger
 from ..Supervis.logger import setlevel
 
@@ -125,7 +125,7 @@ class Restarter(Starter):
         Arguments:
             syntax (*CommandSyntax*): Syntax description with user keywords.
         """
-        if not Pickler.canRestart():
+        if not Serializer.canRestart():
             ExecutionStarter.params.set_option("continue", 0)
             super(Restarter, self)._call_oper(syntax)
         else:
