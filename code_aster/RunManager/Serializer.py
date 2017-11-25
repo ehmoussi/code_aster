@@ -45,7 +45,7 @@ from ..Objects import DataStructure, ResultNaming
 from ..Supervis import ExecutionParameter, logger
 
 
-class Pickler(object):
+class Serializer(object):
 
     """This class manages 'save & reload' feature.
 
@@ -197,7 +197,7 @@ def saveObjects(level=1, delete=True):
     if ExecutionParameter().get_option("debug"):
         libaster.debugJeveuxContent("Saved jeveux objects:")
 
-    pickler = Pickler(context)
+    pickler = Serializer(context)
     saved = pickler.save()
     # close Jeveux files (should not be done before pickling)
     libaster.finalize()
@@ -223,7 +223,7 @@ def loadObjects(level=1):
         del caller
     if ExecutionParameter().get_option("debug"):
         libaster.debugJeveuxContent("Reloaded jeveux objects:")
-    Pickler(context).load()
+    Serializer(context).load()
 
 
 def _filteringContext(context):
@@ -238,9 +238,12 @@ def _filteringContext(context):
     Returns:
         dict: New cleaned context.
     """
+    from ..Commands import CO, FIN
     ctxt = {}
     for name, obj in context.items():
         if name in ('code_aster', ) or name.startswith('__'):
+            continue
+        if obj in (CO, FIN):
             continue
         if type(obj) in (types.ModuleType, types.ClassType, types.MethodType):
             continue

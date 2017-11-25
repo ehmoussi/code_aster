@@ -24,4 +24,4 @@ This module gives objects to manage the execution.
 """
 
 from .LogicalUnit import LogicalUnitFile, ReservedUnitUsed
-from .Pickling import Pickler, loadObjects, saveObjects
+from .Serializer import Serializer, loadObjects, saveObjects
