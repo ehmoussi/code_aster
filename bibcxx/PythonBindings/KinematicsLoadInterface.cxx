@@ -79,5 +79,6 @@ void exportKinematicsLoadToPython()
         .def( "addImposedThermalDOFOnNodes", c8 )
         .def( "build", &KinematicsLoadInstance::build )
         .def( "setSupportModel", &KinematicsLoadInstance::setSupportModel )
+        .def( "setType", &KinematicsLoadInstance::setType )
     ;
 };
