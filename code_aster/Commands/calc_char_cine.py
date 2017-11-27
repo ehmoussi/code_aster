@@ -19,13 +19,13 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import KinematicsLoad
+from ..Objects import FieldOnNodesDouble
 from .ExecuteCommand import ExecuteCommand
 
 
-class KinematicsLoadDefinition(ExecuteCommand):
-    """Command that defines :class:`~code_aster.Objects.KinematicsLoad`."""
-    command_name = "AFFE_CHAR_CINE"
+class KinematicsLoadComputation(ExecuteCommand):
+    """Command that computes :class:`~code_aster.Objects.KinematicsLoad`."""
+    command_name = "CALC_CHAR_CINE"
 
     def create_result(self, keywords):
         """Initialize the result.
@@ -33,14 +33,12 @@ class KinematicsLoadDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = KinematicsLoad()
-        self._result.setSupportModel(keywords["MODELE"])
-        if keywords.get( "MECA_IMPO" ) is not None:
-            self._result.setType('CHAR_CINE_MECA')
-        elif keywords.get( "THER_IMPO" ) is not None:
-            self._result.setType('CHAR_CINE_THER')
+        if keywords['CHAR_CINE'][0].getType() == 'CHAR_CINE_MECA':
+            self._result = FieldOnNodesDouble()
+        elif keywords['CHAR_CINE'][0].getType() == 'CHAR_CINE_THER':
+            self._result = FieldOnNodesDouble()
         else:
-            raise NotImplementedError("Must be implemented")
+            raise NotImplementedError("Not implemented yet")
 
 
-AFFE_CHAR_CINE = KinematicsLoadDefinition.run
+CALC_CHAR_CINE = KinematicsLoadComputation.run

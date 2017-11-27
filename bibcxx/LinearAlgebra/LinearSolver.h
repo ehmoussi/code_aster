@@ -414,7 +414,7 @@ class BaseLinearSolverInstance: public DataStructure
         FieldOnNodesDoublePtr solveDoubleLinearSystem( const AssemblyMatrixDoublePtr& currentMatrix,
                                                        const FieldOnNodesDoublePtr& kinematicsField,
                                                        const FieldOnNodesDoublePtr& currentRHS,
-                                                       FieldOnNodesDoublePtr result = FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( "" ) ) ) const;
+                                                       FieldOnNodesDoublePtr result = FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( Permanent ) ) ) const;
 
         void disablePreprocessing() throw ( std::runtime_error )
         {
