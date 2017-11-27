@@ -663,7 +663,7 @@ def crea_mail_lig_coup(dimension, lignes, groups, arcs):
 
 
 #
-def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, UNITE_MAILLAGE, LIGN_COUPE,
+def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
                         NOM_CHAM, MODELE, **args):
     """
        Ecriture de la macro MACR_LIGN_COUPE
@@ -675,6 +675,10 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, UNITE_MAILLAGE, LIGN_COUPE,
     from Utilitai.UniteAster import UniteAster
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
     ier = 0
+
+    # La valeur par défaut n'est pas dans le catalogue, sinon le mot-clé devient
+    # obligatoire dans AsterStudy
+    UNITE_MAILLAGE = args.get("UNITE_MAILLAGE") or 25
 
     # On importe les definitions des commandes a utiliser dans la macro
     LIRE_MAILLAGE = self.get_cmd('LIRE_MAILLAGE')
