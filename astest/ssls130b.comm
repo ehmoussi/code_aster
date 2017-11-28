@@ -104,7 +104,7 @@ DEPLNO=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
 # deplacement impose
 ENCASFIN=AFFE_CHAR_MECA(MODELE=MODELFIN,
                         CHAMNO_IMPO=_F(CHAM_NO=DEPLNO,
-                                       COEF_MULT=1.,),
+                                       COEF_IMPO=1.,),
                         INFO=1);
 
 MECAFIN=MECA_STATIQUE(MODELE=MODELFIN,

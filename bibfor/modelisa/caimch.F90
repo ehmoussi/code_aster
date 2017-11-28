@@ -64,7 +64,7 @@ implicit none
     character(len=16) :: motfac
     character(len=19) :: lisrel, cham19, prchno
     character(len=24) :: noeuma
-    real(kind=8) :: beta, coef_mult
+    real(kind=8) :: beta, coef_impo
     complex(kind=8) :: betac
     integer :: ibid, idcoec, idcoer, idddl,  idimen, idirec
     integer :: idnoeu,  iequa, ino, inocmp, iocc
@@ -152,7 +152,7 @@ implicit none
 ! ---   RECUPERATION DE LA VALEUR DU SECOND MEMBRE DE LA RELATION
 ! ---   LINEAIRE
 !       --------
-        call getvr8(motfac, 'COEF_MULT', iocc=iocc, scal=coef_mult, nbret=nb)
+        call getvr8(motfac, 'COEF_IMPO', iocc=iocc, scal=coef_impo, nbret=nb)
         if (nb .eq. 0) then
             call utmess('F', 'MODELISA2_86')
         endif
@@ -255,7 +255,7 @@ implicit none
                 zk8(idnoeu+k-1) = nomnoe
                 zk8(idddl+k-1) = nomcmp
                 zr(idcoer+k-1) = 1.
-                beta = coef_mult * vale
+                beta = coef_impo * vale
 !
 ! ---       AFFECTATION DE LA RELATION A LA LISTE_RELA  :
 !
