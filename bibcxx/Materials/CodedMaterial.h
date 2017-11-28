@@ -69,6 +69,7 @@ public:
         long thm = 0;
         if( model->existsThm() ) thm = 1;
         CALLO_RCMFMC_WRAP( materName, mate, &thm, getName() );
+        debugPrint(6);
     };
 
     /**
@@ -81,6 +82,7 @@ public:
      */
     PCFieldOnMeshLongPtr getCodedMaterialField() const
     {
+        _field->updateValuePointer();
         return _field;
     };
 };
