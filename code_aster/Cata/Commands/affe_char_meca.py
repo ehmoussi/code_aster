@@ -291,7 +291,7 @@ AFFE_CHAR_MECA=OPER(nom="AFFE_CHAR_MECA",op=   7,sd_prod=char_meca,
              fr=tr("Impose des DDLs aux valeurs d'un concept cham_no_sdaster"),
 #  type de cham_no_sdaster CO()
              CHAM_NO         =SIMP(statut='o',typ=cham_no_sdaster), #CO()
-             COEF_MULT       =SIMP(statut='o',typ='R' ),
+             COEF_IMPO       =SIMP(statut='o',typ='R' ),
              NUME_LAGR       =SIMP(statut='f',typ='TXM',defaut="NORMAL",into=("NORMAL","APRES") ),
            ),
 
@@ -916,6 +916,6 @@ AFFE_CHAR_MECA=OPER(nom="AFFE_CHAR_MECA",op=   7,sd_prod=char_meca,
          INFO            =SIMP(statut='f',typ='I',defaut= 1,into=( 1 , 2) ),
          translation={
             "AFFE_CHAR_MECA": "Assign mechanical load",
-            "EVOL_CHAR": "Pressure from a result", 
+            "EVOL_CHAR": "Pressure from a result",
          }
 )  ;

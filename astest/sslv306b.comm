@@ -73,7 +73,7 @@ deplproj = CREA_CHAMP(
 )
 
 loaddepl = AFFE_CHAR_MECA(
-    CHAMNO_IMPO=_F(CHAM_NO=deplproj, COEF_MULT=2.0), MODELE=model
+    CHAMNO_IMPO=_F(CHAM_NO=deplproj, COEF_IMPO=2.0), MODELE=model
 )
 
 result2 = MECA_STATIQUE(
