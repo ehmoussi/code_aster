@@ -53,7 +53,7 @@ Detailed description
    :members:
    :special-members: __init__
 
-.. automodule:: code_aster.RunManager.Pickling
+.. automodule:: code_aster.RunManager.Serializer
    :show-inheritance:
    :members:
    :special-members: __init__
