@@ -38,28 +38,35 @@ bool GeneralMaterialBehaviourInstance::buildJeveuxVectors( JeveuxVectorComplex& 
     char16Values->allocate( Permanent, 2*nbOfMaterialProperties );
 
     int position = 0;
-    for( ListStringConstIter curIter = _listOfNameOfMaterialProperties.begin();
-         curIter != _listOfNameOfMaterialProperties.end();
-         ++curIter )
-    {
-        mapStrEMPDConstIterator curIter2 = _mapOfDoubleMaterialProperties.find(*curIter);
-
-        std::string nameOfProperty = (*curIter2).second.getName();
-        if( (*curIter2).second.isMandatory() && ! (*curIter2).second.hasValue() )
+    for( auto curIter : _mapOfDoubleMaterialProperties){
+        std::string nameOfProperty = curIter.second.getName();
+        nameOfProperty.resize( 16, ' ' );
+        (*char16Values)[position] = nameOfProperty.c_str();
+        
+        if( curIter.second.hasValue() )
+            (*doubleValues)[position] = curIter.second.getValue();
+        
+        if( curIter.second.isMandatory() && ! curIter.second.hasValue() )
             throw std::runtime_error( "Mandatory material property " + nameOfProperty + " is missing" );
-
-        if( curIter2 != _mapOfDoubleMaterialProperties.end() )
-        {
-            nameOfProperty.resize( 16, ' ' );
-            (*char16Values)[position] = nameOfProperty.c_str();
-
-            if( (*curIter2).second.hasValue() )
-                (*doubleValues)[position] = (*curIter2).second.getValue();
-        }
-        else
-            throw std::runtime_error( "Le parametre materiau doit etre un double" );
+        
         ++position;
     }
-
+    doubleValues->setLonUti(position);
+    complexValues->setLonUti(0);
+    for( auto curIter : _mapOfTableMaterialProperties){
+        std::string nameOfProperty = curIter.second.getName();
+        nameOfProperty.resize( 16, ' ' );
+        (*char16Values)[position] = nameOfProperty.c_str();
+        
+        if( curIter.second.hasValue() )
+            (*char16Values)[position+_mapOfTableMaterialProperties.size()] = curIter.second.getValue()->getName();
+        
+        if( curIter.second.isMandatory() && ! curIter.second.hasValue() )
+            throw std::runtime_error( "Mandatory material property " + nameOfProperty + " is missing" );
+        
+        ++position;
+    }
+    char16Values->setLonUti(position+_mapOfTableMaterialProperties.size());
+    
     return true;
 };

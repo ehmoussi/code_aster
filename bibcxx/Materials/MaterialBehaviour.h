@@ -35,6 +35,7 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "aster_utils.h"
 #include "Functions/Function.h"
+#include "DataFields/Table.h"
 
 extern "C"
 {
@@ -53,6 +54,9 @@ template<> struct AllowedMaterialPropertyType< double >
 {};
 
 template<> struct AllowedMaterialPropertyType< FunctionPtr >
+{};
+
+template<> struct AllowedMaterialPropertyType< TablePtr >
 {};
 
 /**
@@ -165,6 +169,8 @@ class MaterialPropertyInstance: private AllowedMaterialPropertyType< ValueType >
 typedef MaterialPropertyInstance< double > ElementaryMaterialPropertyDouble;
 /** @typedef Definition d'une propriete materiau de type Function */
 typedef MaterialPropertyInstance< FunctionPtr > ElementaryMaterialPropertyFunction;
+/** @typedef Definition d'une propriete materiau de type Function */
+typedef MaterialPropertyInstance< TablePtr > ElementaryMaterialPropertyTable;
 
 /**
  * @class GeneralMaterialBehaviourInstance
@@ -190,6 +196,14 @@ class GeneralMaterialBehaviourInstance
         /** @typedef Valeur contenue dans un mapStrEMPF */
         typedef mapStrEMPF::value_type mapStrEMPFValue;
 
+        /** @typedef std::map d'une chaine et d'un ElementaryMaterialPropertyTable */
+        typedef std::map< std::string, ElementaryMaterialPropertyTable > mapStrEMPT;
+        /** @typedef Iterateur sur mapStrEMPT */
+        typedef mapStrEMPT::iterator mapStrEMPTIterator;
+        typedef mapStrEMPT::const_iterator mapStrEMPTConstIterator;
+        /** @typedef Valeur contenue dans un mapStrEMPT */
+        typedef mapStrEMPT::value_type mapStrEMPTValue;
+
         /** @typedef std::list< std::string > */
         typedef std::list< std::string > ListString;
         typedef ListString::iterator ListStringIter;
@@ -204,6 +218,9 @@ class GeneralMaterialBehaviourInstance
         /** @brief Map contenant les noms des proprietes function ainsi que les
                    MaterialPropertyInstance correspondant */
         mapStrEMPF               _mapOfFunctionMaterialProperties;
+        /** @brief Map contenant les noms des proprietes table ainsi que les
+                   MaterialPropertyInstance correspondant */
+        mapStrEMPT               _mapOfTableMaterialProperties;
         /** @brief Liste contenant tous les noms des parametres materiau */
         ListString               _listOfNameOfMaterialProperties;
 
@@ -257,6 +274,22 @@ class GeneralMaterialBehaviourInstance
         };
 
         /**
+         * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourInstance
+         * @param nameOfProperty Nom de la propriete
+         * @param value Table correspondant a la valeur donnee par l'utilisateur
+         * @return Booleen valant true si la tache s'est bien deroulee
+         */
+        bool setTableValue( std::string nameOfProperty, TablePtr value )
+        {
+            // Recherche de la propriete materielle
+            mapStrEMPTIterator curIter = _mapOfTableMaterialProperties.find(nameOfProperty);
+            if ( curIter ==  _mapOfTableMaterialProperties.end() ) return false;
+            // Ajout de la valeur
+            (*curIter).second.setValue(value);
+            return true;
+        };
+
+        /**
          * @brief Construction du GeneralMaterialBehaviourInstance
          * @return Booleen valant true si la tache s'est bien deroulee
          * @todo vérifier les valeurs réelles par défaut du .VALR
@@ -277,6 +310,13 @@ class GeneralMaterialBehaviourInstance
         bool addFunctionProperty( std::string key, ElementaryMaterialPropertyFunction value )
         {
             _mapOfFunctionMaterialProperties[ key ] = value;
+            _listOfNameOfMaterialProperties.push_back( key );
+            return true;
+        };
+        
+        bool addTableProperty( std::string key, ElementaryMaterialPropertyTable value )
+        {
+            _mapOfTableMaterialProperties[ key ] = value;
             _listOfNameOfMaterialProperties.push_back( key );
             return true;
         };
@@ -4249,7 +4289,7 @@ class MetaAcierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
             _asterName = "META_ACIER";
 
             // Parametres matériau
-            this->addDoubleProperty( "Trc", ElementaryMaterialPropertyDouble( "TRC" , true ) );
+            this->addTableProperty( "Trc", ElementaryMaterialPropertyTable( "TRC" , true ) );
             this->addDoubleProperty( "Ar3", ElementaryMaterialPropertyDouble( "AR3" , true ) );
             this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA" , true ) );
             this->addDoubleProperty( "Ms0", ElementaryMaterialPropertyDouble( "MS0" , true ) );
