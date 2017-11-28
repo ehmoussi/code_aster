@@ -542,6 +542,10 @@ TRAN_GE3=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                         PAS=PAS)
                        )
 
+TABLE=POST_DYNA_MODA_T(  RESU_GENE=TRAN_GE3,
+                        RELA_EFFO_DEPL=_F(  NOEUD = 'N01', NOM_CMP = 'DX') )
+
+
 TRAN_GE4=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                        MATR_MASS=MASS_GEN,   MATR_RIGI=RIGI_GEN,
                         SCHEMA_TEMPS=_F(SCHEMA=METHOD2, PAS_MAXI=PAS),
