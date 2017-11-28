@@ -205,7 +205,7 @@ function lcgtn_compute(resi,rigi,elas, itemax, prec, m, dt, eps, phi, ep, ka, f,
 ! 1. Calcul de Tel* avec une precision prec/10 et tel que 0<G(Te,Te*)<prec/10 (convexite)
 
     ! Borne min
-    tels = max(telq/(1-q1f),1.5d0*m%q2*telh/acosh(1+0.5d0*(1-q1f)**2/q1f))
+    tels = max(telq/(1-q1f),1.5d0*m%q2*abs(telh)/acosh(1+0.5d0*(1-q1f)**2/q1f))
 
     ! Resolution G(Tel,Tel*)=0
     do iteint = 1,itemax
@@ -224,18 +224,24 @@ function lcgtn_compute(resi,rigi,elas, itemax, prec, m, dt, eps, phi, ep, ka, f,
 
     ! Estimation initiale par resolution du probleme de von Mises
     ts = tels
-    do iteint = 1,itemax
-        ka = kam + jac/m%troismu*(tels-ts)
-        equ   = ts - f_ts_hat(ka)
-        if (abs(equ).le.presig) exit
-        d_equ = 1 + jac/m%troismu*dka_ts_hat(ka)
-        ts = utnewt(ts,equ,d_equ,iteint,mem,xmin=0.d0,xmax=tels)
-    end do
-    if (iteint.gt.itemax) then
-        iret = 1
-        goto 999
-    end if        
-
+    
+    if (f_ts_hat(kam+jac/m%troismu*tels) .le. presig) then
+        ! Cas von Mises singulier (possible meme si GTN regulier)
+        ts = 1.5d0*m%q2*abs(telh)/acosh(1+0.5d0*(1-q1f)**2/q1f)
+    else
+        ! Cas von Mises regulier
+        do iteint = 1,itemax
+            ka = kam + jac/m%troismu*(tels-ts)
+            equ   = ts - f_ts_hat(ka)
+            if (abs(equ).le.presig) exit
+            d_equ = 1 + jac/m%troismu*dka_ts_hat(ka)
+            ts = utnewt(ts,equ,d_equ,iteint,mem,xmin=0.d0,xmax=tels)
+        end do
+        if (iteint.gt.itemax) then
+            iret = 1
+            goto 999
+        end if        
+    end if
 
     ! Resolution de M_hat(p(ts),ts) == 0
     do iteext = 1,itemax
@@ -877,7 +883,7 @@ end function bnd_pmin
 real(kind=8) function bnd_pmax(ts)
     real(kind=8)::ts
     real(kind=8)::muk,al,qmx,b,pmax1,pmax2
-    pmax1 = min(1.d0,2*ts/(3*m%q2)*acosh(1+(1-q1f)**2/(2*q1f)))
+    pmax1 = min(1.d0,2*ts/(3*m%q2)/abs(telh)*acosh(1+(1-q1f)**2/(2*q1f)))
     if ((1-q1f)*ts.lt.telq) then
         qmx = ts*(1-q1f)/telq
         muk = m%troismu/m%troisk
