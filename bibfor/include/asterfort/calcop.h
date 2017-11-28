@@ -20,7 +20,7 @@
 !
 interface
     subroutine calcop(option, lisopt, resuin, resuou, lisord,&
-                      nbordr, chtype, typesd, codret)
+                      nbordr, chtype, typesd, codret, base)
         character(len=16) :: option
         character(len=*) :: lisopt
         character(len=8) :: resuin
@@ -30,5 +30,6 @@ interface
         character(len=4) :: chtype
         character(len=16) :: typesd
         integer :: codret
+        character(len=1), optional, intent(in) :: base
     end subroutine calcop
 end interface
