@@ -337,14 +337,16 @@ subroutine lrmmfa(fid, nomamd, nbnoeu, nbmail, grpnoe,&
                 numfam = zi(adfano+ino-1)
                 if( numfam.ne.0 ) then
                     ifam = zi(jv3+numfam-val_min)
-                    ASSERT(ifam.le.nbrfam.and.ifam.ne.0)
-                    jgrp = zi(jadcor+ifam-1)
-                    nbgr = zi(jv4+ifam-1)
-                    do igrp = 1, nbgr
-                        ngro = zi(jgrp+igrp-1)
-                        ASSERT(ngro.le.nbgrno)
-                        zi(jnbnog+ngro-1) = zi(jnbnog+ngro-1) + 1
-                    enddo
+                    if( ifam.ne.0 ) then
+                        ASSERT(ifam.le.nbrfam.and.ifam.ne.0)
+                        jgrp = zi(jadcor+ifam-1)
+                        nbgr = zi(jv4+ifam-1)
+                        do igrp = 1, nbgr
+                            ngro = zi(jgrp+igrp-1)
+                            ASSERT(ngro.le.nbgrno)
+                            zi(jnbnog+ngro-1) = zi(jnbnog+ngro-1) + 1
+                        enddo
+                    endif
                 endif
             enddo
 
@@ -365,16 +367,18 @@ subroutine lrmmfa(fid, nomamd, nbnoeu, nbmail, grpnoe,&
                 numfam = zi(adfano+ino-1)
                 if( numfam.ne.0 ) then
                     ifam = zi(jv3+numfam-val_min)
-                    jgrp = zi(jadcor+ifam-1)
-                    nbgr = zi(jv4+ifam-1)
-                    do igrp = 1, nbgr
-                        ngro = zi(jgrp+igrp-1)
-                        nbno = zi(jnbno+ngro-1)
-                        ASSERT(nbno.le.zi(jnbnog+ngro-1))
-                        jvec = zi(jcolno+ngro-1)
-                        zi(jvec+nbno) = ino
-                        zi(jnbno+ngro-1) = nbno + 1
-                    enddo
+                    if( ifam.ne.0 ) then
+                        jgrp = zi(jadcor+ifam-1)
+                        nbgr = zi(jv4+ifam-1)
+                        do igrp = 1, nbgr
+                            ngro = zi(jgrp+igrp-1)
+                            nbno = zi(jnbno+ngro-1)
+                            ASSERT(nbno.le.zi(jnbnog+ngro-1))
+                            jvec = zi(jcolno+ngro-1)
+                            zi(jvec+nbno) = ino
+                            zi(jnbno+ngro-1) = nbno + 1
+                        enddo
+                    endif
                 endif
             enddo
             call jedetr('&&LRMMFA.COL_NO')
@@ -397,14 +401,16 @@ subroutine lrmmfa(fid, nomamd, nbnoeu, nbmail, grpnoe,&
                         numfam = zi(jfamma(ityp)+ima-1)
                         if( numfam.ne.0 ) then
                             ifam = zi(jv3+numfam-val_min)
-                            ASSERT(ifam.le.nbrfam.and.ifam.ne.0)
-                            jgrp = zi(jadcor+ifam-1)
-                            nbgr = zi(jv4+ifam-1)
-                            do igrp = 1, nbgr
-                                ngro = zi(jgrp+igrp-1)
-                                ASSERT(ngro.le.nbgrma)
-                                zi(jnbnog+ngro-1) = zi(jnbnog+ngro-1) + 1
-                            enddo
+                            if( ifam.ne.0 ) then
+                                ASSERT(ifam.le.nbrfam.and.ifam.ne.0)
+                                jgrp = zi(jadcor+ifam-1)
+                                nbgr = zi(jv4+ifam-1)
+                                do igrp = 1, nbgr
+                                    ngro = zi(jgrp+igrp-1)
+                                    ASSERT(ngro.le.nbgrma)
+                                    zi(jnbnog+ngro-1) = zi(jnbnog+ngro-1) + 1
+                                enddo
+                            endif
                         endif
                     enddo
                 endif
@@ -431,17 +437,19 @@ subroutine lrmmfa(fid, nomamd, nbnoeu, nbmail, grpnoe,&
                         numfam = zi(jfamma(ityp)+ima-1)
                         if( numfam.ne.0 ) then
                             ifam = zi(jv3+numfam-val_min)
-                            jgrp = zi(jadcor+ifam-1)
-                            nbgr = zi(jv4+ifam-1)
-                            nummai = zi(jnumty(ityp)+ima-1)
-                            do igrp = 1, nbgr
-                                ngro = zi(jgrp+igrp-1)
-                                nbma = zi(jnbma+ngro-1)
-                                ASSERT(nbma.le.zi(jnbnog+ngro-1))
-                                jvec = zi(jcolma+ngro-1)
-                                zi(jvec+nbma) = nummai
-                                zi(jnbma+ngro-1) = nbma + 1
-                            enddo
+                            if( ifam.ne.0 ) then
+                                jgrp = zi(jadcor+ifam-1)
+                                nbgr = zi(jv4+ifam-1)
+                                nummai = zi(jnumty(ityp)+ima-1)
+                                do igrp = 1, nbgr
+                                    ngro = zi(jgrp+igrp-1)
+                                    nbma = zi(jnbma+ngro-1)
+                                    ASSERT(nbma.le.zi(jnbnog+ngro-1))
+                                    jvec = zi(jcolma+ngro-1)
+                                    zi(jvec+nbma) = nummai
+                                    zi(jnbma+ngro-1) = nbma + 1
+                                enddo
+                            endif
                         endif
                     enddo
                 endif
