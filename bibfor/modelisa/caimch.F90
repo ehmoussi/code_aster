@@ -64,7 +64,7 @@ implicit none
     character(len=16) :: motfac
     character(len=19) :: lisrel, cham19, prchno
     character(len=24) :: noeuma
-    real(kind=8) :: beta, alpha
+    real(kind=8) :: beta, coef_mult
     complex(kind=8) :: betac
     integer :: ibid, idcoec, idcoer, idddl,  idimen, idirec
     integer :: idnoeu,  iequa, ino, inocmp, iocc
@@ -84,10 +84,7 @@ implicit none
 ! --- INITIALISATIONS :
 !     ---------------
     zero = 0.0d0
-! --- ALPHA EST LE COEFFICIENT REEL DE LA
-! --- RELATION LINEAIRE
-!
-    alpha = 1.0d0
+
 ! --- BETA, BETAC ET BETAF SONT LES VALEURS DU SECOND MEMBRE DE LA
 ! --- RELATION LINEAIRE SUIVANT QUE C'EST UN REEL, UN COMPLEXE OU
 ! --- UNE FONCTION, DANS NOTRE CAS C'EST UN REEL
@@ -155,7 +152,7 @@ implicit none
 ! ---   RECUPERATION DE LA VALEUR DU SECOND MEMBRE DE LA RELATION
 ! ---   LINEAIRE
 !       --------
-        call getvr8(motfac, 'COEF_MULT', iocc=iocc, scal=alpha, nbret=nb)
+        call getvr8(motfac, 'COEF_MULT', iocc=iocc, scal=coef_mult, nbret=nb)
         if (nb .eq. 0) then
             call utmess('F', 'MODELISA2_86')
         endif
@@ -257,8 +254,8 @@ implicit none
                 nomcmp = zk8(inocmp+nucmp-1)
                 zk8(idnoeu+k-1) = nomnoe
                 zk8(idddl+k-1) = nomcmp
-                zr(idcoer+k-1) = alpha
-                beta = vale
+                zr(idcoer+k-1) = 1.
+                beta = coef_mult * vale
 !
 ! ---       AFFECTATION DE LA RELATION A LA LISTE_RELA  :
 !
