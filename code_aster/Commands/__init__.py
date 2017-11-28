@@ -108,6 +108,7 @@ from .meca_statique import MECA_STATIQUE
 from .mode_statique import MODE_STATIQUE
 from .modi_maillage import MODI_MAILLAGE
 from .modi_modele import MODI_MODELE
+from .modi_repere import MODI_REPERE
 from .nume_ddl import NUME_DDL
 # from .nume_ddl_gene import NUME_DDL_GENE
 from .proj_champ import PROJ_CHAMP
