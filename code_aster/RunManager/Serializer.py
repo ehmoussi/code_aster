@@ -39,6 +39,8 @@ import pickle
 import traceback
 import types
 
+import numpy
+
 import libaster
 
 from .. import Objects
@@ -479,7 +481,7 @@ def _filteringContext(context):
     for name, obj in context.items():
         if name in ('code_aster', ) or name.startswith('__'):
             continue
-        if obj in (CO, FIN):
+        if not isinstance(obj, numpy.ndarray) and obj in (CO, FIN):
             continue
         if type(obj) in (types.ModuleType, types.ClassType, types.MethodType):
             continue
