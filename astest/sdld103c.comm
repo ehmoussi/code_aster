@@ -218,6 +218,8 @@ RESPHYA2=DYNA_LINE(MODELE=MODELE,
                    BASE_CALCUL='GENE',
                    ENRI_STAT = 'OUI',
                    ORTHO = 'OUI',
+                   RESU_GENE=CO("TRANMONO"),
+                   BASE_RESU=CO("MODEMONO"),
                    CHARGE=CON_LIM,
                    BANDE_ANALYSE=9.3,
                    SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE',),
@@ -240,20 +242,20 @@ RESPHYA2=DYNA_LINE(MODELE=MODELE,
 L_INST1=DEFI_LIST_REEL(DEBUT=0.,
                       INTERVALLE=_F(JUSQU_A = 1., PAS = 0.1) )
 # #
-# PGP_MOA= POST_GENE_PHYS(RESU_GENE=TRANMONO,
-#                         MODE_MECA=MODE_MEC,
-#                           OBSERVATION=(
-#                                       _F(LIST_INST=L_INST1,
-#                                          NOM_CHAM = 'ACCE_ABSOLU',
-#                                          ACCE_MONO_APPUI=ACCELER1,
-#                                          DIRECTION=( 1., 0., 0., ),
-#                                          NOM_CMP = 'DX',
-#                                          NOEUD = ('NO2'),),
-#                                       _F(LIST_INST=L_INST1,
-#                                          NOM_CHAM = 'ACCE',
-#                                          NOM_CMP = 'DX',
-#                                          NOEUD = ('NO2'),),
-#                         ),)
+PGP_MOA= POST_GENE_PHYS(RESU_GENE=TRANMONO,
+                        MODE_MECA=MODEMONO,
+                          OBSERVATION=(
+                                      _F(LIST_INST=L_INST1,
+                                         NOM_CHAM = 'ACCE_ABSOLU',
+                                         ACCE_MONO_APPUI=ACCELER1,
+                                         DIRECTION=( 1., 0., 0., ),
+                                         NOM_CMP = 'DX',
+                                         NOEUD = ('NO2'),),
+                                      _F(LIST_INST=L_INST1,
+                                         NOM_CHAM = 'ACCE',
+                                         NOM_CMP = 'DX',
+                                         NOEUD = ('NO2'),),
+                        ),)
 #IMPR_TABLE(TABLE=PGP_MOA)
 
 # TEST_TABLE(

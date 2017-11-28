@@ -1431,14 +1431,15 @@ FCT=DEFI_FONCTION(    NOM_PARA='INST',
 
 CERCLE=DEFI_OBSTACLE(  TYPE='CERCLE' )
 
+LISTAMOR = DEFI_LIST_REEL(VALE=(0.01, 0.01, 0.01, 0.01, 0.01,
+                                0.01, 0.01, 0.01, 0.01, 0.01,
+                                0.01, 0.01, 0.01, 0.01, ),)
+
 TRANGEN=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                          SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE',),
                          MATR_MASS=MASSEGEN,
                          MATR_RIGI=RIGIDGEN,
-                         AMOR_MODAL=_F(AMOR_REDUIT=(
-                            0.01, 0.01, 0.01, 0.01, 0.01,
-                            0.01, 0.01, 0.01, 0.01, 0.01,
-                            0.01, 0.01, 0.01, 0.01, ),),
+                         AMOR_MODAL=_F(LIST_AMOR=LISTAMOR),
                          INCREMENT=_F(  INST_INIT = 0.,  INST_FIN = 0.5,
                                           PAS = DT),
                          EXCIT=_F(  VECT_ASSE_GENE = VECTGE1,
