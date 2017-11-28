@@ -59,7 +59,7 @@ implicit none
         call cazocd(sdcont, keywf, i_zone, nb_cont_zone)
     else if (cont_form .eq. 2) then
         call cazocm(sdcont, keywf, i_zone)
-        call cazocc(sdcont, keywf, i_zone)
+        call cazocc(sdcont, keywf, i_zone,nb_cont_zone = nb_cont_zone)
     else if (cont_form .eq. 3) then
         call cazocx(sdcont, model, keywf, i_zone)
     else if (cont_form .eq. 5) then

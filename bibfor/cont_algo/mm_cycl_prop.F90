@@ -58,7 +58,7 @@ implicit none
     real(kind=8) :: pres_frot(3), dist_frot(3)
     aster_logical :: propa, l_frot_zone
     real(kind=8) :: tole_stick, tole_slide
-    integer :: zone_frot, zone_frot_prop,it=0
+    integer :: zone_frot=0, zone_frot_prop=0,it=0
 !
 ! --------------------------------------------------------------------------------------------------
 !

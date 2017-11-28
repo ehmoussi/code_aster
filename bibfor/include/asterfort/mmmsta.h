@@ -24,20 +24,20 @@ interface
     subroutine mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
                       dlagrf, coefaf,  tau1, tau2,&
                       lcont, ladhe, lambda, rese, nrese, l_previous)
-        integer :: ndim
-        aster_logical :: leltf
-        aster_logical :: lpenaf
-        aster_logical :: loptf
-        aster_logical :: l_previous
-        real(kind=8) :: djeut(3)
-        real(kind=8) :: dlagrf(2)
-        real(kind=8) :: coefaf
-        real(kind=8) :: tau1(3)
-        real(kind=8) :: tau2(3)
-        aster_logical :: lcont
-        aster_logical :: ladhe
-        real(kind=8) :: lambda
-        real(kind=8) :: rese(3)
-        real(kind=8) :: nrese
+        integer, intent(in) :: ndim
+        aster_logical, intent(out) :: leltf
+        aster_logical, intent(out) :: lpenaf
+        aster_logical, intent(in) :: loptf
+        aster_logical, intent(in) :: l_previous
+        real(kind=8), intent(in)  :: djeut(3)
+        real(kind=8), intent(in)  :: dlagrf(2)
+        real(kind=8), intent(in)   :: coefaf
+        real(kind=8), intent(in) :: tau1(3)
+        real(kind=8), intent(in) :: tau2(3)
+        aster_logical, intent(out)  :: lcont
+        aster_logical, intent(out) :: ladhe
+        real(kind=8), intent(in)   :: lambda
+        real(kind=8), intent(out)  :: rese(3)
+        real(kind=8), intent(out)  :: nrese
     end subroutine mmmsta
 end interface

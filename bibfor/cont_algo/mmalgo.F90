@@ -52,6 +52,7 @@ implicit none
     integer, intent(in) :: zone_index
     integer, intent(inout) :: indi_cont_eval
     integer, intent(inout) :: indi_frot_eval
+    real(kind=8), intent(in) :: vale_pene
     real(kind=8), intent(inout) :: dist_cont_curr
     real(kind=8), intent(inout) :: pres_cont_curr
     real(kind=8), intent(inout) :: dist_frot_curr(3)
@@ -98,7 +99,7 @@ implicit none
     real(kind=8) :: coef_cont_curr=0.0, coef_frot_curr=0.0
     real(kind=8) ::  coefficient=0.0
     aster_logical:: coef_found=.false._1,treatment =.true._1
-    aster_logical:: l_coef_adap = .false.
+    aster_logical:: l_coef_adap = .false._1
     integer      ::  mode_cycl = 0
     real(kind=8) :: pres_frot_prev(3)=0.0, pres_cont_prev=0.0
     real(kind=8) :: dist_frot_prev(3)=0.0, dist_cont_prev=0.0
@@ -107,8 +108,7 @@ implicit none
     real(kind=8) :: alpha_cont_matr=0.0, alpha_cont_vect=0.0
     real(kind=8) :: alpha_frot_matr=0.0, alpha_frot_vect=0.0
     real(kind=8) :: coef_opt=0.0,pres_cont(2)=0.0, dist_cont(2)=0.0
-    real(kind=8) :: coef_bussetta=0.0, dist_max
-    real(kind=8), intent(in) :: vale_pene
+    real(kind=8) :: coef_bussetta=0.0, dist_max=0.0
     integer      ::  i_algo_cont=0
     integer :: i_reso_frot=0
 !    real(kind=8) :: coef_bussetta=0.0, dist_max, coef_tmp
@@ -399,7 +399,7 @@ implicit none
             coef_bussetta = v_sdcont_cychis(60*(i_cont_poin-1)+2)
             coef_tmp = v_sdcont_cychis(60*(i_cont_poin-1)+2)
             
-            if (l_pena_cont) then
+            if (indi_cont_curr .eq. 1 .and. l_pena_cont) then
                 if (nint(vale_pene) .eq. -1) then 
                 ! Mode relatif 
                     dist_max = 1.d-2*ds_contact%arete_min
@@ -412,10 +412,10 @@ implicit none
                 call bussetta_algorithm(dist_cont_curr, dist_cont_prev,dist_max, coef_bussetta)
                 v_sdcont_cychis(60*(i_cont_poin-1)+2) = max(coef_bussetta,&
                                                         v_sdcont_cychis(60*(i_cont_poin-1)+2))
-            endif
+            !endif
                                                     
             ! Traitement de fortes interpenetrations         
-            if (indi_cont_curr .eq. 1 .and. l_pena_cont) then            
+            !if (indi_cont_curr .eq. 1 .and. l_pena_cont) then            
                     
                 if (dist_cont_curr .gt. dist_max) then 
                     coef_tmp =coef_tmp*(abs(dist_cont_curr)/dist_max)*100
