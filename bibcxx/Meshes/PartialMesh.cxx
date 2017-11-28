@@ -111,7 +111,7 @@ PartialMeshInstance::PartialMeshInstance( const std::string& name,
 
         taille = numbering.size();
         aster_mpi_bcast( &taille, 1, MPI_INT, proc, commWorld );
-        int addOffset = taille/2;
+        int addOffset = taille/3;
         VectorLong buffer2( taille, 0. );
         if( proc == rank )
         {

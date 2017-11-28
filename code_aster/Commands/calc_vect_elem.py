@@ -35,5 +35,9 @@ class ComputeElementaryVector(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         self._result = ElementaryVector()
+        if keywords['OPTION'] == "CHAR_MECA": self._result.setType('VECT_ELEM_DEPL_R')
+        elif keywords['OPTION'] == "CHAR_THER": self._result.setType('VECT_ELEM_TEMP_R')
+        elif keywords['OPTION'] == "CHAR_ACOU": self._result.setType('VECT_ELEM_PRES_C')
+        else: raise NotImplementedError("Must be implemented")
 
 CALC_VECT_ELEM = ComputeElementaryVector.run

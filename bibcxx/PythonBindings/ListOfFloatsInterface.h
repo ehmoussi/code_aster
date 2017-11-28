@@ -1,6 +1,9 @@
+#ifndef LISTOFFLOATSINTERFACE_H_
+#define LISTOFFLOATSINTERFACE_H_
+
 /**
- * @file StudyDescriptionInterface.cxx
- * @brief Interface python de StudyDescription
+ * @file ListOfFloatsInterface.h
+ * @brief Fichier entete de la classe ListOfFloatsInterface
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,21 +24,9 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <boost/python.hpp>
-#include "PythonBindings/factory.h"
-#include "PythonBindings/StudyDescriptionInterface.h"
-#include "PythonBindings/LoadInterface.h"
+#include "astercxx.h"
+#include "Utilities/ListOfFloats.h"
 
+void exportListOfFloatsToPython();
 
-void exportStudyDescriptionToPython()
-{
-    using namespace boost::python;
-
-    class_< StudyDescriptionInstance, StudyDescriptionPtr >
-        c1( "StudyDescription", no_init );
-    c1.def( "__init__", make_constructor(
-            &initFactoryPtr< StudyDescriptionInstance,
-                             ModelPtr, MaterialOnMeshPtr >) );
-    addKinematicsLoadToInterface( c1 );
-    addMechanicalLoadToInterface( c1 );
-};
+#endif /* LISTOFFLOATSINTERFACE_H_ */

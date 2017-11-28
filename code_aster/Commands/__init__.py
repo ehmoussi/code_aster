@@ -38,9 +38,11 @@ from .affe_char_meca_f import AFFE_CHAR_MECA_F
 from .affe_materiau import AFFE_MATERIAU
 from .affe_modele import AFFE_MODELE
 from .asse_matrice import ASSE_MATRICE
+from .asse_vecteur import ASSE_VECTEUR
 # from .asse_matr_gene import ASSE_MATR_GENE
 # from .asse_vect_gene import ASSE_VECT_GENE
 from .calc_champ import CALC_CHAMP
+from .calc_char_cine import CALC_CHAR_CINE
 from .calc_fonc_interp import CALC_FONC_INTERP
 from .calc_matr_elem import CALC_MATR_ELEM
 from .calc_vect_elem import CALC_VECT_ELEM
@@ -82,6 +84,7 @@ from .modi_maillage import MODI_MAILLAGE
 from .nume_ddl import NUME_DDL
 # from .nume_ddl_gene import NUME_DDL_GENE
 from .proj_champ import PROJ_CHAMP
+from .resoudre import RESOUDRE
 from .stat_non_line import STAT_NON_LINE
 from .recu_fonction import RECU_FONCTION
 

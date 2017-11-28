@@ -290,4 +290,16 @@ typedef boost::shared_ptr< FunctionInstance > FunctionPtr;
  */
 typedef boost::shared_ptr< FunctionComplexInstance > FunctionComplexPtr;
 
+/**
+ * @name emptyDoubleFunction
+ * @brief  Empty function
+ */
+extern FunctionPtr emptyDoubleFunction;
+
+/**
+ * @typedef ListOfFunctions
+ * @brief List of double functions
+ */
+typedef std::list< FunctionPtr > ListOfFunctions;
+
 #endif /* FUNCTION_H_ */

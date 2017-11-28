@@ -118,7 +118,7 @@ else:
     v=petsc4py.PETSc.Viewer.DRAW(A.comm)
     A.view(v)
 
-matrAsse.factorization()
+monSolver.matrixFactorization(matrAsse)
 test.assertEqual( matrAsse.getType(), "MATR_ASSE_DEPL_R" )
 
 resu = monSolver.solveDoubleLinearSystem( matrAsse, retour )

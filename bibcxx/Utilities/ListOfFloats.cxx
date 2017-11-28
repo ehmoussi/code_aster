@@ -1,6 +1,6 @@
 /**
- * @file StudyDescriptionInterface.cxx
- * @brief Interface python de StudyDescription
+ * @file ListOfFloats.cxx
+ * @brief Implementation de ListOfFloats
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,21 +21,30 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <boost/python.hpp>
-#include "PythonBindings/factory.h"
-#include "PythonBindings/StudyDescriptionInterface.h"
-#include "PythonBindings/LoadInterface.h"
+/* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include "Utilities/ListOfFloats.h"
 
-void exportStudyDescriptionToPython()
+VectorDouble ListOfFloatsInstance::getValues() const throw( std::runtime_error )
 {
-    using namespace boost::python;
+    if( !_vale->exists() )
+        throw std::runtime_error( "No list of values in ListOfFloats" );
 
-    class_< StudyDescriptionInstance, StudyDescriptionPtr >
-        c1( "StudyDescription", no_init );
-    c1.def( "__init__", make_constructor(
-            &initFactoryPtr< StudyDescriptionInstance,
-                             ModelPtr, MaterialOnMeshPtr >) );
-    addKinematicsLoadToInterface( c1 );
-    addMechanicalLoadToInterface( c1 );
+    _vale->updateValuePointer();
+    VectorDouble toReturn;
+    auto size = _vale->size();
+    for( int pos = 0; pos < size; ++pos )
+        toReturn.push_back( (*_vale)[pos] );
+    return toReturn;
+};
+
+void ListOfFloatsInstance::setVectorValues( const VectorDouble& vec ) throw( std::runtime_error )
+{
+    (*_vale) = vec;
+};
+
+int ListOfFloatsInstance::size()
+{
+    _vale->updateValuePointer();
+    return _vale->size();
 };

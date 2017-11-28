@@ -36,6 +36,7 @@
 #include "Loads/ListOfLoads.h"
 #include "LinearAlgebra/LinearSolver.h"
 #include "Algorithms/TimeStepper.h"
+#include "Studies/StudyDescription.h"
 
 class StaticMechanicalSolverInstance: public GenericSolver
 {
@@ -65,41 +66,24 @@ class StaticMechanicalSolverInstance: public GenericSolver
         ListOfLoadsPtr      _listOfLoads;
         /** @brief Liste de pas de temps */
         TimeStepperPtr      _timeStep;
+        /** @brief Study */
+        StudyDescriptionPtr _study;
 
     public:
         /**
          * @brief Constructeur
          */
-        StaticMechanicalSolverInstance();
+        StaticMechanicalSolverInstance( const ModelPtr&, const MaterialOnMeshPtr& );
 
         /**
-         * @brief Function d'ajout d'une charge cinematique
-         * @param currentLoad charge a ajouter a la sd
+         * @brief Function d'ajout d'un chargement
+         * @param Args... Liste d'arguments template
          */
-        void addKinematicsLoad( const KinematicsLoadPtr& currentLoad )
+        template< typename... Args >
+        void addLoad( const Args&... a )
         {
-            _listOfLoads->addKinematicsLoad( currentLoad );
+            _study->addLoad( a... );
         };
-
-        /**
-         * @brief Function d'ajout d'une charge mecanique
-         * @param currentLoad charge a ajouter a la sd
-         */
-        void addMechanicalLoad( const GenericMechanicalLoadPtr& currentLoad )
-        {
-            _listOfLoads->addMechanicalLoad( currentLoad );
-        };
-
-#ifdef _USE_MPI
-        /**
-         * @brief Function d'ajout d'une charge mecanique parallele
-         * @param currentLoad charge a ajouter a la sd
-         */
-        void addParallelMechanicalLoad( const ParallelMechanicalLoadPtr& currentLoad )
-        {
-            _listOfLoads->addParallelMechanicalLoad( currentLoad );
-        };
-#endif /* _USE_MPI */
 
         /**
          * @brief Lancement de la resolution
@@ -113,24 +97,6 @@ class StaticMechanicalSolverInstance: public GenericSolver
         void setLinearSolver( const BaseLinearSolverPtr& currentSolver )
         {
             _linearSolver = currentSolver;
-        };
-
-        /**
-         * @brief Methode permettant de definir le champ de materiau
-         * @param currentMaterial objet MaterialOnMeshPtr
-         */
-        void setMaterialOnMesh( const MaterialOnMeshPtr& currentMaterial )
-        {
-            _materialOnMesh = currentMaterial;
-        };
-
-        /**
-         * @brief Methode permettant de definir le modele support
-         * @param currentModel Model support des matrices elementaires
-         */
-        void setSupportModel( const ModelPtr& currentModel )
-        {
-            _supportModel = currentModel;
         };
 
         /**

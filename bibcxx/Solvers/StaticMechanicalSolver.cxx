@@ -33,50 +33,32 @@
 #include "Algorithms/GenericAlgorithm.h"
 #include "Algorithms/StaticMechanicalAlgorithm.h"
 
-StaticMechanicalSolverInstance::StaticMechanicalSolverInstance():
-    _supportModel( ModelPtr() ),
-    _materialOnMesh( MaterialOnMeshPtr() ),
+StaticMechanicalSolverInstance::StaticMechanicalSolverInstance( const ModelPtr& model,
+                                                                const MaterialOnMeshPtr& mater ):
+    _supportModel( model ),
+    _materialOnMesh( mater ),
     _linearSolver( BaseLinearSolverPtr() ),
     _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) ),
-    _timeStep( TimeStepperPtr( new TimeStepperInstance( Permanent ) ) )
-{};
+    _timeStep( TimeStepperPtr( new TimeStepperInstance() ) ),
+    _study( new StudyDescriptionInstance( _supportModel, _materialOnMesh ) )
+{
+    _timeStep->setValues( VectorDouble( 1, 0. ) );
+};
 
 ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runtime_error )
 {
     ResultsContainerPtr resultC( new ResultsContainerInstance ( std::string( "EVOL_ELAS" ) ) );
     std::string nameOfSD = resultC->getName();
 
-    if ( _timeStep->size() == 0 )
+    if( !_timeStep )
+        throw std::runtime_error( "No time list" );
+    if( _timeStep->size() == 0 )
         resultC->allocate( 1 );
     else
         resultC->allocate( _timeStep->size() );
 
-    // Define the study
-    StudyDescriptionPtr study( new StudyDescriptionInstance( _supportModel, _materialOnMesh ) );
-
-    // Add Loads to the study
-    const ListMecaLoad& mecaList = _listOfLoads->getListOfMechanicalLoads();
-    bool mecaLoads = ( mecaList.size() == 0 ? false : true );
-    for ( ListMecaLoadCIter curIter = mecaList.begin();
-          curIter != mecaList.end();
-          ++curIter )
-        study->addMechanicalLoad( *curIter );
-
-#ifdef _USE_MPI
-    const auto& pMecaList = _listOfLoads->getListOfParallelMechanicalLoads();
-    for ( const auto& curIter : pMecaList )
-        study->addParallelMechanicalLoad( curIter );
-#endif /* _USE_MPI */
-
-    const ListKineLoad& kineList = _listOfLoads->getListOfKinematicsLoads();
-    for ( ListKineLoadCIter curIter = kineList.begin();
-          curIter != kineList.end();
-          ++curIter )
-        study->addKinematicsLoad( *curIter );
-//     _listOfLoads->build();
-
     // Define the discrete problem
-    DiscreteProblemPtr dProblem( new DiscreteProblemInstance( study ) );
+    DiscreteProblemPtr dProblem( new DiscreteProblemInstance( _study ) );
 
     if( _supportModel->getSupportMesh()->isParallel() )
     {

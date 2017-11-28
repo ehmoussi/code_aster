@@ -43,17 +43,26 @@ charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dy,
 charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dz, 0., "COTE_B")
 charCine.build()
 
-charCine2 = code_aster.KinematicsLoad()
-charCine2.setSupportModel(monModel)
-charCine2.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dz, 1., "COTE_H")
-charCine2.build()
+a = code_aster.PartialMesh(pMesh, ["COTE_H"])
+if( rank == 0 ): a.debugPrint(8)
 
-monSolver = code_aster.PetscSolver(code_aster.Renumbering.Sans)
-monSolver.setPreconditioning(code_aster.Preconditioning.Sor)
+model1 = AFFE_MODELE(MAILLAGE=a,
+                     AFFE=_F(TOUT='OUI',
+                             PHENOMENE='MECANIQUE',
+                             MODELISATION='DIS_T',),
+                     DISTRIBUTION=_F(METHODE='CENTRALISE',),)
+
+charMeca1 = AFFE_CHAR_MECA(MODELE=model1,
+                           DDL_IMPO=_F(GROUP_NO=("COTE_H"),
+                                       DZ=1.0,),)
+
+charMeca = code_aster.ParallelMechanicalLoad(charMeca1, monModel)
+
+monSolver = code_aster.MumpsSolver(code_aster.Renumbering.Metis)
 
 mecaStatique = code_aster.StaticMechanicalSolver(monModel, affectMat)
 mecaStatique.addKinematicsLoad(charCine)
-mecaStatique.addKinematicsLoad(charCine2)
+mecaStatique.addParallelMechanicalLoad(charMeca)
 mecaStatique.setLinearSolver(monSolver)
 
 resu = mecaStatique.execute()
@@ -64,7 +73,7 @@ MyFieldOnNodes = resu.getRealFieldOnNodes("DEPL", 0)
 sfon = MyFieldOnNodes.exportToSimpleFieldOnNodes()
 sfon.updateValuePointers()
 
-val = [0.134228076192 , 0.134176297047, 0.154099687654, 0.154189676715]
+val = [0.134202362865, 0.134202362865, 0.154144849556, 0.154144849556]
 test.assertAlmostEqual(sfon.getValue(4, 1), val[rank])
 
 test.printSummary()

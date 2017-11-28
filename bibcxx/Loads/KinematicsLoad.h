@@ -97,6 +97,16 @@ class KinematicsLoadInstance: public DataStructure
         };
 
         /**
+         * @brief Reset new type (double, complex, ...)
+         * @param newType
+         */
+        void setType( const std::string newType )
+        {
+            DataStructure::setType( newType );
+        };
+
+
+        /**
          * @brief Ajout d'une valeur mecanique imposee sur un groupe de mailles
          * @param nameOfGroup Nom du groupe sur lequel imposer la valeur
          * @param value Valeur imposee
