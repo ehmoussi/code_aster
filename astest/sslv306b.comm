@@ -1,0 +1,113 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'))
+
+depy = 0.952e-5
+
+depyx2 = 2 * depy
+
+mesh = LIRE_MAILLAGE(UNITE=20)
+
+meshside = CREA_MAILLAGE(MAILLAGE=mesh, RESTREINT=_F(GROUP_MA=('side', )))
+
+model = AFFE_MODELE(
+    AFFE=_F(MODELISATION=('3D', ), PHENOMENE='MECANIQUE', TOUT='OUI'),
+    MAILLAGE=mesh
+)
+
+mod_side = AFFE_MODELE(
+    AFFE=_F(GROUP_MA=('side', ), MODELISATION=('3D', ), PHENOMENE='MECANIQUE'),
+    MAILLAGE=meshside
+)
+
+mater = DEFI_MATERIAU(ELAS=_F(E=2.1e+11, NU=0.3))
+
+fieldmat = AFFE_MATERIAU(AFFE=_F(MATER=(mater, ), TOUT='OUI'), MODELE=model)
+
+block = AFFE_CHAR_CINE(
+    MECA_IMPO=_F(DX=0.0, DY=0.0, DZ=0.0, GROUP_MA=('ENCAST', )), MODELE=model
+)
+
+load = AFFE_CHAR_MECA(
+    DDL_IMPO=_F(DY=depy, GROUP_MA=('FACE_TR', )), MODELE=model
+)
+
+result = MECA_STATIQUE(
+    CHAM_MATER=fieldmat,
+    EXCIT=(_F(CHARGE=block), _F(CHARGE=load)),
+    MODELE=model
+)
+
+res_side = EXTR_RESU(RESTREINT=_F(MODELE=mod_side), RESULTAT=result)
+
+res_proj = PROJ_CHAMP(
+    MODELE_1=mod_side,
+    MODELE_2=model,
+    NOM_CHAM=('DEPL', ),
+    PROJECTION='OUI',
+    RESULTAT=res_side,
+    VIS_A_VIS=_F(GROUP_MA_1=('side', ), GROUP_MA_2=('side', ))
+)
+
+deplproj = CREA_CHAMP(
+    NOM_CHAM='DEPL',
+    OPERATION='EXTR',
+    RESULTAT=res_proj,
+    TYPE_CHAM='NOEU_DEPL_R'
+)
+
+loaddepl = AFFE_CHAR_MECA(
+    CHAMNO_IMPO=_F(CHAM_NO=deplproj, COEF_MULT=2.0), MODELE=model
+)
+
+result2 = MECA_STATIQUE(
+    CHAM_MATER=fieldmat, EXCIT=_F(CHARGE=loaddepl), MODELE=model
+)
+
+IMPR_RESU(RESU=(_F(RESULTAT=result2), _F(RESULTAT=result)), UNITE=80)
+
+TEST_RESU(
+    RESU=_F(
+        GROUP_MA=('RESU_DEP', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DY',
+        NUME_ORDRE=1,
+        REFERENCE='ANALYTIQUE',
+        RESULTAT=result,
+        TYPE_TEST='MAX',
+        VALE_CALC=(depy, ),
+        VALE_REFE=(depy, )
+    )
+)
+
+TEST_RESU(
+    RESU=_F(
+        GROUP_MA=('RESU_DEP', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DY',
+        NUME_ORDRE=1,
+        REFERENCE='ANALYTIQUE',
+        RESULTAT=result2,
+        TYPE_TEST='MAX',
+        VALE_CALC=(depyx2, ),
+        VALE_REFE=(depyx2, )
+    )
+)
+
+FIN()
