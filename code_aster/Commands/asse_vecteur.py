@@ -19,28 +19,20 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import KinematicsLoad
+from ..Objects import FieldOnNodesDouble
 from .ExecuteCommand import ExecuteCommand
 
 
-class KinematicsLoadDefinition(ExecuteCommand):
-    """Command that defines :class:`~code_aster.Objects.KinematicsLoad`."""
-    command_name = "AFFE_CHAR_CINE"
+class AssembleVectorOperator(ExecuteCommand):
+    """Execute legacy operator ASSE_VECTEUR."""
+    command_name = "ASSE_VECTEUR"
 
     def create_result(self, keywords):
-        """Initialize the result.
+        """Create the result.
 
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = KinematicsLoad()
-        self._result.setSupportModel(keywords["MODELE"])
-        if keywords.get( "MECA_IMPO" ) is not None:
-            self._result.setType('CHAR_CINE_MECA')
-        elif keywords.get( "THER_IMPO" ) is not None:
-            self._result.setType('CHAR_CINE_THER')
-        else:
-            raise NotImplementedError("Must be implemented")
+        self._result = FieldOnNodesDouble()
 
-
-AFFE_CHAR_CINE = KinematicsLoadDefinition.run
+ASSE_VECTEUR = AssembleVectorOperator.run

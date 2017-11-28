@@ -48,8 +48,7 @@ charCine2.setSupportModel(monModel)
 charCine2.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dz, 1., "COTE_H")
 charCine2.build()
 
-monSolver = code_aster.PetscSolver(code_aster.Renumbering.Sans)
-monSolver.setPreconditioning(code_aster.Preconditioning.Sor)
+monSolver = code_aster.MumpsSolver(code_aster.Renumbering.Metis)
 
 mecaStatique = code_aster.StaticMechanicalSolver(monModel, affectMat)
 mecaStatique.addKinematicsLoad(charCine)
@@ -64,7 +63,8 @@ MyFieldOnNodes = resu.getRealFieldOnNodes("DEPL", 0)
 sfon = MyFieldOnNodes.exportToSimpleFieldOnNodes()
 sfon.updateValuePointers()
 
-val = [0.134228076192 , 0.134176297047, 0.154099687654, 0.154189676715]
+val = [0.134202362865, 0.134202362865, 0.154144849556, 0.154144849556]
+print rank, sfon.getValue(4, 1)
 test.assertAlmostEqual(sfon.getValue(4, 1), val[rank])
 
 test.printSummary()

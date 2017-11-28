@@ -1,6 +1,6 @@
 /**
- * @file StaticMechanicalSolverInterface.cxx
- * @brief Interface python de StaticMechanicalSolver
+ * @file ListOfFloatsInterface.cxx
+ * @brief Interface python de ListOfFloats
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,25 +21,28 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/StaticMechanicalSolverInterface.h"
-#include "PythonBindings/LoadInterface.h"
-#include "PythonBindings/factory.h"
-#include <boost/python.hpp>
+/* person_in_charge: nicolas.sellenet at edf.fr */
 
-void exportStaticMechanicalSolverToPython()
+#include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/ListOfFloatsInterface.h"
+
+
+void exportListOfFloatsToPython()
 {
     using namespace boost::python;
 
-    class_< StaticMechanicalSolverInstance, StaticMechanicalSolverPtr >
-        c1( "StaticMechanicalSolver", no_init );
-    c1.def( "__init__", make_constructor(
-            &initFactoryPtr< StaticMechanicalSolverInstance,
-                             ModelPtr, MaterialOnMeshPtr > ) );
-    addKinematicsLoadToInterface( c1 );
-    addMechanicalLoadToInterface( c1 );
-#ifdef _USE_MPI
-    addParallelMechanicalLoadToInterface( c1 );
-#endif /* _USE_MPI */
-    c1.def( "execute", &StaticMechanicalSolverInstance::execute );
-    c1.def( "setLinearSolver", &StaticMechanicalSolverInstance::setLinearSolver );
+    class_< ListOfFloatsInstance,
+            ListOfFloatsInstance::ListOfFloatsPtr,
+            bases< DataStructure > > ( "ListOfFloats", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< ListOfFloatsInstance >) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< ListOfFloatsInstance,
+                             std::string >) )
+        .def( "getValues", &ListOfFloatsInstance::getValues )
+        .def( "setVectorValues", &ListOfFloatsInstance::setVectorValues )
+//         .def( "size", &ListOfFloatsInstance::size )
+        .add_property("size", &ListOfFloatsInstance::size)
+    ;
 };

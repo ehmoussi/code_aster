@@ -29,6 +29,7 @@
 #include "Functions/Function.h"
 #include "Supervis/ResultNaming.h"
 
+FunctionPtr emptyDoubleFunction( new FunctionInstance( "" ) );
 
 BaseFunctionInstance::BaseFunctionInstance( const std::string jeveuxName,
                                             const std::string type ):

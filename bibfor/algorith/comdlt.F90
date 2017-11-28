@@ -381,9 +381,14 @@ implicit none
         call rsadpa(result, 'E', 1, 'MODELE', ordr(iordr),&
                     0, sjv=ladpa, styp=k8b)
         zk8(ladpa)=modele(1:8)
-        call rsadpa(result, 'E', 1, 'CHAMPMAT', ordr(iordr),&
-                    0, sjv=ladpa, styp=k8b)
-        zk8(ladpa)=materi
+        if (materi .ne. ' ') then
+            call rsadpa(result, 'E', 1, 'CHAMPMAT', ordr(iordr),&
+                        0, sjv=ladpa, styp=k8b)
+            zk8(ladpa)=materi
+        else
+            call utmess('A', 'CHAMPS_21')
+        endif
+        
         call rsadpa(result, 'E', 1, 'CARAELEM', ordr(iordr),&
                     0, sjv=ladpa, styp=k8b)
         zk8(ladpa)=carael

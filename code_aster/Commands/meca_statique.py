@@ -47,16 +47,27 @@ class MechanicalSolver(ExecuteCommand):
 
     @staticmethod
     def _addLoad(mechaSolv, fkw):
-        load = fkw[ "CHARGE" ]
+        load = fkw["CHARGE"]
+        func = fkw.get("FONC_MULT")
 
-        if isinstance(load, KinematicsLoad):
-            mechaSolv.addKinematicsLoad(load)
-        elif isinstance(load, GenericMechanicalLoad):
-            mechaSolv.addMechanicalLoad(load)
-        elif isinstance(load, ParallelMechanicalLoad):
-            mechaSolv.addParallelMechanicalLoad(load)
+        if func !=  None:
+            if isinstance(load, KinematicsLoad):
+                mechaSolv.addKinematicsLoad(load, func)
+            elif isinstance(load, GenericMechanicalLoad):
+                mechaSolv.addMechanicalLoad(load, func)
+            elif isinstance(load, ParallelMechanicalLoad):
+                mechaSolv.addParallelMechanicalLoad(load, func)
+            else:
+                assert False
         else:
-            assert False
+            if isinstance(load, KinematicsLoad):
+                mechaSolv.addKinematicsLoad(load)
+            elif isinstance(load, GenericMechanicalLoad):
+                mechaSolv.addMechanicalLoad(load)
+            elif isinstance(load, ParallelMechanicalLoad):
+                mechaSolv.addParallelMechanicalLoad(load)
+            else:
+                assert False
 
     def exec_(self, keywords):
         """Execute the command.
@@ -64,12 +75,17 @@ class MechanicalSolver(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        mechaSolv = StaticMechanicalSolver()
-
         model = keywords["MODELE"]
         matOnMesh = keywords["CHAM_MATER"]
-        mechaSolv.setSupportModel(model)
-        mechaSolv.setMaterialOnMesh(matOnMesh)
+
+        mechaSolv = StaticMechanicalSolver(model, matOnMesh)
+
+        inst = keywords.get("INST")
+        if inst != None:
+            mechaSolv.setTimeStepManager(list(inst))
+        listInst = keywords.get("LIST_INST")
+        if listInst != None:
+            mechaSolv.setTimeStepManager(list(listInst))
 
         unsupported(keywords, "EXCIT", "FONC_MULT")
         fkw = keywords["EXCIT"]

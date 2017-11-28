@@ -72,33 +72,14 @@ class StudyDescriptionInstance
         {};
 
         /**
-         * @brief Function d'ajout d'une charge cinematique
-         * @param currentLoad charge a ajouter a la sd
+         * @brief Add a load (mechanical or kinematic) with function, formula...
+         * @param Args... template list of arguments (load and function or formula)
          */
-        void addKinematicsLoad( const KinematicsLoadPtr& currentLoad )
+        template< typename... Args >
+        void addLoad( const Args&... a )
         {
-            _listOfLoads->addKinematicsLoad( currentLoad );
+            _listOfLoads->addLoad( a... );
         };
-
-        /**
-         * @brief Function d'ajout d'une charge mecanique
-         * @param currentLoad charge a ajouter a la sd
-         */
-        void addMechanicalLoad( const GenericMechanicalLoadPtr& currentLoad )
-        {
-            _listOfLoads->addMechanicalLoad( currentLoad );
-        };
-
-#ifdef _USE_MPI
-        /**
-         * @brief Function d'ajout d'une charge mecanique
-         * @param currentLoad charge a ajouter a la sd
-         */
-        void addParallelMechanicalLoad( const ParallelMechanicalLoadPtr& currentLoad )
-        {
-            _listOfLoads->addParallelMechanicalLoad( currentLoad );
-        };
-#endif /* _USE_MPI */
 
         /**
          * @brief Construction de la liste de chargements

@@ -31,6 +31,13 @@
 void exportAssemblyMatrixToPython()
 {
     using namespace boost::python;
+
+    void (AssemblyMatrixDoubleInstance::*c1)(const KinematicsLoadPtr& currentLoad) =
+            &AssemblyMatrixDoubleInstance::addLoad;
+    void (AssemblyMatrixDoubleInstance::*c2)(const KinematicsLoadPtr& currentLoad,
+                                             const FunctionPtr& func) =
+            &AssemblyMatrixDoubleInstance::addLoad;
+
     class_< AssemblyMatrixDoubleInstance, AssemblyMatrixDoublePtr,
             bases< DataStructure > >
         ( "AssemblyMatrixDouble", no_init )
@@ -39,13 +46,20 @@ void exportAssemblyMatrixToPython()
         .def( "__init__", make_constructor(
             &initFactoryPtr< AssemblyMatrixDoubleInstance,
                              std::string >) )
-        .def( "addKinematicsLoad", &AssemblyMatrixDoubleInstance::addKinematicsLoad )
+        .def( "addKinematicsLoad", c1 )
+        .def( "addKinematicsLoad", c2 )
         .def( "build", &AssemblyMatrixDoubleInstance::build )
         .def( "factorization", &AssemblyMatrixDoubleInstance::factorization )
         .def( "getDOFNumbering", &AssemblyMatrixDoubleInstance::getDOFNumbering )
         .def( "setDOFNumbering", &AssemblyMatrixDoubleInstance::setDOFNumbering )
         .def( "appendElementaryMatrix", &AssemblyMatrixDoubleInstance::appendElementaryMatrix )
     ;
+
+    void (AssemblyMatrixComplexInstance::*c3)(const KinematicsLoadPtr& currentLoad) =
+            &AssemblyMatrixComplexInstance::addLoad;
+    void (AssemblyMatrixComplexInstance::*c4)(const KinematicsLoadPtr& currentLoad,
+                                     const FunctionPtr& func) =
+            &AssemblyMatrixComplexInstance::addLoad;
 
     class_< AssemblyMatrixComplexInstance, AssemblyMatrixComplexPtr,
             bases< DataStructure > >
@@ -55,7 +69,8 @@ void exportAssemblyMatrixToPython()
         .def( "__init__", make_constructor(
             &initFactoryPtr< AssemblyMatrixComplexInstance ,
                              std::string >) )
-        .def( "addKinematicsLoad", &AssemblyMatrixComplexInstance::addKinematicsLoad )
+        .def( "addKinematicsLoad", c3 )
+        .def( "addKinematicsLoad", c4 )
         .def( "build", &AssemblyMatrixComplexInstance::build )
         .def( "factorization", &AssemblyMatrixComplexInstance::factorization )
         .def( "getDOFNumbering", &AssemblyMatrixComplexInstance::getDOFNumbering )

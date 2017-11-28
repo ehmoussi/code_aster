@@ -18,9 +18,10 @@
 
 subroutine amumpp(option, nbsol, kxmps, ldist, type,&
                   impr, ifmump, eli2lg, rsolu, csolu,&
-                  vcine, prepos, lpreco)
+                  vcine, prepos, lpreco, lmhpc)
 !
 !
+    use iso_c_binding, only: c_ptr, c_f_pointer
     implicit none
 !-----------------------------------------------------------------------
 ! BUT : ROUTINE DE PRE/POST-TRAITEMENT DE LA SOLUTION ET DU
@@ -58,19 +59,22 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
 #include "asterfort/csmbgg.h"
 #include "asterfort/infniv.h"
 #include "asterfort/jedema.h"
+#include "asterfort/jedetr.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/jgetptc.h"
 #include "asterfort/mcconl.h"
 #include "asterfort/mrconl.h"
 #include "asterfort/mtdscr.h"
 #include "asterfort/nudlg2.h"
 #include "asterfort/utmess.h"
+#include "asterfort/wkvect.h"
 #include "blas/dcopy.h"
 #include "blas/zcopy.h"
     integer :: option, nbsol, kxmps, ifmump
-    aster_logical :: ldist, eli2lg, prepos, lpreco
+    aster_logical :: ldist, eli2lg, prepos, lpreco, lmhpc
     character(len=1) :: type
     character(len=14) :: impr
     character(len=19) :: vcine
@@ -86,7 +90,7 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
     type(dmumps_struc), pointer :: dmpsk => null()
     type(zmumps_struc), pointer :: zmpsk => null()
     integer :: n, nnbsol, rang, lmat, i, ierd, idvalc, k, ifm, niv
-    integer :: jj
+    integer :: jj, nbeql, nuglo, jrhs, j
     character(len=1) :: rouc
     character(len=4) :: etam
     character(len=14) :: nonu
@@ -97,6 +101,12 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
     complex(kind=8) :: cbid, caux
     integer, pointer :: delg(:) => null()
     integer, pointer :: dlg2(:) => null()
+    integer, pointer :: nequ(:) => null()
+    integer, pointer :: pddl(:) => null()
+    integer, pointer :: nulg(:) => null()
+    real(kind=8), pointer :: rsolu2(:) => null()
+    complex(kind=8), pointer :: csolu2(:) => null()
+    type(c_ptr) :: pteur_c
     cbid = dcmplx(0.d0, 0.d0)
 !
 !-----------------------------------------------------------------------
@@ -156,6 +166,16 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
     call mtdscr(nomat)
     call jeveuo(nomat//'.&INT', 'E', lmat)
 !
+    if (lmhpc) then
+        ASSERT(nbsol.eq.1)
+        call jeveuo(nonu//'.NUME.PDDL', 'L', vi=pddl)
+        call jeveuo(nonu//'.NUME.NULG', 'L', vi=nulg)
+        call jeveuo(nonu//'.NUME.NEQU', 'L', vi=nequ)
+        nbeql=nequ(1)
+    else
+        nbeql=n
+    endif
+!
 !
     if (option .eq. 0) then
 !
@@ -180,14 +200,14 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
 !        --- PAS DE PRETRAITEMENT SI NON DEMANDE
         if (.not.lpreco .and. prepos) then
 !
-            if (rang .eq. 0) then
+            if (rang .eq. 0 .or. lmhpc) then
 !           --- MISE A L'ECHELLE DES LAGRANGES DANS LE SECOND MEMBRE
 !           --- RANG 0 UNIQUEMENT
                 if (ltypr) then
-                    call mrconl('MULT', lmat, n, 'R', rsolu,&
+                    call mrconl('MULT', lmat, nbeql, 'R', rsolu,&
                                 nbsol)
                 else
-                    call mcconl('MULT', lmat, n, 'C', csolu,&
+                    call mcconl('MULT', lmat, nbeql, 'C', csolu,&
                                 nbsol)
                 endif
             endif
@@ -211,13 +231,13 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
                 if (ltypr) then
                     ASSERT(rouc.eq.'R')
                     do i = 1, nbsol
-                        call csmbgg(lmat, rsolu(n*(i-1)+1), zr(idvalc), [cbid], [cbid],&
+                        call csmbgg(lmat, rsolu(nbeql*(i-1)+1), zr(idvalc), [cbid], [cbid],&
                                     'R')
                     enddo
                 else
                     ASSERT(rouc.eq.'C')
                     do i = 1, nbsol
-                        call csmbgg(lmat, [0.d0], [0.d0], csolu(n*(i-1)+1), zc(idvalc),&
+                        call csmbgg(lmat, [0.d0], [0.d0], csolu(nbeql*(i-1)+1), zc(idvalc),&
                                     'C')
                     enddo
                 endif
@@ -237,11 +257,47 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
 !
         endif
 !
+        if (lmhpc) then
+            ASSERT(nbsol.eq.1)
+            if (ltypr) then
+                call wkvect('&&AMUMPP.RHS', 'V V R', nnbsol, jrhs)
+            else
+                call wkvect('&&AMUMPP.RHS', 'V V C', nnbsol, jrhs)
+            endif
+            do j = 1, nbeql
+                if ( pddl(j).eq.rang ) then
+                    nuglo = nulg(j)
+                    if(ltypr) then
+                        zr(jrhs+nuglo) = rsolu(j)
+                    else
+                        zc(jrhs+nuglo) = csolu(j)
+                    endif
+                endif
+            enddo
+            if (ltypr) then
+                call asmpi_comm_vect('REDUCE', 'R', nbval=nnbsol, vr=zr(jrhs))
+                call jgetptc(jrhs, pteur_c, vr=zr(1))
+                call c_f_pointer(pteur_c, rsolu2, [nnbsol])
+            else
+                call asmpi_comm_vect('REDUCE', 'C', nbval=nnbsol, vc=zc(jrhs))
+                call jgetptc(jrhs, pteur_c, vc=zc(1))
+                call c_f_pointer(pteur_c, csolu2, [nnbsol])
+            endif
+        else
+            if (ltypr) then
+                call jgetptc(1, pteur_c, vr=rsolu(1))
+                call c_f_pointer(pteur_c, rsolu2, [nnbsol])
+            else
+                call jgetptc(1, pteur_c, vc=csolu(1))
+                call c_f_pointer(pteur_c, csolu2, [nnbsol])
+            endif
+        endif
+!
 !        --- COPIE DE RSOLU DANS %RHS:
         if (rang .eq. 0) then
             if (type .eq. 'S') then
                 do i = 1, nnbsol
-                    raux=rsolu(i)
+                    raux=rsolu2(i)
                     rtest=abs(raux)
                     if (rtest .lt. rmin) then
                         raux=0.d0
@@ -252,7 +308,7 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
                 enddo
             else if (type.eq.'C') then
                 do i = 1, nnbsol
-                    caux=csolu(i)
+                    caux=csolu2(i)
                     rtest=abs(caux)
                     if (rtest .lt. rmin) then
                         caux=dcmplx(0.d0,0.d0)
@@ -264,7 +320,7 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
                 enddo
             else if (type.eq.'D') then
                 do i = 1, nnbsol
-                    raux=rsolu(i)
+                    raux=rsolu2(i)
                     rtest=abs(raux)
                     if (rtest .lt. rmin) then
                         raux=0.d0
@@ -277,7 +333,7 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
                 enddo
             else if (type.eq.'Z') then
                 do i = 1, nnbsol
-                    caux=csolu(i)
+                    caux=csolu2(i)
                     rtest=abs(caux)
                     if (rtest .lt. rmin) then
                         caux=dcmplx(0.d0,0.d0)
@@ -292,6 +348,7 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
                 ASSERT(.false.)
             endif
         endif
+        if (lmhpc) call jedetr('&&AMUMPP.RHS')
 !
 !         -- IMPRESSION DU/DES SECONDS MEMBRES (SI DEMANDE) :
         if (impr(1:3) .eq. 'OUI') then
@@ -325,29 +382,64 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
 !
     else if (option.eq.2) then
 !
+        if (lmhpc) then
+            if (ltypr) then
+                call wkvect('&&AMUMPP.RHS', 'V V R', nnbsol, jrhs)
+                call jgetptc(jrhs, pteur_c, vr=zr(1))
+                call c_f_pointer(pteur_c, rsolu2, [nnbsol])
+            else
+                call wkvect('&&AMUMPP.RHS', 'V V C', nnbsol, jrhs)
+                call jgetptc(jrhs, pteur_c, vc=zc(1))
+                call c_f_pointer(pteur_c, csolu2, [nnbsol])
+            endif
+        else
+            if (ltypr) then
+                call jgetptc(1, pteur_c, vr=rsolu(1))
+                call c_f_pointer(pteur_c, rsolu2, [nnbsol])
+            else
+                call jgetptc(1, pteur_c, vc=csolu(1))
+                call c_f_pointer(pteur_c, csolu2, [nnbsol])
+            endif
+        endif
 !
 !       ------------------------------------------------
 !        POST-TRAITEMENTS ASTER DE LA SOLUTION :
 !       ------------------------------------------------
-        if (rang .eq. 0) then
-            if (type .eq. 'S') then
-                do i = 1, nnbsol
-                    rsolu(i)=smpsk%rhs(i)
-                enddo
-                deallocate(smpsk%rhs)
-            else if (type.eq.'C') then
-                do i = 1, nnbsol
-                    csolu(i)=cmpsk%rhs(i)
-                enddo
-                deallocate(cmpsk%rhs)
-            else if (type.eq.'D') then
-                call dcopy(nnbsol, dmpsk%rhs, 1, rsolu, 1)
-                deallocate(dmpsk%rhs)
-            else if (type.eq.'Z') then
-                call zcopy(nnbsol, zmpsk%rhs, 1, csolu, 1)
-                deallocate(zmpsk%rhs)
-            else
-                ASSERT(.false.)
+        if (rang .eq. 0 .or. lmhpc) then
+            if (rang .eq. 0) then
+                if (type .eq. 'S') then
+                    do i = 1, nnbsol
+                        rsolu2(i)=smpsk%rhs(i)
+                    enddo
+                    deallocate(smpsk%rhs)
+                else if (type.eq.'C') then
+                    do i = 1, nnbsol
+                        csolu2(i)=cmpsk%rhs(i)
+                    enddo
+                    deallocate(cmpsk%rhs)
+                else if (type.eq.'D') then
+                    call dcopy(nnbsol, dmpsk%rhs, 1, rsolu2, 1)
+                    deallocate(dmpsk%rhs)
+                else if (type.eq.'Z') then
+                    call zcopy(nnbsol, zmpsk%rhs, 1, csolu2, 1)
+                    deallocate(zmpsk%rhs)
+                else
+                    ASSERT(.false.)
+                endif
+            endif
+!
+            if (lmhpc) then
+                if (ltypr) then
+                    call asmpi_comm_vect('BCAST', 'R', nbval=nnbsol, bcrank=0, vr=rsolu2)
+                    do j = 1, nbeql
+                        rsolu(j) = rsolu2(nulg(j)+1)
+                    enddo
+                else
+                    call asmpi_comm_vect('BCAST', 'C', nbval=nnbsol, bcrank=0, vc=csolu2)
+                    do j = 1, nbeql
+                        csolu(j) = csolu2(nulg(j)+1)
+                    enddo
+                endif
             endif
 !
             if (eli2lg) then
@@ -362,21 +454,21 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
                 call jeveuo(nonu//'.NUME.DLG2', 'L', vi=dlg2)
                 if (ltypr) then
                     do i = 1, nbsol
-                        do k = 1, n
+                        do k = 1, nbeql
                             if (delg(k) .eq. -1) then
-                                rsolu((i-1)*n+k)= 0.5d0 * rsolu((i-1)*n+k)
+                                rsolu((i-1)*nbeql+k)= 0.5d0 * rsolu((i-1)*nbeql+k)
                                 jj = dlg2(k)
-                                rsolu((i-1)*n+jj) = rsolu((i-1)*n+k)
+                                rsolu((i-1)*nbeql+jj) = rsolu((i-1)*nbeql+k)
                             endif
                         enddo
                     enddo
                 else
                     do i = 1, nbsol
-                        do k = 1, n
+                        do k = 1, nbeql
                             if (delg(k) .eq. -1) then
-                                csolu((i-1)*n+k) = 0.5d0*csolu((i-1)*n+k)
+                                csolu((i-1)*nbeql+k) = 0.5d0*csolu((i-1)*nbeql+k)
                                 jj = dlg2(k)
-                                csolu((i-1)*n+jj) = csolu((i-1)*n+k)
+                                csolu((i-1)*nbeql+jj) = csolu((i-1)*nbeql+k)
                             endif
                         enddo
                     enddo
@@ -387,20 +479,22 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
 !         ON NE LE FAIT PAS SI NON DEMANDE
             if (.not.lpreco .and. prepos) then
                 if (ltypr) then
-                    call mrconl('MULT', lmat, n, 'R', rsolu,&
+                    call mrconl('MULT', lmat, nbeql, 'R', rsolu,&
                                 nbsol)
                 else
-                    call mcconl('MULT', lmat, n, 'C', csolu,&
+                    call mcconl('MULT', lmat, nbeql, 'C', csolu,&
                                 nbsol)
                 endif
             endif
         endif
 !
 !       -- BROADCAST DE SOLU A TOUS LES PROC
-        if (ltypr) then
-            call asmpi_comm_vect('BCAST', 'R', nbval=nnbsol, bcrank=0, vr=rsolu)
-        else
-            call asmpi_comm_vect('BCAST', 'C', nbval=nnbsol, bcrank=0, vc=csolu)
+        if (.not.lmhpc) then
+            if (ltypr) then
+                call asmpi_comm_vect('BCAST', 'R', nbval=nnbsol, bcrank=0, vr=rsolu)
+            else
+                call asmpi_comm_vect('BCAST', 'C', nbval=nnbsol, bcrank=0, vc=csolu)
+            endif
         endif
 !
 !       -- IMPRESSION DU/DES SOLUTIONS (SI DEMANDE) :
@@ -408,16 +502,17 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
             if (rang .eq. 0) then
                 if (ltypr) then
                     do k = 1, nnbsol
-                        write(ifmump,*) k,rsolu(k)
+                        write(ifmump,*) k,rsolu2(k)
                     enddo
                 else
                     do k = 1, nnbsol
-                        write(ifmump,*) k,csolu(k)
+                        write(ifmump,*) k,csolu2(k)
                     enddo
                 endif
                 write(ifmump,*) 'MUMPS FIN SOLUTION'
             endif
         endif
+        if (lmhpc) call jedetr('&&AMUMPP.RHS')
     else
 !       ------------------------------------------------
 !        MAUVAISE OPTION

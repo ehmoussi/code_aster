@@ -49,11 +49,9 @@ CharMeca2.build()
 
 monSolver = code_aster.MumpsSolver( code_aster.Renumbering.Metis )
 
-mecaStatique = code_aster.StaticMechanicalSolver()
+mecaStatique = code_aster.StaticMechanicalSolver(monModel, affectMat)
 mecaStatique.addMechanicalLoad( CharMeca1 )
 mecaStatique.addMechanicalLoad( CharMeca2 )
-mecaStatique.setSupportModel( monModel )
-mecaStatique.setMaterialOnMesh( affectMat )
 mecaStatique.setLinearSolver( monSolver )
 
 temps = [0., 0.5, 1.]

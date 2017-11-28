@@ -112,12 +112,13 @@ class AssemblyMatrixInstance: public DataStructure
         };
 
         /**
-         * @brief Methode permettant d'ajouter un chargement
-         * @param currentLoad objet MechanicalLoad
+         * @brief Function d'ajout d'un chargement
+         * @param Args... Liste d'arguments template
          */
-        void addKinematicsLoad( const KinematicsLoadPtr& currentLoad )
+        template< typename... Args >
+        void addLoad( const Args&... a )
         {
-            _listOfLoads->addKinematicsLoad( currentLoad );
+            _listOfLoads->addLoad( a... );
         };
 
         /**
@@ -156,7 +157,7 @@ class AssemblyMatrixInstance: public DataStructure
          */
         bool isEmpty() const
         {
-            return _isEmpty;
+            return (!_description->exists());
         };
 
         /**
@@ -287,7 +288,7 @@ Mat AssemblyMatrixInstance< ValueType >::toPetsc4py() throw ( std::runtime_error
 
     if ( _isEmpty )
         throw std::runtime_error( "Assembly matrix is empty" );
-    if ( getType() != "MATR_ASSE_DEPL_R_DEPL_R" ) throw std::runtime_error( "Not yet implemented" );
+    if ( getType() != "MATR_ASSE_DEPL_R" ) throw std::runtime_error( "Not yet implemented" );
 
     CALLO_MATASS2PETSC( getName(), &myMat, &ierr );
 

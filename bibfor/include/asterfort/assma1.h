@@ -21,8 +21,9 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine assma1(matas, ldist)
+    subroutine assma1(matas, ldist, lmhpc)
         character(len=*) :: matas
         aster_logical :: ldist
+        aster_logical :: lmhpc
     end subroutine assma1
 end interface

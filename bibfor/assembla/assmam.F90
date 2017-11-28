@@ -99,6 +99,7 @@ subroutine assmam(base, matas, nbmat, tlimat, licoef,&
     character(len=16) :: optio, optio2
     character(len=1) :: base1, typsca
     character(len=2) :: tt
+    character(len=3) :: mathpc
     character(len=8) ::  nogdco, nogdsi, ma, ma2, mo, mo2, partit
     character(len=8) :: symel, kempic
     character(len=14) :: nudev, nu14
@@ -107,7 +108,7 @@ subroutine assmam(base, matas, nbmat, tlimat, licoef,&
     character(len=3) :: matd,kret
     real(kind=8) :: c1, temps(7)
 
-    aster_logical :: acreer, cumul, dbg, ldistme, lmatd
+    aster_logical :: acreer, cumul, dbg, ldistme, lmatd, lmhpc
     aster_logical :: lmasym, lmesym, ldgrel,lparallel_mesh
 
     integer :: admodl, i
@@ -569,14 +570,16 @@ subroutine assmam(base, matas, nbmat, tlimat, licoef,&
         end do
     endif
 
+    call dismoi('MATR_HPC', mat19, 'MATR_ASSE', repk=mathpc)
+    lmhpc = mathpc.eq.'OUI'
 !   -- il faut communiquer ellagr entre les procs :
-    if (ldistme) then
+    if (ldistme.or.lmhpc) then
         call asmpi_comm_vect('MPI_MAX', 'I', sci=ellagr)
     endif
 
 
 !   -- mise a l'echelle des coef. de lagrange si necessaire :
-    if (ellagr .gt. 0) call assma1(mat19, ldistme)
+    if (ellagr .gt. 0) call assma1(mat19, ldistme, lmhpc)
 
 
     if (.not.ldistme) then

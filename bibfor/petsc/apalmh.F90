@@ -70,7 +70,7 @@ use petsc_data_module
 !
 !----------------------------------------------------------------
 !     Variables PETSc
-    PetscInt :: low, high, neql, neqg, ierr
+    PetscInt :: low, high, neql, neqg, ierr, unused_nz
     PetscScalar :: xx(1)
     PetscOffset :: xidx
     Mat :: a
@@ -210,8 +210,9 @@ use petsc_data_module
         enddo
     endif
 
-    call MatMPIAIJSetPreallocation(a, PETSC_NULL_INTEGER, zi4(jidxd),&
-                                   PETSC_NULL_INTEGER, zi4(jidxo), ierr)
+    unused_nz = -1
+    call MatMPIAIJSetPreallocation(a, unused_nz, zi4(jidxd),&
+                                   unused_nz, zi4(jidxo), ierr)
     ASSERT(ierr.eq.0)
 !
 #ifdef ASTER_PETSC_VERSION_LEQ_32
