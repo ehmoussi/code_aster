@@ -112,13 +112,16 @@ implicit none
 ! -------- Nothing to do
                else if (dual_type(1:2).eq.'2D' .or.  dual_type(1:2).eq.'3D') then
                    ltran=.true._1
+               else if (dual_type .eq. 'ROTA2D') then
+                   call utmess('F','CHARGES_35')
+               else if (dual_type .eq. 'ROTA3D') then
+                   call utmess('F','CHARGES_36')
                else if (dual_type.eq.'NLIN') then
 !                  -- Le nom de la charge est malheureusement inexploitable.
 !                     C'est une copie temporaire.
                    call utmess('F','CHARGES_30')
                else
-!                  --  par exemple : 'ROTA3D', ...
-                   call utmess('F','CHARGES_30')
+                    ASSERT(ASTER_FALSE)
                endif
             enddo
 !

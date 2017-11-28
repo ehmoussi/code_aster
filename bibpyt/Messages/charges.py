@@ -91,7 +91,7 @@ Il y a trop de chargements de type Dirichlet suiveur.
 Erreur utilisateur :
   Le chargement contient des relations cinématiques qui sont non-linéaires
   lorsque l'on utilise EXCIT / TYPE_CHARGE='SUIV'.
-  Le code ne sait pas encore traiter ces relations non linéaires.
+  Mais le code ne sait pas encore traiter ces relations non linéaires.
 """),
 
     31 : _(u"""
@@ -110,6 +110,18 @@ Le modèle de la charge %(k1)s est différent du modèle de l'opérateur de calc
 
     34 : _(u"""
 La charge %(k1)s ne peut pas être pilotée.
+"""),
+
+    35 : _(u"""
+Erreur utilisateur :
+  Le chargement contient des relations cinématiques LIAISON_SOLIDE qui sont non-linéaires lorsque l'on utilise EXCIT / TYPE_CHARGE='SUIV'.
+  Mais ce cas n'est pas traité car il y a au moins un noeud qui porte le degré de liberté DRZ.
+"""),
+
+    36 : _(u"""
+Erreur utilisateur :
+  Le chargement contient des relations cinématiques LIAISON_SOLIDE qui sont non-linéaires lorsque l'on utilise EXCIT / TYPE_CHARGE='SUIV'.
+  Mais ce cas n'est pas traité car il y a au moins un noeud qui porte les degrés de liberté DRX, DRY et DRZ.
 """),
 
     38 : _(u"""
