@@ -21,6 +21,20 @@
 
 cata_msg = {
 
+    1 : _(u"""
+ Le mot-clé %(k2)s est absent, or il est obligatoire pour le contact de type %(k1)s.
+"""),
+
+    2 : _(u"""
+ Le mot-clé %(k2)s n'est pas utilisé pour le contact de type %(k1)s.
+ Il n'est donc pas pris en compte.
+ """),
+ 
+     3 : _(u"""
+ Le mot-clé %(k1)s n'est pas utilisé pour le contact en présence du mot-clé SECTEUR.
+ Il n'est donc pas pris en compte.
+ """),
+ 
     4 : _(u"""
  Le calcul ne peut aboutir.
 

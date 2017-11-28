@@ -259,6 +259,14 @@ subroutine op0153()
     if (iret .ne. 0) goto 999
 !
     if (indic .eq. 0) then
+        
+        call getvr8(' ', 'ANGL_ISTHME', scal=haut, nbret=n1)
+        if (n1.ne.0) call utmess('A', 'PREPOST4_3', sk='ANGL_ISTHME')
+        call getvr8(' ', 'ANGL_INCLI', scal=haut, nbret=n1)
+        if (n1.ne.0) call utmess('A', 'PREPOST4_3', sk='ANGL_INCLI')
+        call getvr8(' ', 'ANGL_IMPACT', scal=haut, nbret=n1)
+        if (n1.ne.0) call utmess('A', 'PREPOST4_3', sk='ANGL_IMPACT')
+        
         call getvr8(' ', 'LARGEUR_OBST', scal=haut, nbret=n1)
         if (n1 .le. 0) then
             haut=0.011d0
