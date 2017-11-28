@@ -215,10 +215,10 @@ implicit none
             zr(vale_indx-1+45) = v_sdcont_cychis(60*(i_cont_poin-1)+51)
             !mode robuste frottement
             zr(vale_indx-1+46) = v_sdcont_cychis(60*(i_cont_poin-1)+52)
-            !mode adaptatif : frottement penalise            
-            zr(vale_indx-1+47) = v_sdcont_cychis(60*(i_cont_poin-1)+5)
-!                if (i_cont_poin .eq. 1) & 
-!                    write (6,*) "vale_adhe_impose mmchml", zr(vale_indx-1+47)
+            !mode adaptatif : frottement penalise      
+            if ((i_algo_cont .eq. 3) .and. (i_algo_fric .eq. 1) ) then
+                zr(vale_indx-1+47) = v_sdcont_cychis(60*(i_cont_poin-1)+5)
+            endif
         enddo
         nt_liel = nt_liel + nb_liel
     enddo

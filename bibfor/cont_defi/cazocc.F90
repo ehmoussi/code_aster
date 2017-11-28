@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine cazocc(sdcont, keywf, i_zone)
+subroutine cazocc(sdcont, keywf, i_zone,nb_cont_zone)
 !
 implicit none
 !
@@ -38,6 +38,7 @@ implicit none
     character(len=8), intent(in) :: sdcont
     integer, intent(in) :: i_zone
     character(len=16), intent(in) :: keywf
+    integer, intent(in),optional :: nb_cont_zone
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -80,6 +81,8 @@ implicit none
     aster_logical ::  l_newt_fr = .false._1, l_cont_cont = .false._1,l_pena_cont = .false._1
     character(len=24) :: sdcont_paracr
     real(kind=8), pointer :: v_sdcont_paracr(:) => null()
+    real(kind=8) :: pene_critere
+    integer :: i_pene_zone
 
 !
 ! --------------------------------------------------------------------------------------------------
@@ -201,11 +204,17 @@ implicit none
     v_sdcont_caracf(zcmcf*(i_zone-1)+2) = coef_cont
     v_sdcont_caracf(zcmcf*(i_zone-1)+3) = algo_cont
     v_sdcont_caracf(zcmcf*(i_zone-1)+14) = pene_maxi
-! On cherche le minimum des pene_maxi.
-    if (i_zone .le. 1) then 
-        v_sdcont_paracr(6) = pene_maxi
-    else
-        v_sdcont_paracr(6) = min(pene_maxi,v_sdcont_paracr(6))
+    if (present(nb_cont_zone)) then 
+    ! On cherche le minimum des pene_maxi.
+        if (i_zone .eq. nb_cont_zone  ) then 
+        ! On va parcourir toutes les zones et determiner le min des pene_maxi : pene_critere
+        ! On initialise pene_critere à la valeur courante : soit la valeur de la derniere zone
+            pene_critere = pene_maxi
+            do i_pene_zone =1,nb_cont_zone
+                 if (v_sdcont_caracf(zcmcf*(i_pene_zone-1)+14) .lt. pene_critere) &
+                     v_sdcont_paracr(6) =  v_sdcont_caracf(zcmcf*(i_pene_zone-1)+14)               
+            enddo
+        endif
     endif
 
 !
