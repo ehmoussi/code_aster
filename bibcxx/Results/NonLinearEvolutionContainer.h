@@ -44,7 +44,7 @@ class NonLinearEvolutionContainerInstance: public ResultsContainerInstance
         /**
          * @brief Constructeur
          */
-        NonLinearEvolutionContainerInstance( const std::string resuTyp = "???" ): 
+        NonLinearEvolutionContainerInstance( const std::string resuTyp = "EVOL_NOLI" ): 
                 ResultsContainerInstance( resuTyp )
         {};
 
