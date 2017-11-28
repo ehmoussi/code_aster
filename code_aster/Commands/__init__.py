@@ -111,6 +111,7 @@ from .modi_modele import MODI_MODELE
 from .modi_repere import MODI_REPERE
 from .nume_ddl import NUME_DDL
 # from .nume_ddl_gene import NUME_DDL_GENE
+from .post_champ import POST_CHAMP
 from .proj_champ import PROJ_CHAMP
 from .resoudre import RESOUDRE
 from .stat_non_line import STAT_NON_LINE
