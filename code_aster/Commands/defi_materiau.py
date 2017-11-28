@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import Material, GeneralMaterialBehaviour
+from ..Objects import Material, GeneralMaterialBehaviour, Table
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -62,6 +62,9 @@ class MaterialDefinition(ExecuteCommand):
                                          "(as '{3}'/'{2}') "
                                          .format(skwName, fkwName, iName,
                                                  klass.__name__))
+                elif type( skw ) is Table:
+                    iName = skwName.capitalize()
+                    cRet = matBehav.setTableValue( iName, skw )
                 else:
                     raise NotImplementedError("Unsupported type for keyword: "
                                               "{0} <{1}>"

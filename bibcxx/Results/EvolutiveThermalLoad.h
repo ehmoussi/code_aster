@@ -33,7 +33,7 @@
 
 /**
  * @class EvolutiveThermalLoadInstance
- * @brief Cette classe correspond a un comb_fourier
+ * @brief Cette classe correspond a un evol_ther
  * @author Nicolas Sellenet
  */
 class EvolutiveThermalLoadInstance: public ResultsContainerInstance
@@ -43,7 +43,7 @@ public:
      * @brief Constructeur
      */
     EvolutiveThermalLoadInstance(): 
-        ResultsContainerInstance( "EVOL_CHAR" )
+        ResultsContainerInstance( "EVOL_THER" )
     {};
 
 };

@@ -202,6 +202,18 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
         };
 
         /**
+         * @brief Set the value of LONUTI of jeveux object
+         */
+        bool setLonUti( long value )
+        {
+            if( ! exists() ) return false;
+
+            const std::string param( "LONUTI" );
+            CALLO_JEECRA_WRAP( _name, param, &value );
+            return true;
+        };
+
+        /**
          * @brief Return the size of the vector
          */
         long size() const
