@@ -49,6 +49,7 @@ from .calc_char_cine import CALC_CHAR_CINE
 from .calc_cham_elem import CALC_CHAM_ELEM
 from .calc_char_cine import CALC_CHAR_CINE
 from .calc_fatigue import CALC_FATIGUE
+from .calc_ferraillage import CALC_FERRAILLAGE
 from .calc_fonction import CALC_FONCTION
 from .calc_fonc_interp import CALC_FONC_INTERP
 from .calc_forc_nonl import CALC_FORC_NONL
