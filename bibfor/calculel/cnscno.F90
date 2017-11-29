@@ -219,7 +219,23 @@ subroutine cnscno(cnsz, prchnz, prol0, basez, cnoz,&
         nb_equa=0
         do k = 1, nbno*ncmp1
             if (zl(jcnsl-1+k)) then
-                nb_equa=nb_equa+1
+                nb_equa = nb_equa + 1
+            elseif (prol0 .eq. 'OUI') then
+                zl(jcnsl-1+k) = .true.
+                if (tsca .eq. 'R') then
+                    zr(jcnsv-1+k) = 0.d0
+                else if (tsca.eq.'C') then
+                    zc(jcnsv-1+k) = (0.d0, 0.d0)
+                else if (tsca.eq.'I') then
+                    zi(jcnsv-1+k) = 0
+                else if (tsca.eq.'L') then
+                    zl(jcnsv-1+k) = .false.
+                else if (tsca.eq.'K8') then
+                    zk8(jcnsv-1+k) = ' '
+                else
+                    ASSERT(.false.)
+                endif
+                nb_equa = nb_equa + 1
             endif
         end do
         if (nb_equa .eq. 0) then
