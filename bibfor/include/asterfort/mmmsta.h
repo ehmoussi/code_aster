@@ -25,7 +25,7 @@ interface
                       dlagrf, coefaf,  tau1, tau2,&
                       lcont, ladhe, lambda, rese, nrese, l_previous)
         integer, intent(in) :: ndim
-        aster_logical, intent(out) :: leltf
+        aster_logical, intent(inout) :: leltf
         aster_logical, intent(out) :: lpenaf
         aster_logical, intent(in) :: loptf
         aster_logical, intent(in) :: l_previous
