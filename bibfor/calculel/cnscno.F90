@@ -261,7 +261,7 @@ subroutine cnscno(cnsz, prchnz, prol0, basez, cnoz,&
 !
 !       2.4 CREATION  DE .DEEQ :
 !       POUR DES RAISONS DE PERFORMANCES, IL VAUT MIEUX LE
-!       FAIRE PLUTARD.
+!       FAIRE PLUS TARD.
     endif
 !
 ! - Get number of equations
