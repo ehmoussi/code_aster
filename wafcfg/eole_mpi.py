@@ -40,6 +40,7 @@ def configure(self):
 
     # suppress too aggressive optimization with Intel impi/2017.0.98 : I_MPI_DAPL_TRANSLATION_CACHE=0 
     self.env.append_value('OPT_ENV_FOOTER', [
+        'module unload mkl',
         'module load mkl/2017.0.098 impi/2017.0.098',
         'export I_MPI_DAPL_TRANSLATION_CACHE=0'
     ])
