@@ -314,6 +314,7 @@ subroutine cnoaff(noma, nomgd, base, cno)
 ! --- 5. PASSAGE DU CHAM_NO_S AU CHAM_NO :
 !     =============================================
     prchno=' '
+    prol0 = 'NON'
     call getvtx(' ', 'PROL_ZERO', scal=prol0, nbret=ibid)
     call cnscno(cnos, prchno, prol0, base, cno,&
                 'F', iret)
