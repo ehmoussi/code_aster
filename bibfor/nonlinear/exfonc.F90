@@ -56,7 +56,7 @@ implicit none
 !
 ! In  list_func_acti   : list of active functionnalities
 ! In  ds_algopara      : datastructure for algorithm parameters
-! In  solver           : datastructure for solver parameters 
+! In  solver           : datastructure for solver parameters
 ! In  ds_contact       : datastructure for contact management
 ! In  sddyna           : dynamic parameters datastructure
 ! In  mate             : name of material characteristics (field)
@@ -67,7 +67,7 @@ implicit none
     aster_logical :: l_cont, lallv, l_cont_cont, l_cont_disc, lpena, leltc, l_cont_lac, l_iden_rela
     aster_logical :: l_pilo, l_line_search, lmacr, l_unil, l_diri_undead, l_cont_xfem
     aster_logical :: l_vibr_mode, l_buckling, lexpl, lxfem, lmodim, l_mult_front
-    aster_logical :: lgcpc, lpetsc, lamg, limpex, l_matr_rigi_syme
+    aster_logical :: lgcpc, lpetsc, lamg, limpex, l_matr_rigi_syme, l_matr_distr
     aster_logical :: londe, l_dyna, l_grot_gdep, l_newt_krylov, l_mumps, l_rom
     aster_logical :: l_energy, lproj, lmatdi, lldsp, lctgcp, l_comp_rela, lammo, lthms
     character(len=24) :: typilo, metres, char24
@@ -113,6 +113,7 @@ implicit none
     l_mumps         = isfonc(list_func_acti,'MUMPS')
     l_mult_front    = isfonc(list_func_acti,'MULT_FRONT')
     l_diri_undead   = isfonc(list_func_acti,'DIRI_UNDEAD')
+    l_matr_distr    = isfonc(list_func_acti,'MATR_DISTRIBUEE')
 !
 ! - Get algorithm parameters
 !
@@ -198,6 +199,8 @@ implicit none
         l_iden_rela = ds_contact%l_iden_rela
         if (l_iden_rela .and. l_mult_front) then
             call utmess('F', 'MECANONLINE3_99')
+        elseif (l_matr_distr) then
+            call utmess('F', 'CONTACT2_19')
         endif
     endif
 !
