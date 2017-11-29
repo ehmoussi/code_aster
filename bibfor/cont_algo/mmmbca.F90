@@ -110,7 +110,8 @@ implicit none
     character(len=19) :: chdepd
     aster_logical :: l_glis
     aster_logical :: l_glis_init, l_veri, l_exis_glis, loop_cont_conv, l_loop_cont
-    aster_logical :: l_frot_zone=.false._1, l_pena_frot=.false._1, l_frot=.false._1,l_pena_cont=.false._1
+    aster_logical :: l_frot_zone=.false._1, l_pena_frot=.false._1, l_frot=.false._1
+    aster_logical :: l_pena_cont=.false._1
     integer :: loop_geom_count, loop_fric_count, loop_cont_count
     integer :: type_adap
     character(len=24) :: sdcont_cychis, sdcont_cyccoe, sdcont_cyceta
