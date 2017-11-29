@@ -17,8 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# Ce test vérifie le prolongement par zéro d'un champ aux noeuds NOEU
-# La structure est 2D. C'est un carre forme de 2 zones CARR1 et CARR2.
+# idem zzzz304b but with a sd_resultat object
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 
@@ -64,13 +63,22 @@ field1 = CREA_CHAMP(
     TYPE_CHAM='NOEU_TEMP_R'
 )
 
-IMPR_RESU(FORMAT='RESULTAT', RESU=_F(CHAM_GD=field1), UNITE=8)
+evol1 = CREA_RESU(
+    OPERATION='AFFE',
+    TYPE_RESU='EVOL_THER',
+    NOM_CHAM='TEMP',
+    AFFE=_F(CHAM_GD=field1, INST=1.),
+)
+
+IMPR_RESU(FORMAT='RESULTAT', RESU=_F(RESULTAT=evol1), UNITE=8)
 
 nbnc1 = 21
 TEST_RESU(
-    CHAM_NO=_F(
-        CHAM_GD=field1,
+    RESU=_F(
+        RESULTAT=evol1,
+        NOM_CHAM='TEMP',
         NOM_CMP='TEMP',
+        NUME_ORDRE=1,
         REFERENCE='ANALYTIQUE',
         TYPE_TEST='SOMM',
         VALE_CALC=nbnc1,
@@ -79,8 +87,8 @@ TEST_RESU(
 )
 
 # without PROL_ZERO
-chproj = PROJ_CHAMP(
-    CHAM_GD=field1,
+resproj = PROJ_CHAMP(
+    RESULTAT=evol1,
     MODELE_1=modelbot,
     MODELE_2=model,
     DISTANCE_MAX=0.01,
@@ -88,9 +96,11 @@ chproj = PROJ_CHAMP(
 )
 
 TEST_RESU(
-    CHAM_NO=_F(
-        CHAM_GD=chproj,
+    RESU=_F(
+        RESULTAT=resproj,
+        NOM_CHAM='TEMP',
         NOM_CMP='TEMP',
+        NUME_ORDRE=1,
         REFERENCE='ANALYTIQUE',
         TYPE_TEST='SOMM',
         VALE_CALC=nbnc1,
@@ -98,11 +108,11 @@ TEST_RESU(
     )
 )
 
-IMPR_RESU(FORMAT='RESULTAT', RESU=_F(CHAM_GD=chproj), UNITE=8)
+IMPR_RESU(FORMAT='RESULTAT', RESU=_F(RESULTAT=resproj), UNITE=8)
 
 # with PROL_ZERO
-chproj0 = PROJ_CHAMP(
-    CHAM_GD=field1,
+resproj0 = PROJ_CHAMP(
+    RESULTAT=evol1,
     MODELE_1=modelbot,
     MODELE_2=model,
     DISTANCE_MAX=0.01,
@@ -110,9 +120,11 @@ chproj0 = PROJ_CHAMP(
 )
 
 TEST_RESU(
-    CHAM_NO=_F(
-        CHAM_GD=chproj0,
+    RESU=_F(
+        RESULTAT=resproj0,
+        NOM_CHAM='TEMP',
         NOM_CMP='TEMP',
+        NUME_ORDRE=1,
         REFERENCE='ANALYTIQUE',
         TYPE_TEST='SOMM',
         VALE_CALC=nbnc1,
@@ -120,7 +132,15 @@ TEST_RESU(
     )
 )
 
-IMPR_RESU(FORMAT='RESULTAT', RESU=_F(CHAM_GD=chproj0), UNITE=8)
+IMPR_RESU(FORMAT='RESULTAT', RESU=_F(RESULTAT=resproj0), UNITE=8)
+
+chproj0 = CREA_CHAMP(
+    OPERATION='EXTR',
+    TYPE_CHAM='NOEU_TEMP_R',
+    RESULTAT=resproj0,
+    NOM_CHAM='TEMP',
+    NUME_ORDRE=1
+)
 
 # combinaison is not possible if the fields have not the same support
 sum1 = CREA_CHAMP(
