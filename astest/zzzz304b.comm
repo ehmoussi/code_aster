@@ -1,0 +1,142 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# Ce test vérifie le prolongement par zéro d'un champ aux noeuds NOEU
+# La structure est 2D. C'est un carre forme de 2 zones CARR1 et CARR2.
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
+
+bottom = LIRE_MAILLAGE(UNITE=21)
+
+mesh = LIRE_MAILLAGE(UNITE=20)
+
+modelbot = AFFE_MODELE(
+    AFFE=_F(
+        GROUP_MA=('CARR1', ), MODELISATION=('PLAN', ), PHENOMENE='THERMIQUE'
+    ),
+    MAILLAGE=bottom
+)
+
+model = AFFE_MODELE(
+    AFFE=_F(MODELISATION=('PLAN', ), PHENOMENE='THERMIQUE', TOUT='OUI'),
+    MAILLAGE=mesh
+)
+
+cst1 = CREA_CHAMP(
+    AFFE=_F(NOM_CMP=('TEMP', ), TOUT='OUI', VALE=(1.0, )),
+    MAILLAGE=mesh,
+    OPERATION='AFFE',
+    TYPE_CHAM='NOEU_TEMP_R'
+)
+
+nbnode = 41
+TEST_RESU(
+    CHAM_NO=_F(
+        CHAM_GD=cst1,
+        NOM_CMP='TEMP',
+        REFERENCE='ANALYTIQUE',
+        TYPE_TEST='SOMM',
+        VALE_CALC=nbnode,
+        VALE_REFE=nbnode
+    )
+)
+
+field1 = CREA_CHAMP(
+    AFFE=_F(GROUP_MA=('CARR1', ), NOM_CMP=('TEMP', ), VALE=(1.0, )),
+    MODELE=modelbot,
+    OPERATION='AFFE',
+    TYPE_CHAM='NOEU_TEMP_R'
+)
+
+IMPR_RESU(FORMAT='RESULTAT', RESU=_F(CHAM_GD=field1), UNITE=8)
+
+nbnc1 = 21
+TEST_RESU(
+    CHAM_NO=_F(
+        CHAM_GD=field1,
+        NOM_CMP='TEMP',
+        REFERENCE='ANALYTIQUE',
+        TYPE_TEST='SOMM',
+        VALE_CALC=nbnc1,
+        VALE_REFE=nbnc1
+    )
+)
+
+# without PROL_ZERO
+chproj = PROJ_CHAMP(
+    CHAM_GD=field1,
+    MODELE_1=modelbot,
+    MODELE_2=model,
+    DISTANCE_MAX=0.01,
+    PROL_ZERO='NON'
+)
+
+TEST_RESU(
+    CHAM_NO=_F(
+        CHAM_GD=chproj,
+        NOM_CMP='TEMP',
+        REFERENCE='ANALYTIQUE',
+        TYPE_TEST='SOMM',
+        VALE_CALC=nbnc1,
+        VALE_REFE=nbnc1
+    )
+)
+
+IMPR_RESU(FORMAT='RESULTAT', RESU=_F(CHAM_GD=chproj), UNITE=8)
+
+# with PROL_ZERO
+chproj0 = PROJ_CHAMP(
+    CHAM_GD=field1,
+    MODELE_1=modelbot,
+    MODELE_2=model,
+    DISTANCE_MAX=0.01,
+    PROL_ZERO='OUI'
+)
+
+TEST_RESU(
+    CHAM_NO=_F(
+        CHAM_GD=chproj0,
+        NOM_CMP='TEMP',
+        REFERENCE='ANALYTIQUE',
+        TYPE_TEST='SOMM',
+        VALE_CALC=nbnc1,
+        VALE_REFE=nbnc1
+    )
+)
+
+sum1 = CREA_CHAMP(
+    COMB=(_F(CHAM_GD=chproj0, COEF_R=1.0), _F(CHAM_GD=cst1, COEF_R=1.0)),
+    OPERATION='COMB',
+    TYPE_CHAM='NOEU_TEMP_R'
+)
+
+# `nbnc1` nodes with 1 + 1 and `nbnode - nbnc1` with 1 + 0
+nbcheck0 = 2 * nbnc1 + (nbnode - nbnc1)
+TEST_RESU(
+    CHAM_NO=_F(
+        CHAM_GD=sum1,
+        NOM_CMP='TEMP',
+        REFERENCE='ANALYTIQUE',
+        TYPE_TEST='SOMM',
+        VALE_CALC=nbcheck0,
+        VALE_REFE=nbcheck0
+    )
+)
+
+FIN()
