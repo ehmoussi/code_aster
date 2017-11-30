@@ -41,7 +41,7 @@ subroutine te0150(option, nomte)
 !       'MECA_POU_D_TG' : POUTRE DROITE DE TIMOSHENKO (GAUCHISSEMENT)
 !       'MECA_POU_D_TGM': POUTRE DROITE DE TIMOSHENKO (GAUCHISSEMENT)
 !                         MULTI-FIBRES SECTION CONSTANTE
-!
+!       'MECA_POU_D_SQUE' : SQUELETTE D'ASSEMBLAGE COMBUSTIBLE
 ! --------------------------------------------------------------------------------------------------
 !
     implicit none
@@ -53,6 +53,7 @@ subroutine te0150(option, nomte)
 #include "asterfort/matrot.h"
 #include "asterfort/moytem.h"
 #include "asterfort/pmfrig.h"
+#include "asterfort/pmfite.h"
 #include "asterfort/porigi.h"
 #include "asterfort/poutre_modloc.h"
 #include "asterfort/ptfocp.h"
@@ -68,17 +69,19 @@ subroutine te0150(option, nomte)
 !
     integer :: nbpar, lmater, iret
     integer :: istruc, lorien, lvect
-    integer :: itype, nc, ind, i, j
+    integer :: itype, nc, ind, i, j, ncf
     integer :: ndim, nno, nnos, npg, ipoids
     integer :: ivf, idfdx, jgano
+    integer :: nbfibr, nbgrfi, tygrfi, nbcarm, nug(10), jacf
+    integer :: nbasspou, maxfipoutre
     real(kind=8) :: valpar(3)
     real(kind=8) :: e, nu, g
     real(kind=8) :: a, a2, xl
-    real(kind=8) :: pgl(3, 3), de(14), ffe(14)
-    real(kind=8) :: bsm(14, 14), matk(105)
+    real(kind=8) :: pgl(3, 3), de(18), ffe(18)
+    real(kind=8) :: bsm(18, 18), matk(171)
     real(kind=8) :: epsith
-    real(kind=8) :: fr(14), fi(14), fgr(14), fgi(14)
-    real(kind=8) :: fer(12), fei(12)
+    real(kind=8) :: fr(18), fi(18), fgr(18), fgi(18)
+    real(kind=8) :: fer(18), fei(18)
 !
     character(len=4) :: fami
     character(len=8) :: nompar(3), materi
@@ -94,11 +97,17 @@ subroutine te0150(option, nomte)
     integer, parameter :: nb_cara = 3
     real(kind=8) :: vale_cara(nb_cara)
     character(len=8), parameter :: noms_cara(nb_cara) = (/'A1  ','A2  ','TVAR'/)
-! --------------------------------------------------------------------------------------------------
+! -------------------------------------------------------------------------------------------------- 
 !
     fami = 'RIGI'
     nno = 2
-    nc = 6
+    if (nomte.eq.'MECA_POU_D_SQUE') then
+      nc = 9
+      ncf = nc
+    else
+      nc = 6
+      ncf = nc
+    end if
     istruc = 1
 !
     call elrefe_info(fami=fami, ndim=ndim, nno=nno, nnos=nnos, npg=npg,&
@@ -130,7 +139,8 @@ subroutine te0150(option, nomte)
     call matrot(zr(lorien), pgl)
 !
     materi=' '
-    if ((nomte.ne.'MECA_POU_D_EM') .and. (nomte.ne.'MECA_POU_D_TGM')) then
+    if ((nomte.ne.'MECA_POU_D_EM') .and. (nomte.ne.'MECA_POU_D_TGM') &
+        .and. (nomte.ne.'MECA_POU_D_SQUE')) then
 !       poutres classiques
         if (option(13:16) .ne. '1D1D' .and. .not.lrho) then
             call rcvalb(fami, 1, 1, '+', zi(lmater), materi, 'ELAS', nbpar, nompar, valpar,&
@@ -142,8 +152,8 @@ subroutine te0150(option, nomte)
         endif
     endif
 !
-    if (nomte .eq. 'MECA_POU_D_EM') then
-!       poutre multifibre droite d'euler a 6 DDL
+    if ((nomte .eq. 'MECA_POU_D_EM') .or.(nomte .eq. 'MECA_POU_D_SQUE')) then
+!       poutre multifibre droite d'euler a 6 DDL ou element squelette 9 DDL
         if (lrho) then
             itype=0
         else
@@ -154,10 +164,12 @@ subroutine te0150(option, nomte)
 !       poutre droite de timoskenko a 7 ddl (gauchissement)
         itype = 30
         nc = 7
+        ncf = 6
     else if (nomte .eq. 'MECA_POU_D_TGM') then
 !       poutre droite de timoskenko a 7 ddl (gauchissement, multifibres)
         itype = 30
         nc = 7
+        ncf = 6
     endif
 !   passage du repere local au repere global
     if (option .eq. 'CHAR_MECA_FC1D1D') then
@@ -189,19 +201,21 @@ subroutine te0150(option, nomte)
         if (nomte .eq. 'MECA_POU_D_TG' .or. nomte .eq. 'MECA_POU_D_TGM') then
             call ptforp(0, option, nomte, a, a2, xl, 1, nno, 6, pgl, fer, fei)
         else
-            call ptforp(itype, option, nomte, a, a2, xl, 1, nno, nc, pgl, fer, fei)
+            call ptforp(itype, option, nomte, a, a2, xl, 1, nno, ncf, pgl, fer, fei)
         endif
-        do i = 1, 6
+        do i = 1, ncf
             ffe(i) = fer(i)
-            ffe(i+nc) = fer(i+6)
+            ffe(i+nc) = fer(i+ncf)
         enddo
         if (nc .eq. 7) then
             ffe(7) = 0.d0
             ffe(14) = 0.d0
         endif
     else
-        if (nomte .eq. 'MECA_POU_D_EM' .or. nomte .eq. 'MECA_POU_D_TGM') then
+        if (nomte .eq. 'MECA_POU_D_EM' .or. nomte .eq. 'MECA_POU_D_TGM' &
+            .or. nomte .eq. 'MECA_POU_D_SQUE') then
 !           poutre droite multifibre a section constante
+            matk(:)=0.d0
             call pmfrig(nomte, zi(lmater), matk)
         else
             call porigi(nomte, e, nu, xl, matk)
@@ -233,7 +247,7 @@ subroutine te0150(option, nomte)
             de(8) = -de(1)
         else
             de(1) = -epsith * xl
-            de(7) = -de(1)
+            de(nc+1) = -de(1)
         endif
 !       calcul des forces induites
         do i = 1, nc

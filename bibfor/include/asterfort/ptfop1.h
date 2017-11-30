@@ -19,8 +19,8 @@
 !
 !
 interface
-    subroutine ptfop1(itype, coef1, coef2, xl, qq, fe)
-        integer :: itype
+    subroutine ptfop1(itype, nc, coef1, coef2, xl, qq, fe)
+        integer :: itype, nc
         real(kind=8) :: coef1
         real(kind=8) :: coef2
         real(kind=8) :: xl

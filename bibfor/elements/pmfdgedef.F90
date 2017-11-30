@@ -27,7 +27,7 @@ subroutine pmfdgedef(typfib, b, gg, depl, alicom, nbfibr, nbcarm, &
 ! -------------------------------------------------------------------------------------------------
 !
 !   IN
-!       typfib        : type des fibres : 1 ou 2
+!       typfib        : type des fibres : 1 ou 2, ou 3 (squelette assemblage)
 !       b             : Matrice b pour la position consideree
 !       g             : Matrice g pour la position consideree (mode incompatible)
 !       depl          : Champ de deplacement sur l'element
@@ -67,7 +67,7 @@ subroutine pmfdgedef(typfib, b, gg, depl, alicom, nbfibr, nbcarm, &
 !
 
     integer :: typfib, nbfibr, nbcarm, nbassepou, nbfipoutre(*), maxfipoutre
-    real(kind=8) :: vf(nbcarm, nbfibr), dege(6), b(4), gg, depl(12)
+    real(kind=8) :: vf(nbcarm, nbfibr), dege(6), b(4), gg, depl(*)
     real(kind=8) :: alicom, deffib(nbfibr) 
 !
 ! --------------------------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ subroutine pmfdgedef(typfib, b, gg, depl, alicom, nbfibr, nbcarm, &
         call pmfdge(b, gg, depl, alicom, dege)
         call pmfdef(typfib, nbfibr, nbcarm, vf, dege, deffib)
 
-    elseif ( typfib .eq. 2 ) then
+    elseif (( typfib .eq. 2 ).or.(typfib .eq. 3))  then
         depl2(:)=0
         dege2(:)=0
         call r8inir(nbassepou, 0.d0, yj, 1)
@@ -96,18 +96,33 @@ subroutine pmfdgedef(typfib, b, gg, depl, alicom, nbfibr, nbcarm, &
            yj(i)=vf(4,pos)
            zj(i)=vf(5,pos)
            !Construction champ des DDLs sur poutres
-           depl2(1)=depl(1) + depl(5) * zj(i) -depl(6)*yj(i)
-           depl2(2)=depl(2) - depl(4) * zj(i) +depl(6)*yj(i)
-           depl2(3)=depl(3) + depl(4) * yj(i) -depl(5)*zj(i)
-           depl2(4)=depl(4)
-           depl2(5)=depl(5)
-           depl2(6)=depl(6)
-           depl2(7)=depl(7) + depl(11) * zj(i) -depl(12)*yj(i)
-           depl2(8)=depl(8) - depl(10) * zj(i) +depl(12)*yj(i)
-           depl2(9)=depl(9) + depl(10) * yj(i) -depl(11)*zj(i)
-           depl2(10)=depl(10)
-           depl2(11)=depl(11)
-           depl2(12)=depl(12)
+           if ( typfib .eq. 2 ) then
+               depl2(1)=depl(1) + depl(5) * zj(i) -depl(6)*yj(i)
+               depl2(2)=depl(2) - depl(4) * zj(i) +depl(6)*yj(i)
+               depl2(3)=depl(3) + depl(4) * yj(i) -depl(5)*zj(i)           
+               depl2(4)=depl(4)
+               depl2(5)=depl(5)
+               depl2(6)=depl(6)
+               depl2(7)=depl(7) + depl(11) * zj(i) -depl(12)*yj(i)
+               depl2(8)=depl(8) - depl(10) * zj(i) +depl(12)*yj(i)
+               depl2(9)=depl(9) + depl(10) * yj(i) -depl(11)*zj(i)
+               depl2(10)=depl(10)
+               depl2(11)=depl(11)
+               depl2(12)=depl(12)
+           else
+               depl2(1)=depl(1) + depl(8) * zj(i) -depl(9)*yj(i)
+               depl2(2)=depl(2) - depl(7) * zj(i) 
+               depl2(3)=depl(3) + depl(7) * yj(i) 
+               depl2(4)=depl(4)
+               depl2(5)=depl(5)
+               depl2(6)=depl(6)
+               depl2(7)=depl(10) + depl(17) * zj(i) -depl(18)*yj(i)
+               depl2(8)=depl(11) - depl(16) * zj(i) 
+               depl2(9)=depl(12) + depl(16) * yj(i) 
+               depl2(10)=depl(13)
+               depl2(11)=depl(14)
+               depl2(12)=depl(15)
+           end if
            do ii = 1, nbfipoutre(i)
              posfib=pos+ii-1
              vfv(1,ii)=vf(1,posfib)-yj(i)
@@ -121,7 +136,6 @@ subroutine pmfdgedef(typfib, b, gg, depl, alicom, nbfibr, nbcarm, &
            enddo
            pos=pos+nbfipoutre(i)
         enddo
-
 
     else
         call utmess('F', 'ELEMENTS2_40', si=typfib)

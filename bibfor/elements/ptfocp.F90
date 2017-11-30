@@ -167,7 +167,7 @@ subroutine ptfocp(itype, option, xl, nno, nc, pgl, fer, fei)
         enddo
     endif
 !
-    call ptfop1(itype, coef1, coef2, xl, qqr, fer)
-    call ptfop1(itype, coef1, coef2, xl, qqi, fei)
+    call ptfop1(itype, nc, coef1, coef2, xl, qqr, fer)
+    call ptfop1(itype, nc, coef1, coef2, xl, qqi, fei)
 !
 end subroutine

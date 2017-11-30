@@ -57,7 +57,7 @@ subroutine te0517(option, nomte)
     integer :: jtab(7), ino, istrxm, nbsp
     integer :: igeom, iret, imate, k, npg, ifgm, iretc
 !
-    real(kind=8) :: pgl(3, 3), fl(14), xiy, xiz
+    real(kind=8) :: pgl(3, 3), fl(18), xiy, xiz
     real(kind=8) :: ey, ez, temp, xl, gamma
     real(kind=8) :: xls2, d1b(7, 14), co(3), aa, e, nu, g, alfay, alfaz, phiy
     real(kind=8) :: phiz, forref, momref, carsec(6)
@@ -74,10 +74,14 @@ subroutine te0517(option, nomte)
 !
     nno = 2
     ncomp = 18
-!
+! 
     if (nomte .eq. 'MECA_POU_D_EM') then
         nc = 6
+        npg = 2   
+    else if (nomte.eq.'MECA_POU_D_SQUE') then
+        nc = 9
         npg = 2
+        ncomp = 21
     else if (nomte.eq.'MECA_POU_D_TGM') then
         nc = 7
         npg = 3
@@ -133,6 +137,15 @@ subroutine te0517(option, nomte)
             do kp = 1, npg
                 do k = 1, nc
                     fl(nc*(kp-1)+k) = zr(istrxm-1+ncomp*(kp-1)+k)
+                enddo
+            enddo
+        else if (nomte.eq.'MECA_POU_D_SQUE') then
+            do kp = 1, npg
+                do k = 1, 6
+                    fl(nc*(kp-1)+k) = zr(istrxm-1+ncomp*(kp-1)+k)
+                enddo
+                do k = 7, nc
+                    fl(nc*(kp-1)+k) = zr(istrxm-1+ncomp*(kp-1)+12+k)
                 enddo
             enddo
         else if (nomte.eq.'MECA_POU_D_TGM') then

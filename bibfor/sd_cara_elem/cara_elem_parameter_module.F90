@@ -137,25 +137,26 @@ character(len=16),parameter :: ACE_NM_ELEMENT(ACE_NB_ELEMENT) =[ &
     integer, parameter :: ACE_NU_MASSIF    =  8
     integer, parameter :: ACE_NU_THHMM     =  9
 !
-    integer, parameter :: ACE_NB_POUTRE    = 12
+    integer, parameter :: ACE_NB_POUTRE    = 13
     character(len=16), parameter :: ACE_EL_POUTRE(ACE_NB_POUTRE) =[ &
         'MECA_POU_D_T    ','MECA_POU_D_E    ','MECA_POU_D_T_GD ','MEFS_POU_D_T    ',&
         'MECA_POU_D_TG   ','MECA_POHO_HEXA8 ','MECA_POHO_HEXA20','MET3SEG3        ',&
-        'MET6SEG3        ','MET3SEG4        ','MECA_POU_D_EM   ','MECA_POU_D_TGM  ' ]
+        'MET6SEG3        ','MET3SEG4        ','MECA_POU_D_EM   ','MECA_POU_D_TGM  ',&
+        'MECA_POU_D_SQUE ']
 !
 !     integer, parameter :: ACE_MECA_POU_D_T         1
 !     integer, parameter :: ACE_MECA_POU_D_E         2
 !     integer, parameter :: ACE_MECA_POU_D_T_GD      3
-!     integer, parameter :: ACE_MECA_POU_C_T         4
-!     integer, parameter :: ACE_MEFS_POU_D_T         5
-!     integer, parameter :: ACE_MECA_POU_D_TG        6
-!     integer, parameter :: ACE_MECA_POHO_HEXA8      7
-!     integer, parameter :: ACE_MECA_POHO_HEXA20     8
-!     integer, parameter :: ACE_MET3SEG3             9
-!     integer, parameter :: ACE_MET6SEG3            10
-!     integer, parameter :: ACE_MET3SEG4            11
-!     integer, parameter :: ACE_MECA_POU_D_EM       12
-!     integer, parameter :: ACE_MECA_POU_D_TGM      13
+!     integer, parameter :: ACE_MEFS_POU_D_T         4
+!     integer, parameter :: ACE_MECA_POU_D_TG        5
+!     integer, parameter :: ACE_MECA_POHO_HEXA8      6
+!     integer, parameter :: ACE_MECA_POHO_HEXA20     7
+!     integer, parameter :: ACE_MET3SEG3             8
+!     integer, parameter :: ACE_MET6SEG3             9
+!     integer, parameter :: ACE_MET3SEG4            10
+!     integer, parameter :: ACE_MECA_POU_D_EM       11
+!     integer, parameter :: ACE_MECA_POU_D_TGM      12
+!     integer, parameter :: ACE_MECA_POU_D_SQUE     13
 !
 ! --------------------------------------------------------------------------------------------------
     integer, parameter :: ACE_NB_DISCRET   = 8

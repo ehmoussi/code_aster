@@ -41,13 +41,18 @@ subroutine te0023(option, nomte)
     call jevech('PCAORIE', 'L', iorien)
     call jevech('PSTRX_R', 'E', istrx)
 !
-    if (nomte .eq. 'MECA_POU_D_TGM' .or. nomte.eq.'MECA_POU_D_EM') then
-        if (nomte.eq.'MECA_POU_D_EM') then
+    if (nomte .eq. 'MECA_POU_D_TGM' .or. nomte.eq.'MECA_POU_D_EM' &
+        .or. nomte.eq.'MECA_POU_D_SQUE') then
+        if (nomte.eq.'MECA_POU_D_EM'.or. nomte.eq.'MECA_POU_D_SQUE') then
             npg = 2
         else
             npg = 3
-        endif
-        ncomp = 18
+        endif        
+        if (nomte.eq.'MECA_POU_D_SQUE') then
+          ncomp = 21
+        else
+          ncomp = 18
+        end if
         do 3 kpg = 1, npg
             do 2 i = 1, 15
                 zr(istrx-1+ncomp*(kpg-1) +i) = 0.d0

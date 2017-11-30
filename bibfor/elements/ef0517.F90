@@ -121,6 +121,27 @@ subroutine ef0517(nomte)
         do i = 1,nc
             zr(icontn-1+nc*(kp-1)+i) = zr(istrxr-1+ncomp*(kp-1)+i)
         enddo
+    else if (nomte.eq.'MECA_POU_D_SQUE') then
+        nc    =  9
+        npg   =  2
+        ncomp = 21
+        call jevech('PSTRXRR', 'L', istrxr)
+        call jevech('PEFFORR', 'E', icontn)
+        kp= 1
+        do i = 1,6
+          zr(icontn-1+nc*(kp-1)+i) = - zr(istrxr-1+ncomp*(kp-1)+i)
+        enddo
+        do i = 7,nc
+            zr(icontn-1+nc*(kp-1)+i) = - zr(istrxr-1+ncomp*(kp-1)+12+i)
+        enddo
+        kp= 2
+        do i = 1,6
+          zr(icontn-1+nc*(kp-1)+i) = zr(istrxr-1+ncomp*(kp-1)+i)
+        enddo
+        do i = 7,nc
+            zr(icontn-1+nc*(kp-1)+i) = zr(istrxr-1+ncomp*(kp-1)+12+i)
+        enddo
+
     else
         ASSERT(.false.)
     endif

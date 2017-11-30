@@ -90,6 +90,11 @@ subroutine te0496(option, nomte)
     else if (nomte.eq.'MECA_POU_D_TGM') then
         nbfibr = zi(jnbsp-1+1)
         zi(jdcel-1+1) = nbfibr
+!
+    else if (nomte.eq.'MECA_POU_D_SQUE') then
+        nbfibr = zi(jnbsp-1+1)
+        zi(jdcel-1+1) = nbfibr
+
     endif
 !
 9999  continue

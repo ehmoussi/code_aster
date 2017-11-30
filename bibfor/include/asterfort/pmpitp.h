@@ -19,11 +19,11 @@
 !
 !
 interface
-    subroutine pmpitp(flp, nbpout, yj, zj, fl)
-        integer :: nbpout
+    subroutine pmpitp(typfib, flp, nbpout, yj, zj, fl)
+        integer :: nbpout, typfib
         real(kind=8) :: flp(12,*)
         real(kind=8) :: yj(*)
         real(kind=8) :: zj(*)
-        real(kind=8) :: fl(12)
+        real(kind=8) :: fl(*)
     end subroutine pmpitp
 end interface

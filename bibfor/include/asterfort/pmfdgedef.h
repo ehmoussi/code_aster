@@ -24,7 +24,7 @@ interface
         integer :: typfib
         real(kind=8) :: b(4)
         real(kind=8) :: gg
-        real(kind=8) :: depl(12)
+        real(kind=8) :: depl(*)
         real(kind=8) :: alicom
         integer :: nbfibr
         integer :: nbcarm

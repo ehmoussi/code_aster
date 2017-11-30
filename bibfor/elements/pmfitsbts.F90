@@ -52,7 +52,7 @@ subroutine pmfitsbts(typfib, nf, ncarf, vf, vsig, b, wi, nbassepou, yj, zj, maxf
 !
 !   OUT
 !       flp(12,*) : tableau de forces elementaires sur sous-poutres
-!       ve(12)    : forces elementaires
+!       ve(*)    : forces elementaires
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,7 +64,7 @@ subroutine pmfitsbts(typfib, nf, ncarf, vf, vsig, b, wi, nbassepou, yj, zj, maxf
 #include "asterfort/r8inir.h"
 !
     integer :: typfib, nf, ncarf, nbassepou, maxfipoutre, nbfipoutre(*)
-    real(kind=8) :: vf(ncarf, nf), vsig(nf), vs2(3), b(4), wi, ve(12), vet(12),  vs(6)
+    real(kind=8) :: vf(ncarf, nf), vsig(nf), vs2(3), b(4), wi, ve(*), vet(12),  vs(6)
 
 !
 ! --------------------------------------------------------------------------------------------------
@@ -75,14 +75,14 @@ subroutine pmfitsbts(typfib, nf, ncarf, vf, vsig, b, wi, nbassepou, yj, zj, maxf
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ve(:)=0.0d0
     vs(:)=0.0d0
 !
-    if ( typfib .eq. 1 ) then
+    if ( typfib .eq. 1 ) then          
+        call r8inir(12, 0.d0, ve, 1)
 !       3 caractéristiques utiles par fibre : y z aire
         call pmfits(typfib, nf, ncarf, vf, vsig, vs)
         call pmfbts(b, wi, vs, ve)
-    else if ( typfib .eq. 2 ) then
+    else if ( (typfib .eq. 2) .or. (typfib .eq. 3) ) then
         vet(:)=0.d0
         vs(:)=0.d0
         vs2(:)=0.d0
@@ -115,7 +115,7 @@ subroutine pmfitsbts(typfib, nf, ncarf, vf, vsig, b, wi, nbassepou, yj, zj, maxf
           pos=pos+nbfipoutre(i)
         enddo
 !       Calcul des efforts sur l element a partir des efforts sur les sous-poutres
-        call pmpitp(flp, nbassepou, yj, zj, ve)
+        call pmpitp(typfib,flp, nbassepou, yj, zj, ve)
 
     else
       call utmess('F', 'ELEMENTS2_40', si=typfib)

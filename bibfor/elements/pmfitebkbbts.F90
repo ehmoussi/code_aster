@@ -30,7 +30,7 @@ subroutine pmfitebkbbts(typfib, nf, ncarf, vf, ve, b, wi, gxjx, gxjxpou, g, &
 ! --------------------------------------------------------------------------------------------------
 !
 !   IN
-!       typfib       : type des fibres : 1 ou 2
+!       typfib       : type des fibres : 1 ou 2 ou 3(squelette d'assemblage)
 !       nf           : nombre de fibres
 !       ncarf        : nombre de caracteristiques sur chaque fibre
 !       vf(*)        : positions des fibres
@@ -75,13 +75,14 @@ subroutine pmfitebkbbts(typfib, nf, ncarf, vf, ve, b, wi, gxjx, gxjxpou, g, &
 #include "asterfort/pmfbkb.h"
 #include "asterfort/pmfbts.h"
 #include "asterfort/pmpbkb.h"
+#include "asterfort/pmpbkbsq.h"
 #include "asterfort/pmpitp.h"
 #include "asterfort/r8inir.h"
 !
     integer :: typfib, nf, ncarf, maxfipoutre, nbassepou, nbfipoutre(*)
 
-    real(kind=8) :: vf(ncarf, nf), ve(nf), vs(6), b(4), wi, gxjx, gg, vv(12)
-    real(kind=8) :: ksg(3), sk(78), skt(78), vvt(12), g
+    real(kind=8) :: vf(ncarf, nf), ve(nf), vs(6), b(4), wi, gxjx, gg, vv(*)
+    real(kind=8) :: ksg(3), sk(*), skt(78), vvt(12), g
     real(kind=8) :: yj(*), zj(*), gxjxpou(*), skp(78,*)
     real(kind=8) :: vvp(12, *)
     real(kind=8) :: vev(*), vfv(7, *)
@@ -99,7 +100,6 @@ subroutine pmfitebkbbts(typfib, nf, ncarf, vf, ve, b, wi, gxjx, gxjxpou, g, &
 !       3 caractéristiques utiles par fibre : y z aire
         call pmfite(typfib, nf, ncarf, vf, ve, vs)
         call pmfbkb(vs, b, wi, gxjx, sk)
-
 !       On se sert de pmfbts pour calculer bt,ks,g. g est scalaire
         ksg(1) = vs(1)*gg
         ksg(2) = vs(2)*gg
@@ -110,11 +110,12 @@ subroutine pmfitebkbbts(typfib, nf, ncarf, vf, ve, b, wi, gxjx, gxjxpou, g, &
 
         call r8inir(nbassepou*78, 0.d0, skp, 1)
         call r8inir(nbassepou*12, 0.d0, skp, 1)
+        call r8inir(12, 0.d0, vv, 1)
+        call r8inir(78, 0.d0, sk, 1)
 !       6 caractéristiques utiles par fibre : y z aire yp zp numgr
 !       Boucle sur les poutres
         pos=1
         posfib=0
-        vv(:)=0
         do i = 1, nbassepou
           !Position de la poutre
           yj(i)=vf(4,pos)
@@ -149,9 +150,62 @@ subroutine pmfitebkbbts(typfib, nf, ncarf, vf, ve, b, wi, gxjx, gxjxpou, g, &
           pos=pos+nbfipoutre(i)
         enddo
 !       Matrice de rigidite de l element
-        sk(:)=0.d0
         call pmpbkb(skp, nbassepou, yj, zj, sk)
-        call pmpitp(vvp, nbassepou, yj, zj, vv)
+        call pmpitp(typfib, vvp, nbassepou, yj, zj, vv)
+
+    else if ( typfib.eq. 3 ) then
+
+        call r8inir(nbassepou*78, 0.d0, skp, 1)
+        call r8inir(nbassepou*12, 0.d0, skp, 1)
+        call r8inir(18, 0.d0, vv, 1)
+        call r8inir(171, 0.d0, sk, 1)
+!       6 caractéristiques utiles par fibre : y z aire yp zp numgr
+!       Boucle sur les poutres
+        pos=1
+        posfib=0
+        do i = 1, nbassepou
+          !Position de la poutre
+          yj(i)=vf(4,pos)
+          zj(i)=vf(5,pos)
+          call r8inir(maxfipoutre*7, 0.d0, vfv, 1)
+          call r8inir(maxfipoutre, 0.d0, vev, 1)
+          !Boucle sur les fibres de la poutre
+          do ii = 1, nbfipoutre(i)
+            !Construction des vecteurs corrigés sur une poutre
+            posfib=pos+ii-1
+            vfv(1,ii)=vf(1,posfib)-vf(4,posfib)
+            vfv(2,ii)=vf(2,posfib)-vf(5,posfib)
+            vfv(3,ii)=vf(3,posfib)
+            vev(ii) = ve(posfib)
+          enddo
+!         Propriétes de section sur la poutre
+          call pmfite(2, maxfipoutre, ncarf, vfv, vev, vs)
+!
+!         Matrice de rigidite de la poutre
+!
+          skt(:)=0.d0
+          call pmfbkb(vs, b, wi, gxjxpou(i), skt)          
+          do  ii = 1, 78
+              skp(ii,i) = skt(ii)
+          enddo
+
+!         bt,ks,g. g de la poutre
+          ksg(1) = vs(1)*gg
+          ksg(2) = vs(2)*gg
+          ksg(3) = vs(3)*gg
+          vvt(:)=0.d0
+          call pmfbts(b, wi, ksg, vvt)
+          do ii = 1, 12
+             vvp(ii,i)=vvt(ii)
+          enddo
+          pos=pos+nbfipoutre(i)
+        enddo
+
+!       Matrice de rigidite de l element
+
+        call pmpbkbsq(skp, nbassepou, yj, zj, sk)
+        call pmpitp(typfib, vvp, nbassepou, yj, zj, vv)
+
     else
         call utmess('F', 'ELEMENTS2_40', si=typfib)
     endif
