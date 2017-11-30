@@ -22,7 +22,7 @@ subroutine te0463(option, nomte)
 ! --------------------------------------------------------------------------------------------------
 !
 !     Calcul des coordonnées des sous points de GAUSS sur les familles de la liste MATER
-!     pour les éléments POU_D_EM et POU_D_TGM
+!     pour les éléments POU_D_EM , POU_D_TGM et POU_D_SQUE
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -55,7 +55,7 @@ subroutine te0463(option, nomte)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if ((nomte.ne.'MECA_POU_D_EM') .and. (nomte.ne.'MECA_POU_D_TGM')) then
+    if ((nomte.ne.'MECA_POU_D_EM') .and. (nomte.ne.'MECA_POU_D_TGM') .and. (nomte.ne.'MECA_POU_D_SQUE')) then
         ASSERT(.false.)
     endif
     call jevech('PGEOMER', 'L', igeom)

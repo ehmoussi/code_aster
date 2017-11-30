@@ -43,8 +43,8 @@ interface
         real(kind=8) :: zj(*)
         real(kind=8) :: vfv(7,*)
         real(kind=8) :: skp(78,*)
-        real(kind=8) :: sk(78)
-        real(kind=8) :: vv(12)
+        real(kind=8) :: sk(*)
+        real(kind=8) :: vv(*)
         real(kind=8) :: vvp(12,*)
     end subroutine pmfitebkbbts
 end interface

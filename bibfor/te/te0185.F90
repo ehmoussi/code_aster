@@ -172,6 +172,9 @@ subroutine te0185(option, nomte)
         else if (cmod.eq.'PFM') then
 !         -- POU_D_EM
             call ef0517(nomte)
+        else if (cmod.eq.'PGS') then
+!         -- POU_D_SQUE
+            call ef0517(nomte)
         else if (cmod.eq.'PGM') then
 !         -- POU_D_TGM
             call ef0517(nomte)

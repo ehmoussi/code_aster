@@ -36,6 +36,6 @@ interface
         real(kind=8) :: vsigv(*)
         real(kind=8) :: vfv(7,*)
         real(kind=8) :: flp(12,*)
-        real(kind=8) :: ve(12)
+        real(kind=8) :: ve(*)
     end subroutine pmfitsbts
 end interface

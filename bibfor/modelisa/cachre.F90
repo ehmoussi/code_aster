@@ -30,6 +30,7 @@ subroutine cachre(char, ligrmo, noma, ndim, fonree,&
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/jedema.h"
+#include "asterfort/jeimpo.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
@@ -56,11 +57,12 @@ subroutine cachre(char, ligrmo, noma, ndim, fonree,&
 !      MOTCL  : MOT-CLE FACTEUR
 ! ----------------------------------------------------------------------
     integer :: i, n, nchre, nrep, ncmp, jvalv,  iocc, nfx, nfy, nfz
-    integer :: nmx, nmy, nmz, nplan
-    real(kind=8) :: fx, fy, fz, mx, my, mz, vpre
+    integer :: nmx, nmy, nmz, nplan, nmgx, nmgy, nmgz
+    real(kind=8) :: fx, fy, fz, mx, my, mz, vpre, mgx, mgy, mgz
     complex(kind=8) :: cfx, cfy, cfz, cmx, cmy, cmz, cvpre
     character(len=8) :: kfx, kfy, kfz, kmx, kmy, kmz, typch, plan
-    character(len=16) :: motclf
+    character(len=8) :: kmgx, kmgy, kmgz
+    character(len=16) :: motclf    
     character(len=19) :: carte
     character(len=19) :: cartes(1)
     integer :: ncmps(1)
@@ -98,12 +100,16 @@ subroutine cachre(char, ligrmo, noma, ndim, fonree,&
     vncmp(6) = 'MZ'
     vncmp(7) = 'REP'
     vncmp(8) = 'PLAN'
+    vncmp(9) = 'MGX'
+    vncmp(10) = 'MGY'
+    vncmp(11) = 'MGZ'
+! 
     if (fonree(1:4) .eq. 'REEL') then
-        do i = 1, 8
+        do i = 1, 11
             zr(jvalv-1+i) = 0.d0
         enddo
     else if (fonree(1:4).eq.'COMP') then
-        do i = 1, 8
+        do i = 1, 11
             zc(jvalv-1+i) = dcmplx( 0.d0 , 0.d0 )
         enddo
     else if (fonree.eq.'FONC') then
@@ -112,10 +118,13 @@ subroutine cachre(char, ligrmo, noma, ndim, fonree,&
         enddo
         zk8(jvalv-1+7) = 'GLOBAL'
         zk8(jvalv-1+8) = '&FOZERO'
+        zk8(jvalv-1+9) = '&FOZERO'
+        zk8(jvalv-1+10) = '&FOZERO'
+        zk8(jvalv-1+11) = '&FOZERO'
     else
         ASSERT(.false.)
     endif
-    call nocart(carte, 1, 8)
+    call nocart(carte, 1, 11)
 !
 ! --- STOCKAGE DANS LA CARTE ---
 !
@@ -213,10 +222,19 @@ subroutine cachre(char, ligrmo, noma, ndim, fonree,&
                 call getvr8(motclf, 'MX', iocc=iocc, scal=mx, nbret=nmx)
                 call getvr8(motclf, 'MY', iocc=iocc, scal=my, nbret=nmy)
                 call getvr8(motclf, 'MZ', iocc=iocc, scal=mz, nbret=nmz)
+             else
+               nmx = 0
+               nmy = 0
+               nmz = 0
+            endif
+            if (motclf .eq. 'FORCE_POUTRE') then
+               call getvr8(motclf, 'MGX', iocc=iocc, scal=mgx, nbret=nmgx)
+               call getvr8(motclf, 'MGY', iocc=iocc, scal=mgy, nbret=nmgy)
+               call getvr8(motclf, 'MGZ', iocc=iocc, scal=mgz, nbret=nmgz)
             else
-                nmx = 0
-                nmy = 0
-                nmz = 0
+               nmgx = 0
+               nmgy = 0
+               nmgz = 0
             endif
             if (nfx+nfy+nfz+nmx+nmy+nmz .eq. 0) then
                 if (motclf .eq. 'FORCE_POUTRE') then
@@ -277,6 +295,22 @@ subroutine cachre(char, ligrmo, noma, ndim, fonree,&
                 vncmp(ncmp) = 'MZ'
                 zr(jvalv-1+ncmp) = mz
             endif
+            if (nmgx .ne. 0) then
+                ncmp = ncmp + 1
+                vncmp(ncmp) = 'MGX'
+                zr(jvalv-1+ncmp) = mgx
+            endif
+            if (nmgy .ne. 0) then
+                ncmp = ncmp + 1
+                vncmp(ncmp) = 'MGY'
+                zr(jvalv-1+ncmp) = mgy
+            endif
+            if (nmgz .ne. 0) then
+                ncmp = ncmp + 1
+                vncmp(ncmp) = 'MGZ'
+                zr(jvalv-1+ncmp) = mgz
+            endif
+
             if (nrep .ge. 1) then
                 ncmp = ncmp + 1
                 vncmp(ncmp) = 'REP'
@@ -293,9 +327,18 @@ subroutine cachre(char, ligrmo, noma, ndim, fonree,&
                 call getvid(motclf, 'MY', iocc=iocc, scal=kmy, nbret=nmy)
                 call getvid(motclf, 'MZ', iocc=iocc, scal=kmz, nbret=nmz)
             else
-                nmx = 0
-                nmy = 0
-                nmz = 0
+               nmx = 0
+               nmy = 0
+               nmz = 0
+            endif
+            if (motclf .eq. 'FORCE_POUTRE') then
+               call getvid(motclf, 'MGX', iocc=iocc, scal=kmgx, nbret=nmgx)
+               call getvid(motclf, 'MGY', iocc=iocc, scal=kmgy, nbret=nmgy)
+               call getvid(motclf, 'MGZ', iocc=iocc, scal=kmgz, nbret=nmgz)
+            else
+               nmgx = 0
+               nmgy = 0
+               nmgz = 0
             endif
             if (nfx+nfy+nfz+nmx+nmy+nmz .eq. 0) then
                 if (motclf .eq. 'FORCE_POUTRE') then
@@ -356,6 +399,22 @@ subroutine cachre(char, ligrmo, noma, ndim, fonree,&
                 vncmp(ncmp) = 'MZ'
                 zk8(jvalv-1+ncmp) = kmz
             endif
+            if (nmgx .ne. 0) then
+                ncmp = ncmp + 1
+                vncmp(ncmp) = 'MGX'
+                zk8(jvalv-1+ncmp) = kmgx
+            endif
+            if (nmgy .ne. 0) then
+                ncmp = ncmp + 1
+                vncmp(ncmp) = 'MGY'
+                zk8(jvalv-1+ncmp) = kmgy
+            endif
+            if (nmgz .ne. 0) then
+                ncmp = ncmp + 1
+                vncmp(ncmp) = 'MGZ'
+                zk8(jvalv-1+ncmp) = kmgz
+            endif
+
             if (nrep .ge. 1) then
                 ncmp = ncmp + 1
                 vncmp(ncmp) = 'REP'

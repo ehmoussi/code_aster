@@ -61,6 +61,7 @@ subroutine pmfits(typfib, nf, ncarf, vf, vsig, vs)
 ! --------------------------------------------------------------------------------------------------
 !
     vs(:)=0.0d0
+
 !
     if ( typfib.eq.1 ) then
 !       caractéristiques utiles par fibre : Y Z AIRE
@@ -74,7 +75,7 @@ subroutine pmfits(typfib, nf, ncarf, vf, vsig, vs)
             vs(2) = vs(2)+yy*sigsf
             vs(3) = vs(3)+zz*sigsf
         enddo
-    else if ( typfib.eq.2 ) then
+    else if ( typfib.eq.2  .or. typfib.eq.3 ) then
 !       caractéristiques utiles par fibre : Y Z AIRE YP ZP GX
         do ii = 1, nf
             yy   = vf(1,ii)

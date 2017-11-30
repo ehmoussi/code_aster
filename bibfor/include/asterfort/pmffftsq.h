@@ -19,14 +19,8 @@
 !
 !
 interface
-    subroutine pmftorcor(tygrfi, nbpout, gxjx, gxjxpout, deplm, deplp, xl, fl)
-        integer :: tygrfi
-        integer :: nbpout
-        real(kind=8) :: gxjx
-        real(kind=8) :: gxjxpout(*)
-        real(kind=8) :: deplm(*)
-        real(kind=8) :: deplp(*)
-        real(kind=8) :: xl
-        real(kind=8) :: fl(*)
-    end subroutine pmftorcor
+    subroutine pmffftsq(fv, sv)
+        real(kind=8) :: fv(18)
+        real(kind=8) :: sv(171)
+    end subroutine pmffftsq
 end interface

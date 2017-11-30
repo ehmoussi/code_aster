@@ -46,6 +46,7 @@ INI_STRX = Option(
       CondCalcul('+', ((AT.PHENO,'ME'),(AT.MODELI,'PDT'),)),
       CondCalcul('+', ((AT.PHENO,'ME'),(AT.MODELI,'PFM'),)),
       CondCalcul('+', ((AT.PHENO,'ME'),(AT.MODELI,'PGM'),)),
+      CondCalcul('+', ((AT.PHENO,'ME'),(AT.MODELI,'PGS'),)),
     ),
     comment=""" INITIALISATION DU CHAMP STRX_ELGA""",
 )

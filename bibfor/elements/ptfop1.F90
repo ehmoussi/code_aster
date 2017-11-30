@@ -16,7 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine ptfop1(itype, coef1, coef2, xl, qq, fe)
+
+subroutine ptfop1(itype, nc, coef1, coef2, xl, qq, fe)
 !
 !
 !
@@ -27,8 +28,8 @@ subroutine ptfop1(itype, coef1, coef2, xl, qq, fe)
 !
     implicit none
 !
-    integer :: itype
-    real(kind=8) :: coef1, coef2, xl, fe(12), qq(12)
+    integer :: itype, nc
+    real(kind=8) :: coef1, coef2, xl, fe(18), qq(18)
 !
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
@@ -54,27 +55,36 @@ subroutine ptfop1(itype, coef1, coef2, xl, qq, fe)
 !       elements droits a section constante : on tient compte des efforts tranchants
 !       La charge est constante ou varie lineairement
         if (sect1 .ne. 1.d0) then
-            if (qq(4) .ne. 0.d0 .or. qq(10) .ne. 0.d0 .or. qq(5) .ne. 0.d0 .or. qq(11) .ne.&
-                0.d0 .or. qq(6) .ne. 0.d0 .or. qq(12) .ne. 0.d0) then
+            if (qq(4) .ne. 0.d0 .or. qq(4+nc) .ne. 0.d0 .or. qq(5) .ne. 0.d0 .or. qq(5+nc) .ne.&
+                0.d0 .or. qq(6) .ne. 0.d0 .or. qq(6+nc) .ne. 0.d0) then
                 ASSERT(.false.)
             endif
         endif
 !
         coef = sect1 * xl
-        fe(1)  = (qq(1)/3.d0 +  qq(7)/6.d0)*coef
-        fe(7)  = (qq(1)/6.d0 +  qq(7)/3.d0)*coef
-        fe(2)  = (7.d0*qq(2) + 3.d0* qq(8))*coef/20.d0 - (qq(6)+ qq(12))/2.d0
-        fe(8)  = (3.d0*qq(2) + 7.d0* qq(8))*coef/20.d0 + (qq(6)+ qq(12))/2.d0
-        fe(3)  = (7.d0*qq(3) + 3.d0* qq(9))*coef/20.d0 + (qq(5)+ qq(11))/2.d0
-        fe(9)  = (3.d0*qq(3) + 7.d0* qq(9))*coef/20.d0 - (qq(5)+ qq(11))/2.d0
-        fe(4)  = (qq(4)/3.d0 + qq(10)/6.d0)*xl
-        fe(10) = (qq(4)/6.d0 + qq(10)/3.d0)*xl
+        fe(1)  = (qq(1)/3.d0 +  qq(1+nc)/6.d0)*coef
+        fe(1+nc)  = (qq(1)/6.d0 +  qq(1+nc)/3.d0)*coef
+        fe(2)  = (7.d0*qq(2) + 3.d0* qq(2+nc))*coef/20.d0 - (qq(6)+ qq(6+nc))/2.d0
+        fe(2+nc)  = (3.d0*qq(2) + 7.d0* qq(2+nc))*coef/20.d0 + (qq(6)+ qq(6+nc))/2.d0
+        fe(3)  = (7.d0*qq(3) + 3.d0* qq(3+nc))*coef/20.d0 + (qq(5)+ qq(5+nc))/2.d0
+        fe(3+nc)  = (3.d0*qq(3) + 7.d0* qq(3+nc))*coef/20.d0 - (qq(5)+ qq(5+nc))/2.d0
+        fe(4)  = (qq(4)/3.d0 + qq(4+nc)/6.d0)*xl
+        fe(4+nc) = (qq(4)/6.d0 + qq(4+nc)/3.d0)*xl        
+      
+        if (nc.gt.6) then
+           fe(7) = (qq(7)/3.d0 +  qq(7+nc)/6.d0)*coef
+           fe(7+nc) = (qq(7)/6.d0 +  qq(7+nc)/3.d0)*coef
+           fe(8) = (qq(8)/3.d0 +  qq(8+nc)/6.d0)*coef
+           fe(8+nc) = (qq(8)/6.d0 +  qq(8+nc)/3.d0)*coef
+           fe(9) = (qq(9)/3.d0 +  qq(9+nc)/6.d0)*coef
+           fe(9+nc) = (qq(9)/6.d0 +  qq(9+nc)/3.d0)*coef
+        end if
 !
         coef = coef * xl
-        fe(5)  = -(qq(3)/20.d0 + qq(9)/30.d0)* coef - (qq(11)-qq(5))*xl/12.d0
-        fe(11) =  (qq(3)/30.d0 + qq(9)/20.d0)* coef + (qq(11)-qq(5))*xl/12.d0
-        fe(6)  =  (qq(2)/20.d0 + qq(8)/30.d0)* coef - (qq(12)-qq(6))*xl/12.d0
-        fe(12) = -(qq(2)/30.d0 + qq(8)/20.d0)* coef + (qq(12)-qq(6))*xl/12.d0
+        fe(5)  = -(qq(3)/20.d0 + qq(3+nc)/30.d0)* coef - (qq(5+nc)-qq(5))*xl/12.d0
+        fe(5+nc) =  (qq(3)/30.d0 + qq(3+nc)/20.d0)* coef + (qq(5+nc)-qq(5))*xl/12.d0
+        fe(6)  =  (qq(2)/20.d0 + qq(2+nc)/30.d0)* coef - (qq(6+nc)-qq(6))*xl/12.d0
+        fe(6+nc) = -(qq(2)/30.d0 + qq(2+nc)/20.d0)* coef + (qq(6+nc)-qq(6))*xl/12.d0
 !
     else if (itype .eq. 1) then
 !       elements droits a section variable type 1 : on ne tient pas compte des efforts tranchants
