@@ -115,6 +115,7 @@ from .post_champ import POST_CHAMP
 from .post_elem import POST_ELEM
 from .post_fati_alea import POST_FATI_ALEA
 from .post_fatigue import POST_FATIGUE
+from .post_releve_t import POST_RELEVE_T
 from .proj_champ import PROJ_CHAMP
 from .resoudre import RESOUDRE
 from .stat_non_line import STAT_NON_LINE
