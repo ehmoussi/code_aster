@@ -325,7 +325,7 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
 # --------------------------------------------------------------------
 
     _BlocGC['PRE_COND'] = SIMP(
-        statut='f', typ='TXM', defaut="LDLT_INC", into=("LDLT_INC", "LDLT_SP", "BLOC_LAGR"), )
+        statut='f', typ='TXM', defaut="LDLT_INC", into=("LDLT_INC", "LDLT_SP"), )
     _BlocPE['PRE_COND'] = SIMP(statut='f', typ='TXM', defaut="LDLT_SP",
                                into=("LDLT_INC", "LDLT_SP", "JACOBI", "SOR", "ML", "BOOMER", "GAMG", "BLOC_LAGR", "SANS", ), )
 
