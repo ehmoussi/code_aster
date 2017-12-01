@@ -1,0 +1,33 @@
+#!/usr/bin/python
+# coding: utf-8
+
+import code_aster
+from code_aster.Commands import *
+
+code_aster.init()
+
+test = code_aster.TestCase()
+
+MAILLAG1 = code_aster.Mesh()
+MAILLAG1.readAsterMeshFile("xxXfem.mail")
+
+
+MO=AFFE_MODELE(MAILLAGE=MAILLAG1,
+               AFFE=_F(TOUT='OUI',PHENOMENE='MECANIQUE',MODELISATION='3D'),
+              );
+
+LN = FORMULE(NOM_PARA=('X','Y','Z'),VALE='(X-3/4)**2+(Y-3/4)**2+(Z-1/4)**2-19/16');
+
+FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG1,
+                    TYPE_DISCONTINUITE='INTERFACE',
+                    DEFI_FISS=_F(FONC_LN=LN),
+                    INFO=1);
+
+#MODELEK=MODI_MODELE_XFEM(MODELE_IN=MO,
+#                         FISSURE=FISS,
+#                         INFO=1);
+
+#MA_XFEM=POST_MAIL_XFEM(MODELE = MODELEK);
+
+
+

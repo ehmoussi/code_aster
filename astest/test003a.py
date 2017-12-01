@@ -32,11 +32,8 @@ crack.setCrackShape(shape)
 crack.build()
 test.assertEqual( crack.getType(), "FISS_XFEM" )
 
-"""
-FIXME: enrichWithXfem does not exist!!
 # New xfem model
-xmodel = model.enrichWithXfem(crack)
-"""
+xmodel=crack.enrichModelWithXfem(model)
 
 # Tests
 normalLevelSet=crack.getNormalLevelSetField()
@@ -48,3 +45,5 @@ tangentialLevelSet=crack.getTangentialLevelSetField()
 test.assertAlmostEqual(tangentialLevelSet[0],457.10678118654755)
 test.assertAlmostEqual(tangentialLevelSet[1000],36.744175568087485)
 test.assertAlmostEqual(tangentialLevelSet[10000],64.4660377352206)
+
+test.printSummary()
