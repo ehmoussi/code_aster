@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_init_base_tr(base, ds_para_tr, l_reuse, ds_empi)
+subroutine dbr_init_prof_tr(base, ds_para_tr)
 !
 use Rom_Datastructure_type
 !
@@ -26,54 +26,64 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
-#include "asterfort/romBaseRead.h"
-#include "asterfort/rscrsd.h"
-#include "asterfort/romBaseCopy.h"
-#include "asterfort/dbr_init_prof_tr.h"
+#include "asterfort/assert.h"
+#include "asterfort/dismoi.h"
+#include "asterfort/gnomsd.h"
+#include "asterfort/jedup1.h"
+#include "asterfort/rsexch.h"
+#include "asterfort/romModeParaRead.h"
 !
 character(len=8), intent(in) :: base
 type(ROM_DS_ParaDBR_TR), intent(inout) :: ds_para_tr
-aster_logical, intent(in) :: l_reuse
-type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE - Initializations
 !
-! Prepare datastructure for empiric modes - For POD methods
+! Create PROF_CHNO for truncation
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  base             : name of empiric base
 ! IO  ds_para_tr       : datastructure for truncation parameters
-! In  l_reuse          : .true. if reuse
-! IO  ds_empi          : datastructure for empiric modes
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
+    integer :: i_mode, iret, idx_gd
+    character(len=24) :: prno_new, field_name, mode_ref
+    character(len=19) :: prno_old
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM2_39')
+        call utmess('I', 'ROM2_55')
     endif
 !
-! - Read empiric base to modify
+! - Get mode (complete)
 !
-    if (l_reuse) then
-        call romBaseRead(base, ds_empi)
-    else
-        call romBaseRead(ds_para_tr%base_init, ds_para_tr%ds_empi_init)
-    endif
+    i_mode = 1
+    call romModeParaRead(ds_para_tr%base_init, i_mode,&
+                         field_name_ = field_name)
+    call rsexch(' ', ds_para_tr%base_init, field_name, i_mode,&
+                mode_ref, iret)
+    ASSERT(iret .eq. 0)
 !
-! - Create empiric base
+! - Create PROF_CHNO
 !
-    if (.not. l_reuse) then
-        call dbr_init_prof_tr(base, ds_para_tr)
-        call rscrsd('G', base, 'MODE_EMPI', ds_para_tr%ds_empi_init%nb_mode)
-        call romBaseCopy(ds_para_tr%ds_empi_init, base, ds_empi)
-    endif
+    call dismoi('NUM_GD'   , mode_ref, 'CHAM_NO', repi=idx_gd)
+    call dismoi('PROF_CHNO', mode_ref, 'CHAM_NO', repk=prno_old)
+    prno_new = base(1:8)//'.00000'
+    call gnomsd(' ', prno_new, 10, 14)
+    call jedup1(prno_old(1:19)//'.DEEQ', 'G', prno_new(1:14)//'     .DEEQ')
+    call jedup1(prno_old(1:19)//'.NUEQ', 'G', prno_new(1:14)//'     .NUEQ')
+    call jedup1(prno_old(1:19)//'.PRNO', 'G', prno_new(1:14)//'     .PRNO')
+    call jedup1(prno_old(1:19)//'.LILI', 'G', prno_new(1:14)//'     .LILI')
+!
+! - Save parameters
+!
+    ds_para_tr%prof_chno_rom = prno_new
+    ds_para_tr%idx_gd        = idx_gd
 !
 end subroutine

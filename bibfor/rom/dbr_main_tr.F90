@@ -32,6 +32,8 @@ implicit none
 #include "asterfort/rsnoch.h"
 #include "asterfort/copisd.h"
 #include "asterfort/dismoi.h"
+#include "asterfort/vtcreb.h"
+#include "asterfort/gnomsd.h"
 #include "asterfort/romModeParaSave.h"
 #include "asterfort/romModeParaRead.h"
 !
@@ -73,7 +75,6 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     nb_equa_dom = ds_para_tr%ds_empi_init%nb_equa
     nb_equa_rom = ds_para_tr%nb_equa_rom
     model_rom   = ds_para_tr%model_rom
-    mode_rom    = ds_para_tr%mode_rom 
 !
 ! - Compute
 !
@@ -84,12 +85,21 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
                              mode_freq_  = mode_freq,&
                              nume_slice_ = nume_slice,&
                              nb_snap_    = nb_snap)
-! ----- Get mode (complete)
-        call rsexch(' ', ds_empi%base, field_name, i_mode,&
+! ----- Access to complete mode
+        call rsexch(' ', ds_para_tr%ds_empi_init%base, field_name, i_mode,&
                     mode_dom, iret)
         ASSERT(iret .eq. 0)
         call jeveuo(mode_dom(1:19)//'.VALE', 'L', vr = v_mode_dom)
-! ----- Access to new mode (reduced)
+! ----- Create new mode (reduced)
+        call rsexch(' ', ds_empi%base, field_name, i_mode,&
+                    mode_rom, iret)
+        WRITE(6,*) 'mode_rom <',mode_rom,'>'
+        ASSERT(iret .eq. 100)
+        call vtcreb(mode_rom, 'G', 'R',&
+                    meshz = ds_para_tr%ds_empi_init%mesh,&
+                    prof_chnoz = ds_para_tr%prof_chno_rom,&
+                    idx_gdz = ds_para_tr%idx_gd,&
+                    nb_equa_inz = ds_para_tr%nb_equa_rom)
         call jeveuo(mode_rom(1:19)//'.VALE', 'E', vr = v_mode_rom)
 ! ----- Truncation
         idx_rom = 0
@@ -101,7 +111,6 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
             endif
         enddo
 ! ----- Save mode
-        call copisd('CHAMP_GD', 'G', mode_rom, mode_dom)
         call rsnoch(ds_empi%base, field_name, i_mode)
 ! ----- Save parameters
         call romModeParaSave(ds_empi%base, i_mode,&

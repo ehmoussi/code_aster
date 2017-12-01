@@ -148,15 +148,12 @@ implicit none
 #include "asterfort/lc7051.h"
 #include "asterfort/lc7056.h"
 #include "asterfort/lc7058.h"
-#include "asterfort/lc8027.h"
 #include "asterfort/lc8028.h"
 #include "asterfort/lc8029.h"
-#include "asterfort/lc8056.h"
 #include "asterfort/lc8057.h"
 #include "asterfort/lc8146.h"
 #include "asterfort/lc8331.h"
 #include "asterfort/lc13029.h"
-#include "asterfort/lc13057.h"
 #include "asterfort/lc9999.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vrcpto.h"
@@ -1127,14 +1124,6 @@ implicit none
 ! - For KIT_DDI
 ! --------------------------------------------------------------------------------------------------
 !
-    case (8027)
-        call lc8027(fami, kpg, ksp, ndim, imate,&
-                    compor, mult_comp, carcri, instam, instap, neps,&
-                    epsm, deps, nsig, sigm, vim,&
-                    option, angmas,sigp, nvi, vip, nwkin,&
-                    wkin, typmod,icomp, ndsde,&
-                    dsidep, nwkout, wkout, codret)
-!
     case (8028)
         call lc8028(fami, kpg, ksp, ndim, imate,&
                     compor, mult_comp, carcri, instam, instap, neps,&
@@ -1145,14 +1134,6 @@ implicit none
 !
     case (8029)
         call lc8029(fami, kpg, ksp, ndim, imate,&
-                    compor, mult_comp, carcri, instam, instap, neps,&
-                    epsm, deps, nsig, sigm, vim,&
-                    option, angmas,sigp, nvi, vip, nwkin,&
-                    wkin, typmod,icomp, ndsde,&
-                    dsidep, nwkout, wkout, codret)
-!
-    case (8056)
-        call lc8056(fami, kpg, ksp, ndim, imate,&
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, nsig, sigm, vim,&
                     option, angmas,sigp, nvi, vip, nwkin,&
@@ -1185,14 +1166,6 @@ implicit none
 !
     case (13029)
         call lc13029(fami, kpg, ksp, ndim, imate,&
-                    compor, mult_comp, carcri, instam, instap, neps,&
-                    epsm, deps, nsig, sigm, vim,&
-                    option, angmas,sigp, nvi, vip, nwkin,&
-                    wkin, typmod,icomp, ndsde,&
-                    dsidep, nwkout, wkout, codret)
-!
-    case (13057)
-        call lc13057(fami, kpg, ksp, ndim, imate,&
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, nsig, sigm, vim,&
                     option, angmas,sigp, nvi, vip, nwkin,&

@@ -383,7 +383,7 @@ integer, intent(inout) :: list_func_acti(*)
         if (ds_algorom%l_hrom) then
             list_func_acti(62) = 1
             if (ds_algorom%l_hrom_corref) then
-                list_func_acti(66) = 1
+                list_func_acti(67) = 1
                 list_func_acti(34) = 1
             endif
         endif

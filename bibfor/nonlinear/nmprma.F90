@@ -72,7 +72,7 @@ implicit none
     type(NL_DS_Contact), intent(inout) :: ds_contact
     character(len=19) :: maprec, matass
     integer :: faccvg, ldccvg
-    real(kind=8) ::  minmat, maxmat,exponent_val
+    real(kind=8) ::  minmat=0.0, maxmat=0.0,exponent_val=0.0
 !
 ! --------------------------------------------------------------------------------------------------
 !

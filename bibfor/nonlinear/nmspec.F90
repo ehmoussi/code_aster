@@ -108,19 +108,21 @@ implicit none
 !
 ! --- DOIT-ON FAIRE LE CALCUL ?
 !
-    if (lflam) then
-        nomlis = sdpost(1:14)//'.FLAM'
-        call nmcrpo(nomlis, numins, inst, calcul)
-    else if (lmvib) then
-        nomlis = sdpost(1:14)//'.VIBR'
-        call nmcrpo(nomlis, numins, inst, calcul)
-    else
-        goto 999
-    endif
+!    if (lflam) then
+!        nomlis = sdpost(1:14)//'.FLAM'
+!        call nmcrpo(nomlis, numins, inst, calcul)
+!    else if (lmvib) then
+!        nomlis = sdpost(1:14)//'.VIBR'
+!        call nmcrpo(nomlis, numins, inst, calcul)
+!    else
+!        goto 999
+!    endif
 !
 ! --- CALCUL DE FLAMBEMENT EN STATIQUE ET DYNAMIQUE
 !
     if (lflam) then
+        nomlis = sdpost(1:14)//'.FLAM'
+        call nmcrpo(nomlis, numins, inst, calcul)
         if (calcul) then
             call nmlesd('POST_TRAITEMENT', sdpost, 'OPTION_CALCUL_FLAMB', ibid, r8bid, option)
 !
@@ -150,6 +152,8 @@ implicit none
 ! --- CALCUL DE MODES VIBRATOIRES EN DYNAMIQUE
 !
     if (lmvib) then
+        nomlis = sdpost(1:14)//'.VIBR'
+        call nmcrpo(nomlis, numins, inst, calcul)
         if (calcul) then
             call nmlesd('POST_TRAITEMENT', sdpost, 'OPTION_CALCUL_VIBR', ibid, r8bid, option)
 !
@@ -170,6 +174,6 @@ implicit none
         endif
     endif
 !
-999 continue
+!999 continue
 !
 end subroutine

@@ -50,8 +50,8 @@ implicit none
 !
     integer :: ifm, niv
     integer :: nb_node_rid, nb_mode_prim, nb_mode_dual
-    integer, pointer :: v_list_prim(:) => null()
-    integer, pointer :: v_list_dual(:) => null()
+    integer, pointer :: v_equa_prim(:) => null()
+    integer, pointer :: v_equa_dual(:) => null()
     integer, pointer :: v_list_rid(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -65,17 +65,17 @@ implicit none
 !
 ! - Prepare working objects
 !
-    AS_ALLOCATE(vi = v_list_prim, size = nb_mode_prim)
-    AS_ALLOCATE(vi = v_list_dual, size = nb_mode_dual)
+    AS_ALLOCATE(vi = v_equa_prim, size = nb_mode_prim)
+    AS_ALLOCATE(vi = v_equa_dual, size = nb_mode_dual)
 !
 ! - Application of DEIM
 !    
-    call ddr_comp(ds_para%ds_empi_prim, v_list_prim)
-    call ddr_comp(ds_para%ds_empi_dual, v_list_dual)
+    call ddr_comp(ds_para%ds_empi_prim, v_equa_prim)
+    call ddr_comp(ds_para%ds_empi_dual, v_equa_dual)
 !
 ! - Prepare list of nodes in RID
 !
-    call ddr_prep(ds_para, v_list_prim, v_list_dual, v_list_rid, nb_node_rid)
+    call ddr_prep(ds_para, v_equa_prim, v_equa_dual, v_list_rid, nb_node_rid)
 !
 ! - Create RID on the mesh from list
 !
@@ -83,8 +83,8 @@ implicit none
 !
 ! - Clean
 !
-    AS_DEALLOCATE(vi=v_list_prim)
-    AS_DEALLOCATE(vi=v_list_dual)
+    AS_DEALLOCATE(vi=v_equa_prim)
+    AS_DEALLOCATE(vi=v_equa_dual)
     AS_DEALLOCATE(vi=v_list_rid)
 !
 end subroutine

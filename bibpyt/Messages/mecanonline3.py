@@ -32,7 +32,9 @@ cata_msg = {
 
 
 
-
+    87 : _(u"""
+Le contact de type LAC n'est pas utilisable avec le préconditionneur LDLT_INC, il faut utiliser LDLT_SP.
+"""),
 
     88 : _(u"""
   -> Vous utilisez l'algorithme de contact 'GCP' avec un préconditionneur qui n'est pas adapté.

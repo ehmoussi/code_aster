@@ -65,12 +65,11 @@ type(ROM_DS_ParaDBR_TR), intent(out) :: ds_para_tr
 ! - General initialisations of datastructure
 !
     ds_para_tr%base_init     = ' '
-    ds_para_tr%model_rom     = ' '
     ds_para_tr%ds_empi_init  = ds_empi_init
+    ds_para_tr%model_rom     = ' '
     ds_para_tr%v_equa_rom    => null()
-    ds_para_tr%nume_rom      = ' '
     ds_para_tr%prof_chno_rom = ' '
     ds_para_tr%nb_equa_rom   = 0
-    ds_para_tr%mode_rom      = '&&OP0053.MODE_ROM'
+    ds_para_tr%idx_gd        = 0
 !
 end subroutine

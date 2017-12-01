@@ -15,13 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine ddr_comp(ds_empi, v_list_equa)
+    subroutine ddr_comp(ds_empi, v_equa)
         use Rom_Datastructure_type
         type(ROM_DS_Empi), intent(in) :: ds_empi
-        integer, pointer, intent(in)  :: v_list_equa(:)
+        integer, pointer, intent(in)  :: v_equa(:)
     end subroutine ddr_comp
 end interface

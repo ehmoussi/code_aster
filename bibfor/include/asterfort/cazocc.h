@@ -19,9 +19,10 @@
 !
 !
 interface
-    subroutine cazocc(sdcont, keywf, i_zone)
+    subroutine cazocc(sdcont, keywf, i_zone,nb_cont_zone)
         character(len=8), intent(in) :: sdcont
         integer, intent(in) :: i_zone
         character(len=16), intent(in) :: keywf
+        integer, intent(in), optional :: nb_cont_zone
     end subroutine cazocc
 end interface

@@ -28,13 +28,16 @@ subroutine mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
 #include "asterfort/jevech.h"
 #include "asterfort/mmtrpr.h"
 !
-    integer :: ndim
-    real(kind=8) :: dlagrf(2), djeut(3)
-    aster_logical :: loptf, lpenaf, leltf, l_previous,lpenac
-    real(kind=8) :: tau1(3), tau2(3)
-    aster_logical :: lcont, ladhe
-    real(kind=8) :: rese(3), nrese, lambda
-    real(kind=8) :: coefaf
+    integer, intent(in)  :: ndim
+    real(kind=8), intent(in) :: dlagrf(2)
+    real(kind=8), intent(in) :: djeut(3)
+    real(kind=8), intent(in)  :: coefaf, lambda
+    aster_logical, intent(in)   :: loptf, l_previous
+    real(kind=8), intent(in)  :: tau1(3), tau2(3)
+    aster_logical, intent(out)   :: lpenaf
+    aster_logical, intent(out)   :: lcont, ladhe
+    aster_logical, intent(inout)   :: leltf
+    real(kind=8), intent(out)   :: rese(3), nrese
 !
 ! ----------------------------------------------------------------------
 !
@@ -47,7 +50,7 @@ subroutine mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
 !
 ! IN  NDIM   : DIMENSION DE L'ESPACE
 ! IN  LPENAF : .TRUE. SI FROTTEMENT PENALISE
-! IN  LELTF  : .TRUE. SI ELEMENT DE FROTTEMENT
+! INOUT  LELTF  : .TRUE. SI ELEMENT DE FROTTEMENT
 ! IN  LOPTF  : .TRUE. SI OPTION  DE FROTTEMENT
 ! IN  DLAGRF : INCREMENT DEPDEL DES LAGRANGIENS DE FROTTEMENT
 ! IN  DJEUT  : INCREMENT DEPDEL DU JEU TANGENT
@@ -65,9 +68,10 @@ subroutine mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
 !
 !
     integer :: jpcf
-    integer :: indco
-    integer :: indadhe,indadhe2
-    integer :: ialgoc,ialgof
+    integer :: indco=-1
+    integer :: indadhe=-1,indadhe2=-1
+    integer :: ialgoc=-1,ialgof=-1
+    aster_logical :: lpenac=.false._1
 !
 ! ----------------------------------------------------------------------
 !
@@ -97,11 +101,7 @@ subroutine mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
         indadhe2 = nint(zr(jpcf-1+47))   
     endif
     
-    lpenac = (ialgoc.eq.3) .or. &
-              nint(zr(jpcf-1+45)) .eq. 4
               
-    lpenaf = (ialgof.eq.3) .or. &
-             nint(zr(jpcf-1+46)) .eq. 4
 !
 ! --- STATUT DU CONTACT
 !
@@ -116,7 +116,7 @@ subroutine mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
 ! --- STATUT DU CONTACT - CAS DU FROTTEMENT
 !
 !
-    if (loptf) then
+    if (leltf) then
 ! This test influence highly the NON_REGRESSION & CONVERGENCE 
 ! ONE MUST HAVE ATTENTION WHEN MODIFYING    
         if (lambda .eq. 0.d0) lcont = .false._1
@@ -126,12 +126,15 @@ subroutine mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
 ! --- ETAT D'ADHERENCE DU POINT DE CONTACT
 !
     
-    if (loptf .and. lcont) then
+    if (leltf .and. lcont) then
+        lpenaf = (ialgof.eq.3) .or. &
+                 nint(zr(jpcf-1+46)) .eq. 4
         call mmtrpr(ndim, lpenaf, djeut, dlagrf, coefaf,&
                     tau1, tau2, ladhe, rese, nrese)
-        if (indadhe .eq. 1 .and. l_previous) ladhe = .true. 
 ! On est en penalisatio  ou en algo_cont=penalisation, algo_frot=standard/penalisation
-        if (indadhe2 .eq. 2 ) ladhe = .true. 
+        if (indadhe .eq. 1 .and. l_previous) ladhe = .true. 
+        lpenac = (ialgoc.eq.3) 
+        if (indadhe2 .eq. 1 .and. lpenac .and. .not. (ialgof.eq.3)  ) ladhe = .true.
 
     endif
 !

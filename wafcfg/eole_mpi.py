@@ -38,8 +38,12 @@ def configure(self):
     eole.configure(self)
     self.env['ADDMEM'] = 900
 
+    # suppress too aggressive optimization with Intel impi/2017.0.98 : I_MPI_DAPL_TRANSLATION_CACHE=0 
     self.env.append_value('OPT_ENV_FOOTER', [
-        'module load impi/2017.0.098'])
+        'module unload mkl',
+        'module load mkl/2017.0.098 impi/2017.0.098',
+        'export I_MPI_DAPL_TRANSLATION_CACHE=0'
+    ])
 
     self.env.prepend_value('LIBPATH', [
         YAMMROOT + '/prerequisites/Parmetis_aster-403_aster/lib',

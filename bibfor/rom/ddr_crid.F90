@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine ddr_crid(ds_para, nb_node_rid, v_list_rid)
+subroutine ddr_crid(ds_para, nb_node_rid, v_node_rid)
 !
 use Rom_Datastructure_type
 !
@@ -48,7 +48,7 @@ implicit none
 !
 type(ROM_DS_ParaDDR), intent(in) :: ds_para
 integer, intent(in)           :: nb_node_rid
-integer, intent(in)           :: v_list_rid(nb_node_rid)
+integer, intent(in)           :: v_node_rid(nb_node_rid)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -60,7 +60,7 @@ integer, intent(in)           :: v_list_rid(nb_node_rid)
 !
 ! In  ds_para          : datastructure for parameters of EIM computation
 ! In  nb_node_rid      : number of nodes in RID
-! In  v_list_rid       : list of nodes in RID
+! In  v_node_rid       : list of nodes in RID
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -70,7 +70,7 @@ integer, intent(in)           :: v_list_rid(nb_node_rid)
     integer :: i_layer
     integer :: i_elem, i_node, i_elem_node, i_node_elem, i_rid_maxi
     integer :: nb_rid_elem, nb_int_node, nb_group_add, nb_sub_node, nb_layer_sub, i_couche
-    integer :: indx, node_nume, elem_nume
+    integer :: indx, node_nume, elem_nume, nb_rid_node
     integer :: nb_layer_rid
     character(len=8) :: mesh
     character(len=24):: grelem_rid, grnode_int, grnode_sub
@@ -79,9 +79,9 @@ integer, intent(in)           :: v_list_rid(nb_node_rid)
     integer, pointer :: v_connex(:) => null()
     integer, pointer :: v_connex_longcum(:) => null()
     aster_logical :: test, l_corr_ef
-    aster_logical, pointer :: v_list_ma(:) => null()
-    aster_logical, pointer :: v_list_no(:) => null()
-    aster_logical, pointer :: v_loca_no(:) => null()
+    aster_logical, pointer :: v_liel_rid(:) => null()
+    aster_logical, pointer :: v_lino_rid(:) => null()
+    aster_logical, pointer :: v_lino_add(:) => null()
     aster_logical, pointer :: v_list_in(:) => null()
     aster_logical, pointer :: v_list_sb(:) => null()
     aster_logical, pointer :: v_loca_sb(:) => null()
@@ -122,18 +122,18 @@ integer, intent(in)           :: v_list_rid(nb_node_rid)
 !
 ! - Create working objects
 !
-    AS_ALLOCATE(vl = v_list_ma, size = nb_elem)
-    AS_ALLOCATE(vl = v_list_no, size = nb_node)
-    AS_ALLOCATE(vl = v_loca_no, size = nb_node)
+    AS_ALLOCATE(vl = v_liel_rid, size = nb_elem)
+    AS_ALLOCATE(vl = v_lino_rid, size = nb_node)
+    AS_ALLOCATE(vl = v_lino_add, size = nb_node)
     AS_ALLOCATE(vl = v_list_in, size = nb_node)
     AS_ALLOCATE(vl = v_list_sb, size = nb_node)
     AS_ALLOCATE(vl = v_loca_sb, size = nb_node)
 !
-! - Add one GROUP_MA in mesh
+! - Add GROUP_MA in mesh
 !
     call addGroupElem(mesh, 1) 
 !
-! - Add one GROUP_NO in mesh
+! - Add GROUP_NO in mesh
 !
     if (ds_para%l_corr_ef) then
         nb_group_add = 2
@@ -142,90 +142,105 @@ integer, intent(in)           :: v_list_rid(nb_node_rid)
     endif
     call addGroupNode(mesh, nb_group_add) 
 !
-! - Get all elements of RID
+! - Set list of which nodes from mesh are in RID
 !
     do i_node = 1, nb_node_rid
-        node_nume = v_list_rid(i_node)
+        node_nume = v_node_rid(i_node)
         ASSERT(node_nume .gt. 0)
-        v_list_no(node_nume) = .true._1
-        v_loca_no(node_nume) = .true._1
+        v_lino_rid(node_nume) = ASTER_TRUE
+        v_lino_add(node_nume) = ASTER_TRUE
     enddo
-    do i_layer = 1, nb_layer_rid+1
+!
+! - Add new nodes in RID from NB_LAYER
+!
+    do i_layer = 1, nb_layer_rid + 1
         do i_node = 1, nb_node
-            if (v_list_no(i_node)) then
+            if (v_lino_rid(i_node)) then
                 node_nbelem = v_coninv_longcum(i_node+1)-v_coninv_longcum(i_node)
                 do i_node_elem = 1, node_nbelem
                     elem_nume = v_coninv(v_coninv_longcum(i_node)+i_node_elem-1)
                     elem_nbnode = v_connex_longcum(elem_nume+1)-v_connex_longcum(elem_nume)
                     do i_elem_node = 1, elem_nbnode
                         nunolo = v_connex(v_connex_longcum(elem_nume)+i_elem_node-1)
-                        v_loca_no(nunolo) = .true._1
+                        v_lino_add(nunolo) = ASTER_TRUE
                     enddo
                 enddo
             endif
         enddo
         do i_node = 1, nb_node
-            v_list_no(i_node) = v_loca_no(i_node)
+            v_lino_rid(i_node) = v_lino_add(i_node)
         enddo
     enddo
+!
+! - If all nodes of same element is in RID => this element is in RID
+!
     do i_elem = 1, nb_elem
         elem_nbnode = v_connex_longcum(i_elem+1)-v_connex_longcum(i_elem)
-        test = .false._1
+        test = ASTER_FALSE
         do i_elem_node = 1, elem_nbnode
             nunolo = v_connex(v_connex_longcum(i_elem)+i_elem_node-1)
-            if (v_list_no(nunolo)) then
-                test=.true._1
+            if (v_lino_rid(nunolo)) then
+                test=ASTER_TRUE
             else
-                test=.false._1
+                test=ASTER_FALSE
                 exit
             endif
         enddo
         if (test) then
-            v_list_ma(i_elem) = .true._1
+            v_liel_rid(i_elem) = ASTER_TRUE
         endif
     enddo
-
 !
-! - In case of existing limit domain
+! - In case of existing limit domain: if element is in DOMAINE_MAXI => is in RID
 !
     if (ds_para%l_rid_maxi) then
         do i_elem = 1, nb_elem
-            if (v_list_ma(i_elem)) then
+            if (v_liel_rid(i_elem)) then
                 do i_rid_maxi = 1, ds_para%nb_rid_maxi
                     if (i_elem .eq. ds_para%v_rid_maxi(i_rid_maxi)) then
-                        v_list_ma(i_elem) = .true._1
+                        v_liel_rid(i_elem) = ASTER_TRUE
                         exit
                     else
-                        v_list_ma(i_elem) = .false._1
+                        v_liel_rid(i_elem) = ASTER_FALSE
                     endif
                 enddo
             endif
         enddo
-! ----- Recreate the list of nodes in RID in case of existing limit domain
-        AS_DEALLOCATE(vl=v_list_no)
-        AS_ALLOCATE(vl = v_list_no, size = nb_node)
+    endif
+!
+! - In case of existing limit domain: recreate the list of nodes in RID
+!
+    if (ds_para%l_rid_maxi) then
+        AS_DEALLOCATE(vl=v_lino_rid)
+        AS_ALLOCATE(vl = v_lino_rid, size = nb_node)
         do i_elem = 1, nb_elem
-            if (v_list_ma(i_elem)) then
+            if (v_liel_rid(i_elem)) then
                 elem_nbnode = v_connex_longcum(i_elem+1)-v_connex_longcum(i_elem)
                 do i_elem_node = 1, elem_nbnode
                     nunolo = v_connex(v_connex_longcum(i_elem)+i_elem_node-1)
-                    v_list_no(nunolo) = .true._1
+                    v_lino_rid(nunolo) = ASTER_TRUE
                 enddo
             endif
         enddo
     endif
-
 !
-! - Number of elements in RID
+! - Number of nodes/elements in RID
 !
     nb_rid_elem = 0
     do i_elem = 1, nb_elem
-        if (v_list_ma(i_elem)) then
+        if (v_liel_rid(i_elem)) then
             nb_rid_elem = nb_rid_elem + 1
+        endif
+    end do
+    nb_rid_node = 0
+    do i_node = 1, nb_node
+        if (v_lino_rid(i_node)) then
+            nb_rid_node = nb_rid_node + 1
         endif
     end do
     if (niv .ge. 2) then
         call utmess('I', 'ROM4_22', si = nb_rid_elem)
+        call utmess('I', 'ROM4_29', si = nb_rid_node)
     endif
 !
 ! - Create group for elements of RID
@@ -236,7 +251,7 @@ integer, intent(in)           :: v_list_rid(nb_node_rid)
     call jeveuo(jexnom(mesh//'.GROUPEMA', grelem_rid), 'E', vi = v_group)
     indx = 0
     do i_elem = 1, nb_elem
-        if (v_list_ma(i_elem)) then
+        if (v_liel_rid(i_elem)) then
             indx = indx + 1
             v_group(indx) = i_elem
         endif
@@ -247,11 +262,11 @@ integer, intent(in)           :: v_list_rid(nb_node_rid)
     if (ds_para%l_rid_maxi) then
         do i_rid_maxi = 1, ds_para%nb_rid_maxi
             i_elem = ds_para%v_rid_maxi(i_rid_maxi)
-            if (.not.v_list_ma(i_elem)) then
+            if (.not.v_liel_rid(i_elem)) then
                 elem_nbnode = v_connex_longcum(i_elem+1)-v_connex_longcum(i_elem)
                 do i_elem_node = 1, elem_nbnode
                     nunolo = v_connex(v_connex_longcum(i_elem)+i_elem_node-1)
-                    if (v_list_no(nunolo)) then
+                    if (v_lino_rid(nunolo)) then
                         v_list_in(nunolo) = .true._1
                         v_list_sb(nunolo) = .true._1
                         v_loca_sb(nunolo) = .true._1
@@ -261,11 +276,11 @@ integer, intent(in)           :: v_list_rid(nb_node_rid)
         enddo
     else
         do i_elem = 1, nb_elem
-            if (.not.v_list_ma(i_elem)) then
+            if (.not.v_liel_rid(i_elem)) then
                 elem_nbnode = v_connex_longcum(i_elem+1)-v_connex_longcum(i_elem)
                 do i_elem_node = 1, elem_nbnode
                     nunolo = v_connex(v_connex_longcum(i_elem)+i_elem_node-1)
-                    if (v_list_no(nunolo)) then
+                    if (v_lino_rid(nunolo)) then
                         v_list_in(nunolo) = .true._1
                         v_list_sb(nunolo) = .true._1
                         v_loca_sb(nunolo) = .true._1
@@ -313,7 +328,7 @@ integer, intent(in)           :: v_list_rid(nb_node_rid)
                     node_nbelem = v_coninv_longcum(i_node+1)-v_coninv_longcum(i_node)
                     do i_node_elem = 1, node_nbelem
                         elem_nume = v_coninv(v_coninv_longcum(i_node)+i_node_elem-1)
-                        if (v_list_ma(elem_nume)) then
+                        if (v_liel_rid(elem_nume)) then
                             elem_nbnode = v_connex_longcum(elem_nume+1)-v_connex_longcum(elem_nume)
                             do i_elem_node = 1, elem_nbnode
                                 nunolo = v_connex(v_connex_longcum(elem_nume)+i_elem_node-1)
@@ -362,9 +377,9 @@ integer, intent(in)           :: v_list_rid(nb_node_rid)
 !
 ! - Clean
 !
-    AS_DEALLOCATE(vl=v_list_ma)
-    AS_DEALLOCATE(vl=v_list_no)
-    AS_DEALLOCATE(vl=v_loca_no)
+    AS_DEALLOCATE(vl=v_liel_rid)
+    AS_DEALLOCATE(vl=v_lino_rid)
+    AS_DEALLOCATE(vl=v_lino_add)
     AS_DEALLOCATE(vl=v_list_in)
     AS_DEALLOCATE(vl=v_list_sb)
     AS_DEALLOCATE(vl=v_loca_sb)

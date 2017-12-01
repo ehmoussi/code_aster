@@ -70,6 +70,7 @@ CHARGE=AFFE_CHAR_MECA(      MODELE=STRUCTUR,FORCE_NODALE=(
 
 STATIQ=MECA_STATIQUE(         MODELE=STRUCTUR,
                                  CARA_ELEM=CARA,
+                                 SOLVEUR=_F(METHODE='MULT_FRONT'),
                                 CHAM_MATER=MATER,EXCIT=(
                                      _F(  CHARGE = FIXA,     ),
                                            _F(  CHARGE = CHARGE,   ))

@@ -110,7 +110,7 @@ character(len=*), intent(in) :: func_name_z
 !       HROM               :  hyper-reduced order model
 !       HROM_CORR_EF       :  hyper-reduced order model with EF correction
 !
-! DERNIER NUMERO UTILISE: 66
+! DERNIER NUMERO UTILISE: 67
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -235,7 +235,7 @@ character(len=*), intent(in) :: func_name_z
     else if (func_name.eq.'HROM') then
         isfonc = list_func_acti(62).eq.1
     else if (func_name.eq.'HROM_CORR_EF') then
-        isfonc = list_func_acti(66).eq.1
+        isfonc = list_func_acti(67).eq.1
     else if (func_name.eq.'ENERGIE') then
         isfonc = list_func_acti(50).eq.1
     else if (func_name.eq.'PROJ_MODAL') then

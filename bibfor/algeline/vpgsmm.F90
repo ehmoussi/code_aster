@@ -123,7 +123,7 @@ subroutine vpgsmm(nbeq, nfreq, nconv, vect, alpha, lmatb,&
             ltest=(abs(auxri1).lt.seuilr)
         else
             if (abs(auxri1) .ge. seuilr) then
-                ltest=(abs(2.d0*(auxri-auxri1)/(auxri+auxri1)).lt.seuilp)
+                ltest = 2.d0 * abs(auxri-auxri1) .lt. abs(auxri+auxri1) * seuilp
             else
                 ltest=.false.
             endif

@@ -15,8 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine ddr_comp(ds_empi, v_list_equa)
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1304
+!
+subroutine ddr_comp(ds_empi, v_equa)
 !
 use Rom_Datastructure_type
 !
@@ -35,11 +37,8 @@ implicit none
 #include "asterfort/utmess.h"
 #include "blas/dgesv.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1304
-!
-    type(ROM_DS_Empi), intent(in) :: ds_empi
-    integer, pointer, intent(in)  :: v_list_equa(:)
+type(ROM_DS_Empi), intent(in) :: ds_empi
+integer, pointer, intent(in)  :: v_equa(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -50,7 +49,8 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ds_empi          : datastructure for empiric modes
-! In  v_list_equa      : list of dof chosen by DEIM method
+! In  v_equa           : list of equations selected by DEIM method (magic points)
+!                        for each mode => the index of equation
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -134,7 +134,7 @@ implicit none
                     equa_maxi = i_equa
                 endif
             enddo
-            v_list_equa(i_mode) = equa_maxi
+            v_equa(i_mode) = equa_maxi
             v_list_loca(k_mode) = equa_maxi
 ! - Loop on mode of slice
             do k_mode = 2, nb_motr
@@ -173,7 +173,7 @@ implicit none
                         equa_maxi = i_equa
                     endif
                 enddo
-                v_list_equa(i_mode+k_mode-1) = equa_maxi
+                v_equa(i_mode+k_mode-1) = equa_maxi
                 v_list_loca(k_mode) = equa_maxi
                 AS_DEALLOCATE(vi4=IPIV)
                 AS_DEALLOCATE(vr=v_vect)

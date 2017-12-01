@@ -15,16 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine ddr_prep(ds_para, v_list_prim, v_list_dual, v_list_rid, nb_node_rid)
+    subroutine ddr_prep(ds_para, v_equa_prim, v_equa_dual, v_node_rid, nb_node_rid)
         use Rom_Datastructure_type
         type(ROM_DS_ParaDDR), intent(in) :: ds_para
-        integer, intent(in), pointer :: v_list_prim(:)
-        integer, intent(in), pointer :: v_list_dual(:)
-        integer, intent(out), pointer :: v_list_rid(:)
+        integer, intent(in), pointer :: v_equa_prim(:)
+        integer, intent(in), pointer :: v_equa_dual(:)
+        integer, intent(out), pointer :: v_node_rid(:)
         integer, intent(out) :: nb_node_rid
     end subroutine ddr_prep
 end interface

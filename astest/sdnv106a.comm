@@ -116,6 +116,13 @@ MODE2=CALC_MODES( MATR_RIGI=RIGST2,
                   OPTION='PLUS_PETITE',
                   CALC_FREQ=_F( NMAX_FREQ=95 ),
                   VERI_MODE=_F( STOP_ERREUR='NON' ),);
+
+# Liste des instants pour le calcul spectral
+
+L_INSTC=DEFI_LIST_REEL(VALE=(1.001),);
+
+L_INSTM=DEFI_LIST_REEL(VALE=(0.1,0.6,1.01,1.06,1.1,1.15,1.2,1.25,1.49,1.51,1.52,1.56,1.75,1.99,),);
+
 #
 # CALCUL AVEC SOLVEUR LINEAIRE MULT_FRONT
 REPONSE=STAT_NON_LINE(MODELE=MO,
@@ -129,7 +136,7 @@ REPONSE=STAT_NON_LINE(MODELE=MO,
                 CONVERGENCE=_F(RESI_GLOB_RELA = 1.E-6,
                                ITER_GLOB_MAXI = 50),
                 ARCHIVAGE = _F(LIST_INST=L_ARCH,),
-                CRIT_STAB = _F(TYPE='FLAMBEMENT',
+                CRIT_STAB = _F(TYPE='FLAMBEMENT',LIST_INST=L_INSTC,
                                COEF_DIM_ESPACE=5,
                                NB_MODE=1,CHAR_CRIT=(-100.0,100.),),
              );
@@ -148,10 +155,10 @@ REPONSE=DYNA_NON_LINE( reuse=REPONSE,
                 NEWTON=_F(MATRICE = 'TANGENTE',REAC_ITER = 1),
                 CONVERGENCE=_F(RESI_GLOB_RELA = 1.E-6,
                                 ITER_GLOB_MAXI = 10),
-                CRIT_STAB = _F(TYPE='FLAMBEMENT',
+                CRIT_STAB = _F(TYPE='FLAMBEMENT',LIST_INST=L_INSTC,
                                COEF_DIM_ESPACE=5,
                                NB_MODE=1,CHAR_CRIT=(-100.0,100.),),
-                MODE_VIBR = _F(NB_FREQ=3,MATR_RIGI='TANGENTE',),
+                MODE_VIBR = _F(NB_FREQ=3,MATR_RIGI='TANGENTE',LIST_INST=L_INSTM),
                 ARCHIVAGE = _F(LIST_INST=L_ARCH,),
                 RECH_LINEAIRE=_F(METHODE='MIXTE',),
              );
@@ -171,14 +178,15 @@ REPONSE=DYNA_NON_LINE( reuse=REPONSE,
                 CONVERGENCE=_F(RESI_GLOB_RELA = 1.E-6,
                                ITER_GLOB_MAXI = 10),
                 CRIT_STAB = _F(TYPE='FLAMBEMENT',
-                               COEF_DIM_ESPACE=5,
+                               COEF_DIM_ESPACE=5,LIST_INST=L_INSTC,
                                NB_MODE=1,CHAR_CRIT=(-100.0,100.),),
-                MODE_VIBR = _F(BANDE=(0.1,0.5),MATR_RIGI='ELASTIQUE',),
+                MODE_VIBR = _F(BANDE=(0.1,0.5),MATR_RIGI='ELASTIQUE',LIST_INST=L_INSTM),
                 RECH_LINEAIRE=_F(METHODE='MIXTE',),
              );
 
 
 # CALCUL AVEC SOLVEUR LINEAIRE LDLT
+
 REPONSEL=STAT_NON_LINE(MODELE=MO,
                  CHAM_MATER=CHMAT,EXCIT=(
                     _F( CHARGE = LIAISON),
@@ -193,7 +201,7 @@ REPONSEL=STAT_NON_LINE(MODELE=MO,
                 CRIT_STAB = _F(TYPE='FLAMBEMENT',
                                COEF_DIM_ESPACE=5,
                                NB_MODE=1,CHAR_CRIT=(-100.0,100.),
-                               LIST_INST = L_INST),
+                               LIST_INST = L_INSTC),
              );
 REPONSEL=DYNA_NON_LINE( reuse=REPONSEL,
                SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',
@@ -210,9 +218,9 @@ REPONSEL=DYNA_NON_LINE( reuse=REPONSEL,
                 CONVERGENCE=_F(RESI_GLOB_RELA = 1.E-6,
                                 ITER_GLOB_MAXI = 10),
                 CRIT_STAB = _F(TYPE='FLAMBEMENT',
-                               COEF_DIM_ESPACE=5,
+                               COEF_DIM_ESPACE=5,LIST_INST = L_INSTC,
                                NB_MODE=1,CHAR_CRIT=(-100.0,100.),),
-                MODE_VIBR = _F(NB_FREQ=3,MATR_RIGI='TANGENTE',),
+                MODE_VIBR = _F(NB_FREQ=3,MATR_RIGI='TANGENTE',LIST_INST=L_INSTM),
                 ARCHIVAGE = _F(LIST_INST=L_ARCH,),
                 RECH_LINEAIRE=_F(METHODE='MIXTE',),
              );
@@ -232,9 +240,9 @@ REPONSEL=DYNA_NON_LINE( reuse=REPONSEL,
                 CONVERGENCE=_F(RESI_GLOB_RELA = 1.E-6,
                                ITER_GLOB_MAXI = 10),
                 CRIT_STAB = _F(TYPE='FLAMBEMENT',
-                               COEF_DIM_ESPACE=5,
+                               COEF_DIM_ESPACE=5,LIST_INST = L_INSTC,
                                NB_MODE=1,CHAR_CRIT=(-100.0,100.),),
-                MODE_VIBR = _F(BANDE=(0.1,0.5),MATR_RIGI='ELASTIQUE',),
+                MODE_VIBR = _F(BANDE=(0.1,0.5),MATR_RIGI='ELASTIQUE',LIST_INST=L_INSTM),
                 RECH_LINEAIRE=_F(METHODE='MIXTE',),
              );
 
@@ -252,8 +260,7 @@ REPONSEM=STAT_NON_LINE(MODELE=MO,
                 ARCHIVAGE = _F(LIST_INST=L_ARCH,),
                 CRIT_STAB = _F(TYPE='FLAMBEMENT',
                                COEF_DIM_ESPACE=5,
-                               NB_MODE=1,CHAR_CRIT=(-100.0,100.),
-                               LIST_INST = L_INST),
+                               NB_MODE=1,CHAR_CRIT=(-100.0,100.),LIST_INST=L_INSTC),
              );
 REPONSEM=DYNA_NON_LINE(reuse=REPONSEM,
                SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',
@@ -271,8 +278,8 @@ REPONSEM=DYNA_NON_LINE(reuse=REPONSEM,
                                 ITER_GLOB_MAXI = 10),
                 CRIT_STAB = _F(TYPE='FLAMBEMENT',
                                COEF_DIM_ESPACE=5,
-                               NB_MODE=1,CHAR_CRIT=(-100.0,100.),),
-                MODE_VIBR = _F(NB_FREQ=3,MATR_RIGI='TANGENTE',),
+                               NB_MODE=1,CHAR_CRIT=(-100.0,100.),LIST_INST=L_INSTC),
+                MODE_VIBR = _F(NB_FREQ=3,MATR_RIGI='TANGENTE',LIST_INST=L_INSTM),
                 ARCHIVAGE = _F(LIST_INST=L_ARCH,),
                 RECH_LINEAIRE=_F(METHODE='MIXTE',),
              );
@@ -293,8 +300,8 @@ REPONSEM=DYNA_NON_LINE( reuse=REPONSEM,
                                ITER_GLOB_MAXI = 10),
                 CRIT_STAB = _F(TYPE='FLAMBEMENT',
                                COEF_DIM_ESPACE=5,
-                               NB_MODE=1,CHAR_CRIT=(-100.0,100.),),
-                MODE_VIBR = _F(BANDE=(0.1,0.5),MATR_RIGI='ELASTIQUE',),
+                               NB_MODE=1,CHAR_CRIT=(-100.0,100.),LIST_INST=L_INSTC),
+                MODE_VIBR = _F(BANDE=(0.1,0.5),MATR_RIGI='ELASTIQUE',LIST_INST=L_INSTM),
                 RECH_LINEAIRE=_F(METHODE='MIXTE',),
              );
 #
@@ -600,7 +607,7 @@ REPONSE2=DYNA_NON_LINE(
                 NEWTON=_F(MATRICE = 'TANGENTE',REAC_ITER = 1),
                 CONVERGENCE=_F(RESI_GLOB_RELA = 1.E-6,
                                 ITER_GLOB_MAXI = 10),
-                MODE_VIBR = _F(NB_FREQ=3,MATR_RIGI='SECANTE',),
+                MODE_VIBR = _F(NB_FREQ=3,MATR_RIGI='SECANTE',LIST_INST=L_INSTM),
                 ARCHIVAGE=_F(LIST_INST=L_ARCH2),
              );
 REPONSE2=DYNA_NON_LINE( reuse=REPONSE2,
@@ -616,7 +623,7 @@ REPONSE2=DYNA_NON_LINE( reuse=REPONSE2,
                 NEWTON=_F(MATRICE = 'TANGENTE',REAC_ITER = 1),
                 CONVERGENCE=_F(RESI_GLOB_RELA = 1.E-5,
                                 ITER_GLOB_MAXI = 50),
-                MODE_VIBR = _F(NB_FREQ=3,MATR_RIGI='SECANTE',),
+                MODE_VIBR = _F(NB_FREQ=3,MATR_RIGI='SECANTE',LIST_INST=L_INSTM),
                 ARCHIVAGE=_F(LIST_INST=L_ARCH2,),
              );
 
