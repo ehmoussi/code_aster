@@ -47,8 +47,8 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    type(ROM_DS_Empi) :: empi_prim, empi_dual, empi_rid
-    character(len=8)  :: base_prim = ' ', base_dual = ' ', base_rid = ' '
+    type(ROM_DS_Empi) :: empi_prim, empi_dual
+    character(len=8)  :: base_prim = ' ', base_dual = ' '
     character(len=8)  :: result_dom = ' ', result_rom = ' ', model_dom = ' '
     character(len=16) :: k16bid = ' ', answer
     character(len=24) :: grnode_int
@@ -88,13 +88,6 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
     call getvtx(' ', 'CORR_COMPLET', scal = answer)
     l_corr_ef = answer .eq. 'OUI'
 !
-! - Get informations about bases - Dual
-!
-    if (l_corr_ef) then
-        call getvid(' ', 'BASE_DOMAINE', scal = base_rid)
-        call romBaseRead(base_rid, empi_rid)
-    endif
-!
 ! - Get input results datastructures
 !
     call getvid(' ', 'RESULTAT_REDUIT', scal = result_rom)
@@ -113,6 +106,5 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
     ds_para%grnode_int    = grnode_int
     ds_para%l_prev_dual   = l_prev_dual
     ds_para%l_corr_ef     = l_corr_ef
-    ds_para%ds_empi_rid   = empi_rid 
 !
 end subroutine

@@ -475,6 +475,17 @@ implicit none
     call uttcpu('CPU.OP0186.3', 'FIN', ' ')
     call uttcpr('CPU.OP0186.3', 4, tps3)
 !
+! - TRANSFORMATION DE PHASE CALCUL HR
+!
+    if (ds_algorom%l_hrom_corref) then
+        if (ds_algorom%phase .eq. 'HROM') then
+            ds_algorom%phase = 'CORR_EF'
+            go to 20
+        else if (ds_algorom%phase .eq. 'CORR_EF') then
+            ds_algorom%phase = 'HROM'
+        endif
+    endif
+!
 ! ------- ARCHIVAGE
 !
     if (.not.l_evol) then

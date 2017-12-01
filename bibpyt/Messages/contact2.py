@@ -77,20 +77,26 @@ Conseil :
  - changez vos surfaces de contact.
  - pour la méthode LAC, il faut désactiver le lissage
 """),
-    
+
 
     17 : _(u"""
 L'option DECOUPE_LAC de CREA_MAILLAGE n'a pas traité le même nombre de zones que celles définies dans DEFI_CONTACT
 Conseil :
  - Assurez vous d'avoir renseigné le bon nombre de zones esclaves dans CREA_MAILLAGE/DECOUPE_LAC et DEFI_CONTACT
 """),
-    
-    
+
+
 
     18 : _(u"""
 L'option DECOUPE_LAC de CREA_MAILLAGE n'a pas traité la zone %(k1)s définie dans DEFI_CONTACT.
 Conseil :
  - Assurez vous d'avoir renseigné cette zone dans dans CREA_MAILLAGE/DECOUPE_LAC.
+"""),
+
+    19 : _(u"""
+La méthode de gestion du contact LAC n'est pas compatible avec l'option MATR_DISTRIBUEE='OUI'
+Conseil :
+ - Assurez vous de ne pas utiliser MATR_DISTRIBUEE.
 """),
 
 }

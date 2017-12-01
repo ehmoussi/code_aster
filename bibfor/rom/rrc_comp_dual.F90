@@ -55,13 +55,15 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
     integer :: ifm, niv
     integer :: nb_mode, nb_equa, nb_equa_ridi, nb_cmp, nb_store
-    integer :: iret, i_mode, i_equa, i_store, nume_store
+    integer :: iret, i_mode, i_equa, i_store, nume_store, i_ord, nume_equa
     character(len=8) :: result_rom, result_dom
     real(kind=8), pointer :: v_dual(:) => null()
     real(kind=8), pointer :: v_dual_rom(:) => null()
     real(kind=8), pointer :: v_sigm_dom(:) => null()
+    real(kind=8), pointer :: v_sigm_rid(:) => null()
+    real(kind=8), pointer :: v_sigm_rom(:) => null()
     real(kind=8), pointer :: v_cohr(:) => null()
-    character(len=24) :: field_save
+    character(len=24) :: field_save, sigm_rid
     real(kind=8), pointer :: v_field_save(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -114,16 +116,36 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
                v_dual, nb_equa, v_cohr, nb_mode, 0.d0, v_sigm_dom, nb_equa)
     do i_store = 1, nb_store-1
         nume_store = i_store
+! ----- Get field to save
         call rsexch(' ', result_dom, ds_para%ds_empi_dual%field_name,&
                     nume_store, field_save, iret)
         ASSERT(iret .eq. 100)
         call copisd('CHAMP_GD', 'G', ds_para%ds_empi_dual%field_refe, field_save)
         call jeveuo(field_save(1:19)//'.VALE', 'E', vr = v_field_save)
+! ----- Get field on RID
+        call rsexch(' ', result_rom, ds_para%ds_empi_dual%field_name,&
+                    nume_store, sigm_rid, iret)
+        ASSERT(iret .eq. 0)
+        call jeveuo(sigm_rid(1:19)//'.VALE', 'L', vr = v_sigm_rid)
+! ----- Truncate the field
+        AS_ALLOCATE(vr = v_sigm_rom, size = nb_equa_ridi)
+        do i_ord = 1, ds_para%nb_equa_ridd
+            if (ds_para%v_equa_ridi(i_ord) .ne. 0) then
+                v_sigm_rom(ds_para%v_equa_ridi(i_ord)) = v_sigm_rid(i_ord)
+            endif
+        enddo
+! ----- Set field
         do i_equa = 1, nb_equa
-            v_field_save(i_equa) = v_sigm_dom(i_equa+nb_equa*(nume_store-1))
+            nume_equa = ds_para%v_equa_ridd(i_equa)
+            if (nume_equa .eq. 0) then
+                v_field_save(i_equa) = v_sigm_dom(i_equa+nb_equa*(nume_store-1))
+            else
+                v_field_save(i_equa) = v_sigm_rom(nume_equa)
+            endif
         enddo
         call rsnoch(result_dom, ds_para%ds_empi_dual%field_name,&
                     nume_store)
+        AS_DEALLOCATE(vr = v_sigm_rom)
     enddo
 !
 ! - Clean

@@ -1341,21 +1341,14 @@ MODELE=AFFE_MODELE(  MAILLAGE=POUTRE,
                          AFFE=_F(  TOUT = 'OUI',  PHENOMENE = 'MECANIQUE',
                          MODELISATION = 'POU_D_T') )
 
-R_EXT=1E-02
 
-EP=1.E-03
-
-R_INT=R_EXT - EP
-
-VOLUM=2. * ( pi * ( R_EXT ** 2 - R_INT ** 2 ) )
-
-RHO=2. / VOLUM
-
-DT=8.E-05
+DT=7.E-05
 
 DEDT=2. * DT
 
 FDT=1. / DT
+
+RHO = 10000.
 
 MATER1=DEFI_MATERIAU( ELAS=_F(   E = 1.8E+11,
                                   NU = 0.3,       RHO = RHO) )
@@ -1617,7 +1610,7 @@ T17=POST_USURE(           RESU_GENE=TRANGE2,
                       INFO=2
                   )
 
-TEST_TABLE(VALE_CALC=0.0,
+TEST_TABLE(VALE_CALC=1.61114036564E-05,
            TOLE_MACHINE=1.E-3,
            NOM_PARA='V_USUR_TUBE_CUMU',
            TABLE=T17,

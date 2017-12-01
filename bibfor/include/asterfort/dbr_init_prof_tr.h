@@ -15,12 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
 !
+#include "asterf_types.h"
 !
-interface 
-    subroutine romAlgoNLCorrEFSystemSolve()
+interface
+    subroutine dbr_init_prof_tr(base, ds_para_tr)
         use Rom_Datastructure_type
-
-    end subroutine romAlgoNLCorrEFSystemSolve
-end interface 
+        character(len=8), intent(in) :: base
+        type(ROM_DS_ParaDBR_TR), intent(inout) :: ds_para_tr
+    end subroutine dbr_init_prof_tr
+end interface

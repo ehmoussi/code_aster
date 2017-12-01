@@ -41,8 +41,6 @@ REST_REDUIT_COMPLET=OPER(nom="REST_REDUIT_COMPLET",op=54,
                             GROUP_NO_INTERF = SIMP(statut='o',typ=grno,max=1),
                             BASE_DUAL= SIMP(statut='o',typ=mode_empi,max=1)),
     CORR_COMPLET     = SIMP(statut='f',typ='TXM',defaut='NON',into=('OUI','NON')),
-    b_corr           = BLOC(condition="""(equal_to("CORR_COMPLET", 'OUI'))""",
-                            BASE_DOMAINE = SIMP(statut='o',typ=mode_empi,max=1)),
     INFO             = SIMP(statut='f',typ='I',defaut= 1,into=( 1 , 2) ),
     TITRE            = SIMP(statut='f',typ='TXM'),
 ) ;

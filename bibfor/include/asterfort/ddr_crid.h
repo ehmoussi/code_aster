@@ -15,14 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine ddr_crid(ds_para, nb_node_rid, v_list_rid)
+    subroutine ddr_crid(ds_para, nb_node_rid, v_node_rid)
         use Rom_Datastructure_type
         type(ROM_DS_ParaDDR), intent(in) :: ds_para
         integer, intent(in)           :: nb_node_rid
-        integer, intent(in)           :: v_list_rid(nb_node_rid)
+        integer, intent(in)           :: v_node_rid(nb_node_rid)
     end subroutine ddr_crid
 end interface

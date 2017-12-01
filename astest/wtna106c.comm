@@ -337,15 +337,6 @@ SATLIQ=CALC_CHAMP(reuse=SATLIQ,RESULTAT=SATLIQ,VARI_INTERNE='VAEX_NOEU',NOM_VARI
 SATEAU=CALC_CHAMP(RESULTAT=U0,VARI_INTERNE=('VAEX_ELGA'),NOM_VARI='SATLIQ')
 
 
-#################################################
-IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U0,
-                  NOM_CHAM='DEPL',
-                  GROUP_NO=('BO',),),);
-
-IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U0,
-                  NOM_CHAM='VARI_NOEU',
-                  GROUP_NO=('BO',),),);
-#################################################
 
 TEST_RESU(RESU=(_F(INST=100.0,
                    RESULTAT=DPVP,
@@ -413,6 +404,182 @@ TEST_RESU(RESU=(_F(INST=1000,
                    NOEUD='N2',
                    NOM_CMP='TEMP',
                    VALE_CALC=268.4680,
+                   ),
+                ),
+          )
+
+# Modele D_PLAN_THHMS (non-régression pure, pas de sens physique car modèle initialement axi)
+
+MODEL1=AFFE_MODELE(MAILLAGE=MAIL,
+                   AFFE=_F(TOUT='OUI',
+                           PHENOMENE='MECANIQUE',
+                           MODELISATION='D_PLAN_THHMS',),);
+
+DEP_BLO1=AFFE_CHAR_MECA(    MODELE=MODEL1,
+                      DDL_IMPO=_F( TOUT='OUI',
+                                   DX =0.,
+                                   DY=0., )
+                           )
+
+FLUT1=AFFE_CHAR_MECA(MODELE=MODEL1,
+                       FLUX_THM_REP=_F(GROUP_MA=('GAUCHE','DROIT','BAS','HAUT'),
+                                       FLUN=1.E6,
+                                       FLUN_HYDR1=0.0,
+                                       ),
+                                      );
+
+U1=STAT_NON_LINE(MODELE=MODEL1,
+                 CHAM_MATER=CHMAT0,
+                 EXCIT=(
+                 _F(CHARGE=FLUT1,),
+                 _F(CHARGE=DEP_BLO1,),
+                                          ),
+                 SCHEMA_THM=_F(PARM_THETA=0.57,),
+                 COMPORTEMENT=_F(RELATION='KIT_THHM',
+                              RELATION_KIT=('ELAS','LIQU_VAPE_GAZ','HYDR_UTIL'),
+                              ITER_INTE_MAXI=5,),
+                 ETAT_INIT=_F(DEPL=CHAMNO,
+                              SIGM=SIGINIT,),
+                 INCREMENT=_F(LIST_INST=DEFLIST1,
+                              NUME_INST_FIN=1,
+                              ),
+                 NEWTON=_F(MATRICE='TANGENTE',
+                           REAC_ITER=1,),
+                 RECH_LINEAIRE=_F(RESI_LINE_RELA=0.10000000000000001,
+                                  ITER_LINE_MAXI=3,),
+                 CONVERGENCE=_F(
+                                RESI_GLOB_RELA=1.E-6,
+                                ITER_GLOB_MAXI=20),
+                 SOLVEUR=_F(METHODE='MULT_FRONT',
+                            STOP_SINGULIER='NON',),
+                 );
+
+U1=CALC_CHAMP(reuse =U1,
+              VARI_INTERNE='VARI_NOEU',
+              RESULTAT=U1,);
+
+TEST_RESU(RESU=(_F(INST=1000,
+                   RESULTAT=U1,
+                   NOM_CHAM='VARI_NOEU',
+                   NOEUD='N2',
+                   NOM_CMP='V4',
+                   VALE_CALC=10435.5231931,
+                   ),
+                _F(INST=1000,
+                   RESULTAT=U1,
+                   NOM_CHAM='VARI_NOEU',
+                   NOEUD='N2',
+                   NOM_CMP='V5',
+                   VALE_CALC=0.499966614216,
+                   ),
+                _F(INST=1000,
+                   RESULTAT=U1,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N2',
+                   NOM_CMP='PRE1',
+                   VALE_CALC=33289484.2149,
+                   ),
+                _F(INST=1000,
+                   RESULTAT=U1,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N2',
+                   NOM_CMP='PRE2',
+                   VALE_CALC=19665.1623519,
+                   ),
+                _F(INST=1000,
+                   RESULTAT=U1,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N2',
+                   NOM_CMP='TEMP',
+                   VALE_CALC=28.7745299173,
+                   ),
+                ),
+          )
+
+# Modele D_PLAN_THHMD (non-régression pure, pas de sens physique car modèle initialement axi)
+
+MODEL2=AFFE_MODELE(MAILLAGE=MAIL,
+                   AFFE=_F(TOUT='OUI',
+                           PHENOMENE='MECANIQUE',
+                           MODELISATION='D_PLAN_THHMD',),);
+
+DEP_BLO2=AFFE_CHAR_MECA(    MODELE=MODEL2,
+                      DDL_IMPO=_F( TOUT='OUI',
+                                   DX =0.,
+                                   DY=0., )
+                           )
+
+FLUT2=AFFE_CHAR_MECA(MODELE=MODEL2,
+                       FLUX_THM_REP=_F(GROUP_MA=('GAUCHE','DROIT','BAS','HAUT'),
+                                       FLUN=1.E6,
+                                       FLUN_HYDR1=0.0,
+                                       ),
+                                      );
+
+U2=STAT_NON_LINE(MODELE=MODEL2,
+                 CHAM_MATER=CHMAT0,
+                 EXCIT=(
+                 _F(CHARGE=FLUT2,),
+                 _F(CHARGE=DEP_BLO2,),
+                                          ),
+                 SCHEMA_THM=_F(PARM_THETA=0.57,),
+                 COMPORTEMENT=_F(RELATION='KIT_THHM',
+                              RELATION_KIT=('ELAS','LIQU_VAPE_GAZ','HYDR_UTIL'),
+                              ITER_INTE_MAXI=5,),
+                 ETAT_INIT=_F(DEPL=CHAMNO,
+                              SIGM=SIGINIT,),
+                 INCREMENT=_F(LIST_INST=DEFLIST1,
+                              NUME_INST_FIN=1,
+                              ),
+                 NEWTON=_F(MATRICE='TANGENTE',
+                           REAC_ITER=1,),
+                 RECH_LINEAIRE=_F(RESI_LINE_RELA=0.10000000000000001,
+                                  ITER_LINE_MAXI=3,),
+                 CONVERGENCE=_F(
+                                RESI_GLOB_RELA=1.E-6,
+                                ITER_GLOB_MAXI=20),
+                 SOLVEUR=_F(METHODE='MULT_FRONT',
+                            STOP_SINGULIER='NON',),
+                 );
+
+U2=CALC_CHAMP(reuse =U2,
+              VARI_INTERNE='VARI_NOEU',
+              RESULTAT=U2,);
+
+TEST_RESU(RESU=(_F(INST=1000,
+                   RESULTAT=U2,
+                   NOM_CHAM='VARI_NOEU',
+                   NOEUD='N2',
+                   NOM_CMP='V4',
+                   VALE_CALC=10435.52997,
+                   ),
+                _F(INST=1000,
+                   RESULTAT=U2,
+                   NOM_CHAM='VARI_NOEU',
+                   NOEUD='N2',
+                   NOM_CMP='V5',
+                   VALE_CALC=0.499966614285,
+                   ),
+                _F(INST=1000,
+                   RESULTAT=U2,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N2',
+                   NOM_CMP='PRE1',
+                   VALE_CALC=33289415.4736,
+                   ),
+                _F(INST=1000,
+                   RESULTAT=U2,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N2',
+                   NOM_CMP='PRE2',
+                   VALE_CALC=19665.1763064,
+                   ),
+                _F(INST=1000,
+                   RESULTAT=U2,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N2',
+                   NOM_CMP='TEMP',
+                   VALE_CALC=28.7745304579,
                    ),
                 ),
           )

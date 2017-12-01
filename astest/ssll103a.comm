@@ -347,6 +347,7 @@ CHFORC_4=AFFE_CHAR_MECA(MODELE=MO,FORCE_NODALE=(
 STAT4=MECA_STATIQUE(MODELE=MO,
                    CHAM_MATER=CHMAT,
                    CARA_ELEM=CARAC,
+                   SOLVEUR=_F(METHODE='MULT_FRONT'),
                    EXCIT=(_F(CHARGE=BLOQ,),
                           _F(CHARGE=CHFORC_4,),),);
 

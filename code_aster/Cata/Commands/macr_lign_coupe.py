@@ -70,7 +70,9 @@ MACR_LIGN_COUPE=MACRO(nom="MACR_LIGN_COUPE",
          b_cham       =BLOC(condition = """exists("CHAM_GD")""",
            NOM_CHAM        =SIMP(statut='f',typ='TXM',validators=NoRepeat(),into=C_NOM_CHAM_INTO(),),),
 
-         UNITE_MAILLAGE  =SIMP(statut='f',typ=UnitType(),defaut=25, inout='out'),
+         # UNITE_MAILLAGE: pour rester optionnel dans AsterStudy,
+         # la valeur par défaut est définie dans 'ops'
+         UNITE_MAILLAGE  =SIMP(statut='f',typ=UnitType(), inout='out'),
          MODELE          =SIMP(statut='f',typ=modele_sdaster ),
 
          VIS_A_VIS       =FACT(statut='f',max='**',

@@ -42,7 +42,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: mesh_prim, mesh_dual, mesh_rid, model_prim, model_dual, model_rid
+    character(len=8) :: mesh_prim, mesh_dual, model_prim, model_dual
     character(len=8) :: model_rom, model_dom
     aster_logical :: l_corr_ef, l_prev_dual
 !
@@ -58,10 +58,8 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
     l_prev_dual = ds_para%l_prev_dual
     mesh_prim   = ds_para%ds_empi_prim%mesh
     mesh_dual   = ds_para%ds_empi_dual%mesh
-    mesh_rid    = ds_para%ds_empi_rid%mesh
     model_prim  = ds_para%ds_empi_prim%model
     model_dual  = ds_para%ds_empi_dual%model
-    model_rid   = ds_para%ds_empi_rid%model
     model_rom   = ds_para%model_rom
     model_dom   = ds_para%model_dom
 !
@@ -69,14 +67,6 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
     if (l_prev_dual) then
         if (mesh_prim .ne. mesh_dual) then
-            call utmess('F','ROM4_9')
-        endif
-    endif
-    if (l_corr_ef) then
-        if (mesh_prim .ne. mesh_rid) then
-            call utmess('F','ROM4_9')
-        endif
-        if (mesh_dual .ne. mesh_rid) then
             call utmess('F','ROM4_9')
         endif
     endif
@@ -104,23 +94,12 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
             call utmess('F', 'ROM6_9', sk = ds_para%ds_empi_dual%base)
         endif
     endif
-    if (l_corr_ef) then
-        if (model_rid .eq. '#PLUSIEURS') then
-            call utmess('F','ROM4_11')
-        endif
-        if (model_prim .eq. model_rid) then
-            call utmess('F', 'ROM6_13')
-        endif
-    endif
 !
 ! - Check empiric modes base
 !
     call romBaseChck(ds_para%ds_empi_prim)
     if (l_prev_dual) then
         call romBaseChck(ds_para%ds_empi_dual)
-    endif
-    if (l_corr_ef) then
-        call romBaseChck(ds_para%ds_empi_rid)
     endif
 !
 end subroutine
