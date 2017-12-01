@@ -24,7 +24,6 @@
 #include <boost/python.hpp>
 #include <PythonBindings/factory.h>
 #include "PythonBindings/ModelInterface.h"
-#include "PythonBindings/factory.h"
 
 
 void exportModelToPython()

@@ -297,6 +297,8 @@ class ModelInstance: public DataStructure
 #endif /* _USE_MPI */
 };
 
+
+
 /**
  * @typedef Model
  * @brief Pointeur intelligent vers un ModelInstance
