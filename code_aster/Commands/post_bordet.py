@@ -19,29 +19,12 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import NonLinearEvolutionContainer
-from .ExecuteCommand import ExecuteCommand
+from .ExecuteCommand import ExecuteMacro
 
 
-class StaticNonLinearAnalysisBuild(ExecuteCommand):
-    """Command that defines :class:`~code_aster.Objects.NonLinearEvolutionContainer`.
+class PostBordet(ExecuteMacro):
+    """defines MacroCommand POST_BORDET
     """
-    command_name = "STAT_NON_LINE"
+    command_name = "POST_BORDET"
 
-    def create_result(self, keywords):
-        """Initialize the result.
-
-        Arguments:
-            keywords (dict): Keywords arguments of user's keywords.
-        """
-        self._result = NonLinearEvolutionContainer()
-    
-    def post_exec(self, keywords):
-        """Execute the command.
-
-        Arguments:
-            keywords (dict): User's keywords.
-        """
-        self._result.setModel(keywords["MODELE"])
-
-STAT_NON_LINE = StaticNonLinearAnalysisBuild.run
+POST_BORDET = PostBordet.run

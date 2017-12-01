@@ -66,7 +66,8 @@ private:
     typedef mapStrVOFE::iterator mapStrVOFEIterator;
     /** @typedef Valeur contenue dans mapStrVOFE */
     typedef mapStrVOFE::value_type mapStrVOFEValue;
-
+    /** @brief Model sur lequel repose la resultat */
+    ModelPtr                     _model;
     /** @brief Pointeur de nom Jeveux '.DESC' */
     JeveuxBidirectionalMapChar16 _symbolicNamesOfFields;
     /** @brief Collection '.TACH' */
@@ -107,6 +108,7 @@ public:
     ResultsContainerInstance( const std::string &name,
                               const std::string resuTyp ):
         DataStructure( name, 19, resuTyp ),
+        _model( ModelPtr() ),
         _symbolicNamesOfFields( JeveuxBidirectionalMapChar16( getName() + ".DESC" ) ),
         _namesOfFields( JeveuxCollectionChar24( getName() + ".TACH" ) ),
         _accessVariables( JeveuxBidirectionalMapChar16( getName() + ".NOVA" ) ),
@@ -148,6 +150,19 @@ public:
      */
     void addModel( const ModelPtr&, int rank ) throw ( std::runtime_error );
 
+    /**
+     * @brief Set model
+     */
+    void setModel(const ModelPtr& model) throw ( std::runtime_error ){
+        _model = model;
+    };
+    /**
+     * @brief Get model
+     */
+    ModelPtr getModel() throw ( std::runtime_error ){
+        return _model;
+    };
+    
     /**
      * @brief Add time value for one rank
      * @param rank

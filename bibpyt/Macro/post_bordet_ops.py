@@ -17,13 +17,15 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-def post_bordet_ops(self, TOUT, GROUP_MA, INST, PRECISION, CRITERE, NUME_ORDRE,
-                    PROBA_NUCL, RESULTAT, PARAM, TEMP, COEF_MULT, **args):
+def post_bordet_ops(self, RESULTAT, PARAM, TEMP, TOUT=None, GROUP_MA=None,
+                    INST=None, PRECISION=None, CRITERE=None, NUME_ORDRE=None,
+                    PROBA_NUCL=None, COEF_MULT=None, **args):
     """Corps de POST_BORDET"""
     import numpy as NP
     import aster
     from code_aster.Cata.Syntax import _F
-    from code_aster.Cata.DataStructure import fonction_sdaster, nappe_sdaster
+    from code_aster.Objects import Function as fonction_sdaster
+    from code_aster.Objects import Surface as nappe_sdaster
     from Utilitai.Utmess import UTMESS
 
     ier = 0
@@ -46,10 +48,10 @@ def post_bordet_ops(self, TOUT, GROUP_MA, INST, PRECISION, CRITERE, NUME_ORDRE,
     n_modele = n_modele.rstrip()
     if len(n_modele) == 0 or n_modele == "#PLUSIEURS":
         UTMESS('F', 'RUPTURE1_58')
-    model = self.get_concept(n_modele)
+    model = RESULTAT.getModel()
 
     # Dimension du modele
-    iret, ndim, rbid = aster.dismoi('DIM_GEOM', model.nom, 'MODELE', 'F')
+    iret, ndim, rbid = aster.dismoi('DIM_GEOM', model.getName(), 'MODELE', 'F')
 
     if iret == 1 or ndim == 23:
         UTMESS('F', 'RUPTURE1_57')
@@ -76,13 +78,13 @@ def post_bordet_ops(self, TOUT, GROUP_MA, INST, PRECISION, CRITERE, NUME_ORDRE,
 
 # contrainte principale max et deformation plastique
     __RESU = CALC_CHAMP(
-        RESULTAT=self['RESULTAT'],
+        RESULTAT=RESULTAT,
         CRITERES='SIEQ_ELGA',
         DEFORMATION='EPSP_ELGA',)
 
 # Recuperation de la liste des instants et des ordres de calcul
-    list_ordre = __RESU.LIST_VARI_ACCES()['NUME_ORDRE']
-    list_inst = __RESU.LIST_VARI_ACCES()['INST']
+    list_ordre = aster.GetResu(__RESU.get_name(), "VARI_ACCES")['NUME_ORDRE']
+    list_inst = aster.GetResu(__RESU.get_name(), "VARI_ACCES")['INST']
 
 #
 # On va travailler en ordre ; si l'utilisateur entre un instant, on va le
@@ -163,7 +165,7 @@ def post_bordet_ops(self, TOUT, GROUP_MA, INST, PRECISION, CRITERE, NUME_ORDRE,
         def fseuil(epsi):
             return PARAM['SEUIL_CALC'](epsi, tempe)
 
-        self.update_const_context({'fseuil': fseuil})
+        #self.update_const_context({'fseuil': fseuil})
         __NPY = FORMULE(NOM_PARA=('EPSI'), VALE="""fseuil(EPSI)""")
 
 #
@@ -285,4 +287,4 @@ def post_bordet_ops(self, TOUT, GROUP_MA, INST, PRECISION, CRITERE, NUME_ORDRE,
                         _F(PARA='SIG_BORDET', LISTE_R=BORDTT,),
                         _F(PARA='PROBA_BORDET', LISTE_R=PROBA,),
                         ),)
-    return ier
+    return tabout

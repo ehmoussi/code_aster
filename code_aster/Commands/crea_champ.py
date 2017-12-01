@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import PCFieldOnMeshDouble, FieldOnNodesDouble
+from ..Objects import PCFieldOnMeshDouble, FieldOnNodesDouble, FieldOnElementsDouble
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -37,7 +37,7 @@ class FieldCreator(ExecuteCommand):
         """
         location = keywords["TYPE_CHAM"][:5]
         typ = keywords["TYPE_CHAM"][10:]
-        if typ != "R" or location not in ("CART_", "NOEU_"):
+        if typ != "R" or location not in ("CART_", "NOEU_", "ELGA_"):
             raise NotImplementedError("Type of field {0!r} not yet supported"
                                       .format(keywords["TYPE_CHAM"]))
 
@@ -47,9 +47,11 @@ class FieldCreator(ExecuteCommand):
             else:
                 mesh = keywords["MODELE"].getSupportMesh()
             self._result = PCFieldOnMeshDouble(mesh)
-        else:
-            # NOEU_
+        elif location == "NOEU_":
             self._result = FieldOnNodesDouble()
+        else:
+            # ELGA_
+            self._result = FieldOnElementsDouble()
 
 
 CREA_CHAMP = FieldCreator.run

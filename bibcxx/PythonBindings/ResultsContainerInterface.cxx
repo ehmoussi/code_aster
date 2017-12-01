@@ -42,5 +42,7 @@ void exportResultsContainerToPython()
         .def( "printMedFile", &ResultsContainerInstance::printMedFile )
         .def( "listFields", &ResultsContainerInstance::listFields )
         .def( "update", &ResultsContainerInstance::update )
+        .def( "setModel", &ResultsContainerInstance::setModel )
+        .def( "getModel", &ResultsContainerInstance::getModel )
     ;
 };

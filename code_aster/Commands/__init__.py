@@ -111,6 +111,7 @@ from .modi_modele import MODI_MODELE
 from .modi_repere import MODI_REPERE
 from .nume_ddl import NUME_DDL
 # from .nume_ddl_gene import NUME_DDL_GENE
+from .post_bordet import POST_BORDET
 from .post_champ import POST_CHAMP
 from .post_elem import POST_ELEM
 from .post_fati_alea import POST_FATI_ALEA
