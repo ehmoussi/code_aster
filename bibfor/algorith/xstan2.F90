@@ -318,7 +318,7 @@ subroutine xstan2(noma, modele, crit2, lfiss)
 !
 ! --- CONVERSION CHAM_NO_S -> CHAM_NO POUR MODELE.NOXFEM
 !
-    call cnscno(cns2, ' ', 'OUI', 'G', noxfem,&
+    call cnscno(cns2, ' ', 'NON', 'G', noxfem,&
                 'F', ibid)
 !
 ! --- CONVERSION CHAM_ELEM_S -> CHAM_ELEM POUR MODELE.STNO
