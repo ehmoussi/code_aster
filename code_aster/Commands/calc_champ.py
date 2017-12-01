@@ -19,7 +19,6 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Utilities import required
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -29,22 +28,19 @@ class ComputeAdditionalField(ExecuteCommand):
     """
     command_name = "CALC_CHAMP"
 
-    def adapt_syntax(self, keywords):
-        """Hook to adapt syntax from a old version or for compatibility reasons.
-
-        Arguments:
-            keywords (dict): Keywords arguments of user's keywords, changed
-                in place.
-        """
-        required(keywords, "", "reuse")
-
     def create_result(self, keywords):
         """Initialize the result.
 
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = keywords["RESULTAT"]
+        if keywords.has_key("reuse"):
+            self._result = keywords["reuse"]
+        else:
+            if keywords["RESULTAT"].getType() == "EVOL_ELAS":
+                self._result = type(keywords["RESULTAT"])("EVOL_ELAS")
+            else:
+                self._result = type(keywords["RESULTAT"])()
 
     def post_exec(self, keywords):
         """Execute the command.
