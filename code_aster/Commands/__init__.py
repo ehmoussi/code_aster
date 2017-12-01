@@ -113,6 +113,7 @@ from .nume_ddl import NUME_DDL
 # from .nume_ddl_gene import NUME_DDL_GENE
 from .post_champ import POST_CHAMP
 from .post_elem import POST_ELEM
+from .post_fati_alea import POST_FATI_ALEA
 from .proj_champ import PROJ_CHAMP
 from .resoudre import RESOUDRE
 from .stat_non_line import STAT_NON_LINE
