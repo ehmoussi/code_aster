@@ -34,12 +34,15 @@ class FieldProjector(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         if keywords.has_key("RESULTAT"):
+            if keywords["RESULTAT"].getType() == "EVOL_ELAS":
+                self._result = type(keywords["RESULTAT"])("EVOL_ELAS")
+            else:
+                self._result = type(keywords["RESULTAT"])()
+        elif keywords.has_key("CHAM_GD"):
             raise NotImplementedError("{0!r} is not yet implemented"
                                       .format("CHAM_GD"))
-        if keywords.has_key("CHAM_GD"):
-            raise NotImplementedError("{0!r} is not yet implemented"
-                                      .format("CHAM_GD"))
-        self._result = MatchingMeshes()
+        else:
+            self._result = MatchingMeshes()
 
 
 PROJ_CHAMP = FieldProjector.run

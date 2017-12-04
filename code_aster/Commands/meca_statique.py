@@ -100,6 +100,13 @@ class MechanicalSolver(ExecuteCommand):
         solver = create_solver(keywords.get("SOLVEUR"))
         mechaSolv.setLinearSolver(solver)
         self._result = mechaSolv.execute()
+    
+    def post_exec(self, keywords):
+        """Execute the command.
 
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        self._result.setModel(keywords["MODELE"])
 
 MECA_STATIQUE = MechanicalSolver.run
