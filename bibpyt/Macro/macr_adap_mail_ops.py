@@ -1039,7 +1039,7 @@ def post_traitement(INFO, mode_homard, dico_configuration, Rep_Calc_ASTER):
 
 
 def macr_adap_mail_ops(self,
-                       INFO, VERSION_HOMARD, LOGICIEL, MAILLAGE_FRONTIERE,
+                       INFO, VERSION_HOMARD, LOGICIEL=None, MAILLAGE_FRONTIERE=None,
                        **args):
     """
        Traitement des macros MACR_ADAP_MAIL/MACR_INFO_MAIL
@@ -1112,6 +1112,7 @@ def macr_adap_mail_ops(self,
     from Macro import creation_donnees_homard
     import aster_core
     import aster
+    from code_aster.Commands.macr_adap_mail import MacrAdapMail
 #
     global Liste_Passages
     global numero_passage_fonction
@@ -1209,7 +1210,7 @@ def macr_adap_mail_ops(self,
 #====================================================================
 # 2.1. ==> Donnees de pilotage de l'adaptation
 #
-    if (self.nom == "MACR_ADAP_MAIL"):
+    if (type(self)== MacrAdapMail):
 #
 # 2.1.1. ==> Le mode d'utilisation de homard
 #
@@ -1348,15 +1349,15 @@ def macr_adap_mail_ops(self,
     for dico in liste_maillages:
         # print ".... dico avant =", dico
         if (dico["Action"] != "Rien"):
-            Nom_MED_Mail_NP1 = aster.mdnoma(dico["Nom_ASTER"].nom)
+            Nom_MED_Mail_NP1 = aster.mdnoma(dico["Nom_ASTER"].getName())
             dico["NOM_MED"] = Nom_MED_Mail_NP1
             l_aux.append(dico)
             if (dico["Type_Maillage"] == "MAILLAGE_N"):
-                Nom_Co_Mail_N = dico["Nom_ASTER"].nom
+                Nom_Co_Mail_N = dico["Nom_ASTER"].getName()
             elif (dico["Type_Maillage"] == "MAILLAGE_NP1"):
-                Nom_Co_Mail_NP1 = dico["Nom_ASTER"].nom
+                Nom_Co_Mail_NP1 = dico["Nom_ASTER"].getName()
             elif (dico["Type_Maillage"] == "MAILLAGE_NP1_ANNEXE"):
-                Nom_Co_Mail_NP1_ANNEXE = dico["Nom_ASTER"].nom
+                Nom_Co_Mail_NP1_ANNEXE = dico["Nom_ASTER"].getName()
         # print ".... dico apres =", dico
     liste_maillages = l_aux
 #
@@ -1549,7 +1550,7 @@ def macr_adap_mail_ops(self,
 # 5.2. ==> Appel de la fonction de creation
 #
         donnees_homard = creation_donnees_homard.creation_donnees_homard(
-            self.nom, args, dico_configuration)
+            self.name, args, dico_configuration)
         if (INFO >= 3):
             donnees_homard.quel_mode()
         fic_homard_niter, fic_homard_niterp1 = donnees_homard.creation_configuration(
@@ -1652,7 +1653,6 @@ def macr_adap_mail_ops(self,
 #
                 MasquerAlarme('MODELISA5_49')
 #
-                self.DeclareOut("maillage_a_lire", dico["Nom_ASTER"])
                 maillage_a_lire = LIRE_MAILLAGE(
                     UNITE=unite_fichier_homard_vers_aster,
                     FORMAT="MED",
@@ -1660,6 +1660,7 @@ def macr_adap_mail_ops(self,
                     VERI_MAIL=_F(VERIF="NON"), INFO_MED=infocomm, INFO=infocomm)
 #
                 RetablirAlarme('MODELISA5_49')
+                self.register_result(maillage_a_lire, dico["Nom_ASTER"])
 #
                 # print "MAILLAGE =", maillage_a_lire
                 # print "NOM_MED =", dico["NOM_MED"]
@@ -1725,13 +1726,13 @@ def macr_adap_mail_ops(self,
                         # print "NOM_MAIL_MED =", maillage_np1_nom_med
                         # print "NOM_CHAM_MED =", dico["NOM_CHAM_MED"]
                         # print "TYPE_CHAM =", type_cham
-                        self.DeclareOut("le_champ", nom_cham)
                         le_champ = LIRE_CHAMP(
                             UNITE=unite_fichier_homard_vers_aster, FORMAT="MED",
                             MAILLAGE=maillage_np1, NOM_MAIL_MED=maillage_np1_nom_med,
                             NOM_MED=dico[
                                 "NOM_CHAM_MED"], TYPE_CHAM=type_cham,
                             INFO=infocomm, **motscsi)
+                        self.register_result(le_champ, nom_cham)
 #
 # 8.2.3. ==> En mode LECT
 #
@@ -1747,7 +1748,6 @@ def macr_adap_mail_ops(self,
                         # print "NOM_MAIL_MED =", maillage_n_nom_med
                         # print "NOM_CHAM_MED =", dico["NOM_CHAM_MED"]
                         # print "TYPE_CHAM =", type_cham
-                        self.DeclareOut("le_champ", nom_cham)
                         le_champ = LIRE_CHAMP(
                             UNITE=unite_fichier_homard_vers_aster, FORMAT="MED",
                             MAILLAGE=maillage_n, NOM_MAIL_MED=maillage_n_nom_med, MODELE=args[
@@ -1755,6 +1755,7 @@ def macr_adap_mail_ops(self,
                             NOM_MED=dico[
                                 "NOM_CHAM_MED"], TYPE_CHAM=type_cham,
                             INFO=infocomm, **motscsi)
+                        self.register_result(le_champ, nom_cham)
 #
 #====================================================================
 # 9. En adaptation, memorisation de ce passage
