@@ -67,9 +67,9 @@ class ExecProgram( object ):
     @staticmethod
     def factory(macro, **kwargs):
         """Factory that returns the object according to the arguments"""
-        if kwargs['SALOME']:
+        if kwargs.has_key('SALOME') and kwargs['SALOME']:
             class_ = ExecSalomeScript
-        elif kwargs['MAILLAGE']:
+        elif kwargs.has_key('MAILLAGE') and kwargs['MAILLAGE']:
             fmt = kwargs['MAILLAGE']['FORMAT']
             if fmt not in ('GMSH', 'GIBI', 'SALOME'):
                 UTMESS('F', 'EXECLOGICIEL0_2', valk=fmt)
@@ -92,7 +92,7 @@ class ExecProgram( object ):
     def configure( self, kwargs ):
         """Pre-execution function, read the keywords"""
         self.prog = kwargs['LOGICIEL']
-        self.args = list( kwargs['ARGUMENT'] or [] )
+        self.args = list( kwargs['ARGUMENT'] if kwargs.has_key('ARGUMENT') and kwargs['ARGUMENT'] else [] )
         self.shell = kwargs['SHELL'] == 'OUI'
         self.debug = kwargs['INFO'] == 2
         self.exitCodeMax = kwargs['CODE_RETOUR_MAXI']
