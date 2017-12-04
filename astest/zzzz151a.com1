@@ -1,0 +1,61 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+
+POURSUITE(CODE='OUI',
+          PAR_LOT='NON', 
+          DEBUG=_F(SDVERI='OUI'),)
+import os 
+import tempfile
+import aster_core
+ 
+fic = tempfile.NamedTemporaryFile(dir='.')
+prog_salome=aster_core.get_option('prog:salome')
+
+# Lancement d'une instance salome en récupérant le port
+# 
+os.system('%s start -t --ns-port-log=%s'% (prog_salome,fic.name))
+ 
+fic=open(fic.name,'r')
+port=fic.read()
+fic.close()
+
+# Appel à salome pour construire le maillage
+# 
+msalom2 = EXEC_LOGICIEL(
+                        SALOME=_F(
+                        CHEMIN_SCRIPT   = './fort.17',  PORT=int(port),
+                        ),);
+# Arrêt de l'instance salome
+# 
+os.system('%s shell -p %s killSalomeWithPort.py args:%s'%(prog_salome,port,port))
+
+# --------------------------------------------------------------------------------------------------
+# Test des concepts
+unite=DEFI_FICHIER(ACTION='ASSOCIER', FICHIER='./plaque.med',ACCES='NEW')
+
+MA=LIRE_MAILLAGE(FORMAT='MED',UNITE = unite,);
+
+TEST_RESU(MAILLAGE=(
+       _F( REFERENCE='ANALYTIQUE', MAILLAGE=MA,
+           CARA='NB_MAILLE', VALE_REFE_I=1508, VALE_CALC_I=1508,),
+       _F( REFERENCE='ANALYTIQUE', MAILLAGE=MA,
+           CARA='NB_NOEUD', VALE_REFE_I=2917, VALE_CALC_I=2917,),));
+
+FIN()
