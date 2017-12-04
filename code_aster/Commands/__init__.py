@@ -118,6 +118,7 @@ from .post_fati_alea import POST_FATI_ALEA
 from .post_fatigue import POST_FATIGUE
 from .post_releve_t import POST_RELEVE_T
 from .post_usure import POST_USURE
+from .prod_matr_cham import PROD_MATR_CHAM
 from .proj_champ import PROJ_CHAMP
 from .resoudre import RESOUDRE
 from .stat_non_line import STAT_NON_LINE
