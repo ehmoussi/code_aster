@@ -51,6 +51,8 @@ class MeshReader(ExecuteCommand):
             mesh.readGmshFile( fileName )
         elif format == "GIBI":
             mesh.readGibiFile( fileName )
+        elif format == "ASTER":
+            mesh.readAsterMeshFile( fileName )
         return mesh
 
 

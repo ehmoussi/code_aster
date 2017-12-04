@@ -87,8 +87,8 @@ def crea_grp_matiere(self, groupe, newgrp, iocc, m, __remodr, NOM_CHAM, LIGN_COU
     if len(l_horsmat) > 0:
 
         nderh = l_horsmat.index(l_horsmat[len(l_horsmat) - 1])
-        cnom = list(__macou.sdj.NOMNOE.get())
-        l_coor = __macou.sdj.COORDO.VALE.get()
+        cnom = aster.getvectjev(__macou.nom.ljust(8) + '.NOMNOE')
+        l_coor = aster.getvectjev(__macou.nom.ljust(8) + '.COORDO    .VALE')
         indent = os.linesep + ' ' * 12
         l_surlig = []
         l_horslig = []
@@ -105,8 +105,8 @@ def crea_grp_matiere(self, groupe, newgrp, iocc, m, __remodr, NOM_CHAM, LIGN_COU
 
     elif reste > 0:
 
-        cnom = list(__macou.sdj.NOMNOE.get())
-        l_coor = __macou.sdj.COORDO.VALE.get()
+        cnom = aster.getvectjev(__macou.nom.ljust(8) + '.NOMNOE')
+        l_coor = aster.getvectjev(__macou.nom.ljust(8) + '.COORDO    .VALE')
         indent = os.linesep + ' ' * 12
         l_surlig = []
         for j in l_matiere[:nderm + 1]:
@@ -663,8 +663,8 @@ def crea_mail_lig_coup(dimension, lignes, groups, arcs):
 
 
 #
-def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
-                        NOM_CHAM, MODELE, **args):
+def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None, 
+                        NOM_CHAM=None, MODELE=None, **args):
     """
        Ecriture de la macro MACR_LIGN_COUPE
     """
@@ -707,17 +707,17 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
     l_mode_meca_sans_modele = False
 
     if RESULTAT != None:
-        if args['NUME_ORDRE'] != None:
+        if args.has_key('NUME_ORDRE') and args['NUME_ORDRE'] != None:
             mcORDR['NUME_ORDRE'] = args['NUME_ORDRE']
-        elif args['NUME_MODE'] != None:
+        elif args.has_key('NUME_MODE') and args['NUME_MODE'] != None:
             mcORDR['NUME_MODE'] = args['NUME_MODE']
-        elif args['LIST_ORDRE'] != None:
+        elif args.has_key('LIST_ORDRE') and args['LIST_ORDRE'] != None:
             mcORDR['LIST_ORDRE'] = args['LIST_ORDRE']
-        elif args['INST'] != None:
+        elif args.has_key('INST') and args['INST'] != None:
             mcORDR['INST'] = args['INST']
             mcORDR['CRITERE'] = args['CRITERE']
             mcORDR['PRECISION'] = args['PRECISION']
-        elif args['LIST_INST'] != None:
+        elif args.has_key('LIST_INST') and args['LIST_INST'] != None:
             mcORDR['LIST_INST'] = args['LIST_INST']
             mcORDR['CRITERE'] = args['CRITERE']
             mcORDR['PRECISION'] = args['PRECISION']
@@ -726,7 +726,7 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
 
 
         nomresu = RESULTAT.nom
-        type_resu = AsType(RESULTAT).__name__
+        type_resu = RESULTAT.getType().lower()
         iret, ibid, n_modele = aster.dismoi('MODELE', nomresu, 'RESULTAT', 'F')
         n_modele = n_modele.strip()
         if n_modele in ('', '#AUCUN'):
@@ -896,7 +896,8 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
     fproc = open(nomFichierSortie, 'w')
     fproc.write(os.linesep.join(resu_mail))
     fproc.close()
-    UL.EtatInit(UNITE_MAILLAGE)
+    from code_aster.RunManager import ReservedUnitUsed
+    ReservedUnitUsed(UNITE_MAILLAGE)
 
     # Lecture du maillage de seg2 contenant toutes les lignes de coupe
     __macou = LIRE_MAILLAGE(FORMAT='ASTER',UNITE=UNITE_MAILLAGE,)
@@ -917,7 +918,7 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
 
     __macou = DEFI_GROUP(reuse=__macou, MAILLAGE=__macou, **motscles)
 
-    if AsType(RESULTAT).__name__ in ('evol_elas', 'evol_noli', 'mode_meca',
+    if RESULTAT.getType().lower() in ('evol_elas', 'evol_noli', 'mode_meca',
                                      'comb_fourier', 'mult_elas', 'fourier_elas'):
         __mocou = AFFE_MODELE(MAILLAGE=__macou,
                               AFFE=_F(TOUT='OUI',
@@ -925,7 +926,7 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
                                       MODELISATION='BARRE',),
                               DISTRIBUTION=_F(METHODE='CENTRALISE'),
                               )
-    elif AsType(RESULTAT).__name__ in ('evol_ther', 'evol_varc',):
+    elif RESULTAT.getType().lower() in ('evol_ther', 'evol_varc',):
         __mocou = AFFE_MODELE(MAILLAGE=__macou,
                               AFFE=_F(TOUT='OUI',
                                       PHENOMENE='THERMIQUE',
@@ -934,7 +935,7 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
     motscles = {}
     motscles.update(mcORDR)
     motscles['VIS_A_VIS'] = []
-    if args['VIS_A_VIS'] != None:
+    if args.has_key('VIS_A_VIS') and args['VIS_A_VIS'] != None:
         for v in args['VIS_A_VIS']:
             if v['GROUP_MA_1'] != None:
                 motscles['VIS_A_VIS'].append(
@@ -948,10 +949,10 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
 
     if (l_mode_meca_sans_modele == False):
         # on utilise le modèle pour projeter le champ
-        if n_modele in self.get_global_contexte().keys():
-            MODELE_1 = self.get_global_contexte()[n_modele]
-        else:
-            MODELE_1 = self.jdc.current_context[n_modele]
+        if RESULTAT != None:
+            MODELE_1 = RESULTAT.getModel()
+        elif CHAM_GD != None:
+            MODELE_1 = MODELE
 
         __recou = PROJ_CHAMP(METHODE='COLLOCATION',
                              RESULTAT=RESULTAT,
@@ -983,7 +984,7 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
     mcACTION = []
     angtab = []
 
-    if AsType(RESULTAT).__name__ in ('evol_ther', 'evol_elas', 'evol_noli', 'mode_meca', 'evol_varc',
+    if RESULTAT.getType().lower() in ('evol_ther', 'evol_elas', 'evol_noli', 'mode_meca', 'evol_varc',
                                      'comb_fourier', 'mult_elas', 'fourier_elas'):
 
         if NOM_CHAM in ('DEPL', 'SIEF_ELNO', 'SIGM_NOEU', 'SIGM_ELNO', 'FLUX_ELNO', 'FLUX_NOEU'):
@@ -1108,4 +1109,4 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
     RetablirAlarme('MODELE1_58')
     RetablirAlarme('MODELE1_63')
     RetablirAlarme('MODELE1_64')
-    return ier
+    return nomres
