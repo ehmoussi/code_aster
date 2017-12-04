@@ -62,7 +62,7 @@ format MED.
 """),
 
     8 : _(u"""
-  Il n'a pas de groupe de mailles ou de noeuds dans ce maillage.
+  Il n'y a pas de groupe de mailles ou de noeuds dans ce maillage.
 """),
 
     9 : _(u"""
