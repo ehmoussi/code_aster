@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-def post_coque_ops(self, RESULTAT, COOR_POINT, CHAM, NUME_ORDRE, INST,
+def post_coque_ops(self, RESULTAT, COOR_POINT, CHAM, NUME_ORDRE=None , INST=None,
                    **args):
     """
     macro post_coque
@@ -48,16 +48,14 @@ def post_coque_ops(self, RESULTAT, COOR_POINT, CHAM, NUME_ORDRE, INST,
   # 'tabout' dans le contexte de la macro
 
     self.DeclareOut('tabout', self.sd)
-    assert AsType(RESULTAT).__name__ in ('evol_elas', 'evol_noli',)
-    dico = RESULTAT.LIST_CHAMPS()
-    dico2 = RESULTAT.LIST_VARI_ACCES()
+    assert RESULTAT.getType() in ('EVOL_ELAS', 'EVOL_NOLI',)
+    dico = aster.GetResu(RESULTAT.get_name(), "CHAMPS")
+    dico2 = aster.GetResu(RESULTAT.get_name(), "VARI_ACCES")
   # si ni INST ni NUME_ORDRE ne sont presents, on prend le premier
   # instant calcule
     if not INST and not NUME_ORDRE:
         INST = dico2['INST'][0]
-    iret, ibid, n_modele = aster.dismoi(
-        'MODELE', RESULTAT.nom, 'RESULTAT', 'F')
-    MODEL = self.get_concept(n_modele)
+    MODEL = RESULTAT.getModel()
     if NUME_ORDRE:
         if not NUME_ORDRE in dico2['NUME_ORDRE']:
             UTMESS('F', 'POST0_25', vali=NUME_ORDRE)
@@ -83,7 +81,7 @@ def post_coque_ops(self, RESULTAT, COOR_POINT, CHAM, NUME_ORDRE, INST,
                 else:
                     UTMESS('F', 'POST0_19', vali=NUME_ORDRE)
 
-    dico = RESULTAT.LIST_CHAMPS()
+    dico = aster.GetResu(RESULTAT.get_name(), "CHAMPS")
 
     # Appel MACR_LIGN_COUPE :
     motscles = {}
@@ -220,4 +218,4 @@ def post_coque_ops(self, RESULTAT, COOR_POINT, CHAM, NUME_ORDRE, INST,
     tabout = CREA_TABLE(TYPE_TABLE='TABLE',
                         **dprod)
     RetablirAlarme('MODELISA4_9')
-    return ier
+    return tabout

@@ -114,6 +114,7 @@ from .nume_ddl import NUME_DDL
 # from .nume_ddl_gene import NUME_DDL_GENE
 from .post_bordet import POST_BORDET
 from .post_champ import POST_CHAMP
+from .post_coque import POST_COQUE
 from .post_elem import POST_ELEM
 from .post_fati_alea import POST_FATI_ALEA
 from .post_fatigue import POST_FATIGUE
