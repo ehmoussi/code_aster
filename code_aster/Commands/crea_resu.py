@@ -20,7 +20,8 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import (EvolutiveLoad, EvolutiveThermalLoad,
-                       LinearDisplacementEvolutionContainer)
+                       LinearDisplacementEvolutionContainer,
+                       FourierElasContainer, MultElasContainer)
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -41,6 +42,10 @@ class ResultCreator(ExecuteCommand):
             self._result = EvolutiveThermalLoad()
         elif typ == "EVOL_ELAS":
             self._result = LinearDisplacementEvolutionContainer()
+        elif typ == "FOURIER_ELAS":
+            self._result = FourierElasContainer()
+        elif typ == "MULT_ELAS":
+            self._result = MultElasContainer()
         else:
             raise NotImplementedError("Type of result {0!r} not yet "
                                       "implemented".format(typ))

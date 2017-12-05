@@ -87,7 +87,9 @@
 #include "PythonBindings/EvolutiveLoadInterface.h"
 #include "PythonBindings/EvolutiveThermalLoadInterface.h"
 #include "PythonBindings/FourierCombinationInterface.h"
+#include "PythonBindings/FourierElasContainerInterface.h"
 #include "PythonBindings/MechanicalModeContainerInterface.h"
+#include "PythonBindings/MultElasContainerInterface.h"
 #include "PythonBindings/NonLinearEvolutionContainerInterface.h"
 #include "PythonBindings/ResultsContainerInterface.h"
 #include "PythonBindings/NormalModeAnalysisInterface.h"
@@ -219,7 +221,9 @@ BOOST_PYTHON_MODULE(libaster)
     exportEvolutiveLoadToPython();
     exportEvolutiveThermalLoadToPython();
     exportFourierCombinationToPython();
+    exportFourierElasContainerToPython();
     exportMechanicalModeContainerToPython();
+    exportMultElasContainerToPython();
     exportNonLinearEvolutionContainerToPython();
     exportNormalModeAnalysisToPython();
     exportStaticMechanicalSolverToPython();
