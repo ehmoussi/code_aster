@@ -82,6 +82,15 @@ FOE=DEFI_FONCTION(       NOM_PARA='INST',
                                        18.2,   1.5,  ),
                          PROL_DROITE='LINEAIRE',
                         PROL_GAUCHE='LINEAIRE'     )
+                        
+FOE2=DEFI_FONCTION(       NOM_PARA='TEMP',
+                               VALE=( -10.3,   0.87,
+                                        5.3,   1.6,
+                                        7.8,   1.32,
+                                       11.2,   1.4,
+                                       18.2,   1.5,  ),
+                         PROL_DROITE='LINEAIRE',
+                        PROL_GAUCHE='LINEAIRE'     )
 
 FOF=DEFI_FONCTION(       NOM_PARA='INST',
                                VALE=( -1.2,    1.27,
@@ -105,6 +114,14 @@ FOH=DEFI_FONCTION(       NOM_PARA='INST',
                         PROL_GAUCHE='LINEAIRE'     )
 
 FOI=DEFI_FONCTION(       NOM_PARA='INST',
+                               VALE=( -0.45,  1.02,
+                                       1.4,   0.8,
+                                       8.5,   1.07,
+                                      21.6,   0.98,  ),
+                         PROL_DROITE='LINEAIRE',
+                        PROL_GAUCHE='LINEAIRE'     )
+                        
+FOI2=DEFI_FONCTION(       NOM_PARA='TEMP',
                                VALE=( -0.45,  1.02,
                                        1.4,   0.8,
                                        8.5,   1.07,
@@ -404,9 +421,9 @@ CHTHF=AFFE_CHAR_THER_F(         MODELE=MO,
 
 CHTHFB=AFFE_CHAR_THER_F(         MODELE=MO,FLUX_NL=(
                              _F(  MAILLE = ( 'M30', 'M112', ),
-                                       FLUN = FOI),
+                                       FLUN = FOI2),
                              _F(  GROUP_MA = 'GMA11',
-                                       FLUN = FOE)),ECHANGE=(
+                                       FLUN = FOE2)),ECHANGE=(
                              _F(  GROUP_MA = 'GMA13',
                                        COEF_H = FOB,
                                        TEMP_EXT = FOC),
