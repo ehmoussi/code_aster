@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -48,16 +48,18 @@ subroutine te0564(option, nomte)
 !.......................................................................
 !
     implicit none
+#include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8prem.h"
 #include "asterfort/elref1.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/jevech.h"
+#include "asterfort/lteatt.h"
 #include "asterfort/utmess.h"
 !
     character(len=8) :: elrefe
     character(len=16) :: nomte, option
-    real(kind=8) :: jac, jacpoi, zero
+    real(kind=8) :: jac, jacpoi, zero, r
     real(kind=8) :: xg, yg
     real(kind=8) :: dxdk, dydk, axgau, aygau
     real(kind=8) :: xgau, ygau, axxgau, ayygau
@@ -65,6 +67,7 @@ subroutine te0564(option, nomte)
     integer :: nno, nnos, jgano, ndim, ipg, npg, idfdk, iopt
     integer :: ldec, isect, i, iorig, ivect1
     integer :: ivect2, ino, ipoids, ivf, igeom
+    aster_logical :: laxi
 !
 !
 !
@@ -76,6 +79,9 @@ subroutine te0564(option, nomte)
 !
     call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
   npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfdk,jgano=jgano)
+  
+    laxi = .false.
+    if (lteatt('AXIS','OUI')) laxi = .true.
 !
 ! --- RECUPERATION DES COORDONNEES DES CONNECTIVITES :
 !     ----------------------------------------------
@@ -131,6 +137,9 @@ subroutine te0564(option, nomte)
             if (jac .le. r8prem()) then
                 call utmess('F', 'ELEMENTS4_34')
             endif
+!
+!           dans le cas AXIS la prise en compte du rayon ne doit pas intervenir
+!           a cette etape            
             jacpoi = jac*zr(ipoids+ipg-1)
 !
 ! ---   CALCUL DE AX, AY = SOMME(X.DS, Y.DS) :
@@ -173,6 +182,7 @@ subroutine te0564(option, nomte)
             zr(isect+6-1) = zr(isect+6-1) + axygau*jacpoi
 !
 70      continue
+
 ! --- FIN DE LA BOUCLE SUR LES POINTS D'INTEGRATION
 ! --- ET FIN DE L'OPTION 'CARA_SECT_POUT3'
 !
@@ -204,6 +214,14 @@ subroutine te0564(option, nomte)
             jac = sqrt(dxdk*dxdk+dydk*dydk)
             if (jac .le. r8prem()) then
                 call utmess('F', 'ELEMENTS4_34')
+            endif
+            
+            if (laxi) then
+                r = 0.d0
+                do ino = 1, nno
+                    r = r + zr(igeom+2*(ino-1))*zr(ivf+ldec+ino-1)
+                enddo
+                jac = jac*r
             endif
             jacpoi = jac*zr(ipoids+ipg-1)
 !
