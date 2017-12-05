@@ -17,9 +17,10 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-def macro_elas_mult_ops(self, MODELE, CHAM_MATER, CARA_ELEM, NUME_DDL,
-                        CHAR_MECA_GLOBAL, LIAISON_DISCRET,
-                        CAS_CHARGE, SOLVEUR, **args):
+def macro_elas_mult_ops(self, MODELE, CAS_CHARGE, 
+                        CHAM_MATER=None, CARA_ELEM=None, NUME_DDL=None,
+                        CHAR_MECA_GLOBAL=None, LIAISON_DISCRET=None,
+                         SOLVEUR=None, **args):
     """
        Ecriture de la macro MACRO_ELAS_MULT
     """
@@ -115,10 +116,10 @@ def macro_elas_mult_ops(self, MODELE, CHAM_MATER, CARA_ELEM, NUME_DDL,
         # calcul de lcharg : liste des listes de char_meca (mots clé CHAR_MECA
         # et CHAR_MECA_GLOBAL)
         xx1 = m['CHAR_MECA']
-        if type(xx1) != type((1,)):
+        if type(xx1) != tuple and type(xx1) != list:
             xx1 = (xx1,)
         xx2 = CHAR_MECA_GLOBAL
-        if type(xx2) != type((1,)):
+        if type(xx2) != tuple and type(xx2) != list:
             xx2 = (xx2,)
         lchar1 = []
         for chargt in (xx1 + xx2):
@@ -290,4 +291,4 @@ def macro_elas_mult_ops(self, MODELE, CHAM_MATER, CARA_ELEM, NUME_DDL,
 
 # fin de la boucle sur les items de CAS_CHARGE
 #
-    return ier
+    return nomres
