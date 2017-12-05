@@ -107,6 +107,7 @@ from .lire_maillage import LIRE_MAILLAGE
 from .macr_lign_coupe import MACR_LIGN_COUPE
 from .maj_cata import MAJ_CATA
 from .macr_adap_mail import MACR_ADAP_MAIL
+from .macr_cara_poutre import MACR_CARA_POUTRE
 from .meca_statique import MECA_STATIQUE
 # from .mode_iter_cycl import MODE_ITER_CYCL
 from .mode_statique import MODE_STATIQUE
