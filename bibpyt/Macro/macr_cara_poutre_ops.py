@@ -20,8 +20,8 @@
 # person_in_charge: jean-michel.proix at edf.fr
 
 
-def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
-                         GROUP_MA, ORIG_INER, TABLE_CARA, **args):
+def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA_BORD=None,
+                         GROUP_MA=None, ORIG_INER=None, TABLE_CARA=None, **args):
     """
        Ecriture de la macro MACR_CARA_POUTRE
     """
@@ -958,4 +958,4 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
     #
     RetablirAlarme('CHARGES2_87')
     RetablirAlarme('CALCULEL_40')
-    return ier
+    return nomres
