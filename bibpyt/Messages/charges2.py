@@ -21,6 +21,10 @@
 
 cata_msg = {
 
+    3 : _(u"""
+ La fonction %(k1)s fournie à l'opérande FLUN de FLUX_NL doit avoir le paramètre TEMP.
+"""),
+
     4 : _(u"""
   -> Le modèle contient un mélange d'éléments finis 2D (plan Oxy) et 3D
 

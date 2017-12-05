@@ -29,6 +29,7 @@ subroutine caflnl(char, ligrmo, noma)
 #include "asterfort/jeveuo.h"
 #include "asterfort/nocart.h"
 #include "asterfort/reliem.h"
+#include "asterfort/utmess.h"
     character(len=8) :: char, noma
     character(len=*) :: ligrmo
 !
@@ -43,11 +44,11 @@ subroutine caflnl(char, ligrmo, noma)
 !      FONREE : FONC OU REEL
 !
 !-----------------------------------------------------------------------
-    integer :: nflux, jvalv,  nf, iocc, nbtou, nbma, jma, ncmp
+    integer :: nflux, jvalv,  nf, iocc, nbtou, nbma, jma, ncmp, lprol
     character(len=8) :: k8b, typmcl(2)
     character(len=16) :: motclf, motcle(2)
     character(len=19) :: carte
-    character(len=24) :: mesmai
+    character(len=24) :: mesmai, prol, nompar
     character(len=8), pointer :: vncmp(:) => null()
 !     ------------------------------------------------------------------
     call jemarq()
@@ -82,6 +83,11 @@ subroutine caflnl(char, ligrmo, noma)
     do 10 iocc = 1, nflux
 !
         call getvid(motclf, 'FLUN', iocc=iocc, scal=zk8(jvalv), nbret=nf)
+        
+        prol = zk8(jvalv)//'           .PROL'
+        call jeveuo(prol, 'L', lprol)
+        nompar = zk24(lprol+2)
+        if (nompar(1:4) .ne.'TEMP') call utmess('F','CHARGES2_3',sk=zk8(jvalv))
 !
         call getvtx(motclf, 'TOUT', iocc=iocc, scal=k8b, nbret=nbtou)
         if (nbtou .ne. 0) then
