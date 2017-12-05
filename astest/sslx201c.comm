@@ -1,0 +1,328 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+MA=LIRE_MAILLAGE(FORMAT='MED',);
+
+modelisa = 'AXIS'
+#modelisa = 'C_PLAN'
+
+# copie de la modélisation B en modifiant la zone de raccord.
+# elle se trouve ici sur un bord vertical de façon à se que la valeur
+# du rayon r varie sur la zone
+
+# la surface de raccord est de 5
+surf_racc = 5
+
+MA=MODI_MAILLAGE(reuse =MA,
+                   MAILLAGE=MA,
+                   ORIE_PEAU_2D=_F(GROUP_MA='ELEM_BORD_SUP',),);
+
+
+
+MO_REF=AFFE_MODELE(MAILLAGE=MA,
+               AFFE=(_F(GROUP_MA=('MAIL2D','ELEM_BORD_SUP'),
+                        PHENOMENE='MECANIQUE',
+                        MODELISATION=modelisa,),
+                        ),
+                        );
+
+MO=AFFE_MODELE(MAILLAGE=MA,
+               AFFE=(_F(GROUP_MA=('MAIL2D','ELEM_BORD_SUP'),
+                        PHENOMENE='MECANIQUE',
+                        MODELISATION=modelisa,),
+                     _F(GROUP_MA='DISCRET',
+                        PHENOMENE='MECANIQUE',
+                        MODELISATION='2D_DIS_TR',),
+                        ),
+                        );
+
+MAT=DEFI_MATERIAU(ELAS=_F(E=200000.0,
+                          NU=0.0,
+                          ALPHA=0.0,),);
+
+CHMA=AFFE_MATERIAU(MAILLAGE=MA,
+                   AFFE=_F(TOUT='OUI',
+                           MATER=MAT,),);
+
+CARELEM=AFFE_CARA_ELEM(MODELE=MO,
+                       DISCRET_2D=_F(REPERE='LOCAL',CARA='K_TR_D_L', GROUP_MA='DISCRET',
+                                     VALE=(40.0E5, 2.0E5, 4.0E5),),)
+
+# PRESSION
+# --------
+CHME_REF=AFFE_CHAR_MECA(MODELE=MO_REF,
+                    DDL_IMPO=_F(GROUP_MA='GAUCHE',
+                                DX=0.0,
+                                DY=0.0,),
+                    PRES_REP=_F(PRES=-100/surf_racc, 
+                                GROUP_MA='ELEM_BORD_SUP',
+                                ),
+                                    );
+
+CHME=AFFE_CHAR_MECA(MODELE=MO,
+                    DDL_IMPO=_F(GROUP_MA='GAUCHE',
+                                DX=0.0,
+                                DY=0.0,),
+                    LIAISON_ELEM=_F(OPTION='2D_POU',
+                                    GROUP_MA_1='ELEM_BORD_SUP',
+                                    GROUP_NO_2='G',),
+                    FORCE_NODALE=_F(GROUP_NO='EXTREM',
+                                    FY = 100.,
+                                    ),
+                                    
+                                    );
+
+RES_REF=MECA_STATIQUE(MODELE=MO_REF,
+                  CHAM_MATER=CHMA,
+                  SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
+                  EXCIT=(_F(CHARGE=CHME_REF,),
+                        ),);
+
+
+CALC_CHAMP(reuse=RES_REF, RESULTAT=RES_REF, FORCE='FORC_NODA')
+
+IMPR_RESU(FORMAT='RESULTAT', RESU=_F(RESULTAT=RES_REF, NOM_CHAM=('DEPL','FORC_NODA'), 
+                                     GROUP_MA='ELEM_BORD_SUP'))
+TEST_RESU(RESU=(   _F(NUME_ORDRE=1,
+                      NOEUD='N82',
+                      NOM_CMP='DY',
+                      RESULTAT=RES_REF,
+                      NOM_CHAM='DEPL',
+                      VALE_CALC=4.69753053651249E+00,),
+                   _F(NUME_ORDRE=1,
+                      NOEUD='N119',
+                      NOM_CMP='DY',
+                      RESULTAT=RES_REF,
+                      NOM_CHAM='FORC_NODA',
+                      VALE_CALC=4.58333333330182E+02,),
+                   ),
+          )
+
+
+RES=MECA_STATIQUE(MODELE=MO,
+                  CHAM_MATER=CHMA,
+                  SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
+                  CARA_ELEM  = CARELEM,
+                  EXCIT=(_F(CHARGE=CHME,),
+                        ),);
+
+
+CALC_CHAMP(reuse=RES, RESULTAT=RES, FORCE='FORC_NODA')
+
+IMPR_RESU(FORMAT='RESULTAT', RESU=_F(RESULTAT=RES, NOM_CHAM=('DEPL','FORC_NODA'), 
+                                     GROUP_MA='ELEM_BORD_SUP'))
+TEST_RESU(RESU=(   _F(NUME_ORDRE=1,
+                      NOEUD='N82',
+                      REFERENCE='ANALYTIQUE',
+                      NOM_CMP='DY',
+                      RESULTAT=RES,
+                      NOM_CHAM='DEPL',
+                      VALE_CALC=4.69753051440992E+00,
+                      VALE_REFE=4.69753053651249E+00,),
+                   _F(NUME_ORDRE=1,
+                      NOEUD='N119',
+                      REFERENCE='ANALYTIQUE',
+                      NOM_CMP='DY',
+                      RESULTAT=RES,
+                      NOM_CHAM='FORC_NODA',
+                      VALE_CALC=4.58333333289613E+02,
+                      VALE_REFE=4.58333333330182E+02,),
+                   ),
+          )
+
+DETRUIRE(CONCEPT=_F(NOM=(CHME_REF,CHME, RES_REF, RES )))
+
+
+# CISAILLEMENT
+# ------------
+CHME_REF=AFFE_CHAR_MECA(MODELE=MO_REF,
+                    DDL_IMPO=_F(GROUP_MA='GAUCHE',
+                                DX=0.0,
+                                DY=0.0,),
+                    PRES_REP=_F(CISA_2D=-1000/surf_racc, 
+                                GROUP_MA='ELEM_BORD_SUP',
+                                ),
+                                    );
+
+CHME=AFFE_CHAR_MECA(MODELE=MO,
+                    DDL_IMPO=_F(GROUP_MA='GAUCHE',
+                                DX=0.0,
+                                DY=0.0,),
+                    LIAISON_ELEM=_F(OPTION='2D_POU',
+                                    GROUP_MA_1='ELEM_BORD_SUP',
+                                    GROUP_NO_2='G',),
+                    FORCE_NODALE=_F(GROUP_NO='EXTREM',
+                                    FX = 1000,
+                                    ),
+                                    
+                                    );
+
+RES_REF=MECA_STATIQUE(MODELE=MO_REF,
+                  CHAM_MATER=CHMA,
+                  SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
+                  EXCIT=(_F(CHARGE=CHME_REF,),
+                        ),);
+
+
+CALC_CHAMP(reuse=RES_REF, RESULTAT=RES_REF, FORCE='FORC_NODA')
+
+IMPR_RESU(FORMAT='RESULTAT', RESU=_F(RESULTAT=RES_REF, NOM_CHAM=('DEPL','FORC_NODA'), 
+                                     GROUP_MA='ELEM_BORD_SUP'))
+TEST_RESU(RESU=(   _F(NUME_ORDRE=1,
+                      NOEUD='N82',
+                      NOM_CMP='DY',
+                      RESULTAT=RES_REF,
+                      NOM_CHAM='DEPL',
+                      VALE_CALC=-1.46920718416850E+00,),
+                   _F(NUME_ORDRE=1,
+                      NOEUD='N119',
+                      NOM_CMP='DX',
+                      RESULTAT=RES_REF,
+                      NOM_CHAM='FORC_NODA',
+                      VALE_CALC=4.58333333333301E+03,),
+                   ),
+          )
+
+
+RES=MECA_STATIQUE(MODELE=MO,
+                  CHAM_MATER=CHMA,
+                  SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
+                  CARA_ELEM  = CARELEM,
+                  EXCIT=(_F(CHARGE=CHME,),
+                        ),);
+
+
+CALC_CHAMP(reuse=RES, RESULTAT=RES, FORCE='FORC_NODA')
+
+IMPR_RESU(FORMAT='RESULTAT', RESU=_F(RESULTAT=RES, NOM_CHAM=('DEPL','FORC_NODA'), 
+                                     GROUP_MA='ELEM_BORD_SUP'))
+TEST_RESU(RESU=(   _F(NUME_ORDRE=1,
+                      NOEUD='N82',
+                      REFERENCE='ANALYTIQUE',
+                      NOM_CMP='DY',
+                      RESULTAT=RES,
+                      NOM_CHAM='DEPL',
+                      VALE_CALC=-1.46920717732852E+00,
+                      VALE_REFE=-1.46920718416850E+00,),
+                   _F(NUME_ORDRE=1,
+                      NOEUD='N119',
+                      REFERENCE='ANALYTIQUE',
+                      NOM_CMP='DX',
+                      RESULTAT=RES,
+                      NOM_CHAM='FORC_NODA',
+                      VALE_CALC=4.58333333333327E+03,
+                      VALE_REFE=4.58333333333301E+03,),
+                   ),
+          )
+
+DETRUIRE(CONCEPT=_F(NOM=(CHME_REF,CHME, RES_REF, RES )))
+
+
+# MOMENT
+# ------
+BLOQ_REF=AFFE_CHAR_MECA(MODELE=MO_REF,
+                    DDL_IMPO=_F(GROUP_MA='GAUCHE',
+                                DX=0.0,
+                                DY=0.0,),
+                                    );
+
+# le noeud central de la zone de raccord est en x=15
+FPRES = FORMULE(NOM_PARA='X', VALE = "-96*(X-15)")
+
+CHME_REF=AFFE_CHAR_MECA_F(MODELE=MO_REF,
+                      PRES_REP=_F(PRES=FPRES, GROUP_MA='ELEM_BORD_SUP',),
+                     )
+
+CHME=AFFE_CHAR_MECA(MODELE=MO,
+                    DDL_IMPO=_F(GROUP_MA='GAUCHE',
+                                DX=0.0,
+                                DY=0.0,),
+                    LIAISON_ELEM=_F(OPTION='2D_POU',
+                                    GROUP_MA_1='ELEM_BORD_SUP',
+                                    GROUP_NO_2='G',),
+                    FORCE_NODALE=_F(GROUP_NO='EXTREM',
+                                    MZ = 1000.,
+                                    ),
+                                    
+                                    );
+
+RES_REF=MECA_STATIQUE(MODELE=MO_REF,
+                  CHAM_MATER=CHMA,
+                  SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
+                  EXCIT=(_F(CHARGE=CHME_REF,),
+                         _F(CHARGE=BLOQ_REF,),
+                        ),);
+
+
+CALC_CHAMP(reuse=RES_REF, RESULTAT=RES_REF, FORCE='FORC_NODA')
+
+IMPR_RESU(FORMAT='RESULTAT', RESU=_F(RESULTAT=RES_REF, NOM_CHAM=('DEPL','FORC_NODA'), 
+                                     GROUP_MA='ELEM_BORD_SUP'))
+TEST_RESU(RESU=(   _F(NUME_ORDRE=1,
+                      NOEUD='N82',
+                      NOM_CMP='DY',
+                      RESULTAT=RES_REF,
+                      NOM_CHAM='DEPL',
+                      VALE_CALC=6.04427245116503E+00,),
+                   _F(NUME_ORDRE=1,
+                      NOEUD='N119',
+                      NOM_CMP='DY',
+                      RESULTAT=RES_REF,
+                      NOM_CHAM='FORC_NODA',
+                      VALE_CALC=-2.70000000002163E+03,),
+                   ),
+          )
+
+
+RES=MECA_STATIQUE(MODELE=MO,
+                  CHAM_MATER=CHMA,
+                  SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
+                  CARA_ELEM  = CARELEM,
+                  EXCIT=(_F(CHARGE=CHME,),
+                        ),);
+
+
+CALC_CHAMP(reuse=RES, RESULTAT=RES, FORCE='FORC_NODA')
+
+IMPR_RESU(FORMAT='RESULTAT', RESU=_F(RESULTAT=RES, NOM_CHAM=('DEPL','FORC_NODA'), 
+                                     GROUP_MA='ELEM_BORD_SUP'))
+TEST_RESU(RESU=(   _F(NUME_ORDRE=1,
+                      NOEUD='N82',
+                      REFERENCE='ANALYTIQUE',
+                      NOM_CMP='DY',
+                      RESULTAT=RES,
+                      NOM_CHAM='DEPL',
+                      VALE_CALC=6.04427247628122E+00,
+                      VALE_REFE=6.04427245116503E+00,),
+                   _F(NUME_ORDRE=1,
+                      NOEUD='N119',
+                      REFERENCE='ANALYTIQUE',
+                      NOM_CMP='DY',
+                      RESULTAT=RES,
+                      NOM_CHAM='FORC_NODA',
+                      VALE_CALC=-2.70000000001742E+03,
+                      VALE_REFE=-2.70000000002163E+03,),
+                   ),
+          )
+
+
+FIN();
+#
