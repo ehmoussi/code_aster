@@ -30,7 +30,7 @@ import numpy as NP
 from Noyau.N_types import force_list
 from Noyau.N_utils import AsType
 from code_aster.Cata.Syntax import _F
-from code_aster.Cata.DataStructure import fonction_sdaster, fonction_c, nappe_sdaster
+from code_aster.Objects import Function, FunctionComplex, Surface
 
 from Cata_Utils.t_fonction import (
     t_fonction, t_nappe,
@@ -44,6 +44,71 @@ from Utilitai.random_signal_utils import (ACCE2SRO, DSP2SRO, SRO2DSP,
 
 from Utilitai.Utmess import UTMESS, ASSERT
 from Macro.defi_inte_spec_ops import tocomplex
+
+def calc_fonction_prod(DERIVE=None, EXTRACTION=None, INTEGRE=None, INVERSE=None, COMB=None, COMB_C=None, MULT=None,
+                       ENVELOPPE=None, FRACTILE=None, PROL_SPEC_OSCI=None, SPEC_OSCI=None, ASSE=None, FFT=None,
+                       COMPOSE=None, CORR_ACCE=None, COHERENCE=None,
+                       PUISSANCE=None, LISS_ENVELOP=None, ABS=None, REGR_POLYNOMIALE=None, DSP=None, MOYENNE=None,
+                       INTERPOL_FFT=None, **args):
+
+    if (INTEGRE     != None): return Function
+    if (DERIVE      != None): return Function
+    if (INVERSE     != None): return Function
+    if (COMB        != None):
+        type_vale=type(COMB[0]['FONCTION'])
+        for mcfact in COMB :
+            if(type(mcfact['FONCTION'])!=type_vale):
+                raise AsException("CALC_FONCTION/COMB : pas de types hétérogènes nappe/fonction")
+        return type_vale
+    if (COMB_C      != None):
+        vale=COMB_C[0]['FONCTION']
+        if(type(vale) == Surface):
+            for mcfact in COMB_C[1:] :
+                if(type(mcfact['FONCTION'])!=Surface):
+                    raise AsException("CALC_FONCTION/COMB_C : pas de types hétérogènes nappe/fonction")
+            return Surface
+        else:
+            for mcfact in COMB_C :
+                if(type(mcfact['FONCTION'])==Surface):
+                    raise AsException("CALC_FONCTION/COMB_C : pas de types hétérogènes nappe/fonction")
+            return FunctionComplex
+    if (ENVELOPPE   != None): return type(ENVELOPPE[0]['FONCTION'])
+    if (FRACTILE    != None): return type(FRACTILE[0] ['FONCTION'])
+    if (MOYENNE    != None): return type(MOYENNE[0] ['FONCTION'])
+    if (EXTRACTION  != None): return Function
+    if (PROL_SPEC_OSCI   != None): return Function
+    if (SPEC_OSCI   != None): 
+        if (SPEC_OSCI[0]['TYPE_RESU'] == "NAPPE"):
+            return Surface
+        else:
+            if (SPEC_OSCI[0]['AMOR_REDUIT'] != None):
+                if len(SPEC_OSCI[0]['AMOR_REDUIT']) == 1:
+                    return Function
+                else:
+                    return Surface
+            else:
+                return Surface
+    if (DSP         != None): return Function
+    if (COMPOSE     != None): return Function
+    if (ASSE        != None): return Function
+    if (MULT        != None):
+        type_vale = type(MULT[0]['FONCTION'])
+        for mcfact in MULT:
+            if(type(mcfact['FONCTION']) != type_vale):
+                raise AsException("CALC_FONCTION/MULT : pas de types hétérogènes nappe/fonction")
+        return type_vale
+    if (FFT         != None):
+        vale=FFT[0]['FONCTION']
+        if (type(vale) == Function )  : return FunctionComplex
+        if (type(vale) == FunctionComplex) : return Function
+    if (INTERPOL_FFT   != None): return Function
+    if (CORR_ACCE   != None): return Function
+    if (COHERENCE   != None): return Function
+    if (LISS_ENVELOP!= None): return Surface
+    if (REGR_POLYNOMIALE != None): return Function
+    if (PUISSANCE   != None): return type(PUISSANCE[0]['FONCTION'])
+    if (ABS         != None): return Function
+    raise AsException("type de concept resultat non prevu")
 
 def calc_fonction_ops(self, **args):
     """Corps de la macro CALC_FONCTION"""
@@ -97,7 +162,7 @@ class CalcFonctionOper(object):
         self.resu = None
         self._lf = []
         self._dat = None
-        self.typres = AsType(macro.sd)
+        self.typres = calc_fonction_prod(**kwargs)
 
     def _build_data(self):
         """Read keywords to build the data"""
@@ -129,8 +194,8 @@ class CalcFonctionOper(object):
             if self.args[p] is not None:
                 para[p] = self.args[p]
 
-        if self.typres is not nappe_sdaster:
-            if self.typres is fonction_c:
+        if self.typres is not Surface:
+            if self.typres is FunctionComplex:
                 mcval = 'VALE_C'
             else:
                 mcval = 'VALE'
@@ -171,7 +236,11 @@ class CalcFonctionOper(object):
             nbmf = len(self.kw)
         except AttributeError:
             nbmf = 1
-        for mcf in self.kw:
+        if type(self.kw) in (list, tuple):
+            kw = self.kw
+        else:
+            kw = (self.kw,)
+        for mcf in kw:
             val = force_list(mcf[mcsimp])
             assert nbmf == 1 or len(val) == 1, (nbmf, val)
             value.extend(val)
@@ -345,7 +414,7 @@ class CalcFonction_ENVELOPPE(CalcFonctionOper):
     def _run(self):
         """ENVELOPPE"""
         crit = self.kw['CRITERE']
-        if self.typres is nappe_sdaster:
+        if self.typres is Surface:
             nap0 = self._lf[0]
             vale_para = nap0.vale_para
             para = nap0.para
@@ -374,17 +443,19 @@ class CalcFonction_EXTRACTION(CalcFonctionOper):
 
 class CalcFonction_FFT(CalcFonctionOper):
     """Fast Fourier Transform"""
+
+    
     def _build_data(self):
         """Read keywords to build the data"""
         opts = {}
-        if self.typres is fonction_sdaster:
+        if self.typres is Function:
             opts['arg'] = 'complex'
         self._build_list_fonc(**opts)
 
     def _run(self):
         """FFT"""
         kw = self.kw
-        if self.typres is fonction_c:
+        if self.typres is FunctionComplex:
             self.resu = self._lf[0].fft(kw['METHODE'])
         else:
             self.resu = self._lf[0].fft(kw['METHODE'], kw['SYME'])
@@ -458,7 +529,7 @@ class CalcFonction_FRACTILE(CalcFonctionOper):
     def _run(self):
         """FRACTILE"""
         fract = self.kw['FRACT']
-        if self.typres is nappe_sdaster:
+        if self.typres is Surface:
             nap0 = self._lf[0]
             vale_para = nap0.vale_para
             para = nap0.para
@@ -476,7 +547,7 @@ class CalcFonction_MOYENNE(CalcFonctionOper):
     """Compute the mean of functions"""
     def _run(self):
         """MOYENNE"""
-        if self.typres is nappe_sdaster:
+        if self.typres is Surface:
             nap0 = self._lf[0]
             vale_para = nap0.vale_para
             para = nap0.para
@@ -566,7 +637,7 @@ class CalcFonction_MULT(CalcFonctionOper):
     def _build_data(self):
         """Read keywords to build the data"""
         opts = {}
-        if self.typres is fonction_c:
+        if self.typres is FunctionComplex:
             opts['arg'] = 'complex'
         self._build_list_fonc(**opts)
 
@@ -697,7 +768,7 @@ class CalcFonction_SPEC_OSCI(CalcFonctionOper):
                 spectr = ACCE2SRO(f_in, iamor, l_freq, ideb)
                 vale_y = spectr.vale_y / kw['NORME']
                 l_fonc_f.append(t_fonction(l_freq, vale_y, para_fonc))
-        if self.typres == nappe_sdaster:
+        if self.typres == Surface:
             self.resu = t_nappe(vale_para, l_fonc_f, para)
         else:
             self.resu = l_fonc_f[0]
