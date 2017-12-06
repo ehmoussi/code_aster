@@ -107,6 +107,7 @@ from .extr_table import EXTR_TABLE
 from .factoriser import FACTORISER
 from .fin import FIN
 from .formule import FORMULE
+from .info_exec_aster import INFO_EXEC_ASTER
 from .impr_fonction import IMPR_FONCTION
 from .impr_table import IMPR_TABLE
 from .impr_resu import IMPR_RESU
