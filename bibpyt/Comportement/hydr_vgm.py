@@ -25,15 +25,14 @@ loi = LoiComportement(
     nom            = 'HYDR_VGM',
     lc_type        = ('HYDRAULIQUE',),
     doc            =   """Loi de comportement hydraulique, si le comportement mécanique est sans endommagement :
-   Ici et uniquement pour les lois de couplage liquide/gaz 'LIQU_GAZ', 'LIQU_AD_VAPE_GAZ' et 'LIQVAP_GAZ',
+   Ici et uniquement pour les lois de couplage liquide/gaz 'LIQU_GAZ', 'LIQU_AD_VAPE_GAZ' et 'LIQ_VAP_GAZ',
    les courbes de saturation, de perméabilités relatives à l'eau et au gaz et leur dérivées sont définies par
    le modèle de Mualem Van-Genuchten. """            ,
     num_lc         = 0,
     nb_vari        = 1,
     nom_vari       = ('RHOLIQ',),
     mc_mater       = None,
-    modelisation   = ('KIT_HH','KIT_HHM','KIT_HM','KIT_THHM','KIT_THH',
-        'KIT_THM','KIT_THV',),
+    modelisation   = ('KIT_HH','KIT_HHM','KIT_THHM','KIT_THH',),
     deformation    = ('PETIT','PETIT_REAC','GROT_GDEP',),
     algo_inte      = ('SANS_OBJET',),
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
