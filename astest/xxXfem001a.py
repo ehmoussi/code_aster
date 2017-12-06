@@ -9,7 +9,7 @@ code_aster.init()
 test = code_aster.TestCase()
 
 MAILLAG1 = code_aster.Mesh()
-MAILLAG1.readAsterMeshFile("xxXfem.mail")
+MAILLAG1.readAsterMeshFile("xxXfem001a.mail")
 
 
 MO=AFFE_MODELE(MAILLAGE=MAILLAG1,
@@ -22,6 +22,8 @@ FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG1,
                     TYPE_DISCONTINUITE='INTERFACE',
                     DEFI_FISS=_F(FONC_LN=LN),
                     INFO=1);
+
+test.assertTrue( True )
 
 #MODELEK=MODI_MODELE_XFEM(MODELE_IN=MO,
 #                         FISSURE=FISS,
