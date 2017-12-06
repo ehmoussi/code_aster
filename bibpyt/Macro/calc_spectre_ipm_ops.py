@@ -250,13 +250,17 @@ def calc_spectre_ipm_ops(self,EQUIPEMENT,CALCUL,RESU,MAILLAGE=None,RESULTAT=None
                                                   **motscles) ,
                                                  NOM_PARA='FREQ', ) ;
        #****************************************************
-                dico_global['FREQ ' + plancher] = __Spec[amor].Valeurs()[1][0][0];
+       
+
+       
+       
+                dico_global['FREQ ' + plancher] = Valeurs(__Spec[amor])[1][0][0];
                 for amor in range(len(AMOR_SPEC)):
                     if len(planch_nodes[plancher])>1:
                         nom = 'IPM '+ plancher + ' ' +node + ' ' + str(int(AMOR_SPEC[amor]*100)) + '%'
                     else:
                         nom = 'IPM '+ plancher + ' ' + str(int(AMOR_SPEC[amor]*100)) + '%'
-                    dico_global[nom] = __Spec[amor].Valeurs()[1][0][1];
+                    dico_global[nom] = Valeurs(__Spec[amor])[1][0][1];
     lListe=[]
     lkeys = dico_global.keys()
     lkeys.sort()
@@ -264,4 +268,16 @@ def calc_spectre_ipm_ops(self,EQUIPEMENT,CALCUL,RESU,MAILLAGE=None,RESULTAT=None
         lListe.append(_F(LISTE_R=dico_global[key],PARA=key))
     tab=CREA_TABLE(LISTE=lListe, TITRE='Calcul des spectres avec IPM'  + '\n #')
 
-    return ier
+    return tab
+
+def Valeurs(surface):
+    # TODO : dirty workarround for this macro, until Surface.getValues() implementaiton in c++
+    nsd = '%-19s' % surface.get_name()
+    dicv = aster.getcolljev(nsd + '.VALE')
+    lpar = aster.getvectjev(nsd + '.PARA')
+    lval = []
+    for k in range(len(dicv)):
+        lbl = dicv[k + 1]
+        dim = len(lbl) / 2
+        lval.append([lbl[0:dim], lbl[dim:2 * dim]])
+    return [list(lpar), lval]
