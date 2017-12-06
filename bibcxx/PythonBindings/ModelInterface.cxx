@@ -57,7 +57,9 @@ void exportModelToPython()
     bool (ModelInstance::*c3)(PartialMeshPtr&) =
             &ModelInstance::setSupportMesh;
 #endif /* _USE_MPI */
-
+    bool (ModelInstance::*c5)(BaseMeshPtr&) =
+            &ModelInstance::setSupportMesh;
+    
     class_< ModelInstance, ModelInstance::ModelPtr,
             bases< DataStructure > > ( "Model", no_init )
         .def( "__init__", make_constructor(
@@ -80,5 +82,6 @@ void exportModelToPython()
         .def( "setSupportMesh", c2 )
         .def( "setSupportMesh", c3 )
 #endif /* _USE_MPI */
+        .def( "setSupportMesh", c5 )
     ;
 };

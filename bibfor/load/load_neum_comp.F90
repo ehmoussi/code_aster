@@ -131,8 +131,12 @@ subroutine load_neum_comp(stop       , i_load    , load_name , load_nume  , load
 ! --------- Copying output field
 !
             call exisd('CHAMP_GD', resu_elem, iexist)
-            call dismoi('NOM_MAILLA', load_ligrel, 'LIGREL', repk=noma)
-            call dismoi('PARALLEL_MESH', noma, 'MAILLAGE', repk=kret)
+            if (load_option .ne. 'Copy_Load') then
+                call dismoi('NOM_MAILLA', load_ligrel, 'LIGREL', repk=noma)
+                call dismoi('PARALLEL_MESH', noma, 'MAILLAGE', repk=kret)
+            else
+                kret = 'NON'
+            endif
             if ( kret.eq.'NON' ) then
                 ASSERT((iexist.gt.0).or.(stop.eq.'C'))
             endif
