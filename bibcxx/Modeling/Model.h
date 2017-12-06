@@ -314,6 +314,17 @@ class ModelInstance: public DataStructure
             return true;
         };
 #endif /* _USE_MPI */
+        /**
+         * @brief Definition du maillage support
+         * @param currentMesh objet BasePtr sur lequel le modele reposera
+         */
+        bool setSupportMesh( BaseMeshPtr& currentMesh ) throw ( std::runtime_error )
+        {
+            if ( currentMesh->isEmpty() )
+                throw std::runtime_error( "Mesh is empty" );
+            _supportBaseMesh = currentMesh;
+            return true;
+        };
 };
 
 

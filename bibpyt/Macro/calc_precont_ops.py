@@ -44,11 +44,12 @@
 
 
 
-def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
-                     CABLE_BP, CABLE_BP_INACTIF,
-                     COMPORTEMENT, ETAT_INIT, METHODE, ENERGIE,
-                     RECH_LINEAIRE, CONVERGENCE, INCREMENT, SOLVEUR,
-                     INFO, TITRE, ARCHIVAGE, **args):
+def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
+                     CABLE_BP, COMPORTEMENT, METHODE,
+                     CONVERGENCE, INCREMENT, SOLVEUR, ARCHIVAGE,
+                     reuse=None, CABLE_BP_INACTIF=None, ENERGIE=None,
+                     RECH_LINEAIRE=None, ETAT_INIT=None,
+                     INFO=1, TITRE=None, **args):
     """
        Ecriture de la macro CALC_PRECONT
     """
@@ -57,7 +58,7 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
     import string
     import types
     from code_aster.Cata.Syntax import _F
-    from code_aster.Cata.DataStructure import listr8_sdaster, list_inst
+    from code_aster.Objects import ListOfFloats, TimeStepper
     from Noyau.N_utils import AsType
     from Noyau.N_types import is_sequence
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
@@ -101,10 +102,10 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
 
     __L0 = dIncrement['LIST_INST']
 
-    if type(__L0) == listr8_sdaster:
+    if type(__L0) == ListOfFloats:
     # cas où liste definie par DEFI_LIST_REEL
-        __L1 = __L0.Valeurs()
-    elif type(__L0) == list_inst:
+        __L1 = __L0.getValuesAsArray()
+    elif type(__L0) == TimeStepper:
     # cas où liste definie par DEFI_LIST_INST
         tmp = __L0.get_name().ljust(8) + '.LIST.' + 'DITR'.ljust(18)
         __L1 = aster.getvectjev(tmp)
@@ -198,8 +199,8 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
         motscle5 = {}
 
         if METHODE == 'NEWTON':
-            motscle4['NEWTON'] = args['NEWTON'].List_F()
-            motscle5['NEWTON'] = args['NEWTON'].List_F()
+            motscle4['NEWTON'] = args['NEWTON']
+            motscle5['NEWTON'] = args['NEWTON']
     #     for j in dNewton.keys():
     #       if dNewton[j]==None : del dNewton[j]
 
@@ -365,12 +366,8 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
 
         # 1.5 Modele contenant uniquement les cables de precontrainte
         # ---------------------------------------------------------
-        __MOD = string.ljust(MODELE.nom, 8)
-        __MOD1 = __MOD + '.MODELE    .LGRF        '
-        __LMAIL = aster.getvectjev(__MOD1)
-        __MAIL = string.strip(__LMAIL[0])
-
-        objma = self.get_sd_avant_etape(__MAIL, self)
+        objma = MODELE.getSupportMesh()
+        print objma
         __M_CA = AFFE_MODELE(MAILLAGE=objma,
                              AFFE=affe_mo)
 
@@ -879,4 +876,4 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
             "erreur de programmation, adher different de OUI et NON")
 
     RetablirAlarme('COMPOR4_70')
-    return ier
+    return RES
