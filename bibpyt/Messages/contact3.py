@@ -138,6 +138,11 @@ La normale que vous avez prédéfinie par (VECT_* = 'VECT_Y') sur la maille %(k1
 Utilisez plutôt VECT_* = 'FIXE'
 """),
 
+    44 : _(u"""
+La normale que vous avez choisie NORMALE='ESCL'/'MAIT_ESCL' n'est pas prévue pour des calculs parallèles. Il
+faut utiliser l'option par défaut NORMALE='MAIT' ou changer de surface maître/esclave. 
+"""),
+
     50: _(u"""
 Avec l'option VECT_MAIT = 'FIXE', seule l'option NORMALE = 'MAIT' est possible.
 """),
