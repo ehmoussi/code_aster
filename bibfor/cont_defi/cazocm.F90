@@ -31,6 +31,13 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/normev.h"
 #include "asterfort/utmess.h"
+#include "asterfort/asmpi_info.h"
+#include "asterc/asmpi_comm.h"
+!
+#ifdef _USE_MPI
+#include "mpif.h"
+#include "asterf_mpi.h"
+#endif
 !
 ! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 !
@@ -74,6 +81,15 @@ implicit none
     character(len=8), pointer :: v_sdcont_jeufo2(:) => null()
     character(len=24) :: sdcont_toleco
     real(kind=8), pointer :: v_sdcont_toleco(:) => null()
+!
+! --------------------------------------------------------------------------------------------------
+!
+    mpi_int :: nb_proc, mpicou
+!
+! - Mpi informations
+!
+    call asmpi_comm('GET', mpicou)
+    call asmpi_info(mpicou, size=nb_proc)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -165,15 +181,23 @@ implicit none
 ! - Type of normals
 !
     if (s_algo_cont .ne. 'LAC') then
+        ! Issue25948 : ssnv104b,d est NOOK quand plus de 2 procs est utilise.
+        ! NORMALE='ESCL'/'MAIT_ESCL' est en cause.
         call getvtx(keywf, 'NORMALE', iocc=i_zone, scal=type_norm)
         if (type_norm(1:4) .eq. 'MAIT') then
             if (type_norm(5:9) .eq. '_ESCL') then
                 v_sdcont_methco(zmeth*(i_zone-1)+4) = 1
+                if (nb_proc .gt. 1) then
+                    call utmess('F', 'CONTACT3_44')
+                endif
             else
                 v_sdcont_methco(zmeth*(i_zone-1)+4) = 0
             endif
         else if (type_norm(1:4) .eq. 'ESCL') then
             v_sdcont_methco(zmeth*(i_zone-1)+4) = 2
+            if (nb_proc .gt. 1) then
+                call utmess('F', 'CONTACT3_44')
+            endif
         else
             ASSERT(.false.)
         endif
