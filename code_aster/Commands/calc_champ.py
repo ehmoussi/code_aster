@@ -48,7 +48,10 @@ class ComputeAdditionalField(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        self._result.update()
+        if keywords.has_key("reuse"):
+            self._result.update()
+        else:
+            self._result.setModel(keywords["RESULTAT"].getModel())
 
 
 CALC_CHAMP = ComputeAdditionalField.run
