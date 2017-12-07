@@ -56,6 +56,9 @@ def options(self):
                     help='run a testcase by passing additional arguments '
                          '(possible values are "debugger", "env" + those '
                          'defined in the as_run configuration)')
+    group.add_option('--time_limit', dest='time_limit',
+                    action='store', default=None,
+                    help='override the time limit of the testcase')
 
 def configure(self):
     """Store developer preferences"""
@@ -72,13 +75,15 @@ def runtest(self):
     if not _has_asrun():
         Logs.error("'as_run' not found, please check your $PATH")
         return
-    toolargs = []
+    args = []
     if opts.exectool == 'debugger':
-        toolargs.append('--debugger')
+        args.append('--debugger')
     elif opts.exectool == 'env':
-        toolargs.append('--run_params=actions=make_env')
+        args.append('--run_params=actions=make_env')
     elif opts.exectool is not None:
-        toolargs.append('--exectool=%s' % opts.exectool)
+        args.append('--exectool=%s' % opts.exectool)
+    if opts.time_limit:
+        args.append('--run_params=time_limit={0}'.format(opts.time_limit))
     dtmp = opts.outputdir or self.env['PREFS_OUTPUTDIR'] \
            or tempfile.mkdtemp(prefix='runtest_')
     try:
@@ -93,7 +98,7 @@ def runtest(self):
         cmd = ['as_run', '--vers=%s' % self.env['ASTERDATADIR'], '--test', test]
         if self.variant == 'debug':
             cmd.extend(['-g', '--nodebug_stderr'])
-        cmd.extend(toolargs)
+        cmd.extend(args)
         Logs.info("running %s in '%s'" % (test, self.variant))
         ext = '.' + osp.basename(self.env['PREFIX']) + '.' + self.variant + '.output'
         fname = osp.join(dtmp, osp.basename(test) + ext)
