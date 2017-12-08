@@ -58,6 +58,7 @@ from .calc_forc_nonl import CALC_FORC_NONL
 from .calc_matr_elem import CALC_MATR_ELEM
 from .calc_meta import CALC_META
 from .calc_modes import CALC_MODES
+from .calc_point_mat import CALC_POINT_MAT
 from .calc_vect_elem import CALC_VECT_ELEM
 from .comb_matr_asse import COMB_MATR_ASSE
 from .copier import COPIER

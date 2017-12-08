@@ -18,8 +18,9 @@
 # --------------------------------------------------------------------
 
 def simu_point_mat_ops(
-    self, MATER, INCREMENT, SIGM_IMPOSE, EPSI_IMPOSE, SIGM_INIT, EPSI_INIT, VARI_INIT, NEWTON, CONVERGENCE,
-        MASSIF, ANGLE, COMPORTEMENT, INFO, ARCHIVAGE, SUPPORT, **args):
+    self, MATER, INCREMENT=None, SIGM_IMPOSE=None, EPSI_IMPOSE=None, SIGM_INIT=None, 
+        EPSI_INIT=None, VARI_INIT=None, NEWTON=None, CONVERGENCE=None,
+        MASSIF=None, ANGLE=None, COMPORTEMENT=None, INFO=None, ARCHIVAGE=None, SUPPORT=None, **args):
     """Simulation de la reponse d'un point materiel"""
 
     ier = 0
@@ -45,7 +46,7 @@ def simu_point_mat_ops(
     POST_RELEVE_T = self.get_cmd('POST_RELEVE_T')
     STAT_NON_LINE = self.get_cmd('STAT_NON_LINE')
     IMPR_RESU = self.get_cmd('IMPR_RESU')
-    from Contrib.calc_point_mat import CALC_POINT_MAT
+    from code_aster.Commands import CALC_POINT_MAT
     
     from code_aster.Cata.Syntax import _F
     from Utilitai.UniteAster import UniteAster
@@ -66,7 +67,7 @@ def simu_point_mat_ops(
     CMP_SIG = ['SIXX', 'SIYY', 'SIZZ', 'SIXY', 'SIXZ', 'SIYZ']
 
     if COMPORTEMENT:
-        lcomp = COMPORTEMENT.List_F()[0]
+        lcomp = COMPORTEMENT[0]
 
     if SUPPORT != None:
         if SUPPORT == 'ELEMENT':
@@ -147,21 +148,21 @@ def simu_point_mat_ops(
 #      Etat initial
         etatinit = 0
         if SIGM_INIT != None:
-            motscles['SIGM_INIT'] = SIGM_INIT.List_F()
+            motscles['SIGM_INIT'] = SIGM_INIT
         if EPSI_INIT != None:
-            motscles['EPSI_INIT'] = EPSI_INIT.List_F()
+            motscles['EPSI_INIT'] = EPSI_INIT
         if VARI_INIT != None:
-            motscles['VARI_INIT'] = VARI_INIT.List_F()
+            motscles['VARI_INIT'] = VARI_INIT
         if NEWTON != None:
-            motscles['NEWTON'] = NEWTON.List_F()
+            motscles['NEWTON'] = NEWTON
         if CONVERGENCE != None:
-            motscles['CONVERGENCE'] = CONVERGENCE.List_F()
+            motscles['CONVERGENCE'] = CONVERGENCE
         if MASSIF != None:
-            motscles['MASSIF'] = MASSIF.List_F()
+            motscles['MASSIF'] = MASSIF
         if COMPORTEMENT:
-            motscles['COMPORTEMENT'] = COMPORTEMENT.List_F()
+            motscles['COMPORTEMENT'] = COMPORTEMENT
 #      -- Deroulement du calcul
-        motscles['INCREMENT'] = INCREMENT.List_F()
+        motscles['INCREMENT'] = INCREMENT
 
         if args.has_key('FORMAT_TABLE'):
             if args['FORMAT_TABLE'] != None:
@@ -176,12 +177,12 @@ def simu_point_mat_ops(
                 motscles['NB_VARI_TABLE'] = args['NB_VARI_TABLE']
 
         if ARCHIVAGE:
-            motscles['ARCHIVAGE'] = ARCHIVAGE.List_F()
+            motscles['ARCHIVAGE'] = ARCHIVAGE
 
             #     variables de commande
         if args.has_key('AFFE_VARC'):
             if args['AFFE_VARC'] != None:
-                lvarc = args['AFFE_VARC'].List_F()
+                lvarc = args['AFFE_VARC']
                 nbvarc = len(lvarc)
                 lmotcle = []
                 for ivarc in range(nbvarc):
@@ -938,6 +939,6 @@ def simu_point_mat_ops(
                              _F(OPERATION='COMB', TABLE=__REP_INV,
                                 NOM_PARA=('INST'), ),
                              _F(OPERATION='COMB', TABLE=__REP_VARI, NOM_PARA=('INST'), ),))
-
+        
     RetablirAlarme('COMPOR4_70')
-    return ier
+    return REPONSE
