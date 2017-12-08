@@ -425,7 +425,9 @@ TEST_RESU(RESU=(_F(GROUP_NO='P04',
                    NOM_CMP='DZ',
                    VALE_CALC=-0.449384151174,
                    VALE_REFE=-0.44933,
-                   PRECISION=0.03, ),
+                   PRECISION=0.03,
+                   # issue26503 : les variations de résultats sont liés à Europlexus et non à Code_Aster
+                   TOLE_MACHINE=3E-6 ),
                 _F(GROUP_NO='P04',
                    INST=1.E-3,
                    REFERENCE='SOURCE_EXTERNE',
@@ -434,7 +436,9 @@ TEST_RESU(RESU=(_F(GROUP_NO='P04',
                    NOM_CMP='DZ',
                    VALE_CALC=-821.78513042,
                    VALE_REFE=-824.761,
-                   PRECISION=0.1, ),
+                   PRECISION=0.1, 
+                   # issue26503 : les variations de résultats sont liés à Europlexus et non à Code_Aster
+                   TOLE_MACHINE=2E-4,),
                 ),
           )
 

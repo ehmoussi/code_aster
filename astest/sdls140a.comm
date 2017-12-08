@@ -185,10 +185,6 @@ BlancP=DYNA_NON_LINE(
                          _F(CHARGE=ONDEP2,),), 
                   );
 
-LINST2=DEFI_LIST_REEL(DEBUT=0.5,
-                      INTERVALLE=_F(JUSQU_A=1.0,
-                                    PAS=0.005,),);
-
 maxP=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                 OPERATION='EXTR',
                 RESULTAT=BlancP,
@@ -226,12 +222,109 @@ TEST_RESU(
                       ),                      
                   ),                  
            );
-                  
-IMPR_RESU(FORMAT="RESULTAT",#UNITE=27,
-          RESU=_F(CHAM_GD=maxP,
-                  NOM_CMP=('DX','DY',),
-                  GROUP_NO='LSURF',
-                  IMPR_COOR='OUI',),);
+NT = 202
+
+for k in range(1,NT):
+
+  VECT_EL1=CALC_VECT_ELEM(INST=(k-1)*0.005, OPTION='CHAR_MECA', CHAM_MATER=CHMAT, CHARGE=ONDEP1)
+  VECA1=ASSE_VECTEUR(VECT_ELEM=VECT_EL1, NUME_DDL=NUMEDDL)
+  if k==1:
+    CHA_ON=CREA_RESU(OPERATION='AFFE',
+                  TYPE_RESU='DYNA_TRANS',
+                  MATR_RIGI=RIGI,
+                  MATR_MASS=MASSE,
+                  NOM_CHAM='DEPL',
+                  AFFE=(_F(CHAM_GD=VECA1,INST=0.0,),),);
+  else:
+    CHA_ON=CREA_RESU(reuse=CHA_ON,OPERATION='AFFE',
+                  TYPE_RESU='DYNA_TRANS',
+                  MATR_RIGI=RIGI,
+                  MATR_MASS=MASSE,
+                  NOM_CHAM='DEPL',
+                  AFFE=(_F(CHAM_GD=VECA1,INST=(k-1)*0.005,),),);
+  DETRUIRE(INFO=1,CONCEPT=_F(NOM=(VECT_EL1,VECA1)));
+  
+for k in range(1,NT):
+
+  VECT_EL1=CALC_VECT_ELEM(INST=(k-1)*0.005, OPTION='CHAR_MECA', CHAM_MATER=CHMAT, CHARGE=ONDEP2)
+  VECA1=ASSE_VECTEUR(VECT_ELEM=VECT_EL1, NUME_DDL=NUMEDDL)
+  if k==1:
+    CHA_ONB=CREA_RESU(OPERATION='AFFE',
+                  TYPE_RESU='DYNA_TRANS',
+                  MATR_RIGI=RIGI,
+                  MATR_MASS=MASSE,
+                  NOM_CHAM='DEPL',
+                  AFFE=(_F(CHAM_GD=VECA1,INST=0.0,),),);
+  else:
+    CHA_ONB=CREA_RESU(reuse=CHA_ONB,OPERATION='AFFE',
+                  TYPE_RESU='DYNA_TRANS',
+                  MATR_RIGI=RIGI,
+                  MATR_MASS=MASSE,
+                  NOM_CHAM='DEPL',
+                  AFFE=(_F(CHAM_GD=VECA1,INST=(k-1)*0.005,),),);
+  DETRUIRE(INFO=1,CONCEPT=_F(NOM=(VECT_EL1,VECA1)));
+
+VECT_EL1=CALC_VECT_ELEM(INST=0., OPTION='CHAR_MECA', CHAM_MATER=CHMAT, CHARGE=ONDEP1)
+VECAS=ASSE_VECTEUR(VECT_ELEM=VECT_EL1, NUME_DDL=NUMEDDL)
+
+BlancP2=DYNA_VIBRA(BASE_CALCUL='PHYS',
+                  TYPE_CALCUL='TRAN',
+                  MODELE=MODELE,
+                  CHAM_MATER=CHMAT,
+                  MATR_MASS=MASSE,
+                  MATR_RIGI=RIGI,
+                  MATR_AMOR=AMOR,
+                  SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
+                  INCREMENT=_F(LIST_INST=LINST,),
+                  #EXCIT   = _F( VECT_ASSE = VECAS,
+                  #              COEF_MULT = 0.,
+                  #                     ),
+                  EXCIT_RESU=(
+                            _F( RESULTAT = CHA_ON,
+                                COEF_MULT= -1.0 ,),
+                            _F( RESULTAT = CHA_ONB,
+                                COEF_MULT= -1.0 ,),
+                                 ),
+                  );
+
+
+maxP2=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
+                OPERATION='EXTR',
+                RESULTAT=BlancP2,
+                NOM_CHAM='DEPL',
+                TYPE_MAXI='MAXI',
+                TYPE_RESU='VALE',
+                LIST_INST=LINST,);
+
+TEST_RESU(
+          CHAM_NO=(
+                   _F(CHAM_GD=maxP2,
+                      NOM_CMP='DY',
+                      NOEUD='N23',
+                      VALE_CALC=3.06233360015E+00,
+                      ),
+                   _F(CHAM_GD=maxP2,
+                      NOM_CMP='DX',
+                      NOEUD='N2',
+                      VALE_CALC=2.45347219231E-01,
+                      ),
+                   _F(CHAM_GD=maxP2,
+                      NOM_CMP='DY',
+                      NOEUD='N2',
+                      VALE_CALC=3.07686209170E+00,
+                      ),
+                   _F(CHAM_GD=maxP2,
+                      NOM_CMP='DX',
+                      NOEUD='N3',
+                      VALE_CALC=9.22242081632E-01,
+                      ),
+                   _F(CHAM_GD=maxP2,
+                      NOM_CMP='DY',
+                      NOEUD='N3',
+                      VALE_CALC=1.29681429921E+00,
+                      ),                      
+                  ),                  
+           );                  
 
 BlancS=DYNA_VIBRA(BASE_CALCUL='PHYS',
                   TYPE_CALCUL='TRAN',

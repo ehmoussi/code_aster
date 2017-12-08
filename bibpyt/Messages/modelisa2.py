@@ -340,7 +340,7 @@ Les abscisses curvilignes de la table fournie ne correspondent pas à celles du 
 """),
 
     86: _(u"""
- il faut définir la valeur du coefficient de la relation linéaire après le mot clé COEF_MULT derrière le mot facteur CHAMNO_IMPO
+ il faut définir la valeur du coefficient de la relation linéaire après le mot clé COEF_IMPO derrière le mot facteur CHAMNO_IMPO
 """),
 
     87: _(u"""

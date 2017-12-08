@@ -201,7 +201,9 @@ TEST_RESU(RESU=(_F(RESULTAT=U_EPX,
                    NUME_ORDRE = 6494,
                    VALE_CALC = 0.237958954204,
                    VALE_REFE = 2.37959E-01,
-                   REFERENCE = 'SOURCE_EXTERNE'
+                   REFERENCE = 'SOURCE_EXTERNE',
+                   # issue26503 : les variations de résultats sont liés à Europlexus et non à Code_Aster
+                   TOLE_MACHINE=1E-4
                   ),
                 _F(RESULTAT=U_EPX,
                    MAILLE = 'M150',
@@ -210,7 +212,9 @@ TEST_RESU(RESU=(_F(RESULTAT=U_EPX,
                    NUME_ORDRE = 6494,
                    VALE_CALC = 38661888.792,
                    VALE_REFE = 38661900.0,
-                   REFERENCE = 'SOURCE_EXTERNE'
+                   REFERENCE = 'SOURCE_EXTERNE',
+                   # issue26503 : les variations de résultats sont liés à Europlexus et non à Code_Aster
+                   TOLE_MACHINE=1E-3
                   ),
                ),
          )

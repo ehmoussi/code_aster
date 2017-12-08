@@ -27,17 +27,22 @@ def crea_lib_mfront_ops(self, UNITE_MFRONT, UNITE_LIBRAIRIE, **args):
     self.set_icmd(1)
 
     import os
-    fichierMFront = 'fort.%s' % UNITE_MFRONT
-    if not os.path.exists(fichierMFront):
-        raise
+    from Utilitai.UniteAster import UniteAster
+    from Utilitai.Utmess import UTMESS
+
+    UL = UniteAster()
+    fichierMFront = UL.Nom(UNITE_MFRONT)
 
     os.system("mfront --obuild "+fichierMFront+" --interface=aster")
     if not os.path.exists("src/libAsterBehaviour.so"):
-        raise
+        fileName = ("libAsterBehaviour.so")
+        UTMESS('F', 'MFRONT_4', valk=fileName)
 
     fichierLib = 'fort.%s' % UNITE_LIBRAIRIE
+    fichierLib = UL.Nom(UNITE_LIBRAIRIE)
     os.system("cp src/libAsterBehaviour.so ./"+fichierLib)
     os.system("ls -ltr")
     os.system("rm -fr src include")
+    UL.EtatInit()
 
     return ier

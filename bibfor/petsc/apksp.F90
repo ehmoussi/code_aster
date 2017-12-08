@@ -124,7 +124,6 @@ use petsc_data_module
 !
     call KSPSetTolerances(ksp, rtol, atol, dtol, maxits, ierr)
     ASSERT(ierr.eq.0)
-    print *, "appel de KSPSetUp"
     call KSPSetUp( ksp, ierr )
     ASSERT( ierr == 0 )
 !
