@@ -144,7 +144,12 @@ faut utiliser l'option par défaut NORMALE='MAIT' ou changer de surface maître/
 """),
 
     45 : _(u"""
-Pour les formulations discrètes et unilatérales, il faut utiliser la méthode de distribution centralisée des ligrels
+Pour les formulations discrètes et unilatérales, il faut utiliser la méthode de distribution centralisée 
+"DISTRIBUTION=_F(METHODE='CENTRALISE')" dans AFFE_MODELE. 
+"""),
+
+    46 : _(u"""
+Pour la dynamique non linéaire implicite avec contact, il faut utiliser la méthode de distribution centralisée 
 "DISTRIBUTION=_F(METHODE='CENTRALISE')" dans AFFE_MODELE. 
 """),
 
