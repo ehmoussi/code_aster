@@ -59,7 +59,7 @@ from .calc_table import CALC_TABLE
 from .calc_vect_elem import CALC_VECT_ELEM
 from .copier import COPIER
 from .crea_champ import CREA_CHAMP
-# from .crea_maillage import CREA_MAILLAGE
+from .crea_maillage import CREA_MAILLAGE
 from .crea_resu import CREA_RESU
 from .crea_table import CREA_TABLE
 from .debug import DEBUG

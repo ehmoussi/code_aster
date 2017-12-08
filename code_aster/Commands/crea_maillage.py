@@ -19,22 +19,21 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import Mesh
+from ..Objects import Mesh
+from .ExecuteCommand import ExecuteCommand
 
 
-def CREA_MAILLAGE(**curDict):
-    toReturn = Mesh()
-    name = toReturn.getName()
-    type = toReturn.getType()
+class MeshCreator(ExecuteCommand):
+    """Command that creates mesh."""
+    command_name = "CREA_MAILLAGE"
 
-    syntax = CommandSyntax("CREA_MAILLAGE")
-    syntax.setResult(name, type)
-    syntax.define(curDict)
+    def create_result(self, keywords):
+        """Initialize the result.
 
-    numOp = 167
-    python_execop(numOp)
-    syntax.free()
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = Mesh()
 
-    return toReturn
+
+CREA_MAILLAGE = MeshCreator.run
