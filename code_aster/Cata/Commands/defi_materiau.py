@@ -3023,20 +3023,13 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
                                            PESA_X           = SIMP(statut='o',typ='R'),
                                            PESA_Y           = SIMP(statut='o',typ='R'),
                                            PESA_Z           = SIMP(statut='o',typ='R'),
-                                           SATU_PRES        = SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
-                                           D_SATU_PRES      = SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
-                                           PERM_LIQU        = SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
-                                           D_PERM_LIQU_SATU = SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
-                                           PERM_GAZ         = SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
-                                           D_PERM_SATU_GAZ  = SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
-                                           D_PERM_PRES_GAZ  = SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
-# ---Van Genhuchten et Muallen-----------------------------------------------------------------------------
-
-                                           VG_N    = SIMP(statut='f',typ='R'),
-                                           VG_SR    = SIMP(statut='f',typ='R'),
-                                           VG_PR   = SIMP(statut='f',typ='R'),
-                                           VG_SMAX = SIMP(statut='f',typ='R'),
-                                           VG_SATUR = SIMP(statut='f',typ='R'),
+                                           SATU_PRES        = SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule)),
+                                           D_SATU_PRES      = SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule)),
+                                           PERM_LIQU        = SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule)),
+                                           D_PERM_LIQU_SATU = SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule)),
+                                           PERM_GAZ         = SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule)),
+                                           D_PERM_SATU_GAZ  = SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule)),
+                                           D_PERM_PRES_GAZ  = SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule)),
 # ---------------------------------------------------------------------------------
 # -------------------   DONNEES FACULTATIVES   ------------------------------------
 # ---------------------------------------------------------------------------------
@@ -3096,8 +3089,6 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
 
                                             ENSEMBLE('SATU_PRES','D_SATU_PRES','PERM_LIQU','D_PERM_LIQU_SATU',
                                                             'PERM_GAZ','D_PERM_SATU_GAZ','D_PERM_PRES_GAZ',),
-                                            ENSEMBLE('VG_N','VG_SR','VG_PR','VG_SMAX','VG_SATUR',),
-                                            UN_PARMI('VG_N','SATU_PRES'),
                                            ),
 # ---------------------------------------------------------------------------------
 # -------------------   DONNEES INUTILES   ----------------------------------------

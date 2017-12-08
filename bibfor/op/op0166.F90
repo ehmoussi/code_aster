@@ -328,9 +328,11 @@ subroutine op0166()
                     call pjspma(lcorre(1), cham1, resuou, prol0, ligre2,&
                                 noca, 'G', iret)
                 else
+                    prol0 = 'NON'
+                    call getvtx(' ', 'PROL_ZERO', scal=prol0, nbret=ie)
                     tychv = ' '
                     call pjxxch(lcorre(1), cham1, resuou, tychv, ' ',&
-                                'NON', ' ', 'G', iret)
+                                prol0, ' ', 'G', iret)
                     ASSERT(iret.eq.0)
                 endif
 !

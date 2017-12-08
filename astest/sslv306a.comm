@@ -109,7 +109,7 @@ TEST_TABLE(
            NOM_PARA='DY',
            TABLE=T1,
            FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='N25',),
+                     VALE_K='N22',),
            )
 
 TEST_TABLE(
@@ -120,18 +120,7 @@ TEST_TABLE(
            NOM_PARA='DY',
            TABLE=T1,
            FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='N34',),
-           )
-
-TEST_TABLE(
-           VALE_REFE=9.52E-06,
-           VALE_CALC=9.52E-06,
-           REFERENCE='ANALYTIQUE',
-           PRECISION=1.E-4,
-           NOM_PARA='DY',
-           TABLE=T1,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='N44',),
+                     VALE_K='N31',),
            )
 
 TEST_TABLE(
@@ -146,14 +135,14 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_REFE=7.14E-07,
-           VALE_CALC=7.1400071400071E-07,
+           VALE_REFE=9.52E-06,
+           VALE_CALC=9.52E-06,
            REFERENCE='ANALYTIQUE',
            PRECISION=1.E-4,
-           NOM_PARA='DX',
+           NOM_PARA='DY',
            TABLE=T1,
            FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='N25',),
+                     VALE_K='N38',),
            )
 
 TEST_TABLE(
@@ -164,18 +153,18 @@ TEST_TABLE(
            NOM_PARA='DX',
            TABLE=T1,
            FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='N34',),
+                     VALE_K='N22',),
            )
 
 TEST_TABLE(
-           VALE_REFE=-7.14E-07,
-           VALE_CALC=-7.1400071400071E-07,
+           VALE_REFE=7.14E-07,
+           VALE_CALC=7.1400071400071E-07,
            REFERENCE='ANALYTIQUE',
            PRECISION=1.E-4,
            NOM_PARA='DX',
            TABLE=T1,
            FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='N44',),
+                     VALE_K='N31',),
            )
 
 TEST_TABLE(
@@ -187,6 +176,17 @@ TEST_TABLE(
            TABLE=T1,
            FILTRE=_F(NOM_PARA='NOEUD',
                      VALE_K='N41',),
+           )
+
+TEST_TABLE(
+           VALE_REFE=-7.14E-07,
+           VALE_CALC=-7.1400071400071E-07,
+           REFERENCE='ANALYTIQUE',
+           PRECISION=1.E-4,
+           NOM_PARA='DX',
+           TABLE=T1,
+           FILTRE=_F(NOM_PARA='NOEUD',
+                     VALE_K='N38',),
            )
 
 #
@@ -197,7 +197,7 @@ TEST_TABLE(PRECISION=0.104,
            NOM_PARA='SIXX',
            TABLE=T2,
            FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='N3',),
+                     VALE_K='N1',),
            )
 
 TEST_TABLE(PRECISION=0.104,
@@ -207,27 +207,27 @@ TEST_TABLE(PRECISION=0.104,
            NOM_PARA='SIXX',
            TABLE=T2,
            FILTRE=_F(NOM_PARA='NOEUD',
+                     VALE_K='N2',),
+           )
+
+TEST_TABLE(PRECISION=0.104,
+           VALE_CALC=-1.65515466E+05,
+           VALE_REFE=-1.500E5,
+           REFERENCE='ANALYTIQUE',
+           NOM_PARA='SIXX',
+           TABLE=T2,
+           FILTRE=_F(NOM_PARA='NOEUD',
+                     VALE_K='N3',),
+           )
+
+TEST_TABLE(PRECISION=0.104,
+           VALE_CALC=-1.65515466E+05,
+           VALE_REFE=-1.500E5,
+           REFERENCE='ANALYTIQUE',
+           NOM_PARA='SIXX',
+           TABLE=T2,
+           FILTRE=_F(NOM_PARA='NOEUD',
                      VALE_K='N4',),
-           )
-
-TEST_TABLE(PRECISION=0.104,
-           VALE_CALC=-1.65515466E+05,
-           VALE_REFE=-1.500E5,
-           REFERENCE='ANALYTIQUE',
-           NOM_PARA='SIXX',
-           TABLE=T2,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='N5',),
-           )
-
-TEST_TABLE(PRECISION=0.104,
-           VALE_CALC=-1.65515466E+05,
-           VALE_REFE=-1.500E5,
-           REFERENCE='ANALYTIQUE',
-           NOM_PARA='SIXX',
-           TABLE=T2,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='N6',),
            )
 
 FIN()

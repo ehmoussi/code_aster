@@ -20,7 +20,7 @@
 import os
 import copy
 from math import log, sqrt, floor, pi, sin
-from numpy import sqrt
+from numpy import sqrt as nsqrt
 
 def epeq(eps1, eps2, eps3):
     """Calcule la deformation equivalente"""
@@ -33,7 +33,7 @@ def epeq(eps1, eps2, eps3):
     ep3 = eps3.convert('real')
     para = copy.copy(ep1.para)
     valx = ep1.vale_x
-    valy = sqrt(ep1.vale_y*ep1.vale_y + 3.0*ep2.vale_y*ep2.vale_y + 3.0*ep3.vale_y*ep3.vale_y)
+    valy = nsqrt(ep1.vale_y*ep1.vale_y + 3.0*ep2.vale_y*ep2.vale_y + 3.0*ep3.vale_y*ep3.vale_y)
     para['PROL_GAUCHE'] = 'CONSTANT'
     para['PROL_DROITE'] = 'CONSTANT'
     eptq = t_fonction(valx, valy, para)
@@ -972,7 +972,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                           DISCRET=(_F(GROUP_MA = grma_tot,
                                       CARA     = 'K_T_D_L',
                                       REPERE = 'GLOBAL',
-                                      VALE     = (1.E15,1.E15,1E15,),
+                                      VALE     = (5.E13,5.E13,5.E13,),
                                      ),),)
 
     else:
@@ -2347,18 +2347,18 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                                          __epsXYt,
                           )), INFO = 1)
 
-               #coef = (2/3)*np.sqrt(3)
+                coef = (2./3.)*nsqrt(3.)
                 __gam[k] = CALC_FONCTION(
-                    LIST_PARA=__linst, COMB=(_F(FONCTION=__epxy[k], COEF=((2./3.)*1.7320508075688772),),
+                    LIST_PARA=__linst, COMB=(_F(FONCTION=__epxy[k], COEF=coef,),
                     #LIST_PARA=__linst, COMB=(_F(FONCTION=__epxy[k], COEF=2.0,),
                                              ),)
 
                 # coef = (1/3)*np.sqrt(3)
                 if formulation == 'LYSMER':
-                  f2Getoil = 0.57735026918962573*E[iter][k] / (1+ __TMAT['NU',k]) * (1.-AH[iter][k]*AH[iter][k]/2 + (AH[iter][k]*sqrt(1-AH[iter][k]*AH[iter][k]/4))*1.j) ;
+                  f2Getoil = (1./nsqrt(3.))*E[iter][k] / (1+ __TMAT['NU',k]) * (1.-AH[iter][k]*AH[iter][k]/2 + (AH[iter][k]*sqrt(1-AH[iter][k]*AH[iter][k]/4))*1.j) ;
                   #f2Getoil = 1.0*E[iter][k] / (1+ __TMAT['NU',k]) * (1.-AH[iter][k]*AH[iter][k]/2 + (AH[iter][k]*sqrt(1-AH[iter][k]*AH[iter][k]/4))*1.j) ;
                 else: 
-                  f2Getoil = 0.57735026918962573*(E[iter][k] / (1+ __TMAT['NU',k]) ) * (1.+ (AH[iter][k])*1.j);
+                  f2Getoil = (1./np.sqrt(3.))*(E[iter][k] / (1+ __TMAT['NU',k]) ) * (1.+ (AH[iter][k])*1.j);
                   #f2Getoil = 1.0*(E[iter][k] / (1+ __TMAT['NU',k]) ) * (1.+ (AH[iter][k])*1.j);
 
                 __qh = CALC_FONCTION(COMB_C=_F(FONCTION=__eph,COEF_C = f2Getoil),LIST_PARA=__lfreq,NOM_PARA='FREQ',);

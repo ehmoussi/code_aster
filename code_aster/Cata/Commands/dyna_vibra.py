@@ -283,7 +283,7 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
             NOEUD        =         SIMP(statut='c',typ=no  ,validators=NoRepeat(),max='**'),
             GROUP_NO     =         SIMP(statut='f',typ=grno,validators=NoRepeat(),max='**'),),),
         MODE_STAT        = SIMP(statut='f',typ=mode_meca),
-        EXCIT_RESU       = FACT(statut='f',
+        EXCIT_RESU       = FACT(statut='f',max='**',
             RESULTAT     =     SIMP(statut='o',typ=dyna_trans),
             COEF_MULT    =     SIMP(statut='o',typ='R'),),
         ), # end b_excit_line_tran

@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine cfconv(mesh      , ds_measure, sderro, hval_algo, ds_print,&
                   ds_contact)
 !
@@ -34,15 +35,14 @@ implicit none
 #include "asterfort/nmlecv.h"
 #include "asterfort/nmrvai.h"
 #include "asterfort/mmbouc.h"
+#include "asterfort/nmcrel.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: mesh
-    character(len=24), intent(in) :: sderro
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19), intent(in) :: hval_algo(*)
-    type(NL_DS_Print), intent(inout) :: ds_print
-    type(NL_DS_Contact), intent(inout) :: ds_contact
+character(len=8), intent(in) :: mesh
+character(len=24), intent(in) :: sderro
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19), intent(in) :: hval_algo(*)
+type(NL_DS_Print), intent(inout) :: ds_print
+type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -65,7 +65,7 @@ implicit none
     integer :: nb_cont_iter
     real(kind=8) :: loop_geom_vale
     aster_logical :: l_resi_conv
-    aster_logical :: l_all_verif, l_eval_geom
+    aster_logical :: l_all_verif, l_eval_geom, loop_geom_error
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -98,6 +98,8 @@ implicit none
         if (l_resi_conv) then
             call cfcgeo(mesh, hval_algo, ds_contact)
             l_eval_geom = .true.
+            call mmbouc(ds_contact, 'Geom', 'Is_Error', loop_state_ = loop_geom_error)
+            call nmcrel(sderro, 'ERRE_CTD1', loop_geom_error)
         endif
     endif
 !

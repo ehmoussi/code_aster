@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine calcop(option, lisopt, resuin, resuou, lisord,&
-                  nbordr, chtype, typesd, codret)
+                  nbordr, chtype, typesd, codret, base)
     implicit none
 !     --- ARGUMENTS ---
 #include "asterf_types.h"
@@ -56,6 +56,7 @@ subroutine calcop(option, lisopt, resuin, resuou, lisord,&
 #include "asterfort/wkvect.h"
 !
     integer :: nbordr, codret, tbid(1)
+    character(len=1), optional, intent(in) :: base
     character(len=4) :: chtype
     character(len=8) :: resuin, resuou
     character(len=16) :: option, typesd
@@ -75,6 +76,8 @@ subroutine calcop(option, lisopt, resuin, resuou, lisord,&
 !   LISORD  K19  LISTE DE NUMEROS D'ORDRE
 !   CHTYPE  K4   TYPE DES CHARGES
 !   TYPESD  K16  TYPE DE LA STRUCTURE DE DONNEES RESULTAT
+!   BASE    K1   BASE SUR LAQUELLE SERA SAUVEGARDEE LES CHAMP
+!                DEMANDES
 !
 ! IN/OUT :
 !   LISOPT  K19  LISTE D'OPTIONS A METTRE SUR LA BASE GLOBALE
@@ -272,7 +275,13 @@ subroutine calcop(option, lisopt, resuin, resuou, lisord,&
 !       SI L'OPTION CALCULEE ICI EST DEMANDEE PAR
 !       L'UTILISATUER, ON LA MET SUR LA BASE GLOBALE
         basopt = 'G'
-        if (optio2 .ne. option) basopt = 'V'
+        if (optio2 .ne. option) then
+            basopt = 'V'
+        else
+            if( present(base) ) then
+                basopt = base
+            endif
+        endif
 !
         if (nbopt .ne. 0) then
             posopt = indk16(zk16(jliopg),optio2,1,nbopt)

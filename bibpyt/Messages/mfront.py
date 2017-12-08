@@ -39,4 +39,10 @@ cata_msg = {
   Erreur générique dans MFront, le calcul ne peut pas continuer.
 """),
 
+    4 : _(u"""
+  Le fichier de sortie de MFront %(k1)s n'a pas pu être produit.
+
+  Conseil : Vérifiez l'existence du fichier fourni au mot-clé UNITE_MFRONT.
+"""),
+
 }

@@ -344,6 +344,7 @@ for k in range(1,NF):
                            ),
                      EXCIT_RESU=(
                             _F( RESULTAT = resunl, COEF_MULT = -1.0,),
+                            _F( RESULTAT = resunl, COEF_MULT = 0.0,),
                                 ),
                         );
 

@@ -1,10 +1,12 @@
-P time_limit 60
+P time_limit 180
 P memory_limit 256
 P ncpus 1
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
 P testlist verif_interact sequential
 F comm zzzz151a.comm D 1
+F com1 zzzz151a.com1 D 1
 F libr zzzz151a.14 D 14
 F libr zzzz151a.16 D 16
 F libr forma01d.datg D 17
+

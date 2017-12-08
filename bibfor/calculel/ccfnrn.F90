@@ -245,7 +245,7 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
         if (iret .ne. 0) then
             optio2 = 'SIEF_ELGA'
             call calcop(optio2, ' ', resuin, resuou, lisord,&
-                        nbordr, chtype, typesd, cret)
+                        nbordr, chtype, typesd, cret, 'V')
         endif
         if (lstr) then
             call rsexch(' ', resuin, 'STRX_ELGA', iordr, strx,&
@@ -253,7 +253,7 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
             if (iret .ne. 0 .and. lstr2) then
                 optio2 = 'STRX_ELGA'
                 call calcop(optio2, ' ', resuin, resuou, lisord,&
-                            nbordr, chtype, typesd, cret)
+                            nbordr, chtype, typesd, cret, 'V')
             endif
         endif
 !
