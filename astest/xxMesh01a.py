@@ -13,4 +13,9 @@ mail1 = LIRE_MAILLAGE( FORMAT = "MED" )
 with test.assertRaisesRegexp(ValueError, "must be in"):
     LIRE_MAILLAGE( FORMAT = "GIBI", UNITE = 21 )
 
+MA0=LIRE_MAILLAGE(FORMAT='MED',UNITE=22)
+
+# Groupes de mailles
+MA1=CREA_MAILLAGE(MAILLAGE=MA0, RESTREINT=_F(GROUP_MA='V001'), )
+
 test.printSummary()
