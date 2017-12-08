@@ -143,6 +143,11 @@ La normale que vous avez choisie NORMALE='ESCL'/'MAIT_ESCL' n'est pas prévue po
 faut utiliser l'option par défaut NORMALE='MAIT' ou changer de surface maître/esclave. 
 """),
 
+    45 : _(u"""
+Pour les formulations discrètes et unilatérales, il faut utiliser la méthode de distribution centralisée des ligrels
+"DISTRIBUTION=_F(METHODE='CENTRALISE')" dans AFFE_MODELE. 
+"""),
+
     50: _(u"""
 Avec l'option VECT_MAIT = 'FIXE', seule l'option NORMALE = 'MAIT' est possible.
 """),
