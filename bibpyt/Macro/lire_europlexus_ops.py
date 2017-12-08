@@ -52,6 +52,8 @@ def lire_europlexus_ops(self, UNITE_MED, MODELE, COMPORTEMENT,
     analysis.prep_cont2effo()
     resu = analysis.lire_champs_noeud(resu)
     analysis.traite_champs_gauss(resu)
+    
+    return resu
 
 
 class LireEPX():
