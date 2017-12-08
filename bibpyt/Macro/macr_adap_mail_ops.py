@@ -1112,7 +1112,6 @@ def macr_adap_mail_ops(self,
     from Macro import creation_donnees_homard
     import aster_core
     import aster
-    from code_aster.Commands.macr_adap_mail import MacrAdapMail
 #
     global Liste_Passages
     global numero_passage_fonction
@@ -1210,7 +1209,7 @@ def macr_adap_mail_ops(self,
 #====================================================================
 # 2.1. ==> Donnees de pilotage de l'adaptation
 #
-    if (type(self)== MacrAdapMail):
+    if (self.command_name == "MACR_ADAP_MAIL"):
 #
 # 2.1.1. ==> Le mode d'utilisation de homard
 #
