@@ -19,8 +19,5 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from .ExecuteCommand import ExecuteMacro
-
-
 def DETRUIRE(**keywords):
     pass

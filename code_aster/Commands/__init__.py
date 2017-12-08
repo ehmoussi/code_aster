@@ -32,7 +32,6 @@ using their catalog definition.
 """
 
 # please keep alphabetical order
-from .affe_cara_elem import AFFE_CARA_ELEM
 from .affe_char_acou import AFFE_CHAR_ACOU
 from .affe_char_cine import AFFE_CHAR_CINE
 from .affe_char_cine_f import AFFE_CHAR_CINE_F
@@ -54,13 +53,11 @@ from .calc_cham_elem import CALC_CHAM_ELEM
 from .calc_char_cine import CALC_CHAR_CINE
 from .calc_fatigue import CALC_FATIGUE
 from .calc_ferraillage import CALC_FERRAILLAGE
-from .calc_fonction import CALC_FONCTION
 from .calc_fonc_interp import CALC_FONC_INTERP
 from .calc_forc_nonl import CALC_FORC_NONL
 from .calc_matr_elem import CALC_MATR_ELEM
 from .calc_meta import CALC_META
 from .calc_modes import CALC_MODES
-from .calc_table import CALC_TABLE
 from .calc_vect_elem import CALC_VECT_ELEM
 from .comb_matr_asse import COMB_MATR_ASSE
 from .copier import COPIER
@@ -68,10 +65,8 @@ from .crea_champ import CREA_CHAMP
 from .crea_maillage import CREA_MAILLAGE
 from .crea_resu import CREA_RESU
 from .crea_table import CREA_TABLE
-from .debug import DEBUG
 from .debut import DEBUT, POURSUITE
 from .defi_base_modale import DEFI_BASE_MODALE
-from .defi_cable_bp import DEFI_CABLE_BP
 from .defi_cable_op import DEFI_CABLE_OP
 from .defi_compor import DEFI_COMPOR
 from .defi_composite import DEFI_COMPOSITE
@@ -90,7 +85,6 @@ from .defi_interf_dyna import DEFI_INTERF_DYNA
 from .defi_list_inst import DEFI_LIST_INST
 from .defi_list_reel import DEFI_LIST_REEL
 from .defi_materiau import DEFI_MATERIAU
-from .defi_mater_gc import DEFI_MATER_GC
 from .defi_modele_gene import DEFI_MODELE_GENE
 from .defi_nappe import DEFI_NAPPE
 from .defi_obstacle import DEFI_OBSTACLE
@@ -101,25 +95,17 @@ from .detruire import DETRUIRE
 from .dyna_non_line import DYNA_NON_LINE
 from .dyna_vibra import DYNA_VIBRA
 from .engendre_test import ENGENDRE_TEST
-from .exec_logiciel import EXEC_LOGICIEL
 from .extr_resu import EXTR_RESU
 from .extr_table import EXTR_TABLE
 from .factoriser import FACTORISER
 from .fin import FIN
 from .formule import FORMULE
 from .info_exec_aster import INFO_EXEC_ASTER
-from .impr_fonction import IMPR_FONCTION
-from .impr_table import IMPR_TABLE
 from .impr_resu import IMPR_RESU
 from .lire_maillage import LIRE_MAILLAGE
 from .macr_elem_dyna import MACR_ELEM_DYNA
 from .macr_elem_stat import MACR_ELEM_STAT
-from .macr_lign_coupe import MACR_LIGN_COUPE
 from .maj_cata import MAJ_CATA
-from .macr_adap_mail import MACR_ADAP_MAIL
-from .macr_cara_poutre import MACR_CARA_POUTRE
-from .macr_info_mail import MACR_INFO_MAIL
-from .macro_elas_mult import MACRO_ELAS_MULT
 from .meca_statique import MECA_STATIQUE
 from .mode_iter_cycl import MODE_ITER_CYCL
 from .mode_statique import MODE_STATIQUE
@@ -129,9 +115,7 @@ from .modi_modele_xfem import MODI_MODELE_XFEM
 from .modi_repere import MODI_REPERE
 from .nume_ddl import NUME_DDL
 from .nume_ddl_gene import NUME_DDL_GENE
-from .post_bordet import POST_BORDET
 from .post_champ import POST_CHAMP
-from .post_coque import POST_COQUE
 from .post_elem import POST_ELEM
 from .post_fati_alea import POST_FATI_ALEA
 from .post_fatigue import POST_FATIGUE
