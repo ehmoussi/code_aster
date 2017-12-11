@@ -17,7 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nonlinDSPostTimeStepInit(ds_algopara, ds_constitutive, ds_posttimestep)
+subroutine nonlinDSPostTimeStepInit(result         , ds_algopara, ds_constitutive,&
+                                    ds_posttimestep)
 !
 use NonLin_Datastructure_type
 !
@@ -28,7 +29,10 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/utmess.h"
+#include "asterfort/nonlinDSTableIOSetPara.h"
+#include "asterfort/nonlinDSTableIOCreate.h"
 !
+character(len=8), intent(in) :: result
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
@@ -41,6 +45,7 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  result           : name of results datastructure
 ! In  ds_algopara      : datastructure for algorithm parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IO  ds_posttimestep  : datastructure for post-treatment at each time step
@@ -49,6 +54,17 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 !
     integer :: ifm, niv
     aster_logical :: l_hpp
+    integer, parameter :: nb_para = 10
+    character(len=24), parameter :: list_para(nb_para) = (/&
+        'INST           ','NUME_INST      ',&
+        'NB_MODE        ','NUME_MODE      ','TYPE_MODE      ',&
+        'FREQ           ','CHAR_CRIT      ','CHAR_STAB      ',&
+        'NOM_OBJET      ','NOM_SD         '/)
+    character(len=8),  parameter :: type_para(nb_para) = (/&
+        'R  '            ,'I  '            ,&
+        'I  '            ,'I  '            ,'K16'            ,&
+        'R  '            ,'R  '            ,'R  '            ,&
+        'K16'            ,'K24'            /)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -77,14 +93,15 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
     endif
     ds_posttimestep%l_hpp = l_hpp
 !
-    ds_posttimestep%mode_vibr_resu%eigen_value  = r8vide()
-    ds_posttimestep%mode_vibr_resu%eigen_index  = -1
-    ds_posttimestep%mode_vibr_resu%eigen_vector = '&&NMDOPO.VIBMOD'
-    ds_posttimestep%mode_flam_resu%eigen_value  = r8vide()
-    ds_posttimestep%mode_flam_resu%eigen_index  = -1
-    ds_posttimestep%mode_flam_resu%eigen_vector = '&&NMDOPO.FLAMOD'
-    ds_posttimestep%crit_stab_resu%eigen_value  = r8vide()
-    ds_posttimestep%crit_stab_resu%eigen_index  = -1
-    ds_posttimestep%crit_stab_resu%eigen_vector = '&&NMDOPO.STAMOD'
+! - Create list of parameters for output table
+!
+    call nonlinDSTableIOSetPara(tableio_   = ds_posttimestep%table_io,&
+                                nb_para_   = nb_para,&
+                                list_para_ = list_para,&
+                                type_para_ = type_para)
+!
+! - Create table in results datastructure
+!
+    call nonlinDSTableIOCreate(result, 'ANALYSE_MODALE', ds_posttimestep%table_io)    
 !
 end subroutine

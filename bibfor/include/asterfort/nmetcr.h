@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmetcr(ds_inout       , model     , compor   , list_func_acti, sddyna   ,&
-                      ds_posttimestep, ds_contact, cara_elem, list_load)
+    subroutine nmetcr(ds_inout  , model    , compor   , list_func_acti, sddyna   ,&
+                      ds_contact, cara_elem, list_load)
         use NonLin_Datastructure_type
         type(NL_DS_InOut), intent(inout) :: ds_inout
         character(len=24), intent(in) :: model
@@ -26,7 +26,6 @@ interface
         type(NL_DS_Contact), intent(in) :: ds_contact
         character(len=24), intent(in) :: compor
         character(len=19), intent(in) :: sddyna
-        type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
         character(len=24), intent(in) :: cara_elem
         character(len=19), intent(in) :: list_load
     end subroutine nmetcr

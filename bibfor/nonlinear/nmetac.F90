@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmetac(list_func_acti, sddyna, ds_contact, ds_inout)
 !
 use NonLin_Datastructure_type
@@ -31,12 +32,10 @@ implicit none
 #include "asterfort/ndynlo.h"
 #include "asterfort/SetIOField.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer, intent(in) :: list_func_acti(*)
-    character(len=19), intent(in) :: sddyna
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    type(NL_DS_InOut), intent(inout) :: ds_inout
+integer, intent(in) :: list_func_acti(*)
+character(len=19), intent(in) :: sddyna
+type(NL_DS_Contact), intent(in) :: ds_contact
+type(NL_DS_InOut), intent(inout) :: ds_inout
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,7 +55,7 @@ implicit none
     character(len=24) :: sdcont_defi
     aster_logical :: l_cont_xfem, l_frot_xfem, l_xfem_czm, l_cont
     aster_logical :: l_dyna, l_inte_node, l_muap, l_strx
-    aster_logical :: l_vibr_mode, l_crit_stab, l_dof_stab, l_ener
+    aster_logical :: l_ener
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -66,9 +65,6 @@ implicit none
 !
     l_dyna      = ndynlo(sddyna,'DYNAMIQUE' )
     l_muap      = ndynlo(sddyna,'MULTI_APPUI')
-    l_crit_stab = isfonc(list_func_acti,'CRIT_STAB' )
-    l_dof_stab  = isfonc(list_func_acti,'DDL_STAB' )
-    l_vibr_mode = isfonc(list_func_acti,'MODE_VIBR' )
     l_strx      = isfonc(list_func_acti,'EXI_STRX')
     l_ener      = isfonc(list_func_acti,'ENERGIE' )
     l_cont_xfem = isfonc(list_func_acti,'CONT_XFEM' )
@@ -116,24 +112,6 @@ implicit none
         if (ds_contact%l_form_lac) then
             call SetIOField(ds_inout, 'CONT_ELEM', l_acti_ = .true._1)
         endif
-    endif
-!
-! - Stability criterion (buckling)
-!
-    if (l_crit_stab) then
-        call SetIOField(ds_inout, 'MODE_FLAMB', l_acti_ = .true._1)
-    endif
-!
-! - Stability criterion (with dof selection)
-!
-    if (l_dof_stab) then
-        call SetIOField(ds_inout, 'MODE_STAB', l_acti_ = .true._1)
-    endif
-!
-! - Vibration modes
-!
-    if (l_vibr_mode) then
-        call SetIOField(ds_inout, 'DEPL_VIBR', l_acti_ = .true._1)
     endif
 !
 ! - "MULTI-APPUIS": DEPL/VITE/ACCE d'entrainement

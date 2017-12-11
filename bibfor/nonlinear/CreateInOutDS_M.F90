@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine CreateInOutDS_M(ds_inout)
 !
 use NonLin_Datastructure_type
@@ -27,9 +28,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_InOut), intent(inout) :: ds_inout
+type(NL_DS_InOut), intent(inout) :: ds_inout
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -44,16 +43,16 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer, parameter :: nb_field_defi = 22
+    integer, parameter :: nb_field_defi = 19
     integer :: i_field
 ! - Name of field (type) in results datastructure (add one -> don't forget to modify rscrsd.F90)
     character(len=16), parameter :: field_type(nb_field_defi) = &
             (/'DEPL            ','SIEF_ELGA       ','VARI_ELGA       ',&
               'COMPORTEMENT    ','VITE            ','ACCE            ',&
               'INDC_ELEM       ','SECO_ELEM       ','COHE_ELEM       ',&
-              'CONT_NOEU       ','MODE_FLAMB      ','DEPL_VIBR       ',&
+              'CONT_NOEU       ',&
               'DEPL_ABSOLU     ','VITE_ABSOLU     ','ACCE_ABSOLU     ',&
-              'FORC_NODA       ','STRX_ELGA       ','MODE_STAB       ',&
+              'FORC_NODA       ','STRX_ELGA       ',&
               'FORC_AMOR       ','FORC_LIAI       ','EPSI_ELGA       ',&
               'CONT_ELEM       '/)
 ! - Type of GRANDEUR for field
@@ -61,9 +60,9 @@ implicit none
             (/'DEPL_R  ','SIEF_R  ','VARI_R  ',&
               'COMPOR  ','DEPL_R  ','DEPL_R  ',&
               'NEUT_I  ','NEUT_R  ','NEUT_R  ',&
+              'DEPL_R  ',&
               'DEPL_R  ','DEPL_R  ','DEPL_R  ',&
-              'DEPL_R  ','DEPL_R  ','DEPL_R  ',&
-              'DEPL_R  ','STRX_R  ','DEPL_R  ',&
+              'DEPL_R  ','STRX_R  ',&
               'DEPL_R  ','DEPL_R  ','EPSI_R  ',&
               'NEUT_R  '/)
 ! - Keyword for initial state (ETAT_INIT)
@@ -71,9 +70,9 @@ implicit none
             (/'DEPL    ','SIGM    ','VARI    ',&
               '        ','VITE    ','ACCE    ',&
               '        ','        ','COHE    ',&
+              '        ',&
               '        ','        ','        ',&
-              '        ','        ','        ',&
-              '        ','STRX    ','        ',&
+              '        ','STRX    ',&
               '        ','        ','        ',&
               '        '/)
 ! - Spatial discretization of field
@@ -81,49 +80,49 @@ implicit none
             (/'NOEU','ELGA','ELGA',&
               'ELGA','NOEU','NOEU',&
               'ELEM','ELEM','XXXX',&
+              'NOEU',&
               'NOEU','NOEU','NOEU',&
-              'NOEU','NOEU','NOEU',&
-              'NOEU','ELGA','NOEU',&
+              'NOEU','ELGA',&
               'NOEU','NOEU','ELGA',&
               'ELEM'/)
 ! - TRUE if field can been read for initial state (ETAT_INIT)
     aster_logical, parameter :: l_read_init(nb_field_defi) = &
-                                                (/.true._1,.true._1 ,.true._1 ,&
-                                                 .false._1,.true._1 ,.true._1 ,&
-                                                 .true._1 ,.true._1 ,.true._1 ,&
-                                                 .false._1,.false._1,.false._1,&
-                                                 .true._1 ,.true._1 ,.true._1 ,&
-                                                 .false._1,.true._1 ,.false._1,&
-                                                 .true._1 ,.true._1 ,.false._1,&
-                                                 .false._1/)
+                                                (/ASTER_TRUE,ASTER_TRUE ,ASTER_TRUE ,&
+                                                 ASTER_FALSE,ASTER_TRUE ,ASTER_TRUE ,&
+                                                 ASTER_TRUE ,ASTER_TRUE ,ASTER_TRUE ,&
+                                                 ASTER_FALSE,&
+                                                 ASTER_TRUE ,ASTER_TRUE ,ASTER_TRUE ,&
+                                                 ASTER_FALSE,ASTER_TRUE ,&
+                                                 ASTER_TRUE ,ASTER_TRUE ,ASTER_FALSE,&
+                                                 ASTER_FALSE/)
 ! - TRUE if field can been store (ARCHIVAGE)
     aster_logical, parameter :: l_store  (nb_field_defi) = &
-                                               (/.true._1 ,.true._1,.true._1 ,&
-                                                 .true._1 ,.true._1,.true._1 ,&
-                                                 .true._1 ,.true._1,.true._1 ,&
-                                                 .true._1 ,.true._1,.true._1 ,&
-                                                 .true._1 ,.true._1,.true._1 ,&
-                                                 .false._1,.true._1,.true._1 ,&
-                                                 .true._1 ,.true._1,.false._1,&
-                                                 .true._1/)
+                                               (/ASTER_TRUE ,ASTER_TRUE,ASTER_TRUE ,&
+                                                 ASTER_TRUE ,ASTER_TRUE,ASTER_TRUE ,&
+                                                 ASTER_TRUE ,ASTER_TRUE,ASTER_TRUE ,&
+                                                 ASTER_TRUE ,&
+                                                 ASTER_TRUE ,ASTER_TRUE,ASTER_TRUE ,&
+                                                 ASTER_FALSE,ASTER_TRUE,&
+                                                 ASTER_TRUE ,ASTER_TRUE,ASTER_FALSE,&
+                                                 ASTER_TRUE/)
  ! - TRUE if field can been followed (OBSERVATION/SUIVI_DDL)
     aster_logical, parameter :: l_obsv  (nb_field_defi) = &
-                                               (/.true._1 ,.true._1 ,.true._1 ,&
-                                                 .false._1,.true._1 ,.true._1 ,&
-                                                 .false._1,.false._1,.false._1,&
-                                                 .true._1 ,.false._1,.false._1,&
-                                                 .true._1 ,.true._1 ,.true._1 ,&
-                                                 .true._1 ,.true._1 ,.false._1,&
-                                                 .false._1,.false._1,.true._1,&
-                                                 .true._1/)
+                                               (/ASTER_TRUE ,ASTER_TRUE ,ASTER_TRUE ,&
+                                                 ASTER_FALSE,ASTER_TRUE ,ASTER_TRUE ,&
+                                                 ASTER_FALSE,ASTER_FALSE,ASTER_FALSE,&
+                                                 ASTER_TRUE ,&
+                                                 ASTER_TRUE ,ASTER_TRUE ,ASTER_TRUE ,&
+                                                 ASTER_TRUE ,ASTER_TRUE ,&
+                                                 ASTER_FALSE,ASTER_FALSE,ASTER_TRUE,&
+                                                 ASTER_TRUE/)
 ! - Keyword for OBSERVATION
     character(len=16), parameter :: obsv_keyw(nb_field_defi) = &
             (/'DEPL            ','SIEF_ELGA       ','VARI_ELGA       ',&
               '                ','VITE            ','ACCE            ',&
               '                ','                ','                ',&
-              'CONT_NOEU       ','                ','                ',&
+              'CONT_NOEU       ',&
               'DEPL_ABSOLU     ','VITE_ABSOLU     ','ACCE_ABSOLU     ',&
-              'FORC_NODA       ','STRX_ELGA       ','                ',&
+              'FORC_NODA       ','STRX_ELGA       ',&
               '                ','                ','EPSI_ELGA       ',&
               'CONT_ELEM       '/)
 ! - Variable (JEVEUX name) for field (#H# for hat variable)
@@ -131,9 +130,9 @@ implicit none
             (/'#H#VALINC#DEPMOI','#H#VALINC#SIGMOI','#H#VALINC#VARMOI',&
               'XXXXXXXXXXXXXXXX','#H#VALINC#VITMOI','#H#VALINC#ACCMOI',&
               'XXXXXXXXXXXXXXXX','XXXXXXXXXXXXXXXX','XXXXXXXXXXXXXXXX',&
+              'XXXXXXXXXXXXXXXX',&
               'XXXXXXXXXXXXXXXX','XXXXXXXXXXXXXXXX','XXXXXXXXXXXXXXXX',&
-              'XXXXXXXXXXXXXXXX','XXXXXXXXXXXXXXXX','XXXXXXXXXXXXXXXX',&
-              '#H#VEASSE#CNFINT','#H#VALINC#STRMOI','XXXXXXXXXXXXXXXX',&
+              '#H#VEASSE#CNFINT','#H#VALINC#STRMOI',&
               '#H#VALINC#FAMMOI','#H#VALINC#FLIMOI','&&NMETCR.EPSI   ',&
               'XXXXXXXXXXXXXXXX'/)
 ! - Variable (JEVEUX name) for init field 
@@ -141,9 +140,9 @@ implicit none
             (/'&&CNPART.ZERO   ','&&NMETCR.SIGMO0 ','&&NMETCR.VARMO0 ',&
               'XXXXXXXXXXXXXXXX','&&CNPART.ZERO   ','&&CNPART.ZERO   ',&
               'XXXXXXXXXXXXXXXX','XXXXXXXXXXXXXXXX','XXXXXXXXXXXXXXXX',&
-              'XXXXXXXXXXXXXXXX','XXXXXXXXXXXXXXXX','XXXXXXXXXXXXXXXX',&
+              'XXXXXXXXXXXXXXXX',&
               '&&CNPART.ZERO   ','&&CNPART.ZERO   ','&&CNPART.ZERO   ',&
-              '&&CNPART.ZERO   ','&&NMETCR.STRMO0 ','XXXXXXXXXXXXXXXX',&
+              '&&CNPART.ZERO   ','&&NMETCR.STRMO0 ',&
               '&&CNPART.ZERO   ','&&CNPART.ZERO   ','&&NMETCR.EPSI   ',&
               'XXXXXXXXXXXXXXXX'/)
 !
@@ -174,8 +173,8 @@ implicit none
         ds_inout%field(i_field)%algo_name       = algo_name(i_field)
         ds_inout%field(i_field)%init_name       = init_name(i_field)
         ds_inout%field(i_field)%init_type       = ' '
-        ds_inout%l_field_read(i_field)          = .false._1
-        ds_inout%l_field_acti(i_field)          = .false._1
+        ds_inout%l_field_read(i_field)          = ASTER_FALSE
+        ds_inout%l_field_acti(i_field)          = ASTER_FALSE
     end do
 !
 end subroutine

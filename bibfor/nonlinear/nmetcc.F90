@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmetcc(field_type, algo_name, init_name      ,&
-                  compor    , sddyna   , ds_posttimestep, ds_contact,&
+subroutine nmetcc(field_type, algo_name, init_name ,&
+                  compor    , sddyna   , ds_contact,&
                   hydr      , temp_init, hydr_init)
 !
 use NonLin_Datastructure_type
@@ -36,7 +36,6 @@ character(len=24), intent(out) :: init_name
 type(NL_DS_Contact), optional, intent(in) :: ds_contact
 character(len=19), optional, intent(in) :: compor
 character(len=19), optional, intent(in) :: sddyna
-type(NL_DS_PostTimeStep), optional, intent(in) :: ds_posttimestep
 character(len=24), optional, intent(in) :: hydr
 character(len=24), optional, intent(in) :: hydr_init
 character(len=24), optional, intent(in) :: temp_init
@@ -57,7 +56,6 @@ character(len=24), optional, intent(in) :: temp_init
 ! In  compor           : name of <CARTE> COMPOR
 ! In  ds_contact       : datastructure for contact management
 ! In  sddyna           : name of dynamic parameters datastructure
-! In  ds_posttimestep  : datastructure for post-treatment at each time step
 ! In  hydr             : name of field for hydratation (HYDR_ELNO)
 ! In  hydr_init        : name of field for initial hydratation
 ! In  temp_init        : name of field for initial temperature
@@ -69,7 +67,6 @@ character(len=24), optional, intent(in) :: temp_init
 !
     character(len=19) :: xindco, xcohes, xseuco
     character(len=24) :: sdcont_solv
-    character(len=19) :: vecfla, vecvib, vecsta
     character(len=19) :: depabs, vitabs, accabs
 !
 ! --------------------------------------------------------------------------------------------------
@@ -85,11 +82,6 @@ character(len=24), optional, intent(in) :: temp_init
         xindco = sdcont_solv(1:14)//'.XFIN'
         xcohes = sdcont_solv(1:14)//'.XCOP'
         xseuco = sdcont_solv(1:14)//'.XFSE'
-    endif
-    if (present(ds_posttimestep)) then
-        vecfla = ds_posttimestep%mode_flam_resu%eigen_vector
-        vecsta = ds_posttimestep%crit_stab_resu%eigen_vector
-        vecvib = ds_posttimestep%mode_vibr_resu%eigen_vector
     endif
     if (present(sddyna)) then
         call ndynkk(sddyna, 'DEPABS', depabs)
@@ -117,15 +109,6 @@ character(len=24), optional, intent(in) :: temp_init
     else if (field_type.eq.'COHE_ELEM') then
         algo_name = xcohes
         init_name = sdcont_solv(1:14)//'.XCO0'
-    else if (field_type.eq.'MODE_FLAMB') then
-        algo_name = vecfla
-        init_name = ' '
-    else if (field_type.eq.'MODE_STAB') then
-        algo_name = vecsta
-        init_name = ' '
-    else if (field_type.eq.'DEPL_VIBR') then
-        algo_name = vecvib
-        init_name = ' '
     else if (field_type.eq.'DEPL_ABSOLU') then
         algo_name = depabs
         init_name = '&&CNPART.ZERO'

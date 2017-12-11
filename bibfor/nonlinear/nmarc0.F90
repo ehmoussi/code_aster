@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmarc0(result, modele        , mate           , carele         , fonact,&
-                  sdcrit, sddyna        , ds_posttimestep, ds_constitutive, sdcriq,&
+subroutine nmarc0(result, modele        , mate           , carele   , fonact,&
+                  sdcrit, sddyna        , ds_constitutive, sdcriq   ,&
                   sdpilo, list_load_resu, numarc         , time_curr)
 !
 use NonLin_Datastructure_type
@@ -35,7 +35,6 @@ implicit none
 #include "asterfort/ndaram.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/ndynre.h"
-#include "asterfort/nmarcp.h"
 #include "asterfort/rsadpa.h"
 #include "asterfort/rssepa.h"
 #include "asterfort/Behaviour_type.h"
@@ -46,7 +45,6 @@ integer :: fonact(*)
 real(kind=8) :: time_curr
 character(len=19) :: sddyna, sdpilo
 character(len=19) :: list_load_resu, sdcrit
-type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 character(len=24) :: modele, mate, carele, sdcriq
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 !
@@ -67,7 +65,6 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 ! IN  SDCRIQ : SD CRITERE QUALITE
 ! IN  COMPOR : CARTE DECRIVANT LE TYPE DE COMPORTEMENT
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! In  ds_posttimestep  : datastructure for post-treatment at each time step
 ! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
 ! IN  SDDYNA : SD DEDIEE A LA DYNAMIQUE
 ! In  list_load_resu : name of list of loads saved in results datastructure
@@ -78,11 +75,10 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 !
     character(len=16) :: valk
     character(len=19) :: k19bla
-    aster_logical :: lerrt, lthm, lflam, lstab, lpilo, ldyna
-    aster_logical :: lvibr, lexge
+    aster_logical :: lerrt, lthm, lpilo, ldyna
+    aster_logical :: lexge
     character(len=24) :: errthm, typsel, typpil
-    real(kind=8) :: taberr(2), parm_theta, valr, chcrit, freqr, coef, chstab, time_prev
-    integer :: iret
+    real(kind=8) :: taberr(2), parm_theta, valr, coef, time_prev
     integer :: jv_para, jerrt
     real(kind=8), pointer :: v_carcri_valv(:) => null()
     real(kind=8), pointer :: plir(:) => null()
@@ -102,9 +98,6 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 !
     ldyna = ndynlo(sddyna,'DYNAMIQUE' )
     lexge = ndynlo(sddyna,'EXPL_GENE' )
-    lflam = isfonc(fonact,'CRIT_STAB')
-    lstab = isfonc(fonact,'DDL_STAB')
-    lvibr = isfonc(fonact,'MODE_VIBR' )
     lerrt = isfonc(fonact,'ERRE_TEMPS_THM')
     lthm = isfonc(fonact,'THM' )
     lpilo = isfonc(fonact,'PILOTAGE' )
@@ -116,37 +109,6 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         parm_theta = v_carcri_valv(PARM_THETA_THM)
         call rsadpa(result, 'E', 1, 'PARM_THETA', numarc, 0, sjv=jv_para)
         zr(jv_para) = parm_theta
-    endif
-!
-! --- ARCHIVAGE DE LA CHARGE CRITIQUE DU MODE DE FLAMBEMENT
-!
-    if (lflam) then
-        call nmarcp('FLAM', ds_posttimestep, k19bla, chcrit, iret)
-        if (iret .ne. 0) then
-            call rsadpa(result, 'E', 1, 'CHAR_CRIT', numarc, 0, sjv=jv_para)
-            zr(jv_para) = chcrit
-        endif
-    endif
-!
-! --- ARCHIVAGE DE LA CHARGE CRITIQUE DU MDOE DE STABILITE
-!
-    if (lstab) then
-        call nmarcp('STAB', ds_posttimestep, k19bla, chstab, iret)
-        if (iret .ne. 0) then
-            call rsadpa(result, 'E', 1, 'CHAR_STAB', numarc, 0, sjv=jv_para)
-            zr(jv_para) = chstab
-        endif
-    endif
-!
-! --- ARCHIVAGE DE LA FREQUENCE DU MODE VIBRATOIRE
-!
-    if (lvibr) then
-        ASSERT(ldyna)
-        call nmarcp('VIBR', ds_posttimestep, k19bla, freqr, iret)
-        if (iret .ne. 0) then
-            call rsadpa(result, 'E', 1, 'FREQ', numarc, 0, sjv=jv_para)
-            zr(jv_para) = freqr
-        endif
     endif
 !
 ! --- ARCHIVAGE DE L'INSTANT

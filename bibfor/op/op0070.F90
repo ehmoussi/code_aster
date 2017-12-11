@@ -294,9 +294,9 @@ implicit none
 ! --- ARCHIVAGE DES RESULTATS
 !
     call onerrf(compex, k16bid, ibid)
-    call nmarch(numins         , model   , mate      , cara_elem      , fonact   ,&
-                ds_constitutive, ds_print, sddisc    , ds_posttimestep, sdcrit   ,&
-                ds_measure     , sderro  , sddyna    , sdpilo         , ds_energy,&
+    call nmarch(numins         , model   , mate      , cara_elem, fonact   ,&
+                ds_constitutive, ds_print, sddisc    , sdcrit   ,&
+                ds_measure     , sderro  , sddyna    , sdpilo   , ds_energy,&
                 ds_inout       , sdcriq  , ds_algorom)
     call onerrf('EXCEPTION+VALID', k16bid, ibid)
 !
@@ -327,9 +327,9 @@ implicit none
 ! --- ON COMMENCE PAR ARCHIVER LE PAS DE TEMPS PRECEDENT
 !
     if (numins .ne. 1) then
-        call nmarch(numins-1       , model   , mate      , cara_elem      , fonact   ,&
-                    ds_constitutive, ds_print, sddisc    , ds_posttimestep, sdcrit   ,&
-                    ds_measure     , sderro  , sddyna    , sdpilo         , ds_energy,&
+        call nmarch(numins-1       , model   , mate      , cara_elem, fonact   ,&
+                    ds_constitutive, ds_print, sddisc    , sdcrit   ,&
+                    ds_measure     , sderro  , sddyna    , sdpilo   , ds_energy,&
                     ds_inout       , sdcriq  , ds_algorom)
     endif
 !
