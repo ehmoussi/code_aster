@@ -101,7 +101,7 @@ MELES=CALC_FLUI_STRU(VITE_FLUI  = _F(VITE_MIN  = 1.,
                                      VITE_MAX  = 1.,
                                      NB_POIN   = 1.),
                      BASE_MODALE= _F(MODE_MECA = MODES,
-                                     
+
                                      AMOR_REDUIT = (0.15E-2,0.15E-2),
                                      ),
                      TYPE_FLUI_STRU=TYPEFLUI,
@@ -123,7 +123,15 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=226.3914026606,
                         FONCTION=FREQ1_AC,),
               )
 
+import aster_core
 
+def includeExternalData(theFile):
+    """Retrieve a file in the external data folder"""
+    repdex = aster_core.get_option('repdex')
+    return osp.join(repdex, theFile)
+
+spec = includeExternalData('sdll152e.msup.datg')
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=spec, ACCES='NEW', UNITE=19)
 
 INTSPEX=LIRE_INTE_SPEC( UNITE=19,
                         FORMAT_C='REEL_IMAG',
@@ -131,12 +139,13 @@ INTSPEX=LIRE_INTE_SPEC( UNITE=19,
                         PROL_GAUCHE='LINEAIRE',
                         INTERPOL='LIN'      )
 
+DEFI_FICHIER(ACTION='LIBERER', UNITE=19)
 
 SPECTRE1=DEFI_SPEC_TURB(
               SPEC_EXCI_POINT=_F(
                    INTE_SPEC = INTSPEX,
                    NATURE = 'FORCE',
-                   ANGLE=5, 
+                   ANGLE=5,
                    CARA_ELEM = CARA,
                    MODELE = MODEL,
                    GROUP_NO = 'GRNO',)
@@ -159,7 +168,7 @@ RPM0=DYNA_SPEC_MODAL(
           BASE_ELAS_FLUI=MELES,
                 VITE_FLUI=vite,
                    EXCIT=_F(  INTE_SPEC_GENE = SPRJ,),
-                OPTION='TOUT' 
+                OPTION='TOUT'
                )
 
 RPP0=REST_SPEC_PHYS(
@@ -194,7 +203,7 @@ SPECTRE2=DEFI_SPEC_TURB(
               SPEC_EXCI_POINT=_F(
                    INTE_SPEC = INTSPEX,
                    NATURE = 'MOMENT',
-                   ANGLE=10, 
+                   ANGLE=10,
                    CARA_ELEM = CARA,
                    MODELE = MODEL,
                    GROUP_NO = 'GRNO',)
@@ -217,7 +226,7 @@ RPM02=DYNA_SPEC_MODAL(
           BASE_ELAS_FLUI=MELES,
                 VITE_FLUI=vite,
                    EXCIT=_F(  INTE_SPEC_GENE = SPRJ2,),
-                OPTION='TOUT' 
+                OPTION='TOUT'
                )
 
 RPP02=REST_SPEC_PHYS(

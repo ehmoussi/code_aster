@@ -78,7 +78,6 @@ PROFVIT1=DEFI_FONC_FLUI(       MAILLAGE=TUBE,
 )
 
 
-
 CARA=AFFE_CARA_ELEM(   MODELE=MODELE,
                        POUTRE=_F(  GROUP_MA = 'POUTRE',
                                 SECTION = 'CERCLE',
@@ -90,6 +89,18 @@ CARA=AFFE_CARA_ELEM(   MODELE=MODELE,
                                         GROUP_FIBRE='SECT'),
                                         )
 
+
+import aster_core
+
+def includeExternalData(theFile):
+    """Retrieve a file in the external data folder"""
+    repdex = aster_core.get_option('repdex')
+    return osp.join(repdex, theFile)
+
+CD = includeExternalData('sdll110a.70.datg')
+CK = includeExternalData('sdll110a.71.datg')
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CD, ACCES='NEW', UNITE=70)
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CK, ACCES='NEW', UNITE=71)
 
 TYPEFLUI=DEFI_FLUI_STRU(
              FAISCEAU_TRANS=_F(
@@ -105,6 +116,7 @@ TYPEFLUI=DEFI_FLUI_STRU(
              PROF_VITE_FLUI = PROFVIT1),
                            INFO=2
 )
+
 FONC_CM=FONC_FLUI_STRU(  TYPE_FLUI_STRU=TYPEFLUI
 )
 
@@ -199,6 +211,9 @@ MELFLUI0=CALC_FLUI_STRU(
              TYPE_FLUI_STRU=TYPEFLUI,
                  IMPRESSION=_F(  PARA_COUPLAGE = 'OUI')
 )
+
+DEFI_FICHIER(ACTION='LIBERER', UNITE=70)
+DEFI_FICHIER(ACTION='LIBERER', UNITE=71)
 
 SPECTRE1=DEFI_SPEC_TURB(
               SPEC_LONG_COR_3=_F(  LONG_COR = 3.4,

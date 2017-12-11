@@ -78,6 +78,18 @@ PROFVIT1=DEFI_FONCTION(  NOM_PARA='ABSC',
 'N_05_005'  , 'N_05_012'  , 'N_05_015'  , 'N_06_001'  , 'N_06_007'  , )
 )
 
+import aster_core
+
+def includeExternalData(theFile):
+    """Retrieve a file in the external data folder"""
+    repdex = aster_core.get_option('repdex')
+    return osp.join(repdex, theFile)
+
+CD = includeExternalData('sdll110a.70.datg')
+CK = includeExternalData('sdll110a.71.datg')
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CD, ACCES='NEW', UNITE=70)
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CK, ACCES='NEW', UNITE=71)
+
 TYPEFLUI=DEFI_FLUI_STRU(  INFO=2,
                FAISCEAU_TRANS=_F(  COUPLAGE = 'OUI',
                                    CARA_ELEM = CARA,
@@ -353,6 +365,9 @@ MELFLUI=CALC_FLUI_STRU(
                         IMPRESSION=_F(  PARA_COUPLAGE = 'OUI')
 )
 
+DEFI_FICHIER(ACTION='LIBERER', UNITE=70)
+DEFI_FICHIER(ACTION='LIBERER', UNITE=71)
+
 MODES=MODI_BASE_MODALE( reuse=MODES,   BASE=MODES,
                         BASE_ELAS_FLUI=MELFLUI,
                         NUME_VITE_FLUI=1
@@ -444,6 +459,9 @@ EFPROJ4=RECU_FONCTION(INTE_SPEC=VECTINT,
 # OBST1 ---> DEF_CHOC
 OBST1=DEFI_OBSTACLE(  TYPE='PLAN_Y'   )
 
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CD, ACCES='NEW', UNITE=70)
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CK, ACCES='NEW', UNITE=71)
+
 TRANGENE=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                     BASE_ELAS_FLUI=MELFLUI, NUME_VITE_FLUI=1,
                     SCHEMA_TEMPS=_F(SCHEMA='RUNGE_KUTTA_32',PAS_MINI=T_PAS,PAS_MAXI=T_PAS),
@@ -486,6 +504,10 @@ TRANGENE=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                   PAS = T_PAS),
           ARCHIVAGE=_F(  PAS_ARCH = 1),
 )
+
+DEFI_FICHIER(ACTION='LIBERER', UNITE=70)
+DEFI_FICHIER(ACTION='LIBERER', UNITE=71)
+
 #
 #
 # TESTS DES RESULTATS

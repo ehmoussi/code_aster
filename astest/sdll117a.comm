@@ -88,6 +88,18 @@ CARA=AFFE_CARA_ELEM(  MODELE=MODELE,
                                   VALE = (9.525E-03, 1.09E-03,)))
 #
 
+import aster_core
+
+def includeExternalData(theFile):
+    """Retrieve a file in the external data folder"""
+    repdex = aster_core.get_option('repdex')
+    return osp.join(repdex, theFile)
+
+CD = includeExternalData('sdll110a.70.datg')
+CK = includeExternalData('sdll110a.71.datg')
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CD, ACCES='NEW', UNITE=70)
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CK, ACCES='NEW', UNITE=71)
+
 TYPEFLU1=DEFI_FLUI_STRU(
                  FAISCEAU_TRANS=_F(
                  COUPLAGE = 'OUI',
@@ -204,6 +216,9 @@ MELES1=CALC_FLUI_STRU(
                                   DEFORMEE = 'NON')
                            )
 
+DEFI_FICHIER(ACTION='LIBERER', UNITE=70)
+DEFI_FICHIER(ACTION='LIBERER', UNITE=71)
+
 #
 
 FREQ1_1=RECU_FONCTION(
@@ -309,6 +324,9 @@ PROFVI2B=DEFI_FONC_FLUI(
 
 #
 
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CD, ACCES='NEW', UNITE=70)
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CK, ACCES='NEW', UNITE=71)
+
 TYPEFLU2=DEFI_FLUI_STRU( FAISCEAU_TRANS=(
                  _F(
                  COUPLAGE = 'OUI',
@@ -338,6 +356,9 @@ MELES2=CALC_FLUI_STRU(
                   IMPRESSION=_F(  PARA_COUPLAGE = 'OUI',
                                DEFORMEE = 'NON')
                            )
+
+DEFI_FICHIER(ACTION='LIBERER', UNITE=70)
+DEFI_FICHIER(ACTION='LIBERER', UNITE=71)
 
 #
 
@@ -430,6 +451,9 @@ PROFVI3=DEFI_FONCTION( NOM_PARA='ABSC', MAILLAGE=POUTRE,
 
 #
 
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CD, ACCES='NEW', UNITE=70)
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CK, ACCES='NEW', UNITE=71)
+
 TYPEFLU3=DEFI_FLUI_STRU(
                  FAISCEAU_TRANS=_F(
                  COUPLAGE = 'OUI',
@@ -456,6 +480,9 @@ MELES3=CALC_FLUI_STRU(
                   IMPRESSION=_F(  PARA_COUPLAGE = 'OUI',
                                DEFORMEE = 'NON')
                            )
+
+DEFI_FICHIER(ACTION='LIBERER', UNITE=70)
+DEFI_FICHIER(ACTION='LIBERER', UNITE=71)
 
 #
 
@@ -562,6 +589,9 @@ PROFVI4B=DEFI_FONC_FLUI(
 
 #
 
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CD, ACCES='NEW', UNITE=70)
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CK, ACCES='NEW', UNITE=71)
+
 TYPEFLU4=DEFI_FLUI_STRU( FAISCEAU_TRANS=(
                  _F(
                  COUPLAGE = 'OUI',
@@ -591,6 +621,9 @@ MELES4=CALC_FLUI_STRU(
                   IMPRESSION=_F(  PARA_COUPLAGE = 'OUI',
                                DEFORMEE = 'NON')
                            )
+
+DEFI_FICHIER(ACTION='LIBERER', UNITE=70)
+DEFI_FICHIER(ACTION='LIBERER', UNITE=71)
 
 #
 
@@ -674,6 +707,9 @@ TEST_FONCTION(VALEUR=(_F(VALE_REFE=31.40,
 # --------------------------------------------------
 #
 
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CD, ACCES='NEW', UNITE=70)
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CK, ACCES='NEW', UNITE=71)
+
 TYPEFLU5=DEFI_FLUI_STRU(
                  FAISCEAU_TRANS=_F(
                  COUPLAGE = 'OUI',
@@ -700,6 +736,9 @@ MELES5=CALC_FLUI_STRU(
                   IMPRESSION=_F(  PARA_COUPLAGE = 'OUI',
                                DEFORMEE = 'NON')
                            )
+
+DEFI_FICHIER(ACTION='LIBERER', UNITE=70)
+DEFI_FICHIER(ACTION='LIBERER', UNITE=71)
 
 #
 
@@ -783,6 +822,9 @@ TEST_FONCTION(VALEUR=(_F(VALE_REFE=32.20,
 # --------------------------------------------------
 #
 
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CD, ACCES='NEW', UNITE=70)
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CK, ACCES='NEW', UNITE=71)
+
 TYPEFLU6=DEFI_FLUI_STRU( FAISCEAU_TRANS=(
                  _F(
                  COUPLAGE = 'OUI',
@@ -812,6 +854,9 @@ MELES6=CALC_FLUI_STRU(
                   IMPRESSION=_F(  PARA_COUPLAGE = 'OUI',
                                DEFORMEE = 'NON')
                            )
+
+DEFI_FICHIER(ACTION='LIBERER', UNITE=70)
+DEFI_FICHIER(ACTION='LIBERER', UNITE=71)
 
 #
 
@@ -907,6 +952,9 @@ PROFVI7=DEFI_FONC_FLUI(
 
 #
 
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CD, ACCES='NEW', UNITE=70)
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CK, ACCES='NEW', UNITE=71)
+
 TYPEFLU7=DEFI_FLUI_STRU(
                  FAISCEAU_TRANS=_F(
                  COUPLAGE = 'OUI',
@@ -933,6 +981,9 @@ MELES7=CALC_FLUI_STRU(
                   IMPRESSION=_F(  PARA_COUPLAGE = 'OUI',
                                DEFORMEE = 'NON')
                            )
+
+DEFI_FICHIER(ACTION='LIBERER', UNITE=70)
+DEFI_FICHIER(ACTION='LIBERER', UNITE=71)
 
 #
 
@@ -1143,6 +1194,9 @@ PROFVI8B=DEFI_FONC_FLUI(
 
 #
 
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CD, ACCES='NEW', UNITE=70)
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CK, ACCES='NEW', UNITE=71)
+
 TYPEFLU8=DEFI_FLUI_STRU( FAISCEAU_TRANS=(
                  _F(
                  COUPLAGE = 'OUI',
@@ -1172,6 +1226,9 @@ MELES8=CALC_FLUI_STRU(
                   IMPRESSION=_F(  PARA_COUPLAGE = 'OUI',
                                DEFORMEE = 'NON')
                            )
+
+DEFI_FICHIER(ACTION='LIBERER', UNITE=70)
+DEFI_FICHIER(ACTION='LIBERER', UNITE=71)
 
 #
 
