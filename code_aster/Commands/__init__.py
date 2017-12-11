@@ -120,6 +120,7 @@ from .meca_statique import MECA_STATIQUE
 from .mode_statique import MODE_STATIQUE
 from .modi_maillage import MODI_MAILLAGE
 from .modi_modele import MODI_MODELE
+from .modi_modele_xfem import MODI_MODELE_XFEM
 from .modi_repere import MODI_REPERE
 from .nume_ddl import NUME_DDL
 # from .nume_ddl_gene import NUME_DDL_GENE
@@ -129,6 +130,7 @@ from .post_coque import POST_COQUE
 from .post_elem import POST_ELEM
 from .post_fati_alea import POST_FATI_ALEA
 from .post_fatigue import POST_FATIGUE
+from .post_mail_xfem import POST_MAIL_XFEM
 from .post_releve_t import POST_RELEVE_T
 from .post_usure import POST_USURE
 from .prod_matr_cham import PROD_MATR_CHAM
