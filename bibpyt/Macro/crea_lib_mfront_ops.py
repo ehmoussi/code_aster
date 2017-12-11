@@ -29,6 +29,7 @@ def crea_lib_mfront_ops(self, UNITE_MFRONT, UNITE_LIBRAIRIE, **args):
     import os
     from Utilitai.UniteAster import UniteAster
     from Utilitai.Utmess import UTMESS
+    from code_aster.RunManager import ReservedUnitUsed
 
     UL = UniteAster()
     fichierMFront = UL.Nom(UNITE_MFRONT)
@@ -43,6 +44,6 @@ def crea_lib_mfront_ops(self, UNITE_MFRONT, UNITE_LIBRAIRIE, **args):
     os.system("cp src/libAsterBehaviour.so ./"+fichierLib)
     os.system("ls -ltr")
     os.system("rm -fr src include")
-    UL.EtatInit()
+    ReservedUnitUsed()
 
-    return ier
+    return
