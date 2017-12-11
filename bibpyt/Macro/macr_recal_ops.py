@@ -40,7 +40,7 @@ def Sortie(LIST_NOM_PARA, LIST_PARA, val, CALCUL_ASTER, Mess):
 
     import aster
     import Macro
-    from code_aster.Cata.Commands import DEFI_LIST_REEL
+    from code_aster.Commands import DEFI_LIST_REEL
     from code_aster.Cata.Syntax import _F
     from Macro import reca_message
     from Macro import reca_algo
@@ -78,7 +78,9 @@ def force_list(obj, typref=list):
 
 
 # ------------------------------------------------------------------------
-def macr_recal_ops(self, UNITE_ESCL, RESU_EXP, LIST_POIDS, LIST_PARA, RESU_CALC, ITER_MAXI, ITER_FONC_MAXI, RESI_GLOB_RELA, UNITE_RESU, PARA_DIFF_FINI, GRAPHIQUE, PARA_OPTI, COURBE, METHODE, INFO, **args):
+def macr_recal_ops(self, UNITE_ESCL, RESU_EXP=None, LIST_POIDS=None, LIST_PARA=None, RESU_CALC=None, 
+                    ITER_MAXI=None, ITER_FONC_MAXI=None, RESI_GLOB_RELA=None, UNITE_RESU=None, PARA_DIFF_FINI=None, 
+                    GRAPHIQUE=None, PARA_OPTI=None, COURBE=None, METHODE=None, INFO=None, **args):
     """ Macro commande realisant le recalage de modeles Aster """
 
     # Initialisation du compteur d'erreurs
@@ -86,10 +88,10 @@ def macr_recal_ops(self, UNITE_ESCL, RESU_EXP, LIST_POIDS, LIST_PARA, RESU_CALC,
 
     import aster
     import Macro
-    from code_aster.Cata.Commands import (DEFI_LIST_REEL, CREA_TABLE,
-        TEST_TABLE, INCLUDE, INFO_EXEC_ASTER)
+    #from code_aster.Commands import (DEFI_LIST_REEL, CREA_TABLE,
+    #    TEST_TABLE, INCLUDE, INFO_EXEC_ASTER)
     from code_aster.Cata.Syntax import _F
-    from code_aster.Cata.Commands import commandStore
+    #from code_aster.Cata.Commands import commandStore
 
     from Macro import reca_message
     from Macro import reca_algo
@@ -109,8 +111,8 @@ def macr_recal_ops(self, UNITE_ESCL, RESU_EXP, LIST_POIDS, LIST_PARA, RESU_CALC,
     self.DeclareOut('nomres', self.sd)
 
     # Declaration de toutes les commandes Aster
-    self.current_context['_F'] = _F
-    self.current_context.update(commandStore)
+    #self.current_context['_F'] = _F
+    #self.current_context.update(commandStore)
 
     # Reecriture des mots-cles
     if COURBE:
@@ -195,10 +197,10 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
 
     import Macro
     from code_aster.Cata.Syntax import _F
-    from code_aster.Cata.Commands import commandStore
+    #from code_aster.Cata.Commands import commandStore
     # Declaration de toutes les commandes Aster
-    self.current_context['_F'] = _F
-    self.current_context.update(commandStore)
+    #self.current_context['_F'] = _F
+    #self.current_context.update(commandStore)
     #_____________________________________________
     #
     # RECUPERATION DU PROFIL DU CALCUL MAITRE
@@ -789,7 +791,7 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
         print "ecart_para, TOLE_PARA=", ecart_para, TOLE_PARA, (ecart_para > TOLE_PARA)
 
     if (residu > RESI_GLOB_RELA):
-        from code_aster.Cata.Commands import CREA_TABLE, TEST_TABLE
+        from code_aster.Commands import CREA_TABLE, TEST_TABLE
         _tmp = []
         _tmp.append({'PARA': 'ITER_MAXI', 'LISTE_R': 0.0, })
         motscle = {'LISTE': _tmp}
