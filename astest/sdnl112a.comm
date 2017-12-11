@@ -84,6 +84,18 @@ PROFVIT1=DEFI_FONCTION(
 )
 )
 
+import aster_core
+
+def includeExternalData(theFile):
+    """Retrieve a file in the external data folder"""
+    repdex = aster_core.get_option('repdex')
+    return osp.join(repdex, theFile)
+
+CD = includeExternalData('sdll110a.70.datg')
+CK = includeExternalData('sdll110a.71.datg')
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CD, ACCES='NEW', UNITE=70)
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CK, ACCES='NEW', UNITE=71)
+
 TYPEFLUI=DEFI_FLUI_STRU(
                FAISCEAU_TRANS=_F(
              COUPLAGE = 'OUI',
@@ -182,6 +194,8 @@ MELFLUI0=CALC_FLUI_STRU(
              IMPRESSION=_F(  PARA_COUPLAGE = 'OUI')
 )
 
+DEFI_FICHIER(ACTION='LIBERER', UNITE=70)
+DEFI_FICHIER(ACTION='LIBERER', UNITE=71)
 
 #
 
@@ -305,6 +319,10 @@ TEST_TABLE(
                    ),
            )
 #
+
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CD, ACCES='NEW', UNITE=70)
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CK, ACCES='NEW', UNITE=71)
+
 MELFLU45=CALC_FLUI_STRU(VITE_FLUI      = _F(VITE_MIN    = vite_min,
                                             VITE_MAX    = vite_max,
                                             NB_POIN     = nb_poin),
@@ -313,6 +331,9 @@ MELFLU45=CALC_FLUI_STRU(VITE_FLUI      = _F(VITE_MIN    = vite_min,
                                             AMOR_REDUIT = (4.999E-03,4.999E-03),),
                         TYPE_FLUI_STRU = TYPEFLUI,
                         IMPRESSION     = _F(PARA_COUPLAGE = 'NON'))
+
+DEFI_FICHIER(ACTION='LIBERER', UNITE=70)
+DEFI_FICHIER(ACTION='LIBERER', UNITE=71)
 
 SPPROJ45=PROJ_SPEC_BASE(SPEC_TURB      = SPECTRE1,
                         NB_POIN        = 4096 ,

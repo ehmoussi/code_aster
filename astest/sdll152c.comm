@@ -21,7 +21,7 @@
 # a clamped-clamped steel tubes (beam model).
 #
 # Note : The modeling procedure requires the representation of a single beam
-#        Fluid-structure coupling forces consider confinement details of the 
+#        Fluid-structure coupling forces consider confinement details of the
 #        array.
 #
 #                                    ^ y-axis
@@ -30,10 +30,10 @@
 #  //|         L, D          |//
 #  //|=======================|//
 #  //|       ^ ^ ^ ^ ^       |//
-#          ^ | | | | | ^            
-#        ^ | | | | | | | ^  
-#      ^ | | | | | | | | | ^ 
-#      | | | | | | | | | | |  
+#          ^ | | | | | ^
+#        ^ | | | | | | | ^
+#      ^ | | | | | | | | | ^
+#      | | | | | | | | | | |
 #
 #          Fluid velocity (parabolic function)
 #
@@ -43,12 +43,12 @@
 #-------------------------------------------------------------------
 # person_in_charge: yannick.tampango at edf.fr
 
-L = 1.000 # Tube length    = 1  m (used for velocity profile definition and 
+L = 1.000 # Tube length    = 1  m (used for velocity profile definition and
 #                                  coherent with the associated mesh file)
 D = 0.040 # Tube diameter  = 4 cm
 t = 0.005 # Tube thickness = 5 mm
 
-DEBUT( CODE=_F(NIV_PUB_WEB='INTRANET'),DEBUG=_F(SDVERI='NON'))
+DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='NON'))
 
 TUBE=LIRE_MAILLAGE(FORMAT='ASTER')
 MODI_MAILLAGE(reuse=TUBE, MAILLAGE=TUBE,
@@ -80,7 +80,7 @@ NbNodes = 101
 Absc = [(L/(NbNodes-1))*i for i in range(NbNodes)]
 Velo = [-4*x*(x-1) for x in Absc]  # Parabolic velocity profile
 Data = [None]*2*NbNodes
-for i in range(NbNodes) : 
+for i in range(NbNodes) :
   Data[2*i  ] = Absc[i]
   Data[2*i+1] = Velo[i]
 
@@ -92,7 +92,7 @@ TYPEFLUI=DEFI_FLUI_STRU(FAISCEAU_TRANS=_F(
                                           CARA_ELEM = CARA,
                                           PROF_RHO_F_INT = RHOI,
                                           PROF_RHO_F_EXT = RHOE,
-                                          COEF_MASS_AJOU = 1.0, 
+                                          COEF_MASS_AJOU = 1.0,
                                           NOM_CMP = 'DY',
                                           TYPE_PAS = 'CARRE_LIGN',
                                           TYPE_RESEAU = 675,

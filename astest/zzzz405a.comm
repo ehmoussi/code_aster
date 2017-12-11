@@ -19,7 +19,7 @@
 
 #
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET'),
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
       DEBUG=_F(SDVERI='OUI'))
 
 # INSTANTS DONNES EN JOUR:
@@ -1581,7 +1581,7 @@ T17=POST_USURE(           RESU_GENE=TRANGE2,
             COEF_USUR_OBST = 1E-10,
             ANGL_FIN = -36.),
    _F(
-            COEF_USUR_MOBILE = 4.E-14,
+            COEF_USUR_MOBILE = 1.E-10,
             COEF_USUR_OBST = 1E-10,
             ANGL_FIN = 0.),
    _F(

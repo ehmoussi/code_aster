@@ -7,5 +7,3 @@ P testlist verification sequential
 
 F comm sdll110a.comm D 1
 F mmed sdll110a.mmed D 20
-F libr sdll110a.70 D 70
-F libr sdll110a.71 D 71

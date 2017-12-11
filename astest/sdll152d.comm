@@ -45,6 +45,17 @@ CARA=AFFE_CARA_ELEM(MODELE = MODEL,
                                 CARA     = ('R','EP',),
                                 VALE     = (0.5*D, t)))
 
+import aster_core
+
+def includeExternalData(theFile):
+    """Retrieve a file in the external data folder"""
+    repdex = aster_core.get_option('repdex')
+    return osp.join(repdex, theFile)
+
+CA = includeExternalData('sdll152d.70.datg')
+KA = includeExternalData('sdll152d.71.datg')
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CA, ACCES='NEW', UNITE=70)
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=KA, ACCES='NEW', UNITE=71)
 
 TYPEFL1=DEFI_FLUI_STRU(GRAPPE=_F(COUPLAGE = 'OUI',
                                  GRAPPE_2 = 'ASC_CEN',
@@ -79,7 +90,6 @@ TYPEFL4=DEFI_FLUI_STRU(GRAPPE=_F(COUPLAGE = 'OUI',
                                  MODELE = MODEL,
                                  COEF_MASS_AJOU = 0.,
                                  RHO_FLUI = 1000.) )
-
 
 MAT=DEFI_MATERIAU(ELAS=_F(E   = 210.E9,
                                RHO = 7800.,
@@ -144,7 +154,8 @@ MELES1=CALC_FLUI_STRU(VITE_FLUI  = _F(VITE_MIN  = vmin,
                      IMPRESSION=_F(PARA_COUPLAGE = 'OUI',
                                    DEFORMEE      = 'NON'))
 
-
+DEFI_FICHIER(ACTION='LIBERER', UNITE=70)
+DEFI_FICHIER(ACTION='LIBERER', UNITE=71)
 
 FREQ1_AC=RECU_FONCTION(
                  BASE_ELAS_FLUI=MELES1,
@@ -187,7 +198,7 @@ RPM01=DYNA_SPEC_MODAL(
           BASE_ELAS_FLUI=MELES1,
                 VITE_FLUI=vite,
                    EXCIT=_F(  INTE_SPEC_GENE = SPRJ1,),
-                OPTION='TOUT' 
+                OPTION='TOUT'
                )
 
 RPP01=REST_SPEC_PHYS(
@@ -219,6 +230,9 @@ TEST_TABLE(
 
 # TYPEFL2
 
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CA, ACCES='NEW', UNITE=70)
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=KA, ACCES='NEW', UNITE=71)
+
 MELES2=CALC_FLUI_STRU(VITE_FLUI  = _F(VITE_MIN  = vmin,
                                      VITE_MAX  = vmax,
                                      NB_POIN   = nb_poin),
@@ -229,6 +243,9 @@ MELES2=CALC_FLUI_STRU(VITE_FLUI  = _F(VITE_MIN  = vmin,
                      TYPE_FLUI_STRU=TYPEFL2,
                      IMPRESSION=_F(PARA_COUPLAGE = 'OUI',
                                    DEFORMEE      = 'NON'))
+
+DEFI_FICHIER(ACTION='LIBERER', UNITE=70)
+DEFI_FICHIER(ACTION='LIBERER', UNITE=71)
 
 
 
@@ -273,7 +290,7 @@ RPM02=DYNA_SPEC_MODAL(
           BASE_ELAS_FLUI=MELES2,
                 VITE_FLUI=vite,
                    EXCIT=_F(  INTE_SPEC_GENE = SPRJ2,),
-                OPTION='TOUT' 
+                OPTION='TOUT'
                )
 
 RPP02=REST_SPEC_PHYS(
@@ -305,6 +322,9 @@ TEST_TABLE(
 
 # TYPEFL3
 
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CA, ACCES='NEW', UNITE=70)
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=KA, ACCES='NEW', UNITE=71)
+
 MELES3=CALC_FLUI_STRU(VITE_FLUI  = _F(VITE_MIN  = vmin,
                                      VITE_MAX  = vmax,
                                      NB_POIN   = nb_poin),
@@ -315,6 +335,9 @@ MELES3=CALC_FLUI_STRU(VITE_FLUI  = _F(VITE_MIN  = vmin,
                      TYPE_FLUI_STRU=TYPEFL3,
                      IMPRESSION=_F(PARA_COUPLAGE = 'OUI',
                                    DEFORMEE      = 'NON'))
+
+DEFI_FICHIER(ACTION='LIBERER', UNITE=70)
+DEFI_FICHIER(ACTION='LIBERER', UNITE=71)
 
 
 
@@ -359,7 +382,7 @@ RPM03=DYNA_SPEC_MODAL(
           BASE_ELAS_FLUI=MELES3,
                 VITE_FLUI=vite,
                    EXCIT=_F(  INTE_SPEC_GENE = SPRJ3,),
-                OPTION='TOUT' 
+                OPTION='TOUT'
                )
 
 RPP03=REST_SPEC_PHYS(
@@ -392,6 +415,9 @@ TEST_TABLE(
 
 # TYPEFL4
 
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CA, ACCES='NEW', UNITE=70)
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=KA, ACCES='NEW', UNITE=71)
+
 MELES4=CALC_FLUI_STRU(VITE_FLUI  = _F(VITE_MIN  = vmin,
                                      VITE_MAX  = vmax,
                                      NB_POIN   = nb_poin),
@@ -403,7 +429,8 @@ MELES4=CALC_FLUI_STRU(VITE_FLUI  = _F(VITE_MIN  = vmin,
                      IMPRESSION=_F(PARA_COUPLAGE = 'OUI',
                                    DEFORMEE      = 'NON'))
 
-
+DEFI_FICHIER(ACTION='LIBERER', UNITE=70)
+DEFI_FICHIER(ACTION='LIBERER', UNITE=71)
 
 FREQ1_DE=RECU_FONCTION(
                  BASE_ELAS_FLUI=MELES4,
@@ -446,7 +473,7 @@ RPM04=DYNA_SPEC_MODAL(
           BASE_ELAS_FLUI=MELES4,
                 VITE_FLUI=vite,
                    EXCIT=_F(  INTE_SPEC_GENE = SPRJ4,),
-                OPTION='TOUT' 
+                OPTION='TOUT'
                )
 
 RPP04=REST_SPEC_PHYS(
