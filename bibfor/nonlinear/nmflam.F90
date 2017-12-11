@@ -42,6 +42,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/copisd.h"
 #include "asterfort/detrsd.h"
+#include "asterfort/diinst.h"
 #include "asterfort/freqom.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetc.h"
@@ -58,6 +59,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/vpcres.h"
 #include "asterfort/vpleci.h"
+#include "asterfort/nonlinDSPostTimeStepSave.h"
 !
 character(len=16), intent(in) :: option
 character(len=24), intent(in) :: model, mate, cara_elem
@@ -112,16 +114,16 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: linsta, l_hpp
-    integer :: nfreq, nfreqc, nbrss, maxitr, i, ljeveu, ibid, iret, nbborn
-    integer :: ldccvg, numord, nddle, nsta, ljeve2, cdsp, nbvec2, nbvect
-    real(kind=8) :: bande(2), r8bid, alpha, tolsor, precsh, fcorig, precdc, omecor, freqm, freqv
-    real(kind=8) :: freqa, freqr, csta
+    integer :: nfreq, nfreqc, nbrss, maxitr, ibid, nbborn
+    integer :: ldccvg, nddle, nsta, cdsp, nbvec2, nbvect, jv_para, i_freq
+    real(kind=8) :: freq_calc, freq_mini_abso, freq_abso, freq_mini
+    real(kind=8) :: bande(2), r8bid, alpha, tolsor, precsh, fcorig, precdc, omecor, inst
     character(len=1)  :: k1bid
     character(len=4)  :: mod45
     character(len=8)  :: sdmode, sdstab, method, arret
-    character(len=16) :: optmod, varacc, typmat, modrig, typres, k16bid, optiof, sturm, modri2
+    character(len=16) :: optmod, typmat, modrig, typres, k16bid, optiof, sturm, modri2
     character(len=16) :: stoper
-    character(len=19) :: matgeo, matas2, vecmod, champ, k19bid, champ2, vecmo2, eigsol
+    character(len=19) :: matgeo, matas2, k19bid, eigsol
     character(len=19) :: raide, masse
     character(len=24) :: k24bid
 !
@@ -131,6 +133,7 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 !
 ! - Initializations
 !
+    inst   = diinst(sddisc, nume_inst)
     matgeo = '&&NMFLAM.MAGEOM'
     matas2 = '&&NMFLAM.MATASS'
     linsta = ASTER_FALSE
@@ -229,116 +232,61 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
                 ibid, ibid, ibid, maxitr, bande, precsh, omecor, precdc, r8bid,&
                 r8bid, r8bid, r8bid, r8bid, tolsor, alpha)
 !
-! --- CALCUL MODAL PROPREMENT DIT
+! - Compute eigen values/vecteors
 !
     call nmop45(eigsol, l_hpp, mod45, sdmode, sdstab, ds_posttimestep)
-    
     call vpleci(eigsol, 'I', 1, k24bid, r8bid, nfreqc)
     call detrsd('EIGENSOLVER',eigsol)
-
+!
+! - No eigen value
+!
     if (nfreqc .eq. 0) then
-        freqr = r8vide()
-        numord = -1
         goto 999
     endif
 !
-! --- SELECTION DU MODE DE PLUS PETITE FREQUENCE
+! - Print info
 !
-    if (mod45 .eq. 'VIBR') then
-        varacc = 'FREQ'
-    else if (mod45 .eq. 'FLAM') then
-        varacc = 'CHAR_CRIT'
-    else
-        ASSERT(ASTER_FALSE)
-    endif
-    freqm = r8maem()
-    numord = 0
-    do i = 1, nfreqc
-        call rsadpa(sdmode, 'L', 1, varacc, i,&
-                    0, sjv=ljeveu)
-        freqv = zr(ljeveu)
-        freqa = abs(freqv)
-        if (freqa .lt. freqm) then
-            numord = i
-            freqm = freqa
-            freqr = freqv
-        endif
+    do i_freq = 1, nfreqc
         if (mod45 .eq. 'VIBR') then
-            call utmess('I', 'MECANONLINE6_10', si=i, sr=freqv)
+            call rsadpa(sdmode, 'L', 1, 'FREQ', i_freq, 0, sjv=jv_para)
+            call utmess('I', 'MECANONLINE6_10', si=i_freq, sr=zr(jv_para))
         else if (mod45 .eq. 'FLAM') then
-            call utmess('I', 'MECANONLINE6_11', si=i, sr=freqv)
+            call rsadpa(sdmode, 'L', 1, 'CHAR_CRIT', i_freq, 0, sjv=jv_para)
+            call utmess('I', 'MECANONLINE6_11', si=i_freq, sr=zr(jv_para))
         else
             ASSERT(ASTER_FALSE)
         endif
     end do
+    i_freq = 1
     if (nsta .ne. 0) then
-        call rsadpa(sdstab, 'L', 1, 'CHAR_STAB', 1,&
-                    0, sjv=ljeve2)
-        csta = zr(ljeve2)
-        call utmess('I', 'MECANONLINE6_12', si=1, sr=csta)
-    endif
-!
-! --- NOM DU MODE
-!
-    if (mod45 .eq. 'VIBR') then
-        vecmod = ds_posttimestep%mode_vibr_resu%eigen_vector
-    else if (mod45 .eq. 'FLAM') then
-        vecmod = ds_posttimestep%mode_flam_resu%eigen_vector
-        if (nsta .ne. 0) then
-            vecmo2 = ds_posttimestep%crit_stab_resu%eigen_vector
-        endif
-    else
-        ASSERT(ASTER_FALSE)
-    endif
-!
-! --- RECUPERATION DES MODES DANS LA SD MODE
-!
-    call rsexch('F', sdmode, 'DEPL', numord, champ, iret)
-    call copisd('CHAMP_GD', 'V', champ, vecmod)
-    if (nsta .ne. 0) then
-        call rsexch('F', sdstab, 'DEPL', 1, champ2, iret)
-        call copisd('CHAMP_GD', 'V', champ2, vecmo2)
-    endif
-!
-! --- AFFICHAGE DES MODES
-!
-    if (mod45 .eq. 'VIBR') then
-        call utmess('I', 'MECANONLINE6_14', sr=freqr)
-    else if (mod45 .eq. 'FLAM') then
-        call utmess('I', 'MECANONLINE6_15', sr=freqr)
-        if (nsta .ne. 0) then
-            call utmess('I', 'MECANONLINE6_16', sr=csta)
-        endif
-    else
-        ASSERT(ASTER_FALSE)
+        call rsadpa(sdstab, 'L', 1, 'CHAR_STAB', i_freq, 0, sjv=jv_para)
+        call utmess('I', 'MECANONLINE6_12', si=i_freq, sr=zr(jv_para))
     endif
 !
 ! --- DETECTION INSTABILITE SI DEMANDE
 !
     if (mod45 .eq. 'FLAM') then
-        call nmflin(ds_posttimestep, matas2, freqr, linsta)
+        freq_mini_abso = r8maem()
+        do i_freq = 1, nfreqc
+            call rsadpa(sdmode, 'L', 1, 'CHAR_CRIT', i_freq, 0, sjv=jv_para)
+            freq_calc = zr(jv_para)
+            freq_abso = abs(freq_calc)
+            if (freq_abso .lt. freq_mini_abso) then
+                freq_mini_abso = freq_abso
+                freq_mini      = freq_calc
+            endif
+        end do
+        call nmflin(ds_posttimestep, matas2, freq_mini, linsta)
         call nmcrel(sderro, 'CRIT_STAB', linsta)
     endif
-!
-! --- ARRET
 !
 999 continue
 !
 ! - Save results
 !
-    if (mod45 .eq. 'VIBR') then
-        ds_posttimestep%mode_vibr_resu%eigen_value = freqr
-        ds_posttimestep%mode_vibr_resu%eigen_index = numord
-    else if (mod45 .eq. 'FLAM') then
-        ds_posttimestep%mode_flam_resu%eigen_value = freqr
-        ds_posttimestep%mode_flam_resu%eigen_index = numord
-        if (nsta .ne. 0) then
-            ds_posttimestep%crit_stab_resu%eigen_value = csta
-            ds_posttimestep%crit_stab_resu%eigen_index = 1
-        endif
-    else
-        ASSERT(ASTER_FALSE)
-    endif
+    call nonlinDSPostTimeStepSave(mod45          , sdmode   , sdstab,&
+                                  inst           , nume_inst, nfreqc,&
+                                  ds_posttimestep)
 !
 ! --- DESTRUCTION DE LA SD DE STOCKAGE DES MODES
 !

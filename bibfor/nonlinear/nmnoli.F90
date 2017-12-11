@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine nmnoli(sddisc, sderro, ds_constitutive, ds_print , sdcrit  ,&
-                  fonact, sddyna, ds_posttimestep, modele   , mate    ,&
+                  fonact, sddyna, modele         , mate     ,&
                   carele, sdpilo, ds_measure     , ds_energy, ds_inout,&
                   sdcriq)
 !
@@ -38,7 +38,6 @@ implicit none
 !
 character(len=19) :: sddisc, sdcrit, sddyna, sdpilo
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 type(NL_DS_Energy), intent(in) :: ds_energy
 character(len=24) :: sderro
 character(len=24) :: modele, mate, carele
@@ -61,7 +60,6 @@ type(NL_DS_Print), intent(in) :: ds_print
 ! In  ds_print         : datastructure for printing parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
-! In  ds_posttimestep  : datastructure for post-treatment at each time step
 ! IN  SDDYNA : SD DYNAMIQUE
 ! IO  ds_inout         : datastructure for input/output management
 ! IN  SDCRIT : INFORMATIONS RELATIVES A LA CONVERGENCE
@@ -127,9 +125,9 @@ type(NL_DS_Print), intent(in) :: ds_print
 !
     if (.not.lreuse) then
         call utmess('I', 'ARCHIVAGE_4')
-        call nmarch(numins         , modele  , mate  , carele         , fonact   ,&
-                    ds_constitutive, ds_print, sddisc, ds_posttimestep, sdcrit   ,&
-                    ds_measure     , sderro  , sddyna, sdpilo         , ds_energy,&
+        call nmarch(numins         , modele  , mate  , carele, fonact   ,&
+                    ds_constitutive, ds_print, sddisc, sdcrit,&
+                    ds_measure     , sderro  , sddyna, sdpilo, ds_energy,&
                     ds_inout       , sdcriq  )
     endif
 !

@@ -181,7 +181,8 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! - Initializations for post-treatment at each time step
 !
-    call nonlinDSPostTimeStepInit(ds_algopara, ds_constitutive, ds_posttimestep)
+    call nonlinDSPostTimeStepInit(ds_inout%result,&
+                                  ds_algopara    , ds_constitutive, ds_posttimestep)
 !
 ! - Prepare list of loads (and late elements) for contact
 !
@@ -275,8 +276,8 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! - Create input/output datastructure
 !
-    call nmetcr(ds_inout       , model     , ds_constitutive%compor, fonact   , sddyna   ,&
-                ds_posttimestep, ds_contact, cara_elem, list_load)
+    call nmetcr(ds_inout  , model    , ds_constitutive%compor, fonact   , sddyna   ,&
+                ds_contact, cara_elem, list_load)
 !
 ! - Read initial state
 !
@@ -390,7 +391,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 ! - Prepare storing
 !
     call nmnoli(sddisc   , sderro, ds_constitutive, ds_print , sdcrit  ,&
-                fonact   , sddyna, ds_posttimestep, model    , mate    ,&
+                fonact   , sddyna, model          , mate     ,&
                 cara_elem, sdpilo, ds_measure     , ds_energy, ds_inout,&
                 sdcriq)
 !

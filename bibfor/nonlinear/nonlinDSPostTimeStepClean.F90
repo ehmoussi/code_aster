@@ -47,6 +47,6 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
     AS_DEALLOCATE(vk8 = ds_posttimestep%stab_para%list_dof_stab)
     call selectListClean(ds_posttimestep%crit_stab%selector)
     call selectListClean(ds_posttimestep%mode_vibr%selector)
-    !call nonlinDSTableIOClean(ds_posttimestep%table_io)
+    call nonlinDSTableIOClean(ds_posttimestep%table_io)
 !
 end subroutine

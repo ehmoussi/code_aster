@@ -81,7 +81,7 @@ implicit none
         aster_logical          :: l_cols_acti(39)
 ! ----- Total width of table
         integer                :: width
-! ----- eNumber of lines for title
+! ----- Number of lines for title
         integer                :: title_height
 ! ----- Separation line
         character(len=512)     :: sep_line
@@ -217,12 +217,12 @@ implicit none
         character(len=8)  :: result
         aster_logical     :: l_temp_nonl
         integer           :: nb_field
-        integer           :: nb_field_maxi = 22
-        type(NL_DS_Field) :: field(22)
+        integer           :: nb_field_maxi = 19
+        type(NL_DS_Field) :: field(19)
         character(len=8)  :: stin_evol
         aster_logical     :: l_stin_evol
-        aster_logical     :: l_field_acti(22)
-        aster_logical     :: l_field_read(22)
+        aster_logical     :: l_field_acti(19)
+        aster_logical     :: l_field_read(19)
         aster_logical     :: l_state_init
         aster_logical     :: l_reuse
         integer           :: didi_nume
@@ -534,6 +534,8 @@ implicit none
 ! ----- Instability parameters
         character(len=16)         :: instab_sign
         real(kind=8)              :: instab_prec
+! ----- Previous frequency
+        real(kind=8)              :: prev_freq = 1.d50
     end type NL_DS_Stability
 !
 ! - Type: spectral analysis
@@ -558,17 +560,11 @@ implicit none
         integer                :: level
     end type NL_DS_Spectral
 !
-! - Type: post_treatment at each time step - Results (provisoire)
-! 
-    type NL_DS_SpectralResults
-        real(kind=8)         :: eigen_value
-        integer              :: eigen_index
-        character(len=19)    :: eigen_vector
-    end type NL_DS_SpectralResults
-!
 ! - Type: post_treatment at each time step
 ! 
     type NL_DS_PostTimeStep
+! ----- Table in output datastructure
+        type(NL_DS_TableIO)   :: table_io
 ! ----- Compute CRIT_STAB / MODE_VIBR
         aster_logical         :: l_crit_stab
         aster_logical         :: l_mode_vibr
@@ -578,10 +574,6 @@ implicit none
         type(NL_DS_Stability) :: stab_para
 ! ----- Small strain hypothese for geometry matrix
         aster_logical         :: l_hpp
-! ----- Results (provisoire)
-        type(NL_DS_SpectralResults) :: mode_vibr_resu
-        type(NL_DS_SpectralResults) :: mode_flam_resu
-        type(NL_DS_SpectralResults) :: crit_stab_resu
     end type NL_DS_PostTimeStep
 !
 end module

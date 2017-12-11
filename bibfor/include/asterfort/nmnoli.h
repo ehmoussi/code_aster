@@ -18,7 +18,7 @@
 !
 interface
     subroutine nmnoli(sddisc, sderro, ds_constitutive, ds_print , sdcrit  ,&
-                      fonact, sddyna, ds_posttimestep, modele   , mate    ,&
+                      fonact, sddyna, modele         , mate     ,&
                       carele, sdpilo, ds_measure     , ds_energy, ds_inout,&
                       sdcriq)
         use NonLin_Datastructure_type
@@ -29,7 +29,6 @@ interface
         character(len=19) :: sdcrit
         integer :: fonact(*)
         character(len=19) :: sddyna
-        type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
         character(len=24) :: modele
         character(len=24) :: mate
         character(len=24) :: carele

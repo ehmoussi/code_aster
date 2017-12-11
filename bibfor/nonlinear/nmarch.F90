@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmarch(numins         , modele  , mate  , carele         , fonact   ,&
-                  ds_constitutive, ds_print, sddisc, ds_posttimestep, sdcrit   ,&
-                  ds_measure     , sderro  , sddyna, sdpilo         , ds_energy,&
+subroutine nmarch(numins         , modele  , mate       , carele, fonact   ,&
+                  ds_constitutive, ds_print, sddisc     , sdcrit,&
+                  ds_measure     , sderro  , sddyna     , sdpilo, ds_energy,&
                   ds_inout       , sdcriq  , ds_algorom_)
 !
 use NonLin_Datastructure_type
@@ -52,7 +52,6 @@ type(NL_DS_InOut), intent(in) :: ds_inout
 type(NL_DS_Measure), intent(inout) :: ds_measure
 type(NL_DS_Energy), intent(in) :: ds_energy
 character(len=19) :: sddisc, sdcrit, sddyna, sdpilo
-type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 character(len=24) :: sderro, sdcriq
 character(len=24) :: modele, mate, carele
@@ -75,7 +74,6 @@ type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
 ! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
-! In  ds_posttimestep  : datastructure for post-treatment at each time step
 ! IN  SDCRIT : VALEUR DES CRITERES DE CONVERGENCE
 ! IN  SDCRIQ : SD CRITERE QUALITE
 ! IN  SDERRO : SD ERREUR
@@ -168,8 +166,8 @@ type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
 !
 ! ----- Storing parameters
 !
-        call nmarc0(result, modele        , mate           , carele         , fonact,&
-                    sdcrit, sddyna        , ds_posttimestep, ds_constitutive, sdcriq,&
+        call nmarc0(result, modele        , mate           , carele, fonact,&
+                    sdcrit, sddyna        , ds_constitutive, sdcriq,&
                     sdpilo, list_load_resu, nume_store     , instan)
 !
 ! ----- Stroring fields

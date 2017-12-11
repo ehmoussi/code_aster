@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmetcr(ds_inout       , model     , compor   , list_func_acti, sddyna   ,&
-                  ds_posttimestep, ds_contact, cara_elem, list_load)
+subroutine nmetcr(ds_inout  , model    , compor   , list_func_acti, sddyna   ,&
+                  ds_contact, cara_elem, list_load)
 !
 use NonLin_Datastructure_type
 !
@@ -46,7 +46,6 @@ integer, intent(in) :: list_func_acti(*)
 type(NL_DS_Contact), intent(in) :: ds_contact
 character(len=24), intent(in) :: compor
 character(len=19), intent(in) :: sddyna
-type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 character(len=24), intent(in) :: cara_elem
 character(len=19), intent(in) :: list_load
 !
@@ -65,7 +64,6 @@ character(len=19), intent(in) :: list_load
 ! In  ds_contact       : datastructure for contact management
 ! In  list_func_acti   : list of active functionnalities
 ! In  sddyna           : name of dynamic parameters datastructure
-! In  ds_posttimestep  : datastructure for post-treatment at each time step
 ! In  list_load        : name of datastructure for list of loads
 !
 ! --------------------------------------------------------------------------------------------------
@@ -108,8 +106,8 @@ character(len=19), intent(in) :: list_load
 !
     do i_field = 1, nb_field
         field_type = ds_inout%field(i_field)%type
-        call nmetcc(field_type, algo_name, init_name      , &
-                    compor    , sddyna   , ds_posttimestep, ds_contact)
+        call nmetcc(field_type, algo_name, init_name ,&
+                    compor    , sddyna   , ds_contact)
         if (algo_name.ne.'XXXXXXXXXXXXXXXX') then
             ds_inout%field(i_field)%algo_name = algo_name
         endif

@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmarch(numins         , modele  , mate  , carele         , fonact   ,&
-                      ds_constitutive, ds_print, sddisc, ds_posttimestep, sdcrit   ,&
-                      ds_measure     , sderro  , sddyna, sdpilo         , ds_energy,&
+    subroutine nmarch(numins         , modele  , mate       , carele, fonact   ,&
+                      ds_constitutive, ds_print, sddisc     , sdcrit,&
+                      ds_measure     , sderro  , sddyna     , sdpilo, ds_energy,&
                       ds_inout       , sdcriq  , ds_algorom_)
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
@@ -31,7 +31,6 @@ interface
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         type(NL_DS_Print), intent(in) :: ds_print
         character(len=19) :: sddisc
-        type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
         character(len=19) :: sdcrit
         type(NL_DS_Measure), intent(inout) :: ds_measure
         character(len=24) :: sderro

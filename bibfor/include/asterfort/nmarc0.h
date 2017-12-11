@@ -15,12 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine nmarc0(result, modele        , mate           , carele         , fonact,&
-                      sdcrit, sddyna        , ds_posttimestep, ds_constitutive, sdcriq,&
+    subroutine nmarc0(result, modele        , mate           , carele   , fonact,&
+                      sdcrit, sddyna        , ds_constitutive, sdcriq   ,&
                       sdpilo, list_load_resu, numarc         , time_curr)
         use NonLin_Datastructure_type
         character(len=8) :: result
@@ -30,7 +28,6 @@ interface
         integer :: fonact(*)
         character(len=19) :: sdcrit
         character(len=19) :: sddyna
-        type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         character(len=24) :: sdcriq
         character(len=19) :: sdpilo

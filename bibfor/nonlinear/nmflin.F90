@@ -62,8 +62,9 @@ real(kind=8) :: freqr
 !
 ! - Get parameters
 !
-    freqr0 = ds_posttimestep%mode_flam_resu%eigen_value
+    freqr0 = ds_posttimestep%stab_para%prev_freq
     if (abs(freqr0) .gt. 1.d30) then
+        ds_posttimestep%stab_para%prev_freq = freqr
         freqr0 = freqr
     endif
     l_geom_matr = ds_posttimestep%stab_para%l_geom_matr
