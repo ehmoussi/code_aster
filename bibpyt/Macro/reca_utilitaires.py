@@ -36,7 +36,7 @@ except:
 try:
     import aster
     CPU_Exception = aster.ArretCPUError
-    from code_aster.Cata.Commands import (INFO_EXEC_ASTER, DEFI_FICHIER,
+    from code_aster.Commands import (INFO_EXEC_ASTER, DEFI_FICHIER,
                                           IMPR_FONCTION, DETRUIRE)
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS, MessageLog

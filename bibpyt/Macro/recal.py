@@ -572,7 +572,7 @@ class CALCULS_ASTER:
             from code_aster.Cata.Syntax import _F
 
             # Declaration de toutes les commandes Aster
-            from code_aster.Cata.Commands import *
+            from code_aster.Commands import *
         except Exception, e:
             raise Exception("Le mode INCLUDE doit etre lance depuis Aster : \nErreur : %s" % e)
 
@@ -650,7 +650,8 @@ class CALCULS_ASTER:
 
 
             # Destruction des concepts Aster
-            liste_concepts = self.jdc.g_context.keys()
+            #liste_concepts = self.jdc.g_context.keys()
+            liste_concepts = []
             for c in liste_concepts:
                 DETRUIRE(OBJET=_F(CHAINE=c), INFO=1);
 
