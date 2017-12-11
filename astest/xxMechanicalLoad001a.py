@@ -54,7 +54,31 @@ CHARGE=AFFE_CHAR_MECA(MODELE=MODELE,
                                    DY=0.0,
                                    DZ=0.0)));
 
-# Test trivial
-test.assertTrue( True )
+CHARGC=AFFE_CHAR_MECA_C(MODELE=MODELE,
+                      DDL_IMPO=(_F(GROUP_NO='DROITE',
+                                   DX=0.0,
+                                   DY=0.0,
+                                   DZ=0.0,
+                                   DRX=0.0,
+                                   DRY=0.0,
+                                   DRZ=0.0),
+                                _F(GROUP_NO='GAUCHE',
+                                   DX=0.0,
+                                   DY=0.0,
+                                   DZ=0.0,
+                                   DRX=0.0,
+                                   DRY=0.0,
+                                   DRZ=0.0),
+                                _F(GROUP_NO='APPUI_1',
+                                   DX=0.0,
+                                   DY=0.0,
+                                   DZ=0.0),
+                                _F(GROUP_NO='APPUI_2',
+                                   DX=0.0,
+                                   DY=0.0,
+                                   DZ=0.0)));
+
+test.assertEqual(CHARGE.getType(), "CHAR_MECA")
+test.assertEqual(CHARGC.getType(), "CHAR_MECA")
 
 test.printSummary()
