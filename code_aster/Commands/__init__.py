@@ -92,6 +92,7 @@ from .defi_mater_gc import DEFI_MATER_GC
 from .defi_nappe import DEFI_NAPPE
 # from .defi_squelette import DEFI_SQUELETTE
 from .defi_spec_turb import DEFI_SPEC_TURB
+from .defi_trc import DEFI_TRC
 from .detruire import DETRUIRE
 from .dyna_non_line import DYNA_NON_LINE
 from .dyna_vibra import DYNA_VIBRA
