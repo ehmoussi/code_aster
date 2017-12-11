@@ -277,7 +277,7 @@ subroutine chprec(chou)
                         proldr, prolga, 2, base, icoret)
         else
             if (n5 .ne. 0) then
-                call chmima(resuco, nomch, typmax, noch19)
+                call chmima(resuco, nomch, tychlu, typmax, noch19)
             else
                 knum = '&&'//nompro//'.NUME_ORDRE'
                 call getvr8(' ', 'PRECISION', scal=epsi, nbret=np)
@@ -350,6 +350,7 @@ subroutine chprec(chou)
     call utmess('F', 'MODELISA4_19')
 !
  20 continue
+ 
     call titre()
 !
 !

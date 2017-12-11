@@ -19,9 +19,10 @@
 !
 !
 interface
-    subroutine chmima(nomsd, nomsy, typmax, nocham)
+    subroutine chmima(nomsd, nomsy, typcha, typmax, nocham)
         character(len=*) :: nomsd
         character(len=*) :: nomsy
+        character(len=*) :: typcha
         character(len=*) :: typmax
         character(len=*) :: nocham
     end subroutine chmima

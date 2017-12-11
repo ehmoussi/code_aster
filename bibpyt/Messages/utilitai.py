@@ -138,10 +138,15 @@ Erreur utilisateur dans la commande CREA_CHAMP.
 """),
 
 
-
-
-
-
+    25 : _(u"""
+Erreur utilisateur dans la commande CREA_RESU / TYPE_MAXI= ...
+  La commande exige que tous les champs pour lesquels on veut extraire
+  le maximum aient la même numérotation pour leurs composantes.
+  Ce n'est pas le cas pour cette structure de donnée SD_RESULTAT.
+  
+  Cela est certainement du à la présence de mailles tardives à certains instants
+  de calcul et pas à d'autres.
+"""),
 
     26 : _(u"""
 Erreur utilisateur dans la commande CREA_RESU / TYPE_MAXI= ...
