@@ -63,6 +63,7 @@ from .calc_modes import CALC_MODES
 from .calc_table import CALC_TABLE
 from .calc_vect_elem import CALC_VECT_ELEM
 from .comb_matr_asse import COMB_MATR_ASSE
+from .copier import COPIER
 from .crea_champ import CREA_CHAMP
 from .crea_maillage import CREA_MAILLAGE
 from .crea_resu import CREA_RESU
