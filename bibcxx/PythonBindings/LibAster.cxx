@@ -110,6 +110,7 @@
 #include "PythonBindings/ResultNamingInterface.h"
 #include "PythonBindings/LinearDisplacementEvolutionContainerInterface.h"
 #include "PythonBindings/MeshCoordinatesFieldInterface.h"
+#include "PythonBindings/DynamicResultsContainerInterface.h"
 #include "PythonBindings/FullDynamicResultsContainerInterface.h"
 #include "PythonBindings/GeneralizedModeContainerInterface.h"
 #include "PythonBindings/ListOfFloatsInterface.h"
@@ -238,6 +239,7 @@ BOOST_PYTHON_MODULE(libaster)
     exportGeneralizedResultsContainerToPython();
     exportLinearDisplacementEvolutionContainerToPython();
     exportMeshCoordinatesFieldToPython();
+    exportDynamicResultsContainerToPython();
     exportFullDynamicResultsContainerToPython();
     exportGeneralizedModeContainerToPython();
 

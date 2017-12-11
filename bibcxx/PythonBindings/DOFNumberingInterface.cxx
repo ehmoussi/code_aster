@@ -48,5 +48,6 @@ void exportDOFNumberingToPython()
             &initFactoryPtr< DOFNumberingInstance,
                              std::string >) )
         .def( "setSupportModel", &DOFNumberingInstance::setSupportModel )
+        .def( "getSupportModel", &DOFNumberingInstance::getSupportModel )
     ;
 };

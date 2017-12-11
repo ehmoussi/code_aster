@@ -49,4 +49,13 @@ class ComputeElementaryMatrix(ExecuteCommand):
 
         self._result = ElementaryMatrix(myType)
 
+    def post_exec(self, keywords):
+        """Store references to ElementaryMatrix objects.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords, changed
+                in place.
+        """
+        self._result.setSupportModel(keywords['MODELE'])
+
 CALC_MATR_ELEM = ComputeElementaryMatrix.run

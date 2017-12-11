@@ -35,6 +35,18 @@ class NumberingCreation(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         self._result = DOFNumbering()
+        
+    def post_exec(self, keywords):
+        """Store references to ElementaryMatrix objects.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords, changed
+                in place.
+        """
+        if keywords.has_key('MODELE'):
+            self._result.setSupportModel(keywords['MODELE'])
+        else:
+            self._result.setSupportModel(keywords['MATR_RIGI'][0].getSupportModel())
 
 
 NUME_DDL = NumberingCreation.run

@@ -41,5 +41,14 @@ class VibrationDynamics(ExecuteCommand):
             raise NotImplementedError("Types of analysis {0!r} and {0!r} not yet "
                                       "implemented".format(typ, base))
 
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        if keywords["BASE_CALCUL"] == "PHYS":
+            self._result.setModel(keywords["MATR_MASS"].getDOFNumbering().getSupportModel())
+
 
 DYNA_VIBRA = VibrationDynamics.run

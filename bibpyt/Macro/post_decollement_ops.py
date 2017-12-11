@@ -62,13 +62,7 @@ def post_decollement_ops(self, RESULTAT, NOM_CHAM, NOM_CMP, GROUP_MA, INFO, **ar
     self.DeclareOut('C_out', self.sd)
 
     # on recupere le concept maillage
-    iret, ibid, nom_mo = aster.dismoi('MODELE', RESULTAT.nom, 'RESULTAT', 'F')
-    if nom_mo == '#AUCUN' :
-      iret, ibid, numddl = aster.dismoi('NUME_DDL', RESULTAT.nom, 'RESU_DYNA', 'F')
-      iret, ibid, nom_ma = aster.dismoi('NOM_MAILLA', numddl, 'NUME_DDL', 'F')
-    else :
-      iret, ibid, nom_ma = aster.dismoi('NOM_MAILLA', nom_mo.strip(), 'MODELE', 'F')
-    MAILLAGE = self.get_concept(nom_ma.strip())
+    MAILLAGE = RESULTAT.getModel().getSupportMesh()
 
     # Creation du groupe de noeuds 'PDECOL'
     DEFI_GROUP(reuse=MAILLAGE, MAILLAGE=MAILLAGE,
@@ -114,7 +108,9 @@ def post_decollement_ops(self, RESULTAT, NOM_CHAM, NOM_CMP, GROUP_MA, INFO, **ar
 
     __surf = __tbSurf0.EXTR_TABLE().values()['INTE_X1'][0]
 
-    __linst = RESULTAT.LIST_VARI_ACCES()['INST']
+    __linst = aster.GetResu(RESULTAT.get_name(), "VARI_ACCES")['INST']
+
+
 
     # Calcul de la surface des noeuds décollés
     __pct = []
@@ -160,4 +156,4 @@ def post_decollement_ops(self, RESULTAT, NOM_CHAM, NOM_CMP, GROUP_MA, INFO, **ar
     if INFO > 1:
         IMPR_TABLE(UNITE=6,
                    TABLE=C_out)
-    return ier
+    return C_out

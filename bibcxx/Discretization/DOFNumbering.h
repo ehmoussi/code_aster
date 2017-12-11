@@ -221,6 +221,12 @@ public:
             throw std::runtime_error( "It is not allowed to defined Model and ElementaryMatrix together" );
         _supportModel = currentModel;
     };
+    /**
+     * @brief Get model
+     */
+    ModelPtr getSupportModel() throw ( std::runtime_error ){
+        return _supportModel;
+    };
 };
 
 /**

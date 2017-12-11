@@ -43,5 +43,6 @@ class AssembleMatrixOperator(ExecuteCommand):
                 in place.
         """
         self._result.appendElementaryMatrix(keywords['MATR_ELEM'])
+        self._result.setDOFNumbering(keywords['NUME_DDL'])
 
 ASSE_MATRICE = AssembleMatrixOperator.run
