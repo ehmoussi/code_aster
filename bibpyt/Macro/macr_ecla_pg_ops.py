@@ -21,9 +21,10 @@
 
 
 def macr_ecla_pg_ops(self, RESULTAT, MAILLAGE, RESU_INIT, MODELE_INIT,
-                     TOUT, GROUP_MA, MAILLE,
-                     SHRINK, TAILLE_MIN,
-                     NOM_CHAM, TOUT_ORDRE, NUME_ORDRE, LIST_ORDRE, INST, LIST_INST, PRECISION, CRITERE,
+                     TOUT=None, GROUP_MA=None, MAILLE=None,
+                     SHRINK=None, TAILLE_MIN=None,
+                     NOM_CHAM=None, TOUT_ORDRE=None, NUME_ORDRE=None, LIST_ORDRE=None,
+                     INST=None, LIST_INST=None, PRECISION=None, CRITERE=None,
                      **args):
     """
        Ecriture de la macro macr_ecla_pg
@@ -50,12 +51,11 @@ def macr_ecla_pg_ops(self, RESULTAT, MAILLAGE, RESU_INIT, MODELE_INIT,
     if MAILLE:
         motscles['MAILLE'] = MAILLE
 
-    self.DeclareOut('ma2', MAILLAGE)
     ma2 = CREA_MAILLAGE(ECLA_PG=_F(MODELE=MODELE_INIT,  NOM_CHAM=NOM_CHAM,
                                    SHRINK=SHRINK, TAILLE_MIN=TAILLE_MIN, **motscles))
+    self.register_result(ma2, MAILLAGE)
 
     # Appel à CREA_RESU :
-    typ2 = AsType(RESU_INIT).__name__
     if TOUT_ORDRE:
         motscles['TOUT_ORDRE'] = TOUT_ORDRE
     if NUME_ORDRE != None:
@@ -67,10 +67,10 @@ def macr_ecla_pg_ops(self, RESULTAT, MAILLAGE, RESU_INIT, MODELE_INIT,
     if INST != None:
         motscles['INST'] = INST
 
-    self.DeclareOut('resu2', RESULTAT)
-    resu2 = CREA_RESU(OPERATION='ECLA_PG', TYPE_RESU=string.upper(typ2),
+    resu2 = CREA_RESU(OPERATION='ECLA_PG', TYPE_RESU=RESU_INIT.getType(),
                       ECLA_PG=_F(
                       MODELE_INIT=MODELE_INIT, RESU_INIT=RESU_INIT, NOM_CHAM=NOM_CHAM,
                                 MAILLAGE=ma2, **motscles))
-    return ier
+    self.register_result(resu2, RESULTAT)
+    return
 #

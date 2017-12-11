@@ -20,6 +20,7 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import (EvolutiveLoad, EvolutiveThermalLoad,
+                       NonLinearEvolutionContainer,
                        LinearDisplacementEvolutionContainer,
                        FourierElasContainer, MultElasContainer)
 from .ExecuteCommand import ExecuteCommand
@@ -40,6 +41,8 @@ class ResultCreator(ExecuteCommand):
             self._result = EvolutiveLoad()
         elif typ == "EVOL_THER":
             self._result = EvolutiveThermalLoad()
+        elif typ == "EVOL_NOLI":
+            self._result = NonLinearEvolutionContainer()
         elif typ == "EVOL_ELAS":
             self._result = LinearDisplacementEvolutionContainer()
         elif typ == "FOURIER_ELAS":
