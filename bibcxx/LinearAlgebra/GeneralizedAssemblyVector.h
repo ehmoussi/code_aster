@@ -52,7 +52,7 @@ public:
      * @brief Constructeur
      */
     GenericGeneralizedAssemblyVectorInstance( const std::string name ):
-        DataStructure( name, 19, "MATR_ASSE_GENE", Permanent ),
+        DataStructure( name, 19, "VECT_ASSE_GENE", Permanent ),
         _desc( JeveuxVectorDouble( getName() + ".DISC" ) ),
         _refe( JeveuxVectorChar24( getName() + ".REFE" ) )
     {};
@@ -75,9 +75,9 @@ private:
      */
     template< class type = ValueType >
     typename std::enable_if< std::is_same< type, double >::value, void>::type
-    setMatrixType()
+    setVectorType()
     {
-        setType( "MATR_ASSE_GENE_R" );
+        setType( "VECT_ASSE_GENE" );
     };
 
     /**
@@ -85,9 +85,9 @@ private:
      */
     template< class type = ValueType >
     typename std::enable_if< std::is_same< type, DoubleComplex >::value, void>::type
-    setMatrixType()
+    setVectorType()
     {
-        setType( "MATR_ASSE_GENE_C" );
+        setType( "VECT_ASSE_GENE_C" );
     };
 
 public:
@@ -113,7 +113,7 @@ public:
         GenericGeneralizedAssemblyVectorInstance( name ),
         _valm( JeveuxVector< ValueType >( getName() + ".VALE" ) )
     {
-        GeneralizedAssemblyVectorInstance< ValueType >::setMatrixType();
+        GeneralizedAssemblyVectorInstance< ValueType >::setVectorType();
     };
 };
 
