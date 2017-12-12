@@ -66,18 +66,33 @@ DataStructure::~DataStructure()// throw ( std::runtime_error )
     std::cout << "DataStructure.destr: " << this->getName() << std::endl;
 #endif
     std::string nameWithoutBlanks = trim( _name );
-    if ( nameWithoutBlanks == "" || _memoryType == Temporary )
+    if ( nameWithoutBlanks == "" )
         return;
 #ifdef _DEBUG_CXX
+    _tco->deallocate();
     std::string base( " " );
-    long pos = 0;
+    long pos = 1;
     long nbval2 = 0;
     long retour = 0;
     JeveuxChar24 nothing( " " );
+    if( nameWithoutBlanks == "&2" )
+    {
+        retour = 1;
+    }
     CALLO_JELSTC( base, nameWithoutBlanks, &pos,
                   &nbval2, nothing, &retour );
-    if ( nbval2 != 0 )
-        throw std::runtime_error( "Remaining jeveux objects in " + _name );
+    if ( retour != 0 )
+    {
+        JeveuxVectorChar24 test( "&&TMP" );
+        test->allocate( Temporary, -retour );
+        long nbval2 = -retour;
+        CALLO_JELSTC( base, nameWithoutBlanks, &pos,
+                      &nbval2, (*test)[0], &retour );
+        std::cout << "Remaining jeveux objects in " << _name << std::endl;
+        std::cout << "List of objects:" << std::endl;
+        for( int i = 0; i < retour; ++i )
+            std::cout << "  - " << (*test)[i].toString() << std::endl;
+    }
 #endif
 };
 
