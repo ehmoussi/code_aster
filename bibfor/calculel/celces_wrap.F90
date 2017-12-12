@@ -21,7 +21,6 @@ subroutine celces_wrap(celz, basez, cesz)
 #include "asterfort/celces.h"
 !
     character(len=*) :: celz, cesz, basez
-    character(len=3) :: copy_nan
 ! ------------------------------------------------------------------
 ! BUT : TRANSFORMER UN CHAM_ELEM (CELZ) EN CHAM_ELEM_S (CESZ)
 !       LES ELEMENTS DONT LA MAILLE SUPPORT EST TARDIVE SONT
@@ -33,6 +32,5 @@ subroutine celces_wrap(celz, basez, cesz)
 ! CESZ    IN/JXOUT K19 : SD CHAM_ELEM_S A CREER
 !     ------------------------------------------------------------------
 !
-    copy_nan = 'OUI'
-    call celces(celz, basez, cesz, copy_nan)
+    call celces(celz, basez, cesz)
 end subroutine

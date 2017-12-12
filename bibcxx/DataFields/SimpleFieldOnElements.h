@@ -58,6 +58,10 @@ private:
     int                     _nbNodes;
     /** @brief Nombre de composantes */
     int                     _nbComp;
+    /** @brief Number of points */
+    int                     _nbPt;
+    /** @brief Number of under points */
+    int                     _nbSpt;
 
 public:
     /**
@@ -78,7 +82,9 @@ public:
                     _values( JeveuxVector<ValueType>( getName() + ".CESV" ) ),
                     _allocated( JeveuxVectorLogical( getName() + ".CESL" ) ),
                     _nbNodes( 0 ),
-                    _nbComp( 0 )
+                    _nbComp( 0 ),
+                    _nbPt( 0 ),
+                    _nbSpt( 0 )
     {
     };
 
@@ -94,7 +100,9 @@ public:
                     _values( JeveuxVector<ValueType>( getName() + ".CESV" ) ),
                     _allocated( JeveuxVectorLogical( getName() + ".CESL" ) ),
                     _nbNodes( 0 ),
-                    _nbComp( 0 )
+                    _nbComp( 0 ),
+                    _nbPt( 0 ),
+                    _nbSpt( 0 )
     {
     };
 
@@ -144,7 +152,9 @@ public:
         {
             _nbNodes = (*_size)[0];
             _nbComp = (*_size)[1];
-            if( _values->size() != _nbNodes*_nbComp )
+            _nbPt = (*_size)[2];
+            _nbSpt = (*_size)[3];
+            if( _values->size() != _nbNodes*_nbComp*_nbPt*_nbSpt )
                 throw std::runtime_error( "Programming error" );
         }
         return retour;

@@ -318,9 +318,9 @@ void DEFSSPP(CORICH,corich, const char*, STRING_SIZE, const char*, STRING_SIZE,
 void DEFSSS(CNOCNS,cnocns, const char*, STRING_SIZE, const char*, STRING_SIZE,
                            const char*, STRING_SIZE);
 
-#define CALLO_CELCES(a, b, c) CALLOOO(CELCES, celces, a, b, c)
-void DEFSSS(CELCES,celces, const char*, STRING_SIZE, const char*, STRING_SIZE,
-                           const char*, STRING_SIZE);
+#define CALLO_CELCES_WRAP(a, b, c) CALLOOO(CELCES_WRAP, celces_wrap, a, b, c)
+void DEFSSS(CELCES_WRAP,celces_wrap, const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                     const char*, STRING_SIZE);
 
 #define CALLO_LRMJOI_WRAP(a, b) CALLOO(LRMJOI_WRAP, lrmjoi_wrap, a, b)
 void DEFSS(LRMJOI_WRAP,lrmjoi_wrap, const char*, STRING_SIZE, const char*, STRING_SIZE);
