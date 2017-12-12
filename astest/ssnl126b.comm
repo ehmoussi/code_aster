@@ -38,7 +38,7 @@ CSEL=AFFE_CHAR_MECA(MODELE=modele,
                   FORCE_FACE=_F(GROUP_MA='EFFORT',
                                 FX=-20000000.0,),);
 
-acier=DEFI_MATERIAU(ELAS=_F(E=210000000000.0,
+acier=DEFI_MATERIAU(ELAS=_F(E=210000000000.0,RHO=7800.,
                             NU=0.3,),
                     ECRO_LINE=_F(D_SIGM_EPSI=70000000000.0,
                                  SY=4000000.0,),);
@@ -236,6 +236,35 @@ TEST_RESU(CHAM_NO=(_F(
                       PRECISION=1.E-4,
                      ),
                    ),)
+# Création d'une SD MODE_MECA
+MODES = CREA_RESU(OPERATION='AFFE',
+                  TYPE_RESU='MODE_MECA',
+                  AFFE=(_F(CHAM_GD=M_FLAMB1,NUME_MODE=1),
+                        _F(CHAM_GD=M_FLAMB2,NUME_MODE=2),),
+                  NOM_CHAM='DEPL',)
+
+
+RIGIELEM=CALC_MATR_ELEM(MODELE=modele,
+                        CHAM_MATER=ch_mat,
+                        OPTION='RIGI_MECA',
+                        CHARGE=CC        )
+
+MASSELEM=CALC_MATR_ELEM(MODELE=modele,
+                        CHAM_MATER=ch_mat,
+                        OPTION='MASS_MECA',
+                        CHARGE=CC        )
+
+
+NUMEROTA=NUME_DDL(  MATR_RIGI=RIGIELEM )
+
+MATRRIGI=ASSE_MATRICE(  MATR_ELEM=RIGIELEM,  NUME_DDL=NUMEROTA )
+
+MATRMASS=ASSE_MATRICE(  MATR_ELEM=MASSELEM,  NUME_DDL=NUMEROTA )
+
+MODES = NORM_MODE(reuse =MODES,
+                  MODE=MODES,
+                  NORME='EUCL',MASSE=MATRMASS,RAIDE=MATRRIGI)
+
 
 
 FIN();
