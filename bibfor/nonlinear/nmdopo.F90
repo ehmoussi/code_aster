@@ -127,25 +127,26 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
                     isdefault=iarg)
         ds_posttimestep%mode_vibr%type_matr_rigi = type_matr_rigi
 ! ----- How to seek eigen values
+        call getvtx(keywfact, 'OPTION', iocc=iocc, scal=option, nbret=iret,&
+                    isdefault=iarg)
         l_small = ASTER_FALSE
         l_strip = ASTER_FALSE
-        call getvr8(keywfact, 'BANDE', iocc=iocc, nbval=2, vect=strip,&
-                    nbret=iret, isdefault=iarg)
-        if (iret .eq. 0) then
-            l_small = ASTER_TRUE
-        else
+        if (option .eq. 'BANDE') then
+            call getvr8(keywfact, 'FREQ', iocc=iocc, nbval=2, vect=strip,&
+                        nbret=iret, isdefault=iarg)
             l_strip = ASTER_TRUE
+            ds_posttimestep%mode_vibr%strip_bounds(1) = omega2(strip(1))
+            ds_posttimestep%mode_vibr%strip_bounds(2) = omega2(strip(2))
+        elseif (option .eq. 'PLUS_PETITE') then
+            call getvis(keywfact, 'NMAX_FREQ', iocc=iocc, scal=nb_eigen, nbret=iret,&
+                        isdefault=iarg)
+            l_small = ASTER_TRUE
+            ds_posttimestep%mode_vibr%nb_eigen = nb_eigen
+        else
+            ASSERT(ASTER_FALSE)
         endif
         ds_posttimestep%mode_vibr%l_small = l_small
         ds_posttimestep%mode_vibr%l_strip = l_strip
-! ----- Get parameters to seek eigen values
-        if (l_strip) then
-            ds_posttimestep%mode_vibr%strip_bounds(1) = omega2(strip(1))
-            ds_posttimestep%mode_vibr%strip_bounds(2) = omega2(strip(2))
-        endif
-        call getvis(keywfact, 'NB_FREQ', iocc=iocc, scal=nb_eigen, nbret=iret,&
-                    isdefault=iarg)
-        ds_posttimestep%mode_vibr%nb_eigen = nb_eigen
 ! ----- Get parameters for eigen solver
         call getvis(keywfact, 'COEF_DIM_ESPACE', iocc=iocc, scal=coef_dim_espace, nbret=iret,&
                     isdefault=iarg)
@@ -159,25 +160,26 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
     if (l_crit_stab) then
         keywfact = 'CRIT_STAB'
 ! ----- How to seek eigen values
+        call getvtx(keywfact, 'OPTION', iocc=iocc, scal=option, nbret=iret,&
+                    isdefault=iarg)
         l_small = ASTER_FALSE
         l_strip = ASTER_FALSE
-        call getvr8(keywfact, 'CHAR_CRIT', iocc=iocc, nbval=2, vect=strip,&
-                    nbret=iret, isdefault=iarg)
-        if (iret .eq. 0) then
-            l_small = ASTER_TRUE
-        else
+        if (option .eq. 'BANDE') then
+            call getvr8(keywfact, 'CHAR_CRIT', iocc=iocc, nbval=2, vect=strip,&
+                        nbret=iret, isdefault=iarg)
             l_strip = ASTER_TRUE
+            ds_posttimestep%crit_stab%strip_bounds(1) = strip(1)
+            ds_posttimestep%crit_stab%strip_bounds(2) = strip(2)
+        elseif (option .eq. 'PLUS_PETITE') then
+            call getvis(keywfact, 'NMAX_CHAR_CRIT', iocc=iocc, scal=nb_eigen, nbret=iret,&
+                        isdefault=iarg)
+            l_small = ASTER_TRUE
+            ds_posttimestep%crit_stab%nb_eigen = nb_eigen
+        else
+            ASSERT(ASTER_FALSE)
         endif
         ds_posttimestep%crit_stab%l_small = l_small
         ds_posttimestep%crit_stab%l_strip = l_strip
-! ----- Get parameters to seek eigen values
-        if (l_strip) then
-            ds_posttimestep%crit_stab%strip_bounds(1) = strip(1)
-            ds_posttimestep%crit_stab%strip_bounds(2) = strip(2)
-        endif
-        call getvis(keywfact, 'NB_MODE', iocc=iocc, scal=nb_eigen, nbret=iret,&
-                    isdefault=iarg)
-        ds_posttimestep%crit_stab%nb_eigen = nb_eigen
 ! ----- Get parameters for eigen solver
         call getvis(keywfact, 'COEF_DIM_ESPACE', iocc=iocc, scal=coef_dim_espace, nbret=iret,&
                     isdefault=iarg)
