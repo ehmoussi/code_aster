@@ -108,7 +108,9 @@ public:
         SimpleFieldOnElementsValueTypePtr toReturn( new SimpleFieldOnElementsValueTypeInstance( getMemoryType() ) );
         const std::string resultName = toReturn->getName();
         const std::string inName = getName();
-        CALLO_CELCES( inName, JeveuxMemoryTypesNames[ getMemoryType() ], resultName );
+        const std::string copyNan( "OUI" );
+        CALLO_CELCES_WRAP( inName, JeveuxMemoryTypesNames[ getMemoryType() ], resultName );
+        toReturn->updateValuePointers();
         return toReturn;
     };
 

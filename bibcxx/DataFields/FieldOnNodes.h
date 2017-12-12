@@ -205,6 +205,7 @@ public:
         const std::string inName = getName();
         CALLO_CNOCNS( inName, JeveuxMemoryTypesNames[ getMemoryType() ],
                      resultName );
+        toReturn->updateValuePointers();
         return toReturn;
     };
 
