@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine nmop45(eigsol, l_hpp, mod45, modes, modes2, ds_posttimestep_)
+subroutine nmop45(eigsol, l_hpp, mod45, modes, modes2, ds_posttimestep_, nfreq_calibr_)
 !
 use NonLin_Datastructure_type
 !
@@ -52,6 +52,7 @@ character(len=4)  , intent(in) :: mod45
 character(len=8)  , intent(in) :: modes, modes2
 character(len=19) , intent(in) :: eigsol
 type(NL_DS_PostTimeStep), optional, intent(in) :: ds_posttimestep_
+integer, optional, intent(out) :: nfreq_calibr_
 !
 ! ======================================================================
 !        ROUTINE DE CALCUL DE CRITERE DE STABILITE VIA UNE RESOLUTION
@@ -73,7 +74,7 @@ type(NL_DS_PostTimeStep), optional, intent(in) :: ds_posttimestep_
 !
     integer           :: iret, ibid, npivot, neqact, mxresf, nblagr,nbddl, nbddl2, un, lresur
     integer           :: nconv, ifm, niv, neq, lraide, eddl, eddl2, jstab, iauxr
-    integer           :: nsta, nddle
+    integer           :: nsta, nddle, nfreq_calibr
     real(kind=8)      :: omemin, omemax, omeshi, vpinf, vpmax, r8bid, csta
     complex(kind=8)   :: cbid
     character(len=4)  :: mod45b
@@ -129,7 +130,13 @@ type(NL_DS_PostTimeStep), optional, intent(in) :: ds_posttimestep_
     veclag='&&NMOP45.DDL.BLOQ.CINE'
     matopa='&&NMOP45.DYN_FAC_C '
     call vpini1(eigsol, modes, solveu, typcon, vecblo, veclag, k24bid, matopa, matopa, iret,&
-                nblagr, neqact, npivot, ibid, omemax, omemin, omeshi, cbid, mod45)
+                nblagr, neqact, npivot, ibid, omemax, omemin, omeshi, cbid, mod45, nfreq_calibr)
+
+    if (present(nfreq_calibr_)) then
+        nfreq_calibr_ = nfreq_calibr
+    endif
+
+
     if (iret.ne.0) goto 80
     
 !

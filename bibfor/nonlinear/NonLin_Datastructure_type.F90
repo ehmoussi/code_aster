@@ -556,8 +556,8 @@ implicit none
         integer                :: coef_dim_espace
 ! ----- Selector (when spectral analysis occurs)
         type(NL_DS_SelectList) :: selector
-! ----- Level of computation (number of eigenvalues, eigenvalue, eigenvalue+eigenvector)
-        integer                :: level
+! ----- Level of computation (number of eigenvalues or eigenvalue+eigenvector)
+        character(len=16)      :: level
     end type NL_DS_Spectral
 !
 ! - Type: post_treatment at each time step

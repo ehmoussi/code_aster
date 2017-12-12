@@ -19,7 +19,7 @@
 subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
                   veclag, vecrig, matpsc, matopa, iretr,&
                   nblagr, neqact, npivot, nstoc, omemax,&
-                  omemin, omeshi, sigma, mod45)
+                  omemin, omeshi, sigma, mod45 , nfreq_calibr_)
 ! PREPARATION DES ASPECTS NUMERIQUES POUR MODE_ITER_SIMULT: SOLVEUR LINEAIRE, LAGRANGE ET MODES
 ! RIGIDES, BORNES DE TRAVAIL EFFECTIVES, CALCUL DU NOMBRE DE MODES, FACTO. DE LA MATRICE SHIFTEE,
 ! DETERMINATION DE LA TAILLE DE L'ESPACE DE PROJECTION.
@@ -76,6 +76,7 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
 !
     integer, intent(out) :: iretr, nblagr, neqact, npivot
     integer, intent(out) :: nstoc
+    integer, optional , intent(out) :: nfreq_calibr_
     real(kind=8), intent(out) :: omemax, omemin, omeshi
     complex(kind=8), intent(out) :: sigma
 !
@@ -310,6 +311,7 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
               endif
               if (typcal(1:11).eq.'CALIBRATION') then
                 iretr=-3
+                nfreq_calibr_ = nfreq
                 goto 999
               endif         
             endif

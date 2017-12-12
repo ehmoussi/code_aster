@@ -172,4 +172,48 @@ TEST_TABLE(
                    ),
            )
 
+
+RESUE=DYNA_NON_LINE(
+    MODELE=affect,
+    CHAM_MATER=CTM,
+    CARA_ELEM=calbar,
+    EXCIT=_F(CHARGE=LIAISON,),
+    COMPORTEMENT=(
+        _F(GROUP_MA = 'Group_cable', RELATION = 'CABLE', DEFORMATION = 'GROT_GDEP'),
+        _F(GROUP_MA = 'Group_barre', RELATION = 'ELAS'),
+    ),
+    INCREMENT=_F(LIST_INST=L_LIST),
+    NEWTON=_F(MATRICE='TANGENTE', REAC_ITER=1,),
+    CONVERGENCE=_F(
+        ITER_GLOB_MAXI=15,
+        RESI_REFE_RELA=1.0E-06 ,         
+        EFFORT_REFE = 1.0,
+        MOMENT_REFE = 1.0,
+),
+    SCHEMA_TEMPS=_F(SCHEMA='HHT',FORMULATION='DEPLACEMENT',),
+    MODE_VIBR=_F(INST=(TMilieu,Tfin),MATR_RIGI='TANGENTE',OPTION='CALIBRATION',FREQ=(60,100),),
+)
+
+
+TAB_SPE2=RECU_TABLE(CO=RESUE,
+                    NOM_TABLE='ANALYSE_MODALE',);
+
+IMPR_TABLE(TABLE=TAB_SPE2);
+
+TEST_TABLE(
+           VALE_CALC_I=8,
+           NOM_PARA='NB_MODE',
+           TABLE=TAB_SPE2,
+           FILTRE=(
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='TYPE_MODE',
+                      VALE_K='DEPL_VIBR',),
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='NUME_MODE',
+                      VALE_I=1,),
+                   _F(NOM_PARA='INST',
+                      VALE=Tfin,),
+                   ),
+           )
+
 FIN()

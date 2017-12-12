@@ -19,7 +19,7 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nmop45(eigsol, l_hpp, mod45, modes, modes2, ds_posttimestep_)
+    subroutine nmop45(eigsol, l_hpp, mod45, modes, modes2, ds_posttimestep_, nfreq_calibr_)
         use NonLin_Datastructure_type          
         character(len=19), intent(in) :: eigsol
         aster_logical    , intent(in) :: l_hpp
@@ -27,5 +27,6 @@ interface
         character(len=8) , intent(in) :: modes
         character(len=8) , intent(in) :: modes2
         type(NL_DS_PostTimeStep), optional, intent(in) :: ds_posttimestep_
+        integer, optional, intent(out) :: nfreq_calibr_
     end subroutine nmop45
 end interface

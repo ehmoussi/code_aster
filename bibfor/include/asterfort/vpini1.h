@@ -21,7 +21,7 @@
 interface
     subroutine vpini1(eigsol, modes, solveu, typcon, vecblo, veclag, vecrig,&
                       matpsc, matopa, iretr, nblagr, neqact, npivot, nstoc, omemax, omemin, omeshi,&
-                      sigma, mod45)
+                      sigma, mod45, nfreq_calibr_)
         character(len=19) , intent(in)  :: eigsol
         character(len=8)  , intent(in)  :: modes
         character(len=19) , intent(in)  :: solveu
@@ -33,6 +33,7 @@ interface
         character(len=19) , intent(inout)  :: matpsc
         character(len=19) , intent(inout)  :: matopa
         integer           , intent(out) :: iretr
+        integer, optional , intent(out) :: nfreq_calibr_
         integer           , intent(out) :: nblagr
         integer           , intent(out) :: neqact
         integer           , intent(out) :: npivot
