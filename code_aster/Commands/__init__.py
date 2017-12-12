@@ -96,6 +96,7 @@ from .detruire import DETRUIRE
 from .dyna_non_line import DYNA_NON_LINE
 from .dyna_vibra import DYNA_VIBRA
 from .engendre_test import ENGENDRE_TEST
+from .extr_mode import EXTR_MODE
 from .extr_resu import EXTR_RESU
 from .extr_table import EXTR_TABLE
 from .factoriser import FACTORISER
