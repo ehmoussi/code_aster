@@ -115,14 +115,14 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 !
     aster_logical :: linsta, l_hpp
     integer :: nfreq, nfreqc, nbrss, maxitr, ibid, nbborn
-    integer :: ldccvg, nddle, nsta, cdsp, nbvec2, nbvect, jv_para, i_freq
+    integer :: ldccvg, nddle, nsta, cdsp, nbvec2, nbvect, jv_para, i_freq, nfreq_calibr
     real(kind=8) :: freq_calc, freq_mini_abso, freq_abso, freq_mini
     real(kind=8) :: bande(2), r8bid, alpha, tolsor, precsh, fcorig, precdc, omecor, inst
     character(len=1)  :: k1bid
     character(len=4)  :: mod45
     character(len=8)  :: sdmode, sdstab, method, arret
     character(len=16) :: optmod, typmat, modrig, typres, k16bid, optiof, sturm, modri2
-    character(len=16) :: stoper
+    character(len=16) :: stoper, typcal
     character(len=19) :: matgeo, matas2, k19bid, eigsol
     character(len=19) :: raide, masse
     character(len=24) :: k24bid
@@ -147,7 +147,7 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 !
     call nmflal(option, ds_posttimestep, mod45 , l_hpp ,&
                 nfreq , cdsp           , typmat, optmod, bande,&
-                nddle , nsta           , modrig)
+                nddle , nsta           , modrig, typcal)
 !
 ! --- CALCUL DE LA MATRICE TANGENTE ASSEMBLEE ET DE LA MATRICE GEOM.
 !
@@ -227,14 +227,15 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
     modri2='SANS'
 ! OPTION STOP_ERREUR EN DUR
     stoper='NON'
+! TYPE DE CALCUL: 'CALIBRATION' OU 'TOUT'.
     call vpcres(eigsol, typres, raide, masse, k19bid, optiof, method, modri2, arret, k19bid,&
-                stoper, sturm, k1bid, k16bid, nfreqc, nbvect, nbvec2, nbrss, nbborn, ibid,&
+                stoper, sturm, typcal, k1bid, k16bid, nfreqc, nbvect, nbvec2, nbrss, nbborn, ibid,&
                 ibid, ibid, ibid, maxitr, bande, precsh, omecor, precdc, r8bid,&
                 r8bid, r8bid, r8bid, r8bid, tolsor, alpha)
 !
 ! - Compute eigen values/vecteors
 !
-    call nmop45(eigsol, l_hpp, mod45, sdmode, sdstab, ds_posttimestep)
+    call nmop45(eigsol, l_hpp, mod45, sdmode, sdstab, ds_posttimestep, nfreq_calibr)
     call vpleci(eigsol, 'I', 1, k24bid, r8bid, nfreqc)
     call detrsd('EIGENSOLVER',eigsol)
 !
@@ -284,9 +285,9 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 !
 ! - Save results
 !
-    call nonlinDSPostTimeStepSave(mod45          , sdmode   , sdstab,&
-                                  inst           , nume_inst, nfreqc,&
-                                  ds_posttimestep)
+    call nonlinDSPostTimeStepSave(mod45       , sdmode         , sdstab,&
+                                  inst        , nume_inst      , nfreqc,&
+                                  nfreq_calibr, ds_posttimestep)
 !
 ! --- DESTRUCTION DE LA SD DE STOCKAGE DES MODES
 !

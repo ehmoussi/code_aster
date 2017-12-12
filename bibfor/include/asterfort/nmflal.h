@@ -20,7 +20,7 @@
 interface
     subroutine nmflal(option, ds_posttimestep, mod45 , l_hpp ,&
                       nfreq , cdsp           , typmat, optmod, bande ,&
-                      nddle , nsta           , modrig)
+                      nddle , nsta           , modrig, typcal)
         use NonLin_Datastructure_type
         character(len=16) :: option
         type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
@@ -34,5 +34,6 @@ interface
         integer :: nddle
         integer :: nsta
         character(len=16) :: modrig
+        character(len=16), intent(out) :: typcal
     end subroutine nmflal
 end interface

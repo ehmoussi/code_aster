@@ -19,7 +19,7 @@
 !
 subroutine nmflal(option, ds_posttimestep, mod45 , l_hpp ,&
                   nfreq , cdsp           , typmat, optmod, bande ,&
-                  nddle , nsta           , modrig)
+                  nddle , nsta           , modrig, typcal)
 !
 use NonLin_Datastructure_type
 !
@@ -36,6 +36,7 @@ character(len=16) :: typmat, modrig
 real(kind=8) :: bande(2)
 type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 aster_logical, intent(out) :: l_hpp
+character(len=16), intent(out) :: typcal
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -78,14 +79,15 @@ aster_logical, intent(out) :: l_hpp
 !
     bande(1) = 1.d-5
     bande(2) = 1.d5
-    nfreq = 0
-    cdsp = 0
-    nddle = 0
-    mod45 = ' '
+    nfreq  = 0
+    cdsp   = 0
+    nddle  = 0
+    mod45  = ' '
     optmod = ' '
     optrig = ' '
     typmat = ' '
-    nsta = 0
+    nsta   = 0
+    typcal = 'TOUT'
     l_hpp  = ASTER_TRUE
 !
 ! --- RECUPERATION DES OPTIONS
@@ -100,6 +102,9 @@ aster_logical, intent(out) :: l_hpp
             optmod = 'BANDE'
         endif
         bande  = ds_posttimestep%mode_vibr%strip_bounds
+        if (ds_posttimestep%mode_vibr%level .eq. 'CALIBRATION') then
+            typcal = 'CALIBRATION'
+        endif
         mod45  = 'VIBR'
         
     else if (option(1:5) .eq. 'FLAMB') then
@@ -112,6 +117,9 @@ aster_logical, intent(out) :: l_hpp
             optmod = 'BANDE'
         endif
         bande  = ds_posttimestep%crit_stab%strip_bounds
+        if (ds_posttimestep%crit_stab%level .eq. 'CALIBRATION') then
+            typcal = 'CALIBRATION'
+        endif
         mod45 = 'FLAM'
         nddle  = ds_posttimestep%stab_para%nb_dof_excl
         nsta   = ds_posttimestep%stab_para%nb_dof_stab

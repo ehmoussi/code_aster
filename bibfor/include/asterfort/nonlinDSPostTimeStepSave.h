@@ -17,13 +17,13 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nonlinDSPostTimeStepSave(mod45          , sdmode   , sdstab ,&
-                                        inst           , nume_inst, nb_freq,&
-                                        ds_posttimestep)
+    subroutine nonlinDSPostTimeStepSave(mod45       , sdmode         , sdstab ,&
+                                        inst        , nume_inst      , nb_freq,&
+                                        nfreq_calibr, ds_posttimestep)
         use NonLin_Datastructure_type
         character(len=4), intent(in) :: mod45
         character(len=8), intent(in) :: sdmode, sdstab
-        integer, intent(in) :: nume_inst, nb_freq
+        integer, intent(in) :: nume_inst, nb_freq, nfreq_calibr
         real(kind=8), intent(in) :: inst
         type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
     end subroutine nonlinDSPostTimeStepSave
