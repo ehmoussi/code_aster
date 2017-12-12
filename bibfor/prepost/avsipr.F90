@@ -76,7 +76,7 @@ subroutine avsipr(nbordr, vwork, tdisp, kwork, sommw,&
         nperm = 12
         tol = 1.d-10
         toldyn = 1.d-2
-        itype = 1
+        itype = 2
         iordre = 1
         ar(1) = sig(1)
         ar(2) = sig(4)
