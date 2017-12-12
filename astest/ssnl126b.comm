@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='NON'))
 
 mail=LIRE_MAILLAGE(FORMAT='MED')
 # Pour eviter les "TOLE MACHINE", on perturbe legerement la geometrie du maillage :
@@ -93,12 +93,26 @@ resuel=STAT_NON_LINE(reuse=resuel,
                    CRIT_STAB=_F()
                   );
 
-TEST_RESU(RESU=_F(PARA='CHAR_CRIT',
-                  INST=1.0,
-                  RESULTAT=resuel,
-                  VALE_CALC=19.0657129149,
-                  ),
-          )
+TABSPEC0=RECU_TABLE(CO=resuel,
+                   NOM_TABLE='ANALYSE_MODALE',);
+
+IMPR_TABLE(TABLE=TABSPEC0)
+
+TEST_TABLE(
+           VALE_CALC=19.0657129149,
+           NOM_PARA='CHAR_CRIT',
+           TABLE=TABSPEC0,
+           FILTRE=(
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='TYPE_MODE',
+                      VALE_K='MODE_FLAMB',),
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='NUME_MODE',
+                      VALE_I=3,),
+                   _F(NOM_PARA='INST',
+                      VALE=1.0,),
+                   ),
+           )
 
 # ELASTOPLASTIQUE
 CS=AFFE_CHAR_MECA(MODELE=modele,
@@ -139,41 +153,89 @@ resu=STAT_NON_LINE(reuse=resu,
                                   ITER_GLOB_MAXI=10,),
                    CRIT_STAB=_F()
                   );
-TEST_RESU(RESU=(_F(PARA='CHAR_CRIT',
-                   INST=0.4,
-                   RESULTAT=resu,
-                   VALE_CALC=-4.99168383871,
-                   ),
-                _F(PARA='CHAR_CRIT',
-                   INST=0.5,
-                   RESULTAT=resu,
-                   VALE_CALC=1.31860769704,
 
-                   ),
-                ),
-          )
+TABSPEC1=RECU_TABLE(CO=resu,
+                   NOM_TABLE='ANALYSE_MODALE',);
 
-TEST_RESU(RESU=(_F(INST=0.4,
-                   REFERENCE='ANALYTIQUE',
-                   RESULTAT=resu,
-                   NOM_CHAM='MODE_FLAMB',
-                   NOEUD='N1',
-                   NOM_CMP='DX',
-                   VALE_CALC=0.,
-                   VALE_REFE=0.0,
-                   CRITERE='RELATIF',
-                   PRECISION=1.E-4,),
-                _F(INST=1.0,
-                   REFERENCE='ANALYTIQUE',
-                   RESULTAT=resu,
-                   NOM_CHAM='MODE_FLAMB',
-                   NOEUD='N1',
-                   NOM_CMP='DX',
-                   VALE_CALC=0.,
-                   VALE_REFE=0.0,
-                   CRITERE='RELATIF',
-                   PRECISION=1.E-4,),
-                ),
-          )
+IMPR_TABLE(TABLE=TABSPEC1)
+
+TEST_TABLE(
+           VALE_CALC=-4.99168383871,
+           NOM_PARA='CHAR_CRIT',
+           TABLE=TABSPEC1,
+           FILTRE=(
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='TYPE_MODE',
+                      VALE_K='MODE_FLAMB',),
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='NUME_MODE',
+                      VALE_I=3,),
+                   _F(NOM_PARA='INST',
+                      VALE=0.4,),
+                   ),
+           )
+
+TEST_TABLE(
+           VALE_CALC=1.31860769704,
+           NOM_PARA='CHAR_CRIT',
+           TABLE=TABSPEC1,
+           FILTRE=(
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='TYPE_MODE',
+                      VALE_K='MODE_FLAMB',),
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='NUME_MODE',
+                      VALE_I=2,),
+                   _F(NOM_PARA='INST',
+                      VALE=0.5,),
+                   ),
+           )
+
+M_FLAMB1=EXTR_TABLE(TYPE_RESU='CHAM_NO_SDASTER',
+                  TABLE=TABSPEC1,
+                  NOM_PARA='NOM_SD',
+                  FILTRE=(_F(NOM_PARA='TYPE_MODE',
+                           VALE_K='MODE_FLAMB'),
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='NUME_MODE',
+                      VALE_I=1,),
+                         _F(NOM_PARA='INST',PRECISION=1.E-6,
+                           VALE=0.4),),)
+
+TEST_RESU(CHAM_NO=(_F(
+                      CHAM_GD=M_FLAMB1,
+                      REFERENCE='ANALYTIQUE',
+                      NOEUD='N1',
+                      NOM_CMP='DX',
+                      VALE_CALC=0.,
+                      VALE_REFE=0.0,
+                      CRITERE='RELATIF',
+                      PRECISION=1.E-4,
+                     ),
+                   ),)
+
+M_FLAMB2=EXTR_TABLE(TYPE_RESU='CHAM_NO_SDASTER',
+                  TABLE=TABSPEC1,
+                  NOM_PARA='NOM_SD',
+                  FILTRE=(_F(NOM_PARA='TYPE_MODE',
+                           VALE_K='MODE_FLAMB'),
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='NUME_MODE',
+                      VALE_I=1,),
+                         _F(NOM_PARA='INST',PRECISION=1.E-6,
+                           VALE=1.0),),)
+
+TEST_RESU(CHAM_NO=(_F(
+                      CHAM_GD=M_FLAMB2,
+                      REFERENCE='ANALYTIQUE',
+                      NOEUD='N1',
+                      NOM_CMP='DX',
+                      VALE_CALC=0.,
+                      VALE_REFE=0.0,
+                      CRITERE='RELATIF',
+                      PRECISION=1.E-4,
+                     ),
+                   ),)
+
 
 FIN();

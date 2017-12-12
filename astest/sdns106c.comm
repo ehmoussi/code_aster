@@ -24,7 +24,7 @@
 #            Comportement GLRC_DM
 #            Amortissement de Rayleigh
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='NON'))
 
 EP=0.1
 t1=2.5E-3
@@ -175,7 +175,7 @@ RESU1=DYNA_NON_LINE(MODELE=MOD,
                     SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',
                                     FORMULATION='DEPLACEMENT',),
                     ARCHIVAGE=_F(LIST_INST=inst1,),
-                    MODE_VIBR=_F(NB_FREQ =3,
+                    MODE_VIBR=_F(NMAX_FREQ =3,
                                  MATR_RIGI='TANGENTE',
                                  LIST_INST = listm,),);
 
@@ -214,7 +214,7 @@ RESU2=DYNA_NON_LINE(ETAT_INIT=_F(INST_ETAT_INIT=t1,
                     SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',
                                     FORMULATION='DEPLACEMENT',),
                     ARCHIVAGE=_F(LIST_INST=inst2,),
-                    MODE_VIBR=_F(NB_FREQ =3,
+                    MODE_VIBR=_F(NMAX_FREQ =3,
                                  MATR_RIGI='TANGENTE',
                                  LIST_INST = listm2,),);
 

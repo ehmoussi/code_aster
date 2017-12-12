@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 DEBUT( CODE = _F(NIV_PUB_WEB = 'INTERNET' ,
-                  ) ,DEBUG=_F(SDVERI='OUI'));
+                  ) ,DEBUG=_F(SDVERI='NON'));
 #
 #  Modelisation de la plaque flexible par COQUE_3D
 #  Maillage_interface :  ASTER pour IFLUSTRU
@@ -369,7 +369,7 @@ RESU=DYNA_NON_LINE(MODELE=MODELE,
                    RECH_LINEAIRE=_F(),
                    CRIT_STAB=_F(RIGI_GEOM='NON',
                                 DDL_EXCLUS=('PHI','PRES','DH',),
-                                MODI_RIGI='OUI',NB_MODE = 1,),
+                                MODI_RIGI='OUI',NMAX_CHAR_CRIT = 1,),
                    );
 #
 RESUST=DYNA_NON_LINE(MODELE=MODELEST,
@@ -483,22 +483,48 @@ TEST_RESU(RESU=_F(INST=2.0,
 #
 valstab = -2.477264942149
 #
-TEST_RESU(RESU=(_F(PARA='CHAR_CRIT',
-                   INST=0.40000000000000002,
-                   REFERENCE='AUTRE_ASTER',
-                   RESULTAT=RESU,
-                   VALE_CALC=-2.47726505977,
-                   VALE_REFE=valstab,
-                   PRECISION=9.9999999999999995E-07,),
-                _F(PARA='CHAR_CRIT',
-                   INST=0.40000000000000002,
-                   REFERENCE='AUTRE_ASTER',
-                   RESULTAT=RESUST,
-                   VALE_CALC=-2.47726520279,
-                   VALE_REFE=valstab,
-                   PRECISION=9.9999999999999995E-07,),
-                ),
-          )
+TABSPEC1=RECU_TABLE(CO=RESU,
+                    NOM_TABLE='ANALYSE_MODALE',);
 
-#
+TEST_TABLE(
+           REFERENCE='AUTRE_ASTER',
+           NOM_PARA='CHAR_CRIT',
+           TABLE=TABSPEC1,
+           VALE_CALC=-2.47726505977,
+           VALE_REFE=valstab,
+           PRECISION=9.9999999999999995E-07,
+           FILTRE=(
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='TYPE_MODE',
+                      VALE_K='MODE_FLAMB',),
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='NUME_MODE',
+                      VALE_I=1,),
+                   _F(NOM_PARA='INST',
+                      VALE=0.4,),
+                   ),
+           )
+
+TABSPEC2=RECU_TABLE(CO=RESUST,
+                    NOM_TABLE='ANALYSE_MODALE',);
+
+TEST_TABLE(
+           REFERENCE='AUTRE_ASTER',
+           NOM_PARA='CHAR_CRIT',
+           TABLE=TABSPEC2,
+           VALE_CALC=-2.47726520279,
+           VALE_REFE=valstab,
+           PRECISION=9.9999999999999995E-07,
+           FILTRE=(
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='TYPE_MODE',
+                      VALE_K='MODE_FLAMB',),
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='NUME_MODE',
+                      VALE_I=3,),
+                   _F(NOM_PARA='INST',
+                      VALE=0.4,),
+                   ),
+           )
+
 FIN();

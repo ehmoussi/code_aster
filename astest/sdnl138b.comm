@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
-      DEBUG=_F( SDVERI     = 'OUI',),
+      DEBUG=_F( SDVERI     = 'NON',),
 )
 
 # lecture du maillage
@@ -131,20 +131,45 @@ RESUD=DYNA_NON_LINE(
         MOMENT_REFE = 1.0,
 ),
     SCHEMA_TEMPS=_F(SCHEMA='HHT',FORMULATION='DEPLACEMENT',),
-    MODE_VIBR=_F(INST=(TMilieu,Tfin),MATR_RIGI='TANGENTE',NB_FREQ=5,),
+    MODE_VIBR=_F(INST=(TMilieu,Tfin),MATR_RIGI='TANGENTE',NMAX_FREQ=15,),
 )
 
-"""
-IMPR_RESU(FORMAT='RESULTAT',
-    RESU=_F(RESULTAT=RESUD,NOM_CHAM=('DEPL','SIEF_ELGA','DEPL_VIBR'), INST=(TMilieu,Tfin), ),
-)
-"""
 
-TEST_RESU(
-    RESU=(
-        _F(PARA='FREQ', INST=TMilieu, RESULTAT=RESUD, VALE_CALC= 6.27962E+01,),
-        _F(PARA='FREQ', INST=Tfin,    RESULTAT=RESUD, VALE_CALC= 8.85701E+01,),
-    ),
-)
+TAB_SPEC=RECU_TABLE(CO=RESUD,
+                    NOM_TABLE='ANALYSE_MODALE',);
+
+IMPR_TABLE(TABLE=TAB_SPEC);
+
+TEST_TABLE(
+           VALE_CALC=6.27962E+01,
+           NOM_PARA='FREQ',
+           TABLE=TAB_SPEC,
+           FILTRE=(
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='TYPE_MODE',
+                      VALE_K='DEPL_VIBR',),
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='NUME_MODE',
+                      VALE_I=1,),
+                   _F(NOM_PARA='INST',
+                      VALE=TMilieu,),
+                   ),
+           )
+
+TEST_TABLE(
+           VALE_CALC=8.85701E+01,
+           NOM_PARA='FREQ',
+           TABLE=TAB_SPEC,
+           FILTRE=(
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='TYPE_MODE',
+                      VALE_K='DEPL_VIBR',),
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='NUME_MODE',
+                      VALE_I=1,),
+                   _F(NOM_PARA='INST',
+                      VALE=Tfin,),
+                   ),
+           )
 
 FIN()
