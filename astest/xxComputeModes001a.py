@@ -56,5 +56,16 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
 
 test.assertEqual(MODES.getType(), "MODE_MECA")
 
+BAMODA=DEFI_BASE_MODALE( 
+                    RITZ=( _F( MODE_MECA=MODES),),);
+
+test.assertEqual(BAMODA.getType(), "MODE_MECA")
+
+MAC=MAC_MODES(BASE_1=BAMODA,
+              BASE_2=BAMODA,
+              MATR_ASSE=MASSE,
+              );
+
+test.assertEqual(MAC.getType(), "TABLE")
 test.printSummary()
 
