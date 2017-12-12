@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-def stanley_ops(self, RESULTAT, MODELE, CHAM_MATER, CARA_ELEM, DISPLAY, **args):
+def stanley_ops(self, RESULTAT=None, MODELE=None, CHAM_MATER=None, CARA_ELEM=None, DISPLAY=None, **args):
     """
        Importation et lancement de Stanley
     """
@@ -33,8 +33,6 @@ def stanley_ops(self, RESULTAT, MODELE, CHAM_MATER, CARA_ELEM, DISPLAY, **args):
     prev_onFatalError = aster.onFatalError()
     aster.onFatalError('EXCEPTION')
 
-    ier = 0
-
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
 
@@ -44,7 +42,7 @@ def stanley_ops(self, RESULTAT, MODELE, CHAM_MATER, CARA_ELEM, DISPLAY, **args):
         os.environ['DISPLAY'] = DISPLAY
 
     # Mode validation de la non-regression
-    if args['UNITE_VALIDATION']:
+    if hasattr(args, 'UNITE_VALIDATION') and args['UNITE_VALIDATION']:
         UTMESS('I', 'STANLEY_2')
         UL = UniteAster()
         FICHIER_VALID = UL.Nom(args['UNITE_VALIDATION'])
@@ -76,4 +74,4 @@ def stanley_ops(self, RESULTAT, MODELE, CHAM_MATER, CARA_ELEM, DISPLAY, **args):
 
     aster.onFatalError(prev_onFatalError)
 
-    return ier
+    return
