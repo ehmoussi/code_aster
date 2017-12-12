@@ -68,6 +68,7 @@ from .crea_resu import CREA_RESU
 from .crea_table import CREA_TABLE
 from .debut import DEBUT, POURSUITE
 from .defi_base_modale import DEFI_BASE_MODALE
+from .defi_obstacle import DEFI_OBSTACLE
 from .defi_cable_op import DEFI_CABLE_OP
 from .defi_compor import DEFI_COMPOR
 from .defi_composite import DEFI_COMPOSITE
@@ -105,6 +106,7 @@ from .formule import FORMULE
 from .info_exec_aster import INFO_EXEC_ASTER
 from .impr_resu import IMPR_RESU
 from .lire_maillage import LIRE_MAILLAGE
+from .lire_plexus import LIRE_PLEXUS
 from .macr_elem_dyna import MACR_ELEM_DYNA
 from .macr_elem_stat import MACR_ELEM_STAT
 from .maj_cata import MAJ_CATA
