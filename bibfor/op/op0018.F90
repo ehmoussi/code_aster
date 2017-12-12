@@ -80,7 +80,7 @@ subroutine op0018()
 !
     integer :: dim_topo_curr, dim_topo_init
     integer :: ifm, niv
-    character(len=8) :: mesh, model, sd_partit1
+    character(len=8) :: mesh, model, sd_partit1, kret
     character(len=8) :: name_elem, z_quasi_zero, methode
     character(len=16) :: k16dummy, name_type_geom, repk, valk(2)
     character(len=16) :: phenom, modeli, list_modelisa(10), keywordfact
@@ -90,7 +90,7 @@ subroutine op0018()
     character(len=24) :: list_elem
     integer, pointer :: p_list_elem(:) => null()
     integer :: nb_elem
-    aster_logical :: l_elem, l_grandeur_cara
+    aster_logical :: l_elem, l_grandeur_cara, lparallel_mesh
     aster_logical :: l_calc_rigi, l_veri_elem, l_need_neigh
     integer :: ielem, iaffe
     integer :: vali(4), ico, imodel, idx_modelisa
@@ -133,6 +133,8 @@ subroutine op0018()
 ! - Get mesh
 !
     call getvid(' ', 'MAILLAGE', scal=mesh)
+    call dismoi('PARALLEL_MESH', mesh, 'MAILLAGE', repk=kret)
+    lparallel_mesh=(kret.eq.'OUI')
 !
 ! - Check jacobians
 !
@@ -225,7 +227,7 @@ subroutine op0018()
             call jedetr(list_elem)
             call getelem(mesh, keywordfact, iaffe, ' ', list_elem,&
                          nb_elem)
-            ASSERT(nb_elem.gt.0)
+            if (.not.lparallel_mesh) ASSERT(nb_elem.gt.0)
 !
 ! --------- Loop on modelisations
 !

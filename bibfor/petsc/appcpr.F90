@@ -271,7 +271,7 @@ implicit none
                         nterm=1
                         ! Indice global Aster (F) correspondant à l'indice local il
                         iga_f = nulg( il )
-                        call VecSetValues( coords, nterm, [to_petsc_int(iga_f - 1)], [val], &
+                        call VecSetValues( coords, nterm, [to_petsc_int(iga_f)], [val], &
                           INSERT_VALUES, ierr )
                         ASSERT( ierr == 0 )
                     endif

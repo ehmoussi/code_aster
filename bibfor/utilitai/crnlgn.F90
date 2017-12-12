@@ -126,9 +126,9 @@ subroutine crnlgn(numddl)
             call jeveuo(jexnum(numddl//'.NUME.PRNO', ili), 'L', jprno)
             nbno_prno = lonmax/(nec+2)
             call jenuno(jexnum(numddl//'.NUME.LILI', ili), nomlig)
-            owner = nomlig//".PNOE"
-            mult1 = nomlig//".MULT"
-            mult2 = nomlig//".MUL2"
+            owner = nomlig//'.PNOE'
+            mult1 = nomlig//'.MULT'
+            mult2 = nomlig//'.MUL2'
             call jeveuo(owner, 'L', jown)
             call jeveuo(mult1, 'L', jmult1)
             call jeveuo(mult2, 'L', jmult2)

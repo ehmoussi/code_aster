@@ -44,8 +44,8 @@ extern const char* const PhysicNames[nbPhysics];
  * @brief Modelisations existantes dans Code_Aster
  * @author Nicolas Sellenet
  */
-enum Modelings { Axisymmetrical, Tridimensional, Planar, PlaneStrain, PlaneStress, DKT, DKTG, PlanarBar };
-const int nbModelings = 8;
+enum Modelings { Axisymmetrical, Tridimensional, TridimensionalAbsorbingBoundary, Planar, PlaneStrain, PlaneStress, DKT, DKTG, PlanarBar };
+const int nbModelings = 9;
 /**
  * @var ModelingNames
  * @brief Nom Aster des differentes modelisations disponibles
@@ -53,7 +53,7 @@ const int nbModelings = 8;
 extern const char* const ModelingNames[nbModelings];
 
 
-const int nbModelingsMechanics = 7;
+const int nbModelingsMechanics = 8;
 extern const Modelings MechanicsModelings[nbModelingsMechanics];
 
 const int nbModelingsThermal = 3;
