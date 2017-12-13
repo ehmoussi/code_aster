@@ -19,33 +19,21 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import AssemblyMatrixDouble, AssemblyMatrixTemperatureDouble
+from ..Objects import EvolutiveThermalLoad
 from .ExecuteCommand import ExecuteCommand
 
 
-class AssembleMatrixOperator(ExecuteCommand):
-    """Execute legacy operator ASSE_MATRICE."""
-    command_name = "ASSE_MATRICE"
+class CalcChamFlui(ExecuteCommand):
+    """Command that defines :class:`~code_aster.Objects.EvolutiveThermalLoad`.
+    """
+    command_name = "CALC_CHAM_FLUI"
 
     def create_result(self, keywords):
-        """Create the result.
-
+        """Initialize the result.
+        
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        if keywords['MATR_ELEM'].getType() == "MATR_ELEM_TEMP_R":
-            self._result = AssemblyMatrixTemperatureDouble()
-        else:
-            self._result = AssemblyMatrixDouble()
+        self._result = EvolutiveThermalLoad()
 
-    def post_exec(self, keywords):
-        """Store references to ElementaryMatrix objects.
-
-        Arguments:
-            keywords (dict): Keywords arguments of user's keywords, changed
-                in place.
-        """
-        self._result.appendElementaryMatrix(keywords['MATR_ELEM'])
-        self._result.setDOFNumbering(keywords['NUME_DDL'])
-
-ASSE_MATRICE = AssembleMatrixOperator.run
+CALC_CHAM_FLUI = CalcChamFlui.run

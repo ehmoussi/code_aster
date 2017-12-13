@@ -47,6 +47,7 @@
 
 #include "Discretization/DOFNumbering.h"
 #include "Discretization/ParallelDOFNumbering.h"
+#include "Loads/PhysicalQuantity.h"
 
 class BaseLinearSolverInstance;
 
@@ -57,7 +58,7 @@ class BaseLinearSolverInstance;
  * @author Nicolas Sellenet
  * @todo revoir le template pour prendre la grandeur en plus
  */
-template< class ValueType >
+template< class ValueType, PhysicalQuantityEnum PhysicalQuantity >
 class AssemblyMatrixInstance: public DataStructure
 {
     private:
@@ -90,7 +91,7 @@ class AssemblyMatrixInstance: public DataStructure
          * @typedef AssemblyMatrixPtr
          * @brief Pointeur intelligent vers un AssemblyMatrix
          */
-        typedef boost::shared_ptr< AssemblyMatrixInstance<ValueType> > AssemblyMatrixPtr;
+        typedef boost::shared_ptr< AssemblyMatrixInstance<ValueType, PhysicalQuantity> > AssemblyMatrixPtr;
 
         /**
          * @brief Constructeur
@@ -217,17 +218,22 @@ class AssemblyMatrixInstance: public DataStructure
 };
 
 /** @typedef Definition d'une matrice assemblee de double */
-template class AssemblyMatrixInstance< double >;
-typedef AssemblyMatrixInstance< double > AssemblyMatrixDoubleInstance;
+template class AssemblyMatrixInstance< double, Displacement >;
+typedef AssemblyMatrixInstance< double, Displacement > AssemblyMatrixDoubleInstance;
 /** @typedef Definition d'une matrice assemblee de complexe */
-typedef AssemblyMatrixInstance< DoubleComplex > AssemblyMatrixComplexInstance;
+typedef AssemblyMatrixInstance< DoubleComplex, Displacement > AssemblyMatrixComplexInstance;
+
+/** @typedef Definition d'une matrice assemblee de double temperature */
+template class AssemblyMatrixInstance< double, Temperature >;
+typedef AssemblyMatrixInstance< double, Temperature > AssemblyMatrixTemperatureDoubleInstance;
 
 typedef boost::shared_ptr< AssemblyMatrixDoubleInstance > AssemblyMatrixDoublePtr;
 typedef boost::shared_ptr< AssemblyMatrixComplexInstance > AssemblyMatrixComplexPtr;
+typedef boost::shared_ptr< AssemblyMatrixTemperatureDoubleInstance > AssemblyMatrixTemperatureDoublePtr;
 
-template< class ValueType >
-AssemblyMatrixInstance< ValueType >::AssemblyMatrixInstance( const JeveuxMemory memType ):
-    DataStructure( "MATR_ASSE_DEPL_R", memType, 19 ),
+template< class ValueType, PhysicalQuantityEnum PhysicalQuantity >
+AssemblyMatrixInstance< ValueType, PhysicalQuantity >::AssemblyMatrixInstance( const JeveuxMemory memType ):
+    DataStructure( "MATR_ASSE_" + std::string(PhysicalQuantityNames[PhysicalQuantity]) + "_R", memType, 19 ),
     _description( JeveuxVectorChar24( getName() + ".REFA" ) ),
     _matrixValues( JeveuxCollection< ValueType >( getName() + ".VALM" ) ),
     _scaleFactorLagrangian( JeveuxVectorDouble( getName() + ".CONL" ) ),
@@ -236,9 +242,9 @@ AssemblyMatrixInstance< ValueType >::AssemblyMatrixInstance( const JeveuxMemory 
     _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance( memType ) ) )
 {};
 
-template< class ValueType >
-AssemblyMatrixInstance< ValueType >::AssemblyMatrixInstance( const std::string& name ):
-    DataStructure( name, 19, "MATR_ASSE_DEPL_R" ),
+template< class ValueType, PhysicalQuantityEnum PhysicalQuantity >
+AssemblyMatrixInstance< ValueType, PhysicalQuantity >::AssemblyMatrixInstance( const std::string& name ):
+    DataStructure( name, 19, "MATR_ASSE_" + std::string(PhysicalQuantityNames[PhysicalQuantity]) + "_R" ),
     _description( JeveuxVectorChar24( getName() + ".REFA" ) ),
     _matrixValues( JeveuxCollection< ValueType >( getName() + ".VALM" ) ),
     _scaleFactorLagrangian( JeveuxVectorDouble( getName() + ".CONL" ) ),
@@ -247,8 +253,8 @@ AssemblyMatrixInstance< ValueType >::AssemblyMatrixInstance( const std::string& 
     _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) )
 {};
 
-template< class ValueType >
-bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
+template< class ValueType, PhysicalQuantityEnum PhysicalQuantity >
+bool AssemblyMatrixInstance< ValueType, PhysicalQuantity >::build() throw ( std::runtime_error )
 {
     if ( _dofNum->isEmpty() )
         throw std::runtime_error( "Numbering is empty" );
@@ -288,8 +294,8 @@ bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
 #ifdef _HAVE_PETSC4PY
 #if _HAVE_PETSC4PY == 1
 
-template< class ValueType >
-Mat AssemblyMatrixInstance< ValueType >::toPetsc4py() throw ( std::runtime_error )
+template< class ValueType, PhysicalQuantityEnum PhysicalQuantity >
+Mat AssemblyMatrixInstance< ValueType, PhysicalQuantity >::toPetsc4py() throw ( std::runtime_error )
 {
     Mat myMat;
     PetscErrorCode ierr;
@@ -305,8 +311,8 @@ Mat AssemblyMatrixInstance< ValueType >::toPetsc4py() throw ( std::runtime_error
 #endif
 #endif
 
-template< class ValueType >
-bool AssemblyMatrixInstance< ValueType >::factorization() throw ( std::runtime_error )
+template< class ValueType, PhysicalQuantityEnum PhysicalQuantity >
+bool AssemblyMatrixInstance< ValueType, PhysicalQuantity >::factorization() throw ( std::runtime_error )
 {
     if ( _isEmpty )
         throw std::runtime_error( "Assembly matrix is empty" );

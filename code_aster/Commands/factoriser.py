@@ -19,12 +19,11 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import AssemblyMatrixDouble
 from .ExecuteCommand import ExecuteCommand
 
 
 class Factoriser(ExecuteCommand):
-    """Command that defines :class:`~code_aster.Objects.AssemblyMatrixDouble`.
+    """Command FACTORISER
     """
     command_name = "FACTORISER"
 
@@ -37,6 +36,6 @@ class Factoriser(ExecuteCommand):
         if keywords.has_key("reuse"):
             self._result = keywords["reuse"]
         else:
-            self._result = AssemblyMatrixDouble()
+            self._result = type(keywords["MATR_ASSE"])()
 
 FACTORISER = Factoriser.run

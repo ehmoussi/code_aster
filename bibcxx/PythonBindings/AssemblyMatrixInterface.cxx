@@ -77,4 +77,28 @@ void exportAssemblyMatrixToPython()
         .def( "setDOFNumbering", &AssemblyMatrixComplexInstance::setDOFNumbering )
         .def( "appendElementaryMatrix", &AssemblyMatrixComplexInstance::appendElementaryMatrix )
     ;
+
+    void (AssemblyMatrixTemperatureDoubleInstance::*c5)(const KinematicsLoadPtr& currentLoad) =
+            &AssemblyMatrixTemperatureDoubleInstance::addLoad;
+    void (AssemblyMatrixTemperatureDoubleInstance::*c6)(const KinematicsLoadPtr& currentLoad,
+                                             const FunctionPtr& func) =
+            &AssemblyMatrixTemperatureDoubleInstance::addLoad;
+
+    class_< AssemblyMatrixTemperatureDoubleInstance, AssemblyMatrixTemperatureDoublePtr,
+            bases< DataStructure > >
+        ( "AssemblyMatrixTemperatureDouble", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< AssemblyMatrixTemperatureDoubleInstance >) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< AssemblyMatrixTemperatureDoubleInstance,
+                             std::string >) )
+        .def( "addKinematicsLoad", c5 )
+        .def( "addKinematicsLoad", c6 )
+        .def( "build", &AssemblyMatrixTemperatureDoubleInstance::build )
+        .def( "factorization", &AssemblyMatrixTemperatureDoubleInstance::factorization )
+        .def( "getDOFNumbering", &AssemblyMatrixTemperatureDoubleInstance::getDOFNumbering )
+        .def( "setDOFNumbering", &AssemblyMatrixTemperatureDoubleInstance::setDOFNumbering )
+        .def( "appendElementaryMatrix", &AssemblyMatrixTemperatureDoubleInstance::appendElementaryMatrix )
+    ;
+
 };

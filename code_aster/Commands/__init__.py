@@ -50,6 +50,7 @@ from .asse_vect_gene import ASSE_VECT_GENE
 from .calc_champ import CALC_CHAMP
 from .calc_char_cine import CALC_CHAR_CINE
 from .calc_cham_elem import CALC_CHAM_ELEM
+from .calc_cham_flui import CALC_CHAM_FLUI
 from .calc_char_cine import CALC_CHAR_CINE
 from .calc_fatigue import CALC_FATIGUE
 from .calc_ferraillage import CALC_FERRAILLAGE
