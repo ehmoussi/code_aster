@@ -65,12 +65,11 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
     #
     ImprTable = False
     #
+    UNITE = args.get("UNITE") or 20
     if (MAILLAGE != None):
         __nomlma = COPIER(CONCEPT=MAILLAGE)
-    elif (args.has_key('UNITE') and args.has_key('FORMAT')):
-        __nomlma = LIRE_MAILLAGE(UNITE=args['UNITE'], FORMAT=args['FORMAT'])
     else:
-        assert False, "Erreur dans les options UNITE, FORMAT, MAILLAGE"
+        __nomlma = LIRE_MAILLAGE(UNITE=args['UNITE'], FORMAT=args['FORMAT'])
     #
     # Dans les tables on retrouve une ligne avec __nomlma.nom. Soit :
     #   - on remplace __nomlma.nom par NomMaillageNew.
