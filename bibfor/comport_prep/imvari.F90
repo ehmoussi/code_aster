@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine imvari(compor_info)
 !
 implicit none
@@ -35,8 +35,7 @@ implicit none
 #include "asterfort/jexnum.h"
 #include "asterfort/utmess.h"
 !
-!
-    character(len=19), intent(in) :: compor_info
+character(len=19), intent(in) :: compor_info
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -107,9 +106,9 @@ implicit none
                 if (vari_excl.eq.'&&MULT_COMP') then
                     call utmess('I', 'COMPOR4_15')
                 else if (vari_excl.eq.'&&PROT_COMP') then
-                    call utmess('I', 'COMPOR4_16')
+                    call utmess('I', 'COMPOR4_16', si = nb_vari)
                 else
-                    ASSERT(.false.)
+                    ASSERT(ASTER_FALSE)
                 endif
             else
                 call utmess('I', 'COMPOR4_4', si = nb_elem_zone)
