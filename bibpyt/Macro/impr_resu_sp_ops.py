@@ -21,6 +21,7 @@
 # person_in_charge: jean-luc.flejou at edf.fr
 #
 from Utilitai.Utmess import UTMESS
+import aster
 
 def Table2vtu(nomfichtar,Reper,LignepvdData):
     #
@@ -154,8 +155,9 @@ def DedansListe(vale , laliste, precision=1.0E-03 ):
 
 
 def impr_resu_sp_ops(self,
-    RESULTAT, NUME_ORDRE, INST, LIST_INST,
-    GROUP_MA, RESU, UNITE, **args):
+    RESULTAT, GROUP_MA, RESU, UNITE, 
+    NUME_ORDRE=None, INST=None, LIST_INST=None,
+    **args):
     """
        Visualisation des sous-points pour MED
     """
@@ -165,6 +167,7 @@ def impr_resu_sp_ops(self,
     import string as ST
     import tempfile
     from code_aster.Cata.Syntax import _F
+    from code_aster.RunManager import LogicalUnitFile
     #
     ier = 0
     # On importe les définitions des commandes à utiliser dans la macro
@@ -177,8 +180,8 @@ def impr_resu_sp_ops(self,
     # Pas de concept sortant
     #
     # Extraction des INST, NUME_ORDRE, CHAMP du résultat
-    Resultemps=RESULTAT.LIST_PARA()['INST']
-    Resulordre=RESULTAT.LIST_PARA()['NUME_ORDRE']
+    Resultemps=aster.GetResu(RESULTAT.get_name(), "PARAMETRES")['INST']
+    Resulordre=aster.GetResu(RESULTAT.get_name(), "PARAMETRES")['NUME_ORDRE']
     ResuName = RESULTAT.nom
     #
     # lestemps : les temps d'extraction des champs
@@ -215,11 +218,11 @@ def impr_resu_sp_ops(self,
     # Triage suivant les nume_ordre croissant
     list_numeordre_instant[list_numeordre_instant[:,0].argsort()]
     # Les champs et leur composantes
-    Resulchamp=RESULTAT.LIST_CHAMPS()
-    Resulcompo=RESULTAT.LIST_NOM_CMP()
+    Resulchamp=aster.GetResu(RESULTAT.get_name(), "CHAMPS")
+    Resulcompo=aster.GetResu(RESULTAT.get_name(), "COMPOSANTES")
     #
     LesChampsComposantes = []
-    motclef = RESU.List_F()
+    motclef = RESU
     for ii in range(len(motclef)):
         mclf = motclef[ii]
         nom_cham = mclf['NOM_CHAM']
@@ -262,7 +265,7 @@ def impr_resu_sp_ops(self,
             #
             LignepvdData[clef].append( (Nom_Fic, ResuName, Nom_Champ, LNom_Cmp, nume_ordre, instant) )
             #
-            __unit = DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=OSP.join(RepertoireSauve,'%s.table' % Nom_Fic), ACCES='NEW', TYPE='ASCII')
+            __unit = LogicalUnitFile.new_free(OSP.join(RepertoireSauve,'%s.table' % Nom_Fic))
             __tbresu=CREA_TABLE(
                 RESU=_F(RESULTAT=RESULTAT, NOM_CHAM=Nom_Champ.upper() , NUME_ORDRE=nume_ordre, GROUP_MA=Group_MA, NOM_CMP=LNom_Cmp,),)
             #
@@ -272,16 +275,13 @@ def impr_resu_sp_ops(self,
                 if ( not icmp in NomColonnes ):
                     UTMESS('F','IMPRRESUSP_6', valk=(icmp,Nom_Champ.upper()))
             #
-            IMPR_TABLE(FORMAT='TABLEAU', UNITE=__unit, TABLE=__tbresu, NOM_PARA=['COOR_X','COOR_Y','COOR_Z'] + LNom_Cmp,)
-            DEFI_FICHIER(ACTION='LIBERER', UNITE=__unit)
+            IMPR_TABLE(FORMAT='TABLEAU', UNITE=__unit.unit, TABLE=__tbresu, NOM_PARA=['COOR_X','COOR_Y','COOR_Z'] + LNom_Cmp,)
+            LogicalUnitFile.release_from_number(__unit.unit)
             DETRUIRE(CONCEPT=_F(NOM=__tbresu,), INFO=1,)
             DETRUIRE(CONCEPT=_F(NOM=__unit,), INFO=1,)
         #
     # Fichier de l'unité logique UNITE
-    UL = UniteAster()
-    nomfich = UL.Nom(UNITE)
+    nomfich = LogicalUnitFile.filename_from_unit(UNITE)
     # Fabrication du pvd et des vtu dans un fichier "tgz"
     Table2vtu(nomfich,RepertoireSauve,LignepvdData)
-    # Remet UNITE dans son état initial
-    UL.EtatInit()
-    return ier
+    return
