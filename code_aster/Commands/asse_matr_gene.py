@@ -19,28 +19,29 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import GeneralizedAssemblyMatrixDouble
-from code_aster import GeneralizedAssemblyMatrixComplex
+from ..Objects import GeneralizedAssemblyMatrixDouble
+from ..Objects import GeneralizedAssemblyMatrixComplex
+from .ExecuteCommand import ExecuteCommand
 
 
-def ASSE_MATR_GENE(**curDict):
-    returnMatrix = None
-    if curDict["METHODE"] == "INITIAL":
-        returnMatrix = GeneralizedAssemblyMatrixDouble()
-    elif curDict['OPTION'] == "RIGI_GENE_C":
-        returnMatrix = GeneralizedAssemblyMatrixComplex()
-    else:
-        returnMatrix = GeneralizedAssemblyMatrixDouble()
-    name = returnMatrix.getName()
-    type = returnMatrix.getType()
-    syntax = CommandSyntax("ASSE_MATR_GENE")
+class GeneralizedMatrixBuilder(ExecuteCommand):
+    """Command that creates the :class:`~code_aster.Objects.GeneralizedAssemblyMatrixDouble`
+    and `~code_aster.Objects.GeneralizedAssemblyMatrixComplex`"""
+    command_name = "ASSE_MATR_GENE"
 
-    syntax.setResult(name, type)
+    def create_result(self, keywords):
+        """Initialize the result.
 
-    syntax.define(curDict)
-    numOp = 128
-    python_execop(numOp)
-    syntax.free()
-    return returnMatrix
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+
+        if keywords["METHODE"] == "INITIAL":
+            self._result = GeneralizedAssemblyMatrixDouble()
+        elif keywords['OPTION'] == "RIGI_GENE_C":
+            self._result = GeneralizedAssemblyMatrixComplex()
+        else:
+            self._result = GeneralizedAssemblyMatrixDouble()
+
+
+ASSE_MATR_GENE = GeneralizedMatrixBuilder.run

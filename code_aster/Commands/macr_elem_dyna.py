@@ -19,21 +19,22 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import DynamicMacroElement
+from ..Objects import DynamicMacroElement
+from .ExecuteCommand import ExecuteCommand
 
 
-def MACR_ELEM_DYNA(**curDict):
-    returnMacroElement = DynamicMacroElement()
-    name = returnMacroElement.getName()
-    type = returnMacroElement.getType()
-    syntax = CommandSyntax("MACR_ELEM_DYNA")
+class DynamicMacroElementDefinition(ExecuteCommand):
+    """Command that creates the :class:`~code_aster.Objects.DynamicMacroElement`"""
+    command_name = "MACR_ELEM_DYNA"
 
-    syntax.setResult(name, type)
+    def create_result(self, keywords):
+        """Initialize the result.
 
-    syntax.define(curDict)
-    numOp = 81
-    python_execop(numOp)
-    syntax.free()
-    return returnMacroElement
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+
+        self._result = DynamicMacroElement()
+
+
+MACR_ELEM_DYNA = DynamicMacroElementDefinition.run

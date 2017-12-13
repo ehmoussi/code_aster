@@ -19,21 +19,22 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import GeneralizedAssemblyVectorDouble
+from ..Objects import GeneralizedAssemblyVectorDouble
+from .ExecuteCommand import ExecuteCommand
 
 
-def ASSE_VECT_GENE(**curDict):
-    returnMatrix = GeneralizedAssemblyVectorDouble()
-    name = returnMatrix.getName()
-    type = returnMatrix.getType()
-    syntax = CommandSyntax("ASSE_VECT_GENE")
+class GeneralizedVectorBuilder(ExecuteCommand):
+    """Command that creates the :class:`~code_aster.Objects.GeneralizedAssemblyVectorDouble`"""
+    command_name = "ASSE_VECT_GENE"
 
-    syntax.setResult(name, type)
+    def create_result(self, keywords):
+        """Initialize the result.
 
-    syntax.define(curDict)
-    numOp = 127
-    python_execop(numOp)
-    syntax.free()
-    return returnMatrix
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+
+        self._result = GeneralizedAssemblyVectorDouble()
+
+
+ASSE_VECT_GENE = GeneralizedVectorBuilder.run

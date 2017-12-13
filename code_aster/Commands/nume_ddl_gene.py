@@ -19,21 +19,22 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import GeneralizedDOFNumbering
+from ..Objects import GeneralizedDOFNumbering
+from .ExecuteCommand import ExecuteCommand
 
 
-def NUME_DDL_GENE(**curDict):
-    returnDOFNum = GeneralizedDOFNumbering()
-    name = returnDOFNum.getName()
-    type = returnDOFNum.getType()
-    syntax = CommandSyntax("NUME_DDL_GENE")
+class GeneralizedDOFNumberingDefinition(ExecuteCommand):
+    """Command that creates the :class:`~code_aster.Objects.GeneralizedDOFNumbering`"""
+    command_name = "NUME_DDL_GENE"
 
-    syntax.setResult(name, type)
+    def create_result(self, keywords):
+        """Initialize the result.
 
-    syntax.define(curDict)
-    numOp = 127
-    python_execop(numOp)
-    syntax.free()
-    return returnDOFNum
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+
+        self._result = GeneralizedDOFNumbering()
+
+
+NUME_DDL_GENE = GeneralizedDOFNumberingDefinition.run

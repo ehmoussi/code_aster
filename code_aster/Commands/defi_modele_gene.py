@@ -19,21 +19,22 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import GeneralizedModel
+from ..Objects import GeneralizedModel
+from .ExecuteCommand import ExecuteCommand
 
 
-def DEFI_MODELE_GENE(**curDict):
-    returnModel = GeneralizedModel()
-    name = returnModel.getName()
-    type = returnModel.getType()
-    syntax = CommandSyntax("DEFI_MODELE_GENE")
+class GeneralizedModelDefinition(ExecuteCommand):
+    """Command that creates the :class:`~code_aster.Objects.GeneralizedModel`"""
+    command_name = "DEFI_MODELE_GENE"
 
-    syntax.setResult(name, type)
+    def create_result(self, keywords):
+        """Initialize the result.
 
-    syntax.define(curDict)
-    numOp = 126
-    python_execop(numOp)
-    syntax.free()
-    return returnModel
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+
+        self._result = GeneralizedModel()
+
+
+DEFI_MODELE_GENE = GeneralizedModelDefinition.run

@@ -43,6 +43,8 @@ void exportModelToPython()
 
     bool (ModelInstance::*c1)(MeshPtr&) =
             &ModelInstance::setSupportMesh;
+    bool (ModelInstance::*c4)(SkeletonPtr&) =
+            &ModelInstance::setSupportMesh;
 
     void (ModelInstance::*split1)(ModelSplitingMethod) =
             &ModelInstance::setSplittingMethod;
@@ -71,6 +73,7 @@ void exportModelToPython()
         .def( "getSplittingMethod", &ModelInstance::getSplittingMethod )
         .def( "getGraphPartitioner", &ModelInstance::getGraphPartitioner )
         .def( "setSupportMesh", c1 )
+        .def( "setSupportMesh", c4 )
         .def( "setSplittingMethod", split1 )
         .def( "setSplittingMethod", split2 )
 #ifdef _USE_MPI

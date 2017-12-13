@@ -46,8 +46,8 @@ from .affe_modele import AFFE_MODELE
 from .asse_maillage import ASSE_MAILLAGE
 from .asse_matrice import ASSE_MATRICE
 from .asse_vecteur import ASSE_VECTEUR
-# from .asse_matr_gene import ASSE_MATR_GENE
-# from .asse_vect_gene import ASSE_VECT_GENE
+from .asse_matr_gene import ASSE_MATR_GENE
+from .asse_vect_gene import ASSE_VECT_GENE
 from .calc_champ import CALC_CHAMP
 from .calc_char_cine import CALC_CHAR_CINE
 from .calc_cham_elem import CALC_CHAM_ELEM
@@ -70,7 +70,7 @@ from .crea_resu import CREA_RESU
 from .crea_table import CREA_TABLE
 from .debug import DEBUG
 from .debut import DEBUT, POURSUITE
-from .defi_obstacle import DEFI_OBSTACLE
+from .defi_base_modale import DEFI_BASE_MODALE
 from .defi_cable_bp import DEFI_CABLE_BP
 from .defi_cable_op import DEFI_CABLE_OP
 from .defi_compor import DEFI_COMPOR
@@ -86,13 +86,14 @@ from .defi_geom_fibre import DEFI_GEOM_FIBRE
 from .defi_grille import DEFI_GRILLE
 from .defi_group import DEFI_GROUP
 from .defi_inte_spec import DEFI_INTE_SPEC
-# from .defi_interf_dyna import DEFI_INTERF_DYNA
+from .defi_interf_dyna import DEFI_INTERF_DYNA
 from .defi_list_reel import DEFI_LIST_REEL
 from .defi_materiau import DEFI_MATERIAU
 from .defi_mater_gc import DEFI_MATER_GC
-# from .defi_modele_gene import DEFI_MODELE_GENE
+from .defi_modele_gene import DEFI_MODELE_GENE
 from .defi_nappe import DEFI_NAPPE
-# from .defi_squelette import DEFI_SQUELETTE
+from .defi_obstacle import DEFI_OBSTACLE
+from .defi_squelette import DEFI_SQUELETTE
 from .defi_spec_turb import DEFI_SPEC_TURB
 from .defi_trc import DEFI_TRC
 from .detruire import DETRUIRE
@@ -109,8 +110,8 @@ from .impr_fonction import IMPR_FONCTION
 from .impr_table import IMPR_TABLE
 from .impr_resu import IMPR_RESU
 from .lire_maillage import LIRE_MAILLAGE
-# from .macr_elem_dyna import MACR_ELEM_DYNA
-# from .macr_elem_stat import MACR_ELEM_STAT
+from .macr_elem_dyna import MACR_ELEM_DYNA
+from .macr_elem_stat import MACR_ELEM_STAT
 from .macr_lign_coupe import MACR_LIGN_COUPE
 from .maj_cata import MAJ_CATA
 from .macr_adap_mail import MACR_ADAP_MAIL
@@ -118,14 +119,14 @@ from .macr_cara_poutre import MACR_CARA_POUTRE
 from .macr_info_mail import MACR_INFO_MAIL
 from .macro_elas_mult import MACRO_ELAS_MULT
 from .meca_statique import MECA_STATIQUE
-# from .mode_iter_cycl import MODE_ITER_CYCL
+from .mode_iter_cycl import MODE_ITER_CYCL
 from .mode_statique import MODE_STATIQUE
 from .modi_maillage import MODI_MAILLAGE
 from .modi_modele import MODI_MODELE
 from .modi_modele_xfem import MODI_MODELE_XFEM
 from .modi_repere import MODI_REPERE
 from .nume_ddl import NUME_DDL
-# from .nume_ddl_gene import NUME_DDL_GENE
+from .nume_ddl_gene import NUME_DDL_GENE
 from .post_bordet import POST_BORDET
 from .post_champ import POST_CHAMP
 from .post_coque import POST_COQUE
@@ -142,6 +143,7 @@ from .stat_non_line import STAT_NON_LINE
 from .reca_weibull import RECA_WEIBULL
 from .recu_fonction import RECU_FONCTION
 from .recu_table import RECU_TABLE
+from .rest_sous_struc import REST_SOUS_STRUC
 from .resoudre import RESOUDRE
 from .test_resu import TEST_RESU
 from .test_table import TEST_TABLE

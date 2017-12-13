@@ -1,6 +1,9 @@
+#ifndef GENERALIZEDMODECONTAINERINTERFACE_H_
+#define GENERALIZEDMODECONTAINERINTERFACE_H_
+
 /**
- * @file SkeletonInterface.cxx
- * @brief Interface python de Skeleton
+ * @file GeneralizedModeContainerInterface.h
+ * @brief Fichier entete de la classe GeneralizedModeContainerInterface
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,20 +24,9 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/SkeletonInterface.h"
-#include "PythonBindings/factory.h"
-#include <boost/python.hpp>
+#include "astercxx.h"
+#include "Results/GeneralizedModeContainer.h"
 
-void exportSkeletonToPython()
-{
-    using namespace boost::python;
+void exportGeneralizedModeContainerToPython();
 
-    class_< SkeletonInstance, SkeletonInstance::SkeletonPtr,
-            bases< BaseMeshInstance > > ( "Skeleton", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< SkeletonInstance > ) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< SkeletonInstance,
-                             std::string >) )
-    ;
-};
+#endif /* GENERALIZEDMODECONTAINERINTERFACE_H_ */
