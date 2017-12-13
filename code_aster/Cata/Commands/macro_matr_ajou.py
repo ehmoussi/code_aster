@@ -25,15 +25,17 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 
-def macro_matr_ajou_prod(self,MATR_AMOR_AJOU,MATR_MASS_AJOU,MATR_RIGI_AJOU,FORC_AJOU,**args):
-  self.type_sdprod(MATR_AMOR_AJOU,matr_asse_gene_r)
-  self.type_sdprod(MATR_MASS_AJOU,matr_asse_gene_r)
-  self.type_sdprod(MATR_RIGI_AJOU,matr_asse_gene_r)
-  if FORC_AJOU != None:
-    for m in FORC_AJOU:
-      self.type_sdprod(m['VECTEUR'],vect_asse_gene)
-
-  return None
+def macro_matr_ajou_prod(self, MATR_AMOR_AJOU=None, MATR_MASS_AJOU=None, MATR_RIGI_AJOU=None, FORC_AJOU=None, **args):
+    if MATR_AMOR_AJOU != None:
+        self.type_sdprod(MATR_AMOR_AJOU, matr_asse_gene_r)
+    if MATR_MASS_AJOU != None:
+        self.type_sdprod(MATR_MASS_AJOU, matr_asse_gene_r)
+    if MATR_RIGI_AJOU != None:
+        self.type_sdprod(MATR_RIGI_AJOU, matr_asse_gene_r)
+    if FORC_AJOU != None:
+        for m in FORC_AJOU:
+            self.type_sdprod(m['VECTEUR'], vect_asse_gene)
+    return None
 
 MACRO_MATR_AJOU=MACRO(nom="MACRO_MATR_AJOU",
                       op=OPS('Macro.macro_matr_ajou_ops.macro_matr_ajou_ops'),
