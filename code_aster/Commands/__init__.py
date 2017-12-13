@@ -140,6 +140,7 @@ from .macr_elem_stat import MACR_ELEM_STAT
 from .maj_cata import MAJ_CATA
 from .meca_statique import MECA_STATIQUE
 from .mode_iter_cycl import MODE_ITER_CYCL
+from .mode_non_line import MODE_NON_LINE
 from .mode_statique import MODE_STATIQUE
 from .modi_maillage import MODI_MAILLAGE
 from .modi_modele import MODI_MODELE
