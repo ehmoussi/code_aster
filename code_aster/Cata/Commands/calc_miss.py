@@ -420,7 +420,7 @@ CALC_MISS = MACRO(nom="CALC_MISS",
                  VITE_ONDE       =SIMP(statut='f',typ='R', defaut=600.),
                  PARA_ALPHA     =SIMP(statut='f',typ='R',defaut=0.5),),
                                ),
-        UNITE_RESU_IMPE  = SIMP(statut='f',typ=UnitType(),defaut=25, inout='inout'),
+        UNITE_RESU_IMPE  = SIMP(statut='f',typ=UnitType(), inout='inout'),
         TYPE             = SIMP(statut='f',typ='TXM', into=("BINAIRE","ASCII"), defaut="ASCII"),
     ),
 
