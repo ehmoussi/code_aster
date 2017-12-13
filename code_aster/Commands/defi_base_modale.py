@@ -19,13 +19,13 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import Skeleton
+from ..Objects import MechanicalModeContainer
 from .ExecuteCommand import ExecuteCommand
 
 
-class SkeletonDefinition(ExecuteCommand):
-    """Command that creates the :class:`~code_aster.Objects.Skeleton`"""
-    command_name = "DEFI_SQUELETTE"
+class ModalBasisDef(ExecuteCommand):
+    """Command that creates the :class:`~code_aster.Objects.ModalBasisDefinition`"""
+    command_name = "DEFI_BASE_MODALE"
 
     def create_result(self, keywords):
         """Initialize the result.
@@ -34,7 +34,7 @@ class SkeletonDefinition(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
 
-        self._result = Skeleton()
+        self._result = MechanicalModeContainer()
 
 
-DEFI_SQUELETTE = SkeletonDefinition.run
+DEFI_BASE_MODALE = ModalBasisDef.run

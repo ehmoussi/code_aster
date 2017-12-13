@@ -42,6 +42,16 @@ MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
         new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) )
 {};
 
+MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
+                                                const SkeletonPtr& mesh ):
+    _supportMesh( mesh ),
+    DataStructure( name, 8, "CHAM_MATER" ),
+    _listOfMaterials( PCFieldOnMeshChar8Ptr(
+        new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
+    _listOfTemperatures( PCFieldOnMeshDoublePtr(
+        new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) )
+{};
+
 #ifdef _USE_MPI
 MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
                                                 const ParallelMeshPtr& mesh ):

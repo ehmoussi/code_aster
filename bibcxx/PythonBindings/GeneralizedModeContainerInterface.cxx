@@ -1,6 +1,6 @@
 /**
- * @file SkeletonInterface.cxx
- * @brief Interface python de Skeleton
+ * @file GeneralizedModeContainerInterface.cxx
+ * @brief Interface python de GeneralizedModeContainer
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,20 +21,17 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/SkeletonInterface.h"
+#include "PythonBindings/GeneralizedModeContainerInterface.h"
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportSkeletonToPython()
+void exportGeneralizedModeContainerToPython()
 {
     using namespace boost::python;
 
-    class_< SkeletonInstance, SkeletonInstance::SkeletonPtr,
-            bases< BaseMeshInstance > > ( "Skeleton", no_init )
+    class_< GeneralizedModeContainerInstance, GeneralizedModeContainerPtr,
+            bases< DynamicResultsContainerInstance > > ( "GeneralizedModeContainer", no_init )
         .def( "__init__", make_constructor(
-            &initFactoryPtr< SkeletonInstance > ) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< SkeletonInstance,
-                             std::string >) )
+            &initFactoryPtr< GeneralizedModeContainerInstance > ) )
     ;
 };

@@ -36,6 +36,9 @@ void exportMaterialOnMeshToPython()
                              const MeshPtr& > ) )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MaterialOnMeshInstance,
+                             const SkeletonPtr& > ) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< MaterialOnMeshInstance,
                              const std::string&,
                              const MeshPtr& > ) )
 #ifdef _USE_MPI

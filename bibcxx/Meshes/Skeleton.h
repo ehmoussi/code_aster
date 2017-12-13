@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe Skeleton
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -34,10 +34,10 @@
 
 /**
  * @class SkeletonInstance
- * @brief Cette classe correspond a un comb_fourier
+ * @brief Cette classe correspond a une sd_squelette
  * @author Nicolas Sellenet
  */
-class SkeletonInstance: public MeshInstance
+class SkeletonInstance: public BaseMeshInstance
 {
 private:
     /** @brief Objet Jeveux '.INV.SKELETON' */
@@ -61,15 +61,21 @@ public:
     /**
      * @brief Constructeur
      */
-    SkeletonInstance(): 
+    SkeletonInstance():
+        SkeletonInstance( ResultNaming::getNewResultName() )
+    {};
+
+    /**
+     * @brief Constructeur
+     */
+    SkeletonInstance( const std::string& name ): 
+        BaseMeshInstance( name, "SQUELETTE" ),
         _invSkeleton( JeveuxVectorLong( getName() + ".INV.SKELETON" ) ),
         _corres( JeveuxVectorLong( getName() + ".CORRES" ) ),
         _nomSst( JeveuxVectorChar24( getName() + ".NOMSST" ) ),
         _anglNaut( JeveuxVectorDouble( getName() + ".ANGL_NAUT" ) ),
         _trans( JeveuxVectorDouble( getName() + ".TRANS" ) )
-    {
-        setType( "SQUELETTE" );
-    };
+    {};
 
 };
 

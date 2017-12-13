@@ -34,6 +34,7 @@
 #include "Meshes/Mesh.h"
 #include "Meshes/ParallelMesh.h"
 #include "Meshes/PartialMesh.h"
+#include "Meshes/Skeleton.h"
 #include "Modeling/ElementaryModeling.h"
 #include "Loads/PhysicalQuantity.h"
 #include "Utilities/SyntaxDictionary.h"
@@ -263,6 +264,18 @@ class ModelInstance: public DataStructure
         {
             if ( currentMesh->isEmpty() )
                 throw std::runtime_error( "Mesh is empty" );
+            _supportBaseMesh = currentMesh;
+            return true;
+        };
+
+        /**
+         * @brief Definition du maillage support
+         * @param currentMesh objet SkeletonPtr sur lequel le modele reposera
+         */
+        bool setSupportMesh( SkeletonPtr& currentMesh ) throw ( std::runtime_error )
+        {
+            if ( currentMesh->isEmpty() )
+                throw std::runtime_error( "Skeleton is empty" );
             _supportBaseMesh = currentMesh;
             return true;
         };

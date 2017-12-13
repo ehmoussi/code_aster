@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.brie at edf.fr
 from code_aster.Commands.ExecuteCommand import ExecuteCommand
-from code_aster.Objects import MechanicalModeContainer
+from code_aster.Objects import MechanicalModeContainer, GeneralizedModeContainer
 from Modal.mode_iter_simult import MODE_ITER_SIMULT as MODE_ITER_SIMULT_CATA
 
 
@@ -37,7 +37,24 @@ class ModalCalculationSimult(ExecuteCommand):
         if keywords.get("TYPE_RESU") in ("MODE_FLAMB", "GENERAL"):
             raise NotImplementedError("Unsupported value: {0}"
                                       .format(keywords["TYPE_RESU"]))
-        self._result = MechanicalModeContainer()
+
+        if keywords.get("MATR_AMOR") != None:
+            if keywords.get("MATR_AMOR").getType() == "MATR_ASSE_DEPL_R":
+                raise NotImplementedError("Unsupported type")
+
+        vale_rigi = keywords.get("MATR_RIGI")
+        if vale_rigi.getType() == "MATR_ASSE_DEPL_R":
+            self._result = MechanicalModeContainer()
+        if vale_rigi.getType() == "MATR_ASSE_TEMP_R":
+            self._result = MechanicalModeContainer()
+        if vale_rigi.getType() == "MATR_ASSE_DEPL_C":
+            raise NotImplementedError("Unsupported type")
+        if vale_rigi.getType() == "MATR_ASSE_PRESS_R":
+            raise NotImplementedError("Unsupported type")
+        if vale_rigi.getType() == "MATR_ASSE_GENE_R":
+            self._result = GeneralizedModeContainer()
+        if vale_rigi.getType() == "MATR_ASSE_GENE_C":
+            self._result = GeneralizedModeContainer()
 
 
 MODE_ITER_SIMULT = ModalCalculationSimult.run

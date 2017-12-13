@@ -19,23 +19,22 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import StructureInterface
+from ..Objects import StructureInterface
+from .ExecuteCommand import ExecuteCommand
 
 
-def DEFI_INTERF_DYNA(**curDict):
-    returnStructureInterface = StructureInterface()
-    name = returnStructureInterface.getName()
-    type = returnStructureInterface.getType()
+class StructureInterfaceDefinition(ExecuteCommand):
+    """Command that creates the :class:`~code_aster.Objects.StructureInterface`"""
+    command_name = "DEFI_INTERF_DYNA"
 
-    syntax = CommandSyntax("DEFI_INTERF_DYNA")
-    syntax.setResult(name, type)
-    syntax.define(curDict)
+    def create_result(self, keywords):
+        """Initialize the result.
 
-    numOp = 98
-    python_execop(numOp)
-    syntax.free()
-    returnStructureInterface.setSupportMesh(curDict["MAILLAGE"])
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
 
-    return returnStructureInterface
+        self._result = StructureInterface()
+
+
+DEFI_INTERF_DYNA = StructureInterfaceDefinition.run

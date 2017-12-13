@@ -31,6 +31,7 @@
 #include "DataStructures/DataStructure.h"
 #include "Modeling/Model.h"
 #include "Meshes/Mesh.h"
+#include "Meshes/Skeleton.h"
 #include "Materials/Material.h"
 #include "DataFields/PCFieldOnMesh.h"
 #include "Meshes/ParallelMesh.h"
@@ -87,7 +88,19 @@ class MaterialOnMeshInstance: public DataStructure
         /**
          * @brief Constructeur
          */
+        MaterialOnMeshInstance( const SkeletonPtr& mesh ):
+            MaterialOnMeshInstance( ResultNaming::getNewResultName(), mesh )
+        {};
+
+        /**
+         * @brief Constructeur
+         */
         MaterialOnMeshInstance( const std::string &, const MeshPtr& );
+
+        /**
+         * @brief Constructeur
+         */
+        MaterialOnMeshInstance( const std::string &, const SkeletonPtr& );
 
 #ifdef _USE_MPI
         /**

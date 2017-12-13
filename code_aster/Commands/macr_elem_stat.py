@@ -19,21 +19,22 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import StaticMacroElement
+from ..Objects import StaticMacroElement
+from .ExecuteCommand import ExecuteCommand
 
 
-def MACR_ELEM_STAT(**curDict):
-    returnMacroElement = StaticMacroElement()
-    name = returnMacroElement.getName()
-    type = returnMacroElement.getType()
-    syntax = CommandSyntax("MACR_ELEM_STAT")
+class StaticMacroElementDefinition(ExecuteCommand):
+    """Command that creates the :class:`~code_aster.Objects.StaticMacroElement`"""
+    command_name = "MACR_ELEM_STAT"
 
-    syntax.setResult(name, type)
+    def create_result(self, keywords):
+        """Initialize the result.
 
-    syntax.define(curDict)
-    numOp = 86
-    python_execop(numOp)
-    syntax.free()
-    return returnMacroElement
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+
+        self._result = StaticMacroElement()
+
+
+MACR_ELEM_STAT = StaticMacroElementDefinition.run

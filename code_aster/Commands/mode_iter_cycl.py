@@ -19,27 +19,22 @@
 
 # person_in_charge: natacha.bereux  at edf.fr
 
-
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
-from code_aster import CyclicSymmetryMode
+from ..Objects import CyclicSymmetryMode
+from .ExecuteCommand import ExecuteCommand
 
 
-def MODE_ITER_CYCL(**curDict):
-    returnCyclicMode = CyclicSymmetryMode()
-    name = returnCyclicMode.getName()
-    type = returnCyclicMode.getType()
+class CyclicSymmetryModeDefinition(ExecuteCommand):
+    """Command that creates the :class:`~code_aster.Objects.CyclicSymmetryMode`"""
+    command_name = "MODE_ITER_CYCL"
 
-    syntax = CommandSyntax("MODE_ITER_CYCL")
-    syntax.setResult(name, type)
-    syntax.define(curDict)
+    def create_result(self, keywords):
+        """Initialize the result.
 
-    numOp = 80
-    python_execop(numOp)
-    syntax.free()
-#   /* TODO returnCyclicMode.setSupportMesh(curDict["MAILLAGE"])
-    modalBasis= curDict["BASE_MODALE"];
-    returnCyclicMode.setModalBasis(modalBasis)
-    returnCyclicMode.setStructureInterface(modalBasis.getStructureInterface())
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
 
-    return returnCyclicMode
+        self._result = CyclicSymmetryMode()
+
+
+MODE_ITER_CYCL = CyclicSymmetryModeDefinition.run
