@@ -18,11 +18,11 @@
 # --------------------------------------------------------------------
 
 def macro_matr_ajou_ops(
-    self, MAILLAGE, GROUP_MA_FLUIDE, GROUP_MA_INTERF, MODELISATION, MODE_MECA, DEPL_IMPO,
-    NUME_DDL_GENE, MODELE_GENE, MATR_MASS_AJOU, MATR_AMOR_AJOU, MATR_RIGI_AJOU,
-    NOEUD_DOUBLE, FLUIDE, DDL_IMPO, DIST_REFE, SOLVEUR, INFO, AVEC_MODE_STAT,
-    MODE_STAT, MONO_APPUI,
-        FORC_AJOU, ECOULEMENT, **args):
+    self, MAILLAGE, GROUP_MA_FLUIDE, GROUP_MA_INTERF, MODELISATION, FLUIDE, DDL_IMPO, 
+    MODE_MECA=None, DEPL_IMPO=None, NUME_DDL_GENE=None, MODELE_GENE=None, MATR_MASS_AJOU=None,
+    MATR_AMOR_AJOU=None, MATR_RIGI_AJOU=None, NOEUD_DOUBLE=None, DIST_REFE=None, SOLVEUR=None,
+    INFO=None, AVEC_MODE_STAT=None, MODE_STAT=None, MONO_APPUI=None,
+    FORC_AJOU=None, ECOULEMENT=None, **args):
     """
        Ecriture de la macro MACRO_MATR_AJOU
     """
@@ -39,16 +39,16 @@ def macro_matr_ajou_ops(
     AFFE_CHAR_THER = self.get_cmd('AFFE_CHAR_THER')
     CALC_MATR_AJOU = self.get_cmd('CALC_MATR_AJOU')
     THER_LINEAIRE = self.get_cmd('THER_LINEAIRE')
-    from Contrib.calc_forc_ajou import CALC_FORC_AJOU
+    from code_aster.Commands import CALC_FORC_AJOU
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
 
     if len(FLUIDE) == 1:
         message = '<I> <MACRO_MATR_AJOU> tout le domaine fluide specifie dans GROUP_MA_INTERF et GROUP_MA_FLUIDE \n'
         message = message + '                      sera affecte par la masse volumique RHO = ' + \
-            str(FLUIDE['RHO']) + ' \n'
+            str(FLUIDE[0]['RHO']) + ' \n'
         aster.affiche('MESSAGE', message)
-        if FLUIDE['GROUP_MA'] != None:
+        if FLUIDE[0]['GROUP_MA'] != None:
             message = '<I> <MACRO_MATR_AJOU> cas fluide simple : le group_ma dans lequel vous affectez la masse \n'
             message = message + \
                 'volumique RHO doit etre la reunion de GROUP_MA_INTERF et GROUP_MA_FLUIDE. \n'
@@ -128,7 +128,6 @@ def macro_matr_ajou_ops(
 #  commande CALC_MATR_AJOU, calcul de la masse ajoutee
 
     if MATR_MASS_AJOU != None:
-        self.DeclareOut('MASSAJ', MATR_MASS_AJOU)
         solveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)
         mostcles = {}
         if NUME_DDL_GENE != None:
@@ -153,6 +152,8 @@ def macro_matr_ajou_ops(
                                 OPTION='MASS_AJOU',
                                 SOLVEUR=solveur,
                                 **mostcles)
+        self.register_result(MASSAJ, MATR_MASS_AJOU)
+        
 
 #  ---------------------------------------------------------------
 #  calcul de l amortissement ajoute
@@ -197,7 +198,6 @@ def macro_matr_ajou_ops(
 #  ---------------------------------------------------------------
 #  calcul amortissement proprement dit
     if MATR_AMOR_AJOU != None:
-        self.DeclareOut('AMORAJ', MATR_AMOR_AJOU)
         solveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)
         mostcles = {}
         if NUME_DDL_GENE != None:
@@ -219,11 +219,11 @@ def macro_matr_ajou_ops(
                                 SOLVEUR=solveur,
                                 POTENTIEL=__POTEN,
                                 **mostcles)
+        self.register_result(AMORAJ, MATR_AMOR_AJOU)
 
 #  ---------------------------------------------------------------
 #  calcul de la rigidite ajoutee
     if MATR_RIGI_AJOU != None:
-        self.DeclareOut('RIGIAJ', MATR_RIGI_AJOU)
         solveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)
         mostcles = {}
         if NUME_DDL_GENE != None:
@@ -245,12 +245,12 @@ def macro_matr_ajou_ops(
                                 SOLVEUR=solveur,
                                 POTENTIEL=__POTEN,
                                 **mostcles)
+        self.register_result(RIGIAJ, MATR_RIGI_AJOU)
 
 #  ---------------------------------------------------------------
 #  boucle sur le nombre de vecteurs a projeter, commande CALC_FORC_AJOU
     if FORC_AJOU != None:
         for FORCAJ in FORC_AJOU:
-            self.DeclareOut('VECTAJ', FORCAJ['VECTEUR'])
             solveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)
             mostcles = {}
             if NUME_DDL_GENE != None:
@@ -280,5 +280,6 @@ def macro_matr_ajou_ops(
                                     CHAM_MATER=__NOMCMA,
                                     SOLVEUR=solveur,
                                     **mostcles)
+            self.register_result(VECTAJ, FORCAJ['VECTEUR'])
 
-    return ier
+    return
