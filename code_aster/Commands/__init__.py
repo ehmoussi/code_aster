@@ -55,6 +55,7 @@ from .calc_fatigue import CALC_FATIGUE
 from .calc_ferraillage import CALC_FERRAILLAGE
 from .calc_fonc_interp import CALC_FONC_INTERP
 from .calc_forc_nonl import CALC_FORC_NONL
+from .calc_matr_ajou import CALC_MATR_AJOU
 from .calc_matr_elem import CALC_MATR_ELEM
 from .calc_meta import CALC_META
 from .calc_modes import CALC_MODES
