@@ -265,6 +265,51 @@ IMPR_RESU(MODELE=MODELE,
           RESU=(_F(CHAM_GD=EXTR_TMI,),
                 _F(CHAM_GD=EXTR_VMI,),),);
 
+
+MAXABS=CREA_CHAMP(TYPE_CHAM='ELNO_SIEF_R',
+                    OPERATION='EXTR',
+                    RESULTAT=DYNATRA,
+                    NOM_CHAM='SIPO_ELNO',
+                    TYPE_MAXI='MAXI_ABS',
+                    TYPE_RESU='VALE',
+                    LIST_INST=LISTER,
+                    PRECISION=1.0E-6,);
+
+MINABS=CREA_CHAMP(TYPE_CHAM='ELNO_SIEF_R',
+                    OPERATION='EXTR',
+                    RESULTAT=DYNATRA,
+                    NOM_CHAM='SIPO_ELNO',
+                    TYPE_MAXI='MINI_ABS',
+                    TYPE_RESU='VALE',
+                    LIST_INST=LISTER,
+                    PRECISION=1.0E-6,);
+
+MAXABSAB=CREA_CHAMP(TYPE_CHAM='ELNO_SIEF_R',
+                    OPERATION='EXTR',
+                    RESULTAT=DYNATRA,
+                    NOM_CHAM='SIPO_ELNO',
+                    TYPE_MAXI='MAXI_ABS',
+                    TYPE_RESU='VALE_ABS',
+                    LIST_INST=LISTER,
+                    PRECISION=1.0E-6,);
+
+MINABSAB=CREA_CHAMP(TYPE_CHAM='ELNO_SIEF_R',
+                    OPERATION='EXTR',
+                    RESULTAT=DYNATRA,
+                    NOM_CHAM='SIPO_ELNO',
+                    TYPE_MAXI='MINI_ABS',
+                    TYPE_RESU='VALE_ABS',
+                    LIST_INST=LISTER,
+                    PRECISION=1.0E-6,);
+
+IMPR_RESU(MODELE=MODELE,
+          FORMAT='RESULTAT',
+          RESU=(_F(CHAM_GD=MAXABS,),
+                _F(CHAM_GD=MINABS,),
+                _F(CHAM_GD=MAXABSAB,),
+                _F(CHAM_GD=MINABSAB,),),);
+
+
 TEST_RESU(RESU=(_F(GROUP_NO='BASE',
                    INST=2.0,
                    RESULTAT=DYNATRA,
@@ -288,5 +333,72 @@ TEST_RESU(RESU=(_F(GROUP_NO='BASE',
                    ),
                 ),
           )
+
+# VALIDATION DE TYPE_RESU='VALE_ABS'
+
+TEST_RESU (CHAM_ELEM=(_F(CHAM_GD        = MAXABS,
+                         MAILLE         ='M1',
+                         NOEUD          ='N1',
+                         NOM_CMP        = 'SN',
+                         VALE_CALC      = -8.20094496775807E+08,
+                         ),
+                        _F(CHAM_GD        = MAXABS,
+                         MAILLE         ='M9',
+                         NOEUD          ='N12',
+                         NOM_CMP        = 'SMFZ',
+                         VALE_CALC      = 1.93299612798964E+10,
+                         ),
+                         ),)
+
+TEST_RESU (CHAM_ELEM=(_F(CHAM_GD        = MAXABSAB,
+                         MAILLE         ='M1',
+                         NOEUD          ='N1',
+                         NOM_CMP        = 'SN',
+                         VALE_CALC      = 8.20094496775807E+08,
+                         VALE_REFE      = 8.20094496775807E+08,
+                         REFERENCE      = 'AUTRE_ASTER',
+                         ),
+                        _F(CHAM_GD        = MAXABSAB,
+                         MAILLE         ='M9',
+                         NOEUD          ='N12',
+                         NOM_CMP        = 'SMFZ',
+                         VALE_CALC      = 1.93299612798964E+10,
+                         VALE_REFE      = 1.93299612798964E+10,
+                         REFERENCE      = 'AUTRE_ASTER',
+                         ),
+                         ),)
+
+TEST_RESU (CHAM_ELEM=(_F(CHAM_GD        = MINABS,
+                         MAILLE         ='M1',
+                         NOEUD          ='N1',
+                         NOM_CMP        = 'SN',
+                         VALE_CALC      = -2.65282777575495E+04,
+                         ),
+                        _F(CHAM_GD        = MINABS,
+                         MAILLE         ='M1',
+                         NOEUD          ='N5',
+                         NOM_CMP        = 'SN',
+                         VALE_CALC      = 4.44886809226435E+04,
+                         ),
+                         ),)
+
+TEST_RESU (CHAM_ELEM=(_F(CHAM_GD        = MINABSAB,
+                         MAILLE         ='M1',
+                         NOEUD          ='N1',
+                         NOM_CMP        = 'SN',
+                         VALE_CALC      = 2.65282777575495E+04,
+                         VALE_REFE      = 2.65282777575495E+04,
+                         REFERENCE      = 'AUTRE_ASTER',
+                         ),
+                        _F(CHAM_GD        = MINABSAB,
+                         MAILLE         ='M1',
+                         NOEUD          ='N5',
+                         NOM_CMP        = 'SN',
+                         VALE_CALC      = 4.44886809226435E+04,
+                         VALE_REFE      = 4.44886809226435E+04,
+                         REFERENCE      = 'AUTRE_ASTER',
+                         ),
+                         ),)
+
 
 FIN();

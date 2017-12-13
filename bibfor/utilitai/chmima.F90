@@ -181,13 +181,22 @@ subroutine chmima(nomsd, nomsy, typcha, typmax, nocham)
 !
             call jeveuo(chs2//sufv, 'L', ivale)
 !
-            do j = 1, neq
-!
-                if (abs(zr(ivale+j-1)) .gt. abs(zr(nvale+j-1))) then
-                    zr(nvale+j-1) = zr(ivale+j-1)
-                    zi(inumer+j-1) = zi(jordr+i-1)
-                endif
-            end do
+            if (valeur.eq.'VALE_ABS')then
+                do j = 1, neq
+                    if (i.eq.2) zr(nvale+j-1) = abs(zr(nvale+j-1))
+                    if (abs(zr(ivale+j-1)) .gt. zr(nvale+j-1)) then
+                        zr(nvale+j-1) = abs(zr(ivale+j-1))
+                        zi(inumer+j-1) = zi(jordr+i-1)
+                    endif
+                end do
+            else
+                do j = 1, neq
+                    if (abs(zr(ivale+j-1)) .gt. abs(zr(nvale+j-1))) then
+                        zr(nvale+j-1) = zr(ivale+j-1)
+                        zi(inumer+j-1) = zi(jordr+i-1)
+                    endif
+                end do
+            endif
         
             if (typcha(1:4).eq.'NOEU') call detrsd('CHAM_NO_S', chs2)
 !
@@ -249,13 +258,22 @@ subroutine chmima(nomsd, nomsy, typcha, typmax, nocham)
 !
             call jeveuo(chs2//sufv, 'L', ivale)
 !
-            do j = 1, neq
-!
-                if (abs(zr(ivale+j-1)) .lt. abs(zr(nvale+j-1))) then
-                    zr(nvale+j-1) = zr(ivale+j-1)
-                    zi(inumer+j-1) = zi(jordr+i-1)
-                endif
-            end do
+            if (valeur.eq.'VALE_ABS')then
+                do j = 1, neq
+                    if (i.eq.2) zr(nvale+j-1) = abs(zr(nvale+j-1))
+                    if (abs(zr(ivale+j-1)) .lt. zr(nvale+j-1)) then
+                        zr(nvale+j-1) = abs(zr(ivale+j-1))
+                        zi(inumer+j-1) = zi(jordr+i-1)
+                    endif
+                end do
+            else
+                do j = 1, neq
+                    if (abs(zr(ivale+j-1)) .lt. abs(zr(nvale+j-1))) then
+                        zr(nvale+j-1) = zr(ivale+j-1)
+                        zi(inumer+j-1) = zi(jordr+i-1)
+                    endif
+                end do
+            endif
                    
             if (typcha(1:4).eq.'NOEU') call detrsd('CHAM_NO_S', chs2)
 !
