@@ -130,6 +130,7 @@ from .post_elem import POST_ELEM
 from .post_fati_alea import POST_FATI_ALEA
 from .post_fatigue import POST_FATIGUE
 from .post_mail_xfem import POST_MAIL_XFEM
+from .post_rccm import POST_RCCM
 from .post_releve_t import POST_RELEVE_T
 from .post_usure import POST_USURE
 from .prod_matr_cham import PROD_MATR_CHAM
