@@ -24,8 +24,7 @@ from .ExecuteCommand import ExecuteCommand
 
 
 class SismicLoading(ExecuteCommand):
-    """Command that creates the :class:`~code_aster.Objects.Model` by assigning
-    finite elements on a :class:`~code_aster.Objects.Mesh`."""
+    """ """
     command_name = "CALC_CHAR_SEISME"
 
     def create_result(self, keywords):

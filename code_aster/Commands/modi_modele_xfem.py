@@ -24,8 +24,7 @@ from .ExecuteCommand import ExecuteCommand
 
 
 class XfemModelModication(ExecuteCommand):
-    """Command that creates the :class:`~code_aster.Objects.Model` by assigning
-    finite elements on a :class:`~code_aster.Objects.Mesh`."""
+    """ """
     command_name = "MODI_MODELE_XFEM"
 
     def create_result(self, keywords):
@@ -35,17 +34,6 @@ class XfemModelModication(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         self._result = Model()
-
-#    def post_exec(self, keywords):
-#        """Execute the command.
-
-#        Arguments:
-#            keywords (dict): User's keywords.
-#        """
-#        if keywords.has_key["FISSURE"]:
-#            self._result.setXfemCrack(keywords["FISSURE"])
-#        elif keywords.has_key["MODELE_THER"]:
-#            self._result.setXfemCrack(keywords["MODELE_THER"])
 
 
 MODI_MODELE_XFEM = XfemModelModication.run
