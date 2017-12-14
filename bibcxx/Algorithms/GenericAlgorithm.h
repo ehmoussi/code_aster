@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe GenericAlgorithm
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -27,6 +27,7 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <iostream>
+#include <initializer_list>
 #include "astercxx.h"
 
 #include "Algorithms/AlgorithmException.h"
@@ -34,35 +35,35 @@
 
 /**
  * @class GenericAlgorithm
- * @brief Classe statique template servant à itérer sur un algorithme en se servant d'un Stepper
+ * @brief template class to iterate over an algorithm with a given Stepper and a Context
  * @author Nicolas Sellenet
  */
-template< class GenericUnitaryAlgorithm >
+template< class StepperAlgo, class CurrentContext, class... GenericUnitaryAlgorithm >
 class Algorithm
 {
 public:
-    /** @typedef Définition du Stepper */
-    typedef typename GenericUnitaryAlgorithm::AlgorithmStepper Stepper;
-
     /**
-     * @brief Réalisation de l'algorithme
-     * @param timeStep Objet sur lequel il faut itérer
-     * @param algo Algorithme à réaliser à chaque itération
+     * @brief Run over an algorithm
+     * @param timeStep Object to do the loop
+     * @param context Context around algorithm
      */
-    static bool runAllStepsOverAlgorithm( Stepper& timeStep, GenericUnitaryAlgorithm& algo )
+    static bool runAllStepsOverAlgorithm( StepperAlgo& timeStep, CurrentContext& context )
         throw ( std::runtime_error )
     {
         if ( ! timeStep.update() ) throw std::runtime_error( "Error with the Stepper" );
 
-        typedef typename Stepper::const_iterator it;
+        typedef typename StepperAlgo::const_iterator it;
         for( it curVal = timeStep.begin();
             curVal != timeStep.end();
             ++curVal )
         {
             try
             {
-                algo.prepareStep( curVal );
-                algo.oneStep();
+                updateContextFromStepper( curVal, context );
+                (void)std::initializer_list<int>
+                {
+                    (GenericUnitaryAlgorithm::oneStep( context ), 0 )...
+                };
             }
             catch( AlgoException& exc )
             {
