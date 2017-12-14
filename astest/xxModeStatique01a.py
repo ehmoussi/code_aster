@@ -137,6 +137,12 @@ mod_sta3 = MODE_STATIQUE(MATR_RIGI=matrAsseK,
 
 print "MODE_STATIQUE couche de compat ok"
 
+
+
+vecx = CALC_CHAR_SEISME(MATR_MASS=matrAsseM,
+                        DIRECTION=(1.0,0.0,0.0,),
+                        MODE_STAT=mod_sta1, GROUP_NO="Bas", );
+
 # Debut du TEST_RESU
 MyFieldOnNodes1 = mod_sta1.getRealFieldOnNodes("DEPL", 0)
 sfon1 = MyFieldOnNodes1.exportToSimpleFieldOnNodes()
@@ -165,6 +171,7 @@ sfon3.updateValuePointers()
 
 test.assertAlmostEqual(sfon3.getValue(0, 0), 0.0)
 
-
+# Test
+test.assertEqual(vecx.getType(), "CHAM_NO")
 test.printSummary()
 # Fin du TEST_RESU
