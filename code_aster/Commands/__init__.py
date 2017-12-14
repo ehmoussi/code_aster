@@ -100,6 +100,7 @@ from .defi_trc import DEFI_TRC
 from .detruire import DETRUIRE
 from .dyna_non_line import DYNA_NON_LINE
 from .dyna_vibra import DYNA_VIBRA
+from .elim_lagr import ELIM_LAGR
 from .engendre_test import ENGENDRE_TEST
 from .extr_mode import EXTR_MODE
 from .extr_resu import EXTR_RESU
