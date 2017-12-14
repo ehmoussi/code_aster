@@ -67,5 +67,8 @@ MAC=MAC_MODES(BASE_1=BAMODA,
               );
 
 test.assertEqual(MAC.getType(), "TABLE")
+
+IMPR_CO(CONCEPT=_F(NOM=BAMODA))
+
 test.printSummary()
 
