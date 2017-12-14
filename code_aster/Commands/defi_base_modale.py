@@ -36,5 +36,16 @@ class ModalBasisDef(ExecuteCommand):
 
         self._result = MechanicalModeContainer()
 
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        if keywords.has_key("CLASSIQUE") and keywords["CLASSIQUE"]:
+            self._result.setStructureInterface(keywords["CLASSIQUE"][0]["INTERF_DYNA"])
+        elif keywords.has_key("RITZ") and keywords["RITZ"] and keywords["RITZ"][0].has_key("INTERF_DYNA"):
+            self._result.setStructureInterface(keywords["RITZ"][0]["INTERF_DYNA"])
+
 
 DEFI_BASE_MODALE = ModalBasisDef.run

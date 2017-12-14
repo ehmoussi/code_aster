@@ -33,13 +33,6 @@ def asse_elem_ssd_ops(self, RESU_ASSE_SSD, SOUS_STRUC, LIAISON, VERIF, **args):
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
 
-    self.DeclareOut('modele', RESU_ASSE_SSD['MODELE'])
-    self.DeclareOut('nugene', RESU_ASSE_SSD['NUME_DDL_GENE'])
-    if RESU_ASSE_SSD['RIGI_GENE']:
-        self.DeclareOut('rigidite', RESU_ASSE_SSD['RIGI_GENE'])
-    if RESU_ASSE_SSD['MASS_GENE']:
-        self.DeclareOut('masse', RESU_ASSE_SSD['MASS_GENE'])
-
     modl_gene = {}
     mcfact = []
     for i in range(len(SOUS_STRUC)):
@@ -85,17 +78,22 @@ def asse_elem_ssd_ops(self, RESU_ASSE_SSD, SOUS_STRUC, LIAISON, VERIF, **args):
         LIAISON=modl_gene['LIAISON'],
         VERIF=VERIF,
     )
-
+    self.register_result(modele, RESU_ASSE_SSD['MODELE'])
+    
     nugene = NUME_DDL_GENE(MODELE_GENE=modele,
                            METHODE=args['METHODE'],
                            STOCKAGE=args['STOCKAGE'],
                            )
-
+    self.register_result(nugene, RESU_ASSE_SSD['NUME_DDL_GENE'])
+    
     if RESU_ASSE_SSD['RIGI_GENE']:
         rigidite = ASSE_MATR_GENE(NUME_DDL_GENE=nugene,
                                   OPTION='RIGI_GENE')
+        self.register_result(rigidite, RESU_ASSE_SSD['RIGI_GENE'])
+    
     if RESU_ASSE_SSD['MASS_GENE']:
         masse = ASSE_MATR_GENE(NUME_DDL_GENE=nugene,
                                OPTION='MASS_GENE')
-
+        self.register_result(masse, RESU_ASSE_SSD['MASS_GENE'])
+    
     return
