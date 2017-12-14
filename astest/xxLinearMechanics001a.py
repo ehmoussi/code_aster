@@ -74,5 +74,8 @@ resu2.listFields()
 dispField=resu2.getRealFieldOnNodes("DEPL", 0)
 test.assertEqual(MyFieldOnNodes.EXTR_COMP().valeurs.sum(), dispField.EXTR_COMP().valeurs.sum())
 
+IMPR_JEVEUX ( ENTITE='MEMOIRE' )
+
+
 test.printSummary()
 # Fin du TEST_RESU
