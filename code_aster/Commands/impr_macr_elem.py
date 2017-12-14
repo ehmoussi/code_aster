@@ -19,29 +19,12 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import DynamicMacroElement
 from .ExecuteCommand import ExecuteCommand
 
 
-class DynamicMacroElementDefinition(ExecuteCommand):
-    """Command that creates the :class:`~code_aster.Objects.DynamicMacroElement`"""
-    command_name = "MACR_ELEM_DYNA"
+class ImprMacrElem(ExecuteCommand):
+    """Command IMPR_MACR_ELEM
+    """
+    command_name = "IMPR_MACR_ELEM"
 
-    def create_result(self, keywords):
-        """Initialize the result.
-
-        Arguments:
-            keywords (dict): Keywords arguments of user's keywords.
-        """
-
-        self._result = DynamicMacroElement()
-
-    def post_exec(self, keywords):
-        """Execute the command.
-
-        Arguments:
-            keywords (dict): User's keywords.
-        """
-        self._result.setSupportMechanicalMode(keywords["BASE_MODALE"])
-
-MACR_ELEM_DYNA = DynamicMacroElementDefinition.run
+IMPR_MACR_ELEM = ImprMacrElem.run

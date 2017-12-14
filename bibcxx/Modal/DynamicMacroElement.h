@@ -32,6 +32,7 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "Discretization/DOFNumbering.h"
+#include "Results/MechanicalModeContainer.h"
 
 
 /**
@@ -82,6 +83,8 @@ private:
     JeveuxVectorDouble     _maelInterVale;
     /** @brief Objet NUME_DDL */
     DOFNumberingPtr        _numeDdl;
+    /** @brief Mode Meca sur lequel repose le macro emement */
+    MechanicalModeContainerPtr     _supportMechanicalMode;
 
 public:
     /**
@@ -114,9 +117,20 @@ public:
         _maelAmorVale( JeveuxVectorDouble( getName() + ".MAEL_AMOR_VALE" ) ),
         _maelInerRefe( JeveuxVectorChar24( getName() + ".MAEL_INER_REFE" ) ),
         _maelInterVale( JeveuxVectorDouble( getName() + ".MAEL_INER_VALE" ) ),
-        _numeDdl( new DOFNumberingInstance( getName() ) )
+        _numeDdl( new DOFNumberingInstance( getName() ) ),
+        _supportMechanicalMode( MechanicalModeContainerPtr() )
     {};
-
+    
+        /**
+         * @brief Definition de la base modale support
+         * @param currentMesh objet MechanicalModeContainerPtr sur lequel le modele reposera
+         */
+        bool setSupportMechanicalMode( MechanicalModeContainerPtr& mechanicalMode ) throw ( std::runtime_error )
+        {
+            _supportMechanicalMode = mechanicalMode;
+            return true;
+        };
+    
 };
 
 /**

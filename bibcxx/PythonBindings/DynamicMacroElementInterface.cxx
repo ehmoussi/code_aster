@@ -33,5 +33,6 @@ void exportDynamicMacroElementToPython()
             bases< DataStructure > > ( "DynamicMacroElement", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< DynamicMacroElementInstance > ) )
+    .def( "setSupportMechanicalMode", &DynamicMacroElementInstance::setSupportMechanicalMode )
     ;
 };
