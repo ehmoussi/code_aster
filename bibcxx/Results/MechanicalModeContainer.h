@@ -27,6 +27,7 @@
 #include "astercxx.h"
 
 #include "Results/ResultsContainer.h"
+#include "LinearAlgebra/StructureInterface.h"
 
 /**
  * @class MechanicalModeContainerInstance
@@ -36,14 +37,25 @@
 class MechanicalModeContainerInstance: public ResultsContainerInstance
 {
 private:
-
+    StructureInterfacePtr _structureInterface;
 public:
     /**
      * @brief Constructeur
      */
-    MechanicalModeContainerInstance(): ResultsContainerInstance( "MODE_MECA" )
+    MechanicalModeContainerInstance(): ResultsContainerInstance( "MODE_MECA" ), 
+    _structureInterface( StructureInterfacePtr() )
     {};
-
+    
+    /**
+     * @brief set interf_dyna
+     * @param structureInterface objet StructureInterfacePtr
+     */
+    bool setStructureInterface( StructureInterfacePtr& structureInterface ) throw ( std::runtime_error )
+    {
+        _structureInterface = structureInterface;
+        return true;
+    };
+    
 };
 
 /**
