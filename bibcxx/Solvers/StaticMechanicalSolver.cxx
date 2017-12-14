@@ -32,6 +32,7 @@
 #include "DataStructures/TemporaryDataStructureName.h"
 #include "Algorithms/GenericAlgorithm.h"
 #include "Algorithms/StaticMechanicalAlgorithm.h"
+#include "Algorithms/StaticMechanicalContext.h"
 
 StaticMechanicalSolverInstance::StaticMechanicalSolverInstance( const ModelPtr& model,
                                                                 const MaterialOnMeshPtr& mater ):
@@ -82,10 +83,10 @@ ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runti
     FieldOnNodesDoublePtr vecass( new FieldOnNodesDoubleInstance( Temporary ) );
     vecass->allocateFromDOFNumering( dofNum1 );
 
-    typedef StaticMechanicalAlgorithm< TimeStepperInstance > MSAlgo;
-    MSAlgo unitaryAlgo( dProblem, _linearSolver, resultC );
-    Algorithm< MSAlgo > algoMS;
-    algoMS.runAllStepsOverAlgorithm( *_timeStep, unitaryAlgo );
+    StaticMechanicalContext currentContext( dProblem, _linearSolver, resultC );
+    typedef Algorithm< TimeStepperInstance, StaticMechanicalContext, 
+                       StaticMechanicalAlgorithm > MSAlgo;
+    MSAlgo::runAllStepsOverAlgorithm( *_timeStep, currentContext );
 
     return resultC;
 };

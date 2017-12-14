@@ -22,3 +22,80 @@
  */
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
+
+#include "Algorithms/StaticMechanicalAlgorithm.h"
+
+template<>
+void updateContextFromStepper< TimeStepperInstance::const_iterator, StaticMechanicalContext >
+    ( const TimeStepperInstance::const_iterator& curStep,
+      StaticMechanicalContext& context )
+{
+    context.setStep( *curStep, curStep.rank );
+};
+
+void StaticMechanicalAlgorithm::oneStep( const CurrentContext& ctx ) throw( AlgoException& )
+{
+    BaseDOFNumberingPtr dofNum1 = ctx._results->getLastDOFNumbering();
+
+    if( ctx._rank == 0 || !ctx._isConst )
+    {
+        ElementaryMatrixPtr matrElem = ctx._discreteProblem->buildElementaryRigidityMatrix( ctx._time );
+
+        // Build assembly matrix
+        ctx._aMatrix->clearElementaryMatrix();
+        ctx._aMatrix->appendElementaryMatrix( matrElem );
+        ctx._aMatrix->setDOFNumbering( dofNum1 );
+        ctx._aMatrix->setListOfLoads( ctx._listOfLoads );
+        ctx._aMatrix->build();
+
+        // Matrix factorization
+        ctx._linearSolver->matrixFactorization( ctx._aMatrix );
+    }
+
+    // Build Dirichlet loads
+    ElementaryVectorPtr vectElem1 = ctx._discreteProblem->buildElementaryDirichletVector( ctx._time );
+    FieldOnNodesDoublePtr chNoDir = vectElem1->assembleVector( dofNum1, ctx._time, Temporary );
+
+    // Build Laplace forces
+    ElementaryVectorPtr vectElem2 = ctx._discreteProblem->buildElementaryLaplaceVector();
+    FieldOnNodesDoublePtr chNoLap = vectElem2->assembleVector( dofNum1, ctx._time, Temporary );
+
+    // Build Neumann loads
+    VectorDouble times;
+    times.push_back( ctx._time );
+    times.push_back( 0. );
+    times.push_back( 0. );
+    ElementaryVectorPtr vectElem3 = ctx._discreteProblem->buildElementaryNeumannVector( times );
+    FieldOnNodesDoublePtr chNoNeu = vectElem3->assembleVector( dofNum1, ctx._time, Temporary );
+
+    chNoDir->addFieldOnNodes( *chNoLap );
+    chNoDir->addFieldOnNodes( *chNoNeu );
+
+    CommandSyntax cmdSt( "MECA_STATIQUE" );
+    cmdSt.setResult( ctx._results->getName(), ctx._results->getType() );
+
+    FieldOnNodesDoublePtr kineLoadsFON = ctx._discreteProblem->buildKinematicsLoad( dofNum1,
+                                                                                    ctx._time,
+                                                                                    Temporary );
+
+    FieldOnNodesDoublePtr resultField = ctx._results->getEmptyFieldOnNodesDouble( "DEPL",
+                                                                                  ctx._rank );
+
+    resultField = ctx._linearSolver->solveDoubleLinearSystem( ctx._aMatrix, kineLoadsFON,
+                                                              chNoDir, resultField );
+
+    /** @todo rajouter un rsadpa */
+    const auto& study = ctx._discreteProblem->getStudyDescription();
+    const auto& model = study->getSupportModel();
+    const auto& mater = study->getMaterialOnMesh();
+    const auto& load = study->getListOfLoads();
+    const auto& cara = study->getElementaryCharacteristics();
+    ctx._results->addModel( model, ctx._rank );
+    ctx._results->addMaterialOnMesh( mater, ctx._rank );
+    ctx._results->addTimeValue( ctx._time, ctx._rank );
+    ctx._results->addListOfLoads( load, ctx._rank );
+    if( cara != nullptr )
+    {
+        ctx._results->addElementaryCharacteristics( cara, ctx._rank );
+    }
+};

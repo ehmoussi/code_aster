@@ -26,145 +26,30 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "Algorithms/GenericUnitaryAlgorithm.h"
-#include "Discretization/DiscreteProblem.h"
-#include "LinearAlgebra/LinearSolver.h"
-#include "Results/ResultsContainer.h"
-#include "Loads/ListOfLoads.h"
+#include "Algorithms/StaticMechanicalContext.h"
+#include "Algorithms/GenericContextUpdater.h"
+#include "Algorithms/TimeStepper.h"
+#include "Algorithms/AlgorithmException.h"
+
+template<>
+void updateContextFromStepper< TimeStepperInstance::const_iterator, StaticMechanicalContext >
+    ( const TimeStepperInstance::const_iterator& curStep,
+      StaticMechanicalContext& context );
 
 /**
  * @class StaticMechanicalAlgorithm
  * @brief Un pas de l'algorithme de l'opérateur de mécanqiue statique linéaire
  * @author Nicolas Sellenet
  */
-template< class Stepper >
-class StaticMechanicalAlgorithm: public GenericUnitaryAlgorithm< Stepper >
+class StaticMechanicalAlgorithm
 {
-    private:
-        /** @brief Problème discret */
-        DiscreteProblemPtr      _discreteProblem;
-        /** @brief Solveur linéaire */
-        BaseLinearSolverPtr     _linearSolver;
-        /** @brief Sd de stockage des résultats */
-        ResultsContainerPtr     _results;
-        /** @brief Chargements */
-        ListOfLoadsPtr          _listOfLoads;
-        /** @brief Pas de temps courant */
-        double                  _time;
-        /** @brief rank */
-        int                     _rank;
-        /** @brief Assembly matrix */
-        AssemblyMatrixDoublePtr _aMatrix;
-        /** @brief Are elastic properties constant */
-        bool                    _isConst;
+    typedef StaticMechanicalContext CurrentContext;
 
-    public:
-        /**
-         * @brief Constructeur
-         * @param DiscreteProblemPtr Problème discret a résoudre par l'algo
-         * @param BaseLinearSolverPtr Sovleur linéaire qui sera utilisé
-         * @param ResultContainerPtr Résultat pour le stockage des déplacements
-         */
-        StaticMechanicalAlgorithm( const DiscreteProblemPtr& curPb,
-                                   const BaseLinearSolverPtr linSolv,
-                                   const ResultsContainerPtr container ):
-            _discreteProblem( curPb ),
-            _linearSolver( linSolv ),
-            _listOfLoads( _discreteProblem->getStudyDescription()->getListOfLoads() ),
-            _results( container ),
-            _time( 0. ),
-            _rank( 0 ),
-            _aMatrix( new AssemblyMatrixDoubleInstance( Temporary ) ),
-            _isConst( _discreteProblem->getStudyDescription()->getCodedMaterial()->constant() )
-        {};
-
-        /**
-         * @brief Avancer d'un pas dans un algorithme
-         */
-        void oneStep() throw( AlgoException& );
-
-        /** @typedef Rappel du typedef de GenericUnitaryAlgorithm */
-        typedef typename Stepper::const_iterator AlgorithmStepperIter;
-
-        /**
-         * @brief Préparation de l'itération suivante
-         * @param curStep Iterateur courant issu du Stepper
-         */
-        void prepareStep( AlgorithmStepperIter& curStep ) throw( AlgoException& );
-};
-
-template< class Stepper >
-void StaticMechanicalAlgorithm< Stepper >::oneStep() throw( AlgoException& )
-{
-    BaseDOFNumberingPtr dofNum1 = _results->getLastDOFNumbering();
-
-    if( _rank == 0 || !_isConst )
-    {
-        ElementaryMatrixPtr matrElem = _discreteProblem->buildElementaryRigidityMatrix( _time );
-
-        // Build assembly matrix
-        _aMatrix->clearElementaryMatrix();
-        _aMatrix->appendElementaryMatrix( matrElem );
-        _aMatrix->setDOFNumbering( dofNum1 );
-        _aMatrix->setListOfLoads( _listOfLoads );
-        _aMatrix->build();
-
-        // Matrix factorization
-        _linearSolver->matrixFactorization( _aMatrix );
-    }
-
-    // Build Dirichlet loads
-    ElementaryVectorPtr vectElem1 = _discreteProblem->buildElementaryDirichletVector( _time );
-    FieldOnNodesDoublePtr chNoDir = vectElem1->assembleVector( dofNum1, _time, Temporary );
-
-    // Build Laplace forces
-    ElementaryVectorPtr vectElem2 = _discreteProblem->buildElementaryLaplaceVector();
-    FieldOnNodesDoublePtr chNoLap = vectElem2->assembleVector( dofNum1, _time, Temporary );
-
-    // Build Neumann loads
-    VectorDouble times;
-    times.push_back( _time );
-    times.push_back( 0. );
-    times.push_back( 0. );
-    ElementaryVectorPtr vectElem3 = _discreteProblem->buildElementaryNeumannVector( times );
-    FieldOnNodesDoublePtr chNoNeu = vectElem3->assembleVector( dofNum1, _time, Temporary );
-
-    chNoDir->addFieldOnNodes( *chNoLap );
-    chNoDir->addFieldOnNodes( *chNoNeu );
-
-    CommandSyntax cmdSt( "MECA_STATIQUE" );
-    cmdSt.setResult( _results->getName(), _results->getType() );
-
-    FieldOnNodesDoublePtr kineLoadsFON = _discreteProblem->buildKinematicsLoad( dofNum1, _time,
-                                                                                Temporary );
-
-    FieldOnNodesDoublePtr resultField = _results->getEmptyFieldOnNodesDouble( "DEPL", _rank );
-
-    resultField = _linearSolver->solveDoubleLinearSystem( _aMatrix, kineLoadsFON,
-                                                          chNoDir, resultField );
-
-    /** @todo rajouter un rsadpa */
-    const auto& study = _discreteProblem->getStudyDescription();
-    const auto& model = study->getSupportModel();
-    const auto& mater = study->getMaterialOnMesh();
-    const auto& load = study->getListOfLoads();
-    const auto& cara = study->getElementaryCharacteristics();
-    _results->addModel( model, _rank );
-    _results->addMaterialOnMesh( mater, _rank );
-    _results->addTimeValue( _time, _rank );
-    _results->addListOfLoads( load, _rank );
-    if( cara != nullptr )
-    {
-        _results->addElementaryCharacteristics( cara, _rank );
-    }
-};
-
-template< class Stepper >
-void StaticMechanicalAlgorithm< Stepper >::prepareStep( AlgorithmStepperIter& curStep )
-    throw( AlgoException& )
-{
-    _time = *curStep;
-    _rank = curStep.rank;
+public:
+    /**
+     * @brief Avancer d'un pas dans un algorithme
+     */
+    static void oneStep( const CurrentContext& ) throw( AlgoException& );
 };
 
 #endif /* STATICMECHANICALGORITHM_H_ */
