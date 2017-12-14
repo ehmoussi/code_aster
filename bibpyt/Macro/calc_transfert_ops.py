@@ -20,22 +20,16 @@
 # person_in_charge: julie.fouque at edf.fr
 
 def calc_transfert_ops(
-    self, NOM_CHAM,ENTREE,SORTIE,RESULTAT_X,RESULTAT_Y,RESULTAT_Z, REPERE,
-        SIGNAL, **args):
+    self, NOM_CHAM,ENTREE,SORTIE,RESULTAT_X,RESULTAT_Y,RESULTAT_Z=None, REPERE=None,
+        SIGNAL=None, **args):
     """
            Macro permettant le calcul de fonctions de transfert et de signaux deconvolues
     """
     import os
-    import aster_core
     import numpy as np
     import aster
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS
-    from Utilitai.Table import Table
-    from Noyau.N_utils import AsType
-    from code_aster.Cata.Syntax import _F
-    from code_aster.Cata.DataStructure import (tran_gene, dyna_harmo,
-        harm_gene, dyna_trans, fonction_sdaster, fonction_c, nappe_sdaster)
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
 
@@ -47,14 +41,13 @@ def calc_transfert_ops(
     CREA_TABLE       = self.get_cmd('CREA_TABLE')
     CALC_FONC_INTERP =self.get_cmd('CALC_FONC_INTERP')
     DEFI_LIST_REEL   =self.get_cmd('DEFI_LIST_REEL')
-    ier =0
 
 
 #......................................................
 #On cherche le type de resultat des calculs dynamiques
 #......................................................
     l_resu=[RESULTAT_X,RESULTAT_Y,] #Liste des noms des resultats
-    l_type=[tran_gene,harm_gene,dyna_trans,dyna_harmo,] #Liste des differents types de resultats possibles
+    l_type=["TRAN_GENE", "HARM_GENE", "DYNA_TRANS", "DYNA_HARMO"] #Liste des differents types de resultats possibles
     compo=['X','Y',]
     entrain=['DX','DY',]
 
@@ -65,9 +58,9 @@ def calc_transfert_ops(
         entrain.append('DZ')
 
     for r_type in l_type :
-        if isinstance(RESULTAT_X, r_type) :
-            if isinstance(RESULTAT_Y, r_type):
-                if (len(l_resu)==3 and isinstance(RESULTAT_Z, r_type)) :
+        if RESULTAT_X.getType() == r_type:
+            if RESULTAT_Y.getType() == r_type:
+                if (len(l_resu)==3 and RESULTAT_Z.getType() == r_type):
                     typ_resu = r_type
                     break
                 if len(l_resu)==2 :
@@ -86,37 +79,26 @@ def calc_transfert_ops(
 #Recu fonction pour le noeud entree
     lst_entr=[]
     if ENTREE != None :
-        for entr in ENTREE:
-            motsentr = {}
-            n_entr = entr.val
-            if 'GROUP_NO' in n_entr:
-                motsentr['GROUP_NO']= n_entr['GROUP_NO']
+        motsentr = ENTREE.copy()
+        for rr in l_resu :
+            if typ_resu  == "DYNA_TRANS" or typ_resu == "DYNA_HARMO":
+                motsentr['RESULTAT'] = rr
             else :
-                motsentr['NOEUD'] = n_entr['NOEUD']
-            for rr in l_resu :
-                if typ_resu  == dyna_trans or typ_resu ==dyna_harmo :
-                    motsentr['RESULTAT'] = rr
-                else :
-                    motsentr['RESU_GENE'] = rr
-                for nomcmp in compo:
-                    _fonc = RECU_FONCTION(NOM_CHAM=NOM_CHAM,
-                                        NOM_CMP='D' + nomcmp,
-                                        **motsentr),
-                    lst_entr.append(_fonc)
+                motsentr['RESU_GENE'] = rr
+            for nomcmp in compo:
+                _fonc = RECU_FONCTION(NOM_CHAM=NOM_CHAM,
+                                    NOM_CMP='D' + nomcmp,
+                                    **motsentr),
+                lst_entr.append(_fonc)
 
 
 
 #Recu fonction pour le noeud sortie
     lst_sort=[]
     for sort in SORTIE:
-        motssort = {}
-        n_sort = sort.val
-        if 'GROUP_NO' in n_sort:
-            motssort['GROUP_NO']= n_sort['GROUP_NO']
-        else :
-            motssort['NOEUD'] = n_sort['NOEUD']
+        motssort = SORTIE.copy()
         for rr in l_resu :
-            if typ_resu  == dyna_trans or typ_resu ==dyna_harmo :
+            if typ_resu  == "DYNA_TRANS" or typ_resu == "DYNA_HARMO":
                 motssort['RESULTAT'] = rr
             else :
                 motssort['RESU_GENE'] = rr
@@ -135,7 +117,7 @@ def calc_transfert_ops(
     E_L_Re=[]
     E_L_Im=[]
     for aa in lst_entr :
-        if typ_resu  == tran_gene or typ_resu ==dyna_trans :
+        if typ_resu  == "TRAN_GENE" or typ_resu =="DYNA_TRANS" :
             _aaa=CALC_FONCTION(COMB=_F(FONCTION=aa,COEF=1,),);
             Tcal,Ordcal=_aaa.Valeurs() # on recupere la liste d'instant pour les signaux calcules par les operateurs de dynamique
             _Tcal=DEFI_LIST_REEL(VALE=Tcal,);#On cree la liste d'instant  associee au calcul dynamique
@@ -162,7 +144,7 @@ def calc_transfert_ops(
     S_L_Re=[]
     S_L_Im=[]
     for bb in lst_sort :
-        if typ_resu  == tran_gene or typ_resu ==dyna_trans :
+        if typ_resu  == "TRAN_GENE" or typ_resu =="DYNA_TRANS" :
             _bbb=CALC_FONCTION(COMB=_F(FONCTION=bb,COEF=1,),);
             TcalS,OrdcalS=_bbb.Valeurs() # on recupere la liste d'instant pour les signaux calcules par les operateurs de dynamique
             p_calS=TcalS[1]-TcalS[0] #on calcul le pas de temps des fonctions recuperees
@@ -213,7 +195,7 @@ def calc_transfert_ops(
         for mentr in args.get('ENTRAINEMENT'):
             s_entr = mentr.val
             for mm in entrain :
-                if type(s_entr[mm])==fonction_c:
+                if s_entr[mm].getType()=="FONCTION_C":
                    _test=s_entr[mm]
                    Test_F,Test_Re,Test_Im=_test.Valeurs()
                    LTEST.append(Test_F)
@@ -262,7 +244,6 @@ def calc_transfert_ops(
 
 
     #les listes valent zero tout le temps
-    self.DeclareOut('tabfrf', self.sd)
     dim_0=len(l_resu)
     dim=len(l_resu)**2
     kk=nn=ll=0
@@ -352,10 +333,9 @@ def calc_transfert_ops(
              d_signal['Lff_%d' %ff]=[]
 
         for sign in SIGNAL:
-            self.DeclareOut('table_s', sign['TABLE_RESU'])
             s_sign=sign.val
             for ss in l_signal:
-                if type(s_sign[ss])==fonction_c:
+                if s_sign[ss].getType()=="FONCTION_C":
                    _test=s_sign[ss]
                    Test_F,Test_Re,Test_Im=_test.Valeurs()
                    STEST.append(Test_F)
@@ -376,7 +356,7 @@ def calc_transfert_ops(
                       UTMESS('F', 'DYNAMIQUE_39')  #On n'a pas encore traite le cas ou l'instant final des signaux mesures est plus petit que celui des calculs dynamiques
                       break
                    else :
-                      if typ_resu  == tran_gene or typ_resu ==dyna_trans :
+                      if typ_resu  == "TRAN_GENE" or typ_resu =="DYNA_TRANS" :
                          _interp=CALC_FONC_INTERP(LIST_PARA=_Tcal,FONCTION=s_sign[ss],);
                          _fonc=CALC_FONCTION(FFT=_F(FONCTION=_interp, METHODE='COMPLET',),);
                       else :
@@ -458,5 +438,6 @@ def calc_transfert_ops(
 
         motssign['LISTE'] = mcsign
         table_s=CREA_TABLE(TYPE_TABLE='TABLE',**motssign)
-
-    return ier
+        return table_s
+    else:
+        return tabfrf
