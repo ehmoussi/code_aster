@@ -67,6 +67,7 @@ timeList.addErrorManager( error1 )
 #action2 = code_aster.Studies.SubstepingOnContact()
 #error2.setAction( action2 )
 #timeList.addErrorManager( error2 )
+acier.debugPrint(6)
 timeList.build()
 timeList.debugPrint( 8 )
 

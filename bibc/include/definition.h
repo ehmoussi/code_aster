@@ -145,6 +145,9 @@
 #define DEFSSPS(UN,LN,a,la,b,lb,c,d,ld)               STDCALL(UN,LN)(a,b,c,d,la,lb,ld)
 #define CALLSSPS(UN,LN,a,b,c,d)                       F_FUNC(UN,LN)(a,b,c,d,strlen(a),strlen(b),strlen(d))
 #define CALLOOPO(UN,LN,a,b,c,d)                       F_FUNC(UN,LN)((a).c_str(),(b).c_str(),c,(d).c_str(),(a).size(),(b).size(),(d).size())
+#define DEFSSPSS(UN,LN,a,la,b,lb,c,d,ld,e,le)               STDCALL(UN,LN)(a,b,c,d,e,la,lb,ld,le)
+#define CALLSSPSS(UN,LN,a,b,c,d,e)                       F_FUNC(UN,LN)(a,b,c,d,e,strlen(a),strlen(b),strlen(d),strlen(e))
+#define CALLOOPOO(UN,LN,a,b,c,d,e)                       F_FUNC(UN,LN)((a).c_str(),(b).c_str(),c,(d).c_str(),(e).c_str(),(a).size(),(b).size(),(d).size(),(e).size())
 #define DEFSSSP(UN,LN,a,la,b,lb,c,lc,d)               STDCALL(UN,LN)(a,b,c,d,la,lb,lc)
 #define CALLSSSP(UN,LN,a,b,c,d)                       F_FUNC(UN,LN)(a,b,c,d,strlen(a),strlen(b),strlen(c))
 #define CALLOOOP(UN,LN,a,b,c,d)                       F_FUNC(UN,LN)((a).c_str(),(b).c_str(),(c).c_str(),d,(a).size(),(b).size(),(c).size())
@@ -343,7 +346,13 @@
 #define CALLOOPP(UN,LN,a,b,c,d)                    F_FUNC(UN,LN)((a).c_str(),(a).size(),(b).c_str(),(b).size(),c,d)
 #define DEFSSPS(UN,LN,a,la,b,lb,c,d,ld)               STDCALL(UN,LN)(a,la,b,lb,c,d,ld)
 #define CALLSSPS(UN,LN,a,b,c,d)                       F_FUNC(UN,LN)(a,strlen(a),b,strlen(b),c,d,strlen(d))
+
+#define DEFSSPS(UN,LN,a,la,b,lb,c,d,ld,e,le)               STDCALL(UN,LN)(a,la,b,lb,c,d,ld,e,le)
+#define CALLSSPS(UN,LN,a,b,c,d,e)                       F_FUNC(UN,LN)(a,strlen(a),b,strlen(b),c,d,strlen(d),e,strlen(e))
+
+
 #define CALLOOPO(UN,LN,a,b,c,d)                       F_FUNC(UN,LN)((a).c_str(),(a).size(),(b).c_str(),(b).size(),c,(d).c_str(),(d).size())
+#define CALLOOPOO(UN,LN,a,b,c,d,e)                       F_FUNC(UN,LN)((a).c_str(),(a).size(),(b).c_str(),(b).size(),c,(d).c_str(),(d).size(),(e).c_str(),(e).size())
 #define DEFSSSP(UN,LN,a,la,b,lb,c,lc,d)               STDCALL(UN,LN)(a,la,b,lb,c,lc,d)
 #define CALLSSSP(UN,LN,a,b,c,d)                       F_FUNC(UN,LN)(a,strlen(a),b,strlen(b),c,strlen(c),d)
 #define CALLOOOP(UN,LN,a,b,c,d)                       F_FUNC(UN,LN)((a).c_str(),(a).size(),(b).c_str(),(b).size(),(c).c_str(),(c).size(),d)

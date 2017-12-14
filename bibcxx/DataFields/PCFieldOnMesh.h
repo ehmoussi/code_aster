@@ -391,6 +391,15 @@ class PCFieldOnMeshInstance: public DataStructure
         };
 
         /**
+         * @brief Function to know if fiel exists
+         * @return true if exists
+         */
+        bool exists()
+        {
+            return _descriptor->exists();
+        };
+
+        /**
          * @brief Get support physical quantity
          */
         std::string getPhysicalQuantityName() const

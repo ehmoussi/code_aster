@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine rcmfmc(chmatz, chmacz, l_thm_, basename)
+subroutine rcmfmc(chmatz, chmacz, l_thm_, basename, base)
 !
 implicit none
 !
@@ -46,6 +46,7 @@ implicit none
     character(len=*), intent(out) :: chmacz
     aster_logical, intent(in), optional :: l_thm_
     character(len=*), intent(inout), optional :: basename
+    character(len=1), intent(in), optional :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,6 +65,7 @@ implicit none
     integer :: nbval,  iret, jvale, igd, kk
     integer :: nbgrp, i, icompt, igrp, ingrp, nbcmp, j, k, nbmat
     integer :: inbmat
+    character(len=1) :: bas
     character(len=4) :: knumat
     character(len=8) :: chmat, nomgd
     character(len=19) :: codi
@@ -82,6 +84,11 @@ implicit none
         chmace = basename//'.MATE_CODE'
     else
         chmace = chmat//'.MATE_CODE'
+    endif
+    if( present(base) ) then
+        bas = base
+    else
+        bas = 'V'
     endif
 !
     if (present(l_thm_)) then
@@ -103,10 +110,10 @@ implicit none
         call dismoi('NB_CMP_MAX', nomgd, 'GRANDEUR', repi=nbcmp)
         ASSERT(nbcmp.ge.30)
         ASSERT((nbval/nbcmp)*nbcmp.eq.nbval)
-        call copisd('CHAMP_GD', 'V', chemat, chmace)
+        call copisd('CHAMP_GD', bas, chemat, chmace)
         call jedetr(chmace//'.VALE')
         nbgrp=nbval/nbcmp
-        call wkvect(chmace//'.VALE', 'V V I', nbgrp, jvale)
+        call wkvect(chmace//'.VALE', bas//' V I', nbgrp, jvale)
         call jenonu(jexnom('&CATA.GD.NOMGD', 'ADRSJEVE'), igd)
         call jeveuo(chmace//'.DESC', 'E', vi = v_desc)
         v_desc(1) = igd

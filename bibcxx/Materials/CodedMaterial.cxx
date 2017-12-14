@@ -26,6 +26,20 @@
 #include "Materials/CodedMaterial.h"
 #include "aster_fort.h"
 
+bool CodedMaterialInstance::allocate()
+{
+    if( _field->exists() ) return false;
+    std::string blanc( 24, ' ' );
+    std::string materName = _mater->getName();
+    materName.resize(24, ' ');
+    std::string mate = blanc;
+    long thm = 0;
+    if( _model->existsThm() ) thm = 1;
+    std::string strJeveuxBase( "G" );
+    CALLO_RCMFMC_WRAP( materName, mate, &thm, getName(), strJeveuxBase );
+    return true;
+};
+
 bool CodedMaterialInstance::constant() const
 {
     const std::string typeco( "CHAM_MATER" );
