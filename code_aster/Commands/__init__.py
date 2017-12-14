@@ -53,6 +53,7 @@ from .calc_char_seisme import CALC_CHAR_SEISME
 from .calc_cham_elem import CALC_CHAM_ELEM
 from .calc_cham_flui import CALC_CHAM_FLUI
 from .calc_char_cine import CALC_CHAR_CINE
+from .calc_erreur import CALC_ERREUR
 from .calc_fatigue import CALC_FATIGUE
 from .calc_ferraillage import CALC_FERRAILLAGE
 from .calc_fonc_interp import CALC_FONC_INTERP
