@@ -73,9 +73,9 @@ force=AFFE_CHAR_MECA(MODELE=modele,
 contact=DEFI_CONTACT(MODELE=modele,
                      FORMULATION='CONTINUE',
                      FROTTEMENT='COULOMB',
-                     ALGO_RESO_GEOM='NEWTON',
-                     ALGO_RESO_CONT='NEWTON',
-                     ALGO_RESO_FROT='NEWTON',
+                     ALGO_RESO_GEOM='POINT_FIXE',
+                     #ALGO_RESO_CONT='POINT_FIXE',
+                     ALGO_RESO_FROT='POINT_FIXE',
                      RESI_FROT = 1.E-4,
                      RESI_GEOM = 1.E-4,
                      #ADAPT_COEF='OUI',
@@ -188,6 +188,7 @@ listarc2=DEFI_LIST_REEL(DEBUT=0.,
                                     _F(JUSQU_A=.15,
                                       NOMBRE=nombre*1,),
                                       ));
+
 list=DEFI_LIST_INST(METHODE='MANUEL',
                     DEFI_LIST=_F(LIST_INST=listinst,),
                     ECHEC=_F(SUBD_PAS=2.,SUBD_NIVEAU=12,),);
@@ -209,16 +210,11 @@ evol1=DYNA_NON_LINE(MODELE=modele,
                                        FORMULATION='DEPLACEMENT',),);
 #IMPR_RESU(RESU=_F(RESULTAT=evol1,LIST_INST=listarc2), UNITE=80, FORMAT='MED');
 
-
 TEST_RESU(RESU=_F(INST=0.0006,
                   RESULTAT=evol1,
                   NOM_CHAM='DEPL',
                   NOM_CMP = 'DY',
                   GROUP_NO='relev_haut',
-                  VALE_CALC=-0.0201868654748,
-                  CRITERE='ABSOLU',),
-          )
-
+                  VALE_CALC=-0.0200939065056,),);
 
 FIN();
-#CHECKSUM:2af6539f8f0ef1542b8f866eb84ee269  -:FIN CHECKSUM
