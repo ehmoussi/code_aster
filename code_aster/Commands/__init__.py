@@ -49,6 +49,7 @@ from .asse_matr_gene import ASSE_MATR_GENE
 from .asse_vect_gene import ASSE_VECT_GENE
 from .calc_champ import CALC_CHAMP
 from .calc_char_cine import CALC_CHAR_CINE
+from .calc_char_seisme import CALC_CHAR_SEISME
 from .calc_cham_elem import CALC_CHAM_ELEM
 from .calc_cham_flui import CALC_CHAM_FLUI
 from .calc_char_cine import CALC_CHAR_CINE
