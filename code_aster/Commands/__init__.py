@@ -108,6 +108,7 @@ from .fin import FIN
 from .formule import FORMULE
 from .info_exec_aster import INFO_EXEC_ASTER
 from .impr_resu import IMPR_RESU
+from .impr_macr_elem import IMPR_MACR_ELEM
 from .lire_maillage import LIRE_MAILLAGE
 from .lire_plexus import LIRE_PLEXUS
 from .macr_elem_dyna import MACR_ELEM_DYNA
