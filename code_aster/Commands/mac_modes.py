@@ -24,8 +24,7 @@ from .ExecuteCommand import ExecuteCommand
 
 
 class ModesMAC(ExecuteCommand):
-    """Command that creates the :class:`~code_aster.Objects.Model` by assigning
-    finite elements on a :class:`~code_aster.Objects.Mesh`."""
+    """ """
     command_name = "MAC_MODES"
 
     def create_result(self, keywords):
