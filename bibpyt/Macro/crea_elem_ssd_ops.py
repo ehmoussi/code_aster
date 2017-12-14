@@ -30,8 +30,6 @@ def crea_elem_ssd_ops(self,  NUME_DDL, INTERFACE, BASE_MODALE,
     # On met le mot cle NUME_DDL dans une variable locale pour le proteger
     numeddl = NUME_DDL
 
-    if numeddl:
-        self.DeclareOut('_nume_ddl', numeddl)
 
     # On importe les definitions des commandes a utiliser dans la macro
     CALC_MATR_ELEM = self.get_cmd('CALC_MATR_ELEM')
@@ -62,7 +60,10 @@ def crea_elem_ssd_ops(self,  NUME_DDL, INTERFACE, BASE_MODALE,
                              CHAM_MATER=args['CHAM_MATER'],)
 
     _nume_ddl = NUME_DDL(MATR_RIGI=_kelem,)
-
+    
+    if numeddl:
+        self.register_result(_nume_ddl, numeddl)
+    
     _matrigi = ASSE_MATRICE(NUME_DDL=_nume_ddl,
                             MATR_ELEM=_kelem,)
 
@@ -272,8 +273,7 @@ def crea_elem_ssd_ops(self,  NUME_DDL, INTERFACE, BASE_MODALE,
     elem['MATR_RIGI'] = _matrigi
     elem['MATR_MASS'] = _mmass
 
-    self.DeclareOut('macr_elem', self.sd)
     macr_elem = MACR_ELEM_DYNA(BASE_MODALE=_base_modale,
                                **elem)
 
-    return
+    return macr_elem
