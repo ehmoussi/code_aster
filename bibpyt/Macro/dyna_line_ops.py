@@ -19,40 +19,38 @@
 # person_in_charge: yannick.tampango at edf.fr
 #
 
-from code_aster.Cata.Commands import CALC_MATR_ELEM
-from code_aster.Cata.Commands import ASSE_MATRICE
-from code_aster.Cata.Commands import CALC_VECT_ELEM
-from code_aster.Cata.Commands import ASSE_VECTEUR
-from code_aster.Cata.Commands import NUME_DDL
-from code_aster.Cata.Commands import DYNA_VIBRA
-from code_aster.Cata.Commands import CALC_FONCTION
-from code_aster.Cata.Commands import CALC_MODES
-from code_aster.Cata.Commands import MACRO_ELAS_MULT
-from code_aster.Cata.Commands import DEFI_BASE_MODALE
-from code_aster.Cata.Commands import PROJ_MATR_BASE
-from code_aster.Cata.Commands import PROJ_VECT_BASE
-from code_aster.Cata.Commands import NUME_DDL_GENE
-from code_aster.Cata.Commands import CALC_CHAR_SEISME
-from code_aster.Cata.Commands import MODE_STATIQUE
-from code_aster.Cata.Commands import REST_GENE_PHYS
-#from code_aster.Cata.Commands import NORM_MODE
-from code_aster.Cata.Commands import DEFI_INTERF_DYNA
-from code_aster.Cata.Commands import MACR_ELEM_DYNA
-from code_aster.Cata.Commands import CALC_MISS
-from code_aster.Cata.Commands import AFFE_CHAR_MECA
-from code_aster.Cata.Commands import CREA_CHAMP
-from code_aster.Cata.Commands import CREA_RESU
-from code_aster.Cata.Commands import FACTORISER
-from code_aster.Cata.Commands import RESOUDRE
-from code_aster.Cata.Commands import MACRO_MATR_AJOU
-from code_aster.Cata.Commands import COMB_MATR_ASSE
-#from code_aster.Cata.Language.DataStructure import AsType
+from code_aster.Commands import CALC_MATR_ELEM
+from code_aster.Commands import ASSE_MATRICE
+from code_aster.Commands import CALC_VECT_ELEM
+from code_aster.Commands import ASSE_VECTEUR
+from code_aster.Commands import NUME_DDL
+from code_aster.Commands import DYNA_VIBRA
+from code_aster.Commands import CALC_FONCTION
+from code_aster.Commands import CALC_MODES
+from code_aster.Commands import MACRO_ELAS_MULT
+from code_aster.Commands import DEFI_BASE_MODALE
+from code_aster.Commands import PROJ_MATR_BASE
+from code_aster.Commands import PROJ_VECT_BASE
+from code_aster.Commands import NUME_DDL_GENE
+from code_aster.Commands import CALC_CHAR_SEISME
+from code_aster.Commands import MODE_STATIQUE
+from code_aster.Commands import REST_GENE_PHYS
+#from code_aster.Commands import NORM_MODE
+from code_aster.Commands import DEFI_INTERF_DYNA
+from code_aster.Commands import MACR_ELEM_DYNA
+from code_aster.Commands import CALC_MISS
+from code_aster.Commands import AFFE_CHAR_MECA
+from code_aster.Commands import CREA_CHAMP
+from code_aster.Commands import CREA_RESU
+from code_aster.Commands import FACTORISER
+from code_aster.Commands import RESOUDRE
+from code_aster.Commands import MACRO_MATR_AJOU
+from code_aster.Commands import COMB_MATR_ASSE
 from code_aster.Cata.Syntax import _F
-from Noyau import N_FONCTION
-from code_aster.Cata import DataStructure
 import aster
 import numpy as np
 from Utilitai.Utmess import UTMESS
+from code_aster.Utilities import force_list
 
 class DynaLineFEM:
     """hold the FEM model used for dyna_line"""
@@ -61,11 +59,11 @@ class DynaLineFEM:
                  ISS = 'NON', **args):
         self.parent = parent
         self.keywords = {"MODELE" : MODELE}
-        charge = tuple(filter(lambda x: type(x)==DataStructure.char_meca, CHARGE))
+        charge = tuple(filter(lambda x: x.getType()=="CHAR_MECA", CHARGE))
         if charge:
             self.keywords["CHARGE"] = charge
         self.char_cine = {}
-        char_cine = tuple(filter(lambda x: type(x)==DataStructure.char_cine_meca, CHARGE))
+        char_cine = tuple(filter(lambda x: x.getType()=="CHAR_CINE_MECA", CHARGE))
         if char_cine:
             self.char_cine["CHAR_CINE"] = char_cine
         if CHAM_MATER:
@@ -79,7 +77,7 @@ class DynaLineFEM:
         self.__isBasePhys = BASE_CALCUL == "PHYS"
         assert(self.__isBaseGene ^ self.__isBasePhys)
         if AMORTISSEMENT:
-            self.amortissement = AMORTISSEMENT.List_F()[0]
+            self.amortissement = force_list(AMORTISSEMENT)[0]
         else:
             self.amortissement = None
         self.iss = ISS == 'OUI'
@@ -325,7 +323,7 @@ class DynaLineExcit:
     def __init__(self, dynaLineFEM, TYPE_CALCUL, BASE_CALCUL, EXCIT=None, ISS="NON", **args):
         self.dynaLineFEM = dynaLineFEM
         if EXCIT:
-            self.charges = EXCIT.List_F()
+            self.charges = force_list(EXCIT)
         else:
             self.charges = []
         self.__isTypeTran = TYPE_CALCUL == "TRAN"
@@ -445,7 +443,7 @@ class DynaLineFrequencyBand:
     """hold frequency band parameters"""
     def __init__(self, PCENT_COUP, TYPE_CALCUL, EXCIT=None, BANDE_ANALYSE=None, **args):
         if EXCIT:
-            self.charges = EXCIT.List_F()
+            self.charges = force_list(EXCIT)
         else:
             self.charges = []
         self.pcent_coup = PCENT_COUP
@@ -474,7 +472,7 @@ class DynaLineFrequencyBand:
                     fonction = charge['FONC_MULT_C']
                 else:
                     raise NotImplementedError("Expected to have FONC_MULT or FONC_MULT_C defined in charge for automatic computation of cutoff frequency")
-                if type(fonction) == N_FONCTION.formule:
+                if fonction.getType() == "FORMULE":
                     raise Exception("automatic computation of cutoff frequency is not possible if a CHARGE is defined with a FORMULE. " \
                                     "A FONCTION should be pass as FONC_MULT instead, you can use CALC_FONC_INTERP to convert your FORMULE to a discret FONCTION")
                 l_freq_fc.append(max(fonction.Absc()))
@@ -485,7 +483,7 @@ class DynaLineFrequencyBand:
                     fonction = charge['ACCE']
                 else:
                     raise NotImplementedError("Expected to have FONC_MULT or ACCE defined in charge")
-                if type(fonction) == N_FONCTION.formule:
+                if fonction.getType() == "FORMULE":
                     raise Exception("automatic computation of cutoff frequency is not possible if a CHARGE is defined with a FORMULE. " \
                                     "A FONCTION should be pass as FONC_MULT instead, you can use CALC_FONC_INTERP to convert your FORMULE to a discret FONCTION")
                 # compute fft
@@ -539,7 +537,7 @@ class DynaLineBasis:
         self.dynaLineFEM.setBasis(self)
         self.dynaLineFrequencyBand = dynaLineFrequencyBand
         if EXCIT:
-            self.charges = EXCIT.List_F()
+            self.charges = force_list(EXCIT)
         else:
             self.charges = []
         self.enri_stat = ENRI_STAT == 'OUI'
@@ -548,7 +546,7 @@ class DynaLineBasis:
         self.iss = ISS == 'OUI'
         self.ifs = IFS == 'OUI'
         if COMPORTEMENT:
-            self.comportement = COMPORTEMENT.List_F()
+            self.comportement = force_list(COMPORTEMENT)
         else:
             self.comportement = None
         if self.iss:
@@ -568,8 +566,8 @@ class DynaLineBasis:
         self.modelisation_flu = MODELISATION_FLU
         self.group_ma_fluide = GROUP_MA_FLUIDE
         self.group_ma_interf = GROUP_MA_INTERF
-        self.rho_fluide = RHO_FLUIDE.List_F()[0]
-        self.pression_flu_impo = PRESSION_FLU_IMPO.List_F()[0]
+        self.rho_fluide = force_list(RHO_FLUIDE)[0]
+        self.pression_flu_impo = force_list(PRESSION_FLU_IMPO)[0]
         self.forc_ajou = FORC_AJOU == 'OUI'
     def matrPhyToGen(self, matrix):
         """project a given matrix to the gen basis"""
@@ -683,10 +681,10 @@ class DynaLineBasis:
                                   STOP_BANDE_VIDE="NON",
                                   **args)
         if self.base_resu:
-            self.parent.DeclareOut('nombase', self.base_resu)
             nombase = REST_GENE_PHYS(RESU_GENE=__calc_modes,
                                      MODE_MECA=__modalBasis,
                                      )
+            self.parent.register_result(nombase, self.base_resu)
             __modalBasis = nombase
         else:
             __modalBasis = REST_GENE_PHYS(RESU_GENE=__calc_modes,
@@ -735,10 +733,10 @@ class DynaLineBasis:
                                    MATR_MASS=__massGen,
                                    MATR_RIGI=__rigiGen)
             if self.base_resu:
-                self.parent.DeclareOut('nombase', self.base_resu)
                 nombase=REST_GENE_PHYS(RESU_GENE=__dynaModes,
                                        TOUT_CHAM='OUI',
                                        )
+                self.parent.register_result(nombase, self.base_resu)
                 __dynaModes = nombase
             else:
                 __dynaModes=REST_GENE_PHYS(RESU_GENE=__dynaModes,
@@ -969,11 +967,11 @@ class DynaLineBasis:
                 args['ORTHO'] = 'OUI'
                 args['MATRICE'] = self.dynaLineFEM.getRigiPhy()
         if self.base_resu and not (self.ortho and mode_intf):
-            self.parent.DeclareOut('nombase', self.base_resu)
             nombase = DEFI_BASE_MODALE(RITZ=ritz,
                                        NUME_REF=self.dynaLineFEM.getNumeddl(),
                                        **args
                                        )
+            self.parent.register_result(nombase, self.base_resu)
             __modalBasis = nombase
         else:
             __modalBasis = DEFI_BASE_MODALE(RITZ=ritz,
@@ -996,7 +994,7 @@ class DynaLineIncrement:
         assert(self.__isTypeTran ^ self.__isTypeHarm)
         if INCREMENT:
             assert self.__isTypeTran
-            self.increment = INCREMENT.List_F()
+            self.increment = force_list(INCREMENT)
         else:
             assert self.__isTypeHarm
             self.increment = {}
@@ -1021,7 +1019,7 @@ class DynaLineInitialState:
     def __init__(self, dynaLineFem, BASE_CALCUL, ETAT_INIT=None, **args):
         self.dynaLineFem = dynaLineFem
         if ETAT_INIT:
-            self.etat_init = ETAT_INIT.List_F()[0]
+            self.etat_init = force_list(ETAT_INIT)[0]
         else:
             self.etat_init = None
         self.__isBaseGene = BASE_CALCUL == "GENE"
@@ -1029,7 +1027,7 @@ class DynaLineInitialState:
         """project all self.etat_init to gene basis"""
         for key in ["DEPL", "VITE"]:
             if self.etat_init.has_key(key) and \
-               type(self.etat_init[key]) == DataStructure.cham_no_sdaster:
+               self.etat_init[key].getType() == "CHAM_NO":
                 if self.__isBaseGene:
                     __vectGen = self.dynaLineFem.dynaLineBasis.vectPhyToGen(self.etat_init[key])
                     self.etat_init[key] = __vectGen
@@ -1078,7 +1076,7 @@ class DynaLineResu:
         self.unite_resu_impe = UNITE_RESU_IMPE
         self.unite_resu_forc = UNITE_RESU_FORC
         if PARAMETRE:
-            self.parametre = PARAMETRE.List_F()[0]
+            self.parametre = force_list(PARAMETRE)[0]
         else:
             self.parametre = {}
         self.parametre['TYPE'] = 'BINAIRE'
@@ -1117,7 +1115,6 @@ class DynaLineResu:
     def __getDynaVibra(self):
         """return result from DYNA_VIBRA (no iss)"""
         keywords = self.__getDynaVibraKeywords()
-        self.parent.DeclareOut('nomresu', self.parent.sd)
         if self.base_calcul == "PHYS":
             nomresu = DYNA_VIBRA(TYPE_CALCUL=self.type_calcul,
                                   BASE_CALCUL=self.base_calcul,
@@ -1127,14 +1124,14 @@ class DynaLineResu:
                                   )
         else:
             if self.resu_gene :
-                # retrieve also result in gene basis
-                self.parent.DeclareOut('resgene', self.resu_gene)
                 resgene = DYNA_VIBRA(TYPE_CALCUL=self.type_calcul,
                                       BASE_CALCUL=self.base_calcul,
                                       MATR_MASS=self.dynaLineFEM.getMass(),
                                       MATR_RIGI=self.dynaLineFEM.getRigi(),
                                       # TOUT_CHAM='OUI',
                                       **keywords)
+                # retrieve also result in gene basis
+                self.parent.register_result(resgene, self.resu_gene)
                 __dyna_vibra = resgene
             else:
                 __dyna_vibra = DYNA_VIBRA(TYPE_CALCUL=self.type_calcul,
@@ -1209,16 +1206,14 @@ class DynaLineResu:
             CALC_MISS(TYPE_RESU='FICHIER',
                       **keywords)
         keywords.update(self.__getCalcMissAdditionalKeywords())
-        self.parent.DeclareOut('nomresu', self.parent.sd)
         if self.resu_gene :
-            # retrieve also result in gene basis
-            self.parent.DeclareOut('resgene', self.resu_gene)
-        
             resu_gene = CALC_MISS(TYPE_RESU=self.type_calcul+"_GENE",
                                   MODELE=self.dynaLineFEM.getModele(),
                                   MATR_RIGI=self.dynaLineFEM.getRigiPhy(),
                                   MATR_MASS=self.dynaLineFEM.getMassPhy(),
                                   **keywords)
+            # retrieve also result in gene basis
+            self.parent.register_result(resgene, self.resu_gene)
             __calc_miss = resu_gene
         else:
              __calc_miss = CALC_MISS(TYPE_RESU=self.type_calcul+"_GENE",
@@ -1257,6 +1252,4 @@ def dyna_line_ops(self, **args):
     
     dynaLineResu = DynaLineResu(self, dynaLineFEM, dynaLineExcit, \
                                 dynaLineIncrement, dynaLineInitialState, **args)
-    dynaLineResu.get()
-    
-    return ier
+    return dynaLineResu.get()
