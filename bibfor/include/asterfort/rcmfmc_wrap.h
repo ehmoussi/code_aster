@@ -18,10 +18,11 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine rcmfmc(chmatz, chmacz, l_thm_, basename)
+    subroutine rcmfmc(chmatz, chmacz, l_thm_, basename, base)
         character(len=*), intent(in) :: chmatz
         character(len=*), intent(out) :: chmacz
         integer, intent(in) :: l_thm_
         character(len=*), intent(in) :: basename
+        character(len=1), intent(in), optional :: base
     end subroutine rcmfmc
 end interface

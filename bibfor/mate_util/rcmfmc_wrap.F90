@@ -1,4 +1,4 @@
-subroutine rcmfmc_wrap(chmatz, chmacz, l_thm_, basename)
+subroutine rcmfmc_wrap(chmatz, chmacz, l_thm_, basename, base)
 !
 implicit none
 !
@@ -27,11 +27,12 @@ implicit none
     character(len=*), intent(out) :: chmacz
     integer, intent(in) :: l_thm_
     character(len=*), intent(inout) :: basename
+    character(len=1), intent(in), optional :: base
     aster_logical :: l_thm
 !
 ! --------------------------------------------------------------------------------------------------
 !
     l_thm = l_thm_ .eq. 1
-    call rcmfmc(chmatz, chmacz, l_thm, basename)
+    call rcmfmc(chmatz, chmacz, l_thm, basename, base)
 
 end subroutine

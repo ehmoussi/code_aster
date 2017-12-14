@@ -55,21 +55,27 @@ public:
      * @brief Constructeur
      */
     CodedMaterialInstance( const MaterialOnMeshPtr& mater, const ModelPtr& model ):
-        DataStructure( "MATER_CODE", Temporary, 8 ),
+        DataStructure( "MATER_CODE", Permanent, 8 ),
         _mater( mater ),
         _model( model ),
         _field( new PCFieldOnMeshLongInstance( getName() + ".MATE_CODE",
                                                _model->getSupportMesh(),
-                                               Temporary ) )
+                                               Permanent ) )
+    {};
+
+    /**
+     * @brief Destructeur
+     */
+    ~CodedMaterialInstance()
     {
-        std::string blanc( 24, ' ' );
-        std::string materName = _mater->getName();
-        materName.resize(24, ' ');
-        std::string mate = blanc;
-        long thm = 0;
-        if( model->existsThm() ) thm = 1;
-        CALLO_RCMFMC_WRAP( materName, mate, &thm, getName() );
+        return;
     };
+
+    /**
+     * @brief Function to allocate the coded material
+     * @return return false if coded material already exists
+     */
+    bool allocate();
 
     /**
      * @brief Function to know if elastic properties depend of a function

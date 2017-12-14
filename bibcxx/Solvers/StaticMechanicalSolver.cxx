@@ -49,6 +49,8 @@ ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runti
     ResultsContainerPtr resultC( new ResultsContainerInstance ( std::string( "EVOL_ELAS" ) ) );
     std::string nameOfSD = resultC->getName();
 
+    _study->getCodedMaterial()->allocate();
+
     if( !_timeStep )
         throw std::runtime_error( "No time list" );
     if( _timeStep->size() == 0 )

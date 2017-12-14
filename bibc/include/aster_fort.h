@@ -220,9 +220,10 @@ void DEFSPSSSPSSPS(MERIME_WRAP,merime_wrap, const char*, STRING_SIZE, ASTERINTEG
                    ASTERDOUBLE *, const char*, STRING_SIZE, const char*, STRING_SIZE,
                    ASTERINTEGER*, const char*, STRING_SIZE );
 
-#define CALLO_RCMFMC_WRAP(a, b, c, d) CALLOOPO(RCMFMC_WRAP, rcmfmc_wrap, a, b, c, d)
-void DEFSSPS(RCMFMC_WRAP,rcmfmc_wrap, const char*, STRING_SIZE, const char*, STRING_SIZE,
-                                      ASTERINTEGER*, const char*, STRING_SIZE);
+#define CALLO_RCMFMC_WRAP(a, b, c, d, e) CALLOOPOO(RCMFMC_WRAP, rcmfmc_wrap, a, b, c, d, e)
+void DEFSSPSS(RCMFMC_WRAP,rcmfmc_wrap, const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                       ASTERINTEGER*, const char*, STRING_SIZE,
+                                       const char*, STRING_SIZE);
 
 #define CALLO_CRESOL_WRAP(a, b) CALLOO(CRESOL_WRAP, cresol_wrap, a, b)
 void DEFSS(CRESOL_WRAP,cresol_wrap, const char*, STRING_SIZE, const char*, STRING_SIZE);
