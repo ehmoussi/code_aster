@@ -111,7 +111,7 @@
 #include "PythonBindings/LinearDisplacementEvolutionContainerInterface.h"
 #include "PythonBindings/MeshCoordinatesFieldInterface.h"
 #include "PythonBindings/DynamicResultsContainerInterface.h"
-#include "PythonBindings/FullDynamicResultsContainerInterface.h"
+#include "PythonBindings/FullTransientResultsContainerInterface.h"
 #include "PythonBindings/GeneralizedModeContainerInterface.h"
 #include "PythonBindings/ListOfFloatsInterface.h"
 
@@ -240,7 +240,7 @@ BOOST_PYTHON_MODULE(libaster)
     exportLinearDisplacementEvolutionContainerToPython();
     exportMeshCoordinatesFieldToPython();
     exportDynamicResultsContainerToPython();
-    exportFullDynamicResultsContainerToPython();
+    exportFullTransientResultsContainerToPython();
     exportGeneralizedModeContainerToPython();
 
 #ifdef _USE_MPI
