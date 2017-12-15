@@ -19,13 +19,15 @@
 
 # person_in_charge: 
 
-from ..Objects import Model
+from ..Objects import NonLinearEvolutionContainer, MechanicalModeContainer
+from ..Objects import LinearDisplacementEvolutionContainer, EvolutiveThermalLoad
 from .ExecuteCommand import ExecuteCommand
 
 
-class XfemModelModication(ExecuteCommand):
-    """ """
-    command_name = "MODI_MODELE_XFEM"
+class XfemFieldPostprocessing(ExecuteCommand):
+    """Command that creates the :class:`~code_aster.Objects.??` by assigning
+    finite elements on a :class:`~code_aster.Objects.??`."""
+    command_name = "POST_CHAM_XFEM"
 
     def create_result(self, keywords):
         """Initialize the result.
@@ -33,18 +35,14 @@ class XfemModelModication(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = Model()
-
-    def post_exec(self, keywords):
-        """Execute the command.
-
-        Arguments:
-            keywords (dict): User's keywords.
-        """
-        if("MODELE_IN" in keywords):
-        	print type(keywords["MODELE_IN"])
-        	self._result.setSupportMesh(keywords["MODELE_IN"].getSupportMesh())
+        if keywords["RESULTAT"].getType() == "EVOL_NOLI":
+            self._result = NonLinearEvolutionContainer()
+        elif keywords["RESULTAT"].getType() == "MODE_MECA":
+            self._result = MechanicalModeContainer()
+        elif keywords["RESULTAT"].getType() == "EVOL_ELAS":
+            self._result = LinearDisplacementEvolutionContainer()
+        elif keywords["RESULTAT"].getType() == "EVOL_THER":
+            self._result = EvolutiveThermalLoad()
 
 
-
-MODI_MODELE_XFEM = XfemModelModication.run
+POST_CHAM_XFEM = XfemFieldPostprocessing.run
