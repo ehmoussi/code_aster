@@ -111,6 +111,7 @@
 #include "PythonBindings/LinearDisplacementEvolutionContainerInterface.h"
 #include "PythonBindings/MeshCoordinatesFieldInterface.h"
 #include "PythonBindings/DynamicResultsContainerInterface.h"
+#include "PythonBindings/FullResultsContainerInterface.h"
 #include "PythonBindings/FullTransientResultsContainerInterface.h"
 #include "PythonBindings/GeneralizedModeContainerInterface.h"
 #include "PythonBindings/ListOfFloatsInterface.h"
@@ -236,10 +237,11 @@ BOOST_PYTHON_MODULE(libaster)
     exportTimeStepManagerToPython();
     exportCppToFortranGlossaryToPython();
     exportCyclicSymmetryModeToPython();
+    exportDynamicResultsContainerToPython();
+    exportFullResultsContainerToPython();
     exportGeneralizedResultsContainerToPython();
     exportLinearDisplacementEvolutionContainerToPython();
     exportMeshCoordinatesFieldToPython();
-    exportDynamicResultsContainerToPython();
     exportFullTransientResultsContainerToPython();
     exportGeneralizedModeContainerToPython();
 

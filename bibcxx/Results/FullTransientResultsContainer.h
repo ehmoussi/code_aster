@@ -26,14 +26,14 @@
 
 #include "astercxx.h"
 
-#include "Results/DynamicResultsContainer.h"
+#include "Results/FullResultsContainer.h"
 
 /**
  * @class FullTransientResultsContainerInstance
  * @brief Cette classe correspond à un dyna_tran
  * @author Nicolas Tardieu
  */
-class FullTransientResultsContainerInstance: public DynamicResultsContainerInstance
+class FullTransientResultsContainerInstance: public FullResultsContainerInstance
 {
 private:
 
@@ -42,7 +42,7 @@ public:
      * @brief Constructeur
      * @todo  Ajouter les objets Jeveux de la SD
      */
-    FullTransientResultsContainerInstance(): DynamicResultsContainerInstance( "DYNA_TRANS" )
+    FullTransientResultsContainerInstance(): FullResultsContainerInstance( "DYNA_TRANS" )
     {};
 
 };
