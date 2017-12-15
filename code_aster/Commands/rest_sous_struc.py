@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import FullDynamicResultsContainer, MechanicalModeContainer
+from ..Objects import FullTransientResultsContainer, MechanicalModeContainer
 from ..Objects import NonLinearEvolutionContainer
 from .ExecuteCommand import ExecuteCommand
 
@@ -38,7 +38,7 @@ class RestSousStrucOper(ExecuteCommand):
         resultat = keywords.get("RESULTAT")
         if resu_gene != None:
             if resu_gene.getType() == "TRAN_GENE":
-                self._result = FullDynamicResultsContainer()
+                self._result = FullTransientResultsContainer()
             if resu_gene.getType() == "MODE_GENE":
                 self._result = MechanicalModeContainer()
             if resu_gene.getType() == "MODE_CYCL":
@@ -50,7 +50,7 @@ class RestSousStrucOper(ExecuteCommand):
             if resultat.getType() == "EVOL_NOLI":
                 self._result = NonLinearEvolutionContainer()
             if resultat.getType() == "DYNA_TRANS":
-                self._result = FullDynamicResultsContainer()
+                self._result = FullTransientResultsContainer()
             if resultat.getType() == "MODE_MECA":
                 self._result = MechanicalModeContainer()
 

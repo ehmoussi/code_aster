@@ -1,9 +1,6 @@
-#ifndef FULLDYNAMICRESULTSCONTAINERINTERFACE_H_
-#define FULLDYNAMICRESULTSCONTAINERINTERFACE_H_
-
 /**
- * @file FullDynamicResultsContainerInterface.h
- * @brief Fichier entete de la classe FullDynamicResultsContainerInterface
+ * @file FullTransientResultsContainerInterface.cxx
+ * @brief Interface python de FullTransientResultsContainer
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -24,9 +21,18 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "astercxx.h"
-#include "Results/FullDynamicResultsContainer.h"
+#include "PythonBindings/FullTransientResultsContainerInterface.h"
+#include "PythonBindings/factory.h"
+#include <boost/python.hpp>
 
-void exportFullDynamicResultsContainerToPython();
+void exportFullTransientResultsContainerToPython()
+{
+    using namespace boost::python;
 
-#endif /* FULLDYNAMICRESULTSCONTAINERINTERFACE_H_ */
+    class_< FullTransientResultsContainerInstance, FullTransientResultsContainerPtr,
+            bases< DynamicResultsContainerInstance > > ( "FullTransientResultsContainer", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< FullTransientResultsContainerInstance > ) )
+        .def( "printMedFile", &FullTransientResultsContainerInstance::printMedFile )
+    ;
+};

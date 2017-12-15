@@ -1,9 +1,9 @@
-#ifndef FULLDYNAMICRESULTSCONTAINER_H_
-#define FULLDYNAMICRESULTSCONTAINER_H_
+#ifndef FULLTRANSIENTRESULTSCONTAINER_H_
+#define FULLTRANSIENTRESULTSCONTAINER_H_
 
 /**
- * @file FullDynamicResultsContainer.h
- * @brief Fichier entete de la classe FullDynamicResultsContainer
+ * @file FullTransientResultsContainer.h
+ * @brief Fichier entete de la classe FullTransientResultsContainer
  * @author Nicolas Tardieu
  * @section LICENCE
  *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
@@ -29,11 +29,11 @@
 #include "Results/DynamicResultsContainer.h"
 
 /**
- * @class FullDynamicResultsContainerInstance
+ * @class FullTransientResultsContainerInstance
  * @brief Cette classe correspond à un dyna_tran
  * @author Nicolas Tardieu
  */
-class FullDynamicResultsContainerInstance: public DynamicResultsContainerInstance
+class FullTransientResultsContainerInstance: public DynamicResultsContainerInstance
 {
 private:
 
@@ -42,15 +42,15 @@ public:
      * @brief Constructeur
      * @todo  Ajouter les objets Jeveux de la SD
      */
-    FullDynamicResultsContainerInstance(): DynamicResultsContainerInstance( "DYNA_TRANS" )
+    FullTransientResultsContainerInstance(): DynamicResultsContainerInstance( "DYNA_TRANS" )
     {};
 
 };
 
 /**
- * @typedef FullDynamicResultsContainerPtr
- * @brief Pointeur intelligent vers un FullDynamicResultsContainerInstance
+ * @typedef FullTransientResultsContainerPtr
+ * @brief Pointeur intelligent vers un FullTransientResultsContainerInstance
  */
-typedef boost::shared_ptr< FullDynamicResultsContainerInstance > FullDynamicResultsContainerPtr;
+typedef boost::shared_ptr< FullTransientResultsContainerInstance > FullTransientResultsContainerPtr;
 
-#endif /* FULLDYNAMICRESULTSCONTAINER_H_ */
+#endif /* FULLTRANSIENTRESULTSCONTAINER_H_ */

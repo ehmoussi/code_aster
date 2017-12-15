@@ -19,12 +19,12 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import FullDynamicResultsContainer
+from ..Objects import FullTransientResultsContainer
 from .ExecuteCommand import ExecuteCommand
 
 
 class CalcForcNonl(ExecuteCommand):
-    """Command that defines :class:`~code_aster.Objects.FullDynamicResultsContainer`.
+    """Command that defines :class:`~code_aster.Objects.FullTransientResultsContainer`.
     """
     command_name = "CALC_FORC_NONL"
 
@@ -34,6 +34,6 @@ class CalcForcNonl(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = FullDynamicResultsContainer()
+        self._result = FullTransientResultsContainer()
 
 CALC_FORC_NONL = CalcForcNonl.run
