@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: samuel.geniaut at edf.fr
+# person_in_charge: pierre.badel at edf.fr
 
 """
 This module defines the different types of calculations
@@ -476,7 +476,6 @@ class Mac3CoeurCalcul(object):
             'COMPORTEMENT': (_F(RELATION='MULTIFIBRE',
                                 GROUP_MA=('CRAYON', 'T_GUIDE'),
                                 PARM_THETA=0.5,
-                                #DEFORMATION='GROT_GDEP',),
                                 DEFORMATION='PETIT',
                                 ),
                              _F(RELATION='DIS_GRICRA',
@@ -491,9 +490,7 @@ class Mac3CoeurCalcul(object):
                                 GROUP_MA='MAINTIEN',
                                 DEFORMATION='PETIT'),),
             'SUIVI_DDL':_F(NOM_CHAM='DEPL',EVAL_CHAM='MAXI_ABS',GROUP_NO='CR_BAS',NOM_CMP=('DX',)),
-            # 'CONVERGENCE' : _F(ITER_GLOB_MAXI=100),
             'NEWTON': _F(MATRICE='TANGENTE',
-                         #PREDICTION='ELASTIQUE',
                          REAC_ITER=1,),
             'SOLVEUR': _F(METHODE='MUMPS',
                           NPREC=15,
@@ -517,7 +514,6 @@ class Mac3CoeurCalcul(object):
                                 GROUP_MA=('CRAYON', 'T_GUIDE'),
                                 PARM_THETA=0.5,
                                 DEFORMATION='GROT_GDEP',
-                                #DEFORMATION='PETIT',
                                 ),
                              _F(RELATION='DIS_GRICRA',
                                 GROUP_MA='ELA',),
@@ -531,9 +527,7 @@ class Mac3CoeurCalcul(object):
                                 GROUP_MA='MAINTIEN',
                                 DEFORMATION='PETIT'),),
             'SUIVI_DDL':_F(NOM_CHAM='DEPL',EVAL_CHAM='MAXI_ABS',GROUP_NO='CR_BAS',NOM_CMP=('DX',)),
-            # 'CONVERGENCE' : _F(ITER_GLOB_MAXI=100),
             'NEWTON': _F(MATRICE='TANGENTE',
-                         #PREDICTION='ELASTIQUE',
                          REAC_ITER=1,),
             'SOLVEUR': _F(METHODE='MUMPS',
                           NPREC=15,
@@ -977,9 +971,6 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
         from code_aster.Cata.Commands import STAT_NON_LINE, PERM_MAC3COEUR, DETRUIRE
         coeur = self.coeur
         # calcul de deformation d'apres DAMAC / T0 - T1
-        self.depl_damac = self.keyw['DEPL_DAMAC']
-        if self.depl_damac :
-            self.macro.DeclareOut('_snl_lame',self.depl_damac)
         _snl_lame = STAT_NON_LINE(**self.snl_lame(
                                   INCREMENT=_F(LIST_INST=self.times,
                                                INST_INIT=0.,

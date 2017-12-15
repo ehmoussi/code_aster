@@ -319,25 +319,6 @@ subroutine dtmcalc(sd_dtm_, sd_int_)
     if (nltreat.eq.1) then
         call detrsd(' ','&&DTMMOD')
         call detrsd(' ','&&DTMNUG')
-!   --- Once the object DTMNUG have been destroyed, 
-!       update numerotation for future use in MUMPS
-
-        call getvid(' ', 'MATR_RIGI', scal=riggen, nbret=iret)
-        call jeveuo(riggen//'           .REFA', 'L', jrefa)
-        nume24(1:14) = zk24(jrefa-1+2)
-
-        matmass = '&&DTMMAG'
-        matrigi = '&&DTMRIG'
-        matamor = '&&DTMAMO'
-        call dismoi('METH_RESO', matmass, 'MATR_ASSE', repk=metres)
-        if (metres .eq. 'MUMPS') then
-            call jeveuo(matmass//'.REFA', 'E', jrefa)
-            zk24(jrefa-1+2) = nume24(1:14)
-            call jeveuo(matrigi//'.REFA', 'E', jrefa)
-            zk24(jrefa-1+2) = nume24(1:14)
-            call jeveuo(matamor//'.REFA', 'E', jrefa)
-            zk24(jrefa-1+2) = nume24(1:14)   
-        endif  
     endif
 
     call dtmget(sd_dtm, _NB_NONLI, iscal=nbnli)

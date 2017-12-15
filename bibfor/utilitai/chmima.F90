@@ -16,10 +16,16 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine chmima(nomsd, nomsy, typmax, nocham)
+subroutine chmima(nomsd, nomsy, typcha, typmax, nocham)
     implicit none
 #include "jeveux.h"
+#include "asterfort/assert.h"
+#include "asterfort/celces.h"
+#include "asterfort/cescel.h"
+#include "asterfort/cnocns.h"
+#include "asterfort/cnscno.h"
 #include "asterfort/copisd.h"
+#include "asterfort/detrsd.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
@@ -40,13 +46,14 @@ subroutine chmima(nomsd, nomsy, typmax, nocham)
 #include "asterfort/idensd.h"
 !
     integer :: nbordr
-    character(len=*) :: nomsd, nomsy, typmax, nocham
+    character(len=*) :: nomsd, nomsy, typmax, nocham, typcha
 !      AFFECTATION DU CHAMP-GD DE NOM NOCHAM  AVEC LES
 !      VALEURS MINMAX EN TOUT POINT DES CHAMPS-GD DE TYPE
 !      NOMSY DU RESULTAT DE NOM NOMSD
 ! ----------------------------------------------------------------------
 ! IN  : NOMSD  : NOM DE LA STRUCTURE "RESULTAT"
 ! IN  : NOMSY  : NOM SYMBOLIQUE DU CHAMP A CHERCHER.
+! IN  : TYPCHA : TYPE DU CHAMP A CHERCHER
 ! IN  : TYPMAX : TYPE D'OPERATION A EFFECTUER
 ! VAR : NOCHAM : NOM DU CHAMP CONTENANT LES MINMAX DES
 !                CHAMPS DE TYPE NOMSY DU RESULTAT NOMSD.
@@ -56,14 +63,14 @@ subroutine chmima(nomsd, nomsy, typmax, nocham)
     character(len=8) :: typma, crit, noma, nomn, valeur
     character(len=19) :: prno, prn2
     character(len=16) :: noms2
-    character(len=19) :: nocha2, chextr, knum
+    character(len=19) :: nocha2, chextr, knum, chs1, chs2
     character(len=24) :: nomnoe
     character(len=5) :: sufv
 !-----------------------------------------------------------------------
     integer :: i, iad, in, inoe, inumer
     integer :: iret, ivale, j, jddlx, jddly, jddlz, jdlrx
     integer :: jdlry, jdlrz, jordr, jvpnt, n2, nbnoe, nc
-    integer :: neq, np, nvale
+    integer :: neq, np, nvale, neq2
     real(kind=8) :: epsi, rs1, x, y, z
 !-----------------------------------------------------------------------
     call jemarq()
@@ -71,6 +78,8 @@ subroutine chmima(nomsd, nomsy, typmax, nocham)
     noms2 = nomsy
     nocha2 = nocham
     typma = typmax
+    chs1 = '&&CHMIMA.CHS1'
+    chs2 = '&&CHMIMA.CHS2'
 !
 !     --- LECTURE DU MOT-CLE TYPE_RESU ---
 !
@@ -92,19 +101,23 @@ subroutine chmima(nomsd, nomsy, typmax, nocham)
 !
     call rsexch('F', nomsd, noms2, zi(jordr), chextr,&
                 iret)
-!
-!      --- INITIALISATION DE NOCHAM AVEC CHEXTR ---
-    call copisd('CHAMP_GD', 'G', chextr(1:19), nocha2(1:19))
-!
-!     --- RECUPERATION DES VALEURS DU CHAMP-GD ---
-    call jeexin(nocha2(1:19)//'.VALE', iret)
-    if (iret .gt. 0) then
-        sufv= '.VALE'
+        
+    if (typcha(1:4).eq.'NOEU' .and. typma.ne.'NORM_TRA')then
+        call cnocns(chextr, 'V', chs1)
+        sufv= '.CNSV'
     else
-        sufv= '.CELV'
+        call copisd('CHAMP_GD', 'G', chextr(1:19), nocha2(1:19))
+        chs1 = nocha2
+        call jeexin(nocha2(1:19)//'.VALE', iret)
+        if (iret .gt. 0) then
+            sufv= '.VALE'
+        else
+            sufv= '.CELV'
+        endif
     endif
-    call jelira(nocha2(1:19)//sufv, 'LONMAX', neq)
-    call jeveuo(nocha2(1:19)//sufv, 'E', nvale)
+
+    call jelira(chs1(1:19)//sufv, 'LONMAX', neq)
+    call jeveuo(chs1(1:19)//sufv, 'E', nvale)
 !
     call wkvect('&&CHMIMA.INST', 'V V I', neq, inumer)
     do i = 1, neq
@@ -122,10 +135,18 @@ subroutine chmima(nomsd, nomsy, typmax, nocham)
 !
             call rsexch('F', nomsd, noms2, zi(jordr+i-1), chextr,&
                         iret)
+            if (typcha(1:4).eq.'NOEU')then
+                call cnocns(chextr, 'V', chs2)
+            else
+                chs2 = chextr
+            endif
+!           verification pour les cham_elem
+            call jelira(chs2(1:19)//sufv, 'LONMAX', neq2)
+            if (neq2 .ne. neq) call utmess('F','UTILITAI_25')
 !
 !         - RECUPERATION DU VALE DU CHAMP EXTRAIT
 !
-            call jeveuo(chextr//sufv, 'L', ivale)
+            call jeveuo(chs2//sufv, 'L', ivale)
 !
             do j = 1, neq
                 if (zr(ivale+j-1) .gt. zr(nvale+j-1)) then
@@ -133,6 +154,8 @@ subroutine chmima(nomsd, nomsy, typmax, nocham)
                     zi(inumer+j-1) = zi(jordr+i-1)
                 endif
             end do
+            
+            if (typcha(1:4).eq.'NOEU') call detrsd('CHAM_NO_S', chs2)
 !
         end do
 !
@@ -145,10 +168,18 @@ subroutine chmima(nomsd, nomsy, typmax, nocham)
 !
             call rsexch('F', nomsd, noms2, zi(jordr+i-1), chextr,&
                         iret)
+            if (typcha(1:4).eq.'NOEU')then
+                call cnocns(chextr, 'V', chs2)
+            else
+                chs2 = chextr
+            endif
+!           verification pour les cham_elem
+            call jelira(chs2(1:19)//sufv, 'LONMAX', neq2)
+            if (neq2 .ne. neq) call utmess('F','UTILITAI_25')
 !
 !         - RECUPERATION DU VALE DU CHAMP EXTRAIT
 !
-            call jeveuo(chextr//sufv, 'L', ivale)
+            call jeveuo(chs2//sufv, 'L', ivale)
 !
             do j = 1, neq
 !
@@ -157,6 +188,8 @@ subroutine chmima(nomsd, nomsy, typmax, nocham)
                     zi(inumer+j-1) = zi(jordr+i-1)
                 endif
             end do
+        
+            if (typcha(1:4).eq.'NOEU') call detrsd('CHAM_NO_S', chs2)
 !
         end do
 !
@@ -166,13 +199,21 @@ subroutine chmima(nomsd, nomsy, typmax, nocham)
 !
 !         - RECUPERATION DU CHAMP DE TYPE NOMSY
 !           CORRESPONDANT AU NUMERO D'ORDRE COURANT
-!
+!if (typcha(1:4).eq.'NOEU' .and. typma.eq.'NORM_TRA')then
             call rsexch('F', nomsd, noms2, zi(jordr+i-1), chextr,&
                         iret)
+            if (typcha(1:4).eq.'NOEU')then
+                call cnocns(chextr, 'V', chs2)
+            else
+                chs2 = chextr
+            endif
+!           verification pour les cham_elem
+            call jelira(chs2(1:19)//sufv, 'LONMAX', neq2)
+            if (neq2 .ne. neq) call utmess('F','UTILITAI_25')
 !
 !         - RECUPERATION DU VALE DU CHAMP EXTRAIT
 !
-            call jeveuo(chextr//sufv, 'L', ivale)
+            call jeveuo(chs2//sufv, 'L', ivale)
 !
             do j = 1, neq
 !
@@ -181,6 +222,8 @@ subroutine chmima(nomsd, nomsy, typmax, nocham)
                     zi(inumer+j-1) = zi(jordr+i-1)
                 endif
             end do
+                    
+            if (typcha(1:4).eq.'NOEU') call detrsd('CHAM_NO_S', chs2)
 !
         end do
 !
@@ -193,10 +236,18 @@ subroutine chmima(nomsd, nomsy, typmax, nocham)
 !
             call rsexch('F', nomsd, noms2, zi(jordr+i-1), chextr,&
                         iret)
+            if (typcha(1:4).eq.'NOEU')then
+                call cnocns(chextr, 'V', chs2)
+            else
+                chs2 = chextr
+            endif
+!           verification pour les cham_elem
+            call jelira(chs2(1:19)//sufv, 'LONMAX', neq2)
+            if (neq2 .ne. neq) call utmess('F','UTILITAI_25')
 !
 !         - RECUPERATION DU VALE DU CHAMP EXTRAIT
 !
-            call jeveuo(chextr//sufv, 'L', ivale)
+            call jeveuo(chs2//sufv, 'L', ivale)
 !
             do j = 1, neq
 !
@@ -205,6 +256,8 @@ subroutine chmima(nomsd, nomsy, typmax, nocham)
                     zi(inumer+j-1) = zi(jordr+i-1)
                 endif
             end do
+                   
+            if (typcha(1:4).eq.'NOEU') call detrsd('CHAM_NO_S', chs2)
 !
         end do
 !
@@ -351,6 +404,13 @@ subroutine chmima(nomsd, nomsy, typmax, nocham)
 !
     call jedetr('&&CHMIMA.INST')
     call jedetr(knum)
+    
+    if (typcha(1:4).eq.'NOEU' .and. typma.ne.'NORM_TRA')then
+        call cnscno(chs1, ' ', 'NON', 'G', nocha2,&
+                    'F', iret)
+        ASSERT(iret.eq.0)
+        call detrsd('CHAM_NO_S', chs1)
+    endif
 !
     call jedema()
 end subroutine

@@ -71,7 +71,7 @@ AFFE_CHAR_THER_F=OPER(nom="AFFE_CHAR_THER_F",op=34,sd_prod=char_ther,
            TOUT            =SIMP(statut='f',typ='TXM',into=("OUI",) ),
            GROUP_MA        =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
            MAILLE          =SIMP(statut='c',typ=ma  ,validators=NoRepeat(),max='**'),
-           FLUN            =SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule) ),
+           FLUN            =SIMP(statut='o',typ=(fonction_sdaster,) ),
          ),
 
 

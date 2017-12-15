@@ -36,6 +36,7 @@ subroutine coefrl(nom1, nom2, nom3, nckmax, ipas,&
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/ulisop.h"
 #include "asterfort/ulopen.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
@@ -51,6 +52,7 @@ subroutine coefrl(nom1, nom2, nom3, nckmax, ipas,&
     integer :: jborne, jcoeff, jvired, nbval1, nbval2, nbval3
     real(kind=8) :: zero, bock1(20), coef1(20, 11)
     real(kind=8) :: vrmin, vrmax
+    character(len=16) :: k16nom
     character(len=24) :: nom4
 !
 ! ----------------------------------------------------------------------
@@ -68,21 +70,24 @@ subroutine coefrl(nom1, nom2, nom3, nckmax, ipas,&
     call jeveuo(nom4, 'L', iunit)
     unit = zi(iunit-1+2)
     nbomax = 20
-    call ulopen(unit, ' ', ' ', 'NEW', 'O')
+    k16nom = ' '
+    if (ulisop ( unit, k16nom ) .eq. 0) then
+        call ulopen(unit, ' ', ' ', 'NEW', 'O')
+    endif
     read (unit,*) nbloc
     zero = 0.0d0
 !
 ! --- BLOC D'INITIALISATION
-    do 10 i = 1, nbomax
+    do i = 1, nbomax
         bock1 (i) = zero
         bornck(i) = zero
         do 20 j = 1, nckmax
             coef1 (i,j) = zero
             coefck(i,j) = zero
 20      continue
-10  end do
+    end do
 !
-    do 30 kk = 1, nbloc
+    do kk = 1, nbloc
         read (unit,*) ipas1
         read (unit,*) ires1
         read (unit,*) nb1
@@ -129,7 +134,7 @@ subroutine coefrl(nom1, nom2, nom3, nckmax, ipas,&
 90          continue
             read (unit,*)
         endif
-30  end do
+    end do
     if (ipas1 .ne. ipas .or. ires1 .ne. ires) then
         call utmess('F', 'MODELISA4_33')
     endif

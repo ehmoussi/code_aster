@@ -73,6 +73,18 @@ PROFVIT1=DEFI_FONC_FLUI(MAILLAGE=TUBE,
                         VITE=_F(PROFIL='UNIFORME',
                                 VALE=1.000000E+00),);
 
+import aster_core
+
+def includeExternalData(theFile):
+    """Retrieve a file in the external data folder"""
+    repdex = aster_core.get_option('repdex')
+    return osp.join(repdex, theFile)
+
+CD = includeExternalData('sdll110a.70.datg')
+CK = includeExternalData('sdll110a.71.datg')
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CD, ACCES='NEW', UNITE=70)
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CK, ACCES='NEW', UNITE=71)
+
 TYPEFLUI=DEFI_FLUI_STRU(
                FAISCEAU_TRANS=_F(
              COUPLAGE = 'OUI',
@@ -134,7 +146,7 @@ MELM=CALC_MATR_ELEM(      MODELE=MODELE,
                           OPTION='MASS_FLUI_STRU'
 )
 
-NUM=NUME_DDL(   MATR_RIGI=MELR) 
+NUM=NUME_DDL(   MATR_RIGI=MELR)
 
 MATRR=ASSE_MATRICE(   MATR_ELEM=MELR,
                        NUME_DDL=NUM
@@ -173,6 +185,9 @@ MELFLUI0=CALC_FLUI_STRU(
              TYPE_FLUI_STRU=TYPEFLUI,
                  IMPRESSION=_F(  PARA_COUPLAGE = 'OUI')
 )
+
+DEFI_FICHIER(ACTION='LIBERER', UNITE=70)
+DEFI_FICHIER(ACTION='LIBERER', UNITE=71)
 
 SPECTRE1=DEFI_SPEC_TURB(
               SPEC_LONG_COR_3=_F(  LONG_COR = 3.4,

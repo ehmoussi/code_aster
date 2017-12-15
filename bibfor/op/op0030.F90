@@ -57,7 +57,7 @@ implicit none
 !
     integer :: iret, nb_dim
     character(len=4) :: vale_type
-    character(len=8) :: mesh, model, sdcont
+    character(len=8) :: mesh, model, sdcont 
     character(len=16) :: k16dummy, command
     character(len=19) :: ligrmo, ligret, ligrel, ligrch
     integer :: cont_form
