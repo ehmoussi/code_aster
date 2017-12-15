@@ -8,5 +8,3 @@ P testlist verification sequential
 F comm sdll110d.comm D 1
 F msh sdll110d.msh D 19
 F mmed sdll110d.mmed D 20
-F libr sdll110a.70 D 70
-F libr sdll110a.71 D 71

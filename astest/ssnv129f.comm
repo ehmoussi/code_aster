@@ -1,0 +1,212 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+#
+# MAILLE QUA4, MODELISATION DKT
+#
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
+
+
+MA=LIRE_MAILLAGE(VERI_MAIL=_F(VERIF='OUI'),FORMAT='MED');
+
+
+MO=AFFE_MODELE(MAILLAGE=MA,
+               AFFE=(_F(GROUP_MA='Q21',
+                        PHENOMENE='MECANIQUE',
+                        MODELISATION='DKT'),
+                     _F(GROUP_MA='Q1',
+                        PHENOMENE='MECANIQUE',
+                        MODELISATION='DKT')),
+# ce test n'a qu'un seul GREL, 'GROUP_ELEM' n'est pas possible
+               DISTRIBUTION=_F(METHODE='CENTRALISE'));
+
+MA=DEFI_GROUP(reuse =MA,
+              MAILLAGE=MA,
+              CREA_GROUP_NO=_F(TOUT_GROUP_MA='OUI'));
+
+CAREL=AFFE_CARA_ELEM(MODELE=MO,
+                     COQUE=(_F(GROUP_MA='Q21',
+                               EPAIS=0.5),
+                            _F(GROUP_MA='Q1',
+                               EPAIS=0.5)));
+
+MAT=DEFI_MATERIAU(ELAS=_F(E=200000000000.0,
+                          NU=0.3));
+
+CHMAT=AFFE_MATERIAU(MAILLAGE=MA,
+                    AFFE=_F(TOUT='OUI',
+                            MATER=MAT));
+
+CHA1=AFFE_CHAR_MECA(MODELE=MO,
+                    PRES_REP=_F(GROUP_MA='Q21',
+                                PRES=-250000000.0));
+
+CHA0=AFFE_CHAR_CINE(MODELE=MO,
+                    MECA_IMPO=(_F(GROUP_NO='CENTE1',
+                                  DX=0.0,
+                                  DY=0.0,
+                                  DRX=0.0,
+                                  DRY=0.0,
+                                  DRZ=0.0),
+                               _F(GROUP_NO='CENTE2',
+                                  DX=0.0,
+                                  DY=0.0,
+                                  DRX=0.0,
+                                  DRY=0.0,
+                                  DRZ=0.0),
+                               _F(GROUP_NO=('DR1','DR21'),
+                                  DY=0.0,
+                                  DZ=0.0,
+                                  DRY=0.0),
+                               _F(GROUP_NO=('DR2','DR22'),
+                                  DX=0.0,
+                                  DZ=0.0,
+                                  DRX=0.0),
+                               _F(GROUP_NO=('DR3','DR23'),
+                                  DY=0.0,
+                                  DZ=0.0,
+                                  DRY=0.0),
+                               _F(GROUP_NO=('DR4','DR24'),
+                                  DX=0.0,
+                                  DZ=0.0,
+                                  DRX=0.0)));
+
+CHA2=DEFI_CONTACT(MODELE         = MO,
+                  FORMULATION    = 'DISCRETE',
+                  REAC_GEOM      = 'SANS',
+                  RESI_ABSO      = 1.E-8,
+                  PRE_COND       = 'DIRICHLET',
+                  ITER_PRE_MAXI = 100,
+                  ZONE=_F(
+                          ALGO_CONT    ='GCP',
+                          GROUP_MA_MAIT='Q1',
+                          GROUP_MA_ESCL='Q21',
+                          SANS_GROUP_NO=('DR1','DR2','DR3','DR4',
+                                              'DR21','DR22','DR23','DR24'),
+                        )
+                  )
+
+RAMPE=DEFI_FONCTION(NOM_PARA='INST',
+                    VALE=(0.0,0.0,
+                          1.0,1.0,
+                          ),
+                    PROL_DROITE='LINEAIRE',
+                    PROL_GAUCHE='LINEAIRE');
+
+L_INST=DEFI_LIST_REEL(DEBUT=0.0,
+                      INTERVALLE=_F(JUSQU_A=1.0,
+                                    NOMBRE=1));
+
+RESU=STAT_NON_LINE(SOLVEUR=_F(METHODE='MUMPS',
+                              # Commente en attente de correction de MATR_DISTRIBUEE avec les charges cinematiques
+                              #MATR_DISTRIBUEE='OUI',
+                             ),
+                   MODELE=MO,
+                   CHAM_MATER=CHMAT,
+                   CARA_ELEM=CAREL,
+                   EXCIT=(_F(CHARGE=CHA1,
+                             FONC_MULT=RAMPE),
+                          _F(CHARGE=CHA0),
+                          ),
+                   CONTACT  =CHA2,
+                   COMPORTEMENT=_F(RELATION='ELAS'),
+                   INCREMENT=_F(LIST_INST=L_INST),
+                   INFO=1);
+
+RESU=CALC_CHAMP(reuse=RESU,RESULTAT=RESU,CONTRAINTE=('SIGM_ELNO'))
+
+
+RESUPOS=POST_CHAMP(RESULTAT=RESU,
+                   EXTR_COQUE=_F(NOM_CHAM='SIGM_ELNO',
+                                 NUME_COUCHE=1,
+                                 NIVE_COUCHE='INF'));
+RESUPOS=CALC_CHAMP(reuse =RESUPOS,
+             RESULTAT=RESUPOS,
+             CONTRAINTE='SIGM_NOEU');
+
+IMPR_RESU(MODELE=MO,
+          FORMAT='GMSH',
+          UNITE=37,
+          RESU=(_F(RESULTAT=RESU,
+                   NOM_CHAM='DEPL'),
+                _F(RESULTAT=RESUPOS,
+                   NOM_CHAM='SIGM_NOEU',
+                   NOM_CMP=('SIXX','SIYY','SIXY'))
+                ));
+
+TEST_RESU(RESU=(_F(NUME_ORDRE=1,
+                   GROUP_NO='CENTE1',
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=RESU,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DZ',
+                   VALE_CALC=-0.345769895,
+                   VALE_REFE=-0.34268749999999998,
+                   CRITERE='RELATIF',
+                   PRECISION=1.E-2,),
+                _F(NUME_ORDRE=1,
+                   GROUP_NO='CENTE1',
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=RESUPOS,
+                   NOM_CHAM='SIGM_NOEU',
+                   NOM_CMP='SIYY',
+                   VALE_CALC= 7.68531550E+09,
+                   VALE_REFE=7.648100000E9,
+                   CRITERE='RELATIF',
+                   PRECISION=5.0000000000000001E-3,),
+                ),
+          )
+
+TEST_RESU(RESU=(_F(NUME_ORDRE=1,
+                   GROUP_NO='A1',
+                   RESULTAT=RESUPOS,
+                   NOM_CHAM='SIGM_NOEU',
+                   NOM_CMP='SIXY',
+                   VALE_CALC=-3.2916909693769999E9,
+                   CRITERE='RELATIF',
+                   ),
+                _F(NUME_ORDRE=1,
+                   GROUP_NO='A3',
+                   RESULTAT=RESUPOS,
+                   NOM_CHAM='SIGM_NOEU',
+                   NOM_CMP='SIXY',
+                   VALE_CALC=-3.2916909693769999E9,
+                   CRITERE='RELATIF',
+                   ),
+                _F(NUME_ORDRE=1,
+                   GROUP_NO='B1',
+                   RESULTAT=RESUPOS,
+                   NOM_CHAM='SIGM_NOEU',
+                   NOM_CMP='SIXY',
+                   VALE_CALC=3.2916909693769999E9,
+                   CRITERE='RELATIF',
+                   ),
+                _F(NUME_ORDRE=1,
+                   GROUP_NO='B3',
+                   RESULTAT=RESUPOS,
+                   NOM_CHAM='SIGM_NOEU',
+                   NOM_CMP='SIXY',
+                   VALE_CALC=3.2916909693769999E9,
+                   CRITERE='RELATIF',
+                   ),
+                ),
+          )
+
+FIN();

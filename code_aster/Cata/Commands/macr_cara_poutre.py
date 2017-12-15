@@ -34,16 +34,16 @@ MACR_CARA_POUTRE=MACRO(nom="MACR_CARA_POUTRE",
          regles=(
             EXCLUS('SYME_Y','GROUP_MA_BORD'),
             EXCLUS('SYME_Z','GROUP_MA_BORD'),
+#            UN_PARMI('MAILLAGE', 'UNITE'),
          ),
 
-         MAILLAGE    =SIMP(statut='f',typ=maillage_sdaster, fr=tr("Nom du concept maillage")),
-         b_maillage  =BLOC(
+         MAILLAGE = SIMP(statut='f',typ=maillage_sdaster, fr=tr("Nom du concept maillage")),
+         UNITE = SIMP(statut='f',typ=UnitType(), inout='in',
+                      fr=tr("Unité correspondant au format du fichier maillage")),
+         b_maillage = BLOC(
             condition = """not exists("MAILLAGE")""",
-            regles=( PRESENT_PRESENT('FORMAT','UNITE') ),
-            FORMAT   =SIMP(statut='f',typ='TXM',defaut="MED",into=("ASTER","MED"),
+            FORMAT = SIMP(statut='f',typ='TXM',defaut="MED",into=("ASTER","MED"),
                            fr=tr("Format du fichier")),
-            UNITE    =SIMP(statut='f',typ=UnitType(),defaut= 20, inout='in',
-                           fr=tr("Unité correspondant au format du fichier maillage")),
          ),
 
          ORIG_INER      =SIMP(statut='f',typ='R',max=3,defaut=(0.E+0,0.E+0),

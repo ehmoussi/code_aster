@@ -185,6 +185,7 @@ DYNAMODA=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                    FROTTEMENT='COULOMB',
                                    COULOMB = COULOMB),
                             ARCHIVAGE=_F(INST=( T1, T2, T3, T4, ),),
+                            VERI_CHOC=_F(STOP_CRITERE='NON')
                           )
 
 #

@@ -873,6 +873,7 @@ FSEISX=CALC_MISS(MODELE=MODELB, TYPE_RESU='CHARGE',
                         FONC_SIGNAL=deplx,
                         NOM_CMP='DX',
                         UNITE_RESU_FORC=29,
+                        UNITE_RESU_IMPE = 25,
                         NOEUD_AFFE=('N257',),
                         );
                         
@@ -880,6 +881,7 @@ FSEISY=CALC_MISS(MODELE=MODELB, TYPE_RESU='CHARGE',
                         FONC_SIGNAL=deply,
                         NOM_CMP='DY',
                         UNITE_RESU_FORC=29,
+                        UNITE_RESU_IMPE = 25,
                         NOEUD_AFFE=('N257',),
                         );
 

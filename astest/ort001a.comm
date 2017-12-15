@@ -39,7 +39,7 @@ R_e = 0.177800
 
 
 DEBUT(PAR_LOT='NON',
-      CODE=_F(NIV_PUB_WEB='INTERNET'),
+      CODE=_F(NIV_PUB_WEB='INTRANET'),
       IGNORE_ALARM='SUPERVIS_1',)
 
 # --- List of timesteps

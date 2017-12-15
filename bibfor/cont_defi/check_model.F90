@@ -22,12 +22,20 @@ implicit none
 !
 #include "asterfort/exixfe.h"
 #include "asterfort/exipat.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/utmess.h"
+#include "asterfort/asmpi_info.h"
+#include "asterc/asmpi_comm.h"
+!
+#ifdef _USE_MPI
+#include "mpif.h"
+#include "asterf_mpi.h"
+#endif
 !
 ! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 !
     character(len=8), intent(in) :: mesh
-    character(len=8), intent(in) :: model
+    character(len=8), intent(in) :: model    
     integer, intent(in) :: cont_form
 !
 ! --------------------------------------------------------------------------------------------------
@@ -45,6 +53,16 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: iret
+    character(len=8)  ::  partit
+!
+! --------------------------------------------------------------------------------------------------
+!
+    mpi_int :: nb_proc, mpicou
+!
+! - Mpi informations
+!
+    call asmpi_comm('GET', mpicou)
+    call asmpi_info(mpicou, size=nb_proc)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -67,5 +85,15 @@ implicit none
         endif
     endif  
 !
+! issue25897 : Pour les formulations discrètes, la méthode de décomposition par sous_domaine
+! est interdite.
+    if ((cont_form .eq. 1) .or. (cont_form .eq. 4)) then 
+        if (nb_proc .gt. 1) then
+        call dismoi('PARTITION', model//'.MODELE', 'LIGREL', repk=partit)
+            if ((partit .ne. ' ')) then
+                call utmess('F', 'CONTACT3_45')
+            endif
+        endif
+    endif
 end subroutine
  

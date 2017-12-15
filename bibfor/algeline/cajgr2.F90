@@ -36,6 +36,7 @@ subroutine cajgr2(igrap, vr, cocaj1, cocaj2)
 #include "asterfort/jeexin.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/ulisop.h"
 #include "asterfort/ulopen.h"
 #include "asterfort/wkvect.h"
     character(len=8) :: typflu
@@ -48,6 +49,7 @@ subroutine cajgr2(igrap, vr, cocaj1, cocaj2)
     real(kind=8) :: coeca1(10, 20, 11), coeca2(10, 20, 11)
     real(kind=8) :: boca1(10, 20), boca2(10, 20), borne1(10, 20)
     real(kind=8) :: zero, coef1(10, 20, 11), coef2(10, 20, 11), borne2(10, 20)
+    character(len=16) :: k16nom
     character(len=24) :: nom1, nom2
     save          borne1, coeca1, borne2, coeca2
 ! ----------------------------------------------------------------------
@@ -76,7 +78,10 @@ subroutine cajgr2(igrap, vr, cocaj1, cocaj2)
 !     =============================
         call jeveuo(nom2, 'L', iunit)
         unit = zi(iunit-1+1)
-        call ulopen(unit, ' ', ' ', 'NEW', 'O')
+        k16nom = ' '
+        if (ulisop ( unit, k16nom ) .eq. 0) then
+            call ulopen(unit, ' ', ' ', 'NEW', 'O')
+        endif
 !
 ! ---    BLOC D'INITIALISATION
         do 10 i = 1, nbmax
