@@ -29,7 +29,7 @@ void exportDynamicResultsContainerToPython()
 {
     using namespace boost::python;
 
-    class_< DynamicResultsContainerInstance, DynamicResultsContainerPtr,
-            bases< ResultsContainerInstance > > ( "DynamicResultsContainer", no_init )
+    class_< DynamicResultsContainerInstance, DynamicResultsContainerInstance::DynamicResultsContainerPtr,
+            bases< DataStructure > > ( "DynamicResultsContainer", no_init )
     ;
 };
