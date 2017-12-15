@@ -109,6 +109,7 @@ from .extr_resu import EXTR_RESU
 from .extr_table import EXTR_TABLE
 from .factoriser import FACTORISER
 from .fin import FIN
+from .fonc_flui_stru import FONC_FLUI_STRU
 from .formule import FORMULE
 from .impr_co import IMPR_CO
 from .info_exec_aster import INFO_EXEC_ASTER
