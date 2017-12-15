@@ -114,6 +114,7 @@
 #include "PythonBindings/FullResultsContainerInterface.h"
 #include "PythonBindings/FullTransientResultsContainerInterface.h"
 #include "PythonBindings/FullHarmonicResultsContainerInterface.h"
+#include "PythonBindings/FullAcousticHarmonicResultsContainerInterface.h"
 #include "PythonBindings/GeneralizedModeContainerInterface.h"
 #include "PythonBindings/ListOfFloatsInterface.h"
 
@@ -245,6 +246,7 @@ BOOST_PYTHON_MODULE(libaster)
     exportMeshCoordinatesFieldToPython();
     exportFullTransientResultsContainerToPython();
     exportFullHarmonicResultsContainerToPython();
+    exportFullAcousticHarmonicResultsContainerToPython();
     exportGeneralizedModeContainerToPython();
 
 #ifdef _USE_MPI
