@@ -111,6 +111,7 @@ from .factoriser import FACTORISER
 from .fin import FIN
 from .fonc_flui_stru import FONC_FLUI_STRU
 from .formule import FORMULE
+from .gene_fonc_alea import GENE_FONC_ALEA
 from .impr_co import IMPR_CO
 from .info_exec_aster import INFO_EXEC_ASTER
 from .impr_jeveux import IMPR_JEVEUX
