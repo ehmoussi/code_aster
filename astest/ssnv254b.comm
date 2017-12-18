@@ -43,7 +43,7 @@ nb_pas = 1000
 nb_arch = 100
 
 # INSTANT DE FIN <= DERNIER INSTANT
-inst_fin =0.94
+inst_fin =0.70
 
 # DERNIER INSTANT
 inst_total = 1.00
