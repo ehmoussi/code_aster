@@ -32,6 +32,8 @@ void exportFullHarmonicResultsContainerToPython()
     class_< FullHarmonicResultsContainerInstance, FullHarmonicResultsContainerPtr,
             bases< FullResultsContainerInstance > > ( "FullHarmonicResultsContainer", no_init )
         .def( "__init__", make_constructor(
+            &initFactoryPtr< FullHarmonicResultsContainerInstance, std::string > ) )
+        .def( "__init__", make_constructor(
             &initFactoryPtr< FullHarmonicResultsContainerInstance > ) )
         .def( "printMedFile", &FullHarmonicResultsContainerInstance::printMedFile )
     ;

@@ -32,6 +32,8 @@ void exportFullTransientResultsContainerToPython()
     class_< FullTransientResultsContainerInstance, FullTransientResultsContainerPtr,
             bases< FullResultsContainerInstance > > ( "FullTransientResultsContainer", no_init )
         .def( "__init__", make_constructor(
+            &initFactoryPtr< FullTransientResultsContainerInstance , std::string > ) )
+        .def( "__init__", make_constructor(
             &initFactoryPtr< FullTransientResultsContainerInstance > ) )
         .def( "printMedFile", &FullTransientResultsContainerInstance::printMedFile )
     ;

@@ -1,9 +1,9 @@
-#ifndef DYNAMICRESULTSCONTAINER_H_
-#define DYNAMICRESULTSCONTAINER_H_
+#ifndef DYNAMICRESULTSINDEXING_H_
+#define DYNAMICRESULTSINDEXING_H_
 
 /**
- * @file DynamicResultsContainer.h
- * @brief Fichier entete de la classe DynamicResultsContainer
+ * @file DynamicResultsIndexing.h
+ * @brief Fichier entete de la classe DynamicResultsIndexing
  * @author Natacha Béreux
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -28,18 +28,17 @@
 
 #include "astercxx.h"
 
-#include "DataStructures/DataStructure.h"
+#include "DataStructures/DataStructure.h" 
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
-
+#include "Supervis/ResultNaming.h"
 /**
- * @class DynamicResultsContainerInstance
- * @brief Cette classe correspond a la sd_resu_dyna de Code_Aster.
- * Un objet sd_resu_dyna est un concept produit par un opérateur
- * dynamique sur base physique ou base généralisée.
+ * @class DynamicResultsIndexingInstance
+ * @brief Cette classe correspond aux objets Aster permettant d'indexer les résultats "généralisés"
+ * i.e. les résultats sur base modale.
  * @author Natacha Béreux
  */
-class DynamicResultsContainerInstance : public DataStructure
+class DynamicResultsIndexingInstance : public DataStructure
 {
 private:
     /** @brief Collection '.REFD' */
@@ -53,22 +52,22 @@ private:
     JeveuxVectorLong             _indi;
 public:
     /**
-     * @typedef DynamicResultsContainerPtr
-     * @brief Pointeur intelligent vers un DynamicResultsContainerInstance
+     * @typedef DynamicResultsIndexingPtr
+     * @brief Pointeur intelligent vers un DynamicResultsIndexingInstance
      */
-    typedef boost::shared_ptr< DynamicResultsContainerInstance > DynamicResultsContainerPtr;
+    typedef boost::shared_ptr< DynamicResultsIndexingInstance > DynamicResultsIndexingPtr;
 
     /**
      * @brief Constructeur
      */
-    DynamicResultsContainerInstance( const std::string resuTyp ):
-        DynamicResultsContainerInstance( ResultNaming::getNewResultName(), resuTyp ) 
+    DynamicResultsIndexingInstance( const std::string resuTyp ):
+        DynamicResultsIndexingInstance( ResultNaming::getNewResultName(), resuTyp ) 
     {};
 
     /**
      * @brief Constructeur
      */
-    DynamicResultsContainerInstance( const std::string &name,
+    DynamicResultsIndexingInstance( const std::string &name,
                                      std::string resuTyp ):
         DataStructure( name, 19, resuTyp ),
         _refd( JeveuxCollectionChar24( getName() + ".REFD" ) ),
@@ -76,6 +75,6 @@ public:
     {};
 };
 
-typedef boost::shared_ptr< DynamicResultsContainerInstance > DynamicResultsContainerPtr;
+typedef boost::shared_ptr< DynamicResultsIndexingInstance > DynamicResultsIndexingPtr;
 
-#endif /* DYNAMICRESULTSCONTAINER_H_ */
+#endif /* DYNAMICRESULTSINDEXING_H_ */

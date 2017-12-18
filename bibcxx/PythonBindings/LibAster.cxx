@@ -110,7 +110,6 @@
 #include "PythonBindings/ResultNamingInterface.h"
 #include "PythonBindings/LinearDisplacementEvolutionContainerInterface.h"
 #include "PythonBindings/MeshCoordinatesFieldInterface.h"
-#include "PythonBindings/DynamicResultsContainerInterface.h"
 #include "PythonBindings/FullResultsContainerInterface.h"
 #include "PythonBindings/FullTransientResultsContainerInterface.h"
 #include "PythonBindings/FullHarmonicResultsContainerInterface.h"
@@ -239,7 +238,6 @@ BOOST_PYTHON_MODULE(libaster)
     exportTimeStepManagerToPython();
     exportCppToFortranGlossaryToPython();
     exportCyclicSymmetryModeToPython();
-    exportDynamicResultsContainerToPython();
     exportFullResultsContainerToPython();
     exportGeneralizedResultsContainerToPython();
     exportLinearDisplacementEvolutionContainerToPython();

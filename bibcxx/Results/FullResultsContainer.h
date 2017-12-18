@@ -26,7 +26,7 @@
 
 #include "astercxx.h"
 
-#include "Results/DynamicResultsContainer.h"
+#include "Results/DynamicResultsIndexing.h"
 #include "Results/ResultsContainer.h"
 
 /**
@@ -34,16 +34,22 @@
  * @brief Cette classe correspond à un sd_dyna_phys
  * @author Natacha Béreux 
  */
-class FullResultsContainerInstance: public DynamicResultsContainerInstance, public ResultsContainerInstance
+class FullResultsContainerInstance: public ResultsContainerInstance
 {
 private:
-
+     /** @brief indexage des résultats de calcul dynamiques */
+     DynamicResultsIndexingPtr _index;
 public:
     /**
      * @brief Constructeur
      * @todo  Ajouter les objets Jeveux de la SD
      */
-    FullResultsContainerInstance( std::string name ): DynamicResultsContainerInstance( name ), ResultsContainerInstance( name )
+    FullResultsContainerInstance( const std::string &name, const std::string &resuTyp ): 
+       ResultsContainerInstance( name, resuTyp ),
+       _index( new DynamicResultsIndexingInstance( name, resuTyp ) )
+    {};
+    FullResultsContainerInstance( const std::string &resuTyp ): 
+        FullResultsContainerInstance( ResultNaming::getNewResultName(), resuTyp ) 
     {};
 
     bool printMedFile( std::string fileName ) const throw ( std::runtime_error ){

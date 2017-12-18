@@ -28,9 +28,10 @@
 
 #include "astercxx.h"
 
-#include "Results/DynamicResultsContainer.h"
+#include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Modal/StaticMacroElement.h"
+#include "Results/DynamicResultsIndexing.h"
 /**
  * @class GeneralizedResultsContainerInstance
  * @brief Cette classe correspond a la sd_dyna_gene de Code_Aster.
@@ -39,9 +40,11 @@
  * @author Natacha Béreux
  */
 template <class ValueType>
-class GeneralizedResultsContainerInstance: public DynamicResultsContainerInstance
+class GeneralizedResultsContainerInstance: public DataStructure
 {
 private:
+    /** @brief DynamicResultsIndexing */
+    DynamicResultsIndexingPtr _index;
     /** @brief Vecteur Jeveux '.DESC' */
     JeveuxVectorLong             _desc;
     /** @brief Vecteur Jeveux '.DISC' */
@@ -62,15 +65,19 @@ public:
     /**
      * @brief Constructeur
      */
-    GeneralizedResultsContainerInstance( const std::string &name ):
-        DynamicResultsContainerInstance( name, "SD_DYNA_GENE" ),
+    GeneralizedResultsContainerInstance( const std::string &name, const std::string &resuTyp ):
+            DataStructure( name, 19, resuTyp ), 
+            _index( new DynamicResultsIndexingInstance( getName(), resuTyp )),
             _desc( JeveuxVectorLong( getName() + ".DESC" ) ),
             _abscissasOfSamples( JeveuxVectorDouble( getName() +".DISC"  ) ),
             _indicesOfSamples( JeveuxVectorLong ( getName() +".ORDR"  ) ),
             _displacement( JeveuxVector<ValueType>( getName() +".DEPL"  ) ),
             _velocity( JeveuxVector<ValueType>( getName() +".VITE"  ) ),
             _acceleration( JeveuxVector<ValueType>( getName() +".ACCE"  ) ),
-            _projM( new ProjMesuInstance( getName() + ".PROJM" ))
+            _projM( new ProjMesuInstance( getName() + ".PROJM" ) )
+    {};
+    GeneralizedResultsContainerInstance( const std::string &resuTyp ): 
+            GeneralizedResultsContainerInstance( ResultNaming::getNewResultName(), resuTyp )
     {};
 };
 
@@ -126,7 +133,7 @@ public:
      * @brief Constructeur
      */
     TransientGeneralizedResultsContainerInstance( const std::string &name ):
-        GeneralizedResultsContainerDoubleInstance( name ),
+        GeneralizedResultsContainerDoubleInstance( name, "TRAN_GENE" ),
         _timeSteps( JeveuxVectorDouble( getName() +".PTEM"  ) ),
         _acceExcitFunction(  JeveuxVectorChar8( getName() +".FACC"  ) ),
         _veloExcitFunction(  JeveuxVectorChar8( getName() +".FVIT"  ) ),
@@ -163,7 +170,7 @@ public:
      * @brief Constructeur
      */
     HarmoGeneralizedResultsContainerInstance( const std::string &name ):
-        GeneralizedResultsContainerComplexInstance( name )
+        GeneralizedResultsContainerComplexInstance( name, "HARM_GENE" )
     {};
 };
 

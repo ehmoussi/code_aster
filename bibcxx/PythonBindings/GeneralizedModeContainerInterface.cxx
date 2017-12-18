@@ -30,7 +30,9 @@ void exportGeneralizedModeContainerToPython()
     using namespace boost::python;
 
     class_< GeneralizedModeContainerInstance, GeneralizedModeContainerPtr,
-            bases< DynamicResultsContainerInstance > > ( "GeneralizedModeContainer", no_init )
+            bases< DataStructure > > ( "GeneralizedModeContainer", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< GeneralizedModeContainerInstance , std::string > ) )
         .def( "__init__", make_constructor(
             &initFactoryPtr< GeneralizedModeContainerInstance > ) )
     ;

@@ -30,10 +30,12 @@ void exportFullResultsContainerToPython()
     using namespace boost::python;
 
     class_< FullResultsContainerInstance, FullResultsContainerPtr,
-            bases< ResultsContainerInstance, DynamicResultsContainerInstance > > ( "FullResultsContainer", no_init )
+            bases< ResultsContainerInstance > > ( "FullResultsContainer", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< FullResultsContainerInstance,
-                             std::string > ) )
+                             std::string , std::string> ) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< FullResultsContainerInstance, std::string> ) )
         .def( "printMedFile", &FullResultsContainerInstance::printMedFile )
     ;
 };

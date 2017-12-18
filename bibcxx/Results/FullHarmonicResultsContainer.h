@@ -27,6 +27,7 @@
 #include "astercxx.h"
 
 #include "Results/FullResultsContainer.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class FullHarmonicResultsContainerInstance
@@ -42,7 +43,9 @@ public:
      * @brief Constructeur
      * @todo  Ajouter les objets Jeveux de la SD
      */
-    FullHarmonicResultsContainerInstance(): FullResultsContainerInstance( "DYNA_HARMO" )
+    FullHarmonicResultsContainerInstance( const std::string &name ): FullResultsContainerInstance( name, "DYNA_HARMO" )
+    {};
+    FullHarmonicResultsContainerInstance(): FullHarmonicResultsContainerInstance(ResultNaming::getNewResultName() )
     {};
 
 };
