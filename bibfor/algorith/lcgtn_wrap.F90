@@ -70,6 +70,10 @@ subroutine lcgtn_wrap(fami, kpg, ksp, ndim, imate, &
         apg  = epsm(ndimsi+1)
         lag  = epsm(ndimsi+2)
         grad = epsm(ndimsi+3:ndimsi+2+ndim) 
+    else
+        apg = 0
+        lag = 0
+        grad = 0
     end if
     
     if (resi) then
