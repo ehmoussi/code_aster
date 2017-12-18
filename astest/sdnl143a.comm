@@ -1,0 +1,188 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
+
+import numpy
+
+ma=LIRE_MAILLAGE();
+
+
+mo=AFFE_MODELE(MAILLAGE=ma,
+               AFFE=_F(GROUP_MA=('PILE',),
+                        PHENOMENE='MECANIQUE',
+                        MODELISATION='POU_D_T',),);
+
+bracing=DEFI_MATERIAU(ELAS=_F(E=2.e13,
+                              NU=0.3,
+                              RHO=780.,
+                              AMOR_ALPHA=0.01,
+                              AMOR_BETA=0.01),);
+
+mater=AFFE_MATERIAU(MAILLAGE=ma,
+                    AFFE=_F(GROUP_MA='PILE',
+                            MATER=bracing,),);
+
+
+#
+rhoeau=1000.
+#FONCTION QUADRATIQUE POUR LES FORCES VISQUEUSES 
+Cd=0.6
+Ca=1.
+D=6.
+
+cara=AFFE_CARA_ELEM(MODELE=mo,
+                    POUTRE=_F(GROUP_MA='PILE',
+                             SECTION='CERCLE',
+                             CARA=('R','EP',),
+                             VALE=(3.0,0.10,),
+                             ),
+                               );
+
+encas14=AFFE_CHAR_MECA(MODELE=mo,
+                       DDL_IMPO=_F(NOEUD=('N0001','N0050',),
+                                   DX=0.,
+                                   DY=0.,
+                                   DZ=0.,
+                                   DRX=0.,
+                                   DRY=0.,
+                                   DRZ=0.,),);
+
+INCLUDE(UNITE=77,);
+
+FXP=FORMULE(NOM_PARA=('X','Y','Z','INST','VITE_X','VITE_Y','VITE_Z','DX','DY','DZ'),
+            VALE='FP(rhoeau,Cd,Ca,D,X,Y,Z,INST,H,T,L,thetai,0.,0.,proinf,depth,lstrech,VITE_X,VITE_Y,VITE_Z,DX,DY,DZ,1,cinelin,projvect,dragquad)',);
+
+FYP=FORMULE(NOM_PARA=('X','Y','Z','INST','VITE_X','VITE_Y','VITE_Z','DX','DY','DZ'),
+            VALE='FP(rhoeau,Cd,Ca,D,X,Y,Z,INST,H,T,L,thetai,0.,0.,proinf,depth,lstrech,VITE_X,VITE_Y,VITE_Z,DX,DY,DZ,2,cinelin,projvect,dragquad)',);
+
+FZP=FORMULE(NOM_PARA=('X','Y','Z','INST','VITE_X','VITE_Y','VITE_Z','DX','DY','DZ'),
+            VALE='FP(rhoeau,Cd,Ca,D,X,Y,Z,INST,H,T,L,thetai,0.,0.,proinf,depth,lstrech,VITE_X,VITE_Y,VITE_Z,DX,DY,DZ,3,cinelin,projvect,dragquad)',);
+
+
+dragF=AFFE_CHAR_MECA_F(MODELE=mo,
+                     FORCE_POUTRE=_F(GROUP_MA='PILE',
+                                     TYPE_CHARGE='FORCE',
+                                     FX=FXP,
+                                     FY=FYP,
+                                     FZ=FZP,),);
+
+
+
+
+poids=AFFE_CHAR_MECA(MODELE=mo,
+                    PESANTEUR=_F(GRAVITE=9.81,
+                                 DIRECTION=(0.,0.,-1.0,),),);
+
+temps=DEFI_LIST_REEL(DEBUT=0.,
+                     INTERVALLE=_F(JUSQU_A=100.,
+                                   PAS=0.1,),);
+
+tempsm=DEFI_LIST_REEL(DEBUT=-1.,
+                      INTERVALLE=_F(JUSQU_A=0.,
+                                    PAS=1,),);
+
+stat=STAT_NON_LINE(MODELE=mo,
+                   CHAM_MATER=mater,
+                   CARA_ELEM=cara,
+                   EXCIT=(_F(CHARGE=encas14,),
+                          _F(CHARGE=poids,),
+                          ),
+                   COMPORTEMENT=_F(RELATION='ELAS',
+                                DEFORMATION='PETIT',
+                                TOUT='OUI',),
+                   INCREMENT=_F(LIST_INST=tempsm,),
+                   NEWTON=_F(REAC_ITER=1,),
+                   CONVERGENCE=_F(ITER_GLOB_MAXI=100,),
+                   SOLVEUR=_F(),);
+
+IMPR_RESU(MODELE=mo,
+          FORMAT='RESULTAT',
+          RESU=_F(RESULTAT=stat,
+                  NOM_CHAM='DEPL',
+                  INST=0.0,
+                  NOEUD='N0002',),);
+
+
+tfin = 21.8
+
+dyna=DYNA_NON_LINE(MODELE=mo,
+                   CHAM_MATER=mater,
+                   CARA_ELEM=cara,
+                   EXCIT=(_F(CHARGE=encas14,),
+                          _F(CHARGE=poids,),
+                          _F(TYPE_CHARGE='SUIV',CHARGE=dragF,),
+                             ),
+                   COMPORTEMENT=_F(RELATION='ELAS',
+                                DEFORMATION='PETIT',
+                                TOUT='OUI',),
+                   ETAT_INIT=_F(EVOL_NOLI=stat,),
+                   INCREMENT=_F(LIST_INST=temps,INST_FIN=tfin),
+                   NEWTON=_F(REAC_ITER=1,),
+                   CONVERGENCE=_F(RESI_GLOB_RELA=0.0001,
+                                  ITER_GLOB_MAXI=100,),
+                   SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',
+                                   FORMULATION='DEPLACEMENT',),);
+
+# Post-traitements
+test=CALC_CHAMP(MODELE=mo,
+                CHAM_MATER=mater,
+                CARA_ELEM=cara,
+                RESULTAT=dyna,
+                TOUT_ORDRE       ='OUI',
+                FORCE='REAC_NODA',);
+
+DYNA01=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
+                               INTITULE='F1_TIME',
+                               RESULTAT=test,
+                               NOM_CHAM='REAC_NODA',
+                               NOEUD='N0001',
+                               TOUT_CMP='OUI',),);
+
+
+# Comparaison avec CALHYPSO à T=21.8
+TEST_TABLE(
+           VALE_CALC = 271881.173311,
+           VALE_REFE = 277644.,
+           REFERENCE = 'AUTRE_ASTER',
+           PRECISION = 0.025,
+           NOM_PARA  = 'DRY',
+           TABLE     = DYNA01,
+           FILTRE    = (
+                           _F(CRIT_COMP = 'EQ',
+                              NOM_PARA  = 'INST',
+                              VALE      = 21.8,),
+                       ),
+           )
+
+
+# Test de non-régression
+TEST_TABLE(
+           VALE_CALC = 189241.857455,
+           NOM_PARA  = 'DRY',
+           TABLE     = DYNA01,
+           FILTRE    = (
+                           _F(CRIT_COMP = 'EQ',
+                              NOM_PARA  = 'INST',
+                              VALE      = 1.0,),
+                       ),
+           )
+
+
+FIN();
