@@ -15,9 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0161(option, nomte)
-    implicit none
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8miem.h"
@@ -33,7 +35,7 @@ subroutine te0161(option, nomte)
 #include "asterfort/tecach.h"
 #include "asterfort/utmess.h"
 #include "blas/ddot.h"
-    character(len=16) :: option, nomte
+character(len=16), intent(in) :: option, nomte
 ! --- ------------------------------------------------------------------
 !                          CALCUL FORCES REPARTIES
 !     NOMTE :
@@ -55,11 +57,15 @@ subroutine te0161(option, nomte)
     real(kind=8) :: s, s2, s3, s4, s5, x(4), c1, c2(3), w(6), u(3), v(3), w2(3)
 !
     integer :: ifcx, idfdk, jgano, ndim, nnos
-    character(len=8) :: nompar(4), nompav(1)
+    character(len=8) :: nompar(10), nompav(1)
     real(kind=8) :: valpav(1), fcx, vite2, vp(3)
     aster_logical :: okvent, fozero
+    real(kind=8) :: valpar(10), xv(3) ,wv(6)
+    integer      :: ivite
+
 ! --- ------------------------------------------------------------------
-    data nompar/'X','Y','Z','INST'/
+    data nompar/'X','Y','Z','DX','DY','DZ',&
+     &                  'VITE_X','VITE_Y','VITE_Z','INST'/
     data nompav/'VITE'/
 ! --- ------------------------------------------------------------------
     r8min = r8miem()
@@ -120,9 +126,9 @@ subroutine te0161(option, nomte)
         call tecach('NNO', 'PTEMPSR', 'L', iret, iad=itemps)
         if (iret .eq. 0) then
             x(4) = zr(itemps)
-            nbpar = 4
+            nbpar = 10
         else
-            nbpar = 3
+            nbpar = 9
         endif
     endif
 !
@@ -130,11 +136,18 @@ subroutine te0161(option, nomte)
     if (option .eq. 'CHAR_MECA_SR1D1D' .or. option .eq. 'CHAR_MECA_SF1D1D') then
         call jevech('PDEPLMR', 'L', idepla)
         call jevech('PDEPLPR', 'L', ideplp)
+!CCP         w(1 2 3 4 5 6) => position  
         do i = 1, 3
             w(i) = zr(igeom+i-1) + zr(idepla-1+i) + zr(ideplp-1+i)
             w(i+3) = zr(igeom+i+2) + zr(idepla-1+i+nddl) + zr(ideplp- 1+i+nddl)
             w2(i) = w(i+3) - w(i)
         enddo
+!CCP       wv (1 2 3 4 5 6) => Vitesses 
+         call tecach('NNO', 'PVITPLU', 'L', iret, iad=ivite)
+         do i = 1, 3
+             wv(i)   = zr(ivite+i-1)
+             wv(i+3) = zr(ivite+i+3-1)
+         enddo
     else
         do i = 1, 3
             w(i) = zr(igeom+i-1)
@@ -184,16 +197,39 @@ subroutine te0161(option, nomte)
                 call utmess('F', 'ELEMENTS3_1', sk=nomte)
             endif
 !
-            do 40 ic = 1, 3
+!CCP       x(1 2 3) => position 
+            do ic = 1, 3
                 x(ic) = 0.d0
-                do 30 neu = 1, nno
+                do neu = 1, nno
                     x(ic) = x(ic) + w(3*neu+ic-3)*zr(ivf+l+neu-1)
- 30             continue
- 40         continue
-            do 50 ic = 1, 3
-                call fointe('FM', zk8(iforc+ic-1), nbpar, nompar, x,&
+                enddo
+            enddo
+
+!CCP       xv (1 2 3) => Vitesses 
+            do ic = 1, 3
+               xv(ic) = 0.d0
+               do neu = 1, nno
+                  xv(ic) = xv(ic) + wv(3*neu+ic-3)*zr(ivf+l+neu-1)
+               enddo
+            enddo 
+
+! ici : x designe la position du point de gauss, w2 le vecteur directeur de l element cable
+!CCP    PG i
+            valpar(1)  = x(1)
+            valpar(2)  = x(2)
+            valpar(3)  = x(3)
+            valpar(4)  = w2(1)
+            valpar(5)  = w2(2)
+            valpar(6)  = w2(3)
+            valpar(7)  = xv(1)
+            valpar(8)  = xv(2)
+            valpar(9)  = xv(3) 
+            valpar(10) = x(4)    
+
+            do ic = 1, 3
+                call fointe('FM', zk8(iforc+ic-1), nbpar, nompar, valpar,&
                             c2( ic), iret)
- 50         continue
+            enddo
             if (normal) then
                 s=ddot(3,c2,1,c2,1)
                 s4 = sqrt(s)
@@ -246,12 +282,12 @@ subroutine te0161(option, nomte)
         endif
 !
         coef = zr(ipoids-1+kp)*c1*sqrt(biline(nordre,zr(igeom), zr(iyty+k),zr(igeom)))
-        do 70 neu = 1, nno
+        do neu = 1, nno
             neum1 = neu - 1
-            do 60 ic = 1, 3
+            do ic = 1, 3
                 jj = ivectu+nddl*neum1+(ic-1)
                 zr(jj) = zr(jj) + coef*c2(ic)*zr(ivf+l+neum1)
- 60         continue
- 70     continue
+            enddo
+        enddo
     end do
 end subroutine
