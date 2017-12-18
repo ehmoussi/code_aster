@@ -51,7 +51,7 @@ class MaterialAssignment(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords, changed
                 in place.
         """
-        for key in ("AFFE_COMPOR", "AFFE_VARC"):
+        for key in ("AFFE_VARC"):
             if keywords.get(key) != None:
                 raise NotImplementedError("'{0}' is not yet implemented"
                                           .format(key))
@@ -71,7 +71,31 @@ class MaterialAssignment(ExecuteCommand):
         else:
             raise TypeError("Unexpected type: {0!r} {1}".format(fkw, type(fkw)))
 
+        fkw = keywords["AFFE_COMPOR"]
+        if isinstance(fkw, dict):
+            self._addBehaviour(fkw)
+        elif type(fkw) in (list, tuple):
+            for curDict in fkw:
+                self._addBehaviour(curDict)
+        else:
+            raise TypeError("Unexpected type: {0!r} {1}".format(fkw, type(fkw)))
+
         self._result.build()
+
+    def _addBehaviour(self, fkw):
+        kwTout = fkw.get("TOUT")
+        kwGrMa = fkw.get("GROUP_MA")
+        mater = fkw[ "COMPOR" ]
+
+        if kwTout != None:
+            self._result.addBehaviourOnAllMesh(mater)
+        elif kwGrMa != None:
+            kwGrMa = force_list(kwGrMa)
+            for grp in kwGrMa:
+                self._result.addBehaviourOnGroupOfElements(mater, grp)
+        else:
+            raise TypeError("At least {0} or {1} is required"
+                            .format("TOUT", "GROUP_MA"))
 
     def _addMaterial(self, fkw):
         kwTout = fkw.get("TOUT")

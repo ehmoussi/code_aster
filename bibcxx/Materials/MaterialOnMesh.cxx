@@ -39,7 +39,9 @@ MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
     _listOfMaterials( PCFieldOnMeshChar8Ptr(
         new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
     _listOfTemperatures( PCFieldOnMeshDoublePtr(
-        new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) )
+        new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) ),
+    _behviourField( PCFieldOnMeshDoublePtr(
+        new PCFieldOnMeshDoubleInstance( getName() + ".COMPOR ", mesh ) ) )
 {};
 
 MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
@@ -49,7 +51,9 @@ MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
     _listOfMaterials( PCFieldOnMeshChar8Ptr(
         new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
     _listOfTemperatures( PCFieldOnMeshDoublePtr(
-        new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) )
+        new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) ),
+    _behviourField( PCFieldOnMeshDoublePtr(
+        new PCFieldOnMeshDoubleInstance( getName() + ".COMPOR ", mesh ) ) )
 {};
 
 #ifdef _USE_MPI
@@ -60,7 +64,9 @@ MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
     _listOfMaterials( PCFieldOnMeshChar8Ptr(
         new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
     _listOfTemperatures( PCFieldOnMeshDoublePtr(
-        new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) )
+        new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) ),
+    _behviourField( PCFieldOnMeshDoublePtr(
+        new PCFieldOnMeshDoubleInstance( getName() + ".COMPOR ", mesh ) ) )
 {};
 #endif /* _USE_MPI */
 
@@ -96,6 +102,29 @@ SyntaxMapContainer MaterialOnMeshInstance::getCppCommandKeywords() throw ( std::
         listeAFFE.push_back( dict2 );
     }
     dict.container["AFFE"] = listeAFFE;
+
+    ListSyntaxMapContainer listeAFFE_COMPOR;
+    for ( auto& curIter : _behaviours )
+    {
+        SyntaxMapContainer dict2;
+        dict2.container["COMPOR"] = curIter.first->getName();
+        const MeshEntityPtr& tmp = curIter.second;
+        if ( tmp->getType() == AllMeshEntitiesType )
+        {
+            dict2.container["TOUT"] = "OUI";
+        }
+        else
+        {
+            if ( tmp->getType() == GroupOfElementsType )
+                dict2.container["GROUP_MA"] = (curIter.second)->getName();
+            else if ( tmp->getType() == GroupOfNodesType  )
+                dict2.container["GROUP_NO"] = (curIter.second)->getName();
+            else
+                throw std::runtime_error("Support entity undefined");
+        }
+        listeAFFE_COMPOR.push_back( dict2 );
+    }
+    dict.container["AFFE_COMPOR"] = listeAFFE_COMPOR;
     return dict;
 };
 

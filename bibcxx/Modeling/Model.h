@@ -199,6 +199,12 @@ class ModelInstance: public DataStructure
         virtual bool build() throw ( std::runtime_error );
 
         /**
+         * @brief Function to know if there is MultiFiberBeam in the Model
+         * @return true if MultiFiberBeam present
+         */
+        bool existsMultiFiberBeam();
+
+        /**
          * @brief Is THM present in model
          * @return true if thm
          */

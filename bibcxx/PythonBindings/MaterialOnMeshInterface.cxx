@@ -50,6 +50,9 @@ void exportMaterialOnMeshToPython()
                              const std::string&,
                              const ParallelMeshPtr& > ) )
 #endif /* _USE_MPI */
+        .def( "addBehaviourOnAllMesh", &MaterialOnMeshInstance::addBehaviourOnAllMesh )
+        .def( "addBehaviourOnGroupOfElements",
+              &MaterialOnMeshInstance::addBehaviourOnGroupOfElements )
         .def( "addMaterialOnAllMesh", &MaterialOnMeshInstance::addMaterialOnAllMesh )
         .def( "addMaterialOnGroupOfElements",
               &MaterialOnMeshInstance::addMaterialOnGroupOfElements )
