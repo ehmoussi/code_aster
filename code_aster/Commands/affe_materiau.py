@@ -71,14 +71,15 @@ class MaterialAssignment(ExecuteCommand):
         else:
             raise TypeError("Unexpected type: {0!r} {1}".format(fkw, type(fkw)))
 
-        fkw = keywords["AFFE_COMPOR"]
-        if isinstance(fkw, dict):
-            self._addBehaviour(fkw)
-        elif type(fkw) in (list, tuple):
-            for curDict in fkw:
-                self._addBehaviour(curDict)
-        else:
-            raise TypeError("Unexpected type: {0!r} {1}".format(fkw, type(fkw)))
+        fkw = keywords.get("AFFE_COMPOR")
+        if fkw != None:
+            if isinstance(fkw, dict):
+                self._addBehaviour(fkw)
+            elif type(fkw) in (list, tuple):
+                for curDict in fkw:
+                    self._addBehaviour(curDict)
+            else:
+                raise TypeError("Unexpected type: {0!r} {1}".format(fkw, type(fkw)))
 
         self._result.build()
 
