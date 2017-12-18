@@ -53,7 +53,7 @@ RESU=MECA_STATIQUE(     MODELE=MODEL,
 
 RESU.printMedFile("test.med")
 
-MyFieldOnNodes = RESU.getRealFieldOnNodes("DEPL", 0)
+MyFieldOnNodes = RESU.getRealFieldOnNodes("DEPL", 1)
 sfon = MyFieldOnNodes.exportToSimpleFieldOnNodes()
 
 test.assertAlmostEqual(sfon.getValue(5, 3), 971.7384412373856)

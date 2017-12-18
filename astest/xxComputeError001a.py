@@ -117,7 +117,7 @@ RESUPRIM=CALC_ERREUR(reuse =RESUPRIM,
 #
 #-----------------------------------------------------------------------
 
-TEST_RESU(RESU=_F(NUME_ORDRE=0,
+TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   POINT=1,
                   RESULTAT=RESUPRIM,
                   NOM_CHAM='ERME_ELEM',

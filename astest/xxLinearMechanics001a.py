@@ -50,11 +50,11 @@ test.assertEqual(x.comp[0:3],('X', 'Y', 'Z'))
 test.assertEqual(x.noeud[-3:],(27, 27, 27))
 
 
-MyFieldOnElements = resu.getRealFieldOnElements("SIGM_ELNO", 0)
+MyFieldOnElements = resu.getRealFieldOnElements("SIGM_ELNO", 1)
 z=MyFieldOnElements.EXTR_COMP('SIXX',topo=1)
 test.assertEqual(len(z.valeurs), 64)
 
-MyFieldOnNodes = resu.getRealFieldOnNodes("DEPL", 0)
+MyFieldOnNodes = resu.getRealFieldOnNodes("DEPL", 1)
 sfon = MyFieldOnNodes.exportToSimpleFieldOnNodes()
 #sfon.debugPrint()
 sfon.updateValuePointers()
@@ -71,7 +71,7 @@ resu2 = CREA_RESU(OPERATION = 'AFFE',
                            )
                  )
 resu2.listFields()
-dispField=resu2.getRealFieldOnNodes("DEPL", 0)
+dispField=resu2.getRealFieldOnNodes("DEPL", 1)
 test.assertEqual(MyFieldOnNodes.EXTR_COMP().valeurs.sum(), dispField.EXTR_COMP().valeurs.sum())
 
 IMPR_JEVEUX ( ENTITE='MEMOIRE' )

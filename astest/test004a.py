@@ -83,7 +83,7 @@ statNonLine.setLoadStepManager( timeList )
 resu = statNonLine.execute()
 #resu.debugPrint( 6 )
 
-u=resu.getRealFieldOnNodes('DEPL',1)
+u=resu.getRealFieldOnNodes('DEPL',2)
 z=u.EXTR_COMP()
 test.assertEqual(len(z.valeurs),81)
 

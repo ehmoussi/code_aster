@@ -204,7 +204,7 @@ FieldOnNodesDoublePtr ResultsContainerInstance::getEmptyFieldOnNodesDouble( cons
                                                                             const int rank )
     throw ( std::runtime_error )
 {
-    if( rank > _nbRanks )
+    if( rank > _nbRanks || rank <= 0 )
         throw std::runtime_error( "Order number out of range" );
     ASTERINTEGER retour;
     retour = 0;
@@ -229,7 +229,7 @@ FieldOnElementsDoublePtr ResultsContainerInstance::getRealFieldOnElements( const
                                                                            const int rank ) const
     throw ( std::runtime_error )
 {
-    if( rank > _nbRanks )
+    if( rank > _nbRanks || rank <= 0 )
         throw std::runtime_error( "Order number out of range" );
 
     auto curIter = _dictOfVectorOfFieldsElements.find( trim( name ) );
@@ -244,7 +244,7 @@ FieldOnNodesDoublePtr ResultsContainerInstance::getRealFieldOnNodes( const std::
                                                                      const int rank ) const
     throw ( std::runtime_error )
 {
-    if( rank > _nbRanks )
+    if( rank > _nbRanks || rank <= 0 )
         throw std::runtime_error( "Order number out of range" );
 
     auto curIter = _dictOfVectorOfFieldsNodes.find( trim( name ) );
