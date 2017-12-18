@@ -88,5 +88,26 @@ ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runti
                        StaticMechanicalAlgorithm > MSAlgo;
     MSAlgo::runAllStepsOverAlgorithm( *_timeStep, currentContext );
 
+    if( _study->getSupportModel()->existsMultiFiberBeam() )
+    {
+        CommandSyntax cmdSt( "CALC_CHAMP" );
+        cmdSt.setResult( resultC->getName(), "RESULTAT" );
+        SyntaxMapContainer dict;
+
+        dict.container["RESULTAT"] = resultC->getName();
+        dict.container["CONTRAINTE"] = "STRX_ELGA";
+
+        cmdSt.define( dict );
+        try
+        {
+            ASTERINTEGER op = 52;
+            CALL_EXECOP( &op );
+        }
+        catch( ... )
+        {
+            throw;
+        }
+    }
+
     return resultC;
 };
