@@ -30,7 +30,7 @@ void exportMechanicalModeContainerToPython()
     using namespace boost::python;
 
     class_< MechanicalModeContainerInstance, MechanicalModeContainerPtr,
-            bases< ResultsContainerInstance > > ( "MechanicalModeContainer", no_init )
+            bases< FullResultsContainerInstance > > ( "MechanicalModeContainer", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MechanicalModeContainerInstance > ) )
     .def( "setStructureInterface", &MechanicalModeContainerInstance::setStructureInterface )
