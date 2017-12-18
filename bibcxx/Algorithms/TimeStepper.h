@@ -79,7 +79,7 @@ class TimeStepperInstance: public DataStructure, public GenericStepper
             double* position;
             int     rank;
 
-            inline const_iterator(): position( NULL ), rank(0)
+            inline const_iterator(): position( NULL ), rank(1)
             {};
 
             inline const_iterator( double* memoryPosition, int curRank ):
@@ -135,7 +135,7 @@ class TimeStepperInstance: public DataStructure, public GenericStepper
          */
         const_iterator begin() const
         {
-            return const_iterator( &( *_values )[0], 0 );
+            return const_iterator( &( *_values )[0], 1 );
         };
 
         /**

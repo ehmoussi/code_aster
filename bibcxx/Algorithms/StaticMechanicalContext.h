@@ -73,7 +73,7 @@ public:
         _listOfLoads( _discreteProblem->getStudyDescription()->getListOfLoads() ),
         _results( container ),
         _time( 0. ),
-        _rank( 0 ),
+        _rank( 1 ),
         _aMatrix( new AssemblyMatrixDoubleInstance( Temporary ) ),
         _isConst( _discreteProblem->getStudyDescription()->getCodedMaterial()->constant() )
     {};

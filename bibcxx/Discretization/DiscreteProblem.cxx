@@ -141,6 +141,7 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix( doub
     ModelPtr curModel = _study->getSupportModel();
     retour->setSupportModel( curModel );
     MaterialOnMeshPtr curMater = _study->getMaterialOnMesh();
+    auto compor = curMater->getBehaviourField();
 
     _study->buildListOfLoads();
     JeveuxVectorChar24 jvListOfLoads = _study->getListOfLoads()->getListVector();
@@ -165,7 +166,8 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix( doub
 
     CALLO_MERIME_WRAP( modelName, &nbLoad, *(jvListOfLoads->getDataPtr()),
                        codedMater->getName(), caraName, &time,
-                       blanc, retour->getName(), &nh, JeveuxMemoryTypesNames[0] );
+                       compor->getName(), retour->getName(), &nh,
+                       JeveuxMemoryTypesNames[0] );
 
     retour->setEmpty( false );
     return retour;

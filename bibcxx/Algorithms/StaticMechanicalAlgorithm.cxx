@@ -37,7 +37,7 @@ void StaticMechanicalAlgorithm::oneStep( const CurrentContext& ctx ) throw( Algo
 {
     BaseDOFNumberingPtr dofNum1 = ctx._results->getLastDOFNumbering();
 
-    if( ctx._rank == 0 || !ctx._isConst )
+    if( ctx._rank == 1 || !ctx._isConst )
     {
         ElementaryMatrixPtr matrElem = ctx._discreteProblem->buildElementaryRigidityMatrix( ctx._time );
 

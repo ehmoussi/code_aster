@@ -221,7 +221,7 @@ FieldOnNodesDoublePtr ResultsContainerInstance::getEmptyFieldOnNodesDouble( cons
     {
         _dictOfVectorOfFieldsNodes[ name ] = VectorOfFieldsNodes( _nbRanks );
     }
-    _dictOfVectorOfFieldsNodes[ name ][ rank ] = result;
+    _dictOfVectorOfFieldsNodes[ name ][ rank-1 ] = result;
     return result;
 };
 
@@ -236,7 +236,7 @@ FieldOnElementsDoublePtr ResultsContainerInstance::getRealFieldOnElements( const
     if( curIter == _dictOfVectorOfFieldsElements.end() )
         throw std::runtime_error( "Field " + name + " unknown in the results container" );
 
-    FieldOnElementsDoublePtr toReturn = curIter->second[ rank ];
+    FieldOnElementsDoublePtr toReturn = curIter->second[ rank-1 ];
     return toReturn;
 };
 
@@ -251,7 +251,7 @@ FieldOnNodesDoublePtr ResultsContainerInstance::getRealFieldOnNodes( const std::
     if( curIter == _dictOfVectorOfFieldsNodes.end() )
         throw std::runtime_error( "Field " + name + " unknown in the results container" );
 
-    FieldOnNodesDoublePtr toReturn = curIter->second[ rank ];
+    FieldOnNodesDoublePtr toReturn = curIter->second[ rank-1 ];
     return toReturn;
 };
 

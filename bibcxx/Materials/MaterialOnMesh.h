@@ -36,6 +36,7 @@
 #include "DataFields/PCFieldOnMesh.h"
 #include "Meshes/ParallelMesh.h"
 #include "Supervis/ResultNaming.h"
+#include "Materials/BehaviourDefinition.h"
 
 /**
  * @class MaterialOnMeshInstance
@@ -56,14 +57,26 @@ class MaterialOnMeshInstance: public DataStructure
         /** @typedef Definition d'un iterateur sur listOfMatsAndGrps */
         typedef listOfMatsAndGrps::iterator listOfMatsAndGrpsIter;
 
+        /** @typedef std::list d'une std::pair de MeshEntityPtr */
+        typedef std::vector< std::pair< BehaviourDefinitionPtr,
+                                        MeshEntityPtr > > listOfBehavAndGrps;
+        /** @typedef Definition de la valeur contenue dans un listOfBehavAndGrps */
+        typedef listOfBehavAndGrps::value_type listOfBehavAndGrpsValue;
+        /** @typedef Definition d'un iterateur sur listOfBehavAndGrps */
+        typedef listOfBehavAndGrps::iterator listOfBehavAndGrpsIter;
+
         /** @brief Maillage sur lequel repose la sd_cham_mater */
         BaseMeshPtr            _supportMesh;
         /** @brief Carte '.CHAMP_MAT' */
         PCFieldOnMeshChar8Ptr  _listOfMaterials;
         /** @brief Carte '.TEMPE_REF' */
         PCFieldOnMeshDoublePtr _listOfTemperatures;
+        /** @brief Carte '.COMPOR' */
+        PCFieldOnMeshDoublePtr _behviourField;
         /** @brief Liste contenant les materiaux ajoutes par l'utilisateur */
         listOfMatsAndGrps      _materialsOnMeshEntity;
+        /** @brief Link to a  */
+        listOfBehavAndGrps     _behaviours;
 
         /**
          * @brief Return a SyntaxMapContainer to emulate the command keywords
@@ -117,6 +130,32 @@ class MaterialOnMeshInstance: public DataStructure
 #endif /* _USE_MPI */
 
         /**
+         * @brief Add a behaviour on all mesh
+         * @param curMater Materiau a ajouter
+         */
+        void addBehaviourOnAllMesh( BehaviourDefinitionPtr& curBehav )
+        {
+            _behaviours.push_back( listOfBehavAndGrpsValue( curBehav,
+                                                       MeshEntityPtr( new AllMeshEntities() ) ) );
+        };
+
+        /**
+         * @brief Ajout d'un materiau sur une entite du maillage
+         * @param curMater Materiau a ajouter
+         * @param nameOfGroup Nom du groupe de mailles
+         */
+        void addBehaviourOnGroupOfElements( BehaviourDefinitionPtr& curBehav,
+                                            std::string nameOfGroup ) throw ( std::runtime_error )
+        {
+            if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
+            if ( ! _supportMesh->hasGroupOfElements( nameOfGroup ) )
+                throw std::runtime_error( nameOfGroup + "not in support mesh" );
+
+            _behaviours.push_back( listOfBehavAndGrpsValue( curBehav,
+                                              MeshEntityPtr( new GroupOfElements(nameOfGroup) ) ) );
+        };
+
+        /**
          * @brief Ajout d'un materiau sur tout le maillage
          * @param curMater Materiau a ajouter
          */
@@ -147,6 +186,14 @@ class MaterialOnMeshInstance: public DataStructure
          * @return PyDict
          */
         PyObject* getCommandKeywords() throw ( std::runtime_error );
+
+        /**
+         * @brief Return the PCFieldOnMesh of behaviour
+         */
+        PCFieldOnMeshDoublePtr getBehaviourField() const
+        {
+            return _behviourField;
+        };
 
         /**
          * @brief Construction (au sens Jeveux fortran) de la sd_cham_mater
