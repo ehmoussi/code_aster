@@ -226,7 +226,6 @@ BOOST_PYTHON_MODULE(libaster)
     exportEvolutiveThermalLoadToPython();
     exportFourierCombinationToPython();
     exportFourierElasContainerToPython();
-    exportMechanicalModeContainerToPython();
     exportMultElasContainerToPython();
     exportNonLinearEvolutionContainerToPython();
     exportNormalModeAnalysisToPython();
@@ -239,6 +238,7 @@ BOOST_PYTHON_MODULE(libaster)
     exportCppToFortranGlossaryToPython();
     exportCyclicSymmetryModeToPython();
     exportFullResultsContainerToPython();
+    exportMechanicalModeContainerToPython();
     exportGeneralizedResultsContainerToPython();
     exportLinearDisplacementEvolutionContainerToPython();
     exportMeshCoordinatesFieldToPython();

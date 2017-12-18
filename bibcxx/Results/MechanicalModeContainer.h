@@ -26,7 +26,7 @@
 
 #include "astercxx.h"
 
-#include "Results/ResultsContainer.h"
+#include "Results/FullResultsContainer.h"
 #include "LinearAlgebra/StructureInterface.h"
 
 /**
@@ -34,7 +34,7 @@
  * @brief Cette classe correspond a un mode_meca
  * @author Nicolas Sellenet
  */
-class MechanicalModeContainerInstance: public ResultsContainerInstance
+class MechanicalModeContainerInstance: public FullResultsContainerInstance
 {
 private:
     StructureInterfacePtr _structureInterface;
@@ -42,7 +42,7 @@ public:
     /**
      * @brief Constructeur
      */
-    MechanicalModeContainerInstance(): ResultsContainerInstance( "MODE_MECA" ), 
+    MechanicalModeContainerInstance(): FullResultsContainerInstance( "MODE_MECA" ), 
     _structureInterface( StructureInterfacePtr() )
     {};
     
