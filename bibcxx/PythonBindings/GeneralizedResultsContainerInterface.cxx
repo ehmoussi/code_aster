@@ -34,13 +34,13 @@ void exportGeneralizedResultsContainerToPython()
 
     class_< GeneralizedResultsContainerDoubleInstance,
             GeneralizedResultsContainerDoublePtr,
-            bases< DynamicResultsContainerInstance > >
+            bases< DataStructure > >
             ( "GeneralizedResultsContainerDouble", no_init )
     ;
 
     class_< GeneralizedResultsContainerComplexInstance,
             GeneralizedResultsContainerComplexPtr,
-            bases< DynamicResultsContainerInstance > >
+            bases< DataStructure > >
             ( "GeneralizedResultsContainerComplex", no_init )
     ;
 

@@ -27,7 +27,7 @@
 #include "astercxx.h"
 
 #include "Results/FullResultsContainer.h"
-
+#include "Supervis/ResultNaming.h"
 /**
  * @class FullTransientResultsContainerInstance
  * @brief Cette classe correspond à un dyna_tran
@@ -42,7 +42,9 @@ public:
      * @brief Constructeur
      * @todo  Ajouter les objets Jeveux de la SD
      */
-    FullTransientResultsContainerInstance(): FullResultsContainerInstance( "DYNA_TRANS" )
+    FullTransientResultsContainerInstance(const std::string &name ): FullResultsContainerInstance(name, "DYNA_TRANS" )
+    {};
+    FullTransientResultsContainerInstance(): FullResultsContainerInstance(ResultNaming::getNewResultName(), "DYNA_TRANS" )
     {};
 
 };

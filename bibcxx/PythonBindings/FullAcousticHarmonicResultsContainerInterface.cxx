@@ -32,6 +32,8 @@ void exportFullAcousticHarmonicResultsContainerToPython()
     class_< FullAcousticHarmonicResultsContainerInstance, FullAcousticHarmonicResultsContainerPtr,
             bases< FullResultsContainerInstance > > ( "FullAcousticHarmonicResultsContainer", no_init )
         .def( "__init__", make_constructor(
+            &initFactoryPtr< FullAcousticHarmonicResultsContainerInstance , std::string > ) )
+        .def( "__init__", make_constructor(
             &initFactoryPtr< FullAcousticHarmonicResultsContainerInstance > ) )
         .def( "printMedFile", &FullAcousticHarmonicResultsContainerInstance::printMedFile )
     ;

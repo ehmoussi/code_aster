@@ -26,14 +26,15 @@
 
 #include "astercxx.h"
 
-#include "Results/DynamicResultsContainer.h"
+#include "Results/FullResultsContainer.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class GeneralizedModeContainerInstance
  * @brief Cette classe correspond à un mode_gene
  * @author Nicolas Sellenet
  */
-class GeneralizedModeContainerInstance: public DynamicResultsContainerInstance
+class GeneralizedModeContainerInstance: public FullResultsContainerInstance
 {
 private:
 
@@ -42,7 +43,9 @@ public:
      * @brief Constructeur
      * @todo  Ajouter les objets Jeveux de la SD
      */
-    GeneralizedModeContainerInstance(): DynamicResultsContainerInstance( "MODE_GENE" )
+    GeneralizedModeContainerInstance( const std::string &name): FullResultsContainerInstance( name, "MODE_GENE" )
+    {};
+    GeneralizedModeContainerInstance(): GeneralizedModeContainerInstance( ResultNaming::getNewResultName())
     {};
 
 };
