@@ -303,11 +303,11 @@ class MECA_POU_D_E(Element):
 
         OP.CHAR_MECA_SF1D1D(te=150,
                             para_in=(
-                            (SP.PCAGNPO, CCAGNPO), (
-                                OP.CHAR_MECA_SF1D1D.PCAORIE, CCAORIE),
+                            (SP.PCAGNPO, CCAGNPO), (OP.CHAR_MECA_SF1D1D.PCAORIE, CCAORIE),
                             (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                             (SP.PFF1D1D, CFORCEF), (SP.PGEOMER, NGEOMER),
                             (SP.PMATERC, LC.CMATERC), (SP.PTEMPSR, CTEMPSR),
+                            (SP.PSTRXMR, ESTRAUX), (SP.PVITPLU, DDL_MECA),
                             ),
                             para_out=((SP.PVECTUR, MVECTUR), ),
                             ),
@@ -375,14 +375,11 @@ class MECA_POU_D_E(Element):
                               (SP.PCOEFFC, LC.CCOEFC), (SP.PCOEFFR, LC.CCOEFR),
                               (OP.EFGE_ELNO.PCOMPOR, LC.CCOMPOR), (
                               OP.EFGE_ELNO.PCONTRR, EEFGEGA),
-                              (SP.PDEPLAR, DDL_MECA), (SP.PFF1D1D, CFORCEF),
+                              (SP.PDEPLAR, DDL_MECA), (SP.PFF1D1D, CFORCEF),(SP.PDEPLPR, DDL_MECA),
                               (SP.PFR1D1D, CFORCER), (SP.PGEOMER, NGEOMER),
-                              (SP.PMATERC, LC.CMATERC), (
-                                  SP.PNONLIN, LC.ENONLIN),
-                              (SP.PPESANR, LC.CPESANR), (
-                                  SP.PSUROPT, LC.CSUROPT),
-                              (SP.PTEMPSR, CTEMPSR), (
-                              OP.EFGE_ELNO.PVARCPR, LC.ZVARCPG),
+                              (SP.PMATERC, LC.CMATERC), (SP.PNONLIN, LC.ENONLIN),
+                              (SP.PPESANR, LC.CPESANR), (SP.PSUROPT, LC.CSUROPT),
+                              (SP.PTEMPSR, CTEMPSR), (OP.EFGE_ELNO.PVARCPR, LC.ZVARCPG),
                               (SP.PVARCRR, LC.ZVARCPG), ),
                      para_out=(
                          (SP.PEFFORC, EEFGENC), (

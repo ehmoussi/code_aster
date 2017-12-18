@@ -80,6 +80,7 @@ EFGE_ELNO = Option(
            PCOMPOR,
            PCONTRR,
         SP.PDEPLAR,
+        SP.PDEPLPR,
         SP.PFF1D1D,
         SP.PFIBRES,
         SP.PFR1D1D,

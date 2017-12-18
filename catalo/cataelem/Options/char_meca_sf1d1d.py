@@ -43,6 +43,8 @@ CHAR_MECA_SF1D1D = Option(
         SP.PGEOMER,
         SP.PMATERC,
         SP.PTEMPSR,
+        SP.PVITPLU,
+        SP.PSTRXMR,
     ),
     para_out=(
         SP.PVECTUR,
