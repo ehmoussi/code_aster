@@ -127,8 +127,7 @@ subroutine matcod(chmat, indmat, nbmat, imate, igrp,&
     codi(9:13) = '.'//knuma1
     call jeexin(codi//'.CODI', iretc)
     if (iretc .ne. 0) then
-        call jeveut(codi//'.CODI', 'L', jcodi)
-        goto 999
+        call jedetr(codi//'.CODI')
     endif
 !
     call wkvect('&&RCMACO.NBCM', 'V V I', nbmat, jnbcm)

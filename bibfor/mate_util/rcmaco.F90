@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine rcmaco(chmat, indmat, nbmat, imate)
+subroutine rcmaco(chmat, chmatgrp, indmat, nbmat, imate)
     implicit none
 #include "jeveux.h"
 #include "asterfort/dismoi.h"
@@ -30,6 +30,7 @@ subroutine rcmaco(chmat, indmat, nbmat, imate)
 #include "asterfort/utmess.h"
 !
     character(len=8) :: chmat
+    character(len=24) :: chmatgrp
     integer :: indmat, nbmat, imate
 ! person_in_charge: j-pierre.lefebvre at edf.fr
 !
@@ -47,7 +48,7 @@ subroutine rcmaco(chmat, indmat, nbmat, imate)
 !
     call jemarq()
 !
-    call jeveut(chmat(1:8)//'.MATE_CODE.GRP', 'L', igrp)
+    call jeveut(chmatgrp, 'L', igrp)
     materi=zk8(igrp+indmat)
     nommat = materi
     call jeveuo(chmat(1:8)//'.CHAMP_MAT .DESC', 'L', vi=desc)

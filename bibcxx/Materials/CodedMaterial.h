@@ -43,6 +43,8 @@ private:
     MaterialOnMeshPtr    _mater;
     ModelPtr             _model;
     PCFieldOnMeshLongPtr _field;
+    JeveuxVectorChar8    _grp;
+    JeveuxVectorLong     _nGrp;
 
 public:
     /**
@@ -60,7 +62,9 @@ public:
         _model( model ),
         _field( new PCFieldOnMeshLongInstance( getName() + ".MATE_CODE",
                                                _model->getSupportMesh(),
-                                               Permanent ) )
+                                               Permanent ) ),
+        _grp( JeveuxVectorChar8( getName() + ".MATE_CODE.GRP" ) ),
+        _nGrp( JeveuxVectorLong( getName() + ".MATE_CODE.NGRP" ) )
     {};
 
     /**

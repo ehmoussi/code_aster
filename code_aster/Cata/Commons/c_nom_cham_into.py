@@ -60,6 +60,8 @@ class NOM_CHAM_INTO:  #COMMUN#
                                  tr(u"Contraintes aux noeuds pour les éléments de poutre"), ),
             "SIRO_ELEM":        ( ("lin", "nonlin",),
                                  tr(u"Contraintes de rosette par élément"), ),
+            "STRX_ELGA":        ( ("lin"),
+                                 tr(u"Efforts généralisés à partir des déplacements en linéaire aux points de Gauss"), ),
         }
         d['DEFORMATION'] = {
             "DEGE_ELGA":        ( ("lin", "nonlin",),
@@ -305,8 +307,6 @@ class NOM_CHAM_INTO:  #COMMUN#
                                  tr(u"Déplacements aux noeuds"), ),
             "DEPL_ABSOLU":      ( (),
                                  tr(u"Déplacements absolus aux noeuds"), ),
-            "STRX_ELGA":        ( (),
-                                 tr(u"Efforts généralisés à partir des déplacements en linéaire aux points de Gauss"), ),
             "TEMP":             ( (),
                                  tr(u"Température aux noeuds"), ),
             "VITE":             ( (),
