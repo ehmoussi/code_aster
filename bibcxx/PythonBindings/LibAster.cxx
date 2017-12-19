@@ -90,6 +90,7 @@
 #include "PythonBindings/FourierElasContainerInterface.h"
 #include "PythonBindings/MechanicalModeContainerInterface.h"
 #include "PythonBindings/AcousticModeContainerInterface.h"
+#include "PythonBindings/BucklingModeContainerInterface.h"
 #include "PythonBindings/MultElasContainerInterface.h"
 #include "PythonBindings/NonLinearEvolutionContainerInterface.h"
 #include "PythonBindings/ResultsContainerInterface.h"
@@ -241,6 +242,7 @@ BOOST_PYTHON_MODULE(libaster)
     exportFullResultsContainerToPython();
     exportMechanicalModeContainerToPython();
     exportAcousticModeContainerToPython();
+    exportBucklingModeContainerToPython();
     exportGeneralizedResultsContainerToPython();
     exportLinearDisplacementEvolutionContainerToPython();
     exportMeshCoordinatesFieldToPython();
