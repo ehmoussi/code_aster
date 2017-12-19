@@ -19,8 +19,9 @@
 !
 !
 interface
-    subroutine rcmaco(chmat, indmat, nbmat, imate)
+    subroutine rcmaco(chmat, chmatgrp, indmat, nbmat, imate)
         character(len=8) :: chmat
+        character(len=24) :: chmatgrp
         integer :: indmat
         integer :: nbmat
         integer :: imate

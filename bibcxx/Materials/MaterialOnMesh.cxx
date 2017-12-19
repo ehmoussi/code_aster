@@ -40,7 +40,7 @@ MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
         new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
     _listOfTemperatures( PCFieldOnMeshDoublePtr(
         new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) ),
-    _behviourField( PCFieldOnMeshDoublePtr(
+    _behaviourField( PCFieldOnMeshDoublePtr(
         new PCFieldOnMeshDoubleInstance( getName() + ".COMPOR ", mesh ) ) )
 {};
 
@@ -52,7 +52,7 @@ MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
         new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
     _listOfTemperatures( PCFieldOnMeshDoublePtr(
         new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) ),
-    _behviourField( PCFieldOnMeshDoublePtr(
+    _behaviourField( PCFieldOnMeshDoublePtr(
         new PCFieldOnMeshDoubleInstance( getName() + ".COMPOR ", mesh ) ) )
 {};
 
@@ -65,7 +65,7 @@ MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
         new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
     _listOfTemperatures( PCFieldOnMeshDoublePtr(
         new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) ),
-    _behviourField( PCFieldOnMeshDoublePtr(
+    _behaviourField( PCFieldOnMeshDoublePtr(
         new PCFieldOnMeshDoubleInstance( getName() + ".COMPOR ", mesh ) ) )
 {};
 #endif /* _USE_MPI */

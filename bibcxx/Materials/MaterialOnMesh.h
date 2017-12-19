@@ -72,7 +72,7 @@ class MaterialOnMeshInstance: public DataStructure
         /** @brief Carte '.TEMPE_REF' */
         PCFieldOnMeshDoublePtr _listOfTemperatures;
         /** @brief Carte '.COMPOR' */
-        PCFieldOnMeshDoublePtr _behviourField;
+        PCFieldOnMeshDoublePtr _behaviourField;
         /** @brief Liste contenant les materiaux ajoutes par l'utilisateur */
         listOfMatsAndGrps      _materialsOnMeshEntity;
         /** @brief Link to a  */
@@ -192,7 +192,8 @@ class MaterialOnMeshInstance: public DataStructure
          */
         PCFieldOnMeshDoublePtr getBehaviourField() const
         {
-            return _behviourField;
+            _behaviourField->updateValuePointers();
+            return _behaviourField;
         };
 
         /**

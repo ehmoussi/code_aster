@@ -70,6 +70,7 @@ implicit none
     character(len=8) :: chmat, nomgd
     character(len=19) :: codi
     character(len=19) :: chemat, chmace
+    character(len=24) :: chmatgrp, chmatngrp
     character(len=8), pointer :: v_vale(:) => null()
     integer, pointer :: v_desc(:) => null()
     aster_logical :: l_thm
@@ -82,8 +83,12 @@ implicit none
     chemat = chmat//'.CHAMP_MAT'
     if( present(basename) ) then
         chmace = basename//'.MATE_CODE'
+        chmatgrp = basename//'.MATE_CODE.GRP'
+        chmatngrp = basename//'.MATE_CODE.NGRP'
     else
         chmace = chmat//'.MATE_CODE'
+        chmatgrp = chmat//'.MATE_CODE.GRP'
+        chmatngrp = basename//'.MATE_CODE.NGRP'
     endif
     if( present(base) ) then
         bas = base
@@ -127,10 +132,10 @@ implicit none
         end do
         ASSERT(icompt .gt. 0)
 
-        call jedetr(chmat//'.MATE_CODE.GRP')
-        call jedetr(chmat//'.MATE_CODE.NGRP')
-        call wkvect(chmat//'.MATE_CODE.GRP', 'V V K8', icompt, igrp)
-        call wkvect(chmat//'.MATE_CODE.NGRP', 'V V I', nbgrp, ingrp)
+        call jedetr(chmatgrp)
+        call jedetr(chmatngrp)
+        call wkvect(chmatgrp, bas//' V K8', icompt, igrp)
+        call wkvect(chmatngrp, bas//' V I', nbgrp, ingrp)
 
         icompt=0
         inbmat=0
@@ -149,13 +154,13 @@ implicit none
         end do
 
         codi=' '
-        call jeveuo(chmat//'.MATE_CODE.GRP', 'L', igrp)
-        call jeveuo(chmat//'.MATE_CODE.NGRP', 'L', ingrp)
+        call jeveuo(chmatgrp, 'L', igrp)
+        call jeveuo(chmatngrp, 'L', ingrp)
         icompt=0
         do kk = 1, nbgrp
             nbmat=zi(ingrp-1+kk)
             if (nbmat .ne. 0) then
-            call rcmaco(chmat(1:8), icompt, nbmat, kk)
+            call rcmaco(chmat(1:8), chmatgrp, icompt, nbmat, kk)
             call codent(kk, 'D0', knumat)
 
 !       -- le nom du codi est celui du premier materiau du groupe kk
