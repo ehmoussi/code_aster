@@ -18,7 +18,7 @@
 
 interface 
     function proten(u,v) result(w)
-    real,dimension(:),intent(in) :: u,v
-    real,dimension(size(u),size(v)) :: w    
+    real(kind=8),dimension(:),intent(in) :: u,v
+    real(kind=8),dimension(size(u),size(v)) :: w    
     end function proten
 end interface 
