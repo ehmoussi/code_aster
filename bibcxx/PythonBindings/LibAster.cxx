@@ -117,6 +117,7 @@
 #include "PythonBindings/FullHarmonicResultsContainerInterface.h"
 #include "PythonBindings/FullAcousticHarmonicResultsContainerInterface.h"
 #include "PythonBindings/GeneralizedModeContainerInterface.h"
+#include "PythonBindings/FluidStructureModalBasisInterface.h"
 #include "PythonBindings/ListOfFloatsInterface.h"
 
 using namespace boost::python;
@@ -249,6 +250,7 @@ BOOST_PYTHON_MODULE(libaster)
     exportFullTransientResultsContainerToPython();
     exportFullHarmonicResultsContainerToPython();
     exportFullAcousticHarmonicResultsContainerToPython();
+    exportFluidStructureModalBasisToPython();
     exportGeneralizedModeContainerToPython();
 
 #ifdef _USE_MPI
