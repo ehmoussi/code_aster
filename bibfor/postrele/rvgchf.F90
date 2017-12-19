@@ -121,7 +121,7 @@ subroutine rvgchf(epsi, criter, nomsd, chpsym, acces,&
         if (n1 .ne. 0) then
             valk = chpsym
             vali = iordr
-            call utmess('I', 'POSTRELE_41', sk=valk, si=vali)
+            call utmess('A', 'POSTRELE_41', sk=valk, si=vali)
             zk24(alschp + 1-1) = '&&CHAMP_EFF_NON_EXISTANT'
         endif
 100      continue
@@ -159,7 +159,7 @@ subroutine rvgchf(epsi, criter, nomsd, chpsym, acces,&
             if (n2 .ne. 0) then
                 valk = chpsym
                 vali = zi(avalac + j-1)
-                call utmess('I', 'POSTRELE_41', sk=valk, si=vali)
+                call utmess('A', 'POSTRELE_41', sk=valk, si=vali)
                 zk24(alschp + 1-1) = '&&CHAMP_EFF_NON_EXISTANT'
             endif
 410          continue
@@ -195,7 +195,7 @@ subroutine rvgchf(epsi, criter, nomsd, chpsym, acces,&
                 if (n2 .ne. 0) then
                     valk = chpsym
                     vali = zi(aliste+j-1)
-                    call utmess('I', 'POSTRELE_41', sk=valk, si=vali)
+                    call utmess('A', 'POSTRELE_41', sk=valk, si=vali)
                     zk24(alschp + j-1) = '&&CHAMP_EFF_NON_EXISTANT'
                 endif
 810              continue
@@ -212,42 +212,43 @@ subroutine rvgchf(epsi, criter, nomsd, chpsym, acces,&
                 zk8(atypac) = 'FREQUENC'
                 modacc = 'FREQ'
             endif
-            do 500, i = 1, nbordr, 1
-            zr(avalac + i-1) = zr(avalr8 + i-1)
-500          continue
-            do 600, i = 1, nbordr, 1
-            cbid = dcmplx(0,0)
-            call rsorac(nomsd, modacc, 0, zr(avalac + i-1), k8bid,&
-                        cbid, epsi, criter, zi, 0,&
-                        n1)
-            n1 = -n1
-            call jecroc(jexnum(nlschp, i))
-            n3=max(n1,1)
-            call jeecra(jexnum(nlschp, i), 'LONMAX', n3)
-            call jeveuo(jexnum(nlschp, i), 'E', alschp)
-            if (n1 .eq. 0) then
-                zk24(alschp + 1-1) = '&&CHAMP_EFF_NON_EXISTANT'
-            else
-                call jecreo('&&OP0051.LISTE.ORDRE', 'V V I')
-                call jeecra('&&OP0051.LISTE.ORDRE', 'LONMAX', n1)
-                call jeveuo('&&OP0051.LISTE.ORDRE', 'E', aliste)
+            do i = 1, nbordr, 1
+                zr(avalac + i-1) = zr(avalr8 + i-1)
+            enddo
+            do i = 1, nbordr, 1
                 cbid = dcmplx(0,0)
                 call rsorac(nomsd, modacc, 0, zr(avalac + i-1), k8bid,&
-                            cbid, epsi, criter, zi(aliste), n1,&
-                            n2)
-                do 610, j = 1, n1, 1
-                call rsexch(' ', nomsd, chpsym, zi(aliste + j-1), zk24(alschp + j-1),&
-                            n2)
-                if (n2 .ne. 0) then
-                    valk = chpsym
-                    vali = zi(aliste+j-1)
-                    call utmess('I', 'POSTRELE_41', sk=valk, si=vali)
-                    zk24(alschp + j-1) = '&&CHAMP_EFF_NON_EXISTANT'
+                            cbid, epsi, criter, zi, 0,&
+                            n1)
+                n1 = -n1
+                call jecroc(jexnum(nlschp, i))
+                n3=max(n1,1)
+                call jeecra(jexnum(nlschp, i), 'LONMAX', n3)
+                call jeveuo(jexnum(nlschp, i), 'E', alschp)
+                if (n1 .eq. 0) then
+                    zk24(alschp + 1-1) = '&&CHAMP_EFF_NON_EXISTANT'
+                    call utmess('A', 'POSTRELE_49', sr=zr(avalac + i-1))
+                else
+                    call jecreo('&&OP0051.LISTE.ORDRE', 'V V I')
+                    call jeecra('&&OP0051.LISTE.ORDRE', 'LONMAX', n1)
+                    call jeveuo('&&OP0051.LISTE.ORDRE', 'E', aliste)
+                    cbid = dcmplx(0,0)
+                    call rsorac(nomsd, modacc, 0, zr(avalac + i-1), k8bid,&
+                                cbid, epsi, criter, zi(aliste), n1,&
+                                n2)
+                    do j = 1, n1, 1
+                        call rsexch(' ', nomsd, chpsym, zi(aliste + j-1),&
+                                    zk24(alschp + j-1), n2)
+                        if (n2 .ne. 0) then
+                            valk = chpsym
+                            vali = zi(aliste+j-1)
+                            call utmess('A', 'POSTRELE_41', sk=valk, si=vali)
+                            zk24(alschp + j-1) = '&&CHAMP_EFF_NON_EXISTANT'
+                        endif
+                    enddo
+                    call jedetr('&&OP0051.LISTE.ORDRE')
                 endif
-610              continue
-                call jedetr('&&OP0051.LISTE.ORDRE')
-            endif
-600          continue
+            enddo
         endif
         call jedetr('&&OP0051.LISTE.IS')
         call jedetr('&&OP0051.LISTE.R8')

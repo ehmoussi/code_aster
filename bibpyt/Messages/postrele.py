@@ -303,7 +303,9 @@ Contactez le support technique.
  la composante %(k1)s n'est pas présente au catalogue des grandeurs.
 """),
 
-
+    49  : _(u"""
+ L'instant %(r1)f ne correspond à aucun numéro d'ordre du résultat fourni.
+"""),
 
     50 : _(u"""
  occurrence %(i1)d du mot clé facteur ACTION
