@@ -1,12 +1,12 @@
-#ifndef ACOUSTICMODECONTAINER_H_
-#define ACOUSTICMODECONTAINER_H_
+#ifndef BUCKLINGMODECONTAINER_H_
+#define BUCKLINGMODECONTAINER_H_
 
 /**
- * @file AcousticModeContainer.h
- * @brief Fichier entete de la classe AcousticModeContainer
+ * @file BucklingModeContainer.h
+ * @brief Fichier entete de la classe BucklingModeContainer
  * @author Natacha Béreux 
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -29,11 +29,11 @@
 #include "Results/FullResultsContainer.h"
 
 /**
- * @class AcousticModeContainerInstance
- * @brief Cette classe correspond a un mode_acou
+ * @class BucklingModeContainerInstance
+ * @brief Cette classe correspond a un mode_flamb
  * @author Natacha Béreux
  */
-class AcousticModeContainerInstance: public FullResultsContainerInstance
+class BucklingModeContainerInstance: public FullResultsContainerInstance
 {
 private:
     
@@ -41,14 +41,14 @@ public:
     /**
      * @brief Constructeur
      */
-    AcousticModeContainerInstance(): FullResultsContainerInstance( "MODE_ACOU" )
+    BucklingModeContainerInstance(): FullResultsContainerInstance( "MODE_FLAMB" )
     {};   
 };
 
 /**
- * @typedef AcousticModeContainerPtr
- * @brief Pointeur intelligent vers un AcousticModeContainerInstance
+ * @typedef BucklingModeContainerPtr
+ * @brief Pointeur intelligent vers un BucklingModeContainerInstance
  */
-typedef boost::shared_ptr< AcousticModeContainerInstance > AcousticModeContainerPtr;
+typedef boost::shared_ptr< BucklingModeContainerInstance > BucklingModeContainerPtr;
 
-#endif /* ACOUSTICMODECONTAINER_H_ */
+#endif /* BUCKLINGMODECONTAINER_H_ */
