@@ -91,13 +91,29 @@ template class GeneralizedResultsContainerInstance< DoubleComplex >;
 typedef GeneralizedResultsContainerInstance< DoubleComplex > GeneralizedResultsContainerComplexInstance;
 typedef boost::shared_ptr< GeneralizedResultsContainerComplexInstance > GeneralizedResultsContainerComplexPtr;
 
-/**
- * @class TransientGeneralizedResultsContainerInstance
- * @brief Cette classe correspond aux concepts  tran_gene,
- * résultats de calcul dynamique transitoire sur base généralisée
- * @author Natacha Béreux
- */
-/* TODO template <class ValueType>  pour traiter DEPL/VITE/ACCE reel et complexe */
+class NonLinearDescriptor 
+{
+    private:
+    /** @brief Vecteur Jeveux '.NL.TYPE' */
+    JeveuxVectorLong           _type;
+    /** @brief Vecteur Jeveux '.NL.VINT' */
+    JeveuxVectorDouble          _internalVar;
+    /** @brief Vecteur Jeveux '.NL.VIND' */
+    JeveuxVectorLong            _vIndi;
+    /** @brief Vecteur Jeveux '.NL.INTI */
+    JeveuxVectorChar24          _vInti;
+    public: 
+    /**
+     * @brief Constructeur
+    */
+    NonLinearDescriptor(const std::string &name):
+    _type( JeveuxVectorLong( name +".NL.TYPE")),
+    _internalVar( JeveuxVectorDouble ( name + ".NL.VINT" )),
+    _vIndi( JeveuxVectorLong( name + ".NL.VIND")),
+    _vInti( JeveuxVectorChar24( name + ".NL.INTI"))
+    {};
+};
+
 class TransientGeneralizedResultsContainerInstance: public GeneralizedResultsContainerDoubleInstance
 {
 private:
@@ -115,6 +131,9 @@ private:
     JeveuxVectorChar8           _displExcitFunction;
     /** @brief Vecteur Jeveux '.IPSD' */
     JeveuxVectorLong           _ipsd;
+    /** @brief Description des nonlinéarités (si mot-clé COMPORTEMENT) */
+    NonLinearDescriptor        _nonLinDesc;
+  
 public:
     /**
      * @typedef TransientGeneralizedResultsContainerPtr
@@ -134,6 +153,7 @@ public:
      */
     TransientGeneralizedResultsContainerInstance( const std::string &name ):
         GeneralizedResultsContainerDoubleInstance( name, "TRAN_GENE" ),
+        _nonLinDesc( name ),
         _timeSteps( JeveuxVectorDouble( getName() +".PTEM"  ) ),
         _acceExcitFunction(  JeveuxVectorChar8( getName() +".FACC"  ) ),
         _veloExcitFunction(  JeveuxVectorChar8( getName() +".FVIT"  ) ),
