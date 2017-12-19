@@ -101,7 +101,7 @@ class MechanicalSolver(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         contrainte = ()
-        if keywords["MODELE"].existsFiberBeam():
+        if keywords["MODELE"].existsMultiFiberBeam():
             contrainte = contrainte+("STRX_ELGA",)
         if keywords.get("OPTION") == "SIEF_ELGA":
             contrainte = contrainte+("SIEF_ELGA",)
