@@ -87,34 +87,34 @@ type(NL_DS_InOut), intent(inout) :: ds_inout
               'ELEM'/)
 ! - TRUE if field can been read for initial state (ETAT_INIT)
     aster_logical, parameter :: l_read_init(nb_field_defi) = &
-                                                (/ASTER_TRUE,ASTER_TRUE ,ASTER_TRUE ,&
-                                                 ASTER_FALSE,ASTER_TRUE ,ASTER_TRUE ,&
-                                                 ASTER_TRUE ,ASTER_TRUE ,ASTER_TRUE ,&
-                                                 ASTER_FALSE,&
-                                                 ASTER_TRUE ,ASTER_TRUE ,ASTER_TRUE ,&
-                                                 ASTER_FALSE,ASTER_TRUE ,&
-                                                 ASTER_TRUE ,ASTER_TRUE ,ASTER_FALSE,&
-                                                 ASTER_FALSE/)
+                                                (/.true._1,.true._1 ,.true._1 ,&
+                                                 .false._1,.true._1 ,.true._1 ,&
+                                                 .true._1 ,.true._1 ,.true._1 ,&
+                                                 .false._1,&
+                                                 .true._1 ,.true._1 ,.true._1 ,&
+                                                 .false._1,.true._1 ,&
+                                                 .true._1 ,.true._1 ,.false._1,&
+                                                 .false._1/)
 ! - TRUE if field can been store (ARCHIVAGE)
     aster_logical, parameter :: l_store  (nb_field_defi) = &
-                                               (/ASTER_TRUE ,ASTER_TRUE,ASTER_TRUE ,&
-                                                 ASTER_TRUE ,ASTER_TRUE,ASTER_TRUE ,&
-                                                 ASTER_TRUE ,ASTER_TRUE,ASTER_TRUE ,&
-                                                 ASTER_TRUE ,&
-                                                 ASTER_TRUE ,ASTER_TRUE,ASTER_TRUE ,&
-                                                 ASTER_FALSE,ASTER_TRUE,&
-                                                 ASTER_TRUE ,ASTER_TRUE,ASTER_FALSE,&
-                                                 ASTER_TRUE/)
+                                               (/.true._1 ,.true._1,.true._1 ,&
+                                                 .true._1 ,.true._1,.true._1 ,&
+                                                 .true._1 ,.true._1,.true._1 ,&
+                                                 .true._1 ,&
+                                                 .true._1 ,.true._1,.true._1 ,&
+                                                 .false._1,.true._1,&
+                                                 .true._1 ,.true._1,.false._1,&
+                                                 .true._1/)
  ! - TRUE if field can been followed (OBSERVATION/SUIVI_DDL)
     aster_logical, parameter :: l_obsv  (nb_field_defi) = &
-                                               (/ASTER_TRUE ,ASTER_TRUE ,ASTER_TRUE ,&
-                                                 ASTER_FALSE,ASTER_TRUE ,ASTER_TRUE ,&
-                                                 ASTER_FALSE,ASTER_FALSE,ASTER_FALSE,&
-                                                 ASTER_TRUE ,&
-                                                 ASTER_TRUE ,ASTER_TRUE ,ASTER_TRUE ,&
-                                                 ASTER_TRUE ,ASTER_TRUE ,&
-                                                 ASTER_FALSE,ASTER_FALSE,ASTER_TRUE,&
-                                                 ASTER_TRUE/)
+                                               (/.true._1 ,.true._1 ,.true._1 ,&
+                                                 .false._1,.true._1 ,.true._1 ,&
+                                                 .false._1,.false._1,.false._1,&
+                                                 .true._1 ,&
+                                                 .true._1 ,.true._1 ,.true._1 ,&
+                                                 .true._1 ,.true._1 ,&
+                                                 .false._1,.false._1,.true._1,&
+                                                 .true._1/)
 ! - Keyword for OBSERVATION
     character(len=16), parameter :: obsv_keyw(nb_field_defi) = &
             (/'DEPL            ','SIEF_ELGA       ','VARI_ELGA       ',&
@@ -173,8 +173,8 @@ type(NL_DS_InOut), intent(inout) :: ds_inout
         ds_inout%field(i_field)%algo_name       = algo_name(i_field)
         ds_inout%field(i_field)%init_name       = init_name(i_field)
         ds_inout%field(i_field)%init_type       = ' '
-        ds_inout%l_field_read(i_field)          = ASTER_FALSE
-        ds_inout%l_field_acti(i_field)          = ASTER_FALSE
+        ds_inout%l_field_read(i_field)          = .false._1
+        ds_inout%l_field_acti(i_field)          = .false._1
     end do
 !
 end subroutine
