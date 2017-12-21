@@ -47,7 +47,7 @@ class FunctionInterpolation(ExecuteCommand):
         intype = keywords["FONCTION"].getType()
         if intype in ("FONCTION_C", "FORMULE_C"):
             self._result = FunctionComplex()
-        elif intype in ("FONCTION", "FORMULE"):
+        elif intype in ("FONCTION_SDASTER", "FORMULE"):
             self._result = Function()
         else:
             raise NotImplementedError("'Surface' type not yet supported.")

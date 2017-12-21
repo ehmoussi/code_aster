@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import Material, GeneralMaterialBehaviour, Table
+from ..Objects import Material, GeneralMaterialBehaviour, Table, Function
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -65,6 +65,9 @@ class MaterialDefinition(ExecuteCommand):
                 elif type( skw ) is Table:
                     iName = skwName.capitalize()
                     cRet = matBehav.setTableValue( iName, skw )
+                elif type( skw ) is Function:
+                    iName = skwName.capitalize()
+                    cRet = matBehav.setFunctionValue( iName, skw )
                 else:
                     raise NotImplementedError("Unsupported type for keyword: "
                                               "{0} <{1}>"

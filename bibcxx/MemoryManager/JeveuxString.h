@@ -140,6 +140,14 @@ class JeveuxString
         };
 
         /**
+         * @brief Operator ==
+         */
+        inline bool operator==( const JeveuxString< lengthT >& chaine )
+        {
+            return strncmp( this->c_str(), chaine.c_str(), lengthT );
+        };
+
+        /**
          * @brief Fonction permettant d'obtenir le pointeur vers le debut de la chaine
          * @return Pointeur vers le debut de la chaine. Attention pas de \0 a la fin !!
          */

@@ -28,6 +28,6 @@ TRC=DEFI_TRC( HIST_EXP=(
                     ) )
 
 
-test.assertEqual(TRC.getType(), "TABLE")
+test.assertEqual(TRC.getType(), "TABLE_SDASTER")
 
 test.printSummary()

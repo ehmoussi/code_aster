@@ -8,7 +8,7 @@ test = code_aster.TestCase()
 
 # Creation du maillage
 mesh = code_aster.Mesh()
-test.assertEqual(mesh.getType(), 'MAILLAGE')
+test.assertEqual(mesh.getType(), 'MAILLAGE_SDASTER')
 
 # Relecture du fichier MED
 mesh.readMedFile("test001a.mmed")
@@ -16,7 +16,7 @@ mesh.readMedFile("test001a.mmed")
 # help(mesh)
 
 coord = mesh.getCoordinates()
-test.assertEqual(coord.getType(), "CHAM_NO")
+test.assertEqual(coord.getType(), "CHAM_NO_SDASTER")
 # help(coord)
 
 # check readonly access
@@ -28,7 +28,7 @@ with test.assertRaises(TypeError):
 
 # Definition du modele Aster
 model = code_aster.Model()
-test.assertEqual(model.getType(), "MODELE")
+test.assertEqual(model.getType(), "MODELE_SDASTER")
 model.setSupportMesh(mesh)
 model.addModelingOnAllMesh(
     code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)

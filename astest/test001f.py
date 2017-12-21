@@ -14,7 +14,7 @@ monModel = code_aster.Model()
 monModel.setSupportMesh( monMaillage )
 monModel.addModelingOnAllMesh( code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional )
 monModel.build()
-test.assertEqual( monModel.getType(), "MODELE" )
+test.assertEqual( monModel.getType(), "MODELE_SDASTER" )
 
 YOUNG = 200000.0;
 POISSON = 0.3;
@@ -55,7 +55,7 @@ acier.addMaterialBehaviour( materElas )
 acier.addMaterialBehaviour( materViscochab )
 acier.build()
 # acier.debugPrint(6)
-test.assertEqual( acier.getType(), "MATER" )
+test.assertEqual( acier.getType(), "MATER_SDASTER" )
 
 affectMat = code_aster.MaterialOnMesh(monMaillage)
 affectMat.addMaterialOnAllMesh( acier )
@@ -93,7 +93,7 @@ numeDDL = code_aster.DOFNumbering()
 numeDDL.setElementaryMatrix( matr_elem )
 numeDDL.computeNumerotation()
 # numeDDL.debugPrint(6)
-test.assertEqual( numeDDL.getType(), "NUME_DDL" )
+test.assertEqual( numeDDL.getType(), "NUME_DDL_SDASTER" )
 
 # vectElem.debugPrint(6)
 test.assertEqual( vectElem.getType(), "VECT_ELEM_DEPL_R" )

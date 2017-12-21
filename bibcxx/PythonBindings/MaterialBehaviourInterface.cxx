@@ -35,6 +35,7 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< GeneralMaterialBehaviourInstance > ) )
         .def( "getAsterName", &GeneralMaterialBehaviourInstance::getAsterName )
         .def( "setDoubleValue", &GeneralMaterialBehaviourInstance::setDoubleValue )
+        .def( "setFunctionValue", &GeneralMaterialBehaviourInstance::setFunctionValue )
         .def( "setTableValue", &GeneralMaterialBehaviourInstance::setTableValue )
     ;
 
