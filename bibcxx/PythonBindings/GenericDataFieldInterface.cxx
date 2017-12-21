@@ -1,6 +1,6 @@
 /**
- * @file FieldOnNodesInterface.cxx
- * @brief Interface python de FieldOnNodes
+ * @file GenericDataFieldInterface.cxx
+ * @brief Interface python de GenericDataField
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -26,29 +26,19 @@
 #include <PythonBindings/factory.h>
 
 #include "PythonBindings/DataStructureInterface.h"
-#include "PythonBindings/FieldOnNodesInterface.h"
-#include "DataFields/MeshCoordinatesField.h"
-#include "PythonBindings/ConstViewerUtilities.h"
+#include "PythonBindings/GenericDataFieldInterface.h"
 
 
-void exportFieldOnNodesToPython()
+void exportGenericDataFieldToPython()
 {
     using namespace boost::python;
 
-    class_< FieldOnNodesDoubleInstance, FieldOnNodesDoublePtr,
-            bases< GenericDataFieldInstance > >("FieldOnNodesDouble", no_init)
+    class_< GenericDataFieldInstance, GenericDataFieldPtr,
+            bases< DataStructure > >("GenericDataFieldDouble", no_init)
         .def( "__init__", make_constructor(
-            &initFactoryPtr< FieldOnNodesDoubleInstance >) )
+            &initFactoryPtr< GenericDataFieldInstance >) )
         .def( "__init__", make_constructor(
-            &initFactoryPtr< FieldOnNodesDoubleInstance,
+            &initFactoryPtr< GenericDataFieldInstance,
                              std::string >) )
-
-        .def( "exportToSimpleFieldOnNodes", &FieldOnNodesDoubleInstance::exportToSimpleFieldOnNodes )
-        .def( "__getitem__", +[](const FieldOnNodesDoubleInstance& v, int i)
-        {
-            return v.operator[](i);
-        })
-        .def( "printMedFile", &FieldOnNodesDoubleInstance::printMedFile )
-        .def( "updateValuePointers", &FieldOnNodesDoubleInstance::updateValuePointers )
     ;
 };

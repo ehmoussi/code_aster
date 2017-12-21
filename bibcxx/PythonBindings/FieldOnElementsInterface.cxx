@@ -34,7 +34,7 @@ void exportFieldOnElementsToPython()
 {
     using namespace boost::python;
     class_< FieldOnElementsDoubleInstance, FieldOnElementsDoublePtr,
-            bases< DataStructure > >("FieldOnElementsDouble", no_init)
+            bases< GenericDataFieldInstance > >("FieldOnElementsDouble", no_init)
         .def( "__init__", make_constructor(
             &initFactoryPtr< FieldOnElementsDoubleInstance >) )
         .def( "__init__", make_constructor(

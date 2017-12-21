@@ -31,6 +31,7 @@
 #include "PythonBindings/DOFNumberingInterface.h"
 #include "PythonBindings/ElementaryCharacteristicsInterface.h"
 #include "PythonBindings/FiberGeometryInterface.h"
+#include "PythonBindings/GenericDataFieldInterface.h"
 #include "PythonBindings/FieldOnElementsInterface.h"
 #include "PythonBindings/FieldOnNodesInterface.h"
 #include "PythonBindings/MeshInterface.h"
@@ -172,6 +173,7 @@ BOOST_PYTHON_MODULE(libaster)
     exportDOFNumberingToPython();
     exportElementaryCharacteristicsToPython();
     exportFiberGeometryToPython();
+    exportGenericDataFieldToPython();
     exportFieldOnElementsToPython();
     exportFieldOnNodesToPython();
     exportPCFieldOnMeshToPython();
