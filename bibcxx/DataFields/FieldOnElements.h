@@ -33,7 +33,7 @@
 #include "aster_fort.h"
 
 #include "MemoryManager/JeveuxVector.h"
-#include "DataStructures/DataStructure.h"
+#include "DataFields/GenericDataField.h"
 #include "DataFields/SimpleFieldOnElements.h"
 #include "Modeling/Model.h"
 
@@ -43,7 +43,7 @@
  * @author Nicolas Sellenet
  */
 template< class ValueType >
-class FieldOnElementsInstance: public DataStructure
+class FieldOnElementsInstance: public GenericDataFieldInstance
 {
 private:
     typedef SimpleFieldOnElementsInstance< ValueType > SimpleFieldOnElementsValueTypeInstance;
@@ -70,7 +70,7 @@ public:
      * @param name Nom Jeveux du champ aux éléments
      */
     FieldOnElementsInstance( const std::string name ):
-                    DataStructure( name, 19, "CHAM_ELEM" ),
+                    GenericDataFieldInstance( name, "CHAM_ELEM" ),
                     _descriptor( JeveuxVectorLong( getName() + ".CELD" ) ),
                     _reference( JeveuxVectorChar24( getName() + ".CELK" ) ),
                     _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) ),
@@ -82,7 +82,7 @@ public:
      * @param memType Mémoire d'allocation
      */
     FieldOnElementsInstance( const JeveuxMemory memType = Permanent ):
-                    DataStructure( "CHAM_ELEM", memType, 19 ),
+                    GenericDataFieldInstance( memType,  "CHAM_ELEM" ),
                     _descriptor( JeveuxVectorLong( getName() + ".CELD" ) ),
                     _reference( JeveuxVectorChar24( getName() + ".CELK" ) ),
                     _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) ),

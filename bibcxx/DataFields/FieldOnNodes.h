@@ -34,7 +34,7 @@
 
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxAllowedTypes.h"
-#include "DataStructures/DataStructure.h"
+#include "DataFields/GenericDataField.h"
 #include "DataFields/SimpleFieldOnNodes.h"
 #include "Discretization/DOFNumbering.h"
 #include "DataFields/MeshCoordinatesField.h"
@@ -63,7 +63,7 @@ template<> struct AllowedFieldType< double >
  * @author Nicolas Sellenet
  */
 template< class ValueType >
-class FieldOnNodesInstance: public DataStructure, private AllowedFieldType< ValueType >
+class FieldOnNodesInstance: public GenericDataFieldInstance, private AllowedFieldType< ValueType >
 {
 private:
     typedef SimpleFieldOnNodesInstance< ValueType > SimpleFieldOnNodesValueTypeInstance;
@@ -90,7 +90,7 @@ public:
      * @param name Nom Jeveux du champ aux noeuds
      */
     FieldOnNodesInstance( const std::string name ):
-                    DataStructure( name, 19, "CHAM_NO" ),
+                    GenericDataFieldInstance( name, "CHAM_NO" ),
                     _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
                     _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
                     _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) )
@@ -102,7 +102,7 @@ public:
      * @param memType Mémoire d'allocation
      */
     FieldOnNodesInstance( const JeveuxMemory memType = Permanent ):
-                    DataStructure( "CHAM_NO", memType, 19 ),
+                    GenericDataFieldInstance( memType,  "CHAM_NO" ),
                     _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
                     _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
                     _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) )
@@ -113,7 +113,7 @@ public:
      * @brief Constructeur from a MeshCoordinatesFieldPtr&
      */
     FieldOnNodesInstance( MeshCoordinatesFieldPtr& toCopy ):
-                    DataStructure( "CHAM_NO", toCopy->getMemoryType(), 19 ),
+                    GenericDataFieldInstance( toCopy->getMemoryType(), "CHAM_NO" ),
                     _descriptor( toCopy->_descriptor ),
                     _reference( toCopy->_reference ),
                     _valuesList( toCopy->_valuesList )

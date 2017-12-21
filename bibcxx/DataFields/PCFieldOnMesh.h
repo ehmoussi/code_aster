@@ -33,6 +33,7 @@
 #include "astercxx.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "MemoryManager/JeveuxVector.h"
+#include "DataFields/GenericDataField.h"
 #include "Meshes/Mesh.h"
 #include "Modeling/FiniteElementDescriptor.h"
 #include "Modeling/PhysicalQuantityManager.h"
@@ -150,7 +151,7 @@ public:
  * @author Natacha Bereux
  */
 template< class ValueType >
-class PCFieldOnMeshInstance: public DataStructure
+class PCFieldOnMeshInstance: public GenericDataFieldInstance
 {
     private:
         /** @brief Vecteur Jeveux '.NOMA' */
@@ -276,7 +277,7 @@ class PCFieldOnMeshInstance: public DataStructure
          */
         PCFieldOnMeshInstance( const std::string& name, const BaseMeshPtr& mesh,
                                const JeveuxMemory memType = Permanent ):
-            DataStructure( name, 19, "CARTE", memType ),
+            GenericDataFieldInstance( name, "CARTE", memType ),
             _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
             _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
             _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
@@ -297,7 +298,7 @@ class PCFieldOnMeshInstance: public DataStructure
         PCFieldOnMeshInstance( std::string name,
                                const FiniteElementDescriptorPtr& ligrel,
                                const JeveuxMemory memType = Permanent ):
-            DataStructure( name, 19, "CARTE", memType ),
+            GenericDataFieldInstance( name, "CARTE", memType ),
             _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
             _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
             _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
@@ -317,7 +318,7 @@ class PCFieldOnMeshInstance: public DataStructure
          */
         PCFieldOnMeshInstance( const BaseMeshPtr& mesh,
                                const JeveuxMemory memType = Permanent ):
-            DataStructure( "CARTE", memType, 19 ),
+            GenericDataFieldInstance( memType, "CARTE" ),
             _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
             _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
             _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
@@ -337,7 +338,7 @@ class PCFieldOnMeshInstance: public DataStructure
          */
         PCFieldOnMeshInstance( const FiniteElementDescriptorPtr& ligrel,
                                const JeveuxMemory memType = Permanent ):
-            DataStructure( "CARTE", memType, 19 ),
+            GenericDataFieldInstance( memType, "CARTE" ),
             _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
             _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
             _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
