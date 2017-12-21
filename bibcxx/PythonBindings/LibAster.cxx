@@ -120,6 +120,7 @@
 #include "PythonBindings/GeneralizedModeContainerInterface.h"
 #include "PythonBindings/FluidStructureModalBasisInterface.h"
 #include "PythonBindings/ListOfFloatsInterface.h"
+#include "PythonBindings/InputVariableDefinitionInterface.h"
 
 using namespace boost::python;
 
@@ -265,4 +266,5 @@ BOOST_PYTHON_MODULE(libaster)
     exportPartialMeshToPython();
     exportResultNamingToPython();
     exportListOfFloatsToPython();
+    exportInputVariableDefinitionToPython();
 };
