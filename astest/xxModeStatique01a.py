@@ -172,6 +172,6 @@ sfon3.updateValuePointers()
 test.assertAlmostEqual(sfon3.getValue(0, 0), 0.0)
 
 # Test
-test.assertEqual(vecx.getType(), "CHAM_NO")
+test.assertEqual(vecx.getType(), "CHAM_NO_SDASTER")
 test.printSummary()
 # Fin du TEST_RESU

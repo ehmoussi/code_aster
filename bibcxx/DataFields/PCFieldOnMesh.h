@@ -148,7 +148,6 @@ public:
  * @class PCFieldOnMeshInstance Piecewise Constant (PC) Field on Mesh template
  * @brief Cette classe permet de definir une carte (champ défini sur les mailles)
  * @author Natacha Bereux
- * @todo Le template doit aussi prendre en argument la grandeur : CART_TEMP_R
  */
 template< class ValueType >
 class PCFieldOnMeshInstance: public DataStructure
@@ -277,7 +276,7 @@ class PCFieldOnMeshInstance: public DataStructure
          */
         PCFieldOnMeshInstance( const std::string& name, const BaseMeshPtr& mesh,
                                const JeveuxMemory memType = Permanent ):
-            DataStructure( name, 19, "CART_", memType ),
+            DataStructure( name, 19, "CARTE", memType ),
             _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
             _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
             _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
@@ -298,7 +297,7 @@ class PCFieldOnMeshInstance: public DataStructure
         PCFieldOnMeshInstance( std::string name,
                                const FiniteElementDescriptorPtr& ligrel,
                                const JeveuxMemory memType = Permanent ):
-            DataStructure( name, 19, "CART_", memType ),
+            DataStructure( name, 19, "CARTE", memType ),
             _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
             _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
             _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
@@ -318,7 +317,7 @@ class PCFieldOnMeshInstance: public DataStructure
          */
         PCFieldOnMeshInstance( const BaseMeshPtr& mesh,
                                const JeveuxMemory memType = Permanent ):
-            DataStructure( "CART_", memType, 19 ),
+            DataStructure( "CARTE", memType, 19 ),
             _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
             _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
             _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
@@ -338,7 +337,7 @@ class PCFieldOnMeshInstance: public DataStructure
          */
         PCFieldOnMeshInstance( const FiniteElementDescriptorPtr& ligrel,
                                const JeveuxMemory memType = Permanent ):
-            DataStructure( "CART_", memType, 19 ),
+            DataStructure( "CARTE", memType, 19 ),
             _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
             _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
             _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
@@ -388,6 +387,21 @@ class PCFieldOnMeshInstance: public DataStructure
             if ( jeveuxBase == Permanent ) strJeveuxBase = "G";
             fortranAllocate( strJeveuxBase, componant );
             _isAllocated = true;
+        };
+
+        /**
+         * @brief Deallocate the PCField
+         */
+        void deallocate()
+        {
+            _meshName->deallocate();
+            _descriptor->deallocate();
+            _nameOfLigrels->deallocate();
+            _listOfMeshElements->deallocate();
+            _valuesList->deallocate();
+            _isAllocated = false;
+            _componentNames->deallocate();
+            _valuesListTmp->deallocate();
         };
 
         /**

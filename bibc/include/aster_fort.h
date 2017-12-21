@@ -335,6 +335,15 @@ ASTERINTEGER DEFP(NBEC,nbec, const ASTERINTEGER* const);
 #define CALL_ISDECO(a, b, c) CALLPPP(ISDECO, isdeco, a, b, c)
 void DEFPPP(ISDECO,isdeco, ASTERINTEGER*, ASTERINTEGER*, ASTERINTEGER*);
 
+#define CALLO_VRCREF(a, b, c, d) CALLOOOO(VRCREF, vrcref, a, b, c, d)
+void DEFSSSS(VRCREF,vrcref, const char*, STRING_SIZE, const char*, STRING_SIZE,
+                            const char*, STRING_SIZE, const char*, STRING_SIZE);
+
+#define CALLO_VRCINS_WRAP(a, b, c, d, e, f) CALLOOOPOO(VRCINS_WRAP, vrcins_wrap, a, b, c, d, e, f)
+void DEFSSSPSS(VRCINS_WRAP,vrcins_wrap, const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                        const char*, STRING_SIZE, const ASTERDOUBLE*,
+                                        const char*, STRING_SIZE, const char*, STRING_SIZE);
+
 /* routines d'accès aux OBJETS JEVEUX (vecteurs, collections, champs) */
 #define CALL_GETCON(nomsd,iob,ishf,ilng,ctype,lcon,iaddr,nomob) \
     CALLSPPPPPPS(GETCON,getcon,nomsd,iob,ishf,ilng,ctype,lcon,iaddr,nomob)

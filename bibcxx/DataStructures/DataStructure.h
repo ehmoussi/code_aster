@@ -132,11 +132,7 @@ class DataStructure
          * @brief Methode servant a fixer a posteriori le type d'une sd
          * @param newType chaine contenant le nouveau type
          */
-        void setType( const std::string newType )
-        {
-            _tco->updateValuePointer();
-            (*_tco)[0] = newType;
-        };
+        void setType( const std::string newType );
 };
 
 #endif

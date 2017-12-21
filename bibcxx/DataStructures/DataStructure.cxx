@@ -43,9 +43,13 @@ DataStructure::DataStructure( const std::string name, const int nameLength,
     std::string name19( _name );
     name19.resize(19, ' ');
     _tco = JeveuxVectorChar24( name19 + "._TCO" );
-    if ( ! _tco->isAllocated() && name != "" ) {
+    if ( ! _tco->isAllocated() && name != "" )
+    {
         _tco->allocate( _memoryType, 1 );
-        (*_tco)[0] = type;
+        if( type.size() <= 8 && type != "FORMULE" )
+            (*_tco)[0] = std::string( trim( type ) + "_SDASTER" );
+        else
+            (*_tco)[0] = type;
     }
 }
 
@@ -96,4 +100,13 @@ void DataStructure::debugPrint( int logicalUnit ) const
     {
         throw std::runtime_error( "debugPrint failed!" );
     }
+};
+
+void DataStructure::setType( const std::string newType )
+{
+    _tco->updateValuePointer();
+    if( newType.size() <= 8 && newType != "FORMULE" )
+        (*_tco)[0] = std::string( trim( newType ) + "_SDASTER" );
+    else
+        (*_tco)[0] = newType;
 };

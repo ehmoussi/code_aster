@@ -38,7 +38,7 @@ class DataStructure(object):
     def getType(cls):
         """Return the type of DataStructure"""
         # use for static checking (with fake datastructures)
-        return cls.__name__.replace("_sdaster", "").upper()
+        return cls.__name__.upper()
 
     @classmethod
     def getSubtypes(cls):
@@ -273,11 +273,7 @@ class cham_gd_sdaster(ASSD):
     pass
 
 class carte_sdaster(cham_gd_sdaster):
-
-    @classmethod
-    def getType(cls):
-        """Return the type of DataStructure"""
-        return "CART_"
+    pass
 
 class cham_elem(cham_gd_sdaster):
     pass

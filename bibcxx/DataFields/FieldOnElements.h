@@ -35,7 +35,6 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "DataStructures/DataStructure.h"
 #include "DataFields/SimpleFieldOnElements.h"
-#include "DataFields/SimpleFieldOnElements.h"
 #include "Modeling/Model.h"
 
 /**
@@ -57,8 +56,8 @@ private:
     /** @brief Vecteur Jeveux '.CELV' */
     JeveuxVector<ValueType> _valuesList;
     /** @brief Modele support */
-    ModelPtr           _supportModel;
-    
+    ModelPtr                _supportModel;
+
 public:
     /**
      * @typedef FieldOnElementsPtr
@@ -76,8 +75,7 @@ public:
                     _reference( JeveuxVectorChar24( getName() + ".CELK" ) ),
                     _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) ),
                     _supportModel( ModelPtr() )
-    {
-    };
+    {};
 
     /**
      * @brief Constructeur
@@ -89,14 +87,24 @@ public:
                     _reference( JeveuxVectorChar24( getName() + ".CELK" ) ),
                     _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) ),
                     _supportModel( ModelPtr() )
-    {
-    };
+    {};
 
     ~FieldOnElementsInstance()
     {
 #ifdef __DEBUG_GC__
         std::cout << "FieldOnElements.destr: " << this->getName() << std::endl;
 #endif
+    };
+
+    /**
+     * @brief
+     * @return
+     */
+    void deallocate()
+    {
+        _descriptor->deallocate();
+        _reference->deallocate();
+        _valuesList->deallocate();
     };
 
     /**
@@ -125,6 +133,7 @@ public:
         retour = ( retour && _valuesList->updateValuePointer() );
         return retour;
     };
+
     /**
      * @brief Definition du modele support
      * @param currentMesh objet Model sur lequel la charge reposera

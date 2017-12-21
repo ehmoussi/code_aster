@@ -29,6 +29,7 @@
 #include <stdexcept>
 #include "astercxx.h"
 #include "DataStructures/DataStructure.h"
+#include "MemoryManager/JeveuxVector.h"
 #include "Modeling/Model.h"
 #include "Meshes/Mesh.h"
 #include "Meshes/Skeleton.h"
@@ -77,6 +78,15 @@ class MaterialOnMeshInstance: public DataStructure
         listOfMatsAndGrps      _materialsOnMeshEntity;
         /** @brief Link to a  */
         listOfBehavAndGrps     _behaviours;
+        /** @brief Jeveux vector '.CVRCNOM' */
+        JeveuxVectorChar8      _cvrcNom;
+        /** @brief Jeveux vector '.CVRCGD' */
+        JeveuxVectorChar8      _cvrcGd;
+        /** @brief Jeveux vector '.CVRCVARC' */
+        JeveuxVectorChar8      _cvrcVarc;
+        /** @brief Jeveux vector '.CVRCCMP' */
+        JeveuxVectorChar8      _cvrcCmp;
+        
 
         /**
          * @brief Return a SyntaxMapContainer to emulate the command keywords
@@ -207,6 +217,12 @@ class MaterialOnMeshInstance: public DataStructure
          * @return booleen indiquant que la construction s'est bien deroulee
          */
         bool build_deprecated() throw ( std::runtime_error );
+
+        /**
+         * @brief Function to know if a given Calculation Input Variables exists
+         * @return true if exists
+         */
+        bool existsCalculationInputVariable( const std::string& );
 
         /**
          * @brief Obtenir le maillage support

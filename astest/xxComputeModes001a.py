@@ -66,7 +66,7 @@ MAC=MAC_MODES(BASE_1=BAMODA,
               MATR_ASSE=MASSE,
               );
 
-test.assertEqual(MAC.getType(), "TABLE")
+test.assertEqual(MAC.getType(), "TABLE_SDASTER")
 
 IMPR_CO(CONCEPT=_F(NOM=BAMODA))
 

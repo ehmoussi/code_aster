@@ -19,7 +19,7 @@ tab = CREA_TABLE(LISTE=(_F(PARA='NUMERO',
 
 tab.debugPrint()
 
-test.assertEqual(tab.getType(), 'TABLE')
+test.assertEqual(tab.getType(), 'TABLE_SDASTER')
 test.assertEqual(tab['NUMERO', 1], 0)
 test.assertEqual(tab.TITRE().strip(), 'Table title')
 

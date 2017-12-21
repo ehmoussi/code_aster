@@ -32,41 +32,76 @@ bool GeneralMaterialBehaviourInstance::buildJeveuxVectors( JeveuxVectorComplex& 
                                                            JeveuxVectorChar16& char16Values ) const
     throw( std::runtime_error )
 {
-    const int nbOfMaterialProperties = _listOfNameOfMaterialProperties.size();
+    const int nbOfMaterialProperties = getNumberOfPropertiesWithValue();
     complexValues->allocate( Permanent, nbOfMaterialProperties );
     doubleValues->allocate( Permanent, nbOfMaterialProperties );
     char16Values->allocate( Permanent, 2*nbOfMaterialProperties );
 
-    int position = 0;
-    for( auto curIter : _mapOfDoubleMaterialProperties){
+    int position = 0, position2 = nbOfMaterialProperties;
+    for( auto curIter : _mapOfDoubleMaterialProperties ){
         std::string nameOfProperty = curIter.second.getName();
-        nameOfProperty.resize( 16, ' ' );
-        (*char16Values)[position] = nameOfProperty.c_str();
-        
         if( curIter.second.hasValue() )
+        {
+            nameOfProperty.resize( 16, ' ' );
+            (*char16Values)[position] = nameOfProperty.c_str();
             (*doubleValues)[position] = curIter.second.getValue();
-        
+            ++position;
+        }
+
         if( curIter.second.isMandatory() && ! curIter.second.hasValue() )
             throw std::runtime_error( "Mandatory material property " + nameOfProperty + " is missing" );
-        
-        ++position;
+
     }
     doubleValues->setLonUti(position);
     complexValues->setLonUti(0);
-    for( auto curIter : _mapOfTableMaterialProperties){
+    for( auto curIter : _mapOfTableMaterialProperties ){
         std::string nameOfProperty = curIter.second.getName();
-        nameOfProperty.resize( 16, ' ' );
-        (*char16Values)[position] = nameOfProperty.c_str();
-        
         if( curIter.second.hasValue() )
-            (*char16Values)[position+_mapOfTableMaterialProperties.size()] = curIter.second.getValue()->getName();
-        
+        {
+            nameOfProperty.resize( 16, ' ' );
+            (*char16Values)[position] = nameOfProperty.c_str();
+            (*char16Values)[position2] = curIter.second.getValue()->getName();
+            ++position;
+            ++position2;
+        }
+
         if( curIter.second.isMandatory() && ! curIter.second.hasValue() )
             throw std::runtime_error( "Mandatory material property " + nameOfProperty + " is missing" );
-        
-        ++position;
     }
-    char16Values->setLonUti(position+_mapOfTableMaterialProperties.size());
-    
+
+    for( auto curIter : _mapOfFunctionMaterialProperties ){
+        std::string nameOfProperty = curIter.second.getName();
+        if( curIter.second.hasValue() )
+        {
+            nameOfProperty.resize( 16, ' ' );
+            (*char16Values)[position] = nameOfProperty.c_str();
+            (*char16Values)[position2] = curIter.second.getValue()->getName();
+            ++position;
+            ++position2;
+        }
+
+        if( curIter.second.isMandatory() && ! curIter.second.hasValue() )
+            throw std::runtime_error( "Mandatory material property " + nameOfProperty + " is missing" );
+    }
+    char16Values->setLonUti( position2 );
+
     return true;
+};
+
+int GeneralMaterialBehaviourInstance::getNumberOfPropertiesWithValue() const
+{
+    int toReturn = 0;
+    for( auto curIter : _mapOfDoubleMaterialProperties )
+        if( curIter.second.hasValue() )
+            ++toReturn;
+
+    for( auto curIter : _mapOfTableMaterialProperties )
+        if( curIter.second.hasValue() )
+            ++toReturn;
+
+    for( auto curIter : _mapOfFunctionMaterialProperties )
+        if( curIter.second.hasValue() )
+            ++toReturn;
+
+    return toReturn;
 };

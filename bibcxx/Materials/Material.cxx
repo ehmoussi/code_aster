@@ -42,13 +42,15 @@ bool MaterialInstance::build() throw( std::runtime_error )
     _materialBehaviourNames->allocate( Permanent, nbMCF );
     int num = 0;
     // Boucle sur les GeneralMaterialBehaviourPtr
-    for( VectorOfGeneralMaterialIter curIter = _vecMatBehaviour.begin();
-         curIter != _vecMatBehaviour.end();
-         ++curIter )
+    for( const auto& curIter : _vecMatBehaviour )
     {
         // Recuperation du nom Aster (ELAS, ELAS_FO, ...) du GeneralMaterialBehaviourPtr
         // sur lequel on travaille
-        std::string curStr( (*curIter)->getAsterName().c_str() );
+        std::string curStr;
+        if( curIter->getAsterNewName() == "" )
+            curStr = std::string( curIter->getAsterName().c_str() );
+        else
+            curStr = std::string( curIter->getAsterNewName().c_str() );
         curStr.resize( 32, ' ' );
         // Recopie dans le ".MATERIAU.NOMRC"
         (*_materialBehaviourNames)[ num ] = curStr.c_str();
@@ -57,7 +59,7 @@ bool MaterialInstance::build() throw( std::runtime_error )
         JeveuxVectorComplex& vec1 = _vectorOfComplexValues[ num ];
         JeveuxVectorDouble& vec2 = _vectorOfDoubleValues[ num ];
         JeveuxVectorChar16& vec3 = _vectorOfChar16Values[ num ];
-        const bool retour = (*curIter)->buildJeveuxVectors( vec1, vec2, vec3 );
+        const bool retour = curIter->buildJeveuxVectors( vec1, vec2, vec3 );
         if ( !retour ) return false;
         ++num;
     }

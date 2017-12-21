@@ -26,12 +26,12 @@ FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG1,
 MODELEK=MODI_MODELE_XFEM(MODELE_IN=MO,
                          FISSURE=FISS,
                          INFO=1);
-test.assertEqual(MODELEK.getType(), "MODELE")
+test.assertEqual(MODELEK.getType(), "MODELE_SDASTER")
 
 
 MA_XFEM=POST_MAIL_XFEM(MODELE = MODELEK);
 
-test.assertEqual(MA_XFEM.getType(), "MAILLAGE")
+test.assertEqual(MA_XFEM.getType(), "MAILLAGE_SDASTER")
 
 
 test.printSummary()

@@ -20,7 +20,7 @@ mesh_assembler = ASSE_MAILLAGE(MAILLAGE_1=mesh,
                                MAILLAGE_2=mesh2,
                                OPERATION="SOUS_STR")
 
-test.assertEqual(mesh_assembler.getType(), "MAILLAGE")
+test.assertEqual(mesh_assembler.getType(), "MAILLAGE_SDASTER")
 
 
 test.printSummary()

@@ -212,6 +212,7 @@ class GeneralMaterialBehaviourInstance
         /** @brief Chaine correspondant au nom Aster du MaterialBehaviourInstance */
         // ex : ELAS ou ELASFo
         std::string              _asterName;
+        std::string              _asterNewName;
         /** @brief Map contenant les noms des proprietes double ainsi que les
                    MaterialPropertyInstance correspondant */
         mapStrEMPD               _mapOfDoubleMaterialProperties;
@@ -228,7 +229,7 @@ class GeneralMaterialBehaviourInstance
         /**
          * @brief Constructeur
          */
-        GeneralMaterialBehaviourInstance()
+        GeneralMaterialBehaviourInstance(): _asterNewName( "" )
         {};
 
         /**
@@ -240,6 +241,16 @@ class GeneralMaterialBehaviourInstance
         {
             return _asterName;
         };
+
+        const std::string getAsterNewName() const
+        {
+            return _asterNewName;
+        };
+
+        /**
+         * @brief Get number of properties with a value
+         */
+        int getNumberOfPropertiesWithValue() const;
 
         /**
          * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourInstance
@@ -371,6 +382,7 @@ class ElasFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             // Mot cle "ELAS_FO" dans Aster
             _asterName = "ELAS_FO";
+            _asterNewName = "ELAS";
 
             // Parametres matériau
             this->addFunctionProperty( "E", ElementaryMaterialPropertyFunction( "E" , true ) );
@@ -385,6 +397,7 @@ class ElasFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addDoubleProperty( "K_dessic", ElementaryMaterialPropertyDouble( "K_DESSIC" , 0.E+0 , false ) );
             this->addDoubleProperty( "B_endoge", ElementaryMaterialPropertyDouble( "B_ENDOGE" , 0.E+0 , false ) );
             this->addFunctionProperty( "Fonc_desorp", ElementaryMaterialPropertyFunction( "FONC_DESORP" , false ) );
+            this->addDoubleProperty( "Coef_amor", ElementaryMaterialPropertyDouble( "COEF_AMOR" , 1., false ) );
         };
 };
 
@@ -469,6 +482,7 @@ class ElasIstrFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             // Mot cle "ELAS_ISTR_FO" dans Aster
             _asterName = "ELAS_ISTR_FO";
+            _asterNewName = "ELAS_ISTR";
 
             // Parametres matériau
             this->addFunctionProperty( "E_l", ElementaryMaterialPropertyFunction( "E_L" , true ) );
@@ -548,6 +562,7 @@ class ElasOrthFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             // Mot cle "ELAS_ORTH_FO" dans Aster
             _asterName = "ELAS_ORTH_FO";
+            _asterNewName = "ELAS_ORTH";
 
             // Parametres matériau
             this->addFunctionProperty( "E_l", ElementaryMaterialPropertyFunction( "E_L" , true ) );
@@ -689,6 +704,7 @@ class ElasCoqueFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         {
             // Mot cle "ELAS_COQUE_FO" dans Aster
             _asterName = "ELAS_COQUE_FO";
+            _asterNewName = "ELAS_COQUE";
 
             // Parametres matériau
             this->addFunctionProperty( "Memb_l", ElementaryMaterialPropertyFunction( "MEMB_L" , false ) );
@@ -854,6 +870,7 @@ class ElasGlrcFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             // Mot cle "ELAS_GLRC_FO" dans Aster
             _asterName = "ELAS_GLRC_FO";
+            _asterNewName = "ELAS_GLRC";
 
             // Parametres matériau
             this->addFunctionProperty( "E_m", ElementaryMaterialPropertyFunction( "E_M" , true ) );
@@ -1076,6 +1093,7 @@ class EcroLineFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             // Mot cle "ECRO_LINE_FO" dans Aster
             _asterName = "ECRO_LINE_FO";
+            _asterNewName = "ECRO_LINE";
 
             // Parametres matériau
             this->addFunctionProperty( "D_sigm_epsi", ElementaryMaterialPropertyFunction( "D_SIGM_EPSI" , true ) );
@@ -1129,6 +1147,7 @@ class EcroPuisFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             // Mot cle "ECRO_PUIS_FO" dans Aster
             _asterName = "ECRO_PUIS_FO";
+            _asterNewName = "ECRO_PUIS";
 
             // Parametres matériau
             this->addFunctionProperty( "Sy", ElementaryMaterialPropertyFunction( "SY" , true ) );
@@ -1188,6 +1207,7 @@ class EcroCookFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             // Mot cle "ECRO_COOK_FO" dans Aster
             _asterName = "ECRO_COOK_FO";
+            _asterNewName = "ECRO_COOK";
 
             // Parametres matériau
             this->addFunctionProperty( "A", ElementaryMaterialPropertyFunction( "A" , true ) );
@@ -1331,6 +1351,7 @@ class PragerFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             // Mot cle "PRAGER_FO" dans Aster
             _asterName = "PRAGER_FO";
+            _asterNewName = "PRAGER";
 
             // Parametres matériau
             this->addFunctionProperty( "C", ElementaryMaterialPropertyFunction( "C" , true ) );
@@ -1388,6 +1409,7 @@ class TaheriFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             // Mot cle "TAHERI_FO" dans Aster
             _asterName = "TAHERI_FO";
+            _asterNewName = "TAHERI";
 
             // Parametres matériau
             this->addFunctionProperty( "R_0", ElementaryMaterialPropertyFunction( "R_0" , true ) );
@@ -1455,6 +1477,7 @@ class RousselierFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         {
             // Mot cle "ROUSSELIER_FO" dans Aster
             _asterName = "ROUSSELIER_FO";
+            _asterNewName = "ROUSSELIER";
 
             // Parametres matériau
             this->addFunctionProperty( "D", ElementaryMaterialPropertyFunction( "D" , true ) );
@@ -1517,6 +1540,7 @@ class ViscSinhFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             // Mot cle "VISC_SINH_FO" dans Aster
             _asterName = "VISC_SINH_FO";
+            _asterNewName = "VISC_SINH";
 
             // Parametres matériau
             this->addFunctionProperty( "Sigm_0", ElementaryMaterialPropertyFunction( "SIGM_0" , true ) );
@@ -1576,6 +1600,7 @@ class Cin1ChabFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             // Mot cle "CIN1_CHAB_FO" dans Aster
             _asterName = "CIN1_CHAB_FO";
+            _asterNewName = "CIN1_CHAB";
 
             // Parametres matériau
             this->addFunctionProperty( "R_0", ElementaryMaterialPropertyFunction( "R_0" , true ) );
@@ -1642,6 +1667,7 @@ class Cin2ChabFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             // Mot cle "CIN2_CHAB_FO" dans Aster
             _asterName = "CIN2_CHAB_FO";
+            _asterNewName = "CIN2_CHAB";
 
             // Parametres matériau
             this->addFunctionProperty( "R_0", ElementaryMaterialPropertyFunction( "R_0" , true ) );
@@ -1730,6 +1756,7 @@ class MemoEcroFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             // Mot cle "MEMO_ECRO_FO" dans Aster
             _asterName = "MEMO_ECRO_FO";
+            _asterNewName = "MEMO_ECRO";
 
             // Parametres matériau
             this->addFunctionProperty( "Mu", ElementaryMaterialPropertyFunction( "MU" , true ) );
@@ -1807,6 +1834,7 @@ class ViscochabFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         {
             // Mot cle "VISCOCHAB_FO" dans Aster
             _asterName = "VISCOCHAB_FO";
+            _asterNewName = "VISCOCHAB";
 
             // Parametres matériau
             this->addFunctionProperty( "K_0", ElementaryMaterialPropertyFunction( "K_0" , true ) );
@@ -2054,6 +2082,7 @@ class LemaSeuilFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         {
             // Mot cle "LEMA_SEUIL_FO" dans Aster
             _asterName = "LEMA_SEUIL_FO";
+            _asterNewName = "LEMA_SEUIL";
 
             // Parametres matériau
             this->addFunctionProperty( "A", ElementaryMaterialPropertyFunction( "A" , true ) );
@@ -2116,6 +2145,7 @@ class LemaitreFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             // Mot cle "LEMAITRE_FO" dans Aster
             _asterName = "LEMAITRE_FO";
+            _asterNewName = "LEMAITRE";
 
             // Parametres matériau
             this->addFunctionProperty( "N", ElementaryMaterialPropertyFunction( "N" , true ) );
@@ -2201,6 +2231,7 @@ class MetaLemaAniFoMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
         {
             // Mot cle "META_LEMA_ANI_FO" dans Aster
             _asterName = "META_LEMA_ANI_FO";
+            _asterNewName = "META_LEMA_ANI";
 
             // Parametres matériau
             this->addFunctionProperty( "F1_a", ElementaryMaterialPropertyFunction( "F1_A" , true ) );
@@ -2390,6 +2421,7 @@ class EndoScalaireFoMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
         {
             // Mot cle "ENDO_SCALAIRE_FO" dans Aster
             _asterName = "ENDO_SCALAIRE_FO";
+            _asterNewName = "ENDO_SCALAIRE";
 
             // Parametres matériau
             this->addFunctionProperty( "K", ElementaryMaterialPropertyFunction( "K" , true ) );
@@ -2453,6 +2485,7 @@ class EndoFissExpFoMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
         {
             // Mot cle "ENDO_FISS_EXP_FO" dans Aster
             _asterName = "ENDO_FISS_EXP_FO";
+            _asterNewName = "ENDO_FISS_EXP";
 
             // Parametres matériau
             this->addFunctionProperty( "K", ElementaryMaterialPropertyFunction( "K" , true ) );
@@ -2592,6 +2625,7 @@ class MazarsFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             // Mot cle "MAZARS_FO" dans Aster
             _asterName = "MAZARS_FO";
+            _asterNewName = "MAZARS";
 
             // Parametres matériau
             this->addFunctionProperty( "Epsd0", ElementaryMaterialPropertyFunction( "EPSD0" , true ) );
@@ -2691,6 +2725,7 @@ class VendochabFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         {
             // Mot cle "VENDOCHAB_FO" dans Aster
             _asterName = "VENDOCHAB_FO";
+            _asterNewName = "VENDOCHAB";
 
             // Parametres matériau
             this->addFunctionProperty( "Sy", ElementaryMaterialPropertyFunction( "SY" , true ) );
@@ -2785,6 +2820,7 @@ class ViscEndoFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             // Mot cle "VISC_ENDO_FO" dans Aster
             _asterName = "VISC_ENDO_FO";
+            _asterNewName = "VISC_ENDO";
 
             // Parametres matériau
             this->addFunctionProperty( "Sy", ElementaryMaterialPropertyFunction( "SY" , true ) );
@@ -4046,6 +4082,7 @@ class TherFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             // Mot cle "THER_FO" dans Aster
             _asterName = "THER_FO";
+            _asterNewName = "THER";
 
             // Parametres matériau
             this->addFunctionProperty( "Lambda", ElementaryMaterialPropertyFunction( "LAMBDA" , true ) );
@@ -4140,6 +4177,7 @@ class TherCoqueFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         {
             // Mot cle "THER_COQUE_FO" dans Aster
             _asterName = "THER_COQUE_FO";
+            _asterNewName = "THER_COQUE";
 
             // Parametres matériau
             this->addFunctionProperty( "Cond_lmm", ElementaryMaterialPropertyFunction( "COND_LMM" , true ) );
@@ -4431,6 +4469,7 @@ class ElasMetaFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             // Mot cle "ELAS_META_FO" dans Aster
             _asterName = "ELAS_META_FO";
+            _asterNewName = "ELAS_META";
 
             // Parametres matériau
             this->addFunctionProperty( "E", ElementaryMaterialPropertyFunction( "E" , true ) );
@@ -4533,6 +4572,7 @@ class MetaViscFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             // Mot cle "META_VISC_FO" dans Aster
             _asterName = "META_VISC_FO";
+            _asterNewName = "META_VISC";
 
             // Parametres matériau
             this->addFunctionProperty( "F1_eta", ElementaryMaterialPropertyFunction( "F1_ETA" , false ) );
@@ -5038,6 +5078,7 @@ class WeibullFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         {
             // Mot cle "WEIBULL_FO" dans Aster
             _asterName = "WEIBULL_FO";
+            _asterNewName = "WEIBULL";
 
             // Parametres matériau
             this->addDoubleProperty( "M", ElementaryMaterialPropertyDouble( "M" , true ) );
@@ -5127,6 +5168,7 @@ class RuptFragFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             // Mot cle "RUPT_FRAG_FO" dans Aster
             _asterName = "RUPT_FRAG_FO";
+            _asterNewName = "RUPT_FRAG";
 
             // Parametres matériau
             this->addFunctionProperty( "Gc", ElementaryMaterialPropertyFunction( "GC" , true ) );
@@ -5326,6 +5368,7 @@ class RccmFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             // Mot cle "RCCM_FO" dans Aster
             _asterName = "RCCM_FO";
+            _asterNewName = "RCCM";
 
             // Parametres matériau
             this->addFunctionProperty( "Sy_02", ElementaryMaterialPropertyFunction( "SY_02" , false ) );
@@ -5482,6 +5525,7 @@ class DruckPragerFoMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
         {
             // Mot cle "DRUCK_PRAGER_FO" dans Aster
             _asterName = "DRUCK_PRAGER_FO";
+            _asterNewName = "DRUCK_PRAGER";
 
             // Parametres matériau
             this->addFunctionProperty( "Alpha", ElementaryMaterialPropertyFunction( "ALPHA" , true ) );
@@ -6307,6 +6351,7 @@ class UmatFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             // Mot cle "UMAT_FO" dans Aster
             _asterName = "UMAT_FO";
+            _asterNewName = "UMAT";
 
             // Parametres matériau
             this->addDoubleProperty( "Nb_vale", ElementaryMaterialPropertyDouble( "NB_VALE" , false ) );

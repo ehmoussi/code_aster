@@ -32,7 +32,7 @@ PMPB1=POST_RCCM(TYPE_RESU_MECA='EVOLUTION',
                  )
 
 
-test.assertEqual(PMPB1.getType(), "TABLE")
+test.assertEqual(PMPB1.getType(), "TABLE_SDASTER")
 
 test.printSummary()
 

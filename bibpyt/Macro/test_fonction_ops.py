@@ -413,7 +413,7 @@ def test_fonction_ops(self, TEST_NOOK, **args):
             # - "fonction" sur un intervalle
             # - "formule",
             # - "fonction" ou "nappe"
-            if lafonc.getType() == "FONCTION" and intervalle != None:
+            if lafonc.getType() == "FONCTION_SDASTER" and intervalle != None:
                 # XXX il faut utiliser lafonc.Parametres() !
                 # XXX ne sert à rien, CALC_FONCTION prend les paramètres de la fonction normalement
                 fctProl = lafonc.sdj.PROL.get()
@@ -503,7 +503,7 @@ def test_fonction_ops(self, TEST_NOOK, **args):
                     res = lafonc(*vParamOrdo)
 
             # Cas fonction et nappe
-            elif lafonc.getType() in ("FONCTION", "FONCTION_C", "NAPPE"):
+            elif lafonc.getType() in ("FONCTION_SDASTER", "FONCTION_C", "NAPPE_SDASTER"):
                 typeFct = lafonc.getType()
                 # XXX il faut utiliser lafonc.Parametres() !
                 # Recuperation du .PROL de la fonction
@@ -525,7 +525,7 @@ def test_fonction_ops(self, TEST_NOOK, **args):
 
                 # Calcul de la fonction
                 res = 0
-                if lafonc.getType() in ("FONCTION", "FONCTION_C"):
+                if lafonc.getType() in ("FONCTION_SDASTER", "FONCTION_C"):
                     res = lafonc(valpu[0])
                 else:
                     # Remise dans l'ordre des param

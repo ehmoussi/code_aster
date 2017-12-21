@@ -41,7 +41,11 @@ MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
     _listOfTemperatures( PCFieldOnMeshDoublePtr(
         new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) ),
     _behaviourField( PCFieldOnMeshDoublePtr(
-        new PCFieldOnMeshDoubleInstance( getName() + ".COMPOR ", mesh ) ) )
+        new PCFieldOnMeshDoubleInstance( getName() + ".COMPOR ", mesh ) ) ),
+    _cvrcNom( JeveuxVectorChar8( getName() + ".CVRCNOM" ) ),
+    _cvrcGd( JeveuxVectorChar8( getName() + ".CVRCGD" ) ),
+    _cvrcVarc( JeveuxVectorChar8( getName() + ".CVRCVARC" ) ),
+    _cvrcCmp( JeveuxVectorChar8( getName() + ".CVRCCMP" ) )
 {};
 
 MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
@@ -53,7 +57,11 @@ MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
     _listOfTemperatures( PCFieldOnMeshDoublePtr(
         new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) ),
     _behaviourField( PCFieldOnMeshDoublePtr(
-        new PCFieldOnMeshDoubleInstance( getName() + ".COMPOR ", mesh ) ) )
+        new PCFieldOnMeshDoubleInstance( getName() + ".COMPOR ", mesh ) ) ),
+    _cvrcNom( JeveuxVectorChar8( getName() + ".CVRCNOM" ) ),
+    _cvrcGd( JeveuxVectorChar8( getName() + ".CVRCGD" ) ),
+    _cvrcVarc( JeveuxVectorChar8( getName() + ".CVRCVARC" ) ),
+    _cvrcCmp( JeveuxVectorChar8( getName() + ".CVRCCMP" ) )
 {};
 
 #ifdef _USE_MPI
@@ -66,7 +74,11 @@ MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
     _listOfTemperatures( PCFieldOnMeshDoublePtr(
         new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) ),
     _behaviourField( PCFieldOnMeshDoublePtr(
-        new PCFieldOnMeshDoubleInstance( getName() + ".COMPOR ", mesh ) ) )
+        new PCFieldOnMeshDoubleInstance( getName() + ".COMPOR ", mesh ) ) ),
+    _cvrcNom( JeveuxVectorChar8( getName() + ".CVRCNOM" ) ),
+    _cvrcGd( JeveuxVectorChar8( getName() + ".CVRCGD" ) ),
+    _cvrcVarc( JeveuxVectorChar8( getName() + ".CVRCVARC" ) ),
+    _cvrcCmp( JeveuxVectorChar8( getName() + ".CVRCCMP" ) )
 {};
 #endif /* _USE_MPI */
 
@@ -174,4 +186,20 @@ bool MaterialOnMeshInstance::build_deprecated() throw ( std::runtime_error )
     _listOfMaterials->updateValuePointers();
 
     return true;
+};
+
+bool MaterialOnMeshInstance::existsCalculationInputVariable( const std::string& name )
+{
+    if( _cvrcVarc->exists() )
+    {
+        JeveuxChar8 toTest( name );
+        auto size = _cvrcVarc->size();
+        for( int i = 0; i < size; ++i )
+        {
+            if( (*_cvrcVarc)[i] == toTest )
+                return true;
+        }
+    }
+
+    return false;
 };
