@@ -1,6 +1,6 @@
 /**
- * @file CalculationInputVariables.cxx
- * @brief Implementation de CalculationInputVariablesInstance
+ * @file InputVariableDefinition.cxx
+ * @brief Implementation de InputVariableDefinition
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -23,4 +23,4 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "Materials/CalculationInputVariables.h"
+#include "Materials/InputVariableDefinition.h"
