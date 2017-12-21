@@ -2,8 +2,8 @@
 #define INPUTVARIABLEDEFINITION_H_
 
 /**
- * @file InputVariableDefinition.h
- * @brief Fichier entete de la classe InputVariableDefinition
+ * @file InputVariableDefinitionInstance.h
+ * @brief Fichier entete de la classe InputVariableDefinitionInstance
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -28,6 +28,7 @@
 
 #include "astercxx.h"
 #include "Meshes/Mesh.h"
+#include "DataFields/GenericDataField.h"
 
 struct TemperatureInputVariableTraits
 {
@@ -95,29 +96,28 @@ struct VolumetricDeformationInputVariableTraits
 };
 
 /**
- * @class InputVariableDefinition
+ * @class GenericInputVariableInstance
  * @brief Input Variable Definition
  * @author Nicolas Sellenet
  */
-template< typename ParameterClass >
-class InputVariableDefinition
+class GenericInputVariableInstance
 {
 private:
-    constexpr static const char* _name = ParameterClass::name;
     BaseMeshPtr                  _mesh;
     MeshEntityPtr                _localization;
-    std::string                  _varcName;
     double                       _refValue;
     bool                         _refValueSet;
+    GenericDataFieldPtr          _chamGd;
 
 public:
+    typedef boost::shared_ptr< GenericInputVariableInstance > GenericInputVariablePtr;
+
     /**
      * @brief Constructeur
      */
-    InputVariableDefinition( const BaseMeshPtr mesh, const std::string name ):
+    GenericInputVariableInstance( const BaseMeshPtr& mesh ):
         _mesh( mesh ),
         _localization( new AllMeshEntities() ),
-        _varcName( name ),
         _refValue( 0. ),
         _refValueSet( false )
     {};
@@ -125,11 +125,9 @@ public:
     /**
      * @brief Constructeur
      */
-    InputVariableDefinition( const BaseMeshPtr mesh, const std::string name,
-                             const std::string nameOfGroup ):
+    GenericInputVariableInstance( const BaseMeshPtr& mesh, const std::string& nameOfGroup ):
         _mesh( mesh ),
         _localization( new GroupOfElements( nameOfGroup ) ),
-        _varcName( name ),
         _refValue( 0. ),
         _refValueSet( false )
     {
@@ -140,26 +138,43 @@ public:
     /**
      * @brief Destructeur
      */
-    ~InputVariableDefinition()
+    ~GenericInputVariableInstance()
     {};
 
     /**
      * @brief Function to know if a reference value exists in input variable
      */
-    bool existsReferenceValue()
+    bool existsReferenceValue() const
     {
         return _refValueSet;
     };
 
     /**
+     * @brief Get the name of the variable
+     */
+    virtual std::string getVariableName() const throw( std::runtime_error )
+    {
+        throw std::runtime_error( "Reference value not set" );
+        return std::string( "NOTHING" );
+    };
+
+    /**
      * @brief Get the reference value of input variable
      */
-    double getReferenceValue()
+    double getReferenceValue() const
         throw( std::runtime_error )
     {
         if( !_refValueSet )
             throw std::runtime_error( "Reference value not set" );
         return _refValue;
+    };
+
+    /**
+     * @brief Function to set the field of values of the imput variable
+     */
+    void setInputValuesField( const GenericDataFieldPtr& field )
+    {
+        _chamGd = field;
     };
 
     /**
@@ -172,18 +187,73 @@ public:
     };
 };
 
-typedef InputVariableDefinition< TemperatureInputVariableTraits > TemperatureInputVariableDefinition;
-typedef InputVariableDefinition< GeometryInputVariableTraits > GeometryInputVariableDefinition;
-typedef InputVariableDefinition< CorrosionInputVariableTraits > CorrosionInputVariableDefinition;
-typedef InputVariableDefinition< IrreversibleDeformationInputVariableTraits > IrreversibleDeformationInputVariableDefinition;
-typedef InputVariableDefinition< ConcreteHydratationInputVariableTraits > ConcreteHydratationInputVariableDefinition;
-typedef InputVariableDefinition< IrradiationInputVariableTraits > IrradiationInputVariableDefinition;
-typedef InputVariableDefinition< SteelPhasesInputVariableTraits > SteelPhasesInputVariableDefinition;
-typedef InputVariableDefinition< ZircaloyPhasesInputVariableTraits > ZircaloyPhasesInputVariableDefinition;
-typedef InputVariableDefinition< Neutral1InputVariableTraits > Neutral1InputVariableDefinition;
-typedef InputVariableDefinition< Neutral2InputVariableTraits > Neutral2InputVariableDefinition;
-typedef InputVariableDefinition< ConcreteDryingInputVariableTraits > ConcreteDryingInputVariableDefinition;
-typedef InputVariableDefinition< TotalFluidPressureInputVariableTraits > TotalFluidPressureInputVariableDefinition;
-typedef InputVariableDefinition< VolumetricDeformationInputVariableTraits > VolumetricDeformationInputVariableDefinition;
+/**
+ * @class InputVariableDefinitionInstance
+ * @brief Input Variable Definition
+ * @author Nicolas Sellenet
+ */
+template< typename ParameterClass >
+class InputVariableDefinitionInstance: public GenericInputVariableInstance
+{
+private:
+    constexpr static const char* _varcName = ParameterClass::name;
+
+public:
+    /**
+     * @brief Constructeur
+     */
+    InputVariableDefinitionInstance( const BaseMeshPtr& mesh ):
+        GenericInputVariableInstance( mesh )
+    {};
+
+    /**
+     * @brief Constructeur
+     */
+    InputVariableDefinitionInstance( const BaseMeshPtr& mesh, const std::string& nameOfGroup ):
+        GenericInputVariableInstance( mesh, nameOfGroup )
+    {};
+
+    /**
+     * @brief Destructeur
+     */
+    ~InputVariableDefinitionInstance()
+    {};
+
+    /**
+     * @brief Get the name of the variable
+     */
+    std::string getVariableName() const throw( std::runtime_error )
+    {
+        return std::string( _varcName );
+    };
+};
+
+typedef InputVariableDefinitionInstance< TemperatureInputVariableTraits > TemperatureInputVariableInstance;
+typedef InputVariableDefinitionInstance< GeometryInputVariableTraits > GeometryInputVariableInstance;
+typedef InputVariableDefinitionInstance< CorrosionInputVariableTraits > CorrosionInputVariableInstance;
+typedef InputVariableDefinitionInstance< IrreversibleDeformationInputVariableTraits > IrreversibleDeformationInputVariableInstance;
+typedef InputVariableDefinitionInstance< ConcreteHydratationInputVariableTraits > ConcreteHydratationInputVariableInstance;
+typedef InputVariableDefinitionInstance< IrradiationInputVariableTraits > IrradiationInputVariableInstance;
+typedef InputVariableDefinitionInstance< SteelPhasesInputVariableTraits > SteelPhasesInputVariableInstance;
+typedef InputVariableDefinitionInstance< ZircaloyPhasesInputVariableTraits > ZircaloyPhasesInputVariableInstance;
+typedef InputVariableDefinitionInstance< Neutral1InputVariableTraits > Neutral1InputVariableInstance;
+typedef InputVariableDefinitionInstance< Neutral2InputVariableTraits > Neutral2InputVariableInstance;
+typedef InputVariableDefinitionInstance< ConcreteDryingInputVariableTraits > ConcreteDryingInputVariableInstance;
+typedef InputVariableDefinitionInstance< TotalFluidPressureInputVariableTraits > TotalFluidPressureInputVariableInstance;
+typedef InputVariableDefinitionInstance< VolumetricDeformationInputVariableTraits > VolumetricDeformationInputVariableInstance;
+
+typedef boost::shared_ptr< TemperatureInputVariableInstance > TemperatureInputVariablePtr;
+typedef boost::shared_ptr< GeometryInputVariableInstance > GeometryInputVariablePtr;
+typedef boost::shared_ptr< CorrosionInputVariableInstance > CorrosionInputVariablePtr;
+typedef boost::shared_ptr< IrreversibleDeformationInputVariableInstance > IrreversibleDeformationInputVariablePtr;
+typedef boost::shared_ptr< ConcreteHydratationInputVariableInstance > ConcreteHydratationInputVariablePtr;
+typedef boost::shared_ptr< IrradiationInputVariableInstance > IrradiationInputVariablePtr;
+typedef boost::shared_ptr< SteelPhasesInputVariableInstance > SteelPhasesInputVariablePtr;
+typedef boost::shared_ptr< ZircaloyPhasesInputVariableInstance > ZircaloyPhasesInputVariablePtr;
+typedef boost::shared_ptr< Neutral1InputVariableInstance > Neutral1InputVariablePtr;
+typedef boost::shared_ptr< Neutral2InputVariableInstance > Neutral2InputVariablePtr;
+typedef boost::shared_ptr< ConcreteDryingInputVariableInstance > ConcreteDryingInputVariablePtr;
+typedef boost::shared_ptr< TotalFluidPressureInputVariableInstance > TotalFluidPressureInputVariablePtr;
+typedef boost::shared_ptr< VolumetricDeformationInputVariableInstance > VolumetricDeformationInputVariablePtr;
 
 #endif /* INPUTVARIABLEDEFINITION_H_ */
