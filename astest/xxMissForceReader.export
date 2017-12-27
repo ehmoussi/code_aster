@@ -8,3 +8,4 @@ P testlist asterxx verification sequential
 F comm xxMissForceReader.py D 1
 F mmed sdlx101a.mmed D 20
 F libr xxMissForceReader.28 D 28
+F libr xxMissForceReader.38 D 38

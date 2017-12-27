@@ -183,8 +183,14 @@ fosx0 = LIRE_FORC_MISS(BASE=BASMO,  NUME_DDL_GENE=nddlgen,
                        NOM_CMP='DX',NOM_CHAM='ACCE',
                        UNITE_RESU_FORC=28, FREQ_EXTR=0.,);
 
+impe0 = LIRE_IMPE_MISS(BASE=BASMO,  NUME_DDL_GENE=nddlgen,
+                       UNITE_RESU_IMPE=38, FREQ_EXTR=0.,);
 
 test.assertEqual(fosx0.getType(), "VECT_ASSE_GENE")
+test.assertEqual(impe0.getType(), "MATR_ASSE_GENE_C")
+
 
 
 test.printSummary()
+
+
