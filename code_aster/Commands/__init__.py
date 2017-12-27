@@ -117,6 +117,7 @@ from .impr_jeveux import IMPR_JEVEUX
 from .impr_resu import IMPR_RESU
 from .info_resu import INFO_RESU
 from .impr_macr_elem import IMPR_MACR_ELEM
+from .lire_forc_miss import LIRE_FORC_MISS
 from .lire_maillage import LIRE_MAILLAGE
 from .lire_plexus import LIRE_PLEXUS
 from .mac_modes import MAC_MODES
