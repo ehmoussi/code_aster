@@ -25,7 +25,7 @@ from math import pi, sqrt, log, exp
 EnumTypes = (ListType, TupleType)
 
 
-def post_dyna_alea_ops(self, INTERSPECTRE, FRAGILITE, TITRE, INFO, **args):
+def post_dyna_alea_ops(self, INFO, **args):
     import numpy as NP
     import aster
     from code_aster.Cata.Syntax import _F
@@ -35,11 +35,11 @@ def post_dyna_alea_ops(self, INTERSPECTRE, FRAGILITE, TITRE, INFO, **args):
 
     commande = 'POST_DYNA_ALEA'
 
-    ier = 0
     # La macro compte pour 1 dans la numérotation des commandes
     self.set_icmd(1)
 
     # Le concept sortant (de type table_sdaster ou dérivé) est tab
+    print "Ouille", self.sd, dir(self),self._result_type
     self.DeclareOut('tabout', self.sd)
 
     # On importe les définitions des commandes a utiliser dans la macro
@@ -97,10 +97,10 @@ def post_dyna_alea_ops(self, INTERSPECTRE, FRAGILITE, TITRE, INFO, **args):
 #  ------------------------------------------------------------------
 #  OPTION FRAGILITE
 # ------------------------------------------------------------------
-    if FRAGILITE != None:
+    if args.has_key('FRAGILITE'):
         from Utilitai.optimize import fmin
         from Utilitai.stats import normcdf, linregress
-
+        FRAGILITE = args['FRAGILITE']
         if FRAGILITE['LIST_PARA'] != None:
             liste_a = FRAGILITE['LIST_PARA'].sdj.VALE.get()
         elif FRAGILITE['VALE'] != None:
@@ -169,8 +169,8 @@ def post_dyna_alea_ops(self, INTERSPECTRE, FRAGILITE, TITRE, INFO, **args):
 
         # table sortie
         mcfact = []
-        if TITRE != None:
-            mcfact.append(_F(PARA='TITRE', LISTE_K=TITRE))
+        if args.has_key('TITRE'):
+            mcfact.append(_F(PARA='TITRE', LISTE_K=args['TITRE']))
 
         mcfact.append(_F(PARA='AM', LISTE_R=xopt[0]))
         mcfact.append(_F(PARA='BETA', LISTE_R=xopt[1]))
@@ -240,14 +240,16 @@ def post_dyna_alea_ops(self, INTERSPECTRE, FRAGILITE, TITRE, INFO, **args):
 
         #   fin FRAGILITE
         tabout = CREA_TABLE(
-            LISTE=mcfact, TITRE='POST_DYNA_ALEA concept : ' + self.sd.nom)
+            LISTE=mcfact, TITRE='POST_DYNA_ALEA concept : ' + self._result_name())
 
 #  ------------------------------------------------------------------
 
 #  ------------------------------------------------------------------
 #  OPTION INTESPEC
 # ------------------------------------------------------------------
-    if INTERSPECTRE != None:
+    if args.has_key('INTERSPECTRE'):
+
+        INTERSPECTRE = args['INTERSPECTRE']
 
         INTE_SPEC = INTERSPECTRE['INTE_SPEC']
 
@@ -259,7 +261,7 @@ def post_dyna_alea_ops(self, INTERSPECTRE, FRAGILITE, TITRE, INFO, **args):
         FRACTILE = INTERSPECTRE['FRACTILE']
 
         # table résultat
-        tabres = Table(titr='POST_DYNA_ALEA concept : %s' % self.sd.nom)
+        tabres = Table(titr='POST_DYNA_ALEA concept : %s' % self._result_name())
 
 #     ------------------------------------------------------------------
 #     Liste des moments spectraux
@@ -514,4 +516,4 @@ def post_dyna_alea_ops(self, INTERSPECTRE, FRAGILITE, TITRE, INFO, **args):
 
         tabout = CREA_TABLE(**dprod)
 
-    return ier
+    return tabout
