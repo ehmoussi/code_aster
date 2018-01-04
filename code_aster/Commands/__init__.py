@@ -122,6 +122,7 @@ from .lire_forc_miss import LIRE_FORC_MISS
 from .lire_impe_miss import LIRE_IMPE_MISS
 from .lire_maillage import LIRE_MAILLAGE
 from .lire_plexus import LIRE_PLEXUS
+from .lire_resu import LIRE_RESU
 from .mac_modes import MAC_MODES
 from .macr_elem_dyna import MACR_ELEM_DYNA
 from .macr_elem_stat import MACR_ELEM_STAT
