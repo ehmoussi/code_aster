@@ -150,12 +150,11 @@ public:
     };
 
     /**
-     * @brief Get the name of the variable
+     * @brief Get the field of values of the input variable
      */
-    virtual std::string getVariableName() const throw( std::runtime_error )
+    GenericDataFieldPtr getInputValuesField() const
     {
-        throw std::runtime_error( "Reference value not set" );
-        return std::string( "NOTHING" );
+        return _chamGd;
     };
 
     /**
@@ -170,7 +169,16 @@ public:
     };
 
     /**
-     * @brief Function to set the field of values of the imput variable
+     * @brief Get the name of the variable
+     */
+    virtual std::string getVariableName() const throw( std::runtime_error )
+    {
+        throw std::runtime_error( "Not allowed" );
+        return std::string( "NOTHING" );
+    };
+
+    /**
+     * @brief Function to set the field of values of the input variable
      */
     void setInputValuesField( const GenericDataFieldPtr& field )
     {
@@ -242,6 +250,7 @@ typedef InputVariableDefinitionInstance< ConcreteDryingInputVariableTraits > Con
 typedef InputVariableDefinitionInstance< TotalFluidPressureInputVariableTraits > TotalFluidPressureInputVariableInstance;
 typedef InputVariableDefinitionInstance< VolumetricDeformationInputVariableTraits > VolumetricDeformationInputVariableInstance;
 
+typedef boost::shared_ptr< GenericInputVariableInstance > GenericInputVariablePtr;
 typedef boost::shared_ptr< TemperatureInputVariableInstance > TemperatureInputVariablePtr;
 typedef boost::shared_ptr< GeometryInputVariableInstance > GeometryInputVariablePtr;
 typedef boost::shared_ptr< CorrosionInputVariableInstance > CorrosionInputVariablePtr;

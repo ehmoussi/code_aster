@@ -75,11 +75,6 @@ subroutine vectme(modelz, carelz, mate, compor, complz,&
     call memare('V', vecele, modele(1:8), mate, carele,&
                 'CHAR_MECA')
 !
-!     -- S'IL N'Y A PAS DE TEMPERATURE, IL N'Y A RIEN A FAIRE :
-!     ---------------------------------------------------------
-    call nmvcd2('TEMP', mate, ltemp)
-    if (.not.ltemp) goto 999
-!
 !     -- S'AGIT-IL D'UN MODELE X-FEM
     call exixfe(modele, iret)
     lxfem = iret.ne.0

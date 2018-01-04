@@ -71,7 +71,8 @@ class StaticMechanicalSolverInstance: public GenericSolver
         /**
          * @brief Constructeur
          */
-        StaticMechanicalSolverInstance( const ModelPtr&, const MaterialOnMeshPtr& );
+        StaticMechanicalSolverInstance( const ModelPtr&, const MaterialOnMeshPtr&,
+                                        const ElementaryCharacteristicsPtr& cara = nullptr );
 
         /**
          * @brief Function d'ajout d'un chargement
@@ -87,14 +88,6 @@ class StaticMechanicalSolverInstance: public GenericSolver
          * @brief Lancement de la resolution
          */
         ResultsContainerPtr execute() throw ( std::runtime_error );
-
-        /**
-         * @brief Set elementary characteristics
-         */
-        void setElementaryCharacteristics( const ElementaryCharacteristicsPtr& cara )
-        {
-            _study->setElementaryCharacteristics( cara );
-        };
 
         /**
          * @brief Methode permettant de definir le solveur lineaire

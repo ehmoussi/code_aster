@@ -35,14 +35,15 @@ void exportStaticMechanicalSolverToPython()
     c1.def( "__init__", make_constructor(
             &initFactoryPtr< StaticMechanicalSolverInstance,
                              ModelPtr, MaterialOnMeshPtr > ) );
+    c1.def( "__init__", make_constructor(
+            &initFactoryPtr< StaticMechanicalSolverInstance,
+                             ModelPtr, MaterialOnMeshPtr, ElementaryCharacteristicsPtr > ) );
     addKinematicsLoadToInterface( c1 );
     addMechanicalLoadToInterface( c1 );
 #ifdef _USE_MPI
     addParallelMechanicalLoadToInterface( c1 );
 #endif /* _USE_MPI */
     c1.def( "execute", &StaticMechanicalSolverInstance::execute );
-    c1.def( "setElementaryCharacteristics",
-            &StaticMechanicalSolverInstance::setElementaryCharacteristics );
     c1.def( "setLinearSolver", &StaticMechanicalSolverInstance::setLinearSolver );
     c1.def( "setTimeStepManager", &StaticMechanicalSolverInstance::setTimeStepManager );
 };

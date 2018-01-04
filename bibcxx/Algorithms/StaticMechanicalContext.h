@@ -30,6 +30,7 @@
 #include "LinearAlgebra/LinearSolver.h"
 #include "Results/ResultsContainer.h"
 #include "Loads/ListOfLoads.h"
+#include "Materials/CalculationInputVariables.h"
 
 class StaticMechanicalAlgorithm;
 
@@ -42,21 +43,23 @@ class StaticMechanicalContext
 {
 private:
     /** @brief Problème discret */
-    DiscreteProblemPtr      _discreteProblem;
+    DiscreteProblemPtr           _discreteProblem;
     /** @brief Solveur linéaire */
-    BaseLinearSolverPtr     _linearSolver;
+    BaseLinearSolverPtr          _linearSolver;
     /** @brief Sd de stockage des résultats */
-    ResultsContainerPtr     _results;
+    ResultsContainerPtr          _results;
     /** @brief Chargements */
-    ListOfLoadsPtr          _listOfLoads;
+    ListOfLoadsPtr               _listOfLoads;
     /** @brief Pas de temps courant */
-    double                  _time;
+    double                       _time;
     /** @brief rank */
-    int                     _rank;
+    int                          _rank;
     /** @brief Assembly matrix */
-    AssemblyMatrixDoublePtr _aMatrix;
+    AssemblyMatrixDoublePtr      _aMatrix;
     /** @brief Are elastic properties constant */
-    bool                    _isConst;
+    bool                         _isConst;
+    /** @brief Input variables */
+    CalculationInputVariablesPtr _varCom;
 
 public:
     /**
@@ -75,7 +78,12 @@ public:
         _time( 0. ),
         _rank( 1 ),
         _aMatrix( new AssemblyMatrixDoubleInstance( Temporary ) ),
-        _isConst( _discreteProblem->getStudyDescription()->getCodedMaterial()->constant() )
+        _isConst( _discreteProblem->getStudyDescription()->getCodedMaterial()->constant() ),
+        _varCom( new CalculationInputVariablesInstance
+                    ( _discreteProblem->getStudyDescription()->getSupportModel(),
+                      _discreteProblem->getStudyDescription()->getMaterialOnMesh(),
+                      _discreteProblem->getStudyDescription()->getElementaryCharacteristics(),
+                      _discreteProblem->getStudyDescription()->getCodedMaterial() ) )
     {};
 
     /**

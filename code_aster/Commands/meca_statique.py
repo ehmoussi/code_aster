@@ -67,8 +67,13 @@ class MechanicalSolver(ExecuteCommand):
         """
         model = keywords["MODELE"]
         matOnMesh = keywords["CHAM_MATER"]
+        caraElem = keywords.get("CARA_ELEM")
 
-        mechaSolv = StaticMechanicalSolver(model, matOnMesh)
+        mechaSolv = None
+        if caraElem != None:
+            mechaSolv = StaticMechanicalSolver(model, matOnMesh, caraElem)
+        else:
+            mechaSolv = StaticMechanicalSolver(model, matOnMesh)
 
         inst = keywords.get("INST")
         if inst != None:
@@ -76,10 +81,6 @@ class MechanicalSolver(ExecuteCommand):
         listInst = keywords.get("LIST_INST")
         if listInst != None:
             mechaSolv.setTimeStepManager(listInst.getValues())
-
-        caraElem = keywords.get("CARA_ELEM")
-        if caraElem != None:
-            mechaSolv.setElementaryCharacteristics(caraElem)
 
         fkw = keywords["EXCIT"]
         if isinstance(fkw, dict):

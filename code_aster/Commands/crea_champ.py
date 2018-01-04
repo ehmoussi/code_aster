@@ -37,7 +37,7 @@ class FieldCreator(ExecuteCommand):
         """
         location = keywords["TYPE_CHAM"][:5]
         typ = keywords["TYPE_CHAM"][10:]
-        if typ != "R" or location not in ("CART_", "NOEU_", "ELGA_"):
+        if (typ != "R" and typ != "F") or location not in ("CART_", "NOEU_", "ELGA_"):
             raise NotImplementedError("Type of field {0!r} not yet supported"
                                       .format(keywords["TYPE_CHAM"]))
 

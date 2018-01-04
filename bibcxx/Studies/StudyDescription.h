@@ -37,6 +37,7 @@
 #include "Loads/ListOfLoads.h"
 #include "Discretization/DOFNumbering.h"
 #include "Discretization/ElementaryCharacteristics.h"
+#include "Materials/CalculationInputVariables.h"
 
 /**
  * @class StudyDescriptionInstance
@@ -45,118 +46,116 @@
  */
 class StudyDescriptionInstance
 {
-    private:
-        /** @brief Modèle support */
-        ModelPtr                     _supportModel;
-        /** @brief Materiau affecté */
-        MaterialOnMeshPtr            _materialOnMesh;
-        /** @brief Liste des chargements */
-        ListOfLoadsPtr               _listOfLoads;
-        /** @brief Liste des chargements */
-        ElementaryCharacteristicsPtr _elemChara;
-        /** @brief coded material */
-        CodedMaterialPtr             _codedMater;
+private:
+    /** @brief Modèle support */
+    ModelPtr                     _supportModel;
+    /** @brief Materiau affecté */
+    MaterialOnMeshPtr            _materialOnMesh;
+    /** @brief Liste des chargements */
+    ListOfLoadsPtr               _listOfLoads;
+    /** @brief Liste des chargements */
+    ElementaryCharacteristicsPtr _elemChara;
+    /** @brief coded material */
+    CodedMaterialPtr             _codedMater;
+    /** @brief Input variables */
+    CalculationInputVariablesPtr _varCom;
 
-    public:
-        /**
-         * @brief Constructeur
-         * @param ModelPtr Modèle de l'étude
-         * @param MaterialOnMeshPtr Matériau de l'étude
-         */
-        StudyDescriptionInstance( const ModelPtr& curModel,
-                                  const MaterialOnMeshPtr& curMat ):
-            _supportModel( curModel ),
-            _materialOnMesh( curMat ),
-            _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) ),
-            _elemChara( ElementaryCharacteristicsPtr( nullptr ) ),
-            _codedMater( new CodedMaterialInstance( _materialOnMesh, _supportModel ) )
-        {};
+public:
+    /**
+     * @brief Constructeur
+     * @param ModelPtr Modèle de l'étude
+     * @param MaterialOnMeshPtr Matériau de l'étude
+     */
+    StudyDescriptionInstance( const ModelPtr& curModel,
+                              const MaterialOnMeshPtr& curMat,
+                              const ElementaryCharacteristicsPtr& cara = nullptr ):
+        _supportModel( curModel ),
+        _materialOnMesh( curMat ),
+        _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) ),
+        _elemChara( cara ),
+        _codedMater( new CodedMaterialInstance( _materialOnMesh, _supportModel ) ),
+        _varCom( new CalculationInputVariablesInstance
+                                            ( _supportModel, _materialOnMesh,
+                                              _elemChara, _codedMater ) )
+    {};
 
-        ~StudyDescriptionInstance()
-        {};
+    ~StudyDescriptionInstance()
+    {};
 
-        /**
-         * @brief Add a load (mechanical or kinematic) with function, formula...
-         * @param Args... template list of arguments (load and function or formula)
-         */
-        template< typename... Args >
-        void addLoad( const Args&... a )
-        {
-            _listOfLoads->addLoad( a... );
-        };
+    /**
+     * @brief Add a load (mechanical or kinematic) with function, formula...
+     * @param Args... template list of arguments (load and function or formula)
+     */
+    template< typename... Args >
+    void addLoad( const Args&... a )
+    {
+        _listOfLoads->addLoad( a... );
+    };
 
-        /**
-         * @brief Construction de la liste de chargements
-         * @return true si tout s'est bien passé
-         */
-        bool buildListOfLoads()
-        {
-            return _listOfLoads->build();
-        };
+    /**
+     * @brief Construction de la liste de chargements
+     * @return true si tout s'est bien passé
+     */
+    bool buildListOfLoads()
+    {
+        return _listOfLoads->build();
+    };
 
-        /**
-         * @brief Get elementary characteristics
-         */
-        const ElementaryCharacteristicsPtr& getElementaryCharacteristics() const
-        {
-            return _elemChara;
-        };
+    /**
+     * @brief Get elementary characteristics
+     */
+    const ElementaryCharacteristicsPtr& getElementaryCharacteristics() const
+    {
+        return _elemChara;
+    };
 
-        /**
-         * @brief Get the build coded material
-         */
-        const CodedMaterialPtr& getCodedMaterial() const
-        {
-            return _codedMater;
-        };
+    /**
+     * @brief Get the build coded material
+     */
+    const CodedMaterialPtr& getCodedMaterial() const
+    {
+        return _codedMater;
+    };
 
-        /**
-         * @brief Obtenir la liste des chargements cinematiques
-         */
-        const ListKineLoad& getListOfKinematicsLoads() const
-        {
-            return _listOfLoads->getListOfKinematicsLoads();
-        };
+    /**
+     * @brief Obtenir la liste des chargements cinematiques
+     */
+    const ListKineLoad& getListOfKinematicsLoads() const
+    {
+        return _listOfLoads->getListOfKinematicsLoads();
+    };
 
-        /**
-         * @brief Renvoit la liste de chargements
-         */
-        const ListOfLoadsPtr& getListOfLoads() const
-        {
-            return _listOfLoads;
-        };
+    /**
+     * @brief Renvoit la liste de chargements
+     */
+    const ListOfLoadsPtr& getListOfLoads() const
+    {
+        return _listOfLoads;
+    };
 
-        /**
-         * @brief Obtenir la liste des chargements mecaniques
-         */
-        const ListMecaLoad& getListOfMechanicalLoads() const
-        {
-            return _listOfLoads->getListOfMechanicalLoads();
-        };
+    /**
+     * @brief Obtenir la liste des chargements mecaniques
+     */
+    const ListMecaLoad& getListOfMechanicalLoads() const
+    {
+        return _listOfLoads->getListOfMechanicalLoads();
+    };
 
-        /**
-         * @brief Obtenir le matériau affecté
-         */
-        const MaterialOnMeshPtr& getMaterialOnMesh() const
-        {
-            return _materialOnMesh;
-        };
+    /**
+     * @brief Obtenir le matériau affecté
+     */
+    const MaterialOnMeshPtr& getMaterialOnMesh() const
+    {
+        return _materialOnMesh;
+    };
 
-        /**
-         * @brief Obtenir le modèle de l'étude
-         */
-        const ModelPtr& getSupportModel() const
-        {
-            return _supportModel;
-        };
-
-        /**
-         * @brief Set elementary characteristics
-         */
-        void setElementaryCharacteristics( const ElementaryCharacteristicsPtr& cara )
-        {
-            _elemChara = cara;
-        };
+    /**
+     * @brief Obtenir le modèle de l'étude
+     */
+    const ModelPtr& getSupportModel() const
+    {
+        return _supportModel;
+    };
 };
 
 

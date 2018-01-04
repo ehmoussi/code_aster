@@ -38,6 +38,7 @@
 #include "Meshes/ParallelMesh.h"
 #include "Supervis/ResultNaming.h"
 #include "Materials/BehaviourDefinition.h"
+#include "Materials/InputVariableDefinition.h"
 
 /**
  * @class MaterialOnMeshInstance
@@ -66,6 +67,14 @@ class MaterialOnMeshInstance: public DataStructure
         /** @typedef Definition d'un iterateur sur listOfBehavAndGrps */
         typedef listOfBehavAndGrps::iterator listOfBehavAndGrpsIter;
 
+        /** @typedef std::list d'une std::pair de MeshEntityPtr */
+        typedef std::vector< std::pair< GenericInputVariablePtr,
+                                        MeshEntityPtr > > listOfInputVarAndGrps;
+        /** @typedef Definition de la valeur contenue dans un listOfInputVarAndGrps */
+        typedef listOfInputVarAndGrps::value_type listOfInputVarAndGrpsValue;
+        /** @typedef Definition d'un iterateur sur listOfInputVarAndGrps */
+        typedef listOfInputVarAndGrps::iterator listOfInputVarAndGrpsIter;
+
         /** @brief Maillage sur lequel repose la sd_cham_mater */
         BaseMeshPtr            _supportMesh;
         /** @brief Carte '.CHAMP_MAT' */
@@ -78,6 +87,8 @@ class MaterialOnMeshInstance: public DataStructure
         listOfMatsAndGrps      _materialsOnMeshEntity;
         /** @brief Link to a  */
         listOfBehavAndGrps     _behaviours;
+        /** @brief Link to a  */
+        listOfInputVarAndGrps  _inputVars;
         /** @brief Jeveux vector '.CVRCNOM' */
         JeveuxVectorChar8      _cvrcNom;
         /** @brief Jeveux vector '.CVRCGD' */
@@ -86,7 +97,6 @@ class MaterialOnMeshInstance: public DataStructure
         JeveuxVectorChar8      _cvrcVarc;
         /** @brief Jeveux vector '.CVRCCMP' */
         JeveuxVectorChar8      _cvrcCmp;
-        
 
         /**
          * @brief Return a SyntaxMapContainer to emulate the command keywords
@@ -140,8 +150,14 @@ class MaterialOnMeshInstance: public DataStructure
 #endif /* _USE_MPI */
 
         /**
+         * @brief Destructor
+         */
+        ~MaterialOnMeshInstance()
+        {};
+
+        /**
          * @brief Add a behaviour on all mesh
-         * @param curMater Materiau a ajouter
+         * @param curBehav behaviour to add
          */
         void addBehaviourOnAllMesh( BehaviourDefinitionPtr& curBehav )
         {
@@ -151,8 +167,8 @@ class MaterialOnMeshInstance: public DataStructure
 
         /**
          * @brief Ajout d'un materiau sur une entite du maillage
-         * @param curMater Materiau a ajouter
-         * @param nameOfGroup Nom du groupe de mailles
+         * @param curMater behaviour to add
+         * @param nameOfGroup Name of group
          */
         void addBehaviourOnGroupOfElements( BehaviourDefinitionPtr& curBehav,
                                             std::string nameOfGroup ) throw ( std::runtime_error )
@@ -162,7 +178,33 @@ class MaterialOnMeshInstance: public DataStructure
                 throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
             _behaviours.push_back( listOfBehavAndGrpsValue( curBehav,
-                                              MeshEntityPtr( new GroupOfElements(nameOfGroup) ) ) );
+                                            MeshEntityPtr( new GroupOfElements(nameOfGroup) ) ) );
+        };
+
+        /**
+         * @brief Add an input variable on all mesh
+         */
+        template< class InputVariablePtr >
+        void addInputVariableOnAllMesh( InputVariablePtr& curBehav )
+        {
+            _inputVars.push_back( listOfInputVarAndGrpsValue( curBehav,
+                                                       MeshEntityPtr( new AllMeshEntities() ) ) );
+        };
+
+        /**
+         * @brief Add an input variable on a group of mesh
+         */
+        template< class InputVariablePtr >
+        void addInputVariableOnGroupOfElements( InputVariablePtr& curBehav,
+                                                std::string nameOfGroup )
+                throw ( std::runtime_error )
+        {
+            if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
+            if ( ! _supportMesh->hasGroupOfElements( nameOfGroup ) )
+                throw std::runtime_error( nameOfGroup + "not in support mesh" );
+
+            _inputVars.push_back( listOfInputVarAndGrpsValue( curBehav,
+                                            MeshEntityPtr( new GroupOfElements(nameOfGroup) ) ) );
         };
 
         /**
@@ -188,7 +230,7 @@ class MaterialOnMeshInstance: public DataStructure
                 throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
             _materialsOnMeshEntity.push_back( listOfMatsAndGrpsValue( curMater,
-                                              MeshEntityPtr( new GroupOfElements(nameOfGroup) ) ) );
+                                            MeshEntityPtr( new GroupOfElements(nameOfGroup) ) ) );
         };
 
         /**

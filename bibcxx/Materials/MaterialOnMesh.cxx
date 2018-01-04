@@ -129,14 +129,39 @@ SyntaxMapContainer MaterialOnMeshInstance::getCppCommandKeywords() throw ( std::
         {
             if ( tmp->getType() == GroupOfElementsType )
                 dict2.container["GROUP_MA"] = (curIter.second)->getName();
-            else if ( tmp->getType() == GroupOfNodesType  )
-                dict2.container["GROUP_NO"] = (curIter.second)->getName();
             else
                 throw std::runtime_error("Support entity undefined");
         }
         listeAFFE_COMPOR.push_back( dict2 );
     }
     dict.container["AFFE_COMPOR"] = listeAFFE_COMPOR;
+
+    ListSyntaxMapContainer listeAFFE_VARC;
+    for ( auto& curIter : _inputVars )
+    {
+        SyntaxMapContainer dict2;
+
+        const auto& inputVar = (*curIter.first);
+        dict2.container["NOM_VARC"] = inputVar.getVariableName();
+        dict2.container["CHAM_GD"] = inputVar.getInputValuesField()->getName();
+        if( inputVar.existsReferenceValue() )
+            dict2.container["VALE_REF"] = inputVar.getReferenceValue();
+
+        const MeshEntityPtr& tmp = curIter.second;
+        if ( tmp->getType() == AllMeshEntitiesType )
+        {
+            dict2.container["TOUT"] = "OUI";
+        }
+        else
+        {
+            if ( tmp->getType() == GroupOfElementsType )
+                dict2.container["GROUP_MA"] = (curIter.second)->getName();
+            else
+                throw std::runtime_error("Support entity undefined");
+        }
+        listeAFFE_VARC.push_back( dict2 );
+    }
+    dict.container["AFFE_VARC"] = listeAFFE_VARC;
     return dict;
 };
 
@@ -192,6 +217,7 @@ bool MaterialOnMeshInstance::existsCalculationInputVariable( const std::string& 
 {
     if( _cvrcVarc->exists() )
     {
+        _cvrcVarc->updateValuePointer();
         JeveuxChar8 toTest( name );
         auto size = _cvrcVarc->size();
         for( int i = 0; i < size; ++i )

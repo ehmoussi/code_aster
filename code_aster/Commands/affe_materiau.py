@@ -22,6 +22,12 @@
 from ..Objects import MaterialOnMesh
 from ..Utilities import force_list
 from .ExecuteCommand import ExecuteCommand
+from ..Objects import TemperatureInputVariable, GeometryInputVariable, CorrosionInputVariable
+from ..Objects import IrreversibleDeformationInputVariable, ConcreteHydratationInputVariable
+from ..Objects import IrradiationInputVariable, SteelPhasesInputVariable
+from ..Objects import ZircaloyPhasesInputVariable, Neutral1InputVariable, Neutral2InputVariable
+from ..Objects import ConcreteDryingInputVariable, TotalFluidPressureInputVariable
+from ..Objects import VolumetricDeformationInputVariable
 
 
 class MaterialAssignment(ExecuteCommand):
@@ -43,18 +49,6 @@ class MaterialAssignment(ExecuteCommand):
         else:
             mesh = keywords["MODELE"].getSupportMesh()
         self._result = MaterialOnMesh(mesh)
-
-    def adapt_syntax(self, keywords):
-        """Hook to adapt syntax from a old version or for compatibility reasons.
-
-        Arguments:
-            keywords (dict): Keywords arguments of user's keywords, changed
-                in place.
-        """
-        for key in ("AFFE_VARC"):
-            if keywords.get(key) != None:
-                raise NotImplementedError("'{0}' is not yet implemented"
-                                          .format(key))
 
     def exec_(self, keywords):
         """Execute the command.
@@ -81,12 +75,27 @@ class MaterialAssignment(ExecuteCommand):
             else:
                 raise TypeError("Unexpected type: {0!r} {1}".format(fkw, type(fkw)))
 
+        mesh = None
+        if keywords.has_key("MAILLAGE"):
+            mesh = keywords["MAILLAGE"]
+        else:
+            mesh = keywords["MODELE"].getSupportMesh()
+        fkw = keywords.get("AFFE_VARC")
+        if fkw != None:
+            if isinstance(fkw, dict):
+                self._addInputVariable(fkw, mesh)
+            elif type(fkw) in (list, tuple):
+                for curDict in fkw:
+                    self._addInputVariable(curDict, mesh)
+            else:
+                raise TypeError("Unexpected type: {0!r} {1}".format(fkw, type(fkw)))
+
         self._result.build()
 
     def _addBehaviour(self, fkw):
         kwTout = fkw.get("TOUT")
         kwGrMa = fkw.get("GROUP_MA")
-        mater = fkw[ "COMPOR" ]
+        mater = fkw["COMPOR"]
 
         if kwTout != None:
             self._result.addBehaviourOnAllMesh(mater)
@@ -94,6 +103,59 @@ class MaterialAssignment(ExecuteCommand):
             kwGrMa = force_list(kwGrMa)
             for grp in kwGrMa:
                 self._result.addBehaviourOnGroupOfElements(mater, grp)
+        else:
+            raise TypeError("At least {0} or {1} is required"
+                            .format("TOUT", "GROUP_MA"))
+
+    def _addInputVariable(self, fkw, mesh):
+        if fkw.get("EVOL") != None:
+            raise TypeError("{0} not allowed".format("EVOL",))
+        kwTout = fkw.get("TOUT")
+        kwGrMa = fkw.get("GROUP_MA")
+        nomVarc = fkw["NOM_VARC"]
+        chamGd = fkw["CHAM_GD"]
+        valeRef = fkw.get("VALE_REF")
+
+        obj = None
+        if nomVarc == "TEMP":
+            obj = TemperatureInputVariable
+        elif nomVarc == "GEOM":
+            obj = GeometryInputVariable
+        elif nomVarc == "CORR":
+            obj = CorrosionInputVariable
+        elif nomVarc == "IRRA":
+            obj = IrreversibleDeformationInputVariable
+        elif nomVarc == "HYDR":
+            obj = ConcreteHydratationInputVariable
+        elif nomVarc == "SECH":
+            obj = IrradiationInputVariable
+        elif nomVarc == "EPSA":
+            obj = SteelPhasesInputVariable
+        elif nomVarc == "M_ACIER":
+            obj = ZircaloyPhasesInputVariable
+        elif nomVarc == "M_ZIRC":
+            obj = Neutral1InputVariable
+        elif nomVarc == "NEUT1":
+            obj = Neutral2InputVariable
+        elif nomVarc == "NEUT2":
+            obj = ConcreteDryingInputVariable
+        elif nomVarc == "PTOT":
+            obj = TotalFluidPressureInputVariable
+        elif nomVarc == "DIVU":
+            obj = VolumetricDeformationInputVariable
+        else:
+            raise TypeError("Input Variable not allowed")
+
+        inputVar = obj(mesh)
+        inputVar.setInputValuesField(chamGd)
+        if valeRef != None: inputVar.setReferenceValue(valeRef)
+
+        if kwTout != None:
+            self._result.addInputVariableOnAllMesh(inputVar)
+        elif kwGrMa != None:
+            kwGrMa = force_list(kwGrMa)
+            for grp in kwGrMa:
+                self._result.addInputVariableOnGroupOfElements(inputVar, grp)
         else:
             raise TypeError("At least {0} or {1} is required"
                             .format("TOUT", "GROUP_MA"))
