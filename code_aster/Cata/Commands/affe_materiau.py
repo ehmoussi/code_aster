@@ -27,7 +27,7 @@ AFFE_MATERIAU=OPER(nom="AFFE_MATERIAU",op=6,sd_prod=cham_mater,
                    fr=tr("Affecter des matériaux à des zones géométriques d'un maillage"),
                          reentrant='n',
          regles=(AU_MOINS_UN('MAILLAGE','MODELE',),),
-         MAILLAGE        =SIMP(statut='f',typ=(maillage_sdaster,maillage_p_sdaster)),
+         MAILLAGE        =SIMP(statut='f',typ=(maillage_sdaster,maillage_p)),
          MODELE          =SIMP(statut='f',typ=modele_sdaster),
 
          #  affectation du nom du matériau (par mailles):
