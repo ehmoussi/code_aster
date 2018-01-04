@@ -573,7 +573,7 @@ class CommandSyntax(object):
         """
         if not cls._random:
             cls.iniran()
-        return cls._random.random()
+        return (cls._random.random(), )
 
     def getmat(self):
         raise NotImplementedError("'getmat' is not yet supported.")
