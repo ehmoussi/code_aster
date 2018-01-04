@@ -359,10 +359,10 @@ class macr_elem_stat(ASSD):
 class maillage_sdaster(ASSD):
     pass
 
-class maillage_p_sdaster(maillage_sdaster):
+class maillage_p(maillage_sdaster):
     pass
 
-class maillage_partiel_sdaster(maillage_sdaster):
+class maillage_partiel(maillage_sdaster):
     pass
 
 class grille_sdaster(maillage_sdaster):
