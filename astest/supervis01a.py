@@ -88,8 +88,8 @@ test.assertSequenceEqual(kws, ["IGNORE_ALARM", "IMPR_MACRO", "INFO", "PAR_LOT"])
 test.assertSequenceEqual(types, ["TX", "TX", "IS", "TX"])
 
 rand = syntax.getran()
-test.assertGreaterEqual(rand, 0.)
-test.assertLessEqual(rand, 1.)
+test.assertGreaterEqual(rand[0], 0.)
+test.assertLessEqual(rand[0], 1.)
 
 syntax.free()
 
