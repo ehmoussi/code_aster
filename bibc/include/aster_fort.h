@@ -344,6 +344,13 @@ void DEFSSSPSS(VRCINS_WRAP,vrcins_wrap, const char*, STRING_SIZE, const char*, S
                                         const char*, STRING_SIZE, const ASTERDOUBLE*,
                                         const char*, STRING_SIZE, const char*, STRING_SIZE);
 
+#define CALLO_CACHVC(a, b, c, d, e, f, g, h, i, j, k) CALLOOOOOOOPPPP(CACHVC, cachvc, a, b, c, d, e, f, g, h, i, j, k)
+void DEFSSSSSSSPPPP(CACHVC,cachvc, const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                   const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                   const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                   const char*, STRING_SIZE, ASTERINTEGER *, ASTERINTEGER *,
+                                   ASTERINTEGER *, ASTERINTEGER *);
+
 /* routines d'accès aux OBJETS JEVEUX (vecteurs, collections, champs) */
 #define CALL_GETCON(nomsd,iob,ishf,ilng,ctype,lcon,iaddr,nomob) \
     CALLSPPPPPPS(GETCON,getcon,nomsd,iob,ishf,ilng,ctype,lcon,iaddr,nomob)

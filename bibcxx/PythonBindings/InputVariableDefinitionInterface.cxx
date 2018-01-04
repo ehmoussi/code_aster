@@ -57,7 +57,7 @@ void exportInputVariableDefinitionToPython()
 
     class_< GeometryInputVariableInstance, GeometryInputVariablePtr,
             bases< GenericInputVariableInstance > >
-        ( "GenericInputVariable", no_init )
+        ( "GeometryInputVariable", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< GeometryInputVariableInstance, const BaseMeshPtr& > ) )
         .def( "__init__", make_constructor(

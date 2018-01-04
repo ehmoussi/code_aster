@@ -33,15 +33,15 @@
 #include "Algorithms/GenericAlgorithm.h"
 #include "Algorithms/StaticMechanicalAlgorithm.h"
 #include "Algorithms/StaticMechanicalContext.h"
-#include "Materials/CalculationInputVariables.h"
 
 StaticMechanicalSolverInstance::StaticMechanicalSolverInstance( const ModelPtr& model,
-                                                                const MaterialOnMeshPtr& mater ):
+                                                                const MaterialOnMeshPtr& mater, 
+                                                                const ElementaryCharacteristicsPtr& cara ):
     _supportModel( model ),
     _materialOnMesh( mater ),
     _linearSolver( BaseLinearSolverPtr() ),
     _timeStep( TimeStepperPtr( new TimeStepperInstance() ) ),
-    _study( new StudyDescriptionInstance( _supportModel, _materialOnMesh ) )
+    _study( new StudyDescriptionInstance( _supportModel, _materialOnMesh, cara ) )
 {
     _timeStep->setValues( VectorDouble( 1, 0. ) );
 };
@@ -83,10 +83,6 @@ ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runti
     dofNum1 = dProblem->computeDOFNumbering( dofNum1 );
     FieldOnNodesDoublePtr vecass( new FieldOnNodesDoubleInstance( Temporary ) );
     vecass->allocateFromDOFNumering( dofNum1 );
-
-    CalculationInputVariablesPtr varCom( new CalculationInputVariablesInstance
-                                             ( _supportModel, _materialOnMesh,
-                                               _study->getElementaryCharacteristics() ) );
 
     StaticMechanicalContext currentContext( dProblem, _linearSolver, resultC );
     typedef Algorithm< TimeStepperInstance, StaticMechanicalContext, 

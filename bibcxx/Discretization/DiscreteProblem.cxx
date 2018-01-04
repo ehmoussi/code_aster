@@ -102,7 +102,7 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryNeumannVector( const
         throw std::runtime_error( "Invalid number of parameter" );
 
     ElementaryVectorPtr retour( new ElementaryVectorInstance( Permanent ) );
-    MaterialOnMeshPtr curMater = _study->getMaterialOnMesh();
+    const auto& curMater = _study->getCodedMaterial()->getCodedMaterialField();
 
     ModelPtr curModel = _study->getSupportModel();
     std::string modelName = curModel->getName();

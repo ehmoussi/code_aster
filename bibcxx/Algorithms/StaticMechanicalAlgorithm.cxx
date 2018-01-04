@@ -60,6 +60,7 @@ void StaticMechanicalAlgorithm::oneStep( const CurrentContext& ctx ) throw( Algo
     ElementaryVectorPtr vectElem2 = ctx._discreteProblem->buildElementaryLaplaceVector();
     FieldOnNodesDoublePtr chNoLap = vectElem2->assembleVector( dofNum1, ctx._time, Temporary );
 
+
     // Build Neumann loads
     VectorDouble times;
     times.push_back( ctx._time );
@@ -70,6 +71,13 @@ void StaticMechanicalAlgorithm::oneStep( const CurrentContext& ctx ) throw( Algo
 
     chNoDir->addFieldOnNodes( *chNoLap );
     chNoDir->addFieldOnNodes( *chNoNeu );
+
+    ctx._varCom->compute( ctx._time );
+    if( ctx._varCom->existsMechanicalLoads() )
+    {
+        auto varComLoad = ctx._varCom->computeMechanicalLoads( dofNum1 );
+        chNoDir->addFieldOnNodes( *varComLoad );
+    }
 
     CommandSyntax cmdSt( "MECA_STATIQUE" );
     cmdSt.setResult( ctx._results->getName(), ctx._results->getType() );
@@ -84,7 +92,6 @@ void StaticMechanicalAlgorithm::oneStep( const CurrentContext& ctx ) throw( Algo
     resultField = ctx._linearSolver->solveDoubleLinearSystem( ctx._aMatrix, kineLoadsFON,
                                                               chNoDir, resultField );
 
-    /** @todo rajouter un rsadpa */
     const auto& study = ctx._discreteProblem->getStudyDescription();
     const auto& model = study->getSupportModel();
     const auto& mater = study->getMaterialOnMesh();

@@ -27,12 +27,16 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "astercxx.h"
+#include "aster_fort.h"
 #include "Materials/MaterialOnMesh.h"
+#include "Materials/CodedMaterial.h"
 #include "Modeling/Model.h"
 #include "Discretization/ElementaryCharacteristics.h"
 #include "DataFields/FieldOnElements.h"
+#include "DataFields/FieldOnNodes.h"
 #include "DataFields/PCFieldOnMesh.h"
 #include "DataStructures/DataStructure.h"
+#include "Discretization/DOFNumbering.h"
 
 /**
  * @class CalculationInputVariablesInstance
@@ -44,6 +48,7 @@ class CalculationInputVariablesInstance: public DataStructure
 private:
     ModelPtr                     _model;
     MaterialOnMeshPtr            _mater;
+    CodedMaterialPtr             _codMater;
     ElementaryCharacteristicsPtr _elemCara;
     FieldOnElementsDoublePtr     _varRef;
     FieldOnElementsDoublePtr     _varInst;
@@ -65,27 +70,8 @@ public:
      * @brief Constructeur
      */
     CalculationInputVariablesInstance( const ModelPtr& model, const MaterialOnMeshPtr& mater,
-                                       const ElementaryCharacteristicsPtr& cara ):
-        DataStructure( "VARI_COM", Permanent, 14 ),
-        _model( model ),
-        _mater( mater ),
-        _elemCara( cara ),
-        _varRef( new FieldOnElementsDoubleInstance( _model->getName() + ".CHVCREF" ) ),
-        _varInst( new FieldOnElementsDoubleInstance( getName() + ".TOUT" ) ),
-        _timeValue( new PCFieldOnMeshDoubleInstance( getName() + ".INST",
-                                                     _model->getSupportMesh() ) ),
-        _currentTime( -1.0 ),
-        _pTot( _mater->existsCalculationInputVariable( "PTOT" ) ),
-        _hydr( _mater->existsCalculationInputVariable( "HYDR" ) ),
-        _sech( _mater->existsCalculationInputVariable( "SECH" ) ),
-        _temp( _mater->existsCalculationInputVariable( "TEMP" ) )
-    {
-        std::string modName( _model->getName(), 0, 8 ), matName( _mater->getName(), 0, 8 );
-        std::string carName( ' ', 8 );
-        if ( _elemCara != nullptr )
-            carName = std::string( _elemCara->getName(), 0, 8 );
-        CALLO_VRCREF( modName, matName, carName, _varRef->getName() );
-    };
+                                       const ElementaryCharacteristicsPtr& cara,
+                                       const CodedMaterialPtr& codMater );
 
     /**
      * @brief Destructeur
@@ -98,22 +84,16 @@ public:
     /**
      * @brief Compute Input Variables at a given time
      */
-    void compute( const double& time )
+    void compute( const double& time );
+
+    /**
+     * @brief Compute Loads after computing of input variables
+     */
+    FieldOnNodesDoublePtr computeMechanicalLoads( const BaseDOFNumberingPtr& dofNUM );
+
+    bool existsMechanicalLoads()
     {
-        _currentTime = time;
-        _varInst->deallocate();
-        _timeValue->deallocate();
-
-        std::string modName( _model->getName(), 0, 8 ), matName( _mater->getName(), 0, 8 );
-        std::string carName( _elemCara->getName(), 0, 8 );
-        std::string out( ' ', 2 );
-        CALLO_VRCINS_WRAP( modName, matName, carName, &time, _varInst->getName(), out );
-
-        std::string comp( "INST_R" );
-        _timeValue->allocate( Permanent, comp );
-        PCFieldZone a( _model->getSupportMesh() );
-        PCFieldValues< double > b( {"INST"}, {time} );
-        _timeValue->setValueOnZone( a, b );
+        return _pTot || _hydr || _sech || _temp;
     };
 };
 

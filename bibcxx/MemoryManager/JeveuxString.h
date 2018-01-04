@@ -144,7 +144,9 @@ class JeveuxString
          */
         inline bool operator==( const JeveuxString< lengthT >& chaine )
         {
-            return strncmp( this->c_str(), chaine.c_str(), lengthT );
+            int ret = strncmp( this->c_str(), chaine.c_str(), lengthT );
+            if( ret == 0 ) return true;
+            return false;
         };
 
         /**

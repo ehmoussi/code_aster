@@ -237,12 +237,15 @@ class PCFieldOnMeshInstance: public GenericDataFieldInstance
                 (*_componentNames)[position] = component[position];
                 (*_valuesListTmp)[position] = values[position];
             }
+            std::string feDescName( " " );
+            if( _FEDesc != nullptr )
+                feDescName = _FEDesc->getName();
 
             const std::string limano( " " );
             try
             {
                 CALLO_NOCARTC( getName(), &code, &tVerif1, grp, mode,
-                              &nma, limano, &( *limanu )[0], _FEDesc->getName() );
+                              &nma, limano, &( *limanu )[0], feDescName );
             }
             catch( ... )
             {
