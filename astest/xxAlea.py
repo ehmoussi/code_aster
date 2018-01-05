@@ -176,8 +176,65 @@ GENE_KT=GENE_FONC_ALEA(INTE_SPEC=INTKTJ1,
                        NB_TIRAGE=20,
                        NB_POIN=2048,
                        INFO=2,);
-                         
 
+test.assertEqual(GENE_KT.getType(), "INTERSPECTRE")
+FONCT1=RECU_FONCTION(INTE_SPEC=GENE_KT,
+                     NUME_ORDRE = 1,
+                     INTERPOL='LIN',
+                     PROL_DROITE='CONSTANT',
+                     PROL_GAUCHE='EXCLU',
+                    );
+                           
+test_KT=INFO_FONCTION(ECART_TYPE=_F(FONCTION=FONCT1 ),);    
+    
+TEST_TABLE(CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=1.E-2,
+           VALE_CALC=5.5198815616958,
+           VALE_REFE=5.5220799999999999,
+           NOM_PARA='ECART_TYPE ',
+           TABLE=test_KT,)
+                        
+STADE=POST_DYNA_ALEA(TITRE='POST_DYNA_ALEA concept', 
+                     INTERSPECTRE=_F(
+                          INTE_SPEC=INTKTJ1,
+                          NUME_ORDRE_J = 1,
+                          NUME_ORDRE_I = 1,
+                          DUREE =10.,),
+                      ) 
+test.assertEqual(STADE.getType(), "TABLE_SDASTER")
+
+TEST_TABLE(CRITERE='RELATIF',
+           VALE_CALC=5.5220842862402,
+           NOM_PARA='ECART',
+           TABLE=STADE,
+           FILTRE=(_F(NOM_PARA='NUME_ORDRE_I',
+                      VALE_I=1,),
+                   _F(NOM_PARA='NUME_ORDRE_J',
+                      VALE_I=1,),
+                   ),
+           )
+TEST_TABLE(CRITERE='RELATIF',
+           VALE_CALC=3.3761135643154998,
+           NOM_PARA='FACT_PIC',
+           TABLE=STADE,
+           FILTRE=(_F(NOM_PARA='NUME_ORDRE_I',
+                      VALE_I=1,),
+                   _F(NOM_PARA='NUME_ORDRE_J',
+                      VALE_I=1,),
+                   ),
+           )
+
+TEST_TABLE(CRITERE='RELATIF',
+           VALE_CALC=18.643183662068999,
+           NOM_PARA='MAX_MOY',
+           TABLE=STADE,
+           FILTRE=(_F(NOM_PARA='NUME_ORDRE_I',
+                      VALE_I=1,),
+                   _F(NOM_PARA='NUME_ORDRE_J',
+                      VALE_I=1,),
+                   ),
+           )
 
 test.printSummary()
 

@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-def info_fonction_ops(self, RMS, NOCI_SEISME, MAX, NORME, ECART_TYPE, INFO, **args):
+def info_fonction_ops(self, INFO, **args):
     """
        Ecriture de la macro INFO_FONCTION
     """
@@ -42,7 +42,8 @@ def info_fonction_ops(self, RMS, NOCI_SEISME, MAX, NORME, ECART_TYPE, INFO, **ar
     # type de traitement
 
     #
-    if (MAX != None):
+    if args.has_key('MAX'):
+        MAX = args['MAX']
         # liste des t_fonction
         l_cofonc = MAX['FONCTION']
         if type(l_cofonc) not in (list, tuple):
@@ -146,7 +147,8 @@ def info_fonction_ops(self, RMS, NOCI_SEISME, MAX, NORME, ECART_TYPE, INFO, **ar
         C_out = CREA_TABLE(**dprod)
 
     #
-    if (ECART_TYPE != None):
+    if args.has_key('ECART_TYPE'):
+        ECART_TYPE = args['ECART_TYPE']
         __ff = ECART_TYPE['FONCTION'].convert()
         if ECART_TYPE['INST_INIT'] != None:
             tini = ECART_TYPE['INST_INIT']
@@ -183,8 +185,8 @@ def info_fonction_ops(self, RMS, NOCI_SEISME, MAX, NORME, ECART_TYPE, INFO, **ar
         )
 
     #
-    if (RMS != None):
-        RMS = list(RMS)
+    if args.has_key('RMS'):
+        RMS = list(args['RMS'])
         sigm = []
         tmpi = []
         tmpf = []
@@ -223,7 +225,8 @@ def info_fonction_ops(self, RMS, NOCI_SEISME, MAX, NORME, ECART_TYPE, INFO, **ar
                            )
 
     #
-    if (NORME != None):
+    if args.has_key('NORME'):
+        NORME = args['NORME']
         __ff = NORME['FONCTION'].convert()
         norme = []
         for __fi in __ff.l_fonc:
@@ -234,7 +237,8 @@ def info_fonction_ops(self, RMS, NOCI_SEISME, MAX, NORME, ECART_TYPE, INFO, **ar
                            )
 
     #
-    if (NOCI_SEISME != None):
+    if args.has_key('NOCI_SEISME'):
+        NOCI_SEISME = args['NOCI_SEISME']
         l_table = []
         if NOCI_SEISME['SPEC_OSCI'] != None:
             # cas intensité spectrale d'une nappe de SRO
@@ -411,4 +415,4 @@ def info_fonction_ops(self, RMS, NOCI_SEISME, MAX, NORME, ECART_TYPE, INFO, **ar
     if INFO > 1:
         IMPR_TABLE(UNITE=6,
                    TABLE=C_out)
-    return ier
+    return C_out
