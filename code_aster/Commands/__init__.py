@@ -59,6 +59,7 @@ from .calc_ferraillage import CALC_FERRAILLAGE
 from .calc_fonc_interp import CALC_FONC_INTERP
 from .calc_forc_ajou import CALC_FORC_AJOU
 from .calc_forc_nonl import CALC_FORC_NONL
+from .calc_g import CALC_G
 from .calc_inte_spec import CALC_INTE_SPEC
 from .calc_matr_ajou import CALC_MATR_AJOU
 from .calc_matr_elem import CALC_MATR_ELEM
