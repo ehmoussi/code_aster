@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine permnoe(maillage, deform, nbmod, nbno)
+subroutine permnoe(maillage, deform, nbmod, nbno, nbddl)
     implicit none
 !
 ! Permute a given nodal field (deform) according to the increasing 
@@ -56,10 +56,11 @@ subroutine permnoe(maillage, deform, nbmod, nbno)
     character(len=8), intent(in) :: maillage
     integer, intent(in) :: nbmod
     integer, intent(in) :: nbno
-    real(kind=8) :: deform(nbno, nbmod)
+    integer, intent(in) :: nbddl
+    real(kind=8) :: deform(nbno*nbmod*nbddl)
 !
 !   -0.2- Local variables
-    integer :: i, j, iexi, labs, nbrma, nbseg2, nbpoi1, kseg
+    integer :: i, j, k, iexi, labs, nbrma, nbseg2, nbpoi1, kseg
     integer :: im, itypm, iseg2, iacnex, jgcnx, ino, nbse2
     integer :: numno, nbchm, isens, mi, ing, ind
     character(len=8) :: typm
@@ -159,15 +160,16 @@ subroutine permnoe(maillage, deform, nbmod, nbno)
                 typseg, zr(labs))
 
 !     --- CREATION D UNE LISTE ORDONNEE DE NOEUDS ---
+    isens = 1
     do i = 1, nbseg2
-        isens = 1
         mi = v_ach(i)
         if (mi .lt. 0) then
             mi    = -mi
-            isens = -1
+            isens = -1*isens
         endif
         call i2extf(mi, 1, conseg, typseg, ing,&
                     ind)
+
         if (isens .eq. 1) then
             lnoe(i)   = ing
             lnoe(i+1) = ind
@@ -176,14 +178,17 @@ subroutine permnoe(maillage, deform, nbmod, nbno)
             lnoe(i)   = ind
         endif
     end do
+
 !
     ASSERT(nbno.eq.(nbseg2+1))
-    AS_ALLOCATE(nbno*nbmod, vr = copyv)
-    call dcopy(nbno*nbmod, deform, 1, copyv, 1)
+    AS_ALLOCATE(nbno*nbmod*nbddl, vr = copyv)
+    call dcopy(nbno*nbmod*nbddl, deform, 1, copyv, 1)
 
     do i = 1, nbno
         do j = 1, nbmod
-            deform(i, j) = copyv(lnoe(i)+(j-1)*nbno)
+            do k = 1, nbddl
+                deform((j-1)*nbno*nbddl+(i-1)*nbddl+k) = copyv((j-1)*nbno*nbddl+(lnoe(i)-1)*nbddl+k)
+            end do
         end do
     end do
 
