@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -255,8 +255,8 @@ subroutine flust1(melflu, typflu, base, nuor, amor,&
     endif
     if (calcul(2)) then
         call connor(melflu, typflu, zr(ifreqi), base, nuor,&
-                    amoc, carac, masg, lnoe, nbm,&
-                    zr(lprofv), zr(lrho), zr(labsc))
+                    amoc, carac, lnoe, nbm, zr(lprofv), &
+                    zr(lrho), zr(labsc), mailla)
     endif
 !
 !

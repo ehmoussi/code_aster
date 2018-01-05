@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -203,7 +203,7 @@ subroutine mdconf(typflu, base, noma, nbm, lnoe,&
             n1 = -1
             n2 = -1
             do ik = 1, lnoe
-                if (zr(ipv+lnoe+ik-1) .ne. 0.d0) then
+                if (abs(zr(ipv+lnoe+ik-1)) .gt. tolr) then
                     n1 = ik
                     goto 21
                 endif
@@ -211,7 +211,7 @@ subroutine mdconf(typflu, base, noma, nbm, lnoe,&
  21         continue
 !
             do ik = lnoe, 1, -1
-                if (zr(ipv+lnoe+ik-1) .ne. 0.d0) then
+                if (abs(zr(ipv+lnoe+ik-1)) .gt. tolr) then
                     n2 = ik
                     goto 31
                 endif
@@ -232,6 +232,7 @@ subroutine mdconf(typflu, base, noma, nbm, lnoe,&
                        zr(ipv+lnoe+ik-1) + zr(ipv+lnoe+ik-2) ) * ( zr(ipv+ik-1) - zr(ipv+ik-2)&
                        ) / 2.d0
             end do
+
 !
             vmoy = aire / (x2-x1)
             vmoyto = vmoyto + aire
@@ -244,7 +245,8 @@ subroutine mdconf(typflu, base, noma, nbm, lnoe,&
                 veci1(ik) = ireszo
                 vecr1(ik) = zr(ipv+lnoe+ik-1)
             end do
-!
+
+            !
             call jelibe(pvite)
 !
 ! ---    FIN DE BOUCLE SUR LES ZONES D EXCITATION DU FLUIDE
@@ -252,6 +254,8 @@ subroutine mdconf(typflu, base, noma, nbm, lnoe,&
 !
 ! ---    VITESSE MOYENNE SUR L'ENSEMBLE DU TUBE
         vmoyto = vmoyto / alonto
+
+
         vecr1(1+2*lnoe) = vmoyto
 !
 !
@@ -277,7 +281,7 @@ subroutine mdconf(typflu, base, noma, nbm, lnoe,&
 !
             call extmod_sorted(base, numddl, nuor, nbm, vecr3,&
                         neq, lnoe, [idep], 1)
-            call permnoe(mailla, vecr3, nbm, lnoe)
+            call permnoe(mailla, vecr3, nbm, lnoe, 1)
 !
         endif
 !
