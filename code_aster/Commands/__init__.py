@@ -68,6 +68,7 @@ from .calc_point_mat import CALC_POINT_MAT
 from .calc_vect_elem import CALC_VECT_ELEM
 from .comb_fourier import COMB_FOURIER
 from .comb_matr_asse import COMB_MATR_ASSE
+from .comb_sism_modal import COMB_SISM_MODAL
 from .copier import COPIER
 from .crea_champ import CREA_CHAMP
 from .crea_maillage import CREA_MAILLAGE
