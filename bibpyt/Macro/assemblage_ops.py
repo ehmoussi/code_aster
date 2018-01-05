@@ -235,6 +235,6 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
             # les vecteurs assembles sont des concepts sortants.
             # self.DeclareOut('vv', v['VECTEUR'])
             # assemblage des vecteurs
-            vv = ASSE_VECTEUR(VECT_ELEM=_b, NUME_DDL=numeddl)
+            vv = ASSE_VECTEUR(VECT_ELEM=_b, NUME_DDL=num)
             self.register_result(vv, v['VECTEUR'])
     return

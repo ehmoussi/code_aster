@@ -162,6 +162,7 @@ from .recu_fonction import RECU_FONCTION
 from .recu_table import RECU_TABLE
 from .rest_sous_struc import REST_SOUS_STRUC
 from .rest_spec_phys import REST_SPEC_PHYS
+from .rest_spec_temp import REST_SPEC_TEMP
 from .resoudre import RESOUDRE
 from .test_resu import TEST_RESU
 from .test_table import TEST_TABLE

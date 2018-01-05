@@ -20,6 +20,7 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import FullTransientResultsContainer
+from ..Objects import FullHarmonicResultsContainer
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -37,6 +38,8 @@ class VibrationDynamics(ExecuteCommand):
         typ  = keywords["TYPE_CALCUL"]
         if base == "PHYS" and typ == "TRAN":
             self._result = FullTransientResultsContainer()
+        elif base == "PHYS" and typ == "HARM":
+            self._result = FullHarmonicResultsContainer()
         else:
             raise NotImplementedError("Types of analysis {0!r} and {0!r} not yet "
                                       "implemented".format(typ, base))

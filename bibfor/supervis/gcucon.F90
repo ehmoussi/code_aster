@@ -38,7 +38,7 @@ subroutine gcucon(result_name, type_name, ier)
     result = result_name
 !
     select case (type_name)
-    case ("EVOL_NOLI", "EVOL_THER")
+    case ("EVOL_NOLI", "EVOL_THER", "DYNA_HARMO", "MODE_EMPI")
         call jeexin(result//".DESC", ier)
     case default
         ASSERT(ASTER_FALSE)
