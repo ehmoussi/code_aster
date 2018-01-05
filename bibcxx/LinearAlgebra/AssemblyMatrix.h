@@ -128,12 +128,6 @@ class AssemblyMatrixInstance: public DataStructure
         bool build() throw ( std::runtime_error );
 
         /**
-         * @brief Factorisation de la matrice
-         * @return true
-        */
-        bool factorization() throw ( std::runtime_error );
-
-        /**
          * @brief Get the internal DOFNumbering
          * @return Internal DOFNumbering
          */
@@ -159,15 +153,6 @@ class AssemblyMatrixInstance: public DataStructure
         bool isEmpty() const
         {
             return (!_description->exists());
-        };
-
-        /**
-         * @brief Methode permettant de savoir si la matrice est vide
-         * @return true si vide
-         */
-        bool isFactorized() const
-        {
-            return _isFactorized;
         };
 
         /**
@@ -310,44 +295,5 @@ Mat AssemblyMatrixInstance< ValueType, PhysicalQuantity >::toPetsc4py() throw ( 
 };
 #endif
 #endif
-
-template< class ValueType, PhysicalQuantityEnum PhysicalQuantity >
-bool AssemblyMatrixInstance< ValueType, PhysicalQuantity >::factorization() throw ( std::runtime_error )
-{
-    if ( _isEmpty )
-        throw std::runtime_error( "Assembly matrix is empty" );
-
-    CommandSyntax cmdSt( "FACTORISER" );
-    cmdSt.setResult( getName(), getType() );
-
-    SyntaxMapContainer dict;
-    // !!! Rajouter un if MUMPS !!!
-    dict.container[ "MATR_ASSE" ] = getName();
-    dict.container[ "ELIM_LAGR" ] = "LAGR2";
-    dict.container[ "TYPE_RESOL" ] = "AUTO";
-    dict.container[ "PRETRAITEMENTS" ] = "AUTO";
-    dict.container[ "PCENT_PIVOT" ] = 20;
-    dict.container[ "GESTION_MEMOIRE" ] = "IN_CORE";
-    dict.container[ "REMPLISSAGE" ] = 1.0;
-    dict.container[ "NIVE_REMPLISSAGE" ] = 0;
-    dict.container[ "STOP_SINGULIER" ] = "OUI";
-    dict.container[ "PRE_COND" ] = "LDLT_INC";
-    dict.container[ "NPREC" ] = 8;
-    cmdSt.define( dict );
-
-    try
-    {
-        ASTERINTEGER op = 14;
-        CALL_EXECOP( &op );
-    }
-    catch( ... )
-    {
-        throw;
-    }
-    _isEmpty = false;
-    _isFactorized = true;
-
-    return true;
-};
 
 #endif /* ASSEMBLYMATRIX_H_ */

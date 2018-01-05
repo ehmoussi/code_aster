@@ -396,12 +396,14 @@ class BaseLinearSolverInstance: public DataStructure
         /**
          * @brief Inversion du systeme lineaire
          * @param currentMatrix Matrice assemblee
+         * @param kinematicsField Charge cinématique
          * @param currentRHS Second membre
+         * @param result champ aux noeuds résultat (optionnel)
          * @return champ aux noeuds resultat
          */
-        FieldOnNodesDoublePtr solveDoubleLinearSystemMatrixRHS
-            ( const AssemblyMatrixDoublePtr& currentMatrix,
-              const FieldOnNodesDoublePtr& currentRHS ) const;
+        FieldOnNodesDoublePtr solveDoubleLinearSystem( const AssemblyMatrixDoublePtr& currentMatrix,
+                                                       const FieldOnNodesDoublePtr& currentRHS,
+                                                       FieldOnNodesDoublePtr result = FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( Permanent ) ) ) const;
 
         /**
          * @brief Inversion du systeme lineaire
@@ -411,10 +413,11 @@ class BaseLinearSolverInstance: public DataStructure
          * @param result champ aux noeuds résultat (optionnel)
          * @return champ aux noeuds resultat
          */
-        FieldOnNodesDoublePtr solveDoubleLinearSystem( const AssemblyMatrixDoublePtr& currentMatrix,
-                                                       const FieldOnNodesDoublePtr& kinematicsField,
-                                                       const FieldOnNodesDoublePtr& currentRHS,
-                                                       FieldOnNodesDoublePtr result = FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( Permanent ) ) ) const;
+        FieldOnNodesDoublePtr solveDoubleLinearSystemWithKinematicsLoad
+            ( const AssemblyMatrixDoublePtr& currentMatrix,
+              const FieldOnNodesDoublePtr& kinematicsField,
+              const FieldOnNodesDoublePtr& currentRHS,
+              FieldOnNodesDoublePtr result = FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( Permanent ) ) ) const;
 
         void disablePreprocessing() throw ( std::runtime_error )
         {

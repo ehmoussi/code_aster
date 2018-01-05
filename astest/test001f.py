@@ -121,7 +121,8 @@ else:
 monSolver.matrixFactorization(matrAsse)
 test.assertEqual( matrAsse.getType(), "MATR_ASSE_DEPL_R" )
 
-resu = monSolver.solveDoubleLinearSystem( matrAsse, retour )
+vcine = dProblem.buildKinematicsLoad(numeDDL, 0.)
+resu = monSolver.solveDoubleLinearSystemWithKinematicsLoad( matrAsse, vcine, retour )
 
 y=resu.EXTR_COMP()
 test.assertEqual( len(y.valeurs), 81 )

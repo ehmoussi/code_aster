@@ -27,6 +27,7 @@
 #include <PythonBindings/factory.h>
 #include "PythonBindings/DiscreteProblemInterface.h"
 
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(buildKinematicsLoad_overloads, buildKinematicsLoad, 2, 2)
 
 void exportDiscreteProblemToPython()
 {
@@ -51,6 +52,9 @@ void exportDiscreteProblemToPython()
               &DiscreteProblemInstance::buildElementaryTangentMatrix )
         .def( "buildElementaryJacobianMatrix",
               &DiscreteProblemInstance::buildElementaryJacobianMatrix )
+        .def( "buildKinematicsLoad",
+              &DiscreteProblemInstance::buildKinematicsLoad,
+              buildKinematicsLoad_overloads() )
         .def( "computeDOFNumbering",
               &DiscreteProblemInstance::computeDOFNumbering )
         .def( "computeMechanicalDampingMatrix",

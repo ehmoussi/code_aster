@@ -31,8 +31,11 @@
 #include "Supervis/ResultNaming.h"
 
 KinematicsLoadInstance::KinematicsLoadInstance():
-    DataStructure( ResultNaming::getNewResultName(), 8, "CHAR_CINE" ),
+    DataStructure( ResultNaming::getNewResultName(), 19, "CHAR_CINE" ),
     _supportModel( ModelPtr() ),
+    _intParam( JeveuxVectorLong( getName() + ".AFCI" ) ),
+    _charParam( JeveuxVectorChar8( getName() + ".AFCK" ) ),
+    _doubleParam( JeveuxVectorDouble( getName() + ".AFCV" ) ),
     _isEmpty( true )
 {};
 

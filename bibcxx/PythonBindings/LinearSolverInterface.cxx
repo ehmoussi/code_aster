@@ -27,7 +27,9 @@
 #include <PythonBindings/factory.h>
 #include "PythonBindings/LinearSolverInterface.h"
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(solveDoubleLinearSystem_overloads, solveDoubleLinearSystem, 3, 4)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(solveDoubleLinearSystemWithKinematicsLoad_overloads,
+                                       solveDoubleLinearSystemWithKinematicsLoad, 3, 4)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(solveDoubleLinearSystem_overloads, solveDoubleLinearSystem, 2, 3)
 
 void exportLinearSolverToPython()
 {
@@ -112,10 +114,13 @@ void exportLinearSolverToPython()
 
     class_< BaseLinearSolverInstance, BaseLinearSolverInstance::BaseLinearSolverPtr,
             bases< DataStructure > > ( "BaseLinearSolver", no_init )
+        .def( "build", &BaseLinearSolverInstance::build )
         .def( "solveDoubleLinearSystem",
-              &BaseLinearSolverInstance::solveDoubleLinearSystemMatrixRHS )
+              &BaseLinearSolverInstance::solveDoubleLinearSystem,
+              solveDoubleLinearSystem_overloads() )
         .def( "solveDoubleLinearSystemWithKinematicsLoad",
-              &BaseLinearSolverInstance::solveDoubleLinearSystem, solveDoubleLinearSystem_overloads() )
+              &BaseLinearSolverInstance::solveDoubleLinearSystemWithKinematicsLoad,
+              solveDoubleLinearSystemWithKinematicsLoad_overloads() )
         .def( "disablePreprocessing", &BaseLinearSolverInstance::disablePreprocessing )
         .def( "matrixFactorization", &BaseLinearSolverInstance::matrixFactorization )
         .def( "setAlgorithm", &BaseLinearSolverInstance::setAlgorithm )
