@@ -162,6 +162,7 @@ from .rest_spec_phys import REST_SPEC_PHYS
 from .resoudre import RESOUDRE
 from .test_resu import TEST_RESU
 from .test_table import TEST_TABLE
+from .ther_lineaire import THER_LINEAIRE
 
 from .ExecuteCommand import CO
 
