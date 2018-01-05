@@ -26,6 +26,7 @@ from ..Objects import EvolutiveLoad
 from ..Objects import FullTransientResultsContainer
 from ..Objects import FullHarmonicResultsContainer
 from ..Objects import MechanicalModeContainer
+from ..Objects import ModeEmpiContainer
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -56,8 +57,7 @@ class ResultsReader(ExecuteCommand):
         elif typ == "MODE_MECA":
             self._result = MechanicalModeContainer()
         elif typ == "MODE_EMPI":
-            raise NotImplementedError("Type of result {0!r} not yet "
-                                      "implemented".format(typ))
+            self._result = ModeEmpiContainer()
         elif typ == "MODE_MECA_C":
             raise NotImplementedError("Type of result {0!r} not yet "
                                       "implemented".format(typ))
@@ -67,6 +67,14 @@ class ResultsReader(ExecuteCommand):
         else:
             raise NotImplementedError("Type of result {0!r} not yet "
                                       "implemented".format(typ))
+
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        self._result.setModel(keywords["MODELE"])
 
 
 LIRE_RESU = ResultsReader.run

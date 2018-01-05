@@ -121,6 +121,7 @@
 #include "PythonBindings/FluidStructureModalBasisInterface.h"
 #include "PythonBindings/ListOfFloatsInterface.h"
 #include "PythonBindings/InputVariableDefinitionInterface.h"
+#include "PythonBindings/ModeEmpiContainerInterface.h"
 
 using namespace boost::python;
 
@@ -267,4 +268,5 @@ BOOST_PYTHON_MODULE(libaster)
     exportResultNamingToPython();
     exportListOfFloatsToPython();
     exportInputVariableDefinitionToPython();
+    exportModeEmpiContainerToPython();
 };
