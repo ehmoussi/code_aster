@@ -81,6 +81,7 @@ from .defi_cable_op import DEFI_CABLE_OP
 from .defi_compor import DEFI_COMPOR
 from .defi_composite import DEFI_COMPOSITE
 from .defi_constante import DEFI_CONSTANTE
+from .defi_domaine_reduit import DEFI_DOMAINE_REDUIT
 from .defi_fichier import DEFI_FICHIER
 from .defi_fiss_xfem import DEFI_FISS_XFEM
 from .defi_flui_stru import DEFI_FLUI_STRU
