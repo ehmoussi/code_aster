@@ -56,6 +56,12 @@ ListSyntaxMapContainer BaseLinearSolverInstance::buildListSyntax()
 
 bool BaseLinearSolverInstance::build()
 {
+    if( _charValues->exists() )
+    {
+        _charValues->deallocate();
+        _doubleValues->deallocate();
+        _integerValues->deallocate();
+    }
     std::string newName( getName() );
     newName.resize( 19, ' ' );
 
