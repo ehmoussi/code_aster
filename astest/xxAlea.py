@@ -169,32 +169,6 @@ INTKTJ1=DEFI_INTE_SPEC(    DIMENSION=1,
                                         PROL_DROITE = 'CONSTANT')
                        )
 
-
-GENE_KT=GENE_FONC_ALEA(INTE_SPEC=INTKTJ1,
-                       FREQ_INIT=0.,
-                       FREQ_FIN=50.,
-                       NB_TIRAGE=20,
-                       NB_POIN=2048,
-                       INFO=2,);
-
-test.assertEqual(GENE_KT.getType(), "INTERSPECTRE")
-FONCT1=RECU_FONCTION(INTE_SPEC=GENE_KT,
-                     NUME_ORDRE = 1,
-                     INTERPOL='LIN',
-                     PROL_DROITE='CONSTANT',
-                     PROL_GAUCHE='EXCLU',
-                    );
-                           
-test_KT=INFO_FONCTION(ECART_TYPE=_F(FONCTION=FONCT1 ),);    
-    
-TEST_TABLE(CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
-           PRECISION=1.E-2,
-           VALE_CALC=5.5198815616958,
-           VALE_REFE=5.5220799999999999,
-           NOM_PARA='ECART_TYPE ',
-           TABLE=test_KT,)
-                        
 STADE=POST_DYNA_ALEA(TITRE='POST_DYNA_ALEA concept', 
                      INTERSPECTRE=_F(
                           INTE_SPEC=INTKTJ1,
@@ -235,6 +209,122 @@ TEST_TABLE(CRITERE='RELATIF',
                       VALE_I=1,),
                    ),
            )
+
+GENE_KT=GENE_FONC_ALEA(INTE_SPEC=INTKTJ1,
+                       FREQ_INIT=0.,
+                       FREQ_FIN=50.,
+                       NB_TIRAGE=20,
+                       NB_POIN=2048,
+                       INFO=2,);
+
+test.assertEqual(GENE_KT.getType(), "INTERSPECTRE")
+
+FONCT1=RECU_FONCTION(INTE_SPEC=GENE_KT,
+                     NUME_ORDRE = 1,
+                     INTERPOL='LIN',
+                     PROL_DROITE='CONSTANT',
+                     PROL_GAUCHE='EXCLU',
+                    );
+                           
+test_KT=INFO_FONCTION(ECART_TYPE=_F(FONCTION=FONCT1 ),);    
+    
+TEST_TABLE(CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=1.E-2,
+           VALE_CALC=5.5198815616958,
+           VALE_REFE=5.5220799999999999,
+           NOM_PARA='ECART_TYPE ',
+           TABLE=test_KT,)
+                        
+#*********************************************************************#
+# *****CALCUL D INTERSPECTRE REPONSE: ACCE --> ACCE *****************#
+# *****                               MVT ABSOLU    *****************#
+# *****  INTERRE1= CALCUL COMPLET ***********************************#
+#*********************************************************************#
+
+DYNALEA1=DYNA_ALEA_MODAL(
+          BASE_MODALE=_F(
+             MODE_MECA = FREQ1,
+             BANDE = (0., 35.,),
+             AMOR_UNIF = 0.05),
+        MODE_STAT=MODESTA1,
+           EXCIT=_F(
+             DERIVATION = 2,
+             INTE_SPEC = INTKTJ1,
+             NUME_ORDRE_I = 1,
+             NUME_ORDRE_J = 1,
+             NOEUD = 'PA1',
+             NOM_CMP = 'DY'),
+               REPONSE=_F(
+             DERIVATION = 2,
+             FREQ_MIN = 0.,
+             FREQ_MAX = 30.,
+             PAS = 5.)
+                             )
+
+INTERRE1=REST_SPEC_PHYS(         MODE_MECA=FREQ1,
+                                         BANDE=( 0., 35., ),
+                              INTE_SPEC_GENE=DYNALEA1,
+                                   MODE_STAT=MODESTA1,
+                               EXCIT=_F(   NOEUD = 'PA1',
+                                        NOM_CMP = 'DY'),
+                                   MOUVEMENT='ABSOLU',
+                                    NOM_CHAM='ACCE',
+                                       NOEUD=( 'PB15', 'PB25', 'PB31', ),
+                                     NOM_CMP=('DY', 'DY', 'DY',  ),
+                                      OPTION='TOUT_TOUT'   )
+
+test.assertEqual(INTERRE1.getType(), "INTERSPECTRE")
+
+
+
+REP1=RECU_FONCTION(    INTE_SPEC=INTERRE1,
+                            NOEUD_I = 'PB25',
+                            NOEUD_J = 'PB25',
+                            NOM_CMP_I = 'DY',
+                      )
+
+
+TEST_FONCTION(VALEUR=_F(VALE_CALC=3.691335875781,
+                        VALE_REFE=3.6913,
+                        REFERENCE='AUTRE_ASTER',
+                        VALE_PARA=5.0,
+                        PRECISION=1.E-2,
+                        FONCTION=REP1,),
+              )
+
+TEST_FONCTION(VALEUR=_F(VALE_CALC=75.43911340159,
+                        VALE_REFE=75.438999999999993,
+                        REFERENCE='AUTRE_ASTER',
+                        VALE_PARA=10.0,
+                        PRECISION=1.E-2,
+                        FONCTION=REP1,),
+              )
+
+TEST_FONCTION(VALEUR=_F(VALE_CALC=1.677695255021,
+                        VALE_REFE=1.6776,
+                        REFERENCE='AUTRE_ASTER',
+                        VALE_PARA=15.0,
+                        PRECISION=1.E-2,
+                        FONCTION=REP1,),
+              )
+
+TEST_FONCTION(VALEUR=_F(VALE_CALC=1.136675355994,
+                        VALE_REFE=1.1367,
+                        REFERENCE='AUTRE_ASTER',
+                        VALE_PARA=20.0,
+                        PRECISION=1.E-2,
+                        FONCTION=REP1,),
+              )
+
+TEST_FONCTION(VALEUR=_F(VALE_CALC=0.29269300232027,
+                        VALE_REFE=0.29260000000000003,
+                        REFERENCE='AUTRE_ASTER',
+                        VALE_PARA=25.0,
+                        PRECISION=1.E-2,
+                        FONCTION=REP1,),
+              )
+
 
 test.printSummary()
 

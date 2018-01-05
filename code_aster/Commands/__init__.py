@@ -103,6 +103,7 @@ from .defi_squelette import DEFI_SQUELETTE
 from .defi_spec_turb import DEFI_SPEC_TURB
 from .defi_trc import DEFI_TRC
 from .detruire import DETRUIRE
+from .dyna_alea_modal import DYNA_ALEA_MODAL
 from .dyna_non_line import DYNA_NON_LINE
 from .dyna_vibra import DYNA_VIBRA
 from .elim_lagr import ELIM_LAGR
@@ -157,6 +158,7 @@ from .reca_weibull import RECA_WEIBULL
 from .recu_fonction import RECU_FONCTION
 from .recu_table import RECU_TABLE
 from .rest_sous_struc import REST_SOUS_STRUC
+from .rest_spec_phys import REST_SPEC_PHYS
 from .resoudre import RESOUDRE
 from .test_resu import TEST_RESU
 from .test_table import TEST_TABLE
