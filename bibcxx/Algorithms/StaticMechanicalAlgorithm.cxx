@@ -89,8 +89,8 @@ void StaticMechanicalAlgorithm::oneStep( const CurrentContext& ctx ) throw( Algo
     FieldOnNodesDoublePtr resultField = ctx._results->getEmptyFieldOnNodesDouble( "DEPL",
                                                                                   ctx._rank );
 
-    resultField = ctx._linearSolver->solveDoubleLinearSystem( ctx._aMatrix, kineLoadsFON,
-                                                              chNoDir, resultField );
+    resultField = ctx._linearSolver->solveDoubleLinearSystemWithKinematicsLoad
+        ( ctx._aMatrix, kineLoadsFON, chNoDir, resultField );
 
     const auto& study = ctx._discreteProblem->getStudyDescription();
     const auto& model = study->getSupportModel();

@@ -195,7 +195,8 @@ FieldOnNodesDoublePtr DiscreteProblemInstance::buildKinematicsLoad( const BaseDO
     const auto& loadInformations = _listOfLoad->getInformationVector();
     const auto& listOfFunctions = _listOfLoad->getListOfFunctions();
     if ( _listOfLoad->isEmpty() )
-        throw std::runtime_error( "ListOfLoads is empty" );
+        _listOfLoad->build();
+//         throw std::runtime_error( "ListOfLoads is empty" );
 
     FieldOnNodesDoublePtr retour( new FieldOnNodesDoubleInstance( memType ) );
     std::string resuName = retour->getName();

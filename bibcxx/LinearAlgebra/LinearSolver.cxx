@@ -105,44 +105,27 @@ bool BaseLinearSolverInstance::matrixFactorization( AssemblyMatrixDoublePtr curr
     return true;
 };
 
-FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystemMatrixRHS(
+FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystem(
             const AssemblyMatrixDoublePtr& currentMatrix,
-            const FieldOnNodesDoublePtr& currentRHS ) const
+            const FieldOnNodesDoublePtr& currentRHS,
+            FieldOnNodesDoublePtr result ) const
 {
-    if( ! currentMatrix->_isFactorized )
-        throw std::runtime_error( "Matrix not factorized" );
-    std::string newName( ResultNaming::getNewResultName() );
-    newName.resize( 19, ' ' );
-    FieldOnNodesDoublePtr returnField( new FieldOnNodesDoubleInstance( newName ) );
+    if ( result->getName() == "" )
+        result = FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( Permanent ) );
 
-    // Definition du bout de fichier de commande correspondant a RESOUDRE
-    CommandSyntax cmdSt( "RESOUDRE" );
-    cmdSt.setResult( newName, "CHAM_NO" );
+    std::string blanc( " " );
+    long nsecm = 0, prepos = 1, istop = 0, iret = 0;
+    std::string base( JeveuxMemoryTypesNames[ result->getMemoryType() ] );
 
-    SyntaxMapContainer dict;
-    // Definition du mot cle simple MATR
-    dict.container[ "MATR" ] = currentMatrix->getName();
-    dict.container[ "CHAM_NO" ] = currentRHS->getName();
-    dict.container[ "NMAX_ITER" ] = 0;
-    dict.container[ "ALGORITHME" ] = "GMRES";
-    dict.container[ "RESI_RELA" ] = 1e-6;
-    dict.container[ "POSTTRAITEMENTS" ] = "AUTO";
-    cmdSt.define( dict );
+    CALLO_RESOUD_WRAP( currentMatrix->getName(), blanc, getName(),
+                       blanc, &nsecm, currentRHS->getName(),
+                       result->getName(), base, blanc,
+                       &prepos, &istop, &iret );
 
-    try
-    {
-        ASTERINTEGER op = 15;
-        CALL_EXECOP( &op );
-    }
-    catch( ... )
-    {
-        throw;
-    }
-
-    return returnField;
+    return result;
 };
 
-FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystem(
+FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystemWithKinematicsLoad(
             const AssemblyMatrixDoublePtr& currentMatrix,
             const FieldOnNodesDoublePtr& kinematicsField,
             const FieldOnNodesDoublePtr& currentRHS,

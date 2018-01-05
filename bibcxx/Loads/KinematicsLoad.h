@@ -31,6 +31,7 @@
 #include "Modeling/Model.h"
 #include "Loads/UnitaryLoad.h"
 #include "Functions/Function.h"
+#include "MemoryManager/JeveuxVector.h"
 
 /**
  * @class KinematicsLoadInstance
@@ -55,13 +56,16 @@ class KinematicsLoadInstance: public DataStructure
         typedef ListDoubleTemp::iterator ListDoubleTempIter;
 
         /** @brief Modele support */
-        ModelPtr       _supportModel;
+        ModelPtr           _supportModel;
         /** @brief Listes des valeurs imposees DEPL_R et TEMP_R */
-        ListDoubleDisp _listOfDoubleImposedDisplacement;
-        ListDoubleTemp _listOfDoubleImposedTemperature;
-        ListFunctionTemp _listOfFunctionImposedTemperature;
+        ListDoubleDisp     _listOfDoubleImposedDisplacement;
+        ListDoubleTemp     _listOfDoubleImposedTemperature;
+        ListFunctionTemp   _listOfFunctionImposedTemperature;
+        JeveuxVectorLong   _intParam;
+        JeveuxVectorChar8  _charParam;
+        JeveuxVectorDouble _doubleParam;
         /** @brief La SD est-elle vide ? */
-        bool           _isEmpty;
+        bool               _isEmpty;
 
     public:
         /**
