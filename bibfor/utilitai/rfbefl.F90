@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@ subroutine rfbefl(base)
     implicit none
 #include "jeveux.h"
 #include "asterc/getres.h"
+#include "asterc/r8prem.h"
 #include "asterfort/assert.h"
 #include "asterfort/foattr.h"
 #include "asterfort/foimpr.h"
@@ -53,14 +54,15 @@ subroutine rfbefl(base)
     integer :: i, id, imod, ind, ind1, ind2
     integer :: inumeo, j, lfon, lfreq, lnumo, lpro, lvar
     integer :: lvite, min, n1, n2, n3, n4, n5
-    integer :: nbm, nbno, nbv, npv, nummod
-    integer :: ifsvr, ifsvi, lremf, nbzex, ivcn, nbconn
-    real(kind=8) :: pas
+    integer :: nbm, nbno, nbv, npv, nummod, iven
+    integer :: ifsvr, ifsvi, lremf, nbzex, ivcn, nbconn, dec
+    real(kind=8) :: pas, epsi
 !-----------------------------------------------------------------------
     call jemarq()
 !
     call infmaj()
     call infniv(ifm, niv)
+    epsi = r8prem()
 !
     call getres(nomfon, typcon, nomcmd)
     basefl = base
@@ -88,7 +90,7 @@ subroutine rfbefl(base)
     zk24(lpro+5) = nomfon
 
     if (parax(1:10).eq.'NB_CONNORS') then
-        ASSERT(paray(1:9).eq.'VITE_CRIT')
+        !ASSERT(paray(1:9).eq.'VITE_CRIT')
 
         call jeveuo(basefl//'           .REMF', 'L', lremf)
         typflu = zk8(lremf+0)
@@ -98,16 +100,45 @@ subroutine rfbefl(base)
         nbconn = zi(ifsvi+nbzex+2)
         pas = (zr(ifsvr+4)-zr(ifsvr+3)) /(nbconn-1)
 
-        call jeveuo(basefl//'.VCN', 'L', ivcn)
+!       --- CAS D'UN NOMBRE DE CONNORS UNIQUE (PAS DE DISCRETISATION EN X)
+!       --- FORCER UNE VALEUR MINIMUM DU PAS EN NOMBRE DE CONNORS 
+        if (abs(pas).lt.epsi) then
+            pas = epsi*1.d3
+        end if
 
-!------------- REMPLISSAGE
+!------------- REMPLISSAGE DE L'ABSCISSE
         call wkvect(nomfon//'.VALE', 'G V R', 2*nbconn, lvar)
         lfon = lvar+nbconn
         do i = 1, nbconn
             zr(lvar + i - 1) = zr(ifsvr+3)+(i-1)*pas
-            zr(lfon + i - 1) = zr(ivcn+nbconn*(nummod-1)+i-1)
         end do
-      
+
+        call jeveuo(basefl//'.VCN', 'L', ivcn)
+!------------- REMPLISSAGE DE L'ORDONNEE
+        if (paray(1:7).eq.'INSTAB_') then
+            call jeveuo(basefl//'.VEN', 'L', iven)
+            dec = 0
+!           ---- POUR LA METHODE TOUTES COMPOSANTS, DECALER DE NBMODES DANS .VEN
+            if (paray(1:15).eq.'INSTAB_TOUT_CMP') then 
+                call jelira(basefl//'.VEN', 'LONMAX', dec)
+                dec = dec/2
+            end if
+            do i = 1, nbconn
+                if (abs(zr(ivcn+nbconn*(nummod-1)+i-1)) .gt. epsi) then
+                    zr(lfon + i - 1) = zr(iven+dec+nummod-1)/zr(ivcn+nbconn*(nummod-1)+i-1)
+                else
+                    call utmess('A', 'UTILITAI4_12', nr=1, valr=[zr(ifsvr+3)+(i-1)*pas])
+                    zr(lfon + i - 1) = 0.d0
+                endif
+            end do
+        else if (paray(1:9).eq.'VITE_CRIT') then
+            do i = 1, nbconn
+                write(*,*) "i=", i, "vc=", zr(ivcn+nbconn*(nummod-1)+i-1)
+                zr(lfon + i - 1) = zr(ivcn+nbconn*(nummod-1)+i-1)
+            end do
+        else 
+            ASSERT(.false.)
+        end if
     else 
         ASSERT(parax(1:8).eq.'VITE_FLU')
 
