@@ -16,24 +16,30 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine zedgar(jv_mater, tm, tp, instp, dinst,&
-                  vim, vip)
+subroutine zedgar(jv_mater ,&
+                  tm       , tp,&
+                  time_curr, time_incr,&
+                  vari_prev, vari_curr)
 !
 use Metallurgy_type
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "asterc/r8prem.h"
 #include "asterc/r8t0.h"
 #include "asterfort/assert.h"
-#include "asterfort/rcvalb.h"
 #include "asterfort/utmess.h"
 #include "asterfort/zevolu.h"
 #include "asterfort/metaZircGetParameters.h"
+#include "asterfort/metaZircGetTime.h"
 #include "asterfort/Metallurgy_type.h"
 !
 integer, intent(in) :: jv_mater
-real(kind=8) :: tm, tp, instp, dinst, vim(4), vip(4)
+real(kind=8), intent(in) :: tm, tp
+real(kind=8), intent(in) :: time_curr, time_incr
+real(kind=8), intent(in) :: vari_prev(4)
+real(kind=8), intent(out) :: vari_curr(4)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -44,82 +50,71 @@ real(kind=8) :: tm, tp, instp, dinst, vim(4), vip(4)
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  jv_mater            : coded material address
-! IN   TM     : TEMPERATURE A L INSTANT MOINS
-! IN   TP     : TEMPERATURE A L INSTANT PLUS
-! IN   INSTP  : INSTANT PLUS
-! IN   DINST  : INCREMENT DE L INSTANT = INSTP-INSTM
-! IN   VIM    : VARIABLES INTERNES A L INSTANT MOINS
-! OUT  VIP    : VARIABLES INTERNES A L INSTANT PLUS
-! SIGNIFICATION DES VARIABLES INTERNES
-! VI(1) = PROPORTION DE PHASE FROIDE ALPHA PUR
-! VI(2) = PROPORTION DE PHASE ALPHABETA
-! VI(3) = TEMPERATURE
-! VI(4) = TEMPS CORRESPONDANT A LA TEMPERATURE D EQUILIBRE
-!         SOIT DE DEBUT DE TRANSFORMATION TDEQ
-!         SOIT DE FIN DE TRANSFORMATION TFEQ
-!         CETTE VARIABLE SERT POUR CALCULER LA VITESSE EN TEMPERATURE
-!         (METHODE SECANTE GLISSANTE - CF DOC R40404)
+! In  tm                  : previous temperature
+! In  tp                  : current temperature
+! In  time_curr           : current time
+! In  time_incr           : increment of time
+! In  vari_prev           : previous internal state variable
+! In  vari_curr           : current internal state variable
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: test, iter
+    integer :: iter
     real(kind=8) :: tdeq, tfeq, k, n, t1c, t2c, ac, m, qsr, coeffc
-    real(kind=8) :: t1r, t2r, ar, br, tabs, tk, tc, tr
-    real(kind=8) :: vitesc, vitesr, dtemp
-    real(kind=8) :: zbetap, zbetam, zeq, zinf, zsup, g, dg, zalphm, zalphp
-    real(kind=8) :: zero
+    real(kind=8) :: t1r, t2r, ar, br, tabs
+    real(kind=8) :: zbetap, zbetam, zalphm, zalphp, zalph1p, zalph2p
+    real(kind=8) :: zeq, zinf, zsup
+    real(kind=8) :: g, dg
+    real(kind=8) :: zero, time_tran, time_tran_p
     integer :: kine_type
+    aster_logical :: l_integ
     type(META_ZircParameters) :: metaZircPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
     zero = r8prem()
+    tabs = r8t0() 
 !
 ! - Get material parameters
 !
     call metaZircGetParameters(jv_mater, tp, metaZircPara)
+    tdeq   = metaZircPara%tdeq
+    k      = metaZircPara%k
+    n      = metaZircPara%n
+    t1c    = metaZircPara%t1c
+    t2c    = metaZircPara%t2c
+    ac     = metaZircPara%ac
+    m      = metaZircPara%m
+    qsr    = metaZircPara%qsrk
+    t1r    = metaZircPara%t1r
+    t2r    = metaZircPara%t2r
+    ar     = metaZircPara%ar
+    br     = metaZircPara%br
+    coeffc = ac*exp(-qsr/(tp+tabs))
 !
-    tdeq = metaZircPara%tdeq
-    k    = metaZircPara%k
-    n    = metaZircPara%n
-    t1c  = metaZircPara%t1c
-    t2c  = metaZircPara%t2c
-    ac   = metaZircPara%ac
-    m    = metaZircPara%m
-    qsr  = metaZircPara%qsrk
-    t1r  = metaZircPara%t1r
-    t2r  = metaZircPara%t2r
-    ar   = metaZircPara%ar
-    br   = metaZircPara%br
+! - Get previous phases
 !
-    tabs=r8t0()
-    tk=tp+tabs
-    coeffc=ac*exp(-qsr/tk)
-!
-! 2 - PREPARATION - Z = FRACTION DE PHASE BETA
-! 2.1 - CALCUL DE LA FRACTION DE Z A L INSTANT MOINS
-!
-    zalphm = vim(1)+vim(2)
+    zalphm = vari_prev(1)+vari_prev(2)
     zbetam = 1.d0-zalphm
-
+    if (abs(zbetam) .le. zero) then
+        zbetam = 0.d0
+    endif
+    if (abs(zalphm) .le. zero) then
+        zbetam = 1.d0
+    endif
+    if ((zbetam.le.1.d-05) .and. (tp.le.tdeq)) then
+        zbetam = 0.d0
+    endif
 !
-    if (abs(zbetam) .le. zero) zbetam=0.d0
-    if (abs(zalphm) .le. zero) zbetam=1.d0
-    if ((zbetam.le.1.d-05) .and. (tp.le.tdeq)) zbetam=0.d0
-!
-! 2.2 - CALCUL DE LA TEMPERATURE A L EQUILIBRE DE FIN DE TRANSFOR
-!       CORRESPONDANT A 0.99 DE Z
+! - Compute final temperature of transformation
 !
     tfeq = tdeq+log(1.d0/0.01d0)**(1.d0/n)/k
-!
-! 2.3 - CALCUL DE LA FRACTION DE Z A L EQUILIBRE
-!
     if (tp .le. tdeq) then
-        zeq=0.d0
+        zeq = 0.d0
     else if (tp .gt. tdeq .and. tp .le. tfeq) then
-        zeq=1.d0-exp(-((k*(tp-tdeq))**n))
+        zeq = 1.d0-exp(-((k*(tp-tdeq))**n))
     else
-        zeq=1.d0
+        zeq = 1.d0
     endif
 !
 ! - Type of kinematic
@@ -136,103 +131,33 @@ real(kind=8) :: tm, tp, instp, dinst, vim(4), vip(4)
         kine_type = COOLING
     endif
 !
-! 3 - SI ZM=0 OU ZM=1
-! 3.1 - RECHERCHE DE L INSTANT CORRESPONDANT A TDEQ OU TFEQ
-!       STOCKE DANS VIP(4)
-! 3.2 - PUIS CALCUL DE TC OU TR POUR SAVOIR SI LA TRANSFORMATON DEBUTE
-!       CHAUFFAGE ZM=0 => SI TP > TDEQ : TC=AC(VITESC)**M
-!       AVEC VITESC LA VITESSE AU CHAUFFAGE
-!       ET SI TP <= TC PAS DE TRANSFORMATION => TEST=1
-!       REFROIDISSEMENT ZM=1 => SI TP < TFEQ : TR=AR+BR*LN(VITESR)
-!       AVEC VITESR LA VITESSE AU REFROIDISSEMENT
-!       ET SI TP >= TR PAS DE TRANSFORMATION => TEST=1
+! - Evaluate value of time for temperature of transformation
 !
-! TEST=0 ON INTEGRE LES EQUATIONS D EVOLUTION
-! TEST=1 ZP=1 OU 0
+    time_tran_p = vari_prev(4)
+    call metaZircGetTime(zbetam   ,&
+                         t1c      , t2c  ,&
+                         t1r      , t2r  ,&
+                         tm       , tp   ,&
+                         tdeq     , tfeq ,&
+                         time_curr    , time_incr, time_tran_p,&
+                         time_tran, l_integ)
 !
-    test=0
+! - Compute new value of beta phase
 !
-! 3 - RECHERCHE DE L INSTANT CORRESPONDANT A TDEQ ET TFEQ
-!
-    if (zbetam .eq. 0.d0) then
-        if ((tdeq .ge. tm) .and. (tdeq .le. tp)) then
-            if (tp .eq. tm) then
-                vip(4)=instp
-            else
-                dtemp=tp-tm
-                vip(4)=instp+(dinst/dtemp)*(tdeq-tp)
-            endif
-        else
-            vip(4)=vim(4)
+    if (.not.l_integ) then
+        if (zbetam .eq. 0.d0) then
+            zbetap = 0.d0
         endif
-!
-! 3.1 - CALCUL DE TC
-!
-        if (tp .gt. tdeq) then
-            vitesc=(tp-tdeq)/(instp-vip(4))
-            if (vitesc .lt. 0.d0) then
-                test=1
-            else
-                if (vitesc .lt. 0.1d0) then
-                    tc=tdeq
-                else
-                    tc=t1c*(vitesc**t2c)
-                endif
-                if (tp .le. tc) test=1
-            endif
-        else
-            test = 1
+        if (zbetam .eq. 1.d0) then
+            zbetap = 1.d0
         endif
-    endif
-!
-    if (zbetam .eq. 1.d0) then
-        if ((tfeq .ge. tp) .and. (tfeq .le. tm)) then
-            if (tp .eq. tm) then
-                vip(4)=instp
-            else
-                dtemp=tp-tm
-                vip(4)=instp+(dinst/dtemp)*(tfeq-tp)
-            endif
-        else
-            vip(4)=vim(4)
-        endif
-!
-! 3.2 - CALCUL DE TR
-!
-        if (tp .lt. tfeq) then
-            vitesr=(tp-tfeq)/(instp-vip(4))
-            if (vitesr .gt. 0.d0) then
-                test=1
-            else
-                if (vitesr .eq. 0.d0) then
-                    tr=tfeq
-                else
-                    tr=t1r+t2r*log(abs(vitesr))
-                    if (tr .gt. tfeq) tr=tfeq
-                endif
-                if (tp .ge. tr) test=1
-            endif
-        else
-            test = 1
-        endif
-    endif
-!
-    if ((zbetam.ne.0.d0) .and. (zbetam.ne.1.d0)) vip(4)=vim(4)
-!
-! 4 - DETERMINSATION DE ZP
-!
-    if (test .eq. 1) then
-        if (zbetam .eq. 0.d0) zbetap=0.d0
-        if (zbetam .eq. 1.d0) zbetap=1.d0
     else
-!
-! 4.1 - CAS PARTICULIER
-!
+! ----- Heating and phase beta is near 1 (icnreasing or decreasing ?)
         if (kine_type .eq. HEATING) then
             if (zeq .gt. 0.99d0) then
                 call zevolu(kine_type,&
                             0.99d0   , zbetam,&
-                            dinst    , tp    ,&
+                            time_incr    , tp    ,&
                             k        , n     ,&
                             tdeq     , tfeq  ,&
                             coeffc   ,&
@@ -244,72 +169,85 @@ real(kind=8) :: tm, tp, instp, dinst, vim(4), vip(4)
                 endif
             endif
         endif
-!
-! 4.2 - METODE DE NEWTON AVEC BORNES CONTROLEES
-! 4.2.1 - MINORANT ET MAJORANT
-!
+! ----- Newton method to compute: bounds
         if (kine_type .eq. HEATING) then
-            zinf=zbetam
-            zsup=zeq
+            zinf = zbetam
+            zsup = zeq
         else
-            zinf=zeq
-            zsup=zbetam
+            zinf = zeq
+            zsup = zbetam
         endif
-!
-! 4.2.2 - INITIALISATION
-!
-        zbetap=zbetam
-        if (zbetam .eq. 0.d0) zbetap=zeq/2.d0
-        if (zbetam .eq. 1.d0) zbetap=(zbetam+zeq)/2.d0
-!
+! ----- Newton method to compute: initialization
+        zbetap = zbetam
+        if (zbetam .eq. 0.d0) then
+            zbetap = zeq/2.d0
+        endif
+        if (zbetam .eq. 1.d0) then
+            zbetap = (zbetam+zeq)/2.d0
+        endif
+! ----- Newton method to compute: initial G function (evolution of beta phase)
         call zevolu(kine_type,&
                     zbetap   , zbetam,&
-                    dinst    , tp    ,&
+                    time_incr    , tp    ,&
                     k        , n     ,&
                     tdeq     , tfeq  ,&
                     coeffc   ,&
                     m        , ar    , br,&
                     g        , dg)
-!
-! 4.2.3 - RESOLUTION PAR UNE METHODE DE NEWTON ENTRE LES BORNES
-!
+! ----- Newton method to compute: iterations
         do iter = 1, 15
-            if (abs(g) .le. 1.d-06) exit
-!
+            if (abs(g) .le. 1.d-06) then
+                goto 100
+            endif
             if (dg .eq. 0.d0) then
-                call utmess('F', 'ALGORITH16_96')
+                call utmess('F', 'METALLURGY1_96')
             endif
             zbetap = zbetap - g/dg
-            if (zbetap .le. zinf .or. zbetap .ge. zsup) zbetap=(zinf+zsup)/2.d0
-!
+            if (zbetap .le. zinf .or. zbetap .ge. zsup) then
+                zbetap=(zinf+zsup)/2.d0
+            endif
+! --------- Compute G function (evolution of beta phase)
             call zevolu(kine_type,&
                         zbetap   , zbetam,&
-                        dinst    , tp    ,&
+                        time_incr    , tp    ,&
                         k        , n     ,&
                         tdeq     , tfeq  ,&
                         coeffc   ,&
                         m        , ar    , br,&
                         g        , dg)
-!
-            if (g .ge. 0.d0) zsup = zbetap
-            if (g .le. 0.d0) zinf = zbetap
+! --------- Newton method to compute: update bounds
+            if (g .ge. 0.d0) then
+                zsup = zbetap
+            endif
+            if (g .le. 0.d0) then
+                zinf = zbetap
+            endif
         end do
-        ASSERT(.false.)
-100      continue
+        call utmess('F', 'METALLURGY1_96')
+100     continue
     endif
 !
-    vip(3)=tp
-    zalphp=1.d0-zbetap
+! - Compute alpha phases
 !
-! 6 - CREATION DES DEUX PHASES
-!
+    zalphp  = 1.d0 - zbetap
     if (zbetap .gt. 0.1d0) then
-        vip(1) =0.d0
+        zalph1p = 0.d0
     else
-        vip(1)=10.d0*(zalphp-0.9d0)*zalphp
+        zalph1p = 10.d0*(zalphp-0.9d0)*zalphp
     endif
-    if (vip(1) .le. zero) vip(1) =0.d0
-    vip(2)=zalphp-vip(1)
-    if (vip(2) .le. zero) vip(2) =0.d0
+    if (zalph1p .le. zero) then
+        zalph1p = 0.d0
+    endif
+    zalph2p = zalphp-zalph1p
+    if (zalph2p .le. zero) then
+        zalph2p = 0.d0
+    endif
+!
+! - Update internal variables
+!
+    vari_curr(1) = zalph1p
+    vari_curr(2) = zalph2p
+    vari_curr(3) = tp
+    vari_curr(4) = time_tran
 !
 end subroutine

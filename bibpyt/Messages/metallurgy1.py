@@ -25,4 +25,8 @@ cata_msg = {
 Le paramètre matériau taille limite D10 n'est pas défini.
 """),
 
+    96 : _(u"""
+Échec de l'algorithme de Newton lors du calcul des phases pour le zirconium.
+"""),
+
 }
