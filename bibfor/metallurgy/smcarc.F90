@@ -106,20 +106,16 @@ subroutine smcarc(nbhist, ftrc, trc, coef, fmod,&
                             dz(j) = ftrc(nbhist,j)*(zout(6)-tempe)
 30                      continue
                     else
-!
-! --- RECHERCHE DES PLUS PROCHES VOISINS PARMI TRC
-!
+! --------------------- Find the six nearest TRC curves
                         x(1) = zin(1)
                         x(2) = zin(2)
                         x(3) = zin(3)
                         x(4) = tpoin2
                         x(5) = tempe
-                        call smcavo(x, ind, nbhist, trc)
-!
-! --- CALCUL DES COORDONNEES BARYCENTRIQUES / AUX PLUS PROCHES VOISINS
-!
-                        call smcaba(ftrc, trc, nbhist, x, dz,&
-                                    ind)
+                        call smcavo(x, nbhist, trc, ind)
+! --------------------- Compute barycenter and update increments of phases
+                        call smcaba(x , nbhist, trc, ftrc, ind,&
+                                    dz)
                         if ((zout(6)-tempe) .gt. zero) then
                             do 35 j = 1, 3
                                 dz(j) = zero

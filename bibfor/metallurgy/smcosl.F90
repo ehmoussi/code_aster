@@ -15,46 +15,63 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine smcosl(trc, ind, a, b, x,&
-                  nbhist)
-!......................................................................C
-!    SYSTEME MATRICIEL POUR LE CALCUL DES COORDONNEES BARYCENTRIQUES   C
-!......................................................................C
-    implicit none
-    real(kind=8) :: a(6, 6), b(6), trc((3*nbhist), 5), x(5), zero, un
-    integer :: ind(6), nbhist, j, i
 !
-!-----------------------------------------------------------------------
-!-----------------------------------------------------------------------
-    zero=0.d0
-    un=1.d0
-    do 20 j = 1, 6
-        b(j)=zero
-        do 10 i = 1, 6
-            a(j,i)=zero
-10      continue
-20  end do
+subroutine smcosl(x, nb_hist, trc, ind,&
+                  a, b)
 !
-! CONSTRUCTION MATRICE A
+implicit none
 !
-    do 40 i = 1, 3
-        do 30 j = 1, 6
+real(kind=8), intent(in) :: x(5)
+integer, intent(in) :: nb_hist
+real(kind=8), intent(in) :: trc((3*nb_hist), 5)
+integer, intent(in) :: ind(6)
+real(kind=8), intent(out) :: a(6, 6), b(6)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! METALLURGY -  Compute phase
+!
+! Prepare system to compute barycenter
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  x                   : given set of parameters
+! In  nb_hist             : number of graph in TRC diagram
+! In  trc                 : values of functions for TRC diagram
+! In  ind                 : index of the six nearest TRC curves
+! Out a                   : matrix of system
+! Out b                   : second member of system
+!
+! --------------------------------------------------------------------------------------------------
+!
+    real(kind=8), parameter :: zero = 0.d0, un = 1.d0
+    integer :: j, i
+!
+! --------------------------------------------------------------------------------------------------
+!
+    b(:)   = zero
+    a(:,:) = zero
+!
+! - Matrix
+!
+    do i = 1, 3
+        do j = 1, 6
             a(i,j)=trc(ind(j),i)
-30      continue
-40  end do
-    do 50 j = 1, 6
-        a(4,j)=trc(ind(j),4)/x(4)
-        a(5,j)=trc(ind(j),5)/x(5)
-        a(6,j)=un
-50  end do
+        end do
+    end do
+    do j = 1, 6
+        a(4,j) = trc(ind(j),4)/x(4)
+        a(5,j) = trc(ind(j),5)/x(5)
+        a(6,j) = un
+    end do
 !
-! CONSTRUCTION SECOND MEMBRE
+! - Second member 
 !
-    do 60 i = 1, 3
+    do i = 1, 3
         b(i)= x(i)
-60  end do
-    b(4)=un
-    b(5)=un
-    b(6)=un
+    end do
+    b(4) = un
+    b(5) = un
+    b(6) = un
+!
 end subroutine
