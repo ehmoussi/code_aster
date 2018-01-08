@@ -17,14 +17,20 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine zedgar(jv_mater ,&
-                      tm       , tp,&
-                      time_curr, time_incr,&
-                      vari_prev, vari_curr)
-        integer, intent(in) :: jv_mater
-        real(kind=8), intent(in) :: tm, tp
-        real(kind=8), intent(in) :: time_curr, time_incr
-        real(kind=8), intent(in) :: vari_prev(4)
-        real(kind=8), intent(out) :: vari_curr(4)
-    end subroutine zedgar
+    subroutine metaZircGetTime(zbetam   ,&
+                               t1c      , t2c  ,&
+                               t1r      , t2r  ,&
+                               tm       , tp   ,&
+                               tdeq     , tfeq ,&
+                               time_curr, time_incr, time_tran_p,&
+                               time_tran, l_integ)
+        use Metallurgy_type
+        real(kind=8), intent(in) :: zbetam
+        real(kind=8), intent(in) :: t1c, t2c
+        real(kind=8), intent(in) :: t1r, t2r
+        real(kind=8), intent(in) :: tm, tp, tdeq, tfeq
+        real(kind=8), intent(in) :: time_curr, time_incr, time_tran_p
+        real(kind=8), intent(out) :: time_tran
+        aster_logical, intent(out) :: l_integ
+    end subroutine metaZircGetTime
 end interface
