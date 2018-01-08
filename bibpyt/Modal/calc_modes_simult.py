@@ -56,6 +56,14 @@ class ModalCalculationSimult(ExecuteCommand):
         if vale_rigi.getType() == "MATR_ASSE_GENE_C":
             self._result = GeneralizedModeContainer()
 
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        self._result.update()
+
 
 MODE_ITER_SIMULT = ModalCalculationSimult.run
 

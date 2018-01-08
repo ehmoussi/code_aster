@@ -44,5 +44,9 @@ void exportResultsContainerToPython()
         .def( "update", &ResultsContainerInstance::update )
         .def( "setModel", &ResultsContainerInstance::setModel )
         .def( "getModel", &ResultsContainerInstance::getModel )
+        .def( "getElementaryCharacteristics", &ResultsContainerInstance::getElementaryCharacteristics )
+        .def( "getMaterialOnMesh", &ResultsContainerInstance::getMaterialOnMesh )
+        .def( "getNumberOfRanks", &ResultsContainerInstance::getNumberOfRanks )
+        .def( "getRanks", &ResultsContainerInstance::getRanks )
     ;
 };
