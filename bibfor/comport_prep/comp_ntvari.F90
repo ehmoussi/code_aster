@@ -21,7 +21,7 @@
 subroutine comp_ntvari(model_ , compor_cart_, compor_list_, compor_info,&
                        nt_vari, nb_vari_maxi, nb_zone     , v_exte)
 !
-use NonLin_Datastructure_type
+use Behaviour_type
 !
 implicit none
 !
@@ -44,7 +44,7 @@ character(len=19), intent(in) :: compor_info
 integer, intent(out) :: nt_vari
 integer, intent(out) :: nb_vari_maxi
 integer, intent(out) :: nb_zone
-type(NL_DS_ComporExte), pointer, intent(out) :: v_exte(:)
+type(Behaviour_External), pointer, intent(out) :: v_exte(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
