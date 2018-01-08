@@ -44,5 +44,17 @@ class FieldProjector(ExecuteCommand):
         else:
             self._result = MatchingMeshes()
 
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        if keywords.has_key("RESULTAT"):
+            if keywords.has_key("MODELE_2"):
+                self._result.setModel(keywords["MODELE_2"])
+            self._result.update()
+
+
 
 PROJ_CHAMP = FieldProjector.run

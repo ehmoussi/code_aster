@@ -56,5 +56,6 @@ void exportMeshToPython()
         .def( "readGibiFile", &MeshInstance::readGibiFile )
         .def( "readGmshFile", &MeshInstance::readGmshFile )
         .def( "readMedFile", &MeshInstance::readMedFile )
+        .def( "getDimension", &MeshInstance::getDimension )
     ;
 };

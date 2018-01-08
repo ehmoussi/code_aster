@@ -67,6 +67,24 @@ ListOfLoadsPtr ResultsContainerInstance::getListOfLoads( int rank )
     return (*curIter).second;
 };
 
+ElementaryCharacteristicsPtr ResultsContainerInstance::getElementaryCharacteristics( int rank )
+    throw ( std::runtime_error )
+{
+    auto curIter = _mapElemCara.find( rank );
+    if( curIter == _mapElemCara.end() )
+        throw std::runtime_error( "Rank not find" );
+    return (*curIter).second;
+};
+
+MaterialOnMeshPtr ResultsContainerInstance::getMaterialOnMesh( int rank )
+    throw ( std::runtime_error )
+{
+    auto curIter = _mapMaterial.find( rank );
+    if( curIter == _mapMaterial.end() )
+        throw std::runtime_error( "Rank not find" );
+    return (*curIter).second;
+};
+
 void ResultsContainerInstance::addMaterialOnMesh( const MaterialOnMeshPtr& mater,
                                                   int rank ) throw ( std::runtime_error )
 {

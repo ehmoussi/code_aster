@@ -22,7 +22,8 @@
 from ..Objects import (EvolutiveLoad, EvolutiveThermalLoad,
                        NonLinearEvolutionContainer,
                        LinearDisplacementEvolutionContainer,
-                       FourierElasContainer, MultElasContainer)
+                       FourierElasContainer, MultElasContainer,
+                       MechanicalModeContainer)
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -49,6 +50,8 @@ class ResultCreator(ExecuteCommand):
             self._result = FourierElasContainer()
         elif typ == "MULT_ELAS":
             self._result = MultElasContainer()
+        elif typ == "MODE_MECA":
+            self._result = MechanicalModeContainer()
         else:
             raise NotImplementedError("Type of result {0!r} not yet "
                                       "implemented".format(typ))

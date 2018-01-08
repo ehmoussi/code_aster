@@ -225,6 +225,18 @@ public:
     ListOfLoadsPtr getListOfLoads( int rank ) throw ( std::runtime_error );
 
     /**
+     * @brief Get elementary characteristics
+     * @param rank
+     */
+    ElementaryCharacteristicsPtr getElementaryCharacteristics( int rank ) throw ( std::runtime_error );
+
+    /**
+     * @brief Get material
+     * @param rank
+     */
+    MaterialOnMeshPtr getMaterialOnMesh( int rank ) throw ( std::runtime_error );
+
+    /**
      * @brief Obtenir un champ aux noeuds réel à partir de son nom et de son numéro d'ordre
      * @param name nom Aster du champ
      * @param rank numéro d'ordre
@@ -258,6 +270,19 @@ public:
     const int getNumberOfRanks() const
     {
         return _nbRanks;
+    };
+
+    /**
+    * @brief Get the number of steps stored in the ResultContainer
+    * @return nbRanks
+    */
+    std::vector<long> getRanks() const
+    {
+        std::vector<long> v;
+        for(int j=0; j<_serialNumber->size(); ++j){
+            v.push_back((*_serialNumber)[j]);
+        }
+        return v;
     };
 
     /**

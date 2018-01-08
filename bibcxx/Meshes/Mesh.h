@@ -175,6 +175,18 @@ public:
     };
 
     /**
+     * @brief Recuperation de la dimension du maillage
+     */
+    int getDimension() const
+    {
+        if( isEmpty() )
+            return 0;
+        if( ! _dimensionInformations->updateValuePointer() )
+            return 0;
+        return (*_dimensionInformations)[5];
+    };
+
+    /**
      * @brief Teste l'existence d'un groupe de mailles dans le maillage
      * @return true si le groupe existe
      */

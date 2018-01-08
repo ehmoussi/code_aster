@@ -61,77 +61,72 @@ def observation_ops(self,
     # ne sert pas par la suite
     mcfact = args
 
-    if not isinstance(NOM_CHAM, tuple):
+    if not isinstance(NOM_CHAM, tuple) and not isinstance(NOM_CHAM, list):
         NOM_CHAM = [NOM_CHAM]
 
     TYPE_CHAM = None
     RESU = None
 
-    if isinstance(RESULTAT, evol_elas):
-        TYPE_RESU = 'EVOL_ELAS'
-    if isinstance(RESULTAT, dyna_trans):
-        TYPE_RESU = 'DYNA_TRANS'
-    if isinstance(RESULTAT, dyna_harmo):
-        TYPE_RESU = 'DYNA_HARMO'
-    if isinstance(RESULTAT, mode_meca):
-        TYPE_RESU = 'MODE_MECA'
-
+    TYPE_RESU = RESULTAT.getType()
+    
     self.DeclareOut('RESU', self.sd)
 
+    
     # recuperation du maillage associe au modele numerique
-    _maillag = aster.getvectjev(MODELE_1.nom.ljust(8) + '.MODELE    .LGRF')
-    maillage = _maillag[0].strip()
-    mayanum = self.get_concept(maillage)
+    mayanum = MODELE_1.getSupportMesh()
 
     # modele numerique 2D ou 3D
-    typmod = mayanum.sdj.DIME.get()
-    typmod = typmod[5]
-
+    typmod = mayanum.getDimension()
+    
     # recuperation du maillage associe au modele experimental
-    _maillag = aster.getvectjev(MODELE_2.nom.ljust(8) + '.MODELE    .LGRF')
-    maillage = _maillag[0].strip()
-    mayaexp = self.get_concept(maillage)
+    mayaexp = MODELE_2.getSupportMesh()
 
     # cham_mater et cara_elem pour le resultat a projeter
-    iret, ibid, nom_cara_elem = aster.dismoi(
-        'CARA_ELEM', RESULTAT.nom, 'RESULTAT', 'F')
-    if len(nom_cara_elem) > 0:
-        assert nom_cara_elem.strip() != "#PLUSIEURS", nom_cara_elem
-        if nom_cara_elem.strip() == "#AUCUN":
-            cara_elem = None
+    if RESULTAT.getNumberOfRanks() > 0:
+        cara_elems = []
+        for j in RESULTAT.getRanks():
+            try:
+                cara_elems += [RESULTAT.getElementaryCharacteristics(j)]
+            except RuntimeError:
+                pass
+        assert len(cara_elems) <= 1
+        if(len(cara_elems)):
+            cara_elem = cara_elems[0]
         else:
-            cara_elem = self.get_concept(nom_cara_elem.strip())
+            cara_elem = None
     else:
         cara_elem = None
 
-    iret, ibid, nom_cham_mater = aster.dismoi(
-        'CHAM_MATER', RESULTAT.nom, 'RESULTAT', 'F')
-    if len(nom_cham_mater) > 0:
-        assert nom_cham_mater.strip() != "#PLUSIEURS", nom_cham_mater
-        if nom_cham_mater.strip() == "#AUCUN":
-            cham_mater = None
+    if RESULTAT.getNumberOfRanks() > 0:
+        cham_maters = []
+        for j in RESULTAT.getRanks():
+            try:
+                cham_maters += [RESULTAT.getMaterialOnMesh(j)]
+            except RuntimeError:
+                pass
+        assert len(cham_maters) <= 1
+        if(len(cham_maters)):
+            cham_mater = cham_maters[0]
         else:
-            cham_mater = self.get_concept(nom_cham_mater.strip())
+            cham_mater = None
     else:
         cham_mater = None
 
     # afreq pour les frequences propres
-    if isinstance(RESULTAT, mode_meca):
+    # if isinstance(RESULTAT, mode_meca):
+    if TYPE_RESU == "MODE_MECA":
         # frequences propres
-        from code_aster.Cata.Commands import RECU_TABLE
+        from code_aster.Commands import RECU_TABLE
         __freq = RECU_TABLE(CO=RESULTAT,
                             NOM_PARA='FREQ',)
         afreq = __freq.EXTR_TABLE().Array('NUME_ORDRE', 'FREQ')
         # noms des matrices
         if MATR_RIGI != None or MATR_MASS != None:
             # recherche du nume_ddl associe
-            iret, ibid, nom_nume_ddl = aster.dismoi(
-                'NOM_NUME_DDL', MATR_RIGI.nom, 'MATR_ASSE', 'F')
-            NUME_DDL = self.get_concept(nom_nume_ddl)
+            NUME_DDL = MATR_RIGI.getDOFNumbering()
             # coherence avec le nom associe a MODELE_2 :
-            iret, ibid, nom_modele = aster.dismoi(
-                'NOM_MODELE', nom_nume_ddl, 'NUME_DDL', 'F')
-            if nom_modele.strip() != MODELE_2.nom.strip():
+            modele_matr_rigi = NUME_DDL.getSupportModel()
+            if modele_matr_rigi.getName() != modele_matr_rigi.getName():
                 UTMESS('F', 'CALCESSAI0_10')
         else:
             UTMESS('A', 'CALCESSAI0_9')
@@ -141,8 +136,8 @@ def observation_ops(self,
         afreq = None
         NUME_DDL = None
 
-    indice = range(len(RESULTAT.LIST_VARI_ACCES()['NUME_ORDRE']))
-
+    indice = range(RESULTAT.getNumberOfRanks())
+    
 #***********************************************
 #  PHASE DE CALCUL DE LA DEFORMATION MOYENNE AUX NOEUDS
 #  CHAMP CALCULE SUR LE MODELE NUMERIQUE
@@ -152,7 +147,7 @@ def observation_ops(self,
     if EPSI_MOYENNE != None:
         for nomcham in NOM_CHAM:
             if nomcham == 'EPSI_NOEU':
-                if isinstance(RESULTAT, dyna_harmo):
+                if RESULTAT.getType() == "DYNA_HARMO":
                     TYPE_CHAM = 'NOEU_EPSI_C'
                 else:
                     TYPE_CHAM = 'NOEU_EPSI_R'
@@ -160,13 +155,13 @@ def observation_ops(self,
         if TYPE_CHAM == None:
             UTMESS('F', 'UTILITAI8_24', valk=['NOEU_EPSI', nomcham])
         else:
-            num_ordr = RESULTAT.LIST_VARI_ACCES()['NUME_ORDRE']
+            num_ordr = RESULTAT.getRanks()
 
-            if isinstance(RESULTAT, evol_elas):
+            if RESULTAT.getType() == "EVOL_ELAS":
                 list_inst = RESULTAT.LIST_VARI_ACCES()['INST']
-            if isinstance(RESULTAT, dyna_trans):
+            if RESULTAT.getType() == "DYNA_TRANS":
                 list_inst = RESULTAT.LIST_VARI_ACCES()['INST']
-            if isinstance(RESULTAT, dyna_harmo):
+            if RESULTAT.getType() == "DYNA_HARMO":
                 list_freq = RESULTAT.LIST_VARI_ACCES()['FREQ']
 
             liste = []
@@ -365,26 +360,26 @@ def observation_ops(self,
                                           **argsa
                                           )
 
-                if isinstance(RESULTAT, mode_meca):
+                if RESULTAT.getType() == "MODE_MECA":
                     mcfact2 = {'CHAM_GD': __chame[ind],
                                'MODELE': MODELE_1,
                                'NUME_MODE': int(afreq[ind, 0]),
                                'FREQ': afreq[ind, 1],
                                }
 
-                if isinstance(RESULTAT, evol_elas):
+                if RESULTAT.getType() == "EVOL_ELAS":
                     mcfact2 = {'CHAM_GD': __chame[ind],
                                'MODELE': MODELE_1,
                                'INST': list_inst[ind],
                                }
 
-                if isinstance(RESULTAT, dyna_trans):
+                if RESULTAT.getType() == "DYNA_TRANS":
                     mcfact2 = {'CHAM_GD': __chame[ind],
                                'MODELE': MODELE_1,
                                'INST': list_inst[ind],
                                }
 
-                if isinstance(RESULTAT, dyna_harmo):
+                if RESULTAT.getType() == "DYNA_HARMO":
                     mcfact2 = {'CHAM_GD': __chame[ind],
                                'MODELE': MODELE_1,
                                'FREQ': list_freq[ind],
@@ -411,12 +406,12 @@ def observation_ops(self,
     for nomcham in NOM_CHAM:
 
         if nomcham == 'DEPL' or nomcham == 'VITE' or nomcham == 'ACCE':
-            if isinstance(RESULTAT, dyna_harmo):
+            if RESULTAT.getType() == "DYNA_HARMO":
                 TYPE_CHAM = 'NOEU_DEPL_C'
             else:
                 TYPE_CHAM = 'NOEU_DEPL_R'
         elif nomcham == 'EPSI_NOEU':
-            if isinstance(RESULTAT, dyna_harmo):
+            if RESULTAT.getType() == "DYNA_HARMO":
                 TYPE_CHAM = 'NOEU_EPSI_C'
             else:
                 TYPE_CHAM = 'NOEU_EPSI_R'
@@ -471,7 +466,7 @@ def observation_ops(self,
 #                         ANGL_NAUT = (alpha, beta, gamma), )
 #                    )
         if MODIF_REPERE != None:
-            num_ordr = __proj.LIST_VARI_ACCES()['NUME_ORDRE']
+            num_ordr = __proj.getRanks()
 
             for modif_rep in MODIF_REPERE:
                 modi_rep = modif_rep.val
@@ -610,14 +605,14 @@ def observation_ops(self,
 #*************************************************
         resu_filtre = None
         if FILTRE != None:
-            num_ordr = __proj.LIST_VARI_ACCES()['NUME_ORDRE']
+            num_ordr = __proj.getRanks()
 
             __chamf = [None] * len(indice)
-            if isinstance(RESULTAT, evol_elas):
+            if RESULTAT.getType() == "EVOL_ELAS":
                 list_inst = __proj.LIST_VARI_ACCES()['INST']
-            if isinstance(RESULTAT, dyna_trans):
+            if RESULTAT.getType() == "DYNA_TRANS":
                 list_inst = __proj.LIST_VARI_ACCES()['INST']
-            if isinstance(RESULTAT, dyna_harmo):
+            if RESULTAT.getType() == "DYNA_HARMO":
                 list_freq = __proj.LIST_VARI_ACCES()['FREQ']
 
             liste = []
@@ -631,8 +626,7 @@ def observation_ops(self,
                                       NOM_CHAM=nomcham,
                                       NUME_ORDRE=num_ordr[ind],)
 
-                for mcfiltre in FILTRE:
-                    filtre = mcfiltre.val
+                for filtre in FILTRE:
                     try:
                         nomchamx = filtre['NOM_CHAM']
                     except KeyError:
@@ -682,7 +676,7 @@ def observation_ops(self,
                         UTMESS('F', 'OBSERVATION_6', valk)
 
                     argsr = {}
-                    if isinstance(RESULTAT, mode_meca):
+                    if RESULTAT.getType() == "MODE_MECA":
                         mcfact2 = {'CHAM_GD': __chamf[ind],
                                    'MODELE': modele,
                                    'NUME_MODE': int(afreq[ind, 0]),
@@ -695,19 +689,19 @@ def observation_ops(self,
                                  'MATR_MASS': MATR_MASS
                                  }
 
-                    if isinstance(RESULTAT, evol_elas):
+                    if RESULTAT.getType() == "EVOL_ELAS":
                         mcfact2 = {'CHAM_GD': __chamf[ind],
                                    'MODELE': modele,
                                    'INST': list_inst[ind],
                                    }
 
-                    if isinstance(RESULTAT, dyna_trans):
+                    if RESULTAT.getType() == "DYNA_TRANS":
                         mcfact2 = {'CHAM_GD': __chamf[ind],
                                    'MODELE': modele,
                                    'INST': list_inst[ind],
                                    }
 
-                    if isinstance(RESULTAT, dyna_harmo):
+                    if RESULTAT.getType() == "DYNA_HARMO":
                         mcfact2 = {'CHAM_GD': __chamf[ind],
                                    'MODELE': MODELE_2,
                                    'FREQ': list_freq[ind],
@@ -755,7 +749,7 @@ def observation_ops(self,
                               **mcfact
                               )
 
-    return ier
+    return RESU
 
 
 #**********************************************
