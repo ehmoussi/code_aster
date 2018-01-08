@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -58,7 +58,7 @@ implicit none
     integer, parameter :: ncmp   = 5
     integer, parameter :: nceld1 = 4
     integer, parameter :: nceld2 = 4
-    integer, parameter :: nceld3 = 4 
+    integer, parameter :: nceld3 = 4
     integer :: ifm, niv
     integer :: nt_patch, nb_grel, nb_liel, nbliac
     integer :: i_liel, i_grel, patch_indx, elem_slav_nume, iret, vale_indx, decal
@@ -76,7 +76,7 @@ implicit none
     real(kind=8), pointer :: v_sdappa_coef(:) => null()
     character(len=24) :: sdcont_stat
     integer, pointer :: v_sdcont_stat(:) => null()
-    character(len=24) :: sdcont_lagc 
+    character(len=24) :: sdcont_lagc
     real(kind=8), pointer :: v_sdcont_lagc(:) => null()
     character(len=24) :: sdappa_gapi
     real(kind=8), pointer :: v_sdappa_gapi(:) => null()
@@ -156,7 +156,7 @@ implicit none
                     coef      = v_sdappa_coef(patch_indx)
                     indi_cont = v_sdcont_stat(patch_indx)
                     zr(vale_indx-1+1) = lagc
-                    if (gapi .eq. gapi) then
+                    if (.not.isnan(gapi)) then
                         zr(vale_indx-1+2) = gapi
                     else
                         zr(vale_indx-1+2) = -1.d0
