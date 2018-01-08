@@ -15,29 +15,44 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine smcarc(nbhist, ftrc, trc, coef, fmod,&
-                  ctes, ckm, nbtrc, tempe, tpoint,&
-                  dt, zin, zout)
-    implicit   none
+!
+subroutine smcarc(nbhist       , ftrc  , trc,&
+                  coef         , fmod  ,&
+                  metaSteelPara, nbtrc , ckm,&
+                  tempe        , tpoint, dt ,&
+                  zin          , zout)
+!
+use Metallurgy_type
+!
+implicit none
+!
 #include "asterfort/smcaba.h"
 #include "asterfort/smcavo.h"
 #include "asterfort/smcomo.h"
 #include "asterfort/metaSteelTRCPolynom.h"
-    integer :: nbhist, nbtrc
-    real(kind=8) :: ftrc((3*nbhist), 3), trc((3*nbhist), 5), fmod(*)
-    real(kind=8) :: ctes(11), ckm(6*nbtrc), coef(*), tempe, tpoint
-    real(kind=8) :: zin(7), zout(7)
-!......................................................................C
 !
+integer :: nbhist, nbtrc
+real(kind=8) :: ftrc((3*nbhist), 3), trc((3*nbhist), 5), fmod(*)
+real(kind=8) :: ckm(6*nbtrc), coef(*), tempe, tpoint
+type(META_SteelParameters), intent(in) :: metaSteelPara
+real(kind=8) :: zin(7), zout(7)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! METALLURGY -  Compute phase (steel)
+!
+! Compute phases (colding)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  metaSteelPara       : parameters for metallurgy of steel
 !   - FONCTION :                                                       C
 !       CALCUL DE Z(N+1) CONNAISSANT T(N), TP(N), Z(N) ET T(N+1)       C
 !   - ENTREES :                                                        C
 !       NBHIST           : NBRE D HISTOIRES EXPERIMENTALE DE DEFI_TRC  C
 !       FTRC(3*NBHIST,3) : VECTEUR DZ/DT EXPERIMENTAUX (VIDE EN ENTREE)C
 !       TRC (3*NBHIST,5) : VECTEUR Z,T EXPERIMENTAUX (VIDE EN ENTREE)  C
-!       FMOD(*)          : ENSEMBLE DES HISTOIRES EXPERIMENTALES       C
-!       CTES(3)          : AR3, ALPHA, MS0                             C
+!       FMOD(*)          : ENSEMBLE DES HISTOIRES EXPERIMENTALES       C                          C
 !       CKM(6*NBTRC)     : VECTEUR DES LOIS MS(Z) SEUIL,AKM,BKM,TPLM   C
 !                        : VECTEUR DES LOIS GRAIN P , A
 !       NBTRC            : NBRE DE LOIS MS(Z)                          C
@@ -46,7 +61,8 @@ subroutine smcarc(nbhist, ftrc, trc, coef, fmod,&
 !       ZIN(7)           : PHASMETA(N) ZF,ZP,ZB,ZM, P ,T,MS           C
 !   - SORTIES :                                                        C
 !       ZOUT(7)          : PHASMETA(N+1) ZF,ZP,ZB,ZM,P,T,MS            C
-!......................................................................C
+!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: j, ind(6)
     real(kind=8) :: sdz, sdz0, tmf, zm, dz(4), x(5), rz
@@ -63,15 +79,15 @@ subroutine smcarc(nbhist, ftrc, trc, coef, fmod,&
     epsi = 1.d-10
     tlim = ckm(4)
 !
-    if (tempe .gt. ctes(1)) then
+    if (tempe .gt. metaSteelPara%ar3) then
         do 5 j = 1, 4
             zout(j) = zin(j)
  5      continue
-        zout(7)=ctes(3)
+        zout(7)=metaSteelPara%ms0
     else
         sdz0 = zin(1) + zin(2) + zin(3) + zin(4)
 !
-        tmf = zin(7) - ( log(ooun))/ctes(2 ) - quinze
+        tmf = zin(7) - ( log(ooun))/metaSteelPara%alpha - quinze
         if ((sdz0.ge.un-0.001d0) .or. (tempe.lt.tmf)) then
             do 10 j = 1, 4
                 zout(j) = zin(j)
@@ -135,7 +151,7 @@ subroutine smcarc(nbhist, ftrc, trc, coef, fmod,&
 !
             sdz = sdz0 - zin(4)
             if ((sdz.ge.ckm(1)) .and. (zin(4).eq.zero)) then
-                zout(7) = ctes(3) + ckm(2)*sdz + ckm(3)
+                zout(7) = metaSteelPara%ms0 + ckm(2)*sdz + ckm(3)
             else
                 zout(7) = zin(7)
             endif
@@ -150,7 +166,7 @@ subroutine smcarc(nbhist, ftrc, trc, coef, fmod,&
                 if ((tpoint.gt.tpli) .and. (zin(4).eq.zero)) then
                     zout(4) = zin(4)
                 else
-                    zout(4) = zm*(un-exp(ctes(2)*(zout(7)-zout(6))))
+                    zout(4) = zm*(un-exp(metaSteelPara%alpha*(zout(7)-zout(6))))
                 endif
             endif
             dz(4) = zout(4)-zin(4)
@@ -174,7 +190,7 @@ subroutine smcarc(nbhist, ftrc, trc, coef, fmod,&
     zaust = zout(1)+zout(2)+zout(3)+zout(4)
     zaust = 1-zaust
 ! --- CALCUL TAILLE DE GRAIN
-    if (ctes(8) .eq. 0.d0) then
+    if (metaSteelPara%austenite%lambda0 .eq. 0.d0) then
         unsurl = 0.d0
         zout(5) = ckm(5)
     else
@@ -182,9 +198,11 @@ subroutine smcarc(nbhist, ftrc, trc, coef, fmod,&
             zout(5)=0.d0
         else
             dmoins = zin(5)
-            lambda = ctes(8)*exp(ctes(9)/(tempe+273.d0))
+            lambda = metaSteelPara%austenite%lambda0*&
+                     exp(metaSteelPara%austenite%qsr_k/(tempe+273.d0))
             unsurl = 1.d0/lambda
-            dlim = ctes(10)*exp(-ctes(11)/(tempe+273.d0))
+            dlim = metaSteelPara%austenite%d10*&
+                   exp(-metaSteelPara%austenite%wsr_k/(tempe+273.d0))
             a2 = 1.d0
             b2 = dmoins-(dt*unsurl/dlim)
             c2 = dt*unsurl
