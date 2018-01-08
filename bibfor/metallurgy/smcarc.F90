@@ -23,6 +23,7 @@ subroutine smcarc(nbhist, ftrc, trc, coef, fmod,&
 #include "asterfort/smcaba.h"
 #include "asterfort/smcavo.h"
 #include "asterfort/smcomo.h"
+#include "asterfort/metaSteelTRCPolynom.h"
     integer :: nbhist, nbtrc
     real(kind=8) :: ftrc((3*nbhist), 3), trc((3*nbhist), 5), fmod(*)
     real(kind=8) :: ctes(11), ckm(6*nbtrc), coef(*), tempe, tpoint
@@ -49,7 +50,7 @@ subroutine smcarc(nbhist, ftrc, trc, coef, fmod,&
 !
     integer :: j, ind(6)
     real(kind=8) :: sdz, sdz0, tmf, zm, dz(4), x(5), rz
-    real(kind=8) :: temps, tpli, a, b, c, d, e, f, ft, f7, fpt, fp7, t
+    real(kind=8) :: tpli
     real(kind=8) :: ooun, quinze, un, zero, tlim, epsi, tpoin2
     real(kind=8) :: lambda, dlim, dmoins, dt, unsurl, zaust
     real(kind=8) :: a2, b2, c2, delta
@@ -61,7 +62,6 @@ subroutine smcarc(nbhist, ftrc, trc, coef, fmod,&
     quinze = 15.d0
     epsi = 1.d-10
     tlim = ckm(4)
-    t = 700.d0
 !
     if (tempe .gt. ctes(1)) then
         do 5 j = 1, 4
@@ -145,25 +145,8 @@ subroutine smcarc(nbhist, ftrc, trc, coef, fmod,&
             if ((zout(6).gt.zout(7)) .or. (zm.lt.ooun)) then
                 zout(4) = zin(4)
             else
-                a = coef(3)
-                b = coef(4)
-                c = coef(5)
-                d = coef(6)
-                e = coef(7)
-                f = coef(8)
-                if ((a.ne.zero) .and. (b.ne.zero) .and. (c.ne.zero) .and. (d.ne.zero) .and.&
-                    (e.ne.zero) .and. (f.ne.zero)) then
-                    f7 = a+b*t+c*t**2+d*t**3+e*t**4+f*t**5
-                    ft=a+b*tempe+c*tempe**2+d*tempe**3+e*tempe**4+f*&
-                    tempe**5
-                    fpt=b+2*c*tempe+3*d*tempe**2+4*e*tempe**3+5*f*&
-                    tempe**4
-                    fp7=b+2*c*t+3*d*t**2+4*e*t**3+5*f*t**4
-                    temps=ft-f7-log(fp7*tlim)
-                    tpli=un/(fpt*exp(temps))
-                else
-                    tpli = tlim
-                endif
+                call metaSteelTRCPolynom(coef(3:8), tlim, tempe,&
+                              tpli)
                 if ((tpoint.gt.tpli) .and. (zin(4).eq.zero)) then
                     zout(4) = zin(4)
                 else
