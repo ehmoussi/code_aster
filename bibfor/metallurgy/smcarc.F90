@@ -84,10 +84,7 @@ subroutine smcarc(nbhist, ftrc, trc, coef, fmod,&
                     dz(j) = zero
 15              continue
             else
-!
-! --- CONSTRUCTION DES POINTS EXPERIMENTAUX DE MEME TEMPERATURE
-!
-!
+! ------------- Compute functions from TRC diagram
                 call smcomo(coef, fmod, tempe, nbhist, ftrc,&
                             trc)
 !
