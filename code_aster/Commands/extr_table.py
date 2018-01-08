@@ -20,6 +20,7 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import Function
+from ..Objects import ElementaryVector
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -35,8 +36,11 @@ class ExtrTable(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         
-        if keywords['TYPE_RESU'] != 'FONCTION_SDASTER':
+        if keywords['TYPE_RESU'] == 'VECT_ELEM_DEPL_R':
+            self._result = ElementaryVector()
+        elif keywords['TYPE_RESU'] == 'FONCTION_SDASTER':
+            self._result = Function()
+        else:
             raise NotImplementedError()
-        self._result = Function()
 
 EXTR_TABLE = ExtrTable.run

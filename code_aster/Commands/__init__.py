@@ -68,6 +68,7 @@ from .calc_matr_elem import CALC_MATR_ELEM
 from .calc_meta import CALC_META
 from .calc_point_mat import CALC_POINT_MAT
 from .calc_vect_elem import CALC_VECT_ELEM
+from .calcul import CALCUL
 from .comb_fourier import COMB_FOURIER
 from .comb_matr_asse import COMB_MATR_ASSE
 from .comb_sism_modal import COMB_SISM_MODAL
@@ -99,6 +100,7 @@ from .defi_inte_spec import DEFI_INTE_SPEC
 from .defi_interf_dyna import DEFI_INTERF_DYNA
 from .defi_list_inst import DEFI_LIST_INST
 from .defi_list_reel import DEFI_LIST_REEL
+from .defi_maillage import DEFI_MAILLAGE
 from .defi_materiau import DEFI_MATERIAU
 from .defi_modele_gene import DEFI_MODELE_GENE
 from .defi_nappe import DEFI_NAPPE
