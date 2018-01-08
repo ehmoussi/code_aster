@@ -15,58 +15,86 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine smcaba(ftrc, trc, nbhist, x, dz,&
-                  ind)
-    implicit   none
+!
+subroutine smcaba(x , nb_hist, trc, ftrc, ind,&
+                  dz)
+!
+implicit none
+!
 #include "asterc/r8prem.h"
 #include "asterfort/assert.h"
 #include "asterfort/rslsvd.h"
 #include "asterfort/smcosl.h"
-    integer :: ind(6), nbhist
-    real(kind=8) :: ftrc((3*nbhist), 3), trc((3*nbhist), 5), x(5), dz(4)
 !
-!         CALCUL DES COORDONNEES BARYCENTRIQUES ET DE DZT
-!-----------------------------------------------------------------------
+real(kind=8), intent(in) :: x(5)
+integer, intent(in) :: nb_hist
+real(kind=8), intent(in) :: trc((3*nb_hist), 5)
+real(kind=8), intent(in) :: ftrc((3*nb_hist), 3)
+integer, intent(in) :: ind(6)
+real(kind=8), intent(inout) :: dz(4)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! METALLURGY -  Compute phase
+!
+! Compute barycenter and update increments of phases
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  x                   : given set of parameters
+! In  nb_hist             : number of graph in TRC diagram
+! In  trc                 : values of functions for TRC diagram
+! In  ftrc                : values of derivatives (by temperature) of functions for TRC diagram
+! In  ind                 : index of the six nearest TRC curves
+! IO  dz                  : increments of phases
+!
+! --------------------------------------------------------------------------------------------------
+!
+    real(kind=8), parameter :: zero = 0.d0
     integer :: ifail, i, nz
     real(kind=8) :: som, alemb(6), a(6, 6), b(6)
-    real(kind=8) :: epsmac, work(96), zero, s(6), u(6, 6), v(6, 6)
-!     ------------------------------------------------------
+    real(kind=8) :: epsmac, work(96), s(6), u(6, 6), v(6, 6)
 !
-!     CALCUL DES COORDONNEES BARYCENTRIQUES
-!
-    zero = 0.d0
-    call smcosl(trc, ind, a, b, x,&
-                nbhist)
+! --------------------------------------------------------------------------------------------------
 !
     epsmac = r8prem()
+!
+! - Prepare system
+!
+    call smcosl(x, nb_hist, trc, ind,&
+                a, b)
+!
+! - Solve system
 !
     call rslsvd(6, 6, 6, a(1, 1), s(1),&
                 u(1, 1), v(1, 1), 1, b(1), epsmac,&
                 ifail, work(1))
-!
-!     PROBLEME DANS LA RESOLUTION DU SYSTEME SOUS CONTRAINT VSRSRR
     ASSERT(ifail .eq. 0)
 !
-    do 10 i = 1, 6
+    do i = 1, 6
         alemb(i) = b(i)
-10  end do
+    end do
     som = zero
-    do 20 i = 1, 6
-        if (alemb(i) .lt. zero) alemb(i)=zero
+    do i = 1, 6
+        if (alemb(i) .lt. zero) then
+            alemb(i) = zero
+        endif
         som = som + alemb(i)
-20  end do
+    end do
+!
+! - Update increment of phases
+!
     if (som .eq. zero) then
-        do 30 nz = 1, 3
+        do nz = 1, 3
             dz(nz) = ftrc(ind(1),nz)
-30      continue
+        end do
     else
-        do 50 nz = 1, 3
+        do nz = 1, 3
             dz(nz) = zero
-            do 40 i = 1, 6
+            do i = 1, 6
                 dz(nz) = dz(nz) + alemb(i)*ftrc(ind(i),nz)/som
-40          continue
-50      continue
+            end do
+        end do
     endif
 !
 end subroutine

@@ -15,51 +15,72 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine smcavo(x, ind, nbhist, trc)
-!......................................................................C
-! RECHERCHE DES PLUS PROCHES VOISINS DE X PARMI LES POINTS CONSTRUITS  C
-!......................................................................C
-    implicit none
-    real(kind=8) :: sdx, trc((3*nbhist), 5), x(5), d(6), dx(5)
-    integer :: ind(6), nbhist, invois, i, j, n
 !
-!-----------------------------------------------------------------------
-!-----------------------------------------------------------------------
-    do 10 i = 1, 6
-        ind(i)=0
-        d(i)=10.0d25
-10  end do
-    do 70 n = 1, (3*nbhist)
-        do 20 i = 1, 3
-            dx(i)=(x(i)-trc(n,i))**2
-20      continue
-        do 30 i = 4, 5
-            dx(i)=((x(i)-trc(n,i))/x(i))**2
-30      continue
-        sdx=0.d0
-        do 40 i = 1, 5
-            sdx=sdx+dx(i)
-40      continue
+subroutine smcavo(x, nb_hist, trc, ind)
+!
+implicit none
+!
+real(kind=8), intent(in) :: x(5)
+integer, intent(in) :: nb_hist
+real(kind=8), intent(in) :: trc((3*nb_hist), 5)
+integer, intent(out) :: ind(6)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! METALLURGY -  Compute phase
+!
+! Find the six nearest TRC curves for given set of parameters
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  x                   : given set of parameters
+! In  nb_hist             : number of graph in TRC diagram
+! In  trc                 : values of functions for TRC diagram
+! Out ind                 : index of the six nearest TRC curves
+!
+! --------------------------------------------------------------------------------------------------
+!
+    real(kind=8) :: sdx, d(6), dx(5)
+    integer :: invois, i, j, i_hist
+!
+! --------------------------------------------------------------------------------------------------
+!
+    ind(:) = 0
+    d(:)   = 10.d25
+
+    do i_hist = 1, 3*nb_hist
+! ----- Compute distances
+        do i = 1, 3
+            dx(i) = (x(i)-trc(i_hist,i))**2
+        end do
+        do i = 4, 5
+            dx(i) = ((x(i)-trc(i_hist,i))/x(i))**2
+        end do
+! ----- Total distance
+        sdx = 0.d0
+        do i = 1, 5
+            sdx = sdx+dx(i)
+        end do
+! ----- Find nearest
         if (sdx .ge. d(6)) then
-            goto 70
+            cycle
         else
-            do 50 i = 6, 1, -1
+            do i = 6, 1, -1
                 if (sdx .lt. d(i)) then
-                    invois=i
+                    invois = i
                 endif
-50          continue
+            end do
             if (invois .eq. 6) then
-                d(6)=sdx
-                ind(6)=n
+                d(6)   = sdx
+                ind(6) = i_hist
             else
-                do 60 j = 6, invois+1, -1
-                    d(j)=d(j-1)
-                    ind(j)=ind(j-1)
-60              continue
-                d(invois)=sdx
-                ind(invois)=n
+                do j = 6, invois+1, -1
+                    d(j)   = d(j-1)
+                    ind(j) = ind(j-1)
+                end do
+                d(invois)   = sdx
+                ind(invois) = i_hist
             endif
         endif
-70  end do
+    end do
 end subroutine
