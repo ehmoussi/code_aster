@@ -17,14 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine zedgar(jv_mater, tm, tp, instp, dinst,&
-                      vim, vip)
+    subroutine metaZircGetParameters(jv_mater, temp, metaZircPara)
+        use Metallurgy_type
         integer, intent(in) :: jv_mater
-        real(kind=8) :: tm
-        real(kind=8) :: tp
-        real(kind=8) :: instp
-        real(kind=8) :: dinst
-        real(kind=8) :: vim(4)
-        real(kind=8) :: vip(4)
-    end subroutine zedgar
+        real(kind=8), intent(in) :: temp
+        type(META_ZircParameters), intent(out) :: metaZircPara
+    end subroutine metaZircGetParameters
 end interface

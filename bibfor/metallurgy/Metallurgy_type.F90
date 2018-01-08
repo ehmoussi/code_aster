@@ -50,6 +50,20 @@ implicit none
         aster_logical :: l_grain_size
         type(META_AusteniteParameters) :: austenite
     end type META_SteelParameters
-
+!
+    type META_ZircParameters
+        real(kind=8) :: tdeq
+        real(kind=8) :: k
+        real(kind=8) :: n
+        real(kind=8) :: t1c
+        real(kind=8) :: t2c
+        real(kind=8) :: ac
+        real(kind=8) :: m
+        real(kind=8) :: qsrk
+        real(kind=8) :: t1r
+        real(kind=8) :: t2r
+        real(kind=8) :: ar
+        real(kind=8) :: br
+    end type META_ZircParameters
 !
 end module

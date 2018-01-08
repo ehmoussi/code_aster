@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,25 +15,35 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine zedgar(matos, tm, tp, instp, dinst,&
+!
+subroutine zedgar(jv_mater, tm, tp, instp, dinst,&
                   vim, vip)
 !
+use Metallurgy_type
 !
-    implicit none
+implicit none
+!
 #include "asterc/r8prem.h"
 #include "asterc/r8t0.h"
 #include "asterfort/assert.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/utmess.h"
 #include "asterfort/zevolu.h"
-    integer :: matos
-    real(kind=8) :: tm, tp, instp, dinst, vim(4), vip(4)
+#include "asterfort/metaZircGetParameters.h"
+#include "asterfort/Metallurgy_type.h"
 !
-!............................................
-! CALCUL PHASE METALLURGIQUE POUR EDGAR
-!............................................
-! IN   MATOS  :
+integer, intent(in) :: jv_mater
+real(kind=8) :: tm, tp, instp, dinst, vim(4), vip(4)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! METALLURGY -  Compute phase
+!
+! Main law for zircaloy
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  jv_mater            : coded material address
 ! IN   TM     : TEMPERATURE A L INSTANT MOINS
 ! IN   TP     : TEMPERATURE A L INSTANT PLUS
 ! IN   INSTP  : INSTANT PLUS
@@ -50,60 +60,38 @@ subroutine zedgar(matos, tm, tp, instp, dinst,&
 !         CETTE VARIABLE SERT POUR CALCULER LA VITESSE EN TEMPERATURE
 !         (METHODE SECANTE GLISSANTE - CF DOC R40404)
 !
-    integer :: test, iter, kpg, spt
-    real(kind=8) :: valres(12), tdeq, tfeq, k, n, t1c, t2c, ac, m, qsr, coeffc
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: test, iter
+    real(kind=8) :: tdeq, tfeq, k, n, t1c, t2c, ac, m, qsr, coeffc
     real(kind=8) :: t1r, t2r, ar, br, tabs, tk, tc, tr
     real(kind=8) :: vitesc, vitesr, dtemp
     real(kind=8) :: zp, zm, zeq, zinf, zsup, g, dg, zalphm, zalphp
     real(kind=8) :: zero
-    character(len=24) :: nomres(12)
-    integer :: icodre(12)
     integer :: cine, chau, refr
     parameter     (chau=1,refr=0)
-    character(len=8) :: fami, poum
+    type(META_ZircParameters) :: metaZircPara
 !
-! 1 - CARACTERISTIQUE MATERIAU
-! 1.1 - MODELE A L EQUILIBRE
+! --------------------------------------------------------------------------------------------------
 !
-    nomres(1)='TDEQ'
-    nomres(2)='K'
-    nomres(3)='N'
+    zero = r8prem()
 !
-! 1.2 - MODELE AU CHAUFFAGE
+! - Get material parameters
 !
-    nomres(4)='T1C'
-    nomres(5)='T2C'
-    nomres(6)='AC'
-    nomres(7)='M'
-    nomres(8)='QSR_K'
+    call metaZircGetParameters(jv_mater, tp, metaZircPara)
 !
-! 1.3 - MODELE AU REFROIDISSEMENT
-!
-    nomres(9)='T1R'
-    nomres(10)='T2R'
-    nomres(11)='AR'
-    nomres(12)='BR'
-    fami='FPG1'
-    kpg=1
-    spt=1
-    poum='+'
-!
-    call rcvalb(fami, kpg, spt, poum, matos,&
-                ' ', 'META_ZIRC', 1, 'TEMP', [tp],&
-                12, nomres, valres, icodre, 1)
-!
-    tdeq = valres(1)
-    k = valres(2)
-    n = valres(3)
-    t1c = valres(4)
-    t2c = valres(5)
-    ac = valres(6)
-    m = valres(7)
-    qsr = valres(8)
-    t1r = valres(9)
-    t2r = valres(10)
-    ar = valres(11)
-    br = valres(12)
+    tdeq = metaZircPara%tdeq
+    k    = metaZircPara%k
+    n    = metaZircPara%n
+    t1c  = metaZircPara%t1c
+    t2c  = metaZircPara%t2c
+    ac   = metaZircPara%ac
+    m    = metaZircPara%m
+    qsr  = metaZircPara%qsrk
+    t1r  = metaZircPara%t1r
+    t2r  = metaZircPara%t2r
+    ar   = metaZircPara%ar
+    br   = metaZircPara%br
 !
     tabs=r8t0()
     tk=tp+tabs
@@ -114,7 +102,7 @@ subroutine zedgar(matos, tm, tp, instp, dinst,&
 !
     zalphm=vim(1)+vim(2)
     zm = 1.d0-zalphm
-    zero=r8prem()
+
 !
     if (abs(zm) .le. zero) zm=0.d0
     if (abs(zalphm) .le. zero) zm=1.d0
@@ -277,7 +265,7 @@ subroutine zedgar(matos, tm, tp, instp, dinst,&
 ! 4.2.3 - RESOLUTION PAR UNE METHODE DE NEWTON ENTRE LES BORNES
 !
         do 10 iter = 1, 15
-            if (abs(g) .le. 1.d-06) goto 100
+            if (abs(g) .le. 1.d-06) exit
 !
             if (dg .eq. 0.d0) then
                 call utmess('F', 'ALGORITH16_96')
