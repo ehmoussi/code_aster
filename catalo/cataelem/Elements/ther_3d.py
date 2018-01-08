@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -36,11 +36,11 @@ CCAMASS  = LocatedComponents(phys=PHY.CAMASS, type='ELEM',
 
 
 CCOMPOR  = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
-    components=('RELCOM',))
+    components=('RELCOM','NBVARI','DEFORM','INCELA'))
 
 
 NVITESR  = LocatedComponents(phys=PHY.DEPL_R, type='ELNO',
-    components=('DX','DY',))
+    components=('DX','DY','DZ',))
 
 
 EENERR   = LocatedComponents(phys=PHY.ENER_R, type='ELEM',
@@ -48,37 +48,29 @@ EENERR   = LocatedComponents(phys=PHY.ENER_R, type='ELEM',
 
 
 CGRAINF  = LocatedComponents(phys=PHY.FLUX_F, type='ELEM',
-    components=('FLUX','FLUY',))
+    components=('FLUX','FLUY','FLUZ',))
 
 
 CGRAINR  = LocatedComponents(phys=PHY.FLUX_R, type='ELEM',
-    components=('FLUX','FLUY',))
+    components=('FLUX','FLUY','FLUZ',))
 
 
 EFLUXPG  = LocatedComponents(phys=PHY.FLUX_R, type='ELGA', location='RIGI',
-    components=('FLUX','FLUY',))
+    components=('FLUX','FLUY','FLUZ',))
 
 
 EFLUXNO  = LocatedComponents(phys=PHY.FLUX_R, type='ELNO',
-    components=('FLUX','FLUY',))
+    components=('FLUX','FLUY','FLUZ',))
 
 
 NGEOMER  = LocatedComponents(phys=PHY.GEOM_R, type='ELNO',
-    components=('X','Y',))
+    components=('X','Y','Z',))
 
 
 
 
 EGGEOP_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
-    components=('X','Y','W',))
-
-
-EGGEOM_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
-    components=('X','Y',))
-
-
-ENGEOM_R = LocatedComponents(phys=PHY.GEOM_R, type='ELNO',
-    components=('X','Y',))
+    components=('X','Y','Z','W',))
 
 
 CTEMPSR  = LocatedComponents(phys=PHY.INST_R, type='ELEM',
@@ -90,10 +82,6 @@ EGNEUT_F = LocatedComponents(phys=PHY.NEUT_F, type='ELGA', location='RIGI',
     components=('X[30]',))
 
 
-ECASECT  = LocatedComponents(phys=PHY.NEUT_R, type='ELEM',
-    components=('X[9]',))
-
-
 EGNEUT_R = LocatedComponents(phys=PHY.NEUT_R, type='ELGA', location='RIGI',
     components=('X[30]',))
 
@@ -103,6 +91,10 @@ EMNEUT_R = LocatedComponents(phys=PHY.NEUT_R, type='ELEM',
 
 
 ESOURCR  = LocatedComponents(phys=PHY.SOUR_R, type='ELGA', location='RIGI',
+    components=('SOUR',))
+
+
+NSOURCR  = LocatedComponents(phys=PHY.SOUR_R, type='ELNO',
     components=('SOUR',))
 
 
@@ -118,36 +110,16 @@ MMATTSR  = ArrayOfComponents(phys=PHY.MTNS_R, locatedComponents=DDL_THER)
 
 
 #------------------------------------------------------------
-class THPLQU4(Element):
+class THER_HEXA20(Element):
     """Please document this element"""
-    meshType = MT.QUAD4
+    meshType = MT.HEXA20
     elrefe =(
-            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4','MASS=FPG4','FPG1=FPG1','NOEU=NOEU',), mater=('FPG1',),),
-            ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2',),),
+            ElrefeLoc(MT.H20, gauss = ('RIGI=FPG27','FPG1=FPG1','MASS=FPG27',), mater=('FPG1',),),
+            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9','MASS=FPG9',),),
         )
     calculs = (
 
-#       Les elements axisymetriques ne devraient jamais etre utilises pour CARA_XXXX
-
-        OP.CARA_CISA(te=509,
-            para_in=((SP.PGEOMER, NGEOMER), (SP.PTEMPE1, DDL_THER),
-                     (SP.PTEMPE2, DDL_THER), ),
-            para_out=((SP.PCASECT, ECASECT), ),
-        ),
-
-        OP.CARA_GAUCHI(te=509,
-            para_in=((SP.PGEOMER, NGEOMER), (SP.PTEMPER, DDL_THER),
-                     ),
-            para_out=((SP.PCASECT, ECASECT), ),
-        ),
-
-        OP.CARA_TORSION(te=509,
-            para_in=((SP.PGEOMER, NGEOMER), (SP.PTEMPER, DDL_THER),
-                     ),
-            para_out=((SP.PCASECT, ECASECT), ),
-        ),
-
-        OP.CHAR_THER_EVOL(te=78,
+        OP.CHAR_THER_EVOL(te=61,
             para_in=((SP.PCAMASS, CCAMASS), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), (SP.PTEMPER, DDL_THER),
                      (SP.PTEMPSR, CTEMPSR), (OP.CHAR_THER_EVOL.PVARCPR, LC.ZVARCPG),
@@ -155,7 +127,7 @@ class THPLQU4(Element):
             para_out=((SP.PVECTTR, MVECTTR), ),
         ),
 
-        OP.CHAR_THER_EVOLNI(te=244,
+        OP.CHAR_THER_EVOLNI(te=281,
             para_in=((OP.CHAR_THER_EVOLNI.PCOMPOR, CCOMPOR), (SP.PGEOMER, NGEOMER),
                      (OP.CHAR_THER_EVOLNI.PHYDRPM, LC.EHYDRNO), (SP.PMATERC, LC.CMATERC),
                      (SP.PTEMPER, DDL_THER), (SP.PTEMPSR, CTEMPSR),
@@ -165,14 +137,14 @@ class THPLQU4(Element):
                      ),
         ),
 
-        OP.CHAR_THER_GRAI_F(te=219,
+        OP.CHAR_THER_GRAI_F(te=217,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PGRAINF, CGRAINF),
                      (SP.PMATERC, LC.CMATERC), (SP.PTEMPSR, CTEMPSR),
                      (OP.CHAR_THER_GRAI_F.PVARCPR, LC.ZVARCPG), ),
             para_out=((SP.PVECTTR, MVECTTR), ),
         ),
 
-        OP.CHAR_THER_GRAI_R(te=219,
+        OP.CHAR_THER_GRAI_R(te=217,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PGRAINR, CGRAINR),
                      (SP.PMATERC, LC.CMATERC), (OP.CHAR_THER_GRAI_R.PVARCPR, LC.ZVARCPG),
                      ),
@@ -186,19 +158,19 @@ class THPLQU4(Element):
             para_out=((SP.PVECTTR, MVECTTR), ),
         ),
 
-        OP.CHAR_THER_SOUR_F(te=80,
+        OP.CHAR_THER_SOUR_F(te=56,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PSOURCF, LC.CSOURCF),
                      (SP.PTEMPSR, CTEMPSR), (OP.CHAR_THER_SOUR_F.PVARCPR, LC.ZVARCPG),),
             para_out=((SP.PVECTTR, MVECTTR), ),
         ),
 
-        OP.CHAR_THER_SOUR_R(te=79,
+        OP.CHAR_THER_SOUR_R(te=55,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PSOURCR, ESOURCR),
                      ),
             para_out=((SP.PVECTTR, MVECTTR), ),
         ),
 
-        OP.CHAR_THER_TNL(te=505,
+        OP.CHAR_THER_TNL(te=525,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PLAGRM, LC.EGNEUT1R),
                      (SP.PMATERC, LC.CMATERC), (SP.PTEMPEI, DDL_THER),
                      (SP.PTEMPER, DDL_THER), (SP.PTEMPSR, CTEMPSR),
@@ -207,7 +179,7 @@ class THPLQU4(Element):
                      (SP.PVECTTR, MVECTTR), ),
         ),
 
-        OP.COOR_ELGA(te=479,
+        OP.COOR_ELGA(te=488,
             para_in=((SP.PGEOMER, NGEOMER), ),
             para_out=((OP.COOR_ELGA.PCOORPG, EGGEOP_R), ),
         ),
@@ -233,7 +205,7 @@ class THPLQU4(Element):
             para_out=((SP.PERRENO, LC.EERRENOT), ),
         ),
 
-        OP.ETHE_ELEM(te=220,
+        OP.ETHE_ELEM(te=66,
             para_in=((SP.PCAMASS, CCAMASS), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), (SP.PTEMPER, DDL_THER),
                      (SP.PTEMPSR, CTEMPSR), (OP.ETHE_ELEM.PVARCPR, LC.ZVARCPG),
@@ -241,7 +213,7 @@ class THPLQU4(Element):
             para_out=((OP.ETHE_ELEM.PENERDR, EENERR), ),
         ),
 
-        OP.FLUX_ELGA(te=69,
+        OP.FLUX_ELGA(te=62,
             para_in=((SP.PCAMASS, CCAMASS), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), (SP.PTEMPER, DDL_THER),
                      (SP.PTEMPSR, CTEMPSR), (OP.FLUX_ELGA.PVARCPR, LC.ZVARCPG),
@@ -262,14 +234,14 @@ class THPLQU4(Element):
             para_out=((OP.INIT_VARC.PVARCPR, LC.ZVARCPG), ),
         ),
 
-        OP.MASS_THER(te=77,
+        OP.MASS_THER(te=54,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PTEMPSR, CTEMPSR), (OP.MASS_THER.PVARCPR, LC.ZVARCPG),
                      ),
             para_out=((OP.MASS_THER.PMATTTR, MMATTTR), ),
         ),
 
-        OP.META_ELNO(te=67,
+        OP.META_ELNO(te=64,
             para_in=((OP.META_ELNO.PCOMPOR, CCOMPOR), (SP.PFTRC, LC.CFTRC),
                      (SP.PMATERC, LC.CMATERC), (OP.META_ELNO.PPHASIN, LC.EPHASNO_),
                      (SP.PTEMPAR, DDL_THER), (SP.PTEMPER, DDL_THER),
@@ -278,14 +250,14 @@ class THPLQU4(Element):
             para_out=((SP.PPHASNOU, LC.EPHASNO_), ),
         ),
 
-        OP.META_INIT_ELNO(te=320,
+        OP.META_INIT_ELNO(te=321,
             para_in=((OP.META_INIT_ELNO.PCOMPOR, CCOMPOR), (SP.PMATERC, LC.CMATERC),
                      (OP.META_INIT_ELNO.PPHASIN, LC.CPHASIN_), (SP.PTEMPER, DDL_THER),
                      ),
             para_out=((SP.PPHASNOU, LC.EPHASNO_), ),
         ),
 
-        OP.MTAN_RIGI_MASS(te=242,
+        OP.MTAN_RIGI_MASS(te=279,
             para_in=((OP.MTAN_RIGI_MASS.PCOMPOR, CCOMPOR), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), (SP.PTEMPEI, DDL_THER),
                      (SP.PTEMPSR, CTEMPSR), (SP.PTMPCHF, DDL_THER),
@@ -316,11 +288,11 @@ class THPLQU4(Element):
         OP.REPERE_LOCAL(te=133,
             para_in=((SP.PCAMASS, CCAMASS), (SP.PGEOMER, NGEOMER),
                      ),
-            para_out=((SP.PREPLO1, LC.CGEOM2D), (SP.PREPLO2, LC.CGEOM2D),
-                     ),
+            para_out=((SP.PREPLO1, LC.CGEOM3D), (SP.PREPLO2, LC.CGEOM3D),
+                     (SP.PREPLO3, LC.CGEOM3D), ),
         ),
 
-        OP.RESI_RIGI_MASS(te=243,
+        OP.RESI_RIGI_MASS(te=283,
             para_in=((OP.RESI_RIGI_MASS.PCOMPOR, CCOMPOR), (SP.PGEOMER, NGEOMER),
                      (OP.RESI_RIGI_MASS.PHYDRPM, LC.EHYDRNO), (SP.PMATERC, LC.CMATERC),
                      (SP.PTEMPEI, DDL_THER), (SP.PTEMPER, DDL_THER),
@@ -338,14 +310,14 @@ class THPLQU4(Element):
             para_out=((SP.PRESIDU, MVECTTR), ),
         ),
 
-        OP.RIGI_THER(te=76,
+        OP.RIGI_THER(te=51,
             para_in=((SP.PCAMASS, CCAMASS), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), (SP.PTEMPSR, CTEMPSR),
                      (OP.RIGI_THER.PVARCPR, LC.ZVARCPG), ),
             para_out=((OP.RIGI_THER.PMATTTR, MMATTTR), ),
         ),
 
-        OP.RIGI_THER_CONV_T(te=502,
+        OP.RIGI_THER_CONV_T(te=522,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PNEUK24, LC.CDECENT), (SP.PTEMPEI, DDL_THER),
                      (SP.PTEMPSR, CTEMPSR), (SP.PVITESR, NVITESR),
@@ -353,14 +325,14 @@ class THPLQU4(Element):
             para_out=((OP.RIGI_THER_CONV_T.PMATTTR, MMATTSR), ),
         ),
 
-        OP.RIGI_THER_TRANS(te=501,
+        OP.RIGI_THER_TRANS(te=521,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PTEMPEI, DDL_THER), (SP.PTEMPER, DDL_THER),
                      (SP.PTEMPSR, CTEMPSR), ),
             para_out=((OP.RIGI_THER_TRANS.PMATTTR, MMATTTR), ),
         ),
 
-        OP.SOUR_ELGA(te=318,
+        OP.SOUR_ELGA(te=319,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PTEMPER, DDL_THER), (SP.PTEMPSR, CTEMPSR),
                      (OP.SOUR_ELGA.PVARCPR, LC.ZVARCPG), ),
@@ -368,21 +340,21 @@ class THPLQU4(Element):
         ),
 
         OP.TOU_INI_ELEM(te=99,
-            para_out=((OP.TOU_INI_ELEM.PSOUR_R, LC.CSOURCR), ),
+            para_out=((OP.TOU_INI_ELEM.PCOEH_R, LC.EHECHPR),
+                      (OP.TOU_INI_ELEM.PSOUR_R, LC.CSOURCR), ),
         ),
 
         OP.TOU_INI_ELGA(te=99,
-            para_out=((OP.TOU_INI_ELGA.PFLUX_R, EFLUXPG), (OP.TOU_INI_ELGA.PGEOM_R, EGGEOM_R),
-                     (OP.TOU_INI_ELGA.PNEUT_F, EGNEUT_F), (OP.TOU_INI_ELGA.PNEUT_R, EGNEUT_R),
-                     (OP.TOU_INI_ELGA.PSOUR_R, ESOURCR), (SP.PTEMP_R, LC.ETEMPPG),
+            para_out=((OP.TOU_INI_ELGA.PFLUX_R, EFLUXPG), (OP.TOU_INI_ELGA.PNEUT_F, EGNEUT_F),
+                     (OP.TOU_INI_ELGA.PNEUT_R, LC.EGNEUT1R), (OP.TOU_INI_ELGA.PSOUR_R, ESOURCR),
                      ),
         ),
 
         OP.TOU_INI_ELNO(te=99,
-            para_out=((OP.TOU_INI_ELNO.PFLUX_R, EFLUXNO), (OP.TOU_INI_ELNO.PGEOM_R, ENGEOM_R),
+            para_out=((OP.TOU_INI_ELNO.PFLUX_R, EFLUXNO), (OP.TOU_INI_ELNO.PGEOM_R, NGEOMER),
                      (OP.TOU_INI_ELNO.PHYDRPM, LC.EHYDRNO), (OP.TOU_INI_ELNO.PINST_R, LC.ENINST_R),
                      (OP.TOU_INI_ELNO.PNEUT_F, LC.ENNEUT_F), (OP.TOU_INI_ELNO.PNEUT_R, LC.ENNEUT_R),
-                     (OP.TOU_INI_ELNO.PVARI_R, LC.EPHASNO_), ),
+                     (OP.TOU_INI_ELNO.PSOUR_R, NSOURCR), ),
         ),
 
         OP.VERI_JACOBIEN(te=328,
@@ -394,360 +366,147 @@ class THPLQU4(Element):
 
 
 #------------------------------------------------------------
-class THPLQU8(THPLQU4):
+class THER_HEXA27(THER_HEXA20):
     """Please document this element"""
-    meshType = MT.QUAD8
+    meshType = MT.HEXA27
     elrefe =(
-            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9','MASS=FPG9','FPG1=FPG1','NOEU=NOEU',), mater=('FPG1',),),
-            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4',),),
+            ElrefeLoc(MT.H27, gauss = ('RIGI=FPG27','FPG1=FPG1','MASS=FPG27',), mater=('FPG1',),),
+            ElrefeLoc(MT.QU9, gauss = ('RIGI=FPG9','MASS=FPG9',),),
         )
 
 
 #------------------------------------------------------------
-class THPLQU9(THPLQU4):
+class THER_HEXA8(THER_HEXA20):
     """Please document this element"""
-    meshType = MT.QUAD9
+    meshType = MT.HEXA8
     elrefe =(
-            ElrefeLoc(MT.QU9, gauss = ('RIGI=FPG9','MASS=FPG9','FPG1=FPG1','NOEU=NOEU',), mater=('FPG1',),),
-            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4',),),
+            ElrefeLoc(MT.HE8, gauss = ('RIGI=FPG8','FPG1=FPG1','MASS=FPG8','NOEU=NOEU',), mater=('FPG1',),),
+            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4','MASS=FPG4',),),
         )
 
 
 #------------------------------------------------------------
-class THPLTR3(THPLQU4):
+class THER_PENTA15(THER_HEXA20):
     """Please document this element"""
-    meshType = MT.TRIA3
+    meshType = MT.PENTA15
     elrefe =(
-            ElrefeLoc(MT.TR3, gauss = ('RIGI=FPG3','MASS=FPG3','FPG1=FPG1','NOEU=NOEU',), mater=('FPG1',),),
-            ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2',),),
+            ElrefeLoc(MT.P15, gauss = ('RIGI=FPG21','FPG1=FPG1','MASS=FPG21',), mater=('FPG1',),),
+            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9','MASS=FPG9','NOEU=NOEU',),),
+            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG6','MASS=FPG6','NOEU=NOEU',),),
         )
 
 
 #------------------------------------------------------------
-class THPLTR6(THPLQU4):
+class THER_PENTA6(THER_HEXA20):
     """Please document this element"""
-    meshType = MT.TRIA6
+    meshType = MT.PENTA6
     elrefe =(
-            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG6','MASS=FPG6','FPG1=FPG1','NOEU=NOEU',), mater=('FPG1',),),
-            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4',),),
-        )
-
-
-#------------------------------------------------------------
-class THAXQU4(THPLQU4):
-    """Please document this element"""
-    meshType = MT.QUAD4
-    elrefe =(
-            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4','MASS=FPG4','FPG1=FPG1','NOEU=NOEU',), mater=('FPG1',),),
-            ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2',),),
-        )
-
-    calculs = (
-        OP.CARA_CISA(te=-1),
-
-        OP.CARA_GAUCHI(te=-1),
-
-        OP.CARA_TORSION(te=-1),
-    )
-
-
-#------------------------------------------------------------
-class THAXQU8(THPLQU4):
-    """Please document this element"""
-    meshType = MT.QUAD8
-    elrefe =(
-            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9','MASS=FPG9','FPG1=FPG1','NOEU=NOEU',), mater=('FPG1',),),
-            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4',),),
-        )
-
-    calculs = (
-        OP.CARA_CISA(te=-1),
-
-        OP.CARA_GAUCHI(te=-1),
-
-        OP.CARA_TORSION(te=-1),
-    )
-
-
-#------------------------------------------------------------
-class THAXQU9(THPLQU4):
-    """Please document this element"""
-    meshType = MT.QUAD9
-    elrefe =(
-            ElrefeLoc(MT.QU9, gauss = ('RIGI=FPG9','MASS=FPG9','FPG1=FPG1','NOEU=NOEU',), mater=('FPG1',),),
-            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4',),),
-        )
-
-    calculs = (
-        OP.CARA_CISA(te=-1),
-
-        OP.CARA_GAUCHI(te=-1),
-
-        OP.CARA_TORSION(te=-1),
-    )
-
-
-#------------------------------------------------------------
-class THAXTR3(THPLQU4):
-    """Please document this element"""
-    meshType = MT.TRIA3
-    elrefe =(
-            ElrefeLoc(MT.TR3, gauss = ('RIGI=FPG3','MASS=FPG3','FPG1=FPG1','NOEU=NOEU',), mater=('FPG1',),),
-            ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2',),),
-        )
-
-    calculs = (
-        OP.CARA_CISA(te=-1),
-
-        OP.CARA_GAUCHI(te=-1),
-
-        OP.CARA_TORSION(te=-1),
-    )
-
-
-#------------------------------------------------------------
-class THAXTR6(THPLQU4):
-    """Please document this element"""
-    meshType = MT.TRIA6
-    elrefe =(
-            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG6','MASS=FPG6','FPG1=FPG1','NOEU=NOEU',), mater=('FPG1',),),
-            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4',),),
-        )
-
-    calculs = (
-        OP.CARA_CISA(te=-1),
-
-        OP.CARA_GAUCHI(te=-1),
-
-        OP.CARA_TORSION(te=-1),
-    )
-
-
-#------------------------------------------------------------
-class THAXQL4(THPLQU4):
-    """Please document this element"""
-    meshType = MT.QUAD4
-    elrefe =(
-            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4','MASS=FPG4','FPG1=FPG1','NOEU=NOEU',), mater=('FPG1',),),
-            ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2',),),
-        )
-
-    calculs = (
-        OP.CARA_CISA(te=-1),
-
-        OP.CARA_GAUCHI(te=-1),
-
-        OP.CARA_TORSION(te=-1),
-    )
-
-
-#------------------------------------------------------------
-class THAXQL9(THPLQU4):
-    """Please document this element"""
-    meshType = MT.QUAD9
-    elrefe =(
-            ElrefeLoc(MT.QU9, gauss = ('RIGI=FPG9','MASS=FPG9','FPG1=FPG1','NOEU=NOEU',), mater=('FPG1',),),
+            ElrefeLoc(MT.PE6, gauss = ('RIGI=FPG6','FPG1=FPG1','MASS=FPG6','NOEU=NOEU',), mater=('FPG1',),),
             ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4','MASS=FPG4','NOEU=NOEU',),),
-            ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2',),),
+            ElrefeLoc(MT.TR3, gauss = ('RIGI=COT3','MASS=COT3','NOEU=NOEU',),),
+        )
+
+
+#------------------------------------------------------------
+class THER_PYRAM13(THER_HEXA20):
+    """Please document this element"""
+    meshType = MT.PYRAM13
+    elrefe =(
+            ElrefeLoc(MT.P13, gauss = ('RIGI=FPG27','FPG1=FPG1','MASS=FPG27',), mater=('FPG1',),),
+            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9','MASS=FPG9',),),
+            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG6','MASS=FPG6',),),
         )
 
     calculs = (
-        OP.CHAR_THER_TNL(te=-1),
+        OP.CHAR_THER_GRAI_F(te=-1),
+
+        OP.CHAR_THER_GRAI_R(te=-1),
 
         OP.DURT_ELNO(te=-1),
-
-        OP.ETHE_ELEM(te=-1),
 
         OP.META_ELNO(te=-1),
 
         OP.META_INIT_ELNO(te=-1),
 
-        OP.RIGI_THER_CONV_T(te=-1),
+        OP.ERTH_ELEM(te=-1),
 
-        OP.RIGI_THER_TRANS(te=-1),
-
-        OP.SOUR_ELGA(te=-1),
-
-        OP.CARA_CISA(te=-1),
-
-        OP.CARA_GAUCHI(te=-1),
-
-        OP.CARA_TORSION(te=-1),
+        OP.ERTH_ELNO(te=-1),
     )
 
 
 #------------------------------------------------------------
-class THAXTL3(THPLQU4):
+class THER_PYRAM5(THER_HEXA20):
     """Please document this element"""
-    meshType = MT.TRIA3
+    meshType = MT.PYRAM5
     elrefe =(
-            ElrefeLoc(MT.TR3, gauss = ('RIGI=FPG3','MASS=FPG3','FPG1=FPG1','NOEU=NOEU',), mater=('FPG1',),),
-            ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2',),),
+            ElrefeLoc(MT.PY5, gauss = ('RIGI=FPG5','FPG1=FPG1','MASS=FPG5','NOEU=NOEU',), mater=('FPG1',),),
+            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4','MASS=FPG4',),),
+            ElrefeLoc(MT.TR3, gauss = ('RIGI=COT3','MASS=COT3',),),
         )
 
     calculs = (
-        OP.CARA_CISA(te=-1),
+        OP.CHAR_THER_GRAI_F(te=-1),
 
-        OP.CARA_GAUCHI(te=-1),
-
-        OP.CARA_TORSION(te=-1),
-    )
-
-
-#------------------------------------------------------------
-class THAXTL6(THPLQU4):
-    """Please document this element"""
-    meshType = MT.TRIA6
-    elrefe =(
-            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG3','MASS=FPG3','FPG1=FPG1','NOEU=NOEU',), mater=('FPG1',),),
-            ElrefeLoc(MT.TR3, gauss = ('RIGI=FPG3','MASS=FPG3','NOEU=NOEU',),),
-            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4',),),
-        )
-
-    calculs = (
-        OP.CHAR_THER_TNL(te=-1),
+        OP.CHAR_THER_GRAI_R(te=-1),
 
         OP.DURT_ELNO(te=-1),
-
-        OP.ETHE_ELEM(te=-1),
 
         OP.META_ELNO(te=-1),
 
         OP.META_INIT_ELNO(te=-1),
 
-        OP.RIGI_THER_CONV_T(te=-1),
+        OP.ERTH_ELEM(te=-1),
 
-        OP.RIGI_THER_TRANS(te=-1),
-
-        OP.SOUR_ELGA(te=-1),
-
-        OP.CARA_CISA(te=-1),
-
-        OP.CARA_GAUCHI(te=-1),
-
-        OP.CARA_TORSION(te=-1),
-
-        OP.CHAR_THER_SOURNL(te=-1),
-
-        OP.RESI_THER_SOURNL(te=-1),
-
-        OP.MTAN_THER_SOURNL(te=-1),
+        OP.ERTH_ELNO(te=-1),
     )
 
 
 #------------------------------------------------------------
-class THPLQL4(THPLQU4):
+class THER_TETRA10(THER_HEXA20):
     """Please document this element"""
-    meshType = MT.QUAD4
+    meshType = MT.TETRA10
     elrefe =(
-            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4','MASS=FPG4','FPG1=FPG1','NOEU=NOEU',), mater=('FPG1',),),
-            ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2',),),
+            ElrefeLoc(MT.T10, gauss = ('RIGI=FPG15','FPG1=FPG1','MASS=FPG15',), mater=('FPG1',),),
+            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG6','MASS=FPG6',),),
         )
 
-    calculs = (
-        OP.CARA_CISA(te=-1),
 
-        OP.CARA_GAUCHI(te=-1),
-
-        OP.CARA_TORSION(te=-1),
-    )
+#------------------------------------------------------------
+class THER_TETRA4(THER_HEXA20):
+    """Please document this element"""
+    meshType = MT.TETRA4
+    elrefe =(
+            ElrefeLoc(MT.TE4, gauss = ('RIGI=FPG4','FPG1=FPG1','MASS=FPG4','NOEU=NOEU',), mater=('FPG1',),),
+            ElrefeLoc(MT.TR3, gauss = ('RIGI=COT3','MASS=COT3',),),
+        )
 
 
 #------------------------------------------------------------
-class THPLQL9(THPLQU4):
+class THER_HEXA8_D(THER_HEXA20):
     """Please document this element"""
-    meshType = MT.QUAD9
+    meshType = MT.HEXA8
     elrefe =(
-            ElrefeLoc(MT.QU9, gauss = ('RIGI=FPG9','MASS=FPG9','FPG1=FPG1','NOEU=NOEU',), mater=('FPG1',),),
+            ElrefeLoc(MT.HE8, gauss = ('RIGI=FPG8','FPG1=FPG1','MASS=FPG8','NOEU=NOEU_S',), mater=('FPG1',),),
+            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4','MASS=FPG4',),),
+        )
+
+
+#------------------------------------------------------------
+class THER_PENTA6_D(THER_HEXA20):
+    """Please document this element"""
+    meshType = MT.PENTA6
+    elrefe =(
+            ElrefeLoc(MT.PE6, gauss = ('RIGI=FPG6','FPG1=FPG1','MASS=FPG6','NOEU=NOEU_S',), mater=('FPG1',),),
             ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4','MASS=FPG4','NOEU=NOEU',),),
-            ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2',),),
+            ElrefeLoc(MT.TR3, gauss = ('RIGI=COT3','MASS=COT3','NOEU=NOEU',),),
         )
-
-    calculs = (
-        OP.CHAR_THER_TNL(te=-1),
-
-        OP.DURT_ELNO(te=-1),
-
-        OP.ETHE_ELEM(te=-1),
-
-        OP.META_ELNO(te=-1),
-
-        OP.META_INIT_ELNO(te=-1),
-
-        OP.RIGI_THER_CONV_T(te=-1),
-
-        OP.RIGI_THER_TRANS(te=-1),
-
-        OP.SOUR_ELGA(te=-1),
-
-        OP.CARA_CISA(te=-1),
-
-        OP.CARA_GAUCHI(te=-1),
-
-        OP.CARA_TORSION(te=-1),
-
-        OP.CHAR_THER_SOURNL(te=-1),
-
-        OP.RESI_THER_SOURNL(te=-1),
-
-        OP.MTAN_THER_SOURNL(te=-1),
-    )
 
 
 #------------------------------------------------------------
-class THPLTL3(THPLQU4):
+class THER_TETRA4_D(THER_HEXA20):
     """Please document this element"""
-    meshType = MT.TRIA3
+    meshType = MT.TETRA4
     elrefe =(
-            ElrefeLoc(MT.TR3, gauss = ('RIGI=FPG3','MASS=FPG3','FPG1=FPG1','NOEU=NOEU',), mater=('FPG1',),),
-            ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2',),),
+            ElrefeLoc(MT.TE4, gauss = ('RIGI=FPG4','FPG1=FPG1','MASS=FPG4','NOEU=NOEU_S',), mater=('FPG1',),),
+            ElrefeLoc(MT.TR3, gauss = ('RIGI=COT3','MASS=COT3',),),
         )
-
-    calculs = (
-        OP.CARA_CISA(te=-1),
-
-        OP.CARA_GAUCHI(te=-1),
-
-        OP.CARA_TORSION(te=-1),
-    )
-
-
-#------------------------------------------------------------
-class THPLTL6(THPLQU4):
-    """Please document this element"""
-    meshType = MT.TRIA6
-    elrefe =(
-            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG3','MASS=FPG3','FPG1=FPG1','NOEU=NOEU',), mater=('FPG1',),),
-            ElrefeLoc(MT.TR3, gauss = ('RIGI=FPG3','MASS=FPG3','NOEU=NOEU',),),
-            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4',),),
-        )
-
-    calculs = (
-        OP.CHAR_THER_TNL(te=-1),
-
-        OP.DURT_ELNO(te=-1),
-
-        OP.ETHE_ELEM(te=-1),
-
-        OP.META_ELNO(te=-1),
-
-        OP.META_INIT_ELNO(te=-1),
-
-        OP.RIGI_THER_CONV_T(te=-1),
-
-        OP.RIGI_THER_TRANS(te=-1),
-
-        OP.SOUR_ELGA(te=-1),
-
-        OP.CARA_CISA(te=-1),
-
-        OP.CARA_GAUCHI(te=-1),
-
-        OP.CARA_TORSION(te=-1),
-
-        OP.CHAR_THER_SOURNL(te=-1),
-
-        OP.RESI_THER_SOURNL(te=-1),
-
-        OP.MTAN_THER_SOURNL(te=-1),
-    )
