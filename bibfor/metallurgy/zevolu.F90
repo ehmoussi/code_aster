@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,18 +16,40 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine zevolu(cine, z, zm, dinst, tp,&
+subroutine zevolu(cine, zbeta, zbetam, dinst, tp,&
                   k, n, tdeq, tfeq, coeffc,&
                   m, ar, br, g, dg)
 !
+implicit none
 !
-    implicit none
 #include "asterfort/tempeq.h"
-    real(kind=8) :: z, zm, dinst, tp
-    real(kind=8) :: k, n, tdeq, tfeq, coeffc, m, ar, br
-    real(kind=8) :: g, dg
-    integer :: cine, chau
-    parameter     (chau=1)
+!
+real(kind=8), intent(in) :: zbeta, zbetam
+real(kind=8), intent(in) :: tdeq, tfeq
+real(kind=8), intent(in) :: k, n
+real(kind=8) :: dinst, tp
+real(kind=8) :: coeffc, m, ar, br
+real(kind=8) :: g, dg
+integer :: cine, chau
+parameter     (chau=1)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! METALLURGY -  Compute phase (zircaloy)
+!
+! Compute G function
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  zbeta               : proportion of beta phase (current)
+! In  zbetam              : proportion of beta phase (previous)
+! In  tdeq                : transformation temperature - Begin
+! In  tfeq                : transformation temperature - End
+! In  k                   : material parameter (META_ZIRC)
+! In  n                   : material parameter (META_ZIRC)
+!
+! --------------------------------------------------------------------------------------------------
+!
 !
 !............................................
 ! CALCUL PHASE METALLURGIQUE POUR EDGAR
@@ -49,24 +71,32 @@ subroutine zevolu(cine, z, zm, dinst, tp,&
 ! OUT  G        : LOI D EVOLUTION DE LA PROPORTION DE LA PHASE BETA
 ! OUT  DG       : DERIVEE DE LA FONCTION G PAR RAPPORT A Z
 !
+! --------------------------------------------------------------------------------------------------
+!
     real(kind=8) :: teq, dvteq
 !
-! 1 - CALCUL DE LA TEMPERATURE A L EQUILIBRE POUR Z ET DE SA DERIVEE
+! --------------------------------------------------------------------------------------------------
 !
-    call tempeq(z, tdeq, tfeq, k, n,&
-                teq, dvteq)
+
+! 
+! - Evaluate equivalent temperature
+!
+    call tempeq(zbeta,&
+                tdeq , tfeq ,&
+                k    , n    ,&
+                teq  , dvteq)
 !
 ! 2 - CALCUL DE LA FONCTION G ET DE SA DERIVEE
 !
     if (cine .eq. chau) then
-        g=z-zm-dinst*coeffc*((abs(tp-teq))**m)
+        g=zbeta-zbetam-dinst*coeffc*((abs(tp-teq))**m)
         dg=1.d0+m*dinst*coeffc*((abs(tp-teq))**(m-1.d0))*dvteq
     else
 ! CINE .EQ. REFR
         g=dinst*exp(ar+br*abs(tp-teq))
-        dg=1.d0+abs(tp-teq)*g*(1.d0-2.d0*z)
-        dg=dg+dvteq*g*z*(1.d0-z)*(1.d0+br*abs(tp-teq))
-        g=z-zm+abs(tp-teq)*g*z*(1.d0-z)
+        dg=1.d0+abs(tp-teq)*g*(1.d0-2.d0*zbeta)
+        dg=dg+dvteq*g*zbeta*(1.d0-zbeta)*(1.d0+br*abs(tp-teq))
+        g=zbeta-zbetam+abs(tp-teq)*g*zbeta*(1.d0-zbeta)
     endif
 !
 end subroutine
