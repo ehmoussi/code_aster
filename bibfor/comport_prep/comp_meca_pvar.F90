@@ -20,7 +20,7 @@
 !
 subroutine comp_meca_pvar(model_, compor_cart_, compor_list_, compor_info)
 !
-use NonLin_Datastructure_type
+use Behaviour_type
 !
 implicit none
 !
@@ -109,7 +109,7 @@ character(len=19), intent(in) :: compor_info
     character(len=255) :: libr_name, subr_name
     character(len=16) :: model_mfront, notype
     integer :: model_dim
-    type(NL_DS_ComporExte), pointer :: v_exte(:) => null()
+    type(Behaviour_External), pointer :: v_exte(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !

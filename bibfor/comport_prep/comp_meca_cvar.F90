@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 !
 subroutine comp_meca_cvar(ds_compor_prep)
 !
-use NonLin_Datastructure_type
+use Behaviour_type
 !
 implicit none
 !
@@ -27,7 +27,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/comp_nbvari.h"
 !
-type(NL_DS_ComporPrep), intent(inout) :: ds_compor_prep
+type(Behaviour_PrepPara), intent(inout) :: ds_compor_prep
 !
 ! --------------------------------------------------------------------------------------------------
 !
