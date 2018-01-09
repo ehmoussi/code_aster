@@ -123,7 +123,7 @@ class ExecuteCommand(object):
         timer = ExecutionParameter().get_option("timer")
         if cls.command_name not in ("DEBUT", "POURSUITE"):
             check_jeveux()
-        if not cmd._op:
+        if cmd._op is None:
             logger.debug("ignore command {0}".format(cmd.name))
             return
 
@@ -231,7 +231,7 @@ class ExecuteCommand(object):
             keywords (dict): Keywords arguments of user's keywords.
         """
         sd_type = self._cata.get_type_sd_prod(**keywords)
-        if not sd_type:
+        if sd_type is None:
             self._result = None
         else:
             raise NotImplementedError("Method 'create_result' must be "
@@ -246,7 +246,7 @@ class ExecuteCommand(object):
         syntax = CommandSyntax(self.name, self._cata)
         syntax.define(keywords)
         # set result and type names
-        if not self._result:
+        if self._result is None:
             type_name = ""
             result_name = ""
         else:
@@ -283,7 +283,7 @@ class ExecuteCommand(object):
         # use *legacy* naming system that reads the command file
         get_name.use_naming_function(partial(get_name.native, level=5))
         sd_name = get_name(self.name)
-        if not sd_name:
+        if sd_name is None:
             # use an automatic naming
             sd_name = ResultNaming.getNewResultName()
         return sd_name

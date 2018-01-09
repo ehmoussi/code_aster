@@ -64,7 +64,7 @@ amor_modal = CALC_AMOR_MODAL(
          ),
                )
 
-test.assertEqual(amor_modal.getType(), "LISTR8")
+test.assertEqual(amor_modal.getType(), "LISTR8_SDASTER")
 
 test.printSummary()
 
