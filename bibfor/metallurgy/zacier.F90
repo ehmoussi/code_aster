@@ -15,11 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine zacier(jv_mater ,&
-                  nbhist, ftrc, trc, coef,&
-                  fmod, ckm, nbtrc, tpg0, tpg1,&
-                  tpg2, dt10, dt21, tamp, metapg)
+                  nb_hist  , ftrc     , trc ,&
+                  coef     , fmod     ,&
+                  nbtrc    , ckm      ,&
+                  tpg0     , tpg1     , tpg2,&
+                  dt10     , dt21     ,&
+                  vari_prev, vari_curr)
 !
 use Metallurgy_type
 !
@@ -30,8 +33,18 @@ implicit none
 #include "asterfort/smcarc.h"
 #include "asterfort/utmess.h"
 #include "asterfort/metaSteelGrainSize.h"
+#include "asterfort/Metallurgy_type.h"
 !
 integer, intent(in) :: jv_mater
+integer, intent(in) :: nb_hist
+real(kind=8), intent(inout) :: ftrc((3*nb_hist), 3), trc((3*nb_hist), 5)
+real(kind=8), intent(in)  :: coef(*), fmod(*)
+integer, intent(in) :: nbtrc
+real(kind=8), intent(in) :: ckm(6*nbtrc)
+real(kind=8), intent(in) :: tpg0, tpg1, tpg2
+real(kind=8), intent(in) :: dt10, dt21
+real(kind=8), intent(in) :: vari_prev(7)
+real(kind=8), intent(out) :: vari_curr(7)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -42,6 +55,21 @@ integer, intent(in) :: jv_mater
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  jv_mater            : coded material address
+! In  nb_hist             : number of graph in TRC diagram
+! IO  trc                 : values of functions for TRC diagram
+! IO  ftrc                : values of derivatives (by temperature) of functions for TRC diagram
+! In  coef                : parameters from TRC diagrams (P5 polynom)
+! In  fmod                : experimental function from TRC diagrams
+! In  nbtrc               : size of TEMP_TRC parameters
+! In  ckm                 : TEMP_TRC parameters
+! In  tpg0                : temperature at time N-1
+! In  tpg1                : temperature at time N
+! In  tpg2                : temperature at time N+1
+! In  dt10                : increment of time [N-1, N]
+! In  dt21                : increment of time [N, N+1]
+!
+! --------------------------------------------------------------------------------------------------
+!
 !
 !       EVOLUTION METALLURGIQUE POUR ACIER
 !
@@ -64,166 +92,164 @@ integer, intent(in) :: jv_mater
 !   - SORTIES :                                                        C
 !       METAPG(7)          : PHASMETA(N+1) ZF,ZP,ZB,ZM,P,T,MS          C
 !
-!-----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    real(kind=8) :: metapg(7), tamp(7), tempo(7)
-    integer :: nbhist, nbtrc
-    real(kind=8) :: ftrc((3*nbhist), 3), trc((3*nbhist), 5), fmod(*)
-    real(kind=8) :: ckm(6*nbtrc), coef(*), dt10, dt21, tpg0, tpg1, tpg2
-    real(kind=8) :: dmoins, coef_phase
+    real(kind=8) :: vari_dumm(7)
+    real(kind=8) :: dmoins
     real(kind=8) :: tpoint, zero, ti, tpi
-    real(kind=8) :: zeq1, zeq2, z1, z2, epsi
-    real(kind=8) :: un
-    real(kind=8) :: zeq1i, zeq2i, ti1, ti2, taux, z1i
+    real(kind=8) :: zeq1, zeq2, zaust, z2, epsi, dt21_mod
+    real(kind=8) :: un, coef_phase
+    real(kind=8) :: zeq1i, zeq2i, ti1, ti2, taux
     integer :: i, j, nbpas
-    aster_logical :: lrefr
+    aster_logical :: l_cold
     type(META_SteelParameters) :: metaSteelPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
     zero = 0.d0
     epsi = 1.d-10
-    un = 1.d0
+    un   = 1.d0
 !
 ! - Get material parameters for steel
 !
     call metaSteelGetParameters(jv_mater, metaSteelPara)
-
-    metapg(6) = tpg2
-    metapg(7) = tamp(7)
+!
+! - Temperature
+!
+    vari_curr(TEMP_PG) = tpg2
+    vari_curr(TEMP_MARTENSITE) = vari_prev(TEMP_MARTENSITE)
     tpoint = (tpg1-tpg0)/dt10
-    z1 = zero
-    do j = 1, 4
-        z1 = z1+tamp(j)
-    end do
-    z1 = un - z1
-    zeq1 = min((tpg1-metaSteelPara%ac1)/(metaSteelPara%ac3-metaSteelPara%ac1) , un )
-    zeq2 = min((tpg2-metaSteelPara%ac1)/(metaSteelPara%ac3-metaSteelPara%ac1) , un )
+!
+! - Proportion of austenite
+!
+    zaust   = un - (vari_prev(PFERRITE) + vari_prev(PPERLITE) +&
+                    vari_prev(PBAINITE) + vari_prev(PMARTENS))
+!
+! - Colding or not ?
+!
+    zeq1    = min((tpg1-metaSteelPara%ac1)/(metaSteelPara%ac3-metaSteelPara%ac1) , un )
+    zeq2    = min((tpg2-metaSteelPara%ac1)/(metaSteelPara%ac3-metaSteelPara%ac1) , un )
     if (tpoint .gt. zero) then
-        lrefr = ASTER_FALSE
+        l_cold = ASTER_FALSE
     else if (tpg2 .gt. metaSteelPara%ar3) then
-        lrefr = ASTER_FALSE
+        l_cold = ASTER_FALSE
     else if (tpg2 .lt. metaSteelPara%ac1) then
-        lrefr = ASTER_TRUE
+        l_cold = ASTER_TRUE
     else if (tpoint .lt. zero) then
-        lrefr = ASTER_TRUE
-    else if (z1 .le. zeq2) then
-        lrefr = ASTER_FALSE
+        l_cold = ASTER_TRUE
+    else if (zaust .le. zeq2) then
+        l_cold = ASTER_FALSE
     else
-        lrefr = ASTER_TRUE
+        l_cold = ASTER_TRUE
     endif
 !
-    if (lrefr) then
+    if (l_cold) then
         if (abs(tpg2-tpg1) .gt. 5.001d0) then
             nbpas = int(abs(tpg2-tpg1)/5.d0-0.001d0)+1
-            dt21 = dt21/dble(nbpas)
-            do j = 1, 7
-                tempo(j) = tamp(j)
-            end do
+            dt21_mod     = dt21/dble(nbpas)
+            vari_dumm(:) = vari_prev(:)
             do i = 1, nbpas
-                ti = tpg1+(tpg2-tpg1)*dble(i-1)/dble(nbpas)
-                metapg(6) = tpg1+(dble(i)*(tpg2-tpg1)) /dble(nbpas)
-                tpi = (metapg(6)-ti)/dt21
-                call smcarc(nbhist       , ftrc , trc ,&
-                            coef         , fmod ,&
-                            metaSteelPara, nbtrc, ckm ,&
-                            ti           , tpi  , dt10,&
-                            tempo        , metapg)
-                do j = 1, 7
-                    tempo(j) = metapg(j)
-                end do
+                ti                 = tpg1+(tpg2-tpg1)*dble(i-1)/dble(nbpas)
+                vari_curr(TEMP_PG) = tpg1+(dble(i)*(tpg2-tpg1))/dble(nbpas)
+                tpi                = (vari_curr(TEMP_PG)-ti)/dt21_mod
+                call smcarc(nb_hist      , ftrc     , trc ,&
+                            coef         , fmod     ,&
+                            metaSteelPara, nbtrc    , ckm ,&
+                            ti           , tpi      , dt10,&
+                            vari_dumm    , vari_curr)
+                vari_dumm(:) = vari_curr(:)
             end do
         else
-            call smcarc(nbhist       , ftrc  , trc  ,&
-                        coef         , fmod  ,&
-                        metaSteelPara, nbtrc , ckm ,&
-                        tpg1         , tpoint, dt10,&
-                        tamp         , metapg)
-!
+            call smcarc(nb_hist      , ftrc     , trc ,&
+                        coef         , fmod     ,&
+                        metaSteelPara, nbtrc    , ckm ,&
+                        tpg1         , tpoint   , dt10,&
+                        vari_prev    , vari_curr)
         endif
     else
         if (abs(tpg2-tpg1) .gt. 5.001d0) then
 ! ----------------SUBDIVISION EN PAS DE CING DEGRE MAX
-            nbpas = int(abs(tpg2-tpg1)/5.d0-0.001d0)+1
-            dt21 = dt21/dble(nbpas)
-            z1i = z1
-            dmoins=tamp(5)
+            nbpas    = int(abs(tpg2-tpg1)/5.d0-0.001d0)+1
+            dt21_mod = dt21/dble(nbpas)
+            dmoins   = vari_prev(SIZE_GRAIN)
             do i = 1, nbpas
-                ti1 = tpg1+(tpg2-tpg1)*dble(i-1)/dble(nbpas)
-                ti2 = tpg1+(tpg2-tpg1)*dble(i)/dble(nbpas)
-                tpoint = (ti2-ti1)/dt21
-                zeq1i = min( (ti1-metaSteelPara%ac1)/(metaSteelPara%ac3-metaSteelPara%ac1) , un )
-                zeq2i = min( (ti2-metaSteelPara%ac1)/(metaSteelPara%ac3-metaSteelPara%ac1) , un )
-                taux = metaSteelPara%taux_1 + (metaSteelPara%taux_3-metaSteelPara%taux_1)*zeq1i
-                if ((ti1.lt.(metaSteelPara%ac1-epsi)) .or. (z1i.ge.un)) then
-                    z2 = z1i
+                ti1    = tpg1+(tpg2-tpg1)*dble(i-1)/dble(nbpas)
+                ti2    = tpg1+(tpg2-tpg1)*dble(i)/dble(nbpas)
+                tpoint = (ti2-ti1)/dt21_mod
+                zeq1i  = min( (ti1-metaSteelPara%ac1)/(metaSteelPara%ac3-metaSteelPara%ac1) , un )
+                zeq2i  = min( (ti2-metaSteelPara%ac1)/(metaSteelPara%ac3-metaSteelPara%ac1) , un )
+                taux   = metaSteelPara%taux_1 + (metaSteelPara%taux_3-metaSteelPara%taux_1)*zeq1i
+                if ((ti1.lt.(metaSteelPara%ac1-epsi)) .or. (zaust.ge.un)) then
+                    z2 = zaust
                 else
-                    if (zeq2i .ge. (un-epsi)) tpoint = zero
-                    if (z1i .gt. zeq1i) then
+                    if (zeq2i .ge. (un-epsi)) then
+                        tpoint = zero
+                    endif
+                    if (zaust .gt. zeq1i) then
                         z2 = (taux*tpoint/(metaSteelPara%ac3-metaSteelPara%ac1))
-                        z2 = z2*exp(-dt21/taux)
+                        z2 = z2*exp(-dt21_mod/taux)
                         z2 = ((-taux*tpoint/(metaSteelPara%ac3-metaSteelPara%ac1))+zeq2i+z2-zeq1i)*&
-                              (un-z1i )/(un-zeq1i )
-                        z2 = z2+z1i
+                              (un-zaust)/(un-zeq1i)
+                        z2 = z2+zaust
                     else
-                        z2 = (taux*tpoint/(metaSteelPara%ac3-metaSteelPara%ac1))-zeq1i+z1i
-                        z2 = z2*exp(-dt21/taux)
+                        z2 = (taux*tpoint/(metaSteelPara%ac3-metaSteelPara%ac1))-zeq1i+zaust
+                        z2 = z2*exp(-dt21_mod/taux)
                         z2 = (-taux*tpoint/(metaSteelPara%ac3-metaSteelPara%ac1))+zeq2i+z2
                     endif
                 endif
-!
 ! ------------- Compute size of grain
-!
-                coef_phase = (1.d0-(z2-z1i)/z2)
+                coef_phase = (1.d0-(z2-zaust)/z2)
                 call metaSteelGrainSize(metaSteelPara, nbtrc     , ckm ,&
                                         ti1          , dt10      , dt21,&
                                         z2           , coef_phase,&
-                                        dmoins       , metapg(5))
+                                        dmoins       , vari_curr(SIZE_GRAIN))
                 if (metaSteelPara%l_grain_size) then
-                    z1i    = z2
-                    dmoins = metapg(5)
+                    zaust  = z2
+                    dmoins = vari_curr(SIZE_GRAIN)
                 endif
             end do
         else
-!
+            dt21_mod = dt21
             taux = metaSteelPara%taux_1 + (metaSteelPara%taux_3-metaSteelPara%taux_1)*zeq1
-            if ((tpg1.lt.(metaSteelPara%ac1-epsi)) .or. (z1.ge.un)) then
-                z2 = z1
+            if ((tpg1.lt.(metaSteelPara%ac1-epsi)) .or. (zaust.ge.un)) then
+                z2 = zaust
             else
-                if (zeq2 .ge. (un-epsi)) tpoint = zero
-                if (z1 .gt. zeq1) then
+                if (zeq2 .ge. (un-epsi)) then
+                    tpoint = zero
+                endif
+                if (zaust .gt. zeq1) then
                     z2 = (taux*tpoint/(metaSteelPara%ac3-metaSteelPara%ac1))
-                    z2 = z2*exp(-dt21/taux)
+                    z2 = z2*exp(-dt21_mod/taux)
                     z2 = ((-taux*tpoint/(metaSteelPara%ac3-metaSteelPara%ac1))+zeq2+z2-zeq1)*&
-                         (un-z1 )/(un-zeq1 )
-                    z2 = z2+z1
+                         (un-zaust )/(un-zeq1 )
+                    z2 = z2+zaust
                 else
-                    z2 = (taux*tpoint/(metaSteelPara%ac3-metaSteelPara%ac1))-zeq1+z1
-                    z2 = z2*exp(-dt21/taux)
+                    z2 = (taux*tpoint/(metaSteelPara%ac3-metaSteelPara%ac1))-zeq1+zaust
+                    z2 = z2*exp(-dt21_mod/taux)
                     z2 = (-taux*tpoint/(metaSteelPara%ac3-metaSteelPara%ac1))+zeq2+z2
                 endif
             endif
-!
 ! --------- Compute size of grain
-!
             coef_phase = 1.d0
             if (abs(z2) .ge. epsi) then
-                coef_phase = (1.d0-(z2-z1)/z2)
+                coef_phase = (1.d0-(z2-zaust)/z2)
             endif
-            call metaSteelGrainSize(metaSteelPara, nbtrc     , ckm ,&
-                                    tpg1         , dt10      , dt21,&
-                                    z2           , coef_phase,&
-                                    tamp(5)      , metapg(5))
+            call metaSteelGrainSize(metaSteelPara        , nbtrc      , ckm ,&
+                                    tpg1                 , dt10       , dt21,&
+                                    z2                   , coef_phase ,&
+                                    vari_prev(SIZE_GRAIN), vari_curr(SIZE_GRAIN))
         endif
 !           REPARTITION DE DZGAMMA SUR DZALPHA
-        if (z2 .gt. (un-epsi)) z2 = un
-        if (z1 .ne. un) then
+        if (z2 .gt. (un-epsi)) then
+            z2 = un
+        endif
+        if (zaust .ne. un) then
             do j = 1, 4
-                metapg(j) = tamp(j)*(un-(z2-z1)/(un-z1))
+                vari_curr(j) = vari_prev(j)*(un-(z2-zaust)/(un-zaust))
             end do
         else
             do j = 1, 4
-                metapg(j) = tamp(j)
+                vari_curr(j) = vari_prev(j)
             end do
         endif
     endif

@@ -16,11 +16,11 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine smcarc(nbhist       , ftrc  , trc,&
-                  coef         , fmod  ,&
-                  metaSteelPara, nbtrc , ckm,&
-                  tempe        , tpoint, dt ,&
-                  zin          , zout)
+subroutine smcarc(nb_hist      , ftrc     , trc,&
+                  coef         , fmod     ,&
+                  metaSteelPara, nbtrc    , ckm,&
+                  temp_curr    , temp_incr, time_incr,&
+                  vari_prev    , vari_curr)
 !
 use Metallurgy_type
 !
@@ -31,12 +31,17 @@ implicit none
 #include "asterfort/smcomo.h"
 #include "asterfort/metaSteelTRCPolynom.h"
 #include "asterfort/metaSteelGrainSize.h"
+#include "asterfort/Metallurgy_type.h"
 !
-integer :: nbhist, nbtrc
-real(kind=8) :: ftrc((3*nbhist), 3), trc((3*nbhist), 5), fmod(*)
-real(kind=8) :: ckm(6*nbtrc), coef(*), tempe, tpoint
+integer, intent(in) :: nb_hist
+real(kind=8), intent(inout) :: ftrc((3*nb_hist), 3), trc((3*nb_hist), 5)
+real(kind=8), intent(in)  :: coef(*), fmod(*)
 type(META_SteelParameters), intent(in) :: metaSteelPara
-real(kind=8) :: zin(7), zout(7)
+integer, intent(in) :: nbtrc
+real(kind=8), intent(in) :: ckm(6*nbtrc)
+real(kind=8), intent(in) :: temp_curr, temp_incr, time_incr
+real(kind=8), intent(in) :: vari_prev(:)
+real(kind=8), intent(out) :: vari_curr(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -46,156 +51,158 @@ real(kind=8) :: zin(7), zout(7)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  nb_hist             : number of graph in TRC diagram
+! IO  trc                 : values of functions for TRC diagram
+! IO  ftrc                : values of derivatives (by temperature) of functions for TRC diagram
+! In  coef                : parameters from TRC diagrams (P5 polynom)
+! In  fmod                : experimental function from TRC diagrams
 ! In  metaSteelPara       : parameters for metallurgy of steel
-!   - FONCTION :                                                       C
-!       CALCUL DE Z(N+1) CONNAISSANT T(N), TP(N), Z(N) ET T(N+1)       C
-!   - ENTREES :                                                        C
-!       NBHIST           : NBRE D HISTOIRES EXPERIMENTALE DE DEFI_TRC  C
-!       FTRC(3*NBHIST,3) : VECTEUR DZ/DT EXPERIMENTAUX (VIDE EN ENTREE)C
-!       TRC (3*NBHIST,5) : VECTEUR Z,T EXPERIMENTAUX (VIDE EN ENTREE)  C
-!       FMOD(*)          : ENSEMBLE DES HISTOIRES EXPERIMENTALES       C                          C
-!       CKM(6*NBTRC)     : VECTEUR DES LOIS MS(Z) SEUIL,AKM,BKM,TPLM   C
-!                        : VECTEUR DES LOIS GRAIN P , A
-!       NBTRC            : NBRE DE LOIS MS(Z)                          C
-!       TEMPE            : TEMPERATURE AU POINT DE GAUSS SUR LE PAS    C
-!       TPOINT           : DERIVEE A GAUCHE DE TEMPE                   C
-!       ZIN(7)           : PHASMETA(N) ZF,ZP,ZB,ZM, P ,T,MS           C
-!   - SORTIES :                                                        C
-!       ZOUT(7)          : PHASMETA(N+1) ZF,ZP,ZB,ZM,P,T,MS            C
+! In  nbtrc               : size of TEMP_TRC parameters
+! In  ckm                 : TEMP_TRC parameters
+! In  temp_curr           : current temperature
+! In  temp_incr           : increment of temperature
+! In  time_incr           : increment of time
+! In  vari_prev           : internal state variables at begin of time step
+! Out vari_curr           : internal state variables at end of time step
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: j, ind(6)
-    real(kind=8) :: sdz, sdz0, tmf, zm, dz(4), x(5), rz
-    real(kind=8) :: tpli, coef_phase
-    real(kind=8) :: ooun, quinze, un, zero, tlim, epsi, tpoin2
-    real(kind=8) :: dt, zaust
-!     ------------------------------------------------------------------
+    integer :: ind(6)
+    real(kind=8) :: tmf, x(5), tpli
+    real(kind=8) :: un, zero, tlim, epsi, temp_incr_eff
+    real(kind=8) :: coef_phase
+    real(kind=8) :: zcold0, zaust, zcold, z13, dz(4), dzcold, zmartensite
+!
+! --------------------------------------------------------------------------------------------------
 !
     zero = 0.d0
-    ooun = 0.01d0
-    un = 1.d0
-    quinze = 15.d0
+    un   = 1.d0
     epsi = 1.d-10
     tlim = ckm(4)
 !
-    if (tempe .gt. metaSteelPara%ar3) then
-        do 5 j = 1, 4
-            zout(j) = zin(j)
- 5      continue
-        zout(7)=metaSteelPara%ms0
+    if (temp_curr .gt. metaSteelPara%ar3) then
+! ----- Nothing changes
+        vari_curr(PFERRITE)        = vari_prev(PFERRITE)
+        vari_curr(PPERLITE)        = vari_prev(PPERLITE)
+        vari_curr(PBAINITE)        = vari_prev(PBAINITE)
+        vari_curr(PMARTENS)        = vari_prev(PMARTENS)
+        vari_curr(TEMP_MARTENSITE) = metaSteelPara%ms0
     else
-        sdz0 = zin(1) + zin(2) + zin(3) + zin(4)
-!
-        tmf = zin(7) - ( log(ooun))/metaSteelPara%alpha - quinze
-        if ((sdz0.ge.un-0.001d0) .or. (tempe.lt.tmf)) then
-            do 10 j = 1, 4
-                zout(j) = zin(j)
-10          continue
-            zout(7)=zin(7)
-!
+        zcold0 = vari_prev(PFERRITE) + vari_prev(PPERLITE) +&
+                 vari_prev(PBAINITE) + vari_prev(PMARTENS)
+        tmf    = vari_prev(TEMP_MARTENSITE) - (log(0.01d0))/metaSteelPara%alpha - 15.d0
+        if ((zcold0 .ge. 0.999d0) .or. (temp_curr .lt. tmf)) then
+! --------- Nothing changes
+            vari_curr(PFERRITE)        = vari_prev(PFERRITE)
+            vari_curr(PPERLITE)        = vari_prev(PPERLITE)
+            vari_curr(PBAINITE)        = vari_prev(PBAINITE)
+            vari_curr(PMARTENS)        = vari_prev(PMARTENS)
+            vari_curr(TEMP_MARTENSITE) = vari_prev(TEMP_MARTENSITE)
         else
-            if (tempe .lt. zin(7)) then
-                do 15 j = 1, 3
-                    dz(j) = zero
-15              continue
+! --------- Compute increment of phases
+            if (temp_curr .lt. vari_prev(TEMP_MARTENSITE)) then
+                dz(PFERRITE) = zero
+                dz(PPERLITE) = zero
+                dz(PBAINITE) = zero
             else
-! ------------- Compute functions from TRC diagram
-                call smcomo(coef, fmod, tempe, nbhist, ftrc,&
-                            trc)
-!
-! --- TPOIN2 POUR EFFET TAILLE DE GRAIN AUSTENITIQUE
+! ------------- Compute Teff (effective cooling speed of temperature)
                 if (ckm(6) .eq. 0.d0) then
-                    tpoin2 = tpoint
+                    temp_incr_eff = temp_incr
                 else
-                    tpoin2 = tpoint * exp(ckm(6)*(zin(5)-ckm(5)))
+                    temp_incr_eff = temp_incr * exp(ckm(6)*(vari_prev(SIZE_GRAIN)-ckm(5)))
                 endif
-! --- COMPARAISON DE L ETAT COURANT / HISTOIRES ENVELOPPES
-!
-                if (tpoin2 .gt. (trc(1,4)*(un+epsi))) then
-                    do 20 j = 1, 3
-                        dz(j) = ftrc(1,j)*(zout(6)-tempe)
-20                  continue
+! ------------- Compute functions from TRC diagram
+                call smcomo(coef, fmod, temp_curr, nb_hist,&
+                            ftrc, trc)
+                if (temp_incr_eff .gt. (trc(1,4)*(un+epsi))) then
+! ----------------- Before first value from TRC diagrams
+                    dz(PFERRITE) = ftrc(1,PFERRITE)*(vari_curr(TEMP_PG)-temp_curr)
+                    dz(PPERLITE) = ftrc(1,PPERLITE)*(vari_curr(TEMP_PG)-temp_curr)
+                    dz(PBAINITE) = ftrc(1,PBAINITE)*(vari_curr(TEMP_PG)-temp_curr)
+                elseif (temp_incr_eff .lt. (trc(nb_hist,4)*(un-epsi))) then
+! ----------------- After last value from TRC diagrams
+                    dz(PFERRITE) = ftrc(nb_hist,PFERRITE)*(vari_curr(TEMP_PG)-temp_curr)
+                    dz(PPERLITE) = ftrc(nb_hist,PPERLITE)*(vari_curr(TEMP_PG)-temp_curr)
+                    dz(PBAINITE) = ftrc(nb_hist,PBAINITE)*(vari_curr(TEMP_PG)-temp_curr)
                 else
-                    if (tpoin2 .lt. (trc(nbhist,4)*(un-epsi))) then
-                        do 30 j = 1, 3
-                            dz(j) = ftrc(nbhist,j)*(zout(6)-tempe)
-30                      continue
+! ----------------- Find the six nearest TRC curves
+                    x(1) = vari_prev(PFERRITE)
+                    x(2) = vari_prev(PPERLITE)
+                    x(3) = vari_prev(PBAINITE)
+                    x(4) = temp_incr_eff
+                    x(5) = temp_curr
+                    call smcavo(x, nb_hist, trc, ind)
+! ----------------- Compute barycenter and update increments of phases
+                    call smcaba(x , nb_hist, trc, ftrc, ind,&
+                                dz)
+                    if ((vari_curr(TEMP_PG)-temp_curr) .gt. zero) then
+                        dz(PFERRITE) = zero
+                        dz(PPERLITE) = zero
+                        dz(PBAINITE) = zero
                     else
-! --------------------- Find the six nearest TRC curves
-                        x(1) = zin(1)
-                        x(2) = zin(2)
-                        x(3) = zin(3)
-                        x(4) = tpoin2
-                        x(5) = tempe
-                        call smcavo(x, nbhist, trc, ind)
-! --------------------- Compute barycenter and update increments of phases
-                        call smcaba(x , nbhist, trc, ftrc, ind,&
-                                    dz)
-                        if ((zout(6)-tempe) .gt. zero) then
-                            do 35 j = 1, 3
-                                dz(j) = zero
-35                          continue
-                        else
-                            do 36 j = 1, 3
-                                dz(j) = dz(j)*(zout(6)-tempe)
-!
-!
-!
-36                          continue
-                        endif
+                        dz(PFERRITE) = dz(PFERRITE)*(vari_curr(TEMP_PG)-temp_curr)
+                        dz(PPERLITE) = dz(PPERLITE)*(vari_curr(TEMP_PG)-temp_curr)
+                        dz(PBAINITE) = dz(PBAINITE)*(vari_curr(TEMP_PG)-temp_curr)
                     endif
                 endif
             endif
-! --- CALCUL DE MS-
-!
-            sdz = sdz0 - zin(4)
-            if ((sdz.ge.ckm(1)) .and. (zin(4).eq.zero)) then
-                zout(7) = metaSteelPara%ms0 + ckm(2)*sdz + ckm(3)
+! --------- New value of sum of three first phases
+            z13 = zcold0 - vari_prev(PMARTENS)
+! --------- Compute new martensite temperature
+            if ((z13.ge.ckm(1)) .and. (vari_prev(PMARTENS).eq.zero)) then
+                vari_curr(TEMP_MARTENSITE) = metaSteelPara%ms0 + ckm(2)*z13 + ckm(3)
             else
-                zout(7) = zin(7)
+                vari_curr(TEMP_MARTENSITE) = vari_prev(TEMP_MARTENSITE)
             endif
-!
-!
-            zm = un - sdz
-            if ((zout(6).gt.zout(7)) .or. (zm.lt.ooun)) then
-                zout(4) = zin(4)
+! --------- Compute proportion of martensite
+            zmartensite = 1.d0 - z13
+            if ((vari_curr(TEMP_PG) .gt. vari_curr(TEMP_MARTENSITE)) .or.&
+                (zmartensite.lt.0.01d0)) then
+                vari_curr(PMARTENS) = vari_prev(PMARTENS)
             else
-                call metaSteelTRCPolynom(coef(3:8), tlim, tempe,&
-                              tpli)
-                if ((tpoint.gt.tpli) .and. (zin(4).eq.zero)) then
-                    zout(4) = zin(4)
+                call metaSteelTRCPolynom(coef(3:8), tlim, temp_curr,&
+                                         tpli)
+                if ((temp_incr.gt.tpli) .and. (vari_prev(PMARTENS).eq.zero)) then
+                    vari_curr(PMARTENS) = vari_prev(PMARTENS)
                 else
-                    zout(4) = zm*(un-exp(metaSteelPara%alpha*(zout(7)-zout(6))))
+                    vari_curr(PMARTENS) = zmartensite*&
+                                     (un-exp(metaSteelPara%alpha*&
+                                      (vari_curr(TEMP_MARTENSITE)-vari_curr(TEMP_PG))))
                 endif
             endif
-            dz(4) = zout(4)-zin(4)
-            sdz = zero
-            do 40 j = 1, 4
-                sdz = sdz+zin(j)+dz(j)
-40          continue
-            if (sdz .gt. un-0.001d0) then
-                rz = sdz - sdz0
-                do 50 j = 1, 4
-                    dz(j) = dz(j) / ( rz/(un-sdz0) )
-                    zout(j) = zin(j) + dz(j)
-50              continue
+            dz(PMARTENS) = vari_curr(PMARTENS)-vari_prev(PMARTENS)
+! --------- New value of sum of "cold" phases
+            zcold = vari_prev(PFERRITE) + vari_prev(PPERLITE) +&
+                    vari_prev(PBAINITE) + vari_prev(PMARTENS)
+            zcold = zcold + dz(PFERRITE) + dz(PPERLITE) +&
+                            dz(PBAINITE) + dz(PMARTENS)
+            if (zcold .gt. 0.999d0) then
+                dzcold = zcold - zcold0
+                vari_curr(PFERRITE) = vari_prev(PFERRITE)+dz(PFERRITE)/(dzcold/(un-zcold0))
+                vari_curr(PPERLITE) = vari_prev(PPERLITE)+dz(PPERLITE)/(dzcold/(un-zcold0))
+                vari_curr(PBAINITE) = vari_prev(PBAINITE)+dz(PBAINITE)/(dzcold/(un-zcold0))
+                vari_curr(PMARTENS) = vari_prev(PMARTENS)+dz(PMARTENS)/(dzcold/(un-zcold0))
             else
-                do 51 j = 1, 4
-                    zout(j) = zin(j) + dz(j)
-51              continue
+                vari_curr(PFERRITE) = vari_prev(PFERRITE)+dz(PFERRITE)
+                vari_curr(PPERLITE) = vari_prev(PPERLITE)+dz(PPERLITE)
+                vari_curr(PBAINITE) = vari_prev(PBAINITE)+dz(PBAINITE)
+                vari_curr(PMARTENS) = vari_prev(PMARTENS)+dz(PMARTENS)
             endif
         endif
     endif
-    zaust = zout(1)+zout(2)+zout(3)+zout(4)
-    zaust = 1-zaust
+!
+! - Compute "hot" phase
+!
+    zaust = un - vari_curr(PFERRITE) + vari_curr(PPERLITE) +&
+                 vari_curr(PBAINITE) + vari_prev(PBAINITE)
 !
 ! - Compute size of grain
 !
-    coef_phase = 1.d0
-    call metaSteelGrainSize(metaSteelPara, nbtrc     , ckm,&
-                            tempe        , dt        , dt ,&
-                            zaust        , coef_phase,&
-                            zin(5)       , zout(5))
+    coef_phase = un
+    call metaSteelGrainSize(metaSteelPara         , nbtrc      , ckm,&
+                            temp_curr             , time_incr  , time_incr,&
+                            zaust                 , coef_phase ,&
+                            vari_prev(SIZE_GRAIN) , vari_curr(SIZE_GRAIN))
 !
 end subroutine
+
