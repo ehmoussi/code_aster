@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -76,6 +76,10 @@ class CoreOptions(object):
             '--command', dest='fort1', type='str', metavar='FILE',
             action='callback', callback=check_value,
             help="Code_Aster command file")
+        parser.add_option(
+            '--stage_number', dest='stage_number', type='int', metavar='NUM',
+            action='store', default=1,
+            help="Stage number in the Study")
         parser.add_option(
             '--memjeveux', dest='memjeveux', type='float', action='store',
             help="maximum size of the memory taken by the execution "
