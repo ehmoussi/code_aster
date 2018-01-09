@@ -19,9 +19,8 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import 
+from ..Objects import FluidStructureModalBasis
 from .ExecuteCommand import ExecuteCommand
-Calculer les paramètres modaux d'une structure soumise à un écoulement. 
 
 class ComputeFluidStructureInteraction(ExecuteCommand):
     """Command that defines :class:`~code_aster.Objects.FluidStructureModalBasis`.
