@@ -16,23 +16,16 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-interface
-    subroutine zacier(jv_mater ,&
-                      nb_hist  , ftrc     , trc ,&
-                      coef     , fmod     ,&
-                      nbtrc    , ckm      ,&
-                      tpg0     , tpg1     , tpg2,&
-                      dt10     , dt21     ,&
-                      vari_prev, vari_curr)
-        integer, intent(in) :: jv_mater
-        integer, intent(in) :: nb_hist
-        real(kind=8), intent(inout) :: ftrc((3*nb_hist), 3), trc((3*nb_hist), 5)
-        real(kind=8), intent(in)  :: coef(*), fmod(*)
-        integer, intent(in) :: nbtrc
-        real(kind=8), intent(in) :: ckm(6*nbtrc)
-        real(kind=8), intent(in) :: tpg0, tpg1, tpg2
-        real(kind=8), intent(in) :: dt10, dt21
-        real(kind=8), intent(in) :: vari_prev(7)
-        real(kind=8), intent(out) :: vari_curr(7)
-    end subroutine zacier
-end interface
+! Metallurgy data structure
+! -------------------------------------------------------------------------
+!
+!
+! - Phases for steel
+!
+#define PFERRITE 1
+#define PPERLITE 2
+#define PBAINITE 3
+#define PMARTENS 4
+#define SIZE_GRAIN       5
+#define TEMP_PG          6
+#define TEMP_MARTENSITE  7

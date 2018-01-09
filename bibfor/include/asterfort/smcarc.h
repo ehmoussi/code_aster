@@ -17,23 +17,20 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine smcarc(nbhist, ftrc, trc, coef, fmod,&
+    subroutine smcarc(nb_hist      , ftrc     , trc,&
+                      coef         , fmod     ,&
                       metaSteelPara, nbtrc    , ckm,&
-                      tempe, tpoint,&
-                      dt, zin, zout)
+                      temp_curr    , temp_incr, time_incr,&
+                      vari_prev    , vari_curr)
         use Metallurgy_type
-        integer :: nbtrc
-        integer :: nbhist
-        real(kind=8) :: ftrc((3*nbhist), 3)
-        real(kind=8) :: trc((3*nbhist), 5)
-        real(kind=8) :: coef(*)
-        real(kind=8) :: fmod(*)
+        integer, intent(in) :: nb_hist
+        real(kind=8), intent(inout) :: ftrc((3*nb_hist), 3), trc((3*nb_hist), 5)
+        real(kind=8), intent(in)  :: coef(*), fmod(*)
         type(META_SteelParameters), intent(in) :: metaSteelPara
-        real(kind=8) :: ckm(6*nbtrc)
-        real(kind=8) :: tempe
-        real(kind=8) :: tpoint
-        real(kind=8) :: dt
-        real(kind=8) :: zin(7)
-        real(kind=8) :: zout(7)
+        integer, intent(in) :: nbtrc
+        real(kind=8), intent(in) :: ckm(6*nbtrc)
+        real(kind=8), intent(in) :: temp_curr, temp_incr, time_incr
+        real(kind=8), intent(in) :: vari_prev(:)
+        real(kind=8), intent(out) :: vari_curr(:)
     end subroutine smcarc
 end interface
