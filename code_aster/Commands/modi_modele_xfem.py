@@ -42,8 +42,7 @@ class XfemModelModication(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         if("MODELE_IN" in keywords):
-        	print type(keywords["MODELE_IN"])
-        	self._result.setSupportMesh(keywords["MODELE_IN"].getSupportMesh())
+            self._result.setSupportMesh(keywords["MODELE_IN"].getSupportMesh())
 
 
 

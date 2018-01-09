@@ -51,7 +51,6 @@ class ReducedBaseDefinition(ExecuteCommand):
             self._result.setModel(keywords["MODELE_REDUIT"])
         else:
             resultat = keywords["RESULTAT"]
-            print "resultat = ", resultat
             if(resultat is not None):
                 self._result.setModel(resultat.getModel())
 
