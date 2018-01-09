@@ -34,7 +34,7 @@ class ExtrResu(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         if keywords["RESULTAT"].getType() == "EVOL_ELAS":
-            self._result = type(keywords["RESULTAT"])("EVOL_ELAS")
+            self._result = type(keywords["RESULTAT"])()
         else:
             self._result = type(keywords["RESULTAT"])()
 
