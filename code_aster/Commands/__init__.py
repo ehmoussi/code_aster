@@ -58,6 +58,7 @@ from .calc_erc_dyn import CALC_ERC_DYN
 from .calc_erreur import CALC_ERREUR
 from .calc_fatigue import CALC_FATIGUE
 from .calc_ferraillage import CALC_FERRAILLAGE
+from .calc_flui_stru import CALC_FLUI_STRU
 from .calc_fonc_interp import CALC_FONC_INTERP
 from .calc_forc_ajou import CALC_FORC_AJOU
 from .calc_forc_nonl import CALC_FORC_NONL
