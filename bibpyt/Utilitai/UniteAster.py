@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -88,7 +88,7 @@ class UniteAster:
         # print 'DEBUG infos[unit] = ', self.infos[unit]
         DETRUIRE(CONCEPT=_F(NOM=__tab), INFO=1)
 
-    def Libre(self, nom=None, action='RESERVER'):
+    def Libre(self, nom=None, action='RESERVER', ascii=True):
         """Réserve/associe et retourne une unité libre en y associant, s'il est
         fourni, le fichier 'nom'.
         """
@@ -104,7 +104,10 @@ class UniteAster:
                 self.infos[unit]['nom']
             raise aster.error, "<F> <UniteAster.Libre> %s" % message
 
-        DEFI_FICHIER(ACTION=action, UNITE=unit, FICHIER=nom.strip())
+        opts = {}
+        if action == 'ASSOCIER':
+            opts['TYPE'] = "ASCII" if ascii else "BINARY"
+        DEFI_FICHIER(ACTION=action, UNITE=unit, FICHIER=nom.strip(), **opts)
         self.infos[unit] = {}
         self.infos[unit]['nom'] = nom.strip()
         self.infos[unit]['etat'] = 'R'
