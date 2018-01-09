@@ -144,6 +144,7 @@ from .mode_iter_cycl import MODE_ITER_CYCL
 from .mode_non_line import MODE_NON_LINE
 from .mode_statique import MODE_STATIQUE
 from .modi_maillage import MODI_MAILLAGE
+from .modi_base_modale import MODI_BASE_MODALE
 from .modi_modele import MODI_MODELE
 from .modi_modele_xfem import MODI_MODELE_XFEM
 from .modi_repere import MODI_REPERE
