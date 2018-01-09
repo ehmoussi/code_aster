@@ -30,6 +30,7 @@ implicit none
 #include "asterfort/smcavo.h"
 #include "asterfort/smcomo.h"
 #include "asterfort/metaSteelTRCPolynom.h"
+#include "asterfort/metaSteelGrainSize.h"
 !
 integer :: nbhist, nbtrc
 real(kind=8) :: ftrc((3*nbhist), 3), trc((3*nbhist), 5), fmod(*)
@@ -66,10 +67,9 @@ real(kind=8) :: zin(7), zout(7)
 !
     integer :: j, ind(6)
     real(kind=8) :: sdz, sdz0, tmf, zm, dz(4), x(5), rz
-    real(kind=8) :: tpli
+    real(kind=8) :: tpli, coef_phase
     real(kind=8) :: ooun, quinze, un, zero, tlim, epsi, tpoin2
-    real(kind=8) :: lambda, dlim, dmoins, dt, unsurl, zaust
-    real(kind=8) :: a2, b2, c2, delta
+    real(kind=8) :: dt, zaust
 !     ------------------------------------------------------------------
 !
     zero = 0.d0
@@ -189,25 +189,13 @@ real(kind=8) :: zin(7), zout(7)
     endif
     zaust = zout(1)+zout(2)+zout(3)+zout(4)
     zaust = 1-zaust
-! --- CALCUL TAILLE DE GRAIN
-    if (metaSteelPara%austenite%lambda0 .eq. 0.d0) then
-        unsurl = 0.d0
-        zout(5) = ckm(5)
-    else
-        if (zaust .lt. 1.d-3) then
-            zout(5)=0.d0
-        else
-            dmoins = zin(5)
-            lambda = metaSteelPara%austenite%lambda0*&
-                     exp(metaSteelPara%austenite%qsr_k/(tempe+273.d0))
-            unsurl = 1.d0/lambda
-            dlim = metaSteelPara%austenite%d10*&
-                   exp(-metaSteelPara%austenite%wsr_k/(tempe+273.d0))
-            a2 = 1.d0
-            b2 = dmoins-(dt*unsurl/dlim)
-            c2 = dt*unsurl
-            delta = (b2**2)+(4.d0*a2*c2)
-            zout(5) = (b2+delta**0.5d0)/(2.d0*a2)
-        endif
-    endif
+!
+! - Compute size of grain
+!
+    coef_phase = 1.d0
+    call metaSteelGrainSize(metaSteelPara, nbtrc     , ckm,&
+                            tempe        , dt        , dt ,&
+                            zaust        , coef_phase,&
+                            zin(5)       , zout(5))
+!
 end subroutine
