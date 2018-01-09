@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -498,7 +498,7 @@ Exception : %s
             code = 'A'
             if self._mpi_nbcpu is None:
                 if in_testcase():
-                    code = 'F'            
+                    code = 'F'
                 self.print_message(code, 'CATAMESS_87', valk=list(not_seen),
                                    exception=True)
 
