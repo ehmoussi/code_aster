@@ -46,9 +46,9 @@ StaticMechanicalSolverInstance::StaticMechanicalSolverInstance( const ModelPtr& 
     _timeStep->setValues( VectorDouble( 1, 0. ) );
 };
 
-ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runtime_error )
+ElasticEvolutionContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runtime_error )
 {
-    ResultsContainerPtr resultC( new ResultsContainerInstance ( std::string( "EVOL_ELAS" ) ) );
+    ElasticEvolutionContainerPtr resultC( new ElasticEvolutionContainerInstance() );
     std::string nameOfSD = resultC->getName();
 
     _study->getCodedMaterial()->allocate();

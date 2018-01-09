@@ -37,6 +37,7 @@
 #include "LinearAlgebra/LinearSolver.h"
 #include "Algorithms/TimeStepper.h"
 #include "Studies/StudyDescription.h"
+#include "Results/ElasticEvolutionContainer.h"
 
 class StaticMechanicalSolverInstance: public GenericSolver
 {
@@ -87,7 +88,7 @@ class StaticMechanicalSolverInstance: public GenericSolver
         /**
          * @brief Lancement de la resolution
          */
-        ResultsContainerPtr execute() throw ( std::runtime_error );
+        ElasticEvolutionContainerPtr execute() throw ( std::runtime_error );
 
         /**
          * @brief Methode permettant de definir le solveur lineaire

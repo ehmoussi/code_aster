@@ -122,6 +122,7 @@
 #include "PythonBindings/ListOfFloatsInterface.h"
 #include "PythonBindings/InputVariableDefinitionInterface.h"
 #include "PythonBindings/ModeEmpiContainerInterface.h"
+#include "PythonBindings/ElasticEvolutionContainerInterface.h"
 
 using namespace boost::python;
 
@@ -269,4 +270,5 @@ BOOST_PYTHON_MODULE(libaster)
     exportListOfFloatsToPython();
     exportInputVariableDefinitionToPython();
     exportModeEmpiContainerToPython();
+    exportElasticEvolutionContainerToPython();
 };
