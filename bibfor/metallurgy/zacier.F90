@@ -29,6 +29,7 @@ implicit none
 #include "asterfort/metaSteelGetParameters.h"
 #include "asterfort/smcarc.h"
 #include "asterfort/utmess.h"
+#include "asterfort/metaSteelGrainSize.h"
 !
 integer, intent(in) :: jv_mater
 !
@@ -69,13 +70,11 @@ integer, intent(in) :: jv_mater
     integer :: nbhist, nbtrc
     real(kind=8) :: ftrc((3*nbhist), 3), trc((3*nbhist), 5), fmod(*)
     real(kind=8) :: ckm(6*nbtrc), coef(*), dt10, dt21, tpg0, tpg1, tpg2
-    real(kind=8) :: lambda, unsurl, dmoins
-    real(kind=8) :: dlim, dz
+    real(kind=8) :: dmoins, coef_phase
     real(kind=8) :: tpoint, zero, ti, tpi
     real(kind=8) :: zeq1, zeq2, z1, z2, epsi
     real(kind=8) :: un
     real(kind=8) :: zeq1i, zeq2i, ti1, ti2, taux, z1i
-    real(kind=8) :: a, b, c, delta
     integer :: i, j, nbpas
     aster_logical :: lrefr
     type(META_SteelParameters) :: metaSteelPara
@@ -173,28 +172,15 @@ integer, intent(in) :: jv_mater
                     endif
                 endif
 !
-!                 CALCUL TAILLE DE GRAIN
+! ------------- Compute size of grain
 !
-                if (.not. metaSteelPara%l_grain_size) then
-                    unsurl = 0.d0
-                    metapg(5) = ckm(5)
-                else
-                    if (z2 .lt. 1.d-3) then
-                        metapg(5)=0.d0
-                    else
-                        lambda = metaSteelPara%austenite%lambda0*&
-                                 exp(metaSteelPara%austenite%qsr_k/(ti1+273.d0))
-                        unsurl = 1/lambda
-                        dlim = metaSteelPara%austenite%d10*&
-                               exp(-metaSteelPara%austenite%wsr_k/(ti1+273.d0))
-                        dz = z2-z1i
-                        a = 1.d0
-                        b = dmoins*(1-dz/z2)-(dt10*unsurl/dlim)
-                        c = dt21*unsurl
-                        delta = (b**2)+(4.d0*a*c)
-                        metapg(5) = (b+delta**0.5d0)/(2.d0*a)
-                    endif
-                    z1i = z2
+                coef_phase = (1.d0-(z2-z1i)/z2)
+                call metaSteelGrainSize(metaSteelPara, nbtrc     , ckm ,&
+                                        ti1          , dt10      , dt21,&
+                                        z2           , coef_phase,&
+                                        dmoins       , metapg(5))
+                if (metaSteelPara%l_grain_size) then
+                    z1i    = z2
                     dmoins = metapg(5)
                 endif
             end do
@@ -217,28 +203,17 @@ integer, intent(in) :: jv_mater
                     z2 = (-taux*tpoint/(metaSteelPara%ac3-metaSteelPara%ac1))+zeq2+z2
                 endif
             endif
-! ---          CALCUL TAILLE DE GRAIN
-            if (.not. metaSteelPara%l_grain_size) then
-                unsurl = 0.d0
-                metapg(5) = ckm(5)
-            else
-                if (z2 .lt. 1.d-3) then
-                    metapg(5)=0.d0
-                else
-                    dmoins = tamp(5)
-                    lambda = metaSteelPara%austenite%lambda0*&
-                             exp(metaSteelPara%austenite%qsr_k/(tpg1+273.d0))
-                    unsurl = 1/lambda
-                    dlim = metaSteelPara%austenite%d10*&
-                           exp(-metaSteelPara%austenite%wsr_k/(tpg1+273.d0))
-                    dz = z2-z1
-                    a = 1.d0
-                    b = dmoins*(1-dz/z2)-(dt10*unsurl/dlim)
-                    c = dt21*unsurl
-                    delta = (b**2)+(4.d0*a*c)
-                    metapg(5) = (b+delta**0.5d0)/(2.d0*a)
-                endif
+!
+! --------- Compute size of grain
+!
+            coef_phase = 1.d0
+            if (abs(z2) .ge. epsi) then
+                coef_phase = (1.d0-(z2-z1)/z2)
             endif
+            call metaSteelGrainSize(metaSteelPara, nbtrc     , ckm ,&
+                                    tpg1         , dt10      , dt21,&
+                                    z2           , coef_phase,&
+                                    tamp(5)      , metapg(5))
         endif
 !           REPARTITION DE DZGAMMA SUR DZALPHA
         if (z2 .gt. (un-epsi)) z2 = un
