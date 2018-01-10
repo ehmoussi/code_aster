@@ -25,9 +25,10 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 
-def macro_expans_prod(self, MODELE_MESURE, RESU_NX, RESU_EX, RESU_ET, RESU_RD, **args):
+def macro_expans_prod(self, MODELE_MESURE, RESU_NX=None, RESU_EX=None, RESU_ET=None, RESU_RD=None, **args):
     RESU_EXP = MODELE_MESURE['MESURE']
-    self.type_sdprod(RESU_NX, mode_meca)
+    if RESU_NX is not None:
+        self.type_sdprod(RESU_NX, mode_meca)
     for res in (RESU_EX, RESU_ET, RESU_RD):
         if res is not None and res.is_typco():
             if AsType(RESU_EXP) == mode_meca:

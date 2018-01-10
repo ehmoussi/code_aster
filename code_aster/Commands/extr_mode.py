@@ -19,6 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
+from ..Objects import MechanicalModeContainer
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -33,6 +34,9 @@ class ExtrMode(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = type(keywords['FILTRE_MODE'][0]['MODE'])()
+        if keywords['FILTRE_MODE'][0]['MODE'].getType() == "MODE_MECA":
+            self._result = MechanicalModeContainer()
+        else:
+            self._result = type(keywords['FILTRE_MODE'][0]['MODE'])()
 
 EXTR_MODE = ExtrMode.run

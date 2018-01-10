@@ -21,22 +21,19 @@ def macro_expans_ops(self,
                      MODELE_CALCUL,
                      MODELE_MESURE,
                      NUME_DDL,
-                     RESU_NX,
-                     RESU_EX,
-                     RESU_ET,
-                     RESU_RD,
+                     RESU_NX=None,
+                     RESU_EX=None,
+                     RESU_ET=None,
+                     RESU_RD=None,
                      MODES_NUM=None,
                      MODES_EXP=None,
                      RESOLUTION=None,
                      **args
                      ):
     """!macro MACRO_EXPANS """
-    from code_aster.Cata.Syntax import _F, CO
-    from code_aster.Cata.DataStructure import mode_meca, dyna_harmo
+    from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS
     from types import ListType, TupleType
-    ier = 0
-
     import aster
     EXTR_MODE = self.get_cmd('EXTR_MODE')
     PROJ_MESU_MODAL = self.get_cmd('PROJ_MESU_MODAL')
@@ -54,17 +51,17 @@ def macro_expans_ops(self,
     self.set_icmd(1)
 
     is_nume_num = is_nume_exp = 0
-    if MODELE_CALCUL['NUME_MODE'] or MODELE_CALCUL['NUME_ORDRE']:
+    if MODELE_CALCUL['NUME_MODE'][0] or MODELE_CALCUL['NUME_ORDRE'][0]:
         # on cree un resultat RESU_NX par extraction de NUME_ORDREs
         is_nume_num = 1
     else:
         if RESU_NX:
             UTMESS('A', 'CALCESSAI0_6', valk=['MODELE_MESURE', 'RESU_EX'])
 
-    if MODELE_MESURE['NUME_MODE'] or MODELE_MESURE['NUME_ORDRE']:
+    if MODELE_MESURE['NUME_MODE'][0] or MODELE_MESURE['NUME_ORDRE'][0]:
         # On cree un RESU_EX par extraction de NUME_ORDREs
         is_nume_exp = 1
-        if isinstance(RESU_NUM, dyna_harmo):
+        if RESU_NUM.getType() == "DYNA_HARMO":
             # on ne peut pas faire de EXTR_MODE  sur un DYNA_HARMO
             is_nume_exp = 0
             UTMESS('A', 'CALCESSAI0_13')
@@ -77,59 +74,58 @@ def macro_expans_ops(self,
     if not is_nume_num:
         __resunx = RESU_NUM
     else:
-        if RESU_NX:
-            self.DeclareOut("__resunx", RESU_NX)
         mfact = {'MODE': RESU_NUM}
-        if MODELE_CALCUL['NUME_MODE']:
+        if MODELE_CALCUL['NUME_MODE'][0]:
             mfact.update({'NUME_MODE': MODELE_CALCUL['NUME_MODE']})
-        elif MODELE_CALCUL['NUME_ORDRE']:
+        elif MODELE_CALCUL['NUME_ORDRE'][0]:
             mfact.update({'NUME_ORDRE': MODELE_CALCUL['NUME_ORDRE']})
 
         __resunx = EXTR_MODE(FILTRE_MODE=mfact)
+        if RESU_NX:
+            self.register_result(__resunx, RESU_NX)
 
     # Extraction des modes expérimentaux
     # ----------------------------------
     if not is_nume_exp:
         __resuex = RESU_EXP
     else:
-        if RESU_EX:
-            self.DeclareOut("__resuex", RESU_EX)
         mfact = {'MODE': RESU_EXP}
-        if MODELE_MESURE['NUME_MODE']:
+        if MODELE_MESURE['NUME_MODE'][0]:
             mfact.update({'NUME_MODE': MODELE_MESURE['NUME_MODE']})
-        elif MODELE_MESURE['NUME_ORDRE']:
+        elif MODELE_MESURE['NUME_ORDRE'][0]:
             mfact.update({'NUME_ORDRE': MODELE_MESURE['NUME_ORDRE']})
 
         __resuex = EXTR_MODE(FILTRE_MODE=mfact)
+        if RESU_EX:
+            self.register_result(__resuex, RESU_EX)
 
     # Projection des modes experimentaux - on passe le mot-cle
     # RESOLUTION directement à PROJ_MESU_MODAL
     # --------------------------------------------------------
     # Mot-clé facteur de résolution
-    for m in RESOLUTION:
-        if m['METHODE'] == 'SVD':
-            mfact = {'METHODE': 'SVD', 'EPS': m['EPS']}
-            if m['REGUL'] != 'NON':
-                mfact.update({'REGUL': m['REGUL']})
-                if m['COEF_PONDER']:
-                    mfact.update({'COEF_PONDER': m['COEF_PONDER']})
-                if m['COEF_PONDER_F']:
-                    mfact.update({'COEF_PONDER_F': m['COEF_PONDER_F']})
-        elif m['METHODE'] == 'LU':
+    if RESOLUTION:
+        if RESOLUTION['METHODE'] == 'SVD':
+            mfact = {'METHODE': 'SVD', 'EPS': RESOLUTION['EPS']}
+            if RESOLUTION['REGUL'] != 'NON':
+                mfact.update({'REGUL': RESOLUTION['REGUL']})
+                if RESOLUTION['COEF_PONDER']:
+                    mfact.update({'COEF_PONDER': RESOLUTION['COEF_PONDER']})
+                if RESOLUTION['COEF_PONDER_F']:
+                    mfact.update({'COEF_PONDER_F': RESOLUTION['COEF_PONDER_F']})
+        elif RESOLUTION['METHODE'] == 'LU':
             mfact = {'METHODE': 'LU'}
 
     # Paramètres à garder : si on étend des mode_meca, on conserve les
     # freq propres, amortissements réduits, et masses généralisées. Pour
     # les dyna_harmo, on conserve les fréquences uniquement
-    if isinstance(RESU_EXP, mode_meca):
+    if RESU_EXP.getType() == "MODE_MECA":
         paras = ('FREQ', 'AMOR_REDUIT', 'MASS_GENE',)
-    elif isinstance(RESU_EXP, dyna_harmo):
+    elif RESU_EXP.getType() == "DYNA_HARMO":
         paras = ('FREQ')
     else:
         paras = None
         #"LE MODELE MEDURE DOIT ETRE UN CONCEPT DE TYPE DYNA_HARMO OU MODE_MECA")
         UTMESS('A', 'CALCESSAI0_1')
-
     try:
         __PROJ = PROJ_MESU_MODAL(MODELE_CALCUL=_F(BASE=__resunx,
                                                   MODELE=MOD_CALCUL,
@@ -147,16 +143,13 @@ def macro_expans_ops(self,
     # Phase de reconstruction des donnees mesurees sur le maillage
     # numerique
     # ------------------------------------------------------------
-    if RESU_ET:
-        self.DeclareOut("__resuet", RESU_ET)
     __resuet = REST_GENE_PHYS(RESU_GENE=__PROJ,
                               TOUT_ORDRE='OUI',
                               NOM_CHAM=NOM_CHAM)
-
+    if RESU_ET:
+        self.register_result(__resuet, RESU_ET)
     # Restriction des modes mesures etendus sur le maillage capteur
     # -------------------------------------------------------------
-    if RESU_RD:
-        self.DeclareOut("__resurd", RESU_RD)
 
     nume = None
     if NUME_DDL:
@@ -180,5 +173,7 @@ def macro_expans_ops(self,
                                        TOUT_2='OUI',),
                           NOM_PARA=paras,
                           )
-
-    return ier
+    if RESU_RD:
+        self.register_result(__resurd, RESU_RD)
+    
+    return
