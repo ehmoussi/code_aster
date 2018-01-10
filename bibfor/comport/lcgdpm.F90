@@ -28,7 +28,6 @@ implicit none
 #include "asterc/r8prem.h"
 #include "asterfort/assert.h"
 #include "asterfort/nzcalc.h"
-#include "asterfort/rcvalb.h"
 #include "asterfort/rcvarc.h"
 #include "asterfort/utmess.h"
 #include "asterfort/verift.h"
@@ -41,6 +40,7 @@ implicit none
 #include "asterfort/metaGetParaMixture.h"
 #include "asterfort/metaGetParaPlasTransf.h"
 #include "asterfort/metaGetParaAnneal.h"
+#include "asterfort/metaGetParaElas.h"
 #include "asterfort/Metallurgy_type.h"
 !
 character(len=*), intent(in) :: fami
@@ -95,7 +95,7 @@ integer, intent(out) :: iret
     integer :: ind(3, 3), nbr
     real(kind=8) :: phase(5), phasm(5), zalpha, deltaz(4)
     real(kind=8) :: temp, dt, coef_hard
-    real(kind=8) :: epsth, e, nu, mu, mum, troisk
+    real(kind=8) :: epsth, e, mu, mum, troisk
     real(kind=8) :: fmel, sy(5), h(5), hmoy, hplus(5), r(5), rmoy
     real(kind=8) :: theta(8)
     real(kind=8) :: eta(5), n(5), unsurn(5), c(5), m(5), cmoy, mmoy, cr
@@ -112,10 +112,8 @@ integer, intent(out) :: iret
     real(kind=8) :: coeff1, coeff2, coeff3, coeff4, coeff5, coeff6, coeff7
     real(kind=8) :: coeff8, coeff9, dv, rb, n0(5)
     real(kind=8) :: mat0(3, 3), mat1(3, 3), mat2(6, 3, 3), mat3(3, 3)
-    real(kind=8) :: valres(20)
     character(len=1) :: poum
-    integer :: icodre(20), test
-    character(len=16) :: nomres(20)
+    integer :: test
     real(kind=8), parameter :: kr(6) = (/1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/)
     real(kind=8), parameter :: pdtsca(6) = (/1.d0,1.d0,1.d0,2.d0,2.d0,2.d0/)
     aster_logical :: resi, rigi, l_temp, l_visc
@@ -178,27 +176,11 @@ integer, intent(out) :: iret
                 ksp, temp, iret2)
     l_temp = iret2 .eq. 0
 !
-! ****************************************
-! 2 - RECUPERATION DES CARACTERISTIQUES
-! ****************************************
+! - Get elastic parameters
 !
-! 2.1 - ELASTIQUE
-!
-    nomres(1)='E'
-    nomres(2)='NU'
-!
-    call rcvalb(fami, kpg, ksp, '-', imat,&
-                ' ', 'ELAS_META', 0, ' ', [0.d0],&
-                2, nomres, valres, icodre, 2)
-    mum=valres(1)/(2.d0*(1.d0+valres(2)))
-!
-    call rcvalb(fami, kpg, ksp, poum, imat,&
-                ' ', 'ELAS_META', 0, ' ', [0.d0],&
-                2, nomres, valres, icodre, 2)
-    e      = valres(1)
-    nu     = valres(2)
-    mu     = e/(2.d0*(1.d0+nu))
-    troisk = e/(1.d0-2.d0*nu)
+    call metaGetParaElas(poum, fami    , kpg     , ksp, imat,&
+                         e_  = e, mu_  = mu, troisk_ = troisk,&
+                         mum_ = mum)
     plasti = vim(7)
     l_visc = compor(1)(1:6) .eq. 'META_V'
 !

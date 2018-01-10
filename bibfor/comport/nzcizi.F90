@@ -28,7 +28,6 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/matini.h"
 #include "asterfort/nzcalc.h"
-#include "asterfort/rcvalb.h"
 #include "asterfort/rcvarc.h"
 #include "asterfort/verift.h"
 #include "asterfort/metaGetType.h"
@@ -38,6 +37,7 @@ implicit none
 #include "asterfort/metaGetParaMixture.h"
 #include "asterfort/metaGetParaPlasTransf.h"
 #include "asterfort/metaGetParaAnneal.h"
+#include "asterfort/metaGetParaElas.h"
 #include "asterfort/Metallurgy_type.h"
 !
 character(len=*), intent(in) :: fami
@@ -107,10 +107,7 @@ integer, intent(out) :: iret
     real(kind=8) :: sigel(6), sigel2(6), sig0(6), sieleq, sigeps
     real(kind=8) :: plasti, dp, seuil
     real(kind=8) :: coef1, coef2, coef3, dv, n0(3), b
-    real(kind=8) :: valres(12)
     character(len=1) :: poum
-    integer :: icodre(12)
-    character(len=16) :: nomres(12)
     aster_logical :: resi, rigi, l_visc
     real(kind=8), parameter :: kron(6) = (/1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/)
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
@@ -156,24 +153,11 @@ integer, intent(out) :: iret
     call verift(fami, kpg, ksp, poum, imat,&
                 epsth_meta_=epsth)
 !
-! ****************************************
-! 2 - RECUPERATION DES CARACTERISTIQUES
-! ****************************************
+! - Get elastic parameters
 !
-! 2.1 - ELASTIQUE ET THERMIQUE
-!
-    nomres(1)='E'
-    nomres(2)='NU'
-    call rcvalb(fami, kpg, ksp, '-', imat,&
-                ' ', 'ELAS_META', 0, ' ', [0.d0],&
-                2, nomres, valres, icodre, 2)
-    deumum = valres(1)/(1.d0+valres(2))
-    call rcvalb(fami, kpg, ksp, poum, imat,&
-                ' ', 'ELAS_META', 0, ' ', [0.d0],&
-                2, nomres, valres, icodre, 2)
-    e      = valres(1)
-    deuxmu = e/(1.d0+valres(2))
-    troisk = e/(1.d0-2.d0*valres(2))
+    call metaGetParaElas(poum, fami    , kpg     , ksp, imat,&
+                         e_  = e, deuxmu_  = deuxmu, troisk_ = troisk,&
+                         deuxmum_ = deumum)
     plasti = vim(25)
     l_visc = compor(1)(1:6) .eq. 'META_V'
 !
