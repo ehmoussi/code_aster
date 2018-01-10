@@ -157,6 +157,7 @@ from .post_dyna_moda_t import POST_DYNA_MODA_T
 from .post_elem import POST_ELEM
 from .post_fati_alea import POST_FATI_ALEA
 from .post_fatigue import POST_FATIGUE
+from .post_gene_phys import POST_GENE_PHYS
 from .post_mail_xfem import POST_MAIL_XFEM
 from .post_rccm import POST_RCCM
 from .post_releve_t import POST_RELEVE_T

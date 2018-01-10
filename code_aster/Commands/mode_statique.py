@@ -92,7 +92,8 @@ class StaticModeCalculation(ExecuteCommand):
             # only for PSEUDO_MODE
         elif self._case == Case.PSEUDO_MODE:
             if fact.get("DIRECTION"):
-                solv.setNameForDirection(fact.get("NOM_DIR"))
+                if fact.has_key("NOM_DIR"):
+                    solv.setNameForDirection(fact.get("NOM_DIR"))
                 solv.WantedDirection(force_list(fact["DIRECTION"]))
             elif fact.get("AXE"):
                 solv.WantedAxe(fact["AXE"])
