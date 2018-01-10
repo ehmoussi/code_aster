@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1501
+!
 subroutine nzgdzi(fami, kpg, ksp, ndim, imat,&
                   compor, crit, instam, instap, fm,&
                   df, sigm, vim, option, sigp,&
@@ -34,29 +35,28 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/verift.h"
 #include "asterfort/zerop3.h"
-#include "asterfort/get_meta_id.h"
+#include "asterfort/metaGetType.h"
 #include "asterfort/get_meta_phasis.h"
+#include "asterfort/Metallurgy_type.h"
 !
-! aslint: disable=W1501
-!
-    character(len=*), intent(in) :: fami
-    integer, intent(in) :: kpg
-    integer, intent(in) :: ksp
-    integer, intent(in) :: ndim
-    integer, intent(in) :: imat
-    character(len=16), intent(in) :: compor(*)
-    real(kind=8), intent(in) :: crit(*)
-    real(kind=8), intent(in) :: instam
-    real(kind=8), intent(in) :: instap
-    real(kind=8), intent(in) :: fm(3, 3)
-    real(kind=8), intent(in) :: df(3, 3)
-    real(kind=8), intent(in) :: sigm(*)
-    real(kind=8), intent(in) :: vim(6)
-    character(len=16), intent(in) :: option
-    real(kind=8), intent(out) :: sigp(*)
-    real(kind=8), intent(out) :: vip(6)
-    real(kind=8), intent(out) :: dsigdf(6, 3, 3)
-    integer, intent(out) :: iret
+character(len=*), intent(in) :: fami
+integer, intent(in) :: kpg
+integer, intent(in) :: ksp
+integer, intent(in) :: ndim
+integer, intent(in) :: imat
+character(len=16), intent(in) :: compor(*)
+real(kind=8), intent(in) :: crit(*)
+real(kind=8), intent(in) :: instam
+real(kind=8), intent(in) :: instap
+real(kind=8), intent(in) :: fm(3, 3)
+real(kind=8), intent(in) :: df(3, 3)
+real(kind=8), intent(in) :: sigm(*)
+real(kind=8), intent(in) :: vim(6)
+character(len=16), intent(in) :: option
+real(kind=8), intent(out) :: sigp(*)
+real(kind=8), intent(out) :: vip(6)
+real(kind=8), intent(out) :: dsigdf(6, 3, 3)
+integer, intent(out) :: iret
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -85,7 +85,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: jprol, jvale, nbval(3), maxval, nb_phasis, meta_id
+    integer :: jprol, jvale, nbval(3), maxval, nb_phasis, meta_type
     integer :: i, j, k, l, mode
     integer :: ind(3, 3), nbr, iret1
     real(kind=8) :: phase(5), phasm(5), zalpha
@@ -144,21 +144,21 @@ implicit none
 !
 ! - Get metallurgy type
 !
-    call get_meta_id(meta_id, nb_phasis)
-    ASSERT(meta_id.eq.2)
+    call metaGetType(meta_type, nb_phasis)
+    ASSERT(meta_type .eq. META_ZIRC)
     ASSERT(nb_phasis.eq.3)
 !
 ! - Get phasis
 !
     if (resi) then
         poum = '+'
-        call get_meta_phasis(fami     , '+'  , kpg   , ksp , meta_id,&
+        call get_meta_phasis(fami     , '+'  , kpg   , ksp , meta_type,&
                              nb_phasis, phase, zcold_ = zalpha)
-        call get_meta_phasis(fami     , '-'  , kpg   , ksp , meta_id,&
+        call get_meta_phasis(fami     , '-'  , kpg   , ksp , meta_type,&
                              nb_phasis, phasm)
     else
         poum = '-'
-        call get_meta_phasis(fami     , '-'  , kpg   , ksp , meta_id,&
+        call get_meta_phasis(fami     , '-'  , kpg   , ksp , meta_type,&
                              nb_phasis, phase, zcold_ = zalpha)
     endif
 !

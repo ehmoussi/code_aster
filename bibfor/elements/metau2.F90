@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine metau2(l_meta)
 !
 implicit none
@@ -24,7 +25,7 @@ implicit none
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/dfdm3d.h"
-#include "asterfort/get_meta_id.h"
+#include "asterfort/metaGetType.h"
 #include "asterfort/get_meta_phasis.h"
 #include "asterfort/get_elas_para.h"
 #include "asterfort/get_elas_id.h"
@@ -32,10 +33,9 @@ implicit none
 #include "asterfort/jevech.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/verift.h"
+#include "asterfort/Metallurgy_type.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    aster_logical, intent(out) :: l_meta
+aster_logical, intent(out) :: l_meta
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -55,7 +55,7 @@ implicit none
     real(kind=8) :: dfdx(27), dfdy(27), dfdz(27)
     real(kind=8) :: poids
     integer :: nb_node, ispg, kp, npg, i_node, elas_id
-    integer :: meta_id, nb_phasis
+    integer :: meta_type, nb_phasis
     integer :: ipoids, idfde
     integer :: j_geom, j_mate, j_mater, j_vect
     character(len=16) :: elas_keyword
@@ -67,8 +67,8 @@ implicit none
 !
 ! - Get metallurgy type
 !
-    call get_meta_id(meta_id, nb_phasis)
-    if (meta_id .eq. 0) then
+    call metaGetType(meta_type, nb_phasis)
+    if (meta_type .eq. META_NONE) then
         l_meta = .false.
         goto 999
     endif

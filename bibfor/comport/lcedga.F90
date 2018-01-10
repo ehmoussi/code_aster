@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine lcedga(fami, kpg, ksp, ndim, imat,&
                   crit, typmod, instam, instap,&
                   deps2, sigm2, vim, option, sigp,&
@@ -36,9 +36,9 @@ implicit none
 #include "asterfort/mgauss.h"
 #include "asterfort/rcvarc.h"
 #include "asterfort/verift.h"
-#include "asterfort/get_meta_id.h"
+#include "asterfort/metaGetType.h"
 #include "asterfort/get_meta_phasis.h"
-!
+#include "asterfort/Metallurgy_type.h"
 !
 character(len=*), intent(in) :: fami
 integer, intent(in) :: kpg
@@ -93,7 +93,7 @@ integer, intent(out) :: iret
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i, j, k, nb_phasis, ndimsi, meta_id
+    integer :: i, j, k, nb_phasis, ndimsi, meta_type
     integer :: ire2
     integer :: iter, itemax
     real(kind=8) :: tm, tp, tref, temp, dt
@@ -156,19 +156,19 @@ integer, intent(out) :: iret
 !
 ! - Get metallurgy type
 !
-    call get_meta_id(meta_id, nb_phasis)
-    ASSERT(meta_id.eq.2)
+    call metaGetType(meta_type, nb_phasis)
+    ASSERT(meta_type.eq.META_ZIRC)
     ASSERT(nb_phasis.eq.3)
 !
 ! - Get phasis
 !
     if (resi) then
-        call get_meta_phasis(fami     , '+'  , kpg   , ksp , meta_id,&
+        call get_meta_phasis(fami     , '+'  , kpg   , ksp , meta_type,&
                              nb_phasis, phase, zcold_ = zalpha, tole_bound_ = tole_bound)
-        call get_meta_phasis(fami     , '-'  , kpg   , ksp , meta_id,&
+        call get_meta_phasis(fami     , '-'  , kpg   , ksp , meta_type,&
                              nb_phasis, phasm)
     else
-        call get_meta_phasis(fami     , '-'  , kpg   , ksp , meta_id,&
+        call get_meta_phasis(fami     , '-'  , kpg   , ksp , meta_type,&
                              nb_phasis, phase, zcold_ = zalpha, tole_bound_ = tole_bound)
     endif
 !

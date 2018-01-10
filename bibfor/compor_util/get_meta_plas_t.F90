@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine get_meta_plas_t(poum     , fami     , kpg      , ksp      , j_mater   ,&
                            meta_type, nb_phasis, phas_prev, phas_curr, zcold_curr,&
                            kpt      , fpt)
@@ -24,20 +24,20 @@ implicit none
 !
 #include "asterfort/assert.h"
 #include "asterfort/rcvalb.h"
+#include "asterfort/Metallurgy_type.h"
 !
-!
-    character(len=1), intent(in) :: poum
-    character(len=*), intent(in) :: fami
-    integer, intent(in) :: kpg
-    integer, intent(in) :: ksp
-    integer, intent(in) :: j_mater
-    integer, intent(in) :: meta_type
-    integer, intent(in) :: nb_phasis
-    real(kind=8), intent(in) :: phas_prev(*)
-    real(kind=8), intent(in) :: phas_curr(*)
-    real(kind=8), intent(in) :: zcold_curr
-    real(kind=8), intent(out) :: kpt(*)
-    real(kind=8), intent(out) :: fpt(*)
+character(len=1), intent(in) :: poum
+character(len=*), intent(in) :: fami
+integer, intent(in) :: kpg
+integer, intent(in) :: ksp
+integer, intent(in) :: j_mater
+integer, intent(in) :: meta_type
+integer, intent(in) :: nb_phasis
+real(kind=8), intent(in) :: phas_prev(*)
+real(kind=8), intent(in) :: phas_curr(*)
+real(kind=8), intent(in) :: zcold_curr
+real(kind=8), intent(out) :: kpt(*)
+real(kind=8), intent(out) :: fpt(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,9 +53,6 @@ implicit none
 ! In  ksp          : current "sous-point" gauss
 ! In  j_mater      : coded material address
 ! In  meta_type    : type of metallurgy
-!                       0 - No metallurgy
-!                       1 - Steel
-!                       2 - Zirconium
 ! In  nb_phasis    : total number of phasis (cold and hot)
 ! In  phas_prev    : previous phasis
 ! In  phas_curr    : current phasis
@@ -75,29 +72,22 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (meta_type.eq.1) then
-        ASSERT(nb_phasis.eq.5) 
-    elseif (meta_type.eq.2) then
-        ASSERT(nb_phasis.eq.3)
-    else
-        ASSERT(.false.)
-    endif
     nb_phasis_cold = nb_phasis - 1
 !
 ! - Name of parameters - Constant k
 !
-    if (meta_type.eq.1) then
+    if (meta_type .eq. META_STEEL) then
         nb_res = 4
         nomres(1) = 'F1_K'
         nomres(2) = 'F2_K'
         nomres(3) = 'F3_K'
         nomres(4) = 'F4_K'   
-    elseif (meta_type.eq.2) then
+    elseif (meta_type .eq. META_ZIRC) then
         nb_res = 2
         nomres(1) = 'F1_K'
         nomres(2) = 'F2_K'
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - Get parameters - Constant k
@@ -111,18 +101,18 @@ implicit none
 !
 ! - Name of parameters - function f'
 !
-    if (meta_type.eq.1) then
+    if (meta_type .eq. META_STEEL) then
         nb_res    = 4
         nomres(1) = 'F1_D_F_META'
         nomres(2) = 'F2_D_F_META'
         nomres(3) = 'F3_D_F_META'
         nomres(4) = 'F4_D_F_META'
-    elseif (meta_type.eq.2) then
+    elseif (meta_type .eq. META_ZIRC) then
         nb_res    = 2
         nomres(1) = 'F1_D_F_META'
         nomres(2) = 'F2_D_F_META'
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - Get parameters - function f'
