@@ -35,6 +35,7 @@ implicit none
 #include "asterfort/metaGetPhase.h"
 #include "asterfort/metaGetParaVisc.h"
 #include "asterfort/metaGetParaHardLine.h"
+#include "asterfort/metaGetParaMixture.h"
 #include "asterfort/Metallurgy_type.h"
 !
 character(len=*), intent(in) :: fami
@@ -93,7 +94,7 @@ integer, intent(out) :: iret
     real(kind=8) :: phase(5), phasm(5), zalpha
     real(kind=8) :: dt, coef_hard
     real(kind=8) :: epsth, e, deuxmu, deumum, troisk
-    real(kind=8) :: fmel(1), sy(5), symoy, h(5), hmoy, rprim
+    real(kind=8) :: fmel, sy(5), symoy, h(5), hmoy, rprim
     real(kind=8) :: theta(8)
     real(kind=8) :: eta(5), n(5), unsurn(5), c(5), m(5), cmoy, mmoy, cr
     real(kind=8) :: dz(4), dz1(4), dz2(4), vi(30), dvin, vimt(30)
@@ -108,7 +109,7 @@ integer, intent(out) :: iret
     character(len=1) :: poum
     integer :: icodre(20)
     character(len=16) :: nomres(20)
-    aster_logical :: resi, rigi
+    aster_logical :: resi, rigi, l_visc
     real(kind=8), parameter :: kron(6) = (/1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/)
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
 !
@@ -128,8 +129,8 @@ integer, intent(out) :: iret
 ! - Get metallurgy type
 !
     call metaGetType(meta_type, nb_phasis)
-    ASSERT(meta_type.eq.META_STEEL)
-    ASSERT(nb_phasis.eq.5)
+    ASSERT(meta_type .eq. META_STEEL)
+    ASSERT(nb_phasis .eq. 5)
 !
 ! - Get phasis
 !
@@ -165,39 +166,17 @@ integer, intent(out) :: iret
     call rcvalb(fami, kpg, ksp, poum, imat,&
                 ' ', 'ELAS_META', 0, ' ', [0.d0],&
                 2, nomres, valres, icodre, 2)
-    e = valres(1)
+    e      = valres(1)
     deuxmu = e/(1.d0+valres(2))
     troisk = e/(1.d0-2.d0*valres(2))
-    plasti=vim(37)
+    plasti = vim(37)
+    l_visc = compor(1)(1:6) .eq. 'META_V'
 !
-! 2.2 - LOI DES MELANGES
+! - Mixture law (yield limit)
 !
-    if (compor(1)(1:6) .eq. 'META_P') then
-        nomres(1) ='F1_SY'
-        nomres(2) ='F2_SY'
-        nomres(3) ='F3_SY'
-        nomres(4) ='F4_SY'
-        nomres(5) ='C_SY'
-        nomres(6) ='SY_MELAN'
-    endif
-    if (compor(1)(1:6) .eq. 'META_V') then
-        nomres(1) ='F1_S_VP'
-        nomres(2) ='F2_S_VP'
-        nomres(3) ='F3_S_VP'
-        nomres(4) ='F4_S_VP'
-        nomres(5) ='C_S_VP'
-        nomres(6) ='S_VP_MEL'
-    endif
-    call rcvalb(fami, 1, 1, '+', imat,&
-                ' ', 'ELAS_META', 1, 'META', [zalpha],&
-                1, nomres(6), fmel, icodre(6), 0)
-    if (icodre(6) .ne. 0) fmel(1) = zalpha
-!
-! 2.3 - LIMITE D ELASTICITE
-!
-    call rcvalb(fami, kpg, ksp, poum, imat,&
-                ' ', 'ELAS_META', 0, ' ', [0.d0],&
-                5, nomres, sy, icodre, 2)
+    call metaGetParaMixture(poum  , fami     , kpg      , ksp   , imat,&
+                            l_visc, meta_type, nb_phasis, zalpha, fmel,&
+                            sy)
 !
 ! - Get hardening slope (linear)
 !
@@ -234,7 +213,7 @@ integer, intent(out) :: iret
             end do
         endif
 ! ----- Parameters for viscosity
-        if (compor(1)(1:6) .eq. 'META_V') then
+        if (l_visc) then
             call metaGetParaVisc(poum     , fami     , kpg, ksp, imat  ,&
                                  meta_type, nb_phasis, eta, n  , unsurn,&
                                  c        , m)
@@ -399,7 +378,7 @@ integer, intent(out) :: iret
     else
         symoy = 0.d0
     endif
-    symoy =(1.d0-fmel(1))*sy(nb_phasis)+fmel(1)*symoy
+    symoy =(1.d0-fmel)*sy(nb_phasis)+fmel*symoy
 !
 ! ********************************
 ! 3 - DEBUT DE L ALGORITHME
@@ -450,7 +429,7 @@ integer, intent(out) :: iret
             if (compor(1)(1:6) .eq. 'META_P') then
                 dp=seuil/(1.5d0*deuxmu+(1.5d0*deuxmu*trans+1.d0)*rprim)
             else
-                call nzcalc(crit, phase, nb_phasis, fmel(1), seuil,&
+                call nzcalc(crit, phase, nb_phasis, fmel, seuil,&
                             dt, trans, rprim, deuxmu, eta,&
                             unsurn, dp, iret)
                 if (iret .eq. 1) goto 999
@@ -496,7 +475,7 @@ integer, intent(out) :: iret
 !
     if (rigi) then
         mode=2
-        if (compor(1)(1:6) .eq. 'META_V') mode=1
+        if (l_visc) mode=1
         call matini(6, 6, 0.d0, dsidep)
         do i = 1, ndimsi
             dsidep(i,i) = 1.d0
@@ -536,11 +515,11 @@ integer, intent(out) :: iret
                         do k = 1, nb_phasis
                             n0(k) = (1-n(k))/n(k)
                         end do
-                        dv = (1-fmel(1))*phase(nb_phasis)*(eta(nb_phasis)/n(nb_phasis)/dt) *&
+                        dv = (1-fmel)*phase(nb_phasis)*(eta(nb_phasis)/n(nb_phasis)/dt) *&
                              ((dp/dt)**n0(nb_phasis))
                         if (zalpha .gt. 0.d0) then
                             do k = 1, nb_phasis-1
-                                if (phase(k) .gt. 0.d0) dv = dv+ fmel(1)*( phase(k)/zalpha) *&
+                                if (phase(k) .gt. 0.d0) dv = dv+ fmel*( phase(k)/zalpha) *&
                                                              & (eta(k)/ n(k)/dt)*((dp/dt)**n0&
                                                              &(k) )
                             end do
