@@ -118,6 +118,7 @@ from .engendre_test import ENGENDRE_TEST
 from .extr_mode import EXTR_MODE
 from .extr_resu import EXTR_RESU
 from .extr_table import EXTR_TABLE
+from .depl_interne import DEPL_INTERNE
 from .factoriser import FACTORISER
 from .fin import FIN
 from .fonc_flui_stru import FONC_FLUI_STRU
