@@ -21,6 +21,7 @@
 
 from ..Objects import FullTransientResultsContainer
 from ..Objects import FullHarmonicResultsContainer
+from ..Objects import TransientGeneralizedResultsContainer, HarmoGeneralizedResultsContainer
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -40,6 +41,10 @@ class VibrationDynamics(ExecuteCommand):
             self._result = FullTransientResultsContainer()
         elif base == "PHYS" and typ == "HARM":
             self._result = FullHarmonicResultsContainer()
+        elif base == "GENE" and typ == "TRAN":
+            self._result = TransientGeneralizedResultsContainer()
+        elif base == "GENE" and typ == "HARM":
+            self._result = HarmoGeneralizedResultsContainer()
         else:
             raise NotImplementedError("Types of analysis {0!r} and {0!r} not yet "
                                       "implemented".format(typ, base))
