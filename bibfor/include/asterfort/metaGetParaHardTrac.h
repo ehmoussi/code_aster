@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,24 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+#include "asterf_types.h"
 !
 interface
-    subroutine get_meta_hard(poum       , fami     , kpg      , ksp   , j_mater,&
-                             l_hard_line, meta_type, nb_phasis, l_temp, temp   ,&
-                             young      , epsp     , r0)
-        character(len=1), intent(in) :: poum
-        character(len=*), intent(in) :: fami
-        integer, intent(in) :: kpg
-        integer, intent(in) :: ksp
+    subroutine metaGetParaHardTrac(j_mater, meta_type, nb_phasis,&
+                                   l_temp , temp     ,&
+                                   epsp   , h0       , rp_      , maxval_)
         integer, intent(in) :: j_mater
         integer, intent(in) :: meta_type
         integer, intent(in) :: nb_phasis
-        logical, intent(in) :: l_hard_line
-        logical, intent(in) :: l_temp
-        real(kind=8), intent(in) :: young
+        aster_logical, intent(in) :: l_temp
         real(kind=8), intent(in) :: temp
         real(kind=8), intent(in) :: epsp(*)
-        real(kind=8), intent(out) :: r0(*)
-    end subroutine get_meta_hard
+        real(kind=8), intent(out) :: h0(*)
+        real(kind=8), optional, intent(out) :: rp_(*)
+        integer, optional, intent(out) :: maxval_
+    end subroutine metaGetParaHardTrac
 end interface

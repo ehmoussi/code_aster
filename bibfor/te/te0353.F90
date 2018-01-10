@@ -70,8 +70,7 @@ character(len=16), intent(in) :: nomte
     real(kind=8) :: coef, trans
     real(kind=8) :: zcold_curr
     real(kind=8) :: phas_prev(5), phas_curr(5), temp
-    aster_logical :: l_axi
-    logical :: l_temp
+    aster_logical :: l_axi, l_temp
     character(len=16) :: elas_keyword
     real(kind=8), parameter :: kron(6) = (/1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/)
 !

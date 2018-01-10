@@ -24,20 +24,22 @@ subroutine meta_vpta_coef(rela_comp, lgpg      , fami     , kpg      , j_mater  
 implicit none
 !
 #include "jeveux.h"
+#include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/jevech.h"
 #include "asterfort/get_meta_comp.h"
 #include "asterfort/get_meta_plas_t.h"
 #include "asterfort/metaGetParaVisc.h"
 #include "asterfort/get_meta_mixd.h"
-#include "asterfort/get_meta_hard.h"
+#include "asterfort/metaGetParaHardTrac.h"
+#include "asterfort/metaGetParaHardLine.h"
 !
 character(len=16), intent(in) :: rela_comp
 integer, intent(in) :: lgpg 
 character(len=4), intent(in) :: fami
 integer, intent(in) :: kpg
 integer, intent(in) :: j_mater
-logical, intent(in) :: l_temp
+aster_logical, intent(in) :: l_temp
 real(kind=8), intent(in) :: temp
 integer, intent(in) :: meta_type
 integer, intent(in) :: nb_phasis
@@ -79,11 +81,11 @@ real(kind=8), intent(out) :: trans
 !
     integer :: j_vari
     integer :: i_phasis, i_phasis_c, ksp, nb_phasis_c
-    real(kind=8) :: epsp(5), r0(5)
+    real(kind=8) :: epsp(5), h0(5)
     real(kind=8) :: kpt(4), fpt(4)
     real(kind=8) :: eta(5), n(5), unsurn(5), c(5), m(5)
-    real(kind=8) :: rprim, deltaz, fmel
-    logical :: l_visc, l_elas, l_plas_tran, l_hard_line
+    real(kind=8) :: rprim, deltaz, fmel, coef_hard
+    aster_logical :: l_visc, l_elas, l_plas_tran, l_hard_line
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -100,7 +102,7 @@ real(kind=8), intent(out) :: trans
     c(:)      = 0.d0
     m(:)      = 0.d0
     epsp(:)   = 0.d0
-    r0(:)     = 0.d0
+    h0(:)     = 0.d0
 !
 ! - Cumulated plastic strain
 !
@@ -158,22 +160,29 @@ real(kind=8), intent(out) :: trans
 !
 ! ----- Get point on hardening curve
 !
-        call get_meta_hard('+'        , fami     , kpg      , ksp   , j_mater,&
-                           l_hard_line, meta_type, nb_phasis, l_temp, temp   ,&
-                           young      , epsp     , r0)
+        if (l_hard_line) then
+            coef_hard = 1.d0
+            call metaGetParaHardLine('+'      , fami     , kpg, ksp, j_mater,&
+                                     meta_type, nb_phasis,&
+                                     young    , coef_hard, h0)
+        else
+            call metaGetParaHardTrac(j_mater, meta_type, nb_phasis,&
+                                     l_temp , temp     ,&
+                                     epsp   , h0)
+        endif
 !
 ! ----- Compute coefficient
 !
         rprim = 0.d0
         if (zcold_curr .gt. 0.d0) then
             do i_phasis_c = 1, nb_phasis_c
-                rprim = rprim + phas_curr(i_phasis_c)*r0(i_phasis_c)
+                rprim = rprim + phas_curr(i_phasis_c)*h0(i_phasis_c)
             end do
             rprim = rprim/zcold_curr
         else
             rprim = 0.d0
         endif
-        rprim = (1.d0-fmel)*r0(nb_phasis)+fmel*rprim
+        rprim = (1.d0-fmel)*h0(nb_phasis)+fmel*rprim
         coef  = 1.d0-(1.5d0*deuxmu)/(1.5d0*deuxmu+rprim)
     endif
 !

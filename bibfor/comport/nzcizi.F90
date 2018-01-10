@@ -34,6 +34,7 @@ implicit none
 #include "asterfort/metaGetType.h"
 #include "asterfort/metaGetPhase.h"
 #include "asterfort/metaGetParaVisc.h"
+#include "asterfort/metaGetParaHardLine.h"
 #include "asterfort/Metallurgy_type.h"
 !
 character(len=*), intent(in) :: fami
@@ -90,7 +91,7 @@ integer, intent(out) :: iret
     integer :: nb_phasis, meta_type
     integer :: ndimsi, i, j, k, l, mode
     real(kind=8) :: phase(5), phasm(5), zalpha
-    real(kind=8) :: dt
+    real(kind=8) :: dt, coef_hard
     real(kind=8) :: epsth, e, deuxmu, deumum, troisk
     real(kind=8) :: fmel(1), sy(3), symoy, h(3), hmoy, rprim
     real(kind=8) :: theta(4)
@@ -196,17 +197,12 @@ integer, intent(out) :: iret
                 ' ', 'ELAS_META', 0, ' ', [0.d0],&
                 3, nomres, sy, icodre, 2)
 !
-! 2.4 - PENTE D ECROUISSAGE
+! - Get hardening slope (linear)
 !
-    nomres(1) ='F1_D_SIGM_EPSI'
-    nomres(2) ='F2_D_SIGM_EPSI'
-    nomres(3) ='C_D_SIGM_EPSI'
-    call rcvalb(fami, kpg, ksp, poum, imat,&
-                ' ', 'META_ECRO_LINE', 0, ' ', [0.d0],&
-                3, nomres, h, icodre, 2)
-    h(1)=(2.d0/3.d0)*h(1)*e/(e-h(1))
-    h(2)=(2.d0/3.d0)*h(2)*e/(e-h(2))
-    h(3)=(2.d0/3.d0)*h(3)*e/(e-h(3))
+    coef_hard = (2.d0/3.d0)
+    call metaGetParaHardLine(poum     , fami     , kpg, ksp, imat,&
+                             meta_type, nb_phasis,&
+                             e        , coef_hard, h)
     hmoy=0.d0
     do k = 1, nb_phasis
         hmoy=hmoy+phase(k)*h(k)

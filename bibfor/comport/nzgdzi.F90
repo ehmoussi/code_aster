@@ -28,8 +28,6 @@ implicit none
 #include "asterc/r8prem.h"
 #include "asterfort/assert.h"
 #include "asterfort/nzcalc.h"
-#include "asterfort/rcfonc.h"
-#include "asterfort/rctrac.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/rcvarc.h"
 #include "asterfort/utmess.h"
@@ -38,6 +36,8 @@ implicit none
 #include "asterfort/metaGetType.h"
 #include "asterfort/metaGetPhase.h"
 #include "asterfort/metaGetParaVisc.h"
+#include "asterfort/metaGetParaHardLine.h"
+#include "asterfort/metaGetParaHardTrac.h"
 #include "asterfort/Metallurgy_type.h"
 !
 character(len=*), intent(in) :: fami
@@ -86,11 +86,11 @@ integer, intent(out) :: iret
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: jprol, jvale, nbval(3), maxval, nb_phasis, meta_type
+    integer :: maxval, nb_phasis, meta_type
     integer :: i, j, k, l, mode
-    integer :: ind(3, 3), nbr, iret1
+    integer :: ind(3, 3), nbr, iret2
     real(kind=8) :: phase(5), phasm(5), zalpha
-    real(kind=8) :: temp, dt
+    real(kind=8) :: temp, dt, coef_hard
     real(kind=8) :: epsth, e, nu, mu, mum, troisk
     real(kind=8) :: fmel(1), sy(3), h(3), hmoy, hplus(3), r(3), rmoy
     real(kind=8) :: theta(4)
@@ -108,15 +108,13 @@ integer, intent(out) :: iret
     real(kind=8) :: coeff1, coeff2, coeff3, coeff4, coeff5, coeff6, coeff7
     real(kind=8) :: coeff8, coeff9, dv, rb, n0(3)
     real(kind=8) :: mat0(3, 3), mat1(3, 3), mat2(6, 3, 3), mat3(3, 3)
-    real(kind=8) :: rbid
     real(kind=8) :: valres(12)
     character(len=1) :: poum
     integer :: icodre(12), test
     character(len=16) :: nomres(12)
-    character(len=8) :: nomcle(3)
     real(kind=8), parameter :: kr(6) = (/1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/)
     real(kind=8), parameter :: pdtsca(6) = (/1.d0,1.d0,1.d0,2.d0,2.d0,2.d0/)
-    aster_logical :: resi, rigi
+    aster_logical :: resi, rigi, l_temp
 !
     data ind   /1,4,5,&
                 4,2,6,&
@@ -147,7 +145,7 @@ integer, intent(out) :: iret
 !
     call metaGetType(meta_type, nb_phasis)
     ASSERT(meta_type .eq. META_ZIRC)
-    ASSERT(nb_phasis.eq.3)
+    ASSERT(nb_phasis .eq. 3)
 !
 ! - Get phasis
 !
@@ -165,10 +163,11 @@ integer, intent(out) :: iret
 !
 ! - Compute thermic strain
 !
-    call rcvarc(' ', 'TEMP', poum, fami, kpg,&
-                ksp, temp, iret1)
     call verift(fami, kpg, ksp, poum, imat,&
-                iret_ = iret1, epsth_meta_=epsth)
+                epsth_meta_=epsth)
+    call rcvarc(' ', 'TEMP', poum, fami, kpg,&
+                ksp, temp, iret2)
+    l_temp = iret2 .eq. 0
 !
 ! ****************************************
 ! 2 - RECUPERATION DES CARACTERISTIQUES
@@ -319,7 +318,6 @@ integer, intent(out) :: iret
             'META_V_IL_PT' .or. compor(1)(1:13) .eq. 'META_V_INL_PT' .or.&
             compor(1)(1:15) .eq. 'META_V_IL_PT_RE' .or. compor(1) (1:16) .eq.&
             'META_V_INL_PT_RE') then
-!
             nomres(1) = 'F1_K'
             nomres(2) = 'F2_K'
             nomres(3) = 'F1_D_F_META'
@@ -351,37 +349,24 @@ integer, intent(out) :: iret
 ! 2.9 - CALCUL DE HMOY ET RMOY (ON INCLUE LE SIGY)
 !
     if (compor(1)(1:9) .eq. 'META_P_IL' .or. compor(1)(1:9) .eq. 'META_V_IL') then
-        nomres(1) ='F1_D_SIGM_EPSI'
-        nomres(2) ='F2_D_SIGM_EPSI'
-        nomres(3) ='C_D_SIGM_EPSI'
-        call rcvalb(fami, kpg, ksp, poum, imat,&
-                    ' ', 'META_ECRO_LINE', 0, ' ', [0.d0],&
-                    3, nomres, h, icodre, 2)
-        h(1)=h(1)*e/(e-h(1))
-        h(2)=h(2)*e/(e-h(2))
-        h(3)=h(3)*e/(e-h(3))
+! ----- Get hardening slope (linear)
+        coef_hard = (1.d0)
+        call metaGetParaHardLine(poum     , fami     , kpg, ksp, imat,&
+                                 meta_type, nb_phasis,&
+                                 e        , coef_hard, h)
         do k = 1, nb_phasis
             r(k) = h(k)*vi(k)+sy(k)
         end do
     endif
-!
     if (compor(1)(1:10) .eq. 'META_P_INL' .or. compor(1)(1:10) .eq. 'META_V_INL') then
-        nomcle(1)='SIGM_F1'
-        nomcle(2)='SIGM_F2'
-        nomcle(3)='SIGM_C'
-        if (iret1 .eq. 1) then
-            call utmess('F', 'COMPOR5_40',sk='SIGM_*')
-        endif
+! ----- Get hardening slope (non-linear)
+        call metaGetParaHardTrac(imat   , meta_type, nb_phasis,&
+                                 l_temp , temp     ,&
+                                 vi     , h       , r , maxval)
         do k = 1, nb_phasis
-            call rctrac(imat, 2, nomcle(k), temp, jprol,&
-                        jvale, nbval( k), rbid)
-            call rcfonc('V', 2, jprol, jvale, nbval(k),&
-                        p = vi(k), rp = r(k), rprim = h(k))
             r(k) = r(k) + sy(k)
         end do
-        maxval = max(nbval(1),nbval(2),nbval(3))
     endif
-!
     if (zalpha .gt. 0.d0) then
         rmoy=phase(1)*r(1)+phase(2)*r(2)
         rmoy = rmoy/zalpha
@@ -391,7 +376,7 @@ integer, intent(out) :: iret
         rmoy = 0.d0
         hmoy = 0.d0
     endif
-    rmoy =(1.d0-fmel(1))*r(nb_phasis)+fmel(1)*rmoy
+    rmoy = (1.d0-fmel(1))*r(nb_phasis)+fmel(1)*rmoy
     hmoy = (1.d0-fmel(1))*h(nb_phasis)+fmel(1)*hmoy
 !
 ! ********************************
@@ -512,15 +497,14 @@ integer, intent(out) :: iret
             if (compor(1)(1:10) .eq. 'META_P_INL' .or. compor(1)(1: 10) .eq.'META_V_INL') then
                 do j = 1, maxval
                     test=0
+                    vip(1:3)   = vi(1:3) + dp
+                    hplus(1:3) = h(1:3)
+                    call metaGetParaHardTrac(imat   , meta_type, nb_phasis,&
+                                             l_temp , temp     ,&
+                                             vip    , h       , r)
                     do k = 1, nb_phasis
                         if (phase(k) .gt. 0.d0) then
-                            vip(k)=vi(k)+dp
-                            hplus(k)=h(k)
-                            call rctrac(imat, 2, nomcle(k), temp, jprol,&
-                                        jvale, nbval(k), rbid)
-                            call rcfonc('V', 2, jprol, jvale, nbval(k),&
-                                        p = vip(k), rp = r(k), rprim = h(k))
-                            r(k)=r(k)+sy(k)
+                            r(k)     = r(k) + sy(k)
                             if (abs(h(k)-hplus(k)) .gt. r8prem()) test= 1
                         endif
                     end do
@@ -588,10 +572,10 @@ integer, intent(out) :: iret
         endif
         if (zalpha .gt. 0.d0) then
             do k = 1, nb_phasis-1
-                if (compor(1)(1:9) .eq. 'META_P_IL' .or. compor(1)(1: 9) .eq.'META_V_IL') then
+                if (compor(1)(1:9) .eq. 'META_P_IL' .or. compor(1)(1: 9) .eq. 'META_V_IL') then
                     vip(4)=vip(4)+fmel(1)*phase(k)*h(k)*vip(k)/zalpha
                 endif
-                if (compor(1)(1:10) .eq. 'META_P_INL' .or. compor(1)( 1:10) .eq.'META_V_INL') then
+                if (compor(1)(1:10) .eq. 'META_P_INL' .or. compor(1)( 1:10) .eq. 'META_V_INL') then
                     vip(4)=vip(4)+fmel(1)*phase(k)*(r(k)-sy(k))/zalpha
                 endif
             end do
