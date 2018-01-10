@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,15 +23,16 @@ subroutine get_meta_comp(rela_comp,&
 !
 implicit none
 !
+#include "asterf_types.h"
 !
-    character(len=16), intent(in) :: rela_comp
-    logical, optional, intent(out) :: l_plas
-    logical, optional, intent(out) :: l_visc
-    logical, optional, intent(out) :: l_hard_isot
-    logical, optional, intent(out) :: l_hard_kine
-    logical, optional, intent(out) :: l_hard_line
-    logical, optional, intent(out) :: l_hard_rest
-    logical, optional, intent(out) :: l_plas_tran
+character(len=16), intent(in) :: rela_comp
+aster_logical, optional, intent(out) :: l_plas
+aster_logical, optional, intent(out) :: l_visc
+aster_logical, optional, intent(out) :: l_hard_isot
+aster_logical, optional, intent(out) :: l_hard_kine
+aster_logical, optional, intent(out) :: l_hard_line
+aster_logical, optional, intent(out) :: l_hard_rest
+aster_logical, optional, intent(out) :: l_plas_tran
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -42,32 +43,32 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  rela_comp    : comportment relation
-! Out l_plas       : .true. if plasticity
-! Out l_visc       : .true. if visco-plasticity
-! Out l_hard_isot  : .true. if isotropic hardening
-! Out l_hard_kine  : .true. if kinematic hardening
-! Out l_hard_line  : .true. if linear hardening
-! Out l_hard_rest  : .true. if restoration hardening
-! Out l_plas_tran  : .true. if transformation plasticity
+! Out l_plas       : ASTER_TRUE if plasticity
+! Out l_visc       : ASTER_TRUE if visco-plasticity
+! Out l_hard_isot  : ASTER_TRUE if isotropic hardening
+! Out l_hard_kine  : ASTER_TRUE if kinematic hardening
+! Out l_hard_line  : ASTER_TRUE if linear hardening
+! Out l_hard_rest  : ASTER_TRUE if restoration hardening
+! Out l_plas_tran  : ASTER_TRUE if transformation plasticity
 !
 ! --------------------------------------------------------------------------------------------------
 !
     if (present(l_plas)) then
-        l_plas      = .false.
+        l_plas      = ASTER_FALSE
         if (rela_comp(6:6) .eq. 'P') then
-            l_plas = .true.
+            l_plas = ASTER_TRUE
         endif
     endif
 !
     if (present(l_visc)) then
-        l_visc      = .false.
+        l_visc      = ASTER_FALSE
         if (rela_comp(6:6) .eq. 'V') then
-            l_visc = .true.
+            l_visc = ASTER_TRUE
         endif
     endif
 !
     if (present(l_hard_rest)) then
-        l_hard_rest = .false.
+        l_hard_rest = ASTER_FALSE
         if (rela_comp(1:12) .eq. 'META_P_IL_RE'     .or.&
             rela_comp(1:15) .eq. 'META_P_IL_PT_RE'  .or.&
             rela_comp(1:12) .eq. 'META_V_IL_RE'     .or.&
@@ -76,12 +77,12 @@ implicit none
             rela_comp(1:16) .eq. 'META_P_INL_PT_RE' .or.&
             rela_comp(1:13) .eq. 'META_V_INL_RE'    .or.&
             rela_comp(1:16) .eq. 'META_V_INL_PT_RE') then
-            l_hard_rest = .true.
+            l_hard_rest = ASTER_TRUE
         endif
     endif
 !
     if (present(l_plas_tran)) then
-        l_plas_tran = .false.
+        l_plas_tran = ASTER_FALSE
         if (rela_comp(1:12) .eq. 'META_P_IL_PT'     .or.&
             rela_comp(1:13) .eq. 'META_P_INL_PT'    .or.&
             rela_comp(1:15) .eq. 'META_P_IL_PT_RE'  .or.&
@@ -90,33 +91,33 @@ implicit none
             rela_comp(1:13) .eq. 'META_V_INL_PT'    .or.&
             rela_comp(1:15) .eq. 'META_V_IL_PT_RE'  .or.&
             rela_comp (1:16) .eq.'META_V_INL_PT_RE') then
-            l_plas_tran = .true.
+            l_plas_tran = ASTER_TRUE
         endif
     endif
 !
     if (present(l_hard_isot)) then
-        l_hard_isot = .false.
+        l_hard_isot = ASTER_FALSE
         if (rela_comp(1:9) .eq. 'META_P_IL' .or.&
             rela_comp(1:9) .eq. 'META_V_IL') then
-            l_hard_isot = .true.
+            l_hard_isot = ASTER_TRUE
         endif
     endif
 !
     if (present(l_hard_kine)) then
-        l_hard_kine = .false.
+        l_hard_kine = ASTER_FALSE
         if (rela_comp(1:9) .eq. 'META_P_CL' .or.&
             rela_comp(1:9) .eq. 'META_V_CL') then
-            l_hard_kine = .true.
+            l_hard_kine = ASTER_TRUE
         endif
     endif
 !
     if (present(l_hard_line)) then
-        l_hard_line = .false.
+        l_hard_line = ASTER_FALSE
         if (rela_comp(1:9) .eq. 'META_P_IL' .or.&
             rela_comp(1:9) .eq. 'META_V_IL' .or.&
             rela_comp(1:9) .eq. 'META_P_CL' .or.&
             rela_comp(1:9) .eq. 'META_V_CL') then
-            l_hard_line = .true.
+            l_hard_line = ASTER_TRUE
         endif
     endif
 !

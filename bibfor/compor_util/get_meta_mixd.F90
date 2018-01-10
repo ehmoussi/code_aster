@@ -22,6 +22,7 @@ subroutine get_meta_mixd(poum  , fami     , kpg      , ksp   , j_mater,&
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/Metallurgy_type.h"
@@ -33,7 +34,7 @@ integer, intent(in) :: ksp
 integer, intent(in) :: j_mater
 integer, intent(in) :: meta_type
 integer, intent(in) :: nb_phasis
-logical, intent(in) :: l_visc
+aster_logical, intent(in) :: l_visc
 real(kind=8), intent(in) :: zalpha
 real(kind=8), intent(out) :: fmel
 real(kind=8), optional, intent(out) :: sy(*)

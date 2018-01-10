@@ -28,8 +28,6 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/matini.h"
 #include "asterfort/nzcalc.h"
-#include "asterfort/rcfonc.h"
-#include "asterfort/rctrac.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/rcvarc.h"
 #include "asterfort/utmess.h"
@@ -37,6 +35,8 @@ implicit none
 #include "asterfort/metaGetType.h"
 #include "asterfort/metaGetPhase.h"
 #include "asterfort/metaGetParaVisc.h"
+#include "asterfort/metaGetParaHardLine.h"
+#include "asterfort/metaGetParaHardTrac.h"
 #include "asterfort/Metallurgy_type.h"
 !
 character(len=*), intent(in) :: fami
@@ -90,10 +90,10 @@ integer, intent(out) :: iret
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: jprol, jvale, nbval(5), maxval, nb_phasis, meta_type
-    integer :: ndimsi, i, j, k, mode, iret1, iret2
+    integer :: maxval, nb_phasis, meta_type
+    integer :: ndimsi, i, j, k, mode, iret2
     real(kind=8) :: phase(5), phasm(5), zalpha
-    real(kind=8) :: temp, dt
+    real(kind=8) :: temp, dt, coef_hard
     real(kind=8) :: epsth, e, deuxmu, deumum, troisk
     real(kind=8) :: fmel(1), sy(5), h(5), hmoy, hplus(5), r(5), rmoy
     real(kind=8) :: theta(8)
@@ -105,13 +105,12 @@ integer, intent(out) :: iret
     real(kind=8) :: sigel(6), sig0(6), sieleq, sigeps
     real(kind=8) :: plasti, dp, seuil
     real(kind=8) :: coef1, coef2, coef3, dv, n0(5), b
-    real(kind=8) :: rbid, precr
+    real(kind=8) :: precr
     real(kind=8) :: valres(20)
     character(len=1) :: poum
     integer :: icodre(20), test
     character(len=16) :: nomres(20)
-    character(len=8) :: nomcle(5)
-    aster_logical :: resi, rigi
+    aster_logical :: resi, rigi, l_temp
     real(kind=8), parameter :: kron(6) = (/1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -150,10 +149,11 @@ integer, intent(out) :: iret
 !
 ! - Compute thermic strain
 !
+    call verift(fami, kpg, ksp, poum, imat,&
+                epsth_meta_=epsth)
     call rcvarc(' ', 'TEMP', poum, fami, kpg,&
                 ksp, temp, iret2)
-    call verift(fami, kpg, ksp, poum, imat,&
-                iret_ = iret1, epsth_meta_=epsth)
+    l_temp = iret2 .eq. 0
 !
 ! ****************************************
 ! 2 - RECUPERATION DES CARACTERISTIQUES
@@ -344,40 +344,23 @@ integer, intent(out) :: iret
 ! 2.9 - CALCUL DE HMOY ET RMOY (ON INCLUE LE SIGY)
 !
     if (compor(1)(1:9) .eq. 'META_P_IL' .or. compor(1)(1:9) .eq. 'META_V_IL') then
-        nomres(1) ='F1_D_SIGM_EPSI'
-        nomres(2) ='F2_D_SIGM_EPSI'
-        nomres(3) ='F3_D_SIGM_EPSI'
-        nomres(4) ='F4_D_SIGM_EPSI'
-        nomres(5) ='C_D_SIGM_EPSI'
-        call rcvalb(fami, kpg, ksp, poum, imat,&
-                    ' ', 'META_ECRO_LINE', 0, ' ', [0.d0],&
-                    5, nomres, h, icodre, 2)
-        h(1)=h(1)*e/(e-h(1))
-        h(2)=h(2)*e/(e-h(2))
-        h(3)=h(3)*e/(e-h(3))
-        h(4)=h(4)*e/(e-h(4))
-        h(5)=h(5)*e/(e-h(5))
+! ----- Get hardening slope (linear)
+        coef_hard = (1.d0)
+        call metaGetParaHardLine(poum     , fami     , kpg, ksp, imat,&
+                                 meta_type, nb_phasis,&
+                                 e        , coef_hard, h)
         do k = 1, nb_phasis
             r(k)=h(k)*vi(k)+sy(k)
         end do
     endif
     if (compor(1)(1:10) .eq. 'META_P_INL' .or. compor(1)(1:10) .eq. 'META_V_INL') then
-        nomcle(1)='SIGM_F1'
-        nomcle(2)='SIGM_F2'
-        nomcle(3)='SIGM_F3'
-        nomcle(4)='SIGM_F4'
-        nomcle(5)='SIGM_C'
-        if (iret1 .eq. 1) then
-            call utmess('F', 'COMPOR5_40',sk='SIGM_*')
-        endif
+! ----- Get hardening slope (non-linear)
+        call metaGetParaHardTrac(imat   , meta_type, nb_phasis,&
+                                 l_temp , temp     ,&
+                                 vi     , h       , r , maxval)
         do k = 1, nb_phasis
-            call rctrac(imat, 2, nomcle(k), temp, jprol,&
-                        jvale, nbval( k), rbid)
-            call rcfonc('V', 2, jprol, jvale, nbval(k),&
-                        p = vi(k), rp = r(k), rprim = h(k))
             r(k) = r(k) + sy(k)
         end do
-        maxval = max(nbval(1),nbval(2),nbval(3),nbval(4),nbval(5))
     endif
     if (zalpha .gt. 0.d0) then
         rmoy=phase(1)*r(1)+phase(2)*r(2)+phase(3)*r(3)+phase(4)*r(4)
@@ -445,20 +428,18 @@ integer, intent(out) :: iret
 !
                 do j = 1, maxval
                     test=0
+                    vip(1:5)   = vi(1:5) + dp
+                    hplus(1:5) = h(1:5)
+                    call metaGetParaHardTrac(imat   , meta_type, nb_phasis,&
+                                             l_temp , temp     ,&
+                                             vip    , h       , r)
                     do k = 1, nb_phasis
                         if (phase(k) .gt. 0.d0) then
-                            vip(k)=vi(k)+dp
-                            hplus(k)=h(k)
-                            call rctrac(imat, 2, nomcle(k), temp, jprol,&
-                                        jvale, nbval(k), rbid)
-                            call rcfonc('V', 2, jprol, jvale, nbval(k),&
-                                        p = vip(k), rp = r(k), rprim = h(k))
-                            r(k) = r(k) + sy(k)
+                            r(k)     = r(k) + sy(k)
                             if (abs(h(k)-hplus(k)) .gt. precr) test= 1
                         endif
                     end do
                     if (test .eq. 0) goto 600
-!
                     hmoy=0.d0
                     rmoy=0.d0
                     if (zalpha .gt. 0.d0) then
@@ -497,7 +478,7 @@ integer, intent(out) :: iret
         end do
 !
 ! 4.2.3 - CALCUL DE VIP ET RMOY
-! 
+!
         do k = 1, nb_phasis
             if (phase(k) .gt. 0.d0) then
                 vip(k)=vi(k)+dp
@@ -562,7 +543,7 @@ integer, intent(out) :: iret
         if (plasti .ge. 0.5d0) then
             if (option(1:9) .eq. 'FULL_MECA') then
                 sigeps = 0.d0
-                do  i = 1, ndimsi
+                do i = 1, ndimsi
                     sigeps = sigeps + dvsigp(i)*dvdeps(i)
                 end do
                 if ((mode.eq.1) .or. ((mode .eq. 2) .and. ( sigeps.ge.0.d0))) then

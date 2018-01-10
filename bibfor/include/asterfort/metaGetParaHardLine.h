@@ -15,12 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-#include "asterf_types.h"
 !
 interface
-    subroutine get_meta_mixd(poum  , fami     , kpg      , ksp   , j_mater,&
-                             l_visc, meta_type, nb_phasis, zalpha, fmel   ,&
-                             sy)
+    subroutine metaGetParaHardLine(poum     , fami     , kpg, ksp, j_mater,&
+                                   meta_type, nb_phasis,&
+                                   young    , coef     , h)
         character(len=1), intent(in) :: poum
         character(len=*), intent(in) :: fami
         integer, intent(in) :: kpg
@@ -28,9 +27,8 @@ interface
         integer, intent(in) :: j_mater
         integer, intent(in) :: meta_type
         integer, intent(in) :: nb_phasis
-        aster_logical, intent(in) :: l_visc
-        real(kind=8), intent(in) :: zalpha
-        real(kind=8), intent(out) :: fmel
-        real(kind=8), optional, intent(out) :: sy(*)
-    end subroutine get_meta_mixd
+        real(kind=8), intent(in) :: young
+        real(kind=8), intent(in) :: coef
+        real(kind=8), intent(out) :: h(*)
+    end subroutine metaGetParaHardLine
 end interface
