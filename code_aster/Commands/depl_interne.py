@@ -19,24 +19,24 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import StaticMacroElement
+from ..Objects import MechanicalModeContainer
 from .ExecuteCommand import ExecuteCommand
 
 
-class StaticMacroElementDefinition(ExecuteCommand):
-    """Command that creates the :class:`~code_aster.Objects.StaticMacroElement`"""
-    command_name = "MACR_ELEM_STAT"
+class DeplInterne(ExecuteCommand):
+    """Command DEPL_INTERNE
+    """
+    command_name = "DEPL_INTERNE"
 
     def create_result(self, keywords):
         """Initialize the result.
-
+        
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        if keywords.has_key("reuse"):
-            self._result = keywords["reuse"]
+        if keywords['DEPL_GLOBAL'] == "MODE_MECA":
+            self._result = MechanicalModeContainer()
         else:
-            self._result = StaticMacroElement()
+            self._result = type(keywords['DEPL_GLOBAL'])()
 
-
-MACR_ELEM_STAT = StaticMacroElementDefinition.run
+DEPL_INTERNE = DeplInterne.run
