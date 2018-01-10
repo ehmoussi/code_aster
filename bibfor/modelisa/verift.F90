@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,27 +26,26 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/get_elasth_para.h"
 #include "asterfort/get_meta_phasis.h"
-#include "asterfort/get_meta_id.h"
+#include "asterfort/metaGetType.h"
 #include "asterfort/get_elas_id.h"
 #include "asterfort/rcvarc.h"
 #include "asterfort/tecael.h"
 #include "asterfort/tecach.h"
 #include "asterfort/utmess.h"
 !
-!
-    character(len=*), intent(in) :: fami
-    integer, intent(in) :: kpg
-    integer, intent(in) :: ksp
-    character(len=*), intent(in) :: poum
-    integer, intent(in) :: j_mater
-    character(len=8), optional, intent(in) :: materi_
-    integer, optional, intent(out) :: iret_
-    real(kind=8), optional, intent(out) :: epsth_
-    real(kind=8), optional, intent(out) :: epsth_anis_(3)
-    real(kind=8), optional, intent(out) :: epsth_meta_
-    real(kind=8), optional, intent(out) :: temp_prev_
-    real(kind=8), optional, intent(out) :: temp_curr_
-    real(kind=8), optional, intent(out) :: temp_refe_
+character(len=*), intent(in) :: fami
+integer, intent(in) :: kpg
+integer, intent(in) :: ksp
+character(len=*), intent(in) :: poum
+integer, intent(in) :: j_mater
+character(len=8), optional, intent(in) :: materi_
+integer, optional, intent(out) :: iret_
+real(kind=8), optional, intent(out) :: epsth_
+real(kind=8), optional, intent(out) :: epsth_anis_(3)
+real(kind=8), optional, intent(out) :: epsth_meta_
+real(kind=8), optional, intent(out) :: temp_prev_
+real(kind=8), optional, intent(out) :: temp_curr_
+real(kind=8), optional, intent(out) :: temp_refe_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -85,7 +84,7 @@ implicit none
     real(kind=8) :: zcold_p, zhot_p, zcold_c, zhot_c, epsth_meta_h, epsth_meta_c
     real(kind=8) :: z_h_r, deps_ch_tref
     integer :: iadzi, iazk24
-    integer :: elas_id, iret_cmp, icompo, meta_id, nb_phasis
+    integer :: elas_id, iret_cmp, icompo, meta_type, nb_phasis
     character(len=16) :: elas_keyword, rela_comp
 !
 ! --------------------------------------------------------------------------------------------------
@@ -181,11 +180,11 @@ implicit none
             call utmess('F', 'COMPOR5_10', sk=elem_name)
         endif
 !
-        call get_meta_id(meta_id, nb_phasis)
+        call metaGetType(meta_type, nb_phasis)
 !
         if (poum.eq.'T'.or.poum.eq.'-') then
             if (iret_temp_prev.eq.0) then
-                call get_meta_phasis(fami, '-', kpg ,ksp, meta_id, nb_phasis,& 
+                call get_meta_phasis(fami, '-', kpg ,ksp, meta_type, nb_phasis,& 
                                      zcold_ = zcold_p,& 
                                      zhot_  = zhot_p)
             endif
@@ -193,7 +192,7 @@ implicit none
 !
         if (poum.eq.'T'.or.poum.eq.'+') then
             if (iret_temp_prev.eq.0) then
-                call get_meta_phasis(fami, '+', kpg, ksp, meta_id, nb_phasis,& 
+                call get_meta_phasis(fami, '+', kpg, ksp, meta_type, nb_phasis,& 
                                      zcold_ = zcold_c,& 
                                      zhot_  = zhot_c)
             endif

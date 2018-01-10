@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine get_meta_hard(poum       , fami     , kpg      , ksp   , j_mater,&
                          l_hard_line, meta_type, nb_phasis, l_temp, temp   ,&
                          young      , epsp     , r0)
@@ -28,21 +28,20 @@ implicit none
 #include "asterfort/rctrac.h"
 #include "asterfort/rcfonc.h"
 #include "asterfort/utmess.h"
+#include "asterfort/Metallurgy_type.h"
 !
-!
-    character(len=1), intent(in) :: poum
-    character(len=*), intent(in) :: fami
-    integer, intent(in) :: kpg
-    integer, intent(in) :: ksp
-    integer, intent(in) :: j_mater
-    integer, intent(in) :: meta_type
-    integer, intent(in) :: nb_phasis
-    logical, intent(in) :: l_hard_line
-    logical, intent(in) :: l_temp
-    real(kind=8), intent(in) :: young
-    real(kind=8), intent(in) :: temp
-    real(kind=8), intent(in) :: epsp(*)
-    real(kind=8), intent(out) :: r0(*)
+character(len=1), intent(in) :: poum
+character(len=*), intent(in) :: fami
+integer, intent(in) :: kpg, ksp
+integer, intent(in) :: j_mater
+integer, intent(in) :: meta_type
+integer, intent(in) :: nb_phasis
+logical, intent(in) :: l_hard_line
+logical, intent(in) :: l_temp
+real(kind=8), intent(in) :: young
+real(kind=8), intent(in) :: temp
+real(kind=8), intent(in) :: epsp(*)
+real(kind=8), intent(out) :: r0(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -58,9 +57,6 @@ implicit none
 ! In  ksp          : current "sous-point" gauss
 ! In  j_mater      : coded material address
 ! In  meta_type    : type of metallurgy
-!                       0 - No metallurgy
-!                       1 - Steel
-!                       2 - Zirconium
 ! In  nb_phasis    : total number of phasis (cold and hot)
 ! In  l_hard_line  : .true. if linear hardening
 ! In  young        : Young modulus
@@ -88,28 +84,20 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (meta_type.eq.1) then
-        ASSERT(nb_phasis.eq.5) 
-    elseif (meta_type.eq.2) then
-        ASSERT(nb_phasis.eq.3)
-    else
-        ASSERT(.false.)
-    endif
-!
     if (l_hard_line) then
         nb_res = nb_phasis
-        if (meta_type.eq.1) then
+        if (meta_type .eq. META_STEEL) then
             nomres(1) = 'F1_D_SIGM_EPSI'
             nomres(2) = 'F2_D_SIGM_EPSI'
             nomres(3) = 'F3_D_SIGM_EPSI'
             nomres(4) = 'F4_D_SIGM_EPSI'
             nomres(5) = 'C_D_SIGM_EPSI'
-        elseif (meta_type.eq.2) then
+        elseif (meta_type .eq. META_ZIRC) then
             nomres(1) = 'F1_D_SIGM_EPSI'
             nomres(2) = 'F2_D_SIGM_EPSI'
             nomres(3) = 'C_D_SIGM_EPSI'
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
         call rcvalb(fami, kpg, ksp, poum, j_mater,&
                     ' ', 'META_ECRO_LINE', 0, ' ', [0.d0],&
@@ -121,18 +109,18 @@ implicit none
     else
         nb_vale   = 1
         keyw_fact = 'META_TRACTION'
-        if (meta_type.eq.1) then
+        if (meta_type .eq. META_STEEL) then
             keyw_trac(1) = 'SIGM_F1'
             keyw_trac(2) = 'SIGM_F2'
             keyw_trac(3) = 'SIGM_F3'
             keyw_trac(4) = 'SIGM_F4'
             keyw_trac(5) = 'SIGM_C'
-        elseif (meta_type.eq.2) then
+        elseif (meta_type .eq. META_ZIRC) then
             keyw_trac(1) = 'SIGM_F1'
             keyw_trac(2) = 'SIGM_F2'
             keyw_trac(3) = 'SIGM_C'
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
 
         do i_phasis = 1, nb_phasis

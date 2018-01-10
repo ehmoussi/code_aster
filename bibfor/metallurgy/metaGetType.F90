@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,18 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine get_meta_id(meta_id, nb_phasis)
+!
+subroutine metaGetType(meta_type, nb_phasis)
 !
 use calcul_module, only : calcul_status
 !
 implicit none
 !
 #include "asterfort/rcvarc.h"
+#include "asterfort/Metallurgy_type.h"
 !
-!
-    integer, intent(out) :: meta_id
-    integer, intent(out) :: nb_phasis
+integer, intent(out) :: meta_type
+integer, intent(out) :: nb_phasis
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -36,11 +36,8 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Out meta_id      : type of metallurgy
-!                       0 - No metallurgy
-!                       1 - Steel
-!                       2 - Zirconium
-! Out nb_phasis    : total number of phasis (cold and hot)
+! Out meta_type      : type of metallurgy
+! Out nb_phasis      : total number of phasis (cold and hot)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,7 +53,7 @@ implicit none
 !
     kpg       = 1
     ksp       = 1
-    meta_id = 0
+    meta_type = META_NONE
     nb_phasis = 0
 !
 ! - Choice of integration scheme: for CALC_POINT_MAT is PMAT !
@@ -70,13 +67,13 @@ implicit none
     call rcvarc(' ', steel, '+', fami, kpg,&
                 ksp, r8dummy, iret_steel)
     if (iret_steel .eq. 0) then
-        meta_id = 1
+        meta_type = META_STEEL
         nb_phasis = 5
     else
         call rcvarc(' ', zirc, '+', fami, kpg,&
                     ksp, r8dummy, iret_zirc)
         if (iret_zirc .eq. 0) then
-            meta_id = 2
+            meta_type = META_ZIRC
             nb_phasis = 3
         endif
     endif

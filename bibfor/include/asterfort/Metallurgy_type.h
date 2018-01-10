@@ -19,6 +19,9 @@
 ! Metallurgy data structure
 ! -------------------------------------------------------------------------
 !
+#define META_NONE        0
+#define META_STEEL       1
+#define META_ZIRC        2
 !
 ! - Phases for steel
 !

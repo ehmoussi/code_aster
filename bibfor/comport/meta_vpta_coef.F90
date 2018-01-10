@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine meta_vpta_coef(rela_comp, lgpg      , fami     , kpg      , j_mater  ,&
                           l_temp   , temp      , meta_type, nb_phasis, phas_prev,&
                           phas_curr, zcold_curr, young    , deuxmu   , coef     ,&
@@ -32,23 +32,22 @@ implicit none
 #include "asterfort/get_meta_mixd.h"
 #include "asterfort/get_meta_hard.h"
 !
-!
-    character(len=16), intent(in) :: rela_comp
-    integer, intent(in) :: lgpg 
-    character(len=4), intent(in) :: fami
-    integer, intent(in) :: kpg
-    integer, intent(in) :: j_mater
-    logical, intent(in) :: l_temp
-    real(kind=8), intent(in) :: temp
-    integer, intent(in) :: meta_type
-    integer, intent(in) :: nb_phasis
-    real(kind=8), intent(in) :: phas_prev(*)
-    real(kind=8), intent(in) :: phas_curr(*)
-    real(kind=8), intent(in) :: zcold_curr
-    real(kind=8), intent(in) :: young
-    real(kind=8), intent(in) :: deuxmu
-    real(kind=8), intent(out) :: coef
-    real(kind=8), intent(out) :: trans
+character(len=16), intent(in) :: rela_comp
+integer, intent(in) :: lgpg 
+character(len=4), intent(in) :: fami
+integer, intent(in) :: kpg
+integer, intent(in) :: j_mater
+logical, intent(in) :: l_temp
+real(kind=8), intent(in) :: temp
+integer, intent(in) :: meta_type
+integer, intent(in) :: nb_phasis
+real(kind=8), intent(in) :: phas_prev(*)
+real(kind=8), intent(in) :: phas_curr(*)
+real(kind=8), intent(in) :: zcold_curr
+real(kind=8), intent(in) :: young
+real(kind=8), intent(in) :: deuxmu
+real(kind=8), intent(out) :: coef
+real(kind=8), intent(out) :: trans
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -67,9 +66,6 @@ implicit none
 ! In  l_temp        : .true. if temperature command variable is affected
 ! In  temp          : temperature
 ! In  meta_type     : type of metallurgy
-!                       0 - No metallurgy
-!                       1 - Steel
-!                       2 - Zirconium
 ! In  nb_phasis     : total number of phasis (cold and hot)
 ! In  phas_prev     : previous phasis
 ! In  phas_curr     : current phasis
