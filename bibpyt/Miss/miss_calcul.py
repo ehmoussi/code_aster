@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -228,6 +228,10 @@ class CalculMiss(object):
             other_groups = _F(
                 GROUP_MA_FLU_STR=self.param['GROUP_MA_FLU_STR'],
                 GROUP_MA_FLU_SOL=self.param['GROUP_MA_FLU_SOL'],
+                GROUP_MA_SOL_SOL=self.param['GROUP_MA_SOL_SOL'],)
+        else:
+            if 'GROUP_MA_SOL_SOL' in self.param:
+                other_groups = _F(
                 GROUP_MA_SOL_SOL=self.param['GROUP_MA_SOL_SOL'],)
         IMPR_MACR_ELEM(MACR_ELEM_DYNA=mael,
                        FORMAT='MISS_3D',

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -75,7 +75,7 @@ CALC_MISS = MACRO(nom="CALC_MISS",
     # pas de post-traitement
     b_basic   = BLOC(condition="""is_in("TYPE_RESU", ('FICHIER', 'TABLE_CONTROL'))""",
                        regles=(UN_PARMI('MACR_ELEM_DYNA', 'BASE_MODALE'),
-                               ENSEMBLE('GROUP_MA_FLU_STR', 'GROUP_MA_FLU_SOL', 'GROUP_MA_SOL_SOL'),
+                               ENSEMBLE('GROUP_MA_FLU_STR', 'GROUP_MA_FLU_SOL'),
                                EXCLUS('SOURCE_SOL', 'SOURCE_FLUIDE')),
         MACR_ELEM_DYNA  = SIMP(statut='f', typ=macr_elem_dyna,
                                fr=tr("Macro élément produit en amont")),
@@ -116,7 +116,7 @@ CALC_MISS = MACRO(nom="CALC_MISS",
     # post-traitement : passage du domaine de Laplace au domaine temporel
     b_fichier_temps   = BLOC(condition="""equal_to("TYPE_RESU", 'FICHIER_TEMPS')""",
                        regles=(UN_PARMI('MACR_ELEM_DYNA', 'BASE_MODALE'),
-                               ENSEMBLE('GROUP_MA_FLU_STR', 'GROUP_MA_FLU_SOL', 'GROUP_MA_SOL_SOL'),
+                               ENSEMBLE('GROUP_MA_FLU_STR', 'GROUP_MA_FLU_SOL'),
                                AU_MOINS_UN('UNITE_RESU_RIGI','UNITE_RESU_AMOR','UNITE_RESU_MASS'),
                                PRESENT_PRESENT('UNITE_RESU_AMOR', 'MATR_GENE'),
                                PRESENT_PRESENT('UNITE_RESU_MASS', 'MATR_GENE'),),
@@ -180,7 +180,7 @@ CALC_MISS = MACRO(nom="CALC_MISS",
     ),
     # si post-traitement
     b_donnees   = BLOC(condition="""not is_in("TYPE_RESU", ('FICHIER', 'FICHIER_TEMPS', 'TABLE_CONTROL', 'CHARGE'))""",
-                       regles=(ENSEMBLE('GROUP_MA_FLU_STR', 'GROUP_MA_FLU_SOL', 'GROUP_MA_SOL_SOL'),
+                       regles=(ENSEMBLE('GROUP_MA_FLU_STR', 'GROUP_MA_FLU_SOL'),
                                UN_PARMI('MATR_AMOR', 'AMOR_REDUIT'),),
         MACR_ELEM_DYNA  = SIMP(statut='f', typ=macr_elem_dyna,
                                fr=tr("Macro élément produit en amont")),
