@@ -173,6 +173,7 @@ from .proj_vect_base import PROJ_VECT_BASE
 from .recu_gene import RECU_GENE
 from .resoudre import RESOUDRE
 from .rest_cond_tran import REST_COND_TRAN
+from .rest_mode_nonl import REST_MODE_NONL
 from .stat_non_line import STAT_NON_LINE
 from .reca_weibull import RECA_WEIBULL
 from .recu_fonction import RECU_FONCTION
