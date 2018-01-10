@@ -30,7 +30,7 @@ implicit none
 #include "asterfort/get_meta_comp.h"
 #include "asterfort/get_meta_plas_t.h"
 #include "asterfort/metaGetParaVisc.h"
-#include "asterfort/get_meta_mixd.h"
+#include "asterfort/metaGetParaMixture.h"
 #include "asterfort/metaGetParaHardTrac.h"
 #include "asterfort/metaGetParaHardLine.h"
 !
@@ -155,8 +155,8 @@ real(kind=8), intent(out) :: trans
 !
 ! ----- Mixing law: yield
 !
-        call get_meta_mixd('+'   , fami     , kpg      , ksp        , j_mater     ,&
-                           l_visc, meta_type, nb_phasis, zcold_curr, fmel  = fmel)
+        call metaGetParaMixture('+'   , fami     , kpg      , ksp       , j_mater     ,&
+                                l_visc, meta_type, nb_phasis, zcold_curr, fmel  = fmel)
 !
 ! ----- Get point on hardening curve
 !

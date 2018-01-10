@@ -37,6 +37,7 @@ implicit none
 #include "asterfort/metaGetParaVisc.h"
 #include "asterfort/metaGetParaHardLine.h"
 #include "asterfort/metaGetParaHardTrac.h"
+#include "asterfort/metaGetParaMixture.h"
 #include "asterfort/Metallurgy_type.h"
 !
 character(len=*), intent(in) :: fami
@@ -95,7 +96,7 @@ integer, intent(out) :: iret
     real(kind=8) :: phase(5), phasm(5), zalpha
     real(kind=8) :: temp, dt, coef_hard
     real(kind=8) :: epsth, e, deuxmu, deumum, troisk
-    real(kind=8) :: fmel(1), sy(3), h(3), hmoy, hplus(3), r(3), rmoy
+    real(kind=8) :: fmel, sy(3), h(3), hmoy, hplus(3), r(3), rmoy
     real(kind=8) :: theta(4)
     real(kind=8) :: eta(5), n(3), unsurn(5), c(3), m(3), cmoy, mmoy, cr
     real(kind=8) :: dz(2), dz1(2), dz2(2), vi(3), dvin, vimoy, ds
@@ -109,7 +110,7 @@ integer, intent(out) :: iret
     character(len=1) :: poum
     integer :: icodre(12), test
     character(len=16) :: nomres(12)
-    aster_logical :: resi, rigi, l_temp
+    aster_logical :: resi, rigi, l_temp, l_visc
     real(kind=8), parameter :: kron(6) = (/1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -170,38 +171,17 @@ integer, intent(out) :: iret
     call rcvalb(fami, kpg, ksp, poum, imat,&
                 ' ', 'ELAS_META', 0, ' ', [0.d0],&
                 2, nomres, valres, icodre, 2)
-    e = valres(1)
+    e      = valres(1)
     deuxmu = e/(1.d0+valres(2))
     troisk = e/(1.d0-2.d0*valres(2))
+    plasti = vim(5)
+    l_visc = compor(1)(1:6) .eq. 'META_V'
 !
-    plasti=vim(5)
+! - Mixture law (yield limit)
 !
-! 2.2 - LOI DES MELANGES
-!
-    if (compor(1)(1:6) .eq. 'META_P') then
-        nomres(1) ='F1_SY'
-        nomres(2) ='F2_SY'
-        nomres(3) ='C_SY'
-        nomres(4) ='SY_MELAN'
-    endif
-!
-    if (compor(1)(1:6) .eq. 'META_V') then
-        nomres(1) ='F1_S_VP'
-        nomres(2) ='F2_S_VP'
-        nomres(3) ='C_S_VP'
-        nomres(4) ='S_VP_MEL'
-    endif
-!
-    call rcvalb(fami, 1, 1, '+', imat,&
-                ' ', 'ELAS_META', 1, 'META', [zalpha],&
-                1, nomres(4), fmel, icodre(4), 0)
-    if (icodre(4) .ne. 0) fmel(1) = zalpha
-!
-! 2.3 - LIMITE D ELASTICITE
-!
-    call rcvalb(fami, kpg, ksp, poum, imat,&
-                ' ', 'ELAS_META', 0, ' ', [0.d0],&
-                3, nomres, sy, icodre, 2)
+    call metaGetParaMixture(poum  , fami     , kpg      , ksp   , imat,&
+                            l_visc, meta_type, nb_phasis, zalpha, fmel,&
+                            sy)
 !
     if (resi) then
 !
@@ -226,7 +206,7 @@ integer, intent(out) :: iret
             end do
         endif
 ! ----- Parameters for viscosity
-        if (compor(1)(1:6) .eq. 'META_V') then
+        if (l_visc) then
             call metaGetParaVisc(poum     , fami     , kpg, ksp, imat  ,&
                                  meta_type, nb_phasis, eta, n  , unsurn,&
                                  c        , m)
@@ -358,8 +338,8 @@ integer, intent(out) :: iret
         rmoy = 0.d0
         hmoy = 0.d0
     endif
-    rmoy = (1.d0-fmel(1))*r(nb_phasis)+fmel(1)*rmoy
-    hmoy = (1.d0-fmel(1))*h(nb_phasis)+fmel(1)*hmoy
+    rmoy = (1.d0-fmel)*r(nb_phasis)+fmel*rmoy
+    hmoy = (1.d0-fmel)*h(nb_phasis)+fmel*hmoy
 !
 ! ********************************
 ! 3 - DEBUT DE L ALGORITHME
@@ -403,7 +383,7 @@ integer, intent(out) :: iret
             dp = 0.d0
         else
             vip(5) = 1.d0
-            call nzcalc(crit, phase, nb_phasis, fmel(1), seuil,&
+            call nzcalc(crit, phase, nb_phasis, fmel, seuil,&
                         dt, trans, hmoy, deuxmu, eta,&
                         unsurn, dp, iret)
             if (iret .eq. 1) goto 999
@@ -435,15 +415,15 @@ integer, intent(out) :: iret
                                 hmoy = hmoy + phase(k)*h(k)
                             endif
                         end do
-                        rmoy=fmel(1)*rmoy/zalpha
-                        hmoy=fmel(1)*hmoy/zalpha
+                        rmoy=fmel*rmoy/zalpha
+                        hmoy=fmel*hmoy/zalpha
                     endif
                     if (phase(nb_phasis) .gt. 0.d0) then
-                        rmoy = (1.d0-fmel(1))*(r(nb_phasis)-h(nb_phasis)*dp)+rmoy
-                        hmoy = (1.d0-fmel(1))*h(nb_phasis)+hmoy
+                        rmoy = (1.d0-fmel)*(r(nb_phasis)-h(nb_phasis)*dp)+rmoy
+                        hmoy = (1.d0-fmel)*h(nb_phasis)+hmoy
                     endif
                     seuil= sieleq - (1.5d0*deuxmu*trans + 1.d0)*rmoy
-                    call nzcalc(crit, phase, nb_phasis, fmel(1), seuil,&
+                    call nzcalc(crit, phase, nb_phasis, fmel, seuil,&
                                 dt, trans, hmoy, deuxmu, eta,&
                                 unsurn, dp, iret)
                     if (iret .eq. 1) goto 999
@@ -474,19 +454,19 @@ integer, intent(out) :: iret
         vip(4)=0.d0
         if (phase(nb_phasis) .gt. 0.d0) then
             if (compor(1)(1:9) .eq. 'META_P_IL' .or. compor(1)(1:9) .eq. 'META_V_IL') then
-                vip(4)=vip(4)+(1-fmel(1))*h(nb_phasis)*vip(nb_phasis)
+                vip(4)=vip(4)+(1-fmel)*h(nb_phasis)*vip(nb_phasis)
             endif
             if (compor(1)(1:10) .eq. 'META_P_INL' .or. compor(1)(1:10) .eq.'META_V_INL') then
-                vip(4)=vip(4)+(1-fmel(1))*(r(nb_phasis)-sy(nb_phasis))
+                vip(4)=vip(4)+(1-fmel)*(r(nb_phasis)-sy(nb_phasis))
             endif
         endif
         if (zalpha .gt. 0.d0) then
             do k = 1, nb_phasis-1
                 if (compor(1)(1:9) .eq. 'META_P_IL' .or. compor(1)(1: 9) .eq. 'META_V_IL') then
-                    vip(4)=vip(4)+fmel(1)*phase(k)*h(k)*vip(k)/zalpha
+                    vip(4)=vip(4)+fmel*phase(k)*h(k)*vip(k)/zalpha
                 endif
                 if (compor(1)(1:10) .eq. 'META_P_INL' .or. compor(1)( 1:10) .eq. 'META_V_INL') then
-                    vip(4)=vip(4)+fmel(1)*phase(k)*(r(k)-sy(k))/zalpha
+                    vip(4)=vip(4)+fmel*phase(k)*(r(k)-sy(k))/zalpha
                 endif
             end do
         endif
@@ -498,7 +478,7 @@ integer, intent(out) :: iret
 !
     if (rigi) then
         mode=2
-        if (compor(1)(1:6) .eq. 'META_V') mode=1
+        if (l_visc) mode=1
         call matini(6, 6, 0.d0, dsidep)
         do i = 1, ndimsi
             dsidep(i,i) =1.d0
@@ -537,12 +517,12 @@ integer, intent(out) :: iret
                         do k = 1, nb_phasis
                             n0(k) = (1-n(k))/n(k)
                         end do
-                        dv = (1-fmel(1))*phase(nb_phasis)*(eta(nb_phasis)/n(nb_phasis)/dt) *&
+                        dv = (1-fmel)*phase(nb_phasis)*(eta(nb_phasis)/n(nb_phasis)/dt) *&
                              ((dp/dt)**n0(nb_phasis))
                         if (zalpha .gt. 0.d0) then
                             do k = 1, nb_phasis-1
                                 if (phase(k) .gt. 0.d0) then
-                                    dv = dv+ fmel(1)*( phase(k)/zalpha) * (eta(k)/ n(k)/dt)*&
+                                    dv = dv+ fmel*( phase(k)/zalpha) * (eta(k)/ n(k)/dt)*&
                                          ((dp/dt)**n0(k))
                                 endif
                             end do

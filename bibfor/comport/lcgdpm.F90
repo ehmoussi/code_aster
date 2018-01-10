@@ -38,6 +38,7 @@ implicit none
 #include "asterfort/metaGetParaVisc.h"
 #include "asterfort/metaGetParaHardLine.h"
 #include "asterfort/metaGetParaHardTrac.h"
+#include "asterfort/metaGetParaMixture.h"
 #include "asterfort/Metallurgy_type.h"
 !
 character(len=*), intent(in) :: fami
@@ -109,13 +110,13 @@ integer, intent(out) :: iret
     real(kind=8) :: coeff1, coeff2, coeff3, coeff4, coeff5, coeff6, coeff7
     real(kind=8) :: coeff8, coeff9, dv, rb, n0(5)
     real(kind=8) :: mat0(3, 3), mat1(3, 3), mat2(6, 3, 3), mat3(3, 3)
-    real(kind=8) :: valres(20), val(1)
+    real(kind=8) :: valres(20)
     character(len=1) :: poum
     integer :: icodre(20), test
     character(len=16) :: nomres(20)
     real(kind=8), parameter :: kr(6) = (/1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/)
     real(kind=8), parameter :: pdtsca(6) = (/1.d0,1.d0,1.d0,2.d0,2.d0,2.d0/)
-    aster_logical :: resi, rigi, l_temp
+    aster_logical :: resi, rigi, l_temp, l_visc
 !
     data ind   /1,4,5,&
                 4,2,6,&
@@ -148,7 +149,7 @@ integer, intent(out) :: iret
 !
     call metaGetType(meta_type, nb_phasis)
     ASSERT(meta_type .eq. META_STEEL)
-    ASSERT(nb_phasis.eq.5)
+    ASSERT(nb_phasis .eq. 5)
 !
 ! - Get phasis
 !
@@ -189,180 +190,152 @@ integer, intent(out) :: iret
     call rcvalb(fami, kpg, ksp, poum, imat,&
                 ' ', 'ELAS_META', 0, ' ', [0.d0],&
                 2, nomres, valres, icodre, 2)
-    e=valres(1)
-    nu=valres(2)
-    mu=e/(2.d0*(1.d0+nu))
+    e      = valres(1)
+    nu     = valres(2)
+    mu     = e/(2.d0*(1.d0+nu))
     troisk = e/(1.d0-2.d0*nu)
+    plasti = vim(7)
+    l_visc = compor(1)(1:6) .eq. 'META_V'
 !
-    if (compor(1)(1:4) .eq. 'META') then
-        plasti=vim(7)
+! - Mixture law (yield limit)
 !
-! 2.2 - LOI DES MELANGES
-!
-        if (compor(1)(1:6) .eq. 'META_P') then
-            nomres(1) ='F1_SY'
-            nomres(2) ='F2_SY'
-            nomres(3) ='F3_SY'
-            nomres(4) ='F4_SY'
-            nomres(5) ='C_SY'
-            nomres(6) ='SY_MELANGE'
-        endif
-        if (compor(1)(1:6) .eq. 'META_V') then
-            nomres(1) ='F1_S_VP'
-            nomres(2) ='F2_S_VP'
-            nomres(3) ='F3_S_VP'
-            nomres(4) ='F4_S_VP'
-            nomres(5) ='C_S_VP'
-            nomres(6) ='S_VP_MEL'
-        endif
-        call rcvalb(fami, 1, 1, '+', imat,&
-                    ' ', 'ELAS_META', 1, 'META', [zalpha],&
-                    1, nomres(6), val, icodre(6), 0)
-        if (icodre(6) .ne. 0) then
-            fmel = zalpha
-        else
-            fmel = val(1)
-        endif
-!
-! 2.3 - LIMITE D ELASTICITE
-!
-        call rcvalb(fami, kpg, ksp, poum, imat,&
-                    ' ', 'ELAS_META', 0, ' ', [0.d0],&
-                    5, nomres, sy, icodre, 2)
-        if (resi) then
+    call metaGetParaMixture(poum  , fami     , kpg      , ksp   , imat,&
+                            l_visc, meta_type, nb_phasis, zalpha, fmel,&
+                            sy)
+    if (resi) then
 !
 ! 2.4 - RESTAURATION D ECROUISSAGE
 !
-            if (compor(1)(1:12) .eq. 'META_P_IL_RE' .or. compor(1)(1:15) .eq.&
-                'META_P_IL_PT_RE' .or. compor(1)(1:12) .eq. 'META_V_IL_RE' .or.&
-                compor(1)(1:15) .eq. 'META_V_IL_PT_RE' .or. compor(1)(1:13) .eq.&
-                'META_P_INL_RE' .or. compor(1)(1:16) .eq. 'META_P_INL_PT_RE' .or.&
-                compor(1)(1:13) .eq. 'META_V_INL_RE' .or. compor(1)(1:16) .eq.&
-                'META_V_INL_PT_RE') then
-                nomres(1) ='C_F1_THETA'
-                nomres(2) ='C_F2_THETA'
-                nomres(3) ='C_F3_THETA'
-                nomres(4) ='C_F4_THETA'
-                nomres(5) ='F1_C_THETA'
-                nomres(6) ='F2_C_THETA'
-                nomres(7) ='F3_C_THETA'
-                nomres(8) ='F4_C_THETA'
-                call rcvalb(fami, kpg, ksp, poum, imat,&
-                            ' ', 'META_RE', 0, '  ', [0.d0],&
-                            8, nomres, theta, icodre, 2)
-            else
-                do i = 1, 8
-                    theta(i)=1.d0
-                end do
-            endif
-! --------- Parameters for viscosity
-            if (compor(1)(1:6) .eq. 'META_V') then
-                call metaGetParaVisc(poum     , fami     , kpg, ksp, imat  ,&
-                                     meta_type, nb_phasis, eta, n  , unsurn,&
-                                     c        , m)
-            else
-                eta(:)    = 0.d0
-                n(:)      = 20.d0
-                unsurn(:) = 1.d0
-                c(:)      = 0.d0
-                m(:)      = 20.d0
-            endif
+        if (compor(1)(1:12) .eq. 'META_P_IL_RE' .or. compor(1)(1:15) .eq.&
+            'META_P_IL_PT_RE' .or. compor(1)(1:12) .eq. 'META_V_IL_RE' .or.&
+            compor(1)(1:15) .eq. 'META_V_IL_PT_RE' .or. compor(1)(1:13) .eq.&
+            'META_P_INL_RE' .or. compor(1)(1:16) .eq. 'META_P_INL_PT_RE' .or.&
+            compor(1)(1:13) .eq. 'META_V_INL_RE' .or. compor(1)(1:16) .eq.&
+            'META_V_INL_PT_RE') then
+            nomres(1) ='C_F1_THETA'
+            nomres(2) ='C_F2_THETA'
+            nomres(3) ='C_F3_THETA'
+            nomres(4) ='C_F4_THETA'
+            nomres(5) ='F1_C_THETA'
+            nomres(6) ='F2_C_THETA'
+            nomres(7) ='F3_C_THETA'
+            nomres(8) ='F4_C_THETA'
+            call rcvalb(fami, kpg, ksp, poum, imat,&
+                        ' ', 'META_RE', 0, '  ', [0.d0],&
+                        8, nomres, theta, icodre, 2)
+        else
+            do i = 1, 8
+                theta(i)=1.d0
+            end do
+        endif
+! ----- Parameters for viscosity
+        if (l_visc) then
+            call metaGetParaVisc(poum     , fami     , kpg, ksp, imat  ,&
+                                 meta_type, nb_phasis, eta, n  , unsurn,&
+                                 c        , m)
+        else
+            eta(:)    = 0.d0
+            n(:)      = 20.d0
+            unsurn(:) = 1.d0
+            c(:)      = 0.d0
+            m(:)      = 20.d0
+        endif
 !
 ! 2.6 - CALCUL DE VIM+DG-DS
 !
-            do k = 1, nb_phasis-1
-                dz(k)= phase(k)-phasm(k)
-                if (dz(k) .ge. 0.d0) then
-                    dz1(k)=dz(k)
-                    dz2(k)=0.d0
-                else
-                    dz1(k)=0.d0
-                    dz2(k)=-dz(k)
-                endif
-            end do
-            if (phase(nb_phasis) .gt. 0.d0) then
-                dvin=0.d0
-                do k = 1, nb_phasis-1
-                    dvin=dvin+dz2(k)*(theta(4+k)*vim(k)-vim(nb_phasis))/&
-                    phase(nb_phasis)
-                end do
-                vi(nb_phasis)=vim(nb_phasis)+dvin
-                vimoy=phase(nb_phasis)*vi(nb_phasis)
+        do k = 1, nb_phasis-1
+            dz(k)= phase(k)-phasm(k)
+            if (dz(k) .ge. 0.d0) then
+                dz1(k)=dz(k)
+                dz2(k)=0.d0
             else
-                vi(nb_phasis) = 0.d0
-                vimoy=0.d0
+                dz1(k)=0.d0
+                dz2(k)=-dz(k)
             endif
+        end do
+        if (phase(nb_phasis) .gt. 0.d0) then
+            dvin=0.d0
             do k = 1, nb_phasis-1
-                if (phase(k) .gt. 0.d0) then
-                    dvin=dz1(k)*(theta(k)*vim(nb_phasis)-vim(k))/phase(k)
-                    vi(k)=vim(k)+dvin
-                    vimoy=vimoy+phase(k)*vi(k)
-                else
-                    vi(k)=0.d0
-                endif
+                dvin=dvin+dz2(k)*(theta(4+k)*vim(k)-vim(nb_phasis))/&
+                phase(nb_phasis)
             end do
+            vi(nb_phasis)=vim(nb_phasis)+dvin
+            vimoy=phase(nb_phasis)*vi(nb_phasis)
+        else
+            vi(nb_phasis) = 0.d0
+            vimoy=0.d0
+        endif
+        do k = 1, nb_phasis-1
+            if (phase(k) .gt. 0.d0) then
+                dvin=dz1(k)*(theta(k)*vim(nb_phasis)-vim(k))/phase(k)
+                vi(k)=vim(k)+dvin
+                vimoy=vimoy+phase(k)*vi(k)
+            else
+                vi(k)=0.d0
+            endif
+        end do
 !
 ! 2.7 - RESTAURATION D ORIGINE VISQUEUSE
 !
-            cmoy=0.d0
-            mmoy=0.d0
-            do k = 1, nb_phasis
-                cmoy=cmoy+phase(k)*c(k)
-                mmoy=mmoy+phase(k)*m(k)
-            end do
-            cr=cmoy*vimoy
-            if (cr .le. 0.d0) then
-                ds=0.d0
-            else
-                ds= dt*(cr**mmoy)
+        cmoy=0.d0
+        mmoy=0.d0
+        do k = 1, nb_phasis
+            cmoy=cmoy+phase(k)*c(k)
+            mmoy=mmoy+phase(k)*m(k)
+        end do
+        cr=cmoy*vimoy
+        if (cr .le. 0.d0) then
+            ds=0.d0
+        else
+            ds= dt*(cr**mmoy)
+        endif
+        do k = 1, nb_phasis
+            if (phase(k) .gt. 0.d0) then
+                vi(k)=vi(k)-ds
+                if (vi(k) .le. 0.d0) vi(k)=0.d0
             endif
-            do k = 1, nb_phasis
-                if (phase(k) .gt. 0.d0) then
-                    vi(k)=vi(k)-ds
-                    if (vi(k) .le. 0.d0) vi(k)=0.d0
-                endif
-            end do
+        end do
 !
 ! 2.8 - PLASTICITE DE TRANSFORMATION
 !
-            trans = 0.d0
-            if (compor(1)(1:12) .eq. 'META_P_IL_PT' .or. compor(1)(1: 13) .eq.&
-                'META_P_INL_PT' .or. compor(1)(1:15) .eq. 'META_P_IL_PT_RE' .or.&
-                compor(1)(1:16) .eq. 'META_P_INL_PT_RE' .or. compor(1)(1:12) .eq.&
-                'META_V_IL_PT' .or. compor(1)(1:13) .eq. 'META_V_INL_PT' .or.&
-                compor(1)(1:15) .eq. 'META_V_IL_PT_RE' .or. compor(1) (1:16) .eq.&
-                'META_V_INL_PT_RE') then
-                nomres(1) = 'F1_K'
-                nomres(2) = 'F2_K'
-                nomres(3) = 'F3_K'
-                nomres(4) = 'F4_K'
-                nomres(5) = 'F1_D_F_META'
-                nomres(6) = 'F2_D_F_META'
-                nomres(7) = 'F3_D_F_META'
-                nomres(8) = 'F4_D_F_META'
-                call rcvalb(fami, kpg, ksp, poum, imat,&
-                            ' ', 'META_PT', 0, ' ', [0.d0],&
-                            4, nomres, valres, icodre, 2)
-                do k = 1, nb_phasis-1
-                    kpt (k) = valres(k)
-                    zvarim = phasm(k)
-                    zvarip = phase(k)
-                    deltaz = (zvarip - zvarim)
-                    if (deltaz .gt. 0.d0) then
-                        j = 4+k
-                        call rcvalb(fami, 1, 1, '+', imat,&
-                                    ' ', 'META_PT', 1, 'META', [zalpha],&
-                                    1, nomres(j), valres(j), icodre( j), 2)
-                        trans = trans + kpt(k)*valres(j)*(zvarip- zvarim)
-                    endif
-                end do
-            endif
-        else
-            trans=0.d0
-            do k = 1, nb_phasis
-                vi(k)=vim(k)
+        trans = 0.d0
+        if (compor(1)(1:12) .eq. 'META_P_IL_PT' .or. compor(1)(1: 13) .eq.&
+            'META_P_INL_PT' .or. compor(1)(1:15) .eq. 'META_P_IL_PT_RE' .or.&
+            compor(1)(1:16) .eq. 'META_P_INL_PT_RE' .or. compor(1)(1:12) .eq.&
+            'META_V_IL_PT' .or. compor(1)(1:13) .eq. 'META_V_INL_PT' .or.&
+            compor(1)(1:15) .eq. 'META_V_IL_PT_RE' .or. compor(1) (1:16) .eq.&
+            'META_V_INL_PT_RE') then
+            nomres(1) = 'F1_K'
+            nomres(2) = 'F2_K'
+            nomres(3) = 'F3_K'
+            nomres(4) = 'F4_K'
+            nomres(5) = 'F1_D_F_META'
+            nomres(6) = 'F2_D_F_META'
+            nomres(7) = 'F3_D_F_META'
+            nomres(8) = 'F4_D_F_META'
+            call rcvalb(fami, kpg, ksp, poum, imat,&
+                        ' ', 'META_PT', 0, ' ', [0.d0],&
+                        4, nomres, valres, icodre, 2)
+            do k = 1, nb_phasis-1
+                kpt (k) = valres(k)
+                zvarim = phasm(k)
+                zvarip = phase(k)
+                deltaz = (zvarip - zvarim)
+                if (deltaz .gt. 0.d0) then
+                    j = 4+k
+                    call rcvalb(fami, 1, 1, '+', imat,&
+                                ' ', 'META_PT', 1, 'META', [zalpha],&
+                                1, nomres(j), valres(j), icodre( j), 2)
+                    trans = trans + kpt(k)*valres(j)*(zvarip- zvarim)
+                endif
             end do
         endif
+    else
+        trans=0.d0
+        do k = 1, nb_phasis
+            vi(k)=vim(k)
+        end do
+    endif
 !
 ! 2.9 - CALCUL DE HMOY ET RMOY (ON INCLUE LE SIGY)
 !
@@ -396,10 +369,6 @@ integer, intent(out) :: iret
         endif
         rmoy =(1.d0-fmel)*r(nb_phasis)+fmel*rmoy
         hmoy = (1.d0-fmel)*h(nb_phasis)+fmel*hmoy
-    else
-        trans=0.d0
-        plasti=0.d0
-    endif
 !
 ! ********************************
 ! 3 - DEBUT DE L ALGORITHME
@@ -693,7 +662,7 @@ integer, intent(out) :: iret
             end do
         else
             mode=2
-            if (compor(1)(1:6) .eq. 'META_V') mode=1
+            if (l_visc) mode=1
             if (mode .eq. 1) then
                 if (dp .gt. 0.d0) then
                     do i = 1, nb_phasis

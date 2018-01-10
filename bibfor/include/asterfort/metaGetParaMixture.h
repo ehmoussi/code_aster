@@ -18,9 +18,9 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine get_meta_mixd(poum  , fami     , kpg      , ksp   , j_mater,&
-                             l_visc, meta_type, nb_phasis, zalpha, fmel   ,&
-                             sy)
+    subroutine metaGetParaMixture(poum  , fami     , kpg      , ksp   , j_mater,&
+                                  l_visc, meta_type, nb_phasis, zalpha, fmel   ,&
+                                  sy)
         character(len=1), intent(in) :: poum
         character(len=*), intent(in) :: fami
         integer, intent(in) :: kpg
@@ -32,5 +32,5 @@ interface
         real(kind=8), intent(in) :: zalpha
         real(kind=8), intent(out) :: fmel
         real(kind=8), optional, intent(out) :: sy(*)
-    end subroutine get_meta_mixd
+    end subroutine metaGetParaMixture
 end interface

@@ -35,6 +35,7 @@ implicit none
 #include "asterfort/metaGetPhase.h"
 #include "asterfort/metaGetParaVisc.h"
 #include "asterfort/metaGetParaHardLine.h"
+#include "asterfort/metaGetParaMixture.h"
 #include "asterfort/Metallurgy_type.h"
 !
 character(len=*), intent(in) :: fami
@@ -93,7 +94,7 @@ integer, intent(out) :: iret
     real(kind=8) :: phase(5), phasm(5), zalpha
     real(kind=8) :: dt, coef_hard
     real(kind=8) :: epsth, e, deuxmu, deumum, troisk
-    real(kind=8) :: fmel(1), sy(3), symoy, h(3), hmoy, rprim
+    real(kind=8) :: fmel, sy(3), symoy, h(3), hmoy, rprim
     real(kind=8) :: theta(4)
     real(kind=8) :: eta(5), n(3), unsurn(5), c(3), m(3), cmoy, mmoy, cr
     real(kind=8) :: dz(2), dz1(2), dz2(2), vi(18), dvin, vimt(18)
@@ -108,7 +109,7 @@ integer, intent(out) :: iret
     character(len=1) :: poum
     integer :: icodre(12)
     character(len=16) :: nomres(12)
-    aster_logical :: resi, rigi
+    aster_logical :: resi, rigi, l_visc
     real(kind=8), parameter :: kron(6) = (/1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/)
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
 !
@@ -128,8 +129,8 @@ integer, intent(out) :: iret
 ! - Get metallurgy type
 !
     call metaGetType(meta_type, nb_phasis)
-    ASSERT(meta_type.eq.META_ZIRC)
-    ASSERT(nb_phasis.eq.3)
+    ASSERT(meta_type .eq. META_ZIRC)
+    ASSERT(nb_phasis .eq. 3)
 !
 ! - Get phasis
 !
@@ -165,37 +166,17 @@ integer, intent(out) :: iret
     call rcvalb(fami, kpg, ksp, poum, imat,&
                 ' ', 'ELAS_META', 0, ' ', [0.d0],&
                 2, nomres, valres, icodre, 2)
-    e = valres(1)
+    e      = valres(1)
     deuxmu = e/(1.d0+valres(2))
     troisk = e/(1.d0-2.d0*valres(2))
-    plasti=vim(25)
+    plasti = vim(25)
+    l_visc = compor(1)(1:6) .eq. 'META_V'
 !
-! 2.2 - LOI DES MELANGES
+! - Mixture law (yield limit)
 !
-    if (compor(1)(1:6) .eq. 'META_P') then
-        nomres(1) ='F1_SY'
-        nomres(2) ='F2_SY'
-        nomres(3) ='C_SY'
-        nomres(4) ='SY_MELAN'
-    endif
-!
-    if (compor(1)(1:6) .eq. 'META_V') then
-        nomres(1) ='F1_S_VP'
-        nomres(2) ='F2_S_VP'
-        nomres(3) ='C_S_VP'
-        nomres(4) ='S_VP_MEL'
-    endif
-!
-    call rcvalb(fami, 1, 1, '+', imat,&
-                ' ', 'ELAS_META', 1, 'META', [zalpha],&
-                1, nomres(4), fmel, icodre(4), 0)
-    if (icodre(4) .ne. 0) fmel(1) = zalpha
-!
-! 2.3 - LIMITE D ELASTICITE
-!
-    call rcvalb(fami, kpg, ksp, poum, imat,&
-                ' ', 'ELAS_META', 0, ' ', [0.d0],&
-                3, nomres, sy, icodre, 2)
+    call metaGetParaMixture(poum  , fami     , kpg      , ksp   , imat,&
+                            l_visc, meta_type, nb_phasis, zalpha, fmel,&
+                            sy)
 !
 ! - Get hardening slope (linear)
 !
@@ -228,7 +209,7 @@ integer, intent(out) :: iret
             end do
         endif
 ! ----- Parameters for viscosity
-        if (compor(1)(1:6) .eq. 'META_V') then
+        if (l_visc) then
             call metaGetParaVisc(poum     , fami     , kpg, ksp, imat  ,&
                                  meta_type, nb_phasis, eta, n  , unsurn,&
                                  c        , m)
@@ -385,7 +366,7 @@ integer, intent(out) :: iret
     else
         symoy = 0.d0
     endif
-    symoy =(1.d0-fmel(1))*sy(nb_phasis)+fmel(1)*symoy
+    symoy =(1.d0-fmel)*sy(nb_phasis)+fmel*symoy
 !
 ! ********************************
 ! 3 - DEBUT DE L ALGORITHME
@@ -435,7 +416,7 @@ integer, intent(out) :: iret
                 dp=seuil/(1.5d0*deuxmu+(1.5d0*deuxmu*trans+1.d0)*&
                 rprim)
             else
-                call nzcalc(crit, phase, nb_phasis, fmel(1), seuil,&
+                call nzcalc(crit, phase, nb_phasis, fmel, seuil,&
                             dt, trans, rprim, deuxmu, eta,&
                             unsurn, dp, iret)
                 if (iret .eq. 1) goto 999
@@ -521,11 +502,11 @@ integer, intent(out) :: iret
                         do k = 1, nb_phasis
                             n0(k) = (1-n(k))/n(k)
                         end do
-                        dv = (1-fmel(1))*phase(nb_phasis)*(eta(nb_phasis)/n(nb_phasis)/dt) *&
+                        dv = (1-fmel)*phase(nb_phasis)*(eta(nb_phasis)/n(nb_phasis)/dt) *&
                              ((dp/dt)**n0(nb_phasis))
                         if (zalpha .gt. 0.d0) then
                             do k = 1, nb_phasis-1
-                                if (phase(k) .gt. 0.d0) dv = dv+ fmel(1)*( phase(k)/zalpha) *&
+                                if (phase(k) .gt. 0.d0) dv = dv+ fmel*( phase(k)/zalpha) *&
                                                              & (eta(k)/ n(k)/dt)*((dp/dt)**n0&
                                                              &(k) )
                             end do

@@ -16,9 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine get_meta_mixd(poum  , fami     , kpg      , ksp   , j_mater,&
-                         l_visc, meta_type, nb_phasis, zalpha,fmel    ,&
-                         sy)
+subroutine metaGetParaMixture(poum  , fami     , kpg      , ksp   , j_mater,&
+                              l_visc, meta_type, nb_phasis, zalpha, fmel   ,&
+                              sy)
 !
 implicit none
 !
@@ -61,31 +61,30 @@ real(kind=8), optional, intent(out) :: sy(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_res_mx
-    parameter (nb_res_mx = 6)
-    real(kind=8) :: valres(nb_res_mx)
-    integer :: codret(nb_res_mx)
-    character(len=16) :: nomres(nb_res_mx)
-    integer :: nb_res, i_res
+    integer :: nb_resu_max
+    parameter (nb_resu_max = 6)
+    real(kind=8) :: resu_vale(nb_resu_max)
+    integer :: codret(nb_resu_max)
+    character(len=16) :: resu_name(nb_resu_max)
+    integer :: nb_resu, i_resu
 !
 ! --------------------------------------------------------------------------------------------------
 !
-
+    nb_resu    = 1
 !
 ! - Mixing function
 !
-    nb_res    = 1
-    nomres(1) = 'SY_MELANGE'
+    resu_name(1) = 'SY_MELANGE'
     if (l_visc) then
-        nb_res    = 1
-        nomres(1) = 'S_VP_MELANGE'
+        nb_resu      = 1
+        resu_name(1) = 'S_VP_MELANGE'
     endif
     fmel = 0.d0
     call rcvalb(fami, kpg, ksp, poum, j_mater,&
                 ' ', 'ELAS_META', 1, 'META', [zalpha],&
-                nb_res, nomres, valres, codret, 0)
+                nb_resu, resu_name, resu_vale, codret, 0)
     if (codret(1) .eq. 0) then
-        fmel = valres(1)
+        fmel = resu_vale(1)
     else
         fmel = zalpha
     endif
@@ -93,39 +92,39 @@ real(kind=8), optional, intent(out) :: sy(*)
 ! - Elasticity yield by phasis
 !
     if (present(sy)) then
-        nb_res = nb_phasis
+        nb_resu = nb_phasis
         if (meta_type .eq. META_STEEL) then
-            nomres(1) = 'F1_SY'
-            nomres(2) = 'F2_SY'
-            nomres(3) = 'F3_SY'
-            nomres(4) = 'F4_SY'
-            nomres(5) = 'C_SY'
+            resu_name(1) = 'F1_SY'
+            resu_name(2) = 'F2_SY'
+            resu_name(3) = 'F3_SY'
+            resu_name(4) = 'F4_SY'
+            resu_name(5) = 'C_SY'
             if (l_visc) then
-                nomres(1) = 'F1_S_VP'
-                nomres(2) = 'F2_S_VP'
-                nomres(3) = 'F3_S_VP'
-                nomres(4) = 'F4_S_VP'
-                nomres(5) = 'C_S_VP'
+                resu_name(1) = 'F1_S_VP'
+                resu_name(2) = 'F2_S_VP'
+                resu_name(3) = 'F3_S_VP'
+                resu_name(4) = 'F4_S_VP'
+                resu_name(5) = 'C_S_VP'
             endif
-            sy(1:nb_res) = 0.d0
+            sy(1:nb_resu) = 0.d0
         elseif (meta_type .eq. META_ZIRC) then
-            nomres(1) = 'F1_SY'
-            nomres(2) = 'F2_SY'
-            nomres(3) = 'C_SY'
+            resu_name(1) = 'F1_SY'
+            resu_name(2) = 'F2_SY'
+            resu_name(3) = 'C_SY'
             if (l_visc) then
-                nomres(1) = 'F1_S_VP'
-                nomres(2) = 'F2_S_VP'
-                nomres(3) = 'C_S_VP'
+                resu_name(1) = 'F1_S_VP'
+                resu_name(2) = 'F2_S_VP'
+                resu_name(3) = 'C_S_VP'
             endif
-            sy(1:nb_res) = 0.d0
+            sy(1:nb_resu) = 0.d0
         else
             ASSERT(ASTER_FALSE)
         endif
         call rcvalb(fami, kpg, ksp, poum, j_mater,&
                     ' ', 'ELAS_META', 0, ' ', [0.d0],&
-                    nb_res, nomres, valres, codret, 2)
-        do i_res = 1, nb_res
-            sy(i_res) = valres(i_res)
+                    nb_resu, resu_name, resu_vale, codret, 2)
+        do i_resu = 1, nb_resu
+            sy(i_resu) = resu_vale(i_resu)
         end do
     endif
 !
