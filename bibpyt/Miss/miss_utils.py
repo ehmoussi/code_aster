@@ -99,6 +99,7 @@ class MISS_PARAMETER(object):
             '_nbPC': 0,
             '_nbfreq': 0,
             '_auto_first_LT': None,
+            '_hasSL': False,
         }
         self._keywords = {}
         # une seule occurence du mcfact
@@ -138,6 +139,7 @@ class MISS_PARAMETER(object):
             if self['EXCIT_SOL'] is not None:
                 self.set('_calc_forc', True)
         self.set('_hasPC', self.get('GROUP_MA_CONTROL') is not None)
+        self.set('_hasSL', self.get('GROUP_MA_SOL_SOL') is not None)
         # unités logiques
         if self.get('UNITE_RESU_IMPE') is None:
             self.set('_exec_Miss', True)

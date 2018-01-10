@@ -316,8 +316,6 @@ class PostMissTran(PostMiss):
         super(PostMissTran, self).argument()
         # s'assurer que les unités logiques sont libérées (rewind)
         self.check_datafile_exist()
-        #DEFI_FICHIER(ACTION='LIBERER', UNITE=self.param['UNITE_RESU_IMPE'])
-        #DEFI_FICHIER(ACTION='LIBERER', UNITE=self.param['UNITE_RESU_FORC'])
         self.suppr_acce_fft()
 
     def execute(self):

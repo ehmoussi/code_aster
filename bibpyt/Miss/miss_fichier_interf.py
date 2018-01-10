@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -51,7 +51,7 @@ def fichier_mvol(struct):
 
 def fichier_chp(param, struct):
     """Produit le contenu du fichier chp"""
-    domain = MissDomains(param['_hasPC'], param["ISSF"] == "OUI")
+    domain = MissDomains(param['_hasPC'], param["ISSF"] == "OUI", param['_hasSL'])
     group = domain.group
     cont = []
     # groupes des interfaces (sol-struct + struct OU fluide-struct)
@@ -96,6 +96,7 @@ def fichier_chp(param, struct):
             cont.append("FLUI " + simp + " BEM")
         else:
             cont.append("DEPN  BEM")
+    if param['_hasSL']:
         cont.append("GROUPE %4d" % group['sol libre'])
         cont.append("LIBRE")
     if param['_hasPC']:
