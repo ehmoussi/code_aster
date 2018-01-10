@@ -171,6 +171,7 @@ from .stat_non_line import STAT_NON_LINE
 from .reca_weibull import RECA_WEIBULL
 from .recu_fonction import RECU_FONCTION
 from .recu_table import RECU_TABLE
+from .rest_gene_phys import REST_GENE_PHYS
 from .rest_sous_struc import REST_SOUS_STRUC
 from .rest_spec_phys import REST_SPEC_PHYS
 from .rest_spec_temp import REST_SPEC_TEMP
