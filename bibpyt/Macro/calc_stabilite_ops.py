@@ -35,9 +35,6 @@ def calc_stabilite_ops(self, reuse, SCHEMA_TEMPS, FILTRE, **args):
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
 
-    # Le concept sortant est une table_container
-    self.DeclareOut('t_resu', self.sd)
-
     # On importe les definitions des commandes a utiliser dans la macro
     EXTR_TABLE = self.get_cmd('EXTR_TABLE')
 
@@ -189,7 +186,7 @@ def calc_stabilite_ops(self, reuse, SCHEMA_TEMPS, FILTRE, **args):
     tab = t_res.dict_CREA_TABLE()
     t_resu = CREA_TABLE(TYPE_TABLE='TABLE_CONTENEUR', **tab)
 
-    return
+    return t_resu
 
 
 def main(U, hu, omega, K, M, nchoc, poschoc, orig, typchoc, alpha, eta, jeu, nbinst, eps, info):
