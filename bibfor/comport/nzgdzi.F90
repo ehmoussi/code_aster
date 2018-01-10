@@ -37,6 +37,7 @@ implicit none
 #include "asterfort/zerop3.h"
 #include "asterfort/metaGetType.h"
 #include "asterfort/metaGetPhase.h"
+#include "asterfort/metaGetParaVisc.h"
 #include "asterfort/Metallurgy_type.h"
 !
 character(len=*), intent(in) :: fami
@@ -242,45 +243,17 @@ integer, intent(out) :: iret
                 theta(i)=1.d0
             end do
         endif
-!
-! 2.5 - VISCOSITE
-!
+! ----- Parameters for viscosity
         if (compor(1)(1:6) .eq. 'META_V') then
-            nomres(1) = 'F1_ETA'
-            nomres(2) = 'F2_ETA'
-            nomres(3) = 'C_ETA'
-            nomres(4) = 'F1_N'
-            nomres(5) = 'F2_N'
-            nomres(6) = 'C_N'
-            nomres(7) ='F1_C'
-            nomres(8) ='F2_C'
-            nomres(9) ='C_C'
-            nomres(10) = 'F1_M'
-            nomres(11) = 'F2_M'
-            nomres(12) = 'C_M'
-            call rcvalb(fami, kpg, ksp, poum, imat,&
-                        ' ', 'META_VISC', 0, ' ', [0.d0],&
-                        6, nomres, valres, icodre, 2)
-            call rcvalb(fami, kpg, ksp, poum, imat,&
-                        ' ', 'META_VISC', 0, ' ', [0.d0],&
-                        6, nomres(7), valres(7), icodre(7), 0)
-            do k = 1, nb_phasis
-                eta(k) = valres(k)
-                n(k) = valres(nb_phasis+k)
-                unsurn(k)=1/n(k)
-                if (icodre(2*nb_phasis+k) .ne. 0) valres(2*nb_phasis+k)=0.d0
-                c(k) =valres(2*nb_phasis+k)
-                if (icodre(3*nb_phasis+k) .ne. 0) valres(3*nb_phasis+k)=20.d0
-                m(k) = valres(3*nb_phasis+k)
-            end do
+            call metaGetParaVisc(poum     , fami     , kpg, ksp, imat  ,&
+                                 meta_type, nb_phasis, eta, n  , unsurn,&
+                                 c        , m)
         else
-            do k = 1, nb_phasis
-                eta(k) = 0.d0
-                n(k)= 20.d0
-                unsurn(k)= 1.d0
-                c(k) = 0.d0
-                m(k) = 20.d0
-            end do
+            eta(:)    = 0.d0
+            n(:)      = 20.d0
+            unsurn(:) = 1.d0
+            c(:)      = 0.d0
+            m(:)      = 20.d0
         endif
 !
 ! 2.6 - CALCUL DE VIM+DG-DS
