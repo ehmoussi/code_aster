@@ -23,7 +23,6 @@
 
 def post_liquefaction_ops(self,AXE,RESU_REF,RESULTAT,INST_REF,**args):
 
-  ier=0
   import aster
   import os,string,types
   from code_aster.Cata.Syntax import _F
@@ -40,11 +39,8 @@ def post_liquefaction_ops(self,AXE,RESU_REF,RESULTAT,INST_REF,**args):
  ### RECUPERATION DU MODELE A PARTIR DU RESULTAT
 
 #  modele
-  iret, ibid, n_modele = aster.dismoi('MODELE', RESU_REF.nom, 'RESULTAT', 'F')
-  __model = self.get_concept(n_modele)
+  __model = RESU_REF.getModel()
 
-  ### Declaration concept sortant
-  self.DeclareOut('LIQ',self.sd)
 
   ### Extraction du champ SIEF_ELGA a la fin de l'etat reference INST_REF
   __sigini = CREA_CHAMP (OPERATION = 'EXTR',
@@ -83,17 +79,8 @@ def post_liquefaction_ops(self,AXE,RESU_REF,RESULTAT,INST_REF,**args):
                        NOM_CMP_RESU = ('X1','X2'),),)
 
   ### Formule pour evaluer le critere de liquefaction (qui vaut 0 si jamais SIYY(tref) vaut 0)
-  def fmul0(x,y,z) :
-    if abs(y)<=1e-12:
-        resu=0.0
-    else:
-        resu=(z-x)/y
-    return resu
-
-  self.update_const_context({'fmul0': fmul0})
-          
   __fmul = FORMULE(NOM_PARA = ('X1','X2','X3'), 
-               VALE     = 'fmul0(X1,X2,X3)')
+               VALE     = '0.0 if abs(X2)<=1e-12 else (X3-X1)/X2')
 
   __chfmu = CREA_CHAMP(OPERATION = 'AFFE',
                TYPE_CHAM = 'ELGA_NEUT_F',
@@ -108,7 +95,7 @@ def post_liquefaction_ops(self,AXE,RESU_REF,RESULTAT,INST_REF,**args):
   ###-------------
 
   ### Acces aux numeros d'ordre de RESULTAT pour l'indicage de la boucle
-  __dico = RESULTAT.LIST_VARI_ACCES()
+  __dico = aster.GetResu(RESULTAT.get_name(), "VARI_ACCES")
   __numo = __dico['NUME_ORDRE']
   __n    = __numo[-1]
 
@@ -229,4 +216,4 @@ def post_liquefaction_ops(self,AXE,RESU_REF,RESULTAT,INST_REF,**args):
           NOM_CHAM  = 'SIEF_ELGA',
                   AFFE      = (__liste),)
 
-  return ier
+  return LIQ
