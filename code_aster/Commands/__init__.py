@@ -162,6 +162,7 @@ from .proj_champ import PROJ_CHAMP
 from .proj_matr_base import PROJ_MATR_BASE
 from .proj_vect_base import PROJ_VECT_BASE
 from .resoudre import RESOUDRE
+from .rest_cond_tran import REST_COND_TRAN
 from .stat_non_line import STAT_NON_LINE
 from .reca_weibull import RECA_WEIBULL
 from .recu_fonction import RECU_FONCTION
