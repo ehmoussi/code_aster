@@ -28,7 +28,7 @@ implicit none
 #include "asterfort/jevech.h"
 #include "asterfort/get_meta_comp.h"
 #include "asterfort/get_meta_plas_t.h"
-#include "asterfort/get_meta_visc.h"
+#include "asterfort/metaGetParaVisc.h"
 #include "asterfort/get_meta_mixd.h"
 #include "asterfort/get_meta_hard.h"
 !
@@ -130,9 +130,9 @@ real(kind=8), intent(out) :: trans
 ! - Visco-plasticity parameters
 !
     if (l_visc) then
-        call get_meta_visc('+'      , fami     , kpg, ksp, j_mater,&
-                           meta_type, nb_phasis, eta, n  , unsurn ,&
-                           c        , m)
+        call metaGetParaVisc('+'      , fami     , kpg, ksp, j_mater,&
+                             meta_type, nb_phasis, eta, n  , unsurn ,&
+                             c        , m)
     endif
 !
 ! - Compute Sum(iphase) [kpt * fpt] on cold phasis

@@ -37,6 +37,7 @@ implicit none
 #include "asterfort/zerop3.h"
 #include "asterfort/metaGetType.h"
 #include "asterfort/metaGetPhase.h"
+#include "asterfort/metaGetParaVisc.h"
 #include "asterfort/Metallurgy_type.h"
 !
 character(len=*), intent(in) :: fami
@@ -255,53 +256,17 @@ integer, intent(out) :: iret
                     theta(i)=1.d0
                 end do
             endif
-!
-! 2.5 - VISCOSITE
-!
+! --------- Parameters for viscosity
             if (compor(1)(1:6) .eq. 'META_V') then
-                nomres(1) = 'F1_ETA'
-                nomres(2) = 'F2_ETA'
-                nomres(3) = 'F3_ETA'
-                nomres(4) = 'F4_ETA'
-                nomres(5) = 'C_ETA'
-                nomres(6) = 'F1_N'
-                nomres(7) = 'F2_N'
-                nomres(8) = 'F3_N'
-                nomres(9) = 'F4_N'
-                nomres(10) = 'C_N'
-                nomres(11) ='F1_C'
-                nomres(12) ='F2_C'
-                nomres(13) ='F3_C'
-                nomres(14) ='F4_C'
-                nomres(15) ='C_C'
-                nomres(16) = 'F1_M'
-                nomres(17) = 'F2_M'
-                nomres(18) = 'F3_M'
-                nomres(19) = 'F4_M'
-                nomres(20) = 'C_M'
-                call rcvalb(fami, kpg, ksp, poum, imat,&
-                            ' ', 'META_VISC', 0, ' ', [0.d0],&
-                            10, nomres, valres, icodre, 2)
-                call rcvalb(fami, kpg, ksp, poum, imat,&
-                            ' ', 'META_VISC', 0, ' ', [0.d0],&
-                            10, nomres(11), valres(11), icodre(11), 0)
-                do k = 1, nb_phasis
-                    eta(k) = valres(k)
-                    n(k) = valres(nb_phasis+k)
-                    unsurn(k)=1/n(k)
-                    if (icodre(2*nb_phasis+k) .ne. 0) valres(2*nb_phasis+k)=0.d0
-                    c(k) =valres(2*nb_phasis+k)
-                    if (icodre(3*nb_phasis+k) .ne. 0) valres(3*nb_phasis+k)=20.d0
-                    m(k) = valres(3*nb_phasis+k)
-                end do
+                call metaGetParaVisc(poum     , fami     , kpg, ksp, imat  ,&
+                                     meta_type, nb_phasis, eta, n  , unsurn,&
+                                     c        , m)
             else
-                do k = 1, nb_phasis
-                    eta(k) = 0.d0
-                    n(k)= 20.d0
-                    unsurn(k)= 1.d0
-                    c(k) = 0.d0
-                    m(k) = 20.d0
-                end do
+                eta(:)    = 0.d0
+                n(:)      = 20.d0
+                unsurn(:) = 1.d0
+                c(:)      = 0.d0
+                m(:)      = 20.d0
             endif
 !
 ! 2.6 - CALCUL DE VIM+DG-DS

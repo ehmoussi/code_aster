@@ -16,9 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine get_meta_visc(poum     , fami     , kpg, ksp, j_mater,&
-                         meta_type, nb_phasis, eta, n  , unsurn ,&
-                         c        , m)
+subroutine metaGetParaVisc(poum     , fami     , kpg, ksp, j_mater,&
+                           meta_type, nb_phasis, eta, n  , unsurn ,&
+                           c        , m)
 !
 implicit none
 !
@@ -62,34 +62,33 @@ real(kind=8), optional, intent(out) :: m(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_res_mx
-    parameter (nb_res_mx = 20)
-    real(kind=8) :: valres(nb_res_mx)
-    integer :: codret(nb_res_mx)
-    character(len=8) :: nomres(nb_res_mx)
-    integer :: nb_res, i_res
+    integer, parameter :: nb_resu_max = 5
+    real(kind=8) :: resu_vale(nb_resu_max)
+    integer :: codret(nb_resu_max)
+    character(len=8) :: resu_name(nb_resu_max)
+    integer :: nb_resu, i_resu
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    nb_res = nb_phasis
+    nb_resu = nb_phasis
 !
 ! - Name of parameters
 !
     if (meta_type .eq. META_STEEL) then
         if (present(eta)) then
-            nomres(1)     = 'F1_ETA'
-            nomres(2)     = 'F2_ETA'
-            nomres(3)     = 'F3_ETA'
-            nomres(4)     = 'F4_ETA'
-            nomres(5)     = 'C_ETA'
-            eta(1:nb_res) = 0.d0
+            resu_name(1)   = 'F1_ETA'
+            resu_name(2)   = 'F2_ETA'
+            resu_name(3)   = 'F3_ETA'
+            resu_name(4)   = 'F4_ETA'
+            resu_name(5)   = 'C_ETA'
+            eta(1:nb_resu) = 0.d0
         endif
     elseif (meta_type .eq. META_ZIRC) then
         if (present(eta)) then
-            nomres(1)     = 'F1_ETA'
-            nomres(2)     = 'F2_ETA'
-            nomres(3)     = 'C_ETA'
-            eta(1:nb_res) = 0.d0
+            resu_name(1)   = 'F1_ETA'
+            resu_name(2)   = 'F2_ETA'
+            resu_name(3)   = 'C_ETA'
+            eta(1:nb_resu) = 0.d0
         endif
     else
         ASSERT(ASTER_FALSE)
@@ -100,9 +99,9 @@ real(kind=8), optional, intent(out) :: m(*)
     if (present(eta)) then
         call rcvalb(fami, kpg, ksp, poum, j_mater,&
                     ' ', 'META_VISC', 0, ' ', [0.d0],&
-                    nb_res, nomres, valres, codret, 2)
-        do i_res = 1, nb_res
-            eta(i_res)    = valres(i_res)
+                    nb_resu, resu_name, resu_vale, codret, 2)
+        do i_resu = 1, nb_resu
+            eta(i_resu)    = resu_vale(i_resu)
         end do
     endif
 !
@@ -110,21 +109,21 @@ real(kind=8), optional, intent(out) :: m(*)
 !
     if (meta_type .eq. META_STEEL) then
         if (present(n)) then
-            nomres(1)        = 'F1_N'
-            nomres(2)        = 'F2_N'
-            nomres(3)        = 'F3_N'
-            nomres(4)        = 'F4_N'
-            nomres(5)        = 'C_N'
-            n(1:nb_res)      = 20.d0
-            unsurn(1:nb_res) = 1.d0
+            resu_name(1)      = 'F1_N'
+            resu_name(2)      = 'F2_N'
+            resu_name(3)      = 'F3_N'
+            resu_name(4)      = 'F4_N'
+            resu_name(5)      = 'C_N'
+            n(1:nb_resu)      = 20.d0
+            unsurn(1:nb_resu) = 1.d0
         endif
     elseif (meta_type .eq. META_ZIRC) then
         if (present(n)) then
-            nomres(1)        = 'F1_N'
-            nomres(2)        = 'F2_N'
-            nomres(3)        = 'C_N'
-            n(1:nb_res)      = 20.d0
-            unsurn(1:nb_res) = 1.d0
+            resu_name(1)      = 'F1_N'
+            resu_name(2)      = 'F2_N'
+            resu_name(3)      = 'C_N'
+            n(1:nb_resu)      = 20.d0
+            unsurn(1:nb_resu) = 1.d0
         endif
     endif
 !
@@ -132,14 +131,14 @@ real(kind=8), optional, intent(out) :: m(*)
 !
     call rcvalb(fami, kpg, ksp, poum, j_mater,&
                 ' ', 'META_VISC', 0, ' ', [0.d0],&
-                nb_res, nomres, valres, codret, 2)
+                nb_resu, resu_name, resu_vale, codret, 2)
     if (present(n)) then
         call rcvalb(fami, kpg, ksp, poum, j_mater,&
                     ' ', 'META_VISC', 0, ' ', [0.d0],&
-                    nb_res, nomres, valres, codret, 2)
-        do i_res = 1, nb_res
-            n(i_res)      = valres(i_res)
-            unsurn(i_res) = 1.d0/n(i_res)
+                    nb_resu, resu_name, resu_vale, codret, 2)
+        do i_resu = 1, nb_resu
+            n(i_resu)      = resu_vale(i_resu)
+            unsurn(i_resu) = 1.d0/n(i_resu)
         end do
     endif
 !
@@ -147,19 +146,19 @@ real(kind=8), optional, intent(out) :: m(*)
 !
     if (meta_type .eq. META_STEEL) then
         if (present(c)) then
-            nomres(1)   = 'F1_C'
-            nomres(2)   = 'F2_C'
-            nomres(3)   = 'F3_C'
-            nomres(4)   = 'F4_C'
-            nomres(5)   = 'C_C'
-            c(1:nb_res) = 0.d0
+            resu_name(1) = 'F1_C'
+            resu_name(2) = 'F2_C'
+            resu_name(3) = 'F3_C'
+            resu_name(4) = 'F4_C'
+            resu_name(5) = 'C_C'
+            c(1:nb_resu) = 0.d0
         endif
     elseif (meta_type .eq. META_ZIRC) then
         if (present(c)) then
-            nomres(1)   = 'F1_C'
-            nomres(2)   = 'F2_C'
-            nomres(3)   = 'C_C'
-            c(1:nb_res) = 0.d0
+            resu_name(1) = 'F1_C'
+            resu_name(2) = 'F2_C'
+            resu_name(3) = 'C_C'
+            c(1:nb_resu) = 0.d0
         endif
     endif
 !
@@ -168,9 +167,9 @@ real(kind=8), optional, intent(out) :: m(*)
     if (present(c)) then
         call rcvalb(fami, kpg, ksp, poum, j_mater,&
                     ' ', 'META_VISC', 0, ' ', [0.d0],&
-                    nb_res, nomres, valres, codret, 2)
-        do i_res = 1, nb_res
-            c(i_res) = valres(i_res)
+                    nb_resu, resu_name, resu_vale, codret, 2)
+        do i_resu = 1, nb_resu
+            c(i_resu) = resu_vale(i_resu)
         end do
     endif
 !
@@ -178,19 +177,19 @@ real(kind=8), optional, intent(out) :: m(*)
 !
     if (meta_type .eq. META_STEEL) then
         if (present(m)) then
-            nomres(1)   = 'F1_M'
-            nomres(2)   = 'F2_M'
-            nomres(3)   = 'F3_M'
-            nomres(4)   = 'F4_M'
-            nomres(5)   = 'C_M'
-            m(1:nb_res) = 20.d0
+            resu_name(1) = 'F1_M'
+            resu_name(2) = 'F2_M'
+            resu_name(3) = 'F3_M'
+            resu_name(4) = 'F4_M'
+            resu_name(5) = 'C_M'
+            m(1:nb_resu) = 20.d0
         endif
     elseif (meta_type .eq. META_ZIRC) then
         if (present(m)) then
-            nomres(1)   = 'F1_M'
-            nomres(2)   = 'F2_M'
-            nomres(3)   = 'C_M'
-            m(1:nb_res) = 20.d0
+            resu_name(1) = 'F1_M'
+            resu_name(2) = 'F2_M'
+            resu_name(3) = 'C_M'
+            m(1:nb_resu) = 20.d0
         endif
     endif
 !
@@ -199,9 +198,9 @@ real(kind=8), optional, intent(out) :: m(*)
     if (present(m)) then
         call rcvalb(fami, kpg, ksp, poum, j_mater,&
                     ' ', 'META_VISC', 0, ' ', [0.d0],&
-                    nb_res, nomres, valres, codret, 2)
-        do i_res = 1, nb_res
-            m(i_res) = valres(i_res)
+                    nb_resu, resu_name, resu_vale, codret, 2)
+        do i_resu = 1, nb_resu
+            m(i_resu) = resu_vale(i_resu)
         end do
     endif
 !
