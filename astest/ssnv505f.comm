@@ -121,38 +121,33 @@ L_ARCH=DEFI_LIST_REEL(DEBUT=0.0,
 F_DIST_M=DEFI_CONSTANTE(VALE=31.75);
 F_DIST_E=DEFI_CONSTANTE(VALE=31.75);
 
-CHLAG= DEFI_CONTACT(MODELE         = MODE,
+CHDISC= DEFI_CONTACT(MODELE         = MODE,
                     FORMULATION    = 'DISCRETE',
-                    FROTTEMENT     = 'COULOMB',
                     REAC_GEOM      = 'AUTOMATIQUE',
                     ZONE =(
                            _F(
                               GROUP_MA_MAIT  = 'POU1',
                               GROUP_MA_ESCL  = 'POU2',
                               ALGO_CONT      = 'PENALISATION',
-                              ALGO_FROT      = 'PENALISATION',
-                              COULOMB        = 0.,
-                              COEF_MATR_FROT = 1.,
                               VECT_MAIT      = 'VECT_Y',
                               MAIT_VECT_Y    = (0.,0.,1.,),
                               DIST_MAIT      = F_DIST_M,
                               DIST_ESCL      = F_DIST_E,
                               E_N            = 1.E8,
-                              E_T            = 1.E5,
                              ),
                           ),
                    );
 
 
 
-ULAG=STAT_NON_LINE(MODELE=MODE,
+UDISC=STAT_NON_LINE(MODELE=MODE,
                 CHAM_MATER=CM,
                 CARA_ELEM=CHAMPCAR,
                 EXCIT=(_F(CHARGE=COND_LIM,),
                        _F(CHARGE=CH1,
                           FONC_MULT=RAMPE,),
                        ),
-                CONTACT  = CHLAG,
+                CONTACT  = CHDISC,
                 COMPORTEMENT=_F(RELATION='ELAS',),
                 INCREMENT=_F(LIST_INST=L_INST,
                              INST_FIN=1.,),
@@ -162,8 +157,8 @@ ULAG=STAT_NON_LINE(MODELE=MODE,
                 ARCHIVAGE=_F(LIST_INST=L_ARCH),
                 INFO=1,);
 
-ULAG=CALC_CHAMP(reuse =ULAG,
-          RESULTAT=ULAG,
+UDISC=CALC_CHAMP(reuse =UDISC,
+          RESULTAT=UDISC,
 
           FORCE='FORC_NODA',
 
@@ -172,16 +167,16 @@ ULAG=CALC_CHAMP(reuse =ULAG,
 
 
 # ---- TABLEAUX ----
-T_REA_LA=POST_RELEVE_T(ACTION=_F(INTITULE='REAC',
+T_REA_DI=POST_RELEVE_T(ACTION=_F(INTITULE='REAC',
                                  GROUP_NO=('A','B'),
-                                 RESULTAT=ULAG,
+                                 RESULTAT=UDISC,
                                  NOM_CHAM='FORC_NODA',
                                  RESULTANTE='DY',
                                  OPERATION='EXTRACTION',),);
 
-T_DEP_LA=POST_RELEVE_T(ACTION=_F(INTITULE='DEPL',
+T_DEP_DI=POST_RELEVE_T(ACTION=_F(INTITULE='DEPL',
                                  GROUP_NO=('C','A1','B1'),
-                                 RESULTAT=ULAG,
+                                 RESULTAT=UDISC,
                                  NOM_CHAM='DEPL',
                                  TOUT_CMP='OUI',
                                  OPERATION='EXTRACTION',),);
@@ -254,35 +249,35 @@ T_DEP_CO=POST_RELEVE_T(ACTION=_F(INTITULE='DEPL',
 # ---- VALIDATION ----
 TEST_TABLE(VALE_CALC=307.483964283,
            NOM_PARA='DY',
-           TABLE=T_REA_LA,
+           TABLE=T_REA_DI,
            FILTRE=_F(NOM_PARA='INST',
                      VALE=0.2,),
            )
 
 TEST_TABLE(VALE_CALC=1251.48831783,
            NOM_PARA='DY',
-           TABLE=T_REA_LA,
+           TABLE=T_REA_DI,
            FILTRE=_F(NOM_PARA='INST',
                      VALE=0.4,),
            )
 
 TEST_TABLE(VALE_CALC=3023.85136136,
            NOM_PARA='DY',
-           TABLE=T_REA_LA,
+           TABLE=T_REA_DI,
            FILTRE=_F(NOM_PARA='INST',
                      VALE=0.6,),
            )
 
 TEST_TABLE(VALE_CALC=4829.42195447,
            NOM_PARA='DY',
-           TABLE=T_REA_LA,
+           TABLE=T_REA_DI,
            FILTRE=_F(NOM_PARA='INST',
                      VALE=0.8,),
            )
 
 TEST_TABLE(VALE_CALC=6655.90338008,
            NOM_PARA='DY',
-           TABLE=T_REA_LA,
+           TABLE=T_REA_DI,
            FILTRE=_F(NOM_PARA='INST',
                      VALE=1.0,),
            )
