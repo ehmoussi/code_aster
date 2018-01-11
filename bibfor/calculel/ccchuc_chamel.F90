@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine ccchuc_chamel(field_in_s, field_out_s, nb_elem, nb_cmp, type_comp,&
+subroutine ccchuc_chamel(field_in_s, field_out_s, nb_elem, list_elem, nb_cmp, type_comp,&
                          crit, nb_form, name_form, name_gd, nb_cmp_resu,&
                          work_out_val, work_out_ele, nb_elem_out, ichk)
 !
@@ -29,6 +29,7 @@ subroutine ccchuc_chamel(field_in_s, field_out_s, nb_elem, nb_cmp, type_comp,&
 #include "asterfort/cesexi.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
+#include "asterfort/jeexin.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeundf.h"
 #include "asterfort/jeveuo.h"
@@ -38,6 +39,7 @@ subroutine ccchuc_chamel(field_in_s, field_out_s, nb_elem, nb_cmp, type_comp,&
     character(len=19), intent(in) :: field_in_s
     character(len=19), intent(in) :: field_out_s
     integer, intent(in) :: nb_elem
+    character(len=24), intent(in) :: list_elem
     integer, intent(in) :: nb_cmp
     character(len=16), intent(in) :: type_comp
     character(len=16), intent(in) :: crit
@@ -60,7 +62,8 @@ subroutine ccchuc_chamel(field_in_s, field_out_s, nb_elem, nb_cmp, type_comp,&
 !
 ! In  field_in_s   : name of <CHAM_ELEM_S> input field FROM which extract values
 ! In  field_out_s  : name of <CHAM_ELEM_S> output field IN which compute values
-! In  nb_elem      : number of elements in input field
+! In  nb_elem      : number of elements
+! In  list_elem    : list of elements
 ! In  nb_cmp       : number of components in input field
 ! In  type_comp    : type of computation (CRITERE or FORMULE)
 ! In  crit         : type of criterion
@@ -76,8 +79,8 @@ subroutine ccchuc_chamel(field_in_s, field_out_s, nb_elem, nb_cmp, type_comp,&
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ima, ipt, isp, icmp, iad, nb_val_in
-    integer :: nbpt, nbsp, nbcmp
-    integer :: j_resu, j_elem
+    integer :: nbpt, nbsp, nbcmp, ichk_elem, ichk_sp
+    integer :: j_resu, j_elem, i_list_elem, j_elemin, iel
     character(len=24) :: work_val, work_cmp
     integer :: j_val, j_cmp
     integer ::   jchsl, jchsd
@@ -92,7 +95,7 @@ subroutine ccchuc_chamel(field_in_s, field_out_s, nb_elem, nb_cmp, type_comp,&
 !
 ! - Initializations
 !
-    ichk = 0
+    ichk = -1
     nb_elem_out = 0
     work_val = '&&CCCHUC_CHAMEL.VAL'
     work_cmp = '&&CCCHUC_CHAMEL.CMP'
@@ -123,8 +126,21 @@ subroutine ccchuc_chamel(field_in_s, field_out_s, nb_elem, nb_cmp, type_comp,&
     call wkvect(work_val, 'V V R', nb_cmp, j_val)
     call wkvect(work_cmp, 'V V K8', nb_cmp, j_cmp)
 !
-    do ima = 1, nb_elem
-        ichk = -1
+    call jeexin(list_elem, i_list_elem)
+    if (i_list_elem .ne. 0) then
+        call jeveuo(list_elem, 'L', j_elemin)
+    endif
+    
+    
+    do iel = 1, nb_elem
+        
+        if (i_list_elem .ne.0)then
+            ima = zi(j_elemin-1+iel)
+        else
+            ima = iel
+        endif
+        
+        ichk_elem = -1
         nbpt = zi(jchsd-1+5+4*(ima-1)+1)
         nbsp = zi(jchsd-1+5+4*(ima-1)+2)
         nbcmp = zi(jchsd-1+5+4*(ima-1)+3)
@@ -154,18 +170,19 @@ subroutine ccchuc_chamel(field_in_s, field_out_s, nb_elem, nb_cmp, type_comp,&
                 if (type_comp .eq. 'CRITERE') then
                     ASSERT(nb_cmp_resu .eq. 1)
                     call ccchcr(crit, name_gd, nb_val_in, zr(j_val), zk8(j_cmp),&
-                                nb_cmp_resu, zr(j_resu), ichk)
+                                nb_cmp_resu, zr(j_resu), ichk_sp)
                 else if (type_comp .eq. 'FORMULE') then
                     ASSERT(nb_cmp_resu .eq. nb_form)
                     call ccchcf(name_form, nb_val_in, zr(j_val), zk8(j_cmp), nb_cmp_resu,&
-                                zr(j_resu), ichk)
+                                zr(j_resu), ichk_sp)
                 else
                     ASSERT(.false.)
                 endif
 !
 ! ------------- Copy to output field
 !
-                if (ichk .eq. 0) then
+                if (ichk_sp .eq. 0) then
+                    ichk_elem = 0
                     do icmp = 1, nb_cmp_resu
                         call cesexi('S', jchrd, jchrl, ima, ipt,&
                                     isp, icmp, iad)
@@ -179,7 +196,8 @@ subroutine ccchuc_chamel(field_in_s, field_out_s, nb_elem, nb_cmp, type_comp,&
 !
 ! ----- Add element computed
 !
-        if (ichk .eq. 0) then
+        if (ichk_elem .eq. 0) then
+            ichk = 0
             nb_elem_out = nb_elem_out + 1
             zi(j_elem-1+nb_elem_out) = ima
         endif 

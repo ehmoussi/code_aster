@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine ccchuc_chamno(field_in_s, field_out_s, nb_node, nb_cmp, type_comp, &
+subroutine ccchuc_chamno(field_in_s, field_out_s, nb_node, list_node, nb_cmp, type_comp, &
                          crit, nb_form, name_form, name_gd, nb_cmp_resu, work_out_val,&
                          nb_node_out, ichk)
 !
@@ -28,6 +28,7 @@ implicit none
 #include "asterfort/ccchcr.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
+#include "asterfort/jeexin.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeundf.h"
 #include "asterfort/jeveuo.h"
@@ -36,7 +37,8 @@ implicit none
 !
     character(len=19), intent(in) :: field_in_s
     character(len=19), intent(in) :: field_out_s
-    integer, intent(in) :: nb_node 
+    integer, intent(in) :: nb_node
+    character(len=24), intent(in) :: list_node
     integer, intent(in) :: nb_cmp
     character(len=16), intent(in) :: type_comp
     character(len=16), intent(in) :: crit
@@ -58,7 +60,8 @@ implicit none
 !
 ! In  field_in_s   : name of <CHAM_NO_S> input field FROM which extract values
 ! In  field_out_s  : name of <CHAM_NO_S> output field IN which compute values
-! In  nb_node      : number of nodes in input field
+! In  nb_node      : number of nodes 
+! In  list_node    : list of nodes  
 ! In  nb_cmp       : number of components in input field
 ! In  type_comp    : type of computation (CRITERE or FORMULE)
 ! In  crit         : type of criterion
@@ -72,10 +75,10 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ino, icmp, nb_val_in
-    integer :: j_resu
+    integer :: ino, icmp, nb_val_in, i_list_node, iel
+    integer :: j_resu, ichk_node
     character(len=19) :: work_val, work_cmp
-    integer :: j_val, j_cmp
+    integer :: j_val, j_cmp, j_nodein
     integer ::   jchsl
     integer :: jchrl
     character(len=8), pointer :: cnsc(:) => null()
@@ -88,7 +91,7 @@ implicit none
 !
 ! - Initializations
 !
-    ichk = 0
+    ichk = -1
     nb_node_out = 0
     work_val = '&&CCCHUC_CHAMNO.VAL'
     work_cmp = '&&CCCHUC_CHAMNO.CMP'
@@ -113,7 +116,18 @@ implicit none
     call wkvect(work_val, 'V V R' , nb_cmp, j_val)
     call wkvect(work_cmp, 'V V K8', nb_cmp, j_cmp)
 !
-    do ino = 1, nb_node
+    call jeexin(list_node, i_list_node)
+    if (i_list_node .ne. 0) then
+        call jeveuo(list_node, 'L', j_nodein)
+    endif
+    
+    do iel = 1, nb_node
+    
+        if (i_list_node .ne.0)then
+            ino = zi(j_nodein-1+iel)
+        else
+            ino = iel
+        endif
 !
 ! ----- Undefine values
 !
@@ -123,6 +137,7 @@ implicit none
 ! ----- Set values
 !
         nb_val_in = 0
+        ichk_node = -1
         do icmp = 1, nb_cmp
             if (zl(jchsl-1+(ino-1)*nb_cmp+icmp)) then
                 nb_val_in = nb_val_in + 1
@@ -136,18 +151,19 @@ implicit none
         if (type_comp .eq. 'CRITERE') then
             ASSERT(nb_cmp_resu .eq. 1)
             call ccchcr(crit, name_gd, nb_val_in, zr(j_val), zk8(j_cmp),&
-                        nb_cmp_resu, zr(j_resu), ichk)
+                        nb_cmp_resu, zr(j_resu), ichk_node)
         elseif (type_comp .eq. 'FORMULE') then
             ASSERT(nb_cmp_resu .eq. nb_form)
             call ccchcf(name_form, nb_val_in, zr(j_val), zk8(j_cmp), nb_cmp_resu,&
-                        zr(j_resu), ichk)
+                        zr(j_resu), ichk_node)
         else
             ASSERT(.false.)
         endif
 !
 ! ----- Copy to output field
 ! 
-        if (ichk.eq.0) then
+        if (ichk_node.eq.0) then
+            ichk = 0
             nb_node_out = nb_node_out + 1
             do icmp = 1, nb_cmp_resu
                 zl(jchrl-1+(ino-1)*nb_cmp_resu+icmp) = .true.

@@ -21,7 +21,7 @@
 interface
     subroutine ccchuc(sdresu_in, sdresu_out, field_type, nume_field_out, type_comp, &
                       crit, norm, nb_form, name_form, list_ordr, &
-                      nb_ordr)
+                      nb_ordr, iocc)
         character(len=8), intent(in) :: sdresu_in
         character(len=8), intent(in) :: sdresu_out
         character(len=16), intent(in) :: field_type
@@ -33,5 +33,6 @@ interface
         integer , intent(in) :: nume_field_out
         character(len=19), intent(in) :: list_ordr
         integer , intent(in) :: nb_ordr
+        integer , intent(in) :: iocc
     end subroutine ccchuc
 end interface
