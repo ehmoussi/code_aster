@@ -84,10 +84,10 @@ def calc_europlexus_ops(self, EXCIT, COMPORTEMENT, ARCHIVAGE, CALCUL,
     MasquerAlarme('JEVEUX_57')
 
     # Ligne de commande d'Europlexus
-    EXEC = args['LOGICIEL']
+    EXEC = args['LOGICIEL'] if args.has_key('LOGICIEL') else None
 
     # Version d'Europlexus
-    VERS = args['VERSION_EUROPLEXUS']
+    VERS = args['VERSION_EUROPLEXUS'] if args.has_key('VERSION_EUROPLEXUS') else None
 
     # Chemin du repertoire REPE_OUT de l'execution courante d'Aster
     REPE_OUT = os.path.join(os.getcwd(), 'REPE_OUT')
@@ -100,11 +100,11 @@ def calc_europlexus_ops(self, EXCIT, COMPORTEMENT, ARCHIVAGE, CALCUL,
 
     # Le concept sortant (de type evol_noli) est nomme 'resu'.
     # Le nom de ce concept sera celui defini par l'utilisateur.
-    self.DeclareOut('resu', self.sd)
     global resu
 
     # On récupère ce nom pour le nommage des fichiers dans REPE_OUT.
-    nom_resu = self.sd.get_name()
+    #nom_resu = self.sd.get_name()
+    nom_resu = self.name
 
     #
     # TRADUCTION DES INFORMATIONS
@@ -143,8 +143,8 @@ def calc_europlexus_ops(self, EXCIT, COMPORTEMENT, ARCHIVAGE, CALCUL,
 
         if COURBE is not None:
             global table
-            self.DeclareOut('table', args['TABLE_COURBE'])
             EPX.get_table()
+            self.register_result(table, args['TABLE_COURBE'])
 
 
     #
@@ -162,7 +162,7 @@ def calc_europlexus_ops(self, EXCIT, COMPORTEMENT, ARCHIVAGE, CALCUL,
     # Suppression du lien symbolique
     os.remove(REPE_epx)
 
-    return ier
+    return resu
 
 #-----------------------------------------------------------------------
 #----------------------------- class EUROPLEXUS ------------------------
