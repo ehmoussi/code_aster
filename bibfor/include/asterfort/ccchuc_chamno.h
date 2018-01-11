@@ -19,12 +19,13 @@
 !
 !
 interface
-    subroutine ccchuc_chamno(field_in_s, field_out_s, nb_node, nb_cmp, type_comp, &
+    subroutine ccchuc_chamno(field_in_s, field_out_s, nb_node, list_node, nb_cmp, type_comp, &
                              crit, nb_form, name_form, name_gd, nb_cmp_resu, work_out_val,&
                              nb_node_out, ichk)
         character(len=19), intent(in) :: field_in_s
         character(len=19), intent(in) :: field_out_s
-        integer, intent(in) :: nb_node 
+        integer, intent(in) :: nb_node
+        character(len=24), intent(in) :: list_node
         integer, intent(in) :: nb_cmp
         character(len=16), intent(in) :: type_comp
         character(len=16), intent(in) :: crit

@@ -18,11 +18,12 @@
 
 subroutine ccchuc(sdresu_in, sdresu_out, field_type, nume_field_out, type_comp,&
                   crit, norm, nb_form, name_form, list_ordr,&
-                  nb_ordr)
+                  nb_ordr, iocc)
 !
     implicit none
 !
 #include "jeveux.h"
+#include "asterc/getexm.h"
 #include "asterfort/assert.h"
 #include "asterfort/ccchci.h"
 #include "asterfort/ccchuc_chamel.h"
@@ -40,12 +41,14 @@ subroutine ccchuc(sdresu_in, sdresu_out, field_type, nume_field_out, type_comp,&
 #include "asterfort/detrsd.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/exlim1.h"
+#include "asterfort/getvtx.h"
 #include "asterfort/gnomsd.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/reliem.h"
 #include "asterfort/rsexch.h"
 #include "asterfort/rsnoch.h"
 #include "asterfort/utmess.h"
@@ -64,6 +67,7 @@ subroutine ccchuc(sdresu_in, sdresu_out, field_type, nume_field_out, type_comp,&
     integer, intent(in) :: nume_field_out
     character(len=19), intent(in) :: list_ordr
     integer, intent(in) :: nb_ordr
+    integer, intent(in) :: iocc
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -84,6 +88,7 @@ subroutine ccchuc(sdresu_in, sdresu_out, field_type, nume_field_out, type_comp,&
 ! In  name_form      : names of formulas
 ! In  nb_ordr        : number of order index in list_ordr
 ! In  list_ordr      : name of list of order
+! In  iocc           : occurence number
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -91,18 +96,19 @@ subroutine ccchuc(sdresu_in, sdresu_out, field_type, nume_field_out, type_comp,&
     integer :: iord, icmp
     integer :: jchsd
     integer :: ibid, jcmp, ichk, iret
-    integer :: nb_node_new, nb_elem_new
-    integer :: nb_elem, nb_node
+    integer :: nb_node_new, nb_elem_new, nb_elem_in, nb_node_in
+    integer :: nb_elem, nb_node, n0, n1, n2, n3
     integer :: nb_cmp
     integer :: nb_cmp_resu
-    integer :: vali(3)
+    integer :: vali(4)
     character(len=2) :: cnum
     character(len=4) :: type_field_in, type_field_out
-    character(len=8) :: ma, model, nomgd
-    character(len=16) :: typs, valk(3), name_field_out
+    character(len=8) :: ma, model, nomgd, nomail
+    character(len=16) :: typs, valk(3), name_field_out, typmcl(4), motcle(4)
     character(len=19) :: field_in_s, field_out_s
     character(len=19) :: ligrel_old, ligrel_new
     character(len=24) :: list_elem_new, work_out_val, wkcmp, list_elem_stor
+    character(len=24) :: list_elem, list_node
     integer :: j_elem, j_resu
     character(len=24) :: field_in, field_out, field_out_sd
 !
@@ -168,11 +174,47 @@ subroutine ccchuc(sdresu_in, sdresu_out, field_type, nume_field_out, type_comp,&
             if (type_field_in .ne. 'NOEU') then
                 call dismoi('NOM_LIGREL', field_in, 'CHAMP', repk=ligrel_old)
                 call dismoi('NOM_MODELE', field_in, 'CHAMP', repk=model)
+                call dismoi('NOM_MAILLA', model, 'MODELE', repk=nomail)
+                nb_elem_in = 0
+                n0 = getexm(' ','GROUP_MA')
+                n1 = getexm(' ','MAILLE')
+                list_elem = '&&CCCHUC.MES_MAILLES'
+                if (n0+n1 .ne. 0) then
+                    call getvtx(' ', 'MAILLE', nbval=0, nbret=n2)
+                    call getvtx(' ', 'GROUP_MA', nbval=0, nbret=n3)
+                    if (n2+n3 .ne. 0) then
+                        motcle(1) = 'GROUP_MA'
+                        motcle(2) = 'MAILLE'
+                        typmcl(1) = 'GROUP_MA'
+                        typmcl(2) = 'MAILLE'
+                        call reliem(' ', nomail, 'NU_MAILLE', ' ', 1,&
+                                    2, motcle, typmcl, list_elem, nb_elem_in)
+                        ASSERT(nb_elem_in .ne. 0)
+                    endif
+                endif
+            else
+                call dismoi('NOM_MAILLA', field_in, 'CHAMP', repk=ma)
+                nb_node_in = 0
+                n0 = getexm(' ','GROUP_MA')
+                n1 = getexm(' ','MAILLE')
+                list_node = '&&CCCHUC.MES_NOEUDS'
+                if (n0+n1 .ne. 0) then
+                    call getvtx(' ', 'MAILLE', nbval=0, nbret=n2)
+                    call getvtx(' ', 'GROUP_MA', nbval=0, nbret=n3)
+                    if (n2+n3 .ne. 0) then
+                        motcle(1) = 'GROUP_MA'
+                        motcle(2) = 'MAILLE'
+                        typmcl(1) = 'GROUP_MA'
+                        typmcl(2) = 'MAILLE'
+                        call reliem(' ', ma, 'NU_NOEUD', ' ', 1,&
+                                    2, motcle, typmcl, list_node, nb_node_in)
+                        ASSERT(nb_node_in .ne. 0)
+                    endif
+                endif
             endif
             ASSERT(type_field_in.ne.'CART' .and. type_field_in.ne.'RESL')
             call codent(nume_field_out, 'D0', cnum)
             name_field_out = 'UT'//cnum//'_'//type_field_in
-            call dismoi('NOM_MAILLA', field_in, 'CHAMP', repk=ma)
         endif
 !
 ! ----- Type of output field
@@ -199,6 +241,11 @@ subroutine ccchuc(sdresu_in, sdresu_out, field_type, nume_field_out, type_comp,&
             call jeveuo(field_in_s//'.CNSD', 'L', jchsd)
             nb_node = zi(jchsd-1+1)
             nb_cmp = zi(jchsd-1+2)
+            if (nb_node_in .eq. 0) then
+                nb_node = zi(jchsd-1+1)
+            else
+                nb_node = nb_node_in
+            endif
 !
 ! --------- Create output field
 !
@@ -213,19 +260,24 @@ subroutine ccchuc(sdresu_in, sdresu_out, field_type, nume_field_out, type_comp,&
 !
 ! --------- Compute on <CHAM_NO>
 !
-            call ccchuc_chamno(field_in_s, field_out_s, nb_node, nb_cmp, type_comp,&
+            call ccchuc_chamno(field_in_s, field_out_s, nb_node, list_node, nb_cmp, type_comp,&
                                crit, nb_form, name_form, nomgd, nb_cmp_resu,&
                                work_out_val, nb_node_new, ichk)
 !
 ! --------- Print
 !
             if (ichk .eq. 0) then
-                vali(1) = numord
-                vali(2) = nb_node_new
-                vali(3) = nb_node
-                call utmess('I', 'CHAMPS_10', ni=3, vali=vali)
+                if (nb_node_new .ne. nb_node)then
+                    vali(1) = numord
+                    vali(2) = nb_node_new
+                    vali(3) = nb_node
+                    vali(4) = iocc
+                    call utmess('A', 'CHAMPS_10', ni=4, vali=vali)
+                endif
             else
-                call utmess('A', 'CHAMPS_15', si=numord)
+                vali(1) = numord
+                vali(2) = iocc
+                call utmess('F', 'CHAMPS_15', ni=2, vali=vali)
             endif
 !
         else
@@ -240,7 +292,11 @@ subroutine ccchuc(sdresu_in, sdresu_out, field_type, nume_field_out, type_comp,&
 !
                 call celces(field_in, 'V', field_in_s)
                 call jeveuo(field_in_s//'.CESD', 'L', jchsd)
-                nb_elem = zi(jchsd-1+1)
+                if (nb_elem_in .eq.0) then
+                    nb_elem = zi(jchsd-1+1)
+                else
+                    nb_elem = nb_elem_in
+                endif
                 nb_cmp = zi(jchsd-1+2)
 !
 ! ------------- Work vector for element in output field
@@ -254,23 +310,29 @@ subroutine ccchuc(sdresu_in, sdresu_out, field_type, nume_field_out, type_comp,&
 !
 ! ------------- Compute on <CHAM_ELEM>
 !
-                call ccchuc_chamel(field_in_s, field_out_s, nb_elem, nb_cmp, type_comp,&
+                call ccchuc_chamel(field_in_s, field_out_s, nb_elem, list_elem, nb_cmp, type_comp,&
                                    crit, nb_form, name_form, nomgd, nb_cmp_resu,&
                                    work_out_val, list_elem_new, nb_elem_new, ichk)
 !
 ! ------------- Print
 !
                 if (ichk .eq. 0) then
-                    vali(1) = numord
-                    vali(2) = nb_elem_new
-                    vali(3) = nb_elem
-                    call utmess('I', 'CHAMPS_8', ni=3, vali=vali)
+                    if (nb_elem_new .ne. nb_elem)then
+                        vali(1) = numord
+                        vali(2) = nb_elem_new
+                        vali(3) = nb_elem
+                        vali(4) = iocc
+                        call utmess('A', 'CHAMPS_8', ni=4, vali=vali)
+                    endif
                 else
-                    call utmess('A', 'CHAMPS_15', si=numord)
+                    vali(1) = numord
+                    vali(2) = iocc
+                    call utmess('F', 'CHAMPS_15', ni=2, vali=vali)
                 endif
 !
 ! ------------- Manage <LIGREL> - Create new if necessary
 !
+                if (nb_elem_in > 0) nb_elem = -nb_elem
                 call ccchuc_ligr(list_elem_stor, nb_elem, nb_elem_new, list_elem_new, ligrel_old,&
                                  ligrel_new)
             endif
@@ -308,6 +370,8 @@ subroutine ccchuc(sdresu_in, sdresu_out, field_type, nume_field_out, type_comp,&
 !
     end do
 !
+    if (nb_elem_in .ne. 0) call jedetr(list_elem)
+    if (nb_node_in .ne. 0) call jedetr(list_node)
     call jedetr(list_elem_stor)
     call jedetr(work_out_val)
 !

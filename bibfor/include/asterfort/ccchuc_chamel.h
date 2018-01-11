@@ -19,12 +19,13 @@
 !
 !
 interface
-    subroutine ccchuc_chamel(field_in_s, field_out_s, nb_elem, nb_cmp, type_comp, &
+    subroutine ccchuc_chamel(field_in_s, field_out_s, nb_elem, list_elem, nb_cmp, type_comp, &
                              crit, nb_form, name_form, name_gd, nb_cmp_resu, &
                              work_out_val, work_out_ele, nb_elem_out, ichk)
         character(len=19), intent(in) :: field_in_s
         character(len=19), intent(in) :: field_out_s
         integer, intent(in) :: nb_elem
+        character(len=24), intent(in) :: list_elem
         integer, intent(in) :: nb_cmp
         character(len=16), intent(in) :: type_comp
         character(len=16), intent(in) :: crit

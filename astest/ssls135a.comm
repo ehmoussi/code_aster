@@ -678,6 +678,17 @@ ferUtil = CALC_CHAMP(
     RESULTAT=Solution
 )
 
+# on verifie qu'il n'y a pas des valeurs à NaN a cause d'un mauvais traitement des ligrels
+ferUtil2 = CALC_CHAMP(
+    GROUP_MA='CALCFER',
+    CHAM_UTIL=_F(
+        FORMULE=(MAX_FERR, ), NOM_CHAM='FERRAILLAGE', NUME_CHAM_RESU=1
+    ),
+    RESULTAT=Solution
+)
+IMPR_RESU(FORMAT='RESULTAT',RESU=_F(RESULTAT=ferUtil2))
+
+
 # Same field using CREA_CHAMP/EXTR + AFFE + EVAL
 
 fer = CREA_CHAMP(

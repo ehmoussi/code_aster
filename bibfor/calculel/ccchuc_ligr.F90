@@ -29,6 +29,7 @@ subroutine ccchuc_ligr(list_elem_stor, nb_elem_old, nb_elem_new, list_elem_new, 
 #include "asterfort/gnomsd.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jeexin.h"
+#include "asterfort/jedetr.h"
 #include "asterfort/wkvect.h"
 !
 !
@@ -56,9 +57,9 @@ subroutine ccchuc_ligr(list_elem_stor, nb_elem_old, nb_elem_new, list_elem_new, 
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: jelem, jlist
+    integer :: jelem, jlist, nb_elem
     integer :: iret, ima
-    aster_logical :: same
+    aster_logical :: same, force_new_ligrel
     character(len=24) :: noojb
     character(len=8) :: model
 !
@@ -67,18 +68,33 @@ subroutine ccchuc_ligr(list_elem_stor, nb_elem_old, nb_elem_new, list_elem_new, 
     same = .true.
     call jeveuo(list_elem_new, 'L', jelem)
     noojb = '12345678.LIGR000000.NBNO'
+    
+    if (nb_elem_old < 0)then
+        nb_elem = -nb_elem_old
+        force_new_ligrel = .true.
+    else
+        nb_elem = nb_elem_old
+        force_new_ligrel = .false.
+    endif
 !
 ! - Do we need a new <LIGREL> ?
 !
     call jeexin(list_elem_stor, iret)
     if (iret .eq. 0) then
-        call wkvect(list_elem_stor, 'V V I', nb_elem_old+1, jlist)
-        if (nb_elem_new .ne. nb_elem_old) then
+        if (nb_elem_new .ne. nb_elem_old .or. force_new_ligrel) then
+            call wkvect(list_elem_stor, 'V V I', nb_elem_new+1, jlist)
             same = .false.
         endif
     else
         call jeveuo(list_elem_stor, 'E', jlist)
-        if (zi(jlist-1+1) .ne. nb_elem_new) goto 51
+        if (zi(jlist-1+1) .ne. nb_elem_new) then
+            same = .false.
+            if (zi(jlist-1+1) .lt. nb_elem_new)then
+                call jedetr(list_elem_stor)
+                call wkvect(list_elem_stor, 'V V I', nb_elem_new+1, jlist)
+            endif
+            goto 51
+        endif
         do ima = 1, nb_elem_new
             if (zi(jlist-1+ima+1) .ne. zi(jelem-1+ima)) then
                 same = .false.
@@ -86,10 +102,6 @@ subroutine ccchuc_ligr(list_elem_stor, nb_elem_old, nb_elem_new, list_elem_new, 
             endif
         enddo
  51     continue
-        zi(jlist-1+1) = nb_elem_new
-        do ima = 1, nb_elem_new
-            zi(jlist-1+ima+1) = zi(jelem-1+ima)
-        enddo
     endif
 !
 ! - Create new <LIGREL> ?
@@ -97,6 +109,11 @@ subroutine ccchuc_ligr(list_elem_stor, nb_elem_old, nb_elem_new, list_elem_new, 
     if (same) then
         ligrel_new = ligrel_old
     else
+        zi(jlist-1+1) = nb_elem_new
+        do ima = 1, nb_elem_new
+            zi(jlist-1+ima+1) = zi(jelem-1+ima)
+        enddo
+        
         call dismoi('NOM_MODELE', ligrel_old, 'LIGREL', repk=model)
         call gnomsd(' ', noojb, 14, 19)
         ligrel_new = noojb(1:19)

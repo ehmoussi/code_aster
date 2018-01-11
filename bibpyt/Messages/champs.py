@@ -56,7 +56,15 @@ Erreur utilisateur :
 """),
 
     8 : _(u"""
-    Numéro d'ordre %(i1)4d : %(i2)d mailles ont été affectées (%(i3)d mailles dans le maillage).
+ L'opération correspondant à l'occurrence numéro %(i4)d de CHAM_UTIL n'a pas pu être 
+ effectuée sur certaines mailles pour le numéro d'ordre %(i1)d.
+    - nombre de mailles affectées : %(i2)d 
+    - nombre de mailles fournies  : %(i3)d 
+
+ Conseils : 
+
+ Utilisez le mot-clé GROUP_MA pour restreindre le calcul aux mailles concernées.
+ Si c'est déjà le cas, adaptez les groupes fournis.  
 """),
 
     9 : _(u"""
@@ -64,8 +72,16 @@ Erreur utilisateur :
  au numéro d'ordre %(i1)d.
 """),
 
-    10 : _(u"""
-    Numéro d'ordre %(i1)4d : %(i2)d noeuds ont été affectés (%(i3)d noeuds dans le maillage).
+   10 : _(u"""
+ L'opération correspondant à l'occurrence numéro %(i4)d de CHAM_UTIL n'a pas pu être 
+ effectuée sur certains noeuds pour le numéro d'ordre %(i1)d.
+    - nombre de noeuds affectées : %(i2)d 
+    - nombre de noeuds fournies  : %(i3)d 
+
+ Conseils : 
+
+ Utilisez le mot-clé GROUP_MA pour restreindre le calcul aux mailles concernées.
+ Si c'est déjà le cas, adaptez les groupes fournis.  
 """),
 
     11 : _(u"""
@@ -103,7 +119,12 @@ Conseil:
 """),
 
     15 : _(u"""
-    Numéro d'ordre %(i1)4d : échec lors du calcul du critère donné par CHAM_UTIL.
+ Le calcul demandé dans l'occurrence numéro %(i2)d de CHAM_UTIL a échoué.
+ Aucune maille ou aucun noeud fourni ne sait traiter le calcul.
+ 
+ Conseils :
+ Si vous avez restreint le calcul à des groupes de mailles ou de noeuds, vérifiez l'affectation de ces entités,
+ sinon le calcul n'est pas possible sur ce modèle.
 """),
 
     16 : _(u"""
