@@ -60,7 +60,6 @@ def macr_ecrevisse_ops(self, reuse,
     import aster
     import copy
 
-    ier = 0
     #
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
@@ -85,15 +84,6 @@ def macr_ecrevisse_ops(self, reuse,
     CO = self.get_cmd("CO")
     CREA_TABLE = self.get_cmd("CREA_TABLE")
 
-    # Concepts sortants
-    # TABLE creees par concatenation des tables sorties par CALC_ECREVISSE a
-    # chaque iteration
-    self.DeclareOut('TABL_RES', TABLE)
-    self.DeclareOut('DEB_RES', DEBIT)
-    # Concepts sortant: les resultats de STAT_NON_LINE et de THER_LINEAIRE valides
-    # vis-a-vis du calcul ecrevisse
-    self.DeclareOut('RTHERM', TEMPER)
-    self.DeclareOut('MECANIC', self.sd)
 
     # alarme de STAT_NON_LINE si les mot-cles de COMPORTEMENT sont renseignes
     # a tort
@@ -321,7 +311,7 @@ def macr_ecrevisse_ops(self, reuse,
                                          VIS_A_VIS=_F(TOUT_1='OUI',
                                                       TOUT_2='OUI',),
                                          INFO=2,)
-
+                
                 # Definition du materiau pour la mecanique
                 # note : on doit le faire a chaque fois car le nom de concept _RTHMPJ
                 #        est different a chaque passage
@@ -677,13 +667,17 @@ def macr_ecrevisse_ops(self, reuse,
     #     Fin boucle sur les pas de temps
     #
 
+    self.register_result(RTHERM, TEMPER)
+
     # Creation du concept de la table en sortie
     if (T_TABL_RES != None):
         dprod = T_TABL_RES.dict_CREA_TABLE()
         TABL_RES = CREA_TABLE(**dprod)
+        self.register_result(TABL_RES, TABLE)
     if (T_DEB_RES != None):
         debprod = T_DEB_RES.dict_CREA_TABLE()
         DEB_RES = CREA_TABLE(**debprod)
+        self.register_result(DEB_RES, DEBIT)
 
     # Destruction des concepts temporaires
     DETRUIRE(
@@ -704,4 +698,4 @@ def macr_ecrevisse_ops(self, reuse,
             INFO=1,)
 
     RetablirAlarme('COMPOR4_70')
-    return ier
+    return MECANIC
