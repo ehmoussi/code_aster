@@ -38,8 +38,6 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
 
-     # Le concept sortant (de type cham_no) est chpout
-    self.DeclareOut('chpout', self.sd)
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
@@ -149,4 +147,4 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args
                                 NOM_CMP='X1',
                                 NOM_CMP_RESU='LAGS_C',),)
 
-    return
+    return chpout
