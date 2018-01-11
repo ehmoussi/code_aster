@@ -177,6 +177,7 @@ from .rest_gene_phys import REST_GENE_PHYS
 from .rest_sous_struc import REST_SOUS_STRUC
 from .rest_spec_phys import REST_SPEC_PHYS
 from .rest_spec_temp import REST_SPEC_TEMP
+from .rest_reduit_complet import REST_REDUIT_COMPLET
 from .resoudre import RESOUDRE
 from .test_resu import TEST_RESU
 from .test_table import TEST_TABLE
