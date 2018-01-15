@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -42,7 +42,6 @@ subroutine peepot(resu, modele, mate, cara, nh,&
 #include "asterfort/jexnom.h"
 #include "asterfort/mecalc.h"
 #include "asterfort/mecham.h"
-#include "asterfort/mechnc.h"
 #include "asterfort/mechti.h"
 #include "asterfort/meharm.h"
 #include "asterfort/peenca.h"
