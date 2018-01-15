@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -73,7 +73,7 @@ STAT_NON_LINE=OPER(nom="STAT_NON_LINE",op=70,sd_prod=evol_noli,
                                         CORR_COMPLET    = SIMP(statut='f',typ='TXM',defaut='NON',into=('OUI','NON'),),
                                         b_hrcoor_cond   = BLOC(condition="""(equal_to("CORR_COMPLET", 'OUI'))""",
                                                              COEF_PENA         = SIMP(statut='f',typ='R',defaut=1.E6),
-                                                             GROUP_NO_ENCASTRE = SIMP(statut='f',typ=grno,max=1),
+                                                             GROUP_NO_ENCASTRE = SIMP(statut='o',typ=grno,max=1),
                                                                ),
                                      ),
                                   ),),
