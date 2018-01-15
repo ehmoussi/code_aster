@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -164,22 +164,6 @@ subroutine mereso(result, modele, mate, carele, fomult,&
     call rsadpa(result, 'E', 1, 'INST', itps,&
                 0, sjv=iainst, styp=k8bid)
     zr(iainst) = partps(1)
-!
-!*** METHODE, RENUM, ...
-!
-    call rsadpa(result, 'E', 1, 'METHODE', itps,&
-                0, sjv=jpara, styp=k8bid)
-    zk16(jpara) = slvk(1)(1:16)
-    call rsadpa(result, 'E', 1, 'RENUM', itps,&
-                0, sjv=jpara, styp=k8bid)
-    zk16(jpara) = slvk(4)(1:16)
-    call rsadpa(result, 'E', 1, 'STOCKAGE', itps,&
-                0, sjv=jpara, styp=k8bid)
-    if (slvk(1)(1:4) .eq. 'LDLT') then
-        zk16(jpara) = 'LIGN_CIEL'
-    else
-        zk16(jpara) = 'MORSE'
-    endif
 !
 !*** LES CRITERES
 !
