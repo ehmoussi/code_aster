@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -739,13 +739,26 @@ EVOLMV=DYNA_NON_LINE(MODELE=MODELB,
  #
 #  Frequence du premier mode valeur venant de CALC_MODES
 #
-freqel = 2.981
+TAB_SPEC=RECU_TABLE(CO=EVOLMV,
+                    NOM_TABLE='ANALYSE_MODALE',);
 
-TEST_RESU(RESU=_F(PARA='FREQ',
-                  INST=-5.0,
-                  RESULTAT=EVOLMV,
-                  CRITERE=('RELATIF', 'RELATIF'),
-                  VALE_CALC=3.0449128780401,),);
+TEST_TABLE(
+           REFERENCE='AUTRE_ASTER',
+           NOM_PARA='FREQ',
+           TABLE=TAB_SPEC,
+           CRITERE=('RELATIF', 'RELATIF'),
+           VALE_CALC=3.0449128780401,
+           FILTRE=(
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='TYPE_MODE',
+                      VALE_K='DEPL_VIBR',),
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='NUME_MODE',
+                      VALE_I=1,),
+                   _F(NOM_PARA='INST',PRECISION=1.E-6,
+                      VALE=-5.0,),
+                   ),
+           )
 
 DEFLIST =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST = TEMPL2A),
                         ECHEC=_F(SUBD_PAS=5,
