@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,6 +25,7 @@ Traitement du modèle
 from Calc_epx.calc_epx_cata import cata_modelisa, mode_epx_fin
 from Calc_epx.calc_epx_struc import BLOC_DONNEES
 from Calc_epx.calc_epx_utils import recupere_structure, tolist, get_group_ma
+from Calc_epx.calc_epx_utils import extract_from_tuple
 from Utilitai.partition import MAIL_PY
 import aster
 import string
@@ -57,12 +58,12 @@ def export_modele(epx, MAILLAGE, MODELE, gmaInterfaces, info_mode_compl):
     modi_repere = {'COQUE': False}
     etat_init_cont = []
     for affe in affe_modele:
-        modelisation = affe['MODELISATION']
+        modelisation = extract_from_tuple(affe['MODELISATION'])
         phenomene = affe['PHENOMENE']
         if phenomene != 'MECANIQUE':
-            UTMESS('A', 'PLEXUS_24', valk=phenomene)
+            UTMESS('F', 'PLEXUS_24', valk=phenomene)
         if modelisation not in cata_modelisa.keys():
-            UTMESS('A', 'PLEXUS_6', valk=modelisation)
+            UTMESS('F', 'PLEXUS_6', valk=modelisation)
         if affe.has_key('TOUT'):
             if not MApyt.gma.has_key(string.rstrip('TOUT')):
                 DEFI_GROUP(reuse=MAILLAGE, MAILLAGE=MAILLAGE,

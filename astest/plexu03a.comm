@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ MODELE=AFFE_MODELE(
                  MAILLAGE=MAILLAGE,AFFE=(
                      _F(  GROUP_MA = ('GROUPE_____VOILE',),
                             PHENOMENE = 'MECANIQUE',
-                            MODELISATION = 'Q4GG'),
+                            MODELISATION = ('Q4GG',),),
                      _F(  GROUP_MA = 'GROUPE__CABLE001',
                             PHENOMENE = 'MECANIQUE',
                             MODELISATION = 'BARRE')
@@ -81,7 +81,7 @@ ACIER = DEFI_MATERIAU(ELAS=_F(
 CHMATER=AFFE_MATERIAU(
                    MAILLAGE=MAILLAGE,AFFE=(
                        _F(  GROUP_MA = ('GROUPE_____VOILE',),
-                              MATER = BETON),
+                              MATER = (BETON,),),
                        _F(  GROUP_MA = 'GROUPE__CABLE001',
                               MATER = ACIER)
                               )
