@@ -15,15 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-#include "jeveux.h"
 !
 !
 interface
-subroutine aflrch(lisrez, chargz, type_liai, elim, detr_lisrez)
+subroutine createTabRela(lisrez, load, motfac_liai)
     character(len=*), intent(in) :: lisrez
-    character(len=*), intent(in) :: chargz
-    character(len=*), intent(in) :: type_liai
-    character(len=*), intent(in), optional :: elim
-    aster_logical   , intent(in), optional :: detr_lisrez
-end subroutine aflrch
+    character(len=8), intent(in) :: load
+    character(len=16), intent(in) :: motfac_liai
+end subroutine createTabRela
 end interface

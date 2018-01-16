@@ -34,6 +34,7 @@ implicit none
 #include "asterfort/calirg.h"
 #include "asterfort/canort.h"
 #include "asterfort/char_read_tran.h"
+#include "asterfort/createTabRela.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/getvtx.h"
@@ -93,7 +94,7 @@ character(len=8), intent(in) :: mesh
     character(len=2) :: typlag
     character(len=4) :: fonree
     character(len=4) :: typcoe, typlia
-    character(len=8) :: model, m8blan, kelim
+    character(len=8) :: model, m8blan, kelim, liaison_epx
     character(len=8) :: kbeta, nono1, nono2, cmp, ddl2, listyp(8)
     character(len=16) :: motfac, tymocl(4), motcle(4)
     character(len=16) :: corres, corre1, corre2, typrac
@@ -120,7 +121,7 @@ character(len=8), intent(in) :: mesh
     character(len=8), pointer :: nomddl(:) => null()
     character(len=8), pointer :: nomnoe(:) => null()
     character(len=16), pointer :: v_list_type(:) => null()
-    aster_logical :: l_error
+    aster_logical :: l_error, detr_lisrel
     character(len=8) :: elem_error
 !
 ! --------------------------------------------------------------------------------------------------
@@ -732,7 +733,20 @@ character(len=8), intent(in) :: mesh
 ! --- AFFECTATION DE LA LISTE DE RELATIONS A LA CHARGE :
 !     ------------------------------------------------
 
-    call aflrch(lisrel, load, 'LIN')
+    detr_lisrel = .true.
+    liaison_epx = ' '
+    if (phenom_ .eq. 'MECANIQUE') then
+        call getvtx(' ', 'LIAISON_EPX', scal=liaison_epx, nbret=ibid)
+        if (ibid.eq.1) then
+            if (liaison_epx .eq. 'OUI') detr_lisrel = .false.
+        endif
+    endif
+    
+    call aflrch(lisrel, load, 'LIN', detr_lisrez=detr_lisrel)
+!
+! --- Copie des relations lineaires dans une table pour CALC_EUROPLEXUS
+!
+     if (liaison_epx .eq. 'OUI') call createTabRela(lisrel, load, motfac(1:16))
 !
 320 continue
     call jedema()

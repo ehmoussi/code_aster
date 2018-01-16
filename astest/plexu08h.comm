@@ -1,0 +1,195 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+#--------------------------------------------------------------
+# Validation de LIAISON_MAIL avec CALC_EUROPLEXUS
+#--------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+EP = 2.
+PRESSION = 1000.
+
+MAILL=LIRE_MAILLAGE(FORMAT='MED',)
+
+MATER=DEFI_MATERIAU(  ELAS=_F(  E = 1.E9,      NU = 0., RHO=3400) )
+CHMAT=AFFE_MATERIAU(  MAILLAGE=MAILL, AFFE=_F(  GROUP_MA=('VOLU','COQUE'),   MATER = MATER) )
+
+MODEL=AFFE_MODELE(  MAILLAGE=MAILL,
+                    AFFE=(_F(GROUP_MA='COQUE', MODELISATION = 'Q4GG', PHENOMENE = 'MECANIQUE'),
+                          _F(GROUP_MA='VOLU', MODELISATION = '3D',  PHENOMENE = 'MECANIQUE')))
+
+CARELEM=AFFE_CARA_ELEM(  MODELE=MODEL,
+                         COQUE=_F(  GROUP_MA = 'COQUE',
+                                    EPAIS = EP,  ANGL_REP = (0., 0.,),
+                                    COQUE_NCOU=1,
+                                    MODI_METRIQUE = 'NON',))
+
+CHARGE=AFFE_CHAR_MECA(  MODELE=MODEL, INFO=1,
+               #FORCE_COQUE=_F(GROUP_MA='COQUE', PRES = PRESSION),
+               FORCE_NODALE=(_F(FX=30000, GROUP_NO='FLECHE'),
+                             _F(FY=20000, GROUP_NO='FLECHE'), 
+                             _F(FZ=10000, GROUP_NO='FLECHE'),
+               ),
+               )
+
+
+CHNOR = CREA_CHAMP( TYPE_CHAM = 'NOEU_GEOM_R', OPERATION = 'NORMALE', MODELE    = MODEL,
+                GROUP_MA  = 'COQUE'  , INFO=1   )
+
+RACCOR1=AFFE_CHAR_MECA(MODELE=MODEL,LIAISON_EPX='OUI',
+     LIAISON_MAIL =_F(TYPE_RACCORD='COQUE_MASSIF', GROUP_NO_ESCL='RAC_COQUE', GROUP_MA_MAIT='VOLU',
+                      CHAM_NORMALE=CHNOR, EPAIS=EP,))
+
+#TABLM = RECU_TABLE(CO=RACCOR1, NOM_TABLE='LIAISON_MAIL')
+#
+#IMPR_TABLE(TABLE=TABLM)
+
+
+BLOQ1=AFFE_CHAR_MECA(  MODELE=MODEL, INFO=1,
+            DDL_IMPO=(_F( GROUP_MA = 'ENCAST',    DX = 0.,  DY = 0.,   DZ = 0.),
+                     ))
+RAMPE=DEFI_FONCTION(NOM_PARA='INST', VALE=(0.,0., 1., 1.))
+
+
+LINST=DEFI_LIST_REEL(DEBUT=0.0,
+INTERVALLE=(_F(JUSQU_A=1,  NOMBRE=10,),
+),)
+
+RESU1=STAT_NON_LINE( MODELE=MODEL, CHAM_MATER=CHMAT, CARA_ELEM=CARELEM,
+          EXCIT=(_F(CHARGE = CHARGE, FONC_MULT=RAMPE),
+                 _F(CHARGE = RACCOR1),
+                 _F(CHARGE = BLOQ1)),
+          INCREMENT=_F(LIST_INST=LINST,),
+          CONVERGENCE=_F(ITER_GLOB_MAXI = 50, RESI_GLOB_RELA=1E-5),
+          COMPORTEMENT=_F(RELATION='ELAS', DEFORMATION='GROT_GDEP'))
+
+
+TEST_RESU(RESU=(_F(INST=1,
+                  GROUP_NO='FLECHE',
+                  RESULTAT=RESU1,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DX',
+                  VALE_CALC=2.76027428973E-05,
+                  ),
+                _F(INST=1,
+                  GROUP_NO='FLECHE',
+                  RESULTAT=RESU1,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DY',
+                  VALE_CALC=0.000201817506448,
+                  ),
+                _F(INST=1,
+                  GROUP_NO='FLECHE',
+                  RESULTAT=RESU1,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DZ',
+                  VALE_CALC=0.00525919072834,
+                  ),
+                ),
+          )
+
+PLATEAU=DEFI_FONCTION(NOM_PARA='INST',
+                     VALE=(0.0,   1.0,
+                           1.0,  1.0,
+                           ),
+                     PROL_DROITE='CONSTANT',
+                     PROL_GAUCHE='CONSTANT',
+                     );
+
+TAB1 = CO('TAB1')
+
+U_EPX = CALC_EUROPLEXUS(
+   VERSION_EUROPLEXUS='EPXASTER_DEV',
+   ETAT_INIT=_F(RESULTAT=RESU1,CONTRAINTE='OUI',EQUILIBRE='NON'),
+   COMPORTEMENT =(_F(
+                  RELATION = 'ELAS',
+                  GROUP_MA='VOLU',
+                 ),
+                  _F(
+                  RELATION = 'ELAS',
+                  GROUP_MA='COQUE',
+                 ),
+              ),
+   EXCIT=(_F(CHARGE=CHARGE,FONC_MULT=PLATEAU),
+          _F(CHARGE=BLOQ1,),
+          _F(CHARGE = RACCOR1),),
+   LANCEMENT ='OUI',
+   CALCUL = _F(TYPE_DISCRETISATION  ='AUTO',
+               INST_INIT = 0,
+               INST_FIN  = 0.1,
+               NMAX      = 2000,
+               ),
+   ARCHIVAGE   = _F(PAS_NBRE=2000,),
+   PAS_NBRE_COURBE=1,
+   TABLE_COURBE    = TAB1,
+   COURBE = (_F(
+               NOM_CHAM = 'DEPL',
+               NOM_CMP  = 'DX',
+               GROUP_NO = ('FLECHE'),
+               NOM_COURBE = 'DX_FLECHE'),
+             _F(
+               NOM_CHAM = 'DEPL',
+               NOM_CMP  = 'DY',
+               GROUP_NO = ('FLECHE'),
+               NOM_COURBE = 'DY_FLECHE'),
+             _F(
+               NOM_CHAM = 'DEPL',
+               NOM_CMP  = 'DZ',
+               GROUP_NO = ('FLECHE'),
+               NOM_COURBE = 'DZ_FLECHE'),
+           ),
+   );
+
+
+IMPR_TABLE(TABLE=TAB1, SEPARATEUR=';')
+
+#IMPR_RESU(FORMAT='RESULTAT',RESU=_F(RESULTAT=U_EPX, NOM_CHAM='DEPL'))
+TEST_RESU(RESU=(_F(NUME_ORDRE=181,
+                  GROUP_NO='FLECHE',
+                  RESULTAT=U_EPX,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DX',
+                  REFERENCE ='AUTRE_ASTER',
+                  VALE_REFE=2.76027428973E-05,
+                  VALE_CALC=2.76037005452E-05,
+                  ),
+                _F(NUME_ORDRE=181,
+                  GROUP_NO='FLECHE',
+                  RESULTAT=U_EPX,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DY',
+                  REFERENCE ='AUTRE_ASTER',
+                  VALE_REFE=0.000201817506448,
+                  VALE_CALC=0.000201816350405,
+                  ),
+                _F(NUME_ORDRE=181,
+                  GROUP_NO='FLECHE',
+                  RESULTAT=U_EPX,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DZ',
+                  REFERENCE ='AUTRE_ASTER',
+                  VALE_REFE=0.00525919072834,
+                  VALE_CALC=0.00525918602159,
+                  ),
+                ),
+          )
+
+
+FIN()

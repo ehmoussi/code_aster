@@ -355,4 +355,9 @@ mot-clé COMPORTEMENT pour cette loi.
     59:  _(u"""
 La commande CALC_EUROPLEXUS ne peut pas fonctionner en parallèle.
 """),
+
+    60:  _(u"""
+Un chargement de type %(k1)s est affecté, cependant le mot-clé LIAISON_EPX n'a pas été mis à 'OUI' dans l'opérateur AFFE_CHAR_MECA.
+Cela est nécessaire pour que les données soient mises en forme avant d'être traduites à EPX"""),
+
 }

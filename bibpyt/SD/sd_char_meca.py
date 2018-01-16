@@ -21,6 +21,7 @@ from SD import *
 
 from SD.sd_ligrel import sd_ligrel
 from SD.sd_carte import sd_carte
+from SD.sd_l_table import sd_l_table
 
 
 class sd_char_gf_xx(AsBase):
@@ -148,6 +149,7 @@ class sd_char_meca(AsBase):
     LISMA01 = Facultatif(AsVI(lonmax=12, ))
     LISMA02 = Facultatif(AsVI(lonmax=12, ))
     POIDS_MAILLE = Facultatif(AsVR())
+    lt = Facultatif(sd_l_table(SDNom(nomj='')))
 
     def check_DUAL(self,checker):
 #       si CIMPO existe, il doit aussi exister CMULT et DUAL :

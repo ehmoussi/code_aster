@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine aflrch(lisrez, chargz, type_liai, elim)
+subroutine aflrch(lisrez, chargz, type_liai, elim, detr_lisrez)
     implicit none
 ! person_in_charge: jacques.pellet at edf.fr
 #include "jeveux.h"
@@ -52,6 +52,7 @@ subroutine aflrch(lisrez, chargz, type_liai, elim)
     character(len=*), intent(in) :: chargz
     character(len=*), intent(in) :: type_liai
     character(len=*), intent(in), optional :: elim
+    aster_logical   , intent(in), optional :: detr_lisrez
 !
 ! -------------------------------------------------------
 !  affectation de l'objet de type  liste_rela et de nom
@@ -78,8 +79,9 @@ subroutine aflrch(lisrez, chargz, type_liai, elim)
 !  S'il y a un conflit entre la volonte de l'utilisateur et
 !  celle du developpeur (via l'argument elim), on donne raison
 !  au developpeur !
-!
-! ------------------------------------------------------------
+! -----------------------------------------------------------
+!  (f) detr_lisrez : .true. : on detruit la sd liste de relation
+! -----------------------------------------------------------
     character(len=19) :: lisrel
     character(len=8) :: charge
     integer :: nmocl
@@ -107,6 +109,7 @@ subroutine aflrch(lisrez, chargz, type_liai, elim)
     integer :: nbcmp, nec, nbnema, nbrela, nbteli, nbterm, nddla
     integer :: jliel0, jlielc, jnema0, jnemac, nbrela2, nbterm2
     character(len=3) :: rapide='OUI'
+    aster_logical :: detr_lisrel
 
     integer :: niv, numel, nunewm, iexi, jlgns
     character(len=8), pointer :: lgrf(:) => null()
@@ -167,6 +170,11 @@ subroutine aflrch(lisrez, chargz, type_liai, elim)
         kelim=elim
     endif
     if (kelim.eq.'OUI') call ordlrl(charge, lisrel, nomgd)
+!
+    detr_lisrel = .true.
+    if (present(detr_lisrez)) then
+        detr_lisrel = detr_lisrez
+    endif
 !
     if (ligrch(12:13) .eq. 'TH') then
         ca1=charge//'.CHTH.CMULT'
@@ -458,17 +466,19 @@ subroutine aflrch(lisrez, chargz, type_liai, elim)
         enddo
     endif
 !
-    call jedetr(lisrel//'.RLCO')
-    call jedetr(lisrel//'.RLDD')
-    call jedetr(lisrel//'.RLNO')
-    call jedetr(lisrel//'.RLBE')
-    call jedetr(lisrel//'.RLNT')
-    call jedetr(lisrel//'.RLPO')
-    call jedetr(lisrel//'.RLSU')
-    call jedetr(lisrel//'.RLNR')
-    call jedetr(lisrel//'.RLTC')
-    call jedetr(lisrel//'.RLTV')
-    call jedetr(lisrel//'.RLLA')
+    if (detr_lisrel) then
+        call jedetr(lisrel//'.RLCO')
+        call jedetr(lisrel//'.RLDD')
+        call jedetr(lisrel//'.RLNO')
+        call jedetr(lisrel//'.RLBE')
+        call jedetr(lisrel//'.RLNT')
+        call jedetr(lisrel//'.RLPO')
+        call jedetr(lisrel//'.RLSU')
+        call jedetr(lisrel//'.RLNR')
+        call jedetr(lisrel//'.RLTC')
+        call jedetr(lisrel//'.RLTV')
+        call jedetr(lisrel//'.RLLA')
+    endif
 !
 999 continue
     call jedema()
