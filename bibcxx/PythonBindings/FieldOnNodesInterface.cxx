@@ -51,4 +51,19 @@ void exportFieldOnNodesToPython()
         .def( "printMedFile", &FieldOnNodesDoubleInstance::printMedFile )
         .def( "updateValuePointers", &FieldOnNodesDoubleInstance::updateValuePointers )
     ;
+    class_< FieldOnNodesComplexInstance, FieldOnNodesComplexPtr,
+            bases< GenericDataFieldInstance > > ( "FieldOnNodesComplex", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< FieldOnNodesComplexInstance >) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< FieldOnNodesComplexInstance,
+                             std::string >) )
+        .def( "exportToSimpleFieldOnNodes", &FieldOnNodesComplexInstance::exportToSimpleFieldOnNodes )
+        .def( "__getitem__", +[](const FieldOnNodesComplexInstance& v, int i)  
+         {
+            return v.operator[](i);
+         })
+        .def( "printMedFile", &FieldOnNodesComplexInstance::printMedFile )
+        .def( "updateValuePointers", &FieldOnNodesComplexInstance::updateValuePointers )
+    ;
 };

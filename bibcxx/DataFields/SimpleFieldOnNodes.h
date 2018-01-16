@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe SimpleFieldOnNodes
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -152,22 +152,31 @@ public:
 };
 
 
-/** @typedef SimpleFieldOnNodesInstanceDouble Instance d'une carte de double */
+/** @typedef SimpleFieldOnNodesDoubleInstance Instance d'une champ simple de doubles */
 typedef SimpleFieldOnNodesInstance< double > SimpleFieldOnNodesDoubleInstance;
 
 /**
  * @typedef SimpleFieldOnNodesPtrDouble
- * @brief Definition d'un champ aux noeuds de double
+ * @brief Definition d'un champ simple de doubles
  */
 typedef boost::shared_ptr< SimpleFieldOnNodesDoubleInstance > SimpleFieldOnNodesDoublePtr;
 
-/** @typedef SimpleFieldOnNodesInstanceLong Instance d'une carte de long */
+/** @typedef SimpleFieldOnNodesInstanceLong Instance d'un champ simple de long */
 typedef SimpleFieldOnNodesInstance< long > SimpleFieldOnNodesLongInstance;
 
 /**
  * @typedef SimpleFieldOnNodesPtrLong
- * @brief Definition d'un champ aux noeuds de long
+ * @brief Definition d'un champ simple de long
  */
 typedef boost::shared_ptr< SimpleFieldOnNodesLongInstance > SimpleFieldOnNodesLongPtr;
 
+/** @typedef SimpleFieldOnNodesComplexInstance 
+    @brief Instance d'un champ simple de complexes */
+typedef SimpleFieldOnNodesInstance< DoubleComplex > SimpleFieldOnNodesComplexInstance;
+
+/**
+ * @typedef SimpleFieldOnNodesComplexPtr
+ * @brief Definition d'un champ simple aux noeuds de complexes
+ */
+typedef boost::shared_ptr< SimpleFieldOnNodesComplexInstance > SimpleFieldOnNodesComplexPtr;
 #endif /* SIMPLEFIELDONNODES_H_ */

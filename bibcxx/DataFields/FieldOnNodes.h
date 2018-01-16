@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe FieldOnNodes
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -57,6 +57,10 @@ template<> struct AllowedFieldType< double >
     static const unsigned short numTypeJeveux = Double;
 };
 
+template<> struct AllowedFieldType< DoubleComplex >
+{
+    static const unsigned short numTypeJeveux = Complex;
+};
 /**
  * @class FieldOnNodesInstance
  * @brief Cette classe template permet de definir un champ aux noeuds Aster
@@ -67,7 +71,7 @@ class FieldOnNodesInstance: public GenericDataFieldInstance, private AllowedFiel
 {
 private:
     typedef SimpleFieldOnNodesInstance< ValueType > SimpleFieldOnNodesValueTypeInstance;
-    typedef boost::shared_ptr< SimpleFieldOnNodesDoubleInstance > SimpleFieldOnNodesValueTypePtr;
+    typedef boost::shared_ptr< SimpleFieldOnNodesValueTypeInstance > SimpleFieldOnNodesValueTypePtr;
 
     /** @brief Vecteur Jeveux '.DESC' */
     JeveuxVectorLong        _descriptor;
@@ -258,7 +262,7 @@ bool FieldOnNodesInstance< ValueType >::printMedFile( const std::string fileName
 };
 
 
-/** @typedef FieldOnNodesInstanceDouble Instance d'une carte de double */
+/** @typedef FieldOnNodesInstanceDouble Instance d'un champ aux noeuds de double */
 typedef FieldOnNodesInstance< double > FieldOnNodesDoubleInstance;
 
 /**
@@ -267,13 +271,23 @@ typedef FieldOnNodesInstance< double > FieldOnNodesDoubleInstance;
  */
 typedef boost::shared_ptr< FieldOnNodesDoubleInstance > FieldOnNodesDoublePtr;
 
-/** @typedef FieldOnNodesInstanceLong Instance d'une carte de long */
+/** @typedef FieldOnNodesLongInstance Instance d'une carte de long */
 typedef FieldOnNodesInstance< long > FieldOnNodesLongInstance;
 
 /**
- * @typedef FieldOnNodesPtrLong
+ * @typedef FieldOnNodesLongPtr
  * @brief Definition d'un champ aux noeuds de long
  */
 typedef boost::shared_ptr< FieldOnNodesLongInstance > FieldOnNodesLongPtr;
+
+/** @typedef FieldOnNodesInstanceComplex Instance d'un champ aux noeuds de complexes */
+typedef FieldOnNodesInstance< DoubleComplex > FieldOnNodesComplexInstance;
+
+/**
+ * @typedef FieldOnNodesComplexPtr
+ * @brief Definition d'un champ aux noeuds de complexes
+ */
+typedef boost::shared_ptr< FieldOnNodesComplexInstance > FieldOnNodesComplexPtr;
+
 
 #endif /* FIELDONNODES_H_ */
