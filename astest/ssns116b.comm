@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -138,8 +138,7 @@ RES1 = STAT_NON_LINE(CARA_ELEM=CARA,
                                      RESI_CPLAN_RELA=1.E-06,
                                      PARM_THETA=1.0,
                                      ITER_CPLAN_MAXI=1,
-                                     DEFORMATION='GROT_GDEP',
-                                     PARM_ALPHA=1.0,),
+                                     DEFORMATION='GROT_GDEP',),
                      NEWTON=_F(REAC_INCR=1,
                                MATRICE='TANGENTE',
                                MATR_RIGI_SYME='NON',
@@ -183,8 +182,7 @@ RES2 = STAT_NON_LINE(CARA_ELEM=CARA,
                                      RESI_CPLAN_RELA=1.E-06,
                                      PARM_THETA=1.0,
                                      ITER_CPLAN_MAXI=1,
-                                     DEFORMATION='GROT_GDEP',
-                                     PARM_ALPHA=1.0,),
+                                     DEFORMATION='GROT_GDEP',),
                      NEWTON=_F(REAC_INCR=1,
                                MATRICE='TANGENTE',
                                MATR_RIGI_SYME='NON',
