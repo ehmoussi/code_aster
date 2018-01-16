@@ -1,12 +1,12 @@
-#ifndef FOURIERELASCONTAINER_H_
-#define FOURIERELASCONTAINER_H_
+#ifndef FOURIERTHERCONTAINER_H_
+#define FOURIERTHERCONTAINER_H_
 
 /**
- * @file FourierElasContainer.h
- * @brief Fichier entete de la classe FourierElasContainer
+ * @file FourierTherContainer.h
+ * @brief Fichier entete de la classe FourierTherContainer
  * @author Natacha Béreux 
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -29,11 +29,11 @@
 #include "Results/ResultsContainer.h"
 
 /**
- * @class FourierElasContainerInstance
+ * @class FourierTherContainerInstance
  * @brief Cette classe correspond a un fourier_elas
  * @author Nicolas Sellenet
  */
-class FourierElasContainerInstance: public ResultsContainerInstance
+class FourierTherContainerInstance: public ResultsContainerInstance
 {
 private:
 
@@ -41,15 +41,15 @@ public:
     /**
      * @brief Constructeur
      */
-    FourierElasContainerInstance(): ResultsContainerInstance( "FOURIER_ELAS" )
+    FourierTherContainerInstance(): ResultsContainerInstance( "FOURIER_THER" )
     {};
 
 };
 
 /**
- * @typedef FourierElasContainerPtr
- * @brief Pointeur intelligent vers un FourierElasContainerInstance
+ * @typedef FourierTherContainerPtr
+ * @brief Pointeur intelligent vers un FourierTherContainerInstance
  */
-typedef boost::shared_ptr< FourierElasContainerInstance > FourierElasContainerPtr;
+typedef boost::shared_ptr< FourierTherContainerInstance > FourierTherContainerPtr;
 
-#endif /* FOURIERELASCONTAINER_H_ */
+#endif /* FOURIERTHERCONTAINER_H_ */
