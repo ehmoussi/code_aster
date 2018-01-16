@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -122,7 +122,7 @@ MAIL=CREA_MAILLAGE(MAILLAGE=MA,INFO=2,
 MAIL=DEFI_GROUP(reuse =MAIL,
               MAILLAGE=MAIL,
               CREA_GROUP_MA=(
-                     _F(NOM='M13', MAILLE='M13',),
+                     _F(NOM='MA13', MAILLE='M13',),
                      _F(NOM='SMA3', MAILLE='SM3',),
               ));
 
@@ -335,7 +335,7 @@ TEST_RESU(CHAM_ELEM=_F( CHAM_GD = CANBSP, GROUP_MA='SMA3', POINT=1, SOUS_POINT=1
 F1D3D=CREA_CHAMP(TYPE_CHAM='CART_FORC_R', OPERATION='EXTR', CHARGE=FORCE,
                NOM_CHAM='.CHME.F1D3D', INFO=2,)
 TEST_RESU(CARTE=_F(REFERENCE='ANALYTIQUE', NOM_CMP='FZ', VALE_CALC=-2.E5, VALE_REFE=-2.E5,
-          GROUP_MA='M13', CHAM_GD=F1D3D,))
+          GROUP_MA='MA13', CHAM_GD=F1D3D,))
 
 # On verifie egalement que la carte extraite peut etre transformee en table :
 TABF13=CREA_TABLE(RESU=_F(CHAM_GD=F1D3D, MAILLE=('M13','M14'), TOUT_CMP='OUI',),)
@@ -344,8 +344,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',NOM_PARA='FZ',TABLE=TABF13,
            FILTRE=_F(NOM_PARA='MAILLE',VALE_K='M13',),
            VALE_CALC=-2.E5 , VALE_REFE=-2.E5,)
 
-#--------------------------------------------------------------------------------------- 
-       
+#---------------------------------------------------------------------------------------
+
 
 CAR0=AFFE_CARA_ELEM(MODELE=MODEL,
                     COQUE=(
@@ -386,8 +386,8 @@ RES0=MECA_STATIQUE(MODELE=MODEL,
                    CHAM_MATER=MATER,
                    CARA_ELEM=CAR0,
                    EXCIT=(_F(CHARGE=COND_LIM,),
-                          _F(CHARGE=FORCE,),),);            
-RESU=CALC_CHAMP(reuse=RESU, RESULTAT=RESU,ENERGIE=('EPOT_ELEM',))             
+                          _F(CHARGE=FORCE,),),);
+RESU=CALC_CHAMP(reuse=RESU, RESULTAT=RESU,ENERGIE=('EPOT_ELEM',))
 RES0=CALC_CHAMP(reuse=RES0, RESULTAT=RES0,ENERGIE=('EPOT_ELEM',))
 IMPR_RESU(FORMAT="RESULTAT",UNITE=6, RESU=_F(RESULTAT=RESU,NOM_CHAM='EPOT_ELEM',NUME_ORDRE=1,MAILLE='M1'))
 IMPR_RESU(FORMAT="RESULTAT",UNITE=6, RESU=_F(RESULTAT=RES0,NOM_CHAM='EPOT_ELEM',NUME_ORDRE=1,MAILLE='M1'))

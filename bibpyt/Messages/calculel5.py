@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+# person_in_charge: thomas.de-soza at edf.fr
 
 cata_msg = {
 
@@ -53,13 +53,6 @@ Contactez le support technique.
 Erreur utilisateur :
  Vous utilisez le mot clé NOM_CMP, mais l'une (au moins) des composantes indiquées
  n'appartient pas à la grandeur : %(k1)s
-"""),
-
-
-
-
-    8 : _(u"""
- il faut renseigner le mot clé MAILLE
 """),
 
     9 : _(u"""
@@ -153,7 +146,7 @@ Contactez le support technique.
 """),
 
     45 : _(u"""
-Longueurs des modes locaux incompatibles entre eux 
+Longueurs des modes locaux incompatibles entre eux
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
@@ -170,7 +163,7 @@ Contactez le support technique.
  Il y a %(i1)d noeuds qui ont été projetés sur des mailles jugées distantes.
 
  Les noeuds sont jugés distants si :
-  * la distance à la maille la plus proche est supérieure à DISTANCE_ALARME 
+  * la distance à la maille la plus proche est supérieure à DISTANCE_ALARME
     (si ce mot clé est utilisé).
   * ou si la distance à la maille la plus proche est supérieure à 1/10ème
     de la taille de cette maille (si le mot clé DISTANCE_ALARME n'est pas utilisé).
@@ -336,20 +329,20 @@ La structure de données résultat en sortie  %(k1)s doit contenir qu'un seul NU
 """),
 
     79 : _(u"""
-Vous utilisez la commande PROJ_CHAMP (ou une fonctionnalité utilisant la 
+Vous utilisez la commande PROJ_CHAMP (ou une fonctionnalité utilisant la
 projection d'un maillage sur un autre).
 Pour des raisons de performance, les mailles du maillage à projeter sont
 placées dans une grille cartésienne régulière.
 
 Le maillage est tel que certaines cellules de la grille contiennent beaucoup
-plus de mailles que d'autres. 
+plus de mailles que d'autres.
 Dans ces conditions, les performances CPU de la projection sont dégradées.
 
 Nombre moyen de mailles dans une cellule   : %(i1)d
 Nombre maximal de mailles dans une cellule : %(i2)d
 
-Conseil : dans ce type de cas de figure, l'utilisation de VIS_A_VIS peut 
-améliorer très significativement les performances de PROJ_CHAMP.  
+Conseil : dans ce type de cas de figure, l'utilisation de VIS_A_VIS peut
+améliorer très significativement les performances de PROJ_CHAMP.
 
 """),
 
