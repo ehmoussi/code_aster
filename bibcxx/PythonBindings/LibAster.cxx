@@ -124,6 +124,7 @@
 #include "PythonBindings/InputVariableDefinitionInterface.h"
 #include "PythonBindings/ModeEmpiContainerInterface.h"
 #include "PythonBindings/ElasticEvolutionContainerInterface.h"
+#include "PythonBindings/InputVariableEvolutionContainerInterface.h"
 
 using namespace boost::python;
 
@@ -260,6 +261,7 @@ BOOST_PYTHON_MODULE(libaster)
     exportFullAcousticHarmonicResultsContainerToPython();
     exportFluidStructureModalBasisToPython();
     exportGeneralizedModeContainerToPython();
+  
 
 #ifdef _USE_MPI
     exportParallelMeshToPython();
@@ -274,4 +276,5 @@ BOOST_PYTHON_MODULE(libaster)
     exportInputVariableDefinitionToPython();
     exportModeEmpiContainerToPython();
     exportElasticEvolutionContainerToPython();
+    exportInputVariableEvolutionContainerToPython();
 };
