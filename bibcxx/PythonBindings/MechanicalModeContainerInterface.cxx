@@ -36,3 +36,15 @@ void exportMechanicalModeContainerToPython()
     .def( "setStructureInterface", &MechanicalModeContainerInstance::setStructureInterface )
     ;
 };
+
+void exportMechanicalModeComplexContainerToPython()
+{
+    using namespace boost::python;
+
+    class_< MechanicalModeComplexContainerInstance, MechanicalModeComplexContainerPtr,
+            bases< FullResultsContainerInstance > > ( "MechanicalModeComplexContainer", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< MechanicalModeComplexContainerInstance > ) )
+    .def( "setStructureInterface", &MechanicalModeComplexContainerInstance::setStructureInterface )
+    ;
+};
