@@ -22,6 +22,7 @@
 from ..Objects import (EvolutiveLoad, EvolutiveThermalLoad,
                        NonLinearEvolutionContainer,
                        LinearDisplacementEvolutionContainer,
+                       InputVariableEvolutionContainer,
                        FourierElasContainer, FourierTherContainer,
                        MultElasContainer, MechanicalModeContainer, 
                        FullTransientResultsContainer, FullHarmonicResultsContainer)
@@ -47,6 +48,8 @@ class ResultCreator(ExecuteCommand):
             self._result = NonLinearEvolutionContainer()
         elif typ == "EVOL_ELAS":
             self._result = LinearDisplacementEvolutionContainer()
+        elif typ == "EVOL_VARC":
+            self._result = InputVariableEvolutionContainer()
         elif typ == "FOURIER_ELAS":
             self._result = FourierElasContainer()
         elif typ == "FOURIER_THER":
