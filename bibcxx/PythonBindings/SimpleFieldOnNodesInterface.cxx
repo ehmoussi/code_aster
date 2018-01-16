@@ -43,4 +43,15 @@ void exportSimpleFieldOnNodesToPython()
               return_value_policy< return_by_value >() )
         .def( "updateValuePointers", &SimpleFieldOnNodesDoubleInstance::updateValuePointers )
     ;
+    class_< SimpleFieldOnNodesComplexInstance, SimpleFieldOnNodesComplexPtr,
+            bases< DataStructure > >("SimpleFieldOnNodesComplex", no_init)
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< SimpleFieldOnNodesComplexInstance >) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< SimpleFieldOnNodesComplexInstance,
+                             std::string >) )
+        .def( "getValue", &SimpleFieldOnNodesComplexInstance::getValue,
+              return_value_policy< return_by_value >() )
+        .def( "updateValuePointers", &SimpleFieldOnNodesComplexInstance::updateValuePointers )
+    ;
 };
