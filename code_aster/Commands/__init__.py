@@ -128,6 +128,7 @@ from .impr_co import IMPR_CO
 from .info_exec_aster import INFO_EXEC_ASTER
 from .impr_jeveux import IMPR_JEVEUX
 from .impr_resu import IMPR_RESU
+from .info_mode import INFO_MODE
 from .info_resu import INFO_RESU
 from .impr_macr_elem import IMPR_MACR_ELEM
 from .lire_champ import LIRE_CHAMP
