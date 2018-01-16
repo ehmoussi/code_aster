@@ -22,8 +22,9 @@
 from ..Objects import (EvolutiveLoad, EvolutiveThermalLoad,
                        NonLinearEvolutionContainer,
                        LinearDisplacementEvolutionContainer,
-                       FourierElasContainer, MultElasContainer,
-                       MechanicalModeContainer)
+                       FourierElasContainer, FourierTherContainer,
+                       MultElasContainer, MechanicalModeContainer, 
+                       FullTransientResultsContainer, FullHarmonicResultsContainer)
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -48,10 +49,16 @@ class ResultCreator(ExecuteCommand):
             self._result = LinearDisplacementEvolutionContainer()
         elif typ == "FOURIER_ELAS":
             self._result = FourierElasContainer()
+        elif typ == "FOURIER_THER":
+            self._result = FourierElasContainer()
         elif typ == "MULT_ELAS":
             self._result = MultElasContainer()
         elif typ == "MODE_MECA":
             self._result = MechanicalModeContainer()
+        elif typ == "DYNA_TRANS":
+            self.result = FullTransientResultsContainer()
+        elif typ == "DYNA_HARMO":
+            self.result = FullHarmonicResultsContainer()
         else:
             raise NotImplementedError("Type of result {0!r} not yet "
                                       "implemented".format(typ))
