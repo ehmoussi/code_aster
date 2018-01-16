@@ -247,6 +247,7 @@ BOOST_PYTHON_MODULE(libaster)
     exportCyclicSymmetryModeToPython();
     exportFullResultsContainerToPython();
     exportMechanicalModeContainerToPython();
+    exportMechanicalModeComplexContainerToPython();
     exportAcousticModeContainerToPython();
     exportBucklingModeContainerToPython();
     exportGeneralizedResultsContainerToPython();

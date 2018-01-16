@@ -26,7 +26,9 @@
 
 #include "astercxx.h"
 #include "Results/MechanicalModeContainer.h"
+#include "Results/MechanicalModeComplexContainer.h"
 
 void exportMechanicalModeContainerToPython();
+void exportMechanicalModeComplexContainerToPython();
 
 #endif /* MECHANICALMODECONTAINERINTERFACE_H_ */
