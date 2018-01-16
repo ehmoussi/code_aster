@@ -183,6 +183,7 @@ from .rest_reduit_complet import REST_REDUIT_COMPLET
 from .resoudre import RESOUDRE
 from .test_resu import TEST_RESU
 from .test_table import TEST_TABLE
+from .ther_non_line import THER_NON_LINE
 from .ther_lineaire import THER_LINEAIRE
 
 from .ExecuteCommand import CO
