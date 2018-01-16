@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,6 +32,9 @@ IGNORE_ALARM=('MODELE1_63'),DEBUG=_F(SDVERI='OUI'))
 
 MA=LIRE_MAILLAGE(FORMAT='MED',VERI_MAIL=_F(VERIF='OUI'));
 
+MA2=CREA_MAILLAGE(MAILLAGE=MA,
+                   QUAD_LINE=_F(TOUT='OUI',),);
+
 MA=DEFI_GROUP(reuse =MA,
               MAILLAGE=MA,
               CREA_GROUP_NO=(_F(GROUP_MA='LCONTA',
@@ -41,6 +44,11 @@ MA=DEFI_GROUP(reuse =MA,
                                 GROUP_NO_EXTR='PPS')));
 
 MO=AFFE_MODELE(MAILLAGE=MA,
+               AFFE=_F(TOUT = 'OUI',
+                       PHENOMENE = 'MECANIQUE',
+                       MODELISATION = 'D_PLAN'));
+
+MO2=AFFE_MODELE(MAILLAGE=MA2,
                AFFE=_F(TOUT = 'OUI',
                        PHENOMENE = 'MECANIQUE',
                        MODELISATION = 'D_PLAN'));
@@ -140,6 +148,15 @@ U2M=STAT_NON_LINE(MODELE     = MO,
                                  RESI_GLOB_RELA = 1.0E-4),
 #                  INFO=2,
                );
+
+
+contnoeu=CREA_CHAMP(INST = 1.0,
+   OPERATION='EXTR', TYPE_CHAM='NOEU_INFC_R',RESULTAT=U2M, NOM_CHAM='CONT_NOEU')
+
+evo2 = PROJ_CHAMP(METHODE= 'COLLOCATION' , CHAM_GD = contnoeu,
+            MODELE_1= MO, MODELE_2= MO2, ALARME='NON')
+
+IMPR_RESU(FORMAT='MED',RESU=_F(CHAM_GD=evo2),)
 
 STATIS=RECU_TABLE(CO=U2M,NOM_TABLE='STAT',);
 IMPR_TABLE(TABLE=STATIS)
