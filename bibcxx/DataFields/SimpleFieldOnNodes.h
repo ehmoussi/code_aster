@@ -109,7 +109,6 @@ public:
      * @brief Surcharge de l'operateur []
      * @param i Indice dans le tableau Jeveux
      * @return la valeur du tableau Jeveux a la position i
-     * @todo cython n'autorise pas la présence de 2 operator[] (un avec et l'autre sans const)
      */
     ValueType &operator[]( int i )
     {
@@ -170,7 +169,7 @@ typedef SimpleFieldOnNodesInstance< long > SimpleFieldOnNodesLongInstance;
  */
 typedef boost::shared_ptr< SimpleFieldOnNodesLongInstance > SimpleFieldOnNodesLongPtr;
 
-/** @typedef SimpleFieldOnNodesComplexInstance 
+/** @typedef SimpleFieldOnNodesComplexInstance
     @brief Instance d'un champ simple de complexes */
 typedef SimpleFieldOnNodesInstance< DoubleComplex > SimpleFieldOnNodesComplexInstance;
 

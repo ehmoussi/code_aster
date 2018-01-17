@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -380,7 +380,8 @@ def check_optimization_options(self):
     self.check_optimization_cxxflags()
     self.check_optimization_fcflags()
     self.check_optimization_python()
-    self.check_optimization_cython()
+    if self.env.BUILD_CYTHON:
+        self.check_optimization_cython()
     self.check_variant_vars()
 
 @Configure.conf
@@ -466,7 +467,8 @@ def write_config_headers(self):
         self.setenv(variant)
         self.write_config_h('Fortran', variant)
         self.write_config_h('C', variant)
-        self.write_config_h('Cython', variant)
+        if self.env.BUILD_CYTHON:
+            self.write_config_h('Cython', variant)
         for key in self.env[DEFKEYS]:
             self.undefine(key)
         self.env[DEFKEYS] = []

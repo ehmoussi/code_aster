@@ -22,40 +22,58 @@ import os.path as osp
 from pprint import pformat
 import shutil
 
-from waflib import Context, Configure
+from waflib import Context, Configure, Errors
 
 
 def options(self):
     self.load('cython')
     group = self.get_option_group("code_aster options")
-    group.add_option('--force-cython', action='store_true',
-                    dest='force_cython', default=False,
-                    help='Force rebuild of all Cython source files')
+    group.add_option('--disable-cython', dest='enable_cython',
+                     default=None, action='store_false',
+                     help='disable the Cython support')
+    group.add_option('--enable-cython', dest='enable_cython',
+                     default=None, action='store_true',
+                     help='force the Cython support')
+
 
 def configure(self):
+    opts = self.options
+    self.env.BUILD_CYTHON = False
+    try:
+        self.check_cython()
+    except Errors.ConfigurationError as exc:
+        if opts.enable_cython is True:
+            raise
+        self.define('_DISABLE_CYTHON', 1)
+        self.undefine('HAVE_CYTHON')
+    else:
+        self.define('HAVE_CYTHON', 1)
+        self.env.BUILD_CYTHON = True
+
+@Configure.conf
+def check_cython(self):
+    opts = self.options
+    if opts.enable_cython is False:
+        raise Errors.ConfigurationError('Cython disabled')
+
     self.load('cython')
+    raise Errors.ConfigurationError('not found')
     self.start_msg('Checking for Cython version')
-    output = self.cmd_and_log(self.env['CYTHON'] + ['--version'], output=Context.STDERR)
+    output = self.cmd_and_log(self.env['CYTHON'] + ['--version'],
+                                output=Context.STDERR)
     self.end_msg(output.strip())
 
-    if self.options.force_cython:
-        self.env.CYTHON_FORCE_REBUILD = True
 
 def build(self):
     get_srcs = self.path.get_src().ant_glob
     env = self.all_envs[self.variant]
-    uses = env['all_dependencies']
-    # force rebuild ?
-    if env.CYTHON_FORCE_REBUILD or self.options.force_cython:
-        shutil.rmtree( self.path.get_bld().abspath() )
 
-    # pure Python files (just installed)
     self(
         features = 'py',
             name = 'code_aster_py',
           source = get_srcs('**/*.py'),
     install_from = '.',
-    install_path = osp.join(env.ASTERLIBDIR, 'code_aster'),
+    install_path = osp.join(env.ASTERLIBDIR, "code_aster"),
     )
 
     self(
@@ -68,9 +86,11 @@ def build(self):
     VERSION_INFO = pformat(env['ASTER_VERSION']),
     )
 
-    build_libaster_dependencies(self)
-    self.add_group()
-    build_wrappers_on_libaster(self)
+    # cython
+    if self.env.BUILD_CYTHON:
+        build_libaster_dependencies(self)
+        self.add_group()
+        build_wrappers_on_libaster(self)
 
 
 def build_libaster_dependencies(self):
