@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine lcpjit(proj_tole       , elem_dime, &
-                  elin_mast_nbnode, elin_mast_coor, elin_mast_code,&
-                  elin_slav_nbnode, elin_slav_coor, elin_slav_code,&
+                  elem_mast_nbnode, elem_mast_coor, elem_mast_code,&
+                  elem_slav_nbnode, elem_slav_coor, elem_slav_code,&
                   poin_inte       , inte_weight   , nb_poin_inte)
 !
 implicit none
@@ -30,19 +30,20 @@ implicit none
 #include "asterfort/insema.h"
 #include "asterfort/ptinma.h"
 #include "asterfort/mmnewt.h"
+#include "asterfort/apelem_getvertex.h"
+#include "asterfort/apelem_inside.h"
 !
-!
-    real(kind=8), intent(in) :: proj_tole
-    integer, intent(in) :: elem_dime
-    integer, intent(in) :: elin_mast_nbnode
-    real(kind=8), intent(in) :: elin_mast_coor(elem_dime,elin_mast_nbnode)
-    character(len=8), intent(in) :: elin_mast_code
-    integer, intent(in) :: elin_slav_nbnode
-    real(kind=8), intent(in) :: elin_slav_coor(elem_dime,elin_slav_nbnode)
-    character(len=8), intent(in) :: elin_slav_code
-    real(kind=8), intent(out):: poin_inte(elem_dime-1,16)
-    real(kind=8), intent(out) :: inte_weight
-    integer, intent(out) :: nb_poin_inte
+real(kind=8), intent(in) :: proj_tole
+integer, intent(in) :: elem_dime
+integer, intent(in) :: elem_mast_nbnode
+real(kind=8), intent(in) :: elem_mast_coor(elem_dime,elem_mast_nbnode)
+character(len=8), intent(in) :: elem_mast_code
+integer, intent(in) :: elem_slav_nbnode
+real(kind=8), intent(in) :: elem_slav_coor(elem_dime,elem_slav_nbnode)
+character(len=8), intent(in) :: elem_slav_code
+real(kind=8), intent(out):: poin_inte(elem_dime-1,16)
+real(kind=8), intent(out) :: inte_weight
+integer, intent(out) :: nb_poin_inte
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -54,24 +55,25 @@ implicit none
 !
 ! In  proj_tole        : tolerance for projection
 ! In  elem_dime        : dimension of elements
-! In  elin_mast_nbnode : number of nodes for each sub-element in master element
-! In  elin_mast_coor   : coordinates of sub-elements in master element
-! In  elin_mast_code   : code of all sub-elements in master element
-! In  elin_slav_nbnode : number of nodes for each sub-element in slave element
-! In  elin_slav_coor   : coordinates of sub-elements in slave element
-! In  elin_slav_code   : code of all sub-elements in slave element
+! In  elem_mast_nbnode : number of nodes of master element
+! In  elem_mast_coor   : coordinates of master element
+! In  elem_mast_code   : code of master element
+! In  elem_slav_nbnode : number of nodes for slave element
+! In  elem_slav_coor   : coordinates of slave element
+! In  elem_slav_code   : code of slave element
 ! Out poin_inte        : list (sorted) of intersection points
 ! Out inte_weight      : total weight of intersection
 ! Out nb_poin_inte     : number of intersection points
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    real(kind=8) :: poin_coop(elem_dime-1,4), node_coop(elem_dime-1,4)
-    real(kind=8) :: ksi1,ksi2, tau1(3), tau2(3), node_coor(3), xpt, ypt
-    real(kind=8) :: xp1, yp1, xp2, yp2, elem_coor(3,9)
+    real(kind=8) :: proj_coop(elem_dime-1,4), node_line_coop(elem_dime-1,4)
+    real(kind=8) :: ksi1,ksi2, tau1(3), tau2(3), noma_coor(3), xpt, ypt
+    real(kind=8) :: xp1, yp1, xp2, yp2, elsl_coor(3,9)
     integer :: i_inte_poin, i_node, i_dime
-    integer :: niverr, test, list_node_next(16), nb_node_coop
+    integer :: niverr, test, list_node_next(16), nb_node_line
     aster_logical :: l_reli
+    character(len=8) :: elem_line_code
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -79,131 +81,81 @@ implicit none
     inte_weight        = 0.d0
     test               = 0
     niverr             = 0
-    elem_coor(1:3,1:9) = 0.d0
-    node_coop(1:elem_dime-1,1:4) = 0.d0
+    elsl_coor(1:3,1:9) = 0.d0
+    node_line_coop(1:elem_dime-1,1:4) = 0.d0
     poin_inte(:,:)     = 0.d0
     l_reli = .false.
-    do i_node = 1,elin_slav_nbnode
+!
+! - Get coordinates of slave element
+!
+    do i_node = 1,elem_slav_nbnode
         do i_dime = 1,elem_dime
-            elem_coor(i_dime,i_node) = elin_slav_coor(i_dime,i_node)
+            elsl_coor(i_dime,i_node) = elem_slav_coor(i_dime,i_node)
         enddo
     enddo
 !
 ! - Project master nodes in slave element parametric space
 !
-    do i_node = 1, elin_mast_nbnode
-!
-! ----- Get coordinates of current master node
-!
-        node_coor(1:3) = 0.d0
+    do i_node = 1, elem_mast_nbnode
+! ----- Get coordinates of master nodes
+        noma_coor(1:3) = 0.d0
         do i_dime = 1, elem_dime
-            node_coor(i_dime) = elin_mast_coor(i_dime,i_node)
+            noma_coor(i_dime) = elem_mast_coor(i_dime, i_node)
         end do
-!
 ! ----- Projection on slave element
-!
-        call mmnewt(elin_slav_code, elin_slav_nbnode, elem_dime,&
-                    elem_coor     , node_coor       , 75,&
-                    proj_tole     , ksi1            , ksi2,&
+        l_reli = ASTER_FALSE
+        call mmnewt(elem_slav_code, elem_slav_nbnode, elem_dime,&
+                    elsl_coor     , noma_coor       , 75       ,&
+                    proj_tole     , ksi1            , ksi2     ,&
                     tau1          , tau2            ,&
-                    niverr,l_reli)
+                    niverr        , l_reli)
+! ----- Get parametric coordinates of projection
         if (niverr .eq. 0) then
-            poin_coop(1,i_node) = ksi1
+            proj_coop(1, i_node) = ksi1
             if (elem_dime .eq. 3) then
-                poin_coop(2,i_node) = ksi2
+                proj_coop(2, i_node) = ksi2
             end if
         else
-            l_reli=.true.
-            call mmnewt(elin_slav_code, elin_slav_nbnode, elem_dime,&
-                    elem_coor     , node_coor       , 75,&
-                    proj_tole     , ksi1            , ksi2,&
-                    tau1          , tau2            ,&
-                    niverr, l_reli)
+! --------- Projection failed => try line search
+            l_reli = ASTER_TRUE
+            call mmnewt(elem_slav_code, elem_slav_nbnode, elem_dime,&
+                        elsl_coor     , noma_coor       , 75       ,&
+                        proj_tole     , ksi1            , ksi2     ,&
+                        tau1          , tau2            ,&
+                        niverr        , l_reli)
             if (niverr .eq. 0) then
-                poin_coop(1,i_node) = ksi1
+                proj_coop(1, i_node) = ksi1
                 if (elem_dime .eq. 3) then
-                    poin_coop(2,i_node) = ksi2
+                    proj_coop(2, i_node) = ksi2
                 end if
             else
                 write(*,*) "mmnewt failed"
-                ASSERT(.false.)
+                ASSERT(ASTER_FALSE)
             endif
         endif
     end do
 !
-! - Get parametric coordinates of slave nodes (depending on element type)
+! - Get parametric coordinates of slave nodes (linear)
 !
-    if (elin_slav_code .eq. 'SE2' .or. elin_slav_code .eq. 'SE3') then
-        node_coop(1,1) = -1.d0
-        node_coop(1,2) = 1.d0
-        nb_node_coop   = 2
-    elseif (elin_slav_code .eq. 'TR3' .or. elin_slav_code .eq. 'TR6') then
-        node_coop(1,1) = 0.d0
-        node_coop(2,1) = 0.d0
-        node_coop(1,2) = 1.d0
-        node_coop(2,2) = 0.d0
-        node_coop(1,3) = 0.d0
-        node_coop(2,3) = 1.d0
-        nb_node_coop   = 3
-    elseif (elin_slav_code .eq. 'QU4' .or. elin_slav_code .eq. 'QU8' .or.&
-            elin_slav_code .eq. 'QU9') then 
-        node_coop(1,1) = -1.d0
-        node_coop(2,1) = -1.d0
-        node_coop(1,2) = 1.d0
-        node_coop(2,2) = -1.d0
-        node_coop(1,3) = 1.d0
-        node_coop(2,3) = 1.d0
-        node_coop(1,4) = -1.d0
-        node_coop(2,4) = 1.d0
-        nb_node_coop   = 4
-    else
-        ASSERT(.false.)
-    end if
+    call apelem_getvertex(elem_dime     , elem_slav_code,&
+                          node_line_coop, nb_node_line  , elem_line_code)
 !
-! - Master nodes belong to intersection
+! - Save projection of master nodes on slave element in list of intersection points
 !
-    if (nb_node_coop .eq. 2) then
-        do i_node = 1, elin_mast_nbnode
-            xpt = poin_coop(1,i_node)
-            if (xpt .ge. (-1.d0-proj_tole) .and. xpt .le. (1.d0+proj_tole)) then       
-                nb_poin_inte              = nb_poin_inte+1
-                poin_inte(1,nb_poin_inte) = xpt
-            endif
-        end do 
-    elseif (nb_node_coop .eq. 3) then
-        do i_node = 1, elin_mast_nbnode
-            xpt = poin_coop(1,i_node)
-            ypt = poin_coop(2,i_node)
-            if ((xpt.ge.-proj_tole) .and. (ypt.ge.-proj_tole) .and.&
-                ((ypt+xpt).le.(1.d0+proj_tole))) then       
-                nb_poin_inte              = nb_poin_inte+1
-                poin_inte(1,nb_poin_inte) = xpt
-                poin_inte(2,nb_poin_inte) = ypt
-            endif
-        end do
-    elseif (nb_node_coop .eq. 4) then
-        do i_node = 1, elin_mast_nbnode
-            xpt = poin_coop(1,i_node)
-            ypt = poin_coop(2,i_node)
-            if ((xpt.ge. -1.d0-proj_tole) .and. (ypt.ge. -1.d0-proj_tole) .and. &
-                (ypt.le.(1.d0+proj_tole)) .and. (xpt.le.(1.d0+proj_tole))) then       
-                nb_poin_inte              = nb_poin_inte+1
-                poin_inte(1,nb_poin_inte) = xpt
-                poin_inte(2,nb_poin_inte) = ypt
-            endif
-        end do
-    end if
+    call apelem_inside(proj_tole       , elem_dime, elem_line_code,&
+                       elem_mast_nbnode, proj_coop,&
+                       nb_poin_inte    , poin_inte)
 !
 ! - Add slave nodes if they are inside master element
 !
-    do i_node = 1, nb_node_coop
-        xpt = node_coop(1,i_node)
+    do i_node = 1, nb_node_line
+        xpt = node_line_coop(1,i_node)
         if (elem_dime .eq. 3) then
-            ypt = node_coop(2,i_node)
+            ypt = node_line_coop(2,i_node)
         elseif (elem_dime .eq. 2) then
             ypt = 0.d0
         endif
-        call ptinma(elin_mast_nbnode, elem_dime, elin_mast_code, poin_coop, proj_tole,&
+        call ptinma(elem_mast_nbnode, elem_dime, elem_mast_code, proj_coop, proj_tole,&
                     xpt             , ypt      , test)
         if (test .eq. 1) then        
             nb_poin_inte              = nb_poin_inte+1
@@ -216,33 +168,26 @@ implicit none
 !
 ! - Set index of next nodes
 !
-    do i_node = 2, elin_mast_nbnode
+    do i_node = 2, elem_mast_nbnode
         list_node_next(i_node-1) = i_node
     end do
-    list_node_next(elin_mast_nbnode) = 1
+    list_node_next(elem_mast_nbnode) = 1
 !
 ! - Intersection of edges
 !
     if (elem_dime .eq. 3) then
+        do i_node = 1, elem_mast_nbnode
 !
-! ----- Set index of next nodes
+! --------- Segment from edge of master element
 !
-        do i_node = 2, elin_mast_nbnode
-            list_node_next(i_node-1) = i_node
-        end do
-        list_node_next(elin_mast_nbnode) = 1
+            xp1 = proj_coop(1,i_node)
+            yp1 = proj_coop(2,i_node)
+            xp2 = proj_coop(1,list_node_next(i_node))
+            yp2 = proj_coop(2,list_node_next(i_node))
 !
-! ----- Loop on master segments
-!   
-        do i_node = 1, elin_mast_nbnode
-            xp1 = poin_coop(1,i_node)
-            yp1 = poin_coop(2,i_node)
-            xp2 = poin_coop(1,list_node_next(i_node))
-            yp2 = poin_coop(2,list_node_next(i_node))
+! --------- Compute intersection between edge of master and slave element
 !
-! --------- Compute intersection between segment and element
-!
-            call insema(nb_node_coop, elem_dime, node_coop, proj_tole,&
+            call insema(nb_node_line, elem_dime, node_line_coop, proj_tole,&
                         xp1         , yp1      , xp2      , yp2      ,&
                         nb_poin_inte, poin_inte)
         end do
@@ -259,7 +204,7 @@ implicit none
 ! - Compute weight of intersection
 !
     if ((nb_poin_inte .gt. 2 .and. elem_dime .eq. 3) .or.&
-        (nb_poin_inte .ge. 2 .and. elem_dime .eq. 2) ) then   
+        (nb_poin_inte .ge. 2 .and. elem_dime .eq. 2)) then
         if (elem_dime .eq. 3) then
             do i_inte_poin = 2, nb_poin_inte
                 list_node_next(i_inte_poin-1) = i_inte_poin
@@ -277,6 +222,6 @@ implicit none
         else
             inte_weight = sqrt((poin_inte(1,2)-poin_inte(1,1))**2)
         end if
-    endif 
+    endif
 !
 end subroutine
