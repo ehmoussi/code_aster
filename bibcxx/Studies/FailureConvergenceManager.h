@@ -96,7 +96,7 @@ public:
     };
 
     /**
-     * @brief Constructeur par défaut (utile pour cython ?)
+     * @brief Constructeur par défaut
      */
     GenericActionInstance(): _actionName( "ACTION",
                                           std::string( ActionNames[ NoActionType ] ), true ),
@@ -485,7 +485,7 @@ protected:
      * @brief Constructeur
      * @param type ConvergenceErrorTypeEnum décrivant le type de l'erreur
      */
-    GenericConvergenceErrorInstance( ConvergenceErrorTypeEnum type ): 
+    GenericConvergenceErrorInstance( ConvergenceErrorTypeEnum type ):
                 _eventName( "EVENEMENT", std::string( ErrorNames[ type ] ), true )
     {
         _listSyntaxParam.push_back( &_eventName );
