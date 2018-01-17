@@ -161,6 +161,67 @@ Documentation of all other types.
 
 
 ********************************************************************************
+:py:class:`~code_aster.Objects.GenericInputVariable` subclasses
+********************************************************************************
+
+.. autoclass:: code_aster.Objects.GenericInputVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.ConcreteDryingInputVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.ConcreteHydratationInputVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.CorrosionInputVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.GeometryInputVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.IrradiationInputVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.IrreversibleDeformationInputVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.Neutral1InputVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.Neutral2InputVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.SteelPhasesInputVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.TemperatureInputVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.TotalFluidPressureInputVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.VolumetricDeformationInputVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.ZircaloyPhasesInputVariable
+   :show-inheritance:
+   :members:
+
+
+********************************************************************************
 :py:class:`~code_aster.Objects.Glossary` object
 ********************************************************************************
 
@@ -500,6 +561,14 @@ Documentation of all other types.
    :members:
 
 .. autoclass:: code_aster.Objects.Modelings
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.MumpsAcceleration
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.MumpsPostTreatment
    :show-inheritance:
    :members:
 
