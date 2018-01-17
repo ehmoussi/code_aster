@@ -20,6 +20,15 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.AcousticModeContainer` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.AcousticModeContainer
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.AcousticsLoad` object
 ================================================================================
 
@@ -42,6 +51,15 @@
 ================================================================================
 
 .. autoclass:: code_aster.Objects.AssemblyMatrixDouble
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.AssemblyMatrixTemperatureDouble` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.AssemblyMatrixTemperatureDouble
    :show-inheritance:
    :members:
 
@@ -87,6 +105,15 @@
 ================================================================================
 
 .. autoclass:: code_aster.Objects.BehaviourDefinition
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.BucklingModeContainer` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.BucklingModeContainer
    :show-inheritance:
    :members:
 
@@ -173,10 +200,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.DynamicResultsContainer` object
+:py:class:`~code_aster.Objects.ElasticEvolutionContainer` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.DynamicResultsContainer
+.. autoclass:: code_aster.Objects.ElasticEvolutionContainer
    :show-inheritance:
    :members:
 
@@ -245,6 +272,15 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.FieldOnNodesComplex` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.FieldOnNodesComplex
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.FieldOnNodesDouble` object
 ================================================================================
 
@@ -258,6 +294,15 @@
 ================================================================================
 
 .. autoclass:: code_aster.Objects.FluidStructureInteraction
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.FluidStructureModalBasis` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.FluidStructureModalBasis
    :show-inheritance:
    :members:
 
@@ -299,10 +344,55 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.FullDynamicResultsContainer` object
+:py:class:`~code_aster.Objects.FourierElasContainer` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.FullDynamicResultsContainer
+.. autoclass:: code_aster.Objects.FourierElasContainer
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.FourierTherContainer` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.FourierTherContainer
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.FullAcousticHarmonicResultsContainer` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.FullAcousticHarmonicResultsContainer
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.FullHarmonicResultsContainer` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.FullHarmonicResultsContainer
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.FullResultsContainer` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.FullResultsContainer
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.FullTransientResultsContainer` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.FullTransientResultsContainer
    :show-inheritance:
    :members:
 
@@ -398,6 +488,15 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.GeneralizedModeContainer` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.GeneralizedModeContainer
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.GeneralizedModel` object
 ================================================================================
 
@@ -420,6 +519,15 @@
 ================================================================================
 
 .. autoclass:: code_aster.Objects.GeneralizedResultsContainerDouble
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.GenericDataFieldDouble` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.GenericDataFieldDouble
    :show-inheritance:
    :members:
 
@@ -483,6 +591,15 @@
 ================================================================================
 
 .. autoclass:: code_aster.Objects.ImposedPressureDouble
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.InputVariableEvolutionContainer` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.InputVariableEvolutionContainer
    :show-inheritance:
    :members:
 
@@ -596,6 +713,15 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.MechanicalModeComplexContainer` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.MechanicalModeComplexContainer
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.MechanicalModeContainer` object
 ================================================================================
 
@@ -623,10 +749,28 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.ModeEmpiContainer` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.ModeEmpiContainer
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.Model` object
 ================================================================================
 
 .. autoclass:: code_aster.Objects.Model
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.MultElasContainer` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.MultElasContainer
    :show-inheritance:
    :members:
 
@@ -753,6 +897,15 @@
 ================================================================================
 
 .. autoclass:: code_aster.Objects.SimpleFieldOnElementsDouble
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.SimpleFieldOnNodesComplex` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.SimpleFieldOnNodesComplex
    :show-inheritance:
    :members:
 
