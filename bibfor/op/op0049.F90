@@ -30,6 +30,7 @@ subroutine op0049()
 !
 !
 #include "jeveux.h"
+#include "asterfort/fclose.h"
 #include "asterfort/getvis.h"
 #include "asterfort/giecas.h"
 #include "asterfort/gilir2.h"
@@ -85,6 +86,7 @@ subroutine op0049()
     if (ulisop ( nfigi, k16nom ) .ne. 0) then
         call ulopen(-nfigi, ' ', ' ', 'NEW', 'O')
     endif
+    call fclose(nfias)
 !
     goto 99999
 !
