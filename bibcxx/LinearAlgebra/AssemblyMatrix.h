@@ -218,7 +218,7 @@ typedef boost::shared_ptr< AssemblyMatrixTemperatureDoubleInstance > AssemblyMat
 
 template< class ValueType, PhysicalQuantityEnum PhysicalQuantity >
 AssemblyMatrixInstance< ValueType, PhysicalQuantity >::AssemblyMatrixInstance( const JeveuxMemory memType ):
-    DataStructure( "MATR_ASSE_" + std::string(PhysicalQuantityNames[PhysicalQuantity]) + "_R", memType, 19 ),
+    DataStructure( "MATR_ASSE_" + std::string(PhysicalQuantityNames[PhysicalQuantity]) + (typeid(ValueType)==typeid(double)?"_R":"_C"), memType, 19 ),
     _description( JeveuxVectorChar24( getName() + ".REFA" ) ),
     _matrixValues( JeveuxCollection< ValueType >( getName() + ".VALM" ) ),
     _scaleFactorLagrangian( JeveuxVectorDouble( getName() + ".CONL" ) ),
@@ -229,7 +229,7 @@ AssemblyMatrixInstance< ValueType, PhysicalQuantity >::AssemblyMatrixInstance( c
 
 template< class ValueType, PhysicalQuantityEnum PhysicalQuantity >
 AssemblyMatrixInstance< ValueType, PhysicalQuantity >::AssemblyMatrixInstance( const std::string& name ):
-    DataStructure( name, 19, "MATR_ASSE_" + std::string(PhysicalQuantityNames[PhysicalQuantity]) + "_R" ),
+    DataStructure( name, 19, "MATR_ASSE_" + std::string(PhysicalQuantityNames[PhysicalQuantity]) + (typeid(ValueType)==typeid(double)?"_R":"_C")),
     _description( JeveuxVectorChar24( getName() + ".REFA" ) ),
     _matrixValues( JeveuxCollection< ValueType >( getName() + ".VALM" ) ),
     _scaleFactorLagrangian( JeveuxVectorDouble( getName() + ".CONL" ) ),

@@ -20,6 +20,7 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import AssemblyMatrixDouble, AssemblyMatrixTemperatureDouble
+from ..Objects import AssemblyMatrixComplex
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -35,6 +36,8 @@ class AssembleMatrixOperator(ExecuteCommand):
         """
         if keywords['MATR_ELEM'].getType() == "MATR_ELEM_TEMP_R":
             self._result = AssemblyMatrixTemperatureDouble()
+        elif keywords['MATR_ELEM'].getType() == "MATR_ELEM_DEPL_C":
+            self._result = AssemblyMatrixComplex()
         else:
             self._result = AssemblyMatrixDouble()
 

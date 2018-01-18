@@ -28,16 +28,12 @@ def dyna_visco_modes(self, TYPE_RESU, TYPE_MODE, list_FREQ, fmax, RESI_RELA,
     from Macro.dyna_visco_modes_calc import dyna_visco_modes_calc
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS
+    import aster
 
     EXTR_MODE       = self.get_cmd('EXTR_MODE')
     DEFI_BASE_MODALE= self.get_cmd('DEFI_BASE_MODALE')
     DETRUIRE        = self.get_cmd('DETRUIRE')
 
-
-    if TYPE_RESU=='MODE' :
-        self.DeclareOut('_modes',self.sd)
-    if (TYPE_RESU=='HARM' and args['MODE_MECA']!=None):
-        self.DeclareOut('_modes',args['MODE_MECA'])
 
   
     i=0
@@ -75,11 +71,12 @@ def dyna_visco_modes(self, TYPE_RESU, TYPE_MODE, list_FREQ, fmax, RESI_RELA,
     #########################################################
     # PRINTING OF THE EIGENMODES
     UTMESS('I', 'DYNAVISCO_3')
-    eigenfreq = _modes.LIST_VARI_ACCES()['FREQ']
+    eigenfreq = aster.GetResu(_modes.getName(), "VARI_ACCES")['FREQ']
+    
     if TYPE_MODE in ['REEL','BETA_REEL']:
         UTMESS('I', 'DYNAVISCO_4')
     if TYPE_MODE=='COMPLEXE':
-        eigendamping = _modes.LIST_PARA()['AMOR_REDUIT']
+        eigendamping = aster.GetResu(_modes.getName(), "PARAMETRES")['AMOR_REDUIT']
         UTMESS('I', 'DYNAVISCO_6')
     for k in range(0,len(eigenfreq)):
         if TYPE_MODE in ['REEL','BETA_REEL']:

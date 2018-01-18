@@ -17,10 +17,10 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-def dyna_visco_ops(self,MODELE,CARA_ELEM,
-                        MATER_ELAS,MATER_ELAS_FO,
-                        EXCIT,FREQ,LIST_FREQ,TYPE_MODE,
-                        RESI_RELA,INFO,TYPE_RESU,**args):
+def dyna_visco_ops(self, MODELE, EXCIT, MATER_ELAS_FO,
+                         MATER_ELAS=None, CARA_ELEM=None,
+                         FREQ=None, LIST_FREQ=None, TYPE_MODE=None,
+                         RESI_RELA=None, INFO=None, TYPE_RESU=None, **args):
     """
        Macro-command DYNA_VISCO, main file
     """
@@ -44,18 +44,6 @@ def dyna_visco_ops(self,MODELE,CARA_ELEM,
     # La macro compte pour 1 dans la numérotation des commandes
     self.set_icmd(1)
     
-    # output results produced by the command
-    if TYPE_RESU=='MODE':
-        self.DeclareOut('_modes',self.sd)
-
-    if TYPE_RESU=='HARM':
-        self.DeclareOut('dyna_harm',self.sd)
-
-        if args['MODE_MECA']!=None:
-            MODE_MECA = args['MODE_MECA']
-            self.DeclareOut('_modes',MODE_MECA)
-
-
     coef_fmax = 1.
     if args.has_key('COEF_FREQ_MAX'):
         coef_fmax = args['COEF_FREQ_MAX']
@@ -109,8 +97,8 @@ def dyna_visco_ops(self,MODELE,CARA_ELEM,
   
   
     for y in MATER_ELAS_FO:
-        e0[ny]=y['E'](list_FREQ[0])
-        eta0[ny]=y['AMOR_HYST'](list_FREQ[0])
+        e0[ny]=float(y['E'](list_FREQ[0]))
+        eta0[ny]=float(y['AMOR_HYST'](list_FREQ[0]))
 
         __new_matv=DEFI_MATERIAU(ELAS=_F(E=e0[ny],
                                          NU=y['NU'],
@@ -233,6 +221,9 @@ def dyna_visco_ops(self,MODELE,CARA_ELEM,
 # FREQUENCY RESPONSE COMPUTATION
     if TYPE_RESU=='HARM':
 
+        if args['MODE_MECA']!=None:
+            self.register_result(_modes, args['MODE_MECA'])
+
 #       DATASTRUCTURE VERIFICATION (SDVERI) MUST BE TEMPORARY DEACTIVATED, IT IS OTHERWISE
 #       COSTLY AS THE FINAL RESULT IS CONSTRUCTED FIELD-BY-FIELD, ONCE THE RESULT CONCEPT
 #       IS FINISHED, THE VERIFICATION PARAMETER IS SET BACK TO ITS ORIGINAL VALUE
@@ -243,9 +234,10 @@ def dyna_visco_ops(self,MODELE,CARA_ELEM,
         dyna_harm=dyna_visco_harm(self, EXCIT, list_FREQ, _modes,
                                         MATER_ELAS_FO, __asseKg, __asseKgr, __asseMg, __listKv, e0, eta0, __num, **args)
         DEBUG(SDVERI=PreviousCheck)
-
-
-    return ier
+        
+        return dyna_harm
+    
+    return _modes
 
 
 ###################################################################
