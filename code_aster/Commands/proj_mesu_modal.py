@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,28 +19,32 @@
 
 # person_in_charge: natacha.bereux@edf.fr
 
-from code_aster import GeneralizedResultsContainer
-from code_aster.Cata import Commands, checkSyntax
-from code_aster.RunManager.AsterFortran import python_execop
-from ..Supervis import CommandSyntax
+from ..Objects import TransientGeneralizedResultsContainer, HarmoGeneralizedResultsContainer
+from ..Objects import GeneralizedModeContainer
+from .ExecuteCommand import ExecuteCommand
 
 
-def PROJ_MESU_MODAL(**curDict):
-    """Projeter des mesures expérimentales sur un modèle numérique en dynamique."""
-    checkSyntax( Commands.PROJ_MESU_MODAL, kwargs )
+class ProjMesuModal(ExecuteCommand):
+    """Command that defines :class:`~code_aster.Objects.GeneralizedAssemblyMatrix`.
+    """
+    command_name = "PROJ_MESU_MODAL"
 
-    mesure = kwargs["MESURE"]
-# TODO tester si on a un concept dyna_trans ou dyna_harmo
-# si dyna_trans
-    returnGeneResult = TransientGeneralizedResultsContainer()
-    name = returnGeneResult.getName()
-    type = returnGeneResult.getType()
-    syntax = CommandSyntax("PROJ_MESU_MODAL")
+    def create_result(self, keywords):
+        """Initialize the result.
 
-    syntax.setResult(name, type)
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        mesure = keywords["MESURE"]
+        if mesure.getType() == "DYNA_TRANS":
+            self._result = TransientGeneralizedResultsContainer()
+        elif mesure.getType() == "DYNA_HARMO":
+            self._result = HarmoGeneralizedResultsContainer()
+        elif mesure.getType() == "MODE_MECA":
+            self._result = GeneralizedModeContainer()
+        elif mesure.getType() == "MODE_MECA_C":
+            self._result = GeneralizedModeContainer()
+        else
+            raise TypeError("Type not allowed")
 
-    syntax.define(curDict)
-    numOp = 193
-    python_execop(numOp)
-    syntax.free()
-    return returnGeneResult
+PROJ_MESU_MODAL = ProjMesuModal.run
