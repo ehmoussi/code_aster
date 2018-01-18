@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,13 +17,13 @@
 ! --------------------------------------------------------------------
 
 subroutine ircael(jcesdi, jcesli, jcesvi, jcesci, nummai,&
-                  nbrcou, nbrsec, nbrfib, nbrgrf, nugrfi)
+                  nbqcou, nbtcou, nbrsec, nbrfib, nbrgrf, nugrfi)
     implicit none
 #include "asterfort/assert.h"
 #include "asterfort/cesexi.h"
     integer :: nmaxfi
     parameter (nmaxfi=10)
-    integer :: jcesdi, jcesli, nummai, nbrcou, jcesvi
+    integer :: jcesdi, jcesli, nummai, nbqcou, nbtcou, jcesvi
     integer :: nbrsec, nbrfib, nbrgrf, nugrfi(nmaxfi), jcesci
 ! person_in_charge: nicolas.sellenet at edf.fr
 ! ----------------------------------------------------------------------
@@ -50,23 +50,20 @@ subroutine ircael(jcesdi, jcesli, jcesvi, jcesci, nummai,&
 !
 #include "jeveux.h"
 !
-    integer :: nbrcmp, numgrf, icmp, iad, igfib
+    integer :: nbrcmp, numgrf, icmp, iad
 !
-    do 20 igfib = 1, nmaxfi
-        nugrfi(igfib)=0
- 20 end do
+    nugrfi(1:nmaxfi)=0
 !
-    nbrcmp = zi(jcesdi-1+5+4* (nummai-1)+3)
+    nbrcmp = zi(jcesdi-1+5+4*(nummai-1)+3)
     numgrf = 1
-    do 10 icmp = 1, nbrcmp
-        call cesexi('C', jcesdi, jcesli, nummai, 1,&
-                    1, icmp, iad)
+    do icmp = 1, nbrcmp
+        call cesexi('C', jcesdi, jcesli, nummai, 1, 1, icmp, iad)
 !
         if (iad .gt. 0) then
-            if (zk8(jcesci+icmp-1) .eq. 'COQ_NCOU') then
-                nbrcou=zi(jcesvi-1+iad)
+            if      (zk8(jcesci+icmp-1).eq.'COQ_NCOU') then
+                nbqcou=zi(jcesvi-1+iad)
             else if (zk8(jcesci+icmp-1).eq.'TUY_NCOU') then
-                nbrcou=zi(jcesvi-1+iad)
+                nbtcou=zi(jcesvi-1+iad)
             else if (zk8(jcesci+icmp-1).eq.'TUY_NSEC') then
                 nbrsec=zi(jcesvi-1+iad)
             else if (zk8(jcesci+icmp-1).eq.'NBFIBR') then
@@ -78,7 +75,7 @@ subroutine ircael(jcesdi, jcesli, jcesvi, jcesci, nummai,&
                 numgrf=numgrf+1
             endif
         endif
- 10 end do
+    enddo
     if (nbrfib .ne. 0) then
         ASSERT(nbrgrf.ne.0)
     endif
