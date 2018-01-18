@@ -22,6 +22,7 @@ from code_aster.Commands.ExecuteCommand import ExecuteCommand
 from code_aster.Objects import (MechanicalModeContainer,
                                 GeneralizedModeContainer,
                                 ResultsContainer)
+from code_aster.Objects import MechanicalModeComplexContainer
 from Modal.mode_iter_simult import MODE_ITER_SIMULT as MODE_ITER_SIMULT_CATA
 
 
@@ -44,15 +45,15 @@ class ModalCalculationSimult(ExecuteCommand):
         vale_rigi = keywords.get("MATR_RIGI")
         vale_amor = keywords.get("MATR_AMOR")
         if vale_amor is not None and vale_amor.getType() == "MATR_ASSE_DEPL_R":
-            self._result = ResultsContainer("MODE_MECA_C")
+            self._result = MechanicalModeComplexContainer()
         elif vale_rigi.getType() == "MATR_ASSE_DEPL_R":
             self._result = MechanicalModeContainer()
         elif vale_rigi.getType() == "MATR_ASSE_TEMP_R":
             self._result = MechanicalModeContainer()
         elif vale_rigi.getType() == "MATR_ASSE_DEPL_C":
-            self._result = ResultsContainer("MODE_MECA_C")
+            self._result = MechanicalModeComplexContainer()
         elif vale_rigi.getType() == "MATR_ASSE_PRESS_R":
-            self._result = ResultsContainer("MODE_MECA_C")
+            self._result = MechanicalModeComplexContainer()
         elif vale_rigi.getType() == "MATR_ASSE_GENE_R":
             self._result = GeneralizedModeContainer()
         elif vale_rigi.getType() == "MATR_ASSE_GENE_C":

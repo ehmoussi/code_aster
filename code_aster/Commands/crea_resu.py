@@ -24,7 +24,8 @@ from ..Objects import (EvolutiveLoad, EvolutiveThermalLoad,
                        LinearDisplacementEvolutionContainer,
                        InputVariableEvolutionContainer,
                        FourierElasContainer, FourierTherContainer,
-                       MultElasContainer, MechanicalModeContainer, 
+                       MultElasContainer, MechanicalModeContainer,
+                       MechanicalModeComplexContainer,
                        FullTransientResultsContainer, FullHarmonicResultsContainer)
 from .ExecuteCommand import ExecuteCommand
 
@@ -58,6 +59,8 @@ class ResultCreator(ExecuteCommand):
             self._result = MultElasContainer()
         elif typ == "MODE_MECA":
             self._result = MechanicalModeContainer()
+        elif typ == "MODE_MECA_C":
+            self._result = MechanicalModeComplexContainer()
         elif typ == "DYNA_TRANS":
             self.result = FullTransientResultsContainer()
         elif typ == "DYNA_HARMO":

@@ -30,6 +30,7 @@ def dyna_visco_modes_calc( self, TYPE_MODE, freq1, nmode, RESI_RELA, i, j,
 
     from code_aster.Cata.Syntax import _F
     import numpy as NP
+    import aster
 
     COMB_MATR_ASSE = self.get_cmd('COMB_MATR_ASSE')
     CALC_MODES     = self.get_cmd('CALC_MODES')
@@ -60,9 +61,8 @@ def dyna_visco_modes_calc( self, TYPE_MODE, freq1, nmode, RESI_RELA, i, j,
 
         ny=0
         for y in MATER_ELAS_FO:
-            e=y['E'](freq1)
-            eta=y['AMOR_HYST'](freq1)
-
+            e=float(y['E'](freq1))
+            eta=float(y['AMOR_HYST'](freq1))
             if TYPE_MODE=='REEL':
                 __asseKw=COMB_MATR_ASSE(COMB_R=(_F(MATR_ASSE=__asseKw,
                                                    COEF_R=1.),
@@ -74,9 +74,8 @@ def dyna_visco_modes_calc( self, TYPE_MODE, freq1, nmode, RESI_RELA, i, j,
                 __asseKw=COMB_MATR_ASSE(COMB_C=(_F(MATR_ASSE=__asseKw,
                                                    COEF_R=1.),
                                                 _F(MATR_ASSE=__listKv[ny],
-                                                   COEF_C=('RI',e/e0[ny]-1.,eta*e/e0[ny]-eta0[ny]),),
+                                                   COEF_C=(complex(e/e0[ny]-1.,eta*e/e0[ny]-eta0[ny])),),
                                                 ),);
-
                 if TYPE_MODE=='BETA_REEL':
                     betab=betab+(e/e0[ny]-1.)*ltrv[ny]
                     betah=betah+(eta*e/e0[ny]-eta0[ny])*ltrv[ny]
@@ -107,7 +106,7 @@ def dyna_visco_modes_calc( self, TYPE_MODE, freq1, nmode, RESI_RELA, i, j,
                             );
 
 
-        freq2=__modtmp.LIST_VARI_ACCES()['FREQ']
+        freq2=aster.GetResu(__modtmp.getName(), "VARI_ACCES")['FREQ']
         dfreq=abs(freq1-freq2[0])
         __numod=0
 
@@ -120,7 +119,7 @@ def dyna_visco_modes_calc( self, TYPE_MODE, freq1, nmode, RESI_RELA, i, j,
 
         freq1=freq2[__numod]
         if TYPE_MODE=='COMPLEXE':
-            amor_red1=__modtmp.LIST_PARA()['AMOR_REDUIT'][__numod]
+            amor_red1= aster.GetResu(__modtmp.getName(), "PARAMETRES")['AMOR_REDUIT'][__numod]
 
         if __numod+1==nmode:
             nmode=nmode+5
@@ -163,9 +162,6 @@ def dyna_visco_modes_calc( self, TYPE_MODE, freq1, nmode, RESI_RELA, i, j,
 
     if reuse=='oui':
         motcles['reuse']=args['co_reuse']
-
-    if (TYPE_RESU=='HARM' and args['MODE_MECA']!=None):
-        self.DeclareOut('_modes',args['MODE_MECA'])
 
     # fill the concept containing the eigenmodes
     _modes=CREA_RESU(OPERATION='AFFE',
