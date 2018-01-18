@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,13 +20,14 @@
 !
 interface
     subroutine ircael(jcesdi, jcesli, jcesvi, jcesci, nummai,&
-                      nbrcou, nbrsec, nbrfib, nbrgrf, nugrfi)
+                      nbqcou, nbtcou, nbrsec, nbrfib, nbrgrf, nugrfi)
         integer :: jcesdi
         integer :: jcesli
         integer :: jcesvi
         integer :: jcesci
         integer :: nummai
-        integer :: nbrcou
+        integer :: nbqcou
+        integer :: nbtcou
         integer :: nbrsec
         integer :: nbrfib
         integer :: nbrgrf

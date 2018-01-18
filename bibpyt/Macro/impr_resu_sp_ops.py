@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -272,7 +272,7 @@ def impr_resu_sp_ops(self,
                 if ( not icmp in NomColonnes ):
                     UTMESS('F','IMPRRESUSP_6', valk=(icmp,Nom_Champ.upper()))
             #
-            IMPR_TABLE(FORMAT='TABLEAU', UNITE=__unit, TABLE=__tbresu, NOM_PARA=['COOR_X','COOR_Y','COOR_Z'] + LNom_Cmp,)
+            IMPR_TABLE(FORMAT='TABLEAU', FORMAT_R="E19.12",UNITE=__unit, TABLE=__tbresu, NOM_PARA=['COOR_X','COOR_Y','COOR_Z'] + LNom_Cmp,)
             DEFI_FICHIER(ACTION='LIBERER', UNITE=__unit)
             DETRUIRE(CONCEPT=_F(NOM=__tbresu,), INFO=1,)
             DETRUIRE(CONCEPT=_F(NOM=__unit,), INFO=1,)

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@ subroutine ircmpe(nofimd, ncmpve, numcmp, exicmp, nbvato,&
 ! aslint: disable=W1504
     implicit none
 #include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/celfpg.h"
 #include "asterfort/cesexi.h"
 #include "asterfort/infniv.h"
@@ -100,15 +101,15 @@ subroutine ircmpe(nofimd, ncmpve, numcmp, exicmp, nbvato,&
     integer :: ifm, nivinf, ibid, iret, iaux, jaux, kaux, ima, jcesd, laux
     integer :: jcesc, jcesl, jcesv, nrefma
     integer :: nrcmp, nrpg, nrsp, nbpg, nbsp, nval, typmas, nbimp0, nrimpr
-    integer :: nmaty0(ntymax), adraux(ntymax), nbcou, nbsec, nbfib
+    integer :: nmaty0(ntymax), adraux(ntymax), nbtcou, nbqcou, nbsec, nbfib
     integer :: adcaii, adcaik, nbgrf, nugrfi(nmaxfi)
-    integer :: nbgrf2, nbcou2, nbsec2, nbfib2, ima2
+    integer :: nbgrf2, nbtcou2, nbqcou2, nbsec2, nbfib2, ima2
     integer :: nugrf2(nmaxfi), igrfi, imafib
 !
     character(len=16) :: nomfpg
     character(len=64) :: noprof
 !
-    aster_logical :: exicar, grfidt
+    aster_logical :: exicar, grfidt, elga_sp
     character(len=16), pointer :: tabnofpg(:) => null()
     character(len=16), pointer :: nofpgma(:) => null()
 !
@@ -146,7 +147,7 @@ subroutine ircmpe(nofimd, ncmpve, numcmp, exicmp, nbvato,&
                 enddo
             enddo
         enddo
- 21 end do
+21  enddo
 !
 !====
 ! 3. PROFAS : LISTE DES MAILLES POUR LESQUELS ON AURA IMPRESSION
@@ -218,62 +219,73 @@ subroutine ircmpe(nofimd, ncmpve, numcmp, exicmp, nbvato,&
         laux = adsd + 4*ima + 1
         nbpg = zi(laux)
         nbsp = zi(laux+1)
+        nomfpg = 'a fac'
+        elga_sp = .false.
         if (typech(1:4) .eq. 'ELGA') then
             nomfpg = nofpgma(ima)
         endif
-        nbcou = 0
-        nbsec = 0
-        nbfib = 0
-        nbgrf = 0
+        nbtcou = 0
+        nbqcou = 0
+        nbsec  = 0
+        nbfib  = 0
+        nbgrf  = 0
         imafib = 0
-        if (nbsp .gt. 1 .and. exicar) then
+!
+        if ((nbsp.ge.1) .and. exicar .and. (typech(1:4) .eq. 'ELGA')) then
             call ircael(jcesd, jcesl, jcesv, jcesc, ima,&
-                        nbcou, nbsec, nbfib, nbgrf, nugrfi)
+                        nbqcou, nbtcou, nbsec, nbfib, nbgrf, nugrfi)
             if (nbfib .ne. 0) imafib = ima
         endif
 !
 ! 4.2.1. ==> RECHERCHE D'UNE IMPRESSION SEMBLABLE
-!
         do jaux = 1 , nbimpr
             if (typech(1:4) .eq. 'ELGA') then
-!           POUR LES ELGA, TRI SUR LES FAMILLES DE POINTS DE GAUSS
+                ! Pour les ELGA, tri sur les familles de points de gauss
                 if (.not.exicar) then
-!             SI ON N'A PAS DE CARA_ELEM, LE CAS EST SIMPLE
-!             ON COMPARE LE NOM DE LA FAMILLE DE PG ET NBSP
-                    if (tabnofpg(jaux) .eq. nomfpg .and. zi( adcaii+10*(jaux-1)+2) .eq. nbsp) then
+                    ! SI ON N'A PAS DE CARA_ELEM, LE CAS EST SIMPLE
+                    ! ON COMPARE LE NOM DE LA FAMILLE DE PG ET NBSP
+                    if (tabnofpg(jaux).eq.nomfpg .and. &
+                        zi(adcaii+10*(jaux-1)+2).eq.nbsp) then
                         nrimpr = jaux
                         goto 423
                     endif
                 else
-!             SINON, ON A DEUX CAS, PMF ET AUTRES
-                    if (nbfib .ne. 0) then
-                        if (tabnofpg(jaux) .eq. nomfpg) then
-!                 POUR LES PMF, ON COMPARE AUSSI LES GROUPES DE FIBRES
+                    if (tabnofpg(jaux) .eq. nomfpg) then
+!                       Les différents cas : PMF, Coques, Tuyaux, Grille
+                        elga_sp = .true.
+                        if (nbfib .ne. 0) then
+!                           Pour les PMF, on compare aussi les groupes de fibres
                             ima2 = zi(adcaii+10*(jaux-1)+5)
                             call ircael(jcesd, jcesl, jcesv, jcesc, ima2,&
-                                        nbcou2, nbsec2, nbfib2, nbgrf2, nugrf2)
-                            if (nbfib2 .eq. nbfib .and. nbgrf2 .eq. nbgrf) then
+                                        nbqcou2, nbtcou2, nbsec2, nbfib2, nbgrf2, nugrf2)
+                            if ((nbfib2.eq.nbfib).and.(nbgrf2.eq.nbgrf)) then
                                 grfidt = .true.
                                 do igrfi = 1, nbgrf2
-                                    if (nugrf2(igrfi) .ne. nugrfi( igrfi)) grfidt = .false.
+                                    if (nugrf2(igrfi).ne.nugrfi(igrfi)) grfidt = .false.
                                 enddo
                                 if (grfidt) then
                                     nrimpr = jaux
                                     goto 423
                                 endif
                             endif
-                        endif
-                    else
-                        if (tabnofpg(jaux) .eq. nomfpg .and. zi(adcaii+10*(jaux-1)+3) .eq. nbcou&
-                            .and. zi(adcaii+10*(jaux-1)+4) .eq. nbsec) then
+                        else if (zi(adcaii+10*(jaux-1)+3).eq.nbtcou .and. &
+                                 zi(adcaii+10*(jaux-1)+4).eq.nbsec) then
+                            ! Tuyaux : même nb de couche et de secteur ==> même nbsp
+                            nrimpr = jaux
+                            goto 423
+                        else if (zi(adcaii+10*(jaux-1)+3).eq.nbqcou .and. &
+                                 zi(adcaii+10*(jaux-1)+2).eq.nbsp) then
+                            ! Coques ou Grilles : même nb de couche et de sous-point
+                            !   Coques  nbsp = 3*nbqcou
+                            !   Grilles nbqcou=nbsp=1
                             nrimpr = jaux
                             goto 423
                         endif
                     endif
                 endif
             else
-                if (zi(adcaii+10*(jaux-1)) .eq. nrefma .and.&
-                    zi(adcaii+ 10*(jaux-1)+2) .eq. nbsp) then
+                if (zi(adcaii+10*(jaux-1)).eq.nrefma .and. &
+                    zi(adcaii+10*(jaux-1)+2).eq.nbsp) then
                     nrimpr = jaux
                     goto 423
                 endif
@@ -291,24 +303,46 @@ subroutine ircmpe(nofimd, ncmpve, numcmp, exicmp, nbvato,&
 !
         nbimpr = nbimpr + 1
         jaux = adcaii+10*(nbimpr-1)
-!                  CAIMPI(1,I) = TYPE D'EF / MAILLE ASTER (0, SI NOEUD)
+!       CAIMPI(1,I) = TYPE D'EF / MAILLE ASTER (0, SI NOEUD)
         zi(jaux) = nrefma
-!                  CAIMPI(2,I) = NOMBRE DE POINTS (DE GAUSS OU NOEUDS)
+!       CAIMPI(2,I) = NOMBRE DE POINTS (DE GAUSS OU NOEUDS)
         zi(jaux+1) = nbpg
-!                  CAIMPI(3,I) = NOMBRE DE SOUS-POINTS
+!       CAIMPI(3,I) = NOMBRE DE SOUS-POINTS
         zi(jaux+2) = nbsp
-!                  CAIMPI(4,I) = NOMBRE DE COUCHES
-        zi(jaux+3) = nbcou
-!                  CAIMPI(5,I) = NOMBRE DE SECTEURS
-        zi(jaux+4) = nbsec
-!                  CAIMPI(6,I) = NUMERO DE LA MAILLE 'EXEMPLE' POUR
-!                                LES PMF
+!       CAIMPI(4,I) = NOMBRE DE COUCHES  : Tuyaux ou Coques-Grilles
+!       CAIMPI(5,I) = NOMBRE DE SECTEURS : Tuyaux
+        if ( elga_sp ) then
+            if ( imafib .eq. 0) then
+                ! Tuyaux
+                if ((nbsec.ge.1).and.(nbtcou.ge.1)) then
+                    zi(jaux+3) = nbtcou
+                    zi(jaux+4) = nbsec
+                ! Coques
+                else if ((nbqcou.ge.1).and.(nbsp.eq.3*nbqcou)) then
+                    zi(jaux+3) = nbqcou
+                    zi(jaux+4) = 0
+                ! Grilles
+                else if ((nbqcou.eq.1).and.(nbsp.eq.1)) then
+                    zi(jaux+3) = nbqcou
+                    zi(jaux+4) = 0
+                else
+                    ASSERT( .False. )
+                endif
+            else
+                zi(jaux+3) = 0
+                zi(jaux+4) = 0
+            endif
+        else
+            zi(jaux+3) = 0
+            zi(jaux+4) = 0
+        endif
+!       CAIMPI(6,I) = NUMERO DE LA MAILLE 'EXEMPLE' POUR LES PMF
         zi(jaux+5) = imafib
-!                  CAIMPI(7,I) = NOMBRE DE MAILLES A ECRIRE
+!       CAIMPI(7,I) = NOMBRE DE MAILLES A ECRIRE
         zi(jaux+6) = 0
-!                  CAIMPI(8,I) = TYPE DE MAILLES ASTER (0, SI NOEUD)
+!       CAIMPI(8,I) = TYPE DE MAILLES ASTER (0, SI NOEUD)
         zi(jaux+7) = typmai(ima)
-!                  CAIMPI(9,I) = TYPE GEOMETRIQUE AU SENS MED
+!       CAIMPI(9,I) = TYPE GEOMETRIQUE AU SENS MED
         zi(jaux+8) = typgeo(typmai(ima))
 !
         if (typech(1:4) .eq. 'ELGA') then
