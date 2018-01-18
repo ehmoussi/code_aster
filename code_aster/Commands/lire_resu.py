@@ -74,7 +74,10 @@ class ResultsReader(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        self._result.setModel(keywords["MODELE"])
+        if keywords.has_key("MODELE"):
+            self._result.setModel(keywords["MODELE"])
+        elif keywords.has_key("MAILLAGE"):
+            self._result.setMesh(keywords["MAILLAGE"])
 
 
 LIRE_RESU = ResultsReader.run

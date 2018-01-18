@@ -165,6 +165,7 @@ from .post_usure import POST_USURE
 from .prod_matr_cham import PROD_MATR_CHAM
 from .proj_champ import PROJ_CHAMP
 from .proj_matr_base import PROJ_MATR_BASE
+from .proj_mesu_modal import PROJ_MESU_MODAL
 from .proj_vect_base import PROJ_VECT_BASE
 from .recu_gene import RECU_GENE
 from .resoudre import RESOUDRE

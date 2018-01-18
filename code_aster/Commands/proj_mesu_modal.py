@@ -35,7 +35,7 @@ class ProjMesuModal(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        mesure = keywords["MESURE"]
+        mesure = keywords["MODELE_MESURE"]["MESURE"]
         if mesure.getType() == "DYNA_TRANS":
             self._result = TransientGeneralizedResultsContainer()
         elif mesure.getType() == "DYNA_HARMO":
@@ -44,7 +44,7 @@ class ProjMesuModal(ExecuteCommand):
             self._result = GeneralizedModeContainer()
         elif mesure.getType() == "MODE_MECA_C":
             self._result = GeneralizedModeContainer()
-        else
+        else:
             raise TypeError("Type not allowed")
 
 PROJ_MESU_MODAL = ProjMesuModal.run
