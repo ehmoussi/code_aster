@@ -31,6 +31,7 @@ implicit none
 #include "asterfort/mmnewt.h"
 #include "asterfort/apelem_getvertex.h"
 #include "asterfort/apelem_inside.h"
+#include "asterfort/apinte_weight.h"
 !
 real(kind=8), intent(in) :: proj_tole
 integer, intent(in) :: elem_dime
@@ -73,7 +74,7 @@ integer, intent(out) :: nb_poin_inte
     real(kind=8) :: noma_coor(3), xpt, ypt
     real(kind=8) :: xp1, yp1, xp2, yp2
     integer :: niverr, test, list_next(16), nb_node_line
-    integer :: i_node, i_inte_poin, i_dime
+    integer :: i_node, i_dime
     character(len=8) :: elem_line_code
     real(kind=8) :: elsl_coor(3,9)
 !
@@ -211,25 +212,7 @@ integer, intent(out) :: nb_poin_inte
 !
 ! - Compute weight of intersection
 !
-    if ((nb_poin_inte .gt. 2 .and. elem_dime .eq. 3) .or.&
-        (nb_poin_inte .ge. 2 .and. elem_dime .eq. 2)) then
-        if (elem_dime .eq. 3) then
-            do i_inte_poin = 2, nb_poin_inte
-                list_next(i_inte_poin-1) = i_inte_poin
-            end do
-            list_next(nb_poin_inte)=1
-            do i_inte_poin = 1,nb_poin_inte
-                inte_weight = inte_weight + &
-                        poin_inte(1,i_inte_poin)*&
-                        poin_inte(2,list_next(i_inte_poin))-&
-                        poin_inte(1,list_next(i_inte_poin))*&
-                        poin_inte(2,i_inte_poin)
-            end do
-            inte_weight = 1.d0/2.d0*inte_weight
-            inte_weight = sqrt(inte_weight**2)
-        else
-            inte_weight = sqrt((poin_inte(1,2)-poin_inte(1,1))**2)
-        end if
-    endif
+    call apinte_weight(elem_dime  , nb_poin_inte, poin_inte,&
+                       inte_weight)
 !
 end subroutine
