@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -274,36 +274,6 @@ TEST_RESU(RESU=(
                    NOM_CMP='SIZZ',
                    VALE_CALC=-2603.9782507,
                    PRECISION = 0.0035,
-                   ),
-                _F(RESULTAT=redu,
-                   REFERENCE='AUTRE_ASTER',
-                   VALE_REFE=-1.01905904477,
-                   NUME_ORDRE= 10,
-                   NOM_CHAM='SIEF_NOEU',
-                   NOEUD='N27',
-                   NOM_CMP='SIXY',
-                   VALE_CALC=-1.37808441086,
-                   PRECISION = 0.36,
-                   ),
-                _F(RESULTAT=redu,
-                   REFERENCE='AUTRE_ASTER',
-                   VALE_REFE=0.358496226016,
-                   NUME_ORDRE= 10,
-                   NOM_CHAM='SIEF_NOEU',
-                   NOEUD='N27',
-                   NOM_CMP='SIXZ',
-                   VALE_CALC=-0.0108122953154,
-                   PRECISION = 1.04,
-                   ),
-                _F(RESULTAT=redu,
-                   REFERENCE='AUTRE_ASTER',
-                   VALE_REFE=1.80949985804,
-                   NUME_ORDRE= 10,
-                   NOM_CHAM='SIEF_NOEU',
-                   NOEUD='N27',
-                   NOM_CMP='SIYZ',
-                   VALE_CALC=1.10755939865,
-                   PRECISION = 0.39,
                    ),
                 ),
           );
