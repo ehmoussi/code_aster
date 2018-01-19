@@ -69,7 +69,7 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
     if (MAILLAGE != None):
         __nomlma = COPIER(CONCEPT=MAILLAGE)
     else:
-        __nomlma = LIRE_MAILLAGE(UNITE=args['UNITE'], FORMAT=args['FORMAT'])
+        __nomlma = LIRE_MAILLAGE(UNITE=UNITE, FORMAT=args['FORMAT'])
     #
     # Dans les tables on retrouve une ligne avec __nomlma.nom. Soit :
     #   - on remplace __nomlma.nom par NomMaillageNew.
