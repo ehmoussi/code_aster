@@ -15,165 +15,147 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmspec(modele     , numedd, numfix  , carele    , ds_constitutive,&
-                  numins     , mate  , comref  , lischa    , ds_contact     ,&
-                  ds_algopara, fonact, ds_print, ds_measure, sddisc         ,&
-                  valinc     , solalg, meelem  , measse    , veelem         ,&
-                  sddyna     , sdpost, sderro)
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
+subroutine nmspec(model          , mate         , cara_elem , list_load  , list_func_acti,& 
+                  nume_dof       , nume_dof_inva,&
+                  ds_constitutive, varc_refe    ,&
+                  sddisc         , nume_inst    ,&
+                  sddyna         , sderro       , ds_contact, ds_algopara,&
+                  ds_measure     , &
+                  hval_incr      , hval_algo    ,&
+                  hval_meelem    , hval_measse  ,&
+                  hval_veelem    ,&
+                  ds_posttimestep)
 !
 use NonLin_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/affich.h"
 #include "asterfort/assert.h"
 #include "asterfort/diinst.h"
 #include "asterfort/isfonc.h"
-#include "asterfort/nmcrpo.h"
+#include "asterfort/selectListGet.h"
 #include "asterfort/nmflam.h"
-#include "asterfort/nmimpx.h"
-#include "asterfort/nmlesd.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer :: numins
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    character(len=19) :: meelem(*)
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=24) :: sderro
-    character(len=19) :: lischa, sddisc, sddyna, sdpost
-    character(len=24) :: modele, numedd, numfix, carele
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=19) :: veelem(*), measse(*)
-    character(len=19) :: solalg(*), valinc(*)
-    character(len=24) :: mate
-    character(len=24) :: comref
-    integer :: fonact(*)
-    type(NL_DS_Print), intent(in) :: ds_print
+character(len=24), intent(in) :: model, mate, cara_elem
+character(len=19), intent(in) :: list_load
+integer, intent(in) :: list_func_acti(*)
+character(len=24), intent(in) :: nume_dof, nume_dof_inva
+character(len=24), intent(in) :: varc_refe
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=19), intent(in) :: sddisc
+integer, intent(in) :: nume_inst
+character(len=19), intent(in) :: sddyna
+character(len=24), intent(in) :: sderro
+type(NL_DS_Contact), intent(in) :: ds_contact
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
+character(len=19), intent(in) :: hval_veelem(*), hval_meelem(*), hval_measse(*)
+type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE MECA_NON_LINE (ALGORITHME)
+! MECA_NON_LINE - Initializations
 !
-! ANALYSE DE FLAMBEMENT OU STABILITE ET/OU MODES VIBRATOIRES
+! Spectral analysis
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IN  MODELE : MODELE
-! IN  NUMEDD : NUME_DDL
-! IN  NUMFIX : NUME_DDL (FIXE AU COURS DU CALCUL)
-! IN  MATE   : CHAMP MATERIAU
-! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VARI_COM DE REFERENCE
+! In  model            : name of model
+! In  mate             : name of material characteristics (field)
+! In  cara_elem        : name of elementary characteristics (field)
+! In  list_load        : datastructure for list of loads
+! In  list_func_acti   : list of active functionnalities
+! In  nume_dof         : name of numbering (NUME_DDL)
+! In  nume_dof_inva    : name of reference numbering (invariant)
 ! In  ds_constitutive  : datastructure for constitutive laws management
-! IN  LISCHA : LISTE DES CHARGES
+! In  varc_refe        : name of reference external state variables
+! In  sddisc           : datastructure for time discretization
+! In  nume_inst        : index of current time step
+! In  sddyna           : datastructure for dynamic
+! In  sderro           : datastructure for error management (events)
 ! In  ds_contact       : datastructure for contact management
-! In  ds_print         : datastructure for printing parameters
-! IO  ds_measure       : datastructure for measure and statistics management
-! IN  SDDYNA : SD POUR LA DYNAMIQUE
 ! In  ds_algopara      : datastructure for algorithm parameters
-! IN  SDDISC : SD DISC_INST
-! IN  PREMIE : SI PREMIER INSTANT DE CALCUL
-! IN  NUMINS : NUMERO D'INSTANT
-! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
-! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
-! IN  MATASS : MATRICE ASSEMBLEE GLOBALE
-! IN  SDPOST : SD POUR POST-TRAITEMENTS (CRIT_STAB ET MODE_VIBR)
+! IO  ds_measure       : datastructure for measure and statistics management
+! In  hval_incr        : hat-variable for incremental values fields
+! In  hval_algo        : hat-variable for algorithms fields
+! In  hval_veelem      : hat-variable for elementary vectors
+! In  hval_meelem      : hat-variable for elementary matrix
+! In  hval_measse      : hat-variable for matrix
+! IO  ds_posttimestep  : datastructure for post-treatment at each time step
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: lmvib, lflam
-    aster_logical :: calcul
-    integer :: ibid
-    real(kind=8) :: r8bid, inst
+    aster_logical :: l_mode_vibr, l_crit_stab, l_select
+    real(kind=8) :: inst
     character(len=16) :: option
-    character(len=19) :: nomlis
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    inst = diinst(sddisc,numins)
-    calcul = .false.
-    nomlis = ' '
-    option = ' '
+    inst     = diinst(sddisc, nume_inst)
+    l_select = ASTER_FALSE
+    option   = ' '
 !
-! --- FONCTIONNALITES ACTIVEES
+! - Active functionnalites
 !
-    lmvib = isfonc(fonact,'MODE_VIBR')
-    lflam = isfonc(fonact,'CRIT_STAB')
+    l_mode_vibr = isfonc(list_func_acti,'MODE_VIBR')
+    l_crit_stab = isfonc(list_func_acti,'CRIT_STAB')
 !
-! --- DOIT-ON FAIRE LE CALCUL ?
+! - Compute stability criterion
 !
-!    if (lflam) then
-!        nomlis = sdpost(1:14)//'.FLAM'
-!        call nmcrpo(nomlis, numins, inst, calcul)
-!    else if (lmvib) then
-!        nomlis = sdpost(1:14)//'.VIBR'
-!        call nmcrpo(nomlis, numins, inst, calcul)
-!    else
-!        goto 999
-!    endif
-!
-! --- CALCUL DE FLAMBEMENT EN STATIQUE ET DYNAMIQUE
-!
-    if (lflam) then
-        nomlis = sdpost(1:14)//'.FLAM'
-        call nmcrpo(nomlis, numins, inst, calcul)
-        if (calcul) then
-            call nmlesd('POST_TRAITEMENT', sdpost, 'OPTION_CALCUL_FLAMB', ibid, r8bid, option)
-!
-! ------- IMPRESSION EN-TETE
-!
-            call nmimpx(ds_print)
+    if (l_crit_stab) then
+        call selectListGet(ds_posttimestep%crit_stab%selector, nume_inst, inst, l_select)
+        if (l_select) then
+            option = ds_posttimestep%crit_stab%option
+! --------- Print
             if (option .eq. 'FLAMBSTA') then
                 call utmess('I', 'MECANONLINE6_2')
             else if (option.eq.'FLAMBDYN') then
                 call utmess('I', 'MECANONLINE6_2')
             else
-                ASSERT(.false.)
+                ASSERT(ASTER_FALSE)
             endif
-            call affich('MESSAGE', ' ')
-!
-! ------- CALCUL EFFECTIF
-!
-            call nmflam(option, modele, numedd, numfix     , carele,&
-                        ds_constitutive, numins, mate       , comref,&
-                        lischa, ds_contact, ds_algopara, fonact,&
-                        ds_measure, sddisc, sddyna,&
-                        sdpost, valinc, solalg, meelem     , measse,&
-                        veelem, sderro)
+! --------- Compute
+            call nmflam(option         ,&
+                        model          , mate         , cara_elem , list_load  , list_func_acti,&
+                        nume_dof       , nume_dof_inva,&
+                        ds_constitutive, varc_refe    ,&
+                        sddisc         , nume_inst    ,& 
+                        sddyna         , sderro       , ds_contact, ds_algopara,& 
+                        ds_measure     ,&
+                        hval_incr      , hval_algo    ,&
+                        hval_meelem    , hval_measse  ,&
+                        hval_veelem    ,&
+                        ds_posttimestep)
         endif
     endif
 !
-! --- CALCUL DE MODES VIBRATOIRES EN DYNAMIQUE
+! - Compute vibration modes
 !
-    if (lmvib) then
-        nomlis = sdpost(1:14)//'.VIBR'
-        call nmcrpo(nomlis, numins, inst, calcul)
-        if (calcul) then
-            call nmlesd('POST_TRAITEMENT', sdpost, 'OPTION_CALCUL_VIBR', ibid, r8bid, option)
-!
-! ------- IMPRESSION EN-TETE
-!
-            call nmimpx(ds_print)
+    if (l_mode_vibr) then
+        call selectListGet(ds_posttimestep%mode_vibr%selector, nume_inst, inst, l_select)
+        if (l_select) then
+            option = ds_posttimestep%mode_vibr%option
+! --------- Print
             call utmess('I', 'MECANONLINE6_3')
-            call affich('MESSAGE', ' ')
-!
-! ------- CALCUL EFFECTIF
-!
-            call nmflam(option, modele, numedd, numfix     , carele,&
-                        ds_constitutive, numins, mate       , comref,&
-                        lischa, ds_contact, ds_algopara, fonact,&
-                        ds_measure, sddisc, sddyna,&
-                        sdpost, valinc, solalg, meelem     , measse,&
-                        veelem, sderro)
+! --------- Compute
+            call nmflam(option         ,&
+                        model          , mate         , cara_elem , list_load  , list_func_acti,&
+                        nume_dof       , nume_dof_inva,&
+                        ds_constitutive, varc_refe    ,&
+                        sddisc         , nume_inst    ,& 
+                        sddyna         , sderro       , ds_contact, ds_algopara,& 
+                        ds_measure     ,&
+                        hval_incr      , hval_algo    ,&
+                        hval_meelem    , hval_measse  ,&
+                        hval_veelem    ,&
+                        ds_posttimestep)
         endif
     endif
-!
-!999 continue
 !
 end subroutine

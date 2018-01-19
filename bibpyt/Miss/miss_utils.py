@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -99,6 +99,7 @@ class MISS_PARAMETER(object):
             '_nbPC': 0,
             '_nbfreq': 0,
             '_auto_first_LT': None,
+            '_hasSL': False,
         }
         self._keywords = {}
         # une seule occurence du mcfact
@@ -138,10 +139,12 @@ class MISS_PARAMETER(object):
             if self['EXCIT_SOL'] is not None:
                 self.set('_calc_forc', True)
         self.set('_hasPC', self.get('GROUP_MA_CONTROL') is not None)
+        self.set('_hasSL', self.get('GROUP_MA_SOL_SOL') is not None)
         # unités logiques
         if self.get('UNITE_RESU_IMPE') is None:
             self.set('_exec_Miss', True)
-            self['UNITE_RESU_IMPE'] = self.UL.Libre(action='ASSOCIER')
+            self['UNITE_RESU_IMPE'] = self.UL.Libre(action='ASSOCIER',
+                 ascii=self._keywords['TYPE'] == 'ASCII')
         if self.get('UNITE_RESU_FORC') is None:
             self.set('_exec_Miss', True)
             self['UNITE_RESU_FORC'] = self.UL.Libre(action='ASSOCIER')

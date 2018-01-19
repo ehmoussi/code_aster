@@ -40,6 +40,10 @@ subroutine vpfopr(option, typres, lmasse, lraide, ldynam,&
 !                         POUR AFFICHAGE)
 !                         INPUT: INTENDANCE + OMEMIN/MAX + NBFREQ
 !
+!     OPTION='BANDEB'  --> OUTPUT: NBFREQ + OMEMIN/MAX +
+!                         AFFICHAGES VPECST
+!                         INPUT: INTENDANCE + OMEMIN/MAX
+!
 !     OPTION='PLUS_PETITE'/'TOUT' --> OUTPUT: MATRICE SHIFTEE + SA FACTO
 !                         RISEE + NPIVOT(1) + OMESHI
 !                         INPUT: INTENDANCE
@@ -149,7 +153,7 @@ subroutine vpfopr(option, typres, lmasse, lraide, ldynam,&
         (option.ne.'STURML1') .and. (option.ne.'STURML1P') .and. (option.ne.'STURML10')&
         .and. (option.ne.'STURML11') .and. (option.ne.'STURMLN') .and.&
         (option.ne.'STURMLNP') .and. (option.ne.'STURMAD').and. (option.ne.'STURMLNS')&
-        .and. (option.ne.'STURMLNQ')) then
+        .and. (option.ne.'STURMLNQ').and. (option.ne.'BANDEB')) then
         ASSERT(.false.)
     endif
     
@@ -423,7 +427,7 @@ subroutine vpfopr(option, typres, lmasse, lraide, ldynam,&
         endif
 !
         k8bid=' '
-        if ((option.eq.'BANDE') .or. (option.eq.'STURMAD')) then
+        if ((option.eq.'BANDE').or.(option.eq.'BANDEB').or.(option.eq.'STURMAD')) then
             typep='R'
         else if (option.eq.'STURM') then
             typep='S'
@@ -461,7 +465,7 @@ subroutine vpfopr(option, typres, lmasse, lraide, ldynam,&
         endif
 !
         omgshi=(omgmax+omgmin)*0.5d0
-        if (option(1:5) .eq. 'BANDE') then
+        if ((option.eq.'BANDE').or.(option.eq.'BANDEA')) then
 !          --- CENTRAGE DE L INTERVALLE ---
             nbessa=0
             prec=precsh
@@ -513,7 +517,7 @@ subroutine vpfopr(option, typres, lmasse, lraide, ldynam,&
         omeshi=omgshi
 !
 !          --- AFFICHAGE COMMUN ---
-        if ((niv.ge.1) .and. (option(1:5).eq.'BANDE')) then
+        if ((niv.ge.1).and.((option.eq.'BANDE').or.(option.eq.'BANDEA'))) then
             if (ldyna) then
                 valr(1)=freqom(omgmin)
                 valr(2)=freqom(omgmax)

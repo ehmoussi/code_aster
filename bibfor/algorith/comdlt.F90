@@ -45,8 +45,9 @@ implicit none
 #include "asterc/r8vide.h"
 #include "asterc/r8prem.h"
 #include "asterfort/cochre.h"
-#include "asterfort/CreateEnergyDS.h"
-#include "asterfort/InitEnergy.h"
+#include "asterfort/nonlinDSEnergyCreate.h"
+#include "asterfort/nonlinDSEnergyInit.h"
+#include "asterfort/nonlinDSEnergyClean.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/dladap.h"
 #include "asterfort/dldiff.h"
@@ -303,11 +304,11 @@ implicit none
 !
 ! - Energy management
 !
-    call CreateEnergyDS(ds_energy)
+    call nonlinDSEnergyCreate(ds_energy)
     call getfac('ENERGIE', iret)
     ds_energy%l_comp  = iret.gt.0
     ds_energy%command = 'DYNA_VIBRA'
-    call InitEnergy(result, ds_energy)
+    call nonlinDSEnergyInit(result, ds_energy)
     if (iret .eq. 0) then
         nomsym(4) = ' '
         nomsym(5) = ' '
@@ -453,6 +454,8 @@ implicit none
 !
  62     continue
     endif
+!
+    call nonlinDSEnergyClean(ds_energy)
 !
     call jedema()
 end subroutine

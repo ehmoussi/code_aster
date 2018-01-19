@@ -15,12 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine nmdata(model    , mesh      , mate      , cara_elem , ds_constitutive,&
-                      list_load, solver    , ds_conv   , sddyna    , sdpost         ,&
+                      list_load, solver    , ds_conv   , sddyna    , ds_posttimestep,&
                       sderro   , ds_energy , sdcriq    , ds_print  , ds_algopara    ,&
                       ds_inout , ds_contact, ds_measure, ds_algorom)
         use NonLin_Datastructure_type
@@ -34,7 +32,7 @@ interface
         character(len=*), intent(out) :: solver
         type(NL_DS_Conv), intent(inout) :: ds_conv
         character(len=19) :: sddyna
-        character(len=19) :: sdpost
+        type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
         character(len=24) :: sderro
         type(NL_DS_Energy), intent(inout) :: ds_energy
         character(len=24) :: sdcriq

@@ -17,24 +17,43 @@
 ! --------------------------------------------------------------------
 
 subroutine lc0075(fami, kpg, ksp, ndim, imate,&
-                  compor, crit, instam, instap, epsm,&
-                  deps, sigm, vim, option, angmas,&
-                  sigp, vip, typmod, icomp,&
-                  nvi, dsidep, codret)
+                    compor, carcri, instam, instap, neps, &
+                    epsm, deps, nsig, sigm, nvi, &
+                    vim, option, angmas, sigp, vip, &
+                    typmod, icomp, ndsde, dsidep, codret)
+
 !
 !
 ! aslint: disable=W1504,W0104
+
     implicit none
-#include "asterfort/utmess.h"
-    integer :: imate, ndim, kpg, ksp, codret, icomp, nvi
-    real(kind=8) :: crit(*), angmas(3)
+#include "asterf_types.h"
+#include "asterfort/assert.h"
+#include "asterfort/lcgtn_wrap.h"
+    
+    
+    integer      :: imate, ndim, kpg, ksp, codret, icomp
+    integer      :: nvi,neps,nsig,ndsde
+    real(kind=8) :: carcri(*), angmas(*)
     real(kind=8) :: instam, instap
-    real(kind=8) :: epsm(6), deps(6)
-    real(kind=8) :: sigm(6), sigp(6)
+    real(kind=8) :: epsm(*), deps(*)
+    real(kind=8) :: sigm(*), sigp(*)
     real(kind=8) :: vim(*), vip(*)
-    real(kind=8) :: dsidep(6, 6)
+    real(kind=8) :: dsidep(*)
     character(len=16) :: compor(*), option
     character(len=8) :: typmod(*)
     character(len=*) :: fami
-    call utmess('F', 'FERMETUR_11')
+! ----------------------------------------------------------------------
+!  Loi de comportement GTN
+! ----------------------------------------------------------------------
+    aster_logical,parameter:: grvi=.false.
+! ----------------------------------------------------------------------
+        ASSERT (neps .eq. nint(sqrt(float(ndsde))))
+        ASSERT (neps .eq. nsig)
+
+        call lcgtn_wrap(fami, kpg, ksp, ndim, imate,&
+                    carcri, instam, instap, neps, epsm,&
+                    deps, vim, option, sigp, vip, &
+                    grvi, dsidep, codret)
+
 end subroutine

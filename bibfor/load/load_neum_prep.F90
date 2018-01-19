@@ -19,7 +19,7 @@
 subroutine load_neum_prep(model    , cara_elem , mate      , load_type     , inst_prev,&
                           inst_curr, inst_theta, nb_in_maxi, nb_in_prep    , lchin    ,&
                           lpain    , varc_curr , disp_prev , disp_cumu_inst, compor   ,&
-                          nharm)
+                          nharm    , strx_prev_, vite_curr_)
 !
 implicit none
 !
@@ -50,6 +50,8 @@ implicit none
     character(len=19), optional, intent(in) :: disp_cumu_inst
     character(len=24), optional, intent(in) :: compor
     integer, optional, intent(in) :: nharm
+    character(len=19), optional, intent(in) :: strx_prev_
+    character(len=19), optional, intent(in) :: vite_curr_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -78,6 +80,8 @@ implicit none
 ! In  disp_cumu_inst : displacement increment from beginning of current time
 ! In  compor         : name of comportment definition (field)
 ! In  nharm          : Fourier mode
+! In  strx_prev      : fibers information at beginning of current time
+! In  vite_curr      : speed at current time
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -203,6 +207,16 @@ implicit none
         nb_in_prep = nb_in_prep + 1
         lpain(nb_in_prep) = 'PCOMPOR'
         lchin(nb_in_prep) = compor(1:19)
+        if ( present( vite_curr_) ) then
+            nb_in_prep = nb_in_prep + 1
+            lpain(nb_in_prep) = 'PVITPLU'
+            lchin(nb_in_prep) = vite_curr_(1:19)
+        endif
+        if ( present( strx_prev_) ) then
+            nb_in_prep = nb_in_prep + 1
+            lpain(nb_in_prep) = 'PSTRXMR'
+            lchin(nb_in_prep) = strx_prev_(1:19)
+        endif
     else
         ASSERT(.false.)
     endif

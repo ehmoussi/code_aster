@@ -54,33 +54,16 @@ cata_msg = {
  Nombre total de macro-éléments pour le contact: %(i1)d soit %(i2)d éléments en contact.
 """),
 
-    10 : _(u"""
-  Le mode vibratoire de numéro d'ordre %(i1)d a pour fréquence %(r1)19.12e
-"""),
+    10 : _(u"""  Le mode vibratoire de numéro d'ordre %(i1)d a pour fréquence %(r1)19.12e."""),
 
-    11 : _(u"""
-  Le mode de flambement de numéro d'ordre %(i1)d a pour charge critique %(r1)19.12e
-"""),
+    11 : _(u"""  Le mode de flambement de numéro d'ordre %(i1)d a pour charge critique %(r1)19.12e."""),
 
-    12 : _(u"""
-  Le mode de stabilité de numéro d'ordre %(i1)d a pour charge critique %(r1)19.12e
-"""),
+    12 : _(u"""  Le mode de stabilité de numéro d'ordre %(i1)d a pour charge critique %(r1)19.12e."""),
 
     13 : _(u"""
  On ne peut pas utiliser CRIT_STAB en calcul parallèle
 """),
 
-    14 : _(u"""
-  Le mode vibratoire stocké a pour fréquence %(r1)19.12e
-"""),
-
-    15 : _(u"""
-  Le mode de flambement stocké a pour charge critique %(r1)19.12e
-"""),
-
-    16 : _(u"""
-  Le mode de stabilité stocké a pour charge critique %(r1)19.12e
-"""),
 
     60 : _(u"""
   Critère(s) de convergence atteint(s)

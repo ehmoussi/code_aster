@@ -16,9 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-
-# person_in_charge: nicolas.greffet at edf.fr
-#
+# person_in_charge: mickael.abbas at edf.fr
 #
 
 import aster
@@ -100,7 +98,7 @@ try :
                   INCREMENT=_F(LIST_INST=list2,),
                   NEWTON=_F(MATRICE='TANGENTE',),
                   SOLVEUR=_F(METHODE='LDLT'),
-                  CRIT_STAB=_F(CHAR_CRIT=(0., 2.),SIGNE='POSITIF_NEGATIF',),
+                  CRIT_STAB=_F(OPTION='BANDE',CHAR_CRIT=(0., 2.),SIGNE='POSITIF_NEGATIF',),
                   );
 except aster.error,err:
    print fmt_raison % str(err)
@@ -137,7 +135,7 @@ try :
                   INCREMENT=_F(LIST_INST=list2,),
                   NEWTON=_F(MATRICE='TANGENTE',),
                   SOLVEUR=_F(METHODE='LDLT'),
-                  CRIT_STAB=_F(CHAR_CRIT=(0., 2.),SIGNE='POSITIF',),
+                  CRIT_STAB=_F(OPTION='BANDE',CHAR_CRIT=(0., 2.),SIGNE='POSITIF',),
                   );
 except aster.error,err:
    print fmt_raison % str(err)
@@ -176,7 +174,7 @@ try :
                   INCREMENT=_F(LIST_INST=list2,),
                   NEWTON=_F(MATRICE='TANGENTE',),
                   SOLVEUR=_F(METHODE='LDLT'),
-                  CRIT_STAB=_F(CHAR_CRIT=(0., 2.),SIGNE='NEGATIF',),
+                  CRIT_STAB=_F(OPTION='BANDE',CHAR_CRIT=(0., 2.),SIGNE='NEGATIF',),
                   );
 except aster.error,err:
    print fmt_raison % str(err)

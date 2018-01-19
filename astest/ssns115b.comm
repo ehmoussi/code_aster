@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -140,8 +140,7 @@ RES1=STAT_NON_LINE(MODELE=MODELE,
                                     RESI_INTE_RELA=1e-06,
                                     ITER_INTE_MAXI=20,
                                     ITER_INTE_PAS=0,
-                                    PARM_THETA=1.0,
-                                    PARM_ALPHA=1.0,),),
+                                    PARM_THETA=1.0,),),
                    INCREMENT=_F(LIST_INST=LIST1,
                                 PRECISION=1e-06,),
                    METHODE='NEWTON',

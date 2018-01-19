@@ -133,7 +133,7 @@ subroutine vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
                 precdc, precsh, rbid, rbid, seuil,&
                 rbid, rbid, rbid, k1bid, k8bid,&
                 k8bid, k9bid, matra, k14bid, matrc,&
-                k16bid, optiof, stoper, sturm, k16bid,&
+                k16bid, optiof, stoper, sturm, k16bid, k16bid,&
                 typres, amor, masse, raide, k19bid,&
                 lc, lkr, lns, lbid, lbid)
     if (lkr) then

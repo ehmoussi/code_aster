@@ -17,11 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# MODELISATION G : COQUE_3D (TRIA7)
-# AUTEUR : Francis LEBOUVIER (DeltaCAD)
-# DATE   : 11/04/2013
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='NON'))
 
 MAIL=LIRE_MAILLAGE(FORMAT='MED', )
 
@@ -171,17 +168,31 @@ res=STAT_NON_LINE(MODELE=MODELE,
                   COMPORTEMENT=_F(RELATION='ELAS',),
                   INCREMENT=_F(LIST_INST=list1,),
                   NEWTON=_F(MATRICE='TANGENTE',),
-                  CRIT_STAB=_F(CHAR_CRIT=(0,2)),
+                  CRIT_STAB=_F(OPTION='BANDE',CHAR_CRIT=(0,2)),
                   );
 
-TEST_RESU(RESU=_F(PARA='CHAR_CRIT',
-                  INST=1.0,
-                  RESULTAT=res,
+TABSPEC0=RECU_TABLE(CO=res,
+                    NOM_TABLE='ANALYSE_MODALE',);
+
+
+TEST_TABLE(
+           REFERENCE='AUTRE_ASTER',
                   VALE_CALC=0.67430377323317,
                   VALE_REFE=0.68,
-                  REFERENCE='AUTRE_ASTER',
-                  PRECISION=0.9E-2,),
-          )
+           PRECISION=0.9E-2,
+           NOM_PARA='CHAR_CRIT',
+           TABLE=TABSPEC0,
+           FILTRE=(
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='TYPE_MODE',
+                      VALE_K='MODE_FLAMB',),
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='NUME_MODE',
+                      VALE_I=1,),
+                   _F(NOM_PARA='INST',
+                      VALE=1.0,),
+                   ),
+           )
 
 
 res2=STAT_NON_LINE(MODELE=MODELE,
@@ -193,16 +204,31 @@ res2=STAT_NON_LINE(MODELE=MODELE,
                    COMPORTEMENT=_F(RELATION='ELAS'),
                    INCREMENT=_F(LIST_INST=list1,),
                    NEWTON=_F(MATRICE='TANGENTE',),
-                   CRIT_STAB=_F(CHAR_CRIT=(0,2)),
+                   CRIT_STAB=_F(OPTION='BANDE',CHAR_CRIT=(0,2)),
                    );
 
-TEST_RESU(RESU=_F(PARA='CHAR_CRIT',
-                  INST=1.0,
-                  RESULTAT=res2,
+TABSPEC1=RECU_TABLE(CO=res2,
+                    NOM_TABLE='ANALYSE_MODALE',);
+
+
+TEST_TABLE(
+           REFERENCE='AUTRE_ASTER',
                   VALE_CALC=1.2478676530876,
                   VALE_REFE=1.088,
-                  REFERENCE='AUTRE_ASTER',
-                  PRECISION=15.E-2,),
-          )
+           PRECISION=15E-2,
+           NOM_PARA='CHAR_CRIT',
+           TABLE=TABSPEC1,
+           FILTRE=(
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='TYPE_MODE',
+                      VALE_K='MODE_FLAMB',),
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='NUME_MODE',
+                      VALE_I=1,),
+                   _F(NOM_PARA='INST',
+                      VALE=1.0,),
+                   ),
+           )
+
 FIN()
 #

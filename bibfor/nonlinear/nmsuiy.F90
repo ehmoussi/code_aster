@@ -15,21 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmsuiy(ds_print, vale_r, i_dof_monitor)
 !
 use NonLin_Datastructure_type
 !
 implicit none
 !
-#include "asterfort/impfoi.h"
 #include "asterfort/nmimcr.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Print), intent(inout) :: ds_print
-    real(kind=8), intent(in) :: vale_r
-    integer, intent(inout) :: i_dof_monitor
+type(NL_DS_Print), intent(inout) :: ds_print
+real(kind=8), intent(in) :: vale_r
+integer, intent(inout) :: i_dof_monitor
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -50,7 +48,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call impfoi(0, 1, i_dof_monitor, indsui)
+    write(indsui,'(I1)') i_dof_monitor
     typcol = 'SUIVDDL'//indsui
     call nmimcr(ds_print, typcol, vale_r, .true._1)
     i_dof_monitor = i_dof_monitor + 1

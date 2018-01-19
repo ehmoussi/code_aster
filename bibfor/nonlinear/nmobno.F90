@@ -15,21 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmobno(sd_obsv, keyw_fact, nb_keyw_fact)
 !
 implicit none
 !
 #include "asterfort/assert.h"
 #include "asterfort/getvtx.h"
-#include "asterfort/impfoi.h"
 #include "asterfort/wkvect.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer, intent(in) :: nb_keyw_fact
-    character(len=19), intent(in) :: sd_obsv
-    character(len=16), intent(in) :: keyw_fact
+integer, intent(in) :: nb_keyw_fact
+character(len=19), intent(in) :: sd_obsv
+character(len=16), intent(in) :: keyw_fact
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -62,7 +60,7 @@ implicit none
 ! - Set titles
 !
     do i_keyw_fact = 1, nb_keyw_fact
-        call impfoi(0, 1, i_keyw_fact, chaine)
+        write(chaine,'(I1)') i_keyw_fact
         title = 'OBSERVATION_'//chaine
         call getvtx(keyw_fact, 'TITRE', iocc=i_keyw_fact, nbval=0, nbret=nb_title)
         nb_title = - nb_title

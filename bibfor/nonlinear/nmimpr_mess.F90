@@ -15,21 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmimpr_mess(indx_mesg, vali_, valr_)
 !
 implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/impfot.h"
+#include "asterfort/nonlinDSColumnWriteValue.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer, intent(in) :: indx_mesg
-    integer, optional, intent(in) :: vali_
-    real(kind=8), optional, intent(in) :: valr_
+integer, intent(in) :: indx_mesg
+integer, optional, intent(in) :: vali_
+real(kind=8), optional, intent(in) :: valr_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -50,7 +49,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     if (present(valr_)) then
-        call impfot(valr_, time_string)
+        call nonlinDSColumnWriteValue(0, time_=valr_, output_string_=time_string)
     endif
     if (indx_mesg .eq. 1) then
         call utmess('I', 'MEASURE1_1', sk = time_string)
@@ -102,7 +101,7 @@ implicit none
         call utmess('I', 'MEASURE1_26', si = vali_)
     else
         WRITE(6,*) 'IndxMesg: ',indx_mesg
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 end subroutine

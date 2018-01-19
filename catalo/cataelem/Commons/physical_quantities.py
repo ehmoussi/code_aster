@@ -2722,6 +2722,7 @@ SIEF_C   = PhysicalQuantity(type='C',
        'FLUZ',
        'PM',
        'PMPB',
+       'SIGONF',
        'SIP',
        'SIPXX',
        'SIPYY',
@@ -2882,6 +2883,7 @@ SIEF_C   = PhysicalQuantity(type='C',
        FLUZ :
        PM :
        PMPB :
+       SIGONF:
        SIP :
        SIPXX : sigmap_xx contraintes de pression dans la massif
        SIPYY : sigmap_yy contraintes de pression dans la massif
@@ -3055,6 +3057,7 @@ SIEF_R   = PhysicalQuantity(type='R',
        'FLUZ',
        'PM',
        'PMPB',
+       'SIGONF',
        'SIP',
        'SIPXX',
        'SIPYY',
@@ -3631,6 +3634,22 @@ XCONTAC  = PhysicalQuantity(type='R',
        RELA   : gere l''activation des lois cohesives avec X-FEM
 """)
 
+
+CONTALAC   = PhysicalQuantity(type='R',
+    components=(
+        'PRES',
+        'JEU',
+        'CONT',
+        'COEFSURF',
+        'PRESCOOR',
+    ),
+    comment="""  CONTALAC Type:R Contact LAC
+        PRES        : Pression de contact
+        JEU           : Gap intégré au sens LAC
+        CONT          : Indicateur de contact
+        COEFSURF      : Poids d'intersection
+        PRESCOOR      : Poids d'intersection*Pression de contact
+""")
 
 # Elementary Quantities
 MDEP_C   = ArrayOfQuantities(elem='MS', phys= DEPL_C)

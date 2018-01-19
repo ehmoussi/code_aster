@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='NON'))
 
 mail=LIRE_MAILLAGE(FORMAT='MED',);
 
@@ -68,27 +68,51 @@ res=STAT_NON_LINE(MODELE=modele,
                             MATRICE='TANGENTE',
                             REAC_ITER=1,),
                   CONVERGENCE=_F(ITER_GLOB_MAXI=300,),
-                  CRIT_STAB=_F(CHAR_CRIT=(-15,15),),
+                  CRIT_STAB=_F(OPTION='BANDE',CHAR_CRIT=(-15,15),),
                   );
 
+TABSPEC0=RECU_TABLE(CO=res,
+                   NOM_TABLE='ANALYSE_MODALE',);
 
 
+TEST_TABLE(
+           REFERENCE='ANALYTIQUE',
+           VALE_CALC=9.976366410,
+           VALE_REFE=9.9645,
+           PRECISION=2.E-3,
+           NOM_PARA='CHAR_CRIT',
+           TABLE=TABSPEC0,
+           FILTRE=(
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='TYPE_MODE',
+                      VALE_K='MODE_FLAMB',),
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='NUME_MODE',
+                      VALE_I=1,),
+                   _F(NOM_PARA='INST',
+                      VALE=0.2,),
+                   ),
+           )
 
-TEST_RESU(RESU=(_F(PARA='CHAR_CRIT',
-                   INST=0.2,
-                   REFERENCE='ANALYTIQUE',
-                   RESULTAT=res,
-                   VALE_CALC=9.976366410,
-                   VALE_REFE=9.9645,
-                   PRECISION=2.E-3,),
-                _F(PARA='CHAR_CRIT',
-                   INST=1.0,
-                   REFERENCE='ANALYTIQUE',
-                   RESULTAT=res,
-                   VALE_CALC=0.675266654,
+
+TEST_TABLE(
+           REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.675266654,
                    VALE_REFE=0.6643,
-                   PRECISION=0.03,),
-                ),
-          )
+                   PRECISION=0.03,
+           NOM_PARA='CHAR_CRIT',
+           TABLE=TABSPEC0,
+           FILTRE=(
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='TYPE_MODE',
+                      VALE_K='MODE_FLAMB',),
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='NUME_MODE',
+                      VALE_I=1,),
+                   _F(NOM_PARA='INST',
+                      VALE=1.0,),
+                   ),
+           )
+
 
 FIN();

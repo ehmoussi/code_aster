@@ -15,76 +15,49 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmcrpc(result)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit     none
-#include "asterfort/exisd.h"
-#include "asterfort/infdbg.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jeexin.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/ltcrsd.h"
-#include "asterfort/ltnotb.h"
-#include "asterfort/tbajpa.h"
-#include "asterfort/tbcrsd.h"
-    character(len=8) :: result
+subroutine nmcrpc(ds_inout, nume_reuse, time_curr)
 !
-! ----------------------------------------------------------------------
+use NonLin_Datastructure_type
 !
-! ROUTINE *_NON_LINE (STRUCTURES DE DONNES)
+implicit none
 !
-! CREATION DE LA TABLE DES PARAMETRES CALCULES
+#include "asterfort/assert.h"
+#include "asterfort/tbajli.h"
 !
-! ----------------------------------------------------------------------
+type(NL_DS_InOut), intent(in) :: ds_inout
+integer, intent(in) :: nume_reuse
+real(kind=8), intent(in) :: time_curr
 !
-! IN  RESULT : NOM SD RESULTAT
+! --------------------------------------------------------------------------------------------------
 !
-! ----------------------------------------------------------------------
+! *_NON_LINE
 !
-    integer :: nbpar
-    parameter   (nbpar=8)
-    character(len=2) :: typpar(nbpar)
-    character(len=10) :: nompar(nbpar)
-! ----------------------------------------------------------------------
-    integer :: ifm, niv, iret
-    character(len=19) :: tablpc
-    data         nompar / 'NUME_REUSE','INST'      ,'TRAV_EXT  ',&
-     &                      'ENER_CIN'  ,'ENER_TOT'  ,'TRAV_AMOR ',&
-     &                      'TRAV_LIAI' ,'DISS_SCH'/
-    data         typpar / 'I'         ,'R'         ,'R'         ,&
-     &                      'R'         ,'R'         ,'R'         ,&
-     &                      'R'         ,'R'/
+! Save parameters in output table
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
+! In  ds_inout         : datastructure for input/output management
+! In  nume_reuse       : index for reuse rsults datastructure
+! In  time_curr        : current time
 !
-! --- CREATION DE LA LISTE DE TABLES SI ELLE N'EXISTE PAS
+! --------------------------------------------------------------------------------------------------
 !
-    call jeexin(result//'           .LTNT', iret)
-    if (iret .eq. 0) call ltcrsd(result, 'G')
+    integer :: vali(1)
+    character(len=8) :: k8bid = ' '
+    complex(kind=8), parameter :: c16bid =(0.d0,0.d0)
+    real(kind=8) :: valr(1)
 !
-! --- RECUPERATION DU NOM DE LA TABLE CORRESPONDANT
-!     AUX PARAMETRE CALCULES
+! --------------------------------------------------------------------------------------------------
 !
-    tablpc = ' '
-    call ltnotb(result, 'PARA_CALC', tablpc)
+    vali(1) = nume_reuse
+    valr(1) = time_curr
 !
-! --- LA TABLE PARA_CALC EXISTE-T-ELLE ?
+! - Add line in table
 !
-    call exisd('TABLE', tablpc, iret)
-!
-! --- NON, ON LA CREE
-!
-    if (iret .eq. 0) then
-        call tbcrsd(tablpc, 'G')
-        call tbajpa(tablpc, nbpar, nompar, typpar)
-    endif
-!
-    call jedema()
+    call tbajli(ds_inout%table_io%table_name,&
+                ds_inout%table_io%nb_para, ds_inout%table_io%list_para,&
+                vali, valr, [c16bid], k8bid, 0)
 !
 end subroutine

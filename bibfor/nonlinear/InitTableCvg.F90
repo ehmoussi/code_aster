@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine InitTableCvg(list_func_acti, sdsuiv, ds_print)
 !
 use NonLin_Datastructure_type
@@ -27,16 +28,13 @@ implicit none
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/impfoi.h"
 #include "asterfort/SetTableColumn.h"
 #include "asterfort/utmess.h"
 #include "asterfort/ComputeTableWidth.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer, intent(in) :: list_func_acti(*)
-    character(len=24), intent(in) :: sdsuiv
-    type(NL_DS_Print), intent(inout) :: ds_print
+integer, intent(in) :: list_func_acti(*)
+character(len=24), intent(in) :: sdsuiv
+type(NL_DS_Print), intent(inout) :: ds_print
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -237,7 +235,7 @@ implicit none
     call jeveuo(sdsuiv_info, 'L', vi = v_sdsuiv_info)
     nb_dof_monitor = v_sdsuiv_info(2)
     do i_dof_monitor = 1, nb_dof_monitor
-        call impfoi(0, 1, i_dof_monitor, indsui)
+        write(indsui,'(I1)') i_dof_monitor
         col_name        = 'SUIVDDL'//indsui
         call SetTableColumn(table_cvg, name_ = col_name, flag_acti_ = .true._1)
     end do

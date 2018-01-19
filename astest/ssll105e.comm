@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'),);
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='NON'),);
 
 mail=LIRE_MAILLAGE(FORMAT="ASTER",);
 
@@ -91,10 +91,9 @@ res=STAT_NON_LINE(MODELE=modele,
                   CRIT_STAB=_F(),
                   );
 
-TEMPO=RECU_FONCTION(RESULTAT=res,
-                    NOM_PARA_RESU='CHAR_CRIT',);
 
-CH_CRIT=CREA_TABLE(FONCTION=_F(FONCTION=TEMPO,),);
+CH_CRIT=RECU_TABLE(CO=res,
+                   NOM_TABLE='ANALYSE_MODALE',);
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
@@ -104,8 +103,13 @@ TEST_TABLE(CRITERE='RELATIF',
            NOM_PARA='INST',
            TABLE=CH_CRIT,
            FILTRE=_F(CRIT_COMP='MINI_ABS',
-                     NOM_PARA='CHAR_CRI',),
+                     NOM_PARA='CHAR_CRIT',),
            )
+
+
+IMPR_TABLE(TABLE=CH_CRIT);
+
+
 
 effort2=AFFE_CHAR_MECA(MODELE=modele,
                       FORCE_NODALE=_F(GROUP_NO='C',
@@ -132,10 +136,9 @@ res2=STAT_NON_LINE(MODELE=modele,
                   CRIT_STAB=_F(),
                   );
 
-TEMPO2=RECU_FONCTION(RESULTAT=res2,
-                    NOM_PARA_RESU='CHAR_CRIT',);
 
-CH_CRIT2=CREA_TABLE(FONCTION=_F(FONCTION=TEMPO2,),);
+CH_CRIT2=RECU_TABLE(CO=res2,
+                   NOM_TABLE='ANALYSE_MODALE',);
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
@@ -145,7 +148,7 @@ TEST_TABLE(CRITERE='RELATIF',
            NOM_PARA='INST',
            TABLE=CH_CRIT2,
            FILTRE=_F(CRIT_COMP='MINI_ABS',
-                     NOM_PARA='CHAR_CRI',),
+                     NOM_PARA='CHAR_CRIT',),
            )
 
 FIN();

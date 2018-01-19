@@ -15,12 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
 subroutine nminit(mesh      , model     , mate       , cara_elem      , list_load ,&
                   numedd    , numfix    , ds_algopara, ds_constitutive, maprec    ,&
                   solver    , numins    , sddisc     , sdnume         , sdcrit    ,&
                   varc_refe , fonact    , sdpilo     , sddyna         , ds_print  ,&
-                  sd_suiv   , sd_obsv   , sderro     , sdpost         , ds_inout  ,&
+                  sd_suiv   , sd_obsv   , sderro     , ds_posttimestep, ds_inout  ,&
                   ds_energy , ds_conv   , sdcriq     , valinc         , solalg    ,&
                   measse    , veelem    , meelem     , veasse         , ds_contact,&
                   ds_measure, ds_algorom)
@@ -62,13 +64,15 @@ implicit none
 #include "asterfort/nmexso.h"
 #include "asterfort/nmfonc.h"
 #include "asterfort/nmihht.h"
-#include "asterfort/InitAlgoPara.h"
-#include "asterfort/InitContact.h"
-#include "asterfort/InitConv.h"
-#include "asterfort/InitEnergy.h"
-#include "asterfort/InitPrint.h"
+#include "asterfort/nonlinDSAlgoParaInit.h"
+#include "asterfort/nonlinDSContactInit.h"
+#include "asterfort/nonlinDSConvergenceInit.h"
+#include "asterfort/nonlinDSEnergyInit.h"
+#include "asterfort/nonlinDSPrintInit.h"
 #include "asterfort/romAlgoNLInit.h"
 #include "asterfort/nonlinDSConstitutiveInit.h"
+#include "asterfort/nonlinDSPostTimeStepInit.h"
+#include "asterfort/nonlinDSInOutInit.h"
 #include "asterfort/nmrefe.h"
 #include "asterfort/nminma.h"
 #include "asterfort/nminmc.h"
@@ -83,46 +87,43 @@ implicit none
 #include "asterfort/nmvcre.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    character(len=8), intent(in) :: mesh
-    character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: mate
-    character(len=24), intent(in) :: cara_elem
-    character(len=19), intent(in) :: list_load
-    character(len=24) :: numedd
-    character(len=24) :: numfix
-    type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
-    type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
-    character(len=19) :: maprec
-    character(len=19), intent(in) :: solver
-    integer :: numins
-    character(len=19) :: sddisc
-    character(len=19) :: sdnume
-    character(len=19) :: sdcrit
-    character(len=24) :: varc_refe
-    integer :: fonact(*)
-    character(len=19) :: sdpilo
-    character(len=19) :: sddyna
-    type(NL_DS_Print), intent(inout) :: ds_print
-    character(len=24), intent(out) :: sd_suiv
-    character(len=19), intent(out) :: sd_obsv
-    character(len=24) :: sderro
-    character(len=19) :: sdpost
-    type(NL_DS_InOut), intent(inout) :: ds_inout
-    type(NL_DS_Energy), intent(inout) :: ds_energy
-    type(NL_DS_Conv), intent(inout) :: ds_conv
-    character(len=24) :: sdcriq
-    character(len=19) :: valinc(*)
-    character(len=19) :: solalg(*)
-    character(len=19) :: measse(*)
-    character(len=19) :: veelem(*)
-    character(len=19) :: meelem(*)
-    character(len=19) :: veasse(*)
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
+character(len=8), intent(in) :: mesh
+character(len=24), intent(in) :: model
+character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: cara_elem
+character(len=19), intent(in) :: list_load
+character(len=24) :: numedd
+character(len=24) :: numfix
+type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
+type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
+character(len=19) :: maprec
+character(len=19), intent(in) :: solver
+integer :: numins
+character(len=19) :: sddisc
+character(len=19) :: sdnume
+character(len=19) :: sdcrit
+character(len=24) :: varc_refe
+integer :: fonact(*)
+character(len=19) :: sdpilo
+character(len=19) :: sddyna
+type(NL_DS_Print), intent(inout) :: ds_print
+character(len=24), intent(out) :: sd_suiv
+character(len=19), intent(out) :: sd_obsv
+character(len=24) :: sderro
+type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
+type(NL_DS_InOut), intent(inout) :: ds_inout
+type(NL_DS_Energy), intent(inout) :: ds_energy
+type(NL_DS_Conv), intent(inout) :: ds_conv
+character(len=24) :: sdcriq
+character(len=19) :: valinc(*)
+character(len=19) :: solalg(*)
+character(len=19) :: measse(*)
+character(len=19) :: veelem(*)
+character(len=19) :: meelem(*)
+character(len=19) :: veasse(*)
+type(NL_DS_Contact), intent(inout) :: ds_contact
+type(NL_DS_Measure), intent(inout) :: ds_measure
+type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -139,6 +140,7 @@ implicit none
 ! In  list_load        : name of datastructure for list of loads
 ! IO  ds_algopara      : datastructure for algorithm parameters
 ! IO  ds_constitutive  : datastructure for constitutive laws management
+! IO  ds_posttimestep  : datastructure for post-treatment at each time step
 ! In  solver           : name of datastructure for solver
 ! IO  ds_print         : datastructure for printing parameters
 ! Out sd_suiv          : datastructure for dof monitoring parameters
@@ -162,8 +164,8 @@ implicit none
     real(kind=8) :: instin
     character(len=8) :: partit
     character(len=19) :: varc_prev, disp_prev, strx_prev
-    aster_logical :: lacc0, lpilo, lmpas, lsstf, lerrt, lviss, lrefe, ldidi, l_obsv
-    aster_logical :: limpl,lcont
+    aster_logical :: lacc0, lpilo, lmpas, lsstf, lerrt, lviss, lrefe, ldidi, l_obsv, l_ener
+    aster_logical :: limpl, lcont
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -171,11 +173,16 @@ implicit none
 !
 ! - Initializations for contact parameters
 !
-    call InitContact(mesh, model, ds_contact)
+    call nonlinDSContactInit(mesh, model, ds_contact)
 !
 ! - Initializations for constitutive laws
 !
     call nonlinDSConstitutiveInit(model, cara_elem, ds_constitutive)
+!
+! - Initializations for post-treatment at each time step
+!
+    call nonlinDSPostTimeStepInit(ds_inout%result,&
+                                  ds_algopara    , ds_constitutive, ds_posttimestep)
 !
 ! - Prepare list of loads (and late elements) for contact
 !
@@ -193,9 +200,10 @@ implicit none
 !
 ! - Prepare active functionnalities information
 !
-    call nmfonc(ds_conv  , ds_algopara    , solver   , model     , ds_contact,&
-                list_load, sdnume         , sddyna   , sdcriq    , mate      ,&
-                ds_inout , ds_constitutive, ds_energy, ds_algorom, fonact)
+    call nmfonc(ds_conv  , ds_algopara    , solver   , model     , ds_contact     ,&
+                list_load, sdnume         , sddyna   , sdcriq    , mate           ,&
+                ds_inout , ds_constitutive, ds_energy, ds_algorom, ds_posttimestep,&
+                fonact)
 !
 ! - Check compatibility of some functionnalities
 !
@@ -208,6 +216,7 @@ implicit none
     lviss = ndynlo(sddyna,'VECT_ISS' )
     lrefe = isfonc(fonact,'RESI_REFE')
     ldidi = isfonc(fonact,'DIDI')
+    l_ener = isfonc(fonact,'ENERGIE')
 !
 ! - Initialization for reduced method
 !
@@ -234,15 +243,21 @@ implicit none
 !
 ! - Initializations for algorithm parameters
 !
-    call InitAlgoPara(fonact, ds_algopara)
+    call nonlinDSAlgoParaInit(fonact, ds_algopara)
 !
 ! - Initializations for convergence management
 !
-    call InitConv(ds_conv, fonact, ds_contact)
+    call nonlinDSConvergenceInit(ds_conv, fonact, ds_contact)
 !
 ! - Initializations for energy management
 !
-    call InitEnergy(ds_inout%result, ds_energy)
+    if (l_ener) then
+        call nonlinDSEnergyInit(ds_inout%result, ds_energy)
+    endif
+!
+! - Initializations for input/output management
+!
+    call nonlinDSInOutInit('MECA', ds_inout)
 !
 ! --- CREATION DES VECTEURS D'INCONNUS
 !
@@ -261,8 +276,8 @@ implicit none
 !
 ! - Create input/output datastructure
 !
-    call nmetcr(ds_inout, model     , ds_constitutive%compor, fonact   , sddyna   ,&
-                sdpost  , ds_contact, cara_elem, list_load)
+    call nmetcr(ds_inout  , model    , ds_constitutive%compor, fonact   , sddyna   ,&
+                ds_contact, cara_elem, list_load)
 !
 ! - Read initial state
 !
@@ -366,7 +381,7 @@ implicit none
 !
 ! - Initializations for printing
 !
-    call InitPrint(sd_suiv, ds_print)
+    call nonlinDSPrintInit(sd_suiv, ds_print)
 !
 ! --- PRE-CALCUL DES MATR_ASSE CONSTANTES AU COURS DU CALCUL
 !
@@ -376,7 +391,7 @@ implicit none
 ! - Prepare storing
 !
     call nmnoli(sddisc   , sderro, ds_constitutive, ds_print , sdcrit  ,&
-                fonact   , sddyna, sdpost         , model    , mate    ,&
+                fonact   , sddyna, model          , mate     ,&
                 cara_elem, sdpilo, ds_measure     , ds_energy, ds_inout,&
                 sdcriq)
 !

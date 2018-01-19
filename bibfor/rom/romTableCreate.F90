@@ -15,27 +15,24 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romTableCreate(result, tabl_name)
 !
 use Rom_Datastructure_type
+use NonLin_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/infniv.h"
-#include "asterfort/exisd.h"
-#include "asterfort/jeexin.h"
-#include "asterfort/ltcrsd.h"
-#include "asterfort/ltnotb.h"
-#include "asterfort/tbajpa.h"
-#include "asterfort/tbcrsd.h"
+#include "asterfort/nonlinDSTableIOSetPara.h"
+#include "asterfort/nonlinDSTableIOCreate.h"
+#include "asterfort/nonlinDSTableIOClean.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: result
-    character(len=19), intent(out) :: tabl_name
+character(len=8), intent(in) :: result
+character(len=19), intent(out) :: tabl_name
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -51,12 +48,12 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
+    type(NL_DS_TableIO) :: tableio
     integer, parameter :: nb_para = 5
-    character(len=8), parameter :: para_type(nb_para) = (/'I','I','R','I','R'/)
-    character(len=16), parameter :: para_name(nb_para) = (/'NUME_MODE  ','NUME_ORDRE ',&
+    character(len=8), parameter :: type_para(nb_para) = (/'I','I','R','I','R'/)
+    character(len=24), parameter :: list_para(nb_para) = (/'NUME_MODE  ','NUME_ORDRE ',&
                                                            'INST       ','NUME_SNAP  ',&
                                                            'COOR_REDUIT'/)
-    integer :: iret
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,25 +61,25 @@ implicit none
     if (niv .ge. 2) then
         call utmess('I', 'ROM5_38')
     endif
-!
-! - Create list of tables in results datastructure (if necessary)
-!
     tabl_name = ' '
-    call jeexin(result//'           .LTNT', iret)
-    if (iret .eq. 0) then
-        call ltcrsd(result, 'G')
-    endif
 !
-! - Get name of reduced coordinates
+! - Create list of parameters
 !
-    call ltnotb(result, 'COOR_REDUIT', tabl_name)   
+    call nonlinDSTableIOSetPara(tableio_   = tableio,&
+                                nb_para_   = nb_para,&
+                                list_para_ = list_para,&
+                                type_para_ = type_para)
 !
-! - Create observation table (if necessary)
+! - Create table in results datastructure
 !
-    call exisd('TABLE', tabl_name, iret)
-    if (iret .eq. 0) then
-        call tbcrsd(tabl_name, 'G')
-        call tbajpa(tabl_name, nb_para, para_name, para_type)
-    endif
+    call nonlinDSTableIOCreate(result, 'COOR_REDUIT', tableio)
+!
+! - Save name of table
+!
+    tabl_name = tableio%table_name
+!
+! - Clean table in results datastructure
+!
+    call nonlinDSTableIOClean(tableio)
 !
 end subroutine

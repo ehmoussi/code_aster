@@ -15,12 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine te0161(option, nomte)
-        character(len=16) :: option
-        character(len=16) :: nomte
+        character(len=16), intent(in) :: option, nomte
     end subroutine te0161
 end interface

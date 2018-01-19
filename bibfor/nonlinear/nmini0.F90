@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmini0(list_func_acti, eta      , nume_inst  , matass         , zmeelm    ,&
                   zmeass        , zveelm   , zveass     , zsolal         , zvalin    ,&
                   ds_print      , ds_conv  , ds_algopara, ds_inout       , ds_contact,&
@@ -30,37 +31,31 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/nmchai.h"
 #include "asterfort/infdbg.h"
-#include "asterfort/CreateConvDS.h"
-#include "asterfort/CreatePrintDS.h"
-#include "asterfort/CreateAlgoParaDS.h"
-#include "asterfort/CreateInOutDS.h"
-#include "asterfort/CreateContactDS.h"
-#include "asterfort/CreateMeasureDS.h"
-#include "asterfort/CreateEnergyDS.h"
+#include "asterfort/nonlinDSConvergenceCreate.h"
+#include "asterfort/nonlinDSPrintCreate.h"
+#include "asterfort/nonlinDSAlgoParaCreate.h"
+#include "asterfort/nonlinDSInOutCreate.h"
+#include "asterfort/nonlinDSContactCreate.h"
+#include "asterfort/nonlinDSMeasureCreate.h"
+#include "asterfort/nonlinDSEnergyCreate.h"
 #include "asterfort/romAlgoNLDSCreate.h"
 #include "asterfort/nonlinDSConstitutiveCreate.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer, intent(out) :: list_func_acti(*)
-    character(len=19), intent(out) :: matass
-    integer, intent(out) :: nume_inst
-    real(kind=8), intent(out) :: eta
-    integer, intent(in) :: zmeelm
-    integer, intent(in) :: zmeass
-    integer, intent(in) :: zveelm
-    integer, intent(in) :: zveass
-    integer, intent(in) :: zsolal
-    integer, intent(in) :: zvalin
-    type(NL_DS_Print), intent(out) :: ds_print
-    type(NL_DS_Conv), intent(out) :: ds_conv
-    type(NL_DS_AlgoPara), intent(out) :: ds_algopara
-    type(NL_DS_InOut), intent(out) :: ds_inout
-    type(NL_DS_Contact), intent(out) :: ds_contact
-    type(NL_DS_Measure), intent(out) :: ds_measure
-    type(NL_DS_Energy), intent(out) :: ds_energy
-    type(ROM_DS_AlgoPara), intent(out) :: ds_algorom
-    type(NL_DS_Constitutive), intent(out) :: ds_constitutive
+integer, intent(out) :: list_func_acti(*)
+character(len=19), intent(out) :: matass
+integer, intent(out) :: nume_inst
+real(kind=8), intent(out) :: eta
+integer, intent(in) :: zmeelm, zmeass, zveelm
+integer, intent(in) :: zveass, zsolal, zvalin
+type(NL_DS_Print), intent(out) :: ds_print
+type(NL_DS_Conv), intent(out) :: ds_conv
+type(NL_DS_AlgoPara), intent(out) :: ds_algopara
+type(NL_DS_InOut), intent(out) :: ds_inout
+type(NL_DS_Contact), intent(out) :: ds_contact
+type(NL_DS_Measure), intent(out) :: ds_measure
+type(NL_DS_Energy), intent(out) :: ds_energy
+type(ROM_DS_AlgoPara), intent(out) :: ds_algorom
+type(NL_DS_Constitutive), intent(out) :: ds_constitutive
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -97,31 +92,31 @@ implicit none
 !
 ! - Create printing management datastructure
 !
-    call CreatePrintDS(ds_print)
+    call nonlinDSPrintCreate(ds_print)
 !
 ! - Create convergence management datastructure
 !
-    call CreateConvDS(ds_conv)
+    call nonlinDSConvergenceCreate(ds_conv)
 !
 ! - Create algorithm parameters datastructure
 !
-    call CreateAlgoParaDS(ds_algopara)
+    call nonlinDSAlgoParaCreate(ds_algopara)
 !
 ! - Create input/output management datastructure
 !
-    call CreateInOutDS('MECA', ds_inout)
+    call nonlinDSInOutCreate('MECA', ds_inout)
 !
 ! - Create contact management datastructure
 !
-    call CreateContactDS(ds_contact)
+    call nonlinDSContactCreate(ds_contact)
 !
 ! - Create measure and statistics management datastructure
 !
-    call CreateMeasureDS(ds_measure)
+    call nonlinDSMeasureCreate(ds_measure)
 !
 ! - Create energy management datastructure
 !
-    call CreateEnergyDS(ds_energy)
+    call nonlinDSEnergyCreate(ds_energy)
 !
 ! - Create ROM parameters datastructure
 !

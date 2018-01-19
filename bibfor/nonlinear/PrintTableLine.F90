@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine PrintTableLine(table, col_sep, unit_print)
 !
 use NonLin_Datastructure_type
@@ -24,17 +25,13 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/impfoi.h"
-#include "asterfort/impfor.h"
-#include "asterfort/impfok.h"
+#include "asterfort/nonlinDSColumnWriteValue.h"
 #include "asterfort/utmess.h"
 #include "asterfort/PrepareTableLine.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Table), intent(in) :: table
-    character(len=1), intent(in) :: col_sep
-    integer, intent(in) :: unit_print
+type(NL_DS_Table), intent(in) :: table
+character(len=1), intent(in) :: col_sep
+integer, intent(in) :: unit_print
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,23 +50,21 @@ implicit none
     integer :: i_col, nb_cols
     type(NL_DS_Column) :: col
     integer :: vali
-    integer :: pos, posfin, posmar, unibid
+    integer :: pos, posfin, posmar
     character(len=16) :: chvide
     character(len=24) :: valk, name
     real(kind=8) :: valr
     character(len=512) :: table_line
-    integer :: longr, precr, longi
+    integer :: longr, longi
     aster_logical :: l_vale_affe, l_vale_real, l_vale_inte, l_vale_strg
     integer :: col_width, line_width
     character(len=1) :: mark
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    unibid = 0
     chvide = ' '
     pos    = 2
     longr  = 12
-    precr  = 5
     longi  = 6
 !
 ! - Get parameters
@@ -103,10 +98,12 @@ implicit none
             else
                 if (l_vale_inte) then
                     vali = col%vale_inte
-                    call impfoi(unibid, longi, vali, table_line(pos:posfin))
+                    call nonlinDSColumnWriteValue(longi, table_line(pos: posfin),&
+                                                  value_i_ = vali)
                 else if (l_vale_real) then
                     valr = col%vale_real
-                    call impfor(unibid, longr, precr, valr, table_line(pos: posfin))
+                    call nonlinDSColumnWriteValue(longr, table_line(pos: posfin),&
+                                                  value_r_ = valr)
                 else if (l_vale_strg) then
                     valk = col%vale_strg
                     table_line(pos:posfin) = valk(1:col_width)
@@ -127,6 +124,6 @@ implicit none
 !
 ! - Print
 !
-    call impfok(table_line, line_width, unit_print)
+    call nonlinDSColumnWriteValue(line_width,  output_unit_ = unit_print, value_k_ = table_line)
 !
 end subroutine

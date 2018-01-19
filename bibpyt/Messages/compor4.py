@@ -59,6 +59,7 @@ Comportement - Occurrence  %(i1)d"""),
 """),
 
     16: _(u"""
+  Il y a %(i1)d variables internes.
   Pour les comportements externes prototypes (MFRONT ou UMAT), on n'a pas d'informations sur le nom des variables internes.
 """),
 

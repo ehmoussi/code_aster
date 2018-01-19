@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nonlinDSConstitutiveCreate(ds_constitutive)
 !
 use NonLin_Datastructure_type
@@ -26,9 +27,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Constitutive), intent(out) :: ds_constitutive
+type(NL_DS_Constitutive), intent(out) :: ds_constitutive
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,9 +56,9 @@ implicit none
     ds_constitutive%carcri      = '&&OP00XX.CARCRI'
     ds_constitutive%mult_comp   = '&&OP00XX.MULT_COMP'
     ds_constitutive%comp_error  = '&&OP00XX.COMP_ERROR'
-    ds_constitutive%l_deborst   = .false._1
-    ds_constitutive%l_dis_choc  = .false._1
-    ds_constitutive%l_post_incr = .false._1
-    ds_constitutive%l_matr_geom = .false._1
+    ds_constitutive%l_deborst   = ASTER_FALSE
+    ds_constitutive%l_dis_choc  = ASTER_FALSE
+    ds_constitutive%l_post_incr = ASTER_FALSE
+    ds_constitutive%l_matr_geom = ASTER_FALSE
 !
 end subroutine

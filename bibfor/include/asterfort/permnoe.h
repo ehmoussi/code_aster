@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,10 +19,11 @@
 !
 !
 interface
-    subroutine permnoe(maillage, deform, nbmod, nbno)
+    subroutine permnoe(maillage, deform, nbmod, nbno, nbddl)
         character(len=8), intent(in) :: maillage
         integer, intent(in) :: nbmod
         integer, intent(in) :: nbno
-        real(kind=8) :: deform(nbno, nbmod)
+        integer, intent(in) :: nbddl
+        real(kind=8) :: deform(nbno*nbmod*nbddl)
     end subroutine permnoe
 end interface

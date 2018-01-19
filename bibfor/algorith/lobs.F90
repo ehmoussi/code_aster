@@ -15,22 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine lobs(sd_obsv, nume_time, time, l_obsv)
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/impfoi.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/nmcrpo.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=19), intent(in) :: sd_obsv
-    integer, intent(in) :: nume_time
-    real(kind=8), intent(in) :: time
-    aster_logical, intent(out) :: l_obsv
+character(len=19), intent(in) :: sd_obsv
+integer, intent(in) :: nume_time
+real(kind=8), intent(in) :: time
+aster_logical, intent(out) :: l_obsv
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -102,7 +100,7 @@ implicit none
 ! ----- Other times ?
 !
         do i_keyw_fact = 1, nb_keyw_fact
-            call impfoi(0, 2, i_keyw_fact, chaine)
+            write(chaine,'(I2)') i_keyw_fact
             list_inst_obsv = sd_obsv(1:14)//chaine(1:2)//'.LI'
             call nmcrpo(list_inst_obsv, nume_time, time, l_select)
             v_extr_flag(i_keyw_fact) = l_select

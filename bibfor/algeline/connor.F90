@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 
 subroutine connor(melflu, typflu, freq, base, nuor,&
-                  amoc, carac, masg, lnoe, nbm,&
-                  vite, rho, abscur)
+                  amoc, carac, lnoe, nbm, vite, &
+                  rho, abscur, mailla)
 !
 ! aslint: disable=W1306 
     implicit none
@@ -50,19 +50,20 @@ subroutine connor(melflu, typflu, freq, base, nuor,&
 #include "asterc/r8pi.h"
 #include "asterc/r8prem.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/extmod.h"
+#include "asterfort/extmod_sorted.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/mtdscr.h"
+#include "asterfort/permnoe.h"
 #include "asterfort/rsadpa.h"
 #include "asterfort/wkvect.h"
 !
     character(len=19) :: melflu
-    character(len=8) :: typflu, base
+    character(len=8) :: typflu, base, mailla
     integer :: nbm
     integer :: nuor(nbm), lnoe
-    real(kind=8) :: amoc(nbm), masg(nbm), carac(2), freq(nbm)
+    real(kind=8) :: amoc(nbm), carac(2), freq(nbm)
     real(kind=8) :: vite(lnoe), abscur(lnoe), epsi
     real(kind=8) :: rho(2*lnoe)
 !
@@ -201,13 +202,17 @@ subroutine connor(melflu, typflu, freq, base, nuor,&
 !
 !     EXTRACTION DE LA COMPOSANTE SELON LA DIRECTION DE L ECOULEMENT DES
 !     DIFFERENTS MODES (Gevibus method - 1d)
-    call extmod(base, numddl, nuor, nbm, mode,&
-                neq, lnoe, [idep], 1)
+    call extmod_sorted(base, numddl, nuor, nbm, mode,&
+                       neq, lnoe, [idep], 1)
+    call permnoe(mailla, mode, nbm, lnoe, 1)
+
 !
 !     EXTRACTION DES COMPOSANTES DE TRANSLATION DES  DIFFERENTS MODES
 !     (Alternative methode translation 3d)
-    call extmod(base, numddl, nuor, nbm, modetr,&
-                neq, lnoe, ldepl, 3)
+    call extmod_sorted(base, numddl, nuor, nbm, modetr,&
+                       neq, lnoe, ldepl, 3)
+    call permnoe(mailla, modetr, nbm, lnoe, 3)
+!
 !   ============================================================
 
     rhoeq = 0.d0
@@ -443,6 +448,8 @@ subroutine connor(melflu, typflu, freq, base, nuor,&
     end do
 !
 !
+
+
     do i = 1, nbval
         modul=1
 !
@@ -460,8 +467,12 @@ subroutine connor(melflu, typflu, freq, base, nuor,&
             endif
             ki(j) = conn_min + pas*(conn_max-conn_min)/(nbdisc(j)-1)
         end do
+
+
 !
         do im = 1, nbm
+
+
             numera(im)= 0.d0
             denomi    = 0.d0
             do izone = 1, nbzex
@@ -478,7 +489,6 @@ subroutine connor(melflu, typflu, freq, base, nuor,&
             else
                 vcr_3d(im,i) = sqrt(numera(im)/denomi)*coef(im)
             end if
-            
         end do
     end do
 !

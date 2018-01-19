@@ -81,7 +81,7 @@ subroutine vpvers(eigsol, modes, checksd)
                 alpha, rbid, freq1, rbid, rbid, rbid, rbid, rbid, rbid, rbid, rbid,&
                 rbid,&
                 appr, k8bid, method, typevp, matra, matrb, matrc, modrig, optiof, k16bid, k16bid,&
-                typeqz, typres, amor, masse, raide, k19bid,&
+                k16bid, typeqz, typres, amor, masse, raide, k19bid,&
                 lc, lkr, lns, lpg, lqz)
 !
 ! --  REGLES D'EXCLUSION

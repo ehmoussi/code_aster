@@ -121,7 +121,7 @@ subroutine vpcalt(eigsol, vecrer, vecrei, vecrek, vecvp,&
                 precdc, rbid, prorto, prsudg, rbid,&
                 rbid, rbid, rbid, appr, k8bid,&
                 method, k9bid, k14bid, k14bid, k14bid,&
-                k16bid, optiof, k16bid, k16bid, k16bid,&
+                k16bid, optiof, k16bid, k16bid, k16bid, k16bid,&
                 typres, amor, masse, raide, k19bid,&
                 lc, lkr, lns, lpg, lbid)
     ASSERT(method(1:8).eq.'TRI_DIAG')

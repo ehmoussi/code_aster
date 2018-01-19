@@ -87,7 +87,7 @@ subroutine vpini2(eigsol, lcomod, nbvecg, nfreqg, nbpark,&
                 rbid, rbid, rbid, rbid, rbid,&
                 rbid, rbid, rbid, k1bid, k8bid,&
                 k8bid, k9bid, k14bid, k14bid, k14bid,&
-                k16bid, k16bid, k16bid, k16bid, k16bid,&
+                k16bid, k16bid, k16bid, k16bid, k16bid, k16bid,&
                 k16bid, k19bid, k19bid, raide, k19bid,&
                 lc, lkr, lns, lbid, lbid)
     call jeveuo(raide//'.&INT', 'E', lraide)

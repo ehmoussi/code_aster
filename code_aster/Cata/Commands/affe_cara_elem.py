@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -273,7 +273,7 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
             mclf = MASS_REP[i]
             if mclf['VALE'] is not None:
                 vale =  mclf['VALE']
-                check( vale>0.0, defErr, 'MASS_REP', i1, 'VALE')
+                check( vale>=0.0, defErr, 'MASS_REP', i1, 'VALE')
     #
     # Tout est ok
     return cara_elem

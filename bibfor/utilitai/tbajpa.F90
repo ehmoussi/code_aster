@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -85,8 +85,6 @@ subroutine tbajpa(nomta, nbpar, nompar, typpar)
         call jeveuo(nomtab//'.TBLP', 'E', jtblp)
 !
         do 10 i = 1, nbpar
-    if (nompar(i).eq.'COOR_X' ) then
-    endif
             zk24(jtblp+4*(i-1) ) = nompar(i)
             zk24(jtblp+4*(i-1)+1) = typpar(i)
             call codent(i, 'D0', knume)

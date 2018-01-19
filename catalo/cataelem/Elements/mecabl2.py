@@ -150,7 +150,7 @@ class MECABL2(Element):
         OP.CHAR_MECA_SF1D1D(te=161,
             para_in=((SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PFF1D1D, CFORCEF), (SP.PGEOMER, NGEOMER),
-                     (SP.PTEMPSR, CTEMPSR), ),
+                     (SP.PTEMPSR, CTEMPSR), (SP.PVITPLU, DDL_MECA)),
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
 
@@ -179,7 +179,7 @@ class MECABL2(Element):
 
         OP.EFGE_ELNO(te=185,
             para_in=((SP.PCACABL, LC.CCACABL), (OP.EFGE_ELNO.PCAORIE, CCAORIE),
-                     (OP.EFGE_ELNO.PCONTRR, EEFGEGA), (SP.PDEPLAR, DDL_MECA),
+                     (OP.EFGE_ELNO.PCONTRR, EEFGEGA), (SP.PDEPLAR, DDL_MECA),(SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PNONLIN, LC.ENONLIN), (OP.EFGE_ELNO.PVARCPR, LC.ZVARCPG),
                      (SP.PVARCRR, LC.ZVARCPG), ),

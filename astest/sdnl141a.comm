@@ -1,0 +1,180 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
+
+import numpy
+
+ma=LIRE_MAILLAGE();
+
+
+
+mo=AFFE_MODELE(MAILLAGE=ma,
+               AFFE=(_F(GROUP_MA=('POUTRE',),
+                        PHENOMENE='MECANIQUE',
+                        MODELISATION='POU_D_E',),
+                     _F(GROUP_MA=('R1','R2',),
+                        PHENOMENE='MECANIQUE',
+                        MODELISATION='DIS_TR',),),);
+
+bracing=DEFI_MATERIAU(ELAS=_F(E=2.e11,
+                              NU=0.3,
+                              RHO=7800,),);
+
+mater=AFFE_MATERIAU(MAILLAGE=ma,
+                    AFFE=_F(GROUP_MA='POUTRE',
+                            MATER=bracing,),);
+
+
+
+cara=AFFE_CARA_ELEM(MODELE=mo,
+                    POUTRE=_F(GROUP_MA='POUTRE',
+                             SECTION='CERCLE',
+                             CARA=('R','EP',),
+                             VALE=(0.5,0.01,),
+                             ),
+                    DISCRET=(_F(CARA='K_TR_D_L',
+                               GROUP_MA=('R1','R2',),
+                               VALE=(1000.,1000.,50.,1000.,1000.,1000.,),),
+                            _F(CARA='M_TR_D_L',
+                               GROUP_MA=('R1','R2',),
+                               VALE=(0.,0.,0.,0.),),)
+);
+
+# Caracteristiques poutre
+rhoeau=1000.
+Cd1=1.
+D1=1.
+
+encas14=AFFE_CHAR_MECA(MODELE=mo,
+                       DDL_IMPO=_F(NOEUD=('N0001','N0004',),
+                                   DX=0.,
+                                   DY=0.,
+                                   DZ=0.,
+                                   DRX=0.,
+                                   DRY=0.,
+                                   DRZ=0.,),);
+
+plan=AFFE_CHAR_MECA(MODELE=mo,
+                    DDL_IMPO=_F(GROUP_NO='POUTRE',
+                                DY=0.,),);
+
+DZ=AFFE_CHAR_MECA(MODELE=mo,
+                  DDL_IMPO=_F(GROUP_NO='POUTRE',
+                              DZ=1.,),);
+
+liai=AFFE_CHAR_MECA(MODELE=mo,
+                    LIAISON_DDL=_F(NOEUD=('N0002','N0003',),
+                                   DDL=('DZ','DZ',),
+                                   COEF_MULT=(1.0,-1.0,),
+                                   COEF_IMPO=0.,),);
+
+
+INCLUDE(UNITE=77,);
+
+FZP=FORMULE(NOM_PARA=('X','Y','Z','INST','VITE_X','VITE_Y','VITE_Z','DX','DY','DZ'),
+            VALE='FP(rhoeau,Cd1,D1,X,Y,Z,INST,H,T,L,thetai,0.,0.,proinf,depth,lstrech,VITE_X,VITE_Y,VITE_Z,DX,DY,DZ,3,cinelin,projvect,dragquad)',);
+
+
+visqueux=AFFE_CHAR_MECA_F(MODELE=mo,
+                     FORCE_POUTRE=_F(GROUP_MA='POUTRE',
+                                     TYPE_CHARGE='FORCE',
+                                     FZ=FZP,),);
+
+
+poids=AFFE_CHAR_MECA(MODELE=mo,
+                    PESANTEUR=_F(GRAVITE=10.,
+                                 DIRECTION=(0.,0.,-1.0,),),);
+
+temps=DEFI_LIST_REEL(DEBUT=0.,
+                     INTERVALLE=_F(JUSQU_A=100.,
+                                   PAS=0.025,),);
+
+tempsm=DEFI_LIST_REEL(DEBUT=-1.,
+                      INTERVALLE=_F(JUSQU_A=0.,
+                                    PAS=1,),);
+
+stat=STAT_NON_LINE(MODELE=mo,
+                   CHAM_MATER=mater,
+                   CARA_ELEM=cara,
+                   EXCIT=(_F(CHARGE=encas14,),
+                          _F(CHARGE=DZ,),
+                          _F(CHARGE=plan,),
+                          ),
+                   COMPORTEMENT=_F(RELATION='ELAS',
+                                DEFORMATION='PETIT',
+                                TOUT='OUI',),
+                   INCREMENT=_F(LIST_INST=tempsm,),
+                   NEWTON=_F(REAC_ITER=1,),
+                   CONVERGENCE=_F(ITER_GLOB_MAXI=100,),
+                   SOLVEUR=_F(),);
+
+
+
+tfin = 2.
+
+dyna=DYNA_NON_LINE(MODELE=mo,
+                   CHAM_MATER=mater,
+                   CARA_ELEM=cara,
+                   EXCIT=(_F(CHARGE=encas14,),
+                          _F(CHARGE=liai,),
+                          _F(
+                             TYPE_CHARGE='SUIV',
+                             CHARGE=visqueux,),
+                             ),
+                   COMPORTEMENT=_F(RELATION='ELAS',
+                                DEFORMATION='PETIT',
+                                TOUT='OUI',),
+                   ETAT_INIT=_F(EVOL_NOLI=stat,),
+                   INCREMENT=_F(LIST_INST=temps,
+                                INST_FIN=tfin,),
+                   SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',
+                                   FORMULATION='DEPLACEMENT',),);
+
+# Comparaison avec CALHYPSO à T=20.8
+#TEST_RESU(RESU=_F(RESULTAT=dyna,
+#                   INST= 20.8,
+#                   NOM_CHAM='DEPL',
+#                   NOEUD='N0002',
+#                   NOM_CMP='DZ',
+#                   VALE_CALC=0.0792599128559,
+#                   VALE_REFE=0.07775,
+#                   REFERENCE='AUTRE_ASTER',
+#                   PRECISION=0.02,
+#                   ),)
+
+# Test de non-régression
+TEST_RESU(RESU=_F(RESULTAT=dyna,
+                   INST= 1.,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N0002',
+                   NOM_CMP='DZ',
+                   VALE_CALC=0.8233373311,
+                   ),)
+
+# Test de non-régression
+TEST_RESU(RESU=_F(RESULTAT=dyna,
+                   INST= 2.,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N0002',
+                   NOM_CMP='DZ',
+                   VALE_CALC=0.485287507366,
+                   ),)
+
+FIN();

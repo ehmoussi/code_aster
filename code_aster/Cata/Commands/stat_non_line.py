@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -73,7 +73,7 @@ STAT_NON_LINE=OPER(nom="STAT_NON_LINE",op=70,sd_prod=evol_noli,
                                         CORR_COMPLET    = SIMP(statut='f',typ='TXM',defaut='NON',into=('OUI','NON'),),
                                         b_hrcoor_cond   = BLOC(condition="""(equal_to("CORR_COMPLET", 'OUI'))""",
                                                              COEF_PENA         = SIMP(statut='f',typ='R',defaut=1.E6),
-                                                             GROUP_NO_ENCASTRE = SIMP(statut='f',typ=grno,max=1),
+                                                             GROUP_NO_ENCASTRE = SIMP(statut='o',typ=grno,max=1),
                                                                ),
                                      ),
                                   ),),
@@ -107,14 +107,19 @@ STAT_NON_LINE=OPER(nom="STAT_NON_LINE",op=70,sd_prod=evol_noli,
          AFFICHAGE       =C_AFFICHAGE(),
 #-------------------------------------------------------------------
          CRIT_STAB      =FACT(statut='f',min=1,max=1,
-           NB_MODE         =SIMP(statut='f',typ='I',max=1,val_min=1,defaut=3),
+           OPTION       =SIMP(statut='f',typ='TXM',defaut="PLUS_PETITE",into=("PLUS_PETITE","BANDE","CALIBRATION"),),
+           b_bande      =BLOC(condition="""(equal_to("OPTION", 'BANDE'))""",
+              CHAR_CRIT       =SIMP(statut='f',typ='R',min=2,max=2,),
+                              ),
+           b_petite     =BLOC(condition="""(equal_to("OPTION", 'PLUS_PETITE'))""",
+              NMAX_CHAR_CRIT  =SIMP(statut='f',typ='I',max=1,val_min=1,defaut=3),
+                              ),
+           b_calibre    =BLOC(condition="""(equal_to("OPTION", 'CALIBRATION'))""",
+              CHAR_CRIT       =SIMP(statut='f',typ='R',min=2,max=2,),
+                              ),
            COEF_DIM_ESPACE =SIMP(statut='f',typ='I',max=1,val_min=2,defaut=5),
            RIGI_GEOM    =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON")),
            MODI_RIGI    =SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON")),
-           b_char_crit  =BLOC(condition="""(equal_to("RIGI_GEOM", 'OUI'))""",
-              CHAR_CRIT       =SIMP(statut='f',typ='R',min=2,max=2,
-                                 fr=tr("Valeur des deux charges critiques délimitant la bande de recherche en HPP")),
-                              ),
            TYPE         =SIMP(statut='f',typ='TXM',defaut="FLAMBEMENT",into=("FLAMBEMENT","STABILITE")),
            PREC_INSTAB   =SIMP(statut='f',typ='R',defaut=1.E-6,max=1,),
            SIGNE         =SIMP(statut='f',typ='TXM',defaut=("POSITIF_NEGATIF"),into=("NEGATIF","POSITIF","POSITIF_NEGATIF"),max=1,),

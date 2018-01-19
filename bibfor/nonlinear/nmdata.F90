@@ -15,9 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmdata(model    , mesh      , mate      , cara_elem , ds_constitutive,&
-                  list_load, solver    , ds_conv   , sddyna    , sdpost         ,&
+                  list_load, solver    , ds_conv   , sddyna    , ds_posttimestep,&
                   sderro   , ds_energy , sdcriq    , ds_print  , ds_algopara    ,&
                   ds_inout , ds_contact, ds_measure, ds_algorom)
 !
@@ -29,7 +30,7 @@ implicit none
 #include "asterf_types.h"
 #include "asterc/getres.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/ReadEnergy.h"
+
 #include "asterfort/infdbg.h"
 #include "asterfort/getvid.h"
 #include "asterfort/ndcrdy.h"
@@ -37,10 +38,11 @@ implicit none
 #include "asterfort/nmcrer.h"
 #include "asterfort/nmcrga.h"
 #include "asterfort/nmdocn.h"
-#include "asterfort/ReadContact.h"
-#include "asterfort/ReadPrint.h"
-#include "asterfort/ReadInOut.h"
-#include "asterfort/ReadMeasure.h"
+#include "asterfort/nonlinDSContactRead.h"
+#include "asterfort/nonlinDSPrintRead.h"
+#include "asterfort/nonlinDSInOutRead.h"
+#include "asterfort/nonlinDSMeasureRead.h"
+#include "asterfort/nonlinDSEnergyRead.h"
 #include "asterfort/GetIOField.h"
 #include "asterfort/verif_affe.h"
 #include "asterfort/gettco.h"
@@ -51,27 +53,25 @@ implicit none
 #include "asterfort/nmetdo.h"
 #include "asterfort/nmlect.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=*), intent(out) :: model
-    character(len=*), intent(out) :: mesh
-    character(len=*), intent(out) :: mate
-    character(len=*), intent(out) :: cara_elem
-    type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
-    character(len=*), intent(out) :: list_load
-    character(len=*), intent(out) :: solver
-    type(NL_DS_Conv), intent(inout) :: ds_conv
-    character(len=19) :: sddyna
-    character(len=19) :: sdpost
-    character(len=24) :: sderro
-    type(NL_DS_Energy), intent(inout) :: ds_energy
-    character(len=24) :: sdcriq
-    type(NL_DS_Print), intent(inout) :: ds_print
-    type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
-    type(NL_DS_InOut), intent(inout) :: ds_inout
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
+character(len=*), intent(out) :: model
+character(len=*), intent(out) :: mesh
+character(len=*), intent(out) :: mate
+character(len=*), intent(out) :: cara_elem
+type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
+character(len=*), intent(out) :: list_load
+character(len=*), intent(out) :: solver
+type(NL_DS_Conv), intent(inout) :: ds_conv
+character(len=19) :: sddyna
+type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
+character(len=24) :: sderro
+type(NL_DS_Energy), intent(inout) :: ds_energy
+character(len=24) :: sdcriq
+type(NL_DS_Print), intent(inout) :: ds_print
+type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
+type(NL_DS_InOut), intent(inout) :: ds_inout
+type(NL_DS_Contact), intent(inout) :: ds_contact
+type(NL_DS_Measure), intent(inout) :: ds_measure
+type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -90,7 +90,7 @@ implicit none
 ! Out solver           : name of datastructure for solver
 ! IO  ds_conv          : datastructure for convergence management
 ! IN  SDDYNA : SD DYNAMIQUE
-! OUT SDPOST : SD POUR POST-TRAITEMENTS (CRIT_STAB ET MODE_VIBR)
+! IO  ds_posttimestep  : datastructure for post-treatment at each time step
 ! OUT SDERRO : SD ERREUR
 ! IO  ds_energy        : datastructure for energy management
 ! OUT SDCRIQ : SD CRITERE QUALITE
@@ -122,7 +122,7 @@ implicit none
 !
 ! - Read parameters for input/output management
 !
-    call ReadInOut('MECA', result, ds_inout)
+    call nonlinDSInOutRead('MECA', result, ds_inout)
 !
 ! - Initial state (EVOL_NOL or stresses)
 !
@@ -172,19 +172,19 @@ implicit none
 !
 ! - Read parameters for post-treatment management (CRIT_STAB and MODE_VIBR)
 !
-    call nmdopo(sddyna, ds_algopara, sdpost)
+    call nmdopo(sddyna, ds_posttimestep)
 !
 ! - Read parameters for contact management
 !
-    call ReadContact(ds_contact,ds_conv%iter_glob_maxi)
+    call nonlinDSContactRead(ds_contact,ds_conv%iter_glob_maxi)
 !
 ! - Read parameters for energy management
 !
-    call ReadEnergy(ds_energy)
+    call nonlinDSEnergyRead(ds_energy)
 !
 ! - Read parameters for measure and statistic management
 !
-    call ReadMeasure(ds_measure)
+    call nonlinDSMeasureRead(ds_measure)
 !
 ! --- LECTURE DES DONNEES GESTION ALGORITHME
 !
@@ -199,6 +199,6 @@ implicit none
 !
 ! - Read parameters for printing
 !
-    call ReadPrint(ds_print)
+    call nonlinDSPrintRead(ds_print)
 !
 end subroutine

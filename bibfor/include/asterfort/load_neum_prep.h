@@ -15,14 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine load_neum_prep(model    , cara_elem , mate      , load_type     , inst_prev,&
                               inst_curr, inst_theta, nb_in_maxi, nb_in_prep    , lchin    ,&
                               lpain    , varc_curr , disp_prev , disp_cumu_inst, compor   ,&
-                              nharm)
+                              nharm    , strx_prev_, vite_curr_)
         character(len=24), intent(in) :: model
         character(len=24), intent(in) :: cara_elem
         character(len=24), intent(in) :: mate
@@ -39,5 +37,7 @@ interface
         character(len=19), optional, intent(in) :: disp_cumu_inst
         character(len=24), optional, intent(in) :: compor
         integer, optional, intent(in) :: nharm
+        character(len=19), optional, intent(in) :: strx_prev_
+        character(len=19), optional, intent(in) :: vite_curr_
     end subroutine load_neum_prep
 end interface

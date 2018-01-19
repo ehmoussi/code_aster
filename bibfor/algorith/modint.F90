@@ -59,6 +59,7 @@ subroutine modint(ssami, raiint, nddlin, nbmod, shift,&
 !
 !-- VARIABLES EN ENTREES / SORTIE
 #include "jeveux.h"
+#include "asterf_types.h"
 #include "asterc/isnnem.h"
 #include "asterc/getran.h"
 #include "asterc/matfpe.h"
@@ -109,11 +110,11 @@ subroutine modint(ssami, raiint, nddlin, nbmod, shift,&
 !-- VARIABLES DE LA ROUTINE
     real(kind=8) :: pi
     parameter    (pi=3.141592653589793238462643d0)
-
+    aster_logical :: l_hpp
     integer :: lmatmo, i1, j1, k1, m1, lmakry, nsekry,nsekry2,nsekry3, nbborn
     integer :: lmatk, lmatm, lmapro, nbrss, lkpro, lmatrm, lmatrk, lwork
     integer :: limped, lmatma, iret, nbvect, ibid, no, nbsst, lindin, coeff, lvp
-    integer :: ifm,niv,mode_symetrique, maxitr, nbvec2, defo, nddle, nsta
+    integer :: ifm,niv,mode_symetrique, maxitr, nbvec2
     integer(kind=4) :: info
     real(kind=8) :: temp, rbid, norm, lambda, comlin(2), swork(1), max, omecor
     real(kind=8) :: bande(2), freq1, freq2, alpha, tolsor, precsh, fcorig, precdc
@@ -122,7 +123,7 @@ subroutine modint(ssami, raiint, nddlin, nbmod, shift,&
     character(len=1)  :: listyp(2), k1bid
     character(len=4)  :: mod45
     character(len=8)  :: k8bid, method, sdstab, arret
-    character(len=16) :: typres, k16bid, optiof, sturm, modrig, stoper
+    character(len=16) :: typres, k16bid, optiof, sturm, modrig, stoper, typcal
     character(len=19) :: lismat(2), imped, solveu, nume91, nume, prno, eigsol, k19bid
     character(len=19) :: raide2, masse2
     character(len=24) :: valk, k24bid
@@ -280,19 +281,19 @@ subroutine modint(ssami, raiint, nddlin, nbmod, shift,&
     modrig='SANS'
 ! OPTION STOP_ERREUR EN DUR
     stoper='NON'
+! TYPE DE CALCUL: 'CALIBRATION' OU 'TOUT'.
+    typcal='TOUT'
     call vpcres(eigsol, typres, raide2, masse2, k19bid, optiof, method, modrig, arret, k19bid,&
-                stoper, sturm, k1bid, k16bid, nsekry2, nbvect, nbvec2, nbrss, nbborn, ibid,&
-                ibid, ibid, ibid, maxitr, bande, precsh, omecor, precdc, r8bid,&
+                stoper, sturm, typcal, k1bid, k16bid, nsekry2, nbvect, nbvec2, nbrss, nbborn,&
+                ibid, ibid, ibid, ibid, maxitr, bande, precsh, omecor, precdc, r8bid,&
                 r8bid, r8bid, r8bid, r8bid, tolsor, alpha)
 !
 ! --- CALCUL MODAL PROPREMENT DIT
 !
-    defo=0
+    l_hpp = ASTER_TRUE
     mod45='VIBR'
-    nddle=0
     sdstab='&&DUMMY2'
-    nsta=0
-    call nmop45(eigsol, defo, mod45, k24bid, nddle, modes, sdstab, k24bid, nsta)
+    call nmop45(eigsol, l_hpp, mod45, modes, sdstab)
     call vpleci(eigsol, 'I', 1, k24bid, r8bid, nsekry2)
     call detrsd('EIGENSOLVER',eigsol)
 

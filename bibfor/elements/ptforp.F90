@@ -54,8 +54,8 @@ subroutine ptforp(itype, option, nomte, a, a2, xl, ist, nno, nc, pgl, fer, fei)
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: icodre(1)
-    integer :: ifcx, i, j, nnoc, ncc, lx, iorien, idepla, ideplp, lmate, lpesa
-    integer :: lforc, itemps, nbpar, ier, iret, icoer, icoec, iretr, iretc
+    integer :: ifcx, i,  nnoc, ncc, lx, iorien, idepla, ideplp, lmate, lpesa
+    integer :: lforc, itemps, nbpar, ier, iret, icoer, icoec, iretr, iretc, ivite
     integer :: lrota, istrxm, k
 !
 ! --------------------------------------------------------------------------------------------------
@@ -74,12 +74,14 @@ subroutine ptforp(itype, option, nomte, a, a2, xl, ist, nno, nc, pgl, fer, fei)
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=8) :: nompav(1)
-    character(len=8) :: nompar(4)
+    character(len=8) :: nompar(10)
     character(len=16) :: ch16, messk(2)
+    real(kind=8) :: valpar(10)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    data nompar /'X','Y','Z','INST'/
+    data nompar /'X','Y','Z','DX','DY','DZ',&
+     &                  'VITE_X','VITE_Y','VITE_Z','INST'/
     data nompav /'VITE'/
 !
 ! --------------------------------------------------------------------------------------------------
@@ -106,6 +108,7 @@ subroutine ptforp(itype, option, nomte, a, a2, xl, ist, nno, nc, pgl, fer, fei)
         call jevech('PDEPLMR', 'L', idepla)
         call jevech('PDEPLPR', 'L', ideplp)
 !
+        call tecach('NNO', 'PVITPLU', 'L', iret, iad=ivite)
         call tecach('NNO', 'PSTRXMR', 'L', iret, iad=istrxm)
         if (iret .ne. 0) then
             messk(1) = option
@@ -229,19 +232,51 @@ subroutine ptforp(itype, option, nomte, a, a2, xl, ist, nno, nc, pgl, fer, fei)
         if (iret.eq.0) then
             w(4) = zr(itemps)
             w(8) = zr(itemps)
-            nbpar = 4
+            nbpar = 10
         else
-            nbpar = 3
+            nbpar = 9
         endif
         call jevech('PFF1D1D', 'L', lforc)
         normal = zk8(lforc+6).eq.'VENT'
         global = zk8(lforc+6).eq.'GLOBAL'
+!CCP    Deplacements
+        call tecach('NNO', 'PDEPLPR', 'L', iret, iad=ideplp)
+        if (iret .eq. 2) then
+            call jevech('PDEPLAR', 'L', ideplp)
+        endif
+
+!CCP    Vitesses
+        call tecach('NNO', 'PVITPLU', 'L', iret, iad=ivite)
+! Noeud 1
+        valpar(1)  = w(1)
+        valpar(2)  = w(2)
+        valpar(3)  = w(3)
+        valpar(4)  = w2(1)
+        valpar(5)  = w2(2)
+        valpar(6)  = w2(3)
+        valpar(7)  = zr(ivite-1+1)
+        valpar(8)  = zr(ivite-1+2)
+        valpar(9)  = zr(ivite-1+3) 
+        valpar(10) = w(4)  
         do i = 1, 6
-            j = i + 6
-            call fointe('FM', zk8(lforc+i-1), nbpar, nompar, w(1), q(i), ier)
-            call fointe('FM', zk8(lforc+i-1), nbpar, nompar, w(5), q(j), ier)
+            call fointe('FM', zk8(lforc+i-1), nbpar, nompar, valpar,&
+                        q(i), ier)
         enddo
-!
+! Noeud 2
+        valpar(1)  = w(5)
+        valpar(2)  = w(6)
+        valpar(3)  = w(7)
+        valpar(4)  = w2(1)
+        valpar(5)  = w2(2)
+        valpar(6)  = w2(3)
+        valpar(7)  = zr(ivite-1+7)
+        valpar(8)  = zr(ivite-1+8)
+        valpar(9)  = zr(ivite-1+9)
+        valpar(10) = w(8)     
+        do i = 1, 6
+            call fointe('FM', zk8(lforc+i-1), nbpar, nompar, valpar,&
+                        q(i+6), ier)
+        enddo
     else
         ch16 = option
         call utmess('F', 'ELEMENTS2_47', sk=ch16)

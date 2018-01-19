@@ -15,10 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nsta)
 !
-    implicit none
+subroutine nmop45(eigsol, l_hpp, mod45, modes, modes2, ds_posttimestep_, nfreq_calibr_)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -44,29 +47,25 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
 #include "asterfort/vpvers.h"
 #include "asterfort/wkvect.h"
 !
-    integer           , intent(in) :: defo, nddle, nsta
-    character(len=4)  , intent(in) :: mod45
-    character(len=8)  , intent(in) :: modes, modes2
-    character(len=19) , intent(in) :: eigsol
-    character(len=24) , intent(in) :: ddlexc, ddlsta
+aster_logical     , intent(in) :: l_hpp
+character(len=4)  , intent(in) :: mod45
+character(len=8)  , intent(in) :: modes, modes2
+character(len=19) , intent(in) :: eigsol
+type(NL_DS_PostTimeStep), optional, intent(in) :: ds_posttimestep_
+integer, optional, intent(out) :: nfreq_calibr_
 !
 ! ======================================================================
 !        ROUTINE DE CALCUL DE CRITERE DE STABILITE VIA UNE RESOLUTION
 !        DE GEP (PARTAGEE AVEC OP0045).
 !-----------------------------------------------------------------------
 !   IN : EIGSOL : SD EIGENSOLVER CONTENANT LES PARAMETRES DU PB MODAL
-!   IN : DEFO   : TYPE DE DEFORMATIONS
-!                0            PETITES DEFORMATIONS (MATR. GEOM.)
-!                1            GRANDES DEFORMATIONS (PAS DE MATR. GEOM.)                  
+!   IN : L_HPP  : TYPE DE DEFORMATIONS
+!                .TRUE.         PETITES DEFORMATIONS (MATR. GEOM.)
+!                .FALSE.        GRANDES DEFORMATIONS (PAS DE MATR. GEOM.)                  
 !   IN : MOD45  : TYPE DE CALCUL AU SENS NMOP45: VIBR OU FLAM
-!   IN : DDLEXC : OBJET JEVEUX VECTEUR POSITION DES DDLS BLOQUES
-!   IN : NDDLE  : TAILLE DE CE VECTEUR
 !   IN : MODES  : NOM UTILISATEUR DU CONCEPT MODAL PRODUIT
 !   IN : MODES2 : NOM UTILISATEUR D'UN SECOND CONCEPT MODAL PRODUIT (SI
 !                 ANALYSE DE STABILITE (NSTA.NE.0)
-!   IN : DDLSTA : OBJET JEVEUX VECTEUR DES DDLS DE STABILITE A EXCLURE
-!                 DU PB MODAL
-!   IN : NSTA   : TAILLE DE CE VECTEUR
 !-----------------------------------------------------------------------
 !
 !
@@ -74,7 +73,8 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
     parameter (nbpari=8,nbparr=16,nbpark=3)
 !
     integer           :: iret, ibid, npivot, neqact, mxresf, nblagr,nbddl, nbddl2, un, lresur
-    integer           :: nconv, ifm, niv, neq, lraide, eddl, jexx, eddl2, jest, jstab, iauxr
+    integer           :: nconv, ifm, niv, neq, lraide, eddl, eddl2, jstab, iauxr
+    integer           :: nsta, nddle, nfreq_calibr
     real(kind=8)      :: omemin, omemax, omeshi, vpinf, vpmax, r8bid, csta
     complex(kind=8)   :: cbid
     character(len=4)  :: mod45b
@@ -82,8 +82,8 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
     character(len=16) :: typcon, typco2, k16bid
     character(len=19) :: matopa, solveu, raide
     character(len=24) :: k24bid, vecblo, veclag, vecrer, vecrei, vecrek, vecvp, vecstb
-    character(len=24) :: vecedd, vecsdd, vecstab
-    aster_logical     :: lbid, lcomod, checksd
+    character(len=24) :: vecedd, vecsdd
+    aster_logical     :: lcomod, checksd
     mpi_int           :: mpibid
     aster_logical     :: flage
 !
@@ -92,6 +92,12 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
     call infdbg('MECA_NON_LINE', ifm, niv)
     cbid=(0.d0,0.d0)
     nconv=0 
+    nsta  = 0
+    nddle = 0
+    if (present(ds_posttimestep_)) then
+        nddle  = ds_posttimestep_%stab_para%nb_dof_excl
+        nsta   = ds_posttimestep_%stab_para%nb_dof_stab
+    endif
 !
 ! --- CALCUL MODAL NON PARALLELISE (SEUL EVENTUELLEMENT LE SOLVEUR LINEAIRE SOUS-JACENT)
 !
@@ -124,7 +130,13 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
     veclag='&&NMOP45.DDL.BLOQ.CINE'
     matopa='&&NMOP45.DYN_FAC_C '
     call vpini1(eigsol, modes, solveu, typcon, vecblo, veclag, k24bid, matopa, matopa, iret,&
-                nblagr, neqact, npivot, ibid, omemax, omemin, omeshi, cbid, mod45)
+                nblagr, neqact, npivot, ibid, omemax, omemin, omeshi, cbid, mod45, nfreq_calibr)
+
+    if (present(nfreq_calibr_)) then
+        nfreq_calibr_ = nfreq_calibr
+    endif
+
+
     if (iret.ne.0) goto 80
     
 !
@@ -141,7 +153,7 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
     call vpleci(eigsol, 'K', 6, k24bid, r8bid, ibid)
     method=''
     method=trim(k24bid)
-    if (((mod45(1:4).eq.'FLAM').and.(defo.eq.0)).or.(mod45(1:4).ne.'FLAM')) then
+    if (((mod45(1:4).eq.'FLAM').and.l_hpp).or.(mod45(1:4).ne.'FLAM')) then
 ! ========================================================================
 ! --- FLAMBEMENT AVEC MATRICE GEOMETRIQUE OU DYNAMIQUE TOUT CAS DE FIGURE
 ! ======================================================================== 
@@ -187,16 +199,16 @@ subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes, modes2, ddlsta, nst
         vecedd='&&NMOP45.POSI.EDDL'
         call wkvect(vecedd,'V V I', neq, eddl)
         if (nddle.ne.0) then
-            call jeveuo(ddlexc, 'L', jexx)
-            call elmddl(raide, 'DDL_EXCLUS    ', neq, zk8(jexx), nddle, nbddl, zi(eddl))
+            call elmddl(raide, 'DDL_EXCLUS    ', neq, ds_posttimestep_%stab_para%list_dof_excl,&
+                        nddle, nbddl, zi(eddl))
         else
             nbddl = 0
         endif
         vecsdd='&&NMOP45.POSI.SDDL'
         call wkvect(vecsdd, 'V V I', neq, eddl2)
         if (nsta.ne.0) then
-            call jeveuo(ddlsta, 'L', jest)
-            call elmddl(raide, 'DDL_STAB      ', neq, zk8(jest), nsta, nbddl2, zi(eddl2))
+            call elmddl(raide, 'DDL_STAB      ', neq, ds_posttimestep_%stab_para%list_dof_stab,&
+                        nsta, nbddl2, zi(eddl2))
         else
             nbddl2 = 0
         endif

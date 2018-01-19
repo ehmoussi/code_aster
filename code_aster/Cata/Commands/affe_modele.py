@@ -81,6 +81,7 @@ AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
                                   "3D_SI",           # person_in_charge: mickael.abbas at edf.fr
                                   "3D_GRAD_EPSI",    # person_in_charge: sylvie.michel-ponnelle at edf.fr
                                   "3D_GRAD_VARI",    # person_in_charge: sylvie.michel-ponnelle at edf.fr
+                                  "3D_GRAD_INCO",    # person_in_charge: eric.lorentz at edf.fr
                                   "3D_GVNO",         # person_in_charge: jerome.beaurain at edf.fr
                                   "3D_JOINT",        # person_in_charge: kyrylo.kazymyrenko at edf.fr
                                   "3D_JOINT_HYME",   # person_in_charge: kyrylo.kazymyrenko at edf.fr
@@ -96,6 +97,7 @@ AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
                                   "AXIS_INCO_UPO",   # person_in_charge: mickael.abbas at edf.fr
                                   "AXIS_SI",         # person_in_charge: mickael.abbas at edf.fr
                                   "AXIS_GRAD_VARI",  # person_in_charge: sylvie.michel-ponnelle at edf.fr
+                                  "AXIS_GRAD_INCO",  # person_in_charge: eric.lorentz at edf.fr
                                   "AXIS_GVNO",       # person_in_charge: jerome.beaurain at edf.fr
                                   "AXIS_JOINT",      # person_in_charge: kyrylo.kazymyrenko at edf.fr
                                   "AXIS_INTERFACE",  # person_in_charge: kyrylo.kazymyrenko at edf.fr
@@ -114,6 +116,7 @@ AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
                                   "D_PLAN",          # person_in_charge: j-pierre.lefebvre at edf.fr
                                   "D_PLAN_GRAD_EPSI",# person_in_charge: sylvie.michel-ponnelle at edf.fr
                                   "D_PLAN_GRAD_VARI",# person_in_charge: sylvie.michel-ponnelle at edf.fr
+                                  "D_PLAN_GRAD_INCO",# person_in_charge: eric.lorentz at edf.fr
                                   "D_PLAN_GVNO",     # person_in_charge: jerome.beaurain at edf.fr
                                   "D_PLAN_GRAD_SIGM",# person_in_charge: sylvie.granet at edf.fr
                                   "PLAN_JOINT",      # person_in_charge: kyrylo.kazymyrenko at edf.fr

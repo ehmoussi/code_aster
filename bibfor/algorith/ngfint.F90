@@ -38,10 +38,10 @@ subroutine ngfint(option, typmod, ndim, nddl, neps,&
     character(len=16) :: option, compor(*)
 !
     integer :: ndim, nddl, neps, npg, mat, lgpg, codret
-    real(kind=8) :: w(0:npg-1), ni2ldc(0:neps-1), b(neps, npg, nddl)
+    real(kind=8) :: w(neps,npg), ni2ldc(neps,npg), b(neps,npg,nddl)
     real(kind=8) :: angmas(3), crit(*), instam, instap
     real(kind=8) :: ddlm(nddl), ddld(nddl)
-    real(kind=8) :: sigmam(0:neps*npg-1), sigmap(0:neps*npg-1)
+    real(kind=8) :: sigmam(neps,npg), sigmap(neps,npg)
     real(kind=8) :: vim(lgpg, npg), vip(lgpg, npg), matr(nddl, nddl), fint(nddl)
 ! ----------------------------------------------------------------------
 !     RAPH_MECA, RIGI_MECA_* ET FULL_MECA_*
@@ -72,36 +72,24 @@ subroutine ngfint(option, typmod, ndim, nddl, neps,&
 ! OUT MATR    : MATRICE DE RIGIDITE   (RIGI_MECA_* ET FULL_MECA_*)
 ! OUT CODRET  : CODE RETOUR
 ! ----------------------------------------------------------------------
-    integer :: nnomax, npgmax, epsmax, ddlmax
-    parameter (nnomax=27,npgmax=27,epsmax=20,ddlmax=15*nnomax)
-! ----------------------------------------------------------------------
     aster_logical :: resi, rigi
-    integer :: nepg, g, ieg, cod(npgmax)
-    real(kind=8) :: sigm(0:epsmax*npgmax-1), sigp(0:epsmax*npgmax-1)
-    real(kind=8) :: epsm(0:epsmax*npgmax-1), epsd(0:epsmax*npgmax-1)
-    real(kind=8) :: dsidep(0:epsmax*epsmax*npgmax-1), dum(1)
-    real(kind=8) :: ktgb(0:epsmax*npgmax*ddlmax-1)
-! ----------------------------------------------------------------------
-#define os(g) (g-1)*neps
-#define dos(g) (g-1)*neps*neps
+    integer :: nepg, g, i, cod(npg)
+    real(kind=8) :: sigm(neps,npg), sigp(neps,npg)
+    real(kind=8) :: epsm(neps,npg), epsd(neps,npg)
+    real(kind=8) :: dsidep(neps,neps,npg), dum(1)
+    real(kind=8) :: ktgb(0:neps*npg*nddl-1)
 ! ----------------------------------------------------------------------
 !
 ! - INITIALISATION
 !
-    ASSERT(npg.le.npgmax)
-    ASSERT(neps.le.epsmax)
-    ASSERT(nddl.le.ddlmax)
     nepg = neps*npg
 !
     resi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RAPH_MECA'
     rigi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RIGI_MECA'
 !
-    if (rigi) call r8inir(neps*nepg, 0.d0, dsidep, 1)
-    if (resi) call r8inir(nepg, 0.d0, sigp, 1)
-!
-    do 5 g = 1, npg
-        cod(g)=0
-  5 end do
+    if (rigi) dsidep = 0.d0
+    if (resi) sigp = 0.d0
+    cod = 0
 !
 !
 !
@@ -119,27 +107,21 @@ subroutine ngfint(option, typmod, ndim, nddl, neps,&
 ! - CALCUL DE LA LOI DE COMPORTEMENT
 !
 !    FORMAT LDC DES CONTRAINTES (AVEC RAC2)
-    do 10 ieg = 0, nepg-1
-        sigm(ieg) = sigmam(ieg)*ni2ldc(mod(ieg,neps))
- 10 end do
+     sigm = sigmam*ni2ldc
 !
 !    LOI DE COMPORTEMENT EN CHAQUE POINT DE GAUSS
-    do 20 g = 1, npg
+    do g = 1, npg
         call nmcomp(fami, g, 1, ndim, typmod,&
                     mat, compor, crit, instam, instap,&
-                    neps, epsm(os(g)), epsd(os(g)), neps, sigm(os(g)),&
+                    neps, epsm(:,g), epsd(:,g), neps, sigm(:,g),&
                     vim(1, g), option, angmas, 1, dum(1),&
-                    sigp(os(g)), vip(1, g), neps*neps, dsidep( dos(g)), 1,&
+                    sigp(:,g), vip(1, g), neps*neps, dsidep(:,:,g), 1,&
                     dum(1), cod(g))
-        if (cod(g) .eq. 1) goto 9000
- 20 end do
+        if (cod(g) .eq. 1) goto 900
+    end do
 !
 !    FORMAT RESULTAT DES CONTRAINTES (SANS RAC2)
-    if (resi) then
-        do 30 ieg = 0, nepg-1
-            sigmap(ieg) = sigp(ieg)/ni2ldc(mod(ieg,neps))
- 30     continue
-    endif
+    if (resi) sigmap = sigp/ni2ldc 
 !
 !
 !
@@ -148,9 +130,7 @@ subroutine ngfint(option, typmod, ndim, nddl, neps,&
     if (resi) then
 !
 !      PRISE EN CHARGE DU POIDS DU POINT DE GAUSS
-        do 40 ieg = 0, nepg-1
-            sigp(ieg) = sigp(ieg)*w(ieg/neps)
- 40     continue
+        sigp = sigp*w
 !
 !      FINT = SOMME(G) WG.BT.SIGMA
         call dgemv('T', nepg, nddl, 1.d0, b,&
@@ -166,16 +146,16 @@ subroutine ngfint(option, typmod, ndim, nddl, neps,&
     if (rigi) then
 !
 !      PRISE EN CHARGE DU POIDS DU POINT DE GAUSS  WG.DSIDEP
-        do 50 ieg = 0, neps*nepg-1
-            dsidep(ieg) = dsidep(ieg)*w(ieg/(neps*neps))
- 50     continue
+        do i = 1,neps
+            dsidep(:,i,:) = dsidep(:,i,:)*w
+        end do
 !
 !      CALCUL DES PRODUITS INTERMEDIAIRES (WG.DSIDEP).B POUR CHAQUE G
-        do 60 g = 1, npg
+        do g = 1, npg
             call dgemm('N', 'N', neps, nddl, neps,&
-                       1.d0, dsidep(dos(g)), neps, b(1, g, 1), nepg,&
-                       0.d0, ktgb(os(g)), nepg)
- 60     continue
+                       1.d0, dsidep(1,1,g), neps, b(1, g, 1), nepg,&
+                       0.d0, ktgb((g-1)*neps), nepg)
+        end do
 !
 !      CALCUL DU PRODUIT FINAL SOMME(G) BT. ((WG.DSIDEP).B)  TRANSPOSE
         call dgemm('T', 'N', nddl, nddl, nepg,&
@@ -187,7 +167,7 @@ subroutine ngfint(option, typmod, ndim, nddl, neps,&
 !
 !
 ! - SYNTHESE DU CODE RETOUR
-9000 continue
+900 continue
     if (resi) call codere(cod, npg, codret)
 !
 end subroutine

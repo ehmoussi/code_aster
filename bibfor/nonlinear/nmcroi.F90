@@ -15,21 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmcroi(sd_obsv, keyw_fact, nb_keyw_fact)
 !
 implicit none
 !
-#include "asterfort/impfoi.h"
 #include "asterfort/nmcrpx.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/wkvect.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer, intent(in) :: nb_keyw_fact
-    character(len=19), intent(in) :: sd_obsv
-    character(len=16), intent(in) :: keyw_fact
+integer, intent(in) :: nb_keyw_fact
+character(len=19), intent(in) :: sd_obsv
+character(len=16), intent(in) :: keyw_fact
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -59,7 +57,7 @@ implicit none
     base      = 'V'
     keyw_step = 'PAS_OBSE'
     do i_keyw_fact = 1, nb_keyw_fact
-        call impfoi(0, 2, i_keyw_fact, chaine)
+        write(chaine,'(I2)') i_keyw_fact
         list_inst_obsv = sd_obsv(1:14)//chaine(1:2)//'.LI'
         call nmcrpx(keyw_fact, keyw_step, i_keyw_fact, list_inst_obsv, base)
     end do

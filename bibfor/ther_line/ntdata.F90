@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine ntdata(list_load, solver, matcst   , coecst  , result,&
                   model    , mate  , cara_elem, ds_inout, theta )
 !
@@ -28,20 +29,18 @@ implicit none
 #include "asterfort/cresol.h"
 #include "asterfort/ntdoth.h"
 #include "asterfort/ntdomt.h"
-#include "asterfort/ReadInOut.h"
+#include "asterfort/nonlinDSInOutRead.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=19), intent(inout) :: list_load
-    character(len=19), intent(in) :: solver
-    aster_logical, intent(out) :: matcst
-    aster_logical, intent(out) :: coecst
-    character(len=8), intent(out) :: result
-    character(len=24), intent(out) :: model
-    character(len=24), intent(out) :: mate
-    character(len=24), intent(out) :: cara_elem
-    type(NL_DS_InOut), intent(inout) :: ds_inout
-    real(kind=8), intent(out) :: theta
+character(len=19), intent(inout) :: list_load
+character(len=19), intent(in) :: solver
+aster_logical, intent(out) :: matcst
+aster_logical, intent(out) :: coecst
+character(len=8), intent(out) :: result
+character(len=24), intent(out) :: model
+character(len=24), intent(out) :: mate
+character(len=24), intent(out) :: cara_elem
+type(NL_DS_InOut), intent(inout) :: ds_inout
+real(kind=8), intent(out) :: theta
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -88,6 +87,6 @@ implicit none
 !
 ! - Read parameters for input/output management
 !
-    call ReadInOut('THER', result, ds_inout)
+    call nonlinDSInOutRead('THER', result, ds_inout)
 !
 end subroutine

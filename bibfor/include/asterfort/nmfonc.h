@@ -15,15 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine nmfonc(ds_conv  , ds_algopara    , solver   , model     , ds_contact    ,&
-                      list_load, sdnume         , sddyna   , sdcriq    , mate          ,&
-                      ds_inout , ds_constitutive, ds_energy, ds_algorom, list_func_acti)
+    subroutine nmfonc(ds_conv       , ds_algopara    , solver   , model     , ds_contact     ,&
+                      list_load     , sdnume         , sddyna   , sdcriq    , mate           ,&
+                      ds_inout      , ds_constitutive, ds_energy, ds_algorom, ds_posttimestep,&
+                      list_func_acti)
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
         type(NL_DS_Conv), intent(in) :: ds_conv
@@ -40,6 +38,7 @@ interface
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         type(NL_DS_Energy), intent(in) :: ds_energy
         type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+        type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
         integer, intent(inout) :: list_func_acti(*)
     end subroutine nmfonc
 end interface

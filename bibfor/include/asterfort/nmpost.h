@@ -15,17 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 ! aslint: disable=W1504
 !
 interface
     subroutine nmpost(modele , mesh    , numedd, numfix     , carele  ,&
                       ds_constitutive , numins  , mate  , comref     , ds_inout,&
                       ds_contact, ds_algopara, fonact  ,&
-                      ds_print, ds_measure, sddisc , &
-                      sd_obsv, sderro  , sddyna, sdpost     , valinc  ,&
+                      ds_measure, sddisc , &
+                      sd_obsv, sderro  , sddyna, ds_posttimestep     , valinc  ,&
                       solalg , meelem  , measse, veelem     , veasse  ,&
                       ds_energy, sdcriq  , eta   , lischa)
         use NonLin_Datastructure_type
@@ -42,7 +39,6 @@ interface
         type(NL_DS_InOut), intent(in) :: ds_inout
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         integer :: fonact(*)
-        type(NL_DS_Print), intent(in) :: ds_print
         type(NL_DS_Measure), intent(inout) :: ds_measure
         character(len=19) :: sddisc
         character(len=19), intent(in) :: sd_obsv
@@ -50,7 +46,7 @@ interface
         character(len=24) :: sdieto
         character(len=19) :: sddyna
         character(len=19) :: lischa
-        character(len=19) :: sdpost
+        type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
         character(len=19) :: valinc(*)
         character(len=19) :: solalg(*)
         character(len=19) :: meelem(*)

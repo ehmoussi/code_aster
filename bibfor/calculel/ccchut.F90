@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -131,7 +131,7 @@ subroutine ccchut(sdresu_in, sdresu_out, list_ordr, nb_ordr)
 !
         call ccchuc(sdresu_in, sdresu_out, field_type, nume_field_out, type_comp,&
                     crit, norm, nb_form, zk8(jform), list_ordr,&
-                    nb_ordr)
+                    nb_ordr, ioc)
 !
         call jedetr(lform)
     enddo
