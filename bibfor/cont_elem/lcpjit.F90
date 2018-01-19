@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine lcpjit(proj_tole       , elem_dime, &
+subroutine lcpjit(proj_tole       , elem_dime     , &
                   elem_mast_nbnode, elem_mast_coor, elem_mast_code,&
                   elem_slav_nbnode, elem_slav_coor, elem_slav_code,&
                   poin_inte       , inte_weight   , nb_poin_inte)
@@ -24,7 +24,6 @@ subroutine lcpjit(proj_tole       , elem_dime, &
 implicit none
 !
 #include "asterf_types.h"
-#include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/lcodrm.h"
 #include "asterfort/insema.h"
@@ -41,7 +40,7 @@ character(len=8), intent(in) :: elem_mast_code
 integer, intent(in) :: elem_slav_nbnode
 real(kind=8), intent(in) :: elem_slav_coor(elem_dime,elem_slav_nbnode)
 character(len=8), intent(in) :: elem_slav_code
-real(kind=8), intent(out):: poin_inte(elem_dime-1,16)
+real(kind=8), intent(out) :: poin_inte(elem_dime-1,16)
 real(kind=8), intent(out) :: inte_weight
 integer, intent(out) :: nb_poin_inte
 !
@@ -67,24 +66,29 @@ integer, intent(out) :: nb_poin_inte
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    real(kind=8) :: proj_coop(elem_dime-1,4), node_line_coop(elem_dime-1,4)
-    real(kind=8) :: ksi1,ksi2, tau1(3), tau2(3), noma_coor(3), xpt, ypt
-    real(kind=8) :: xp1, yp1, xp2, yp2, elsl_coor(3,9)
-    integer :: i_inte_poin, i_node, i_dime
-    integer :: niverr, test, list_node_next(16), nb_node_line
-    aster_logical :: l_reli
+    aster_logical :: debug, l_reli
+    real(kind=8) :: node_line_coop(elem_dime-1,4)
+    real(kind=8) :: proj_coop(elem_dime-1,4)
+    real(kind=8) :: ksi1, ksi2, tau1(3), tau2(3)
+    real(kind=8) :: noma_coor(3), xpt, ypt
+    real(kind=8) :: xp1, yp1, xp2, yp2
+    integer :: niverr, test, list_next(16), nb_node_line
+    integer :: i_node, i_inte_poin, i_dime
     character(len=8) :: elem_line_code
+    real(kind=8) :: elsl_coor(3,9)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     nb_poin_inte       = 0
     inte_weight        = 0.d0
-    test               = 0
-    niverr             = 0
-    elsl_coor(1:3,1:9) = 0.d0
-    node_line_coop(1:elem_dime-1,1:4) = 0.d0
     poin_inte(:,:)     = 0.d0
-    l_reli = .false.
+    debug              = ASTER_FALSE
+    l_reli             = ASTER_FALSE
+    node_line_coop(elem_dime-1,4) = 0.d0
+    elsl_coor(1:3,1:9) = 0.d0
+    if (debug) then
+        write(*,*) ". Projection/intersection"
+    endif
 !
 ! - Get coordinates of slave element
 !
@@ -96,6 +100,9 @@ integer, intent(out) :: nb_poin_inte
 !
 ! - Project master nodes in slave element parametric space
 !
+    if (debug) then
+        write(*,*) ".. Project master nodes in slave element parametric space"
+    endif 
     do i_node = 1, elem_mast_nbnode
 ! ----- Get coordinates of master nodes
         noma_coor(1:3) = 0.d0
@@ -149,15 +156,16 @@ integer, intent(out) :: nb_poin_inte
 ! - Add slave nodes if they are inside master element
 !
     do i_node = 1, nb_node_line
+! ----- Current coordinates of slave node
         xpt = node_line_coop(1,i_node)
+        ypt = 0.d0
         if (elem_dime .eq. 3) then
             ypt = node_line_coop(2,i_node)
-        elseif (elem_dime .eq. 2) then
-            ypt = 0.d0
         endif
+! ----- Test if point is inside element
         call ptinma(elem_mast_nbnode, elem_dime, elem_mast_code, proj_coop, proj_tole,&
                     xpt             , ypt      , test)
-        if (test .eq. 1) then        
+        if (test .eq. 1) then    
             nb_poin_inte              = nb_poin_inte+1
             poin_inte(1,nb_poin_inte) = xpt
             if (elem_dime .eq. 3) then
@@ -169,9 +177,9 @@ integer, intent(out) :: nb_poin_inte
 ! - Set index of next nodes
 !
     do i_node = 2, elem_mast_nbnode
-        list_node_next(i_node-1) = i_node
+        list_next(i_node-1) = i_node
     end do
-    list_node_next(elem_mast_nbnode) = 1
+    list_next(elem_mast_nbnode) = 1
 !
 ! - Intersection of edges
 !
@@ -182,13 +190,13 @@ integer, intent(out) :: nb_poin_inte
 !
             xp1 = proj_coop(1,i_node)
             yp1 = proj_coop(2,i_node)
-            xp2 = proj_coop(1,list_node_next(i_node))
-            yp2 = proj_coop(2,list_node_next(i_node))
+            xp2 = proj_coop(1,list_next(i_node))
+            yp2 = proj_coop(2,list_next(i_node))
 !
 ! --------- Compute intersection between edge of master and slave element
 !
             call insema(nb_node_line, elem_dime, node_line_coop, proj_tole,&
-                        xp1         , yp1      , xp2      , yp2      ,&
+                        xp1         , yp1      , xp2           , yp2      ,&
                         nb_poin_inte, poin_inte)
         end do
         ASSERT(nb_poin_inte .le. 16)
@@ -207,14 +215,14 @@ integer, intent(out) :: nb_poin_inte
         (nb_poin_inte .ge. 2 .and. elem_dime .eq. 2)) then
         if (elem_dime .eq. 3) then
             do i_inte_poin = 2, nb_poin_inte
-                list_node_next(i_inte_poin-1) = i_inte_poin
+                list_next(i_inte_poin-1) = i_inte_poin
             end do
-            list_node_next(nb_poin_inte)=1
+            list_next(nb_poin_inte)=1
             do i_inte_poin = 1,nb_poin_inte
-                inte_weight = inte_weight+&
+                inte_weight = inte_weight + &
                         poin_inte(1,i_inte_poin)*&
-                        poin_inte(2,list_node_next(i_inte_poin))-&
-                        poin_inte(1,list_node_next(i_inte_poin))*&
+                        poin_inte(2,list_next(i_inte_poin))-&
+                        poin_inte(1,list_next(i_inte_poin))*&
                         poin_inte(2,i_inte_poin)
             end do
             inte_weight = 1.d0/2.d0*inte_weight

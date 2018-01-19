@@ -448,8 +448,8 @@ character(len=24), intent(in) :: pair_method
 ! ----------------- Projection/intersection of elements in slave parametric space
 !
                     call prjint(pair_tole     , elem_slav_dime,&
-                                elin_slav_coor, elin_slav_nbnode(i_elin_slav), elin_slav_code,&
-                                elin_mast_coor, elin_mast_nbnode(i_elin_mast), elin_mast_code,&
+                                elin_mast_nbnode(i_elin_mast), elin_mast_coor, elin_mast_code,&
+                                elin_slav_nbnode(i_elin_slav), elin_slav_coor, elin_slav_code,&
                                 poin_inte     , inte_weight                  , nb_poin_inte  ,&
                                 inte_neigh_ = inte_neigh_aux)
                     if (debug) then
