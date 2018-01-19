@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmextr_ligr(meshz, modelz, sdextrz, nb_keyw_fact, nb_field_comp)
 !
 implicit none
@@ -25,16 +26,13 @@ implicit none
 #include "asterfort/as_deallocate.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/exlim1.h"
-#include "asterfort/impfoi.h"
 #include "asterfort/jeveuo.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=*), intent(in) :: modelz
-    character(len=*), intent(in) :: meshz
-    character(len=*), intent(in) :: sdextrz
-    integer, intent(in) :: nb_keyw_fact
-    integer, intent(in) :: nb_field_comp
+character(len=*), intent(in) :: modelz
+character(len=*), intent(in) :: meshz
+character(len=*), intent(in) :: sdextrz
+integer, intent(in) :: nb_keyw_fact
+integer, intent(in) :: nb_field_comp
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -103,7 +101,7 @@ implicit none
         do i_keyw_fact = 1, nb_keyw_fact
             field = v_extr_field(4*(i_keyw_fact-1)+4)
             if (field .eq. field_comp) then
-                call impfoi(0, 2, i_keyw_fact, chaine)
+                write(chaine,'(I2)') i_keyw_fact
                 list_elem = sdextr(1:14)//chaine(1:2)//'   .MAIL'
                 call jeveuo(list_elem, 'L', vi = v_list_elem)
                 nb_elem   = v_extr_info(7+7*(i_keyw_fact-1)+3)

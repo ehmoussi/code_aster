@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -677,6 +677,17 @@ ferUtil = CALC_CHAMP(
     ),
     RESULTAT=Solution
 )
+
+# on verifie qu'il n'y a pas des valeurs à NaN a cause d'un mauvais traitement des ligrels
+ferUtil2 = CALC_CHAMP(
+    GROUP_MA='CALCFER',
+    CHAM_UTIL=_F(
+        FORMULE=(MAX_FERR, ), NOM_CHAM='FERRAILLAGE', NUME_CHAM_RESU=1
+    ),
+    RESULTAT=Solution
+)
+IMPR_RESU(FORMAT='RESULTAT',RESU=_F(RESULTAT=ferUtil2))
+
 
 # Same field using CREA_CHAMP/EXTR + AFFE + EVAL
 

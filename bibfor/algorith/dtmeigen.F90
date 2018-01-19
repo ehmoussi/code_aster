@@ -25,6 +25,7 @@ subroutine dtmeigen(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
 !            implicit treatment of non linearities
 !
 #include "jeveux.h"
+#include "asterf_types.h"
 #include "asterc/isnnem.h"
 #include "asterc/r8vide.h"
 #include "asterfort/crsmos.h"
@@ -72,8 +73,9 @@ subroutine dtmeigen(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
     integer, pointer              :: buffint(:)
 !
 !   -0.2- Local variables
+    aster_logical         :: l_hpp
     integer               :: nbmode, i, j, count, jrefa, nbnoli, nbvect, nbvec2, nbrss, maxitr
-    integer               :: jdesc, lmatm, lmatk, lmatc, jbase, defo, nddle, nsta, nbborn
+    integer               :: jdesc, lmatm, lmatk, lmatc, jbase, nbborn
     integer               :: ibid, nlcase, iret, fsichoc, info, ifm
     real(kind=8)          :: time, bande(2), r8bid, alpha, tolsor, precsh, omecor, precdc, fcorig
     character(len=1)      :: k1bid
@@ -81,7 +83,7 @@ subroutine dtmeigen(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
     character(len=7)      :: casek7, case0k7
     character(len=8)      :: sd_dtm, sd_int, modmec, typrof, modes, method, sdstab, arret
     character(len=14)     :: nugene, nopara(9)
-    character(len=16)     :: optiof, typres, k16bid, sturm, modrig, stoper
+    character(len=16)     :: optiof, typres, k16bid, sturm, modrig, stoper, typcal
     character(len=19)     :: matmass, matrigi, matamor, raide2, masse2, eigsol, k19bid
     character(len=24)     :: stomor, solver, base_jv, kvali, kvalr, kvalk, add_jv, k24bid
 !
@@ -325,18 +327,18 @@ subroutine dtmeigen(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
         modrig='SANS'
 ! OPTION STOP_ERREUR EN DUR
         stoper='NON'
+! TYPE DE CALCUL: 'CALIBRATION' OU 'TOUT'.
+        typcal='TOUT'
         call vpcres(eigsol,typres,raide2,masse2,k19bid,optiof,method,modrig,arret,k19bid,&
-                    stoper,sturm,k1bid,k16bid,nbmode,nbvect,nbvec2,nbrss,nbborn,ibid,&
-                    ibid, ibid, ibid, maxitr, bande, precsh, omecor, precdc,r8bid,&
+                    stoper,sturm,typcal, k1bid,k16bid,nbmode,nbvect,nbvec2,nbrss,nbborn,&
+                    ibid, ibid, ibid, ibid, maxitr, bande, precsh, omecor, precdc,r8bid,&
                     r8bid, r8bid, r8bid, r8bid, tolsor, alpha)
         
 !       2.1 - Mode calculation
-        defo=0
+        l_hpp = ASTER_TRUE
         mod45='VIBR'
-        nddle=0
         sdstab='&&DUMMY'
-        nsta=0
-        call nmop45(eigsol, defo, mod45, k24bid, nddle, modes, sdstab, k24bid, nsta)
+        call nmop45(eigsol, l_hpp, mod45, modes, sdstab)
         call vpleci(eigsol, 'I', 1, k24bid, r8bid, nbmode)
         call detrsd('EIGENSOLVER',eigsol)
 

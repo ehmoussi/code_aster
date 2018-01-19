@@ -17,9 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine lceigv(fami, kpg, ksp, neps, imate,&
-                      epsm, deps, vim, option,&
+    subroutine lceigv(fami, kpg, ksp, ndim ,neps, &
+                      imate, epsm, deps, vim, option,&
                       sig, vip, dsidep)
+        integer :: ndim
         integer :: neps
         character(len=*) :: fami
         integer :: kpg

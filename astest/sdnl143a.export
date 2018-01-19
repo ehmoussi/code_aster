@@ -1,0 +1,10 @@
+P time_limit 280
+P memory_limit 512
+P ncpus 1
+P mpi_nbcpu 1
+P mpi_nbnoeud 1
+P testlist verification sequential
+
+F comm sdnl143a.comm D 1
+F datg sdnl143a.datg D 77
+F mmed sdnl143a.mmed D 20

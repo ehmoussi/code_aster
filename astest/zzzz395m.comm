@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -64,7 +64,7 @@ mesh=DEFI_DOMAINE_REDUIT(reuse=mesh,INFO=2,
             BASE_DUAL=base_d,
             NOM_DOMAINE='RID',
             NB_COUCHE_SUPPL = 4,
-            NOM_INTERFACE='INF',);
+            GROUP_NO_INTERF='INF',);
 
 IMPR_RESU(FORMAT='MED', UNITE = 80, RESU=_F(MAILLAGE = mesh))
 
@@ -143,10 +143,10 @@ mesh2=DEFI_DOMAINE_REDUIT(reuse=mesh2,INFO=2,
             BASE_DUAL=base_d2,
             NOM_DOMAINE='RID',
             CORR_COMPLET = 'OUI',
-            NOM_ENCASTRE = 'SUB',
+            GROUP_NO_ENCASTRE = 'SUB',
             NB_COUCHE_ENCASTRE = 1,
             NB_COUCHE_SUPPL    = 1,
-            NOM_INTERFACE='INF',);
+            GROUP_NO_INTERF='INF',);
 
 TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh2,
                         CARA        = 'NB_GROUP_MA',
@@ -226,7 +226,7 @@ mesh3=DEFI_DOMAINE_REDUIT(reuse=mesh3,INFO=2,
             BASE_PRIMAL=base_p3,
             BASE_DUAL=base_d3,
             NOM_DOMAINE='RID',
-            NOM_INTERFACE='INF',
+            GROUP_NO_INTERF='INF',
             DOMAINE_MINI=_F(GROUP_MA='S_inf'),
             );
 

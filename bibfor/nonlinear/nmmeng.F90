@@ -15,8 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmmeng(list_func_acti, ds_algorom)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmmeng(list_func_acti,&
+                  ds_algorom, ds_print, ds_measure,&
+                  ds_energy , ds_inout, ds_posttimestep)
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
@@ -27,11 +30,19 @@ implicit none
 #include "asterfort/detmat.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/romAlgoNLClean.h"
+#include "asterfort/nonlinDSPrintClean.h"
+#include "asterfort/nonlinDSMeasureClean.h"
+#include "asterfort/nonlinDSEnergyClean.h"
+#include "asterfort/nonlinDSPostTimeStepClean.h"
+#include "asterfort/nonlinDSInOutClean.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer, intent(in) :: list_func_acti(*)
-    type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
+integer, intent(in) :: list_func_acti(*)
+type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
+type(NL_DS_Print), intent(inout) :: ds_print
+type(NL_DS_Energy), intent(inout) :: ds_energy
+type(NL_DS_Measure), intent(inout) :: ds_measure
+type(NL_DS_InOut), intent(inout) :: ds_inout
+type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -43,6 +54,11 @@ implicit none
 !
 ! In  list_func_acti   : list of active functionnalities
 ! IO  ds_algorom       : datastructure for ROM parameters
+! IO  ds_print         : datastructure for printing parameters
+! IO  ds_energy        : datastructure for energy management
+! IO  ds_measure       : datastructure for measure and statistics management
+! IO  ds_inout         : datastructure for input/output management
+! IO  ds_posttimestep  : datastructure for post-treatment at each time step
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -54,6 +70,14 @@ implicit none
     if (l_rom) then
         call romAlgoNLClean(ds_algorom)
     endif
+!
+! - De-allocate
+!
+    call nonlinDSPrintClean(ds_print)
+    call nonlinDSMeasureClean(ds_measure)
+    call nonlinDSEnergyClean(ds_energy)
+    call nonlinDSInOutClean(ds_inout)
+    call nonlinDSPostTimeStepClean(ds_posttimestep)
 !
 ! - DESTRUCTION DE TOUTES LES MATRICES CREEES
 !

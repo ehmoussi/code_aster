@@ -23,104 +23,182 @@ subroutine te0508(option, nomte)
 #include "asterf_types.h"
 #include "jeveux.h"
 !
+#include "asterfort/assert.h"
 #include "asterfort/elrefv.h"
 #include "asterfort/jevech.h"
+#include "asterfort/lteatt.h"
 #include "asterfort/ngforc.h"
-#include "asterfort/ngfore.h"
 #include "asterfort/nmgvmb.h"
+#include "asterfort/lggvfc.h"
+#include "asterfort/lgicfc.h"
 #include "asterfort/teattr.h"
+#include "asterfort/tecach.h"
 #include "asterfort/terefe.h"
+
     character(len=16) :: option, nomte
 ! ......................................................................
 !    - FONCTION REALISEE:  OPTIONS FORC_NODA ET REFE_FORC_NODA
-!                          POUR LA MODELISATION GRAD_VARI
+!                          POUR MODELISATIONS GRAD_VARI et GRAD_INCO
 !    - ARGUMENTS:
 !        DONNEES:      OPTION       -->  OPTION DE CALCUL
 !                      NOMTE        -->  NOM DU TYPE ELEMENT
 ! ......................................................................
-    integer :: nnomax, npgmax, epsmax, ddlmax
-    parameter (nnomax=27,npgmax=27,epsmax=20,ddlmax=15*nnomax)
-! ......................................................................
-    character(len=8) :: typmod(2)
-    aster_logical :: axi
-    integer :: nno, nnob, npg, ndim, nddl, neps
+    character(len=8) :: typmod
+    aster_logical :: axi,grand,inco,refe
+    integer :: nno, nnob, npg, ndim, nddl, neps,itab(2)
     integer :: iret, nnos, jgano, ipoids, ivf, idfde, ivfb, idfdeb, jganob
-    integer :: igeom, icontm, ivectu
-    real(kind=8) :: sigref, varref, lagref, sref(11)
-    real(kind=8) :: b(epsmax, npgmax, ddlmax), w(npgmax), ni2ldc(epsmax)
-    character(len=16) :: nomelt
-    common /ffauto/ nomelt
-!
-!
-!
-! - INITIALISATION
-!
-    nomelt = nomte
-    call teattr('S', 'TYPMOD', typmod(1), iret)
-    typmod(2) = 'GRADVARI'
-    axi = typmod(1).eq.'AXIS'
-!
+    integer :: igeom, icont, ivectu, idepl, icompo
+    real(kind=8) :: sigref, varref, lagref,epsref
+    real(kind=8),allocatable:: b(:,:,:), w(:,:),ni2ldc(:,:)
+    real(kind=8),allocatable:: sref(:)
+    real(kind=8),allocatable:: ddl(:)
+    
+! ----------------------------------------------------------------------
+
+! Option calculee et nature de l'element fini
+    call teattr('S', 'TYPMOD', typmod, iret)
+    inco  = lteatt('INCO','C5GV')
+    axi   = typmod.eq.'AXIS'
+    refe  = option.eq.'REFE_FORC_NODA'
+
+
+! - Caracteristiques de l'element
     call elrefv(nomte, 'RIGI', ndim, nno, nnob,&
                 nnos, npg, ipoids, ivf, ivfb,&
                 idfde, idfdeb, jgano, jganob)
-!
-!
-!
-! - CALCUL DES ELEMENTS CINEMATIQUES
-!
+    neps = merge(3*ndim+4,3*ndim+2,inco)
+
+
+! Parametres de l'option et nbr de ddl
     call jevech('PGEOMER', 'L', igeom)
-    call nmgvmb(ndim, nno, nnob, npg, axi,&
-                zr(igeom), zr(ivf), zr(ivfb), idfde, idfdeb,&
-                ipoids, nddl, neps, b, w,&
-                ni2ldc)
-!
-! - OPTION FORC_NODA
-!
-    if (option .eq. 'FORC_NODA') then
-        call jevech('PCONTMR', 'L', icontm)
-        call jevech('PVECTUR', 'E', ivectu)
-        call ngforc(nddl, neps, npg, w, b,&
-                    ni2ldc, zr(icontm), zr(ivectu))
-    endif
-!
-!
-!
-! - OPTION REFE_FORC_NODA
-!
-    if (option .eq. 'REFE_FORC_NODA') then
-        call jevech('PVECTUR', 'E', ivectu)
-!
-!      LECTURE DES COMPOSANTES DE REFERENCE
-        call terefe('SIGM_REFE', 'MECA_GRADVARI', sigref)
-        call terefe('VARI_REFE', 'MECA_GRADVARI', varref)
-        call terefe('LAGR_REFE', 'MECA_GRADVARI', lagref)
-!
-!      AFFECTATION DES CONTRAINTES GENERALISEES DE REFERENCE
-        if (ndim .eq. 2) then
-            sref(1) = sigref
-            sref(2) = sigref
-            sref(3) = sigref
-            sref(4) = sigref
-            sref(5) = lagref
-            sref(6) = varref
-            sref(7) = 0
-            sref(8) = 0
-        else if (ndim.eq.3) then
-            sref(1) = sigref
-            sref(2) = sigref
-            sref(3) = sigref
-            sref(4) = sigref
-            sref(5) = sigref
-            sref(6) = sigref
-            sref(7) = lagref
-            sref(8) = varref
-            sref(9) = 0
-            sref(10) = 0
-            sref(11) = 0
+    call jevech('PCOMPOR', 'L', icompo)
+    call tecach('OOO', 'PVECTUR', 'E', iret, nval=2, itab=itab)
+    ivectu = itab(1)
+    nddl = itab(2)
+    if (.not.refe) then
+        call jevech('PCONTMR', 'L', icont)
+        call jevech('PDEPLMR', 'L', idepl) 
+    else
+        allocate(sref(neps))
+        ! En attendant de lire le deplacement dans l'option REFE_FORC_NODA
+        allocate(ddl(nddl))
+        ddl = 0
+    end if
+
+    grand = zk16(icompo+2)(1:8).eq.'GDEF_LOG'
+
+
+
+! -------------------------!
+!   GRAD_INCO + GDEF_LOG   !
+! -------------------------!
+
+    if (inco .and. grand) then  
+         
+        if (refe) then 
+            call terefe('SIGM_REFE', 'MECA_GRADVARI', sigref)
+            call terefe('VARI_REFE', 'MECA_GRADVARI', varref)
+            call terefe('LAGR_REFE', 'MECA_GRADVARI', lagref)
+            call terefe('EPSI_REFE', 'MECA_INCO',     epsref)
+
+            if (ndim .eq. 2) then
+                sref(1:neps) = [sigref,sigref,sigref,sigref,epsref, &
+                              sigref,lagref,varref, 0.d0, 0.d0]
+            else if (ndim.eq.3) then
+                sref(1:neps) = [sigref,sigref,sigref,sigref,sigref, &
+                              sigref,epsref,sigref,lagref,varref, &
+                              0.d0, 0.d0, 0.d0]
+            endif
+
+            call lgicfc(refe,ndim, nno, nnob, npg, nddl, axi, &
+                        zr(igeom),ddl, zr(ivf),zr(ivfb), idfde, idfdeb,&
+                        ipoids,transpose(spread(sref,1,npg)),&
+                        zr(ivectu))
+
+        else
+            call lgicfc(refe,ndim, nno, nnob, npg, nddl, axi, &
+                        zr(igeom),zr(idepl), zr(ivf),zr(ivfb), idfde, idfdeb,&
+                        ipoids,zr(icont),zr(ivectu))
+        
         endif
-!
-        call ngfore(nddl, neps, npg, w, b,&
-                    ni2ldc, sref, zr(ivectu))
-    endif
-!
+
+
+
+! -------------------------!
+!   GRAD_VARI + GDEF_LOG   !
+! -------------------------!
+
+    else if (.not.inco .and. grand) then  
+         
+        if (refe) then
+            call terefe('SIGM_REFE', 'MECA_GRADVARI', sigref)
+            call terefe('VARI_REFE', 'MECA_GRADVARI', varref)
+            call terefe('LAGR_REFE', 'MECA_GRADVARI', lagref)
+
+            if (ndim .eq. 2) then
+                sref(1:neps) = [sigref,sigref,sigref,sigref,lagref, &
+                            varref,0.d0,0.d0]
+            else if (ndim.eq.3) then
+                sref(1:neps) = [sigref,sigref,sigref,sigref,sigref, &
+                            sigref,lagref,varref,0.d0,0.d0,0.d0]
+            endif
+
+            call lggvfc(refe,ndim, nno, nnob, npg, nddl, axi, &
+                        zr(igeom),ddl, zr(ivf),zr(ivfb), idfde, idfdeb,&
+                        ipoids,transpose(spread(sref,1,npg)),&
+                        zr(ivectu))
+
+        else
+            call lggvfc(refe,ndim, nno, nnob, npg, nddl, axi, &
+                        zr(igeom),zr(idepl), zr(ivf),zr(ivfb), idfde, idfdeb,&
+                        ipoids,zr(icont),zr(ivectu))
+       
+        endif
+    
+
+
+! -------------------------!
+!   GRAD_VARI + PETIT      !
+! -------------------------!
+
+    else if (.not.inco .and. .not.grand) then  
+        call nmgvmb(ndim, nno, nnob, npg, axi,&
+                    zr(igeom), zr(ivf), zr(ivfb), idfde, idfdeb,&
+                    ipoids, nddl, neps, b, w,ni2ldc)
+
+        if (refe) then
+            call terefe('SIGM_REFE', 'MECA_GRADVARI', sigref)
+            call terefe('VARI_REFE', 'MECA_GRADVARI', varref)
+            call terefe('LAGR_REFE', 'MECA_GRADVARI', lagref)
+            
+            if (ndim .eq. 2) then
+                sref(1:neps) = [sigref,sigref,sigref,sigref,lagref, &
+                            varref,0.d0,0.d0]
+            else if (ndim.eq.3) then
+                sref(1:neps) = [sigref,sigref,sigref,sigref,sigref, &
+                            sigref,lagref,varref,0.d0,0.d0,0.d0]
+            endif
+
+            call ngforc(w,abs(b),ni2ldc,transpose(spread(sref(1:neps),1,npg)),zr(ivectu))
+
+        else
+            call ngforc(w, b, ni2ldc, zr(icont), zr(ivectu))
+
+        end if
+
+        deallocate(b,w,ni2ldc)
+
+
+    else
+        ! Combinaison inconnue
+        ASSERT(ASTER_FALSE)
+    end if
+
+
+
+    if (refe) then
+        deallocate(ddl)
+        deallocate(sref)
+    end if
+
 end subroutine

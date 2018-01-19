@@ -1,0 +1,296 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+#
+
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
+      DEBUG=_F(SDVERI='OUI',),
+      PAR_LOT = 'NON',
+      INFO=1,);
+
+lisi=DEFI_LIST_REEL(DEBUT=0,
+                    INTERVALLE=_F(JUSQU_A=1,
+                                  PAS=1,),);
+LINST=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=lisi,),
+                         ECHEC=_F(EVENEMENT='ERREUR',
+                         ACTION='DECOUPE',),);                  
+RAMPE=DEFI_FONCTION(NOM_PARA='INST',VALE=(0,0,1,1),); 
+
+Mail=LIRE_MAILLAGE(UNITE=20,
+                   FORMAT='MED',);
+                   
+Mail=MODI_MAILLAGE(reuse=Mail,
+                   MAILLAGE=Mail,
+                   ORIE_PEAU_3D=_F(GROUP_MA=('Group_2','Group_1','Group_3','Group_4',),),);                       
+
+Mail2=CREA_MAILLAGE(MAILLAGE=Mail,
+                    DECOUPE_LAC=_F(GROUP_MA_ESCL='Group_1',),)
+                    
+mat1=DEFI_MATERIAU(ELAS=_F(E=2000,
+                           NU=0.3,),);
+
+MODI=AFFE_MODELE(MAILLAGE=Mail2,
+                    AFFE=_F(TOUT='OUI',
+                         PHENOMENE='MECANIQUE',
+                         MODELISATION='3D',),);
+
+AFFE=AFFE_MATERIAU(MAILLAGE=Mail2,
+                   MODELE=MODI,
+                   AFFE=_F(TOUT='OUI',
+                           MATER=mat1,),);
+
+DEFICO=DEFI_CONTACT(MODELE=MODI,
+                    INFO=1,
+                    FORMULATION='CONTINUE',
+                    ALGO_RESO_GEOM='NEWTON',
+                    ALGO_RESO_CONT='NEWTON',
+                    ZONE=_F(APPARIEMENT='MORTAR',
+                            GROUP_MA_MAIT='Group_2',
+                            GROUP_MA_ESCL='Group_1',
+                            ALGO_CONT='LAC',
+                            TYPE_APPA="ROBUSTE",),);
+
+CHAR1=AFFE_CHAR_CINE(MODELE=MODI,
+                     MECA_IMPO=(_F(GROUP_MA='Symx',
+                                   DX=0,),
+                                _F(GROUP_MA='Symy',
+                                   DY=0,),
+                                _F(GROUP_MA='Group_3',
+                                   DZ=0,),),);
+CHAR2= AFFE_CHAR_MECA(MODELE=MODI,
+                             PRES_REP=_F(GROUP_MA='Group_4',
+                             PRES=25,), );
+
+ 
+
+RES=STAT_NON_LINE(INFO=2,
+                  AFFICHAGE=_F(INFO_RESIDU='OUI',),
+                  MODELE=MODI,
+                  CHAM_MATER=AFFE,
+                  EXCIT=(_F(CHARGE=CHAR1,
+                              FONC_MULT=RAMPE),
+                         _F(CHARGE=CHAR2,
+                              FONC_MULT=RAMPE,
+                            #TYPE_CHARGE='SUIV',
+                            ), ),  
+                  CONTACT=DEFICO,
+                  NEWTON=_F(MATRICE='TANGENTE',
+                            REAC_ITER=1,),    
+                  COMPORTEMENT=_F(RELATION='ELAS',
+                                    DEFORMATION='PETIT',
+                                  TOUT='OUI',),
+                  INCREMENT=_F(LIST_INST=LINST,),
+                  SOLVEUR=_F(ELIM_LAGR='NON',
+                             METHODE='MUMPS',
+                             RESI_RELA=1.E-6,
+                             PCENT_PIVOT= 30,),
+                  OBSERVATION = (
+                               _F(OBSE_ETAT_INIT = 'NON',
+                                  NOM_CMP    = ('PRES', 'JEU', 'CONT', 'COEFSURF', 'PRESCOOR'),
+                                  NOM_CHAM   ='CONT_ELEM',
+                                  MAILLE='1Z1527',
+                                  INST=(1.),
+                                  EVAL_CHAM  ='VALE',),
+                                  ),
+                  CONVERGENCE=_F(RESI_GLOB_RELA=1.E-6,
+                                 ITER_GLOB_MAXI=50,));
+
+IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=RES, NOM_CHAM=('SIEF_ELGA','CONT_ELEM'), INST=1.0, MAILLE=('1Z1527'),))
+
+TAB= RECU_TABLE(CO=RES, NOM_TABLE='OBSERVATION')
+
+print TAB.EXTR_TABLE()
+
+IMPR_TABLE(TABLE=TAB)
+
+
+CALC_CHAMP(reuse=RES,
+           RESULTAT=RES,
+           CONTRAINTE=('SIEF_NOEU'),);
+
+
+
+TEST_RESU(RESU=(_F(INST=1.0,
+                   TYPE_TEST='MIN',
+                   RESULTAT=RES,
+                   REFERENCE = 'ANALYTIQUE',
+                   NOM_CHAM='SIEF_NOEU',
+                   LEGENDE='CALC_PRESSION',
+                   NOM_CMP='SIZZ',
+                   VALE_REFE=-25.0,
+                   VALE_CALC=-25.0,
+                   ),
+                _F(INST=1.0,
+                   TYPE_TEST='MAX',
+                   RESULTAT=RES,
+                   REFERENCE = 'ANALYTIQUE',
+                   NOM_CHAM='SIEF_NOEU',
+                   LEGENDE='CALC_PRESSION',
+                   NOM_CMP='SIZZ',
+                   VALE_REFE=-25.0,
+                   VALE_CALC=-25.00,
+                   ),
+                _F(INST=1.0,
+                   TYPE_TEST='MIN',
+                   RESULTAT=RES,
+                   REFERENCE = 'ANALYTIQUE',
+                   NOM_CHAM='DEPL',
+                   LEGENDE='LAGS_C',
+                   NOM_CMP='LAGS_C',
+                   VALE_REFE=-25.0,
+                   VALE_CALC=-25.0,
+                   ),
+                _F(INST=1.0,
+                   TYPE_TEST='MAX',
+                   RESULTAT=RES,
+                   REFERENCE = 'ANALYTIQUE',
+                   NOM_CHAM='DEPL',
+                   LEGENDE='LAGS_C',
+                   NOM_CMP='LAGS_C',
+                   VALE_REFE=-25.0,
+                   VALE_CALC=-25.0,
+                   ),
+                ),
+          ); 
+
+TEST_RESU(RESU=(_F(INST=1.0,
+                   TYPE_TEST='MIN',
+                   RESULTAT=RES,
+                   REFERENCE = 'ANALYTIQUE',
+                   NOM_CHAM='CONT_ELEM',
+                   LEGENDE='CONT_ELEM',
+                   NOM_CMP='PRES',
+                   VALE_REFE=-25.0,
+                   VALE_CALC=-25.0,
+                   ),
+                _F(INST=1.0,
+                   TYPE_TEST='MAX',
+                   RESULTAT=RES,
+                   REFERENCE = 'ANALYTIQUE',
+                   NOM_CHAM='CONT_ELEM',
+                   LEGENDE='CONT_ELEM',
+                   NOM_CMP='PRES',
+                   VALE_REFE=-25.0,
+                   VALE_CALC=-25.00,
+                   ),
+                _F(INST=1.0,
+                   TYPE_TEST='MIN',
+                   RESULTAT=RES,
+                   REFERENCE = 'ANALYTIQUE',
+                   ORDRE_GRANDEUR= 1.0,
+                   CRITERE='ABSOLU',
+                   NOM_CHAM='CONT_ELEM',
+                   LEGENDE='CONT_ELEM',
+                   NOM_CMP='JEU',
+                   VALE_REFE=0.0,
+                   VALE_CALC=0.0,
+                   ),
+                _F(INST=1.0,
+                   TYPE_TEST='MAX',
+                   RESULTAT=RES,
+                   REFERENCE = 'ANALYTIQUE',
+                   ORDRE_GRANDEUR= 1.0,
+                   CRITERE='ABSOLU',
+                   NOM_CHAM='CONT_ELEM',
+                   LEGENDE='CONT_ELEM',
+                   NOM_CMP='JEU',
+                   VALE_REFE=0.0,
+                   VALE_CALC=0.0,
+                   ),
+                _F(INST=1.0,
+                   TYPE_TEST='MIN',
+                   RESULTAT=RES,
+                   REFERENCE = 'ANALYTIQUE',
+                   NOM_CHAM='CONT_ELEM',
+                   LEGENDE='CONT_ELEM',
+                   NOM_CMP='CONT',
+                   VALE_REFE=1.0,
+                   VALE_CALC=1.0,
+                   ),
+                _F(INST=1.0,
+                   TYPE_TEST='MAX',
+                   RESULTAT=RES,
+                   REFERENCE = 'ANALYTIQUE',
+                   NOM_CHAM='CONT_ELEM',
+                   LEGENDE='CONT_ELEM',
+                   NOM_CMP='CONT',
+                   VALE_REFE=1.0,
+                   VALE_CALC=1.0,
+                   ),
+                _F(INST=1.0,
+                   TYPE_TEST='MIN',
+                   RESULTAT=RES,
+                   NOM_CHAM='CONT_ELEM',
+                   LEGENDE='CONT_ELEM',
+                   NOM_CMP='COEFSURF',
+                   VALE_CALC=0.25,
+                   ),
+                _F(INST=1.0,
+                   TYPE_TEST='MAX',
+                   RESULTAT=RES,
+                   NOM_CHAM='CONT_ELEM',
+                   LEGENDE='CONT_ELEM',
+                   NOM_CMP='COEFSURF',
+                   VALE_CALC=0.25,
+                   ),
+                _F(INST=1.0,
+                   TYPE_TEST='MIN',
+                   RESULTAT=RES,
+                   NOM_CHAM='CONT_ELEM',
+                   LEGENDE='CONT_ELEM',
+                   NOM_CMP='PRESCOOR',
+                   VALE_CALC=-6.25,
+                   ),
+                _F(INST=1.0,
+                   TYPE_TEST='MAX',
+                   RESULTAT=RES,
+                   NOM_CHAM='CONT_ELEM',
+                   LEGENDE='CONT_ELEM',
+                   NOM_CMP='PRESCOOR',
+                   VALE_CALC=-6.25,
+                   ),
+                ),
+          )
+
+TEST_TABLE(TABLE=TAB,
+                 NOM_PARA='VALE',
+                 VALE_CALC=-25.00,
+                 VALE_REFE=-25.00,
+                 REFERENCE='AUTRE_ASTER',
+                 FILTRE=(_F(NOM_PARA='NOM_OBSERVATION',
+                           CRIT_COMP='EQ',
+                           VALE_K="OBSERVATION_1",
+                           ),
+                         _F(NOM_PARA='NOM_CHAM',
+                           CRIT_COMP='EQ',
+                           VALE_K="CONT_ELEM",
+                           ),
+                         _F(NOM_PARA='INST',
+                           CRIT_COMP='EQ',
+                           VALE=1.0,
+                           ),
+                         _F(NOM_PARA='NOM_CMP',
+                           CRIT_COMP='EQ',
+                           VALE_K="PRES",
+                           ),
+                        )
+                )
+
+FIN()

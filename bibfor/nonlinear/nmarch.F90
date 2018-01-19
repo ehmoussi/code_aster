@@ -15,10 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmarch(numins         , modele  , mate  , carele, fonact   ,&
-                  ds_constitutive, ds_print, sddisc, sdpost, sdcrit   ,&
-                  ds_measure     , sderro  , sddyna, sdpilo, ds_energy,&
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmarch(numins         , modele  , mate       , carele, fonact   ,&
+                  ds_constitutive, ds_print, sddisc     , sdcrit,&
+                  ds_measure     , sderro  , sddyna     , sdpilo, ds_energy,&
                   ds_inout       , sdcriq  , ds_algorom_)
 !
 use NonLin_Datastructure_type
@@ -27,11 +28,13 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/isfonc.h"
 #include "asterfort/diinst.h"
 #include "asterfort/dinuar.h"
 #include "asterfort/nmarc0.h"
 #include "asterfort/nmarce.h"
 #include "asterfort/nmarpc.h"
+#include "asterfort/nmcrpc.h"
 #include "asterfort/nmfinp.h"
 #include "asterfort/nmleeb.h"
 #include "asterfort/nmrinc.h"
@@ -42,19 +45,17 @@ implicit none
 #include "asterfort/uttcpg.h"
 #include "asterfort/romAlgoNLTableSave.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer :: fonact(*)
-    integer :: numins
-    type(NL_DS_Print), intent(in) :: ds_print
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    type(NL_DS_Energy), intent(in) :: ds_energy
-    character(len=19) :: sddisc, sdcrit, sddyna, sdpost, sdpilo
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=24) :: sderro, sdcriq
-    character(len=24) :: modele, mate, carele
-    type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
+integer :: fonact(*)
+integer :: numins
+type(NL_DS_Print), intent(in) :: ds_print
+type(NL_DS_InOut), intent(in) :: ds_inout
+type(NL_DS_Measure), intent(inout) :: ds_measure
+type(NL_DS_Energy), intent(in) :: ds_energy
+character(len=19) :: sddisc, sdcrit, sddyna, sdpilo
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=24) :: sderro, sdcriq
+character(len=24) :: modele, mate, carele
+type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -73,7 +74,6 @@ implicit none
 ! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
-! IN  SDPOST : SD POUR POST-TRAITEMENTS (CRIT_STAB ET MODE_VIBR)
 ! IN  SDCRIT : VALEUR DES CRITERES DE CONVERGENCE
 ! IN  SDCRIQ : SD CRITERE QUALITE
 ! IN  SDERRO : SD ERREUR
@@ -132,7 +132,11 @@ implicit none
 !
 ! - Save energy parameters in output table
 !
-    call nmarpc(ds_energy, nume_reuse, instan)
+    if (isfonc(fonact,'ENERGIE')) then
+        call nmarpc(ds_energy, nume_reuse, instan)
+    else
+        call nmcrpc(ds_inout, nume_reuse, instan)
+    endif
 !
 ! - Print or not ?
 !
@@ -162,9 +166,9 @@ implicit none
 !
 ! ----- Storing parameters
 !
-        call nmarc0(result, modele        , mate      , carele         , fonact,&
-                    sdcrit, sddyna        , sdpost    , ds_constitutive, sdcriq,&
-                    sdpilo, list_load_resu, nume_store, instan)
+        call nmarc0(result, modele        , mate           , carele, fonact,&
+                    sdcrit, sddyna        , ds_constitutive, sdcriq,&
+                    sdpilo, list_load_resu, nume_store     , instan)
 !
 ! ----- Stroring fields
 !

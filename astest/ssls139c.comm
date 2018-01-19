@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -153,7 +153,6 @@ RESU2 = STAT_NON_LINE(CARA_ELEM=ORI_MEMB,
                                        GROUP_MA=('MEMBRA', ),
                                        RELATION=relation,
                                        ITER_CPLAN_MAXI=1,
-                                       PARM_ALPHA=1.0,
                                        ITER_INTE_MAXI=20,
                                        RESI_INTE_RELA=1.E-06,
                                        ITER_INTE_PAS=0,
@@ -166,8 +165,7 @@ RESU2 = STAT_NON_LINE(CARA_ELEM=ORI_MEMB,
                                        RESI_CPLAN_RELA=1.E-06,
                                        PARM_THETA=1.0,
                                        ITER_CPLAN_MAXI=1,
-                                       DEFORMATION='PETIT',
-                                       PARM_ALPHA=1.0,),
+                                       DEFORMATION='PETIT',),
                                     ),
                       SOLVEUR=_F(METHODE='MUMPS',
                                  RENUM='METIS',

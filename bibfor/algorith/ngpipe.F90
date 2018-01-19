@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine ngpipe(typilo, npg, neps, nddl, b,&
-                  li2ldc, typmod, mat, compor, lgpg,&
+                  ni2ldc, typmod, mat, compor, lgpg,&
                   ddlm, sigm, vim, ddld, ddl0,&
                   ddl1, tau, etamin, etamax, copilo)
 !
@@ -25,6 +25,7 @@ subroutine ngpipe(typilo, npg, neps, nddl, b,&
     implicit none
 !
 #include "asterc/r8vide.h"
+#include "asterfort/assert.h"
 #include "asterfort/pil000.h"
 #include "asterfort/r8inir.h"
 #include "blas/dgemv.h"
@@ -35,7 +36,7 @@ subroutine ngpipe(typilo, npg, neps, nddl, b,&
     real(kind=8) :: ddlm(nddl), ddld(nddl), ddl0(nddl), ddl1(nddl)
     real(kind=8) :: sigm(0:neps*npg-1), vim(lgpg, npg), tau
     real(kind=8) :: copilo(5, npg), etamin, etamax
-    real(kind=8) :: b(neps, npg, nddl), li2ldc(0:neps-1)
+    real(kind=8) :: b(neps, npg, nddl), ni2ldc(0:neps*npg-1)
 !.......................................................................
 !
 !     BUT:  CALCUL  DES COEFFICIENTS DE PILOTAGE POUR PRED_ELAS
@@ -45,7 +46,7 @@ subroutine ngpipe(typilo, npg, neps, nddl, b,&
 ! IN  NEPS   : NOMBRE DE COMPOSANTES DE DEFORMATIONS / CONTRAINTES
 ! IN  NDDL   : NOMBRE DE DDL DANS L'ELEMENT
 ! IN  B      : MATRICE CINEMATIQUE
-! IN  LI2LDC : CONVERSION CONTRAINTE --> AVEC RACINE DE DEUX
+! IN  ni2ldc : CONVERSION CONTRAINTE --> AVEC RACINE DE DEUX
 ! IN  TYPMOD : TYPE DE MODELISATION
 ! IN  MAT    : MATERIAU CODE
 ! IN  COMPOR : COMPORTEMENT
@@ -73,6 +74,7 @@ subroutine ngpipe(typilo, npg, neps, nddl, b,&
 !
 ! -- INITIALISATION
 !
+    ASSERT (compor(3).eq.'PETIT')
     call r8inir(npg*5, r8vide(), copilo, 1)
     nepg = neps*npg
 !
@@ -95,17 +97,17 @@ subroutine ngpipe(typilo, npg, neps, nddl, b,&
 !
 ! -- PRETRAITEMENT SI NECESSAIRE
     if (typilo .eq. 'PRED_ELAS') then
-        do 10 ieg = 0, nepg-1
-            sigmam(ieg) = sigm(ieg)*li2ldc(mod(ieg,neps))
-10      continue
+        do ieg = 0, nepg-1
+            sigmam(ieg) = sigm(ieg)*ni2ldc(ieg)
+        end do
     endif
 !
 ! -- TRAITEMENT DE CHAQUE POINT DE GAUSS
 !
-    do 20 g = 1, npg
+    do g = 1, npg
         call pil000(typilo, compor, neps, tau, mat,&
                     vim(1, g), sigmam(os(g)), epsm(os(g)), epsp(os(g)), epsd(os(g)),&
                     typmod, etamin, etamax, copilo(1, g))
-20  end do
+    end do
 !
 end subroutine

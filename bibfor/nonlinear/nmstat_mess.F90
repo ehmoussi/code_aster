@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmstat_mess(ds_measure, phasis)
 !
 use NonLin_Datastructure_type
@@ -25,16 +26,13 @@ implicit none
 #include "asterf_types.h"
 #include "asterc/r8prem.h"
 #include "asterfort/assert.h"
-#include "asterfort/impfot.h"
 #include "asterfort/utmess.h"
 #include "asterfort/nmtimr.h"
 #include "asterfort/nmrvai.h"
 #include "asterfort/nmimpr_mess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=1), intent(in) :: phasis
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=1), intent(in) :: phasis
 !
 ! --------------------------------------------------------------------------------------------------
 !

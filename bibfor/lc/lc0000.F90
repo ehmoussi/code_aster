@@ -136,6 +136,7 @@ implicit none
 #include "asterfort/lc6036.h"
 #include "asterfort/lc6046.h"
 #include "asterfort/lc6057.h"
+#include "asterfort/lc6075.h"
 #include "asterfort/lc7010.h"
 #include "asterfort/lc7011.h"
 #include "asterfort/lc7013.h"
@@ -647,10 +648,11 @@ implicit none
                     nvi, dsidep, codret)
     case (75)
         call lc0075(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip, typmod, icomp,&
-                    nvi, dsidep, codret)
+                    compor, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, nvi, vim,&
+                    option, angmas, sigp, vip,&
+                    typmod, icomp, ndsde,&
+                    dsidep, codret)
     case (76)
         call lc0076(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
@@ -1032,6 +1034,15 @@ implicit none
     case (6057)
 !     ENDO_FISS_EXP
         call lc6057(fami, kpg, ksp, ndim, imate,&
+                    compor, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, nvi, vim,&
+                    option, angmas, sigp, vip,&
+                    typmod, icomp, ndsde,&
+                    dsidep, codret)
+!
+    case (6075)
+!     GTN
+        call lc6075(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, neps,&
                     epsm, deps, nsig, sigm, nvi, vim,&
                     option, angmas, sigp, vip,&

@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine ntini0(ds_algopara, ds_inout)
 !
 use NonLin_Datastructure_type
@@ -24,13 +25,11 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/infniv.h"
-#include "asterfort/CreateAlgoParaDS.h"
-#include "asterfort/CreateInOutDS.h"
+#include "asterfort/nonlinDSAlgoParaCreate.h"
+#include "asterfort/nonlinDSInOutCreate.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_AlgoPara), intent(out) :: ds_algopara
-    type(NL_DS_InOut), intent(out) :: ds_inout
+type(NL_DS_AlgoPara), intent(out) :: ds_algopara
+type(NL_DS_InOut), intent(out) :: ds_inout
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,10 +55,10 @@ implicit none
 !
 ! - Create input/output management datastructure
 !
-    call CreateInOutDS('THER', ds_inout)
+    call nonlinDSInOutCreate('THER', ds_inout)
 !
 ! - Create algorithm parameters datastructure
 !
-    call CreateAlgoParaDS(ds_algopara)
+    call nonlinDSAlgoParaCreate(ds_algopara)
 !
 end subroutine

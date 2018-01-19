@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -76,11 +76,11 @@ type(ROM_DS_ParaDDR), intent(inout) :: ds_para
 !
     call getvtx(' ', 'NOM_DOMAINE'    , scal = grelem_rid)
     call getvis(' ', 'NB_COUCHE_SUPPL', scal = nb_layer_rid)
-    call getvtx(' ', 'NOM_INTERFACE'  , scal = grnode_int)
+    call getvtx(' ', 'GROUP_NO_INTERF', scal = grnode_int)
     call getvtx(' ', 'CORR_COMPLET'   , scal = answer)
     l_corr_ef = answer .eq. 'OUI'
     if (l_corr_ef) then
-        call getvtx(' ', 'NOM_ENCASTRE', scal = grnode_sub)
+        call getvtx(' ', 'GROUP_NO_ENCASTRE'  , scal = grnode_sub)
         call getvis(' ', 'NB_COUCHE_ENCASTRE' , scal = nb_layer_sub, nbret = nocc)
         if (nb_layer_sub .gt. nb_layer_rid) then
             call utmess('A', 'ROM5_15')

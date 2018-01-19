@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -355,4 +355,9 @@ mot-clé COMPORTEMENT pour cette loi.
     59:  _(u"""
 La commande CALC_EUROPLEXUS ne peut pas fonctionner en parallèle.
 """),
+
+    60:  _(u"""
+Un chargement de type %(k1)s est affecté, cependant le mot-clé LIAISON_EPX n'a pas été mis à 'OUI' dans l'opérateur AFFE_CHAR_MECA.
+Cela est nécessaire pour que les données soient mises en forme avant d'être traduites à EPX"""),
+
 }

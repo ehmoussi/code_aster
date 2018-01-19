@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,11 +25,15 @@ class MissDomains(object):
     """A MissDomain instance assigns the identifiers of the domains and
     the different groups they contains"""
 
-    def __init__(self, use_pc, use_issf):
+    def __init__(self, use_pc, use_issf, use_sol_libre):
         """Initialization"""
         self.use_pc = use_pc
         self.use_issf = use_issf
+        self.use_sol_libre = use_sol_libre
         # XXX by defining all the domains, even for issf, fdlv112b fails
+        # If there is no PC, for impedance computation, structure domain
+        # is useless : only soil (and fluid for ISFS) are needed
+        # For simplicity we keep structure domain in all ISS cases
         self.def_all_domains = (not use_issf) or use_pc
         self.domain = {}
         self.group = {}
@@ -51,18 +55,19 @@ class MissDomains(object):
         - Keys of 'domain' are strings: 'struct', 'sol', 'fluide'.
           A domain is defined by its number and the groups that belong to it.
 
-             groupes                   ISS    ISS+PC  ISFS    ISFS+PC
-        . interface sol-structure       1       1       1       1
-        . interface fluide-structure                    2       2
-        . interface sol-fluide                          3       3
-        . sol libre                                     4       4
-        . points de contrôle                    2               5
-        . volume de la structure        2       3       5       6
+             groupes                   ISS    ISS+SL  ISS+PC ISS+SL+PC ISFS   ISFS+PC
+        . interface sol-structure       1       1       1       1       1       1
+        . interface fluide-structure                                    2       2
+        . interface sol-fluide                                          3       3
+        . sol libre                             2               2       4       4
+        . points de controle                            2       3               5
+        . volume de la structure        2       3       3       4       5       6
         """
         self.domain['struct'] = (1, [1])
         self.domain['sol'] = (2, [-1])
         self.group['sol-struct'] = i = 1
         if self.use_issf:
+            self.domain['fluide'] = (3, [-2, -3])
             if self.def_all_domains:
                 self.domain['fluide'] = (3, [-2, -3])
             else:
@@ -70,20 +75,25 @@ class MissDomains(object):
                 self.domain['fluide'] = (2, [-2, -3])
             self.group['fluide-struct'] = i = i + 1
             self.group['sol-fluide'] = i = i + 1
-            self.group['sol libre'] = i = i + 1
             self.domain['struct'][1].append(self.group['fluide-struct'])
-            self.domain['sol'][1].extend([self.group['sol-fluide'],
-                                          self.group['sol libre']])
+            self.domain['sol'][1].append(self.group['sol-fluide'])
+        if self.use_sol_libre:
+            self.group['sol libre'] = i = i + 1
+            self.domain['sol'][1].append(self.group['sol libre'])
         if self.use_pc:
             self.group['pc'] = i = i + 1
             self.domain['sol'][1].append(self.group['pc'])
         self.group['struct'] = i = i + 1
         self.domain['struct'][1].append(self.group['struct'])
         # checkings
-        if not self.use_pc and not self.use_issf:
+        if not self.use_pc and not self.use_issf and not self.use_sol_libre:
             assert self.group['struct'] == 2
-        elif self.use_pc and not self.use_issf:
+        elif self.use_sol_libre and not self.use_pc and not self.use_issf:
             assert self.group['struct'] == 3
+        elif self.use_pc and not self.use_issf and not self.use_sol_libre:
+            assert self.group['struct'] == 3
+        elif self.use_pc and not self.use_issf and self.use_sol_libre:
+            assert self.group['struct'] == 4
         elif not self.use_pc and self.use_issf:
             assert self.group['struct'] == 5
         elif self.use_pc and self.use_issf:

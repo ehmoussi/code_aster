@@ -19,15 +19,9 @@
 !
 !
 interface
-    subroutine ngforc(nddl, neps, npg, w, b,&
-                      ni2ldc, sigmam, fint)
-        integer :: npg
-        integer :: neps
-        integer :: nddl
-        real(kind=8) :: w(0:npg-1)
-        real(kind=8) :: b(neps*npg*nddl)
-        real(kind=8) :: ni2ldc(0:neps-1)
-        real(kind=8) :: sigmam(0:neps*npg-1)
-        real(kind=8) :: fint(nddl)
+    subroutine ngforc(w, b, ni2ldc, sigmam, fint)
+        real(kind=8),intent(in) :: w(:,:), ni2ldc(:,:), b(:,:,:)
+        real(kind=8),intent(in) :: sigmam(size(w,1),size(w,2))
+        real(kind=8) :: fint(*)
     end subroutine ngforc
 end interface

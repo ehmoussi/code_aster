@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -47,6 +47,7 @@ subroutine spect1(casint, nomu, spectr, ispect, base,&
 !
 #include "asterf_types.h"
 #include "jeveux.h"
+#include "asterc/r8prem.h"
 #include "asterfort/coesp1.h"
 #include "asterfort/coesp4.h"
 #include "asterfort/dismoi.h"
@@ -90,11 +91,13 @@ subroutine spect1(casint, nomu, spectr, ispect, base,&
     real(kind=8) :: beta, beta1, beta2, eps, err, fr, frc
     real(kind=8) :: gamma, phi0, phi01, phi02, phie, r1, ren
     real(kind=8) :: rom, rov, sx, tauxv, tol, vitezi, x1
-    real(kind=8) :: x2, xlc, xnu
+    real(kind=8) :: x2, xlc, xnu, epsi
 !-----------------------------------------------------------------------
     data depla   /'DX      ','DY      ','DZ      '/
 !-----------------------------------------------------------------------
     call jemarq()
+    epsi = r8prem()
+
     tol = 1.d-05
     ier = 0
 !
@@ -175,7 +178,7 @@ subroutine spect1(casint, nomu, spectr, ispect, base,&
     x1 = 0.d0
     x2 = 0.d0
     do 50 ik = 1, nbp
-        if (zr(ipvn+nbp+ik-1) .ne. 0.d0) then
+        if (abs(zr(ipvn+nbp+ik-1)) .gt. epsi) then
             x1 = zr(ipvn+ik-1)
             n1 = ik
             goto 51
@@ -184,7 +187,7 @@ subroutine spect1(casint, nomu, spectr, ispect, base,&
  51 continue
 !
     do 60 ik = nbp, 1, -1
-        if (zr(ipvn+nbp+ik-1) .ne. 0.d0) then
+        if (abs(zr(ipvn+nbp+ik-1)) .gt. epsi) then
             x2 = zr(ipvn+ik-1)
             n2 = ik
             goto 61
@@ -239,7 +242,7 @@ subroutine spect1(casint, nomu, spectr, ispect, base,&
                 do 30 ip = 1, nbp
                     zr(idefm+nbp*(im-1)+ip-1) = zr(icha+6*(ip-1)+idep- 1)
  30             continue
-                call permnoe(maillage, zr(idefm+nbp*(im-1)), 1, nbp)
+                call permnoe(maillage, zr(idefm+nbp*(im-1)), 1, nbp, 1)
                 call jelibe(nomcha)
  40         continue
         else
@@ -249,7 +252,7 @@ subroutine spect1(casint, nomu, spectr, ispect, base,&
                 do 35 ip = 1, nbp
                     zr(idefm+nbp*(im-1)+ip-1) = zr(icha+6*(ip-1)+icmp- 1)
  35             continue
-                call permnoe(maillage, zr(idefm+nbp*(im-1)), 1, nbp)
+                call permnoe(maillage, zr(idefm+nbp*(im-1)), 1, nbp, 1)
                 call jelibe(nomcha)
  45         continue
         endif 
@@ -355,7 +358,7 @@ subroutine spect1(casint, nomu, spectr, ispect, base,&
         rom = 0.d0
         ic = 0
         do 130 ii = 1, nbp
-            if (zr(ipvn+nbp+ii-1) .ne. 0.d0) then
+            if (abs(zr(ipvn+nbp+ii-1)) .gt. epsi) then
                 rom = rom + zr(irhoe+nbp+ii-1)
                 ic = ic + 1
             endif

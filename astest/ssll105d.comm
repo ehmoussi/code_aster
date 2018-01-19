@@ -20,7 +20,7 @@
 # ON VERIFIE AUSSI L'INTER-OPERABILITE DU CALCUL MODAL DE CRIT_STAB
 # AVEC LES TROIS SOLVEURS DIRECTS DISPONIBLES: LDLT, MULT_FRONT ET MUMPS
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='NON'))
 
 mail=LIRE_MAILLAGE(FORMAT="ASTER",);
 
@@ -75,17 +75,32 @@ res=STAT_NON_LINE(MODELE=modele,
                                DEFORMATION='PETIT',),
                   INCREMENT=_F(LIST_INST=list,),
                   NEWTON=_F(MATRICE='TANGENTE',),
-                  CRIT_STAB=_F(CHAR_CRIT=(0,2),),
+                  CRIT_STAB=_F(OPTION='BANDE',CHAR_CRIT=(0,2),),
                   );
 
-TEST_RESU(RESU=_F(PARA='CHAR_CRIT',
-                  INST=1.0,
-                  REFERENCE='ANALYTIQUE',
-                  RESULTAT=res,
+TABSPEC0=RECU_TABLE(CO=res,
+                    NOM_TABLE='ANALYSE_MODALE',);
+
+IMPR_TABLE(TABLE=TABSPEC0);
+
+TEST_TABLE(
+           REFERENCE='ANALYTIQUE',
                   VALE_CALC=1.086655673,
                   VALE_REFE=1.0880000000000001,
-                  PRECISION=0.02,),
-          )
+           PRECISION=0.02,
+           NOM_PARA='CHAR_CRIT',
+           TABLE=TABSPEC0,
+           FILTRE=(
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='TYPE_MODE',
+                      VALE_K='MODE_FLAMB',),
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='NUME_MODE',
+                      VALE_I=1,),
+                   _F(NOM_PARA='INST',
+                      VALE=1.0,),
+                   ),
+           )
 
 effort2=AFFE_CHAR_MECA(MODELE=modele,
                       FORCE_NODALE=_F(GROUP_NO='C',
@@ -102,7 +117,7 @@ res2L=STAT_NON_LINE(MODELE=modele,
                   INCREMENT=_F(LIST_INST=list,),
                   NEWTON=_F(MATRICE='TANGENTE',),
                   SOLVEUR=_F(METHODE='LDLT'),
-                  CRIT_STAB=_F(CHAR_CRIT=(0, 1),),
+                  CRIT_STAB=_F(OPTION='BANDE',CHAR_CRIT=(0, 1),),
                   );
 
 res2F=STAT_NON_LINE(MODELE=modele,
@@ -116,7 +131,7 @@ res2F=STAT_NON_LINE(MODELE=modele,
                   INCREMENT=_F(LIST_INST=list,),
                   NEWTON=_F(MATRICE='TANGENTE',),
                   SOLVEUR=_F(METHODE='MULT_FRONT'),
-                  CRIT_STAB=_F(CHAR_CRIT=(0., 1.),),
+                  CRIT_STAB=_F(OPTION='BANDE',CHAR_CRIT=(0., 1.),),
                   );
 res2M=STAT_NON_LINE(MODELE=modele,
                   CHAM_MATER=ch_mat,
@@ -129,30 +144,80 @@ res2M=STAT_NON_LINE(MODELE=modele,
                   INCREMENT=_F(LIST_INST=list,),
                   NEWTON=_F(MATRICE='TANGENTE',),
                   SOLVEUR=_F(METHODE='MUMPS'),
-                  CRIT_STAB=_F(CHAR_CRIT=(0., 1.),),
+                  CRIT_STAB=_F(OPTION='BANDE',CHAR_CRIT=(0., 1.),),
                   );
-TEST_RESU(RESU=(_F(PARA='CHAR_CRIT',
-                   INST=1.0,
-                   REFERENCE='ANALYTIQUE',
-                   RESULTAT=res2L,
-                   VALE_CALC=0.679830918,
-                   VALE_REFE=0.68000000000000005,
-                   PRECISION=0.02,),
-                _F(PARA='CHAR_CRIT',
-                   INST=1.0,
-                   REFERENCE='ANALYTIQUE',
-                   RESULTAT=res2F,
-                   VALE_CALC=0.679830918,
-                   VALE_REFE=0.68000000000000005,
-                   PRECISION=0.02,),
-                _F(PARA='CHAR_CRIT',
-                   INST=1.0,
-                   REFERENCE='ANALYTIQUE',
-                   RESULTAT=res2M,
-                   VALE_CALC=0.679830918,
-                   VALE_REFE=0.68000000000000005,
-                   PRECISION=0.02,),
-                ),
-          )
+
+TABSPEC1=RECU_TABLE(CO=res2L,
+                    NOM_TABLE='ANALYSE_MODALE',);
+
+IMPR_TABLE(TABLE=TABSPEC1);
+
+TEST_TABLE(
+           REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.679830918,
+           VALE_REFE=0.68000000000000005,
+           PRECISION=0.02,
+           NOM_PARA='CHAR_CRIT',
+           TABLE=TABSPEC1,
+           FILTRE=(
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='TYPE_MODE',
+                      VALE_K='MODE_FLAMB',),
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='NUME_MODE',
+                      VALE_I=1,),
+                   _F(NOM_PARA='INST',
+                      VALE=1.0,),
+                   ),
+           )
+
+TABSPEC2=RECU_TABLE(CO=res2F,
+                    NOM_TABLE='ANALYSE_MODALE',);
+
+IMPR_TABLE(TABLE=TABSPEC2);
+
+TEST_TABLE(
+           REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.679830918,
+           VALE_REFE=0.68000000000000005,
+           PRECISION=0.02,
+           NOM_PARA='CHAR_CRIT',
+           TABLE=TABSPEC2,
+           FILTRE=(
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='TYPE_MODE',
+                      VALE_K='MODE_FLAMB',),
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='NUME_MODE',
+                      VALE_I=1,),
+                   _F(NOM_PARA='INST',
+                      VALE=1.0,),
+                   ),
+           )
+
+TABSPEC3=RECU_TABLE(CO=res2M,
+                    NOM_TABLE='ANALYSE_MODALE',);
+
+IMPR_TABLE(TABLE=TABSPEC3);
+
+TEST_TABLE(
+           REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.679830918,
+           VALE_REFE=0.68000000000000005,
+           PRECISION=0.02,
+           NOM_PARA='CHAR_CRIT',
+           TABLE=TABSPEC3,
+           FILTRE=(
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='TYPE_MODE',
+                      VALE_K='MODE_FLAMB',),
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='NUME_MODE',
+                      VALE_I=1,),
+                   _F(NOM_PARA='INST',
+                      VALE=1.0,),
+                   ),
+           )
+
 
 FIN();

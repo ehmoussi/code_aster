@@ -15,20 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
 !
+#include "asterf_types.h"
 !
 interface
-    subroutine nmop45(eigsol, defo, mod45, ddlexc, nddle, modes,&
-                      modes2, ddlsta, nsta)                    
+    subroutine nmop45(eigsol, l_hpp, mod45, modes, modes2, ds_posttimestep_, nfreq_calibr_)
+        use NonLin_Datastructure_type          
         character(len=19), intent(in) :: eigsol
-        integer          , intent(in) :: defo
+        aster_logical    , intent(in) :: l_hpp
         character(len=4) , intent(in) :: mod45
-        character(len=24), intent(in) :: ddlexc
-        integer          , intent(in) :: nddle
         character(len=8) , intent(in) :: modes
         character(len=8) , intent(in) :: modes2
-        character(len=24), intent(in) :: ddlsta
-        integer          , intent(in) :: nsta
+        type(NL_DS_PostTimeStep), optional, intent(in) :: ds_posttimestep_
+        integer, optional, intent(out) :: nfreq_calibr_
     end subroutine nmop45
 end interface

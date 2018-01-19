@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -310,8 +310,7 @@ RESU0=STAT_NON_LINE( reuse=RESU0,
                 ETAT_INIT=_F(EVOL_NOLI=RESU0),
 
                 COMPORTEMENT=_F( RELATION = 'KIT_HH2',
-                              RELATION_KIT = ('LIQU_AD_GAZ','HYDR_VGM'),
-                              PARM_ALPHA=PARM_ALPHA),
+                              RELATION_KIT = ('LIQU_AD_GAZ','HYDR_VGM'),),
 
                INCREMENT=_F(  LIST_INST = LI),
 

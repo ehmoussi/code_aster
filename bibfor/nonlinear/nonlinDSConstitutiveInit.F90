@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nonlinDSConstitutiveInit(model, cara_elem, ds_constitutive)
 !
 use NonLin_Datastructure_type
@@ -31,11 +32,9 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/Behaviour_type.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: cara_elem
-    type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
+character(len=24), intent(in) :: model
+character(len=24), intent(in) :: cara_elem
+type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,7 +63,7 @@ implicit none
         write (ifm,*) '<MECANONLINE> . Initializations for constitutive laws'
     endif
 !
-! - Construct CHEM_ELEM_S
+! - Construct CHAM_ELEM_S
 !
     call nmdoco(model, cara_elem, ds_constitutive%compor)
 !
@@ -84,7 +83,7 @@ implicit none
         if ((v_compor_vale(DEFO+NB_COMP_MAXI*(i_affe-1)).eq.'GROT_GDEP') .or.&
             (v_compor_vale(DEFO+NB_COMP_MAXI*(i_affe-1)).eq.'SIMO_MIEHE') .or.&
             (v_compor_vale(DEFO+NB_COMP_MAXI*(i_affe-1)).eq.'GDEF_LOG')) then
-            ds_constitutive%l_matr_geom = .true.
+            ds_constitutive%l_matr_geom = ASTER_TRUE
         endif
     enddo
 !

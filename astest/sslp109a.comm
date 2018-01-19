@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ), DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ), DEBUG=_F(SDVERI='NON'))
 
 MAILLAGE  =  LIRE_MAILLAGE(FORMAT='MED')
 
@@ -82,7 +82,7 @@ EVOL   = STAT_NON_LINE( MODELE     = MO,INFO=1,
                                      ),
                         CRIT_STAB  = _F( TYPE           ='STABILITE',
                                          RIGI_GEOM      = 'NON',
-                                         NB_MODE        = 1,
+                                         NMAX_CHAR_CRIT        = 1,
                                          DDL_STAB       = ('DX','DY')
                                         ),
                         COMPORTEMENT  = _F( TOUT           = 'OUI',
@@ -99,11 +99,25 @@ EVOL   = STAT_NON_LINE( MODELE     = MO,INFO=1,
 #    TEST DU CRITERE DE STABILITE
 #***********************************************************************
 
-TEST_RESU(RESU=_F(NUME_ORDRE=1,
-                  PARA='CHAR_STAB',
-                  RESULTAT=EVOL,
+TABSPEC0=RECU_TABLE(CO=EVOL,
+                    NOM_TABLE='ANALYSE_MODALE',);
+
+IMPR_TABLE(TABLE=TABSPEC0);
+
+TEST_TABLE(
                   VALE_CALC=0.14644660940673,
-                  ),
-          )
+           NOM_PARA='CHAR_STAB',
+           TABLE=TABSPEC0,
+           FILTRE=(
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='TYPE_MODE',
+                      VALE_K='MODE_STAB',),
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='NUME_MODE',
+                      VALE_I=1,),
+                   _F(NOM_PARA='INST',
+                      VALE=1.0,),
+                   ),
+           )
 
 FIN();

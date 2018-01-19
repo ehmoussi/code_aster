@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine vecgme(model    , cara_elem   , matez          , lload_namez, lload_infoz,&
                   inst_curr, disp_prevz  , disp_cumu_instz, vect_elemz , inst_prev  ,&
                   compor   , ligrel_calcz, vite_currz     , strx_prevz)
@@ -39,22 +40,20 @@ implicit none
 #include "asterfort/memare.h"
 #include "asterfort/reajre.h"
 !
-! person_in_charge: jacques.pellet at edf.fr
-!
-    character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: cara_elem
-    character(len=*), intent(in) :: matez
-    real(kind=8), intent(in) :: inst_curr
-    character(len=*), intent(in) :: disp_prevz
-    character(len=*), intent(in) :: disp_cumu_instz
-    character(len=*), intent(in) :: lload_namez
-    character(len=*), intent(in) :: lload_infoz
-    character(len=*), intent(inout) :: vect_elemz
-    real(kind=8), intent(in) :: inst_prev
-    character(len=24), intent(in) :: compor
-    character(len=*), intent(in) :: ligrel_calcz
-    character(len=*), intent(in) :: vite_currz
-    character(len=*), intent(in) :: strx_prevz
+character(len=24), intent(in) :: model
+character(len=24), intent(in) :: cara_elem
+character(len=*), intent(in) :: matez
+real(kind=8), intent(in) :: inst_curr
+character(len=*), intent(in) :: disp_prevz
+character(len=*), intent(in) :: disp_cumu_instz
+character(len=*), intent(in) :: lload_namez
+character(len=*), intent(in) :: lload_infoz
+character(len=*), intent(inout) :: vect_elemz
+real(kind=8), intent(in) :: inst_prev
+character(len=24), intent(in) :: compor
+character(len=*), intent(in) :: ligrel_calcz
+character(len=*), intent(in) :: vite_currz
+character(len=*), intent(in) :: strx_prevz
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -157,7 +156,7 @@ implicit none
     call load_neum_prep(model    , cara_elem , mate      , 'Suiv'      , inst_prev,&
                         inst_curr, inst_theta, nb_in_maxi, nb_in_prep  , lchin    ,&
                         lpain    , disp_prev = disp_prev, disp_cumu_inst = disp_cumu_inst,&
-                        compor = compor)
+                        compor = compor, strx_prev_=strx_prev, vite_curr_=vite_curr)
 !
 ! - Computation
 !

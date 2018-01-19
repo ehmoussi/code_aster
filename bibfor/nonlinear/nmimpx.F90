@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmimpx(ds_print)
 !
 use NonLin_Datastructure_type
@@ -23,12 +24,10 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/impfok.h"
+#include "asterfort/nonlinDSColumnWriteValue.h"
 #include "asterfort/iunifi.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Print), intent(in) :: ds_print
+type(NL_DS_Print), intent(in) :: ds_print
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,6 +56,8 @@ implicit none
 !
 ! - Print line
 !
-    call impfok(sep_line, line_width, mesg_unit)
+    call nonlinDSColumnWriteValue(line_width,&
+                                  output_unit_ = mesg_unit,&
+                                  value_k_     = sep_line)
 !
 end subroutine

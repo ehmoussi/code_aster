@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -94,13 +94,13 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
     real(kind=8) :: valres(nbval)
 
     integer :: nbvari, codrep, ksp, i, ivari, iret
-    real(kind=8) :: ep, em, depsth, tref, tempm, tempp, sigx, epsx, depsx,tempplus
+    real(kind=8) :: ep, em, depsth, tref, tempm, tempp, sigx, epsx, depsx, tempplus, tempmax
     real(kind=8) :: cstpm(13), angmas(3), depsm, nu, bendo, kdess, valsech, valsechref, valhydr
     character(len=4) :: fami
     character(len=8) :: nompim(12), mazars(8), materi
     character(len=16) :: compo, algo, nomres(2)
     character(len=30) :: valkm(3)
-    aster_logical :: istemp, ishydr, issech
+    aster_logical :: istemp, ishydr, issech, resi
 !
     data nompim /'SY', 'EPSI_ULT', 'SIGM_ULT', 'EPSP_HAR', 'R_PM',&
                  'EP_SUR_E', 'A1_PM', 'A2_PM', 'ELAN', 'A6_PM', 'C_PM', 'A_PM'/
@@ -186,21 +186,28 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
             valkm(3)=mazars(8)
             call utmess('F', 'COMPOR1_76', nk=3, valk=valkm)
         endif
-!
+!       On mémorise varip(température) que si "resi"
+        resi = (option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL')
 !       boucle comportement sur chaque fibre
         do i = 1, nf
             ivari = nbvalc*(i-1) + 1
             ksp=debsp-1+i
             if (istemp) then
                 call verift(fami, kpg, ksp, '+', icdmat, materi, epsth_=depsth, temp_curr_=tempplus)
-!               Mémorise la température maximale atteinte
-                if ( varim(ivari+7-1) .lt. tempplus ) then
-                    varip(ivari+7-1) = tempplus
+                ! Température maximale
+                if ( tempplus .gt. varim(ivari+7-1) ) then
+                    tempmax = tempplus
+                else
+                    tempmax = varim(ivari+7-1)
+                endif
+!               Mémorise ou pas la température maximale atteinte
+                if ( resi ) then
+                    varip(ivari+7-1) = tempmax
                 endif
                 nomres(1) = 'E'
                 nomres(2) = 'NU'
                 call rcvalb(fami, kpg, ksp, '+', icdmat, materi, 'ELAS', &
-                            1, 'TEMP', varip(ivari+7-1), 2, nomres, valres, icodre, 1)
+                            1, 'TEMP', [tempmax], 2, nomres, valres, icodre, 1)
                 ep = valres(1)
                 nu = valres(2)
             endif
@@ -217,7 +224,7 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
             if ( istemp .or. ishydr .or. issech ) then
                 if ( istemp ) then
                     call rcvalb(fami, kpg, ksp, '+', icdmat, materi, 'MAZARS', &
-                                1, 'TEMP', varip(ivari+7-1), 8, mazars, valres, icodre, 1)
+                                1, 'TEMP', [tempmax], 8, mazars, valres, icodre, 1)
                 else
                     call rcvalb(fami, kpg, ksp, '+', icdmat, materi, 'MAZARS', &
                                 0, ' ', [0.0d0], 8, mazars, valres, icodre, 1)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -71,7 +71,9 @@ class MissCmdeGenerator(object):
             self.dinf["surf"] = "SURF"
 
         self.domain = MissDomains(self.param['_hasPC'],
-                                  self.param['ISSF'] == 'OUI')
+                                  self.param['ISSF'] == 'OUI',
+                                  self.param['_hasSL'],
+                                  )
         # lignes du fichier
         self.lines = []
         # pour savoir si forces/impédances ont été calculées
@@ -610,6 +612,7 @@ class TestMissCmde(unittest.TestCase):
             'OPTION_RFIC': 'NON',
             'COEF_OFFSET': 12,
             '_hasPC': False,
+            '_hasSL': False,
             '_nbPC': 0,
             '_auto_first_LT': None,
         })
@@ -721,6 +724,7 @@ bEoiaetIF5ltey0cVW72YG2767XsvvDfhYldqSF/Ac9u8B8=
             'ISSF': 'OUI',
             'MATER_FLUIDE': {'RHO': 1000., 'CELE': 1500, 'AMOR_BETA': 0.,
                              'DEMI_ESPACE': 'OUI'},
+            '_hasSL': True,
         })
         gen = MissCmdeGen(self.par, self.struct, self.fname)
         txt = gen.build()
@@ -887,6 +891,7 @@ aoGdEL8yaVmewuCHkhR/om5lOpTds/i504zrNvFvcCbg8g==
                              'DEMI_ESPACE': 'OUI'},
             '_hasPC': True,
             '_nbPC': 3,
+            '_hasSL': True,
         })
         gen = MissCmdeGen(self.par, self.struct, self.fname)
         txt = gen.build()
@@ -926,6 +931,7 @@ rXffxK/nhVQeQ/4A5Lekkg==
             'MATER_FLUIDE': {'RHO': 1000., 'CELE': 150, 'AMOR_BETA': 0.,
                              'DEMI_ESPACE': 'NON'},
             'SOURCE_FLUIDE': {'POINT': (0., 0., 0.)},
+            '_hasSL': True,
         })
         gen = MissCmdeGen(self.par, self.struct, self.fname)
         txt = gen.build()

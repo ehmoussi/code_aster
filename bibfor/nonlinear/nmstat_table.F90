@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmstat_table(ds_measure)
 !
 use NonLin_Datastructure_type
@@ -26,9 +27,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/tbajli.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Measure), intent(in) :: ds_measure
+type(NL_DS_Measure), intent(in) :: ds_measure
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -93,7 +92,7 @@ implicit none
 !
 ! - Add line in table
 !
-    call tbajli(table%table_name, table%nb_para, table%list_para,&
+    call tbajli(table%table_io%table_name, table%table_io%nb_para, table%table_io%list_para,&
                 vali, valr, [c16bid], k8bid, 0)
 !
 end subroutine

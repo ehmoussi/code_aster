@@ -50,13 +50,27 @@ implicit none
         character(len=16)  :: vale_strg
     end type NL_DS_Column
 !
+! - Type: table in output datastructure
+! 
+    type NL_DS_TableIO
+! ----- Name of result datastructure
+        character(len=8)           :: result = ' '
+! ----- Parameters for table in output Datastructure
+        character(len=19)          :: table_name = ' '
+        character(len=24)          :: table_type = ' '
+! ----- List of parameters
+        integer                    :: nb_para = 0
+        integer                    :: nb_para_inte = 0
+        integer                    :: nb_para_real = 0
+        integer                    :: nb_para_cplx = 0
+        integer                    :: nb_para_strg = 0
+        character(len=24), pointer :: list_para(:) => null()
+        character(len=8), pointer  :: type_para(:) => null()
+    end type NL_DS_TableIO
+!
 ! - Type: table 
 ! 
     type NL_DS_Table
-! ----- Name of result datastructure
-        character(len=8)       :: result
-        character(len=19)      :: table_name
-        character(len=24)      :: table_type
 ! ----- Number of active columns
         integer                :: nb_cols
 ! ----- Maximum number of columns in table
@@ -67,7 +81,7 @@ implicit none
         aster_logical          :: l_cols_acti(39)
 ! ----- Total width of table
         integer                :: width
-! ----- eNumber of lines for title
+! ----- Number of lines for title
         integer                :: title_height
 ! ----- Separation line
         character(len=512)     :: sep_line
@@ -75,14 +89,8 @@ implicit none
         aster_logical          :: l_csv
 ! ----- Logical unit for outside file (CSV)
         integer                :: unit_csv
-! ----- List of parameters (for table definition)
-        integer                :: nb_para
-        integer                :: nb_para_inte
-        integer                :: nb_para_real
-        integer                :: nb_para_cplx
-        integer                :: nb_para_strg
-        character(len=24)      :: list_para(39)
-        character(len=3)       :: type_para(39)
+! ----- Table in output datastructure
+        type(NL_DS_TableIO)    :: table_io
 ! ----- Index to values
         integer                :: indx_vale(39)
     end type NL_DS_Table
@@ -209,12 +217,12 @@ implicit none
         character(len=8)  :: result
         aster_logical     :: l_temp_nonl
         integer           :: nb_field
-        integer           :: nb_field_maxi = 22
-        type(NL_DS_Field) :: field(22)
+        integer           :: nb_field_maxi = 19
+        type(NL_DS_Field) :: field(19)
         character(len=8)  :: stin_evol
         aster_logical     :: l_stin_evol
-        aster_logical     :: l_field_acti(22)
-        aster_logical     :: l_field_read(22)
+        aster_logical     :: l_field_acti(19)
+        aster_logical     :: l_field_read(19)
         aster_logical     :: l_state_init
         aster_logical     :: l_reuse
         integer           :: didi_nume
@@ -232,6 +240,8 @@ implicit none
         aster_logical     :: l_init_stat
         aster_logical     :: l_init_vale
         real(kind=8)      :: temp_init
+! ----- Table of parameters in output datastructure
+        type(NL_DS_TableIO) :: table_io
     end type NL_DS_InOut
 !
 ! - Type: loop management
@@ -491,5 +501,79 @@ implicit none
 ! ----- Flag for large strains in tangent matrix
         aster_logical         :: l_matr_geom
     end type NL_DS_Constitutive
+!
+! - Type: selection list
+! 
+    type NL_DS_SelectList
+! ----- List of values
+        integer               :: nb_value   = 0
+        real(kind=8)          :: incr_mini  = 0.d0
+        real(kind=8), pointer :: list_value(:) => null()
+! ----- Parameters to detect real in list
+        real(kind=8)          :: precision  = 0.d0
+        aster_logical         :: l_abso     = ASTER_FALSE
+        real(kind=8)          :: tolerance  = 0.d0
+        integer               :: freq_step  = 0
+! ----- Type of selection
+        aster_logical         :: l_by_freq  = ASTER_FALSE
+    end type NL_DS_SelectList
+!
+! - Type: spectral analysis for stability
+! 
+    type NL_DS_Stability
+! ----- Use geometric matrix (only CRIT_STAB)
+        aster_logical             :: l_geom_matr
+! ----- Use modified rigidity matrix (only CRIT_STAB)
+        aster_logical             :: l_modi_rigi
+! ----- Excluded DOF (only CRIT_STAB)
+        integer                   :: nb_dof_excl
+        character(len=8), pointer :: list_dof_excl(:) => null()
+! ----- Stabilized DOF (only CRIT_STAB)
+        integer                   :: nb_dof_stab
+        character(len=8), pointer :: list_dof_stab(:) => null()
+! ----- Instability parameters
+        character(len=16)         :: instab_sign
+        real(kind=8)              :: instab_prec
+! ----- Previous frequency
+        real(kind=8)              :: prev_freq = 1.d50
+    end type NL_DS_Stability
+!
+! - Type: spectral analysis
+! 
+    type NL_DS_Spectral
+! ----- Name of option to compute
+        character(len=16)      :: option
+! ----- Type of rigidity matrix
+        character(len=16)      :: type_matr_rigi
+! ----- Type of eigenvalues research
+        aster_logical          :: l_small
+        aster_logical          :: l_strip
+! ----- Bounds of strip (STRIP option)
+        real(kind=8)           :: strip_bounds(2)
+! ----- Number of eigenvalues to search (SMALL option)
+        integer                :: nb_eigen
+! ----- Parameter for eigen solver
+        integer                :: coef_dim_espace
+! ----- Selector (when spectral analysis occurs)
+        type(NL_DS_SelectList) :: selector
+! ----- Level of computation (number of eigenvalues or eigenvalue+eigenvector)
+        character(len=16)      :: level
+    end type NL_DS_Spectral
+!
+! - Type: post_treatment at each time step
+! 
+    type NL_DS_PostTimeStep
+! ----- Table in output datastructure
+        type(NL_DS_TableIO)   :: table_io
+! ----- Compute CRIT_STAB / MODE_VIBR
+        aster_logical         :: l_crit_stab
+        aster_logical         :: l_mode_vibr
+! ----- Spectral analyses
+        type(NL_DS_Spectral)  :: crit_stab
+        type(NL_DS_Spectral)  :: mode_vibr
+        type(NL_DS_Stability) :: stab_para
+! ----- Small strain hypothese for geometry matrix
+        aster_logical         :: l_hpp
+    end type NL_DS_PostTimeStep
 !
 end module

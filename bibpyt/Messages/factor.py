@@ -118,12 +118,12 @@ Problème lors de la factorisation de la matrice:
 
     42: _(u"""
 Solveur MUMPS :
-  La Matrice est non factorisable. Elle est détectée comme étant singulière
-  (en structure ou numériquement).
+  La matrice est non factorisable. Elle est détectée comme étant singulière.
 
 Conseils :
-  Il peut s'agir d'une erreur de programmation ou d'un problème de mise en données (blocage
-  absent ou surabondant).
+  - il s'agit vraisemblablement d'un problème de mise en données, vérifiez vos conditions aux limites (blocage absent ou surabondant) ;
+  - si le calcul est non-linéaire, rétablissez la détection de singularité (paramètre NPREC à sa valeur par défaut) pour permettre
+le découpage du pas de temps.
 """),
 
     48: _(u"""

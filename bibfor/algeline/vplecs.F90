@@ -22,7 +22,7 @@ subroutine vplecs(eigsol, itemax, maxitr, nbborn, nitv,&
                   precdc, precsh, prorto, prsudg, seuil,&
                   tol, toldyn, tolsor, appr, arret,&
                   method, typevp, matra, matrb, matrc,&
-                  modrig, optiof, stoper, sturm, typeqz,&
+                  modrig, optiof, stoper, sturm, typcal, typeqz,&
                   typres, amor, masse, raide, tabmod,&
                   lc, lkr, lns, lpg, lqz)
 !
@@ -60,7 +60,7 @@ subroutine vplecs(eigsol, itemax, maxitr, nbborn, nitv,&
     character(len=8), intent(out) :: arret, method
     character(len=9), intent(out) :: typevp
     character(len=14), intent(out) :: matra, matrb, matrc
-    character(len=16), intent(out) :: modrig, optiof, stoper, sturm, typeqz, typres
+    character(len=16), intent(out) :: modrig, optiof, stoper, sturm, typcal, typeqz, typres
     character(len=19), intent(out) :: amor, masse, raide, tabmod
     aster_logical , intent(out) :: lc, lkr, lns, lpg, lqz
 !
@@ -77,7 +77,7 @@ subroutine vplecs(eigsol, itemax, maxitr, nbborn, nitv,&
 ! --  BUFFERS DE LECTURE (EN CAS D'APPELS AVEC K*BID, PASSAGE PAR REFERENCE)
     character(len=1) :: app2
     character(len=8) :: arre2, metho2
-    character(len=16) :: modri2, optio2, stope2, stur2, typeq2, typre2
+    character(len=16) :: modri2, optio2, stope2, stur2, typeq2, typre2, typca2
     character(len=19) :: amo2, mass2, raid2, tabmo2
 !
 ! -----------------------
@@ -118,6 +118,9 @@ subroutine vplecs(eigsol, itemax, maxitr, nbborn, nitv,&
     stope2=trim(zk24(eislvk-1+10))
     stur2=''
     stur2 =trim(zk24(eislvk-1+11))
+    typca2=''
+    typca2=trim(zk24(eislvk-1+12))
+!
     app2=''
     app2  =trim(zk24(eislvk-1+16))
     typeq2=''
@@ -281,6 +284,7 @@ subroutine vplecs(eigsol, itemax, maxitr, nbborn, nitv,&
     optiof=trim(optio2)
     stoper=trim(stope2)
     sturm=trim(stur2)
+    typcal=trim(typca2)
     typeqz=trim(typeq2)
     typres=trim(typre2)
     amor=trim(amo2)

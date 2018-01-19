@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ DEFI_DOMAINE_REDUIT=OPER(nom="DEFI_DOMAINE_REDUIT",op=50,
      BASE_DUAL       = SIMP(statut='o',typ=mode_empi,max=1),
      NOM_DOMAINE     = SIMP(statut='o',typ='TXM',max=1),
      NB_COUCHE_SUPPL = SIMP(statut='f',typ='I',defaut=0),
-     NOM_INTERFACE   = SIMP(statut='o',typ='TXM',max=1),
+     GROUP_NO_INTERF = SIMP(statut='o',typ='TXM',max=1),
      MAILLAGE        = SIMP(statut='o',typ=maillage_sdaster,fr=tr("Maillage réutlisé en entrée")),
      DOMAINE_MINI   = FACT(statut='f',max=1,
          GROUP_NO        = SIMP(statut='f',typ=grno,validators=NoRepeat(),max='**'),
@@ -44,7 +44,7 @@ DEFI_DOMAINE_REDUIT=OPER(nom="DEFI_DOMAINE_REDUIT",op=50,
 
      CORR_COMPLET  = SIMP(statut='f',typ='TXM',defaut='NON',into=('OUI','NON')),
      p_correcteur   =BLOC(condition="""(equal_to("CORR_COMPLET", 'OUI'))""",
-        NOM_ENCASTRE          = SIMP(statut='o',typ='TXM',max=1),
+        GROUP_NO_ENCASTRE     = SIMP(statut='o',typ='TXM',max=1),
         NB_COUCHE_ENCASTRE    = SIMP(statut='f',typ='I',defaut=0) ),
      INFO          = SIMP(statut='f',typ='I',defaut= 1,into=( 1 , 2) ),
      TITRE         = SIMP(statut='f',typ='TXM'),

@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmextr(meshz       , modelz    , sdextrz   , ds_inout , keyw_fact,&
                   nb_keyw_fact, nb_extr   ,&
                   cara_elemz  , matez     , ds_constitutive, disp_curr, strx_curr,&
@@ -31,7 +32,6 @@ implicit none
 #include "asterfort/as_deallocate.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/getvtx.h"
-#include "asterfort/impfoi.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/nmextr_read_1.h"
 #include "asterfort/nmextr_read_2.h"
@@ -49,23 +49,21 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=*), intent(in) :: meshz
-    character(len=*), intent(in) :: modelz
-    character(len=*), intent(in) :: sdextrz
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    integer, intent(in) :: nb_keyw_fact
-    character(len=16), intent(in) :: keyw_fact
-    integer, intent(out) :: nb_extr
-    character(len=*), optional, intent(in) :: cara_elemz
-    character(len=*), optional, intent(in) :: matez
-    type(NL_DS_Constitutive), optional, intent(in) :: ds_constitutive
-    character(len=*), optional, intent(in) :: disp_curr
-    character(len=*), optional, intent(in) :: strx_curr
-    character(len=*), optional, intent(in) :: varc_curr
-    character(len=*), optional, intent(in) :: varc_refe
-    real(kind=8), optional, intent(in) :: time
+character(len=*), intent(in) :: meshz
+character(len=*), intent(in) :: modelz
+character(len=*), intent(in) :: sdextrz
+type(NL_DS_InOut), intent(in) :: ds_inout
+integer, intent(in) :: nb_keyw_fact
+character(len=16), intent(in) :: keyw_fact
+integer, intent(out) :: nb_extr
+character(len=*), optional, intent(in) :: cara_elemz
+character(len=*), optional, intent(in) :: matez
+type(NL_DS_Constitutive), optional, intent(in) :: ds_constitutive
+character(len=*), optional, intent(in) :: disp_curr
+character(len=*), optional, intent(in) :: strx_curr
+character(len=*), optional, intent(in) :: varc_curr
+character(len=*), optional, intent(in) :: varc_refe
+real(kind=8), optional, intent(in) :: time
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -122,7 +120,6 @@ implicit none
 !
     call nmextr_read_1(ds_inout, keyw_fact, nb_keyw_fact, list_field, rela_field_keyw,&
                        nb_field, nb_field_comp)
-!~     print*, 'list_field ',list_field(1)
 !
 ! - Create datastructure
 !
@@ -176,7 +173,7 @@ implicit none
 !
 ! ----- Datastructure name generation
 !
-        call impfoi(0, 2, i_keyw_fact, chaine)
+        write(chaine,'(I2)') i_keyw_fact
         list_node = sdextr(1:14)//chaine(1:2)//'   .NOEU'
         list_elem = sdextr(1:14)//chaine(1:2)//'   .MAIL'
         list_poin = sdextr(1:14)//chaine(1:2)//'   .POIN'

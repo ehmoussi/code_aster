@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -66,23 +66,23 @@ CARA=AFFE_CARA_ELEM(MODELE = MODEL,
                                 CARA     = ('R','EP',),
                                 VALE     = (0.5*D, t)))
 
-RHOI=DEFI_FONCTION(NOM_PARA='ABSC',
-                   MAILLAGE=TUBE,
-                   VALE_Y=( 1000.,  1000. ),
-                   NOEUD_PARA=( 'N001', 'N101',))
-
-RHOE=DEFI_FONCTION(NOM_PARA='ABSC',
-                   MAILLAGE=TUBE,
-                   VALE_Y=( 1000.,  1000. ),
-                   NOEUD_PARA=( 'N001', 'N101',))
 
 NbNodes = 101
 Absc = [(L/(NbNodes-1))*i for i in range(NbNodes)]
+
+RHOI=DEFI_FONCTION(NOM_PARA ='ABSC',
+                   ABSCISSE =Absc,
+                   ORDONNEE =[1000.]*len(Absc))
+
+RHOE=DEFI_FONCTION(NOM_PARA ='ABSC',
+                   ABSCISSE =Absc,
+                   ORDONNEE =[1000.]*len(Absc))
+
 Velo = [-4*x*(x-1) for x in Absc]  # Parabolic velocity profile
 Data = [None]*2*NbNodes
 for i in range(NbNodes) : 
-  Data[2*i  ] = Absc[i]
-  Data[2*i+1] = Velo[i]
+    Data[2*i  ] = Absc[i]
+    Data[2*i+1] = Velo[i]
 
 VELPROF=DEFI_FONCTION(NOM_PARA = 'ABSC',
                       VALE     = Data)
@@ -172,10 +172,10 @@ VCRIT = RECU_FONCTION(BASE_ELAS_FLUI=MELES,
                      PARA_Y='VITE_CRIT',
                      NUME_MODE=1)
 
+# TEST DE LA VITESSE CRITIQUE CALCULEE POUR MODE #1 ET NOMBRE DE CONNORS DE 4.5
 TEST_FONCTION(VALEUR=_F(VALE_CALC=4.566804940706,
                         CRITERE='RELATIF',
                         VALE_PARA=4.5,
                         FONCTION=VCRIT))
-
 
 FIN()

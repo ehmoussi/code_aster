@@ -16,28 +16,14 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-!
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine lcgrad(resi, rigi, ndim, ndimsi, neps,&
-                      sigma, apg, lag, grad, aldc,&
-                      r, c, ktg, sig, dsidep)
-        integer :: neps
-        integer :: ndim
-        aster_logical :: resi
-        aster_logical :: rigi
-        integer :: ndimsi
-        real(kind=8) :: sigma(6)
-        real(kind=8) :: apg
-        real(kind=8) :: lag
-        real(kind=8) :: grad(ndim)
-        real(kind=8) :: aldc
-        real(kind=8) :: r
-        real(kind=8) :: c
-        real(kind=8) :: ktg(6, 6, 4)
-        real(kind=8) :: sig(neps)
-        real(kind=8) :: dsidep(neps, neps)
+    subroutine lcgrad(resi, rigi, sig, apg, lag, grad, aldc,&
+                  r, c, deps_sig,dphi_sig,deps_a,dphi_a, sief, dsde)
+        aster_logical :: resi, rigi
+        real(kind=8),intent(in) :: sig(:), apg, lag, grad(:), aldc, r, c
+        real(kind=8),intent(in) :: deps_sig(:,:),dphi_sig(:),deps_a(:),dphi_a
+        real(kind=8)            :: sief(*), dsde(:,:)
     end subroutine lcgrad
 end interface

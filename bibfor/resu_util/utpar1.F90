@@ -200,15 +200,6 @@ implicit none
 !     --------------------------------
         ico=ico+1
         para_list(ico)='INST#A#R'
-        ico=ico+1
-!       -- FREQ ET CHAR_CRIT NE PEUTVENT  PAS ETRE UNE VARIABLE D'ACCES
-!       A CAUSE DE LRIDEA.F (TEST ZZZZ165A)
-        para_list(ico)='FREQ#P#R'
-        ico=ico+1
-        para_list(ico)='CHAR_CRIT#P#R'
-!
-        ico=ico+1
-        para_list(ico)='CHAR_STAB#P#R'
 !
         ico=ico+1
         para_list(ico)='CARAELEM#P#K8'

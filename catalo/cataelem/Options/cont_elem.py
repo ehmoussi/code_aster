@@ -25,7 +25,7 @@ import cataelem.Commons.attributes as AT
 
 
 
-CT_ELEM  = OutputParameter(phys=PHY.NEUT_R, type='ELEM')
+CT_ELEM  = OutputParameter(phys=PHY.CONTALAC, type='ELEM')
 
 
 CONT_ELEM = Option(

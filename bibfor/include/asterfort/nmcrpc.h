@@ -15,11 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine nmcrpc(result)
-        character(len=8) :: result
+    subroutine nmcrpc(ds_inout, nume_reuse, time_curr)
+        use NonLin_Datastructure_type
+        type(NL_DS_InOut), intent(in) :: ds_inout
+        integer, intent(in) :: nume_reuse
+        real(kind=8), intent(in) :: time_curr
     end subroutine nmcrpc
 end interface

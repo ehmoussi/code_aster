@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -417,7 +417,7 @@ class BLOC_DONNEES_SUP:
         -----------------------
     """
 
-    def __init__(self, mot_cle, l_BD, cle='', val_cle=''):
+    def __init__(self, mot_cle, l_BD, cle='', val_cle='', titre=None):
         """
             Création de l'objet
         """
@@ -429,6 +429,7 @@ class BLOC_DONNEES_SUP:
         self.cle = cle
         self.val_cle = val_cle
         self.l_BD = l_BD
+        self.titre = titre
 #------------------------------------------------------------------------
 
     def write(self, decal):
@@ -437,6 +438,8 @@ class BLOC_DONNEES_SUP:
         """
         liste_ligne = []
         decal2 = 4
+        if self.titre:
+            liste_ligne.append('*' + decal * '-' + self.titre)
         liste_ligne.append(decal * ' ' + self.mot_cle + ' %s %s'
                            % (self.cle, self.val_cle))
         for bloc in self.l_BD:
