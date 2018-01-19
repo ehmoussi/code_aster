@@ -33,12 +33,12 @@ implicit none
 #include "asterfort/mmtang.h"
 #include "asterfort/mmnorm.h"
 #include "asterfort/mmdonf.h"
-#include "asterfort/apdist.h"
 #include "asterfort/apnorm.h"
 #include "asterfort/apelem_getcenter.h"
 #include "asterfort/apelem_getvertex.h"
 #include "asterfort/apelem_inside.h"
 #include "asterfort/apinte_weight.h"
+#include "asterfort/apinte_chck.h"
 !
 real(kind=8), intent(in) :: proj_tole
 integer, intent(in) :: elem_dime
@@ -76,7 +76,7 @@ integer, optional, intent(inout) :: inte_neigh_(4)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: debug, l_reli
+    aster_logical :: debug, l_reli, l_inter
     real(kind=8) :: node_line_coop(elem_dime-1,4)
     real(kind=8) :: proj_coop(elem_dime-1,4)
     real(kind=8) :: ksi1, ksi2, tau1(3), tau2(3)
@@ -85,9 +85,7 @@ integer, optional, intent(inout) :: inte_neigh_(4)
     integer :: niverr, test, list_next(16), nb_node_line
     integer :: i_node, i_dime
     character(len=8) :: elem_line_code
-    real(kind=8) :: tevapr, dist_sign, sig
     real(kind=8) :: ksi1_cent, ksi2_cent
-    real(kind=8) :: dist, vect_pm(3)
     real(kind=8) :: elin_mast_norm(3), elin_slav_norm(3)
     integer :: list_prev(16)
     integer :: elem_auxi_nbnode, inte_neigh(4)
@@ -188,65 +186,19 @@ integer, optional, intent(inout) :: inte_neigh_(4)
                 write(*,*) "mmnewt failed"
                 ASSERT(ASTER_FALSE)
             endif
-        endif
-!
-! ----- Compute distance from point to its orthogonal projection
-!
-        dist = 0.d0
-        call apdist(elem_slav_code, elem_slav_coor, elem_slav_nbnode, ksi1, ksi2,&
-                    noma_coor     , dist          , vect_pm)
-!
-! ----- Sign of colinear product VECT_PM . NORMAL(slave)
-!
-        sig = 0.d0
-        if (elem_dime .eq. 3) then
-            sig = vect_pm(1)*elin_slav_norm(1)+&
-                  vect_pm(2)*elin_slav_norm(2)+&
-                  vect_pm(3)*elin_slav_norm(3)
-        elseif (elem_dime .eq. 2) then
-            sig = vect_pm(1)*elin_slav_norm(1)+&
-                  vect_pm(2)*elin_slav_norm(2)
-        else
-            ASSERT(.false.)
-        end if       
-        dist_sign = -sign(dist,sig)
-!
-! ----- Sign of colinear product VECT_PM . NORMAL(master)
-!
-        if (elem_dime .eq. 3) then
-            tevapr = vect_pm(1)*elin_mast_norm(1)+&
-                     vect_pm(2)*elin_mast_norm(2)+&
-                     vect_pm(3)*elin_mast_norm(3)
-        elseif (elem_dime .eq. 2) then
-            tevapr = vect_pm(1)*elin_mast_norm(1)+&
-                     vect_pm(2)*elin_mast_norm(2)
-        else
-            ASSERT(.false.)
-        end if
-        if (debug) then
-            write(*,*) "... Node: ",i_node,' - Coord: ', noma_coor
-            write(*,*) " => Distance: ",dist,' - Distance signée: ', dist_sign
-            write(*,*) " => VECT_PM . NORMAL: ", tevapr
-        endif 
-!
-! ----- No change of sign => no intersection
-!
-        if (dist_sign .lt. 0.d0-proj_tole) then
-            if (tevapr .gt. 0.d0-proj_tole) then
-                if (debug) then
-                    write(*,*) "... Pas d'intersection: ", dist_sign, tevapr
-                endif
-                goto 99
-            end if
-        elseif (dist_sign .gt. 0.d0+proj_tole) then
-            if (tevapr .lt. 0.d0+proj_tole) then
-                if (debug) then
-                    write(*,*) "... Pas d'intersection: ", dist_sign, tevapr
-                endif
-                goto 99
-            end if
-        end if     
+        endif    
     end do
+!
+! - Check if intersection is void or not
+!
+    call apinte_chck(proj_tole       , elem_dime     , &
+                     elem_mast_nbnode, elem_mast_coor, &
+                     elem_slav_nbnode, elem_slav_coor, elem_slav_code,&
+                     proj_coop       , elin_mast_norm, elin_slav_norm,&
+                     l_inter)
+    if (.not. l_inter) then
+        goto 99
+    endif
 !
 ! - Get parametric coordinates of slave nodes (linear)
 !
