@@ -218,7 +218,7 @@ integer, intent(in) :: i_zone
 ! ----------------- Cut master element in linearized sub-elements (SEG2 or TRIA3)
 !
                     call apdcma(elem_mast_code,&
-                                elin_mast_sub, elin_mast_nbnode, elin_mast_nbsub, elin_mast_code)
+                                elin_mast_sub , elin_mast_nbnode, elin_mast_nbsub, elin_mast_code)
                     if (debug) then
                         write(*,*) "Cut master: ", elin_mast_nbsub
                     endif
@@ -254,9 +254,9 @@ integer, intent(in) :: i_zone
 ! ------------------------- Projection/intersection of elements in slave parametric space
 !
                         call prjint(pair_tole     , elem_mast_dime,&
-                                    elin_slav_coor, elin_slav_nbnode(i_elin_slav), elin_slav_code,&
-                                    elin_mast_coor, elin_mast_nbnode(i_elin_mast), elin_mast_code,&
-                                    poin_inte     , inte_weight                  , nb_poin_inte  )
+                                    elin_slav_nbnode(i_elin_slav) , elin_slav_coor, elin_slav_code,&
+                                    elin_mast_nbnode(i_elin_mast) , elin_mast_coor, elin_mast_code,&
+                                    poin_inte     , inte_weight   , nb_poin_inte  )
 !
 ! ------------------------- Set start elements
 !
