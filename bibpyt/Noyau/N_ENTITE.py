@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -291,9 +291,9 @@ class ENTITE:
         from code_aster.Cata.DataStructure import UnitType
         if self.inout is None:
             return
-        elif self.inout not in ('in', 'out', 'inout'):
+        elif self.inout not in ('in', 'out'):
             self.cr.fatal(
-                _(u"L'attribut 'inout' doit valoir 'in','out' ou 'inout' : %r"),
+                _(u"L'attribut 'inout' doit valoir 'in' ou 'out' : %r"),
                 self.inout)
         elif UnitType() not in self.type or len(self.type) != 1:
             self.cr.fatal(
