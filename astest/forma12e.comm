@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -136,7 +136,6 @@ TRANGENE= DYNA_VIBRA(TYPE_CALCUL='TRAN', BASE_CALCUL='GENE',
                      SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
                      MATR_MASS=MASPRO,
                      MATR_RIGI=RIGPRO,
-                     VITE_ROTA=0.0,
                      INCREMENT=_F(PAS=pa,
                                   INST_FIN=tfin,),
                      EXCIT=_F(VECT_ASSE_GENE=PESPRO,
