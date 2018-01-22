@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -73,7 +73,7 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
         ACCE_ROTA       =     SIMP(statut='f',typ=(fonction_sdaster,formule),),),
 
         b_constante     = BLOC(condition="""equal_to("VITESSE_VARIABLE", 'NON')""",
-        VITE_ROTA       =     SIMP(statut='o',typ='R',defaut=0.E0),),
+        VITE_ROTA       =     SIMP(statut='f',typ='R',defaut=0.E0),),
         COUPLAGE_EDYOS  =     FACT(statut='f',max=1,
             PAS_TPS_EDYOS=        SIMP(statut='o',typ='R' ),),),
 
