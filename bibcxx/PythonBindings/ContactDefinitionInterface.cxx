@@ -32,94 +32,12 @@ void exportContactDefinitionToPython()
 {
     using namespace boost::python;
 
-    enum_< FrictionEnum >( "Friction" )
-        .value( "Coulomb", Coulomb )
-        .value( "WithoutFriction", WithoutFriction )
-        ;
-
-    enum_< GeometricResolutionAlgorithmEnum >( "GeometricResolutionAlgorithm" )
-        .value( "FixPoint", FixPoint )
-        .value( "Newton", Newton )
-        ;
-
-    enum_< GeometricUpdateEnum >( "GeometricUpdate" )
-        .value( "AutoUpdate", AutoUpdate )
-        .value( "Controlled", Controlled )
-        .value( "WithoutGeometricUpdate", WithoutGeometricUpdate )
-        ;
-
-    enum_< ContactPrecondEnum >( "ContactPrecond" )
-        .value( "Dirichlet", Dirichlet )
-        .value( "WithoutPrecond", WithoutPrecond )
-        ;
-
-    class_< DiscretizedContactInstance, DiscretizedContactPtr,
-            bases< DataStructure > > ( "DiscretizedContact", no_init )
+    class_< ContactDefinitionInstance, ContactDefinitionInstance::ContactDefinitionPtr,
+            bases< DataStructure > >( "ContactDefinition", no_init )
         .def( "__init__", make_constructor(
-            &initFactoryPtr< DiscretizedContactInstance >) )
+            &initFactoryPtr< ContactDefinitionInstance >) )
         .def( "__init__", make_constructor(
-            &initFactoryPtr< DiscretizedContactInstance,
-                             std::string >) )
-        .def( "addContactZone", &DiscretizedContactInstance::addContactZone )
-        .def( "build", &DiscretizedContactInstance::build )
-        .def( "setModel", &DiscretizedContactInstance::setModel )
-        .def( "setGeometricResolutionAlgorithm",
-              &DiscretizedContactInstance::setGeometricResolutionAlgorithm<Discretized> )
-        .def( "setGeometricUpdate",
-              &DiscretizedContactInstance::setGeometricUpdate<Discretized> )
-        .def( "setMaximumNumberOfGeometricIteration",
-              &DiscretizedContactInstance::setMaximumNumberOfGeometricIteration<Discretized> )
-        .def( "setGeometricResidual",
-              &DiscretizedContactInstance::setGeometricResidual<Discretized> )
-        .def( "setNumberOfGeometricIteration",
-              &DiscretizedContactInstance::setNumberOfGeometricIteration<Discretized> )
-        .def( "setNormsSmooth", &DiscretizedContactInstance::setNormsSmooth<Discretized> )
-        .def( "setNormsVerification",
-              &DiscretizedContactInstance::setNormsVerification<Discretized> )
-        .def( "setStopOnInterpenetrationDetection",
-              &DiscretizedContactInstance::setStopOnInterpenetrationDetection<Discretized> )
-        .def( "setContactAlgorithm",
-              &DiscretizedContactInstance::setContactAlgorithm<Discretized> )
-        .def( "enableContactMatrixSingularityDetection",
-              &DiscretizedContactInstance::enableContactMatrixSingularityDetection<Discretized> )
-        .def( "numberOfSolversForSchurComplement",
-              &DiscretizedContactInstance::numberOfSolversForSchurComplement<Discretized> )
-        .def( "setResidualForGcp",
-              &DiscretizedContactInstance::setResidualForGcp<Discretized> )
-        .def( "allowOutOfBoundLinearSearch",
-              &DiscretizedContactInstance::allowOutOfBoundLinearSearch<Discretized> )
-        .def( "setPreconditioning",
-              &DiscretizedContactInstance::setPreconditioning<Discretized> )
-        .def( "setThresholdOfPreconditioningActivation",
-              &DiscretizedContactInstance::setThresholdOfPreconditioningActivation<Discretized> )
-        .def( "setMaximumNumberOfPreconditioningIteration",
-              &DiscretizedContactInstance::setMaximumNumberOfPreconditioningIteration<Discretized> )
-    ;
-
-    class_< ContinuousContactInstance, ContinuousContactPtr,
-            bases< DataStructure > > ( "ContinuousContact", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ContinuousContactInstance >) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ContinuousContactInstance,
-                             std::string >) )
-    ;
-
-    class_< XfemContactInstance, XfemContactPtr,
-            bases< DataStructure > > ( "XfemContact", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< XfemContactInstance >) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< XfemContactInstance,
-                             std::string >) )
-    ;
-
-    class_< UnilateralConnexionInstance, UnilateralConnexionPtr,
-            bases< DataStructure > > ( "UnilateralConnexion", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< UnilateralConnexionInstance >) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< UnilateralConnexionInstance,
+            &initFactoryPtr< ContactDefinitionInstance,
                              std::string >) )
     ;
 };

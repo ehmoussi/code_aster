@@ -106,26 +106,6 @@ Documentation of all other types.
    :members:
 
 
-********************************************************************************
-:py:class:`~code_aster.Objects.GenericContactZone` subclasses
-********************************************************************************
-
-.. autoclass:: code_aster.Objects.GenericContactZone
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.ContinuousContactZone
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.DiscretizedContactZone
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.XfemContactZone
-   :show-inheritance:
-   :members:
-
 
 ********************************************************************************
 :py:class:`~code_aster.Objects.GenericConvergenceError` subclasses
@@ -472,51 +452,12 @@ Documentation of all other types.
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.ContactAlgorithm
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.ContactFormulation
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.ContactInitialization
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.ContactPrecond
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.CzmAlgorithm
-   :show-inheritance:
-   :members:
-
 .. autoclass:: code_aster.Objects.DrivingType
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.Friction
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.FrictionAlgorithm
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.GeometricResolutionAlgorithm
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.GeometricUpdate
-   :show-inheritance:
-   :members:
 
 .. autoclass:: code_aster.Objects.GraphPartitioner
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.IntegrationAlgorithm
    :show-inheritance:
    :members:
 
@@ -525,10 +466,6 @@ Documentation of all other types.
    :members:
 
 .. autoclass:: code_aster.Objects.IterativeSolverAlgorithm
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.LagrangeAlgorithm
    :show-inheritance:
    :members:
 
@@ -576,13 +513,6 @@ Documentation of all other types.
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.NormType
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.Pairing
-   :show-inheritance:
-   :members:
 
 .. autoclass:: code_aster.Objects.PhysicalQuantityComponent
    :show-inheritance:

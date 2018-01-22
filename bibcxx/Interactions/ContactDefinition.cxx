@@ -22,15 +22,3 @@
  */
 
 #include "Interactions/ContactDefinition.h"
-
-const std::vector< FrictionEnum > allFrictionParameters = { Coulomb, WithoutFriction };
-const std::vector< std::string > allFrictionParametersNames = { "COULOMB", "SANS" };
-
-const std::vector< GeometricResolutionAlgorithmEnum > allGeometricResolutionAlgorithm = { FixPoint, Newton };
-const std::vector< std::string > allGeometricResolutionAlgorithmNames = { "POINT_FIXE", "NEWTON" };
-
-const std::vector< GeometricUpdateEnum > allGeometricUpdate = { AutoUpdate, Controlled, WithoutGeometricUpdate };
-const std::vector< std::string > allGeometricUpdateNames = { "AUTOMATIQUE", "CONTROLE", "SANS" };
-
-const std::vector< ContactPrecondEnum > allContactPrecond = { Dirichlet, WithoutPrecond };
-const std::vector< std::string > allContactPrecondNames = { "DIRICHLET", "SANS" };
