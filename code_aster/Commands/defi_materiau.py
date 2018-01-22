@@ -20,7 +20,9 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import Material, GeneralMaterialBehaviour, Table, Function
+from ..Objects import Surface, Formula
 from .ExecuteCommand import ExecuteCommand
+import numpy
 
 
 class MaterialDefinition(ExecuteCommand):
@@ -54,25 +56,54 @@ class MaterialDefinition(ExecuteCommand):
                                           .format(fkwName))
             matBehav = klass()
             for skwName, skw in fkw.iteritems():
-                if type( skw ) is float:
-                    iName = skwName.capitalize()
-                    cRet = matBehav.setDoubleValue( iName, skw )
+                if skwName == "ORDRE_PARAM":
+                    matBehav.setSortedListParameters(list(skw))
+                    continue
+                iName = skwName.capitalize()
+                if fkwName in ("MFRONT", "UMAT"):
+                    print skw
+                    matBehav.setVectorOfDoubleValue(iName, list(skw))
+                    continue
+                if fkwName in ("MFRONT_FO", "UMAT_FO"):
+                    matBehav.setVectorOfFunctionValue(iName, list(skw))
+                    continue
+                if type(skw) in (float, int, numpy.float64):
+                    cRet = matBehav.setDoubleValue(iName, float(skw))
                     if not cRet:
                         print ValueError("Can not assign keyword '{1}'/'{0}' "
                                          "(as '{3}'/'{2}') "
                                          .format(skwName, fkwName, iName,
                                                  klass.__name__))
-                elif type( skw ) is Table:
-                    iName = skwName.capitalize()
-                    cRet = matBehav.setTableValue( iName, skw )
-                elif type( skw ) is Function:
-                    iName = skwName.capitalize()
-                    cRet = matBehav.setFunctionValue( iName, skw )
+                elif type(skw) is complex:
+                    cRet = matBehav.setComplexValue(iName, skw)
+                    if not cRet:
+                        print ValueError("Can not assign keyword '{1}'/'{0}' "
+                                         "(as '{3}'/'{2}') "
+                                         .format(skwName, fkwName, iName,
+                                                 klass.__name__))
+                elif type(skw) is str:
+                    cRet = matBehav.setStringValue(iName, skw)
+                elif type(skw) is Table:
+                    cRet = matBehav.setTableValue(iName, skw)
+                elif type(skw) is Function:
+                    cRet = matBehav.setFunctionValue(iName, skw)
+                elif type(skw) is Surface:
+                    cRet = matBehav.setSurfaceValue(iName, skw)
+                elif type(skw) is Formula:
+                    cRet = matBehav.setFormulaValue(iName, skw)
+                elif type(skw) is tuple and type(skw[0]) is str:
+                    if skw[0] == "RI":
+                        comp = complex(skw[1], skw[2])
+                        cRet = matBehav.setComplexValue(iName, comp)
+                    else:
+                        raise NotImplementedError("Unsupported type for keyword: "
+                                                "{0} <{1}>"
+                                                .format(skwName, type(skw)))
                 else:
                     raise NotImplementedError("Unsupported type for keyword: "
                                               "{0} <{1}>"
                                               .format(skwName, type(skw)))
-            self._result.addMaterialBehaviour( matBehav )
+            self._result.addMaterialBehaviour(matBehav)
 
         self._result.build()
 

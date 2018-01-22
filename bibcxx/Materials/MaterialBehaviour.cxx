@@ -4,7 +4,7 @@
  * @author Nicolas Sellenet
  * @todo autoriser le type Function pour les paramètres matériau 
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -29,15 +29,24 @@
 
 bool GeneralMaterialBehaviourInstance::buildJeveuxVectors( JeveuxVectorComplex& complexValues,
                                                            JeveuxVectorDouble& doubleValues,
-                                                           JeveuxVectorChar16& char16Values ) const
+                                                           JeveuxVectorChar16& char16Values,
+                                                           JeveuxVectorChar16& ordr,
+                                                           JeveuxVectorDouble& userDoubles,
+                                                           JeveuxVectorChar8& userFunctions ) const
     throw( std::runtime_error )
 {
+    if( _vectOrdr.size() != 0 )
+    {
+        ordr->allocate( Permanent, _vectOrdr.size() );
+        for( int i = 0; i < _vectOrdr.size(); ++i )
+            (*ordr)[i] = _vectOrdr[i];
+    }
     const int nbOfMaterialProperties = getNumberOfPropertiesWithValue();
     complexValues->allocate( Permanent, nbOfMaterialProperties );
     doubleValues->allocate( Permanent, nbOfMaterialProperties );
     char16Values->allocate( Permanent, 2*nbOfMaterialProperties );
 
-    int position = 0, position2 = nbOfMaterialProperties;
+    int position = 0, position2 = nbOfMaterialProperties, pos3 = 0;
     for( auto curIter : _mapOfDoubleMaterialProperties ){
         std::string nameOfProperty = curIter.second.getName();
         if( curIter.second.hasValue() )
@@ -52,8 +61,43 @@ bool GeneralMaterialBehaviourInstance::buildJeveuxVectors( JeveuxVectorComplex& 
             throw std::runtime_error( "Mandatory material property " + nameOfProperty + " is missing" );
 
     }
-    doubleValues->setLonUti(position);
-    complexValues->setLonUti(0);
+    doubleValues->setUsedSize(position);
+
+    for( auto curIter : _mapOfComplexMaterialProperties ){
+        std::string nameOfProperty = curIter.second.getName();
+        if( curIter.second.hasValue() )
+        {
+            nameOfProperty.resize( 16, ' ' );
+            (*char16Values)[position] = nameOfProperty.c_str();
+            (*complexValues)[position] = curIter.second.getValue();
+            ++position;
+            ++pos3;
+        }
+
+        if( curIter.second.isMandatory() && ! curIter.second.hasValue() )
+            throw std::runtime_error( "Mandatory material property " + nameOfProperty + " is missing" );
+
+    }
+    if( pos3 != 0 )
+        complexValues->setUsedSize(position);
+    else
+        complexValues->setUsedSize(pos3);
+
+    for( auto curIter : _mapOfStringMaterialProperties ){
+        std::string nameOfProperty = curIter.second.getName();
+        if( curIter.second.hasValue() )
+        {
+            nameOfProperty.resize( 16, ' ' );
+            (*char16Values)[position] = nameOfProperty.c_str();
+            (*char16Values)[position2] = curIter.second.getValue();
+            ++position;
+            ++position2;
+        }
+
+        if( curIter.second.isMandatory() && ! curIter.second.hasValue() )
+            throw std::runtime_error( "Mandatory material property " + nameOfProperty + " is missing" );
+    }
+
     for( auto curIter : _mapOfTableMaterialProperties ){
         std::string nameOfProperty = curIter.second.getName();
         if( curIter.second.hasValue() )
@@ -83,7 +127,50 @@ bool GeneralMaterialBehaviourInstance::buildJeveuxVectors( JeveuxVectorComplex& 
         if( curIter.second.isMandatory() && ! curIter.second.hasValue() )
             throw std::runtime_error( "Mandatory material property " + nameOfProperty + " is missing" );
     }
-    char16Values->setLonUti( position2 );
+
+    if( _mapOfVectorDoubleMaterialProperties.size() > 1 )
+        throw std::runtime_error( "Unconsistent size" );
+    for( auto curIter : _mapOfVectorDoubleMaterialProperties ){
+        std::string nameOfProperty = curIter.second.getName();
+        if( curIter.second.hasValue() )
+        {
+            nameOfProperty.resize( 16, ' ' );
+            (*char16Values)[position] = nameOfProperty.c_str();
+            (*char16Values)[position2] = userDoubles->getName();
+
+            auto values = curIter.second.getValue();
+            userDoubles->allocate( Permanent, values.size() );
+            (*userDoubles) = values;
+            ++position;
+            ++position2;
+        }
+
+        if( curIter.second.isMandatory() && ! curIter.second.hasValue() )
+            throw std::runtime_error( "Mandatory material property " + nameOfProperty + " is missing" );
+    }
+
+    if( _mapOfVectorFunctionMaterialProperties.size() > 1 )
+        throw std::runtime_error( "Unconsistent size" );
+    for( auto curIter : _mapOfVectorFunctionMaterialProperties ){
+        std::string nameOfProperty = curIter.second.getName();
+        if( curIter.second.hasValue() )
+        {
+            nameOfProperty.resize( 16, ' ' );
+            (*char16Values)[position] = nameOfProperty.c_str();
+            (*char16Values)[position2] = userFunctions->getName();
+
+            auto values = curIter.second.getValue();
+            userFunctions->allocate( Permanent, values.size() );
+            for( int i = 0; i < values.size(); ++i )
+                (*userFunctions)[i] = values[i]->getName();
+            ++position;
+            ++position2;
+        }
+
+        if( curIter.second.isMandatory() && ! curIter.second.hasValue() )
+            throw std::runtime_error( "Mandatory material property " + nameOfProperty + " is missing" );
+    }
+    char16Values->setUsedSize( position2 );
 
     return true;
 };
@@ -95,11 +182,27 @@ int GeneralMaterialBehaviourInstance::getNumberOfPropertiesWithValue() const
         if( curIter.second.hasValue() )
             ++toReturn;
 
+    for( auto curIter : _mapOfComplexMaterialProperties )
+        if( curIter.second.hasValue() )
+            ++toReturn;
+
+    for( auto curIter : _mapOfStringMaterialProperties )
+        if( curIter.second.hasValue() )
+            ++toReturn;
+
     for( auto curIter : _mapOfTableMaterialProperties )
         if( curIter.second.hasValue() )
             ++toReturn;
 
     for( auto curIter : _mapOfFunctionMaterialProperties )
+        if( curIter.second.hasValue() )
+            ++toReturn;
+
+    for( auto curIter : _mapOfVectorDoubleMaterialProperties )
+        if( curIter.second.hasValue() )
+            ++toReturn;
+
+    for( auto curIter : _mapOfVectorFunctionMaterialProperties )
         if( curIter.second.hasValue() )
             ++toReturn;
 
