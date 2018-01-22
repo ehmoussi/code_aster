@@ -3,7 +3,7 @@
  * @brief Interface python de MaterialBehaviour
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -34,9 +34,18 @@ void exportMaterialBehaviourToPython()
         .def( "__init__", make_constructor(
             &initFactoryPtr< GeneralMaterialBehaviourInstance > ) )
         .def( "getAsterName", &GeneralMaterialBehaviourInstance::getAsterName )
+        .def( "setComplexValue", &GeneralMaterialBehaviourInstance::setComplexValue )
         .def( "setDoubleValue", &GeneralMaterialBehaviourInstance::setDoubleValue )
+        .def( "setStringValue", &GeneralMaterialBehaviourInstance::setStringValue )
         .def( "setFunctionValue", &GeneralMaterialBehaviourInstance::setFunctionValue )
         .def( "setTableValue", &GeneralMaterialBehaviourInstance::setTableValue )
+        .def( "setSurfaceValue", &GeneralMaterialBehaviourInstance::setSurfaceValue )
+        .def( "setFormulaValue", &GeneralMaterialBehaviourInstance::setFormulaValue )
+        .def( "setVectorOfDoubleValue", &GeneralMaterialBehaviourInstance::setVectorOfDoubleValue )
+        .def( "setVectorOfFunctionValue",
+              &GeneralMaterialBehaviourInstance::setVectorOfFunctionValue )
+        .def( "setSortedListParameters",
+              &GeneralMaterialBehaviourInstance::setSortedListParameters )
     ;
 
     class_< ElasMaterialBehaviourInstance, ElasMaterialBehaviourPtr,
@@ -1152,18 +1161,18 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MonoDdCcIrraMaterialBehaviourInstance > ) )
     ;
 
-    class_< UmatMaterialBehaviourInstance, UmatMaterialBehaviourPtr,
+    class_< UMatMaterialBehaviourInstance, UMatMaterialBehaviourPtr,
             bases< GeneralMaterialBehaviourInstance > >
-        ( "UmatMaterialBehaviour", no_init )
+        ( "UMatMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
-            &initFactoryPtr< UmatMaterialBehaviourInstance > ) )
+            &initFactoryPtr< UMatMaterialBehaviourInstance > ) )
     ;
 
-    class_< UmatFoMaterialBehaviourInstance, UmatFoMaterialBehaviourPtr,
+    class_< UMatFoMaterialBehaviourInstance, UMatFoMaterialBehaviourPtr,
             bases< GeneralMaterialBehaviourInstance > >
-        ( "UmatFoMaterialBehaviour", no_init )
+        ( "UMatFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
-            &initFactoryPtr< UmatFoMaterialBehaviourInstance > ) )
+            &initFactoryPtr< UMatFoMaterialBehaviourInstance > ) )
     ;
 
     class_< CritRuptMaterialBehaviourInstance, CritRuptMaterialBehaviourPtr,
@@ -1171,5 +1180,19 @@ void exportMaterialBehaviourToPython()
         ( "CritRuptMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< CritRuptMaterialBehaviourInstance > ) )
+    ;
+
+    class_< MFrontMaterialBehaviourInstance, MFrontMaterialBehaviourPtr,
+            bases< GeneralMaterialBehaviourInstance > >
+        ( "MFrontMaterialBehaviour", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< MFrontMaterialBehaviourInstance > ) )
+    ;
+
+    class_< MFrontFoMaterialBehaviourInstance, MFrontFoMaterialBehaviourPtr,
+            bases< GeneralMaterialBehaviourInstance > >
+        ( "MFrontFoMaterialBehaviour", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< MFrontFoMaterialBehaviourInstance > ) )
     ;
 };

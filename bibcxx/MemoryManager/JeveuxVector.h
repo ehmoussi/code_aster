@@ -204,7 +204,7 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
         /**
          * @brief Set the value of LONUTI of jeveux object
          */
-        bool setLonUti( long value )
+        bool setUsedSize( long value )
         {
             if( ! exists() ) return false;
 

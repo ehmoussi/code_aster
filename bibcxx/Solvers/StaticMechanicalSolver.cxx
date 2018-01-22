@@ -35,7 +35,7 @@
 #include "Algorithms/StaticMechanicalContext.h"
 
 StaticMechanicalSolverInstance::StaticMechanicalSolverInstance( const ModelPtr& model,
-                                                                const MaterialOnMeshPtr& mater, 
+                                                                const MaterialOnMeshPtr& mater,
                                                                 const ElementaryCharacteristicsPtr& cara ):
     _supportModel( model ),
     _materialOnMesh( mater ),
@@ -49,7 +49,6 @@ StaticMechanicalSolverInstance::StaticMechanicalSolverInstance( const ModelPtr& 
 ElasticEvolutionContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runtime_error )
 {
     ElasticEvolutionContainerPtr resultC( new ElasticEvolutionContainerInstance() );
-    std::string nameOfSD = resultC->getName();
 
     _study->getCodedMaterial()->allocate();
 
