@@ -29,11 +29,11 @@ implicit none
 #include "asterfort/lcodrm.h"
 #include "asterfort/insema.h"
 #include "asterfort/ptinma.h"
-#include "asterfort/mmtang.h"
-#include "asterfort/mmnorm.h"
-#include "asterfort/mmdonf.h"
-#include "asterfort/apnorm.h"
-#include "asterfort/apelem_getcenter.h"
+!#include "asterfort/mmtang.h"
+!#include "asterfort/mmnorm.h"
+!#include "asterfort/mmdonf.h"
+#include "asterfort/apinte_norm.h"
+!#include "asterfort/apelem_getcenter.h"
 #include "asterfort/apelem_getvertex.h"
 #include "asterfort/apelem_inside.h"
 #include "asterfort/apinte_weight.h"
@@ -84,11 +84,9 @@ integer, optional, intent(inout) :: inte_neigh_(4)
     integer :: test, list_next(16), nb_node_line
     integer :: i_node
     character(len=8) :: elem_line_code
-    real(kind=8) :: ksi1_cent, ksi2_cent
-    real(kind=8) :: elin_mast_norm(3), elin_slav_norm(3)
+    real(kind=8) :: mast_norm(3), slav_norm(3)
     integer :: list_prev(16)
-    integer :: elem_auxi_nbnode, inte_neigh(4)
-    character(len=8) :: elem_auxi_code
+    integer :: inte_neigh(4)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -105,43 +103,12 @@ integer, optional, intent(inout) :: inte_neigh_(4)
         write(*,*) ". Projection/intersection"
     endif
 !
-! - Compute master element normal (at center)
+! - Compute norms
 !
-    ASSERT(elem_mast_code .eq. 'SE2' .or. elem_mast_code .eq. 'TR3')
-    call apelem_getcenter(elem_mast_code, ksi1_cent, ksi2_cent)
-    call apnorm(elem_mast_nbnode, elem_mast_code, elem_dime     , elem_mast_coor,&
-                ksi1_cent       , ksi2_cent     , elin_mast_norm)
-    if (debug) then
-        write(*,*) ".. Master/Norm: ", elin_mast_norm
-    endif
-!
-! - Linearization of reference element for slave element
-!
-    if (elem_slav_code .eq. 'TR3' .or.&
-        elem_slav_code .eq. 'TR6') then
-        elem_auxi_code   = 'TR3'
-        elem_auxi_nbnode = 3 
-    elseif (elem_slav_code .eq. 'QU4' .or.&
-            elem_slav_code .eq. 'QU8' .or. &
-            elem_slav_code .eq. 'QU9') then
-        elem_auxi_code   = 'QU4'
-        elem_auxi_nbnode = 4  
-    elseif (elem_slav_code .eq. 'SE2' .or.&
-            elem_slav_code .eq. 'SE3') then
-        elem_auxi_code   = 'SE2'
-        elem_auxi_nbnode = 2
-    else
-        ASSERT(.false.) 
-    end if
-!
-! - Compute slave element normal (at center)
-!
-    call apelem_getcenter(elem_auxi_code, ksi1_cent, ksi2_cent)
-    call apnorm(elem_auxi_nbnode, elem_auxi_code, elem_dime     , elem_slav_coor,&
-                ksi1_cent       , ksi2_cent     , elin_slav_norm)
-    if (debug) then
-        write(*,*) ".. Slave/Norm: ", elin_slav_norm
-    endif 
+    call apinte_norm(elem_dime       , &
+                     elem_mast_nbnode, elem_mast_coor, elem_mast_code,&
+                     elem_slav_coor  , elem_slav_code,&
+                     mast_norm       , slav_norm)
 !
 ! - Project master nodes in slave element parametric space
 !
@@ -155,7 +122,7 @@ integer, optional, intent(inout) :: inte_neigh_(4)
     call apinte_chck(proj_tole       , elem_dime     , &
                      elem_mast_nbnode, elem_mast_coor, &
                      elem_slav_nbnode, elem_slav_coor, elem_slav_code,&
-                     proj_coop       , elin_mast_norm, elin_slav_norm,&
+                     proj_coop       , mast_norm     , slav_norm,&
                      l_inter)
     if (.not. l_inter) then
         goto 99
