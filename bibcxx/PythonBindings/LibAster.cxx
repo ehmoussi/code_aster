@@ -47,8 +47,6 @@
 #include "PythonBindings/FormulaInterface.h"
 #include "PythonBindings/SurfaceInterface.h"
 #include "PythonBindings/ContactDefinitionInterface.h"
-#include "PythonBindings/ContactZoneInterface.h"
-#include "PythonBindings/XfemContactZoneInterface.h"
 #include "PythonBindings/AssemblyMatrixInterface.h"
 #include "PythonBindings/ElementaryMatrixInterface.h"
 #include "PythonBindings/ElementaryVectorInterface.h"
@@ -193,8 +191,6 @@ BOOST_PYTHON_MODULE(libaster)
     exportFormulaToPython();
     exportSurfaceToPython();
     exportContactDefinitionToPython();
-    exportContactZoneToPython();
-    exportXfemContactZoneToPython();
     exportAssemblyMatrixToPython();
     exportElementaryMatrixToPython();
     exportElementaryVectorToPython();

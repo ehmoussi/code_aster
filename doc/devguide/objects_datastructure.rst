@@ -119,15 +119,6 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.ContinuousContact` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.ContinuousContact
-   :show-inheritance:
-   :members:
-
-
-================================================================================
 :py:class:`~code_aster.Objects.CrackTip` object
 ================================================================================
 
@@ -153,14 +144,6 @@
    :show-inheritance:
    :members:
 
-
-================================================================================
-:py:class:`~code_aster.Objects.DiscretizedContact` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.DiscretizedContact
-   :show-inheritance:
-   :members:
 
 
 ================================================================================
@@ -1045,13 +1028,6 @@
    :members:
 
 
-================================================================================
-:py:class:`~code_aster.Objects.UnilateralConnexion` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.UnilateralConnexion
-   :show-inheritance:
-   :members:
 
 
 ================================================================================
@@ -1064,10 +1040,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.XfemContact` object
+:py:class:`~code_aster.Objects.ContactDefinition` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.XfemContact
+.. autoclass:: code_aster.Objects.ContactDefinition
    :show-inheritance:
    :members:
 
