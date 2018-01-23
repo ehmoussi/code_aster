@@ -1,0 +1,88 @@
+#!groovy
+
+pipeline {
+    options {
+        timestamps()
+        timeout(time: 1, unit: 'HOURS')
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '20'))
+    }
+    agent {
+        docker {
+            image "localhost:5000/dev-codeaster:default"
+            args "--volume \${HOME}/dev/codeaster/data:/home/user/dev/codeaster/data --volume \${HOME}/dev/codeaster/devtools:/home/user/dev/codeaster/devtools --volume \${HOME}/dev/codeaster/validation:/home/user/dev/codeaster/validation"
+        }
+    }
+
+    environment {
+        ADM = credentials("SCM_ADMINASTER")
+    }
+
+    stages {
+        stage('Build') {
+            // Check for development tools
+            steps {
+                sh "./waf configure install --prefix=build/install/std"
+                sh "[ -e waf_mpi ] || ln -s waf_variant waf_mpi"
+                sh "./waf_mpi configure install --prefix=build/install/mpi"
+            }
+        }
+        stage('Test') {
+            steps {
+                sh '''#!/bin/bash -l
+                run_testcases --vers=\$(pwd)/build/install/std/share/aster --testlist=asterxx --resutest=build/resutest
+                exit 0
+                '''
+                sh '''#!/bin/bash -l
+                run_testcases --vers=\$(pwd)/build/install/mpi/share/aster --testlist=asterxx --resutest=build/resutest_mpi
+                exit 0
+                '''
+            }
+        }
+        stage('Merge') {
+            when {
+                expression { return currentBuild.currentResult == "SUCCESS" }
+            }
+            steps {
+                echo "Run automatic merge here!"
+            }
+        }
+    }
+    post {
+        always {
+            junit 'build/resutest*/run_testcases.xml'
+            sh "post2mattermost ${currentBuild.currentResult} 'Job ${env.JOB_NAME} #${env.BUILD_NUMBER} ended (<${env.RUN_DISPLAY_URL}|Open>)'"
+        }
+        success {
+            emailext(
+                subject: "Completed - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """
+<p><a href="${env.BUILD_URL}/display/redirect">Job ${env.JOB_NAME} (#${env.BUILD_NUMBER})</a> ended successfully.</p>
+<p>Branch name: ${env.MERCURIAL_REVISION_BRANCH}</p>
+<p>Revision: ${env.MERCURIAL_REVISION_SHORT}</p>
+<p>Congratulations! Your changes have been integrated in the main branch of the official repository.</p>
+<p>Read the <a href="${env.BUILD_URL}/display/redirect">job page</a> or open the attached log file for details.</p>
+                 """,
+                to: emailextrecipients([[$class: 'DevelopersRecipientProvider']]),
+                mimeType: 'text/html',
+                attachLog: true
+            )
+        }
+        failure {
+            emailext(
+                subject: "Failed - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """
+<p><a href="${env.BUILD_URL}/display/redirect">Job ${env.JOB_NAME} (#${env.BUILD_NUMBER})</a> ended with failure.</p>
+<p>Branch name: ${env.MERCURIAL_REVISION_BRANCH}</p>
+<p>Revision: ${env.MERCURIAL_REVISION_SHORT}</p>
+<p>Sorry, checkings failed. Your changes have been rejected and won't be integrated in the main branch of the official repository.</p>
+<p>Please fix the errors and try again.</p>
+<p>Read the <a href="${env.BUILD_URL}/display/redirect">job page</a> or open the attached log file to see the reasons of the failure.</p>
+                 """,
+                to: emailextrecipients([[$class: 'DevelopersRecipientProvider']]),
+                mimeType: 'text/html',
+                attachLog: true
+            )
+        }
+    }
+}
