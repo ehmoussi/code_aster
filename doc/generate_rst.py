@@ -9,11 +9,11 @@ EPILOG = """
 EXAMPLES:
     Generate a file like ``supervis.rst``::
 
-        generate_rst.py code_aster/__init__.py code_aster/Supervis/*.py
+        python generate_rst.py code_aster/__init__.py code_aster/Supervis/*.py
 
     Generate files for *DataStructure* and derivated subclasses::
 
-        generate_rst --objects
+        python generate_rst.py --objects
 """
 
 import argparse

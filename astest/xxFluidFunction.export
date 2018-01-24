@@ -6,4 +6,4 @@ P mpi_nbnoeud 1
 P testlist asterxx verification sequential
 
 F comm xxFluidFunction.py D 1
-F nom xxFluidFunction.med D 0
+F nom sdll110a.mmed D 0
