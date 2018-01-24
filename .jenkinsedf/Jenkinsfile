@@ -19,8 +19,22 @@ pipeline {
     }
 
     stages {
+        stage('Init') {
+            steps {
+                sh "post2mattermost 'Starting Job ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.RUN_DISPLAY_URL}|Open>)'"
+            }
+        }
+        stage('PreCheck') {
+            steps {
+                sh '''#!/bin/bash -l
+                ./check_docs.sh
+                '''
+                sh '''#!/bin/bash -l
+                ./check_automerge.sh
+                '''
+            }
+        }
         stage('Build') {
-            // Check for development tools
             steps {
                 sh "./waf configure install --prefix=build/install/std"
                 sh "[ -e waf_mpi ] || ln -s waf_variant waf_mpi"
@@ -37,6 +51,7 @@ pipeline {
                 run_testcases --vers=\$(pwd)/build/install/mpi/share/aster --testlist=asterxx --resutest=build/resutest_mpi
                 exit 0
                 '''
+                junit 'build/resutest*/run_testcases.xml'
             }
         }
         stage('Merge') {
@@ -44,13 +59,33 @@ pipeline {
                 expression { return currentBuild.currentResult == "SUCCESS" }
             }
             steps {
-                echo "Run automatic merge here!"
+                sh """#!/bin/bash -l
+
+                cp  .hg/hgrc .hg/hgrc.bck
+                cat << EOF >> .hg/hgrc
+[ui]
+username = 'mergerobot <no-reply@edf.fr>'
+
+[extensions]
+strip =
+
+[auth]
+robot.prefix = http://aster-repo.der.edf.fr/scm/
+robot.username = ${ADM_USR}
+robot.password = ${ADM_PSW}
+EOF
+                ./share/test/check_automerge.sh --verbose --commit
+                ret=\$?
+
+                mv .hg/hgrc.bck .hg/hgrc
+
+                exit \${ret}
+                """
             }
         }
     }
     post {
         always {
-            junit 'build/resutest*/run_testcases.xml'
             sh "post2mattermost ${currentBuild.currentResult} 'Job ${env.JOB_NAME} #${env.BUILD_NUMBER} ended (<${env.RUN_DISPLAY_URL}|Open>)'"
         }
         success {
