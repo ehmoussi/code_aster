@@ -106,7 +106,6 @@ Documentation of all other types.
    :members:
 
 
-
 ********************************************************************************
 :py:class:`~code_aster.Objects.GenericConvergenceError` subclasses
 ********************************************************************************
@@ -456,7 +455,6 @@ Documentation of all other types.
    :show-inheritance:
    :members:
 
-
 .. autoclass:: code_aster.Objects.GraphPartitioner
    :show-inheritance:
    :members:
@@ -512,7 +510,6 @@ Documentation of all other types.
 .. autoclass:: code_aster.Objects.NonLinearMethodEnum
    :show-inheritance:
    :members:
-
 
 .. autoclass:: code_aster.Objects.PhysicalQuantityComponent
    :show-inheritance:

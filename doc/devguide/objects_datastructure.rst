@@ -119,6 +119,15 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.ContactDefinition` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.ContactDefinition
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.CrackTip` object
 ================================================================================
 
@@ -143,7 +152,6 @@
 .. autoclass:: code_aster.Objects.DOFNumbering
    :show-inheritance:
    :members:
-
 
 
 ================================================================================
@@ -1028,22 +1036,11 @@
    :members:
 
 
-
-
 ================================================================================
 :py:class:`~code_aster.Objects.WavePressureOnFaceDouble` object
 ================================================================================
 
 .. autoclass:: code_aster.Objects.WavePressureOnFaceDouble
-   :show-inheritance:
-   :members:
-
-
-================================================================================
-:py:class:`~code_aster.Objects.ContactDefinition` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.ContactDefinition
    :show-inheritance:
    :members:
 

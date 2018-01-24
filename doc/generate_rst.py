@@ -80,7 +80,7 @@ def all_objects(destdir):
     import code_aster.Objects as OBJ
 
     boost_instance = OBJ.DataStructure.mro()[1]
-    boost_enum = OBJ.ContactAlgorithm.mro()[1]
+    boost_enum = OBJ.Modelings.mro()[1]
 
     # sections: directly derivated from Boost.Python.instance
     sections = [OBJ.DataStructure, OBJ.GeneralMaterialBehaviour]
