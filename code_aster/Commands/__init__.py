@@ -164,6 +164,7 @@ from .post_rccm import POST_RCCM
 from .post_releve_t import POST_RELEVE_T
 from .post_usure import POST_USURE
 from .pre_gibi import PRE_GIBI
+from .pre_ideas import PRE_IDEAS
 from .prod_matr_cham import PROD_MATR_CHAM
 from .proj_champ import PROJ_CHAMP
 from .proj_matr_base import PROJ_MATR_BASE
