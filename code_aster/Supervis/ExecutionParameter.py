@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -90,6 +90,7 @@ class ExecutionParameter(object):
         self._args['repmat'] = '.'
         self._args['repdex'] = '.'
 
+        self._args['stage_number'] = 0
         self._args['continue'] = 0
         self._args['deprecated'] = 0
         self._args['use_legacy_mode'] = 0
@@ -199,6 +200,9 @@ class ExecutionParameter(object):
             action='store', metavar='DIR', default='.',
             help="directory of external datas (geometrical datas or properties...)")
 
+        parser.add_argument('--stage_number',
+            action='store', type=int, default=1, metavar='NUM',
+            help="Stage number in the Study")
         parser.add_argument('--continue',
             action='store_const', const=1, default=0,
             help="turn on to continue a previous execution")
