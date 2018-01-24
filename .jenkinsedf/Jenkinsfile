@@ -27,9 +27,6 @@ pipeline {
         stage('PreCheck') {
             steps {
                 sh '''#!/bin/bash -l
-                ./check_docs.sh
-                '''
-                sh '''#!/bin/bash -l
                 ./check_automerge.sh
                 '''
             }
@@ -37,6 +34,9 @@ pipeline {
         stage('Build') {
             steps {
                 sh "./waf configure install --prefix=build/install/std"
+                sh '''#!/bin/bash -l
+                ./check_docs.sh
+                '''
                 sh "[ -e waf_mpi ] || ln -s waf_variant waf_mpi"
                 sh "./waf_mpi configure install --prefix=build/install/mpi"
             }
