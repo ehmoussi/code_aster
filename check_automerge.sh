@@ -88,7 +88,7 @@ check_merge_main()
         if [ ${do_commit} -eq 1 ]
         then
             printf "\nCommit merge...\n"
-            hg commit --message "merge '${branch}'" || return 4
+            hg commit --message "merge '${branch}'" < /dev/null || return 4
             hg log --graph --limit 100
             printf "\nPush new revision...\n"
             hg push --rev . --new-branch ${DEST_REPO}
