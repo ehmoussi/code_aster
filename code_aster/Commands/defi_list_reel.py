@@ -52,10 +52,12 @@ class ListOfFloatsDefinition(ExecuteCommand):
             for factkw in keywords['INTERVALLE']:
                 stop = factkw['JUSQU_A']
                 step = factkw.get('PAS')
+                print step
                 if step is None:
-                    step = (stop - start) / factkw['NOMBRE']
+                    step = 1.*(stop - start) / factkw['NOMBRE']
                 if step > stop - start:
                     raise ValueError("PAS is greater than the interval")
+                print values, start, stop, step
                 values = np.concatenate((values, np.arange(start, stop, step)))
                 if abs(stop - values[-1]) < 1.e-3 * step:
                     values = values[:-1]
