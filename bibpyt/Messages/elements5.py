@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -167,7 +167,7 @@ OPTION MASS_INER : la masse volumique RHO doit être non nulle
     50 : _(u"""
    La méthode IMPLEX ne peut pas être utilisée avec la loi de comportement que vous
    avez choisi ; sur les éléments 2D et 3D elle n'est utilisable qu'avec VMIS_ISOT_LINE,
-   ENDO_FRAGILE et ENDO_ISOT_BETON
+   et ENDO_ISOT_BETON
 """),
 
     51 : _(u"""
