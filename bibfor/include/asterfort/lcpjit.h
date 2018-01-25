@@ -24,10 +24,10 @@ interface
         real(kind=8), intent(in) :: proj_tole
         integer, intent(in) :: elem_dime
         integer, intent(in) :: elem_mast_nbnode
-        real(kind=8), intent(in) :: elem_mast_coor(elem_dime,elem_mast_nbnode)
+        real(kind=8), intent(in) :: elem_mast_coor(3,9)
         character(len=8), intent(in) :: elem_mast_code
         integer, intent(in) :: elem_slav_nbnode
-        real(kind=8), intent(in) :: elem_slav_coor(elem_dime,elem_slav_nbnode)
+        real(kind=8), intent(in) :: elem_slav_coor(3,9)
         character(len=8), intent(in) :: elem_slav_code
         real(kind=8), intent(out):: poin_inte(elem_dime-1,16)
         real(kind=8), intent(out) :: inte_weight

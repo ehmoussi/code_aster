@@ -17,20 +17,17 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine lcrtma(elem_dime       , proj_tole,&
-                      tria_coor       , &
-                      elin_slav_nbnode, elin_slav_coor, elin_slav_code,&
-                      elem_mast_nbnode, elem_mast_coor, elem_mast_code,&
-                      tria_coot)
-        integer, intent(in) :: elem_dime
+    subroutine apinte_prsl(proj_tole       , elem_dime     , &
+                           elem_mast_nbnode, elem_mast_coor, &
+                           elem_slav_nbnode, elem_slav_coor, elem_slav_code,&
+                           proj_coor       )
         real(kind=8), intent(in) :: proj_tole
-        real(kind=8), intent(in) :: tria_coor(elem_dime-1,3)
-        integer, intent(in) :: elin_slav_nbnode
-        real(kind=8), intent(in) :: elin_slav_coor(3, 9)
-        character(len=8), intent(in) :: elin_slav_code
+        integer, intent(in) :: elem_dime
         integer, intent(in) :: elem_mast_nbnode
-        real(kind=8), intent(in) :: elem_mast_coor(elem_dime,elem_mast_nbnode)
-        character(len=8), intent(in) :: elem_mast_code
-        real(kind=8), intent(out) :: tria_coot(2,3)
-    end subroutine lcrtma
+        real(kind=8), intent(in) :: elem_mast_coor(3,9)
+        integer, intent(in) :: elem_slav_nbnode
+        real(kind=8), intent(in) :: elem_slav_coor(3,9)
+        character(len=8), intent(in) :: elem_slav_code
+        real(kind=8), intent(out) :: proj_coor(elem_dime-1,4)
+    end subroutine apinte_prsl
 end interface

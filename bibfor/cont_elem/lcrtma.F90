@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine lcrtma(elem_dime       , proj_tole,&
                   tria_coor       , &
                   elin_slav_nbnode, elin_slav_coor, elin_slav_code,&
@@ -31,17 +31,16 @@ implicit none
 #include "asterfort/mmnorm.h"
 #include "asterfort/assert.h"
 !
-!
-    integer, intent(in) :: elem_dime
-    real(kind=8), intent(in) :: proj_tole
-    real(kind=8), intent(in) :: tria_coor(elem_dime-1,3)
-    integer, intent(in) :: elin_slav_nbnode
-    real(kind=8), intent(in) :: elin_slav_coor(elem_dime,elin_slav_nbnode)
-    character(len=8), intent(in) :: elin_slav_code
-    integer, intent(in) :: elem_mast_nbnode
-    real(kind=8), intent(in) :: elem_mast_coor(elem_dime,elem_mast_nbnode)
-    character(len=8), intent(in) :: elem_mast_code
-    real(kind=8), intent(out) :: tria_coot(2,3)
+integer, intent(in) :: elem_dime
+real(kind=8), intent(in) :: proj_tole
+real(kind=8), intent(in) :: tria_coor(elem_dime-1,3)
+integer, intent(in) :: elin_slav_nbnode
+real(kind=8), intent(in) :: elin_slav_coor(3,9)
+character(len=8), intent(in) :: elin_slav_code
+integer, intent(in) :: elem_mast_nbnode
+real(kind=8), intent(in) :: elem_mast_coor(elem_dime,elem_mast_nbnode)
+character(len=8), intent(in) :: elem_mast_code
+real(kind=8), intent(out) :: tria_coot(2,3)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,13 +63,14 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i_node,i_dime,niverr
+    integer :: i_node, niverr
     real(kind=8) :: tria_coor_real(3), tria_coor_para(2)
     real(kind=8) :: dff(2, 9)
     real(kind=8) :: tau1(3), tau2(3)
     real(kind=8) :: norm(3)
     real(kind=8) :: ksi1, ksi2
-    real(kind=8) :: mast_coor(3,9), slav_coor(3,9)
+    real(kind=8) :: slav_coor(elem_dime,elin_slav_nbnode), mast_coor(3,9)
+    integer :: i_dime
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -79,19 +79,17 @@ implicit none
     tau1(1:3)        = 0.d0
     tau2(1:3)        = 0.d0
     norm(1:3)        = 0.d0
+
+    slav_coor(:,:) = 0.d0
+    do i_node = 1, elin_slav_nbnode
+        do i_dime = 1, elem_dime
+            slav_coor(i_dime, i_node) = elin_slav_coor(i_dime, i_node)
+        end do
+    end do
     mast_coor(1:3,1:9) = 0.d0
-    slav_coor(1:3,1:9) = 0.d0
-!
-! - Get coordinates of elements
-!
     do i_node = 1, elem_mast_nbnode
         do i_dime = 1, elem_dime
             mast_coor(i_dime, i_node) = elem_mast_coor(i_dime,i_node)
-        enddo
-    enddo
-    do i_node=1,elin_slav_nbnode
-        do i_dime=1,elem_dime
-            slav_coor(i_dime, i_node) = elin_slav_coor(i_dime,i_node)
         enddo
     enddo
 !
@@ -114,7 +112,7 @@ implicit none
 !
 ! ----- Project in real space
 !
-        call reerel(elin_slav_code, elin_slav_nbnode, elem_dime, elin_slav_coor,&
+        call reerel(elin_slav_code, elin_slav_nbnode, elem_dime, slav_coor,&
                     tria_coor_para, tria_coor_real)
 !
 ! ----- Compute normal
@@ -122,7 +120,7 @@ implicit none
         call mmdonf(elem_dime, elin_slav_nbnode, elin_slav_code,&
                     tria_coor_para(1), tria_coor_para(2),&
                     dff)
-        call mmtang(elem_dime, elin_slav_nbnode, slav_coor, dff, tau1,&
+        call mmtang(elem_dime, elin_slav_nbnode, elin_slav_coor, dff, tau1,&
                     tau2)
         call mmnorm(elem_dime, tau1, tau2, norm)
 !
