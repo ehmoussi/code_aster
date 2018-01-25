@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -151,12 +151,12 @@ TEST_RESU(CHAM_NO=_F(NOEUD='N7',
 #  On veut que :
 #     STAT_NON_LINE :
 #         COMPORTEMENT=(_F( GROUP_MA='MASSIF',RELATION = 'CJS'),
-#                    _F( GROUP_MA='BETON', RELATION = 'ENDO_FRAGILE'),),
+#                    _F( GROUP_MA='BETON', RELATION = 'ENDO_ISOT_BETON'),),
 #
 #     pour la relation de comportement CJS (16 variables internes), on veut affecter :
 #           - V1 = 1.0   et  V9 = 9.0
 #
-#     pour la relation de comportement ENDO_FRAGILE (2 variables internes), on veut affecter :
+#     pour la relation de comportement ENDO_ENDO_ISOT_BETON (2 variables internes), on veut affecter :
 #           - V2 = 2.0
 #
 #===============================================================================================
@@ -168,7 +168,7 @@ TEST_RESU(CHAM_NO=_F(NOEUD='N7',
 # 3.1.1  calcul non lineaire bidon pour avoir un modele du champ de variables internes :
 #---------------------------------------------------------------------------------------
 BETON=DEFI_MATERIAU( ELAS=_F( E = 20000., NU = 0.),
-               ECRO_LINE=_F(  SY = 6., D_SIGM_EPSI = -10000.)  )
+               BETON_ECRO_LINE=_F(  SYT = 6., D_SIGM_EPSI = -10000.)  )
 
 
 MASSIF=DEFI_MATERIAU(    ELAS=_F(  E = 35.E3, NU = 0.15),
@@ -187,7 +187,7 @@ CHAR_U1=AFFE_CHAR_MECA( MODELE=MO,
 UBID=STAT_NON_LINE( MODELE=MO, CHAM_MATER=CHMAT,
        EXCIT= _F( CHARGE = CHAR_U1,),
        COMPORTEMENT=(_F( GROUP_MA='MASSIF',RELATION = 'CJS'),
-                  _F( GROUP_MA='BETON', RELATION = 'ENDO_FRAGILE'),),
+                  _F( GROUP_MA='BETON', RELATION = 'ENDO_ISOT_BETON'),),
        NEWTON=_F(  MATRICE = 'ELASTIQUE'),
        CONVERGENCE=_F( ARRET = 'NON',  # pour continuer sans convergence
                 ITER_GLOB_MAXI = 1),

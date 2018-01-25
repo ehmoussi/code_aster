@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -123,7 +123,6 @@ implicit none
 #include "asterfort/lc1058.h"
 #include "asterfort/lc2001.h"
 #include "asterfort/lc2002.h"
-#include "asterfort/lc2005.h"
 #include "asterfort/lc2036.h"
 #include "asterfort/lc2038.h"
 #include "asterfort/lc3053.h"
@@ -341,13 +340,6 @@ implicit none
     case (4)
 !     VMIS_CINX_CHAB/MEMO VISC_CINX_CHAB/MEMO,
         call lc0004(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip, typmod, icomp,&
-                    nvi, dsidep, codret)
-    case (5)
-!     ENDO_FRAGILE
-        call lc0005(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, typmod, icomp,&
@@ -918,14 +910,6 @@ implicit none
                     epsm, deps, nsig, sigm, vim,&
                     option, sigp, vip, typmod, ndsde,&
                     dsidep, codret)
-
-    case (2005)
-!     ENDO_FRAGILE+GRAD_EPSI
-        call lc2005(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip, typmod, icomp,&
-                    nvi, dsidep, codret)
 
     case (2036)
 !     ENDO_ISOT_BETON

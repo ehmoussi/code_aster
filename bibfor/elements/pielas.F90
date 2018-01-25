@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -28,7 +28,6 @@ subroutine pielas(ndim, npg, kpg, compor, typmod,&
 #include "asterfort/pipedo.h"
 #include "asterfort/pipedp.h"
 #include "asterfort/pipeds.h"
-#include "asterfort/pipeef.h"
 #include "asterfort/pipepl.h"
 #include "asterfort/utmess.h"
 #include "blas/daxpy.h"
@@ -85,14 +84,7 @@ subroutine pielas(ndim, npg, kpg, compor, typmod,&
 !
 ! --- CALCUL SUIVANT COMPORTEMENT
 !
-    if (compor(1) .eq. 'ENDO_FRAGILE') then
-        call daxpy(ndimsi, 1.d0, epsm, 1, epsp,&
-                   1)
-        call pipeef(ndim, typmod, tau, mate, vim(1, kpg),&
-                    epsp, epsd, copilo(1, kpg), copilo(2, kpg), copilo(3, kpg),&
-                    copilo(4, kpg), copilo(5, kpg))
-!
-        else if (compor(1).eq.'VMIS_ISOT_TRAC' .or. compor(1)&
+    if (compor(1).eq.'VMIS_ISOT_TRAC' .or. compor(1)&
     .eq.'VMIS_ISOT_LINE') then
         call pipepl(ndim, compor(1), typmod, tau, mate,&
                     sigma, vim(1, kpg), epsp, epsd, copilo(1, kpg),&
