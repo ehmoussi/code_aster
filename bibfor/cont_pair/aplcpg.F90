@@ -492,8 +492,8 @@ character(len=24), intent(in) :: pair_method
 !
 ! --------------------- Projection from para. space of element into sub-element para. space
 !
-                        call aprtpe(elem_slav_dime, poin_inte  , nb_poin_inte,&
-                                    elem_slav_code, i_elin_slav)
+                        call aprtpe(elem_slav_dime, elem_slav_code, i_elin_slav,&
+                                    nb_poin_inte  , poin_inte )
 !
 ! --------------------- Compute mean square gap and weight of intersection
 !

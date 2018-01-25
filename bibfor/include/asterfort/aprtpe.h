@@ -17,12 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine aprtpe(elin_dime, poin_inte , nb_poin_inte,& 
-                      elem_code, elin_nume_)
-        integer, intent(in) :: elin_dime
-        real(kind=8), intent(inout) :: poin_inte(elin_dime-1,16)
-        integer, intent(in) :: nb_poin_inte
+    subroutine aprtpe(elem_dime   , elem_code, indx_tria_elem,&
+                      nb_poin_inte, poin_inte)
+        integer, intent(in) :: elem_dime
         character(len=8), intent(in) :: elem_code
-        integer, optional, intent(in) :: elin_nume_
+        integer, intent(in) :: indx_tria_elem
+        integer, intent(in) :: nb_poin_inte
+        real(kind=8), intent(inout) :: poin_inte(elem_dime-1,16)
     end subroutine aprtpe
 end interface

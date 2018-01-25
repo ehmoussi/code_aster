@@ -15,57 +15,58 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine aprtpe(elin_dime, poin_inte, nb_poin_inte,&
-                  elem_code, elin_nume_)
+!
+subroutine aprtpe(elem_dime   , elem_code, indx_tria_elem,&
+                  nb_poin_inte, poin_inte)
 !
 implicit none
 !
 #include "asterfort/reerel.h"
 #include "asterfort/assert.h"
 !
-!
-integer, intent(in) :: elin_dime
-real(kind=8), intent(inout) :: poin_inte(elin_dime-1,16)
-integer, intent(in) :: nb_poin_inte
+integer, intent(in) :: elem_dime
 character(len=8), intent(in) :: elem_code
-integer, intent(in), optional :: elin_nume_
+integer, intent(in) :: indx_tria_elem
+integer, intent(in) :: nb_poin_inte
+real(kind=8), intent(inout) :: poin_inte(elem_dime-1,16)
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Contact - Pairing segment to segment
 !
-! Projection from parametric space of element into sub-element parametric space
+! Projection from parametric space of triangle in real space
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  elin_dime        : dimension of elements
-! In  poin_inte        : list (sorted) of intersection points (parametric space)
-! In  nb_poin_inte     : number of intersection points
+! In  elem_dime        : dimension of element
 ! In  elem_code        : code of element
-! In  poin_inte_real   : list (sorted) of intersection points (real space)
-! In  elin_nume        : index of sub-element in elements
+! In  indx_tria_elem   : index of triangle in element
+! In  poin_inte        : coordinates in parametric space of triangle
+! Out poin_inte        : coordinates in real space
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    real(kind=8) :: poin_inte_real(elin_dime-1,16)
+    real(kind=8) :: poin_inte_real(elem_dime-1,16)
     integer :: i_poin_inte
     real(kind=8) :: node_real(3), ksi(2)
-    real(kind=8) :: tau1(3), tau2(3)
-    real(kind=8) :: norm(3), noor
+    real(kind=8) :: tau1(3), tau2(3), norm(3), noor
     real(kind=8) :: node_para(3,3)
-    character(len=8) :: elin_code
+    character(len=8) :: elem_proj_code
 !
 ! --------------------------------------------------------------------------------------------------
 !
     do i_poin_inte = 1, nb_poin_inte
-        poin_inte_real(1,i_poin_inte) = 0.d0
-        poin_inte_real(2,i_poin_inte) = 0.d0
+        poin_inte_real(1, i_poin_inte) = 0.d0
+        poin_inte_real(2, i_poin_inte) = 0.d0
     end do
     tau1(1:3) = 0.d0
     tau2(1:3) = 0.d0
     norm(1:3) = 0.d0
     noor      = 0.d0
+!
+! - Sub-element is always TR3
+!
+    elem_proj_code = 'TR3'
 !
 ! - Loop on intersection points
 !
@@ -75,12 +76,11 @@ integer, intent(in), optional :: elin_nume_
         norm(1:3) = 0.d0
         noor      = 0.d0
         ksi(1) = poin_inte (1, i_poin_inte)
-        if (elin_dime .eq. 3) then
+        if (elem_dime .eq. 3) then
             ksi(2) = poin_inte (2, i_poin_inte)
         end if
-        if ((elem_code.eq.'QU4' .or. elem_code.eq.'QU8' .or. elem_code.eq.'QU9') .and.&
-            present(elin_nume_)) then
-            if (elin_nume_ .eq. 1) then
+        if (elem_code.eq.'QU4' .or. elem_code.eq.'QU8' .or. elem_code.eq.'QU9') then
+            if (indx_tria_elem .eq. 1) then
                 node_para(1,1) = -1.d0
                 node_para(2,1) = -1.d0
                 node_para(3,1) =  0.d0
@@ -90,10 +90,10 @@ integer, intent(in), optional :: elin_nume_
                 node_para(1,3) =  1.d0
                 node_para(2,3) =  1.d0
                 node_para(3,3) =  0.d0
-                call reerel(elin_code, 3, 3, node_para, ksi, node_real)
+                call reerel(elem_proj_code, 3, 3, node_para, ksi, node_real)
                 poin_inte_real(1,i_poin_inte) = node_real(1)
                 poin_inte_real(2,i_poin_inte) = node_real(2)
-            elseif (elin_nume_ .eq. 2) then
+            elseif (indx_tria_elem .eq. 2) then
                 node_para(1,1) =  1.d0
                 node_para(2,1) =  1.d0
                 node_para(3,1) =  0.d0
@@ -103,7 +103,7 @@ integer, intent(in), optional :: elin_nume_
                 node_para(1,3) = -1.d0
                 node_para(2,3) = -1.d0
                 node_para(3,3) =  0.d0
-                call reerel(elin_code,3, 3, node_para, ksi, node_real)
+                call reerel(elem_proj_code,3, 3, node_para, ksi, node_real)
                 poin_inte_real(1,i_poin_inte) = node_real(1)
                 poin_inte_real(2,i_poin_inte) = node_real(2)
             else
@@ -111,7 +111,7 @@ integer, intent(in), optional :: elin_nume_
             endif
         else
             poin_inte_real(1,i_poin_inte) = ksi(1)
-            if (elin_dime .eq. 3) then
+            if (elem_dime .eq. 3) then
                 poin_inte_real(2,i_poin_inte) = ksi(2)
             end if
         end if

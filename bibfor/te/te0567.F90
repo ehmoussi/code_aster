@@ -217,10 +217,10 @@ character(len=16), intent(in) :: nomte
                             write(*,*) "Triangle: ", i_tria, tria_coor
                         endif
                         tria_coor_aux(1:32)=tria_coor(1:32)
-! --------------------- Projection from para. space of triangle into sub-element para. space
+! --------------------- Projection from parametric space of triangle in real space
                         if (elem_slav_code .ne. elin_slav_code ) then
-                            call aprtpe(elem_dime     , tria_coor  , 3,&
-                                        elem_slav_code, i_elin_slav)
+                            call aprtpe(elem_dime, elem_slav_code, i_elin_slav,&
+                                        3, tria_coor)
                         endif
 ! --------------------- Change shape of vector
                         tria_coot(1:2,1:3)=0.d0
@@ -380,10 +380,10 @@ character(len=16), intent(in) :: nomte
                                     write(*,*) "Triangle: ", i_tria, tria_coor
                                 endif
                                 tria_coor_aux(1:32)=tria_coor(1:32)
-! ----------------------------- Projection from para. space of triangle into sub-element para. space
+! ----------------------------- Projection from parametric space of triangle in real space
                                 if (elem_slav_code .ne. elin_slav_code ) then
-                                    call aprtpe(elem_dime     , tria_coor  , 3,&
-                                                elem_slav_code, i_elin_slav)
+                                    call aprtpe(elem_dime, elem_slav_code, i_elin_slav,&
+                                                3, tria_coor)
                                 endif
 ! ----------------------------- Change shape of vector
                                 tria_coot(1:2,1:3)=0.d0
