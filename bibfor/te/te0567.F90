@@ -67,10 +67,10 @@ character(len=16), intent(in) :: nomte
     character(len=8) :: elem_slav_code, elem_mast_code
     real(kind=8) :: elem_mast_coor(27),elem_slav_coor(27)
     real(kind=8) :: elem_mast_coop(27),elem_slav_coop(27)
-    real(kind=8) :: elin_mast_coor(27)
+    real(kind=8) :: elin_mast_coor(3, 9)
     integer :: elin_mast_nbsub, elin_mast_sub(2,3), elin_mast_nbnode(2)
     character(len=8) :: elin_mast_code
-    real(kind=8) :: elin_slav_coor(27)
+    real(kind=8) :: elin_slav_coor(3, 9)
     integer :: elin_slav_nbsub, elin_slav_sub(2,3), elin_slav_nbnode(2)
     character(len=8) :: elin_slav_code
     real(kind=8) :: poin_inte(32), tria_coot(2,3), tria_coor(32), tria_coor_aux(32)
@@ -140,7 +140,7 @@ character(len=16), intent(in) :: nomte
     call lcgeog(elem_dime     , nb_lagr       , indi_lagc ,&
                 nb_node_slav  , nb_node_mast  , &
                 algo_reso_geom, elem_mast_coor, elem_slav_coor,&
-                norm_smooth,ASTER_FALSE)
+                norm_smooth   , ASTER_FALSE)
 !    if (l_previous) write(6,*) "cyclage",lagrc,indi_cont
 
 !
@@ -164,20 +164,20 @@ character(len=16), intent(in) :: nomte
 ! ----- Loop on linearized slave sub-elements
         do i_elin_slav = 1, elin_slav_nbsub
 ! --------- Get coordinates for current linearized slave sub-element
-            elin_slav_coor(:) = 0.d0
+            elin_slav_coor(: , :) = 0.d0
             do i_node = 1, elin_slav_nbnode(i_elin_slav)
                 do i_dime = 1, elem_dime
-                    elin_slav_coor((i_node-1)*elem_dime+i_dime) = &
+                    elin_slav_coor(i_dime, i_node) = &
                        elem_slav_coor((elin_slav_sub(i_elin_slav,i_node)-1)*elem_dime+i_dime)
                 end do
             end do
 ! --------- Loop on linearized master sub-elements
             do i_elin_mast = 1, elin_mast_nbsub
 ! ------------- Get coordinates for current linearized master sub-element
-                elin_mast_coor(:) = 0.d0
+                elin_mast_coor(:, :) = 0.d0
                 do i_node = 1, elin_mast_nbnode(i_elin_mast)
                     do i_dime = 1, elem_dime
-                        elin_mast_coor((i_node-1)*elem_dime+i_dime) = &
+                        elin_mast_coor(i_dime, i_node) = &
                             elem_mast_coor((elin_mast_sub(i_elin_mast,i_node)-1)*elem_dime+i_dime)
                     end do
                 end do
@@ -324,10 +324,10 @@ character(len=16), intent(in) :: nomte
 
                 do i_elin_slav = 1, elin_slav_nbsub
 ! ----------------- Get coordinates for current linearized slave sub-element
-                    elin_slav_coor(:) = 0.d0
+                    elin_slav_coor(:, :) = 0.d0
                     do i_node = 1, elin_slav_nbnode(i_elin_slav)
                         do i_dime = 1, elem_dime
-                            elin_slav_coor((i_node-1)*elem_dime+i_dime) = &
+                            elin_slav_coor(i_dime, i_node) = &
                                elem_slav_coop((elin_slav_sub(i_elin_slav,i_node)-1)*&
                                elem_dime+i_dime)
                         end do
@@ -336,10 +336,10 @@ character(len=16), intent(in) :: nomte
 
                     do i_elin_mast = 1, elin_mast_nbsub
 ! --------------------- Get coordinates for current linearized master sub-element
-                        elin_mast_coor(:) = 0.d0
+                        elin_mast_coor(:, :) = 0.d0
                         do i_node = 1, elin_mast_nbnode(i_elin_mast)
                             do i_dime = 1, elem_dime
-                                elin_mast_coor((i_node-1)*elem_dime+i_dime) = &
+                                elin_mast_coor(i_dime, i_node) = &
                                     elem_mast_coop((elin_mast_sub(i_elin_mast,i_node)-1)*&
                                     elem_dime+i_dime)
                             end do
@@ -456,8 +456,6 @@ character(len=16), intent(in) :: nomte
                             end do
                         end if
                     end do
-
-
                 enddo
             if ((abs(lagrc_prev+100.d0*gap_prev)+abs(lagrc+100.d0*gap_curr)) .gt. 1.d-6 ) then
                 alpha = 1.0-abs(lagrc+100.d0*gap_curr)/&

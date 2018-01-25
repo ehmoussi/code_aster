@@ -29,7 +29,6 @@ implicit none
 #include "asterfort/lcodrm.h"
 #include "asterfort/insema.h"
 #include "asterfort/ptinma.h"
-#include "asterfort/mmnewt.h"
 #include "asterfort/mmtang.h"
 #include "asterfort/mmnorm.h"
 #include "asterfort/mmdonf.h"
@@ -39,6 +38,7 @@ implicit none
 #include "asterfort/apelem_inside.h"
 #include "asterfort/apinte_weight.h"
 #include "asterfort/apinte_chck.h"
+#include "asterfort/apinte_prsl.h"
 !
 real(kind=8), intent(in) :: proj_tole
 integer, intent(in) :: elem_dime
@@ -76,14 +76,13 @@ integer, optional, intent(inout) :: inte_neigh_(4)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: debug, l_reli, l_inter
+    aster_logical :: debug, l_inter
     real(kind=8) :: node_line_coop(elem_dime-1,4)
     real(kind=8) :: proj_coop(elem_dime-1,4)
-    real(kind=8) :: ksi1, ksi2, tau1(3), tau2(3)
-    real(kind=8) :: noma_coor(3), xpt, ypt
+    real(kind=8) :: xpt, ypt
     real(kind=8) :: xp1, yp1, xp2, yp2
-    integer :: niverr, test, list_next(16), nb_node_line
-    integer :: i_node, i_dime
+    integer :: test, list_next(16), nb_node_line
+    integer :: i_node
     character(len=8) :: elem_line_code
     real(kind=8) :: ksi1_cent, ksi2_cent
     real(kind=8) :: elin_mast_norm(3), elin_slav_norm(3)
@@ -97,7 +96,6 @@ integer, optional, intent(inout) :: inte_neigh_(4)
     inte_weight        = 0.d0
     poin_inte(:,:)     = 0.d0
     debug              = ASTER_FALSE
-    l_reli             = ASTER_FALSE
     node_line_coop(elem_dime-1,4) = 0.d0
     inte_neigh(1:4) = 0
     if (present(inte_neigh_)) then
@@ -147,47 +145,10 @@ integer, optional, intent(inout) :: inte_neigh_(4)
 !
 ! - Project master nodes in slave element parametric space
 !
-    if (debug) then
-        write(*,*) ".. Project master nodes in slave element parametric space"
-    endif 
-    do i_node = 1, elem_mast_nbnode
-! ----- Get coordinates of master nodes
-        noma_coor(1:3) = 0.d0
-        do i_dime = 1, elem_dime
-            noma_coor(i_dime) = elem_mast_coor(i_dime, i_node)
-        end do
-! ----- Projection on slave element
-        l_reli = ASTER_FALSE
-        call mmnewt(elem_slav_code, elem_slav_nbnode, elem_dime,&
-                    elem_slav_coor, noma_coor       , 75       ,&
-                    proj_tole     , ksi1            , ksi2     ,&
-                    tau1          , tau2            ,&
-                    niverr        , l_reli)
-! ----- Get parametric coordinates of projection
-        if (niverr .eq. 0) then
-            proj_coop(1, i_node) = ksi1
-            if (elem_dime .eq. 3) then
-                proj_coop(2, i_node) = ksi2
-            end if
-        else
-! --------- Projection failed => try line search
-            l_reli = ASTER_TRUE
-            call mmnewt(elem_slav_code, elem_slav_nbnode, elem_dime,&
-                        elem_slav_coor, noma_coor       , 75      ,&
-                        proj_tole     , ksi1            , ksi2     ,&
-                        tau1          , tau2            ,&
-                        niverr        , l_reli)
-            if (niverr .eq. 0) then
-                proj_coop(1, i_node) = ksi1
-                if (elem_dime .eq. 3) then
-                    proj_coop(2, i_node) = ksi2
-                end if
-            else
-                write(*,*) "mmnewt failed"
-                ASSERT(ASTER_FALSE)
-            endif
-        endif    
-    end do
+    call apinte_prsl(proj_tole       , elem_dime     , &
+                     elem_mast_nbnode, elem_mast_coor, &
+                     elem_slav_nbnode, elem_slav_coor, elem_slav_code,&
+                     proj_coop       )
 !
 ! - Check if intersection is void or not
 !

@@ -66,12 +66,12 @@ character(len=16), intent(in) :: nomte
     aster_logical :: l_axis, l_elem_frot, loptf, debug, l_upda_jaco
     real(kind=8) :: norm(3)
     character(len=8) :: elem_slav_code, elem_mast_code
-    real(kind=8) :: elem_mast_coor(27),elem_slav_coor(27)
-    real(kind=8) :: elem_mast_coop(27),elem_slav_coop(27)
-    real(kind=8) :: elin_mast_coor(27)
+    real(kind=8) :: elem_mast_coor(27), elem_slav_coor(27)
+    real(kind=8) :: elem_mast_coop(27), elem_slav_coop(27)
+    real(kind=8) :: elin_mast_coor(3, 9)
     integer :: elin_mast_nbsub, elin_mast_sub(2,3), elin_mast_nbnode(2)
     character(len=8) :: elin_mast_code
-    real(kind=8) :: elin_slav_coor(27)
+    real(kind=8) :: elin_slav_coor(3, 9)
     integer :: elin_slav_nbsub, elin_slav_sub(2,3), elin_slav_nbnode(2)
     character(len=8) :: elin_slav_code
     real(kind=8) :: poin_inte(32), tria_coot(2,3), tria_coor(32), tria_coor_aux(32)
@@ -125,13 +125,13 @@ character(len=16), intent(in) :: nomte
 ! - Get indicators
 !
     call lcstco(algo_reso_geom, indi_cont, l_upda_jaco, &
-                 lagrc, gap_curr, mesure, rho_n, eval,ASTER_FALSE)
+                lagrc, gap_curr, mesure, rho_n, eval, ASTER_FALSE)
 !
 ! - S'il y a du cyclage, on récupère les informations à n-1 :
 !
     if (l_previous) then
-           call lcstco(algo_reso_geom, indi_cont_prev, l_upda_jaco, lagrc_prev,&
-                     gap_prev, mesure_prev, rho_n_prev, eval_prev, l_previous)
+       call lcstco(algo_reso_geom, indi_cont_prev, l_upda_jaco, lagrc_prev,&
+                   gap_prev, mesure_prev, rho_n_prev, eval_prev, l_previous)
     end if
 !
 ! - Compute updated geometry
@@ -139,8 +139,8 @@ character(len=16), intent(in) :: nomte
     call lcgeog(elem_dime     , nb_lagr       , indi_lagc ,&
                 nb_node_slav  , nb_node_mast  , &
                 algo_reso_geom, elem_mast_coor, elem_slav_coor,&
-                norm_smooth, ASTER_FALSE)
-    if(l_previous) then
+                norm_smooth   , ASTER_FALSE)
+    if (l_previous) then 
          call lcgeog(elem_dime     , nb_lagr       , indi_lagc ,&
             nb_node_slav  , nb_node_mast  , &
             algo_reso_geom, elem_mast_coop, elem_slav_coop,&
@@ -158,20 +158,20 @@ character(len=16), intent(in) :: nomte
 ! ----- Loop on linearized slave sub-elements
         do i_elin_slav = 1, elin_slav_nbsub
 ! --------- Get coordinates for current linearized slave sub-element
-            elin_slav_coor(:) = 0.d0
+            elin_slav_coor(:, :) = 0.d0
             do i_node = 1, elin_slav_nbnode(i_elin_slav)
                 do i_dime = 1, elem_dime
-                    elin_slav_coor((i_node-1)*elem_dime+i_dime) = &
+                    elin_slav_coor(i_dime, i_node) = &
                        elem_slav_coor((elin_slav_sub(i_elin_slav,i_node)-1)*elem_dime+i_dime)
                 end do
             end do
 ! --------- Loop on linearized master sub-elements
             do i_elin_mast = 1, elin_mast_nbsub
 ! ------------- Get coordinates for current linearized master sub-element
-                elin_mast_coor(:) = 0.d0
+                elin_mast_coor(:, :) = 0.d0
                 do i_node = 1, elin_mast_nbnode(i_elin_mast)
                     do i_dime = 1, elem_dime
-                        elin_mast_coor((i_node-1)*elem_dime+i_dime) = &
+                        elin_mast_coor(i_dime, i_node) = &
                             elem_mast_coor((elin_mast_sub(i_elin_mast,i_node)-1)*elem_dime+i_dime)
                     end do
                 end do
@@ -338,20 +338,20 @@ character(len=16), intent(in) :: nomte
 ! ------------- Loop on linearized slave sub-elements
                 do i_elin_slav = 1, elin_slav_nbsub
 ! ----------------- Get coordinates for current linearized slave sub-element
-                    elin_slav_coor(:) = 0.d0
+                    elin_slav_coor(:, :) = 0.d0
                     do i_node = 1, elin_slav_nbnode(i_elin_slav)
                         do i_dime = 1, elem_dime
-                          elin_slav_coor((i_node-1)*elem_dime+i_dime) = &
+                          elin_slav_coor(i_dime, i_node) = &
                         elem_slav_coop((elin_slav_sub(i_elin_slav,i_node)-1)*elem_dime+i_dime)
                         end do
                     end do
 ! ----------------- Loop on linearized master sub-elements
                     do i_elin_mast = 1, elin_mast_nbsub
 ! --------------------- Get coordinates for current linearized master sub-element
-                        elin_mast_coor(:) = 0.d0
+                        elin_mast_coor(:, :) = 0.d0
                         do i_node = 1, elin_mast_nbnode(i_elin_mast)
                             do i_dime = 1, elem_dime
-                                elin_mast_coor((i_node-1)*elem_dime+i_dime) = &
+                                elin_mast_coor(i_dime, i_node) = &
                             elem_mast_coop((elin_mast_sub(i_elin_mast,i_node)-1)*&
                                    elem_dime+i_dime)
                             end do
@@ -456,7 +456,7 @@ character(len=16), intent(in) :: nomte
                                                 elem_slav_code,&
                                                 poidpg      , gauss_coot    , jacobian, norm ,&
                                                 vtmp_prev)
-                                end do             
+                                end do
 ! ----------------------------- Projection of triangle in master parametric space
                                 call lcrtma(elem_dime       , proj_tole,&
                                             tria_coor_aux   , &
