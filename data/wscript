@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,15 +25,16 @@ Build some data files (dest: share/aster)
 - 'external_programs.js': definition of external programs called from code_aster
 """
 
-import sys
-import os
-import os.path as osp
-from itertools import chain
 import cPickle
 import json
+import os
+import os.path as osp
 import re
+import sys
+from itertools import chain
+from subprocess import PIPE, Popen
 
-from waflib import Configure, Utils, Logs, Errors
+from waflib import Configure, Errors, Logs, Utils
 
 
 def options(self):
@@ -163,7 +164,24 @@ def env2dict(self, src):
     dico['ASTERDATADIR'] = env['ASTERDATADIR']
     dico['ASTER_TAG'] = '.'.join([str(i) for i in env['ASTER_VERSION'][0]])
     self.end_msg("yes")
+
+    self.start_msg('Build list of testcases')
+    dico['ASTER_TEST_FILES'] = _build_testlist(src)
+    valid = osp.join(src, '..', 'validation')
+    dico['ASTER_TEST_FILES_VALID'] = _build_testlist(valid)
+    self.end_msg("yes")
     return dico
+
+
+def _build_testlist(path):
+    if not osp.exists(osp.join(path, 'astest')):
+        return ''
+    cmd = ['grep', '-l', 'testlist.*sequential',
+           osp.join(path, 'astest', '*.export')]
+    proc = Popen(' '.join(cmd), stdout=PIPE, stderr=PIPE, shell=True)
+    out = proc.communicate()[0]
+    tests = [osp.splitext(osp.basename(i))[0] for i in out.split()]
+    return os.linesep.join(tests)
 
 
 def change_tests(dico, install_tests):
