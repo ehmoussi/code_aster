@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -37,6 +37,7 @@ subroutine aniver(mater)
 #include "asterfort/jeveuo.h"
 #include "asterfort/rccome.h"
 #include "asterfort/utmess.h"
+#include "asterc/r8prem.h"
     character(len=8) :: mater
 ! -----  VARIABLES LOCALES
     character(len=2) :: m2blan
@@ -71,10 +72,7 @@ subroutine aniver(mater)
     m2blan = ' '
     k8bid = ' '
 !
-    do 10 i = 1, 6
-        do 10 j = 1, 6
-            dorth(i,j) = zero
-10      continue
+    dorth(:,:) = zero
 !
     e1 = zero
     e2 = zero
@@ -163,18 +161,21 @@ subroutine aniver(mater)
 ! ---       ON NE TRAITE QUE LE CAS DEFORMATIONS PLANES OU
 ! ---       AXISYMETRIQUE CAR LE CAS CONTRAINTES PLANES REVIENT
 ! ---       A L'ELASTICITE ISOTROPE :
+! ---       (comme on n'a accès qu'au matériau, les différents cas
+! ---       2D, 3D... ne peuvent être discriminés qu'à partir de ce que
+! ---       l'utilisateur a spécifié)
 !           -----------------------
                     if (igln .eq. 0) then
                         ndim = 2
                         if (ien .eq. 0) goto 20
-                        if (e3 .eq. zero) goto 20
+                        if (e3 .le. r8prem()) goto 20
 !
                         c1 = e1/(un+nu12)
-                        delta = un - nu12 - deux*nu13*nu13*e1/e3
+                        delta = un - nu12 - deux*nu13*nu13*e3/e1
 !
-                        dorth(1,1) = c1*(un - nu13*nu13*e1/e3)/delta
-                        dorth(1,2) = c1*((un - nu13*nu13*e1/e3)/delta - un)
-                        dorth(1,3) = e1*nu13/delta
+                        dorth(1,1) = c1*(un - nu13*nu13*e3/e1)/delta
+                        dorth(1,2) = c1*((un - nu13*nu13*e3/e1)/delta - un)
+                        dorth(1,3) = e3*nu13/delta
                         dorth(2,1) = dorth(1,2)
                         dorth(2,2) = dorth(1,1)
                         dorth(2,3) = dorth(1,3)
@@ -192,14 +193,14 @@ subroutine aniver(mater)
                     else if (igln.ne.0) then
                         ndim = 3
                         if (ien .eq. 0) goto 20
-                        if (e3 .eq. zero) goto 20
+                        if (e3 .le. r8prem()) goto 20
 !
                         c1 = e1/(un+nu12)
-                        delta = un - nu12 - deux*nu13*nu13*e1/e3
+                        delta = un - nu12 - deux*nu13*nu13*e3/e1
 !
-                        dorth(1,1) = c1*(un - nu13*nu13*e1/e3)/delta
-                        dorth(1,2) = c1*((un - nu13*nu13*e1/e3)/delta - un)
-                        dorth(1,3) = e1*nu13/delta
+                        dorth(1,1) = c1*(un - nu13*nu13*e3/e1)/delta
+                        dorth(1,2) = c1*((un - nu13*nu13*e3/e1)/delta - un)
+                        dorth(1,3) = e3*nu13/delta
                         dorth(2,1) = dorth(1,2)
                         dorth(2,2) = dorth(1,1)
                         dorth(2,3) = dorth(1,3)
@@ -225,8 +226,8 @@ subroutine aniver(mater)
                     if (igln .eq. 0) then
                         ndim = 2
                         if (iet .eq. 0) goto 20
-                        if (e2 .eq. zero) goto 20
-                        if (e3 .eq. zero) goto 20
+                        if (e2 .le. r8prem()) goto 20
+                        if (e3 .le. r8prem()) goto 20
                         if (ien .eq. 0) then
                             call utmess('A', 'ELEMENTS_9')
                             goto 100
@@ -236,15 +237,15 @@ subroutine aniver(mater)
 ! ---         ET DE L'AXISYMETRIE :
 !             -------------------
                         nu21 = e2*nu12/e1
-                        nu31 = e1*nu13/e3
-                        nu32 = e2*nu23/e3
-                        delta = un-nu23*nu32-nu31*nu13-nu21*nu12 -deux*nu23*nu31*nu21
+                        nu31 = e3*nu13/e1
+                        nu32 = e3*nu23/e2
+                        delta = un-nu23*nu32-nu31*nu13-nu21*nu12 -deux*nu23*nu31*nu12
 !
                         dorth(1,1) = (un - nu23*nu32)*e1/delta
-                        dorth(1,2) = (nu21 + nu13*nu32)*e1/delta
-                        dorth(1,3) = (nu13 + nu21*nu23)*e1/delta
-                        dorth(2,2) = (un - nu13*nu31)*e2/delta
-                        dorth(2,3) = (nu23 + nu13*nu12)*e2/delta
+                        dorth(1,2) = (nu21 + nu31*nu23)*e1/delta
+                        dorth(1,3) = (nu31 + nu21*nu32)*e1/delta
+                        dorth(2,2) = (un - nu31*nu13)*e2/delta
+                        dorth(2,3) = (nu32 + nu31*nu12)*e2/delta
                         dorth(3,3) = (un - nu21*nu12)*e3/delta
                         dorth(2,1) = dorth(1,2)
                         dorth(3,1) = dorth(1,3)
@@ -260,10 +261,7 @@ subroutine aniver(mater)
 !             ----------------------------------------
 100                      continue
 !
-                        do 30 i = 1, 6
-                            do 30 j = 1, 6
-                                dorth(i,j) = zero
-30                          continue
+                        dorth(:,:)=zero
 !
                         nu21 = e2*nu12/e1
                         delta = un-nu12*nu21
@@ -274,6 +272,7 @@ subroutine aniver(mater)
                         dorth(2,1) = dorth(1,2)
 !
                         dorth(4,4) = g12
+!
 ! ---         CALCUL DES VALEURS PROPRES DE LA MATRICE DORTH :
 !             ----------------------------------------------
                         call dortvp(ndim, nomrc, dorth, 'CP')
@@ -283,14 +282,12 @@ subroutine aniver(mater)
                     else if (igln.ne.0) then
                         ndim = 3
                         if (iet .eq. 0) goto 20
-                        if (e2 .eq. zero) goto 20
-                        if (e3 .eq. zero) goto 20
+                        if (e2 .le. r8prem()) goto 20
+                        if (e3 .le. r8prem()) goto 20
                         if (ien .eq. 0) then
                             ndim = 2
-                            do 31 i = 1, 6
-                                do 31 j = 1, 6
-                                    dorth(i,j) = zero
-31                              continue
+!
+                            dorth(:,:)=zero
 !
                             nu21 = e2*nu12/e1
                             delta = un-nu12*nu21
@@ -299,21 +296,23 @@ subroutine aniver(mater)
                             dorth(1,2) = nu12*e2/delta
                             dorth(2,2) = e2/delta
                             dorth(2,1) = dorth(1,2)
+!
                             dorth(4,4) = g12
+!
 ! ---           CALCUL DES VALEURS PROPRES DE LA MATRICE DORTH :
                             call dortvp(ndim, nomrc, dorth, 'CP')
                         endif
 !
                         nu21 = e2*nu12/e1
-                        nu31 = e1*nu13/e3
-                        nu32 = e2*nu23/e3
-                        delta = un-nu23*nu32-nu31*nu13-nu21*nu12 -deux*nu23*nu31*nu21
+                        nu31 = e3*nu13/e1
+                        nu32 = e3*nu23/e2
+                        delta = un-nu23*nu32-nu31*nu13-nu21*nu12 -deux*nu23*nu31*nu12
 !
                         dorth(1,1) = (un - nu23*nu32)*e1/delta
-                        dorth(1,2) = (nu21 + nu13*nu32)*e1/delta
-                        dorth(1,3) = (nu13 + nu21*nu23)*e1/delta
-                        dorth(2,2) = (un - nu13*nu31)*e2/delta
-                        dorth(2,3) = (nu23 + nu13*nu12)*e2/delta
+                        dorth(1,2) = (nu21 + nu31*nu23)*e1/delta
+                        dorth(1,3) = (nu31 + nu21*nu32)*e1/delta
+                        dorth(2,2) = (un - nu31*nu13)*e2/delta
+                        dorth(2,3) = (nu32 + nu31*nu12)*e2/delta
                         dorth(3,3) = (un - nu21*nu12)*e3/delta
                         dorth(2,1) = dorth(1,2)
                         dorth(3,1) = dorth(1,3)
