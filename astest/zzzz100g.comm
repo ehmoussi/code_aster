@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -36,6 +36,17 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=15.,
                         REFERENCE='ANALYTIQUE',
                         NOM_PARA='X',
                         FONCTION=form,),
-              )
+             )
+
+inter = CALC_FONC_INTERP(FONCTION=form,
+                         VALE_PARA=(2., 2.5, 3.),)
+
+TEST_FONCTION(VALEUR=_F(VALE_CALC=15.,
+                        VALE_REFE=15.,
+                        VALE_PARA=2.5,
+                        REFERENCE='ANALYTIQUE',
+                        NOM_PARA='X',
+                        FONCTION=inter,),
+             )
 
 FIN()
