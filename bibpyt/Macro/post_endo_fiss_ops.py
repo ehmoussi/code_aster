@@ -707,10 +707,11 @@ def calcul_ouverture(self, NOM_CHAM, NOM_CMP, dRECHERCHE, __RESUIN, __mail, info
 
 def post_endo_fiss_ops(self,
                        TABLE,
-                       OUVERTURE,
                        NOM_CMP,
                        NOM_CHAM,
                        RECHERCHE,
+                       OUVERTURE=None,
+                       CHAM_GD=None,
                        **args):
 
     import aster
@@ -769,9 +770,9 @@ def post_endo_fiss_ops(self,
         if (OUVERTURE == 'OUI') and ('BORNE_MAX' not in dRECHERCHE.keys()):
             UTMESS('F', 'POST0_44')
 
-    if args['CHAM_GD'] != None:
+    if CHAM_GD != None:
         build = 'champ'
-        __ENDO = args['CHAM_GD']
+        __ENDO = CHAM_GD
         inst = 1.
         motscles['INST'] = inst
 
@@ -1009,4 +1010,4 @@ def post_endo_fiss_ops(self,
     RetablirAlarme('CALCULEL2_12')
     RetablirAlarme('CALCULEL5_7')
 
-    return ier
+    return resu_mail0
