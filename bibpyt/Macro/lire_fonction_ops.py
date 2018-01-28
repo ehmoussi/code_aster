@@ -231,14 +231,15 @@ def complex_values(filename, idbx, idbr, idbi, module_phase=False):
     return cols.ravel()
 
 
-def lire_fonction_ops(self, FORMAT, TYPE, SEPAR, INDIC_PARA, UNITE,
-                      NOM_PARA, NOM_RESU, INTERPOL, PROL_DROITE,
-                      PROL_GAUCHE, VERIF, INFO, TITRE, **args):
+def lire_fonction_ops(self, UNITE, NOM_PARA, FORMAT=None, TYPE=None, SEPAR=None, INDIC_PARA=None, 
+                      NOM_RESU=None, INTERPOL=None, PROL_DROITE=None,
+                      PROL_GAUCHE=None, VERIF=None, INFO=None, TITRE=None, **args):
     """Méthode corps de la macro
     """
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS
     from Utilitai.UniteAster import UniteAster
+    from code_aster.RunManager import ReservedUnitUsed
 
     ier = 0
     # La macro compte pour 1 dans la numerotation des commandes
@@ -351,5 +352,5 @@ def lire_fonction_ops(self, FORMAT, TYPE, SEPAR, INDIC_PARA, UNITE,
                              VERIF=VERIF,
                              **motscles)
     # remet UNITE dans son état initial
-    UL.EtatInit()
-    return ier
+    ReservedUnitUsed(UNITE)
+    return ut_fonc
