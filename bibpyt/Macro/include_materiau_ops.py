@@ -170,4 +170,4 @@ def include_materiau_ops(self,
             else:
                 del kwcata[mcf]
     MAT = DEFI_MATERIAU(**kwcata)
-    return 0
+    return MAT
