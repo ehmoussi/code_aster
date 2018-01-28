@@ -21,15 +21,15 @@ from geomec_utils import *
 from geomec_essais import *
 
 
-def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
-                           ESSAI_TD,
-                           ESSAI_TND,
-                           ESSAI_CISA_C,
-                           ESSAI_TND_C,
-                           ESSAI_TD_A,
-                           ESSAI_TD_NA,
-                           ESSAI_OEDO_C,
-                           ESSAI_ISOT_C,
+def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO=None,
+                           ESSAI_TD=None,
+                           ESSAI_TND=None,
+                           ESSAI_CISA_C=None,
+                           ESSAI_TND_C=None,
+                           ESSAI_TD_A=None,
+                           ESSAI_TD_NA=None,
+                           ESSAI_OEDO_C=None,
+                           ESSAI_ISOT_C=None,
                            # ESSAI_XXX,
                            **args):
     """Corps de CALC_ESSAI_GEOMECA"""
@@ -55,8 +55,8 @@ def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
     # ---
     if ESSAI_TD != None:
 
-        for iocc, DicoEssai in enumerate(ESSAI_TD.List_F()):
-            str_num = int_2_str(iocc + 1, len(ESSAI_TD.List_F()))
+        for iocc, DicoEssai in enumerate(ESSAI_TD):
+            str_num = int_2_str(iocc + 1, len(ESSAI_TD))
             essai_TD(self, str_num, DicoEssai,
                      MATER, COMPORTEMENT, CONVERGENCE, INFO)
 
@@ -65,8 +65,8 @@ def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
     # ---
     if ESSAI_TND != None:
 
-        for iocc, DicoEssai in enumerate(ESSAI_TND.List_F()):
-            str_num = int_2_str(iocc + 1, len(ESSAI_TND.List_F()))
+        for iocc, DicoEssai in enumerate(ESSAI_TND):
+            str_num = int_2_str(iocc + 1, len(ESSAI_TND))
             essai_TND(self, str_num, DicoEssai,
                       MATER, COMPORTEMENT, CONVERGENCE, INFO)
 
@@ -75,8 +75,8 @@ def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
     # ---
     if ESSAI_CISA_C != None:
 
-        for iocc, DicoEssai in enumerate(ESSAI_CISA_C.List_F()):
-            str_num = int_2_str(iocc + 1, len(ESSAI_CISA_C.List_F()))
+        for iocc, DicoEssai in enumerate(ESSAI_CISA_C):
+            str_num = int_2_str(iocc + 1, len(ESSAI_CISA_C))
             essai_CISA_C(self, str_num, DicoEssai,
                          MATER, COMPORTEMENT, CONVERGENCE, INFO)
 
@@ -85,8 +85,8 @@ def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
     # ---
     if ESSAI_TND_C != None:
 
-        for iocc, DicoEssai in enumerate(ESSAI_TND_C.List_F()):
-            str_num = int_2_str(iocc + 1, len(ESSAI_TND_C.List_F()))
+        for iocc, DicoEssai in enumerate(ESSAI_TND_C):
+            str_num = int_2_str(iocc + 1, len(ESSAI_TND_C))
             essai_TND_C(self, str_num, DicoEssai,
                         MATER, COMPORTEMENT, CONVERGENCE, INFO)
 
@@ -95,8 +95,8 @@ def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
     # ---
     if ESSAI_TD_A != None:
 
-        for iocc, DicoEssai in enumerate(ESSAI_TD_A.List_F()):
-            str_num = int_2_str(iocc + 1, len(ESSAI_TD_A.List_F()))
+        for iocc, DicoEssai in enumerate(ESSAI_TD_A):
+            str_num = int_2_str(iocc + 1, len(ESSAI_TD_A))
             essai_TD_A(self, str_num, DicoEssai,
                        MATER, COMPORTEMENT, CONVERGENCE, INFO)
 
@@ -105,8 +105,8 @@ def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
     # ---
     if ESSAI_TD_NA != None:
 
-        for iocc, DicoEssai in enumerate(ESSAI_TD_NA.List_F()):
-            str_num = int_2_str(iocc + 1, len(ESSAI_TD_NA.List_F()))
+        for iocc, DicoEssai in enumerate(ESSAI_TD_NA):
+            str_num = int_2_str(iocc + 1, len(ESSAI_TD_NA))
             essai_TD_NA(self, str_num, DicoEssai,
                         MATER, COMPORTEMENT, CONVERGENCE, INFO)
 
@@ -115,8 +115,8 @@ def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
     # ---
     if ESSAI_OEDO_C != None:
 
-        for iocc, DicoEssai in enumerate(ESSAI_OEDO_C.List_F()):
-            str_num = int_2_str(iocc + 1, len(ESSAI_OEDO_C.List_F()))
+        for iocc, DicoEssai in enumerate(ESSAI_OEDO_C):
+            str_num = int_2_str(iocc + 1, len(ESSAI_OEDO_C))
             essai_OEDO_C(self, str_num, DicoEssai,
                          MATER, COMPORTEMENT, CONVERGENCE, INFO)
 
@@ -125,8 +125,8 @@ def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
     # ---
     if ESSAI_ISOT_C != None:
 
-        for iocc, DicoEssai in enumerate(ESSAI_ISOT_C.List_F()):
-            str_num = int_2_str(iocc + 1, len(ESSAI_ISOT_C.List_F()))
+        for iocc, DicoEssai in enumerate(ESSAI_ISOT_C):
+            str_num = int_2_str(iocc + 1, len(ESSAI_ISOT_C))
             essai_ISOT_C(self, str_num, DicoEssai,
                          MATER, COMPORTEMENT, CONVERGENCE, INFO)
 
@@ -134,4 +134,4 @@ def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
     # Essai 'XXX'
     # ---
     # if ESSAI_XXX != None : ...
-    return ier
+    return
