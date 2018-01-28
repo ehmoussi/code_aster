@@ -72,9 +72,9 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
     i0 = 0
     Courbe = []
     iocc = -1
-    for Ci in COURBE:
+    for dC in COURBE:
         iocc += 1
-        dC = Ci.cree_dict_valeurs(Ci.mc_liste)
+        # dC = Ci.cree_dict_valeurs(Ci.mc_liste)
         if dC.get('LIST_PARA') and i0 == 0:
             i0 = iocc
         for mc in dC.keys():

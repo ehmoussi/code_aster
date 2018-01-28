@@ -35,12 +35,13 @@ def essai_TD(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERGENCE, INF
     import aster
 
     DEFI_FONCTION = self.get_cmd('DEFI_FONCTION')
-    SIMU_POINT_MAT = self.get_cmd('SIMU_POINT_MAT')
+    # SIMU_POINT_MAT = self.get_cmd('SIMU_POINT_MAT')
     DETRUIRE = self.get_cmd('DETRUIRE')
     CREA_TABLE = self.get_cmd('CREA_TABLE')
     IMPR_TABLE = self.get_cmd('IMPR_TABLE')
     DEFI_LIST_INST = self.get_cmd('DEFI_LIST_INST')
     DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
+    from code_aster.Commands import SIMU_POINT_MAT
 
     PRES_CONF = DicoEssai['PRES_CONF']
     EPSI_IMPOSE = DicoEssai['EPSI_IMPOSE']
@@ -100,10 +101,13 @@ def essai_TD(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERGENCE, INF
         # ---
         # Calcul
         # ---
+        CONVERGENCE2 = {k:CONVERGENCE[k]
+                        for k in ("RESI_GLOB_MAXI", "RESI_GLOB_RELA",
+                                  "ITER_GLOB_MAXI") if k in CONVERGENCE}
         __EVOL = SIMU_POINT_MAT(
             INFO=INFO,
-            COMPORTEMENT=COMPORTEMENT.List_F(),
-            CONVERGENCE=CONVERGENCE.List_F(),
+            COMPORTEMENT=COMPORTEMENT,
+            CONVERGENCE=CONVERGENCE2,
             MATER=MATER,
             INCREMENT=_F(LIST_INST=__DLIST,
                          INST_INIT=0.,
@@ -253,10 +257,13 @@ def essai_TND(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERGENCE, IN
         # ---
         # Calcul, avec tr(eps) = 0 impose
         # ---
+        CONVERGENCE2 = {k:CONVERGENCE[k]
+                        for k in ("RESI_GLOB_MAXI", "RESI_GLOB_RELA",
+                                  "ITER_GLOB_MAXI") if k in CONVERGENCE}
         __EVOL = SIMU_POINT_MAT(
             INFO=INFO,
-            COMPORTEMENT=COMPORTEMENT.List_F(),
-            CONVERGENCE=CONVERGENCE.List_F(),
+            COMPORTEMENT=COMPORTEMENT,
+            CONVERGENCE=CONVERGENCE2,
             MATER=MATER,
             INCREMENT=_F(LIST_INST=__DLIST,
                          INST_INIT=0.,
@@ -445,10 +452,13 @@ def essai_CISA_C(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERGENCE,
             # ---
             # Calcul
             # ---
+            CONVERGENCE2 = {k:CONVERGENCE[k]
+                for k in ("RESI_GLOB_MAXI", "RESI_GLOB_RELA",
+                          "ITER_GLOB_MAXI") if k in CONVERGENCE}
             __EVOL = SIMU_POINT_MAT(
                 INFO=INFO,
-                COMPORTEMENT=COMPORTEMENT.List_F(),
-                CONVERGENCE=CONVERGENCE.List_F(),
+                COMPORTEMENT=COMPORTEMENT,
+                CONVERGENCE=CONVERGENCE2,
                 MATER=MATER,
                 INCREMENT=_F(LIST_INST=__DLIST,
                              INST_INIT=0.,
@@ -621,8 +631,8 @@ def essai_TND_C_mono(self, inst_init, sigm, epsi, vari, DicoEssai,
     try:
       __EVOLM = CALC_POINT_MAT(
         INFO=INFO,
-        COMPORTEMENT=COMPORTEMENT.List_F(),
-        CONVERGENCE=CONVERGENCE.List_F(),
+        COMPORTEMENT=COMPORTEMENT,
+        CONVERGENCE=CONVERGENCE,
         MATER=MATER,
         INCREMENT=_F(LIST_INST=__dlist,
                      INST_INIT=inst_init,
@@ -679,7 +689,8 @@ def essai_TND_C(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERGENCE, 
     import aster
     from Utilitai.Utmess import UTMESS
     from Comportement import catalc
-    from Contrib.calc_point_mat import CALC_POINT_MAT
+    # from Contrib.calc_point_mat import CALC_POINT_MAT
+    from code_aster.Commands import CALC_POINT_MAT
 
     DEFI_FONCTION = self.get_cmd('DEFI_FONCTION')
     DETRUIRE = self.get_cmd('DETRUIRE')
@@ -700,7 +711,7 @@ def essai_TND_C(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERGENCE, 
     comp  = ['XX','YY','ZZ','XY','XZ','YZ']
 
     # recuperation du nombre de VI associe a la LdC
-    nom_lc = COMPORTEMENT.List_F()[0]['RELATION']
+    nom_lc = COMPORTEMENT[0]['RELATION']
     num_lc, nb_vari, nb_vari_exte = catalc.get_info(nom_lc)
     assert type(nb_vari) is int and nb_vari > 0
 
@@ -819,8 +830,8 @@ def essai_TND_C(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERGENCE, 
 # Contrainte SIGMA_1 imposee
                 __EVOL = CALC_POINT_MAT(
                     INFO=INFO,
-                    COMPORTEMENT=COMPORTEMENT.List_F(),
-                    CONVERGENCE=CONVERGENCE.List_F(),
+                    COMPORTEMENT=COMPORTEMENT,
+                    CONVERGENCE=CONVERGENCE,
                     MATER=MATER,
                     INCREMENT=_F(LIST_INST=__DLIST,
                                  INST_INIT=0.,
@@ -1289,7 +1300,7 @@ def essai_TD_A(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERGENCE, I
     NB_INST = DicoEssai['NB_INST']
 
     # recuperation du nombre de VI associe a la LdC
-    nom_lc = COMPORTEMENT.List_F()[0]['RELATION']
+    nom_lc = COMPORTEMENT[0]['RELATION']
     num_lc, nb_vari, nb_vari_exte = catalc.get_info(nom_lc)
     assert type(nb_vari) is int and nb_vari > 0
 
@@ -1383,10 +1394,13 @@ def essai_TD_A(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERGENCE, I
             # ---
             # Calcul
             # ---
+            CONVERGENCE2 = {k:CONVERGENCE[k]
+                            for k in ("RESI_GLOB_MAXI", "RESI_GLOB_RELA",
+                                      "ITER_GLOB_MAXI") if k in CONVERGENCE}
             __EVOL = SIMU_POINT_MAT(
                 INFO=INFO,
-                COMPORTEMENT=COMPORTEMENT.List_F(),
-                CONVERGENCE=CONVERGENCE.List_F(),
+                COMPORTEMENT=COMPORTEMENT,
+                CONVERGENCE=CONVERGENCE2,
                 MATER=MATER,
                 INCREMENT=_F(LIST_INST=__DLIST,
                              INST_INIT=0.,
@@ -1549,7 +1563,7 @@ def essai_TD_NA(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERGENCE, 
     NB_INST = DicoEssai['NB_INST']
 
     # recuperation du nombre de VI associe a la LdC
-    nom_lc = COMPORTEMENT.List_F()[0]['RELATION']
+    nom_lc = COMPORTEMENT[0]['RELATION']
     num_lc, nb_vari, nb_vari_exte = catalc.get_info(nom_lc)
     assert type(nb_vari) is int and nb_vari > 0
 
@@ -1640,10 +1654,13 @@ def essai_TD_NA(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERGENCE, 
             # ---
             # Calcul
             # ---
+            CONVERGENCE2 = {k:CONVERGENCE[k]
+                            for k in ("RESI_GLOB_MAXI", "RESI_GLOB_RELA",
+                                      "ITER_GLOB_MAXI") if k in CONVERGENCE}
             __EVOL = SIMU_POINT_MAT(
                 INFO=INFO,
-                COMPORTEMENT=COMPORTEMENT.List_F(),
-                CONVERGENCE=CONVERGENCE.List_F(),
+                COMPORTEMENT=COMPORTEMENT,
+                CONVERGENCE=CONVERGENCE2,
                 MATER=MATER,
                 INCREMENT=_F(LIST_INST=__DLIST,
                              INST_INIT=0.,
@@ -1794,7 +1811,7 @@ def essai_OEDO_C(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERGENCE,
     NB_INST = DicoEssai['NB_INST']
 
     # recuperation du nombre de VI associe a la LdC
-    nom_lc = COMPORTEMENT.List_F()[0]['RELATION']
+    nom_lc = COMPORTEMENT[0]['RELATION']
     num_lc, nb_vari, nb_vari_exte = catalc.get_info(nom_lc)
     assert type(nb_vari) is int and nb_vari > 0
 
@@ -1908,10 +1925,14 @@ def essai_OEDO_C(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERGENCE,
             # Calcul
             # ---
 
+            CONVERGENCE2 = {k:CONVERGENCE[k]
+                            for k in ("RESI_GLOB_MAXI", "RESI_GLOB_RELA",
+                                      "ITER_GLOB_MAXI") if k in CONVERGENCE}
+            print COMPORTEMENT
             __EVOL = SIMU_POINT_MAT(
                 INFO=INFO,
-                COMPORTEMENT=COMPORTEMENT.List_F(),
-                CONVERGENCE=CONVERGENCE.List_F(),
+                COMPORTEMENT=COMPORTEMENT,
+                CONVERGENCE=CONVERGENCE2,
                 MATER=MATER,
                 SUPPORT='POINT',
                 INCREMENT=_F(LIST_INST=__DLIST,
@@ -2044,7 +2065,7 @@ def essai_ISOT_C(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERGENCE,
     NB_INST = DicoEssai['NB_INST']
 
     # recuperation du nombre de VI associe a la LdC
-    nom_lc = COMPORTEMENT.List_F()[0]['RELATION']
+    nom_lc = COMPORTEMENT[0]['RELATION']
     num_lc, nb_vari, nb_vari_exte = catalc.get_info(nom_lc)
     assert type(nb_vari) is int and nb_vari > 0
 
@@ -2159,10 +2180,14 @@ def essai_ISOT_C(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERGENCE,
             # ---
             # Calcul
             # ---
+
+            CONVERGENCE2 = {k:CONVERGENCE[k]
+                            for k in ("RESI_GLOB_MAXI", "RESI_GLOB_RELA",
+                                      "ITER_GLOB_MAXI") if k in CONVERGENCE}
             __EVOL = SIMU_POINT_MAT(
                 INFO=INFO,
-                COMPORTEMENT=COMPORTEMENT.List_F(),
-                CONVERGENCE=CONVERGENCE.List_F(),
+                COMPORTEMENT=COMPORTEMENT,
+                CONVERGENCE=CONVERGENCE2,
                 MATER=MATER,
                 SUPPORT='POINT',
                 INCREMENT=_F(LIST_INST=__DLIST,
