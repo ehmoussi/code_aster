@@ -23,8 +23,8 @@ def get_nom_maillage_sdfiss(FISS):
     import aster
     from Utilitai.Utmess import UTMESS
 
-    iret, ibid, nom_ma = aster.dismoi('NOM_MAILLA', FISS.nom, 'FISS_XFEM', 'F')
-    return nom_ma.strip()
+    nom_ma = FISS.getSupportMesh()
+    return nom_ma
 
 
 def raff_xfem_ops(self, FISSURE, TYPE, **args):
@@ -70,7 +70,6 @@ def raff_xfem_ops(self, FISSURE, TYPE, **args):
 
     # on recupere le concept maillage "associe a la sd"
     nom_ma = get_nom_maillage_sdfiss(FISSURE[0])
-    MA = self.get_concept(nom_ma)
 
     # on verifie que toutes les fissures/interfaces sont rattachees au meme
     # maillage
@@ -142,7 +141,7 @@ def raff_xfem_ops(self, FISSURE, TYPE, **args):
             elif typ_ds == 'INTERFACE':
                 __CHFOR = CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_F',
                                      OPERATION='AFFE',
-                                     MAILLAGE=MA,
+                                     MAILLAGE=nom_ma,
                                      AFFE=_F(TOUT='OUI',
                                              NOM_CMP='X1',
                                              VALE_F=__MDISTI,),
@@ -169,7 +168,7 @@ def raff_xfem_ops(self, FISSURE, TYPE, **args):
             # champ d'Erreur de la fissure i
             __CERR[i] = CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_R',
                                    OPERATION='ASSE',
-                                   MAILLAGE=MA,
+                                   MAILLAGE=nom_ma,
                                    ASSE=_F(TOUT='OUI',
                                            CHAM_GD=__CERRB,
                                            NOM_CMP='X1',
@@ -195,7 +194,7 @@ def raff_xfem_ops(self, FISSURE, TYPE, **args):
         # Définition de l'erreur en chaque noeud du maillage
         __CHFORM = CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_F',
                               OPERATION='AFFE',
-                              MAILLAGE=MA,
+                              MAILLAGE=nom_ma,
                               AFFE=_F(TOUT='OUI',
                                       NOM_CMP='X1',
                                       VALE_F=__Erreur,),
@@ -232,7 +231,7 @@ def raff_xfem_ops(self, FISSURE, TYPE, **args):
         # champ de sortie
         chamout = CREA_CHAMP(TYPE_CHAM='CART_NEUT_R',
                              OPERATION='ASSE',
-                             MAILLAGE=MA,
+                             MAILLAGE=nom_ma,
                              ASSE=list_asse
                              )
 
