@@ -22,7 +22,7 @@ FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG1,
                     TYPE_DISCONTINUITE='INTERFACE',
                     DEFI_FISS=_F(FONC_LN=LN),
                     INFO=1);
-
+CHERR = RAFF_XFEM(FISSURE=FISS)
 MODELEK=MODI_MODELE_XFEM(MODELE_IN=MO,
                          FISSURE=FISS,
                          INFO=1);
