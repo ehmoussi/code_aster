@@ -37,32 +37,5 @@ class ListOfFloatsDefinition(ExecuteCommand):
         """
         self._result = ListOfFloats()
 
-    def exec_(self, keywords):
-        """Execute the command.
-
-        Arguments:
-            keywords (dict): User's keywords.
-        """
-        vale = keywords.get('VALE')
-        if vale is not None:
-            values = np.array(vale)
-        else:
-            start = keywords['DEBUT']
-            values = np.array([])
-            for factkw in keywords['INTERVALLE']:
-                stop = factkw['JUSQU_A']
-                step = factkw.get('PAS')
-                if step is None:
-                    step = 1.*(stop - start) / factkw['NOMBRE']
-                if step > stop - start:
-                    raise ValueError("PAS is greater than the interval")
-                values = np.concatenate((values, np.arange(start, stop, step)))
-                if abs(stop - values[-1]) < 1.e-3 * step:
-                    values = values[:-1]
-                start = stop
-            values = np.concatenate((values, np.array([stop])))
-
-        self._result.setValues(values)
-
 
 DEFI_LIST_REEL = ListOfFloatsDefinition.run
