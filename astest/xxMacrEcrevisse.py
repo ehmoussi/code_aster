@@ -87,7 +87,11 @@ CONT  = DEFI_CONTACT(MODELE      = MODMECA,
                             GROUP_MA_ESCL = 'BFISB',
                      ),)
 
-PR_EXT = DEFI_CONSTANTE(VALE = 1.E5,)
+PR_EXT = DEFI_FONCTION( NOM_PARA    = 'INST',
+                        PROL_GAUCHE = 'CONSTANT',
+                        PROL_DROITE = 'CONSTANT',
+                        VALE = ( 0,              1.E5,
+                                 5000.,      1.E5, ), )
 
 PR_INT = DEFI_FONCTION( NOM_PARA    = 'INST',
                         PROL_GAUCHE = 'CONSTANT',
@@ -95,7 +99,11 @@ PR_INT = DEFI_FONCTION( NOM_PARA    = 'INST',
                         VALE = ( 0,              1.E6,
                                  5000.,      1.E6, ), )
 
-TEMP_EXT = DEFI_CONSTANTE(VALE = 20.,)
+TEMP_EXT = DEFI_FONCTION(NOM_PARA    = 'INST',
+                       PROL_GAUCHE = 'CONSTANT',
+                       PROL_DROITE = 'CONSTANT',
+                       VALE = ( 0.,        20.,
+                                5000., 20., ), )
 
 TEMP_INT = DEFI_FONCTION(NOM_PARA    = 'INST',
                        PROL_GAUCHE = 'CONSTANT',
@@ -103,8 +111,19 @@ TEMP_INT = DEFI_FONCTION(NOM_PARA    = 'INST',
                        VALE = ( 0.,        180.,
                                 5000., 180., ), )
 
-H_EXT    = DEFI_CONSTANTE(VALE = 0.,)
-H_INT    = DEFI_CONSTANTE(VALE = 0.,)
+H_EXT = DEFI_FONCTION(NOM_PARA    = 'INST',
+                       PROL_GAUCHE = 'CONSTANT',
+                       PROL_DROITE = 'CONSTANT',
+                       VALE = ( 0.,        0.,
+                                5000., 0., ), )
+
+H_INT = DEFI_FONCTION(NOM_PARA    = 'INST',
+                       PROL_GAUCHE = 'CONSTANT',
+                       PROL_DROITE = 'CONSTANT',
+                       VALE = ( 0.,        0.,
+                                5000., 0., ), )
+
+
 CONDTHER = AFFE_CHAR_THER_F(
                     MODELE  = MODTHER,
                     ECHANGE = (_F(GROUP_MA = 'INTRADOS',
