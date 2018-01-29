@@ -93,11 +93,11 @@ class Mac3CoeurCalcul(object):
     def factory(macro, args):
         """Factory that returns the calculation object"""
         class_ = None
-        if args['DEFORMATION']:
+        if 'DEFORMATION'in args and args['DEFORMATION']:
             class_ = Mac3CoeurDeformation
-        if args['LAME']:
+        if 'LAME'in args and args['LAME']:
             class_ = Mac3CoeurLame
-        if args['ETAT_INITIAL']:
+        if 'ETAT_INITIAL'in args and args['ETAT_INITIAL']:
             class_ = Mac3CoeurEtatInitial
         if not class_:
             UTMESS('F', 'DVP_1')
@@ -105,6 +105,7 @@ class Mac3CoeurCalcul(object):
 
     def __init__(self, macro, args):
         """Initialization"""
+        from code_aster.Cata.Syntax import CO
         self.macro = macro
         self.keyw = args
         self.mcf = args[self.mcfact]
