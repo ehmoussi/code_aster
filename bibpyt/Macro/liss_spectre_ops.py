@@ -212,6 +212,8 @@ def liss_spectre_ops(
             pl = spec['NOM']
             batiment = spec['BATIMENT']
             commentaire = spec['COMMENTAIRE']
+            print "toto", dir(nappe), type(nappe)
+            print "titi", dir(nappe.sdj())
             
             lpar, lval = nappe.Valeurs()
             nb_freq = len(lval[0][0])
