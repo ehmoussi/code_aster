@@ -27,12 +27,20 @@ if(DEFINED ENV{USER})
 endif()
 set(RESUTEST_DIR "@ASRUN_TMPDIR@/${USER}_resutest@ASTER_TAG@")
 
-set(ASTER_TEST_FILES
-@ASTER_TEST_FILES@
+set(ASTER_TEST_FILES_SEQ
+@ASTER_TEST_FILES_SEQ@
 )
 
-set(ASTER_TEST_FILES_VALID
-@ASTER_TEST_FILES_VALID@
+set(ASTER_TEST_FILES_PAR
+@ASTER_TEST_FILES_PAR@
+)
+
+set(ASTER_TEST_FILES_VALID_SEQ
+@ASTER_TEST_FILES_VALID_SEQ@
+)
+
+set(ASTER_TEST_FILES_VALID_PAR
+@ASTER_TEST_FILES_VALID_PAR@
 )
 
 set(ASTER_TEST_FILES_INTEGR
@@ -46,7 +54,20 @@ zzzz218a
 zzzz401a
 )
 
-set(ASTER_TEST_FILES_ALL ${ASTER_TEST_FILES} ${ASTER_TEST_FILES_VALID})
+set(ASTER_TEST_FILES_ALL_VALID
+    ${ASTER_TEST_FILES_VALID_SEQ}
+    ${ASTER_TEST_FILES_VALID_PAR}
+)
+set(ASTER_TEST_FILES_ALL_PAR
+    ${ASTER_TEST_FILES_PAR}
+    ${ASTER_TEST_FILES_VALID_PAR}
+)
+set(ASTER_TEST_FILES_ALL
+    ${ASTER_TEST_FILES_SEQ}
+    ${ASTER_TEST_FILES_PAR}
+    ${ASTER_TEST_FILES_VALID_SEQ}
+    ${ASTER_TEST_FILES_VALID_PAR}
+)
 
 foreach(testname ${ASTER_TEST_FILES_ALL})
     if(NOT (testname MATCHES "^(erreu06a|plexu|supv002a)"))
@@ -56,14 +77,24 @@ foreach(testname ${ASTER_TEST_FILES_ALL})
 
         set(_props "${COMPONENT_NAME}")
 
-        string(FIND "${ASTER_TEST_FILES_INTEGR}" ${testname} _found)
-        if(${_found} GREATER -1)
+        string(FIND "${ASTER_TEST_FILES_INTEGR}" ${testname} _integr)
+        string(FIND "${ASTER_TEST_FILES_ALL_PAR}" ${testname} _par)
+        string(FIND "${ASTER_TEST_FILES_ALL_VALID}" ${testname} _valid)
+
+        if(${_integr} GREATER -1)
           string(CONCAT _props "${_props}" ";" "SMECA_INTEGR")
         endif()
 
-        string(FIND "${ASTER_TEST_FILES_VALID}" ${testname} _found)
-        if(${_found} GREATER -1)
-          string(CONCAT _props "${_props}" ";" "${COMPONENT_NAME}_VALID")
+        if(${_valid} GREATER -1)
+          string(CONCAT _props "${_props}" ";" "SMECA_VALIDATION")
+        else()
+          string(CONCAT _props "${_props}" ";" "SMECA_VERIFICATION")
+        endif()
+
+        if(${_par} GREATER -1)
+          string(CONCAT _props "${_props}_PARALLEL")
+        else()
+          string(CONCAT _props "${_props}_SEQUENTIAL")
         endif()
 
         set_tests_properties(${TEST_NAME} PROPERTIES LABELS "${_props}")
