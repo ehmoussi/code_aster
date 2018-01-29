@@ -83,7 +83,7 @@ def FcontinuGR2R(T, I1R, I2R, TRR, PHI1R, PHI2R, TAU1R, TAU2R, D):
     return fxt
 
 
-def defi_fonc_elec_ops(self, FREQ, SIGNAL, COUR, COUR_PRIN, COUR_SECO, **args):
+def defi_fonc_elec_ops(self, FREQ=None, SIGNAL=None, COUR=None, COUR_PRIN=None, COUR_SECO=None, **args):
     ier = 0
     from Utilitai.Utmess import UTMESS
     import numpy
@@ -217,4 +217,4 @@ def defi_fonc_elec_ops(self, FREQ, SIGNAL, COUR, COUR_PRIN, COUR_SECO, **args):
                           VALE=vale,
                           PROL_DROITE='CONSTANT',
                           PROL_GAUCHE='CONSTANT',)
-    return ier
+    return C_out
