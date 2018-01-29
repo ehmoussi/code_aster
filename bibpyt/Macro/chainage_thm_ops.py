@@ -107,6 +107,7 @@ def chainage_thm_ops(self, TYPE_CHAINAGE, **args):
         self.DeclareOut('nomres', self.sd)
 
         nomres = CHAINAGE_HYDR_MECA(self, args, motscles)
+        return nomres
 
     #
     # 2. Chaînage MECANIQUE ===> HYDRAULIQUE
@@ -117,6 +118,7 @@ def chainage_thm_ops(self, TYPE_CHAINAGE, **args):
         self.DeclareOut('nomres', self.sd)
 
         nomres = CHAINAGE_MECA_HYDR(self, args, motscles)
+        return nomres
 
     #
     # 3. Initialisation des matrices de projection
@@ -129,9 +131,12 @@ def chainage_thm_ops(self, TYPE_CHAINAGE, **args):
         self.DeclareOut('MATR_HM2', args['MATR_HM2'])
 
         MATR_MH, MATR_HM1, MATR_HM2 = CHAINAGE_INIT(self, args, motscles)
+        self.register_result(MATR_MH, args['MATR_MH'])
+        self.register_result(MATR_HM1, args['MATR_HM1'])
+        self.register_result(MATR_HM2, args['MATR_HM2'])
 
     else:
 
         UTMESS('F', 'DVP_1')
 
-    return ier
+    return

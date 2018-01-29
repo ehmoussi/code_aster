@@ -77,6 +77,12 @@ class BaseFunctionInstance: public DataStructure
 
         BaseFunctionInstance( const std::string jeveuxName, const std::string type );
 
+
+        /**
+         * @brief Set the function type to CONSTANT
+         */
+        void setAsConstant();
+
         /**
          * @brief Definition of the name of the parameter (abscissa)
          * @param name name of the parameter
@@ -209,7 +215,6 @@ public:
     };
 
 };
-
 
 /**
  * class FunctionComplexInstance

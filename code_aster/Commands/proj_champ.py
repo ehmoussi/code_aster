@@ -54,6 +54,11 @@ class FieldProjector(ExecuteCommand):
             if keywords.has_key("MODELE_2"):
                 self._result.setModel(keywords["MODELE_2"])
             self._result.update()
+        elif keywords.has_key("CHAM_GD"):
+            pass
+        else:
+            if keywords.has_key("MAILLAGE_1"):
+                self._result.setFirstMesh(keywords["MAILLAGE_1"])
 
 
 

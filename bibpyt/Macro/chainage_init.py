@@ -33,10 +33,7 @@ def CHAINAGE_INIT(self, args, motscles):
     MATR_MH = PROJ_CHAMP(METHODE='COLLOCATION', MODELE_1=MODELE_MECA,
                          MODELE_2=MODELE_HYDR, PROJECTION='NON', **motscles)
 
-    iret, ibid, nom_mail = aster.dismoi(
-        'NOM_MAILLA', MODELE_HYDR.nom, 'MODELE', 'F')
-    nom_mail = nom_mail.strip()
-    __maillage_h = self.get_concept(nom_mail)
+    __maillage_h = MODELE_HYDR.getSupportMesh()
 
     _maillin = CREA_MAILLAGE(MAILLAGE=__maillage_h,
                              QUAD_LINE=_F(TOUT='OUI',), **motscles)

@@ -45,8 +45,10 @@ class ConstantAsFunction(ExecuteCommand):
 
         funct.setValues([0.], [keywords['VALE'], ])
         funct.setResultName(keywords['NOM_RESU'])
+        funct.setParameterName("TOUTPARA")
         funct.setInterpolation("LIN LIN")
         funct.setExtrapolation("CC")
+        funct.setAsConstant()
 
 
 DEFI_CONSTANTE = ConstantAsFunction.run

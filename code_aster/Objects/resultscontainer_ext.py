@@ -37,3 +37,9 @@ class ExtendedResultsContainer(injector(ResultsContainer), ResultsContainer):
         object during unpickling.
         """
         return (self.getName(), self.getType())
+
+    def LIST_VARI_ACCES (self):
+        if not self.accessible():
+            raise AsException("Erreur dans resultat.LIST_VARI_ACCES " +
+                              "en PAR_LOT='OUI'")
+        return aster.GetResu(self.get_name(), "VARI_ACCES")

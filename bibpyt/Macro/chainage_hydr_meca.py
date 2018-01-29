@@ -46,25 +46,17 @@ def CHAINAGE_HYDR_MECA(self, args, motscles):
     MATR_HM1 = args['MATR_HM1']
     MATR_HM2 = args['MATR_HM2']
 
-    para = RESU_HYDR.LIST_PARA()
-    smo = set(para['MODELE'])
-
-# normalement, il ne doit y avoir qu'un modèle ...
-    if len(smo) <> 1:
-        UTMESS('F', 'CHAINAGE_10')
-    nom_mo_re = list(smo)[0]
-
-    __modele = self.get_concept(nom_mo_re)
+    __modele = RESU_HYDR.getModel()
 
   #
   # Nom du modèle obtenu à partir du résultat : nom_modele_1
   #
 
     iret, ibid, nom_modele_1 = aster.dismoi(
-        'MODELISATION', __modele.nom, 'MODELE', 'F')
+        'MODELISATION', __modele.getName(), 'MODELE', 'F')
     nom_modele_1 = nom_modele_1.strip()
 
-    iret, ibid, yathm1 = aster.dismoi('EXI_THM', __modele.nom, 'MODELE', 'F')
+    yathm1 = __modele.existsThm()
 
   #
   # A l'heure actuelle, les modélisations autorisées pour
@@ -90,8 +82,9 @@ def CHAINAGE_HYDR_MECA(self, args, motscles):
   # Nom du modèle 2 fourni en entrée : nom_modele_2
   #
 
-    iret, ibid, nom_modele_2 = aster.dismoi(
-        'MODELISATION', MODELE_MECA.nom, 'MODELE', 'F')
+    iret, ibid, nom_modele_2 = aster.dismoi('MODELISATION',
+                                            MODELE_MECA.getName(),
+                                            'MODELE', 'F')
     nom_modele_2 = nom_modele_2.strip()
 
     linst_resultat = RESU_HYDR.LIST_VARI_ACCES()['INST']
@@ -149,10 +142,7 @@ def CHAINAGE_HYDR_MECA(self, args, motscles):
   # hydraulique
   #
 
-    iret, ibid, nom_mail = aster.dismoi(
-        'NOM_MAILLA', __modele.nom, 'MODELE', 'F')
-    nom_mail = nom_mail.strip()
-    __maillage_h = self.get_concept(nom_mail)
+    __maillage_h = __modele.getSupportMesh()
 
   #
   # On vérifie que le résultat donné en sortie
@@ -188,6 +178,7 @@ def CHAINAGE_HYDR_MECA(self, args, motscles):
 
         nomres = PROJ_CHAMP(
             CHAM_GD=__proch, MATR_PROJECTION=MATR_HM2, **motscles)
+        return nomres
 
     else:
 
@@ -244,3 +235,5 @@ def CHAINAGE_HYDR_MECA(self, args, motscles):
 
         nomres = PROJ_CHAMP(
             RESULTAT=__projres, MATR_PROJECTION=MATR_HM2, **motscles)
+
+        return nomres
