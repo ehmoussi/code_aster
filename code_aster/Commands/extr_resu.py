@@ -38,4 +38,15 @@ class ExtrResu(ExecuteCommand):
         else:
             self._result = type(keywords["RESULTAT"])()
 
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        resultat = keywords["RESULTAT"]
+        if(resultat):
+            self._result.setModel(resultat.getModel())
+            self._result.update()
+
 EXTR_RESU = ExtrResu.run
