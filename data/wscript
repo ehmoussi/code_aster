@@ -41,37 +41,37 @@ def options(self):
     group = self.get_option_group("code_aster options")
     # default=False in libaster, True in code_aster
     group.add_option('--legacy', dest='legacy',
-                    default=True, action='store_true',
-                    help='create some legacy files')
+                     default=True, action='store_true',
+                     help='create some legacy files')
     group.add_option('--nolegacy', dest='legacy',
-                    action='store_false',
-                    help='do not create legacy files')
+                     action='store_false',
+                     help='do not create legacy files')
 
     group = self.add_option_group('External programs options')
     group.add_option('--with-prog-metis', action='store_true', default=None,
-                    dest='with_prog_metis',
-                    help='Force support of metis program')
+                     dest='with_prog_metis',
+                     help='Force support of metis program')
     group.add_option('--with-prog-gmsh', action='store_true', default=None,
-                    dest='with_prog_gmsh',
-                    help='Force support of gmsh program')
+                     dest='with_prog_gmsh',
+                     help='Force support of gmsh program')
     group.add_option('--with-prog-salome', action='store_true', default=None,
-                    dest='with_prog_salome',
-                    help='Force support of salome program')
-    group.add_option('--with-prog-europlexus', action='store_true', default=None,
-                    dest='with_prog_europlexus',
-                    help='Force support of europlexus program')
+                     dest='with_prog_salome',
+                     help='Force support of salome program')
+    group.add_option('--with-prog-europlexus', action='store_true',
+                     default=None, dest='with_prog_europlexus',
+                     help='Force support of europlexus program')
     group.add_option('--with-prog-miss3d', action='store_true', default=None,
-                    dest='with_prog_miss3d',
-                    help='Force support of miss3d program')
+                     dest='with_prog_miss3d',
+                     help='Force support of miss3d program')
     group.add_option('--with-prog-homard', action='store_true', default=None,
-                    dest='with_prog_homard',
-                    help='Force support of homard program')
-    group.add_option('--with-prog-ecrevisse', action='store_true', default=None,
-                    dest='with_prog_ecrevisse',
-                    help='Force support of ecrevisse program')
+                     dest='with_prog_homard',
+                     help='Force support of homard program')
+    group.add_option('--with-prog-ecrevisse', action='store_true',
+                     default=None, dest='with_prog_ecrevisse',
+                     help='Force support of ecrevisse program')
     group.add_option('--with-prog-xmgrace', action='store_true', default=None,
-                    dest='with_prog_xmgrace',
-                    help='Force support of xmgrace program')
+                     dest='with_prog_xmgrace',
+                     help='Force support of xmgrace program')
 
 
 def configure(self):
@@ -98,35 +98,38 @@ def build(self):
         raise Errors.BuildError
     change_tests(dict_conv, self.env.install_tests)
     self(
-        features = 'subst',
-            name = 'data_files',
-          source = src,
-          target = tgt,
-    install_path = self.env.ASTERDATADIR,
-            vars = ['ASTER_ENVIRON', 'EXTERNAL_PROGRAMS', 'install_tests'],
-   PROGRAMS_JSON = json.dumps(self.env['EXTERNAL_PROGRAMS'], sort_keys=True,
-							  indent=4, separators=(',', ': ')),
-     **dict_conv
+        features='subst',
+        name='data_files',
+        source=src,
+        target=tgt,
+        install_path=self.env.ASTERDATADIR,
+        vars=['ASTER_ENVIRON', 'EXTERNAL_PROGRAMS', 'install_tests'],
+        PROGRAMS_JSON=json.dumps(self.env['EXTERNAL_PROGRAMS'], sort_keys=True,
+                                 indent=4, separators=(',', ': ')),
+        **dict_conv
     )
 
 
 SRCTEST_TMPL = """SRCTEST        | src     | -     | %s"""
+
 
 @Configure.conf
 def env2dict(self, src):
     """build dict informations"""
     self.start_msg('Store execution environment')
     env = self.env.derive()
-    env['LD_LIBRARY_PATH'] = os.environ.get('LD_LIBRARY_PATH', '').split(os.pathsep)
-    ld_path = self.remove_duplicates(chain(*[Utils.to_list(env[name])
-                for name in ('LIBPATH', 'LIBDIR', 'LD_LIBRARY_PATH',
-                             'ASTERLIBDIR') if env[name]]))
+    env['LD_LIBRARY_PATH'] = os.environ.get(
+        'LD_LIBRARY_PATH', '').split(os.pathsep)
+    ld_path = self.remove_duplicates(
+        chain(*[Utils.to_list(env[name]) for name in (
+            'LIBPATH', 'LIBDIR', 'LD_LIBRARY_PATH', 'ASTERLIBDIR')
+                if env[name]]))
     sep = os.pathsep + '\\\n'
     dico = {}
     dico['DEFINES'] = ' '.join([d.split('=')[0] for d in env['DEFINES']])
     py_path = self.remove_duplicates(Utils.to_list(env['CFG_PYTHONPATH']))
     dico['PYTHONHOME'] = sys.prefix + '' if sys.prefix == sys.exec_prefix \
-                                         else ':' + sys.exec_prefix
+        else ':' + sys.exec_prefix
     dico['PYTHON_DIRNAME'] = osp.dirname(env['PYTHON'][0])
     # as_run compatibility
     if env.ASRUN_MPI_VERSION:
@@ -153,10 +156,10 @@ def env2dict(self, src):
         SRCTEST_TMPL % '%(SRC)s/../validation/astest' % dico])
     text = ""
     if env['MFRONT']:
-        tfel = osp.dirname( osp.dirname(env['MFRONT'][0]) )
+        tfel = osp.dirname(osp.dirname(env['MFRONT'][0]))
         text += os.linesep.join([
             "# MFront specific",
-            "export TFELHOME={}".format( tfel ),
+            "export TFELHOME={}".format(tfel),
             "export PATH=${TFELHOME}/bin:$PATH"
         ])
     dico['MFRONT_SPECIFIC'] = text
@@ -166,17 +169,21 @@ def env2dict(self, src):
     self.end_msg("yes")
 
     self.start_msg('Build list of testcases')
-    dico['ASTER_TEST_FILES'] = _build_testlist(src)
+    seq = 'testlist.*sequential'
+    mpi = 'testlist.*parallel'
     valid = osp.join(src, '..', 'validation')
-    dico['ASTER_TEST_FILES_VALID'] = _build_testlist(valid)
+    dico['ASTER_TEST_FILES_SEQ'] = _build_testlist(src, seq)
+    dico['ASTER_TEST_FILES_PAR'] = _build_testlist(src, mpi)
+    dico['ASTER_TEST_FILES_VALID_SEQ'] = _build_testlist(valid, seq)
+    dico['ASTER_TEST_FILES_VALID_PAR'] = _build_testlist(valid, mpi)
     self.end_msg("yes")
     return dico
 
 
-def _build_testlist(path):
+def _build_testlist(path, filter_expr):
     if not osp.exists(osp.join(path, 'astest')):
         return ''
-    cmd = ['grep', '-l', 'testlist.*sequential',
+    cmd = ['grep', '-l', filter_expr,
            osp.join(path, 'astest', '*.export')]
     proc = Popen(' '.join(cmd), stdout=PIPE, stderr=PIPE, shell=True)
     out = proc.communicate()[0]
