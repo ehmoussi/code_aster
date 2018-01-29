@@ -95,8 +95,8 @@ def build_context(unite, temp, prol):
 
 
 def include_materiau_ops(self,
-                         EXTRACTION, UNITE_LONGUEUR, INFO,
-                         PROL_GAUCHE, PROL_DROITE, **args):
+                         EXTRACTION=None, UNITE_LONGUEUR=None, INFO=None,
+                         PROL_GAUCHE=None, PROL_DROITE=None, **args):
     """Macro INCLUDE_MATERIAU"""
     import aster
     from code_aster.Cata.Syntax import _F
