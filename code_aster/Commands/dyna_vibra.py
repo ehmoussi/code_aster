@@ -57,6 +57,7 @@ class VibrationDynamics(ExecuteCommand):
         """
         if keywords["BASE_CALCUL"] == "PHYS":
             self._result.setModel(keywords["MATR_MASS"].getDOFNumbering().getSupportModel())
+            self._result.update()
 
 
 DYNA_VIBRA = VibrationDynamics.run
