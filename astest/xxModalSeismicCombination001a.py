@@ -217,7 +217,20 @@ SPECT=DEFI_NAPPE(  NOM_PARA='AMOR',
                          TITRE='CAS TEST &CODE   COMMANDE &COMMANDE'
                      )
 
-#
+LISS_SPECTRE(SPECTRE=(_F(NAPPE=SPECT, NOM='TEST', BATIMENT='BATIMENT', 
+                         COMMENTAIRE='PRECISIONS', DIRECTION = 'X',),), 
+             OPTION = 'CONCEPTION',
+             NB_FREQ_LISS = 50,
+             FREQ_MIN = 0.5,
+             FREQ_MAX = 35.5,
+             ZPA   = 2.25793,
+             BORNE_X=(0.1,100),
+             BORNE_Y=(0.01,100),
+             ECHELLE_X = 'LOG',
+             ECHELLE_Y = 'LOG',
+             LEGENDE_X = 'Frequence (Hz)',
+             LEGENDE_Y = 'Pseudo-acceleration (g)',)
+
 
 SISM_SPE=COMB_SISM_MODAL(  MODE_MECA=MODE_MEC,
                            AMOR_REDUIT=(
