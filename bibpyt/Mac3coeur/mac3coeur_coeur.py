@@ -1197,12 +1197,9 @@ class Coeur(object):
         # des internes de cuve en fonction de la température
         ALPH1local = self.ALPH1
         ALPH2local = self.ALPH2
-        ALPHENV = '(%(ALPH1local)e*' + \
-            _TEMPENV.nom + '(INST) + %(ALPH2local)e)'
-        ALPHPIC = '(%(ALPH1local)e*' + \
-            _TEMPPIC.nom + '(INST) + %(ALPH2local)e)'
-        ALPHPSC = '(%(ALPH1local)e*' + \
-            _TEMPPSC.nom + '(INST) + %(ALPH2local)e)'
+        ALPHENV = '(%(ALPH1local)e*_TEMPENV(INST) + %(ALPH2local)e)'
+        ALPHPIC = '(%(ALPH1local)e*_TEMPPIC(INST) + %(ALPH2local)e)'
+        ALPHPSC = '(%(ALPH1local)e*_TEMPPSC(INST) + %(ALPH2local)e)'
 
         # Donnees geometriques
         # coordonnees centre cuve
@@ -1229,8 +1226,7 @@ class Coeur(object):
         # pour éviter la division par zéro
         COSTE = '(Y-%(Y0)f)/(' + L + '+%(epsilon)e)'
         SINTE = '(Z-%(Z0)f)/(' + L + '+%(epsilon)e)'
-        Dcth = L + ' * ' + ALPHENV + \
-            ' * (' + _TEMPENV.nom + '(INST)-%(TP_REFlocal)f) '
+        Dcth = L + ' * ' + ALPHENV + ' * (_TEMPENV(INST)-%(TP_REFlocal)f) '
         f_DthY = Dcth + '*' + COSTE
         f_DthZ = Dcth + '*' + SINTE
         _DthY = FORMULE(
@@ -1238,8 +1234,7 @@ class Coeur(object):
         _DthZ = FORMULE(
             NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthZ % locals())
 
-        Dthpic = L + ' * ' + ALPHPIC + \
-            ' * (' + _TEMPPIC.nom + '(INST)-%(TP_REFlocal)f) '
+        Dthpic = L + ' * ' + ALPHPIC + ' * (_TEMPPIC(INST)-%(TP_REFlocal)f) '
         f_DthYpic = Dthpic + '*' + COSTE
         f_DthZpic = Dthpic + '*' + SINTE
         _DthYpic = FORMULE(
@@ -1247,8 +1242,7 @@ class Coeur(object):
         _DthZpic = FORMULE(
             NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthZpic % locals())
 
-        Dthpsc = L + ' * ' + ALPHPSC + \
-            ' * (' + _TEMPPSC.nom + '(INST)-%(TP_REFlocal)f) '
+        Dthpsc = L + ' * ' + ALPHPSC + ' * (_TEMPPSC(INST)-%(TP_REFlocal)f) '
         f_DthYpsc = Dthpsc + '*' + COSTE
         f_DthZpsc = Dthpsc + '*' + SINTE
         _DthYpsc = FORMULE(
@@ -1314,9 +1308,8 @@ class Coeur(object):
                                        PROL_DROITE='CONSTANT',
                                        PROL_GAUCHE='CONSTANT',)
 
-        f_DthXpic = '( (' + _DthXpicPeriph.nom + '(INST) -'  + _DthXpicCentre.nom + \
-            '(INST) ) /(%(Rpsc)f)**2   )*(' +  L + \
-            ')**2   +' + _DthXpicCentre.nom + '(INST)'
+        f_DthXpic = '( (_DthXpicPeriph(INST) -_DthXpicCentre(INST) ) /(%(Rpsc)f)**2   )*('+\
+            L + ')**2   +_DthXpicCentre(INST)'
         _DthXpic = FORMULE(
             NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthXpic % locals())
 
@@ -1326,9 +1319,9 @@ class Coeur(object):
         #---------------------------------------------------------------
         XINFCUVElocal = self.XINFCUVE
         XSUPCUVElocal = self.XSUPCUVE
-        f_DthX = '(-1.*'  + _DthXpicPeriph.nom + \
+        f_DthX = '(-1.*_DthXpicPeriph' + \
             '(INST)/(%(XSUPCUVElocal)f-%(XINFCUVElocal)f) * X  +'  + \
-            _DthXpicPeriph.nom + '(INST))'
+            '_DthXpicPeriph.nom(INST))'
         _DthX = FORMULE(NOM_PARA=('X', 'INST'), VALE=f_DthX % locals())
 
         #---------------------------------------------------------------

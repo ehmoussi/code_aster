@@ -105,7 +105,6 @@ class Mac3CoeurCalcul(object):
 
     def __init__(self, macro, args):
         """Initialization"""
-        from code_aster.Cata.Syntax import CO
         self.macro = macro
         self.keyw = args
         self.mcf = args[self.mcfact]
@@ -1109,7 +1108,6 @@ class Mac3CoeurEtatInitial(Mac3CoeurLame):
 
     def __init__(self,macro,args) :
         """Initialization"""
-        from code_aster.Cata.Syntax import CO
         self.args_lame={}
         self.args_defo={}
         for el in args :
