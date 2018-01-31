@@ -43,7 +43,12 @@ class ConstantAsFunction(ExecuteCommand):
         """
         funct = self._result
 
-        funct.setValues([0.], [keywords['VALE'], ])
+        value = None
+        if type(keywords['VALE']) is tuple:
+            value = list(keywords['VALE'])
+        else:
+            value = [keywords['VALE'],]
+        funct.setValues([0.], value)
         funct.setResultName(keywords['NOM_RESU'])
         funct.setParameterName("TOUTPARA")
         funct.setInterpolation("LIN LIN")

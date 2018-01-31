@@ -81,6 +81,7 @@ class FormulaDefinition(ExecuteCommand):
         """
         self._result.setVariables(force_list(keywords['NOM_PARA']))
         expr = keywords.get('VALE') or keywords.get('VALE_C')
+        expr = expr.strip()
         self._result.setExpression("".join(expr.splitlines()))
         self._result.setContext(self._ctxt)
         # the context is hold by the Formula
