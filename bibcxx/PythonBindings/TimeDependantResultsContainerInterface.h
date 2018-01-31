@@ -1,7 +1,10 @@
+#ifndef TIMEDEPENDANTRESULTSCONTAINERINTERFACE_H_
+#define TIMEDEPENDANTRESULTSCONTAINERINTERFACE_H_
+
 /**
- * @file InputVariableEvolutionContainerInterface.cxx
- * @brief Interface python de InputVariableEvolutionContainer
- * @author Natacha Béreux
+ * @file TimeDependantResultsContainerInterface.h
+ * @brief Fichier entete de la classe TimeDependantResultsContainerInterface
+ * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
@@ -21,18 +24,9 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/InputVariableEvolutionContainerInterface.h"
-#include "PythonBindings/factory.h"
-#include <boost/python.hpp>
+#include "astercxx.h"
+#include "Results/TimeDependantResultsContainer.h"
 
-void exportInputVariableEvolutionContainerToPython()
-{
-    using namespace boost::python;
+void exportTimeDependantResultsContainerToPython();
 
-    class_< InputVariableEvolutionContainerInstance, InputVariableEvolutionContainerPtr,
-            bases< TimeDependantResultsContainerInstance > >
-        ( "InputVariableEvolutionContainer", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< InputVariableEvolutionContainerInstance > ) )
-    ;
-};
+#endif /* TIMEDEPENDANTRESULTSCONTAINERINTERFACE_H_ */

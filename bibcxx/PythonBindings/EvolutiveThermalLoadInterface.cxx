@@ -30,7 +30,8 @@ void exportEvolutiveThermalLoadToPython()
     using namespace boost::python;
 
     class_< EvolutiveThermalLoadInstance, EvolutiveThermalLoadPtr,
-            bases< ResultsContainerInstance > > ( "EvolutiveThermalLoad", no_init )
+            bases< TimeDependantResultsContainerInstance > >
+        ( "EvolutiveThermalLoad", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< EvolutiveThermalLoadInstance > ) )
     ;
