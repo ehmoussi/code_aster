@@ -1,10 +1,10 @@
-#ifndef ELASTICEVOLUTIONCONTAINER_H_
-#define ELASTICEVOLUTIONCONTAINER_H_
+#ifndef TIMEDEPENDANTRESULTSCONTAINER_H_
+#define TIMEDEPENDANTRESULTSCONTAINER_H_
 
 /**
- * @file ElasticEvolutionContainer.h
- * @brief Fichier entete de la classe ElasticEvolutionContainer
- * @author Natacha Béreux
+ * @file TimeDependantResultsContainer.h
+ * @brief Fichier entete de la classe TimeDependantResultsContainer
+ * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
@@ -24,33 +24,33 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: natacha.bereux at edf.fr */
+/* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "astercxx.h"
 
-#include "Results/TimeDependantResultsContainer.h"
+#include "Results/ResultsContainer.h"
 
 /**
- * @class ElasticEvolutionContainerInstance
- * @brief Cette classe correspond a un evol_elas
- * @author Natacha Béreux
+ * @class TimeDependantResultsContainerInstance
+ * @brief Cette classe correspond a un evol_sd_aster
+ * @author Natacha Béreux 
  */
-class ElasticEvolutionContainerInstance: public TimeDependantResultsContainerInstance
+class TimeDependantResultsContainerInstance: public ResultsContainerInstance
 {
 private:
 public:
     /**
      * @brief Constructeur
      */
-    ElasticEvolutionContainerInstance(): 
-        TimeDependantResultsContainerInstance( "EVOL_ELAS" )
+    TimeDependantResultsContainerInstance( const std::string resuTyp = "EVOL" ): 
+            ResultsContainerInstance( resuTyp )
     {};
 };
 
 /**
- * @typedef ElasticEvolutionContainerPtr
- * @brief Pointeur intelligent vers un ElasticEvolutionContainerInstance
+ * @typedef TimeDependantResultsContainerPtr
+ * @brief Pointeur intelligent vers un TimeDependantResultsContainerInstance
  */
-typedef boost::shared_ptr< ElasticEvolutionContainerInstance > ElasticEvolutionContainerPtr;
+typedef boost::shared_ptr< TimeDependantResultsContainerInstance > TimeDependantResultsContainerPtr;
 
-#endif /* ELASTICEVOLUTIONCONTAINER_H_ */
+#endif /* TIMEDEPENDANTRESULTSCONTAINER_H_ */

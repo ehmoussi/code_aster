@@ -30,7 +30,8 @@ void exportEvolutiveLoadToPython()
     using namespace boost::python;
 
     class_< EvolutiveLoadInstance, EvolutiveLoadPtr,
-            bases< ResultsContainerInstance > > ( "EvolutiveLoad", no_init )
+            bases< TimeDependantResultsContainerInstance > >
+        ( "EvolutiveLoad", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< EvolutiveLoadInstance > ) )
     ;

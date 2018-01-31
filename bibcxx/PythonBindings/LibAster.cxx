@@ -83,6 +83,7 @@
 #include "PythonBindings/LineSearchMethodInterface.h"
 #include "PythonBindings/NonLinearMethodInterface.h"
 #include "PythonBindings/StateInterface.h"
+#include "PythonBindings/TimeDependantResultsContainerInterface.h"
 #include "PythonBindings/EvolutiveLoadInterface.h"
 #include "PythonBindings/EvolutiveThermalLoadInterface.h"
 #include "PythonBindings/FourierCombinationInterface.h"
@@ -228,6 +229,7 @@ BOOST_PYTHON_MODULE(libaster)
     exportNonLinearMethodToPython();
     exportStateToPython();
     exportResultsContainerToPython();
+    exportTimeDependantResultsContainerToPython();
     exportEvolutiveLoadToPython();
     exportEvolutiveThermalLoadToPython();
     exportFourierCombinationToPython();

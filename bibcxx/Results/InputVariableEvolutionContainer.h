@@ -28,7 +28,7 @@
 
 #include "astercxx.h"
 
-#include "Results/ResultsContainer.h"
+#include "Results/TimeDependantResultsContainer.h"
 
 
 /**
@@ -37,17 +37,16 @@
           et stocke des champs 
  * @author Natacha Béreux 
  */
-class InputVariableEvolutionContainerInstance: public ResultsContainerInstance
+class InputVariableEvolutionContainerInstance: public TimeDependantResultsContainerInstance
 {
-    private:
-    public:
-        /**
-         * @brief Constructeur
-         */
-        InputVariableEvolutionContainerInstance( const std::string resuTyp = "EVOL_VARC" ): 
-                ResultsContainerInstance( resuTyp )
-        {};
-
+private:
+public:
+    /**
+     * @brief Constructeur
+     */
+    InputVariableEvolutionContainerInstance():
+        TimeDependantResultsContainerInstance( "EVOL_VARC" )
+    {};
 };
 
 /**

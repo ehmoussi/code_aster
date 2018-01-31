@@ -30,7 +30,8 @@ void exportElasticEvolutionContainerToPython()
     using namespace boost::python;
 
     class_< ElasticEvolutionContainerInstance, ElasticEvolutionContainerPtr,
-            bases< ResultsContainerInstance > > ( "ElasticEvolutionContainer", no_init )
+            bases< TimeDependantResultsContainerInstance > >
+        ( "ElasticEvolutionContainer", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ElasticEvolutionContainerInstance > ) )
     ;
