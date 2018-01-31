@@ -140,6 +140,9 @@ subroutine ccchuc(sdresu_in, sdresu_out, field_type, nume_field_out, type_comp,&
 !
     call jeveuo(list_ordr, 'L', jordr)
 !
+    nb_elem_in = 0
+    nb_node_in = 0
+!
     do iord = 1, nb_ordr
 !
 ! ----- Get input field
@@ -175,7 +178,6 @@ subroutine ccchuc(sdresu_in, sdresu_out, field_type, nume_field_out, type_comp,&
                 call dismoi('NOM_LIGREL', field_in, 'CHAMP', repk=ligrel_old)
                 call dismoi('NOM_MODELE', field_in, 'CHAMP', repk=model)
                 call dismoi('NOM_MAILLA', model, 'MODELE', repk=nomail)
-                nb_elem_in = 0
                 n0 = getexm(' ','GROUP_MA')
                 n1 = getexm(' ','MAILLE')
                 list_elem = '&&CCCHUC.MES_MAILLES'
@@ -194,7 +196,6 @@ subroutine ccchuc(sdresu_in, sdresu_out, field_type, nume_field_out, type_comp,&
                 endif
             else
                 call dismoi('NOM_MAILLA', field_in, 'CHAMP', repk=ma)
-                nb_node_in = 0
                 n0 = getexm(' ','GROUP_MA')
                 n1 = getexm(' ','MAILLE')
                 list_node = '&&CCCHUC.MES_NOEUDS'
