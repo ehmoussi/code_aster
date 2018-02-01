@@ -53,63 +53,9 @@ void exportMaterialOnMeshToPython()
     c1.def( "addBehaviourOnAllMesh", &MaterialOnMeshInstance::addBehaviourOnAllMesh );
     c1.def( "addBehaviourOnGroupOfElements",
               &MaterialOnMeshInstance::addBehaviourOnGroupOfElements );
-
-    c1.def( "addInputVariableOnAllMesh",
-            &MaterialOnMeshInstance::addInputVariableOnAllMesh< TemperatureInputVariablePtr > );
-    c1.def( "addInputVariableOnGroupOfElements",
-       &MaterialOnMeshInstance::addInputVariableOnGroupOfElements< TemperatureInputVariablePtr > );
-    c1.def( "addInputVariableOnAllMesh",
-            &MaterialOnMeshInstance::addInputVariableOnAllMesh< GeometryInputVariablePtr > );
-    c1.def( "addInputVariableOnGroupOfElements",
-       &MaterialOnMeshInstance::addInputVariableOnGroupOfElements< GeometryInputVariablePtr > );
-    c1.def( "addInputVariableOnAllMesh",
-            &MaterialOnMeshInstance::addInputVariableOnAllMesh< CorrosionInputVariablePtr > );
-    c1.def( "addInputVariableOnGroupOfElements",
-       &MaterialOnMeshInstance::addInputVariableOnGroupOfElements< CorrosionInputVariablePtr > );
-    c1.def( "addInputVariableOnAllMesh",
-        &MaterialOnMeshInstance::addInputVariableOnAllMesh< IrreversibleDeformationInputVariablePtr > );
-    c1.def( "addInputVariableOnGroupOfElements",
-       &MaterialOnMeshInstance::addInputVariableOnGroupOfElements< IrreversibleDeformationInputVariablePtr > );
-    c1.def( "addInputVariableOnAllMesh",
-            &MaterialOnMeshInstance::addInputVariableOnAllMesh< ConcreteHydratationInputVariablePtr > );
-    c1.def( "addInputVariableOnGroupOfElements",
-       &MaterialOnMeshInstance::addInputVariableOnGroupOfElements< ConcreteHydratationInputVariablePtr > );
-    c1.def( "addInputVariableOnAllMesh",
-            &MaterialOnMeshInstance::addInputVariableOnAllMesh< IrradiationInputVariablePtr > );
-    c1.def( "addInputVariableOnGroupOfElements",
-       &MaterialOnMeshInstance::addInputVariableOnGroupOfElements< IrradiationInputVariablePtr > );
-    c1.def( "addInputVariableOnAllMesh",
-            &MaterialOnMeshInstance::addInputVariableOnAllMesh< SteelPhasesInputVariablePtr > );
-    c1.def( "addInputVariableOnGroupOfElements",
-       &MaterialOnMeshInstance::addInputVariableOnGroupOfElements< SteelPhasesInputVariablePtr > );
-    c1.def( "addInputVariableOnAllMesh",
-            &MaterialOnMeshInstance::addInputVariableOnAllMesh< ZircaloyPhasesInputVariablePtr > );
-    c1.def( "addInputVariableOnGroupOfElements",
-       &MaterialOnMeshInstance::addInputVariableOnGroupOfElements< ZircaloyPhasesInputVariablePtr > );
-    c1.def( "addInputVariableOnAllMesh",
-            &MaterialOnMeshInstance::addInputVariableOnAllMesh< Neutral1InputVariablePtr > );
-    c1.def( "addInputVariableOnGroupOfElements",
-       &MaterialOnMeshInstance::addInputVariableOnGroupOfElements< Neutral1InputVariablePtr > );
-    c1.def( "addInputVariableOnAllMesh",
-            &MaterialOnMeshInstance::addInputVariableOnAllMesh< Neutral2InputVariablePtr > );
-    c1.def( "addInputVariableOnGroupOfElements",
-       &MaterialOnMeshInstance::addInputVariableOnGroupOfElements< Neutral2InputVariablePtr > );
-    c1.def( "addInputVariableOnAllMesh",
-            &MaterialOnMeshInstance::addInputVariableOnAllMesh< ConcreteDryingInputVariablePtr > );
-    c1.def( "addInputVariableOnGroupOfElements",
-       &MaterialOnMeshInstance::addInputVariableOnGroupOfElements< ConcreteDryingInputVariablePtr > );
-    c1.def( "addInputVariableOnAllMesh",
-            &MaterialOnMeshInstance::addInputVariableOnAllMesh< TotalFluidPressureInputVariablePtr > );
-    c1.def( "addInputVariableOnGroupOfElements",
-       &MaterialOnMeshInstance::addInputVariableOnGroupOfElements< TotalFluidPressureInputVariablePtr > );
-    c1.def( "addInputVariableOnAllMesh",
-            &MaterialOnMeshInstance::addInputVariableOnAllMesh< VolumetricDeformationInputVariablePtr > );
-    c1.def( "addInputVariableOnGroupOfElements",
-       &MaterialOnMeshInstance::addInputVariableOnGroupOfElements< VolumetricDeformationInputVariablePtr > );
-
     c1.def( "addMaterialOnAllMesh", &MaterialOnMeshInstance::addMaterialOnAllMesh );
     c1.def( "addMaterialOnGroupOfElements",
               &MaterialOnMeshInstance::addMaterialOnGroupOfElements );
+    c1.def( "buildWithoutInputVariables", &MaterialOnMeshInstance::buildWithoutInputVariables );
     c1.def( "getSupportMesh", &MaterialOnMeshInstance::getSupportMesh );
-    c1.def( "build", &MaterialOnMeshInstance::build );
 };

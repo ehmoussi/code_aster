@@ -28,7 +28,42 @@
 
 #include "astercxx.h"
 #include "Meshes/Mesh.h"
+#include "Meshes/Skeleton.h"
+#include "Meshes/ParallelMesh.h"
 #include "DataFields/GenericDataField.h"
+#include "Results/TimeDependantResultsContainer.h"
+#include "Functions/Function.h"
+#include "Functions/Formula.h"
+
+class MaterialOnMeshBuilderInstance;
+
+/**
+ * @class EvolutionParameterInstance
+ * @brief Class EvolutionParameterInstance to be used when InputVariable is time dependant
+ * @author Nicolas Sellenet
+ */
+// class EvolutionParameterInstance
+// {
+// private:
+//     TimeDependantResultsContainerPtr _evol;
+//     std::string                      _nomCham;
+//     std::string                      _prolGauche;
+//     std::string                      _prolDroite;
+//     FunctionPtr                      _foncInst;
+//     FormulaPtr                       _formInst;
+// 
+// public:
+//     EvolutionParameterInstance( const TimeDependantResultsContainerPtr& evol ):
+//         _evol( evol ),
+//         _nomCham( "" ),
+//         _prolGauche( "EXCLU" ),
+//         _prolDroite( "EXCLU" ),
+//         _foncInst( nullptr ),
+//         _formInst( nullptr )
+//     {};
+// };
+
+// typedef boost::shared_ptr< EvolutionParameterInstance > EvolutionParameterPtr;
 
 struct TemperatureInputVariableTraits
 {
@@ -108,6 +143,7 @@ private:
     double                       _refValue;
     bool                         _refValueSet;
     GenericDataFieldPtr          _chamGd;
+//     EvolutionParameterPtr        _evolParam;
 
 public:
     typedef boost::shared_ptr< GenericInputVariableInstance > GenericInputVariablePtr;
@@ -176,6 +212,14 @@ public:
         throw std::runtime_error( "Not allowed" );
         return std::string( "NOTHING" );
     };
+
+    /**
+     * @brief Function to set the evolution parameter of the input variable
+     */
+//     void setEvolutionParameter( const EvolutionParameterPtr& evol )
+//     {
+//         _evolParam = evol;
+//     };
 
     /**
      * @brief Function to set the field of values of the input variable
@@ -264,5 +308,76 @@ typedef boost::shared_ptr< Neutral2InputVariableInstance > Neutral2InputVariable
 typedef boost::shared_ptr< ConcreteDryingInputVariableInstance > ConcreteDryingInputVariablePtr;
 typedef boost::shared_ptr< TotalFluidPressureInputVariableInstance > TotalFluidPressureInputVariablePtr;
 typedef boost::shared_ptr< VolumetricDeformationInputVariableInstance > VolumetricDeformationInputVariablePtr;
+
+/**
+ * @class InputVariableOnMeshInstance
+ * @brief Input variable on mesh
+ * @author Nicolas Sellenet
+ */
+class InputVariableOnMeshInstance
+{
+    friend class MaterialOnMeshBuilderInstance;
+
+private:
+    /** @typedef std::list d'une std::pair de MeshEntityPtr */
+    typedef std::vector< std::pair< GenericInputVariablePtr,
+                                    MeshEntityPtr > > VectorOfInputVarAndGrps;
+    /** @typedef Definition de la valeur contenue dans un VectorOfInputVarAndGrps */
+    typedef VectorOfInputVarAndGrps::value_type VectorOfInputVarAndGrpsValue;
+    /** @typedef Definition d'un iterateur sur VectorOfInputVarAndGrps */
+    typedef VectorOfInputVarAndGrps::iterator VectorOfInputVarAndGrpsIter;
+
+    /** @brief Vector of GenericInputVariableInstance */
+    VectorOfInputVarAndGrps _inputVars;
+    /** @brief Maillage sur lequel repose la sd_cham_mater */
+    BaseMeshPtr             _supportMesh;
+
+public:
+    InputVariableOnMeshInstance( const MeshPtr& mesh ):
+        _supportMesh( mesh )
+    {};
+
+    InputVariableOnMeshInstance( const SkeletonPtr& mesh ):
+        _supportMesh( mesh )
+    {};
+
+#ifdef _USE_MPI
+    InputVariableOnMeshInstance( const ParallelMeshPtr& mesh ):
+        _supportMesh( mesh )
+    {};
+#endif /* _USE_MPI */
+
+    /**
+     * @brief Add an input variable on all mesh
+     */
+    template< class InputVariablePtr >
+    void addInputVariableOnAllMesh( const InputVariablePtr& curBehav )
+    {
+        _inputVars.push_back( VectorOfInputVarAndGrpsValue( curBehav,
+                                                    MeshEntityPtr( new AllMeshEntities() ) ) );
+    };
+
+    /**
+     * @brief Add an input variable on a group of mesh
+     */
+    template< class InputVariablePtr >
+    void addInputVariableOnGroupOfElements( const InputVariablePtr& curBehav,
+                                            const std::string& nameOfGroup )
+        throw ( std::runtime_error )
+    {
+        if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
+        if ( ! _supportMesh->hasGroupOfElements( nameOfGroup ) )
+            throw std::runtime_error( nameOfGroup + "not in support mesh" );
+
+        _inputVars.push_back( VectorOfInputVarAndGrpsValue( curBehav,
+                                        MeshEntityPtr( new GroupOfElements(nameOfGroup) ) ) );
+    };
+};
+
+/**
+ * @typedef InputVariableOnMeshPtr
+ * @brief Pointeur intelligent vers un InputVariableOnMeshInstance
+ */
+typedef boost::shared_ptr< InputVariableOnMeshInstance > InputVariableOnMeshPtr;
 
 #endif /* INPUTVARIABLEDEFINITION_H_ */

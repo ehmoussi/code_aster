@@ -124,6 +124,7 @@
 #include "PythonBindings/ModeEmpiContainerInterface.h"
 #include "PythonBindings/ElasticEvolutionContainerInterface.h"
 #include "PythonBindings/InputVariableEvolutionContainerInterface.h"
+#include "PythonBindings/MaterialOnMeshBuilderInterface.h"
 
 using namespace boost::python;
 
@@ -275,4 +276,5 @@ BOOST_PYTHON_MODULE(libaster)
     exportModeEmpiContainerToPython();
     exportElasticEvolutionContainerToPython();
     exportInputVariableEvolutionContainerToPython();
+    exportMaterialOnMeshBuilderToPython();
 };
