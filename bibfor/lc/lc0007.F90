@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,6 @@ subroutine lc0007(fami, kpg, ksp, ndim, imate,&
 !
 implicit none
 !
-#include "asterfort/lceobg.h"
 #include "asterfort/lceobl.h"
 !
 ! aslint: disable=W1504,W0104

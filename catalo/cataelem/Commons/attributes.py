@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -500,7 +500,6 @@ TYPMOD2 = Attribute(value=(
                     'EJ_HYME',
                     'ELEMDISC',
                     'ELEMJOIN',
-                    'GRADEPSI',
                     'GRADVARI',
                     'GRADSIGM',
                     'GDVARINO',
@@ -512,8 +511,7 @@ TYPMOD2 = Attribute(value=(
   TYPMOD2 : Complement au type de  modelisation utilise pour integrer les lois de comportement TYPMOD
             (TYPMOD2 est utilise dans NMCOMP et certaines routines LCxxxx)
            Les valeurs possibles de cet attribut sont :
-  TYPMOD2= GRADEPSI l'element utilise des comportements non locaux (TYPMOD(2)='GRADEPSI' pour NMCOMP)
-           GRADVARI l'element utilise des comportements non locaux (TYPMOD(2)='GRADVARI' pour NMCOMP)
+  TYPMOD2= GRADVARI l'element utilise des comportements non locaux (TYPMOD(2)='GRADVARI' pour NMCOMP)
            ELEMJOIN l'element utilise des comportements d'elements de joints (CZM sur des modelisations *_JOINT)
            INTERFAC l'element utilise des comportements d'elements d'interface (CZM sur des modelisations *_INTERFACE)
            ELEMDISC l'element utilise des comportements d'elements a discontinuite interne
