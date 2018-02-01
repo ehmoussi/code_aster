@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -196,8 +196,6 @@ DYNA_NON_LINE=OPER(nom="DYNA_NON_LINE",op= 70,sd_prod=evol_noli,reentrant='f',
                               ),
            MATR_RIGI        =SIMP(statut='f',typ='TXM',defaut="ELASTIQUE",into=("ELASTIQUE","TANGENTE","SECANTE",) ),
            COEF_DIM_ESPACE  =SIMP(statut='f',typ='I',max=1,val_min=2,defaut=5),
-           BANDE            =SIMP(statut='f',typ='R',min=2,max=2,
-                            fr=tr("Valeur des deux fréquences délimitant la bande de recherche"),),
            regles         = (EXCLUS('PAS_CALC','LIST_INST','INST'),),
            LIST_INST      = SIMP(statut='f',typ=(listr8_sdaster) ),
            INST           = SIMP(statut='f',typ='R',validators=NoRepeat(),max='**' ),
