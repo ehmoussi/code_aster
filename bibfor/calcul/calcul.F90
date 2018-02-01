@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -143,7 +143,7 @@ implicit none
     call jemarq()
 
 !   dbg : une variable pour provoquer des ecritures de debug :
-    dbg=.false.
+    dbg=.true.
 
     ca_ligrel_=ligrel_
     ca_option_=option_
