@@ -3,7 +3,7 @@
  * @brief Implementation de MaterialOnMesh
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,6 +31,7 @@
 #include "Utilities/SyntaxDictionary.h"
 #include "Supervis/CommandSyntax.h"
 
+#include "Materials/MaterialOnMeshBuilder.h"
 
 MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
                                                 const MeshPtr& mesh ):
@@ -82,133 +83,9 @@ MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
 {};
 #endif /* _USE_MPI */
 
-SyntaxMapContainer MaterialOnMeshInstance::getCppCommandKeywords() throw ( std::runtime_error )
+bool MaterialOnMeshInstance::buildWithoutInputVariables() throw ( std::runtime_error )
 {
-    SyntaxMapContainer dict;
-
-    if ( ! _supportMesh )
-        throw std::runtime_error("Support mesh is undefined");
-    dict.container["MAILLAGE"] = _supportMesh->getName();
-
-    ListSyntaxMapContainer listeAFFE;
-    for ( listOfMatsAndGrpsIter curIter = _materialsOnMeshEntity.begin();
-          curIter != _materialsOnMeshEntity.end();
-          ++curIter )
-    {
-        SyntaxMapContainer dict2;
-        dict2.container["MATER"] = curIter->first->getName();
-        const MeshEntityPtr& tmp = curIter->second;
-        if ( tmp->getType() == AllMeshEntitiesType )
-        {
-            dict2.container["TOUT"] = "OUI";
-        }
-        else
-        {
-            if ( tmp->getType() == GroupOfElementsType )
-                dict2.container["GROUP_MA"] = (curIter->second)->getName();
-            else if ( tmp->getType() == GroupOfNodesType  )
-                dict2.container["GROUP_NO"] = (curIter->second)->getName();
-            else
-                throw std::runtime_error("Support entity undefined");
-        }
-        listeAFFE.push_back( dict2 );
-    }
-    dict.container["AFFE"] = listeAFFE;
-
-    ListSyntaxMapContainer listeAFFE_COMPOR;
-    for ( auto& curIter : _behaviours )
-    {
-        SyntaxMapContainer dict2;
-        dict2.container["COMPOR"] = curIter.first->getName();
-        const MeshEntityPtr& tmp = curIter.second;
-        if ( tmp->getType() == AllMeshEntitiesType )
-        {
-            dict2.container["TOUT"] = "OUI";
-        }
-        else
-        {
-            if ( tmp->getType() == GroupOfElementsType )
-                dict2.container["GROUP_MA"] = (curIter.second)->getName();
-            else
-                throw std::runtime_error("Support entity undefined");
-        }
-        listeAFFE_COMPOR.push_back( dict2 );
-    }
-    dict.container["AFFE_COMPOR"] = listeAFFE_COMPOR;
-
-    ListSyntaxMapContainer listeAFFE_VARC;
-    for ( auto& curIter : _inputVars )
-    {
-        SyntaxMapContainer dict2;
-
-        const auto& inputVar = (*curIter.first);
-        dict2.container["NOM_VARC"] = inputVar.getVariableName();
-        dict2.container["CHAM_GD"] = inputVar.getInputValuesField()->getName();
-        if( inputVar.existsReferenceValue() )
-            dict2.container["VALE_REF"] = inputVar.getReferenceValue();
-
-        const MeshEntityPtr& tmp = curIter.second;
-        if ( tmp->getType() == AllMeshEntitiesType )
-        {
-            dict2.container["TOUT"] = "OUI";
-        }
-        else
-        {
-            if ( tmp->getType() == GroupOfElementsType )
-                dict2.container["GROUP_MA"] = (curIter.second)->getName();
-            else
-                throw std::runtime_error("Support entity undefined");
-        }
-        listeAFFE_VARC.push_back( dict2 );
-    }
-    dict.container["AFFE_VARC"] = listeAFFE_VARC;
-    return dict;
-};
-
-PyObject* MaterialOnMeshInstance::getCommandKeywords() throw ( std::runtime_error )
-{
-    SyntaxMapContainer dict = getCppCommandKeywords();
-
-    PyObject* returnDict = dict.convertToPythonDictionnary();
-    return returnDict;
-};
-
-bool MaterialOnMeshInstance::build() throw ( std::runtime_error )
-{
-    auto syntax = CommandSyntax( "AFFE_MATERIAU" );
-    syntax.setResult( getName(), getType() );
-    auto keywords = getCppCommandKeywords();
-    syntax.define( keywords );
-    // Maintenant que le fichier de commande est pret, on appelle OP006
-    try
-    {
-        ASTERINTEGER op = 6;
-        CALL_EXECOP( &op );
-    }
-    catch( ... )
-    {
-        throw;
-    }
-    // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
-    _listOfMaterials->updateValuePointers();
-
-    return true;
-};
-
-bool MaterialOnMeshInstance::build_deprecated() throw ( std::runtime_error )
-{
-    // Maintenant que le fichier de commande est pret, on appelle OP006
-    try
-    {
-        ASTERINTEGER op = 6;
-        CALL_EXECOP( &op );
-    }
-    catch( ... )
-    {
-        throw;
-    }
-    // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
-    _listOfMaterials->updateValuePointers();
+    MaterialOnMeshBuilderInstance::buildInstance(*this);
 
     return true;
 };

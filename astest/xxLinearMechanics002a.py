@@ -31,7 +31,7 @@ acier.debugPrint(6)
 
 affectMat = code_aster.MaterialOnMesh(monMaillage)
 affectMat.addMaterialOnAllMesh( acier )
-affectMat.build()
+affectMat.buildWithoutInputVariables()
 
 imposedDof1 = code_aster.DisplacementDouble()
 imposedDof1.setValue( code_aster.PhysicalQuantityComponent.Dx, 0.0 )

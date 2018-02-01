@@ -31,7 +31,7 @@ acier.build()
 
 affectMat = code_aster.MaterialOnMesh(pMesh)
 affectMat.addMaterialOnAllMesh( acier )
-affectMat.build()
+affectMat.buildWithoutInputVariables()
 
 testMesh2 = affectMat.getSupportMesh()
 test.assertEqual(testMesh2.getType(), "MAILLAGE_P")

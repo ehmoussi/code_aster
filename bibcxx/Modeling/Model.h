@@ -105,7 +105,7 @@ class ModelInstance: public DataStructure
         PartialMeshPtr       _supportPartialMesh;
 #endif /* _USE_MPI */
         /** @brief Méthode de parallélisation du modèle */
-        ModelSplitingMethod _splitMethod;
+        ModelSplitingMethod  _splitMethod;
         /** @brief Graph partitioning */
         GraphPartitioner     _graphPartitioner;
 
