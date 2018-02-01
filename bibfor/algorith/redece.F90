@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -239,7 +239,7 @@ implicit none
     if (npal .eq. 0) then
         goto 2
     else
-        if ((typmod(2).eq.'GRADEPSI') .or. (typmod(2).eq.'GRADVARI')) then
+        if (typmod(2).eq.'GRADVARI') then
             call utmess('A', 'COMPOR2_10', sk=typmod(2))
         endif
     endif

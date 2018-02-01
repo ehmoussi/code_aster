@@ -127,11 +127,6 @@ implicit none
 #include "asterfort/lc2038.h"
 #include "asterfort/lc3053.h"
 #include "asterfort/lc4047.h"
-#include "asterfort/lc5007.h"
-#include "asterfort/lc5008.h"
-#include "asterfort/lc5016.h"
-#include "asterfort/lc5021.h"
-#include "asterfort/lc5036.h"
 #include "asterfort/lc6036.h"
 #include "asterfort/lc6046.h"
 #include "asterfort/lc6057.h"
@@ -299,9 +294,6 @@ implicit none
     endif
     if (typmod(2) .eq. 'GRADSIGM') then
         numlc = numlc + 4000
-    endif
-    if (typmod(2) .eq. 'GRADEPSI') then
-        numlc = numlc + 5000
     endif
     if (typmod(2) .eq. 'GRADVARI') then
         numlc = numlc + 6000
@@ -952,47 +944,6 @@ implicit none
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, wkin, wkout, typmod,&
                     icomp, nvi, dsidep, codret)
-!
-! --------------------------------------------------------------------------------------------------
-! - With GRADEPSI
-! --------------------------------------------------------------------------------------------------
-!
-    case (5007)
-!     ENDO_ORTH_BETON
-        call lc5007(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
-                    nvi, dsidep, codret)
-    case (5008)
-!     MAZARS
-        call lc5008(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkout, typmod, icomp,&
-                    nvi, dsidep, codret)
-    case (5016)
-!     DRUCK_PRAGER
-        call lc5016(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkout, typmod, icomp,&
-                    nvi, dsidep, codret)
-    case (5021)
-!     BETON_UMLV
-        call lc5021(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkout, typmod, icomp,&
-                    nvi, dsidep, codret)
-    case (5036)
-!     ENDO_ISOT_BETON
-        call lc5036(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, neps,&
-                    epsm, deps, nsig, sigm, vim,&
-                    option, angmas, sigp, vip, nwkin,&
-                    wkin, typmod, icomp, nvi, ndsde,&
-                    dsidep, nwkout, wkout, codret)
 !
 ! --------------------------------------------------------------------------------------------------
 ! - With GRADVARI
