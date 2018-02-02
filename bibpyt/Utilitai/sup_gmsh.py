@@ -24,7 +24,7 @@ import copy
 import numpy as NP
 
 try:
-    from code_aster.Cata.Commands import (COPIER, CREA_MAILLAGE, DEFI_FICHIER,
+    from code_aster.Commands import (COPIER, CREA_MAILLAGE, DEFI_FICHIER,
                                           DEFI_GROUP, DETRUIRE, LIRE_MAILLAGE,
                                           PRE_GMSH)
     from code_aster.Cata.Syntax import _F

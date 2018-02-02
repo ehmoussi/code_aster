@@ -23,7 +23,7 @@
 Transformation des variables internes
 """
 
-from code_aster.Cata.Commands import CREA_CHAMP, FORMULE, CALC_CHAMP, IMPR_RESU
+from code_aster.Commands import CREA_CHAMP, FORMULE, CALC_CHAMP, IMPR_RESU
 from Calc_epx.calc_epx_cata import cata_compor
 from code_aster.Cata.Syntax import _F
 from Utilitai.Utmess import MasquerAlarme, RetablirAlarme
@@ -35,7 +35,7 @@ def var_int_a2e(compor_gr, resu, mod, nume_ordre):
         Renvoie un résultat contenant les champs DEPL, SIEF_ELGA et VARI_ELGA
         transformé du NUME_ORDRE nume_ordre du résultat resu.
     """
-    from code_aster.Cata.Commands import CREA_RESU
+    from code_aster.Commands import CREA_RESU
 
     # extraction des champs :
 

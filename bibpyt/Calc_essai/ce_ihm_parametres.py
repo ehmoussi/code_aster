@@ -36,7 +36,7 @@ from Tkinter import Checkbutton, Canvas, Toplevel
 from Tkinter import NORMAL, DISABLED
 
 from code_aster.Cata.Syntax import _F
-from code_aster.Cata.Commands import EXEC_LOGICIEL
+from code_aster.Commands import EXEC_LOGICIEL
 from Utilitai.Utmess import UTMESS
 from Utilitai.Table import Table
 
@@ -544,7 +544,7 @@ class InterfaceParametres(Frame):
 #
 # Classes specifiques pour chaque logiciel de post-traitement
 #
-from code_aster.Cata.Commands import INFO_EXEC_ASTER, DEFI_FICHIER, DETRUIRE, IMPR_RESU
+from code_aster.Commands import INFO_EXEC_ASTER, DEFI_FICHIER, DETRUIRE, IMPR_RESU
 
 # Classe abstraite
 

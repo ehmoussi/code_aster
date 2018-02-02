@@ -28,7 +28,7 @@ from ..Objects import IrradiationInputVariable, SteelPhasesInputVariable
 from ..Objects import ZircaloyPhasesInputVariable, Neutral1InputVariable, Neutral2InputVariable
 from ..Objects import ConcreteDryingInputVariable, TotalFluidPressureInputVariable
 from ..Objects import VolumetricDeformationInputVariable, InputVariableOnMesh
-from ..Objects import MaterialOnMeshBuilder
+from ..Objects import MaterialOnMeshBuilder, EvolutionParameter
 
 
 class MaterialAssignment(ExecuteCommand):
@@ -111,13 +111,12 @@ class MaterialAssignment(ExecuteCommand):
                             .format("TOUT", "GROUP_MA"))
 
     def _addInputVariable(self, inputVarOnMesh, fkw, mesh):
-        if fkw.get("EVOL") != None:
-            raise TypeError("{0} not allowed".format("EVOL",))
         kwTout = fkw.get("TOUT")
         kwGrMa = fkw.get("GROUP_MA")
         nomVarc = fkw["NOM_VARC"]
-        chamGd = fkw["CHAM_GD"]
+        chamGd = fkw.get("CHAM_GD")
         valeRef = fkw.get("VALE_REF")
+        evol = fkw.get("EVOL")
 
         obj = None
         if nomVarc == "TEMP":
@@ -150,8 +149,38 @@ class MaterialAssignment(ExecuteCommand):
             raise TypeError("Input Variable not allowed")
 
         inputVar = obj(mesh)
-        inputVar.setInputValuesField(chamGd)
-        if valeRef != None: inputVar.setReferenceValue(valeRef)
+        if valeRef != None:
+            inputVar.setReferenceValue(valeRef)
+
+        if chamGd != None:
+            inputVar.setInputValuesField(chamGd)
+
+        if evol != None:
+            evolParam = EvolutionParameter(evol)
+            nomCham = fkw.get("NOM_CHAM")
+            if nomCham != None: evolParam.setFieldName(nomCham)
+            foncInst = fkw.get("FONC_INST")
+            if foncInst != None: evolParam.setTimeFunction(foncInst)
+
+            prolDroite = fkw.get("PROL_DROITE")
+            if prolDroite != None:
+                if prolDroite == "EXCLU":
+                    evolParam.prohibitRightExtension()
+                if prolDroite == "CONSTANT":
+                    evolParam.setConstantRightExtension()
+                if prolDroite == "LINEAIRE":
+                    evolParam.setLinearRightExtension()
+
+            prolGauche = fkw.get("PROL_GAUCHE")
+            if prolGauche != None:
+                if prolGauche == "EXCLU":
+                    evolParam.prohibitLeftExtension()
+                if prolGauche == "CONSTANT":
+                    evolParam.setConstantLeftExtension()
+                if prolGauche == "LINEAIRE":
+                    evolParam.setLinearLeftExtension()
+
+            inputVar.setEvolutionParameter(evolParam)
 
         if kwTout != None:
             inputVarOnMesh.addInputVariableOnAllMesh(inputVar)

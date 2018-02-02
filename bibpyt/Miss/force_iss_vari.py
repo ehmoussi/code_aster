@@ -32,7 +32,7 @@ def force_iss_vari(self,imod,MATR_GENE,NOM_CMP,ISSF,INFO,UNITE_RESU_FORC,
     from Utilitai.signal_correlation_utils import (CALC_COHE,
                               get_group_nom_coord, calc_dist2)
     from code_aster.Cata.Syntax import _F
-    from code_aster.Cata.Commands import (
+    from code_aster.Commands import (
         DETRUIRE, LIRE_IMPE_MISS, LIRE_FORC_MISS, CREA_CHAMP,
         COMB_MATR_ASSE, DYNA_VIBRA
     )

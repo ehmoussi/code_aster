@@ -109,7 +109,7 @@ class CalcEssaiExpansion:
             4 resultats sont crees, nommes basename + suffix, ou
             suffix = ['_NX','_EX','_ET','_RD']"""
         from code_aster.Cata.Syntax import CO
-        from code_aster.Cata.Commands import DETRUIRE, MACRO_EXPANS
+        from code_aster.Commands import DETRUIRE, MACRO_EXPANS
         self.mess.disp_mess("Debut de MACRO_EXPANS")
         mdo = self.ce_objects
 
@@ -188,7 +188,7 @@ class CalcEssaiExpansion:
 
     def calc_mac_mode(self, resu1, resu2, norme):
         """!Calcul de MAC entre deux bases modales compatibles"""
-        from code_aster.Cata.Commands import MAC_MODES, DETRUIRE
+        from code_aster.Commands import MAC_MODES, DETRUIRE
         o1 = resu1.obj
         o2 = resu2.obj
         try:
@@ -210,7 +210,7 @@ class CalcEssaiExpansion:
 
 def make_mac_salome(mac, resu1, resu2, unite):
 
-    from code_aster.Cata.Commands import (LIRE_MAILLAGE, AFFE_MODELE,
+    from code_aster.Commands import (LIRE_MAILLAGE, AFFE_MODELE,
         CREA_CHAMP, DETRUIRE, INFO_EXEC_ASTER, IMPR_RESU, DEFI_FICHIER,
         CREA_RESU)
     import random
@@ -281,7 +281,7 @@ def make_mac_salome(mac, resu1, resu2, unite):
 
 
 def make_mesh_mac(nb_l, nb_c):
-    from code_aster.Cata.Commands import INFO_EXEC_ASTER
+    from code_aster.Commands import INFO_EXEC_ASTER
     _UL = INFO_EXEC_ASTER(LISTE_INFO='UNITE_LIBRE')
     unite = _UL['UNITE_LIBRE', 1]
 
