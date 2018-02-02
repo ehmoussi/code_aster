@@ -59,7 +59,7 @@ def get_unite_libre():
     """
         Retoune une unité de fichier libre.
     """
-    from code_aster.Cata.Commands import DETRUIRE, INFO_EXEC_ASTER
+    from code_aster.Commands import DETRUIRE, INFO_EXEC_ASTER
     _UL = INFO_EXEC_ASTER(LISTE_INFO='UNITE_LIBRE')
     unite = _UL['UNITE_LIBRE', 1]
     DETRUIRE(CONCEPT=(_F(NOM=_UL),), INFO=1)

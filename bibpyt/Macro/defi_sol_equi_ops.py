@@ -24,7 +24,7 @@ from numpy import sqrt as nsqrt
 
 def epeq(eps1, eps2, eps3):
     """Calcule la deformation equivalente"""
-    from code_aster.Cata.Commands import (
+    from code_aster.Commands import (
          DEFI_FONCTION,
     )
     from Cata_Utils.t_fonction import t_fonction

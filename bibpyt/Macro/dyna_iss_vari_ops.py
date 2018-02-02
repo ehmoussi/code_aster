@@ -33,7 +33,7 @@ import os
 from SD.sd_maillage import sd_maillage
 from Utilitai.signal_correlation_utils import (get_group_nom_coord, calc_dist2)
 from code_aster.Cata.Syntax import _F
-from code_aster.Cata.Commands import (DETRUIRE, LIRE_IMPE_MISS, LIRE_FORC_MISS,
+from code_aster.Commands import (DETRUIRE, LIRE_IMPE_MISS, LIRE_FORC_MISS,
                                       COMB_MATR_ASSE, DYNA_VIBRA)
 
 def dyna_iss_vari_ops(self, **kwargs):

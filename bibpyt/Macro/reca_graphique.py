@@ -22,7 +22,7 @@ import copy
 import Numeric
 import types
 import Cata
-from code_aster.Cata.Commands import DEFI_FICHIER, IMPR_FONCTION
+from code_aster.Commands import DEFI_FICHIER, IMPR_FONCTION
 from code_aster.Cata.Syntax import _F
 
 try:

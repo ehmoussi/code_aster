@@ -1552,7 +1552,7 @@ class DispFRFDialogue(Toplevel):
     def prep_calc(self, num_resu, resu, param):
         """ Calcul des FRF associees a une base de mode et une excitation "marteau".
             Pour les calculs de modification structurale (sumail != None), calcul du depl interne"""
-        from code_aster.Cata.Commands import DEPL_INTERNE
+        from code_aster.Commands import DEPL_INTERNE
         mdo = self.ce_objects
         if isinstance(self.modes_couple, ModeMeca):
             nom = self.modes_couple
@@ -1625,7 +1625,7 @@ class DispFRFDialogue(Toplevel):
 
     def choix_ddl(self, num_resu):
         # la liste des ddls dispos pour le champ selectionne
-        from code_aster.Cata.Commands import CREA_CHAMP, DETRUIRE
+        from code_aster.Commands import CREA_CHAMP, DETRUIRE
         ddls = []
         self.champ_choisi[num_resu] = self.param_disp[num_resu]['champ'].get()
         try:
@@ -1664,7 +1664,7 @@ class DispFRFDialogue(Toplevel):
         # TODO :  rendre possible un calcul sur base modale, en fabriquant les
         # matrices de mass et de raideur generalisees a partir des donnees
         # mesurees
-        from code_aster.Cata.Commands import DYNA_VIBRA, AFFE_CHAR_MECA, DEFI_FONCTION
+        from code_aster.Commands import DYNA_VIBRA, AFFE_CHAR_MECA, DEFI_FONCTION
 
         f_min = string.atof(param['freq_min'].get())
         f_max = string.atof(param['freq_max'].get())
@@ -1710,7 +1710,7 @@ class DispFRFDialogue(Toplevel):
         self.affich_FRF(1)
 
     def affich_FRF(self):
-        from code_aster.Cata.Commands import RECU_FONCTION
+        from code_aster.Commands import RECU_FONCTION
         if self.sumail:
             dynas = [self.dyna[0], self.dyna[2]]
         else:
@@ -1854,7 +1854,7 @@ class ObservationWindow(Frame):
     def _calculate_observabilite(self):
 
         from code_aster.Cata.Syntax import CO
-        from code_aster.Cata.Commands import OBSERVATION, DETRUIRE
+        from code_aster.Commands import OBSERVATION, DETRUIRE
 
         if self.obs_co:
             DETRUIRE(CONCEPT=_F(NOM=self.obs_co.obj), INFO=1)

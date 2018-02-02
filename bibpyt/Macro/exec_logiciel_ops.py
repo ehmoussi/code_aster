@@ -35,7 +35,7 @@ import traceback
 import aster_core
 from Utilitai.Utmess import UTMESS
 from Utilitai.UniteAster import UniteAster
-from code_aster.Cata.Commands import LIRE_MAILLAGE, PRE_GIBI
+from code_aster.Commands import LIRE_MAILLAGE, PRE_GIBI
 
 
 class CommandLine( object ):

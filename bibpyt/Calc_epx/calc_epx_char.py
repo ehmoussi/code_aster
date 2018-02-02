@@ -328,7 +328,7 @@ def tabRelaToEpx(nomchar, concept_charge, mot_cle_epx, MAILLAGE):
     créée via AFFE_CHAR_MECA/LIAISON_EPX=OUI
     """
     from Calc_epx.calc_epx_cata import cata_compo
-    from code_aster.Cata.Commands import RECU_TABLE, DETRUIRE
+    from code_aster.Commands import RECU_TABLE, DETRUIRE
     from code_aster.Cata.Syntax import _F
     from Calc_epx.calc_epx_struc import BLOC_DONNEES, BLOC_DONNEES_SUP
 

@@ -42,28 +42,105 @@ class MaterialOnMeshBuilderInstance;
  * @brief Class EvolutionParameterInstance to be used when InputVariable is time dependant
  * @author Nicolas Sellenet
  */
-// class EvolutionParameterInstance
-// {
-// private:
-//     TimeDependantResultsContainerPtr _evol;
-//     std::string                      _nomCham;
-//     std::string                      _prolGauche;
-//     std::string                      _prolDroite;
-//     FunctionPtr                      _foncInst;
-//     FormulaPtr                       _formInst;
-// 
-// public:
-//     EvolutionParameterInstance( const TimeDependantResultsContainerPtr& evol ):
-//         _evol( evol ),
-//         _nomCham( "" ),
-//         _prolGauche( "EXCLU" ),
-//         _prolDroite( "EXCLU" ),
-//         _foncInst( nullptr ),
-//         _formInst( nullptr )
-//     {};
-// };
+class EvolutionParameterInstance
+{
+private:
+    TimeDependantResultsContainerPtr _evol;
+    std::string                      _nomCham;
+    std::string                      _prolGauche;
+    std::string                      _prolDroite;
+    FunctionPtr                      _foncInst;
+    FormulaPtr                       _formInst;
 
-// typedef boost::shared_ptr< EvolutionParameterInstance > EvolutionParameterPtr;
+public:
+    EvolutionParameterInstance( const TimeDependantResultsContainerPtr& evol ):
+        _evol( evol ),
+        _nomCham( "" ),
+        _prolGauche( "EXCLU" ),
+        _prolDroite( "EXCLU" ),
+        _foncInst( nullptr ),
+        _formInst( nullptr )
+    {};
+
+    std::string getFieldName()
+    {
+        return _nomCham;
+    };
+
+    std::string getLeftExtension()
+    {
+        return _prolGauche;
+    };
+
+    std::string getRightExtension()
+    {
+        return _prolDroite;
+    };
+
+    TimeDependantResultsContainerPtr getTimeDependantResultsContainer()
+    {
+        return _evol;
+    };
+
+    FormulaPtr getTimeFormula()
+    {
+        return _formInst;
+    };
+
+    FunctionPtr getTimeFunction()
+    {
+        return _foncInst;
+    };
+
+    void prohibitLeftExtension()
+    {
+        _prolDroite = "EXCLU";
+    };
+
+    void prohibitRightExtension()
+    {
+        _prolDroite = "EXCLU";
+    };
+
+    void setConstantLeftExtension()
+    {
+        _prolDroite = "CONSTANT";
+    };
+
+    void setConstantRightExtension()
+    {
+        _prolDroite = "CONSTANT";
+    };
+
+    void setFieldName( const std::string& name )
+    {
+        _nomCham = name;
+    };
+
+    void setLinearLeftExtension()
+    {
+        _prolDroite = "LINEAIRE";
+    };
+
+    void setLinearRightExtension()
+    {
+        _prolDroite = "LINEAIRE";
+    };
+
+    void setTimeFunction( const FormulaPtr& func )
+    {
+        _foncInst = nullptr;
+        _formInst = func;
+    };
+
+    void setTimeFunction( const FunctionPtr& func )
+    {
+        _formInst = nullptr;
+        _foncInst = func;
+    };
+};
+
+typedef boost::shared_ptr< EvolutionParameterInstance > EvolutionParameterPtr;
 
 struct TemperatureInputVariableTraits
 {
@@ -143,7 +220,7 @@ private:
     double                       _refValue;
     bool                         _refValueSet;
     GenericDataFieldPtr          _chamGd;
-//     EvolutionParameterPtr        _evolParam;
+    EvolutionParameterPtr        _evolParam;
 
 public:
     typedef boost::shared_ptr< GenericInputVariableInstance > GenericInputVariablePtr;
@@ -188,6 +265,14 @@ public:
     /**
      * @brief Get the field of values of the input variable
      */
+    EvolutionParameterPtr getEvolutionParameter() const
+    {
+        return _evolParam;
+    };
+
+    /**
+     * @brief Get the field of values of the input variable
+     */
     GenericDataFieldPtr getInputValuesField() const
     {
         return _chamGd;
@@ -216,16 +301,18 @@ public:
     /**
      * @brief Function to set the evolution parameter of the input variable
      */
-//     void setEvolutionParameter( const EvolutionParameterPtr& evol )
-//     {
-//         _evolParam = evol;
-//     };
+    void setEvolutionParameter( const EvolutionParameterPtr& evol )
+    {
+        _chamGd = nullptr;
+        _evolParam = evol;
+    };
 
     /**
      * @brief Function to set the field of values of the input variable
      */
     void setInputValuesField( const GenericDataFieldPtr& field )
     {
+        _evolParam = nullptr;
         _chamGd = field;
     };
 

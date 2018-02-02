@@ -32,7 +32,7 @@ from graphiqueTk import *
 import cata_champs
 cata = cata_champs.CATA_CHAMPS()
 
-from code_aster.Cata.Commands import EXEC_LOGICIEL
+from code_aster.Commands import EXEC_LOGICIEL
 from code_aster.Cata.Syntax import _F
 
 import Templates

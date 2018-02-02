@@ -125,7 +125,7 @@ class AsBase(Type):
             return self.short_repr()
         else:
             from code_aster.Cata.Syntax import _F
-            from code_aster.Cata.Commands import IMPR_CO
+            from code_aster.Commands import IMPR_CO
             IMPR_CO(CONCEPT=_F(NOM=self.nom), UNITE=6)
             return ''
 

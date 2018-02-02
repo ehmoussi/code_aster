@@ -80,7 +80,7 @@ def _debug(arg, label, dest='RESULTAT'):
     """
     if not DEBUG:
         return
-    from code_aster.Cata.Commands import IMPR_CO
+    from code_aster.Commands import IMPR_CO
     from code_aster.Cata.Syntax import _F, ASSD, MCFACT
     show = partial(aster.affiche, dest)
     if isinstance(arg, ASSD):

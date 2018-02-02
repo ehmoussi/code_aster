@@ -95,7 +95,23 @@ void MaterialOnMeshBuilderInstance::buildInstance( MaterialOnMeshInstance& curMa
 
             const auto& inputVar = (*curIter.first);
             dict2.container["NOM_VARC"] = inputVar.getVariableName();
-            dict2.container["CHAM_GD"] = inputVar.getInputValuesField()->getName();
+            const auto& inputField = inputVar.getInputValuesField();
+            const auto& evolParam = inputVar.getEvolutionParameter();
+            if( inputField != nullptr )
+                dict2.container["CHAM_GD"] = inputField->getName();
+
+            if( evolParam != nullptr )
+            {
+                dict2.container["EVOL"] = evolParam->getTimeDependantResultsContainer()->getName();
+                dict2.container["PROL_DROITE"] = evolParam->getRightExtension();
+                dict2.container["PROL_GAUCHE"] = evolParam->getLeftExtension();
+                if( evolParam->getFieldName() != "" )
+                    dict2.container["NOM_CHAM"] = evolParam->getFieldName();
+                if( evolParam->getTimeFormula() != nullptr )
+                    dict2.container["FONC_INST"] = evolParam->getTimeFormula()->getName();
+                if( evolParam->getTimeFunction() != nullptr )
+                    dict2.container["FONC_INST"] = evolParam->getTimeFunction()->getName();
+            }
             if( inputVar.existsReferenceValue() )
                 dict2.container["VALE_REF"] = inputVar.getReferenceValue();
 

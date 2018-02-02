@@ -66,7 +66,7 @@ def compute_ep_from_Z(line) :
 
 def definir_chargement_transverse(cote, epaisseur, pos_thyc, force, prod):
     """XXX pas documenté, propre à lire_resu_thyc"""
-    from code_aster.Cata.Commands import DEFI_FONCTION
+    from code_aster.Commands import DEFI_FONCTION
     # Determination du chargement transverse sur les crayons pour un
     # assemblage donne.
     kk = 2
@@ -140,7 +140,7 @@ def lire_resu_thyc(coeur, MODELE, nom_fic):
     ou un objet ThycResult avec .read(), .hydr_load()... pour récupérer les
     différents résultats
     """
-    from code_aster.Cata.Commands import (DEFI_FONCTION, AFFE_CHAR_MECA,
+    from code_aster.Commands import (DEFI_FONCTION, AFFE_CHAR_MECA,
         AFFE_CHAR_MECA_F)
     from code_aster.Cata.Syntax import _F
     # Fonction multiplicative de la force hydrodynamique axiale.

@@ -141,7 +141,7 @@ class LireEPX():
             Complète dic_mc_cara avec ces infos.
         """
 
-        from code_aster.Cata.Commands import FORMULE, CREA_CHAMP
+        from code_aster.Commands import FORMULE, CREA_CHAMP
         from Calc_epx.calc_epx_utils import recupere_structure, tolist
         from Calc_epx.calc_epx_utils import get_group_ma
         from Calc_epx.calc_epx_cara import export_cara
@@ -282,7 +282,7 @@ le mot-clé %s""" % mc_cara)
             Lecture des champs aux noeuds dans le fichier MED.
             Création d'un résultat ASTER avec ces champs.
         """
-        from code_aster.Cata.Commands import LIRE_RESU
+        from code_aster.Commands import LIRE_RESU
         from Calc_epx.calc_epx_cata import format_med_6ddl, format_med_3ddl
         import med_aster
 
@@ -473,8 +473,8 @@ présentes%s""" % compo)
         """
             Transformation et assemblage des champs aux points de Gauss.
         """
-        from code_aster.Cata.Commands import LIRE_CHAMP, CREA_CHAMP, DETRUIRE
-        from code_aster.Cata.Commands import CREA_RESU, MODI_REPERE
+        from code_aster.Commands import LIRE_CHAMP, CREA_CHAMP, DETRUIRE
+        from code_aster.Commands import CREA_RESU, MODI_REPERE
 
         info_mode_epx = self.info_mode_epx
         info_comp_epx = self.info_comp_epx
@@ -734,7 +734,7 @@ présentes%s""" % compo)
         RetablirAlarme('COMPOR2_23')
 
         if self.modi_repere['COQUE']:
-            from code_aster.Cata.Commands import MODI_REPERE
+            from code_aster.Commands import MODI_REPERE
             MODI_REPERE(RESULTAT=resu, reuse=resu,
                         REPERE='COQUE_INTR_UTIL',
                         MODI_CHAM=_F(TYPE_CHAM='COQUE_GENE',
