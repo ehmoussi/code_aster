@@ -143,7 +143,7 @@ implicit none
     call jemarq()
 
 !   dbg : une variable pour provoquer des ecritures de debug :
-    dbg=.true.
+    dbg=.false.
 
     ca_ligrel_=ligrel_
     ca_option_=option_
