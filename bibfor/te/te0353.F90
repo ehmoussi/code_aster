@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -100,7 +100,7 @@ implicit none
 ! - Comportement
 !
     call jevech('PCOMPOR', 'L', j_compor)
-    rela_comp = zk16(j_compor-1+NAME)
+    rela_comp = zk16(j_compor-1+RELA_NAME)
 !
 ! - Cannot evaluate command variables effect for Mfront behaviors
 !

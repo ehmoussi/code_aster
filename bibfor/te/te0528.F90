@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -70,7 +70,7 @@ implicit none
 !     -------------------------------
     call jevech('PCOMPOR', 'L', icompo)
 !
-    compo1=zk16(icompo-1+NAME)
+    compo1=zk16(icompo-1+RELA_NAME)
     compo2=zk16(icompo-1+CREEP_NAME)
 !
 !    VERIFICATION DU COMPORTEMENT FLUAGE
@@ -124,7 +124,7 @@ implicit none
 ! --- BOUCLE SUR LES POINTS D'INTEGRATION :
 !     -----------------------------------
 !
-        do 140 igau = 1, npg
+        do igau = 1, npg
 !
 ! POUR BETON_UMLV LE FLUAGE DE DESSICCATION VAUT
 !                    [V9 V10 V11 V18 V19 V20]
@@ -138,10 +138,10 @@ implicit none
 !
             endif
 !
-            do 182 i = 1, nbsig
+            do i = 1, nbsig
                 epsfl(nbsig*(igau-1)+i)=epstmp(i)
-182         continue
-140     continue
+            end do
+        end do
 !
 !     --------------------------------------------------------
 !      CALCUL DE L'OPTION EPFP
@@ -155,7 +155,7 @@ implicit none
 !     ---------------------------------
         call jevech('PTEMPSR', 'L', itemps)
 !
-        do 180 igau = 1, npg
+        do igau = 1, npg
 !
             if ((compo1(1:10).eq.'BETON_UMLV') .or.&
                 ( compo1(1:7) .eq. 'KIT_DDI' .and. compo2(1:10) .eq. 'BETON_UMLV' )) then
@@ -169,9 +169,9 @@ implicit none
 !
                 call lcumvi('FP', zr(ivari+(igau-1)*nbvari), epstmp)
 !
-                do 185 i = 1, nbsig
+                do  i = 1, nbsig
                     epsfl(nbsig*(igau-1)+i)=epstmp(i)
-185             continue
+                end do
 !
             else if (compo1(1:12).eq.'BETON_BURGER') then
 !      POUR BETON_BURGER LE FLUAGE PROPRE VAUT
@@ -184,14 +184,13 @@ implicit none
 !
                 call burftm('FP', zr(ivari+(igau-1)*nbvari), epstmp)
 !
-                do 190 i = 1, nbsig
+                do i = 1, nbsig
                     epsfl(nbsig*(igau-1)+i)=epstmp(i)
-190             continue
+                end do
 !
 !-------------------------------------------------------------------*
-                else if ((compo1(1:13).eq.'BETON_GRANGER') .or. (compo1(1:7)&
-            .eq.'KIT_DDI'.and. compo2(1:13).eq.'BETON_GRANGER') )&
-            then
+            else if ((compo1(1:13).eq.'BETON_GRANGER') .or.&
+                 (compo1(1:7).eq.'KIT_DDI'.and. compo2(1:13).eq.'BETON_GRANGER') )then
                 nomres='NU'
                 nompar='INST'
                 valpar=zr(itemps)
@@ -202,13 +201,12 @@ implicit none
 !
                 call calcgr(igau, nbsig, nbvari, zr(ivari), nu(1),&
                             epstmp)
-                do 187 i = 1, nbsig
+                do i = 1, nbsig
                     epsfl(nbsig*(igau-1)+i)=epstmp(i)
-187             continue
+                end do
 !
             endif
-180     continue
-!
+        end do
     endif
 !
 ! --- RECUPERATION DU VECTEUR EN SORTIE:
@@ -220,11 +218,11 @@ implicit none
 ! ---    AFFECTATION DU VECTEUR EN SORTIE AVEC LES DEFORMATIONS AUX
 ! ---    POINTS D'INTEGRATION :
 !        --------------------
-    do 160 igau = 1, npg
-        do 150 isig = 1, nbsig
+    do igau = 1, npg
+        do isig = 1, nbsig
             zr(idef+nbsig* (igau-1)+isig-1) = epsfl(nbsig* (igau-1)+ isig)
-150     continue
-160 end do
+        end do
+    end do
 !
 999 continue
 end subroutine

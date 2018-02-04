@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -66,7 +66,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (compor(NAME)(8:8) .eq. 'I') then
+    if (compor(RELA_NAME)(8:8) .eq. 'I') then
         if (compor(META_NAME) .eq. 'ACIER') then
             call nzisfw(fami, kpg, ksp, ndim, imate,&
                         compor, carcri, instam, instap, epsm,&
@@ -78,7 +78,7 @@ implicit none
                         deps, sigm, vim, option, sigp,&
                         vip, dsidep, codret)
         endif
-    else if (compor(NAME)(8:8).eq.'C') then
+    else if (compor(RELA_NAME)(8:8).eq.'C') then
         if (compor(META_NAME) .eq. 'ACIER') then
             call nzcifw(fami, kpg, ksp, ndim, imate,&
                         compor, carcri, instam, instap, epsm,&

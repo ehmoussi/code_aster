@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -130,7 +130,7 @@ type(NL_DS_ComporExte), pointer, intent(out) :: v_exte(:)
 ! ----- Get parameters
 !
         if (present(compor_cart_)) then
-            rela_comp   = v_compor_vale(nb_cmp_max*(i_zone-1)+NAME)
+            rela_comp   = v_compor_vale(nb_cmp_max*(i_zone-1)+RELA_NAME)
             defo_comp   = v_compor_vale(nb_cmp_max*(i_zone-1)+DEFO)
             type_cpla   = v_compor_vale(nb_cmp_max*(i_zone-1)+PLANESTRESS)
             mult_comp   = v_compor_vale(nb_cmp_max*(i_zone-1)+MULTCOMP)
@@ -140,7 +140,7 @@ type(NL_DS_ComporExte), pointer, intent(out) :: v_exte(:)
             kit_comp(4) = v_compor_vale(nb_cmp_max*(i_zone-1)+KIT4_NAME)
             post_iter   = v_compor_vale(nb_cmp_max*(i_zone-1)+POSTITER)
         else
-            rela_comp   = compor_list_(NAME)
+            rela_comp   = compor_list_(RELA_NAME)
             defo_comp   = compor_list_(DEFO)
             type_cpla   = compor_list_(PLANESTRESS)
             mult_comp   = compor_list_(MULTCOMP)
