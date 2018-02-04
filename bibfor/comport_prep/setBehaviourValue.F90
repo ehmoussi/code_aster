@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -79,7 +79,7 @@ implicit none
 !
     if (present(v_compor_)) then
         v_compor_(1:NB_COMP_MAXI) = 'VIDE'
-        v_compor_(NAME) = rela_comp
+        v_compor_(RELA_NAME) = rela_comp
         write (v_compor_(NVAR),'(I16)') nb_vari
         v_compor_(DEFO) = defo_comp
         v_compor_(INCRELAS) = type_comp
@@ -123,7 +123,7 @@ implicit none
         endif
     elseif (present(l_compor_)) then
         l_compor_(1:NB_COMP_MAXI) = 'VIDE'
-        l_compor_(NAME) = rela_comp
+        l_compor_(RELA_NAME) = rela_comp
         write (l_compor_(NVAR),'(I16)') nb_vari
         l_compor_(DEFO) = defo_comp
         l_compor_(INCRELAS) = type_comp

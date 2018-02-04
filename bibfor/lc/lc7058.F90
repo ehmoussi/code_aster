@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -120,7 +120,7 @@ integer, intent(out) :: codret
     ndi            = 3
     codret         = 0
     nprops         = npropmax
-    rela_comp      = compor(NAME)
+    rela_comp      = compor(RELA_NAME)
     defo_comp      = compor(DEFO)
     pfcmfr         = nint(carcri(16))
     jvariexte      = nint(carcri(IVARIEXTE))

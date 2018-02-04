@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 ! - Access in <COMPOR> - Behaviour field - General
 !
 #define NB_COMP_MAXI 20
-#define NAME         1
+#define RELA_NAME    1
 #define NVAR         2
 #define DEFO         3
 #define INCRELAS     4
