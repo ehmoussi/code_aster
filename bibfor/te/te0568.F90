@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -64,7 +64,7 @@ implicit none
     integer :: jvect, jv_geom
     integer :: i_tria, i_dime, i_elin_mast, i_elin_slav, i_node, i_gauss
     real(kind=8) :: proj_tole, lagrc, lagrc_prev
-    integer :: algo_reso_geom, indi_cont, indi_cont_prev, norm_smooth, norm_smooth_prev
+    integer :: algo_reso_geom, indi_cont, indi_cont_prev, norm_smooth
     aster_logical :: l_axis, l_elem_frot, loptf, debug, l_upda_jaco       
     real(kind=8) :: norm(3)
     character(len=8) :: elem_slav_code, elem_mast_code
@@ -102,7 +102,6 @@ implicit none
     elem_slav_coor(1:27) = 0.d0
     elem_mast_coor_prev(1:27) = 0.d0
     elem_slav_coor_prev(1:27) = 0.d0
-    norm_smooth_prev = norm_smooth
     proj_tole            = 1.d-9
     max_value        =0.5d0
     debug                = .false.
