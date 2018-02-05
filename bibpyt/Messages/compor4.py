@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -79,6 +79,10 @@ Or elle n'a pas été définie dans AFFE_MATERIAU.
     24: _(u"""
 Le comportement MFront utilise les phases du Zircaloy.
 Ce n'est actuellement pas possible.
+"""),
+
+    25: _(u"""
+La variable de commande %(k1)s a été définie dans AFFE_MATERIAU mais n'est pas définie dans le comportement MFront. 
 """),
 
     53: _(u"""

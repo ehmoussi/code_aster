@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine mfront_varc(fami   , kpg      , ksp, imate, &
-                       nb_varc, list_varc, &
+subroutine mfront_varc(fami   , kpg      , ksp      , imate, &
+                       nb_varc, list_varc, jvariexte,&
                        temp   , dtemp    , &
                        predef , dpred    , &
                        neps   , epsth    , depsth)
@@ -30,19 +30,21 @@ implicit none
 #include "asterc/r8nnem.h"
 #include "asterc/r8prem.h"
 #include "asterfort/assert.h"
+#include "asterfort/isdeco.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/rcvarc.h"
 #include "asterfort/utmess.h"
 #include "asterfort/verift.h"
 #include "asterfort/get_elas_id.h"
+#include "asterfort/Behaviour_type.h"
 !    
 character(len=*), intent(in) :: fami
-integer, intent(in) :: kpg
-integer, intent(in) :: ksp
+integer, intent(in) :: kpg, ksp
 integer, intent(in) :: imate
 integer, intent(in) :: nb_varc
 character(len=8), intent(in) :: list_varc(*)
+integer, intent(in) :: jvariexte
 real(kind=8), intent(out) :: temp, dtemp
 real(kind=8), intent(out) :: predef(*), dpred(*)
 integer, intent(in) :: neps
@@ -62,6 +64,7 @@ real(kind=8), intent(out) :: epsth(neps), depsth(neps)
 ! In  ksp              : current "sous-point" gauss
 ! In  nb_varc          : total number of external state variables
 ! In  list_varc        : list of external state variables
+! In  jvariexte        : coded integer for external state variable
 ! Out temp             : temperature at beginning of current step time
 ! Out dtemp            : increment of temperature during current step time
 ! Out predef           : external state variables at beginning of current step time
@@ -83,6 +86,7 @@ real(kind=8), intent(out) :: epsth(neps), depsth(neps)
     character(len=16) :: elas_keyword
     real(kind=8) :: epsthm, epsth_anism(3), epsth_metam
     real(kind=8) :: epsthp, epsth_anisp(3), epsth_metap
+    integer      :: tabcod(30), variextecode(1)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -90,6 +94,12 @@ real(kind=8), intent(out) :: epsth(neps), depsth(neps)
     call r8inir(neps, 0.d0, epsth, 1)
     call r8inir(nb_varc_maxi, r8nnem(), predef, 1)
     call r8inir(nb_varc_maxi, r8nnem(), dpred, 1)
+!
+! - External state variables in MFRONT
+!
+    tabcod(:) = 0
+    variextecode(1) = jvariexte
+    call isdeco(variextecode(1), tabcod, 30)
 !
 ! - Get type of elasticity (Isotropic/Orthotropic/Transverse isotropic)
 !
@@ -169,6 +179,9 @@ real(kind=8), intent(out) :: epsth(neps), depsth(neps)
                    epsth(i_dim)  = epsth(i_dim)+epsbm
                    depsth(i_dim) = depsth(i_dim)+epsbp-epsbm
                 enddo
+                if (tabcod(SECH) .eq. 0) then
+                    call utmess('A', 'COMPOR4_25', sk = list_varc(i_varc))
+                endif
             else
                 call utmess('F', 'COMPOR4_23', sk = list_varc(i_varc))
             endif
@@ -201,6 +214,9 @@ real(kind=8), intent(out) :: epsth(neps), depsth(neps)
                    epsth(i_dim)  = epsth(i_dim)+epsbm
                    depsth(i_dim) = depsth(i_dim)+epsbp-epsbm
                 enddo
+                if (tabcod(HYDR) .eq. 0) then
+                    call utmess('A', 'COMPOR4_25', sk = list_varc(i_varc))
+                endif
             else
                 call utmess('F', 'COMPOR4_23', sk = list_varc(i_varc))
             endif
@@ -213,12 +229,18 @@ real(kind=8), intent(out) :: epsth(neps), depsth(neps)
         else
             if (list_varc(i_varc) .eq. 'ELTSIZE1') then
                 predef(i_varc) = ca_vext_eltsize1_
+                if (tabcod(ELTSIZE1) .eq. 0) then
+                    call utmess('A', 'COMPOR4_25', sk = list_varc(i_varc))
+                endif
             endif
             if (list_varc(i_varc) .eq. 'HYGR') then
                 vrcm = ca_vext_hygrm_
                 vrcp = ca_vext_hygrp_
                 predef(i_varc) = vrcm
                 dpred(i_varc)  = vrcp-vrcm
+                if (tabcod(HYGR) .eq. 0) then
+                    call utmess('A', 'COMPOR4_25', sk = list_varc(i_varc))
+                endif
             endif
             if ((list_varc(i_varc) .ne. 'HYGR') .and. (list_varc(i_varc) .ne. 'ELTSIZE1')) then
                 call utmess('F', 'COMPOR4_23', sk = list_varc(i_varc))

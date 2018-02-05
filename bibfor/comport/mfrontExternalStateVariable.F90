@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,21 +17,21 @@
 ! --------------------------------------------------------------------
 !
 subroutine mfrontExternalStateVariable(carcri,&
-                                       fami   , kpg      , ksp, imate, &
-                                       temp   , dtemp    , &
-                                       predef , dpred    , &
-                                       neps   , epsth    , depsth)
+                                       fami  , kpg      , ksp, imate, &
+                                       temp  , dtemp    , &
+                                       predef, dpred    , &
+                                       neps  , epsth    , depsth)
 !
 implicit none
 !
 #include "asterc/mfront_get_external_state_variable.h"
 #include "asterfort/assert.h"
 #include "asterfort/mfront_varc.h"
+#include "asterfort/Behaviour_type.h"
 !
 real(kind=8), intent(in) :: carcri(*)
 character(len=*), intent(in) :: fami
-integer, intent(in) :: kpg
-integer, intent(in) :: ksp
+integer, intent(in) :: kpg, ksp
 integer, intent(in) :: imate
 real(kind=8), intent(out) :: temp, dtemp
 real(kind=8), intent(out) :: predef(*), dpred(*)
@@ -62,18 +62,19 @@ real(kind=8), intent(out) :: epsth(neps), depsth(neps)
 ! --------------------------------------------------------------------------------------------------
 !
     integer, parameter :: nb_varc_maxi = 8
-    integer :: nb_varc
+    integer :: nb_varc, jvariexte
     character(len=8) :: list_varc(nb_varc_maxi)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    jvariexte = nint(carcri(IVARIEXTE))
     call mfront_get_external_state_variable(int(carcri(14)), int(carcri(15)),&
                                             list_varc      , nb_varc)
 !
     ASSERT(nb_varc .le. nb_varc_maxi)
 !
-    call mfront_varc(fami   , kpg      , ksp, imate, &
-                     nb_varc, list_varc, &
+    call mfront_varc(fami   , kpg      , ksp      , imate, &
+                     nb_varc, list_varc, jvariexte,&
                      temp   , dtemp    , &
                      predef , dpred    , &
                      neps   , epsth    , depsth)
