@@ -35,11 +35,11 @@ CALC_FERRAILLAGE=OPER(nom="CALC_FERRAILLAGE",op=175,sd_prod=calc_ferraillage_pro
 
          reuse=SIMP(statut='c', typ=CO),
          RESULTAT        =SIMP(statut='o',typ=(evol_elas,evol_noli,dyna_trans,) ),
-
-
+#
 #====
 # Sélection des numéros d'ordre pour lesquels on fait le calcul :
 #====
+#
          TOUT_ORDRE      =SIMP(statut='f',typ='TXM',into=("OUI",) ),
          NUME_ORDRE      =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**' ),
          LIST_ORDRE      =SIMP(statut='f',typ=listis_sdaster),
@@ -56,28 +56,75 @@ CALC_FERRAILLAGE=OPER(nom="CALC_FERRAILLAGE",op=175,sd_prod=calc_ferraillage_pro
                  PRECISION       =SIMP(statut='o',typ='R',),),
          ),
 
-
 #
 #====
 # Définition des grandeurs caractéristiques
 #====
 #
          TYPE_COMB    =SIMP(statut='o',typ='TXM',into=('ELU','ELS')),
+         CODIFICATION =SIMP(statut='o',typ='TXM', defaut='UTILISATEUR',into=('UTILISATEUR','BAEL91','EC2')),
 
-#        mot clé facteur répétable pour assigner les caractéristiques locales par zones topologiques (GROUP_MA)
-         AFFE  =FACT(statut='o',max='**',
-           regles=(UN_PARMI('TOUT','GROUP_MA','MAILLE'),),
-           TOUT       =SIMP(statut='f',typ='TXM',into=("OUI",) ),
-           GROUP_MA   =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
-           MAILLE     =SIMP(statut='c',typ=ma,validators=NoRepeat(),max='**'),
-           ENROBG     =SIMP(statut='o',typ='R'), # enrobage
-           CEQUI      =SIMP(statut='f',typ='R'), # coefficient d'équivalence acier/béton  (pour ELS)
-           SIGM_ACIER =SIMP(statut='o',typ='R'), # contrainte admissible dans l'acier
-           SIGM_BETON =SIMP(statut='o',typ='R'), # contrainte admissible dans le béton
-           PIVA       =SIMP(statut='f',typ='R'), # valeur du pivot a  (pour ELU)
-           PIVB       =SIMP(statut='f',typ='R'), # valeur du pivot b  (pour ELU)
-           ES         =SIMP(statut='f',typ='R'), # valeur du Module d'Young de l'acier (pour ELU)
-           ),
+         b_UTILISATEUR = BLOC(condition = """ equal_to("CODIFICATION", 'UTILISATEUR')""",
+                          fr=tr("utilisation sans réglementation spécifique. Version aster <= 13"),
+#          mot clé facteur répétable pour assigner les caractéristiques locales par zones topologiques (GROUP_MA)
+           AFFE  =FACT(statut='o',max='**',
+             regles=(UN_PARMI('TOUT','GROUP_MA','MAILLE'),),
+             TOUT       =SIMP(statut='f',typ='TXM',into=("OUI",) ),
+             GROUP_MA   =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
+             MAILLE     =SIMP(statut='c',typ=ma,validators=NoRepeat(),max='**'),
+             ENROBG     =SIMP(statut='o',typ='R'), # enrobage armatures
+             CEQUI      =SIMP(statut='f',typ='R'), # coefficient d'équivalence acier/béton  (pour ELS)
+             SIGM_ACIER =SIMP(statut='o',typ='R'), # contrainte admissible dans l'acier
+             SIGM_BETON =SIMP(statut='o',typ='R'), # contrainte admissible dans le béton
+             PIVA       =SIMP(statut='f',typ='R'), # valeur du pivot a  (pour ELU)
+             PIVB       =SIMP(statut='f',typ='R'), # valeur du pivot b  (pour ELU)
+             ES         =SIMP(statut='f',typ='R'), # valeur du Module d'Young de l'acier (pour ELU)
+             ),),
+
+         b_BAEL91 = BLOC(condition = """ equal_to("CODIFICATION", 'BAEL91')""",
+                          fr=tr("utilisation du BAEL91"),
+#          mot clé facteur répétable pour assigner les caractéristiques locales par zones topologiques (GROUP_MA)
+           AFFE  =FACT(statut='o',max='**',
+             regles=(UN_PARMI('TOUT','GROUP_MA','MAILLE'),),
+             UNITE_CONTRAINTE =SIMP(statut='o',typ='TXM', into=("MPa","Pa"),fr=tr("Unité des contraintes du problème.")),
+             TOUT       =SIMP(statut='f',typ='TXM',into=("OUI",) ),
+             GROUP_MA   =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
+             MAILLE     =SIMP(statut='c',typ=ma,validators=NoRepeat(),max='**'),
+             C_INF      =SIMP(statut='o',typ='R'), # enrobage armatures inférieures
+             C_SUP      =SIMP(statut='o',typ='R'), # enrobage armatures supérieures
+             N          =SIMP(statut='f',typ='R'), # coefficient d'équivalence acier/béton  (pour ELS)
+             FE         =SIMP(statut='f',typ='R'), # contrainte admissible dans l'acier
+             FCJ        =SIMP(statut='f',typ='R'), # contrainte admissible dans le béton
+             GAMMA_C    =SIMP(statut='f',typ='R'), # coefficient de sécurité sur la résistance de calcul du béton
+             GAMMA_S    =SIMP(statut='f',typ='R'), # coefficient de sécurité sur la résistance de calcul des aciers
+             ALPHA_CC   =SIMP(statut='f',typ='R',defaut=0.85), # coefficient intervennant à l'ELU
+             SIGS_ELS   =SIMP(statut='f',typ='R'), # contrainte ultime de dimensionnement de l'acier pour l'ELS
+             SIGC_ELS   =SIMP(statut='f',typ='R'), # contrainte ultime de dimensionnement du béton pour l'ELS
+             E_S        =SIMP(statut='f',typ='R'), # valeur du Module d'Young de l'acier (pour ELU)
+             ),),
+
+         b_EC2 = BLOC(condition = """ equal_to("CODIFICATION", 'EC2')""",
+                          fr=tr("utilisation de l'eurocode 2"),
+#          mot clé facteur répétable pour assigner les caractéristiques locales par zones topologiques (GROUP_MA)
+           AFFE  =FACT(statut='o',max='**',
+             regles=(UN_PARMI('TOUT','GROUP_MA','MAILLE'),),
+             UNITE_CONTRAINTE =SIMP(statut='o',typ='TXM', into=("MPa","Pa"),fr=tr("Unité des contraintes du problème.")),
+             TOUT             =SIMP(statut='f',typ='TXM',into=("OUI",) ),
+             GROUP_MA         =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
+             MAILLE           =SIMP(statut='c',typ=ma,validators=NoRepeat(),max='**'),
+             C_INF            =SIMP(statut='o',typ='R'), # enrobage armatures inférieures
+             C_SUP            =SIMP(statut='o',typ='R'), # enrobage armatures supérieures
+             ALPHA_E          =SIMP(statut='f',typ='R'), # coefficient d'équivalence acier/béton  (pour ELS)
+             FYK              =SIMP(statut='f',typ='R'), # contrainte admissible dans l'acier
+             GAMMA_S          =SIMP(statut='f',typ='R'), # coefficient de sécurité sur la résistance de calcul des aciers
+             FCK              =SIMP(statut='f',typ='R'), # contrainte admissible dans le béton
+             GAMMA_C          =SIMP(statut='f',typ='R'), # coefficient de sécurité sur la résistance de calcul du béton
+             ALPHA_CC         =SIMP(statut='f',typ='R',defaut=1.), # coefficient intervennant à l'ELU
+             SIGS_ELS         =SIMP(statut='f',typ='R'), # contrainte ultime de dimensionnement de l'acier pour l'ELS
+             SIGC_ELS         =SIMP(statut='f',typ='R'), # contrainte ultime de dimensionnement du béton pour l'ELS
+             E_S              =SIMP(statut='f',typ='R'), # valeur du Module d'Young de l'acier (pour ELU)
+             CLASSE_ACIER     =SIMP(statut='f',typ='TXM',defaut='B', into=("A","B","C")), # classe de ductilité des aciers
+             ),),
       )
 
 
