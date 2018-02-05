@@ -1,0 +1,498 @@
+#!/usr/bin/env python
+# -*- coding: utf - 8 -*-
+import os, sys
+from math import sqrt
+import numpy as np
+CODE_PATH = os.path.dirname(os.path.abspath(__file__))
+c = 0.04
+h = 0.2
+d = (h-c)
+def check_pivot(mu_bc,mu_ab,mu_1s,mu):
+    if mu>mu_bc:
+        pivot = 'C'
+    else:
+        if mu<mu_ab:
+            pivot = 'A'
+            if mu<0.0:
+                pivot += ' entierement tendu'
+            else:
+                pivot += ' partiellement tendu'
+        else:
+            pivot = 'B'
+    return pivot
+
+for codification in ["utilisateur","BAEL","EC2"]:
+    algoelu_fich = os.path.join(CODE_PATH,"algo_elu_"+codification+".csv")
+    algo_elu = open(algoelu_fich, "w")
+    algo_elu.write(codification+" ELU\n")
+    if codification == "BAEL":
+        lambd = 0.8
+        gamma_s = 1.15
+        gamma_c = 1.5
+        fcj = 35
+        fe = 500.e6
+        alpha_cc = 0.85
+        sigm_c_els = 21.e6
+        sigm_s_els = 400.e6
+        n = 15.1
+        E_s = 2.1e11
+        eps_b = 3.5e-3
+        eps_a = 10e-3
+        sigm_s = fe/gamma_s
+        sigm_c = alpha_cc*fcj*1e6/gamma_c
+        alpha_ab = 3.5e-3/(3.5e-3+10e-3)
+        alpha_b = 1.0
+        zd = 0.9*d
+    if codification == "EC2":
+        lambd = 0.8
+        gamma_s = 1.15
+        gamma_c = 1.5
+        fcj = 35
+        fe = 500.e6
+        alpha_cc = 1.0
+        sigm_c_els = 21.e6
+        sigm_s_els = 400.e6
+        n = 210.e3/10.e3
+        E_s = 2.1e11
+        eps_b = 3.5e-3
+        eps_a = 0.9*5.e-2 #classe B
+        alpha_ab = 3.5e-3/(3.5e-3+eps_a)
+        sigm_s = fe/gamma_s
+        eps_bb = sigm_s/(E_s)
+        alpha_b = 3.5e-3/(3.5e-3+eps_bb)
+        alpha_b = 1
+        sigm_c = alpha_cc*fcj*1e6/gamma_c
+        algo_elu.write("esp_bb=%f\n"% (eps_bb))
+        zd = 0.9*d
+    if codification ==  "utilisateur":
+        lambd = 0.8
+        gamma_s = 1.15
+        gamma_c = 1.5
+        fcj = 35
+        fe = 500.e6
+        alpha_cc = 1.0
+        sigm_c_els = 21.e6
+        sigm_s_els = 400.e6
+        alpha_b = 1.0
+        n = 15.1
+        E_s = 2.1e11
+        eps_b = 3.5e-3
+        eps_a = 10e-3
+        sigm_s = 435e6
+        sigm_c = 23.3e6
+        alpha_ab = 3.5e-3/(3.5e-3+10e-3)
+        zd = 0.9*d
+
+    algo_elu.write("sigm_s = %f\n"% sigm_s)
+    algo_elu.write("sigm_c = %f\n"% sigm_c)
+    mu_ab = lambd*alpha_ab*(1-lambd*alpha_ab/2)
+    mu_bc = lambd*alpha_b*(1-lambd*alpha_b/2)
+    algo_elu.write("alpha_ab = %f\n"% alpha_ab)
+    algo_elu.write("alpha_b = %f\n"% alpha_b)
+    algo_elu.write("mu_ab = %f\n"% mu_ab)
+    algo_elu.write("mu_bc = %f\n"% mu_bc)
+    algo_elu.write("esp_a= piv_a = %f\n"% (eps_a))
+    Dref_elu = list()
+    Dref_els = list()
+    alpha_1s = eps_b/(eps_b+sigm_s/(E_s))
+    mu_1s = lambd*alpha_1s*(1-lambd*alpha_1s/2)
+    algo_elu.write("alpha_1s = %f\n"% alpha_1s)
+    algo_elu.write("mu_1s = %f\n"% mu_1s)
+
+    algo_elu.write("z = %f, 0.9d = %f\n"% (zd,0.9*d))
+    algo_elu.write("*****************************:\n")
+    algo_elu.write("conf 1:\n")
+    algo_elu.write("*****************************:\n")
+    Nxx = 1e6 #pivot C
+    Minf= Nxx*(d-h/2)
+    mu= Minf / (d**2*sigm_c)
+    pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
+    algo_elu.write("pivot %s\n"% pivot)
+    Qy = 1e5
+    Qx = 0.0
+    Q = sqrt(Qy**2+Qx**2)
+    if codification == "EC2":
+        Q = abs(Qy)
+        v1 = 0.6*( 1 -fcj/250.)
+        algo_elu.write("v1 = %f\n"% v1)
+        sigm_cp = Nxx /h
+        algo_elu.write("sigm_cp = %f\n"% sigm_cp)
+        algo_elu.write("(sigm_cp/sigm_c) = %f\n"% ((sigm_cp/sigm_c)))
+        alpha_cw = 1. +sigm_cp /sigm_c
+        algo_elu.write("alpha_cw = %f\n"% alpha_cw)
+        X = Q / (alpha_cw*v1*sigm_c*zd)
+        algo_elu.write("X = %.6f\n"% X)
+        if X >= 0.3448:
+            cot = (1+sqrt(1-4*X**2))/(2*X)
+            algo_elu.write("cot = %f\n"% cot)
+        elif X<=0.3448:
+            cot = 2.5
+        Ast = Q/(sigm_s*zd*cot)
+    else:
+        Ast = sqrt(Qy**2+Qx**2)/(zd*sigm_s)
+    algo_elu.write("Ast = %.8f\n"% Ast)
+    Dref_elu.append([-1.0,-1.0,-1.0,-1.0,Ast])
+    Nxx = -1e6
+    Minf = -Nxx*(0.5*h-c)
+    mu = Minf/(d**2*sigm_c_els)
+    print Minf, mu
+    mub = 1+(2*n*Minf)/(d**2*sigm_s_els)
+    Dref_els.append([0,0,0,0])
+
+    algo_elu.write("*****************************:\n")
+    algo_elu.write("conf 2:\n")
+    algo_elu.write("*****************************:\n")
+    Nxx = -1e6 #pivot A
+    Qy = 0.0
+    Qx = -600000
+    Q = sqrt(Qy**2+Qx**2)
+    Minf= Nxx*(d-h/2)
+    mu= Minf / (d**2*sigm_c)
+    pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
+    algo_elu.write("pivot %s\n"% pivot)
+    algo_elu.write("mu = %f\n"% mu)
+    if codification == "EC2":
+        Q = abs(Qx)
+        v1 = 0.6*( 1 -fcj/250.)
+        algo_elu.write("v1 = %f\n"% v1)
+        sigm_cp = Nxx /h
+        algo_elu.write("sigm_cp = %f\n"% sigm_cp)
+        algo_elu.write("(sigm_cp/sigm_c) = %f\n"% (sigm_cp/sigm_c))
+        alpha_cw = 1
+        algo_elu.write("alpha_cw = %f\n"% alpha_cw)
+        X = Q / (alpha_cw*v1*sigm_c*zd)
+        algo_elu.write("X = %f\n"% X)
+        if X >= 0.3448:
+            cot = (1.+sqrt(1.-4*X**2))/(2*X)
+            algo_elu.write("cot = %f\n"% cot)
+        elif X<=0.3448:
+            cot = 2.5
+        Ast = Q/(sigm_s*zd*cot)
+    else:
+        Ast = sqrt(Qy**2+Qx**2)/(zd*sigm_s)
+    algo_elu.write("Ast = %f\n"% Ast)
+    As = abs(Nxx)/sigm_s
+    Asxs = Asxi = As / 2
+    Dref_elu.append([Asxi,Asxs,0,0,Ast])
+    Minf = -Nxx*(h/2 - c)
+    mu = Minf/(d**2*sigm_c_els)
+    As = abs(Nxx)/sigm_s_els
+    Asxs = Asxi = As / 2
+    Dref_els.append([Asxi,Asxs,0,0])
+
+    algo_elu.write("*****************************:\n")
+    algo_elu.write("conf 3:\n")
+    algo_elu.write("*****************************:\n")
+    Nyy = -1e6 #pivot A
+    Minf= Nxx*(d-h/2)
+    mu= Minf / (d**2*sigm_c)
+    pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
+    algo_elu.write("pivot %s\n"% pivot)
+    algo_elu.write("mu = %f\n"% mu)
+    Qy = 80000
+    Qx = -20000
+    Q = sqrt(Qy**2+Qx**2)
+    if codification == "EC2":
+        Q = 82450
+        v1 = 0.6*( 1 -fcj/250.)
+        algo_elu.write("v1 = %f\n"% v1)
+        sigm_cp = Nxx /h
+        algo_elu.write("sigm_cp = %f\n"% sigm_cp)
+        algo_elu.write("(sigm_cp/sigm_c) = %f\n"% (sigm_cp/sigm_c))
+        alpha_cw = 1
+        X = Q / (alpha_cw*v1*sigm_c*zd)
+        algo_elu.write("X = %f\n"% X)
+        if X >= 0.3448:
+            cot = (1.+sqrt(1.-4*X**2))/(2*X)
+        elif X<=0.3448:
+            cot = 2.5
+        algo_elu.write("cot = %f\n"% cot)
+        Ast = Q/(sigm_s*zd*cot)
+    else:
+        Ast = sqrt(Qy**2+Qx**2)/(zd*sigm_s)
+    algo_elu.write("Ast = %f\n"% Ast)
+    As = abs(Nyy)/((2*sigm_s))
+    Asys = Asyi = As 
+    Dref_elu.append([0.0,0.0,Asyi,Asys,Ast])
+    As = abs(Nyy)/sigm_s_els
+    Asys = Asyi = As / 2
+    Dref_els.append([0.0,0.0,Asyi,Asys])
+
+    algo_elu.write("*****************************:\n")
+    algo_elu.write("conf 4-5:\n")
+    algo_elu.write("*****************************:\n")
+    Mfx = 100000
+    mu = Mfx/(d**2*sigm_c)
+    pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
+    algo_elu.write("pivot %s\n"% pivot)
+    algo_elu.write("mub = %f\n"% mu)
+    alpha = 1-sqrt(1-2*mu)
+    algo_elu.write("alpha = %f\n"% alpha)
+    algo_elu.write("alpha/lambd = %f\n"% (alpha/lambd))
+    z = d*(1-alpha/2)
+    algo_elu.write("z = %f\n"% z)
+    Asys = Asxs =  Mfx/(z*sigm_s)
+    tmp = Mfx/z
+    tmp2 = (1-sqrt(1-2*mu))*d*sigm_c
+    tmp2 = (alpha)*d*sigm_c
+    algo_elu.write("tmp = %f\n"% tmp)
+    algo_elu.write("tmp = %f\n"% tmp2)
+    Dref_elu.append([0,0,0,Asys,0.0])
+    Dref_elu.append([0,Asxs,0,0,0.0])
+    ylim = d*(n*sigm_c_els)/(n*sigm_c_els+sigm_s_els)
+    Mlim = 0.5*sigm_c_els*ylim*(d-ylim/3)
+    mu = n*Mfx/(d**2 *sigm_s_els)
+    coeff = [1, -3, -6*mu,+6*mu]
+    sol = np.roots(coeff)
+    alpha = min(abs(sol))
+    Asys = Asxs = Mfx /(sigm_s_els*d*(1-alpha/3))
+    Dref_els.append([0,0,0,Asys])
+    Dref_els.append([0,Asxs,0,0])
+
+    algo_elu.write("*****************************:\n")
+    algo_elu.write("conf 6:\n")
+    algo_elu.write("*****************************:\n")
+    Mfy = 1e5
+    Nxx = -1e5
+    M = Mfy - Nxx*(d-h/2)
+    algo_elu.write("M = %f\n"% M)
+    mu = M/(d**2*sigm_c)
+    algo_elu.write("mu = %f\n"% mu)
+    pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
+    algo_elu.write("pivot %s\n"% pivot)
+    alpha = 1-sqrt(1-2*mu)
+    algo_elu.write("alpha = %f\n"% alpha)
+    algo_elu.write("alpha/lambd = %f\n"% (alpha/lambd))
+    z = d*(1-alpha/2)
+    algo_elu.write("z = %f\n"% z)
+    Asxs = M/(z*sigm_s)+Nxx/sigm_s
+    Dref_elu.append([0,Asxs,0,0,0])
+    Nxx = -20000
+    M = Mfy -Nxx*(d-h/2)
+    mu = n*M/(d**2*sigm_s_els)
+    coeff = [1, -3, -6*mu,+6*mu]
+    sol = np.roots(coeff)
+    alpha = min(abs(sol))
+    Asxs = M/(sigm_s_els*d*(1-alpha/3))+Nxx/sigm_s_els
+    Dref_els.append([0,Asxs,0,0])
+
+    algo_elu.write("*****************************:\n")
+    algo_elu.write("conf 7:\n")
+    algo_elu.write("*****************************:\n")
+    Mfy = 1e5
+    Nxx = 1e5
+    M = Mfy - Nxx*(d-h/2)
+    mu = M/(d**2*sigm_c)
+    alpha = 1-sqrt(1-2*mu)
+    z = d*(1-alpha/2)
+    Asxs = M/(z*sigm_s)+Nxx/sigm_s
+    pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
+    algo_elu.write("pivot %s\n"% pivot)
+    algo_elu.write("M = %f\n"% M)
+    algo_elu.write("mu = %f\n"% mu)
+    algo_elu.write("alpha = %f\n"% alpha)
+    algo_elu.write("alpha/lambd = %f\n"% (alpha/lambd))
+    algo_elu.write("z = %f\n"% z)
+    Dref_elu.append([0,Asxs,0,0,0])
+    M = Mfy -Nxx*(d-h/2)
+    mu = n*M/(d**2*sigm_s_els)
+    coeff = [1, -3, -6*mu,+6*mu]
+    sol = np.roots(coeff)
+    alpha = min(abs(sol))
+    Asxs = M/(sigm_s_els*d*(1-alpha/3))+Nxx/sigm_s_els
+    Dref_els.append([0,Asxs,0,0])
+
+    algo_elu.write("*****************************:\n")
+    algo_elu.write("conf 8:\n")
+    algo_elu.write("*****************************:\n")
+    Mfy = 1e5
+    Nxx = 2e6
+    M = Mfy - Nxx*(d-h/2)
+    mu = M/(d**2*sigm_c)
+    pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
+    algo_elu.write("pivot %s\n"% pivot)
+    algo_elu.write("mu = %f\n"% mu)
+    Asxs = M/((d-c)*sigm_s)+Nxx/sigm_s
+    Asxi = -M/((d-c)*sigm_s)
+    algo_elu.write("M = %f\n"% M)
+    Dref_elu.append([Asxi,Asxs,0,0,0.0])
+    Asxs = M/((d-c)*sigm_s_els)+Nxx/sigm_s_els
+    Asxi = -M/((d-c)*sigm_s_els)
+    Dref_els.append([Asxi,Asxs,0,0])
+
+    algo_elu.write("*****************************:\n")
+    algo_elu.write("conf 9:\n")
+    algo_elu.write("*****************************:\n")
+    Mfy = 1e5
+    Mfx = -7.5e4
+    mu = abs(Mfx)/(d**2*sigm_c)
+    pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
+    algo_elu.write("pivot %s\n"% pivot)
+    alpha = 1-sqrt(1-2*mu)
+    z = d*(1-alpha/2)
+    Asyi = abs(Mfx)/(z*sigm_s)
+    algo_elu.write("M = %f\n"% Mfx)
+    algo_elu.write("mu = %f\n"% mu)
+    algo_elu.write("alpha = %f\n"% alpha)
+    algo_elu.write("z = %f\n"% z)
+    algo_elu.write("Asyi = %f\n"% Asyi)
+    mu = abs(Mfy)/(d**2*sigm_c)
+    alpha = 1-sqrt(1-2*mu)
+    z = d*(1-alpha/2)
+    pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
+    algo_elu.write("pivot %s\n"% pivot)
+    algo_elu.write("M = %f\n"% Mfy)
+    algo_elu.write("mu = %f\n"% mu)
+    algo_elu.write("alpha = %f\n"% alpha)
+    algo_elu.write("alpha/lambd = %f\n"% (alpha/lambd))
+    algo_elu.write("z = %f\n"% z)
+    Asxs = abs(Mfy)/(z*sigm_s)
+    algo_elu.write("Asxs = %f\n"% Asxs)
+    Dref_elu.append([0,Asxs,Asyi,0,0])
+
+    mu = n*abs(Mfx)/(d**2 *sigm_s_els)
+    coeff = [1, -3, -6*mu,+6*mu]
+    sol = np.roots(coeff)
+    alpha = min(abs(sol))
+    Asyi = abs(Mfx)/(sigm_s_els*d*(1-alpha/3))
+    mu = n*Mfy/(d**2 *sigm_s_els)
+    coeff = [1, -3, -6*mu,+6*mu]
+    sol = np.roots(coeff)
+    alpha = min(abs(sol))
+    Asxs = Mfy /(sigm_s_els*d*(1-alpha/3))
+    Dref_els.append([0,Asxs,Asyi,0])
+
+    algo_elu.write("*****************************:\n")
+    algo_elu.write("conf 10:\n")
+    algo_elu.write("*****************************:\n")
+    Mfx = M = -150e3
+    mu = abs(Mfx)/(d**2*sigm_c)
+    pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
+    alpha = 1-sqrt(1-2*mu)
+    z = d*(1-alpha/2)
+    eps_a = eps_b * (1-alpha)/alpha
+    Asyi = abs(Mfx)/(z*sigm_s)
+    algo_elu.write("pivot %s\n"% pivot)
+    algo_elu.write("M = %f\n"% M)
+    algo_elu.write("mu = %f\n"% mu)
+    algo_elu.write("alpha = %f\n"% alpha)
+    algo_elu.write("alpha/lambd = %f\n"% (alpha/lambd))
+    algo_elu.write("z = %f\n"% z)
+    Dref_elu.append([0,0,Asyi,0,0])
+
+    ylim = d*(n*sigm_c_els)/(n*sigm_c_els+sigm_s_els)
+    Mfx = 100e3
+    Mlim = 0.5*sigm_c_els*ylim*(d-ylim/3)
+    mu = n*Mfx/(d**2 *sigm_s_els)
+    coeff = [1, -3, -6*mu,+6*mu]
+    sol = np.roots(coeff)
+    alpha = min(abs(sol))
+    Asyi = Mfx /(sigm_s_els*d*(1-alpha/3))
+    Dref_els.append([0,0,Asyi,0])
+
+    algo_elu.write("*****************************:\n")
+    algo_elu.write("conf 11:\n")
+    algo_elu.write("*****************************:\n")
+    Mfx = -260e3
+    if codification == "BAEL":
+        Mfx = -220e3
+    mu = abs(Mfx)/(d**2*sigm_c)
+    pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
+    alpha = 1-sqrt(1-2*mu)
+    z = d*(1-alpha/2)
+    eps_a = lambd*eps_b * (1-alpha/lambd)/alpha
+    Asyi = abs(Mfx)/(z*E_s*eps_a)
+    Asyi = abs(Mfx)/(z*sigm_s)
+    algo_elu.write("pivot %s\n"% pivot)
+    algo_elu.write("M = %f\n"% Mfx)
+    algo_elu.write("mu = %f\n"% mu)
+    algo_elu.write("alpha = %f\n"% alpha)
+    algo_elu.write("alpha/lambd = %f\n"% (alpha/lambd))
+    algo_elu.write("esp_a = %f\n"% eps_a)
+    algo_elu.write("E_s*eps_a = %f\n"% (E_s*eps_a))
+    algo_elu.write("z = %f\n"% z)
+    Dref_elu.append([0,0,Asyi,0,0])
+
+    algo_elu.write("*****************************:\n")
+    algo_elu.write("conf 12:\n")
+    algo_elu.write("*****************************:\n")
+    Dref_elu.append([-1.0,-1.0,-1.0,-1.0,0.0])
+
+    algo_elu.write("*****************************:\n")
+    algo_elu.write("conf 13:\n")
+    algo_elu.write("*****************************:\n")
+    Nxx = -1.5e6 #pivot C
+    Qy = 8e5
+    Qx = 0.0
+    Q = sqrt(Qy**2+Qx**2)
+    if codification == "EC2":
+        Q = abs(Qy)
+        v1 = 0.6*( 1 -fcj/250.)
+        algo_elu.write("v1 = %f"% v1)
+        sigm_cp = Nxx /h
+        algo_elu.write("sigm_cp = %f\n"% sigm_cp)
+        algo_elu.write("(sigm_cp/sigm_c) = %f\n"% ((sigm_cp/sigm_c)))
+        alpha_cw = 1.25
+        algo_elu.write("alpha_cw = %f\n"% alpha_cw)
+        X = Q / (alpha_cw*v1*sigm_c*zd)
+        algo_elu.write("X = %.6f\n"% X)
+        if X >= 0.3448:
+            cot = (1+sqrt(1-4*X**2))/(2*X)
+            algo_elu.write("cot = %f\n"% cot)
+        elif X<=0.3448:
+            cot = 2.5
+        Ast = Q/(sigm_s*zd*cot)
+    else:
+        Ast = sqrt(Qy**2+Qx**2)/(zd*sigm_s)
+    algo_elu.write("Ast = %.8f\n"% Ast)
+    Dref_elu.append([-1.0,-1.0,-1.0,-1.0,Ast])
+
+    algo_elu.write("*****************************:\n")
+    algo_elu.write("conf 14:\n")
+    algo_elu.write("*****************************:\n")
+    Nxx = -2.5e6 #pivot C
+    Qy = 1e5
+    Qx = 0.0
+    Q = sqrt(Qy**2+Qx**2)
+    if codification == "EC2":
+        Q = abs(Qy)
+        v1 = 0.6*( 1 -fcj/250.)
+        algo_elu.write("v1 = %f"% v1)
+        sigm_cp = -Nxx /h
+        algo_elu.write("sigm_cp = %f\n"% sigm_cp)
+        algo_elu.write("(sigm_cp/sigm_c) = %f\n"% ((sigm_cp/sigm_c)))
+        alpha_cw = 2.5*(1-sigm_cp/sigm_c)
+        algo_elu.write("alpha_cw = %f\n"% alpha_cw)
+        X = Q / (alpha_cw*v1*sigm_c*zd)
+        algo_elu.write("X = %.6f\n"% X)
+        if X >= 0.3448:
+            cot = (1+sqrt(1-4*X**2))/(2*X)
+            algo_elu.write("cot = %f\n"% cot)
+        elif X<=0.3448:
+            cot = 2.5
+        Ast = Q/(sigm_s*zd*cot)
+    else:
+        Ast = sqrt(Qy**2+Qx**2)/(zd*sigm_s)
+    algo_elu.write("Ast = %.8f\n"% Ast)
+    Dref_elu.append([-1.0,-1.0,-1.0,-1.0,Ast])
+
+    csv_elu = os.path.join(CODE_PATH,"ref_elu_"+codification+".csv")
+    fich = open(csv_elu, "w")
+    fich.write(codification+" ELU\n")
+    fich.write("[Asxs, Asxi, Asys, Asyi, Ast]\n")
+    for j,listi in enumerate(Dref_elu):
+        text = "%s,\n"% str(listi)
+        fich.write(text)
+    fich.close()
+
+    csv_els = os.path.join(CODE_PATH,"ref_els_"+codification+".csv")
+    fich = open(csv_els, "w")
+    fich.write(codification+" ELS\n")
+    fich.write("[Asxs, Asxi, Asys, Asyi]\n")
+    for j,listi in enumerate(Dref_els):
+        text = "%s,\n"% str(listi)
+        fich.write(text)
+    fich.close()
+    Mfx = mu_ab *(d**2*sigm_c)
+    algo_elu.write("Mfab < %.6f pour etre en pivot A entre A et B\n"% Mfx)
+    algo_elu.close()

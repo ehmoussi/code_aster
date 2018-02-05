@@ -97,9 +97,9 @@ CDECENT = LocatedComponents(phys=PHY.NEUT_K24, type='ELEM',
                             components=('Z1',))
 
 CFER1_R = LocatedComponents(phys=PHY.FER1_R, type='ELEM',
-                            components=(
-                                'TYPCOMB', 'ENROBG', 'CEQUI', 'SIGACI', 'SIGBET',
-                            'PIVA', 'PIVB', 'ES',))
+                            components=('TYPCOMB', 'CODIF', 'ES', 'CEQUI', 'ENROBS', 'ENROBI',
+                                        'SIGMACI', 'SIGMBET', 'COEFF1', 'COEFF2', 'GAMMAS', 
+                                        'GAMMAC', 'FACIER', 'FBETON', 'CLACIER', 'UC',))
 
 CFER2_R = LocatedComponents(phys=PHY.FER2_R, type='ELEM',
                             components=(

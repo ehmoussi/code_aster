@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -438,22 +438,29 @@ Risques et conseils :
     72 : _(u"""
  Erreur commande CALC_FERRAILLAGE :
    On n'a pas réussi à calculer la carte de ferraillage sur un élément.
-   Levier négatif ou nul (l'utilisateur a fourni des valeurs d'enrobage incompatibles avec l'épaisseur de l'élément)
+   z = 0.9(h-c) est négatif ou nul (l'utilisateur a fourni des valeurs d'enrobage incompatibles avec l'épaisseur de l'élément)
 """),
 
     73 : _(u"""
- Erreur utilisateur commande CALC_FERRAILLAGE :
+ Erreur utilisateur commande CALC_FERRAILLAGE / CODIFICATION = UTILISATEUR :
    Certains mots clés de CALC_FERRAILLAGE / AFFE sont obligatoires :
-     pour TYPE_COMB='ELU' :
-        PIVA et PIVB et ES
-        ES doit être supérieur à 0
-     pour TYPE_COMB='ELS' :
+     pour TYPE_COMB = 'ELU' :
+        PIVA, PIVB et ES
+        Attention ES doit être supérieur à 0
+     pour TYPE_COMB = 'ELS' :
         CEQUI
 """),
+
     74 : _(u"""
- Erreur utilisateur commande CALC_FERRAILLAGE :
-   La valeur du module d'Young ES est de <%(r1)E>. Elle n'est pas correcte.
+ Erreur utilisateur commande CALC_FERRAILLAGE / CODIFICATION = BAEL91 :
+   Certains mots clés de CALC_FERRAILLAGE / AFFE sont obligatoires :
+     pour TYPE_COMB = 'ELU' :
+        FE, FCJ, GAMMA_S, GAMMA_C et E_S
+        Attention E_S doit être supérieur à 0
+     pour TYPE_COMB = 'ELS' :
+        SIGS_ELS, SIGC_ELS et N
 """),
+
     75 : _(u"""
  Votre modèle ne contient que des éléments 1D. Le lissage global n'est
  possible que pour les éléments 2D ou 3D.
@@ -463,33 +470,102 @@ Risques et conseils :
  Votre modèle contient un mélange d'éléments 1D,2D ou 3D.
  Le lissage global n'est possible que pour les éléments 2D soit 3D.
 """),
+
     77 : _(u"""
  Commande CALC_FERRAILLAGE :
-   ELU : On n'a pas réussi à calculer la densité de ferraillage sur une ou plusieurs facettes de Capra Maury.
-   Les sections d'aciers sont complètement comprimées. La densité calculée est nulle sur ces facettes.
-   Le résultat sur l'élément peut être non nul si les autres facettes sont calculables.
-   ATTENTION : Aucune vérification des contraintes dans le béton n'est faite en compression sur cette facette.
-   (Pivot C non calculé)   
+   ELU : On n'a pas réussi à calculer la densité de ferraillage sur au moins une des facettes de Capra Maury (pivot C).
+   La densité de ferraillage est nulle sur ces facettes.
+   ATTENTION : La densité de ferraillage calculée sur l'élément peut être non nul si la densité de ferraillage est calculable sur les autres facettes.
 """),
+
     78 : _(u"""
  Commande CALC_FERRAILLAGE :
    ELU : On n'a pas réussi à calculer la densité de ferraillage sur l'élément.
-   Toutes les facettes de Capra Maury sont en compression.
-   Les sections d'aciers sont complètement comprimées. La densité calculée est mise à -1.
-   C'est probablement un pivot C, ce cas n'est pas prévu.   
+   Au moins une des facettes de Capra Maury est en compression (pivot C) mais aucun facette ne dépasse le critère en compression, pas besoin d'acier de traction.
+   ATTENTION : Les aciers de compression ne sont pas calculés !
+   La densité de ferraillage est fixée à -1 pour cet élément.
 """),
 
     79 : _(u"""
  Commande CALC_FERRAILLAGE :
    ELU : On n'a pas réussi à calculer la densité de ferraillage sur l'élément.
-   Pour une des facettes de Capra Maury au moins, la section est complètement comprimée. La densité calculée est mise à -1.
-   C'est probablement un pivot C, ce cas n'est pas prévu.
+   Pour une des facettes de Capra Maury au moins, la section est trop comprimée (pivot C).
+   ATTENTION : Les aciers en compression ne sont pas calculés !
+   La densité de ferraillage est mise à -1.
+   Conseil : on suggère soit de changer la classe de béton soit de revoir le coffrage.
 """),
 
     80 : _(u"""
  Erreur commande CALC_FERRAILLAGE :
-   On n'a pas réussi à calculer la carte de ferraillage sur un élément.
-   ELS : Dépassement contrainte béton;
+   ELS : On n'a pas réussi à calculer la carte de ferraillage sur un élément.
+   Raison : dépassement de la contrainte de compression maximale du béton.
+   Conseil : on suggère soit de changer la classe de béton soit de revoir le coffrage.
+"""),
+
+    81 : _(u"""
+ Commande CALC_FERRAILLAGE :
+   ELU : On n'a pas réussi à calculer la densité de ferraillage sur l'élément.
+   Pour une des facettes de Capra Maury au moins, le béton est trop cisaillé.
+   La densité de féraillage transversale est fixé à -1 pour l'élément.
+   Conseil : on suggère soit de changer la classe de béton soit de revoir le coffrage.
+   
+"""),
+
+    82 : _(u"""
+ Erreur utilisateur commande CALC_FERRAILLAGE / CODIFICATION = EC2 :
+   Certains mots clés de CALC_FERRAILLAGE / AFFE sont obligatoires :
+     pour TYPE_COMB = 'ELU' :
+        FCK, FYK, GAMMA_S, GAMMA_C et E_S
+        Attention E_S doit être supérieur à 0
+     pour TYPE_COMB = 'ELS' :
+        SIGS_ELS, SIGC_ELS et ALPHA_E
+"""),
+
+    83 : _(u"""
+ Commande CALC_FERRAILLAGE :
+   ELU : On n'a pas réussi à calculer la densité de ferraillage sur l'élément.
+   Pour une des facettes de Capra Maury au moins, la section est trop comprimée (pivot B).
+   ATTENTION : Les aciers en compression ne sont pas calculés !
+   La densité de ferraillage est mise à -1.
+   Conseil : on suggère soit de changer la classe de béton soit de revoir le coffrage.
+"""),
+
+    84 : _(u"""
+ Commande CALC_FERRAILLAGE :
+   ELS : On n'a pas réussi à calculer la densité de ferraillage sur l'élément.
+   Pour une des facettes de Capra Maury au moins, la section est trop comprimée (pivot B).
+   ATTENTION : Les aciers en compression ne sont pas calculés !
+   La densité de ferraillage est mise à -1.
+   Conseil : on suggère soit de changer la classe de béton soit de revoir le coffrage.
+"""),
+
+    85 : _(u"""
+ Commande CALC_FERRAILLAGE :
+   ELS : On n'a pas réussi à calculer la densité de ferraillage sur au moins une des facettes de Capra Maury (pivot C).
+   La densité de ferraillage est nulle sur ces facettes.
+   ATTENTION : La densité de ferraillage calculée sur l'élément peut être non nul si la densité de ferraillage est calculable sur les autres facettes.
+"""),
+
+    86 : _(u"""
+ Commande CALC_FERRAILLAGE :
+   ELS : On n'a pas réussi à calculer la densité de ferraillage sur l'élément.
+   Pour une des facettes de Capra Maury au moins, la section est trop comprimée (pivot C).
+   ATTENTION : Les aciers en compression ne sont pas calculés !
+   La densité de ferraillage est mise à -1.
+   Conseil : on suggère soit de changer la classe de béton soit de revoir le coffrage.
+"""),
+
+    87 : _(u"""
+ Commande CALC_FERRAILLAGE :
+   ELS : On n'a pas réussi à calculer la densité de ferraillage sur l'élément.
+   Au moins une des facettes de Capra Maury est en compression (pivot C) mais aucun facette ne dépasse le critère en compression, pas besoin d'acier de traction.
+   ATTENTION : Les aciers de compression ne sont pas calculés !
+   La densité de ferraillage est fixée à -1 pour cet élément.
+"""),
+
+    88 : _(u"""
+ Commande CALC_FERRAILLAGE : ATTENTION un chanmp de ferraillage existe déjà au numéro d'ordre %(i1)d du résultat %(k1)s
+   Ce champ de ferraillage sera écrasé !
 """),
 
     90 : _(u"""

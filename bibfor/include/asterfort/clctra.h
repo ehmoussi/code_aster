@@ -19,7 +19,24 @@
 !
 !
 interface
-    subroutine trgfct(fcttab)
-        real(kind=8) :: fcttab(36, 5)
-    end subroutine trgfct
+subroutine clctra(typco, effrts, effn, effm, efft,  ht, enrobs, enrobi, facier,&
+                  fbeton, sigaci, coeff1, gammac, gammas, uc, dnstra, ierr)
+        integer :: typco
+        real(kind=8) :: effrts(8)
+        real(kind=8) :: effn
+        real(kind=8) :: effm
+        real(kind=8) :: efft
+        real(kind=8) :: ht
+        real(kind=8) :: enrobs
+        real(kind=8) :: enrobi
+        real(kind=8) :: facier
+        real(kind=8) :: fbeton
+        real(kind=8) :: sigaci
+        real(kind=8) :: coeff1
+        real(kind=8) :: gammac
+        real(kind=8) :: gammas
+        integer :: uc
+        real(kind=8) :: dnstra
+        integer :: ierr
+    end subroutine clctra
 end interface

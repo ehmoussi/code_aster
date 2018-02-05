@@ -5,7 +5,7 @@ P mpi_nbcpu 1
 P mpi_nbnoeud 1
 P testlist verification sequential
 
-F comm ssls134a.comm D 1
+F comm ssls134d.comm D 1
 F mail ssls134a.mail D 20
 F libr ssls134a.30 D 30
 F libr ssls134a.31 D 31
