@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import Table
+from ..Objects import TableContainer
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -34,6 +34,6 @@ class ModeNonLine(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = Table()
+        self._result = TableContainer()
 
 MODE_NON_LINE = ModeNonLine.run
