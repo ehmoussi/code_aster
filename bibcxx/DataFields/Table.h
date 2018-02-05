@@ -53,11 +53,11 @@ private:
     bool               _isEmpty;
 
 public:
-    /**
-     * @typedef TablePtr
-     * @brief Pointeur intelligent vers un Table
-     */
-    typedef boost::shared_ptr< TableInstance > TablePtr;
+   /**
+   * @typedef TablePtr
+   * @brief Definition of a smart pointer to a TableInstance 
+   */
+   typedef boost::shared_ptr< TableInstance > TablePtr;
 
     // FIXME: Development documentation says 17 chars + "  ", for 'LG' logicals.
 
@@ -65,8 +65,10 @@ public:
      * @brief Constructeur
      * @param name Nom Jeveux du champ aux noeuds
      */
-    TableInstance( const std::string& name ) throw( std::runtime_error ):
-        DataStructure( name, 19, "TABLE" ),
+    TableInstance( const std::string& name, 
+                   const std::string &type = "TABLE", 
+                   const JeveuxMemory memType = Permanent ):
+        DataStructure( name, 19, type, memType ),
         _memoryLocation( JeveuxVectorChar8( getName() + ".TBBA" ) ),
         _description( JeveuxVectorLong( getName() + ".TBNP" ) ),
         _parameterDescription( JeveuxVectorChar24( getName() + ".TBLP" ) )
@@ -76,8 +78,9 @@ public:
     /**
      * @brief Constructeur
      */
-    TableInstance():
-        DataStructure( ResultNaming::getNewResultName(), 19, "TABLE" ),
+    TableInstance( const JeveuxMemory memType = Permanent, 
+                   const std::string &type = "TABLE" ):
+        DataStructure( ResultNaming::getNewResultName(), 19, type, memType ),
         _memoryLocation( JeveuxVectorChar8( getName() + ".TBBA" ) ),
         _description( JeveuxVectorLong( getName() + ".TBNP" ) ),
         _parameterDescription( JeveuxVectorChar24( getName() + ".TBLP" ) )
@@ -106,10 +109,71 @@ public:
     };
 };
 
+ /**
+   * @typedef TablePtr
+   * @brief Definition of a smart pointer to a TableInstance 
+   */
+   typedef boost::shared_ptr< TableInstance > TablePtr;
+
 /**
- * @typedef TablePtr
- * @brief Definition d'un champ aux noeuds de double
+ * @typedef TableOfFunctionsInstance
+ * @brief Definition of TableOfFunctionsInstance (table_fonction) 
  */
-typedef boost::shared_ptr< TableInstance > TablePtr;
+class TableOfFunctionsInstance : public TableInstance
+{
+public:
+   /**
+   * @typedef TableOfFunctionsPtr
+   * @brief Definition of a smart pointer to a TableOfFunctionsInstance 
+   */
+   typedef boost::shared_ptr< TableOfFunctionsInstance > TableOfFunctionsPtr;
+   /**
+   * @brief Constructeur
+   * @param name Nom Jeveux du champ aux noeuds
+   */
+    TableOfFunctionsInstance( const std::string& name ):
+                    TableInstance( name, "TABLE_FONCTION" )
+    {
+    };
+
+    /**
+     * @brief Constructeur
+     */
+    TableOfFunctionsInstance():
+                    TableInstance("TABLE_FONCTION" )
+    {
+    };
+};
+
+/**
+ * @typedef TableContainerInstance
+ * @brief Definition of TableContainerInstance (table_container) 
+ */
+
+class TableContainerInstance : public TableInstance
+{
+public: 
+   /**
+   * @typedef TableContainerPtr
+   * @brief Definition of a smart pointer to a TableContainerInstance 
+   */
+   typedef boost::shared_ptr< TableContainerInstance > TableContainerPtr;
+   /**
+   * @brief Constructeur
+   * @param name Nom Jeveux du champ aux noeuds
+   */
+    TableContainerInstance( const std::string& name ):
+                    TableInstance( name, "TABLE_CONTAINER" )
+    {
+    };
+
+    /**
+     * @brief Constructeur
+     */
+    TableContainerInstance():
+                    TableInstance(ResultNaming::getNewResultName(),"TABLE_CONTAINER" )
+    {
+    };
+};
 
 #endif /* TABLE_H_ */

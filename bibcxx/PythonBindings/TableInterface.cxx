@@ -41,4 +41,20 @@ void exportTableToPython()
             &initFactoryPtr< TableInstance,
                              std::string >) )
     ;
+    class_< TableOfFunctionsInstance, TableOfFunctionsInstance::TableOfFunctionsPtr,
+            bases< TableInstance > >( "TableOfFunctions", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< TableOfFunctionsInstance >) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< TableOfFunctionsInstance,
+                             std::string >) )
+    ;
+    class_< TableContainerInstance, TableContainerInstance::TableContainerPtr,
+            bases< TableInstance > >( "TableContainer", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< TableContainerInstance >) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< TableContainerInstance,
+                             std::string >) )
+    ;
 };
