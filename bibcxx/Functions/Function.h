@@ -5,7 +5,7 @@
  * @file Function.h
  * @brief Implementation of functions.
  * @section LICENCE
- * Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+ * Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
  * This file is part of code_aster.
  *
  * code_aster is free software: you can redistribute it and/or modify
@@ -29,6 +29,7 @@
 
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
+#include "Functions/GenericFunction.h"
 
 
 /**
@@ -36,7 +37,7 @@
  *   Create a datastructure for a function with real values
  * @author Mathieu Courtois
  */
-class BaseFunctionInstance: public DataStructure
+class BaseFunctionInstance: public DataStructure, public GenericFunctionInstance
 {
     private:
         // Nom Jeveux de la SD
