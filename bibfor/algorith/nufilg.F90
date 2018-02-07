@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1306,W1504
+!
 subroutine nufilg(ndim, nnod, nnop, npg, iw,&
                   vffd, vffp, idff1, vu, vp,&
                   geomi, typmod, option, mate, compor,&
@@ -23,9 +25,8 @@ subroutine nufilg(ndim, nnod, nnop, npg, iw,&
                   ddld, angmas, sigm, vim, sigp,&
                   vip, resi, rigi, vect, matr,&
                   matsym, codret)
-! person_in_charge: sebastien.fayolle at edf.fr
-! aslint: disable=W1306,W1504
-    implicit none
+!
+implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/codere.h"
@@ -61,7 +62,6 @@ subroutine nufilg(ndim, nnod, nnop, npg, iw,&
 !          CALCUL DES FORCES INTERNES POUR LES ELEMENTS
 !          INCOMPRESSIBLES POUR LES GRANDES DEFORMATIONS
 !          3D/D_PLAN/AXIS
-!          ROUTINE APPELEE PAR TE0596
 !-----------------------------------------------------------------------
 ! IN  RESI    : CALCUL DES FORCES INTERNES
 ! IN  RIGI    : CALCUL DE LA MATRICE DE RIGIDITE
@@ -108,8 +108,8 @@ subroutine nufilg(ndim, nnod, nnop, npg, iw,&
     real(kind=8) :: r, w, wp, dff1(nnod, 4)
     real(kind=8) :: presm(27), presd(27)
     real(kind=8) :: pm, pd, pp
-    real(kind=8) :: fm(3, 3), jm, ftm(3, 3), corm, epsm(6), epsml(6)
-    real(kind=8) :: fp(3, 3), jp, ftp(3, 3), corp, epsp(6), deps(6)
+    real(kind=8) :: fm(3, 3), jm, ftm(3, 3), corm, epsml(6)
+    real(kind=8) :: fp(3, 3), jp, ftp(3, 3), corp, deps(6)
     real(kind=8) :: gn(3, 3), lamb(3), logl(3)
     real(kind=8) :: tn(6), tp(6), dtde(6, 6)
     real(kind=8) :: pk2(6), pk2m(6)
@@ -180,9 +180,9 @@ subroutine nufilg(ndim, nnod, nnop, npg, iw,&
                     iw, vffd(1, g), idff1, r, w,&
                     dff1)
         call nmepsi(ndim, nnod, axi, grand, vffd(1, g),&
-                    r, dff1, deplm, fm, epsm)
+                    r, dff1, deplm, fm)
         call nmepsi(ndim, nnod, axi, grand, vffd(1, g),&
-                    r, dff1, deplp, fp, epsp)
+                    r, dff1, deplp, fp)
         call dfdmip(ndim, nnod, axi, geomp, g,&
                     iw, vffd(1, g), idff1, r, wp,&
                     dff1)
