@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ def defi_group_prod(MAILLAGE,GRILLE,**args):
 
 DEFI_GROUP=OPER(nom="DEFI_GROUP",op= 104,sd_prod=defi_group_prod,
                 fr=tr("Définition de nouveaux groupes de noeuds et/ou de mailles dans un concept maillage"),
-                reentrant='o',
+                reentrant='o:MAILLAGE',
          regles=(AU_MOINS_UN('CREA_GROUP_MA','CREA_GROUP_NO','DETR_GROUP_NO','DETR_GROUP_MA'),
                  UN_PARMI('MAILLAGE','GRILLE'),),
          reuse=SIMP(statut='c', typ=CO),
