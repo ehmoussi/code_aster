@@ -14,12 +14,20 @@ def getListOfCommands():
 def checkDefinition( commands ):
     """Check the definition of the catalog of the commands (see N_ENTITE.py)"""
     print ">>> Vérification des catalogues de commandes..."
+    err = []
     for cmd in commands:
         cr = cmd.report()
         if not cr.estvide():
-            print str(cr)
-            raise TypeError("La vérification du catalogue a échoué pour '{0}'"\
-                            .format(cmd.nom))
+            err.append([cmd.nom, str(cr)])
+            # print str(cr)
+            # raise TypeError("La vérification du catalogue a échoué pour '{0}'"\
+            #                 .format(cmd.nom))
+    for name, msg in err:
+        print("La vérification du catalogue a échoué pour '{0}':\n{1}"
+              .format(name, msg))
+    if err:
+        raise TypeError("{0} erreurs sur {1} commandes."
+                        .format(len(err), len(commands)))
     print "    ok\n"
 
 def get_entite( obj ):
