@@ -207,18 +207,18 @@ class ENTITE:
             try:
                 assert len(orig) in (2, 3), u"un ou deux mots-clés attendus"
                 orig.pop(0)
-                key1 = self.entites.get(orig[0])
-                assert key1 is not None, u"mot-clé inexistant {0!r}".format(orig[0])
+                key1 = self.get_entite(orig[0])
+                assert key1 is not None, u"mot-clé inexistant {0!r}".format(orig)
                 if len(orig) > 1:
-                    key2 = key1.entites.get(orig[1])
-                    assert key2 is not None, u"mot-clé inexistant {0!r}".format(orig[1])
+                    key2 = key1.get_entite(orig[1])
+                    assert key2 is not None, u"mot-clé inexistant {0!r}".format(orig)
             except AssertionError as exc:
-                self.cr.fatal(_(u"reentrant doit indiquer quel mot-clé fournit "
-                                u"le concept réentrant.\nPar exemple: "
+                self.cr.fatal(_(u"'reentrant' doit indiquer quel mot-clé "
+                                u"fournit le concept réentrant.\nPar exemple: "
                                 u"'o:MAILLAGE' pour un mot-clé simple ou "
                                 u"'o:ETAT_INIT:EVOL_NOLI' pour un mot-clé "
                                 u"facteur. Les mots-clés doivent exister.\n"
-                                u"Erreur: {0!r} {0}"
+                                u"Erreur: {0}"
                                 .format(exc)))
 
     def check_statut(self, into=('o', 'f', 'c', 'd')):
