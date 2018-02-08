@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -42,7 +42,7 @@ def comb_matr_asse_prod(COMB_R,COMB_C,CALC_AMOR_GENE,**args):
 
 COMB_MATR_ASSE=OPER(nom="COMB_MATR_ASSE",op=  31,sd_prod=comb_matr_asse_prod,
                     fr=tr("Effectuer la combinaison linéaire de matrices assemblées"),
-                    reentrant='f',
+                    reentrant='f:*:MATR_ASSE',
          regles=(UN_PARMI('COMB_R','COMB_C','CALC_AMOR_GENE' ),),
          reuse=SIMP(statut='c', typ=CO),
          COMB_R          =FACT(statut='f',max='**',

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ from code_aster.Cata.Commons import *
 
 DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
                    fr=tr("Définition des paramètres décrivant le comportement d un matériau"),
-                   reentrant='f',
+                   reentrant='f:MATER',
        regles=(EXCLUS('ELAS','ELAS_FO','ELAS_FLUI','ELAS_ISTR','ELAS_ISTR_FO','ELAS_ORTH',
                       'ELAS_ORTH_FO','ELAS_COQUE','ELAS_COQUE_FO',
                       'ELAS_HYPER','ELAS_2NDG','ELAS_GLRC','ELAS_DHRC'),
@@ -68,7 +68,7 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
                PRESENT_PRESENT('CABLE','ELAS'),
                PRESENT_PRESENT('MOHR_COULOMB','ELAS'),
                PRESENT_PRESENT('ELAS_GLRC','GLRC_DM'),
-               
+
                AU_MOINS_UN('ELAS','ELAS_FO','ELAS_FLUI','ELAS_ISTR','ELAS_ISTR_FO','ELAS_ORTH',
                            'ELAS_ORTH_FO','ELAS_COQUE','ELAS_COQUE_FO','ELAS_MEMBRANE',
                            'ELAS_HYPER','ELAS_2NDG','ELAS_GLRC','ELAS_GLRC_FO','ELAS_DHRC','CABLE',
@@ -88,12 +88,12 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
                            'COMP_THM',
                            'FATIGUE','DOMMA_LEMAITRE','CISA_PLAN_CRIT','THM_RUPT','WEIBULL','WEIBULL_FO',
                            'NON_LOCAL','RUPT_FRAG','RUPT_FRAG_FO','CZM_LAB_MIX','RUPT_DUCT','JOINT_MECA_RUPT','JOINT_MECA_FROT','RCCM','RCCM_FO',
-                           'LAIGLE','LETK','LKR','DRUCK_PRAGER','VISC_DRUC_PRAG','HOEK_BROWN','GONF_ELAS','JOINT_BANDIS', 
+                           'LAIGLE','LETK','LKR','DRUCK_PRAGER','VISC_DRUC_PRAG','HOEK_BROWN','GONF_ELAS','JOINT_BANDIS',
                            'MONO_VISC1','MONO_VISC2','MONO_ISOT1','MONO_ISOT2','MONO_CINE1','MONO_CINE2','MONO_DD_KR','MONO_DD_CFC','MONO_DD_CFC_IRRA',
                            'MONO_DD_FAT','MONO_DD_CC','MONO_DD_CC_IRRA',
                            'MFRONT','MFRONT_FO','UMAT','UMAT_FO','CRIT_RUPT','REST_ECRO'),
                ),
-               
+
            reuse=SIMP(statut='c', typ=CO),
            MATER      =SIMP(statut='f',typ=mater_sdaster),
 #

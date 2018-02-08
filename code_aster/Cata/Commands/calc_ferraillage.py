@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -29,8 +29,9 @@ def calc_ferraillage_prod(RESULTAT,**args):
    raise AsException("type de concept resultat non prevu")
 
 
-CALC_FERRAILLAGE=OPER(nom="CALC_FERRAILLAGE",op=175,sd_prod=calc_ferraillage_prod, reentrant='o',
-                 fr=tr("calcul de cartes de densité de ferraillage "),
+CALC_FERRAILLAGE=OPER(nom="CALC_FERRAILLAGE",op=175,sd_prod=calc_ferraillage_prod,
+         reentrant='o:RESULTAT',
+         fr=tr("calcul de cartes de densité de ferraillage "),
 
          reuse=SIMP(statut='c', typ=CO),
          RESULTAT        =SIMP(statut='o',typ=(evol_elas,evol_noli,dyna_trans,) ),

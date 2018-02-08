@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ def elim_lagr_prod(MATR_RIGI,**args):
 
 ELIM_LAGR=OPER(nom="ELIM_LAGR",op=69,sd_prod=elim_lagr_prod,
                fr=tr("Créer une matrice en ayant éliminé les condition cinématiques dualisées."),
-               reentrant='f',
+               reentrant='f:MATR_RIGI',
 
          reuse=SIMP(statut='c', typ=CO),
          # Matrice de "rigidité" (celle qui contient les équations dualisées) :

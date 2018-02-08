@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ from code_aster.Cata.Commons import *
 DEFI_BASE_REDUITE=OPER(
     nom="DEFI_BASE_REDUITE",op=53,
     sd_prod=mode_empi,
-    reentrant='f',
+    reentrant='f:BASE',
     reuse=SIMP(statut='c', typ=CO),
 
     OPERATION = SIMP(statut='f',typ='TXM',defaut="POD",into=("POD","POD_INCR",'GLOUTON','TRONCATURE',)),
@@ -93,12 +93,12 @@ DEFI_BASE_REDUITE=OPER(
         SOLVEUR         =C_SOLVEUR('DYNA_LINE_HARM'),
         NB_MODE         =SIMP(statut='f',typ='I'),
     ),
- 
+
     b_tronca       =BLOC(condition ="""(equal_to("OPERATION", 'TRONCATURE'))""",
         BASE          = SIMP(statut='f',typ=mode_empi),
         MODELE_REDUIT = SIMP(statut='o',typ=modele_sdaster),
     ),
-   
+
     INFO            =SIMP(statut='f',typ='I',defaut= 1,into=( 1 , 2) ),
     TITRE           =SIMP(statut='f',typ='TXM'),
 ) ;

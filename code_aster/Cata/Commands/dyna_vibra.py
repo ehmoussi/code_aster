@@ -37,7 +37,7 @@ def dyna_vibra_sdprod(BASE_CALCUL, TYPE_CALCUL, MATR_RIGI,**args):
 DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
                    op       = 29,
                    sd_prod  = dyna_vibra_sdprod,
-                   reentrant='f',
+                   reentrant='f:RESULTAT',
                    fr       = tr("Calcul dynamique transitoire ou harminque, sur base physique ou généralisée"),
 
         reuse=SIMP(statut='c', typ=CO),
