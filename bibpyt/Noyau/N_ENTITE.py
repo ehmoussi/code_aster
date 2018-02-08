@@ -194,13 +194,32 @@ class ENTITE:
 
     def check_reentrant(self):
         """Vérifie l'attribut reentrant."""
-        if self.reentrant not in ('o', 'n', 'f'):
+        status = self.reentrant[0]
+        if status not in ('o', 'n', 'f'):
             self.cr.fatal(
                 _(u"L'attribut 'reentrant' doit valoir 'o','n' ou 'f' : %r"),
-                self.reentrant)
-        if self.reentrant != 'n' and 'reuse' not in self.entites.keys():
+                status)
+        if status != 'n' and 'reuse' not in self.entites.keys():
             self.cr.fatal(_(u"L'opérateur est réentrant, il faut ajouter "
                             u"le mot-clé 'reuse'."))
+        if status != 'n':
+            orig = self.reentrant.split(':')
+            try:
+                assert len(orig) in (2, 3), u"un ou deux mots-clés attendus"
+                orig.pop(0)
+                key1 = self.entites.get(orig[0])
+                assert key1 is not None, u"mot-clé inexistant {0!r}".format(orig[0])
+                if len(orig) > 1:
+                    key2 = key1.entites.get(orig[1])
+                    assert key2 is not None, u"mot-clé inexistant {0!r}".format(orig[1])
+            except AssertionError as exc:
+                self.cr.fatal(_(u"reentrant doit indiquer quel mot-clé fournit "
+                                u"le concept réentrant.\nPar exemple: "
+                                u"'o:MAILLAGE' pour un mot-clé simple ou "
+                                u"'o:ETAT_INIT:EVOL_NOLI' pour un mot-clé "
+                                u"facteur. Les mots-clés doivent exister.\n"
+                                u"Erreur: {0!r} {0}"
+                                .format(exc)))
 
     def check_statut(self, into=('o', 'f', 'c', 'd')):
         """Vérifie l'attribut statut."""
