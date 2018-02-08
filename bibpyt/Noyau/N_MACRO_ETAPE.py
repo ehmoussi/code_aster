@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -188,7 +188,7 @@ class MACRO_ETAPE(N_ETAPE.ETAPE):
                 sd_prod = lambda etape: None
 
         # on teste maintenant si la SD est réutilisée ou s'il faut la créer
-        if self.definition.reentrant != 'n' and self.reuse:
+        if self.definition.reentrant[0] != 'n' and self.reuse:
             # Le concept produit est specifie reutilise (reuse=xxx). C'est une erreur mais non fatale.
             # Elle sera traitee ulterieurement.
             self.sd = self.reuse
@@ -495,7 +495,7 @@ Le type demande (%s) et le type du concept (%s) devraient etre derives""" % (t, 
             etape.sdnom = sd.nom
             # pour l'ajouter au contexte de la macro
             self.g_context[sd.nom] = sd
-        elif etape.definition.reentrant != 'n' and etape.reuse != None:
+        elif etape.definition.reentrant[0] != 'n' and etape.reuse != None:
             # On est dans le cas d'une commande avec reutilisation d'un concept existant
             # get_sd_prod fait le necessaire : verifications, associations, etc. mais ne cree
             # pas un nouveau concept. Il retourne le concept reutilise

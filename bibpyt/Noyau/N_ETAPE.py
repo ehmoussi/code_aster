@@ -194,7 +194,7 @@ class ETAPE(N_MCCOMPO.MCCOMPO):
         else:
             sd_prod = self.definition.sd_prod
         # on teste maintenant si la SD est réutilisée ou s'il faut la créer
-        if self.definition.reentrant != 'n' and self.reuse:
+        if self.definition.reentrant[0] != 'n' and self.reuse:
             # Le concept produit est specifie reutilise (reuse=xxx). C'est une erreur mais non fatale.
             # Elle sera traitee ulterieurement.
             self.sd = self.reuse

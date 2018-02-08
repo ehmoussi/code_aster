@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -103,7 +103,7 @@ class MACRO_ETAPE(V_ETAPE.ETAPE):
             if self.sd != None:
                 valid = valid * self.valid_sdnom(cr)
 
-            if self.definition.reentrant == 'n' and self.reuse:
+            if self.definition.reentrant[0] == 'n' and self.reuse:
                 # Il ne peut y avoir de concept reutilise avec une MACRO  non
                 # reentrante
                 if cr == 'oui':
@@ -202,7 +202,7 @@ class MACRO_ETAPE(V_ETAPE.ETAPE):
                     if cr == 'oui':
                         self.cr.fatal(_(u"Concept retourné non défini"))
                     valid = 0
-            if self.definition.reentrant == 'o':
+            if self.definition.reentrant[0] == 'o':
                 if cr == 'oui':
                     self.cr.fatal(
                         _(u'Commande obligatoirement réentrante : spécifier reuse=concept'))

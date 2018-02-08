@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -141,7 +141,7 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
                 # l'indicateur de validité valid
                 return valid
 
-            if self.definition.reentrant == 'n' and self.reuse:
+            if self.definition.reentrant[0] == 'n' and self.reuse:
                 # Il ne peut y avoir de concept reutilise avec un OPER non
                 # reentrant
                 if cr == 'oui':
@@ -229,7 +229,7 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
                     if cr == 'oui':
                         self.cr.fatal(_(u"Concept retourné non défini"))
                     valid = 0
-            if self.definition.reentrant == 'o':
+            if self.definition.reentrant[0] == 'o':
                 if cr == 'oui':
                     self.cr.fatal(
                         _(u'Commande obligatoirement réentrante : spécifier reuse=concept'))
