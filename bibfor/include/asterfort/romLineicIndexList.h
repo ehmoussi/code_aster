@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine romLineicIndexList(nb1 , tab1, nb2, tab2, &
-                                  tab3, epsi)
-        integer, intent(in) :: nb1
-        integer, intent(in) :: nb2
-        real(kind=8), intent(in) :: tab1(nb1)
-        real(kind=8), intent(in) :: tab2(nb2)
-        integer, intent(out) :: tab3(nb1)
-        real(kind=8), intent(in) :: epsi
+    subroutine romLineicIndexList(tole         ,&
+                                  nb_node      , coor_node ,&
+                                  nb_slice     , coor_slice,&
+                                  node_to_slice)
+        real(kind=8), intent(in) :: tole 
+        integer, intent(in) :: nb_node
+        real(kind=8), intent(in) :: coor_node(nb_node)
+        integer, intent(in) :: nb_slice
+        real(kind=8), intent(in) :: coor_slice(nb_slice)
+        integer, intent(out) :: node_to_slice(nb_node)
     end subroutine romLineicIndexList
 end interface

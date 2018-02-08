@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine dbr_rnum(ds_empi)
 !
 use Rom_Datastructure_type
@@ -37,9 +38,7 @@ implicit none
 #include "asterfort/romLineicIndexSurf.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_Empi), intent(inout) :: ds_empi
+type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -55,7 +54,7 @@ implicit none
 !
     integer :: niv, ifm
     type(ROM_DS_LineicNumb) :: ds_line
-    integer :: nb_node, nb_slice, i_node, nb_node_grno
+    integer :: nb_node, nb_slice, i_node, nb_node_slice
     real(kind=8) :: tole_node
     character(len=8) :: axe_line = ' ', mesh= ' '
     character(len=24) :: surf_num = ' '
@@ -106,10 +105,10 @@ implicit none
 !
 ! - Get coordinates of nodes for one slice
 !
-    call jelira(jexnom(mesh//'.GROUPENO',surf_num), 'LONUTI', nb_node_grno)
+    call jelira(jexnom(mesh//'.GROUPENO',surf_num), 'LONUTI', nb_node_slice)
     call jeveuo(jexnom(mesh//'.GROUPENO',surf_num), 'L'     , vi = v_grno)
-    AS_ALLOCATE(vr = v_coor_1, size = nb_node_grno)
-    AS_ALLOCATE(vr = v_coor_2, size = nb_node_grno)
+    AS_ALLOCATE(vr = v_coor_1, size = nb_node_slice)
+    AS_ALLOCATE(vr = v_coor_2, size = nb_node_slice)
 !
 ! - In case of lineic model, we must create a new numbering for the nodes on mesh
 !
@@ -118,49 +117,52 @@ implicit none
         call uttrir(nb_slice, v_coor_w, tole_node)
         AS_ALLOCATE(vr = v_coor_p, size = nb_slice)
         v_coor_p(1:nb_slice) = v_coor_w(1:nb_slice)
-
-        call romLineicIndexList(nb_node  , v_coor_x , nb_slice, v_coor_p,&
-                                ds_line%v_nume_pl, tole_node)
-        
-        do i_node = 1, nb_node_grno
+        call romLineicIndexList(tole_node,&
+                                nb_node      , v_coor_x,&
+                                nb_slice     , v_coor_p,&
+                                ds_line%v_nume_pl)
+        do i_node = 1, nb_node_slice
             v_coor_1(i_node) = v_coor(1+3*(v_grno(i_node)-1)+1)
             v_coor_2(i_node) = v_coor(1+3*(v_grno(i_node)-1)+2)
         enddo
-        call romLineicIndexSurf(nb_node     , v_coor_y , v_coor_z,&
-                                nb_node_grno, v_coor_1 , v_coor_2,&
-                                ds_line%v_nume_sf, tole_node)
+        call romLineicIndexSurf(tole_node        ,&
+                                nb_node          , v_coor_y , v_coor_z,&
+                                nb_node_slice    , v_coor_1 , v_coor_2,&
+                                ds_line%v_nume_sf)
     elseif (axe_line .eq. 'OY') then
         v_coor_w(1:nb_node) = v_coor_y(1:nb_node)
         call uttrir(nb_slice, v_coor_w, tole_node)
         AS_ALLOCATE(vr=v_coor_p, size=nb_slice)
         v_coor_p(1:nb_slice) = v_coor_w(1:nb_slice)
-
-        call romLineicIndexList(nb_node  , v_coor_y , nb_slice, v_coor_p,&
-                                ds_line%v_nume_pl, tole_node)
-
-        do i_node = 1, nb_node_grno
+        call romLineicIndexList(tole_node,&
+                                nb_node      , v_coor_y,&
+                                nb_slice     , v_coor_p,&
+                                ds_line%v_nume_pl)
+        do i_node = 1, nb_node_slice
             v_coor_1(i_node) = v_coor(1+3*(v_grno(i_node)-1)+2)
             v_coor_2(i_node) = v_coor(1+3*(v_grno(i_node)-1)+0)
         enddo
-        call romLineicIndexSurf(nb_node     , v_coor_z , v_coor_x,&
-                                nb_node_grno, v_coor_1 , v_coor_2,&
-                                ds_line%v_nume_sf, tole_node)    
+        call romLineicIndexSurf(tole_node        ,&
+                                nb_node          , v_coor_z , v_coor_x,&
+                                nb_node_slice    , v_coor_1 , v_coor_2,&
+                                ds_line%v_nume_sf)   
     elseif (axe_line .eq. 'OZ') then
         v_coor_w(1:nb_node) = v_coor_z(1:nb_node)
         call uttrir(nb_slice, v_coor_w, tole_node)
         AS_ALLOCATE(vr=v_coor_p, size=nb_slice)
         v_coor_p(1:nb_slice) = v_coor_w(1:nb_slice)
-
-        call romLineicIndexList(nb_node  , v_coor_z , nb_slice, v_coor_p,&
-                                ds_line%v_nume_pl, tole_node)
-
-        do i_node = 1, nb_node_grno
+        call romLineicIndexList(tole_node,&
+                                nb_node      , v_coor_z,&
+                                nb_slice     , v_coor_p,&
+                                ds_line%v_nume_pl)
+        do i_node = 1, nb_node_slice
             v_coor_1(i_node) = v_coor(1+3*(v_grno(i_node)-1)+0)
             v_coor_2(i_node) = v_coor(1+3*(v_grno(i_node)-1)+1)
         enddo
-        call romLineicIndexSurf(nb_node     , v_coor_x , v_coor_y,&
-                                nb_node_grno, v_coor_1 , v_coor_2,&
-                                ds_line%v_nume_sf, tole_node)
+        call romLineicIndexSurf(tole_node        ,&
+                                nb_node          , v_coor_x , v_coor_y,&
+                                nb_node_slice    , v_coor_1 , v_coor_2,&
+                                ds_line%v_nume_sf)
     else
         ASSERT(.false.)
     endif

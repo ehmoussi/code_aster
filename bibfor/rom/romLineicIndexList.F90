@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,50 +15,47 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine romLineicIndexList(nb1 , tab1, nb2, tab2, &
-                               tab3, epsi)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine romLineicIndexList(tole         ,&
+                              nb_node      , coor_node ,&
+                              nb_slice     , coor_slice,&
+                              node_to_slice)
 !
 implicit none
 !
-!
-!
-    integer, intent(in) :: nb1
-    real(kind=8), intent(in) :: tab1(nb1)
-    integer, intent(in) :: nb2
-    real(kind=8), intent(in) :: tab2(nb2)
-    integer, intent(out) :: tab3(nb1)
-    real(kind=8), intent(in) :: epsi
+real(kind=8), intent(in) :: tole
+integer, intent(in) :: nb_node
+real(kind=8), intent(in) :: coor_node(nb_node)
+integer, intent(in) :: nb_slice
+real(kind=8), intent(in) :: coor_slice(nb_slice)
+integer, intent(out) :: node_to_slice(nb_node)
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Model reduction - Utilities
 !
-! For lineic base
+! For lineic base - Get index of slice for each node in given direction
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  tole             : tolerance
+! In  nb_node          : number of nodes
+! In  coor_node        : coordinates of nodes in given direction
+! In  nb_slice         : number of slices
+! In  coor_slice       : coordinates of slices in given direction
+! Out node_to_slice    : for each node, the index of slice
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: i_node, i_slice
 !
 ! --------------------------------------------------------------------------------------------------
 ! 
-! A PARTIR D'UNE LISTE RANGEE EN ORDRE CROISSANT, TROUVER LA POSITION DE CHAQUE VALEUR DE LA 
-! LISTE ENTREE
-! Le RESULTAT EST UNE LISTE D'ENTIER.
-!
-! TAB1      /R/: TABLEAU DONNE
-! NB1       /I/: TAILLAE DU TABLEAU DONNE
-! TAB2      /R/: TABLEAU ORDONNE
-! NB2       /I/: TAILLE DU TABLEAU ORDONNE
-! TAB3      /I/: TABLEAU RESULTAT
-! EPS       /R/: VALEUR DE TOLERENCE
-!
-! --------------------------------------------------------------------------------------------------
-! 
-    integer :: i, j
-!
-! --------------------------------------------------------------------------------------------------
-! 
-    do i = 1, nb1
-        do j = 1, nb2
-            if (abs(tab2(j)-tab1(i)) .lt. epsi) then
-                tab3(i) = j
+    do i_node = 1, nb_node
+        do i_slice = 1, nb_slice
+            if (abs(coor_slice(i_slice)-coor_node(i_node)) .lt. tole) then
+                node_to_slice(i_node) = i_slice
                 exit
             endif
         enddo
