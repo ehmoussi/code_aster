@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,8 @@ def modi_repere_prod(RESULTAT,CHAM_GD,**args):
   if AsType(RESULTAT) != None : return AsType(RESULTAT)
   if AsType(CHAM_GD)  != None : return AsType(CHAM_GD)
 
-MODI_REPERE=OPER(nom="MODI_REPERE",op=191,sd_prod=modi_repere_prod,reentrant='f',
+MODI_REPERE=OPER(nom="MODI_REPERE",op=191,sd_prod=modi_repere_prod,
+                 reentrant='f:RESULTAT',
                  fr="Calcule les champs dans un nouveau repère.",
 #
     regles=(UN_PARMI('CHAM_GD','RESULTAT',),),
@@ -98,8 +99,8 @@ MODI_REPERE=OPER(nom="MODI_REPERE",op=191,sd_prod=modi_repere_prod,reentrant='f'
                 GROUP_NO    =SIMP(statut='f',typ=grno,validators=NoRepeat(),max='**',),
                 MAILLE      =SIMP(statut='c',typ=ma  ,validators=NoRepeat(),max='**',),
                 NOEUD       =SIMP(statut='c',typ=no  ,validators=NoRepeat(),max='**',),
-            ),),  
-                      
+            ),),
+
         b_coq      =BLOC(condition = """equal_to("REPERE", 'COQUE')""",
             AFFE     =FACT(statut='o',max='**',regles=(UN_PARMI('ANGL_REP','VECTEUR'),),
                 ANGL_REP        =SIMP(statut='f',typ='R',min=2,max=2,),
@@ -109,19 +110,19 @@ MODI_REPERE=OPER(nom="MODI_REPERE",op=191,sd_prod=modi_repere_prod,reentrant='f'
                 MAILLE      =SIMP(statut='c',typ=ma  ,validators=NoRepeat(),max='**',),
                 NOEUD       =SIMP(statut='c',typ=no  ,validators=NoRepeat(),max='**',),
             ),),
-            
+
         b_autre    =BLOC(condition = """is_in("REPERE", ('GLOBAL_UTIL', 'COQUE_INTR_UTIL', 'COQUE_UTIL_INTR'))""",
             AFFE     =FACT(statut='o',max='**',
                 GROUP_MA    =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**',),
                 GROUP_NO    =SIMP(statut='f',typ=grno,validators=NoRepeat(),max='**',),
                 MAILLE      =SIMP(statut='c',typ=ma  ,validators=NoRepeat(),max='**',),
                 NOEUD       =SIMP(statut='c',typ=no  ,validators=NoRepeat(),max='**',),
-           ),),            
+           ),),
 #
 #   Traitement de CHAM_GD and not reuse
 #
     CARA_ELEM   =SIMP(statut='f',typ=cara_elem,),
- 
+
     TITRE   =SIMP(statut='f',typ='TXM',),
     INFO    =SIMP(statut='f',typ='I',defaut=1,into=(1,2),),
 );

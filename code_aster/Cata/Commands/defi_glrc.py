@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,8 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 
-DEFI_GLRC=OPER(nom="DEFI_GLRC",op=57,sd_prod=mater_sdaster,reentrant='f',
+DEFI_GLRC=OPER(nom="DEFI_GLRC",op=57,sd_prod=mater_sdaster,
+               reentrant='f:*:MATER',
                fr=tr("Déterminer les caractéristiques homogenéisées du béton armé à partir des propriétés du béton et des  "
                      " armatures"),
                reuse = SIMP(statut='c',typ=mater_sdaster),

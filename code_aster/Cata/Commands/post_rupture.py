@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ POST_RUPTURE=MACRO(nom="POST_RUPTURE",
                    op=OPS("Macro.post_rupture_ops.post_rupture_ops"),
                    sd_prod=table_sdaster,
                    fr=tr("post-traitements en Rupture"),
-                   reentrant='f',
+                   reentrant='f:TABLE',
 
       reuse=SIMP(statut='c', typ=CO),
       TABLE     = SIMP(statut='o',typ=table_sdaster,max='**'),
