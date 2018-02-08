@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -89,7 +89,7 @@ implicit none
     character(len=16) :: option, compor(ncmpma), nompar(ntamax), opt2, mult_comp
     character(len=19) :: codi, sddisc, k19b, sdcrit
     character(len=24) :: sderro
-    integer, parameter :: carsiz=21
+    integer, parameter :: carsiz=22
     real(kind=8) :: instam, instap, ang(7), r8b, carcri(carsiz), fem(9)
     real(kind=8) :: deps(9), sigm(6), sigp(6), epsm(9), eps(9), vr(ntamax)
     real(kind=8) :: valimp(9), r(12), rini(12), dy(12), ddy(12), y(12), rac2

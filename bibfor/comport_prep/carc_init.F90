@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine carc_init(mesh, carcri, nb_cmp)
 !
 implicit none
@@ -29,10 +29,9 @@ implicit none
 #include "asterfort/jexnom.h"
 #include "asterfort/jexnum.h"
 !
-!
-    character(len=8) , intent(in) :: mesh
-    character(len=19) , intent(in) :: carcri
-    integer, intent(out) :: nb_cmp
+character(len=8) , intent(in) :: mesh
+character(len=19) , intent(in) :: carcri
+integer, intent(out) :: nb_cmp
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -65,7 +64,7 @@ implicit none
     call jenonu(jexnom('&CATA.GD.NOMGD', name_gd), nume_gd)
     call jeveuo(jexnum('&CATA.GD.NOMCMP', nume_gd), 'L', vk8 = p_cata_nomcmp)
     call jelira(jexnum('&CATA.GD.NOMCMP', nume_gd), 'LONMAX', nb_cmp_max)
-    ASSERT(nb_cmp_max .le. 21)
+    ASSERT(nb_cmp_max .le. 22)
 !
 ! - Allocate <CARTE>
 !

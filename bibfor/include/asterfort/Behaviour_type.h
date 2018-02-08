@@ -83,6 +83,7 @@
 ! - Access in <CARCRI>
 !
 #define IVARIEXTE      11
+#define ISTRAINEXTE    22
 #define PARM_ALPHA_THM 18
 #define PARM_THETA_THM 12
 !

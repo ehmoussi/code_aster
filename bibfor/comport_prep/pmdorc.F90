@@ -49,7 +49,7 @@ implicit none
 #include "asterfort/setMFrontPara.h"
 !
 character(len=16), intent(out) :: compor(20)
-real(kind=8), intent(out) :: carcri(21)
+real(kind=8), intent(out) :: carcri(22)
 integer, intent(out) :: nb_vari
 integer, intent(out) :: incela
 character(len=16), intent(out) :: mult_comp
