@@ -207,11 +207,20 @@ class ENTITE:
             try:
                 assert len(orig) in (2, 3), u"un ou deux mots-clés attendus"
                 orig.pop(0)
-                key1 = self.get_entite(orig[0])
-                assert key1 is not None, u"mot-clé inexistant {0!r}".format(orig)
-                if len(orig) > 1:
-                    key2 = key1.get_entite(orig[1])
-                    assert key2 is not None, u"mot-clé inexistant {0!r}".format(orig)
+                msg = u"Mot-clé inexistant {0!r}"
+                if orig[0] != "*":
+                    key1 = self.get_entite(orig[0])
+                    assert key1 is not None, msg.format(orig)
+                    if len(orig) > 1:
+                        key2 = key1.get_entite(orig[1])
+                        assert key2 is not None, msg.format(orig)
+                else:
+                    keywords = self.get_mc_simp(niv=2)
+                    assert orig[1] in keywords, msg.format(orig)
+                    assert keywords.count(orig[1]) > 1, (
+                        u"Le format '*:MCSIMP' ne doit être utilisé que si le "
+                        u"mot-clé simple est sous plusieurs mots-clés facteurs "
+                        u"ou blocs : {0}".format(orig))
             except AssertionError as exc:
                 self.cr.fatal(_(u"'reentrant' doit indiquer quel mot-clé "
                                 u"fournit le concept réentrant.\nPar exemple: "
