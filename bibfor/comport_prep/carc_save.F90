@@ -199,22 +199,20 @@ type(Behaviour_PrepCrit), intent(in) :: ds_compor_para
         p_carc_valv(9)  = iter_deborst_max
         p_carc_valv(10) = resi_radi_rela
         p_carc_valv(IVARIEXTE) = jvariexte
+        p_carc_valv(PARM_THETA_THM) = parm_theta_thm
         p_carc_valv(13) = post_iter
-        p_carc_valv(21) = post_incr
-!       exte_comp UMAT / MFRONT
         p_carc_valv(14) = cptr_nbvarext
         p_carc_valv(15) = cptr_namevarext
         p_carc_valv(16) = cptr_fct_ldc
-        p_carc_valv(19) = cptr_nameprop
-        p_carc_valv(20) = cptr_nbprop
-!       cf. CALC_POINT_MAT / PMDORC
         if (l_matr_unsymm) then
             p_carc_valv(17) = 1
         else
             p_carc_valv(17) = 0
         endif
         p_carc_valv(PARM_ALPHA_THM) = parm_alpha_thm
-        p_carc_valv(PARM_THETA_THM) = parm_theta_thm
+        p_carc_valv(19) = cptr_nameprop
+        p_carc_valv(20) = cptr_nbprop
+        p_carc_valv(21) = post_incr      
 !
 ! ----- Affect in <CARTE>
 !

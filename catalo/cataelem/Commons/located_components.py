@@ -49,6 +49,13 @@ CCAGRPO = LocatedComponents(phys=PHY.CAGEPO, type='ELEM',
                                         'HZ2', 'EPY2', 'EPZ2', 'R1', 'EP1',
                                         'R2', 'EP2', 'TSEC',))
 
+CCARCRI  = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
+                             components=('ITECREL', 'MACOMP', 'RESCREL', 'THETA',
+                                         'ITEDEC', 'INTLOC', 'PERTURB', 'TOLDEBO',
+                                         'ITEDEBO', 'RESIRADI', 'VARIEXTE', 'THETATHM',
+                                         'POSTITER', 'LC_EXT[3]', 'MATRNSYM', 'ALPHATHM',
+                                         'LC_EXT2[2]', 'POSTINCR', ))
+
 CCDTAU = LocatedComponents(phys=PHY.PILO_R, type='ELEM',
                            components=('A0',))
 
