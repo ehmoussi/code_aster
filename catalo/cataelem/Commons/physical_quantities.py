@@ -446,6 +446,7 @@ CARCRI   = PhysicalQuantity(type='R',
        'ALPHATHM',
        'LC_EXT2[2]',
        'POSTINCR',
+       'STRAIN',
     ),
     comment="""  CARCRI Type :R Critere de convergence d'un probleme non-lineaire materiel
     (pour 1 point de Gauss)
@@ -467,6 +468,7 @@ CARCRI   = PhysicalQuantity(type='R',
        ALPHATHM : parametre ALPHA pour la THM (volumes finis)
        LC_EXT[2]: pointeurs vers routines externes (UMAT / MFRONT) => materiaux
        POSTINCR : type de critere POST_INCR : 0=rien, 1=REST_ECRO
+       STRAIN   : modele de deformation pour MFront
 """)
 
 

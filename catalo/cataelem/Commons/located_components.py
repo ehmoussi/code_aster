@@ -54,7 +54,7 @@ CCARCRI  = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
                                          'ITEDEC', 'INTLOC', 'PERTURB', 'TOLDEBO',
                                          'ITEDEBO', 'RESIRADI', 'VARIEXTE', 'THETATHM',
                                          'POSTITER', 'LC_EXT[3]', 'MATRNSYM', 'ALPHATHM',
-                                         'LC_EXT2[2]', 'POSTINCR', ))
+                                         'LC_EXT2[2]', 'POSTINCR', 'STRAIN'))
 
 CCDTAU = LocatedComponents(phys=PHY.PILO_R, type='ELEM',
                            components=('A0',))
