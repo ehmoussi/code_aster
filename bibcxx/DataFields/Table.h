@@ -65,26 +65,26 @@ public:
      * @brief Constructeur
      * @param name Nom Jeveux du champ aux noeuds
      */
-    TableInstance( const std::string& name, 
-                   const std::string &type = "TABLE", 
-                   const JeveuxMemory memType = Permanent ):
-        DataStructure( name, 19, type, memType ),
+    TableInstance( const std::string& name ) throw( std::runtime_error ):
+        DataStructure( name, 19, "TABLE" ),
         _memoryLocation( JeveuxVectorChar8( getName() + ".TBBA" ) ),
         _description( JeveuxVectorLong( getName() + ".TBNP" ) ),
         _parameterDescription( JeveuxVectorChar24( getName() + ".TBLP" ) )
     {
+     //std::cout<< "name = "<< this->getName() << std::endl ;
     };
 
     /**
      * @brief Constructeur
      */
-    TableInstance( const JeveuxMemory memType = Permanent, 
-                   const std::string &type = "TABLE" ):
-        DataStructure( ResultNaming::getNewResultName(), 19, type, memType ),
+    TableInstance():
+        DataStructure( ResultNaming::getNewResultName(), 19, "TABLE" ),
         _memoryLocation( JeveuxVectorChar8( getName() + ".TBBA" ) ),
         _description( JeveuxVectorLong( getName() + ".TBNP" ) ),
         _parameterDescription( JeveuxVectorChar24( getName() + ".TBLP" ) )
-    {};
+    {
+    // std::cout<< "name = "<< this->getName() << std::endl ;
+    };
 
     ~TableInstance()
     {
@@ -132,16 +132,19 @@ public:
    * @param name Nom Jeveux du champ aux noeuds
    */
     TableOfFunctionsInstance( const std::string& name ):
-                    TableInstance( name, "TABLE_FONCTION" )
+                    TableInstance( name )
     {
+       this->setType( "TABLE_FONCTION" );
     };
+ 
 
     /**
      * @brief Constructeur
      */
     TableOfFunctionsInstance():
-                    TableInstance("TABLE_FONCTION" )
+                    TableInstance()
     {
+        this->setType( "TABLE_FONCTION" );
     };
 };
 
@@ -163,16 +166,18 @@ public:
    * @param name Nom Jeveux du champ aux noeuds
    */
     TableContainerInstance( const std::string& name ):
-                    TableInstance( name, "TABLE_CONTAINER" )
+                    TableInstance( name )
     {
+      this-> setType( "TABLE_CONTAINER" );
     };
 
     /**
      * @brief Constructeur
      */
     TableContainerInstance():
-                    TableInstance(ResultNaming::getNewResultName(),"TABLE_CONTAINER" )
+                    TableInstance()
     {
+      this-> setType( "TABLE_CONTAINER");
     };
 };
 

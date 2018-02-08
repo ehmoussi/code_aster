@@ -19,7 +19,7 @@
 # person_in_charge: mathieu.courtois at edf.fr
 # person_in_charge: mathieu.courtois@edf.fr
 
-from ..Objects import Table
+from ..Objects import Table, TableContainer, TableOfFunctions
 from .ExecuteCommand import ExecuteCommand
 
 
