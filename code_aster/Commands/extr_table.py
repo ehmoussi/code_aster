@@ -24,6 +24,9 @@ from ..Objects import ElementaryVector
 from ..Objects import Table
 from ..Objects import GeneralizedAssemblyMatrixDouble
 from ..Objects import AssemblyMatrixDouble
+from ..Objects import Surface
+from ..Objects import MechanicalModeContainer
+from ..Objects import PCFieldOnMeshDouble, FieldOnElementsDouble
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -49,6 +52,14 @@ class ExtrTable(ExecuteCommand):
             self.result = GeneralizedAssemblyMatrixDouble()
         elif keywords['TYPE_RESU'] =='MATR_ELEM_DEPL_R':
             self.result = AssemblyMatrixDouble()
+        elif keywords['TYPE_RESU'] =='NAPPE_SDASTER':
+            self.result = Surface()
+        elif keywords['TYPE_RESU'] =='MODE_MECA':
+            self.result = MechanicalModeContainer()
+        elif keywords['TYPE_RESU'] =='CARTE_SDASTER':
+            self.result = PCFieldOnMeshDouble()
+        elif keywords['TYPE_RESU'] =='CHAM_ELEM':
+            self.result = FieldOnElementsDouble()
         else:
             raise NotImplementedError()
 
