@@ -21,6 +21,9 @@
 
 from ..Objects import Function
 from ..Objects import ElementaryVector
+from ..Objects import Table
+from ..Objects import GeneralizedAssemblyMatrixDouble
+from ..Objects import AssemblyMatrixDouble
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -40,6 +43,12 @@ class ExtrTable(ExecuteCommand):
             self._result = ElementaryVector()
         elif keywords['TYPE_RESU'] == 'FONCTION_SDASTER':
             self._result = Function()
+        elif keywords['TYPE_RESU'] == 'TABLE_SDASTER':
+            self.result  = Table()
+        elif keywords['TYPE_RESU'] =='MATR_ASSE_GENE_R':
+            self.result = GeneralizedAssemblyMatrixDouble()
+        elif keywords['TYPE_RESU'] =='MATR_ELEM_DEPL_R':
+            self.result = AssemblyMatrixDouble()
         else:
             raise NotImplementedError()
 
