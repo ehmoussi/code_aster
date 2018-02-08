@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -263,6 +263,14 @@ def build(self):
             osp.join(self.env.data_path or '', 'datg')]
     if self.env.install_tests:
         lsub.extend(['astest', osp.join(self.env.validation_path, 'astest')])
+    else:
+        dest = osp.join(self.env.ASTERDATADIR, 'tests')
+        if osp.exists(dest) and not osp.islink(dest):
+            Logs.warn("Symlink not created, {0!r} already exists "
+                      "(use '--install-tests' to update this directory)."
+                      .format(dest))
+        elif not osp.exists(dest):
+            self.symlink_as(dest, osp.abspath("astest"))
     for optional in lsub:
         if osp.exists(osp.join(optional, 'wscript')):
             self.recurse(optional)
