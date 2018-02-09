@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -650,6 +650,7 @@ TEMPE1=EXTR_RESU(RESULTAT=TEMPE,
                  ARCHIVAGE=_F(INST=(195.0,200.0,),),);
 
 TEMPE1=THER_LINEAIRE(reuse =TEMPE1,
+                #      EVOL_THER=TEMPE1,
                      MODELE=MOTH,
                      CHAM_MATER=CHMAT,
                      EXCIT=_F(CHARGE=CHTH2,),
