@@ -216,7 +216,10 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
                 d = self.cree_dict_valeurs(self.mc_liste)
                 d = _backward_compatibility_27390(self, d)
                 orig = self.definition.reentrant.split(":")[1:]
-                keyword = d.get(orig[0])
+                for k in orig[0].split("|"):
+                    keyword = d.get(k)
+                    if keyword is not None:
+                        break
                 if keyword is None:
                     if cr == 'oui':
                         self.cr.fatal(_(u'Concept réutilisé : non trouvé sous %s'),
