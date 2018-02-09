@@ -212,6 +212,35 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
                                       self.reuse.nom, self.sdnom)
                     valid = 0
             if valid:
+                d = self.cree_dict_valeurs(self.mc_liste)
+                orig = self.definition.reentrant.split(":")[1:]
+                keyword = d.get(orig[0])
+                if keyword is None:
+                    if cr == 'oui':
+                        self.cr.fatal(_(u'Concept réutilisé : non trouvé sous %s'),
+                                      "/".join(orig))
+                    valid = 0
+                if valid and len(orig) == 2:
+                    keyword = keyword.get(orig[1])
+                    if keyword is None:
+                        if cr == 'oui':
+                            self.cr.fatal(_(u'Concept réutilisé : non trouvé sous %s'),
+                                          "/".join(orig))
+                        valid = 0
+                if AsType(keyword) != sd_prod:
+                    if cr == 'oui':
+                        self.cr.fatal(_(u'Concept réutilisé : type incorrect '
+                                        u' %s au lieu de %s'),
+                                        AsType(keyword), sd_prod)
+                    valid = 0
+                if (self.sdnom != '' and self.sdnom[0] != '_'
+                    and keyword.nom != self.sdnom):
+                    if cr == 'oui':
+                        self.cr.fatal(_(u'Concept réutilisé : concept '
+                                        u'inattendu %s au lieu de %s'),
+                                        keyword.nom, self.sdnom)
+                    valid = 0
+            if valid:
                 self.sd = self.reuse
         else:
             if sd_prod == None:  # Pas de concept retourné
