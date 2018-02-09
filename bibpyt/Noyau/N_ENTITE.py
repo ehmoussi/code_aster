@@ -209,7 +209,10 @@ class ENTITE:
                 orig.pop(0)
                 msg = u"Mot-clé inexistant {0!r}"
                 if orig[0] != "*":
-                    key1 = self.get_entite(orig[0])
+                    for k in orig[0].split("|"):
+                        key1 = self.get_entite(k)
+                        if key1 is not None:
+                            break
                     assert key1 is not None, msg.format(orig)
                     if len(orig) > 1:
                         key2 = key1.get_entite(orig[1])

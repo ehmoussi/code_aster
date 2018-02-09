@@ -39,7 +39,7 @@ def crea_resu_prod(TYPE_RESU,**args):
     raise AsException("type de concept resultat non prevu")
 
 CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,
-               reentrant='f:RESULTAT',
+               reentrant='f:RESULTAT|RESU_FINAL',
                fr=tr("Creer ou enrichir une structure de donnees resultat a partir de champs aux noeuds"),
 
          reuse=SIMP(statut='c', typ=CO),
