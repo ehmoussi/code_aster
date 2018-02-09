@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,520 +17,551 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
+      DEBUG=_F(SDVERI='OUI'))
 
-E=2.0E+05
+E = 2.0E+05
 
-NU=0.3
+NU = 0.3
 
-H=1.0
+H = 1.0
 
-ALPHA_FO=DEFI_CONSTANTE(VALE= 1.E-05)
+C_MEM = E * H / (1. - (NU * NU))
 
-C_MEM=E * H / ( 1. - ( NU * NU ) )
+C_FLE = (E * H * H * H) / (12. * (1. - (NU * NU)))
 
-C_FLE=( E * H * H * H ) / ( 12. *  ( 1. - ( NU * NU ) ) )
+C_CIS = E * H / (1. + NU)
 
-C_CIS=E * H / ( 1. + NU )
+C1111 = C_MEM * 1.
 
-C1111=C_MEM * 1.
+C1112 = C_MEM * NU
 
-C1112=C_MEM * NU
+C2222 = C_MEM * 1.
 
-C2222=C_MEM * 1.
+C1212 = C_MEM * (1. - NU) / 2.
 
-C1212=C_MEM * ( 1. - NU ) / 2.
+D1111 = C_FLE * 1.
 
-D1111=C_FLE * 1.
+D1112 = C_FLE * NU
 
-D1112=C_FLE * NU
+D2222 = C_FLE * 1.
 
-D2222=C_FLE * 1.
+D1212 = C_FLE * (1. - NU) / 2.
 
-D1212=C_FLE * ( 1. - NU ) / 2.
+G11 = C_CIS * 5. / 12.
 
-G11=C_CIS * 5. / 12.
+G22 = C_CIS * 5. / 12.
 
-G22=C_CIS * 5. / 12.
-
-C1111_FO=DEFI_CONSTANTE(VALE=C1111)
-
-
-C1112_FO=DEFI_FONCTION(NOM_PARA='TEMP',
-                       VALE=(-1.,C1112,
-                              0.,C1112,
-                              1.,C1112),
-                        PROL_DROITE='CONSTANT',
-                        PROL_GAUCHE='CONSTANT')
-C2222_FO=DEFI_FONCTION(NOM_PARA='TEMP',
-                       VALE=(-1.,C2222,
-                              0.,C2222,
-                              1.,C2222),
-                        PROL_DROITE='CONSTANT',
-                        PROL_GAUCHE='CONSTANT')
-C1212_FO=DEFI_FONCTION(NOM_PARA='TEMP',
-                       VALE=(-1.,C1212,
-                              0.,C1212,
-                              1.,C1212),
-                        PROL_DROITE='CONSTANT',
-                        PROL_GAUCHE='CONSTANT')
-D1111_FO=DEFI_FONCTION(NOM_PARA='TEMP',
-                       VALE=(-1.,D1111,
-                              0.,D1111,
-                              1.,D1111),
-                        PROL_DROITE='CONSTANT',
-                        PROL_GAUCHE='CONSTANT')
-D1112_FO=DEFI_FONCTION(NOM_PARA='TEMP',
-                       VALE=(-1.,D1112,
-                              0.,D1112,
-                              1.,D1112),
-                        PROL_DROITE='CONSTANT',
-                        PROL_GAUCHE='CONSTANT')
-D2222_FO=DEFI_FONCTION(NOM_PARA='TEMP',
-                       VALE=(-1.,D2222,
-                              0.,D2222,
-                              1.,D2222),
-                        PROL_DROITE='CONSTANT',
-                        PROL_GAUCHE='CONSTANT')
-D1212_FO=DEFI_FONCTION(NOM_PARA='TEMP',
-                       VALE=(-1.,D1212,
-                              0.,D1212,
-                              1.,D1212),
-                        PROL_DROITE='CONSTANT',
-                        PROL_GAUCHE='CONSTANT')
-G11_FO=DEFI_FONCTION(NOM_PARA='TEMP',
-                       VALE=(-1.,G11,
-                              0.,G11,
-                              1.,G11),
-                        PROL_DROITE='CONSTANT',
-                        PROL_GAUCHE='CONSTANT')
-G22_FO=DEFI_FONCTION(NOM_PARA='TEMP',
-                       VALE=(-1.,G22,
-                              0.,G22,
-                              1.,G22),
-                        PROL_DROITE='CONSTANT',
-                        PROL_GAUCHE='CONSTANT')
-
-#......................................................................
+# ......................................................................
 #
 # MODELISATION DKT
-#......................................................................
-#
+# ......................................................................
+MA = LIRE_MAILLAGE(FORMAT='MED',
+                   UNITE=20)
 
-MA=LIRE_MAILLAGE(FORMAT='MED', )
+MA = DEFI_GROUP(reuse=MA,
+                CREA_GROUP_MA=_F(NOM='TOUT',
+                                 TOUT='OUI'),
+                MAILLAGE=MA)
 
-DEFI_GROUP( reuse=MA,   MAILLAGE=MA,
-  CREA_GROUP_MA=_F(  NOM = 'TOUT', TOUT = 'OUI'))
+MO = AFFE_MODELE(AFFE=_F(MODELISATION='DKT',
+                         PHENOMENE='MECANIQUE',
+                         TOUT='OUI'),
+                 MAILLAGE=MA)
 
-MO=AFFE_MODELE(  MAILLAGE=MA,
-         AFFE=_F(  TOUT = 'OUI',PHENOMENE = 'MECANIQUE',
-                           MODELISATION = 'DKT'))
+CARE = AFFE_CARA_ELEM(COQUE=_F(ANGL_REP=(0.0, 0.0),
+                               EPAIS=1.0,
+                               GROUP_MA='TOUT'),
+                      MODELE=MO)
 
-CARE=AFFE_CARA_ELEM( MODELE=MO,
-       COQUE=_F(
-       GROUP_MA = 'TOUT',
-EPAIS = 1.0, ANGL_REP = (0.,0.,)) )
+MOTHER = AFFE_MODELE(AFFE=_F(MODELISATION='COQUE',
+                             PHENOMENE='THERMIQUE',
+                             TOUT='OUI'),
+                     MAILLAGE=MA)
 
-MOTHER=AFFE_MODELE(  MAILLAGE=MA,
-         AFFE=_F(  TOUT = 'OUI',PHENOMENE = 'THERMIQUE',
-                           MODELISATION = 'COQUE'))
+CARETHE = AFFE_CARA_ELEM(COQUE=_F(EPAIS=1.0,
+                                  GROUP_MA='TOUT'),
+                         MODELE=MOTHER)
 
-MAT=DEFI_MATERIAU( ELAS_COQUE=_F(  MEMB_L = C1111,
-                                      MEMB_LT = C1112,
-                                      MEMB_T = C2222,
-                                      MEMB_G_LT = C1212,
-                                      FLEX_L = D1111,
-                                      FLEX_LT = D1112,
-                                      FLEX_T = D2222,
-                                      FLEX_G_LT = D1212,
-                                      CISA_L = G11,
-                                      CISA_T = G22,
-                             RHO = 8.E-6, ALPHA = 1.E-05))
+MAT = DEFI_MATERIAU(ELAS_COQUE=_F(ALPHA=1e-05,
+                                  CISA_L=G11,
+                                  CISA_T=G22,
+                                  FLEX_G_LT=D1212,
+                                  FLEX_L=D1111,
+                                  FLEX_LT=D1112,
+                                  FLEX_T=D2222,
+                                  MEMB_G_LT=C1212,
+                                  MEMB_L=C1111,
+                                  MEMB_LT=C1112,
+                                  MEMB_T=C2222,
+                                  RHO=8e-06))
 
-RHOF=DEFI_CONSTANTE(VALE = 8.e-6)
-MATHH=DEFI_MATERIAU( ELAS_COQUE_FO=_F(  MEMB_L = C1111_FO,
-                                      MEMB_LT = C1112_FO,
-                                      MEMB_T = C2222_FO,
-                                      MEMB_G_LT = C1212_FO,
-                                      FLEX_L = D1111_FO,
-                                      FLEX_LT = D1112_FO,
-                                      FLEX_T = D2222_FO,
-                                      FLEX_G_LT = D1212_FO,
-                                      CISA_L = G11_FO,
-                                      CISA_T = G22_FO,
-                           RHO = RHOF, ALPHA = ALPHA_FO))
+MATHER = DEFI_MATERIAU(THER=_F(LAMBDA=1.0,
+                               RHO_CP=0.0))
 
-MATHER=DEFI_MATERIAU(THER=_F( LAMBDA = 1.0, RHO_CP = 0.0) )
+CHMAT = AFFE_MATERIAU(AFFE=_F(MATER=MAT,
+                              TOUT='OUI'),
+                      MAILLAGE=MA)
 
-CHMAT=AFFE_MATERIAU(  MAILLAGE=MA,
-                        AFFE=_F(  TOUT = 'OUI', MATER = MAT))
+CHMATHE = AFFE_MATERIAU(AFFE=_F(MATER=MATHER,
+                                TOUT='OUI'),
+                        MAILLAGE=MA)
 
-CHMATH=AFFE_MATERIAU(  MAILLAGE=MA,
-                        AFFE=_F(  TOUT = 'OUI', MATER = MATHH))
+ALPHA_FO = DEFI_CONSTANTE(VALE=1e-05)
 
-CHMATHE=AFFE_MATERIAU(  MAILLAGE=MA,
-                        AFFE=_F(  TOUT = 'OUI', MATER = MATHER))
+C1111_FO = DEFI_CONSTANTE(VALE=C1111)
 
-CARETHE=AFFE_CARA_ELEM(   MODELE=MOTHER,
-                           COQUE=_F(
-       GROUP_MA = 'TOUT',
-   EPAIS = 1.0)       )
+C1112_FO = DEFI_FONCTION(NOM_PARA='TEMP',
+                         PROL_DROITE='CONSTANT',
+                         PROL_GAUCHE='CONSTANT',
+                         VALE=(-1.0, C1112, 0.0, C1112, 1.0, C1112))
 
-CHTHE=AFFE_CHAR_THER(
-            MODELE=MOTHER,
-        TEMP_IMPO=_F( TOUT = 'OUI', TEMP_INF = -0.5,   TEMP_SUP = 0.5)
-                       )
+C2222_FO = DEFI_FONCTION(NOM_PARA='TEMP',
+                         PROL_DROITE='CONSTANT',
+                         PROL_GAUCHE='CONSTANT',
+                         VALE=(-1.0, C2222, 0.0, C2222, 1.0, C2222))
 
-CHTH2=AFFE_CHAR_THER(
-            MODELE=MOTHER,
-        TEMP_IMPO=_F( TOUT = 'OUI', TEMP_INF = 0.1,   TEMP_SUP = 0.1))
+C1212_FO = DEFI_FONCTION(NOM_PARA='TEMP',
+                         PROL_DROITE='CONSTANT',
+                         PROL_GAUCHE='CONSTANT',
+                         VALE=(-1.0, C1212, 0.0, C1212, 1.0, C1212))
 
-TEMPHOM=CREA_CHAMP( OPERATION='AFFE', TYPE_CHAM='NOEU_TEMP_R',
-               MAILLAGE=MA,AFFE=(
+D1111_FO = DEFI_FONCTION(NOM_PARA='TEMP',
+                         PROL_DROITE='CONSTANT',
+                         PROL_GAUCHE='CONSTANT',
+                         VALE=(-1.0, D1111, 0.0, D1111, 1.0, D1111))
 
-                _F(
-                TOUT = 'OUI',
-                NOM_CMP = 'TEMP_INF',
-                VALE = 0.),
+D1112_FO = DEFI_FONCTION(NOM_PARA='TEMP',
+                         PROL_DROITE='CONSTANT',
+                         PROL_GAUCHE='CONSTANT',
+                         VALE=(-1.0, D1112, 0.0, D1112, 1.0, D1112))
 
-                _F(
-                TOUT = 'OUI',
-                NOM_CMP = 'TEMP_MIL',
-                VALE = 0.),
+D2222_FO = DEFI_FONCTION(NOM_PARA='TEMP',
+                         PROL_DROITE='CONSTANT',
+                         PROL_GAUCHE='CONSTANT',
+                         VALE=(-1.0, D2222, 0.0, D2222, 1.0, D2222))
 
-                _F(
-                TOUT = 'OUI',
-                NOM_CMP = 'TEMP_SUP',
-                VALE = 0.))
-                )
+D1212_FO = DEFI_FONCTION(NOM_PARA='TEMP',
+                         PROL_DROITE='CONSTANT',
+                         PROL_GAUCHE='CONSTANT',
+                         VALE=(-1.0, D1212, 0.0, D1212, 1.0, D1212))
 
-TEMPLIN=THER_LINEAIRE(
-                  MODELE=MOTHER,
-              CHAM_MATER=CHMATHE,
-               CARA_ELEM=CARETHE,
-                  EXCIT=_F( CHARGE = CHTHE)
-                         )
+G11_FO = DEFI_FONCTION(NOM_PARA='TEMP',
+                       PROL_DROITE='CONSTANT',
+                       PROL_GAUCHE='CONSTANT',
+                       VALE=(-1.0, G11, 0.0, G11, 1.0, G11))
 
-TEMPLI2=THER_LINEAIRE(
-                  MODELE=MOTHER,
-              CHAM_MATER=CHMATHE,
-               CARA_ELEM=CARETHE,
-                  EXCIT=_F( CHARGE = CHTH2)
-                         )
+G22_FO = DEFI_FONCTION(NOM_PARA='TEMP',
+                       PROL_DROITE='CONSTANT',
+                       PROL_GAUCHE='CONSTANT',
+                       VALE=(-1.0, G22, 0.0, G22, 1.0, G22))
 
-CREA_RESU(reuse=TEMPLI2,  OPERATION='AFFE', TYPE_RESU='EVOL_THER',
-                      NOM_CHAM='TEMP',
-                       AFFE=_F(  CHAM_GD = TEMPHOM,
-                                 INST = -1.)
-                                 )
+RHOF = DEFI_CONSTANTE(VALE=8e-06)
 
-# ------------------------------------------------------------------
-TEMPER1=CREA_RESU(  OPERATION='PREP_VRC2', TYPE_RESU='EVOL_THER',
-    PREP_VRC2= _F(  MODELE=MO, CARA_ELEM=CARE, EVOL_THER = TEMPLIN, ),)
-TEMPER2=CREA_RESU(  OPERATION='PREP_VRC2', TYPE_RESU='EVOL_THER',
-    PREP_VRC2= _F(  MODELE=MO, CARA_ELEM=CARE, EVOL_THER = TEMPLI2, ),)
+MATHH = DEFI_MATERIAU(ELAS_COQUE_FO=_F(ALPHA=ALPHA_FO,
+                                       CISA_L=G11_FO,
+                                       CISA_T=G22_FO,
+                                       FLEX_G_LT=D1212_FO,
+                                       FLEX_L=D1111_FO,
+                                       FLEX_LT=D1112_FO,
+                                       FLEX_T=D2222_FO,
+                                       MEMB_G_LT=C1212_FO,
+                                       MEMB_L=C1111_FO,
+                                       MEMB_LT=C1112_FO,
+                                       MEMB_T=C2222_FO,
+                                       RHO=RHOF))
 
+CHMATH = AFFE_MATERIAU(AFFE=_F(MATER=MATHH,
+                               TOUT='OUI'),
+                       MAILLAGE=MA)
 
-CHMAT1=AFFE_MATERIAU(   MAILLAGE=MA,
-       AFFE=_F( TOUT = 'OUI', MATER = MAT),
-       AFFE_VARC=  _F(TOUT='OUI',EVOL=TEMPER1,NOM_VARC='TEMP',NOM_CHAM='TEMP',VALE_REF=0.0),
-       )
-CHMAT2=AFFE_MATERIAU(   MAILLAGE=MA,
-       AFFE=_F( TOUT = 'OUI', MATER = MAT),
-       AFFE_VARC=  _F(TOUT='OUI',EVOL=TEMPER2,NOM_VARC='TEMP',NOM_CHAM='TEMP',VALE_REF=0.0),
-       )
-CHMATH1=AFFE_MATERIAU(   MAILLAGE=MA,
-       AFFE=_F( TOUT = 'OUI', MATER = MATHH),
-       AFFE_VARC=  _F(TOUT='OUI',EVOL=TEMPER1,NOM_VARC='TEMP',NOM_CHAM='TEMP',VALE_REF=0.0),
-       )
+CHTHE = AFFE_CHAR_THER(MODELE=MOTHER,
+                       TEMP_IMPO=_F(TEMP_INF=-0.5,
+                                    TEMP_SUP=0.5,
+                                    TOUT='OUI'))
 
-CHMATH2=AFFE_MATERIAU(   MAILLAGE=MA,
-       AFFE=_F( TOUT = 'OUI', MATER = MATHH),
-       AFFE_VARC=  _F(TOUT='OUI',EVOL=TEMPER2,NOM_VARC='TEMP',NOM_CHAM='TEMP',VALE_REF=0.0),
-       )
+CHTH2 = AFFE_CHAR_THER(MODELE=MOTHER,
+                       TEMP_IMPO=_F(TEMP_INF=0.1,
+                                    TEMP_SUP=0.1,
+                                    TOUT='OUI'))
 
 # ------------------------------------------------------------------
+CHPES = AFFE_CHAR_MECA(DDL_IMPO=(_F(DZ=0.0,
+                                    GROUP_NO='LM'),
+                                 _F(DRX=0.0,
+                                    DRZ=0.0,
+                                    DY=0.0,
+                                    GROUP_NO='KL'),
+                                 _F(DRY=0.0,
+                                    DRZ=0.0,
+                                    DX=0.0,
+                                    GROUP_NO='MN')),
+                       FORCE_ARETE=_F(FZ=0.0008,
+                                      GROUP_MA='HAUT'),
+                       MODELE=MO,
+                       PESANTEUR=_F(DIRECTION=(0.0, 0.0, -1.0),
+                                    GRAVITE=10.0))
 
-CHPES=AFFE_CHAR_MECA(  MODELE=MO,
-           PESANTEUR= _F(GRAVITE=10.,
-                         DIRECTION=(0.,0.,-1.,),),
-         FORCE_ARETE=_F(  GROUP_MA = 'HAUT',        FZ = 8.E-4),DDL_IMPO=(
-            _F(  GROUP_NO = 'LM',              DZ = 0.),
-                _F(  GROUP_NO = 'KL',          DY = 0.,  DRX = 0.,        DRZ = 0.),
-                _F(  GROUP_NO = 'MN',   DX = 0.,                 DRY = 0., DRZ = 0.))
-                                                            )
+CHDIL = AFFE_CHAR_MECA(DDL_IMPO=(_F(DRX=0.0,
+                                    DRY=0.0,
+                                    DZ=0.0,
+                                    GROUP_NO='KNSANSKN'),
+                                 _F(DRX=0.0,
+                                    DRY=0.0,
+                                    DZ=0.0,
+                                    GROUP_NO='LMSANSLM'),
+                                 _F(DRX=0.0,
+                                    DRZ=0.0,
+                                    DY=0.0,
+                                    GROUP_NO='KL'),
+                                 _F(DRY=0.0,
+                                    DRZ=0.0,
+                                    DX=0.0,
+                                    GROUP_NO='MN'),
+                                 _F(DRY=0.0,
+                                    DZ=0.0,
+                                    GROUP_NO='KETL'),
+                                 _F(DRX=0.0,
+                                    DZ=0.0,
+                                    GROUP_NO='METN')),
+                       MODELE=MO)
 
-#
+TEMPLIN = THER_LINEAIRE(CARA_ELEM=CARETHE,
+                        CHAM_MATER=CHMATHE,
+                        EXCIT=_F(CHARGE=CHTHE),
+                        MODELE=MOTHER)
 
-CHDIL=AFFE_CHAR_MECA(  MODELE=MO,
-           DDL_IMPO=(
-           _F(  GROUP_NO = 'KNSANSKN',     DZ = 0.,  DRX = 0., DRY = 0.),
-                    _F(  GROUP_NO = 'LMSANSLM',     DZ = 0.,  DRX = 0., DRY = 0.),
-                    _F(  GROUP_NO = 'KL',   DY = 0.,          DRX = 0., DRZ = 0.),
-                    _F(  GROUP_NO = 'MN',   DX = 0.,          DRY = 0., DRZ = 0.),
-                    _F(  GROUP_NO = 'KETL',         DZ = 0.,  DRY = 0.),
-                    _F(  GROUP_NO = 'METN',         DZ = 0.,  DRX = 0.))
-                                                            )
+TEMPLI2 = THER_LINEAIRE(CARA_ELEM=CARETHE,
+                        CHAM_MATER=CHMATHE,
+                        EXCIT=_F(CHARGE=CHTH2),
+                        MODELE=MOTHER)
 
 # ------------------------------------------------------------------
+DEPLPES = MECA_STATIQUE(CARA_ELEM=CARE,
+                        CHAM_MATER=CHMAT,
+                        EXCIT=_F(CHARGE=CHPES),
+                        MODELE=MO)
 
-DEPLPES=MECA_STATIQUE(MODELE=MO,
-                      CARA_ELEM=CARE,
-                      CHAM_MATER=CHMAT,
-                      EXCIT=_F(CHARGE=CHPES),);
+TEMPHOM = CREA_CHAMP(AFFE=(_F(NOM_CMP='TEMP_INF',
+                              TOUT='OUI',
+                              VALE=0.0),
+                           _F(NOM_CMP='TEMP_MIL',
+                              TOUT='OUI',
+                              VALE=0.0),
+                           _F(NOM_CMP='TEMP_SUP',
+                              TOUT='OUI',
+                              VALE=0.0)),
+                     MAILLAGE=MA,
+                     OPERATION='AFFE',
+                     TYPE_CHAM='NOEU_TEMP_R')
 
-DEPLPES=CALC_CHAMP(reuse=DEPLPES,RESULTAT=DEPLPES,CONTRAINTE=('EFGE_ELNO'))
+DEPLPES = CALC_CHAMP(reuse=DEPLPES,
+                     CONTRAINTE='EFGE_ELNO',
+                     RESULTAT=DEPLPES)
 
+TEMPLI2 = CREA_RESU(reuse=TEMPLI2,
+                    AFFE=_F(CHAM_GD=TEMPHOM,
+                            INST=-1.0),
+                    NOM_CHAM='TEMP',
+                    OPERATION='AFFE',
+                    RESULTAT=TEMPLI2,
+                    TYPE_RESU='EVOL_THER')
 
-DEPLDIL=MECA_STATIQUE(MODELE=MO,
-                      CHAM_MATER=CHMAT1,
-                      CARA_ELEM=CARE,
-                      EXCIT=_F(CHARGE=CHDIL),);
+# ------------------------------------------------------------------
+TEMPER1 = CREA_RESU(OPERATION='PREP_VRC2',
+                    PREP_VRC2=_F(CARA_ELEM=CARE,
+                                 EVOL_THER=TEMPLIN,
+                                 MODELE=MO),
+                    TYPE_RESU='EVOL_THER')
 
-DEPLDIL=CALC_CHAMP(reuse=DEPLDIL,RESULTAT=DEPLDIL,CONTRAINTE=('EFGE_ELNO'))
+CHMAT1 = AFFE_MATERIAU(AFFE=_F(MATER=MAT,
+                               TOUT='OUI'),
+                       AFFE_VARC=_F(EVOL=TEMPER1,
+                                    NOM_CHAM='TEMP',
+                                    NOM_VARC='TEMP',
+                                    TOUT='OUI',
+                                    VALE_REF=0.0),
+                       MAILLAGE=MA)
 
+CHMATH1 = AFFE_MATERIAU(AFFE=_F(MATER=MATHH,
+                                TOUT='OUI'),
+                        AFFE_VARC=_F(EVOL=TEMPER1,
+                                     NOM_CHAM='TEMP',
+                                     NOM_VARC='TEMP',
+                                     TOUT='OUI',
+                                     VALE_REF=0.0),
+                        MAILLAGE=MA)
 
+DEPLDIL = MECA_STATIQUE(CARA_ELEM=CARE,
+                        CHAM_MATER=CHMAT1,
+                        EXCIT=_F(CHARGE=CHDIL),
+                        MODELE=MO)
 
-DEPLDILT=MECA_STATIQUE(MODELE=MO,
-                       CHAM_MATER=CHMATH1,
-                       CARA_ELEM=CARE,
-                       EXCIT=_F(CHARGE=CHDIL),);
+DEPLDILT = MECA_STATIQUE(CARA_ELEM=CARE,
+                         CHAM_MATER=CHMATH1,
+                         EXCIT=_F(CHARGE=CHDIL),
+                         MODELE=MO)
 
-DEPLDILT=CALC_CHAMP(reuse=DEPLDILT,RESULTAT=DEPLDILT,CONTRAINTE=('EFGE_ELNO'))
+DEPLDIL = CALC_CHAMP(reuse=DEPLDIL,
+                     CONTRAINTE='EFGE_ELNO',
+                     RESULTAT=DEPLDIL)
 
+DEPLDILT = CALC_CHAMP(reuse=DEPLDILT,
+                      CONTRAINTE='EFGE_ELNO',
+                      RESULTAT=DEPLDILT)
 
+TEMPER2 = CREA_RESU(OPERATION='PREP_VRC2',
+                    PREP_VRC2=_F(CARA_ELEM=CARE,
+                                 EVOL_THER=TEMPLI2,
+                                 MODELE=MO),
+                    TYPE_RESU='EVOL_THER')
 
-DEPLDI2=MECA_STATIQUE(MODELE=MO,
-                      CHAM_MATER=CHMAT2,
-                      CARA_ELEM=CARE,
-                      EXCIT=_F(CHARGE=CHDIL),);
+CHMAT2 = AFFE_MATERIAU(AFFE=_F(MATER=MAT,
+                               TOUT='OUI'),
+                       AFFE_VARC=_F(EVOL=TEMPER2,
+                                    NOM_CHAM='TEMP',
+                                    NOM_VARC='TEMP',
+                                    TOUT='OUI',
+                                    VALE_REF=0.0),
+                       MAILLAGE=MA)
 
-DEPLDI2=CALC_CHAMP(reuse=DEPLDI2,RESULTAT=DEPLDI2,CONTRAINTE=('EFGE_ELNO'))
+CHMATH2 = AFFE_MATERIAU(AFFE=_F(MATER=MATHH,
+                                TOUT='OUI'),
+                        AFFE_VARC=_F(EVOL=TEMPER2,
+                                     NOM_CHAM='TEMP',
+                                     NOM_VARC='TEMP',
+                                     TOUT='OUI',
+                                     VALE_REF=0.0),
+                        MAILLAGE=MA)
 
+DEPLDI2 = MECA_STATIQUE(CARA_ELEM=CARE,
+                        CHAM_MATER=CHMAT2,
+                        EXCIT=_F(CHARGE=CHDIL),
+                        MODELE=MO)
 
+DEPLDI2T = MECA_STATIQUE(CARA_ELEM=CARE,
+                         CHAM_MATER=CHMATH2,
+                         EXCIT=_F(CHARGE=CHDIL),
+                         MODELE=MO)
 
-DEPLDI2T=MECA_STATIQUE(MODELE=MO,
-                       CHAM_MATER=CHMATH2,
-                       CARA_ELEM=CARE,
-                       EXCIT=_F( CHARGE=CHDIL),)
+DEPLDI2 = CALC_CHAMP(reuse=DEPLDI2,
+                     CONTRAINTE='EFGE_ELNO',
+                     RESULTAT=DEPLDI2)
 
-DEPLDI2T=CALC_CHAMP(reuse=DEPLDI2T,RESULTAT=DEPLDI2T,CONTRAINTE=('EFGE_ELNO'))
+DEPLDI2T = CALC_CHAMP(reuse=DEPLDI2T,
+                      CONTRAINTE='EFGE_ELNO',
+                      RESULTAT=DEPLDI2T)
 
-#---------------------------------------------------------------------
-
-
-TEST_RESU(RESU=(_F(NUME_ORDRE=1,
-                   REFERENCE='ANALYTIQUE',
-                   RESULTAT=DEPLPES,
-                   NOM_CHAM='DEPL',
+# ---------------------------------------------------------------------
+TEST_RESU(RESU=(_F(CRITERE='RELATIF',
                    NOEUD='N1',
+                   NOM_CHAM='DEPL',
                    NOM_CMP='DX',
-                   VALE_CALC=-2.33523069E-08,
-                   VALE_REFE=-2.4E-08,
-                   CRITERE='RELATIF',
-                   PRECISION=0.040000000000000001,),
-                _F(NUME_ORDRE=1,
+                   NUME_ORDRE=1,
+                   PRECISION=0.04,
                    REFERENCE='ANALYTIQUE',
                    RESULTAT=DEPLPES,
-                   NOM_CHAM='DEPL',
+                   VALE_CALC=-2.33523069e-08,
+                   VALE_REFE=-2.4e-08),
+                _F(CRITERE='RELATIF',
                    NOEUD='N227',
+                   NOM_CHAM='DEPL',
                    NOM_CMP='DY',
-                   VALE_CALC=-2.33523059E-08,
-                   VALE_REFE=-2.4E-08,
-                   CRITERE='RELATIF',
-                   PRECISION=0.040000000000000001,),
-                _F(NUME_ORDRE=1,
+                   NUME_ORDRE=1,
+                   PRECISION=0.04,
                    REFERENCE='ANALYTIQUE',
                    RESULTAT=DEPLPES,
-                   NOM_CHAM='DEPL',
+                   VALE_CALC=-2.33523059e-08,
+                   VALE_REFE=-2.4e-08),
+                _F(CRITERE='RELATIF',
                    NOEUD='N6',
+                   NOM_CHAM='DEPL',
                    NOM_CMP='DZ',
-                   VALE_CALC= 5.02660158E-09,
-                   VALE_REFE=5.0000000000000001E-09,
-                   CRITERE='RELATIF',
-                   PRECISION=1.E-2,),
-                _F(NUME_ORDRE=1,
+                   NUME_ORDRE=1,
+                   PRECISION=0.01,
                    REFERENCE='ANALYTIQUE',
                    RESULTAT=DEPLPES,
-                   NOM_CHAM='DEPL',
+                   VALE_CALC=5.02660158e-09,
+                   VALE_REFE=5e-09),
+                _F(CRITERE='RELATIF',
                    NOEUD='N215',
+                   NOM_CHAM='DEPL',
                    NOM_CMP='DZ',
-                   VALE_CALC= 5.02660191E-09,
-                   VALE_REFE=5.0000000000000001E-09,
-                   CRITERE='RELATIF',
-                   PRECISION=1.E-2,),
-                _F(NUME_ORDRE=1,
+                   NUME_ORDRE=1,
+                   PRECISION=0.01,
                    REFERENCE='ANALYTIQUE',
                    RESULTAT=DEPLPES,
-                   NOM_CHAM='DEPL',
+                   VALE_CALC=5.02660191e-09,
+                   VALE_REFE=5e-09),
+                _F(CRITERE='RELATIF',
                    NOEUD='N6',
+                   NOM_CHAM='DEPL',
                    NOM_CMP='DRY',
-                   VALE_CALC=-2.29228970E-09,
-                   VALE_REFE=-2.4E-09,
-                   CRITERE='RELATIF',
-                   PRECISION=0.050000000000000003,),
-                _F(NUME_ORDRE=1,
+                   NUME_ORDRE=1,
+                   PRECISION=0.05,
                    REFERENCE='ANALYTIQUE',
                    RESULTAT=DEPLPES,
-                   NOM_CHAM='DEPL',
+                   VALE_CALC=-2.2922897e-09,
+                   VALE_REFE=-2.4e-09),
+                _F(CRITERE='RELATIF',
                    NOEUD='N215',
+                   NOM_CHAM='DEPL',
                    NOM_CMP='DRX',
-                   VALE_CALC= 2.29228988E-09,
-                   VALE_REFE=2.4E-09,
-                   CRITERE='RELATIF',
-                   PRECISION=0.050000000000000003,),
-                _F(NUME_ORDRE=1,
-                   REFERENCE='ANALYTIQUE',
-                   RESULTAT=DEPLDI2,
-                   NOM_CHAM='DEPL',
-                   NOEUD='N11',
-                   NOM_CMP='DX',
-                   VALE_CALC= 2.60000000E-05,
-                   VALE_REFE=2.5999999999999998E-05,
-                   CRITERE='RELATIF',
-                   PRECISION=1.E-3,),
-                _F(NUME_ORDRE=1,
-                   REFERENCE='ANALYTIQUE',
-                   RESULTAT=DEPLDI2,
-                   NOM_CHAM='DEPL',
-                   NOEUD='N161',
-                   NOM_CMP='DY',
-                   VALE_CALC= 2.60000000E-05,
-                   VALE_REFE=2.5999999999999998E-05,
-                   CRITERE='RELATIF',
-                   PRECISION=1.E-3,),
-                _F(NUME_ORDRE=1,
-                   REFERENCE='ANALYTIQUE',
-                   RESULTAT=DEPLDI2T,
-                   NOM_CHAM='DEPL',
-                   NOEUD='N11',
-                   NOM_CMP='DX',
-                   VALE_CALC= 2.60000000E-05,
-                   VALE_REFE=2.5999999999999998E-05,
-                   CRITERE='RELATIF',
-                   PRECISION=1.E-3,),
-                _F(NUME_ORDRE=1,
-                   REFERENCE='ANALYTIQUE',
-                   RESULTAT=DEPLDI2T,
-                   NOM_CHAM='DEPL',
-                   NOEUD='N161',
-                   NOM_CMP='DY',
-                   VALE_CALC= 2.60000000E-05,
-                   VALE_REFE=2.5999999999999998E-05,
-                   CRITERE='RELATIF',
-                   PRECISION=1.E-3,),
-                _F(NUME_ORDRE=1,
+                   NUME_ORDRE=1,
+                   PRECISION=0.05,
                    REFERENCE='ANALYTIQUE',
                    RESULTAT=DEPLPES,
-                   NOM_CHAM='EFGE_ELNO',
+                   VALE_CALC=2.29228988e-09,
+                   VALE_REFE=2.4e-09),
+                _F(CRITERE='RELATIF',
+                   NOEUD='N11',
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DX',
+                   NUME_ORDRE=1,
+                   PRECISION=0.001,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=DEPLDI2,
+                   VALE_CALC=2.6e-05,
+                   VALE_REFE=2.6e-05),
+                _F(CRITERE='RELATIF',
+                   NOEUD='N161',
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DY',
+                   NUME_ORDRE=1,
+                   PRECISION=0.001,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=DEPLDI2,
+                   VALE_CALC=2.6e-05,
+                   VALE_REFE=2.6e-05),
+                _F(CRITERE='RELATIF',
+                   NOEUD='N11',
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DX',
+                   NUME_ORDRE=1,
+                   PRECISION=0.001,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=DEPLDI2T,
+                   VALE_CALC=2.6e-05,
+                   VALE_REFE=2.6e-05),
+                _F(CRITERE='RELATIF',
+                   NOEUD='N161',
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DY',
+                   NUME_ORDRE=1,
+                   PRECISION=0.001,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=DEPLDI2T,
+                   VALE_CALC=2.6e-05,
+                   VALE_REFE=2.6e-05),
+                _F(CRITERE='RELATIF',
+                   MAILLE='M362',
                    NOEUD='N1',
+                   NOM_CHAM='EFGE_ELNO',
                    NOM_CMP='NYY',
-                   VALE_CALC= 7.70119490E-04,
-                   VALE_REFE=8.0000000000000004E-4,
-                   CRITERE='RELATIF',
-                   PRECISION=0.050000000000000003,
-                   MAILLE='M362',),
-                _F(NUME_ORDRE=1,
+                   NUME_ORDRE=1,
+                   PRECISION=0.05,
                    REFERENCE='ANALYTIQUE',
                    RESULTAT=DEPLPES,
-                   NOM_CHAM='EFGE_ELNO',
+                   VALE_CALC=0.00077011949,
+                   VALE_REFE=0.0008),
+                _F(CRITERE='RELATIF',
+                   MAILLE='M400',
                    NOEUD='N227',
+                   NOM_CHAM='EFGE_ELNO',
                    NOM_CMP='NYY',
-                   VALE_CALC= 7.70119493E-04,
-                   VALE_REFE=8.0000000000000004E-4,
-                   CRITERE='RELATIF',
-                   PRECISION=0.050000000000000003,
-                   MAILLE='M400',),
-                _F(NUME_ORDRE=1,
+                   NUME_ORDRE=1,
+                   PRECISION=0.05,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=DEPLPES,
+                   VALE_CALC=0.000770119493,
+                   VALE_REFE=0.0008),
+                _F(CRITERE='RELATIF',
+                   MAILLE='M1',
+                   NOEUD='N11',
+                   NOM_CHAM='EFGE_ELNO',
+                   NOM_CMP='MYY',
+                   NUME_ORDRE=1,
+                   PRECISION=0.001,
                    REFERENCE='ANALYTIQUE',
                    RESULTAT=DEPLDIL,
-                   NOM_CHAM='EFGE_ELNO',
-                   NOEUD='N11',
-                   NOM_CMP='MYY',
                    VALE_CALC=-0.238095238,
-                   VALE_REFE=-0.238095,
-                   CRITERE='RELATIF',
-                   PRECISION=1.E-3,
-                   MAILLE='M1',),
-                _F(NUME_ORDRE=1,
+                   VALE_REFE=-0.238095),
+                _F(CRITERE='RELATIF',
+                   MAILLE='M39',
+                   NOEUD='N161',
+                   NOM_CHAM='EFGE_ELNO',
+                   NOM_CMP='MYY',
+                   NUME_ORDRE=1,
+                   PRECISION=0.001,
                    REFERENCE='ANALYTIQUE',
                    RESULTAT=DEPLDIL,
-                   NOM_CHAM='EFGE_ELNO',
-                   NOEUD='N161',
-                   NOM_CMP='MYY',
                    VALE_CALC=-0.238095238,
-                   VALE_REFE=-0.238095,
-                   CRITERE='RELATIF',
-                   PRECISION=1.E-3,
-                   MAILLE='M39',),
-                _F(NUME_ORDRE=1,
+                   VALE_REFE=-0.238095),
+                _F(CRITERE='RELATIF',
+                   MAILLE='M1',
+                   NOEUD='N11',
+                   NOM_CHAM='EFGE_ELNO',
+                   NOM_CMP='NYY',
+                   NUME_ORDRE=1,
+                   PRECISION=0.001,
                    REFERENCE='ANALYTIQUE',
                    RESULTAT=DEPLDI2,
+                   VALE_CALC=-0.2,
+                   VALE_REFE=-0.2),
+                _F(CRITERE='RELATIF',
+                   MAILLE='M39',
+                   NOEUD='N161',
                    NOM_CHAM='EFGE_ELNO',
-                   NOEUD='N11',
                    NOM_CMP='NYY',
-                   VALE_CALC=-0.200000000,
-                   VALE_REFE=-0.20000000000000001,
-                   CRITERE='RELATIF',
-                   PRECISION=1.E-3,
-                   MAILLE='M1',),
-                _F(NUME_ORDRE=1,
+                   NUME_ORDRE=1,
+                   PRECISION=0.001,
                    REFERENCE='ANALYTIQUE',
                    RESULTAT=DEPLDI2,
+                   VALE_CALC=-0.2,
+                   VALE_REFE=-0.2),
+                _F(CRITERE='RELATIF',
+                   MAILLE='M1',
+                   NOEUD='N11',
                    NOM_CHAM='EFGE_ELNO',
-                   NOEUD='N161',
-                   NOM_CMP='NYY',
-                   VALE_CALC=-0.200000000,
-                   VALE_REFE=-0.20000000000000001,
-                   CRITERE='RELATIF',
-                   PRECISION=1.E-3,
-                   MAILLE='M39',),
-                _F(NUME_ORDRE=1,
+                   NOM_CMP='MYY',
+                   NUME_ORDRE=1,
+                   PRECISION=0.001,
                    REFERENCE='ANALYTIQUE',
                    RESULTAT=DEPLDILT,
-                   NOM_CHAM='EFGE_ELNO',
-                   NOEUD='N11',
-                   NOM_CMP='MYY',
                    VALE_CALC=-0.238095238,
-                   VALE_REFE=-0.238095,
-                   CRITERE='RELATIF',
-                   PRECISION=1.E-3,
-                   MAILLE='M1',),
-                _F(NUME_ORDRE=1,
+                   VALE_REFE=-0.238095),
+                _F(CRITERE='RELATIF',
+                   MAILLE='M39',
+                   NOEUD='N161',
+                   NOM_CHAM='EFGE_ELNO',
+                   NOM_CMP='MYY',
+                   NUME_ORDRE=1,
+                   PRECISION=0.001,
                    REFERENCE='ANALYTIQUE',
                    RESULTAT=DEPLDILT,
-                   NOM_CHAM='EFGE_ELNO',
-                   NOEUD='N161',
-                   NOM_CMP='MYY',
                    VALE_CALC=-0.238095238,
-                   VALE_REFE=-0.238095,
-                   CRITERE='RELATIF',
-                   PRECISION=1.E-3,
-                   MAILLE='M39',),
-                _F(NUME_ORDRE=1,
-                   REFERENCE='ANALYTIQUE',
-                   RESULTAT=DEPLDI2T,
-                   NOM_CHAM='EFGE_ELNO',
+                   VALE_REFE=-0.238095),
+                _F(CRITERE='RELATIF',
+                   MAILLE='M1',
                    NOEUD='N11',
+                   NOM_CHAM='EFGE_ELNO',
                    NOM_CMP='NYY',
-                   VALE_CALC=-0.200000000,
-                   VALE_REFE=-0.20000000000000001,
-                   CRITERE='RELATIF',
-                   PRECISION=1.E-3,
-                   MAILLE='M1',),
-                _F(NUME_ORDRE=1,
+                   NUME_ORDRE=1,
+                   PRECISION=0.001,
                    REFERENCE='ANALYTIQUE',
                    RESULTAT=DEPLDI2T,
-                   NOM_CHAM='EFGE_ELNO',
+                   VALE_CALC=-0.2,
+                   VALE_REFE=-0.2),
+                _F(CRITERE='RELATIF',
+                   MAILLE='M39',
                    NOEUD='N161',
+                   NOM_CHAM='EFGE_ELNO',
                    NOM_CMP='NYY',
-                   VALE_CALC=-0.200000000,
-                   VALE_REFE=-0.20000000000000001,
-                   CRITERE='RELATIF',
-                   PRECISION=1.E-3,
-                   MAILLE='M39',),
-                ),
-          )
+                   NUME_ORDRE=1,
+                   PRECISION=0.001,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=DEPLDI2T,
+                   VALE_CALC=-0.2,
+                   VALE_REFE=-0.2)))
 
 FIN()
-#
