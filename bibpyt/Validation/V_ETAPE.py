@@ -223,7 +223,6 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
                 if valid and len(orig) == 2:
                     try:
                         keyword = keyword[0]
-                        print "DEBUG: use first occurrence", keyword
                     except IndexError:
                         pass
                     try:
@@ -242,12 +241,11 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
                                         u' %s au lieu de %s'),
                                         AsType(keyword), sd_prod)
                     valid = 0
-                if (valid and self.sdnom != '' and self.sdnom[0] != '_'
-                    and keyword.nom != self.sdnom):
+                if valid and keyword is not self.reuse:
                     if cr == 'oui':
                         self.cr.fatal(_(u'Concept réutilisé : concept '
                                         u'inattendu %s au lieu de %s'),
-                                        keyword.nom, self.sdnom)
+                                        keyword, self.reuse)
                     valid = 0
             if valid:
                 self.sd = self.reuse
