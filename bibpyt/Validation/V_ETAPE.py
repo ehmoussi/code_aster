@@ -221,19 +221,28 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
                                       "/".join(orig))
                     valid = 0
                 if valid and len(orig) == 2:
-                    keyword = keyword.get(orig[1])
+                    try:
+                        keyword = keyword[0]
+                        print "DEBUG: use first occurrence", keyword
+                    except IndexError:
+                        pass
+                    try:
+                        keyword = keyword.get(orig[1])
+                    except Exception as exc:
+                        self.cr.fatal(str(exc))
+                        keyword = None
                     if keyword is None:
                         if cr == 'oui':
                             self.cr.fatal(_(u'Concept réutilisé : non trouvé sous %s'),
                                           "/".join(orig))
                         valid = 0
-                if AsType(keyword) != sd_prod:
+                if valid and AsType(keyword) != sd_prod:
                     if cr == 'oui':
                         self.cr.fatal(_(u'Concept réutilisé : type incorrect '
                                         u' %s au lieu de %s'),
                                         AsType(keyword), sd_prod)
                     valid = 0
-                if (self.sdnom != '' and self.sdnom[0] != '_'
+                if (valid and self.sdnom != '' and self.sdnom[0] != '_'
                     and keyword.nom != self.sdnom):
                     if cr == 'oui':
                         self.cr.fatal(_(u'Concept réutilisé : concept '
