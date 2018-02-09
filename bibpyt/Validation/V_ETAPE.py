@@ -33,6 +33,7 @@ import types
 import sys
 import traceback
 import re
+import warnings
 
 # Modules EFICAS
 import V_MCCOMPO
@@ -213,6 +214,7 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
                     valid = 0
             if valid:
                 d = self.cree_dict_valeurs(self.mc_liste)
+                d = _backward_compatibility_27390(self, d)
                 orig = self.definition.reentrant.split(":")[1:]
                 keyword = d.get(orig[0])
                 if keyword is None:
@@ -296,3 +298,33 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
                 break
             self.cr.add(child.report())
         return self.cr
+
+
+def _backward_compatibility_27390(etape, keywords):
+    """Backward compatibility function for transition (cf. issue27390).
+
+    Arguments:
+        etape (ETAPE): Currently executed command
+        keywords (dict): Dict of keywords.
+
+    Returns:
+        dict; *keywords* changed in place.
+    """
+    msg = ("\n <A> {name} with reuse but {key} is missing.\n"
+           "{key}={reuse} has been added for you but it "
+           "will be an error in the next major version.\n")
+
+    key = None
+    if etape.nom in ("DYNA_NON_LINE", "STAT_NON_LINE"):
+        key = "EVOL_NOLI"
+    if etape.nom in ("THER_LINEAIRE", ):
+        key = "EVOL_THER"
+
+    if key:
+        if keywords.get(key) is None:
+            keywords[key] = etape.reuse
+            warnings.warn(msg.format(name=etape.nom, key=key,
+                                     reuse=etape.reuse.nom),
+                          DeprecationWarning)
+
+    return keywords
