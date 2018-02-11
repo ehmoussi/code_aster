@@ -480,6 +480,9 @@ class ExecuteMacro(ExecuteCommand):
     def cr(self):
         return logger
 
+    def get_concept(self, name):
+        raise NotImplementedError("'get_concept()' does not exist anymore...")
+
 
 class CO(object):
 
