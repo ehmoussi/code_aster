@@ -324,6 +324,8 @@ def _backward_compatibility_27390(etape, keywords):
         key = "EVOL_THER"
     if etape.nom in ("DYNA_VIBRA", ):
         key = "RESULTAT"
+    if etape.nom in ("COMB_MATR_ASSE", ):
+        key = "MATR_ASSE"
 
     if key:
         if keywords.get(key) is None:

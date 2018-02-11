@@ -42,9 +42,15 @@ def comb_matr_asse_prod(COMB_R,COMB_C,CALC_AMOR_GENE,**args):
 
 COMB_MATR_ASSE=OPER(nom="COMB_MATR_ASSE",op=  31,sd_prod=comb_matr_asse_prod,
                     fr=tr("Effectuer la combinaison linéaire de matrices assemblées"),
-                    reentrant='f:COMB_R|COMB_C:MATR_ASSE',
+                    reentrant='f:MATR_ASSE',
          regles=(UN_PARMI('COMB_R','COMB_C','CALC_AMOR_GENE' ),),
          reuse=SIMP(statut='c', typ=CO),
+         MATR_ASSE=SIMP(statut='f',
+                        typ=(matr_asse_depl_r, matr_asse_depl_c, matr_asse_temp_r,
+                             matr_asse_temp_c, matr_asse_pres_r, matr_asse_pres_c,
+                             matr_asse_gene_r, matr_asse_gene_c),
+                        fr=tr("Objet qui sera enrichi des nouveaux instants calculés")),
+
          COMB_R          =FACT(statut='f',max='**',
            PARTIE          =SIMP(statut='f',typ='TXM',into=("REEL","IMAG") ),
            MATR_ASSE       =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_depl_c,matr_asse_temp_r,matr_asse_temp_c
