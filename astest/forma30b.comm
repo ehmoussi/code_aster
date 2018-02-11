@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -327,12 +327,13 @@ CHTEMP0=CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_R',
                            NOM_CMP='TEMP',
                            VALE=0.0,),);
 
-CREA_RESU(reuse =TEMPE2,
-                 OPERATION='AFFE',
-                 TYPE_RESU='EVOL_THER',
-                 NOM_CHAM='TEMP',
-                 AFFE=_F(CHAM_GD=CHTEMP0,
-                         INST=-1.0,),);
+CREA_RESU(reuse=TEMPE2,
+          RESULTAT=TEMPE2,
+          OPERATION='AFFE',
+          TYPE_RESU='EVOL_THER',
+          NOM_CHAM='TEMP',
+          AFFE=_F(CHAM_GD=CHTEMP0,
+                  INST=-1.0,),);
 
 
 BRIDAG2=AFFE_CHAR_MECA(MODELE=MO,

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -162,7 +162,8 @@ def dyna_visco_modes_calc( self, TYPE_MODE, freq1, nmode, RESI_RELA, i, j,
         assert False
 
     if reuse=='oui':
-        motcles['reuse']=args['co_reuse']
+        motcles['reuse'] = args['co_reuse']
+        motcles['RESULTAT'] = args['co_reuse']
 
     if (TYPE_RESU=='HARM' and args['MODE_MECA']!=None):
         self.DeclareOut('_modes',args['MODE_MECA'])

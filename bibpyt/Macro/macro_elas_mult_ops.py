@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -168,7 +168,7 @@ def macro_elas_mult_ops(self, MODELE, CHAM_MATER, CARA_ELEM, NUME_DDL,
             if len(lchar1) > 0:
                 motscles['CHARGE'] = lchar1
             __nomvel = CALC_VECT_ELEM(OPTION='CHAR_MECA', **motscles)
-                
+
                 # chargement du aux variables de commandes
             if l_calc_varc :
                 motscles = {}
@@ -176,7 +176,7 @@ def macro_elas_mult_ops(self, MODELE, CHAM_MATER, CARA_ELEM, NUME_DDL,
                     motscles['CARA_ELEM'] = CARA_ELEM
                 if ifour:
                     motscles['MODE_FOURIER'] = m['MODE_FOURIER']
-                
+
                 __list1=DEFI_LIST_REEL(DEBUT=0.0,
                                     INTERVALLE=_F(JUSQU_A=1.0,
                                                   NOMBRE=1,),);
@@ -209,7 +209,7 @@ def macro_elas_mult_ops(self, MODELE, CHAM_MATER, CARA_ELEM, NUME_DDL,
                                  NOM_PARA='NOM_SD',
                                  FILTRE=_F(NOM_PARA='NOM_OBJET',
                                            VALE_K='FORC_VARC_ELEM_P'),)
-                                           
+
                 __nomasv = ASSE_VECTEUR(VECT_ELEM=(__nomvel,__vvarcp), NUME_DDL=num)
             else:
                 __nomasv = ASSE_VECTEUR(VECT_ELEM=(__nomvel,), NUME_DDL=num)
@@ -267,8 +267,11 @@ def macro_elas_mult_ops(self, MODELE, CHAM_MATER, CARA_ELEM, NUME_DDL,
 
     if self.reuse:
         motscles['reuse'] = self.reuse
-    nomres = CREA_RESU(
-        OPERATION='AFFE', TYPE_RESU=tyresu, NOM_CHAM='DEPL', **motscles)
+        motscles['RESULTAT'] = self.reuse
+    nomres = CREA_RESU(OPERATION='AFFE',
+                       TYPE_RESU=tyresu,
+                       NOM_CHAM='DEPL',
+                       **motscles)
 
 #
 # boucle sur les items de CAS_CHARGE pour SIEF_ELGA
