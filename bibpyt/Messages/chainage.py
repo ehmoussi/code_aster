@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -67,10 +67,6 @@ instant trouvé dans la SD résultat %(k1)s.
     9 : _(u"""
   Vous n'avez pas choisi une loi de comportement mécanique autorisée pour les
   modélisations THM : %(k1)s
-"""),
-
-    10 : _(u"""
-  Si vous faites du chaînage, il ne faut qu'un seul et unique modèle dans le résultat. Si vous en voulez plusieurs, faites une demande d'évolution.
 """),
 
     11 : _(u"""

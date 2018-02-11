@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -39,7 +39,7 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
     from code_aster.Cata.Syntax import _F
     from Utilitai.Table import Table
     from Utilitai.Utmess import UTMESS
-    from code_aster.Cata.Commands import EXTR_RESU, DEFI_LIST_ENTI, IMPR_RESU
+    from code_aster.Commands import EXTR_RESU, DEFI_LIST_ENTI, IMPR_RESU
     from SD.sd_maillage import sd_maillage
     #
     self.set_icmd(1)

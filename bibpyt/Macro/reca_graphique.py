@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ import copy
 import Numeric
 import types
 import Cata
-from code_aster.Cata.Commands import DEFI_FICHIER, IMPR_FONCTION
+from code_aster.Commands import DEFI_FICHIER, IMPR_FONCTION
 from code_aster.Cata.Syntax import _F
 
 try:

@@ -30,7 +30,8 @@ void exportInputVariableEvolutionContainerToPython()
     using namespace boost::python;
 
     class_< InputVariableEvolutionContainerInstance, InputVariableEvolutionContainerPtr,
-            bases< ResultsContainerInstance > > ( "InputVariableEvolutionContainer", no_init )
+            bases< TimeDependantResultsContainerInstance > >
+        ( "InputVariableEvolutionContainer", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< InputVariableEvolutionContainerInstance > ) )
     ;

@@ -42,12 +42,13 @@ StaticNonLinearAnalysisInstance::StaticNonLinearAnalysisInstance():
 
 /** @brief main routine to run a static, nonlinear analysis 
  */
-NonLinearEvolutionContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runtime_error )
+NonLinearEvolutionContainerPtr StaticNonLinearAnalysisInstance::execute()
+    throw ( std::runtime_error )
 {
 // cmdSNL is the command Syntax object associated to Code_Aster STAT_NON_LINE command 
     CommandSyntax cmdSNL( "STAT_NON_LINE");
 // Init name of result 
-    NonLinearEvolutionContainerPtr resultSNL( new NonLinearEvolutionContainerInstance ( std::string( "EVOL_NOLI" ) ) );
+    NonLinearEvolutionContainerPtr resultSNL( new NonLinearEvolutionContainerInstance() );
     cmdSNL.setResult( resultSNL->getName(), "STAT_NON_LINE" );
 // Build a dictionnary of keywords/values used to define the command syntax object    
    SyntaxMapContainer dict;

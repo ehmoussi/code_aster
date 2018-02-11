@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ import tkFont
 from code_aster.Cata.Syntax import _F
 import aster
 from Macro.calc_spec_ops import FonctionError
-from code_aster.Cata.Commands import DETRUIRE, CREA_TABLE, RECU_FONCTION, IMPR_TABLE
+from code_aster.Commands import DETRUIRE, CREA_TABLE, RECU_FONCTION, IMPR_TABLE
 from Contrib.calc_spec import CALC_SPEC
 from Calc_essai.cata_ce import InterSpectre, CreaTable, Tempo
 from Calc_essai.outils_ihm import MultiList, DispFRFDialogue, VisuSpectre
@@ -668,7 +668,7 @@ class InterfaceCalcSpec(Frame):
 
     def crea_tab_fonc(self):
 
-        from code_aster.Cata.Commands import CREA_TABLE
+        from code_aster.Commands import CREA_TABLE
         # recuperation des numeros d'ordre et de reference
 
         ind_mes = self.list_mes.curselection()

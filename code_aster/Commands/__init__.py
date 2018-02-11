@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -164,6 +164,8 @@ from .post_rccm import POST_RCCM
 from .post_releve_t import POST_RELEVE_T
 from .post_usure import POST_USURE
 from .pre_gibi import PRE_GIBI
+from .pre_gmsh import PRE_GMSH
+from .pre_ideas import PRE_IDEAS
 from .prod_matr_cham import PROD_MATR_CHAM
 from .proj_champ import PROJ_CHAMP
 from .proj_matr_base import PROJ_MATR_BASE

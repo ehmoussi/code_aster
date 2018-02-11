@@ -53,6 +53,7 @@ void exportFunctionToPython()
                              std::string >) )
         .def( "setValues", &FunctionInstance::setValues )
         .def( "size", &FunctionInstance::size )
+        .def( "setAsConstant", &FunctionInstance::setAsConstant )
     ;
 
     // Candidates for setValues

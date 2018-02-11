@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -43,10 +43,17 @@ class ConstantAsFunction(ExecuteCommand):
         """
         funct = self._result
 
-        funct.setValues([0.], [keywords['VALE'], ])
+        value = None
+        if type(keywords['VALE']) is tuple:
+            value = list(keywords['VALE'])
+        else:
+            value = [keywords['VALE'],]
+        funct.setValues([0.], value)
         funct.setResultName(keywords['NOM_RESU'])
+        funct.setParameterName("TOUTPARA")
         funct.setInterpolation("LIN LIN")
         funct.setExtrapolation("CC")
+        funct.setAsConstant()
 
 
 DEFI_CONSTANTE = ConstantAsFunction.run

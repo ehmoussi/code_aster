@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -38,7 +38,8 @@ def configure(self):
 
     official_programs.configure(self)
 
-    self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0'])
+    self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0',
+                                       '-Wno-literal-suffix'])
     self.env['ADDMEM'] = 350
 
     TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL300'

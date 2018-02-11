@@ -108,6 +108,15 @@ void BaseFunctionInstance::setExtrapolation( const std::string type )
     (*_property)[4] = type.c_str();
 }
 
+
+void BaseFunctionInstance::setAsConstant()
+{
+    if( !_property->isAllocated() )
+        propertyAllocate();
+    _funct_type = "CONSTANT";
+    (*_property)[0] = _funct_type;
+}
+
 /* Complex function */
 void FunctionComplexInstance::setValues( const VectorDouble &absc,
                                          const VectorDouble &ordo )

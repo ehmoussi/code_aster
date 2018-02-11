@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe MaterialOnMesh
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -38,7 +38,8 @@
 #include "Meshes/ParallelMesh.h"
 #include "Supervis/ResultNaming.h"
 #include "Materials/BehaviourDefinition.h"
-#include "Materials/InputVariableDefinition.h"
+
+class MaterialOnMeshBuilderInstance;
 
 /**
  * @class MaterialOnMeshInstance
@@ -47,6 +48,8 @@
  */
 class MaterialOnMeshInstance: public DataStructure
 {
+    friend class MaterialOnMeshBuilderInstance;
+
     private:
         // On redefinit le type MeshEntityPtr afin de pouvoir stocker les MeshEntity
         // dans la list
@@ -67,14 +70,6 @@ class MaterialOnMeshInstance: public DataStructure
         /** @typedef Definition d'un iterateur sur listOfBehavAndGrps */
         typedef listOfBehavAndGrps::iterator listOfBehavAndGrpsIter;
 
-        /** @typedef std::list d'une std::pair de MeshEntityPtr */
-        typedef std::vector< std::pair< GenericInputVariablePtr,
-                                        MeshEntityPtr > > listOfInputVarAndGrps;
-        /** @typedef Definition de la valeur contenue dans un listOfInputVarAndGrps */
-        typedef listOfInputVarAndGrps::value_type listOfInputVarAndGrpsValue;
-        /** @typedef Definition d'un iterateur sur listOfInputVarAndGrps */
-        typedef listOfInputVarAndGrps::iterator listOfInputVarAndGrpsIter;
-
         /** @brief Maillage sur lequel repose la sd_cham_mater */
         BaseMeshPtr            _supportMesh;
         /** @brief Carte '.CHAMP_MAT' */
@@ -87,8 +82,6 @@ class MaterialOnMeshInstance: public DataStructure
         listOfMatsAndGrps      _materialsOnMeshEntity;
         /** @brief Link to a  */
         listOfBehavAndGrps     _behaviours;
-        /** @brief Link to a  */
-        listOfInputVarAndGrps  _inputVars;
         /** @brief Jeveux vector '.CVRCNOM' */
         JeveuxVectorChar8      _cvrcNom;
         /** @brief Jeveux vector '.CVRCGD' */
@@ -97,12 +90,6 @@ class MaterialOnMeshInstance: public DataStructure
         JeveuxVectorChar8      _cvrcVarc;
         /** @brief Jeveux vector '.CVRCCMP' */
         JeveuxVectorChar8      _cvrcCmp;
-
-        /**
-         * @brief Return a SyntaxMapContainer to emulate the command keywords
-         * @return SyntaxMapContainer
-         */
-        SyntaxMapContainer getCppCommandKeywords() throw ( std::runtime_error );
 
     public:
         /**
@@ -182,32 +169,6 @@ class MaterialOnMeshInstance: public DataStructure
         };
 
         /**
-         * @brief Add an input variable on all mesh
-         */
-        template< class InputVariablePtr >
-        void addInputVariableOnAllMesh( InputVariablePtr& curBehav )
-        {
-            _inputVars.push_back( listOfInputVarAndGrpsValue( curBehav,
-                                                       MeshEntityPtr( new AllMeshEntities() ) ) );
-        };
-
-        /**
-         * @brief Add an input variable on a group of mesh
-         */
-        template< class InputVariablePtr >
-        void addInputVariableOnGroupOfElements( InputVariablePtr& curBehav,
-                                                std::string nameOfGroup )
-                throw ( std::runtime_error )
-        {
-            if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
-            if ( ! _supportMesh->hasGroupOfElements( nameOfGroup ) )
-                throw std::runtime_error( nameOfGroup + "not in support mesh" );
-
-            _inputVars.push_back( listOfInputVarAndGrpsValue( curBehav,
-                                            MeshEntityPtr( new GroupOfElements(nameOfGroup) ) ) );
-        };
-
-        /**
          * @brief Ajout d'un materiau sur tout le maillage
          * @param curMater Materiau a ajouter
          */
@@ -234,10 +195,10 @@ class MaterialOnMeshInstance: public DataStructure
         };
 
         /**
-         * @brief Return a Python dict to emulate the command keywords
-         * @return PyDict
+         * @brief Build MaterialOnMeshPtr without InputVariables
+         * @return true
          */
-        PyObject* getCommandKeywords() throw ( std::runtime_error );
+        bool buildWithoutInputVariables() throw ( std::runtime_error );
 
         /**
          * @brief Return the PCFieldOnMesh of behaviour
@@ -247,18 +208,6 @@ class MaterialOnMeshInstance: public DataStructure
             _behaviourField->updateValuePointers();
             return _behaviourField;
         };
-
-        /**
-         * @brief Construction (au sens Jeveux fortran) de la sd_cham_mater
-         * @return booleen indiquant que la construction s'est bien deroulee
-         */
-        bool build() throw ( std::runtime_error );
-
-        /**
-         * @brief Construction (au sens Jeveux fortran) de la sd_cham_mater
-         * @return booleen indiquant que la construction s'est bien deroulee
-         */
-        bool build_deprecated() throw ( std::runtime_error );
 
         /**
          * @brief Function to know if a given Calculation Input Variables exists

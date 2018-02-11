@@ -40,7 +40,7 @@ beton.build()
 
 affectMat = code_aster.MaterialOnMesh(monMaillage)
 affectMat.addMaterialOnAllMesh( beton )
-affectMat.build()
+affectMat.buildWithoutInputVariables()
 
 
 # Chargement

@@ -32,6 +32,27 @@ void exportInputVariableDefinitionToPython()
 {
     using namespace boost::python;
 
+    void (EvolutionParameterInstance::*c1)(const FormulaPtr&) =
+            &EvolutionParameterInstance::setTimeFunction;
+    void (EvolutionParameterInstance::*c2)(const FunctionPtr&) =
+            &EvolutionParameterInstance::setTimeFunction;
+
+    class_< EvolutionParameterInstance, EvolutionParameterPtr >
+        ( "EvolutionParameter", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< EvolutionParameterInstance,
+                             const TimeDependantResultsContainerPtr& > ) )
+        .def( "setFieldName", &EvolutionParameterInstance::setFieldName )
+        .def( "setTimeFunction", c1 )
+        .def( "setTimeFunction", c2 )
+        .def( "prohibitRightExtension", &EvolutionParameterInstance::prohibitRightExtension )
+        .def( "setConstantRightExtension", &EvolutionParameterInstance::setConstantRightExtension )
+        .def( "setLinearRightExtension", &EvolutionParameterInstance::setLinearRightExtension )
+        .def( "prohibitLeftExtension", &EvolutionParameterInstance::prohibitLeftExtension )
+        .def( "setConstantLeftExtension", &EvolutionParameterInstance::setConstantLeftExtension )
+        .def( "setLinearLeftExtension", &EvolutionParameterInstance::setLinearLeftExtension )
+    ;
+
     class_< GenericInputVariableInstance, GenericInputVariableInstance::GenericInputVariablePtr >
         ( "GenericInputVariable", no_init )
         .def( "__init__", make_constructor(
@@ -41,6 +62,7 @@ void exportInputVariableDefinitionToPython()
                              const std::string& > ) )
         .def( "existsReferenceValue", &GenericInputVariableInstance::existsReferenceValue )
         .def( "getReferenceValue", &GenericInputVariableInstance::getReferenceValue )
+        .def( "setEvolutionParameter", &GenericInputVariableInstance::setEvolutionParameter )
         .def( "setInputValuesField", &GenericInputVariableInstance::setInputValuesField )
         .def( "setReferenceValue", &GenericInputVariableInstance::setReferenceValue )
     ;
@@ -174,4 +196,67 @@ void exportInputVariableDefinitionToPython()
             &initFactoryPtr< VolumetricDeformationInputVariableInstance, const BaseMeshPtr&,
                              const std::string& > ) )
     ;
+
+    class_< InputVariableOnMeshInstance, InputVariableOnMeshPtr >
+        c3( "InputVariableOnMesh", no_init );
+    c3.def( "__init__", make_constructor(
+            &initFactoryPtr< InputVariableOnMeshInstance, const MeshPtr& > ) );
+    c3.def( "__init__", make_constructor(
+            &initFactoryPtr< InputVariableOnMeshInstance, const SkeletonPtr& > ) );
+#ifdef _USE_MPI
+    c3.def( "__init__", make_constructor(
+            &initFactoryPtr< InputVariableOnMeshInstance, const ParallelMeshPtr& > ) );
+#endif /* _USE_MPI */
+    c3.def( "addInputVariableOnAllMesh",
+            &InputVariableOnMeshInstance::addInputVariableOnAllMesh< TemperatureInputVariablePtr > );
+    c3.def( "addInputVariableOnGroupOfElements",
+       &InputVariableOnMeshInstance::addInputVariableOnGroupOfElements< TemperatureInputVariablePtr > );
+    c3.def( "addInputVariableOnAllMesh",
+            &InputVariableOnMeshInstance::addInputVariableOnAllMesh< GeometryInputVariablePtr > );
+    c3.def( "addInputVariableOnGroupOfElements",
+       &InputVariableOnMeshInstance::addInputVariableOnGroupOfElements< GeometryInputVariablePtr > );
+    c3.def( "addInputVariableOnAllMesh",
+            &InputVariableOnMeshInstance::addInputVariableOnAllMesh< CorrosionInputVariablePtr > );
+    c3.def( "addInputVariableOnGroupOfElements",
+       &InputVariableOnMeshInstance::addInputVariableOnGroupOfElements< CorrosionInputVariablePtr > );
+    c3.def( "addInputVariableOnAllMesh",
+        &InputVariableOnMeshInstance::addInputVariableOnAllMesh< IrreversibleDeformationInputVariablePtr > );
+    c3.def( "addInputVariableOnGroupOfElements",
+       &InputVariableOnMeshInstance::addInputVariableOnGroupOfElements< IrreversibleDeformationInputVariablePtr > );
+    c3.def( "addInputVariableOnAllMesh",
+            &InputVariableOnMeshInstance::addInputVariableOnAllMesh< ConcreteHydratationInputVariablePtr > );
+    c3.def( "addInputVariableOnGroupOfElements",
+       &InputVariableOnMeshInstance::addInputVariableOnGroupOfElements< ConcreteHydratationInputVariablePtr > );
+    c3.def( "addInputVariableOnAllMesh",
+            &InputVariableOnMeshInstance::addInputVariableOnAllMesh< IrradiationInputVariablePtr > );
+    c3.def( "addInputVariableOnGroupOfElements",
+       &InputVariableOnMeshInstance::addInputVariableOnGroupOfElements< IrradiationInputVariablePtr > );
+    c3.def( "addInputVariableOnAllMesh",
+            &InputVariableOnMeshInstance::addInputVariableOnAllMesh< SteelPhasesInputVariablePtr > );
+    c3.def( "addInputVariableOnGroupOfElements",
+       &InputVariableOnMeshInstance::addInputVariableOnGroupOfElements< SteelPhasesInputVariablePtr > );
+    c3.def( "addInputVariableOnAllMesh",
+            &InputVariableOnMeshInstance::addInputVariableOnAllMesh< ZircaloyPhasesInputVariablePtr > );
+    c3.def( "addInputVariableOnGroupOfElements",
+       &InputVariableOnMeshInstance::addInputVariableOnGroupOfElements< ZircaloyPhasesInputVariablePtr > );
+    c3.def( "addInputVariableOnAllMesh",
+            &InputVariableOnMeshInstance::addInputVariableOnAllMesh< Neutral1InputVariablePtr > );
+    c3.def( "addInputVariableOnGroupOfElements",
+       &InputVariableOnMeshInstance::addInputVariableOnGroupOfElements< Neutral1InputVariablePtr > );
+    c3.def( "addInputVariableOnAllMesh",
+            &InputVariableOnMeshInstance::addInputVariableOnAllMesh< Neutral2InputVariablePtr > );
+    c3.def( "addInputVariableOnGroupOfElements",
+       &InputVariableOnMeshInstance::addInputVariableOnGroupOfElements< Neutral2InputVariablePtr > );
+    c3.def( "addInputVariableOnAllMesh",
+            &InputVariableOnMeshInstance::addInputVariableOnAllMesh< ConcreteDryingInputVariablePtr > );
+    c3.def( "addInputVariableOnGroupOfElements",
+       &InputVariableOnMeshInstance::addInputVariableOnGroupOfElements< ConcreteDryingInputVariablePtr > );
+    c3.def( "addInputVariableOnAllMesh",
+            &InputVariableOnMeshInstance::addInputVariableOnAllMesh< TotalFluidPressureInputVariablePtr > );
+    c3.def( "addInputVariableOnGroupOfElements",
+       &InputVariableOnMeshInstance::addInputVariableOnGroupOfElements< TotalFluidPressureInputVariablePtr > );
+    c3.def( "addInputVariableOnAllMesh",
+            &InputVariableOnMeshInstance::addInputVariableOnAllMesh< VolumetricDeformationInputVariablePtr > );
+    c3.def( "addInputVariableOnGroupOfElements",
+       &InputVariableOnMeshInstance::addInputVariableOnGroupOfElements< VolumetricDeformationInputVariablePtr > );
 };

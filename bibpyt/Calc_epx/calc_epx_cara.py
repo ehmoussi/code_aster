@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -219,7 +219,7 @@ def export_cara(cle, epx, donnees_cle, MAILLAGE, CARA_ELEM,
         Traite les données 'donnes_cle' contenues dans le mot clé facteur 'cle'
         de l'objet CARA_ELEM
     """
-    from code_aster.Cata.Commands import DEFI_GROUP
+    from code_aster.Commands import DEFI_GROUP
     donnees_cle = tolist(donnees_cle)
 
     # recuperation des parametres

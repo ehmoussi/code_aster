@@ -20,7 +20,7 @@ MATER=DEFI_MATERIAU(ELAS=_F(E=10000.0,
 
 affectMat = code_aster.MaterialOnMesh(MAIL)
 affectMat.addMaterialOnAllMesh(MATER)
-affectMat.build()
+affectMat.buildWithoutInputVariables()
 
 MODT=AFFE_MODELE(MAILLAGE=MAIL,
                  AFFE=_F(TOUT='OUI',

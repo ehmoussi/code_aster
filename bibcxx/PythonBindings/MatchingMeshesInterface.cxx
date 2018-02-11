@@ -33,5 +33,6 @@ void exportMatchingMeshesToPython()
             bases< DataStructure > > ( "MatchingMeshes", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MatchingMeshesInstance > ) )
+        .def("setFirstMesh", &MatchingMeshesInstance::setFirstMesh)
     ;
 };

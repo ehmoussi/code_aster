@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -37,5 +37,16 @@ class ExtrResu(ExecuteCommand):
             self._result = type(keywords["RESULTAT"])()
         else:
             self._result = type(keywords["RESULTAT"])()
+
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        resultat = keywords["RESULTAT"]
+        if(resultat):
+            self._result.setModel(resultat.getModel())
+            self._result.update()
 
 EXTR_RESU = ExtrResu.run

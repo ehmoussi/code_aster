@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ from code_aster.Cata.Syntax import _F
 from code_aster.Cata.DataStructure import (fonction_sdaster, fonction_c,
 nappe_sdaster, cara_elem, cham_mater, maillage_sdaster, modele_sdaster)
 
-from code_aster.Cata.Commands import (DETRUIRE, DEFI_MAILLAGE, ASSE_MAILLAGE,
+from code_aster.Commands import (DETRUIRE, DEFI_MAILLAGE, ASSE_MAILLAGE,
     AFFE_MATERIAU, AFFE_MODELE, AFFE_CARA_ELEM, LIRE_MAILLAGE,
     AFFE_CHAR_MECA, ASSE_MATRICE, DEFI_INTERF_DYNA, CALC_MATR_ELEM,
     DEFI_BASE_MODALE, CALC_MODES, NUME_DDL, MODE_STATIQUE,

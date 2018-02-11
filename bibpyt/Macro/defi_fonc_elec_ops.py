@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -83,7 +83,7 @@ def FcontinuGR2R(T, I1R, I2R, TRR, PHI1R, PHI2R, TAU1R, TAU2R, D):
     return fxt
 
 
-def defi_fonc_elec_ops(self, FREQ, SIGNAL, COUR, COUR_PRIN, COUR_SECO, **args):
+def defi_fonc_elec_ops(self, FREQ=None, SIGNAL=None, COUR=None, COUR_PRIN=None, COUR_SECO=None, **args):
     ier = 0
     from Utilitai.Utmess import UTMESS
     import numpy
@@ -217,4 +217,4 @@ def defi_fonc_elec_ops(self, FREQ, SIGNAL, COUR, COUR_PRIN, COUR_SECO, **args):
                           VALE=vale,
                           PROL_DROITE='CONSTANT',
                           PROL_GAUCHE='CONSTANT',)
-    return ier
+    return C_out

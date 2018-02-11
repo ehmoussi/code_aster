@@ -83,6 +83,7 @@
 #include "PythonBindings/LineSearchMethodInterface.h"
 #include "PythonBindings/NonLinearMethodInterface.h"
 #include "PythonBindings/StateInterface.h"
+#include "PythonBindings/TimeDependantResultsContainerInterface.h"
 #include "PythonBindings/EvolutiveLoadInterface.h"
 #include "PythonBindings/EvolutiveThermalLoadInterface.h"
 #include "PythonBindings/FourierCombinationInterface.h"
@@ -123,6 +124,7 @@
 #include "PythonBindings/ModeEmpiContainerInterface.h"
 #include "PythonBindings/ElasticEvolutionContainerInterface.h"
 #include "PythonBindings/InputVariableEvolutionContainerInterface.h"
+#include "PythonBindings/MaterialOnMeshBuilderInterface.h"
 
 using namespace boost::python;
 
@@ -228,6 +230,7 @@ BOOST_PYTHON_MODULE(libaster)
     exportNonLinearMethodToPython();
     exportStateToPython();
     exportResultsContainerToPython();
+    exportTimeDependantResultsContainerToPython();
     exportEvolutiveLoadToPython();
     exportEvolutiveThermalLoadToPython();
     exportFourierCombinationToPython();
@@ -273,4 +276,5 @@ BOOST_PYTHON_MODULE(libaster)
     exportModeEmpiContainerToPython();
     exportElasticEvolutionContainerToPython();
     exportInputVariableEvolutionContainerToPython();
+    exportMaterialOnMeshBuilderToPython();
 };

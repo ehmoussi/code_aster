@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -27,7 +27,8 @@ from ..Objects import IrreversibleDeformationInputVariable, ConcreteHydratationI
 from ..Objects import IrradiationInputVariable, SteelPhasesInputVariable
 from ..Objects import ZircaloyPhasesInputVariable, Neutral1InputVariable, Neutral2InputVariable
 from ..Objects import ConcreteDryingInputVariable, TotalFluidPressureInputVariable
-from ..Objects import VolumetricDeformationInputVariable
+from ..Objects import VolumetricDeformationInputVariable, InputVariableOnMesh
+from ..Objects import MaterialOnMeshBuilder, EvolutionParameter
 
 
 class MaterialAssignment(ExecuteCommand):
@@ -80,17 +81,19 @@ class MaterialAssignment(ExecuteCommand):
             mesh = keywords["MAILLAGE"]
         else:
             mesh = keywords["MODELE"].getSupportMesh()
+
+        inputVarOnMesh = InputVariableOnMesh(mesh)
         fkw = keywords.get("AFFE_VARC")
         if fkw != None:
             if isinstance(fkw, dict):
-                self._addInputVariable(fkw, mesh)
+                self._addInputVariable(inputVarOnMesh, fkw, mesh)
             elif type(fkw) in (list, tuple):
                 for curDict in fkw:
-                    self._addInputVariable(curDict, mesh)
+                    self._addInputVariable(inputVarOnMesh, curDict, mesh)
             else:
                 raise TypeError("Unexpected type: {0!r} {1}".format(fkw, type(fkw)))
 
-        self._result.build()
+        self._result = MaterialOnMeshBuilder.build(self._result, inputVarOnMesh)
 
     def _addBehaviour(self, fkw):
         kwTout = fkw.get("TOUT")
@@ -107,14 +110,13 @@ class MaterialAssignment(ExecuteCommand):
             raise TypeError("At least {0} or {1} is required"
                             .format("TOUT", "GROUP_MA"))
 
-    def _addInputVariable(self, fkw, mesh):
-        if fkw.get("EVOL") != None:
-            raise TypeError("{0} not allowed".format("EVOL",))
+    def _addInputVariable(self, inputVarOnMesh, fkw, mesh):
         kwTout = fkw.get("TOUT")
         kwGrMa = fkw.get("GROUP_MA")
         nomVarc = fkw["NOM_VARC"]
-        chamGd = fkw["CHAM_GD"]
+        chamGd = fkw.get("CHAM_GD")
         valeRef = fkw.get("VALE_REF")
+        evol = fkw.get("EVOL")
 
         obj = None
         if nomVarc == "TEMP":
@@ -147,15 +149,45 @@ class MaterialAssignment(ExecuteCommand):
             raise TypeError("Input Variable not allowed")
 
         inputVar = obj(mesh)
-        inputVar.setInputValuesField(chamGd)
-        if valeRef != None: inputVar.setReferenceValue(valeRef)
+        if valeRef != None:
+            inputVar.setReferenceValue(valeRef)
+
+        if chamGd != None:
+            inputVar.setInputValuesField(chamGd)
+
+        if evol != None:
+            evolParam = EvolutionParameter(evol)
+            nomCham = fkw.get("NOM_CHAM")
+            if nomCham != None: evolParam.setFieldName(nomCham)
+            foncInst = fkw.get("FONC_INST")
+            if foncInst != None: evolParam.setTimeFunction(foncInst)
+
+            prolDroite = fkw.get("PROL_DROITE")
+            if prolDroite != None:
+                if prolDroite == "EXCLU":
+                    evolParam.prohibitRightExtension()
+                if prolDroite == "CONSTANT":
+                    evolParam.setConstantRightExtension()
+                if prolDroite == "LINEAIRE":
+                    evolParam.setLinearRightExtension()
+
+            prolGauche = fkw.get("PROL_GAUCHE")
+            if prolGauche != None:
+                if prolGauche == "EXCLU":
+                    evolParam.prohibitLeftExtension()
+                if prolGauche == "CONSTANT":
+                    evolParam.setConstantLeftExtension()
+                if prolGauche == "LINEAIRE":
+                    evolParam.setLinearLeftExtension()
+
+            inputVar.setEvolutionParameter(evolParam)
 
         if kwTout != None:
-            self._result.addInputVariableOnAllMesh(inputVar)
+            inputVarOnMesh.addInputVariableOnAllMesh(inputVar)
         elif kwGrMa != None:
             kwGrMa = force_list(kwGrMa)
             for grp in kwGrMa:
-                self._result.addInputVariableOnGroupOfElements(inputVar, grp)
+                inputVarOnMesh.addInputVariableOnGroupOfElements(inputVar, grp)
         else:
             raise TypeError("At least {0} or {1} is required"
                             .format("TOUT", "GROUP_MA"))

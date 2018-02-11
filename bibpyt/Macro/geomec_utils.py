@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -173,9 +173,9 @@ def verif_essais(COMPORTEMENT, ESSAI_TD,
     if ESSAI_TD != None:
 
         typ_essai = "ESSAI_TD"
-        List_essais += ESSAI_TD.List_F()
+        List_essais += ESSAI_TD
 
-        for iocc, DicoEssai in enumerate(ESSAI_TD.List_F()):
+        for iocc, DicoEssai in enumerate(ESSAI_TD):
 
             # Le "bon" nbre d'elts a-t-il ete renseigne pr les MotCles simples
             # -> PRES_CONF, EPSI_IMPOSE, TABLE_RESU ?
@@ -210,9 +210,9 @@ def verif_essais(COMPORTEMENT, ESSAI_TD,
     if ESSAI_TND != None:
 
         typ_essai = "ESSAI_TND"
-        List_essais += ESSAI_TND.List_F()
+        List_essais += ESSAI_TND
 
-        for iocc, DicoEssai in enumerate(ESSAI_TND.List_F()):
+        for iocc, DicoEssai in enumerate(ESSAI_TND):
 
             # Le "bon" nbre d'elts a-t-il ete renseigne pr les MotCles simples
             # -> PRES_CONF, EPSI_IMPOSE, TABLE_RESU ?
@@ -250,9 +250,9 @@ def verif_essais(COMPORTEMENT, ESSAI_TD,
     if ESSAI_CISA_C != None:
 
         typ_essai = "ESSAI_CISA_C"
-        List_essais += ESSAI_CISA_C.List_F()
+        List_essais += ESSAI_CISA_C
 
-        for iocc, DicoEssai in enumerate(ESSAI_CISA_C.List_F()):
+        for iocc, DicoEssai in enumerate(ESSAI_CISA_C):
 
             # coherence du nbre de TABLE_RESU avec le nbre de PRES_CONF
             if DicoEssai.has_key('TABLE_RESU'):
@@ -283,9 +283,12 @@ def verif_essais(COMPORTEMENT, ESSAI_TD,
 
             # on s'assure que la liste des GAMMA_IMPOSE est croissante
             clef = 'GAMMA_IMPOSE'
-            list_tmp = list(DicoEssai[clef])
-            list_tmp.sort()
-            if not(DicoEssai[clef] == tuple(list_tmp)):
+            if(type(DicoEssai[clef]) is float):
+                list_tmp = [DicoEssai[clef]]
+            else:
+                list_tmp = list(DicoEssai[clef])
+            list_tmp_s = sorted(list_tmp, )
+            if not(list_tmp_s == list_tmp):
                 UTMESS(
                     'F', 'COMPOR2_38', valk=(typ_essai, clef, ListR_2_Str(DicoEssai[clef]), "croissante"),
                     vali=(iocc + 1))
@@ -296,9 +299,9 @@ def verif_essais(COMPORTEMENT, ESSAI_TD,
     if ESSAI_TND_C != None:
 
         typ_essai = "ESSAI_TND_C"
-        List_essais += ESSAI_TND_C.List_F()
+        List_essais += ESSAI_TND_C
 
-        for iocc, DicoEssai in enumerate(ESSAI_TND_C.List_F()):
+        for iocc, DicoEssai in enumerate(ESSAI_TND_C):
 
             # coherence du nbre de TABLE_RESU avec le nbre de PRES_CONF
             if DicoEssai.has_key('TABLE_RESU'):
@@ -342,9 +345,12 @@ def verif_essais(COMPORTEMENT, ESSAI_TD,
 
             # on s'assure que la liste des SIGM_IMPOSE est croissante
             clef = 'SIGM_IMPOSE'
-            list_tmp = list(DicoEssai[clef])
-            list_tmp.sort()
-            if not(DicoEssai[clef] == tuple(list_tmp)):
+            if(type(DicoEssai[clef]) is float):
+                list_tmp = [DicoEssai[clef]]
+            else:
+                list_tmp = list(DicoEssai[clef])
+            list_tmp_s = sorted(list_tmp, )
+            if not(list_tmp_s == list_tmp):
                 UTMESS(
                     'F', 'COMPOR2_38', valk=(typ_essai, clef, ListR_2_Str(DicoEssai[clef]), "croissante"),
                     vali=(iocc + 1))
@@ -355,9 +361,9 @@ def verif_essais(COMPORTEMENT, ESSAI_TD,
     if ESSAI_TD_A != None:
 
         typ_essai = "ESSAI_TD_A"
-        List_essais += ESSAI_TD_A.List_F()
+        List_essais += ESSAI_TD_A
 
-        for iocc, DicoEssai in enumerate(ESSAI_TD_A.List_F()):
+        for iocc, DicoEssai in enumerate(ESSAI_TD_A):
 
             # coherence du nbre de TABLE_RESU avec le nbre de PRES_CONF
             if DicoEssai.has_key('TABLE_RESU'):
@@ -384,9 +390,12 @@ def verif_essais(COMPORTEMENT, ESSAI_TD,
 
             # on s'assure que la liste des EPSI_IMPOSE est croissante
             clef = 'EPSI_IMPOSE'
-            list_tmp = list(DicoEssai[clef])
-            list_tmp.sort()
-            if not(DicoEssai[clef] == tuple(list_tmp)):
+            if(type(DicoEssai[clef]) is float):
+                list_tmp = [DicoEssai[clef]]
+            else:
+                list_tmp = list(DicoEssai[clef])
+            list_tmp_s = sorted(list_tmp, )
+            if not(list_tmp_s == list_tmp):
                 UTMESS(
                     'F', 'COMPOR2_38', valk=(typ_essai, clef, ListR_2_Str(DicoEssai[clef]), "croissante"),
                     vali=(iocc + 1))
@@ -401,9 +410,9 @@ def verif_essais(COMPORTEMENT, ESSAI_TD,
     if ESSAI_TD_NA != None:
 
         typ_essai = "ESSAI_TD_NA"
-        List_essais += ESSAI_TD_NA.List_F()
+        List_essais += ESSAI_TD_NA
 
-        for iocc, DicoEssai in enumerate(ESSAI_TD_NA.List_F()):
+        for iocc, DicoEssai in enumerate(ESSAI_TD_NA):
 
             # coherence du nbre de TABLE_RESU avec le nbre de PRES_CONF
             if DicoEssai.has_key('TABLE_RESU'):
@@ -430,9 +439,12 @@ def verif_essais(COMPORTEMENT, ESSAI_TD,
 
             # on s'assure que la liste des EPSI_IMPOSE est décroissante
             clef = 'EPSI_IMPOSE'
-            list_tmp = list(DicoEssai[clef])
-            list_tmp.sort(reverse=True)
-            if not(DicoEssai[clef] == tuple(list_tmp)):
+            if(type(DicoEssai[clef]) is float):
+                list_tmp = [DicoEssai[clef]]
+            else:
+                list_tmp = list(DicoEssai[clef])
+            list_tmp_s = sorted(list_tmp, reverse=True)
+            if not(list_tmp_s == list_tmp):
                 UTMESS(
                     'F', 'COMPOR2_38', valk=(typ_essai, clef, ListR_2_Str(DicoEssai[clef]), "décroissante"),
                     vali=(iocc + 1))
@@ -448,9 +460,9 @@ def verif_essais(COMPORTEMENT, ESSAI_TD,
     if ESSAI_OEDO_C != None:
 
         typ_essai = "ESSAI_OEDO_C"
-        List_essais += ESSAI_OEDO_C.List_F()
+        List_essais += ESSAI_OEDO_C
 
-        for iocc, DicoEssai in enumerate(ESSAI_OEDO_C.List_F()):
+        for iocc, DicoEssai in enumerate(ESSAI_OEDO_C):
 
             # Le "bon" nbre d'elts a-t-il ete renseigne pr les MotCles simples
             # -> PRES_CONF, SIGM_DECH, TABLE_RESU ?
@@ -494,9 +506,12 @@ def verif_essais(COMPORTEMENT, ESSAI_TD,
 
             # on s'assure que la liste des SIGM_IMPOSE est décroissante
             clef = 'SIGM_IMPOSE'
-            list_tmp = list(DicoEssai[clef])
-            list_tmp.sort(reverse=True)
-            if not(DicoEssai[clef] == tuple(list_tmp)):
+            if(type(DicoEssai[clef]) is float):
+                list_tmp = [DicoEssai[clef]]
+            else:
+                list_tmp = list(DicoEssai[clef])
+            list_tmp_s = sorted(list_tmp, reverse=True)
+            if not(list_tmp_s == list_tmp):
                 UTMESS(
                     'F', 'COMPOR2_38', valk=(typ_essai, clef, ListR_2_Str(DicoEssai[clef]), "décroissante"),
                     vali=(iocc + 1))
@@ -512,9 +527,9 @@ def verif_essais(COMPORTEMENT, ESSAI_TD,
     if ESSAI_ISOT_C != None:
 
         typ_essai = "ESSAI_ISOT_C"
-        List_essais += ESSAI_ISOT_C.List_F()
+        List_essais += ESSAI_ISOT_C
 
-        for iocc, DicoEssai in enumerate(ESSAI_ISOT_C.List_F()):
+        for iocc, DicoEssai in enumerate(ESSAI_ISOT_C):
 
             # Le "bon" nbre d'elts a-t-il ete renseigne pr les MotCles simples
             # -> PRES_CONF, SIGM_DECH, TABLE_RESU ?
@@ -558,9 +573,12 @@ def verif_essais(COMPORTEMENT, ESSAI_TD,
 
             # on s'assure que la liste des SIGM_IMPOSE est décroissante
             clef = 'SIGM_IMPOSE'
-            list_tmp = list(DicoEssai[clef])
-            list_tmp.sort(reverse=True)
-            if not(DicoEssai[clef] == tuple(list_tmp)):
+            if(type(DicoEssai[clef]) is float):
+                list_tmp = [DicoEssai[clef]]
+            else:
+                list_tmp = list(DicoEssai[clef])
+            list_tmp_s = sorted(list_tmp, reverse=True)
+            if not(list_tmp_s == list_tmp):
                 UTMESS(
                     'F', 'COMPOR2_38', valk=(typ_essai, clef, ListR_2_Str(DicoEssai[clef]), "décroissante"),
                     vali=(iocc + 1))
@@ -938,6 +956,7 @@ def remplir_tables(self, typ_essai, str_n_essai, DicoEssai, Resu_in):
                         _F(LISTE_R=Resu_in['SIG_LAT'][i], PARA='SIG_LAT'),
                         _F(LISTE_R=Resu_in['P'][i], PARA='P'),
                         _F(LISTE_R=Resu_in['Q'][i], PARA='Q'),))
+                self.register_result(TABLRES, DicoEssai['TABLE_RESU'][i])
 
         # ---
         # Essai "TND"
@@ -967,6 +986,7 @@ def remplir_tables(self, typ_essai, str_n_essai, DicoEssai, Resu_in):
                         _F(LISTE_R=Resu_in['Q'][i], PARA='Q'),
                         _F(LISTE_R=Resu_in['PRE_EAU'][i], PARA='PRE_EAU'),
                     ))
+                self.register_result(TABLRES, DicoEssai['TABLE_RESU'][i])
 
         # ---
         # Essai "CISA_C"
@@ -995,6 +1015,7 @@ def remplir_tables(self, typ_essai, str_n_essai, DicoEssai, Resu_in):
                     LdicoRes += [
                         {'PARA': 'SIG_XY_' + stjp1, 'LISTE_R': Resu_in['SIG_XY'][i][j]}]
                 TABLRES = CREA_TABLE(TITRE=titre_table, LISTE=(LdicoRes))
+                self.register_result(TABLRES, DicoEssai['TABLE_RESU'][i])
 
                 stip1 = int_2_str(i + 1, len(PRES_CONF))
                 LdicoResGlob += [
@@ -1010,6 +1031,7 @@ def remplir_tables(self, typ_essai, str_n_essai, DicoEssai, Resu_in):
             titre_table = "Resultats globaux : ESSAI_CISA_C numero " + \
                 str_n_essai + "\n"
             TABLRES = CREA_TABLE(TITRE=titre_table, LISTE=(LdicoResGlob))
+            self.register_result(TABLRES, DicoEssai['TABLE_RESU'][-1])
 
         # ---
         # Essai "TND_C"
@@ -1050,6 +1072,7 @@ def remplir_tables(self, typ_essai, str_n_essai, DicoEssai, Resu_in):
                     LdicoRes += [
                         {'PARA': 'PRE_EAU_' + stjp1, 'LISTE_R': Resu_in['PRE_EAU'][i][j]}]
                 TABLRES = CREA_TABLE(TITRE=titre_table, LISTE=(LdicoRes))
+                self.register_result(TABLRES, DicoEssai['TABLE_RESU'][i])
 
                 stip1 = int_2_str(i + 1, len(PRES_CONF))
                 LdicoResGlob += [
@@ -1063,6 +1086,7 @@ def remplir_tables(self, typ_essai, str_n_essai, DicoEssai, Resu_in):
             titre_table = "Resultats globaux : ESSAI_TND_C numero " + \
                 str_n_essai + "\n"
             TABLRES = CREA_TABLE(TITRE=titre_table, LISTE=(LdicoResGlob))
+            self.register_result(TABLRES, DicoEssai['TABLE_RESU'][-1])
 
         # ---
         # Essai "TD_A"
@@ -1101,6 +1125,7 @@ def remplir_tables(self, typ_essai, str_n_essai, DicoEssai, Resu_in):
                     LdicoRes += [
                         {'PARA': 'Q_' + stjp1, 'LISTE_R': Resu_in['Q'][i][j]}]
                 TABLRES = CREA_TABLE(TITRE=titre_table, LISTE=(LdicoRes))
+                self.register_result(TABLRES, DicoEssai['TABLE_RESU'][i])
 
                 stip1 = int_2_str(i + 1, len(PRES_CONF))
                 LdicoResGlob += [
@@ -1114,6 +1139,7 @@ def remplir_tables(self, typ_essai, str_n_essai, DicoEssai, Resu_in):
             titre_table = "Resultats globaux : ESSAI_TD_A numero " + \
                 str_n_essai + "\n"
             TABLRES = CREA_TABLE(TITRE=titre_table, LISTE=(LdicoResGlob))
+            self.register_result(TABLRES, DicoEssai['TABLE_RESU'][-1])
 
         # ---
         # Essai "TD_NA"
@@ -1152,6 +1178,7 @@ def remplir_tables(self, typ_essai, str_n_essai, DicoEssai, Resu_in):
                     LdicoRes += [
                         {'PARA': 'Q_' + stjp1, 'LISTE_R': Resu_in['Q'][i][j]}]
                 TABLRES = CREA_TABLE(TITRE=titre_table, LISTE=(LdicoRes))
+                self.register_result(TABLRES, DicoEssai['TABLE_RESU'][i])
 
                 stip1 = int_2_str(i + 1, len(PRES_CONF))
                 LdicoResGlob += [
@@ -1165,6 +1192,7 @@ def remplir_tables(self, typ_essai, str_n_essai, DicoEssai, Resu_in):
             titre_table = "Resultats globaux : ESSAI_TD_NA numero " + \
                 str_n_essai + "\n"
             TABLRES = CREA_TABLE(TITRE=titre_table, LISTE=(LdicoResGlob))
+            self.register_result(TABLRES, DicoEssai['TABLE_RESU'][-1])
 
         # ---
         # Essai "OEDO_C"
@@ -1215,6 +1243,7 @@ def remplir_tables(self, typ_essai, str_n_essai, DicoEssai, Resu_in):
                     TABLRES = CREA_TABLE(TITRE=titre_table)
                 else:
                     TABLRES = CREA_TABLE(TITRE=titre_table, LISTE=(LdicoRes))
+                self.register_result(TABLRES, DicoEssai['TABLE_RESU'][i])
 
         # ---
         # Essai "ISOT_C"
@@ -1261,6 +1290,7 @@ def remplir_tables(self, typ_essai, str_n_essai, DicoEssai, Resu_in):
                     TABLRES = CREA_TABLE(TITRE=titre_table)
                 else:
                     TABLRES = CREA_TABLE(TITRE=titre_table, LISTE=(LdicoRes))
+                self.register_result(TABLRES, DicoEssai['TABLE_RESU'][i])
 
         # ---
         # Pour nouvel essai
@@ -1308,9 +1338,12 @@ def Calc_Gs_max(self, GAMMA_ELAS, PRES_CONF, KZERO, MATER, COMPORTEMENT, CONVERG
     __CHAR3 = DEFI_FONCTION(NOM_PARA='INST',
                             VALE=(0., PRES_CONF, 1., PRES_CONF,),)
 
+    CONVERGENCE2 = {k:CONVERGENCE[k]
+                    for k in ("RESI_GLOB_MAXI", "RESI_GLOB_RELA",
+                              "ITER_GLOB_MAXI") if k in CONVERGENCE}
     __EVOL = SIMU_POINT_MAT(
-        COMPORTEMENT=COMPORTEMENT.List_F(),
-        CONVERGENCE=CONVERGENCE.List_F(),
+        COMPORTEMENT=COMPORTEMENT,
+        CONVERGENCE=CONVERGENCE2,
         MATER=MATER,
         INCREMENT=_F(LIST_INST=__DLIST,
                      INST_INIT=0.,
@@ -1376,9 +1409,13 @@ def Calc_Es_max_TA(self, EPSI_ELAS, PRES_CONF, KZERO, MATER, COMPORTEMENT, CONVE
     __CHAR2 = DEFI_FONCTION(NOM_PARA='INST',
                             VALE=(0., KZERO * PRES_CONF, 5., KZERO * PRES_CONF,),)
 
+
+    CONVERGENCE2 = {k:CONVERGENCE[k]
+                    for k in ("RESI_GLOB_MAXI", "RESI_GLOB_RELA",
+                              "ITER_GLOB_MAXI") if k in CONVERGENCE}
     __EVOL = SIMU_POINT_MAT(
-        COMPORTEMENT=COMPORTEMENT.List_F(),
-        CONVERGENCE=CONVERGENCE.List_F(),
+        COMPORTEMENT=COMPORTEMENT,
+        CONVERGENCE=CONVERGENCE2,
         MATER=MATER,
         INCREMENT=_F(LIST_INST=__DLIST,
                      INST_INIT=0.,
@@ -1447,9 +1484,13 @@ def Calc_Es_max_TNA(self, EPSI_ELAS, PRES_CONF, KZERO, MATER, COMPORTEMENT, CONV
     __CHAR2 = DEFI_FONCTION(NOM_PARA='INST',
                             VALE=(0., KZERO * PRES_CONF, 3., KZERO * PRES_CONF,),)
 
+
+    CONVERGENCE2 = {k:CONVERGENCE[k]
+                    for k in ("RESI_GLOB_MAXI", "RESI_GLOB_RELA",
+                              "ITER_GLOB_MAXI") if k in CONVERGENCE}
     __EVOL = SIMU_POINT_MAT(
-        COMPORTEMENT=COMPORTEMENT.List_F(),
-        CONVERGENCE=CONVERGENCE.List_F(),
+        COMPORTEMENT=COMPORTEMENT,
+        CONVERGENCE=CONVERGENCE2,
         MATER=MATER,
         INCREMENT=_F(LIST_INST=__DLIST,
                      INST_INIT=0.,

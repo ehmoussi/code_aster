@@ -49,7 +49,7 @@ mesh=DEFI_DOMAINE_REDUIT(reuse=mesh,INFO=2,
             BASE_PRIMAL=base_p,
             BASE_DUAL=base_d,
             NOM_DOMAINE='RID',
-            NOM_INTERFACE='INF',);
+            GROUP_NO_INTERF='INF',);
 
 # # IMPR_RESU(FORMAT='MED', UNITE = 80, RESU=_F(MAILLAGE = mesh))
 

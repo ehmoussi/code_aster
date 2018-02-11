@@ -40,7 +40,7 @@ from Utilitai.partition import MAIL_PY
 
 import aster
 from code_aster.Cata.Syntax import _F
-from code_aster.Cata.Commands import (
+from code_aster.Commands import (
     DETRUIRE, DEFI_FICHIER,
     NUME_DDL_GENE, PROJ_VECT_BASE, PROJ_MATR_BASE, COMB_MATR_ASSE,
     LIRE_IMPE_MISS, LIRE_FORC_MISS,
