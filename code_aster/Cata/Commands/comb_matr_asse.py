@@ -42,7 +42,7 @@ def comb_matr_asse_prod(COMB_R,COMB_C,CALC_AMOR_GENE,**args):
 
 COMB_MATR_ASSE=OPER(nom="COMB_MATR_ASSE",op=  31,sd_prod=comb_matr_asse_prod,
                     fr=tr("Effectuer la combinaison linéaire de matrices assemblées"),
-                    reentrant='f:*:MATR_ASSE',
+                    reentrant='f:COMB_R|COMB_C:MATR_ASSE',
          regles=(UN_PARMI('COMB_R','COMB_C','CALC_AMOR_GENE' ),),
          reuse=SIMP(statut='c', typ=CO),
          COMB_R          =FACT(statut='f',max='**',

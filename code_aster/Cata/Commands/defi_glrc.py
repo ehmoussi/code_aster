@@ -24,7 +24,7 @@ from code_aster.Cata.Commons import *
 
 
 DEFI_GLRC=OPER(nom="DEFI_GLRC",op=57,sd_prod=mater_sdaster,
-               reentrant='f:*:MATER',
+               reentrant='f:BETON|NAPPE|CABLE_PREC|LINER:MATER',
                fr=tr("Déterminer les caractéristiques homogenéisées du béton armé à partir des propriétés du béton et des  "
                      " armatures"),
                reuse = SIMP(statut='c',typ=mater_sdaster),
