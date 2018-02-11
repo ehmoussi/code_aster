@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -285,7 +285,8 @@ RESU_100=CREA_RESU(OPERATION='AFFE',
                            MODELE=MOTHER_2,
                            INST=100.0,),);
 
-RESU_100=CREA_RESU(reuse =RESU_100,
+RESU_100=CREA_RESU(reuse=RESU_100,
+                   RESULTAT=RESU_100,
                    OPERATION='AFFE',
                    TYPE_RESU='EVOL_THER',
                    NOM_CHAM='HYDR_ELNO',
