@@ -37,7 +37,7 @@ def crea_champ_prod(TYPE_CHAM,**args):
 
 CREA_CHAMP=OPER(nom="CREA_CHAMP",op= 195,sd_prod=crea_champ_prod,
                 fr=tr("Création d'un champ "),
-                reentrant='f:ASSE:CHAM_GD',
+                reentrant='f:ASSE|COMB:CHAM_GD',
 
          reuse=SIMP(statut='c', typ=CO),
        # TYPE_CHAM doit etre de la forme : CART_xx, NOEU_xx, ELEM_xx, ELGA_xx ou ELNO_xx
