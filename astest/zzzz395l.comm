@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -148,7 +148,7 @@ thnl2=CALC_CHAMP(reuse=thnl2,
                 RESULTAT=thnl2,
                 THERMIQUE='FLUX_NOEU',);
 
-# Create base 
+# Create base
 base_p1=DEFI_BASE_REDUITE(OPERATION = 'POD_INCR',
                           TOLE      = 1.E-10,
                           RESULTAT  = thnl1,
@@ -157,6 +157,7 @@ base_p1=DEFI_BASE_REDUITE(OPERATION = 'POD_INCR',
                           TOLE_SVD  = 1.E-3,);
 
 base_p1=DEFI_BASE_REDUITE(reuse     = base_p1,
+                          BASE      = base_p1,
                           OPERATION = 'POD_INCR',
                           TOLE      = 1.E-10,
                           RESULTAT  = thnl2,
