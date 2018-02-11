@@ -86,6 +86,7 @@ from .defi_compor import DEFI_COMPOR
 from .defi_composite import DEFI_COMPOSITE
 from .defi_constante import DEFI_CONSTANTE
 from .defi_base_reduite import DEFI_BASE_REDUITE
+from .defi_contact import DEFI_CONTACT
 from .defi_domaine_reduit import DEFI_DOMAINE_REDUIT
 from .defi_fichier import DEFI_FICHIER
 from .defi_fiss_xfem import DEFI_FISS_XFEM
@@ -109,6 +110,7 @@ from .defi_obstacle import DEFI_OBSTACLE
 from .defi_squelette import DEFI_SQUELETTE
 from .defi_spec_turb import DEFI_SPEC_TURB
 from .defi_trc import DEFI_TRC
+from .depl_interne import DEPL_INTERNE
 from .detruire import DETRUIRE
 from .dyna_alea_modal import DYNA_ALEA_MODAL
 from .dyna_non_line import DYNA_NON_LINE
@@ -118,7 +120,6 @@ from .engendre_test import ENGENDRE_TEST
 from .extr_mode import EXTR_MODE
 from .extr_resu import EXTR_RESU
 from .extr_table import EXTR_TABLE
-from .depl_interne import DEPL_INTERNE
 from .factoriser import FACTORISER
 from .fin import FIN
 from .fonc_flui_stru import FONC_FLUI_STRU
@@ -191,7 +192,6 @@ from .test_table import TEST_TABLE
 from .ther_non_line import THER_NON_LINE
 from .ther_lineaire import THER_LINEAIRE
 from .ther_non_line_mo import THER_NON_LINE_MO
-from .defi_contact import DEFI_CONTACT
 
 from .ExecuteCommand import CO
 
