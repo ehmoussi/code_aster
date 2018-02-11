@@ -895,6 +895,13 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< FluideMaterialBehaviourInstance > ) )
     ;
 
+    class_< ThmInitMaterialBehaviourInstance, ThmInitMaterialBehaviourPtr,
+            bases< GeneralMaterialBehaviourInstance > >
+        ( "ThmInitMaterialBehaviour", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< ThmInitMaterialBehaviourInstance > ) )
+    ;
+
     class_< ThmGazMaterialBehaviourInstance, ThmGazMaterialBehaviourPtr,
             bases< GeneralMaterialBehaviourInstance > >
         ( "ThmGazMaterialBehaviour", no_init )
@@ -907,6 +914,13 @@ void exportMaterialBehaviourToPython()
         ( "ThmVapeGazMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ThmVapeGazMaterialBehaviourInstance > ) )
+    ;
+
+    class_< ThmDiffuMaterialBehaviourInstance, ThmDiffuMaterialBehaviourPtr,
+            bases< GeneralMaterialBehaviourInstance > >
+        ( "ThmDiffuMaterialBehaviour", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< ThmDiffuMaterialBehaviourInstance > ) )
     ;
 
     class_< ThmLiquMaterialBehaviourInstance, ThmLiquMaterialBehaviourPtr,

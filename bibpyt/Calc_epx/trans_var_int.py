@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 Transformation des variables internes
 """
 
-from code_aster.Cata.Commands import CREA_CHAMP, FORMULE, CALC_CHAMP, IMPR_RESU
+from code_aster.Commands import CREA_CHAMP, FORMULE, CALC_CHAMP, IMPR_RESU
 from Calc_epx.calc_epx_cata import cata_compor
 from code_aster.Cata.Syntax import _F
 from Utilitai.Utmess import MasquerAlarme, RetablirAlarme
@@ -35,7 +35,7 @@ def var_int_a2e(compor_gr, resu, mod, nume_ordre):
         Renvoie un résultat contenant les champs DEPL, SIEF_ELGA et VARI_ELGA
         transformé du NUME_ORDRE nume_ordre du résultat resu.
     """
-    from code_aster.Cata.Commands import CREA_RESU
+    from code_aster.Commands import CREA_RESU
 
     # extraction des champs :
 

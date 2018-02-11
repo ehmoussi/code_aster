@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -81,6 +81,7 @@ class FormulaDefinition(ExecuteCommand):
         """
         self._result.setVariables(force_list(keywords['NOM_PARA']))
         expr = keywords.get('VALE') or keywords.get('VALE_C')
+        expr = expr.strip()
         self._result.setExpression("".join(expr.splitlines()))
         self._result.setContext(self._ctxt)
         # the context is hold by the Formula

@@ -380,11 +380,16 @@ class ExecuteMacro(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         def _predicate(value):
+            if(type(value) in (list, tuple)):
+                return all(isinstance(val, CO) for val in value)
             return isinstance(value, CO)
 
         self._sdprods = search_for(keywords, _predicate)
         if self._sdprods:
-            names = [i.getName() for i in self._sdprods]
+            names_i = ((ii.getName() for ii in i) if(type(i) in (list, tuple))
+                       else [i.getName()]
+                       for i in self._sdprods)
+            names = [ii for i in names_i for ii in i]
             self._result_type = namedtuple("Result", ["main"] + names)
             self._result_names = names
             self._add_results = {}

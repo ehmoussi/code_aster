@@ -28,7 +28,7 @@
 
 #include "astercxx.h"
 
-#include "Results/ResultsContainer.h"
+#include "Results/TimeDependantResultsContainer.h"
 
 
 /**
@@ -36,16 +36,15 @@
  * @brief Cette classe correspond a un comb_fourier
  * @author Nicolas Sellenet
  */
-class EvolutiveLoadInstance: public ResultsContainerInstance
+class EvolutiveLoadInstance: public TimeDependantResultsContainerInstance
 {
 public:
     /**
      * @brief Constructeur
      */
     EvolutiveLoadInstance(): 
-        ResultsContainerInstance( "EVOL_CHAR" )
+        TimeDependantResultsContainerInstance( "EVOL_CHAR" )
     {};
-
 };
 
 /**

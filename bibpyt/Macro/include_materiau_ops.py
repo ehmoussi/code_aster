@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -95,8 +95,8 @@ def build_context(unite, temp, prol):
 
 
 def include_materiau_ops(self,
-                         EXTRACTION, UNITE_LONGUEUR, INFO,
-                         PROL_GAUCHE, PROL_DROITE, **args):
+                         EXTRACTION=None, UNITE_LONGUEUR=None, INFO=None,
+                         PROL_GAUCHE=None, PROL_DROITE=None, **args):
     """Macro INCLUDE_MATERIAU"""
     import aster
     from code_aster.Cata.Syntax import _F
@@ -170,4 +170,4 @@ def include_materiau_ops(self,
             else:
                 del kwcata[mcf]
     MAT = DEFI_MATERIAU(**kwcata)
-    return 0
+    return MAT

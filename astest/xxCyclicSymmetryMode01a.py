@@ -36,7 +36,7 @@ acier.build()
 
 affeMat = code_aster.MaterialOnMesh(secteur)
 affeMat.addMaterialOnAllMesh(acier)
-affeMat.build()
+affeMat.buildWithoutInputVariables()
 
 charCine = code_aster.KinematicsLoad()
 charCine.setSupportModel(modele)

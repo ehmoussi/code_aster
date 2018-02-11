@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -99,7 +99,7 @@ class FunctionDefinition(ExecuteCommand):
             UTMESS("F", "UTILITAI2_77")
         diff = abscissas[1:] - abscissas[:-1]
         if keywords.get("VERIF") == "CROISSANT":
-            if diff.min() <= 0:
+            if len(diff) > 0 and diff.min() <= 0:
                 UTMESS("F", "FONCT0_44", valk=funct.getName())
         else:
             if not cmplx:

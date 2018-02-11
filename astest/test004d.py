@@ -28,7 +28,7 @@ acier.build()
 
 affectMat = code_aster.MaterialOnMesh(monMaillage)
 affectMat.addMaterialOnAllMesh( acier )
-affectMat.build()
+affectMat.buildWithoutInputVariables()
 
 
 kine1 = code_aster.KinematicsLoad()

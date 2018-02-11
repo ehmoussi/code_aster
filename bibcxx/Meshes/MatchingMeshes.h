@@ -30,6 +30,8 @@
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 
+#include "Meshes/Mesh.h"
+
 /**
  * @class MatchingMeshesInstance
  * @brief Cette classe decrit un corresp_2_mailla
@@ -60,6 +62,8 @@ private:
     JeveuxVectorLong   _pjngI1;
     /** @brief Objet Jeveux '.PJNG_I2' */
     JeveuxVectorLong   _pjngI2;
+    /** @brief Premier Maillage */
+    BaseMeshPtr          _firstBaseMesh;
 
 public:
     /**
@@ -72,6 +76,14 @@ public:
      * @brief Constructeur
      */
     MatchingMeshesInstance();
+
+    bool setFirstMesh( MeshPtr& currentMesh ) throw ( std::runtime_error )
+    {
+        if ( currentMesh->isEmpty() )
+            throw std::runtime_error( "Mesh is empty" );
+        _firstBaseMesh = currentMesh;
+        return true;
+    };
 };
 
 

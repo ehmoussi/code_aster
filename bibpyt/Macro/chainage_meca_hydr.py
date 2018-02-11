@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -44,25 +44,16 @@ def CHAINAGE_MECA_HYDR(self, args, motscles):
     INST = args['INST']
     MATR_MH = args['MATR_MH']
 
-    para = RESU_MECA.LIST_PARA()
-    smo = set(para['MODELE'])
-
-# normalement, il ne doit y avoir qu'un modèle ...
-    if len(smo) <> 1:
-        UTMESS('F', 'CHAINAGE_10')
-    nom_mo_re = list(smo)[0]
-
-    __modele = self.get_concept(nom_mo_re)
+    __modele = RESU_MECA.getModel()
 
   #
   # Nom du modèle obtenu à partir du résultat : nom_modele_1
   #
-
-    iret, ibid, nom_modele_1 = aster.dismoi(
-        'MODELISATION', __modele.nom, 'MODELE', 'F')
+    iret, ibid, nom_modele_1 = aster.dismoi('MODELISATION', __modele.getName(),
+                                            'MODELE', 'F')
     nom_modele_1 = nom_modele_1.strip()
 
-    iret, ibid, yathm1 = aster.dismoi('EXI_THM', __modele.nom, 'MODELE', 'F')
+    yathm1 = __modele.existsThm()
 
   #
   # A l'heure actuelle, les modélisations autorisées pour
@@ -89,7 +80,7 @@ def CHAINAGE_MECA_HYDR(self, args, motscles):
   #
 
     iret, ibid, nom_modele_2 = aster.dismoi(
-        'MODELISATION', MODELE_HYDR.nom, 'MODELE', 'F')
+        'MODELISATION', MODELE_HYDR.getName(), 'MODELE', 'F')
     nom_modele_2 = nom_modele_2.strip()
 
     linst_resultat = RESU_MECA.LIST_VARI_ACCES()['INST']
@@ -153,10 +144,7 @@ def CHAINAGE_MECA_HYDR(self, args, motscles):
     if not(nom_modele_2 in mod_hyd_autorise):
         UTMESS('F', 'CHAINAGE_3', valk=[nom_modele_2, 'd arrivée'])
 
-    iret, ibid, nom_mail = aster.dismoi(
-        'NOM_MAILLA', MODELE_HYDR.nom, 'MODELE', 'F')
-    nom_mail = nom_mail.strip()
-    __maillage_h = self.get_concept(nom_mail)
+    __maillage_h = MODELE_HYDR.getSupportMesh()
 
     linst = [instm, instp]
 
@@ -266,7 +254,8 @@ def CHAINAGE_MECA_HYDR(self, args, motscles):
                              INST=instm, **motscles)
 
     if b_info:
-        UTMESS('I', 'CHAINAGE_7', valk=['divu', MODELE_HYDR.nom], valr=[instm])
+        UTMESS('I', 'CHAINAGE_7',
+               valk=['divu', MODELE_HYDR.getName()], valr=[instm])
 
     __divum = CREA_CHAMP(TYPE_CHAM='NOEU_EPSI_R',
                          OPERATION='ASSE',
@@ -278,7 +267,8 @@ def CHAINAGE_MECA_HYDR(self, args, motscles):
                             TOUT='OUI',),), **motscles)
 
     if b_info:
-        UTMESS('I', 'CHAINAGE_7', valk=['divu', MODELE_HYDR.nom], valr=[instp])
+        UTMESS('I', 'CHAINAGE_7',
+               valk=['divu', MODELE_HYDR.getName()], valr=[instp])
 
     __divup = CREA_CHAMP(TYPE_CHAM='NOEU_EPSI_R',
                          OPERATION='ASSE',
@@ -305,3 +295,4 @@ def CHAINAGE_MECA_HYDR(self, args, motscles):
                                     INST=instp,),
                                  _F(CHAM_GD=__divup,
                                     INST=INST,),),)
+    return nomres

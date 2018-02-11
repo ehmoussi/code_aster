@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -72,7 +72,7 @@ def get_unite_libre():
     """
         Retoune une unité de fichier libre.
     """
-    from code_aster.Cata.Commands import DETRUIRE, INFO_EXEC_ASTER
+    from code_aster.Commands import DETRUIRE, INFO_EXEC_ASTER
     _UL = INFO_EXEC_ASTER(LISTE_INFO='UNITE_LIBRE')
     unite = _UL['UNITE_LIBRE', 1]
     DETRUIRE(CONCEPT=(_F(NOM=_UL),), INFO=1)

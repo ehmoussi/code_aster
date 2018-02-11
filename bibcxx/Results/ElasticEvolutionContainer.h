@@ -4,7 +4,7 @@
 /**
  * @file ElasticEvolutionContainer.h
  * @brief Fichier entete de la classe ElasticEvolutionContainer
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  * @section LICENCE
  *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
@@ -28,26 +28,23 @@
 
 #include "astercxx.h"
 
-#include "Results/ResultsContainer.h"
-
+#include "Results/TimeDependantResultsContainer.h"
 
 /**
  * @class ElasticEvolutionContainerInstance
- * @brief Cette classe correspond a un evol_noli, elle hérite de ResultsContainer
-          et stocke des champs 
- * @author Natacha Béreux 
+ * @brief Cette classe correspond a un evol_elas
+ * @author Natacha Béreux
  */
-class ElasticEvolutionContainerInstance: public ResultsContainerInstance
+class ElasticEvolutionContainerInstance: public TimeDependantResultsContainerInstance
 {
-    private:
-    public:
-        /**
-         * @brief Constructeur
-         */
-        ElasticEvolutionContainerInstance( const std::string resuTyp = "EVOL_ELAS" ): 
-                ResultsContainerInstance( resuTyp )
-        {};
-
+private:
+public:
+    /**
+     * @brief Constructeur
+     */
+    ElasticEvolutionContainerInstance(): 
+        TimeDependantResultsContainerInstance( "EVOL_ELAS" )
+    {};
 };
 
 /**

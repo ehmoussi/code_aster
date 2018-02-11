@@ -28,7 +28,7 @@
 
 #include "astercxx.h"
 
-#include "Results/ResultsContainer.h"
+#include "Results/TimeDependantResultsContainer.h"
 
 
 /**
@@ -36,16 +36,15 @@
  * @brief Cette classe correspond a un evol_ther
  * @author Nicolas Sellenet
  */
-class EvolutiveThermalLoadInstance: public ResultsContainerInstance
+class EvolutiveThermalLoadInstance: public TimeDependantResultsContainerInstance
 {
 public:
     /**
      * @brief Constructeur
      */
     EvolutiveThermalLoadInstance(): 
-        ResultsContainerInstance( "EVOL_THER" )
+        TimeDependantResultsContainerInstance( "EVOL_THER" )
     {};
-
 };
 
 /**

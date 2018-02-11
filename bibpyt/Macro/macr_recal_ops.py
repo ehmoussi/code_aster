@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -91,7 +91,7 @@ def macr_recal_ops(self, UNITE_ESCL, RESU_EXP=None, LIST_POIDS=None, LIST_PARA=N
     #from code_aster.Commands import (DEFI_LIST_REEL, CREA_TABLE,
     #    TEST_TABLE, INCLUDE, INFO_EXEC_ASTER)
     from code_aster.Cata.Syntax import _F
-    #from code_aster.Cata.Commands import commandStore
+    #from code_aster.Commands import commandStore
 
     from Macro import reca_message
     from Macro import reca_algo
@@ -197,7 +197,7 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
 
     import Macro
     from code_aster.Cata.Syntax import _F
-    #from code_aster.Cata.Commands import commandStore
+    #from code_aster.Commands import commandStore
     # Declaration de toutes les commandes Aster
     #self.current_context['_F'] = _F
     #self.current_context.update(commandStore)

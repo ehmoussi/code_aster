@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ import numpy as NP
 from math import log
 from code_aster.Cata.Syntax import *
 from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commands import (AFFE_CHAR_THER, AFFE_MATERIAU, CALC_CHAMP, CALC_CHAM_ELEM, CREA_CHAMP, DEFI_MATERIAU, PROJ_CHAMP)
+from code_aster.Commands import (AFFE_CHAR_THER, AFFE_MATERIAU, CALC_CHAMP, CALC_CHAM_ELEM, CREA_CHAMP, DEFI_MATERIAU, PROJ_CHAMP)
 
 
 def NT(epsp, Nl, Kt, a1, a2, a3):

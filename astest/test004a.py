@@ -29,7 +29,7 @@ acier.debugPrint(6)
 
 affectMat = code_aster.MaterialOnMesh(monMaillage)
 affectMat.addMaterialOnAllMesh( acier )
-affectMat.build()
+affectMat.buildWithoutInputVariables()
 
 charMeca1 = code_aster.KinematicsLoad()
 charMeca1.setSupportModel(monModel)

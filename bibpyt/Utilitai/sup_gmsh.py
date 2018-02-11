@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ import copy
 import numpy as NP
 
 try:
-    from code_aster.Cata.Commands import (COPIER, CREA_MAILLAGE, DEFI_FICHIER,
+    from code_aster.Commands import (COPIER, CREA_MAILLAGE, DEFI_FICHIER,
                                           DEFI_GROUP, DETRUIRE, LIRE_MAILLAGE,
                                           PRE_GMSH)
     from code_aster.Cata.Syntax import _F

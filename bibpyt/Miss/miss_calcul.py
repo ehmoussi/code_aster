@@ -42,7 +42,7 @@ import numpy as NP
 import aster_core
 import aster
 from code_aster.Cata.Syntax import _F
-from code_aster.Cata.Commands import MACR_ELEM_DYNA, IMPR_MACR_ELEM
+from code_aster.Commands import MACR_ELEM_DYNA, IMPR_MACR_ELEM
 
 from Utilitai.Utmess import UTMESS
 from Utilitai.System import ExecCommand

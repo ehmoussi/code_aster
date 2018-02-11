@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ from Tkinter import Checkbutton, Canvas, Toplevel
 from Tkinter import NORMAL, DISABLED
 
 from code_aster.Cata.Syntax import _F
-from code_aster.Cata.Commands import EXEC_LOGICIEL
+from code_aster.Commands import EXEC_LOGICIEL
 from Utilitai.Utmess import UTMESS
 from Utilitai.Table import Table
 
@@ -544,7 +544,7 @@ class InterfaceParametres(Frame):
 #
 # Classes specifiques pour chaque logiciel de post-traitement
 #
-from code_aster.Cata.Commands import INFO_EXEC_ASTER, DEFI_FICHIER, DETRUIRE, IMPR_RESU
+from code_aster.Commands import INFO_EXEC_ASTER, DEFI_FICHIER, DETRUIRE, IMPR_RESU
 
 # Classe abstraite
 

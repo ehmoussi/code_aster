@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -57,6 +57,7 @@ class VibrationDynamics(ExecuteCommand):
         """
         if keywords["BASE_CALCUL"] == "PHYS":
             self._result.setModel(keywords["MATR_MASS"].getDOFNumbering().getSupportModel())
+            self._result.update()
 
 
 DYNA_VIBRA = VibrationDynamics.run

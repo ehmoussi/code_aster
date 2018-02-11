@@ -32,7 +32,7 @@ acier.build()
 
 affeMat = code_aster.MaterialOnMesh(monMaillage)
 affeMat.addMaterialOnAllMesh(acier)
-affeMat.build()
+affeMat.buildWithoutInputVariables()
 
 imposedDof1 = code_aster.DisplacementDouble()
 imposedDof1.setValue(code_aster.PhysicalQuantityComponent.Dx, 0.0)

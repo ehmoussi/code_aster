@@ -28,7 +28,7 @@
 
 #include "astercxx.h"
 
-#include "Results/ResultsContainer.h"
+#include "Results/TimeDependantResultsContainer.h"
 
 
 /**
@@ -37,17 +37,16 @@
           et stocke des champs 
  * @author Natacha Béreux 
  */
-class NonLinearEvolutionContainerInstance: public ResultsContainerInstance
+class NonLinearEvolutionContainerInstance: public TimeDependantResultsContainerInstance
 {
-    private:
-    public:
-        /**
-         * @brief Constructeur
-         */
-        NonLinearEvolutionContainerInstance( const std::string resuTyp = "EVOL_NOLI" ): 
-                ResultsContainerInstance( resuTyp )
-        {};
-
+private:
+public:
+    /**
+     * @brief Constructeur
+     */
+    NonLinearEvolutionContainerInstance(): 
+        TimeDependantResultsContainerInstance( "EVOL_NOLI" )
+    {};
 };
 
 /**
