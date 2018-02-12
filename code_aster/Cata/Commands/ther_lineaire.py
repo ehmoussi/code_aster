@@ -24,10 +24,10 @@ from code_aster.Cata.Commons import *
 
 
 THER_LINEAIRE=OPER(nom="THER_LINEAIRE",op=25,sd_prod=evol_ther,
-                   reentrant='f:EVOL_THER',
+                   reentrant='f:RESULTAT',
                    fr=tr("Résoudre un problème thermique linéaire stationnaire ou transitoire"),
          reuse=SIMP(statut='c', typ=CO),
-         EVOL_THER       =SIMP(statut='f',typ=evol_ther,
+         RESULTAT        =SIMP(statut='f',typ=evol_ther,
                                fr=tr("Objet qui sera enrichi des nouveaux instants calculés")),
          MODELE          =SIMP(statut='o',typ=modele_sdaster),
          CHAM_MATER      =SIMP(statut='o',typ=cham_mater),

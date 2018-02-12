@@ -318,11 +318,8 @@ def _backward_compatibility_27390(etape, keywords):
            "will be an error in the next major version.\n")
 
     key = None
-    if etape.nom in ("DYNA_NON_LINE", "STAT_NON_LINE"):
-        key = "EVOL_NOLI"
-    if etape.nom in ("THER_LINEAIRE", "THER_NON_LINE"):
-        key = "EVOL_THER"
-    if etape.nom in ("DYNA_VIBRA", ):
+    if etape.nom in ("DYNA_NON_LINE", "STAT_NON_LINE", "THER_LINEAIRE",
+                     "THER_NON_LINE", "DYNA_VIBRA"):
         key = "RESULTAT"
     if etape.nom in ("COMB_MATR_ASSE", ):
         key = "MATR_ASSE"
