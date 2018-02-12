@@ -320,7 +320,7 @@ def _backward_compatibility_27390(etape, keywords):
     key = None
     if etape.nom in ("DYNA_NON_LINE", "STAT_NON_LINE"):
         key = "EVOL_NOLI"
-    if etape.nom in ("THER_LINEAIRE", ):
+    if etape.nom in ("THER_LINEAIRE", "THER_NON_LINE"):
         key = "EVOL_THER"
     if etape.nom in ("DYNA_VIBRA", ):
         key = "RESULTAT"

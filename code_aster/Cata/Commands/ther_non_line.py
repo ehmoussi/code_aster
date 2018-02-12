@@ -24,10 +24,12 @@ from code_aster.Cata.Commons import *
 
 
 THER_NON_LINE=OPER(nom="THER_NON_LINE",op= 186,sd_prod=evol_ther,
-                   reentrant='f:ETAT_INIT:EVOL_THER',
+                   reentrant='f:EVOL_THER',
                    fr=tr("Résoudre un problème thermique non linéaire (conditions limites ou comportement matériau)"
                        " stationnaire ou transitoire"),
          reuse=SIMP(statut='c', typ=CO),
+         EVOL_THER       =SIMP(statut='f',typ=evol_ther,
+                               fr=tr("Objet qui sera enrichi des nouveaux instants calculés")),
          MODELE          =SIMP(statut='o',typ=(modele_sdaster),),
          CHAM_MATER      =SIMP(statut='o',typ=(cham_mater) ),
          CARA_ELEM       =SIMP(statut='c',typ=(cara_elem) ),
