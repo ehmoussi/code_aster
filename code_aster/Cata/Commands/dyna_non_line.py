@@ -25,10 +25,10 @@ from code_aster.Cata.Commons import *
 
 
 DYNA_NON_LINE=OPER(nom="DYNA_NON_LINE",op= 70,sd_prod=evol_noli,
-            reentrant='f:EVOL_NOLI',
+            reentrant='f:RESULTAT',
             fr=tr("Calcul de l'évolution dynamique d'une structure dont le matériau ou la géométrie ont un comportement non linéaire"),
          reuse=SIMP(statut='c', typ=CO),
-         EVOL_NOLI       =SIMP(statut='f',typ=evol_noli,
+         RESULTAT        =SIMP(statut='f',typ=evol_noli,
                                fr=tr("Objet qui sera enrichi des nouveaux instants calculés")),
          MODELE          =SIMP(statut='o',typ=modele_sdaster),
          CHAM_MATER      =SIMP(statut='o',typ=cham_mater),
