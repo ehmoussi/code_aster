@@ -1,6 +1,6 @@
 #!/bin/bash
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,4 +18,9 @@
 # --------------------------------------------------------------------
 
 export WAF_SUFFIX=`basename $0 | sed 's/^waf_//'`
-export WAFLOCK=.lock-${WAF_SUFFIX}_build && ./waf "$@" --out=build/${WAF_SUFFIX}
+export WAFLOCK=.lock-${WAF_SUFFIX}_build
+if [ `echo "$*" | grep -c -- --out` -eq 0 ]; then
+    ./waf "$@" --out=build/${WAF_SUFFIX}
+else
+    ./waf "$@"
+fi

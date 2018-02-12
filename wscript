@@ -143,16 +143,14 @@ def configure(self):
 
     # compute default prefix
     if not self.env.PREFIX:
-        suffix = osp.basename(self.options.out)
-        if not suffix:
-            suffix = 'std'
+        suffix = os.environ.get('WAF_SUFFIX', 'std')
         default_prefix = '../install/%s' % suffix
         self.env.PREFIX = osp.abspath(default_prefix)
     self.msg('Setting prefix to', self.env.PREFIX)
 
     self.load('ext_aster', tooldir='waftools')
     if not self.options.use_config and os.environ.get('DEVTOOLS_COMPUTER_ID'):
-        suffix= osp.basename(self.options.out)
+        suffix = os.environ.get('WAF_SUFFIX', '')
         if suffix:
             suffix = '_' + suffix
         self.options.use_config = os.environ['DEVTOOLS_COMPUTER_ID'] + suffix
