@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -35,16 +35,16 @@ mail = CREA_MAILLAGE(MAILLAGE=mail1,
 mail = DEFI_GROUP(reuse =mail, MAILLAGE=mail,
                 CREA_GROUP_NO=_F(GROUP_MA=('STRVOU','VOLSOL','TH_SOL',),),
                 );
-                
+
 mail = DEFI_GROUP(reuse =mail, MAILLAGE=mail,
                 CREA_GROUP_NO=_F(INTERSEC=('STRVOU','VOLSOL',),NOM='INTESOL'),
                 );
-                
+
 mail = MODI_MAILLAGE(reuse =mail, MAILLAGE=mail,
              ORIE_PEAU_3D=_F(GROUP_MA_VOLU='VOLSOL',GROUP_MA='TH_SOL'),
                 );
-                
-# 
+
+#
 eau   = DEFI_MATERIAU (FLUIDE=_F(RHO=1000.,  CELE_R=1500.));
 #
 beton = DEFI_MATERIAU( ELAS=_F( E= 3.6E+10, RHO= 2400. , NU= 0.2,
@@ -55,7 +55,7 @@ beton = DEFI_MATERIAU( ELAS=_F( E= 3.6E+10, RHO= 2400. , NU= 0.2,
 # LONG_CARA sert a definir la raideur equivalente et represente
 # une longueur caracteristique du domaine borne par les frontieres absorbantes
 #
-roche = DEFI_MATERIAU( ELAS=_F( E= 3.0E+11, RHO= 2000., NU= 0.16, 
+roche = DEFI_MATERIAU( ELAS=_F( E= 3.0E+11, RHO= 2000., NU= 0.16,
                                #AMOR_ALPHA=0.0005, AMOR_BETA=0.6,
                                AMOR_HYST=0.04,
                                LONG_CARA=340.,
@@ -87,7 +87,7 @@ ensemble  = AFFE_MODELE (MAILLAGE= mail,
                                     MODELISATION='3D_ABSO'),
                                 ),
                            );
-                           
+
 #
 champmat = AFFE_MATERIAU    (MAILLAGE= mail,
                     AFFE =(
@@ -104,55 +104,55 @@ champmat = AFFE_MATERIAU    (MAILLAGE= mail,
                                MATER   = roche ),
                            ),
                                );
-                               
+
 cond_lib = AFFE_CHAR_MECA( MODELE= ensemble,
            DDL_IMPO=_F(GROUP_NO='SLIBRE_N',  PRES=0., PHI=0.)
                             ) ;
-                            
+
 impemeca = AFFE_CHAR_MECA (MODELE    = ensemble,
                IMPE_FACE =(_F(GROUP_MA= 'IFLUSOLF', IMPE= 1.5E+6),
                            ));
 
 
 # Calcul des matrices et vecteurs elementaires=
-#---------------------------------------------- 
+#----------------------------------------------
 rigi_ele = CALC_MATR_ELEM( MODELE= ensemble , OPTION= 'RIGI_MECA',
-                               CHAM_MATER= champmat, 
+                               CHAM_MATER= champmat,
                                CHARGE= (cond_lib)    ) ;
-                               
+
 righ_ele = CALC_MATR_ELEM( MODELE= ensemble , OPTION= 'RIGI_MECA_HYST',
                                RIGI_MECA = rigi_ele,
-                               CHAM_MATER= champmat, 
+                               CHAM_MATER= champmat,
                                CHARGE= (cond_lib)    ) ;
-                               
+
 
 mass_ele = CALC_MATR_ELEM( MODELE= ensemble , OPTION= 'MASS_MECA',
-                               CHAM_MATER= champmat, 
+                               CHAM_MATER= champmat,
                                CHARGE= (cond_lib)    ) ;
 
 amor_ele = CALC_MATR_ELEM( MODELE = ensemble, OPTION= 'AMOR_MECA',
-                               CHAM_MATER= champmat, 
+                               CHAM_MATER= champmat,
                                RIGI_MECA = rigi_ele,
                                MASS_MECA = mass_ele,
                                CHARGE= (cond_lib)    ) ;
-                               
+
 #
 # Calcul de l'impedance associee au domaine fluide
 #
 impe_ele = CALC_MATR_ELEM( MODELE = ensemble, OPTION= 'IMPE_MECA',
-                               CHAM_MATER= champmat, 
+                               CHAM_MATER= champmat,
                                CHARGE= (impemeca)    ) ;
-                               
+
 VECT_ELE=CALC_VECT_ELEM(     OPTION='CHAR_MECA',
                              CHAM_MATER=champmat,
                              CHARGE=cond_lib,
                            )
- 
+
 nume_ddl = NUME_DDL( MATR_RIGI= rigi_ele, );
 
 # Assemblage des matrices et vecteurs=
 #-------------------------------------
-#  
+#
 rigidite = ASSE_MATRICE( MATR_ELEM= rigi_ele , NUME_DDL= nume_ddl ) ;
 rigihyst = ASSE_MATRICE( MATR_ELEM= righ_ele , NUME_DDL= nume_ddl ) ;
 masse    = ASSE_MATRICE( MATR_ELEM= mass_ele , NUME_DDL= nume_ddl ) ;
@@ -162,9 +162,9 @@ imped    = ASSE_MATRICE( MATR_ELEM= impe_ele , NUME_DDL= nume_ddl ) ;
 VECAS=ASSE_VECTEUR( VECT_ELEM=VECT_ELE, NUME_DDL=nume_ddl );
 
 #
-fo1 = DEFI_FONCTION ( NOM_PARA= 'FREQ', 
+fo1 = DEFI_FONCTION ( NOM_PARA= 'FREQ',
          VALE= ( 0., 1., 100., 1. ) );
-         
+
 INCLUDE(UNITE=31,);
 
 #Parametres
@@ -190,7 +190,7 @@ linst= DEFI_LIST_REEL ( DEBUT = 0.,
                                          ),
                                        ),
                       );
-                      
+
 
 #
 # Si le sol est homogene non dissipatif, on devrait mettre COEF=0.5
@@ -199,16 +199,16 @@ linst= DEFI_LIST_REEL ( DEBUT = 0.,
 #
 accex0= CALC_FONCTION( COMB=_F( FONCTION = acc_x, COEF = 0.52),
                       LIST_PARA=linst);
-                      
+
 accex= CALC_FONCTION( CORR_ACCE=_F( FONCTION = accex0, METHODE='FILTRAGE'),);
-                      
+
 
 #
 # accxc sert juste de reference, pas pour le calcul
 #
 accxc= CALC_FONCTION( COMB=_F( FONCTION = acc_x, COEF = 1.0),
                       LIST_PARA=linst);
-                      
+
 vitex=CALC_FONCTION(INTEGRE=_F(FONCTION=accex,));
 
 deplx0=CALC_FONCTION(INTEGRE=_F(FONCTION=vitex,));
@@ -225,25 +225,25 @@ deplx=CALC_FONC_INTERP(FONCTION=deplxF, NOM_PARA = 'INST',
                         PROL_GAUCHE='CONSTANT',
                         LIST_PARA=linst);
 
-                      
+
 # On donne en exemple en plus les cas ondes P et SH
 #
 # ONDEP=AFFE_CHAR_MECA_F(  MODELE=ensemble,
-#                 ONDE_PLANE=_F( DIRECTION = (0., 0., 1.,), 
+#                 ONDE_PLANE=_F( DIRECTION = (0., 0., 1.,),
 #                 TYPE_ONDE = 'P',
 #                 DIST=prof,
 #                 DEPL_IMPO=deplx,
 #                 FONC_SIGNAL = vitex, GROUP_MA='TH_SOL')
 #                      );
 ONDEV=AFFE_CHAR_MECA_F(  MODELE=ensemble,
-                ONDE_PLANE=_F( DIRECTION = (0., 0., 1.,), 
+                ONDE_PLANE=_F( DIRECTION = (0., 0., 1.,),
                 TYPE_ONDE = 'SV',
                 DIST=prof,
                 DEPL_IMPO=deplx,
                 FONC_SIGNAL = vitex, GROUP_MA='TH_SOL')
                      );
 # ONDEH=AFFE_CHAR_MECA_F(  MODELE=ensemble,
-#                 ONDE_PLANE=_F( DIRECTION = (0., 0., 1.,), 
+#                 ONDE_PLANE=_F( DIRECTION = (0., 0., 1.,),
 #                 TYPE_ONDE = 'SH',
 #                 DIST=prof,
 #                 DEPL_IMPO=deplx,
@@ -284,7 +284,7 @@ for k in range(1,NF):
 #                            COEF_R=1.0,
 #                            ),
         ),
-      ); 
+      );
   if k==1:
     CHA_ON=CREA_RESU(OPERATION='AFFE',
                   TYPE_RESU='DYNA_TRANS',
@@ -293,7 +293,9 @@ for k in range(1,NF):
                   NOM_CHAM='DEPL',
                   AFFE=(_F(CHAM_GD=VECAT,INST=0.0,),),);
   else:
-    CHA_ON=CREA_RESU(reuse=CHA_ON,OPERATION='AFFE',
+    CHA_ON=CREA_RESU(reuse=CHA_ON,
+                  RESULTAT=CHA_ON,
+                  OPERATION='AFFE',
                   TYPE_RESU='DYNA_TRANS',
                   MATR_RIGI=rigidite,
                   MATR_MASS=masse,
@@ -303,7 +305,7 @@ for k in range(1,NF):
   DETRUIRE(INFO=1,CONCEPT=_F(NOM=(VECT_EL2,VECA2)));
 #  DETRUIRE(INFO=1,CONCEPT=_F(NOM=(VECT_EL3,VECA3)));
   DETRUIRE(INFO=1,CONCEPT=_F(NOM=(VECAT)));
-  
+
 CHAONF = REST_SPEC_TEMP( RESULTAT = CHA_ON ,
                           METHODE = 'PROL_ZERO' ,
                           SYMETRIE = 'NON' ,
@@ -313,7 +315,7 @@ CHAONF = REST_SPEC_TEMP( RESULTAT = CHA_ON ,
 lfreqc = DEFI_LIST_REEL ( DEBUT = df,
                            INTERVALLE = _F( JUSQU_A = fmax,
                                           PAS = df)
-                            );                            
+                            );
 
 #
 # Calcul pour la premiere frequence qu'on va decaler a 0 :
@@ -331,49 +333,53 @@ dynah0 = DYNA_VIBRA    ( TYPE_CALCUL='HARM', BASE_CALCUL='PHYS',
                         FREQ= df,
                         TOUT_CHAM= 'OUI'
                         );
-                        
+
 DEP0=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_C',
                  OPERATION='EXTR',
                  RESULTAT=dynah0,
                  NOM_CHAM='DEPL',
                  FREQ=df,
-                 INFO=1,);                        
-                        
+                 INFO=1,);
+
 VIT0=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_C',
                  OPERATION='EXTR',
                  RESULTAT=dynah0,
                  NOM_CHAM='VITE',
                  FREQ=df,
                  INFO=1,);
-                 
+
 ACC0=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_C',
                  OPERATION='EXTR',
                  RESULTAT=dynah0,
                  NOM_CHAM='ACCE',
                  FREQ=df,
                  INFO=1,);
-                 
+
 dynah=CREA_RESU(OPERATION='AFFE',
                   TYPE_RESU='DYNA_HARMO',
                   MATR_RIGI=rigidite,
                   MATR_MASS=masse,
                   NOM_CHAM='DEPL',
                   AFFE=(_F(CHAM_GD=DEP0,FREQ=0.0,),),);
-                  
-dynah=CREA_RESU(reuse=dynah, OPERATION='AFFE',
+
+dynah=CREA_RESU(reuse=dynah,
+                  RESULTAT=dynah,
+                  OPERATION='AFFE',
                   TYPE_RESU='DYNA_HARMO',
                   MATR_RIGI=rigidite,
                   MATR_MASS=masse,
                   NOM_CHAM='VITE',
                   AFFE=(_F(CHAM_GD=VIT0,FREQ=0.0,),),);
-                  
-dynah=CREA_RESU(reuse=dynah, OPERATION='AFFE',
+
+dynah=CREA_RESU(reuse=dynah,
+                  RESULTAT=dynah,
+                  OPERATION='AFFE',
                   TYPE_RESU='DYNA_HARMO',
                   MATR_RIGI=rigidite,
                   MATR_MASS=masse,
                   NOM_CHAM='ACCE',
                   AFFE=(_F(CHAM_GD=ACC0,FREQ=0.0,),),);
-                                                
+
 #
 # Calcul pour toute la suite des frequences :
 #
@@ -392,12 +398,12 @@ dynah = DYNA_VIBRA    ( reuse=dynah, RESULTAT=dynah,
                         LIST_FREQ= lfreqc,
                         TOUT_CHAM= 'OUI'
                       );
-                      
+
 dyna = REST_SPEC_TEMP( RESULTAT = dynah ,
                           METHODE = 'PROL_ZERO' ,
                           SYMETRIE = 'NON' ,
                           TOUT_CHAM = 'OUI'  );
-                      
+
 # Point au sommet du barrage
 
 axch = RECU_FONCTION( RESULTAT= dyna, GROUP_NO='GNOH', NOM_CHAM= 'ACCE',
@@ -405,28 +411,28 @@ axch = RECU_FONCTION( RESULTAT= dyna, GROUP_NO='GNOH', NOM_CHAM= 'ACCE',
                       PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',
                       LIST_INST=linst,
                       NOM_CMP='DX');
-      
+
 
 
 # Point au bas du barrage
 
-axcb = RECU_FONCTION( RESULTAT= dyna, GROUP_NO='GNOB', 
+axcb = RECU_FONCTION( RESULTAT= dyna, GROUP_NO='GNOB',
                       NOM_CHAM= 'ACCE',
                       INTERPOL='LIN',
                       PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',
                       LIST_INST=linst,
                          NOM_CMP='DX');
 
-# Point au bord du barrage 
+# Point au bord du barrage
 
-axcc = RECU_FONCTION( RESULTAT= dyna, GROUP_NO='GNOB',  
+axcc = RECU_FONCTION( RESULTAT= dyna, GROUP_NO='GNOB',
                       NOM_CHAM= 'ACCE',
                       INTERPOL='LIN',
                       PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',
                       LIST_INST=linst,
                          NOM_CMP='DX');
- 
-    
+
+
 # IMPR_FONCTION(UNITE=32,
 #               FORMAT='XMGRACE',
 #              COURBE=(_F(FONCTION=axch),
@@ -435,8 +441,8 @@ axcc = RECU_FONCTION( RESULTAT= dyna, GROUP_NO='GNOB',
 #                      _F(FONCTION=accxc),
 #               ),
 #       );
-                    
-              
+
+
 freqspec = DEFI_LIST_REEL ( DEBUT = 0.1,
                           INTERVALLE = (
                                       _F(
@@ -459,23 +465,23 @@ sro_axh=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=axch, AMOR_REDUIT=0.05,
                                   NORME=1.,
                                   LIST_FREQ = freqspec,
                                  ),);
- 
+
 sro_axb=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=axcb, AMOR_REDUIT=0.05,
                                   NORME=1.,
                                   LIST_FREQ = freqspec,
                                  ),);
- 
+
 sro_axc=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=axcc, AMOR_REDUIT=0.05,
                                   NORME=1.,
                                   LIST_FREQ = freqspec,
                                  ),);
- 
+
 sro_axd=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=acc_x, AMOR_REDUIT=0.05,
                                   NORME=1.,
                                   LIST_FREQ = freqspec,
                                  ),);
- 
- 
+
+
 # IMPR_FONCTION(UNITE=33,
 #               FORMAT='XMGRACE',
 #               COURBE=(_F(FONCTION=sro_axh),
@@ -483,9 +489,9 @@ sro_axd=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=acc_x, AMOR_REDUIT=0.05,
 #                       _F(FONCTION=sro_axc),
 #                       _F(FONCTION=sro_axd),
 #            ),
-#       );      
+#       );
 
-                                 
+
 #
 # Valeurs de reference pour calcul complet sur aster5 :
 # inst1 = 1.02
@@ -499,7 +505,7 @@ sro_axd=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=acc_x, AMOR_REDUIT=0.05,
 #
 # Valeurs de reference pour test :
 inst1 = 0.27
-calt1 = 1.258811841068 
+calt1 = 1.258811841068
 reft1 = 1.273984709738
 tolt1 = 0.013
 calsro = 3.413043472460
