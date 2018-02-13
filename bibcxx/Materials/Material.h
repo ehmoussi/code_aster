@@ -29,6 +29,7 @@
 #include "astercxx.h"
 #include "DataStructures/DataStructure.h"
 #include "Materials/MaterialBehaviour.h"
+#include "Functions/Function.h"
 
 /**
  * @class MaterialInstance
@@ -63,6 +64,8 @@ class MaterialInstance: public DataStructure
         std::vector< JeveuxVectorDouble >  _vectorOfUserDoubleValues;
         /** @brief Vector of JeveuxVectorChar8 named '.XXXXXXX.LISV_FO' */
         std::vector< JeveuxVectorChar8 >   _vectorOfUserFunctionValues;
+        /** @brief Vector of JeveuxVectorDouble named '.&&RDEP' */
+        FunctionPtr                        _doubleValues;
 
     public:
         /**
@@ -83,7 +86,8 @@ class MaterialInstance: public DataStructure
             _jeveuxName( ResultNaming::getCurrentName() ),
             _materialBehaviourNames( JeveuxVectorChar32( _jeveuxName + ".MATERIAU.NOMRC " ) ),
             _nbMaterialBehaviour( 0 ),
-            _nbUserMaterialBehaviour( 0 )
+            _nbUserMaterialBehaviour( 0 ),
+            _doubleValues( new FunctionInstance( _jeveuxName + ".&&RDEP" ) )
         {};
 
         /**

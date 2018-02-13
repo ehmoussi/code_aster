@@ -63,6 +63,7 @@ bool MaterialInstance::build() throw( std::runtime_error )
         JeveuxVectorDouble& vec5 = _vectorOfUserDoubleValues[ num ];
         JeveuxVectorChar8& vec6 = _vectorOfUserFunctionValues[ num ];
         const bool retour = curIter->buildJeveuxVectors( vec1, vec2, vec3, vec4, vec5, vec6 );
+        const bool retour2 = curIter->buildTractionFunction( _doubleValues );
         if ( !retour ) return false;
         ++num;
     }

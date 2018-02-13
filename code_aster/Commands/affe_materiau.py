@@ -125,21 +125,21 @@ class MaterialAssignment(ExecuteCommand):
             obj = GeometryInputVariable
         elif nomVarc == "CORR":
             obj = CorrosionInputVariable
-        elif nomVarc == "IRRA":
+        elif nomVarc == "EPSA":
             obj = IrreversibleDeformationInputVariable
         elif nomVarc == "HYDR":
             obj = ConcreteHydratationInputVariable
-        elif nomVarc == "SECH":
+        elif nomVarc == "IRRA":
             obj = IrradiationInputVariable
-        elif nomVarc == "EPSA":
-            obj = SteelPhasesInputVariable
         elif nomVarc == "M_ACIER":
-            obj = ZircaloyPhasesInputVariable
+            obj = SteelPhasesInputVariable
         elif nomVarc == "M_ZIRC":
-            obj = Neutral1InputVariable
+            obj = ZircaloyPhasesInputVariable
         elif nomVarc == "NEUT1":
-            obj = Neutral2InputVariable
+            obj = Neutral1InputVariable
         elif nomVarc == "NEUT2":
+            obj = Neutral2InputVariable
+        elif nomVarc == "SECH":
             obj = ConcreteDryingInputVariable
         elif nomVarc == "PTOT":
             obj = TotalFluidPressureInputVariable

@@ -27,6 +27,7 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "astercxx.h"
+#include "DataStructures/DataStructure.h"
 
 
 /**
@@ -34,7 +35,7 @@
  * @brief Base class of Function, Formula and Table
  * @author Nicolas Sellenet
  */
-class GenericFunctionInstance
+class GenericFunctionInstance: public DataStructure
 {
 private:
 
@@ -48,8 +49,34 @@ public:
     /**
      * @brief Constructeur
      */
-    GenericFunctionInstance()
+    GenericFunctionInstance( const std::string& name, const std::string& type ):
+        DataStructure( name, 19, type )
     {};
+
+    /**
+     * @brief Get the result name
+     * @return  name of the result
+     */
+    virtual std::string getResultName()
+    {
+        return "";
+    };
+
+    /**
+     * @brief Return the number of points of the function
+     */
+    virtual long maximumSize() const throw ( std::runtime_error )
+    {
+        return 0;
+    };
+
+    /**
+     * @brief Return the number of points of the function
+     */
+    virtual long size() const throw ( std::runtime_error )
+    {
+        return 0;
+    };
 };
 
 /**

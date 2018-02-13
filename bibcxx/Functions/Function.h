@@ -27,7 +27,6 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 
-#include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Functions/GenericFunction.h"
 
@@ -37,7 +36,7 @@
  *   Create a datastructure for a function with real values
  * @author Mathieu Courtois
  */
-class BaseFunctionInstance: public DataStructure, public GenericFunctionInstance
+class BaseFunctionInstance: public GenericFunctionInstance
 {
     private:
         // Nom Jeveux de la SD
@@ -78,6 +77,26 @@ class BaseFunctionInstance: public DataStructure, public GenericFunctionInstance
 
         BaseFunctionInstance( const std::string jeveuxName, const std::string type );
 
+        ~BaseFunctionInstance()
+        {};
+
+
+        /**
+         * @brief Allocate function
+         */
+        virtual void allocate( JeveuxMemory mem, long size ) throw ( std::runtime_error );
+
+        /**
+         * @brief Get the result name
+         * @return  name of the result
+         */
+        std::string getResultName()
+        {
+            if( !_property->exists() )
+                return "";
+            _property->updateValuePointer();
+            return (*_property)[3].toString();
+        }
 
         /**
          * @brief Set the function type to CONSTANT
@@ -156,7 +175,15 @@ class BaseFunctionInstance: public DataStructure, public GenericFunctionInstance
         /**
          * @brief Return the number of points of the function
          */
-        virtual long size() const
+        virtual long maximumSize() const throw ( std::runtime_error )
+        {
+            return _value->size() / 2;
+        }
+
+        /**
+         * @brief Return the number of points of the function
+         */
+        virtual long size() const throw ( std::runtime_error )
         {
             return _value->size() / 2;
         }
@@ -247,10 +274,24 @@ public:
         _funct_type = "FONCT_C";
     };
 
+
+    /**
+     * @brief Allocate function
+     */
+    void allocate( JeveuxMemory mem, long size ) throw ( std::runtime_error );
+
     /**
      * @brief Return the number of points of the function
      */
-    long size() const
+    virtual long maximumSize() const throw ( std::runtime_error )
+    {
+        return _value->size() / 3;
+    }
+
+    /**
+     * @brief Return the number of points of the function
+     */
+    long size() const throw ( std::runtime_error )
     {
         return _value->size() / 3;
     }
