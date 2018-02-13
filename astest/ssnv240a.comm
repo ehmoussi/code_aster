@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -386,7 +386,7 @@ dico = U.LIST_VARI_ACCES()
 list_bouc = dico['INST'];
 
 for ii in range(len(list_bouc)):
-  
+
   VAR2 = CREA_CHAMP(TYPE_CHAM = 'NOEU_VAR2_R',
                     OPERATION='EXTR',
                     RESULTAT = U,
@@ -404,7 +404,7 @@ for ii in range(len(list_bouc)):
                             CUMUL = 'NON'),);
 
   if(ii==0):
-    
+
     RESU = CREA_RESU( OPERATION = 'AFFE',
                       TYPE_RESU = 'EVOL_THER',
                       NOM_CHAM  = 'TEMP',
@@ -412,8 +412,9 @@ for ii in range(len(list_bouc)):
                               INST = list_bouc[ii],),);
 
   else:
-    
+
     RESU = CREA_RESU(reuse = RESU,
+                     RESULTAT  = RESU,
                      OPERATION = 'AFFE',
                      TYPE_RESU = 'EVOL_THER',
                      NOM_CHAM  = 'TEMP',

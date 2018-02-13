@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -65,13 +65,13 @@ LAMBDA = 1.0;
 #CHALEUR D HYDRATATION  J/m3
 Q0 = 114000000.0;
 
-#TEMPERATURE DE REFERENCE 
+#TEMPERATURE DE REFERENCE
 TZ0 = 273.15;
 
-# CONSTANTE ARRHENIUS 
+# CONSTANTE ARRHENIUS
 Ar = 4000;
 
-# COEFFICIENT DE LA FONCTION A 
+# COEFFICIENT DE LA FONCTION A
 a6 = 50.12;
 
 a5 = -190.76;
@@ -210,7 +210,7 @@ MO2=AFFE_MODELE(MAILLAGE=MA,
                         PHENOMENE='THERMIQUE',
                         MODELISATION='3D',),),);
 #--------------------------------------------------------------
-# 2- DEFINITION DES PARAMETRES MATERIAUX 
+# 2- DEFINITION DES PARAMETRES MATERIAUX
 #  ET CARACTERISTIQUES GEOMETRIQUES DES ELEMENTS DE STRUCTURE
 #--------------------------------------------------------------
 
@@ -273,7 +273,7 @@ CHMAT=AFFE_MATERIAU(MAILLAGE=MA,
                                   VALE_REF=120,),),);
 
 #--------------------------------------------------------------
-# 3- DEFINITION DES CHARGEMENTS 
+# 3- DEFINITION DES CHARGEMENTS
 #--------------------------------------------------------------
 
 CLIM=AFFE_CHAR_MECA(MODELE=MO,
@@ -302,6 +302,7 @@ RESUSTA=MECA_STATIQUE(MODELE=MO,
                       INST_FIN=4320000,);
 
 RESUSTA=MECA_STATIQUE(reuse =RESUSTA,
+                      RESULTAT=RESUSTA,
                       MODELE=MO,
                       CHAM_MATER=CHMAT,
                       CARA_ELEM=CARAMECA,
