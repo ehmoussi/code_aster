@@ -209,6 +209,22 @@ bool MetaTractionMaterialBehaviourInstance::buildTractionFunction
     ( FunctionPtr& doubleValues ) const
     throw( std::runtime_error )
 {
+    long maxSize = 0;
+    std::string resName;
+    for( auto curIter : _mapOfFunctionMaterialProperties )
+    {
+        std::string nameOfProperty = curIter.second.getName();
+        if( curIter.second.hasValue() )
+        {
+            const auto size = curIter.second.getValue()->maximumSize();
+            if( size > maxSize )
+                maxSize = size;
+            resName = curIter.second.getValue()->getResultName();
+        }
+    }
+    doubleValues->allocate( Permanent, maxSize );
+    doubleValues->setParameterName( "EPSI" );
+    doubleValues->setResultName( resName );
     return true;
 };
 
