@@ -35,7 +35,7 @@ REST_COND_TRAN=OPER(nom="REST_COND_TRAN",op=  78,sd_prod=rest_cond_tran_prod,
                     fr=tr("Restituer dans la base physique des résultats issus d'un calcul"
                          "non-lineaire avec projection modale ou d'un calcul transitoire linear"
                          "avec condensation dynamique"),
-                    reentrant='f:RESULTAT',
+                    reentrant='f:RESU_FINAL|RESULTAT',
         regles=(
                 EXCLUS('TOUT_ORDRE','NUME_ORDRE','INST','LIST_INST','TOUT_INST'),
                 EXCLUS('MACR_ELEM_DYNA','BASE_MODALE'),),
