@@ -257,7 +257,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
           )
 
 RESU=STAT_NON_LINE(reuse =RESU,
-                   EVOL_NOLI=RESU,
+                   RESULTAT=RESU,
                    MODELE=MO,
                    CHAM_MATER=CHMAT,
                    CARA_ELEM=CARA,
@@ -300,7 +300,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=2,
 #--------------------------------------------------------------------
 
 RESU=DYNA_NON_LINE(reuse =RESU,
-                   EVOL_NOLI=RESU,
+                   RESULTAT=RESU,
                    MODELE=MO,
                    CHAM_MATER=CHMAT,
                    CARA_ELEM=CARA,
@@ -367,7 +367,7 @@ CHVARI=CREA_CHAMP(OPERATION='EXTR',
                   INST=0.5,)
 
 RESU=DYNA_NON_LINE(reuse =RESU,
-                   EVOL_NOLI=RESU,
+                   RESULTAT=RESU,
                    MODELE=MO,
                    CHAM_MATER=CHMAT,
                    CARA_ELEM=CARA,
@@ -407,7 +407,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=12,
           )
 
 RESU=DYNA_NON_LINE(reuse =RESU,
-                   EVOL_NOLI=RESU,
+                   RESULTAT=RESU,
                    MODELE=MO,
                    CHAM_MATER=CHMAT,
                    CARA_ELEM=CARA,
@@ -446,7 +446,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=17,
           )
 
 RESU=DYNA_NON_LINE(reuse =RESU,
-                   EVOL_NOLI=RESU,
+                   RESULTAT=RESU,
                    MODELE=MO,
                    CHAM_MATER=CHMAT,
                    CARA_ELEM=CARA,
@@ -485,7 +485,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=22,
           )
 
 RESU=DYNA_NON_LINE(reuse =RESU,
-                   EVOL_NOLI=RESU,
+                   RESULTAT=RESU,
                    MODELE=MO,
                    CHAM_MATER=CHMAT,
                    CARA_ELEM=CARA,
@@ -524,7 +524,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=27,
           )
 
 RESU=DYNA_NON_LINE(reuse =RESU,
-                   EVOL_NOLI=RESU,
+                   RESULTAT=RESU,
                    MODELE=MO,
                    CHAM_MATER=CHMAT,
                    CARA_ELEM=CARA,
@@ -560,7 +560,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=32,
           )
 
 RESU=DYNA_NON_LINE(reuse =RESU,
-                   EVOL_NOLI=RESU,
+                   RESULTAT=RESU,
                    MODELE=MO,
                    CHAM_MATER=CHMAT,
                    CARA_ELEM=CARA,
@@ -601,7 +601,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=37,
 #
 
 RESU=DYNA_NON_LINE(reuse =RESU,
-                   EVOL_NOLI=RESU,
+                   RESULTAT=RESU,
                    MODELE=MO,
                    CHAM_MATER=CHMAT,
                    CARA_ELEM=CARA,

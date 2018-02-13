@@ -450,7 +450,7 @@ U2=STAT_NON_LINE(MODELE=MODELE2,
                  );
 
 U2=STAT_NON_LINE(reuse=U2,
-                 EVOL_NOLI=U2,
+                 RESULTAT=U2,
                  MODELE=MODELE,
                  CHAM_MATER=CHMAT0,
                  EXCIT=(
