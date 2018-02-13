@@ -400,9 +400,11 @@ class ExecuteMacro(ExecuteCommand):
             logger.info(command_result(self._counter, self.name,
                                        self._result.getName()))
         if self._result_names:
-            names = ["{0} {1}".format(
-                i, decorate_name(self._add_results[i].getName()))
-                for i in self._result_names]
+            names = []
+            for name in self._result_names:
+                res = self._add_results.get(name)
+                resname = res.getName() if res is not None else "?"
+                names.append("{0} {1}".format(name, decorate_name(resname)))
             logger.info(command_result(self._counter, self.name,
                                        names))
         self._print_timer()

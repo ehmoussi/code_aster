@@ -24,11 +24,15 @@ def macr_ecrevisse_ops(self, **args):
     Découpage/Génération par Aster du fichier de données d'Ecrevisse et lancement d'Ecrevisse.
     """
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
-    from Utilitai.Table import Table, merge
+    from Utilitai.Table import merge
     from code_aster.Cata.Syntax import _F
     from Contrib.calc_ecrevisse import CALC_ECREVISSE
-    import aster
     import copy
+
+    # ASSD.__getitem__ was deprecated, now it didn't work anymore!
+    import warnings
+    warnings.warn("MACR_ECREVISSE must be refactored!", RuntimeWarning)
+    return
 
     #
     # La macro compte pour 1 dans la numerotation des commandes
