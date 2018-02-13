@@ -37,9 +37,13 @@ def crea_champ_prod(TYPE_CHAM,**args):
 
 CREA_CHAMP=OPER(nom="CREA_CHAMP",op= 195,sd_prod=crea_champ_prod,
                 fr=tr("Création d'un champ "),
-                reentrant='f:ASSE|COMB:CHAM_GD',
+                reentrant='f:CHAM_GD',
 
          reuse=SIMP(statut='c', typ=CO),
+         b_reuse=BLOC(condition = """is_in("OPERATION", ("ASSE", "COMB"))""",
+            CHAM_GD=SIMP(statut='f',typ=cham_gd_sdaster,
+         ),
+                      fr=tr("Objet qui sera réutilisé pour l'opération")),
        # TYPE_CHAM doit etre de la forme : CART_xx, NOEU_xx, ELEM_xx, ELGA_xx ou ELNO_xx
        # ou xx est le nom d'une grandeur définie dans le catalogue des grandeurs
          TYPE_CHAM       =SIMP(statut='o',typ='TXM',into=C_TYPE_CHAM_INTO()),

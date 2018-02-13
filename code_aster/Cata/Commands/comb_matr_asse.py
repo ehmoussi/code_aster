@@ -49,7 +49,7 @@ COMB_MATR_ASSE=OPER(nom="COMB_MATR_ASSE",op=  31,sd_prod=comb_matr_asse_prod,
                         typ=(matr_asse_depl_r, matr_asse_depl_c, matr_asse_temp_r,
                              matr_asse_temp_c, matr_asse_pres_r, matr_asse_pres_c,
                              matr_asse_gene_r, matr_asse_gene_c),
-                        fr=tr("Objet qui sera enrichi des nouveaux instants calculés")),
+                        fr=tr("Objet qui sera réutilisé pour l'opération")),
 
          COMB_R          =FACT(statut='f',max='**',
            PARTIE          =SIMP(statut='f',typ='TXM',into=("REEL","IMAG") ),
