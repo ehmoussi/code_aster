@@ -33,7 +33,7 @@ FunctionPtr emptyDoubleFunction( new FunctionInstance( "" ) );
 
 BaseFunctionInstance::BaseFunctionInstance( const std::string jeveuxName,
                                             const std::string type ):
-    DataStructure( jeveuxName, 19, type ),
+    GenericFunctionInstance( jeveuxName, type ),
     _jeveuxName( getName() ),
     _property( JeveuxVectorChar24( getName() + ".PROL" ) ),
     _value( JeveuxVectorDouble( getName() + ".VALE" ) ),
@@ -44,6 +44,22 @@ BaseFunctionInstance::BaseFunctionInstance( const std::string jeveuxName,
 BaseFunctionInstance::BaseFunctionInstance( const std::string type ) :
     BaseFunctionInstance::BaseFunctionInstance( ResultNaming::getNewResultName(), type )
 {
+}
+
+void BaseFunctionInstance::allocate( JeveuxMemory mem, long size ) throw ( std::runtime_error )
+{
+    if( _property->exists() )
+        _property->deallocate();
+    propertyAllocate();
+
+    if( _value->exists() )
+        _value->deallocate();
+    _value->allocate( mem, 2*size );
+}
+
+void FunctionComplexInstance::allocate( JeveuxMemory mem, long size ) throw ( std::runtime_error )
+{
+    throw std::runtime_error( "Not yet implemented!" );
 }
 
 void BaseFunctionInstance::setValues( const VectorDouble &absc, const VectorDouble &ordo )

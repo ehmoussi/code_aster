@@ -28,10 +28,10 @@
 
 #include "astercxx.h"
 
-#include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "Supervis/ResultNaming.h"
+#include "Functions/GenericFunction.h"
 
 
 /**
@@ -39,7 +39,7 @@
  * @brief Cette classe correspond a une nappe
  * @author Nicolas Sellenet
  */
-class SurfaceInstance: public DataStructure
+class SurfaceInstance: public GenericFunctionInstance
 {
 private:
     // Vecteur Jeveux '.PROL'
@@ -67,11 +67,52 @@ public:
      * @brief Constructeur
      */
     SurfaceInstance( const std::string name ):
-        DataStructure( name, 19, "NAPPE", Permanent ),
+        GenericFunctionInstance( name, "NAPPE" ),
         _property( JeveuxVectorChar24( getName() + ".PROL" ) ),
         _parameters( JeveuxVectorDouble( getName() + ".PARA" ) ),
         _value( JeveuxCollectionDouble( getName() + ".VALE" ) )
     {};
+
+    /**
+     * @brief Get the result name
+     * @return  name of the result
+     */
+    std::string getResultName()
+    {
+        if( !_property->exists() )
+            return "";
+        _property->updateValuePointer();
+        return (*_property)[3].toString();
+    }
+
+    /**
+     * @brief Return the number of points of the function
+     */
+    long maximumSize() const throw ( std::runtime_error )
+    {
+        _value->buildFromJeveux();
+        long toReturn = 0;
+        for( const auto& curIter : *_value )
+        {
+            if( curIter.size() > toReturn )
+                toReturn = curIter.size();
+        }
+        return toReturn;
+    };
+
+    /**
+     * @brief Return the number of points of the function
+     */
+    long size() const throw ( std::runtime_error )
+    {
+        _value->buildFromJeveux();
+        long toReturn = 0;
+        for( const auto& curIter : *_value )
+        {
+            toReturn += curIter.size();
+        }
+        return toReturn;
+    };
 };
 
 /**
