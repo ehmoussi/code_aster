@@ -84,14 +84,14 @@ real(kind=8), optional, intent(in) :: deplm_(ndim, nno), ddepl_(ndim, nno)
 !                                        jv_func, &
 !                                        geom   , typmod)
 !    endif
-!!
-!! - Gradient of velocity
-!!
-!    if (tabcod(GRADVELO) .eq. 1) then
-!        call calcExternalStateVariable3(nno     , npg    , ndim    ,&
-!                                        jv_poids, jv_func, jv_dfunc,&
-!                                        geom    , deplm_ , ddepl_ )
-!    endif
+!
+! - Gradient of velocity
+!
+    if (tabcod(GRADVELO) .eq. 1) then
+        call calcExternalStateVariable3(nno     , npg    , ndim    ,&
+                                        jv_poids, jv_func, jv_dfunc,&
+                                        geom    , deplm_ , ddepl_ )
+    endif
 !!
 !! - Element size 2
 !!
