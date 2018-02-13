@@ -43,6 +43,7 @@
 #include "PythonBindings/GeneralizedDOFNumberingInterface.h"
 #include "PythonBindings/FluidStructureInteractionInterface.h"
 #include "PythonBindings/TurbulentSpectrumInterface.h"
+#include "PythonBindings/GenericFunctionInterface.h"
 #include "PythonBindings/FunctionInterface.h"
 #include "PythonBindings/FormulaInterface.h"
 #include "PythonBindings/SurfaceInterface.h"
@@ -189,6 +190,7 @@ BOOST_PYTHON_MODULE(libaster)
     exportGeneralizedDOFNumberingToPython();
     exportFluidStructureInteractionToPython();
     exportTurbulentSpectrumToPython();
+    exportGenericFunctionToPython();
     exportFunctionToPython();
     exportFormulaToPython();
     exportSurfaceToPython();

@@ -75,7 +75,7 @@ template<> struct AllowedMaterialPropertyType< SurfacePtr >
 template<> struct AllowedMaterialPropertyType< FormulaPtr >
 {};
 
-template<> struct AllowedMaterialPropertyType< DataStructure::DataStructurePtr >
+template<> struct AllowedMaterialPropertyType< GenericFunctionPtr >
 {};
 
 template<> struct AllowedMaterialPropertyType< VectorDouble >
@@ -207,7 +207,7 @@ typedef MaterialPropertyInstance< SurfacePtr > ElementaryMaterialPropertySurface
 /** @typedef Definition d'une propriete materiau de type Formula */
 typedef MaterialPropertyInstance< FormulaPtr > ElementaryMaterialPropertyFormula;
 /** @typedef Definition d'une propriete materiau de type DataStructure */
-typedef MaterialPropertyInstance< DataStructure::DataStructurePtr > ElementaryMaterialPropertyDataStructure;
+typedef MaterialPropertyInstance< GenericFunctionPtr > ElementaryMaterialPropertyDataStructure;
 /** @typedef Definition d'une propriete materiau de type vector double */
 typedef MaterialPropertyInstance< VectorDouble > ElementaryMaterialPropertyVectorDouble;
 /** @typedef Definition d'une propriete materiau de type vector Function */
@@ -508,6 +508,13 @@ class GeneralMaterialBehaviourInstance
                                  JeveuxVectorChar16& ordr,
                                  JeveuxVectorDouble& userDoubles,
                                  JeveuxVectorChar8& userFunctions ) const
+            throw ( std::runtime_error );
+
+        /**
+         * @brief Build ".RDEP" if necessary
+         * @return true
+         */
+        virtual bool buildTractionFunction( FunctionPtr& doubleValues ) const
             throw ( std::runtime_error );
 
     protected:
@@ -1250,6 +1257,13 @@ class TractionMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             // Parametres matériau
             this->addFunctionProperty( "Sigm", ElementaryMaterialPropertyDataStructure( "SIGM" , true ) );
         };
+
+        /**
+         * @brief Build ".RDEP"
+         * @return true
+         */
+        bool buildTractionFunction( FunctionPtr& doubleValues ) const
+            throw ( std::runtime_error );
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Traction */
@@ -4834,6 +4848,13 @@ class MetaTractionMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
             this->addFunctionProperty( "Sigm_f4", ElementaryMaterialPropertyDataStructure( "SIGM_F4" , false ) );
             this->addFunctionProperty( "Sigm_c", ElementaryMaterialPropertyDataStructure( "SIGM_C" , false ) );
         };
+
+        /**
+         * @brief Build ".RDEP"
+         * @return true
+         */
+        bool buildTractionFunction( FunctionPtr& doubleValues ) const
+            throw ( std::runtime_error );
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MetaTraction */

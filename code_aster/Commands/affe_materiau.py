@@ -1,6 +1,22 @@
-# coding: utf-8
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -125,21 +141,21 @@ class MaterialAssignment(ExecuteCommand):
             obj = GeometryInputVariable
         elif nomVarc == "CORR":
             obj = CorrosionInputVariable
-        elif nomVarc == "IRRA":
+        elif nomVarc == "EPSA":
             obj = IrreversibleDeformationInputVariable
         elif nomVarc == "HYDR":
             obj = ConcreteHydratationInputVariable
-        elif nomVarc == "SECH":
+        elif nomVarc == "IRRA":
             obj = IrradiationInputVariable
-        elif nomVarc == "EPSA":
-            obj = SteelPhasesInputVariable
         elif nomVarc == "M_ACIER":
-            obj = ZircaloyPhasesInputVariable
+            obj = SteelPhasesInputVariable
         elif nomVarc == "M_ZIRC":
-            obj = Neutral1InputVariable
+            obj = ZircaloyPhasesInputVariable
         elif nomVarc == "NEUT1":
-            obj = Neutral2InputVariable
+            obj = Neutral1InputVariable
         elif nomVarc == "NEUT2":
+            obj = Neutral2InputVariable
+        elif nomVarc == "SECH":
             obj = ConcreteDryingInputVariable
         elif nomVarc == "PTOT":
             obj = TotalFluidPressureInputVariable

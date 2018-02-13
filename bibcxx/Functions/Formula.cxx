@@ -33,7 +33,7 @@
 
 
 FormulaInstance::FormulaInstance( const std::string jeveuxName ):
-    DataStructure( jeveuxName, 19, "FORMULE" ),
+    GenericFunctionInstance( jeveuxName, "FORMULE" ),
     _jeveuxName( getName() ),
     _property( JeveuxVectorChar24( getName() + ".PROL" ) ),
     _variables( JeveuxVectorChar8( getName() + ".NOVA" ) ),

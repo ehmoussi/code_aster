@@ -30,8 +30,8 @@
 
 #include "astercxx.h"
 #include "definition.h"
-#include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
+#include "Functions/GenericFunction.h"
 
 
 /**
@@ -39,7 +39,7 @@
  *   Create a datastructure for a formula with real values
  * @author Mathieu Courtois
  */
-class FormulaInstance: public DataStructure
+class FormulaInstance: public GenericFunctionInstance
 {
     private:
         // Nom Jeveux de la SD
@@ -85,6 +85,18 @@ class FormulaInstance: public DataStructure
         FormulaInstance( const std::string jeveuxName );
 
         ~FormulaInstance();
+
+        /**
+         * @brief Get the result name
+         * @return  name of the result
+         */
+        std::string getResultName()
+        {
+            if( !_property->exists() )
+                return "";
+            _property->updateValuePointer();
+            return (*_property)[3].toString();
+        }
 
         /**
          * @brief Definition of the name of the variables
@@ -182,7 +194,6 @@ class FormulaInstance: public DataStructure
         {
             return _property->updateValuePointer() && _variables->updateValuePointer();
         }
-
 };
 
 /**

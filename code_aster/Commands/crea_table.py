@@ -1,6 +1,6 @@
 # coding=utf-8
 #
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 # person_in_charge: mathieu.courtois at edf.fr
 # person_in_charge: mathieu.courtois@edf.fr
 
-from ..Objects import Table
+from ..Objects import Table, TableContainer, TableOfFunctions
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -33,6 +33,15 @@ class TableCreation(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = Table()
+        typ = keywords["TYPE_TABLE"]
+        if typ == "TABLE":
+            self._result = Table()
+        elif typ == "TABLE_FONCTION":
+            self._result = TableOfFunctions()
+        elif typ == "TABLE_CONTENEUR":
+            self._result = TableContainer()
+        else:
+            raise NotImplementedError("Type of table {0!r} not yet "
+                                      "implemented".format(typ))
 
 CREA_TABLE = TableCreation.run
