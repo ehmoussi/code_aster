@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -221,7 +221,12 @@ class _F(dict):
         return self.get(keyword)
 
     def cree_dict_valeurs(self, *args, **kwargs):
+        """Return a dict-like object to access to keywords."""
         return self
+
+    def cree_dict_toutes_valeurs(self):
+        """Same as `cree_dict_valeurs()`, for compatibility."""
+        return self.cree_dict_valeurs()
 
     @property
     def mc_liste(self):

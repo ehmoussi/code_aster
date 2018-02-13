@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,36 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-def macr_ecrevisse_ops(self, reuse,
-                       CONV_CRITERE,
-                       TABLE,
-                       TEMPER,
-                       DEBIT,
-                       MODELE_MECA,
-                       MODELE_THER,
-                       FISSURE,
-                       ECOULEMENT,
-                       LIST_INST,
-                       MODELE_ECRE,
-                       CONVERGENCE_ECREVISSE,
-                       COURBES,
-                       LOGICIEL,
-                       VERSION,
-                       ENTETE,
-                       IMPRESSION,
-                       CHAM_MATER,
-                       TEMP_INIT,
-                       CARA_ELEM,
-                       CONTACT,
-                       EXCIT_MECA,
-                       EXCIT_THER,
-                       COMPORTEMENT,
-                       NEWTON,
-                       CONVERGENCE,
-                       ETAT_INIT,
-                       ENERGIE,
-                       INFO,
-                       **args):
+def macr_ecrevisse_ops(self, **args):
     """
     Procédure de couplage Code_Aster-Ecrevisse.
     Exécution pour tous les pas de temps des calculs thermiques, mécaniques puis hydrauliques.
@@ -55,14 +26,42 @@ def macr_ecrevisse_ops(self, reuse,
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
     from Utilitai.Table import Table, merge
     from code_aster.Cata.Syntax import _F
-    import aster_core
-    import os
+    from Contrib.calc_ecrevisse import CALC_ECREVISSE
     import aster
     import copy
 
     #
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
+
+    CONV_CRITERE = args.get("CONV_CRITERE")
+    TABLE = args.get("TABLE")
+    TEMPER = args.get("TEMPER")
+    DEBIT = args.get("DEBIT")
+    MODELE_MECA = args.get("MODELE_MECA")
+    MODELE_THER = args.get("MODELE_THER")
+    FISSURE = args.get("FISSURE")
+    ECOULEMENT = args.get("ECOULEMENT")
+    LIST_INST = args.get("LIST_INST")
+    MODELE_ECRE = args.get("MODELE_ECRE")
+    CONVERGENCE_ECREVISSE = args.get("CONVERGENCE_ECREVISSE")
+    COURBES = args.get("COURBES")
+    LOGICIEL = args.get("LOGICIEL")
+    VERSION = args.get("VERSION")
+    ENTETE = args.get("ENTETE")
+    IMPRESSION = args.get("IMPRESSION")
+    CHAM_MATER = args.get("CHAM_MATER")
+    TEMP_INIT = args.get("TEMP_INIT")
+    CARA_ELEM = args.get("CARA_ELEM")
+    CONTACT = args.get("CONTACT")
+    EXCIT_MECA = args.get("EXCIT_MECA")
+    EXCIT_THER = args.get("EXCIT_THER")
+    COMPORTEMENT = args.get("COMPORTEMENT")
+    NEWTON = args.get("NEWTON")
+    CONVERGENCE = args.get("CONVERGENCE")
+    ETAT_INIT = args.get("ETAT_INIT")
+    ENERGIE = args.get("ENERGIE")
+    INFO = args.get("INFO")
 
     # Parametres debug
     debug = False
@@ -80,7 +79,6 @@ def macr_ecrevisse_ops(self, reuse,
     DETRUIRE = self.get_cmd("DETRUIRE")
     AFFE_MATERIAU = self.get_cmd("AFFE_MATERIAU")
     STAT_NON_LINE = self.get_cmd("STAT_NON_LINE")
-    from Contrib.calc_ecrevisse import CALC_ECREVISSE
     CO = self.get_cmd("CO")
     CREA_TABLE = self.get_cmd("CREA_TABLE")
 
@@ -100,9 +98,6 @@ def macr_ecrevisse_ops(self, reuse,
         IsPoursuite = True
     else:
         dEtatInit = None
-
-    # Valeur par defaut du mot cle LOGICIEL
-    # if not LOGICIEL: LOGICIEL = aster_core.get_option('prog:ecrevisse')
 
     # RECUPERATION DES MOTS-CLES FACTEURS
 
@@ -311,7 +306,7 @@ def macr_ecrevisse_ops(self, reuse,
                                          VIS_A_VIS=_F(TOUT_1='OUI',
                                                       TOUT_2='OUI',),
                                          INFO=2,)
-                
+
                 # Definition du materiau pour la mecanique
                 # note : on doit le faire a chaque fois car le nom de concept _RTHMPJ
                 #        est different a chaque passage
