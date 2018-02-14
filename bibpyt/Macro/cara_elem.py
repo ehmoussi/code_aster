@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -121,8 +121,8 @@ CARA_ELEM=OPER(nom="CARA_ELEM",sd_prod=cara_elem, op= 19,
             ),
             MODI_METRIQUE = SIMP(statut= 'f',typ= 'TXM',defaut= "NON",into= ("OUI","NON") ),
             FCX           = SIMP(statut= 'f',typ= (fonction_sdaster,nappe_sdaster,formule) ),
-            TUYAU_NSEC    = SIMP(statut= 'f',typ= 'I',val_max= 32,defaut= 16),
-            TUYAU_NCOU    = SIMP(statut= 'f',typ= 'I',val_max= 10,defaut= 3),
+            TUYAU_NSEC    = SIMP(statut= 'f',typ= 'I',val_max= 32, val_min=8, defaut= 16),
+            TUYAU_NCOU    = SIMP(statut= 'f',typ= 'I',val_max= 10, val_min=1, defaut= 3),
         ),
         b_coude = BLOC(condition = " SECTION == 'COUDE'",
             regles=(UN_PARMI('MAILLE','GROUP_MA'),
