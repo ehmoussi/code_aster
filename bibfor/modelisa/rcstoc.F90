@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,6 @@
 
 subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
                   valk, nbr, nbc, nbk)
-! aslint: disable=
     implicit none
 #include "jeveux.h"
 #include "asterc/getmjm.h"
@@ -38,13 +37,13 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnum.h"
 #include "asterfort/lxlgut.h"
+#include "asterfort/rcstoc_verif.h"
 #include "asterfort/tbexp2.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/indk16.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
-
     integer :: nbr, nbc, nbk, nbobj
     real(kind=8) :: valr(*)
     complex(kind=8) :: valc(*)
@@ -52,8 +51,7 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
     character(len=19) :: noobrc
     character(len=16) :: valk(*)
     character(len=32) :: nomrc
-
-
+!
 ! But: Stocker dans les 3 tableaux VALR, VALC et VALK les reels, les
 !      complexes et les k16 caracterisant la loi de comportement de nom nomrc
 !      Creer si necessaire (ORDRE_PARAM) les objets .ORDR et .KORD et les remplir
@@ -67,22 +65,15 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
 !  out nbr    : nombre de reels
 !  out nbc    : nombre de complexes
 !  out nbk    : nombre de concepts (fonction, trc, table, liste)
-!
 ! ----------------------------------------------------------------------
-!
-    real(kind=8) :: valr8, e1, ei, precma, valrr(4)
-    character(len=8) :: valtx
-    character(len=8) :: valch, nomcle(5)
-    character(len=8) :: table, typfon, nompf(10)
-    character(len=19) :: rdep, nomfct, nomint
-    character(len=8) :: num_lisv
-    character(len=16) :: nom_lisv
+    real(kind=8) :: valr8
+    character(len=8) :: valtx, valch, nomcle(5), table, typfon, nompf(10), num_lisv
+    character(len=19) :: nomfct, nomint
+    character(len=16) :: nom_lisv, typeco
     character(len=24) :: prol1, prol2, valkk(2)
-    character(len=16) :: typeco
     complex(kind=8) :: valc8
-    integer ::   ibk, nbmax, vali, itrou, n1, posi, kr, kc, kf
-    integer :: i, k, ii,  jrpv, jvale, nbcoup, n, jlisvr, jlisvf,nmcs
-    integer :: iret, nbfct, nbpts, jprol, nbptm, lpro1, lpro2, nbpf
+    integer :: ibk, nbmax, itrou, n1, posi, kr, kc, kf, i, ii
+    integer :: jvale, n, jlisvr, jlisvf, nmcs, jprol, lpro1, lpro2, nbpf
     character(len=32), pointer :: nomobj(:) => null()
     character(len=8), pointer :: typobj(:) => null()
     character(len=24), pointer :: prol(:) => null()
@@ -94,17 +85,13 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
     call jemarq()
     AS_ALLOCATE(vk8=typobj, size=nbobj)
     AS_ALLOCATE(vk32=nomobj, size=nbobj)
-
     nbr = 0
     nbc = 0
     nbk = 0
-
-
 !   -- 1. Recuperation de la liste des mots cles utilises
 !         et de leurs types associes => nomobj(:) et typboj(:)
 !   -------------------------------------------------------------------------
     call getmjm(nomrc, 1, nbobj, nomobj, typobj, nmcs)
-
 
 !   -- 2. Le mot cle ORDRE_PARAM est special (mot cle cache).
 !         Il donne l'ordre des mots cles simples pour l'acces via la routine rcvalt.F90.
@@ -133,7 +120,6 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
         nmcs=nmcs-1
     endif
 
-
 !   -- 3. On verifie que les mots cles simples ont moins de 16 carateres
 !   ---------------------------------------------------------------------
     do i = 1, nmcs
@@ -143,7 +129,6 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
             call utmess('F','MODELISA9_84', sk=nomobj(i))
         endif
     enddo
-
 
 !   -- 4. On modifie typobj pour remplacer 'R8' par 'LR8',
 !         'C8' par 'LC8' et 'CO' par 'LFO' quand ce sont des listes.
@@ -185,7 +170,6 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
             ASSERT(.false.)
         endif
     enddo
-
 
 !   -- 5. Si le mot cle ORDRE_PARAM est fourni, on verifie que TOUS les mots cles fournis
 !         font partie de la liste et on cree l'objet .KORD :
@@ -237,7 +221,6 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
         ASSERT(kc.eq.0)
         ASSERT(kr+kf.eq.nmcs)
     endif
-
 
 !   -- 6. Glute META_MECA*, BETON_DOUBLE_DP, RUPT_FRAG et CZM_LAB_MIX :
 !         On traite les TX qu'on convertit en R8
@@ -296,10 +279,8 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
         endif
     end do
 
-
 !   -- 7. Stockage des informations dans VALK, VALR et VALC :
 !   ---------------------------------------------------------
-
 !   -- 7.1 on traite les reels
 !   --------------------------
     do i = 1, nmcs
@@ -311,8 +292,6 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
             valk(nbr) = nomobj(i)(1:16)
         endif
     end do
-
-
 !   -- 7.2 on traite les complexes
 !   ------------------------------
     do i = 1, nmcs
@@ -325,10 +304,8 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
         endif
     end do
 
-
 !   -- 3.3 on traite ensuite les concepts CO puis les listes (LR8/LC8/LFO):
 !   ------------------------------------------------------------------------
-
 !   -- 7.3.1 : on stocke le nom des parametres concernes :
     do i = 1, nmcs
         if (typobj(i)(1:3) .eq. 'CO ') then
@@ -349,7 +326,6 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
             valk(nbr+nbc+nbk) = nomobj(i)(1:16)
         endif
     end do
-
 !   -- 7.3.2 : on stocke le nom des structures de donnees : fonctions, TRC, listes
     ibk = 0
     do i = 1, nmcs
@@ -388,7 +364,6 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
         endif
     end do
 
-
 !   -- 7. creation d'une fonction pour stocker r(p) :
 !   -------------------------------------------------
     if (( nomrc(1:8) .eq. 'TRACTION' ) .or. ( nomrc(1:13) .eq. 'META_TRACTION' )) then
@@ -403,7 +378,7 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
             nomcle(5)(1:7)='SIGM_C '
         endif
         nbmax = 0
-        do 149 ii = 1, nbk
+        do ii = 1, nbk
             do i = 1, nbk
                 if ((valk(nbr+nbc+ii)(1:6) .eq. 'SIGM  ') .or.&
                     (valk(nbr+nbc+ii)(1:7) .eq. 'SIGM_F1') .or.&
@@ -417,139 +392,16 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
             call utmess('F', 'MODELISA6_70', sk=nomcle(ii))
 151         continue
             nomfct = valk(nbr+nbc+nbk+ii)
+            call rcstoc_verif(nomfct, nomcle(ii), nomrc, nbmax)
+        enddo
 !
-            call jeveuo(nomfct//'.PROL', 'L', vk24=prol)
-            if (prol(1)(1:1) .eq. 'F') then
-                call jelira(nomfct//'.VALE', 'LONMAX', nbptm)
-                if (nomrc(1:8) .eq. 'TRACTION') then
-                    if (nbptm .lt. 4) then
-                        call utmess('F', 'MODELISA6_71', sk=nomcle(ii))
-                    endif
-                endif
-                if (nomrc(1:13) .eq. 'META_TRACTION') then
-                    if (nbptm .lt. 2) then
-                        call utmess('F', 'MODELISA6_72', sk=nomcle(ii))
-                    endif
-                endif
-                nbcoup = nbptm / 2
-                if (nbptm .ge. nbmax) nbmax = nbptm
-!
-                call jeveuo(nomfct//'.VALE', 'L', jrpv)
-                if (zr(jrpv) .le. 0.d0) then
-                    valkk (1) = nomcle(ii)
-                    valkk (2) = nomfct
-                    valrr (1) = zr(jrpv)
-                    call utmess('F', 'MODELISA9_59', nk=2, valk=valkk, sr=valrr(1))
-                endif
-                if (zr(jrpv+nbptm/2) .le. 0.d0) then
-                    valkk (1) = nomcle(ii)
-                    valkk (2) = nomfct
-                    valrr (1) = zr(jrpv+nbptm/2)
-                    call utmess('F', 'MODELISA9_60', nk=2, valk=valkk, sr=valrr(1))
-                endif
-!        VERIF ABSCISSES CROISSANTES (AU SENS LARGE)
-                iret=2
-                call foverf(zr(jrpv), nbcoup, iret)
-                iret = 0
-                e1 = zr(jrpv+nbcoup) / zr(jrpv)
-                precma = 1.d-10
-!
-                do 200 i = 1, nbcoup-1
-                    ei = (zr(jrpv+nbcoup+i) - zr(jrpv+nbcoup+i-1) ) / ( zr(jrpv+i) - zr(jrpv+i-1)&
-                         )
-                    if (ei .gt. e1) then
-                        iret = iret + 1
-                        valkk (1) = nomcle(ii)
-                        valrr (1) = e1
-                        valrr (2) = ei
-                        valrr (3) = zr(jrpv+i)
-                        call utmess('E', 'MODELISA9_61', sk=valkk(1), nr=3, valr=valrr)
-                    else if ((e1-ei)/e1 .le. precma) then
-                        valkk (1) = nomcle(ii)
-                        valrr (1) = e1
-                        valrr (2) = ei
-                        valrr (3) = precma
-                        valrr (4) = zr(jrpv+i)
-                        call utmess('A', 'MODELISA9_62', sk=valkk(1), nr=4, valr=valrr)
-                    endif
-200              continue
-                if (iret .ne. 0) then
-                    call utmess('F', 'MODELISA6_73')
-                endif
-!
-            else if (prol(1)(1:1) .eq. 'N') then
-                call jelira(nomfct//'.VALE', 'NUTIOC', nbfct)
-                nbptm = 0
-                do 160 k = 1, nbfct
-                    call jelira(jexnum(nomfct//'.VALE', k), 'LONMAX', nbpts)
-                    nbcoup = nbpts / 2
-                    if (nbpts .ge. nbmax) nbmax = nbpts
-                    if (nomrc(1:8) .eq. 'TRACTION') then
-                        if (nbpts .lt. 4) then
-                            call utmess('F', 'MODELISA6_74')
-                        endif
-                    endif
-                    if (nomrc(1:13) .eq. 'META_TRACTION') then
-                        if (nbpts .lt. 2) then
-                            call utmess('F', 'MODELISA6_75', sk=nomcle( ii))
-                        endif
-                    endif
-                    call jeveuo(jexnum(nomfct//'.VALE', k), 'L', jrpv)
-                    if (zr(jrpv) .le. 0.d0) then
-                        vali = k
-                        valkk (1) = nomcle(ii)
-                        valkk (2) = nomfct
-                        valrr (1) = zr(jrpv)
-                        call utmess('F', 'MODELISA9_63', nk=2, valk=valkk, si=vali,&
-                                    sr=valrr(1))
-                    endif
-                    if (zr(jrpv+nbpts/2) .le. 0.d0) then
-                        vali = k
-                        valkk (1) = nomcle(ii)
-                        valkk (2) = nomfct
-                        valrr (1) = zr(jrpv+nbpts/2)
-                        call utmess('F', 'MODELISA9_64', nk=2, valk=valkk, si=vali,&
-                                    sr=valrr(1))
-                    endif
-
-!                   verif abscisses croissantes (au sens large)
-                    iret=2
-                    call foverf(zr(jrpv), nbcoup, iret)
-                    iret = 0
-                    e1 = zr(jrpv+nbcoup) / zr(jrpv)
-                    do 210 i = 1, nbcoup-1
-                        ei = (&
-                             zr(jrpv+nbcoup+i) - zr(jrpv+nbcoup+i-1) ) / ( zr(jrpv+i) - zr(jrpv+i&
-                             &-1)&
-                             )
-                        if (ei .gt. e1) then
-                            iret = iret + 1
-                            valkk (1) = nomcle(ii)
-                            valrr (1) = e1
-                            valrr (2) = ei
-                            valrr (3) = zr(jrpv+i)
-                            call utmess('E', 'MODELISA9_65', sk=valkk(1), nr=3, valr=valrr)
-                        endif
-210                  continue
-                    if (iret .ne. 0) then
-                        call utmess('F', 'MODELISA6_73')
-                    endif
-160              continue
-!
-            else
-                call utmess('F', 'MODELISA6_76')
-            endif
-149      continue
-!
-        rdep = nommat//'.&&RDEP'
-        call wkvect(rdep//'.PROL', 'G V K24', 6, jprol)
+        call wkvect(nommat//'.&&RDEP'//'.PROL', 'G V K24', 6, jprol)
         zk24(jprol ) = 'FONCTION'
         zk24(jprol+1) = 'LIN LIN '
         zk24(jprol+2) = 'EPSI    '
         zk24(jprol+3) = prol(4)
-        call wkvect(rdep//'.VALE', 'G V R', 2*nbmax, jvale)
+        call wkvect(nommat//'.&&RDEP'//'.VALE', 'G V R', 2*nbmax, jvale)
     endif
-
 
 !   -- 8. Creation si necessaire d'une fonction pour stocker beta
 !         (enthalpie volumique) calculee a partir de RHO_CP
@@ -592,7 +444,6 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
 651     continue
     endif
 
-
 !   -- 9. Verification des noms des parametres des tables TRC :
 !   -----------------------------------------------------------
     if (nomrc(1:10) .eq. 'META_ACIER') then
@@ -622,7 +473,6 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
 720      continue
     endif
 
-
 !   -- 10. Verification que RHO ne peut etre une fonction que de la geometrie :
 !   ---------------------------------------------------------------------------
     if (nomrc .eq. 'ELAS_FO') then
@@ -639,9 +489,7 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
             enddo
         endif
     endif
-
     AS_DEALLOCATE(vk8=typobj)
     AS_DEALLOCATE(vk32=nomobj)
-
     call jedema()
 end subroutine
