@@ -22,7 +22,9 @@ pipeline {
     stages {
         stage('Init') {
             steps {
-                sh "post2mattermost 'Starting Job ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.RUN_DISPLAY_URL}|Open>)'"
+                sh '''#!/bin/bash -l
+                echo post2mattermost 'Starting Job ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.RUN_DISPLAY_URL}|Open>)'
+                '''
             }
         }
         stage('PreCheck') {
@@ -87,7 +89,9 @@ EOF
     }
     post {
         always {
-            sh "post2mattermost ${currentBuild.currentResult} 'Job ${env.JOB_NAME} #${env.BUILD_NUMBER} ended (<${env.RUN_DISPLAY_URL}|Open>)'"
+            sh '''#!/bin/bash -l
+            echo post2mattermost ${currentBuild.currentResult} 'Job ${env.JOB_NAME} #${env.BUILD_NUMBER} ended (<${env.RUN_DISPLAY_URL}|Open>)'
+            '''
         }
         success {
             emailext(
