@@ -76,14 +76,14 @@ real(kind=8), optional, intent(in) :: deplm_(ndim, nno), ddepl_(ndim, nno)
                                         jv_poids, jv_func, jv_dfunc,&
                                         geom    , typmod )
     endif
-!!
-!! - Coordinates of Gauss points
-!!
-!    if (tabcod(COORGA) .eq. 1) then
-!        call calcExternalStateVariable2(nno    , npg   , ndim  ,&
-!                                        jv_func, &
-!                                        geom   , typmod)
-!    endif
+!
+! - Coordinates of Gauss points
+!
+    if (tabcod(COORGA) .eq. 1) then
+        call calcExternalStateVariable2(nno    , npg   , ndim  ,&
+                                        jv_func, &
+                                        geom   , typmod)
+    endif
 !
 ! - Gradient of velocity
 !
