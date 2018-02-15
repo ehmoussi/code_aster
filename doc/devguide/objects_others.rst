@@ -57,6 +57,15 @@ Documentation of all other types.
 
 
 ********************************************************************************
+:py:class:`~code_aster.Objects.EvolutionParameter` object
+********************************************************************************
+
+.. autoclass:: code_aster.Objects.EvolutionParameter
+   :show-inheritance:
+   :members:
+
+
+********************************************************************************
 :py:class:`~code_aster.Objects.ForceDouble` object
 ********************************************************************************
 
@@ -237,6 +246,15 @@ Documentation of all other types.
 
 
 ********************************************************************************
+:py:class:`~code_aster.Objects.InputVariableOnMesh` object
+********************************************************************************
+
+.. autoclass:: code_aster.Objects.InputVariableOnMesh
+   :show-inheritance:
+   :members:
+
+
+********************************************************************************
 :py:class:`~code_aster.Objects.LibAsterInitializer` object
 ********************************************************************************
 
@@ -268,6 +286,15 @@ Documentation of all other types.
 ********************************************************************************
 
 .. autoclass:: code_aster.Objects.LocalShellForceDouble
+   :show-inheritance:
+   :members:
+
+
+********************************************************************************
+:py:class:`~code_aster.Objects.MaterialOnMeshBuilder` object
+********************************************************************************
+
+.. autoclass:: code_aster.Objects.MaterialOnMeshBuilder
    :show-inheritance:
    :members:
 
