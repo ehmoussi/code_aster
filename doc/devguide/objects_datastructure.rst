@@ -524,6 +524,15 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.GenericFunction` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.GenericFunction
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.GenericMechanicalLoad` object
 ================================================================================
 
@@ -992,10 +1001,37 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.TableContainer` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.TableContainer
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.TableOfFunctions` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.TableOfFunctions
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.ThermalLoad` object
 ================================================================================
 
 .. autoclass:: code_aster.Objects.ThermalLoad
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.TimeDependantResultsContainer` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.TimeDependantResultsContainer
    :show-inheritance:
    :members:
 

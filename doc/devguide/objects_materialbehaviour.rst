@@ -1307,10 +1307,28 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.ThmDiffuMaterialBehaviour` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.ThmDiffuMaterialBehaviour
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.ThmGazMaterialBehaviour` object
 ================================================================================
 
 .. autoclass:: code_aster.Objects.ThmGazMaterialBehaviour
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.ThmInitMaterialBehaviour` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.ThmInitMaterialBehaviour
    :show-inheritance:
    :members:
 
