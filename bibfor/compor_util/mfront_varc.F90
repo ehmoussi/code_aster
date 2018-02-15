@@ -21,7 +21,7 @@ subroutine mfront_varc(fami   , kpg      , ksp      , imate, &
                        nb_varc, list_varc, jvariexte,&
                        temp   , dtemp    , &
                        predef , dpred    , &
-                       neps   , epsth    , depsth)
+                       neps   , epsth    , depsth, rela_comp)
 !
 use calcul_module, only : ca_vext_eltsize1_, ca_vext_hygrm_, ca_vext_hygrp_
 !
@@ -49,6 +49,7 @@ real(kind=8), intent(out) :: temp, dtemp
 real(kind=8), intent(out) :: predef(*), dpred(*)
 integer, intent(in) :: neps
 real(kind=8), intent(out) :: epsth(neps), depsth(neps)
+character(len=16),optional,intent(in) :: rela_comp
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -83,7 +84,7 @@ real(kind=8), intent(out) :: epsth(neps), depsth(neps)
     real(kind=8)      :: tm,tp,tref
     character(len=16) :: nomres(3)
     integer           :: elas_id
-    character(len=16) :: elas_keyword
+    character(len=16) :: elas_keyword, rela_loc
     real(kind=8) :: epsthm, epsth_anism(3), epsth_metam
     real(kind=8) :: epsthp, epsth_anisp(3), epsth_metap
     integer      :: tabcod(30), variextecode(1)
@@ -125,6 +126,12 @@ real(kind=8), intent(out) :: epsth(neps), depsth(neps)
                 iret_       = iret)
     if (iret .ne. 0) then
         tp = 0.d0
+    endif
+
+    if (present(rela_comp)) then
+        rela_loc = rela_comp
+    else
+        rela_loc = ''
     endif
 !
 ! - Compute thermic strains
@@ -218,7 +225,9 @@ real(kind=8), intent(out) :: epsth(neps), depsth(neps)
                     call utmess('A', 'COMPOR4_25', sk = list_varc(i_varc))
                 endif
             else
-                call utmess('F', 'COMPOR4_23', sk = list_varc(i_varc))
+                if (rela_loc.ne.'BETON_BURGER') then
+                    call utmess('F', 'COMPOR4_23', sk = list_varc(i_varc))
+                endif
             endif
         endif
         call rcvarc(' ', list_varc(i_varc), '-', fami, kpg, ksp, vrcm, iret)
@@ -243,7 +252,9 @@ real(kind=8), intent(out) :: epsth(neps), depsth(neps)
                 endif
             endif
             if ((list_varc(i_varc) .ne. 'HYGR') .and. (list_varc(i_varc) .ne. 'ELTSIZE1')) then
-                call utmess('F', 'COMPOR4_23', sk = list_varc(i_varc))
+                if (rela_loc.ne.'BETON_BURGER') then
+                    call utmess('F', 'COMPOR4_23', sk = list_varc(i_varc))
+                endif
             endif
         endif
     end do

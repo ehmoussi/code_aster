@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -66,7 +66,6 @@ subroutine lcjacb(fami, kpg, ksp, rela_comp, mod,&
 !       ----------------------------------------------------------------
 !
 #include "asterf_types.h"
-#include "asterfort/burjac.h"
 #include "asterfort/cvmjac.h"
 #include "asterfort/hayjac.h"
 #include "asterfort/hujjac.h"
@@ -111,11 +110,6 @@ subroutine lcjacb(fami, kpg, ksp, rela_comp, mod,&
     else if (rela_comp(1:7) .eq. 'IRRAD3M') then
         call irrjac(fami, kpg, ksp, mod, nmat,&
                     materf, yf, dy, nr, drdy)
-!
-    else if (rela_comp(1:12) .eq. 'BETON_BURGER') then
-        call burjac(mod, nmat, materd, materf, nvi,&
-                    vind, timed, timef, yd, yf,&
-                    dy, nr, drdy)
 !
     else if (rela_comp(1:4) .eq. 'LETK') then
         call lkijac(mod, nmat, materf, timed, timef,&

@@ -20,7 +20,7 @@ subroutine mfrontExternalStateVariable(carcri,&
                                        fami  , kpg      , ksp, imate, &
                                        temp  , dtemp    , &
                                        predef, dpred    , &
-                                       neps  , epsth    , depsth)
+                                       neps  , epsth    , depsth, rela_comp)
 !
 implicit none
 !
@@ -37,6 +37,7 @@ real(kind=8), intent(out) :: temp, dtemp
 real(kind=8), intent(out) :: predef(*), dpred(*)
 integer, intent(in) :: neps
 real(kind=8), intent(out) :: epsth(neps), depsth(neps)
+character(len=16),optional,intent(in) :: rela_comp
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -73,10 +74,18 @@ real(kind=8), intent(out) :: epsth(neps), depsth(neps)
 !
     ASSERT(nb_varc .le. nb_varc_maxi)
 !
-    call mfront_varc(fami   , kpg      , ksp      , imate, &
-                     nb_varc, list_varc, jvariexte,&
-                     temp   , dtemp    , &
-                     predef , dpred    , &
-                     neps   , epsth    , depsth)
+    if (present(rela_comp)) then
+        call mfront_varc(fami   , kpg      , ksp, imate, &
+                        nb_varc, list_varc, jvariexte, &
+                        temp   , dtemp    , &
+                        predef , dpred    , &
+                        neps   , epsth    , depsth, rela_comp)
+    else
+        call mfront_varc(fami   , kpg      , ksp, imate, &
+                        nb_varc, list_varc, jvariexte, &
+                        temp   , dtemp    , &
+                        predef , dpred    , &
+                        neps   , epsth    , depsth)
+    endif
 !
 end subroutine

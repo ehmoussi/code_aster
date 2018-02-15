@@ -21,7 +21,7 @@ interface
                             nb_varc, list_varc, jvariexte,&
                             temp   , dtemp    , &
                             predef , dpred    , &
-                            neps   , epsth    , depsth)
+                            neps   , epsth    , depsth, rela_comp)
         character(len=*), intent(in) :: fami
         integer, intent(in) :: kpg, ksp
         integer, intent(in) :: imate
@@ -32,5 +32,6 @@ interface
         real(kind=8), intent(out) :: predef(*), dpred(*)
         integer, intent(in) :: neps
         real(kind=8), intent(out) :: epsth(neps), depsth(neps)
+        character(len=16),optional,intent(in) :: rela_comp
     end subroutine mfront_varc
 end interface

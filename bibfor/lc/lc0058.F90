@@ -156,7 +156,7 @@ integer, intent(out) :: codret
                                      fami   , kpg      , ksp, imate, &
                                      temp   , dtemp    , &
                                      predef , dpred    , &
-                                     neps   , epsth    , depsth)
+                                     neps   , epsth    , depsth, rela_comp)
 !
 ! - Prepare strains
 !

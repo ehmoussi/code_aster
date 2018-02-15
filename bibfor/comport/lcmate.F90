@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -56,7 +56,6 @@ subroutine lcmate(fami, kpg, ksp, comp, mod,&
 !                    UTILISEE SEULEMENT POUR LE MONOCRISTAL IMPLICITE
 !       ----------------------------------------------------------------
 #include "asterfort/assert.h"
-#include "asterfort/burmat.h"
 #include "asterfort/cvmmat.h"
 #include "asterfort/haymat.h"
 #include "asterfort/hbrmat.h"
@@ -159,19 +158,16 @@ subroutine lcmate(fami, kpg, ksp, comp, mod,&
                     nmat, itmax, toler, materd, materf,&
                     matcst, ndt, ndi, nr, nvi)
 !
-    else if (rela_comp(1:12) .eq. 'BETON_BURGER') then
-        call burmat(fami, kpg, ksp, mod, imat,&
-                    nmat, materd, materf, matcst, ndt,&
-                    ndi, nr, nvi)
-        typma='COHERENT'
     else if (rela_comp(1:4) .eq. 'LETK') then
         call lkimat(mod, imat, nmat, materd, materf,&
                     matcst, ndt, ndi, nvi, nr)
         typma='COHERENT'
+!
     else if (rela_comp(1:3).eq.'LKR') then
         call srimat(mod,imat,nmat,tempd,tempf,tref,materd,materf,&
                     matcst,ndt,ndi,nvi,nr)
         typma='COHERENT'
+!
     else if (rela_comp(1:8) .eq. 'HAYHURST') then
         call haymat(fami, kpg, ksp, mod, imat,&
                     nmat, '-', materd(1, 1), materd(1, 2), nvi,&
@@ -181,12 +177,14 @@ subroutine lcmate(fami, kpg, ksp, comp, mod,&
                     nr)
         call matect(materd, materf, nmat, matcst)
         typma='COHERENT'
+!
     else if (rela_comp(1:6) .eq. 'HUJEUX') then
         call hujma2(fami, kpg, ksp, mod, imat,&
                     nmat, tempf, angmas, sigd, vind,&
                     materd, materf, ndt, ndi, nvi,&
                     nr, matcst)
         typma='COHERENT'
+!
     else
 !
 ! CAS GENERAL
