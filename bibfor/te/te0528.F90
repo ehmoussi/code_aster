@@ -134,7 +134,7 @@ implicit none
                 call lcumvi('FD', zr(ivari+(igau-1)*nbvari), epstmp)
 !
             else if (compo1(1:12).eq.'BETON_BURGER') then
-                call burftm('FD', zr(ivari+(igau-1)*nbvari), epstmp)
+                call burftm('FD', ndim, zr(ivari+(igau-1)*nbvari), epstmp)
 !
             endif
 !
@@ -182,7 +182,7 @@ implicit none
 !        EPFP13 = V14+V15
 !        EPFP14 = V16+V17
 !
-                call burftm('FP', zr(ivari+(igau-1)*nbvari), epstmp)
+                call burftm('FP', ndim, zr(ivari+(igau-1)*nbvari), epstmp)
 !
                 do i = 1, nbsig
                     epsfl(nbsig*(igau-1)+i)=epstmp(i)

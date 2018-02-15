@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -67,28 +67,37 @@ FONC1=DEFI_FONCTION( NOM_PARA='SECH',
                      VALE=(0.0, 0.0, 1.0, 1.0,)
                    )
 
-MATER=DEFI_MATERIAU(ELAS_FO=_F(E=YOUN,
-                               NU=ZERO,
-                               TEMP_DEF_ALPHA=TREF,
-                               ALPHA=ALPH,
-                               FONC_DESORP = FONC1),
-                     BETON_BURGER =_F( K_RS   = 4360,
-                                        ETA_RS = 3.41e9,
-                                        KAPPA  = 3e-3,
-                                        ETA_IS = 5.76e12,
-                                        K_RD   = 3270,
-                                        ETA_RD = 2.55e9,
-                                        ETA_ID = 4.32e12,
-                                        QSR_K  = 0.,
-                                        TEMP_0_C  = 20.,
-                                      ),
-                 );
+KRS_F = DEFI_CONSTANTE(VALE=4360);
+ETARS_F = DEFI_CONSTANTE(VALE=3.41e9);
+KAPPA_F = DEFI_CONSTANTE(VALE=3e-3);
+ETAIS_F = DEFI_CONSTANTE(VALE=5.76e12);
+KRD_F = DEFI_CONSTANTE(VALE=3270);
+ETARD_F = DEFI_CONSTANTE(VALE=2.55e9);
+ETAID_F = DEFI_CONSTANTE(VALE=4.32e12);
+TEMP0C_F = DEFI_CONSTANTE(VALE=20.);
+
+MATER=DEFI_MATERIAU( ELAS_FO=_F( E=YOUN,
+                                 NU=ZERO,
+                                 TEMP_DEF_ALPHA=TREF,
+                                 ALPHA=ALPH,
+                                 FONC_DESORP = FONC1),
+                     BETON_BURGER_FO =_F( YoungModulus = YOUN,
+                                          PoissonRatio = ZERO,
+                                          K_RS     = KRS_F,
+                                          ETA_RS   = ETARS_F,
+                                          KAPPA    = KAPPA_F, 
+                                          ETA_IS   = ETAIS_F,
+                                          K_RD     = KRD_F,
+                                          ETA_RD   = ETARD_F,
+                                          ETA_ID   = ETAID_F,
+                                          ETA_FD   = ZERO,
+                                          QSR_K    = ZERO,
+                                          TEMP_0_C = TEMP0C_F,),);
 
 MOMECA=AFFE_MODELE(MAILLAGE=MA,
                    AFFE=_F(TOUT='OUI',
                            PHENOMENE='MECANIQUE',
                            MODELISATION='D_PLAN',),);
-
 
 L_INST=DEFI_LIST_REEL(DEBUT=0.0,
                       INTERVALLE=(_F(JUSQU_A=1,
@@ -105,7 +114,6 @@ TIMP=DEFI_FONCTION(
                        VALE=(  0. , TREF, 1. , 500.)
                         )
 
-
 CHP_TEMP=CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_F',
                     OPERATION='AFFE',
                     MAILLAGE=MA,
@@ -118,8 +126,6 @@ RTEMP=CREA_RESU(OPERATION='AFFE',
                 NOM_CHAM='TEMP',
                 AFFE=_F(CHAM_GD=CHP_TEMP,
                         LIST_INST=L_INST,),);
-
-
 
 SECH=CREA_CHAMP( OPERATION='AFFE', TYPE_CHAM='NOEU_TEMP_R', MAILLAGE=MA,
                         AFFE=_F( TOUT = 'OUI',
@@ -161,9 +167,9 @@ U=STAT_NON_LINE(MODELE=MOMECA,
                 EXCIT=(_F(CHARGE=LIAISON1,),
                     ),
                 COMPORTEMENT=_F(RELATION  = compor,
-                             RESI_INTE_RELA=1E-10,
-                             ITER_INTE_MAXI = 100,
-                             ALGO_INTE = 'NEWTON',),
+                             RESI_INTE_RELA=1E-10,),
+                             #ITER_INTE_MAXI = 100,
+                             #ALGO_INTE = 'NEWTON',),
                 INCREMENT=_F(LIST_INST=DEFLIST,),
                 NEWTON=_F(REAC_INCR=1,
                           REAC_ITER=1,),
@@ -218,6 +224,8 @@ for i in range(NCAL):
           # correction eventuelle des valeurs initiales du temps ti
 
           Ei=DEFI_CONSTANTE(VALE=YOUN(Ti))
+          Ei2 = YOUN(Ti)
+          print 'Ei', Ei2
 
           MATER[i]=DEFI_MATERIAU(#ELAS=_F(E=YOUN(Ti),
                                  #        NU=0.,
@@ -229,17 +237,18 @@ for i in range(NCAL):
                                 TEMP_DEF_ALPHA=0.,
                                 ALPHA=ZERO,
                                 FONC_DESORP = FONC1),
-                     BETON_BURGER =_F( K_RS   = 4360,
-                                        ETA_RS = 3.41e9,
-                                        KAPPA  = 3e-3,
-                                        ETA_IS = 5.76e12,
-                                        K_RD   = 3270,
-                                        ETA_RD = 2.55e9,
-                                        ETA_ID = 4.32e12,
-                                        QSR_K  = 0.,
-                                        TEMP_0_C  = 20.,
-                                      ),
-                 );
+                     BETON_BURGER =_F( YoungModulus = Ei2,
+                                       PoissonRatio = 0.,
+                                       K_RS   = 4360,
+                                       ETA_RS = 3.41e9,
+                                       KAPPA  = 3e-3,
+                                       ETA_IS = 5.76e12,
+                                       K_RD   = 3270,
+                                       ETA_RD = 2.55e9,
+                                       ETA_ID = 4.32e12,
+                                       ETA_FD = 0.,
+                                       QSR_K  = 0.,
+                                       TEMP_0_C  = 20.,),);
 
 
           list = DEFI_LIST_REEL(DEBUT=timem,

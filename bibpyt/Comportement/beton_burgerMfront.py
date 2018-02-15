@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,25 +17,22 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+# person_in_charge: vinicius.alves-fernandes at edf.fr
 
-from cata_comportement import LoiComportement
+from cata_comportement import LoiComportementMFront
 
-loi = LoiComportement(
+loi = LoiComportementMFront(
     nom            = 'BETON_BURGER',
-    lc_type        = ('MECANIQUE',),
-    doc            =   """Comportement de fluage propre du beton selon modele de burger avec non linearite sur le fluide de Maxwell (R7.01.35)"""            ,
-    num_lc         = 30,
-    nb_vari        = 21,
-    nom_vari       = ('ERSP','EISP','ERD11','EID11','ERD22',
-        'EID22','ERD33','EID33','EFD11','EFD22',
-        'EFD33','ERD12','EID12','ERD23','EID23',
-        'ERD31','EID31','EFD12','EFD23','EFD31',
-        'EIEQM',),
-    mc_mater       = ('ELAS','BETON_BURGER',),
-    modelisation   = ('3D','AXIS','C_PLAN','D_PLAN',),
-    deformation    = ('PETIT','PETIT_REAC','GROT_GDEP',),
-    algo_inte      = ('NEWTON','NEWTON_PERT',),
-    type_matr_tang = ('PERTURBATION','VERIFICATION',),
+    symbol_mfront  = 'asterbeton_burger',
+    doc            =   """Comportement de fluage propre du beton selon modele de burger avec non linearite sur le fluide de Maxwell (R7.01.35)"""        ,
+    num_lc         = 58,
+    nb_vari        = 0,
+    nom_vari       = None,
+    mc_mater       = None,
+    modelisation   = ('3D','AXIS','D_PLAN',),
+    deformation    = ('PETIT','PETIT_REAC','GDEF_LOG',),
+    algo_inte      = ('NEWTON_PERT',),
+    type_matr_tang = None,
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
