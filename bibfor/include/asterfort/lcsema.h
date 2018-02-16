@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,19 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine lcsema(elem_dime  , nb_node_mast   , nb_node_slav, nb_lagr,&
-                      norm_smooth, norm           , lagrc,&
-                      poidspg    , shape_mast_func, jaco_upda,&
+    subroutine lcsema(elem_dime    , nb_node_mast   , nb_node_slav, nb_lagr,&
+                      l_norm_smooth, norm           , lagrc,&
+                      poidspg      , shape_mast_func, jaco_upda,&
                       vtmp )
         integer, intent(in) :: elem_dime
-        integer, intent(in) :: nb_node_mast
-        integer, intent(in) :: nb_node_slav
-        integer, intent(in) :: nb_lagr
-        integer, intent(in) :: norm_smooth
+        integer, intent(in) :: nb_node_mast, nb_node_slav, nb_lagr
+        aster_logical, intent(in) :: l_norm_smooth
         real(kind=8), intent(in) :: norm(3)
         real(kind=8), intent(in) :: shape_mast_func(9)
         real(kind=8), intent(in) :: poidspg

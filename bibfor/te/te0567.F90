@@ -59,10 +59,11 @@ character(len=16), intent(in) :: nomte
     integer :: nb_node_slav, nb_node_mast, nb_lagr, nb_poin_inte, nb_dof, nb_tria, nb_gauss
     integer :: indi_lagc(10)
     integer :: elem_dime
-    integer :: jmatt, jv_geom
+    integer :: jmatt
     integer :: i_tria, i_dime, i_elin_mast, i_elin_slav, i_node, i_gauss
     real(kind=8) :: proj_tole, lagrc,lagrc_prev
-    integer :: algo_reso_geom, indi_cont, indi_cont_prev, norm_smooth,norm_smooth_prev
+    integer :: algo_reso_geom, indi_cont, indi_cont_prev
+    aster_logical :: l_norm_smooth, l_norm_smooth_p
     aster_logical :: l_axis, l_elem_frot, loptf, debug, l_upda_jaco, l_upda_jaco_prev
     real(kind=8) :: norm(3)
     character(len=8) :: elem_slav_code, elem_mast_code
@@ -104,9 +105,9 @@ character(len=16), intent(in) :: nomte
     proj_tole         = 1.d-9
     alpha             = 0.7
     debug             = ASTER_FALSE
+    l_norm_smooth_p   = ASTER_FALSE
     loptf             = nomopt.eq.'RIGI_FROT'
     ASSERT(.not.loptf)
-    call jevech('PGEOMER', 'L', jv_geom)
 !
 ! - Get informations about contact element
 !
@@ -149,7 +150,7 @@ character(len=16), intent(in) :: nomte
                 nb_node_slav  , nb_node_mast  ,&
                 elem_mast_init, elem_slav_init,&
                 elem_mast_coor, elem_slav_coor,&
-                norm_smooth)
+                l_norm_smooth)
 
 !
 ! - S'il y a du cyclage, on calcul la géométrie à n-1 :
@@ -160,7 +161,7 @@ character(len=16), intent(in) :: nomte
                     nb_node_slav  , nb_node_mast  ,&
                     elem_mast_init, elem_slav_init,&
                     elem_mast_coop, elem_slav_coop,&
-                    norm_smooth)
+                    l_norm_smooth_p)
     end if
 !
 ! - Compute matrix
@@ -266,7 +267,7 @@ character(len=16), intent(in) :: nomte
                                         jacobian      , norm)
 ! ------------------------- Compute contact matrix (slave side)
                             call lccoes(elem_dime  , nb_node_slav, nb_lagr  ,&
-                                        norm_smooth, norm        , indi_lagc,&
+                                        l_norm_smooth, norm        , indi_lagc,&
                                         poidpg     , shape_func  , jacobian ,&
                                         mmat )
                         end do
@@ -295,7 +296,7 @@ character(len=16), intent(in) :: nomte
                                         jacobian      , norm)
 ! ------------------------- Compute contact matrix (master side)
                             call lccoma(elem_dime  , nb_node_mast, nb_node_slav, nb_lagr,&
-                                        norm_smooth, norm        , indi_lagc   ,&
+                                        l_norm_smooth, norm        , indi_lagc   ,&
                                         poidpg     , shape_func  , jacobian    ,&
                                         mmat       )
                        end do
@@ -430,7 +431,7 @@ character(len=16), intent(in) :: nomte
                                                 jacobian      , norm)
 ! --------------------------------- Compute contact matrix (slave side)
                                     call lccoes(elem_dime  , nb_node_slav, nb_lagr  ,&
-                                                norm_smooth_prev, norm        , indi_lagc,&
+                                                l_norm_smooth_p, norm        , indi_lagc,&
                                                 poidpg     , shape_func  , jacobian ,&
                                                 mmat_prev )          
                                 end do             
@@ -461,7 +462,7 @@ character(len=16), intent(in) :: nomte
                                                 jacobian      , norm)
 ! --------------------------------- Compute contact matrix (master side)
                                     call lccoma(elem_dime  , nb_node_mast, nb_node_slav, nb_lagr,&
-                                                norm_smooth, norm        , indi_lagc   ,&
+                                                l_norm_smooth, norm        , indi_lagc   ,&
                                                 poidpg     , shape_func  , jacobian    ,&
                                                 mmat_prev       )
                                end do
