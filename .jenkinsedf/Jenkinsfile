@@ -47,15 +47,12 @@ pipeline {
         stage('Test') {
             steps {
                 sh '''#!/bin/bash -l
-                whoami
-                echo "PATH: $PATH"
-                which run_testcases
+                source $HOME/dev/codeaster/devtools/etc/env_unstable.sh
                 run_testcases --vers=\$(pwd)/build/install/std/share/aster --testlist=asterxx --resutest=build/resutest
                 exit 0
                 '''
                 sh '''#!/bin/bash -l
-                echo "PATH: $PATH"
-                which run_testcases
+                source $HOME/dev/codeaster/devtools/etc/env_unstable.sh
                 run_testcases --vers=\$(pwd)/build/install/mpi/share/aster --testlist=asterxx --resutest=build/resutest_mpi
                 exit 0
                 '''
