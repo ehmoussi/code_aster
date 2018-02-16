@@ -21,11 +21,12 @@ subroutine lcgeog(algo_reso_geom, l_previous    ,&
                   nb_node_slav  , nb_node_mast  ,&
                   elem_mast_init, elem_slav_init,&
                   elem_mast_coor, elem_slav_coor,&
-                  norm_smooth)
+                  l_norm_smooth)
 !
 implicit none
 !
 #include "jeveux.h"
+#include "asterf_types.h"
 #include "asterfort/jevech.h"
 #include "asterfort/lcreac.h"
 !
@@ -40,7 +41,7 @@ real(kind=8), intent(in) :: elem_slav_init(elem_dime, nb_node_slav)
 real(kind=8), intent(in) :: elem_mast_init(elem_dime, nb_node_mast)
 real(kind=8), intent(inout) :: elem_slav_coor(elem_dime, nb_node_slav)
 real(kind=8), intent(inout) :: elem_mast_coor(elem_dime, nb_node_mast)
-integer, intent(out) :: norm_smooth
+aster_logical, intent(out) :: l_norm_smooth 
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -63,7 +64,7 @@ integer, intent(out) :: norm_smooth
 ! In  elem_mast_init   : initial coordinates from master side of contact element
 ! IO  elem_slav_coor   : updated coordinates from slave side of contact element
 ! IO  elem_mast_coor   : updated coordinates from master side of contact element
-! Out norm_smooth      : indicator for normals smoothing
+! Out l_norm_smooth    : indicator for normals smoothing
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -78,7 +79,7 @@ integer, intent(out) :: norm_smooth
 !
 ! - Smooth normals ?
 !
-    norm_smooth = nint(zr(jpcf-1+1))
+    l_norm_smooth = int(zr(jpcf-1+1)) .eq. 1
 !
 ! - Coefficient to update geometry
 !
