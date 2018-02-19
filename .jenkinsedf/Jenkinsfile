@@ -22,9 +22,9 @@ pipeline {
     stages {
         stage('Init') {
             steps {
-                sh '''#!/bin/bash -l
+                sh """#!/bin/bash -l
                 post2mattermost 'Starting Job ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.RUN_DISPLAY_URL}|Open>)'
-                '''
+                """
             }
         }
         stage('PreCheck') {
@@ -51,12 +51,12 @@ pipeline {
             steps {
                 sh '''#!/bin/bash -l
                 source $HOME/dev/codeaster/devtools/etc/env_unstable.sh
-                run_testcases --vers=\$(pwd)/build/install/std/share/aster --testlist=asterxx --resutest=build/resutest
+                run_testcases --clean --vers=\$(pwd)/build/install/std/share/aster --testlist=asterxx --resutest=build/resutest
                 exit 0
                 '''
                 sh '''#!/bin/bash -l
                 source $HOME/dev/codeaster/devtools/etc/env_unstable.sh
-                run_testcases --vers=\$(pwd)/build/install/mpi/share/aster --testlist=asterxx --resutest=build/resutest_mpi
+                run_testcases --clean --vers=\$(pwd)/build/install/mpi/share/aster --testlist=asterxx --resutest=build/resutest_mpi
                 exit 0
                 '''
                 junit 'build/resutest*/run_testcases.xml'
@@ -106,9 +106,9 @@ EOF
     }
     post {
         always {
-            sh '''#!/bin/bash -l
+            sh """#!/bin/bash -l
             post2mattermost ${currentBuild.currentResult} 'Job ${env.JOB_NAME} #${env.BUILD_NUMBER} ended (<${env.RUN_DISPLAY_URL}|Open>)'
-            '''
+            """
         }
         success {
             emailext(
