@@ -92,13 +92,13 @@ real(kind=8), optional, intent(in) :: deplm_(ndim, nno), ddepl_(ndim, nno)
                                         jv_poids, jv_func, jv_dfunc,&
                                         geom    , deplm_ , ddepl_ )
     endif
-!!
-!! - Element size 2
-!!
-!    if (tabcod(ELTSIZE2) .eq. 1) then
-!        call calcExternalStateVariable4(nno     , npg   ,&
-!                                        jv_dfunc,&
-!                                        geom    , typmod)
-!    endif
+!
+! - Element size 2
+!
+    if (tabcod(ELTSIZE2) .eq. 1) then
+        call calcExternalStateVariable4(nno     , npg   , ndim,&
+                                        jv_dfunc,&
+                                        geom    , typmod)
+    endif
 !
 end subroutine
