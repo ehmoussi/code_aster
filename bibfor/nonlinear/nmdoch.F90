@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -78,7 +78,7 @@ character(len=19), optional, intent(in) :: list_load_resu_
     integer :: infmax, i_excit, i_load, iret, infc, j, i_load_new, iret_cable_cine
     character(len=4) :: typcal
     character(len=5) :: suffix
-    character(len=8) :: k8bid, load_type, parcha
+    character(len=8) :: k8bid, load_type, func_para_inst, func_para_vite
     character(len=8) :: const_func
     character(len=16) :: nomcmd, typesd, load_apply, load_keyword
     character(len=8) :: load_name, load_func, model, load_model
@@ -108,24 +108,24 @@ character(len=19), optional, intent(in) :: list_load_resu_
     infmax         = 0
     const_func     = '&&NMDOME'
     lisdbl         = '&&NMDOME.LISDBL'
-    l_func_c       = .false.
+    l_func_c       = ASTER_FALSE
     info_type      = 'RIEN'
     npilo          = 0
     i_excit        = 0
     i_load_new     = 0
     i_diri_suiv    = 0
-    l_diri_undead = .false.
+    l_diri_undead = ASTER_FALSE
 !
 ! - Get model
 !
     model=' '
-    if (nomcmd.ne.'CREA_RESU')then
+    if (nomcmd .ne. 'CREA_RESU') then
         call getvid(' ', 'MODELE', scal=model, nbret=n1)
     endif
 !
 ! - Can we create "zero-load" list of loads datastructure ?
 !
-    l_zero_allowed = .false.
+    l_zero_allowed = ASTER_FALSE
     if (l_load_user) then
         l_zero_allowed = nomcmd.eq.'DYNA_NON_LINE'.or.&
                          nomcmd.eq.'CALC_FORC_NONL'.or.&
@@ -134,7 +134,7 @@ character(len=19), optional, intent(in) :: list_load_resu_
                          nomcmd.eq.'LIRE_RESU'.or.&
                          nomcmd.eq.'CREA_RESU'
     else
-        l_zero_allowed = .true.
+        l_zero_allowed = ASTER_TRUE
     endif
 !
 ! - Get number of loads for loads datastructure
@@ -247,37 +247,32 @@ character(len=19), optional, intent(in) :: list_load_resu_
             lchin = ligrch(1:13)//'.CIMPO.DESC'
             call jeexin(lchin, iret)
             if (iret .ne. 0) then
+                call dismoi('PARA_INST', lchin, 'CARTE', repk=func_para_inst)
                 if (load_apply .eq. 'SUIV') then
                     info_type     = 'DIRI_SUIV'
                     l_diri_undead = .true.
                 else if (load_apply .eq. 'FIXE_PILO') then
-                    call dismoi('PARA_INST', lchin(1:19), 'CARTE', repk=parcha)
-                    if (parcha(1:3) .eq. 'OUI') then
-                        call utmess('F', 'CHARGES_28', sk=load_name)
-                    endif
-                    if (load_type(5:7) .eq. '_FT') then
-                        call utmess('F', 'CHARGES_28', sk=load_name)
-                    else if (load_type(5:7).eq.'_FO') then
+                    if (load_type(5:7).eq.'_FO') then
                         info_type = 'DIRI_PILO_F'
+                        if (func_para_inst(1:3) .eq. 'OUI') then
+                            call utmess('F', 'CHARGES_28', sk=load_name)
+                        endif
                     else
                         info_type = 'DIRI_PILO'
                     endif
                 else if (load_apply .eq. 'DIDI') then
                     if (load_type(5:7) .eq. '_FO') then
-                        info_type = 'DIRI_FO'
-                        call dismoi('PARA_INST', lchin(1:19), 'CARTE', repk=parcha)
-                        if (parcha(1:3) .eq. 'OUI') then
-                            info_type = 'DIRI_FT'
+                        info_type = 'DIRI_FO_DIDI'
+                        if (func_para_inst(1:3) .eq. 'OUI') then
+                            info_type = 'DIRI_FT_DIDI'
                         endif
                     else
-                        info_type = 'DIRI_CSTE'
+                        info_type = 'DIRI_CSTE_DIDI'
                     endif
-                    info_type = info_type(1:9)//'_DIDI'
                 else if (load_apply .eq. 'FIXE_CSTE') then
                     if (load_type(5:7) .eq. '_FO') then
                         info_type = 'DIRI_FO'
-                        call dismoi('PARA_INST', lchin(1:19), 'CARTE', repk=parcha)
-                        if (parcha(1:3) .eq. 'OUI') then
+                        if (func_para_inst(1:3) .eq. 'OUI') then
                             info_type = 'DIRI_FT'
                         endif
                     else
@@ -305,18 +300,26 @@ character(len=19), optional, intent(in) :: list_load_resu_
                 call jeexin(lchin, iret)
                 info_type = 'RIEN'
                 if (iret .ne. 0) then
+                    if (nomlig(i_type_neum) .eq. '.VEASS') then
+                        func_para_inst = 'NON'
+                        func_para_vite = 'NON'
+                    else
+                        call dismoi('PARA_INST', lchin, 'CARTE', repk=func_para_inst)
+                        call dismoi('PARA_VITE', lchin, 'CARTE', repk=func_para_vite)
+                    endif
                     if (nomlig(i_type_neum) .eq. '.ONDPL') then
                         info_type = 'NEUM_ONDE'
-                    else if (nomlig(i_type_neum).eq.'.SIINT') then
+                    else if (nomlig(i_type_neum) .eq. '.SIINT') then
                         info_type = 'NEUM_SIGM_INT'
                     else if (load_apply .eq. 'FIXE_PILO') then
                         if (nomlig(i_type_neum) .eq. '.VEASS') then
                             info_type = 'NEUM_PILO'
                         else
-                            if (load_type(5:7) .eq. '_FT') then
-                                call utmess('F', 'CHARGES_28', sk=load_name)
-                            else if (load_type(5:7).eq.'_FO') then
+                            if (load_type(5:7).eq.'_FO') then
                                 info_type = 'NEUM_PILO_F'
+                                if (func_para_inst(1:3) .eq. 'OUI') then
+                                    call utmess('F', 'CHARGES_28', sk=load_name)
+                                endif
                             else
                                 info_type = 'NEUM_PILO'
                             endif
@@ -325,8 +328,7 @@ character(len=19), optional, intent(in) :: list_load_resu_
                         info_type = 'NEUM_SUIV'
                     else if (load_apply .eq. 'FIXE_CSTE') then
                         if (load_type(5:7).eq.'_FO') then
-                            call dismoi('PARA_INST', lchin(1:19), 'CARTE', repk=parcha)
-                            if (parcha(1:3) .eq. 'OUI') then
+                            if (func_para_inst(1:3) .eq. 'OUI') then
                                 info_type = 'NEUM_FT'
                             else
                                 info_type = 'NEUM_FO'
@@ -340,8 +342,7 @@ character(len=19), optional, intent(in) :: list_load_resu_
                             call utmess('F', 'CHARGES_31', sk=load_name)
                         endif
                         if (load_type(5:7).eq.'_FO') then
-                            call dismoi('PARA_INST', lchin(1:19), 'CARTE', repk=parcha)
-                            if (parcha(1:3) .eq. 'OUI') then
+                            if (func_para_inst(1:3) .eq. 'OUI') then
                                 info_type = 'NEUM_FT'
                             else
                                 info_type = 'NEUM_FO'
@@ -351,6 +352,14 @@ character(len=19), optional, intent(in) :: list_load_resu_
                         endif
                     else
                         ASSERT(.false.)
+                    endif
+                    if (func_para_vite .eq. 'OUI') then
+                        if (load_apply .ne. 'SUIV') then
+                            call utmess('F', 'CHARGES_55', sk=load_name)
+                        endif
+                        if (nomcmd .eq. 'STAT_NON_LINE') then
+                            call utmess('F', 'CHARGES_56', sk=load_name)
+                        endif
                     endif
                 endif
                 if (info_type .ne. 'RIEN') then

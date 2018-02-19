@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine liscli(list_load  , i_load      , nb_info_maxi, list_info_type, load_namez,&
                   load_funcz , nb_info_type, i_neum_lapl)
 !
@@ -26,15 +26,14 @@ implicit none
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 !
-!
-    character(len=19), intent(in) :: list_load
-    integer, intent(in) :: i_load
-    integer, intent(in) :: nb_info_maxi
-    character(len=24), intent(inout) :: list_info_type(nb_info_maxi)
-    character(len=*), intent(out) :: load_namez
-    character(len=*), intent(out) :: load_funcz
-    integer, intent(out) :: nb_info_type
-    integer, intent(out) :: i_neum_lapl
+character(len=19), intent(in) :: list_load
+integer, intent(in) :: i_load
+integer, intent(in) :: nb_info_maxi
+character(len=24), intent(inout) :: list_info_type(nb_info_maxi)
+character(len=*), intent(out) :: load_namez
+character(len=*), intent(out) :: load_funcz
+integer, intent(out) :: nb_info_type
+integer, intent(out) :: i_neum_lapl
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -131,7 +130,7 @@ implicit none
         ASSERT(i_info_type.le.nb_info_maxi)
         list_info_type(i_info_type) = 'DIRI_CSTE'
         if (v_load_info(3*nb_load+2+i_load+1) .eq. 1) then
-            list_info_type(i_info_type) = list_info_type(i_info_type)(1:9)//'_DIDI'
+            list_info_type(i_info_type) = 'DIRI_CSTE_DIDI'
         endif
     endif
 !
@@ -140,7 +139,7 @@ implicit none
         ASSERT(i_info_type.le.nb_info_maxi)
         list_info_type(i_info_type) = 'DIRI_FO'
         if (v_load_info(3*nb_load+2+i_load+1) .eq. 1) then
-            list_info_type(i_info_type) = list_info_type(i_info_type)(1:9)//'_DIDI'
+            list_info_type(i_info_type) = 'DIRI_FO_DIDI'
         endif
     endif
 !
@@ -149,7 +148,7 @@ implicit none
         ASSERT(i_info_type.le.nb_info_maxi)
         list_info_type(i_info_type) = 'DIRI_FT'
         if (v_load_info(3*nb_load+2+i_load+1) .eq. 1) then
-            list_info_type(i_info_type) = list_info_type(i_info_type)(1:9)//'_DIDI'
+            list_info_type(i_info_type) = 'DIRI_FT_DIDI'
         endif
     endif
 !
