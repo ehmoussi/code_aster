@@ -23,7 +23,7 @@ pipeline {
         stage('Init') {
             steps {
                 sh '''#!/bin/bash -l
-                echo post2mattermost 'Starting Job ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.RUN_DISPLAY_URL}|Open>)'
+                post2mattermost 'Starting Job ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.RUN_DISPLAY_URL}|Open>)'
                 '''
             }
         }
@@ -36,12 +36,15 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh "./waf configure install --prefix=build/install/std"
+                sh "( cd $HOME/dev/jenkins/data && hg pull && hg update )"
+                sh "./waf configure --with-data=$HOME/dev/jenkins/data --prefix=build/install/std"
+                sh "./waf install"
                 sh '''#!/bin/bash -l
                 ./check_docs.sh
                 '''
                 sh "[ -e waf_mpi ] || ln -s waf_variant waf_mpi"
-                sh "./waf_mpi configure install --prefix=build/install/mpi"
+                sh "./waf_mpi configure --with-data=$HOME/dev/jenkins/data --prefix=build/install/mpi"
+                sh "./waf_mpi install"
             }
         }
         stage('Test') {
@@ -57,6 +60,17 @@ pipeline {
                 exit 0
                 '''
                 junit 'build/resutest*/run_testcases.xml'
+            }
+        }
+        stage('CheckTest') {
+            try {
+                sh '''#!/bin/bash -l
+                $HOME/dev/codeaster/devtools/bin/check_known_errors.sh --branch build/resutest build/resutest_mpi
+                '''
+                currentBuild.result = 'SUCCESS'
+            }
+            catch(exc) {
+                echo "new testcases in failure"
             }
         }
         stage('Merge') {
@@ -92,7 +106,7 @@ EOF
     post {
         always {
             sh '''#!/bin/bash -l
-            echo post2mattermost ${currentBuild.currentResult} 'Job ${env.JOB_NAME} #${env.BUILD_NUMBER} ended (<${env.RUN_DISPLAY_URL}|Open>)'
+            post2mattermost ${currentBuild.currentResult} 'Job ${env.JOB_NAME} #${env.BUILD_NUMBER} ended (<${env.RUN_DISPLAY_URL}|Open>)'
             '''
         }
         success {
