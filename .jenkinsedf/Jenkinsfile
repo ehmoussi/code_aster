@@ -60,16 +60,17 @@ pipeline {
                 exit 0
                 '''
                 junit 'build/resutest*/run_testcases.xml'
-            }
-            script {
-                try {
-                    sh '''#!/bin/bash -l
-                    $HOME/dev/codeaster/devtools/bin/check_known_errors.sh --branch build/resutest build/resutest_mpi
-                    '''
-                    currentBuild.result = 'SUCCESS'
-                }
-                catch(exc) {
-                    echo "new testcases in failure"
+
+                script {
+                    try {
+                        sh '''#!/bin/bash -l
+                        $HOME/dev/codeaster/devtools/bin/check_known_errors.sh --branch build/resutest build/resutest_mpi
+                        '''
+                        currentBuild.result = 'SUCCESS'
+                    }
+                    catch(exc) {
+                        echo "new testcases in failure"
+                    }
                 }
             }
         }
