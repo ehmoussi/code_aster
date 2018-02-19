@@ -35,5 +35,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
-    exte_vari      = ('ELTSIZE1',),
+    exte_vari      = ('ELTSIZE1','ELTSIZE2',),
 )
