@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -37,20 +37,18 @@ subroutine nlsav(sd_nl_, ip, lonvec, iocc, kscal,&
 !  cvect   [Opt]: Vector to be saved in the case of complex parameters [C8]
 !
 ! 1 - First, we verify that the parameter name is valid
-! 2 - Second, we save the given value/vector in the correct work vector  
+! 2 - Second, we save the given value/vector in the correct work vector
 !     according to the sd_nl_ data structure's map
 !
 ! Examples : call nlsav('&&OP0074','RESU_IN ',1, kscal=resuin)
 !            call nlsav('&&OP0074','NOM_CMP ',1, iocc=2, kvect=('DX','DY'))
 ! ----------------------------------------------------------------------
-! person_in_charge: hassan.berro at edf.fr    
+! person_in_charge: hassan.berro at edf.fr
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/codent.h"
 #include "nldef.h"
-#include "asterfort/jedema.h"
 #include "asterfort/jeexin.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/as_deallocate.h"
@@ -69,7 +67,7 @@ subroutine nlsav(sd_nl_, ip, lonvec, iocc, kscal,&
     character(len=*), optional, intent(in) :: kscal
     integer,          optional, intent(in) :: iscal
     real(kind=8),     optional, intent(in) :: rscal
-    complex(kind=8),  optional, intent(in) :: cscal   
+    complex(kind=8),  optional, intent(in) :: cscal
     character(len=*), optional, intent(in) :: kvect(lonvec)
     integer,          optional, intent(in) :: ivect(lonvec)
     real(kind=8),     optional, intent(in) :: rvect(lonvec)
@@ -85,7 +83,7 @@ subroutine nlsav(sd_nl_, ip, lonvec, iocc, kscal,&
 
 
 !   --- For general usage
-    aster_logical     :: input_test 
+    aster_logical     :: input_test
     integer           :: i, jvect, jscal, iret
     integer           :: dec, level, lvec, addr
     character(len=6)  :: k_iocc
@@ -120,14 +118,18 @@ subroutine nlsav(sd_nl_, ip, lonvec, iocc, kscal,&
     end if
 
 !   The parameter to be saved was not found in the predefined list
-    if (ip.gt._NL_NBPAR) then 
+    if (ip.gt._NL_NBPAR) then
         ASSERT(.false.)
     end if
-
+!   Some verifications on parameter
+    ASSERT(params(ip).ne.'XXXXXXXX')
+    ASSERT(partyp(ip).ne.'XXX')
+    ASSERT(parind(ip).ne.0 )
+!
     if (present(buffer)) then
 
         dec = 0
-        if (present(iocc)) then 
+        if (present(iocc)) then
             level = size(buffer)/(2*_NL_NBPAR)
             if (iocc.le.level) then
                 dec = (iocc-1)*2*_NL_NBPAR
@@ -180,7 +182,7 @@ subroutine nlsav(sd_nl_, ip, lonvec, iocc, kscal,&
 20  continue
 
     savejv(1:8) = sd_nl
-    if (present(iocc)) then 
+    if (present(iocc)) then
 !       The parameter to be saved is global but an occurence index was given
         ASSERT(parind(ip).gt.0)
         call codent(iocc, 'G', k_iocc)
@@ -193,7 +195,7 @@ subroutine nlsav(sd_nl_, ip, lonvec, iocc, kscal,&
 !   ====================================================================
 
 !   --- Vectors
-    if (abs(parind(ip)).eq.2) then 
+    if (abs(parind(ip)).eq.2) then
 !
 !       The parameter to be saved is a vector but no vector input was found
         input_test = UN_PARMI4(kvect, ivect, rvect, cvect)
@@ -201,9 +203,9 @@ subroutine nlsav(sd_nl_, ip, lonvec, iocc, kscal,&
         ASSERT(lonvec.ge.1)
 !
         call jeexin(savejv, iret)
-        if (iret.gt.0) then 
+        if (iret.gt.0) then
             call jeveuo(savejv, 'E', jvect)
-        else 
+        else
             call wkvect(savejv, 'V V '//partyp(ip), lonvec, jvect)
         endif
 !
@@ -222,7 +224,7 @@ subroutine nlsav(sd_nl_, ip, lonvec, iocc, kscal,&
         else if (partyp(ip).eq.'R') then
             call dcopy(lonvec, rvect, 1, zr(jvect), 1)
         else if (partyp(ip).eq.'C') then
-            call zcopy(lonvec, cvect, 1, zc(jvect), 1)            
+            call zcopy(lonvec, cvect, 1, zc(jvect), 1)
         else if (partyp(ip).eq.'I') then
             do i = 1, lonvec
                 zi(jvect+i-1) = ivect(i)
@@ -237,23 +239,23 @@ subroutine nlsav(sd_nl_, ip, lonvec, iocc, kscal,&
         ASSERT(input_test)
 !
         call jeexin(savejv, iret)
-        if (iret.gt.0) then 
+        if (iret.gt.0) then
             call jeveuo(savejv, 'E', jscal)
-        else 
+        else
             call wkvect(savejv, 'V V '//partyp(ip), 1, jscal)
         endif
 !
-        if (partyp(ip).eq.'K8 ') then 
+        if (partyp(ip).eq.'K8 ') then
             zk8(jscal) = kscal_(1:8)
-        else if (partyp(ip).eq.'K16') then 
+        else if (partyp(ip).eq.'K16') then
             zk16(jscal) = kscal_(1:16)
-        else if (partyp(ip).eq.'K24') then 
+        else if (partyp(ip).eq.'K24') then
             zk24(jscal) = kscal_
-        elseif (partyp(ip).eq.'R') then 
+        elseif (partyp(ip).eq.'R') then
             zr(jscal) = rscal
-        elseif (partyp(ip).eq.'C') then 
+        elseif (partyp(ip).eq.'C') then
             zc(jscal) = cscal
-        elseif (partyp(ip).eq.'I')  then 
+        elseif (partyp(ip).eq.'I')  then
             zi(jscal) = iscal
         end if
 !

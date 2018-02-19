@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@ subroutine verif_loi_mater(mater)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: cc, kk, nbcrme, iret, jvalk, nbr, nbc, nbk2, nbk
+    integer             :: cc, kk, nbcrme, iret, nbr, nbc, nbk2, nbk
     integer             :: jprol, jvale, nbvale
     real(kind=8)        :: dx, fx, dfx, raidex
     logical             :: OkFct
@@ -52,14 +52,14 @@ subroutine verif_loi_mater(mater)
     character(len=11) :: k11
     character(len=19) :: noobrc
     character(len=24) :: chprol, chvale, chpara
-    character(len=24) :: valk(2)
+    character(len=32) :: valk(2)
     character(len=32) :: nomrc
 !
-    real(kind=8), pointer       :: matr(:) => null()
-    character(len=16), pointer  :: matk(:) => null()
-    character(len=32), pointer :: vnomrc(:) => null()
+    real(kind=8), pointer       :: matr(:)      => null()
+    character(len=16), pointer  :: matk(:)      => null()
+    character(len=32), pointer  :: vnomrc(:)    => null()
 !
-    integer :: icoulomb, ia_nor, ia_tan
+    integer :: icoulomb, ia_nor, ia_tan, iecro, ifx, ifyz, tecro
     logical :: alarme
 !
     real(kind=8) :: precis
@@ -103,27 +103,38 @@ subroutine verif_loi_mater(mater)
                     endif
                 endif
             endif
-        elseif ( nomrc .eq. 'DIS_ECRO_TRAC' ) then
+        else if ( nomrc .eq. 'DIS_ECRO_TRAC' ) then
             call rccome(mater, vnomrc(cc), iret, iarret=1, k11_ind_nomrc=k11)
             noobrc = mater//k11
-!           Récupération des pointeurs, ainsi que du nombre de RCK
-            call jeveuo(noobrc//'.VALK', 'L', jvalk)
+            ! Nombre de : réel, complexe , chaine de caractères
             call jelira(noobrc//'.VALR', 'LONUTI', nbr)
             call jelira(noobrc//'.VALC', 'LONUTI', nbc)
             call jelira(noobrc//'.VALK', 'LONUTI', nbk2)
-            nbk=(nbk2-nbr-nbc)/2
-            ASSERT( nbr .eq. 0 )
             ASSERT( nbc .eq. 0 )
-            ASSERT( nbk .eq. 1 )
-            ASSERT( zk16(jvalk) .eq. 'FX' )
+            ! Récupération des pointeurs sur les valeurs
+            call jeveuo(noobrc//'.VALR', 'L', vr  =matr)
+            call jeveuo(noobrc//'.VALK', 'L', vk16=matk)
+            nbk=(nbk2-nbr-nbc)/2
+            ifx  = indk16(matk,'FX', 1,nbk2)
+            ifyz = indk16(matk,'FTAN',1,nbk2)
+            ! Nom de la fonction
+            if      (ifx.ne.0) then
+                nomfon = matk(ifx+nbk)(1:8)
+            else if (ifyz.ne.0) then
+                nomfon = matk(ifyz+nbk)(1:8)
+            else
+                ASSERT( .false. )
+            endif
+            iecro  = indk16(matk,'ECRO', 1,nbk2)
+            ASSERT( iecro .ne. 0 )
+            tecro = nint(matr(iecro))
 !           Quelques vérifications sur la fonction
 !               interpolation LIN LIN
-!               paramètre 'DX'
+!               paramètre 'DX' ou 'DTAN'
 !               prolongée à gauche ou à droite exclue
-!               avoir 2 points minimum
+!               avoir 3 points minimum ou exactement
 !               FX et DX sont positifs, point n°1:(DX=0, FX=0)
 !               dFx >0 , dDx >0
-            nomfon = zk16(jvalk+1)(1:8)
             chprol = nomfon//'.PROL'
             chvale = nomfon//'.VALE'
             chpara = nomfon//'.PARA'
@@ -138,9 +149,18 @@ subroutine verif_loi_mater(mater)
             OkFct = (zk24(jprol)(1:8) .eq. 'FONCTION')
             OkFct = OkFct .and. (zk24(jprol+1)(1:3) .eq. 'LIN')
             OkFct = OkFct .and. (zk24(jprol+1)(5:7) .eq. 'LIN')
-            OkFct = OkFct .and. (zk24(jprol+2)(1:2) .eq. 'DX')
+            if (ifx.ne.0) then
+                OkFct = OkFct .and. (zk24(jprol+2)(1:2) .eq. 'DX')
+                OkFct = OkFct .and. (nbvale .ge. 3 )
+            else if (ifyz.ne.0) then
+                OkFct = OkFct .and. (zk24(jprol+2)(1:4) .eq. 'DTAN')
+                if (tecro.eq.1) then
+                    OkFct = OkFct .and. (nbvale .ge. 3 )
+                else
+                    OkFct = OkFct .and. (nbvale .eq. 3 )
+                endif
+            endif
             OkFct = OkFct .and. (zk24(jprol+4)(1:2) .eq. 'EE')
-            OkFct = OkFct .and. (nbvale .ge. 3 )
             OkFct = OkFct .and. (dx .ge. 0.0d0 ) .and. (dx .le. precis)
             OkFct = OkFct .and. (fx .ge. 0.0d0 ) .and. (fx .le. precis)
             if ( OkFct ) then
@@ -152,6 +172,7 @@ subroutine verif_loi_mater(mater)
                     endif
                     if ( kk .eq. 1 ) then
                         raidex = (zr(jvale+nbvale+kk) - fx)/(zr(jvale+kk) - dx)
+                        dfx = raidex
                     else
                         dfx = (zr(jvale+nbvale+kk) - fx)/(zr(jvale+kk) - dx)
                         if ( dfx .gt. raidex ) then
@@ -159,13 +180,14 @@ subroutine verif_loi_mater(mater)
                             exit cik1
                         endif
                     endif
-                    dx = zr(jvale+kk)
-                    fx = zr(jvale+nbvale+kk)
+                    dx     = zr(jvale+kk)
+                    fx     = zr(jvale+nbvale+kk)
+                    raidex = dfx
                 enddo cik1
             endif
-            if (.not. OkFct ) then
+            if ( .not. OkFct ) then
                 valk(1) = 'DIS_ECRO_TRAC'
-                valk(2) = 'FX=f(DX)'
+                valk(2) = 'FX=f(DX) | FTAN=f(DTAN)'
                 call utmess('F', 'DISCRETS_62', nk=2, valk=valk)
             endif
         endif

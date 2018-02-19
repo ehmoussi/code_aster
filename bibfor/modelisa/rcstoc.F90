@@ -83,6 +83,7 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
     integer ::   ibk, nbmax, vali, itrou, n1, posi, kr, kc, kf
     integer :: i, k, ii,  jrpv, jvale, nbcoup, n, jlisvr, jlisvf,nmcs
     integer :: iret, nbfct, nbpts, jprol, nbptm, lpro1, lpro2, nbpf
+    integer :: dis_ecro_trac
     character(len=32), pointer :: nomobj(:) => null()
     character(len=8), pointer :: typobj(:) => null()
     character(len=24), pointer :: prol(:) => null()
@@ -243,9 +244,13 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
     ! --------------------------------------------------------------------
     !
     !   Glute : On traite les TX qu'on convertit en R8
-    !       META_MECA*, BETON_DOUBLE_DP, RUPT_FRAG , CZM_LAB_MIX , BETON_RAG
-    !
+    !       META_MECA* , BETON_DOUBLE_DP , RUPT_FRAG , CZM_LAB_MIX
+    !       DIS_ECRO_TRAC
     ! --------------------------------------------------------------------
+    dis_ecro_trac = 0
+    if (nomrc(1:13).eq.'DIS_ECRO_TRAC') then
+        dis_ecro_trac = 1
+    endif
     do i = 1, nmcs
         if (typobj(i)(1:2) .eq. 'TX') then
             if (nomrc(1:9) .eq. 'ELAS_META') then
@@ -311,10 +316,37 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
                         endif
                     endif
                 endif
+            else if (nomrc(1:13).eq.'DIS_ECRO_TRAC') then
+                dis_ecro_trac = 1
+                call getvtx(nomrc, nomobj(i), iocc=1, scal=valtx, nbret=n)
+                if (n .eq. 1) then
+                    if (nomobj(i) .eq. 'ECROUISSAGE') then
+                        dis_ecro_trac = 2
+                        nbr = nbr + 1
+                        valk(nbr) = 'ECRO'
+                        if      (valtx.eq.'ISOTROPE') then
+                            valr(nbr) = 1.0D0
+                        else if (valtx.eq.'CINEMATIQUE') then
+                            valr(nbr) = 2.0D0
+                        else
+                            ASSERT(.false.)
+                        endif
+                    endif
+                endif
             endif
         endif
     enddo
-
+!
+!   Traitement de DIS_ECRO_TRAC / ECRO
+!       ECRO est seulement présent quand FTAN existe, il peut donc être absent
+!   dis_ecro_trac = 0 : Le comportement n'existe pas. Il n'y a rien à faire.
+!   dis_ecro_trac = 2 : Tout est bon ECRO a été traité. Il n'y a rien de plus à faire.
+!   dis_ecro_trac = 1 : Le comportement existe, et ECRO n'existe pas ==> on crée la variable.
+    if ( dis_ecro_trac == 1 ) then
+        nbr = nbr + 1
+        valk(nbr) = 'ECRO'
+        valr(nbr) = 0.0D0
+    endif
 
 !   -- 7. Stockage des informations dans VALK, VALR et VALC :
 !   ---------------------------------------------------------
