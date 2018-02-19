@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -67,16 +67,21 @@ subroutine dtmforc_decr(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
 !   -0.2- Local variables
     aster_logical     :: multi_support
     integer           :: i, iex, nbexci, ier, nbno
-    integer           :: ino, nbdecp, iret, start, finish
+    integer           :: ino, iret, start, finish
     real(kind=8)      :: sina, cosa, sinb, cosb, sing
     real(kind=8)      :: cosg, depglo(3), vitglo(3), deploc(6), vitloc(6)
-    real(kind=8)      :: dvitlo(3), flocal(3), errmax, fgloba(3), y0(5)
-    real(kind=8)      :: dy0(5), ldcpar(2), resu(10)
+    real(kind=8)      :: dvitlo(3), flocal(3), fgloba(3)
     character(len=8)  :: sd_dtm, sd_nl, monmot, obst_typ, ldccar(1)
     character(len=19) :: nomres
+!   Dimension for the system equations
+    integer :: nbequa, nbdecp, iloi
+    parameter  (nbequa=14)
+    real(kind=8) :: y0(nbequa), dy0(nbequa), resu(nbequa*2), ynorme(nbequa)
+    real(kind=8) :: errmax
 !
-    integer         , pointer :: vindx (:)  => null()
+    integer         , pointer :: vindx (:)   => null()
     integer         , pointer :: ldcfct(:)   => null()
+    real(kind=8)    , pointer :: ldcpar(:)   => null()
     real(kind=8)    , pointer :: origob (:)  => null()
     real(kind=8)    , pointer :: coedep (:)  => null()
     real(kind=8)    , pointer :: coevit (:)  => null()
@@ -94,6 +99,7 @@ subroutine dtmforc_decr(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
     character(len=8), pointer :: nofdep(:)  => null()
     character(len=8), pointer :: nofvit(:)  => null()
 !
+! --------------------------------------------------------------------------------------------------
 !   0 - Initializations
     sd_dtm = sd_dtm_
     sd_nl  = sd_nl_
@@ -103,7 +109,6 @@ subroutine dtmforc_decr(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
     start  = vindx(nl_ind)
 !
     deploc(1:6) = 0.d0
-
 !
     call dtmget(sd_dtm, _MULTI_AP, kscal=monmot, buffer=buffdtm)
     multi_support = monmot(1:3) .eq. 'OUI'
@@ -120,12 +125,10 @@ subroutine dtmforc_decr(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
             coedep(iex) = 0.d0
             coevit(iex) = 0.d0
             if (nofdep(iex) .ne. ' ') then
-                call fointe('F', nofdep(iex), 1, ['INST'], [time],&
-                            coedep(iex), ier)
+                call fointe('F', nofdep(iex), 1, ['INST'], [time], coedep(iex), ier)
             endif
             if (nofvit(iex) .ne. ' ') then
-                call fointe('F', nofvit(iex), 1, ['INST'], [time],&
-                            coevit(iex), ier)
+                call fointe('F', nofvit(iex), 1, ['INST'], [time], coevit(iex), ier)
             endif
         enddo
     endif
@@ -151,19 +154,18 @@ subroutine dtmforc_decr(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
         nbno = 2
         call nlget(sd_nl, _MODAL_DEPL_NO2, iocc=nl_ind, vr=dplmod2, buffer=buffnl)
         if (multi_support) call nlget(sd_nl, _PSI_DELT_NO2, vr=psidel2, buffer=buffnl)
-    end if
+    endif
 
     do ino = 1, nbno
-!       --- Point toward the modal displacement for the concerned node / 1 or 2 /
+        ! Point toward the modal displacement for the concerned node / 1 or 2 /
         dplmod => dplmod1
         if (multi_support) psidel => psidel1
         if (ino.eq.2) then
             dplmod => dplmod2
             if (multi_support) psidel => psidel2
-        end if
-
-!       --- Conversion of generalized displacements/velocities
-!           back to the physical (global) basis
+        endif
+        ! Conversion of generalized displacements/velocities
+        ! back to the physical (global) basis
         if (multi_support) then
             call tophys_ms(dplmod, psidel, coedep, depl, depglo)
             call tophys_ms(dplmod, psidel, coevit, vite, vitglo)
@@ -171,125 +173,105 @@ subroutine dtmforc_decr(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
             call tophys(dplmod, depl, depglo)
             call tophys(dplmod, vite, vitglo)
         endif
-
-    !   --- Conversion of these vectors to the local basis
+        ! Conversion of these vectors to the local basis
         call gloloc(depglo,origob          ,sina,cosa,sinb,cosb,sing,cosg, deploc(1+(ino-1)*3))
         call gloloc(vitglo,[0.d0,0.d0,0.d0],sina,cosa,sinb,cosb,sing,cosg, vitloc(1+(ino-1)*3))
-    end do
-
-
+    enddo
+!
     if (nbno.eq.2) then
         do i = 1, 3
             dvitlo(i) = vitloc(i) - vitloc(3+i)
-        end do
+        enddo
     else
         do i = 1, 3
             dvitlo(i) = vitloc(i)
-        end do
-    end if
-
-!   -------------------------------------------------------------------------------------
-
-!   --- Non linear behaviour along the local x-axis
-
-!       System equations     : 1      2       3     4       5
-!                       yy   : force  Up      U     puiss   ip
-
-!   --- Internal variables   : 1      2       3     4       5
-!                       vari : force  Up      U     puiss   ip
+        enddo
+    endif
 !
-
-!   --- Retrieve the internal variables
-    y0(1) = vint(start+7 )
-    y0(2) = vint(start+8 )
-    y0(3) = vint(start+9 )
-    y0(4) = vint(start+10)
-    y0(5) = vint(start+11)
+! --------------------------------------------------------------------------------------------------
+!   Non linear behaviour along the local x-axis or in yz-plane
 !
-    resu(1:10) = 0.d0
-
-!   --- At initialization, the step is set to zero, there is no need to integrate
+!   System equations
+!                    1 2 3       4 5 6  7      8         9 10 11  12 13 14
+!       y0   : force(x,y,z) depl(x,y,z) Dissip pcum deplp(x,y,z)  X(x,y,z)
+!   Internal variables
+!       vari : force(x,y,z) depl(x,y,z) Dissip pcum deplp(x,y,z)  X(x,y,z)
+! --------------------------------------------------------------------------------------------------
+!
+!   Behavior type : [nbvale, jprol, jvale, iloi, tecro]
+    call nlget(sd_nl, _NL_FUNC_DEF, iocc=nl_ind, vi=ldcfct, buffer=buffnl)
+    iloi = ldcfct(4)
+!   At initialization, the step is set to zero, there is no need to integrate
     if (abs(step) .le. r8prem()) then
-        do i = 1, 5
-            resu(i) = y0(i)
-        end do
+        resu(:) = 0.0
+        resu(1:nbequa) = vint(start+6:start+5+nbequa)
     else
-!       --- Physical (behavior) parameters
-        call nlget(sd_nl, _DISC_ISOT_DX0, iocc=nl_ind, rscal=ldcpar(1), buffer=buffnl)
-        call nlget(sd_nl, _DISC_ISOT_DX , iocc=nl_ind, rscal=ldcpar(2), buffer=buffnl)
-        call nlget(sd_nl, _NL_FUNC_DEF  , iocc=nl_ind, vi=ldcfct      , buffer=buffnl)
-
-!       --- Numerical parameters
+        ! Physical (behavior) parameters
+        call nlget(sd_nl, _DISC_ISOT_FX0DX0, iocc=nl_ind, vr=ldcpar, buffer=buffnl)
+        ! Numerical parameters
         call nlget(sd_nl, _MAX_INTE   , iocc=nl_ind, iscal=nbdecp, buffer=buffnl)
         call nlget(sd_nl, _RES_INTE   , iocc=nl_ind, rscal=errmax, buffer=buffnl)
-
-!       --- Velocity (along the local x-axis)
-        dy0(1:5) = 0.d0
-        dy0(3) = -dvitlo(1)
-    
-!       --- Runge-Kutta 5/4 integration from t -> t+dt
+        ! Initialization
+        dy0(:)       = 0.0
+        y0(1:nbequa) = vint(start+6:start+5+nbequa)
+        ! Velocity (along the local x-axis)
+        if ( iloi.eq.1 ) then
+            dy0(4) =  -dvitlo(1)
+        else
+            dy0(5) =  -dvitlo(2)
+            dy0(6) =  -dvitlo(3)
+        endif
+        ! Norme pour le critère d'erreur
+        ynorme(1:3)   = ldcpar(1)/10.0
+        ynorme(4:6)   = ldcpar(2)/10.0
+        ynorme(7)     = ldcpar(1)*ldcpar(2)/100.0
+        ynorme(8:11)  = ldcpar(2)/10.0
+        ynorme(12:14) = ldcpar(1)/100.0
+        !
+        ! Runge-Kutta 5/4 integration from t -> t+dt
         iret = 0
-        call rk5adp(5, ldcpar, ldcfct, ldccar, time, step, nbdecp,&
-                    errmax, y0, dy0, disc_isotr, resu, iret)
+        call rk5adp(nbequa, ldcpar, ldcfct, ldccar, time, step, nbdecp,&
+                    errmax, y0, dy0, disc_isotr, resu, iret, ynorme)
         if ( iret.ne.0 ) then
             call utmess('A', 'DISCRETS_42',si=nbdecp, sr=errmax)
         endif
-    end if
-
-!   --- Retrieve the axial force (along the local x-axis)
+    endif
+!
+!   Retrieve the axial force (along the local x-axis)
     flocal(1:3) = 0.d0
-    flocal(1)   = resu(1)
-
-!   --- Conversion to the global (physical) reference
-    call locglo(flocal, sina, cosa, sinb, cosb,&
-                sing, cosg, fgloba)
-
-!   --- Generalized force on the first node
+    if ( iloi.eq.1 ) then
+        flocal(1) = resu(1)
+    else
+        flocal(2) = resu(2)
+        flocal(3) = resu(3)
+    endif
+!   Conversion to the global (physical) reference
+    call locglo(flocal, sina, cosa, sinb, cosb, sing, cosg, fgloba)
+!   Generalized force on the first node
     call togene(dplmod1, fgloba, fext)
-!   --- Generalized force on the second node
+!   Generalized force on the second node
     if (nbno.eq.2) then
         call togene(dplmod2, fgloba, fext, coef=-1.d0)
     endif
-
-!   -------------------------------------------------------------------------------------------
-!   --- Internal variables, storage
-    if (step.gt.0.d0) then
 !
+!   Internal variables, storage
+    if (step.gt.0.d0) then
         finish = vindx(nl_ind+1)
         ASSERT((finish-start).eq.NBVARINT_DECR)
-
-!       --- Local displacement of node 1
+        ! Local displacement of node 1
         vint(start   ) = deploc(1)
         vint(start+1 ) = deploc(2)
         vint(start+2 ) = deploc(3)
-
-!       --- Local displacement of node 2
+        ! Local displacement of node 2
         vint(start+3 ) = deploc(4)
         vint(start+4 ) = deploc(5)
         vint(start+5 ) = deploc(6)
-
-!       --- Axial deformation velocity
-        vint(start+6 ) = dvitlo(1)
-
-!       --- Axial force of the non linear device
-        vint(start+7 ) = resu(1)
-
-!       --- Deformation velocity (Viscous)
-        vint(start+8 ) = resu(2)
-
-!       --- Deformation
-        vint(start+9 ) = resu(3)
-
-!       --- Power
-        vint(start+10) = resu(4)
-
-!       --- ip
-        vint(start+11) = resu(5)
-    end if
-
+        ! Internal variables of the behavior
+        vint(start+6:start+6+nbequa-1) = resu(1:nbequa)
+    endif
+!
     if (multi_support) then
         AS_DEALLOCATE(vr=coedep)
         AS_DEALLOCATE(vr=coevit)
-    end if
-
+    endif
 end subroutine

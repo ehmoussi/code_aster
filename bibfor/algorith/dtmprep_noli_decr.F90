@@ -40,6 +40,7 @@ subroutine dtmprep_noli_decr(sd_dtm_, sd_nl_, icomp)
 #include "asterfort/getvid.h"
 #include "asterfort/getvis.h"
 #include "asterfort/getvr8.h"
+#include "asterfort/getvtx.h"
 #include "asterfort/gloloc.h"
 #include "asterfort/infmaj.h"
 #include "asterfort/infniv.h"
@@ -67,25 +68,25 @@ subroutine dtmprep_noli_decr(sd_dtm_, sd_nl_, icomp)
     integer          , intent(in) :: icomp
 !
 !   -0.2- Local variables
-    aster_logical     :: lnoeu2, okfct
-    integer           :: i, n1, ibid, nbdecr, nbnoli
+    aster_logical     :: lnoeu2, OkFct
+    integer           :: i, n1, ibid, nbdecr, nbnoli, nbfx, nbfyz, iloi, tecro
     integer           :: nbmcl, ier, nbno1, nbno2, ino1
     integer           :: ino2, ind1, ind2, nbmode, info
     integer           :: vali, j, neq, mxlevel, nexcit
     integer           :: kk, nbvale, jprol, jvale
 !
-    real(kind=8)      :: fx, dx, r8bid, alpha, beta
+    real(kind=8)      :: fx, dx, r8bid, alpha, beta, raidex, dfx
     real(kind=8)      :: sina, cosa, sinb, cosb, sing
     real(kind=8)      :: cosg, valr(10), ddpilo(3), dpiglo(6), dpiloc(6)
     real(kind=8)      :: one, axe(3), res_inte
 !
     character(len=8)  :: sd_dtm, sd_nl, mesh, mesh1, mesh2
     character(len=8)  :: nume, nume1, nume2, no1_name, no2_name
-    character(len=8)  :: monmot, nomf8, intk
-    character(len=16) :: typnum, typem, limocl(2), tymocl(2), valk(2)
-    character(len=16) :: obst_typ, motfac
+    character(len=8)  :: monmot, nomfx, nomfyz, intk
+    character(len=16) :: typnum, typem, limocl(2), tymocl(2)
+    character(len=16) :: obst_typ, motfac, nomecro
     character(len=19) :: nomres, nomfon
-    character(len=24) :: nl_title, chprol, chvale, chpara
+    character(len=24) :: nl_title, chprol, chvale, chpara, valk(2)
 !
     integer     , pointer       :: ddlcho(:)         => null()
     real(kind=8), pointer       :: coor_no1(:)       => null()
@@ -150,7 +151,7 @@ subroutine dtmprep_noli_decr(sd_dtm_, sd_nl_, icomp)
         call utmess('F', 'ALGORITH5_36')
     else
         ASSERT(.false.)
-    end if
+    endif
 !
 !
 !   --- 2 - Localisation (support nodes) of the buckling non linearity
@@ -190,11 +191,11 @@ subroutine dtmprep_noli_decr(sd_dtm_, sd_nl_, icomp)
             lnoeu2 = .true.
         else
             ASSERT(.false.)
-        end if
+        endif
 
         call nlsav(sd_nl, _NUMDDL_2, 1, iocc=i, kscal=nume2(1:8))
         call nlsav(sd_nl, _MESH_2, 1, iocc=i, kscal=mesh2)
-    end if
+    endif
 !
 !   --- 3 - Filling up the sd_nl with further information regarding the
 !           nonlinearity(ies)
@@ -218,12 +219,12 @@ subroutine dtmprep_noli_decr(sd_dtm_, sd_nl_, icomp)
     if (lnoeu2) then
         if (mesh2 .ne. mesh1) then
             call jeveuo(mesh2//'.COORDO    .VALE', 'L', vr=vale)
-        end if
+        endif
         call jenonu(jexnom(mesh2//'.NOMNOE', no2_name), ino2)
         ind1 = 1+3*(ino2-1)
         ind2 = ind1+3
         call nlsav(sd_nl, _COOR_NO2, 3, iocc=i, rvect=vale(ind1:ind2))
-    end if
+    endif
 !
 !   --- 3.3 - Other information are read from the user input
     call codent(i, 'D0', intk)
@@ -231,13 +232,35 @@ subroutine dtmprep_noli_decr(sd_dtm_, sd_nl_, icomp)
     call nlsav(sd_nl, _NL_TITLE, 1, iocc=i, kscal=nl_title)
 
 !   --- Verifications on the function as done in "verif_loi_mater"
-    call getvid(motfac, 'FX', iocc=icomp, scal=nomf8)
-    nomfon = nomf8
+    call getvid(motfac, 'FX',  iocc=icomp, scal=nomfx,  nbret=nbfx)
+    call getvid(motfac, 'FTAN', iocc=icomp, scal=nomfyz, nbret=nbfyz)
+    iloi = 0
+    if      ( nbfx  .eq. 1) then
+        nomfon = nomfx
+        iloi = 1
+    else if ( nbfyz .eq. 1) then
+        nomfon = nomfyz
+        iloi = 2
+    else
+        ASSERT( .False. )
+    endif
+    tecro = 0
+    if ( iloi == 2 ) then
+        call getvtx(motfac, 'ECROUISSAGE', iocc=icomp, scal=nomecro, nbret=ibid)
+        if      ( nomecro(1:8)  == 'ISOTROPE' ) then
+            tecro = 1
+        else if ( nomecro(1:11) == 'CINEMATIQUE' ) then
+            tecro = 2
+        else
+            ASSERT( .False. )
+        endif
+    endif
+
     chprol = nomfon//'.PROL'
     chvale = nomfon//'.VALE'
     chpara = nomfon//'.PARA'
 
-!   --- Commentary J.-L : C'est bien des "jeveut" et c'est volontaire
+!   --- Commentary JL : C'est bien des "jeveut" et c'est volontaire
     call jeveut(chprol, 'L', jprol)
     call jeveut(chvale, 'L', jvale)
     call jelira(chvale, 'LONMAX', nbvale)
@@ -245,34 +268,53 @@ subroutine dtmprep_noli_decr(sd_dtm_, sd_nl_, icomp)
 !   --- Verifications on the function values
     dx = zr(jvale)
     fx = zr(jvale+nbvale)
-    okfct = (zk24(jprol)(1:8) .eq. 'FONCTION')
-    okfct = okfct .and. (zk24(jprol+1)(1:3) .eq. 'LIN')
-    okfct = okfct .and. (zk24(jprol+1)(5:7) .eq. 'LIN')
-    okfct = okfct .and. (zk24(jprol+2)(1:2) .eq. 'DX')
-    okfct = okfct .and. (zk24(jprol+4)(1:2) .eq. 'EE')
-    okfct = okfct .and. (nbvale .ge. 3 )
-    okfct = okfct .and. (dx .ge. 0.0d0 ) .and. (dx .le. precis)
-    okfct = okfct .and. (fx .ge. 0.0d0 ) .and. (fx .le. precis)
-    if ( okfct ) then
+    OkFct = (zk24(jprol)(1:8) .eq. 'FONCTION')
+    OkFct = OkFct .and. (zk24(jprol+1)(1:3) .eq. 'LIN')
+    OkFct = OkFct .and. (zk24(jprol+1)(5:7) .eq. 'LIN')
+    if (nbfx.eq.1) then
+        OkFct = OkFct .and. (zk24(jprol+2)(1:2) .eq. 'DX')
+        OkFct = OkFct .and. (nbvale .ge. 3 )
+    else if (nbfyz.eq.1) then
+        OkFct = OkFct .and. (zk24(jprol+2)(1:4) .eq. 'DTAN')
+        if (tecro.eq.1) then
+            OkFct = OkFct .and. (nbvale .ge. 3 )
+        else
+            OkFct = OkFct .and. (nbvale .eq. 3 )
+        endif
+    endif
+    OkFct = OkFct .and. (zk24(jprol+4)(1:2) .eq. 'EE')
+    OkFct = OkFct .and. (dx .ge. 0.0d0 ) .and. (dx .le. precis)
+    OkFct = OkFct .and. (fx .ge. 0.0d0 ) .and. (fx .le. precis)
+    if ( OkFct ) then
         cik1: do kk = 1, nbvale-1
             if ( ( zr(jvale+kk) .le. dx ) .or. &
-                ( zr(jvale+nbvale+kk) .le. fx ) ) then
-                okfct = .false.
+                 ( zr(jvale+nbvale+kk) .le. fx ) ) then
+                OkFct = .false.
                 exit cik1
             endif
-            dx = zr(jvale+kk)
-            fx = zr(jvale+nbvale+kk)
+            if ( kk .eq. 1 ) then
+                raidex = (zr(jvale+nbvale+kk) - fx)/(zr(jvale+kk) - dx)
+                dfx = raidex
+            else
+                dfx = (zr(jvale+nbvale+kk) - fx)/(zr(jvale+kk) - dx)
+                if ( dfx .gt. raidex ) then
+                    OkFct = .false.
+                    exit cik1
+                endif
+            endif
+            dx     = zr(jvale+kk)
+            fx     = zr(jvale+nbvale+kk)
+            raidex = dfx
         enddo cik1
     endif
-    if (.not. okfct ) then
+    if ( .not. OkFct ) then
         valk(1) = 'DIS_ECRO_TRAC'
-        valk(2) = 'FX=f(DX)'
+        valk(2) = 'FX=f(DX) | FTAN=f(DTAN)'
         call utmess('F', 'DISCRETS_62', nk=2, valk=valk)
     endif
 !
-    call nlsav(sd_nl, _DISC_ISOT_DX0, 1, iocc=i, rscal=zr(jvale+nbvale+1))
-    call nlsav(sd_nl, _DISC_ISOT_DX , 1, iocc=i, rscal=zr(jvale+1))
-    call nlsav(sd_nl, _NL_FUNC_DEF  , 3, iocc=i, ivect=[nbvale, jprol, jvale])
+    call nlsav(sd_nl, _DISC_ISOT_FX0DX0, 2, iocc=i, rvect=[zr(jvale+nbvale+1),zr(jvale+1)])
+    call nlsav(sd_nl, _NL_FUNC_DEF,      5, iocc=i, ivect=[nbvale, jprol, jvale, iloi, tecro])
 !
     call getvis(motfac, 'ITER_INTE_MAXI', iocc=icomp, scal=vali, nbret=n1)
     call nlsav(sd_nl, _MAX_INTE, 1, iocc=i, iscal=vali)
@@ -297,7 +339,7 @@ subroutine dtmprep_noli_decr(sd_dtm_, sd_nl_, icomp)
     call angvx(axe, alpha, beta)
     call nlsav(sd_nl, _SINCOS_ANGLE_A, 2, iocc=i, rvect=[sin(alpha), cos(alpha)])
     call nlsav(sd_nl, _SINCOS_ANGLE_B, 2, iocc=i, rvect=[sin(beta), cos(beta)])
-    call nlsav(sd_nl, _SINCOS_ANGLE_G, 2, iocc=i, rvect=[0.d0, 1.0d0])
+    call nlsav(sd_nl, _SINCOS_ANGLE_G, 2, iocc=i, rvect=[0.d0, 1.d0])
 
     obst_typ = 'BI_PLANY'
     call nlsav(sd_nl, _OBST_TYP, 1, iocc=i, kscal=obst_typ)
@@ -425,7 +467,7 @@ subroutine dtmprep_noli_decr(sd_dtm_, sd_nl_, icomp)
                 ps2del2(3*(j-1)+1) = ps1del(ddlcho(4),j)
                 ps2del2(3*(j-1)+2) = ps1del(ddlcho(5),j)
                 ps2del2(3*(j-1)+3) = ps1del(ddlcho(6),j)
-            end do
+            enddo
         endif
     endif
 !
