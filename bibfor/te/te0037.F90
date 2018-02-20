@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -84,10 +84,10 @@ subroutine te0037(option, nomte)
     integer :: alp
     integer :: nnof, npgf, ipoidf, ivff, idfdef, ipgf, pos, zxain, nptf, ifh
     real(kind=8) :: pres, cisa, forrep(3, 2), ff(27), jac, nd(3), he(2), mat(1)
-    real(kind=8) :: lst, xg(4), dfbid(27, 3), r27bid(27), r3bid(3), r
+    real(kind=8) :: xg(4), dfbid(27, 3), r27bid(27), r3bid(3), r
     aster_logical :: pre1, axi
     integer :: compt, nddlm, nddls, nddlp, iret, jheafa, ncomph, ncompb
-    real(kind=8) :: thet, pinter(3), pinref(3)
+    real(kind=8) :: thet
     real(kind=8) :: fk(27,3,3), ka, mu
     data    he / -1.d0 , 1.d0/
 !
@@ -256,22 +256,7 @@ subroutine te0037(option, nomte)
                             npg=npgf,jpoids=ipoidf,jvf=ivff,jdfde=idfdef)
 !
         call vecini(27, 0.d0, ff)
-!       ON VERIFIE QUE LES NOEUDS DE LA FACETTE DE CONTACT ONT LST<0
 !
-           if (nfe.eq.1) then
-              call vecini(3, 0.d0, pinter)
-              do i = 1, nptf
-                 do j = 1, ndim
-                    pinter(j) = zr(jptint-1+ndim*(cface(ifa,i)-1)+j)
-                 end do
-                 call reeref(elref, nno, zr(igeom), pinter, ndim, pinref, ff, dfbid)
-                 lst = 0.d0
-                 do j = 1, nno
-                     lst=lst+zr(jlst-1+j)*ff(j)
-                 end do
-                 ASSERT(lst.le.1.d-4)
-              end do
-           endif
 !       BOUCLE SUR LES POINTS DE GAUSS DES FACETTES
            do ipgf = 1, npgf
 !
