@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -213,7 +213,7 @@ DEP=POST_RELEVE_T(ACTION=_F(INTITULE='DEPLE',
 DEP = CALC_TABLE(TABLE = DEP,
                  reuse = DEP,
                  ACTION =_F(OPERATION = 'EXTR',
-                            NOM_PARA=('NOEUD','INST','COOR_X','COOR_Y','DX','DY','DZ')));
+                            NOM_PARA=('NOEUD','INST','COOR_X','COOR_Y','COOR_Z','DX','DY','DZ')));
 
 DEPP = CALC_TABLE(TABLE = DEP,
                      ACTION =(_F(OPERATION = 'FILTRE',
@@ -307,14 +307,59 @@ DEPMLY = CALC_TABLE(TABLE = DEPM,
 
 # Definition des zones
 
-depl_y  = FORMULE(NOM_PARA=('DY','COOR_Y'),
-                 VALE='DY+(COOR_Y+5)/100');
-depl_x1 = FORMULE(NOM_PARA=('DX','COOR_X'),
-                 VALE='DX+(COOR_X+5)/100');
-depl_x2 = FORMULE(NOM_PARA=('DX','COOR_X'),
-                 VALE='DX+2*(COOR_X+5)/100');
-depl_x3 = FORMULE(NOM_PARA=('DX','COOR_X'),
-                 VALE='DX+3*(COOR_X+5)/100');
+# ATTENTION : les formules suivantes supposent des pressions esprimees en MPa
+#             => il faut utiliser un module d'Younf exprime en MPa !
+
+# conversion Pa -> MPa du module d'Young
+EM = E*1.e-6
+
+# zone 1 : [-5, 0[ x ]-2, +2[
+def ux1(x, y):
+    return -(2. - nu)*x/EM - 5.*(2. - nu)/EM
+def uy1(x, y):
+    return -(1. - 2.*nu)*y/EM - (5. - 7.*nu)/EM
+def uz1(z):
+    return 3.*nu*z/EM
+
+depl_x1 = FORMULE(NOM_PARA=('DX','COOR_X','COOR_Y'), VALE='DX-ux1(COOR_X, COOR_Y)')
+depl_y1 = FORMULE(NOM_PARA=('DY','COOR_X','COOR_Y'), VALE='DY-uy1(COOR_X, COOR_Y)')
+depl_z1 = FORMULE(NOM_PARA=('DZ','COOR_Z'), VALE='DZ-uz1(COOR_Z)')
+
+# zone 2 : [-5, +5] x ]+2, +5]
+def ux2(x, y):
+    return -(3. - nu)*x/EM - 5.*(3. - nu)/EM
+def uy2(x, y):
+    return -(1. - 3.*nu)*y/EM - 5.*(1. - nu)/EM
+def uz2(z):
+    return 4.*nu*z/EM
+
+depl_x2 = FORMULE(NOM_PARA=('DX','COOR_X','COOR_Y'), VALE='DX-ux2(COOR_X, COOR_Y)')
+depl_y2 = FORMULE(NOM_PARA=('DY','COOR_X','COOR_Y'), VALE='DY-uy2(COOR_X, COOR_Y)')
+depl_z2 = FORMULE(NOM_PARA=('DZ','COOR_Z'), VALE='DZ-uz2(COOR_Z)')
+
+# zone 3 : ]0, +5] x ]-2, +2[
+def ux3(x, y):
+    return -(2. - nu)*x/EM - 5*(2. - nu)/EM
+def uy3(x, y):
+    return -(1. - 2.*nu)*y/EM - (5. - 7.*nu)/EM
+def uz3(z):
+    return 3.*nu*z/EM
+
+depl_x3 = FORMULE(NOM_PARA=('DX','COOR_X','COOR_Y'), VALE='DX-ux3(COOR_X, COOR_Y)')
+depl_y3 = FORMULE(NOM_PARA=('DY','COOR_X','COOR_Y'), VALE='DY-uy3(COOR_X, COOR_Y)')
+depl_z3 = FORMULE(NOM_PARA=('DZ','COOR_Z'), VALE='DZ-uz3(COOR_Z)')
+
+# zone 4 : ]-5, +5] x [-5, -2[
+def ux4(x, y):
+    return -(1. - nu)*x/EM - 5.*(1. - nu)/EM
+def uy4(x, y):
+    return -(1. - nu)*y/EM - 5.*(1. - nu)/EM
+def uz4(z):
+    return 2.*nu*z/EM
+
+depl_x4 = FORMULE(NOM_PARA=('DX','COOR_X','COOR_Y'), VALE='DX-ux4(COOR_X, COOR_Y)')
+depl_y4 = FORMULE(NOM_PARA=('DY','COOR_X','COOR_Y'), VALE='DY-uy4(COOR_X, COOR_Y)')
+depl_z4 = FORMULE(NOM_PARA=('DZ','COOR_Z'), VALE='DZ-uz4(COOR_Z)')
 
 DEPZON=[None]*5
 DEPZON[1] = CALC_TABLE(TABLE = DEPMLX,
@@ -323,36 +368,48 @@ DEPZON[1] = CALC_TABLE(TABLE = DEPMLX,
                              _F(OPERATION = 'COMB',
                                TABLE=DEPMGY),
                             _F(OPERATION = 'OPER',
+                                 NOM_PARA  = 'DZ-DZ',
+                                 FORMULE = depl_z1),
+                            _F(OPERATION = 'OPER',
                                  NOM_PARA  = 'DY-DY',
-                                 FORMULE = depl_y),
+                                 FORMULE = depl_y1),
+                            _F(OPERATION = 'OPER',
+                                 NOM_PARA  = 'DX-DX',
+                                 FORMULE = depl_x1)));
+DEPZON[2] = CALC_TABLE(TABLE = DEPPGY,
+                    ACTION =(_F(OPERATION = 'OPER',
+                                 NOM_PARA  = 'DZ-DZ',
+                                 FORMULE = depl_z2),
+                            _F(OPERATION = 'OPER',
+                                 NOM_PARA  = 'DY-DY',
+                                 FORMULE = depl_y2),
                             _F(OPERATION = 'OPER',
                                  NOM_PARA  = 'DX-DX',
                                  FORMULE = depl_x2)));
-DEPZON[2] = CALC_TABLE(TABLE = DEPPGY,
-                    ACTION =(_F(OPERATION = 'OPER',
-                                 NOM_PARA  = 'DY-DY',
-                                 FORMULE = depl_y),
-                            _F(OPERATION = 'OPER',
-                                 NOM_PARA  = 'DX-DX',
-                                 FORMULE = depl_x3)));
 DEPZON[3] = CALC_TABLE(TABLE = DEPMGX,
                     ACTION =(_F(OPERATION = 'COMB',
                                TABLE=DEPPGX),
                             _F(OPERATION = 'COMB',
                                TABLE=DEPPLY),
                             _F(OPERATION = 'OPER',
+                                 NOM_PARA  = 'DZ-DZ',
+                                 FORMULE = depl_z3),
+                            _F(OPERATION = 'OPER',
                                  NOM_PARA  = 'DY-DY',
-                                 FORMULE = depl_y),
+                                 FORMULE = depl_y3),
                             _F(OPERATION = 'OPER',
                                  NOM_PARA  = 'DX-DX',
-                                 FORMULE = depl_x2)));
+                                 FORMULE = depl_x3)));
 DEPZON[4] = CALC_TABLE(TABLE = DEPMLY,
                     ACTION =(_F(OPERATION = 'OPER',
+                                 NOM_PARA  = 'DZ-DZ',
+                                 FORMULE = depl_z4),
+                            _F(OPERATION = 'OPER',
                                  NOM_PARA  = 'DY-DY',
-                                 FORMULE = depl_y),
+                                 FORMULE = depl_y4),
                             _F(OPERATION = 'OPER',
                                  NOM_PARA  = 'DX-DX',
-                                 FORMULE = depl_x1)));
+                                 FORMULE = depl_x4)));
 
 #------------------------------------------------------------------------
 # POST-TRAITEMENT : CALCUL D'ERREURS EN TERME DE NORME EN ENERGIE ET
@@ -375,30 +432,35 @@ SYY=FORMULE(NOM_PARA=('X','Y',),VALE='Syy(X,Y)');
 
 ###    - deplacement
 
-# for 3D
-c1 = 1
-c2 = -nu
+def ux(x, y):
+    if x < 0 and y > -2 and y < 2:
+        return ux1(x, y)
+    if y > 2:
+        return ux2(x, y)
+    if x > 0 and y > -2 and y < 2:
+        return ux3(x, y)
+    if y < -2:
+        return ux4(x, y)
 
-def ux(X,Y):
-    # integration de -5 à X
-    return (5+X) * (c1*Sxx(X,Y)+c2*Syy(X,Y)) / E
+def uy(x, y):
+    if x < 0 and y > -2 and y < 2:
+        return uy1(x, y)
+    if y > 2:
+        return uy2(x, y)
+    if x > 0 and y > -2 and y < 2:
+        return uy3(x, y)
+    if y < -2:
+        return uy4(x, y)
 
-
-def uy(X,Y):
-    if Y<-2:
-        # integration de -5 à -2
-        return (5+Y) * (c1*Syy(X,Y)+c2*Sxx(X,Y)) / E
-    if Y<2:
-        # integration de -5 à -2 + integration de -2 à Y
-        return  3 * (c1*Syy(X,Y-4)+c2*Sxx(X,Y-4)) / E  +  (Y+2) * (c1*Syy(X,Y)+c2*Sxx(X,Y)) / E
-    # integration de -5 à -2 + integration de -2 à 2 + integration de 2 à Y
-    return  3 * (c1*Syy(X,Y-7)+c2*Sxx(X,Y-7)) / E  +  4 * (c1*Syy(X,Y-3)+c2*Sxx(X,Y-3)) / E +  (Y-2) * (c1*Syy(X,Y)+c2*Sxx(X,Y)) / E
-
-
-def uz(X,Y,Z): 
-    return Z * (c2*Syy(X,Y)+c2*Sxx(X,Y)) / E
-    
-
+def uz(x, y, z):
+    if x < 0 and y > -2 and y < 2:
+        return uz1(z)
+    if y > 2:
+        return uz2(z)
+    if x > 0 and y > -2 and y < 2:
+        return uz3(z)
+    if y < -2:
+        return uz4(z)
 
 UX=FORMULE(NOM_PARA=('X','Y',),VALE='ux(X,Y)')
 UY=FORMULE(NOM_PARA=('X','Y',),VALE='uy(X,Y)')
@@ -449,30 +511,30 @@ vale = [0,0,0,0,0]
 preci = 0.05
 
 VALE_CALC=[
- -0.00440703034918,
- 0.0180307479174,
- 0.00203049644559,
- 0.0339033142295,
- -0.015420472234,
- 0.00554723979396,
- -0.00370045707029,
- 0.0296824196704,
- 0.0276152775808,
- 0.0380546714438,
+ -0.0104413169582,
+  0.00550315266918,
+ -0.0075334369479,
+  0.00122390982636,
+ -0.01543780368,
+ -0.00246109145351,
+ -0.011814523399,
+  0.00568793593774,   
+ -0.00538472241915,
+  0.00505467144381,
  -0.0163830971871,
- 0.00259605221432,
- 0.00531971796396,
- 0.026340516303,
- 0.00729445789149,
- 0.0373944447617,
- -0.0153580454819,
- 0.00259665905702,
- 0.0,
- 0.0282259200058,
- 0.00535276853437,
- 0.0115466648543,
+ -0.00840425549166,
+ -0.0121568636,
+  0.00145197276823,
+ -0.00448496087487,
+  0.00553870005981,
+ -0.0156233948252,
+ -0.00569156197623,
+ -0.0043436707035,
+  0.00207173380485,
+ -0.00364723146563,
+  0.00254666485429,
  -0.00971307152842,
- 0.00180523359655
+ -0.00366048921676
 ]
 
 for i in [1,2,3,4]: #Boucle sur les zones
@@ -508,14 +570,14 @@ for i in [1,2,3,4]: #Boucle sur les zones
              PRECISION=preci,
              REFERENCE='ANALYTIQUE',);
   TEST_TABLE(TABLE=DEPZON[i],
-             NOM_PARA='DZ',
+             NOM_PARA='DZ-DZ',
              TYPE_TEST='MIN',
              VALE_CALC=VALE_CALC[(i-1)*6+4], VALE_REFE=0,
              CRITERE='ABSOLU',
              PRECISION=preci,
              REFERENCE='ANALYTIQUE',);
   TEST_TABLE(TABLE=DEPZON[i],
-             NOM_PARA='DZ',
+             NOM_PARA='DZ-DZ',
              TYPE_TEST='MAX',
              VALE_CALC=VALE_CALC[(i-1)*6+5], VALE_REFE=0,
              CRITERE='ABSOLU',
