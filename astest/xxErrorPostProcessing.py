@@ -131,13 +131,13 @@ TABDEP=POST_RELEVE_T(ACTION=_F(INTITULE='DEPLACEMENT SUR LES LEVRES',
 def ux(X,Y): 
     return (2.-X)*pression(Y)/E
 
-UX=FORMULE(NOM_PARA=('X','Y',),VALE='ux(X,Y)')
+UX=FORMULE(NOM_PARA=('X','Y',),VALE='ux(X,Y)',ux=ux)
 
 #    - contraintes
 def Sxx(X,Y):
     return -pression(Y)
 
-SXX=FORMULE(NOM_PARA=('X','Y',),VALE='Sxx(X,Y)');
+SXX=FORMULE(NOM_PARA=('X','Y',),VALE='Sxx(X,Y)',Sxx=Sxx);
 
 # calcul de l'erreur en terme de norme en energie
 Scal=CREA_CHAMP(OPERATION='EXTR',
@@ -171,24 +171,6 @@ tabL2=POST_ERREUR(OPTION='DEPL_RELA',
 
 IMPR_TABLE(TABLE=tabL2)
 
-TEST_TABLE(CRITERE='ABSOLU',
-           REFERENCE='ANALYTIQUE',
-           PRECISION=1.E-13,
-           VALE_CALC=1.32624444414E-14,
-           VALE_REFE=0.0,
-           NOM_PARA='DX-DXP',
-           TYPE_TEST='SOMM_ABS',
-           TABLE=TABDEPP,)
-
-TEST_TABLE(CRITERE='ABSOLU',
-           REFERENCE='ANALYTIQUE',
-           PRECISION=1.E-13,
-           VALE_CALC=8.62504512256E-15,
-           VALE_REFE=0.0,
-           NOM_PARA='DY-DY',
-           TYPE_TEST='SOMM_ABS',
-           TABLE=TABDEPP,)
-
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='ANALYTIQUE',
@@ -201,7 +183,7 @@ TEST_TABLE(CRITERE='RELATIF',
            );
 
 TEST_TABLE(CRITERE='ABSOLU',
-           VALE_CALC=1.38382174822E-15,
+           VALE_CALC=0.920532482048,
            NOM_PARA='ERREUR RELATIVE',
            FILTRE=_F(NOM_PARA='GROUP_MA',
                      VALE_K='TOTAL'),
@@ -219,7 +201,7 @@ TEST_TABLE(CRITERE='RELATIF',
            );
 
 TEST_TABLE(CRITERE='ABSOLU',
-           VALE_CALC=2.55041016394E-15,
+           VALE_CALC=0.920762510703,
            NOM_PARA='ERREUR RELATIVE',
            FILTRE=_F(NOM_PARA='GROUP_MA',
                      VALE_K='TOTAL'),

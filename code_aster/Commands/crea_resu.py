@@ -40,34 +40,37 @@ class ResultCreator(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        typ = keywords["TYPE_RESU"]
-        if typ == "EVOL_CHAR":
-            self._result = EvolutiveLoad()
-        elif typ == "EVOL_THER":
-            self._result = EvolutiveThermalLoad()
-        elif typ == "EVOL_NOLI":
-            self._result = NonLinearEvolutionContainer()
-        elif typ == "EVOL_ELAS":
-            self._result = LinearDisplacementEvolutionContainer()
-        elif typ == "EVOL_VARC":
-            self._result = InputVariableEvolutionContainer()
-        elif typ == "FOURIER_ELAS":
-            self._result = FourierElasContainer()
-        elif typ == "FOURIER_THER":
-            self._result = FourierElasContainer()
-        elif typ == "MULT_ELAS":
-            self._result = MultElasContainer()
-        elif typ == "MODE_MECA":
-            self._result = MechanicalModeContainer()
-        elif typ == "MODE_MECA_C":
-            self._result = MechanicalModeComplexContainer()
-        elif typ == "DYNA_TRANS":
-            self.result = FullTransientResultsContainer()
-        elif typ == "DYNA_HARMO":
-            self.result = FullHarmonicResultsContainer()
+        if keywords.has_key("reuse"):
+            self._result = keywords["reuse"]
         else:
-            raise NotImplementedError("Type of result {0!r} not yet "
-                                      "implemented".format(typ))
+            typ = keywords["TYPE_RESU"]
+            if typ == "EVOL_CHAR":
+                self._result = EvolutiveLoad()
+            elif typ == "EVOL_THER":
+                self._result = EvolutiveThermalLoad()
+            elif typ == "EVOL_NOLI":
+                self._result = NonLinearEvolutionContainer()
+            elif typ == "EVOL_ELAS":
+                self._result = LinearDisplacementEvolutionContainer()
+            elif typ == "EVOL_VARC":
+                self._result = InputVariableEvolutionContainer()
+            elif typ == "FOURIER_ELAS":
+                self._result = FourierElasContainer()
+            elif typ == "FOURIER_THER":
+                self._result = FourierElasContainer()
+            elif typ == "MULT_ELAS":
+                self._result = MultElasContainer()
+            elif typ == "MODE_MECA":
+                self._result = MechanicalModeContainer()
+            elif typ == "MODE_MECA_C":
+                self._result = MechanicalModeComplexContainer()
+            elif typ == "DYNA_TRANS":
+                self.result = FullTransientResultsContainer()
+            elif typ == "DYNA_HARMO":
+                self.result = FullHarmonicResultsContainer()
+            else:
+                raise NotImplementedError("Type of result {0!r} not yet "
+                                        "implemented".format(typ))
 
     def post_exec(self, keywords):
         """Execute the command.

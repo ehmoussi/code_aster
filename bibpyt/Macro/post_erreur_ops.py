@@ -30,15 +30,12 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
     """
     import aster
 
-    from Accas           import _F
+    from code_aster.Cata.Language.SyntaxObjects import _F
     from Utilitai.Utmess import UTMESS, ASSERT
 
     ier = 0
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
-
-    # Le concept sortant (de type table_sdaster ou dérivé) est tabout
-    self.DeclareOut('tabout', self.sd)
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
@@ -71,7 +68,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
     # récupération du maillage inclus dans le modele
     iret,ibid,nom_mail = aster.dismoi('NOM_MAILLA', MODELE.nom, 'MODELE', 'F')
     nom_mail = nom_mail.strip()
-    __MA = self.get_concept(nom_mail)
+    __MA = MODELE.getSupportMesh()
 
     # récupération de la dimension géométrique
     iret,dime,kbid = aster.dismoi('DIM_GEOM', __MA.nom, 'MAILLAGE', 'F')
@@ -118,7 +115,8 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
         # boucle sur la liste des composantes (DX, DY, DZ)
         for ddl in l_DDL:
            # recuperation de la liste de fonctions associees a la composante courante
-           l_ddl=args[ddl]
+           l_ddl=None
+           if args.has_key(ddl): l_ddl=args[ddl]
            # mise a jour des mappings si la liste existe
            if l_ddl != None:
               # assertion : l'utilisateur associe une et une seule fonction pour chaque groupe
@@ -206,7 +204,9 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                               CHAM_GD=CHAM_GD,
                              );
         else:
-           cham_mater=args['CHAM_MATER']
+           cham_mater=None
+           if args.has_key('CHAM_MATER'):
+              cham_mater=args['CHAM_MATER']
 
         # dans le cas X-FEM, on assemble le champ de deplacement aux points de Gauss pour
         # se ramener un champ de la forme (DX, DY, H1X, H1Y, ..., E1X, E1Y, ...) a la forme
@@ -358,7 +358,8 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
         # boucle sur la liste des composantes (SIXX, SIYY, SIZZ, SIXY, SIXZ, SIYZ)
         for sig in l_SIGM:
            # recuperation de la liste de fonctions associees a la composante courante
-           l_sig=args[sig]
+           l_sig=None
+           if args.has_key(sig): l_sig=args[sig]
            # mise a jour des mappings si la liste existe
            if l_sig != None:
               # assertion : l'utilisateur associe une et une seule fonction pour chaque groupe
@@ -390,7 +391,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
               d_affe['VALE_F']=l_sig[ig]
               # stockage du mot-clef facteur dans la liste
               l_F.append(_F(**d_affe))
-
+        l_F = tuple(l_F)
         __SI_ana_F=CREA_CHAMP(OPERATION='AFFE',
                             TYPE_CHAM='ELGA_NEUT_F',
                             MODELE=MODELE,
@@ -864,4 +865,4 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
     DETRUIRE(CONCEPT=_F(NOM=__ZERO), INFO=1)
 
 
-    return ier
+    return tabout
