@@ -211,40 +211,26 @@ def calc_gp_ops(self, **args):
     self.set_icmd(1)
     # On importe les definitions des commandes a utiliser dans la macro
     global DEFI_GROUP
-    CREA_CHAMP = self.get_cmd('CREA_CHAMP')
-    CREA_TABLE = self.get_cmd('CREA_TABLE')
-    POST_ELEM = self.get_cmd('POST_ELEM')
-    FORMULE = self.get_cmd('FORMULE')
-    CALC_TABLE = self.get_cmd('CALC_TABLE')
-    CALC_CHAMP = self.get_cmd('CALC_CHAMP')
-    DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
-    DEFI_GROUP = self.get_cmd('DEFI_GROUP')
+    from code_aster.Commands import CREA_CHAMP, CREA_TABLE, POST_ELEM
+    from code_aster.Commands import FORMULE, CALC_TABLE, CALC_CHAMP
+    from code_aster.Commands import DEFI_LIST_REEL, DEFI_GROUP
 #
 
 #
 # RECUPERATION DU MODELE, DU MAILLAGE ET DU MATERIAU A PARTIR DU RESULTAT
 #
 
-    __RESU = self['RESULTAT']
+    __RESU = args['RESULTAT']
 
 #  modele
-    iret, ibid, n_modele = aster.dismoi('MODELE', __RESU.nom, 'RESULTAT', 'F')
-    n_modele = n_modele.rstrip()
-    if len(n_modele) == 0 or n_modele == "#PLUSIEURS":
-        UTMESS('F', 'RUPTURE1_58')
-    __model = self.get_concept(n_modele)
+    __model = __RESU.getModel()
     # Dimension du modele
-    iret, ndim, rbid = aster.dismoi('DIM_GEOM', __model.nom, 'MODELE', 'F')
+    iret, ndim, rbid = aster.dismoi('DIM_GEOM', __model.getName(), 'MODELE', 'F')
 #
 #  maillage
-    iret, ibid, nom_ma = aster.dismoi(
-        'NOM_MAILLA', __RESU.nom, 'RESULTAT', 'F')
-    __maillage = self.get_concept(nom_ma.strip())
+    __maillage = __model.getSupportMesh()
 #
-#  champ materiau (inutile mais permet d eviter des alarmes)
-    iret, ibid, nom_cham_mater = aster.dismoi(
-        'CHAM_MATER', __RESU.nom, 'RESULTAT', 'F')
-    __cham_mater = self.get_concept(nom_cham_mater.strip())
+    __cham_mater = __RESU.getMaterialOnMesh()
 
 #
 # RECUPERATION DES DONNEES DE SYMETRIE ET DU FOND DE FISSURE
@@ -252,15 +238,15 @@ def calc_gp_ops(self, **args):
 
 # mult=Coefficient multiplicatif suivant la symetrie du probleme
     mult = 1.
-    if self['TRANCHE_2D'] != None:
-        TRANCHE_2D = self['TRANCHE_2D']
+    if args.has_key('TRANCHE_2D'):
+        TRANCHE_2D = args['TRANCHE_2D']
         if ndim != 2:
             UTMESS('F', 'RUPTURE1_19', ['TRANCHE_2D', '2D'])
 #    symetrie
-        if self['SYME'] == 'OUI':
+        if args['SYME'] == 'OUI':
             mult = 2.
     else:
-        TRANCHE_3D = self['TRANCHE_3D']
+        TRANCHE_3D = args['TRANCHE_3D']
         if ndim != 3:
             UTMESS('F', 'RUPTURE1_19', ['TRANCHE_3D', '3D'])
 
@@ -291,11 +277,11 @@ def calc_gp_ops(self, **args):
     list_inst = __RESU.LIST_VARI_ACCES()['INST']
     l_inst_final = []
 
-    for inst in self['LIST_INST'].Valeurs():
-        if self['CRITERE'] == 'ABSOLU':
-            prec = self['PRECISION']
-        elif self['CRITERE'] == 'RELATIF':
-            prec = self['PRECISION'] * inst
+    for inst in args['LIST_INST'].Valeurs():
+        if args['CRITERE'] == 'ABSOLU':
+            prec = args['PRECISION']
+        elif args['CRITERE'] == 'RELATIF':
+            prec = args['PRECISION'] * inst
 
         match = [x for x in list_inst if (
             (x + prec >= inst) and (x - prec <= inst))]
@@ -315,12 +301,11 @@ def calc_gp_ops(self, **args):
 
 # Definition du concept sortant systematique dans le contexte de la macro
 # L'eventuel champ de copeaux est cree plus tard si besoin
-    self.DeclareOut('tabout', self.sd)
 
 # Definition de la sortie facultative GP_MAX
-    GPMAX = self['GPMAX']
-    if GPMAX != None:
-        self.DeclareOut('tabgpmax', GPMAX)
+    GPMAX = None
+    if args.has_key('GPMAX'):
+        GPMAX = args['GPMAX']
 # Creation des colonnes de la table de sortie gpmax
         tabinstmax = []
         tabcopmax = []
@@ -385,13 +370,6 @@ def calc_gp_ops(self, **args):
             nbcop = TRANCHE_2D['NB_ZONE']
             theta = TRANCHE_2D['ANGLE']
             taille = TRANCHE_2D['TAILLE']
-# Manipulation obligatoire pour pouvoir se servir des grandeurs dans les
-# formules
-            self.update_const_context({'origine': TRANCHE_2D['CENTRE']})
-            self.update_const_context({'rayon': TRANCHE_2D['RAYON']})
-            self.update_const_context({'taille': taille})
-            self.update_const_context({'theta': theta})
-            self.update_const_context({'NRJ': NRJ})
             nom_cmp = ['X%d' % k for k in range(1, nbcop + 1)]
             nom_cop = ['COPS_%d' % k for k in range(1, nbcop + 1)]
 
@@ -406,21 +384,26 @@ def calc_gp_ops(self, **args):
                                 MODELE=__model,
                                 CHAM_GD=__CHXN)
 
+            ccos=cos(theta * pi / 180.)
+            ssin=sin(theta * pi / 180.)
 # construction du champ copeau pour visualisation par utilisateur s'il le
 # souhaite
             if TRANCHE_2D['CHAMP_VISU'] != 0:
-                self.DeclareOut('chp_cop', TRANCHE_2D['CHAMP_VISU'])
-
-                self.update_const_context({'SEUIL': SEUIL})
-                self.update_const_context({'ccos': cos(theta * pi / 180.)})
-                self.update_const_context({'ssin': sin(theta * pi / 180.)})
 
                 __seuil = [None for i in range(nbcop)]
                 for cop in range(nbcop):
                     __seuil[cop] = FORMULE(
                         VALE='''SEUIL(X,Y,origine[0],origine[1],rayon,taille,%d,ccos,ssin)''' % (
                             cop + 1),
-                        NOM_PARA=('X', 'Y'),)
+                        NOM_PARA=('X', 'Y'),
+                        origine=TRANCHE_2D['CENTRE'],
+                        rayon=TRANCHE_2D['RAYON'],
+                        taille=taille,
+                        theta=theta,
+                        SEUIL=SEUIL,
+                        ccos=ccos,
+                        ssin=ssin,
+                        )
 
                 __formule_seuil = CREA_CHAMP(TYPE_CHAM='ELGA_NEUT_F',
                                              MODELE=__model,
@@ -434,6 +417,7 @@ def calc_gp_ops(self, **args):
                                      OPERATION='EVAL',
                                      CHAM_F=__formule_seuil,
                                      CHAM_PARA=(__CHXG),)
+                self.register_result(chp_cop, TRANCHE_2D['CHAMP_VISU'])
 
 # calcul des energies et du gp
             __ener = [None for cop in range(nbcop)]
@@ -441,7 +425,13 @@ def calc_gp_ops(self, **args):
                 __ener[cop] = FORMULE(
                     VALE='''NRJ(TOTALE,X,Y,origine[0],origine[1],rayon,taille,%d,ccos,ssin)''' % (
                         cop + 1),
-                    NOM_PARA=('TOTALE', 'X', 'Y'),)
+                    NOM_PARA=('TOTALE', 'X', 'Y'),
+                    origine=TRANCHE_2D['CENTRE'],
+                    rayon=TRANCHE_2D['RAYON'],
+                    taille=taille,
+                    NRJ=NRJ,
+                    ccos=ccos,
+                    ssin=ssin,)
 
             __formule_ener = CREA_CHAMP(TYPE_CHAM='ELGA_NEUT_F',
                                         MODELE=__model,
@@ -579,5 +569,6 @@ def calc_gp_ops(self, **args):
             _F(PARA='DELTA L',   LISTE_R=tablcopmax,),
             _F(PARA='GP',        LISTE_R=tabgpmax,),
         ),)
+        self.register_result(tabgpmax, GPMAX)
     RetablirAlarme('CALCCHAMP_1')
-    return ier
+    return tabout

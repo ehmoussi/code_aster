@@ -221,6 +221,5 @@ TEST_TABLE(CRITERE='RELATIF',
                    _F(NOM_PARA='ZONE',
                       VALE_K = 'COPS_3'),)
            )
-test.assertEqual(CHARGC.getType(), "CHAR_MECA")
 
 test.printSummary()

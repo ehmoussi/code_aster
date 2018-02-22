@@ -228,6 +228,20 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
         };
 
         /**
+         * @brief Return the size of the vector
+         */
+        long usedSize() const
+        {
+            if( ! exists() ) return 0;
+
+            long vectSize;
+            JeveuxChar8 param( "LONUTI" );
+            JeveuxChar32 dummy( " " );
+            CALLO_JELIRA( _name, param, &vectSize, dummy );
+            return vectSize;
+        };
+
+        /**
          * @brief Mise a jour du pointeur Jeveux
          * @return true si la mise a jour s'est bien passee
          */

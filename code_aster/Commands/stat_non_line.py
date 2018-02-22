@@ -42,6 +42,8 @@ class StaticNonLinearAnalysisBuild(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        self._result.setModel(keywords["MODELE"])
+        self._result.update()
+        self._result.appendModelOnAllRanks(keywords["MODELE"])
+        self._result.appendMaterialOnMeshOnAllRanks(keywords["CHAM_MATER"])
 
 STAT_NON_LINE = StaticNonLinearAnalysisBuild.run
