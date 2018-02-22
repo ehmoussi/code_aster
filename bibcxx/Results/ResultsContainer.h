@@ -78,8 +78,6 @@ private:
     typedef mapStrVOFE::value_type mapStrVOFEValue;
     /** @brief Model sur lequel repose la resultat */
     BaseMeshPtr                  _mesh;
-    /** @brief Model sur lequel repose la resultat */
-    ModelPtr                     _model;
     /** @brief Pointeur de nom Jeveux '.DESC' */
     JeveuxBidirectionalMapChar16 _symbolicNamesOfFields;
     /** @brief Collection '.TACH' */
@@ -129,7 +127,6 @@ public:
                               const std::string resuTyp ):
         DataStructure( name, 19, resuTyp ),
         _mesh( nullptr ),
-        _model( nullptr ),
         _symbolicNamesOfFields( JeveuxBidirectionalMapChar16( getName() + ".DESC" ) ),
         _namesOfFields( JeveuxCollectionChar24( getName() + ".TACH" ) ),
         _accessVariables( JeveuxBidirectionalMapChar16( getName() + ".NOVA" ) ),
@@ -174,22 +171,9 @@ public:
     /**
      * @brief Set model
      */
-    void setMesh( const BaseMeshPtr& mesh ) throw ( std::runtime_error ){
+    void setMesh( const BaseMeshPtr& mesh ) throw ( std::runtime_error )
+    {
         _mesh = mesh;
-    };
-
-    /**
-     * @brief Set model
-     */
-    void setModel( const ModelPtr& model ) throw ( std::runtime_error ){
-        _model = model;
-    };
-
-    /**
-     * @brief Get model
-     */
-    ModelPtr getModel() throw ( std::runtime_error ){
-        return _model;
     };
 
     /**
@@ -197,6 +181,18 @@ public:
      * @param rank
      */
     void addTimeValue( double, int rank ) throw ( std::runtime_error );
+
+    /**
+     * @brief Append a material on all rank of ResultsContainer
+     * @param MaterialOnMeshPtr
+     */
+    void appendMaterialOnMeshOnAllRanks( const MaterialOnMeshPtr& );
+
+    /**
+     * @brief Append a model on all rank of ResultsContainer
+     * @param ModelPtr
+     */
+    void appendModelOnAllRanks( const ModelPtr& );
 
     /**
      * @brief Obtenir un DOFNumbering à remplir
@@ -244,9 +240,19 @@ public:
 
     /**
      * @brief Get material
+     */
+    MaterialOnMeshPtr getMaterialOnMesh() throw ( std::runtime_error );
+
+    /**
+     * @brief Get material
      * @param rank
      */
     MaterialOnMeshPtr getMaterialOnMesh( int rank ) throw ( std::runtime_error );
+
+    /**
+     * @brief Get model
+     */
+    ModelPtr getModel() throw ( std::runtime_error );
 
     /**
      * @brief Obtenir un champ aux noeuds réel à partir de son nom et de son numéro d'ordre
