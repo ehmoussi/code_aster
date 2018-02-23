@@ -144,6 +144,7 @@ vecx = CALC_CHAR_SEISME(MATR_MASS=matrAsseM,
                         MODE_STAT=mod_sta1, GROUP_NO="Bas", );
 
 # Debut du TEST_RESU
+mod_sta1.update()
 MyFieldOnNodes1 = mod_sta1.getRealFieldOnNodes("DEPL", 1)
 sfon1 = MyFieldOnNodes1.exportToSimpleFieldOnNodes()
 # sfon1.debugPrint()
@@ -153,6 +154,7 @@ sfon1.updateValuePointers()
 
 test.assertAlmostEqual(sfon1.getValue(0, 0), 0.180974483763)
 
+mod_sta2.update()
 MyFieldOnNodes2 = mod_sta2.getRealFieldOnNodes("DEPL", 1)
 sfon2 = MyFieldOnNodes2.exportToSimpleFieldOnNodes()
 # sfon2.debugPrint()
@@ -162,6 +164,7 @@ sfon2.updateValuePointers()
 
 test.assertAlmostEqual(sfon2.getValue(0, 0), 2.56667232228e-05)
 
+mod_sta3.update()
 MyFieldOnNodes3 = mod_sta3.getRealFieldOnNodes("DEPL", 1)
 sfon3 = MyFieldOnNodes3.exportToSimpleFieldOnNodes()
 # sfon3.debugPrint()
