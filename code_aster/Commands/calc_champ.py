@@ -51,7 +51,12 @@ class ComputeAdditionalField(ExecuteCommand):
         if keywords.has_key("reuse"):
             self._result.update()
         else:
-            self._result.setModel(keywords["RESULTAT"].getModel())
+            self._result.update()
+            try:
+                model = keywords["RESULTAT"].getModel()
+                self._result.appendModelOnAllRanks(model)
+            except:
+                pass
 
 
 CALC_CHAMP = ComputeAdditionalField.run
