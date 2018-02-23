@@ -176,7 +176,6 @@ class ExecuteCommand(object):
             for key, value in toVisit.iteritems():
                 self._visitSyntax(value)
         elif isinstance(toVisit, DataStructure):
-            print toVisit
             self._result.addReference(toVisit)
 
     def add_references(self, keywords):
