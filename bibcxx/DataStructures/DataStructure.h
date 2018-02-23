@@ -47,6 +47,10 @@
  */
 class DataStructure
 {
+    public:
+        /** @typedef shared_ptr d'une DataStructure */
+        typedef boost::shared_ptr< DataStructure > DataStructurePtr;
+
     private:
         /** @brief Nom de la sd */
         /** @todo remettre le const */
@@ -55,11 +59,10 @@ class DataStructure
         JeveuxMemory _memoryType;
         /** @brief Object that stores the DataStructure type for jeveux requests */
         JeveuxVectorChar24 _tco;
+        /** @brief Vector which contains reference to other DataStructure */
+        std::vector< DataStructurePtr > _referenceVector;
 
     public:
-        /** @typedef shared_ptr d'une DataStructure */
-        typedef boost::shared_ptr< DataStructure > DataStructurePtr;
-
         /**
          * @brief Constructeur
          * @param name Name of the jeveux datastructure
@@ -84,6 +87,29 @@ class DataStructure
          * @brief Destructeur
          */
         ~DataStructure();
+
+        /**
+         * @brief Function to add a reference to another datastructure
+         * @param ds datastructure to reference
+         */
+        void addReference( const DataStructurePtr& ds )
+        {
+            _referenceVector.push_back( ds );
+        };
+
+        /**
+         * @brief Function membre debugPrint
+         * @param logicalUnit Unite logique d'impression
+         */
+        void debugPrint( const int logicalUnit = 6 ) const;
+
+        /**
+         * @brief Function membre debugPrint
+         */
+        void debugPrint() const
+        {
+            debugPrint(6);
+        };
 
         /**
          * @brief Function membre getMemoryType
@@ -111,20 +137,6 @@ class DataStructure
         {
             _tco->updateValuePointer();
             return (*_tco)[0].rstrip();
-        };
-
-        /**
-         * @brief Function membre debugPrint
-         * @param logicalUnit Unite logique d'impression
-         */
-        void debugPrint( const int logicalUnit = 6 ) const;
-
-        /**
-         * @brief Function membre debugPrint
-         */
-        void debugPrint() const
-        {
-            debugPrint(6);
         };
 
     protected:

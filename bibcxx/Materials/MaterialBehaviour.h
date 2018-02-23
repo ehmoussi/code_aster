@@ -628,7 +628,7 @@ class ElasFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             // Parametres matériau
             this->addFunctionProperty( "E", ElementaryMaterialPropertyDataStructure( "E" , true ) );
             this->addFunctionProperty( "Nu", ElementaryMaterialPropertyDataStructure( "NU" , true ) );
-            this->addDoubleProperty( "Rho", ElementaryMaterialPropertyDouble( "RHO" , false ) );
+            this->addFunctionProperty( "Rho", ElementaryMaterialPropertyDataStructure( "RHO" , false ) );
             this->addDoubleProperty( "Temp_def_alpha", ElementaryMaterialPropertyDouble( "TEMP_DEF_ALPHA" , false ) );
             this->addDoubleProperty( "Precision", ElementaryMaterialPropertyDouble( "PRECISION" , 1. , false ) );
             this->addFunctionProperty( "Alpha", ElementaryMaterialPropertyDataStructure( "ALPHA" , false ) );

@@ -36,6 +36,7 @@ void exportDataStructureToPython()
 
     class_< DataStructure, DataStructure::DataStructurePtr >( "DataStructure", no_init )
         .enable_pickling()
+        .def( "addReference", &DataStructure::addReference )
         .def( "getName", &DataStructure::getName, return_value_policy<return_by_value>() )
         .def( "getType", &DataStructure::getType, return_value_policy<return_by_value>() )
         .def( "debugPrint", c1 )
