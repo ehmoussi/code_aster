@@ -46,7 +46,7 @@ class ExtrResu(ExecuteCommand):
         """
         resultat = keywords["RESULTAT"]
         if(resultat):
-            self._result.setModel(resultat.getModel())
             self._result.update()
+            self._result.appendModelOnAllRanks(resultat.getModel())
 
 EXTR_RESU = ExtrResu.run

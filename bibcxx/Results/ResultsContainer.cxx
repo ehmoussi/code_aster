@@ -96,16 +96,26 @@ void ResultsContainerInstance::addModel( const ModelPtr& model,
 
 void ResultsContainerInstance::appendMaterialOnMeshOnAllRanks( const MaterialOnMeshPtr& mater )
 {
-    for( int rank = 0; rank < _nbRanks; ++rank )
+    _serialNumber->updateValuePointer();
+    long nbRanks = _serialNumber->usedSize();
+    for( int rank = 0; rank < nbRanks; ++rank )
+    {
+        const long iordr = (*_serialNumber)[rank];
         if( _mapMaterial.find( rank ) == _mapMaterial.end() )
-            addMaterialOnMesh( mater, rank );
+            addMaterialOnMesh( mater, iordr );
+    }
 };
 
 void ResultsContainerInstance::appendModelOnAllRanks( const ModelPtr& model )
 {
-    for( int rank = 0; rank < _nbRanks; ++rank )
+    _serialNumber->updateValuePointer();
+    long nbRanks = _serialNumber->usedSize();
+    for( int rank = 0; rank < nbRanks; ++rank )
+    {
+        const long iordr = (*_serialNumber)[rank];
         if( _mapModel.find( rank ) == _mapModel.end() )
-            addModel( model, rank );
+            addModel( model, iordr );
+    }
 };
 
 MaterialOnMeshPtr ResultsContainerInstance::getMaterialOnMesh( int rank )

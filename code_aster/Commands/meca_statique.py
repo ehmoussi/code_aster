@@ -112,6 +112,7 @@ class MechanicalSolver(ExecuteCommand):
                        RESULTAT=self._result,
                        CONTRAINTE=contrainte,)
 
-        self._result.setModel(keywords["MODELE"])
+        self._result.update()
+        self._result.appendModelOnAllRanks(keywords["MODELE"])
 
 MECA_STATIQUE = MechanicalSolver.run
