@@ -74,7 +74,7 @@ pi = NP.pi
 SXX = FORMULE(NOM_PARA=('X1','Y1','Z1','X2','Y2','Z2','FREQ'),
               VALE_C='FREQ*sin(pi*Y1)*sin(pi*Y2)',)
 
-INTESPEC=CREA_TABLE(LISTE=(_F(LISTE_K=('SXX'),PARA='FONCTION_C'),
+INTESPEC=CREA_TABLE(LISTE=(_F(LISTE_K=(SXX.getName()),PARA='FONCTION_C'),
                            _F(LISTE_K=('DX'),PARA='NUME_ORDRE_I'),
                            _F(LISTE_K=('DX'),PARA='NUME_ORDRE_J'),),
                     TYPE_TABLE='TABLE_FONCTION',
