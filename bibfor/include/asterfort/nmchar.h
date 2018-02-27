@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,22 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
-! aslint: disable=W1504
 !
 interface
-    subroutine nmchar(mode  , phasez         , modele, numedd  , mate      ,&
-                      carele, ds_constitutive, lischa, numins  , ds_measure,&
-                      sddisc, fonact         , comref, ds_inout, valinc    ,&
-                      solalg, veelem         , measse, veasse  , sddyna)
+    subroutine nmchar(mode    , phasez,&
+                      modele  , numedd, ds_material, carele, ds_constitutive,&
+                      lischa  , numins, ds_measure , sddisc, fonact         ,&
+                      ds_inout, valinc, solalg     , veelem, measse         ,&
+                      veasse  , sddyna)
         use NonLin_Datastructure_type
         character(len=4) :: mode
         character(len=*) :: phasez
         character(len=24) :: modele
         character(len=24) :: numedd
-        character(len=24) :: mate
+        type(NL_DS_Material), intent(in) :: ds_material
         character(len=24) :: carele
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         character(len=19) :: lischa
@@ -38,7 +35,6 @@ interface
         type(NL_DS_Measure), intent(inout) :: ds_measure
         character(len=19) :: sddisc
         integer :: fonact(*)
-        character(len=24) :: comref
         type(NL_DS_InOut), intent(in) :: ds_inout
         character(len=19) :: valinc(*)
         character(len=19) :: solalg(*)

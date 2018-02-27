@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,8 +18,8 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine nmobse(meshz     , sd_obsv  , time,&
-                  cara_elemz, modelz   , matez    , ds_constitutive, disp_curr,&
-                  strx_curr , varc_curr, varc_refe)
+                  cara_elemz, modelz   , ds_material, ds_constitutive, disp_curr,&
+                  strx_curr , varc_curr)
 !
 use NonLin_Datastructure_type
 !
@@ -39,13 +39,12 @@ character(len=*), intent(in) :: meshz
 character(len=19), intent(in) :: sd_obsv
 real(kind=8), intent(in) :: time
 character(len=*), optional, intent(in) :: cara_elemz
-character(len=*), optional, intent(in) :: matez
+type(NL_DS_Material), optional, intent(in) :: ds_material
 character(len=*), optional, intent(in) :: modelz
 type(NL_DS_Constitutive), optional, intent(in) :: ds_constitutive
 character(len=*), optional, intent(in) :: disp_curr
 character(len=*), optional, intent(in) :: strx_curr
 character(len=*), optional, intent(in) :: varc_curr
-character(len=*), optional, intent(in) :: varc_refe
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -60,11 +59,10 @@ character(len=*), optional, intent(in) :: varc_refe
 ! In  sd_obsv          : datastructure for observation parameters
 ! In  model            : name of model
 ! In  cara_elem        : name of datastructure for elementary parameters (CARTE)
-! In  mate             : name of material characteristics (field)
+! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  disp_curr        : current displacements
 ! In  varc_curr        : command variable for current time
-! In  varc_refe        : command variable for reference
 ! In  strx_curr        : fibers information for current time
 !
 ! --------------------------------------------------------------------------------------------------
@@ -150,9 +148,9 @@ character(len=*), optional, intent(in) :: varc_refe
             field_disc = v_extr_comp(4*(i_field_comp-1)+2)(1:4) 
             field_type = v_extr_comp(4*(i_field_comp-1)+3)
             ligrel     = v_extr_comp(4*(i_field_comp-1)+4)(1:19)
-            call nmextr_comp(field_comp, field_disc, field_type     , meshz    , modelz   ,&
-                             cara_elemz, matez     , ds_constitutive, disp_curr, strx_curr,&
-                             varc_curr , varc_refe , time           , ligrelz = ligrel)
+            call nmextr_comp(field_comp, field_disc , field_type     , meshz    , modelz   ,&
+                             cara_elemz, ds_material, ds_constitutive, disp_curr, strx_curr,&
+                             varc_curr , time       , ligrelz = ligrel)
         end do
     endif
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,9 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmcoma(modelz, mate  , carele    , ds_constitutive, ds_algopara,&
-                  lischa, numedd, numfix    , solveu         , comref     ,&
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
+subroutine nmcoma(modelz, ds_material, carele    , ds_constitutive, ds_algopara,&
+                  lischa, numedd, numfix    , solveu         , &
                   sddisc, sddyna, ds_print  , ds_measure     , ds_algorom, numins     ,&
                   iterat, fonact, ds_contact, valinc         , solalg     ,&
                   veelem, meelem, measse    , veasse         , maprec     ,&
@@ -51,27 +53,24 @@ implicit none
 #include "asterfort/mtdscr.h"
 #include "asterfort/romAlgoNLCorrEFMatrixModify.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    integer :: fonact(*)
-    character(len=*) :: modelz
-    character(len=24) :: mate, carele
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=24) :: numedd, numfix
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
-    character(len=19) :: sddisc, sddyna, lischa, solveu, sdnume
-    character(len=24) :: comref
-    type(NL_DS_Print), intent(inout) :: ds_print
-    character(len=19) :: meelem(*), veelem(*)
-    character(len=19) :: solalg(*), valinc(*)
-    character(len=19) :: measse(*), veasse(*)
-    integer :: numins, iterat, ibid
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-    character(len=19) :: maprec, matass
-    integer :: faccvg, ldccvg
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+integer :: fonact(*)
+character(len=*) :: modelz
+character(len=24) :: carele
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=24) :: numedd, numfix
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=19) :: sddisc, sddyna, lischa, solveu, sdnume
+type(NL_DS_Print), intent(inout) :: ds_print
+character(len=19) :: meelem(*), veelem(*)
+character(len=19) :: solalg(*), valinc(*)
+character(len=19) :: measse(*), veasse(*)
+integer :: numins, iterat
+type(NL_DS_Contact), intent(inout) :: ds_contact
+character(len=19) :: maprec, matass
+integer :: faccvg, ldccvg
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -84,9 +83,8 @@ implicit none
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL (VARIABLE AU COURS DU CALCUL)
 ! IN  NUMFIX : NUME_DDL (FIXE AU COURS DU CALCUL)
-! IN  MATE   : CHAMP MATERIAU
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VARI_COM DE REFERENCE
+! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  LISCHA : LISTE DES CHARGES
 ! IO  ds_contact       : datastructure for contact management
@@ -128,10 +126,10 @@ implicit none
     character(len=16) :: metcor, metpre
     character(len=16) :: optrig, optamo
     character(len=19) :: vefint, cnfint
-    character(len=24) :: modele
+    character(len=24) :: modele, mate, varc_refe
     aster_logical :: renume
     integer :: ifm, niv
-    integer :: nb_matr
+    integer :: nb_matr, ibid
     character(len=6) :: list_matr_type(20)
     character(len=16) :: list_calc_opti(20), list_asse_opti(20)
     aster_logical :: list_l_asse(20), list_l_calc(20)
@@ -145,6 +143,8 @@ implicit none
 !
 ! - Initializations
 !
+    mate      = ds_material%field_mate
+    varc_refe = ds_material%varc_refe
     nb_matr              = 0
     list_matr_type(1:20) = ' '
     modele = modelz
@@ -189,7 +189,7 @@ implicit none
 ! --- CALCUL DES FORCES INTERNES
 !
     if (lcfint) then
-        call nmfint(modele, mate  , carele, comref    , ds_constitutive,&
+        call nmfint(modele, mate  , carele, varc_refe, ds_constitutive,&
                     fonact, iterat, sddyna, ds_measure, valinc         ,&
                     solalg, ldccvg, vefint)
     endif
@@ -260,9 +260,9 @@ implicit none
 ! --- CALCUL ET ASSEMBLAGE DES MATR_ELEM DE LA LISTE
 !
     if (nb_matr .gt. 0) then
-        call nmxmat(modelz        , mate       , carele     , ds_constitutive, sddisc        ,&
+        call nmxmat(modelz        , ds_material, carele     , ds_constitutive, sddisc        ,&
                     sddyna        , fonact     , numins     , iterat         , valinc        ,&
-                    solalg        , lischa     , comref     , numedd         , numfix        ,&
+                    solalg        , lischa     , numedd         , numfix        ,&
                     ds_measure    , ds_algopara, nb_matr    , list_matr_type , list_calc_opti,&
                     list_asse_opti, list_l_calc, list_l_asse, lcfint         , meelem        ,&
                     measse        , veelem     , ldccvg     , ds_contact)

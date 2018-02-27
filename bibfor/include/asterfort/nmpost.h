@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 !
 interface
     subroutine nmpost(modele , mesh    , numedd, numfix     , carele  ,&
-                      ds_constitutive , numins  , mate  , comref     , ds_inout,&
+                      ds_constitutive , numins  , ds_material, ds_inout,&
                       ds_contact, ds_algopara, fonact  ,&
                       ds_measure, sddisc , &
                       sd_obsv, sderro  , sddyna, ds_posttimestep     , valinc  ,&
@@ -33,8 +33,7 @@ interface
         character(len=24) :: carele
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         integer :: numins
-        character(len=24) :: mate
-        character(len=24) :: comref
+        type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Contact), intent(inout) :: ds_contact
         type(NL_DS_InOut), intent(in) :: ds_inout
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara

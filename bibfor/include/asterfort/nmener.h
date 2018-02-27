@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 ! aslint: disable=W1504
 !
 interface
     subroutine nmener(valinc, veasse, measse, sddyna, eta        ,&
                       ds_energy, fonact, numedd, numfix, ds_algopara,&
-                      meelem, numins, modele, mate  , carele     ,&
+                      meelem, numins, modele, ds_material, carele     ,&
                       ds_constitutive, ds_measure, sddisc, solalg, lischa,&
-                      comref, veelem, ds_inout)
+                      veelem, ds_inout)
         use NonLin_Datastructure_type
         character(len=19) :: valinc(*)
         character(len=19) :: veasse(*)
@@ -39,7 +36,7 @@ interface
         character(len=19) :: meelem(*)
         integer :: numins
         character(len=24) :: modele
-        character(len=24) :: mate
+        type(NL_DS_Material), intent(in) :: ds_material
         character(len=24) :: carele
         type(NL_DS_InOut), intent(in) :: ds_inout
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
@@ -48,7 +45,6 @@ interface
         character(len=19) :: sddisc
         character(len=19) :: solalg(*)
         character(len=19) :: lischa
-        character(len=24) :: comref
         character(len=19) :: veelem(*)
     end subroutine nmener
 end interface

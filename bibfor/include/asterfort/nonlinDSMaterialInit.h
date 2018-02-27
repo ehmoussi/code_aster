@@ -17,19 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmobse(meshz     , sd_obsv  , time,&
-                      cara_elemz, modelz   , ds_material, ds_constitutive, disp_curr,&
-                      strx_curr , varc_curr)
+    subroutine nonlinDSMaterialInit(model      , mate, cara_elem,&
+                                    ds_material)
         use NonLin_Datastructure_type
-        character(len=*), intent(in) :: meshz
-        character(len=19), intent(in) :: sd_obsv
-        real(kind=8), intent(in) :: time
-        character(len=*), optional, intent(in) :: modelz
-        character(len=*), optional, intent(in) :: cara_elemz
-        type(NL_DS_Material), optional, intent(in) :: ds_material
-        type(NL_DS_Constitutive), optional, intent(in) :: ds_constitutive
-        character(len=*), optional, intent(in) :: disp_curr
-        character(len=*), optional, intent(in) :: strx_curr
-        character(len=*), optional, intent(in) :: varc_curr
-    end subroutine nmobse
+        character(len=24), intent(in) :: model, mate, cara_elem
+        type(NL_DS_Material), intent(inout) :: ds_material
+    end subroutine nonlinDSMaterialInit
 end interface

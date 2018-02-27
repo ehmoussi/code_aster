@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,11 +16,10 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
 !
-subroutine nmresi(noma  , mate   , numedd  , sdnume  , fonact,&
+subroutine nmresi(noma  , ds_material, numedd  , sdnume  , fonact,&
                   sddyna, ds_conv, ds_print, ds_contact,&
-                  matass, numins , eta     , comref  , valinc,&
+                  matass, numins , eta     , valinc,&
                   solalg, veasse , measse  , ds_inout, ds_algorom,&
                   vresi , vchar)
 !
@@ -54,24 +53,23 @@ implicit none
 #include "asterfort/romAlgoNLMecaResidual.h"
 #include "asterfort/romAlgoNLCorrEFMecaResidual.h"
 !
-    character(len=8) :: noma
-    character(len=24) :: numedd
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-    type(NL_DS_Conv), intent(inout) :: ds_conv
-    type(NL_DS_Print), intent(inout) :: ds_print
-    character(len=24) :: mate
-    integer :: numins
-    character(len=19) :: sddyna, sdnume
-    character(len=19) :: measse(*), veasse(*)
-    character(len=19) :: valinc(*), solalg(*)
-    character(len=19) :: matass
-    character(len=24) :: comref
-    integer :: fonact(*)
-    real(kind=8) :: eta
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    real(kind=8), intent(out) :: vchar
-    real(kind=8), intent(out) :: vresi
-    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+character(len=8) :: noma
+character(len=24) :: numedd
+type(NL_DS_Contact), intent(inout) :: ds_contact
+type(NL_DS_Conv), intent(inout) :: ds_conv
+type(NL_DS_Print), intent(inout) :: ds_print
+integer :: numins
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=19) :: sddyna, sdnume
+character(len=19) :: measse(*), veasse(*)
+character(len=19) :: valinc(*), solalg(*)
+character(len=19) :: matass
+integer :: fonact(*)
+real(kind=8) :: eta
+type(NL_DS_InOut), intent(in) :: ds_inout
+real(kind=8), intent(out) :: vchar
+real(kind=8), intent(out) :: vresi
+type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -87,9 +85,9 @@ implicit none
 ! IN  SDNUME : NOM DE LA SD NUMEROTATION
 ! In  ds_inout         : datastructure for input/output management
 ! IO  ds_conv          : datastructure for convergence management
-! IN  COMREF : VARI_COM REFE
 ! IN  MATASS : MATRICE DU PREMIER MEMBRE ASSEMBLEE
 ! IN  NUMINS : NUMERO D'INSTANT
+! In  ds_material      : datastructure for material parameters
 ! In  ds_contact       : datastructure for contact management
 ! In  ds_algorom       : datastructure for ROM parameters
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
@@ -102,15 +100,16 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: jdiri=0, jvcfo=0, jiner=0
+    integer :: jdiri=0, jiner=0
     integer :: ifm=0, niv=0
     integer, pointer :: v_ccid(:) => null()
     integer :: neq=0
+    character(len=24) :: mate, varc_refe
     character(len=8) :: noddlm=' '
     aster_logical :: ldyna, lstat, lcine, l_cont_cont, l_cont_lac, l_rom
     character(len=19) :: profch=' ', foiner=' '
     character(len=19) :: commoi=' ', depmoi=' '
-    character(len=19) :: cndiri=' ', cnbudi=' ', cnvcfo=' ', cnfext=' '
+    character(len=19) :: cndiri=' ', cnbudi=' ', cnfext=' '
     character(len=19) :: cnvcf1=' ', cnrefe=' ', cnfint=' '
     character(len=19) :: cnfnod=' ', cndipi=' ', cndfdo=' '
     integer :: jfnod=0
@@ -145,6 +144,8 @@ implicit none
 !
 ! --- INITIALISATIONS
 !
+    mate      = ds_material%field_mate
+    varc_refe = ds_material%varc_refe
     vrela = 0.d0
     vmaxi = 0.d0
     vrefe = 0.d0
@@ -181,7 +182,6 @@ implicit none
     call nmchex(valinc, 'VALINC', 'COMMOI', commoi)
     call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
     call nmchex(veasse, 'VEASSE', 'CNBUDI', cnbudi)
-    call nmchex(veasse, 'VEASSE', 'CNVCF0', cnvcfo)
     call nmchex(veasse, 'VEASSE', 'CNVCF1', cnvcf1)
     call nmchex(veasse, 'VEASSE', 'CNREFE', cnrefe)
     call nmchex(veasse, 'VEASSE', 'CNFNOD', cnfnod)
@@ -226,7 +226,7 @@ implicit none
 ! --- CALCULE LE MAX DES RESIDUS PAR CMP POUR LE RESIDU RESI_COMP_RELA
 !
     if (lcmp) then
-        call rescmp(cndiri, cnvcfo, cnfext, cnfint, cnfnod,&
+        call rescmp(cndiri, cnfext, cnfint, cnfnod,&
                     maxres, noddlm, icomp)
     endif
 !
@@ -235,7 +235,6 @@ implicit none
     call jeveuo(cnfint(1:19)//'.VALE', 'L', vr=fint)
     call jeveuo(cndiri(1:19)//'.VALE', 'L', jdiri)
     call jeveuo(cnfext(1:19)//'.VALE', 'L', vr=fext)
-    call jeveuo(cnvcfo(1:19)//'.VALE', 'L', jvcfo)
     call jeveuo(cnbudi(1:19)//'.VALE', 'L', vr=budi)
     call jeveuo(cndfdo(1:19)//'.VALE', 'L', vr=dfdo)
     if (lpilo) then
@@ -384,12 +383,12 @@ implicit none
             if (vchar .gt. resi_glob_rela) then
                 vinit = vinit/vchar
                 if (vinit .gt. resi_glob_rela) then
-                    call nmvcmx(mate, noma, comref, commoi)
+                    call nmvcmx(mate, noma, varc_refe, commoi)
                 endif
             endif
         else
             if (vinit .gt. resi_glob_maxi) then
-                call nmvcmx(mate, noma, comref, commoi)
+                call nmvcmx(mate, noma, varc_refe, commoi)
             endif
         endif
     endif

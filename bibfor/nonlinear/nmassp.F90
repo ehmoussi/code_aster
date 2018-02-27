@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmassp(modele         , numedd, mate  , carele    , comref    ,&
-                  ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
-                  sddyna         , valinc, solalg, veelem    , veasse    ,&
-                  ldccvg         , cnpilo, cndonn, sdnume    , matass    ,&
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmassp(modele         , numedd, ds_material, carele    ,&
+                  ds_constitutive, lischa, fonact     , ds_measure, ds_contact,&
+                  sddyna         , valinc, solalg     , veelem    , veasse    ,&
+                  ldccvg         , cnpilo, cndonn     , sdnume    , matass    ,&
                   ds_algorom)
 !
 use NonLin_Datastructure_type
@@ -35,21 +36,19 @@ implicit none
 #include "asterfort/nsassp.h"
 #include "asterfort/vtzero.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer :: ldccvg
-    integer :: fonact(*)
-    character(len=19) :: lischa, sddyna, sdnume, matass
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=24) :: modele, numedd, mate
-    character(len=24) :: carele, comref
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    character(len=19) :: solalg(*), valinc(*)
-    character(len=19) :: veasse(*), veelem(*)
-    character(len=19) :: cnpilo, cndonn
-    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+integer :: ldccvg
+integer :: fonact(*)
+character(len=19) :: lischa, sddyna, sdnume, matass
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=24) :: modele, numedd
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=24) :: carele
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=19) :: solalg(*), valinc(*)
+character(len=19) :: veasse(*), veelem(*)
+character(len=19) :: cnpilo, cndonn
+type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -61,9 +60,8 @@ implicit none
 !
 ! IN  MODELE : NOM DU MODELE
 ! IN  NUMEDD : NOM DE LA NUMEROTATION
-! IN  MATE   : NOM DU CHAMP DE MATERIAU
+! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VALEURS DE REF DES VARIABLES DE COMMANDE
 ! IN  LISCHA : SD L_CHARGES
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  ds_contact       : datastructure for contact management
@@ -109,16 +107,16 @@ implicit none
 ! --- EVALUATION DU SECOND MEMBRE
 !
     if (ldyna) then
-        call ndassp(modele         , numedd, mate      , carele, comref    ,&
-                    ds_constitutive, lischa, ds_measure, fonact, ds_contact,&
-                    sddyna         , valinc, solalg    , veelem, veasse    ,&
-                    ldccvg         , cndonn, sdnume    , matass)
+        call ndassp(modele         , numedd, ds_material, carele,&
+                    ds_constitutive, lischa, ds_measure , fonact, ds_contact,&
+                    sddyna         , valinc, solalg     , veelem, veasse    ,&
+                    ldccvg         , cndonn, sdnume     , matass)
     else if (lstat) then
         call nsassp(modele, numedd, lischa, fonact, sddyna,&
                     ds_measure, valinc, veelem, veasse, cnpilo,&
-                    cndonn, mate, carele, ds_contact, matass, ds_algorom)
+                    cndonn, ds_material, carele, ds_contact, matass, ds_algorom)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 end subroutine

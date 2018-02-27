@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
 subroutine nmener(valinc, veasse, measse, sddyna, eta        ,&
                   ds_energy, fonact, numedd, numfix, ds_algopara,&
-                  meelem, numins, modele, mate  , carele     ,&
+                  meelem, numins, modele, ds_material, carele     ,&
                   ds_constitutive, ds_measure, sddisc, solalg, lischa     ,&
-                  comref, veelem, ds_inout)
+                  veelem, ds_inout)
 !
 use NonLin_Datastructure_type
 !
@@ -44,20 +46,17 @@ implicit none
 #include "asterfort/nmmass.h"
 #include "asterfort/wkvect.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    character(len=19) :: sddyna, valinc(*), veasse(*), measse(*)
-    type(NL_DS_Energy), intent(inout) :: ds_energy
-    character(len=19) :: meelem(*), sddisc, solalg(*), lischa, veelem(*)
-    character(len=24) :: numedd, numfix, modele, mate, carele
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=24) :: comref
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    real(kind=8) :: eta
-    integer :: fonact(*), numins
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+character(len=19) :: sddyna, valinc(*), veasse(*), measse(*)
+type(NL_DS_Energy), intent(inout) :: ds_energy
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=19) :: meelem(*), sddisc, solalg(*), lischa, veelem(*)
+character(len=24) :: numedd, numfix, modele, carele
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_Measure), intent(inout) :: ds_measure
+real(kind=8) :: eta
+integer :: fonact(*), numins
+type(NL_DS_InOut), intent(in) :: ds_inout
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -79,7 +78,7 @@ implicit none
 ! IN  MEELEM : MATRICES ELEMENTAIRES
 ! IN  NUMINS : NUMERO D'INSTANT
 ! IN  MODELE : MODELE
-! IN  MATE   : CHAMP MATERIAU
+! In  ds_material      : datastructure for material parameters
 ! In  ds_inout         : datastructure for input/output management
 ! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
@@ -88,7 +87,6 @@ implicit none
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
 ! IN  LISCHA : LISTE DES CHARGES
-! IN  COMREF : VARI_COM DE REFERENCE
 ! IN  VEELEM : VECTEURS ELEMENTAIRES
 !
 ! --------------------------------------------------------------------------------------------------
@@ -336,9 +334,9 @@ implicit none
 ! --- ON LE FAIT ICI AFIN DE DISPOSER D UNE MATRICE D AMORTISSEMENT.
 !
     if (numins .eq. 1) then
-        call nmfini(sddyna, valinc         , measse    , modele  , mate  ,&
+        call nmfini(sddyna, valinc         , measse    , modele  , ds_material,&
                     carele, ds_constitutive, ds_measure, sddisc  , numins,&
-                    solalg, lischa         , comref    , ds_inout, numedd,&
+                    solalg, lischa         , ds_inout, numedd,&
                     veelem, veasse)
     endif
 !

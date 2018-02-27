@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nminvc(modelz, mate  , carele  , ds_constitutive, ds_measure,&
-                  sddisc, sddyna, valinc  , solalg         , lischa    ,&
-                  comref, numedd, ds_inout, veelem         , veasse    ,&
-                  measse)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nminvc(modelz, ds_material, carele, ds_constitutive, ds_measure,&
+                  sddisc, sddyna     , valinc, solalg         , lischa    ,&
+                  numedd, ds_inout   , veelem, veasse         , measse)
 !
 use NonLin_Datastructure_type
 !
@@ -30,17 +30,16 @@ implicit none
 #include "asterfort/nmcvec.h"
 #include "asterfort/nmxvec.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=*) :: modelz
-    character(len=24) :: mate, carele
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=19) :: sddisc, sddyna, lischa
-    character(len=24) :: comref, numedd
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    character(len=19) :: veelem(*), veasse(*), measse(*)
-    character(len=19) :: solalg(*), valinc(*)
+character(len=*) :: modelz
+character(len=24) :: carele
+type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=19) :: sddisc, sddyna, lischa
+character(len=24) :: numedd
+type(NL_DS_Measure), intent(inout) :: ds_measure
+type(NL_DS_InOut), intent(in) :: ds_inout
+character(len=19) :: veelem(*), veasse(*), measse(*)
+character(len=19) :: solalg(*), valinc(*)
 !
 ! ----------------------------------------------------------------------
 !
@@ -51,6 +50,7 @@ implicit none
 ! ----------------------------------------------------------------------
 !
 ! IN  SDDYNA : SD DYNAMIQUE
+! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  MODELE : NOM DU MODELE
 ! IN  SOLVEU : SOLVEUR
@@ -69,8 +69,8 @@ implicit none
 ! ----------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: numins
-    integer :: nbvect
+    character(len=24) :: mate, comref
+    integer :: numins, nbvect
     character(len=6) :: ltypve(20)
     character(len=16) :: loptve(20)
     aster_logical :: lcalve(20), lassve(20)
@@ -84,6 +84,8 @@ implicit none
 !
 ! --- INITIALISATIONS
 !
+    mate   = ds_material%field_mate
+    comref = ds_material%varc_refe
     numins = 1
     call nmcvec('INIT', ' ', ' ', .false._1, .false._1,&
                 nbvect, ltypve, loptve, lcalve, lassve)

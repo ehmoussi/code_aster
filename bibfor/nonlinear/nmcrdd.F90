@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmcrdd(meshz          , modelz   , ds_inout , cara_elemz, matez    ,&
-                  ds_constitutive, disp_curr, strx_curr, varc_curr , varc_refe,&
-                  time           , sd_suiv)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmcrdd(meshz          , modelz   , ds_inout , cara_elemz, ds_material,&
+                  ds_constitutive, disp_curr, strx_curr, varc_curr , time       ,&
+                  sd_suiv)
 !
 use NonLin_Datastructure_type
 !
@@ -29,20 +30,17 @@ implicit none
 #include "asterfort/nmcrdn.h"
 #include "asterfort/nmextr.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=*), intent(in) :: meshz
-    character(len=*), intent(in) :: modelz
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    character(len=*), intent(in) :: cara_elemz
-    character(len=*), intent(in) :: matez
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=*), intent(in) :: disp_curr
-    character(len=*), intent(in) :: strx_curr
-    character(len=*), intent(in) :: varc_curr
-    character(len=*), intent(in) :: varc_refe
-    real(kind=8),  intent(in) :: time
-    character(len=24), intent(out) :: sd_suiv
+character(len=*), intent(in) :: meshz
+character(len=*), intent(in) :: modelz
+type(NL_DS_InOut), intent(in) :: ds_inout
+character(len=*), intent(in) :: cara_elemz
+type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=*), intent(in) :: disp_curr
+character(len=*), intent(in) :: strx_curr
+character(len=*), intent(in) :: varc_curr
+real(kind=8),  intent(in) :: time
+character(len=24), intent(out) :: sd_suiv
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,11 +55,10 @@ implicit none
 ! In  result           : name of results datastructure
 ! In  sddisc           : datastructure for discretization
 ! In  cara_elem        : name of datastructure for elementary parameters (CARTE)
-! In  mate             : name of material characteristics (field)
+! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  disp_curr        : current displacements
 ! In  varc_curr        : command variable for current time
-! In  varc_refe        : command variable for reference
 ! In  time             : current time
 ! In  strx_curr        : fibers information for current time
 ! In  ds_inout         : datastructure for input/output management
@@ -86,8 +83,8 @@ implicit none
     sdextr_suiv = sd_suiv(1:14)
     call nmextr(meshz       , modelz        , sdextr_suiv, ds_inout , keyw_fact,&
                 nb_keyw_fact, nb_dof_monitor,&
-                cara_elemz  , matez         , ds_constitutive, disp_curr, strx_curr,&
-                varc_curr   , varc_refe     , time       )
+                cara_elemz  , ds_material   , ds_constitutive, disp_curr, strx_curr,&
+                varc_curr   , time       )
 !
 ! - Read name of columns
 !

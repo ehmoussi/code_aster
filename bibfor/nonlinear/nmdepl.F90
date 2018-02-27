@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmdepl(modele         , numedd , mate  , carele    , comref     ,&
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
+subroutine nmdepl(modele         , numedd , ds_material, carele    ,&
                   ds_constitutive, lischa , fonact, ds_measure, ds_algopara,&
                   noma           , numins , iterat, solveu    , matass     ,&
                   sddisc         , sddyna , sdnume, sdpilo    , sderro     ,&
@@ -47,25 +49,23 @@ implicit none
 #include "asterfort/nmsolm.h"
 #include "asterfort/nmsolu.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer :: fonact(*)
-    integer :: iterat, numins
-    real(kind=8) :: eta
-    character(len=8) :: noma
-    type(NL_DS_Conv), intent(inout) :: ds_conv
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    character(len=19) :: sddisc, sdnume, sddyna, sdpilo
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19) :: lischa, matass, solveu
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=24) :: modele, numedd, mate, carele, comref
-    character(len=24) :: sderro
-    character(len=19) :: veelem(*), veasse(*)
-    character(len=19) :: solalg(*), valinc(*)
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-    aster_logical :: lerrit
+integer :: fonact(*)
+integer :: iterat, numins
+real(kind=8) :: eta
+character(len=8) :: noma
+type(NL_DS_Conv), intent(inout) :: ds_conv
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+character(len=19) :: sddisc, sdnume, sddyna, sdpilo
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19) :: lischa, matass, solveu
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=24) :: modele, numedd, carele
+character(len=24) :: sderro
+character(len=19) :: veelem(*), veasse(*)
+character(len=19) :: solalg(*), valinc(*)
+type(NL_DS_Contact), intent(inout) :: ds_contact
+aster_logical :: lerrit
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -77,9 +77,8 @@ implicit none
 !
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL
-! IN  MATE   : CHAMP MATERIAU
+! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VARI_COM DE REFERENCE
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  LISCHA : LISTE DES CHARGES
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
@@ -160,7 +159,7 @@ implicit none
 !
     if (.not.lreli .or. iterat .eq. 0) then
         if (lpilo) then
-            call nmpich(modele         , numedd, mate  , carele    , comref    ,&
+            call nmpich(modele         , numedd, ds_material, carele    ,&
                         ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
                         sdpilo         , iterat, sdnume, deltat    , valinc    ,&
                         solalg         , veelem, veasse, sddisc    , eta       ,&
@@ -173,14 +172,14 @@ implicit none
 ! --- RECHERCHE LINEAIRE
 !
         if (lpilo) then
-            call nmrepl(modele         , numedd, mate       , carele, comref    ,&
+            call nmrepl(modele         , numedd, ds_material, carele,&
                         ds_constitutive, lischa, ds_algopara, fonact, iterat    ,&
                         ds_measure     , sdpilo, sdnume     , sddyna, ds_contact,&
                         deltat         , valinc, solalg     , veelem, veasse    ,&
                         sddisc         , etan  , ds_conv    , eta   , offset    ,&
                         ldccvg         , pilcvg, matass )
         else
-            call nmreli(modele         , numedd, mate       , carele    , comref    ,&
+            call nmreli(modele         , numedd, ds_material, carele    ,&
                         ds_constitutive, lischa, fonact     , iterat    , ds_measure,&
                         sdnume         , sddyna, ds_algopara, ds_contact, valinc    ,&
                         solalg         , veelem, veasse     , ds_conv   , ldccvg)

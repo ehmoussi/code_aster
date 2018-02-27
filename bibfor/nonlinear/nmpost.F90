@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 ! aslint: disable=W1504
 !
 subroutine nmpost(modele , mesh    , numedd, numfix     , carele  ,&
-                  ds_constitutive , numins  , mate  , comref     , ds_inout,&
+                  ds_constitutive , numins  , ds_material, ds_inout,&
                   ds_contact, ds_algopara, fonact  ,&
                   ds_measure, sddisc     , &
                   sd_obsv, sderro  , sddyna, ds_posttimestep, valinc  ,&
@@ -49,6 +49,7 @@ character(len=8), intent(in) :: mesh
 real(kind=8) :: eta
 type(NL_DS_InOut), intent(in) :: ds_inout
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+type(NL_DS_Material), intent(in) :: ds_material
 character(len=19) :: meelem(*)
 type(NL_DS_Contact), intent(inout) :: ds_contact
 type(NL_DS_Energy), intent(inout) :: ds_energy
@@ -62,8 +63,7 @@ character(len=19) :: veelem(*), measse(*), veasse(*)
 character(len=19) :: solalg(*), valinc(*)
 type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=24) :: sderro, sdcriq
-character(len=24) :: mate, carele
-character(len=24) :: comref
+character(len=24) :: carele
 integer :: fonact(*)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -77,9 +77,8 @@ integer :: fonact(*)
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL
 ! IN  NUMFIX : NUME_DDL (FIXE AU COURS DU CALCUL)
-! IN  MATE   : CHAMP MATERIAU
+! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VARI_COM DE REFERENCE
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  ds_inout         : datastructure for input/output management
 ! IO  ds_contact       : datastructure for contact management
@@ -126,7 +125,7 @@ integer :: fonact(*)
         call nmtime(ds_measure, 'Launch', 'Post')
 ! ----- CALCUL EVENTUEL DE L'INDICATEUR D'ERREUR TEMPORELLE THM
         if (lerrt) then
-            call nmetca(modele, mesh  , mate, sddisc, sdcriq,&
+            call nmetca(modele, mesh  , ds_material, sddisc, sdcriq,&
                         numins, valinc)
         endif
 !
@@ -140,9 +139,9 @@ integer :: fonact(*)
 ! ----- Spectral analysis (MODE_VIBR/CRIT_STAB)
 !
         if (l_mode_vibr .or. l_crit_stab) then
-            call nmspec(modele         , mate      , carele    ,lischa      , fonact,&
+            call nmspec(modele         , ds_material, carele    ,lischa      , fonact,&
                         numedd         , numfix    ,&
-                        ds_constitutive, comref    ,&
+                        ds_constitutive, &
                         sddisc         , numins    ,&
                         sddyna         , sderro    , ds_contact, ds_algopara,&
                         ds_measure     ,&
@@ -157,22 +156,22 @@ integer :: fonact(*)
         if (lener) then
             call nmener(valinc, veasse, measse, sddyna, eta        ,&
                         ds_energy, fonact, numedd, numfix, ds_algopara,&
-                        meelem, numins, modele, mate  , carele     ,&
+                        meelem, numins, modele, ds_material, carele     ,&
                         ds_constitutive, ds_measure, sddisc, solalg, lischa     ,&
-                        comref, veelem, ds_inout)
+                        veelem, ds_inout)
         endif
 !
 ! ----- Post-treatment for behavior laws.
 !
         if (l_post_incr) then
-            call nmrest_ecro(modele, mate, ds_constitutive, valinc)
+            call nmrest_ecro(modele, ds_material%field_mate, ds_constitutive, valinc)
         endif
 !
 ! ----- Make observation
 !
         if (l_obsv) then
-            call nmobsv(mesh  , modele, sddisc         , sd_obsv, numins,&
-                        carele, mate  , ds_constitutive, comref , valinc)
+            call nmobsv(mesh  , modele     , sddisc         , sd_obsv, numins,&
+                        carele, ds_material, ds_constitutive, valinc)
         endif
 !
 ! ----- End of timer for post-treatment

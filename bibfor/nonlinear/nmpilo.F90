@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,9 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmpilo(sdpilo, deltat, rho            , solalg    , veasse,&
-                  modele, mate  , ds_constitutive, ds_contact, valinc,&
+                  modele, ds_material, ds_constitutive, ds_contact, valinc,&
                   nbatte, numedd, nbeffe         , eta       , pilcvg,&
                   carele)
 !
@@ -41,17 +42,16 @@ implicit none
 #include "asterfort/nmpipe.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer :: nbatte, nbeffe
-    integer :: pilcvg
-    real(kind=8) :: deltat, rho, eta(nbatte)
-    character(len=19) :: sdpilo
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=19) :: solalg(*), veasse(*), valinc(*)
-    character(len=24) :: modele, mate, carele
-    character(len=24) :: numedd
-    type(NL_DS_Contact), intent(in) :: ds_contact
+integer :: nbatte, nbeffe
+integer :: pilcvg
+real(kind=8) :: deltat, rho, eta(nbatte)
+character(len=19) :: sdpilo
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=19) :: solalg(*), veasse(*), valinc(*)
+character(len=24) :: modele, carele
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=24) :: numedd
+type(NL_DS_Contact), intent(in) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -72,7 +72,7 @@ implicit none
 ! IN  RHO    : VALEUR DU PAS DE RECHERCHE LINEAIRE
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL
-! IN  MATE   : MATERIAU
+! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  ds_contact       : datastructure for contact management
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
@@ -90,6 +90,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     integer :: neq, i, ierm
     real(kind=8) :: dtau, etrmin, etrmax, coef
     character(len=19) :: ddepl0, ddepl1
@@ -97,8 +98,6 @@ implicit none
     character(len=19) :: ligrpi, cartyp, careta
     character(len=19) :: depmoi, depdel, deppr1, deppr2
     character(len=19) :: cnfepi
-    character(len=3) :: mfdet
-    integer :: ifm, niv
     aster_logical :: isxfe
     real(kind=8), pointer :: dep0(:) => null()
     real(kind=8), pointer :: dep1(:) => null()
@@ -148,13 +147,6 @@ implicit none
     cartyp = pltk(3)(1:19)
     careta = pltk(4)(1:19)
 !
-! --- VERIFICATION QUE LES VARIABLES DE COMMANDE NE DEPENDENT PAS DU TEMPS
-!
-    call dismoi('VARC_F_INST', mate, 'CHAM_MATER', repk=mfdet)
-    if (mfdet .eq. 'OUI') then
-        call utmess('F', 'CALCULEL2_58', nk=1, valk=mate)
-    endif
-!
 ! --- INCREMENTS DE DEPLACEMENT RHO.DU0 ET RHO.DU1
 !
     call jeveuo(deppr1(1:19)//'.VALE', 'L', vr=du0)
@@ -191,12 +183,12 @@ implicit none
 ! --- PILOTAGE PAR CRITERE
 !
     else if (typpil.eq.'PRED_ELAS' .or. typpil.eq.'DEFORMATION') then
-        call nmpipe(modele         , ligrpi    , cartyp, careta, mate  ,&
+        call nmpipe(modele         , ligrpi    , cartyp, careta, ds_material,&
                     ds_constitutive, ds_contact, valinc, depdel, ddepl0,&
                     ddepl1         , dtau      , nbeffe, eta   , pilcvg,&
                     typpil         , carele)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! --- LE CALCUL DE PILOTAGE A FORCEMENT ETE REALISE

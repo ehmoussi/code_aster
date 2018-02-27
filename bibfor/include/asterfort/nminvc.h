@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine nminvc(modelz, mate  , carele  , ds_constitutive, ds_measure,&
-                      sddisc, sddyna, valinc  , solalg         , lischa    ,&
-                      comref, numedd, ds_inout, veelem         , veasse    ,&
-                      measse)
+    subroutine nminvc(modelz, ds_material, carele, ds_constitutive, ds_measure,&
+                      sddisc, sddyna     , valinc, solalg         , lischa    ,&
+                      numedd, ds_inout   , veelem, veasse         , measse)
         use NonLin_Datastructure_type
         character(len=*) :: modelz
-        character(len=24) :: mate
+        type(NL_DS_Material), intent(in) :: ds_material
         character(len=24) :: carele
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         type(NL_DS_Measure), intent(inout) :: ds_measure
@@ -35,7 +32,6 @@ interface
         character(len=19) :: solalg(*)
         type(NL_DS_InOut), intent(in) :: ds_inout
         character(len=19) :: lischa
-        character(len=24) :: comref
         character(len=24) :: numedd
         character(len=19) :: veelem(*)
         character(len=19) :: veasse(*)

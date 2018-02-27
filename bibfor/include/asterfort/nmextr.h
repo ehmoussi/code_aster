@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine nmextr(meshz       , modelz    , sdextrz   , ds_inout , keyw_fact,&
-                      nb_keyw_fact, nb_extr   ,&
-                      cara_elemz  , matez     , ds_constitutive, disp_curr, strx_curr,&
-                      varc_curr   , varc_refe , time      )
+    subroutine nmextr(meshz       , modelz     , sdextrz   , ds_inout , keyw_fact,&
+                      nb_keyw_fact, nb_extr    ,&
+                      cara_elemz  , ds_material, ds_constitutive, disp_curr, strx_curr,&
+                      varc_curr   , time      )
         use NonLin_Datastructure_type
         character(len=*), intent(in) :: meshz
         character(len=*), intent(in) :: modelz
@@ -32,12 +30,11 @@ interface
         character(len=16), intent(in) :: keyw_fact
         integer, intent(out) :: nb_extr  
         character(len=*), optional, intent(in) :: cara_elemz
-        character(len=*), optional, intent(in) :: matez
+        type(NL_DS_Material), optional, intent(in) :: ds_material
         type(NL_DS_Constitutive), optional, intent(in) :: ds_constitutive
         character(len=*), optional, intent(in) :: disp_curr
         character(len=*), optional, intent(in) :: strx_curr
         character(len=*), optional, intent(in) :: varc_curr
-        character(len=*), optional, intent(in) :: varc_refe
         real(kind=8), optional, intent(in) :: time
     end subroutine nmextr
 end interface

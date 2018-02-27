@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,9 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmpred(modele, numedd         , numfix    , mate       , carele  ,&
-                  comref, ds_constitutive, lischa    , ds_algopara, solveu  ,&
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
+subroutine nmpred(modele, numedd         , numfix    , ds_material, carele  ,&
+                  ds_constitutive, lischa    , ds_algopara, solveu  ,&
                   fonact, ds_print       , ds_measure, ds_algorom , sddisc  ,&
                   sdnume, sderro         , numins    , valinc     , solalg  ,&
                   matass, maprec         , ds_contact, sddyna     , ds_inout,&
@@ -36,27 +38,25 @@ implicit none
 #include "asterfort/nmprde.h"
 #include "asterfort/nmprta.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer :: fonact(*)
-    integer :: numins
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    character(len=19) :: matass, maprec
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
-    type(NL_DS_Print), intent(inout) :: ds_print
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=19) :: lischa, solveu, sddisc, sddyna, sdnume
-    character(len=24) :: modele, mate, carele, comref
-    character(len=24) :: numedd, numfix
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-    character(len=24) :: sderro
-    character(len=19) :: meelem(*), veelem(*)
-    character(len=19) :: measse(*), veasse(*)
-    character(len=19) :: solalg(*), valinc(*)
-    aster_logical :: lerrit
+integer :: fonact(*)
+integer :: numins
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+character(len=19) :: matass, maprec
+type(NL_DS_Measure), intent(inout) :: ds_measure
+type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+type(NL_DS_Print), intent(inout) :: ds_print
+type(NL_DS_InOut), intent(in) :: ds_inout
+type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=19) :: lischa, solveu, sddisc, sddyna, sdnume
+character(len=24) :: modele, carele
+character(len=24) :: numedd, numfix
+type(NL_DS_Contact), intent(inout) :: ds_contact
+character(len=24) :: sderro
+character(len=19) :: meelem(*), veelem(*)
+character(len=19) :: measse(*), veasse(*)
+character(len=19) :: solalg(*), valinc(*)
+aster_logical :: lerrit
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -69,9 +69,8 @@ implicit none
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL (VARIABLE AU COURS DU CALCUL)
 ! IN  NUMFIX : NUME_DDL (FIXE AU COURS DU CALCUL)
-! IN  MATE   : CHAMP MATERIAU
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VARIABLES DE COMMANDE DE REFERENCE
+! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  LISCHA : LISTE DES CHARGES
 ! IN  SOLVEU : SOLVEUR
@@ -121,8 +120,8 @@ implicit none
 !
     if ((ds_algopara%matrix_pred .eq. 'ELASTIQUE').or.&
         (ds_algopara%matrix_pred .eq. 'TANGENTE')) then
-        call nmprta(modele    , numedd         , numfix    , mate       , carele,&
-                    comref    , ds_constitutive, lischa    , ds_algopara, solveu,&
+        call nmprta(modele    , numedd         , numfix    , ds_material, carele,&
+                    ds_constitutive, lischa    , ds_algopara, solveu,&
                     fonact    , ds_print       , ds_measure, ds_algorom , sddisc,&
                     numins    , valinc         , solalg    , matass     , maprec,&
                     ds_contact, sddyna         , meelem    , measse     , veelem,&
@@ -134,8 +133,8 @@ implicit none
 !
     elseif ((ds_algopara%matrix_pred .eq. 'EXTRAPOLE').or.&
             (ds_algopara%matrix_pred .eq.'DEPL_CALCULE')) then
-        call nmprde(modele, numedd         , numfix    , mate       , carele    ,&
-                    comref, ds_constitutive, lischa    , ds_algopara, solveu    ,&
+        call nmprde(modele, numedd         , numfix    , ds_material, carele    ,&
+                    ds_constitutive, lischa    , ds_algopara, solveu    ,&
                     fonact, ds_print       , ds_measure, ds_algorom, sddisc     , numins    ,&
                     valinc, solalg         , matass    , maprec     , ds_contact,&
                     sddyna, meelem         , measse    , veelem     , veasse    ,&

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine ndxpre(modele  , numedd         , numfix    , mate       , carele,&
-                  comref  , ds_constitutive, lischa    , ds_algopara, solveu,&
-                  fonact  , sddisc         , ds_measure, numins     , valinc,&
-                  solalg  , matass         , maprec    , sddyna     , sderro,&
-                  ds_inout, meelem         , measse    , veelem     , veasse,&
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
+subroutine ndxpre(modele         , numedd, numfix     , ds_material, carele,&
+                  ds_constitutive, lischa, ds_algopara, solveu     ,&
+                  fonact         , sddisc, ds_measure , numins     , valinc,&
+                  solalg         , matass, maprec     , sddyna     , sderro,&
+                  ds_inout       , meelem, measse     , veelem     , veasse,&
                   lerrit)
 !
 use NonLin_Datastructure_type
@@ -39,24 +41,22 @@ implicit none
 #include "asterfort/nmresd.h"
 #include "asterfort/vtzero.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer :: fonact(*)
-    integer :: numins
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    character(len=19) :: matass, maprec
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19) :: lischa, solveu, sddisc, sddyna
-    character(len=24) :: modele, mate, carele, comref
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=24) :: numedd, numfix
-    character(len=24) :: sderro
-    character(len=19) :: meelem(*), veelem(*)
-    character(len=19) :: measse(*), veasse(*)
-    character(len=19) :: solalg(*), valinc(*)
-    aster_logical :: lerrit
+integer :: fonact(*)
+integer :: numins
+type(NL_DS_InOut), intent(in) :: ds_inout
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+character(len=19) :: matass, maprec
+type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19) :: lischa, solveu, sddisc, sddyna
+character(len=24) :: modele, carele
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=24) :: numedd, numfix
+character(len=24) :: sderro
+character(len=19) :: meelem(*), veelem(*)
+character(len=19) :: measse(*), veasse(*)
+character(len=19) :: solalg(*), valinc(*)
+aster_logical :: lerrit
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -69,9 +69,8 @@ implicit none
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL (VARIABLE AU COURS DU CALCUL)
 ! IN  NUMFIX : NUME_DDL (FIXE AU COURS DU CALCUL)
-! IN  MATE   : CHAMP MATERIAU
+! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VARIABLES DE COMMANDE DE REFERENCE
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  ds_inout         : datastructure for input/output management
 ! In  ds_algopara      : datastructure for algorithm parameters
@@ -127,8 +126,8 @@ implicit none
 !
 ! --- CALCUL DE LA MATRICE GLOBALE
 !
-    call ndxprm(modele, mate  , carele    , ds_constitutive, ds_algopara,&
-                lischa, numedd, numfix    , solveu         , comref     ,&
+    call ndxprm(modele, ds_material, carele    , ds_constitutive, ds_algopara,&
+                lischa, numedd, numfix    , solveu         ,&
                 sddisc, sddyna, ds_measure, numins         , fonact     ,&
                 valinc, solalg, veelem    , meelem         , measse     ,&
                 maprec, matass, faccvg    , ldccvg)
@@ -140,17 +139,17 @@ implicit none
 !
 ! --- CALCUL DES CHARGEMENTS VARIABLES AU COURS DU PAS DE TEMPS
 !
-    call nmchar('VARI', 'PREDICTION'   , modele, numedd  , mate      ,&
+    call nmchar('VARI', 'PREDICTION'   , modele, numedd  , ds_material,&
                 carele, ds_constitutive, lischa, numins  , ds_measure,&
-                sddisc, fonact         , comref, ds_inout, valinc    ,&
+                sddisc, fonact         , ds_inout, valinc    ,&
                 solalg, veelem         , measse, veasse  , sddyna)
 !
 ! --- CALCUL DU SECOND MEMBRE
 !
-    call nmassx(modele         , numedd, mate  , carele    , comref,&
-                ds_constitutive, lischa, fonact, ds_measure, sddyna,&
-                valinc         , solalg, veelem, veasse    , ldccvg,&
-                cndonn)
+    call nmassx(modele         , numedd, ds_material, carele    ,&
+                ds_constitutive, lischa, fonact     , ds_measure, &
+                sddyna         , valinc, solalg     , veelem    , veasse,&
+                ldccvg         , cndonn)
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmcere(modele         , numedd, mate  , carele    , comref    ,&
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
+subroutine nmcere(modele         , numedd, ds_material, carele    ,&
                   ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
                   iterat         , sdnume, valinc, solalg    , veelem    ,&
                   veasse         , offset, rho   , eta       , residu    ,&
@@ -49,19 +51,17 @@ implicit none
 #include "asterfort/r8inir.h"
 #include "blas/daxpy.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer :: fonact(*)
-    integer :: iterat, ldccvg
-    real(kind=8) :: eta, rho, offset, residu
-    character(len=19) :: lischa, sdnume, matass
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=24) :: modele, numedd, mate, carele, comref
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19) :: veelem(*), veasse(*)
-    character(len=19) :: solalg(*), valinc(*)
+integer :: fonact(*)
+integer :: iterat, ldccvg
+real(kind=8) :: eta, rho, offset, residu
+character(len=19) :: lischa, sdnume, matass
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=24) :: modele, numedd, carele
+type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Contact), intent(in) :: ds_contact
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19) :: veelem(*), veasse(*)
+character(len=19) :: solalg(*), valinc(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -73,9 +73,8 @@ implicit none
 !
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL
-! IN  MATE   : CHAMP MATERIAU
+! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VARI_COM DE REFERENCE
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  LISCHA : LISTE DES CHARGES
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
@@ -106,6 +105,7 @@ implicit none
     integer, parameter :: zsolal = 17
     aster_logical :: lgrot, lendo
     integer :: neq, nmax
+    character(len=24) :: varc_refe, mate
     character(len=19) :: vefint, vediri, vebudi
     character(len=19) :: cnfint, cndiri, cnfext, cnbudi
     character(len=19) :: valint(zvalin)
@@ -132,6 +132,8 @@ implicit none
 !
 ! --- INITIALISATIONS
 !
+    mate      = ds_material%field_mate
+    varc_refe = ds_material%varc_refe
     k19bla = ' '
     lgrot = isfonc(fonact,'GD_ROTA')
     lendo = isfonc(fonact,'ENDO_NO')
@@ -198,7 +200,7 @@ implicit none
 !
 ! --- REACTUALISATION DES FORCES INTERIEURES
 !
-    call nmfint(modele, mate  , carele, comref    , ds_constitutive,&
+    call nmfint(modele, mate  , carele, varc_refe , ds_constitutive,&
                 fonact, iterat, k19bla, ds_measure, valint         ,&
                 solalt, ldccvg, vefint)
 !

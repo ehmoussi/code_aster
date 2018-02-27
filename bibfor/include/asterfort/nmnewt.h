@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,19 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 ! aslint: disable=W1504
 !
 interface
-    subroutine nmnewt(mesh       , model    , numins    , numedd         , numfix   ,&
-                      mate       , cara_elem, comref    , ds_constitutive, list_load,&
-                      ds_algopara, fonact   , ds_measure, sderro         , ds_print ,&
-                      sdnume     , sddyna   , sddisc    , sdcrit         , sdsuiv   ,&
-                      sdpilo     , ds_conv  , solveu    , maprec         , matass   ,&
-                      ds_inout   , valinc   , solalg    , meelem         , measse   ,&
-                      veelem     , veasse   , ds_contact, ds_algorom     , eta      ,&
+    subroutine nmnewt(mesh       , model    , numins         , numedd    , numfix   ,&
+                      ds_material, cara_elem, ds_constitutive, list_load ,&
+                      ds_algopara, fonact   , ds_measure     , sderro    , ds_print ,&
+                      sdnume     , sddyna   , sddisc         , sdcrit    , sdsuiv   ,&
+                      sdpilo     , ds_conv  , solveu         , maprec    , matass   ,&
+                      ds_inout   , valinc   , solalg         , meelem    , measse   ,&
+                      veelem     , veasse   , ds_contact     , ds_algorom, eta      ,&
                       nbiter  )
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
@@ -36,9 +33,8 @@ interface
         integer :: numins
         character(len=24) :: numedd
         character(len=24) :: numfix
-        character(len=24), intent(in) :: mate
+        type(NL_DS_Material), intent(in) :: ds_material
         character(len=24), intent(in) :: cara_elem
-        character(len=24) :: comref
         type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
         character(len=19), intent(in) :: list_load
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmcrob(meshz     , modelz         , sddisc   , ds_inout , cara_elemz,&
-                  matez     , ds_constitutive, disp_curr, strx_curr, varc_curr ,&
-                  varc_refe , time           , sd_obsv  )
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmcrob(meshz      , modelz         , sddisc   , ds_inout , cara_elemz,&
+                  ds_material, ds_constitutive, disp_curr, strx_curr, varc_curr ,&
+                  time       , sd_obsv  )
 !
 use NonLin_Datastructure_type
 !
@@ -33,21 +34,18 @@ implicit none
 #include "asterfort/nmobno.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=*), intent(in) :: meshz
-    character(len=*), intent(in) :: modelz
-    character(len=19), intent(in) :: sddisc
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    character(len=*), intent(in) :: cara_elemz
-    character(len=*), intent(in) :: matez
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=*), intent(in) :: disp_curr
-    character(len=*), intent(in) :: strx_curr
-    character(len=*), intent(in) :: varc_curr
-    character(len=*), intent(in) :: varc_refe
-    real(kind=8),  intent(in) :: time
-    character(len=19), intent(out) :: sd_obsv
+character(len=*), intent(in) :: meshz
+character(len=*), intent(in) :: modelz
+character(len=19), intent(in) :: sddisc
+type(NL_DS_InOut), intent(in) :: ds_inout
+character(len=*), intent(in) :: cara_elemz
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=*), intent(in) :: disp_curr
+character(len=*), intent(in) :: strx_curr
+character(len=*), intent(in) :: varc_curr
+real(kind=8),  intent(in) :: time
+character(len=19), intent(out) :: sd_obsv
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -62,11 +60,10 @@ implicit none
 ! In  result           : name of results datastructure
 ! In  ds_inout         : datastructure for input/output management
 ! In  cara_elem        : name of datastructure for elementary parameters (CARTE)
-! In  mate             : name of material characteristics (field)
+! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  disp_curr        : current displacements
 ! In  varc_curr        : command variable for current time
-! In  varc_refe        : command variable for reference
 ! In  time             : current time
 ! In  strx_curr        : fibers information for current time
 ! Out sd_obsv          : datastructure for observation parameters
@@ -103,8 +100,8 @@ implicit none
     sdextr_obsv = sd_obsv(1:14)
     call nmextr(meshz       , modelz    , sdextr_obsv, ds_inout, keyw_fact,&
                 nb_keyw_fact, nb_obsv   ,&
-                cara_elemz  , matez     , ds_constitutive, disp_curr, strx_curr,&
-                varc_curr   , varc_refe , time       )
+                cara_elemz  , ds_material, ds_constitutive, disp_curr, strx_curr,&
+                varc_curr   , time       )
 !
 ! - Set reuse index in OBSERVATION table
 !

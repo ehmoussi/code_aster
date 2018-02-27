@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmnewt(mesh       , model    , numins    , numedd         , numfix   ,&
-                  mate       , cara_elem, comref    , ds_constitutive, list_load,&
-                  ds_algopara, fonact   , ds_measure, sderro         , ds_print ,&
-                  sdnume     , sddyna   , sddisc    , sdcrit         , sdsuiv   ,&
-                  sdpilo     , ds_conv  , solveu    , maprec         , matass   ,&
-                  ds_inout   , valinc   , solalg    , meelem         , measse   ,&
-                  veelem     , veasse   , ds_contact, ds_algorom     , eta      ,&
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
+subroutine nmnewt(mesh       , model    , numins         , numedd         , numfix   ,&
+                  ds_material, cara_elem, ds_constitutive, list_load,&
+                  ds_algopara, fonact   , ds_measure     , sderro         , ds_print ,&
+                  sdnume     , sddyna   , sddisc         , sdcrit         , sdsuiv   ,&
+                  sdpilo     , ds_conv  , solveu         , maprec         , matass   ,&
+                  ds_inout   , valinc   , solalg         , meelem         , measse   ,&
+                  veelem     , veasse   , ds_contact     , ds_algorom     , eta      ,&
                   nbiter  )
 !
 use NonLin_Datastructure_type
@@ -65,45 +67,41 @@ implicit none
 #include "asterfort/nmtime.h"
 #include "asterfort/nmtimr.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    character(len=8), intent(in) :: mesh
-    character(len=24), intent(in) :: model
-    integer :: numins
-    character(len=24) :: numedd
-    character(len=24) :: numfix
-    character(len=24), intent(in) :: mate
-    character(len=24), intent(in) :: cara_elem
-    character(len=24) :: comref
-    type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
-    character(len=19), intent(in) :: list_load
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    integer :: fonact(*)
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=24) :: sderro
-    type(NL_DS_Print), intent(inout) :: ds_print
-    character(len=19) :: sdnume
-    character(len=19) :: sddyna
-    character(len=19) :: sddisc
-    character(len=19) :: sdcrit
-    character(len=24) :: sdsuiv
-    character(len=19) :: sdpilo
-    type(NL_DS_Conv), intent(inout) :: ds_conv
-    character(len=19) :: solveu
-    character(len=19) :: maprec
-    character(len=19) :: matass
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    character(len=19) :: valinc(*)
-    character(len=19) :: solalg(*)
-    character(len=19) :: meelem(*)
-    character(len=19) :: measse(*)
-    character(len=19) :: veelem(*)
-    character(len=19) :: veasse(*)
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-    type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
-    real(kind=8) :: eta
-    integer :: nbiter
+character(len=8), intent(in) :: mesh
+character(len=24), intent(in) :: model
+integer :: numins
+character(len=24) :: numedd
+character(len=24) :: numfix
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=24), intent(in) :: cara_elem
+type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
+character(len=19), intent(in) :: list_load
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+integer :: fonact(*)
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=24) :: sderro
+type(NL_DS_Print), intent(inout) :: ds_print
+character(len=19) :: sdnume
+character(len=19) :: sddyna
+character(len=19) :: sddisc
+character(len=19) :: sdcrit
+character(len=24) :: sdsuiv
+character(len=19) :: sdpilo
+type(NL_DS_Conv), intent(inout) :: ds_conv
+character(len=19) :: solveu
+character(len=19) :: maprec
+character(len=19) :: matass
+type(NL_DS_InOut), intent(in) :: ds_inout
+character(len=19) :: valinc(*)
+character(len=19) :: solalg(*)
+character(len=19) :: meelem(*)
+character(len=19) :: measse(*)
+character(len=19) :: veelem(*)
+character(len=19) :: veasse(*)
+type(NL_DS_Contact), intent(inout) :: ds_contact
+type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
+real(kind=8) :: eta
+integer :: nbiter
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -115,7 +113,7 @@ implicit none
 !
 ! In  mesh             : name of mesh
 ! In  model            : name of model
-! In  mate             : name of material characteristics (field)
+! In  ds_material      : datastructure for material parameters
 ! In  cara_elem        : name of elementary characteristics (field)
 ! In  list_load        : name of datastructure for list of loads
 ! IO  ds_algopara      : datastructure for algorithm parameters
@@ -152,7 +150,7 @@ implicit none
     iterat = 0
     niveau = 0
     nbiter = 0
-    lerrit = .false.
+    lerrit = ASTER_FALSE
 !
 ! - Active functionnalities
 !
@@ -184,16 +182,16 @@ implicit none
 !
 ! --- INITIALISATIONS POUR LE NOUVEAU PAS DE TEMPS
 !
-    call nmnpas(model     , mesh  , mate  , cara_elem , fonact    ,&
+    call nmnpas(model     , mesh  , ds_material, cara_elem , fonact    ,&
                 ds_print  , sddisc, sdsuiv, sddyna    , sdnume    ,&
                 ds_measure, numedd, numins, ds_contact,&
                 valinc    , solalg, solveu, ds_conv   , list_load )
 !
 ! --- CALCUL DES CHARGEMENTS CONSTANTS AU COURS DU PAS DE TEMPS
 !
-    call nmchar('FIXE'   , ' '            , model    , numedd  , mate      ,&
+    call nmchar('FIXE'   , ' '            , model    , numedd  , ds_material,&
                 cara_elem, ds_constitutive, list_load, numins  , ds_measure,&
-                sddisc   , fonact         , comref   , ds_inout, valinc    ,&
+                sddisc   , fonact         , ds_inout , valinc    ,&
                 solalg   , veelem         , measse   , veasse  , sddyna)
 !
 ! ======================================================================
@@ -229,8 +227,8 @@ implicit none
 !
 ! --- PREDICTION D'UNE DIRECTION DE DESCENTE
 !
-    call nmpred(model , numedd         , numfix    , mate       , cara_elem,&
-                comref, ds_constitutive, list_load , ds_algopara, solveu   ,&
+    call nmpred(model , numedd         , numfix    , ds_material, cara_elem,&
+                ds_constitutive, list_load , ds_algopara, solveu   ,&
                 fonact, ds_print       , ds_measure, ds_algorom , sddisc   ,&
                 sdnume, sderro         , numins    , valinc     , solalg   ,&
                 matass, maprec         , ds_contact, sddyna     , ds_inout ,&
@@ -254,7 +252,7 @@ implicit none
 ! --- EN CORRIGEANT LA (LES) DIRECTIONS DE DESCENTE
 ! --- SI CONTACT OU PILOTAGE OU RECHERCHE LINEAIRE
 !
-    call nmdepl(model          , numedd   , mate  , cara_elem , comref     ,&
+    call nmdepl(model          , numedd   , ds_material, cara_elem , &
                 ds_constitutive, list_load, fonact, ds_measure, ds_algopara,&
                 mesh           , numins   , iterat, solveu    , matass     ,&
                 sddisc         , sddyna   , sdnume, sdpilo    , sderro     ,&
@@ -265,7 +263,7 @@ implicit none
 !
 ! --- CALCUL DES FORCES APRES CORRECTION
 !
-    call nmfcor(model          , numedd    , mate    , cara_elem  , comref,&
+    call nmfcor(model          , numedd    , ds_material, cara_elem  ,&
                 ds_constitutive, list_load , fonact  , ds_algopara, numins,&
                 iterat         , ds_measure, sddisc  , sddyna     , sdnume,&
                 sderro         , ds_contact, ds_inout, valinc     , solalg,&
@@ -276,23 +274,22 @@ implicit none
 !
 ! - DOF monitoring
 !
-    call nmsuiv(mesh  , sdsuiv         , ds_print, cara_elem, model ,&
-                mate  , ds_constitutive, valinc  , comref   , sddisc,&
-                numins)
+    call nmsuiv(mesh       , sdsuiv         , ds_print, cara_elem, model ,&
+                ds_material, ds_constitutive, valinc  , sddisc   , numins)
 !
 ! --- ESTIMATION DE LA CONVERGENCE
 !
 315 continue
-    call nmconv(mesh    , model, mate   , numedd  , sdnume     ,&
+    call nmconv(mesh    , model, ds_material, numedd  , sdnume     ,&
                 fonact  , sddyna, ds_conv, ds_print, ds_measure,&
                 sddisc  , sdcrit , sderro  , ds_algopara, ds_algorom,&
-                ds_inout, comref, matass , solveu  , numins     ,&
+                ds_inout, matass , solveu  , numins     ,&
                 iterat  , eta   , ds_contact, valinc     ,&
                 solalg  , measse, veasse )
 !
 ! --- MISE A JOUR DES EFFORTS DE CONTACT
 !
-    call nmfcon(model, numedd, mate  , fonact, ds_contact,&
+    call nmfcon(model, numedd, ds_material, fonact, ds_contact,&
                 ds_measure, valinc, solalg,&
                 veelem, veasse,  ds_constitutive)
 !
@@ -308,7 +305,6 @@ implicit none
 ! - Stop Newton iterations
 !
     call nmleeb(sderro, 'NEWT', etnewt)
-!    write (6,*) "etnewt",etnewt
     
     if (etnewt .ne. 'CONT') then
         goto 330
@@ -318,8 +314,8 @@ implicit none
 !
 320 continue
 !
-    call nmdesc(model   , numedd         , numfix    , mate      , cara_elem  ,&
-                comref  , ds_constitutive, list_load , ds_contact, ds_algopara,&
+    call nmdesc(model   , numedd         , numfix    , ds_material, cara_elem  ,&
+                ds_constitutive, list_load , ds_contact, ds_algopara,&
                 solveu  , fonact         , numins    , iterat    , sddisc     ,&
                 ds_print, ds_measure     , ds_algorom, sddyna    , sdnume     ,&
                 sderro  , matass         , maprec    , valinc    , solalg     ,&
@@ -386,7 +382,7 @@ implicit none
 !
 ! --- GESTION FIN DE BOUCLE POINTS FIXES
 !
-    call nmtble(niveau, model, mesh    , mate  , ds_contact, &
+    call nmtble(niveau, model, mesh    , ds_material, ds_contact, &
                 fonact, ds_print, ds_measure,&
                 sderro, ds_conv , sddisc, numins, valinc,&
                 solalg,  ds_constitutive, ds_algorom)

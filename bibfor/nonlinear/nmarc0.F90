@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmarc0(result, modele        , mate           , carele   , fonact,&
+subroutine nmarc0(result, modele        , ds_material    , carele   , fonact,&
                   sdcrit, sddyna        , ds_constitutive, sdcriq   ,&
                   sdpilo, list_load_resu, numarc         , time_curr)
 !
@@ -45,7 +45,8 @@ integer :: fonact(*)
 real(kind=8) :: time_curr
 character(len=19) :: sddyna, sdpilo
 character(len=19) :: list_load_resu, sdcrit
-character(len=24) :: modele, mate, carele, sdcriq
+character(len=24) :: modele, carele, sdcriq
+type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 !
 ! ----------------------------------------------------------------------
@@ -58,7 +59,7 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 !
 ! IN  RESULT : NOM UTILISATEUR DU CONCEPT RESULTAT
 ! IN  MODELE : NOM DU MODELE
-! IN  MATE   : CHAMP DE MATERIAU
+! In  ds_material      : datastructure for material parameters
 ! IN  SDCRIT : VALEUR DES CRITERES DE CONVERGENCE
 ! IN  SDPILO : SD PILOTAGE
 ! In  ds_constitutive  : datastructure for constitutive laws management
@@ -126,7 +127,8 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 !
 ! --- ARCHIVAGE DU MODELE, MATERIAU, CARA_ELEM ET DE LA SD CHARGE
 !
-    call rssepa(result, numarc, modele(1:8), mate(1:8), carele(1:8), list_load_resu)
+    call rssepa(result, numarc, modele(1:8), ds_material%field_mate(1:8), carele(1:8),&
+                list_load_resu)
 !
 ! --- ARCHIVAGE DES CRITERES DE CONVERGENCE
 !

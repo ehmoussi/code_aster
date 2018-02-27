@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,13 +17,13 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmarc0(result, modele        , mate           , carele   , fonact,&
+    subroutine nmarc0(result, modele        , ds_material    , carele   , fonact,&
                       sdcrit, sddyna        , ds_constitutive, sdcriq   ,&
                       sdpilo, list_load_resu, numarc         , time_curr)
         use NonLin_Datastructure_type
         character(len=8) :: result
         character(len=24) :: modele
-        character(len=24) :: mate
+        type(NL_DS_Material), intent(in) :: ds_material
         character(len=24) :: carele
         integer :: fonact(*)
         character(len=19) :: sdcrit
