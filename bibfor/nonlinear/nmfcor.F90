@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmfcor(modele         , numedd    , mate    , carele     , comref,&
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
+subroutine nmfcor(modele         , numedd    , ds_material, carele  ,&
                   ds_constitutive, lischa    , fonact  , ds_algopara, numins,&
                   iterat         , ds_measure, sddisc  , sddyna     , sdnume,&
                   sderro         , ds_contact, ds_inout, valinc     , solalg,&
@@ -45,23 +47,21 @@ implicit none
 #include "asterfort/nmrigi.h"
 #include "asterfort/nmtime.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer :: fonact(*)
-    integer :: iterat, numins
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19) :: sddisc, sddyna, sdnume
-    character(len=19) :: lischa, matass
-    character(len=24) :: modele, numedd, mate, carele, comref
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=24) :: sderro
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    character(len=19) :: meelem(*), veelem(*), measse(*), veasse(*)
-    character(len=19) :: solalg(*), valinc(*)
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    aster_logical :: lerrit
+integer :: fonact(*)
+integer :: iterat, numins
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19) :: sddisc, sddyna, sdnume
+character(len=19) :: lischa, matass
+character(len=24) :: modele, numedd, carele
+type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=24) :: sderro
+type(NL_DS_InOut), intent(in) :: ds_inout
+character(len=19) :: meelem(*), veelem(*), measse(*), veasse(*)
+character(len=19) :: solalg(*), valinc(*)
+type(NL_DS_Contact), intent(in) :: ds_contact
+aster_logical :: lerrit
 !
 ! ----------------------------------------------------------------------
 !
@@ -74,9 +74,8 @@ implicit none
 !
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL
-! IN  MATE   : CHAMP MATERIAU
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VARI_COM DE REFERENCE
+! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
 ! IO  ds_measure       : datastructure for measure and statistics management
@@ -98,6 +97,7 @@ implicit none
 !
 ! ----------------------------------------------------------------------
 !
+    character(len=24) :: mate, varc_refe
     aster_logical :: lcfint, lcrigi, lcdiri, lcbudi
     character(len=19) :: vefint, vediri, vebudi, cnfint, cndiri, cnbudi
     character(len=19) :: depplu, vitplu, accplu
@@ -115,6 +115,8 @@ implicit none
 !
 ! --- INITIALISATIONS CODES RETOURS
 !
+    mate      = ds_material%field_mate
+    varc_refe = ds_material%varc_refe
     ldccvg = -1
 !
 ! --- FONCTIONNALITES ACTIVEES
@@ -137,15 +139,15 @@ implicit none
 !
 ! --- CALCUL DES CHARGEMENTS VARIABLES AU COURS DU PAS DE TEMPS
 !
-    call nmchar('VARI', 'CORRECTION'   , modele, numedd  , mate      ,&
+    call nmchar('VARI', 'CORRECTION'   , modele, numedd  , ds_material,&
                 carele, ds_constitutive, lischa, numins  , ds_measure,&
-                sddisc, fonact         , comref, ds_inout, valinc    ,&
+                sddisc, fonact         , ds_inout, valinc    ,&
                 solalg, veelem         , measse, veasse  , sddyna)
 !
 ! --- CALCUL DU SECOND MEMBRE POUR CONTACT/XFEM
 !
     if (leltc) then
-        call nmfocc('CONVERGENC', modele    , mate  , numedd, fonact,&
+        call nmfocc('CONVERGENC', modele    , ds_material, numedd, fonact,&
                     ds_contact  , ds_measure, solalg, valinc, veelem,&
                     veasse, ds_constitutive)
     endif
@@ -162,9 +164,9 @@ implicit none
         if (lcrigi) then
             call nmrigi(modele    , mate  , carele, ds_constitutive, sddyna,&
                         ds_measure, fonact, iterat, valinc         , solalg,&
-                        comref    , meelem, veelem, option         , ldccvg)
+                        varc_refe, meelem, veelem, option         , ldccvg)
         else
-            call nmfint(modele, mate  , carele, comref    , ds_constitutive,&
+            call nmfint(modele, mate  , carele, varc_refe , ds_constitutive,&
                         fonact, iterat, sddyna, ds_measure, valinc         ,&
                         solalg, ldccvg, vefint)
         endif

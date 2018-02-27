@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,8 +21,8 @@
 !
 interface
     subroutine nmflma(typmat, mod45 , l_hpp  , ds_algopara, modelz,&
-                      mate  , carele, sddisc, sddyna     , fonact,&
-                      numins, valinc, solalg, lischa     , comref,&
+                      ds_material, carele, sddisc, sddyna     , fonact,&
+                      numins, valinc, solalg, lischa     ,&
                       ds_contact, numedd, numfix,&
                       ds_constitutive, ds_measure, meelem,&
                       measse, veelem, nddle , ds_posttimestep, modrig,&
@@ -33,7 +33,7 @@ interface
         aster_logical, intent(in) :: l_hpp
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         character(len=*) :: modelz
-        character(len=24) :: mate
+        type(NL_DS_Material), intent(in) :: ds_material
         character(len=24) :: carele
         character(len=19) :: sddisc
         character(len=19) :: sddyna
@@ -42,7 +42,6 @@ interface
         character(len=19) :: valinc(*)
         character(len=19) :: solalg(*)
         character(len=19) :: lischa
-        character(len=24) :: comref
         type(NL_DS_Contact), intent(in) :: ds_contact
         character(len=24) :: numedd
         character(len=24) :: numfix

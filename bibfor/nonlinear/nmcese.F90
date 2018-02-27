@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmcese(modele         , numedd, mate  , carele    , comref    ,&
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
+subroutine nmcese(modele         , numedd, ds_material, carele    ,&
                   ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
                   iterat         , sdnume, sdpilo, valinc    , solalg    ,&
                   veelem         , veasse, offset, typsel    , sddisc    ,&
@@ -40,23 +42,21 @@ implicit none
 #include "asterfort/utdidt.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer :: fonact(*)
-    integer :: iterat
-    real(kind=8) :: rho, offset, eta(2)
-    character(len=19) :: lischa, sdnume, sdpilo, sddisc, matass
-    character(len=24) :: modele, numedd, mate, carele, comref
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19) :: veelem(*), veasse(*)
-    character(len=19) :: solalg(*), valinc(*)
-    character(len=24) :: typsel
-    integer :: licite(2)
-    integer :: ldccvg, pilcvg
-    real(kind=8) :: etaf, criter
+integer :: fonact(*)
+integer :: iterat
+real(kind=8) :: rho, offset, eta(2)
+character(len=19) :: lischa, sdnume, sdpilo, sddisc, matass
+character(len=24) :: modele, numedd, carele
+type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_Contact), intent(in) :: ds_contact
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19) :: veelem(*), veasse(*)
+character(len=19) :: solalg(*), valinc(*)
+character(len=24) :: typsel
+integer :: licite(2)
+integer :: ldccvg, pilcvg
+real(kind=8) :: etaf, criter
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -68,9 +68,8 @@ implicit none
 !
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL
-! IN  MATE   : CHAMP MATERIAU
+! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VARI_COM DE REFERENCE
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  LISCHA : LISTE DES CHARGES
 ! IN  SDPILO : SD PILOTAGE
@@ -150,8 +149,7 @@ implicit none
 ! --- VERIFICATION DE LA COMPATIBILITE
 !
     if (mixte) then
-        call utdidt('L', sddisc, 'ECHE', 'CHOIX_SOLU_PILO',&
-                    valk_ = choix)
+        call utdidt('L', sddisc, 'ECHE', 'CHOIX_SOLU_PILO', valk_ = choix)
         if (choix .eq. 'AUTRE') then
             call utmess('F', 'MECANONLINE_62')
         endif
@@ -181,7 +179,6 @@ implicit none
             call jeveuo(sdpilo(1:19)//'.PLIR', 'L', vr=plir)
             swloun = plir(1)*plir(6).lt.0.d0
         endif
-!
         call nmceai(numedd, depdel, deppr1, deppr2, depold,&
                     sdpilo, rho, eta(1), isxfe, f(1),&
                     indic)
@@ -223,12 +220,12 @@ implicit none
 ! --- SELECTION SELON LA METHODE CHOISIE: RESIDU OU MIXTE
 !
     if (typsel .eq. 'RESIDU' .or. mixte) then
-        call nmcere(modele         , numedd, mate  , carele    , comref    ,&
+        call nmcere(modele         , numedd, ds_material, carele    ,&
                     ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
                     iterat         , sdnume, valinc, solalg    , veelem    ,&
                     veasse         , offset, rho   , eta(1)    , f(1)      ,&
                     ldccv(1)       , matass)
-        call nmcere(modele         , numedd, mate  , carele    , comref    ,&
+        call nmcere(modele         , numedd, ds_material, carele    ,&
                     ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
                     iterat         , sdnume, valinc, solalg    , veelem    ,&
                     veasse         , offset, rho   , eta(2)    , f(2)      ,&
@@ -269,8 +266,7 @@ implicit none
         switch = .true.
         txt = 'NATUREL'
         if (choix .eq. 'AUTRE') then
-            call utdidt('E', sddisc, 'ECHE', 'CHOIX_SOLU_PILO',&
-                        valk_ = txt)
+            call utdidt('E', sddisc, 'ECHE', 'CHOIX_SOLU_PILO', valk_ = txt)
         endif
     endif
 !
@@ -279,7 +275,9 @@ implicit none
 ! --- RETOUR DE LA SELECTION AVEC EVENTUELLEMENT INTERVERSION
 !
     sel = 2
-    if ((f(1).le.f(2) .and. .not.switch) .or. (f(1).gt.f(2) .and. switch)) sel=1
+    if ((f(1).le.f(2) .and. .not.switch) .or. (f(1).gt.f(2) .and. switch)) then
+        sel=1
+    endif
     etaf = eta(sel)
     pilcvg = licite(sel)
     ldccvg = ldccv(sel)

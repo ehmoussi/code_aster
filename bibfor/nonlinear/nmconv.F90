@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmconv(noma    , modele, mate      , numedd  , sdnume     ,&
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
+subroutine nmconv(noma    , modele, ds_material, numedd  , sdnume     ,&
                   fonact  , sddyna, ds_conv   , ds_print, ds_measure ,&
                   sddisc  , sdcrit, sderro    , ds_algopara, ds_algorom,&
-                  ds_inout, comref, matass    , solveu  , numins     ,&
+                  ds_inout, matass    , solveu  , numins     ,&
                   iterat  , eta   , ds_contact, valinc  , solalg     ,&
                   measse  , veasse)
 !
@@ -57,27 +59,24 @@ implicit none
 #include "asterfort/nmrvai.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer :: fonact(*)
-    integer :: iterat, numins
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    real(kind=8) :: eta
-    character(len=19) :: sdcrit, sddisc, sddyna, sdnume
-    character(len=19) :: matass, solveu
-    character(len=19) :: measse(*), veasse(*)
-    character(len=19) :: solalg(*), valinc(*)
-    character(len=24) :: comref, mate
-    character(len=8) :: noma
-    character(len=24) :: numedd, modele
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-    character(len=24) :: sderro
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    type(NL_DS_Print), intent(inout) :: ds_print
-    type(NL_DS_Conv), intent(inout) :: ds_conv
-    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+integer :: fonact(*)
+integer :: iterat, numins
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+real(kind=8) :: eta
+character(len=19) :: sdcrit, sddisc, sddyna, sdnume
+character(len=19) :: matass, solveu
+character(len=19) :: measse(*), veasse(*)
+character(len=19) :: solalg(*), valinc(*)
+character(len=8) :: noma
+character(len=24) :: numedd, modele
+type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Contact), intent(inout) :: ds_contact
+character(len=24) :: sderro
+type(NL_DS_Measure), intent(inout) :: ds_measure
+type(NL_DS_InOut), intent(in) :: ds_inout
+type(NL_DS_Print), intent(inout) :: ds_print
+type(NL_DS_Conv), intent(inout) :: ds_conv
+type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -96,7 +95,6 @@ implicit none
 ! IO  ds_print         : datastructure for printing parameters
 ! IN  NUMEDD : NUMEROTATION NUME_DDL
 ! IN  SDNUME : NOM DE LA SD NUMEROTATION
-! IN  COMREF : VARI_COM REFE
 ! IN  MATASS : MATRICE DU PREMIER MEMBRE ASSEMBLEE
 ! IN  SOLVEU : SOLVEUR
 ! IN  ITERAT : NUMERO D'ITERATION
@@ -112,7 +110,7 @@ implicit none
 ! In  ds_algorom       : datastructure for ROM parameters
 ! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
 ! IN  SDCRIT : SYNTHESE DES RESULTATS DE CONVERGENCE POUR ARCHIVAGE
-! IN  COMREF : VARI_COM REFE
+! In  ds_material      : datastructure for material parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -189,9 +187,9 @@ implicit none
 !
 ! ----- Compute residuals
 !
-        call nmresi(noma  , mate   , numedd  , sdnume  , fonact,&
+        call nmresi(noma  , ds_material, numedd  , sdnume  , fonact,&
                     sddyna, ds_conv, ds_print, ds_contact,&
-                    matass, numins , eta     , comref  , valinc,&
+                    matass, numins , eta     , valinc,&
                     solalg, veasse , measse  , ds_inout, ds_algorom,&
                     vresi , vchar)
 !

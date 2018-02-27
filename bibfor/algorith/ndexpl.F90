@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,9 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine ndexpl(modele  , numedd         , numfix  , mate       , carele,&
-                  comref  , ds_constitutive, lischa  , ds_algopara, fonact,&
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
+subroutine ndexpl(modele  , numedd         , numfix  , ds_material, carele,&
+                  ds_constitutive, lischa  , ds_algopara, fonact,&
                   ds_print, ds_measure     , sdnume  , sddyna     , sddisc,&
                   sderro  , valinc         , numins  , solalg     , solveu,&
                   matass  , maprec         , ds_inout, meelem     , measse,&
@@ -35,27 +37,24 @@ implicit none
 #include "asterfort/ndxpre.h"
 #include "asterfort/nmchar.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer :: numins
-    integer :: fonact(*)
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    character(len=24) :: sderro
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19) :: sdnume, sddyna, sddisc
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    type(NL_DS_Print), intent(inout) :: ds_print
-    character(len=19) :: valinc(*), solalg(*)
-    character(len=19) :: meelem(*), veelem(*)
-    character(len=19) :: measse(*), veasse(*)
-    character(len=19) :: lischa
-    character(len=19) :: solveu, maprec, matass
-    character(len=24) :: modele, numedd, numfix
-    character(len=24) :: comref
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=24) :: mate, carele
-    integer :: nbiter
+integer :: numins
+integer :: fonact(*)
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+character(len=24) :: sderro
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19) :: sdnume, sddyna, sddisc
+type(NL_DS_InOut), intent(in) :: ds_inout
+type(NL_DS_Print), intent(inout) :: ds_print
+character(len=19) :: valinc(*), solalg(*)
+character(len=19) :: meelem(*), veelem(*)
+character(len=19) :: measse(*), veasse(*)
+character(len=19) :: lischa
+character(len=19) :: solveu, maprec, matass
+character(len=24) :: modele, numedd, numfix
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=24) :: carele
+integer :: nbiter
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -68,9 +67,8 @@ implicit none
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL (VARIABLE AU COURS DU CALCUL)
 ! IN  NUMFIX : NUME_DDL (FIXE AU COURS DU CALCUL)
-! IN  MATE   : CHAMP MATERIAU
+! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VARIABLES DE COMMANDE DE REFERENCE
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  LISCHA : L_CHARGES
 ! In  ds_inout         : datastructure for input/output management
@@ -93,11 +91,13 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    character(len=24) :: mate, comref
     aster_logical :: lerrit
 !
 ! --------------------------------------------------------------------------------------------------
 !
-
+    mate   = ds_material%field_mate
+    comref = ds_material%varc_refe
 !
 ! --- INITIALISATION DES CHAMPS D'INCONNUES POUR LE NOUVEAU PAS DE TEMPS
 !
@@ -107,18 +107,18 @@ implicit none
 !
 ! --- CALCUL DES CHARGEMENTS CONSTANTS AU COURS DU PAS DE TEMPS
 !
-    call nmchar('FIXE', ' '            , modele, numedd  , mate      ,&
-                carele, ds_constitutive, lischa, numins  , ds_measure,&
-                sddisc, fonact         , comref, ds_inout, valinc    ,&
-                solalg, veelem         , measse, veasse  , sddyna)
+    call nmchar('FIXE', ' '            , modele  , numedd, ds_material,&
+                carele, ds_constitutive, lischa  , numins, ds_measure,&
+                sddisc, fonact         , ds_inout, valinc,&
+                solalg, veelem         , measse  , veasse, sddyna)
 !
 ! --- PREDICTION D'UNE DIRECTION DE DESCENTE
 !
-    call ndxpre(modele  , numedd         , numfix    , mate       , carele,&
-                comref  , ds_constitutive, lischa    , ds_algopara, solveu,&
-                fonact  , sddisc         , ds_measure, numins     , valinc,&
-                solalg  , matass         , maprec    , sddyna     , sderro,&
-                ds_inout, meelem         , measse    , veelem     , veasse,&
+    call ndxpre(modele         , numedd, numfix     , ds_material, carele,&
+                ds_constitutive, lischa, ds_algopara, solveu     ,&
+                fonact         , sddisc, ds_measure , numins     , valinc,&
+                solalg         , matass, maprec     , sddyna     , sderro,&
+                ds_inout       , meelem, measse     , veelem     , veasse,&
                 lerrit)
 !
     if (lerrit) goto 315

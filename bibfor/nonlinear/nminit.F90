@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,14 +18,14 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nminit(mesh      , model     , mate       , cara_elem      , list_load ,&
-                  numedd    , numfix    , ds_algopara, ds_constitutive, maprec    ,&
-                  solver    , numins    , sddisc     , sdnume         , sdcrit    ,&
-                  varc_refe , fonact    , sdpilo     , sddyna         , ds_print  ,&
-                  sd_suiv   , sd_obsv   , sderro     , ds_posttimestep, ds_inout  ,&
-                  ds_energy , ds_conv   , sdcriq     , valinc         , solalg    ,&
-                  measse    , veelem    , meelem     , veasse         , ds_contact,&
-                  ds_measure, ds_algorom)
+subroutine nminit(mesh       , model     , mate       , cara_elem      , list_load ,&
+                  numedd     , numfix    , ds_algopara, ds_constitutive, maprec    ,&
+                  solver     , numins    , sddisc     , sdnume         , sdcrit    ,&
+                  ds_material, fonact    , sdpilo     , sddyna         , ds_print  ,&
+                  sd_suiv    , sd_obsv   , sderro     , ds_posttimestep, ds_inout  ,&
+                  ds_energy  , ds_conv   , sdcriq     , valinc         , solalg    ,&
+                  measse     , veelem    , meelem     , veasse         , ds_contact,&
+                  ds_measure , ds_algorom)
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
@@ -84,7 +84,7 @@ implicit none
 #include "asterfort/nmpro2.h"
 #include "asterfort/nmrini.h"
 #include "asterfort/nmvcle.h"
-#include "asterfort/nmvcre.h"
+#include "asterfort/nonlinDSMaterialInit.h"
 #include "asterfort/utmess.h"
 !
 character(len=8), intent(in) :: mesh
@@ -102,7 +102,7 @@ integer :: numins
 character(len=19) :: sddisc
 character(len=19) :: sdnume
 character(len=19) :: sdcrit
-character(len=24) :: varc_refe
+type(NL_DS_Material), intent(inout) :: ds_material
 integer :: fonact(*)
 character(len=19) :: sdpilo
 character(len=19) :: sddyna
@@ -138,6 +138,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 ! In  mate             : name of material characteristics (field)
 ! In  cara_elem        : name of elementary characteristics (field)
 ! In  list_load        : name of datastructure for list of loads
+! IO  ds_material      : datastructure for material parameters
 ! IO  ds_algopara      : datastructure for algorithm parameters
 ! IO  ds_constitutive  : datastructure for constitutive laws management
 ! IO  ds_posttimestep  : datastructure for post-treatment at each time step
@@ -290,16 +291,17 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
                 fonact    , sddyna, ds_conv , ds_algopara, solver,&
                 ds_contact, sddisc)
 !
-! --- CREATION DU CHAMP DES VARIABLES DE COMMANDE DE REFERENCE
+! - Initializations for material parameters management
 !
-    call nmvcre(model, mate, cara_elem, varc_refe)
+    call nonlinDSMaterialInit(model      , mate, cara_elem,&
+                              ds_material)
 !
 ! --- PRE-CALCUL DES MATR_ELEM CONSTANTES AU COURS DU CALCUL
 !
-    call nminmc(fonact   , list_load, sddyna    , model      , ds_constitutive,&
-                numedd   , numfix   , ds_contact, ds_algopara, solalg         ,&
-                valinc   , mate     , cara_elem    , sddisc     , ds_measure     ,&
-                varc_refe, meelem   , measse    , veelem)
+    call nminmc(fonact, list_load  , sddyna    , model      , ds_constitutive,&
+                numedd, numfix     , ds_contact, ds_algopara, solalg         ,&
+                valinc, ds_material, cara_elem , sddisc     , ds_measure     ,&
+                meelem, measse     , veelem)
 !
 ! --- INSTANT INITIAL
 !
@@ -313,10 +315,9 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! --- CALCUL ET ASSEMBLAGE DES VECT_ELEM CONSTANTS AU COURS DU CALCUL
 !
-    call nminvc(model    , mate  , cara_elem  , ds_constitutive, ds_measure,&
-                sddisc   , sddyna, valinc  , solalg         , list_load ,&
-                varc_refe, numedd, ds_inout, veelem         , veasse    ,&
-                measse)
+    call nminvc(model , ds_material, cara_elem, ds_constitutive, ds_measure,&
+                sddisc, sddyna     , valinc   , solalg         , list_load ,&
+                numedd, ds_inout   , veelem   , veasse         , measse)
 !
 ! - Compute reference vector for RESI_REFE_RELA
 !
@@ -351,11 +352,11 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 ! --- CALCUL DE L'ACCELERATION INITIALE
 !
     if (lacc0) then
-        call nmchar('ACCI'  , ' '   , model    , numedd, mate     ,&
-                    cara_elem  , ds_constitutive, list_load, numins, ds_measure   ,&
-                    sddisc  , fonact, varc_refe,&
-                    ds_inout, valinc, solalg   , veelem, measse   ,&
-                    veasse  , sddyna)
+        call nmchar('ACCI'   , ' '   ,&
+                    model    , numedd, ds_material, cara_elem, ds_constitutive,&
+                    list_load, numins, ds_measure , sddisc   , fonact         ,&
+                    ds_inout , valinc, solalg     , veelem   , measse         ,&
+                    veasse   , sddyna)
         call accel0(model     , numedd, numfix     , fonact, list_load,&
                     ds_contact, maprec, solver     , valinc, sddyna   ,&
                     ds_measure, ds_algopara, meelem, measse   ,&
@@ -369,15 +370,15 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! - Create observation datastructure
 !
-    call nmcrob(mesh     , model          , sddisc   , ds_inout , cara_elem   ,&
-                mate     , ds_constitutive, disp_prev, strx_prev, varc_prev,&
-                varc_refe, instin         , sd_obsv  )
+    call nmcrob(mesh       , model          , sddisc   , ds_inout , cara_elem   ,&
+                ds_material, ds_constitutive, disp_prev, strx_prev, varc_prev,&
+                instin     , sd_obsv  )
 !
 ! - Create dof monitoring datastructure
 !
-    call nmcrdd(mesh           , model    , ds_inout , cara_elem   , mate     ,&
-                ds_constitutive, disp_prev, strx_prev, varc_prev, varc_refe,&
-                instin, sd_suiv)
+    call nmcrdd(mesh           , model    , ds_inout , cara_elem, ds_material,&
+                ds_constitutive, disp_prev, strx_prev, varc_prev, instin     ,&
+                sd_suiv)
 !
 ! - Initializations for printing
 !
@@ -391,7 +392,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 ! - Prepare storing
 !
     call nmnoli(sddisc   , sderro, ds_constitutive, ds_print , sdcrit  ,&
-                fonact   , sddyna, model          , mate     ,&
+                fonact   , sddyna, model          , ds_material,&
                 cara_elem, sdpilo, ds_measure     , ds_energy, ds_inout,&
                 sdcriq)
 !
@@ -400,9 +401,8 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
     l_obsv = .false.
     call lobs(sd_obsv, numins, instin, l_obsv)
     if (l_obsv) then
-        call nmobsv(mesh     , model, sddisc         , sd_obsv  , numins,&
-                    cara_elem, mate , ds_constitutive, varc_refe, valinc,&
-                    ds_inout)
+        call nmobsv(mesh     , model      , sddisc         , sd_obsv, numins  ,&
+                    cara_elem, ds_material, ds_constitutive, valinc , ds_inout)
     endif
 !
 ! - Update name of fields
@@ -418,8 +418,8 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 ! --- CALCUL DU SECOND MEMBRE INITIAL POUR MULTI-PAS
 !
     if (lmpas) then
-        call nmihht(model , numedd   , mate     , ds_constitutive,&
-                    cara_elem, list_load, varc_refe, fonact    , ds_measure   ,&
+        call nmihht(model , numedd   , ds_material, ds_constitutive,&
+                    cara_elem, list_load, fonact    , ds_measure   ,&
                     sddyna,  sdnume   , ds_contact, valinc,&
                     sddisc, solalg   , veasse   , measse    , ds_inout)
     endif

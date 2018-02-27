@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmceta(modele         , numedd, mate  , carele    , comref    ,&
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
+subroutine nmceta(modele         , numedd, ds_material, carele    ,&
                   ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
                   sdpilo         , iterat, sdnume, valinc    , solalg    ,&
                   veelem         , veasse, sddisc, nbeffe    , irecli    ,&
@@ -36,21 +38,19 @@ implicit none
 #include "asterfort/nmcere.h"
 #include "asterfort/nmcese.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer :: fonact(*)
-    aster_logical :: irecli
-    integer :: iterat, nbeffe
-    integer :: ldccvg, pilcvg
-    real(kind=8) :: etaf, proeta(2), rho, offset, residu
-    character(len=19) :: lischa, sdnume, sdpilo, matass
-    character(len=24) :: modele, numedd, mate, carele, comref
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19) :: veelem(*), veasse(*)
-    character(len=19) :: solalg(*), valinc(*)
+integer :: fonact(*)
+aster_logical :: irecli
+integer :: iterat, nbeffe
+integer :: ldccvg, pilcvg
+real(kind=8) :: etaf, proeta(2), rho, offset, residu
+character(len=19) :: lischa, sdnume, sdpilo, matass
+character(len=24) :: modele, numedd, carele
+type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_Contact), intent(in) :: ds_contact
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19) :: veelem(*), veasse(*)
+character(len=19) :: solalg(*), valinc(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -62,9 +62,8 @@ implicit none
 !
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL
-! IN  MATE   : CHAMP MATERIAU
+! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VARI_COM DE REFERENCE
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  LISCHA : LISTE DES CHARGES
 ! IN  SDPILO : SD PILOTAGE
@@ -201,7 +200,7 @@ implicit none
 !     S'IL EXISTE DEUX ETA SOLUTIONS :
 !        - ON DEMANDE A NMCESE DE CHOISIR
     if (nbeffe .eq. 2) then
-        call nmcese(modele         , numedd, mate  , carele    , comref    ,&
+        call nmcese(modele         , numedd, ds_material, carele    ,&
                     ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
                     iterat         , sdnume, sdpilo, valinc    , solalg    ,&
                     veelem         , veasse, offset, typsel    , sddisc    ,&
@@ -219,7 +218,7 @@ implicit none
     if (irecli) then
 ! ----- CETTE ETAPE EST SAUTEE SI LE RESIDU EST DEJA CALCULE DANS NMCESE
         if (typsel .eq. 'RESIDU' .and. nbeffe .eq. 2)     continue
-        call nmcere(modele         , numedd, mate  , carele    , comref    ,&
+        call nmcere(modele         , numedd, ds_material, carele    , &
                     ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
                     iterat         , sdnume, valinc, solalg    , veelem    ,&
                     veasse         , offset, rho   , etaf      , residu    ,&

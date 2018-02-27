@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmfini(sddyna, valinc         , measse    , modele  , mate  ,&
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmfini(sddyna, valinc         , measse    , modele  , ds_material,&
                   carele, ds_constitutive, ds_measure, sddisc  , numins,&
-                  solalg, lischa         , comref    , ds_inout, numedd,&
+                  solalg, lischa         , ds_inout  , numedd,&
                   veelem, veasse)
 !
 use NonLin_Datastructure_type
@@ -39,16 +40,15 @@ implicit none
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=19) :: sddyna, valinc(*), measse(*)
-    character(len=24) :: modele, mate, carele, comref
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=24) :: numedd
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    character(len=19) :: sddisc, solalg(*), lischa, veelem(*), veasse(*)
-    integer :: numins
+character(len=19) :: sddyna, valinc(*), measse(*)
+character(len=24) :: modele, carele
+type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=24) :: numedd
+type(NL_DS_InOut), intent(in) :: ds_inout
+character(len=19) :: sddisc, solalg(*), lischa, veelem(*), veasse(*)
+integer :: numins
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -63,7 +63,7 @@ implicit none
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  MEASSE : VARIABLE CHAPEAU POUR NOM DES MATR_ASSE
 ! IN  MODELE : MODELE
-! IN  MATE   : CHAMP MATERIAU
+! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IO  ds_measure       : datastructure for measure and statistics management
@@ -72,7 +72,6 @@ implicit none
 ! In  ds_inout         : datastructure for input/output management
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
 ! IN  LISCHA : LISTE DES CHARGES
-! IN  COMREF : VARI_COM DE REFERENCE
 ! IN  NUMEDD : NUME_DDL
 ! IN  VEELEM : VECTEURS ELEMENTAIRES
 ! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
@@ -85,6 +84,7 @@ implicit none
     integer :: neq, iaux
     aster_logical :: lamor, ldyna
     integer :: nbvect
+    character(len=24) :: varc_refe, mate
     character(len=16) :: loptve(20)
     character(len=6) :: ltypve(20)
     aster_logical :: lassve(20), lcalve(20)
@@ -101,6 +101,8 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    mate      = ds_material%field_mate
+    varc_refe = ds_material%varc_refe
     lamor = ndynlo(sddyna,'MAT_AMORT')
     ldyna = ndynlo(sddyna,'DYNAMIQUE')
     call nmchex(valinc, 'VALINC', 'FEXMOI', fexmoi)
@@ -158,7 +160,7 @@ implicit none
                 nbvect, ltypve, loptve, lcalve, lassve)
     call nmxvec(modele, mate  , carele, ds_constitutive, ds_measure,&
                 sddisc, sddyna, numins, valinc         , solalg    ,&
-                lischa, comref, numedd, ds_inout       , veelem    ,&
+                lischa, varc_refe, numedd, ds_inout       , veelem    ,&
                 veasse, measse, nbvect, ltypve         , lcalve    ,&
                 loptve, lassve)
     call nmchex(veasse, 'VEASSE', 'CNFNOD', cnfnod)

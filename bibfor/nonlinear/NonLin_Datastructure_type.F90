@@ -492,4 +492,15 @@ implicit none
         aster_logical         :: l_hpp
     end type NL_DS_PostTimeStep
 !
+! - Type: material properties
+! 
+    type NL_DS_Material
+! ----- Field of material parameters
+        character(len=24) :: field_mate
+! ----- Field for reference of external state variables
+        character(len=24) :: varc_refe
+
+
+    end type NL_DS_Material
+!
 end module

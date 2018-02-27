@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmnpas(modele    , noma  , mate  , carele    , fonact    ,&
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmnpas(modele    , noma  , ds_material, carele    , fonact    ,&
                   ds_print  , sddisc, sdsuiv, sddyna    , sdnume    ,&
                   ds_measure, numedd, numins, ds_contact, &
                   valinc    , solalg, solveu, ds_conv   , lischa    )
@@ -45,33 +46,32 @@ implicit none
 #include "asterfort/nmvcle.h"
 #include "asterfort/SetResi.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
+integer :: fonact(*)
+character(len=8) :: noma
+character(len=19) :: sddyna, sdnume, sddisc, solveu
+character(len=24) :: modele, carele
+type(NL_DS_Material), intent(in) :: ds_material
+integer :: numins
+type(NL_DS_Print), intent(inout) :: ds_print
+character(len=24) :: sdsuiv
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=24) :: numedd
+type(NL_DS_Contact), intent(inout) :: ds_contact
+character(len=19) :: solalg(*), valinc(*)
+type(NL_DS_Conv), intent(inout) :: ds_conv
+character(len=19), intent(in) :: lischa
 !
-    integer :: fonact(*)
-    character(len=8) :: noma
-    character(len=19) :: sddyna, sdnume, sddisc, solveu
-    character(len=24) :: modele, mate, carele
-    integer :: numins
-    type(NL_DS_Print), intent(inout) :: ds_print
-    character(len=24) :: sdsuiv
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=24) :: numedd
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-    character(len=19) :: solalg(*), valinc(*)
-    type(NL_DS_Conv), intent(inout) :: ds_conv
-    character(len=19), intent(in) :: lischa
+! --------------------------------------------------------------------------------------------------
 !
-! ----------------------------------------------------------------------
+! MECA_NON_LINE - Algorithm
 !
-! ROUTINE MECA_NON_LINE (ALGORITHME)
+! New time step
 !
-! INITIALISATIONS POUR LE NOUVEAU PAS DE TEMPS
-!
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  MODELE : NOM DU MODELE
 ! IN  NOMA   : NOM DU MAILLAGE
-! IN  MATE   : CHAMP DE MATERIAU
+! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! IN  NUMEDD : NUME_DDL
@@ -87,7 +87,7 @@ implicit none
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
 ! IO  ds_conv          : datastructure for convergence management
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: lgrot, ldyna, lnkry
     aster_logical :: l_cont, l_cont_cont, l_diri_undead
@@ -95,15 +95,17 @@ implicit none
     character(len=19) :: depmoi, varmoi
     character(len=19) :: depplu, varplu
     character(len=19) :: complu, depdel
+    character(len=24) :: mate
     real(kind=8) :: instan
     integer :: jdepde
     integer :: indro
     integer :: iterat
     real(kind=8), pointer :: depp(:) => null()
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call dismoi('NB_EQUA', numedd, 'NUME_DDL', repi=neq)
+    mate   = ds_material%field_mate
 !
 ! - Active functionnalites
 !

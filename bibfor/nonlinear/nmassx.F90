@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmassx(modele, numedd, mate, carele, comref,&
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmassx(modele, numedd, ds_material, carele,&
                   ds_constitutive, lischa, fonact, ds_measure,&
                   sddyna, valinc, solalg, veelem, veasse,&
                   ldccvg, cndonn)
@@ -39,18 +40,17 @@ implicit none
 #include "asterfort/vtaxpy.h"
 #include "asterfort/vtzero.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer :: ldccvg
-    integer :: fonact(*)
-    character(len=19) :: lischa, sddyna
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=24) :: modele, numedd, mate
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=24) :: carele, comref
-    character(len=19) :: solalg(*), valinc(*)
-    character(len=19) :: veasse(*), veelem(*)
-    character(len=19) :: cndonn
+integer :: ldccvg
+integer :: fonact(*)
+character(len=19) :: lischa, sddyna
+type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=24) :: modele, numedd
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=24) :: carele
+character(len=19) :: solalg(*), valinc(*)
+character(len=19) :: veasse(*), veelem(*)
+character(len=19) :: cndonn
 !
 ! ----------------------------------------------------------------------
 !
@@ -62,9 +62,8 @@ implicit none
 !
 ! IN  MODELE : NOM DU MODELE
 ! IN  NUMEDD : NOM DE LA NUMEROTATION
-! IN  MATE   : NOM DU CHAMP DE MATERIAU
+! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VALEURS DE REF DES VARIABLES DE COMMANDE
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  LISCHA : SD LISTE DES CHARGES
 ! IO  ds_measure       : datastructure for measure and statistics management
@@ -84,7 +83,7 @@ implicit none
 !
 !
 !
-!
+    character(len=24) :: mate, varc_refe
     character(len=19) :: cnffdo, cndfdo, cnfvdo, cnvady
     character(len=19) :: cndumm
     character(len=19) :: cndiri, cnfint, cnvcpr
@@ -98,6 +97,8 @@ implicit none
 !
 ! ----------------------------------------------------------------------
 !
+    mate      = ds_material%field_mate
+    varc_refe = ds_material%varc_refe
     iterat = 0
     call vtzero(cndonn)
     cndumm = '&&CNCHAR.DUMM'
@@ -161,7 +162,7 @@ implicit none
 !
 ! --- CALCUL DES FORCES INTERIEURES
 !
-    call nmfint(modele, mate  , carele, comref    , ds_constitutive,&
+    call nmfint(modele, mate  , carele, varc_refe , ds_constitutive,&
                 fonact, iterat, sddyna, ds_measure, valinc         ,&
                 solalg, ldccvg, vefint)
 !

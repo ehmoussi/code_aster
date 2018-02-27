@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmextr_comp(field     , field_disc, field_type     , meshz    , modelz   ,&
-                       cara_elemz, matez     , ds_constitutive, disp_curr, strx_curr,&
-                       varc_curr , varc_refe , time           , ligrelz)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmextr_comp(field     , field_disc , field_type     , meshz    , modelz   ,&
+                       cara_elemz, ds_material, ds_constitutive, disp_curr, strx_curr,&
+                       varc_curr , time       , ligrelz)
 !
 use NonLin_Datastructure_type
 !
@@ -32,22 +33,19 @@ implicit none
 #include "asterfort/meharm.h"
 #include "asterfort/mecact.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=19), intent(in) :: field
-    character(len=24), intent(in) :: field_type
-    character(len=4), intent(in) :: field_disc
-    character(len=*), intent(in) :: modelz
-    character(len=*), intent(in) :: meshz
-    character(len=*), intent(in) :: cara_elemz
-    character(len=*), intent(in) :: matez
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=*), intent(in) :: disp_curr
-    character(len=*), intent(in) :: strx_curr
-    character(len=*), intent(in) :: varc_curr
-    character(len=*), intent(in) :: varc_refe
-    real(kind=8), intent(in) :: time
-    character(len=*), optional, intent(in) :: ligrelz
+character(len=19), intent(in) :: field
+character(len=24), intent(in) :: field_type
+character(len=4), intent(in) :: field_disc
+character(len=*), intent(in) :: modelz
+character(len=*), intent(in) :: meshz
+character(len=*), intent(in) :: cara_elemz
+type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=*), intent(in) :: disp_curr
+character(len=*), intent(in) :: strx_curr
+character(len=*), intent(in) :: varc_curr
+real(kind=8), intent(in) :: time
+character(len=*), optional, intent(in) :: ligrelz
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -65,11 +63,10 @@ implicit none
 ! In  model            : name of model
 ! In  mesh             : name of mesh
 ! In  cara_elem        : name of datastructure for elementary parameters (CARTE)
-! In  mate             : name of material characteristics (field)
+! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  disp_curr        : current displacements
 ! In  varc_curr        : command variable for current time
-! In  varc_refe        : command variable for reference
 ! In  time             : current time
 ! In  strx_curr        : fibers information for current time
 ! In  ligrel           : current LIGREL (if not present: on all model)
@@ -129,13 +126,13 @@ implicit none
     lpain(2)  = 'PDEPLAR'
     lchin(2)  = disp_curr(1:19)
     lpain(3)  = 'PMATERC'
-    lchin(3)  = matez(1:19)
+    lchin(3)  = ds_material%field_mate(1:19)
     lpain(4)  = 'PTEMPSR'
     lchin(4)  = chtime(1:19)
     lpain(5)  = 'PVARCPR'
     lchin(5)  = varc_curr(1:19)
     lpain(6)  = 'PVARCRR'
-    lchin(6)  = varc_refe(1:19)
+    lchin(6)  = ds_material%varc_refe(1:19)
     lpain(7)  = 'PCACOQU'
     lchin(7)  = chcara(7)(1:19)
     lpain(8)  = 'PCOMPOR'

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -86,7 +86,6 @@ implicit none
     character(len=19) :: solver, maprec, matass
     character(len=24) :: model, mate, cara_elem
     character(len=24) :: numedd, numfix
-    character(len=24) :: comref
 !
 ! --- FONCTIONNALITES ACTIVEES
 !
@@ -108,6 +107,7 @@ implicit none
     type(ROM_DS_AlgoPara)    :: ds_algorom
     type(NL_DS_Constitutive) :: ds_constitutive
     type(NL_DS_PostTimeStep) :: ds_posttimestep
+    type(NL_DS_Material)     :: ds_material
 !
 ! --- VARIABLES CHAPEAUX
 !
@@ -128,7 +128,6 @@ implicit none
     data sdcrit            /'&&OP0070.CRIT.'/
     data list_load         /'&&OP0070.LISCHA'/
     data solver            /'&&OP0070.SOLVEUR'/
-    data comref            /'&&OP0070.COREF'/
     data maprec            /'&&OP0070.MAPREC'/
 !
 ! ----------------------------------------------------------------------
@@ -150,9 +149,9 @@ implicit none
 ! - Creation of datastructures
 !
     call nmini0(fonact    , eta      , numins     , matass         , zmeelm    ,&
-                zmeass    , zveelm   , zveass     , zsolal         , zvalin    ,&
-                ds_print  , ds_conv  , ds_algopara, ds_inout       , ds_contact,&
-                ds_measure, ds_energy, ds_algorom , ds_constitutive)
+                zmeass    , zveelm   , zveass     , zsolal         , zvalin     ,&
+                ds_print  , ds_conv  , ds_algopara, ds_inout       , ds_contact ,&
+                ds_measure, ds_energy, ds_algorom , ds_constitutive, ds_material)
 !
 ! - Read parameters
 !
@@ -163,14 +162,14 @@ implicit none
 !
 ! - Initializations of datastructures
 !
-    call nminit(mesh      , model     , mate       , cara_elem      , list_load ,&
-                numedd    , numfix    , ds_algopara, ds_constitutive, maprec    ,&
-                solver    , numins    , sddisc     , sdnume         , sdcrit    ,&
-                comref    , fonact    , sdpilo     , sddyna         , ds_print  ,&
-                sd_suiv   , sd_obsv   , sderro     , ds_posttimestep, ds_inout  ,&
-                ds_energy , ds_conv   , sdcriq     , valinc         , solalg    ,&
-                measse    , veelem    , meelem     , veasse         , ds_contact,&
-                ds_measure, ds_algorom)
+    call nminit(mesh       , model     , mate       , cara_elem      , list_load ,&
+                numedd     , numfix    , ds_algopara, ds_constitutive, maprec    ,&
+                solver     , numins    , sddisc     , sdnume         , sdcrit    ,&
+                ds_material, fonact    , sdpilo     , sddyna         , ds_print  ,&
+                sd_suiv    , sd_obsv   , sderro     , ds_posttimestep, ds_inout  ,&
+                ds_energy  , ds_conv   , sdcriq     , valinc         , solalg    ,&
+                measse     , veelem    , meelem     , veasse         , ds_contact,&
+                ds_measure , ds_algorom)
 !
 ! - Launch timer for total time
 !
@@ -208,15 +207,15 @@ implicit none
 ! --- REALISATION DU PAS DE TEMPS
 !
     if (lexpl) then
-        call ndexpl(model   , numedd         , numfix   , mate       , cara_elem,&
-                    comref  , ds_constitutive, list_load, ds_algopara, fonact   ,&
+        call ndexpl(model   , numedd         , numfix   , ds_material, cara_elem,&
+                    ds_constitutive, list_load, ds_algopara, fonact   ,&
                     ds_print, ds_measure     , sdnume   , sddyna     , sddisc   ,&
                     sderro  , valinc         , numins   , solalg     , solver   ,&
                     matass  , maprec         , ds_inout , meelem     , measse   ,&
                     veelem  , veasse         , nbiter)
     else if (lstat.or.limpl) then
         call nmnewt(mesh       , model    , numins    , numedd         , numfix   ,&
-                    mate       , cara_elem, comref    , ds_constitutive, list_load,&
+                    ds_material, cara_elem, ds_constitutive, list_load,&
                     ds_algopara, fonact   , ds_measure, sderro         , ds_print ,&
                     sdnume     , sddyna   , sddisc    , sdcrit         , sd_suiv  ,&
                     sdpilo     , ds_conv  , solver    , maprec         , matass   ,&
@@ -224,7 +223,7 @@ implicit none
                     veelem     , veasse   , ds_contact, ds_algorom     , eta      ,&
                     nbiter  )
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - End of timer for current step time
@@ -247,7 +246,7 @@ implicit none
 ! - Post-treatment
 !
     call nmpost(model          , mesh       , numedd, numfix    , cara_elem      ,&
-                ds_constitutive, numins     , mate  , comref    , ds_inout       ,&
+                ds_constitutive, numins     , ds_material, ds_inout       ,&
                 ds_contact     , ds_algopara, fonact, ds_measure,&
                 sddisc         , sd_obsv    , sderro, sddyna    , ds_posttimestep,&
                 valinc         , solalg     , meelem, measse    , veelem         ,&
@@ -294,9 +293,9 @@ implicit none
 ! --- ARCHIVAGE DES RESULTATS
 !
     call onerrf(compex, k16bid, ibid)
-    call nmarch(numins         , model   , mate      , cara_elem, fonact   ,&
-                ds_constitutive, ds_print, sddisc    , sdcrit   ,&
-                ds_measure     , sderro  , sddyna    , sdpilo   , ds_energy,&
+    call nmarch(numins         , model   , ds_material, cara_elem, fonact   ,&
+                ds_constitutive, ds_print, sddisc     , sdcrit   ,&
+                ds_measure     , sderro  , sddyna     , sdpilo   , ds_energy,&
                 ds_inout       , sdcriq  , ds_algorom)
     call onerrf('EXCEPTION+VALID', k16bid, ibid)
 !
@@ -327,9 +326,9 @@ implicit none
 ! --- ON COMMENCE PAR ARCHIVER LE PAS DE TEMPS PRECEDENT
 !
     if (numins .ne. 1) then
-        call nmarch(numins-1       , model   , mate      , cara_elem, fonact   ,&
-                    ds_constitutive, ds_print, sddisc    , sdcrit   ,&
-                    ds_measure     , sderro  , sddyna    , sdpilo   , ds_energy,&
+        call nmarch(numins-1       , model   , ds_material, cara_elem, fonact   ,&
+                    ds_constitutive, ds_print, sddisc     , sdcrit   ,&
+                    ds_measure     , sderro  , sddyna     , sdpilo   , ds_energy,&
                     ds_inout       , sdcriq  , ds_algorom)
     endif
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmfocc(phase      , model     , mate     , nume_dof , list_func_acti,&
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmfocc(phase      , model     , ds_material, nume_dof , list_func_acti,&
                   ds_contact , ds_measure, hval_algo, hval_incr, hval_veelem   ,&
                   hval_veasse, ds_constitutive)
 !
@@ -38,20 +39,18 @@ implicit none
 #include "asterfort/nmvcex.h"
 #include "asterfort/vtaxpy.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=10), intent(in) :: phase
-    character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: mate
-    character(len=24), intent(in) :: nume_dof
-    integer, intent(in) :: list_func_acti(*)
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19), intent(in) :: hval_algo(*)
-    character(len=19), intent(in) :: hval_incr(*)
-    character(len=19), intent(in) :: hval_veelem(*)
-    character(len=19), intent(in) :: hval_veasse(*)
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=10), intent(in) :: phase
+character(len=24), intent(in) :: model
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=24), intent(in) :: nume_dof
+integer, intent(in) :: list_func_acti(*)
+type(NL_DS_Contact), intent(in) :: ds_contact
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19), intent(in) :: hval_algo(*)
+character(len=19), intent(in) :: hval_incr(*)
+character(len=19), intent(in) :: hval_veelem(*)
+character(len=19), intent(in) :: hval_veasse(*)
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -66,7 +65,7 @@ implicit none
 !               'CONVERGENC' - PHASE DE CONVERGENCE
 !               'CORRECTION' - PHASE DE CORRECTION
 ! In  model            : name of model
-! In  mate             : name of material characteristics (field)
+! In  ds_material      : datastructure for material parameters
 ! In  nume_dof         : name of numbering (NUME_DDL)
 ! In  list_func_acti   : list of active functionnalities
 ! In  ds_contact       : datastructure for contact management
@@ -147,7 +146,7 @@ implicit none
         ((.not.l_cont_lac) .or. ds_contact%nb_cont_pair.ne.0)) then
         call nmtime(ds_measure, 'Init'  , 'Cont_Elem')
         call nmtime(ds_measure, 'Launch', 'Cont_Elem')
-        call nmelcv('CONT'        , mesh     , model    , mate     , ds_contact    ,&
+        call nmelcv('CONT'        , mesh     , model    , ds_material, ds_contact    ,&
                     disp_prev     , vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
                     disp_newt_curr, vect_elem_cont, time_prev, time_curr, ds_constitutive)
         call assvec('V', vect_asse_cont, 1, vect_elem_cont, [1.d0],&
@@ -164,7 +163,7 @@ implicit none
     if (l_elem_frot .and. (.not.l_all_verif) .and. (.not.l_xthm)) then
         call nmtime(ds_measure, 'Init'  , 'Cont_Elem')
         call nmtime(ds_measure, 'Launch', 'Cont_Elem')
-        call nmelcv('FROT'        , mesh     , model    , mate     , ds_contact    ,&
+        call nmelcv('FROT'        , mesh     , model    , ds_material, ds_contact    ,&
                     disp_prev     , vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
                     disp_newt_curr, vect_elem_frot, time_prev, time_curr, ds_constitutive)
         call assvec('V', vect_asse_frot, 1, vect_elem_frot, [1.d0],&

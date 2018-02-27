@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmarch(numins         , modele  , mate       , carele, fonact   ,&
+    subroutine nmarch(numins         , modele  , ds_material, carele, fonact   ,&
                       ds_constitutive, ds_print, sddisc     , sdcrit,&
                       ds_measure     , sderro  , sddyna     , sdpilo, ds_energy,&
                       ds_inout       , sdcriq  , ds_algorom_)
@@ -25,7 +25,7 @@ interface
         use Rom_Datastructure_type
         integer :: numins
         character(len=24) :: modele
-        character(len=24) :: mate
+        type(NL_DS_Material), intent(in) :: ds_material
         character(len=24) :: carele
         integer :: fonact(*)
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive

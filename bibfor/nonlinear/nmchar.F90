@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmchar(mode  , phasez         , modele, numedd  , mate      ,&
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmchar(mode  , phasez         , modele, numedd  , ds_material,&
                   carele, ds_constitutive, lischa, numins  , ds_measure,&
-                  sddisc, fonact         , comref, ds_inout, valinc    ,&
+                  sddisc, fonact         , ds_inout, valinc    ,&
                   solalg, veelem         , measse, veasse  , sddyna)
 !
 use NonLin_Datastructure_type
@@ -33,22 +34,19 @@ implicit none
 #include "asterfort/nmcvec.h"
 #include "asterfort/nmxvec.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    character(len=4) :: mode
-    character(len=*) :: phasez
-    character(len=19) :: lischa
-    character(len=24) :: modele, mate, carele, numedd
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=24) :: comref
-    character(len=19) :: sddyna, sddisc
-    integer :: fonact(*)
-    integer :: numins
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    character(len=19) :: veelem(*), measse(*), veasse(*)
-    character(len=19) :: solalg(*), valinc(*)
+character(len=4) :: mode
+character(len=*) :: phasez
+character(len=19) :: lischa
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=24) :: modele, carele, numedd
+type(NL_DS_Measure), intent(inout) :: ds_measure
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=19) :: sddyna, sddisc
+integer :: fonact(*)
+integer :: numins
+type(NL_DS_InOut), intent(in) :: ds_inout
+character(len=19) :: veelem(*), measse(*), veasse(*)
+character(len=19) :: solalg(*), valinc(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -66,15 +64,14 @@ implicit none
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL
 ! IN  LISCHA : LISTE DES CHARGES
-! IN  MATE   : CHAMP MATERIAU
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
+! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  NUMEDD : NUME_DDL
 ! IN  NUMINS : NUMERO INSTANT
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
-! IN  COMREF : VARI_COM DE REFERENCE
 ! In  ds_inout         : datastructure for input/output management
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  MEASSE : VARIABLE CHAPEAU POUR NOM DES MATR_ASSE
@@ -84,6 +81,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    character(len=24) :: mate, comref
     aster_logical :: ldyna, lexpl
     aster_logical :: londe, llapl, lammo, lsstf, lviss
     aster_logical :: limpe, lpilo, lmacr, limpex, l_diri_undead
@@ -103,7 +101,9 @@ implicit none
 !
 ! --- INITIALISATIONS
 !
-    phase = phasez
+    mate   = ds_material%field_mate
+    comref = ds_material%varc_refe
+    phase  = phasez
     call nmcvec('INIT', ' ', ' ', .false._1, .false._1,&
                 nbvect, ltypve, loptve, lcalve, lassve)
 !

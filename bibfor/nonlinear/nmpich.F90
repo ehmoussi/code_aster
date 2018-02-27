@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmpich(modele         , numedd, mate  , carele    , comref    ,&
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
+subroutine nmpich(modele         , numedd, ds_material, carele    ,&
                   ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
                   sdpilo         , iterat, sdnume, deltat    , valinc    ,&
                   solalg         , veelem, veasse, sddisc    , eta       ,&
@@ -32,19 +34,17 @@ implicit none
 #include "asterfort/nmceta.h"
 #include "asterfort/nmpilo.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer :: fonact(*)
-    integer :: iterat, pilcvg, ldccvg
-    real(kind=8) :: deltat, eta, rho, offset
-    character(len=19) :: lischa, sdnume, sdpilo, sddisc, matass
-    character(len=24) :: modele, numedd, mate, carele, comref
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19) :: veelem(*), veasse(*)
-    character(len=19) :: solalg(*), valinc(*)
+integer :: fonact(*)
+integer :: iterat, pilcvg, ldccvg
+real(kind=8) :: deltat, eta, rho, offset
+character(len=19) :: lischa, sdnume, sdpilo, sddisc, matass
+character(len=24) :: modele, numedd, carele
+type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_Contact), intent(in) :: ds_contact
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19) :: veelem(*), veasse(*)
+character(len=19) :: solalg(*), valinc(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,10 +56,9 @@ implicit none
 !
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL
-! IN  MATE   : CHAMP MATERIAU
+! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
 ! IN  SDNUME : SD NUMEROTATION
-! IN  COMREF : VARI_COM DE REFERENCE
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  LISCHA : LISTE DES CHARGES
 ! IO  ds_measure       : datastructure for measure and statistics management
@@ -109,19 +108,19 @@ implicit none
     rho = 1.d0
     offset = 0.d0
     nbatte = 2
-    irecli = .false.
+    irecli = ASTER_FALSE
 !
 ! --- RESOLUTION DE L'EQUATION DE PILOTAGE
 !
     call nmpilo(sdpilo, deltat, rho            , solalg    , veasse,&
-                modele, mate  , ds_constitutive, ds_contact, valinc,&
+                modele, ds_material, ds_constitutive, ds_contact, valinc,&
                 nbatte, numedd, nbeffe         , proeta    , pilcvg,&
                 carele)
 !
 ! - CHOIX DE ETA_PILOTAGE
 !
     if (pilcvg .ne. 1) then
-        call nmceta(modele         , numedd, mate  , carele    , comref    ,&
+        call nmceta(modele         , numedd, ds_material, carele    ,&
                     ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
                     sdpilo         , iterat, sdnume, valinc    , solalg    ,&
                     veelem         , veasse, sddisc, nbeffe    , irecli    ,&

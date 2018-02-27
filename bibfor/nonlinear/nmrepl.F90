@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmrepl(modele         , numedd, mate       , carele, comref    ,&
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
+subroutine nmrepl(modele         , numedd, ds_material, carele,&
                   ds_constitutive, lischa, ds_algopara, fonact, iterat    ,&
                   ds_measure     , sdpilo, sdnume     , sddyna, ds_contact,&
                   deltat         , valinc, solalg     , veelem, veasse    ,&
@@ -45,22 +47,20 @@ implicit none
 #include "asterfort/nmrelp.h"
 #include "asterfort/nmrep2.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer :: fonact(*)
-    integer :: iterat
-    real(kind=8) :: deltat, eta, etan, offset
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    character(len=19) :: lischa, sddyna, sdnume, sdpilo, sddisc, matass
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=24) :: modele, numedd, mate, carele, comref
-    character(len=19) :: veelem(*), veasse(*)
-    character(len=19) :: solalg(*), valinc(*)
-    type(NL_DS_Conv), intent(inout) :: ds_conv
-    integer :: pilcvg, ldccvg
+integer :: fonact(*)
+integer :: iterat
+real(kind=8) :: deltat, eta, etan, offset
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+character(len=19) :: lischa, sddyna, sdnume, sdpilo, sddisc, matass
+type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_Contact), intent(in) :: ds_contact
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=24) :: modele, numedd, carele
+character(len=19) :: veelem(*), veasse(*)
+character(len=19) :: solalg(*), valinc(*)
+type(NL_DS_Conv), intent(inout) :: ds_conv
+integer :: pilcvg, ldccvg
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -72,9 +72,8 @@ implicit none
 !
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL
-! IN  MATE   : CHAMP MATERIAU
+! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VARI_COM DE REFERENCE
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  LISCHA : LISTE DES CHARGES
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
@@ -183,7 +182,7 @@ implicit none
 ! --- FONCTIONS DE PILOTAGE LINEAIRES : RECHERCHE LINEAIRE STANDARD
 !
     if (typilo .eq. 'DDL_IMPO') then
-        call nmrelp(modele         , numedd, mate       , carele    , comref    ,&
+        call nmrelp(modele         , numedd, ds_material, carele    ,&
                     ds_constitutive, lischa, fonact     , iterat    , ds_measure,&
                     sdnume         , sddyna, ds_algopara, ds_contact, valinc    ,&
                     solalg         , veelem, veasse     , ds_conv   , ldccvg)
@@ -242,7 +241,7 @@ implicit none
 ! ----- RESOLUTION DE L'EQUATION DE PILOTAGE: NVELLE DIRECT. DE DESCENTE
 !
         call nmpilo(sdpilo, deltat, rho            , solalg    , veasse,&
-                    modele, mate  , ds_constitutive, ds_contact, valinc,&
+                    modele, ds_material, ds_constitutive, ds_contact, valinc,&
                     nbatte, numedd, nbeffe         , proeta    , pilcvg,&
                     carele)
         if (pilcvg .eq. 1) goto 999
@@ -258,7 +257,7 @@ implicit none
 !
         call nmchso(veasse, 'VEASSE', 'CNDIRI', cndirs(act), veasst)
         call nmchso(veasse, 'VEASSE', 'CNFINT', cnfins(act), veasst)
-        call nmceta(modele         , numedd, mate  , carele        , comref    ,&
+        call nmceta(modele         , numedd, ds_material, carele        ,&
                     ds_constitutive, lischa, fonact, ds_measure    , ds_contact,&
                     sdpilo         , iterat, sdnume, valint(1, act), solalg    ,&
                     veelem         , veasst, sddisc, nbeffe        , irecli    ,&

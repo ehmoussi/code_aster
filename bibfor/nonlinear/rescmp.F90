@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine rescmp(cndiri, cnvcfo, cnfext, cnfint, cnfnod,&
-                  maxres, noddlm, numno)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine rescmp(cndiri, cnfext, cnfint, cnfnod,&
+                  maxres, noddlm, numno)
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/cnocns.h"
@@ -30,10 +30,11 @@ subroutine rescmp(cndiri, cnvcfo, cnfext, cnfint, cnfnod,&
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
-    real(kind=8) :: maxres
-    character(len=8) :: noddlm
-    integer :: numno
-    character(len=19) :: cndiri, cnvcfo, cnfext, cnfint, cnfnod
+!
+real(kind=8) :: maxres
+character(len=8) :: noddlm
+integer :: numno
+character(len=19) :: cndiri, cnfext, cnfint, cnfnod
 !
 ! ----------------------------------------------------------------------
 !
@@ -71,7 +72,7 @@ subroutine rescmp(cndiri, cnvcfo, cnfext, cnfint, cnfnod,&
     integer :: licmpu(999)
     integer :: nbcmp, nbno, inc, ino, nbcmpu
     character(len=8) :: nomgd
-    integer :: jfint, jdiri, jfext, jvcfo, jfnod
+    integer :: jfint, jdiri, jfext, jfnod
     real(kind=8) :: epsi
     real(kind=8), pointer :: diris(:) => null()
     real(kind=8), pointer :: fexts(:) => null()
@@ -88,7 +89,6 @@ subroutine rescmp(cndiri, cnvcfo, cnfext, cnfint, cnfnod,&
 !
 ! --- ACCES AUX CHAM_NO
 !
-    call jeveuo(cnvcfo(1:19)//'.VALE', 'L', jvcfo)
     call jeveuo(cnfint(1:19)//'.VALE', 'L', jfint)
     call jeveuo(cndiri(1:19)//'.VALE', 'L', jdiri)
     call jeveuo(cnfext(1:19)//'.VALE', 'L', jfext)
@@ -200,7 +200,5 @@ subroutine rescmp(cndiri, cnvcfo, cnfext, cnfint, cnfnod,&
     call detrsd('CHAM_NO_S', cfnfex)
 !
     call jedema()
-!
-!
 !
 end subroutine

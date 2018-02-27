@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmprta(modele    , numedd         , numfix    , mate       , carele,&
-                  comref    , ds_constitutive, lischa    , ds_algopara, solveu,&
-                  fonact    , ds_print       , ds_measure, ds_algorom , sddisc,&
-                  numins    , valinc         , solalg    , matass     , maprec,&
-                  ds_contact, sddyna         , meelem    , measse     , veelem,&
-                  veasse    , sdnume         , ds_inout  , ldccvg     , faccvg,&
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
+subroutine nmprta(modele    , numedd         , numfix     , ds_material, carele,&
+                  ds_constitutive, lischa    , ds_algopara, solveu     ,&
+                  fonact    , ds_print       , ds_measure , ds_algorom , sddisc,&
+                  numins    , valinc         , solalg     , matass     , maprec,&
+                  ds_contact, sddyna         , meelem     , measse     , veelem,&
+                  veasse    , sdnume         , ds_inout   , ldccvg     , faccvg,&
                   rescvg    )
 !
 use NonLin_Datastructure_type
@@ -43,25 +45,23 @@ implicit none
 #include "asterfort/nmresd.h"
 #include "asterfort/vtzero.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer :: fonact(*)
-    integer :: numins, faccvg, rescvg, ldccvg
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
-    type(NL_DS_Print), intent(inout) :: ds_print
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    character(len=19) :: matass, maprec
-    character(len=19) :: lischa, solveu, sddisc, sddyna, sdnume
-    character(len=24) :: modele, mate, carele, comref
-    character(len=24) :: numedd, numfix
-    character(len=19) :: solalg(*), valinc(*)
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-    character(len=19) :: veelem(*), veasse(*)
-    character(len=19) :: meelem(*), measse(*)
+integer :: fonact(*)
+integer :: numins, faccvg, rescvg, ldccvg
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+type(NL_DS_Measure), intent(inout) :: ds_measure
+type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+type(NL_DS_Print), intent(inout) :: ds_print
+type(NL_DS_InOut), intent(in) :: ds_inout
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=19) :: matass, maprec
+character(len=19) :: lischa, solveu, sddisc, sddyna, sdnume
+character(len=24) :: modele, carele
+character(len=24) :: numedd, numfix
+character(len=19) :: solalg(*), valinc(*)
+type(NL_DS_Contact), intent(inout) :: ds_contact
+character(len=19) :: veelem(*), veasse(*)
+character(len=19) :: meelem(*), measse(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -74,9 +74,8 @@ implicit none
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL (VARIABLE AU COURS DU CALCUL)
 ! IN  NUMFIX : NUME_DDL (FIXE AU COURS DU CALCUL)
-! IN  MATE   : CHAMP MATERIAU
+! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VARIABLES DE COMMANDE DE REFERENCE
 ! IN  LISCHA : LISTE DES CHARGES
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  ds_algopara      : datastructure for algorithm parameters
@@ -160,9 +159,9 @@ implicit none
 !
 ! --- CALCUL DE LA MATRICE GLOBALE
 !
-    call nmprma(modele     , mate    , carele, ds_constitutive,&
-                ds_algopara, lischa  , numedd, numfix, solveu,&
-                comref     , ds_print, ds_measure, ds_algorom, sddisc,&
+    call nmprma(modele     , ds_material, carele, ds_constitutive,&
+                ds_algopara, lischa     , numedd, numfix, solveu,&
+                ds_print, ds_measure, ds_algorom, sddisc,&
                 sddyna     , numins  , fonact, ds_contact,&
                 valinc     , solalg  , veelem, meelem, measse,&
                 maprec     , matass  , faccvg, ldccvg)
@@ -174,22 +173,23 @@ implicit none
 !
 ! --- CALCUL DES CHARGEMENTS VARIABLES AU COURS DU PAS DE TEMPS
 !
-    call nmchar('VARI', 'PREDICTION'   , modele, numedd  , mate      ,&
-                carele, ds_constitutive, lischa, numins  , ds_measure,&
-                sddisc, fonact         , comref, ds_inout, valinc    ,&
-                solalg, veelem         , measse, veasse  , sddyna)
+    call nmchar('VARI'  , 'PREDICTION',&
+                modele  , numedd, ds_material, carele, ds_constitutive,&
+                lischa  , numins, ds_measure , sddisc, fonact         ,&
+                ds_inout, valinc, solalg     , veelem, measse         ,&
+                veasse  , sddyna)
 !
 ! --- CALCUL DU SECOND MEMBRE POUR CONTACT/XFEM
 !
     if (leltc) then
-        call nmfocc('PREDICTION', modele    , mate  , numedd, fonact,&
+        call nmfocc('PREDICTION', modele    , ds_material, numedd, fonact,&
                     ds_contact  , ds_measure, solalg, valinc, veelem,&
                     veasse, ds_constitutive)
     endif
 !
 ! --- CALCUL DU SECOND MEMBRE
 !
-    call nmassp(modele         , numedd, mate  , carele    , comref    ,&
+    call nmassp(modele         , numedd, ds_material, carele    ,&
                 ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
                 sddyna         , valinc, solalg, veelem    , veasse    ,&
                 ldccvg         , cnpilo, cndonn, sdnume    , matass    ,&

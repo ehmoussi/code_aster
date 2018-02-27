@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 !
 interface
-    subroutine nmresi(noma  , mate   , numedd  , sdnume  , fonact,&
+    subroutine nmresi(noma  , ds_material, numedd  , sdnume  , fonact,&
                       sddyna, ds_conv, ds_print, ds_contact,&
-                      matass, numins , eta     , comref  , valinc,&
+                      matass, numins , eta     , valinc,&
                       solalg, veasse , measse  , ds_inout, ds_algorom,&
                       vresi , vchar)
         use NonLin_Datastructure_type
@@ -29,7 +28,7 @@ interface
         character(len=24) :: numedd
         type(NL_DS_Contact), intent(inout) :: ds_contact
         type(NL_DS_Conv), intent(inout) :: ds_conv
-        character(len=24) :: mate
+        type(NL_DS_Material), intent(in) :: ds_material
         character(len=19) :: sdnume
         integer :: fonact(*)
         character(len=19) :: sddyna
@@ -37,7 +36,6 @@ interface
         character(len=19) :: matass
         integer :: numins
         real(kind=8) :: eta
-        character(len=24) :: comref
         character(len=19) :: valinc(*)
         character(len=19) :: solalg(*)
         character(len=19) :: veasse(*)
