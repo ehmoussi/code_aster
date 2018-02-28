@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1501
+! person_in_charge: nicolas.sellenet at edf.fr
+!
 subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
                   chtype, typesd)
     implicit none
@@ -51,7 +53,7 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
 #include "asterfort/utmess.h"
 #include "asterfort/vecgme.h"
 #include "asterfort/vechme.h"
-#include "asterfort/vefnme.h"
+#include "asterfort/vefnme_cplx.h"
 #include "asterfort/vefpme.h"
 #include "asterfort/vrcins.h"
 #include "asterfort/vtcreb.h"
@@ -69,7 +71,7 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
 !  CALC_CHAMP - CALCUL DES FORCES NODALES ET DES REACTIONS NODALES
 !  -    -                  -      -              -         -
 ! ----------------------------------------------------------------------
-! person_in_charge: nicolas.sellenet at edf.fr
+
     integer :: jordr, iret, iordr, i, jinfc, nbchar, ic, jref
     integer :: iachar, ichar, ii, nuord, nh, jnmo, nbddl, lmat, iad, ind
     integer :: neq, jfo, lonch, jfr, jfi
@@ -319,7 +321,7 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
 !
 !
 ! separation reel imag si dyna_harmo
-        call vefnme(option, 'V', modele, mater, carac,&
+        call vefnme_cplx(option, 'V', modele, mater, carac,&
                     compor, partps, nh, ligrel, chvarc,&
                     sigma, strx, chdepl, chdep2, vfono)
 !       --- ASSEMBLAGE DES VECTEURS ELEMENTAIRES ---
