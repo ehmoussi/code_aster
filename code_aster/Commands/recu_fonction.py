@@ -18,7 +18,7 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
-from ..Objects import Function
+from ..Objects import Function, FunctionComplex
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -32,6 +32,23 @@ class ExtractFunction(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
+        if keywords.has_key("RESULTAT") and keywords["RESULTAT"].getType() == "DYNA_HARMO":
+            self._result = FunctionComplex()
+            return
+        if keywords.has_key("RESU_GENE") and keywords[RESU_GENE] == "HARM_GENE":
+            self._result = FunctionComplex()
+            return
+        if keywords.has_key("INTE_SPEC"):
+            if keywords.has_key("NUME_ORDRE_J") and keywords["NUME_ORDRE_I"] != keywords["NUME_ORDRE_J"]:
+                self._result = FunctionComplex()
+                return
+            if (keywords.has_key("NOEUD_J") and keywords["NOEUD_I"] != keywords["NOEUD_J"]) or \
+                    keywords.has_key("NOM_CMP_J") and keywords["NOM_CMP_I"] != keywords["NOM_CMP_J"]:
+                self._result = FunctionComplex()
+                return
+        if keywords.has_key("TABLE") and (keywords["NOM_PARA_TABL"] == "FONCTION_C" or keywords["PARA_Y"] == "VALE_C"):
+            self._result = FunctionComplex()
+            return
         self._result = Function()
 
 RECU_FONCTION = ExtractFunction.run
