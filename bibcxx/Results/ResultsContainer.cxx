@@ -226,6 +226,12 @@ bool ResultsContainerInstance::update() throw ( std::runtime_error )
                     if( curIter2 == _dictOfVectorOfFieldsNodes.end() )
                         _dictOfVectorOfFieldsNodes[ nomSymb ] = VectorOfFieldsNodes( numberOfSerialNum,
                             FieldOnNodesDoublePtr( nullptr ) );
+                    else if( curIter2->second.size() != numberOfSerialNum )
+                    {
+                        curIter2->second.clear();
+                        _dictOfVectorOfFieldsNodes[ nomSymb ] = VectorOfFieldsNodes( numberOfSerialNum,
+                            FieldOnNodesDoublePtr( nullptr ) );
+                    }
 
                     long test2 = _dictOfVectorOfFieldsNodes[ nomSymb ][ rank ].use_count();
                     if( test2 == 0 )
@@ -240,6 +246,12 @@ bool ResultsContainerInstance::update() throw ( std::runtime_error )
                     if( curIter2 == _dictOfVectorOfFieldsElements.end() )
                         _dictOfVectorOfFieldsElements[ nomSymb ] = VectorOfFieldsElements( numberOfSerialNum,
                             FieldOnElementsDoublePtr( nullptr ) );
+                    else if( curIter2->second.size() != numberOfSerialNum )
+                    {
+                        curIter2->second.clear();
+                       _dictOfVectorOfFieldsElements [ nomSymb ] = VectorOfFieldsElements( numberOfSerialNum,
+                            FieldOnElementsDoublePtr( nullptr ) );
+                    }
 
                     long test2 = _dictOfVectorOfFieldsElements[ nomSymb ][ rank ].use_count();
                     if( test2 == 0 )
