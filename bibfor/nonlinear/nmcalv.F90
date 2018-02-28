@@ -55,7 +55,7 @@ real(kind=8) :: instam, instap
 character(len=19) :: lischa, sddyna
 character(len=19) :: solalg(*), valinc(*)
 character(len=6) :: typvec
-character(len=19) :: vecele, veceri(2)
+character(len=19) :: vecele
 character(len=16) :: option
 !
 ! ----------------------------------------------------------------------
@@ -168,11 +168,10 @@ character(len=16) :: option
             ASSERT(.false.)
         endif
 !
-        veceri(1)=vecele
-        veceri(2)=' '
-        call vefnme(optio2, 'V', modele, mate, carele,&
+        call vefnme(optio2, modele, mate, carele,&
                     compor, partps, 0, ' ', varc,&
-                    sigm, strx, depl, depdel, veceri)
+                    sigm, strx, depl, depdel,&
+                    'V',  vecele)
         call nmdep0('OFF', solalg)
 !
 ! --- DEPLACEMENTS DIRICHLET FIXE

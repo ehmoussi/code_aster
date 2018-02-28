@@ -17,20 +17,23 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine vefnme(option_, model     , mate , cara_elem_,&
-                      compor , partps    , nh   , ligrel_   ,&
-                      varc_  , sigm_     , strx_,&
-                      disp_  , disp_incr_,&
-                      base   , vect_elem_)
-        character(len=16), intent(in) :: option_
+    subroutine vefnme_cplx(option, base  , model , mate      , carele  ,&
+                           compor, partps, nh    , ligrelz   , varicomz,&
+                           sigmaz, strxz , deplz , depl_incrz, vecelz)
+        character(len=16), intent(in) :: option
         character(len=1), intent(in) :: base
         character(len=8), intent(in) :: model
         real(kind=8), intent(in) :: partps(*)
-        character(len=24), intent(in) :: cara_elem_,  mate
-        character(len=*), intent(in) :: ligrel_
+        character(len=24), intent(in) :: carele
+        character(len=24), intent(in) :: mate
+        character(len=*), intent(in) :: ligrelz
         integer, intent(in) :: nh
         character(len=19), intent(in) :: compor
-        character(len=*), intent(in) :: sigm_, varc_, strx_, disp_, disp_incr_
-        character(len=*), intent(inout) :: vect_elem_
-    end subroutine vefnme
+        character(len=*), intent(in) :: sigmaz
+        character(len=*), intent(in) :: varicomz
+        character(len=*), intent(in) :: strxz
+        character(len=*), intent(in) :: deplz
+        character(len=*), intent(in) :: depl_incrz
+        character(len=*), intent(inout) :: vecelz(*)
+    end subroutine vefnme_cplx
 end interface
