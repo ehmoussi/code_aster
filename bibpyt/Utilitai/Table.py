@@ -344,6 +344,7 @@ class Table(TableBase):
             self.type = [None] * len(self.para)
         self.titr = titr
         self.nom = nom
+        self.referenceToDataStructure = []
 
     def copy(self):
         """Retourne une copie de la table.

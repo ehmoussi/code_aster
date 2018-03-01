@@ -60,7 +60,8 @@ def gene_acce_seisme_ops(self, **kwargs):
     # création de l'objet generator
     generator = Generator.factory(self, params)
     try:
-        generator.run()
+        toReturn = generator.run()
+        return toReturn
     except Exception, err:
         trace = ''.join(traceback.format_tb(sys.exc_traceback))
         UTMESS('F', 'SUPERVIS2_5', valk=('GENE_ACCE_SEISME', trace, str(err)))
@@ -87,33 +88,33 @@ class GeneAcceParameters(object):
         if keys.has_key('ECART_TYPE'):
             if keys['ECART_TYPE']:
                 keys['ECART_TYPE'] = keys['ECART_TYPE'] * self.norme
-                del keys['ACCE_MAX'],
-                del keys['INTE_ARIAS']
+                if keys.has_key("ACCE_MAX"): del keys['ACCE_MAX']
+                if keys.has_key("INTE_ARIAS"): del keys['INTE_ARIAS']
             elif keys['ACCE_MAX']:
                 keys['ACCE_MAX'] = keys['ACCE_MAX'] * self.norme
-                del keys['ECART_TYPE'],
-                del keys['INTE_ARIAS']
+                if keys.has_key("ECART_TYPE"): del keys['ECART_TYPE'],
+                if keys.has_key("INTE_ARIAS"): del keys['INTE_ARIAS']
             elif keys['INTE_ARIAS']:
-                del keys['ECART_TYPE'],
-                del keys['ACCE_MAX']
+                if keys.has_key("ECART_TYPE"): del keys['ECART_TYPE'],
+                if keys.has_key("ACCE_MAX"): del keys['ACCE_MAX']
 
         others = kwargs.keys()
-        others.remove('MODULATION')
-        others.remove('COEF_CORR')
-        others.remove('MATR_COHE')
-        others.remove('PHASE')
+        if others.count("MODULATION") != 0: others.remove('MODULATION')
+        if others.count("COEF_CORR") != 0: others.remove('COEF_CORR')
+        if others.count("MATR_COHE") != 0: others.remove('MATR_COHE')
+        if others.count("PHASE") != 0: others.remove('PHASE')
  #  # SimulationKeys and MethodKeys
-        if kwargs['COEF_CORR'] != None:
+        if kwargs.has_key('COEF_CORR'):
             corr_keys = {}
             corr_keys['TYPE'] = 'COEF_CORR'
             corr_keys['COEF_CORR'] = kwargs.get('COEF_CORR')
             corr_keys['RATIO_HV'] = None
             if kwargs.get('SPEC_FRACTILE')!= None:
                 corr_keys['RATIO_HV'] = kwargs.get('RATIO_HV')
-        elif kwargs['MATR_COHE'] != None:
+        elif kwargs.has_key('MATR_COHE'):
              ckeys = kwargs.get('MATR_COHE')[0]
              corr_keys = ckeys.cree_dict_valeurs(ckeys.mc_liste)
-        elif kwargs['PHASE'] != None:
+        elif kwargs.has_key('PHASE'):
              ckeys = kwargs.get('PHASE')[0]
              corr_keys = ckeys.cree_dict_valeurs(ckeys.mc_liste)
              corr_keys['TYPE'] = 'PHASE'
@@ -127,45 +128,45 @@ class GeneAcceParameters(object):
             GeneratorKeys = kwargs.get('DSP')[0]
             method_keys = GeneratorKeys.cree_dict_valeurs(
                 GeneratorKeys.mc_liste)
-            others.remove('DSP')
+            if others.count("DSP") != 0: others.remove('DSP')
         else:
             self.cas = 'SPECTRE'
             self.simulation_keys.update({'TYPE_ITER': 'MOYENNE'}) 
             if kwargs.get('SPEC_FRACTILE'):
                 GeneratorKeys = kwargs.get('SPEC_FRACTILE')[0]
                 self.simulation_keys.update({'SPEC_METHODE': 'SPEC_FRACTILE'})
-                others.remove('SPEC_FRACTILE')
+                if others.count("SPEC_FRACTILE") != 0: others.remove('SPEC_FRACTILE')
             elif kwargs.get('SPEC_MEDIANE'):
                 GeneratorKeys = kwargs.get('SPEC_MEDIANE')[0]
                 self.simulation_keys.update({'SPEC_METHODE': 'SPEC_MEDIANE'})
                 self.simulation_keys.update({'TYPE_ITER': 'MEDIANE'})
-                others.remove('SPEC_MEDIANE')
+                if others.count("SPEC_MEDIANE") != 0: others.remove('SPEC_MEDIANE')
                 if kwargs.get('NB_TIRAGE') == 1:
                     UTMESS('F', 'SEISME_38')
             elif kwargs.get('SPEC_MOYENNE'):
                 GeneratorKeys = kwargs.get('SPEC_MOYENNE')[0]
                 self.simulation_keys.update({'SPEC_METHODE': 'SPEC_MEDIANE'})
-                others.remove('SPEC_MOYENNE')
+                if others.count("SPEC_MOYENNE") != 0: others.remove('SPEC_MOYENNE')
                 if kwargs.get('NB_TIRAGE') == 1:
                     UTMESS('F', 'SEISME_38')
             elif kwargs.get('SPEC_UNIQUE'):
                 GeneratorKeys = kwargs.get('SPEC_UNIQUE')[0]
-                others.remove('SPEC_UNIQUE')
+                if others.count("SPEC_UNIQUE") != 0: others.remove('SPEC_UNIQUE')
                 self.simulation_keys.update({'SPEC_METHODE': 'SPEC_UNIQUE'})           
             method_keys = GeneratorKeys.cree_dict_valeurs(
                 GeneratorKeys.mc_liste)            
         self.method_keys = {}
         for key in method_keys:
-            if method_keys[key] != None:
+            if method_keys.has_key(key):
                 self.method_keys[key] = method_keys[key]
         if self.method_keys.has_key('NB_ITER') :
             self.simulation_keys.update({'NB_ITER': 
                         self.method_keys['NB_ITER']})               
         # OtherKeys remplissage
-        other_keys = {}
+        others_keys = {}
         for key in others:
-            other_keys[key] = kwargs.get(key)
-        self.simulation_keys.update(other_keys)
+            others_keys[key] = kwargs.get(key)
+        self.simulation_keys.update(others_keys)
         self.simulation_keys.update({'CAS': self.cas})
 
 
@@ -185,19 +186,18 @@ class Generator(object):
 
     def __init__(self, macro, params):
         """Constructor Base class"""
-        self.name = macro.sd.nom
         self.macro = macro
         self.norme = params.norme
         self.INFO = params.simulation_keys['INFO']
         self.modul_params = params.modulation_keys
         self.method_params = params.method_keys
         self.simu_params = params.simulation_keys
-        self.FREQ_FILTRE = params.simulation_keys['FREQ_FILTRE']
-        self.FREQ_CORNER = params.simulation_keys['FREQ_CORNER']
-        self.FREQ_PENTE = params.simulation_keys['FREQ_PENTE']
+        self.FREQ_FILTRE = params.simulation_keys.get('FREQ_FILTRE')
+        self.FREQ_CORNER = params.simulation_keys.get('FREQ_CORNER')
+        self.FREQ_PENTE = params.simulation_keys.get('FREQ_PENTE')
         self.DSP_args = {}
         self.SRO_args = {'NORME': self.norme}
-        self.tab = Table(titr='GENE_ACCE_SEISME concept : %s' % macro.sd.nom)
+        self.tab = Table(titr='GENE_ACCE_SEISME')
         self.sampler = Sampler(params.modulation_keys, params.simulation_keys)
         # modulation indépendant de DSP/SPECTRE mais dépend de sampler:
         self.modulator = Modulator.factory(params.modulation_keys)
@@ -206,7 +206,7 @@ class Generator(object):
         # parametres des t_fonctions  a creer
         self.para_fonc_traj = {
             'NOM_PARA': 'INST', 'NOM_RESU': 'ACCE', 'PROL_DROITE': 'EXCLU',
-            'PROL_GAUCHE': 'EXCLU', 'TITRE': params.simulation_keys['TITRE'], }
+            'PROL_GAUCHE': 'EXCLU', 'TITRE': params.simulation_keys.get('TITRE'), }
         self.para_dsp = {
             'INTERPOL': ['LIN', 'LIN'], 'NOM_PARA': 'FREQ',
             'PROL_DROITE': 'CONSTANT', 'PROL_GAUCHE': 'EXCLU',
@@ -250,7 +250,7 @@ class Generator(object):
         self.modulation()
         self.prepare_data()
         self.build_DSP()
-        self.build_result()
+        return self.build_result()
 
 
 class GeneratorDSP(Generator):
@@ -260,8 +260,8 @@ class GeneratorDSP(Generator):
     def prepare_data(self):
         """prepare data for DSP class"""
         self.DSP_args.update({
-            'FREQ_FOND': self.method_params['FREQ_FOND'],
-            'AMORT': self.method_params['AMOR_REDUIT']})
+            'FREQ_FOND': self.method_params.get('FREQ_FOND'),
+            'AMORT': self.method_params.get('AMOR_REDUIT')})
         if self.FREQ_CORNER == None:
             self.FREQ_CORNER = 0.05 * self.DSP_args['FREQ_FOND']
         # Il faut calculer le facteur de pic si la donnee = PGA
@@ -310,12 +310,14 @@ class GeneratorDSP(Generator):
        # Le concept sortant (de type table_fonction) est tab
         macr = self.macro
         CREA_TABLE = macr.get_cmd('CREA_TABLE')
-        macr.DeclareOut('tab_out', macr.sd)
         #--- construction des fonctions sortie
         self.build_output()
         #--- Creation du concept (table) en sortie
         dict_keywords = self.tab.dict_CREA_TABLE()
         tab_out = CREA_TABLE(TYPE_TABLE='TABLE_FONCTION', **dict_keywords)
+        for func in self.tab.referenceToDataStructure:
+            tab_out.addReference(func)
+        return tab_out
 
 
 class GeneratorSpectrum(Generator):
@@ -327,9 +329,9 @@ class GeneratorSpectrum(Generator):
         if self.FREQ_CORNER == None:
             self.FREQ_CORNER = 0.0
         if 'NB_ITER' in self.method_params: 
-            dico_err = {'ERRE_ZPA': list(self.method_params['ERRE_ZPA']),
-                        'ERRE_MAX': list(self.method_params['ERRE_MAX']),
-                        'ERRE_RMS': list(self.method_params['ERRE_RMS'])}
+            dico_err = {'ERRE_ZPA': list(self.method_params.get('ERRE_ZPA')),
+                        'ERRE_MAX': list(self.method_params.get('ERRE_MAX')),
+                        'ERRE_RMS': list(self.method_params.get('ERRE_RMS'))}
             err_def = 0.2
             for keys in dico_err:
                 if len(dico_err[keys]) < 2:
@@ -341,7 +343,7 @@ class GeneratorSpectrum(Generator):
             elif  self.simu_params['TYPE_ITER'] == 'MOYENNE': 
                 self.SRO_args.update({'TYPE_ITER' : 'SPEC_MOYENNE',})
 
-        spec_osci = self.method_params['SPEC_OSCI']
+        spec_osci = self.method_params.get('SPEC_OSCI')
         l_freq_sro, sro_ref = spec_osci.Valeurs()
         ZPA = sro_ref[-1]
         F_MIN = l_freq_sro[0]
@@ -352,12 +354,12 @@ class GeneratorSpectrum(Generator):
         f_spec = t_fonction(l_freq_sro, sro_ref, para=self.para_sro)
         self.SRO_args.update({'FONC_SPEC': f_spec,
                               'FMIN': F_MIN,
-                              'AMORT': self.method_params['AMOR_REDUIT']})
+                              'AMORT': self.method_params.get('AMOR_REDUIT')})
         if 'METHODE' in self.method_params:
             self.SRO_args.update(
-                {'METHODE_SRO': self.method_params['METHODE']})
+                {'METHODE_SRO': self.method_params.get('METHODE')})
         if self.method_params.has_key('SPEC_1_SIGMA'):
-            spec_sigma = self.method_params['SPEC_1_SIGMA']
+            spec_sigma = self.method_params.get('SPEC_1_SIGMA')
             f_spec_sigma = t_fonction(spec_sigma.Absc(), spec_sigma.Ordo(),
                                       para=self.para_sro)
             f_spec_sigma = f_spec_sigma.evalfonc(l_freq_sro)
@@ -365,9 +367,9 @@ class GeneratorSpectrum(Generator):
             f_beta = t_fonction(l_freq_sro, sro_beta, para=self.para_sro)
             self.SRO_args.update({'FONC_BETA': f_beta})
         if 'FREQ_PAS' in self.method_params:
-            self.SRO_args.update({'PAS': self.method_params['FREQ_PAS']})
+            self.SRO_args.update({'PAS': self.method_params.get('FREQ_PAS')})
         elif 'LIST_FREQ' in self.method_params:
-            L_FREQ = self.method_params['LIST_FREQ'].Valeurs()
+            L_FREQ = self.method_params.get('LIST_FREQ').Valeurs()
             assert L_FREQ[0] > 0.0, "LIST_FREQ: il faut des valeurs >0.0"
             self.SRO_args.update({'LIST_FREQ': L_FREQ})
         else:
@@ -406,12 +408,12 @@ class GeneratorSpectrum(Generator):
        # Le concept sortant (de type table_fonction) est tab
         macr = self.macro
         CREA_TABLE = macr.get_cmd('CREA_TABLE')
-        macr.DeclareOut('tab_out', macr.sd)
         #--- construction des fonctions sortie
         self.build_output()
         #--- Creation du concept (table) en sortie
         dict_keywords = self.tab.dict_CREA_TABLE()
         tab_out = CREA_TABLE(TYPE_TABLE='TABLE_FONCTION', **dict_keywords)
+        return tab_out
 
 
 
@@ -425,10 +427,10 @@ class Sampler(object):
     """class Sampling: common task for all cases"""
 
     def __init__(self, modul_params, method_params):
-        self.FREQ_FILTRE = method_params['FREQ_FILTRE']
+        self.FREQ_FILTRE = method_params.get('FREQ_FILTRE')
         self.INFO = modul_params['INFO']
-        self.DT = method_params['PAS_INST']
-        self.NB_POIN = method_params['NB_POIN']
+        self.DT = method_params.get('PAS_INST')
+        self.NB_POIN = method_params.get('NB_POIN')
         self.modulation_type = modul_params['TYPE']
         self.DUREE_PHASE_FORTE = modul_params['DUREE_PHASE_FORTE']
         self.INST_INI = 0.0
@@ -673,7 +675,7 @@ class Simulator(object):
         self.FREQ_FILTRE = simu_params['FREQ_FILTRE']
         self.para_fonc_traj = {
             'NOM_PARA': 'INST', 'NOM_RESU': 'ACCE', 'PROL_DROITE': 'EXCLU',
-            'PROL_GAUCHE': 'EXCLU', 'TITRE': simu_params['TITRE'], }
+            'PROL_GAUCHE': 'EXCLU', 'TITRE': simu_params.get('TITRE'), }
 
     def process_TimeHistory(self, generator, Xt):
         """apply modulation and low pass filter if requested"""
@@ -714,6 +716,7 @@ class SimulatorDSPScalar(Simulator):
             _f_out = DEFI_FONCTION(ABSCISSE=tuple(generator.sampler.liste_temps),
                                    ORDONNEE=tuple(Xt), **self.para_fonc_traj)
             generator.tab.append({'NUME_ORDRE': self.ntir + 1, 'FONCTION': _f_out.nom})
+            generator.tab.referenceToDataStructure.append(_f_out)
             self.ntir = self.ntir + 1
 
 
@@ -759,6 +762,7 @@ class SimulatorDSPVector(Simulator):
                 _f_out = DEFI_FONCTION(
                           ABSCISSE = tuple(generator.sampler.liste_temps),
                           ORDONNEE = tuple(accef), **self.para_fonc_traj)
+                generator.tab.referenceToDataStructure.append(_f_out)
                 if self.TYPE == 'COEF_CORR':
                     nom_acce = 'ACCE' + str(nba)
                     generator.tab.append({'NUME_ORDRE': self.ntir + 1,
@@ -797,6 +801,7 @@ class SimulatorSPECVector(Simulator):
                     _f_out = DEFI_FONCTION(
                           ABSCISSE = tuple(generator.sampler.liste_temps),
                           ORDONNEE = tuple(accef), **self.para_fonc_traj)
+                    generator.tab.referenceToDataStructure.append(_f_out)
                     if self.TYPE == 'COEF_CORR':
                         nom_acce = 'ACCE' + str(nba)
                         generator.tab.append({'NUME_ORDRE': self.ntir + 1,
@@ -919,6 +924,7 @@ class SimulatorSPECVector(Simulator):
                         nom_no = self.liste_nom[nba-1]
                         generator.tab.append({'NUME_ORDRE': self.ntir + 1,
                                  'FONCTION': _f_out.nom ,'NOEUD':nom_no})
+                    generator.tab.referenceToDataStructure.append(_f_out)
                     nba = nba + 1
                 self.ntir = self.ntir + 1
         else:
@@ -934,6 +940,7 @@ class SimulatorSPECVector(Simulator):
                     _f_out = DEFI_FONCTION(
                          ABSCISSE=tuple(generator.sampler.liste_temps),
                          ORDONNEE=tuple(accef), **self.para_fonc_traj)
+                    generator.tab.referenceToDataStructure.append(_f_out)
                     if self.TYPE == 'COEF_CORR':
                         nom_acce = 'ACCE' + str(nba)
                         generator.tab.append({'NUME_ORDRE': self.ntir + 1,
@@ -966,6 +973,7 @@ class SimulatorSPECScalar(Simulator):
                         ORDONNEE=tuple(Xt), **self.para_fonc_traj)
                 generator.tab.append({'NUME_ORDRE': self.ntir + 1,
                                       'FONCTION': _f_out.nom})
+                generator.tab.referenceToDataStructure.append(_f_out)
                 self.ntir = self.ntir + 1
 
 
@@ -1036,6 +1044,7 @@ class SimulatorSPECScalar(Simulator):
                 _f_out = DEFI_FONCTION(
                          ABSCISSE=tuple(generator.sampler.liste_temps),
                          ORDONNEE=tuple(Xt), **self.para_fonc_traj)
+                generator.tab.referenceToDataStructure.append(_f_out)
                 generator.tab.append({'NUME_ORDRE': self.ntir + 1,
                                       'FONCTION': _f_out.nom})
                 self.ntir = self.ntir + 1
@@ -1050,6 +1059,7 @@ class SimulatorSPECScalar(Simulator):
                 _f_out = DEFI_FONCTION(
                          ABSCISSE=tuple(generator.sampler.liste_temps),
                          ORDONNEE=tuple(Xt), **self.para_fonc_traj)
+                generator.tab.referenceToDataStructure.append(_f_out)
                 generator.tab.append({'NUME_ORDRE': self.ntir + 1,
                                     'FONCTION': _f_out.nom})
                 self.ntir = self.ntir + 1
@@ -1090,6 +1100,7 @@ class SimulatorSPECPhase(Simulator):
                     _f_out = DEFI_FONCTION(
                           ABSCISSE = tuple(generator.sampler.liste_temps),
                           ORDONNEE = tuple(accef), **self.para_fonc_traj)
+                    generator.tab.referenceToDataStructure.append(_f_out)
                     nom_no = self.liste_nom[nba-1]
                     generator.tab.append({'NUME_ORDRE': self.ntir + 1,
                                   'FONCTION': _f_out.nom ,'NOEUD': nom_no})
@@ -1172,6 +1183,7 @@ class SimulatorSPECPhase(Simulator):
                     _f_out = DEFI_FONCTION(
                          ABSCISSE=tuple(generator.sampler.liste_temps),
                          ORDONNEE=tuple(accef), **self.para_fonc_traj)
+                    generator.tab.referenceToDataStructure.append(_f_out)
                     nom_no = self.liste_nom[nba-1]
                     generator.tab.append({'NUME_ORDRE': self.ntir + 1,
                                  'FONCTION': _f_out.nom ,'NOEUD':nom_no})
@@ -1191,6 +1203,7 @@ class SimulatorSPECPhase(Simulator):
                     _f_out = DEFI_FONCTION(
                          ABSCISSE=tuple(generator.sampler.liste_temps),
                          ORDONNEE=tuple(acce), **self.para_fonc_traj)
+                    generator.tab.referenceToDataStructure.append(_f_out)
                     nom_no = self.liste_nom[nba-1]
                     generator.tab.append({'NUME_ORDRE': self.ntir + 1,
                                  'FONCTION': _f_out.nom ,'NOEUD': nom_no})
@@ -1221,6 +1234,7 @@ class SimulatorDSPPhase(Simulator):
                 _f_out = DEFI_FONCTION(
                           ABSCISSE = tuple(generator.sampler.liste_temps),
                           ORDONNEE = tuple(accef), **self.para_fonc_traj)
+                generator.tab.referenceToDataStructure.append(_f_out)
                 nom_no = liste_nom[nba-1]
                 generator.tab.append({'NUME_ORDRE': self.ntir + 1,
                          'FONCTION': _f_out.nom ,'NOEUD': nom_no})
