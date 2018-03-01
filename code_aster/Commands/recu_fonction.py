@@ -46,7 +46,7 @@ class ExtractFunction(ExecuteCommand):
                     keywords.has_key("NOM_CMP_J") and keywords["NOM_CMP_I"] != keywords["NOM_CMP_J"]:
                 self._result = FunctionComplex()
                 return
-        if keywords.has_key("TABLE") and (keywords["NOM_PARA_TABL"] == "FONCTION_C" or keywords["PARA_Y"] == "VALE_C"):
+        if keywords.has_key("TABLE") and (keywords.get("NOM_PARA_TABL") == "FONCTION_C" or keywords.get("PARA_Y") == "VALE_C"):
             self._result = FunctionComplex()
             return
         self._result = Function()
