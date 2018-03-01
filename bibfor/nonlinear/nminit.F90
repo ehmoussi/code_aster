@@ -40,7 +40,6 @@ implicit none
 #include "asterfort/cucrsd.h"
 #include "asterfort/diinit.h"
 #include "asterfort/diinst.h"
-#include "asterfort/dismoi.h"
 #include "asterfort/exfonc.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/jeveuo.h"
@@ -161,14 +160,12 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
     integer :: iret
     real(kind=8) :: r8bid3(3)
     real(kind=8) :: instin
-    character(len=8) :: partit
     character(len=19) :: varc_prev, disp_prev, strx_prev
     aster_logical :: lacc0, lpilo, lmpas, lsstf, lerrt, lviss, lrefe, ldidi, l_obsv, l_ener
-    aster_logical :: limpl, lcont
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    lacc0 = .false.
+    lacc0 = ASTER_FALSE
 !
 ! - Initializations for contact parameters
 !
@@ -418,18 +415,6 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
                     cara_elem, list_load, fonact    , ds_measure   ,&
                     sddyna,  sdnume   , valinc,&
                     sddisc, solalg   , veasse   , measse    , ds_inout)
-    endif
-!
-! ON EXCLUT CONTACT+DISTRIBUTION/MODEL AUTRE QUE CENTRALISE :
-! POUR DEVEROUILLER IL FAUT VERIFIER LE TEST SDNV105C en // issue25915
-!
-    limpl = ndynlo(sddyna,'IMPLICITE')
-    lcont = isfonc(fonact,'CONTACT')
-    if (lcont .and. limpl) then
-        call dismoi('PARTITION', model(1:8)//'.MODELE', 'LIGREL', repk=partit)
-        if ((partit .ne. ' ')) then
-            call utmess('F', 'CONTACT3_46')
-        endif
     endif
 !
 ! - Reset times and counters
