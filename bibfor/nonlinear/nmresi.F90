@@ -17,11 +17,14 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmresi(noma  , ds_material, numedd  , sdnume  , fonact,&
-                  sddyna, ds_conv, ds_print, ds_contact,&
-                  matass, numins , eta     , valinc,&
-                  solalg, veasse , measse  , ds_inout, ds_algorom,&
-                  vresi , vchar)
+subroutine nmresi(mesh       , list_func_acti, ds_material,&
+                  nume_dof   , sdnume        , sddyna     ,&
+                  ds_conv    , ds_print      , ds_contact ,&
+                  ds_inout   , ds_algorom    ,&
+                  matass     , nume_inst     , eta        ,&
+                  hval_incr  , hval_algo     ,&
+                  hval_veasse, hval_measse   ,&
+                  r_resi_vale, r_char_vale)
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
@@ -29,8 +32,8 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
-#include "jeveux.h"
 #include "asterc/r8vide.h"
+#include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
@@ -38,10 +41,9 @@ implicit none
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/mmconv.h"
-#include "asterfort/ndiner.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/nmchex.h"
-#include "asterfort/nmequi.h"
+#include "asterfort/nmfext.h"
 #include "asterfort/nmimre.h"
 #include "asterfort/nmimre_dof.h"
 #include "asterfort/GetResi.h"
@@ -52,23 +54,22 @@ implicit none
 #include "asterfort/romAlgoNLMecaResidual.h"
 #include "asterfort/romAlgoNLCorrEFMecaResidual.h"
 !
-character(len=8) :: noma
-character(len=24) :: numedd
-type(NL_DS_Contact), intent(inout) :: ds_contact
+character(len=8), intent(in) :: mesh
+integer, intent(in) :: list_func_acti(*)
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=24), intent(in) :: nume_dof
+character(len=19), intent(in) :: sddyna, sdnume
 type(NL_DS_Conv), intent(inout) :: ds_conv
 type(NL_DS_Print), intent(inout) :: ds_print
-integer :: numins
-type(NL_DS_Material), intent(in) :: ds_material
-character(len=19) :: sddyna, sdnume
-character(len=19) :: measse(*), veasse(*)
-character(len=19) :: valinc(*), solalg(*)
-character(len=19) :: matass
-integer :: fonact(*)
-real(kind=8) :: eta
+type(NL_DS_Contact), intent(inout) :: ds_contact
 type(NL_DS_InOut), intent(in) :: ds_inout
-real(kind=8), intent(out) :: vchar
-real(kind=8), intent(out) :: vresi
 type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+character(len=19), intent(in) :: matass
+integer, intent(in) :: nume_inst
+real(kind=8), intent(in) :: eta
+character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
+character(len=19), intent(in) :: hval_measse(*), hval_veasse(*)
+real(kind=8), intent(out) :: r_char_vale, r_resi_vale
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -78,61 +79,60 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IN  NOMA   : NOM DU MAILLAGE
-! IO  ds_print         : datastructure for printing parameters
-! IN  NUMEDD : NUMEROTATION NUME_DDL
-! IN  SDNUME : NOM DE LA SD NUMEROTATION
-! In  ds_inout         : datastructure for input/output management
-! IO  ds_conv          : datastructure for convergence management
-! IN  MATASS : MATRICE DU PREMIER MEMBRE ASSEMBLEE
-! IN  NUMINS : NUMERO D'INSTANT
+! In  mesh              : name of mesh
+! In  list_func_acti   : list of active functionnalities
 ! In  ds_material      : datastructure for material parameters
+! In  nume_dof         : name of numbering object (NUME_DDL)
+! In  sdnume           : datastructure for dof positions
+! In  sddyna           : datastructure for dynamic
+! IO  ds_conv          : datastructure for convergence management
+! IO  ds_print         : datastructure for printing parameters
 ! In  ds_contact       : datastructure for contact management
+! In  ds_inout         : datastructure for input/output management
 ! In  ds_algorom       : datastructure for ROM parameters
-! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
-! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
-! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
-! IN  MEASSE : VARIABLE CHAPEAU POUR NOM DES MATR_ASSE
-! IN  ETA    : COEFFICIENT DE PILOTAGE
-! Out vresi            : norm of equilibrium residual
-! Out vchar            : norm of exterior loads
+! In  matass           : matrix
+! In  nume_inst        : index of current time step    
+! In  eta              : coefficient for pilotage (continuation)
+! In  hval_incr        : hat-variable for incremental values fields
+! In  hval_algo        : hat-variable for algorithms fields
+! In  hval_veasse      : hat-variable for vectors (node fields)
+! In  hval_measse      : hat-variable for matrix
+! Out r_resi_vale      : norm for equilibrium residual
+! Out r_char_vale      : norm for denominator of RESI_GLOB_RELA
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm=0, niv=0
     integer, pointer :: v_ccid(:) => null()
-    integer :: neq=0
+    integer :: nb_equa=0, i_equa=0
     character(len=24) :: mate, varc_refe
-    character(len=8) :: noddlm=' '
-    aster_logical :: ldyna, lstat, lcine, l_cont_cont, l_cont_lac, l_rom
-    character(len=19) :: profch=' ', foiner=' '
-    character(len=19) :: commoi=' ', depmoi=' '
+    aster_logical :: l_stat, l_load_cine, l_cont_cont, l_cont_lac, l_rom
+    aster_logical :: l_resi_refe, l_varc_init, l_resi_comp, l_rela
+    aster_logical :: l_no_disp, l_pilo
+    character(len=19) :: profch=' '
+    character(len=19) :: varc_prev=' ', disp_prev=' '
     character(len=19) :: cndiri=' ', cnbudi=' ', cnfext=' '
     character(len=19) :: cnrefe=' ', cnfint=' '
     character(len=19) :: cnfnod=' ', cndipi=' ', cndfdo=' '
-    integer :: jfnod=0
-    integer :: ieq=0
-    aster_logical :: lrefe=.false._1, linit=.false._1, lcmp=.false._1, l_rela=.false._1
     real(kind=8) :: val1=0.d0, val4=0.d0, val5=0.d0
-    real(kind=8) :: maxres=0.d0
-    integer :: irela=0, imaxi=0, iresi=0, irefe=0, ichar=0, icomp=0
-    aster_logical :: lndepl=.false._1, lpilo=.false._1
+    integer :: r_rela_indx=0, r_maxi_indx=0, r_resi_indx=0
+    integer :: r_refe_indx=0, r_char_indx=0, r_comp_indx=0
     real(kind=8) :: resi_glob_rela, resi_glob_maxi
-    real(kind=8) :: vpene
-    character(len=16) :: nfrot=' ', ngeom=' '
+    character(len=16) :: r_fric_name=' ', r_geom_name=' ', r_comp_name=' '
     character(len=24) :: sdnuco=' '
-    integer :: jnuco=0
-    real(kind=8) :: vrela, vmaxi, vrefe, vinit, vcomp, vfrot, vgeom
-    real(kind=8), pointer :: budi(:) => null()
-    real(kind=8), pointer :: dfdo(:) => null()
-    real(kind=8), pointer :: dipi(:) => null()
-    real(kind=8), pointer :: fext(:) => null()
-    real(kind=8), pointer :: fint(:) => null()
-    real(kind=8), pointer :: refe(:) => null()
-    real(kind=8), pointer :: v_diri(:) => null()
+    integer, pointer :: v_sdnuco(:) => null()
+    real(kind=8) :: r_rela_vale, r_maxi_vale, r_refe_vale, r_varc_vale
+    real(kind=8) :: r_comp_vale, r_fric_vale, r_geom_vale, r_pene_vale
+    real(kind=8), pointer :: v_cnbudi(:) => null()
+    real(kind=8), pointer :: v_cndfdo(:) => null()
+    real(kind=8), pointer :: v_cndipi(:) => null()
+    real(kind=8), pointer :: v_cnfext(:) => null()
+    real(kind=8), pointer :: v_cnfint(:) => null()
+    real(kind=8), pointer :: v_cnrefe(:) => null()
+    real(kind=8), pointer :: v_cndiri(:) => null()
     real(kind=8), pointer :: v_fvarc_init(:) => null()
-    real(kind=8), pointer :: v_cont_disc(:) => null()
-    integer, pointer :: deeq(:) => null()
+    real(kind=8), pointer :: v_cnctdf(:) => null()
+    integer, pointer :: v_deeq(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -142,240 +142,225 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
         write (ifm,*) '<MECANONLINE> ... CALCUL DES RESIDUS'
     endif
 !
-! --- INITIALISATIONS
+! - Initialisations
 !
     mate      = ds_material%field_mate
     varc_refe = ds_material%varc_refe
-    vrela = 0.d0
-    vmaxi = 0.d0
-    vrefe = 0.d0
-    vchar = 0.d0
-    vresi = 0.d0
-    vcomp = 0.d0
-    vinit = 0.d0
-    vfrot = 0.d0
-    vgeom = 0.d0
-    irela = 0
-    imaxi = 0
-    irefe = 0
-    iresi = 0
-    ichar = 0
-    icomp = 0
-    call dismoi('NB_EQUA', numedd, 'NUME_DDL', repi=neq)
+    call dismoi('NB_EQUA', nume_dof, 'NUME_DDL', repi=nb_equa)
 !
-! --- FONCTIONNALITES ACTIVEES
+    r_rela_vale = 0.d0
+    r_maxi_vale = 0.d0
+    r_refe_vale = 0.d0
+    r_char_vale = 0.d0
+    r_resi_vale = 0.d0
+    r_comp_vale = 0.d0
+    r_varc_vale = 0.d0
+    r_fric_vale = 0.d0
+    r_geom_vale = 0.d0
+    r_rela_indx = 0
+    r_maxi_indx = 0
+    r_refe_indx = 0
+    r_resi_indx = 0
+    r_char_indx = 0
+    r_comp_indx = 0    
 !
-    ldyna = ndynlo(sddyna,'DYNAMIQUE')
-    lstat = ndynlo(sddyna,'STATIQUE')
-    lrefe = isfonc(fonact,'RESI_REFE')
-    lcmp = isfonc(fonact,'RESI_COMP')
-    lpilo = isfonc(fonact,'PILOTAGE')
-    lcine = isfonc(fonact,'DIRI_CINE')
-    l_cont_cont = isfonc(fonact,'CONT_CONTINU')
-    l_cont_lac  = isfonc(fonact,'CONT_LAC')
-    l_rom = isfonc(fonact,'ROM')
-    linit = (numins.eq.1).and.(.not.ds_inout%l_state_init)
+! - Active functionnalities
 !
-! --- DECOMPACTION DES VARIABLES CHAPEAUX
+    l_stat      = ndynlo(sddyna,'STATIQUE')
+    l_resi_refe = isfonc(list_func_acti,'RESI_REFE')
+    l_resi_comp = isfonc(list_func_acti,'RESI_COMP')
+    l_pilo      = isfonc(list_func_acti,'PILOTAGE')
+    l_load_cine = isfonc(list_func_acti,'DIRI_CINE')
+    l_cont_cont = isfonc(list_func_acti,'CONT_CONTINU')
+    l_cont_lac  = isfonc(list_func_acti,'CONT_LAC')
+    l_rom       = isfonc(list_func_acti,'ROM')
+    l_varc_init = (nume_inst .eq. 1) .and. (.not.ds_inout%l_state_init)
+    l_no_disp   = .not.(ndynlo(sddyna,'FORMUL_DEPL').or.l_stat)
 !
-    call nmchex(valinc, 'VALINC', 'DEPMOI', depmoi)
-    call nmchex(valinc, 'VALINC', 'COMMOI', commoi)
-    call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
-    call nmchex(veasse, 'VEASSE', 'CNBUDI', cnbudi)
-    call nmchex(veasse, 'VEASSE', 'CNREFE', cnrefe)
-    call nmchex(veasse, 'VEASSE', 'CNFNOD', cnfnod)
-    call nmchex(veasse, 'VEASSE', 'CNDIPI', cndipi)
+! - Get hat variables
+!
+    call nmchex(hval_incr, 'VALINC', 'DEPMOI', disp_prev)
+    call nmchex(hval_incr, 'VALINC', 'COMMOI', varc_prev)
+    call nmchex(hval_veasse, 'VEASSE', 'CNDIRI', cndiri)
+    call nmchex(hval_veasse, 'VEASSE', 'CNBUDI', cnbudi)
+    call nmchex(hval_veasse, 'VEASSE', 'CNREFE', cnrefe)
+    call nmchex(hval_veasse, 'VEASSE', 'CNFNOD', cnfnod)
+    call nmchex(hval_veasse, 'VEASSE', 'CNDIPI', cndipi)
+    call nmchex(hval_veasse, 'VEASSE', 'CNFEXT', cnfext)
+    call nmchex(hval_veasse, 'VEASSE', 'CNFINT', cnfint)
     cndfdo = '&&CNCHAR.DFDO'
 !
-! --- CALCUL DE LA FORCE DE REFERENCE POUR LA DYNAMIQUE
+! - Compute external forces
 !
-    if (ldyna) then
-        foiner = '&&CNPART.CHP1'
-        call ndiner(numedd, sddyna, valinc, measse, foiner)
-    endif
+    call nmfext(eta, list_func_acti, sddyna, hval_veasse, cnfext, ds_contact)
 !
-! --- TYPE DE FORMULATION
+! - For kinematic loads
 !
-    lndepl = .not.(ndynlo(sddyna,'FORMUL_DEPL').or.lstat)
-!
-! --- RESULTANTE DES EFFORTS POUR ESTIMATION DE L'EQUILIBRE
-!
-    call nmequi(eta, fonact, sddyna, ds_contact, veasse,&
-                cnfext, cnfint)
-!
-! --- POINTEUR SUR LES DDLS ELIMINES PAR AFFE_CHAR_CINE
-!
-    if (lcine) then
+    if (l_load_cine) then
         call nmpcin(matass)
         call jeveuo(matass(1:19)//'.CCID', 'L', vi = v_ccid)
     endif
+    call dismoi('PROF_CHNO', disp_prev, 'CHAM_NO', repk=profch)
+    call jeveuo(profch(1:19)//'.DEEQ', 'L', vi=v_deeq)
 !
-! --- REPERAGE DDL LAGRANGE DE CONTACT
+! - For contact dof
 !
     if (l_cont_cont .or. l_cont_lac) then
         sdnuco = sdnume(1:19)//'.NUCO'
-        call jeveuo(sdnuco, 'L', jnuco)
+        call jeveuo(sdnuco, 'L', vi = v_sdnuco)
     endif
 !
-! --- ACCES NUMEROTATION DUALISATION DES EQUATIONS
+! - Compute RESI_COMP_RELA
 !
-    call dismoi('PROF_CHNO', depmoi, 'CHAM_NO', repk=profch)
-    call jeveuo(profch(1:19)//'.DEEQ', 'L', vi=deeq)
-!
-! --- CALCULE LE MAX DES RESIDUS PAR CMP POUR LE RESIDU RESI_COMP_RELA
-!
-    if (lcmp) then
+    if (l_resi_comp) then
         call rescmp(cndiri, cnfext, cnfint, cnfnod,&
-                    ds_contact,&
-                    maxres, noddlm, icomp)
+                    ds_contact ,&
+                    r_comp_vale, r_comp_name, r_comp_indx)
     endif
 !
-! --- ACCES AUX CHAM_NO
+! - Compute force for denominator of RESI_GLOB_RELA
 !
-    call jeveuo(cnfint(1:19)//'.VALE', 'L', vr=fint)
-    call jeveuo(cndiri(1:19)//'.VALE', 'L', vr=v_diri)
-    call jeveuo(cnfext(1:19)//'.VALE', 'L', vr=fext)
-    call jeveuo(cnbudi(1:19)//'.VALE', 'L', vr=budi)
-    call jeveuo(cndfdo(1:19)//'.VALE', 'L', vr=dfdo)
-    if (lpilo) then
-        call jeveuo(cndipi(1:19)//'.VALE', 'L', vr=dipi)
+    call nmrede(list_func_acti, sddyna    ,&
+                sdnume        , nb_equa   , matass,&
+                ds_material   , ds_contact,&
+                cnfext        , cnfint    , cndiri,&
+                hval_measse   , hval_incr ,&
+                r_char_vale   , r_char_indx)
+!
+! - Access to fields
+!
+    call jeveuo(cnfint(1:19)//'.VALE', 'L', vr=v_cnfint)
+    call jeveuo(cndiri(1:19)//'.VALE', 'L', vr=v_cndiri)
+    call jeveuo(cnfext(1:19)//'.VALE', 'L', vr=v_cnfext)
+    call jeveuo(cnbudi(1:19)//'.VALE', 'L', vr=v_cnbudi)
+    call jeveuo(cndfdo(1:19)//'.VALE', 'L', vr=v_cndfdo)
+    if (l_pilo) then
+        call jeveuo(cndipi(1:19)//'.VALE', 'L', vr=v_cndipi)
     endif
-    if (linit) then
+    if (l_varc_init) then
         call jeveuo(ds_material%fvarc_init(1:19)//'.VALE', 'L', vr=v_fvarc_init)
     endif
-    if (lrefe) then
-        call jeveuo(cnrefe(1:19)//'.VALE', 'L', vr=refe)
-    endif
-    if (lcine) then
-        call jeveuo(cnfnod(1:19)//'.VALE', 'L', jfnod)
+    if (l_resi_refe) then
+        call jeveuo(cnrefe(1:19)//'.VALE', 'L', vr=v_cnrefe)
     endif
     if (ds_contact%l_cnctdf) then
-        call jeveuo(ds_contact%cnctdf(1:19)//'.VALE', 'L', vr=v_cont_disc)
+        call jeveuo(ds_contact%cnctdf(1:19)//'.VALE', 'L', vr=v_cnctdf)
     endif
 !
-! --- CALCUL DES FORCES POUR MISE A L'ECHELLE (DENOMINATEUR)
+! - Compute
 !
-    call nmrede(sdnume, fonact, sddyna, matass,&
-                ds_material, ds_contact,&
-                veasse, neq, foiner, cnfext, cnfint,&
-                vchar, ichar)
+    do i_equa = 1, nb_equa
 !
-! --- CALCUL DES RESIDUS
-!
-    do ieq = 1, neq
-!
-! ----- SI SCHEMA NON EN DEPLACEMENT: ON IGNORE LA VALEUR DU RESIDU
-!
-        if (lndepl) then
-            if (v_diri(ieq) .ne. 0.d0) then
-                goto 20
+        if (l_no_disp) then
+            if (v_cndiri(i_equa) .ne. 0.d0) then
+                cycle
             endif
         endif
-!
-! ----- SI CHARGEMENT CINEMATIQUE: ON IGNORE LA VALEUR DU RESIDU
-!
-        if (lcine) then
-            if (v_ccid(ieq) .eq. 1) then
-                goto 20
+        if (l_load_cine) then
+            if (v_ccid(i_equa) .eq. 1) then
+                cycle
             endif
         endif
-!
-! ----- SI LAGRANGIEN DE CONTACT/FROT: ON IGNORE LA VALEUR DU RESIDU
-!
         if (l_cont_cont .or. l_cont_lac) then
-            if (zi(jnuco+ieq-1) .eq. 1) then
-                goto 20
+            if (v_sdnuco(i_equa) .eq. 1) then
+                cycle
             endif
         endif
 !
 ! --- CALCUL DU RESIDU A PROPREMENT PARLER
 !
-        if (lpilo) then
-            val1 = abs(fint(ieq)+v_diri(ieq)+budi(ieq) -fext(ieq)-dfdo(1+ieq-1)-eta*dipi(ieq))
+        if (l_pilo) then
+            val1 = abs(v_cnfint(i_equa)+v_cndiri(i_equa)+v_cnbudi(i_equa)-&
+                       v_cnfext(i_equa)-v_cndfdo(1+i_equa-1)-eta*v_cndipi(i_equa))
         else
             if (ds_contact%l_cnctdf) then
-                val1 = abs(fint(ieq)+v_diri(ieq)+v_cont_disc(ieq)+budi(ieq)-fext(ieq)-dfdo(1+ieq-1))
+                val1 = abs(v_cnfint(i_equa)+v_cndiri(i_equa)+&
+                           v_cnctdf(i_equa)+v_cnbudi(i_equa)-&
+                           v_cnfext(i_equa)-v_cndfdo(i_equa))
             else
-                val1 = abs(fint(ieq)+v_diri(ieq)+budi(ieq) -fext(ieq)-dfdo(1+ieq-1) )
+                val1 = abs(v_cnfint(i_equa)+v_cndiri(i_equa)+v_cnbudi(i_equa)-&
+                           v_cnfext(i_equa)-v_cndfdo(i_equa) )
             endif
         endif
 !
 ! --- VRESI: MAX RESIDU D'EQUILIBRE
 !
-        if (vresi .le. val1) then
-            vresi = val1
-            iresi = ieq
+        if (r_resi_vale .le. val1) then
+            r_resi_vale = val1
+            r_resi_indx = i_equa
         endif
 !
 ! --- SI CONVERGENCE EN CONTRAINTE ACTIVE
 !
-        if (lrefe) then
-            if (deeq(2*ieq) .gt. 0) then
+        if (l_resi_refe) then
+            if (v_deeq(2*i_equa) .gt. 0) then
                 if (ds_contact%l_cnctdf) then
-                    val4 = abs(fint(ieq)+v_diri(ieq)+v_cont_disc(ieq)+&
-                               budi(ieq)-fext(ieq)-dfdo(1+ieq-1))/refe(ieq)
+                    val4 = abs(v_cnfint(i_equa)+v_cndiri(i_equa)+v_cnctdf(i_equa)+&
+                               v_cnbudi(i_equa)-v_cnfext(i_equa)-v_cndfdo(i_equa))/v_cnrefe(i_equa)
                 else
-                    val4 = abs(fint(ieq)+v_diri(ieq)+budi(ieq) -fext(ieq)-dfdo(1+ieq-1))/&
-                           refe(ieq)
+                    val4 = abs(v_cnfint(i_equa)+v_cndiri(i_equa)+v_cnbudi(i_equa)-&
+                               v_cnfext(i_equa)-v_cndfdo(i_equa))/v_cnrefe(i_equa)
                 endif
-                if (vrefe .le. val4) then
-                    vrefe = val4
-                    irefe = ieq
+                if (r_refe_vale .le. val4) then
+                    r_refe_vale = val4
+                    r_refe_indx = i_equa
                 endif
             endif
         endif
-!
-! --- SI TEST CONTRAINTES INITIALES
-!
-        if (linit) then
-            val5 = abs(v_fvarc_init(ieq))
-            if (vinit .le. val5) then
-                vinit = val5
+! ----- Initial external state variables
+        if (l_varc_init) then
+            val5 = abs(v_fvarc_init(i_equa))
+            if (r_varc_vale .le. val5) then
+                r_varc_vale = val5
             endif
         endif
- 20     continue
     end do
 !
 ! - Evaluate residuals in applying HYPER-REDUCTION
 !
-    if (l_rom .and. ds_algorom%phase .eq. 'HROM') then
-        call romAlgoNLMecaResidual(fint, fext, ds_algorom, lcine, v_ccid,&
-                                   vresi)
-    endif
-    if (l_rom .and. ds_algorom%phase .eq. 'CORR_EF') then
-        call romAlgoNLCorrEFMecaResidual(fint, fext, ds_algorom, lcine, v_ccid,&
-                                         vresi)
+    if (l_rom) then
+        if (ds_algorom%phase .eq. 'HROM') then
+            call romAlgoNLMecaResidual(v_cnfint, v_cnfext, ds_algorom, l_load_cine, v_ccid,&
+                                       r_resi_vale)
+        elseif (ds_algorom%phase .eq. 'CORR_EF') then
+            call romAlgoNLCorrEFMecaResidual(v_cnfint, v_cnfext, ds_algorom, l_load_cine, v_ccid,&
+                                             r_resi_vale)
+        else
+            ASSERT(ASTER_FALSE)
+        endif
     endif
 !
-! --- SYNTHESE DES RESULTATS
+! - Resultats
 !
-    vmaxi = vresi
-    imaxi = iresi
-    if (vchar .gt. 0.d0) then
-        vrela = vresi/vchar
-        irela = iresi
+    r_maxi_vale = r_resi_vale
+    r_maxi_indx = r_resi_indx
+    if (r_char_vale .gt. 0.d0) then
+        r_rela_vale = r_resi_vale/r_char_vale
+        r_rela_indx = r_resi_indx
     else
-        vrela = -1.d0
+        r_rela_vale = -1.d0
     endif
 !
-    if (lcmp) then
-        vcomp = maxres
-    endif
-!
-! --- RESIDUS SPECIFIQUES POUR NEWTON GENERALISE
+! - Contact with generalized Newton
 !
     if (l_cont_cont .or. l_cont_lac) then
-        call mmconv(noma , ds_contact, valinc, solalg, vfrot,&
-                    nfrot, vgeom     , ngeom, vpene)
+        call mmconv(mesh       , ds_contact ,&
+                    hval_incr  , hval_algo  ,&
+                    r_fric_vale, r_fric_name,&
+                    r_geom_vale, r_geom_name,&
+                    r_pene_vale)
         if (nint(ds_contact%continue_pene) .eq. 3 .or. &
-            nint(ds_contact%continue_pene) .eq. 4 ) ds_conv%l_stop_pene = .false._1
+            nint(ds_contact%continue_pene) .eq. 4 ) then
+            ds_conv%l_stop_pene = ASTER_FALSE
+        endif
     endif
 !
 ! - Save informations about residuals into convergence datastructure
 !
-    call nmimre_dof(numedd, ds_conv, vrela, vmaxi, vrefe, &
-                    vcomp , vfrot  , vgeom, irela, imaxi, &
-                    irefe , noddlm , icomp, nfrot, ngeom, vpene)
+    call nmimre_dof(nume_dof   , ds_conv,&
+                    r_rela_vale, r_maxi_vale, r_refe_vale, r_comp_vale , r_fric_vale, r_geom_vale,&
+                    r_rela_indx, r_maxi_indx, r_refe_indx, r_comp_name , r_comp_indx, r_fric_name,&
+                    r_geom_name, r_pene_vale)
 !
 ! - Set value of residuals informations in convergence table
 !
@@ -390,17 +375,17 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 ! --- VERIFICATION QUE LES VARIABLES DE COMMANDE INITIALES CONDUISENT
 ! --- A DES FORCES NODALES NULLES
 !
-    if (linit) then
+    if (l_varc_init) then
         if (l_rela) then
-            if (vchar .gt. resi_glob_rela) then
-                vinit = vinit/vchar
-                if (vinit .gt. resi_glob_rela) then
-                    call nmvcmx(mate, noma, varc_refe, commoi)
+            if (r_char_vale .gt. resi_glob_rela) then
+                r_varc_vale = r_varc_vale/r_char_vale
+                if (r_varc_vale .gt. resi_glob_rela) then
+                    call nmvcmx(mate, mesh, varc_refe, varc_prev)
                 endif
             endif
         else
-            if (vinit .gt. resi_glob_maxi) then
-                call nmvcmx(mate, noma, varc_refe, commoi)
+            if (r_varc_vale .gt. resi_glob_maxi) then
+                call nmvcmx(mate, mesh, varc_refe, varc_prev)
             endif
         endif
     endif
