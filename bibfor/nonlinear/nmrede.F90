@@ -17,10 +17,12 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmrede(sdnume, fonact, sddyna, matass,&
-                  ds_material, ds_contact,&
-                  veasse, neq, foiner, cnfext, cnfint,&
-                  vchar, ichar)
+subroutine nmrede(list_func_acti, sddyna     ,&
+                  sdnume        , nb_equa    , matass,&
+                  ds_material   , ds_contact ,&
+                  cnfext        , cnfint     , cndiri,&
+                  hval_measse   , hval_incr  ,&
+                  r_char_vale   , r_char_indx)
 !
 use NonLin_Datastructure_type
 !
@@ -34,167 +36,156 @@ implicit none
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/ndynlo.h"
-#include "asterfort/nmchex.h"
+#include "asterfort/ndiner.h"
 !
-character(len=19) :: sddyna, sdnume
+integer, intent(in) :: list_func_acti(*)
+character(len=19), intent(in) :: sddyna, sdnume
+integer, intent(in) :: nb_equa
+character(len=19), intent(in) :: matass
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Contact), intent(in) :: ds_contact
-character(len=19) :: veasse(*)
-character(len=19) :: matass
-integer :: fonact(*)
-real(kind=8) :: vchar
-integer :: ichar
-integer :: neq
-character(len=19) :: foiner, cnfext, cnfint
+character(len=19), intent(in) :: cnfext, cnfint, cndiri
+character(len=19), intent(in) :: hval_measse(*)
+character(len=19), intent(in) :: hval_incr(*)
+real(kind=8), intent(out) :: r_char_vale
+integer, intent(out) :: r_char_indx
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE MECA_NON_LINE (UTILITAIRE - RESIDU)
+! MECA_NON_LINE - Algorithm
 !
-! MAXIMUM DU CHARGEMENT EXTERIEUR
+! Compute force for denominator of RESI_GLOB_RELA
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! IN  NUMEDD : NUMEROTATION NUME_DDL
-! In  ds_contact       : datastructure for contact management
+! In  list_func_acti   : list of active functionnalities
+! In  sddyna           : datastructure for dynamic
+! In  sdnume           : datastructure for dof positions
+! In  nb_equa          : total number of equations
+! In  matass           : matrix
 ! In  ds_material      : datastructure for material parameters
-! IN  SDNUME : NOM DE LA SD NUMEROTATION
-! IN  FONACT : FONCTIONNALITES ACTIVEES
-! IN  MATASS : MATRICE DU PREMIER MEMBRE ASSEMBLEE
-! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
-! IN  SDDYNA : SD DYNAMIQUE
-! IN  NEQ    : NOMBRE D'EQUATIONS
-! IN  FOINER : VECT_ASSE DES FORCES D'INERTIE
-! IN  CNFEXT : VECT_ASSE DES FORCES EXTERIEURES APPLIQUEES (NEUMANN)
-! IN  CNFINT : VECT_ASSE DES FORCES INTERIEURES
-! OUT VCHAR  : CHARGEMENT EXTERIEUR MAXI
-! OUT ICHAR  : DDL OU LE CHARGEMENT EXTERIEUR EST MAXI
+! In  ds_contact       : datastructure for contact management
+! In  cnfext           : nodal field for external force
+! In  cnfint           : nodal field for internal force
+! In  cndiri           : nodal field for support reaction
+! In  hval_measse      : hat-variable for matrix
+! In  hval_incr        : hat-variable for incremental values fields
+! Out r_char_vale      : norm for denominator of RESI_GLOB_RELA
+! Out r_char_indx      : index of value for denominator of RESI_GLOB_RELA
 !
+! --------------------------------------------------------------------------------------------------
 !
-!
-!
-    integer :: jccid
     integer :: ifm, niv
-    aster_logical :: ldyna, lcine, l_cont_cont, l_cont_lac
-    character(len=19) :: cndiri
-    integer :: ieq
-    real(kind=8) :: val2, val3, appui, fext
+    aster_logical :: l_dyna, l_load_cine, l_cont_cont, l_cont_lac
+    character(len=19) :: cniner
+    integer :: i_equa
+    real(kind=8) :: val2, appui, fext
     character(len=24) :: sdnuco
-    integer :: jnuco
-    real(kind=8), pointer :: v_cont_disc(:) => null()
-    real(kind=8), pointer :: v_diri(:) => null()
-    real(kind=8), pointer :: vfext(:) => null()
-    real(kind=8), pointer :: fint(:) => null()
-    real(kind=8), pointer :: iner(:) => null()
+    integer, pointer :: v_ccid(:) => null()
+    integer, pointer :: v_sdnuco(:) => null()
+    real(kind=8), pointer :: v_cnctdf(:) => null()
+    real(kind=8), pointer :: v_cndiri(:) => null()
+    real(kind=8), pointer :: v_cnfext(:) => null()
+    real(kind=8), pointer :: v_cnfint(:) => null()
+    real(kind=8), pointer :: v_cniner(:) => null()
     real(kind=8), pointer :: v_fvarc_curr(:) => null()
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
 !
-! --- INITIALISATIONS
+! - Initializations
 !
-    vchar = 0.d0
-    ichar = 0
-    jccid = 0
+    r_char_vale = 0.d0
+    r_char_indx = 0
 !
-! --- FONCTIONNALITES ACTIVEES
+! - Active functionnalities
 !
-    ldyna = ndynlo(sddyna,'DYNAMIQUE')
-    lcine = isfonc(fonact,'DIRI_CINE')
-    l_cont_cont = isfonc(fonact,'CONT_CONTINU')
-    l_cont_lac  = isfonc(fonact,'CONT_LAC')
+    l_dyna      = ndynlo(sddyna,'DYNAMIQUE')
+    l_load_cine = isfonc(list_func_acti,'DIRI_CINE')
+    l_cont_cont = isfonc(list_func_acti,'CONT_CONTINU')
+    l_cont_lac  = isfonc(list_func_acti,'CONT_LAC')
 !
-! --- DECOMPACTION DES VARIABLES CHAPEAUX
+! - Compute inertial force
 !
-    call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
-!
-! --- ACCES DDLS IMPOSES PAR AFFE_CHAR_CINE :
-!
-    if (lcine) then
-        call jeveuo(matass(1:19)//'.CCID', 'L', jccid)
+    if (l_dyna) then
+        cniner = '&&CNPART.CHP1'
+        call ndiner(nb_equa, sddyna, hval_incr, hval_measse, cniner)
     endif
 !
-! --- REPERAGE DDL LAGRANGE DE CONTACT
+! - For kinematic loads
+!
+    if (l_load_cine) then
+        call jeveuo(matass(1:19)//'.CCID', 'L', vi = v_ccid)
+    endif
+!
+! - For contact dof
 !
     if (l_cont_cont .or. l_cont_lac) then
         sdnuco = sdnume(1:19)//'.NUCO'
-        call jeveuo(sdnuco, 'L', jnuco)
+        call jeveuo(sdnuco, 'L', vi = v_sdnuco)
     endif
 !
-! --- ACCES AUX CHAM_NO
+! - Access
 !
-    call jeveuo(cnfint(1:19)//'.VALE', 'L', vr=fint)
-    call jeveuo(cndiri(1:19)//'.VALE', 'L', vr=v_diri)
-    call jeveuo(cnfext(1:19)//'.VALE', 'L', vr=vfext)
+    call jeveuo(cnfint(1:19)//'.VALE', 'L', vr=v_cnfint)
+    call jeveuo(cndiri(1:19)//'.VALE', 'L', vr=v_cndiri)
+    call jeveuo(cnfext(1:19)//'.VALE', 'L', vr=v_cnfext)
     call jeveuo(ds_material%fvarc_curr(1:19)//'.VALE', 'L', vr=v_fvarc_curr)
-!
-    if (ldyna) then
-        call jeveuo(foiner(1:19)//'.VALE', 'L', vr=iner)
+    if (l_dyna) then
+        call jeveuo(cniner(1:19)//'.VALE', 'L', vr=v_cniner)
     endif
-
     if (ds_contact%l_cnctdf) then
-        call jeveuo(ds_contact%cnctdf(1:19)//'.VALE', 'L', vr=v_cont_disc)
+        call jeveuo(ds_contact%cnctdf(1:19)//'.VALE', 'L', vr=v_cnctdf)
     endif
 !
-! --- CALCUL DES RESIDUS
+! - Compute
 !
-    do ieq = 1, neq
-!
-! ----- QUELLE REACTION D'APPUI ?
-!
+    do i_equa = 1, nb_equa
+! ----- Select support force
         appui = 0.d0
-        fext = 0.d0
-        if (lcine) then
-            if (zi(jccid+ieq-1) .eq. 1) then
-                appui = - fint(ieq)
-                fext = 0.d0
+        fext  = 0.d0
+        if (l_load_cine) then
+            if (v_ccid(i_equa) .eq. 1) then
+                appui = - v_cnfint(i_equa)
+                fext  = 0.d0
             else
                 if (ds_contact%l_cnctdf) then
-                    appui = v_diri(ieq) + v_cont_disc(ieq)
+                    appui = v_cndiri(i_equa) + v_cnctdf(i_equa)
                 else
-                    appui = v_diri(ieq)
+                    appui = v_cndiri(i_equa)
                 endif
-                fext = vfext(ieq)
+                fext = v_cnfext(i_equa)
             endif
         else
             if (ds_contact%l_cnctdf) then
-                appui = v_diri(ieq) + v_cont_disc(ieq)
+                appui = v_cndiri(i_equa) + v_cnctdf(i_equa)
             else
-                appui = v_diri(ieq)
+                appui = v_cndiri(i_equa)
             endif
-            fext = vfext(ieq)
+            fext = v_cnfext(i_equa)
         endif
-!
-        val2 = abs(appui-fext)+abs(v_fvarc_curr(ieq))
-!
-! ----- SI LAGRANGIEN DE CONTACT/FROT: ON IGNORE LA VALEUR DU RESIDU
-!
+! ----- Compute value
+        val2 = abs(appui-fext)+abs(v_fvarc_curr(i_equa))
+! ----- Exclude contact dof
         if (l_cont_cont .or. l_cont_lac) then
-            if (zi(jnuco+ieq-1) .eq. 1) then
-                goto 20
+            if (v_sdnuco(i_equa) .eq. 1) then
+                cycle
             endif
         endif
-!
-! ----- VCHAR: MAX CHARGEMENT EXTERIEUR EN STATIQUE
-!
-        if (vchar .le. val2) then
-            vchar = val2
-            ichar = ieq
+! ----- Get maximum value (static)
+        if (r_char_vale .le. val2) then
+            r_char_vale = val2
+            r_char_indx = i_equa
         endif
-!
-! ----- VCHAR: MAX CHARGEMENT EXTERIEUR EN DYNAMIQUE
-!
-        if (ldyna) then
-            val3 = abs(iner(ieq))
-            if (vchar .le. val3) then
-                vchar = val3
-                ichar = ieq
+! ----- Get maximum value (dynamic)
+        if (l_dyna) then
+            if (r_char_vale .le. abs(v_cniner(i_equa))) then
+                r_char_vale = abs(v_cniner(i_equa))
+                r_char_indx = i_equa
             endif
         endif
-!
- 20     continue
     end do
 !
     call jedema()

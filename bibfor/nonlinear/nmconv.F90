@@ -187,11 +187,14 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! ----- Compute residuals
 !
-        call nmresi(noma  , ds_material, numedd  , sdnume  , fonact,&
-                    sddyna, ds_conv, ds_print, ds_contact,&
-                    matass, numins , eta     , valinc,&
-                    solalg, veasse , measse  , ds_inout, ds_algorom,&
-                    vresi , vchar)
+        call nmresi(noma    , fonact    , ds_material,&
+                    numedd  , sdnume    , sddyna     ,&
+                    ds_conv , ds_print  , ds_contact ,&
+                    ds_inout, ds_algorom,&
+                    matass  , numins    , eta        ,&
+                    valinc  , solalg    ,&
+                    veasse  , measse    ,& 
+                    vresi   , vchar)
 !
 ! ----- Evaluate convergence of residuals
 !

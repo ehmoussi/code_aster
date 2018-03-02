@@ -17,23 +17,23 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmrede(sdnume, fonact, sddyna, matass,&
-                      ds_material, ds_contact,&
-                      veasse, neq, foiner, cnfext, cnfint,&
-                      vchar, ichar)
+    subroutine nmrede(list_func_acti, sddyna     ,&
+                      sdnume        , nb_equa    , matass,&
+                      ds_material   , ds_contact ,&
+                      cnfext        , cnfint     , cndiri,&
+                      hval_measse   , hval_incr  ,&
+                      r_char_vale   , r_char_indx)
         use NonLin_Datastructure_type
-        character(len=19) :: sdnume
+        integer, intent(in) :: list_func_acti(*)
+        character(len=19), intent(in) :: sddyna, sdnume
+        integer, intent(in) :: nb_equa
+        character(len=19), intent(in) :: matass
         type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Contact), intent(in) :: ds_contact
-        integer :: fonact(*)
-        character(len=19) :: sddyna
-        character(len=19) :: matass
-        character(len=19) :: veasse(*)
-        integer :: neq
-        character(len=19) :: foiner
-        character(len=19) :: cnfext
-        character(len=19) :: cnfint
-        real(kind=8) :: vchar
-        integer :: ichar
+        character(len=19), intent(in) :: cnfext, cnfint, cndiri
+        character(len=19), intent(in) :: hval_measse(*)
+        character(len=19), intent(in) :: hval_incr(*)
+        real(kind=8), intent(out) :: r_char_vale
+        integer, intent(out) :: r_char_indx
     end subroutine nmrede
 end interface
