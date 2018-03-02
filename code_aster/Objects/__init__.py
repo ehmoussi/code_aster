@@ -44,6 +44,7 @@ from .mechanicalload_ext import GenericMechanicalLoad
 from .meshcoordinatesfield_ext import MeshCoordinatesField
 from .model_ext import Model
 from .resultscontainer_ext import ResultsContainer
+from .surface_ext import Surface
 from .table_ext import Table
 from .timestepmanager_ext import TimeStepManager
 

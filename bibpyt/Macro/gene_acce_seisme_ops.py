@@ -60,8 +60,7 @@ def gene_acce_seisme_ops(self, **kwargs):
     # création de l'objet generator
     generator = Generator.factory(self, params)
     try:
-        toReturn = generator.run()
-        return toReturn
+        return generator.run()
     except Exception, err:
         trace = ''.join(traceback.format_tb(sys.exc_traceback))
         UTMESS('F', 'SUPERVIS2_5', valk=('GENE_ACCE_SEISME', trace, str(err)))
