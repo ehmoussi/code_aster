@@ -136,6 +136,14 @@ class ExtendedTable(injector(Table), Table):
             lisdic.append(d)
         return Table(lisdic, lpar, ltyp, titr, self.nom)
 
+    def Valeurs(self):
+        """
+        Retourne une liste contenant les paramètres et les valeurs
+        """
+        values = self.exportValuesToPython()
+        parameters = self.exportParametersToPython()
+        return [parameters, values]
+
 
 # class table_fonction(table_sdaster):
 #     """Table contenant une colonne FONCTION et/ou FONCTION_C dont les

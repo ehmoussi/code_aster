@@ -74,6 +74,18 @@ public:
     {};
 
     /**
+     * @brief Copy parameters to python list
+     * @return  return list of parameters
+     */
+    PyObject* exportParametersToPython() const throw ( std::runtime_error );
+
+    /**
+     * @brief Copy values to python list [[[func1_abs],[func1_ord]],[[func2_abs],[func2_ord]],...]
+     * @return  return list of list of list of values
+     */
+    PyObject* exportValuesToPython() const throw ( std::runtime_error );
+
+    /**
      * @brief Get the result name
      * @return  name of the result
      */
@@ -83,7 +95,7 @@ public:
             return "";
         _property->updateValuePointer();
         return (*_property)[3].toString();
-    }
+    };
 
     /**
      * @brief Return the number of points of the function

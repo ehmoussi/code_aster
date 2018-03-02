@@ -3,7 +3,7 @@
  * @brief Implementation de Surface
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -24,3 +24,51 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "Functions/Surface.h"
+#include <boost/python.hpp>
+
+PyObject* SurfaceInstance::exportParametersToPython() const throw ( std::runtime_error )
+{
+    if( ! _parameters->exists() )
+        throw std::runtime_error( getName() + " does not exist" );
+
+    _parameters->updateValuePointer();
+
+    using namespace boost::python;
+    using boost::python::list;
+
+    list toReturn;
+    for( int pos = 0; pos < _parameters->size(); ++pos )
+    {
+        toReturn.append( (*_parameters)[ pos ] );
+    }
+    return incref( toReturn.ptr() );
+};
+
+PyObject* SurfaceInstance::exportValuesToPython() const throw ( std::runtime_error )
+{
+    if( ! _value->exists() )
+        throw std::runtime_error( getName() + " does not exist" );
+
+    _value->buildFromJeveux();
+
+    using namespace boost::python;
+    using boost::python::list;
+
+    list toReturn;
+    for( const auto& curIter : *_value )
+    {
+        const auto size = curIter.size()/2;
+        list list1;
+        list list2;
+        list list3;
+        for( int pos = 0; pos < size; ++pos )
+        {
+            list2.append( curIter[ pos ] );
+            list3.append( curIter[ pos + size ] );
+        }
+        list1.append( list2 );
+        list1.append( list3 );
+        toReturn.append( list1 );
+    }
+    return incref( toReturn.ptr() );
+};
