@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,54 +15,46 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmnkft(solveu, sddisc, iterat)
-    implicit none
-#include "jeveux.h"
 !
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
+subroutine nmnkft(solver, sddisc, iterat_)
+!
+implicit none
+!
 #include "asterfort/jeveuo.h"
 #include "asterfort/nmlere.h"
 #include "asterfort/nmlerr.h"
-    integer :: iterat
-    character(len=19) :: sddisc
 !
-! ----------------------------------------------------------------------
+character(len=19), intent(in) :: solver, sddisc
+integer, optional, intent(in) :: iterat_
+!
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE POUR METHODE DE NEWTON INEXACTE
 !
 ! CALCUL DE LA PRECISION DE LA RESOLUTION DU SYSTEME LINEAIRE A CHAQUE
 ! ITERATION DE NEWTON POUR NEWTON-KRYLOV APPELEE FORCING TERM
-! ----------------------------------------------------------------------
 !
-! IN  MATASS : SD MATRICE ASSEMBLEE
+! --------------------------------------------------------------------------------------------------
+!
+!
+! SCHEMA DE CALCUL INPIRE DE "SOLVING NONLINEAR EQUATION WITH
+!     NEWTON'S METHOD", C.T. KELLEY, SIAM, PAGE 62-63
 ! IN  SDDISC : SD DISCRETISATION
 ! IN  ITERAT : NUMERO ITERATION NEWTON
 !
+! --------------------------------------------------------------------------------------------------
 !
-!
-!
-!
-    integer ::  ibid
+    integer ::  ibid, iterat
     real(kind=8) :: epsi, epsold, resnew(1), resold(1), epsmin
-    character(len=19) :: solveu
     real(kind=8), pointer :: slvr(:) => null()
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-!
-    call jemarq()
-!
-! --- CALCUL DE LA PRECISION DE RESOLUTION POUR L'ITERATION SUIVANTE
-!
-!
-! --- SCHEMA DE CALCUL INPIRE DE "SOLVING NONLINEAR EQUATION WITH
-!     NEWTON'S METHOD", C.T. KELLEY, SIAM, PAGE 62-63
-    call jeveuo(solveu//'.SLVR', 'E', vr=slvr)
-    if (iterat .eq. -1) then
+    call jeveuo(solver//'.SLVR', 'E', vr=slvr)
+    if (.not. present(iterat_)) then
         call nmlerr(sddisc, 'L', 'INIT_NEWTON_KRYLOV', epsi, ibid)
     else
+        iterat = iterat_
         if (iterat .eq. 0) then
             call nmlere(sddisc, 'L', 'VCHAR', iterat, resold(1))
         else
@@ -75,19 +67,14 @@ subroutine nmnkft(solveu, sddisc, iterat)
             goto 10
         endif
         if ((0.9d0*epsold**2) .gt. 0.2d0) then
-            epsi=min(max(0.1d0*resnew(1)**2/resold(1)**2,0.9d0*epsold**2)&
-            ,4.d-1*epsold)
+            epsi=min(max(0.1d0*resnew(1)**2/resold(1)**2,0.9d0*epsold**2),4.d-1*epsold)
         else
             epsmin = slvr(1)
-            epsi=max(min(0.1d0*resnew(1)**2/resold(1)**2,4.d-1*epsold)&
-            ,epsmin)
-!
-!
+            epsi=max(min(0.1d0*resnew(1)**2/resold(1)**2,4.d-1*epsold),epsmin)
         endif
     endif
 !
 10  continue
-!
 !
 ! --- STOCKAGE DE LA PRECISION CALCULEE POUR ITERATION SUIVANTE
 !
@@ -97,6 +84,4 @@ subroutine nmnkft(solveu, sddisc, iterat)
 !
     slvr(2)=epsi
 !
-!
-    call jedema()
 end subroutine
