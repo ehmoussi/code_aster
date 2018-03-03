@@ -20,7 +20,7 @@ interface
     subroutine nmnpas(modele    , noma  , fonact,&
                       ds_print  , sddisc, sdsuiv, sddyna    , sdnume    ,&
                       ds_measure, numedd, numins, ds_contact, &
-                      valinc    , solalg, solveu, ds_conv   , lischa    )
+                      valinc    , solalg, solver, ds_conv   , lischa    )
         use NonLin_Datastructure_type
         character(len=24) :: modele
         character(len=8) :: noma
@@ -36,7 +36,7 @@ interface
         type(NL_DS_Contact), intent(inout) :: ds_contact
         character(len=19) :: valinc(*)
         character(len=19) :: solalg(*)
-        character(len=19) :: solveu
+        character(len=19) :: solver
         type(NL_DS_Conv), intent(inout) :: ds_conv
         character(len=19), intent(in) :: lischa
     end subroutine nmnpas

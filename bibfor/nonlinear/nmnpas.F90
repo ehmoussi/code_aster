@@ -20,7 +20,7 @@
 subroutine nmnpas(modele    , noma  , fonact,&
                   ds_print  , sddisc, sdsuiv, sddyna    , sdnume    ,&
                   ds_measure, numedd, numins, ds_contact, &
-                  valinc    , solalg, solveu, ds_conv   , lischa    )
+                  valinc    , solalg, solver, ds_conv   , lischa    )
 !
 use NonLin_Datastructure_type
 !
@@ -47,7 +47,7 @@ implicit none
 !
 integer :: fonact(*)
 character(len=8) :: noma
-character(len=19) :: sddyna, sdnume, sddisc, solveu
+character(len=19) :: sddyna, sdnume, sddisc, solver
 character(len=24) :: modele
 integer :: numins
 type(NL_DS_Print), intent(inout) :: ds_print
@@ -86,14 +86,12 @@ character(len=19), intent(in) :: lischa
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: lgrot, ldyna, lnkry
-    aster_logical :: l_cont, l_cont_cont, l_diri_undead
+    aster_logical :: l_cont, l_diri_undead
     integer :: neq
     character(len=19) :: depmoi, varmoi
     character(len=19) :: depplu, varplu
     character(len=19) :: depdel
-    integer :: jdepde
-    integer :: indro
-    integer :: iterat
+    integer :: jdepde, indro
     real(kind=8), pointer :: depp(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -106,7 +104,6 @@ character(len=19), intent(in) :: lischa
     l_cont        = isfonc(fonact,'CONTACT')
     lgrot         = isfonc(fonact,'GD_ROTA')
     lnkry         = isfonc(fonact,'NEWTON_KRYLOV')
-    l_cont_cont   = isfonc(fonact,'CONT_CONTINU')
     l_diri_undead = isfonc(fonact,'DIRI_UNDEAD')
 !
 ! --- POUTRES EN GRANDES ROTATIONS
@@ -159,8 +156,7 @@ character(len=19), intent(in) :: lischa
 ! --- NEWTON-KRYLOV : COPIE DANS LA SD SOLVEUR DE LA PRECISION DE LA
 !                     RESOLUTION POUR LA PREDICTION (FORCING-TERM)
     if (lnkry) then
-        iterat=-1
-        call nmnkft(solveu, sddisc, iterat)
+        call nmnkft(solver, sddisc)
     endif
 !
 ! - Initializations of contact for current time step
