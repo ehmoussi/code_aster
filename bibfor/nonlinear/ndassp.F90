@@ -99,7 +99,7 @@ character(len=19) :: cndonn
     character(len=19) :: vect(nbcoef)
     character(len=19) :: cnfint, cndiri, k19bla
     character(len=19) :: vefint, vediri
-    character(len=19) :: cnbudi, cnvcpr
+    character(len=19) :: cnbudi
     character(len=19) :: depmoi, vitmoi, accmoi
     character(len=19) :: veclag
     aster_logical :: ldepl, lvite, lacce
@@ -157,10 +157,6 @@ character(len=19) :: cndonn
 ! --- CALCUL DU VECTEUR DES CHARGEMENTS VARIABLES DYNAMIQUES (NEUMANN)
 !
     call ndasva('PRED', sddyna, veasse, cnvady)
-!
-! --- SECOND MEMBRE DES VARIABLES DE COMMANDE
-!
-    call nmchex(veasse, 'VEASSE', 'CNVCPR', cnvcpr)
 !
 ! --- QUEL VECTEUR D'INCONNUES PORTE LES LAGRANGES ?
 !
@@ -227,7 +223,7 @@ character(len=19) :: cndonn
     vect(3) = cnbudi
     vect(4) = cnfint
     vect(5) = cndiri
-    vect(6) = cnvcpr
+    vect(6) = ds_material%fvarc_pred(1:19)
     vect(7) = cndfdo
     vect(8) = cnvady
 !

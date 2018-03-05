@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
 subroutine nmxvec(modelz  , mate  , carele, ds_constitutive, ds_measure,&
                   sddisc  , sddyna, numins, valinc, solalg,&
-                  lischa  , comref, numedd,&
+                  lischa  , numedd,&
                   ds_inout, veelem, veasse, measse, nbvect,&
                   ltypve  , lcalve, loptve, lassve)
 !
@@ -33,24 +35,20 @@ implicit none
 #include "asterfort/nmcalv.h"
 #include "asterfort/nmchex.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer :: nbvect
-    character(len=6) :: ltypve(20)
-    aster_logical :: lcalve(20), lassve(20)
-    character(len=16) :: loptve(20)
-    character(len=*) :: modelz
-    character(len=24) :: mate, carele
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=24) :: numedd
-    integer :: numins
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    character(len=19) :: sddisc, sddyna, lischa
-    character(len=24) :: comref
-    character(len=19) :: veelem(*), veasse(*), measse(*)
-    character(len=19) :: solalg(*), valinc(*)
+integer :: nbvect
+character(len=6) :: ltypve(20)
+aster_logical :: lcalve(20), lassve(20)
+character(len=16) :: loptve(20)
+character(len=*) :: modelz
+character(len=24) :: mate, carele
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=24) :: numedd
+integer :: numins
+type(NL_DS_InOut), intent(in) :: ds_inout
+character(len=19) :: sddisc, sddyna, lischa
+character(len=19) :: veelem(*), veasse(*), measse(*)
+character(len=19) :: solalg(*), valinc(*)
 !
 ! ----------------------------------------------------------------------
 !
@@ -64,7 +62,6 @@ implicit none
 ! IN  NUMEDD : NUME_DDL
 ! IN  MATE   : CHAMP MATERIAU
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VARI_COM DE REFERENCE
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  LISCHA : LISTE DES CHARGES
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
@@ -124,7 +121,7 @@ implicit none
         if (lcalc) then
             call nmchex(veelem, 'VEELEM', typvec, vecele)
             call nmcalv(typvec, modele, lischa, mate  , carele,&
-                        ds_constitutive, numedd, comref, ds_measure, instam,&
+                        ds_constitutive, numedd, ds_measure, instam,&
                         instap, valinc, solalg, sddyna, option,&
                         vecele)
         endif
@@ -133,10 +130,10 @@ implicit none
 !
         if (lasse) then
             call nmchex(veasse  , 'VEASSE', typvec, vecass)
-            call nmassv(typvec  , modelz, lischa, mate, carele,&
-                        ds_constitutive, numedd, instam, instap, &
-                        sddyna         , ds_measure, valinc, comref,&
-                        ds_inout, measse, vecele, vecass)
+            call nmassv(typvec  , modelz    , lischa, &
+                        numedd  , instam    , instap, &
+                        sddyna  , ds_measure, valinc, &
+                        ds_inout, measse    , vecele, vecass)
         endif
     end do
 !

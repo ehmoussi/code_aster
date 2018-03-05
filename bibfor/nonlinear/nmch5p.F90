@@ -43,7 +43,7 @@ character(len=19) :: veasse(*)
     character(len=19) :: cnbudi, cnlapl, cnsstr, cnctdf, cnondp
     character(len=19) :: cneltc, cneltf
     character(len=19) :: cnsstf
-    character(len=19) :: cnrefe, cnvcf0, cnvcpr
+    character(len=19) :: cnrefe
     character(len=19) :: cndyna, cnmodp, cnmodc
     character(len=19) :: cnctdc, cnunil, cnfext
     character(len=19) :: cnimpp, cnimpc, cnviss
@@ -57,10 +57,9 @@ character(len=19) :: veasse(*)
     data cnsstf,cneltc    /'&&NMCH5P.CNSSTF','&&NMCH5P.CNELTC'/
     data cneltf           /'&&NMCH5P.CNELTF'/
     data cnrefe           /'&&NMCH5P.CNREFE'/
-    data cnvcf0           /'&&NMCH5P.CNVCF0'/
     data cncine,cnsstr    /'&&NMCH5P.CNCINE','&&NMCH5P.CNSSTR'/
     data cnctdf           /'&&NMCH5P.CNCTDF'/
-    data cnvcpr,cnmodp    /'&&NMCH5P.CNVCPR','&&NMCH5P.CNMODP'/
+    data cnmodp           /'&&NMCH5P.CNMODP'/
     data cndyna           /'&&NMCH5P.CNDYNA'/
     data cnmodc,cnctdc    /'&&NMCH5P.CNMODC','&&NMCH5P.CNCTDC'/
     data cnunil,cnfext    /'&&NMCH5P.CNUNIL','&&NMCH5P.CNFEXT'/
@@ -88,14 +87,12 @@ character(len=19) :: veasse(*)
     call nmcha0('VEASSE', 'CNELTC', cneltc, veasse)
     call nmcha0('VEASSE', 'CNELTF', cneltf, veasse)
     call nmcha0('VEASSE', 'CNREFE', cnrefe, veasse)
-    call nmcha0('VEASSE', 'CNVCF0', cnvcf0, veasse)
 !
 ! --- SANS VECT_ELEM POUR CONSTRUIRE
 !
     call nmcha0('VEASSE', 'CNCINE', cncine, veasse)
     call nmcha0('VEASSE', 'CNSSTR', cnsstr, veasse)
     call nmcha0('VEASSE', 'CNCTDF', cnctdf, veasse)
-    call nmcha0('VEASSE', 'CNVCPR', cnvcpr, veasse)
     call nmcha0('VEASSE', 'CNDYNA', cndyna, veasse)
     call nmcha0('VEASSE', 'CNMODP', cnmodp, veasse)
     call nmcha0('VEASSE', 'CNMODC', cnmodc, veasse)

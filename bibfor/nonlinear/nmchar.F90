@@ -81,7 +81,7 @@ character(len=19) :: solalg(*), valinc(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=24) :: mate, comref
+    character(len=24) :: mate
     aster_logical :: ldyna, lexpl
     aster_logical :: londe, llapl, lammo, lsstf, lviss
     aster_logical :: limpe, lpilo, lmacr, limpex, l_diri_undead
@@ -102,7 +102,6 @@ character(len=19) :: solalg(*), valinc(*)
 ! --- INITIALISATIONS
 !
     mate   = ds_material%field_mate
-    comref = ds_material%varc_refe
     phase  = phasez
     call nmcvec('INIT', ' ', ' ', .false._1, .false._1,&
                 nbvect, ltypve, loptve, lcalve, lassve)
@@ -169,22 +168,12 @@ character(len=19) :: solalg(*), valinc(*)
         call nmcvec('AJOU', 'CNCINE', ' ', .false._1, .true._1,&
                     nbvect, ltypve, loptve, lcalve, lassve)
 !
-! --- FORCE DE REFERENCE LIEE AUX VAR. COMMANDES EN T+
-!
-        call nmcvec('AJOU', 'CNVCF0', ' ', .true._1, .true._1,&
-                    nbvect, ltypve, loptve, lcalve, lassve)
-!
 ! --- FORCES NODALES POUR PREDICTION (SKIP FOR IMPLEX/EXPLICITE)
 !
         if (.not.(lexpl.or.limpex)) then
             call nmcvec('AJOU', 'CNFNOD', 'SIGMOI', .true._1, .true._1,&
                         nbvect, ltypve, loptve, lcalve, lassve)
         endif
-!
-! --- FORCES POUR VAR. COMM. (POUR PREDICTION)
-!
-        call nmcvec('AJOU', 'CNVCPR', ' ', .false._1, .true._1,&
-                    nbvect, ltypve, loptve, lcalve, lassve)
 !
 ! --- FORCES ISSUES DU CALCUL PAR SOUS-STRUCTURATION
 !
@@ -204,7 +193,7 @@ character(len=19) :: solalg(*), valinc(*)
 !
         call nmxvec(modele  , mate  , carele, ds_constitutive, ds_measure,&
                     sddisc  , sddyna, numins, valinc, solalg,&
-                    lischa  , comref, numedd,&
+                    lischa  , numedd,&
                     ds_inout, veelem, veasse, measse, nbvect,&
                     ltypve  , lcalve, loptve, lassve)
 !
@@ -281,7 +270,7 @@ character(len=19) :: solalg(*), valinc(*)
 !
         call nmxvec(modele  , mate  , carele, ds_constitutive, ds_measure,&
                     sddisc  , sddyna, numins, valinc, solalg,&
-                    lischa  , comref, numedd,&
+                    lischa  , numedd,&
                     ds_inout, veelem, veasse, measse, nbvect,&
                     ltypve  , lcalve, loptve, lassve)
 !
@@ -349,7 +338,7 @@ character(len=19) :: solalg(*), valinc(*)
 !
         call nmxvec(modele  , mate  , carele, ds_constitutive, ds_measure,&
                     sddisc  , sddyna, numins, valinc, solalg,&
-                    lischa  , comref, numedd,&
+                    lischa  , numedd,&
                     ds_inout, veelem, veasse, measse, nbvect,&
                     ltypve  , lcalve, loptve, lassve)
     else

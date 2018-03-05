@@ -15,11 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmassv(typvez         , modelz, lischa, mate    , carele,&
-                  ds_constitutive, numedd, instam, instap  , sddyna,&
-                  ds_measure     , valinc, comref, ds_inout, measse,&
-                  vecelz         , vecasz)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmassv(typvez    , modelz, lischa  ,&
+                  numedd    , instam, instap  , sddyna,&
+                  ds_measure, valinc, ds_inout, measse,&
+                  vecelz    , vecasz)
 !
 use NonLin_Datastructure_type
 !
@@ -49,18 +50,15 @@ implicit none
 #include "asterfort/nmvcpr.h"
 #include "asterfort/nmviss.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=*) :: modelz, typvez
-    character(len=19) :: lischa
-    real(kind=8) :: instap, instam
-    character(len=19) :: sddyna
-    character(len=24) :: mate, carele, numedd, comref
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19) :: measse(*), valinc(*)
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    character(len=*) :: vecasz, vecelz
+character(len=*) :: modelz, typvez
+character(len=19) :: lischa
+real(kind=8) :: instap, instam
+character(len=19) :: sddyna
+character(len=24) :: numedd
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19) :: measse(*), valinc(*)
+type(NL_DS_InOut), intent(in) :: ds_inout
+character(len=*) :: vecasz, vecelz
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -73,14 +71,10 @@ implicit none
 ! IN  TYPVEC : TYPE DE CALCUL VECT_ELEM
 ! IN  MODELE : MODELE
 ! IN  LISCHA : LISTE DES CHARGES
-! IN  MATE   : CHAMP MATERIAU
-! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  NUMEDD : NUME_DDL
 ! IN  INSTAP : INSTANT PLUS
 ! IN  SDDYNA : SD DYNAMIQUE
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
-! IN  COMREF : VARI_COM DE REFERENCE
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  ds_inout         : datastructure for input/output management
 ! IN  VECELE : VECT_ELEM A ASSEMBLER
@@ -219,12 +213,6 @@ implicit none
         call ascova('D', vafsdo, fomult, 'INST', instap,&
                     'R', vecass)
 !
-! --- FORCE DE REFERENCE POUR VARIABLES DE COMMANDE COURANTES
-!
-    else if (typvec.eq.'CNVCF0') then
-        call assvec('V', vecass, 1, vecele, [1.d0],&
-                    numedd, ' ', 'ZERO', 1)
-!
 ! --- CONDITIONS DE DIRICHLET VIA AFFE_CHAR_CINE (PAS DE VECT_ELEM)
 !
     else if (typvec.eq.'CNCINE') then
@@ -244,15 +232,6 @@ implicit none
         call nmchex(measse, 'MEASSE', 'MESSTR', sstru)
         call nmmacv(depplu, sstru, vecass)
 !
-! --- FORCES ISSUES DES VARIABLES DE COMMANDE (PAS DE VECT_ELEM)
-!
-    else if (typvec.eq.'CNVCPR') then
-        call nmvcpr(modele, mate  , carele, comref, ds_constitutive%compor, &
-                    valinc, nume_dof_ = numedd, base_ = 'V',&
-                    vect_elem_prev_ = '&&VEVCOM',&
-                    vect_elem_curr_ = '&&VEVCOP',&
-                    cnvcpr_ = vecass)
-!
 ! --- FORCE D'EQUILIBRE DYNAMIQUE (PAS DE VECT_ELEM)
 !
     else if (typvec.eq.'CNDYNA') then
@@ -270,7 +249,7 @@ implicit none
         call nmamod('CORR', numedd, sddyna, vitplu, vitkm1,&
                     vecass)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! --- DEBUG

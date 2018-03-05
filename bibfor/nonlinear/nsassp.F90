@@ -83,7 +83,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     parameter    (nbcoef=9)
     real(kind=8) :: coef(nbcoef)
     character(len=19) :: vect(nbcoef)
-    character(len=19) :: cnfnod, cnbudi, cnvcpr, cnsstr, cneltc, cneltf, cnfint
+    character(len=19) :: cnfnod, cnbudi, cnsstr, cneltc, cneltf, cnfint
     character(len=19) :: depmoi, k19bla
     aster_logical :: lmacr, leltc, leltf, lallv
 !
@@ -127,10 +127,6 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
     call nmasva(sddyna, veasse, cnfvdo)
 !
-! --- SECOND MEMBRE DES VARIABLES DE COMMANDE
-!
-    call nmchex(veasse, 'VEASSE', 'CNVCPR', cnvcpr)
-!
 ! --- FORCES NODALES
 !
     call nmchex(veasse, 'VEASSE', 'CNFNOD', cnfnod)
@@ -167,7 +163,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     vect(3) = cndiri
     vect(4) = cnbudi
     vect(5) = cnfnod
-    vect(6) = cnvcpr
+    vect(6) = ds_material%fvarc_pred(1:19)
     vect(7) = cndfdo
 !
 ! - Internal forces

@@ -36,6 +36,7 @@ implicit none
 #include "asterfort/ndxnpa.h"
 #include "asterfort/ndxpre.h"
 #include "asterfort/nmchar.h"
+#include "asterfort/nonlinDSMaterialTimeStep.h"
 !
 integer :: numins
 integer :: fonact(*)
@@ -91,19 +92,24 @@ integer :: nbiter
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=24) :: mate, comref
+
     aster_logical :: lerrit
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    mate   = ds_material%field_mate
-    comref = ds_material%varc_refe
+
 !
-! --- INITIALISATION DES CHAMPS D'INCONNUES POUR LE NOUVEAU PAS DE TEMPS
+! - Update for new time step
 !
-    call ndxnpa(modele, mate  , carele, fonact, ds_print,&
+    call ndxnpa(fonact, ds_print,&
                 sddisc, sddyna, sdnume, numedd, numins  ,&
                 valinc, solalg)
+!
+! - Update material parameters for new time step
+!
+    call nonlinDSMaterialTimeStep(modele         , ds_material, carele,&
+                                  ds_constitutive, valinc     ,&
+                                  numedd         , sddisc     , numins)
 !
 ! --- CALCUL DES CHARGEMENTS CONSTANTS AU COURS DU PAS DE TEMPS
 !

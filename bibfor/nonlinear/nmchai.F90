@@ -54,7 +54,7 @@ character(len=6), optional, intent(out) :: tychap_out
 ! ----------------------------------------------------------------------
 !
     integer :: zmeelm, zmeass, zveelm, zveass
-    parameter    (zmeelm=9 ,zmeass=4 ,zveelm=20,zveass=31)
+    parameter    (zmeelm=9 ,zmeass=4 ,zveelm=19,zveass=29)
     integer :: zsolal, zvalin
     parameter    (zsolal=17,zvalin=28)
 !
@@ -72,13 +72,13 @@ character(len=6), optional, intent(out) :: tychap_out
     data lveelm /'CNFINT','CNDIRI','CNBUDI','CNFNOD','CNDIDO',&
      &             'CNDIPI','CNFEDO','CNFEPI','CNLAPL','CNONDP',&
      &             'CNFSDO','CNIMPP','      ','CNDIDI','CNSSTF',&
-     &             'CNELTC','CNELTF','CNREFE','CNVCF0',&
+     &             'CNELTC','CNELTF','CNREFE',&
      &             'CNIMPC'/
     data lveass /'CNFINT','CNDIRI','CNBUDI','CNFNOD','CNDIDO',&
      &             'CNDIPI','CNFEDO','CNFEPI','CNLAPL','CNONDP',&
      &             'CNFSDO','CNIMPP','      ','CNDIDI','CNSSTF',&
-     &             'CNELTC','CNELTF','CNREFE','CNVCF0',&
-     &             'CNCINE','CNSSTR','CNCTDF','CNVCPR','CNDYNA',&
+     &             'CNELTC','CNELTF','CNREFE',&
+     &             'CNCINE','CNSSTR','CNCTDF','CNDYNA',&
      &             'CNMODP','CNMODC','CNCTDC','CNUNIL','CNFEXT',&
      &             'CNIMPC','CNVISS'/
 !

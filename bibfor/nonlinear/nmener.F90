@@ -91,7 +91,7 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter:: zveass = 31
+    integer, parameter:: zveass = 29
     integer :: iret(zveass)
     character(len=19) :: depmoi, depplu, vitmoi, vitplu, masse, amort, rigid
     character(len=19) :: fexmoi, fexplu, fammoi, fnomoi
@@ -113,6 +113,7 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     real(kind=8), pointer :: fnomo(:) => null()
     real(kind=8), pointer :: fnopl(:) => null()
     real(kind=8), pointer :: veass(:) => null()
+    real(kind=8), pointer :: v_fvarc_curr(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -151,6 +152,7 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     call nmchex(measse, 'MEASSE', 'MERIGI', rigid)
     call nmchex(measse, 'MEASSE', 'MEMASS', masse)
     call nmchex(measse, 'MEASSE', 'MEAMOR', amort)
+    call jeveuo(ds_material%fvarc_curr(1:19)//'.VALE', 'L', vr=v_fvarc_curr)
 !
 !
     do i = 1, zveass
@@ -200,12 +202,12 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 ! --------------------------------------------------------------------
             else if (i.eq.19) then
                 do j = 1, neq
-                    fexpl(j)=fexpl(j)+veass(j)
+                    fexpl(j)=fexpl(j)+v_fvarc_curr(j)
                 end do
 ! ON AJOUTE LES CONTRAINTES ISSUES DES VARIABLES DE COMMANDE AUX
 ! FORCES INTERNES EGALEMENT
                 do j = 1, neq
-                    fnopl(j)=fnopl(j)+veass(j)
+                    fnopl(j)=fnopl(j)+v_fvarc_curr(j)
                 end do
 ! --------------------------------------------------------------------
 ! 8  - CNFEPI : FORCES PILOTEES PARAMETRE ETA A PRENDRE EN COMPTE
@@ -223,22 +225,22 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
                     fexpl(j)=fexpl(j)-veass(j)
                 end do
 ! --------------------------------------------------------------------
-! 26 - CNMODC : FORCE D AMORTISSEMENT MODAL
+! 24 - CNMODC : FORCE D AMORTISSEMENT MODAL
 ! --------------------------------------------------------------------
-            else if (i.eq.26) then
+            else if (i.eq.24) then
                 do j = 1, neq
                     fampl(j)=fampl(j)+veass(j)
                 end do
 ! --------------------------------------------------------------------
 ! 16 - CNELTC : FORCES ELEMENTS DE CONTACT (CONTINU + XFEM)
 ! 17 - CNELTF : FORCES ELEMENTS DE FROTTEMENT (CONTINU + XFEM)
-! 30 - CNIMPC : FORCES IMPEDANCE
-! 22 - CNCTDF : FORCES DE FROTTEMENT (CONTACT DISCRET)
-! 27 - CNCTDC : FORCES DE CONTACT (CONTACT DISCRET)
-! 28 - CNUNIL : FORCES DE CONTACT (LIAISON_UNILATERALE)
+! 21 - CNCTDF : FORCES DE FROTTEMENT (CONTACT DISCRET)
+! 25 - CNCTDC : FORCES DE CONTACT (CONTACT DISCRET)
+! 26 - CNUNIL : FORCES DE CONTACT (LIAISON_UNILATERALE)
+! 28 - CNIMPC : FORCES IMPEDANCE
 ! --------------------------------------------------------------------
-            else if ((i.eq.16).or.(i.eq.17).or.(i.eq.30).or.&
-                     (i.eq.22) .or.(i.eq.27).or.(i.eq.28)) then
+            else if ((i.eq.16).or.(i.eq.17).or.(i.eq.28).or.&
+                     (i.eq.21) .or.(i.eq.25).or.(i.eq.26)) then
                 do j = 1, neq
                     flipl(j)=flipl(j)+veass(j)
                 end do
@@ -252,15 +254,15 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 ! CNDIRI CONTIENT BTLAMBDA PLUS CONTRIBUTION CNCTDF DU CONTACT.
 ! ON SOUHAITE AJOUTER -BT.LAMBDA A FEXTE. ON AJOUTE DONC -CNDIRI,
 ! MAIS IL FAUT ALORS LUI RETRANCHER -CNCTDF.
-                if (i .eq. 22) then
+                if (i .eq. 21) then
                     do j = 1, neq
                         fexpl(j)=fexpl(j)+veass(j)
                     end do
                 endif
 ! --------------------------------------------------------------------
-! 31 - CNVISS : CHARGEMENT VEC_ISS (FORCE_SOL)
+! 29 - CNVISS : CHARGEMENT VEC_ISS (FORCE_SOL)
 ! --------------------------------------------------------------------
-            else if (i.eq.31) then
+            else if (i.eq.29) then
 ! CHARGEMENT FORCE_SOL CNVISS. SI ON COMPTE SA CONTRIBUTION EN TANT
 ! QUE FORCE DISSIPATIVE DE LIAISON, ON DOIT PRENDRE L OPPOSE.
                 do j = 1, neq
@@ -276,9 +278,9 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
                     fnopl(j)=fnopl(j)+veass(j)
                 end do
 ! --------------------------------------------------------------------
-! 20 - CNCINE : INCREMENTS DE DEPLACEMENT IMPOSES (AFFE_CHAR_CINE)
+! 19 - CNCINE : INCREMENTS DE DEPLACEMENT IMPOSES (AFFE_CHAR_CINE)
 ! --------------------------------------------------------------------
-            else if (i.eq.20) then
+            else if (i.eq.19) then
 ! ON DOIT RECONSTRUIRE LA MATRICE DE MASSE CAR ELLE A ETE MODIFIEE
 ! POUR SUPPRIMER DES DEGRES DE LIBERTE EN RAISON DE AFFE_CHAR_CINE.
                 reassm=.true.
