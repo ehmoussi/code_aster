@@ -172,11 +172,12 @@ ERC=CALC_ERC_DYN( EVAL_FONC='OUI',
                   INFO=1,
                   SOLVEUR=_F(METHODE='MUMPS',),);
 
-                 
-### test sur le champ u 
+
+### test sur le champ u
 TEST_RESU(RESU=(_F(NUME_ORDRE=3,
                    VALE_CALC=0.957415448053491,
                    VALE_REFE=0.957415448053491,
+                   VALE_ABS='OUI',
                    REFERENCE='NON_DEFINI',
                    RESULTAT=ERC,
                    NOM_CHAM='DEPL',
@@ -185,6 +186,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=3,
                 _F(NUME_ORDRE=3,
                    VALE_CALC=-0.038110367724860,
                    VALE_REFE=-0.038110367724860,
+                   VALE_ABS='OUI',
                    REFERENCE='NON_DEFINI',
                    RESULTAT=ERC,
                    NOM_CHAM='DEPL',
@@ -193,16 +195,18 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=3,
                 _F(NUME_ORDRE=3,
                    VALE_CALC=-0.494584477951991,
                    VALE_REFE=-0.494584477951991,
+                   VALE_ABS='OUI',
                    REFERENCE='NON_DEFINI',
                    RESULTAT=ERC,
                    NOM_CHAM='DEPL',
                    NOEUD='NO4',
                    NOM_CMP='DX',),),);
 
-### test sur le champ u-v 
+### test sur le champ u-v
 TEST_RESU(RESU=(_F(NUME_ORDRE=4,
                    VALE_CALC=-0.223608826207038,
                    VALE_REFE=-0.223608826207038,
+                   VALE_ABS='OUI',
                    REFERENCE='NON_DEFINI',
                    RESULTAT=ERC,
                    NOM_CHAM='DEPL',
@@ -211,6 +215,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=4,
                 _F(NUME_ORDRE=4,
                    VALE_CALC=-0.107013222975753,
                    VALE_REFE=-0.107013222975753,
+                   VALE_ABS='OUI',
                    REFERENCE='NON_DEFINI',
                    RESULTAT=ERC,
                    NOM_CHAM='DEPL',
@@ -219,13 +224,14 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=4,
                 _F(NUME_ORDRE=4,
                    VALE_CALC=0.095122864867336,
                    VALE_REFE=0.095122864867336,
+                   VALE_ABS='OUI',
                    REFERENCE='NON_DEFINI',
                    RESULTAT=ERC,
                    NOM_CHAM='DEPL',
                    NOEUD='NO4',
                    NOM_CMP='DX',),),);
 
-########## POST-TRAITEMENTS 
+########## POST-TRAITEMENTS
 
 ### Si on s'interesse a l'expansion de donnees sur le modele, les champs solution
 ### sont stockes directement dans le concept de sortie de CALC_ERC_DYN:
@@ -254,7 +260,7 @@ TEST_TABLE( TABLE   = F_COUT,
             TYPE_TEST = 'MIN',
             REFERENCE='ANALYTIQUE',
             VALE_REFE = 0.,
-            VALE_CALC = 2.13860631521E-31, 
+            VALE_CALC = 2.13860631521E-31,
             CRITERE   = 'ABSOLU',)
 
 TEST_TABLE( TABLE   = F_COUT,
@@ -276,4 +282,3 @@ TEST_TABLE( TABLE   = F_COUT,
             CRITERE   = 'RELATIF',)
 
 test.printSummary()
-

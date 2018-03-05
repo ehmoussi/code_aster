@@ -6,6 +6,5 @@ P mpi_nbnoeud 1
 P testlist asterxx verification sequential
 
 F comm xxCalcErcDyn001a.py D 1
-F nom xxCalcErcDyn001a.mail D 0
 F nom sdld107a.mail D 0
 F nom sdld107a.msup D 0
