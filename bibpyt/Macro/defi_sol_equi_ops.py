@@ -3665,4 +3665,4 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
     dprod = tab.dict_CREA_TABLE()
     tabout = CREA_TABLE(**dprod)
 
-    return ier
+    return tabout

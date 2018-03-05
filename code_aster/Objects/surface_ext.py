@@ -32,9 +32,58 @@ from ..Utilities import injector
 class ExtendedSurface(injector(Surface), Surface):
     cata_sdj = "SD.sd_nappe.sd_nappe"
 
+    def convert(self):
+        """
+        Retourne un objet de la classe t_nappe, représentation python de la nappe
+        """
+        from Cata_Utils.t_fonction import t_fonction, t_nappe
+        para = self.Parametres()
+        vale = self.Valeurs()
+        l_fonc = []
+        i = 0
+        for pf in para[1]:
+            para_f = {'INTERPOL': pf['INTERPOL_FONC'],
+                      'PROL_DROITE': pf['PROL_DROITE_FONC'],
+                      'PROL_GAUCHE': pf['PROL_GAUCHE_FONC'],
+                      'NOM_PARA': para[0]['NOM_PARA_FONC'],
+                      'NOM_RESU': para[0]['NOM_RESU'],
+                      }
+            l_fonc.append(t_fonction(vale[1][i][0], vale[1][i][1], para_f))
+            i += 1
+        return t_nappe(vale[0], l_fonc, para[0], nom=self.nom)
+
+    def Parametres(self):
+        """
+        Retourne un dictionnaire contenant les parametres de la nappe,
+        le type jeveux (NAPPE) n'est pas retourne,
+        le dictionnaire peut ainsi etre fourni a CALC_FONC_INTERP tel quel,
+        et une liste de dictionnaire des parametres de chaque fonction.
+        """
+        prol = self.exportExtensionToPython()
+        TypeProl = {'E': 'EXCLU', 'L': 'LINEAIRE', 'C': 'CONSTANT'}
+        dico = {
+            'INTERPOL': [prol[1][0:3], prol[1][4:7]],
+           'NOM_PARA': prol[2][0:16].strip(),
+           'NOM_RESU': prol[3][0:16].strip(),
+           'PROL_DROITE': TypeProl[prol[4][1]],
+           'PROL_GAUCHE': TypeProl[prol[4][0]],
+           'NOM_PARA_FONC': prol[6][0:4].strip(),
+        }
+        lparf = []
+        nbf = (len(prol) - 7) / 2
+        for i in range(nbf):
+            dicf = {
+                'INTERPOL_FONC': [prol[7 + i * 2][0:3], prol[7 + i * 2][4:7]],
+               'PROL_DROITE_FONC': TypeProl[prol[8 + i * 2][1]],
+               'PROL_GAUCHE_FONC': TypeProl[prol[8 + i * 2][0]],
+            }
+            lparf.append(dicf)
+        return [dico, lparf]
+
     def Valeurs(self):
         """
-        Retourne une liste contenant les paramètres et les valeurs
+        Retourne la liste des valeurs du parametre,
+        et une liste de couples (abscisses,ordonnees) de chaque fonction.
         """
         values = self.exportValuesToPython()
         parameters = self.exportParametersToPython()

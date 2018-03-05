@@ -39,6 +39,7 @@ void exportSurfaceToPython()
         .def( "__init__", make_constructor(
             &initFactoryPtr< SurfaceInstance,
                              std::string >) )
+        .def( "exportExtensionToPython", &SurfaceInstance::exportExtensionToPython )
         .def( "exportValuesToPython", &SurfaceInstance::exportValuesToPython )
         .def( "exportParametersToPython", &SurfaceInstance::exportParametersToPython )
     ;

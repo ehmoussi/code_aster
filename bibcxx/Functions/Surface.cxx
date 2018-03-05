@@ -26,6 +26,26 @@
 #include "Functions/Surface.h"
 #include <boost/python.hpp>
 
+PyObject* SurfaceInstance::exportExtensionToPython() const throw ( std::runtime_error )
+{
+    if( ! _property->exists() )
+        throw std::runtime_error( getName() + " does not exist" );
+
+    _property->updateValuePointer();
+
+    using namespace boost::python;
+    using boost::python::list;
+
+    list toReturn;
+    for( int pos = 0; pos < _property->size(); ++pos )
+    {
+        const std::string toCopy = (*_property)[ pos ].toString();
+        std::cout << "toCopy " << pos << " " << toCopy << std::endl;
+        toReturn.append( toCopy );
+    }
+    return incref( toReturn.ptr() );
+};
+
 PyObject* SurfaceInstance::exportParametersToPython() const throw ( std::runtime_error )
 {
     if( ! _parameters->exists() )
