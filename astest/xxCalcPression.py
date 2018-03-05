@@ -101,9 +101,9 @@ RESU=CALC_CHAMP(reuse =RESU,
                CONTRAINTE='SIEF_NOEU',FORCE=('FORC_NODA','REAC_NODA'));
 
 p_appr_F=CALC_PRESSION(MAILLAGE=MESH,
-                             RESULTAT=RESU,
-                                GROUP_MA=('Bottom_C','Top_B',),
-                            INST=1.0,
-                    );
+                       RESULTAT=RESU,
+                       MODELE=MO,
+                       GROUP_MA=('Bottom_C','Top_B',),
+                       INST=1.0)
 
 test.assertTrue( True )
