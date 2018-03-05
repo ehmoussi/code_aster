@@ -9,7 +9,7 @@ code_aster.init()
 test = code_aster.TestCase()
 
 MESH = code_aster.Mesh()
-MESH.readMedFile("xxFluidFunction.med")
+MESH.readMedFile("sdll110a.mmed")
 
 MESH=MODI_MAILLAGE(reuse=MESH, MAILLAGE=MESH,ABSC_CURV=_F(NOEUD_ORIG='N_01_001',TOUT='OUI'))
 
@@ -58,4 +58,3 @@ test.assertEqual(TYPEFLUI.getType(), "TYPE_FLUI_STRU")
 test.assertEqual(FONC_CM.getType(), "FONCTION_SDASTER")
 
 test.printSummary()
-
