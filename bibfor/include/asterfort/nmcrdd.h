@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmcrdd(meshz          , modelz   , ds_inout , cara_elemz, ds_material,&
-                      ds_constitutive, disp_curr, strx_curr, varc_curr , time       ,&
+    subroutine nmcrdd(meshz          , modelz, ds_inout , cara_elemz, ds_material,&
+                      ds_constitutive, disp  , strx     , varc      , time       ,&
                       sd_suiv)
         use NonLin_Datastructure_type
         character(len=*), intent(in) :: meshz
@@ -27,9 +27,9 @@ interface
         character(len=*), intent(in) :: cara_elemz
         type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        character(len=*), intent(in) :: disp_curr
-        character(len=*), intent(in) :: strx_curr
-        character(len=*), intent(in) :: varc_curr
+        character(len=*), intent(in) :: disp
+        character(len=*), intent(in) :: strx
+        character(len=*), intent(in) :: varc
         real(kind=8),  intent(in) :: time
         character(len=24), intent(out) :: sd_suiv
     end subroutine nmcrdd

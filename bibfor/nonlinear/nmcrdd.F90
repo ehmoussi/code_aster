@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmcrdd(meshz          , modelz   , ds_inout , cara_elemz, ds_material,&
-                  ds_constitutive, disp_curr, strx_curr, varc_curr , time       ,&
+subroutine nmcrdd(meshz          , modelz, ds_inout, cara_elemz, ds_material,&
+                  ds_constitutive, disp  , strx    , varc      , time       ,&
                   sd_suiv)
 !
 use NonLin_Datastructure_type
@@ -36,9 +36,9 @@ type(NL_DS_InOut), intent(in) :: ds_inout
 character(len=*), intent(in) :: cara_elemz
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-character(len=*), intent(in) :: disp_curr
-character(len=*), intent(in) :: strx_curr
-character(len=*), intent(in) :: varc_curr
+character(len=*), intent(in) :: disp
+character(len=*), intent(in) :: strx
+character(len=*), intent(in) :: varc
 real(kind=8),  intent(in) :: time
 character(len=24), intent(out) :: sd_suiv
 !
@@ -57,10 +57,10 @@ character(len=24), intent(out) :: sd_suiv
 ! In  cara_elem        : name of datastructure for elementary parameters (CARTE)
 ! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
-! In  disp_curr        : current displacements
-! In  varc_curr        : command variable for current time
-! In  time             : current time
-! In  strx_curr        : fibers information for current time
+! In  disp             : displacements
+! In  varc             : external state variable
+! In  time             : time
+! In  strx             : fibers information
 ! In  ds_inout         : datastructure for input/output management
 ! Out sd_suiv          : datastructure for dof monitor parameters
 !
@@ -83,8 +83,8 @@ character(len=24), intent(out) :: sd_suiv
     sdextr_suiv = sd_suiv(1:14)
     call nmextr(meshz       , modelz        , sdextr_suiv, ds_inout , keyw_fact,&
                 nb_keyw_fact, nb_dof_monitor,&
-                cara_elemz  , ds_material   , ds_constitutive, disp_curr, strx_curr,&
-                varc_curr   , time       )
+                cara_elemz  , ds_material   , ds_constitutive, disp, strx,&
+                varc        , time       )
 !
 ! - Read name of columns
 !

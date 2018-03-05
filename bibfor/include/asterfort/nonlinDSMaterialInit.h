@@ -17,10 +17,16 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nonlinDSMaterialInit(model      , mate, cara_elem,&
+    subroutine nonlinDSMaterialInit(model      , mate     , cara_elem,&
+                                    compor     , hval_incr,&
+                                    nume_dof   , time_init,&
                                     ds_material)
         use NonLin_Datastructure_type
         character(len=24), intent(in) :: model, mate, cara_elem
+        character(len=24), intent(in) :: compor
+        character(len=19), intent(in) :: hval_incr(*)
+        character(len=24), intent(in) :: nume_dof
+        real(kind=8), intent(in) :: time_init
         type(NL_DS_Material), intent(inout) :: ds_material
     end subroutine nonlinDSMaterialInit
 end interface
