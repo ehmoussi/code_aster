@@ -109,7 +109,7 @@ integer :: pilcvg, ldccvg
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter:: zveass = 24
+    integer, parameter:: zveass = 23
     integer, parameter:: zsolal = 17
     integer, parameter:: zvalin = 28
     aster_logical :: exopt, mieux, irecli

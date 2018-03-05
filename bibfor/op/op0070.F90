@@ -65,7 +65,7 @@ implicit none
     integer, parameter :: zmeelm = 9
     integer, parameter :: zmeass = 4
     integer, parameter :: zveelm = 17
-    integer, parameter :: zveass = 24
+    integer, parameter :: zveass = 23
     integer, parameter :: zsolal = 17
     integer, parameter :: zvalin = 28
 !

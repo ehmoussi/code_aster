@@ -93,7 +93,7 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter:: zveass = 24
+    integer, parameter:: zveass = 23
     integer :: iret(zveass)
     character(len=19) :: depmoi, depplu, vitmoi, vitplu, masse, amort, rigid
     character(len=19) :: fexmoi, fexplu, fammoi, fnomoi
@@ -252,9 +252,9 @@ type(NL_DS_Contact), intent(in) :: ds_contact
                     fexpl(j)=fexpl(j)-veass(j)
                 end do
 ! --------------------------------------------------------------------
-! 22 - CNMODC : FORCE D AMORTISSEMENT MODAL
+! 21 - CNAMOD : FORCE D AMORTISSEMENT MODAL
 ! --------------------------------------------------------------------
-            else if (i.eq.22) then
+            else if (i.eq.21) then
                 do j = 1, neq
                     fampl(j)=fampl(j)+veass(j)
                 end do
@@ -275,9 +275,9 @@ type(NL_DS_Contact), intent(in) :: ds_contact
                     end do
                 endif
 ! --------------------------------------------------------------------
-! 24 - CNVISS : CHARGEMENT VEC_ISS (FORCE_SOL)
+! 23 - CNVISS : CHARGEMENT VEC_ISS (FORCE_SOL)
 ! --------------------------------------------------------------------
-            else if (i.eq.24) then
+            else if (i.eq.23) then
 ! CHARGEMENT FORCE_SOL CNVISS. SI ON COMPTE SA CONTRIBUTION EN TANT
 ! QUE FORCE DISSIPATIVE DE LIAISON, ON DOIT PRENDRE L OPPOSE.
                 do j = 1, neq
