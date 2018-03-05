@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -81,6 +81,7 @@ S_1=MACR_ELEM_STAT(
 
 S_1=MACR_ELEM_STAT(reuse=S_1,
 #  ---------------------
+    MACR_ELEM=S_1,
     RIGI_MECA=_F(),
     MASS_MECA=_F(),
     CAS_CHARGE=_F( NOM_CAS = 'CHF1',
@@ -92,6 +93,7 @@ S_1=MACR_ELEM_STAT(reuse=S_1,
 
 S_1=MACR_ELEM_STAT(reuse=S_1,
 #  ---------------------
+    MACR_ELEM=S_1,
     CAS_CHARGE=_F( NOM_CAS = 'CHF2', CHARGE = (CHF2_1,CHF3_1), SUIV = 'NON')
     )
 
@@ -183,7 +185,7 @@ MAG=ASSE_MAILLAGE(
 #  -------------------
 
 MOG=AFFE_MODELE( MAILLAGE=MAG,
- 
+
        AFFE=_F( GROUP_MA = 'GRSD1', MODELISATION = 'D_PLAN', PHENOMENE = 'MECANIQUE'),
        AFFE_SOUS_STRUC=_F( SUPER_MAILLE = ('S_123',)))
 
