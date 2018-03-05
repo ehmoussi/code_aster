@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-# person_in_charge: 
+# person_in_charge: mickael.abbas at edf.fr
 
 from ..Objects import EvolutiveThermalLoad
 from .ExecuteCommand import ExecuteCommand
@@ -48,8 +48,8 @@ class NonLinearThermalAnalysis(ExecuteCommand):
         if(keywords.has_key("reuse")):
             self._result.update()
         else:
-            self._result.setModel(keywords["MODELE"])
             self._result.update()
+            self._result.appendModelOnAllRanks(keywords["MODELE"])
 
 
 THER_NON_LINE = NonLinearThermalAnalysis.run

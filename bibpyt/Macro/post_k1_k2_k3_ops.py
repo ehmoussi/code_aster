@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -1865,8 +1865,8 @@ def is_present_varc(RESULTAT):
 #---------------------------------------------------------------------------------------------------------------
 #                 CORPS DE LA MACRO POST_K1_K2_K3
 #-------------------------------------------------------------------------
-def post_k1_k2_k3_ops(self, FOND_FISS, FISSURE, RESULTAT,
-                      ABSC_CURV_MAXI, PREC_VIS_A_VIS, INFO, TITRE, **args):
+def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None, 
+                      ABSC_CURV_MAXI=None, PREC_VIS_A_VIS=None, INFO=None, TITRE=None, **args):
     """
     Macro POST_K1_K2_K3
     Calcul des facteurs d'intensité de contraintes en 2D et en 3D
@@ -1914,11 +1914,26 @@ def post_k1_k2_k3_ops(self, FOND_FISS, FISSURE, RESULTAT,
     # si le MCS MATER n'est pas renseigne, on considere le materiau
     # present dans la sd_resultat. Si MATER est renseigne, on ecrase
     # le materiau et on emet une alarme.
-    MATER = args['MATER']
     if MATER == None:
-        MATER = self.get_concept(mater)
+        if RESULTAT.getNumberOfRanks() > 0:
+            cham_maters = []
+            for j in RESULTAT.getRanks():
+                print "j", j
+                try:
+                    cham_maters += [RESULTAT.getMaterialOnMesh(j)]
+                except RuntimeError:
+                    pass
+            assert len(cham_maters) <= 1
+            if(len(cham_maters)):
+                MATER = cham_maters[0]
+            else:
+                MATER = None
+        else:
+            MATER = None
     else:
         UTMESS('A', 'RUPTURE0_1', valk=[mater, MATER.nom])
+    
+
 
     # Affectation de ndim selon le type de modelisation
     assert MODELISATION in ["3D", "AXIS", "D_PLAN", "C_PLAN"]
@@ -1937,15 +1952,15 @@ def post_k1_k2_k3_ops(self, FOND_FISS, FISSURE, RESULTAT,
 #                               MAILLAGE
 #   ------------------------------------------------------------------
 
-    iret, ibid, nom_ma = aster.dismoi(
-        'NOM_MAILLA', RESULTAT.nom, 'RESULTAT', 'F')
-    MAILLAGE = self.get_concept(nom_ma.strip())
+    nom_ma = RESULTAT.getModel().getSupportMesh()
+
 
 #   ------------------------------------------------------------------
 #                         CARACTERISTIQUES MATERIAUX
 #   ------------------------------------------------------------------
     mater_fonc = False
 
+    print MATER.__getattribute__('NOMRC')
     matph = MATER.sdj.NOMRC.get()
     phenom = None
     ind = 0
@@ -2158,12 +2173,7 @@ def post_k1_k2_k3_ops(self, FOND_FISS, FISSURE, RESULTAT,
                 dicoF = get_absfon(Lnoff, Nnoff, d_coorf)
 
 #        Extraction dep sup/inf sur les normales
-            iret, ibid, n_modele = aster.dismoi(
-                'MODELE', RESULTAT.nom, 'RESULTAT', 'F')
-            n_modele = n_modele.rstrip()
-            if len(n_modele) == 0:
-                UTMESS('F', 'RUPTURE0_18')
-            MODEL = self.get_concept(n_modele)
+            MODEL = RESULTAT.getModel()
 
             (__TlibS, __TlibI) = get_tab_dep(self, Lnocal, Nnocal, d_coorf, dicVDIR, RESULTAT, MODEL,
                                              ListmaS, ListmaI, NB_NOEUD_COUPE, hmax, syme_char, PREC_VIS_A_VIS)
@@ -2421,4 +2431,4 @@ def post_k1_k2_k3_ops(self, FOND_FISS, FISSURE, RESULTAT,
                                           NOM_PARA=('INST', 'ABSC_CURV'),
                                           ORDRE='CROISSANT'))
 
-    return ier
+    return tabout

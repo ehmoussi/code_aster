@@ -87,7 +87,11 @@ CONT  = DEFI_CONTACT(MODELE      = MODMECA,
                             GROUP_MA_ESCL = 'BFISB',
                      ),)
 
-PR_EXT = DEFI_CONSTANTE(VALE = 1.E5,)
+PR_EXT = DEFI_FONCTION( NOM_PARA    = 'INST',
+                        PROL_GAUCHE = 'CONSTANT',
+                        PROL_DROITE = 'CONSTANT',
+                        VALE = ( 0,              1.E5,
+                                 5000.,      1.E5, ), )
 
 PR_INT = DEFI_FONCTION( NOM_PARA    = 'INST',
                         PROL_GAUCHE = 'CONSTANT',
@@ -95,7 +99,11 @@ PR_INT = DEFI_FONCTION( NOM_PARA    = 'INST',
                         VALE = ( 0,              1.E6,
                                  5000.,      1.E6, ), )
 
-TEMP_EXT = DEFI_CONSTANTE(VALE = 20.,)
+TEMP_EXT = DEFI_FONCTION(NOM_PARA    = 'INST',
+                       PROL_GAUCHE = 'CONSTANT',
+                       PROL_DROITE = 'CONSTANT',
+                       VALE = ( 0.,        20.,
+                                5000., 20., ), )
 
 TEMP_INT = DEFI_FONCTION(NOM_PARA    = 'INST',
                        PROL_GAUCHE = 'CONSTANT',
@@ -103,8 +111,19 @@ TEMP_INT = DEFI_FONCTION(NOM_PARA    = 'INST',
                        VALE = ( 0.,        180.,
                                 5000., 180., ), )
 
-H_EXT    = DEFI_CONSTANTE(VALE = 0.,)
-H_INT    = DEFI_CONSTANTE(VALE = 0.,)
+H_EXT = DEFI_FONCTION(NOM_PARA    = 'INST',
+                       PROL_GAUCHE = 'CONSTANT',
+                       PROL_DROITE = 'CONSTANT',
+                       VALE = ( 0.,        0.,
+                                5000., 0., ), )
+
+H_INT = DEFI_FONCTION(NOM_PARA    = 'INST',
+                       PROL_GAUCHE = 'CONSTANT',
+                       PROL_DROITE = 'CONSTANT',
+                       VALE = ( 0.,        0.,
+                                5000., 0., ), )
+
+
 CONDTHER = AFFE_CHAR_THER_F(
                     MODELE  = MODTHER,
                     ECHANGE = (_F(GROUP_MA = 'INTRADOS',
@@ -118,53 +137,55 @@ L_INST = DEFI_LIST_REEL(
                 DEBUT      = 0.0,
                 INTERVALLE = (_F(JUSQU_A = 5000., NOMBRE = 2,), ),)
 
-RMECA = MACR_ECREVISSE(
-         TABLE  = CO('TABLECR'),
-         DEBIT  = CO('DEBECR'),
-         TEMPER = CO('TEMPECR'),
-         CHAM_MATER   = CHMAT,
-         MODELE_MECA  = MODMECA,
-         MODELE_THER  = MODTHER,
-         TEMP_INIT    = 20.,
-         EXCIT_MECA   = _F(CHARGE   = CONDMECA),
-         EXCIT_THER   = _F(CHARGE   = CONDTHER),
-         COMPORTEMENT = _F(RELATION ='ELAS',),
-         CONTACT      = CONT,
-         FISSURE = _F(
-               PREFIXE_FICHIER  = 'FISSURE1',
-               SECTION          = 'RECTANGLE',
-               GROUP_MA         = ('BFISH','BFISB',),
-               RUGOSITE         = 0.5E-06,
-               ZETA             = 0.0,
-               GROUP_NO_ORIG    = ('GM27','GM28',),
-               GROUP_NO_EXTR    = ('GM29','GM30',),
-               LISTE_VAL_BL     = (1., 1.),
-               OUVERT_REMANENTE = 10.0E-06,
-               TORTUOSITE       = 1.0, ),
-         ECOULEMENT = _F(
-               FLUIDE_ENTREE  = 5,
-               PRES_ENTREE_FO = PR_INT,
-               PRES_SORTIE_FO = PR_EXT,
-               PRES_PART      = 6.E5,
-               TITR_MASS      = 0.3,),
-         LIST_INST = L_INST,
-         MODELE_ECRE = _F(
-               IVENAC         = 0,
-               ECOULEMENT     = 'SATURATION',
-               FROTTEMENT     = 0,
-               TRANSFERT_CHAL = 2,),
-         CONV_CRITERE = _F(
-               TEMP_REF = 0.5,
-               PRES_REF = 0.01*1.E5,
-               CRITERE  = 'EXPLICITE',),
-         CONVERGENCE_ECREVISSE = _F(
-               CRIT_CONV_DEBI = 1.e-8,
-               KGTEST         = 0.4,
-               ITER_GLOB_MAXI = 400,),
-         VERSION     = '3.2.2',
-         COURBES     = 'AUCUNE',
-         IMPRESSION  = 'NON',
-         INFO        = 1,
-         )
+#RMECA = MACR_ECREVISSE(
+         #TABLE  = CO('TABLECR'),
+         #DEBIT  = CO('DEBECR'),
+         #TEMPER = CO('TEMPECR'),
+         #CHAM_MATER   = CHMAT,
+         #MODELE_MECA  = MODMECA,
+         #MODELE_THER  = MODTHER,
+         #TEMP_INIT    = 20.,
+         #EXCIT_MECA   = _F(CHARGE   = CONDMECA),
+         #EXCIT_THER   = _F(CHARGE   = CONDTHER),
+         #COMPORTEMENT = _F(RELATION ='ELAS',),
+         #CONTACT      = CONT,
+         #FISSURE = _F(
+               #PREFIXE_FICHIER  = 'FISSURE1',
+               #SECTION          = 'RECTANGLE',
+               #GROUP_MA         = ('BFISH','BFISB',),
+               #RUGOSITE         = 0.5E-06,
+               #ZETA             = 0.0,
+               #GROUP_NO_ORIG    = ('GM27','GM28',),
+               #GROUP_NO_EXTR    = ('GM29','GM30',),
+               #LISTE_VAL_BL     = (1., 1.),
+               #OUVERT_REMANENTE = 10.0E-06,
+               #TORTUOSITE       = 1.0, ),
+         #ECOULEMENT = _F(
+               #FLUIDE_ENTREE  = 5,
+               #PRES_ENTREE_FO = PR_INT,
+               #PRES_SORTIE_FO = PR_EXT,
+               #PRES_PART      = 6.E5,
+               #TITR_MASS      = 0.3,),
+         #LIST_INST = L_INST,
+         #MODELE_ECRE = _F(
+               #IVENAC         = 0,
+               #ECOULEMENT     = 'SATURATION',
+               #FROTTEMENT     = 0,
+               #TRANSFERT_CHAL = 2,),
+         #CONV_CRITERE = _F(
+               #TEMP_REF = 0.5,
+               #PRES_REF = 0.01*1.E5,
+               #CRITERE  = 'EXPLICITE',),
+         #CONVERGENCE_ECREVISSE = _F(
+               #CRIT_CONV_DEBI = 1.e-8,
+               #KGTEST         = 0.4,
+               #ITER_GLOB_MAXI = 400,),
+         #VERSION     = '3.2.2',
+         #COURBES     = 'AUCUNE',
+         #IMPRESSION  = 'NON',
+         #INFO        = 1,
+         #)
 
 test.assertTrue( True )
+
+test.printSummary()

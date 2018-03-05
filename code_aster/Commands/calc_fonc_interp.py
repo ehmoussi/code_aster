@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -18,7 +18,7 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 # person_in_charge: mathieu.courtois@edf.fr
-from ..Objects import Function, FunctionComplex
+from ..Objects import Function, FunctionComplex, Formula, Surface
 from ..Utilities import compat_listr8
 from .ExecuteCommand import ExecuteCommand
 
@@ -45,12 +45,21 @@ class FunctionInterpolation(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         intype = keywords["FONCTION"].getType()
-        if intype in ("FONCTION_C", "FORMULE_C"):
+        if intype == "FONCTION_C":
             self._result = FunctionComplex()
-        elif intype in ("FONCTION_SDASTER", "FORMULE"):
+        elif intype == "FONCTION_SDASTER":
             self._result = Function()
+        elif intype == "NAPPE_SDASTER":
+            self._result = Surface()
+        elif intype == "FORMULE":
+            if keywords.get("NOM_PARA_FONC") != None:
+                self._result = Surface()
+            else:
+                self._result = Function()
+        elif intype == "FORMULE_C":
+            self._result = FunctionComplex()
         else:
-            raise NotImplementedError("'Surface' type not yet supported.")
+            raise TypeError
 
 
 CALC_FONC_INTERP = FunctionInterpolation.run

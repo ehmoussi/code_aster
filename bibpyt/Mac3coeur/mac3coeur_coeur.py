@@ -1230,25 +1230,96 @@ class Coeur(object):
         f_DthY = Dcth + '*' + COSTE
         f_DthZ = Dcth + '*' + SINTE
         _DthY = FORMULE(
-            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthY % locals())
+            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthY % locals(),
+            Dcth=Dcth,
+            COSTE=COSTE,
+            ALPHPIC=ALPHPIC,
+            ALPH1local=ALPH1local,
+            ALPH2local=ALPH2local,
+            _TEMPENV=_TEMPENV,
+            TP_REFlocal=TP_REFlocal,
+            L=L,
+            ALPHENV=ALPHENV,
+            epsilon=epsilon,
+            Y0=Y0,
+            Z0=Z0,)
         _DthZ = FORMULE(
-            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthZ % locals())
+            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthZ % locals(),
+            Dcth=Dcth,
+            SINTE=SINTE,
+            ALPHPIC=ALPHPIC,
+            ALPH1local=ALPH1local,
+            ALPH2local=ALPH2local,
+            _TEMPENV=_TEMPENV,
+            TP_REFlocal=TP_REFlocal,
+            L=L,
+            ALPHENV=ALPHENV,
+            epsilon=epsilon,
+            Y0=Y0,
+            Z0=Z0,)
 
         Dthpic = L + ' * ' + ALPHPIC + ' * (_TEMPPIC(INST)-%(TP_REFlocal)f) '
         f_DthYpic = Dthpic + '*' + COSTE
         f_DthZpic = Dthpic + '*' + SINTE
         _DthYpic = FORMULE(
-            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthYpic % locals())
+            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthYpic % locals(),
+            Dthpic=Dthpic,
+            COSTE=COSTE,
+            ALPHPIC=ALPHPIC,
+            ALPH1local=ALPH1local,
+            ALPH2local=ALPH2local,
+            _TEMPENV=_TEMPENV,
+            TP_REFlocal=TP_REFlocal,
+            L=L,
+            ALPHENV=ALPHENV,
+            epsilon=epsilon,
+            Y0=Y0,
+            Z0=Z0,
+            _TEMPPIC=_TEMPPIC,
+            )
         _DthZpic = FORMULE(
-            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthZpic % locals())
+            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthZpic % locals(),
+            Dthpic=Dthpic,
+            SINTE=SINTE,
+            ALPHPIC=ALPHPIC,
+            ALPH1local=ALPH1local,
+            ALPH2local=ALPH2local,
+            TP_REFlocal=TP_REFlocal,
+            L=L,
+            epsilon=epsilon,
+            Y0=Y0,
+            Z0=Z0,
+            _TEMPPIC=_TEMPPIC,)
 
         Dthpsc = L + ' * ' + ALPHPSC + ' * (_TEMPPSC(INST)-%(TP_REFlocal)f) '
         f_DthYpsc = Dthpsc + '*' + COSTE
         f_DthZpsc = Dthpsc + '*' + SINTE
         _DthYpsc = FORMULE(
-            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthYpsc % locals())
+            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthYpsc % locals(),
+            Dthpic=Dthpic,
+            COSTE=COSTE,
+            ALPHPSC=ALPHPSC,
+            ALPH1local=ALPH1local,
+            ALPH2local=ALPH2local,
+            TP_REFlocal=TP_REFlocal,
+            L=L,
+            epsilon=epsilon,
+            Y0=Y0,
+            Z0=Z0,
+            _TEMPPSC=_TEMPPSC,)
         _DthZpsc = FORMULE(
-            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthZpsc % locals())
+            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthZpsc % locals(),
+            Dthpic=Dthpic,
+            SINTE=SINTE,
+            ALPHPSC=ALPHPSC,
+            ALPH1local=ALPH1local,
+            ALPH2local=ALPH2local,
+            TP_REFlocal=TP_REFlocal,
+            L=L,
+            epsilon=epsilon,
+            Y0=Y0,
+            Z0=Z0,
+            _TEMPPSC=_TEMPPSC,)
 
         #---------------------------------------------------------------
         #--                  Deplacements verticaux                   --
@@ -1311,7 +1382,8 @@ class Coeur(object):
         f_DthXpic = '( (_DthXpicPeriph(INST) -_DthXpicCentre(INST) ) /(%(Rpsc)f)**2   )*('+\
             L + ')**2   +_DthXpicCentre(INST)'
         _DthXpic = FORMULE(
-            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthXpic % locals())
+            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthXpic % locals(),
+            _DthXpicPeriph=_DthXpicPeriph,_DthXpicCentre=_DthXpicCentre)
 
         #---------------------------------------------------------------
         #--                Deplacements  verticaux                    --
@@ -1321,8 +1393,12 @@ class Coeur(object):
         XSUPCUVElocal = self.XSUPCUVE
         f_DthX = '(-1.*_DthXpicPeriph' + \
             '(INST)/(%(XSUPCUVElocal)f-%(XINFCUVElocal)f) * X  +'  + \
-            '_DthXpicPeriph.nom(INST))'
-        _DthX = FORMULE(NOM_PARA=('X', 'INST'), VALE=f_DthX % locals())
+            '_DthXpicPeriph(INST))'
+        _DthX = FORMULE(NOM_PARA=('X', 'INST'), VALE=f_DthX % locals(),
+                        _DthXpicPeriph=_DthXpicPeriph,
+                        XSUPCUVElocal=XSUPCUVElocal,
+                        XINFCUVElocal=XINFCUVElocal,
+                        )
 
         #---------------------------------------------------------------
         #--                  chargement resultant                     --
