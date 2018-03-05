@@ -51,9 +51,9 @@ class FieldProjector(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         if keywords.has_key("RESULTAT"):
-            if keywords.has_key("MODELE_2"):
-                self._result.setModel(keywords["MODELE_2"])
             self._result.update()
+            if keywords.has_key("MODELE_2"):
+                self._result.appendModelOnAllRanks(keywords["MODELE_2"])
         elif keywords.has_key("CHAM_GD"):
             pass
         else:

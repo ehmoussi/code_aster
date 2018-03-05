@@ -56,5 +56,12 @@ DN1=DEFI_NAPPE( NOM_PARA='AMOR', NOM_RESU='ACCE',
                 VERIF='CROISSANT',  INTERPOL='LOG',
                 PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',
                 PARA=( 0.01,  0.02, ), FONCTION=( DF1,  DF2, ) )
+
+values2 = DN1.exportValuesToPython()
+test.assertEqual( values2[1][0], [3.0, 4.0, 5.0] )
+
+parameters = DN1.exportParametersToPython()
+test.assertEqual( parameters, [0.01, 0.02] )
+
 # DN1.debugPrint()
 test.printSummary()

@@ -72,26 +72,28 @@ FONCCB=DEFI_FONCTION(NOM_PARA='INST',
                      );
 
 
-U = CALC_EUROPLEXUS(
-   MODELE=MODELE,
-   CHAM_MATER=CHMATER,
-   COMPORTEMENT =(_F(
-                  RELATION = 'ELAS',
-                  GROUP_MA = ('GROUPE__CABLE001',),
-                 ),
-              ),
-   CARA_ELEM=CARAELEM,
-   EXCIT=(_F(CHARGE=BLOQ,),
-          _F(CHARGE=TRAC,FONC_MULT=FONCCB,),
-         ),
-   LANCEMENT ='OUI',
-   CALCUL = _F(TYPE_DISCRETISATION  ='UTIL',
-               INST_INIT = 0,
-               INST_FIN  = 2e-3,
-               NMAX      = 100,
-               PASFIX    = 2e-5,
-               ),
-   ARCHIVAGE   = _F(PAS_NBRE=10,),
-   );
+#U = CALC_EUROPLEXUS(
+   #MODELE=MODELE,
+   #CHAM_MATER=CHMATER,
+   #COMPORTEMENT =(_F(
+                  #RELATION = 'ELAS',
+                  #GROUP_MA = ('GROUPE__CABLE001',),
+                 #),
+              #),
+   #CARA_ELEM=CARAELEM,
+   #EXCIT=(_F(CHARGE=BLOQ,),
+          #_F(CHARGE=TRAC,FONC_MULT=FONCCB,),
+         #),
+   #LANCEMENT ='OUI',
+   #CALCUL = _F(TYPE_DISCRETISATION  ='UTIL',
+               #INST_INIT = 0,
+               #INST_FIN  = 2e-3,
+               #NMAX      = 100,
+               #PASFIX    = 2e-5,
+               #),
+   #ARCHIVAGE   = _F(PAS_NBRE=10,),
+   #);
 
 test.assertTrue( True )
+
+test.printSummary()

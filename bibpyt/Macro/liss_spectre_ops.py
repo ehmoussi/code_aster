@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from Accas import _F
+from code_aster.Cata.Syntax import _F
 import string
 import os
 
@@ -356,4 +356,3 @@ def liss_spectre_ops(
                          ),
                  INFO=1)
         
-    return ier

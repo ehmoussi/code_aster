@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -251,7 +251,7 @@ class CalcFonctionOper(object):
         as t_fonction objects.
         nappe_sdaster objects are interpolated on the same abscissa."""
         lf_in = self._get_mcsimp(mcsimp)
-        all_nap = min([int(i.getType() == "NAPPE") for i in lf_in]) == 1
+        all_nap = min([int(i.getType() == "NAPPE_SDASTER") for i in lf_in]) == 1
         if all_nap:
             list_fonc = [tf.convert() for tf in lf_in]
             list_fonc = homo_support_nappe(list_fonc)

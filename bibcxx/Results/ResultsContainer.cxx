@@ -76,15 +76,6 @@ ElementaryCharacteristicsPtr ResultsContainerInstance::getElementaryCharacterist
     return (*curIter).second;
 };
 
-MaterialOnMeshPtr ResultsContainerInstance::getMaterialOnMesh( int rank )
-    throw ( std::runtime_error )
-{
-    auto curIter = _mapMaterial.find( rank );
-    if( curIter == _mapMaterial.end() )
-        throw std::runtime_error( "Rank not find" );
-    return (*curIter).second;
-};
-
 void ResultsContainerInstance::addMaterialOnMesh( const MaterialOnMeshPtr& mater,
                                                   int rank ) throw ( std::runtime_error )
 {
@@ -101,6 +92,77 @@ void ResultsContainerInstance::addModel( const ModelPtr& model,
     long rang = rank;
     std::string type("MODELE");
     CALLO_RSADPA_ZK8_WRAP( getName(), &rang, model->getName(), type );
+};
+
+void ResultsContainerInstance::appendMaterialOnMeshOnAllRanks( const MaterialOnMeshPtr& mater )
+{
+    _serialNumber->updateValuePointer();
+    long nbRanks = _serialNumber->usedSize();
+    for( int rank = 0; rank < nbRanks; ++rank )
+    {
+        const long iordr = (*_serialNumber)[rank];
+        if( _mapMaterial.find( rank ) == _mapMaterial.end() )
+            addMaterialOnMesh( mater, iordr );
+    }
+};
+
+void ResultsContainerInstance::appendModelOnAllRanks( const ModelPtr& model )
+{
+    _serialNumber->updateValuePointer();
+    long nbRanks = _serialNumber->usedSize();
+    for( int rank = 0; rank < nbRanks; ++rank )
+    {
+        const long iordr = (*_serialNumber)[rank];
+        if( _mapModel.find( rank ) == _mapModel.end() )
+            addModel( model, iordr );
+    }
+};
+
+MaterialOnMeshPtr ResultsContainerInstance::getMaterialOnMesh( int rank )
+    throw ( std::runtime_error )
+{
+    auto curIter = _mapMaterial.find( rank );
+    if( curIter == _mapMaterial.end() )
+        throw std::runtime_error( "Rank not find" );
+    return (*curIter).second;
+};
+
+MaterialOnMeshPtr ResultsContainerInstance::getMaterialOnMesh() throw ( std::runtime_error )
+{
+    std::string name("");
+    MaterialOnMeshPtr toReturn( nullptr );
+    for( const auto& curIter: _mapMaterial )
+    {
+        if( name == "" )
+        {
+            toReturn = curIter.second;
+            name = toReturn->getName();
+        }
+        if( name != curIter.second->getName() )
+            throw std::runtime_error( "Error: multiple materials" );
+    }
+    if( toReturn == nullptr )
+        throw std::runtime_error( "Error: no material on mesh" );
+    return toReturn;
+};
+
+ModelPtr ResultsContainerInstance::getModel() throw ( std::runtime_error )
+{
+    std::string name("");
+    ModelPtr toReturn( nullptr );
+    for( const auto& curIter: _mapModel )
+    {
+        if( name == "" )
+        {
+            toReturn = curIter.second;
+            name = toReturn->getName();
+        }
+        if( name != curIter.second->getName() )
+            throw std::runtime_error( "Error: multiple models" );
+    }
+    if( toReturn == nullptr )
+        throw std::runtime_error( "Error: no model" );
+    return toReturn;
 };
 
 void ResultsContainerInstance::addTimeValue( double value,
@@ -128,17 +190,17 @@ bool ResultsContainerInstance::update() throw ( std::runtime_error )
 {
     _serialNumber->updateValuePointer();
     _namesOfFields->buildFromJeveux();
-    const auto numberOfSerialNum = _serialNumber->size();
+    const auto numberOfSerialNum = _serialNumber->usedSize();
     _nbRanks = numberOfSerialNum;
 
     int cmpt = 1;
     for( const auto curIter : _namesOfFields->getVectorOfObjects() )
     {
         auto nomSymb = trim( _symbolicNamesOfFields->findStringOfElement( cmpt ) );
-        if( numberOfSerialNum != curIter.size() )
+        if( numberOfSerialNum > curIter.size() )
             throw std::runtime_error( "Programming error" );
 
-        for( int rank = 0; rank < curIter.size(); ++rank )
+        for( int rank = 0; rank < numberOfSerialNum; ++rank )
         {
             std::string name( trim( curIter[ rank ].toString() ) );
             if( name != "" )
@@ -164,6 +226,12 @@ bool ResultsContainerInstance::update() throw ( std::runtime_error )
                     if( curIter2 == _dictOfVectorOfFieldsNodes.end() )
                         _dictOfVectorOfFieldsNodes[ nomSymb ] = VectorOfFieldsNodes( numberOfSerialNum,
                             FieldOnNodesDoublePtr( nullptr ) );
+                    else if( curIter2->second.size() != numberOfSerialNum )
+                    {
+                        curIter2->second.clear();
+                        _dictOfVectorOfFieldsNodes[ nomSymb ] = VectorOfFieldsNodes( numberOfSerialNum,
+                            FieldOnNodesDoublePtr( nullptr ) );
+                    }
 
                     long test2 = _dictOfVectorOfFieldsNodes[ nomSymb ][ rank ].use_count();
                     if( test2 == 0 )
@@ -178,6 +246,12 @@ bool ResultsContainerInstance::update() throw ( std::runtime_error )
                     if( curIter2 == _dictOfVectorOfFieldsElements.end() )
                         _dictOfVectorOfFieldsElements[ nomSymb ] = VectorOfFieldsElements( numberOfSerialNum,
                             FieldOnElementsDoublePtr( nullptr ) );
+                    else if( curIter2->second.size() != numberOfSerialNum )
+                    {
+                        curIter2->second.clear();
+                       _dictOfVectorOfFieldsElements [ nomSymb ] = VectorOfFieldsElements( numberOfSerialNum,
+                            FieldOnElementsDoublePtr( nullptr ) );
+                    }
 
                     long test2 = _dictOfVectorOfFieldsElements[ nomSymb ][ rank ].use_count();
                     if( test2 == 0 )

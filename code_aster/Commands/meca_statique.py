@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -112,6 +112,7 @@ class MechanicalSolver(ExecuteCommand):
                        RESULTAT=self._result,
                        CONTRAINTE=contrainte,)
 
-        self._result.setModel(keywords["MODELE"])
+        self._result.update()
+        self._result.appendModelOnAllRanks(keywords["MODELE"])
 
 MECA_STATIQUE = MechanicalSolver.run

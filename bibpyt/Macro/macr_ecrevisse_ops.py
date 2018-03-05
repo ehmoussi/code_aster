@@ -310,7 +310,6 @@ def macr_ecrevisse_ops(self, **args):
                                          VIS_A_VIS=_F(TOUT_1='OUI',
                                                       TOUT_2='OUI',),
                                          INFO=2,)
-
                 # Definition du materiau pour la mecanique
                 # note : on doit le faire a chaque fois car le nom de concept _RTHMPJ
                 #        est different a chaque passage

@@ -40,29 +40,20 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args
     MODI_MAILLAGE = self.get_cmd('MODI_MAILLAGE')
     FORMULE = self.get_cmd('FORMULE')
 
-    # Modele & BLINDAGES
     model = args.get('MODELE')
     if model == None:
-        UTMESS('F', 'CALCPRESSION0_1')
-        # Recupération à partir de ASTER.DISMOI
-        iret, ibid, n_modele = aster.dismoi(
-            'MODELE', RESULTAT.nom, 'RESULTAT', 'F')
-        n_modele = n_modele.rstrip()
-        if n_modele in ('', '#AUCUN'):
-            UTMESS('I', 'POST0_23', valk=RESULTAT.nom)
-        if n_modele == '#PLUSIEURS':
-            UTMESS('F', 'CALCPRESSION0_2')
-        model = self.get_concept(n_modele)
+        UTMESS('A', 'CALCPRESSION0_1')
+        model = RESULTAT.getModel()
 
 
     # BLINDAGE : on poursuit le calcul uniquement que si le modèle n'est pas
     # un élément de structure
     iret, ibid, test_structure = aster.dismoi(
-        'EXI_RDM', model.nom, 'MODELE', 'F')
+        'EXI_RDM', model.getName(), 'MODELE', 'F')
     if test_structure == 'OUI':
         UTMESS('F', 'CALCPRESSION0_3')
     else:
-        iret, dim, rbid = aster.dismoi('DIM_GEOM', model.nom, 'MODELE', 'F')
+        iret, dim, rbid = aster.dismoi('DIM_GEOM', model.getName(), 'MODELE', 'F')
 
 # Corps de la commande
 # Champ de contraintes de Cauchy aux noeuds
@@ -88,7 +79,6 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args
                             )
 
     # Normale sur la configuration finale
-    Mail = self.DeclareOut('Mail', MAILLAGE)
     if GEOMETRIE == 'DEFORMEE' :
         Mail = MODI_MAILLAGE(reuse=MAILLAGE,
                              MAILLAGE=MAILLAGE,
@@ -100,12 +90,12 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args
                             MODELE=model,
                             GROUP_MA=GROUP_MA,
                             )
-    if  GEOMETRIE == 'DEFORMEE' :
+    if GEOMETRIE == 'DEFORMEE' :
         Mail = MODI_MAILLAGE(reuse=MAILLAGE,
                          MAILLAGE=MAILLAGE,
                          DEFORME=_F(OPTION='TRAN',
                                     DEPL=__mdepl,),)
-
+        self.register_result(Mail, MAILLAGE)
     # Pression à l'interface
     if dim == 3:
     # Formule en dimension 3 :

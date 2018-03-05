@@ -53,12 +53,12 @@ inst = DEFI_LIST_REEL(DEBUT=0.,
 SINOM=CALC_FONC_INTERP(LIST_PARA=inst,
                        FONCTION=sinom,);
 
-C_FREQ2=CALC_TRANSFERT(NOM_CHAM='ACCE',
-                       RESULTAT_X=TRANSD,
-                       RESULTAT_Y=TRANSD,
-                       REPERE='ABSOLU',
-                       ENTREE=_F(NOEUD='N1',),
-                       SORTIE=_F(NOEUD='N2',),
-                                 );
+#C_FREQ2=CALC_TRANSFERT(NOM_CHAM='ACCE',
+#                       RESULTAT_X=TRANSD,
+#                       RESULTAT_Y=TRANSD,
+#                       REPERE='ABSOLU',
+#                       ENTREE=_F(NOEUD='N1',),
+#                       SORTIE=_F(NOEUD='N2',),
+#                                 );
 
 test.assertTrue( True )

@@ -64,7 +64,8 @@ import aster
 from ..Cata import Commands
 from ..Cata.SyntaxChecker import CheckerError, checkCommandSyntax
 from ..Cata.SyntaxUtils import mixedcopy, remove_none, search_for
-from ..Objects import ResultNaming
+from ..Cata.Language.SyntaxObjects import _F
+from ..Objects import ResultNaming, DataStructure
 from ..Supervis import CommandSyntax, ExecutionParameter, logger
 from ..Utilities import Singleton, deprecated, import_object
 from ..Utilities.outputs import (command_header, command_result,
@@ -146,6 +147,7 @@ class ExecuteCommand(object):
         timer.Start(str(cmd._counter), name=cmd.command_name)
         cmd.print_syntax(keywords)
         cmd.exec_(keywords)
+        cmd.add_references(keywords)
         cmd.post_exec(keywords)
         cmd.print_result()
         return cmd._result
@@ -162,6 +164,29 @@ class ExecuteCommand(object):
     def name(self):
         """Returns the command name."""
         return self._cata.name
+
+    def _visitSyntax(self, toVisit):
+        if type(toVisit) in (list, tuple):
+            for value in toVisit:
+                if isinstance(value, DataStructure):
+                    self._result.addReference(value)
+                else:
+                    self._visitSyntax(value)
+        elif type(toVisit) in (dict, _F):
+            for key, value in toVisit.iteritems():
+                self._visitSyntax(value)
+        elif isinstance(toVisit, DataStructure):
+            self._result.addReference(toVisit)
+
+    def add_references(self, keywords):
+        """Add reference to DataStructure in self._result
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords, changed
+                in place.
+        """
+        if isinstance(self._result, DataStructure):
+            self._visitSyntax(keywords)
 
     def adapt_syntax(self, keywords):
         """Hook to adapt syntax from a old version or for compatibility reasons.

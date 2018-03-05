@@ -3,7 +3,7 @@
  * @brief Interface python de Surface
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -39,5 +39,8 @@ void exportSurfaceToPython()
         .def( "__init__", make_constructor(
             &initFactoryPtr< SurfaceInstance,
                              std::string >) )
+        .def( "exportExtensionToPython", &SurfaceInstance::exportExtensionToPython )
+        .def( "exportValuesToPython", &SurfaceInstance::exportValuesToPython )
+        .def( "exportParametersToPython", &SurfaceInstance::exportParametersToPython )
     ;
 };
