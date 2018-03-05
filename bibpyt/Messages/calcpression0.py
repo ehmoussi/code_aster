@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,10 +23,6 @@
 cata_msg = {
     1 : _(u"""
 Le mot-clef MODELE est absent dans CALC_PRESSION.
-"""),
-
-    2 : _(u"""
-Il y a plusieurs modélisations. Il est donc impossible d'effectuer le calcul.
 """),
 
     3 : _(u"""

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,52 +17,55 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-def macr_ecrevisse_ops(self, reuse=None,
-                       CONV_CRITERE=None,
-                       TABLE=None,
-                       TEMPER=None,
-                       DEBIT=None,
-                       MODELE_MECA=None,
-                       MODELE_THER=None,
-                       FISSURE=None,
-                       ECOULEMENT=None,
-                       LIST_INST=None,
-                       MODELE_ECRE=None,
-                       CONVERGENCE_ECREVISSE=None,
-                       COURBES=None,
-                       LOGICIEL=None,
-                       VERSION=None,
-                       ENTETE=None,
-                       IMPRESSION=None,
-                       CHAM_MATER=None,
-                       TEMP_INIT=None,
-                       CARA_ELEM=None,
-                       CONTACT=None,
-                       EXCIT_MECA=None,
-                       EXCIT_THER=None,
-                       COMPORTEMENT=None,
-                       NEWTON=None,
-                       CONVERGENCE=None,
-                       ETAT_INIT=None,
-                       ENERGIE=None,
-                       INFO=None,
-                       **args):
+def macr_ecrevisse_ops(self, **args):
     """
     Procédure de couplage Code_Aster-Ecrevisse.
     Exécution pour tous les pas de temps des calculs thermiques, mécaniques puis hydrauliques.
     Découpage/Génération par Aster du fichier de données d'Ecrevisse et lancement d'Ecrevisse.
     """
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
-    from Utilitai.Table import Table, merge
+    from Utilitai.Table import merge
     from code_aster.Cata.Syntax import _F
-    import aster_core
-    import os
-    import aster
+    from Contrib.calc_ecrevisse import CALC_ECREVISSE
     import copy
+
+    # ASSD.__getitem__ was deprecated, now it didn't work anymore!
+    import warnings
+    warnings.warn("MACR_ECREVISSE must be refactored!", RuntimeWarning)
+    return
 
     #
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
+
+    CONV_CRITERE = args.get("CONV_CRITERE")
+    TABLE = args.get("TABLE")
+    TEMPER = args.get("TEMPER")
+    DEBIT = args.get("DEBIT")
+    MODELE_MECA = args.get("MODELE_MECA")
+    MODELE_THER = args.get("MODELE_THER")
+    FISSURE = args.get("FISSURE")
+    ECOULEMENT = args.get("ECOULEMENT")
+    LIST_INST = args.get("LIST_INST")
+    MODELE_ECRE = args.get("MODELE_ECRE")
+    CONVERGENCE_ECREVISSE = args.get("CONVERGENCE_ECREVISSE")
+    COURBES = args.get("COURBES")
+    LOGICIEL = args.get("LOGICIEL")
+    VERSION = args.get("VERSION")
+    ENTETE = args.get("ENTETE")
+    IMPRESSION = args.get("IMPRESSION")
+    CHAM_MATER = args.get("CHAM_MATER")
+    TEMP_INIT = args.get("TEMP_INIT")
+    CARA_ELEM = args.get("CARA_ELEM")
+    CONTACT = args.get("CONTACT")
+    EXCIT_MECA = args.get("EXCIT_MECA")
+    EXCIT_THER = args.get("EXCIT_THER")
+    COMPORTEMENT = args.get("COMPORTEMENT")
+    NEWTON = args.get("NEWTON")
+    CONVERGENCE = args.get("CONVERGENCE")
+    ETAT_INIT = args.get("ETAT_INIT")
+    ENERGIE = args.get("ENERGIE")
+    INFO = args.get("INFO")
 
     # Parametres debug
     debug = False
@@ -80,7 +83,6 @@ def macr_ecrevisse_ops(self, reuse=None,
     DETRUIRE = self.get_cmd("DETRUIRE")
     AFFE_MATERIAU = self.get_cmd("AFFE_MATERIAU")
     STAT_NON_LINE = self.get_cmd("STAT_NON_LINE")
-    from Contrib.calc_ecrevisse import CALC_ECREVISSE
     CO = self.get_cmd("CO")
     CREA_TABLE = self.get_cmd("CREA_TABLE")
 
@@ -93,7 +95,7 @@ def macr_ecrevisse_ops(self, reuse=None,
     IsInit = True
     # Traitement de l'etat initial en cas de poursuite
     if ETAT_INIT:
-        dEtatInit = dict([(k, v) for k, v in ETAT_INIT[0].items() if v is not None])
+        dEtatInit = ETAT_INIT[0].cree_dict_toutes_valeurs()
         EVINIT = dEtatInit['EVOL_NOLI']
         _THINIT = dEtatInit['EVOL_THER']
         nume_ordre = dEtatInit['NUME_ORDRE']
@@ -101,28 +103,24 @@ def macr_ecrevisse_ops(self, reuse=None,
     else:
         dEtatInit = None
 
-    # Valeur par defaut du mot cle LOGICIEL
-    # if not LOGICIEL: LOGICIEL = aster_core.get_option('prog:ecrevisse')
-
     # RECUPERATION DES MOTS-CLES FACTEURS
 
     l_dFISSURE = []
     for fissure in FISSURE:
-        print fissure
-        dFISSURE = dict([(k, v) for k, v in fissure.items() if v is not None])
+        dFISSURE = fissure.cree_dict_toutes_valeurs()
         l_dFISSURE.append(dFISSURE)
 
-    dECOULEMENT = dict([(k, v) for k, v in ECOULEMENT[0].items() if v is not None])
+    dECOULEMENT = ECOULEMENT[0].cree_dict_toutes_valeurs()
     # on ne supprime pas les valeurs None
     dMODELE_ECRE = MODELE_ECRE[0].cree_dict_valeurs(MODELE_ECRE[0].mc_liste)
-    dCONVERGENCE_ECREVISSE = dict([(k, v) for k, v in CONVERGENCE_ECREVISSE[0].items() if v is not None])
-    
-    dCOMPORTEMENT = dict([(k, v) for k, v in COMPORTEMENT[0].items() if v is not None])
-    dNEWTON = dict([(k, v) for k, v in NEWTON[0].items() if v is not None])
-    dCONVERGENCE = dict([(k, v) for k, v in CONVERGENCE[0].items() if v is not None])
+    dCONVERGENCE_ECREVISSE = CONVERGENCE_ECREVISSE[
+        0].cree_dict_toutes_valeurs()
+    dCOMPORTEMENT = COMPORTEMENT[0].cree_dict_toutes_valeurs()
+    dNEWTON = NEWTON[0].cree_dict_toutes_valeurs()
+    dCONVERGENCE = CONVERGENCE[0].cree_dict_toutes_valeurs()
 
     # Recuperation des infos pour la convergence de la macro
-    dMacr_Conv = dict([(k, v) for k, v in CONV_CRITERE[0].items() if v is not None])
+    dMacr_Conv = CONV_CRITERE[0].cree_dict_toutes_valeurs()
     motclefsCALC_ECREVISSE = {}
     motclefsCALC_ECREVISSE['COURBES'] = COURBES,
 
@@ -238,7 +236,7 @@ def macr_ecrevisse_ops(self, reuse=None,
                 _dEXCIT_THER = []
                 if EXCIT_THER:
                     for excit_i in EXCIT_THER:
-                        dEXCIT_THER_i = dict([(k, v) for k, v in excit_i.items() if v is not None])
+                        dEXCIT_THER_i = excit_i.cree_dict_toutes_valeurs()
                         _dEXCIT_THER.append(dEXCIT_THER_i)
 
                 # Definition des chargements thermiques venant d Ecrevisse
@@ -312,14 +310,13 @@ def macr_ecrevisse_ops(self, reuse=None,
                                          VIS_A_VIS=_F(TOUT_1='OUI',
                                                       TOUT_2='OUI',),
                                          INFO=2,)
-                
                 # Definition du materiau pour la mecanique
                 # note : on doit le faire a chaque fois car le nom de concept _RTHMPJ
                 #        est different a chaque passage
                 motclefmater = {}
                 motclefmater['AFFE'] = []
                 for j in CHAM_MATER['AFFE']:
-                    motclefmater['AFFE'].append(dict([(k, v) for k, v in j.items() if v is not None]))
+                    motclefmater['AFFE'].append(j.cree_dict_toutes_valeurs())
                 motclefmater['MAILLAGE'] = CHAM_MATER['MAILLAGE']
 
                 # Set external state variables
@@ -337,7 +334,7 @@ def macr_ecrevisse_ops(self, reuse=None,
                 # Recuperation des chargements mecaniques
                 if EXCIT_MECA:
                     for excit_i in EXCIT_MECA:
-                        dEXCIT_MECA_i = dict([(k, v) for k, v in excit_i.items() if v is not None])
+                        dEXCIT_MECA_i = excit_i.cree_dict_toutes_valeurs()
                         _dEXCIT_MECA.append(dEXCIT_MECA_i)
 
                 # Definition des chargements venant d'Ecrevisse

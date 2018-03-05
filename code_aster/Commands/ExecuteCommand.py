@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -120,7 +120,7 @@ class ExecuteCommand(object):
             keywords (dict): User keywords
         """
         cmd = cls()
-        cmd.keep_caller_infos()
+        cmd.keep_caller_infos(keywords)
         timer = ExecutionParameter().get_option("timer")
         if cls.command_name not in ("DEBUT", "POURSUITE"):
             check_jeveux()
@@ -206,7 +206,11 @@ class ExecuteCommand(object):
         remove_none(printed_args)
         filename = self._caller["filename"]
         lineno = self._caller["lineno"]
-        logger.info("\n" + command_separator())
+
+        logger.info("\n.. _stg{0}_{1}".format(
+            ExecutionParameter().get_option("stage_number"),
+            self._caller["identifier"]))
+        logger.info(command_separator())
         logger.info(command_header(self._counter, filename, lineno))
         logger.info(command_text(self.name, printed_args, self._res_syntax(),
                                  limit=500))
@@ -313,13 +317,16 @@ class ExecuteCommand(object):
             sd_name = ResultNaming.getNewResultName()
         return sd_name
 
-    def keep_caller_infos(self, level=2):
+    def keep_caller_infos(self, keywords, level=2):
         """Register the caller frame infos.
 
         Arguments:
-            caller (*frame*): The caller frame.
+            keywords (dict): Dict of keywords.
+            level (Optional[int]): Number of frames to rewind to find the
+                caller.
         """
-        self._caller = {"filename": "unknown", "lineno": 0, "context": {}}
+        self._caller = {"filename": "unknown", "lineno": 0, "context": {},
+                        "identifier": ""}
         try:
             caller = inspect.currentframe()
             for i in range(level):
@@ -329,6 +336,12 @@ class ExecuteCommand(object):
             self._caller["context"] = caller.f_globals
         finally:
             del caller
+
+        try:
+            identifier = "cmd{0}".format(keywords.pop('identifier'))
+        except KeyError:
+            identifier = "txt{0}".format(self._caller["lineno"])
+        self._caller["identifier"] = identifier
 
 
 def check_jeveux():
@@ -412,9 +425,11 @@ class ExecuteMacro(ExecuteCommand):
             logger.info(command_result(self._counter, self.name,
                                        self._result.getName()))
         if self._result_names:
-            names = ["{0} {1}".format(
-                i, decorate_name(self._add_results[i].getName()))
-                for i in self._result_names]
+            names = []
+            for name in self._result_names:
+                res = self._add_results.get(name)
+                resname = res.getName() if res is not None else "?"
+                names.append("{0} {1}".format(name, decorate_name(resname)))
             logger.info(command_result(self._counter, self.name,
                                        names))
         self._print_timer()
@@ -491,6 +506,9 @@ class ExecuteMacro(ExecuteCommand):
     @deprecated(True, help="Use the 'logger' object instead.")
     def cr(self):
         return logger
+
+    def get_concept(self, name):
+        raise NotImplementedError("'get_concept()' does not exist anymore...")
 
 
 class CO(object):
