@@ -254,7 +254,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --- CALCUL DES FORCES POUR MISE A L'ECHELLE (DENOMINATEUR)
 !
-    call nmrede(sdnume, fonact, sddyna, matass,&
+    call nmrede(sdnume, fonact, sddyna, matass, ds_material,&
                 veasse, neq, foiner, cnfext, cnfint,&
                 vchar, ichar)
 !

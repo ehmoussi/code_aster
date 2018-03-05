@@ -17,21 +17,16 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmrede(sdnume, fonact, sddyna, matass, ds_material,&
-                      veasse, neq, foiner, cnfext, cnfint,&
-                      vchar, ichar)
+    subroutine nonlinDSMaterialTimeStep(model          , ds_material, cara_elem,&
+                                        ds_constitutive, hval_incr  ,&
+                                        nume_dof       , sddisc     , nume_inst)
         use NonLin_Datastructure_type
-        character(len=19) :: sdnume
+        character(len=24), intent(in) :: model, cara_elem
         type(NL_DS_Material), intent(in) :: ds_material
-        integer :: fonact(*)
-        character(len=19) :: sddyna
-        character(len=19) :: matass
-        character(len=19) :: veasse(*)
-        integer :: neq
-        character(len=19) :: foiner
-        character(len=19) :: cnfext
-        character(len=19) :: cnfint
-        real(kind=8) :: vchar
-        integer :: ichar
-    end subroutine nmrede
+        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+        character(len=19), intent(in) :: hval_incr(*)
+        character(len=24), intent(in) :: nume_dof
+        character(len=19), intent(in) :: sddisc
+        integer, intent(in) :: nume_inst
+    end subroutine nonlinDSMaterialTimeStep
 end interface

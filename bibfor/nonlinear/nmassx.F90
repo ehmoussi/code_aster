@@ -86,7 +86,7 @@ character(len=19) :: cndonn
     character(len=24) :: mate, varc_refe
     character(len=19) :: cnffdo, cndfdo, cnfvdo, cnvady
     character(len=19) :: cndumm
-    character(len=19) :: cndiri, cnfint, cnvcpr
+    character(len=19) :: cndiri, cnfint
     character(len=19) :: vediri, vefint
     character(len=19) :: depmoi, vitmoi, accmoi
     integer :: iterat
@@ -142,10 +142,6 @@ character(len=19) :: cndonn
 !
     call ndasva('PRED', sddyna, veasse, cnvady)
 !
-! --- SECOND MEMBRE DES VARIABLES DE COMMANDE
-!
-    call nmchex(veasse, 'VEASSE', 'CNVCPR', cnvcpr)
-!
 ! --- CALCUL DES REACTIONS D'APPUI BT.LAMBDA
 !
     call nmdiri(modele, mate, carele, lischa, sddyna,&
@@ -183,7 +179,7 @@ character(len=19) :: cndonn
     vect(1) = cnffdo
     vect(2) = cnfvdo
     vect(3) = cnfint
-    vect(4) = cnvcpr
+    vect(4) = ds_material%fvarc_pred(1:19)
     vect(5) = cndfdo
     vect(6) = cndiri
     vect(7) = cnvady

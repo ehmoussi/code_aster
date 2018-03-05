@@ -17,15 +17,13 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmnpas(modele    , noma  , ds_material, carele    , fonact    ,&
+    subroutine nmnpas(modele    , noma  , fonact,&
                       ds_print  , sddisc, sdsuiv, sddyna    , sdnume    ,&
                       ds_measure, numedd, numins, ds_contact, &
                       valinc    , solalg, solveu, ds_conv   , lischa    )
         use NonLin_Datastructure_type
         character(len=24) :: modele
         character(len=8) :: noma
-        type(NL_DS_Material), intent(in) :: ds_material
-        character(len=24) :: carele
         integer :: fonact(*)
         type(NL_DS_Print), intent(inout) :: ds_print
         character(len=19) :: sddisc

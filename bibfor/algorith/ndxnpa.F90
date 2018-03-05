@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine ndxnpa(modele, mate  , carele, fonact, ds_print,&
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine ndxnpa(fonact, ds_print,&
                   sddisc, sddyna, sdnume, numedd, numins  ,&
                   valinc, solalg)
 !
@@ -37,17 +38,13 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/ndnpas.h"
 #include "asterfort/nmchex.h"
-#include "asterfort/nmvcle.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer :: fonact(*)
-    character(len=19) :: sddyna, sdnume, sddisc
-    character(len=24) :: modele, mate, carele
-    type(NL_DS_Print), intent(inout) :: ds_print
-    integer :: numins
-    character(len=24) :: numedd
-    character(len=19) :: solalg(*), valinc(*)
+integer :: fonact(*)
+character(len=19) :: sddyna, sdnume, sddisc
+type(NL_DS_Print), intent(inout) :: ds_print
+integer :: numins
+character(len=24) :: numedd
+character(len=19) :: solalg(*), valinc(*)
 !
 ! ----------------------------------------------------------------------
 !
@@ -57,10 +54,6 @@ implicit none
 !
 ! ----------------------------------------------------------------------
 !
-!
-! IN  MODELE : NOM DU MODELE
-! IN  MATE   : CHAMP DE MATERIAU
-! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! IN  NUMEDD : NUME_DDL
 ! IN  NUMINS : NUMERO INSTANT COURANT
@@ -77,8 +70,7 @@ implicit none
     integer :: neq
     character(len=19) :: depmoi, varmoi
     character(len=19) :: depplu, varplu, vitplu, accplu
-    character(len=19) :: complu, depdel
-    real(kind=8) :: instap
+    character(len=19) :: depdel
     integer :: jdepde
     integer :: indro
     real(kind=8), pointer :: depp(:) => null()
@@ -89,7 +81,6 @@ implicit none
 !
 ! --- INITIALISATIONS
 !
-    instap = diinst(sddisc,numins)
     call dismoi('NB_EQUA', numedd, 'NUME_DDL', repi=neq)
 !
 ! --- FONCTIONNALITES ACTIVEES
@@ -112,12 +103,7 @@ implicit none
     call nmchex(valinc, 'VALINC', 'VITPLU', vitplu)
     call nmchex(valinc, 'VALINC', 'ACCPLU', accplu)
     call nmchex(valinc, 'VALINC', 'VARPLU', varplu)
-    call nmchex(valinc, 'VALINC', 'COMPLU', complu)
     call nmchex(solalg, 'SOLALG', 'DEPDEL', depdel)
-!
-! --- TRAITEMENT DES VARIABLES DE COMMANDE
-!
-    call nmvcle(modele, mate, carele, instap, complu)
 !
 ! --- ESTIMATIONS INITIALES DES VARIABLES INTERNES
 !

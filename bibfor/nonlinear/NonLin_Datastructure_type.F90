@@ -503,6 +503,10 @@ implicit none
         character(len=24) :: varc_init
 ! ----- Force for initial value of external state variables
         character(len=24) :: fvarc_init
+! ----- Force from external state variables for predictor
+        character(len=24) :: fvarc_pred
+! ----- Force from external state variables for convergence criteria
+        character(len=24) :: fvarc_curr
 
     end type NL_DS_Material
 !

@@ -84,7 +84,7 @@ integer :: numins
     integer :: neq, iaux
     aster_logical :: lamor, ldyna
     integer :: nbvect
-    character(len=24) :: varc_refe, mate
+    character(len=24) :: mate
     character(len=16) :: loptve(20)
     character(len=6) :: ltypve(20)
     aster_logical :: lassve(20), lcalve(20)
@@ -102,7 +102,6 @@ integer :: numins
 ! --------------------------------------------------------------------------------------------------
 !
     mate      = ds_material%field_mate
-    varc_refe = ds_material%varc_refe
     lamor = ndynlo(sddyna,'MAT_AMORT')
     ldyna = ndynlo(sddyna,'DYNAMIQUE')
     call nmchex(valinc, 'VALINC', 'FEXMOI', fexmoi)
@@ -160,7 +159,7 @@ integer :: numins
                 nbvect, ltypve, loptve, lcalve, lassve)
     call nmxvec(modele, mate  , carele, ds_constitutive, ds_measure,&
                 sddisc, sddyna, numins, valinc         , solalg    ,&
-                lischa, varc_refe, numedd, ds_inout       , veelem    ,&
+                lischa, numedd, ds_inout       , veelem    ,&
                 veasse, measse, nbvect, ltypve         , lcalve    ,&
                 loptve, lassve)
     call nmchex(veasse, 'VEASSE', 'CNFNOD', cnfnod)

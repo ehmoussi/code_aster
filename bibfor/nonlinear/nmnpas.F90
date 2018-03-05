@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmnpas(modele    , noma  , ds_material, carele    , fonact    ,&
+subroutine nmnpas(modele    , noma  , fonact,&
                   ds_print  , sddisc, sdsuiv, sddyna    , sdnume    ,&
                   ds_measure, numedd, numins, ds_contact, &
                   valinc    , solalg, solveu, ds_conv   , lischa    )
@@ -31,7 +31,6 @@ implicit none
 #include "asterc/isnnem.h"
 #include "asterc/r8vide.h"
 #include "asterfort/copisd.h"
-#include "asterfort/diinst.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/initia.h"
 #include "asterfort/isfonc.h"
@@ -49,8 +48,7 @@ implicit none
 integer :: fonact(*)
 character(len=8) :: noma
 character(len=19) :: sddyna, sdnume, sddisc, solveu
-character(len=24) :: modele, carele
-type(NL_DS_Material), intent(in) :: ds_material
+character(len=24) :: modele
 integer :: numins
 type(NL_DS_Print), intent(inout) :: ds_print
 character(len=24) :: sdsuiv
@@ -71,8 +69,6 @@ character(len=19), intent(in) :: lischa
 !
 ! IN  MODELE : NOM DU MODELE
 ! IN  NOMA   : NOM DU MAILLAGE
-! In  ds_material      : datastructure for material parameters
-! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! IN  NUMEDD : NUME_DDL
 ! IN  NUMINS : NUMERO INSTANT COURANT
@@ -94,9 +90,7 @@ character(len=19), intent(in) :: lischa
     integer :: neq
     character(len=19) :: depmoi, varmoi
     character(len=19) :: depplu, varplu
-    character(len=19) :: complu, depdel
-    character(len=24) :: mate
-    real(kind=8) :: instan
+    character(len=19) :: depdel
     integer :: jdepde
     integer :: indro
     integer :: iterat
@@ -105,7 +99,6 @@ character(len=19), intent(in) :: lischa
 ! --------------------------------------------------------------------------------------------------
 !
     call dismoi('NB_EQUA', numedd, 'NUME_DDL', repi=neq)
-    mate   = ds_material%field_mate
 !
 ! - Active functionnalites
 !
@@ -115,10 +108,6 @@ character(len=19), intent(in) :: lischa
     lnkry         = isfonc(fonact,'NEWTON_KRYLOV')
     l_cont_cont   = isfonc(fonact,'CONT_CONTINU')
     l_diri_undead = isfonc(fonact,'DIRI_UNDEAD')
-!
-! --- INSTANT COURANT
-!
-    instan = diinst(sddisc,numins)
 !
 ! --- POUTRES EN GRANDES ROTATIONS
 !
@@ -134,12 +123,7 @@ character(len=19), intent(in) :: lischa
     call nmchex(valinc, 'VALINC', 'VARMOI', varmoi)
     call nmchex(valinc, 'VALINC', 'DEPPLU', depplu)
     call nmchex(valinc, 'VALINC', 'VARPLU', varplu)
-    call nmchex(valinc, 'VALINC', 'COMPLU', complu)
     call nmchex(solalg, 'SOLALG', 'DEPDEL', depdel)
-!
-! --- TRAITEMENT DES VARIABLES DE COMMANDE
-!
-    call nmvcle(modele, mate, carele, instan, complu)
 !
 ! --- ESTIMATIONS INITIALES DES VARIABLES INTERNES
 !

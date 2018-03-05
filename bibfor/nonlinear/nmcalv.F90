@@ -15,9 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmcalv(typvec         , modelz, lischa, mate      , carele,&
-                  ds_constitutive, numedd, comref, ds_measure, instam,&
+                  ds_constitutive, numedd, ds_measure, instam,&
                   instap         , valinc, solalg, sddyna    , option,&
                   vecele)
 !
@@ -46,19 +47,16 @@ implicit none
 #include "asterfort/velame.h"
 #include "asterfort/veondp.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=*) :: modelz
-    character(len=24) :: mate, carele, numedd
-    character(len=24) :: comref
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    real(kind=8) :: instam, instap
-    character(len=19) :: lischa, sddyna
-    character(len=19) :: solalg(*), valinc(*)
-    character(len=6) :: typvec
-    character(len=19) :: vecele, veceri(2)
-    character(len=16) :: option
+character(len=*) :: modelz
+character(len=24) :: mate, carele, numedd
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_Measure), intent(inout) :: ds_measure
+real(kind=8) :: instam, instap
+character(len=19) :: lischa, sddyna
+character(len=19) :: solalg(*), valinc(*)
+character(len=6) :: typvec
+character(len=19) :: vecele, veceri(2)
+character(len=16) :: option
 !
 ! ----------------------------------------------------------------------
 !
@@ -76,7 +74,6 @@ implicit none
 ! IN  NUMEDD : NUME_DDL
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  ds_constitutive  : datastructure for constitutive laws management
-! IN  COMREF : VARI_COM DE REFERENCE
 ! IN  INSTAM : INSTANT MOINS
 ! IN  INSTAP : INSTANT PLUS
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
@@ -231,14 +228,8 @@ implicit none
         call vecgme(modele, carele, mate, charge, infoch,&
                     instap, depmoi, depdel, vecele, instam,&
                     compor, ' '   , vitplu, strmoi)
-!
-! --- FORCE DE REFERENCE POUR VARIABLES DE COMMANDE COURANTES
-!
-    else if (typvec.eq.'CNVCF0') then
-        call nmvcfo('+'   , modele   , mate     , carele, compor,&
-                    comref, valinc, vecele)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! --- DEBUG

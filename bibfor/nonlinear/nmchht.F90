@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -197,21 +197,21 @@ implicit none
 ! - Given displacements
 !
     call nmcalv('CNDIDO'       , model    , list_load, mate      , cara_elem     ,&
-                ds_constitutive, nume_dof , varc_refe, ds_measure, time_prev_step,&
+                ds_constitutive, nume_dof , ds_measure, time_prev_step,&
                 time_init      , hval_incr, hval_algo, sddyna    , k16bla        ,&
                 vedido)
-    call nmassv('CNDIDO'       , model      , list_load      , mate     , cara_elem  ,&
-                ds_constitutive, nume_dof   , time_prev_step , time_init, &
-                sddyna         , ds_measure , hval_incr, varc_refe  ,&
+    call nmassv('CNDIDO'       , model      , list_load      , &
+                nume_dof   , time_prev_step , time_init, &
+                sddyna         , ds_measure , hval_incr, &
                 ds_inout       , hval_measse, vedido  , cndido)
     if (ldidi) then
         call nmcalv('CNDIDI'       , model    , list_load, mate     , cara_elem     ,&
-                    ds_constitutive, nume_dof , varc_refe, ds_measure, time_prev_step,&
+                    ds_constitutive, nume_dof , ds_measure, time_prev_step,&
                     time_init      , hval_incr, hval_algo, sddyna   , k16bla        ,&
                     vedidi)
-        call nmassv('CNDIDI'       , model      , list_load      , mate     , cara_elem  ,&
-                    ds_constitutive, nume_dof   , time_prev_step , time_init, &
-                    sddyna         , ds_measure, hval_incr, varc_refe  ,&
+        call nmassv('CNDIDI'       , model      , list_load      ,&
+                    nume_dof   , time_prev_step , time_init, &
+                    sddyna         , ds_measure, hval_incr, &
                     ds_inout       , hval_measse, vedidi         , cndidi)
     endif
 !
@@ -219,12 +219,12 @@ implicit none
 !
     if (llapl) then
         call nmcalv('CNLAPL'       , model    , list_load, mate     , cara_elem     ,&
-                    ds_constitutive, nume_dof , varc_refe, ds_measure, time_prev_step,&
+                    ds_constitutive, nume_dof , ds_measure, time_prev_step,&
                     time_init      , hval_incr, hval_algo, sddyna   , k16bla        ,&
                     velapl)
-        call nmassv('CNLAPL'       , model      , list_load      , mate     , cara_elem  ,&
-                    ds_constitutive, nume_dof   , time_prev_step , time_init, &
-                    sddyna         , ds_measure, hval_incr, varc_refe  ,&
+        call nmassv('CNLAPL'       , model      , list_load      ,&
+                    nume_dof   , time_prev_step , time_init, &
+                    sddyna         , ds_measure, hval_incr, &
                     ds_inout       , hval_measse, velapl  , cnlapl)
     endif
 !
@@ -232,12 +232,12 @@ implicit none
 !
     if (londe) then
         call nmcalv('CNONDP'       , model    , list_load, mate     , cara_elem     ,&
-                    ds_constitutive, nume_dof , varc_refe, ds_measure, time_prev_step,&
+                    ds_constitutive, nume_dof , ds_measure, time_prev_step,&
                     time_init      , hval_incr, hval_algo, sddyna   , k16bla        ,&
                     veondp)
-        call nmassv('CNONDP'       , model      , list_load      , mate     , cara_elem  ,&
-                    ds_constitutive, nume_dof   , time_prev_step , time_init, &
-                    sddyna         , ds_measure, hval_incr, varc_refe  ,&
+        call nmassv('CNONDP'       , model      , list_load      , &
+                    nume_dof   , time_prev_step , time_init, &
+                    sddyna         , ds_measure, hval_incr, &
                     ds_inout       , hval_measse, veondp, cnondp)
     endif
 !
@@ -245,40 +245,40 @@ implicit none
 !
     if (lsstf) then
         call nmcalv('CNSSTF'       , model    , list_load, mate     , cara_elem     ,&
-                    ds_constitutive, nume_dof , varc_refe, ds_measure, time_prev_step,&
+                    ds_constitutive, nume_dof , ds_measure, time_prev_step,&
                     time_init      , hval_incr, hval_algo, sddyna   , k16bla        ,&
                     vesstf)
-        call nmassv('CNSSTF'       , model      , list_load      , mate     , cara_elem  ,&
-                    ds_constitutive, nume_dof   , time_prev_step , time_init, &
-                    sddyna         , ds_measure         , hval_incr, varc_refe  ,&
+        call nmassv('CNSSTF'       , model      , list_load      ,&
+                    nume_dof   , time_prev_step , time_init, &
+                    sddyna         , ds_measure         , hval_incr,&
                     ds_inout       , hval_measse, vesstf  , cnsstf)
     endif
 !
 ! - FORCE_SOL
 !
     if (lviss) then
-        call nmassv('CNVISS'       , model      , list_load      , mate     , cara_elem  ,&
-                    ds_constitutive, nume_dof   , time_prev_step , time_init, &
-                    sddyna         , ds_measure , hval_incr, varc_refe  ,&
+        call nmassv('CNVISS'       , model      , list_load      , &
+                   nume_dof   , time_prev_step , time_init, &
+                    sddyna         , ds_measure , hval_incr, &
                     ds_inout       , hval_measse, k16bla  , cnviss)
     endif
 !
 ! - Neumann forces
 !
     call nmcalv('CNFEDO'       , model    , list_load, mate     , cara_elem     ,&
-                ds_constitutive, nume_dof , varc_refe, ds_measure   , time_prev_step,&
+                ds_constitutive, nume_dof , ds_measure   , time_prev_step,&
                 time_init      , hval_incr, hval_algo, sddyna   , k16bla        ,&
                 vefedo)
-    call nmassv('CNFEDO'       , model      , list_load      , mate     , cara_elem  ,&
-                ds_constitutive, nume_dof   , time_prev_step , time_init, &
-                sddyna         , ds_measure , hval_incr, varc_refe  ,&
+    call nmassv('CNFEDO'       , model      , list_load      ,&
+                nume_dof   , time_prev_step , time_init, &
+                sddyna         , ds_measure , hval_incr, &
                 ds_inout       , hval_measse, vefedo  , cnfedo)
 !
 ! - Given displacements (AFFE_CHAR_CINE)
 !
-    call nmassv('CNCINE'       , model      , list_load      , mate     , cara_elem  ,&
-                ds_constitutive, nume_dof   , time_prev_step , time_init, &
-                sddyna         , ds_measure , hval_incr, varc_refe  ,&
+    call nmassv('CNCINE'       , model      , list_load      ,&
+                nume_dof   , time_prev_step , time_init, &
+                sddyna         , ds_measure , hval_incr, &
                 ds_inout       , hval_measse, k16bla  , cncine)
 !
 99  continue

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmrede(sdnume, fonact, sddyna, matass,&
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmrede(sdnume, fonact, sddyna, matass, ds_material,&
                   veasse, neq, foiner, cnfext, cnfint,&
                   vchar, ichar)
 !
-! person_in_charge: mickael.abbas at edf.fr
+use NonLin_Datastructure_type
 !
-    implicit none
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/infdbg.h"
@@ -32,14 +34,16 @@ subroutine nmrede(sdnume, fonact, sddyna, matass,&
 #include "asterfort/jeveuo.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/nmchex.h"
-    character(len=19) :: sddyna, sdnume
-    character(len=19) :: veasse(*)
-    character(len=19) :: matass
-    integer :: fonact(*)
-    real(kind=8) :: vchar
-    integer :: ichar
-    integer :: neq
-    character(len=19) :: foiner, cnfext, cnfint
+!
+character(len=19) :: sddyna, sdnume
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=19) :: veasse(*)
+character(len=19) :: matass
+integer :: fonact(*)
+real(kind=8) :: vchar
+integer :: ichar
+integer :: neq
+character(len=19) :: foiner, cnfext, cnfint
 !
 ! ----------------------------------------------------------------------
 !
@@ -49,8 +53,8 @@ subroutine nmrede(sdnume, fonact, sddyna, matass,&
 !
 ! ----------------------------------------------------------------------
 !
-!
 ! IN  NUMEDD : NUMEROTATION NUME_DDL
+! In  ds_material      : datastructure for material parameters
 ! IN  SDNUME : NOM DE LA SD NUMEROTATION
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! IN  MATASS : MATRICE DU PREMIER MEMBRE ASSEMBLEE
@@ -69,7 +73,7 @@ subroutine nmrede(sdnume, fonact, sddyna, matass,&
     integer :: jccid
     integer :: ifm, niv
     aster_logical :: ldyna, lcine, l_cont_cont, l_cont_lac
-    character(len=19) :: cndiri, cnvcfo
+    character(len=19) :: cndiri
     integer :: ieq
     real(kind=8) :: val2, val3, appui, fext
     character(len=24) :: sdnuco
@@ -78,7 +82,7 @@ subroutine nmrede(sdnume, fonact, sddyna, matass,&
     real(kind=8), pointer :: vfext(:) => null()
     real(kind=8), pointer :: fint(:) => null()
     real(kind=8), pointer :: iner(:) => null()
-    real(kind=8), pointer :: vcfo(:) => null()
+    real(kind=8), pointer :: v_fvarc_curr(:) => null()
 !
 ! ----------------------------------------------------------------------
 !
@@ -101,7 +105,6 @@ subroutine nmrede(sdnume, fonact, sddyna, matass,&
 ! --- DECOMPACTION DES VARIABLES CHAPEAUX
 !
     call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
-    call nmchex(veasse, 'VEASSE', 'CNVCF0', cnvcfo)
 !
 ! --- ACCES DDLS IMPOSES PAR AFFE_CHAR_CINE :
 !
@@ -121,7 +124,7 @@ subroutine nmrede(sdnume, fonact, sddyna, matass,&
     call jeveuo(cnfint(1:19)//'.VALE', 'L', vr=fint)
     call jeveuo(cndiri(1:19)//'.VALE', 'L', vr=diri)
     call jeveuo(cnfext(1:19)//'.VALE', 'L', vr=vfext)
-    call jeveuo(cnvcfo(1:19)//'.VALE', 'L', vr=vcfo)
+    call jeveuo(ds_material%fvarc_curr(1:19)//'.VALE', 'L', vr=v_fvarc_curr)
 !
     if (ldyna) then
         call jeveuo(foiner(1:19)//'.VALE', 'L', vr=iner)
@@ -148,7 +151,7 @@ subroutine nmrede(sdnume, fonact, sddyna, matass,&
             fext = vfext(ieq)
         endif
 !
-        val2 = abs(appui-fext)+abs(vcfo(ieq))
+        val2 = abs(appui-fext)+abs(v_fvarc_curr(ieq))
 !
 ! ----- SI LAGRANGIEN DE CONTACT/FROT: ON IGNORE LA VALEUR DU RESIDU
 !
