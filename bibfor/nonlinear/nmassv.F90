@@ -41,7 +41,6 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/ndfdyn.h"
 #include "asterfort/ndynlo.h"
-#include "asterfort/nmamod.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmcvci.h"
 #include "asterfort/nmdebg.h"
@@ -222,18 +221,6 @@ character(len=*) :: vecasz, vecelz
 !
     else if (typvec.eq.'CNDYNA') then
         call ndfdyn(sddyna, measse, vitplu, accplu, vecass)
-!
-! --- FORCES D'AMORTISSEMENT MODAL EN PREDICTION (PAS DE VECT_ELEM)
-!
-    else if (typvec.eq.'CNMODP') then
-        call nmamod('PRED', numedd, sddyna, vitplu, vitkm1,&
-                    vecass)
-!
-! --- FORCES D'AMORTISSEMENT MODAL EN CORRECTION (PAS DE VECT_ELEM)
-!
-    else if (typvec.eq.'CNMODC') then
-        call nmamod('CORR', numedd, sddyna, vitplu, vitkm1,&
-                    vecass)
     else
         ASSERT(ASTER_FALSE)
     endif

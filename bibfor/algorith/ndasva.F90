@@ -93,13 +93,7 @@ character(len=19) :: sddyna
     cnvari(ifdo) = cndyna
     covari(ifdo) = -1.d0
     if (lammo) then
-        if (phase .eq. 'PRED') then
-            call nmchex(veasse, 'VEASSE', 'CNMODP', cnmoda)
-        else if (phase.eq.'CORR') then
-            call nmchex(veasse, 'VEASSE', 'CNMODC', cnmoda)
-        else
-            ASSERT(.false.)
-        endif
+        call nmchex(veasse, 'VEASSE', 'CNAMOD', cnmoda)
         ifdo = ifdo+1
         cnvari(ifdo) = cnmoda
         covari(ifdo) = -1.d0

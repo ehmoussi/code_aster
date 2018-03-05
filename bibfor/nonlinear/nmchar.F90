@@ -34,6 +34,7 @@ implicit none
 #include "asterfort/nmcvec.h"
 #include "asterfort/nmxvec.h"
 #include "asterfort/nonlinDynaImpeCompute.h"
+#include "asterfort/nonlinDynaMDampCompute.h"
 !
 character(len=4) :: mode
 character(len=*) :: phasez
@@ -234,11 +235,13 @@ character(len=19) :: solalg(*), valinc(*)
 !
             if (lammo) then
                 if (phase .eq. 'PREDICTION') then
-                    call nmcvec('AJOU', 'CNMODP', ' ', .false._1, .true._1,&
-                                nbvect, ltypve, loptve, lcalve, lassve)
+                    call nonlinDynaMDampCompute('Prediction', sddyna    ,&
+                                                numedd      , ds_measure,&
+                                                valinc      , veasse)
                 else if (phase.eq.'CORRECTION') then
-                    call nmcvec('AJOU', 'CNMODC', ' ', .false._1, .true._1,&
-                                nbvect, ltypve, loptve, lcalve, lassve)
+                    call nonlinDynaMDampCompute('Correction', sddyna    ,&
+                                                numedd      , ds_measure,&
+                                                valinc      , veasse)
                 else
                     ASSERT(.false.)
                 endif

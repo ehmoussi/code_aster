@@ -79,7 +79,7 @@ character(len=19), intent(in) :: veasse(*)
     character(len=19) :: depkm1, vitkm1, acckm1, romkm1, romk
     character(len=19) :: depent, vitent, accent
     character(len=19) :: depabs, vitabs, accabs
-    character(len=19) :: cndyna, cnmodp, cnmodc
+    character(len=19) :: cndyna, cnamod
     character(len=19) :: cnfext
     character(len=19) :: cnfedo, cnfsdo, cndidi, cnfint
     character(len=19) :: cndido, cncine, cndiri
@@ -327,10 +327,8 @@ character(len=19), intent(in) :: veasse(*)
 ! --- AMORTISSEMENT MODAL
 !
     if (lammo) then
-        call nmchex(veasse, 'VEASSE', 'CNMODP', cnmodp)
-        call nmchex(veasse, 'VEASSE', 'CNMODC', cnmodc)
-        call vtcreb(cnmodp, 'V', 'R', nume_ddlz = numedd)
-        call vtcreb(cnmodc, 'V', 'R', nume_ddlz = numedd)
+        call nmchex(veasse, 'VEASSE', 'CNAMOD', cnamod)
+        call vtcreb(cnamod, 'V', 'R', nume_ddlz = numedd)
     endif
 !
 ! --- CONTACT AVEC DES ELEMENTS FINIS (CONTINUE/XFEM)
