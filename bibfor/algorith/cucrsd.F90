@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine cucrsd(mesh, nume_dof, ds_contact)
 !
 use NonLin_Datastructure_type
@@ -39,12 +39,12 @@ implicit none
 #include "asterfort/jexnum.h"
 #include "asterfort/posddl.h"
 #include "asterfort/utmess.h"
+#include "asterfort/vtcreb.h"
 #include "asterfort/wkvect.h"
 !
-!
-    character(len=8), intent(in) :: mesh
-    character(len=24), intent(in) :: nume_dof
-    type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=8), intent(in) :: mesh
+character(len=24), intent(in) :: nume_dof
+type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,7 +56,7 @@ implicit none
 !
 ! In  mesh             : name of mesh
 ! In  nume_dof         : name of numbering object (NUME_DDL)
-! In  ds_contact       : datastructure for contact management
+! IO  ds_contact       : datastructure for contact management
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -241,6 +241,11 @@ implicit none
 ! --- MATRICE DE LA LIAISON_UNILATERALE ACM1AT
 !
     call cfcrma(ncmpg, mesh, sdunil_solv)
+!
+! - Forces to solve
+!
+    call vtcreb(ds_contact%cnunil, 'V', 'R', nume_ddlz = nume_dof)
+    ds_contact%l_cnunil = ASTER_TRUE
 !
     call jedema()
 end subroutine

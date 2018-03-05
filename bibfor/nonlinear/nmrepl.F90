@@ -109,7 +109,7 @@ integer :: pilcvg, ldccvg
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter:: zveass = 26
+    integer, parameter:: zveass = 24
     integer, parameter:: zsolal = 17
     integer, parameter:: zvalin = 28
     aster_logical :: exopt, mieux, irecli
@@ -332,7 +332,7 @@ integer :: pilcvg, ldccvg
 ! --- REACTUALISATION DES EFFORTS EXTERIEURS (AVEC ETA)
 !
     call nmchex(veasst, 'VEASSE', 'CNFEXT', cnfext)
-    call nmfext(eta, fonact, sddyna, veasst, cnfext)
+    call nmfext(eta, fonact, sddyna, veasst, cnfext, ds_contact)
 !
 ! --- RECUPERATION DES VARIABLES EN T+ (PAS DE RECALCUL)
 !

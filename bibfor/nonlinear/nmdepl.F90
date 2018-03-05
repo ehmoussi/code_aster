@@ -149,7 +149,7 @@ aster_logical :: lerrit
 ! --- CALCUL DE LA RESULTANTE DES EFFORTS EXTERIEURS
 !
     call nmchex(veasse, 'VEASSE', 'CNFEXT', cnfext)
-    call nmfext(etan, fonact, sddyna, veasse, cnfext)
+    call nmfext(etan, fonact, sddyna, veasse, cnfext, ds_contact)
 !
 ! --- CONVERSION RESULTAT dU VENANT DE K.dU = F SUIVANT SCHEMAS
 !

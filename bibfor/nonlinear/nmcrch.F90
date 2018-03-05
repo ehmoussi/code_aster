@@ -65,7 +65,7 @@ character(len=19), intent(in) :: veasse(*)
     character(len=24) :: sdcont_defi
     aster_logical :: ldyna, lammo, lmpas, lrefe, lmacr, lmuap, lviss
     aster_logical :: leltc, leltf
-    aster_logical :: lunil, lctcd, lctfd, lpenac, lallv
+    aster_logical :: lallv
     aster_logical :: lsstf, limpe
     aster_logical :: ldidi, lpilo, lener
     character(len=19) :: depplu, vitplu, accplu
@@ -85,7 +85,6 @@ character(len=19), intent(in) :: veasse(*)
     character(len=19) :: cndido, cncine, cndiri
     character(len=19) :: cnondp, cnlapl, cnviss
     character(len=19) :: cnsstf, cnsstr
-    character(len=19) :: cnctdc, cnunil
     character(len=19) :: cneltc, cneltf
     character(len=19) :: cnimpe
     character(len=19) :: cnfepi, cndipi, cnrefe
@@ -108,10 +107,7 @@ character(len=19), intent(in) :: veasse(*)
     ldyna = ndynlo(sddyna,'DYNAMIQUE')
     lammo = ndynlo(sddyna,'AMOR_MODAL')
     lmpas = ndynlo(sddyna,'MULTI_PAS')
-    lctcd = isfonc(fonact,'CONT_DISCRET')
-    lctfd = isfonc(fonact,'FROT_DISCRET')
     lallv = isfonc(fonact,'CONT_ALL_VERIF')
-    lunil = isfonc(fonact,'LIAISON_UNILATER')
     ldidi = isfonc(fonact,'DIDI')
     lpilo = isfonc(fonact,'PILOTAGE')
     lsstf = isfonc(fonact,'SOUS_STRUC')
@@ -120,11 +116,6 @@ character(len=19), intent(in) :: veasse(*)
     lviss = ndynlo(sddyna,'VECT_ISS' )
     lener = isfonc(fonact,'ENERGIE')
     lmuap = ndynlo(sddyna,'MULTI_APPUI')
-    if (lctcd) then
-        lpenac = cfdisl(sdcont_defi,'CONT_PENA' )
-    else
-        lpenac = .false.
-    endif
     leltc = isfonc(fonact,'ELT_CONTACT')
     leltf = isfonc(fonact,'ELT_FROTTEMENT')
 !
@@ -340,20 +331,6 @@ character(len=19), intent(in) :: veasse(*)
         call nmchex(veasse, 'VEASSE', 'CNMODC', cnmodc)
         call vtcreb(cnmodp, 'V', 'R', nume_ddlz = numedd)
         call vtcreb(cnmodc, 'V', 'R', nume_ddlz = numedd)
-    endif
-!
-! --- CONTACT/FROTTEMENT DISCRET
-!
-    if (lctcd .and. (.not.lallv)) then
-        call nmchex(veasse, 'VEASSE', 'CNCTDC', cnctdc)
-        call vtcreb(cnctdc, 'V', 'R', nume_ddlz = numedd)
-    endif
-!
-! --- LIAISON UNILATERALE
-!
-    if (lunil) then
-        call nmchex(veasse, 'VEASSE', 'CNUNIL', cnunil)
-        call vtcreb(cnunil, 'V', 'R', nume_ddlz = numedd)
     endif
 !
 ! --- CONTACT AVEC DES ELEMENTS FINIS (CONTINUE/XFEM)

@@ -327,6 +327,12 @@ implicit none
 ! ----- Force for DISCRETE contact (friction)
         aster_logical     :: l_cnctdf
         character(len=19) :: cnctdf
+! ----- Force for DISCRETE contact (contact)
+        aster_logical     :: l_cnctdc
+        character(len=19) :: cnctdc
+! ----- Force for DISCRETE contact (LIAISON_UNIL)
+        aster_logical     :: l_cnunil
+        character(len=19) :: cnunil
     end type NL_DS_Contact
 !
 ! - Type: timer management

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmequi(eta, fonact, sddyna, veasse,&
-                  cnfext, cnfint)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine nmequi(eta, fonact, sddyna, ds_contact, veasse,&
+                  cnfext, cnfint)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -32,34 +34,35 @@ subroutine nmequi(eta, fonact, sddyna, veasse,&
 #include "asterfort/ndynlo.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmfext.h"
-    real(kind=8) :: eta
-    integer :: fonact(*)
-    character(len=19) :: sddyna
-    character(len=19) :: veasse(*)
-    character(len=19) :: cnfext, cnfint
 !
-! ----------------------------------------------------------------------
+real(kind=8) :: eta
+integer :: fonact(*)
+character(len=19) :: sddyna
+character(len=19) :: veasse(*)
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=19) :: cnfext, cnfint
+!
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (ALGORITHME)
 !
 ! RESULTANTE DES EFFORTS POUR ESTIMATION DE L'EQUILIBRE
 !
-! ----------------------------------------------------------------------
-!
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  SDDYNA : SD DYNAMIQUE
+! In  ds_contact       : datastructure for contact management
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! IN  ETA    : COEFFICIENT DE PILOTAGE
 ! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
 !
-!
-!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
     aster_logical :: ldyna, lstat
     aster_logical :: lnewma
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
@@ -67,8 +70,7 @@ subroutine nmequi(eta, fonact, sddyna, veasse,&
 ! --- AFFICHAGE
 !
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> CALCUL DES FORCES POUR '//&
-        'ESTIMATION DE L''EQUILIBRE'
+        write (ifm,*) '<MECANONLINE> CALCUL DES FORCES POUR ESTIMATION DE L''EQUILIBRE'
     endif
 !
 ! --- FONCTIONNALITES ACTIVEES
@@ -77,7 +79,7 @@ subroutine nmequi(eta, fonact, sddyna, veasse,&
 !
 ! --- INITIALISATIONS
 !
-    lnewma = .false.
+    lnewma = ASTER_FALSE
 !
 ! --- FONCTIONNALITES ACTIVEES
 !
@@ -86,24 +88,16 @@ subroutine nmequi(eta, fonact, sddyna, veasse,&
     if (ldyna) then
         lnewma = ndynlo(sddyna,'FAMILLE_NEWMARK')
     endif
+    ASSERT(lstat .or. lnewma)
 !
 ! --- VECTEURS EN SORTIE
 !
-    if (lstat .or. lnewma) then
-        call nmchex(veasse, 'VEASSE', 'CNFEXT', cnfext)
-        call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
-    else
-        ASSERT(.false.)
-    endif
+    call nmchex(veasse, 'VEASSE', 'CNFEXT', cnfext)
+    call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
 !
 ! --- CALCUL DES TERMES
 !
-    if (lstat .or. lnewma) then
-        call nmfext(eta, fonact, sddyna, veasse, cnfext)
-    else
-        ASSERT(.false.)
-    endif
-!
+    call nmfext(eta, fonact, sddyna, veasse, cnfext, ds_contact)
 !
     call jedema()
 end subroutine
