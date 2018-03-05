@@ -119,6 +119,15 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.ContactDefinition` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.ContactDefinition
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.CrackTip` object
 ================================================================================
 
@@ -143,7 +152,6 @@
 .. autoclass:: code_aster.Objects.DOFNumbering
    :show-inheritance:
    :members:
-
 
 
 ================================================================================
@@ -511,6 +519,15 @@
 ================================================================================
 
 .. autoclass:: code_aster.Objects.GenericDataFieldDouble
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.GenericFunction` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.GenericFunction
    :show-inheritance:
    :members:
 
@@ -984,10 +1001,37 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.TableContainer` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.TableContainer
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.TableOfFunctions` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.TableOfFunctions
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.ThermalLoad` object
 ================================================================================
 
 .. autoclass:: code_aster.Objects.ThermalLoad
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.TimeDependantResultsContainer` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.TimeDependantResultsContainer
    :show-inheritance:
    :members:
 
@@ -1028,22 +1072,11 @@
    :members:
 
 
-
-
 ================================================================================
 :py:class:`~code_aster.Objects.WavePressureOnFaceDouble` object
 ================================================================================
 
 .. autoclass:: code_aster.Objects.WavePressureOnFaceDouble
-   :show-inheritance:
-   :members:
-
-
-================================================================================
-:py:class:`~code_aster.Objects.ContactDefinition` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.ContactDefinition
    :show-inheritance:
    :members:
 

@@ -830,6 +830,24 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.MFrontFoMaterialBehaviour` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.MFrontFoMaterialBehaviour
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.MFrontMaterialBehaviour` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.MFrontMaterialBehaviour
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.MazarsFoMaterialBehaviour` object
 ================================================================================
 
@@ -1289,10 +1307,28 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.ThmDiffuMaterialBehaviour` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.ThmDiffuMaterialBehaviour
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.ThmGazMaterialBehaviour` object
 ================================================================================
 
 .. autoclass:: code_aster.Objects.ThmGazMaterialBehaviour
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.ThmInitMaterialBehaviour` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.ThmInitMaterialBehaviour
    :show-inheritance:
    :members:
 
@@ -1334,19 +1370,19 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.UmatFoMaterialBehaviour` object
+:py:class:`~code_aster.Objects.UMatFoMaterialBehaviour` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.UmatFoMaterialBehaviour
+.. autoclass:: code_aster.Objects.UMatFoMaterialBehaviour
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.UmatMaterialBehaviour` object
+:py:class:`~code_aster.Objects.UMatMaterialBehaviour` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.UmatMaterialBehaviour
+.. autoclass:: code_aster.Objects.UMatMaterialBehaviour
    :show-inheritance:
    :members:
 
