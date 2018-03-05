@@ -94,7 +94,7 @@ robot.prefix = http://aster-repo.der.edf.fr/scm/
 robot.username = ${ADM_USR}
 robot.password = ${ADM_PSW}
 EOF
-                ./share/test/check_automerge.sh --verbose --commit
+                ./check_automerge.sh --verbose --commit
                 ret=\$?
 
                 mv .hg/hgrc.bck .hg/hgrc
