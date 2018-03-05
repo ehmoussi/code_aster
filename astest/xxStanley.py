@@ -5,6 +5,8 @@ code_aster.init()
 
 test = code_aster.TestCase()
 
-STANLEY()
+#STANLEY()
 
 test.assertTrue( True )
+
+test.printSummary()
