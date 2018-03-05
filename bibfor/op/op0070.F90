@@ -62,8 +62,12 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: fonact(100)
-    integer, parameter :: zmeelm=9, zmeass=4, zveelm=17, zveass=26
-    integer, parameter :: zsolal=17, zvalin=28
+    integer, parameter :: zmeelm = 9
+    integer, parameter :: zmeass = 4
+    integer, parameter :: zveelm = 17
+    integer, parameter :: zveass = 24
+    integer, parameter :: zsolal = 17
+    integer, parameter :: zvalin = 28
 !
 ! --- GESTION BOUCLES
 !

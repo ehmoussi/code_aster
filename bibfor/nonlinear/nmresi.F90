@@ -200,7 +200,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --- RESULTANTE DES EFFORTS POUR ESTIMATION DE L'EQUILIBRE
 !
-    call nmequi(eta, fonact, sddyna, veasse,&
+    call nmequi(eta, fonact, sddyna, ds_contact, veasse,&
                 cnfext, cnfint)
 !
 ! --- POINTEUR SUR LES DDLS ELIMINES PAR AFFE_CHAR_CINE

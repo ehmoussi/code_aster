@@ -103,7 +103,7 @@ aster_logical :: lerrit
     character(len=19) :: vefint, vediri, vebudi, cnfint, cndiri, cnbudi
     character(len=19) :: depplu, vitplu, accplu
     character(len=16) :: option
-    aster_logical :: lctcd, lunil, leltc
+    aster_logical :: l_cont_disc, l_unil, leltc
     integer :: ldccvg
     integer :: ifm, niv
 !
@@ -122,8 +122,8 @@ aster_logical :: lerrit
 !
 ! --- FONCTIONNALITES ACTIVEES
 !
-    lunil = isfonc(fonact,'LIAISON_UNILATER')
-    lctcd = isfonc(fonact,'CONT_DISCRET')
+    l_unil      = isfonc(fonact,'LIAISON_UNILATER')
+    l_cont_disc = isfonc(fonact,'CONT_DISCRET')
     leltc = isfonc(fonact,'ELT_CONTACT')
 !
 ! --- DECOMPACTION DES VARIABLES CHAPEAUX
@@ -179,8 +179,8 @@ aster_logical :: lerrit
 !
 ! - Compute vectors for DISCRETE contact
 !
-    if (lctcd .or. lunil) then
-        call nmctcd(fonact, ds_contact, nume_dof, veasse)
+    if (l_cont_disc .or. l_unil) then
+        call nmctcd(fonact, ds_contact, nume_dof)
     endif
 !
 ! --- ASSEMBLAGE DES FORCES INTERIEURES

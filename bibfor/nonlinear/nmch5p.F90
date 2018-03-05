@@ -45,7 +45,7 @@ character(len=19) :: veasse(*)
     character(len=19) :: cnsstf
     character(len=19) :: cnrefe
     character(len=19) :: cndyna, cnmodp, cnmodc
-    character(len=19) :: cnctdc, cnunil, cnfext
+    character(len=19) :: cnfext
     character(len=19) :: cnimpe, cnviss
 !
     data cnfedo,cnfsdo    /'&&NMCH5P.CNFEDO','&&NMCH5P.CNFSDO'/
@@ -60,8 +60,8 @@ character(len=19) :: veasse(*)
     data cncine,cnsstr    /'&&NMCH5P.CNCINE','&&NMCH5P.CNSSTR'/
     data cnmodp           /'&&NMCH5P.CNMODP'/
     data cndyna           /'&&NMCH5P.CNDYNA'/
-    data cnmodc,cnctdc    /'&&NMCH5P.CNMODC','&&NMCH5P.CNCTDC'/
-    data cnunil,cnfext    /'&&NMCH5P.CNUNIL','&&NMCH5P.CNFEXT'/
+    data cnmodc           /'&&NMCH5P.CNMODC'/
+    data cnfext           /'&&NMCH5P.CNFEXT'/
     data cnimpe           /'&&NMCH5P.CNIMPE'/
     data cnviss           /'&&NMCH5P.CNVISS'/
 !
@@ -93,8 +93,6 @@ character(len=19) :: veasse(*)
     call nmcha0('VEASSE', 'CNDYNA', cndyna, veasse)
     call nmcha0('VEASSE', 'CNMODP', cnmodp, veasse)
     call nmcha0('VEASSE', 'CNMODC', cnmodc, veasse)
-    call nmcha0('VEASSE', 'CNCTDC', cnctdc, veasse)
-    call nmcha0('VEASSE', 'CNUNIL', cnunil, veasse)
     call nmcha0('VEASSE', 'CNFEXT', cnfext, veasse)
     call nmcha0('VEASSE', 'CNVISS', cnviss, veasse)
 !

@@ -93,7 +93,7 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter:: zveass = 26
+    integer, parameter:: zveass = 24
     integer :: iret(zveass)
     character(len=19) :: depmoi, depplu, vitmoi, vitplu, masse, amort, rigid
     character(len=19) :: fexmoi, fexplu, fammoi, fnomoi
@@ -117,6 +117,8 @@ type(NL_DS_Contact), intent(in) :: ds_contact
     real(kind=8), pointer :: veass(:) => null()
     real(kind=8), pointer :: v_fvarc_curr(:) => null()
     real(kind=8), pointer :: v_cnctdf(:) => null()
+    real(kind=8), pointer :: v_cnctdc(:) => null()
+    real(kind=8), pointer :: v_cnunil(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -159,6 +161,13 @@ type(NL_DS_Contact), intent(in) :: ds_contact
     if (ds_contact%l_cnctdf) then
         call jeveuo(ds_contact%cnctdf(1:19)//'.VALE', 'L', vr=v_cnctdf)
     endif
+    if (ds_contact%l_cnctdc) then
+        call jeveuo(ds_contact%cnctdc(1:19)//'.VALE', 'L', vr=v_cnctdc)
+    endif
+    if (ds_contact%l_cnunil) then
+        call jeveuo(ds_contact%cnunil(1:19)//'.VALE', 'L', vr=v_cnunil)
+    endif
+!
 !
     do i = 1, zveass
         iret(i)=0
@@ -199,6 +208,16 @@ type(NL_DS_Contact), intent(in) :: ds_contact
     if (ds_contact%l_cnctdf) then
         do j = 1, neq
             flipl(j)=flipl(j)+v_cnctdf(j)
+        end do
+    endif
+    if (ds_contact%l_cnctdc) then
+        do j = 1, neq
+            flipl(j)=flipl(j)+v_cnctdc(j)
+        end do
+    endif
+    if (ds_contact%l_cnunil) then
+        do j = 1, neq
+            flipl(j)=flipl(j)+v_cnunil(j)
         end do
     endif
 !
@@ -242,12 +261,9 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 ! --------------------------------------------------------------------
 ! 15 - CNELTC : FORCES ELEMENTS DE CONTACT (CONTINU + XFEM)
 ! 16 - CNELTF : FORCES ELEMENTS DE FROTTEMENT (CONTINU + XFEM)
-! 23 - CNCTDC : FORCES DE CONTACT (CONTACT DISCRET)
-! 24 - CNUNIL : FORCES DE CONTACT (LIAISON_UNILATERALE)
 ! 12 - CNIMPE : FORCES IMPEDANCE
 ! --------------------------------------------------------------------
-            else if ((i.eq.15).or.(i.eq.16).or.(i.eq.12).or.&
-                     (i.eq.23).or.(i.eq.24)) then
+            else if ((i.eq.15).or.(i.eq.16).or.(i.eq.12)) then
                 do j = 1, neq
                     flipl(j)=flipl(j)+veass(j)
                 end do
@@ -259,9 +275,9 @@ type(NL_DS_Contact), intent(in) :: ds_contact
                     end do
                 endif
 ! --------------------------------------------------------------------
-! 26 - CNVISS : CHARGEMENT VEC_ISS (FORCE_SOL)
+! 24 - CNVISS : CHARGEMENT VEC_ISS (FORCE_SOL)
 ! --------------------------------------------------------------------
-            else if (i.eq.26) then
+            else if (i.eq.24) then
 ! CHARGEMENT FORCE_SOL CNVISS. SI ON COMPTE SA CONTRIBUTION EN TANT
 ! QUE FORCE DISSIPATIVE DE LIAISON, ON DOIT PRENDRE L OPPOSE.
                 do j = 1, neq

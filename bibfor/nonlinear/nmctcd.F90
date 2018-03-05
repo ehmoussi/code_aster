@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmctcd(list_func_acti, ds_contact, nume_dof, hval_veasse)
+subroutine nmctcd(list_func_acti, ds_contact, nume_dof)
 !
 use NonLin_Datastructure_type
 !
@@ -35,7 +35,6 @@ implicit none
 integer, intent(in) :: list_func_acti(*)
 type(NL_DS_Contact), intent(in) :: ds_contact
 character(len=24), intent(in) :: nume_dof
-character(len=19), intent(in) :: hval_veasse(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,7 +47,6 @@ character(len=19), intent(in) :: hval_veasse(*)
 ! In  list_func_acti   : list of active functionnalities
 ! In  nume_dof         : name of numbering (NUME_DDL)
 ! In  ds_contact       : datastructure for contact management
-! In  hval_veasse      : hat-variable for vectors (node fields)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -79,7 +77,7 @@ character(len=19), intent(in) :: hval_veasse(*)
 ! ----- Contact (DISCRETE) forces
 !
         if (l_cont_disc) then
-            call nmchex(hval_veasse, 'VEASSE', 'CNCTDC', vect_asse)
+            vect_asse = ds_contact%cnctdc
             call cffoco(nume_dof, ds_contact%sdcont_solv, vect_asse)
         endif
 !
@@ -93,7 +91,7 @@ character(len=19), intent(in) :: hval_veasse(*)
 ! ----- Unilateral conditions (DISCRETE) forces
 !
         if (l_unil) then
-            call nmchex(hval_veasse, 'VEASSE', 'CNUNIL', vect_asse)
+            vect_asse = ds_contact%cnunil
             call cufoco(nume_dof, ds_contact%sdunil_solv, vect_asse)
         endif
     endif

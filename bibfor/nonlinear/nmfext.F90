@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmfext(eta, fonact, sddyna, veasse, cnfext)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine nmfext(eta, fonact, sddyna, veasse, cnfext, ds_contact_)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -37,32 +39,32 @@ subroutine nmfext(eta, fonact, sddyna, veasse, cnfext)
 #include "asterfort/nmdebg.h"
 #include "asterfort/vtaxpy.h"
 #include "asterfort/vtzero.h"
-    real(kind=8) :: eta
-    integer :: fonact(*)
-    character(len=19) :: sddyna
-    character(len=19) :: veasse(*)
-    character(len=19) :: cnfext
 !
-! ----------------------------------------------------------------------
+real(kind=8) :: eta
+integer :: fonact(*)
+character(len=19) :: sddyna
+character(len=19) :: veasse(*)
+type(NL_DS_Contact), optional, intent(in) :: ds_contact_
+character(len=19) :: cnfext
+!
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (ALGORITHME)
 !
 ! RESULTANTE DES EFFORTS EXTERIEURS
 !
-! ----------------------------------------------------------------------
-!
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  SDDYNA : SD DYNAMIQUE
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! IN  ETA    : COEFFICIENT DE PILOTAGE
 ! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
+! In  ds_contact       : datastructure for contact management
 ! OUT CNFEXT : CHARGEMENT EXTERIEUR RESULTANT
 !
-!
-!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=19) :: cnunil, cnctdc
     character(len=19) :: cnffdo, cnffpi, cnfvdo, cnvady
     aster_logical :: lctcd, lunil
     real(kind=8) :: coeequ
@@ -71,7 +73,7 @@ subroutine nmfext(eta, fonact, sddyna, veasse, cnfext)
     character(len=19) :: vect(20)
     real(kind=8) :: coef(20)
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
@@ -101,19 +103,17 @@ subroutine nmfext(eta, fonact, sddyna, veasse, cnfext)
 ! --- FORCES DE CONTACT DISCRET
 !
     if (lctcd .and. (.not.lallv)) then
-        call nmchex(veasse, 'VEASSE', 'CNCTDC', cnctdc)
         ifdo = ifdo + 1
         coef(ifdo) = -1.d0
-        vect(ifdo) = cnctdc
+        vect(ifdo) = ds_contact_%cnctdc
     endif
 !
 ! --- FORCES DE LIAISON_UNILATER
 !
     if (lunil) then
-        call nmchex(veasse, 'VEASSE', 'CNUNIL', cnunil)
         ifdo = ifdo + 1
         coef(ifdo) = -1.d0
-        vect(ifdo) = cnunil
+        vect(ifdo) = ds_contact_%cnunil
     endif
 !
 ! --- CALCUL DU VECTEUR DES CHARGEMENTS FIXES        (NEUMANN)
@@ -159,9 +159,9 @@ subroutine nmfext(eta, fonact, sddyna, veasse, cnfext)
     if (ifdo .gt. 20) then
         ASSERT(.false.)
     endif
-    do 10 n = 1, ifdo
+    do n = 1, ifdo
         call vtaxpy(coef(n), vect(n), cnfext)
- 10 end do
+    end do
 !
 ! --- AFFICHAGE
 !

@@ -152,9 +152,13 @@ type(NL_DS_Contact), intent(out) :: ds_contact
 !
     ds_contact%nb_cont_pair = 0
 !
-! - Force for DISCRETE contact (friction)
+! - Force for DISCRETE contact
 !
     ds_contact%l_cnctdf     = ASTER_FALSE
     ds_contact%cnctdf       = '&&OP0070.CNCTDF'
+    ds_contact%l_cnctdc     = ASTER_FALSE
+    ds_contact%cnctdc       = '&&OP0070.CNCTDC'
+    ds_contact%l_cnunil     = ASTER_FALSE
+    ds_contact%cnunil       = '&&OP0070.CNUNIL'
 !
 end subroutine

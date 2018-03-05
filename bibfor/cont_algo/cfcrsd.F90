@@ -291,8 +291,10 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
         call cfcrma(nbcm1a, mesh, ds_contact%sdcont_solv)
     endif
 !
-! - Force for friction or penalization
+! - Forces to solve
 !
+    call vtcreb(ds_contact%cnctdc, 'V', 'R', nume_ddlz = nume_dof)
+    ds_contact%l_cnctdc = ASTER_TRUE
     if (l_frot .or. l_pena_cont) then
         call vtcreb(ds_contact%cnctdf, 'V', 'R', nume_ddlz = nume_dof)
         ds_contact%l_cnctdf = ASTER_TRUE

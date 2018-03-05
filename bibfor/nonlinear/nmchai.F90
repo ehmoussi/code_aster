@@ -53,10 +53,12 @@ character(len=6), optional, intent(out) :: tychap_out
 !
 ! ----------------------------------------------------------------------
 !
-    integer :: zmeelm, zmeass, zveelm, zveass
-    parameter    (zmeelm=9 ,zmeass=4 ,zveelm=17,zveass=26)
-    integer :: zsolal, zvalin
-    parameter    (zsolal=17,zvalin=28)
+    integer, parameter :: zmeelm = 9
+    integer, parameter :: zmeass = 4
+    integer, parameter :: zveelm = 17
+    integer, parameter :: zveass = 24
+    integer, parameter :: zsolal = 17
+    integer, parameter :: zvalin = 28
 !
     character(len=8) :: lmeelm(zmeelm), lmeass(zmeass)
     character(len=8) :: lveelm(zveelm), lveass(zveass)
@@ -78,7 +80,7 @@ character(len=6), optional, intent(out) :: tychap_out
      &             'CNFSDO','CNIMPE','CNDIDI','CNSSTF',&
      &             'CNELTC','CNELTF','CNREFE',&
      &             'CNCINE','CNSSTR','CNDYNA',&
-     &             'CNMODP','CNMODC','CNCTDC','CNUNIL','CNFEXT',&
+     &             'CNMODP','CNMODC','CNFEXT',&
      &             'CNVISS'/
 !
     data lsolal /'DDEPLA','DEPDEL','DEPOLD','DEPPR1','DEPPR2',&
