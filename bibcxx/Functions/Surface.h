@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe Surface
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -72,6 +72,12 @@ public:
         _parameters( JeveuxVectorDouble( getName() + ".PARA" ) ),
         _value( JeveuxCollectionDouble( getName() + ".VALE" ) )
     {};
+
+    /**
+     * @brief Copy extension parameters to python list
+     * @return  return list of parameters
+     */
+    PyObject* exportExtensionToPython() const throw ( std::runtime_error );
 
     /**
      * @brief Copy parameters to python list

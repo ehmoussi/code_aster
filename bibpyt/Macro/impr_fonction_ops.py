@@ -103,7 +103,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
             if obj == None:
                 UTMESS('S', 'SUPERVIS_56')
             if typi in ('FONCTION', 'NAPPE', 'NAPPE_LISSEE') :
-                if obj.getType() == "NAPPE":
+                if obj.getType() == "NAPPE_SDASTER":
                     lpar, lval = obj.Valeurs()
                     linterp = lval[0][0]
                 else:
@@ -149,7 +149,8 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                     UTMESS(
                         'S', 'FONCT0_50', valk=obj.nom, vali=len(dpar['NOM_PARA']))
 
-            if obj.getType() == "NAPPE":
+            print "obj.getType()", obj.getType()
+            if obj.getType() == "NAPPE_SDASTER":
                 lpar, lval = obj.Valeurs()
                 dico, ldicf = obj.Parametres()
                 Leg = dCi['LEGENDE']
@@ -278,7 +279,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
         elif typi == 'FONC_X':
             ob2 = dCi['FONC_Y']
             # peut-on blinder au niveau du catalogue
-            if obj.getType() == "NAPPE" or ob2.getType() == "NAPPE":
+            if obj.getType() == "NAPPE_SDASTER" or ob2.getType() == "NAPPE_SDASTER":
                 UTMESS('S', 'FONCT0_4')
             if interp and iocc > 0:
                 UTMESS('S', 'FONCT0_5')

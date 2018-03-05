@@ -202,26 +202,6 @@ TEST_TABLE(  TABLE=T_resu,
                        CRITERE='RELATIF',
                        ),
              VALE_CALC=(  0.058597272   , ),
-             VALE_ABS='NON',)  
-
-TEST_TABLE(  TABLE=T_resu,
-             NOM_PARA='gamma_ma',
-             FILTRE=_F(NOM_PARA='M',
-                       VALE_K='COUCH4A',
-                       CRITERE='RELATIF',
-                       ),
-             VALE_CALC=(  0.00017851907   , ),
-             CRITERE='RELATIF',
-             VALE_ABS='NON',)
-             
-TEST_TABLE(  TABLE=T_resu,
-             NOM_PARA='gamma_ma',
-             FILTRE=_F(NOM_PARA='M',
-                       VALE_K='COUCH2A',
-                       CRITERE='RELATIF',
-                       ),
-             VALE_CALC=(  0.00041247863   , ),
-             CRITERE='RELATIF',
              VALE_ABS='NON',)
 
 
