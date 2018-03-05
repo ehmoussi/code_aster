@@ -79,8 +79,8 @@ MNL = MODE_NON_LINE(MATR_RIGI=K,   INFO=1,
                       ),
                  )
 
-MNL = CALC_STABILITE(reuse=MNL,MODE_NON_LINE=MNL,
-                     FILTRE=_F( FREQ_MIN = 0.64, FREQ_MAX =0.65,),
-                   )
+#MNL = CALC_STABILITE(reuse=MNL,MODE_NON_LINE=MNL,
+                     #FILTRE=_F( FREQ_MIN = 0.64, FREQ_MAX =0.65,),
+                   #)
 
 test.assertTrue( True )
