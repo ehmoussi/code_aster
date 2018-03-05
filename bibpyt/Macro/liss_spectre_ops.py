@@ -356,4 +356,3 @@ def liss_spectre_ops(
                          ),
                  INFO=1)
         
-    return ier
