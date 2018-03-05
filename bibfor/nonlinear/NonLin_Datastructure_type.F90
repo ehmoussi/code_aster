@@ -499,7 +499,10 @@ implicit none
         character(len=24) :: field_mate
 ! ----- Field for reference of external state variables
         character(len=24) :: varc_refe
-
+! ----- Field for initial value of external state variables
+        character(len=24) :: varc_init
+! ----- Force for initial value of external state variables
+        character(len=24) :: fvarc_init
 
     end type NL_DS_Material
 !

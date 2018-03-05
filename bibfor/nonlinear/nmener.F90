@@ -91,14 +91,13 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter:: zveass = 32
+    integer, parameter:: zveass = 31
     integer :: iret(zveass)
     character(len=19) :: depmoi, depplu, vitmoi, vitplu, masse, amort, rigid
     character(len=19) :: fexmoi, fexplu, fammoi, fnomoi
     character(len=19) :: famplu, flimoi, fliplu, fnoplu
     character(len=19) :: lisbid
     character(len=8) :: k8bid
-    character(len=6) :: tychap_out
     integer :: ivitmo, ivitpl
     integer :: neq, i, j, long
     integer :: ifexte, ifamor, ifliai, ifcine, ifnoda
@@ -119,38 +118,6 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
     call jemarq()
 !
-    call nmchai('VEASSE', 'CNFINT', 1, tychap_out)
-    call nmchai('VEASSE', 'CNDIRI', 2, tychap_out)
-    call nmchai('VEASSE', 'CNBUDI', 3, tychap_out)
-    call nmchai('VEASSE', 'CNFNOD', 4, tychap_out)
-    call nmchai('VEASSE', 'CNDIDO', 5, tychap_out)
-    call nmchai('VEASSE', 'CNDIPI', 6, tychap_out)
-    call nmchai('VEASSE', 'CNFEDO', 7, tychap_out)
-    call nmchai('VEASSE', 'CNFEPI', 8, tychap_out)
-    call nmchai('VEASSE', 'CNLAPL', 9, tychap_out)
-    call nmchai('VEASSE', 'CNONDP', 10, tychap_out)
-    call nmchai('VEASSE', 'CNFSDO', 11, tychap_out)
-    call nmchai('VEASSE', 'CNIMPP', 12, tychap_out)
-    call nmchai('VEASSE', '      ', 13, tychap_out)
-    call nmchai('VEASSE', 'CNDIDI', 14, tychap_out)
-    call nmchai('VEASSE', 'CNSSTF', 15, tychap_out)
-    call nmchai('VEASSE', 'CNELTC', 16, tychap_out)
-    call nmchai('VEASSE', 'CNELTF', 17, tychap_out)
-    call nmchai('VEASSE', 'CNREFE', 18, tychap_out)
-    call nmchai('VEASSE', 'CNVCF1', 19, tychap_out)
-    call nmchai('VEASSE', 'CNVCF0', 20, tychap_out)
-    call nmchai('VEASSE', 'CNCINE', 21, tychap_out)
-    call nmchai('VEASSE', 'CNSSTR', 22, tychap_out)
-    call nmchai('VEASSE', 'CNCTDF', 23, tychap_out)
-    call nmchai('VEASSE', 'CNVCPR', 24, tychap_out)
-    call nmchai('VEASSE', 'CNDYNA', 25, tychap_out)
-    call nmchai('VEASSE', 'CNMODP', 26, tychap_out)
-    call nmchai('VEASSE', 'CNMODC', 27, tychap_out)
-    call nmchai('VEASSE', 'CNCTDC', 28, tychap_out)
-    call nmchai('VEASSE', 'CNUNIL', 29, tychap_out)
-    call nmchai('VEASSE', 'CNFEXT', 30, tychap_out)
-    call nmchai('VEASSE', 'CNIMPC', 31, tychap_out)
-    call nmchai('VEASSE', 'CNVISS', 32, tychap_out)
     call nmchai('VEASSE', 'LONMAX', long)
     ASSERT(long.eq.zveass)
 !
@@ -229,9 +196,9 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
                     fexpl(j)=fexpl(j)+veass(j)
                 end do
 ! --------------------------------------------------------------------
-! 20 - CNVCF0 : FORCE DE REFERENCE LIEE AUX VAR. COMMANDES EN T+
+! 19 - CNVCF0 : FORCE DE REFERENCE LIEE AUX VAR. COMMANDES EN T+
 ! --------------------------------------------------------------------
-            else if (i.eq.20) then
+            else if (i.eq.19) then
                 do j = 1, neq
                     fexpl(j)=fexpl(j)+veass(j)
                 end do
@@ -256,22 +223,22 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
                     fexpl(j)=fexpl(j)-veass(j)
                 end do
 ! --------------------------------------------------------------------
-! 27 - CNMODC : FORCE D AMORTISSEMENT MODAL
+! 26 - CNMODC : FORCE D AMORTISSEMENT MODAL
 ! --------------------------------------------------------------------
-            else if (i.eq.27) then
+            else if (i.eq.26) then
                 do j = 1, neq
                     fampl(j)=fampl(j)+veass(j)
                 end do
 ! --------------------------------------------------------------------
 ! 16 - CNELTC : FORCES ELEMENTS DE CONTACT (CONTINU + XFEM)
 ! 17 - CNELTF : FORCES ELEMENTS DE FROTTEMENT (CONTINU + XFEM)
-! 31 - CNIMPC : FORCES IMPEDANCE
-! 23 - CNCTDF : FORCES DE FROTTEMENT (CONTACT DISCRET)
-! 28 - CNCTDC : FORCES DE CONTACT (CONTACT DISCRET)
-! 29 - CNUNIL : FORCES DE CONTACT (LIAISON_UNILATERALE)
+! 30 - CNIMPC : FORCES IMPEDANCE
+! 22 - CNCTDF : FORCES DE FROTTEMENT (CONTACT DISCRET)
+! 27 - CNCTDC : FORCES DE CONTACT (CONTACT DISCRET)
+! 28 - CNUNIL : FORCES DE CONTACT (LIAISON_UNILATERALE)
 ! --------------------------------------------------------------------
-                else if ((i.eq.16).or.(i.eq.17).or.(i.eq.31).or. (i.eq.23)&
-            .or.(i.eq.28).or.(i.eq.29)) then
+            else if ((i.eq.16).or.(i.eq.17).or.(i.eq.30).or.&
+                     (i.eq.22) .or.(i.eq.27).or.(i.eq.28)) then
                 do j = 1, neq
                     flipl(j)=flipl(j)+veass(j)
                 end do
@@ -285,15 +252,15 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 ! CNDIRI CONTIENT BTLAMBDA PLUS CONTRIBUTION CNCTDF DU CONTACT.
 ! ON SOUHAITE AJOUTER -BT.LAMBDA A FEXTE. ON AJOUTE DONC -CNDIRI,
 ! MAIS IL FAUT ALORS LUI RETRANCHER -CNCTDF.
-                if (i .eq. 23) then
+                if (i .eq. 22) then
                     do j = 1, neq
                         fexpl(j)=fexpl(j)+veass(j)
                     end do
                 endif
 ! --------------------------------------------------------------------
-! 33 - CNVISS : CHARGEMENT VEC_ISS (FORCE_SOL)
+! 31 - CNVISS : CHARGEMENT VEC_ISS (FORCE_SOL)
 ! --------------------------------------------------------------------
-            else if (i.eq.32) then
+            else if (i.eq.31) then
 ! CHARGEMENT FORCE_SOL CNVISS. SI ON COMPTE SA CONTRIBUTION EN TANT
 ! QUE FORCE DISSIPATIVE DE LIAISON, ON DOIT PRENDRE L OPPOSE.
                 do j = 1, neq
@@ -309,9 +276,9 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
                     fnopl(j)=fnopl(j)+veass(j)
                 end do
 ! --------------------------------------------------------------------
-! 21 - CNCINE : INCREMENTS DE DEPLACEMENT IMPOSES (AFFE_CHAR_CINE)
+! 20 - CNCINE : INCREMENTS DE DEPLACEMENT IMPOSES (AFFE_CHAR_CINE)
 ! --------------------------------------------------------------------
-            else if (i.eq.21) then
+            else if (i.eq.20) then
 ! ON DOIT RECONSTRUIRE LA MATRICE DE MASSE CAR ELLE A ETE MODIFIEE
 ! POUR SUPPRIMER DES DEGRES DE LIBERTE EN RAISON DE AFFE_CHAR_CINE.
                 reassm=.true.

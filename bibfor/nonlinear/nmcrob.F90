@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmcrob(meshz      , modelz         , sddisc   , ds_inout , cara_elemz,&
-                  ds_material, ds_constitutive, disp_curr, strx_curr, varc_curr ,&
+subroutine nmcrob(meshz      , modelz         , sddisc, ds_inout , cara_elemz,&
+                  ds_material, ds_constitutive, disp  , strx     , varc      ,&
                   time       , sd_obsv  )
 !
 use NonLin_Datastructure_type
@@ -41,9 +41,9 @@ type(NL_DS_InOut), intent(in) :: ds_inout
 character(len=*), intent(in) :: cara_elemz
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Material), intent(in) :: ds_material
-character(len=*), intent(in) :: disp_curr
-character(len=*), intent(in) :: strx_curr
-character(len=*), intent(in) :: varc_curr
+character(len=*), intent(in) :: disp
+character(len=*), intent(in) :: strx
+character(len=*), intent(in) :: varc
 real(kind=8),  intent(in) :: time
 character(len=19), intent(out) :: sd_obsv
 !
@@ -62,10 +62,10 @@ character(len=19), intent(out) :: sd_obsv
 ! In  cara_elem        : name of datastructure for elementary parameters (CARTE)
 ! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
-! In  disp_curr        : current displacements
-! In  varc_curr        : command variable for current time
-! In  time             : current time
-! In  strx_curr        : fibers information for current time
+! In  disp             : displacements
+! In  varc             : external state variable
+! In  time             : time
+! In  strx             : fibers information
 ! Out sd_obsv          : datastructure for observation parameters
 !
 ! --------------------------------------------------------------------------------------------------
@@ -100,8 +100,8 @@ character(len=19), intent(out) :: sd_obsv
     sdextr_obsv = sd_obsv(1:14)
     call nmextr(meshz       , modelz    , sdextr_obsv, ds_inout, keyw_fact,&
                 nb_keyw_fact, nb_obsv   ,&
-                cara_elemz  , ds_material, ds_constitutive, disp_curr, strx_curr,&
-                varc_curr   , time       )
+                cara_elemz  , ds_material, ds_constitutive, disp, strx,&
+                varc        , time       )
 !
 ! - Set reuse index in OBSERVATION table
 !

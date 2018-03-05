@@ -110,7 +110,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     character(len=19) :: profch=' ', foiner=' '
     character(len=19) :: commoi=' ', depmoi=' '
     character(len=19) :: cndiri=' ', cnbudi=' ', cnfext=' '
-    character(len=19) :: cnvcf1=' ', cnrefe=' ', cnfint=' '
+    character(len=19) :: cnrefe=' ', cnfint=' '
     character(len=19) :: cnfnod=' ', cndipi=' ', cndfdo=' '
     integer :: jfnod=0
     integer :: ieq=0
@@ -131,7 +131,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     real(kind=8), pointer :: fext(:) => null()
     real(kind=8), pointer :: fint(:) => null()
     real(kind=8), pointer :: refe(:) => null()
-    real(kind=8), pointer :: vcf1(:) => null()
+    real(kind=8), pointer :: v_fvarc_init(:) => null()
     integer, pointer :: deeq(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -182,7 +182,6 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     call nmchex(valinc, 'VALINC', 'COMMOI', commoi)
     call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
     call nmchex(veasse, 'VEASSE', 'CNBUDI', cnbudi)
-    call nmchex(veasse, 'VEASSE', 'CNVCF1', cnvcf1)
     call nmchex(veasse, 'VEASSE', 'CNREFE', cnrefe)
     call nmchex(veasse, 'VEASSE', 'CNFNOD', cnfnod)
     call nmchex(veasse, 'VEASSE', 'CNDIPI', cndipi)
@@ -244,7 +243,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
         call jeveuo(foiner(1:19)//'.VALE', 'L', jiner)
     endif
     if (linit) then
-        call jeveuo(cnvcf1(1:19)//'.VALE', 'L', vr=vcf1)
+        call jeveuo(ds_material%fvarc_init(1:19)//'.VALE', 'L', vr=v_fvarc_init)
     endif
     if (lrefe) then
         call jeveuo(cnrefe(1:19)//'.VALE', 'L', vr=refe)
@@ -316,7 +315,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 ! --- SI TEST CONTRAINTES INITIALES
 !
         if (linit) then
-            val5 = abs(vcf1(ieq))
+            val5 = abs(v_fvarc_init(ieq))
             if (vinit .le. val5) then
                 vinit = val5
             endif

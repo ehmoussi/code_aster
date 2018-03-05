@@ -76,14 +76,12 @@ implicit none
 #include "asterfort/nmrefe.h"
 #include "asterfort/nminma.h"
 #include "asterfort/nminmc.h"
-#include "asterfort/nminvc.h"
 #include "asterfort/nmlssv.h"
 #include "asterfort/nmnoli.h"
 #include "asterfort/nmnume.h"
 #include "asterfort/nmobsv.h"
 #include "asterfort/nmpro2.h"
 #include "asterfort/nmrini.h"
-#include "asterfort/nmvcle.h"
 #include "asterfort/nonlinDSMaterialInit.h"
 #include "asterfort/utmess.h"
 !
@@ -277,12 +275,12 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! - Create input/output datastructure
 !
-    call nmetcr(ds_inout  , model    , ds_constitutive%compor, fonact   , sddyna   ,&
+    call nmetcr(ds_inout  , model    , ds_constitutive%compor, fonact, sddyna,&
                 ds_contact, cara_elem, list_load)
 !
 ! - Read initial state
 !
-    call nmdoet(model , ds_constitutive%compor, fonact, numedd, sdpilo  ,&
+    call nmdoet(model , ds_constitutive%compor, fonact, numedd, sdpilo,&
                 sddyna, sdcriq, solalg, lacc0 , ds_inout)
 !
 ! - Create time discretization and storing datastructures
@@ -291,9 +289,16 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
                 fonact    , sddyna, ds_conv , ds_algopara, solver,&
                 ds_contact, sddisc)
 !
+! - Initial time
+!
+    numins = 0
+    instin = diinst(sddisc,numins)
+!
 ! - Initializations for material parameters management
 !
-    call nonlinDSMaterialInit(model      , mate, cara_elem,&
+    call nonlinDSMaterialInit(model      , mate     , cara_elem,&
+                              ds_constitutive%compor, valinc,&
+                              numedd     , instin   , &
                               ds_material)
 !
 ! --- PRE-CALCUL DES MATR_ELEM CONSTANTES AU COURS DU CALCUL
@@ -302,22 +307,6 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
                 numedd, numfix     , ds_contact, ds_algopara, solalg         ,&
                 valinc, ds_material, cara_elem , sddisc     , ds_measure     ,&
                 meelem, measse     , veelem)
-!
-! --- INSTANT INITIAL
-!
-    numins = 0
-    instin = diinst(sddisc,numins)
-!
-! --- EXTRACTION VARIABLES DE COMMANDES AU TEMPS T-
-!
-    call nmchex(valinc, 'VALINC', 'COMMOI', varc_prev)
-    call nmvcle(model , mate, cara_elem, instin, varc_prev)
-!
-! --- CALCUL ET ASSEMBLAGE DES VECT_ELEM CONSTANTS AU COURS DU CALCUL
-!
-    call nminvc(model , ds_material, cara_elem, ds_constitutive, ds_measure,&
-                sddisc, sddyna     , valinc   , solalg         , list_load ,&
-                numedd, ds_inout   , veelem   , veasse         , measse)
 !
 ! - Compute reference vector for RESI_REFE_RELA
 !
@@ -367,6 +356,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
     call nmchex(valinc, 'VALINC', 'DEPMOI', disp_prev)
     call nmchex(valinc, 'VALINC', 'STRMOI', strx_prev)
+    call nmchex(valinc, 'VALINC', 'COMMOI', varc_prev)
 !
 ! - Create observation datastructure
 !

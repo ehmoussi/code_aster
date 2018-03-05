@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmch5p(veasse)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit     none
+subroutine nmch5p(veasse)
+!
+implicit none
+!
 #include "asterfort/nmcha0.h"
-    character(len=19) :: veasse(*)
+!
+character(len=19) :: veasse(*)
 !
 ! ----------------------------------------------------------------------
 !
@@ -42,7 +43,7 @@ subroutine nmch5p(veasse)
     character(len=19) :: cnbudi, cnlapl, cnsstr, cnctdf, cnondp
     character(len=19) :: cneltc, cneltf
     character(len=19) :: cnsstf
-    character(len=19) :: cnrefe, cnvcf0, cnvcf1, cnvcpr
+    character(len=19) :: cnrefe, cnvcf0, cnvcpr
     character(len=19) :: cndyna, cnmodp, cnmodc
     character(len=19) :: cnctdc, cnunil, cnfext
     character(len=19) :: cnimpp, cnimpc, cnviss
@@ -56,7 +57,7 @@ subroutine nmch5p(veasse)
     data cnsstf,cneltc    /'&&NMCH5P.CNSSTF','&&NMCH5P.CNELTC'/
     data cneltf           /'&&NMCH5P.CNELTF'/
     data cnrefe           /'&&NMCH5P.CNREFE'/
-    data cnvcf0,cnvcf1    /'&&NMCH5P.CNVCF0','&&NMCH5P.CNVCF1'/
+    data cnvcf0           /'&&NMCH5P.CNVCF0'/
     data cncine,cnsstr    /'&&NMCH5P.CNCINE','&&NMCH5P.CNSSTR'/
     data cnctdf           /'&&NMCH5P.CNCTDF'/
     data cnvcpr,cnmodp    /'&&NMCH5P.CNVCPR','&&NMCH5P.CNMODP'/
@@ -87,7 +88,6 @@ subroutine nmch5p(veasse)
     call nmcha0('VEASSE', 'CNELTC', cneltc, veasse)
     call nmcha0('VEASSE', 'CNELTF', cneltf, veasse)
     call nmcha0('VEASSE', 'CNREFE', cnrefe, veasse)
-    call nmcha0('VEASSE', 'CNVCF1', cnvcf1, veasse)
     call nmcha0('VEASSE', 'CNVCF0', cnvcf0, veasse)
 !
 ! --- SANS VECT_ELEM POUR CONSTRUIRE
