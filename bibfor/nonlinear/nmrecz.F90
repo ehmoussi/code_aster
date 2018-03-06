@@ -17,66 +17,68 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmrecz(numedd, ds_contact,&
-                  cndiri, cnfint    , cnfext, ddepla,&
-                  fonc)
+subroutine nmrecz(nume_dof, ds_contact,&
+                  cndiri  , cnfint    , cnfext, disp_iter,&
+                  func)
 !
 use NonLin_Datastructure_type
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/nmequi.h"
 !
-real(kind=8) :: fonc
-character(len=24) :: numedd
+character(len=24), intent(in) :: nume_dof
 type(NL_DS_Contact), intent(in) :: ds_contact
-character(len=19) :: cndiri, cnfint, cnfext, ddepla
+character(len=19), intent(in) :: cndiri, cnfint, cnfext, disp_iter
+real(kind=8), intent(out) :: func
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE MECA_NON_LINE (RECHERCHE LINEAIRE)
+! MECA_NON_LINE - Algorithm (line search)
 !
-! CALCUL DE LA FONCTION POUR LA RECHERCHE LINEAIRE
+! Compute function to minimize for line search
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! IN  NUMEDD : NOM DU NUME_DDL
+! In  nume_dof         : name of numbering object (NUME_DDL)
 ! In  ds_contact       : datastructure for contact management
-! IN  CNDIRI : VECT_ASSE REACTIONS D'APPUI
-! IN  CNFINT : VECT_ASSE FORCES INTERIEURES
-! IN  CNFEXT : VECT_ASSE FORCES EXTERIEURES
-! IN  DDEPLA : INCREMENT DE DEPLACEMENT
-! OUT FONC   : VALEUR DE LA FONCTION
+! In  cndiri           : nodal field for support reaction
+! In  cnfint           : nodal field for internal force
+! In  cnfext           : nodal field for external force
+! In  disp_iter        : displacement iteration
+! Out function         : function to minimize for line search
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    integer :: ieq, neq
-    real(kind=8), pointer :: v_ddepl(:) => null()
-    real(kind=8), pointer :: v_diri(:) => null()
-    real(kind=8), pointer :: v_fext(:) => null()
-    real(kind=8), pointer :: v_fint(:) => null()
-    real(kind=8), pointer :: v_cont_disc(:) => null()
+    character(len=19) :: cnequi
+    real(kind=8), pointer :: v_cnequi(:) => null()
+    integer :: i_equa, nb_equa
+    aster_logical :: l_disp, l_pilo
+    real(kind=8), pointer :: v_disp_iter(:) => null()
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    call dismoi('NB_EQUA', numedd, 'NUME_DDL', repi=neq)
+    call dismoi('NB_EQUA', nume_dof, 'NUME_DDL', repi=nb_equa)
+    call jeveuo(disp_iter(1:19)//'.VALE', 'L', vr=v_disp_iter)
 !
-    call jeveuo(cnfext(1:19)//'.VALE', 'L', vr=v_fext)
-    call jeveuo(cnfint(1:19)//'.VALE', 'L', vr=v_fint)
-    call jeveuo(cndiri(1:19)//'.VALE', 'L', vr=v_diri)
-    call jeveuo(ddepla(1:19)//'.VALE', 'L', vr=v_ddepl)
+! - Compute lack of balance forces
 !
-    fonc = 0.d0
-    if (ds_contact%l_cnctdf) then
-        call jeveuo(ds_contact%cnctdf(1:19)//'.VALE', 'L', vr=v_cont_disc)
-        do ieq = 1, neq
-            fonc = fonc + v_ddepl(ieq) * (v_fint(ieq)+ v_diri(ieq) + v_cont_disc(ieq) - v_fext(ieq))
-        end do
-    else
-        do ieq = 1, neq
-            fonc = fonc + v_ddepl(ieq) * (v_fint(ieq)+ v_diri(ieq)- v_fext(ieq))
-        end do
-    endif
+    l_disp = ASTER_FALSE
+    l_pilo = ASTER_FALSE
+    cnequi = '&&CNCHAR.DONN'
+    call nmequi(l_disp    , l_pilo, cnequi,&
+                cnfint    , cnfext, cndiri,&
+                ds_contact)
+    call jeveuo(cnequi(1:19)//'.VALE', 'L', vr=v_cnequi)
+!
+! - Compute function
+!
+    func = 0.d0
+    do i_equa = 1, nb_equa
+        func = func + v_disp_iter(i_equa) * v_cnequi(i_equa)
+    end do
 !
 end subroutine
