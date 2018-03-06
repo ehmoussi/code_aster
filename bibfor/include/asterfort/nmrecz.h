@@ -17,16 +17,13 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmrecz(numedd, ds_contact,&
-                      cndiri, cnfint    , cnfext, ddepla,&
-                      fonc)
+    subroutine nmrecz(nume_dof, ds_contact,&
+                      cndiri  , cnfint    , cnfext, disp_iter,&
+                      func)
         use NonLin_Datastructure_type
-        character(len=24) :: numedd
+        character(len=24), intent(in) :: nume_dof
         type(NL_DS_Contact), intent(in) :: ds_contact
-        character(len=19) :: cndiri
-        character(len=19) :: cnfint
-        character(len=19) :: cnfext
-        character(len=19) :: ddepla
-        real(kind=8) :: fonc
+        character(len=19), intent(in) :: cndiri, cnfint, cnfext, disp_iter
+        real(kind=8), intent(out) :: func
     end subroutine nmrecz
 end interface
