@@ -17,14 +17,14 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nsassp(model     , nume_dof   , list_load, fonact    , sddyna,&
+    subroutine nsassp(model     , nume_dof   , list_load, fonact    ,&
                       ds_measure, valinc     , veelem   , veasse    , cnpilo,&
                       cndonn    , ds_material, cara_elem, ds_contact, matass,&
                       ds_algorom)
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
         integer :: fonact(*)
-        character(len=19) :: list_load, sddyna, matass
+        character(len=19) :: list_load, matass
         character(len=24) :: model, nume_dof, cara_elem
         type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Measure), intent(inout) :: ds_measure

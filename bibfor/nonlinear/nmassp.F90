@@ -112,7 +112,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
                     sddyna         , valinc, solalg     , veelem, veasse    ,&
                     ldccvg         , cndonn, sdnume     , matass)
     else if (lstat) then
-        call nsassp(modele, numedd, lischa, fonact, sddyna,&
+        call nsassp(modele, numedd, lischa, fonact,&
                     ds_measure, valinc, veelem, veasse, cnpilo,&
                     cndonn, ds_material, carele, ds_contact, matass, ds_algorom)
     else

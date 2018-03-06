@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nsassp(model     , nume_dof   , list_load, fonact    , sddyna,&
+subroutine nsassp(model     , nume_dof   , list_load, fonact    ,&
                   ds_measure, valinc     , veelem   , veasse    , cnpilo,&
                   cndonn    , ds_material, cara_elem, ds_contact, matass,&
                   ds_algorom)
@@ -41,7 +41,7 @@ implicit none
 #include "asterfort/vtzero.h"
 !
 integer :: fonact(*)
-character(len=19) :: list_load, sddyna, matass
+character(len=19) :: list_load, matass
 character(len=24) :: model, nume_dof, cara_elem
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Measure), intent(inout) :: ds_measure
@@ -63,7 +63,6 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 ! In  ds_material      : datastructure for material parameters
 ! In  list_load        : name of datastructure for list of loads
 ! In  nume_dof         : name of numbering object (NUME_DDL)
-! In  sddyna           : datastructure for dynamic
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! In  ds_contact       : datastructure for contact management
 ! IO  ds_measure       : datastructure for measure and statistics management
@@ -85,7 +84,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     character(len=19) :: vebudi, vediri
     character(len=19) :: cnfnod, cnbudi, cnsstr, cneltc, cneltf, cnfint
     character(len=19) :: disp_prev
-    aster_logical :: lmacr, leltc, leltf, lallv
+    aster_logical :: lmacr, leltc, leltf, lallv, l_pilo
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -103,6 +102,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     leltc = isfonc(fonact,'ELT_CONTACT')
     leltf = isfonc(fonact,'ELT_FROTTEMENT')
     lallv = isfonc(fonact,'CONT_ALL_VERIF' )
+    l_pilo = isfonc(fonact,'PILOTAGE')
 !
 ! - Launch timer
 !
@@ -113,17 +113,17 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
     call nmchex(valinc, 'VALINC', 'DEPMOI', disp_prev)
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS FIXES        (NEUMANN)
+! - Get dead Neumann loads and multi-step dynamic schemes forces
 !
-    call nmasfi(fonact, sddyna, veasse, cnffdo, cnffpi)
+    call nmasfi(fonact, veasse, cnffdo)
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS FIXES        (DIRICHLET)
+! - Get Dirichlet loads
 !
-    call nmasdi(fonact, veasse, cndfdo, cndfpi)
+    call nmasdi(fonact, veasse, cndfdo)
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS VARIABLES    (NEUMANN)
+! - Get undead Neumann loads and multi-step dynamic schemes forces
 !
-    call nmasva(sddyna, veasse, cnfvdo)
+    call nmasva(veasse, cnfvdo)
 !
 ! --- FORCES NODALES
 !
@@ -206,16 +206,26 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
         call vtaxpy(coef(i_vect), vect(i_vect), cndonn)
     end do
 !
+! - Get dead Neumann loads (for PILOTAGE)
+!
+    call nmchex(veasse, 'VEASSE', 'CNFEPI', cnffpi)
+!
+! - Get Dirichlet loads (for PILOTAGE)
+!
+    call nmchex(veasse, 'VEASSE', 'CNDIPI', cndfpi)
+!
 ! --- CHARGEMENT PILOTE
 !
-    nb_vect = 2
-    coef(1) = 1.d0
-    coef(2) = 1.d0
-    vect(1) = cnffpi
-    vect(2) = cndfpi
-    do i_vect = 1, nb_vect
-        call vtaxpy(coef(i_vect), vect(i_vect), cnpilo)
-    end do
+    if (l_pilo) then
+        nb_vect = 2
+        coef(1) = 1.d0
+        coef(2) = 1.d0
+        vect(1) = cnffpi
+        vect(2) = cndfpi
+        do i_vect = 1, nb_vect
+            call vtaxpy(coef(i_vect), vect(i_vect), cnpilo)
+        end do
+    endif
 !
 ! - End timer
 !

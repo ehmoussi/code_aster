@@ -68,7 +68,7 @@ character(len=19) :: cnfext
     character(len=19) :: cnffdo, cnffpi, cnfvdo, cnvady
     aster_logical :: lctcd, lunil
     real(kind=8) :: coeequ
-    aster_logical :: ldyna, lallv
+    aster_logical :: ldyna, lallv, l_pilo
     integer :: ifdo, n
     character(len=19) :: vect(20)
     real(kind=8) :: coef(20)
@@ -89,6 +89,7 @@ character(len=19) :: cnfext
     lctcd = isfonc(fonact,'CONT_DISCRET' )
     lunil = isfonc(fonact,'LIAISON_UNILATER')
     lallv = isfonc(fonact,'CONT_ALL_VERIF' )
+    l_pilo = isfonc(fonact,'PILOTAGE')
 !
 ! --- INITIALISATIONS
 !
@@ -116,19 +117,19 @@ character(len=19) :: cnfext
         vect(ifdo) = ds_contact_%cnunil
     endif
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS FIXES        (NEUMANN)
+! - Get dead Neumann loads and multi-step dynamic schemes forces
 !
-    call nmasfi(fonact, sddyna, veasse, cnffdo, cnffpi)
+    call nmasfi(fonact, veasse, cnffdo, sddyna)
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS VARIABLES    (NEUMANN)
+! - Get undead Neumann loads and multi-step dynamic schemes forces
 !
-    call nmasva(sddyna, veasse, cnfvdo)
+    call nmasva(veasse, cnfvdo, sddyna)
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS VARIABLES DYNAMIQUES (NEUMANN)
+! - Get undead Neumann loads for dynamic
 !
     if (ldyna) then
         coeequ = ndynre(sddyna,'COEF_MPAS_EQUI_COUR')
-        call ndasva('CORR', sddyna, veasse, cnvady)
+        call ndasva(sddyna, veasse, cnvady)
     endif
 !
 ! --- CHARGEMENTS EXTERIEURS DONNEES
@@ -140,11 +141,14 @@ character(len=19) :: cnfext
     coef(ifdo) = 1.d0
     vect(ifdo) = cnfvdo
 !
-! --- CHARGEMENTS EXTERIEURS PILOTES
+! - Get dead Neumann loads (for PILOTAGE)
 !
-    ifdo = ifdo + 1
-    coef(ifdo) = eta
-    vect(ifdo) = cnffpi
+    if (l_pilo) then
+        call nmchex(veasse, 'VEASSE', 'CNFEPI', cnffpi)
+        ifdo = ifdo + 1
+        coef(ifdo) = eta
+        vect(ifdo) = cnffpi
+    endif
 !
 ! --- TERMES DE RAPPEL DYNAMIQUE
 !
