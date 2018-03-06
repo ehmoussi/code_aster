@@ -36,7 +36,6 @@ implicit none
 #include "asterfort/assvec.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmvcle.h"
-#include "asterfort/nmvcpr.h"
 !
 character(len=24), intent(in) :: model, cara_elem
 type(NL_DS_Material), intent(in) :: ds_material
@@ -97,13 +96,13 @@ integer, intent(in) :: nume_inst
 !
 ! - Compute CHAR_MECA_*_R for PREDICTOR
 !
-    vect_elem = '&&VARCINIT_ELEM'
-    call nmvcpr(model    , ds_material%field_mate,&
-                cara_elem, ds_material%varc_refe , ds_constitutive%compor, &
-                hval_incr, nume_dof_ = nume_dof, base_ = 'V',&
-                vect_elem_prev_ = '&&VEVCOM',&
-                vect_elem_curr_ = '&&VEVCOP',&
-                cnvcpr_ = ds_material%fvarc_pred)
-    call detrsd('RESUELEM', vect_elem)
+!    vect_elem = '&&VARCINIT_ELEM'
+!    call nmvcpr(model    , ds_material%field_mate,&
+!                cara_elem, ds_material%varc_refe , ds_constitutive%compor, &
+!                hval_incr, nume_dof_ = nume_dof, base_ = 'V',&
+!                vect_elem_prev_ = '&&VEVCOM',&
+!                vect_elem_curr_ = '&&VEVCOP',&
+!                cnvcpr_ = ds_material%fvarc_pred)
+!    call detrsd('RESUELEM', vect_elem)
 !
 end subroutine

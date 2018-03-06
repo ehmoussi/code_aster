@@ -36,7 +36,7 @@ implicit none
 #include "asterfort/ndxnpa.h"
 #include "asterfort/ndxpre.h"
 #include "asterfort/nmchar.h"
-#include "asterfort/nonlinDSMaterialTimeStep.h"
+#include "asterfort/nmforc_step.h"
 !
 integer :: numins
 integer :: fonact(*)
@@ -101,22 +101,22 @@ integer :: nbiter
 !
 ! - Update for new time step
 !
-    call ndxnpa(fonact, ds_print,&
+    call ndxnpa(modele        , carele,&
+                fonact, ds_print,&
+                ds_material   , ds_constitutive,&
                 sddisc, sddyna, sdnume, numedd, numins  ,&
                 valinc, solalg)
 !
-! - Update material parameters for new time step
+! - Compute forces for second member when constant in time step
 !
-    call nonlinDSMaterialTimeStep(modele         , ds_material, carele,&
-                                  ds_constitutive, valinc     ,&
-                                  numedd         , sddisc     , numins)
-!
-! --- CALCUL DES CHARGEMENTS CONSTANTS AU COURS DU PAS DE TEMPS
-!
-    call nmchar('FIXE', ' '            , modele  , numedd, ds_material,&
-                carele, ds_constitutive, lischa  , numins, ds_measure,&
-                sddisc, fonact         , ds_inout, valinc,&
-                solalg, veelem         , measse  , veasse, sddyna)
+    call nmforc_step(fonact     ,&
+                     modele     , carele         , numedd,&
+                     lischa     , sddyna         ,&
+                     ds_material, ds_constitutive,&
+                     ds_measure , ds_inout       ,&
+                     sddisc     , numins         ,&
+                     valinc     , solalg         ,&
+                     veelem     , veasse)
 !
 ! --- PREDICTION D'UNE DIRECTION DE DESCENTE
 !
