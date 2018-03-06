@@ -48,7 +48,7 @@ implicit none
 #include "asterfort/lobs.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/nmchap.h"
-#include "asterfort/nmchar.h"
+#include "asterfort/nmforc_acci.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmcrch.h"
 #include "asterfort/nmcrcv.h"
@@ -341,11 +341,17 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 ! --- CALCUL DE L'ACCELERATION INITIALE
 !
     if (lacc0) then
-        call nmchar('ACCI'   , ' '   ,&
-                    model    , numedd, ds_material, cara_elem, ds_constitutive,&
-                    list_load, numins, ds_measure , sddisc   , fonact         ,&
-                    ds_inout , valinc, solalg     , veelem   , measse         ,&
-                    veasse   , sddyna)
+! ----- Compute forces for second member for initial acceleration
+        call nmforc_acci(fonact,&
+                         model      , cara_elem      , numedd,&
+                         list_load  , sddyna         ,&
+                         ds_material, ds_constitutive,&
+                         ds_measure , ds_inout       ,&
+                         sddisc     , numins         ,&
+                         valinc     , solalg         ,&
+                         veelem     , veasse         ,&
+                         measse)
+! ----- Compute initial acceleration
         call accel0(model     , numedd, numfix     , fonact, list_load,&
                     ds_contact, maprec, solver     , valinc, sddyna   ,&
                     ds_measure, ds_algopara, meelem, measse   ,&
