@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,9 +16,10 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine lcegeo(nno, npg, jv_poids, jv_func, jv_dfunc,&
-                  geom, typmod, jvariexte, ndim,&
-                  deplm, ddepl)
+subroutine lcegeo(nno     , npg      , ndim    ,&
+                  jv_poids, jv_func  , jv_dfunc,&
+                  typmod  , jvariexte,&
+                  geom    , deplm_   , ddepl_)
 !
 implicit none
 !
@@ -34,9 +35,9 @@ implicit none
 integer, intent(in) :: nno, npg, ndim
 integer, intent(in) :: jv_poids, jv_func, jv_dfunc
 character(len=8), intent(in) :: typmod(2)
-real(kind=8), intent(in) :: geom(3, nno)
-real(kind=8), intent(in) :: deplm(3, nno), ddepl(3, nno)
 integer, intent(in) :: jvariexte
+real(kind=8), intent(in) :: geom(ndim, nno)
+real(kind=8), optional, intent(in) :: deplm_(ndim, nno), ddepl_(ndim, nno)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -46,17 +47,17 @@ integer, intent(in) :: jvariexte
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IN  NNO    : NOMBRE DE NOEUDS DE L'ELEMENT
-! IN  NPG    : NOMBRE DE POINTS DE GAUSS
-! IN  IPOIDS : POIDS DES POINTS DE GAUSS
-! IN  IVF    : VALEUR  DES FONCTIONS DE FORME
-! IN  IDFDE  : DERIVEE DES FONCTIONS DE FORME ELEMENT DE REFERENCE
-! IN  GEOM   : COORDONEES DES NOEUDS
-! IN  TYPMOD : TYPE DE MODELISATION
+! In  nno              : number of nodes 
+! In  npg              : number of Gauss points 
+! In  ndim             : dimension of problem (2 or 3)
+! In  jv_poids         : JEVEUX adress for weight of Gauss points
+! In  jv_func          : JEVEUX adress for shape functions
+! In  jv_dfunc         : JEVEUX adress for derivative of shape functions
+! In  typmod           : type of modelization (TYPMOD2)
 ! In  jvariexte        : coded integer for external state variable
-! OUT ELGEOM  : TABLEAUX DES ELEMENTS GEOMETRIQUES SPECIFIQUES AUX LOIS
-!               DE COMPORTEMENT (DIMENSION MAXIMALE FIXEE EN DUR, EN
-!               FONCTION DU NOMBRE MAXIMAL DE POINT DE GAUSS)
+! In  geom             : initial coordinates of nodes
+! In  deplm            : displacements of nodes at beginning of time step
+! In  ddepl            : displacements of nodes since beginning of time step
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,33 +72,33 @@ integer, intent(in) :: jvariexte
 ! - Element size 1
 !
     if (tabcod(ELTSIZE1) .eq. 1) then
-        call calcExternalStateVariable1(nno     , npg    , &
+        call calcExternalStateVariable1(nno     , npg    , ndim    ,&
                                         jv_poids, jv_func, jv_dfunc,&
                                         geom    , typmod )
     endif
-!
-! - Coordinates of Gauss points
-!
-    if (tabcod(COORGA) .eq. 1) then
-        call calcExternalStateVariable2(nno    , npg   , ndim  ,&
-                                        jv_func, &
-                                        geom   , typmod)
-    endif
-!
-! - Gradient of velocity
-!
-    if (tabcod(GRADVELO) .eq. 1) then
-        call calcExternalStateVariable3(nno     , npg    , ndim    ,&
-                                        jv_poids, jv_func, jv_dfunc,&
-                                        geom    , deplm  , ddepl   )
-    endif
-!
-! - Element size 2
-!
-    if (tabcod(ELTSIZE2) .eq. 1) then
-        call calcExternalStateVariable4(nno     , npg   ,&
-                                        jv_dfunc,&
-                                        geom    , typmod)
-    endif
+!!
+!! - Coordinates of Gauss points
+!!
+!    if (tabcod(COORGA) .eq. 1) then
+!        call calcExternalStateVariable2(nno    , npg   , ndim  ,&
+!                                        jv_func, &
+!                                        geom   , typmod)
+!    endif
+!!
+!! - Gradient of velocity
+!!
+!    if (tabcod(GRADVELO) .eq. 1) then
+!        call calcExternalStateVariable3(nno     , npg    , ndim    ,&
+!                                        jv_poids, jv_func, jv_dfunc,&
+!                                        geom    , deplm_ , ddepl_ )
+!    endif
+!!
+!! - Element size 2
+!!
+!    if (tabcod(ELTSIZE2) .eq. 1) then
+!        call calcExternalStateVariable4(nno     , npg   ,&
+!                                        jv_dfunc,&
+!                                        geom    , typmod)
+!    endif
 !
 end subroutine
