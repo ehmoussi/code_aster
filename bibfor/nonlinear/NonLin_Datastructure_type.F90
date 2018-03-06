@@ -518,4 +518,12 @@ implicit none
 
     end type NL_DS_Material
 !
+! - Type: combine vectors
+! 
+    type NL_DS_VectComb
+        integer            :: nb_vect
+        real(kind=8)       :: vect_coef(20)
+        character(len=19)  :: vect_name(20)
+    end type NL_DS_VectComb
+!
 end module
