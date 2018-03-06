@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,14 +17,15 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine lcegeo(nno, npg, jv_poids, jv_func, jv_dfunc,&
-                      geom, typmod, jvariexte, ndim,&
-                      deplm, ddepl)
+    subroutine lcegeo(nno     , npg      , ndim    ,&
+                      jv_poids, jv_func  , jv_dfunc,&
+                      typmod  , jvariexte,&
+                      geom    , deplm_   , ddepl_)
         integer, intent(in) :: nno, npg, ndim
         integer, intent(in) :: jv_poids, jv_func, jv_dfunc
         character(len=8), intent(in) :: typmod(2)
-        real(kind=8), intent(in) :: geom(3, nno)
-        real(kind=8), intent(in) :: deplm(3, nno), ddepl(3, nno)
         integer, intent(in) :: jvariexte
+        real(kind=8), intent(in) :: geom(ndim, nno)
+        real(kind=8), optional, intent(in) :: deplm_(ndim, nno), ddepl_(ndim, nno)
     end subroutine lcegeo
 end interface
