@@ -218,8 +218,8 @@ integer :: pilcvg, ldccvg
 !
 ! --- CALCUL DE F(RHO=0)
 !
-    call nmpilr(fonact, numedd, matass, veasse, f0,&
-                etan)
+    call nmpilr(fonact, numedd, matass, veasse, etan,&
+                f0)
     fcvg = abs(relirl * f0)
 !
 ! --- INITIALISATION ET DIRECTION DE DESCENTE

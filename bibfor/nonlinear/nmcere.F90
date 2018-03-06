@@ -237,8 +237,8 @@ character(len=19) :: solalg(*), valinc(*)
 ! --- CALCUL DU RESIDU
 !
     if (ldccvg .eq. 0) then
-        call nmpilr(fonact, nume_dof, matass, veasse, residu,&
-                    eta)
+        call nmpilr(fonact, nume_dof, matass, veasse, eta,&
+                    residu)
     endif
 !
 end subroutine

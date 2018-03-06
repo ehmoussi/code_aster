@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine nmpilr(fonact, numedd, matass, veasse, residu,&
-                      eta)
-        integer :: fonact(*)
-        character(len=24) :: numedd
-        character(len=19) :: matass
-        character(len=19) :: veasse(*)
-        real(kind=8) :: residu
-        real(kind=8) :: eta
+    subroutine nmpilr(list_func_acti, nume_dof, matass, hval_veasse, eta,&
+                      residu        )
+        integer, intent(in) :: list_func_acti(*)
+        character(len=24), intent(in) :: nume_dof
+        character(len=19), intent(in) :: matass, hval_veasse(*)
+        real(kind=8), intent(in) :: eta
+        real(kind=8), intent(out) :: residu
     end subroutine nmpilr
 end interface
