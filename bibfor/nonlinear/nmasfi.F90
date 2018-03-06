@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,202 +15,133 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmasfi(fonact, sddyna, veasse, cnffdo, cnffpi)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine nmasfi(list_func_acti, hval_veasse, cnffdo, sddyna_)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
 #include "asterf_types.h"
-#include "jeveux.h"
+#include "asterfort/nonlinDSVectCombCompute.h"
+#include "asterfort/nonlinDSVectCombAddHat.h"
+#include "asterfort/nonlinDSVectCombAddDyna.h"
+#include "asterfort/nonlinDSVectCombInit.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/ndynkk.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/ndynre.h"
-#include "asterfort/nmchex.h"
-#include "asterfort/nmdebg.h"
-#include "asterfort/vtaxpy.h"
-#include "asterfort/vtzero.h"
-    character(len=19) :: cnffdo, cnffpi
-    character(len=19) :: veasse(*)
-    integer :: fonact(*)
-    character(len=19) :: sddyna
 !
-! ----------------------------------------------------------------------
+integer, intent(in) :: list_func_acti(*)
+character(len=19), intent(in) :: hval_veasse(*), cnffdo
+character(len=19), optional, intent(in) :: sddyna_
 !
-! ROUTINE MECA_NON_LINE (ALGORITHME)
+! --------------------------------------------------------------------------------------------------
 !
-! CALCUL DES COMPOSANTES DU VECTEUR SECOND MEMBRE
-!  - CHARGEMENT DE TYPE NEUMANN
-!  - CHARGEMENT FIXE AU COURS DU PAS DE TEMPS
-!  - CHARGEMENT DONNE ET PILOTE
+! MECA_NON_LINE - Algorithm
 !
-! ----------------------------------------------------------------------
+! Get dead Neumann loads and multi-step dynamic schemes forces
 !
+! --------------------------------------------------------------------------------------------------
 !
-! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
-! IN  SDDYNA : SD DYNAMIQUE
-! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
-! OUT CNFFDO : VECT_ASSE DE TOUTES LES FORCES FIXES DONNES
-! OUT CNFFPI : VECT_ASSE DE TOUTES LES FORCES FIXES PILOTES
+! In  list_func_acti   : list of active functionnalities
+! In  sddyna           : datastructure for dynamic
+! In  hval_veasse      : hat-variable for vectors (node fields)
+! In  cnffdo           : name of resultant nodal field
 !
-!
-!
-!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: ifdo
-    integer :: n
-    character(len=19) :: cndonn(20)
-    real(kind=8) :: codonn(20)
     real(kind=8) :: coeext, coeex2
-    character(len=19) :: cnfedo, cnlame, cnondp, cnfepi
-    character(len=19) :: cnsstf, cnviss
-    aster_logical :: llapl
-    aster_logical :: londe, lpilo, lsstf, lmpas, ldyna, lviss
+    aster_logical :: l_lapl
+    aster_logical :: l_wave, l_sstf, l_mult_step, l_dyna, l_viss
+    type(NL_DS_VectComb) :: ds_vectcomb
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
     if (niv .ge. 2) then
         write (ifm,*) '<MECANONLINE> ...... CALCUL NEUMANN CONSTANT'
     endif
 !
-! --- FONCTIONNALITES ACTIVEES
+! - Active functionnalities
+!  
+    l_lapl      = isfonc(list_func_acti,'LAPLACE')
+    l_sstf      = isfonc(list_func_acti,'SOUS_STRUC')
+    l_dyna      = ASTER_FALSE
+    l_mult_step = ASTER_FALSE
+    l_viss      = ASTER_FALSE
+    l_wave      = ASTER_FALSE
+    if (present(sddyna_)) then  
+        l_mult_step = ndynlo(sddyna_,'MULTI_PAS')
+        l_dyna      = ndynlo(sddyna_,'DYNAMIQUE')
+        l_viss      = ndynlo(sddyna_,'VECT_ISS')
+        l_wave      = ndynlo(sddyna_,'ONDE_PLANE')
+    endif
 !
-    londe = ndynlo(sddyna,'ONDE_PLANE')
-    llapl = isfonc(fonact,'LAPLACE')
-    lpilo = isfonc(fonact,'PILOTAGE')
-    lsstf = isfonc(fonact,'SOUS_STRUC')
-    lmpas = ndynlo(sddyna,'MULTI_PAS')
-    ldyna = ndynlo(sddyna,'DYNAMIQUE')
-    lviss = ndynlo(sddyna,'VECT_ISS')
+! - Initializations
 !
-! --- INITIALISATIONS
+    call nonlinDSVectCombInit(ds_vectcomb)
 !
-    ifdo = 0
-    call vtzero(cnffdo)
-    call vtzero(cnffpi)
+! - Coefficients
 !
-! --- COEFFICIENTS POUR MULTI-PAS
-!
-    if (ldyna) then
-        coeext = ndynre(sddyna,'COEF_MPAS_FEXT_PREC')
-        coeex2 = ndynre(sddyna,'COEF_MPAS_FEXT_COUR')
+    if (l_dyna) then
+        coeext = ndynre(sddyna_,'COEF_MPAS_FEXT_PREC')
+        coeex2 = ndynre(sddyna_,'COEF_MPAS_FEXT_COUR')
     else
         coeext = 1.d0
         coeex2 = 1.d0
     endif
 !
-! --- FORCES DONNEES
+! - Dead Neumann forces
 !
-    call nmchex(veasse, 'VEASSE', 'CNFEDO', cnfedo)
-    ifdo = ifdo+1
-    cndonn(ifdo) = cnfedo
-    codonn(ifdo) = coeex2
+    call nonlinDSVectCombAddHat(hval_veasse, 'CNFEDO', coeex2, ds_vectcomb)
 !
-! --- CHARGEMENTS FORCES DE LAPLACE
+! - Laplace load
 !
-    if (llapl) then
-        call nmchex(veasse, 'VEASSE', 'CNLAPL', cnlame)
-        ifdo = ifdo+1
-        cndonn(ifdo) = cnlame
-        codonn(ifdo) = coeex2
+    if (l_lapl) then
+        call nonlinDSVectCombAddHat(hval_veasse, 'CNLAPL', coeex2, ds_vectcomb)
     endif
 !
-! --- CHARGEMENTS ONDE_PLANE
+! - Wave load
 !
-    if (londe) then
-        call nmchex(veasse, 'VEASSE', 'CNONDP', cnondp)
-        ifdo = ifdo+1
-        cndonn(ifdo) = cnondp
-        codonn(ifdo) = -1.d0*coeex2
+    if (l_wave) then
+        call nonlinDSVectCombAddHat(hval_veasse, 'CNONDP', -1.d0*coeex2, ds_vectcomb)
     endif
 !
-! --- FORCES ISSUES DU CALCUL PAR SOUS-STRUCTURATION
+! - Sub-structuring force
 !
-    if (lsstf) then
-        call nmchex(veasse, 'VEASSE', 'CNSSTF', cnsstf)
-        ifdo = ifdo+1
-        cndonn(ifdo) = cnsstf
-!        codonn(ifdo) = 1.d0
-        codonn(ifdo) = coeex2
+    if (l_sstf) then
+        call nonlinDSVectCombAddHat(hval_veasse, 'CNSSTF', coeex2, ds_vectcomb)
     endif
 !
-! --- FORCES VEC_ISS
+! - FSI ground load
 !
-    if (lviss) then
-        call nmchex(veasse, 'VEASSE', 'CNVISS', cnviss)
-        ifdo = ifdo+1
-        cndonn(ifdo) = cnviss
-!        codonn(ifdo) = 1.d0
-        codonn(ifdo) = coeex2
+    if (l_viss) then
+        call nonlinDSVectCombAddHat(hval_veasse, 'CNVISS', coeex2, ds_vectcomb)
     endif
 !
-! --- AJOUT FORCES EXTERNES PAS PRECEDENT
+! - Multi-step dynamic schemes forces from previous time step
 !
-    if (lmpas) then
-        call ndynkk(sddyna, 'OLDP_CNFEDO', cnfedo)
-        ifdo = ifdo+1
-        cndonn(ifdo) = cnfedo
-        codonn(ifdo) = coeext
-        if (llapl) then
-            call ndynkk(sddyna, 'OLDP_CNLAPL', cnlame)
-            ifdo = ifdo+1
-            cndonn(ifdo) = cnlame
-            codonn(ifdo) = coeext
+    if (l_mult_step) then
+        call nonlinDSVectCombAddDyna(sddyna_, 'CNFEDO', coeext, ds_vectcomb)
+        if (l_lapl) then
+            call nonlinDSVectCombAddDyna(sddyna_, 'CNLAPL', coeext, ds_vectcomb)
         endif
-        if (londe) then
-            call ndynkk(sddyna, 'OLDP_CNONDP', cnondp)
-            ifdo = ifdo+1
-            cndonn(ifdo) = cnondp
-            codonn(ifdo) = -1.d0*coeext
+        if (l_wave) then
+            call nonlinDSVectCombAddDyna(sddyna_, 'CNONDP', -1.d0*coeext, ds_vectcomb)
         endif
-        if (lviss) then
-            call ndynkk(sddyna, 'OLDP_CNVISS', cnviss)
-            ifdo = ifdo+1
-            cndonn(ifdo) = cnviss
-            codonn(ifdo) = coeext
+        if (l_viss) then
+            call nonlinDSVectCombAddDyna(sddyna_, 'CNVISS', coeext, ds_vectcomb)
         endif
-        if (lsstf) then
-            call ndynkk(sddyna, 'OLDP_CNSSTF', cnsstf)
-            ifdo = ifdo+1
-            cndonn(ifdo) = cnsstf
-            codonn(ifdo) = coeext
+        if (l_sstf) then
+            call nonlinDSVectCombAddDyna(sddyna_, 'CNSSTF', coeext, ds_vectcomb)
         endif
     endif
 !
-! --- VECTEUR RESULTANT FORCES DONNEES
+! - Combination
 !
-    do n = 1, ifdo
-        call vtaxpy(codonn(n), cndonn(n), cnffdo)
-        if (niv .ge. 2) then
-            write (ifm,*) '<MECANONLINE> ......... FORC. DONNEES'
-            write (ifm,*) '<MECANONLINE> .........  ',n,' - COEF: ',&
-     &                 codonn(n)
-            call nmdebg('VECT', cndonn(n), ifm)
-        endif
-    end do
+    call nonlinDSVectCombCompute(ds_vectcomb, cnffdo)
 !
-! --- VECTEUR RESULTANT FORCES PILOTEES
-!
-    if (lpilo) then
-        call nmchex(veasse, 'VEASSE', 'CNFEPI', cnfepi)
-        cnffpi = cnfepi
-        if (niv .ge. 2) then
-            write (ifm,*) '<MECANONLINE> ......... FORC. PILOTEES'
-            write (ifm,*) '<MECANONLINE> .........  ',1,' - COEF: ',&
-     &                 1.d0
-            call nmdebg('VECT', cnffpi, ifm)
-        endif
-    endif
-!
-    call jedema()
 end subroutine

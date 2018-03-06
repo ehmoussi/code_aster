@@ -125,21 +125,21 @@ character(len=19) :: cndonn
     call nmtime(ds_measure, 'Init'  , '2nd_Member')
     call nmtime(ds_measure, 'Launch', '2nd_Member')
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS FIXES        (NEUMANN)
+! - Get dead Neumann loads and multi-step dynamic schemes forces
 !
-    call nmasfi(fonact, sddyna, veasse, cnffdo, cndumm)
+    call nmasfi(fonact, veasse, cnffdo, sddyna)
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS FIXES        (DIRICHLET)
+! - Get Dirichlet loads
 !
-    call nmasdi(fonact, veasse, cndfdo, cndumm)
+    call nmasdi(fonact, veasse, cndfdo)
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS VARIABLES    (NEUMANN)
+! - Get undead Neumann loads and multi-step dynamic schemes forces
 !
-    call nmasva(sddyna, veasse, cnfvdo)
+    call nmasva(veasse, cnfvdo, sddyna)
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS VARIABLES DYNAMIQUES (NEUMANN)
+! - Get undead Neumann loads for dynamic
 !
-    call ndasva('PRED', sddyna, veasse, cnvady)
+    call ndasva(sddyna, veasse, cnvady)
 !
 ! - Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
 !

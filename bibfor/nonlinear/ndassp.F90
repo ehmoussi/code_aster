@@ -141,21 +141,21 @@ character(len=19) :: cndonn
     call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
     call nmchex(veelem, 'VEELEM', 'CNFINT', vefint)
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS FIXES        (NEUMANN)
+! - Get dead Neumann loads and multi-step dynamic schemes forces
 !
-    call nmasfi(fonact, sddyna, veasse, cnffdo, cndumm)
+    call nmasfi(fonact, veasse, cnffdo, sddyna)
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS FIXES        (DIRICHLET)
+! - Get Dirichlet loads
 !
-    call nmasdi(fonact, veasse, cndfdo, cndumm)
+    call nmasdi(fonact, veasse, cndfdo)
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS VARIABLES    (NEUMANN)
+! - Get undead Neumann loads and multi-step dynamic schemes forces
 !
-    call nmasva(sddyna, veasse, cnfvdo)
+    call nmasva(veasse, cnfvdo, sddyna)
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS VARIABLES DYNAMIQUES (NEUMANN)
+! - Get undead Neumann loads for dynamic
 !
-    call ndasva('PRED', sddyna, veasse, cnvady)
+    call ndasva(sddyna, veasse, cnvady)
 !
 ! --- QUEL VECTEUR D'INCONNUES PORTE LES LAGRANGES ?
 !

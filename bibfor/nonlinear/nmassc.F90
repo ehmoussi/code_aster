@@ -36,6 +36,7 @@ implicit none
 #include "asterfort/nmchex.h"
 #include "asterfort/nmtime.h"
 #include "asterfort/vtaxpy.h"
+#include "asterfort/isfonc.h"
 !
 type(NL_DS_Measure), intent(inout) :: ds_measure
 type(NL_DS_Contact), intent(in) :: ds_contact
@@ -71,7 +72,7 @@ character(len=19) :: veasse(*)
     character(len=19) :: cnffpi, cndfpi, cndiri
     character(len=19) :: cnfint, cnbudi
     real(kind=8) :: coeequ
-    aster_logical :: ldyna
+    aster_logical :: ldyna, l_pilo
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -88,34 +89,37 @@ character(len=19) :: veasse(*)
     cndfpi = '&&CNCHAR.DFPI'
     cnfvdo = '&&CNCHAR.FVDO'
     cnvady = '&&CNCHAR.FVDY'
-!
     call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
     call nmchex(veasse, 'VEASSE', 'CNBUDI', cnbudi)
     call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
+!
+! --- FONCTIONNALITES ACTIVEES
+!
     ldyna = ndynlo(sddyna,'DYNAMIQUE')
+    l_pilo = isfonc(fonact,'PILOTAGE')
 !
 ! - Launch timer
 !
     call nmtime(ds_measure, 'Init'  , '2nd_Member')
     call nmtime(ds_measure, 'Launch', '2nd_Member')
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS FIXES        (NEUMANN)
+! - Get dead Neumann loads and multi-step dynamic schemes forces
 !
-    call nmasfi(fonact, sddyna, veasse, cnffdo, cnffpi)
+    call nmasfi(fonact, veasse, cnffdo, sddyna)
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS FIXES        (DIRICHLET)
+! - Get Dirichlet loads
 !
-    call nmasdi(fonact, veasse, cndfdo, cndfpi)
+    call nmasdi(fonact, veasse, cndfdo)
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS VARIABLES    (NEUMANN)
+! - Get undead Neumann loads and multi-step dynamic schemes forces
 !
-    call nmasva(sddyna, veasse, cnfvdo)
+    call nmasva(veasse, cnfvdo, sddyna)
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS VARIABLES DYNAMIQUES (NEUMANN)
+! - Get undead Neumann loads for dynamic
 !
     if (ldyna) then
         coeequ = ndynre(sddyna,'COEF_MPAS_EQUI_COUR')
-        call ndasva('CORR', sddyna, veasse, cnvady)
+        call ndasva(sddyna, veasse, cnvady)
     endif
 !
 ! --- CHARGEMENTS DONNES AVEC PRISE EN COMPTE L'ERREUR DE L'ERREUR QUI
@@ -150,20 +154,32 @@ character(len=19) :: veasse(*)
         vect(nb_vect) = ds_contact%cnctdf
     endif
 !
+! --- CHARGEMENT DONNE
+!
     do i_vect = 1, nb_vect
         call vtaxpy(coef(i_vect), vect(i_vect), cndonn)
     end do
 !
-! --- CHARGEMENTS PILOTES
+! - Get dead Neumann loads (for PILOTAGE)
 !
-    nb_vect = 2
-    coef(1) = 1.d0
-    coef(2) = 1.d0
-    vect(1) = cnffpi
-    vect(2) = cndfpi
-    do i_vect = 1, nb_vect
-        call vtaxpy(coef(i_vect), vect(i_vect), cnpilo)
-    end do
+    call nmchex(veasse, 'VEASSE', 'CNFEPI', cnffpi)
+!
+! - Get Dirichlet loads (for PILOTAGE)
+!
+    call nmchex(veasse, 'VEASSE', 'CNDIPI', cndfpi)
+!
+! --- CHARGEMENT PILOTE
+!
+    if (l_pilo) then
+        nb_vect = 2
+        coef(1) = 1.d0
+        coef(2) = 1.d0
+        vect(1) = cnffpi
+        vect(2) = cndfpi
+        do i_vect = 1, nb_vect
+            call vtaxpy(coef(i_vect), vect(i_vect), cnpilo)
+        end do
+    endif
 !
 ! - End timer
 !
