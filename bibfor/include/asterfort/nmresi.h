@@ -24,7 +24,7 @@ interface
                       matass     , nume_inst     , eta        ,&
                       hval_incr  , hval_algo     ,&
                       hval_veasse, hval_measse   ,&
-                      r_resi_vale, r_char_vale)
+                      r_equi_vale, r_char_vale)
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
         character(len=8), intent(in) :: mesh
@@ -42,6 +42,6 @@ interface
         real(kind=8), intent(in) :: eta
         character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
         character(len=19), intent(in) :: hval_measse(*), hval_veasse(*)
-        real(kind=8), intent(out) :: r_char_vale, r_resi_vale
+        real(kind=8), intent(out) :: r_char_vale, r_equi_vale
     end subroutine nmresi
 end interface

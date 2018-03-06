@@ -17,87 +17,83 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmequi(eta, fonact, sddyna, ds_contact, veasse,&
-                  cnfext, cnfint)
+subroutine nmequi(l_disp     , l_pilo, cnresu,&
+                  cnfint     , cnfext, cndiri,&
+                  ds_contact_,&
+                  cnbudi_    , cndfdo_,&
+                  cndipi_    , eta_)
 !
 use NonLin_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/ndynin.h"
-#include "asterfort/ndynlo.h"
-#include "asterfort/nmchex.h"
-#include "asterfort/nmfext.h"
+#include "asterfort/nmdebg.h"
+#include "asterfort/nonlinDSVectCombCompute.h"
+#include "asterfort/nonlinDSVectCombAddAny.h"
+#include "asterfort/nonlinDSVectCombInit.h"
 !
-real(kind=8) :: eta
-integer :: fonact(*)
-character(len=19) :: sddyna
-character(len=19) :: veasse(*)
-type(NL_DS_Contact), intent(in) :: ds_contact
-character(len=19) :: cnfext, cnfint
+aster_logical, intent(in) :: l_disp, l_pilo
+character(len=19), intent(in) :: cnresu
+character(len=19), intent(in) :: cnfint, cnfext, cndiri
+type(NL_DS_Contact), optional, intent(in) :: ds_contact_
+character(len=19), optional, intent(in) :: cnbudi_, cndfdo_, cndipi_
+real(kind=8), optional, intent(in) :: eta_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE MECA_NON_LINE (ALGORITHME)
+! MECA_NON_LINE - Algorithm
 !
-! RESULTANTE DES EFFORTS POUR ESTIMATION DE L'EQUILIBRE
+! Compute lack of balance forces
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IN  SDDYNA : SD DYNAMIQUE
 ! In  ds_contact       : datastructure for contact management
-! IN  FONACT : FONCTIONNALITES ACTIVEES
-! IN  ETA    : COEFFICIENT DE PILOTAGE
-! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    aster_logical :: ldyna, lstat
-    aster_logical :: lnewma
+    type(NL_DS_VectComb) :: ds_vectcomb
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> CALCUL DES FORCES POUR ESTIMATION DE L''EQUILIBRE'
+        write (ifm,*) '<MECANONLINE> Compute lack of balance forces'
     endif
 !
-! --- FONCTIONNALITES ACTIVEES
+! - Initializations
 !
-    ldyna = ndynlo(sddyna,'DYNAMIQUE')
+    call nonlinDSVectCombInit(ds_vectcomb)
 !
-! --- INITIALISATIONS
+! - Add vect_asse
 !
-    lnewma = ASTER_FALSE
-!
-! --- FONCTIONNALITES ACTIVEES
-!
-    ldyna = ndynlo(sddyna,'DYNAMIQUE')
-    lstat = ndynlo(sddyna,'STATIQUE')
-    if (ldyna) then
-        lnewma = ndynlo(sddyna,'FAMILLE_NEWMARK')
+    call nonlinDSVectCombAddAny(cnfint, +1.d0, ds_vectcomb)
+    call nonlinDSVectCombAddAny(cndiri, +1.d0, ds_vectcomb)
+    call nonlinDSVectCombAddAny(cnfext, -1.d0, ds_vectcomb)
+    if (present(ds_contact_)) then
+        if (ds_contact_%l_cnctdf) then
+            call nonlinDSVectCombAddAny(ds_contact_%cnctdf, +1.d0, ds_vectcomb)
+        endif
     endif
-    ASSERT(lstat .or. lnewma)
+    if (l_disp) then
+        call nonlinDSVectCombAddAny(cnbudi_, +1.d0, ds_vectcomb)
+        call nonlinDSVectCombAddAny(cndfdo_, -1.d0, ds_vectcomb)
+    endif
+    if (l_pilo) then
+        call nonlinDSVectCombAddAny(cndipi_, -eta_, ds_vectcomb)
+    endif
 !
-! --- VECTEURS EN SORTIE
+! - Combination
 !
-    call nmchex(veasse, 'VEASSE', 'CNFEXT', cnfext)
-    call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
+    call nonlinDSVectCombCompute(ds_vectcomb, cnresu)
 !
-! --- CALCUL DES TERMES
+! - Debug
 !
-    call nmfext(eta, fonact, sddyna, veasse, cnfext, ds_contact)
+    if (niv .eq. 2) then
+        call nmdebg('VECT', cnresu, ifm)
+    endif
 !
-    call jedema()
 end subroutine
