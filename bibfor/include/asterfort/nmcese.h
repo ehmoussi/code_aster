@@ -19,7 +19,7 @@
 !
 interface
     subroutine nmcese(modele         , numedd, ds_material, carele    ,&
-                      ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
+                      ds_constitutive, lischa, fonact, ds_measure,&
                       iterat         , sdnume, sdpilo, valinc    , solalg    ,&
                       veelem         , veasse, offset, typsel    , sddisc    ,&
                       licite         , rho   , eta   , etaf      , criter    ,&
@@ -33,7 +33,6 @@ interface
         character(len=19) :: lischa
         integer :: fonact(*)
         type(NL_DS_Measure), intent(inout) :: ds_measure
-        type(NL_DS_Contact), intent(in) :: ds_contact
         integer :: iterat
         character(len=19) :: sdnume
         character(len=19) :: sdpilo

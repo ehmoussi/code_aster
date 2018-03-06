@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmrelp(modele         , numedd, ds_material, carele    ,&
-                  ds_constitutive, lischa, fonact     , iterat    , ds_measure,&
-                  sdnume         , sddyna, ds_algopara, ds_contact, valinc    ,&
-                  solalg         , veelem, veasse     , ds_conv   , ldccvg)
+subroutine nmrelp(model          , nume_dof , ds_material, cara_elem ,&
+                  ds_constitutive, list_load, fonact     , iterat    , ds_measure,&
+                  sdnume         , sddyna   , ds_algopara, ds_contact, valinc    ,&
+                  solalg         , veelem   , veasse     , ds_conv   , ldccvg)
 !
 use NonLin_Datastructure_type
 !
@@ -35,7 +35,6 @@ implicit none
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/nmadir.h"
 #include "asterfort/nmaint.h"
 #include "asterfort/nmcha0.h"
 #include "asterfort/nmchai.h"
@@ -60,9 +59,9 @@ integer :: iterat, ldccvg
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 type(NL_DS_Contact), intent(in) :: ds_contact
 type(NL_DS_Measure), intent(inout) :: ds_measure
-character(len=19) :: lischa, sddyna, sdnume
+character(len=19) :: list_load, sddyna, sdnume
 type(NL_DS_Material), intent(in) :: ds_material
-character(len=24) :: modele, numedd, carele
+character(len=24) :: model, nume_dof, cara_elem
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 character(len=19) :: veelem(*), veasse(*)
 character(len=19) :: solalg(*), valinc(*)
@@ -76,12 +75,12 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IN  MODELE : MODELE
-! IN  NUMEDD : NUME_DDL
+! In  model            : name of model
+! In  cara_elem        : name of elementary characteristics (field)
 ! In  ds_material      : datastructure for material parameters
-! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
+! In  list_load        : name of datastructure for list of loads
+! In  nume_dof         : name of numbering object (NUME_DDL)
 ! In  ds_constitutive  : datastructure for constitutive laws management
-! IN  LISCHA : LISTE DES CHARGES
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! IN  ITERAT : NUMERO D'ITERATION DE NEWTON
@@ -195,8 +194,8 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
     call vtzero(depplt)
     call copisd('CHAMP_GD', 'V', varplu, varplt)
     call copisd('CHAMP_GD', 'V', sigplu, sigplt)
-    call vtcreb('&&NMRECH.RESI', 'V', 'R', nume_ddlz = numedd, nb_equa_outz = neq)
-    call vtcreb('&&NMRECH.DIRI', 'V', 'R', nume_ddlz = numedd, nb_equa_outz = neq)
+    call vtcreb('&&NMRECH.RESI', 'V', 'R', nume_ddlz = nume_dof, nb_equa_outz = neq)
+    call vtcreb('&&NMRECH.DIRI', 'V', 'R', nume_ddlz = nume_dof, nb_equa_outz = neq)
 !
 ! --- CONSTRUCTION DES VARIABLES CHAPEAUX
 !
@@ -212,7 +211,8 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
 !
 ! --- CALCUL DE F(RHO=0)
 !
-    call nmrecz(numedd, cndiri, cnfint, cnfext, ddepla,&
+    call nmrecz(nume_dof, ds_contact,&
+                cndiri, cnfint, cnfext, ddepla,&
                 f0)
 !
     if (niv .ge. 2) then
@@ -251,9 +251,9 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
 !
 ! ----- CALCUL DE L'INCREMENT DE DEPLACEMENT TEMPORAIRE
 !
-        call nmmaji(numedd, lgrot, lendo, sdnume, rho,&
+        call nmmaji(nume_dof, lgrot, lendo, sdnume, rho,&
                     depdel, ddepla, depdet, 0)
-        call nmmaji(numedd, lgrot, lendo, sdnume, rho,&
+        call nmmaji(nume_dof, lgrot, lendo, sdnume, rho,&
                     depplu, ddepla, depplt, 1)
         if (lnkry) then
             call vlaxpy(1.d0-rho, ddepla, depdet)
@@ -273,23 +273,19 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
 !
 ! ----- REACTUALISATION DES FORCES INTERIEURES
 !
-        call nmfint(modele, mate  , carele, varc_refe, ds_constitutive,&
+        call nmfint(model, mate  , cara_elem, varc_refe, ds_constitutive,&
                     fonact, iterat, sddyna, ds_measure, valint(1, act) ,&
                     solalt, ldccvg, vefint)
 !
 ! ----- ASSEMBLAGE DES FORCES INTERIEURES
 !
-        call nmaint(numedd, fonact, ds_contact, veasse, vefint,&
+        call nmaint(nume_dof, fonact, veasse, vefint,&
                     cnfins(act), sdnume)
-!
-! ----- REACTUALISATION DES REACTIONS D'APPUI BT.LAMBDA
-!
+! ----- Update force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
         call nmtime(ds_measure, 'Init'  , '2nd_Member')
         call nmtime(ds_measure, 'Launch', '2nd_Member')
-        call nmdiri(modele, mate, carele, lischa, sddyna,&
-                    depplt, k19bla, k19bla, vediri)
-        call nmadir(numedd, fonact, ds_contact, veasse, vediri,&
-                    cndirs(act))
+        call nmdiri(model , ds_material, cara_elem, list_load,&
+                    depplt, vediri     , nume_dof , cndirs(act))
         call nmtime(ds_measure, 'Stop', '2nd_Member')
         if (niv .ge. 2) then
             write (ifm,*) '<MECANONLINE> ...... FORCES INTERNES'
@@ -317,8 +313,8 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
 !
 ! ----- CALCUL DE F(RHO)
 !
-        call nmrecz(numedd, cndirs(act), cnfins(act), cnfext, ddepla,&
-                    f)
+        call nmrecz(nume_dof, ds_contact,&
+                    cndirs(act), cnfins(act), cnfext, ddepla, f)
 !
         if (niv .ge. 2) then
             write (ifm,*) '<MECANONLINE> ... FONCTIONNELLE COURANTE: ',f
@@ -355,8 +351,7 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
 !
 ! --- AJUSTEMENT DE LA DIRECTION DE DESCENTE
 !
-    call daxpy(neq, rhoopt-1.d0, vale, 1, vale,&
-               1)
+    call daxpy(neq, rhoopt-1.d0, vale, 1, vale, 1)
 !
 ! --- RECUPERATION DES VARIABLES EN T+ SI NECESSAIRE
 !

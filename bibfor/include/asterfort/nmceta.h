@@ -21,7 +21,7 @@
 !
 interface
     subroutine nmceta(modele         , numedd, ds_material, carele    ,&
-                      ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
+                      ds_constitutive, lischa, fonact, ds_measure,&
                       sdpilo         , iterat, sdnume, valinc    , solalg    ,&
                       veelem         , veasse, sddisc, nbeffe    , irecli    ,&
                       proeta         , offset, rho   , etaf      , ldccvg    ,&
@@ -35,7 +35,6 @@ interface
         character(len=19) :: lischa
         integer :: fonact(*)
         type(NL_DS_Measure), intent(inout) :: ds_measure
-        type(NL_DS_Contact), intent(in) :: ds_contact
         character(len=19) :: sdpilo
         integer :: iterat
         character(len=19) :: sdnume

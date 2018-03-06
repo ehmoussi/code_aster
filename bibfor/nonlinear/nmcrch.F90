@@ -85,7 +85,7 @@ character(len=19), intent(in) :: veasse(*)
     character(len=19) :: cndido, cncine, cndiri
     character(len=19) :: cnondp, cnlapl, cnviss
     character(len=19) :: cnsstf, cnsstr
-    character(len=19) :: cnctdc, cnctdf, cnunil
+    character(len=19) :: cnctdc, cnunil
     character(len=19) :: cneltc, cneltf
     character(len=19) :: cnimpp, cnimpc
     character(len=19) :: cnfepi, cndipi, cnrefe
@@ -349,10 +349,6 @@ character(len=19), intent(in) :: veasse(*)
     if (lctcd .and. (.not.lallv)) then
         call nmchex(veasse, 'VEASSE', 'CNCTDC', cnctdc)
         call vtcreb(cnctdc, 'V', 'R', nume_ddlz = numedd)
-    endif
-    if ((lctfd.or.lpenac) .and. (.not.lallv)) then
-        call nmchex(veasse, 'VEASSE', 'CNCTDF', cnctdf)
-        call vtcreb(cnctdf, 'V', 'R', nume_ddlz = numedd)
     endif
 !
 ! --- LIAISON UNILATERALE

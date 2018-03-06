@@ -22,7 +22,7 @@ interface
                       ds_energy, fonact, numedd, numfix, ds_algopara,&
                       meelem, numins, modele, ds_material, carele     ,&
                       ds_constitutive, ds_measure, sddisc, solalg, lischa,&
-                      veelem, ds_inout)
+                      veelem, ds_inout, ds_contact)
         use NonLin_Datastructure_type
         character(len=19) :: valinc(*)
         character(len=19) :: veasse(*)
@@ -46,5 +46,6 @@ interface
         character(len=19) :: solalg(*)
         character(len=19) :: lischa
         character(len=19) :: veelem(*)
+        type(NL_DS_Contact), intent(in) :: ds_contact
     end subroutine nmener
 end interface

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,23 +15,23 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmrecz(numedd, cndiri, cnfint, cnfext, ddepla,&
-                  fonc)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
+subroutine nmrecz(numedd, ds_contact,&
+                  cndiri, cnfint    , cnfext, ddepla,&
+                  fonc)
 !
+use NonLin_Datastructure_type
 !
-    implicit none
-#include "jeveux.h"
+implicit none
+!
 #include "asterfort/dismoi.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
-    real(kind=8) :: fonc
-    character(len=24) :: numedd
-    character(len=19) :: cndiri, cnfint, cnfext, ddepla
+!
+real(kind=8) :: fonc
+character(len=24) :: numedd
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=19) :: cndiri, cnfint, cnfext, ddepla
 !
 ! ----------------------------------------------------------------------
 !
@@ -41,42 +41,42 @@ subroutine nmrecz(numedd, cndiri, cnfint, cnfext, ddepla,&
 !
 ! ----------------------------------------------------------------------
 !
-!
 ! IN  NUMEDD : NOM DU NUME_DDL
+! In  ds_contact       : datastructure for contact management
 ! IN  CNDIRI : VECT_ASSE REACTIONS D'APPUI
 ! IN  CNFINT : VECT_ASSE FORCES INTERIEURES
 ! IN  CNFEXT : VECT_ASSE FORCES EXTERIEURES
 ! IN  DDEPLA : INCREMENT DE DEPLACEMENT
 ! OUT FONC   : VALEUR DE LA FONCTION
 !
-!
-!
+! ----------------------------------------------------------------------
 !
     integer :: ieq, neq
-    real(kind=8), pointer :: ddepl(:) => null()
-    real(kind=8), pointer :: diri(:) => null()
-    real(kind=8), pointer :: fext(:) => null()
-    real(kind=8), pointer :: fint(:) => null()
+    real(kind=8), pointer :: v_ddepl(:) => null()
+    real(kind=8), pointer :: v_diri(:) => null()
+    real(kind=8), pointer :: v_fext(:) => null()
+    real(kind=8), pointer :: v_fint(:) => null()
+    real(kind=8), pointer :: v_cont_disc(:) => null()
 !
 ! ----------------------------------------------------------------------
 !
-    call jemarq()
-!
-! --- INITIALISATIONS
-!
     call dismoi('NB_EQUA', numedd, 'NUME_DDL', repi=neq)
 !
-! --- ACCES OBJETS
-!
-    call jeveuo(cnfext(1:19)//'.VALE', 'L', vr=fext)
-    call jeveuo(cnfint(1:19)//'.VALE', 'L', vr=fint)
-    call jeveuo(cndiri(1:19)//'.VALE', 'L', vr=diri)
-    call jeveuo(ddepla(1:19)//'.VALE', 'L', vr=ddepl)
+    call jeveuo(cnfext(1:19)//'.VALE', 'L', vr=v_fext)
+    call jeveuo(cnfint(1:19)//'.VALE', 'L', vr=v_fint)
+    call jeveuo(cndiri(1:19)//'.VALE', 'L', vr=v_diri)
+    call jeveuo(ddepla(1:19)//'.VALE', 'L', vr=v_ddepl)
 !
     fonc = 0.d0
-    do ieq = 1, neq
-        fonc = fonc + ddepl(ieq) * (fint(ieq)+ diri(ieq)- fext(ieq))
-    end do
+    if (ds_contact%l_cnctdf) then
+        call jeveuo(ds_contact%cnctdf(1:19)//'.VALE', 'L', vr=v_cont_disc)
+        do ieq = 1, neq
+            fonc = fonc + v_ddepl(ieq) * (v_fint(ieq)+ v_diri(ieq) + v_cont_disc(ieq) - v_fext(ieq))
+        end do
+    else
+        do ieq = 1, neq
+            fonc = fonc + v_ddepl(ieq) * (v_fint(ieq)+ v_diri(ieq)- v_fext(ieq))
+        end do
+    endif
 !
-    call jedema()
 end subroutine

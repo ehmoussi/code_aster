@@ -54,7 +54,7 @@ character(len=6), optional, intent(out) :: tychap_out
 ! ----------------------------------------------------------------------
 !
     integer :: zmeelm, zmeass, zveelm, zveass
-    parameter    (zmeelm=9 ,zmeass=4 ,zveelm=19,zveass=29)
+    parameter    (zmeelm=9 ,zmeass=4 ,zveelm=19,zveass=28)
     integer :: zsolal, zvalin
     parameter    (zsolal=17,zvalin=28)
 !
@@ -78,7 +78,7 @@ character(len=6), optional, intent(out) :: tychap_out
      &             'CNDIPI','CNFEDO','CNFEPI','CNLAPL','CNONDP',&
      &             'CNFSDO','CNIMPP','      ','CNDIDI','CNSSTF',&
      &             'CNELTC','CNELTF','CNREFE',&
-     &             'CNCINE','CNSSTR','CNCTDF','CNDYNA',&
+     &             'CNCINE','CNSSTR','CNDYNA',&
      &             'CNMODP','CNMODC','CNCTDC','CNUNIL','CNFEXT',&
      &             'CNIMPC','CNVISS'/
 !

@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine ndassp(modele         , numedd, ds_material, carele,&
-                  ds_constitutive, lischa, ds_measure , fonact, ds_contact,&
-                  sddyna         , valinc, solalg     , veelem, veasse    ,&
-                  ldccvg         , cndonn, sdnume     , matass)
+subroutine ndassp(model          , nume_dof , ds_material, cara_elem,&
+                  ds_constitutive, list_load, ds_measure , fonact, ds_contact,&
+                  sddyna         , valinc   , solalg     , veelem, veasse    ,&
+                  ldccvg         , cndonn   , sdnume     , matass)
 !
 use NonLin_Datastructure_type
 !
@@ -31,7 +31,6 @@ implicit none
 #include "asterfort/ndasva.h"
 #include "asterfort/ndynin.h"
 #include "asterfort/ndynre.h"
-#include "asterfort/nmadir.h"
 #include "asterfort/nmaint.h"
 #include "asterfort/nmasdi.h"
 #include "asterfort/nmasfi.h"
@@ -46,12 +45,12 @@ implicit none
 !
 integer :: ldccvg
 integer :: fonact(*)
-character(len=19) :: lischa, sddyna, sdnume, matass
+character(len=19) :: list_load, sddyna, sdnume, matass
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Measure), intent(inout) :: ds_measure
-character(len=24) :: modele, numedd
-character(len=24) :: carele
+character(len=24) :: model, nume_dof
+character(len=24) :: cara_elem
 type(NL_DS_Contact), intent(in) :: ds_contact
 character(len=19) :: solalg(*), valinc(*)
 character(len=19) :: veasse(*), veelem(*)
@@ -65,14 +64,15 @@ character(len=19) :: cndonn
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IN  MODELE : NOM DU MODELE
-! IN  NUMEDD : NOM DE LA NUMEROTATION
-! IN  LISCHA : SD LISTE CHARGES
+! In  model            : name of model
+! In  cara_elem        : name of elementary characteristics (field)
 ! In  ds_material      : datastructure for material parameters
+! In  list_load        : name of datastructure for list of loads
+! In  nume_dof         : name of numbering object (NUME_DDL)
+! In  sddyna           : datastructure for dynamic
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
-! IN  SDDYNA : SD DYNAMIQUE
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  VEELEM : VARIABLE CHAPEAU POUR NOM DES VECT_ELEM
 ! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
@@ -89,18 +89,18 @@ character(len=19) :: cndonn
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=24) :: mate, comref
-    integer :: i, nbvec, iterat, nbcoef
+    integer, parameter :: nb_vect_maxi = 10
+    real(kind=8) :: coef(nb_vect_maxi)
+    character(len=19) :: vect(nb_vect_maxi)
+    character(len=24) :: mate, varc_refe
+    integer :: i_vect, nb_vect, iterat
     character(len=19) :: cnffdo, cndfdo, cnfvdo, cnvady
     character(len=19) :: cndumm
     character(len=19) :: vebudi
-    parameter    (nbcoef=8)
-    real(kind=8) :: coef(nbcoef)
-    character(len=19) :: vect(nbcoef)
-    character(len=19) :: cnfint, cndiri, k19bla
+    character(len=19) :: cnfint, cndiri
     character(len=19) :: vefint, vediri
     character(len=19) :: cnbudi
-    character(len=19) :: depmoi, vitmoi, accmoi
+    character(len=19) :: disp_prev, vitmoi, accmoi
     character(len=19) :: veclag
     aster_logical :: ldepl, lvite, lacce
     real(kind=8) :: coeequ
@@ -115,9 +115,8 @@ character(len=19) :: cndonn
     cndfdo = '&&CNCHAR.DFDO'
     cnfvdo = '&&CNCHAR.FVDO'
     cnvady = '&&CNCHAR.FVDY'
-    k19bla = ' '
-    mate   = ds_material%field_mate
-    comref = ds_material%varc_refe
+    mate      = ds_material%field_mate
+    varc_refe = ds_material%varc_refe
 !
 ! --- TYPE DE FORMULATION SCHEMA DYNAMIQUE GENERAL
 !
@@ -136,7 +135,7 @@ character(len=19) :: cndonn
 !
 ! --- DECOMPACTION DES VARIABLES CHAPEAUX
 !
-    call nmchex(valinc, 'VALINC', 'DEPMOI', depmoi)
+    call nmchex(valinc, 'VALINC', 'DEPMOI', disp_prev)
     call nmchex(valinc, 'VALINC', 'VITMOI', vitmoi)
     call nmchex(valinc, 'VALINC', 'ACCMOI', accmoi)
     call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
@@ -161,11 +160,11 @@ character(len=19) :: cndonn
 ! --- QUEL VECTEUR D'INCONNUES PORTE LES LAGRANGES ?
 !
     if (ldepl) then
-        veclag = depmoi
+        veclag = disp_prev
     else if (lvite) then
 !        VECLAG = VITMOI
 !       VILAINE GLUTE POUR L'INSTANT
-        veclag = depmoi
+        veclag = disp_prev
     else if (lacce) then
         veclag = accmoi
     else
@@ -176,17 +175,15 @@ character(len=19) :: cndonn
 !
     call nmchex(veasse, 'VEASSE', 'CNBUDI', cnbudi)
     call nmchex(veelem, 'VEELEM', 'CNBUDI', vebudi)
-    call nmbudi(modele, numedd, lischa, veclag, vebudi,&
+    call nmbudi(model, nume_dof, list_load, veclag, vebudi,&
                 cnbudi, matass)
 !
-! --- CALCUL DES REACTIONS D'APPUI BT.LAMBDA
+! - Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
 !
     call nmchex(veelem, 'VEELEM', 'CNDIRI', vediri)
     call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
-    call nmdiri(modele, mate, carele, lischa, k19bla,&
-                depmoi, k19bla, k19bla, vediri)
-    call nmadir(numedd, fonact, ds_contact, veasse, vediri,&
-                cndiri)
+    call nmdiri(model    , ds_material, cara_elem, list_load,&
+                disp_prev, vediri     , nume_dof , cndiri   )
 !
 ! - End timer
 !
@@ -194,7 +191,7 @@ character(len=19) :: cndonn
 !
 ! --- CALCUL DES FORCES INTERIEURES
 !
-    call nmfint(modele, mate  , carele, comref    , ds_constitutive,&
+    call nmfint(model, mate  , cara_elem, varc_refe, ds_constitutive,&
                 fonact, iterat, sddyna, ds_measure, valinc         ,&
                 solalg, ldccvg, vefint)
 !
@@ -204,12 +201,12 @@ character(len=19) :: cndonn
 !
 ! --- ASSEMBLAGE DES FORCES INTERIEURES
 !
-    call nmaint(numedd, fonact, ds_contact, veasse, vefint,&
+    call nmaint(nume_dof, fonact, veasse, vefint,&
                 cnfint, sdnume)
 !
-! --- CHARGEMENTS DONNES
+! - List of vectors
 !
-    nbvec = 8
+    nb_vect = 8
     coef(1) = 1.d0
     coef(2) = 1.d0
     coef(3) = -1.d0
@@ -227,13 +224,18 @@ character(len=19) :: cndonn
     vect(7) = cndfdo
     vect(8) = cnvady
 !
+! - Add discrete contact force
+!
+    if (ds_contact%l_cnctdf) then
+        nb_vect = nb_vect + 1
+        coef(nb_vect) = -1.d0
+        vect(nb_vect) = ds_contact%cnctdf
+    endif
+!
 ! --- CHARGEMENT DONNE
 !
-    if (nbvec .gt. nbcoef) then
-        ASSERT(.false.)
-    endif
-    do i = 1, nbvec
-        call vtaxpy(coef(i), vect(i), cndonn)
+    do i_vect = 1, nb_vect
+        call vtaxpy(coef(i_vect), vect(i_vect), cndonn)
     end do
 !
 999 continue

@@ -16,10 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
 !
-subroutine nmcere(modele         , numedd, ds_material, carele    ,&
-                  ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
+subroutine nmcere(model         , nume_dof, ds_material, cara_elem    ,&
+                  ds_constitutive, list_load, fonact, ds_measure,&
                   iterat         , sdnume, valinc, solalg    , veelem    ,&
                   veasse         , offset, rho   , eta       , residu    ,&
                   ldccvg         , matass)
@@ -35,7 +34,6 @@ implicit none
 #include "asterfort/isfonc.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/majour.h"
-#include "asterfort/nmadir.h"
 #include "asterfort/nmaint.h"
 #include "asterfort/nmbudi.h"
 #include "asterfort/nmcha0.h"
@@ -54,11 +52,10 @@ implicit none
 integer :: fonact(*)
 integer :: iterat, ldccvg
 real(kind=8) :: eta, rho, offset, residu
-character(len=19) :: lischa, sdnume, matass
+character(len=19) :: list_load, sdnume, matass
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-character(len=24) :: modele, numedd, carele
+character(len=24) :: model, nume_dof, cara_elem
 type(NL_DS_Material), intent(in) :: ds_material
-type(NL_DS_Contact), intent(in) :: ds_contact
 type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=19) :: veelem(*), veasse(*)
 character(len=19) :: solalg(*), valinc(*)
@@ -71,14 +68,14 @@ character(len=19) :: solalg(*), valinc(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IN  MODELE : MODELE
-! IN  NUMEDD : NUME_DDL
+! In  model            : name of model
+! In  cara_elem        : name of elementary characteristics (field)
 ! In  ds_material      : datastructure for material parameters
-! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
+! In  list_load        : name of datastructure for list of loads
+! In  nume_dof         : name of numbering object (NUME_DDL)
+! IO  ds_measure       : datastructure for measure and statistics management
 ! In  ds_constitutive  : datastructure for constitutive laws management
-! IN  LISCHA : LISTE DES CHARGES
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
-! In  ds_contact       : datastructure for contact management
 ! IN  SDNUME : SD NUMEROTATION
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
@@ -141,7 +138,7 @@ character(len=19) :: solalg(*), valinc(*)
     depdet = '&&CNCETA.CHP1'
     depplt = '&&CNCETA.CHP2'
     ldccvg = -1
-    call dismoi('NB_EQUA', numedd, 'NUME_DDL', repi=neq)
+    call dismoi('NB_EQUA', nume_dof, 'NUME_DDL', repi=neq)
     call nmchai('VALINC', 'LONMAX', nmax)
     ASSERT(nmax.eq.zvalin)
     call nmchai('SOLALG', 'LONMAX', nmax)
@@ -200,13 +197,13 @@ character(len=19) :: solalg(*), valinc(*)
 !
 ! --- REACTUALISATION DES FORCES INTERIEURES
 !
-    call nmfint(modele, mate  , carele, varc_refe , ds_constitutive,&
+    call nmfint(model, mate  , cara_elem, varc_refe , ds_constitutive,&
                 fonact, iterat, k19bla, ds_measure, valint         ,&
                 solalt, ldccvg, vefint)
 !
 ! --- ASSEMBLAGE DES FORCES INTERIEURES
 !
-    call nmaint(numedd, fonact, ds_contact, veasse, vefint,&
+    call nmaint(nume_dof, fonact, veasse, vefint,&
                 cnfint, sdnume)
 !
 ! - Launch timer
@@ -214,16 +211,14 @@ character(len=19) :: solalg(*), valinc(*)
     call nmtime(ds_measure, 'Init'  , '2nd_Member')
     call nmtime(ds_measure, 'Launch', '2nd_Member')
 !
-! --- REACTUALISATION DES REACTIONS D'APPUI BT.LAMBDA
+! - Update force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
 !
-    call nmdiri(modele, mate, carele, lischa, k19bla,&
-                depl, vite, acce, vediri)
-    call nmadir(numedd, fonact, ds_contact, veasse, vediri,&
-                cndiri)
+    call nmdiri(model, ds_material, cara_elem, list_load,&
+                depl , vediri     , nume_dof , cndiri   )
 !
 ! --- REACTUALISATION DES CONDITIONS DE DIRICHLET B.U
 !
-    call nmbudi(modele, numedd, lischa, depplt, vebudi,&
+    call nmbudi(model, nume_dof, list_load, depplt, vebudi,&
                 cnbudi, matass)
 !
 ! --- REACTUALISATION DES EFFORTS EXTERIEURS (AVEC ETA)
@@ -242,7 +237,7 @@ character(len=19) :: solalg(*), valinc(*)
 ! --- CALCUL DU RESIDU
 !
     if (ldccvg .eq. 0) then
-        call nmpilr(fonact, numedd, matass, veasse, residu,&
+        call nmpilr(fonact, nume_dof, matass, veasse, residu,&
                     eta)
     endif
 !

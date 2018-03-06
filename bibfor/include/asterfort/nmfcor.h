@@ -20,37 +20,27 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nmfcor(modele         , numedd    , ds_material, carele,&
-                      ds_constitutive, lischa    , fonact  , ds_algopara, numins,&
-                      iterat         , ds_measure, sddisc  , sddyna     , sdnume,&
-                      sderro         , ds_contact, ds_inout, valinc     , solalg,&
-                      veelem         , veasse    , meelem  , measse     , matass,&
+    subroutine nmfcor(model          , nume_dof  , ds_material, cara_elem  ,&
+                      ds_constitutive, list_load , fonact     , ds_algopara, numins,&
+                      iterat         , ds_measure, sddisc     , sddyna     , sdnume,&
+                      sderro         , ds_contact, ds_inout   , valinc     , solalg,&
+                      veelem         , veasse    , meelem     , measse     , matass,&
                       lerrit)
         use NonLin_Datastructure_type
-        character(len=24) :: modele
-        character(len=24) :: numedd
-        type(NL_DS_Material), intent(in) :: ds_material
-        character(len=24) :: carele
-        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        character(len=19) :: lischa
         integer :: fonact(*)
+        integer :: iterat, numins
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-        type(NL_DS_InOut), intent(in) :: ds_inout
-        integer :: numins
-        integer :: iterat
         type(NL_DS_Measure), intent(inout) :: ds_measure
-        character(len=19) :: sddisc
-        character(len=19) :: sddyna
-        character(len=19) :: sdnume
+        character(len=19) :: sddisc, sddyna, sdnume
+        character(len=19) :: list_load, matass
+        character(len=24) :: model, nume_dof, cara_elem
+        type(NL_DS_Material), intent(in) :: ds_material
+        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         character(len=24) :: sderro
+        type(NL_DS_InOut), intent(in) :: ds_inout
+        character(len=19) :: meelem(*), veelem(*), measse(*), veasse(*)
+        character(len=19) :: solalg(*), valinc(*)
         type(NL_DS_Contact), intent(in) :: ds_contact
-        character(len=19) :: valinc(*)
-        character(len=19) :: solalg(*)
-        character(len=19) :: veelem(*)
-        character(len=19) :: veasse(*)
-        character(len=19) :: meelem(*)
-        character(len=19) :: measse(*)
-        character(len=19) :: matass
         aster_logical :: lerrit
     end subroutine nmfcor
 end interface

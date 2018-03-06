@@ -19,7 +19,7 @@
 !
 subroutine nmihht(model    , nume_dof , ds_material, ds_constitutive,&
                   cara_elem, list_load, list_func_acti, ds_measure,&
-                  sddyna   , sdnume   , ds_contact , hval_incr,&
+                  sddyna   , sdnume   , hval_incr,&
                   sddisc   , hval_algo, hval_veasse, hval_measse   , ds_inout)
 !
 use NonLin_Datastructure_type
@@ -41,7 +41,6 @@ type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=19), intent(in) :: sddyna
 character(len=19), intent(in) :: sddisc
 character(len=19), intent(in) :: sdnume
-type(NL_DS_Contact), intent(in) :: ds_contact
 character(len=19), intent(in) :: hval_incr(*)
 character(len=19), intent(in) :: hval_algo(*)
 character(len=19), intent(in) :: hval_veasse(*)
@@ -67,7 +66,6 @@ type(NL_DS_InOut), intent(in) :: ds_inout
 ! In  sddyna           : dynamic parameters datastructure
 ! In  sddisc           : datastructure for time discretization
 ! In  sdnume           : datastructure for dof positions
-! In  ds_contact       : datastructure for contact management
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
 ! In  hval_veasse      : hat-variable for vectors (node fields)
@@ -97,7 +95,7 @@ type(NL_DS_InOut), intent(in) :: ds_inout
     if (l_reuse .or. l_init_state) then
         call nmchht(model    , mate     , cara_elem  , ds_constitutive,&
                     list_load, nume_dof , varc_refe  , list_func_acti, ds_measure ,&
-                    sddyna   , sddisc   , sdnume     , ds_contact,&
+                    sddyna   , sddisc   , sdnume     , &
                     hval_incr, hval_algo, hval_veasse, hval_measse   , ds_inout)
     endif
 

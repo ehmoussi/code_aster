@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nsassp(modele    , numedd     , lischa, fonact    , sddyna,&
-                  ds_measure, valinc     , veelem, veasse    , cnpilo,&
-                  cndonn    , ds_material, carele, ds_contact, matass,&
+subroutine nsassp(model     , nume_dof   , list_load, fonact    , sddyna,&
+                  ds_measure, valinc     , veelem   , veasse    , cnpilo,&
+                  cndonn    , ds_material, cara_elem, ds_contact, matass,&
                   ds_algorom)
 !
 use NonLin_Datastructure_type
@@ -30,7 +30,6 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/isfonc.h"
-#include "asterfort/nmadir.h"
 #include "asterfort/nmasdi.h"
 #include "asterfort/nmasfi.h"
 #include "asterfort/nmasva.h"
@@ -42,8 +41,8 @@ implicit none
 #include "asterfort/vtzero.h"
 !
 integer :: fonact(*)
-character(len=19) :: lischa, sddyna, matass
-character(len=24) :: modele, numedd, carele
+character(len=19) :: list_load, sddyna, matass
+character(len=24) :: model, nume_dof, cara_elem
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Measure), intent(inout) :: ds_measure
 type(NL_DS_Contact), intent(in) :: ds_contact
@@ -51,20 +50,21 @@ character(len=19) :: veasse(*), veelem(*), valinc(*)
 character(len=19) :: cnpilo, cndonn
 type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (ALGORITHME - PREDICTION)
 !
 ! CALCUL DU SECOND MEMBRE POUR LA PREDICTION - STATIQUE
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! IN  MODELE : NOM DU MODELE
-! IN  NUMEDD : NOM DE LA NUMEROTATION
-! IN  LISCHA : SD L_CHARGES
-! IN  FONACT : FONCTIONNALITES ACTIVEES
-! IN  SDDYNA : SD DYNAMIQUE
+! In  model            : name of model
+! In  cara_elem        : name of elementary characteristics (field)
 ! In  ds_material      : datastructure for material parameters
+! In  list_load        : name of datastructure for list of loads
+! In  nume_dof         : name of numbering object (NUME_DDL)
+! In  sddyna           : datastructure for dynamic
+! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! In  ds_contact       : datastructure for contact management
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
@@ -74,20 +74,20 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 ! OUT CNDONN : VECTEUR ASSEMBLE DES FORCES DONNEES
 ! IN  MATASS : SD MATRICE ASSEMBLEE
 !
+! --------------------------------------------------------------------------------------------------
 !
-    character(len=24) :: mate
-    integer :: i, nbvec, nbcoef
+    integer, parameter :: nb_vect_maxi = 10
+    real(kind=8) :: coef(nb_vect_maxi)
+    character(len=19) :: vect(nb_vect_maxi)
+    integer :: i_vect, nb_vect
     character(len=19) :: cnffdo, cndfdo, cnfvdo
     character(len=19) :: cnffpi, cndfpi, cndiri
     character(len=19) :: vebudi, vediri
-    parameter    (nbcoef=9)
-    real(kind=8) :: coef(nbcoef)
-    character(len=19) :: vect(nbcoef)
     character(len=19) :: cnfnod, cnbudi, cnsstr, cneltc, cneltf, cnfint
-    character(len=19) :: depmoi, k19bla
+    character(len=19) :: disp_prev
     aster_logical :: lmacr, leltc, leltf, lallv
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call vtzero(cndonn)
     call vtzero(cnpilo)
@@ -96,8 +96,6 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     cndfdo = '&&CNCHAR.DFDO'
     cndfpi = '&&CNCHAR.DFPI'
     cnfvdo = '&&CNCHAR.FVDO'
-    k19bla = ' '
-    mate   = ds_material%field_mate
 !
 ! --- FONCTIONNALITES ACTIVEES
 !
@@ -113,7 +111,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --- DECOMPACTION DES VARIABLES CHAPEAUX
 !
-    call nmchex(valinc, 'VALINC', 'DEPMOI', depmoi)
+    call nmchex(valinc, 'VALINC', 'DEPMOI', disp_prev)
 !
 ! --- CALCUL DU VECTEUR DES CHARGEMENTS FIXES        (NEUMANN)
 !
@@ -132,25 +130,23 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     call nmchex(veasse, 'VEASSE', 'CNFNOD', cnfnod)
     call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
 !
-! --- CALCUL DES REACTIONS D'APPUI BT.LAMBDA
+! - Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
 !
     call nmchex(veelem, 'VEELEM', 'CNDIRI', vediri)
     call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
-    call nmdiri(modele, mate, carele, lischa, k19bla,&
-                depmoi, k19bla, k19bla, vediri)
-    call nmadir(numedd, fonact, ds_contact, veasse, vediri,&
-                cndiri)
+    call nmdiri(model    , ds_material, cara_elem, list_load,&
+                disp_prev, vediri     , nume_dof , cndiri   )
 !
 ! --- CONDITIONS DE DIRICHLET B.U
 !
     call nmchex(veasse, 'VEASSE', 'CNBUDI', cnbudi)
     call nmchex(veelem, 'VEELEM', 'CNBUDI', vebudi)
-    call nmbudi(modele, numedd, lischa, depmoi, vebudi,&
+    call nmbudi(model, nume_dof, list_load, disp_prev, vebudi,&
                 cnbudi, matass)
 !
 ! --- CHARGEMENTS DONNES
 !
-    nbvec = 7
+    nb_vect = 7
     coef(1) = 1.d0
     coef(2) = 1.d0
     coef(3) = -1.d0
@@ -172,51 +168,53 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
         vect(5) = cnfint
     endif
 !
+! - Add discrete contact force
+!
+    if (ds_contact%l_cnctdf) then
+        nb_vect = nb_vect + 1
+        coef(nb_vect) = -1.d0
+        vect(nb_vect) = ds_contact%cnctdf
+    endif
+!
 ! --- FORCES ISSUES DES MACRO-ELEMENTS STATIQUES
 !
     if (lmacr) then
         call nmchex(veasse, 'VEASSE', 'CNSSTR', cnsstr)
-        nbvec = nbvec + 1
-        coef(nbvec) = 1.d0
-        vect(nbvec) = cnsstr
+        nb_vect = nb_vect + 1
+        coef(nb_vect) = 1.d0
+        vect(nb_vect) = cnsstr
     endif
 !
 ! --- FORCES DES ELEMENTS DE CONTACT (XFEM+CONTINUE)
 !
     if (leltc .and. (.not.lallv)) then
         call nmchex(veasse, 'VEASSE', 'CNELTC', cneltc)
-        nbvec = nbvec + 1
-        coef(nbvec) = -1.d0
-        vect(nbvec) = cneltc
+        nb_vect = nb_vect + 1
+        coef(nb_vect) = -1.d0
+        vect(nb_vect) = cneltc
     endif
     if (leltf .and. (.not.lallv)) then
         call nmchex(veasse, 'VEASSE', 'CNELTF', cneltf)
-        nbvec = nbvec + 1
-        coef(nbvec) = -1.d0
-        vect(nbvec) = cneltf
+        nb_vect = nb_vect + 1
+        coef(nb_vect) = -1.d0
+        vect(nb_vect) = cneltf
     endif
 !
 ! --- CHARGEMENT DONNE
 !
-    if (nbvec .gt. nbcoef) then
-        ASSERT(.false.)
-    endif
-    do i = 1, nbvec
-        call vtaxpy(coef(i), vect(i), cndonn)
+    do i_vect = 1, nb_vect
+        call vtaxpy(coef(i_vect), vect(i_vect), cndonn)
     end do
 !
 ! --- CHARGEMENT PILOTE
 !
-    nbvec = 2
+    nb_vect = 2
     coef(1) = 1.d0
     coef(2) = 1.d0
     vect(1) = cnffpi
     vect(2) = cndfpi
-    if (nbvec .gt. nbcoef) then
-        ASSERT(.false.)
-    endif
-    do i = 1, nbvec
-        call vtaxpy(coef(i), vect(i), cnpilo)
+    do i_vect = 1, nb_vect
+        call vtaxpy(coef(i_vect), vect(i_vect), cnpilo)
     end do
 !
 ! - End timer

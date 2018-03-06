@@ -17,12 +17,14 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmrede(sdnume, fonact, sddyna, matass, ds_material,&
+    subroutine nmrede(sdnume, fonact, sddyna, matass,&
+                      ds_material, ds_contact,&
                       veasse, neq, foiner, cnfext, cnfint,&
                       vchar, ichar)
         use NonLin_Datastructure_type
         character(len=19) :: sdnume
         type(NL_DS_Material), intent(in) :: ds_material
+        type(NL_DS_Contact), intent(in) :: ds_contact
         integer :: fonact(*)
         character(len=19) :: sddyna
         character(len=19) :: matass

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmctcd(list_func_acti, ds_contact, nume_dof, hval_veasse)
 !
 use NonLin_Datastructure_type
@@ -31,12 +32,10 @@ implicit none
 #include "asterfort/cffofr.h"
 #include "asterfort/cufoco.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer, intent(in) :: list_func_acti(*)
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    character(len=24), intent(in) :: nume_dof
-    character(len=19), intent(in) :: hval_veasse(*)
+integer, intent(in) :: list_func_acti(*)
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=24), intent(in) :: nume_dof
+character(len=19), intent(in) :: hval_veasse(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -87,7 +86,7 @@ implicit none
 ! ----- Friction (DISCRETE) forces
 !
         if ((l_frot_disc) .or. (l_cont_pena)) then
-            call nmchex(hval_veasse, 'VEASSE', 'CNCTDF', vect_asse)
+            vect_asse = ds_contact%cnctdf
             call cffofr(nume_dof, ds_contact%sdcont_solv, vect_asse)
         endif
 !

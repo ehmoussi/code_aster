@@ -18,11 +18,11 @@
 !
 interface
     subroutine rescmp(cndiri, cnfext, cnfint, cnfnod,&
+                      ds_contact,&
                       maxres, noddlm, numno)
-        character(len=19) :: cndiri
-        character(len=19) :: cnfext
-        character(len=19) :: cnfint
-        character(len=19) :: cnfnod
+        use NonLin_Datastructure_type
+        character(len=19) :: cndiri, cnfext, cnfint, cnfnod
+        type(NL_DS_Contact), intent(in) :: ds_contact
         real(kind=8) :: maxres
         character(len=8) :: noddlm
         integer :: numno

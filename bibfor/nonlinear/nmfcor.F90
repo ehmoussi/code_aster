@@ -18,11 +18,11 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmfcor(modele         , numedd    , ds_material, carele  ,&
-                  ds_constitutive, lischa    , fonact  , ds_algopara, numins,&
-                  iterat         , ds_measure, sddisc  , sddyna     , sdnume,&
-                  sderro         , ds_contact, ds_inout, valinc     , solalg,&
-                  veelem         , veasse    , meelem  , measse     , matass,&
+subroutine nmfcor(model          , nume_dof  , ds_material, cara_elem  ,&
+                  ds_constitutive, list_load , fonact     , ds_algopara, numins,&
+                  iterat         , ds_measure, sddisc     , sddyna     , sdnume,&
+                  sderro         , ds_contact, ds_inout   , valinc     , solalg,&
+                  veelem         , veasse    , meelem     , measse     , matass,&
                   lerrit)
 !
 use NonLin_Datastructure_type
@@ -32,7 +32,6 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
-#include "asterfort/nmadir.h"
 #include "asterfort/nmaint.h"
 #include "asterfort/nmbudi.h"
 #include "asterfort/nmchar.h"
@@ -52,8 +51,8 @@ integer :: iterat, numins
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=19) :: sddisc, sddyna, sdnume
-character(len=19) :: lischa, matass
-character(len=24) :: modele, numedd, carele
+character(len=19) :: list_load, matass
+character(len=24) :: model, nume_dof, cara_elem
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 character(len=24) :: sderro
@@ -72,9 +71,11 @@ aster_logical :: lerrit
 !
 ! ----------------------------------------------------------------------
 !
-! IN  MODELE : MODELE
-! IN  NUMEDD : NUME_DDL
-! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
+! In  model            : name of model
+! In  cara_elem        : name of elementary characteristics (field)
+! In  ds_material      : datastructure for material parameters
+! In  list_load        : name of datastructure for list of loads
+! In  nume_dof         : name of numbering object (NUME_DDL)
 ! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
@@ -139,15 +140,15 @@ aster_logical :: lerrit
 !
 ! --- CALCUL DES CHARGEMENTS VARIABLES AU COURS DU PAS DE TEMPS
 !
-    call nmchar('VARI', 'CORRECTION'   , modele, numedd  , ds_material,&
-                carele, ds_constitutive, lischa, numins  , ds_measure,&
+    call nmchar('VARI', 'CORRECTION'   , model, nume_dof  , ds_material,&
+                cara_elem, ds_constitutive, list_load, numins  , ds_measure,&
                 sddisc, fonact         , ds_inout, valinc    ,&
                 solalg, veelem         , measse, veasse  , sddyna)
 !
 ! --- CALCUL DU SECOND MEMBRE POUR CONTACT/XFEM
 !
     if (leltc) then
-        call nmfocc('CONVERGENC', modele    , ds_material, numedd, fonact,&
+        call nmfocc('CONVERGENC', model    , ds_material, nume_dof, fonact,&
                     ds_contact  , ds_measure, solalg, valinc, veelem,&
                     veasse, ds_constitutive)
     endif
@@ -162,11 +163,11 @@ aster_logical :: lerrit
 !
     if (lcfint) then
         if (lcrigi) then
-            call nmrigi(modele    , mate  , carele, ds_constitutive, sddyna,&
+            call nmrigi(model    , mate  , cara_elem, ds_constitutive, sddyna,&
                         ds_measure, fonact, iterat, valinc         , solalg,&
                         varc_refe, meelem, veelem, option         , ldccvg)
         else
-            call nmfint(modele, mate  , carele, varc_refe , ds_constitutive,&
+            call nmfint(model, mate  , cara_elem, varc_refe , ds_constitutive,&
                         fonact, iterat, sddyna, ds_measure, valinc         ,&
                         solalg, ldccvg, vefint)
         endif
@@ -179,7 +180,7 @@ aster_logical :: lerrit
 ! - Compute vectors for DISCRETE contact
 !
     if (lctcd .or. lunil) then
-        call nmctcd(fonact, ds_contact, numedd, veasse)
+        call nmctcd(fonact, ds_contact, nume_dof, veasse)
     endif
 !
 ! --- ASSEMBLAGE DES FORCES INTERIEURES
@@ -187,22 +188,21 @@ aster_logical :: lerrit
     call nmtime(ds_measure, 'Init', '2nd_Member')
     call nmtime(ds_measure, 'Launch', '2nd_Member')
     if (lcfint) then
-        call nmaint(numedd, fonact, ds_contact, veasse, vefint,&
+        call nmaint(nume_dof, fonact, veasse, vefint,&
                     cnfint, sdnume)
     endif
 !
-! --- CALCUL ET ASSEMBLAGE DES REACTIONS D'APPUI BT.LAMBDA
+! - Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
 !
     if (lcdiri) then
-        call nmdiri(modele, mate, carele, lischa, sddyna,&
-                    depplu, vitplu, accplu, vediri)
-        call nmadir(numedd, fonact, ds_contact, veasse, vediri,&
-                    cndiri)
+        call nmdiri(model , ds_material, cara_elem, list_load,&
+                    depplu, vediri     , nume_dof , cndiri   ,&
+                    sddyna, vitplu     , accplu)
     endif
 !
 ! --- CALCUL ET ASSEMBLAGE DE B.U
 !
-    call nmbudi(modele, numedd, lischa, depplu, vebudi,&
+    call nmbudi(model, nume_dof, list_load, depplu, vebudi,&
                 cnbudi, matass)
 !
     call nmtime(ds_measure, 'Stop', '2nd_Member')

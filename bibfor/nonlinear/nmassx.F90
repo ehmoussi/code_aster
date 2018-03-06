@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmassx(modele, numedd, ds_material, carele,&
-                  ds_constitutive, lischa, fonact, ds_measure,&
+subroutine nmassx(model, nume_dof, ds_material, cara_elem,&
+                  ds_constitutive, list_load, fonact, ds_measure,&
                   sddyna, valinc, solalg, veelem, veasse,&
                   ldccvg, cndonn)
 !
@@ -42,32 +42,33 @@ implicit none
 !
 integer :: ldccvg
 integer :: fonact(*)
-character(len=19) :: lischa, sddyna
+character(len=19) :: list_load, sddyna
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-character(len=24) :: modele, numedd
+character(len=24) :: model, nume_dof
 type(NL_DS_Measure), intent(inout) :: ds_measure
-character(len=24) :: carele
+character(len=24) :: cara_elem
 character(len=19) :: solalg(*), valinc(*)
 character(len=19) :: veasse(*), veelem(*)
 character(len=19) :: cndonn
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (ALGORITHME)
 !
 ! CALCUL DU SECOND MEMBRE POUR LA PREDICTION EN EXPLICITE
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! IN  MODELE : NOM DU MODELE
-! IN  NUMEDD : NOM DE LA NUMEROTATION
+! In  model            : name of model
+! In  cara_elem        : name of elementary characteristics (field)
 ! In  ds_material      : datastructure for material parameters
-! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! In  ds_constitutive  : datastructure for constitutive laws management
-! IN  LISCHA : SD LISTE DES CHARGES
-! IO  ds_measure       : datastructure for measure and statistics management
+! In  list_load        : name of datastructure for list of loads
+! In  nume_dof         : name of numbering object (NUME_DDL)
+! In  sddyna           : datastructure for dynamic
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
+! In  ds_constitutive  : datastructure for constitutive laws management
+! IO  ds_measure       : datastructure for measure and statistics management
 ! IN  SDDYNA : SD DYNAMIQUE
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
@@ -81,21 +82,21 @@ character(len=19) :: cndonn
 !                    CRITERES PHYSIQUES
 !                3 - SIZZ NON NUL (DEBORST) ON CONTINUE A ITERER
 !
-!
+! --------------------------------------------------------------------------------------------------
 !
     character(len=24) :: mate, varc_refe
     character(len=19) :: cnffdo, cndfdo, cnfvdo, cnvady
     character(len=19) :: cndumm
     character(len=19) :: cndiri, cnfint
     character(len=19) :: vediri, vefint
-    character(len=19) :: depmoi, vitmoi, accmoi
+    character(len=19) :: disp_prev, vite_prev, acce_prev
     integer :: iterat
-    integer :: i, nbvec
+    integer :: i_vect, nb_vect
     real(kind=8) :: coef(8)
     character(len=19) :: vect(8)
     real(kind=8) :: coeequ
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     mate      = ds_material%field_mate
     varc_refe = ds_material%varc_refe
@@ -109,13 +110,11 @@ character(len=19) :: cndonn
 !
 ! --- DECOMPACTION DES VARIABLES CHAPEAUX
 !
-    call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
     call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
-    call nmchex(veelem, 'VEELEM', 'CNDIRI', vediri)
     call nmchex(veelem, 'VEELEM', 'CNFINT', vefint)
-    call nmchex(valinc, 'VALINC', 'DEPMOI', depmoi)
-    call nmchex(valinc, 'VALINC', 'VITMOI', vitmoi)
-    call nmchex(valinc, 'VALINC', 'ACCMOI', accmoi)
+    call nmchex(valinc, 'VALINC', 'DEPMOI', disp_prev)
+    call nmchex(valinc, 'VALINC', 'VITMOI', vite_prev)
+    call nmchex(valinc, 'VALINC', 'ACCMOI', acce_prev)
 !
 ! --- COEFFICIENTS POUR MULTI-PAS
 !
@@ -142,15 +141,13 @@ character(len=19) :: cndonn
 !
     call ndasva('PRED', sddyna, veasse, cnvady)
 !
-! --- CALCUL DES REACTIONS D'APPUI BT.LAMBDA
+! - Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
 !
-    call nmdiri(modele, mate, carele, lischa, sddyna,&
-                depmoi, vitmoi, accmoi, vediri)
-!
-! --- ASSEMBLAGE DES REACTIONS D'APPUI
-!
-    call assvec('V', cndiri, 1, vediri, [1.d0],&
-                numedd, ' ', 'ZERO', 1)
+    call nmchex(veelem, 'VEELEM', 'CNDIRI', vediri)
+    call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
+    call nmdiri(model    , ds_material, cara_elem, list_load,&
+                disp_prev, vediri     , nume_dof , cndiri   ,&
+                sddyna   , vite_prev  , acce_prev)
 !
 ! - End timer
 !
@@ -158,17 +155,17 @@ character(len=19) :: cndonn
 !
 ! --- CALCUL DES FORCES INTERIEURES
 !
-    call nmfint(modele, mate  , carele, varc_refe , ds_constitutive,&
+    call nmfint(model, mate  , cara_elem, varc_refe , ds_constitutive,&
                 fonact, iterat, sddyna, ds_measure, valinc         ,&
                 solalg, ldccvg, vefint)
 !
 ! --- ASSEMBLAGE DES FORCES INTERIEURES
 !
-    call assvec('V', cnfint, 1, vefint, [1.d0], numedd, ' ', 'ZERO', 1)
+    call assvec('V', cnfint, 1, vefint, [1.d0], nume_dof, ' ', 'ZERO', 1)
 !
 ! --- CHARGEMENTS DONNES
 !
-    nbvec = 7
+    nb_vect = 7
     coef(1) = 1.d0
     coef(2) = 1.d0
     coef(3) = -1.d0
@@ -186,11 +183,11 @@ character(len=19) :: cndonn
 !
 ! --- CHARGEMENT DONNE
 !
-    if (nbvec .gt. 8) then
+    if (nb_vect .gt. 8) then
         ASSERT(.false.)
     endif
-    do i = 1, nbvec
-        call vtaxpy(coef(i), vect(i), cndonn)
+    do i_vect = 1, nb_vect
+        call vtaxpy(coef(i_vect), vect(i_vect), cndonn)
     end do
 !
 end subroutine

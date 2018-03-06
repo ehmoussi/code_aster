@@ -18,7 +18,10 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine rescmp(cndiri, cnfext, cnfint, cnfnod,&
+                  ds_contact,&
                   maxres, noddlm, numno)
+!
+use NonLin_Datastructure_type
 !
 implicit none
 !
@@ -35,6 +38,7 @@ real(kind=8) :: maxres
 character(len=8) :: noddlm
 integer :: numno
 character(len=19) :: cndiri, cnfext, cnfint, cnfnod
+type(NL_DS_Contact), intent(in) :: ds_contact
 !
 ! ----------------------------------------------------------------------
 !
@@ -65,120 +69,117 @@ character(len=19) :: cndiri, cnfext, cnfint, cnfnod
 !
     character(len=3) :: tsca
     integer :: cmpmax
-    character(len=19) :: cfnos, cfnint, cfndir, cfnfex
+    character(len=19) :: cnfnod_s, cnfint_s, cndiri_s, cnfext_s, cnctdf_s
     integer :: i, k
     real(kind=8) :: resim, fonam, res
     integer :: jcnsl
     integer :: licmpu(999)
-    integer :: nbcmp, nbno, inc, ino, nbcmpu
+    integer :: nb_cmp, nb_node, i_cmp, i_node, nbcmpu
     character(len=8) :: nomgd
-    integer :: jfint, jdiri, jfext, jfnod
     real(kind=8) :: epsi
-    real(kind=8), pointer :: diris(:) => null()
-    real(kind=8), pointer :: fexts(:) => null()
-    real(kind=8), pointer :: fints(:) => null()
-    real(kind=8), pointer :: vcfos(:) => null()
-    character(len=8), pointer :: cnsc(:) => null()
-    character(len=8), pointer :: cnsk(:) => null()
-    integer, pointer :: cnsd(:) => null()
+    real(kind=8), pointer :: v_diri_cnsv(:) => null()
+    real(kind=8), pointer :: v_fext_cnsv(:) => null()
+    real(kind=8), pointer :: v_fint_cnsv(:) => null()
+    real(kind=8), pointer :: v_fnod_cnsv(:) => null()
+    real(kind=8), pointer :: v_cont_cnsv(:) => null()
+    character(len=8), pointer :: v_fnod_cnsc(:) => null()
+    character(len=8), pointer :: v_fnod_cnsk(:) => null()
+    integer, pointer :: v_fnod_cnsd(:) => null()
     parameter    (epsi = 1.d-50)
 !
 ! ----------------------------------------------------------------------
 !
     call jemarq()
 !
-! --- ACCES AUX CHAM_NO
+! - Convert to "simple" fields
 !
-    call jeveuo(cnfint(1:19)//'.VALE', 'L', jfint)
-    call jeveuo(cndiri(1:19)//'.VALE', 'L', jdiri)
-    call jeveuo(cnfext(1:19)//'.VALE', 'L', jfext)
-    call jeveuo(cnfnod(1:19)//'.VALE', 'L', jfnod)
+    cnfnod_s = '&&RESCMP.CNFNOD_S'
+    cnfint_s = '&&RESCMP.CNFINT_S'
+    cndiri_s = '&&RESCMP.CNDIRI_S'
+    cnfext_s = '&&RESCMP.CNFEXT_S'
+    cnctdf_s = '&&RESCMP.CNCTDF_S'
+    call cnocns(cnfnod, 'V', cnfnod_s)
+    call jeveuo(cnfnod_s(1:19)//'.CNSV', 'L', vr=v_fnod_cnsv)
+    call jeveuo(cnfnod_s(1:19)//'.CNSD', 'L', vi=v_fnod_cnsd)
+    call jeveuo(cnfnod_s(1:19)//'.CNSL', 'L', jcnsl)
+    call jeveuo(cnfnod_s(1:19)//'.CNSC', 'L', vk8=v_fnod_cnsc)
+    call jeveuo(cnfnod_s(1:19)//'.CNSK', 'L', vk8=v_fnod_cnsk)
+    call cnocns(cnfint, 'V', cnfint_s)
+    call jeveuo(cnfint_s(1:19)//'.CNSV', 'L', vr=v_fint_cnsv)
+    call cnocns(cndiri, 'V', cndiri_s)
+    call jeveuo(cndiri_s(1:19)//'.CNSV', 'L', vr=v_diri_cnsv)
+    call cnocns(cnfext, 'V', cnfext_s)
+    call jeveuo(cnfext_s(1:19)//'.CNSV', 'L', vr=v_fext_cnsv)
+    if (ds_contact%l_cnctdf) then
+        call cnocns(ds_contact%cnctdf, 'V', cnctdf_s)
+        call jeveuo(cnctdf_s(1:19)//'.CNSV', 'L', vr=v_cont_cnsv)
+    endif
 !
-! --- TRANSFORMATION EN CHAMPS SIMPLES
-!
-    cfnos = '&&NMRESI.CHAM_NO_S'
-    cfnint = '&&NMRESII.CHAM_NO_S'
-    cfndir = '&&NMRESID.CHAM_NO_S'
-    cfnfex = '&&NMRESIX.CHAM_NO_S'
-    call cnocns(cnfnod, 'V', cfnos)
-    call cnocns(cnfint, 'V', cfnint)
-    call cnocns(cndiri, 'V', cfndir)
-    call cnocns(cnfext, 'V', cfnfex)
-!
-! --- ACDES VALEURES
-!
-    call jeveuo(cfnos (1:19)//'.CNSV', 'L', vr=vcfos)
-    call jeveuo(cfnint(1:19)//'.CNSV', 'L', vr=fints)
-    call jeveuo(cfndir(1:19)//'.CNSV', 'L', vr=diris)
-    call jeveuo(cfnfex(1:19)//'.CNSV', 'L', vr=fexts)
-    call jeveuo(cfnos(1:19)//'.CNSD', 'L', vi=cnsd)
-    call jeveuo(cfnos(1:19)//'.CNSL', 'L', jcnsl)
-    call jeveuo(cfnos(1:19)//'.CNSC', 'L', vk8=cnsc)
-    call jeveuo(cfnos(1:19)//'.CNSK', 'L', vk8=cnsk)
-!
-    nbcmp = cnsd(2)
-    nbno = cnsd(1)
-    nomgd = cnsk(2)
+    nb_cmp = v_fnod_cnsd(2)
+    nb_node = v_fnod_cnsd(1)
+
 !
 ! --- NB DE CMP DANS LE CHAMP
 !
     nbcmpu = 0
-    do inc = 1, nbcmp
-        do ino = 1, nbno
-            if (zl(jcnsl-1+(ino-1)*nbcmp+inc)) goto 20
+    do i_cmp = 1, nb_cmp
+        do i_node = 1, nb_node
+            if (zl(jcnsl-1+(i_node-1)*nb_cmp+i_cmp)) goto 20
         end do
         goto 30
  20     continue
         nbcmpu = nbcmpu + 1
         ASSERT(nbcmpu.lt.999)
-        licmpu(nbcmpu) = inc
+        licmpu(nbcmpu) = i_cmp
  30     continue
     end do
 !
-    if (nbcmpu .gt. nddmax) then
-        ASSERT(.false.)
-    endif
-    call dismoi('TYPE_SCA', nomgd, 'GRANDEUR', repk=tsca)
-    if (tsca .ne. 'R') then
-        ASSERT(.false.)
-    endif
+! - Some checks
 !
-    do inc = 1, nbcmpu
-        nomddl(inc) = cnsc(licmpu(inc))
-        maxddf(inc) = 0.d0
-        maxddr(inc) = 0.d0
-        numnod(inc) = 0
+    nomgd = v_fnod_cnsk(2)
+    ASSERT(nbcmpu .le. nddmax)
+    call dismoi('TYPE_SCA', nomgd, 'GRANDEUR', repk=tsca)
+    ASSERT(tsca .eq. 'R')
+!
+    do i_cmp = 1, nbcmpu
+        nomddl(i_cmp) = v_fnod_cnsc(licmpu(i_cmp))
+        maxddf(i_cmp) = 0.d0
+        maxddr(i_cmp) = 0.d0
+        numnod(i_cmp) = 0
     end do
 !
 !
-    do ino = 1, nbno
-        do inc = 1, nbcmpu
-            k = licmpu(inc)
-            if (zl(jcnsl-1+(ino-1)*nbcmp+k)) then
-                i = nbcmp*(ino-1)+k
-                resim=abs(fints(i)+diris(i)-fexts(i)&
-                )
-                fonam = abs(vcfos(i))
-                if (resim .gt. maxddr(inc)) then
-                    maxddr(inc)= resim
-                    numnod(inc)= ino
+    do i_node = 1, nb_node
+        do i_cmp = 1, nbcmpu
+            k = licmpu(i_cmp)
+            if (zl(jcnsl-1+(i_node-1)*nb_cmp+k)) then
+                i = nb_cmp*(i_node-1)+k
+                if (ds_contact%l_cnctdf) then
+                    resim = abs(v_fint_cnsv(i)+v_diri_cnsv(i)+v_cont_cnsv(i)-v_fext_cnsv(i))
+                else
+                    resim = abs(v_fint_cnsv(i)+v_diri_cnsv(i)-v_fext_cnsv(i))
                 endif
-                maxddf(inc)=max(fonam,maxddf(inc))
+                fonam = abs(v_fnod_cnsv(i))
+                if (resim .gt. maxddr(i_cmp)) then
+                    maxddr(i_cmp)= resim
+                    numnod(i_cmp)= i_node
+                endif
+                maxddf(i_cmp)=max(fonam,maxddf(i_cmp))
             endif
         end do
     end do
     maxres=0.d0
 !
 !
-    do inc = 1, nbcmpu
-        if (maxddf(inc) .gt. 0.d0) then
-            res = maxddr(inc)/maxddf(inc)
+    do i_cmp = 1, nbcmpu
+        if (maxddf(i_cmp) .gt. 0.d0) then
+            res = maxddr(i_cmp)/maxddf(i_cmp)
         else
             res = -1
         endif
         if (res .gt. maxres) then
             maxres = res
-            cmpmax = inc
+            cmpmax = i_cmp
         endif
     end do
 !
@@ -194,10 +195,11 @@ character(len=19) :: cndiri, cnfext, cnfint, cnfnod
         noddlm = nomddl(cmpmax)
     endif
 !
-    call detrsd('CHAM_NO_S', cfnos)
-    call detrsd('CHAM_NO_S', cfnint)
-    call detrsd('CHAM_NO_S', cfndir)
-    call detrsd('CHAM_NO_S', cfnfex)
+    call detrsd('CHAM_NO_S', cnfnod_s)
+    call detrsd('CHAM_NO_S', cnfint_s)
+    call detrsd('CHAM_NO_S', cndiri_s)
+    call detrsd('CHAM_NO_S', cnfext_s)
+    call detrsd('CHAM_NO_S', cnctdf_s)
 !
     call jedema()
 !
