@@ -66,7 +66,7 @@ implicit none
 #include "asterfort/nmtble.h"
 #include "asterfort/nmtime.h"
 #include "asterfort/nmtimr.h"
-#include "asterfort/nonlinDSMaterialTimeStep.h"
+#include "asterfort/nmforc_step.h"
 !
 character(len=8), intent(in) :: mesh
 character(len=24), intent(in) :: model
@@ -181,26 +181,28 @@ integer :: nbiter
         endif
     endif
 !
-! - Update for new time step
+! - Updates for new time step
 !
-    call nmnpas(model     , mesh  , fonact,&
-                ds_print  , sddisc, sdsuiv, sddyna    , sdnume    ,&
-                ds_measure, numedd, numins, ds_contact,&
-                valinc    , solalg, solveu, ds_conv   , list_load )
+    call nmnpas(mesh       , model          , cara_elem,&
+                fonact     , list_load      ,&
+                ds_material, ds_constitutive,&
+                ds_measure , ds_print       ,&
+                sddisc     , numins         ,&
+                sdsuiv     , sddyna         ,&
+                ds_contact , ds_conv        ,&
+                sdnume     , numedd         , solveu,&
+                valinc     , solalg)
 !
-! - Update material parameters for new time step
+! - Compute forces for second member when constant in time step
 !
-    call nonlinDSMaterialTimeStep(model          , ds_material, cara_elem,&
-                                  ds_constitutive, valinc     ,&
-                                  numedd         , sddisc     , numins)
-
-!
-! --- CALCUL DES CHARGEMENTS CONSTANTS AU COURS DU PAS DE TEMPS
-!
-    call nmchar('FIXE'   , ' '            , model    , numedd  , ds_material,&
-                cara_elem, ds_constitutive, list_load, numins  , ds_measure,&
-                sddisc   , fonact         , ds_inout , valinc    ,&
-                solalg   , veelem         , measse   , veasse  , sddyna)
+    call nmforc_step(fonact     ,&
+                     model      , cara_elem      , numedd  ,&
+                     list_load  , sddyna         ,&
+                     ds_material, ds_constitutive,&
+                     ds_measure , ds_inout       ,&
+                     sddisc     , numins         ,&
+                     valinc     , solalg         ,&
+                     veelem     , veasse)
 !
 ! ======================================================================
 !     BOUCLE POINTS FIXES

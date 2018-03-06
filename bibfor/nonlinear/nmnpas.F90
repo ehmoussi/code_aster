@@ -17,10 +17,15 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmnpas(modele    , noma  , fonact,&
-                  ds_print  , sddisc, sdsuiv, sddyna    , sdnume    ,&
-                  ds_measure, numedd, numins, ds_contact, &
-                  valinc    , solalg, solver, ds_conv   , lischa    )
+subroutine nmnpas(mesh          , model          , cara_elem,&
+                  list_func_acti, list_load      ,&
+                  ds_material   , ds_constitutive,&
+                  ds_measure    , ds_print       ,&
+                  sddisc        , nume_inst      ,&
+                  sdsuiv        , sddyna         ,&
+                  ds_contact    , ds_conv        ,&
+                  sdnume        , nume_dof       , solver   ,&
+                  hval_incr     , hval_algo )
 !
 use NonLin_Datastructure_type
 !
@@ -44,44 +49,54 @@ implicit none
 #include "asterfort/nmnkft.h"
 #include "asterfort/nmvcle.h"
 #include "asterfort/SetResi.h"
+#include "asterfort/nonlinDSMaterialTimeStep.h"
 !
-integer :: fonact(*)
-character(len=8) :: noma
-character(len=19) :: sddyna, sdnume, sddisc, solver
-character(len=24) :: modele
-integer :: numins
-type(NL_DS_Print), intent(inout) :: ds_print
-character(len=24) :: sdsuiv
+character(len=8) :: mesh
+character(len=24), intent(in) :: model, cara_elem
+integer, intent(in) :: list_func_acti(*)
+character(len=19), intent(in) :: list_load
+type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Measure), intent(inout) :: ds_measure
-character(len=24) :: numedd
+type(NL_DS_Print), intent(inout) :: ds_print
+character(len=19), intent(in) :: sddisc
+integer, intent(in) :: nume_inst
+character(len=24), intent(in) :: sdsuiv
+character(len=19), intent(in) :: sddyna
 type(NL_DS_Contact), intent(inout) :: ds_contact
-character(len=19) :: solalg(*), valinc(*)
 type(NL_DS_Conv), intent(inout) :: ds_conv
-character(len=19), intent(in) :: lischa
+character(len=19), intent(in) :: sdnume, solver
+character(len=24), intent(in)  :: nume_dof
+character(len=19), intent(in) :: hval_algo(*), hval_incr(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! MECA_NON_LINE - Algorithm
 !
-! New time step
+! Updates for new time step
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IN  MODELE : NOM DU MODELE
-! IN  NOMA   : NOM DU MAILLAGE
-! IN  FONACT : FONCTIONNALITES ACTIVEES
-! IN  NUMEDD : NUME_DDL
-! IN  NUMINS : NUMERO INSTANT COURANT
-! IO  ds_print         : datastructure for printing parameters
+! In  mesh             : name of mesh
+! In  model            : name of model
+! In  cara_elem        : name of elementary characteristics (field)
+! In  list_func_acti   : list of active functionnalities
+! In  list_load        : name of datastructure for list of loads
+! In  ds_material      : datastructure for material parameters
+! In  ds_constitutive  : datastructure for constitutive laws management
 ! IO  ds_measure       : datastructure for measure and statistics management
-! IN  SDDISC : SD DISCRETISATION TEMPORELLE
-! IN  SDSUIV : SD SUIVI_DDL
-! IN  SDNUME : NOM DE LA SD NUMEROTATION
+! IO  ds_print         : datastructure for printing parameters
+! In  sddisc           : datastructure for time discretization
+! In  nume_inst        : index of current time step
+! In  sdsuiv           : datastructure for DOF monitoring
+! In  sddyna           : datastructure for dynamic
 ! IO  ds_contact       : datastructure for contact management
-! IN  SDDYNA : SD DYNAMIQUE
-! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
-! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
 ! IO  ds_conv          : datastructure for convergence management
+! In  sdnume           : datastructure for dof positions
+! In  nume_dof         : name of numbering object (NUME_DDL)
+! In  solver           : datastructure for solver parameters
+! In  hval_incr        : hat-variable for incremental values fields
+! In  hval_algo        : hat-variable for algorithms fields
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -96,15 +111,15 @@ character(len=19), intent(in) :: lischa
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call dismoi('NB_EQUA', numedd, 'NUME_DDL', repi=neq)
+    call dismoi('NB_EQUA', nume_dof, 'NUME_DDL', repi=neq)
 !
 ! - Active functionnalites
 !
     ldyna         = ndynlo(sddyna,'DYNAMIQUE')
-    l_cont        = isfonc(fonact,'CONTACT')
-    lgrot         = isfonc(fonact,'GD_ROTA')
-    lnkry         = isfonc(fonact,'NEWTON_KRYLOV')
-    l_diri_undead = isfonc(fonact,'DIRI_UNDEAD')
+    l_cont        = isfonc(list_func_acti,'CONTACT')
+    lgrot         = isfonc(list_func_acti,'GD_ROTA')
+    lnkry         = isfonc(list_func_acti,'NEWTON_KRYLOV')
+    l_diri_undead = isfonc(list_func_acti,'DIRI_UNDEAD')
 !
 ! --- POUTRES EN GRANDES ROTATIONS
 !
@@ -116,11 +131,11 @@ character(len=19), intent(in) :: lischa
 !
 ! --- DECOMPACTION DES VARIABLES CHAPEAUX
 !
-    call nmchex(valinc, 'VALINC', 'DEPMOI', depmoi)
-    call nmchex(valinc, 'VALINC', 'VARMOI', varmoi)
-    call nmchex(valinc, 'VALINC', 'DEPPLU', depplu)
-    call nmchex(valinc, 'VALINC', 'VARPLU', varplu)
-    call nmchex(solalg, 'SOLALG', 'DEPDEL', depdel)
+    call nmchex(hval_incr, 'VALINC', 'DEPMOI', depmoi)
+    call nmchex(hval_incr, 'VALINC', 'VARMOI', varmoi)
+    call nmchex(hval_incr, 'VALINC', 'DEPPLU', depplu)
+    call nmchex(hval_incr, 'VALINC', 'VARPLU', varplu)
+    call nmchex(hval_algo, 'SOLALG', 'DEPDEL', depdel)
 !
 ! --- ESTIMATIONS INITIALES DES VARIABLES INTERNES
 !
@@ -143,14 +158,14 @@ character(len=19), intent(in) :: lischa
 ! - Update dualized relations for non-linear Dirichlet boundary conditions (undead)
 !
     if (l_diri_undead) then
-        call cldual_maj(lischa, depmoi)
+        call cldual_maj(list_load, depmoi)
     endif
 !
 ! --- INITIALISATIONS EN DYNAMIQUE
 !
     if (ldyna) then
-        call ndnpas(fonact, numedd, numins, sddisc, sddyna,&
-                    valinc, solalg)
+        call ndnpas(list_func_acti, nume_dof, nume_inst, sddisc, sddyna,&
+                    hval_incr, hval_algo)
     endif
 !
 ! --- NEWTON-KRYLOV : COPIE DANS LA SD SOLVEUR DE LA PRECISION DE LA
@@ -162,12 +177,18 @@ character(len=19), intent(in) :: lischa
 ! - Initializations of contact for current time step
 !
     if (l_cont) then
-        call cont_init(noma  , modele, ds_contact, numins, ds_measure,&
-                       sddyna, valinc, sdnume    , fonact)
+        call cont_init(mesh  , model, ds_contact, nume_inst, ds_measure,&
+                       sddyna, hval_incr, sdnume    , list_func_acti)
     endif
 !
 ! - Print management - Initializations for new step time
 !
-    call nmimin(fonact, sddisc, sdsuiv, numins, ds_print)
+    call nmimin(list_func_acti, sddisc, sdsuiv, nume_inst, ds_print)
+!
+! - Update material parameters for new time step
+!
+    call nonlinDSMaterialTimeStep(model          , ds_material, cara_elem,&
+                                  ds_constitutive, hval_incr  ,&
+                                  nume_dof       , sddisc     , nume_inst)
 !
 end subroutine

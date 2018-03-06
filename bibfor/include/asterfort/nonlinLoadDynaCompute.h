@@ -17,20 +17,19 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine ndxnpa(model         , cara_elem,&
-                      list_func_acti, ds_print,&
-                      ds_material   , ds_constitutive,&
-                      sddisc, sddyna, sdnume, nume_dof, nume_inst  ,&
-                      hval_incr     , hval_algo)
+    subroutine nonlinLoadDynaCompute(mode       , sddyna     ,&
+                                     model      , nume_dof   ,&
+                                     ds_material, ds_measure , ds_inout,&
+                                     time_prev  , time_curr  ,&
+                                     hval_veelem, hval_veasse)
         use NonLin_Datastructure_type
-        character(len=24), intent(in) :: model, cara_elem
-        integer, intent(in) :: list_func_acti(*)
+        character(len=4), intent(in) :: mode
+        character(len=19), intent(in) :: sddyna
+        character(len=24), intent(in) :: model, nume_dof
         type(NL_DS_Material), intent(in) :: ds_material
-        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        character(len=19), intent(in) :: sddyna, sdnume, sddisc
-        type(NL_DS_Print), intent(inout) :: ds_print
-        integer, intent(in) :: nume_inst
-        character(len=24), intent(in) :: nume_dof
-        character(len=19), intent(in) :: hval_algo(*), hval_incr(*)
-    end subroutine ndxnpa
+        type(NL_DS_Measure), intent(inout) :: ds_measure
+        type(NL_DS_InOut), intent(in) :: ds_inout
+        real(kind=8), intent(in) :: time_prev, time_curr
+        character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
+    end subroutine nonlinLoadDynaCompute
 end interface

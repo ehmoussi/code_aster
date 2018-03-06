@@ -36,6 +36,7 @@ implicit none
 #include "asterfort/vefnme.h"
 #include "asterfort/assvec.h"
 #include "asterfort/nmtime.h"
+#include "asterfort/nmdep0.h"
 !
 character(len=24), intent(in) :: model, cara_elem, nume_dof
 integer, intent(in) :: list_func_acti(*)
@@ -82,6 +83,10 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 !
     option = 'FORC_NODA'
 !
+! - Set disp_cumu_inst to zero
+!
+    call nmdep0('ON ', hval_algo)
+!
 ! - Hat variable
 !
     call nmchex(hval_veelem, 'VEELEM', 'CNFNOD', vect_elem)
@@ -123,6 +128,10 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
     endif
     call assvec('V', vect_asse, 1, vect_elem, [1.d0],&
                  nume_dof, ' ', 'ZERO', 1)
+!
+! - Restore disp_cumu_inst
+!
+    call nmdep0('OFF', hval_algo)
 !
 ! - Stop timer
 !

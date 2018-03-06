@@ -17,20 +17,22 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine ndxnpa(model         , cara_elem,&
-                      list_func_acti, ds_print,&
-                      ds_material   , ds_constitutive,&
-                      sddisc, sddyna, sdnume, nume_dof, nume_inst  ,&
-                      hval_incr     , hval_algo)
+    subroutine nonlinLoadCompute(mode       , list_load      ,&
+                                 model      , cara_elem      , nume_dof  , list_func_acti,&
+                                 ds_material, ds_constitutive, ds_measure,&
+                                 time_prev  , time_curr      ,&
+                                 hval_incr  , hval_algo      ,&
+                                 hval_veelem, hval_veasse)
         use NonLin_Datastructure_type
-        character(len=24), intent(in) :: model, cara_elem
+        character(len=4), intent(in) :: mode
+        character(len=19), intent(in) :: list_load
         integer, intent(in) :: list_func_acti(*)
+        character(len=24), intent(in) :: model, cara_elem, nume_dof
         type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        character(len=19), intent(in) :: sddyna, sdnume, sddisc
-        type(NL_DS_Print), intent(inout) :: ds_print
-        integer, intent(in) :: nume_inst
-        character(len=24), intent(in) :: nume_dof
-        character(len=19), intent(in) :: hval_algo(*), hval_incr(*)
-    end subroutine ndxnpa
+        type(NL_DS_Measure), intent(inout) :: ds_measure
+        real(kind=8), intent(in) :: time_prev, time_curr
+        character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
+        character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
+    end subroutine nonlinLoadCompute
 end interface
