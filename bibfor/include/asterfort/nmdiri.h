@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,20 +15,21 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine nmdiri(modele, mate, carele, lischa, sddyna,&
-                      depl, vite, acce, vediri)
-        character(len=24) :: modele
-        character(len=24) :: mate
-        character(len=24) :: carele
-        character(len=19) :: lischa
-        character(len=19) :: sddyna
-        character(len=19) :: depl
-        character(len=19) :: vite
-        character(len=19) :: acce
-        character(len=19) :: vediri
+    subroutine nmdiri(model  , ds_material, cara_elem, list_load,&
+                      disp   , vediri     , nume_dof , cndiri   ,&
+                      sddyna_, vite_      , acce_)
+        use NonLin_Datastructure_type
+        character(len=24), intent(in) :: model
+        type(NL_DS_Material), intent(in) :: ds_material
+        character(len=24), intent(in) :: cara_elem
+        character(len=19), intent(in) :: list_load
+        character(len=19), intent(in) :: disp
+        character(len=19), intent(in) :: vediri
+        character(len=24), intent(in) :: nume_dof
+        character(len=19), intent(in) :: cndiri
+        character(len=19), optional, intent(in) :: sddyna_
+        character(len=19), optional, intent(in) :: vite_, acce_
     end subroutine nmdiri
 end interface

@@ -110,7 +110,7 @@ integer :: pilcvg, ldccvg
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: zveass, zsolal, zvalin
-    parameter    (zveass=29,zsolal=17,zvalin=28)
+    parameter    (zveass=28,zsolal=17,zvalin=28)
 !
     aster_logical :: exopt, mieux, irecli
     integer :: itrlmx, iterho, act, opt
@@ -258,7 +258,7 @@ integer :: pilcvg, ldccvg
         call nmchso(veasse, 'VEASSE', 'CNDIRI', cndirs(act), veasst)
         call nmchso(veasse, 'VEASSE', 'CNFINT', cnfins(act), veasst)
         call nmceta(modele         , numedd, ds_material, carele        ,&
-                    ds_constitutive, lischa, fonact, ds_measure    , ds_contact,&
+                    ds_constitutive, lischa, fonact, ds_measure    ,&
                     sdpilo         , iterat, sdnume, valint(1, act), solalg    ,&
                     veelem         , veasst, sddisc, nbeffe        , irecli    ,&
                     proeta         , offset, rho   , eta           , ldccvg    ,&

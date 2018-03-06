@@ -17,28 +17,22 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine ndassp(modele         , numedd, ds_material, carele,&
-                      ds_constitutive, lischa, ds_measure , fonact, ds_contact,&
-                      sddyna         , valinc, solalg     , veelem, veasse    ,&
-                      ldccvg         , cndonn, sdnume     , matass)
+    subroutine ndassp(model          , nume_dof , ds_material, cara_elem,&
+                      ds_constitutive, list_load, ds_measure , fonact   , ds_contact,&
+                      sddyna         , valinc   , solalg     , veelem   , veasse    ,&
+                      ldccvg         , cndonn   , sdnume     , matass)
         use NonLin_Datastructure_type
-        character(len=24) :: modele
-        character(len=24) :: numedd
-        type(NL_DS_Material), intent(in) :: ds_material
-        character(len=24) :: carele
-        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        character(len=19) :: lischa
-        type(NL_DS_Measure), intent(inout) :: ds_measure
-        integer :: fonact(*)
-        type(NL_DS_Contact), intent(in) :: ds_contact
-        character(len=19) :: sddyna
-        character(len=19) :: valinc(*)
-        character(len=19) :: solalg(*)
-        character(len=19) :: veelem(*)
-        character(len=19) :: veasse(*)
         integer :: ldccvg
+        integer :: fonact(*)
+        character(len=19) :: list_load, sddyna, sdnume, matass
+        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+        type(NL_DS_Material), intent(in) :: ds_material
+        type(NL_DS_Measure), intent(inout) :: ds_measure
+        character(len=24) :: model, nume_dof
+        character(len=24) :: cara_elem
+        type(NL_DS_Contact), intent(in) :: ds_contact
+        character(len=19) :: solalg(*), valinc(*)
+        character(len=19) :: veasse(*), veelem(*)
         character(len=19) :: cndonn
-        character(len=19) :: sdnume
-        character(len=19) :: matass
     end subroutine ndassp
 end interface

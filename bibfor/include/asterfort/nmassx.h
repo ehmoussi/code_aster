@@ -17,25 +17,21 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmassx(modele, numedd, ds_material, carele,&
-                      ds_constitutive, lischa, fonact, ds_measure,&
+    subroutine nmassx(model, nume_dof, ds_material, cara_elem,&
+                      ds_constitutive, list_load, fonact, ds_measure,&
                       sddyna, valinc, solalg, veelem, veasse,&
                       ldccvg, cndonn)
         use NonLin_Datastructure_type        
-        character(len=24) :: modele
-        character(len=24) :: numedd
-        type(NL_DS_Material), intent(in) :: ds_material
-        character(len=24) :: carele
-        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        character(len=19) :: lischa
-        integer :: fonact(*)
-        type(NL_DS_Measure), intent(inout) :: ds_measure
-        character(len=19) :: sddyna
-        character(len=19) :: valinc(*)
-        character(len=19) :: solalg(*)
-        character(len=19) :: veelem(*)
-        character(len=19) :: veasse(*)
         integer :: ldccvg
+        integer :: fonact(*)
+        character(len=19) :: list_load, sddyna
+        type(NL_DS_Material), intent(in) :: ds_material
+        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+        character(len=24) :: model, nume_dof
+        type(NL_DS_Measure), intent(inout) :: ds_measure
+        character(len=24) :: cara_elem
+        character(len=19) :: solalg(*), valinc(*)
+        character(len=19) :: veasse(*), veelem(*)
         character(len=19) :: cndonn
     end subroutine nmassx
 end interface

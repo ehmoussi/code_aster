@@ -22,7 +22,7 @@ subroutine nmener(valinc, veasse, measse, sddyna, eta        ,&
                   ds_energy, fonact, numedd, numfix, ds_algopara,&
                   meelem, numins, modele, ds_material, carele     ,&
                   ds_constitutive, ds_measure, sddisc, solalg, lischa     ,&
-                  veelem, ds_inout)
+                  veelem, ds_inout, ds_contact)
 !
 use NonLin_Datastructure_type
 !
@@ -57,6 +57,7 @@ real(kind=8) :: eta
 integer :: fonact(*), numins
 type(NL_DS_InOut), intent(in) :: ds_inout
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+type(NL_DS_Contact), intent(in) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -88,10 +89,11 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
 ! IN  LISCHA : LISTE DES CHARGES
 ! IN  VEELEM : VECTEURS ELEMENTAIRES
+! In  ds_contact       : datastructure for contact management
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter:: zveass = 29
+    integer, parameter:: zveass = 28
     integer :: iret(zveass)
     character(len=19) :: depmoi, depplu, vitmoi, vitplu, masse, amort, rigid
     character(len=19) :: fexmoi, fexplu, fammoi, fnomoi
@@ -114,6 +116,7 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     real(kind=8), pointer :: fnopl(:) => null()
     real(kind=8), pointer :: veass(:) => null()
     real(kind=8), pointer :: v_fvarc_curr(:) => null()
+    real(kind=8), pointer :: v_cnctdf(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -153,7 +156,9 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     call nmchex(measse, 'MEASSE', 'MEMASS', masse)
     call nmchex(measse, 'MEASSE', 'MEAMOR', amort)
     call jeveuo(ds_material%fvarc_curr(1:19)//'.VALE', 'L', vr=v_fvarc_curr)
-!
+    if (ds_contact%l_cnctdf) then
+        call jeveuo(ds_contact%cnctdf(1:19)//'.VALE', 'L', vr=v_cnctdf)
+    endif
 !
     do i = 1, zveass
         iret(i)=0
@@ -182,7 +187,22 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     call wkvect('FNODA', 'V V R', 2*neq, ifnoda)
     call wkvect('FCINE', 'V V R', neq, ifcine)
 !
-! RECUPERATION DES DIFFERENTES CONTRIBUTIONS AUX VECTEURS DE FORCE
+! - Get external state variable contribution
+!
+    do j = 1, neq
+        fexpl(j)=fexpl(j)+v_fvarc_curr(j)
+        fnopl(j)=fnopl(j)+v_fvarc_curr(j)
+    end do
+!
+! - Get discrete contact/friction contribution
+!
+    if (ds_contact%l_cnctdf) then
+        do j = 1, neq
+            flipl(j)=flipl(j)+v_cnctdf(j)
+        end do
+    endif
+!
+! - Get other contributions
 !
     do i = 1, zveass
         if (iret(i) .ne. 0) then
@@ -196,18 +216,6 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
             if ((i.eq.7 ) .or. (i.eq.9 ) .or. (i.eq.11) .or. (i.eq.15)) then
                 do j = 1, neq
                     fexpl(j)=fexpl(j)+veass(j)
-                end do
-! --------------------------------------------------------------------
-! 19 - CNVCF0 : FORCE DE REFERENCE LIEE AUX VAR. COMMANDES EN T+
-! --------------------------------------------------------------------
-            else if (i.eq.19) then
-                do j = 1, neq
-                    fexpl(j)=fexpl(j)+v_fvarc_curr(j)
-                end do
-! ON AJOUTE LES CONTRAINTES ISSUES DES VARIABLES DE COMMANDE AUX
-! FORCES INTERNES EGALEMENT
-                do j = 1, neq
-                    fnopl(j)=fnopl(j)+v_fvarc_curr(j)
                 end do
 ! --------------------------------------------------------------------
 ! 8  - CNFEPI : FORCES PILOTEES PARAMETRE ETA A PRENDRE EN COMPTE
@@ -225,22 +233,21 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
                     fexpl(j)=fexpl(j)-veass(j)
                 end do
 ! --------------------------------------------------------------------
-! 24 - CNMODC : FORCE D AMORTISSEMENT MODAL
+! 23 - CNMODC : FORCE D AMORTISSEMENT MODAL
 ! --------------------------------------------------------------------
-            else if (i.eq.24) then
+            else if (i.eq.23) then
                 do j = 1, neq
                     fampl(j)=fampl(j)+veass(j)
                 end do
 ! --------------------------------------------------------------------
 ! 16 - CNELTC : FORCES ELEMENTS DE CONTACT (CONTINU + XFEM)
 ! 17 - CNELTF : FORCES ELEMENTS DE FROTTEMENT (CONTINU + XFEM)
-! 21 - CNCTDF : FORCES DE FROTTEMENT (CONTACT DISCRET)
-! 25 - CNCTDC : FORCES DE CONTACT (CONTACT DISCRET)
-! 26 - CNUNIL : FORCES DE CONTACT (LIAISON_UNILATERALE)
-! 28 - CNIMPC : FORCES IMPEDANCE
+! 24 - CNCTDC : FORCES DE CONTACT (CONTACT DISCRET)
+! 25 - CNUNIL : FORCES DE CONTACT (LIAISON_UNILATERALE)
+! 27 - CNIMPC : FORCES IMPEDANCE
 ! --------------------------------------------------------------------
-            else if ((i.eq.16).or.(i.eq.17).or.(i.eq.28).or.&
-                     (i.eq.21) .or.(i.eq.25).or.(i.eq.26)) then
+            else if ((i.eq.16).or.(i.eq.17).or.(i.eq.27).or.&
+                     (i.eq.24).or.(i.eq.25)) then
                 do j = 1, neq
                     flipl(j)=flipl(j)+veass(j)
                 end do
@@ -251,18 +258,10 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
                         fnopl(j)=fnopl(j)-veass(j)
                     end do
                 endif
-! CNDIRI CONTIENT BTLAMBDA PLUS CONTRIBUTION CNCTDF DU CONTACT.
-! ON SOUHAITE AJOUTER -BT.LAMBDA A FEXTE. ON AJOUTE DONC -CNDIRI,
-! MAIS IL FAUT ALORS LUI RETRANCHER -CNCTDF.
-                if (i .eq. 21) then
-                    do j = 1, neq
-                        fexpl(j)=fexpl(j)+veass(j)
-                    end do
-                endif
 ! --------------------------------------------------------------------
-! 29 - CNVISS : CHARGEMENT VEC_ISS (FORCE_SOL)
+! 28 - CNVISS : CHARGEMENT VEC_ISS (FORCE_SOL)
 ! --------------------------------------------------------------------
-            else if (i.eq.29) then
+            else if (i.eq.28) then
 ! CHARGEMENT FORCE_SOL CNVISS. SI ON COMPTE SA CONTRIBUTION EN TANT
 ! QUE FORCE DISSIPATIVE DE LIAISON, ON DOIT PRENDRE L OPPOSE.
                 do j = 1, neq

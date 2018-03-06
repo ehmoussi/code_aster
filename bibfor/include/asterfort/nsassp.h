@@ -17,27 +17,20 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nsassp(modele    , numedd     , lischa, fonact    , sddyna,&
-                      ds_measure, valinc     , veelem, veasse    , cnpilo,&
-                      cndonn    , ds_material, carele, ds_contact, matass,&
+    subroutine nsassp(model     , nume_dof   , list_load, fonact    , sddyna,&
+                      ds_measure, valinc     , veelem   , veasse    , cnpilo,&
+                      cndonn    , ds_material, cara_elem, ds_contact, matass,&
                       ds_algorom)
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
-        character(len=24) :: modele
-        character(len=24) :: numedd
-        character(len=19) :: lischa
         integer :: fonact(*)
-        character(len=19) :: sddyna
-        type(NL_DS_Measure), intent(inout) :: ds_measure
-        character(len=19) :: valinc(*)
-        character(len=19) :: veelem(*)
-        character(len=19) :: veasse(*)
-        character(len=19) :: cnpilo
-        character(len=19) :: cndonn
+        character(len=19) :: list_load, sddyna, matass
+        character(len=24) :: model, nume_dof, cara_elem
         type(NL_DS_Material), intent(in) :: ds_material
-        character(len=24) :: carele
+        type(NL_DS_Measure), intent(inout) :: ds_measure
         type(NL_DS_Contact), intent(in) :: ds_contact
-        character(len=19) :: matass
+        character(len=19) :: veasse(*), veelem(*), valinc(*)
+        character(len=19) :: cnpilo, cndonn
         type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     end subroutine nsassp
 end interface

@@ -202,7 +202,7 @@ integer :: faccvg, ldccvg
 !
     if (lcfint) then
         lcfint = .false.
-        call nmaint(numedd, fonact, ds_contact, veasse, vefint,&
+        call nmaint(numedd, fonact, veasse, vefint,&
                     cnfint, sdnume)
     endif
 !

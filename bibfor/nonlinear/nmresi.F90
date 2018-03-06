@@ -42,7 +42,6 @@ implicit none
 #include "asterfort/ndynlo.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmequi.h"
-#include "asterfort/nmigno.h"
 #include "asterfort/nmimre.h"
 #include "asterfort/nmimre_dof.h"
 #include "asterfort/GetResi.h"
@@ -100,7 +99,6 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: jdiri=0, jiner=0
     integer :: ifm=0, niv=0
     integer, pointer :: v_ccid(:) => null()
     integer :: neq=0
@@ -131,7 +129,9 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     real(kind=8), pointer :: fext(:) => null()
     real(kind=8), pointer :: fint(:) => null()
     real(kind=8), pointer :: refe(:) => null()
+    real(kind=8), pointer :: v_diri(:) => null()
     real(kind=8), pointer :: v_fvarc_init(:) => null()
+    real(kind=8), pointer :: v_cont_disc(:) => null()
     integer, pointer :: deeq(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -226,21 +226,19 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
     if (lcmp) then
         call rescmp(cndiri, cnfext, cnfint, cnfnod,&
+                    ds_contact,&
                     maxres, noddlm, icomp)
     endif
 !
 ! --- ACCES AUX CHAM_NO
 !
     call jeveuo(cnfint(1:19)//'.VALE', 'L', vr=fint)
-    call jeveuo(cndiri(1:19)//'.VALE', 'L', jdiri)
+    call jeveuo(cndiri(1:19)//'.VALE', 'L', vr=v_diri)
     call jeveuo(cnfext(1:19)//'.VALE', 'L', vr=fext)
     call jeveuo(cnbudi(1:19)//'.VALE', 'L', vr=budi)
     call jeveuo(cndfdo(1:19)//'.VALE', 'L', vr=dfdo)
     if (lpilo) then
         call jeveuo(cndipi(1:19)//'.VALE', 'L', vr=dipi)
-    endif
-    if (ldyna) then
-        call jeveuo(foiner(1:19)//'.VALE', 'L', jiner)
     endif
     if (linit) then
         call jeveuo(ds_material%fvarc_init(1:19)//'.VALE', 'L', vr=v_fvarc_init)
@@ -251,10 +249,14 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     if (lcine) then
         call jeveuo(cnfnod(1:19)//'.VALE', 'L', jfnod)
     endif
+    if (ds_contact%l_cnctdf) then
+        call jeveuo(ds_contact%cnctdf(1:19)//'.VALE', 'L', vr=v_cont_disc)
+    endif
 !
 ! --- CALCUL DES FORCES POUR MISE A L'ECHELLE (DENOMINATEUR)
 !
-    call nmrede(sdnume, fonact, sddyna, matass, ds_material,&
+    call nmrede(sdnume, fonact, sddyna, matass,&
+                ds_material, ds_contact,&
                 veasse, neq, foiner, cnfext, cnfint,&
                 vchar, ichar)
 !
@@ -264,8 +266,10 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! ----- SI SCHEMA NON EN DEPLACEMENT: ON IGNORE LA VALEUR DU RESIDU
 !
-        if (nmigno(jdiri ,lndepl,ieq)) then
-            goto 20
+        if (lndepl) then
+            if (v_diri(ieq) .ne. 0.d0) then
+                goto 20
+            endif
         endif
 !
 ! ----- SI CHARGEMENT CINEMATIQUE: ON IGNORE LA VALEUR DU RESIDU
@@ -287,9 +291,13 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 ! --- CALCUL DU RESIDU A PROPREMENT PARLER
 !
         if (lpilo) then
-            val1 = abs(fint(ieq)+zr(jdiri+ieq-1)+budi(ieq) -fext(ieq)-dfdo(1+ieq-1)-eta*dipi(ieq))
+            val1 = abs(fint(ieq)+v_diri(ieq)+budi(ieq) -fext(ieq)-dfdo(1+ieq-1)-eta*dipi(ieq))
         else
-            val1 = abs( fint(ieq)+zr(jdiri+ieq-1)+budi(ieq) -fext(ieq)-dfdo(1+ieq-1) )
+            if (ds_contact%l_cnctdf) then
+                val1 = abs(fint(ieq)+v_diri(ieq)+v_cont_disc(ieq)+budi(ieq)-fext(ieq)-dfdo(1+ieq-1))
+            else
+                val1 = abs(fint(ieq)+v_diri(ieq)+budi(ieq) -fext(ieq)-dfdo(1+ieq-1) )
+            endif
         endif
 !
 ! --- VRESI: MAX RESIDU D'EQUILIBRE
@@ -303,8 +311,13 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
         if (lrefe) then
             if (deeq(2*ieq) .gt. 0) then
-                val4 = abs(fint(ieq)+zr(jdiri+ieq-1)+budi(ieq) -fext(ieq)-dfdo(1+ieq-1))/&
-                       refe(ieq)
+                if (ds_contact%l_cnctdf) then
+                    val4 = abs(fint(ieq)+v_diri(ieq)+v_cont_disc(ieq)+&
+                               budi(ieq)-fext(ieq)-dfdo(1+ieq-1))/refe(ieq)
+                else
+                    val4 = abs(fint(ieq)+v_diri(ieq)+budi(ieq) -fext(ieq)-dfdo(1+ieq-1))/&
+                           refe(ieq)
+                endif
                 if (vrefe .le. val4) then
                     vrefe = val4
                     irefe = ieq

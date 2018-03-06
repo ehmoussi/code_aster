@@ -324,7 +324,9 @@ implicit none
         real(kind=8)      :: critere_penetration  = 0.0
         real(kind=8)      :: continue_pene  = 0.0
         real(kind=8)      :: time_curr  = -1.0
-
+! ----- Force for DISCRETE contact (friction)
+        aster_logical     :: l_cnctdf
+        character(len=19) :: cnctdf
     end type NL_DS_Contact
 !
 ! - Type: timer management

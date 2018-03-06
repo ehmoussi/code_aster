@@ -15,10 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmchht(model    , mate     , cara_elem  , ds_constitutive,&
                   list_load, nume_dof , varc_refe  , list_func_acti, ds_measure,&
-                  sddyna   , sddisc   , sdnume     , ds_contact,&
+                  sddyna   , sddisc   , sdnume     , &
                   hval_incr, hval_algo, hval_veasse, hval_measse   , ds_inout)
 !
 use NonLin_Datastructure_type
@@ -44,26 +45,23 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/nd_mstp_time.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: mate
-    character(len=24), intent(in) :: cara_elem
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=24), intent(in) :: nume_dof
-    character(len=19), intent(in) :: list_load
-    character(len=24), intent(in) :: varc_refe
-    integer, intent(in) :: list_func_acti(*)
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19), intent(in) :: sddyna
-    character(len=19), intent(in) :: sddisc
-    character(len=19), intent(in) :: sdnume
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    character(len=19), intent(in) :: hval_incr(*)
-    character(len=19), intent(in) :: hval_algo(*)
-    character(len=19), intent(in) :: hval_veasse(*)
-    character(len=19), intent(in) :: hval_measse(*)
-    type(NL_DS_InOut), intent(in) :: ds_inout
+character(len=24), intent(in) :: model
+character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: cara_elem
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=24), intent(in) :: nume_dof
+character(len=19), intent(in) :: list_load
+character(len=24), intent(in) :: varc_refe
+integer, intent(in) :: list_func_acti(*)
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19), intent(in) :: sddyna
+character(len=19), intent(in) :: sddisc
+character(len=19), intent(in) :: sdnume
+character(len=19), intent(in) :: hval_incr(*)
+character(len=19), intent(in) :: hval_algo(*)
+character(len=19), intent(in) :: hval_veasse(*)
+character(len=19), intent(in) :: hval_measse(*)
+type(NL_DS_InOut), intent(in) :: ds_inout
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -85,7 +83,6 @@ implicit none
 ! In  sddyna           : dynamic parameters datastructure
 ! In  sddisc           : datastructure for time discretization
 ! In  sdnume           : datastructure for dof positions
-! In  ds_contact       : datastructure for contact management
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
 ! In  hval_veasse      : hat-variable for vectors (node fields)
@@ -191,7 +188,7 @@ implicit none
     call nmfint(model         , mate  , cara_elem, varc_refe, ds_constitutive,&
                 list_func_acti, iterat, sddyna   , ds_measure,&
                 hval_incr, hval_algo  , ldccvg   , vefint)
-    call nmaint(nume_dof, list_func_acti, ds_contact, hval_veasse, vefint,&
+    call nmaint(nume_dof, list_func_acti, hval_veasse, vefint,&
                 cnfint  , sdnume)
 !
 ! - Given displacements

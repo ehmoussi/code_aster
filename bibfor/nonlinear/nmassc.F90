@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmassc(fonact, sddyna, ds_measure, veasse, cnpilo,&
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmassc(fonact, sddyna, ds_measure, ds_contact, veasse, cnpilo,&
                   cndonn)
 !
 use NonLin_Datastructure_type
@@ -36,45 +37,43 @@ implicit none
 #include "asterfort/nmtime.h"
 #include "asterfort/vtaxpy.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
+type(NL_DS_Measure), intent(inout) :: ds_measure
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=19) :: cnpilo, cndonn
+integer :: fonact(*)
+character(len=19) :: sddyna
+character(len=19) :: veasse(*)
 !
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19) :: cnpilo, cndonn
-    integer :: fonact(*)
-    character(len=19) :: sddyna
-    character(len=19) :: veasse(*)
-!
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (ALGORITHME - CORRECTION)
 !
 ! CALCUL DU SECOND MEMBRE POUR LA CORRECTION
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
 ! IO  ds_measure       : datastructure for measure and statistics management
+! In  ds_contact       : datastructure for contact management
 ! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
 ! OUT CNPILO : VECTEUR ASSEMBLE DES FORCES PILOTEES
 ! OUT CNDONN : VECTEUR ASSEMBLE DES FORCES DONNEES
 !
-!
-!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: i, nbvec, nbcoef
+    integer, parameter :: nb_vect_maxi = 10
+    real(kind=8) :: coef(nb_vect_maxi)
+    character(len=19) :: vect(nb_vect_maxi)
+    integer :: i_vect, nb_vect
     character(len=19) :: cnffdo, cndfdo, cnfvdo, cnvady
     character(len=19) :: cnffpi, cndfpi, cndiri
     character(len=19) :: cnfint, cnbudi
-    parameter    (nbcoef=7)
-    real(kind=8) :: coef(nbcoef)
-    character(len=19) :: vect(nbcoef)
     real(kind=8) :: coeequ
     aster_logical :: ldyna
 !
-!
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call infdbg('MECA_NON_LINE', ifm, niv)
     if (niv .ge. 2) then
@@ -122,7 +121,7 @@ implicit none
 ! --- CHARGEMENTS DONNES AVEC PRISE EN COMPTE L'ERREUR DE L'ERREUR QUI
 !    FAITE SUR LES DDLS IMPOSES (CNDFDO - CNBUDI)
 !
-    nbvec = 6
+    nb_vect = 6
     coef(1) = 1.d0
     coef(2) = 1.d0
     coef(3) = -1.d0
@@ -138,30 +137,32 @@ implicit none
     vect(6) = cndfdo
 !
     if (ldyna) then
-        nbvec = 7
-        coef(nbvec) = coeequ
-        vect(nbvec) = cnvady
+        nb_vect = nb_vect + 1
+        coef(nb_vect) = coeequ
+        vect(nb_vect) = cnvady
     endif
 !
-    if (nbvec .gt. nbcoef) then
-        ASSERT(.false.)
+! - Add discrete contact force
+!
+    if (ds_contact%l_cnctdf) then
+        nb_vect = nb_vect + 1
+        coef(nb_vect) = -1.d0
+        vect(nb_vect) = ds_contact%cnctdf
     endif
-    do i = 1, nbvec
-        call vtaxpy(coef(i), vect(i), cndonn)
+!
+    do i_vect = 1, nb_vect
+        call vtaxpy(coef(i_vect), vect(i_vect), cndonn)
     end do
 !
 ! --- CHARGEMENTS PILOTES
 !
-    nbvec = 2
+    nb_vect = 2
     coef(1) = 1.d0
     coef(2) = 1.d0
     vect(1) = cnffpi
     vect(2) = cndfpi
-    if (nbvec .gt. nbcoef) then
-        ASSERT(.false.)
-    endif
-    do i = 1, nbvec
-        call vtaxpy(coef(i), vect(i), cnpilo)
+    do i_vect = 1, nb_vect
+        call vtaxpy(coef(i_vect), vect(i_vect), cnpilo)
     end do
 !
 ! - End timer

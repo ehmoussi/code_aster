@@ -144,7 +144,7 @@ aster_logical :: lerrit
 !
 ! --- PREPARATION DU SECOND MEMBRE
 !
-    call nmassc(fonact, sddyna, ds_measure, veasse, cnpilo,&
+    call nmassc(fonact, sddyna, ds_measure, ds_contact, veasse, cnpilo,&
                 cndonn)
 !
 ! --- ACTUALISATION DES CL CINEMATIQUES

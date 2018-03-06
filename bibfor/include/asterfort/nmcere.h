@@ -15,35 +15,23 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 !
 interface
-    subroutine nmcere(modele         , numedd, ds_material, carele    ,&
-                      ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
+    subroutine nmcere(model         , nume_dof, ds_material, cara_elem    ,&
+                      ds_constitutive, list_load, fonact, ds_measure,&
                       iterat         , sdnume, valinc, solalg    , veelem    ,&
                       veasse         , offset, rho   , eta       , residu    ,&
                       ldccvg         , matass)
         use NonLin_Datastructure_type
-        character(len=24) :: modele
-        character(len=24) :: numedd
-        type(NL_DS_Material), intent(in) :: ds_material
-        character(len=24) :: carele
-        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        character(len=19) :: lischa
         integer :: fonact(*)
+        integer :: iterat, ldccvg
+        real(kind=8) :: eta, rho, offset, residu
+        character(len=19) :: list_load, sdnume, matass
+        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+        character(len=24) :: model, nume_dof, cara_elem
+        type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Measure), intent(inout) :: ds_measure
-        type(NL_DS_Contact), intent(in) :: ds_contact
-        integer :: iterat
-        character(len=19) :: sdnume
-        character(len=19) :: valinc(*)
-        character(len=19) :: solalg(*)
-        character(len=19) :: veelem(*)
-        character(len=19) :: veasse(*)
-        real(kind=8) :: offset
-        real(kind=8) :: rho
-        real(kind=8) :: eta
-        real(kind=8) :: residu
-        integer :: ldccvg
-        character(len=19) :: matass
+        character(len=19) :: veelem(*), veasse(*)
+        character(len=19) :: solalg(*), valinc(*)
     end subroutine nmcere
 end interface

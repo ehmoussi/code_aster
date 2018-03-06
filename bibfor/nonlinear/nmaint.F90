@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmaint(numedd, fonact, ds_contact, veasse, vefint,&
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmaint(numedd, fonact, veasse, vefint,&
                   cnfint, sdnume)
 !
 use NonLin_Datastructure_type
@@ -38,33 +39,28 @@ implicit none
 #include "asterfort/vtaxpy.h"
 #include "asterfort/vtzero.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
+integer :: fonact(*)
+character(len=24) :: numedd
+character(len=19) :: veasse(*)
+character(len=19) :: vefint, cnfint
+character(len=19) :: sdnume
 !
-    integer :: fonact(*)
-    character(len=24) :: numedd
-    character(len=19) :: veasse(*)
-    character(len=19) :: vefint, cnfint
-    character(len=19) :: sdnume
-    type(NL_DS_Contact), intent(in) :: ds_contact
-!
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (ALGORITHME)
 !
 ! ASSEMBLAGE DU VECTEUR DES FORCES INTERNES
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  NUMEDD : NOM DE LA NUMEROTATION
-! In  ds_contact       : datastructure for contact management
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
 ! IN  VEFINT : VECT_ELEM FORCES INTERNES
 ! IN  CNFINT : VECT_ASSE FORCES INTERNES
 ! IN  SDNUME : SD NUMEROTATION
 !
-!
-!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
     character(len=1) :: base
@@ -75,7 +71,7 @@ implicit none
     aster_logical :: lendo
     real(kind=8), pointer :: vale(:) => null()
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
@@ -95,7 +91,7 @@ implicit none
 ! --- CONTRIBUTIONS DU CONTACT
 !
     if (lcont) then
-        call nmasco('CNFINT', fonact, ds_contact, veasse, cncont)
+        call nmasco(fonact, veasse, cncont)
     endif
 !
 ! --- ASSEMBLAGE DES FORCES INTERIEURES

@@ -158,7 +158,7 @@ integer :: fonact(*)
                         ds_energy, fonact, numedd, numfix, ds_algopara,&
                         meelem, numins, modele, ds_material, carele     ,&
                         ds_constitutive, ds_measure, sddisc, solalg, lischa     ,&
-                        veelem, ds_inout)
+                        veelem, ds_inout, ds_contact)
         endif
 !
 ! ----- Post-treatment for behavior laws.

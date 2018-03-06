@@ -17,7 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmrede(sdnume, fonact, sddyna, matass, ds_material,&
+subroutine nmrede(sdnume, fonact, sddyna, matass,&
+                  ds_material, ds_contact,&
                   veasse, neq, foiner, cnfext, cnfint,&
                   vchar, ichar)
 !
@@ -37,6 +38,7 @@ implicit none
 !
 character(len=19) :: sddyna, sdnume
 type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Contact), intent(in) :: ds_contact
 character(len=19) :: veasse(*)
 character(len=19) :: matass
 integer :: fonact(*)
@@ -54,6 +56,7 @@ character(len=19) :: foiner, cnfext, cnfint
 ! ----------------------------------------------------------------------
 !
 ! IN  NUMEDD : NUMEROTATION NUME_DDL
+! In  ds_contact       : datastructure for contact management
 ! In  ds_material      : datastructure for material parameters
 ! IN  SDNUME : NOM DE LA SD NUMEROTATION
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
@@ -78,7 +81,8 @@ character(len=19) :: foiner, cnfext, cnfint
     real(kind=8) :: val2, val3, appui, fext
     character(len=24) :: sdnuco
     integer :: jnuco
-    real(kind=8), pointer :: diri(:) => null()
+    real(kind=8), pointer :: v_cont_disc(:) => null()
+    real(kind=8), pointer :: v_diri(:) => null()
     real(kind=8), pointer :: vfext(:) => null()
     real(kind=8), pointer :: fint(:) => null()
     real(kind=8), pointer :: iner(:) => null()
@@ -122,12 +126,16 @@ character(len=19) :: foiner, cnfext, cnfint
 ! --- ACCES AUX CHAM_NO
 !
     call jeveuo(cnfint(1:19)//'.VALE', 'L', vr=fint)
-    call jeveuo(cndiri(1:19)//'.VALE', 'L', vr=diri)
+    call jeveuo(cndiri(1:19)//'.VALE', 'L', vr=v_diri)
     call jeveuo(cnfext(1:19)//'.VALE', 'L', vr=vfext)
     call jeveuo(ds_material%fvarc_curr(1:19)//'.VALE', 'L', vr=v_fvarc_curr)
 !
     if (ldyna) then
         call jeveuo(foiner(1:19)//'.VALE', 'L', vr=iner)
+    endif
+
+    if (ds_contact%l_cnctdf) then
+        call jeveuo(ds_contact%cnctdf(1:19)//'.VALE', 'L', vr=v_cont_disc)
     endif
 !
 ! --- CALCUL DES RESIDUS
@@ -143,11 +151,19 @@ character(len=19) :: foiner, cnfext, cnfint
                 appui = - fint(ieq)
                 fext = 0.d0
             else
-                appui = diri(ieq)
+                if (ds_contact%l_cnctdf) then
+                    appui = v_diri(ieq) + v_cont_disc(ieq)
+                else
+                    appui = v_diri(ieq)
+                endif
                 fext = vfext(ieq)
             endif
         else
-            appui = diri(ieq)
+            if (ds_contact%l_cnctdf) then
+                appui = v_diri(ieq) + v_cont_disc(ieq)
+            else
+                appui = v_diri(ieq)
+            endif
             fext = vfext(ieq)
         endif
 !

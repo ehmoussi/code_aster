@@ -19,7 +19,7 @@
 ! aslint: disable=W1504
 !
 subroutine nmcese(modele         , numedd, ds_material, carele    ,&
-                  ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
+                  ds_constitutive, lischa, fonact, ds_measure,&
                   iterat         , sdnume, sdpilo, valinc    , solalg    ,&
                   veelem         , veasse, offset, typsel    , sddisc    ,&
                   licite         , rho   , eta   , etaf      , criter    ,&
@@ -49,7 +49,6 @@ character(len=19) :: lischa, sdnume, sdpilo, sddisc, matass
 character(len=24) :: modele, numedd, carele
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-type(NL_DS_Contact), intent(in) :: ds_contact
 type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=19) :: veelem(*), veasse(*)
 character(len=19) :: solalg(*), valinc(*)
@@ -76,7 +75,6 @@ real(kind=8) :: etaf, criter
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! IN  SDNUME : SD NUMEROTATION
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
-! In  ds_contact       : datastructure for contact management
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
 ! IN  ITERAT : NUMERO D'ITERATION DE NEWTON
@@ -221,12 +219,12 @@ real(kind=8) :: etaf, criter
 !
     if (typsel .eq. 'RESIDU' .or. mixte) then
         call nmcere(modele         , numedd, ds_material, carele    ,&
-                    ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
+                    ds_constitutive, lischa, fonact, ds_measure,&
                     iterat         , sdnume, valinc, solalg    , veelem    ,&
                     veasse         , offset, rho   , eta(1)    , f(1)      ,&
                     ldccv(1)       , matass)
         call nmcere(modele         , numedd, ds_material, carele    ,&
-                    ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
+                    ds_constitutive, lischa, fonact, ds_measure,&
                     iterat         , sdnume, valinc, solalg    , veelem    ,&
                     veasse         , offset, rho   , eta(2)    , f(2)      ,&
                     ldccv(2)       , matass)

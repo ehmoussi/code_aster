@@ -410,7 +410,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
     if (lmpas) then
         call nmihht(model , numedd   , ds_material, ds_constitutive,&
                     cara_elem, list_load, fonact    , ds_measure   ,&
-                    sddyna,  sdnume   , ds_contact, valinc,&
+                    sddyna,  sdnume   , valinc,&
                     sddisc, solalg   , veasse   , measse    , ds_inout)
     endif
 !

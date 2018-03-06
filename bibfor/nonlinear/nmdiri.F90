@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,83 +15,114 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmdiri(modele, mate, carele, lischa, sddyna,&
-                  depl, vite, acce, vediri)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine nmdiri(model  , ds_material, cara_elem, list_load,&
+                  disp   , vediri     , nume_dof , cndiri   ,&
+                  sddyna_, vite_      , acce_)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
 #include "asterf_types.h"
-#include "jeveux.h"
 #include "asterfort/assert.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/ndynin.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/vebtla.h"
-    character(len=19) :: lischa
-    character(len=24) :: modele, mate, carele
-    character(len=19) :: vediri, sddyna
-    character(len=19) :: depl, vite, acce
+#include "asterfort/assvec.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/nmdebg.h"
+#include "asterfort/vtzero.h"
 !
-! ----------------------------------------------------------------------
+character(len=24), intent(in) :: model
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=24), intent(in) :: cara_elem
+character(len=19), intent(in) :: list_load
+character(len=19), intent(in) :: disp
+character(len=19), intent(in) :: vediri
+character(len=24), intent(in) :: nume_dof
+character(len=19), intent(in) :: cndiri
+character(len=19), optional, intent(in) :: sddyna_
+character(len=19), optional, intent(in) :: vite_, acce_
 !
-! ROUTINE MECA_NON_LINE (ALGORITHME)
+! --------------------------------------------------------------------------------------------------
 !
-! CALCUL DES VECT_ELEM POUR LES REACTIONS D'APPUI BT.LAMBDA
+! MECA_NON_LINE - Algorithm
 !
-! ----------------------------------------------------------------------
+! Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
 !
+! --------------------------------------------------------------------------------------------------
 !
-! IN  MODELE : NOM DU MODELE
-! IN  MATE   : NOM DU CHAMP DE MATERIAU
-! IN  LISCHA : LISTE DES CHARGES
-! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  SDDYNA : SD DYNAMIQUE
-! OUT VEDIRI : VECT_ELEM DES REACTIONS D'APPUI BT.LAMBDA
+! In  model            : name of model
+! In  cara_elem        : name of elementary characteristics (field)
+! In  ds_material      : datastructure for material parameters
+! In  list_load        : name of datastructure for list of loads
+! In  disp             : displacement
+! In  vediri           : name of elementary vectors
+! In  nume_dof         : name of numbering object (NUME_DDL)
+! In  cndiri           : name of assembled vector
+! In  sddyna           : datastructure for dynamic
+! In  vite             : speed
+! In  acce             : acceleration
 !
+! --------------------------------------------------------------------------------------------------
 !
-!
-!
-    aster_logical :: lstat, ldepl, lvite, lacce
+    integer :: ifm, niv
+    aster_logical :: l_disp, l_vite, l_acce, l_dyna
     character(len=19) :: veclag
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    call jemarq()
-!
-! --- FONCTIONNALITES ACTIVEES
-!
-    lstat = ndynlo(sddyna,'STATIQUE')
-    if (lstat) then
-        ldepl = .true.
-        lvite = .false.
-        lacce = .false.
-    else
-        ldepl = ndynin(sddyna,'FORMUL_DYNAMIQUE').eq.1
-        lvite = ndynin(sddyna,'FORMUL_DYNAMIQUE').eq.2
-        lacce = ndynin(sddyna,'FORMUL_DYNAMIQUE').eq.3
+    call infdbg('MECA_NON_LINE', ifm, niv)
+    if (niv .ge. 2) then
+        write (ifm,*) &
+        '<MECANONLINE> ... Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA'
     endif
 !
-! --- QUEL VECTEUR D'INCONNUES PORTE LES LAGRANGES ?
+! - Get type of unknowns
 !
-    if (ldepl) then
-        veclag = depl
-    else if (lvite) then
-        veclag = vite
+    l_disp = ASTER_TRUE
+    l_vite = ASTER_FALSE
+    l_acce = ASTER_FALSE
+    if (present(sddyna_)) then
+        l_dyna  = ndynlo(sddyna_,'DYNAMIQUE')
+        if (l_dyna) then
+            l_disp = ndynin(sddyna_,'FORMUL_DYNAMIQUE') .eq. 1
+            l_vite = ndynin(sddyna_,'FORMUL_DYNAMIQUE') .eq. 2
+            l_acce = ndynin(sddyna_,'FORMUL_DYNAMIQUE') .eq. 3
+        endif
+    endif
+!
+! - Which unknowns for Lagrange multipliers ?
+!
+    if (l_disp) then
+        veclag = disp
+    else if (l_vite) then
+        veclag = vite_
 !       VILAINE GLUTE POUR L'INSTANT
-        veclag = depl
-    else if (lacce) then
-        veclag = acce
+        veclag = disp
+    else if (l_acce) then
+        veclag = acce_
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
-! --- CALCUL DES VECT_ELEM POUR LES REACTIONS D'APPUI BT.LAMBDA
+! - Elementary vectors
 !
-    call vebtla('V', modele, mate, carele, veclag,&
-                lischa, vediri)
+    call vebtla('V'      , model, ds_material%field_mate, cara_elem, veclag,&
+                list_load, vediri)
 !
-    call jedema()
+! - Assembling
+!
+    call vtzero(cndiri)
+    call assvec('V', cndiri, 1, vediri, [1.d0],&
+                nume_dof, ' ', 'ZERO', 1)
+!
+! - Print
+!
+    if (niv .ge. 2) then
+        call nmdebg('VECT', cndiri, 6)
+    endif
+!
 end subroutine
