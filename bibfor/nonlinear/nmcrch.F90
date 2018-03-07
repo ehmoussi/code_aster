@@ -87,7 +87,7 @@ character(len=19), intent(in) :: veasse(*)
     character(len=19) :: cnsstf, cnsstr
     character(len=19) :: cnctdc, cnunil
     character(len=19) :: cneltc, cneltf
-    character(len=19) :: cnimpp, cnimpc
+    character(len=19) :: cnimpe
     character(len=19) :: cnfepi, cndipi, cnrefe
 !
 ! ----------------------------------------------------------------------
@@ -260,13 +260,11 @@ character(len=19), intent(in) :: veasse(*)
         call vtcreb(cnviss, 'V', 'R', nume_ddlz = numedd)
     endif
 !
-! --- FORCES D'IMPEDANCES (PREDICTION ET CORRECTION)
+! --- FORCES D'IMPEDANCES
 !
     if (limpe) then
-        call nmchex(veasse, 'VEASSE', 'CNIMPP', cnimpp)
-        call vtcreb(cnimpp, 'V', 'R', nume_ddlz = numedd)
-        call nmchex(veasse, 'VEASSE', 'CNIMPC', cnimpc)
-        call vtcreb(cnimpc, 'V', 'R', nume_ddlz = numedd)
+        call nmchex(veasse, 'VEASSE', 'CNIMPE', cnimpe)
+        call vtcreb(cnimpe, 'V', 'R', nume_ddlz = numedd)
     endif
 !
 ! --- SECOND MEMBRE

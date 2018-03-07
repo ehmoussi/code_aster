@@ -109,9 +109,9 @@ integer :: pilcvg, ldccvg
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: zveass, zsolal, zvalin
-    parameter    (zveass=28,zsolal=17,zvalin=28)
-!
+    integer, parameter:: zveass = 26
+    integer, parameter:: zsolal = 17
+    integer, parameter:: zvalin = 28
     aster_logical :: exopt, mieux, irecli
     integer :: itrlmx, iterho, act, opt
     integer :: pilopt
