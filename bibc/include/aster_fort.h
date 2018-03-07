@@ -398,6 +398,10 @@ extern void DEFSPPSPPPSP(RSACPA,rsacpa,char *, STRING_SIZE, ASTERINTEGER *, ASTE
 #define CALL_RSACPA(nomsd, numva, icode, nomva, ctype, ival, rval, kval, ier) \
     CALLSPPSPPPSP(RSACPA,rsacpa, nomsd, numva, icode, nomva, ctype, ival, rval, kval, ier)
 
+#define CALLO_RCSTOC_VERIF(a,b,c,d) CALLOOOP(RCSTOC_VERIF,rcstoc_verif,a,b,c,d)
+extern void DEFSSSP(RCSTOC_VERIF, rcstoc_verif, const char *, STRING_SIZE,
+                    const char *,  STRING_SIZE, const char *,  STRING_SIZE, ASTERINTEGER *);
+
 /* particulier car on passe les longueurs des chaines en dur */
 extern void DEFSPSPPPS(RSACCH,rsacch,char *, STRING_SIZE, ASTERINTEGER *, char *,STRING_SIZE,
     ASTERINTEGER *, ASTERINTEGER *, ASTERINTEGER *, char *,STRING_SIZE);

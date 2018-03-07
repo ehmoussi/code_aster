@@ -186,14 +186,17 @@ bool TractionMaterialBehaviourInstance::buildTractionFunction
     ( FunctionPtr& doubleValues ) const
     throw( std::runtime_error )
 {
-    long maxSize = 0;
+    long maxSize = 0, maxSize2 = 0;
     std::string resName;
     for( auto curIter : _mapOfFunctionMaterialProperties )
     {
         std::string nameOfProperty = curIter.second.getName();
         if( curIter.second.hasValue() )
         {
-            const auto size = curIter.second.getValue()->maximumSize();
+            const auto func = curIter.second.getValue();
+            CALLO_RCSTOC_VERIF( func->getName(), nameOfProperty,
+                                _asterName, &maxSize2 );
+            const auto size = func->maximumSize();
             if( size > maxSize )
                 maxSize = size;
             resName = curIter.second.getValue()->getResultName();
@@ -209,14 +212,17 @@ bool MetaTractionMaterialBehaviourInstance::buildTractionFunction
     ( FunctionPtr& doubleValues ) const
     throw( std::runtime_error )
 {
-    long maxSize = 0;
+    long maxSize = 0, maxSize2 = 0;
     std::string resName;
     for( auto curIter : _mapOfFunctionMaterialProperties )
     {
         std::string nameOfProperty = curIter.second.getName();
         if( curIter.second.hasValue() )
         {
-            const auto size = curIter.second.getValue()->maximumSize();
+            const auto func = curIter.second.getValue();
+            CALLO_RCSTOC_VERIF( func->getName(), nameOfProperty,
+                                _asterName, &maxSize2 );
+            const auto size = func->maximumSize();
             if( size > maxSize )
                 maxSize = size;
             resName = curIter.second.getValue()->getResultName();
