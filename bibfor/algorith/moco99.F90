@@ -69,12 +69,12 @@ subroutine moco99(nomres, resul, nbmod, lrang, iorne,&
     parameter   (nbpabm=10)
     integer :: ldpar(nbpabm), ldpa2(nbpabm)
     integer :: nbcham, nbold(1), nbtrou, vali
-    integer :: i, ii, jtyp, ier, iorol, ire, ibid
+    integer :: i, ii, jtyp, ier, iorol, ire, ibid, lpain(3),lpaou(3)
     integer :: llkge, llmge, llncp, llom2, lltmo, llval2, llvalo
 !
     real(kind=8) :: genek, genem, omeg2, rbid, epsi
 !
-    character(len=8) :: k8bid, interf, typi
+    character(len=8) :: k8bid, interf, typi, param(3)
     character(len=16) :: typres, bmpara(nbpabm), chmeca, typmo
     character(len=19) :: chamol, chamne
     character(len=24) :: type, typeba
@@ -89,6 +89,10 @@ subroutine moco99(nomres, resul, nbmod, lrang, iorne,&
      &              'AMOR_REDUIT'/
 !
 !-----------------------------------------------------------------------
+    param(1) = 'MODELE'
+    param(2) = 'CHAMPMAT'
+    param(3) = 'CARAELEM'
+
 !
 ! --- CAS DE L'ABSENCE D'UN MODE_MECA
 !
@@ -178,6 +182,17 @@ subroutine moco99(nomres, resul, nbmod, lrang, iorne,&
         call rsadpa(resul, 'L', 1, 'TYPE_MODE', iorol,&
                     0, sjv=lltmo, styp=k8bid, istop=0)
         typmo=zk16(lltmo)
+        
+!       RECUPERATION ET ECRITURE DES MODELES, CHAMPMAT ET CARA_ELEM
+        
+        call rsadpa(resul, 'L', 3, param, iorol,&
+                    0, tjv=lpain, styp=k8bid, istop=0)
+        
+        call rsadpa(nomres, 'E', 3, param, iorol,&
+                    0, tjv=lpaou, styp=k8bid, istop=0)
+        zk8(lpaou(1)) = zk8(lpain(1)) 
+        zk8(lpaou(2)) = zk8(lpain(2)) 
+        zk8(lpaou(3)) = zk8(lpain(3))
 !
  11     continue
 !

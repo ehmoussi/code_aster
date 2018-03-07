@@ -215,15 +215,11 @@ LTEMPS=DEFI_LIST_REEL(   VALE=(9.E-4,  17.E-4,  25.E-4,)              )
 
 #
 REPONS=CALC_CHAMP(RESULTAT=REPONSE,
-                  MODELE=MODELE,
-                  CARA_ELEM=CARAELEM,
-                  CHAM_MATER=MATER,
                   LIST_INST=LTEMPS,
                   CONTRAINTE='SIGM_ELNO',);
 
 #
 REPON2=CALC_CHAMP(RESULTAT=REPONS,
-                  MODELE=MODELE,
                   LIST_INST=LTEMPS,
                   CONTRAINTE='SIGM_NOEU',);
 

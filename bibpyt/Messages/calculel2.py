@@ -242,7 +242,9 @@ Contactez le support technique.
    Le modèle n'a pas été trouvé. Le calcul n'est pas possible.
 """),
 
-
+    45: _(u"""
+   Le CARA_ELEM n'a pas été trouvé. Le calcul n'est pas possible.
+"""),
 
     46: _(u"""
   mode ligne  %(k1)s  /= mode colonne  %(k2)s

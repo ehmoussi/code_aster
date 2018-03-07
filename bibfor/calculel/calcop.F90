@@ -187,7 +187,7 @@ subroutine calcop(option, lisopt, resuin, resuou, lisord,&
     call rslesd(resuin, minord, modele, mateco(1:8), carael)
     call rsadpa(resuin, 'L', 1, 'MODELE', minord,&
                 0, sjv=jpara)
-    if (zk8(jpara) .ne. modele) then
+    if (zk8(jpara) .ne. modele .and. zk8(jpara) .ne. ' ') then
         call utmess('A', 'CALCULEL_24')
     endif
 !

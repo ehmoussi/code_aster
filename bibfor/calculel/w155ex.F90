@@ -106,6 +106,9 @@ subroutine w155ex(nomres, resu, nbordr, liordr)
             call rsexch(' ', resu19, nomsym(isym), nuordr, chin,iret)
             if (iret .eq. 0) then
                 call rslesd(resu, nuordr, model_ = modele, cara_elem_ = carele)
+                if (modele .eq. ' ') call utmess('F', 'CALCULEL2_44')
+                if (carele .eq. ' ') call utmess('F', 'CALCULEL2_45')
+                
                 if (modele .ne. modeav) then
                     call exlima(' ', 1, 'G', modele, ligrel)
                     modeav=modele
