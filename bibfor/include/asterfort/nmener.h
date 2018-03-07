@@ -21,8 +21,8 @@ interface
     subroutine nmener(valinc, veasse, measse, sddyna, eta        ,&
                       ds_energy, fonact, numedd, numfix, ds_algopara,&
                       meelem, numins, modele, ds_material, carele     ,&
-                      ds_constitutive, ds_measure, sddisc, solalg, lischa,&
-                      veelem, ds_inout, ds_contact)
+                      ds_constitutive, ds_measure, sddisc, solalg,&
+                      veelem, ds_contact)
         use NonLin_Datastructure_type
         character(len=19) :: valinc(*)
         character(len=19) :: veasse(*)
@@ -38,13 +38,11 @@ interface
         character(len=24) :: modele
         type(NL_DS_Material), intent(in) :: ds_material
         character(len=24) :: carele
-        type(NL_DS_InOut), intent(in) :: ds_inout
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         type(NL_DS_Measure), intent(inout) :: ds_measure
         character(len=19) :: sddisc
         character(len=19) :: solalg(*)
-        character(len=19) :: lischa
         character(len=19) :: veelem(*)
         type(NL_DS_Contact), intent(in) :: ds_contact
     end subroutine nmener

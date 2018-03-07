@@ -250,7 +250,7 @@ implicit none
 ! - Post-treatment
 !
     call nmpost(model          , mesh       , numedd, numfix    , cara_elem      ,&
-                ds_constitutive, numins     , ds_material, ds_inout       ,&
+                ds_constitutive, numins     , ds_material,&
                 ds_contact     , ds_algopara, fonact, ds_measure,&
                 sddisc         , sd_obsv    , sderro, sddyna    , ds_posttimestep,&
                 valinc         , solalg     , meelem, measse    , veelem         ,&
