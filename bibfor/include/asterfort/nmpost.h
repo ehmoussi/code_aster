@@ -19,7 +19,7 @@
 !
 interface
     subroutine nmpost(modele , mesh    , numedd, numfix     , carele  ,&
-                      ds_constitutive , numins  , ds_material, ds_inout,&
+                      ds_constitutive , numins  , ds_material,&
                       ds_contact, ds_algopara, fonact  ,&
                       ds_measure, sddisc , &
                       sd_obsv, sderro  , sddyna, ds_posttimestep     , valinc  ,&
@@ -35,7 +35,6 @@ interface
         integer :: numins
         type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Contact), intent(inout) :: ds_contact
-        type(NL_DS_InOut), intent(in) :: ds_inout
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         integer :: fonact(*)
         type(NL_DS_Measure), intent(inout) :: ds_measure

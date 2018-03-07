@@ -19,7 +19,7 @@
 interface
     subroutine nmfini(sddyna, valinc         , measse    , modele  , ds_material,&
                       carele, ds_constitutive, ds_measure, sddisc  , numins,&
-                      solalg, lischa         , ds_inout, numedd,&
+                      solalg, numedd         , fonact,&
                       veelem, veasse)
         use NonLin_Datastructure_type
         character(len=19) :: sddyna
@@ -27,12 +27,12 @@ interface
         character(len=19) :: measse(*)
         character(len=24) :: modele
         character(len=24) :: carele
+        integer, intent(in) :: fonact(*)
         type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         type(NL_DS_Measure), intent(inout) :: ds_measure
         character(len=19) :: sddisc
         integer :: numins
-        type(NL_DS_InOut), intent(in) :: ds_inout
         character(len=19) :: solalg(*)
         character(len=19) :: lischa
         character(len=24) :: numedd

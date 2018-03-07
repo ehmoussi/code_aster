@@ -19,7 +19,7 @@
 ! aslint: disable=W1504
 !
 subroutine nmpost(modele , mesh    , numedd, numfix     , carele  ,&
-                  ds_constitutive , numins  , ds_material, ds_inout,&
+                  ds_constitutive , numins  , ds_material,&
                   ds_contact, ds_algopara, fonact  ,&
                   ds_measure, sddisc     , &
                   sd_obsv, sderro  , sddyna, ds_posttimestep, valinc  ,&
@@ -47,7 +47,6 @@ implicit none
 integer :: numins
 character(len=8), intent(in) :: mesh
 real(kind=8) :: eta
-type(NL_DS_InOut), intent(in) :: ds_inout
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 type(NL_DS_Material), intent(in) :: ds_material
 character(len=19) :: meelem(*)
@@ -80,7 +79,6 @@ integer :: fonact(*)
 ! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
 ! In  ds_constitutive  : datastructure for constitutive laws management
-! In  ds_inout         : datastructure for input/output management
 ! IO  ds_contact       : datastructure for contact management
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
@@ -157,8 +155,8 @@ integer :: fonact(*)
             call nmener(valinc, veasse, measse, sddyna, eta        ,&
                         ds_energy, fonact, numedd, numfix, ds_algopara,&
                         meelem, numins, modele, ds_material, carele     ,&
-                        ds_constitutive, ds_measure, sddisc, solalg, lischa     ,&
-                        veelem, ds_inout, ds_contact)
+                        ds_constitutive, ds_measure, sddisc, solalg,&
+                        veelem, ds_contact)
         endif
 !
 ! ----- Post-treatment for behavior laws.
