@@ -33,6 +33,7 @@ implicit none
 #include "asterfort/ndynlo.h"
 #include "asterfort/nmcvec.h"
 #include "asterfort/nmxvec.h"
+#include "asterfort/nonlinDynaImpeCompute.h"
 !
 character(len=4) :: mode
 character(len=*) :: phasez
@@ -247,11 +248,17 @@ character(len=19) :: solalg(*), valinc(*)
 !
             if (limpe) then
                 if (phase .eq. 'PREDICTION') then
-                    call nmcvec('AJOU', 'CNIMPP', ' ', .true._1, .true._1,&
-                                nbvect, ltypve, loptve, lcalve, lassve)
+                    call nonlinDynaImpeCompute('Prediction', sddyna    ,&
+                                               modele      , numedd    ,&
+                                               ds_material , ds_measure,&
+                                               valinc      ,&
+                                               veelem      , veasse)
                 else if (phase.eq.'CORRECTION') then
-                    call nmcvec('AJOU', 'CNIMPC', ' ', .true._1, .true._1,&
-                                nbvect, ltypve, loptve, lcalve, lassve)
+                    call nonlinDynaImpeCompute('Correction', sddyna    ,&
+                                               modele      , numedd    ,&
+                                               ds_material , ds_measure,&
+                                               valinc      ,&
+                                               veelem      , veasse)
                 else
                     ASSERT(.false.)
                 endif
@@ -323,8 +330,11 @@ character(len=19) :: solalg(*), valinc(*)
 ! --- FORCES IMPEDANCES
 !
         if (limpe) then
-            call nmcvec('AJOU', 'CNIMPP', ' ', .true._1, .true._1,&
-                        nbvect, ltypve, loptve, lcalve, lassve)
+            call nonlinDynaImpeCompute('Prediction', sddyna    ,&
+                                       modele      , numedd    ,&
+                                       ds_material , ds_measure,&
+                                       valinc      ,&
+                                       veelem      , veasse)
         endif
 !
 ! --- CHARGES VEC_ISS

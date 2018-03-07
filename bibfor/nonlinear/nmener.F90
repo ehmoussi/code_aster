@@ -93,7 +93,7 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter:: zveass = 28
+    integer, parameter:: zveass = 26
     integer :: iret(zveass)
     character(len=19) :: depmoi, depplu, vitmoi, vitplu, masse, amort, rigid
     character(len=19) :: fexmoi, fexplu, fammoi, fnomoi
@@ -211,9 +211,9 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 ! 7  - CNFEDO : CHARGES MECANIQUES FIXES DONNEES
 ! 9  - CNLAPL : FORCES DE LAPLACE
 ! 11 - CNFSDO : FORCES SUIVEUSES
-! 15 - CNSSTF : FORCES ISSUES DU CALCUL PAR SOUS-STRUCTURATION
+! 14 - CNSSTF : FORCES ISSUES DU CALCUL PAR SOUS-STRUCTURATION
 ! --------------------------------------------------------------------
-            if ((i.eq.7 ) .or. (i.eq.9 ) .or. (i.eq.11) .or. (i.eq.15)) then
+            if ((i.eq.7 ) .or. (i.eq.9 ) .or. (i.eq.11) .or. (i.eq.14)) then
                 do j = 1, neq
                     fexpl(j)=fexpl(j)+veass(j)
                 end do
@@ -233,25 +233,25 @@ type(NL_DS_Contact), intent(in) :: ds_contact
                     fexpl(j)=fexpl(j)-veass(j)
                 end do
 ! --------------------------------------------------------------------
-! 23 - CNMODC : FORCE D AMORTISSEMENT MODAL
+! 22 - CNMODC : FORCE D AMORTISSEMENT MODAL
 ! --------------------------------------------------------------------
-            else if (i.eq.23) then
+            else if (i.eq.22) then
                 do j = 1, neq
                     fampl(j)=fampl(j)+veass(j)
                 end do
 ! --------------------------------------------------------------------
-! 16 - CNELTC : FORCES ELEMENTS DE CONTACT (CONTINU + XFEM)
-! 17 - CNELTF : FORCES ELEMENTS DE FROTTEMENT (CONTINU + XFEM)
-! 24 - CNCTDC : FORCES DE CONTACT (CONTACT DISCRET)
-! 25 - CNUNIL : FORCES DE CONTACT (LIAISON_UNILATERALE)
-! 27 - CNIMPC : FORCES IMPEDANCE
+! 15 - CNELTC : FORCES ELEMENTS DE CONTACT (CONTINU + XFEM)
+! 16 - CNELTF : FORCES ELEMENTS DE FROTTEMENT (CONTINU + XFEM)
+! 23 - CNCTDC : FORCES DE CONTACT (CONTACT DISCRET)
+! 24 - CNUNIL : FORCES DE CONTACT (LIAISON_UNILATERALE)
+! 12 - CNIMPE : FORCES IMPEDANCE
 ! --------------------------------------------------------------------
-            else if ((i.eq.16).or.(i.eq.17).or.(i.eq.27).or.&
-                     (i.eq.24).or.(i.eq.25)) then
+            else if ((i.eq.15).or.(i.eq.16).or.(i.eq.12).or.&
+                     (i.eq.23).or.(i.eq.24)) then
                 do j = 1, neq
                     flipl(j)=flipl(j)+veass(j)
                 end do
-                if ((i.eq.16) .or. (i.eq.17)) then
+                if ((i.eq.15) .or. (i.eq.16)) then 
 ! ON ENLEVE LA CONTRIBUTION DU CONTACT (CONTINU + XFEM) DANS
 ! LES FORCES INTERNES (VOIR ROUTINE NMAINT)
                     do j = 1, neq
@@ -259,9 +259,9 @@ type(NL_DS_Contact), intent(in) :: ds_contact
                     end do
                 endif
 ! --------------------------------------------------------------------
-! 28 - CNVISS : CHARGEMENT VEC_ISS (FORCE_SOL)
+! 26 - CNVISS : CHARGEMENT VEC_ISS (FORCE_SOL)
 ! --------------------------------------------------------------------
-            else if (i.eq.28) then
+            else if (i.eq.26) then
 ! CHARGEMENT FORCE_SOL CNVISS. SI ON COMPTE SA CONTRIBUTION EN TANT
 ! QUE FORCE DISSIPATIVE DE LIAISON, ON DOIT PRENDRE L OPPOSE.
                 do j = 1, neq
@@ -277,9 +277,9 @@ type(NL_DS_Contact), intent(in) :: ds_contact
                     fnopl(j)=fnopl(j)+veass(j)
                 end do
 ! --------------------------------------------------------------------
-! 19 - CNCINE : INCREMENTS DE DEPLACEMENT IMPOSES (AFFE_CHAR_CINE)
+! 18 - CNCINE : INCREMENTS DE DEPLACEMENT IMPOSES (AFFE_CHAR_CINE)
 ! --------------------------------------------------------------------
-            else if (i.eq.19) then
+            else if (i.eq.18) then
 ! ON DOIT RECONSTRUIRE LA MATRICE DE MASSE CAR ELLE A ETE MODIFIEE
 ! POUR SUPPRIMER DES DEGRES DE LIBERTE EN RAISON DE AFFE_CHAR_CINE.
                 reassm=.true.

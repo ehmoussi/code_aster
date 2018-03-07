@@ -195,13 +195,6 @@ character(len=16) :: option
     else if (typvec.eq.'CNONDP') then
         call veondp(modele, mate, sddyna, instap, vecele)
 !
-! --- FORCES IMPEDANCE
-!
-    else if (typvec.eq.'CNIMPC') then
-        call veimpd(modele, mate, vitplu, sddyna, vecele)
-    else if (typvec.eq.'CNIMPP') then
-        call veimpd(modele, mate, vitmoi, sddyna, vecele)
-!
 ! --- FORCES FIXES MECANIQUES DONNEES
 !
     else if (typvec.eq.'CNFEDO') then

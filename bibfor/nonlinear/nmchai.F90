@@ -54,7 +54,7 @@ character(len=6), optional, intent(out) :: tychap_out
 ! ----------------------------------------------------------------------
 !
     integer :: zmeelm, zmeass, zveelm, zveass
-    parameter    (zmeelm=9 ,zmeass=4 ,zveelm=19,zveass=28)
+    parameter    (zmeelm=9 ,zmeass=4 ,zveelm=17,zveass=26)
     integer :: zsolal, zvalin
     parameter    (zsolal=17,zvalin=28)
 !
@@ -71,16 +71,15 @@ character(len=6), optional, intent(out) :: tychap_out
 !
     data lveelm /'CNFINT','CNDIRI','CNBUDI','CNFNOD','CNDIDO',&
      &             'CNDIPI','CNFEDO','CNFEPI','CNLAPL','CNONDP',&
-     &             'CNFSDO','CNIMPP','      ','CNDIDI','CNSSTF',&
-     &             'CNELTC','CNELTF','CNREFE',&
-     &             'CNIMPC'/
+     &             'CNFSDO','CNIMPE','CNDIDI','CNSSTF',&
+     &             'CNELTC','CNELTF','CNREFE'/
     data lveass /'CNFINT','CNDIRI','CNBUDI','CNFNOD','CNDIDO',&
      &             'CNDIPI','CNFEDO','CNFEPI','CNLAPL','CNONDP',&
-     &             'CNFSDO','CNIMPP','      ','CNDIDI','CNSSTF',&
+     &             'CNFSDO','CNIMPE','CNDIDI','CNSSTF',&
      &             'CNELTC','CNELTF','CNREFE',&
      &             'CNCINE','CNSSTR','CNDYNA',&
      &             'CNMODP','CNMODC','CNCTDC','CNUNIL','CNFEXT',&
-     &             'CNIMPC','CNVISS'/
+     &             'CNVISS'/
 !
     data lsolal /'DDEPLA','DEPDEL','DEPOLD','DEPPR1','DEPPR2',&
      &             'DVITLA','VITDEL','VITOLD','VITPR1','VITPR2',&

@@ -85,7 +85,7 @@ character(len=*) :: vecasz, vecelz
     real(kind=8) :: r8bid
     character(len=19) :: sstru
     character(len=19) :: vecele
-    character(len=24) :: vaonde, vadido, vafedo, valamp, vaimpe
+    character(len=24) :: vaonde, vadido, vafedo, valamp
     character(len=24) :: vafepi, vafsdo
     character(len=8) :: modele
     character(len=24) :: vecass
@@ -93,7 +93,6 @@ character(len=*) :: vecasz, vecelz
     character(len=19) :: depkm1, vitkm1, acckm1, romkm1, romk
     character(len=24) :: charge, infoch, fomult, fomul2
     character(len=16) :: typvec
-    integer :: jimpe, jvaanc
     integer :: ifm, niv
 !
 ! ----------------------------------------------------------------------
@@ -172,19 +171,6 @@ character(len=*) :: vecasz, vecelz
         call asasve(vecele, numedd, 'R', vaonde)
         call ascova('D', vaonde, ' ', 'INST', r8bid,&
                     'R', vecass)
-!
-! --- FORCES IMPEDANCES
-!
-    else if (typvec(1:9).eq.'CNIMPP') then
-        call asasve(vecele, numedd, 'R', vaimpe)
-        call jeveuo(vaimpe, 'L', jvaanc)
-        call jeveuo(zk24(jvaanc)(1:19)//'.VALE', 'L', jimpe)
-        call copisd('CHAMP_GD', 'V', zk24(jvaanc), vecass)
-    else if (typvec(1:9).eq.'CNIMPC') then
-        call asasve(vecele, numedd, 'R', vaimpe)
-        call jeveuo(vaimpe, 'L', jvaanc)
-        call jeveuo(zk24(jvaanc)(1:19)//'.VALE', 'L', jimpe)
-        call copisd('CHAMP_GD', 'V', zk24(jvaanc), vecass)
 !
 ! --- FORCES FIXES MECANIQUES DONNEES
 !
