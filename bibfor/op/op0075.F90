@@ -42,7 +42,7 @@ subroutine op0075()
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !     ------------------------------------------------------------------
-    character(len=8) :: k8bid, nomres, resin, mode, blanc8, param(3)
+    character(len=8) :: k8bid, nomres, resin, mode, blanc8, param(3), val_param(3)
     character(len=16) :: concep, nomcmd, typres, typrep, champ(4)
     character(len=19) :: profno
     character(len=24) :: matgen, numgen, basemo
@@ -181,6 +181,25 @@ subroutine op0075()
                         0, tjv=lpaout, styp=k8bid)
             do i = 1, 3
                 zk8(lpaout(i))=zk8(lpain(i))
+            end do
+        end do
+    else
+        call jeveuo(nomres//'           .ORDR', 'L', vi=ordr)
+        call jelira(nomres//'           .ORDR', 'LONUTI', nbord)
+        
+        call dismoi('MODELE',     basemo, 'RESULTAT', repk=val_param(1), arret='C')
+        call dismoi('CHAM_MATER', basemo, 'RESULTAT', repk=val_param(2), arret='C')
+        call dismoi('CARA_ELEM',  basemo, 'RESULTAT', repk=val_param(3), arret='C')
+        
+        do i = 1, 3
+            if (val_param(i)(1:6).eq.'#AUCUN') val_param(i) = ' '
+        end do
+        
+        do iord = 1, nbord
+            call rsadpa(nomres, 'E', 3, param, ordr(iord),&
+                        0, tjv=lpaout, styp=k8bid)
+            do i = 1, 3
+                zk8(lpaout(i))=val_param(i)
             end do
         end do
     endif
