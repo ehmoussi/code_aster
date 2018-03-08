@@ -37,8 +37,10 @@ implicit none
 #include "asterfort/nmchex.h"
 #include "asterfort/nmdiri.h"
 #include "asterfort/nmtime.h"
-#include "asterfort/vtaxpy.h"
-#include "asterfort/vtzero.h"
+#include "asterfort/nonlinDSVectCombInit.h"
+#include "asterfort/nonlinDSVectCombCompute.h"
+#include "asterfort/nonlinDSVectCombAddAny.h"
+#include "asterfort/nonlinDSVectCombAddHat.h"
 !
 integer :: fonact(*)
 character(len=19) :: list_load, matass
@@ -75,57 +77,83 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: nb_vect_maxi = 10
-    real(kind=8) :: coef(nb_vect_maxi)
-    character(len=19) :: vect(nb_vect_maxi)
-    integer :: i_vect, nb_vect
-    character(len=19) :: cnffdo, cndfdo, cnfvdo
-    character(len=19) :: cnffpi, cndfpi, cndiri
-    character(len=19) :: vebudi, vediri
-    character(len=19) :: cnfnod, cnbudi, cnsstr, cnfint
+    character(len=19) :: cnffdo, cndfdo, cnfvdo, cnffpi, cndfpi
+    character(len=19) :: vebudi, cnbudi
+    character(len=19) :: vediri, cndiri
     character(len=19) :: disp_prev
-    aster_logical :: lmacr, l_pilo
+    aster_logical :: l_macr, l_pilo
+    type(NL_DS_VectComb) :: ds_vectcomb
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call vtzero(cndonn)
-    call vtzero(cnpilo)
+    call nonlinDSVectCombInit(ds_vectcomb)
     cnffdo = '&&CNCHAR.FFDO'
     cnffpi = '&&CNCHAR.FFPI'
     cndfdo = '&&CNCHAR.DFDO'
     cndfpi = '&&CNCHAR.DFPI'
     cnfvdo = '&&CNCHAR.FVDO'
 !
-! --- FONCTIONNALITES ACTIVEES
+! - Active functionnalities
 !
-    lmacr = isfonc(fonact,'MACR_ELEM_STAT')
+    l_macr = isfonc(fonact,'MACR_ELEM_STAT')
     l_pilo = isfonc(fonact,'PILOTAGE')
+!
+! - Get hat variables
+!
+    call nmchex(valinc, 'VALINC', 'DEPMOI', disp_prev)
 !
 ! - Launch timer
 !
     call nmtime(ds_measure, 'Init'  , '2nd_Member')
     call nmtime(ds_measure, 'Launch', '2nd_Member')
 !
-! --- DECOMPACTION DES VARIABLES CHAPEAUX
-!
-    call nmchex(valinc, 'VALINC', 'DEPMOI', disp_prev)
-!
 ! - Get dead Neumann loads and multi-step dynamic schemes forces
 !
     call nmasfi(fonact, veasse, cnffdo)
+    call nonlinDSVectCombAddAny(cnffdo, +1.d0, ds_vectcomb)
 !
 ! - Get Dirichlet loads
 !
     call nmasdi(fonact, veasse, cndfdo)
+    call nonlinDSVectCombAddAny(cndfdo, +1.d0, ds_vectcomb)
 !
 ! - Get undead Neumann loads and multi-step dynamic schemes forces
 !
     call nmasva(fonact, veasse, cnfvdo)
+    call nonlinDSVectCombAddAny(cnfvdo, +1.d0, ds_vectcomb)
 !
-! --- FORCES NODALES
+! - Add DISCRETE contact force
 !
-    call nmchex(veasse, 'VEASSE', 'CNFNOD', cnfnod)
-    call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
+    if (ds_contact%l_cnctdf) then
+        call nonlinDSVectCombAddAny(ds_contact%cnctdf, -1.d0, ds_vectcomb)
+    endif
+!
+! - Add CONTINUE/XFEM contact force
+!
+    if (ds_contact%l_cneltc) then
+        call nonlinDSVectCombAddAny(ds_contact%cneltc, -1.d0, ds_vectcomb)
+    endif
+    if (ds_contact%l_cneltf) then
+        call nonlinDSVectCombAddAny(ds_contact%cneltf, -1.d0, ds_vectcomb)
+    endif
+!
+! - Force from sub-structuring
+!
+    if (l_macr) then
+        call nonlinDSVectCombAddHat(veasse, 'CNSSTR', +1.d0, ds_vectcomb)
+    endif
+!
+! - External state variable
+!
+    call nonlinDSVectCombAddAny(ds_material%fvarc_pred, +1.d0, ds_vectcomb)
+!
+! - Compute Dirichlet boundary conditions - B.U
+!
+    call nmchex(veasse, 'VEASSE', 'CNBUDI', cnbudi)
+    call nmchex(veelem, 'VEELEM', 'CNBUDI', vebudi)
+    call nmbudi(model, nume_dof, list_load, disp_prev, vebudi,&
+                cnbudi, matass)
+    call nonlinDSVectCombAddHat(veasse, 'CNBUDI', -1.d0, ds_vectcomb)
 !
 ! - Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
 !
@@ -133,94 +161,31 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
     call nmdiri(model    , ds_material, cara_elem, list_load,&
                 disp_prev, vediri     , nume_dof , cndiri   )
+    call nonlinDSVectCombAddHat(veasse, 'CNDIRI', -1.d0, ds_vectcomb)
 !
-! --- CONDITIONS DE DIRICHLET B.U
+! - Add internal forces to second member
 !
-    call nmchex(veasse, 'VEASSE', 'CNBUDI', cnbudi)
-    call nmchex(veelem, 'VEELEM', 'CNBUDI', vebudi)
-    call nmbudi(model, nume_dof, list_load, disp_prev, vebudi,&
-                cnbudi, matass)
-!
-! --- CHARGEMENTS DONNES
-!
-    nb_vect = 7
-    coef(1) = 1.d0
-    coef(2) = 1.d0
-    coef(3) = -1.d0
-    coef(4) = -1.d0
-    coef(5) = -1.d0
-    coef(6) = 1.d0
-    coef(7) = 1.d0
-    vect(1) = cnffdo
-    vect(2) = cnfvdo
-    vect(3) = cndiri
-    vect(4) = cnbudi
-    vect(5) = cnfnod
-    vect(6) = ds_material%fvarc_pred(1:19)
-    vect(7) = cndfdo
-!
-! - Internal forces
-! 
     if (ds_algorom%phase.eq.'CORR_EF') then
-        vect(5) = cnfint
+        call nonlinDSVectCombAddHat(veasse, 'CNFINT', -1.d0, ds_vectcomb)
+    else
+        call nonlinDSVectCombAddHat(veasse, 'CNFNOD', -1.d0, ds_vectcomb)
     endif
 !
-! - Add discrete contact force
+! - Second member (standard)
 !
-    if (ds_contact%l_cnctdf) then
-        nb_vect = nb_vect + 1
-        coef(nb_vect) = -1.d0
-        vect(nb_vect) = ds_contact%cnctdf
-    endif
+    call nonlinDSVectCombCompute(ds_vectcomb, cndonn)
 !
-! --- FORCES ISSUES DES MACRO-ELEMENTS STATIQUES
-!
-    if (lmacr) then
-        call nmchex(veasse, 'VEASSE', 'CNSSTR', cnsstr)
-        nb_vect = nb_vect + 1
-        coef(nb_vect) = 1.d0
-        vect(nb_vect) = cnsstr
-    endif
-!
-! --- FORCES DES ELEMENTS DE CONTACT (XFEM+CONTINUE)
-!
-    if (ds_contact%l_cneltc) then
-        nb_vect = nb_vect + 1
-        coef(nb_vect) = -1.d0
-        vect(nb_vect) = ds_contact%cneltc
-    endif
-    if (ds_contact%l_cneltf) then
-        nb_vect = nb_vect + 1
-        coef(nb_vect) = -1.d0
-        vect(nb_vect) = ds_contact%cneltf
-    endif
-!
-! --- CHARGEMENT DONNE
-!
-    do i_vect = 1, nb_vect
-        call vtaxpy(coef(i_vect), vect(i_vect), cndonn)
-    end do
-!
-! - Get dead Neumann loads (for PILOTAGE)
-!
-    call nmchex(veasse, 'VEASSE', 'CNFEPI', cnffpi)
-!
-! - Get Dirichlet loads (for PILOTAGE)
-!
-    call nmchex(veasse, 'VEASSE', 'CNDIPI', cndfpi)
-!
-! --- CHARGEMENT PILOTE
-!
+    call nonlinDSVectCombInit(ds_vectcomb)
     if (l_pilo) then
-        nb_vect = 2
-        coef(1) = 1.d0
-        coef(2) = 1.d0
-        vect(1) = cnffpi
-        vect(2) = cndfpi
-        do i_vect = 1, nb_vect
-            call vtaxpy(coef(i_vect), vect(i_vect), cnpilo)
-        end do
+! ----- Get dead Neumann loads (for PILOTAGE)
+        call nonlinDSVectCombAddHat(veasse, 'CNFEPI', +1.d0, ds_vectcomb)
+! ----- Get Dirichlet loads (for PILOTAGE)
+        call nonlinDSVectCombAddHat(veasse, 'CNDIPI', +1.d0, ds_vectcomb)   
     endif
+!
+! - Second member (PILOTAGE)
+!
+    call nonlinDSVectCombCompute(ds_vectcomb, cnpilo)
 !
 ! - End timer
 !
