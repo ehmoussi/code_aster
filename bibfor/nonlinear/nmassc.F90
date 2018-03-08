@@ -35,8 +35,11 @@ implicit none
 #include "asterfort/nmasva.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmtime.h"
-#include "asterfort/vtaxpy.h"
 #include "asterfort/isfonc.h"
+#include "asterfort/nonlinDSVectCombInit.h"
+#include "asterfort/nonlinDSVectCombCompute.h"
+#include "asterfort/nonlinDSVectCombAddAny.h"
+#include "asterfort/nonlinDSVectCombAddHat.h"
 !
 type(NL_DS_Measure), intent(inout) :: ds_measure
 type(NL_DS_Contact), intent(in) :: ds_contact
@@ -64,15 +67,11 @@ character(len=19) :: veasse(*)
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer, parameter :: nb_vect_maxi = 10
-    real(kind=8) :: coef(nb_vect_maxi)
-    character(len=19) :: vect(nb_vect_maxi)
-    integer :: i_vect, nb_vect
     character(len=19) :: cnffdo, cndfdo, cnfvdo, cnvady
-    character(len=19) :: cnffpi, cndfpi, cndiri
-    character(len=19) :: cnfint, cnbudi, cnsstr
+    character(len=19) :: cnffpi, cndfpi
     real(kind=8) :: coeequ
-    aster_logical :: ldyna, l_pilo, l_macr
+    aster_logical :: l_dyna, l_pilo, l_macr
+    type(NL_DS_VectComb) :: ds_vectcomb
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -81,21 +80,19 @@ character(len=19) :: veasse(*)
         write (ifm,*) '<MECANONLINE> ...... CALCUL SECOND MEMBRE'
     endif
 !
-! --- INITIALISATIONS
+! - Initializations
 !
+    call nonlinDSVectCombInit(ds_vectcomb)
     cnffdo = '&&CNCHAR.FFDO'
     cnffpi = '&&CNCHAR.FFPI'
     cndfdo = '&&CNCHAR.DFDO'
     cndfpi = '&&CNCHAR.DFPI'
     cnfvdo = '&&CNCHAR.FVDO'
     cnvady = '&&CNCHAR.FVDY'
-    call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
-    call nmchex(veasse, 'VEASSE', 'CNBUDI', cnbudi)
-    call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
 !
-! --- FONCTIONNALITES ACTIVEES
+! - Active functionnalities
 !
-    ldyna = ndynlo(sddyna,'DYNAMIQUE')
+    l_dyna = ndynlo(sddyna,'DYNAMIQUE')
     l_pilo = isfonc(fonact,'PILOTAGE')
     l_macr = isfonc(fonact,'MACR_ELEM_STAT')
 !
@@ -107,89 +104,74 @@ character(len=19) :: veasse(*)
 ! - Get dead Neumann loads and multi-step dynamic schemes forces
 !
     call nmasfi(fonact, veasse, cnffdo, sddyna)
+    call nonlinDSVectCombAddAny(cnffdo, +1.d0, ds_vectcomb)
 !
 ! - Get Dirichlet loads
 !
     call nmasdi(fonact, veasse, cndfdo)
+    call nonlinDSVectCombAddAny(cndfdo, +1.d0, ds_vectcomb)
 !
 ! - Get undead Neumann loads and multi-step dynamic schemes forces
 !
     call nmasva(fonact, veasse, cnfvdo, sddyna)
+    call nonlinDSVectCombAddAny(cnfvdo, +1.d0, ds_vectcomb)
 !
 ! - Get undead Neumann loads for dynamic
 !
-    if (ldyna) then
+    if (l_dyna) then
         coeequ = ndynre(sddyna,'COEF_MPAS_EQUI_COUR')
         call ndasva(sddyna, veasse, cnvady)
+        call nonlinDSVectCombAddAny(cnvady, coeequ, ds_vectcomb)
     endif
 !
-! --- CHARGEMENTS DONNES AVEC PRISE EN COMPTE L'ERREUR DE L'ERREUR QUI
-!    FAITE SUR LES DDLS IMPOSES (CNDFDO - CNBUDI)
-!
-    nb_vect = 6
-    coef(1) = 1.d0
-    coef(2) = 1.d0
-    coef(3) = -1.d0
-    coef(4) = -1.d0
-    coef(5) = -1.d0
-    coef(6) = 1.d0
-!
-    vect(1) = cnffdo
-    vect(2) = cnfvdo
-    vect(3) = cnfint
-    vect(4) = cnbudi
-    vect(5) = cndiri
-    vect(6) = cndfdo
-!
-    if (ldyna) then
-        nb_vect = nb_vect + 1
-        coef(nb_vect) = coeequ
-        vect(nb_vect) = cnvady
-    endif
-!
-! - Add discrete contact force
+! - Add DISCRETE contact force
 !
     if (ds_contact%l_cnctdf) then
-        nb_vect = nb_vect + 1
-        coef(nb_vect) = -1.d0
-        vect(nb_vect) = ds_contact%cnctdf
+        call nonlinDSVectCombAddAny(ds_contact%cnctdf, -1.d0, ds_vectcomb)
     endif
 !
 ! - Force from sub-structuring
 !
     if (l_macr) then
-        call nmchex(veasse, 'VEASSE', 'CNSSTR', cnsstr)
-        nb_vect = nb_vect + 1
-        coef(nb_vect) = -1.d0
-        vect(nb_vect) = cnsstr
+        call nonlinDSVectCombAddHat(veasse, 'CNSSTR', -1.d0, ds_vectcomb)
     endif
 !
-! --- CHARGEMENT DONNE
+! - Add internal forces to second member
 !
-    do i_vect = 1, nb_vect
-        call vtaxpy(coef(i_vect), vect(i_vect), cndonn)
-    end do
+    call nonlinDSVectCombAddHat(veasse, 'CNFINT', -1.d0, ds_vectcomb)
 !
-! - Get dead Neumann loads (for PILOTAGE)
+! - Add Dirichlet boundary conditions - B.U
 !
-    call nmchex(veasse, 'VEASSE', 'CNFEPI', cnffpi)
+    call nonlinDSVectCombAddHat(veasse, 'CNBUDI', -1.d0, ds_vectcomb)
 !
-! - Get Dirichlet loads (for PILOTAGE)
+! - Add force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
 !
-    call nmchex(veasse, 'VEASSE', 'CNDIPI', cndfpi)
+    call nonlinDSVectCombAddHat(veasse, 'CNDIRI', -1.d0, ds_vectcomb)
 !
-! --- CHARGEMENT PILOTE
+! - Add CONTINUE/XFEM contact force
 !
+!    if (ds_contact%l_cneltc) then
+!        call nonlinDSVectCombAddAny(ds_contact%cneltc, -1.d0, ds_vectcomb)
+!    endif
+!    if (ds_contact%l_cneltf) then
+!        call nonlinDSVectCombAddAny(ds_contact%cneltf, -1.d0, ds_vectcomb)
+!    endif
+!
+! - Second member (standard)
+!
+    call nonlinDSVectCombCompute(ds_vectcomb, cndonn)
+!
+    call nonlinDSVectCombInit(ds_vectcomb)
     if (l_pilo) then
-        nb_vect = 2
-        coef(1) = 1.d0
-        coef(2) = 1.d0
-        vect(1) = cnffpi
-        vect(2) = cndfpi
-        do i_vect = 1, nb_vect
-            call vtaxpy(coef(i_vect), vect(i_vect), cnpilo)
-        end do
+! ----- Get dead Neumann loads (for PILOTAGE)
+        call nonlinDSVectCombAddHat(veasse, 'CNFEPI', +1.d0, ds_vectcomb)
+! ----- Get Dirichlet loads (for PILOTAGE)
+        call nonlinDSVectCombAddHat(veasse, 'CNDIPI', +1.d0, ds_vectcomb)   
     endif
+!
+! - Second member (PILOTAGE)
+!
+    call nonlinDSVectCombCompute(ds_vectcomb, cnpilo)
 !
 ! - End timer
 !
