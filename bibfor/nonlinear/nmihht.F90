@@ -72,13 +72,11 @@ type(NL_DS_InOut), intent(in) :: ds_inout
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=24) :: mate, varc_refe
     aster_logical :: l_init_state, l_reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    mate      = ds_material%field_mate
-    varc_refe = ds_material%varc_refe
+
 !
 ! - Does ETAT_INIT (initial state) exist ?
 !
@@ -91,10 +89,10 @@ type(NL_DS_InOut), intent(in) :: ds_inout
 ! - Compute previous second member for multi-step schemes
 !
     if (l_reuse .or. l_init_state) then
-        call nmchht(model    , mate     , cara_elem  , ds_constitutive,&
-                    list_load, nume_dof , varc_refe  , list_func_acti, ds_measure ,&
-                    sddyna   , sddisc   , sdnume     , &
-                    hval_incr, hval_algo, hval_measse, ds_inout)
+        call nmchht(model    , ds_material, cara_elem     , ds_constitutive,&
+                    list_load, nume_dof   , list_func_acti, ds_measure     ,&
+                    sddyna   , sddisc     , sdnume        , &
+                    hval_incr, hval_algo  , hval_measse   , ds_inout)
     endif
 
 end subroutine
