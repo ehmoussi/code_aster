@@ -17,18 +17,17 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmchht(model    , mate     , cara_elem  , ds_constitutive,&
-                      list_load, nume_dof , varc_refe  , list_func_acti, ds_measure,&
-                      sddyna   , sddisc   , sdnume     , &
-                      hval_incr, hval_algo, hval_measse, ds_inout)
+    subroutine nmchht(model    , ds_material, cara_elem     , ds_constitutive,&
+                      list_load, nume_dof   , list_func_acti, ds_measure,&
+                      sddyna   , sddisc     , sdnume        , &
+                      hval_incr, hval_algo  , hval_measse   , ds_inout)
         use NonLin_Datastructure_type
         character(len=24), intent(in) :: model
-        character(len=24), intent(in) :: mate
+        type(NL_DS_Material), intent(in) :: ds_material
         character(len=24), intent(in) :: cara_elem
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         character(len=24), intent(in) :: nume_dof
         character(len=19), intent(in) :: list_load
-        character(len=24), intent(in) :: varc_refe
         integer, intent(in) :: list_func_acti(*)
         type(NL_DS_Measure), intent(inout) :: ds_measure
         character(len=19), intent(in) :: sddyna
