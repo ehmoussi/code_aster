@@ -187,8 +187,8 @@ type(NL_DS_InOut), intent(in) :: ds_inout
     call nmfint(model         , mate  , cara_elem, varc_refe, ds_constitutive,&
                 list_func_acti, iterat, sddyna   , ds_measure,&
                 hval_incr, hval_algo  , ldccvg   , vefint)
-    call nmaint(nume_dof, list_func_acti, vefint,&
-                cnfint  , sdnume)
+    call nmaint(nume_dof, list_func_acti, sdnume,&
+                vefint  , cnfint)
 !
 ! - Given displacements
 !

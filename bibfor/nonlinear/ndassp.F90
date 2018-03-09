@@ -166,12 +166,12 @@ character(len=19) :: cndonn
 !
 ! - Add CONTINUE/XFEM contact force
 !
-!    if (ds_contact%l_cneltc) then
-!        call nonlinDSVectCombAddAny(ds_contact%cneltc, -1.d0, ds_vectcomb)
-!    endif
-!    if (ds_contact%l_cneltf) then
-!        call nonlinDSVectCombAddAny(ds_contact%cneltf, -1.d0, ds_vectcomb)
-!    endif
+    if (ds_contact%l_cneltc) then
+        call nonlinDSVectCombAddAny(ds_contact%cneltc, -1.d0, ds_vectcomb)
+    endif
+    if (ds_contact%l_cneltf) then
+        call nonlinDSVectCombAddAny(ds_contact%cneltf, -1.d0, ds_vectcomb)
+    endif
 !
 ! - Force from sub-structuring
 !
@@ -226,8 +226,8 @@ character(len=19) :: cndonn
 !
     if (ldccvg .eq. 0) then
 ! ----- Assemble internal forces
-        call nmaint(nume_dof, fonact, vefint,&
-                    cnfint, sdnume, ds_contact)
+        call nmaint(nume_dof, fonact, sdnume,&
+                    vefint  , cnfint)
 ! ----- Add internal forces to second member
         call nonlinDSVectCombAddHat(veasse, 'CNFINT', -1.d0, ds_vectcomb)
 ! ----- Combination

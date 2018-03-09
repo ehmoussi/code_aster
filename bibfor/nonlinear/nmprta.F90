@@ -182,9 +182,8 @@ character(len=19) :: meelem(*), measse(*)
 ! --- CALCUL DU SECOND MEMBRE POUR CONTACT/XFEM
 !
     if (leltc) then
-        call nmfocc('PREDICTION', modele    , ds_material, numedd, fonact,&
-                    ds_contact  , ds_measure, solalg, valinc, veelem,&
-                    veasse, ds_constitutive)
+        call nmfocc('PREDICTION', modele    , ds_material, numedd, fonact         ,&
+                    ds_contact  , ds_measure, solalg     , valinc, ds_constitutive)
     endif
 !
 ! --- CALCUL DU SECOND MEMBRE

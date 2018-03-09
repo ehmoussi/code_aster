@@ -273,16 +273,16 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
             call nmdebg('VECT', depdet, 6)
         endif
 !
-! ----- REACTUALISATION DES FORCES INTERIEURES
+! ----- Update internal forces
 !
         call nmfint(model, mate  , cara_elem, varc_refe, ds_constitutive,&
                     fonact, iterat, sddyna, ds_measure, valint(1, act) ,&
                     solalt, ldccvg, vefint)
 !
-! ----- ASSEMBLAGE DES FORCES INTERIEURES
+! ----- Assemble internal forces
 !
-        call nmaint(nume_dof, fonact, vefint,&
-                    cnfins(act), sdnume, ds_contact)
+        call nmaint(nume_dof, fonact, sdnume,&
+                    vefint, cnfins(act))
 ! ----- Update force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
         call nmtime(ds_measure, 'Init'  , '2nd_Member')
         call nmtime(ds_measure, 'Launch', '2nd_Member')

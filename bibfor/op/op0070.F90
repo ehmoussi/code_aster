@@ -315,8 +315,9 @@ implicit none
 ! --- MISE A JOUR DES INFORMATIONS POUR UN NOUVEAU PAS DE TEMPS
 !
     ASSERT(etcalc.eq.'CONT')
-    call nmfpas(fonact, sddyna, sdpilo, sddisc, nbiter,&
-                numins, eta   , valinc, solalg, veasse)
+    call nmfpas(fonact    , sddyna, sdpilo, sddisc, nbiter,&
+                numins    , eta   , valinc, solalg, veasse,&
+                ds_contact)
     numins = numins + 1
 !
     goto 200

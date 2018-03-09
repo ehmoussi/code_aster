@@ -305,8 +305,6 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 !  1  - CNFINT : FORCES INTERNES
 ! --------------------------------------------------------------------
             else if (i.eq.1) then
-! CONTIENT UNE CONTRIBUTION DU CONTACT QU ON ENLEVE PAR AILLEURS.
-! CONTIENT LA CONTRIBUTION DES MACRO ELEMENTS.
                 do j = 1, neq
                     fnopl(j)=fnopl(j)+veass(j)
                 end do

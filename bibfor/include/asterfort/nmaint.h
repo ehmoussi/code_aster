@@ -17,14 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmaint(numedd, fonact, vefint,&
-                      cnfint, sdnume, ds_contact_)
+    subroutine nmaint(nume_dof, list_func_acti, sdnume,&
+                      vefint  , cnfint)
         use NonLin_Datastructure_type
-        character(len=24) :: numedd
-        integer :: fonact(*)
-        type(NL_DS_Contact), optional, intent(in) :: ds_contact_
-        character(len=19) :: vefint
-        character(len=19) :: cnfint
-        character(len=19) :: sdnume
+        character(len=24), intent(in) :: nume_dof
+        integer, intent(in) :: list_func_acti(*)
+        character(len=19), intent(in) :: sdnume
+        character(len=19), intent(in) :: vefint, cnfint
     end subroutine nmaint
 end interface

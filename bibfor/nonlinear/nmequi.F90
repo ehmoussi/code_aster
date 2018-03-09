@@ -81,12 +81,12 @@ real(kind=8), optional, intent(in) :: eta_
         if (ds_contact_%l_cnctdf) then
             call nonlinDSVectCombAddAny(ds_contact_%cnctdf, +1.d0, ds_vectcomb)
         endif
-!        if (ds_contact_%l_cneltc) then
-!            call nonlinDSVectCombAddAny(ds_contact_%cneltc, +1.d0, ds_vectcomb)
-!        endif
-!        if (ds_contact_%l_cneltf) then
-!            call nonlinDSVectCombAddAny(ds_contact_%cneltf, +1.d0, ds_vectcomb)
-!        endif
+        if (ds_contact_%l_cneltc) then
+            call nonlinDSVectCombAddAny(ds_contact_%cneltc, +1.d0, ds_vectcomb)
+        endif
+        if (ds_contact_%l_cneltf) then
+            call nonlinDSVectCombAddAny(ds_contact_%cneltf, +1.d0, ds_vectcomb)
+        endif
     endif
     if (l_disp) then
         call nonlinDSVectCombAddAny(cnbudi_, +1.d0, ds_vectcomb)

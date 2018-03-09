@@ -150,12 +150,12 @@ character(len=19) :: veasse(*)
 !
 ! - Add CONTINUE/XFEM contact force
 !
-!    if (ds_contact%l_cneltc) then
-!        call nonlinDSVectCombAddAny(ds_contact%cneltc, -1.d0, ds_vectcomb)
-!    endif
-!    if (ds_contact%l_cneltf) then
-!        call nonlinDSVectCombAddAny(ds_contact%cneltf, -1.d0, ds_vectcomb)
-!    endif
+    if (ds_contact%l_cneltc) then
+        call nonlinDSVectCombAddAny(ds_contact%cneltc, -1.d0, ds_vectcomb)
+    endif
+    if (ds_contact%l_cneltf) then
+        call nonlinDSVectCombAddAny(ds_contact%cneltf, -1.d0, ds_vectcomb)
+    endif
 !
 ! - Second member (standard)
 !

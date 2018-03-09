@@ -17,9 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmfocc(phase      , model     , ds_material, nume_dof , list_func_acti,&
-                  ds_contact , ds_measure, hval_algo, hval_incr, hval_veelem   ,&
-                  hval_veasse, ds_constitutive)
+subroutine nmfocc(phase      , model     , ds_material, nume_dof , list_func_acti ,&
+                  ds_contact , ds_measure, hval_algo  , hval_incr, ds_constitutive)
 !
 use NonLin_Datastructure_type
 !
@@ -48,8 +47,6 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=19), intent(in) :: hval_algo(*)
 character(len=19), intent(in) :: hval_incr(*)
-character(len=19), intent(in) :: hval_veelem(*)
-character(len=19), intent(in) :: hval_veasse(*)
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 !
 ! --------------------------------------------------------------------------------------------------
@@ -72,8 +69,6 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
-! In  hval_veelem      : hat-variable for elementary vectors
-! In  hval_veasse      : hat-variable for vectors (node fields)
 ! In  ds_constitutive  : datastructure for constitutive laws management
 !
 ! --------------------------------------------------------------------------------------------------
@@ -83,7 +78,7 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
     aster_logical :: l_xthm
     character(len=8) :: mesh
     character(len=19) :: vect_elem_cont, vect_elem_frot
-    character(len=19) :: vect_asse_frot, vect_asse_cont, vect_asse_fint
+    character(len=19) :: vect_asse_frot, vect_asse_cont
     character(len=19) :: disp_prev, disp_cumu_inst, disp_newt_curr, vite_prev, acce_prev, vite_curr
     character(len=19) :: varc_prev, varc_curr, time_prev, time_curr
 !
@@ -107,7 +102,6 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 !
 ! - Get fields
 !
-    call nmchex(hval_veasse, 'VEASSE', 'CNFINT', vect_asse_fint)
     call nmchex(hval_incr, 'VALINC', 'DEPMOI', disp_prev)
     call nmchex(hval_incr, 'VALINC', 'VITMOI', vite_prev)
     call nmchex(hval_incr, 'VALINC', 'ACCMOI', acce_prev)
@@ -127,17 +121,6 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 !
     if ((phase.eq.'CONVERGENC') .and. (l_newt_cont .or. l_newt_geom)) then
         goto 999
-    endif
-!
-! - Prepare internal forces: no previous contact forces
-!
-    if (phase .eq. 'CORRECTION') then
-        if (l_elem_cont .and. (.not.l_all_verif)) then
-            call vtaxpy(-1.d0, vect_asse_cont, vect_asse_fint)
-        endif
-        if (l_elem_frot .and. (.not.l_all_verif) .and. (.not.l_xthm)) then
-            call vtaxpy(-1.d0, vect_asse_frot, vect_asse_fint)
-        endif
     endif
 !
 ! - Compute contact forces
@@ -172,17 +155,6 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         call nmrinc(ds_measure, 'Cont_Elem')
         if (niv .eq. 2) then
             call nmdebg('VECT', vect_asse_frot, ifm)
-        endif
-    endif
-!
-! - Prepare internal forces: add new contact forces
-!
-    if (phase .eq. 'CORRECTION') then
-        if (l_elem_cont .and. (.not.l_all_verif)) then
-            call vtaxpy(+1.d0, vect_asse_cont, vect_asse_fint)
-        endif
-        if (l_elem_frot .and. (.not.l_all_verif) .and. (.not.l_xthm)) then
-            call vtaxpy(+1.d0, vect_asse_frot, vect_asse_fint)
         endif
     endif
 !

@@ -99,6 +99,8 @@ character(len=19), optional, intent(in) :: sddyna_
     if (l_mult_step) then
         call nonlinDSVectCombAddDyna(sddyna_, 'CNFSDO', coeext, ds_vectcomb)
         call nonlinDSVectCombAddDyna(sddyna_, 'CNFINT', -1.d0*coeint, ds_vectcomb)
+        call nonlinDSVectCombAddDyna(sddyna_, 'CNELTC', -1.d0*coeint, ds_vectcomb)
+        call nonlinDSVectCombAddDyna(sddyna_, 'CNELTF', -1.d0*coeint, ds_vectcomb)
         if (l_macr) then
             call nonlinDSVectCombAddDyna(sddyna_, 'CNSSTR', -1.d0*coeint, ds_vectcomb)
         endif

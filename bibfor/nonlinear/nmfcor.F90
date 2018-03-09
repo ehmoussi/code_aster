@@ -148,9 +148,8 @@ aster_logical :: lerrit
 ! --- CALCUL DU SECOND MEMBRE POUR CONTACT/XFEM
 !
     if (leltc) then
-        call nmfocc('CONVERGENC', model    , ds_material, nume_dof, fonact,&
-                    ds_contact  , ds_measure, solalg, valinc, veelem,&
-                    veasse, ds_constitutive)
+        call nmfocc('CONVERGENC', model     , ds_material, nume_dof, fonact,&
+                    ds_contact  , ds_measure, solalg     , valinc  , ds_constitutive)
     endif
 !
 ! --- OPTION POUR MERIMO
@@ -159,7 +158,7 @@ aster_logical :: lerrit
                 iterat     , ds_contact, lcfint, lcdiri, lcbudi,&
                 lcrigi     , option)
 !
-! --- CALCUL DES FORCES INTERNES ET DE LA RIGIDITE SI NECESSAIRE
+! - Compute internal forces / matrix rigidity
 !
     if (lcfint) then
         if (lcrigi) then
@@ -183,13 +182,13 @@ aster_logical :: lerrit
         call nmctcd(fonact, ds_contact, nume_dof)
     endif
 !
-! --- ASSEMBLAGE DES FORCES INTERIEURES
+! - Assemble internal forces
 !
     call nmtime(ds_measure, 'Init', '2nd_Member')
     call nmtime(ds_measure, 'Launch', '2nd_Member')
     if (lcfint) then
-        call nmaint(nume_dof, fonact, vefint,&
-                    cnfint, sdnume, ds_contact)
+        call nmaint(nume_dof, fonact, sdnume,&
+                    vefint  , cnfint)
     endif
 !
 ! - Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
@@ -200,7 +199,7 @@ aster_logical :: lerrit
                     sddyna, vitplu     , accplu)
     endif
 !
-! --- CALCUL ET ASSEMBLAGE DE B.U
+! - Compute Dirichlet boundary conditions - B.U
 !
     call nmbudi(model, nume_dof, list_load, depplu, vebudi,&
                 cnbudi, matass)
