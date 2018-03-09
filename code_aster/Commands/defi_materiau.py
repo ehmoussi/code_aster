@@ -61,7 +61,6 @@ class MaterialDefinition(ExecuteCommand):
                     continue
                 iName = skwName.capitalize()
                 if fkwName in ("MFRONT", "UMAT"):
-                    print skw
                     matBehav.setVectorOfDoubleValue(iName, list(skw))
                     continue
                 if fkwName in ("MFRONT_FO", "UMAT_FO"):
@@ -121,7 +120,11 @@ class MaterialDefinition(ExecuteCommand):
                 continue
             if not issubclass(obj, GeneralMaterialBehaviour):
                 continue
-            key = obj().getAsterName()
+            key = ""
+            try:
+                key = obj.getName()
+            except:
+                key = obj().getAsterName()
             objects[key] = obj
         return objects
 

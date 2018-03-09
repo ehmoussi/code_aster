@@ -61,6 +61,20 @@ bool GeneralMaterialBehaviourInstance::buildJeveuxVectors( JeveuxVectorComplex& 
             throw std::runtime_error( "Mandatory material property " + nameOfProperty + " is missing" );
 
     }
+    for( auto curIter : _mapOfConvertibleMaterialProperties ){
+        std::string nameOfProperty = curIter.second.getName();
+        if( curIter.second.hasValue() )
+        {
+            nameOfProperty.resize( 16, ' ' );
+            (*char16Values)[position] = nameOfProperty.c_str();
+            (*doubleValues)[position] = curIter.second.getValue();
+            ++position;
+        }
+
+        if( curIter.second.isMandatory() && ! curIter.second.hasValue() )
+            throw std::runtime_error( "Mandatory material property " + nameOfProperty + " is missing" );
+
+    }
     doubleValues->setUsedSize(position);
 
     for( auto curIter : _mapOfComplexMaterialProperties ){
@@ -262,6 +276,10 @@ int GeneralMaterialBehaviourInstance::getNumberOfPropertiesWithValue() const
             ++toReturn;
 
     for( auto curIter : _mapOfVectorFunctionMaterialProperties )
+        if( curIter.second.hasValue() )
+            ++toReturn;
+
+    for( auto curIter : _mapOfConvertibleMaterialProperties )
         if( curIter.second.hasValue() )
             ++toReturn;
 
