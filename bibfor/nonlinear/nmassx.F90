@@ -38,8 +38,10 @@ implicit none
 #include "asterfort/nmdiri.h"
 #include "asterfort/nmfint.h"
 #include "asterfort/nmtime.h"
-#include "asterfort/vtaxpy.h"
-#include "asterfort/vtzero.h"
+#include "asterfort/nonlinDSVectCombInit.h"
+#include "asterfort/nonlinDSVectCombCompute.h"
+#include "asterfort/nonlinDSVectCombAddAny.h"
+#include "asterfort/nonlinDSVectCombAddHat.h"
 !
 integer :: ldccvg
 integer :: fonact(*)
@@ -86,42 +88,40 @@ character(len=19) :: cndonn
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=24) :: mate, varc_refe
-    character(len=19) :: cnffdo, cndfdo, cnfvdo, cnvady, cnsstr
-    character(len=19) :: cndumm
-    character(len=19) :: cndiri, cnfint
-    character(len=19) :: vediri, vefint
+    character(len=19) :: cnffdo, cndfdo, cnfvdo, cnvady, cndumm
+    character(len=19) :: vefint, cnfint
+    character(len=19) :: vediri, cndiri
     character(len=19) :: disp_prev, vite_prev, acce_prev
-    integer :: iterat
-    integer :: i_vect, nb_vect
-    real(kind=8) :: coef(8)
-    character(len=19) :: vect(8)
-    real(kind=8) :: coeequ
     aster_logical :: l_macr
+    integer :: iterat
+    real(kind=8) :: coeequ
+    type(NL_DS_VectComb) :: ds_vectcomb
 !
 ! --------------------------------------------------------------------------------------------------
 !
     mate      = ds_material%field_mate
     varc_refe = ds_material%varc_refe
+!
+! - Initializations
+!
+    call nonlinDSVectCombInit(ds_vectcomb)
     iterat = 0
-    call vtzero(cndonn)
     cndumm = '&&CNCHAR.DUMM'
     cnffdo = '&&CNCHAR.FFDO'
     cndfdo = '&&CNCHAR.DFDO'
     cnfvdo = '&&CNCHAR.FVDO'
     cnvady = '&&CNCHAR.FVDY'
+    l_macr = isfonc(fonact,'MACR_ELEM_STAT')
 !
-! --- DECOMPACTION DES VARIABLES CHAPEAUX
+! - Get hat variables
 !
-    call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
-    call nmchex(veelem, 'VEELEM', 'CNFINT', vefint)
     call nmchex(valinc, 'VALINC', 'DEPMOI', disp_prev)
     call nmchex(valinc, 'VALINC', 'VITMOI', vite_prev)
     call nmchex(valinc, 'VALINC', 'ACCMOI', acce_prev)
 !
-! --- COEFFICIENTS POUR MULTI-PAS
+! - Coefficient for multi-step scheme
 !
     coeequ = ndynre(sddyna,'COEF_MPAS_EQUI_COUR')
-    l_macr = isfonc(fonact,'MACR_ELEM_STAT')
 !
 ! - Launch timer
 !
@@ -131,18 +131,32 @@ character(len=19) :: cndonn
 ! - Get dead Neumann loads and multi-step dynamic schemes forces
 !
     call nmasfi(fonact, veasse, cnffdo, sddyna)
+    call nonlinDSVectCombAddAny(cnffdo, +1.d0, ds_vectcomb)
 !
 ! - Get Dirichlet loads
 !
     call nmasdi(fonact, veasse, cndfdo)
+    call nonlinDSVectCombAddAny(cndfdo, +1.d0, ds_vectcomb)
 !
 ! - Get undead Neumann loads and multi-step dynamic schemes forces
 !
     call nmasva(fonact, veasse, cnfvdo, sddyna)
+    call nonlinDSVectCombAddAny(cnfvdo, +1.d0, ds_vectcomb)
 !
 ! - Get undead Neumann loads for dynamic
 !
     call ndasva(sddyna, veasse, cnvady)
+    call nonlinDSVectCombAddAny(cnvady, coeequ, ds_vectcomb)
+!
+! - Force from sub-structuring
+!
+    if (l_macr) then
+        call nonlinDSVectCombAddHat(veasse, 'CNSSTR', -1.d0, ds_vectcomb)
+    endif
+!
+! - External state variable
+!
+    call nonlinDSVectCombAddAny(ds_material%fvarc_pred, +1.d0, ds_vectcomb)
 !
 ! - Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
 !
@@ -151,55 +165,27 @@ character(len=19) :: cndonn
     call nmdiri(model    , ds_material, cara_elem, list_load,&
                 disp_prev, vediri     , nume_dof , cndiri   ,&
                 sddyna   , vite_prev  , acce_prev)
+    call nonlinDSVectCombAddHat(veasse, 'CNDIRI', -1.d0, ds_vectcomb)
 !
 ! - End timer
 !
     call nmtime(ds_measure, 'Stop', '2nd_Member')
 !
-! --- CALCUL DES FORCES INTERIEURES
+! - Compute internal forces
 !
-    call nmfint(model, mate  , cara_elem, varc_refe , ds_constitutive,&
-                fonact, iterat, sddyna, ds_measure, valinc         ,&
+    call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
+    call nmchex(veelem, 'VEELEM', 'CNFINT', vefint)
+    call nmfint(model , mate  , cara_elem, varc_refe , ds_constitutive,&
+                fonact, iterat, sddyna   , ds_measure, valinc         ,&
                 solalg, ldccvg, vefint)
 !
-! --- ASSEMBLAGE DES FORCES INTERIEURES
-!
-    call assvec('V', cnfint, 1, vefint, [1.d0], nume_dof, ' ', 'ZERO', 1)
-!
-! --- CHARGEMENTS DONNES
-!
-    nb_vect = 7
-    coef(1) = 1.d0
-    coef(2) = 1.d0
-    coef(3) = -1.d0
-    coef(4) = 1.d0
-    coef(5) = 1.d0
-    coef(6) = -1.d0
-    coef(7) = coeequ
-    vect(1) = cnffdo
-    vect(2) = cnfvdo
-    vect(3) = cnfint
-    vect(4) = ds_material%fvarc_pred(1:19)
-    vect(5) = cndfdo
-    vect(6) = cndiri
-    vect(7) = cnvady
-!
-! - Force from sub-structuring
-!
-    if (l_macr) then
-        call nmchex(veasse, 'VEASSE', 'CNSSTR', cnsstr)
-        nb_vect = nb_vect + 1
-        coef(nb_vect) = -1.d0
-        vect(nb_vect) = cnsstr
+    if (ldccvg .eq. 0) then
+! ----- Assemble internal forces
+        call assvec('V', cnfint, 1, vefint, [1.d0], nume_dof, ' ', 'ZERO', 1)
+! ----- Add internal forces to second member
+        call nonlinDSVectCombAddHat(veasse, 'CNFINT', -1.d0, ds_vectcomb)
+! ----- Combination
+        call nonlinDSVectCombCompute(ds_vectcomb, cndonn)
     endif
-!
-! --- CHARGEMENT DONNE
-!
-    if (nb_vect .gt. 8) then
-        ASSERT(.false.)
-    endif
-    do i_vect = 1, nb_vect
-        call vtaxpy(coef(i_vect), vect(i_vect), cndonn)
-    end do
 !
 end subroutine
