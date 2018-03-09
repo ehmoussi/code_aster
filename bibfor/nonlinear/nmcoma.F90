@@ -186,7 +186,7 @@ integer :: faccvg, ldccvg
                 metcor, reasma, lcamor, optrig, lcrigi,&
                 larigi, lcfint)
 !
-! --- CALCUL DES FORCES INTERNES
+! - Compute internal forces
 !
     if (lcfint) then
         call nmfint(modele, mate  , carele, varc_refe, ds_constitutive,&
@@ -198,12 +198,12 @@ integer :: faccvg, ldccvg
 !
     if (ldccvg .eq. 1) goto 999
 !
-! --- ASSEMBLAGE DES FORCES INTERNES
+! - Assemble internal forces
 !
     if (lcfint) then
         lcfint = .false.
-        call nmaint(numedd, fonact, vefint,&
-                    cnfint, sdnume, ds_contact)
+        call nmaint(numedd, fonact, sdnume,&
+                    vefint, cnfint)
     endif
 !
 ! --- CALCUL DES MATR_ELEM CONTACT/XFEM_CONTACT

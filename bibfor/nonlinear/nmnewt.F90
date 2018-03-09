@@ -299,9 +299,8 @@ integer :: nbiter
 !
 ! --- MISE A JOUR DES EFFORTS DE CONTACT
 !
-    call nmfcon(model, numedd, ds_material, fonact, ds_contact,&
-                ds_measure, valinc, solalg,&
-                veelem, veasse,  ds_constitutive)
+    call nmfcon(model     , numedd, ds_material, fonact         , ds_contact,&
+                ds_measure, valinc, solalg     , ds_constitutive)
 !
 ! - Evaluate events at current Newton iteration
 !

@@ -17,9 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmfcon(modele, numedd, ds_material, fonact, ds_contact,&
-                  ds_measure, valinc, solalg,&
-                  veelem, veasse, ds_constitutive)
+subroutine nmfcon(modele    , numedd, ds_material, fonact         , ds_contact,&
+                  ds_measure, valinc, solalg     , ds_constitutive)
 !
 use NonLin_Datastructure_type
 !
@@ -31,7 +30,6 @@ implicit none
 !
 integer :: fonact(*)
 character(len=24) :: modele, numedd
-character(len=19) :: veelem(*), veasse(*)
 character(len=19) :: solalg(*), valinc(*)
 type(NL_DS_Measure), intent(inout) :: ds_measure
 type(NL_DS_Contact), intent(in) :: ds_contact
@@ -54,8 +52,6 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
-! IN  VEELEM : VARIABLE CHAPEAU POUR NOM DES VECT_ELEM
-! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
 ! In  ds_constitutive  : datastructure for constitutive laws management
 !
 ! ----------------------------------------------------------------------
@@ -69,9 +65,8 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 ! --- CALCUL DU SECOND MEMBRE POUR CONTACT/XFEM
 !
     if (leltc) then
-        call nmfocc('CORRECTION', modele, ds_material, numedd, fonact,&
-                    ds_contact, ds_measure, solalg,&
-                    valinc, veelem, veasse, ds_constitutive)
+        call nmfocc('CORRECTION', modele    , ds_material, numedd, fonact,&
+                    ds_contact  , ds_measure, solalg,valinc, ds_constitutive)
     endif
 !
 end subroutine

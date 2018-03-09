@@ -145,6 +145,10 @@ character(len=19) :: nomsd
         cham24 = zk24(jvaol+10-1)
     else if (chaine(1:11).eq.'OLDP_CNSSTR') then
         cham24 = zk24(jvaol+11-1)
+    else if (chaine(1:11).eq.'OLDP_CNELTC') then
+        cham24 = zk24(jvaol+12-1)
+    else if (chaine(1:11).eq.'OLDP_CNELTF') then
+        cham24 = zk24(jvaol+13-1)
 !
     else if (chaine(1:6).eq.'CHONDP') then
         cham24 = zk24(jtcha+1-1)

@@ -17,33 +17,27 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmaint(numedd, fonact, vefint,&
-                  cnfint, sdnume, ds_contact_)
+subroutine nmaint(nume_dof, list_func_acti, sdnume,&
+                  vefint  , cnfint)
 !
 use NonLin_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "jeveux.h"
 #include "asterfort/assvec.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/nmasco.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmdebg.h"
-#include "asterfort/vtaxpy.h"
 #include "asterfort/vtzero.h"
 !
-integer :: fonact(*)
-character(len=24) :: numedd
-character(len=19) :: vefint, cnfint
-character(len=19) :: sdnume
-type(NL_DS_Contact), optional, intent(in) :: ds_contact_
+character(len=24), intent(in) :: nume_dof
+integer, intent(in) :: list_func_acti(*)
+character(len=19), intent(in) :: sdnume
+character(len=19), intent(in) :: vefint, cnfint
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,89 +47,56 @@ type(NL_DS_Contact), optional, intent(in) :: ds_contact_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IN  NUMEDD : NOM DE LA NUMEROTATION
-! IN  FONACT : FONCTIONNALITES ACTIVEES
-! In  ds_contact       : datastructure for contact management
-! IN  VEFINT : VECT_ELEM FORCES INTERNES
-! IN  CNFINT : VECT_ASSE FORCES INTERNES
-! IN  SDNUME : SD NUMEROTATION
-!
-! --------------------------------------------------------------------------------------------------
-!
     integer :: ifm, niv
     character(len=1) :: base
-    aster_logical :: lcont
-    character(len=19) :: cncont
-    integer :: neq, i, endo
+    integer :: nb_equa, i_equa
     integer :: endop1, endop2
     aster_logical :: lendo
-    real(kind=8), pointer :: vale(:) => null()
+    real(kind=8), pointer :: v_cnfint(:) => null()
+    integer, pointer :: v_endo(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
     if (niv .ge. 2) then
         write (ifm,*) '<MECANONLINE> ... ASSEMBLAGE DES FORCES INTERNES'
     endif
 !
-! --- INITIALISATIONS
+! - Initializations
 !
-    base = 'V'
-    lcont = isfonc(fonact,'CONTACT')
-    cncont = '&&CNCHAR.DUMM'
+    base  = 'V'
     call vtzero(cnfint)
-    call vtzero(cncont)
+    lendo = isfonc(list_func_acti,'ENDO_NO')
 !
-! --- CONTRIBUTIONS DU CONTACT
-!
-    if (lcont) then
-        if (present(ds_contact_)) then
-            call nmasco(cncont, ds_contact_)
-        endif
-    endif
-!
-! --- ASSEMBLAGE DES FORCES INTERIEURES
+! - Assemble
 !
     call assvec(base, cnfint, 1, vefint, [1.d0],&
-                numedd, ' ', 'ZERO', 1)
+                nume_dof, ' ', 'ZERO', 1)
 !
-    lendo = isfonc(fonact,'ENDO_NO')
+! - Change values fro GDVARINO
 !
     if (lendo) then
-        call jeveuo(sdnume(1:19)//'.ENDO', 'L', endo)
-        call jeveuo(cnfint(1:19)//'.VALE', 'E', vr=vale)
-!
-        call dismoi('NB_EQUA', numedd, 'NUME_DDL', repi=neq)
-!
+        call jeveuo(sdnume(1:19)//'.ENDO', 'L', vi=v_endo)
+        call jeveuo(cnfint(1:19)//'.VALE', 'E', vr=v_cnfint)
+        call dismoi('NB_EQUA', nume_dof, 'NUME_DDL', repi=nb_equa)
         endop1 = 0
         endop2 = 0
-!
-        do i = 1, neq
-!
-            if (zi(endo+i-1) .eq. 2) then
-                if (vale(i) .ge. 0.d0) then
+        do i_equa = 1, nb_equa
+            if (v_endo(i_equa) .eq. 2) then
+                if (v_cnfint(i_equa) .ge. 0.d0) then
                     endop2 = endop2+1
-                    vale(i) = 0.d0
+                    v_cnfint(i_equa) = 0.d0
                 else
                     endop1 = endop1+1
                 endif
             endif
-!
         end do
     endif
 !
-! --- CONTRIBUTIONS DU CONTACT
-!
-    if (lcont) then
-        call vtaxpy(1.d0, cncont, cnfint)
-    endif
-!
-! --- AFFICHAGE
+! - Debug
 !
     if (niv .ge. 2) then
         call nmdebg('VECT', cnfint, 6)
     endif
 !
-    call jedema()
 end subroutine

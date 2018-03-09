@@ -17,9 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmfocc(phase      , model     , ds_material, nume_dof , list_func_acti,&
-                      ds_contact , ds_measure, hval_algo  , hval_incr, hval_veelem   ,&
-                      hval_veasse, ds_constitutive)
+    subroutine nmfocc(phase      , model     , ds_material, nume_dof , list_func_acti ,&
+                      ds_contact , ds_measure, hval_algo  , hval_incr, ds_constitutive)
         use NonLin_Datastructure_type
         character(len=10), intent(in) :: phase
         character(len=24), intent(in) :: model
@@ -30,8 +29,6 @@ interface
         type(NL_DS_Measure), intent(inout) :: ds_measure
         character(len=19), intent(in) :: hval_algo(*)
         character(len=19), intent(in) :: hval_incr(*)
-        character(len=19), intent(in) :: hval_veelem(*)
-        character(len=19), intent(in) :: hval_veasse(*)
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
     end subroutine nmfocc
 end interface

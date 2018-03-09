@@ -198,16 +198,16 @@ character(len=19) :: solalg(*), valinc(*)
     call nmchex(valint, 'VALINC', 'VITPLU', vite)
     call nmchex(valint, 'VALINC', 'ACCPLU', acce)
 !
-! --- REACTUALISATION DES FORCES INTERIEURES
+! - Compute internal forces
 !
     call nmfint(model, mate  , cara_elem, varc_refe , ds_constitutive,&
                 fonact, iterat, k19bla, ds_measure, valint         ,&
                 solalt, ldccvg, vefint)
 !
-! --- ASSEMBLAGE DES FORCES INTERIEURES
+! - Assemble internal forces
 !
-    call nmaint(nume_dof, fonact, vefint,&
-                cnfint, sdnume, ds_contact)
+    call nmaint(nume_dof, fonact, sdnume,&
+                vefint  , cnfint)
 !
 ! - Launch timer
 !

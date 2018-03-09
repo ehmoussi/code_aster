@@ -84,7 +84,7 @@ character(len=19), intent(in) :: veasse(*)
     character(len=19) :: cnondp, cnlapl, cnviss
     character(len=19) :: cnsstf, cnsstr
     character(len=19) :: cnimpe
-    character(len=19) :: cnfepi, cndipi, cnrefe
+    character(len=19) :: cnfepi, cndipi, cnrefe, cneltc, cneltf
 !
 ! ----------------------------------------------------------------------
 !
@@ -303,6 +303,10 @@ character(len=19), intent(in) :: veasse(*)
             call vtcreb(cnviss, 'V', 'R', nume_ddlz = numedd)
             call ndynkk(sddyna, 'OLDP_CNSSTR', cnsstr)
             call vtcreb(cnsstr, 'V', 'R', nume_ddlz = numedd)
+            call ndynkk(sddyna, 'OLDP_CNELTC', cneltc)
+            call vtcreb(cneltc, 'V', 'R', nume_ddlz = numedd)
+            call ndynkk(sddyna, 'OLDP_CNELTF', cneltf)
+            call vtcreb(cneltf, 'V', 'R', nume_ddlz = numedd)
         endif
     endif
 !

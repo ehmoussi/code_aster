@@ -103,7 +103,7 @@ character(len=19) :: lischa
 !
     character(len=19) :: cdfedo, cdfsdo, cddidi, cdfint
     character(len=19) :: cddido, cdcine
-    character(len=19) :: cdondp, cdlapl
+    character(len=19) :: cdondp, cdlapl, cdeltc, cdeltf
     character(len=19) :: cdsstf, cdviss, cdsstr
 !
     character(len=19) :: depent, vitent, accent
@@ -115,6 +115,7 @@ character(len=19) :: lischa
     data cdondp,cdlapl    /'&&NDLECT.CNONDP','&&NDLECT.CNLAPL'/
     data cdcine,cdsstf    /'&&NDLECT.CNCINE','&&NDLECT.CNSSTF'/
     data cdsstr           /'&&NDLECT.CNSSTR'/
+    data cdeltc,cdeltf    /'&&NDLECT.CNELTC','&&NDLECT.CNELTF'/
 !
     data vefedo,vefsdo    /'&&NDLECT.VEFEDO','&&NDLECT.VEFSDO'/
     data vedido,vedidi    /'&&NDLECT.VEDIDO','&&NDLECT.VEDIDI'/
@@ -391,6 +392,8 @@ character(len=19) :: lischa
         zk24(jvaol+9-1) = cdcine
         zk24(jvaol+10-1) = cdviss
         zk24(jvaol+11-1) = cdsstr
+        zk24(jvaol+12-1) = cdeltc
+        zk24(jvaol+13-1) = cdeltf
     endif
 !
 ! --- CARTE STADYN POUR POUTRES
