@@ -17,9 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nonlinSubStruCompute(ds_measure ,&
-                                hval_incr  ,&
-                                hval_veasse, hval_measse)
+subroutine nonlinSubStruCompute(ds_measure , disp  ,&
+                                hval_measse, cnsstr)
 !
 use NonLin_Datastructure_type
 !
@@ -33,8 +32,8 @@ implicit none
 #include "asterfort/nmmacv.h"
 !
 type(NL_DS_Measure), intent(inout) :: ds_measure
-character(len=19), intent(in) :: hval_incr(*)
-character(len=19), intent(in) :: hval_veasse(*), hval_measse(*)
+character(len=19), intent(in) :: disp
+character(len=19), intent(in) :: cnsstr, hval_measse(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -45,19 +44,16 @@ character(len=19), intent(in) :: hval_veasse(*), hval_measse(*)
 ! --------------------------------------------------------------------------------------------------
 !
 ! IO  ds_measure       : datastructure for measure and statistics management
-! In  hval_incr        : hat-variable for incremental values fields
+! In  disp             : displacement field
 ! In  hval_measse      : hat-variable for matrix
-! In  hval_veasse      : hat-variable for vectors (node fields)
+! In  cnsstr           : name of sub-structuring effect on second member
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=24) :: vect_asse
-    character(len=19) :: matr_sstr, depl_curr
+    character(len=19) :: matr_sstr
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call nmchex(hval_incr  , 'VALINC', 'DEPPLU', depl_curr)
-    call nmchex(hval_veasse, 'VEASSE', 'CNSSTR', vect_asse)
     call nmchex(hval_measse, 'MEASSE', 'MESSTR', matr_sstr)
 !
 ! - Launch timer
@@ -67,7 +63,7 @@ character(len=19), intent(in) :: hval_veasse(*), hval_measse(*)
 !
 ! - Compute
 !
-    call nmmacv(depl_curr, matr_sstr, vect_asse)
+    call nmmacv(disp, matr_sstr, cnsstr)
 !
 ! - Stop timer
 !

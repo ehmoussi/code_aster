@@ -123,7 +123,7 @@ integer :: pilcvg, ldccvg
     real(kind=8) :: fgmax, fgmin, amelio, residu, etaopt, rho
     character(len=19) :: veasst(zveass), solalt(zsolal), valint(zvalin, 2)
     character(len=19) :: cnfins(2), cndirs(2), k19bla
-    character(len=19) :: cndiri, cnfint, cnfext
+    character(len=19) :: cndiri, cnfint, cnfext, cnsstr
     character(len=19) :: depplu, sigplu, varplu, complu
     character(len=19) :: depdet
     character(len=19) :: sigplt, varplt, depplt
@@ -169,6 +169,7 @@ integer :: pilcvg, ldccvg
 !
     call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
     call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
+    call nmchex(veasse, 'VEASSE', 'CNSSTR', cnsstr)
     call nmchex(valinc, 'VALINC', 'DEPPLU', depplu)
     call nmchex(valinc, 'VALINC', 'SIGPLU', sigplu)
     call nmchex(valinc, 'VALINC', 'VARPLU', varplu)

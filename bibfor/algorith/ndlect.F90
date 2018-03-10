@@ -74,7 +74,7 @@ character(len=19) :: lischa
     parameter     (quatre = 4.d0 )
 !
     integer :: nmodam, nreavi, nondp
-    integer :: nbmods, nbmoda, nbmodp, nbsst
+    integer :: nbmods, nbmoda, nbmodp
     integer :: iret
     integer :: n1, nbmg, nrv
     integer :: nbexci, nbgene
@@ -104,7 +104,7 @@ character(len=19) :: lischa
     character(len=19) :: cnfedo, cnfsdo, cndidi, cnfint
     character(len=19) :: cndido, cncine
     character(len=19) :: cnondp, cnlapl
-    character(len=19) :: cnsstf, cnviss
+    character(len=19) :: cnsstf, cnviss, cnsstr
 !
     character(len=19) :: depent, vitent, accent
     character(len=19) :: depabs, vitabs, accabs
@@ -114,6 +114,7 @@ character(len=19) :: lischa
     data cnfint,cnviss    /'&&NDLECT.CNFINT','&&NDLECT.CNVISS'/
     data cnondp,cnlapl    /'&&NDLECT.CNONDP','&&NDLECT.CNLAPL'/
     data cncine,cnsstf    /'&&NDLECT.CNCINE','&&NDLECT.CNSSTF'/
+    data cnsstr           /'&&NDLECT.CNSSTR'/
 !
     data vefedo,vefsdo    /'&&NDLECT.VEFEDO','&&NDLECT.VEFSDO'/
     data vedido,vedidi    /'&&NDLECT.VEDIDO','&&NDLECT.VEDIDI'/
@@ -389,6 +390,7 @@ character(len=19) :: lischa
         zk24(jvaol+8-1) = cnsstf
         zk24(jvaol+9-1) = cncine
         zk24(jvaol+10-1) = cnviss
+        zk24(jvaol+11-1) = cnsstr
     endif
 !
 ! --- CARTE STADYN POUR POUTRES

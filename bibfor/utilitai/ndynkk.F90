@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine ndynkk(sddyna, chaine, nomsd)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine ndynkk(sddyna, chaine, nomsd)
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -28,9 +28,10 @@ subroutine ndynkk(sddyna, chaine, nomsd)
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/ndynlo.h"
-    character(len=19) :: sddyna
-    character(len=*) :: chaine
-    character(len=19) :: nomsd
+!
+character(len=19) :: sddyna
+character(len=*) :: chaine
+character(len=19) :: nomsd
 !
 ! ----------------------------------------------------------------------
 !
@@ -142,6 +143,8 @@ subroutine ndynkk(sddyna, chaine, nomsd)
         cham24 = zk24(jvaol+9-1)
     else if (chaine(1:11).eq.'OLDP_CNVISS') then
         cham24 = zk24(jvaol+10-1)
+    else if (chaine(1:11).eq.'OLDP_CNSSTR') then
+        cham24 = zk24(jvaol+11-1)
 !
     else if (chaine(1:6).eq.'CHONDP') then
         cham24 = zk24(jtcha+1-1)

@@ -123,7 +123,7 @@ character(len=19) :: cnfext
 !
 ! - Get undead Neumann loads and multi-step dynamic schemes forces
 !
-    call nmasva(veasse, cnfvdo, sddyna)
+    call nmasva(fonact, veasse, cnfvdo, sddyna)
 !
 ! - Get undead Neumann loads for dynamic
 !

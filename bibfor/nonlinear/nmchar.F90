@@ -33,8 +33,10 @@ implicit none
 #include "asterfort/ndynlo.h"
 #include "asterfort/nmcvec.h"
 #include "asterfort/nmxvec.h"
+#include "asterfort/nmchex.h"
 #include "asterfort/nonlinDynaImpeCompute.h"
 #include "asterfort/nonlinDynaMDampCompute.h"
+#include "asterfort/nonlinSubStruCompute.h"
 !
 character(len=4) :: mode
 character(len=*) :: phasez
@@ -88,6 +90,7 @@ character(len=19) :: solalg(*), valinc(*)
     aster_logical :: londe, llapl, lammo, lsstf, lviss
     aster_logical :: limpe, lpilo, lmacr, limpex, l_diri_undead
     character(len=10) :: phase
+    character(len=19) :: disp_curr, cnsstr
     integer :: nbvect
     character(len=16) :: loptve(20)
     character(len=6) :: ltypve(20)
@@ -126,78 +129,7 @@ character(len=19) :: solalg(*), valinc(*)
 ! --- CHARGEMENTS FIXES PENDANT LE PAS DE TEMPS (ON EST EN PREDICTION)
 !
     if (mode .eq. 'FIXE') then
-!
-! --- DEPLACEMENTS IMPOSES DONNES
-!
-        call nmcvec('AJOU', 'CNDIDO', ' ', .true._1, .true._1,&
-                    nbvect, ltypve, loptve, lcalve, lassve)
-!
-! --- DEPLACEMENTS IMPOSES PILOTES
-!
-        if (lpilo) then
-            call nmcvec('AJOU', 'CNDIPI', ' ', .true._1, .true._1,&
-                        nbvect, ltypve, loptve, lcalve, lassve)
-        endif
-!
-! --- CHARGEMENTS FORCES DE LAPLACE
-!
-        if (llapl) then
-            call nmcvec('AJOU', 'CNLAPL', ' ', .true._1, .true._1,&
-                        nbvect, ltypve, loptve, lcalve, lassve)
-        endif
-!
-! --- CHARGEMENTS ONDE_PLANE
-!
-        if (londe) then
-            call nmcvec('AJOU', 'CNONDP', ' ', .true._1, .true._1,&
-                        nbvect, ltypve, loptve, lcalve, lassve)
-        endif
-!
-! --- CHARGEMENTS MECANIQUES FIXES DONNES
-!
-        call nmcvec('AJOU', 'CNFEDO', ' ', .true._1, .true._1,&
-                    nbvect, ltypve, loptve, lcalve, lassve)
-!
-! --- CHARGEMENTS MECANIQUES PILOTES
-!
-        if (lpilo) then
-            call nmcvec('AJOU', 'CNFEPI', ' ', .true._1, .true._1,&
-                        nbvect, ltypve, loptve, lcalve, lassve)
-        endif
-!
-! --- CONDITIONS CINEMATIQUES IMPOSEES  (AFFE_CHAR_CINE)
-!
-        call nmcvec('AJOU', 'CNCINE', ' ', .false._1, .true._1,&
-                    nbvect, ltypve, loptve, lcalve, lassve)
-!
-! --- FORCES NODALES POUR PREDICTION (SKIP FOR IMPLEX/EXPLICITE)
-!
-        if (.not.(lexpl.or.limpex)) then
-            call nmcvec('AJOU', 'CNFNOD', 'SIGMOI', .true._1, .true._1,&
-                        nbvect, ltypve, loptve, lcalve, lassve)
-        endif
-!
-! --- FORCES ISSUES DU CALCUL PAR SOUS-STRUCTURATION
-!
-        if (lsstf) then
-            call nmcvec('AJOU', 'CNSSTF', ' ', .true._1, .true._1,&
-                        nbvect, ltypve, loptve, lcalve, lassve)
-        endif
-!
-! --- CHARGES VEC_ISS
-!
-        if (lviss) then
-            call nmcvec('AJOU', 'CNVISS', ' ', .false._1, .true._1,&
-                        nbvect, ltypve, loptve, lcalve, lassve)
-        endif
-!
-! --- CALCUL ET ASSEMBLAGE
-!
-        call nmxvec(modele  , mate  , carele, ds_constitutive, ds_measure,&
-                    sddisc  , sddyna, numins, valinc, solalg,&
-                    lischa  , numedd,&
-                    ds_inout, veelem, veasse, measse, nbvect,&
-                    ltypve  , lcalve, loptve, lassve)
+
 !
 ! --- CHARGEMENTS VARIABLES PENDANT LE PAS DE TEMPS
 !
@@ -272,8 +204,10 @@ character(len=19) :: solalg(*), valinc(*)
 ! --- VECT_ASSE(MACR_ELEM) = MATR_ASSE(MACR_ELEM) * VECT_DEPL
 !
         if (lmacr) then
-            call nmcvec('AJOU', 'CNSSTR', ' ', .false._1, .true._1,&
-                        nbvect, ltypve, loptve, lcalve, lassve)
+            call nmchex(valinc, 'VALINC', 'DEPPLU', disp_curr)
+            call nmchex(veasse, 'VEASSE', 'CNSSTR', cnsstr)
+            call nonlinSubStruCompute(ds_measure, disp_curr,&
+                                      measse    , cnsstr)
         endif
 !
 ! --- CALCUL EFFECTIF
@@ -287,73 +221,7 @@ character(len=19) :: solalg(*), valinc(*)
 ! --- CHARGEMENTS POUR ACCELERATION INITIALE
 !
     else if (mode.eq.'ACCI') then
-        if (numins .ne. 0) then
-            ASSERT(.false.)
-        endif
-!
-! --- CHARGEMENTS MECANIQUES FIXES DONNES
-!
-        call nmcvec('AJOU', 'CNFEDO', ' ', .true._1, .true._1,&
-                    nbvect, ltypve, loptve, lcalve, lassve)
-!
-! --- FORCES SUIVEUSES DONNEES
-!
-        call nmcvec('AJOU', 'CNFSDO', ' ', .true._1, .true._1,&
-                    nbvect, ltypve, loptve, lcalve, lassve)
-!
-! --- DEPLACEMENTS IMPOSES DONNES
-!
-        call nmcvec('AJOU', 'CNDIDO', ' ', .true._1, .true._1,&
-                    nbvect, ltypve, loptve, lcalve, lassve)
-!
-! --- FORCES NODALES
-!
-        call nmcvec('AJOU', 'CNFNOD', 'SIGMOI', .true._1, .true._1,&
-                    nbvect, ltypve, loptve, lcalve, lassve)
-!
-! --- CONDITIONS CINEMATIQUES IMPOSEES  (AFFE_CHAR_CINE)
-!
-        call nmcvec('AJOU', 'CNCINE', ' ', .false._1, .true._1,&
-                    nbvect, ltypve, loptve, lcalve, lassve)
-!
-! --- FORCES ISSUES DES MACRO-ELEMENTS
-!
-        if (lmacr) then
-            call nmcvec('AJOU', 'CNSSTR', ' ', .false._1, .true._1,&
-                        nbvect, ltypve, loptve, lcalve, lassve)
-        endif
-!
-! --- FORCES ISSUES DU CALCUL PAR SOUS-STRUCTURATION
-!
-        if (lsstf) then
-            call nmcvec('AJOU', 'CNSSTF', ' ', .true._1, .true._1,&
-                        nbvect, ltypve, loptve, lcalve, lassve)
-        endif
-!
-! --- FORCES IMPEDANCES
-!
-        if (limpe) then
-            call nonlinDynaImpeCompute('Prediction', sddyna    ,&
-                                       modele      , numedd    ,&
-                                       ds_material , ds_measure,&
-                                       valinc      ,&
-                                       veelem      , veasse)
-        endif
-!
-! --- CHARGES VEC_ISS
-!
-        if (lviss) then
-            call nmcvec('AJOU', 'CNVISS', ' ', .false._1, .true._1,&
-                        nbvect, ltypve, loptve, lcalve, lassve)
-        endif
-!
-! --- CALCUL ET ASSEMBLAGE
-!
-        call nmxvec(modele  , mate  , carele, ds_constitutive, ds_measure,&
-                    sddisc  , sddyna, numins, valinc, solalg,&
-                    lischa  , numedd,&
-                    ds_inout, veelem, veasse, measse, nbvect,&
-                    ltypve  , lcalve, loptve, lassve)
+
     else
         ASSERT(.false.)
     endif

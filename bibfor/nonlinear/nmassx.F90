@@ -28,6 +28,7 @@ implicit none
 !
 #include "asterfort/assert.h"
 #include "asterfort/assvec.h"
+#include "asterfort/isfonc.h"
 #include "asterfort/ndasva.h"
 #include "asterfort/ndynre.h"
 #include "asterfort/nmasdi.h"
@@ -85,7 +86,7 @@ character(len=19) :: cndonn
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=24) :: mate, varc_refe
-    character(len=19) :: cnffdo, cndfdo, cnfvdo, cnvady
+    character(len=19) :: cnffdo, cndfdo, cnfvdo, cnvady, cnsstr
     character(len=19) :: cndumm
     character(len=19) :: cndiri, cnfint
     character(len=19) :: vediri, vefint
@@ -95,6 +96,7 @@ character(len=19) :: cndonn
     real(kind=8) :: coef(8)
     character(len=19) :: vect(8)
     real(kind=8) :: coeequ
+    aster_logical :: l_macr
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -119,6 +121,7 @@ character(len=19) :: cndonn
 ! --- COEFFICIENTS POUR MULTI-PAS
 !
     coeequ = ndynre(sddyna,'COEF_MPAS_EQUI_COUR')
+    l_macr = isfonc(fonact,'MACR_ELEM_STAT')
 !
 ! - Launch timer
 !
@@ -135,7 +138,7 @@ character(len=19) :: cndonn
 !
 ! - Get undead Neumann loads and multi-step dynamic schemes forces
 !
-    call nmasva(veasse, cnfvdo, sddyna)
+    call nmasva(fonact, veasse, cnfvdo, sddyna)
 !
 ! - Get undead Neumann loads for dynamic
 !
@@ -180,6 +183,15 @@ character(len=19) :: cndonn
     vect(5) = cndfdo
     vect(6) = cndiri
     vect(7) = cnvady
+!
+! - Force from sub-structuring
+!
+    if (l_macr) then
+        call nmchex(veasse, 'VEASSE', 'CNSSTR', cnsstr)
+        nb_vect = nb_vect + 1
+        coef(nb_vect) = -1.d0
+        vect(nb_vect) = cnsstr
+    endif
 !
 ! --- CHARGEMENT DONNE
 !

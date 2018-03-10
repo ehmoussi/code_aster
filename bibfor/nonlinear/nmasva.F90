@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmasva(hval_veasse, cnvado, sddyna_)
+subroutine nmasva(list_func_acti, hval_veasse, cnvado, sddyna_)
 !
 use NonLin_Datastructure_type
 !
@@ -31,7 +31,9 @@ implicit none
 #include "asterfort/infdbg.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/ndynre.h"
+#include "asterfort/isfonc.h"
 !
+integer, intent(in) :: list_func_acti(*)
 character(len=19), intent(in) :: hval_veasse(*), cnvado
 character(len=19), optional, intent(in) :: sddyna_
 !
@@ -43,15 +45,16 @@ character(len=19), optional, intent(in) :: sddyna_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  sddyna           : datastructure for dynamic
+! In  list_func_acti   : list of active functionnalities
 ! In  hval_veasse      : hat-variable for vectors (node fields)
 ! In  cnvado           : name of resultant nodal field
+! In  sddyna           : datastructure for dynamic
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
     real(kind=8) :: coeext, coeex2, coeint
-    aster_logical :: l_dyna, l_mult_step
+    aster_logical :: l_dyna, l_mult_step, l_macr
     type(NL_DS_VectComb) :: ds_vectcomb
 !
 ! --------------------------------------------------------------------------------------------------
@@ -69,6 +72,7 @@ character(len=19), optional, intent(in) :: sddyna_
         l_mult_step = ndynlo(sddyna_,'MULTI_PAS')
         l_dyna      = ndynlo(sddyna_,'DYNAMIQUE')
     endif
+    l_macr = isfonc(list_func_acti,'MACR_ELEM_STAT')
 !
 ! - Initializations
 !
@@ -95,6 +99,9 @@ character(len=19), optional, intent(in) :: sddyna_
     if (l_mult_step) then
         call nonlinDSVectCombAddDyna(sddyna_, 'CNFSDO', coeext, ds_vectcomb)
         call nonlinDSVectCombAddDyna(sddyna_, 'CNFINT', -1.d0*coeint, ds_vectcomb)
+        if (l_macr) then
+            call nonlinDSVectCombAddDyna(sddyna_, 'CNSSTR', -1.d0*coeint, ds_vectcomb)
+        endif
     endif
 !
 ! - Combination

@@ -44,6 +44,7 @@ implicit none
 #include "asterfort/nmvcex.h"
 #include "asterfort/utmess.h"
 #include "asterfort/nd_mstp_time.h"
+#include "asterfort/nonlinSubStruCompute.h"
 !
 character(len=24), intent(in) :: model
 character(len=24), intent(in) :: mate
@@ -98,9 +99,9 @@ type(NL_DS_InOut), intent(in) :: ds_inout
     character(len=19) :: vefedo, veondp, vedidi, velapl, vesstf
     character(len=19) :: cnfedo, cndidi, cnfint
     character(len=19) :: cndido, cncine, cnviss
-    character(len=19) :: cnondp, cnlapl, cnsstf
-    character(len=19) :: matr_sstr, disp_prev
-    character(len=24) :: cnsstr, codere
+    character(len=19) :: cnondp, cnlapl, cnsstf, cnsstr
+    character(len=19) :: disp_prev
+    character(len=24) :: codere
     character(len=19) :: varc_prev, varc_curr, time_prev, time_curr
     real(kind=8) :: time_init, time_prev_step
     integer :: iterat, ldccvg
@@ -173,14 +174,14 @@ type(NL_DS_InOut), intent(in) :: ds_inout
     call ndynkk(sddyna, 'OLDP_CNCINE', cncine)
     call ndynkk(sddyna, 'OLDP_CNVISS', cnviss)
     call ndynkk(sddyna, 'OLDP_CNSSTF', cnsstf)
-    call nmchex(hval_veasse, 'VEASSE', 'CNSSTR', cnsstr(1:19))
-    call nmchex(hval_measse, 'MEASSE', 'MESSTR', matr_sstr)
-    call nmchex(hval_incr  , 'VALINC', 'DEPMOI', disp_prev)
+    call ndynkk(sddyna, 'OLDP_CNSSTR', cnsstr)
 !
 ! - Forces from macro-elements
 ! 
     if (lmacr) then
-        call nmmacv(disp_prev, matr_sstr, cnsstr)
+        call nmchex(hval_incr, 'VALINC', 'DEPMOI', disp_prev)
+        call nonlinSubStruCompute(ds_measure , disp_prev  ,&
+                                  hval_measse, cnsstr)
     endif  
 !
 ! - Internal forces

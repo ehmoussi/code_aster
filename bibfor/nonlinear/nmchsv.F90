@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -53,7 +53,8 @@ subroutine nmchsv(fonact, veasse, sddyna)
     character(len=19) :: olondp, ollapl, olcine, olviss, olsstf
     character(len=19) :: cnfedo, cnfsdo, cndido, cndidi, cnfint
     character(len=19) :: cnondp, cnlapl, cncine, cnviss, cnsstf
-    aster_logical :: londe, llapl, ldidi, lviss, lsstf
+    character(len=19) :: olsstr, cnsstr 
+    aster_logical :: londe, llapl, ldidi, lviss, lsstf, l_macr
 !
 ! ----------------------------------------------------------------------
 !
@@ -61,11 +62,12 @@ subroutine nmchsv(fonact, veasse, sddyna)
 !
 ! --- FONCTIONNALITES ACTIVEES
 !
-    londe = ndynlo(sddyna,'ONDE_PLANE')
-    lviss = ndynlo(sddyna,'VECT_ISS')
-    lsstf = isfonc(fonact,'SOUS_STRUC')
-    llapl = isfonc(fonact,'LAPLACE')
-    ldidi = isfonc(fonact,'DIDI')
+    londe  = ndynlo(sddyna,'ONDE_PLANE')
+    lviss  = ndynlo(sddyna,'VECT_ISS')
+    lsstf  = isfonc(fonact,'SOUS_STRUC')
+    llapl  = isfonc(fonact,'LAPLACE')
+    ldidi  = isfonc(fonact,'DIDI')
+    l_macr = isfonc(fonact,'MACR_ELEM_STAT')
 !
 ! --- NOM DES CHAMPS PAS PRECEDENT
 !
@@ -79,6 +81,7 @@ subroutine nmchsv(fonact, veasse, sddyna)
     call ndynkk(sddyna, 'OLDP_CNCINE', olcine)
     call ndynkk(sddyna, 'OLDP_CNVISS', olviss)
     call ndynkk(sddyna, 'OLDP_CNSSTF', olsstf)
+    call ndynkk(sddyna, 'OLDP_CNSSTR', olsstr)
 !
 ! --- NOM DES CHAMPS PAS COURANT
 !
@@ -92,6 +95,7 @@ subroutine nmchsv(fonact, veasse, sddyna)
     call nmchex(veasse, 'VEASSE', 'CNCINE', cncine)
     call nmchex(veasse, 'VEASSE', 'CNVISS', cnviss)
     call nmchex(veasse, 'VEASSE', 'CNSSTF', cnsstf)
+    call nmchex(veasse, 'VEASSE', 'CNSSTR', cnsstr)
 !
 ! --- RECOPIE DES CHAMPS
 !
@@ -114,6 +118,9 @@ subroutine nmchsv(fonact, veasse, sddyna)
     endif
     if (lsstf) then
         call copisd('CHAMP_GD', 'V', cnsstf, olsstf)
+    endif
+    if (l_macr) then
+        call copisd('CHAMP_GD', 'V', cnsstr, olsstr)
     endif
 !
     call jedema()

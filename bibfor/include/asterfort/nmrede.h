@@ -20,7 +20,7 @@ interface
     subroutine nmrede(list_func_acti, sddyna     ,&
                       sdnume        , nb_equa    , matass,&
                       ds_material   , ds_contact ,&
-                      cnfext        , cnfint     , cndiri,&
+                      cnfext        , cnfint     , cndiri, cnsstr,&
                       hval_measse   , hval_incr  ,&
                       r_char_vale   , r_char_indx)
         use NonLin_Datastructure_type
@@ -30,7 +30,7 @@ interface
         character(len=19), intent(in) :: matass
         type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Contact), intent(in) :: ds_contact
-        character(len=19), intent(in) :: cnfext, cnfint, cndiri
+        character(len=19), intent(in) :: cnfext, cnfint, cndiri, cnsstr
         character(len=19), intent(in) :: hval_measse(*)
         character(len=19), intent(in) :: hval_incr(*)
         real(kind=8), intent(out) :: r_char_vale
