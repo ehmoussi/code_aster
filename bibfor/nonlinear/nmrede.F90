@@ -20,7 +20,7 @@
 subroutine nmrede(list_func_acti, sddyna     ,&
                   sdnume        , nb_equa    , matass,&
                   ds_material   , ds_contact ,&
-                  cnfext        , cnfint     , cndiri,&
+                  cnfext        , cnfint     , cndiri, cnsstr,&
                   hval_measse   , hval_incr  ,&
                   r_char_vale   , r_char_indx)
 !
@@ -44,7 +44,7 @@ integer, intent(in) :: nb_equa
 character(len=19), intent(in) :: matass
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Contact), intent(in) :: ds_contact
-character(len=19), intent(in) :: cnfext, cnfint, cndiri
+character(len=19), intent(in) :: cnfext, cnfint, cndiri, cnsstr
 character(len=19), intent(in) :: hval_measse(*)
 character(len=19), intent(in) :: hval_incr(*)
 real(kind=8), intent(out) :: r_char_vale
@@ -68,6 +68,7 @@ integer, intent(out) :: r_char_indx
 ! In  cnfext           : nodal field for external force
 ! In  cnfint           : nodal field for internal force
 ! In  cndiri           : nodal field for support reaction
+! In  cnsstr           : nodal field for sub-structuring force
 ! In  hval_measse      : hat-variable for matrix
 ! In  hval_incr        : hat-variable for incremental values fields
 ! Out r_char_vale      : norm for denominator of RESI_GLOB_RELA
@@ -76,7 +77,7 @@ integer, intent(out) :: r_char_indx
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    aster_logical :: l_dyna, l_load_cine, l_cont_cont, l_cont_lac
+    aster_logical :: l_dyna, l_load_cine, l_cont_cont, l_cont_lac, l_macr
     character(len=19) :: cniner
     integer :: i_equa
     real(kind=8) :: val2, appui, fext
@@ -88,6 +89,7 @@ integer, intent(out) :: r_char_indx
     real(kind=8), pointer :: v_cnfext(:) => null()
     real(kind=8), pointer :: v_cnfint(:) => null()
     real(kind=8), pointer :: v_cniner(:) => null()
+    real(kind=8), pointer :: v_cnsstr(:) => null()
     real(kind=8), pointer :: v_fvarc_curr(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -106,6 +108,7 @@ integer, intent(out) :: r_char_indx
     l_load_cine = isfonc(list_func_acti,'DIRI_CINE')
     l_cont_cont = isfonc(list_func_acti,'CONT_CONTINU')
     l_cont_lac  = isfonc(list_func_acti,'CONT_LAC')
+    l_macr      = isfonc(list_func_acti, 'MACR_ELEM_STAT')
 !
 ! - Compute inertial force
 !
@@ -139,6 +142,9 @@ integer, intent(out) :: r_char_indx
     if (ds_contact%l_cnctdf) then
         call jeveuo(ds_contact%cnctdf(1:19)//'.VALE', 'L', vr=v_cnctdf)
     endif
+    if (l_macr) then
+        call jeveuo(cnsstr(1:19)//'.VALE', 'L', vr=v_cnsstr)
+    endif
 !
 ! - Compute
 !
@@ -150,6 +156,9 @@ integer, intent(out) :: r_char_indx
             if (v_ccid(i_equa) .eq. 1) then
                 appui = - v_cnfint(i_equa)
                 fext  = 0.d0
+                if (l_macr) then
+                    appui = - v_cnfint(i_equa) - v_cnsstr(i_equa)
+                endif
             else
                 if (ds_contact%l_cnctdf) then
                     appui = v_cndiri(i_equa) + v_cnctdf(i_equa)

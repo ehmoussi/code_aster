@@ -18,15 +18,15 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nmequi(l_disp     , l_pilo, cnresu,&
-                      cnfint     , cnfext, cndiri,&
+    subroutine nmequi(l_disp     , l_pilo, l_macr, cnresu,&
+                      cnfint     , cnfext, cndiri, cnsstr,&
                       ds_contact_,&
                       cnbudi_    , cndfdo_,&
                       cndipi_    , eta_)
         use NonLin_Datastructure_type
-        aster_logical, intent(in) :: l_disp, l_pilo
+        aster_logical, intent(in) :: l_disp, l_pilo, l_macr
         character(len=19), intent(in) :: cnresu
-        character(len=19), intent(in) :: cnfint, cnfext, cndiri
+        character(len=19), intent(in) :: cnfint, cnfext, cndiri, cnsstr
         type(NL_DS_Contact), optional, intent(in) :: ds_contact_
         character(len=19), optional, intent(in) :: cnbudi_, cndfdo_, cndipi_
         real(kind=8), optional, intent(in) :: eta_

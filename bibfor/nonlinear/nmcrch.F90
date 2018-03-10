@@ -307,6 +307,8 @@ character(len=19), intent(in) :: veasse(*)
             call vtcreb(cncine, 'V', 'R', nume_ddlz = numedd)
             call ndynkk(sddyna, 'OLDP_CNVISS', cnviss)
             call vtcreb(cnviss, 'V', 'R', nume_ddlz = numedd)
+            call ndynkk(sddyna, 'OLDP_CNSSTR', cnsstr)
+            call vtcreb(cnsstr, 'V', 'R', nume_ddlz = numedd)
         endif
     endif
 !

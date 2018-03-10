@@ -107,14 +107,14 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
     integer, pointer :: v_ccid(:) => null()
     integer :: nb_equa=0, i_equa=0
     character(len=24) :: mate, varc_refe
-    aster_logical :: l_stat, l_load_cine, l_cont_cont, l_cont_lac, l_rom
+    aster_logical :: l_stat, l_load_cine, l_cont_cont, l_cont_lac, l_rom, l_macr
     aster_logical :: l_resi_refe, l_varc_init, l_resi_comp, l_rela
     aster_logical :: l_no_disp, l_pilo, l_disp
     character(len=19) :: profch=' '
     character(len=19) :: varc_prev=' ', disp_prev=' '
     character(len=19) :: cndiri=' ', cnbudi=' ', cnfext=' '
     character(len=19) :: cnrefe=' ', cnfint=' '
-    character(len=19) :: cnfnod=' ', cndfdo=' ', cnequi = ' ', cndipi = ' '
+    character(len=19) :: cnfnod=' ', cndfdo=' ', cnequi = ' ', cndipi = ' ', cnsstr = ' '
     real(kind=8) :: vale_equi=0.d0, vale_refe=0.d0, vale_varc=0.d0
     integer :: r_rela_indx=0, r_resi_indx=0, r_equi_indx=0
     integer :: r_refe_indx=0, r_char_indx=0, r_comp_indx=0
@@ -169,6 +169,7 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
     l_cont_cont = isfonc(list_func_acti,'CONT_CONTINU')
     l_cont_lac  = isfonc(list_func_acti,'CONT_LAC')
     l_rom       = isfonc(list_func_acti,'ROM')
+    l_macr      = isfonc(list_func_acti, 'MACR_ELEM_STAT')
     l_varc_init = (nume_inst .eq. 1) .and. (.not.ds_inout%l_state_init)
     l_no_disp   = .not.(ndynlo(sddyna,'FORMUL_DEPL').or.l_stat)
     l_disp      = ASTER_TRUE
@@ -184,6 +185,7 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
     call nmchex(hval_veasse, 'VEASSE', 'CNFNOD', cnfnod)
     call nmchex(hval_veasse, 'VEASSE', 'CNFEXT', cnfext)
     call nmchex(hval_veasse, 'VEASSE', 'CNFINT', cnfint)
+    call nmchex(hval_veasse, 'VEASSE', 'CNSSTR', cnsstr)
     cndfdo = '&&CNCHAR.DFDO'
 !
 ! - Compute external forces
@@ -219,7 +221,7 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
     call nmrede(list_func_acti, sddyna    ,&
                 sdnume        , nb_equa   , matass,&
                 ds_material   , ds_contact,&
-                cnfext        , cnfint    , cndiri,&
+                cnfext        , cnfint    , cndiri, cnsstr,&
                 hval_measse   , hval_incr ,&
                 r_char_vale   , r_char_indx)
 !
@@ -238,8 +240,8 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
 ! - Compute lack of balance forces
 !
     cnequi = '&&CNCHAR.DONN'
-    call nmequi(l_disp     , l_pilo, cnequi,&
-                cnfint     , cnfext, cndiri,&
+    call nmequi(l_disp     , l_pilo, l_macr, cnequi,&
+                cnfint     , cnfext, cndiri, cnsstr,&
                 ds_contact,&
                 cnbudi     , cndfdo,&
                 cndipi     , eta)

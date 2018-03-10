@@ -82,7 +82,6 @@ character(len=*) :: vecasz, vecelz
 ! --------------------------------------------------------------------------------------------------
 !
     real(kind=8) :: r8bid
-    character(len=19) :: sstru
     character(len=19) :: vecele
     character(len=24) :: vaonde, vadido, vafedo, valamp
     character(len=24) :: vafepi, vafsdo
@@ -209,13 +208,6 @@ character(len=*) :: vecasz, vecelz
     else if (typvec.eq.'CNVISS') then
         call nmviss(numedd, sddyna, ds_inout, instam, instap,&
                     vecass)
-!
-! --- FORCES ISSUES DES MACRO-ELEMENTS (PAS DE VECT_ELEM)
-! --- VECT_ASSE(MACR_ELEM) = MATR_ASSE(MACR_ELEM) * VECT_DEPL
-!
-    else if (typvec.eq.'CNSSTR') then
-        call nmchex(measse, 'MEASSE', 'MESSTR', sstru)
-        call nmmacv(depplu, sstru, vecass)
 !
 ! --- FORCE D'EQUILIBRE DYNAMIQUE (PAS DE VECT_ELEM)
 !

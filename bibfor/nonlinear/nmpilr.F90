@@ -55,9 +55,9 @@ real(kind=8), intent(out) :: residu
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=19) :: cnfext, cnfint, cndiri, cnbudi, cndipi, cndfdo, cnequi
+    character(len=19) :: cnfext, cnfint, cndiri, cnbudi, cndipi, cndfdo, cnequi, cnsstr
     integer :: i_equa, nb_equa
-    aster_logical :: l_load_cine, l_disp, l_pilo
+    aster_logical :: l_load_cine, l_disp, l_pilo, l_macr
     integer, pointer :: v_ccid(:) => null()
     real(kind=8), pointer :: v_cnequi(:) => null()
 !
@@ -67,7 +67,8 @@ real(kind=8), intent(out) :: residu
 !
 ! - Active functionnalities
 !
-    l_load_cine = isfonc(list_func_acti,'DIRI_CINE')
+    l_load_cine = isfonc(list_func_acti, 'DIRI_CINE')
+    l_macr      = isfonc(list_func_acti, 'MACR_ELEM_STAT')
     l_disp      = ASTER_TRUE
     l_pilo      = ASTER_TRUE
 !
@@ -78,6 +79,7 @@ real(kind=8), intent(out) :: residu
     call nmchex(hval_veasse, 'VEASSE', 'CNFEXT', cnfext)
     call nmchex(hval_veasse, 'VEASSE', 'CNBUDI', cnbudi)
     call nmchex(hval_veasse, 'VEASSE', 'CNDIPI', cndipi)
+    call nmchex(hval_veasse, 'VEASSE', 'CNSSTR', cnsstr)
     cndfdo = '&&CNCHAR.DFDO'
 !
 ! - For kinematic loads
@@ -90,8 +92,8 @@ real(kind=8), intent(out) :: residu
 ! - Compute lack of balance forces
 !
     cnequi = '&&CNCHAR.DONN'
-    call nmequi(l_disp     , l_pilo, cnequi,&
-                cnfint     , cnfext, cndiri,&
+    call nmequi(l_disp     , l_pilo, l_macr, cnequi,&
+                cnfint     , cnfext, cndiri, cnsstr,&
                 cnbudi_ = cnbudi, cndfdo_ = cndfdo,&
                 cndipi_ = cndipi, eta_    = eta)
     call jeveuo(cnequi(1:19)//'.VALE', 'L', vr=v_cnequi)

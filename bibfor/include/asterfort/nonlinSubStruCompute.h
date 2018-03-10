@@ -17,12 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nonlinSubStruCompute(ds_measure ,&
-                                    hval_incr  ,&
-                                    hval_veasse, hval_measse)
+    subroutine nonlinSubStruCompute(ds_measure , disp  ,&
+                                    hval_measse, cnsstr)
         use NonLin_Datastructure_type
         type(NL_DS_Measure), intent(inout) :: ds_measure
-        character(len=19), intent(in) :: hval_incr(*)
-        character(len=19), intent(in) :: hval_veasse(*), hval_measse(*)
+        character(len=19), intent(in) :: disp
+        character(len=19), intent(in) :: cnsstr, hval_measse(*)
     end subroutine nonlinSubStruCompute
 end interface

@@ -70,9 +70,9 @@ character(len=19) :: veasse(*)
     integer :: i_vect, nb_vect
     character(len=19) :: cnffdo, cndfdo, cnfvdo, cnvady
     character(len=19) :: cnffpi, cndfpi, cndiri
-    character(len=19) :: cnfint, cnbudi
+    character(len=19) :: cnfint, cnbudi, cnsstr
     real(kind=8) :: coeequ
-    aster_logical :: ldyna, l_pilo
+    aster_logical :: ldyna, l_pilo, l_macr
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -97,6 +97,7 @@ character(len=19) :: veasse(*)
 !
     ldyna = ndynlo(sddyna,'DYNAMIQUE')
     l_pilo = isfonc(fonact,'PILOTAGE')
+    l_macr = isfonc(fonact,'MACR_ELEM_STAT')
 !
 ! - Launch timer
 !
@@ -113,7 +114,7 @@ character(len=19) :: veasse(*)
 !
 ! - Get undead Neumann loads and multi-step dynamic schemes forces
 !
-    call nmasva(veasse, cnfvdo, sddyna)
+    call nmasva(fonact, veasse, cnfvdo, sddyna)
 !
 ! - Get undead Neumann loads for dynamic
 !
@@ -152,6 +153,15 @@ character(len=19) :: veasse(*)
         nb_vect = nb_vect + 1
         coef(nb_vect) = -1.d0
         vect(nb_vect) = ds_contact%cnctdf
+    endif
+!
+! - Force from sub-structuring
+!
+    if (l_macr) then
+        call nmchex(veasse, 'VEASSE', 'CNSSTR', cnsstr)
+        nb_vect = nb_vect + 1
+        coef(nb_vect) = -1.d0
+        vect(nb_vect) = cnsstr
     endif
 !
 ! --- CHARGEMENT DONNE

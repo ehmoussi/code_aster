@@ -17,7 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmasva(hval_veasse, cnvado, sddyna_)
+    subroutine nmasva(list_func_acti, hval_veasse, cnvado, sddyna_)
+        integer, intent(in) :: list_func_acti(*)
         character(len=19), intent(in) :: hval_veasse(*), cnvado
         character(len=19), optional, intent(in) :: sddyna_
     end subroutine nmasva

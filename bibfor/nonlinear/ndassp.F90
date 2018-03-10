@@ -28,6 +28,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
+#include "asterfort/isfonc.h"
 #include "asterfort/ndasva.h"
 #include "asterfort/ndynin.h"
 #include "asterfort/ndynre.h"
@@ -94,7 +95,7 @@ character(len=19) :: cndonn
     character(len=19) :: vect(nb_vect_maxi)
     character(len=24) :: mate, varc_refe
     integer :: i_vect, nb_vect, iterat
-    character(len=19) :: cnffdo, cndfdo, cnfvdo, cnvady
+    character(len=19) :: cnffdo, cndfdo, cnfvdo, cnvady, cnsstr
     character(len=19) :: cndumm
     character(len=19) :: vebudi
     character(len=19) :: cnfint, cndiri
@@ -102,7 +103,7 @@ character(len=19) :: cndonn
     character(len=19) :: cnbudi
     character(len=19) :: disp_prev, vitmoi, accmoi
     character(len=19) :: veclag
-    aster_logical :: ldepl, lvite, lacce
+    aster_logical :: ldepl, lvite, lacce, l_macr
     real(kind=8) :: coeequ
 !
 ! --------------------------------------------------------------------------------------------------
@@ -120,9 +121,10 @@ character(len=19) :: cndonn
 !
 ! --- TYPE DE FORMULATION SCHEMA DYNAMIQUE GENERAL
 !
-    ldepl = ndynin(sddyna,'FORMUL_DYNAMIQUE').eq.1
-    lvite = ndynin(sddyna,'FORMUL_DYNAMIQUE').eq.2
-    lacce = ndynin(sddyna,'FORMUL_DYNAMIQUE').eq.3
+    ldepl  = ndynin(sddyna,'FORMUL_DYNAMIQUE').eq.1
+    lvite  = ndynin(sddyna,'FORMUL_DYNAMIQUE').eq.2
+    lacce  = ndynin(sddyna,'FORMUL_DYNAMIQUE').eq.3
+    l_macr = isfonc(fonact,'MACR_ELEM_STAT')
 !
 ! --- COEFFICIENTS POUR MULTI-PAS
 !
@@ -151,7 +153,7 @@ character(len=19) :: cndonn
 !
 ! - Get undead Neumann loads and multi-step dynamic schemes forces
 !
-    call nmasva(veasse, cnfvdo, sddyna)
+    call nmasva(fonact, veasse, cnfvdo, sddyna)
 !
 ! - Get undead Neumann loads for dynamic
 !
@@ -230,6 +232,15 @@ character(len=19) :: cndonn
         nb_vect = nb_vect + 1
         coef(nb_vect) = -1.d0
         vect(nb_vect) = ds_contact%cnctdf
+    endif
+!
+! - Force from sub-structuring
+!
+    if (l_macr) then
+        call nmchex(veasse, 'VEASSE', 'CNSSTR', cnsstr)
+        nb_vect = nb_vect + 1
+        coef(nb_vect) = -1.d0
+        vect(nb_vect) = cnsstr
     endif
 !
 ! --- CHARGEMENT DONNE

@@ -64,8 +64,8 @@ character(len=19) :: sdnume
 !
     integer :: ifm, niv
     character(len=1) :: base
-    aster_logical :: lcont, lmacr
-    character(len=19) :: cncont, cnsstr
+    aster_logical :: lcont
+    character(len=19) :: cncont
     integer :: neq, i, endo
     integer :: endop1, endop2
     aster_logical :: lendo
@@ -83,7 +83,6 @@ character(len=19) :: sdnume
 !
     base = 'V'
     lcont = isfonc(fonact,'CONTACT')
-    lmacr = isfonc(fonact,'MACR_ELEM_STAT')
     cncont = '&&CNCHAR.DUMM'
     call vtzero(cnfint)
     call vtzero(cncont)
@@ -128,13 +127,6 @@ character(len=19) :: sdnume
 !
     if (lcont) then
         call vtaxpy(1.d0, cncont, cnfint)
-    endif
-!
-! --- FORCES ISSUES DES MACRO-ELEMENTS STATIQUES
-!
-    if (lmacr) then
-        call nmchex(veasse, 'VEASSE', 'CNSSTR', cnsstr)
-        call vtaxpy(1.d0, cnsstr, cnfint)
     endif
 !
 ! --- AFFICHAGE

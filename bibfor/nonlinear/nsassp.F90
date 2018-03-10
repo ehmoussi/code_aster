@@ -123,7 +123,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! - Get undead Neumann loads and multi-step dynamic schemes forces
 !
-    call nmasva(veasse, cnfvdo)
+    call nmasva(fonact, veasse, cnfvdo)
 !
 ! --- FORCES NODALES
 !

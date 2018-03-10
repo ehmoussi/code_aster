@@ -17,8 +17,9 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmrecz(nume_dof, ds_contact,&
-                  cndiri  , cnfint    , cnfext, disp_iter,&
+subroutine nmrecz(nume_dof , ds_contact, list_func_acti,&
+                  cndiri   , cnfint    , cnfext, cnsstr,&
+                  disp_iter,&
                   func)
 !
 use NonLin_Datastructure_type
@@ -29,10 +30,12 @@ implicit none
 #include "asterfort/dismoi.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/nmequi.h"
+#include "asterfort/isfonc.h"
 !
+integer, intent(in) :: list_func_acti(*)
 character(len=24), intent(in) :: nume_dof
 type(NL_DS_Contact), intent(in) :: ds_contact
-character(len=19), intent(in) :: cndiri, cnfint, cnfext, disp_iter
+character(len=19), intent(in) :: cndiri, cnfint, cnfext, cnsstr, disp_iter
 real(kind=8), intent(out) :: func
 !
 ! --------------------------------------------------------------------------------------------------
@@ -45,9 +48,11 @@ real(kind=8), intent(out) :: func
 !
 ! In  nume_dof         : name of numbering object (NUME_DDL)
 ! In  ds_contact       : datastructure for contact management
+! In  list_func_acti   : list of active functionnalities
 ! In  cndiri           : nodal field for support reaction
 ! In  cnfint           : nodal field for internal force
 ! In  cnfext           : nodal field for external force
+! In  cnsstr           : nodal field for sub-structuring force
 ! In  disp_iter        : displacement iteration
 ! Out function         : function to minimize for line search
 !
@@ -56,7 +61,7 @@ real(kind=8), intent(out) :: func
     character(len=19) :: cnequi
     real(kind=8), pointer :: v_cnequi(:) => null()
     integer :: i_equa, nb_equa
-    aster_logical :: l_disp, l_pilo
+    aster_logical :: l_disp, l_pilo, l_macr
     real(kind=8), pointer :: v_disp_iter(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -68,9 +73,10 @@ real(kind=8), intent(out) :: func
 !
     l_disp = ASTER_FALSE
     l_pilo = ASTER_FALSE
+    l_macr = isfonc(list_func_acti, 'MACR_ELEM_STAT')
     cnequi = '&&CNCHAR.DONN'
-    call nmequi(l_disp    , l_pilo, cnequi,&
-                cnfint    , cnfext, cndiri,&
+    call nmequi(l_disp    , l_pilo, l_macr, cnequi,&
+                cnfint    , cnfext, cndiri, cnsstr,&
                 ds_contact)
     call jeveuo(cnequi(1:19)//'.VALE', 'L', vr=v_cnequi)
 !

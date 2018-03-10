@@ -39,6 +39,7 @@ implicit none
 #include "asterfort/nonlinDynaImpeCompute.h"
 #include "asterfort/nonlinSubStruCompute.h"
 #include "asterfort/nonlinNForceCompute.h"
+#include "asterfort/nmchex.h"
 #include "asterfort/nmdep0.h"
 #include "asterfort/nmvcpr.h"
 #include "asterfort/detrsd.h"
@@ -90,6 +91,7 @@ character(len=19), intent(in) :: hval_measse(*)
     integer :: ifm, niv
     real(kind=8) :: time_prev, time_curr
     aster_logical :: l_macr, l_impe
+    character(len=19) :: disp_curr, cnsstr
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -140,9 +142,10 @@ character(len=19), intent(in) :: hval_measse(*)
 ! - Compute sub-structuring effect on second member
 !
     if (l_macr) then
-        call nonlinSubStruCompute(ds_measure ,&
-                                  hval_incr  ,&
-                                  hval_veasse, hval_measse)
+        call nmchex(hval_incr  , 'VALINC', 'DEPPLU', disp_curr)
+        call nmchex(hval_veasse, 'VEASSE', 'CNSSTR', cnsstr)
+        call nonlinSubStruCompute(ds_measure , disp_curr,&
+                                  hval_measse, cnsstr)
     endif
 !
 ! - Compute nodal force BT . SIGMA (No integration of behaviour)

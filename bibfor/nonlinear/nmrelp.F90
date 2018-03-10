@@ -52,6 +52,7 @@ implicit none
 #include "asterfort/vtcreb.h"
 #include "asterfort/vtzero.h"
 #include "asterfort/zbinit.h"
+#include "asterfort/nonlinSubStruCompute.h"
 #include "blas/daxpy.h"
 !
 integer :: fonact(*)
@@ -116,7 +117,7 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
     character(len=19) :: depplu, sigplu, varplu, complu
     character(len=19) :: sigplt, varplt, depplt
     character(len=19) :: vefint, vediri
-    character(len=19) :: cnfint, cndiri, cnfext
+    character(len=19) :: cnfint, cndiri, cnfext, cnsstr
     character(len=19) :: depdet, ddepla, depdel
     character(len=19) :: solalt(zsolal), valint(zvalin, 2)
     character(len=24) :: mate, varc_refe
@@ -171,6 +172,7 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
     call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
     call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
     call nmchex(veasse, 'VEASSE', 'CNFEXT', cnfext)
+    call nmchex(veasse, 'VEASSE', 'CNSSTR', cnsstr)
     call nmchex(veelem, 'VEELEM', 'CNFINT', vefint)
     call nmchex(veelem, 'VEELEM', 'CNDIRI', vediri)
     call nmchex(solalg, 'SOLALG', 'DDEPLA', ddepla)
@@ -186,6 +188,8 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
     cnfins(2) = '&&NMRECH.RESI'
     cndirs(1) = cndiri
     cndirs(2) = '&&NMRECH.DIRI'
+    cnfins(1) = cnfint
+    cnfins(2) = '&&NMRECH.RESI'
     depdet = '&&CNPART.CHP1'
     depplt = '&&CNPART.CHP2'
     sigplt = '&&NMRECH.SIGP'
@@ -211,8 +215,8 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
 !
 ! --- CALCUL DE F(RHO=0)
 !
-    call nmrecz(nume_dof, ds_contact,&
-                cndiri, cnfint, cnfext, ddepla,&
+    call nmrecz(nume_dof, ds_contact, fonact, &
+                cndiri, cnfint, cnfext, cnsstr, ddepla,&
                 f0)
 !
     if (niv .ge. 2) then
@@ -313,8 +317,8 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
 !
 ! ----- CALCUL DE F(RHO)
 !
-        call nmrecz(nume_dof, ds_contact,&
-                    cndirs(act), cnfins(act), cnfext, ddepla, f)
+        call nmrecz(nume_dof, ds_contact, fonact, &
+                    cndirs(act), cnfins(act), cnfext, cnsstr, ddepla, f)
 !
         if (niv .ge. 2) then
             write (ifm,*) '<MECANONLINE> ... FONCTIONNELLE COURANTE: ',f

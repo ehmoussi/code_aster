@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,52 +15,41 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmmacv(vecdep, sstru, vecass)
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine nmmacv(disp, matr_sstr, cnsstr)
+!
+implicit none
+!
 #include "jeveux.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/mrmult.h"
-    character(len=19) :: sstru
-    character(len=19) :: vecdep
-    character(len=24) :: vecass
 !
-! ----------------------------------------------------------------------
+character(len=19), intent(in) :: matr_sstr, disp, cnsstr
 !
-! ROUTINE MECA_NON_LINE (CALCUL - MACRO_ELEMENT)
+! --------------------------------------------------------------------------------------------------
 !
-! CALCUL DE LA CONTRIBUTION AU SECOND MEMBRE DES MACRO-ELEMENTS
+! MECA_NON_LINE - Algorithm
 !
-! ----------------------------------------------------------------------
+! Compute sub-structuring effect on second member
 !
+! --------------------------------------------------------------------------------------------------
 !
-! IN  VECDEP : VECTEUR DEPLACEMENT
-! IN  SSTRU  : MATRICE ASSEMBLEE DES SOUS-ELEMENTS STATIQUES
-! OUT VECASS : VECT_ASSE CALCULE
+! In  disp             : displacement field
+! In  matr_sstr        : name of sub-structuring matrix
+! In  cnsstr           : name of sub-structuring effect on second member
 !
+! --------------------------------------------------------------------------------------------------
 !
+    integer :: jrsst
+    real(kind=8), pointer :: v_cnsstr(:) => null()
+    real(kind=8), pointer :: v_disp(:) => null()
 !
+! --------------------------------------------------------------------------------------------------
 !
-    integer ::   jrsst
-    real(kind=8), pointer :: cnfi(:) => null()
-    real(kind=8), pointer :: depl(:) => null()
-!
-! ----------------------------------------------------------------------
-!
-    call jemarq()
-!
-! --- CALCUL VECT_ASSE(MACR_ELEM) = MATR_ASSE(MACR_ELEM) * VECT_DEPL
-!
-    call jeveuo(vecass(1:19)//'.VALE', 'E', vr=cnfi)
-    call jeveuo(vecdep(1:19)//'.VALE', 'L', vr=depl)
-    call jeveuo(sstru(1:19) //'.&INT', 'L', jrsst)
-    call mrmult('ZERO', jrsst, depl, cnfi, 1,&
-                .true._1)
-!
-    call jedema()
+    call jeveuo(cnsstr(1:19)//'.VALE', 'E', vr=v_cnsstr)
+    call jeveuo(disp(1:19)//'.VALE', 'L', vr=v_disp)
+    call jeveuo(matr_sstr(1:19) //'.&INT', 'L', jrsst)
+    call mrmult('ZERO', jrsst, v_disp, v_cnsstr, 1, ASTER_TRUE)
 !
 end subroutine

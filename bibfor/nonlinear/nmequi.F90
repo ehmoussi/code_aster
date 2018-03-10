@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmequi(l_disp     , l_pilo, cnresu,&
-                  cnfint     , cnfext, cndiri,&
+subroutine nmequi(l_disp     , l_pilo, l_macr, cnresu,&
+                  cnfint     , cnfext, cndiri, cnsstr,&
                   ds_contact_,&
                   cnbudi_    , cndfdo_,&
                   cndipi_    , eta_)
@@ -35,9 +35,9 @@ implicit none
 #include "asterfort/nonlinDSVectCombAddAny.h"
 #include "asterfort/nonlinDSVectCombInit.h"
 !
-aster_logical, intent(in) :: l_disp, l_pilo
+aster_logical, intent(in) :: l_disp, l_pilo, l_macr
 character(len=19), intent(in) :: cnresu
-character(len=19), intent(in) :: cnfint, cnfext, cndiri
+character(len=19), intent(in) :: cnfint, cnfext, cndiri, cnsstr
 type(NL_DS_Contact), optional, intent(in) :: ds_contact_
 character(len=19), optional, intent(in) :: cnbudi_, cndfdo_, cndipi_
 real(kind=8), optional, intent(in) :: eta_
@@ -85,6 +85,10 @@ real(kind=8), optional, intent(in) :: eta_
     if (l_pilo) then
         call nonlinDSVectCombAddAny(cndipi_, -eta_, ds_vectcomb)
     endif
+    if (l_macr) then
+        call nonlinDSVectCombAddAny(cnsstr, +1.d0, ds_vectcomb)
+    endif
+
 !
 ! - Combination
 !
