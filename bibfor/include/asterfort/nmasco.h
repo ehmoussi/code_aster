@@ -17,10 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmasco(fonact, veasse, cncont)
+    subroutine nmasco(cncont, ds_contact)
         use NonLin_Datastructure_type
-        integer :: fonact(*)
-        character(len=19) :: veasse(*)
         character(len=19) :: cncont
+        type(NL_DS_Contact), intent(in) :: ds_contact
     end subroutine nmasco
 end interface

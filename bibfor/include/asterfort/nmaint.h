@@ -17,12 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmaint(numedd, fonact, veasse, vefint,&
-                      cnfint, sdnume)
+    subroutine nmaint(numedd, fonact, vefint,&
+                      cnfint, sdnume, ds_contact_)
         use NonLin_Datastructure_type
         character(len=24) :: numedd
         integer :: fonact(*)
-        character(len=19) :: veasse(*)
+        type(NL_DS_Contact), optional, intent(in) :: ds_contact_
         character(len=19) :: vefint
         character(len=19) :: cnfint
         character(len=19) :: sdnume

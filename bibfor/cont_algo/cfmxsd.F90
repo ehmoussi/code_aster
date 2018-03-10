@@ -125,13 +125,13 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 ! ----- Create datastructures for LAC method
 !
         if (l_cont_lac) then
-            call lac_crsd(ds_contact)
+            call lac_crsd(nume_dof, ds_contact)
         endif
 !
 ! ----- Create datastructures for XFEM method
 !
         if (l_cont_xfem) then
-            call xxmxme(mesh, model, list_func_acti, ds_contact)
+            call xxmxme(mesh, model, nume_dof, list_func_acti, ds_contact)
         endif
     endif
 !

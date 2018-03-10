@@ -283,8 +283,8 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
 !
 ! ----- ASSEMBLAGE DES FORCES INTERIEURES
 !
-        call nmaint(nume_dof, fonact, veasse, vefint,&
-                    cnfins(act), sdnume)
+        call nmaint(nume_dof, fonact, vefint,&
+                    cnfins(act), sdnume, ds_contact)
 ! ----- Update force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
         call nmtime(ds_measure, 'Init'  , '2nd_Member')
         call nmtime(ds_measure, 'Launch', '2nd_Member')

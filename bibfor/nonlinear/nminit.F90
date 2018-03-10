@@ -414,7 +414,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
         call nmihht(model , numedd   , ds_material, ds_constitutive,&
                     cara_elem, list_load, fonact    , ds_measure   ,&
                     sddyna,  sdnume   , valinc,&
-                    sddisc, solalg   , veasse   , measse    , ds_inout)
+                    sddisc, solalg   , measse    , ds_inout)
     endif
 !
 ! - Reset times and counters

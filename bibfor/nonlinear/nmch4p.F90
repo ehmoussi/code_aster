@@ -40,7 +40,6 @@ character(len=19) :: veelem(*)
     character(len=19) :: vefsdo, vefint, vebudi, vedido, vesstf
     character(len=19) :: vedipi, vefedo, vefepi, veondp
     character(len=19) :: vedidi, vediri, vefnod, velapl
-    character(len=19) :: veeltc, veeltf
     character(len=19) :: verefe
     character(len=19) :: veimpe
 !
@@ -50,8 +49,7 @@ character(len=19) :: veelem(*)
     data vebudi,vedidi    /'&&NMCH4P.VEBUDI','&&NMCH4P.VEDIDI'/
     data veondp,velapl    /'&&NMCH4P.VEONDP','&&NMCH4P.VELAPL'/
     data vediri,vefnod    /'&&NMCH4P.VEDIRI','&&NMCH4P.VEFNOD'/
-    data vesstf,veeltc    /'&&NMCH4P.VESSTF','&&NMCH4P.VEELTC'/
-    data veeltf           /'&&NMCH4P.VEELTF'/
+    data vesstf           /'&&NMCH4P.VESSTF'/
     data verefe           /'&&NMCH4P.VEREFE'/
     data veimpe           /'&&NMCH4P.VEIMPE'/
 !
@@ -72,8 +70,6 @@ character(len=19) :: veelem(*)
     call nmcha0('VEELEM', 'CNIMPE', veimpe, veelem)
     call nmcha0('VEELEM', 'CNDIDI', vedidi, veelem)
     call nmcha0('VEELEM', 'CNSSTF', vesstf, veelem)
-    call nmcha0('VEELEM', 'CNELTC', veeltc, veelem)
-    call nmcha0('VEELEM', 'CNELTF', veeltf, veelem)
     call nmcha0('VEELEM', 'CNREFE', verefe, veelem)
 !
 end subroutine

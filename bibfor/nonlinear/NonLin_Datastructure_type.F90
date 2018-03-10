@@ -333,6 +333,14 @@ implicit none
 ! ----- Force for DISCRETE contact (LIAISON_UNIL)
         aster_logical     :: l_cnunil
         character(len=19) :: cnunil
+! ----- Force for CONTINUE contact (contact)
+        aster_logical     :: l_cneltc
+        character(len=19) :: cneltc
+        character(len=19) :: veeltc
+! ----- Force for CONTINUE contact (friction)
+        aster_logical     :: l_cneltf
+        character(len=19) :: cneltf
+        character(len=19) :: veeltf
     end type NL_DS_Contact
 !
 ! - Type: timer management

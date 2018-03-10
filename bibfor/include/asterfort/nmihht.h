@@ -20,7 +20,7 @@ interface
     subroutine nmihht(model    , nume_dof , ds_material, ds_constitutive,&
                       cara_elem, list_load, list_func_acti, ds_measure,&
                       sddyna   , sdnume   , hval_incr     ,&
-                      sddisc   , hval_algo, hval_veasse, hval_measse   , ds_inout)
+                      sddisc   , hval_algo, hval_measse   , ds_inout)
         use NonLin_Datastructure_type
         character(len=24), intent(in) :: model
         type(NL_DS_Material), intent(in) :: ds_material
@@ -35,7 +35,6 @@ interface
         character(len=19), intent(in) :: sdnume
         character(len=19), intent(in) :: hval_incr(*)
         character(len=19), intent(in) :: hval_algo(*)
-        character(len=19), intent(in) :: hval_veasse(*)
         character(len=19), intent(in) :: hval_measse(*)
         type(NL_DS_InOut), intent(in) :: ds_inout
     end subroutine nmihht

@@ -64,8 +64,6 @@ character(len=19), intent(in) :: veasse(*)
     integer :: ifm, niv
     character(len=24) :: sdcont_defi
     aster_logical :: ldyna, lammo, lmpas, lrefe, lmacr, lmuap, lviss
-    aster_logical :: leltc, leltf
-    aster_logical :: lallv
     aster_logical :: lsstf, limpe
     aster_logical :: ldidi, lpilo, lener
     character(len=19) :: depplu, vitplu, accplu
@@ -85,7 +83,6 @@ character(len=19), intent(in) :: veasse(*)
     character(len=19) :: cndido, cncine, cndiri
     character(len=19) :: cnondp, cnlapl, cnviss
     character(len=19) :: cnsstf, cnsstr
-    character(len=19) :: cneltc, cneltf
     character(len=19) :: cnimpe
     character(len=19) :: cnfepi, cndipi, cnrefe
 !
@@ -107,7 +104,6 @@ character(len=19), intent(in) :: veasse(*)
     ldyna = ndynlo(sddyna,'DYNAMIQUE')
     lammo = ndynlo(sddyna,'AMOR_MODAL')
     lmpas = ndynlo(sddyna,'MULTI_PAS')
-    lallv = isfonc(fonact,'CONT_ALL_VERIF')
     ldidi = isfonc(fonact,'DIDI')
     lpilo = isfonc(fonact,'PILOTAGE')
     lsstf = isfonc(fonact,'SOUS_STRUC')
@@ -116,8 +112,6 @@ character(len=19), intent(in) :: veasse(*)
     lviss = ndynlo(sddyna,'VECT_ISS' )
     lener = isfonc(fonact,'ENERGIE')
     lmuap = ndynlo(sddyna,'MULTI_APPUI')
-    leltc = isfonc(fonact,'ELT_CONTACT')
-    leltf = isfonc(fonact,'ELT_FROTTEMENT')
 !
 ! --- ENERGIE
 !
@@ -331,20 +325,6 @@ character(len=19), intent(in) :: veasse(*)
     if (lammo) then
         call nmchex(veasse, 'VEASSE', 'CNAMOD', cnamod)
         call vtcreb(cnamod, 'V', 'R', nume_ddlz = numedd)
-    endif
-!
-! --- CONTACT AVEC DES ELEMENTS FINIS (CONTINUE/XFEM)
-!
-    if (leltc .and. (.not.lallv)) then
-        call nmchex(veasse, 'VEASSE', 'CNELTC', cneltc)
-        call vtcreb(cneltc, 'V', 'R', nume_ddlz = numedd)
-    endif
-!
-! --- FROTTEMENT AVEC DES ELEMENTS FINIS (CONTINUE/XFEM)
-!
-    if (leltf .and. (.not.lallv)) then
-        call nmchex(veasse, 'VEASSE', 'CNELTF', cneltf)
-        call vtcreb(cneltf, 'V', 'R', nume_ddlz = numedd)
     endif
 !
 ! --- RESIDU DE REFERENCE

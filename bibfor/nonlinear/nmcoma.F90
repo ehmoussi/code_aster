@@ -202,8 +202,8 @@ integer :: faccvg, ldccvg
 !
     if (lcfint) then
         lcfint = .false.
-        call nmaint(numedd, fonact, veasse, vefint,&
-                    cnfint, sdnume)
+        call nmaint(numedd, fonact, vefint,&
+                    cnfint, sdnume, ds_contact)
     endif
 !
 ! --- CALCUL DES MATR_ELEM CONTACT/XFEM_CONTACT

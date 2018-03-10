@@ -203,8 +203,8 @@ character(len=19) :: cndonn
 !
 ! --- ASSEMBLAGE DES FORCES INTERIEURES
 !
-    call nmaint(nume_dof, fonact, veasse, vefint,&
-                cnfint, sdnume)
+    call nmaint(nume_dof, fonact, vefint,&
+                cnfint, sdnume, ds_contact)
 !
 ! - List of vectors
 !

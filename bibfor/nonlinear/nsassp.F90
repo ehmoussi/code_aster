@@ -82,9 +82,9 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     character(len=19) :: cnffdo, cndfdo, cnfvdo
     character(len=19) :: cnffpi, cndfpi, cndiri
     character(len=19) :: vebudi, vediri
-    character(len=19) :: cnfnod, cnbudi, cnsstr, cneltc, cneltf, cnfint
+    character(len=19) :: cnfnod, cnbudi, cnsstr, cnfint
     character(len=19) :: disp_prev
-    aster_logical :: lmacr, leltc, leltf, lallv, l_pilo
+    aster_logical :: lmacr, l_pilo
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -99,9 +99,6 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 ! --- FONCTIONNALITES ACTIVEES
 !
     lmacr = isfonc(fonact,'MACR_ELEM_STAT')
-    leltc = isfonc(fonact,'ELT_CONTACT')
-    leltf = isfonc(fonact,'ELT_FROTTEMENT')
-    lallv = isfonc(fonact,'CONT_ALL_VERIF' )
     l_pilo = isfonc(fonact,'PILOTAGE')
 !
 ! - Launch timer
@@ -187,17 +184,15 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --- FORCES DES ELEMENTS DE CONTACT (XFEM+CONTINUE)
 !
-    if (leltc .and. (.not.lallv)) then
-        call nmchex(veasse, 'VEASSE', 'CNELTC', cneltc)
+    if (ds_contact%l_cneltc) then
         nb_vect = nb_vect + 1
         coef(nb_vect) = -1.d0
-        vect(nb_vect) = cneltc
+        vect(nb_vect) = ds_contact%cneltc
     endif
-    if (leltf .and. (.not.lallv)) then
-        call nmchex(veasse, 'VEASSE', 'CNELTF', cneltf)
+    if (ds_contact%l_cneltf) then
         nb_vect = nb_vect + 1
         coef(nb_vect) = -1.d0
-        vect(nb_vect) = cneltf
+        vect(nb_vect) = ds_contact%cneltf
     endif
 !
 ! --- CHARGEMENT DONNE

@@ -160,5 +160,11 @@ type(NL_DS_Contact), intent(out) :: ds_contact
     ds_contact%cnctdc       = '&&OP0070.CNCTDC'
     ds_contact%l_cnunil     = ASTER_FALSE
     ds_contact%cnunil       = '&&OP0070.CNUNIL'
+    ds_contact%l_cneltc     = ASTER_FALSE
+    ds_contact%cneltc       = '&&OP0070.CNELTC'
+    ds_contact%veeltc       = '&&OP0070.VEELTC'
+    ds_contact%l_cneltf     = ASTER_FALSE
+    ds_contact%cneltf       = '&&OP0070.CNELTF'
+    ds_contact%veeltf       = '&&OP0070.VEELTF'
 !
 end subroutine

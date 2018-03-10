@@ -114,10 +114,10 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
     call nmchex(hval_incr, 'VALINC', 'VITPLU', vite_curr)
     call nmchex(hval_algo, 'SOLALG', 'DEPDEL', disp_cumu_inst)
     call nmchex(hval_algo, 'SOLALG', 'DDEPLA', disp_newt_curr)
-    call nmchex(hval_veelem, 'VEELEM', 'CNELTC', vect_elem_cont)
-    call nmchex(hval_veelem, 'VEELEM', 'CNELTF', vect_elem_frot)
-    call nmchex(hval_veasse, 'VEASSE', 'CNELTC', vect_asse_cont)
-    call nmchex(hval_veasse, 'VEASSE', 'CNELTF', vect_asse_frot)
+    vect_elem_cont = ds_contact%veeltc
+    vect_elem_frot = ds_contact%veeltf
+    vect_asse_cont = ds_contact%cneltc
+    vect_asse_frot = ds_contact%cneltf
     call nmchex(hval_incr, 'VALINC', 'COMMOI', varc_prev)
     call nmchex(hval_incr, 'VALINC', 'COMPLU', varc_curr)
     call nmvcex('INST', varc_prev, time_prev)

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine lac_crsd(ds_contact)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine lac_crsd(nume_dof, ds_contact)
 !
 use NonLin_Datastructure_type
 !
 implicit none
 !
-#include "jeveux.h"
 #include "asterf_types.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/cfdisi.h"
@@ -31,10 +31,10 @@ implicit none
 #include "asterfort/infdbg.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/vtcreb.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=24), intent(in) :: nume_dof
+type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -44,7 +44,8 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_contact       : datastructure for contact management
+! In  nume_dof         : name of numbering object (NUME_DDL)
+! IO  ds_contact       : datastructure for contact management
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -78,5 +79,10 @@ implicit none
     call wkvect(sdcont_stat, 'V V I', nt_patch, jv_dummy)
     call wkvect(sdcont_zeta, 'V V I', nt_patch, jv_dummy)
     call wkvect(sdcont_lagc, 'V V R', nt_patch, jv_dummy)
+!
+! - Forces to solve
+!
+    call vtcreb(ds_contact%cneltc, 'V', 'R', nume_ddlz = nume_dof)
+    ds_contact%l_cneltc = ASTER_TRUE
 !
 end subroutine
