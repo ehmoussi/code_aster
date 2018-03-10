@@ -59,7 +59,7 @@ pipeline {
                 script {
                     try {
                         sh '''#!/bin/bash -l
-                        $HOME/dev/codeaster/devtools/bin/check_known_errors.sh --branch build/resutest build/resutest_mpi
+                        $HOME/dev/codeaster/devtools/bin/check_known_errors.sh --branch asterxx build/resutest build/resutest_mpi
                         '''
                         currentBuild.result = 'SUCCESS'
                     }
