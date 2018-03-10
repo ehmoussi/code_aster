@@ -1,5 +1,4 @@
 #!groovy
-
 pipeline {
     options {
         timestamps()
@@ -9,10 +8,6 @@ pipeline {
     }
     agent {
         label "calibre9"
-        // docker {
-        //     image "localhost:5000/dev-codeaster:default"
-        //     args "--volume \${HOME}/dev/codeaster/data:/home/user/dev/codeaster/data --volume \${HOME}/dev/codeaster/devtools:/home/user/dev/codeaster/devtools --volume \${HOME}/dev/codeaster/validation:/home/user/dev/codeaster/validation"
-        // }
     }
 
     environment {
@@ -64,7 +59,7 @@ pipeline {
                 script {
                     try {
                         sh '''#!/bin/bash -l
-                        $HOME/dev/codeaster/devtools/bin/check_known_errors.sh --branch build/resutest build/resutest_mpi
+                        $HOME/dev/codeaster/devtools/bin/check_known_errors.sh --branch asterxx build/resutest build/resutest_mpi
                         '''
                         currentBuild.result = 'SUCCESS'
                     }
