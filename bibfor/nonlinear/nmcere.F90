@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine nmcere(model         , nume_dof, ds_material, cara_elem    ,&
-                  ds_constitutive, list_load, fonact, ds_measure,&
+                  ds_constitutive, ds_contact, list_load, fonact, ds_measure,&
                   iterat         , sdnume, valinc, solalg    , veelem    ,&
                   veasse         , offset, rho   , eta       , residu    ,&
                   ldccvg         , matass)
@@ -54,6 +54,7 @@ integer :: iterat, ldccvg
 real(kind=8) :: eta, rho, offset, residu
 character(len=19) :: list_load, sdnume, matass
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_Contact), intent(in) :: ds_contact
 character(len=24) :: model, nume_dof, cara_elem
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Measure), intent(inout) :: ds_measure
@@ -75,6 +76,7 @@ character(len=19) :: solalg(*), valinc(*)
 ! In  nume_dof         : name of numbering object (NUME_DDL)
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  ds_constitutive  : datastructure for constitutive laws management
+! In  ds_contact       : datastructure for contact management
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! IN  SDNUME : SD NUMEROTATION
 ! IO  ds_measure       : datastructure for measure and statistics management
@@ -203,8 +205,8 @@ character(len=19) :: solalg(*), valinc(*)
 !
 ! --- ASSEMBLAGE DES FORCES INTERIEURES
 !
-    call nmaint(nume_dof, fonact, veasse, vefint,&
-                cnfint, sdnume)
+    call nmaint(nume_dof, fonact, vefint,&
+                cnfint, sdnume, ds_contact)
 !
 ! - Launch timer
 !

@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmaint(numedd, fonact, veasse, vefint,&
-                  cnfint, sdnume)
+subroutine nmaint(numedd, fonact, vefint,&
+                  cnfint, sdnume, ds_contact_)
 !
 use NonLin_Datastructure_type
 !
@@ -41,9 +41,9 @@ implicit none
 !
 integer :: fonact(*)
 character(len=24) :: numedd
-character(len=19) :: veasse(*)
 character(len=19) :: vefint, cnfint
 character(len=19) :: sdnume
+type(NL_DS_Contact), optional, intent(in) :: ds_contact_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -55,7 +55,7 @@ character(len=19) :: sdnume
 !
 ! IN  NUMEDD : NOM DE LA NUMEROTATION
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
-! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
+! In  ds_contact       : datastructure for contact management
 ! IN  VEFINT : VECT_ELEM FORCES INTERNES
 ! IN  CNFINT : VECT_ASSE FORCES INTERNES
 ! IN  SDNUME : SD NUMEROTATION
@@ -90,7 +90,9 @@ character(len=19) :: sdnume
 ! --- CONTRIBUTIONS DU CONTACT
 !
     if (lcont) then
-        call nmasco(fonact, veasse, cncont)
+        if (present(ds_contact_)) then
+            call nmasco(cncont, ds_contact_)
+        endif
     endif
 !
 ! --- ASSEMBLAGE DES FORCES INTERIEURES

@@ -20,7 +20,7 @@
 subroutine nmchht(model    , mate     , cara_elem  , ds_constitutive,&
                   list_load, nume_dof , varc_refe  , list_func_acti, ds_measure,&
                   sddyna   , sddisc   , sdnume     , &
-                  hval_incr, hval_algo, hval_veasse, hval_measse   , ds_inout)
+                  hval_incr, hval_algo, hval_measse, ds_inout)
 !
 use NonLin_Datastructure_type
 !
@@ -60,7 +60,6 @@ character(len=19), intent(in) :: sddisc
 character(len=19), intent(in) :: sdnume
 character(len=19), intent(in) :: hval_incr(*)
 character(len=19), intent(in) :: hval_algo(*)
-character(len=19), intent(in) :: hval_veasse(*)
 character(len=19), intent(in) :: hval_measse(*)
 type(NL_DS_InOut), intent(in) :: ds_inout
 !
@@ -86,7 +85,6 @@ type(NL_DS_InOut), intent(in) :: ds_inout
 ! In  sdnume           : datastructure for dof positions
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
-! In  hval_veasse      : hat-variable for vectors (node fields)
 ! In  hval_measse      : hat-variable for matrix
 ! In  ds_inout         : datastructure for input/output management
 !
@@ -189,7 +187,7 @@ type(NL_DS_InOut), intent(in) :: ds_inout
     call nmfint(model         , mate  , cara_elem, varc_refe, ds_constitutive,&
                 list_func_acti, iterat, sddyna   , ds_measure,&
                 hval_incr, hval_algo  , ldccvg   , vefint)
-    call nmaint(nume_dof, list_func_acti, hval_veasse, vefint,&
+    call nmaint(nume_dof, list_func_acti, vefint,&
                 cnfint  , sdnume)
 !
 ! - Given displacements

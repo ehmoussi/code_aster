@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine xxmxme(mesh, model, list_func_acti, ds_contact)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine xxmxme(mesh, model, nume_dof, list_func_acti, ds_contact)
 !
 use NonLin_Datastructure_type
 !
@@ -28,7 +29,6 @@ implicit none
 #include "asterfort/cfdisi.h"
 #include "asterfort/cfdisl.h"
 #include "asterfort/cfmmvd.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
@@ -37,30 +37,29 @@ implicit none
 #include "asterfort/wkvect.h"
 #include "asterfort/xmele1.h"
 #include "asterfort/xmele3.h"
+#include "asterfort/vtcreb.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
+character(len=8), intent(in) :: mesh, model
+character(len=24), intent(in) :: nume_dof
+integer, intent(in) :: list_func_acti(*)
+type(NL_DS_Contact), intent(inout) :: ds_contact
 !
-    character(len=8), intent(in) :: mesh
-    character(len=8), intent(in) :: model
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    integer, intent(in) :: list_func_acti(*)
+! --------------------------------------------------------------------------------------------------
 !
-! ----------------------------------------------------------------------
+! Contact - Solve
 !
-! ROUTINE CONTACT (METHODES XFEM)
+! XFEM method - Create datastructures
 !
-! CREATION SD DE RESOLUTION RESOCO
-!
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! In  mesh             : name of mesh
 ! In  model            : name of model
-! In  ds_contact       : datastructure for contact management
+! In  nume_dof         : name of numbering object (NUME_DDL)
 ! In  list_func_acti   : list of active functionnalities
+! IO  ds_contact       : datastructure for contact management
 !
+! --------------------------------------------------------------------------------------------------
 !
-
-    integer :: ifm, niv
     integer :: nfiss
     integer, parameter :: nfismx =100
     character(len=24) :: tabfin
@@ -73,12 +72,11 @@ implicit none
     integer, pointer :: nfis(:) => null()
     integer, pointer :: xfem_cont(:) => null()
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('CONTACT', ifm, niv)
 !
-! --- FONCTIONNALITES ACTIVEES
+! - Active functionnalities
 !
     ntpc = cfdisi(ds_contact%sdcont_defi,'NTPC' )
     lxfcm = isfonc(list_func_acti,'CONT_XFEM')
@@ -157,6 +155,15 @@ implicit none
         call xmele1(mesh, model, ds_contact, ligrel, nfiss,&
                     xseuc0, 'PSEUIL', 'RIGI_CONT', list_func_acti)
     endif
+!
+! - Forces to solve
+!
+    call vtcreb(ds_contact%cneltc, 'V', 'R', nume_ddlz = nume_dof)
+    ds_contact%l_cneltc = ASTER_TRUE
+    !if (lxffm) then
+        call vtcreb(ds_contact%cneltf, 'V', 'R', nume_ddlz = nume_dof)
+        ds_contact%l_cneltf = ASTER_TRUE
+    !endif
 !
     call jedema()
 !

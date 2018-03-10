@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmasco(fonact, veasse, cncont)
+subroutine nmasco(cncont, ds_contact)
 !
 use NonLin_Datastructure_type
 !
@@ -25,14 +25,11 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/cfdisl.h"
-#include "asterfort/isfonc.h"
-#include "asterfort/nmchex.h"
 #include "asterfort/vtaxpy.h"
 #include "asterfort/vtzero.h"
 !
-integer :: fonact(*)
-character(len=19) :: veasse(*)
 character(len=19) :: cncont
+type(NL_DS_Contact), intent(in) :: ds_contact
 !
 ! ----------------------------------------------------------------------
 !
@@ -42,8 +39,7 @@ character(len=19) :: cncont
 !
 ! ----------------------------------------------------------------------
 !
-! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
-! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
+! In  ds_contact       : datastructure for contact management
 ! OUT CNCONT : VECT_ASSE DES CONTRIBUTIONS DE CONTACT/FROTTEMENT (C/F)
 !               C/F METHODE CONTINUE
 !               C/F METHODE XFEM
@@ -53,36 +49,26 @@ character(len=19) :: cncont
 !
 !
 !
-    aster_logical :: leltc, leltf, lallv
     integer :: nb_vect, i_vect
     character(len=19) :: vect(20)
     real(kind=8) :: coef(20)
-    character(len=19) :: cneltc, cneltf
 !
 ! ----------------------------------------------------------------------
 !
     nb_vect = 0
     call vtzero(cncont)
 !
-! --- FONCTIONNALITES ACTIVEES
-!
-    leltc = isfonc(fonact,'ELT_CONTACT')
-    leltf = isfonc(fonact,'ELT_FROTTEMENT')
-    lallv = isfonc(fonact,'CONT_ALL_VERIF' )
-!
 ! --- FORCES DES ELEMENTS DE CONTACT (XFEM+CONTINUE)
 !
-    if (leltc .and. (.not.lallv)) then
-        call nmchex(veasse, 'VEASSE', 'CNELTC', cneltc)
+    if (ds_contact%l_cneltc) then
         nb_vect = nb_vect + 1
         coef(nb_vect) = 1.d0
-        vect(nb_vect) = cneltc
+        vect(nb_vect) = ds_contact%cneltc
     endif
-    if (leltf .and. (.not.lallv)) then
-        call nmchex(veasse, 'VEASSE', 'CNELTF', cneltf)
+    if (ds_contact%l_cneltf) then
         nb_vect = nb_vect + 1
         coef(nb_vect) = 1.d0
-        vect(nb_vect) = cneltf
+        vect(nb_vect) = ds_contact%cneltf
     endif
 !
 ! --- VECTEUR RESULTANT

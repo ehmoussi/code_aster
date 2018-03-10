@@ -188,8 +188,8 @@ aster_logical :: lerrit
     call nmtime(ds_measure, 'Init', '2nd_Member')
     call nmtime(ds_measure, 'Launch', '2nd_Member')
     if (lcfint) then
-        call nmaint(nume_dof, fonact, veasse, vefint,&
-                    cnfint, sdnume)
+        call nmaint(nume_dof, fonact, vefint,&
+                    cnfint, sdnume, ds_contact)
     endif
 !
 ! - Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA

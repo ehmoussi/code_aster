@@ -129,11 +129,11 @@ integer :: fonact(*)
                         numins, valinc)
         endif
 !
-! ----- POST_TRAITEMENT DU CONTACT
+! ----- Post-treatment for contact
 !
         if (lcont) then
             call cfmxpo(mesh      , modele, ds_contact, numins, sddisc,&
-                        ds_measure, solalg, valinc    , veasse)
+                        ds_measure, solalg, valinc    )
         endif
 !
 ! ----- Spectral analysis (MODE_VIBR/CRIT_STAB)

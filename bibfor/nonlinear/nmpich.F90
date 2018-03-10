@@ -121,7 +121,7 @@ character(len=19) :: solalg(*), valinc(*)
 !
     if (pilcvg .ne. 1) then
         call nmceta(modele         , numedd, ds_material, carele    ,&
-                    ds_constitutive, lischa, fonact, ds_measure,&
+                    ds_constitutive, ds_contact, lischa, fonact, ds_measure,&
                     sdpilo         , iterat, sdnume, valinc    , solalg    ,&
                     veelem         , veasse, sddisc, nbeffe    , irecli    ,&
                     proeta         , offset, rho   , eta       , ldccvg    ,&

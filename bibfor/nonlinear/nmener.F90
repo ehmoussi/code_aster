@@ -93,7 +93,7 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter:: zveass = 23
+    integer, parameter:: zveass = 21
     integer :: iret(zveass)
     character(len=19) :: depmoi, depplu, vitmoi, vitplu, masse, amort, rigid
     character(len=19) :: fexmoi, fexplu, fammoi, fnomoi
@@ -119,6 +119,8 @@ type(NL_DS_Contact), intent(in) :: ds_contact
     real(kind=8), pointer :: v_cnctdf(:) => null()
     real(kind=8), pointer :: v_cnctdc(:) => null()
     real(kind=8), pointer :: v_cnunil(:) => null()
+    real(kind=8), pointer :: v_cneltc(:) => null()
+    real(kind=8), pointer :: v_cneltf(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -166,6 +168,12 @@ type(NL_DS_Contact), intent(in) :: ds_contact
     endif
     if (ds_contact%l_cnunil) then
         call jeveuo(ds_contact%cnunil(1:19)//'.VALE', 'L', vr=v_cnunil)
+    endif
+    if (ds_contact%l_cneltc) then
+        call jeveuo(ds_contact%cneltc(1:19)//'.VALE', 'L', vr=v_cneltc)
+    endif
+    if (ds_contact%l_cneltf) then
+        call jeveuo(ds_contact%cneltf(1:19)//'.VALE', 'L', vr=v_cneltf)
     endif
 !
 !
@@ -221,6 +229,25 @@ type(NL_DS_Contact), intent(in) :: ds_contact
         end do
     endif
 !
+! - Get continue contact/friction contribution
+!
+    if (ds_contact%l_cneltc) then
+        do j = 1, neq
+            flipl(j)=flipl(j)+v_cneltc(j)
+        end do
+        do j = 1, neq
+            fnopl(j)=fnopl(j)-v_cneltc(j)
+        end do
+    endif
+    if (ds_contact%l_cneltf) then
+        do j = 1, neq
+            flipl(j)=flipl(j)+v_cneltf(j)
+        end do
+        do j = 1, neq
+            fnopl(j)=fnopl(j)-v_cneltf(j)
+        end do
+    endif
+!
 ! - Get other contributions
 !
     do i = 1, zveass
@@ -252,32 +279,23 @@ type(NL_DS_Contact), intent(in) :: ds_contact
                     fexpl(j)=fexpl(j)-veass(j)
                 end do
 ! --------------------------------------------------------------------
-! 21 - CNAMOD : FORCE D AMORTISSEMENT MODAL
+! 19 - CNAMOD : FORCE D AMORTISSEMENT MODAL
 ! --------------------------------------------------------------------
-            else if (i.eq.21) then
+            else if (i.eq.19) then
                 do j = 1, neq
                     fampl(j)=fampl(j)+veass(j)
                 end do
 ! --------------------------------------------------------------------
-! 15 - CNELTC : FORCES ELEMENTS DE CONTACT (CONTINU + XFEM)
-! 16 - CNELTF : FORCES ELEMENTS DE FROTTEMENT (CONTINU + XFEM)
 ! 12 - CNIMPE : FORCES IMPEDANCE
 ! --------------------------------------------------------------------
-            else if ((i.eq.15).or.(i.eq.16).or.(i.eq.12)) then
+            else if (i.eq.12) then
                 do j = 1, neq
                     flipl(j)=flipl(j)+veass(j)
                 end do
-                if ((i.eq.15) .or. (i.eq.16)) then 
-! ON ENLEVE LA CONTRIBUTION DU CONTACT (CONTINU + XFEM) DANS
-! LES FORCES INTERNES (VOIR ROUTINE NMAINT)
-                    do j = 1, neq
-                        fnopl(j)=fnopl(j)-veass(j)
-                    end do
-                endif
 ! --------------------------------------------------------------------
-! 23 - CNVISS : CHARGEMENT VEC_ISS (FORCE_SOL)
+! 21 - CNVISS : CHARGEMENT VEC_ISS (FORCE_SOL)
 ! --------------------------------------------------------------------
-            else if (i.eq.23) then
+            else if (i.eq.21) then
 ! CHARGEMENT FORCE_SOL CNVISS. SI ON COMPTE SA CONTRIBUTION EN TANT
 ! QUE FORCE DISSIPATIVE DE LIAISON, ON DOIT PRENDRE L OPPOSE.
                 do j = 1, neq
@@ -293,9 +311,9 @@ type(NL_DS_Contact), intent(in) :: ds_contact
                     fnopl(j)=fnopl(j)+veass(j)
                 end do
 ! --------------------------------------------------------------------
-! 18 - CNCINE : INCREMENTS DE DEPLACEMENT IMPOSES (AFFE_CHAR_CINE)
+! 16 - CNCINE : INCREMENTS DE DEPLACEMENT IMPOSES (AFFE_CHAR_CINE)
 ! --------------------------------------------------------------------
-            else if (i.eq.18) then
+            else if (i.eq.16) then
 ! ON DOIT RECONSTRUIRE LA MATRICE DE MASSE CAR ELLE A ETE MODIFIEE
 ! POUR SUPPRIMER DES DEGRES DE LIBERTE EN RAISON DE AFFE_CHAR_CINE.
                 reassm=.true.
