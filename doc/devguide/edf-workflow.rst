@@ -15,12 +15,12 @@ Rules for EDF continuous integration
 - The master branch is ``asterxx``.
   Developers must not commit revisions in this branch.
 
-- Developers must use their own branch for commit: ``asterxx/XY`` (use your
-  initials for XY).
+- Developers must use their own branch to commit changes: ``asterxx/XY`` (use
+  your initials for XY).
 
-- Commit message must refers the an existing issue.
+- Commit messages must refer to the an existing issue.
 
-- Some of branches are automatically and continuously integrated.
+- The branches ``asterxx.*`` are automatically and continuously integrated.
 
 
 Configure your repository
@@ -74,23 +74,25 @@ See the example below (time is botton-up):
 
 .. code-block:: none
 
-    @    8:6f14c26b8c70 asterxx: merge 'asterxx/mc'
+    @    9:1ef6a397a16f asterxx: merge 'asterxx/mc'
     |\
-    | o  7:0793faaeb163 asterxx/mc: [#45678] Other fixes.
+    | o  8:fbb270649f54 asterxx/mc: [#45678] Other fixes.
     | |
-    | o  6:9c0af2ba8f71 asterxx/mc: [#45678] Add changes for the same feature
+    | o  7:424270e8c082 asterxx/mc: [#45678] Add changes for the same feature
     | |
-    o |  5:2a2addf7b938 asterxx: merge 'asterxx/mc'
+    | o  6:2fedc3797079 asterxx/mc: update to master branch 'asterxx'
+    |/|
+    o |  5:06487835c81e asterxx: merge 'asterxx/mc'
     |\|
-    | o  4:90eb433b033c asterxx/mc: [#45678] Reopen same developer branch for new feature
+    | o  4:832106d39564 asterxx/mc: [#45678] Reopen same developer branch for new feature
     |/
-    o    3:f8f46913a29e asterxx: merge 'asterxx/mc'
+    o    3:08f9c539e56e asterxx: merge 'asterxx/mc'
     |\
-    | o  2:ecd673612c7b asterxx/mc: [#12345] Continue development for feature 12345
+    | o  2:cc027a3c53fb asterxx/mc: [#12345] Continue development for feature 12345
     | |
-    | o  1:4e177336ac01 asterxx/mc: [#12345] Start feature for 12345
+    | o  1:960aca07afbb asterxx/mc: [#12345] Start feature for 12345
     |/
-    o  0:8b5355e95334 asterxx: Main branch: asterxx
+    o  0:53c1e379e218 asterxx: Main branch: asterxx
 
 .. Commands to create this sample tree
 .. hg init
@@ -113,6 +115,8 @@ See the example below (time is botton-up):
 .. hg merge asterxx/mc
 .. hg ci -m "merge 'asterxx/mc'"
 .. hg up asterxx/mc
+.. hg merge asterxx
+.. hg ci -m "update to master branch 'asterxx'"
 .. echo 1 >> hello
 .. hg ci -m "[#45678] Add changes for the same feature"
 .. echo 1 >> hello
@@ -122,6 +126,8 @@ See the example below (time is botton-up):
 .. hg ci -m "merge 'asterxx/mc'"
 .. hg log -G --template="{rev}:{node|short} {branch}: {desc|firstline}\n"
 
+0. Start point should always be the master branch ``asterxx``.
+
 #. Start branch (``hg branch asterxx/mc``) and hack code.
 
 #. Continue hacking and submit your work (``hg submit``).
@@ -129,10 +135,13 @@ See the example below (time is botton-up):
 #. **If the checkings pass, the robot automatically merges in the master branch.**
 
 #. Reopen the branch from master for a new feature
-   (``hg up asterxx && hg branch -f asterxx/mc``).
+   (``hg update asterxx && hg branch -f asterxx/mc``).
    Code and submit changes (``hg submit``).
 
 #. **If the checkings pass, the robot automatically merges in the master branch.**
+
+#. Update working branch with last changes from master
+   (``hg update asterxx/mc && hg merge asterxx && hg commit -m "update to master branch 'asterxx'"``).
 
 #. Additional developments are required, continue from the same branch.
 
@@ -157,7 +166,9 @@ To be accepted, the developments must pass the following checkings.
 
 - Merge with master branch (``asterxx``) should be trivial
   (checked by ``check_automerge.sh``).
-  *In case of conflicts you have to merge master branch in yours first.*
+
+  *In case of conflicts you have to merge the master branch with yours first.
+  If your branch has several heads you have to merge them first.*
 
 - Check sequential and parallel builds.
 
