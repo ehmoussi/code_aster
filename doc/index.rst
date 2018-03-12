@@ -16,6 +16,7 @@ Table of contents
    devguide
 
    installation
+   devguide/edf-workflow
 
 
 ******************
