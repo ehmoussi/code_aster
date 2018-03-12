@@ -40,7 +40,6 @@ PyObject* SurfaceInstance::exportExtensionToPython() const throw ( std::runtime_
     for( int pos = 0; pos < _property->size(); ++pos )
     {
         const std::string toCopy = (*_property)[ pos ].toString();
-        std::cout << "toCopy " << pos << " " << toCopy << std::endl;
         toReturn.append( toCopy );
     }
     return incref( toReturn.ptr() );

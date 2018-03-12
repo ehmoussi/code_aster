@@ -344,7 +344,8 @@ void DEFSSSPSS(VRCINS_WRAP,vrcins_wrap, const char*, STRING_SIZE, const char*, S
                                         const char*, STRING_SIZE, const ASTERDOUBLE*,
                                         const char*, STRING_SIZE, const char*, STRING_SIZE);
 
-#define CALLO_CACHVC(a, b, c, d, e, f, g, h, i, j, k) CALLOOOOOOOPPPP(CACHVC, cachvc, a, b, c, d, e, f, g, h, i, j, k)
+#define CALLO_CACHVC(a, b, c, d, e, f, g, h, i, j, k) CALLOOOOOOOPPPP(CACHVC, cachvc, a, b, c,\
+                                                                      d, e, f, g, h, i, j, k)
 void DEFSSSSSSSPPPP(CACHVC,cachvc, const char*, STRING_SIZE, const char*, STRING_SIZE,
                                    const char*, STRING_SIZE, const char*, STRING_SIZE,
                                    const char*, STRING_SIZE, const char*, STRING_SIZE,
@@ -397,6 +398,10 @@ extern void DEFSPPSPPPSP(RSACPA,rsacpa,char *, STRING_SIZE, ASTERINTEGER *, ASTE
           char *, STRING_SIZE, ASTERINTEGER *);
 #define CALL_RSACPA(nomsd, numva, icode, nomva, ctype, ival, rval, kval, ier) \
     CALLSPPSPPPSP(RSACPA,rsacpa, nomsd, numva, icode, nomva, ctype, ival, rval, kval, ier)
+
+#define CALLO_RCSTOC_VERIF(a,b,c,d) CALLOOOP(RCSTOC_VERIF,rcstoc_verif,a,b,c,d)
+extern void DEFSSSP(RCSTOC_VERIF, rcstoc_verif, const char *, STRING_SIZE,
+                    const char *,  STRING_SIZE, const char *,  STRING_SIZE, ASTERINTEGER *);
 
 /* particulier car on passe les longueurs des chaines en dur */
 extern void DEFSPSPPPS(RSACCH,rsacch,char *, STRING_SIZE, ASTERINTEGER *, char *,STRING_SIZE,
