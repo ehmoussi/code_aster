@@ -159,11 +159,12 @@ character(len=19) :: depest
     if ((faccvg.eq.1) .or. (faccvg.eq.2)) goto 999
     if (ldccvg .eq. 1) goto 999
 !
-! --- CALCUL DU SECOND MEMBRE
-! --- PRISE EN COMPTE DES CL DUALISEES
+! - Evaluate second memeber for Dirichlet loads (AFFE_CHAR_MECA)
 !
-    call nmassd(modele, numedd, lischa, fonact, depest,&
-                veasse, matass, cnpilo, cndonn)
+    call nmassd(modele    , numedd, lischa, fonact, &
+                ds_measure, depest,&
+                veelem    , veasse, matass,&
+                cnpilo    , cndonn)
 !
 ! --- PRISE EN COMPTE DES CL ELIMINEES
 !

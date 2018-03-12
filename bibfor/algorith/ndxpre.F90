@@ -136,10 +136,11 @@ aster_logical :: lerrit
 ! - Compute forces for second member at prediction
 !
     call nmforc_pred(list_func_acti,&
-                     model         , cara_elem      , nume_dof,&
+                     model         , cara_elem      ,&
+                     nume_dof      , matass         ,&
                      list_load     , sddyna         ,&
                      ds_material   , ds_constitutive,&
-                     ds_measure    , &
+                     ds_measure    , ds_algopara    ,&
                      sddisc        , nume_inst      ,&
                      hval_incr     , hval_algo      ,&
                      hval_veelem   , hval_veasse    ,&

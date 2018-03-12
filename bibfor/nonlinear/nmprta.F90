@@ -171,10 +171,11 @@ character(len=19) :: hval_meelem(*), hval_measse(*)
 ! - Compute forces for second member at prediction
 !
     call nmforc_pred(list_func_acti,&
-                     model         , cara_elem      , nume_dof,&
+                     model         , cara_elem      ,&
+                     nume_dof      , matass         ,&
                      list_load     , sddyna         ,&
                      ds_material   , ds_constitutive,&
-                     ds_measure    , &
+                     ds_measure    , ds_algopara    ,&
                      sddisc        , nume_inst      ,&
                      hval_incr     , hval_algo      ,&
                      hval_veelem   , hval_veasse    ,&
@@ -183,16 +184,16 @@ character(len=19) :: hval_meelem(*), hval_measse(*)
 ! --- CALCUL DU SECOND MEMBRE POUR CONTACT/XFEM
 !
     if (leltc) then
-        call nmfocc('PREDICTION', model    , ds_material, nume_dof, list_func_acti         ,&
-                    ds_contact  , ds_measure, hval_algo     , hval_incr, ds_constitutive)
+        call nmfocc('PREDICTION', model     , ds_material, nume_dof , list_func_acti ,&
+                    ds_contact  , ds_measure, hval_algo  , hval_incr, ds_constitutive)
     endif
 !
 ! --- CALCUL DU SECOND MEMBRE
 !
     call nmassp(model         , nume_dof, ds_material, cara_elem    ,&
-                ds_constitutive, list_load, list_func_acti, ds_measure, ds_contact,&
+                ds_constitutive, list_func_acti, ds_measure, ds_contact,&
                 sddyna         , hval_incr, hval_algo, hval_veelem    , hval_veasse    ,&
-                ldccvg         , cnpilo, cndonn, sdnume    , matass    ,&
+                ldccvg         , cnpilo, cndonn, sdnume    , &
                 ds_algorom)
 !
 ! --- INCREMENT DE DEPLACEMENT NUL EN PREDICTION

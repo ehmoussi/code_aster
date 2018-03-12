@@ -18,9 +18,9 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine ndassp(model          , nume_dof , ds_material, cara_elem,&
-                  ds_constitutive, list_load, ds_measure , fonact, ds_contact,&
+                  ds_constitutive, ds_measure, fonact, ds_contact,&
                   sddyna         , valinc   , solalg     , veelem, veasse    ,&
-                  ldccvg         , cndonn   , sdnume     , matass)
+                  ldccvg         , cndonn   , sdnume     )
 !
 use NonLin_Datastructure_type
 !
@@ -36,7 +36,6 @@ implicit none
 #include "asterfort/nmasdi.h"
 #include "asterfort/nmasfi.h"
 #include "asterfort/nmasva.h"
-#include "asterfort/nmbudi.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmfint.h"
 #include "asterfort/nmtime.h"
@@ -47,7 +46,7 @@ implicit none
 !
 integer :: ldccvg
 integer :: fonact(*)
-character(len=19) :: list_load, sddyna, sdnume, matass
+character(len=19) :: sddyna, sdnume
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Measure), intent(inout) :: ds_measure
@@ -69,7 +68,6 @@ character(len=19) :: cndonn
 ! In  model            : name of model
 ! In  cara_elem        : name of elementary characteristics (field)
 ! In  ds_material      : datastructure for material parameters
-! In  list_load        : name of datastructure for list of loads
 ! In  nume_dof         : name of numbering object (NUME_DDL)
 ! In  sddyna           : datastructure for dynamic
 ! IO  ds_measure       : datastructure for measure and statistics management
@@ -80,7 +78,6 @@ character(len=19) :: cndonn
 ! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
 ! In  ds_contact       : datastructure for contact management
 ! IN  SDNUME : SD NUMEROTATION
-! IN  MATASS  : SD MATRICE ASSEMBLEE
 ! OUT CNDONN : VECTEUR ASSEMBLE DES FORCES DONNEES
 ! OUT LDCCVG : CODE RETOUR DE L'INTEGRATION DU COMPORTEMENT
 !                -1 : PAS D'INTEGRATION DU COMPORTEMENT
@@ -93,11 +90,7 @@ character(len=19) :: cndonn
 !
     character(len=24) :: mate, varc_refe
     character(len=19) :: cnffdo, cndfdo, cnfvdo, cnvady, cndumm
-    character(len=19) :: vebudi, cnbudi
     character(len=19) :: vefint, cnfint
-    character(len=19) :: cndiri
-    character(len=19) :: disp_prev, acce_prev
-    character(len=19) :: vect_lagr
     aster_logical :: l_disp, l_vite, l_acce, l_macr
     integer :: iterat
     real(kind=8) :: coeequ
@@ -122,11 +115,6 @@ character(len=19) :: cndonn
     l_vite  = ndynin(sddyna,'FORMUL_DYNAMIQUE').eq.2
     l_acce  = ndynin(sddyna,'FORMUL_DYNAMIQUE').eq.3
     l_macr = isfonc(fonact,'MACR_ELEM_STAT')
-!
-! - Get hat variables
-!
-    call nmchex(valinc, 'VALINC', 'DEPMOI', disp_prev)
-    call nmchex(valinc, 'VALINC', 'ACCMOI', acce_prev)
 !
 ! - Coefficient for multi-step scheme
 !
@@ -182,30 +170,12 @@ character(len=19) :: cndonn
 !
     call nonlinDSVectCombAddAny(ds_material%fvarc_pred, +1.d0, ds_vectcomb)
 !
-! - WHich vector for Lagrange multipliers
+! - Get Dirichlet boundary conditions - B.U
 !
-    if (l_disp) then
-        vect_lagr = disp_prev
-    else if (l_vite) then
-!       VILAINE GLUTE POUR L'INSTANT
-        vect_lagr = disp_prev
-    else if (l_acce) then
-        vect_lagr = acce_prev
-    else
-        ASSERT(.false.)
-    endif
-!
-! - Compute Dirichlet boundary conditions - B.U
-!
-    call nmchex(veasse, 'VEASSE', 'CNBUDI', cnbudi)
-    call nmchex(veelem, 'VEELEM', 'CNBUDI', vebudi)
-    call nmbudi(model, nume_dof, list_load, vect_lagr, vebudi,&
-                cnbudi, matass)
     call nonlinDSVectCombAddHat(veasse, 'CNBUDI', -1.d0, ds_vectcomb)
 !
 ! - Get force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
 !
-    call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
     call nonlinDSVectCombAddHat(veasse, 'CNDIRI', -1.d0, ds_vectcomb)
 !
 ! - End timer

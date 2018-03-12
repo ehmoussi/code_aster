@@ -18,10 +18,11 @@
 !
 interface
     subroutine nmforc_pred(list_func_acti,&
-                           model         , cara_elem      , nume_dof,&
+                           model         , cara_elem      ,&
+                           nume_dof      , matr_asse      ,&
                            list_load     , sddyna         ,&
                            ds_material   , ds_constitutive,&
-                           ds_measure    , &
+                           ds_measure    , ds_algopara    ,&
                            sddisc        , nume_inst      ,&
                            hval_incr     , hval_algo      ,&
                            hval_veelem   , hval_veasse    ,&
@@ -29,10 +30,12 @@ interface
         use NonLin_Datastructure_type
         integer, intent(in) :: list_func_acti(*)
         character(len=24), intent(in) :: model, cara_elem, nume_dof
+        character(len=19), intent(in) :: matr_asse
         character(len=19), intent(in) :: list_load, sddyna
         type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         type(NL_DS_Measure), intent(inout) :: ds_measure
+        type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         character(len=19), intent(in) :: sddisc
         integer, intent(in) :: nume_inst
         character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
