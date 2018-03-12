@@ -17,15 +17,15 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nonlinLoadDirichletCompute(list_load , model      , nume_dof,&
-                                          ds_measure, matr_asse  ,&
-                                          hval_incr , hval_veelem, hval_veasse)
+    subroutine nonlinLoadDirichletCompute(list_load  , model      , nume_dof   ,&
+                                          ds_measure , matr_asse  , disp       ,&
+                                          hval_veelem, hval_veasse)
         use NonLin_Datastructure_type
         character(len=19), intent(in) :: list_load
         character(len=24), intent(in) :: model, nume_dof
         type(NL_DS_Measure), intent(inout) :: ds_measure
         character(len=19), intent(in) :: matr_asse
-        character(len=19), intent(in) :: hval_incr(*)
+        character(len=19), intent(in) :: disp
         character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
     end subroutine nonlinLoadDirichletCompute
 end interface

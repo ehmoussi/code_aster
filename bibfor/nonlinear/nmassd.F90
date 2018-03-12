@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,40 +15,41 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmassd(modele, numedd, lischa, fonact, depest,&
-                  veasse, matass, cnpilo, cndonn)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine nmassd(model      , nume_dof   , list_load, list_func_acti, &
+                  ds_measure , disp_esti  ,&
+                  hval_veelem, hval_veasse, matr_asse,&
+                  cnpilo     , cndonn)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
 #include "asterf_types.h"
-#include "jeveux.h"
 #include "asterfort/assert.h"
-#include "asterfort/detrsd.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/nmbudi.h"
-#include "asterfort/nmchex.h"
-#include "asterfort/vtaxpy.h"
-    integer :: fonact(*)
-    character(len=19) :: lischa
-    character(len=24) :: modele, numedd
-    character(len=19) :: depest
-    character(len=19) :: veasse(*)
-    character(len=19) :: cnpilo, cndonn, matass
+#include "asterfort/nonlinLoadDirichletCompute.h"
+#include "asterfort/nonlinDSVectCombInit.h"
+#include "asterfort/nonlinDSVectCombCompute.h"
+#include "asterfort/nonlinDSVectCombAddHat.h"
 !
-! ----------------------------------------------------------------------
+integer, intent(in) :: list_func_acti(*)
+character(len=19), intent(in) :: list_load
+character(len=24), intent(in) :: model, nume_dof
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19), intent(in) :: disp_esti
+character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
+character(len=19), intent(in) :: cnpilo, cndonn, matr_asse
+!
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (ALGORITHME)
 !
-! CALCUL DU SECOND MEMBRE POUR LA PREDICTION - DEPLACEMENT DONNE OU
-! EXTRAPOLE
+! Evaluate second memeber for Dirichlet loads (AFFE_CHAR_MECA)
 !
-! ----------------------------------------------------------------------
-!
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  MODELE : NOM DU MODELE
 ! IN  NUMEDD : NOM DE LA NUMEROTATION
@@ -60,83 +61,54 @@ subroutine nmassd(modele, numedd, lischa, fonact, depest,&
 ! OUT CNPILO : VECTEUR ASSEMBLE DES FORCES PILOTEES
 ! OUT CNDONN : VECTEUR ASSEMBLE DES FORCES DONNEES
 !
-!
-!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nbcoef, i, nbvec
-    parameter   (nbcoef=3)
-    real(kind=8) :: coef(nbcoef)
-    character(len=19) :: vect(nbcoef)
-    character(len=19) :: vebest
-    character(len=19) :: cnbest, cndido, cndidi, cndipi
-    aster_logical :: ldidi
+    aster_logical :: l_didi, l_pilo
+    type(NL_DS_VectComb) :: ds_vectcomb
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
     if (niv .ge. 2) then
         write (ifm,*) '<MECANONLINE> ...... CALCUL SECOND MEMBRE'
     endif
 !
-! --- INITIALISATIONS
+! - Initializations
 !
-    vebest = '&&NMASSD.VEBEST'
-    cnbest = '&&NMASSD.CNBEST'
+    call nonlinDSVectCombInit(ds_vectcomb)
 !
-! --- FONCTIONNALITES ACTIVEES
+! - Active functionnalities
 !
-    ldidi = isfonc(fonact,'DIDI')
+    l_didi = isfonc(list_func_acti,'DIDI')
+    l_pilo = isfonc(list_func_acti,'PILOTAGE')
 !
-! --- DEPLACEMENT IMPOSES
+! - Compute values of Dirichlet conditions
 !
-    call nmchex(veasse, 'VEASSE', 'CNDIDO', cndido)
-    call nmchex(veasse, 'VEASSE', 'CNDIDI', cndidi)
+    call nonlinLoadDirichletCompute(list_load  , model      , nume_dof ,&
+                                    ds_measure , matr_asse  , disp_esti,&
+                                    hval_veelem, hval_veasse)
 !
-! --- DEPLACEMENT PILOTES
+! - Dirichlet (given displacements) - AFFE_CHAR_MECA
 !
-    call nmchex(veasse, 'VEASSE', 'CNDIPI', cndipi)
-!
-! --- CONDITIONS DE DIRICHLET B.U
-!
-    call nmbudi(modele, numedd, lischa, depest, vebest,&
-                cnbest, matass)
-!
-! --- VALEURS POUR SOMME DES FORCES
-!
-    nbvec = 2
-    coef(1) = 1.d0
-    coef(2) = -1.d0
-    vect(1) = cndido
-    vect(2) = cnbest
-    if (ldidi) then
-        nbvec = nbvec+1
-        vect(nbvec) = cndidi
-        coef(nbvec) = 1.d0
+    call nonlinDSVectCombAddHat(hval_veasse, 'CNDIDO', +1.d0, ds_vectcomb)
+    call nonlinDSVectCombAddHat(hval_veasse, 'CNBUDI', -1.d0, ds_vectcomb)
+    if (l_didi) then
+        call nonlinDSVectCombAddHat(hval_veasse, 'CNDIDI', 1.d0, ds_vectcomb)
     endif
 !
-! --- CHARGEMENT FIXE
+! - Second member (standard)
 !
-    if (nbvec .gt. nbcoef) then
-        ASSERT(.false.)
+    call nonlinDSVectCombCompute(ds_vectcomb, cndonn)
+!
+    call nonlinDSVectCombInit(ds_vectcomb)
+    if (l_pilo) then
+! ----- Get Dirichlet loads (for PILOTAGE)
+        call nonlinDSVectCombAddHat(hval_veasse, 'CNDIPI', +1.d0, ds_vectcomb)   
     endif
-    do 10 i = 1, nbvec
-        call vtaxpy(coef(i), vect(i), cndonn)
- 10 end do
 !
-! --- CHARGEMENT PILOTE
+! - Second member (PILOTAGE)
 !
-    cnpilo = cndipi
-!
-! --- NETTOYAGE
-!
-    call detrsd('VECT_ELEM', vebest)
-    call detrsd('CHAMP', cnbest)
-!
-    call jedema()
+    call nonlinDSVectCombCompute(ds_vectcomb, cnpilo)
 !
 end subroutine

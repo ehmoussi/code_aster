@@ -18,9 +18,9 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine nmassp(modele         , numedd, ds_material, carele    ,&
-                  ds_constitutive, lischa, fonact     , ds_measure, ds_contact,&
-                  sddyna         , valinc, solalg     , veelem    , veasse    ,&
-                  ldccvg         , cnpilo, cndonn     , sdnume    , matass    ,&
+                  ds_constitutive, fonact, ds_measure , ds_contact,&
+                  sddyna         , valinc, solalg     , veelem    , veasse,&
+                  ldccvg         , cnpilo, cndonn     , sdnume    ,&
                   ds_algorom)
 !
 use NonLin_Datastructure_type
@@ -38,7 +38,7 @@ implicit none
 !
 integer :: ldccvg
 integer :: fonact(*)
-character(len=19) :: lischa, sddyna, sdnume, matass
+character(len=19) :: sddyna, sdnume
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=24) :: modele, numedd
@@ -62,7 +62,6 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 ! IN  NUMEDD : NOM DE LA NUMEROTATION
 ! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  LISCHA : SD L_CHARGES
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  ds_contact       : datastructure for contact management
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
@@ -108,13 +107,13 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
     if (ldyna) then
         call ndassp(modele         , numedd, ds_material, carele,&
-                    ds_constitutive, lischa, ds_measure , fonact, ds_contact,&
+                    ds_constitutive, ds_measure , fonact, ds_contact,&
                     sddyna         , valinc, solalg     , veelem, veasse    ,&
-                    ldccvg         , cndonn, sdnume     , matass)
+                    ldccvg         , cndonn, sdnume     )
     else if (lstat) then
-        call nsassp(modele, numedd, lischa, fonact,&
-                    ds_measure, valinc, veelem, veasse, cnpilo,&
-                    cndonn, ds_material, ds_contact, matass, ds_algorom)
+        call nsassp(fonact, &
+                    ds_measure, valinc, veasse, cnpilo,&
+                    cndonn, ds_material, ds_contact, ds_algorom)
     else
         ASSERT(ASTER_FALSE)
     endif

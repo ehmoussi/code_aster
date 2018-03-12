@@ -17,14 +17,14 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine ndassp(model          , nume_dof , ds_material, cara_elem,&
-                      ds_constitutive, list_load, ds_measure , fonact   , ds_contact,&
-                      sddyna         , valinc   , solalg     , veelem   , veasse    ,&
-                      ldccvg         , cndonn   , sdnume     , matass)
+    subroutine ndassp(model          , nume_dof  , ds_material, cara_elem,&
+                      ds_constitutive, ds_measure, fonact     , ds_contact,&
+                      sddyna         , valinc    , solalg     , veelem   , veasse    ,&
+                      ldccvg         , cndonn    , sdnume     )
         use NonLin_Datastructure_type
         integer :: ldccvg
         integer :: fonact(*)
-        character(len=19) :: list_load, sddyna, sdnume, matass
+        character(len=19) :: sddyna, sdnume
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Measure), intent(inout) :: ds_measure

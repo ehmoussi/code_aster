@@ -18,9 +18,9 @@
 !
 interface
     subroutine nmassp(modele         , numedd, ds_material, carele    ,&
-                      ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
+                      ds_constitutive, fonact, ds_measure, ds_contact,&
                       sddyna         , valinc, solalg, veelem    , veasse    ,&
-                      ldccvg         , cnpilo, cndonn, sdnume    , matass    ,&
+                      ldccvg         , cnpilo, cndonn, sdnume    , &
                       ds_algorom)
         use NonLin_Datastructure_type
         use Rom_Datastructure_type  
@@ -29,7 +29,6 @@ interface
         type(NL_DS_Material), intent(in) :: ds_material
         character(len=24) :: carele
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        character(len=19) :: lischa
         integer :: fonact(*)
         type(NL_DS_Measure), intent(inout) :: ds_measure
         type(NL_DS_Contact), intent(in) :: ds_contact
@@ -43,7 +42,6 @@ interface
         character(len=19) :: cnpilo
         character(len=19) :: cndonn
         character(len=19) :: sdnume
-        character(len=19) :: matass
         type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     end subroutine nmassp
 end interface

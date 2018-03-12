@@ -87,7 +87,7 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     integer :: faccvg, rescvg
     character(len=19) :: matass, depso1, depso2
     character(len=19) :: cncine, cncinx, cndonn, k19bla
-    character(len=19) :: accmoi
+    character(len=19) :: disp_prev, acce_prev
 !
 ! ----------------------------------------------------------------------
 !
@@ -107,7 +107,8 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
 ! --- DECOMPACTION VARIABLES CHAPEAUX
 !
-    call nmchex(valinc, 'VALINC', 'ACCMOI', accmoi)
+    call nmchex(valinc, 'VALINC', 'DEPMOI', disp_prev)
+    call nmchex(valinc, 'VALINC', 'ACCMOI', acce_prev)
     call nmchex(veasse, 'VEASSE', 'CNCINE', cncine)
     call nmchex(solalg, 'SOLALG', 'DEPSO1', depso1)
     call nmchex(solalg, 'SOLALG', 'DEPSO2', depso2)
@@ -118,16 +119,17 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
                 sddyna, ds_measure, ds_contact, ds_algopara,&
                 meelem, measse, maprec, matass    , faccvg)
     if (faccvg .eq. 2) then
-        call vtzero(accmoi)
+        call vtzero(acce_prev)
         call utmess('A', 'MECANONLINE_69')
         goto 999
     endif
 !
 ! - Compute values of Dirichlet conditions
 !
+
     call nonlinLoadDirichletCompute(lischa    , modele, numedd,&
-                                    ds_measure, matass,&
-                                    valinc    , veelem, veasse)
+                                    ds_measure, matass, disp_prev,&
+                                    veelem    , veasse)
 !
 ! --- CALCUL DU SECOND MEMBRE
 !
@@ -144,7 +146,7 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     call nmreso(fonact, cndonn, k19bla, cncinx, solveu,&
                 maprec, matass, depso1, depso2, rescvg)
     if (rescvg .eq. 1) then
-        call vtzero(accmoi)
+        call vtzero(acce_prev)
         call utmess('A', 'MECANONLINE_70')
         goto 999
     endif
@@ -155,13 +157,13 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
 ! --- RECOPIE SOLUTION
 !
-    call copisd('CHAMP_GD', 'V', depso1, accmoi)
+    call copisd('CHAMP_GD', 'V', depso1, acce_prev)
 !
 999 continue
 !
     if (niv .ge. 2) then
         write (ifm,*) '<MECANONLINE> ...... ACCMOI : '
-        call nmdebg('VECT', accmoi, ifm)
+        call nmdebg('VECT', acce_prev, ifm)
     endif
 !
 ! --- MENAGE

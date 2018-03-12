@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,20 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine nmassd(modele, numedd, lischa, fonact, depest,&
-                      veasse, matass, cnpilo, cndonn)
-        character(len=24) :: modele
-        character(len=24) :: numedd
-        character(len=19) :: lischa
-        integer :: fonact(*)
-        character(len=19) :: depest
-        character(len=19) :: veasse(*)
-        character(len=19) :: matass
-        character(len=19) :: cnpilo
-        character(len=19) :: cndonn
+    subroutine nmassd(model      , nume_dof   , list_load, list_func_acti, &
+                      ds_measure , disp_esti  ,&
+                      hval_veelem, hval_veasse, matr_asse,&
+                      cnpilo     , cndonn)
+        use NonLin_Datastructure_type
+        integer, intent(in) :: list_func_acti(*)
+        character(len=19), intent(in) :: list_load
+        character(len=24), intent(in) :: model, nume_dof
+        type(NL_DS_Measure), intent(inout) :: ds_measure
+        character(len=19), intent(in) :: disp_esti
+        character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
+        character(len=19), intent(in) :: cnpilo, cndonn, matr_asse
     end subroutine nmassd
 end interface

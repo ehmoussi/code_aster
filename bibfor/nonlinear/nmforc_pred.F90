@@ -18,10 +18,11 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine nmforc_pred(list_func_acti,&
-                       model         , cara_elem      , nume_dof,&
+                       model         , cara_elem      ,&
+                       nume_dof      , matr_asse      ,&
                        list_load     , sddyna         ,&
                        ds_material   , ds_constitutive,&
-                       ds_measure    , &
+                       ds_measure    , ds_algopara    ,&
                        sddisc        , nume_inst      ,&
                        hval_incr     , hval_algo      ,&
                        hval_veelem   , hval_veasse    ,&
@@ -46,13 +47,16 @@ implicit none
 #include "asterfort/nonlinLoadCompute.h"
 #include "asterfort/nonlinSubStruCompute.h"
 #include "asterfort/nonlinNForceCompute.h"
+#include "asterfort/nonlinLoadDirichletCompute.h"
 !
 integer, intent(in) :: list_func_acti(*)
 character(len=24), intent(in) :: model, cara_elem, nume_dof
+character(len=19), intent(in) :: matr_asse
 character(len=19), intent(in) :: list_load, sddyna
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Measure), intent(inout) :: ds_measure
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 character(len=19), intent(in) :: sddisc
 integer, intent(in) :: nume_inst
 character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
@@ -71,11 +75,13 @@ character(len=19), intent(in) :: hval_measse(*)
 ! In  model            : name of model
 ! In  cara_elem        : name of elementary characteristics (field)
 ! In  nume_dof         : name of numbering object (NUME_DDL)
+! In  matr_asse        : matrix
 ! In  list_load        : name of datastructure for list of loads
 ! In  sddyna           : datastructure for dynamic
 ! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IO  ds_measure       : datastructure for measure and statistics management
+! In  ds_algopara      : datastructure for algorithm parameters
 ! In  sddisc           : datastructure for time discretization
 ! In  nume_inst        : index of current time step
 ! In  hval_incr        : hat-variable for incremental values fields
@@ -91,7 +97,7 @@ character(len=19), intent(in) :: hval_measse(*)
     character(len=19) :: disp_prev
     character(len=19) :: disp_curr, vite_curr, acce_curr
     real(kind=8) :: time_prev, time_curr
-    aster_logical :: l_dyna, l_impe, l_ammo, l_macr, l_implex
+    aster_logical :: l_dyna, l_impe, l_ammo, l_macr, l_implex, l_expl
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -111,6 +117,7 @@ character(len=19), intent(in) :: hval_measse(*)
     l_dyna   = ndynlo(sddyna,'DYNAMIQUE')
     l_impe   = ndynlo(sddyna,'IMPE_ABSO')
     l_ammo   = ndynlo(sddyna,'AMOR_MODAL')
+    l_expl   = ndynlo(sddyna,'EXPLICITE')
     l_macr   = isfonc(list_func_acti,'MACR_ELEM_STAT')
     l_implex = isfonc(list_func_acti,'IMPLEX')
 !
@@ -183,6 +190,15 @@ character(len=19), intent(in) :: hval_measse(*)
                                  time_prev  , time_curr      ,&
                                  hval_incr  , hval_algo      ,&
                                  hval_veelem, hval_veasse)
+    endif
+!
+! - Compute Dirichlet boundary conditions - B.U
+!
+    if (.not. l_expl .and. (ds_algopara%matrix_pred .eq. 'ELASTIQUE'.or.&
+        ds_algopara%matrix_pred .eq. 'TANGENTE')) then
+        call nonlinLoadDirichletCompute(list_load  , model      , nume_dof ,&
+                                        ds_measure , matr_asse  , disp_prev,&
+                                        hval_veelem, hval_veasse)
     endif
 !
 end subroutine
