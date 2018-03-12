@@ -344,7 +344,8 @@ void DEFSSSPSS(VRCINS_WRAP,vrcins_wrap, const char*, STRING_SIZE, const char*, S
                                         const char*, STRING_SIZE, const ASTERDOUBLE*,
                                         const char*, STRING_SIZE, const char*, STRING_SIZE);
 
-#define CALLO_CACHVC(a, b, c, d, e, f, g, h, i, j, k) CALLOOOOOOOPPPP(CACHVC, cachvc, a, b, c, d, e, f, g, h, i, j, k)
+#define CALLO_CACHVC(a, b, c, d, e, f, g, h, i, j, k) CALLOOOOOOOPPPP(CACHVC, cachvc, a, b, c,\
+                                                                      d, e, f, g, h, i, j, k)
 void DEFSSSSSSSPPPP(CACHVC,cachvc, const char*, STRING_SIZE, const char*, STRING_SIZE,
                                    const char*, STRING_SIZE, const char*, STRING_SIZE,
                                    const char*, STRING_SIZE, const char*, STRING_SIZE,
