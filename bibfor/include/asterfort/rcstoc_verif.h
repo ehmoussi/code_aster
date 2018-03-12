@@ -18,11 +18,11 @@
 
 !
 !
-          interface 
-            subroutine rcstoc_verif(nomfct, nomcle, nomrc, nbmax)
-                character(len=19) :: nomfct
-                character(len=8) :: nomcle
-                character(len=32) :: nomrc
-                integer :: nbmax
-            end subroutine rcstoc_verif
-          end interface 
+interface 
+    subroutine rcstoc_verif(nomfct, nomcle, nomrc, nbmax)
+        character(len=*) :: nomfct
+        character(len=*) :: nomcle
+        character(len=*) :: nomrc
+        integer :: nbmax
+    end subroutine rcstoc_verif
+end interface 

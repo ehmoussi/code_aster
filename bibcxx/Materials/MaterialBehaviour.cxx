@@ -61,6 +61,20 @@ bool GeneralMaterialBehaviourInstance::buildJeveuxVectors( JeveuxVectorComplex& 
             throw std::runtime_error( "Mandatory material property " + nameOfProperty + " is missing" );
 
     }
+    for( auto curIter : _mapOfConvertibleMaterialProperties ){
+        std::string nameOfProperty = curIter.second.getName();
+        if( curIter.second.hasValue() )
+        {
+            nameOfProperty.resize( 16, ' ' );
+            (*char16Values)[position] = nameOfProperty.c_str();
+            (*doubleValues)[position] = curIter.second.getValue();
+            ++position;
+        }
+
+        if( curIter.second.isMandatory() && ! curIter.second.hasValue() )
+            throw std::runtime_error( "Mandatory material property " + nameOfProperty + " is missing" );
+
+    }
     doubleValues->setUsedSize(position);
 
     for( auto curIter : _mapOfComplexMaterialProperties ){
@@ -186,14 +200,17 @@ bool TractionMaterialBehaviourInstance::buildTractionFunction
     ( FunctionPtr& doubleValues ) const
     throw( std::runtime_error )
 {
-    long maxSize = 0;
+    long maxSize = 0, maxSize2 = 0;
     std::string resName;
     for( auto curIter : _mapOfFunctionMaterialProperties )
     {
         std::string nameOfProperty = curIter.second.getName();
         if( curIter.second.hasValue() )
         {
-            const auto size = curIter.second.getValue()->maximumSize();
+            const auto func = curIter.second.getValue();
+            CALLO_RCSTOC_VERIF( func->getName(), nameOfProperty,
+                                _asterName, &maxSize2 );
+            const auto size = func->maximumSize();
             if( size > maxSize )
                 maxSize = size;
             resName = curIter.second.getValue()->getResultName();
@@ -209,14 +226,17 @@ bool MetaTractionMaterialBehaviourInstance::buildTractionFunction
     ( FunctionPtr& doubleValues ) const
     throw( std::runtime_error )
 {
-    long maxSize = 0;
+    long maxSize = 0, maxSize2 = 0;
     std::string resName;
     for( auto curIter : _mapOfFunctionMaterialProperties )
     {
         std::string nameOfProperty = curIter.second.getName();
         if( curIter.second.hasValue() )
         {
-            const auto size = curIter.second.getValue()->maximumSize();
+            const auto func = curIter.second.getValue();
+            CALLO_RCSTOC_VERIF( func->getName(), nameOfProperty,
+                                _asterName, &maxSize2 );
+            const auto size = func->maximumSize();
             if( size > maxSize )
                 maxSize = size;
             resName = curIter.second.getValue()->getResultName();
@@ -256,6 +276,10 @@ int GeneralMaterialBehaviourInstance::getNumberOfPropertiesWithValue() const
             ++toReturn;
 
     for( auto curIter : _mapOfVectorFunctionMaterialProperties )
+        if( curIter.second.hasValue() )
+            ++toReturn;
+
+    for( auto curIter : _mapOfConvertibleMaterialProperties )
         if( curIter.second.hasValue() )
             ++toReturn;
 

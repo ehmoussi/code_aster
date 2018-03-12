@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine rcstoc_verif(nomfct, nomcle, nomrc, nbmax)
+subroutine rcstoc_verif(nomfcz, nomclz, nomrz, nbmax)
     implicit none
 #include "jeveux.h"
 #include "asterfort/foverf.h"
@@ -27,14 +27,17 @@ subroutine rcstoc_verif(nomfct, nomcle, nomrc, nbmax)
 #include "asterfort/jexnum.h"
 #include "asterfort/utmess.h"
 
-    character(len=19) :: nomfct
-    character(len=8) :: nomcle
-    character(len=32) :: nomrc
+    character(len=*) :: nomfcz
+    character(len=*) :: nomclz
+    character(len=*) :: nomrz
     integer :: nbmax
 ! ----------------------------------------------------------------------
 !
     real(kind=8) :: e1, ei, precma, valrr(4)
     character(len=24) :: valkk(2)
+    character(len=19) :: nomfct
+    character(len=8) :: nomcle
+    character(len=32) :: nomrc
     integer :: vali
     integer :: k, i, ii, jrpv, nbcoup
     integer :: iret, nbfct, nbpts, nbptm
@@ -43,6 +46,9 @@ subroutine rcstoc_verif(nomfct, nomcle, nomrc, nbmax)
 !
     call jemarq()
 !
+    nomfct = nomfcz
+    nomcle = nomclz
+    nomrc = nomrz
     call jeveuo(nomfct//'.PROL', 'L', vk24=prol)
     if (prol(1)(1:1) .eq. 'F') then
         call jelira(nomfct//'.VALE', 'LONMAX', nbptm)

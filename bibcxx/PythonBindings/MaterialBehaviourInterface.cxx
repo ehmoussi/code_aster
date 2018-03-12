@@ -53,6 +53,8 @@ void exportMaterialBehaviourToPython()
         ( "ElasMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ElasMaterialBehaviourInstance > ) )
+        .def( "getName", &ElasMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ElasFoMaterialBehaviourInstance, ElasFoMaterialBehaviourPtr,
@@ -60,6 +62,8 @@ void exportMaterialBehaviourToPython()
         ( "ElasFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ElasFoMaterialBehaviourInstance > ) )
+        .def( "getName", &ElasFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ElasFluiMaterialBehaviourInstance, ElasFluiMaterialBehaviourPtr,
@@ -67,6 +71,8 @@ void exportMaterialBehaviourToPython()
         ( "ElasFluiMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ElasFluiMaterialBehaviourInstance > ) )
+        .def( "getName", &ElasFluiMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ElasIstrMaterialBehaviourInstance, ElasIstrMaterialBehaviourPtr,
@@ -74,6 +80,8 @@ void exportMaterialBehaviourToPython()
         ( "ElasIstrMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ElasIstrMaterialBehaviourInstance > ) )
+        .def( "getName", &ElasIstrMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ElasIstrFoMaterialBehaviourInstance, ElasIstrFoMaterialBehaviourPtr,
@@ -81,6 +89,8 @@ void exportMaterialBehaviourToPython()
         ( "ElasIstrFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ElasIstrFoMaterialBehaviourInstance > ) )
+        .def( "getName", &ElasIstrFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ElasOrthMaterialBehaviourInstance, ElasOrthMaterialBehaviourPtr,
@@ -88,6 +98,8 @@ void exportMaterialBehaviourToPython()
         ( "ElasOrthMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ElasOrthMaterialBehaviourInstance > ) )
+        .def( "getName", &ElasOrthMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ElasOrthFoMaterialBehaviourInstance, ElasOrthFoMaterialBehaviourPtr,
@@ -95,6 +107,8 @@ void exportMaterialBehaviourToPython()
         ( "ElasOrthFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ElasOrthFoMaterialBehaviourInstance > ) )
+        .def( "getName", &ElasOrthFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ElasHyperMaterialBehaviourInstance, ElasHyperMaterialBehaviourPtr,
@@ -102,6 +116,8 @@ void exportMaterialBehaviourToPython()
         ( "ElasHyperMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ElasHyperMaterialBehaviourInstance > ) )
+        .def( "getName", &ElasHyperMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ElasCoqueMaterialBehaviourInstance, ElasCoqueMaterialBehaviourPtr,
@@ -109,6 +125,8 @@ void exportMaterialBehaviourToPython()
         ( "ElasCoqueMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ElasCoqueMaterialBehaviourInstance > ) )
+        .def( "getName", &ElasCoqueMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ElasCoqueFoMaterialBehaviourInstance, ElasCoqueFoMaterialBehaviourPtr,
@@ -116,6 +134,8 @@ void exportMaterialBehaviourToPython()
         ( "ElasCoqueFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ElasCoqueFoMaterialBehaviourInstance > ) )
+        .def( "getName", &ElasCoqueFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ElasMembraneMaterialBehaviourInstance, ElasMembraneMaterialBehaviourPtr,
@@ -123,6 +143,8 @@ void exportMaterialBehaviourToPython()
         ( "ElasMembraneMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ElasMembraneMaterialBehaviourInstance > ) )
+        .def( "getName", &ElasMembraneMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< Elas2ndgMaterialBehaviourInstance, Elas2ndgMaterialBehaviourPtr,
@@ -130,6 +152,8 @@ void exportMaterialBehaviourToPython()
         ( "Elas2ndgMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< Elas2ndgMaterialBehaviourInstance > ) )
+        .def( "getName", &Elas2ndgMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ElasGlrcMaterialBehaviourInstance, ElasGlrcMaterialBehaviourPtr,
@@ -137,6 +161,8 @@ void exportMaterialBehaviourToPython()
         ( "ElasGlrcMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ElasGlrcMaterialBehaviourInstance > ) )
+        .def( "getName", &ElasGlrcMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ElasGlrcFoMaterialBehaviourInstance, ElasGlrcFoMaterialBehaviourPtr,
@@ -144,6 +170,8 @@ void exportMaterialBehaviourToPython()
         ( "ElasGlrcFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ElasGlrcFoMaterialBehaviourInstance > ) )
+        .def( "getName", &ElasGlrcFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ElasDhrcMaterialBehaviourInstance, ElasDhrcMaterialBehaviourPtr,
@@ -151,6 +179,8 @@ void exportMaterialBehaviourToPython()
         ( "ElasDhrcMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ElasDhrcMaterialBehaviourInstance > ) )
+        .def( "getName", &ElasDhrcMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< CableMaterialBehaviourInstance, CableMaterialBehaviourPtr,
@@ -158,6 +188,8 @@ void exportMaterialBehaviourToPython()
         ( "CableMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< CableMaterialBehaviourInstance > ) )
+        .def( "getName", &CableMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< VeriBorneMaterialBehaviourInstance, VeriBorneMaterialBehaviourPtr,
@@ -165,6 +197,8 @@ void exportMaterialBehaviourToPython()
         ( "VeriBorneMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< VeriBorneMaterialBehaviourInstance > ) )
+        .def( "getName", &VeriBorneMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< TractionMaterialBehaviourInstance, TractionMaterialBehaviourPtr,
@@ -172,6 +206,8 @@ void exportMaterialBehaviourToPython()
         ( "TractionMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< TractionMaterialBehaviourInstance > ) )
+        .def( "getName", &TractionMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< EcroLineMaterialBehaviourInstance, EcroLineMaterialBehaviourPtr,
@@ -179,6 +215,8 @@ void exportMaterialBehaviourToPython()
         ( "EcroLineMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< EcroLineMaterialBehaviourInstance > ) )
+        .def( "getName", &EcroLineMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< EndoHeterogeneMaterialBehaviourInstance, EndoHeterogeneMaterialBehaviourPtr,
@@ -186,6 +224,8 @@ void exportMaterialBehaviourToPython()
         ( "EndoHeterogeneMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< EndoHeterogeneMaterialBehaviourInstance > ) )
+        .def( "getName", &EndoHeterogeneMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< EcroLineFoMaterialBehaviourInstance, EcroLineFoMaterialBehaviourPtr,
@@ -193,6 +233,8 @@ void exportMaterialBehaviourToPython()
         ( "EcroLineFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< EcroLineFoMaterialBehaviourInstance > ) )
+        .def( "getName", &EcroLineFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< EcroPuisMaterialBehaviourInstance, EcroPuisMaterialBehaviourPtr,
@@ -200,6 +242,8 @@ void exportMaterialBehaviourToPython()
         ( "EcroPuisMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< EcroPuisMaterialBehaviourInstance > ) )
+        .def( "getName", &EcroPuisMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< EcroPuisFoMaterialBehaviourInstance, EcroPuisFoMaterialBehaviourPtr,
@@ -207,6 +251,8 @@ void exportMaterialBehaviourToPython()
         ( "EcroPuisFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< EcroPuisFoMaterialBehaviourInstance > ) )
+        .def( "getName", &EcroPuisFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< EcroCookMaterialBehaviourInstance, EcroCookMaterialBehaviourPtr,
@@ -214,6 +260,8 @@ void exportMaterialBehaviourToPython()
         ( "EcroCookMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< EcroCookMaterialBehaviourInstance > ) )
+        .def( "getName", &EcroCookMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< EcroCookFoMaterialBehaviourInstance, EcroCookFoMaterialBehaviourPtr,
@@ -221,6 +269,8 @@ void exportMaterialBehaviourToPython()
         ( "EcroCookFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< EcroCookFoMaterialBehaviourInstance > ) )
+        .def( "getName", &EcroCookFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< BetonEcroLineMaterialBehaviourInstance, BetonEcroLineMaterialBehaviourPtr,
@@ -228,6 +278,8 @@ void exportMaterialBehaviourToPython()
         ( "BetonEcroLineMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< BetonEcroLineMaterialBehaviourInstance > ) )
+        .def( "getName", &BetonEcroLineMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< BetonReglePrMaterialBehaviourInstance, BetonReglePrMaterialBehaviourPtr,
@@ -235,6 +287,8 @@ void exportMaterialBehaviourToPython()
         ( "BetonReglePrMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< BetonReglePrMaterialBehaviourInstance > ) )
+        .def( "getName", &BetonReglePrMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< EndoOrthBetonMaterialBehaviourInstance, EndoOrthBetonMaterialBehaviourPtr,
@@ -242,6 +296,8 @@ void exportMaterialBehaviourToPython()
         ( "EndoOrthBetonMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< EndoOrthBetonMaterialBehaviourInstance > ) )
+        .def( "getName", &EndoOrthBetonMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< PragerMaterialBehaviourInstance, PragerMaterialBehaviourPtr,
@@ -249,6 +305,8 @@ void exportMaterialBehaviourToPython()
         ( "PragerMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< PragerMaterialBehaviourInstance > ) )
+        .def( "getName", &PragerMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< PragerFoMaterialBehaviourInstance, PragerFoMaterialBehaviourPtr,
@@ -256,6 +314,8 @@ void exportMaterialBehaviourToPython()
         ( "PragerFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< PragerFoMaterialBehaviourInstance > ) )
+        .def( "getName", &PragerFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< TaheriMaterialBehaviourInstance, TaheriMaterialBehaviourPtr,
@@ -263,6 +323,8 @@ void exportMaterialBehaviourToPython()
         ( "TaheriMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< TaheriMaterialBehaviourInstance > ) )
+        .def( "getName", &TaheriMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< TaheriFoMaterialBehaviourInstance, TaheriFoMaterialBehaviourPtr,
@@ -270,6 +332,8 @@ void exportMaterialBehaviourToPython()
         ( "TaheriFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< TaheriFoMaterialBehaviourInstance > ) )
+        .def( "getName", &TaheriFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< RousselierMaterialBehaviourInstance, RousselierMaterialBehaviourPtr,
@@ -277,6 +341,8 @@ void exportMaterialBehaviourToPython()
         ( "RousselierMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< RousselierMaterialBehaviourInstance > ) )
+        .def( "getName", &RousselierMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< RousselierFoMaterialBehaviourInstance, RousselierFoMaterialBehaviourPtr,
@@ -284,6 +350,8 @@ void exportMaterialBehaviourToPython()
         ( "RousselierFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< RousselierFoMaterialBehaviourInstance > ) )
+        .def( "getName", &RousselierFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ViscSinhMaterialBehaviourInstance, ViscSinhMaterialBehaviourPtr,
@@ -291,6 +359,8 @@ void exportMaterialBehaviourToPython()
         ( "ViscSinhMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ViscSinhMaterialBehaviourInstance > ) )
+        .def( "getName", &ViscSinhMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ViscSinhFoMaterialBehaviourInstance, ViscSinhFoMaterialBehaviourPtr,
@@ -298,6 +368,8 @@ void exportMaterialBehaviourToPython()
         ( "ViscSinhFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ViscSinhFoMaterialBehaviourInstance > ) )
+        .def( "getName", &ViscSinhFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< Cin1ChabMaterialBehaviourInstance, Cin1ChabMaterialBehaviourPtr,
@@ -305,6 +377,8 @@ void exportMaterialBehaviourToPython()
         ( "Cin1ChabMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< Cin1ChabMaterialBehaviourInstance > ) )
+        .def( "getName", &Cin1ChabMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< Cin1ChabFoMaterialBehaviourInstance, Cin1ChabFoMaterialBehaviourPtr,
@@ -312,6 +386,8 @@ void exportMaterialBehaviourToPython()
         ( "Cin1ChabFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< Cin1ChabFoMaterialBehaviourInstance > ) )
+        .def( "getName", &Cin1ChabFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< Cin2ChabMaterialBehaviourInstance, Cin2ChabMaterialBehaviourPtr,
@@ -319,6 +395,8 @@ void exportMaterialBehaviourToPython()
         ( "Cin2ChabMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< Cin2ChabMaterialBehaviourInstance > ) )
+        .def( "getName", &Cin2ChabMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< Cin2ChabFoMaterialBehaviourInstance, Cin2ChabFoMaterialBehaviourPtr,
@@ -326,6 +404,8 @@ void exportMaterialBehaviourToPython()
         ( "Cin2ChabFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< Cin2ChabFoMaterialBehaviourInstance > ) )
+        .def( "getName", &Cin2ChabFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< Cin2NradMaterialBehaviourInstance, Cin2NradMaterialBehaviourPtr,
@@ -333,6 +413,8 @@ void exportMaterialBehaviourToPython()
         ( "Cin2NradMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< Cin2NradMaterialBehaviourInstance > ) )
+        .def( "getName", &Cin2NradMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MemoEcroMaterialBehaviourInstance, MemoEcroMaterialBehaviourPtr,
@@ -340,6 +422,8 @@ void exportMaterialBehaviourToPython()
         ( "MemoEcroMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MemoEcroMaterialBehaviourInstance > ) )
+        .def( "getName", &MemoEcroMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MemoEcroFoMaterialBehaviourInstance, MemoEcroFoMaterialBehaviourPtr,
@@ -347,6 +431,8 @@ void exportMaterialBehaviourToPython()
         ( "MemoEcroFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MemoEcroFoMaterialBehaviourInstance > ) )
+        .def( "getName", &MemoEcroFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ViscochabMaterialBehaviourInstance, ViscochabMaterialBehaviourPtr,
@@ -354,6 +440,8 @@ void exportMaterialBehaviourToPython()
         ( "ViscochabMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ViscochabMaterialBehaviourInstance > ) )
+        .def( "getName", &ViscochabMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ViscochabFoMaterialBehaviourInstance, ViscochabFoMaterialBehaviourPtr,
@@ -361,6 +449,8 @@ void exportMaterialBehaviourToPython()
         ( "ViscochabFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ViscochabFoMaterialBehaviourInstance > ) )
+        .def( "getName", &ViscochabFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< LemaitreMaterialBehaviourInstance, LemaitreMaterialBehaviourPtr,
@@ -368,6 +458,8 @@ void exportMaterialBehaviourToPython()
         ( "LemaitreMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< LemaitreMaterialBehaviourInstance > ) )
+        .def( "getName", &LemaitreMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< LemaitreIrraMaterialBehaviourInstance, LemaitreIrraMaterialBehaviourPtr,
@@ -375,6 +467,8 @@ void exportMaterialBehaviourToPython()
         ( "LemaitreIrraMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< LemaitreIrraMaterialBehaviourInstance > ) )
+        .def( "getName", &LemaitreIrraMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< LmarcIrraMaterialBehaviourInstance, LmarcIrraMaterialBehaviourPtr,
@@ -382,6 +476,8 @@ void exportMaterialBehaviourToPython()
         ( "LmarcIrraMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< LmarcIrraMaterialBehaviourInstance > ) )
+        .def( "getName", &LmarcIrraMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ViscIrraLogMaterialBehaviourInstance, ViscIrraLogMaterialBehaviourPtr,
@@ -389,6 +485,8 @@ void exportMaterialBehaviourToPython()
         ( "ViscIrraLogMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ViscIrraLogMaterialBehaviourInstance > ) )
+        .def( "getName", &ViscIrraLogMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< GranIrraLogMaterialBehaviourInstance, GranIrraLogMaterialBehaviourPtr,
@@ -396,6 +494,8 @@ void exportMaterialBehaviourToPython()
         ( "GranIrraLogMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< GranIrraLogMaterialBehaviourInstance > ) )
+        .def( "getName", &GranIrraLogMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< LemaSeuilMaterialBehaviourInstance, LemaSeuilMaterialBehaviourPtr,
@@ -403,6 +503,8 @@ void exportMaterialBehaviourToPython()
         ( "LemaSeuilMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< LemaSeuilMaterialBehaviourInstance > ) )
+        .def( "getName", &LemaSeuilMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< LemaSeuilFoMaterialBehaviourInstance, LemaSeuilFoMaterialBehaviourPtr,
@@ -410,6 +512,8 @@ void exportMaterialBehaviourToPython()
         ( "LemaSeuilFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< LemaSeuilFoMaterialBehaviourInstance > ) )
+        .def( "getName", &LemaSeuilFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< Irrad3mMaterialBehaviourInstance, Irrad3mMaterialBehaviourPtr,
@@ -417,6 +521,8 @@ void exportMaterialBehaviourToPython()
         ( "Irrad3mMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< Irrad3mMaterialBehaviourInstance > ) )
+        .def( "getName", &Irrad3mMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< LemaitreFoMaterialBehaviourInstance, LemaitreFoMaterialBehaviourPtr,
@@ -424,6 +530,8 @@ void exportMaterialBehaviourToPython()
         ( "LemaitreFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< LemaitreFoMaterialBehaviourInstance > ) )
+        .def( "getName", &LemaitreFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MetaLemaAniMaterialBehaviourInstance, MetaLemaAniMaterialBehaviourPtr,
@@ -431,6 +539,8 @@ void exportMaterialBehaviourToPython()
         ( "MetaLemaAniMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MetaLemaAniMaterialBehaviourInstance > ) )
+        .def( "getName", &MetaLemaAniMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MetaLemaAniFoMaterialBehaviourInstance, MetaLemaAniFoMaterialBehaviourPtr,
@@ -438,6 +548,8 @@ void exportMaterialBehaviourToPython()
         ( "MetaLemaAniFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MetaLemaAniFoMaterialBehaviourInstance > ) )
+        .def( "getName", &MetaLemaAniFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ArmeMaterialBehaviourInstance, ArmeMaterialBehaviourPtr,
@@ -445,6 +557,8 @@ void exportMaterialBehaviourToPython()
         ( "ArmeMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ArmeMaterialBehaviourInstance > ) )
+        .def( "getName", &ArmeMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< AsseCornMaterialBehaviourInstance, AsseCornMaterialBehaviourPtr,
@@ -452,6 +566,8 @@ void exportMaterialBehaviourToPython()
         ( "AsseCornMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< AsseCornMaterialBehaviourInstance > ) )
+        .def( "getName", &AsseCornMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< DisContactMaterialBehaviourInstance, DisContactMaterialBehaviourPtr,
@@ -459,6 +575,8 @@ void exportMaterialBehaviourToPython()
         ( "DisContactMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< DisContactMaterialBehaviourInstance > ) )
+        .def( "getName", &DisContactMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< EndoScalaireMaterialBehaviourInstance, EndoScalaireMaterialBehaviourPtr,
@@ -466,6 +584,8 @@ void exportMaterialBehaviourToPython()
         ( "EndoScalaireMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< EndoScalaireMaterialBehaviourInstance > ) )
+        .def( "getName", &EndoScalaireMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< EndoScalaireFoMaterialBehaviourInstance, EndoScalaireFoMaterialBehaviourPtr,
@@ -473,6 +593,8 @@ void exportMaterialBehaviourToPython()
         ( "EndoScalaireFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< EndoScalaireFoMaterialBehaviourInstance > ) )
+        .def( "getName", &EndoScalaireFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< EndoFissExpMaterialBehaviourInstance, EndoFissExpMaterialBehaviourPtr,
@@ -480,6 +602,8 @@ void exportMaterialBehaviourToPython()
         ( "EndoFissExpMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< EndoFissExpMaterialBehaviourInstance > ) )
+        .def( "getName", &EndoFissExpMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< EndoFissExpFoMaterialBehaviourInstance, EndoFissExpFoMaterialBehaviourPtr,
@@ -487,6 +611,8 @@ void exportMaterialBehaviourToPython()
         ( "EndoFissExpFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< EndoFissExpFoMaterialBehaviourInstance > ) )
+        .def( "getName", &EndoFissExpFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< DisGricraMaterialBehaviourInstance, DisGricraMaterialBehaviourPtr,
@@ -494,6 +620,8 @@ void exportMaterialBehaviourToPython()
         ( "DisGricraMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< DisGricraMaterialBehaviourInstance > ) )
+        .def( "getName", &DisGricraMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< BetonDoubleDpMaterialBehaviourInstance, BetonDoubleDpMaterialBehaviourPtr,
@@ -501,6 +629,8 @@ void exportMaterialBehaviourToPython()
         ( "BetonDoubleDpMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< BetonDoubleDpMaterialBehaviourInstance > ) )
+        .def( "getName", &BetonDoubleDpMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MazarsMaterialBehaviourInstance, MazarsMaterialBehaviourPtr,
@@ -508,6 +638,8 @@ void exportMaterialBehaviourToPython()
         ( "MazarsMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MazarsMaterialBehaviourInstance > ) )
+        .def( "getName", &MazarsMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MazarsFoMaterialBehaviourInstance, MazarsFoMaterialBehaviourPtr,
@@ -515,6 +647,8 @@ void exportMaterialBehaviourToPython()
         ( "MazarsFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MazarsFoMaterialBehaviourInstance > ) )
+        .def( "getName", &MazarsFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< JointBaMaterialBehaviourInstance, JointBaMaterialBehaviourPtr,
@@ -522,6 +656,8 @@ void exportMaterialBehaviourToPython()
         ( "JointBaMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< JointBaMaterialBehaviourInstance > ) )
+        .def( "getName", &JointBaMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< VendochabMaterialBehaviourInstance, VendochabMaterialBehaviourPtr,
@@ -529,6 +665,8 @@ void exportMaterialBehaviourToPython()
         ( "VendochabMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< VendochabMaterialBehaviourInstance > ) )
+        .def( "getName", &VendochabMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< VendochabFoMaterialBehaviourInstance, VendochabFoMaterialBehaviourPtr,
@@ -536,6 +674,8 @@ void exportMaterialBehaviourToPython()
         ( "VendochabFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< VendochabFoMaterialBehaviourInstance > ) )
+        .def( "getName", &VendochabFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< HayhurstMaterialBehaviourInstance, HayhurstMaterialBehaviourPtr,
@@ -543,6 +683,8 @@ void exportMaterialBehaviourToPython()
         ( "HayhurstMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< HayhurstMaterialBehaviourInstance > ) )
+        .def( "getName", &HayhurstMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ViscEndoMaterialBehaviourInstance, ViscEndoMaterialBehaviourPtr,
@@ -550,6 +692,8 @@ void exportMaterialBehaviourToPython()
         ( "ViscEndoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ViscEndoMaterialBehaviourInstance > ) )
+        .def( "getName", &ViscEndoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ViscEndoFoMaterialBehaviourInstance, ViscEndoFoMaterialBehaviourPtr,
@@ -557,6 +701,8 @@ void exportMaterialBehaviourToPython()
         ( "ViscEndoFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ViscEndoFoMaterialBehaviourInstance > ) )
+        .def( "getName", &ViscEndoFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< PintoMenegottoMaterialBehaviourInstance, PintoMenegottoMaterialBehaviourPtr,
@@ -564,6 +710,8 @@ void exportMaterialBehaviourToPython()
         ( "PintoMenegottoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< PintoMenegottoMaterialBehaviourInstance > ) )
+        .def( "getName", &PintoMenegottoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< BpelBetonMaterialBehaviourInstance, BpelBetonMaterialBehaviourPtr,
@@ -571,6 +719,8 @@ void exportMaterialBehaviourToPython()
         ( "BpelBetonMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< BpelBetonMaterialBehaviourInstance > ) )
+        .def( "getName", &BpelBetonMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< BpelAcierMaterialBehaviourInstance, BpelAcierMaterialBehaviourPtr,
@@ -578,6 +728,8 @@ void exportMaterialBehaviourToPython()
         ( "BpelAcierMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< BpelAcierMaterialBehaviourInstance > ) )
+        .def( "getName", &BpelAcierMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< EtccBetonMaterialBehaviourInstance, EtccBetonMaterialBehaviourPtr,
@@ -585,6 +737,8 @@ void exportMaterialBehaviourToPython()
         ( "EtccBetonMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< EtccBetonMaterialBehaviourInstance > ) )
+        .def( "getName", &EtccBetonMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< EtccAcierMaterialBehaviourInstance, EtccAcierMaterialBehaviourPtr,
@@ -592,6 +746,8 @@ void exportMaterialBehaviourToPython()
         ( "EtccAcierMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< EtccAcierMaterialBehaviourInstance > ) )
+        .def( "getName", &EtccAcierMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MohrCoulombMaterialBehaviourInstance, MohrCoulombMaterialBehaviourPtr,
@@ -599,6 +755,8 @@ void exportMaterialBehaviourToPython()
         ( "MohrCoulombMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MohrCoulombMaterialBehaviourInstance > ) )
+        .def( "getName", &MohrCoulombMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< CamClayMaterialBehaviourInstance, CamClayMaterialBehaviourPtr,
@@ -606,6 +764,8 @@ void exportMaterialBehaviourToPython()
         ( "CamClayMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< CamClayMaterialBehaviourInstance > ) )
+        .def( "getName", &CamClayMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< BarceloneMaterialBehaviourInstance, BarceloneMaterialBehaviourPtr,
@@ -613,6 +773,8 @@ void exportMaterialBehaviourToPython()
         ( "BarceloneMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< BarceloneMaterialBehaviourInstance > ) )
+        .def( "getName", &BarceloneMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< CjsMaterialBehaviourInstance, CjsMaterialBehaviourPtr,
@@ -620,6 +782,8 @@ void exportMaterialBehaviourToPython()
         ( "CjsMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< CjsMaterialBehaviourInstance > ) )
+        .def( "getName", &CjsMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< HujeuxMaterialBehaviourInstance, HujeuxMaterialBehaviourPtr,
@@ -627,6 +791,8 @@ void exportMaterialBehaviourToPython()
         ( "HujeuxMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< HujeuxMaterialBehaviourInstance > ) )
+        .def( "getName", &HujeuxMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< EcroAsymLineMaterialBehaviourInstance, EcroAsymLineMaterialBehaviourPtr,
@@ -634,6 +800,8 @@ void exportMaterialBehaviourToPython()
         ( "EcroAsymLineMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< EcroAsymLineMaterialBehaviourInstance > ) )
+        .def( "getName", &EcroAsymLineMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< GrangerFpMaterialBehaviourInstance, GrangerFpMaterialBehaviourPtr,
@@ -641,6 +809,8 @@ void exportMaterialBehaviourToPython()
         ( "GrangerFpMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< GrangerFpMaterialBehaviourInstance > ) )
+        .def( "getName", &GrangerFpMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< GrangerFp_indtMaterialBehaviourInstance, GrangerFp_indtMaterialBehaviourPtr,
@@ -648,6 +818,8 @@ void exportMaterialBehaviourToPython()
         ( "GrangerFp_indtMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< GrangerFp_indtMaterialBehaviourInstance > ) )
+        .def( "getName", &GrangerFp_indtMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< VGrangerFpMaterialBehaviourInstance, VGrangerFpMaterialBehaviourPtr,
@@ -655,6 +827,8 @@ void exportMaterialBehaviourToPython()
         ( "VGrangerFpMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< VGrangerFpMaterialBehaviourInstance > ) )
+        .def( "getName", &VGrangerFpMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< BetonBurgerFpMaterialBehaviourInstance, BetonBurgerFpMaterialBehaviourPtr,
@@ -662,6 +836,8 @@ void exportMaterialBehaviourToPython()
         ( "BetonBurgerFpMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< BetonBurgerFpMaterialBehaviourInstance > ) )
+        .def( "getName", &BetonBurgerFpMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< BetonUmlvFpMaterialBehaviourInstance, BetonUmlvFpMaterialBehaviourPtr,
@@ -669,6 +845,8 @@ void exportMaterialBehaviourToPython()
         ( "BetonUmlvFpMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< BetonUmlvFpMaterialBehaviourInstance > ) )
+        .def( "getName", &BetonUmlvFpMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< BetonRagMaterialBehaviourInstance, BetonRagMaterialBehaviourPtr,
@@ -676,6 +854,8 @@ void exportMaterialBehaviourToPython()
         ( "BetonRagMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< BetonRagMaterialBehaviourInstance > ) )
+        .def( "getName", &BetonRagMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< PoroBetonMaterialBehaviourInstance, PoroBetonMaterialBehaviourPtr,
@@ -683,6 +863,8 @@ void exportMaterialBehaviourToPython()
         ( "PoroBetonMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< PoroBetonMaterialBehaviourInstance > ) )
+        .def( "getName", &PoroBetonMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< GlrcDmMaterialBehaviourInstance, GlrcDmMaterialBehaviourPtr,
@@ -690,6 +872,8 @@ void exportMaterialBehaviourToPython()
         ( "GlrcDmMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< GlrcDmMaterialBehaviourInstance > ) )
+        .def( "getName", &GlrcDmMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< DhrcMaterialBehaviourInstance, DhrcMaterialBehaviourPtr,
@@ -697,6 +881,8 @@ void exportMaterialBehaviourToPython()
         ( "DhrcMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< DhrcMaterialBehaviourInstance > ) )
+        .def( "getName", &DhrcMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< GattMonerieMaterialBehaviourInstance, GattMonerieMaterialBehaviourPtr,
@@ -704,6 +890,8 @@ void exportMaterialBehaviourToPython()
         ( "GattMonerieMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< GattMonerieMaterialBehaviourInstance > ) )
+        .def( "getName", &GattMonerieMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< CorrAcierMaterialBehaviourInstance, CorrAcierMaterialBehaviourPtr,
@@ -711,6 +899,8 @@ void exportMaterialBehaviourToPython()
         ( "CorrAcierMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< CorrAcierMaterialBehaviourInstance > ) )
+        .def( "getName", &CorrAcierMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< CableGaineFrotMaterialBehaviourInstance, CableGaineFrotMaterialBehaviourPtr,
@@ -718,6 +908,8 @@ void exportMaterialBehaviourToPython()
         ( "CableGaineFrotMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< CableGaineFrotMaterialBehaviourInstance > ) )
+        .def( "getName", &CableGaineFrotMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< DisEcroCineMaterialBehaviourInstance, DisEcroCineMaterialBehaviourPtr,
@@ -725,6 +917,8 @@ void exportMaterialBehaviourToPython()
         ( "DisEcroCineMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< DisEcroCineMaterialBehaviourInstance > ) )
+        .def( "getName", &DisEcroCineMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< DisViscMaterialBehaviourInstance, DisViscMaterialBehaviourPtr,
@@ -732,6 +926,8 @@ void exportMaterialBehaviourToPython()
         ( "DisViscMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< DisViscMaterialBehaviourInstance > ) )
+        .def( "getName", &DisViscMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< DisBiliElasMaterialBehaviourInstance, DisBiliElasMaterialBehaviourPtr,
@@ -739,6 +935,8 @@ void exportMaterialBehaviourToPython()
         ( "DisBiliElasMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< DisBiliElasMaterialBehaviourInstance > ) )
+        .def( "getName", &DisBiliElasMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< TherNlMaterialBehaviourInstance, TherNlMaterialBehaviourPtr,
@@ -746,6 +944,8 @@ void exportMaterialBehaviourToPython()
         ( "TherNlMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< TherNlMaterialBehaviourInstance > ) )
+        .def( "getName", &TherNlMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< TherHydrMaterialBehaviourInstance, TherHydrMaterialBehaviourPtr,
@@ -753,6 +953,8 @@ void exportMaterialBehaviourToPython()
         ( "TherHydrMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< TherHydrMaterialBehaviourInstance > ) )
+        .def( "getName", &TherHydrMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< TherMaterialBehaviourInstance, TherMaterialBehaviourPtr,
@@ -760,6 +962,8 @@ void exportMaterialBehaviourToPython()
         ( "TherMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< TherMaterialBehaviourInstance > ) )
+        .def( "getName", &TherMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< TherFoMaterialBehaviourInstance, TherFoMaterialBehaviourPtr,
@@ -767,6 +971,8 @@ void exportMaterialBehaviourToPython()
         ( "TherFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< TherFoMaterialBehaviourInstance > ) )
+        .def( "getName", &TherFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< TherOrthMaterialBehaviourInstance, TherOrthMaterialBehaviourPtr,
@@ -774,6 +980,8 @@ void exportMaterialBehaviourToPython()
         ( "TherOrthMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< TherOrthMaterialBehaviourInstance > ) )
+        .def( "getName", &TherOrthMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< TherCoqueMaterialBehaviourInstance, TherCoqueMaterialBehaviourPtr,
@@ -781,6 +989,8 @@ void exportMaterialBehaviourToPython()
         ( "TherCoqueMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< TherCoqueMaterialBehaviourInstance > ) )
+        .def( "getName", &TherCoqueMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< TherCoqueFoMaterialBehaviourInstance, TherCoqueFoMaterialBehaviourPtr,
@@ -788,6 +998,8 @@ void exportMaterialBehaviourToPython()
         ( "TherCoqueFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< TherCoqueFoMaterialBehaviourInstance > ) )
+        .def( "getName", &TherCoqueFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< SechGrangerMaterialBehaviourInstance, SechGrangerMaterialBehaviourPtr,
@@ -795,6 +1007,8 @@ void exportMaterialBehaviourToPython()
         ( "SechGrangerMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< SechGrangerMaterialBehaviourInstance > ) )
+        .def( "getName", &SechGrangerMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< SechMensiMaterialBehaviourInstance, SechMensiMaterialBehaviourPtr,
@@ -802,6 +1016,8 @@ void exportMaterialBehaviourToPython()
         ( "SechMensiMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< SechMensiMaterialBehaviourInstance > ) )
+        .def( "getName", &SechMensiMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< SechBazantMaterialBehaviourInstance, SechBazantMaterialBehaviourPtr,
@@ -809,6 +1025,8 @@ void exportMaterialBehaviourToPython()
         ( "SechBazantMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< SechBazantMaterialBehaviourInstance > ) )
+        .def( "getName", &SechBazantMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< SechNappeMaterialBehaviourInstance, SechNappeMaterialBehaviourPtr,
@@ -816,6 +1034,8 @@ void exportMaterialBehaviourToPython()
         ( "SechNappeMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< SechNappeMaterialBehaviourInstance > ) )
+        .def( "getName", &SechNappeMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MetaAcierMaterialBehaviourInstance, MetaAcierMaterialBehaviourPtr,
@@ -823,6 +1043,8 @@ void exportMaterialBehaviourToPython()
         ( "MetaAcierMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MetaAcierMaterialBehaviourInstance > ) )
+        .def( "getName", &MetaAcierMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MetaZircMaterialBehaviourInstance, MetaZircMaterialBehaviourPtr,
@@ -830,6 +1052,8 @@ void exportMaterialBehaviourToPython()
         ( "MetaZircMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MetaZircMaterialBehaviourInstance > ) )
+        .def( "getName", &MetaZircMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< DurtMetaMaterialBehaviourInstance, DurtMetaMaterialBehaviourPtr,
@@ -837,6 +1061,8 @@ void exportMaterialBehaviourToPython()
         ( "DurtMetaMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< DurtMetaMaterialBehaviourInstance > ) )
+        .def( "getName", &DurtMetaMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ElasMetaMaterialBehaviourInstance, ElasMetaMaterialBehaviourPtr,
@@ -844,6 +1070,8 @@ void exportMaterialBehaviourToPython()
         ( "ElasMetaMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ElasMetaMaterialBehaviourInstance > ) )
+        .def( "getName", &ElasMetaMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ElasMetaFoMaterialBehaviourInstance, ElasMetaFoMaterialBehaviourPtr,
@@ -851,6 +1079,8 @@ void exportMaterialBehaviourToPython()
         ( "ElasMetaFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ElasMetaFoMaterialBehaviourInstance > ) )
+        .def( "getName", &ElasMetaFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MetaEcroLineMaterialBehaviourInstance, MetaEcroLineMaterialBehaviourPtr,
@@ -858,6 +1088,8 @@ void exportMaterialBehaviourToPython()
         ( "MetaEcroLineMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MetaEcroLineMaterialBehaviourInstance > ) )
+        .def( "getName", &MetaEcroLineMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MetaTractionMaterialBehaviourInstance, MetaTractionMaterialBehaviourPtr,
@@ -865,6 +1097,8 @@ void exportMaterialBehaviourToPython()
         ( "MetaTractionMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MetaTractionMaterialBehaviourInstance > ) )
+        .def( "getName", &MetaTractionMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MetaViscFoMaterialBehaviourInstance, MetaViscFoMaterialBehaviourPtr,
@@ -872,6 +1106,8 @@ void exportMaterialBehaviourToPython()
         ( "MetaViscFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MetaViscFoMaterialBehaviourInstance > ) )
+        .def( "getName", &MetaViscFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MetaPtMaterialBehaviourInstance, MetaPtMaterialBehaviourPtr,
@@ -879,6 +1115,8 @@ void exportMaterialBehaviourToPython()
         ( "MetaPtMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MetaPtMaterialBehaviourInstance > ) )
+        .def( "getName", &MetaPtMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MetaReMaterialBehaviourInstance, MetaReMaterialBehaviourPtr,
@@ -886,6 +1124,8 @@ void exportMaterialBehaviourToPython()
         ( "MetaReMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MetaReMaterialBehaviourInstance > ) )
+        .def( "getName", &MetaReMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< FluideMaterialBehaviourInstance, FluideMaterialBehaviourPtr,
@@ -893,6 +1133,8 @@ void exportMaterialBehaviourToPython()
         ( "FluideMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< FluideMaterialBehaviourInstance > ) )
+        .def( "getName", &FluideMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ThmInitMaterialBehaviourInstance, ThmInitMaterialBehaviourPtr,
@@ -900,6 +1142,8 @@ void exportMaterialBehaviourToPython()
         ( "ThmInitMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ThmInitMaterialBehaviourInstance > ) )
+        .def( "getName", &ThmInitMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ThmGazMaterialBehaviourInstance, ThmGazMaterialBehaviourPtr,
@@ -907,6 +1151,8 @@ void exportMaterialBehaviourToPython()
         ( "ThmGazMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ThmGazMaterialBehaviourInstance > ) )
+        .def( "getName", &ThmGazMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ThmVapeGazMaterialBehaviourInstance, ThmVapeGazMaterialBehaviourPtr,
@@ -914,6 +1160,8 @@ void exportMaterialBehaviourToPython()
         ( "ThmVapeGazMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ThmVapeGazMaterialBehaviourInstance > ) )
+        .def( "getName", &ThmVapeGazMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ThmDiffuMaterialBehaviourInstance, ThmDiffuMaterialBehaviourPtr,
@@ -921,6 +1169,8 @@ void exportMaterialBehaviourToPython()
         ( "ThmDiffuMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ThmDiffuMaterialBehaviourInstance > ) )
+        .def( "getName", &ThmDiffuMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ThmLiquMaterialBehaviourInstance, ThmLiquMaterialBehaviourPtr,
@@ -928,6 +1178,8 @@ void exportMaterialBehaviourToPython()
         ( "ThmLiquMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ThmLiquMaterialBehaviourInstance > ) )
+        .def( "getName", &ThmLiquMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< FatigueMaterialBehaviourInstance, FatigueMaterialBehaviourPtr,
@@ -935,6 +1187,8 @@ void exportMaterialBehaviourToPython()
         ( "FatigueMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< FatigueMaterialBehaviourInstance > ) )
+        .def( "getName", &FatigueMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< DommaLemaitreMaterialBehaviourInstance, DommaLemaitreMaterialBehaviourPtr,
@@ -942,6 +1196,8 @@ void exportMaterialBehaviourToPython()
         ( "DommaLemaitreMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< DommaLemaitreMaterialBehaviourInstance > ) )
+        .def( "getName", &DommaLemaitreMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< CisaPlanCritMaterialBehaviourInstance, CisaPlanCritMaterialBehaviourPtr,
@@ -949,6 +1205,8 @@ void exportMaterialBehaviourToPython()
         ( "CisaPlanCritMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< CisaPlanCritMaterialBehaviourInstance > ) )
+        .def( "getName", &CisaPlanCritMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ThmRuptMaterialBehaviourInstance, ThmRuptMaterialBehaviourPtr,
@@ -956,6 +1214,8 @@ void exportMaterialBehaviourToPython()
         ( "ThmRuptMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ThmRuptMaterialBehaviourInstance > ) )
+        .def( "getName", &ThmRuptMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< WeibullMaterialBehaviourInstance, WeibullMaterialBehaviourPtr,
@@ -963,6 +1223,8 @@ void exportMaterialBehaviourToPython()
         ( "WeibullMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< WeibullMaterialBehaviourInstance > ) )
+        .def( "getName", &WeibullMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< WeibullFoMaterialBehaviourInstance, WeibullFoMaterialBehaviourPtr,
@@ -970,6 +1232,8 @@ void exportMaterialBehaviourToPython()
         ( "WeibullFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< WeibullFoMaterialBehaviourInstance > ) )
+        .def( "getName", &WeibullFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< NonLocalMaterialBehaviourInstance, NonLocalMaterialBehaviourPtr,
@@ -977,6 +1241,8 @@ void exportMaterialBehaviourToPython()
         ( "NonLocalMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< NonLocalMaterialBehaviourInstance > ) )
+        .def( "getName", &NonLocalMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< RuptFragMaterialBehaviourInstance, RuptFragMaterialBehaviourPtr,
@@ -984,6 +1250,8 @@ void exportMaterialBehaviourToPython()
         ( "RuptFragMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< RuptFragMaterialBehaviourInstance > ) )
+        .def( "getName", &RuptFragMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< RuptFragFoMaterialBehaviourInstance, RuptFragFoMaterialBehaviourPtr,
@@ -991,6 +1259,8 @@ void exportMaterialBehaviourToPython()
         ( "RuptFragFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< RuptFragFoMaterialBehaviourInstance > ) )
+        .def( "getName", &RuptFragFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< CzmLabMixMaterialBehaviourInstance, CzmLabMixMaterialBehaviourPtr,
@@ -998,6 +1268,8 @@ void exportMaterialBehaviourToPython()
         ( "CzmLabMixMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< CzmLabMixMaterialBehaviourInstance > ) )
+        .def( "getName", &CzmLabMixMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< RuptDuctMaterialBehaviourInstance, RuptDuctMaterialBehaviourPtr,
@@ -1005,6 +1277,8 @@ void exportMaterialBehaviourToPython()
         ( "RuptDuctMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< RuptDuctMaterialBehaviourInstance > ) )
+        .def( "getName", &RuptDuctMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< JointMecaRuptMaterialBehaviourInstance, JointMecaRuptMaterialBehaviourPtr,
@@ -1012,6 +1286,8 @@ void exportMaterialBehaviourToPython()
         ( "JointMecaRuptMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< JointMecaRuptMaterialBehaviourInstance > ) )
+        .def( "getName", &JointMecaRuptMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< JointMecaFrotMaterialBehaviourInstance, JointMecaFrotMaterialBehaviourPtr,
@@ -1019,6 +1295,8 @@ void exportMaterialBehaviourToPython()
         ( "JointMecaFrotMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< JointMecaFrotMaterialBehaviourInstance > ) )
+        .def( "getName", &JointMecaFrotMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< RccmMaterialBehaviourInstance, RccmMaterialBehaviourPtr,
@@ -1026,6 +1304,8 @@ void exportMaterialBehaviourToPython()
         ( "RccmMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< RccmMaterialBehaviourInstance > ) )
+        .def( "getName", &RccmMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< RccmFoMaterialBehaviourInstance, RccmFoMaterialBehaviourPtr,
@@ -1033,6 +1313,8 @@ void exportMaterialBehaviourToPython()
         ( "RccmFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< RccmFoMaterialBehaviourInstance > ) )
+        .def( "getName", &RccmFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< LaigleMaterialBehaviourInstance, LaigleMaterialBehaviourPtr,
@@ -1040,6 +1322,8 @@ void exportMaterialBehaviourToPython()
         ( "LaigleMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< LaigleMaterialBehaviourInstance > ) )
+        .def( "getName", &LaigleMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< LetkMaterialBehaviourInstance, LetkMaterialBehaviourPtr,
@@ -1047,6 +1331,8 @@ void exportMaterialBehaviourToPython()
         ( "LetkMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< LetkMaterialBehaviourInstance > ) )
+        .def( "getName", &LetkMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< DruckPragerMaterialBehaviourInstance, DruckPragerMaterialBehaviourPtr,
@@ -1054,6 +1340,8 @@ void exportMaterialBehaviourToPython()
         ( "DruckPragerMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< DruckPragerMaterialBehaviourInstance > ) )
+        .def( "getName", &DruckPragerMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< DruckPragerFoMaterialBehaviourInstance, DruckPragerFoMaterialBehaviourPtr,
@@ -1061,6 +1349,8 @@ void exportMaterialBehaviourToPython()
         ( "DruckPragerFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< DruckPragerFoMaterialBehaviourInstance > ) )
+        .def( "getName", &DruckPragerFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ViscDrucPragMaterialBehaviourInstance, ViscDrucPragMaterialBehaviourPtr,
@@ -1068,6 +1358,8 @@ void exportMaterialBehaviourToPython()
         ( "ViscDrucPragMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ViscDrucPragMaterialBehaviourInstance > ) )
+        .def( "getName", &ViscDrucPragMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< HoekBrownMaterialBehaviourInstance, HoekBrownMaterialBehaviourPtr,
@@ -1075,6 +1367,8 @@ void exportMaterialBehaviourToPython()
         ( "HoekBrownMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< HoekBrownMaterialBehaviourInstance > ) )
+        .def( "getName", &HoekBrownMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< ElasGonfMaterialBehaviourInstance, ElasGonfMaterialBehaviourPtr,
@@ -1082,6 +1376,8 @@ void exportMaterialBehaviourToPython()
         ( "ElasGonfMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ElasGonfMaterialBehaviourInstance > ) )
+        .def( "getName", &ElasGonfMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< JointBandisMaterialBehaviourInstance, JointBandisMaterialBehaviourPtr,
@@ -1089,6 +1385,8 @@ void exportMaterialBehaviourToPython()
         ( "JointBandisMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< JointBandisMaterialBehaviourInstance > ) )
+        .def( "getName", &JointBandisMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MonoVisc1MaterialBehaviourInstance, MonoVisc1MaterialBehaviourPtr,
@@ -1096,6 +1394,8 @@ void exportMaterialBehaviourToPython()
         ( "MonoVisc1MaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MonoVisc1MaterialBehaviourInstance > ) )
+        .def( "getName", &MonoVisc1MaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MonoVisc2MaterialBehaviourInstance, MonoVisc2MaterialBehaviourPtr,
@@ -1103,6 +1403,8 @@ void exportMaterialBehaviourToPython()
         ( "MonoVisc2MaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MonoVisc2MaterialBehaviourInstance > ) )
+        .def( "getName", &MonoVisc2MaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MonoIsot1MaterialBehaviourInstance, MonoIsot1MaterialBehaviourPtr,
@@ -1110,6 +1412,8 @@ void exportMaterialBehaviourToPython()
         ( "MonoIsot1MaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MonoIsot1MaterialBehaviourInstance > ) )
+        .def( "getName", &MonoIsot1MaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MonoIsot2MaterialBehaviourInstance, MonoIsot2MaterialBehaviourPtr,
@@ -1117,6 +1421,8 @@ void exportMaterialBehaviourToPython()
         ( "MonoIsot2MaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MonoIsot2MaterialBehaviourInstance > ) )
+        .def( "getName", &MonoIsot2MaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MonoCine1MaterialBehaviourInstance, MonoCine1MaterialBehaviourPtr,
@@ -1124,6 +1430,8 @@ void exportMaterialBehaviourToPython()
         ( "MonoCine1MaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MonoCine1MaterialBehaviourInstance > ) )
+        .def( "getName", &MonoCine1MaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MonoCine2MaterialBehaviourInstance, MonoCine2MaterialBehaviourPtr,
@@ -1131,6 +1439,8 @@ void exportMaterialBehaviourToPython()
         ( "MonoCine2MaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MonoCine2MaterialBehaviourInstance > ) )
+        .def( "getName", &MonoCine2MaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MonoDdKrMaterialBehaviourInstance, MonoDdKrMaterialBehaviourPtr,
@@ -1138,6 +1448,8 @@ void exportMaterialBehaviourToPython()
         ( "MonoDdKrMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MonoDdKrMaterialBehaviourInstance > ) )
+        .def( "getName", &MonoDdKrMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MonoDdCfcMaterialBehaviourInstance, MonoDdCfcMaterialBehaviourPtr,
@@ -1145,6 +1457,8 @@ void exportMaterialBehaviourToPython()
         ( "MonoDdCfcMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MonoDdCfcMaterialBehaviourInstance > ) )
+        .def( "getName", &MonoDdCfcMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MonoDdCfcIrraMaterialBehaviourInstance, MonoDdCfcIrraMaterialBehaviourPtr,
@@ -1152,6 +1466,8 @@ void exportMaterialBehaviourToPython()
         ( "MonoDdCfcIrraMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MonoDdCfcIrraMaterialBehaviourInstance > ) )
+        .def( "getName", &MonoDdCfcIrraMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MonoDdFatMaterialBehaviourInstance, MonoDdFatMaterialBehaviourPtr,
@@ -1159,6 +1475,8 @@ void exportMaterialBehaviourToPython()
         ( "MonoDdFatMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MonoDdFatMaterialBehaviourInstance > ) )
+        .def( "getName", &MonoDdFatMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MonoDdCcMaterialBehaviourInstance, MonoDdCcMaterialBehaviourPtr,
@@ -1166,6 +1484,8 @@ void exportMaterialBehaviourToPython()
         ( "MonoDdCcMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MonoDdCcMaterialBehaviourInstance > ) )
+        .def( "getName", &MonoDdCcMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MonoDdCcIrraMaterialBehaviourInstance, MonoDdCcIrraMaterialBehaviourPtr,
@@ -1173,6 +1493,8 @@ void exportMaterialBehaviourToPython()
         ( "MonoDdCcIrraMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MonoDdCcIrraMaterialBehaviourInstance > ) )
+        .def( "getName", &MonoDdCcIrraMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< UMatMaterialBehaviourInstance, UMatMaterialBehaviourPtr,
@@ -1180,6 +1502,8 @@ void exportMaterialBehaviourToPython()
         ( "UMatMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< UMatMaterialBehaviourInstance > ) )
+        .def( "getName", &UMatMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< UMatFoMaterialBehaviourInstance, UMatFoMaterialBehaviourPtr,
@@ -1187,6 +1511,8 @@ void exportMaterialBehaviourToPython()
         ( "UMatFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< UMatFoMaterialBehaviourInstance > ) )
+        .def( "getName", &UMatFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< CritRuptMaterialBehaviourInstance, CritRuptMaterialBehaviourPtr,
@@ -1194,6 +1520,8 @@ void exportMaterialBehaviourToPython()
         ( "CritRuptMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< CritRuptMaterialBehaviourInstance > ) )
+        .def( "getName", &CritRuptMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MFrontMaterialBehaviourInstance, MFrontMaterialBehaviourPtr,
@@ -1201,6 +1529,8 @@ void exportMaterialBehaviourToPython()
         ( "MFrontMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MFrontMaterialBehaviourInstance > ) )
+        .def( "getName", &MFrontMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 
     class_< MFrontFoMaterialBehaviourInstance, MFrontFoMaterialBehaviourPtr,
@@ -1208,5 +1538,7 @@ void exportMaterialBehaviourToPython()
         ( "MFrontFoMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MFrontFoMaterialBehaviourInstance > ) )
+        .def( "getName", &MFrontFoMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
     ;
 };
