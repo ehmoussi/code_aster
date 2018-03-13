@@ -35,7 +35,7 @@ implicit none
 #include "asterfort/ndxdep.h"
 #include "asterfort/ndxnpa.h"
 #include "asterfort/ndxpre.h"
-#include "asterfort/nmforc_step.h"
+#include "asterfort/ndxforc_step.h"
 !
 integer :: numins
 integer :: fonact(*)
@@ -108,14 +108,14 @@ integer :: nbiter
 !
 ! - Compute forces for second member when constant in time step
 !
-    call nmforc_step(fonact     ,&
-                     modele     , carele         , numedd,&
-                     lischa     , sddyna         ,&
-                     ds_material, ds_constitutive,&
-                     ds_measure , ds_inout       ,&
-                     sddisc     , numins         ,&
-                     valinc     , solalg         ,&
-                     veelem     , veasse)
+    call ndxforc_step(fonact     ,&
+                      modele     , carele         , numedd,&
+                      lischa     , sddyna         ,&
+                      ds_material, ds_constitutive,&
+                      ds_measure , ds_inout       ,&
+                      sddisc     , numins         ,&
+                      valinc     , solalg         ,&
+                      veelem     , veasse)
 !
 ! --- PREDICTION D'UNE DIRECTION DE DESCENTE
 !

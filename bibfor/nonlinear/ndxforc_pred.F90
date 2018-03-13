@@ -17,16 +17,16 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmforc_pred(list_func_acti,&
-                       model         , cara_elem      ,&
-                       nume_dof      , matr_asse      ,&
-                       list_load     , sddyna         ,&
-                       ds_material   , ds_constitutive,&
-                       ds_measure    , ds_algopara    ,&
-                       sddisc        , nume_inst      ,&
-                       hval_incr     , hval_algo      ,&
-                       hval_veelem   , hval_veasse    ,&
-                       hval_measse)
+subroutine ndxforc_pred(list_func_acti,&
+                        model         , cara_elem      ,&
+                        nume_dof      , &
+                        list_load     , sddyna         ,&
+                        ds_material   , ds_constitutive,&
+                        ds_measure    , &
+                        sddisc        , nume_inst      ,&
+                        hval_incr     , hval_algo      ,&
+                        hval_veelem   , hval_veasse    ,&
+                        hval_measse   , ldccvg)
 !
 use NonLin_Datastructure_type
 !
@@ -46,28 +46,27 @@ implicit none
 #include "asterfort/nonlinDynaImpeCompute.h"
 #include "asterfort/nonlinLoadCompute.h"
 #include "asterfort/nonlinSubStruCompute.h"
-#include "asterfort/nonlinNForceCompute.h"
-#include "asterfort/nonlinLoadDirichletCompute.h"
+#include "asterfort/nmfint.h"
+#include "asterfort/assvec.h"
 !
 integer, intent(in) :: list_func_acti(*)
 character(len=24), intent(in) :: model, cara_elem, nume_dof
-character(len=19), intent(in) :: matr_asse
 character(len=19), intent(in) :: list_load, sddyna
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Measure), intent(inout) :: ds_measure
-type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 character(len=19), intent(in) :: sddisc
 integer, intent(in) :: nume_inst
 character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
 character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 character(len=19), intent(in) :: hval_measse(*)
+integer, intent(out) :: ldccvg
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! MECA_NON_LINE - Algorithm
 !
-! Compute forces for second member at prediction
+! Compute forces for second member at prediction for explicit algorithm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -75,13 +74,11 @@ character(len=19), intent(in) :: hval_measse(*)
 ! In  model            : name of model
 ! In  cara_elem        : name of elementary characteristics (field)
 ! In  nume_dof         : name of numbering object (NUME_DDL)
-! In  matr_asse        : matrix
 ! In  list_load        : name of datastructure for list of loads
 ! In  sddyna           : datastructure for dynamic
 ! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IO  ds_measure       : datastructure for measure and statistics management
-! In  ds_algopara      : datastructure for algorithm parameters
 ! In  sddisc           : datastructure for time discretization
 ! In  nume_inst        : index of current time step
 ! In  hval_incr        : hat-variable for incremental values fields
@@ -89,22 +86,31 @@ character(len=19), intent(in) :: hval_measse(*)
 ! In  hval_veelem      : hat-variable for elementary vectors
 ! In  hval_veasse      : hat-variable for vectors (node fields)
 ! In  hval_measse      : hat-variable for matrix
+! Out ldccvg           : indicator from integration of behaviour
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=19) :: cndyna, cnsstr, vediri, cndiri
-    character(len=19) :: disp_prev
+    character(len=24) :: mate, varc_refe
+    character(len=19) :: cndyna, cnsstr, vediri, cndiri, vefint, cnfint
+    character(len=19) :: disp_prev, vite_prev, acce_prev
     character(len=19) :: disp_curr, vite_curr, acce_curr
     real(kind=8) :: time_prev, time_curr
-    aster_logical :: l_dyna, l_impe, l_ammo, l_macr, l_implex
+    aster_logical :: l_impe, l_ammo, l_macr
+    integer :: iterat
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'MECANONLINE11_1')
+        call utmess('I', 'MECANONLINE11_21')
     endif
+!
+! - Initializations
+!
+    ldccvg    = 0
+    mate      = ds_material%field_mate
+    varc_refe = ds_material%varc_refe
 !
 ! - Get time
 !
@@ -114,15 +120,15 @@ character(len=19), intent(in) :: hval_measse(*)
 !
 ! - Active functionnalities
 !
-    l_dyna   = ndynlo(sddyna,'DYNAMIQUE')
     l_impe   = ndynlo(sddyna,'IMPE_ABSO')
     l_ammo   = ndynlo(sddyna,'AMOR_MODAL')
     l_macr   = isfonc(list_func_acti,'MACR_ELEM_STAT')
-    l_implex = isfonc(list_func_acti,'IMPLEX')
 !
 ! - Get hat variables
 !
     call nmchex(hval_incr, 'VALINC', 'DEPMOI', disp_prev)
+    call nmchex(hval_incr, 'VALINC', 'VITMOI', vite_prev)
+    call nmchex(hval_incr, 'VALINC', 'ACCMOI', acce_prev)
     call nmchex(hval_incr, 'VALINC', 'DEPPLU', disp_curr)
     call nmchex(hval_incr, 'VALINC', 'ACCPLU', acce_curr)
     call nmchex(hval_incr, 'VALINC', 'VITPLU', vite_curr)
@@ -150,55 +156,42 @@ character(len=19), intent(in) :: hval_measse(*)
     call nmchex(hval_veasse, 'VEASSE', 'CNDIRI', cndiri)
     call nmdiri(model    , ds_material, cara_elem, list_load,&
                 disp_prev, vediri     , nume_dof , cndiri   ,&
-                sddyna   )
+                sddyna   , vite_prev  , acce_prev)
 !
 ! - Compute effect of dynamic forces (from time discretization scheme)
 !
-    if (l_dyna) then
-        call nmchex(hval_veasse, 'VEASSE', 'CNDYNA', cndyna)
-        call ndfdyn(sddyna, hval_measse, ds_measure, vite_curr, acce_curr,&
-                    cndyna)
-    endif
+    call nmchex(hval_veasse, 'VEASSE', 'CNDYNA', cndyna)
+    call ndfdyn(sddyna, hval_measse, ds_measure, vite_curr, acce_curr,&
+                cndyna)
 !
 ! - Compute modal damping
 !
-    if (l_dyna) then
-        if (l_ammo) then
-            call nonlinDynaMDampCompute('Prediction', sddyna    ,&
-                                        nume_dof    , ds_measure,&
-                                        hval_incr   , hval_veasse)
-        endif
+    if (l_ammo) then
+        call nonlinDynaMDampCompute('Prediction', sddyna    ,&
+                                    nume_dof    , ds_measure,&
+                                    hval_incr   , hval_veasse)
     endif
 !
 ! - Compute impedance
 !
-    if (l_dyna) then
-        if (l_impe) then
-            call nonlinDynaImpeCompute('Prediction', sddyna    ,&
-                                       model       , nume_dof  ,&
-                                       ds_material , ds_measure,&
-                                       hval_incr   ,&
-                                       hval_veelem , hval_veasse)
-        endif
+    if (l_impe) then
+        call nonlinDynaImpeCompute('Prediction', sddyna    ,&
+                                   model       , nume_dof  ,&
+                                   ds_material , ds_measure,&
+                                   hval_incr   ,&
+                                   hval_veelem , hval_veasse)
     endif
 !
-! - Compute nodal force BT . SIGMA (No integration of behaviour)
+! - Compute internal forces
 !
-    if (l_implex) then
-        call nonlinNForceCompute(model      , cara_elem      , nume_dof  , list_func_acti,&
-                                 ds_material, ds_constitutive, ds_measure,&
-                                 time_prev  , time_curr      ,&
-                                 hval_incr  , hval_algo      ,&
-                                 hval_veelem, hval_veasse)
-    endif
-!
-! - Compute Dirichlet boundary conditions - B.U
-!
-    if (ds_algopara%matrix_pred .eq. 'ELASTIQUE'.or.&
-        ds_algopara%matrix_pred .eq. 'TANGENTE') then
-        call nonlinLoadDirichletCompute(list_load  , model      , nume_dof ,&
-                                        ds_measure , matr_asse  , disp_prev,&
-                                        hval_veelem, hval_veasse)
+    iterat = 0
+    call nmchex(hval_veasse, 'VEASSE', 'CNFINT', cnfint)
+    call nmchex(hval_veelem, 'VEELEM', 'CNFINT', vefint)
+    call nmfint(model         , mate  , cara_elem, varc_refe , ds_constitutive,&
+                list_func_acti, iterat, sddyna   , ds_measure, hval_incr      ,&
+                hval_algo     , ldccvg, vefint)
+    if (ldccvg .eq. 0) then
+        call assvec('V', cnfint, 1, vefint, [1.d0], nume_dof, ' ', 'ZERO', 1)
     endif
 !
 end subroutine
