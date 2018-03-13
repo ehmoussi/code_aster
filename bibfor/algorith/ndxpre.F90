@@ -34,14 +34,12 @@ implicit none
 #include "asterfort/infdbg.h"
 #include "asterfort/ndxprm.h"
 #include "asterfort/nmassx.h"
-#include "asterfort/nmforc_pred.h"
+#include "asterfort/ndxforc_pred.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmcret.h"
 #include "asterfort/nmltev.h"
 #include "asterfort/nmresd.h"
 #include "asterfort/vtzero.h"
-#include "asterfort/assvec.h"
-#include "asterfort/nmfint.h"
 !
 integer :: list_func_acti(*)
 integer :: nume_inst
@@ -94,11 +92,9 @@ aster_logical :: lerrit
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=24) :: mate, varc_refe
     real(kind=8) :: instap
-    character(len=19) :: cncine, cndonn, cnzero, vefint, cnfint
+    character(len=19) :: cncine, cndonn, cnzero
     integer :: ldccvg, faccvg, rescvg
-    integer :: iterat
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -109,15 +105,10 @@ aster_logical :: lerrit
 !
 ! --- INITIALISATIONS
 !
-    mate      = ds_material%field_mate
-    varc_refe = ds_material%varc_refe
     instap = diinst(sddisc,nume_inst)
     cndonn = '&&CNCHAR.DONN'
     cnzero = '&&CNPART.ZERO'
     call vtzero(cndonn)
-!
-! --- INITIALISATION CODES RETOURS
-!
     faccvg = -1
     rescvg = -1
     ldccvg = -1
@@ -136,50 +127,37 @@ aster_logical :: lerrit
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER
 !
-    if ((faccvg.eq.1) .or. (faccvg.eq.2)) goto 999
-    if (ldccvg .eq. 1) goto 999
+    if ((faccvg .eq. 1) .or. (faccvg .eq. 2) .or. (ldccvg .eq. 1)) then
+        goto 99
+    endif
 !
 ! - Compute forces for second member at prediction
 !
-    call nmforc_pred(list_func_acti,&
-                     model         , cara_elem      ,&
-                     nume_dof      , matass         ,&
-                     list_load     , sddyna         ,&
-                     ds_material   , ds_constitutive,&
-                     ds_measure    , ds_algopara    ,&
-                     sddisc        , nume_inst      ,&
-                     hval_incr     , hval_algo      ,&
-                     hval_veelem   , hval_veasse    ,&
-                     hval_measse)
-!
-! - Compute internal forces
-!
-    iterat = 0
-    call nmchex(hval_veasse, 'VEASSE', 'CNFINT', cnfint)
-    call nmchex(hval_veelem, 'VEELEM', 'CNFINT', vefint)
-    call nmfint(model    , mate  , cara_elem, varc_refe , ds_constitutive,&
-                list_func_acti, iterat, sddyna   , ds_measure, hval_incr      ,&
-                hval_algo, ldccvg, vefint)
-    if (ldccvg .eq. 0) then
-        call assvec('V', cnfint, 1, vefint, [1.d0], nume_dof, ' ', 'ZERO', 1)
-    endif
+    call ndxforc_pred(list_func_acti,&
+                      model         , cara_elem      ,&
+                      nume_dof      , &
+                      list_load     , sddyna         ,&
+                      ds_material   , ds_constitutive,&
+                      ds_measure    , &
+                      sddisc        , nume_inst      ,&
+                      hval_incr     , hval_algo      ,&
+                      hval_veelem   , hval_veasse    ,&
+                      hval_measse   , ldccvg)
 !
 ! - Evaluate second member
 !
     call nmassx(list_func_acti, sddyna, ds_material, hval_veasse,&
                 cndonn)
 !
-! --- ERREUR SANS POSSIBILITE DE CONTINUER
+! - Solve system
 !
-    if (ldccvg .eq. 1) goto 999
+    if (ldccvg .eq. 0) then
+        call nmresd(list_func_acti, sddyna   , ds_measure, solveu, nume_dof,&
+                    instap        , maprec   , matass    , cndonn, cnzero  ,&
+                    cncine        , hval_algo, rescvg)
+    endif
 !
-! --- RESOLUTION
-!
-    call nmresd(list_func_acti, sddyna, ds_measure, solveu, nume_dof,&
-                instap, maprec, matass    , cndonn, cnzero,&
-                cncine, hval_algo, rescvg)
-!
-999 continue
+ 99 continue
 !
 ! --- TRANSFORMATION DES CODES RETOURS EN EVENEMENTS
 !

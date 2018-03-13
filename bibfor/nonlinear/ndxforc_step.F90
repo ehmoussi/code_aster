@@ -17,14 +17,14 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmforc_step(list_func_acti,&
-                       model         , cara_elem      , nume_dof,&
-                       list_load     , sddyna         ,&
-                       ds_material   , ds_constitutive,&
-                       ds_measure    , ds_inout       ,&
-                       sddisc        , nume_inst      ,&
-                       hval_incr     , hval_algo      ,&
-                       hval_veelem   , hval_veasse)
+subroutine ndxforc_step(list_func_acti,&
+                        model         , cara_elem      , nume_dof,&
+                        list_load     , sddyna         ,&
+                        ds_material   , ds_constitutive,&
+                        ds_measure    , ds_inout       ,&
+                        sddisc        , nume_inst      ,&
+                        hval_incr     , hval_algo      ,&
+                        hval_veelem   , hval_veasse)
 !
 use NonLin_Datastructure_type
 !
@@ -36,7 +36,6 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/nonlinLoadCompute.h"
 #include "asterfort/nonlinLoadDynaCompute.h"
-#include "asterfort/nonlinNForceCompute.h"
 #include "asterfort/nmvcpr.h"
 #include "asterfort/diinst.h"
 #include "asterfort/ndynlo.h"
@@ -58,7 +57,7 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 !
 ! MECA_NON_LINE - Algorithm
 !
-! Compute forces for second member when constant in time step
+! Compute forces for second member when constant in time step for explicit algorithm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -83,13 +82,12 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 !
     integer :: ifm, niv
     real(kind=8) :: time_prev, time_curr
-    aster_logical :: l_dyna, l_implex
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'MECANONLINE11_13')
+        call utmess('I', 'MECANONLINE11_22')
     endif
 !
 ! - Get time
@@ -97,11 +95,6 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
     ASSERT(nume_inst .gt. 0)
     time_prev = diinst(sddisc,nume_inst-1)
     time_curr = diinst(sddisc,nume_inst)
-!
-! - Active functionnalities
-!
-    l_dyna       = ndynlo(sddyna,'DYNAMIQUE')
-    l_implex     = isfonc(list_func_acti,'IMPLEX')
 !
 ! - Compute CHAR_MECA_*_R for PREDICTOR
 !
@@ -123,22 +116,10 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 !
 ! - Compute loads (for dynamic)
 !
-    if (l_dyna) then
-        call nonlinLoadDynaCompute('FIXE'     , sddyna     ,&
-                                   model      , nume_dof   ,&
-                                   ds_material, ds_measure , ds_inout,&
-                                   time_prev  , time_curr  ,&
-                                   hval_veelem, hval_veasse)
-    endif
-!
-! - Compute nodal force BT . SIGMA (No integration of behaviour)
-!
-    if (.not. l_implex) then
-        call nonlinNForceCompute(model      , cara_elem      , nume_dof  , list_func_acti,&
-                                 ds_material, ds_constitutive, ds_measure,&
-                                 time_prev  , time_curr      ,&
-                                 hval_incr  , hval_algo      ,&
-                                 hval_veelem, hval_veasse)
-    endif
+    call nonlinLoadDynaCompute('FIXE'     , sddyna     ,&
+                               model      , nume_dof   ,&
+                               ds_material, ds_measure , ds_inout,&
+                               time_prev  , time_curr  ,&
+                               hval_veelem, hval_veasse)
 !
 end subroutine

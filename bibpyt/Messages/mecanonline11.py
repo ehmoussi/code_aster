@@ -60,4 +60,8 @@ cata_msg = {
    19  : _(u"""Calcul du second membre à la prédiction (statique)."""),
 
    20  : _(u"""Calcul du second membre à la prédiction (dynamique)."""),
+
+   21  : _(u"""Calcul des composantes du second membre à la prédiction pour la dynamique explicite."""),
+
+   22  : _(u"""Calcul des composantes du second membre pour le pas de temps courant pour la dynamique explicite."""),
 }
