@@ -40,6 +40,7 @@ implicit none
 #include "asterfort/ndynlo.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/nmchex.h"
+#include "asterfort/nmdiri.h"
 #include "asterfort/nonlinDynaMDampCompute.h"
 #include "asterfort/nonlinDynaImpeCompute.h"
 #include "asterfort/nonlinLoadCompute.h"
@@ -86,7 +87,8 @@ character(len=19), intent(in) :: hval_measse(*)
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=19) :: cndyna, cnsstr
+    character(len=19) :: cndyna, cnsstr, vediri, cndiri
+    character(len=19) :: disp_prev
     character(len=19) :: disp_curr, vite_curr, acce_curr
     real(kind=8) :: time_prev, time_curr
     aster_logical :: l_dyna, l_impe, l_ammo, l_macr, l_implex
@@ -112,6 +114,13 @@ character(len=19), intent(in) :: hval_measse(*)
     l_macr   = isfonc(list_func_acti,'MACR_ELEM_STAT')
     l_implex = isfonc(list_func_acti,'IMPLEX')
 !
+! - Get hat variables
+!
+    call nmchex(hval_incr, 'VALINC', 'DEPMOI', disp_prev)
+    call nmchex(hval_incr, 'VALINC', 'DEPPLU', disp_curr)
+    call nmchex(hval_incr, 'VALINC', 'ACCPLU', acce_curr)
+    call nmchex(hval_incr, 'VALINC', 'VITPLU', vite_curr)
+!
 ! - Compute loads (undead)
 !
     call nonlinLoadCompute('VARI'     , list_load      ,&
@@ -124,18 +133,22 @@ character(len=19), intent(in) :: hval_measse(*)
 ! - Compute sub-structuring effect on second member
 !
     if (l_macr) then
-        call nmchex(hval_incr  , 'VALINC', 'DEPPLU', disp_curr)
         call nmchex(hval_veasse, 'VEASSE', 'CNSSTR', cnsstr)
         call nonlinSubStruCompute(ds_measure , disp_curr,&
                                   hval_measse, cnsstr)
     endif
-
+!
+! - Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
+!
+    call nmchex(hval_veelem, 'VEELEM', 'CNDIRI', vediri)
+    call nmchex(hval_veasse, 'VEASSE', 'CNDIRI', cndiri)
+    call nmdiri(model    , ds_material, cara_elem, list_load,&
+                disp_prev, vediri     , nume_dof , cndiri   ,&
+                sddyna   )
 !
 ! - Compute effect of dynamic forces (from time discretization scheme)
 !
     if (l_dyna) then
-        call nmchex(hval_incr  , 'VALINC', 'ACCPLU', acce_curr)
-        call nmchex(hval_incr  , 'VALINC', 'VITPLU', vite_curr)
         call nmchex(hval_veasse, 'VEASSE', 'CNDYNA', cndyna)
         call ndfdyn(sddyna, hval_measse, vite_curr, acce_curr, cndyna)
     endif

@@ -38,7 +38,6 @@ implicit none
 #include "asterfort/nmasva.h"
 #include "asterfort/nmbudi.h"
 #include "asterfort/nmchex.h"
-#include "asterfort/nmdiri.h"
 #include "asterfort/nmfint.h"
 #include "asterfort/nmtime.h"
 #include "asterfort/nonlinDSVectCombInit.h"
@@ -96,7 +95,7 @@ character(len=19) :: cndonn
     character(len=19) :: cnffdo, cndfdo, cnfvdo, cnvady, cndumm
     character(len=19) :: vebudi, cnbudi
     character(len=19) :: vefint, cnfint
-    character(len=19) :: vediri, cndiri
+    character(len=19) :: cndiri
     character(len=19) :: disp_prev, acce_prev
     character(len=19) :: vect_lagr
     aster_logical :: l_disp, l_vite, l_acce, l_macr
@@ -204,12 +203,9 @@ character(len=19) :: cndonn
                 cnbudi, matass)
     call nonlinDSVectCombAddHat(veasse, 'CNBUDI', -1.d0, ds_vectcomb)
 !
-! - Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
+! - Get force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
 !
-    call nmchex(veelem, 'VEELEM', 'CNDIRI', vediri)
     call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
-    call nmdiri(model    , ds_material, cara_elem, list_load,&
-                disp_prev, vediri     , nume_dof , cndiri   )
     call nonlinDSVectCombAddHat(veasse, 'CNDIRI', -1.d0, ds_vectcomb)
 !
 ! - End timer

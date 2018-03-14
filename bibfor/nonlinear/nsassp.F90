@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nsassp(model     , nume_dof   , list_load, fonact    ,&
-                  ds_measure, valinc     , veelem   , veasse    , cnpilo,&
-                  cndonn    , ds_material, cara_elem, ds_contact, matass,&
+subroutine nsassp(model     , nume_dof   , list_load , fonact    ,&
+                  ds_measure, valinc     , veelem    , veasse    , cnpilo,&
+                  cndonn    , ds_material, ds_contact, matass,&
                   ds_algorom)
 !
 use NonLin_Datastructure_type
@@ -35,7 +35,6 @@ implicit none
 #include "asterfort/nmasva.h"
 #include "asterfort/nmbudi.h"
 #include "asterfort/nmchex.h"
-#include "asterfort/nmdiri.h"
 #include "asterfort/nmtime.h"
 #include "asterfort/nonlinDSVectCombInit.h"
 #include "asterfort/nonlinDSVectCombCompute.h"
@@ -44,7 +43,7 @@ implicit none
 !
 integer :: fonact(*)
 character(len=19) :: list_load, matass
-character(len=24) :: model, nume_dof, cara_elem
+character(len=24) :: model, nume_dof
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Measure), intent(inout) :: ds_measure
 type(NL_DS_Contact), intent(in) :: ds_contact
@@ -61,7 +60,6 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  model            : name of model
-! In  cara_elem        : name of elementary characteristics (field)
 ! In  ds_material      : datastructure for material parameters
 ! In  list_load        : name of datastructure for list of loads
 ! In  nume_dof         : name of numbering object (NUME_DDL)
@@ -79,7 +77,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
     character(len=19) :: cnffdo, cndfdo, cnfvdo, cnffpi, cndfpi
     character(len=19) :: vebudi, cnbudi
-    character(len=19) :: vediri, cndiri
+    character(len=19) :: cndiri
     character(len=19) :: disp_prev
     aster_logical :: l_macr, l_pilo
     type(NL_DS_VectComb) :: ds_vectcomb
@@ -155,12 +153,9 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
                 cnbudi, matass)
     call nonlinDSVectCombAddHat(veasse, 'CNBUDI', -1.d0, ds_vectcomb)
 !
-! - Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
+! - Get force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
 !
-    call nmchex(veelem, 'VEELEM', 'CNDIRI', vediri)
     call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
-    call nmdiri(model    , ds_material, cara_elem, list_load,&
-                disp_prev, vediri     , nume_dof , cndiri   )
     call nonlinDSVectCombAddHat(veasse, 'CNDIRI', -1.d0, ds_vectcomb)
 !
 ! - Add internal forces to second member

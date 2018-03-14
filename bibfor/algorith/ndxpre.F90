@@ -145,11 +145,11 @@ aster_logical :: lerrit
                      hval_veelem   , hval_veasse    ,&
                      hval_measse)
 !
-! --- CALCUL DU SECOND MEMBRE
+! - CALCUL DU SECOND MEMBRE
 !
-    call nmassx(model         , nume_dof, ds_material, cara_elem    ,&
-                ds_constitutive, list_load, list_func_acti     , ds_measure, &
-                sddyna         , hval_incr, hval_algo     , hval_veelem    , hval_veasse,&
+    call nmassx(model          , nume_dof      , ds_material, cara_elem  ,&
+                ds_constitutive, list_func_acti, ds_measure , &
+                sddyna         , hval_incr     , hval_algo  , hval_veelem, hval_veasse,&
                 ldccvg         , cndonn)
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER
