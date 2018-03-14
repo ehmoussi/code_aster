@@ -41,6 +41,7 @@ implicit none
 #include "asterfort/nmprma.h"
 #include "asterfort/nmreso.h"
 #include "asterfort/vtzero.h"
+#include "asterfort/nonlinLoadDirichletCompute.h"
 !
 integer :: fonact(*)
 integer :: numins, ldccvg, faccvg, rescvg
@@ -123,7 +124,7 @@ character(len=19) :: depest
     real(kind=8), pointer :: sol2(:) => null()
     integer, pointer :: delg(:) => null()
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     solu1 = '&&CNPART.CHP2'
     solu2 = '&&CNPART.CHP3'
@@ -156,15 +157,19 @@ character(len=19) :: depest
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER
 !
-    if ((faccvg.eq.1) .or. (faccvg.eq.2)) goto 999
-    if (ldccvg .eq. 1) goto 999
+    if ((faccvg .eq. 1) .or. (faccvg .eq. 2) .or. (ldccvg .eq. 1)) then
+        goto 999
+    endif
 !
-! - Evaluate second memeber for Dirichlet loads (AFFE_CHAR_MECA)
+! - Compute values of Dirichlet conditions
 !
-    call nmassd(modele    , numedd, lischa, fonact, &
-                ds_measure, depest,&
-                veelem    , veasse, matass,&
-                cnpilo    , cndonn)
+    call nonlinLoadDirichletCompute(lischa    , modele, numedd,&
+                                    ds_measure, matass, depest,&
+                                    veelem    , veasse)
+!
+! - Evaluate second member for Dirichlet loads (AFFE_CHAR_MECA)
+!
+    call nmassd(fonact, veasse, cnpilo, cndonn)
 !
 ! --- PRISE EN COMPTE DES CL ELIMINEES
 !

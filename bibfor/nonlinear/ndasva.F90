@@ -28,7 +28,6 @@ implicit none
 #include "asterfort/nonlinDSVectCombCompute.h"
 #include "asterfort/nonlinDSVectCombAddHat.h"
 #include "asterfort/nonlinDSVectCombInit.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/ndynlo.h"
 !
 character(len=19), intent(in) :: sddyna, hval_veasse(*), cnvady
@@ -47,18 +46,10 @@ character(len=19), intent(in) :: sddyna, hval_veasse(*), cnvady
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
     aster_logical :: l_impe, l_ammo
     type(NL_DS_VectComb) :: ds_vectcomb
 !
 ! --------------------------------------------------------------------------------------------------
-!
-    call infdbg('MECA_NON_LINE', ifm, niv)
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ...... CALCUL NEUMANN VARIABLE EN DYNAMIQUE'
-    endif
-!
-! - Active functionnalities
 !
     l_impe = ndynlo(sddyna,'IMPE_ABSO')
     l_ammo = ndynlo(sddyna,'AMOR_MODAL')

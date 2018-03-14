@@ -17,10 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nsassp(fonact    ,&
-                  ds_measure, valinc     , veasse    , cnpilo,&
-                  cndonn    , ds_material, ds_contact, &
-                  ds_algorom)
+subroutine nsassp(list_func_acti, ds_material, ds_contact, ds_algorom,&
+                  hval_veasse   , cnpilo     , cndonn)
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
@@ -33,46 +31,52 @@ implicit none
 #include "asterfort/nmasdi.h"
 #include "asterfort/nmasfi.h"
 #include "asterfort/nmasva.h"
-#include "asterfort/nmchex.h"
-#include "asterfort/nmtime.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
+#include "asterfort/nmdebg.h"
 #include "asterfort/nonlinDSVectCombInit.h"
 #include "asterfort/nonlinDSVectCombCompute.h"
 #include "asterfort/nonlinDSVectCombAddAny.h"
 #include "asterfort/nonlinDSVectCombAddHat.h"
 !
-integer :: fonact(*)
+integer, intent(in) :: list_func_acti(*)
 type(NL_DS_Material), intent(in) :: ds_material
-type(NL_DS_Measure), intent(inout) :: ds_measure
 type(NL_DS_Contact), intent(in) :: ds_contact
-character(len=19) :: veasse(*), valinc(*)
-character(len=19) :: cnpilo, cndonn
 type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+character(len=19), intent(in) :: hval_veasse(*)
+character(len=19), intent(in) :: cnpilo, cndonn
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE MECA_NON_LINE (ALGORITHME - PREDICTION)
+! MECA_NON_LINE - Algorithm
 !
-! CALCUL DU SECOND MEMBRE POUR LA PREDICTION - STATIQUE
+! Evaluate second member for prediction (static)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  list_func_acti   : list of active functionnalities
 ! In  ds_material      : datastructure for material parameters
-! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! In  ds_contact       : datastructure for contact management
-! IO  ds_measure       : datastructure for measure and statistics management
-! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
-! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
-! OUT CNPILO : VECTEUR ASSEMBLE DES FORCES PILOTEES
-! OUT CNDONN : VECTEUR ASSEMBLE DES FORCES DONNEES
+! In  ds_algorom       : datastructure for ROM parameters
+! In  hval_veasse      : hat-variable for vectors (node fields)
+! In  cndonn           : name of nodal field for "given" forces
+! In  cnpilo           : name of nodal field for "pilotage" forces
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     character(len=19) :: cnffdo, cndfdo, cnfvdo, cnffpi, cndfpi
-    character(len=19) :: disp_prev
     aster_logical :: l_macr, l_pilo
     type(NL_DS_VectComb) :: ds_vectcomb
 !
 ! --------------------------------------------------------------------------------------------------
+!    
+    call infdbg('MECANONLINE', ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'MECANONLINE11_19')
+    endif
+!
+! - Initializations
 !
     call nonlinDSVectCombInit(ds_vectcomb)
     cnffdo = '&&CNCHAR.FFDO'
@@ -83,31 +87,22 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! - Active functionnalities
 !
-    l_macr = isfonc(fonact,'MACR_ELEM_STAT')
-    l_pilo = isfonc(fonact,'PILOTAGE')
-!
-! - Get hat variables
-!
-    call nmchex(valinc, 'VALINC', 'DEPMOI', disp_prev)
-!
-! - Launch timer
-!
-    call nmtime(ds_measure, 'Init'  , '2nd_Member')
-    call nmtime(ds_measure, 'Launch', '2nd_Member')
+    l_macr = isfonc(list_func_acti,'MACR_ELEM_STAT')
+    l_pilo = isfonc(list_func_acti,'PILOTAGE')
 !
 ! - Get dead Neumann loads and multi-step dynamic schemes forces
 !
-    call nmasfi(fonact, veasse, cnffdo)
+    call nmasfi(list_func_acti, hval_veasse, cnffdo)
     call nonlinDSVectCombAddAny(cnffdo, +1.d0, ds_vectcomb)
 !
 ! - Get Dirichlet loads
 !
-    call nmasdi(fonact, veasse, cndfdo)
+    call nmasdi(list_func_acti, hval_veasse, cndfdo)
     call nonlinDSVectCombAddAny(cndfdo, +1.d0, ds_vectcomb)
 !
 ! - Get undead Neumann loads and multi-step dynamic schemes forces
 !
-    call nmasva(fonact, veasse, cnfvdo)
+    call nmasva(list_func_acti, hval_veasse, cnfvdo)
     call nonlinDSVectCombAddAny(cnfvdo, +1.d0, ds_vectcomb)
 !
 ! - Add DISCRETE contact force
@@ -128,7 +123,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 ! - Force from sub-structuring
 !
     if (l_macr) then
-        call nonlinDSVectCombAddHat(veasse, 'CNSSTR', +1.d0, ds_vectcomb)
+        call nonlinDSVectCombAddHat(hval_veasse, 'CNSSTR', +1.d0, ds_vectcomb)
     endif
 !
 ! - External state variable
@@ -137,38 +132,40 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! - Get Dirichlet boundary conditions - B.U
 !
-    call nonlinDSVectCombAddHat(veasse, 'CNBUDI', -1.d0, ds_vectcomb)
+    call nonlinDSVectCombAddHat(hval_veasse, 'CNBUDI', -1.d0, ds_vectcomb)
 !
 ! - Get force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
 !
-    call nonlinDSVectCombAddHat(veasse, 'CNDIRI', -1.d0, ds_vectcomb)
+    call nonlinDSVectCombAddHat(hval_veasse, 'CNDIRI', -1.d0, ds_vectcomb)
 !
 ! - Add internal forces to second member
 !
     if (ds_algorom%phase.eq.'CORR_EF') then
-        call nonlinDSVectCombAddHat(veasse, 'CNFINT', -1.d0, ds_vectcomb)
+        call nonlinDSVectCombAddHat(hval_veasse, 'CNFINT', -1.d0, ds_vectcomb)
     else
-        call nonlinDSVectCombAddHat(veasse, 'CNFNOD', -1.d0, ds_vectcomb)
+        call nonlinDSVectCombAddHat(hval_veasse, 'CNFNOD', -1.d0, ds_vectcomb)
     endif
 !
 ! - Second member (standard)
 !
     call nonlinDSVectCombCompute(ds_vectcomb, cndonn)
+    if (niv .ge. 2) then
+        call nmdebg('VECT', cndonn, 6)
+    endif
 !
     call nonlinDSVectCombInit(ds_vectcomb)
     if (l_pilo) then
 ! ----- Get dead Neumann loads (for PILOTAGE)
-        call nonlinDSVectCombAddHat(veasse, 'CNFEPI', +1.d0, ds_vectcomb)
+        call nonlinDSVectCombAddHat(hval_veasse, 'CNFEPI', +1.d0, ds_vectcomb)
 ! ----- Get Dirichlet loads (for PILOTAGE)
-        call nonlinDSVectCombAddHat(veasse, 'CNDIPI', +1.d0, ds_vectcomb)   
+        call nonlinDSVectCombAddHat(hval_veasse, 'CNDIPI', +1.d0, ds_vectcomb)   
     endif
 !
 ! - Second member (PILOTAGE)
 !
     call nonlinDSVectCombCompute(ds_vectcomb, cnpilo)
-!
-! - End timer
-!
-    call nmtime(ds_measure, 'Stop', '2nd_Member')
+    if (niv .ge. 2) then
+        call nmdebg('VECT', cnpilo, 6)
+    endif
 !
 end subroutine

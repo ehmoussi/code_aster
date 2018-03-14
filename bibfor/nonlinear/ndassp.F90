@@ -38,7 +38,9 @@ implicit none
 #include "asterfort/nmasva.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmfint.h"
-#include "asterfort/nmtime.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
+#include "asterfort/nmdebg.h"
 #include "asterfort/nonlinDSVectCombInit.h"
 #include "asterfort/nonlinDSVectCombCompute.h"
 #include "asterfort/nonlinDSVectCombAddAny.h"
@@ -88,6 +90,7 @@ character(len=19) :: cndonn
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     character(len=24) :: mate, varc_refe
     character(len=19) :: cnffdo, cndfdo, cnfvdo, cnvady, cndumm
     character(len=19) :: vefint, cnfint
@@ -98,11 +101,15 @@ character(len=19) :: cndonn
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    mate      = ds_material%field_mate
-    varc_refe = ds_material%varc_refe
+    call infdbg('MECANONLINE', ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'MECANONLINE11_20')
+    endif
 !
 ! - Initializations
 !
+    mate      = ds_material%field_mate
+    varc_refe = ds_material%varc_refe
     call nonlinDSVectCombInit(ds_vectcomb)
     ldccvg = -1
     iterat = 0
@@ -111,19 +118,14 @@ character(len=19) :: cndonn
     cndfdo = '&&CNCHAR.DFDO'
     cnfvdo = '&&CNCHAR.FVDO'
     cnvady = '&&CNCHAR.FVDY'
-    l_disp  = ndynin(sddyna,'FORMUL_DYNAMIQUE').eq.1
-    l_vite  = ndynin(sddyna,'FORMUL_DYNAMIQUE').eq.2
-    l_acce  = ndynin(sddyna,'FORMUL_DYNAMIQUE').eq.3
+    l_disp = ndynin(sddyna,'FORMUL_DYNAMIQUE').eq.1
+    l_vite = ndynin(sddyna,'FORMUL_DYNAMIQUE').eq.2
+    l_acce = ndynin(sddyna,'FORMUL_DYNAMIQUE').eq.3
     l_macr = isfonc(fonact,'MACR_ELEM_STAT')
 !
 ! - Coefficient for multi-step scheme
 !
     coeequ = ndynre(sddyna,'COEF_MPAS_EQUI_COUR')
-!
-! - Launch timer
-!
-    call nmtime(ds_measure, 'Init'  , '2nd_Member')
-    call nmtime(ds_measure, 'Launch', '2nd_Member')
 !
 ! - Get dead Neumann loads and multi-step dynamic schemes forces
 !
@@ -178,10 +180,6 @@ character(len=19) :: cndonn
 !
     call nonlinDSVectCombAddHat(veasse, 'CNDIRI', -1.d0, ds_vectcomb)
 !
-! - End timer
-!
-    call nmtime(ds_measure, 'Stop', '2nd_Member')
-!
 ! - Compute internal forces
 !
     call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
@@ -198,6 +196,10 @@ character(len=19) :: cndonn
         call nonlinDSVectCombAddHat(veasse, 'CNFINT', -1.d0, ds_vectcomb)
 ! ----- Combination
         call nonlinDSVectCombCompute(ds_vectcomb, cndonn)
+! ----- Debug
+        if (niv .ge. 2) then
+            call nmdebg('VECT', cndonn, 6)
+        endif
     endif
 !
 end subroutine

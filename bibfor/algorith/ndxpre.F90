@@ -40,6 +40,8 @@ implicit none
 #include "asterfort/nmltev.h"
 #include "asterfort/nmresd.h"
 #include "asterfort/vtzero.h"
+#include "asterfort/assvec.h"
+#include "asterfort/nmfint.h"
 !
 integer :: list_func_acti(*)
 integer :: nume_inst
@@ -91,10 +93,12 @@ aster_logical :: lerrit
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    real(kind=8) :: instap
-    character(len=19) :: cncine, cndonn, cnzero
-    integer :: ldccvg, faccvg, rescvg
     integer :: ifm, niv
+    character(len=24) :: mate, varc_refe
+    real(kind=8) :: instap
+    character(len=19) :: cncine, cndonn, cnzero, vefint, cnfint
+    integer :: ldccvg, faccvg, rescvg
+    integer :: iterat
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -105,6 +109,8 @@ aster_logical :: lerrit
 !
 ! --- INITIALISATIONS
 !
+    mate      = ds_material%field_mate
+    varc_refe = ds_material%varc_refe
     instap = diinst(sddisc,nume_inst)
     cndonn = '&&CNCHAR.DONN'
     cnzero = '&&CNPART.ZERO'
@@ -146,12 +152,22 @@ aster_logical :: lerrit
                      hval_veelem   , hval_veasse    ,&
                      hval_measse)
 !
-! - CALCUL DU SECOND MEMBRE
+! - Compute internal forces
 !
-    call nmassx(model          , nume_dof      , ds_material, cara_elem  ,&
-                ds_constitutive, list_func_acti, ds_measure , &
-                sddyna         , hval_incr     , hval_algo  , hval_veelem, hval_veasse,&
-                ldccvg         , cndonn)
+    iterat = 0
+    call nmchex(hval_veasse, 'VEASSE', 'CNFINT', cnfint)
+    call nmchex(hval_veelem, 'VEELEM', 'CNFINT', vefint)
+    call nmfint(model    , mate  , cara_elem, varc_refe , ds_constitutive,&
+                list_func_acti, iterat, sddyna   , ds_measure, hval_incr      ,&
+                hval_algo, ldccvg, vefint)
+    if (ldccvg .eq. 0) then
+        call assvec('V', cnfint, 1, vefint, [1.d0], nume_dof, ' ', 'ZERO', 1)
+    endif
+!
+! - Evaluate second member
+!
+    call nmassx(list_func_acti, sddyna, ds_material, hval_veasse,&
+                cndonn)
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER
 !

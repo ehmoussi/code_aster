@@ -33,11 +33,11 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
 #include "asterfort/nonlinLoadCompute.h"
 #include "asterfort/nonlinLoadDynaCompute.h"
 #include "asterfort/nonlinNForceCompute.h"
 #include "asterfort/nmvcpr.h"
-#include "asterfort/detrsd.h"
 #include "asterfort/diinst.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/isfonc.h"
@@ -82,7 +82,6 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=19) :: vect_elem
     real(kind=8) :: time_prev, time_curr
     aster_logical :: l_dyna, l_expl, l_implex
 !
@@ -90,8 +89,7 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 !
     call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) &
-         '<MECANONLINE> ... Compute forces for second member when constant in time step'
+        call utmess('I', 'MECANONLINE11_13')
     endif
 !
 ! - Get time
@@ -108,14 +106,12 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 !
 ! - Compute CHAR_MECA_*_R for PREDICTOR
 !
-    vect_elem = '&&VARCINIT_ELEM'
     call nmvcpr(model    , ds_material%field_mate,&
                 cara_elem, ds_material%varc_refe , ds_constitutive%compor, &
                 hval_incr, nume_dof_ = nume_dof, base_ = 'V',&
                 vect_elem_prev_ = '&&VEVCOM',&
                 vect_elem_curr_ = '&&VEVCOP',&
                 cnvcpr_ = ds_material%fvarc_pred)
-    call detrsd('RESUELEM', vect_elem)
 !
 ! - Compute loads
 !

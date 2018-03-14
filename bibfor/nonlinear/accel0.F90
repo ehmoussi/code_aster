@@ -126,15 +126,13 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
 ! - Compute values of Dirichlet conditions
 !
-
     call nonlinLoadDirichletCompute(lischa    , modele, numedd,&
                                     ds_measure, matass, disp_prev,&
                                     veelem    , veasse)
 !
-! --- CALCUL DU SECOND MEMBRE
+! - Evaluate second member for initial acceleration
 !
-    call nmassi(modele, numedd, lischa, fonact, sddyna,&
-                valinc, veelem, veasse, cndonn, matass)
+    call nmassi(fonact, sddyna, veasse, cndonn)
 !
 ! --- POUR LE CALCUL DE DDEPLA, IL FAUT METTRE CNCINE A ZERO
 !

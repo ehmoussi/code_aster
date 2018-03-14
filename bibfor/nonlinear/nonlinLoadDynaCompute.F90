@@ -29,7 +29,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/infdbg.h"
+#include "asterfort/nmdebg.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/nmtime.h"
 #include "asterfort/nmchex.h"
@@ -37,6 +37,8 @@ implicit none
 #include "asterfort/asasve.h"
 #include "asterfort/ascova.h"
 #include "asterfort/nmviss.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
 !
 character(len=4), intent(in) :: mode
 character(len=19), intent(in) :: sddyna
@@ -71,12 +73,20 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     character(len=19) :: vect_elem, vect_asse
     character(len=24) :: vect_alem
     aster_logical :: l_wave, l_viss
 !
 ! --------------------------------------------------------------------------------------------------
-!  
+!
+    call infdbg('MECANONLINE', ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'MECANONLINE11_5')
+    endif
+!
+! - Active functionnalities
+!
     l_wave = ndynlo(sddyna,'ONDE_PLANE')
     l_viss = ndynlo(sddyna,'VECT_ISS')
 !
@@ -96,6 +106,9 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
             call asasve(vect_elem, nume_dof, 'R', vect_alem)
             call ascova('D', vect_alem, ' ', 'INST', time_curr,&
                         'R', vect_asse)
+            if (niv .ge. 2) then
+                call nmdebg('VECT', vect_asse, 6)
+            endif
         endif
     endif
 !
@@ -106,6 +119,9 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
             call nmchex(hval_veasse, 'VEASSE', 'CNVISS', vect_asse)
             call nmviss(nume_dof, sddyna, ds_inout, time_prev, time_curr,&
                         vect_asse)
+            if (niv .ge. 2) then
+                call nmdebg('VECT', vect_asse, 6)
+            endif
         endif
     endif
 !

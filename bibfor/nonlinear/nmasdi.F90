@@ -27,7 +27,6 @@ implicit none
 #include "asterfort/nonlinDSVectCombCompute.h"
 #include "asterfort/nonlinDSVectCombAddHat.h"
 #include "asterfort/nonlinDSVectCombInit.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
 !
 integer, intent(in) :: list_func_acti(*)
@@ -47,18 +46,10 @@ character(len=19), intent(in) :: hval_veasse(*), cndfdo
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
     aster_logical :: l_didi
     type(NL_DS_VectComb) :: ds_vectcomb
 !
 ! --------------------------------------------------------------------------------------------------
-!
-    call infdbg('MECA_NON_LINE', ifm, niv)
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ...... CALCUL DIRICHLET CONSTANT'
-    endif
-!
-! - Active functionnalities
 !
     l_didi = isfonc(list_func_acti,'DIDI')
 !

@@ -25,4 +25,39 @@ cata_msg = {
 
     2  : _(u"""Calcul des composantes du second membre à la correction."""),
 
+    3  : _(u"""Calcul des composantes du second membre pour l'accélération initiale."""),
+
+    4  : _(u"""  Calcul des chargements (Dirichlet ou Neumann)."""),
+
+    5  : _(u"""  Calcul des chargements spécifiques à la dynamique."""),
+
+    6  : _(u"""  Calcul de l'impédance (dynamique)."""),
+
+    7  : _(u"""  Calcul de l'effet sur le second membre des macro-éléments."""),
+
+    8  : _(u"""  Calcul des efforts intérieurs (sans intégration du comportement)."""),
+
+    9  : _(u"""  Calcul des forces de rappel dynamique."""),
+
+   10  : _(u"""  Calcul des forces d'amortissement modal."""),
+
+   11  : _(u"""  Calcul des réactions d'appui pour les conditions limites de Dirichlet."""),
+
+   12  : _(u"""  Calcul des conditions limites de Dirichlet."""),
+
+   13  : _(u"""Calcul des composantes du second membre pour le pas de temps courant."""),
+
+   14  : _(u"""  Calcul de la contribution des variables de commande."""),
+
+   15  : _(u"""Calcul du second membre à la correction."""),
+
+   16  : _(u"""Calcul du second membre pour un chargement de Dirichlet donné (EXTRAPOLE ou DEPL_CALCULE)."""),
+
+   17  : _(u"""Calcul du second membre pour l'accélération initiale."""),
+
+   18  : _(u"""Calcul du second membre pour la dynamique explicite."""),
+
+   19  : _(u"""Calcul du second membre à la prédiction (statique)."""),
+
+   20  : _(u"""Calcul du second membre à la prédiction (dynamique)."""),
 }

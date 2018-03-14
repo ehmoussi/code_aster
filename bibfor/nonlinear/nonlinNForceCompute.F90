@@ -29,7 +29,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/infdbg.h"
+#include "asterfort/nmdebg.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmvcex.h"
@@ -37,6 +37,8 @@ implicit none
 #include "asterfort/assvec.h"
 #include "asterfort/nmtime.h"
 #include "asterfort/nmdep0.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
 !
 character(len=24), intent(in) :: model, cara_elem, nume_dof
 integer, intent(in) :: list_func_acti(*)
@@ -71,6 +73,7 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     character(len=19) :: vect_elem, vect_asse
     real(kind=8) :: time_list(2)
     character(len=19) :: disp_prev, strx_prev, sigm_prev, varc_prev
@@ -80,6 +83,13 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
     aster_logical :: l_implex
 !
 ! --------------------------------------------------------------------------------------------------
+!
+    call infdbg('MECANONLINE', ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'MECANONLINE11_8')
+    endif
+!
+! - Initializations
 !
     option = 'FORC_NODA'
 !
@@ -136,5 +146,11 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 ! - Stop timer
 !
     call nmtime(ds_measure, 'Stop', '2nd_Member')
+!
+! - Debug
+!
+    if (niv .ge. 2) then
+        call nmdebg('VECT', vect_asse, 6)
+    endif
 !
 end subroutine

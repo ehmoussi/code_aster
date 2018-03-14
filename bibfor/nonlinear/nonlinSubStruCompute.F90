@@ -26,10 +26,12 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmtime.h"
 #include "asterfort/nmmacv.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
+#include "asterfort/nmdebg.h"
 !
 type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=19), intent(in) :: disp
@@ -50,9 +52,17 @@ character(len=19), intent(in) :: cnsstr, hval_measse(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     character(len=19) :: matr_sstr
 !
 ! --------------------------------------------------------------------------------------------------
+!
+    call infdbg('MECANONLINE', ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'MECANONLINE11_7')
+    endif
+!
+! - Get hat variables
 !
     call nmchex(hval_measse, 'MEASSE', 'MESSTR', matr_sstr)
 !
@@ -68,5 +78,11 @@ character(len=19), intent(in) :: cnsstr, hval_measse(*)
 ! - Stop timer
 !
     call nmtime(ds_measure, 'Stop', '2nd_Member')
+!
+! - Debug
+!
+    if (niv .ge. 2) then
+        call nmdebg('VECT', cnsstr, 6)
+    endif
 !
 end subroutine

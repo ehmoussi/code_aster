@@ -17,9 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine ndfdyn(sddyna, hval_measse, vite_curr, acce_curr, cndyna)
+    subroutine ndfdyn(sddyna, hval_measse, ds_measure, vite_curr, acce_curr,&
+                      cndyna)
+        use NonLin_Datastructure_type
         character(len=19), intent(in) :: sddyna
         character(len=19), intent(in) :: hval_measse(*)
+        type(NL_DS_Measure), intent(inout) :: ds_measure
         character(len=19), intent(in) :: vite_curr, acce_curr
         character(len=19), intent(in) :: cndyna
     end subroutine ndfdyn

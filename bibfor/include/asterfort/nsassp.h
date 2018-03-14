@@ -17,18 +17,15 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nsassp(fonact    ,&
-                      ds_measure, valinc     , veasse    , cnpilo,&
-                      cndonn    , ds_material, ds_contact,&
-                      ds_algorom)
+    subroutine nsassp(list_func_acti, ds_material, ds_contact, ds_algorom,&
+                      hval_veasse   , cnpilo     , cndonn )
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
-        integer :: fonact(*)
+        integer, intent(in) :: list_func_acti(*)
         type(NL_DS_Material), intent(in) :: ds_material
-        type(NL_DS_Measure), intent(inout) :: ds_measure
         type(NL_DS_Contact), intent(in) :: ds_contact
-        character(len=19) :: veasse(*), valinc(*)
-        character(len=19) :: cnpilo, cndonn
         type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+        character(len=19), intent(in) :: hval_veasse(*)
+        character(len=19), intent(in) :: cnpilo, cndonn
     end subroutine nsassp
 end interface

@@ -30,7 +30,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/infdbg.h"
+#include "asterfort/nmdebg.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmvcex.h"
@@ -47,6 +47,8 @@ implicit none
 #include "asterfort/nmtime.h"
 #include "asterfort/nmsssv.h"
 #include "asterfort/assvss.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
 !
 character(len=4), intent(in) :: mode
 character(len=19), intent(in) :: list_load
@@ -87,6 +89,7 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     character(len=24) :: lload_name, lload_info, lload_func, lload_fcss
     character(len=19) :: vect_elem, vect_asse
     character(len=24) :: vect_alem
@@ -98,6 +101,13 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
     character(len=24) :: vrcplu
 !
 ! --------------------------------------------------------------------------------------------------
+!
+    call infdbg('MECANONLINE', ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'MECANONLINE11_4')
+    endif
+!
+! - Initializations
 !
     lload_name    = list_load(1:19)//'.LCHA'
     lload_info    = list_load(1:19)//'.INFC'
@@ -141,6 +151,9 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
         call asasve(vect_elem, nume_dof, 'R', vect_alem)
         call ascova('D', vect_alem, lload_func, 'INST', time_curr,&
                     'R', vect_asse)
+        if (niv .ge. 2) then
+            call nmdebg('VECT', vect_asse, 6)
+        endif
     endif
 !
 ! - Dirichlet (AFFE_CHAR_CINE)
@@ -149,6 +162,9 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
         call nmchex(hval_veasse, 'VEASSE', 'CNCINE', vect_asse)
         call nmcvci(lload_name, lload_info, lload_func, nume_dof, disp_prev,&
                     time_curr, vect_asse)
+        if (niv .ge. 2) then
+            call nmdebg('VECT', vect_asse, 6)
+        endif
     endif
 !
 ! - Neumann (dead)
@@ -161,6 +177,9 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
         call asasve(vect_elem, nume_dof, 'R', vect_alem)
         call ascova('D', vect_alem, lload_func, 'INST', time_curr,&
                     'R', vect_asse)
+        if (niv .ge. 2) then
+            call nmdebg('VECT', vect_asse, 6)
+        endif
     endif
 !
 ! - Laplace
@@ -174,6 +193,9 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
             call asasve(vect_elem, nume_dof, 'R', vect_alem)
             call ascova('D', vect_alem, lload_func, 'INST', time_curr,&
                         'R', vect_asse)
+            if (niv .ge. 2) then
+                call nmdebg('VECT', vect_asse, 6)
+            endif
         endif
     endif
 !
@@ -187,6 +209,9 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
                         vect_elem)
             call assvec('V', vect_asse, 1, vect_elem, [1.d0],&
                         nume_dof, ' ', 'ZERO', 1)
+            if (niv .ge. 2) then
+                call nmdebg('VECT', vect_asse, 6)
+            endif
         endif
     endif
 !
@@ -202,6 +227,9 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
             call asasve(vect_elem, nume_dof, 'R', vect_alem)
             call ascova('D', vect_alem, lload_func, 'INST', time_curr,&
                         'R', vect_asse)
+            if (niv .ge. 2) then
+                call nmdebg('VECT', vect_asse, 6)
+            endif
         endif
     endif
 !
@@ -217,6 +245,9 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
         call asasve(vect_elem, nume_dof, 'R', vect_alem)
         call ascova('D', vect_alem, lload_func, 'INST', time_curr,&
                     'R', vect_asse)
+        if (niv .ge. 2) then
+            call nmdebg('VECT', vect_asse, 6)
+        endif
     endif
 !
 ! - Dynamic sub-structuring
@@ -229,6 +260,9 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
                         vect_elem)
             call assvss('V', vect_asse, vect_elem, nume_dof, ' ',&
                         'ZERO', 1, lload_fcss, time_curr)
+            if (niv .ge. 2) then
+                call nmdebg('VECT', vect_asse, 6)
+            endif
         endif
     endif
 !

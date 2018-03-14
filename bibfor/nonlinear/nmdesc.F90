@@ -142,10 +142,10 @@ aster_logical :: lerrit
     if ((faccvg.eq.1) .or. (faccvg.eq.2)) goto 999
     if (ldccvg .eq. 1) goto 999
 !
-! --- PREPARATION DU SECOND MEMBRE
+! - Evaluate second member for correction
 !
-    call nmassc(fonact, sddyna, ds_measure, ds_contact, veasse, cnpilo,&
-                cndonn)
+    call nmassc(fonact, sddyna, ds_contact, veasse,&
+                cnpilo, cndonn)
 !
 ! --- ACTUALISATION DES CL CINEMATIQUES
 !

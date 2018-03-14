@@ -27,7 +27,6 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmtime.h"
 #include "asterfort/dismoi.h"
@@ -35,6 +34,9 @@ implicit none
 #include "asterfort/ndynlo.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/fmodam.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
+#include "asterfort/nmdebg.h"
 !
 character(len=10), intent(in) :: phase
 character(len=19), intent(in) :: sddyna
@@ -63,6 +65,7 @@ character(len=19), intent(in) :: hval_veasse(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     character(len=19) :: vect_asse
     character(len=19) :: vite_iter, vite_curr
     real(kind=8), pointer :: v_vect_asse(:) => null()
@@ -74,6 +77,13 @@ character(len=19), intent(in) :: hval_veasse(*)
     real(kind=8), pointer :: v_vite_curr(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
+!
+    call infdbg('MECANONLINE', ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'MECANONLINE11_10')
+    endif
+!
+! - Get hat variables
 !
     call nmchex(hval_incr, 'VALINC', 'VITPLU', vite_curr)
     call nmchex(hval_incr, 'VALINC', 'VITKM1', vite_iter)
@@ -111,5 +121,11 @@ character(len=19), intent(in) :: hval_veasse(*)
 ! - Stop timer
 !
     call nmtime(ds_measure, 'Stop', '2nd_Member')
+!
+! - Debug
+!
+    if (niv .ge. 2) then
+        call nmdebg('VECT', vect_asse, 6)
+    endif
 !
 end subroutine
