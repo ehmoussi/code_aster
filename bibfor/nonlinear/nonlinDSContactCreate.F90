@@ -58,6 +58,7 @@ type(NL_DS_Contact), intent(out) :: ds_contact
     ds_contact%l_contact   = ASTER_FALSE
     ds_contact%l_meca_cont = ASTER_FALSE
     ds_contact%l_meca_unil = ASTER_FALSE
+    ds_contact%l_thm       = ASTER_FALSE
     ds_contact%sdcont      = ' '
     ds_contact%l_form_cont = ASTER_FALSE
     ds_contact%l_form_disc = ASTER_FALSE

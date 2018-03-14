@@ -85,6 +85,7 @@ integer, intent(out) :: r_char_indx
     integer, pointer :: v_ccid(:) => null()
     integer, pointer :: v_sdnuco(:) => null()
     real(kind=8), pointer :: v_cnctdf(:) => null()
+    real(kind=8), pointer :: v_cnunil(:) => null()
     real(kind=8), pointer :: v_cndiri(:) => null()
     real(kind=8), pointer :: v_cnfext(:) => null()
     real(kind=8), pointer :: v_cnfint(:) => null()
@@ -144,6 +145,9 @@ integer, intent(out) :: r_char_indx
     if (ds_contact%l_cnctdf) then
         call jeveuo(ds_contact%cnctdf(1:19)//'.VALE', 'L', vr=v_cnctdf)
     endif
+    if (ds_contact%l_cnunil) then
+        call jeveuo(ds_contact%cnunil(1:19)//'.VALE', 'L', vr=v_cnunil)
+    endif
     if (ds_contact%l_cneltc) then
         call jeveuo(ds_contact%cneltc(1:19)//'.VALE', 'L', vr=v_cneltc)
     endif
@@ -178,12 +182,18 @@ integer, intent(out) :: r_char_indx
                 if (ds_contact%l_cnctdf) then
                     appui = appui + v_cnctdf(i_equa)
                 endif
+                if (ds_contact%l_cnunil) then
+                    appui = appui + v_cnunil(i_equa)
+                endif
                 fext = v_cnfext(i_equa)
             endif
         else
             appui = v_cndiri(i_equa)
             if (ds_contact%l_cnctdf) then
                 appui = appui + v_cnctdf(i_equa)
+            endif
+            if (ds_contact%l_cnunil) then
+                appui = appui + v_cnunil(i_equa)
             endif
             fext = v_cnfext(i_equa)
         endif

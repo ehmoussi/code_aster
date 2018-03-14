@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -78,6 +78,7 @@ implicit none
     aster_logical :: l_matr_cont
     aster_logical :: l_cont_elem, l_cont_disc, l_matr_elas
     aster_logical :: l_first_step, l_dyna, l_amor, l_dischoc, l_varc, l_elas_fo
+    aster_logical :: l_unil, l_thm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -111,6 +112,8 @@ implicit none
     l_dyna      = ndynlo(sddyna,'DYNAMIQUE')
     l_amor      = ndynlo(sddyna,'MAT_AMORT')
     l_cont_disc = isfonc(list_func_acti,'CONT_DISCRET')
+    l_unil      = isfonc(list_func_acti,'LIAISON_UNILATER')
+    l_thm       = ds_contact%l_thm
     l_cont_elem = isfonc(list_func_acti,'ELT_CONTACT')
     l_dischoc   = isfonc(list_func_acti,'DIS_CHOC')
     l_varc      = isfonc(list_func_acti,'EXI_VARC' )
@@ -121,6 +124,13 @@ implicit none
     if (l_cont_disc) then
         l_matr_cont = cfdisl(ds_contact%sdcont_defi,'MODI_MATR_GLOB')
     endif
+!
+! - Add unilateral links matrix in global matrix ?
+!   Peut mieux faire pour choisir la methode de resolution
+    if (l_thm) then
+        l_matr_cont = .true.
+    endif
+!
 !
 ! - Elastic matrix for time_incr < PAS_MINI_ELAS
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -33,6 +33,7 @@ implicit none
 #include "asterfort/ndynlo.h"
 #include "asterfort/ndynre.h"
 #include "asterfort/nmasfr.h"
+#include "asterfort/nmasun.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/lccmst.h"
 !
@@ -84,6 +85,7 @@ implicit none
     integer :: nbmat
     character(len=10) :: phase
     character(len=19) :: rigid, masse, amort
+    aster_logical :: lunil
 !
 ! ----------------------------------------------------------------------
 !
@@ -106,6 +108,8 @@ implicit none
 ! --- FONCTIONNALITES ACTIVEES
 !
     lctcd         = isfonc(fonact,'CONT_DISCRET')
+!     lunil         = isfonc(fonact,'LIAISON_UNILATER')
+    lunil         = ds_contact%l_thm
     l_neum_undead = isfonc(fonact,'NEUM_UNDEAD')
     l_cont_lac    = isfonc(fonact,'CONT_LAC')
     lamor         = ndynlo(sddyna,'MAT_AMORT')
@@ -225,6 +229,15 @@ implicit none
 !
     if (l_cont_lac) then
         call lccmst(ds_contact, matass)
+    endif
+!
+! --- PRISE EN COMPTE DE LA MATRICE TANGENTE DE PENALISATION
+! --- AVEC LES LIAISONS UNILATERALES
+!
+    if (lunil .and. (phase.eq.'CORRECTION')) then
+!
+!       A remplacer par un appel plus propre
+        call nmasun(ds_contact%sdunil_solv, matass)
     endif
 !
 999 continue

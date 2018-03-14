@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,8 @@
 ! --------------------------------------------------------------------
 
 subroutine nmunil(mesh  , disp_curr, disp_iter, solver    , matr_asse,&
-                  cncine, iter_newt, time_curr, ds_contact, ctccvg)
+                  cncine, iter_newt, time_curr, ds_contact, nume_dof ,&
+                  ctccvg)
 !
 use NonLin_Datastructure_type
 !
@@ -25,6 +26,7 @@ implicit none
 !
 #include "jeveux.h"
 #include "asterfort/algocu.h"
+#include "asterfort/algocup.h"
 #include "asterfort/assert.h"
 #include "asterfort/cuprep.h"
 #include "asterfort/infniv.h"
@@ -34,6 +36,7 @@ implicit none
 ! person_in_charge: mickael.abbas at edf.fr
 !
     character(len=8), intent(in) :: mesh
+    character(len=14), intent(in) :: nume_dof
     character(len=19), intent(in) :: disp_curr
     character(len=19), intent(in) :: disp_iter
     character(len=19), intent(in) :: solver
@@ -43,6 +46,7 @@ implicit none
     real(kind=8), intent(in) :: time_curr
     type(NL_DS_Contact), intent(in) :: ds_contact
     integer, intent(out) :: ctccvg
+    aster_logical :: l_thm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -96,15 +100,26 @@ implicit none
 !
 ! - Prepare unilateral constraints
 !
-    if (iter_newt .eq. 0) then
-        nb_equa = zi(lmat+2)
-        call cuprep(mesh, nb_equa, ds_contact, disp_curr, time_curr)
+    l_thm = ds_contact%l_thm
+!
+    if ((iter_newt.eq.0) .or. l_thm) then
+       nb_equa = zi(lmat+2)
+       call cuprep(mesh, nb_equa, ds_contact, disp_curr, disp_iter, time_curr)
     endif
 !
 ! - Solve
 !
-    call algocu(ds_contact, solver, lmat, ldscon, cncine,&
+    if (l_thm) then
+!   Toujours algorithme de penalisation
+!   Arguments à changer
+!   A changer dans une version plus aboutie du code
+       call algocup(ds_contact, nume_dof, matr_asse)
+       ctccvg = 0
+!
+    else
+       call algocu(ds_contact, solver, lmat, ldscon, cncine,&
                 disp_iter , ctccvg)
+    endif
 !
 ! - Yes for computation
 !

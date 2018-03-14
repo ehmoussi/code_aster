@@ -15,18 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine cuprep(mesh, nb_equa, ds_contact, disp_curr, disp_iter, &
-                      time_curr)
+    subroutine algocup(ds_contact, numedd, matass)
         use NonLin_Datastructure_type
-        character(len=8), intent(in) :: mesh
-        integer, intent(in) :: nb_equa
         type(NL_DS_Contact), intent(in) :: ds_contact
-        character(len=19), intent(in) :: disp_curr
-        character(len=19), intent(in) :: disp_iter
-        real(kind=8), intent(in) :: time_curr
-    end subroutine cuprep
+        character(len=14) :: numedd
+        character(len=19) :: matass
+    end subroutine algocup
 end interface

@@ -220,6 +220,17 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 ! - Unilateral link
 !
     if (l_unil) then
+    
+        write(6,*) 'exfonc :: l_thm =',ds_contact%l_thm
+        if (ds_contact%l_thm) then
+           ! Guilhem:  A modifier dans la version aboutie
+           lmodim = .true.
+           if (reac_incr .eq. 0) then
+              if (lmodim) then
+                 call utmess('F', 'CONTACT_88')
+              endif
+           endif
+        endif
         if (l_pilo) then
             call utmess('F', 'MECANONLINE3_94')
         endif
