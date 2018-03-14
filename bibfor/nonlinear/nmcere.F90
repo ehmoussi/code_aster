@@ -16,6 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
 !
 subroutine nmcere(model         , nume_dof, ds_material, cara_elem    ,&
                   ds_constitutive, ds_contact, list_load, fonact, ds_measure,&
@@ -239,8 +240,8 @@ character(len=19) :: solalg(*), valinc(*)
 ! --- CALCUL DU RESIDU
 !
     if (ldccvg .eq. 0) then
-        call nmpilr(fonact, nume_dof, matass, veasse, eta,&
-                    residu)
+        call nmpilr(fonact, nume_dof, matass, veasse, ds_contact,&
+                    eta   , residu)
     endif
 !
 end subroutine

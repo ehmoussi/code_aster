@@ -188,8 +188,6 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
     cnfins(2) = '&&NMRECH.RESI'
     cndirs(1) = cndiri
     cndirs(2) = '&&NMRECH.DIRI'
-    cnfins(1) = cnfint
-    cnfins(2) = '&&NMRECH.RESI'
     depdet = '&&CNPART.CHP1'
     depplt = '&&CNPART.CHP2'
     sigplt = '&&NMRECH.SIGP'

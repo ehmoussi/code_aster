@@ -17,11 +17,13 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmpilr(list_func_acti, nume_dof, matass, hval_veasse, eta,&
-                      residu        )
+    subroutine nmpilr(list_func_acti, nume_dof, matass, hval_veasse, ds_contact,&
+                      eta           , residu  )
+        use NonLin_Datastructure_type
         integer, intent(in) :: list_func_acti(*)
         character(len=24), intent(in) :: nume_dof
         character(len=19), intent(in) :: matass, hval_veasse(*)
+        type(NL_DS_Contact), intent(in) :: ds_contact
         real(kind=8), intent(in) :: eta
         real(kind=8), intent(out) :: residu
     end subroutine nmpilr

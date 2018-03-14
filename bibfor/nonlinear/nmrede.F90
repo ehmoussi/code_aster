@@ -90,6 +90,8 @@ integer, intent(out) :: r_char_indx
     real(kind=8), pointer :: v_cnfint(:) => null()
     real(kind=8), pointer :: v_cniner(:) => null()
     real(kind=8), pointer :: v_cnsstr(:) => null()
+    real(kind=8), pointer :: v_cneltc(:) => null()
+    real(kind=8), pointer :: v_cneltf(:) => null()
     real(kind=8), pointer :: v_fvarc_curr(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -108,7 +110,7 @@ integer, intent(out) :: r_char_indx
     l_load_cine = isfonc(list_func_acti,'DIRI_CINE')
     l_cont_cont = isfonc(list_func_acti,'CONT_CONTINU')
     l_cont_lac  = isfonc(list_func_acti,'CONT_LAC')
-    l_macr      = isfonc(list_func_acti, 'MACR_ELEM_STAT')
+    l_macr      = isfonc(list_func_acti,'MACR_ELEM_STAT')
 !
 ! - Compute inertial force
 !
@@ -142,6 +144,12 @@ integer, intent(out) :: r_char_indx
     if (ds_contact%l_cnctdf) then
         call jeveuo(ds_contact%cnctdf(1:19)//'.VALE', 'L', vr=v_cnctdf)
     endif
+    if (ds_contact%l_cneltc) then
+        call jeveuo(ds_contact%cneltc(1:19)//'.VALE', 'L', vr=v_cneltc)
+    endif
+    if (ds_contact%l_cneltf) then
+        call jeveuo(ds_contact%cneltf(1:19)//'.VALE', 'L', vr=v_cneltf)
+    endif
     if (l_macr) then
         call jeveuo(cnsstr(1:19)//'.VALE', 'L', vr=v_cnsstr)
     endif
@@ -157,21 +165,25 @@ integer, intent(out) :: r_char_indx
                 appui = - v_cnfint(i_equa)
                 fext  = 0.d0
                 if (l_macr) then
-                    appui = - v_cnfint(i_equa) - v_cnsstr(i_equa)
+                    appui = appui - v_cnsstr(i_equa)
+                endif
+                if (ds_contact%l_cneltc) then
+                    appui = appui - v_cneltc(i_equa)
+                endif
+                if (ds_contact%l_cneltf) then
+                    appui = appui - v_cneltf(i_equa)
                 endif
             else
+                appui = v_cndiri(i_equa)
                 if (ds_contact%l_cnctdf) then
-                    appui = v_cndiri(i_equa) + v_cnctdf(i_equa)
-                else
-                    appui = v_cndiri(i_equa)
+                    appui = appui + v_cnctdf(i_equa)
                 endif
                 fext = v_cnfext(i_equa)
             endif
         else
+            appui = v_cndiri(i_equa)
             if (ds_contact%l_cnctdf) then
-                appui = v_cndiri(i_equa) + v_cnctdf(i_equa)
-            else
-                appui = v_cndiri(i_equa)
+                appui = appui + v_cnctdf(i_equa)
             endif
             fext = v_cnfext(i_equa)
         endif

@@ -17,14 +17,16 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine rescmp(cndiri, cnfext, cnfint, cnfnod,&
-                  ds_contact,&
-                  maxres, noddlm, numno)
+subroutine rescmp(list_func_acti, ds_contact ,&
+                  cndiri        , cnfext     ,&
+                  cnfint        , cnsstr     , cnfnod,&
+                  r_comp_vale   , r_comp_name, r_comp_indx)
 !
 use NonLin_Datastructure_type
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/cnocns.h"
@@ -33,90 +35,90 @@ implicit none
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/nmequi.h"
+#include "asterfort/isfonc.h"
 !
-real(kind=8) :: maxres
-character(len=8) :: noddlm
-integer :: numno
-character(len=19) :: cndiri, cnfext, cnfint, cnfnod
+integer, intent(in) :: list_func_acti(*)
 type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=19), intent(in) :: cnfext, cnfint, cndiri, cnsstr, cnfnod
+real(kind=8), intent(out) :: r_comp_vale
+character(len=8), intent(out) :: r_comp_name
+integer, intent(out) :: r_comp_indx
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE MECA_NON_LINE (UTILITAIRE - RESIDU)
+! MECA_NON_LINE - Convergence management
 !
-! CALCULE LE MAX DES RESIDUS PAR CMP POUR LE RESIDU RESI_COMP_RELA 
+! Compute RESI_COMP_RELA
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
+! In  list_func_acti   : list of active functionnalities
+! In  ds_contact       : datastructure for contact management
+! In  cnfext           : nodal field for external force
+! In  cnfint           : nodal field for internal force
+! In  cndiri           : nodal field for support reaction
+! In  cnsstr           : nodal field for sub-structuring force
+! In  cnfnod           : nodal field for BT . SIGMA (No integration of behaviour)
+! Out r_comp_indx      : number of node where RESI_COMP_RELA is maximum
+! Out r_comp_vale      : value of RESI_COMP_RELA
+! Out r_comp_name      : name of component where RESI_COMP_RELA is maximum
 !
-! IN  CNFEXT : VECT_ASSE DES FORCES EXTERIEURES APPLIQUEES (NEUMANN)
-! IN  CNFINT : VECT_ASSE DES FORCES INTERIEURES
-! IN  CNFNOD : VECT_ASSE DES FORCES NODALES
-! IN  CNDIRI : VECT_ASSE REACTIONS D'APPUI
-! OUT MAXRES : RESIDU RESI_NODA_RELA
-! OUT NUMNO  : NUMERO DU NOEUD PENALISANT
-! OUT NODDLM : NOM DU MECANISME SUR LEQUEL PORTE LE RESIDU
+! --------------------------------------------------------------------------------------------------
 !
-!
-!
-!
-!
-    integer :: nddmax
-    parameter    (nddmax = 6)
+    integer, parameter :: nddmax = 6
     character(len=8) :: nomddl(nddmax)
     real(kind=8) :: maxddf(nddmax), maxddr(nddmax)
     integer :: numnod(nddmax)
-!
+    aster_logical :: l_disp, l_pilo, l_macr
     character(len=3) :: tsca
     integer :: cmpmax
-    character(len=19) :: cnfnod_s, cnfint_s, cndiri_s, cnfext_s, cnctdf_s
+    character(len=19) :: cnfnod_s, cnequi, cnequi_s
     integer :: i, k
     real(kind=8) :: resim, fonam, res
     integer :: jcnsl
     integer :: licmpu(999)
     integer :: nb_cmp, nb_node, i_cmp, i_node, nbcmpu
     character(len=8) :: nomgd
-    real(kind=8) :: epsi
-    real(kind=8), pointer :: v_diri_cnsv(:) => null()
-    real(kind=8), pointer :: v_fext_cnsv(:) => null()
-    real(kind=8), pointer :: v_fint_cnsv(:) => null()
-    real(kind=8), pointer :: v_fnod_cnsv(:) => null()
-    real(kind=8), pointer :: v_cont_cnsv(:) => null()
-    character(len=8), pointer :: v_fnod_cnsc(:) => null()
-    character(len=8), pointer :: v_fnod_cnsk(:) => null()
-    integer, pointer :: v_fnod_cnsd(:) => null()
-    parameter    (epsi = 1.d-50)
+    real(kind=8), parameter :: epsi = 1.d-50
+    real(kind=8), pointer :: v_cnequi_cnsv(:) => null()
+    real(kind=8), pointer :: v_cnfnod_cnsv(:) => null()
+    character(len=8), pointer :: v_cnfnod_cnsc(:) => null()
+    character(len=8), pointer :: v_cnfnod_cnsk(:) => null()
+    integer, pointer :: v_cnfnod_cnsd(:) => null()
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
+!
+! - Active functionnalities
+!
+    l_disp      = ASTER_FALSE
+    l_pilo      = ASTER_FALSE
+    l_macr      = isfonc(list_func_acti, 'MACR_ELEM_STAT')
+!
+! - Compute lack of balance forces
+!
+    cnequi = '&&CNCHAR.DONN'
+    call nmequi(l_disp    , l_pilo, l_macr, cnequi,&
+                cnfint    , cnfext, cndiri, cnsstr,&
+                ds_contact)
 !
 ! - Convert to "simple" fields
 !
     cnfnod_s = '&&RESCMP.CNFNOD_S'
-    cnfint_s = '&&RESCMP.CNFINT_S'
-    cndiri_s = '&&RESCMP.CNDIRI_S'
-    cnfext_s = '&&RESCMP.CNFEXT_S'
-    cnctdf_s = '&&RESCMP.CNCTDF_S'
+    cnequi_s = '&&RESCMP.CNEQUI_S'
     call cnocns(cnfnod, 'V', cnfnod_s)
-    call jeveuo(cnfnod_s(1:19)//'.CNSV', 'L', vr=v_fnod_cnsv)
-    call jeveuo(cnfnod_s(1:19)//'.CNSD', 'L', vi=v_fnod_cnsd)
+    call jeveuo(cnfnod_s(1:19)//'.CNSV', 'L', vr=v_cnfnod_cnsv)
+    call jeveuo(cnfnod_s(1:19)//'.CNSD', 'L', vi=v_cnfnod_cnsd)
     call jeveuo(cnfnod_s(1:19)//'.CNSL', 'L', jcnsl)
-    call jeveuo(cnfnod_s(1:19)//'.CNSC', 'L', vk8=v_fnod_cnsc)
-    call jeveuo(cnfnod_s(1:19)//'.CNSK', 'L', vk8=v_fnod_cnsk)
-    call cnocns(cnfint, 'V', cnfint_s)
-    call jeveuo(cnfint_s(1:19)//'.CNSV', 'L', vr=v_fint_cnsv)
-    call cnocns(cndiri, 'V', cndiri_s)
-    call jeveuo(cndiri_s(1:19)//'.CNSV', 'L', vr=v_diri_cnsv)
-    call cnocns(cnfext, 'V', cnfext_s)
-    call jeveuo(cnfext_s(1:19)//'.CNSV', 'L', vr=v_fext_cnsv)
-    if (ds_contact%l_cnctdf) then
-        call cnocns(ds_contact%cnctdf, 'V', cnctdf_s)
-        call jeveuo(cnctdf_s(1:19)//'.CNSV', 'L', vr=v_cont_cnsv)
-    endif
+    call jeveuo(cnfnod_s(1:19)//'.CNSC', 'L', vk8=v_cnfnod_cnsc)
+    call jeveuo(cnfnod_s(1:19)//'.CNSK', 'L', vk8=v_cnfnod_cnsk)
+    call cnocns(cnequi, 'V', cnequi_s)
+    call jeveuo(cnequi_s(1:19)//'.CNSV', 'L', vr=v_cnequi_cnsv)
 !
-    nb_cmp = v_fnod_cnsd(2)
-    nb_node = v_fnod_cnsd(1)
+    nb_cmp = v_cnfnod_cnsd(2)
+    nb_node = v_cnfnod_cnsd(1)
 
 !
 ! --- NB DE CMP DANS LE CHAMP
@@ -136,13 +138,13 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 !
 ! - Some checks
 !
-    nomgd = v_fnod_cnsk(2)
+    nomgd = v_cnfnod_cnsk(2)
     ASSERT(nbcmpu .le. nddmax)
     call dismoi('TYPE_SCA', nomgd, 'GRANDEUR', repk=tsca)
     ASSERT(tsca .eq. 'R')
 !
     do i_cmp = 1, nbcmpu
-        nomddl(i_cmp) = v_fnod_cnsc(licmpu(i_cmp))
+        nomddl(i_cmp) = v_cnfnod_cnsc(licmpu(i_cmp))
         maxddf(i_cmp) = 0.d0
         maxddr(i_cmp) = 0.d0
         numnod(i_cmp) = 0
@@ -154,12 +156,8 @@ type(NL_DS_Contact), intent(in) :: ds_contact
             k = licmpu(i_cmp)
             if (zl(jcnsl-1+(i_node-1)*nb_cmp+k)) then
                 i = nb_cmp*(i_node-1)+k
-                if (ds_contact%l_cnctdf) then
-                    resim = abs(v_fint_cnsv(i)+v_diri_cnsv(i)+v_cont_cnsv(i)-v_fext_cnsv(i))
-                else
-                    resim = abs(v_fint_cnsv(i)+v_diri_cnsv(i)-v_fext_cnsv(i))
-                endif
-                fonam = abs(v_fnod_cnsv(i))
+                resim = abs(v_cnequi_cnsv(i))
+                fonam = abs(v_cnfnod_cnsv(i))
                 if (resim .gt. maxddr(i_cmp)) then
                     maxddr(i_cmp)= resim
                     numnod(i_cmp)= i_node
@@ -168,7 +166,7 @@ type(NL_DS_Contact), intent(in) :: ds_contact
             endif
         end do
     end do
-    maxres=0.d0
+    r_comp_vale=0.d0
 !
 !
     do i_cmp = 1, nbcmpu
@@ -177,8 +175,8 @@ type(NL_DS_Contact), intent(in) :: ds_contact
         else
             res = -1
         endif
-        if (res .gt. maxres) then
-            maxres = res
+        if (res .gt. r_comp_vale) then
+            r_comp_vale = res
             cmpmax = i_cmp
         endif
     end do
@@ -186,20 +184,17 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 !  POUR INFO SI BESOIN NUMDDL  : NUMERO DU DDL PENALISANT
 !    NUMDDL   = NUMN(CMPMAX)
 !
-    if (maxres .lt. epsi) then
-        maxres = -1.d0
-        numno = 0
-        noddlm = '   '
+    if (r_comp_vale .lt. epsi) then
+        r_comp_vale = -1.d0
+        r_comp_indx = 0
+        r_comp_name = '   '
     else
-        numno = numnod(cmpmax)
-        noddlm = nomddl(cmpmax)
+        r_comp_indx = numnod(cmpmax)
+        r_comp_name = nomddl(cmpmax)
     endif
 !
+    call detrsd('CHAM_NO_S', cnequi_s)
     call detrsd('CHAM_NO_S', cnfnod_s)
-    call detrsd('CHAM_NO_S', cnfint_s)
-    call detrsd('CHAM_NO_S', cndiri_s)
-    call detrsd('CHAM_NO_S', cnfext_s)
-    call detrsd('CHAM_NO_S', cnctdf_s)
 !
     call jedema()
 !
