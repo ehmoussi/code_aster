@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine ndfdyn(sddyna, measse, vitplu, accplu, cndyna)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine ndfdyn(sddyna, hval_measse, vite_curr, acce_curr, cndyna)
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -38,33 +38,26 @@ subroutine ndfdyn(sddyna, measse, vitplu, accplu, cndyna)
 #include "asterfort/vtaxpy.h"
 #include "asterfort/vtzero.h"
 #include "asterfort/zerlag.h"
-    character(len=19) :: sddyna
-    character(len=19) :: measse(*)
-    character(len=19) :: vitplu, accplu
-    character(len=24) :: cndyna
 !
-! ----------------------------------------------------------------------
+character(len=19), intent(in) :: sddyna
+character(len=19), intent(in) :: hval_measse(*)
+character(len=19), intent(in) :: vite_curr, acce_curr
+character(len=19), intent(in) :: cndyna
+!
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (DYNAMIQUE)
 !
 ! CALCUL DES FORCES DE RAPPEL DYNAMIQUE
 !
-! ----------------------------------------------------------------------
-!
-!
-!
-!
-!
-!
+! --------------------------------------------------------------------------------------------------
 !
     character(len=19) :: amort, masse, rigid
-    character(len=19) :: vites, accel
     character(len=19) :: cniner, cnhyst
     real(kind=8) :: coerma, coeram, coerri
-    aster_logical :: lamor, limpl
-    aster_logical :: lnewma
+    aster_logical :: l_amor, l_impl
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
 !
@@ -76,21 +69,14 @@ subroutine ndfdyn(sddyna, measse, vitplu, accplu, cndyna)
 !
 ! --- FONCTIONNALITES ACTIVEES
 !
-    lamor = ndynlo(sddyna,'MAT_AMORT')
-    limpl = ndynlo(sddyna,'IMPLICITE')
-!
-! --- TYPE DE SCHEMA: NEWMARK (ET SES DERIVEES)
-!
-    lnewma = ndynlo(sddyna,'FAMILLE_NEWMARK')
-    if (.not.(lnewma)) then
-        ASSERT(.false.)
-    endif
+    l_amor = ndynlo(sddyna,'MAT_AMORT')
+    l_impl = ndynlo(sddyna,'IMPLICITE')
 !
 ! --- MATRICES ASSEMBLEES
 !
-    call nmchex(measse, 'MEASSE', 'MEAMOR', amort)
-    call nmchex(measse, 'MEASSE', 'MEMASS', masse)
-    call nmchex(measse, 'MEASSE', 'MERIGI', rigid)
+    call nmchex(hval_measse, 'MEASSE', 'MEAMOR', amort)
+    call nmchex(hval_measse, 'MEASSE', 'MEMASS', masse)
+    call nmchex(hval_measse, 'MEASSE', 'MERIGI', rigid)
 !
 ! --- VECTEURS RESULTATS
 !
@@ -102,19 +88,13 @@ subroutine ndfdyn(sddyna, measse, vitplu, accplu, cndyna)
 !
 ! --- VECTEURS SOLUTIONS
 !
-    vites = vitplu
-    accel = accplu
-    if (limpl) then
-        if (lnewma) then
-            call nminer(masse, accel, cniner)
-            call vtaxpy(coerma, cniner, cndyna)
-        else
-            ASSERT(.false.)
-        endif
+    if (l_impl) then
+        call nminer(masse, acce_curr, cniner)
+        call vtaxpy(coerma, cniner, cndyna)
     endif
 !
-    if (lamor) then
-        call nmhyst(amort, vites, cnhyst)
+    if (l_amor) then
+        call nmhyst(amort, vite_curr, cnhyst)
         call vtaxpy(coeram, cnhyst, cndyna)
     endif
 !
