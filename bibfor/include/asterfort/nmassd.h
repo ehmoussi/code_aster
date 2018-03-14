@@ -17,17 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmassd(model      , nume_dof   , list_load, list_func_acti, &
-                      ds_measure , disp_esti  ,&
-                      hval_veelem, hval_veasse, matr_asse,&
-                      cnpilo     , cndonn)
+    subroutine nmassd(list_func_acti, hval_veasse, cnpilo, cndonn)
         use NonLin_Datastructure_type
         integer, intent(in) :: list_func_acti(*)
-        character(len=19), intent(in) :: list_load
-        character(len=24), intent(in) :: model, nume_dof
-        type(NL_DS_Measure), intent(inout) :: ds_measure
-        character(len=19), intent(in) :: disp_esti
-        character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
-        character(len=19), intent(in) :: cnpilo, cndonn, matr_asse
+        character(len=19), intent(in) :: hval_veasse(*)
+        character(len=19), intent(in) :: cnpilo, cndonn
     end subroutine nmassd
 end interface

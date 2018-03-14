@@ -46,6 +46,7 @@ implicit none
 #include "asterfort/diinst.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/ndynlo.h"
+#include "asterfort/utmess.h"
 !
 integer, intent(in) :: list_func_acti(*)
 character(len=24), intent(in) :: model, cara_elem, nume_dof
@@ -97,8 +98,7 @@ character(len=19), intent(in) :: hval_measse(*)
 !
     call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) &
-         '<MECANONLINE> ... Compute forces for second member for initial acceleration'
+        call utmess('I', 'MECANONLINE11_3')
     endif
 !
 ! - Get time

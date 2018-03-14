@@ -17,15 +17,13 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmassc(fonact, sddyna, ds_measure, ds_contact, veasse, cnpilo,&
-                      cndonn)
+    subroutine nmassc(list_func_acti, sddyna, ds_contact, hval_veasse,&
+                      cnpilo      , cndonn)
         use NonLin_Datastructure_type
-        integer :: fonact(*)
-        character(len=19) :: sddyna
-        type(NL_DS_Measure), intent(inout) :: ds_measure
+        integer, intent(in) :: list_func_acti(*)
+        character(len=19), intent(in) :: sddyna
         type(NL_DS_Contact), intent(in) :: ds_contact
-        character(len=19) :: veasse(*)
-        character(len=19) :: cnpilo
-        character(len=19) :: cndonn
+        character(len=19), intent(in) :: hval_veasse(*)
+        character(len=19), intent(in) :: cnpilo, cndonn
     end subroutine nmassc
 end interface

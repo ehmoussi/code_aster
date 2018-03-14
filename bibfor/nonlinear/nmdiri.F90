@@ -32,6 +32,7 @@ implicit none
 #include "asterfort/vebtla.h"
 #include "asterfort/assvec.h"
 #include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
 #include "asterfort/nmdebg.h"
 #include "asterfort/vtzero.h"
 !
@@ -74,10 +75,9 @@ character(len=19), optional, intent(in) :: vite_, acce_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) &
-        '<MECANONLINE> ... Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA'
+        call utmess('I', 'MECANONLINE11_11')
     endif
 !
 ! - Get type of unknowns
@@ -123,7 +123,7 @@ character(len=19), optional, intent(in) :: vite_, acce_
     call assvec('V', cndiri, 1, vediri, [1.d0],&
                 nume_dof, ' ', 'ZERO', 1)
 !
-! - Print
+! - Debug
 !
     if (niv .ge. 2) then
         call nmdebg('VECT', cndiri, 6)

@@ -28,7 +28,6 @@ implicit none
 #include "asterfort/nonlinDSVectCombAddHat.h"
 #include "asterfort/nonlinDSVectCombAddDyna.h"
 #include "asterfort/nonlinDSVectCombInit.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/ndynre.h"
 #include "asterfort/isfonc.h"
@@ -52,19 +51,11 @@ character(len=19), optional, intent(in) :: sddyna_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
     real(kind=8) :: coeext, coeex2, coeint
     aster_logical :: l_dyna, l_mult_step, l_macr
     type(NL_DS_VectComb) :: ds_vectcomb
 !
 ! --------------------------------------------------------------------------------------------------
-!
-    call infdbg('MECA_NON_LINE', ifm, niv)
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ...... CALCUL NEUMANN VARIABLE'
-    endif
-!
-! - Active functionnalities
 !
     l_dyna      = ASTER_FALSE
     l_mult_step = ASTER_FALSE

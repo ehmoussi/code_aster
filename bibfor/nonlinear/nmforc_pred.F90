@@ -157,7 +157,8 @@ character(len=19), intent(in) :: hval_measse(*)
 !
     if (l_dyna) then
         call nmchex(hval_veasse, 'VEASSE', 'CNDYNA', cndyna)
-        call ndfdyn(sddyna, hval_measse, vite_curr, acce_curr, cndyna)
+        call ndfdyn(sddyna, hval_measse, ds_measure, vite_curr, acce_curr,&
+                    cndyna)
     endif
 !
 ! - Compute modal damping

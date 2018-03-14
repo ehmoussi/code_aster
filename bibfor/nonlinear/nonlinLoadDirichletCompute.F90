@@ -27,10 +27,12 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/nmbudi.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmtime.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
+#include "asterfort/nmdebg.h"
 !
 character(len=19), intent(in) :: list_load
 character(len=24), intent(in) :: model, nume_dof
@@ -58,9 +60,17 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     character(len=19) :: vect_elem, vect_asse
 !
 ! --------------------------------------------------------------------------------------------------
+!
+    call infdbg('MECANONLINE', ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'MECANONLINE11_12')
+    endif
+!
+! - Get hat variables
 !
     call nmchex(hval_veelem, 'VEELEM', 'CNBUDI', vect_elem)
     call nmchex(hval_veasse, 'VEASSE', 'CNBUDI', vect_asse)
@@ -78,5 +88,11 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 ! - Stop timer
 !
     call nmtime(ds_measure, 'Stop', '2nd_Member')
+!
+! - Debug
+!
+    if (niv .ge. 2) then
+        call nmdebg('VECT', vect_asse, 6)
+    endif
 !
 end subroutine

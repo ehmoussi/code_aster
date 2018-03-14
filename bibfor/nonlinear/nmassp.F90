@@ -30,7 +30,6 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/ndassp.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/nsassp.h"
@@ -82,38 +81,29 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
-    aster_logical :: lstat, ldyna
+    aster_logical :: l_stat, l_dyna
 !
 ! --------------------------------------------------------------------------------------------------
-!
-    call infdbg('MECA_NON_LINE', ifm, niv)
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... CALCUL SECOND MEMBRE'
-    endif
-!
-! --- INITIALISATIONS
 !
     ldccvg = -1
     call vtzero(cnpilo)
     call vtzero(cndonn)
 !
-! --- FONCTIONNALITES ACTIVEES
+! - Active functionnalities
 !
-    lstat = ndynlo(sddyna,'STATIQUE')
-    ldyna = ndynlo(sddyna,'DYNAMIQUE')
+    l_stat = ndynlo(sddyna,'STATIQUE')
+    l_dyna = ndynlo(sddyna,'DYNAMIQUE')
 !
-! --- EVALUATION DU SECOND MEMBRE
+! - Evaluate second member for prediction
 !
-    if (ldyna) then
+    if (l_dyna) then
         call ndassp(modele         , numedd, ds_material, carele,&
                     ds_constitutive, ds_measure , fonact, ds_contact,&
                     sddyna         , valinc, solalg     , veelem, veasse    ,&
                     ldccvg         , cndonn, sdnume     )
-    else if (lstat) then
-        call nsassp(fonact, &
-                    ds_measure, valinc, veasse, cnpilo,&
-                    cndonn, ds_material, ds_contact, ds_algorom)
+    else if (l_stat) then
+        call nsassp(fonact, ds_material, ds_contact, ds_algorom,&
+                    veasse, cnpilo     , cndonn )
     else
         ASSERT(ASTER_FALSE)
     endif
