@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmchfi(ds_algopara, fonact    , sddisc, sddyna, numins,&
-                  iterat     , ds_contact, lcfint, lcdiri, lcbudi,&
-                  lcrigi     , option)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmchfi(ds_algopara, list_func_acti, sddyna   , ds_contact,&
+                  sddisc     , nume_inst     , iter_newt,&
+                  lcfint     , lcdiri        , lcbudi   , lcrigi    ,&
+                  option)
 !
 use NonLin_Datastructure_type
 !
@@ -29,60 +31,55 @@ implicit none
 #include "asterfort/ndynlo.h"
 #include "asterfort/nmchrm.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+integer, intent(in) :: list_func_acti(*)
+character(len=19), intent(in) :: sddisc, sddyna
+type(NL_DS_Contact), intent(in) :: ds_contact
+integer, intent(in) :: nume_inst, iter_newt
+aster_logical, intent(out) :: lcfint, lcrigi, lcdiri, lcbudi
+character(len=16), intent(out) :: option
 !
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    integer :: fonact(*)
-    character(len=16) :: option
-    character(len=19) :: sddisc, sddyna
-    integer :: numins, iterat
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    aster_logical :: lcfint, lcrigi, lcdiri, lcbudi
+! --------------------------------------------------------------------------------------------------
 !
-! ----------------------------------------------------------------------
+! MECA_NON_LINE - Algorithm
 !
-! ROUTINE MECA_NON_LINE (CALCUL)
+! Get option for update internal forces
 !
-! CHOIX DE L'OPTION POUR CALCUL DES FORCES INTERNES
-!
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! In  ds_algopara      : datastructure for algorithm parameters
-! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
-! IN  SDDISC : SD DISC_INST
-! IN  SDDYNA : SD DYNAMIQUE
-! IN  NUMINS : NUMERO D'INSTANT
-! IN  ITERAT : NUMERO D'ITERATION
+! In  list_func_acti   : list of active functionnalities
+! In  sddisc           : datastructure for discretization
+! In  sddyna           : name of dynamic parameters datastructure
+! In  nume_inst        : index of current time step
+! In  iter_newt        : index of current Newton iteration
 ! In  ds_contact       : datastructure for contact management
-! OUT LCFINT  : .TRUE. SI CALCUL DES VECT_ELEM DES FORCES INTERIEURS
-! OUT LCDIRI  : .TRUE. SI CALCUL DES VECT_ELEM DES REACTIONS D'APPUI
-! OUT LCRIGI  : .TRUE. SI CALCUL DES MATR_ELEM DES MATRICES DE RIGIDITE
-! OUT OPTION : NOM D'OPTION PASSE A MERIMO POUR FORCES INTERNES
+! Out lcfint           : flag to compute internal forces (CNFINT)
+! Out lcrigi           : flag to compute rigidity matrix
+! Out lcdiri           : flag to compute Dirichlet boundary conditions - BT.LAMBDA (CNDIRI)
+! Out lcbudi           : flag to compute Dirichlet boundary conditions - B.U (CNBUDI)
+! Out option           : name of non-linear option
 !
+! --------------------------------------------------------------------------------------------------
 !
+    aster_logical :: l_matr_asse
+    character(len=16) :: type_matr_corr, type_matr_pred
+    aster_logical :: l_unil, l_cont_disc, l_line_search
 !
+! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: reasma
-    character(len=16) :: metcor, metpre
-    aster_logical :: lunil, lctcd, lreli, lexpl
+    l_unil        = isfonc(list_func_acti,'LIAISON_UNILATER')
+    l_cont_disc   = isfonc(list_func_acti,'CONT_DISCRET')
+    l_line_search = isfonc(list_func_acti,'RECH_LINE')
 !
-! ----------------------------------------------------------------------
+! - Option for matrix
 !
-    lunil = isfonc(fonact,'LIAISON_UNILATER')
-    lctcd = isfonc(fonact,'CONT_DISCRET')
-    lreli = isfonc(fonact,'RECH_LINE')
-    lexpl = ndynlo(sddyna,'EXPLICITE')
-!
-! --- CHOIX DE REASSEMBLAGE DE LA MATRICE GLOBALE
-!
-    call nmchrm('FORCES_INT', ds_algopara, fonact, sddisc, sddyna,&
-                numins, iterat, ds_contact, metpre, metcor,&
-                reasma)
-!
-! --- OPTION DE CALCUL
-!
-    if (reasma) then
-        if (metcor .eq. 'TANGENTE') then
+    call nmchrm('FORCES_INT',&
+                ds_algopara   , list_func_acti, sddisc     , sddyna,&
+                nume_inst     , iter_newt     , ds_contact ,&
+                type_matr_pred, type_matr_corr, l_matr_asse)
+    if (l_matr_asse) then
+        if (type_matr_corr .eq. 'TANGENTE') then
             option = 'FULL_MECA'
         else
             option = 'FULL_MECA_ELAS'
@@ -91,37 +88,29 @@ implicit none
         option = 'RAPH_MECA'
     endif
 !
-! --- DOIT-ON CALCULER LES VECT_ELEM DES FORCES INTERNES ?
-! --- INUTILE SI FULL_MECA (DEJA FAIT)
-!
-    if (.not.lreli .or. iterat .eq. 0) then
-        lcfint = .true.
-    else
-        if (option .eq. 'FULL_MECA') then
-            lcfint = .true.
-        else
-            lcfint = .false.
-        endif
-    endif
-!
-    if (lctcd .or. lunil) then
-        lcfint = .true.
-    endif
-!
-    if (lexpl) then
-        lcfint = .false.
-    endif
-!
-! --- DOIT-ON CALCULER LES MATR_ELEM DE RIGIDITE ?
+! - Update rigidity matrix ?
 !
     if (option .ne. 'RAPH_MECA') then
-        lcrigi = .true.
+        lcrigi = ASTER_TRUE
     else
-        lcrigi = .false.
+        lcrigi = ASTER_FALSE
     endif
 !
-! --- DOIT-ON CALCULER LES VECT_ELEM DES REACTIONS D'APPUI ?
-!    -> NON SI DEJA CALCULE DANS RECHERCHE LINEAIRE
+! - Update internal forces ?
+!
+    if (.not.l_line_search .or. iter_newt .eq. 0) then
+        lcfint = ASTER_TRUE
+    else
+        if (option .eq. 'FULL_MECA') then
+            lcfint = ASTER_TRUE
+        else
+            lcfint = ASTER_FALSE
+        endif
+    endif
+    if (l_cont_disc .or. l_unil) then
+        lcfint = ASTER_TRUE
+    endif
+!
     lcdiri = lcfint
     lcbudi = lcfint
 !
