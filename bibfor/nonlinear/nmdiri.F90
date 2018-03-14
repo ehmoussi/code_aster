@@ -103,7 +103,11 @@ character(len=19), optional, intent(in) :: vite_, acce_
 !       VILAINE GLUTE POUR L'INSTANT
         veclag = disp
     else if (l_acce) then
-        veclag = acce_
+        if (present(acce_)) then
+            veclag = acce_
+        else
+            veclag = disp
+        endif
     else
         ASSERT(ASTER_FALSE)
     endif

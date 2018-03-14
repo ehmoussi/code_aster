@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine nmassx(model, nume_dof, ds_material, cara_elem,&
-                  ds_constitutive, list_load, fonact, ds_measure,&
+                  ds_constitutive, fonact, ds_measure,&
                   sddyna, valinc, solalg, veelem, veasse,&
                   ldccvg, cndonn)
 !
@@ -34,10 +34,9 @@ implicit none
 #include "asterfort/nmasdi.h"
 #include "asterfort/nmasfi.h"
 #include "asterfort/nmasva.h"
-#include "asterfort/nmchex.h"
-#include "asterfort/nmdiri.h"
 #include "asterfort/nmfint.h"
 #include "asterfort/nmtime.h"
+#include "asterfort/nmchex.h"
 #include "asterfort/nonlinDSVectCombInit.h"
 #include "asterfort/nonlinDSVectCombCompute.h"
 #include "asterfort/nonlinDSVectCombAddAny.h"
@@ -45,7 +44,7 @@ implicit none
 !
 integer :: ldccvg
 integer :: fonact(*)
-character(len=19) :: list_load, sddyna
+character(len=19) :: sddyna
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 character(len=24) :: model, nume_dof
@@ -66,7 +65,6 @@ character(len=19) :: cndonn
 ! In  model            : name of model
 ! In  cara_elem        : name of elementary characteristics (field)
 ! In  ds_material      : datastructure for material parameters
-! In  list_load        : name of datastructure for list of loads
 ! In  nume_dof         : name of numbering object (NUME_DDL)
 ! In  sddyna           : datastructure for dynamic
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
@@ -90,8 +88,7 @@ character(len=19) :: cndonn
     character(len=24) :: mate, varc_refe
     character(len=19) :: cnffdo, cndfdo, cnfvdo, cnvady, cndumm
     character(len=19) :: vefint, cnfint
-    character(len=19) :: vediri, cndiri
-    character(len=19) :: disp_prev, vite_prev, acce_prev
+    character(len=19) :: cndiri
     aster_logical :: l_macr
     integer :: iterat
     real(kind=8) :: coeequ
@@ -112,12 +109,6 @@ character(len=19) :: cndonn
     cnfvdo = '&&CNCHAR.FVDO'
     cnvady = '&&CNCHAR.FVDY'
     l_macr = isfonc(fonact,'MACR_ELEM_STAT')
-!
-! - Get hat variables
-!
-    call nmchex(valinc, 'VALINC', 'DEPMOI', disp_prev)
-    call nmchex(valinc, 'VALINC', 'VITMOI', vite_prev)
-    call nmchex(valinc, 'VALINC', 'ACCMOI', acce_prev)
 !
 ! - Coefficient for multi-step scheme
 !
@@ -158,13 +149,9 @@ character(len=19) :: cndonn
 !
     call nonlinDSVectCombAddAny(ds_material%fvarc_pred, +1.d0, ds_vectcomb)
 !
-! - Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
+! - Get force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
 !
-    call nmchex(veelem, 'VEELEM', 'CNDIRI', vediri)
     call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
-    call nmdiri(model    , ds_material, cara_elem, list_load,&
-                disp_prev, vediri     , nume_dof , cndiri   ,&
-                sddyna   , vite_prev  , acce_prev)
     call nonlinDSVectCombAddHat(veasse, 'CNDIRI', -1.d0, ds_vectcomb)
 !
 ! - End timer
