@@ -33,7 +33,7 @@ implicit none
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/nmaint.h"
-#include "asterfort/nmbudi.h"
+#include "asterfort/nonlinLoadDirichletCompute.h"
 #include "asterfort/nmforc_corr.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmchfi.h"
@@ -100,8 +100,8 @@ aster_logical :: lerrit
 !
     character(len=24) :: mate, varc_refe
     aster_logical :: lcfint, lcrigi, lcdiri, lcbudi
-    character(len=19) :: vefint, vediri, vebudi, cnfint, cndiri, cnbudi
-    character(len=19) :: depplu, vitplu, accplu
+    character(len=19) :: vefint, vediri, cnfint, cndiri
+    character(len=19) :: disp_curr, vite_curr, acce_curr
     character(len=16) :: option
     aster_logical :: l_cont_disc, l_unil, leltc
     integer :: ldccvg
@@ -126,17 +126,13 @@ aster_logical :: lerrit
     l_cont_disc = isfonc(list_func_acti,'CONT_DISCRET')
     leltc       = isfonc(list_func_acti,'ELT_CONTACT')
 !
-! --- DECOMPACTION DES VARIABLES CHAPEAUX
+! - Get hat-variables
 !
-    call nmchex(hval_incr, 'VALINC', 'DEPPLU', depplu)
-    call nmchex(hval_incr, 'VALINC', 'VITPLU', vitplu)
-    call nmchex(hval_incr, 'VALINC', 'ACCPLU', accplu)
-    call nmchex(hval_veelem, 'VEELEM', 'CNDIRI', vediri)
-    call nmchex(hval_veelem, 'VEELEM', 'CNBUDI', vebudi)
+    call nmchex(hval_incr, 'VALINC', 'DEPPLU', disp_curr)
+    call nmchex(hval_incr, 'VALINC', 'VITPLU', vite_curr)
+    call nmchex(hval_incr, 'VALINC', 'ACCPLU', acce_curr)
     call nmchex(hval_veelem, 'VEELEM', 'CNFINT', vefint)
-    call nmchex(hval_veasse, 'VEASSE', 'CNDIRI', cndiri)
     call nmchex(hval_veasse, 'VEASSE', 'CNFINT', cnfint)
-    call nmchex(hval_veasse, 'VEASSE', 'CNBUDI', cnbudi)
 !
 ! - Compute forces for second member at correction
 !
@@ -157,11 +153,12 @@ aster_logical :: lerrit
                     ds_contact  , ds_measure, hval_algo  , hval_incr, ds_constitutive)
     endif
 !
-! --- OPTION POUR MERIMO
+! - Get option for update internal forces
 !
-    call nmchfi(ds_algopara, list_func_acti, sddisc, sddyna, nume_inst,&
-                iterat     , ds_contact, lcfint, lcdiri, lcbudi,&
-                lcrigi     , option)
+    call nmchfi(ds_algopara, list_func_acti, sddyna   , ds_contact,&
+                sddisc     , nume_inst     , iterat,&
+                lcfint     , lcdiri        , lcbudi   , lcrigi    ,&
+                option)
 !
 ! - Compute internal forces / matrix rigidity
 !
@@ -177,41 +174,36 @@ aster_logical :: lerrit
         endif
     endif
 !
-! --- ERREUR SANS POSSIBILITE DE CONTINUER
+! - No error => continue
 !
-    if (ldccvg .eq. 1) goto 999
-!
-! - Compute vectors for DISCRETE contact
-!
-    if (l_cont_disc .or. l_unil) then
-        call nmctcd(list_func_acti, ds_contact, nume_dof)
+    if (ldccvg .ne. 1) then
+! ----- Compute vectors for DISCRETE contact
+        if (l_cont_disc .or. l_unil) then
+            call nmctcd(list_func_acti, ds_contact, nume_dof)
+        endif
+! ----- Assemble internal forces
+        if (lcfint) then
+            call nmaint(nume_dof, list_func_acti, sdnume,&
+                        vefint  , cnfint)
+        endif
+! ----- Launch timer
+        call nmtime(ds_measure, 'Init', '2nd_Member')
+        call nmtime(ds_measure, 'Launch', '2nd_Member')
+! ----- Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
+        if (lcdiri) then
+            call nmchex(hval_veelem, 'VEELEM', 'CNDIRI', vediri)
+            call nmchex(hval_veasse, 'VEASSE', 'CNDIRI', cndiri)
+            call nmdiri(model    , ds_material, cara_elem, list_load,&
+                        disp_curr, vediri     , nume_dof , cndiri   ,&
+                        sddyna   , vite_curr  , acce_curr)
+        endif
+! ----- End timer
+        call nmtime(ds_measure, 'Stop', '2nd_Member')
+! ----- Compute Dirichlet boundary conditions - B.U
+        call nonlinLoadDirichletCompute(list_load  , model      , nume_dof ,&
+                                        ds_measure , matass     , disp_curr,&
+                                        hval_veelem, hval_veasse)
     endif
-!
-! - Assemble internal forces
-!
-    call nmtime(ds_measure, 'Init', '2nd_Member')
-    call nmtime(ds_measure, 'Launch', '2nd_Member')
-    if (lcfint) then
-        call nmaint(nume_dof, list_func_acti, sdnume,&
-                    vefint  , cnfint)
-    endif
-!
-! - Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
-!
-    if (lcdiri) then
-        call nmdiri(model , ds_material, cara_elem, list_load,&
-                    depplu, vediri     , nume_dof , cndiri   ,&
-                    sddyna, vitplu     , accplu)
-    endif
-!
-! - Compute Dirichlet boundary conditions - B.U
-!
-    call nmbudi(model, nume_dof, list_load, depplu, vebudi,&
-                cnbudi, matass)
-!
-    call nmtime(ds_measure, 'Stop', '2nd_Member')
-!
-999 continue
 !
 ! --- TRANSFORMATION DES CODES RETOURS EN EVENEMENTS
 !
