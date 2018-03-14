@@ -20,9 +20,9 @@
 !
 subroutine nmcere(model         , nume_dof, ds_material, cara_elem    ,&
                   ds_constitutive, ds_contact, list_load, fonact, ds_measure,&
-                  iterat         , sdnume, valinc, solalg    , veelem    ,&
-                  veasse         , offset, rho   , eta       , residu    ,&
-                  ldccvg         , matass)
+                  iterat         , sdnume, valinc, solalg    , hval_veelem    ,&
+                  hval_veasse         , offset, rho   , eta       , residu    ,&
+                  ldccvg         , matr_asse)
 !
 use NonLin_Datastructure_type
 !
@@ -36,7 +36,7 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/majour.h"
 #include "asterfort/nmaint.h"
-#include "asterfort/nmbudi.h"
+#include "asterfort/nonlinLoadDirichletCompute.h"
 #include "asterfort/nmcha0.h"
 #include "asterfort/nmchai.h"
 #include "asterfort/nmchcp.h"
@@ -53,13 +53,13 @@ implicit none
 integer :: fonact(*)
 integer :: iterat, ldccvg
 real(kind=8) :: eta, rho, offset, residu
-character(len=19) :: list_load, sdnume, matass
+character(len=19) :: list_load, sdnume, matr_asse
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Contact), intent(in) :: ds_contact
 character(len=24) :: model, nume_dof, cara_elem
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Measure), intent(inout) :: ds_measure
-character(len=19) :: veelem(*), veasse(*)
+character(len=19) :: hval_veelem(*), hval_veasse(*)
 character(len=19) :: solalg(*), valinc(*)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -106,8 +106,8 @@ character(len=19) :: solalg(*), valinc(*)
     aster_logical :: lgrot, lendo
     integer :: neq, nmax
     character(len=24) :: varc_refe, mate
-    character(len=19) :: vefint, vediri, vebudi
-    character(len=19) :: cnfint, cndiri, cnfext, cnbudi
+    character(len=19) :: vefint, vediri
+    character(len=19) :: cnfint, cndiri, cnfext
     character(len=19) :: valint(zvalin)
     character(len=19) :: solalt(zsolal)
     character(len=19) :: depdet, depdel, deppr1, deppr2
@@ -156,12 +156,10 @@ character(len=19) :: solalg(*), valinc(*)
     call nmchex(solalg, 'SOLALG', 'DEPDEL', depdel)
     call nmchex(solalg, 'SOLALG', 'DEPPR1', deppr1)
     call nmchex(solalg, 'SOLALG', 'DEPPR2', deppr2)
-    call nmchex(veelem, 'VEELEM', 'CNDIRI', vediri)
-    call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
-    call nmchex(veelem, 'VEELEM', 'CNFINT', vefint)
-    call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
-    call nmchex(veelem, 'VEELEM', 'CNBUDI', vebudi)
-    call nmchex(veasse, 'VEASSE', 'CNBUDI', cnbudi)
+    call nmchex(hval_veelem, 'VEELEM', 'CNDIRI', vediri)
+    call nmchex(hval_veasse, 'VEASSE', 'CNDIRI', cndiri)
+    call nmchex(hval_veelem, 'VEELEM', 'CNFINT', vefint)
+    call nmchex(hval_veasse, 'VEASSE', 'CNFINT', cnfint)
 !
 ! --- MISE A JOUR DEPLACEMENT
 ! --- DDEP = RHO*DEPPRE(1) + (ETA-OFFSET)*DEPPRE(2)
@@ -209,6 +207,12 @@ character(len=19) :: solalg(*), valinc(*)
     call nmaint(nume_dof, fonact, sdnume,&
                 vefint  , cnfint)
 !
+! - Update Dirichlet boundary conditions - B.U
+!
+    call nonlinLoadDirichletCompute(list_load  , model      , nume_dof,&
+                                    ds_measure , matr_asse  , depplt  ,&
+                                    hval_veelem, hval_veasse)
+!
 ! - Launch timer
 !
     call nmtime(ds_measure, 'Init'  , '2nd_Member')
@@ -219,15 +223,10 @@ character(len=19) :: solalg(*), valinc(*)
     call nmdiri(model, ds_material, cara_elem, list_load,&
                 depl , vediri     , nume_dof , cndiri   )
 !
-! --- REACTUALISATION DES CONDITIONS DE DIRICHLET B.U
-!
-    call nmbudi(model, nume_dof, list_load, depplt, vebudi,&
-                cnbudi, matass)
-!
 ! --- REACTUALISATION DES EFFORTS EXTERIEURS (AVEC ETA)
 !
-    call nmchex(veasse, 'VEASSE', 'CNFEXT', cnfext)
-    call nmfext(eta, fonact, k19bla, veasse, cnfext)
+    call nmchex(hval_veasse, 'VEASSE', 'CNFEXT', cnfext)
+    call nmfext(eta, fonact, k19bla, hval_veasse, cnfext)
 !
 ! - End timer
 !
@@ -240,7 +239,7 @@ character(len=19) :: solalg(*), valinc(*)
 ! --- CALCUL DU RESIDU
 !
     if (ldccvg .eq. 0) then
-        call nmpilr(fonact, nume_dof, matass, veasse, ds_contact,&
+        call nmpilr(fonact, nume_dof, matr_asse, hval_veasse, ds_contact,&
                     eta   , residu)
     endif
 !
