@@ -17,10 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine rescmp(list_func_acti, ds_contact ,&
-                  cndiri        , cnfext     ,&
-                  cnfint        , cnsstr     , cnfnod,&
-                  r_comp_vale   , r_comp_name, r_comp_indx)
+subroutine rescmp(cnfnod     , cnequi,&
+                  r_comp_vale, r_comp_name, r_comp_indx)
 !
 use NonLin_Datastructure_type
 !
@@ -35,12 +33,8 @@ implicit none
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/nmequi.h"
-#include "asterfort/isfonc.h"
 !
-integer, intent(in) :: list_func_acti(*)
-type(NL_DS_Contact), intent(in) :: ds_contact
-character(len=19), intent(in) :: cnfext, cnfint, cndiri, cnsstr, cnfnod
+character(len=19), intent(in) :: cnfnod, cnequi
 real(kind=8), intent(out) :: r_comp_vale
 character(len=8), intent(out) :: r_comp_name
 integer, intent(out) :: r_comp_indx
@@ -53,13 +47,8 @@ integer, intent(out) :: r_comp_indx
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  list_func_acti   : list of active functionnalities
-! In  ds_contact       : datastructure for contact management
-! In  cnfext           : nodal field for external force
-! In  cnfint           : nodal field for internal force
-! In  cndiri           : nodal field for support reaction
-! In  cnsstr           : nodal field for sub-structuring force
-! In  cnfnod           : nodal field for BT . SIGMA (No integration of behaviour)
+! In  cnfnod           : nodal field for internal force
+! In  cnequi           : nodal field for out-of-balance force
 ! Out r_comp_indx      : number of node where RESI_COMP_RELA is maximum
 ! Out r_comp_vale      : value of RESI_COMP_RELA
 ! Out r_comp_name      : name of component where RESI_COMP_RELA is maximum
@@ -70,10 +59,9 @@ integer, intent(out) :: r_comp_indx
     character(len=8) :: nomddl(nddmax)
     real(kind=8) :: maxddf(nddmax), maxddr(nddmax)
     integer :: numnod(nddmax)
-    aster_logical :: l_disp, l_pilo, l_macr
     character(len=3) :: tsca
     integer :: cmpmax
-    character(len=19) :: cnfnod_s, cnequi, cnequi_s
+    character(len=19) :: cnfnod_s, cnequi_s
     integer :: i, k
     real(kind=8) :: resim, fonam, res
     integer :: jcnsl
@@ -90,19 +78,6 @@ integer, intent(out) :: r_comp_indx
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-!
-! - Active functionnalities
-!
-    l_disp      = ASTER_FALSE
-    l_pilo      = ASTER_FALSE
-    l_macr      = isfonc(list_func_acti, 'MACR_ELEM_STAT')
-!
-! - Compute lack of balance forces
-!
-    cnequi = '&&CNCHAR.DONN'
-    call nmequi(l_disp    , l_pilo, l_macr, cnequi,&
-                cnfint    , cnfext, cndiri, cnsstr,&
-                ds_contact)
 !
 ! - Convert to "simple" fields
 !

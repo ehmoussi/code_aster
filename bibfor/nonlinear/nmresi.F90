@@ -114,7 +114,7 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
     character(len=19) :: varc_prev=' ', disp_prev=' '
     character(len=19) :: cndiri=' ', cnbudi=' ', cnfext=' '
     character(len=19) :: cnrefe=' ', cnfint=' '
-    character(len=19) :: cnfnod=' ', cndfdo=' ', cnequi = ' ', cndipi = ' ', cnsstr = ' '
+    character(len=19) :: cndfdo=' ', cnequi = ' ', cndipi = ' ', cnsstr = ' ', cnfnod = ' '
     real(kind=8) :: vale_equi=0.d0, vale_refe=0.d0, vale_varc=0.d0
     integer :: r_rela_indx=0, r_resi_indx=0, r_equi_indx=0
     integer :: r_refe_indx=0, r_char_indx=0, r_comp_indx=0
@@ -182,9 +182,9 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
     call nmchex(hval_veasse, 'VEASSE', 'CNDIRI', cndiri)
     call nmchex(hval_veasse, 'VEASSE', 'CNBUDI', cnbudi)
     call nmchex(hval_veasse, 'VEASSE', 'CNREFE', cnrefe)
-    call nmchex(hval_veasse, 'VEASSE', 'CNFNOD', cnfnod)
     call nmchex(hval_veasse, 'VEASSE', 'CNFEXT', cnfext)
     call nmchex(hval_veasse, 'VEASSE', 'CNFINT', cnfint)
+    call nmchex(hval_veasse, 'VEASSE', 'CNFNOD', cnfnod)
     call nmchex(hval_veasse, 'VEASSE', 'CNSSTR', cnsstr)
     cndfdo = '&&CNCHAR.DFDO'
 !
@@ -208,15 +208,6 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
         call jeveuo(sdnuco, 'L', vi = v_sdnuco)
     endif
 !
-! - Compute RESI_COMP_RELA
-!
-    if (l_resi_comp) then
-        call rescmp(list_func_acti, ds_contact ,&
-                    cndiri        , cnfext     ,&
-                    cnfint        , cnsstr     , cnfnod,&
-                    r_comp_vale   , r_comp_name, r_comp_indx)
-    endif
-!
 ! - Compute force for denominator of RESI_GLOB_RELA
 !
     call nmrede(list_func_acti, sddyna    ,&
@@ -225,6 +216,22 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
                 cnfext        , cnfint    , cndiri, cnsstr,&
                 hval_measse   , hval_incr ,&
                 r_char_vale   , r_char_indx)
+!
+! - Compute lack of balance forces
+!
+    cnequi = '&&CNCHAR.DONN'
+    call nmequi(l_disp     , l_pilo, l_macr, cnequi,&
+                cnfint     , cnfext, cndiri, cnsstr,&
+                ds_contact,&
+                cnbudi     , cndfdo,&
+                cndipi     , eta)
+!
+! - Compute RESI_COMP_RELA
+!
+    if (l_resi_comp) then
+        call rescmp(cnfnod     , cnequi,&
+                    r_comp_vale, r_comp_name, r_comp_indx)
+    endif
 !
 ! - Access to fields
 !
@@ -237,15 +244,6 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
     if (l_resi_refe) then
         call jeveuo(cnrefe(1:19)//'.VALE', 'L', vr=v_cnrefe)
     endif
-!
-! - Compute lack of balance forces
-!
-    cnequi = '&&CNCHAR.DONN'
-    call nmequi(l_disp     , l_pilo, l_macr, cnequi,&
-                cnfint     , cnfext, cndiri, cnsstr,&
-                ds_contact,&
-                cnbudi     , cndfdo,&
-                cndipi     , eta)
     call jeveuo(cnequi(1:19)//'.VALE', 'L', vr=v_cnequi)
 !
 ! - Compute
