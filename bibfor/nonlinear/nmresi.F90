@@ -80,7 +80,7 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  mesh              : name of mesh
+! In  mesh             : name of mesh
 ! In  list_func_acti   : list of active functionnalities
 ! In  ds_material      : datastructure for material parameters
 ! In  nume_dof         : name of numbering object (NUME_DDL)
@@ -211,9 +211,10 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
 ! - Compute RESI_COMP_RELA
 !
     if (l_resi_comp) then
-        call rescmp(cndiri, cnfext, cnfint, cnfnod,&
-                    ds_contact ,&
-                    r_comp_vale, r_comp_name, r_comp_indx)
+        call rescmp(list_func_acti, ds_contact ,&
+                    cndiri        , cnfext     ,&
+                    cnfint        , cnsstr     , cnfnod,&
+                    r_comp_vale   , r_comp_name, r_comp_indx)
     endif
 !
 ! - Compute force for denominator of RESI_GLOB_RELA

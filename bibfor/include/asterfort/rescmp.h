@@ -17,14 +17,16 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine rescmp(cndiri, cnfext, cnfint, cnfnod,&
-                      ds_contact,&
-                      maxres, noddlm, numno)
+    subroutine rescmp(list_func_acti, ds_contact ,&
+                      cndiri        , cnfext     ,&
+                      cnfint        , cnsstr     , cnfnod,&
+                      r_comp_vale   , r_comp_name, r_comp_indx)
         use NonLin_Datastructure_type
-        character(len=19) :: cndiri, cnfext, cnfint, cnfnod
+        integer, intent(in) :: list_func_acti(*)
         type(NL_DS_Contact), intent(in) :: ds_contact
-        real(kind=8) :: maxres
-        character(len=8) :: noddlm
-        integer :: numno
+        character(len=19), intent(in) :: cnfext, cnfint, cndiri, cnsstr, cnfnod
+        real(kind=8), intent(out) :: r_comp_vale
+        character(len=8), intent(out) :: r_comp_name
+        integer, intent(out) :: r_comp_indx
     end subroutine rescmp
 end interface
