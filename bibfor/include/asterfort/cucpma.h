@@ -19,14 +19,12 @@
 !
 !
 interface
-    subroutine cuprep(mesh, nb_equa, ds_contact, disp_curr, disp_iter, &
-                      time_curr)
-        use NonLin_Datastructure_type
-        character(len=8), intent(in) :: mesh
-        integer, intent(in) :: nb_equa
-        type(NL_DS_Contact), intent(in) :: ds_contact
-        character(len=19), intent(in) :: disp_curr
-        character(len=19), intent(in) :: disp_iter
-        real(kind=8), intent(in) :: time_curr
-    end subroutine cuprep
+    subroutine cucpma(deficu, resocu, neq, nbliai, numedd, matrcf)
+        character(len=24) :: deficu
+        character(len=24) :: resocu
+        integer :: neq
+        integer :: nbliai
+        character(len=14) :: numedd
+        character(len=19) :: matrcf
+    end subroutine cucpma
 end interface

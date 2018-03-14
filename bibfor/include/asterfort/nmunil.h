@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,8 @@
 !
 interface
     subroutine nmunil(mesh  , disp_curr, disp_iter, solver    , matr_asse,&
-                      cncine, iter_newt, time_curr, ds_contact, ctccvg)
+                      cncine, iter_newt, time_curr, ds_contact, nume_dof ,&
+                      ctccvg)
         use NonLin_Datastructure_type
         character(len=8), intent(in) :: mesh
         character(len=19), intent(in) :: disp_curr
@@ -31,6 +32,7 @@ interface
         integer, intent(in) :: iter_newt
         real(kind=8), intent(in) :: time_curr
         type(NL_DS_Contact), intent(in) :: ds_contact
+        character(len=14), intent(in) :: nume_dof
         integer, intent(out) :: ctccvg
     end subroutine nmunil
 end interface

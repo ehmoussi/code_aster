@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine cuprep(mesh, nb_equa, ds_contact, disp_iter, time_curr)
+subroutine cuprep(mesh, nb_equa, ds_contact, disp_curr, disp_iter, time_curr)
 !
 use NonLin_Datastructure_type
 !
@@ -36,6 +36,7 @@ implicit none
     integer, intent(in) :: nb_equa
     type(NL_DS_Contact), intent(in) :: ds_contact
     character(len=19), intent(in) :: disp_iter
+    character(len=19), intent(in) :: disp_curr
     real(kind=8), intent(in) :: time_curr
 !
 ! --------------------------------------------------------------------------------------------------
@@ -49,6 +50,7 @@ implicit none
 ! In  mesh             : name of mesh
 ! In  nb_equa          : number of equations
 ! In  ds_contact       : datastructure for contact management
+! In  disp_curr        : current displacements
 ! In  disp_iter        : displacement iteration
 ! In  time_curr        : current time
 !
@@ -66,6 +68,7 @@ implicit none
     real(kind=8) :: valpar(4)
     real(kind=8), pointer :: coor(:) => null()
     real(kind=8), pointer :: depp(:) => null()
+    real(kind=8), pointer :: vale(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -125,7 +128,7 @@ implicit none
 !
     poinoe = ds_contact%sdunil_defi(1:16)//'.POINOE'
     call jeveuo(poinoe, 'L', jpoi)
-    call jeveuo(disp_iter(1:19)//'.VALE', 'E', vr=depp)
+    call jeveuo(disp_curr(1:19)//'.VALE', 'E', vr=depp)
 !
     do inoe = 1, nnocu
         jdecal = zi(jpoi+inoe-1)
@@ -135,6 +138,21 @@ implicit none
         zr(japjeu+inoe-1) = zr(japjeu+inoe-1) - val
     end do
 !
+! --- PENALISATION : RESTE A MULTIPLIER PAR L INCREMENT
+! ---    SANS PRISE EN COMPTE DU CONTACT
+!
+    if (ds_contact%l_thm) then
+       call jeveuo(disp_iter(1:19)//'.VALE', 'L', vr=vale)
+       do inoe = 1, nnocu
+          jdecal = zi(jpoi+inoe-1)
+          nbddl  = zi(jpoi+inoe) - zi(jpoi+inoe-1)
+          call caladu(nb_equa, nbddl, zr(japcoe+jdecal), zi(japddl+jdecal), vale,&
+                   val)
+          zr(japjeu+inoe-1) = zr(japjeu+inoe-1) - val
+       end do
+    endif
+!
+! ----------------------------------------------------------------------
     call jedema()
 !
 end subroutine

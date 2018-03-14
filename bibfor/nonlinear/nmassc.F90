@@ -149,6 +149,12 @@ character(len=19), intent(in) :: cnpilo, cndonn
         call nonlinDSVectCombAddAny(ds_contact%cnctdf, -1.d0, ds_vectcomb)
     endif
 !
+! - Add LIAISON_UNIL penalized force
+!
+    if (ds_contact%l_cnunil) then
+        call nonlinDSVectCombAddAny(ds_contact%cnunil, -1.d0, ds_vectcomb)
+    endif
+!
 ! - Force from sub-structuring
 !
     if (l_macr) then
@@ -176,7 +182,7 @@ character(len=19), intent(in) :: cnpilo, cndonn
 ! ----- Get dead Neumann loads (for PILOTAGE)
         call nonlinDSVectCombAddHat(hval_veasse, 'CNFEPI', +1.d0, ds_vectcomb)
 ! ----- Get Dirichlet loads (for PILOTAGE)
-        call nonlinDSVectCombAddHat(hval_veasse, 'CNDIPI', +1.d0, ds_vectcomb)   
+        call nonlinDSVectCombAddHat(hval_veasse, 'CNDIPI', +1.d0, ds_vectcomb)
     endif
 !
 ! - Second member (PILOTAGE)

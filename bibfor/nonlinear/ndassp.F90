@@ -118,6 +118,12 @@ character(len=19), intent(in) :: cndonn
         call nonlinDSVectCombAddAny(ds_contact%cnctdf, -1.d0, ds_vectcomb)
     endif
 !
+! - Add LIAISON_UNIL penalized force
+!
+    if (ds_contact%l_cnunil) then
+        call nonlinDSVectCombAddAny(ds_contact%cnunil, -1.d0, ds_vectcomb)
+    endif
+!
 ! - Add CONTINUE/XFEM contact force
 !
     if (ds_contact%l_cneltc) then

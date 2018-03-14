@@ -42,6 +42,7 @@ implicit none
 #include "asterfort/vtcreb.h"
 #include "asterfort/wkvect.h"
 !
+!
 character(len=8), intent(in) :: mesh
 character(len=24), intent(in) :: nume_dof
 type(NL_DS_Contact), intent(inout) :: ds_contact
@@ -77,6 +78,9 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     character(len=24) :: cm1a, coco, liac, mu, delt0, delta, liot
     integer :: jcoco, jliac, jmu, jdelt0, jdelta, jliot
 !
+    character(len=24) :: coefpe
+    integer :: jcoe_pena, inoe
+    character(len=19) :: enat
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
@@ -247,5 +251,31 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     call vtcreb(ds_contact%cnunil, 'V', 'R', nume_ddlz = nume_dof)
     ds_contact%l_cnunil = ASTER_TRUE
 !
+! --- CAS DE LA PENALISATION - MATRICE ENAT
+!
+! ---   MATRICE STOCKEE CREUSE E_N*AT (POUR CONTACT PENALISE)
+! ---   TAILLE : NBENAT*30
+
+!     write(6,*) 'cucrsd :: l_thm =',ds_contact%l_thm
+    if (ds_contact%l_thm) then
+       enat = sdunil_solv(1:14)//'.ENAT'
+       call jecrec(enat, 'V V R', 'NU', 'DISPERSE', 'CONSTANT',&
+                nnocu)
+       call jeecra(enat, 'LONMAX', ival=30)
+       do inoe = 1, nnocu
+          call jecroc(jexnum(enat, inoe))
+       end do
+!
+! --- COEFFICIENT DE PENALISATION
+!
+! En dur pour l'instant, à changer dans une version plus aboutie
+! Voir deplacer dans sdunil_defi
+!
+       coefpe = sdunil_solv(1:14)//'.COEFPE'
+       call wkvect(coefpe, 'V V R', 1, jcoe_pena)
+       zr(jcoe_pena) = 1.
+    endif
+!
+! ----------------------------------------------------------------------
     call jedema()
 end subroutine

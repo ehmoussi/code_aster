@@ -26,6 +26,8 @@ implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
+#include "asterfort/dismoi.h"
+#include "asterfort/getvid.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/jedema.h"
@@ -69,9 +71,10 @@ character(len=19) :: cnfext
     aster_logical :: lctcd, lunil
     real(kind=8) :: coeequ
     aster_logical :: ldyna, lallv, l_pilo
-    integer :: ifdo, n
+    integer :: ifdo, n, nocc
     character(len=19) :: vect(20)
     real(kind=8) :: coef(20)
+    character(len=8) :: model, answer
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -110,8 +113,14 @@ character(len=19) :: cnfext
     endif
 !
 ! --- FORCES DE LIAISON_UNILATER
+!    On desactive pour l'instant en penalisation
+
+    model = ' '
+    call getvid(' ', 'MODELE', scal=model, nbret=nocc)
+    ASSERT(nocc .ne. 0)
+    call dismoi('EXI_THM', model, 'MODELE', repk=answer)
 !
-    if (lunil) then
+    if (lunil .and. (answer.ne.'OUI')) then
         ifdo = ifdo + 1
         coef(ifdo) = -1.d0
         vect(ifdo) = ds_contact_%cnunil
