@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmequi(l_disp     , l_pilo, l_macr, cnresu,&
+subroutine nmequi(l_disp     , l_pilo, l_macr, cnequi,&
                   cnfint     , cnfext, cndiri, cnsstr,&
                   ds_contact_,&
                   cnbudi_    , cndfdo_,&
@@ -36,7 +36,7 @@ implicit none
 #include "asterfort/nonlinDSVectCombInit.h"
 !
 aster_logical, intent(in) :: l_disp, l_pilo, l_macr
-character(len=19), intent(in) :: cnresu
+character(len=19), intent(in) :: cnequi
 character(len=19), intent(in) :: cnfint, cnfext, cndiri, cnsstr
 type(NL_DS_Contact), optional, intent(in) :: ds_contact_
 character(len=19), optional, intent(in) :: cnbudi_, cndfdo_, cndipi_
@@ -54,6 +54,7 @@ real(kind=8), optional, intent(in) :: eta_
 ! In  cnfint           : nodal field for internal force
 ! In  cndiri           : nodal field for support reaction
 ! In  cnsstr           : nodal field for sub-structuring force
+! In  cnequi           : nodal field for out-of-balance force
 ! In  ds_contact       : datastructure for contact management
 !
 ! --------------------------------------------------------------------------------------------------
@@ -102,12 +103,12 @@ real(kind=8), optional, intent(in) :: eta_
 !
 ! - Combination
 !
-    call nonlinDSVectCombCompute(ds_vectcomb, cnresu)
+    call nonlinDSVectCombCompute(ds_vectcomb, cnequi)
 !
 ! - Debug
 !
     if (niv .eq. 2) then
-        call nmdebg('VECT', cnresu, ifm)
+        call nmdebg('VECT', cnequi, ifm)
     endif
 !
 end subroutine
