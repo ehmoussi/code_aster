@@ -17,30 +17,26 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmchar(mode    , phasez,&
-                      modele  , numedd, ds_material, carele, ds_constitutive,&
-                      lischa  , numins, ds_measure , sddisc, fonact         ,&
-                      ds_inout, valinc, solalg     , veelem, measse         ,&
-                      veasse  , sddyna)
+    subroutine nmforc_corr(list_func_acti,&
+                           model         , cara_elem      , nume_dof,&
+                           list_load     , sddyna         ,&
+                           ds_material   , ds_constitutive,&
+                           ds_measure    , &
+                           sddisc        , nume_inst      ,&
+                           hval_incr     , hval_algo      ,&
+                           hval_veelem   , hval_veasse    ,&
+                           hval_measse)
         use NonLin_Datastructure_type
-        character(len=4) :: mode
-        character(len=*) :: phasez
-        character(len=24) :: modele
-        character(len=24) :: numedd
+        integer, intent(in) :: list_func_acti(*)
+        character(len=24), intent(in) :: model, cara_elem, nume_dof
+        character(len=19), intent(in) :: list_load, sddyna
         type(NL_DS_Material), intent(in) :: ds_material
-        character(len=24) :: carele
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        character(len=19) :: lischa
-        integer :: numins
         type(NL_DS_Measure), intent(inout) :: ds_measure
-        character(len=19) :: sddisc
-        integer :: fonact(*)
-        type(NL_DS_InOut), intent(in) :: ds_inout
-        character(len=19) :: valinc(*)
-        character(len=19) :: solalg(*)
-        character(len=19) :: veelem(*)
-        character(len=19) :: measse(*)
-        character(len=19) :: veasse(*)
-        character(len=19) :: sddyna
-    end subroutine nmchar
+        character(len=19), intent(in) :: sddisc
+        integer, intent(in) :: nume_inst
+        character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
+        character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
+        character(len=19), intent(in) :: hval_measse(*)
+    end subroutine nmforc_corr
 end interface

@@ -22,7 +22,7 @@ subroutine nmpred(modele, numedd         , numfix    , ds_material, carele  ,&
                   ds_constitutive, lischa    , ds_algopara, solveu  ,&
                   fonact, ds_print       , ds_measure, ds_algorom , sddisc  ,&
                   sdnume, sderro         , numins    , valinc     , solalg  ,&
-                  matass, maprec         , ds_contact, sddyna     , ds_inout,&
+                  matass, maprec         , ds_contact, sddyna     ,&
                   meelem, measse         , veelem    , veasse     , lerrit)
 !
 use NonLin_Datastructure_type
@@ -45,7 +45,6 @@ character(len=19) :: matass, maprec
 type(NL_DS_Measure), intent(inout) :: ds_measure
 type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 type(NL_DS_Print), intent(inout) :: ds_print
-type(NL_DS_InOut), intent(in) :: ds_inout
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 character(len=19) :: lischa, solveu, sddisc, sddyna, sdnume
@@ -77,7 +76,6 @@ aster_logical :: lerrit
 ! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
 ! In  ds_algopara      : datastructure for algorithm parameters
 ! IO  ds_print         : datastructure for printing parameters
-! In  ds_inout         : datastructure for input/output management
 ! IO  ds_contact       : datastructure for contact management
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
 ! IO  ds_measure       : datastructure for measure and statistics management
@@ -120,12 +118,12 @@ aster_logical :: lerrit
 !
     if ((ds_algopara%matrix_pred .eq. 'ELASTIQUE').or.&
         (ds_algopara%matrix_pred .eq. 'TANGENTE')) then
-        call nmprta(modele    , numedd         , numfix    , ds_material, carele,&
+        call nmprta(modele    , numedd         , numfix     , ds_material, carele,&
                     ds_constitutive, lischa    , ds_algopara, solveu,&
-                    fonact    , ds_print       , ds_measure, ds_algorom , sddisc,&
-                    numins    , valinc         , solalg    , matass     , maprec,&
-                    ds_contact, sddyna         , meelem    , measse     , veelem,&
-                    veasse    , sdnume         , ds_inout  , ldccvg     , faccvg,&
+                    fonact    , ds_print       , ds_measure , ds_algorom , sddisc,&
+                    numins    , valinc         , solalg     , matass     , maprec,&
+                    ds_contact, sddyna         , meelem     , measse     , veelem,&
+                    veasse    , sdnume         , ldccvg     , faccvg,&
                     rescvg    )
 !
 ! --- PREDICTION PAR EXTRAPOLATION DU PAS PRECEDENT OU PAR DEPLACEMENT

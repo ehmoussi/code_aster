@@ -18,11 +18,11 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmfcor(model          , nume_dof  , ds_material, cara_elem  ,&
-                  ds_constitutive, list_load , fonact     , ds_algopara, numins,&
-                  iterat         , ds_measure, sddisc     , sddyna     , sdnume,&
-                  sderro         , ds_contact, ds_inout   , valinc     , solalg,&
-                  veelem         , veasse    , meelem     , measse     , matass,&
+subroutine nmfcor(model          , nume_dof   , ds_material   , cara_elem  ,&
+                  ds_constitutive, list_load  , list_func_acti, ds_algopara, nume_inst,&
+                  iterat         , ds_measure , sddisc        , sddyna     , sdnume   ,&
+                  sderro         , ds_contact , hval_incr     , hval_algo  ,&
+                  hval_veelem    , hval_veasse, hval_meelem   , hval_measse, matass   ,&
                   lerrit)
 !
 use NonLin_Datastructure_type
@@ -34,7 +34,7 @@ implicit none
 #include "asterfort/isfonc.h"
 #include "asterfort/nmaint.h"
 #include "asterfort/nmbudi.h"
-#include "asterfort/nmchar.h"
+#include "asterfort/nmforc_corr.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmchfi.h"
 #include "asterfort/nmcret.h"
@@ -46,8 +46,8 @@ implicit none
 #include "asterfort/nmrigi.h"
 #include "asterfort/nmtime.h"
 !
-integer :: fonact(*)
-integer :: iterat, numins
+integer :: list_func_acti(*)
+integer :: iterat, nume_inst
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=19) :: sddisc, sddyna, sdnume
@@ -56,20 +56,20 @@ character(len=24) :: model, nume_dof, cara_elem
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 character(len=24) :: sderro
-type(NL_DS_InOut), intent(in) :: ds_inout
-character(len=19) :: meelem(*), veelem(*), measse(*), veasse(*)
-character(len=19) :: solalg(*), valinc(*)
+character(len=19) :: hval_meelem(*), hval_veelem(*)
+character(len=19) :: hval_measse(*), hval_veasse(*)
+character(len=19) :: hval_algo(*), hval_incr(*)
 type(NL_DS_Contact), intent(in) :: ds_contact
 aster_logical :: lerrit
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (ALGORITHME)
 !
 ! MISE A JOUR DES EFFORTS APRES CALCUL DE LA CORRECTION DES CHAMPS
 ! DEPLACEMENTS/VITESSES ACCELERATIONS
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! In  model            : name of model
 ! In  cara_elem        : name of elementary characteristics (field)
@@ -78,25 +78,25 @@ aster_logical :: lerrit
 ! In  nume_dof         : name of numbering object (NUME_DDL)
 ! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
-! IN  SDDYNA : SD POUR LA DYNAMIQUE
+! In  sddyna           : datastructure for dynamic
 ! IO  ds_measure       : datastructure for measure and statistics management
-! IN  FONACT : FONCTIONNALITES ACTIVEES
+! In  list_func_acti   : list of active functionnalities
 ! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  ITERAT : NUMERO D'ITERATION DE NEWTON
-! IN  NUMINS : NUMERO D'INSTANT
-! IN  SDDISC : SD DISCRETISATION TEMPORELLE
+! In  sddisc           : datastructure for time discretization
+! In  nume_inst        : index of current time step
 ! IN  SDERRO : GESTION DES ERREURS
 ! In  ds_contact       : datastructure for contact management
-! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
-! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
-! IN  VEELEM : VARIABLE CHAPEAU POUR NOM DES VECT_ELEM
-! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
-! IN  MEELEM : VARIABLE CHAPEAU POUR NOM DES MATR_ELEM
-! IN  MEASSE : VARIABLE CHAPEAU POUR NOM DES MATR_ASSE
+! In  hval_incr        : hat-variable for incremental values fields
+! In  hval_algo        : hat-variable for algorithms fields
+! In  hval_veelem      : hat-variable for elementary vectors
+! In  hval_veasse      : hat-variable for vectors (node fields)
+! In  hval_meelem      : hat-variable for elementary matrix
+! In  hval_measse      : hat-variable for matrix
 ! IN  SDNUME : SD NUMEROTATION
 ! OUT LERRIT : .TRUE. SI ERREUR PENDANT CORRECTION
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     character(len=24) :: mate, varc_refe
     aster_logical :: lcfint, lcrigi, lcdiri, lcbudi
@@ -107,7 +107,7 @@ aster_logical :: lerrit
     integer :: ldccvg
     integer :: ifm, niv
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call infdbg('MECA_NON_LINE', ifm, niv)
     if (niv .ge. 2) then
@@ -118,43 +118,48 @@ aster_logical :: lerrit
 !
     mate      = ds_material%field_mate
     varc_refe = ds_material%varc_refe
-    ldccvg = -1
+    ldccvg    = -1
 !
 ! --- FONCTIONNALITES ACTIVEES
 !
-    l_unil      = isfonc(fonact,'LIAISON_UNILATER')
-    l_cont_disc = isfonc(fonact,'CONT_DISCRET')
-    leltc = isfonc(fonact,'ELT_CONTACT')
+    l_unil      = isfonc(list_func_acti,'LIAISON_UNILATER')
+    l_cont_disc = isfonc(list_func_acti,'CONT_DISCRET')
+    leltc       = isfonc(list_func_acti,'ELT_CONTACT')
 !
 ! --- DECOMPACTION DES VARIABLES CHAPEAUX
 !
-    call nmchex(valinc, 'VALINC', 'DEPPLU', depplu)
-    call nmchex(valinc, 'VALINC', 'VITPLU', vitplu)
-    call nmchex(valinc, 'VALINC', 'ACCPLU', accplu)
-    call nmchex(veelem, 'VEELEM', 'CNDIRI', vediri)
-    call nmchex(veelem, 'VEELEM', 'CNBUDI', vebudi)
-    call nmchex(veelem, 'VEELEM', 'CNFINT', vefint)
-    call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
-    call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
-    call nmchex(veasse, 'VEASSE', 'CNBUDI', cnbudi)
+    call nmchex(hval_incr, 'VALINC', 'DEPPLU', depplu)
+    call nmchex(hval_incr, 'VALINC', 'VITPLU', vitplu)
+    call nmchex(hval_incr, 'VALINC', 'ACCPLU', accplu)
+    call nmchex(hval_veelem, 'VEELEM', 'CNDIRI', vediri)
+    call nmchex(hval_veelem, 'VEELEM', 'CNBUDI', vebudi)
+    call nmchex(hval_veelem, 'VEELEM', 'CNFINT', vefint)
+    call nmchex(hval_veasse, 'VEASSE', 'CNDIRI', cndiri)
+    call nmchex(hval_veasse, 'VEASSE', 'CNFINT', cnfint)
+    call nmchex(hval_veasse, 'VEASSE', 'CNBUDI', cnbudi)
 !
-! --- CALCUL DES CHARGEMENTS VARIABLES AU COURS DU PAS DE TEMPS
+! - Compute forces for second member at correction
 !
-    call nmchar('VARI', 'CORRECTION'   , model, nume_dof  , ds_material,&
-                cara_elem, ds_constitutive, list_load, numins  , ds_measure,&
-                sddisc, fonact         , ds_inout, valinc    ,&
-                solalg, veelem         , measse, veasse  , sddyna)
+    call nmforc_corr(list_func_acti,&
+                     model         , cara_elem      , nume_dof,&
+                     list_load     , sddyna         ,&
+                     ds_material   , ds_constitutive,&
+                     ds_measure    , &
+                     sddisc        , nume_inst      ,&
+                     hval_incr     , hval_algo      ,&
+                     hval_veelem   , hval_veasse    ,&
+                     hval_measse)
 !
 ! --- CALCUL DU SECOND MEMBRE POUR CONTACT/XFEM
 !
     if (leltc) then
-        call nmfocc('CONVERGENC', model     , ds_material, nume_dof, fonact,&
-                    ds_contact  , ds_measure, solalg     , valinc  , ds_constitutive)
+        call nmfocc('CONVERGENC', model     , ds_material, nume_dof , list_func_acti,&
+                    ds_contact  , ds_measure, hval_algo  , hval_incr, ds_constitutive)
     endif
 !
 ! --- OPTION POUR MERIMO
 !
-    call nmchfi(ds_algopara, fonact, sddisc, sddyna, numins,&
+    call nmchfi(ds_algopara, list_func_acti, sddisc, sddyna, nume_inst,&
                 iterat     , ds_contact, lcfint, lcdiri, lcbudi,&
                 lcrigi     , option)
 !
@@ -163,12 +168,12 @@ aster_logical :: lerrit
     if (lcfint) then
         if (lcrigi) then
             call nmrigi(model    , mate  , cara_elem, ds_constitutive, sddyna,&
-                        ds_measure, fonact, iterat, valinc         , solalg,&
-                        varc_refe, meelem, veelem, option         , ldccvg)
+                        ds_measure, list_func_acti, iterat, hval_incr, hval_algo,&
+                        varc_refe, hval_meelem, hval_veelem, option         , ldccvg)
         else
             call nmfint(model, mate  , cara_elem, varc_refe , ds_constitutive,&
-                        fonact, iterat, sddyna, ds_measure, valinc         ,&
-                        solalg, ldccvg, vefint)
+                        list_func_acti, iterat, sddyna, ds_measure, hval_incr         ,&
+                        hval_algo, ldccvg, vefint)
         endif
     endif
 !
@@ -179,7 +184,7 @@ aster_logical :: lerrit
 ! - Compute vectors for DISCRETE contact
 !
     if (l_cont_disc .or. l_unil) then
-        call nmctcd(fonact, ds_contact, nume_dof)
+        call nmctcd(list_func_acti, ds_contact, nume_dof)
     endif
 !
 ! - Assemble internal forces
@@ -187,7 +192,7 @@ aster_logical :: lerrit
     call nmtime(ds_measure, 'Init', '2nd_Member')
     call nmtime(ds_measure, 'Launch', '2nd_Member')
     if (lcfint) then
-        call nmaint(nume_dof, fonact, sdnume,&
+        call nmaint(nume_dof, list_func_acti, sdnume,&
                     vefint  , cnfint)
     endif
 !

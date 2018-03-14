@@ -18,12 +18,12 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmprta(modele    , numedd         , numfix     , ds_material, carele,&
-                  ds_constitutive, lischa    , ds_algopara, solveu     ,&
-                  fonact    , ds_print       , ds_measure , ds_algorom , sddisc,&
-                  numins    , valinc         , solalg     , matass     , maprec,&
-                  ds_contact, sddyna         , meelem     , measse     , veelem,&
-                  veasse    , sdnume         , ds_inout   , ldccvg     , faccvg,&
+subroutine nmprta(model          , nume_dof , numfix     , ds_material, cara_elem,&
+                  ds_constitutive, list_load, ds_algopara, solveu     ,&
+                  list_func_acti , ds_print , ds_measure , ds_algorom , sddisc,&
+                  nume_inst      , hval_incr, hval_algo  , matass     , maprec,&
+                  ds_contact     , sddyna   , hval_meelem, hval_measse, hval_veelem,&
+                  hval_veasse    , sdnume   , ldccvg     , faccvg,&
                   rescvg    )
 !
 use NonLin_Datastructure_type
@@ -37,7 +37,7 @@ implicit none
 #include "asterfort/isfonc.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/nmassp.h"
-#include "asterfort/nmchar.h"
+#include "asterfort/nmforc_pred.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmdep0.h"
 #include "asterfort/nmfocc.h"
@@ -45,23 +45,22 @@ implicit none
 #include "asterfort/nmresd.h"
 #include "asterfort/vtzero.h"
 !
-integer :: fonact(*)
-integer :: numins, faccvg, rescvg, ldccvg
+integer :: list_func_acti(*)
+integer :: nume_inst, faccvg, rescvg, ldccvg
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 type(NL_DS_Measure), intent(inout) :: ds_measure
 type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 type(NL_DS_Print), intent(inout) :: ds_print
-type(NL_DS_InOut), intent(in) :: ds_inout
 type(NL_DS_Material), intent(in) :: ds_material
 character(len=19) :: matass, maprec
-character(len=19) :: lischa, solveu, sddisc, sddyna, sdnume
-character(len=24) :: modele, carele
-character(len=24) :: numedd, numfix
-character(len=19) :: solalg(*), valinc(*)
+character(len=19) :: list_load, solveu, sddisc, sddyna, sdnume
+character(len=24) :: model, cara_elem
+character(len=24) :: nume_dof, numfix
+character(len=19) :: hval_algo(*), hval_incr(*)
 type(NL_DS_Contact), intent(inout) :: ds_contact
-character(len=19) :: veelem(*), veasse(*)
-character(len=19) :: meelem(*), measse(*)
+character(len=19) :: hval_veelem(*), hval_veasse(*)
+character(len=19) :: hval_meelem(*), hval_measse(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,31 +70,29 @@ character(len=19) :: meelem(*), measse(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IN  MODELE : MODELE
-! IN  NUMEDD : NUME_DDL (VARIABLE AU COURS DU CALCUL)
+! In  list_func_acti   : list of active functionnalities
+! In  model            : name of model
+! In  cara_elem        : name of elementary characteristics (field)
+! In  nume_dof         : name of numbering object (NUME_DDL)
+! In  list_load        : name of datastructure for list of loads
 ! IN  NUMFIX : NUME_DDL (FIXE AU COURS DU CALCUL)
 ! In  ds_material      : datastructure for material parameters
-! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  LISCHA : LISTE DES CHARGES
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  SOLVEU : SOLVEUR
-! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
 ! IO  ds_print         : datastructure for printing parameters
-! In  ds_inout         : datastructure for input/output management
-! IN  SDDYNA : SD POUR LA DYNAMIQUE
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  ds_algorom       : datastructure for ROM parameters
-! IN  SDDISC : SD DISCRETISATION TEMPORELLE
-! IN  NUMINS : NUMERO D'INSTANT
-! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
-! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
-! IN  MEELEM : VARIABLE CHAPEAU POUR NOM DES MATR_ELEM
-! IN  MEASSE : VARIABLE CHAPEAU POUR NOM DES MATR_ASSE
-! IN  VEELEM : VARIABLE CHAPEAU POUR NOM DES VECT_ELEM
-! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
+! In  sddisc           : datastructure for time discretization
+! In  nume_inst        : index of current time step
+! In  hval_incr        : hat-variable for incremental values fields
+! In  hval_algo        : hat-variable for algorithms fields
+! In  hval_veelem      : hat-variable for elementary vectors
+! In  hval_veasse      : hat-variable for vectors (node fields)
+! In  hval_meelem      : hat-variable for elementary matrix
+! In  hval_measse      : hat-variable for matrix
+! In  sddyna           : datastructure for dynamic
 ! IO  ds_contact       : datastructure for contact management
-! IN  SDDYNA : SD DYNAMIQUE
 ! IN  MATASS : NOM DE LA MATRICE DU PREMIER MEMBRE ASSEMBLEE
 ! IN  MAPREC : NOM DE LA MATRICE DE PRECONDITIONNEMENT (GCPC)
 ! IN  SDNUME : SD NUMEROTATION
@@ -134,11 +131,11 @@ character(len=19) :: meelem(*), measse(*)
 !
     lstat = ndynlo(sddyna,'STATIQUE')
     limpl = ndynlo(sddyna,'IMPLICITE')
-    leltc = isfonc(fonact,'ELT_CONTACT')
+    leltc = isfonc(list_func_acti,'ELT_CONTACT')
 !
 ! --- INITIALISATIONS
 !
-    instap = diinst(sddisc,numins)
+    instap = diinst(sddisc,nume_inst)
     ldccvg = -1
     faccvg = -1
     rescvg = -1
@@ -149,21 +146,21 @@ character(len=19) :: meelem(*), measse(*)
 !
 ! --- DECOMPACTION DES VARIABLES CHAPEAUX
 !
-    call nmchex(veasse, 'VEASSE', 'CNCINE', cncine)
+    call nmchex(hval_veasse, 'VEASSE', 'CNCINE', cncine)
 !
 ! --- INCREMENT DE DEPLACEMENT NUL EN PREDICTION
 !
     if (lstat .or. limpl) then
-        call nmdep0('ON ', solalg)
+        call nmdep0('ON ', hval_algo)
     endif
 !
 ! --- CALCUL DE LA MATRICE GLOBALE
 !
-    call nmprma(modele     , ds_material, carele, ds_constitutive,&
-                ds_algopara, lischa     , numedd, numfix, solveu,&
+    call nmprma(model     , ds_material, cara_elem, ds_constitutive,&
+                ds_algopara, list_load     , nume_dof, numfix, solveu,&
                 ds_print, ds_measure, ds_algorom, sddisc,&
-                sddyna     , numins  , fonact, ds_contact,&
-                valinc     , solalg  , veelem, meelem, measse,&
+                sddyna     , nume_inst  , list_func_acti, ds_contact,&
+                hval_incr     , hval_algo  , hval_veelem, hval_meelem, hval_measse,&
                 maprec     , matass  , faccvg, ldccvg)
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER
@@ -171,40 +168,44 @@ character(len=19) :: meelem(*), measse(*)
     if ((faccvg.eq.1) .or. (faccvg.eq.2)) goto 999
     if (ldccvg .eq. 1) goto 999
 !
-! --- CALCUL DES CHARGEMENTS VARIABLES AU COURS DU PAS DE TEMPS
+! - Compute forces for second member at prediction
 !
-    call nmchar('VARI'  , 'PREDICTION',&
-                modele  , numedd, ds_material, carele, ds_constitutive,&
-                lischa  , numins, ds_measure , sddisc, fonact         ,&
-                ds_inout, valinc, solalg     , veelem, measse         ,&
-                veasse  , sddyna)
+    call nmforc_pred(list_func_acti,&
+                     model         , cara_elem      , nume_dof,&
+                     list_load     , sddyna         ,&
+                     ds_material   , ds_constitutive,&
+                     ds_measure    , &
+                     sddisc        , nume_inst      ,&
+                     hval_incr     , hval_algo      ,&
+                     hval_veelem   , hval_veasse    ,&
+                     hval_measse)
 !
 ! --- CALCUL DU SECOND MEMBRE POUR CONTACT/XFEM
 !
     if (leltc) then
-        call nmfocc('PREDICTION', modele    , ds_material, numedd, fonact         ,&
-                    ds_contact  , ds_measure, solalg     , valinc, ds_constitutive)
+        call nmfocc('PREDICTION', model    , ds_material, nume_dof, list_func_acti         ,&
+                    ds_contact  , ds_measure, hval_algo     , hval_incr, ds_constitutive)
     endif
 !
 ! --- CALCUL DU SECOND MEMBRE
 !
-    call nmassp(modele         , numedd, ds_material, carele    ,&
-                ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
-                sddyna         , valinc, solalg, veelem    , veasse    ,&
+    call nmassp(model         , nume_dof, ds_material, cara_elem    ,&
+                ds_constitutive, list_load, list_func_acti, ds_measure, ds_contact,&
+                sddyna         , hval_incr, hval_algo, hval_veelem    , hval_veasse    ,&
                 ldccvg         , cnpilo, cndonn, sdnume    , matass    ,&
                 ds_algorom)
 !
 ! --- INCREMENT DE DEPLACEMENT NUL EN PREDICTION
 !
     if (lstat .or. limpl) then
-        call nmdep0('OFF', solalg)
+        call nmdep0('OFF', hval_algo)
     endif
 !
 ! --- RESOLUTION K.DU = DF
 !
-    call nmresd(fonact, sddyna, ds_measure, solveu    , numedd,&
+    call nmresd(list_func_acti, sddyna, ds_measure, solveu    , nume_dof,&
                 instap, maprec, matass    , cndonn    , cnpilo,&
-                cncine, solalg, rescvg    , ds_algorom)
+                cncine, hval_algo, rescvg    , ds_algorom)
 !
 999 continue
 !

@@ -35,7 +35,6 @@ implicit none
 #include "asterfort/ndxdep.h"
 #include "asterfort/ndxnpa.h"
 #include "asterfort/ndxpre.h"
-#include "asterfort/nmchar.h"
 #include "asterfort/nmforc_step.h"
 !
 integer :: numins
@@ -124,7 +123,7 @@ integer :: nbiter
                 ds_constitutive, lischa, ds_algopara, solveu     ,&
                 fonact         , sddisc, ds_measure , numins     , valinc,&
                 solalg         , matass, maprec     , sddyna     , sderro,&
-                ds_inout       , meelem, measse     , veelem     , veasse,&
+                meelem         , measse, veelem     , veasse,&
                 lerrit)
 !
     if (lerrit) goto 315

@@ -212,7 +212,7 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
         call nmchex(hval_veasse, 'VEASSE', 'CNFSDO', vect_asse)
         call vecgme(model, cara_elem, ds_material%field_mate,&
                     lload_name, lload_info,&
-                    time_curr, disp_curr, disp_cumu_inst, vect_elem, time_prev,&
+                    time_curr, disp_prev, disp_cumu_inst, vect_elem, time_prev,&
                     ds_constitutive%compor, ' '   , vite_curr, strx_prev)
         call asasve(vect_elem, nume_dof, 'R', vect_alem)
         call ascova('D', vect_alem, lload_func, 'INST', time_curr,&

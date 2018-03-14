@@ -38,7 +38,6 @@ implicit none
 #include "asterfort/nmactf.h"
 #include "asterfort/nmactn.h"
 #include "asterfort/nmaffi.h"
-#include "asterfort/nmchar.h"
 #include "asterfort/nmconv.h"
 #include "asterfort/nmcrel.h"
 #include "asterfort/nmcvgf.h"
@@ -241,7 +240,7 @@ integer :: nbiter
                 ds_constitutive, list_load , ds_algopara, solveu   ,&
                 fonact, ds_print       , ds_measure, ds_algorom , sddisc   ,&
                 sdnume, sderro         , numins    , valinc     , solalg   ,&
-                matass, maprec         , ds_contact, sddyna     , ds_inout ,&
+                matass, maprec         , ds_contact, sddyna     , &
                 meelem, measse         , veelem    , veasse     , lerrit)
 !
     if (lerrit) goto 315
@@ -276,7 +275,7 @@ integer :: nbiter
     call nmfcor(model          , numedd    , ds_material, cara_elem  ,&
                 ds_constitutive, list_load , fonact  , ds_algopara, numins,&
                 iterat         , ds_measure, sddisc  , sddyna     , sdnume,&
-                sderro         , ds_contact, ds_inout, valinc     , solalg,&
+                sderro         , ds_contact, valinc  , solalg,&
                 veelem         , veasse    , meelem  , measse     , matass,&
                 lerrit)
 !

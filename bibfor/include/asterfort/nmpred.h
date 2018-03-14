@@ -24,7 +24,7 @@ interface
                       ds_constitutive, lischa    , ds_algopara, solveu  ,&
                       fonact, ds_print       , ds_measure, ds_algorom , sddisc  ,&
                       sdnume, sderro         , numins    , valinc     , solalg  ,&
-                      matass, maprec         , ds_contact, sddyna     , ds_inout,&
+                      matass, maprec         , ds_contact, sddyna     , &
                       meelem, measse         , veelem    , veasse     , lerrit)
         use NonLin_Datastructure_type
         use ROM_Datastructure_type
@@ -35,7 +35,6 @@ interface
         character(len=24) :: carele
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         character(len=19) :: lischa
-        type(NL_DS_InOut), intent(in) :: ds_inout
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         character(len=19) :: solveu
         integer :: fonact(*)
