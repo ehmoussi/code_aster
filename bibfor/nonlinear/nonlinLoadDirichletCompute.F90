@@ -27,7 +27,8 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/nmbudi.h"
+#include "asterfort/vebume.h"
+#include "asterfort/assvec.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmtime.h"
 #include "asterfort/infdbg.h"
@@ -61,7 +62,7 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=19) :: vect_elem, vect_asse
+    character(len=19) :: vebudi, cnbudi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -72,8 +73,8 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 !
 ! - Get hat variables
 !
-    call nmchex(hval_veelem, 'VEELEM', 'CNBUDI', vect_elem)
-    call nmchex(hval_veasse, 'VEASSE', 'CNBUDI', vect_asse)
+    call nmchex(hval_veelem, 'VEELEM', 'CNBUDI', vebudi)
+    call nmchex(hval_veasse, 'VEASSE', 'CNBUDI', cnbudi)
 !
 ! - Launch timer
 !
@@ -82,8 +83,9 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 !
 ! - Compute
 !
-    call nmbudi(model, nume_dof, list_load, disp, vect_elem,&
-                vect_asse, matr_asse)
+    call vebume(model, matr_asse, disp, list_load, vebudi)
+    call assvec('V', cnbudi, 1, vebudi, [1.d0],&
+                nume_dof, ' ', 'ZERO', 1)
 !
 ! - Stop timer
 !
@@ -92,7 +94,7 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 ! - Debug
 !
     if (niv .ge. 2) then
-        call nmdebg('VECT', vect_asse, 6)
+        call nmdebg('VECT', cnbudi, 6)
     endif
 !
 end subroutine
