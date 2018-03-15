@@ -76,6 +76,7 @@ CCOMPOR  = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
                                          'KIT1NAME', 'KIT2NAME', 'KIT3NAME', 'KIT4NAME',
                                          'KIT1NUME', 'KIT2NUME', 'KIT3NUME', 'KIT4NUME',
                                          'KIT1NVAR', 'KIT2NVAR', 'KIT3NVAR', 'KIT4NVAR',
+                                         'DEFO_LDC',
                                          ))
 
 CCOMPO2 = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
