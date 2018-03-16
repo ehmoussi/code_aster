@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,6 +25,8 @@ import os
 import re
 from copy import copy
 from types import IntType, FloatType, StringType, UnicodeType, NoneType
+
+import numpy
 
 from Noyau.N_types import is_int, is_float, is_complex, is_number, is_str, is_sequence
 
@@ -93,6 +95,7 @@ class TableBase(object):
         para = {
             'TABLEAU': {'mode': 'a', 'driver': self.ImprTableau, },
             'ASTER': {'mode': 'a', 'driver': self.ImprTableau, },
+            'NUMPY': {'mode': 'a', 'driver': self.ImprNumpy, },
             'XMGRACE': {'mode': 'a', 'driver': self.ImprGraph, },
             'AGRAF': {'mode': 'a', 'driver': self.ImprTableau, },
             'TABLEAU_CROISE': {'mode': 'a', 'driver': self.ImprTabCroise, },
@@ -163,6 +166,28 @@ class TableBase(object):
         # fermeture
         if kargs.get('FICHIER') != None:
             f.close()
+
+    def ImprNumpy(self, **kargs):
+        """Impression au format numpy."""
+        para = [i for i, j in zip(self.para, self.type) if j in ('R', 'I')]
+        restr = self[para]
+        values = []
+        for i in para:
+            valp = getattr(restr, i).values()
+            # replace None by 0.
+            valp = [x or 0. for x in valp]
+            values.extend(valp)
+
+        tab = numpy.array(values)
+        tab.shape = (len(para), len(self))
+        tab = tab.T
+        filename = kargs.get('FICHIER')
+        if filename is None:
+            print tab
+        else:
+            numpy.save(filename, tab)
+            if not filename.endswith(".npy"):
+                os.rename(filename + ".npy", filename)
 
     def ReprTable(self, FORMAT='TABLEAU', dform=None, **ignore):
         """Représentation d'une Table ou d'une Colonne sous forme d'un tableau.
@@ -650,7 +675,6 @@ class Table(TableBase):
         """Renvoie sous forme de NumArray le résultat d'une extraction dans une table
         méthode utile à macr_recal
         """
-        import numpy
         __Rep = self[Para, Champ].values()
         F = numpy.zeros((len(__Rep[Para]), 2))
         for i in range(len(__Rep[Para])):

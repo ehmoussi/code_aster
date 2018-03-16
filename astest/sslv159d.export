@@ -7,3 +7,4 @@ P testlist verification sequential
 
 F comm sslv159d.comm D 1
 F mail sslv159b.mail D 20
+F libr sslv159d.11 D 11
