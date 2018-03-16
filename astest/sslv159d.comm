@@ -17,17 +17,24 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(
-              NIV_PUB_WEB='INTERNET',
-              ),);
+import os
 
-E = 2.e11
+os.rename('fort.11', 'inputs.pick')
 
-nu = 0.3
 
-F = -500.
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'))
 
-h = 0.02
+# E = 2.e11
+E = VARIABLE(NOM_PARA='E', VALE=2.e11)
+
+# nu = 0.3
+nu = VARIABLE(NOM_PARA='nu', VALE=0.3)
+
+# F = -500.
+F = VARIABLE(NOM_PARA='F', VALE=-543.)
+
+# h = 0.02
+h = VARIABLE(NOM_PARA='h', VALE=0.02)
 
 MBI = LIRE_MAILLAGE(FORMAT='ASTER',
                     UNITE=20)
@@ -78,7 +85,9 @@ table = POST_RELEVE_T(ACTION=_F(GROUP_NO=('ForNod', ),
                                 RESULTAT=reslin))
 
 IMPR_TABLE(TABLE=table,
-           UNITE=6)
+           NOM_PARA=["RESU", "COOR_X", "COOR_Y", "DZ"],
+           FORMAT='NUMPY',
+           UNITE=10)
 
 TEST_TABLE(
   NOM_PARA='DZ',
