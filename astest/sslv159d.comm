@@ -1,0 +1,91 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(
+              NIV_PUB_WEB='INTERNET',
+              ),);
+
+E = 2.e11
+
+nu = 0.3
+
+F = -500.
+
+h = 0.02
+
+MBI = LIRE_MAILLAGE(FORMAT='ASTER',
+                    UNITE=20)
+
+MOD = AFFE_MODELE(AFFE=_F(GROUP_MA='POU',
+                          MODELISATION='POU_D_T',
+                          PHENOMENE='MECANIQUE'),
+                  MAILLAGE=MBI)
+
+CARA_POU = AFFE_CARA_ELEM(MODELE=MOD,
+                          POUTRE=_F(CARA=('H', ),
+                                    GROUP_MA=('POU', ),
+                                    SECTION='RECTANGLE',
+                                    VALE=(h, )))
+
+MAT = DEFI_MATERIAU(ELAS=_F(E=E,
+                            NU=nu,
+                            RHO=7800.0))
+
+CHMAT = AFFE_MATERIAU(AFFE=_F(GROUP_MA='POU',
+                              MATER=MAT),
+                      MAILLAGE=MBI)
+
+CL = AFFE_CHAR_MECA(DDL_IMPO=_F(DRX=0,
+                                DRY=0,
+                                DRZ=0,
+                                DX=0,
+                                DY=0,
+                                DZ=0,
+                                GROUP_NO='Encas'),
+                    MODELE=MOD)
+
+FORCE = AFFE_CHAR_MECA(FORCE_NODALE=_F(FZ=F,
+                                       GROUP_NO='ForNod'),
+                       MODELE=MOD)
+
+reslin = MECA_STATIQUE(CARA_ELEM=CARA_POU,
+                       CHAM_MATER=CHMAT,
+                       EXCIT=(_F(CHARGE=CL),
+                              _F(CHARGE=FORCE)),
+                       MODELE=MOD)
+
+table = POST_RELEVE_T(ACTION=_F(GROUP_NO=('ForNod', ),
+                                INTITULE='Fleche',
+                                NOM_CHAM='DEPL',
+                                NOM_CMP=('DZ', ),
+                                OPERATION=('EXTRACTION', ),
+                                RESULTAT=reslin))
+
+IMPR_TABLE(TABLE=table,
+           UNITE=6)
+
+TEST_TABLE(
+  NOM_PARA='DZ',
+  REFERENCE='AUTRE_ASTER',
+  TABLE=table,
+  VALE_CALC=(-0.00268651, ),
+  VALE_REFE=(-0.00268651, )
+)
+
+FIN()
