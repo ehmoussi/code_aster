@@ -169,11 +169,12 @@ class TableBase(object):
 
     def ImprNumpy(self, **kargs):
         """Impression au format numpy."""
-        para = [i for i, j in zip(self.para, self.type) if j in ('R', 'I')]
-        restr = self[para]
+        para = [i for i, j in zip(self.para, self.type) if j not in ('R', 'I')]
+        if para:
+            UTMESS('F', 'TABLE0_5', valk=repr(para))
         values = []
         for i in para:
-            valp = getattr(restr, i).values()
+            valp = getattr(self, i).values()
             # replace None by 0.
             valp = [x or 0. for x in valp]
             values.extend(valp)
