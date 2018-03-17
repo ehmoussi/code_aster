@@ -85,7 +85,7 @@ table = POST_RELEVE_T(ACTION=_F(GROUP_NO=('ForNod', ),
                                 RESULTAT=reslin))
 
 IMPR_TABLE(TABLE=table,
-           NOM_PARA=["RESU", "COOR_X", "COOR_Y", "DZ"],
+           NOM_PARA=["COOR_X", "COOR_Y", "DZ"],
            FORMAT='NUMPY',
            UNITE=10)
 
