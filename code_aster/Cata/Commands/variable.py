@@ -49,6 +49,7 @@ def VARIABLE(NOM_PARA, VALE):
         float: Value of the parameter.
     """
     if not hasattr(VARIABLE, "_cache"):
+        print "Settings variables values..."
         if not osp.exists(INPUTS):
             params, values = [], []
         else:
@@ -61,4 +62,10 @@ def VARIABLE(NOM_PARA, VALE):
 
     params, values = VARIABLE._cache
     inputs = dict(zip(params, values))
-    return inputs.get(NOM_PARA, VALE)
+    value = inputs.get(NOM_PARA)
+    if value is None:
+        value = VALE
+        print "- Use nominal value for {0} = {1}".format(NOM_PARA, value)
+    else:
+        print "- From inputs file for  {0} = {1}".format(NOM_PARA, value)
+    return value

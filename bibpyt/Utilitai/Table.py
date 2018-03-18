@@ -173,14 +173,14 @@ class TableBase(object):
         if para:
             UTMESS('F', 'TABLE0_5', valk=repr(para))
         values = []
-        for i in para:
+        for i in self.para:
             valp = getattr(self, i).values()
             # replace None by 0.
             valp = [x or 0. for x in valp]
             values.extend(valp)
 
         tab = numpy.array(values)
-        tab.shape = (len(para), len(self))
+        tab.shape = (len(self.para), len(self))
         tab = tab.T
         filename = kargs.get('FICHIER')
         if filename is None:
