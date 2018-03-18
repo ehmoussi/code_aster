@@ -17,6 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+# person_in_charge: mathieu.courtois@edf.from
+
 import os
 
 os.rename('fort.11', 'inputs.pick')
@@ -84,17 +86,15 @@ table = POST_RELEVE_T(ACTION=_F(GROUP_NO=('ForNod', ),
                                 OPERATION=('EXTRACTION', ),
                                 RESULTAT=reslin))
 
-IMPR_TABLE(TABLE=table,
-           NOM_PARA=["COOR_X", "COOR_Y", "DZ"],
-           FORMAT='NUMPY',
+IMPR_TABLE(FORMAT='NUMPY',
+           NOM_PARA=['COOR_X', 'COOR_Y', 'DZ'],
+           TABLE=table,
            UNITE=10)
 
-TEST_TABLE(
-  NOM_PARA='DZ',
-  REFERENCE='AUTRE_ASTER',
-  TABLE=table,
-  VALE_CALC=(-0.00268651, ),
-  VALE_REFE=(-0.00268651, )
-)
+TEST_TABLE(NOM_PARA='DZ',
+           REFERENCE='AUTRE_ASTER',
+           TABLE=table,
+           VALE_CALC=(-0.00268651, ),
+           VALE_REFE=(-0.00268651, ))
 
 FIN()
