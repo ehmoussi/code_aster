@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,16 +15,67 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+!aslint: disable=W1504,W0104
 
 subroutine lc0050(fami, kpg, ksp, ndim, typmod,&
                   imate, compor, crit, instam, instap,&
                   neps, epsm, deps, nsig, sigm,&
-                  nvi, vim, option, angmas, &
-                  icomp, stress, statev, ndsde,&
-                  dsidep, codret)
+                  nvi, vim, option, angmas, icomp, &
+                  temp , dtemp , predef, dpred ,&
+                  stress, statev, ndsde, dsidep, codret)
+!
 use calcul_module, only : ca_iactif_
 !
-!     BUT: INTERFACE POUR ROUTINE D'INTEGRATION LOI DE COMPORTEMENT UMAT
+implicit none
+!
+#include "jeveux.h"
+#include "asterc/r8nnem.h"
+#include "asterc/umatwp.h"
+#include "asterfort/assert.h"
+#include "asterfort/infniv.h"
+#include "asterfort/jevech.h"
+#include "asterfort/lceqvn.h"
+#include "asterfort/lcicma.h"
+#include "asterfort/matrot.h"
+#include "asterfort/r8inir.h"
+#include "asterfort/rcvarc.h"
+#include "asterfort/tecael.h"
+#include "asterfort/mat_proto.h"
+#include "blas/daxpy.h"
+#include "blas/dcopy.h"
+#include "blas/dscal.h"
+#include "asterfort/umatPrepareStrain.h"
+!
+character(len=*), intent(in) :: fami
+integer, intent(in) :: kpg, ksp, ndim
+character(len=8), intent(in) :: typmod(*)
+integer, intent(in) :: imate
+character(len=16), intent(in) :: compor(*)
+real(kind=8), intent(in) :: crit(*)
+real(kind=8), intent(in) :: instam, instap
+integer, intent(in) :: neps, nsig, nvi
+real(kind=8), intent(in) :: epsm(6), deps(6)
+real(kind=8), intent(in) :: sigm(6)
+real(kind=8), intent(in) :: vim(*)
+character(len=16), intent(in) :: option
+real(kind=8), intent(in) :: angmas(*)
+integer, intent(in) :: icomp
+real(kind=8), intent(in) :: temp, dtemp
+real(kind=8), intent(in) :: predef(*), dpred(*) 
+real(kind=8), intent(out) :: stress(6)
+real(kind=8), intent(out) :: statev(nvi)
+integer, intent(out) :: ndsde
+real(kind=8), intent(out) :: dsidep(6, 6)
+integer, intent(out) :: codret
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Behaviour
+!
+! UMAT : INTERFACE POUR ROUTINE D'INTEGRATION LOI DE COMPORTEMENT UMAT
+!
+! --------------------------------------------------------------------------------------------------
+!     
 !       IN   FAMI    FAMILLE DE POINT DE GAUSS (RIGI,MASS,...)
 !            KPG,KSP NUMERO DU (SOUS)POINT DE GAUSS
 !            NDIM    DIMENSION DE L ESPACE (3D=3,2D=2,1D=1)
@@ -48,68 +99,49 @@ use calcul_module, only : ca_iactif_
 !                          'FULL_MECA'     > DSIDEP(T+DT) , SIG(T+DT)
 !                          'RAPH_MECA'     > SIG(T+DT)
 !            ANGMAS  ANGLES DE ROTATION DU REPERE LOCAL, CF. MASSIF
-!       OUT  STRESS    CONTRAINTE A T+DT
-! !!!!        ATTENTION : ZONE MEMOIRE NON DEFINIE SI RIGI_MECA_TANG
-!       OUT  STATEV  VARIABLES INTERNES A T+DT
-! !!!!        ATTENTION : ZONE MEMOIRE NON DEFINIE SI RIGI_MECA_TANG
 !            TYPMOD  TYPE DE MODELISATION (3D, AXIS, D_PLAN)
 !            ICOMP   NUMERO DU SOUS-PAS DE TEMPS (CF. REDECE.F)
 !            NVI     NOMBRE TOTAL DE VARIABLES INTERNES (+9 SI GDEF_HYP)
-!       OUT  DSIDEP  MATRICE DE COMPORTEMENT TANGENT A T+DT OU T
-!       OUT  CODRET  CODE-RETOUR = 0 SI OK, =1 SINON
+!            TEMP    TEMPERATURE A T
+!            DTEMP   INCREMENT DE TEMPERATURE
+!            PREDEF  VARIABLES DE COMMANDE A T
+!            DPRED   INCREMENT DE VARIABLES DE COMMANDE  
+!       OUT  STRESS    CONTRAINTE A T+DT
+! !!!!!        ATTENTION : ZONE MEMOIRE NON DEFINIE SI RIGI_MECA_TANG
+!            STATEV  VARIABLES INTERNES A T+DT
+! !!!!!        ATTENTION : ZONE MEMOIRE NON DEFINIE SI RIGI_MECA_TANG
+!            DSIDEP  MATRICE DE COMPORTEMENT TANGENT A T+DT OU T
+!            CODRET  CODE-RETOUR = 0 SI OK, =1 SINON
 ! ======================================================================
-! aslint: disable=W1504,W0104
-    implicit none
-#include "jeveux.h"
-#include "asterc/r8nnem.h"
-#include "asterc/umatwp.h"
-#include "asterfort/assert.h"
-#include "asterfort/infniv.h"
-#include "asterfort/jevech.h"
-#include "asterfort/lceqvn.h"
-#include "asterfort/lcicma.h"
-#include "asterfort/matrot.h"
-#include "asterfort/pmat.h"
-#include "asterfort/r8inir.h"
-#include "asterfort/rcvarc.h"
-#include "asterfort/tecael.h"
-#include "asterfort/mat_proto.h"
-#include "asterfort/varcumat.h"
-#include "asterfort/lcdetf.h"
-#include "blas/daxpy.h"
-#include "blas/dcopy.h"
-#include "blas/dscal.h"
-!
-    integer ::      imate, ndim, kpg, ksp, codret, icomp, nvi, nprops, pfumat
-    integer ::      npropmax, ntens, ndi, nshr, i, nstatv, npt, noel, layer, npred
-    integer ::      kspt, kstep, kinc, idbg, j, ifm, niv, ndsde
-    parameter     ( npropmax = 197)
-    parameter     ( npred = 8)
-    integer ::      neps, nsig
-    real(kind=8) :: angmas(*), crit(*)
-    real(kind=8) :: instam, instap, drot(3, 3), dstran(9), props(npropmax)
-    real(kind=8) :: epsm(6), deps(6)
-    real(kind=8) :: sigm(6), stress(6), sse, spd, scd, time(2)
-    real(kind=8) :: vim(*), statev(nvi)
-    real(kind=8) :: predef(npred), dpred(npred)
-    real(kind=8) :: ddsdde(36), dfgrd0(3, 3), dfgrd1(3, 3)
-    real(kind=8) :: ddsddt(6), drplde(6), celent, stran(9), dsidep(6, 6)
-    real(kind=8) :: dtime, temp, dtemp, coords(3), rpl, pnewdt, drpldt
-    real(kind=8) :: depsth(6), epsth(6), rac2, usrac2, drott(3, 3)
-    character(len=16) :: compor(*), option
-    character(len=8) :: typmod(*)
-    character(len=*) :: fami
-    character(len=80) :: cmname
-    
-    integer:: jiterat, iadzi, iazk24, iretx,irety,iretz
-    
-    common/tdim/  ntens  , ndi
-    data idbg/1/
-!
 !     NTENS  :  NB TOTAL DE COMPOSANTES TENSEURS
 !     NDI    :  NB DE COMPOSANTES DIRECTES  TENSEURS
 ! ======================================================================
-
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer ::      nprops, pfumat
+    integer ::      ntens, ndi, nshr, i, nstatv, npt, noel, layer
+    integer ::      kspt, kstep, kinc, idbg, j, ifm, niv
+    integer:: jiterat, iadzi, iazk24, iretx,irety,iretz
+    integer, parameter :: npropmax = 197
+    integer, parameter :: npred = 8
+    real(kind=8) :: drott(3, 3), drot(3, 3), dstran(9), stran(9)
+    real(kind=8) :: props(npropmax)
+    real(kind=8) :: sse, spd, scd, rpl
+    real(kind=8) :: time(2), dtime, pnewdt
+    real(kind=8) :: ddsdde(36), dfgrd0(3, 3), dfgrd1(3, 3)
+    real(kind=8) :: ddsddt(6), drplde(6), drpldt
+    real(kind=8) :: coords(3), celent
+    real(kind=8) :: rac2, usrac2
+    character(len=80) :: cmname
+    character(len=8)   :: lvarc(npred)
+!
+    common/tdim/  ntens  , ndi
+    data idbg/1/
+    data lvarc/'SECH','HYDR','IRRA','NEUT1','NEUT2','CORR','ALPHPUR','ALPHBETA'/
+!
+! --------------------------------------------------------------------------------------------------
+!
     ntens=2*ndim
     ndi=3
     nshr=ntens-ndi
@@ -117,10 +149,19 @@ use calcul_module, only : ca_iactif_
     rac2=sqrt(2.d0)
     usrac2=rac2*0.5d0
     nprops = npropmax
-
+!
 !     IMPRESSIONS EVENTUELLES EN DEBUG
     call infniv(ifm, niv)
-
+!
+    if ((niv.ge.2) .and. (idbg.eq.1)) then
+        write(ifm,*)'TEMPERATURE ET INCREMENT'
+        write(ifm,'(2(1X,E11.4))') temp,dtemp
+        write(ifm,*) 'AUTRES VARIABLES DE COMMANDE ET INCREMENTS'
+        do i = 1, npred
+            write(ifm,'(A8,2(1X,E11.4))') lvarc(i),predef(i),dpred(i)
+        enddo
+    endif
+!
 !     SI ON NE TRAVAILLE PAS AVEC CALC_POINT_MAT, RECUPERATION DU NUM DE L'ITERATION ET DE LA MAILLE
     if (ca_iactif_ .ne. 2) then 
     
@@ -140,8 +181,7 @@ use calcul_module, only : ca_iactif_
         kinc = 0
         noel = 1
     end if
-    
-    
+!
 !   COORDONNEES DU POINT D'INTEGRATION (NaN si absent)
     call rcvarc(' ', 'X', '+', fami, kpg,  ksp, coords(1), iretx)
     call rcvarc(' ', 'Y', '+', fami, kpg,  ksp, coords(2), irety)
@@ -151,38 +191,15 @@ use calcul_module, only : ca_iactif_
     else
         coords(ndim+1:) = 0.d0
     end if
-    
-    
+!
 !   LECTURE DES PROPRIETES MATERIAU (MOT-CLE UMAT[_FO] DE DEFI_MATERIAU)
     call mat_proto(fami, kpg, ksp, '+', imate, compor(1), nprops, props)
-
-!   LECTURE DES VARIABLES DE COMMANDE  ET DEFORMATIONS ASSOCIEES
-    call varcumat(fami, kpg, ksp, imate, ifm, niv, idbg,  temp, dtemp, &
-   &              predef, dpred, neps, epsth, depsth )
 !
-! CAS DES GRANDES DEFORMATIONS : ON VEUT F- ET F+
+!   PREPARATION DES DEFORMATIONS EN ENTREE DE LA LOI
+    call umatPrepareStrain(neps , epsm , deps ,&
+                           stran , dstran, dfgrd0, dfgrd1)
 !
-    if (neps.eq.6) then
-!
-! PETITES DEFORMATIONS : DEFORMATION - DEFORMATION THERMIQUE
-        if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
-            call dcopy(neps, deps, 1, dstran, 1)
-            call daxpy(neps, -1.d0, depsth, 1, dstran,1)
-! TRAITEMENT DES COMPOSANTES 4,5,6 : DANS UMAT, GAMMAXY,XZ,YZ
-            call dscal(3, rac2, dstran(4), 1)
-        else
-            call r8inir(neps, 0.d0, dstran, 1)
-        endif
-!
-        call dcopy(neps, epsm, 1, stran, 1)
-        call daxpy(neps, -1.d0, epsth, 1, stran, 1)
-        call dscal(3, rac2, stran(4), 1)
-        call r8inir(9, 0.d0, dfgrd0, 1)
-        call r8inir(9, 0.d0, dfgrd1, 1)
-    else
-        ASSERT(.false.)
-    endif
-!
+!   RENOMMAGE DE CERTAINES VARIABLES EN ACCORD AVEC STANDARD UMAT
     if (compor(3) .eq. 'GDEF_LOG') then
         nstatv=nvi-6
     else
@@ -207,8 +224,8 @@ use calcul_module, only : ca_iactif_
     layer=1
     kspt=ksp
     kstep=icomp
-
-!     initialisations des arguments inutilises
+!
+!     INITIALISATIONS DES ARGUMENTS INUTILISES
     sse=0.d0
     spd=0.d0
     scd=0.d0
