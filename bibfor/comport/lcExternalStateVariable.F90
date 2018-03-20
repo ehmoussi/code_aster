@@ -36,6 +36,7 @@ implicit none
 #include "asterfort/get_elas_id.h"
 #include "asterfort/comp_meca_l.h"
 #include "asterfort/mfrontExternalStateVariable.h"
+#include "asterfort/umatExternalStateVariable.h"
 !
 real(kind=8), intent(in) :: carcri(*)
 character(len=16), intent(in) :: compor(*)
@@ -229,14 +230,21 @@ real(kind=8), intent(out) :: predef(*), dpred(*)
         depsth(k) = depsth(k)+(defap(k)-defam(k))*rac2
     enddo     
 !
-! - Prepare predef and dpred for MFront
+! - Prepare predef and dpred variables for MFront and UMAT
 !
     rela_comp = compor(RELA_NAME)
+!     * For MFront
     call comp_meca_l(rela_comp, 'MFRONT_PROTO', l_mfront_proto)
     call comp_meca_l(rela_comp, 'MFRONT_OFFI' , l_mfront_offi)
-    
     if (l_mfront_proto .or. l_mfront_offi) then
         call mfrontExternalStateVariable(carcri, rela_comp, fami, kpg, ksp, &
+                                         irets, ireth, &
+                                         sechm, sechp, hydrm, hydrp, &
+                                         predef, dpred)
+    endif
+!     * For UMAT
+    if (rela_comp .eq. 'UMAT') then
+        call umatExternalStateVariable(fami, kpg, ksp, &
                                          irets, ireth, &
                                          sechm, sechp, hydrm, hydrp, &
                                          predef, dpred)

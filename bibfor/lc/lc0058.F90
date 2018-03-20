@@ -27,7 +27,6 @@ subroutine lc0058(fami , kpg   , ksp   , ndim  , typmod,&
 implicit none
 !
 #include "asterc/mfront_behaviour.h"
-#include "asterfort/mfrontExternalStateVariable.h"
 #include "asterfort/mfront_get_mater_value.h"
 #include "asterfort/mfrontPrepareStrain.h"
 #include "asterfort/assert.h"
