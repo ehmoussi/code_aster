@@ -81,10 +81,6 @@ Le comportement MFront utilise les phases du Zircaloy.
 Ce n'est actuellement pas possible.
 """),
 
-    25: _(u"""
-La variable de commande %(k1)s a été définie dans AFFE_MATERIAU mais n'est pas définie dans le comportement MFront. 
-"""),
-
     35: _(u"""Le modèle de déformation utilisé dans MFront est incompatible avec %(k1)s."""),
 
     53: _(u"""
