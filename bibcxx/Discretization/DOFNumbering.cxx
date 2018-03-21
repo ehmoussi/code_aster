@@ -34,6 +34,9 @@ BaseDOFNumberingInstance::BaseDOFNumberingInstance( const std::string& type,
     _localNumbering( new LocalEquationNumberingInstance( getName() + ".NUML" ) ),
     _supportModel( ModelPtr() ),
     _listOfLoads( new ListOfLoadsInstance() ),
+    _smos( new MorseStorageInstance( getName() + ".SMOS" ) ),
+    _slcs( new LigneDeCielInstance( getName() + ".SLCS" ) ),
+    _mltf( new MultFrontGarbageInstance( getName() + ".MLTF" ) ),
     _isEmpty( true )
 {};
 
@@ -46,9 +49,11 @@ BaseDOFNumberingInstance::BaseDOFNumberingInstance( const std::string name,
     _localNumbering( new LocalEquationNumberingInstance( getName() + ".NUML" ) ),
     _supportModel( ModelPtr() ),
     _listOfLoads( new ListOfLoadsInstance() ),
+    _smos( new MorseStorageInstance( getName() + ".SMOS" ) ),
+    _slcs( new LigneDeCielInstance( getName() + ".SLCS" ) ),
+    _mltf( new MultFrontGarbageInstance( getName() + ".MLTF" ) ),
     _isEmpty( true )
-{
-};
+{};
 
 bool BaseDOFNumberingInstance::computeNumerotation() throw ( std::runtime_error )
 {
