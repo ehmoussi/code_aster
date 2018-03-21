@@ -1,9 +1,9 @@
 /**
- * @file FieldOnNodes.cxx
- * @brief Implementation de FieldOnNodes vide car FieldOnNodes est un template
+ * @file ElementaryResult.cxx
+ * @brief Implementation de ElementaryResult
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -21,6 +21,6 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "DataFields/FieldOnNodes.h"
+#include "DataFields/ElementaryResult.h"
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
