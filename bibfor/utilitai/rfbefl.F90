@@ -67,8 +67,8 @@ subroutine rfbefl(base)
     call getres(nomfon, typcon, nomcmd)
     basefl = base
     nbv = 0
-    interp(1) = 'NON '
-    interp(2) = 'NON '
+    interp(1) = 'LIN '
+    interp(2) = 'LIN '
 !
 !     --- RECUPERATION DES ENTREES ---
 !

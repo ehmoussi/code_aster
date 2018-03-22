@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -82,7 +82,7 @@ ORIEN=AFFE_CARA_ELEM(   MODELE=MOTH,
 FLU_Y=DEFI_FONCTION(  NOM_PARA='Y',
                            VALE=(-0.1E0,  60.E0,
                                   0.1E0, -60.E0, ),
-                          INTERPOL='NON'
+                          INTERPOL='LIN'
                           )
 
 FLU_Z=DEFI_FONCTION(  NOM_PARA='Z',
