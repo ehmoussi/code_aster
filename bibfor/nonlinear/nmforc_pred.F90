@@ -46,7 +46,6 @@ implicit none
 #include "asterfort/nonlinDynaImpeCompute.h"
 #include "asterfort/nonlinLoadCompute.h"
 #include "asterfort/nonlinSubStruCompute.h"
-#include "asterfort/nonlinNForceCompute.h"
 #include "asterfort/nonlinLoadDirichletCompute.h"
 !
 integer, intent(in) :: list_func_acti(*)
@@ -97,7 +96,7 @@ character(len=19), intent(in) :: hval_measse(*)
     character(len=19) :: disp_prev
     character(len=19) :: disp_curr, vite_curr, acce_curr
     real(kind=8) :: time_prev, time_curr
-    aster_logical :: l_dyna, l_impe, l_ammo, l_macr, l_implex
+    aster_logical :: l_dyna, l_impe, l_ammo, l_macr
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -118,7 +117,6 @@ character(len=19), intent(in) :: hval_measse(*)
     l_impe   = ndynlo(sddyna,'IMPE_ABSO')
     l_ammo   = ndynlo(sddyna,'AMOR_MODAL')
     l_macr   = isfonc(list_func_acti,'MACR_ELEM_STAT')
-    l_implex = isfonc(list_func_acti,'IMPLEX')
 !
 ! - Get hat variables
 !
@@ -178,16 +176,6 @@ character(len=19), intent(in) :: hval_measse(*)
                                        hval_incr   ,&
                                        hval_veelem , hval_veasse)
         endif
-    endif
-!
-! - Compute nodal force BT . SIGMA (No integration of behaviour)
-!
-    if (l_implex) then
-        call nonlinNForceCompute(model      , cara_elem      , nume_dof  , list_func_acti,&
-                                 ds_material, ds_constitutive, ds_measure,&
-                                 time_prev  , time_curr      ,&
-                                 hval_incr  , hval_algo      ,&
-                                 hval_veelem, hval_veasse)
     endif
 !
 ! - Compute Dirichlet boundary conditions - B.U

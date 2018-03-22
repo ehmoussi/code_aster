@@ -33,6 +33,7 @@ implicit none
 #include "asterfort/nmchex.h"
 #include "asterfort/nmdebg.h"
 #include "asterfort/vtzero.h"
+#include "asterfort/utmess.h"
 !
 character(len=24), intent(in) :: nume_dof
 integer, intent(in) :: list_func_acti(*)
@@ -41,9 +42,17 @@ character(len=19), intent(in) :: vefint, cnfint
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE MECA_NON_LINE (ALGORITHME)
+! MECA_NON_LINE - Algorithm
 !
-! ASSEMBLAGE DU VECTEUR DES FORCES INTERNES
+! Assemble elementary vectors for internal forces by integration of behaviour
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  nume_dof         : name of numbering object (NUME_DDL)
+! In  list_func_acti   : list of active functionnalities
+! In  sdnume           : datastructure for dof positions
+! In  vefint           : elementary vectors for internal forces 
+! In  cnfint           : nodal field for internal forces 
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -59,7 +68,7 @@ character(len=19), intent(in) :: vefint, cnfint
 !
     call infdbg('MECA_NON_LINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... ASSEMBLAGE DES FORCES INTERNES'
+        call utmess('I', 'MECANONLINE11_28')
     endif
 !
 ! - Initializations

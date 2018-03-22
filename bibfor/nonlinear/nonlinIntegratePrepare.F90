@@ -17,7 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nonlinDSConstitutiveInit(model, cara_elem, ds_constitutive)
+subroutine nonlinIntegratePrepare(list_func_acti , sddyna,&
+                                  ds_constitutive)
 !
 use NonLin_Datastructure_type
 !
@@ -26,66 +27,58 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
-#include "asterfort/nmdoco.h"
-#include "asterfort/nmcpqu.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/jeveuo.h"
 #include "asterfort/utmess.h"
-#include "asterfort/Behaviour_type.h"
+#include "asterfort/isfonc.h"
+#include "asterfort/ndynlo.h"
 !
-character(len=24), intent(in) :: model
-character(len=24), intent(in) :: cara_elem
+integer, intent(in) :: list_func_acti(*)
+character(len=19), intent(in) :: sddyna
 type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! MECA_NON_LINE - Constitutive laws
 !
-! Initializations for constitutive laws management datastructure
+! Prepare integration of constitutive laws
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  model            : name of the model
-! In  cara_elem        : name of elementary characteristics (field)
+! In  list_func_acti   : list of active functionnalities
+! In  sddyna           : dynamic parameters datastructure
 ! IO  ds_constitutive  : datastructure for constitutive laws management
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=8) :: answer
-    integer :: nb_affe, i_affe
-    character(len=16), pointer :: v_compor_vale(:) => null()
-    integer, pointer :: v_compor_desc(:) => null()
+    aster_logical :: l_implex, l_resi_comp, l_stat, l_dyna
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'MECANONLINE11_24')
+        call utmess('I', 'MECANONLINE11_26')
     endif
 !
-! - Construct CHAM_ELEM_S
+! - Active functionnalities
 !
-    call nmdoco(model, cara_elem, ds_constitutive%compor)
+    l_implex    = isfonc(list_func_acti,'IMPLEX')
+    l_resi_comp = isfonc(list_func_acti,'RESI_COMP')
+    l_stat      = ndynlo(sddyna,'STATIQUE')
+    l_dyna      = ndynlo(sddyna,'DYNAMIQUE')
 !
-! - Some functionnalities
+! - Activation
 !
-    call nmcpqu(ds_constitutive%compor, 'C_PLAN', 'DEBORST', ds_constitutive%l_deborst)
-    call nmcpqu(ds_constitutive%compor, 'RELCOM', 'DIS_CHOC', ds_constitutive%l_dis_choc)
-    call dismoi('POST_INCR', ds_constitutive%carcri, 'CARTE_CARCRI', repk=answer)
-    ds_constitutive%l_post_incr = answer .eq. 'OUI'
-!
-! - Look if geometric matrix is included in global tangent matrix
-!
-    call jeveuo(ds_constitutive%compor(1:19)//'.VALE', 'L', vk16 = v_compor_vale)
-    call jeveuo(ds_constitutive%compor(1:19)//'.DESC', 'L', vi   = v_compor_desc)
-    nb_affe = v_compor_desc(3)
-    do i_affe = 1, nb_affe
-        if ((v_compor_vale(DEFO+NB_COMP_MAXI*(i_affe-1)).eq.'GROT_GDEP') .or.&
-            (v_compor_vale(DEFO+NB_COMP_MAXI*(i_affe-1)).eq.'SIMO_MIEHE') .or.&
-            (v_compor_vale(DEFO+NB_COMP_MAXI*(i_affe-1)).eq.'GDEF_LOG')) then
-            ds_constitutive%l_matr_geom = ASTER_TRUE
-        endif
-    enddo
+    if (l_resi_comp) then
+        ds_constitutive%l_pred_cnfnod = ASTER_TRUE
+    endif
+    if (l_implex) then
+        ds_constitutive%l_pred_cnfnod = ASTER_TRUE
+    endif
+    if (l_stat) then
+        ds_constitutive%l_pred_cnfnod = ASTER_TRUE
+    endif
+    if (l_dyna) then
+        ds_constitutive%l_pred_cnfint = ASTER_TRUE
+    endif
 !
 end subroutine

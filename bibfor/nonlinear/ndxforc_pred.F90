@@ -46,8 +46,7 @@ implicit none
 #include "asterfort/nonlinDynaImpeCompute.h"
 #include "asterfort/nonlinLoadCompute.h"
 #include "asterfort/nonlinSubStruCompute.h"
-#include "asterfort/nmfint.h"
-#include "asterfort/assvec.h"
+#include "asterfort/nmfint_pred.h"
 !
 integer, intent(in) :: list_func_acti(*)
 character(len=24), intent(in) :: model, cara_elem, nume_dof
@@ -91,7 +90,7 @@ integer, intent(out) :: ldccvg
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=19) :: cndyna, cnsstr, vefint, cnfint
+    character(len=19) :: cndyna, cnsstr
     character(len=19) :: disp_prev, vite_prev, acce_prev
     character(len=19) :: disp_curr, vite_curr, acce_curr
     real(kind=8) :: time_prev, time_curr
@@ -180,15 +179,12 @@ integer, intent(out) :: ldccvg
 !
 ! - Compute internal forces
 !
-    call nmchex(hval_veasse, 'VEASSE', 'CNFINT', cnfint)
-    call nmchex(hval_veelem, 'VEELEM', 'CNFINT', vefint)
-    call nmfint(model         , cara_elem      ,&
-                ds_material   , ds_constitutive,&
-                list_func_acti, iter_newt      , sddyna, ds_measure,&
-                hval_incr     , hval_algo      ,&
-                vefint        , ldccvg   )
-    if (ldccvg .eq. 0) then
-        call assvec('V', cnfint, 1, vefint, [1.d0], nume_dof, ' ', 'ZERO', 1)
-    endif
+    call nmfint_pred(model      , cara_elem      , list_func_acti,&
+                     sddyna     , nume_dof       , &
+                     ds_material, ds_constitutive, ds_measure    ,&
+                     time_prev  , time_curr      , iter_newt     ,&
+                     hval_incr  , hval_algo      ,&
+                     hval_veelem, hval_veasse    ,&
+                     ldccvg     )
 !
 end subroutine
