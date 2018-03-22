@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ def macro_matr_ajou_ops(
     import types
     import aster
     from Utilitai.Utmess import UTMESS
+    from Utilitai.Utmess import MasquerAlarme, RetablirAlarme
     ier = 0
 
     # On importe les definitions des commandes a utiliser dans la macro
@@ -98,10 +99,18 @@ def macro_matr_ajou_ops(
 
 #  ---------------------------------------------------------------
 #  commande AFFE_MODELE modele interface
+    # Pour masquer certaines alarmes
+    # <MODELE1_63> : DANS UN MODELE, IL EXISTE DES ELEMENTS DE TYPE "BORD" QUI N'ONT PAS DE VOISIN AVEC RIGIDITE
+    # <MODELE1_64> : DANS UN MODELE, IL N'Y A AUCUN ELEMENT AVEC RIGIDITE
+    MasquerAlarme('MODELE1_63')
+    MasquerAlarme('MODELE1_64')
+    
     __NOMINT = AFFE_MODELE(MAILLAGE=MAILLAGE,
                            AFFE=_F(GROUP_MA=GROUP_MA_INTERF,
                                    MODELISATION=MODELISATION,
                                    PHENOMENE='THERMIQUE'), )
+    RetablirAlarme('MODELE1_63')
+    RetablirAlarme('MODELE1_64')
 
 #  ---------------------------------------------------------------
 #  commande AFFE_CHAR_THER condition de pression imposee
