@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -59,9 +59,5 @@ Le fichier %(k1)s n'existe pas.
  Code retour = %(i2)d      (maximum toléré : %(i1)d)
 """),
 
-    24 : _(u"""
-Le chemin d'accès au programme '%(k1)s' est trop long pour être stocké
-dans la variable prévue (de longueur %(i1)d).
-"""),
 
 }
