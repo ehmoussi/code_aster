@@ -41,7 +41,7 @@ implicit none
 #include "asterfort/ndynlo.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/nmchex.h"
-#include "asterfort/nmdiri.h"
+#include "asterfort/nonlinRForceCompute.h"
 #include "asterfort/nonlinDynaMDampCompute.h"
 #include "asterfort/nonlinDynaImpeCompute.h"
 #include "asterfort/nonlinLoadCompute.h"
@@ -92,7 +92,7 @@ integer, intent(out) :: ldccvg
 !
     integer :: ifm, niv
     character(len=24) :: mate, varc_refe
-    character(len=19) :: cndyna, cnsstr, vediri, cndiri, vefint, cnfint
+    character(len=19) :: cndyna, cnsstr, vefint, cnfint
     character(len=19) :: disp_prev, vite_prev, acce_prev
     character(len=19) :: disp_curr, vite_curr, acce_curr
     real(kind=8) :: time_prev, time_curr
@@ -152,11 +152,9 @@ integer, intent(out) :: ldccvg
 !
 ! - Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
 !
-    call nmchex(hval_veelem, 'VEELEM', 'CNDIRI', vediri)
-    call nmchex(hval_veasse, 'VEASSE', 'CNDIRI', cndiri)
-    call nmdiri(model    , ds_material, cara_elem, list_load,&
-                disp_prev, vediri     , nume_dof , cndiri   ,&
-                sddyna   , vite_prev  , acce_prev)
+    call nonlinRForceCompute(model      , ds_material, cara_elem, list_load,&
+                             nume_dof   , ds_measure , acce_prev,&
+                             hval_veelem, hval_veasse)
 !
 ! - Compute effect of dynamic forces (from time discretization scheme)
 !

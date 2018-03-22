@@ -17,19 +17,18 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmdiri(model  , ds_material, cara_elem, list_load,&
-                      disp   , vediri     , nume_dof , cndiri   ,&
-                      sddyna_, vite_      , acce_)
+    subroutine nonlinRForceCompute(model      , ds_material , cara_elem, list_load,&
+                                   nume_dof   , ds_measure  , vect_lagr,&
+                                   hval_veelem, hval_veasse_, cndiri_)
         use NonLin_Datastructure_type
-        character(len=24), intent(in) :: model
+        character(len=24), intent(in) :: model, cara_elem
         type(NL_DS_Material), intent(in) :: ds_material
-        character(len=24), intent(in) :: cara_elem
         character(len=19), intent(in) :: list_load
-        character(len=19), intent(in) :: disp
-        character(len=19), intent(in) :: vediri
         character(len=24), intent(in) :: nume_dof
-        character(len=19), intent(in) :: cndiri
-        character(len=19), optional, intent(in) :: sddyna_
-        character(len=19), optional, intent(in) :: vite_, acce_
-    end subroutine nmdiri
+        type(NL_DS_Measure), intent(inout) :: ds_measure
+        character(len=19), intent(in) :: vect_lagr
+        character(len=19), intent(in) :: hval_veelem(*)
+        character(len=19), optional, intent(in) :: hval_veasse_(*)
+        character(len=19), optional, intent(in) :: cndiri_
+    end subroutine nonlinRForceCompute
 end interface
