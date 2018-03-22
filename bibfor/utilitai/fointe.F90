@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -73,7 +73,6 @@ subroutine fointe(codmes, nomf, nbpu, nompu, valpu,&
 ! IER = 140 : TYPE D'INTERPOLATION SUR LES PARA DE LA NAPPE INCONNU
 ! IER = 150 : TYPE DE FONCTION NON TRAITE
 ! IER = 160 : PAS ASSEZ DE PARAMETRES
-! IER = 170 : INTERPOLATION SUR LES PARAMETRES DE LA NAPPE NON PERMISE
 ! IER = 200 : ERREUR AVEC UNE FORMULE
 !     ------------------------------------------------------------------
 !
@@ -284,11 +283,6 @@ subroutine fointe(codmes, nomf, nbpu, nompu, valpu,&
                         resu, ier)
             if (ier .ne. 0) goto 9998
         else if (coli.eq.'I') then
-            if (svinte(isave)(1:3) .eq. 'NON') then
-                call utmess('A', 'FONCT0_11', sk=nomfon)
-                ier = 170
-                goto 9998
-            endif
             call fointn(izero, nomf, rvar, i, epsi,&
                         tab(3), ier)
             if (ier .ne. 0) goto 9998

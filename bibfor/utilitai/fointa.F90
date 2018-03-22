@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -167,9 +167,6 @@ subroutine fointa(ipif, nbpu, nompu, valpu, resu)
             if (ier .ne. 0) goto 999
 !
         else if (coli.eq.'I') then
-            if (zk24(jpro+1)(1:3) .eq. 'NON') then
-                call utmess('F', 'UTILITAI2_12')
-            endif
             call fointn(ipif, nomf, rvar, inume, epsi,&
                         tab(3), ier)
             if (ier .ne. 0) goto 999

@@ -49,20 +49,12 @@ cata_msg = {
   Les fonctions de type " %(k1)s " ne sont pas imprimées.
 """),
 
-    12 : _(u"""
- interpolation sur paramètres non permise
-"""),
-
     13 : _(u"""
  interpolation " %(k1)s " inconnue
 """),
 
     14 : _(u"""
  " %(k1)s " type de fonction inconnu
-"""),
-
-    16 : _(u"""
- interpolation non permise
 """),
 
     17 : _(u"""
