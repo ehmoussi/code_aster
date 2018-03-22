@@ -5,5 +5,5 @@ P mpi_nbcpu 1
 P mpi_nbnoeud 1
 P testlist verification sequential
 
-F comm ssnv216a.comm D 1
-F mmed ssnv216a.mmed D 20
+F comm ssnv401c.comm D 1
+F mail ssnv400a.mail D 20

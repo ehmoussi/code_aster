@@ -65,7 +65,6 @@ implicit none
 #include "asterfort/lc0038.h"
 #include "asterfort/lc0039.h"
 #include "asterfort/lc0042.h"
-#include "asterfort/lc0044.h"
 #include "asterfort/lc0050.h"
 #include "asterfort/lc0054.h"
 #include "asterfort/lc0055.h"
@@ -112,6 +111,7 @@ implicit none
 #include "asterfort/lc0115.h"
 #include "asterfort/lc0120.h"
 #include "asterfort/lc0137.h"
+#include "asterfort/lc0145.h"
 #include "asterfort/lc0152.h"
 #include "asterfort/lc0165.h"
 #include "asterfort/lc0166.h"
@@ -513,12 +513,6 @@ integer :: codret
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
-    case (44)
-        call lc0044(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip, typmod, icomp,&
-                    nvi, dsidep, codret)
     case (50)
 !     UMAT
         call lc0050(fami, kpg, ksp, ndim, typmod,&
@@ -804,6 +798,15 @@ integer :: codret
                     angmas, sigp, vip, &
                     typmod, icomp, nvi,&
                     dsidep, codret)
+
+    case (145)
+!       BETON_RAG : nouvelle
+        call lc0145(fami, kpg, ksp, ndim, imate,&
+                    compor, carcri, instam, instap, epsm,&
+                    deps, sigm, vim, option, angmas,&
+                    sigp, vip, typmod, icomp,&
+                    nvi, dsidep, codret)
+
     case (152)
 !     CABLE_GAINE
         call lc0152(fami, kpg, ksp, ndim, imate,&
