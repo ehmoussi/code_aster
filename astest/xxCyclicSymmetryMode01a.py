@@ -38,7 +38,7 @@ affeMat = code_aster.MaterialOnMesh(secteur)
 affeMat.addMaterialOnAllMesh(acier)
 affeMat.buildWithoutInputVariables()
 
-charCine = code_aster.KinematicsLoad()
+charCine = code_aster.KinematicsMechanicalLoad()
 charCine.setSupportModel(modele)
 charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dx,
                                         0., ["ENCAS","AXE","Droite","Gauche"])
