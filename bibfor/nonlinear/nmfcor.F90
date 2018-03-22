@@ -30,6 +30,7 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/nmaint.h"
@@ -39,7 +40,9 @@ implicit none
 #include "asterfort/nmchfi.h"
 #include "asterfort/nmcret.h"
 #include "asterfort/nmctcd.h"
-#include "asterfort/nmdiri.h"
+#include "asterfort/ndynin.h"
+#include "asterfort/ndynlo.h"
+#include "asterfort/nonlinRForceCompute.h"
 #include "asterfort/nmfint.h"
 #include "asterfort/nmfocc.h"
 #include "asterfort/nmltev.h"
@@ -98,14 +101,15 @@ aster_logical :: lerrit
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     character(len=24) :: mate, varc_refe
     aster_logical :: lcfint, lcrigi, lcdiri, lcbudi
-    character(len=19) :: vefint, vediri, cnfint, cndiri
-    character(len=19) :: disp_curr, vite_curr, acce_curr
+    character(len=19) :: vefint, cnfint
+    character(len=19) :: disp_curr, vite_curr, acce_curr, vect_lagr
     character(len=16) :: option
     aster_logical :: l_cont_disc, l_unil, leltc
+    aster_logical :: l_disp, l_vite, l_acce, l_dyna
     integer :: ldccvg
-    integer :: ifm, niv
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -174,6 +178,30 @@ aster_logical :: lerrit
         endif
     endif
 !
+! - Get type of unknowns
+!
+    l_disp = ASTER_TRUE
+    l_vite = ASTER_FALSE
+    l_acce = ASTER_FALSE
+    l_dyna  = ndynlo(sddyna,'DYNAMIQUE')
+    if (l_dyna) then
+        l_disp = ndynin(sddyna,'FORMUL_DYNAMIQUE') .eq. 1
+        l_vite = ndynin(sddyna,'FORMUL_DYNAMIQUE') .eq. 2
+        l_acce = ndynin(sddyna,'FORMUL_DYNAMIQUE') .eq. 3
+    endif
+!
+! - Which unknowns for Lagrange multipliers ?
+!
+    if (l_disp) then
+        vect_lagr = disp_curr
+    else if (l_vite) then
+        vect_lagr = disp_curr
+    else if (l_acce) then
+        vect_lagr = acce_curr
+    else
+        ASSERT(ASTER_FALSE)
+    endif
+!
 ! - No error => continue
 !
     if (ldccvg .ne. 1) then
@@ -186,19 +214,12 @@ aster_logical :: lerrit
             call nmaint(nume_dof, list_func_acti, sdnume,&
                         vefint  , cnfint)
         endif
-! ----- Launch timer
-        call nmtime(ds_measure, 'Init', '2nd_Member')
-        call nmtime(ds_measure, 'Launch', '2nd_Member')
 ! ----- Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
         if (lcdiri) then
-            call nmchex(hval_veelem, 'VEELEM', 'CNDIRI', vediri)
-            call nmchex(hval_veasse, 'VEASSE', 'CNDIRI', cndiri)
-            call nmdiri(model    , ds_material, cara_elem, list_load,&
-                        disp_curr, vediri     , nume_dof , cndiri   ,&
-                        sddyna   , vite_curr  , acce_curr)
+            call nonlinRForceCompute(model      , ds_material, cara_elem, list_load,&
+                                     nume_dof   , ds_measure , vect_lagr,&
+                                     hval_veelem, hval_veasse)
         endif
-! ----- End timer
-        call nmtime(ds_measure, 'Stop', '2nd_Member')
 ! ----- Compute Dirichlet boundary conditions - B.U
         call nonlinLoadDirichletCompute(list_load  , model      , nume_dof ,&
                                         ds_measure , matass     , disp_curr,&

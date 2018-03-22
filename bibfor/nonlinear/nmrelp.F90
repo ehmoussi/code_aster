@@ -41,7 +41,7 @@ implicit none
 #include "asterfort/nmchex.h"
 #include "asterfort/nmchso.h"
 #include "asterfort/nmdebg.h"
-#include "asterfort/nmdiri.h"
+#include "asterfort/nonlinRForceCompute.h"
 #include "asterfort/nmfint.h"
 #include "asterfort/nmmaji.h"
 #include "asterfort/nmrebo.h"
@@ -261,9 +261,7 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
             call vlaxpy(1.d0-rho, ddepla, depdet)
             call vlaxpy(1.d0-rho, ddepla, depplt)
         endif
-!
-! ----- AFFICHAGE
-!
+! ----- Print
         if (niv .ge. 2) then
             write (ifm,*) '<MECANONLINE> ...... ITERATION <',iterho,'>'
             write (ifm,*) '<MECANONLINE> ...... RHO COURANT = ',rho
@@ -272,23 +270,16 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
             write (ifm,*) '<MECANONLINE> ...... INCREMENT DEPL. TOTAL'
             call nmdebg('VECT', depdet, 6)
         endif
-!
 ! ----- Update internal forces
-!
         call nmfint(model, mate  , cara_elem, varc_refe, ds_constitutive,&
                     fonact, iterat, sddyna, ds_measure, valint(1, act) ,&
                     solalt, ldccvg, vefint)
-!
-! ----- Assemble internal forces
-!
         call nmaint(nume_dof, fonact, sdnume,&
                     vefint, cnfins(act))
 ! ----- Update force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
-        call nmtime(ds_measure, 'Init'  , '2nd_Member')
-        call nmtime(ds_measure, 'Launch', '2nd_Member')
-        call nmdiri(model , ds_material, cara_elem, list_load,&
-                    depplt, vediri     , nume_dof , cndirs(act))
-        call nmtime(ds_measure, 'Stop', '2nd_Member')
+        call nonlinRForceCompute(model   , ds_material, cara_elem, list_load,&
+                                 nume_dof, ds_measure , depplt,&
+                                 veelem  , cndiri_ = cndirs(act))
         if (niv .ge. 2) then
             write (ifm,*) '<MECANONLINE> ...... FORCES INTERNES'
             call nmdebg('VECT', cnfins(act), 6)

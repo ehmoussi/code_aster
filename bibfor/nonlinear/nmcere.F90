@@ -42,7 +42,7 @@ implicit none
 #include "asterfort/nmchcp.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmchso.h"
-#include "asterfort/nmdiri.h"
+#include "asterfort/nonlinRForceCompute.h"
 #include "asterfort/nmfext.h"
 #include "asterfort/nmfint.h"
 #include "asterfort/nmpilr.h"
@@ -106,14 +106,13 @@ character(len=19) :: solalg(*), valinc(*)
     aster_logical :: lgrot, lendo
     integer :: neq, nmax
     character(len=24) :: varc_refe, mate
-    character(len=19) :: vefint, vediri
-    character(len=19) :: cnfint, cndiri, cnfext
+    character(len=19) :: vefint
+    character(len=19) :: cnfint, cnfext
     character(len=19) :: valint(zvalin)
     character(len=19) :: solalt(zsolal)
     character(len=19) :: depdet, depdel, deppr1, deppr2
     character(len=19) :: depplt, ddep
     character(len=19) :: depplu
-    character(len=19) :: sigplu, varplu, complu
     character(len=19) :: depl, vite, acce, k19bla
     real(kind=8), pointer :: ddepl(:) => null()
     real(kind=8), pointer :: depdl(:) => null()
@@ -150,14 +149,9 @@ character(len=19) :: solalg(*), valinc(*)
 ! --- DECOMPACTION VARIABLES CHAPEAUX
 !
     call nmchex(valinc, 'VALINC', 'DEPPLU', depplu)
-    call nmchex(valinc, 'VALINC', 'SIGPLU', sigplu)
-    call nmchex(valinc, 'VALINC', 'VARPLU', varplu)
-    call nmchex(valinc, 'VALINC', 'COMPLU', complu)
     call nmchex(solalg, 'SOLALG', 'DEPDEL', depdel)
     call nmchex(solalg, 'SOLALG', 'DEPPR1', deppr1)
     call nmchex(solalg, 'SOLALG', 'DEPPR2', deppr2)
-    call nmchex(hval_veelem, 'VEELEM', 'CNDIRI', vediri)
-    call nmchex(hval_veasse, 'VEASSE', 'CNDIRI', cndiri)
     call nmchex(hval_veelem, 'VEELEM', 'CNFINT', vefint)
     call nmchex(hval_veasse, 'VEASSE', 'CNFINT', cnfint)
 !
@@ -212,16 +206,18 @@ character(len=19) :: solalg(*), valinc(*)
     call nonlinLoadDirichletCompute(list_load  , model      , nume_dof,&
                                     ds_measure , matr_asse  , depplt  ,&
                                     hval_veelem, hval_veasse)
+
+!
+! - Update force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
+!
+    call nonlinRForceCompute(model      , ds_material, cara_elem, list_load,&
+                             nume_dof   , ds_measure , depl     ,&
+                             hval_veelem, hval_veasse)
 !
 ! - Launch timer
 !
     call nmtime(ds_measure, 'Init'  , '2nd_Member')
     call nmtime(ds_measure, 'Launch', '2nd_Member')
-!
-! - Update force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
-!
-    call nmdiri(model, ds_material, cara_elem, list_load,&
-                depl , vediri     , nume_dof , cndiri   )
 !
 ! --- REACTUALISATION DES EFFORTS EXTERIEURS (AVEC ETA)
 !
