@@ -432,6 +432,11 @@ implicit none
         aster_logical         :: l_post_incr
 ! ----- Flag for large strains in tangent matrix
         aster_logical         :: l_matr_geom
+! ----- Flag to compute nodal force at prediction
+        aster_logical         :: l_pred_cnfnod
+! ----- Flag to integrate behaviour law at prediction
+        aster_logical         :: l_pred_cnfint
+
     end type NL_DS_Constitutive
 !
 ! - Type: selection list

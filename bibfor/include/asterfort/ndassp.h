@@ -17,23 +17,14 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine ndassp(model          , nume_dof  , ds_material   , cara_elem  ,&
-                      ds_constitutive, ds_measure, list_func_acti, ds_contact ,&
-                      sddyna         ,&
-                      hval_incr      , hval_algo , hval_veelem   , hval_veasse,&
-                      ldccvg         , cndonn    , sdnume )
+    subroutine ndassp(ds_material, list_func_acti, ds_contact,&
+                      sddyna     , hval_veasse   , cndonn    )
         use NonLin_Datastructure_type
-        integer, intent(in) :: list_func_acti(*)
-        character(len=19), intent(in) :: sddyna, sdnume
-        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         type(NL_DS_Material), intent(in) :: ds_material
-        type(NL_DS_Measure), intent(inout) :: ds_measure
-        character(len=24), intent(in) :: model, nume_dof
-        character(len=24), intent(in) :: cara_elem
+        integer, intent(in) :: list_func_acti(*)
         type(NL_DS_Contact), intent(in) :: ds_contact
-        character(len=19), intent(in) :: hval_algo(*), hval_incr(*)
-        character(len=19), intent(in) :: hval_veasse(*), hval_veelem(*)
+        character(len=19), intent(in) :: sddyna
+        character(len=19), intent(in) :: hval_veasse(*)
         character(len=19), intent(in) :: cndonn
-        integer, intent(out) :: ldccvg
     end subroutine ndassp
 end interface

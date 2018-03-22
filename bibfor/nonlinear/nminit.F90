@@ -72,6 +72,7 @@ implicit none
 #include "asterfort/nonlinDSConstitutiveInit.h"
 #include "asterfort/nonlinDSPostTimeStepInit.h"
 #include "asterfort/nonlinDSInOutInit.h"
+#include "asterfort/nonlinIntegratePrepare.h"
 #include "asterfort/nmrefe.h"
 #include "asterfort/nminma.h"
 #include "asterfort/nminmc.h"
@@ -297,6 +298,10 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
                               ds_constitutive%compor, valinc,&
                               numedd     , instin   , &
                               ds_material)
+!
+! - Prepare integration of constitutive laws
+!
+    call nonlinIntegratePrepare(fonact, sddyna, ds_constitutive)
 !
 ! --- PRE-CALCUL DES MATR_ELEM CONSTANTES AU COURS DU CALCUL
 !

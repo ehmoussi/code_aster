@@ -17,18 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmassp(ds_material   ,list_func_acti,&
-                      ds_algorom    , sddyna        ,&
-                      ds_contact    , hval_veasse   ,&
-                      cnpilo        , cndonn)
-        use NonLin_Datastructure_type
-        use Rom_Datastructure_type  
-        type(NL_DS_Material), intent(in) :: ds_material
+    subroutine nonlinIntegratePrepare(list_func_acti , sddyna,&
+                                      ds_constitutive)
+        use NonLin_Datastructure_type        
         integer, intent(in) :: list_func_acti(*)
-        type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
         character(len=19), intent(in) :: sddyna
-        type(NL_DS_Contact), intent(in) :: ds_contact
-        character(len=19), intent(in) :: hval_veasse(*)
-        character(len=19), intent(in) :: cnpilo, cndonn
-    end subroutine nmassp
+        type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
+    end subroutine nonlinIntegratePrepare
 end interface

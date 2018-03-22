@@ -49,7 +49,7 @@ integer, intent(out) :: ldccvg
 !
 ! MECA_NON_LINE - Algorithm
 !
-! Compute internal forces by integration of behaviour
+! Compute elementary vectors for internal forces by integration of behaviour
 !
 ! --------------------------------------------------------------------------------------------------
 !

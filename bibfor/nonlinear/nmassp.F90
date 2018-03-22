@@ -17,11 +17,10 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmassp(modele         , numedd, ds_material, carele    ,&
-                  ds_constitutive, fonact, ds_measure , ds_contact,&
-                  sddyna         , valinc, solalg     , veelem    , veasse,&
-                  ldccvg         , cnpilo, cndonn     , sdnume    ,&
-                  ds_algorom)
+subroutine nmassp(ds_material   , list_func_acti,&
+                  ds_algorom    , sddyna        ,&
+                  ds_contact    , hval_veasse   ,&
+                  cnpilo        , cndonn)
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
@@ -35,49 +34,30 @@ implicit none
 #include "asterfort/nsassp.h"
 #include "asterfort/vtzero.h"
 !
-integer :: ldccvg
-integer :: fonact(*)
-character(len=19) :: sddyna, sdnume
-type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-type(NL_DS_Measure), intent(inout) :: ds_measure
-character(len=24) :: modele, numedd
 type(NL_DS_Material), intent(in) :: ds_material
-character(len=24) :: carele
-type(NL_DS_Contact), intent(in) :: ds_contact
-character(len=19) :: solalg(*), valinc(*)
-character(len=19) :: veasse(*), veelem(*)
-character(len=19) :: cnpilo, cndonn
+integer, intent(in) :: list_func_acti(*)
 type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+character(len=19), intent(in) :: sddyna
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=19), intent(in) :: hval_veasse(*)
+character(len=19), intent(in) :: cnpilo, cndonn
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE MECA_NON_LINE (ALGORITHME - PREDICTION)
+! MECA_NON_LINE - Algorithm
 !
-! CALCUL DU SECOND MEMBRE POUR LA PREDICTION
+! Evaluate second member for prediction
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IN  MODELE : NOM DU MODELE
-! IN  NUMEDD : NOM DE LA NUMEROTATION
 ! In  ds_material      : datastructure for material parameters
-! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! In  ds_constitutive  : datastructure for constitutive laws management
+! In  list_func_acti   : list of active functionnalities
+! In  ds_algorom       : datastructure for ROM parameters
 ! In  ds_contact       : datastructure for contact management
-! IN  FONACT : FONCTIONNALITES ACTIVEES
-! IO  ds_measure       : datastructure for measure and statistics management
-! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
-! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
-! IN  VEELEM : VARIABLE CHAPEAU POUR NOM DES VECT_ELEM
-! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
-! IN  SDNUME : SD NUMEROTATION
-! OUT CNPILO : VECTEUR ASSEMBLE DES FORCES PILOTEES
-! OUT CNDONN : VECTEUR ASSEMBLE DES FORCES DONNEES
-! OUT LDCCVG : CODE RETOUR DE L'INTEGRATION DU COMPORTEMENT
-!                -1 : PAS D'INTEGRATION DU COMPORTEMENT
-!                 0 : CAS DU FONCTIONNEMENT NORMAL
-!                 1 : ECHEC DE L'INTEGRATION DE LA LDC
-!                 2 : ERREUR SUR LA NON VERIF. DE CRITERES PHYSIQUES
-!                 3 : SIZZ PAS NUL POUR C_PLAN DEBORST
+! In  sddyna           : datastructure for dynamic
+! In  hval_veasse      : hat-variable for vectors (node fields)
+! In  cndonn           : name of nodal field for "given" forces
+! In  cnpilo           : name of nodal field for "pilotage" forces
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -85,7 +65,6 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ldccvg = -1
     call vtzero(cnpilo)
     call vtzero(cndonn)
 !
@@ -97,13 +76,11 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 ! - Evaluate second member for prediction
 !
     if (l_dyna) then
-        call ndassp(modele         , numedd, ds_material, carele,&
-                    ds_constitutive, ds_measure , fonact, ds_contact,&
-                    sddyna         , valinc, solalg     , veelem, veasse    ,&
-                    ldccvg         , cndonn, sdnume     )
+        call ndassp(ds_material, list_func_acti, ds_contact,&
+                    sddyna     , hval_veasse   , cndonn)
     else if (l_stat) then
-        call nsassp(fonact, ds_material, ds_contact, ds_algorom,&
-                    veasse, cnpilo     , cndonn )
+        call nsassp(list_func_acti, ds_material, ds_contact, ds_algorom,&
+                    hval_veasse   , cnpilo     , cndonn)
     else
         ASSERT(ASTER_FALSE)
     endif

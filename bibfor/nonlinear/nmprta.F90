@@ -32,12 +32,14 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/diinst.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/nmassp.h"
 #include "asterfort/nmforc_pred.h"
+#include "asterfort/nmfint_pred.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmdep0.h"
 #include "asterfort/nmfocc.h"
@@ -115,10 +117,11 @@ character(len=19) :: hval_meelem(*), hval_measse(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    real(kind=8) :: instap
-    character(len=19) :: cncine, cndonn, cnpilo
-    aster_logical :: lstat, limpl, leltc
     integer :: ifm, niv
+    integer :: iter_newt
+    real(kind=8) :: time_prev, time_curr
+    character(len=19) :: cncine, cndonn, cnpilo
+    aster_logical :: leltc
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -127,15 +130,12 @@ character(len=19) :: hval_meelem(*), hval_measse(*)
         write (ifm,*) '<MECANONLINE> PREDICTION TYPE EULER'
     endif
 !
-! --- FONCTIONNALITES ACTIVEES
+! - Active functionnalities
 !
-    lstat = ndynlo(sddyna,'STATIQUE')
-    limpl = ndynlo(sddyna,'IMPLICITE')
     leltc = isfonc(list_func_acti,'ELT_CONTACT')
 !
 ! --- INITIALISATIONS
 !
-    instap = diinst(sddisc,nume_inst)
     ldccvg = -1
     faccvg = -1
     rescvg = -1
@@ -144,24 +144,29 @@ character(len=19) :: hval_meelem(*), hval_measse(*)
     call vtzero(cndonn)
     call vtzero(cnpilo)
 !
+! - Get time
+!
+    ASSERT(nume_inst .gt. 0)
+    time_prev = diinst(sddisc,nume_inst-1)
+    time_curr = diinst(sddisc,nume_inst)
+    iter_newt = 0
+!
 ! --- DECOMPACTION DES VARIABLES CHAPEAUX
 !
     call nmchex(hval_veasse, 'VEASSE', 'CNCINE', cncine)
 !
 ! --- INCREMENT DE DEPLACEMENT NUL EN PREDICTION
 !
-    if (lstat .or. limpl) then
-        call nmdep0('ON ', hval_algo)
-    endif
+    call nmdep0('ON ', hval_algo)
 !
 ! --- CALCUL DE LA MATRICE GLOBALE
 !
-    call nmprma(model     , ds_material, cara_elem, ds_constitutive,&
-                ds_algopara, list_load     , nume_dof, numfix, solveu,&
-                ds_print, ds_measure, ds_algorom, sddisc,&
+    call nmprma(model      , ds_material, cara_elem, ds_constitutive,&
+                ds_algopara, list_load  , nume_dof, numfix, solveu,&
+                ds_print   , ds_measure , ds_algorom, sddisc,&
                 sddyna     , nume_inst  , list_func_acti, ds_contact,&
-                hval_incr     , hval_algo  , hval_veelem, hval_meelem, hval_measse,&
-                maprec     , matass  , faccvg, ldccvg)
+                hval_incr  , hval_algo  , hval_veelem, hval_meelem, hval_measse,&
+                maprec     , matass     , faccvg, ldccvg)
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER
 !
@@ -188,25 +193,35 @@ character(len=19) :: hval_meelem(*), hval_measse(*)
                     ds_contact  , ds_measure, hval_algo  , hval_incr, ds_constitutive)
     endif
 !
-! --- CALCUL DU SECOND MEMBRE
+! - Compute internal forces at prediction
 !
-    call nmassp(model         , nume_dof, ds_material, cara_elem    ,&
-                ds_constitutive, list_func_acti, ds_measure, ds_contact,&
-                sddyna         , hval_incr, hval_algo, hval_veelem    , hval_veasse    ,&
-                ldccvg         , cnpilo, cndonn, sdnume    , &
-                ds_algorom)
+    call nmfint_pred(model      , cara_elem      , list_func_acti, &
+                     sddyna     , nume_dof       , &
+                     ds_material, ds_constitutive, ds_measure    ,&
+                     time_prev  , time_curr      , iter_newt     ,&
+                     hval_incr  , hval_algo      ,&
+                     hval_veelem, hval_veasse    ,&
+                     ldccvg     , sdnume)
+    if (ldccvg .eq. 1) then
+        goto 999
+    endif
+!
+! - Evaluate second member for prediction
+!
+    call nmassp(ds_material   , list_func_acti,&
+                ds_algorom    , sddyna        ,&
+                ds_contact    , hval_veasse   ,&
+                cnpilo        , cndonn)
 !
 ! --- INCREMENT DE DEPLACEMENT NUL EN PREDICTION
 !
-    if (lstat .or. limpl) then
-        call nmdep0('OFF', hval_algo)
-    endif
+    call nmdep0('OFF', hval_algo)
 !
 ! --- RESOLUTION K.DU = DF
 !
-    call nmresd(list_func_acti, sddyna, ds_measure, solveu    , nume_dof,&
-                instap, maprec, matass    , cndonn    , cnpilo,&
-                cncine, hval_algo, rescvg    , ds_algorom)
+    call nmresd(list_func_acti, sddyna   , ds_measure, solveu    , nume_dof,&
+                time_curr     , maprec   , matass    , cndonn    , cnpilo  ,&
+                cncine        , hval_algo, rescvg    , ds_algorom)
 !
 999 continue
 !
