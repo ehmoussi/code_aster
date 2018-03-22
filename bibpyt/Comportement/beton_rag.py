@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,27 +22,30 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'BETON_RAG',
-    lc_type        = ('MECANIQUE',),
-    doc            =   """Loi RAG pour le beton"""            ,
-    num_lc         = 44,
-    nb_vari        = 65,
-    nom_vari       = ('ERS','EIS','EID11','ERD11','EID22',
-        'ERD22','EID33','ERD33','EID12','ERD12',
-        'EID31','ERD31','EID23','ERD23','ENDOT11',
-        'ENDOT22','ENDOT33','ENDOT12','ENDOT13','ENDOT23',
-        'ENDOC0','SUT11','SUT22','SUT33','SUT12',
-        'SUT13','SUT23','SUC','PW','PCH',
-        'ARAG','ESI','ESS','EDI11','EDS11',
-        'EDI22','EDS22','EDI33','EDS33','EDI12',
-        'EDS12','EDI13','EDS13','EDI23','EDS23',
-        'SEF11','SEF22','SEF33','SEF12','SEF13',
-        'SEF23','EVP11','EVP22','EVP33','EVP12',
-        'EVP13','EVP23','BT11','BT22','BT33',
-        'BT12','BT13','BT23','BC','PEFFRAG',
-        ),
+    doc            =   """Loi RAG pour le beton""",
+    num_lc         = 145,
+    nb_vari        = 33,
+    nom_vari       = (
+        # 01:07 : Contraintes seuils d'endommagement : Tenseur traction + compression
+        'BR_SUT11','BR_SUT22','BR_SUT33','BR_SUT12','BR_SUT13','BR_SUT23','BR_SIGDP',
+        # 08:14 : Déformations de fluage : Tenseur déviatorique + partie sphérique
+        'BR_EFU11','BR_EFU22','BR_EFU33','BR_EFU12','BR_EFU13','BR_EFU23','BR_EFUSP',
+        # 15:21 : Déformations de fluage interne : Tenseur déviatorique + partie sphérique
+        'BR_EP111','BR_EP122','BR_EP133','BR_EP112','BR_EP113','BR_EP123','BR_EP1SP',
+        # 22 : Avancement chimique
+        'BR_AVCHI',
+        # 23:25 : Endommagement viscoplastique de la RAG
+        'BR_DVRAG1','BR_DVRAG2','BR_DVRAG3',
+        # 26:31  : Déformations viscoplastique due à la RAG
+        'BR_EPV11','BR_EPV22','BR_EPV33','BR_EPV12','BR_EPV13','BR_EPV23',
+        # 32 : Pression du gel
+        'BR_PRGEL',
+        # 33 : Étude réalisée
+        'BR_ETUDE',
+    ),
     mc_mater       = ('ELAS','BETON_RAG',),
     modelisation   = ('3D','AXIS','D_PLAN',),
-    deformation    = ('PETIT','PETIT_REAC',),
+    deformation    = ('PETIT',),
     algo_inte      = ('SPECIFIQUE',),
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,

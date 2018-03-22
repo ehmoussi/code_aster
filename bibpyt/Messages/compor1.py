@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -319,15 +319,6 @@ Vous utilisez un comportement élastique non-linéaire avec un état initial.
 Cet état initial ne sera pas pris en compte.
 """),
 
-    63 : _(u"""
-   ATTENTION SR > 1    SR = %(r1)f
-   Séchage moins %(r2)f  Séchage plus %(r3)f    W0 %(r4)f
-"""),
-
-    64 : _(u"""
-   ATTENTION SR < 0    SR = %(r1)f
-   Séchage moins %(r2)f  Séchage plus %(r3)f   W0 %(r4)f
-"""),
 
     67 : _(u"""
 Dans la définition du matériau RUPT_DUCT les coefficients de forme de la loi CZM_TRA_MIX doivent vérifier : COEF_EXTR <= COEF_PLAS
@@ -460,6 +451,12 @@ m=%(r1)f et p=%(r2)f ne respectent pas la contrainte m>p+2.
 ITER_INTE_PAS ne peut admettre qu'une valeur positive pour un comportement MFRONT.
  """),
 
-
+    96 : _(u"""
+Loi de comportement BETON_RAG :
+Au temps %(r1)f, une grandeur liée au séchage est inférieure au seuil %(r2)f, ce qui n'a pas de sens physique.
+    Séchage au temps précédent : %(r3)f
+    Séchage au temps actuel    : %(r4)f
+    Séchage de référence       : %(r5)f
+ """),
 
 }
