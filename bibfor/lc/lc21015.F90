@@ -17,17 +17,16 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504,W0104
 !
-subroutine lc1015(fami, kpg, ksp, ndim, imate,&
-                  compor, carcri, instam, instap, epsm,&
-                  deps, sigm, vim, option, angmas,&
-                  sigp, vip, typmod, icomp,&
-                  nvi, dsidep, codret)
+subroutine lc21015(fami, kpg, ksp, ndim, imate,&
+                   compor, carcri, instam, instap, epsm,&
+                   deps, sigm, vim, option, angmas,&
+                   sigp, vip, typmod, icomp,&
+                   nvi, dsidep, codret)
 !
 implicit none
 !
 #include "asterfort/assert.h"
 #include "asterfort/lcgdpm.h"
-#include "asterfort/nzgdzi.h"
 #include "asterfort/postsm.h"
 #include "asterfort/Behaviour_type.h"
 !
@@ -58,23 +57,14 @@ integer, intent(out) :: codret
 !
 ! Behaviour - Special SIMO_MIEHE
 !
-! Metallurgy META_*
+! 'META_*' for steel
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (compor(META_NAME) .eq. 'ACIER') then
-        call lcgdpm(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, sigp,&
-                    vip, dsidep, codret)
-    else if (compor(META_NAME) .eq. 'ZIRC') then
-        call nzgdzi(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, sigp,&
-                    vip, dsidep, codret)
-    else
-        ASSERT(.false.)
-    endif
+    call lcgdpm(fami, kpg, ksp, ndim, imate,&
+                compor, carcri, instam, instap, epsm,&
+                deps, sigm, vim, option, sigp,&
+                vip, dsidep, codret)
     call postsm(option, epsm, deps, sigm, sigp, dsidep)
 !
 end subroutine

@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1501,W1504
+!
 subroutine lc0000(fami, kpg, ksp, ndim, typmod,&
                   imate, compor, mult_comp, carcri,&
                   instam, instap,&
@@ -41,7 +42,6 @@ implicit none
 #include "asterfort/lc0009.h"
 #include "asterfort/lc0012.h"
 #include "asterfort/lc0014.h"
-#include "asterfort/lc0015.h"
 #include "asterfort/lc0016.h"
 #include "asterfort/lc0017.h"
 #include "asterfort/lc0018.h"
@@ -149,31 +149,33 @@ implicit none
 #include "asterfort/lc8146.h"
 #include "asterfort/lc8331.h"
 #include "asterfort/lc13029.h"
+#include "asterfort/lc20015.h"
+#include "asterfort/lc21015.h"
+#include "asterfort/lc30015.h"
+#include "asterfort/lc31015.h"
 #include "asterfort/lc9999.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vrcpto.h"
 #include "asterfort/isdeco.h"
 #include "asterfort/calcExternalStateVariable5.h"
 !
-! aslint: disable=W1501,W1504
-!
-    integer :: imate, ndim, nvi, kpg, ksp
-    integer :: neps, nsig, nwkin, nwkout, ndsde
-    real(kind=8) :: carcri(*), angmas(3)
-    real(kind=8) :: instam, instap
-    real(kind=8) :: wkin(nwkin), wkout(nwkout)
-    real(kind=8) :: epsm(neps), deps(neps)
-    real(kind=8) :: sigm(nsig), sigp(nsig)
-    real(kind=8) :: vim(nvi), vip(nvi)
-    real(kind=8) :: dsidep(ndsde)
-    character(len=16) :: compor(*), option
-    character(len=16), intent(in) :: mult_comp
-    character(len=8) :: typmod(*)
-    character(len=*) :: fami
-    aster_logical :: cp
-    integer :: icomp
-    integer :: numlc
-    integer :: codret
+integer :: imate, ndim, nvi, kpg, ksp
+integer :: neps, nsig, nwkin, nwkout, ndsde
+real(kind=8) :: carcri(*), angmas(3)
+real(kind=8) :: instam, instap
+real(kind=8) :: wkin(nwkin), wkout(nwkout)
+real(kind=8) :: epsm(neps), deps(neps)
+real(kind=8) :: sigm(nsig), sigp(nsig)
+real(kind=8) :: vim(nvi), vip(nvi)
+real(kind=8) :: dsidep(ndsde)
+character(len=16) :: compor(*), option
+character(len=16), intent(in) :: mult_comp
+character(len=8) :: typmod(*)
+character(len=*) :: fami
+aster_logical :: cp
+integer :: icomp
+integer :: numlc
+integer :: codret
 !
 ! ======================================================================
 !     INTEGRATION DES LOIS DE COMPORTEMENT NON LINEAIRE POUR LES
@@ -360,13 +362,6 @@ implicit none
     case (14)
 !     ROUSSELIER
         call lc0014(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip, typmod, icomp,&
-                    nvi, dsidep, codret)
-    case (15)
-!     META_XXX
-        call lc0015(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, typmod, icomp,&
@@ -1117,6 +1112,42 @@ implicit none
                     option, angmas,sigp, nvi, vip, nwkin,&
                     wkin, typmod,icomp, ndsde,&
                     dsidep, nwkout, wkout, codret)
+!
+! --------------------------------------------------------------------------------------------------
+! - For metallurgy/steel
+! --------------------------------------------------------------------------------------------------
+!
+    case (20015)
+        call lc20015(fami, kpg, ksp, ndim, imate,&
+                     compor, carcri, instam, instap, epsm,&
+                     deps, sigm, vim, option, angmas,&
+                     sigp, vip, typmod, icomp,&
+                     nvi, dsidep, codret)
+    case (21015)
+! ----- SIMO_MIEHE
+        call lc21015(fami, kpg, ksp, ndim, imate,&
+                     compor, carcri, instam, instap, epsm,&
+                     deps, sigm, vim, option, angmas,&
+                     sigp, vip, typmod, icomp,&
+                     nvi, dsidep, codret)
+!
+! --------------------------------------------------------------------------------------------------
+! - For metallurgy/zircaloy
+! --------------------------------------------------------------------------------------------------
+!
+    case (30015)
+        call lc30015(fami, kpg, ksp, ndim, imate,&
+                     compor, carcri, instam, instap, epsm,&
+                     deps, sigm, vim, option, angmas,&
+                     sigp, vip, typmod, icomp,&
+                     nvi, dsidep, codret)
+    case (31015)
+! ----- SIMO_MIEHE
+        call lc31015(fami, kpg, ksp, ndim, imate,&
+                     compor, carcri, instam, instap, epsm,&
+                     deps, sigm, vim, option, angmas,&
+                     sigp, vip, typmod, icomp,&
+                     nvi, dsidep, codret)
 !
 ! --------------------------------------------------------------------------------------------------
 ! - Error

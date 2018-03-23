@@ -63,8 +63,15 @@ CALC_META=OPER(nom="CALC_META",op=194,sd_prod=evol_ther,
 
        COMPORTEMENT      =FACT(statut='o',max=1,
          RELATION        =SIMP(statut='o',typ='TXM',into=("ACIER","ZIRC",) ),
-         ACIER           =SIMP(statut='c',typ='I',defaut=7,into=(7,) ),
-         ZIRC            =SIMP(statut='c',typ='I',defaut=4,into=(4,) ),
+         b_acier = BLOC(condition = """equal_to("RELATION", 'ACIER')""",
+                    LOI_META = SIMP(statut='f',typ='TXM',defaut="WAECKEL",into=("WAECKEL",),),
+                       ),
+         b_zirc  = BLOC(condition = """equal_to("RELATION", 'ZIRC')""",
+                    LOI_META = SIMP(statut='f',typ='TXM',defaut="EDGAR",into=("EDGAR",),),
+                       ),
+
+         #ACIER           =SIMP(statut='c',typ='I',defaut=7,into=(7,) ),
+         #ZIRC            =SIMP(statut='c',typ='I',defaut=4,into=(4,) ),
 
          regles=(PRESENT_ABSENT('TOUT','GROUP_MA','MAILLE'),),
          TOUT            =SIMP(statut='f',typ='TXM',into=("OUI",) ),

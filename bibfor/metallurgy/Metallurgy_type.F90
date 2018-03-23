@@ -32,6 +32,28 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 !
+! - Type: parameters for behaviour
+! 
+    type META_Parameters
+! ----- Keyword RELATION
+        character(len=16) :: phase_type
+! ----- Keyword LOI_META
+        character(len=16) :: loi_meta
+! ----- Total number of internal state variables
+        integer           :: nb_vari
+! ----- Index of behaviour
+        integer           :: nume_comp
+    end type META_Parameters
+!
+! - Type: for preparation of comportment
+! 
+    type META_PrepPara
+! ----- Number of factor keywords
+        integer                        :: nb_comp
+! ----- List of parameters
+        type(META_Parameters), pointer :: v_comp(:)
+    end type META_PrepPara
+!
     type META_AusteniteParameters
         real(kind=8) :: lambda0
         real(kind=8) :: qsr_k

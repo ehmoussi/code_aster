@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504,W0104
 !
-subroutine lc1015(fami, kpg, ksp, ndim, imate,&
+subroutine lc30015(fami, kpg, ksp, ndim, imate,&
                   compor, carcri, instam, instap, epsm,&
                   deps, sigm, vim, option, angmas,&
                   sigp, vip, typmod, icomp,&
@@ -26,9 +26,8 @@ subroutine lc1015(fami, kpg, ksp, ndim, imate,&
 implicit none
 !
 #include "asterfort/assert.h"
-#include "asterfort/lcgdpm.h"
-#include "asterfort/nzgdzi.h"
-#include "asterfort/postsm.h"
+#include "asterfort/nzedga.h"
+#include "asterfort/nzcizi.h"
 #include "asterfort/Behaviour_type.h"
 !
 character(len=*), intent(in) :: fami
@@ -56,25 +55,24 @@ integer, intent(out) :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Behaviour - Special SIMO_MIEHE
+! Behaviour
 !
-! Metallurgy META_*
+! 'META_*' for zircaloy
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (compor(META_NAME) .eq. 'ACIER') then
-        call lcgdpm(fami, kpg, ksp, ndim, imate,&
+    if (compor(RELA_NAME)(8:8) .eq. 'I') then
+        call nzedga(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, sigp,&
                     vip, dsidep, codret)
-    else if (compor(META_NAME) .eq. 'ZIRC') then
-        call nzgdzi(fami, kpg, ksp, ndim, imate,&
+    else if (compor(RELA_NAME)(8:8).eq.'C') then
+        call nzcizi(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, sigp,&
                     vip, dsidep, codret)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
-    call postsm(option, epsm, deps, sigm, sigp, dsidep)
 !
 end subroutine
