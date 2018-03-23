@@ -15,63 +15,59 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+! aslint: disable=W1003
+! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine mtdorc(model, compor)
+subroutine comp_meta_info(ds_comporMeta)
 !
 use Metallurgy_type
 !
 implicit none
 !
-#include "asterfort/assert.h"
-#include "asterfort/comp_init.h"
-#include "asterfort/comp_meta_info.h"
-#include "asterfort/comp_meta_read.h"
-#include "asterfort/comp_meta_save.h"
-#include "asterfort/dismoi.h"
+#include "asterf_types.h"
+#include "asterc/getfac.h"
 !
-character(len=8), intent(in) :: model
-character(len=19), intent(in) :: compor
+type(META_PrepPara), intent(out) :: ds_comporMeta
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Preparation of comportment (metallurgy)
 !
-! Prepare objects COMPOR <CARTE>
+! Create datastructure to prepare comportement
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  model       : name of model
-! In  compor      : name of <CARTE> COMPOR
+! Out ds_comporMeta    : datastructure to prepare comportement
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_cmp
-    character(len=8) :: mesh
-    type(META_PrepPara) :: ds_comporMeta
+    character(len=16) :: keywordfact
+    integer :: nb_info_comp, nbocc_compor
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call dismoi('NOM_MAILLA', model, 'MODELE', repk=mesh)
+    nbocc_compor = 0
+    keywordfact  = 'COMPORTEMENT'
+    call getfac(keywordfact, nbocc_compor)
 !
-! - Create datastructure to prepare comportement
+! - Initializations
 !
-    call comp_meta_info(ds_comporMeta)
+    ds_comporMeta%v_comp   => null()
 !
-! - Create COMPOR <CARTE>
+! - Number of comportement information
 !
-    call comp_init(mesh, compor, 'V', nb_cmp)
+    if (nbocc_compor .eq. 0) then
+        nb_info_comp = 1
+    else
+        nb_info_comp = nbocc_compor
+    endif
 !
-! - Read informations from command file
+! - Save number of comportments
 !
-    call comp_meta_read(ds_comporMeta)
+    ds_comporMeta%nb_comp = nbocc_compor
 !
-! - Save informations in COMPOR <CARTE>
+! - Allocate comportment informations objects 
 !
-    call comp_meta_save(mesh         , compor, nb_cmp, &
-                        ds_comporMeta)
-!
-! - Cleaning
-!
-    deallocate(ds_comporMeta%v_comp)
+    allocate(ds_comporMeta%v_comp(nb_info_comp))
 !
 end subroutine

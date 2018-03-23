@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,25 +15,21 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine comp_meta_read(list_vale)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine comp_meta_read(ds_comporMeta)
+!
+use Metallurgy_type
 !
 implicit none
 !
-#include "jeveux.h"
-#include "asterc/getfac.h"
-#include "asterfort/getvid.h"
-#include "asterfort/getvis.h"
+#include "asterf_types.h"
+#include "asterc/lcinfo.h"
+#include "asterc/lcdiscard.h"
+#include "asterc/lccree.h"
 #include "asterfort/getvtx.h"
-#include "asterfort/assert.h"
-#include "asterfort/jelira.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/utmess.h"
-#include "asterfort/wkvect.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=19), intent(in) :: list_vale
+type(META_PrepPara), intent(inout) :: ds_comporMeta
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -43,34 +39,42 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  list_vale   : list of informations to save
+! IO  ds_comporMeta    : datastructure to prepare comportement
 !
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=16) :: keywordfact
-    integer :: iocc, nocc
-    integer :: j_lvali, j_lvalk
-    character(len=16) :: phas_type, rela_comp
-    integer :: nb_vari
+    integer :: i_comp, nb_comp
+    character(len=16) :: phase_type, loi_meta
+    integer :: nb_comp_elem, nume_comp, nb_vari, idummy, iret
+    character(len=16) :: comp_elem(2), comp_code_py
 !
 ! --------------------------------------------------------------------------------------------------
 !
     keywordfact = 'COMPORTEMENT'
-    call getfac(keywordfact, nocc)
-!
-! - List construction
-!
-    call wkvect(list_vale(1:19)//'.VALI', 'V V I'  , nocc, j_lvali)
-    call wkvect(list_vale(1:19)//'.VALK', 'V V K24', nocc, j_lvalk)
+    nb_comp     = ds_comporMeta%nb_comp
 !
 ! - Read informations in CALC_META
 !
-    do iocc = 1, nocc
-        call getvtx(keywordfact, 'RELATION', iocc = iocc, scal = phas_type)
-        call getvis(keywordfact, phas_type, iocc = iocc, scal = nb_vari)
-        rela_comp = phas_type
-        zi(j_lvali-1+1)   = nb_vari
-        zk24(j_lvalk-1+1) = rela_comp
+    do i_comp = 1, nb_comp
+        call getvtx(keywordfact, 'RELATION', iocc = i_comp, scal = phase_type, nbret=iret)
+        call getvtx(keywordfact, 'LOI_META', iocc = i_comp, scal = loi_meta, nbret=iret)
+! ----- Create composite comportment
+        nb_comp_elem = 2
+        comp_elem(1) = phase_type
+        comp_elem(2) = loi_meta
+        call lccree(nb_comp_elem, comp_elem, comp_code_py)
+! ----- Get number of variables and index of behaviour
+        call lcinfo(comp_code_py, nume_comp, nb_vari, idummy)
+! ----- Glute provisoire: nombre de phases different entre CALC_META et STAT_NON_LINE
+        nb_vari = nb_vari-1
+! ----- Glute provisoire: nombre de phases different entre CALC_META et STAT_NON_LINE
+        call lcdiscard(comp_code_py)
+! ----- Save values
+        ds_comporMeta%v_comp(i_comp)%phase_type = phase_type
+        ds_comporMeta%v_comp(i_comp)%loi_meta   = loi_meta
+        ds_comporMeta%v_comp(i_comp)%nb_vari    = nb_vari
+        ds_comporMeta%v_comp(i_comp)%nume_comp  = nume_comp
     end do
 !
 end subroutine

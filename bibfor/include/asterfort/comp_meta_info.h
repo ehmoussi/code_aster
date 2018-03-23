@@ -16,9 +16,11 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
+#include "asterf_types.h"
+!
 interface
-    subroutine comp_meta_read(ds_comporMeta)
+    subroutine comp_meta_info(ds_comporMeta)
         use Metallurgy_type
-        type(META_PrepPara), intent(inout) :: ds_comporMeta
-    end subroutine comp_meta_read
+        type(META_PrepPara), intent(out) :: ds_comporMeta
+    end subroutine comp_meta_info
 end interface
