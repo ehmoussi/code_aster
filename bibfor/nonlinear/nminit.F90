@@ -158,7 +158,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: iret, ibid
+    integer :: iret
     real(kind=8) :: r8bid3(3)
     real(kind=8) :: instin
     character(len=8) :: partit
@@ -329,7 +329,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 ! --- INITIALISATION CALCUL PAR SOUS-STRUCTURATION
 !
     if (lsstf) then
-        call nmlssv('INIT', list_load, ibid)
+        call nmlssv(list_load)
     endif
 !
 ! --- CREATION DE LA SD EXCIT_SOL
@@ -388,7 +388,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! - Make initial observation
 !
-    l_obsv = .false.
+    l_obsv = ASTER_FALSE
     call lobs(sd_obsv, numins, instin, l_obsv)
     if (l_obsv) then
         call nmobsv(mesh     , model      , sddisc         , sd_obsv, numins  ,&
