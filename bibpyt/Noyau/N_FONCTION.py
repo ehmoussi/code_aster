@@ -58,7 +58,7 @@ class formule(ASSD):
         self.nompar = None
         self.expression = None
         self.code = None
-        self.ctxt = []
+        self.ctxt = None
         ctxt = {}
         ctxt.update(getattr(self.parent, 'const_context', {}))
         ctxt.update(getattr(self.parent, 'macro_const_context', {}))
@@ -98,13 +98,13 @@ class formule(ASSD):
 
     def set_context(self, objects):
         """Stocke des objets de contexte"""
-        self.ctxt = objects
+        self.ctxt = pickle.loads(objects)
 
     def get_context(self):
         """Retourne le contexte stocké avec la formule."""
-        if not self.ctxt:
+        if self.ctxt is None:
             return {}
-        return pickle.loads(self.ctxt)
+        return self.ctxt
 
     def __setstate__(self, state):
         """Cette methode sert a restaurer l'attribut code lors d'un unpickle."""
