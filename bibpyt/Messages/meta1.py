@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,5 +27,15 @@ cata_msg = {
 
     2  : _(u"""
  Erreur dans CALC_META: le résultat thermique donné pour l'état initial doit être le même que le résultat de CALC_META.
+"""),
+
+    44 : _(u"""
+Erreur dans CALC_META: l'état métallurgique initial produit par CREA_CHAMP est incomplet.
+Pour l'acier, il faut renseigner les quatre phases ferritiques et la taille de grain.
+"""),
+
+    45 : _(u"""
+Erreur dans CALC_META: l'état métallurgique initial produit par CREA_CHAMP est incomplet.
+Pour le zircaloy, il faut renseigner les deux phases alpha et l'instant de transition.
 """),
 }
