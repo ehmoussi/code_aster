@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -66,8 +66,8 @@ LR8=DEFI_LIST_REEL(   DEBUT=0.,INTERVALLE=(
 PHASINIT=CREA_CHAMP(  OPERATION='AFFE', TYPE_CHAM='CART_VAR2_R',
                            MAILLAGE=MAIL,
                            AFFE=_F(  TOUT = 'OUI',
-                                  NOM_CMP = ('V1',  'V2',  'V3', 'V4'  ),
-                                  VALE = ( 1.0,   0.0,   0.0, 0. ))
+                                  NOM_CMP = ('V1',  'V2',  'V3', 'V4', 'V5'  ),
+                                  VALE = ( 1.0,   0.0,   0.0, 0., 0. ))
                         )
 
 TEMPE=CREA_RESU(    OPERATION='AFFE', TYPE_RESU='EVOL_THER',
@@ -86,33 +86,19 @@ TEMPE=CALC_META(reuse=TEMPE,
                 OPTION='META_ELNO',);
 
 
-TEST_RESU(RESU=(_F(INST=30.0,
-                   RESULTAT=TEMPE,
-                   NOM_CHAM='META_ELNO',
-                   NOEUD='N39',
-                   NOM_CMP='V1',
-                   VALE_CALC=1.0,
-                   MAILLE='M13',),
+TEST_RESU(RESU=(
                 _F(INST=30.0,
                    RESULTAT=TEMPE,
                    NOM_CHAM='META_ELNO',
                    NOEUD='N66',
-                   NOM_CMP='V3',
+                   NOM_CMP='V4',
                    VALE_CALC=315.000000000,
                    MAILLE='M19',),
                 _F(INST=120.0,
                    RESULTAT=TEMPE,
                    NOM_CHAM='META_ELNO',
-                   NOEUD='N39',
-                   NOM_CMP='V1',
-                   VALE_CALC=0.0,
-                   CRITERE='ABSOLU',
-                   MAILLE='M13',),
-                _F(INST=120.0,
-                   RESULTAT=TEMPE,
-                   NOM_CHAM='META_ELNO',
                    NOEUD='N66',
-                   NOM_CMP='V3',
+                   NOM_CMP='V4',
                    VALE_CALC=1200.0,
                    MAILLE='M19',),
                 _F(INST=240.0,
@@ -126,7 +112,7 @@ TEST_RESU(RESU=(_F(INST=30.0,
                    RESULTAT=TEMPE,
                    NOM_CHAM='META_ELNO',
                    NOEUD='N70',
-                   NOM_CMP='V3',
+                   NOM_CMP='V4',
                    VALE_CALC=20.000000000,
                    MAILLE='M19',),
                 ),

@@ -620,8 +620,8 @@ PHASINIT=CREA_CHAMP(TYPE_CHAM='CART_VAR2_R',
                     OPERATION='AFFE',
                     MAILLAGE=MAIL,
                     AFFE=_F(TOUT='OUI',
-                            NOM_CMP=('V1','V2','V3','V4','V5',),
-                            VALE=(0.7,0.0,0.3,0.0,0.0,),),);
+                            NOM_CMP=('V1','V2','V3','V4','V5','V6'),
+                            VALE=(0.7,0.0,0.3,0.0,0.0,0.0),),);
 
 TEMPE=THER_LINEAIRE(MODELE=MOTH,
                     CHAM_MATER=CHMAT,
