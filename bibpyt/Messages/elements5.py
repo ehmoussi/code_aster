@@ -135,14 +135,6 @@ Un seul noeud doit constituer le groupe de noeuds %(k1)s. On n'utilisera que le 
  Épaisseur dans AFFE_CARA_ELEM: %(r2)f
 """),
 
-    44 : _(u"""
-Erreur utilisateur :
-  L'état métallurgique initial produit par CREA_CHAMP est incomplet.
-Conseil :
-  Pour le Zircaloy, il faut renseigner V1, V2 et V4
-  Pour l'acier, il faut renseigner V1, V2, ..., V5
-"""),
-
     45 : _(u"""
 OPTION MASS_INER : la masse volumique RHO doit être non nulle
 """),
