@@ -19,7 +19,7 @@
 subroutine zedgar(jv_mater ,&
                   tm       , tp,&
                   time_curr, time_incr,&
-                  vari_prev, vari_curr)
+                  meta_prev, meta_curr)
 !
 use Metallurgy_type
 !
@@ -38,8 +38,8 @@ implicit none
 integer, intent(in) :: jv_mater
 real(kind=8), intent(in) :: tm, tp
 real(kind=8), intent(in) :: time_curr, time_incr
-real(kind=8), intent(in) :: vari_prev(5)
-real(kind=8), intent(out) :: vari_curr(5)
+real(kind=8), intent(in) :: meta_prev(5)
+real(kind=8), intent(out) :: meta_curr(5)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -54,8 +54,8 @@ real(kind=8), intent(out) :: vari_curr(5)
 ! In  tp                  : current temperature
 ! In  time_curr           : current time
 ! In  time_incr           : increment of time
-! In  vari_prev           : previous internal state variable
-! In  vari_curr           : current internal state variable
+! In  meta_prev           : previous internal state variable
+! In  meta_curr           : current internal state variable
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -94,7 +94,7 @@ real(kind=8), intent(out) :: vari_curr(5)
 !
 ! - Get previous phases
 !
-    zalphm = vari_prev(PALPHA1)+vari_prev(PALPHA2)
+    zalphm = meta_prev(PALPHA1)+meta_prev(PALPHA2)
     zbetam = 1.d0-zalphm
     if (abs(zbetam) .le. zero) then
         zbetam = 0.d0
@@ -133,7 +133,7 @@ real(kind=8), intent(out) :: vari_curr(5)
 !
 ! - Evaluate value of time for temperature of transformation
 !
-    time_tran_p = vari_prev(TIME_TRAN)
+    time_tran_p = meta_prev(TIME_TRAN)
     call metaZircGetTime(zbetam   ,&
                          t1c      , t2c  ,&
                          t1r      , t2r  ,&
@@ -252,10 +252,10 @@ real(kind=8), intent(out) :: vari_curr(5)
 !
 ! - Update internal variables
 !
-    vari_curr(PALPHA1)   = zalph1p
-    vari_curr(PALPHA2)   = zalph2p
-    vari_curr(PBETA)     = zbetap
-    vari_curr(ZIRC_TEMP) = tp
-    vari_curr(TIME_TRAN) = time_tran
+    meta_curr(PALPHA1)   = zalph1p
+    meta_curr(PALPHA2)   = zalph2p
+    meta_curr(PBETA)     = zbetap
+    meta_curr(ZIRC_TEMP) = tp
+    meta_curr(TIME_TRAN) = time_tran
 !
 end subroutine

@@ -18,16 +18,19 @@
 !
 subroutine te0067(option, nomte)
 !
+use Metallurgy_type
+!
 implicit none
 !
 #include "jeveux.h"
 #include "asterfort/elrefe_info.h"
-#include "asterfort/assert.h"
 #include "asterfort/jevech.h"
 #include "asterfort/rcadma.h"
 #include "asterfort/zacier.h"
 #include "asterfort/zedgar.h"
 #include "asterfort/Metallurgy_type.h"
+#include "asterfort/nzcomp_prep.h"
+#include "asterfort/nzcomp.h"
 !
 character(len=16), intent(in) :: option, nomte
 !
@@ -45,98 +48,59 @@ character(len=16), intent(in) :: option, nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: nbv_steel = 8
-    integer, parameter :: nbv_zirc  = 5
-    integer, parameter :: nb_nd_max = 9
     character(len=16) :: phase_type
-    integer :: icodre
-    real(kind=8) :: dt10, dt21, instp
+    real(kind=8) :: dt10, dt21, inst2
     real(kind=8) :: tno1, tno0, tno2
-    real(kind=8) :: metaac(nb_nd_max*nbv_steel), metazi(nb_nd_max*nbv_zirc)
-    integer :: nno, i_node, i_vari, itempe, itempa, itemps, iadtrc
-    integer :: imate
-    integer :: nb_hist, itempi, nbtrc, iadckm
-    integer :: ipftrc, jftrc, jtrc, iphasi, iphasn, icompo
-    integer :: jv_mater, nbcb1, nbcb2, nblexp, iadexp
+    integer :: nno, i_node, itempe, itempa, jv_time
+    integer :: imate, nb_vari, nume_comp
+    integer :: itempi
+    integer :: jv_phase_in, jv_phase_out, icompo
+    integer :: jv_mater
+    type(META_MaterialParameters) :: metaPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call elrefe_info(fami='RIGI', nno=nno)
-    ASSERT(nno .le. nb_nd_max)
-    ASSERT(nbv_steel .eq. STEEL_NBVARI)
-    ASSERT(nbv_zirc .eq. ZIRC_NBVARI)
 !
-! - Input fields
+! - Input/Output fields
 !
     call jevech('PMATERC', 'L', imate)
     call jevech('PTEMPAR', 'L', itempa)
     call jevech('PTEMPER', 'L', itempe)
     call jevech('PTEMPIR', 'L', itempi)
-    call jevech('PTEMPSR', 'L', itemps)
-    call jevech('PPHASIN', 'L', iphasi)
+    call jevech('PTEMPSR', 'L', jv_time)
+    call jevech('PPHASIN', 'L', jv_phase_in)
     call jevech('PCOMPOR', 'L', icompo)
-    jv_mater  = zi(imate)
-!
-! - Output fields
-!
-    call jevech('PPHASNOU', 'E', iphasn)
-!
-! - Type of phase
+    call jevech('PPHASNOU', 'E', jv_phase_out)
 !
     phase_type = zk16(icompo)
+    jv_mater   = zi(imate)
+    read (zk16(icompo+3),'(I16)') nume_comp
 !
-    if (phase_type .eq. 'ACIER') then
+! - Preparation
 !
-        call jevech('PFTRC', 'L', ipftrc)
-        jftrc = zi(ipftrc)
-        jtrc = zi(ipftrc+1)
+    call nzcomp_prep(jv_mater, phase_type,&
+                     nb_vari , metaPara)
 !
-        call rcadma(jv_mater, 'META_ACIER', 'TRC', iadtrc, icodre, 1)
+! - Time parameters: 0 - 1 - 2
 !
-        nbcb1 = nint(zr(iadtrc+1))
-        nb_hist = nint(zr(iadtrc+2))
-        nbcb2 = nint(zr(iadtrc+1+2+nbcb1*nb_hist))
-        nblexp = nint(zr(iadtrc+1+2+nbcb1*nb_hist+1))
-        nbtrc = nint(zr(iadtrc+1+2+nbcb1*nb_hist+2+nbcb2*nblexp+1))
-        iadexp = 5 + nbcb1*nb_hist
-        iadckm = 7 + nbcb1*nb_hist + nbcb2*nblexp
+    dt10  = zr(jv_time+1)
+    dt21  = zr(jv_time+2)
+    inst2 = zr(jv_time)+dt21
 !
-        do i_node = 1, nno
-            dt10 = zr(itemps+1)
-            dt21 = zr(itemps+2)
-            tno1 = zr(itempe+i_node-1)
-            tno0 = zr(itempa+i_node-1)
-            tno2 = zr(itempi+i_node-1)
-            call zacier(jv_mater,&
-                        nb_hist, zr(jftrc), zr(jtrc),&
-                        zr(iadtrc+3), zr(iadtrc+iadexp),&
-                        nbtrc, zr(iadtrc+iadckm),&
-                        tno0, tno1, tno2,&
-                        dt10, dt21,&
-                        zr(iphasi+STEEL_NBVARI*(i_node-1)), metaac(1+STEEL_NBVARI*(i_node-1)))
-            do i_vari = 1, STEEL_NBVARI
-                zr(iphasn+STEEL_NBVARI*(i_node-1)+i_vari-1) =&
-                    metaac(1+STEEL_NBVARI*(i_node-1)+i_vari-1)
-            end do
-        end do
-    else if (phase_type .eq. 'ZIRC') then
-        dt10 = zr(itemps+1)
-        dt21 = zr(itemps+2)
-        instp= zr(itemps)+dt21
-        do i_node = 1, nno
-            tno1 = zr(itempe+i_node-1)
-            tno2 = zr(itempi+i_node-1)
-            call zedgar(jv_mater,&
-                        tno1, tno2,&
-                        instp, dt21,&
-                        zr(iphasi+ZIRC_NBVARI*(i_node-1) ), metazi(1+ZIRC_NBVARI*(i_node-1)))
-            do i_vari = 1, ZIRC_NBVARI
-                zr(iphasn+ZIRC_NBVARI*(i_node-1)+i_vari-1) =&
-                    metazi(1+ZIRC_NBVARI*(i_node-1)+i_vari-1)
-            end do
-        end do
-    else
-        ASSERT(ASTER_FALSE)
-    endif
+! - Loop on nodes
+!
+    do i_node = 1, nno
+! ----- Temperatures: 0 - 1 - 2
+        tno1 = zr(itempe+i_node-1)
+        tno0 = zr(itempa+i_node-1)
+        tno2 = zr(itempi+i_node-1)
+! ----- General switch
+        call nzcomp(jv_mater , metaPara , nume_comp,&
+                    dt10     , dt21     , inst2    ,&
+                    tno0     , tno1     , tno2     ,&
+                    zr(jv_phase_in+nb_vari*(i_node-1)),&
+                    zr(jv_phase_out+nb_vari*(i_node-1)))
+    end do
 !
 end subroutine

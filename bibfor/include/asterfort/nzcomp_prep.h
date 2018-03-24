@@ -17,14 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine zedgar(jv_mater ,&
-                      tm       , tp,&
-                      time_curr, time_incr,&
-                      meta_prev, meta_curr)
+    subroutine nzcomp_prep(jv_mater, phase_type,&
+                           nb_vari , metaPara)
+        use Metallurgy_type
         integer, intent(in) :: jv_mater
-        real(kind=8), intent(in) :: tm, tp
-        real(kind=8), intent(in) :: time_curr, time_incr
-        real(kind=8), intent(in) :: meta_prev(5)
-        real(kind=8), intent(out) :: meta_curr(5)
-    end subroutine zedgar
+        character(len=16), intent(in) :: phase_type
+        integer, intent(out) :: nb_vari
+        type(META_MaterialParameters), intent(out) :: metaPara
+    end subroutine nzcomp_prep
 end interface

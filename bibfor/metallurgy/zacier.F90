@@ -16,19 +16,17 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine zacier(jv_mater ,&
-                  nb_hist  , ftrc     , trc ,&
-                  coef     , fmod     ,&
-                  nbtrc    , ckm      ,&
-                  tpg0     , tpg1     , tpg2,&
-                  dt10     , dt21     ,&
-                  vari_prev, vari_curr)
+subroutine zacier(metaSteelPara,&
+                  tpg0         , tpg1     , tpg2,&
+                  dt10         , dt21     ,&
+                  meta_prev    , meta_curr)
 !
 use Metallurgy_type
 !
 implicit none
 !
 #include "asterf_types.h"
+#include "jeveux.h"
 #include "asterc/r8prem.h"
 #include "asterfort/metaSteelGetParameters.h"
 #include "asterfort/assert.h"
@@ -37,16 +35,11 @@ implicit none
 #include "asterfort/metaSteelGrainSize.h"
 #include "asterfort/Metallurgy_type.h"
 !
-integer, intent(in) :: jv_mater
-integer, intent(in) :: nb_hist
-real(kind=8), intent(inout) :: ftrc((3*nb_hist), 3), trc((3*nb_hist), 5)
-real(kind=8), intent(in)  :: coef(*), fmod(*)
-integer, intent(in) :: nbtrc
-real(kind=8), intent(in) :: ckm(6*nbtrc)
+type(META_SteelParameters), intent(in) :: metaSteelPara
 real(kind=8), intent(in) :: tpg0, tpg1, tpg2
 real(kind=8), intent(in) :: dt10, dt21
-real(kind=8), intent(in) :: vari_prev(8)
-real(kind=8), intent(out) :: vari_curr(8)
+real(kind=8), intent(in) :: meta_prev(8)
+real(kind=8), intent(out) :: meta_curr(8)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,19 +49,14 @@ real(kind=8), intent(out) :: vari_curr(8)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  jv_mater            : coded material address
-! In  nb_hist             : number of graph in TRC diagram
-! IO  trc                 : values of functions for TRC diagram
-! IO  ftrc                : values of derivatives (by temperature) of functions for TRC diagram
-! In  coef                : parameters from TRC diagrams (P5 polynom)
-! In  fmod                : experimental function from TRC diagrams
-! In  nbtrc               : size of TEMP_TRC parameters
-! In  ckm                 : TEMP_TRC parameters
+! In  metaSteelPara       : material parameters for metallurgy of steel
 ! In  tpg0                : temperature at time N-1
 ! In  tpg1                : temperature at time N
 ! In  tpg2                : temperature at time N+1
 ! In  dt10                : increment of time [N-1, N]
 ! In  dt21                : increment of time [N, N+1]
+! In  meta_prev           : value of internal state variable at previous time step
+! Out meta_prev           : value of internal state variable at current time step
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -78,9 +66,8 @@ real(kind=8), intent(out) :: vari_curr(8)
     real(kind=8) :: zeq1, zeq2, zaust, z2, epsi, dt21_mod
     real(kind=8) :: un, coef_phase
     real(kind=8) :: zeq1i, zeq2i, ti1, ti2, taux
-    integer :: i, j, nbpas
+    integer :: i, j, nbpas, nb_hist, nb_trc
     aster_logical :: l_cold
-    type(META_SteelParameters) :: metaSteelPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -91,18 +78,19 @@ real(kind=8), intent(out) :: vari_curr(8)
 !
 ! - Get material parameters for steel
 !
-    call metaSteelGetParameters(jv_mater, metaSteelPara)
+    nb_hist = metaSteelPara%trc%nb_hist
+    nb_trc  = metaSteelPara%trc%nb_trc
 !
 ! - Temperature
 !
-    vari_curr(STEEL_TEMP) = tpg2
-    vari_curr(TEMP_MARTENSITE) = vari_prev(TEMP_MARTENSITE)
+    meta_curr(STEEL_TEMP) = tpg2
+    meta_curr(TEMP_MARTENSITE) = meta_prev(TEMP_MARTENSITE)
     tpoint = (tpg1-tpg0)/dt10
 !
 ! - Proportion of austenite
 !
-    zaust   = un - (vari_prev(PFERRITE) + vari_prev(PPERLITE) +&
-                    vari_prev(PBAINITE) + vari_prev(PMARTENS))
+    zaust   = un - (meta_prev(PFERRITE) + meta_prev(PPERLITE) +&
+                    meta_prev(PBAINITE) + meta_prev(PMARTENS))
 !
 ! - Colding or not ?
 !
@@ -126,31 +114,41 @@ real(kind=8), intent(out) :: vari_curr(8)
         if (abs(tpg2-tpg1) .gt. 5.001d0) then
             nbpas = int(abs(tpg2-tpg1)/5.d0-0.001d0)+1
             dt21_mod     = dt21/dble(nbpas)
-            vari_dumm(:) = vari_prev(:)
+            vari_dumm(:) = meta_prev(:)
             do i = 1, nbpas
                 ti                    = tpg1+(tpg2-tpg1)*dble(i-1)/dble(nbpas)
-                vari_curr(STEEL_TEMP) = tpg1+(dble(i)*(tpg2-tpg1))/dble(nbpas)
-                tpi                   = (vari_curr(STEEL_TEMP)-ti)/dt21_mod
-                call smcarc(nb_hist      , ftrc     , trc ,&
-                            coef         , fmod     ,&
-                            metaSteelPara, nbtrc    , ckm ,&
+                meta_curr(STEEL_TEMP) = tpg1+(dble(i)*(tpg2-tpg1))/dble(nbpas)
+                tpi                   = (meta_curr(STEEL_TEMP)-ti)/dt21_mod
+                call smcarc(nb_hist      , &
+                            zr(metaSteelPara%trc%jv_ftrc),&
+                            zr(metaSteelPara%trc%jv_trc),&
+                            zr(metaSteelPara%trc%iadtrc+3),&
+                            zr(metaSteelPara%trc%iadtrc+metaSteelPara%trc%iadexp), &
+                            metaSteelPara,&
+                            nb_trc    ,&
+                            zr(metaSteelPara%trc%iadtrc+metaSteelPara%trc%iadckm),&
                             ti           , tpi      , dt10,&
-                            vari_dumm    , vari_curr)
-                vari_dumm(:) = vari_curr(:)
+                            vari_dumm    , meta_curr)
+                vari_dumm(:) = meta_curr(:)
             end do
         else
-            call smcarc(nb_hist      , ftrc     , trc ,&
-                        coef         , fmod     ,&
-                        metaSteelPara, nbtrc    , ckm ,&
+            call smcarc(nb_hist      , &
+                        zr(metaSteelPara%trc%jv_ftrc),&
+                        zr(metaSteelPara%trc%jv_trc),&
+                        zr(metaSteelPara%trc%iadtrc+3),&
+                        zr(metaSteelPara%trc%iadtrc+metaSteelPara%trc%iadexp), &
+                        metaSteelPara,&
+                        nb_trc    ,&
+                        zr(metaSteelPara%trc%iadtrc+metaSteelPara%trc%iadckm),&
                         tpg1         , tpoint   , dt10,&
-                        vari_prev    , vari_curr)
+                        meta_prev    , meta_curr)
         endif
     else
         if (abs(tpg2-tpg1) .gt. 5.001d0) then
 ! ----------------SUBDIVISION EN PAS DE CING DEGRE MAX
             nbpas    = int(abs(tpg2-tpg1)/5.d0-0.001d0)+1
             dt21_mod = dt21/dble(nbpas)
-            dmoins   = vari_prev(SIZE_GRAIN)
+            dmoins   = meta_prev(SIZE_GRAIN)
             do i = 1, nbpas
                 ti1    = tpg1+(tpg2-tpg1)*dble(i-1)/dble(nbpas)
                 ti2    = tpg1+(tpg2-tpg1)*dble(i)/dble(nbpas)
@@ -177,14 +175,19 @@ real(kind=8), intent(out) :: vari_curr(8)
                     endif
                 endif
 ! ------------- Compute size of grain
-                coef_phase = (1.d0-(z2-zaust)/z2)
-                call metaSteelGrainSize(metaSteelPara, nbtrc     , ckm ,&
+                coef_phase = 1.d0
+                if (abs(z2) .ge. epsi) then
+                    coef_phase = (1.d0-(z2-zaust)/z2)
+                endif
+                call metaSteelGrainSize(metaSteelPara,&
+                                        nb_trc     ,&
+                                        zr(metaSteelPara%trc%iadtrc+metaSteelPara%trc%iadckm),&
                                         ti1          , dt10      , dt21,&
                                         z2           , coef_phase,&
-                                        dmoins       , vari_curr(SIZE_GRAIN))
+                                        dmoins       , meta_curr(SIZE_GRAIN))
                 if (metaSteelPara%l_grain_size) then
                     zaust  = z2
-                    dmoins = vari_curr(SIZE_GRAIN)
+                    dmoins = meta_curr(SIZE_GRAIN)
                 endif
             end do
         else
@@ -213,10 +216,12 @@ real(kind=8), intent(out) :: vari_curr(8)
             if (abs(z2) .ge. epsi) then
                 coef_phase = (1.d0-(z2-zaust)/z2)
             endif
-            call metaSteelGrainSize(metaSteelPara        , nbtrc      , ckm ,&
-                                    tpg1                 , dt10       , dt21,&
-                                    z2                   , coef_phase ,&
-                                    vari_prev(SIZE_GRAIN), vari_curr(SIZE_GRAIN))
+            call metaSteelGrainSize(metaSteelPara,&
+                                    nb_trc       ,&
+                                    zr(metaSteelPara%trc%iadtrc+metaSteelPara%trc%iadckm),&
+                                    tpg1         , dt10       , dt21,&
+                                    z2           , coef_phase ,&
+                                    meta_prev(SIZE_GRAIN), meta_curr(SIZE_GRAIN))
         endif
 !           REPARTITION DE DZGAMMA SUR DZALPHA
         if (z2 .gt. (un-epsi)) then
@@ -224,24 +229,24 @@ real(kind=8), intent(out) :: vari_curr(8)
         endif
         if (zaust .ne. un) then
             do j = 1, 4
-                vari_curr(j) = vari_prev(j)*(un-(z2-zaust)/(un-zaust))
+                meta_curr(j) = meta_prev(j)*(un-(z2-zaust)/(un-zaust))
             end do
         else
             do j = 1, 4
-                vari_curr(j) = vari_prev(j)
+                meta_curr(j) = meta_prev(j)
             end do
         endif
     endif
 !
 ! - Compute austenite
 !
-    zaust = un - vari_curr(1) - vari_curr(2) - vari_curr(3) - vari_curr(4)
+    zaust = un - meta_curr(1) - meta_curr(2) - meta_curr(3) - meta_curr(4)
     if (zaust .le. r8prem()) then
         zaust = 0.d0
     endif
     if (zaust .ge. 1.d0) then
         zaust = 1.d0
     endif
-    vari_curr(PAUSTENITE) = zaust
+    meta_curr(PAUSTENITE) = zaust
 !
 end subroutine
