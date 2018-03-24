@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -457,13 +457,13 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                 else
                     smpsk%n=to_mumps_int(n)
                 endif
-                smpsk%nz_loc=nz2
+                smpsk%nnz_loc=nz2
                 allocate(smpsk%irn_loc(nz2))
                 allocate(smpsk%jcn_loc(nz2))
                 allocate(smpsk%a_loc(nz2))
             else if (type.eq.'C') then
                 cmpsk%n=to_mumps_int(n)
-                cmpsk%nz_loc=nz2
+                cmpsk%nnz_loc=nz2
                 allocate(cmpsk%irn_loc(nz2))
                 allocate(cmpsk%jcn_loc(nz2))
                 allocate(cmpsk%a_loc(nz2))
@@ -473,13 +473,13 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                 else
                     dmpsk%n=to_mumps_int(n)
                 endif
-                dmpsk%nz_loc=nz2
+                dmpsk%nnz_loc=nz2
                 allocate(dmpsk%irn_loc(nz2))
                 allocate(dmpsk%jcn_loc(nz2))
                 allocate(dmpsk%a_loc(nz2))
             else if (type.eq.'Z') then
                 zmpsk%n=to_mumps_int(n)
-                zmpsk%nz_loc=nz2
+                zmpsk%nnz_loc=nz2
                 allocate(zmpsk%irn_loc(nz2))
                 allocate(zmpsk%jcn_loc(nz2))
                 allocate(zmpsk%a_loc(nz2))
@@ -494,25 +494,25 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
         else
             if (type .eq. 'S') then
                 smpsk%n=to_mumps_int(n)
-                smpsk%nz=nz2
+                smpsk%nnz=nz2
                 allocate(smpsk%irn(nz2))
                 allocate(smpsk%jcn(nz2))
                 allocate(smpsk%a(nz2))
             else if (type.eq.'C') then
                 cmpsk%n=to_mumps_int(n)
-                cmpsk%nz=nz2
+                cmpsk%nnz=nz2
                 allocate(cmpsk%irn(nz2))
                 allocate(cmpsk%jcn(nz2))
                 allocate(cmpsk%a(nz2))
             else if (type.eq.'D') then
                 dmpsk%n=to_mumps_int(n)
-                dmpsk%nz=nz2
+                dmpsk%nnz=nz2
                 allocate(dmpsk%irn(nz2))
                 allocate(dmpsk%jcn(nz2))
                 allocate(dmpsk%a(nz2))
             else if (type.eq.'Z') then
                 zmpsk%n=to_mumps_int(n)
-                zmpsk%nz=nz2
+                zmpsk%nnz=nz2
                 allocate(zmpsk%irn(nz2))
                 allocate(zmpsk%jcn(nz2))
                 allocate(zmpsk%a(nz2))
@@ -755,25 +755,25 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
         nz2=to_mumps_int(iterm)
         if (ldist) then
             if (type .eq. 'S') then
-                smpsk%nz_loc=nz2
+                smpsk%nnz_loc=nz2
             else if (type.eq.'C') then
-                cmpsk%nz_loc=nz2
+                cmpsk%nnz_loc=nz2
             else if (type.eq.'D') then
-                dmpsk%nz_loc=nz2
+                dmpsk%nnz_loc=nz2
             else if (type.eq.'Z') then
-                zmpsk%nz_loc=nz2
+                zmpsk%nnz_loc=nz2
             else
                 ASSERT(.false.)
             endif
         else
             if (type .eq. 'S') then
-                smpsk%nz=nz2
+                smpsk%nnz=nz2
             else if (type.eq.'C') then
-                cmpsk%nz=nz2
+                cmpsk%nnz=nz2
             else if (type.eq.'D') then
-                dmpsk%nz=nz2
+                dmpsk%nnz=nz2
             else if (type.eq.'Z') then
-                zmpsk%nz=nz2
+                zmpsk%nnz=nz2
             else
                 ASSERT(.false.)
             endif

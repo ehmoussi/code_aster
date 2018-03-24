@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ subroutine amumph(action, solvez, matasz, rsolu, csolu,&
 !     /'VERSION' : POUR RECUPERER LE NUMERO DE VERSION (SEULEMENT LA
 !              SD_SOLVEUR OU LA MATAS SONT REQUIS). CE NUMERO EST
 !              STOCKEE DANS SD_SOLVEUR.SLVK(12). IL DOIT ETRE LICITE
-!              (5.2.0/5.1.1(consortium)) SINON UTMESS_F.
+!              (5.1.1/5.1.2(consortium)) SINON UTMESS_F.
 !              PAR DEFAUT ON CHERCHE LE NUMERO DS LA SD_SOLVEUR, SINON ON PREND CELUI LIE
 !              AU PACKAGE MUMPS LINKE.
 !     /'PRERES'  : POUR DEMANDER LES ETAPES ANALYSE+FACTORISATION
@@ -243,7 +243,7 @@ subroutine amumph(action, solvez, matasz, rsolu, csolu,&
 ! --- STOCKE DANS LA SD_SOLVEUR
                     kvers=trim(adjustl(slvk(12)))
                     select case (kvers)
-                        case('5.0.2','5.0.2consortium','5.1.1','5.1.1consortium')
+                        case('5.1.1','5.1.1consortium','5.1.2','5.1.2consortium')
                     case default
                         call utmess('F', 'FACTOR_72', sk=kvers)
                     end select
