@@ -54,7 +54,7 @@ character(len=16), intent(in) :: option, nomte
     integer :: icodre(1)
     real(kind=8) :: metaac(nb_nd_max*nbv_steel), metazi(nb_nd_max*nbv_zirc)
     real(kind=8) :: zero, ms0(1), zalpha, zbeta
-    real(kind=8) :: tno0
+    real(kind=8) :: tno0, phase_tot
     integer :: nno
     integer :: jv_compo, j, i_node, kpg, spt
     integer :: imate, itempe, iphasi, iphasn
@@ -88,12 +88,14 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Values required for META_INIT_ELNO vector
 !
+    phase_tot = 0.d0
     if (phase_type .eq. 'ACIER') then
 ! ----- All phases
         do j = 1, 5
             if (zr(iphasi-1+j) .eq. r8vide() .or. isnan(zr(iphasi-1+j))) then
                 call utmess('F', 'META1_44')
             endif
+            phase_tot = phase_tot + zr(iphasi-1+j)
         end do
 ! ----- Grain size
         if (zr(iphasi-1+SIZE_GRAIN) .eq. r8vide() .or. isnan(zr(iphasi-1+SIZE_GRAIN))) then
@@ -105,12 +107,17 @@ character(len=16), intent(in) :: option, nomte
             if (zr(iphasi-1+j) .eq. r8vide() .or. isnan(zr(iphasi-1+j))) then
                 call utmess('F', 'META1_45')
             endif
+            phase_tot = phase_tot + zr(iphasi-1+j)
         end do
 ! ----- Transition time
         if (zr(iphasi-1+TIME_TRAN) .eq. r8vide() .or. isnan(zr(iphasi-1+TIME_TRAN))) then
             call utmess('F', 'META1_47')
         endif
     endif
+!
+    if (abs(phase_tot-1.d0).gt. 1.d-2) then
+        call utmess('A', 'META1_46', sr = phase_tot)
+    endif 
 !
     if (phase_type .eq. 'ACIER') then
         nomres = 'MS0'
@@ -119,7 +126,7 @@ character(len=16), intent(in) :: option, nomte
                     1, nomres, ms0, icodre, 1)
         do i_node = 1, nno
             tno0 = zr(itempe+i_node-1)
-            do j = 1, 5
+            do j = 1, 6
                 metaac(STEEL_NBVARI*(i_node-1)+j) = zr(iphasi-1+j)
             end do
             metaac(STEEL_NBVARI*(i_node-1)+TEMP_MARTENSITE) = ms0(1)

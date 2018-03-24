@@ -17,22 +17,15 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine zacier(jv_mater ,&
-                      nb_hist  , ftrc     , trc ,&
-                      coef     , fmod     ,&
-                      nbtrc    , ckm      ,&
-                      tpg0     , tpg1     , tpg2,&
-                      dt10     , dt21     ,&
-                      vari_prev, vari_curr)
-        integer, intent(in) :: jv_mater
-        integer, intent(in) :: nb_hist
-        real(kind=8), intent(inout) :: ftrc((3*nb_hist), 3), trc((3*nb_hist), 5)
-        real(kind=8), intent(in)  :: coef(*), fmod(*)
-        integer, intent(in) :: nbtrc
-        real(kind=8), intent(in) :: ckm(6*nbtrc)
+    subroutine zacier(metaSteelPara,&
+                      tpg0         , tpg1     , tpg2,&
+                      dt10         , dt21     ,&
+                      meta_prev    , meta_curr)
+        use Metallurgy_type
+        type(META_SteelParameters), intent(in) :: metaSteelPara
         real(kind=8), intent(in) :: tpg0, tpg1, tpg2
         real(kind=8), intent(in) :: dt10, dt21
-        real(kind=8), intent(in) :: vari_prev(8)
-        real(kind=8), intent(out) :: vari_curr(8)
+        real(kind=8), intent(in) :: meta_prev(8)
+        real(kind=8), intent(out) :: meta_curr(8)
     end subroutine zacier
 end interface

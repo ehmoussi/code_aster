@@ -48,4 +48,8 @@ Pour l'acier, il faut renseigner la taille de grain.
 Erreur dans CALC_META: l'état métallurgique initial produit par CREA_CHAMP est incomplet.
 Pour le Zircaloy, il faut renseigner l'instant de transition.
 """),
+
+    46 : _(u"""
+Erreur dans CALC_META: La somme des phases vaut %(r1)12.4E.
+"""),
 }

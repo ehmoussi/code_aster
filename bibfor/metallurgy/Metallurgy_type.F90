@@ -61,6 +61,13 @@ implicit none
         real(kind=8) :: wsr_k
     end type META_AusteniteParameters
 !
+    type META_TRCParameters
+        integer :: jv_ftrc, jv_trc
+        integer :: iadexp, iadckm, iadtrc
+        integer :: nb_trc
+        integer :: nb_hist
+    end type META_TRCParameters
+!
     type META_SteelParameters
         real(kind=8) :: ar3
         real(kind=8) :: alpha
@@ -71,6 +78,7 @@ implicit none
         real(kind=8) :: taux_3
         aster_logical :: l_grain_size
         type(META_AusteniteParameters) :: austenite
+        type(META_TRCParameters)       :: trc
     end type META_SteelParameters
 !
     type META_ZircParameters
@@ -87,5 +95,10 @@ implicit none
         real(kind=8) :: ar
         real(kind=8) :: br
     end type META_ZircParameters
+!
+    type META_MaterialParameters
+        type(META_SteelParameters)      :: steel
+        type(META_ZircParameters)       :: zirc
+    end type META_MaterialParameters
 !
 end module

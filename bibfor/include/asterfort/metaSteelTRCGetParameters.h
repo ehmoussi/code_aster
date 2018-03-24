@@ -17,14 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine zedgar(jv_mater ,&
-                      tm       , tp,&
-                      time_curr, time_incr,&
-                      meta_prev, meta_curr)
+    subroutine metaSteelTRCGetParameters(jv_mater, metaSteelPara)
+        use Metallurgy_type
         integer, intent(in) :: jv_mater
-        real(kind=8), intent(in) :: tm, tp
-        real(kind=8), intent(in) :: time_curr, time_incr
-        real(kind=8), intent(in) :: meta_prev(5)
-        real(kind=8), intent(out) :: meta_curr(5)
-    end subroutine zedgar
+        type(META_SteelParameters), intent(out) :: metaSteelPara
+    end subroutine metaSteelTRCGetParameters
 end interface
