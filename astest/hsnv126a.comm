@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -90,9 +90,9 @@ _F( VALE = (
 PHASINIT=CREA_CHAMP(OPERATION='AFFE', TYPE_CHAM='CART_VAR2_R',
                            MAILLAGE=MAIL,
                            AFFE=_F(  TOUT = 'OUI',
-             NOM_CMP = ( 'V1', 'V2', 'V3', 'V4',  'V5',          ),
+             NOM_CMP = ( 'V1', 'V2', 'V3', 'V4',  'V5', 'V6'         ),
 
-    VALE = ( 0.7, 0.0, 0.3, 0.0,  0.0,     ))
+    VALE = ( 0.7, 0.0, 0.3, 0.0,  0.0, 0.0    ))
                         )
 
 MOTH=AFFE_MODELE( MAILLAGE=MAIL,
