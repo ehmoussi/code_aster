@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -339,8 +339,8 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                   PARA='FREQ',RESULTAT=sd_testee,
                   VALE_CALC=4.44221839359,),
                _F(NUME_ORDRE=1,
-                  PARA='MASS_EFFE_UN_DX',RESULTAT=sd_testee,
-                  VALE_CALC=9.2386176895E-06,),
+                  PARA='MASS_EFFE_UN_DY',RESULTAT=sd_testee,
+                  VALE_CALC=0.090228535871,),
                _F(NUME_ORDRE=7,
                   PARA='FREQ',RESULTAT=sd_testee,
                   VALE_CALC=11.713585425,),
@@ -467,7 +467,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                   VALE_CALC=4.44221839411,),
                _F(NUME_ORDRE=1,
                   PARA='MASS_EFFE_UN_DX',RESULTAT=sd_testee,
-                  VALE_CALC=9.23861755833E-06, TOLE_MACHINE=2.e-6),
+                  VALE_CALC=9.23862727034E-06, TOLE_MACHINE=2.e-6),
                _F(NUME_ORDRE=7,
                   PARA='FREQ',RESULTAT=sd_testee,
                   VALE_CALC=11.713585425,),

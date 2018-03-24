@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -436,9 +436,9 @@ for i in range(0,n) :
 #
 #tests exhaustifs sur le fond en ouverture
 #
-K1_CALC =[0.950817692526, 0.951422862646, 0.951120277586];
-K2_CALC =[0.00173232320602, 0.00166039798713, 0.00169636059657];
-G_CALC =[9.02992650934E-07, 9.04018747443E-07, 9.03505699188E-07];
+K1_CALC =[0.950926842302, 0.951531991293, 0.951229416797];
+K2_CALC =[0.00173023756219, 0.00165831853625, 0.00169427804922];
+G_CALC =[9.03200305131E-07, 9.04226609263E-07, 9.03713457197E-07];
 
 
 for i in range(0,n) :

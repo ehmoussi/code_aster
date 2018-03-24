@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -278,6 +278,8 @@ subroutine amumpc(action, kxmps, csolu, vcine, nbsol,&
             goto 99
         else if (cmpsk%infog(1).eq.-38) then
             call utmess('F', 'FACTOR_91')
+        else if (cmpsk%infog(1).eq.-51) then
+            call utmess('F', 'FACTOR_92')
         else
             iaux=cmpsk%infog(1)
             if (iaux .lt. 0) then
