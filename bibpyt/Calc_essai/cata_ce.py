@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -492,7 +492,7 @@ class InterSpectre:
 
                 _fonc = DEFI_FONCTION(NOM_PARA="FREQ",
                                       NOM_RESU="DSP",
-                                      INTERPOL="NON",
+                                      INTERPOL="LIN",
                                       INFO=1,
                                       VALE_C=fonc,)
                 l_fonc.append(_fonc)
