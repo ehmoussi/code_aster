@@ -28,7 +28,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/jevech.h"
 #include "asterfort/get_meta_comp.h"
-#include "asterfort/get_meta_plas_t.h"
+#include "asterfort/metaGetParaPlasTransf.h"
 #include "asterfort/metaGetParaVisc.h"
 #include "asterfort/metaGetParaMixture.h"
 #include "asterfort/metaGetParaHardTrac.h"
@@ -84,7 +84,7 @@ real(kind=8), intent(out) :: trans
     real(kind=8) :: epsp(5), h0(5)
     real(kind=8) :: kpt(4), fpt(4)
     real(kind=8) :: eta(5), n(5), unsurn(5), c(5), m(5)
-    real(kind=8) :: rprim, deltaz, fmel, coef_hard
+    real(kind=8) :: rprim, deltaz(8), fmel, coef_hard
     aster_logical :: l_visc, l_elas, l_plas_tran, l_hard_line
 !
 ! --------------------------------------------------------------------------------------------------
@@ -108,7 +108,8 @@ real(kind=8), intent(out) :: trans
 !
     call jevech('PVARIPR', 'L', j_vari)
     do i_phasis = 1, nb_phasis
-        epsp(i_phasis) = zr(j_vari+lgpg*(kpg-1)-1+i_phasis)
+        epsp(i_phasis)   = zr(j_vari+lgpg*(kpg-1)-1+i_phasis)
+        deltaz(i_phasis) = (phas_curr(i_phasis)-phas_prev(i_phasis))
     end do
 !
 ! - Is elastic ?
@@ -124,9 +125,9 @@ real(kind=8), intent(out) :: trans
 ! - Transformation plasticity parameters
 !
     if (l_plas_tran) then
-        call get_meta_plas_t('+'      , fami     , kpg      , ksp      , j_mater   ,&
-                             meta_type, nb_phasis, phas_prev, phas_curr, zcold_curr,&
-                             kpt      , fpt)
+        call metaGetParaPlasTransf('+'      , fami     , kpg   , ksp       , j_mater,&
+                                   meta_type, nb_phasis, deltaz, zcold_curr,&
+                                   kpt      , fpt)
     endif
 !
 ! - Visco-plasticity parameters
@@ -141,9 +142,8 @@ real(kind=8), intent(out) :: trans
 !
     trans     = 0.d0
     do i_phasis_c = 1, nb_phasis_c
-        deltaz = (phas_curr(i_phasis_c)-phas_prev(i_phasis_c))
-        if (deltaz.gt.0) then
-            trans = trans+kpt(i_phasis_c)*fpt(i_phasis_c)*deltaz
+        if (deltaz(i_phasis_c) .gt. 0) then
+            trans = trans+kpt(i_phasis_c)*fpt(i_phasis_c)*deltaz(i_phasis_c)
         endif
     end do
 !
