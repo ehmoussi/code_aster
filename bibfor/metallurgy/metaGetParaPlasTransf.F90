@@ -16,34 +16,31 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine get_meta_plas_t(poum     , fami     , kpg      , ksp      , j_mater   ,&
-                           meta_type, nb_phasis, phas_prev, phas_curr, zcold_curr,&
-                           kpt      , fpt)
+subroutine metaGetParaPlasTransf(poum     , fami     , kpg       , ksp       , j_mater,&
+                                 meta_type, nb_phasis, phase_incr, phase_cold,&
+                                 kpt      , fpt)
 !
 implicit none
 !
 #include "asterfort/assert.h"
 #include "asterfort/rcvalb.h"
+#include "asterfort/utmess.h"
 #include "asterfort/Metallurgy_type.h"
 !
 character(len=1), intent(in) :: poum
 character(len=*), intent(in) :: fami
-integer, intent(in) :: kpg
-integer, intent(in) :: ksp
+integer, intent(in) :: kpg, ksp
 integer, intent(in) :: j_mater
 integer, intent(in) :: meta_type
 integer, intent(in) :: nb_phasis
-real(kind=8), intent(in) :: phas_prev(*)
-real(kind=8), intent(in) :: phas_curr(*)
-real(kind=8), intent(in) :: zcold_curr
-real(kind=8), intent(out) :: kpt(*)
-real(kind=8), intent(out) :: fpt(*)
+real(kind=8), intent(in) :: phase_incr(*), phase_cold
+real(kind=8), intent(out) :: kpt(*), fpt(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Comportment utility - Metallurgy
 !
-! Get parameters for transformation plasticity
+! Get plasticity of transformation
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -54,78 +51,64 @@ real(kind=8), intent(out) :: fpt(*)
 ! In  j_mater      : coded material address
 ! In  meta_type    : type of metallurgy
 ! In  nb_phasis    : total number of phasis (cold and hot)
-! In  phas_prev    : previous phasis
-! In  phas_curr    : current phasis
-! In  zcold_curr   : sum of cold phasis
+! In  phase_incr   : increment of phasis
+! In  phase_cold   : sum of "cold" phasis
 ! Out kpt          : transformation plasticity - constant k
 ! Out fpt          : transformation plasticity - function f'
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_res_mx
-    parameter (nb_res_mx = 4)
-    real(kind=8) :: valres(nb_res_mx)
-    integer :: codret(nb_res_mx)
-    character(len=16) :: nomres(nb_res_mx)
-    integer :: nb_res, i_phasis, nb_phasis_cold
-    real(kind=8) :: deltaz
+    integer, parameter :: nb_resu_max = 5
+    real(kind=8) :: resu_vale(nb_resu_max)
+    integer :: codret(nb_resu_max)
+    character(len=16) :: resu_name(nb_resu_max)
+    integer :: nb_resu, i_resu
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    nb_phasis_cold = nb_phasis - 1
+    nb_resu = nb_phasis - 1
 !
-! - Name of parameters - Constant k
+! - Coefficient K
 !
     if (meta_type .eq. META_STEEL) then
-        nb_res = 4
-        nomres(1) = 'F1_K'
-        nomres(2) = 'F2_K'
-        nomres(3) = 'F3_K'
-        nomres(4) = 'F4_K'   
+        resu_name(1) = 'F1_K'
+        resu_name(2) = 'F2_K'
+        resu_name(3) = 'F3_K'
+        resu_name(4) = 'F4_K'
     elseif (meta_type .eq. META_ZIRC) then
-        nb_res = 2
-        nomres(1) = 'F1_K'
-        nomres(2) = 'F2_K'
+        resu_name(1) = 'F1_K'
+        resu_name(2) = 'F2_K'
     else
         ASSERT(ASTER_FALSE)
     endif
-!
-! - Get parameters - Constant k
-!
     call rcvalb(fami, kpg, ksp, poum, j_mater,&
                 ' ', 'META_PT', 0, ' ', [0.d0],&
-                nb_res, nomres, valres, codret, 2)
-    do i_phasis = 1, nb_phasis_cold
-        kpt(i_phasis) = valres(i_phasis)
+                nb_resu, resu_name, resu_vale, codret, 2)
+    do i_resu = 1, nb_resu
+        kpt(i_resu) = resu_vale(i_resu)
     end do
 !
-! - Name of parameters - function f'
+! - Function F'
 !
     if (meta_type .eq. META_STEEL) then
-        nb_res    = 4
-        nomres(1) = 'F1_D_F_META'
-        nomres(2) = 'F2_D_F_META'
-        nomres(3) = 'F3_D_F_META'
-        nomres(4) = 'F4_D_F_META'
+        resu_name(1) = 'F1_D_F_META'
+        resu_name(2) = 'F2_D_F_META'
+        resu_name(3) = 'F3_D_F_META'
+        resu_name(4) = 'F4_D_F_META'
     elseif (meta_type .eq. META_ZIRC) then
-        nb_res    = 2
-        nomres(1) = 'F1_D_F_META'
-        nomres(2) = 'F2_D_F_META'
+        resu_name(1) = 'F1_D_F_META'
+        resu_name(2) = 'F2_D_F_META'
     else
         ASSERT(ASTER_FALSE)
     endif
-!
-! - Get parameters - function f'
-!
-    do i_phasis = 1, nb_phasis_cold
-        deltaz = (phas_curr(i_phasis) - phas_prev(i_phasis))
-        if (deltaz .gt. 0.d0) then
+    do i_resu = 1, nb_resu
+        if (phase_incr(i_resu) .gt. 0.d0) then
             call rcvalb(fami, kpg, ksp, poum, j_mater,&
-                        ' ', 'META_PT', 1, 'META', [zcold_curr],&
-                        1, nomres(i_phasis), valres(i_phasis), codret(i_phasis), 2)
-            fpt(i_phasis) = valres(i_phasis)
+                        ' ', 'META_PT', 1, 'META', [phase_cold],&
+                        1, resu_name(i_resu), resu_vale(i_resu), codret, 2)
+            fpt(i_resu) = resu_vale(i_resu)
         else
-            fpt(i_phasis) = 0.d0
+            fpt(i_resu) = 0.d0
         endif
     end do
 !

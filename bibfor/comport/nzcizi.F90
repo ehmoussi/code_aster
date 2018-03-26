@@ -36,6 +36,7 @@ implicit none
 #include "asterfort/metaGetParaVisc.h"
 #include "asterfort/metaGetParaHardLine.h"
 #include "asterfort/metaGetParaMixture.h"
+#include "asterfort/metaGetParaPlasTransf.h"
 #include "asterfort/Metallurgy_type.h"
 !
 character(len=*), intent(in) :: fami
@@ -91,7 +92,7 @@ integer, intent(out) :: iret
 !
     integer :: nb_phasis, meta_type
     integer :: ndimsi, i, j, k, l, mode
-    real(kind=8) :: phase(5), phasm(5), zalpha
+    real(kind=8) :: phase(5), phasm(5), zalpha, deltaz(5)
     real(kind=8) :: dt, coef_hard
     real(kind=8) :: epsth, e, deuxmu, deumum, troisk
     real(kind=8) :: fmel, sy(3), symoy, h(3), hmoy, rprim
@@ -99,7 +100,7 @@ integer, intent(out) :: iret
     real(kind=8) :: eta(5), n(3), unsurn(5), c(3), m(3), cmoy, mmoy, cr
     real(kind=8) :: dz(2), dz1(2), dz2(2), vi(18), dvin, vimt(18)
     real(kind=8) :: xmoy(6), ds(6), xmoyeq
-    real(kind=8) :: trans, kpt(2), zvarim, zvarip, deltaz
+    real(kind=8) :: trans, kpt(2), fpt(2)
     real(kind=8) :: trepsm, trdeps, trsigm, trsigp
     real(kind=8) :: dvdeps(6), dvsigm(6), dvsigp(6)
     real(kind=8) :: sigel(6), sigel2(6), sig0(6), sieleq, sigeps
@@ -145,6 +146,9 @@ integer, intent(out) :: iret
         call metaGetPhase(fami     , '-'  , kpg   , ksp , meta_type,&
                              nb_phasis, phase, zcold_ = zalpha)
     endif
+    do k = 1, nb_phasis-1
+        deltaz(k) = phase(k) - phasm(k)
+    end do
 !
 ! - Compute thermic strain
 !
@@ -310,31 +314,17 @@ integer, intent(out) :: iret
                 endif
             end do
         end do
-!
-! 2.9 - PLASTICITE DE TRANSFORMATION
-!
+! ----- Parameters for plasticity of tranformation
         trans = 0.d0
         if (compor(1)(1:12) .eq. 'META_P_CL_PT' .or. compor(1)(1: 15) .eq.&
             'META_P_CL_PT_RE' .or. compor(1)(1:12) .eq. 'META_V_CL_PT' .or.&
             compor(1)(1:15) .eq. 'META_V_CL_PT_RE') then
-            nomres(1) = 'F1_K'
-            nomres(2) = 'F2_K'
-            nomres(3) = 'F1_D_F_META'
-            nomres(4) = 'F2_D_F_META'
-            call rcvalb(fami, kpg, ksp, poum, imat,&
-                        ' ', 'META_PT', 0, ' ', [0.d0],&
-                        2, nomres, valres, icodre, 2)
+            call metaGetParaPlasTransf('+'      , fami     , 1     , 1     , imat,&
+                                       meta_type, nb_phasis, deltaz, zalpha,&
+                                       kpt      , fpt)
             do k = 1, nb_phasis-1
-                kpt (k) = valres(k)
-                zvarim = phasm(k)
-                zvarip = phase(k)
-                deltaz = (zvarip - zvarim)
-                if (deltaz .gt. 0.d0) then
-                    j = 2+k
-                    call rcvalb(fami, 1, 1, '+', imat,&
-                                ' ', 'META_PT', 1, 'META', [zalpha],&
-                                1, nomres(j), valres(j), icodre( j), 2)
-                    trans = trans + kpt(k)*valres(j)*(zvarip- zvarim)
+                if (deltaz(k) .gt. 0.d0) then
+                    trans = trans + kpt(k)*fpt(k)*deltaz(k)
                 endif
             end do
         endif

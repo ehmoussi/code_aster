@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,23 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
 !
 interface
-    subroutine get_meta_plas_t(poum     , fami     , kpg      , ksp      , j_mater   ,&
-                               meta_type, nb_phasis, phas_prev, phas_curr, zcold_curr,&
-                               kpt      , fpt)
+    subroutine metaGetParaPlasTransf(poum     , fami     , kpg       , ksp       , j_mater,&
+                                     meta_type, nb_phasis, phase_incr, phase_cold,&
+                                     kpt      , fpt)
         character(len=1), intent(in) :: poum
         character(len=*), intent(in) :: fami
-        integer, intent(in) :: kpg
-        integer, intent(in) :: ksp
+        integer, intent(in) :: kpg, ksp
         integer, intent(in) :: j_mater
         integer, intent(in) :: meta_type
         integer, intent(in) :: nb_phasis
-        real(kind=8), intent(in) :: phas_prev(*)
-        real(kind=8), intent(in) :: phas_curr(*)
-        real(kind=8), intent(in) :: zcold_curr
-        real(kind=8), intent(out) :: kpt(*)
-        real(kind=8), intent(out) :: fpt(*)
-    end subroutine get_meta_plas_t
+        real(kind=8), intent(in) :: phase_incr(*), phase_cold
+        real(kind=8), intent(out) :: kpt(*), fpt(*)
+    end subroutine metaGetParaPlasTransf
 end interface
