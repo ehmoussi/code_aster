@@ -16,76 +16,112 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine mfrontExternalStateVariable(carcri,&
-                                       fami  , kpg      , ksp, imate, &
-                                       temp  , dtemp    , &
-                                       predef, dpred    , &
-                                       neps  , epsth    , depsth, rela_comp)
+subroutine mfrontExternalStateVariable(carcri, rela_comp, fami, kpg, ksp, &
+                                         irets, ireth, &
+                                         sechm, sechp, hydrm, hydrp, &
+                                         predef, dpred)
+!
+use calcul_module, only : ca_vext_eltsize1_, ca_vext_hygrm_, ca_vext_hygrp_
 !
 implicit none
 !
+#include "asterfort/Behaviour_type.h"
+#include "asterfort/r8inir.h"
+#include "asterc/r8nnem.h"
 #include "asterc/mfront_get_external_state_variable.h"
 #include "asterfort/assert.h"
-#include "asterfort/mfront_varc.h"
-#include "asterfort/Behaviour_type.h"
+#include "asterfort/utmess.h"
+#include "asterfort/rcvarc.h"
 !
 real(kind=8), intent(in) :: carcri(*)
+character(len=16), intent(in) :: rela_comp
 character(len=*), intent(in) :: fami
 integer, intent(in) :: kpg, ksp
-integer, intent(in) :: imate
-real(kind=8), intent(out) :: temp, dtemp
+integer, intent(in)      :: irets, ireth
+real(kind=8), intent(in) :: sechm, sechp, hydrm, hydrp
 real(kind=8), intent(out) :: predef(*), dpred(*)
-integer, intent(in) :: neps
-real(kind=8), intent(out) :: epsth(neps), depsth(neps)
-character(len=16),optional,intent(in) :: rela_comp
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Behaviour (MFront)
 !
-! Prepare external state variables
+! Prepare predef and dpred variables
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  carcri           : parameters for comportment
+! In  rela_comp        : name of comportment definition
 ! In  fami             : Gauss family for integration point rule
-! In  imate            : coded material address
 ! In  kpg              : current point gauss
 ! In  ksp              : current "sous-point" gauss
-! Out temp             : temperature at beginning of current step time
-! Out dtemp            : increment of temperature during current step time
+! In  irets            : error code for 'SECH'
+! In  ireth            : error code for 'HYDR'
+! In  sechm            : 'SECH' at the beginning of current step time
+! In  sechp            : 'SECH' at the end of current step time
+! In  hydrm            : 'HYDR' at the beginning of current step time
+! In  hydrp            : 'HYDR' at the end of current step time
 ! Out predef           : external state variables at beginning of current step time
 ! Out dpred            : increment of external state variables during current step time
-! In  neps             : number of components of strains
-! Out epsth            : thermic strains at beginning of current step time
-! Out depsth           : increment of thermic strains during current step time
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer, parameter :: nb_varc_maxi = 8
-    integer :: nb_varc, jvariexte
-    character(len=8) :: list_varc(nb_varc_maxi)
+    integer            :: i_varc, iret, iret2, nb_varc
+    real(kind=8)       :: vrcm, vrcp
+    character(len=8)   :: list_varc(nb_varc_maxi)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    jvariexte = nint(carcri(IVARIEXTE))
+    call r8inir(nb_varc_maxi, r8nnem(), predef, 1)
+    call r8inir(nb_varc_maxi, r8nnem(), dpred, 1)
+!
+! Get the ExternalStateVariables declared in the mfront law
     call mfront_get_external_state_variable(int(carcri(14)), int(carcri(15)),&
                                             list_varc      , nb_varc)
 !
     ASSERT(nb_varc .le. nb_varc_maxi)
 !
-    if (present(rela_comp)) then
-        call mfront_varc(fami   , kpg      , ksp, imate, &
-                        nb_varc, list_varc, jvariexte, &
-                        temp   , dtemp    , &
-                        predef , dpred    , &
-                        neps   , epsth    , depsth, rela_comp)
-    else
-        call mfront_varc(fami   , kpg      , ksp, imate, &
-                        nb_varc, list_varc, jvariexte, &
-                        temp   , dtemp    , &
-                        predef , dpred    , &
-                        neps   , epsth    , depsth)
-    endif
-!
+    do i_varc = 1, nb_varc
+        if (list_varc(i_varc) .eq. 'SECH' ) then
+            if (irets .eq. 0) then
+                predef(i_varc) = sechm
+                dpred(i_varc)  = sechp-sechm
+            else 
+                call utmess('F', 'COMPOR4_23', sk = list_varc(i_varc))
+            endif
+        else
+            if (list_varc(i_varc) .eq. 'HYDR' ) then
+                if (ireth .eq. 0) then
+                    predef(i_varc) = hydrm
+                    dpred(i_varc)  = hydrp-hydrm
+                else 
+                    if (rela_comp.ne.'BETON_BURGER') then
+                        call utmess('F', 'COMPOR4_23', sk = list_varc(i_varc))
+                    endif
+                endif
+            else 
+                call rcvarc(' ', list_varc(i_varc), '-', fami, kpg, ksp, vrcm, iret)
+                if (iret .eq. 0) then
+                    call rcvarc('F', list_varc(i_varc), '+', fami, kpg, ksp, vrcp, iret2)
+                    predef(i_varc) = vrcm
+                    dpred(i_varc)  = vrcp-vrcm
+                else
+                    if (list_varc(i_varc) .eq. 'ELTSIZE1') then
+                        predef(i_varc) = ca_vext_eltsize1_
+                    endif
+                    if (list_varc(i_varc) .eq. 'HYGR') then
+                        predef(i_varc) = ca_vext_hygrm_
+                        dpred(i_varc)  = ca_vext_hygrp_-ca_vext_hygrm_
+                    endif
+                    if ((list_varc(i_varc) .ne. 'HYGR') .and. &
+                    (list_varc(i_varc) .ne. 'ELTSIZE1')) then
+                        if (rela_comp .ne. 'BETON_BURGER') then
+                            call utmess('F', 'COMPOR4_23', sk = list_varc(i_varc))
+                        endif
+                    endif
+                endif
+            endif
+        endif
+    enddo
+
 end subroutine

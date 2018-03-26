@@ -21,6 +21,7 @@ subroutine lc0058(fami , kpg   , ksp   , ndim  , typmod,&
                   imate, compor, carcri, instam, instap,&
                   neps , epsm  , deps  , nsig  , sigm  ,&
                   nvi  , vim   , option, angmas, icomp ,&
+                  temp , dtemp , predef, dpred ,&
                   sigp , vip   , dsidep, codret)
 !
 implicit none
@@ -55,6 +56,8 @@ real(kind=8), intent(in) :: vim(*)
 character(len=16), intent(in) :: option
 real(kind=8), intent(in) :: angmas(*)
 integer, intent(in) :: icomp
+real(kind=8), intent(in) :: temp, dtemp
+real(kind=8), intent(in) :: predef(*), dpred(*)
 real(kind=8), intent(out) :: sigp(6)
 real(kind=8), intent(out) :: vip(nvi)
 real(kind=8), intent(out) :: dsidep(6, 6)
@@ -88,6 +91,10 @@ integer, intent(out) :: codret
 ! In  option           : name of option to compute
 ! In  angmas           : nautical angles
 ! In  icomp            : indicator of local sub-step
+! In temp              : temperature at beginning of current step time
+! In dtemp             : increment of temperature during current step time
+! In predef            : external state variables at beginning of current step time
+! In dpred             : increment of external state variables during current step time
 ! Out sigm             : stresses at end of current step time
 ! Out vip              : internal state variables at end of current step time
 ! Out dsidep           : tangent matrix
@@ -96,19 +103,17 @@ integer, intent(out) :: codret
 ! --------------------------------------------------------------------------------------------------
 !
     integer, parameter :: npropmax = 197
-    integer, parameter :: npred = 8
     integer :: nprops, nstatv, j, i, pfcmfr, nummod, jvariexte, jstrainexte
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
     real(kind=8), parameter :: usrac2 = sqrt(2.d0)*0.5d0
     real(kind=8) :: drot(3, 3), dstran(9), props(npropmax)
     real(kind=8) :: time(2)
-    real(kind=8) :: predef(npred), dpred(npred)
     real(kind=8) :: ddsdde(54)
     real(kind=8) :: stran(9)
-    real(kind=8) :: dtime, temp, dtemp, pnewdt
-    real(kind=8) :: depsth(6), epsth(6), drott(3, 3)
+    real(kind=8) :: dtime, pnewdt
+    real(kind=8) :: drott(3, 3)
     character(len=16) :: rela_comp, defo_comp
-    aster_logical :: l_pred, l_simomiehe, l_grotgdep, l_czm
+    aster_logical :: l_simomiehe, l_grotgdep, l_czm
     integer :: ntens, ndi
     common/tdim/  ntens  , ndi
 !
@@ -123,7 +128,6 @@ integer, intent(out) :: codret
     pfcmfr         = nint(carcri(16))
     jvariexte      = nint(carcri(IVARIEXTE))
     jstrainexte    = nint(carcri(ISTRAINEXTE))
-    l_pred         = option(1:9).eq. 'RIGI_MECA'
     l_simomiehe    = ASTER_FALSE
     l_grotgdep     = ASTER_FALSE
     if (jstrainexte .eq. MFRONT_STRAIN_GROTGDEP_L) then
@@ -131,9 +135,6 @@ integer, intent(out) :: codret
     endif
     l_czm          = typmod(2).eq.'ELEMJOIN'
     ASSERT(.not. l_czm)
-    if (l_czm) then
-        ntens = 6
-    endif
 !
 ! - Get material properties
 !
@@ -155,20 +156,11 @@ integer, intent(out) :: codret
         ASSERT(.false.)
     endif
 !
-! - Prepare external state variables
-!
-    call mfrontExternalStateVariable(carcri,&
-                                     fami   , kpg      , ksp, imate, &
-                                     temp   , dtemp    , &
-                                     predef , dpred    , &
-                                     neps   , epsth    , depsth, rela_comp)
-!
 ! - Prepare strains
 !
-    call mfrontPrepareStrain(l_simomiehe, l_grotgdep, l_pred, l_czm,&
-                             neps       , epsm      , deps  ,&
-                             epsth      , depsth    ,&
-                             stran      , dstran)
+    call mfrontPrepareStrain(l_simomiehe, l_grotgdep, option, &
+                             neps , epsm , deps ,&
+                             stran , dstran)
 !
 ! - Modify number of internal state variables
 !
