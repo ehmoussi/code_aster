@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ loi = LoiComportement(
     nom            = 'ELAS_POUTRE_GR',
     lc_type        = ('MECANIQUE',),
     doc            =   """ERelation de comportement élastique pour les poutres en grands déplacements et grandes rotations
-   (DEFORMATION: 'GREEN_GR' est obligatoire). (Cf. [R5.03.40] pour plus de détail)."""            ,
+   (DEFORMATION: 'GREEN_GR' est obligatoire). (Cf. [R5.03.40] pour plus de détail)."""              ,
     num_lc         = 0,
     nb_vari        = 3,
     nom_vari       = ('GR1','GR2','GR3',),
@@ -37,4 +37,5 @@ loi = LoiComportement(
     proprietes     = ('COMP_ELAS',),
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

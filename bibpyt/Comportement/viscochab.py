@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ loi = LoiComportement(
     lc_type        = ('MECANIQUE',),
     doc            =   """Modèle élastoviscoplastique de Lemaitre-Chaboche avec effet de
    mémoire et restauration.
-   Ce modèle s'emploie avec les mots clés DEFORMATION = PETIT ou PETIT_REAC."""            ,
+   Ce modèle s'emploie avec les mots clés DEFORMATION = PETIT ou PETIT_REAC."""              ,
     num_lc         = 32,
     nb_vari        = 28,
     nom_vari       = ('VISCHA1','VISCHA2','VISCHA3','VISCHA4','VISCHA5',
@@ -43,4 +43,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ from cata_comportement import LoiComportement
 loi = LoiComportement(
     nom            = 'CJS',
     lc_type        = ('MECANIQUE',),
-    doc            =   """Comportement élastoplastique multicritère des sols  cf. R7.01.13"""            ,
+    doc            =   """Comportement élastoplastique multicritère des sols  cf. R7.01.13"""              ,
     num_lc         = 23,
     nb_vari        = 16,
     nom_vari       = ('SEUILISO','ANGLEDEV','XCINXX','XCINYY','XCINZZ',
@@ -39,4 +39,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('No',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

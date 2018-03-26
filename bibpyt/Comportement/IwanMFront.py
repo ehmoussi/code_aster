@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ loi = LoiComportementMFront(
     nom            = 'Iwan',
     symbol_mfront  = 'asteriwan',
     lc_type        = ('MECANIQUE',),
-    doc            =   """To complete ..."""          ,
+    doc            =   """To complete ..."""            ,
     num_lc         = 58,
     nb_vari        = 0,
     nom_vari       = None,
@@ -37,4 +37,5 @@ loi = LoiComportementMFront(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('MECANIQUE',),
 )

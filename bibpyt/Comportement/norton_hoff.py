@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ loi = LoiComportement(
    (voir mot clé PILOTAGE='ANA_LIM' de STAT_NON_LINE [U4.51.03]).
    Il est fortement conseillé d'employer de la recherche linéaire (voir mot clé RECH_LINEAIRE de STAT_NON_LINE [U4.51.03]).
    En effet, le calcul de la charge limite requiert beaucoup d'itérations de recherche linéaire (de l'ordre de 50)
-   et d'itérations de Newton (de l'ordre de 50)."""            ,
+   et d'itérations de Newton (de l'ordre de 50)."""              ,
     num_lc         = 17,
     nb_vari        = 1,
     nom_vari       = ('VIDE',),
@@ -44,4 +44,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

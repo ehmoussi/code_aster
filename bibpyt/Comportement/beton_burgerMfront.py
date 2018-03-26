@@ -24,7 +24,8 @@ from cata_comportement import LoiComportementMFront
 loi = LoiComportementMFront(
     nom            = 'BETON_BURGER',
     symbol_mfront  = 'asterbeton_burger',
-    doc            =   """Comportement de fluage propre du beton selon modele de burger avec non linearite sur le fluide de Maxwell (R7.01.35)"""        ,
+    lc_type        = None,
+    doc            =   """Comportement de fluage propre du beton selon modele de burger avec non linearite sur le fluide de Maxwell (R7.01.35)"""          ,
     num_lc         = 58,
     nb_vari        = 0,
     nom_vari       = None,
@@ -36,4 +37,5 @@ loi = LoiComportementMFront(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('MECANIQUE',),
 )

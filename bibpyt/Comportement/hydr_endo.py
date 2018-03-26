@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ loi = LoiComportement(
     doc            =   """Loi de comportement hydraulique, si le comportement mécanique est endommageant
    (donc si on utilise 'MAZARS' ou 'ENDO_ISOT_BETON') sous RELATION_KIT. Ce mot clé permet de renseigner la
    courbe de saturation et sa dérivée en fonction de la pression capillaire
-   ainsi que la perméabilité relative et sa dérivée en fonction de la saturation."""            ,
+   ainsi que la perméabilité relative et sa dérivée en fonction de la saturation."""              ,
     num_lc         = 0,
     nb_vari        = 1,
     nom_vari       = ('RHOLIQ',),
@@ -40,4 +40,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

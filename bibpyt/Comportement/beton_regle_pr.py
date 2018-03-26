@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ loi = LoiComportement(
 -c'est une loi 2D et plus exactement 2 fois 1D : dans le repère propre de déformation, on écrit une loi 1D contrainte-déformation ;
 -la loi 1D sur chaque direction de déformation propre est la suivante :
 * en traction, linéaire jusqu'à un pic, adoucissement linéaire jusqu'à 0 ;
-* en compression, une loi puissance jusqu'à un plateau (d'ou PR : parabole-rectangle)."""            ,
+* en compression, une loi puissance jusqu'à un plateau (d'ou PR : parabole-rectangle)."""              ,
     num_lc         = 9,
     nb_vari        = 1,
     nom_vari       = ('EPSPEQ',),
@@ -41,4 +41,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

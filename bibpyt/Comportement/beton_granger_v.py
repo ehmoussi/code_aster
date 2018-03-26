@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ loi = LoiComportement(
     nom            = 'BETON_GRANGER_V',
     lc_type        = ('MECANIQUE',),
     doc            =   """Comportement de fluage propre du beton avec prise en compte du
-   phénomène de vieillissement, cf. R7.01.01"""            ,
+   phénomène de vieillissement, cf. R7.01.01"""              ,
     num_lc         = 26,
     nb_vari        = 55,
     nom_vari       = ('VG1','VG2','VG3','VG4','VG5',
@@ -47,4 +47,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

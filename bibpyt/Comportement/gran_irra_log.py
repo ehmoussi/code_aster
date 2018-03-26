@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ loi = LoiComportement(
    similaire à la loi VISC_IRRA_LOG pour la déformation viscoplastique, et intégrant en plus une déformation de grandissement
    sous irradiation (cf. [R5.03.09]). Le champ de fluence est défini par le mot-clé AFFE_VARC de la commande AFFE_MATERIAU.
    Le grandissement ne se faisant que selon une direction, il est nécessaire dans les cas 3D et 2D de donner la direction du grandissement
-   par l'opérande ANGL_REP du mot clé MASSIF de l'opérateur AFFE_CARA_ELEM"""            ,
+   par l'opérande ANGL_REP du mot clé MASSIF de l'opérateur AFFE_CARA_ELEM"""              ,
     num_lc         = 28,
     nb_vari        = 3,
     nom_vari       = ('EPSPEQ','IRVECU','EPSGRD',),
@@ -40,4 +40,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

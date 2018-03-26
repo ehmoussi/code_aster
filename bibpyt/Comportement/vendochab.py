@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ loi = LoiComportement(
     nom            = 'VENDOCHAB',
     lc_type        = ('MECANIQUE',),
     doc            =   """Modèle viscoplastique couplé à l'endommagement isotrope de Lemaitre-Chaboche [R5.03.15].
-   Ce modèle s'emploie avec les mots clés DEFORMATION = PETIT ou PETIT_REAC."""            ,
+   Ce modèle s'emploie avec les mots clés DEFORMATION = PETIT ou PETIT_REAC."""              ,
     num_lc         = 31,
     nb_vari        = 10,
     nom_vari       = ('EPSPXX','EPSPYY','EPSPZZ','EPSPXY','EPSPXZ',
@@ -38,4 +38,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

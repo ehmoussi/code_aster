@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ loi = LoiComportement(
     nom            = 'VMIS_CINE_GC',
     lc_type        = ('MECANIQUE',),
     doc            =   """Loi de Von Mises en 1D - Écrouissage cinématique linéaire.
-   Application aux études en génie civil : armatures, trellis soudés"""            ,
+   Application aux études en génie civil : armatures, trellis soudés"""              ,
     num_lc         = 0,
     nb_vari        = 6,
     nom_vari       = ('CRITSIG','CRITEPS','XCINXX','INDIPLAS','DISSIP',
@@ -38,4 +38,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

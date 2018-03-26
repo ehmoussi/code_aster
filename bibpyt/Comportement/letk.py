@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ loi = LoiComportement(
     nom            = 'LETK',
     lc_type        = ('MECANIQUE',),
     doc            =   """Relation de comportement pour la modélisation élasto visco plastique des roches suivant le modèle de Laigle et Kleine, cf. [R7.01.24].
-   L'opérateur relatif à la prédiction élastique est celui de l'élasticité non linéaire spécifique à la loi."""            ,
+   L'opérateur relatif à la prédiction élastique est celui de l'élasticité non linéaire spécifique à la loi."""              ,
     num_lc         = 35,
     nb_vari        = 9,
     nom_vari       = ('XIP','GAMMAP','XIVP','GAMMAVP','INDICDIL',
@@ -38,4 +38,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('No',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

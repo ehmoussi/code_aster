@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ loi = LoiComportement(
     doc            =   """Loi de comportement hydraulique, si le comportement mécanique est sans endommagement :
    Ici et uniquement pour les lois de couplage liquide/gaz 'LIQU_GAZ', 'LIQU_AD_VAPE_GAZ' et 'LIQU_AD_GAZ',
    les courbes de saturation, de perméabilités relatives à l'eau  et leur dérivées sont définies par
-   le modèle de Mualem Van-Genuchten. Celle au gaz par une loi cubique """            ,
+   le modèle de Mualem Van-Genuchten. Celle au gaz par une loi cubique """              ,
     num_lc         = 0,
     nb_vari        = 1,
     nom_vari       = ('RHOLIQ',),
@@ -38,4 +38,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )
