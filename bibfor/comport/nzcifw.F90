@@ -30,6 +30,7 @@ implicit none
 #include "asterfort/nzcalc.h"
 #include "asterfort/rcvarc.h"
 #include "asterfort/verift.h"
+#include "asterfort/metaGetMechanism.h"
 #include "asterfort/metaGetType.h"
 #include "asterfort/metaGetPhase.h"
 #include "asterfort/metaGetParaVisc.h"
@@ -108,7 +109,8 @@ integer, intent(out) :: iret
     real(kind=8) :: plasti, dp, seuil
     real(kind=8) :: coef1, coef2, coef3, dv, n0(5), b
     character(len=1) :: poum
-    aster_logical :: resi, rigi, l_visc
+    aster_logical :: resi, rigi
+    aster_logical :: l_visc, l_plas, l_anneal, l_plas_tran, l_hard_isotline, l_hard_isotnlin
     real(kind=8), parameter :: kron(6) = (/1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/)
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
 !
@@ -153,13 +155,22 @@ integer, intent(out) :: iret
     call verift(fami, kpg, ksp, poum, imat,&
                 epsth_meta_=epsth)
 !
+! - Mechanisms of comportment law
+!
+    call metaGetMechanism(compor(1),&
+                          l_plas          = l_plas,&
+                          l_visc          = l_visc,&
+                          l_anneal        = l_anneal,&
+                          l_plas_tran     = l_plas_tran,&
+                          l_hard_isotline = l_hard_isotline,&
+                          l_hard_isotnlin = l_hard_isotnlin)
+!
 ! - Get elastic parameters
 !
     call metaGetParaElas(poum, fami    , kpg     , ksp, imat,&
                          e_  = e, deuxmu_  = deuxmu, troisk_ = troisk,&
                          deuxmum_ = deumum)
     plasti = vim(37)
-    l_visc = compor(1)(1:6) .eq. 'META_V'
 !
 ! - Mixture law (yield limit)
 !
@@ -180,9 +191,7 @@ integer, intent(out) :: iret
 !
     if (resi) then
 ! ----- Parameters for annealing
-        if (compor(1)(1:15) .eq. 'META_P_CL_PT_RE' .or. compor(1)( 1:12) .eq.&
-            'META_P_CL_RE' .or. compor(1)(1:12) .eq. 'META_V_CL_RE' .or.&
-            compor(1)(1:15) .eq. 'META_V_CL_PT_RE') then
+        if (l_anneal) then
             call metaGetParaAnneal(poum     , fami    , kpg, ksp, imat,&
                                    meta_type, nb_phase,&
                                    theta)
@@ -296,10 +305,7 @@ integer, intent(out) :: iret
         end do
 ! ----- Parameters for plasticity of tranformation
         trans = 0.d0
-        if (compor(1)(1:12) .eq. 'META_P_CL_PT' .or.&
-            compor(1)(1:15) .eq. 'META_P_CL_PT_RE' .or.&
-            compor(1)(1:12) .eq. 'META_V_CL_PT' .or.&
-            compor(1)(1:15) .eq. 'META_V_CL_PT_RE') then
+        if (l_plas_tran) then
             call metaGetParaPlasTransf('+'      , fami     , 1     , 1     , imat,&
                                        meta_type, nb_phase, deltaz, zalpha,&
                                        kpt      , fpt)
@@ -388,7 +394,7 @@ integer, intent(out) :: iret
         else
             vip(37) = 1.d0
             rprim=3.d0*hmoy/2.d0
-            if (compor(1)(1:6) .eq. 'META_P') then
+            if (l_plas) then
                 dp=seuil/(1.5d0*deuxmu+(1.5d0*deuxmu*trans+1.d0)*rprim)
             else
                 call nzcalc(crit, phase, nb_phase, fmel, seuil,&

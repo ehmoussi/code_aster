@@ -27,7 +27,7 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/jevech.h"
-#include "asterfort/get_meta_comp.h"
+#include "asterfort/metaGetMechanism.h"
 #include "asterfort/metaGetParaPlasTransf.h"
 #include "asterfort/metaGetParaVisc.h"
 #include "asterfort/metaGetParaMixture.h"
@@ -116,11 +116,11 @@ real(kind=8), intent(out) :: trans
 !
     l_elas = zr(j_vari+lgpg*(kpg-1)+nb_phasis).lt.0.5d0
 !
-! - Characteristics of comportment law
+! - Mechanisms of comportment law
 !
-    call get_meta_comp(rela_comp,&
-                       l_visc = l_visc,&
-                       l_hard_line = l_hard_line, l_plas_tran = l_plas_tran)
+    call metaGetMechanism(rela_comp,&
+                          l_visc = l_visc,&
+                          l_hard_line = l_hard_line, l_plas_tran = l_plas_tran)
 !
 ! - Transformation plasticity parameters
 !

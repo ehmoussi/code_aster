@@ -15,11 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine get_meta_comp(rela_comp,&
-                         l_plas, l_visc,&
-                         l_hard_isot, l_hard_kine, l_hard_line, l_hard_rest,&
-                         l_plas_tran)
+!
+subroutine metaGetMechanism(rela_comp,&
+                            l_plas, l_visc,&
+                            l_hard_isotline, l_hard_isotnlin,&
+                            l_hard_kine, l_hard_line, l_anneal,&
+                            l_plas_tran)
 !
 implicit none
 !
@@ -28,10 +29,10 @@ implicit none
 character(len=16), intent(in) :: rela_comp
 aster_logical, optional, intent(out) :: l_plas
 aster_logical, optional, intent(out) :: l_visc
-aster_logical, optional, intent(out) :: l_hard_isot
+aster_logical, optional, intent(out) :: l_hard_isotline, l_hard_isotnlin
 aster_logical, optional, intent(out) :: l_hard_kine
 aster_logical, optional, intent(out) :: l_hard_line
-aster_logical, optional, intent(out) :: l_hard_rest
+aster_logical, optional, intent(out) :: l_anneal
 aster_logical, optional, intent(out) :: l_plas_tran
 !
 ! --------------------------------------------------------------------------------------------------
@@ -48,7 +49,7 @@ aster_logical, optional, intent(out) :: l_plas_tran
 ! Out l_hard_isot  : ASTER_TRUE if isotropic hardening
 ! Out l_hard_kine  : ASTER_TRUE if kinematic hardening
 ! Out l_hard_line  : ASTER_TRUE if linear hardening
-! Out l_hard_rest  : ASTER_TRUE if restoration hardening
+! Out l_anneal  : ASTER_TRUE if restoration hardening
 ! Out l_plas_tran  : ASTER_TRUE if transformation plasticity
 !
 ! --------------------------------------------------------------------------------------------------
@@ -67,8 +68,8 @@ aster_logical, optional, intent(out) :: l_plas_tran
         endif
     endif
 !
-    if (present(l_hard_rest)) then
-        l_hard_rest = ASTER_FALSE
+    if (present(l_anneal)) then
+        l_anneal = ASTER_FALSE
         if (rela_comp(1:12) .eq. 'META_P_IL_RE'     .or.&
             rela_comp(1:15) .eq. 'META_P_IL_PT_RE'  .or.&
             rela_comp(1:12) .eq. 'META_V_IL_RE'     .or.&
@@ -77,7 +78,7 @@ aster_logical, optional, intent(out) :: l_plas_tran
             rela_comp(1:16) .eq. 'META_P_INL_PT_RE' .or.&
             rela_comp(1:13) .eq. 'META_V_INL_RE'    .or.&
             rela_comp(1:16) .eq. 'META_V_INL_PT_RE') then
-            l_hard_rest = ASTER_TRUE
+            l_anneal = ASTER_TRUE
         endif
     endif
 !
@@ -95,11 +96,19 @@ aster_logical, optional, intent(out) :: l_plas_tran
         endif
     endif
 !
-    if (present(l_hard_isot)) then
-        l_hard_isot = ASTER_FALSE
+    if (present(l_hard_isotline)) then
+        l_hard_isotline = ASTER_FALSE
         if (rela_comp(1:9) .eq. 'META_P_IL' .or.&
             rela_comp(1:9) .eq. 'META_V_IL') then
-            l_hard_isot = ASTER_TRUE
+            l_hard_isotline = ASTER_TRUE
+        endif
+    endif
+!
+    if (present(l_hard_isotnlin)) then
+        l_hard_isotnlin = ASTER_FALSE
+        if (rela_comp(1:10) .eq. 'META_P_INL' .or.&
+            rela_comp(1:10) .eq. 'META_V_INL') then
+            l_hard_isotnlin = ASTER_TRUE
         endif
     endif
 !
