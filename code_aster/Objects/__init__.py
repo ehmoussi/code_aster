@@ -39,6 +39,7 @@ from .fieldonelements_ext import FieldOnElementsDouble
 from .fieldonnodes_ext import FieldOnNodesDouble
 from .formula_ext import Formula
 from .function_ext import Function
+from .generalizedassemblymatrix_ext import GeneralizedAssemblyMatrixDouble
 from .materialonmesh_ext import MaterialOnMesh
 from .mechanicalload_ext import GenericMechanicalLoad
 from .meshcoordinatesfield_ext import MeshCoordinatesField
