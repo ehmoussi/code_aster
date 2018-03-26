@@ -38,8 +38,8 @@ implicit none
 integer, intent(in) :: jv_mater
 real(kind=8), intent(in) :: tm, tp
 real(kind=8), intent(in) :: time_curr, time_incr
-real(kind=8), intent(in) :: vari_prev(4)
-real(kind=8), intent(out) :: vari_curr(4)
+real(kind=8), intent(in) :: vari_prev(5)
+real(kind=8), intent(out) :: vari_curr(5)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -243,10 +243,18 @@ real(kind=8), intent(out) :: vari_curr(4)
         zalph2p = 0.d0
     endif
 !
+! - Compute beta phase
+!
+    zbetap = 1.d0-zalphp
+    if (abs(zbetap) .le. zero) then
+        zbetap = 0.d0
+    endif
+!
 ! - Update internal variables
 !
     vari_curr(PALPHA1)   = zalph1p
     vari_curr(PALPHA2)   = zalph2p
+    vari_curr(PBETA)     = zbetap
     vari_curr(ZIRC_TEMP) = tp
     vari_curr(TIME_TRAN) = time_tran
 !

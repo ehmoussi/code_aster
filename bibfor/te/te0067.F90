@@ -22,32 +22,37 @@ implicit none
 !
 #include "jeveux.h"
 #include "asterfort/elrefe_info.h"
+#include "asterfort/assert.h"
 #include "asterfort/jevech.h"
 #include "asterfort/rcadma.h"
 #include "asterfort/zacier.h"
 #include "asterfort/zedgar.h"
 #include "asterfort/Metallurgy_type.h"
 !
-character(len=16) :: option, nomte
+character(len=16), intent(in) :: option, nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! Elementary computation
 !
-!    - FONCTION REALISEE:  CALCUL DE Z EN 2D ET AXI
-!                          CHGT DE PHASE METALURGIQUE
-!                          OPTION : 'META_ELGA_TEMP  ' 'META_ELNO'
-!
-!    - ARGUMENTS:
-!        DONNEES:      OPTION       -->  OPTION DE CALCUL
-!                      NOMTE        -->  NOM DU TYPE ELEMENT
+! Elements: THERMIQUE - AXIS*, PLAN*
+! Option: META_ELNO
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=16) :: compor(3)
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer, parameter :: nbv_steel = 8
+    integer, parameter :: nbv_zirc  = 5
+    integer, parameter :: nb_nd_max = 9
+    character(len=16) :: phase_type
     integer :: icodre
     real(kind=8) :: dt10, dt21, instp
     real(kind=8) :: tno1, tno0, tno2
-    real(kind=8) :: metaac(63), metazi(36)
+    real(kind=8) :: metaac(nb_nd_max*nbv_steel), metazi(nb_nd_max*nbv_zirc)
     integer :: nno, i_node, i_vari, itempe, itempa, itemps, iadtrc
     integer :: imate
     integer :: nb_hist, itempi, nbtrc, iadckm
@@ -57,6 +62,11 @@ character(len=16) :: option, nomte
 ! --------------------------------------------------------------------------------------------------
 !
     call elrefe_info(fami='RIGI', nno=nno)
+    ASSERT(nno .le. nb_nd_max)
+    ASSERT(nbv_steel .eq. STEEL_NBVARI)
+    ASSERT(nbv_zirc .eq. ZIRC_NBVARI)
+!
+! - Input fields
 !
     call jevech('PMATERC', 'L', imate)
     call jevech('PTEMPAR', 'L', itempa)
@@ -65,12 +75,17 @@ character(len=16) :: option, nomte
     call jevech('PTEMPSR', 'L', itemps)
     call jevech('PPHASIN', 'L', iphasi)
     call jevech('PCOMPOR', 'L', icompo)
+    jv_mater  = zi(imate)
+!
+! - Output fields
+!
     call jevech('PPHASNOU', 'E', iphasn)
 !
-    compor(1)=zk16(icompo)
-    jv_mater = zi(imate)
+! - Type of phase
 !
-    if (compor(1) .eq. 'ACIER') then
+    phase_type = zk16(icompo)
+!
+    if (phase_type .eq. 'ACIER') then
 !
         call jevech('PFTRC', 'L', ipftrc)
         jftrc = zi(ipftrc)
@@ -104,7 +119,7 @@ character(len=16) :: option, nomte
                     metaac(1+STEEL_NBVARI*(i_node-1)+i_vari-1)
             end do
         end do
-    else if (compor(1)(1:4).eq.'ZIRC') then
+    else if (phase_type .eq. 'ZIRC') then
         dt10 = zr(itemps+1)
         dt21 = zr(itemps+2)
         instp= zr(itemps)+dt21
@@ -120,6 +135,8 @@ character(len=16) :: option, nomte
                     metazi(1+ZIRC_NBVARI*(i_node-1)+i_vari-1)
             end do
         end do
+    else
+        ASSERT(ASTER_FALSE)
     endif
 !
 end subroutine

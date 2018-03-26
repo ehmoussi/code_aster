@@ -31,11 +31,21 @@ cata_msg = {
 
     44 : _(u"""
 Erreur dans CALC_META: l'état métallurgique initial produit par CREA_CHAMP est incomplet.
-Pour l'acier, il faut renseigner les quatre phases ferritiques et la taille de grain.
+Pour l'acier, il faut renseigner les cinq phases.
 """),
 
     45 : _(u"""
 Erreur dans CALC_META: l'état métallurgique initial produit par CREA_CHAMP est incomplet.
-Pour le zircaloy, il faut renseigner les deux phases alpha et l'instant de transition.
+Pour le Zircaloy, il faut renseigner les trois phases.
+"""),
+
+    46 : _(u"""
+Erreur dans CALC_META: l'état métallurgique initial produit par CREA_CHAMP est incomplet.
+Pour l'acier, il faut renseigner la taille de grain.
+"""),
+
+    47 : _(u"""
+Erreur dans CALC_META: l'état métallurgique initial produit par CREA_CHAMP est incomplet.
+Pour le Zircaloy, il faut renseigner l'instant de transition.
 """),
 }

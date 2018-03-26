@@ -67,8 +67,6 @@ type(META_PrepPara), intent(inout) :: ds_comporMeta
 ! ----- Get number of variables and index of behaviour
         call lcinfo(comp_code_py, nume_comp, nb_vari, idummy)
 ! ----- Glute provisoire: nombre de phases different entre CALC_META et STAT_NON_LINE
-        nb_vari = nb_vari-1
-! ----- Glute provisoire: nombre de phases different entre CALC_META et STAT_NON_LINE
         call lcdiscard(comp_code_py)
 ! ----- Save values
         ds_comporMeta%v_comp(i_comp)%phase_type = phase_type

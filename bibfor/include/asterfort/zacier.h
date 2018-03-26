@@ -32,7 +32,7 @@ interface
         real(kind=8), intent(in) :: ckm(6*nbtrc)
         real(kind=8), intent(in) :: tpg0, tpg1, tpg2
         real(kind=8), intent(in) :: dt10, dt21
-        real(kind=8), intent(in) :: vari_prev(7)
-        real(kind=8), intent(out) :: vari_curr(7)
+        real(kind=8), intent(in) :: vari_prev(8)
+        real(kind=8), intent(out) :: vari_curr(8)
     end subroutine zacier
 end interface
