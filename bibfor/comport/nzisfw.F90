@@ -31,6 +31,7 @@ implicit none
 #include "asterfort/rcvarc.h"
 #include "asterfort/utmess.h"
 #include "asterfort/verift.h"
+#include "asterfort/metaGetMechanism.h"
 #include "asterfort/metaGetType.h"
 #include "asterfort/metaGetPhase.h"
 #include "asterfort/metaGetParaVisc.h"
@@ -111,7 +112,8 @@ integer, intent(out) :: iret
     real(kind=8) :: precr
     character(len=1) :: poum
     integer :: test
-    aster_logical :: resi, rigi, l_temp, l_visc
+    aster_logical :: resi, rigi, l_temp
+    aster_logical :: l_visc, l_plas, l_anneal, l_plas_tran, l_hard_isotline, l_hard_isotnlin
     real(kind=8), parameter :: kron(6) = (/1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -159,6 +161,16 @@ integer, intent(out) :: iret
                 ksp, temp, iret2)
     l_temp = iret2 .eq. 0
 !
+! - Mechanisms of comportment law
+!
+    call metaGetMechanism(compor(1),&
+                          l_plas          = l_plas,&
+                          l_visc          = l_visc,&
+                          l_anneal        = l_anneal,&
+                          l_plas_tran     = l_plas_tran,&
+                          l_hard_isotline = l_hard_isotline,&
+                          l_hard_isotnlin = l_hard_isotnlin)
+!
 ! - Get elastic parameters
 !
     call metaGetParaElas(poum, fami    , kpg     , ksp, imat,&
@@ -166,7 +178,6 @@ integer, intent(out) :: iret
                          deuxmum_ = deumum)
     plasti = vim(7)
     trans  = 0.d0
-    l_visc = compor(1)(1:6) .eq. 'META_V'
 !
 ! - Mixture law (yield limit)
 !
@@ -176,12 +187,7 @@ integer, intent(out) :: iret
 !
     if (resi) then
 ! ----- Parameters for annealing
-        if (compor(1)(1:12) .eq. 'META_P_IL_RE' .or. compor(1)(1:15) .eq.&
-            'META_P_IL_PT_RE' .or. compor(1)(1:12) .eq. 'META_V_IL_RE' .or.&
-            compor(1)(1:15) .eq. 'META_V_IL_PT_RE' .or. compor(1)(1:13) .eq.&
-            'META_P_INL_RE' .or. compor(1)(1:16) .eq. 'META_P_INL_PT_RE' .or.&
-            compor(1)(1:13) .eq. 'META_V_INL_RE' .or. compor(1)(1:16) .eq.&
-            'META_V_INL_PT_RE') then
+        if (l_anneal) then
             call metaGetParaAnneal(poum     , fami    , kpg, ksp, imat,&
                                    meta_type, nb_phase,&
                                    theta)
@@ -258,14 +264,7 @@ integer, intent(out) :: iret
         end do
 ! ----- Parameters for plasticity of tranformation
         trans = 0.d0
-        if (compor(1)(1:12) .eq. 'META_P_IL_PT' .or.&
-            compor(1)(1:13) .eq. 'META_P_INL_PT' .or.&
-            compor(1)(1:15) .eq. 'META_P_IL_PT_RE' .or.&
-            compor(1)(1:16) .eq. 'META_P_INL_PT_RE' .or.&
-            compor(1)(1:12) .eq. 'META_V_IL_PT' .or.&
-            compor(1)(1:13) .eq. 'META_V_INL_PT' .or.&
-            compor(1)(1:15) .eq. 'META_V_IL_PT_RE' .or.&
-            compor(1)(1:16) .eq. 'META_V_INL_PT_RE') then
+        if (l_plas_tran) then
             call metaGetParaPlasTransf('+'      , fami     , 1     , 1     , imat,&
                                        meta_type, nb_phase, deltaz, zalpha,&
                                        kpt      , fpt)
@@ -283,7 +282,7 @@ integer, intent(out) :: iret
 !
 ! 2.9 - CALCUL DE HMOY ET RMOY (ON INCLUE LE SIGY)
 !
-    if (compor(1)(1:9) .eq. 'META_P_IL' .or. compor(1)(1:9) .eq. 'META_V_IL') then
+    if (l_hard_isotline) then
 ! ----- Get hardening slope (linear)
         coef_hard = (1.d0)
         call metaGetParaHardLine(poum     , fami     , kpg, ksp, imat,&
@@ -293,7 +292,7 @@ integer, intent(out) :: iret
             r(k)=h(k)*vi(k)+sy(k)
         end do
     endif
-    if (compor(1)(1:10) .eq. 'META_P_INL' .or. compor(1)(1:10) .eq. 'META_V_INL') then
+    if (l_hard_isotnlin) then
 ! ----- Get hardening slope (non-linear)
         call metaGetParaHardTrac(imat   , meta_type, nb_phase,&
                                  l_temp , temp     ,&
@@ -364,7 +363,7 @@ integer, intent(out) :: iret
 ! DANS LE CAS NON LINEAIRE
 ! VERIFICATION QU ON EST DANS LE BON INTERVALLE
 !
-            if (compor(1)(1:10) .eq. 'META_P_INL' .or. compor(1)(1: 10) .eq. 'META_V_INL') then
+            if (l_hard_isotnlin) then
 !
                 do j = 1, maxval
                     test=0
@@ -428,20 +427,20 @@ integer, intent(out) :: iret
         end do
         vip(6)=0.d0
         if (phase(nb_phase) .gt. 0.d0) then
-            if (compor(1)(1:9) .eq. 'META_P_IL' .or. compor(1)(1:9) .eq. 'META_V_IL') then
+            if (l_hard_isotline) then
                 vip(6)=vip(6)+(1-fmel)*h(nb_phase)*vip(nb_phase)
             endif
-            if (compor(1)(1:10) .eq. 'META_P_INL' .or. compor(1)(1:10) .eq. 'META_V_INL') then
+            if (l_hard_isotnlin) then
                 vip(6)=vip(6)+(1-fmel)*(r(nb_phase)-sy(nb_phase))
             endif
         endif
 !
         if (zalpha .gt. 0.d0) then
             do k = 1, nb_phase-1
-                if (compor(1)(1:9) .eq. 'META_P_IL' .or. compor(1)(1: 9) .eq. 'META_V_IL') then
+                if (l_hard_isotline) then
                     vip(6)=vip(6)+fmel*phase(k)*h(k)*vip(k)/ zalpha
                 endif
-                if (compor(1)(1:10) .eq. 'META_P_INL' .or. compor(1)( 1:10) .eq. 'META_V_INL') then
+                if (l_hard_isotnlin) then
                     vip(6)=vip(6)+fmel*phase(k)*(r(k)-sy(k))/ zalpha
                 endif
             end do

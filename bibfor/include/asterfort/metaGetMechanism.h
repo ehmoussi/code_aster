@@ -18,17 +18,18 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine get_meta_comp(rela_comp,&
-                             l_plas, l_visc,&
-                             l_hard_isot, l_hard_kine, l_hard_line, l_hard_rest,&
-                             l_plas_tran)
+    subroutine metaGetMechanism(rela_comp,&
+                                l_plas, l_visc,&
+                                l_hard_isotline, l_hard_isotnlin,&
+                                l_hard_kine, l_hard_line, l_anneal,&
+                                l_plas_tran)
         character(len=16), intent(in) :: rela_comp
         aster_logical, optional, intent(out) :: l_plas
         aster_logical, optional, intent(out) :: l_visc
-        aster_logical, optional, intent(out) :: l_hard_isot
+        aster_logical, optional, intent(out) :: l_hard_isotline, l_hard_isotnlin
         aster_logical, optional, intent(out) :: l_hard_kine
         aster_logical, optional, intent(out) :: l_hard_line
-        aster_logical, optional, intent(out) :: l_hard_rest
+        aster_logical, optional, intent(out) :: l_anneal
         aster_logical, optional, intent(out) :: l_plas_tran
-    end subroutine get_meta_comp
+    end subroutine metaGetMechanism
 end interface
