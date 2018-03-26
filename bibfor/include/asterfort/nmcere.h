@@ -18,14 +18,14 @@
 ! aslint: disable=W1504
 !
 interface
-    subroutine nmcere(model          , nume_dof  , ds_material, cara_elem,&
-                      ds_constitutive, ds_contact, list_load  , fonact   , ds_measure ,&
-                      iterat         , sdnume    , valinc     , solalg   , hval_veelem,&
-                      hval_veasse    , offset    , rho        , eta      , residu     ,&
+    subroutine nmcere(model          , nume_dof  , ds_material, cara_elem     ,&
+                      ds_constitutive, ds_contact, list_load  , list_func_acti, ds_measure ,&
+                      iter_newt      , sdnume    , valinc     , solalg        , hval_veelem,&
+                      hval_veasse    , offset    , rho        , eta           , residu     ,&
                       ldccvg         , matr_asse)
         use NonLin_Datastructure_type
-        integer :: fonact(*)
-        integer :: iterat, ldccvg
+        integer :: list_func_acti(*)
+        integer :: iter_newt, ldccvg
         real(kind=8) :: eta, rho, offset, residu
         character(len=19) :: list_load, sdnume, matr_asse
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive

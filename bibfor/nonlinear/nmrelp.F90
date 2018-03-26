@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine nmrelp(model          , nume_dof , ds_material, cara_elem ,&
-                  ds_constitutive, list_load, fonact     , iterat    , ds_measure,&
+                  ds_constitutive, list_load, list_func_acti     , iter_newt    , ds_measure,&
                   sdnume         , sddyna   , ds_algopara, ds_contact, valinc    ,&
                   solalg         , veelem   , veasse     , ds_conv   , ldccvg)
 !
@@ -55,8 +55,8 @@ implicit none
 #include "asterfort/nonlinSubStruCompute.h"
 #include "blas/daxpy.h"
 !
-integer :: fonact(*)
-integer :: iterat, ldccvg
+integer :: list_func_acti(*)
+integer :: iter_newt, ldccvg
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 type(NL_DS_Contact), intent(in) :: ds_contact
 type(NL_DS_Measure), intent(inout) :: ds_measure
@@ -134,9 +134,9 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
 !
 ! --- FONCTIONNALITES ACTIVEES
 !
-    lgrot = isfonc(fonact,'GD_ROTA')
-    lendo = isfonc(fonact,'ENDO_NO')
-    lnkry = isfonc(fonact,'NEWTON_KRYLOV')
+    lgrot = isfonc(list_func_acti,'GD_ROTA')
+    lendo = isfonc(list_func_acti,'ENDO_NO')
+    lnkry = isfonc(list_func_acti,'NEWTON_KRYLOV')
 !
 ! --- INITIALISATIONS
 !
@@ -213,7 +213,7 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
 !
 ! --- CALCUL DE F(RHO=0)
 !
-    call nmrecz(nume_dof, ds_contact, fonact, &
+    call nmrecz(nume_dof, ds_contact, list_func_acti, &
                 cndiri, cnfint, cnfext, cnsstr, ddepla,&
                 f0)
 !
@@ -271,10 +271,12 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
             call nmdebg('VECT', depdet, 6)
         endif
 ! ----- Update internal forces
-        call nmfint(model, mate  , cara_elem, varc_refe, ds_constitutive,&
-                    fonact, iterat, sddyna, ds_measure, valint(1, act) ,&
-                    solalt, ldccvg, vefint)
-        call nmaint(nume_dof, fonact, sdnume,&
+        call nmfint(model          , cara_elem      ,&
+                    ds_material    , ds_constitutive,&
+                    list_func_acti , iter_newt      , sddyna, ds_measure,&
+                    valint(1, act) , solalt         ,&
+                    vefint         , ldccvg   )
+        call nmaint(nume_dof, list_func_acti, sdnume,&
                     vefint, cnfins(act))
 ! ----- Update force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
         call nonlinRForceCompute(model   , ds_material, cara_elem, list_load,&
@@ -306,7 +308,7 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
 !
 ! ----- CALCUL DE F(RHO)
 !
-        call nmrecz(nume_dof, ds_contact, fonact, &
+        call nmrecz(nume_dof, ds_contact, list_func_acti, &
                     cndirs(act), cnfins(act), cnfext, cnsstr, ddepla, f)
 !
         if (niv .ge. 2) then

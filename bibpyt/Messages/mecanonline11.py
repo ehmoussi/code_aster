@@ -21,13 +21,13 @@
 
 cata_msg = {
 
-    1  : _(u"""Calcul des composantes du second membre à la prédiction."""),
+    1  : _(u"""Préparation du second membre pour la prédiction."""),
 
-    2  : _(u"""Calcul des composantes du second membre à la correction."""),
+    2  : _(u"""Préparation du second membre pour la correction."""),
 
-    3  : _(u"""Calcul des composantes du second membre pour l'accélération initiale."""),
+    3  : _(u"""Préparation du second membre pour l'accélération initiale."""),
 
-    4  : _(u"""  Calcul des chargements (Dirichlet ou Neumann)."""),
+    4  : _(u"""  Calcul des chargements."""),
 
     5  : _(u"""  Calcul des chargements spécifiques à la dynamique."""),
 
@@ -45,11 +45,11 @@ cata_msg = {
 
    12  : _(u"""  Calcul des conditions limites de Dirichlet."""),
 
-   13  : _(u"""Calcul des composantes du second membre pour le pas de temps courant."""),
+   13  : _(u"""Préparation du second membre pour le pas de temps courant."""),
 
    14  : _(u"""  Calcul de la contribution des variables de commande."""),
 
-   15  : _(u"""Calcul du second membre à la correction."""),
+   15  : _(u"""Calcul du second membre pour la correction."""),
 
    16  : _(u"""Calcul du second membre pour un chargement de Dirichlet donné (EXTRAPOLE ou DEPL_CALCULE)."""),
 
@@ -57,11 +57,13 @@ cata_msg = {
 
    18  : _(u"""Calcul du second membre pour la dynamique explicite."""),
 
-   19  : _(u"""Calcul du second membre à la prédiction (statique)."""),
+   19  : _(u"""Calcul du second membre pour la prédiction (statique)."""),
 
-   20  : _(u"""Calcul du second membre à la prédiction (dynamique)."""),
+   20  : _(u"""Calcul du second membre pour la prédiction (dynamique)."""),
 
-   21  : _(u"""Calcul des composantes du second membre à la prédiction pour la dynamique explicite."""),
+   21  : _(u"""Préparation du second membre pour la prédiction (dynamique explicite)."""),
 
-   22  : _(u"""Calcul des composantes du second membre pour le pas de temps courant pour la dynamique explicite."""),
+   22  : _(u"""Préparation du second membre pour le pas de temps courant (dynamique explicite)."""),
+
+   25  : _(u"""Intégration de la loi de comportement (calcul des efforts internes)."""),
 }

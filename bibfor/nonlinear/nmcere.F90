@@ -18,10 +18,10 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmcere(model         , nume_dof, ds_material, cara_elem    ,&
-                  ds_constitutive, ds_contact, list_load, fonact, ds_measure,&
-                  iterat         , sdnume, valinc, solalg    , hval_veelem    ,&
-                  hval_veasse         , offset, rho   , eta       , residu    ,&
+subroutine nmcere(model          , nume_dof  , ds_material, cara_elem     ,&
+                  ds_constitutive, ds_contact, list_load  , list_func_acti, ds_measure ,&
+                  iter_newt      , sdnume    , valinc     , solalg        , hval_veelem,&
+                  hval_veasse    , offset    , rho        , eta           , residu     ,&
                   ldccvg         , matr_asse)
 !
 use NonLin_Datastructure_type
@@ -50,8 +50,8 @@ implicit none
 #include "asterfort/r8inir.h"
 #include "blas/daxpy.h"
 !
-integer :: fonact(*)
-integer :: iterat, ldccvg
+integer :: list_func_acti(*)
+integer :: iter_newt, ldccvg
 real(kind=8) :: eta, rho, offset, residu
 character(len=19) :: list_load, sdnume, matr_asse
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
@@ -105,7 +105,6 @@ character(len=19) :: solalg(*), valinc(*)
     integer, parameter :: zsolal = 17
     aster_logical :: lgrot, lendo
     integer :: neq, nmax
-    character(len=24) :: varc_refe, mate
     character(len=19) :: vefint
     character(len=19) :: cnfint, cnfext
     character(len=19) :: valint(zvalin)
@@ -131,11 +130,9 @@ character(len=19) :: solalg(*), valinc(*)
 !
 ! --- INITIALISATIONS
 !
-    mate      = ds_material%field_mate
-    varc_refe = ds_material%varc_refe
     k19bla = ' '
-    lgrot = isfonc(fonact,'GD_ROTA')
-    lendo = isfonc(fonact,'ENDO_NO')
+    lgrot = isfonc(list_func_acti,'GD_ROTA')
+    lendo = isfonc(list_func_acti,'ENDO_NO')
     ddep = '&&CNCETA.CHP0'
     depdet = '&&CNCETA.CHP1'
     depplt = '&&CNCETA.CHP2'
@@ -192,13 +189,18 @@ character(len=19) :: solalg(*), valinc(*)
 !
 ! - Compute internal forces
 !
-    call nmfint(model, mate  , cara_elem, varc_refe , ds_constitutive,&
-                fonact, iterat, k19bla, ds_measure, valint         ,&
-                solalt, ldccvg, vefint)
+!    call nmfint(model, mate  , cara_elem, varc_refe , ds_constitutive,&
+!                list_func_acti, iter_newt, k19bla, ds_measure, valint         ,&
+!                solalt, ldccvg, vefint)
+    call nmfint(model         , cara_elem      ,&
+                ds_material   , ds_constitutive,&
+                list_func_acti, iter_newt      , k19bla, ds_measure,&
+                valint        , solalt         ,&
+                vefint        , ldccvg   )
 !
 ! - Assemble internal forces
 !
-    call nmaint(nume_dof, fonact, sdnume,&
+    call nmaint(nume_dof, list_func_acti, sdnume,&
                 vefint  , cnfint)
 !
 ! - Update Dirichlet boundary conditions - B.U
@@ -222,7 +224,7 @@ character(len=19) :: solalg(*), valinc(*)
 ! --- REACTUALISATION DES EFFORTS EXTERIEURS (AVEC ETA)
 !
     call nmchex(hval_veasse, 'VEASSE', 'CNFEXT', cnfext)
-    call nmfext(eta, fonact, k19bla, hval_veasse, cnfext)
+    call nmfext(eta, list_func_acti, k19bla, hval_veasse, cnfext)
 !
 ! - End timer
 !
@@ -235,7 +237,7 @@ character(len=19) :: solalg(*), valinc(*)
 ! --- CALCUL DU RESIDU
 !
     if (ldccvg .eq. 0) then
-        call nmpilr(fonact, nume_dof, matr_asse, hval_veasse, ds_contact,&
+        call nmpilr(list_func_acti, nume_dof, matr_asse, hval_veasse, ds_contact,&
                     eta   , residu)
     endif
 !

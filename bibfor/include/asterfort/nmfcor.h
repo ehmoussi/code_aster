@@ -22,13 +22,13 @@
 interface
     subroutine nmfcor(model          , nume_dof   , ds_material   , cara_elem  ,&
                       ds_constitutive, list_load  , list_func_acti, ds_algopara, nume_inst,&
-                      iterat         , ds_measure , sddisc        , sddyna     , sdnume   ,&
+                      iter_newt      , ds_measure , sddisc        , sddyna     , sdnume   ,&
                       sderro         , ds_contact , hval_incr     , hval_algo,&
                       hval_veelem    , hval_veasse, hval_meelem   , hval_measse, matass   ,&
                       lerrit)
         use NonLin_Datastructure_type
         integer :: list_func_acti(*)
-        integer :: iterat, nume_inst
+        integer :: iter_newt, nume_inst
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         type(NL_DS_Measure), intent(inout) :: ds_measure
         character(len=19) :: sddisc, sddyna, sdnume

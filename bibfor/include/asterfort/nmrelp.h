@@ -18,12 +18,12 @@
 !
 interface
     subroutine nmrelp(model          , nume_dof , ds_material, cara_elem ,&
-                      ds_constitutive, list_load, fonact     , iterat    , ds_measure,&
+                      ds_constitutive, list_load, list_func_acti, iter_newt , ds_measure,&
                       sdnume         , sddyna   , ds_algopara, ds_contact, valinc    ,&
                       solalg         , veelem   , veasse     , ds_conv   , ldccvg)
         use NonLin_Datastructure_type
-        integer :: fonact(*)
-        integer :: iterat, ldccvg
+        integer :: list_func_acti(*)
+        integer :: iter_newt, ldccvg
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         type(NL_DS_Contact), intent(in) :: ds_contact
         type(NL_DS_Measure), intent(inout) :: ds_measure
