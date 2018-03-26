@@ -21,6 +21,18 @@
 
 cata_msg = {
 
+    1: _(u"""
+Liste des comportements métallurgiques.
+"""),
+
+    4: _(u"""Affecté sur %(i1)d éléments"""),
+
+    5: _(u"""  Type de phases                       : %(k1)s"""),
+
+    6: _(u"""  Modèle métallurgique                 : %(k1)s"""),
+
+    9: _(u"""  Nombre total de variables internes   : %(i1)d"""),
+
     73 : _(u"""
 Le paramètre matériau taille limite D10 n'est pas défini.
 """),

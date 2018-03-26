@@ -27,6 +27,8 @@ implicit none
 #include "asterfort/comp_meta_info.h"
 #include "asterfort/comp_meta_read.h"
 #include "asterfort/comp_meta_save.h"
+#include "asterfort/comp_meta_pvar.h"
+#include "asterfort/comp_meta_prnt.h"
 #include "asterfort/dismoi.h"
 !
 character(len=8), intent(in) :: model
@@ -47,10 +49,12 @@ character(len=19), intent(in) :: compor
 !
     integer :: nb_cmp
     character(len=8) :: mesh
+    character(len=19) :: compor_info
     type(META_PrepPara) :: ds_comporMeta
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    compor_info = '&&MTDORC.INFO'
     call dismoi('NOM_MAILLA', model, 'MODELE', repk=mesh)
 !
 ! - Create datastructure to prepare comportement
@@ -69,6 +73,14 @@ character(len=19), intent(in) :: compor
 !
     call comp_meta_save(mesh         , compor, nb_cmp, &
                         ds_comporMeta)
+!
+! - Prepare informations about internal variables
+!
+    call comp_meta_pvar(model, compor, compor_info)
+!
+! - Print informations about internal variables
+!
+    call comp_meta_prnt(compor_info)
 !
 ! - Cleaning
 !
