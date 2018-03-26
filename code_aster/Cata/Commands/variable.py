@@ -27,45 +27,66 @@ The parameters are provided as a pickle file that contains:
 - the list of the parameters values.
 """
 
+from __future__ import print_function
+
 import os.path as osp
 import pickle
 
 import numpy
 
-INPUTS = 'inputs.pick'
+from Noyau.N_utils import Singleton
 
 
-def VARIABLE(NOM_PARA, VALE):
-    """Return the value of a parameter.
+class VariableSupport(Singleton):
+    """Implementation of the VARIABLE feature for parametic study."""
 
-    If the parameter is not provided by the pickle file, the returned value is
-    the nominal one.
+    nom = 'VARIABLE' # for vocab01a
+    inputs_filename = 'inputs.pick'
 
-    Arguments:
-        NOM_PARA (str): Name of the parameter.
-        VALE (float): Nominal value of the parameter.
+    def __init__(self):
+        """Initialization"""
+        self._cache = None
 
-    Returns:
-        float: Value of the parameter.
-    """
-    if not hasattr(VARIABLE, "_cache"):
-        print "Settings variables values..."
-        if not osp.exists(INPUTS):
+    def _get_inputs(self):
+        """Read the input file and store content in cache for future calls."""
+        if self._cache is not None:
+            return self._cache
+
+        if not osp.exists(self.inputs_filename):
+            print("No such file: '{0}'".format(self.inputs_filename))
             params, values = [], []
         else:
+            print("Settings variables values...")
             with open('inputs.pick', 'rb') as pick:
                 params = pickle.load(pick)
                 values = pickle.load(pick)
 
-        VARIABLE._cache = params, values
+        self._cache = params, values
         assert len(params) == len(values), (params, values)
+        return self._cache
 
-    params, values = VARIABLE._cache
-    inputs = dict(zip(params, values))
-    value = inputs.get(NOM_PARA)
-    if value is None:
-        value = VALE
-        print "- Use nominal value for {0} = {1}".format(NOM_PARA, value)
-    else:
-        print "- From inputs file for  {0} = {1}".format(NOM_PARA, value)
-    return value
+    def __call__(self, NOM_PARA, VALE):
+        """Return the value of a parameter.
+
+        If the parameter is not provided by the pickle file, the returned value is
+        the nominal one.
+
+        Arguments:
+            NOM_PARA (str): Name of the parameter.
+            VALE (float): Nominal value of the parameter.
+
+        Returns:
+            float: Value of the parameter.
+        """
+        params, values = self._get_inputs()
+        inputs = dict(zip(params, values))
+        value = inputs.get(NOM_PARA)
+        if value is None:
+            value = VALE
+            print("- Use nominal value for {0} = {1}".format(NOM_PARA, value))
+        else:
+            print("- From inputs file for  {0} = {1}".format(NOM_PARA, value))
+        return value
+
+
+VARIABLE = VariableSupport()

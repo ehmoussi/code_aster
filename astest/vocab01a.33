@@ -9,7 +9,8 @@ import tempfile
 def getListOfCommands():
     """Build the list of operators"""
     from code_aster.Cata.Commands import commandStore
-    return commandStore.values()
+    commands = [cmd for cmd in commandStore.values() if cmd.nom != 'VARIABLE']
+    return commands
 
 def checkDefinition( commands ):
     """Check the definition of the catalog of the commands (see N_ENTITE.py)"""
