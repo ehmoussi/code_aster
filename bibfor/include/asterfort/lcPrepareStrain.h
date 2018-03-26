@@ -15,18 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
+#include "asterf_types.h"
+!
 interface
-    subroutine  mfrontExternalStateVariable(carcri, rela_comp, fami, kpg, ksp, &
-                                            irets, ireth, &
-                                            sechm, sechp, hydrm, hydrp, &
-                                            predef, dpred)
-        real(kind=8), intent(in) :: carcri(*)
-        character(len=16), intent(in) :: rela_comp
-        character(len=*), intent(in) :: fami
-        integer, intent(in) :: kpg, ksp
-        integer, intent(in)      :: irets, ireth
-        real(kind=8), intent(in) :: sechm, sechp, hydrm, hydrp
-        real(kind=8), intent(out) :: predef(*), dpred(*)
-    end subroutine mfrontExternalStateVariable
+    subroutine lcPrepareStrain(compor, option, typmod,&
+                               neps , epsth , depsth,&
+                               epsm , deps)
+        character(len=16), intent(in) :: compor(*), option
+        character(len=8), intent(in) :: typmod(*)
+        integer, intent(in) :: neps
+        real(kind=8), intent(in) :: epsth(neps), depsth(neps)
+        real(kind=8), intent(inout) :: epsm(neps), deps(neps)
+    end subroutine lcPrepareStrain
 end interface

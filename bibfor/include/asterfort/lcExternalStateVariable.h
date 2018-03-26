@@ -15,18 +15,21 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 interface
-    subroutine  mfrontExternalStateVariable(carcri, rela_comp, fami, kpg, ksp, &
-                                            irets, ireth, &
-                                            sechm, sechp, hydrm, hydrp, &
-                                            predef, dpred)
+    subroutine  lcExternalStateVariable(carcri, compor, &
+                                       fami  , kpg      , ksp, imate, &
+                                       neps  , epsth    , depsth, &
+                                       temp  , dtemp, &
+                                       predef, dpred )
         real(kind=8), intent(in) :: carcri(*)
-        character(len=16), intent(in) :: rela_comp
+        character(len=16), intent(in) :: compor(*)
         character(len=*), intent(in) :: fami
         integer, intent(in) :: kpg, ksp
-        integer, intent(in)      :: irets, ireth
-        real(kind=8), intent(in) :: sechm, sechp, hydrm, hydrp
+        integer, intent(in) :: imate
+        integer, intent(in) :: neps
+        real(kind=8), intent(out) :: epsth(neps), depsth(neps)
+        real(kind=8), intent(out) :: temp, dtemp
         real(kind=8), intent(out) :: predef(*), dpred(*)
-    end subroutine mfrontExternalStateVariable
+    end subroutine lcExternalStateVariable
 end interface
