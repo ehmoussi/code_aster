@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -145,7 +145,7 @@ class Base(object):
 
     __properties__ = ('deformation', 'mc_mater', 'modelisation', 'nb_vari',
                       'nom_vari', 'proprietes', 'algo_inte',
-                      'type_matr_tang', 'syme_matr_tang', 'exte_vari', 'lc_type')
+                      'type_matr_tang', 'syme_matr_tang', 'exte_vari', 'lc_type', 'deform_ldc')
 
     def copy(self):
         """Copie d'un objet LoiComportement"""
@@ -203,6 +203,7 @@ class Base(object):
    symétrie                          : %(syme_matr_tang)r
    nom des variables d'état externes : %(exte_vari)r
    type de la loi de comportement    : %(lc_type)r
+   déformations en entrée de la loi  : %(deform_ldc)r
 """
         return template % self.dict_info()
 
@@ -287,6 +288,8 @@ class LoiComportement(Base):
         'syme_matr_tang', (str, unicode), "Symétrie")
     lc_type = Base.gen_property(
         'lc_type', (str, unicode), "Type de la loi de comportement")
+    deform_ldc = Base.gen_property(
+        'deform_ldc', (str, unicode), "Déformations en entrée de la loi")
 
     def check_vari(self):
         """Vérifie la cohérence de la définition des variables internes"""
@@ -333,11 +336,12 @@ class LoiComportementMFront(LoiComportement):
     def long_repr(self):
         template = """Loi de comportement : %(nom)s
 '''%(doc)s'''
-   routine                    : %(num_lc)r
-   modélisations disponibles  : %(modelisation)r
-   types de déformations      : %(deformation)r
-   schémas d'intégration      : %(algo_inte)r
-   nom du symbole             : %(symbol_mfront)r
+   routine                           : %(num_lc)r
+   modélisations disponibles         : %(modelisation)r
+   types de déformations             : %(deformation)r
+   schémas d'intégration             : %(algo_inte)r
+   nom du symbole                    : %(symbol_mfront)r
+   déformations en entrée de la loi  : %(deform_ldc)r
 """
         return template % self.dict_info()
 
@@ -375,6 +379,7 @@ class KIT(Base):
     syme_matr_tang = property(Base.gen_getfunc(intersection, 'syme_matr_tang'))
     symbol_mfront = property(Base.gen_getfunc(first,        'symbol_mfront'))
     exte_vari = property(Base.gen_getfunc(intersection, 'exte_vari'))
+    deform_ldc = property(Base.gen_getfunc(first, 'deform_ldc')) #On a mis "first" comme sélection de la propriété pour un kit, mais en vrai, on ne peut pas travailler en kit avec des ldc qui n'ont pas la même valeur de "deform_ldc" ?
 
     @property
     def ldctype(self):
@@ -535,7 +540,7 @@ class CataLoiComportement(Singleton):
     def get_variexte(self, loi):
         """Retourne la liste des variables externes
 
-        CALL LCVARIEXTE(COMPOR, NBVARI, LVARI)
+        CALL LCEXTEVARI(COMPOR, NBVARI, LVARI)
         ==> exte_vari = catalc.get_variexte(COMPOR)"""
         if self.debug:
             print 'catalc.get_variexte - args =', loi
@@ -543,7 +548,7 @@ class CataLoiComportement(Singleton):
         return comport.exte_vari
 
     def query(self, loi, attr, valeur):
-        """Est-ce que VALEUR est un valeur autorisée de PROPRIETE ?
+        """Est-ce que VALEUR est une valeur autorisée de PROPRIETE ?
            CALL LCTEST(COMPOR, PROPRIETE, VALEUR, IRET)
            ==> iret = catalc.query(COMPOR, PROPRIETE, VALEUR)"""
         if self.debug:
@@ -594,6 +599,16 @@ class CataLoiComportement(Singleton):
             print 'catalc.get_symmetry - args =', loi
         comport = self.get(loi)
         return comport.syme_matr_tang
+        
+    def get_deformldc(self, loi):
+        """Retourne la nature de la déformation en entrée de la ldc
+
+        CALL LCDEFORMLDC(COMPOR, DEFORM_LDC)
+        ==> deform_ldc = catalc.get_deformldc(COMPOR)"""
+        if self.debug:
+            print 'catalc.get_deformldc - args =', loi
+        comport = self.get(loi)
+        return comport.deform_ldc
 
     def get_kit(self, *list_kit):
 #        """Identifie les LdC pour le kit THM """

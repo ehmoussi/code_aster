@@ -2438,7 +2438,7 @@ void DEFSPS(LCEXTEVARI, lcextevari, _IN char *compor, STRING_SIZE lcompor,
    Retourne la liste des variables externes
 
       CALL LCEXTEVARI(COMPOR, NBVARI, LVARI)
-      ==> nom_vari = catalc.get_variextevari(COMPOR)
+      ==> exte_vari = catalc.get_variexte(COMPOR)
 */
    PyObject *catalc, *res;
 
@@ -2446,7 +2446,7 @@ void DEFSPS(LCEXTEVARI, lcextevari, _IN char *compor, STRING_SIZE lcompor,
    res = PyObject_CallMethod(catalc, "get_variexte", "s#", compor, lcompor);
    if (res == NULL) {
       MYABORT("Echec lors de la recuperation des noms des variables externes du "\
-              "comportement (lcvariexet/get_variexte) !");
+              "comportement (lcvariexte/get_variexte) !");
    }
 
    convertxt((int)*nbvari, res, nomvar, lnomvar);
@@ -2557,7 +2557,7 @@ void DEFSS(LCSYMM, lcsymm, _IN char *compor, STRING_SIZE lcompor,
                           _OUT char *symm, STRING_SIZE lsymm)
 {
 /*
-   Retourne le nom de la fonction dans la bibliothèque MFront
+   Retourne le type de symétrie de la matrice
 
       CALL LCSYMM(COMPOR, SYMMETRY)
       ==> name = catalc.get_symmetry(COMPOR)
@@ -2567,7 +2567,7 @@ void DEFSS(LCSYMM, lcsymm, _IN char *compor, STRING_SIZE lcompor,
    catalc = GetJdcAttr("catalc");
    res = PyObject_CallMethod(catalc, "get_symmetry", "s#", compor, lcompor);
    if (res == NULL) {
-      MYABORT("Echec lors de la recuperation de la symétrie de la matrice !");
+      MYABORT("Echec lors de la récuperation de la symétrie de la matrice !");
    }
    convertxt(1, res, symm, lsymm);
 
@@ -2575,6 +2575,29 @@ void DEFSS(LCSYMM, lcsymm, _IN char *compor, STRING_SIZE lcompor,
    Py_XDECREF(catalc);
 }
 
+
+void DEFSS(LCDEFORMLDC, lcdeformldc, _IN char *compor, STRING_SIZE lcompor,
+                          _OUT char *deformldc, STRING_SIZE ldeformldc)
+{
+/*
+   Retourne la nature de la déformation en entrée de la ldc
+
+      CALL LCDEFORMLDC(COMPOR, DEFORM_LDC)
+      ==> deform_ldc = catalc.get_deformldc(COMPOR)
+*/
+   PyObject *catalc, *res;
+
+   catalc = GetJdcAttr("catalc");
+   res = PyObject_CallMethod(catalc, "get_deformldc", "s#", compor, lcompor);
+   if (res == NULL) {
+      MYABORT("Echec lors de la récuperation de la nature de la  " \
+              "déformation en entrée de la ldc (lcdeformldc/get_deformldc) !");
+   }
+   convertxt(1, res, deformldc, ldeformldc);
+
+   Py_XDECREF(res);
+   Py_XDECREF(catalc);
+}
 
 void DEFPSS(LCKITREAD, lckitread,_IN ASTERINTEGER *nbkit,
                                  _IN char *lkit, STRING_SIZE llkit,
