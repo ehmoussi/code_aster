@@ -37,7 +37,7 @@ implicit none
 #include "asterfort/rcvarc.h"
 #include "asterfort/verift.h"
 #include "asterfort/metaGetType.h"
-#include "asterfort/get_meta_phasis.h"
+#include "asterfort/metaGetPhase.h"
 #include "asterfort/Metallurgy_type.h"
 !
 character(len=*), intent(in) :: fami
@@ -163,12 +163,12 @@ integer, intent(out) :: iret
 ! - Get phasis
 !
     if (resi) then
-        call get_meta_phasis(fami     , '+'  , kpg   , ksp , meta_type,&
+        call metaGetPhase(fami     , '+'  , kpg   , ksp , meta_type,&
                              nb_phasis, phase, zcold_ = zalpha, tole_bound_ = tole_bound)
-        call get_meta_phasis(fami     , '-'  , kpg   , ksp , meta_type,&
+        call metaGetPhase(fami     , '-'  , kpg   , ksp , meta_type,&
                              nb_phasis, phasm)
     else
-        call get_meta_phasis(fami     , '-'  , kpg   , ksp , meta_type,&
+        call metaGetPhase(fami     , '-'  , kpg   , ksp , meta_type,&
                              nb_phasis, phase, zcold_ = zalpha, tole_bound_ = tole_bound)
     endif
 !

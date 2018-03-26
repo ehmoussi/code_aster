@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -127,8 +127,8 @@ CALC_POINT_MAT=OPER(nom="CALC_POINT_MAT",op=33,sd_prod=table_sdaster,reentrant='
 
      AFFE_VARC    = FACT(statut='f',max='**',
         NOM_VARC    = SIMP(statut='o',typ='TXM', into=("TEMP","CORR","IRRA","HYDR","SECH","NEUT1","NEUT2",
-                                                 "PFERRITE","PPERLITE","PBAINITE","PMARTENS",
-                                                 "ALPHPUR","ALPHBETA", #"M_ZIRC",
+                                                 "PFERRITE","PPERLITE","PBAINITE","PMARTENS","PAUSTENI",
+                                                 "ALPHPUR","ALPHBETA","BETA", 
                                                  "EPSA",
                                                   )),
         VALE_FONC   = SIMP(statut='f',typ=(fonction_sdaster,formule) ),

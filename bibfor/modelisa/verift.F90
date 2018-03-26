@@ -25,7 +25,7 @@ implicit none
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/get_elasth_para.h"
-#include "asterfort/get_meta_phasis.h"
+#include "asterfort/metaGetPhase.h"
 #include "asterfort/metaGetType.h"
 #include "asterfort/get_elas_id.h"
 #include "asterfort/rcvarc.h"
@@ -184,7 +184,7 @@ real(kind=8), optional, intent(out) :: temp_refe_
 !
         if (poum.eq.'T'.or.poum.eq.'-') then
             if (iret_temp_prev.eq.0) then
-                call get_meta_phasis(fami, '-', kpg ,ksp, meta_type, nb_phasis,& 
+                call metaGetPhase(fami, '-', kpg ,ksp, meta_type, nb_phasis,& 
                                      zcold_ = zcold_p,& 
                                      zhot_  = zhot_p)
             endif
@@ -192,7 +192,7 @@ real(kind=8), optional, intent(out) :: temp_refe_
 !
         if (poum.eq.'T'.or.poum.eq.'+') then
             if (iret_temp_prev.eq.0) then
-                call get_meta_phasis(fami, '+', kpg, ksp, meta_type, nb_phasis,& 
+                call metaGetPhase(fami, '+', kpg, ksp, meta_type, nb_phasis,& 
                                      zcold_ = zcold_c,& 
                                      zhot_  = zhot_c)
             endif

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -194,6 +194,10 @@ def simu_point_mat_ops(
                         dico['NOM_VARC'] = 'ALPHBETA'
                         dico['VALE_FONC'] = lvarc[ivarc]['V2']
                         lmotcle.append(dico)
+                        dico = {}
+                        dico['NOM_VARC'] = 'BETA'
+                        dico['VALE_FONC'] = lvarc[ivarc]['V3']
+                        lmotcle.append(dico)
                     elif(str(lvarc[ivarc]['NOM_VARC']) == 'M_ACIER'):
                         dico['NOM_VARC'] = 'PFERRITE'
                         dico['VALE_FONC'] = lvarc[ivarc]['V1']
@@ -209,6 +213,10 @@ def simu_point_mat_ops(
                         dico = {}
                         dico['NOM_VARC'] = 'PMARTENS'
                         dico['VALE_FONC'] = lvarc[ivarc]['V4']
+                        lmotcle.append(dico)
+                        dico = {}
+                        dico['NOM_VARC'] = 'PAUSTENI'
+                        dico['VALE_FONC'] = lvarc[ivarc]['V5']
                         lmotcle.append(dico)
                     else:
                         dico['NOM_VARC'] = lvarc[ivarc]['NOM_VARC']
@@ -543,6 +551,7 @@ def simu_point_mat_ops(
                         lordo2 = lvarc[ivarc]['V2'].Ordo()
                         lordo3 = lvarc[ivarc]['V3'].Ordo()
                         lordo4 = lvarc[ivarc]['V4'].Ordo()
+                        lordo5 = lvarc[ivarc]['V5'].Ordo()
                         l_affe_cham = []
                         __CHV = [None] * len(labsc)
                         __CHN = [None] * len(labsc)
@@ -573,14 +582,11 @@ def simu_point_mat_ops(
                                 OPERATION='ASSE', TYPE_CHAM='ELNO_VARI_R',
                                 MODELE=__MO, PROL_ZERO='OUI',
                                 ASSE=(
-                                    _F(CHAM_GD=__CHN[
-                                        it], NOM_CMP='X1', NOM_CMP_RESU='V1', GROUP_MA='TOUT'),
-                                    _F(CHAM_GD=__CHN[
-                                        it], NOM_CMP='X2', NOM_CMP_RESU='V2', GROUP_MA='TOUT'),
-                                    _F(CHAM_GD=__CHN[
-                                        it], NOM_CMP='X3', NOM_CMP_RESU='V3', GROUP_MA='TOUT'),
-                                    _F(CHAM_GD=__CHN[
-                                        it], NOM_CMP='X4', NOM_CMP_RESU='V4', GROUP_MA='TOUT'),
+                                    _F(CHAM_GD=__CHN[it], NOM_CMP='X1', NOM_CMP_RESU='V1', GROUP_MA='TOUT'),
+                                    _F(CHAM_GD=__CHN[it], NOM_CMP='X2', NOM_CMP_RESU='V2', GROUP_MA='TOUT'),
+                                    _F(CHAM_GD=__CHN[it], NOM_CMP='X3', NOM_CMP_RESU='V3', GROUP_MA='TOUT'),
+                                    _F(CHAM_GD=__CHN[it], NOM_CMP='X4', NOM_CMP_RESU='V4', GROUP_MA='TOUT'),
+                                    _F(CHAM_GD=__CHN[it], NOM_CMP='X5', NOM_CMP_RESU='V5', GROUP_MA='TOUT'),
                                 ))
                             dicoch["CHAM_GD"] = __CHV[it]
                             dicoch["INST"] = time
@@ -599,6 +605,7 @@ def simu_point_mat_ops(
                         lordo5 = lvarc[ivarc]['V5'].Ordo()
                         lordo6 = lvarc[ivarc]['V6'].Ordo()
                         lordo7 = lvarc[ivarc]['V7'].Ordo()
+                        lordo8 = lvarc[ivarc]['V8'].Ordo()
                         l_affe_cham = []
                         __CHV = [None] * len(labsc)
                         __CHN = [None] * len(labsc)
@@ -607,10 +614,10 @@ def simu_point_mat_ops(
                                                    OPERATION='AFFE', PROL_ZERO='OUI',
                                                    MODELE=__MO,
                                                    AFFE=(
-                                                   _F(MAILLE='VOLUME',
-                                                      NOM_CMP='X1',
-                                                      VALE=lordo1[it],
-                                                      ),
+                                                       _F(MAILLE='VOLUME',
+                                                          NOM_CMP='X1',
+                                                          VALE=lordo1[it],
+                                                          ),
                                                        _F(MAILLE='VOLUME',
                                                           NOM_CMP='X2',
                                                           VALE=lordo2[it],
@@ -635,26 +642,24 @@ def simu_point_mat_ops(
                                                           NOM_CMP='X7',
                                                           VALE=lordo7[it],
                                                           ),
+                                                       _F(MAILLE='VOLUME',
+                                                          NOM_CMP='X8',
+                                                          VALE=lordo8[it],
+                                                          ),
                                                    ),),
                             dicoch = {}
                             __CHV[it] = CREA_CHAMP(
                                 OPERATION='ASSE', TYPE_CHAM='ELNO_VARI_R',
                                 MODELE=__MO, PROL_ZERO='OUI',
                                 ASSE=(
-                                    _F(CHAM_GD=__CHN[
-                                        it], NOM_CMP='X1', NOM_CMP_RESU='V1', GROUP_MA='TOUT'),
-                                    _F(CHAM_GD=__CHN[
-                                        it], NOM_CMP='X2', NOM_CMP_RESU='V2', GROUP_MA='TOUT'),
-                                    _F(CHAM_GD=__CHN[
-                                        it], NOM_CMP='X3', NOM_CMP_RESU='V3', GROUP_MA='TOUT'),
-                                    _F(CHAM_GD=__CHN[
-                                        it], NOM_CMP='X4', NOM_CMP_RESU='V4', GROUP_MA='TOUT'),
-                                    _F(CHAM_GD=__CHN[
-                                        it], NOM_CMP='X5', NOM_CMP_RESU='V5', GROUP_MA='TOUT'),
-                                    _F(CHAM_GD=__CHN[
-                                        it], NOM_CMP='X6', NOM_CMP_RESU='V6', GROUP_MA='TOUT'),
-                                    _F(CHAM_GD=__CHN[
-                                        it], NOM_CMP='X7', NOM_CMP_RESU='V7', GROUP_MA='TOUT'),
+                                    _F(CHAM_GD=__CHN[it], NOM_CMP='X1', NOM_CMP_RESU='V1', GROUP_MA='TOUT'),
+                                    _F(CHAM_GD=__CHN[it], NOM_CMP='X2', NOM_CMP_RESU='V2', GROUP_MA='TOUT'),
+                                    _F(CHAM_GD=__CHN[it], NOM_CMP='X3', NOM_CMP_RESU='V3', GROUP_MA='TOUT'),
+                                    _F(CHAM_GD=__CHN[it], NOM_CMP='X4', NOM_CMP_RESU='V4', GROUP_MA='TOUT'),
+                                    _F(CHAM_GD=__CHN[it], NOM_CMP='X5', NOM_CMP_RESU='V5', GROUP_MA='TOUT'),
+                                    _F(CHAM_GD=__CHN[it], NOM_CMP='X6', NOM_CMP_RESU='V6', GROUP_MA='TOUT'),
+                                    _F(CHAM_GD=__CHN[it], NOM_CMP='X7', NOM_CMP_RESU='V7', GROUP_MA='TOUT'),
+                                    _F(CHAM_GD=__CHN[it], NOM_CMP='X8', NOM_CMP_RESU='V8', GROUP_MA='TOUT'),
                                 ))
                             dicoch["CHAM_GD"] = __CHV[it]
                             dicoch["INST"] = time

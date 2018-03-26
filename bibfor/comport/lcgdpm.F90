@@ -36,7 +36,7 @@ implicit none
 #include "asterfort/verift.h"
 #include "asterfort/zerop3.h"
 #include "asterfort/metaGetType.h"
-#include "asterfort/get_meta_phasis.h"
+#include "asterfort/metaGetPhase.h"
 #include "asterfort/Metallurgy_type.h"
 !
 character(len=*), intent(in) :: fami
@@ -148,20 +148,20 @@ integer, intent(out) :: iret
 ! - Get metallurgy type
 !
     call metaGetType(meta_type, nb_phasis)
-    ASSERT(meta_type.eq.META_STEEL)
+    ASSERT(meta_type .eq. META_STEEL)
     ASSERT(nb_phasis.eq.5)
 !
 ! - Get phasis
 !
     if (resi) then
         poum = '+'
-        call get_meta_phasis(fami     , '+'  , kpg   , ksp , meta_type,&
+        call metaGetPhase(fami     , '+'  , kpg   , ksp , meta_type,&
                              nb_phasis, phase, zcold_ = zalpha)
-        call get_meta_phasis(fami     , '-'  , kpg   , ksp , meta_type,&
+        call metaGetPhase(fami     , '-'  , kpg   , ksp , meta_type,&
                              nb_phasis, phasm)
     else
         poum = '-'
-        call get_meta_phasis(fami     , '-'  , kpg   , ksp , meta_type,&
+        call metaGetPhase(fami     , '-'  , kpg   , ksp , meta_type,&
                              nb_phasis, phase, zcold_ = zalpha)
     endif
 !
