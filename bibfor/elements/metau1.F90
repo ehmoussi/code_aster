@@ -26,7 +26,6 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/dfdm2d.h"
 #include "asterfort/metaGetType.h"
-#include "asterfort/get_meta_phasis.h"
 #include "asterfort/get_elas_para.h"
 #include "asterfort/get_elas_id.h"
 #include "asterfort/elrefe_info.h"

@@ -37,7 +37,7 @@ subroutine mat_proto(fami, kpg, ksp, poum, imate, itface, nprops, props)
 #include "asterfort/rccoma.h"
 #include "asterfort/rcvarc.h"
 #include "asterfort/utmess.h"
-#include "asterfort/get_meta_phasis.h"
+#include "asterfort/metaGetPhase.h"
 #include "asterfort/metaGetType.h"
 
     character(len=*), intent(in) :: fami
@@ -73,7 +73,7 @@ subroutine mat_proto(fami, kpg, ksp, poum, imate, itface, nprops, props)
 !    
     if (icodre.eq.0) then
         call metaGetType(meta_type, nb_phasis)
-        call get_meta_phasis(fami     , poum  , kpg   , ksp , meta_type,&
+        call metaGetPhase(fami     , poum  , kpg   , ksp , meta_type,&
                              nb_phasis, phase, zcold_ = zalpha)
 !
         call rcadlv(fami, kpg, ksp, poum, imate, ' ', itface, &

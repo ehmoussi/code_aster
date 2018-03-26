@@ -112,9 +112,9 @@
 #define EPSAXY    22
 #define EPSAXZ    23
 #define EPSAYZ    24
-#define PFERRITE  25
-#define PPERLITE  26
-#define PBAINITE  27
-#define PMARTENS  28
-#define ALPHPUR   29
-#define ALPHBET   30
+#define ZFERRITE  25
+#define ZPERLITE  26
+#define ZBAINITE  27
+#define ZMARTENS  28
+#define ZALPHPUR  29
+#define ZALPHBET  30

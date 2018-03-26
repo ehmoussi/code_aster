@@ -27,7 +27,7 @@ implicit none
 #include "asterfort/elrefe_info.h"
 #include "asterfort/jevech.h"
 #include "asterfort/meta_vpta_coef.h"
-#include "asterfort/get_meta_phasis.h"
+#include "asterfort/metaGetPhase.h"
 #include "asterfort/metaGetType.h"
 #include "asterfort/get_elas_id.h"
 #include "asterfort/get_elas_para.h"
@@ -168,9 +168,9 @@ character(len=16), intent(in) :: nomte
 !
         phas_prev(:) = 0.d0
         phas_curr(:) = 0.d0
-        call get_meta_phasis(fami     , '-'      , ipg        , ispg, meta_type,&
+        call metaGetPhase(fami     , '-'      , ipg        , ispg, meta_type,&
                              nb_phasis, phas_prev)
-        call get_meta_phasis(fami     , '+'      , ipg        , ispg, meta_type,&
+        call metaGetPhase(fami     , '+'      , ipg        , ispg, meta_type,&
                              nb_phasis, phas_curr, zcold_ = zcold_curr)
 !
 ! ----- Get elastic parameters
