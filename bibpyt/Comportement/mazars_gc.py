@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ loi = LoiComportement(
    En contrainte plane :
       Pas de couplage possible avec d'autres phénomènes tels que le fluage.
       Cette version permet de rendre mieux compte du cisaillement.
-   """            ,
+   """              ,
     num_lc         = 8,
     nb_vari        = 8,
     nom_vari       = ('CRITSIG','CRITEPS','ENDO','EPSEQT','EPSEQC',
@@ -45,4 +45,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('No',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

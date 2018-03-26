@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ loi = LoiComportement(
     doc            =   """Comportement élastoplastique des sols normalement consolidés (argiles par exemple). cf. R7.01.14
    La partie élastique est non-linéaire. La partie plastique peut être durcissante ou adoucissante.
    Si le modèle CAM_CLAY est utilisé avec la modélisation THM, le mot clé PORO renseigné sous CAM_CLAY et
-   sous THM_INIT doit être le même."""            ,
+   sous THM_INIT doit être le même."""              ,
     num_lc         = 22,
     nb_vari        = 7,
     nom_vari       = ('PCR','INDIPLAS','SIGP','SIEQ','EPSPVOL',
@@ -40,4 +40,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

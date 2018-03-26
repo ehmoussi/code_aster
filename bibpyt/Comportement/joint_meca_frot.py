@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ loi = LoiComportement(
     lc_type        = ('MECANIQUE',),
     doc            =   """Loi elastoplastique de Mohr-Coulomb avec adhesion pour modélisation de joints dans les barrages.
             Elle permet aussi de modéliser, avec les éléments  de joint hydro-mécaniques, un couplage entre
-            la mécanique et l'écoulement de fluide dans la fissure """            ,
+            la mécanique et l'écoulement de fluide dans la fissure """              ,
     num_lc         = 48,
     nb_vari        = 18,
     nom_vari       = ('LAMBDA','INDIPLAS','DEPPLAS1','DEPPLAS2','INDIOUV',
@@ -42,4 +42,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

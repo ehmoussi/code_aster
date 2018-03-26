@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ loi = LoiComportement(
     nom            = 'VMIS_ISOT_TRAC',
     lc_type        = ('MECANIQUE',),
     doc            =   """Loi de plasticité de Von Mises à écrouissage isotrope défini
-            par une courbe de traction affine par morceaux [R5.03.02]"""            ,
+            par une courbe de traction affine par morceaux [R5.03.02]"""              ,
     num_lc         = 2,
     nb_vari        = 2,
     nom_vari       = ('EPSPEQ','INDIPLAS',),
@@ -38,4 +38,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

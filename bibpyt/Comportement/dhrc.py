@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ loi = LoiComportement(
    La loi de comportement s'écrit directement en terme de contraintes et de déformations généralisées.
    La modélisation jusqu'à la rupture n'est pas recommandée, puisque les phénomènes de plastification des aciers et de propagation de fissures ne sont pas
    pris en compte. L'identification des paramètres nécessaires à cette loi de comportement se fait via une procédure préalable d'homogénéisation.
-   Pour les précisions sur la formulation du modèle voir [R7.01.36]"""            ,
+   Pour les précisions sur la formulation du modèle voir [R7.01.36]"""              ,
     num_lc         = 0,
     nb_vari        = 11,
     nom_vari       = ('ENDOSUP','ENDOINF','GLISXSUP','GLISYSUP','GLISXINF',
@@ -41,4 +41,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ from cata_comportement import LoiComportement
 loi = LoiComportement(
     nom            = 'LIQU_GAZ_ATM',
     lc_type        = ('COUPLAGE_THM',),
-    doc            =   """Loi de comportement pour un milieu poreux non saturé avec un liquide et du gaz à pression atmosphérique (Cf. [R7.01.11] pour plus de détails)."""            ,
+    doc            =   """Loi de comportement pour un milieu poreux non saturé avec un liquide et du gaz à pression atmosphérique (Cf. [R7.01.11] pour plus de détails)."""              ,
     num_lc         = 6,
     nb_vari        = 2,
     nom_vari       = ('POROSITE','SATLIQ',),
@@ -37,4 +37,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

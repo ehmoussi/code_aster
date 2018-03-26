@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@ from cata_comportement import LoiComportement
 loi = LoiComportement(
     nom            = 'LEMA_SEUIL',
     lc_type        = ('MECANIQUE',),
-    doc            =   """Relation de comportement viscoplastique avec seuil sous irradiation pour les assemblages combustibles cf. [R5.03.08]"""            ,
+    doc            =   """Relation de comportement viscoplastique avec seuil sous irradiation pour les assemblages combustibles cf. [R5.03.08]"""              ,
     num_lc         = 28,
     nb_vari        = 2,
     nom_vari       = ('EPSPEQ','SEUIL',),
@@ -35,4 +35,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ loi = LoiComportement(
     doc            =   """Relation de comportement élasto-plastique sous irradiation des aciers inoxydables 304 et 316,
    matériaux dont sont constitués les structures internes de cuve des réacteurs nucléaires (cf. [R5.03.13]).
    Le champ de fluence est défini par le mot-clé AFFE_VARC de la commande AFFE_MATERIAU.
-   Le modèle prend en compte la plasticité, le fluage sous irradiation, le gonflement sous flux neutronique."""            ,
+   Le modèle prend en compte la plasticité, le fluage sous irradiation, le gonflement sous flux neutronique."""              ,
     num_lc         = 30,
     nb_vari        = 7,
     nom_vari       = ('EPSPEQ','SEUIL','EPEQIRRA','GONF','INDIPLAS',
@@ -40,4 +40,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )
