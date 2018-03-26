@@ -406,6 +406,8 @@ THL10=CALC_META(reuse=THL10,
                              TOUT = 'OUI'),
                 OPTION='META_ELNO',);
 
+IMPR_RESU(FORMAT='MED',RESU=_F(RESULTAT=THL10))
+
 #     -  THERMIQUE NON LINEAIRE
 #        ----------------------
 THNL1=THER_NON_LINE(        MODELE=MO,

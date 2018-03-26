@@ -69,6 +69,7 @@ subroutine irchme(ifichi, chanom, partie, nochmd, noresu,&
 #include "asterfort/irceme.h"
 #include "asterfort/ircnme.h"
 #include "asterfort/irmpav.h"
+#include "asterfort/irmeta.h"
 #include "asterfort/irvari.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeexin.h"
@@ -199,7 +200,7 @@ subroutine irchme(ifichi, chanom, partie, nochmd, noresu,&
 !
     if (codret .eq. 0) then
 !
-        if (typech(1:4) .ne. 'ELGA') then
+        if (typech(1:4) .ne. 'ELGA' .and. typech(1:4) .ne. 'ELNO') then
             modele = ' '
         else
             nocelk = chanom//'.CELK'
@@ -256,6 +257,12 @@ subroutine irchme(ifichi, chanom, partie, nochmd, noresu,&
                             nbrcmp, nomcmp, partie, numpt, instan,&
                             numord, nbmaec, limaec, noresu, sdcarm,&
                             carael, codret_vari)
+            endif
+            if ((nomsym.eq.'META_ELNO') .and. lvarie) then
+                call irmeta(ifichi, nochmd, chanom, typech, modele,&
+                            nbrcmp, nomcmp, partie, numpt, instan,&
+                            numord, nbmaec, limaec, noresu, sdcarm,&
+                            codret_vari)
             endif
             call irceme(ifichi, nochmd, chanom, typech, modele,&
                         nbrcmp, nomcmp, ' ', partie, numpt,&

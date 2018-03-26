@@ -110,6 +110,7 @@ TEMPE=CALC_META(reuse=TEMPE,
                              TOUT='OUI'),
                 OPTION='META_ELNO',);
 
+IMPR_RESU(FORMAT='MED',RESU=_F(RESULTAT=TEMPE))
 
 FBM1=DEFI_FONCTION(      NOM_PARA='TEMP',
                             PROL_DROITE='LINEAIRE',
