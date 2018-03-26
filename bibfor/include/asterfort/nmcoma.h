@@ -18,17 +18,17 @@
 ! aslint: disable=W1504
 !
 interface
-    subroutine nmcoma(modelz, ds_material, carele    , ds_constitutive, ds_algopara,&
-                      lischa, numedd, numfix    , solveu         , &
-                      sddisc, sddyna, ds_print  , ds_measure     , ds_algorom, numins     ,&
-                      iterat, fonact, ds_contact, valinc         , solalg     ,&
+    subroutine nmcoma(modelz   , ds_material   , cara_elem , ds_constitutive, ds_algopara,&
+                      lischa   , numedd        , numfix    , solveu         , &
+                      sddisc   , sddyna        , ds_print  , ds_measure     , ds_algorom, numins,&
+                      iter_newt, list_func_acti, ds_contact, hval_incr       , hval_algo     ,&
                       veelem, meelem, measse    , veasse         , maprec     ,&
                       matass, faccvg, ldccvg    , sdnume)
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
         character(len=*) :: modelz
         type(NL_DS_Material), intent(in) :: ds_material
-        character(len=24) :: carele
+        character(len=24) :: cara_elem
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         character(len=19) :: lischa
@@ -41,11 +41,11 @@ interface
         type(NL_DS_Measure), intent(inout) :: ds_measure
         type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
         integer :: numins
-        integer :: iterat
-        integer :: fonact(*)
+        integer :: iter_newt
+        integer :: list_func_acti(*)
         type(NL_DS_Contact), intent(inout) :: ds_contact
-        character(len=19) :: valinc(*)
-        character(len=19) :: solalg(*)
+        character(len=19) :: hval_incr(*)
+        character(len=19) :: hval_algo(*)
         character(len=19) :: veelem(*)
         character(len=19) :: meelem(*)
         character(len=19) :: measse(*)

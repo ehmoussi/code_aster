@@ -91,13 +91,12 @@ integer, intent(out) :: ldccvg
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=24) :: mate, varc_refe
     character(len=19) :: cndyna, cnsstr, vefint, cnfint
     character(len=19) :: disp_prev, vite_prev, acce_prev
     character(len=19) :: disp_curr, vite_curr, acce_curr
     real(kind=8) :: time_prev, time_curr
     aster_logical :: l_impe, l_ammo, l_macr
-    integer :: iterat
+    integer :: iter_newt
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -109,8 +108,7 @@ integer, intent(out) :: ldccvg
 ! - Initializations
 !
     ldccvg    = 0
-    mate      = ds_material%field_mate
-    varc_refe = ds_material%varc_refe
+    iter_newt = 0
 !
 ! - Get time
 !
@@ -182,12 +180,13 @@ integer, intent(out) :: ldccvg
 !
 ! - Compute internal forces
 !
-    iterat = 0
     call nmchex(hval_veasse, 'VEASSE', 'CNFINT', cnfint)
     call nmchex(hval_veelem, 'VEELEM', 'CNFINT', vefint)
-    call nmfint(model         , mate  , cara_elem, varc_refe , ds_constitutive,&
-                list_func_acti, iterat, sddyna   , ds_measure, hval_incr      ,&
-                hval_algo     , ldccvg, vefint)
+    call nmfint(model         , cara_elem      ,&
+                ds_material   , ds_constitutive,&
+                list_func_acti, iter_newt      , sddyna, ds_measure,&
+                hval_incr     , hval_algo      ,&
+                vefint        , ldccvg   )
     if (ldccvg .eq. 0) then
         call assvec('V', cnfint, 1, vefint, [1.d0], nume_dof, ' ', 'ZERO', 1)
     endif

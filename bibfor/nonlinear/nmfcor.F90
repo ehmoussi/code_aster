@@ -20,7 +20,7 @@
 !
 subroutine nmfcor(model          , nume_dof   , ds_material   , cara_elem  ,&
                   ds_constitutive, list_load  , list_func_acti, ds_algopara, nume_inst,&
-                  iterat         , ds_measure , sddisc        , sddyna     , sdnume   ,&
+                  iter_newt         , ds_measure , sddisc        , sddyna     , sdnume   ,&
                   sderro         , ds_contact , hval_incr     , hval_algo  ,&
                   hval_veelem    , hval_veasse, hval_meelem   , hval_measse, matass   ,&
                   lerrit)
@@ -50,7 +50,7 @@ implicit none
 #include "asterfort/nmtime.h"
 !
 integer :: list_func_acti(*)
-integer :: iterat, nume_inst
+integer :: iter_newt, nume_inst
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=19) :: sddisc, sddyna, sdnume
@@ -160,7 +160,7 @@ aster_logical :: lerrit
 ! - Get option for update internal forces
 !
     call nmchfi(ds_algopara, list_func_acti, sddyna   , ds_contact,&
-                sddisc     , nume_inst     , iterat,&
+                sddisc     , nume_inst     , iter_newt,&
                 lcfint     , lcdiri        , lcbudi   , lcrigi    ,&
                 option)
 !
@@ -169,12 +169,14 @@ aster_logical :: lerrit
     if (lcfint) then
         if (lcrigi) then
             call nmrigi(model    , mate  , cara_elem, ds_constitutive, sddyna,&
-                        ds_measure, list_func_acti, iterat, hval_incr, hval_algo,&
+                        ds_measure, list_func_acti, iter_newt, hval_incr, hval_algo,&
                         varc_refe, hval_meelem, hval_veelem, option         , ldccvg)
         else
-            call nmfint(model, mate  , cara_elem, varc_refe , ds_constitutive,&
-                        list_func_acti, iterat, sddyna, ds_measure, hval_incr         ,&
-                        hval_algo, ldccvg, vefint)
+            call nmfint(model          , cara_elem      ,&
+                        ds_material    , ds_constitutive,&
+                        list_func_acti , iter_newt      , sddyna, ds_measure,&
+                        hval_incr      , hval_algo      ,&
+                        vefint         , ldccvg   )
         endif
     endif
 !

@@ -103,20 +103,17 @@ type(NL_DS_InOut), intent(in) :: ds_inout
     character(len=24) :: codere
     character(len=19) :: varc_prev, varc_curr, time_prev, time_curr
     real(kind=8) :: time_init, time_prev_step
-    integer :: iterat, ldccvg, nmax
+    integer :: iter_newt, ldccvg, nmax
     character(len=4) :: mode
-    character(len=24) :: mate, varc_refe
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    iterat = 0
-    codere = '&&NMCHHT.CODERE'
+    iter_newt = 0
+    codere    = '&&NMCHHT.CODERE'
     call nmchai('VEELEM', 'LONMAX', nmax)
     ASSERT(nmax.eq.zvelem)
     call nmchai('VEASSE', 'LONMAX', nmax)
     ASSERT(nmax.eq.zveass)
-    mate      = ds_material%field_mate
-    varc_refe = ds_material%varc_refe
 !
 ! - Active functionnalities
 !
@@ -209,9 +206,11 @@ type(NL_DS_InOut), intent(in) :: ds_inout
 !
 ! - Internal forces
 !
-    call nmfint(model         , mate  , cara_elem, varc_refe, ds_constitutive,&
-                list_func_acti, iterat, sddyna   , ds_measure,&
-                hval_incr     , hval_algo  , ldccvg   , vefint)
+    call nmfint(model         , cara_elem      ,&
+                ds_material   , ds_constitutive,&
+                list_func_acti, iter_newt      , sddyna   , ds_measure,&
+                hval_incr     , hval_algo      ,&
+                vefint        , ldccvg         )
     call nmaint(nume_dof, list_func_acti, sdnume,&
                 vefint  , cnfint)
 !
