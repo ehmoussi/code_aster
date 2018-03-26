@@ -22,22 +22,24 @@
 !
 ! - Phases for steel
 !
-#define STEEL_NBVARI     7
+#define STEEL_NBVARI     8
 #define PFERRITE         1
 #define PPERLITE         2
 #define PBAINITE         3
 #define PMARTENS         4
-#define SIZE_GRAIN       5
-#define STEEL_TEMP       6
-#define TEMP_MARTENSITE  7
+#define PAUSTENITE       5
+#define SIZE_GRAIN       6
+#define STEEL_TEMP       7
+#define TEMP_MARTENSITE  8
 !
 ! - Phases for zircaloy
 !
-#define ZIRC_NBVARI      4
+#define ZIRC_NBVARI      5
 #define PALPHA1          1
 #define PALPHA2          2
-#define ZIRC_TEMP        3
-#define TIME_TRAN        4
+#define PBETA            3
+#define ZIRC_TEMP        4
+#define TIME_TRAN        5
 !
 ! - Kinetic
 !

@@ -29,6 +29,7 @@ use Metallurgy_type
 implicit none
 !
 #include "asterf_types.h"
+#include "asterc/r8prem.h"
 #include "asterfort/metaSteelGetParameters.h"
 #include "asterfort/assert.h"
 #include "asterfort/smcarc.h"
@@ -44,8 +45,8 @@ integer, intent(in) :: nbtrc
 real(kind=8), intent(in) :: ckm(6*nbtrc)
 real(kind=8), intent(in) :: tpg0, tpg1, tpg2
 real(kind=8), intent(in) :: dt10, dt21
-real(kind=8), intent(in) :: vari_prev(7)
-real(kind=8), intent(out) :: vari_curr(7)
+real(kind=8), intent(in) :: vari_prev(8)
+real(kind=8), intent(out) :: vari_curr(8)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,7 +72,7 @@ real(kind=8), intent(out) :: vari_curr(7)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    real(kind=8) :: vari_dumm(7)
+    real(kind=8) :: vari_dumm(8)
     real(kind=8) :: dmoins
     real(kind=8) :: tpoint, zero, ti, tpi
     real(kind=8) :: zeq1, zeq2, zaust, z2, epsi, dt21_mod
@@ -86,7 +87,7 @@ real(kind=8), intent(out) :: vari_curr(7)
     zero = 0.d0
     epsi = 1.d-10
     un   = 1.d0
-    ASSERT(STEEL_NBVARI .eq. 7)
+    ASSERT(STEEL_NBVARI .eq. 8)
 !
 ! - Get material parameters for steel
 !
@@ -231,4 +232,16 @@ real(kind=8), intent(out) :: vari_curr(7)
             end do
         endif
     endif
+!
+! - Compute austenite
+!
+    zaust = un - vari_curr(1) - vari_curr(2) - vari_curr(3) - vari_curr(4)
+    if (zaust .le. r8prem()) then
+        zaust = 0.d0
+    endif
+    if (zaust .ge. 1.d0) then
+        zaust = 1.d0
+    endif
+    vari_curr(PAUSTENITE) = zaust
+!
 end subroutine

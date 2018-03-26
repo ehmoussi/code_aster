@@ -24,7 +24,7 @@ interface
         integer, intent(in) :: jv_mater
         real(kind=8), intent(in) :: tm, tp
         real(kind=8), intent(in) :: time_curr, time_incr
-        real(kind=8), intent(in) :: vari_prev(4)
-        real(kind=8), intent(out) :: vari_curr(4)
+        real(kind=8), intent(in) :: vari_prev(5)
+        real(kind=8), intent(out) :: vari_curr(5)
     end subroutine zedgar
 end interface
