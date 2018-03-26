@@ -40,6 +40,7 @@ implicit none
 #include "asterfort/metaGetParaHardTrac.h"
 #include "asterfort/metaGetParaMixture.h"
 #include "asterfort/metaGetParaPlasTransf.h"
+#include "asterfort/metaGetParaAnneal.h"
 #include "asterfort/Metallurgy_type.h"
 !
 character(len=*), intent(in) :: fami
@@ -89,7 +90,7 @@ integer, intent(out) :: iret
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: maxval, nb_phasis, meta_type
+    integer :: maxval, nb_phase, meta_type
     integer :: i, j, k, l, mode, iret2
     integer :: ind(3, 3), nbr
     real(kind=8) :: phase(5), phasm(5), zalpha, deltaz(4)
@@ -148,24 +149,24 @@ integer, intent(out) :: iret
 !
 ! - Get metallurgy type
 !
-    call metaGetType(meta_type, nb_phasis)
+    call metaGetType(meta_type, nb_phase)
     ASSERT(meta_type .eq. META_STEEL)
-    ASSERT(nb_phasis .eq. 5)
+    ASSERT(nb_phase .eq. 5)
 !
-! - Get phasis
+! - Get phases
 !
     if (resi) then
         poum = '+'
         call metaGetPhase(fami     , '+'  , kpg   , ksp , meta_type,&
-                             nb_phasis, phase, zcold_ = zalpha)
+                          nb_phase, phase, zcold_ = zalpha)
         call metaGetPhase(fami     , '-'  , kpg   , ksp , meta_type,&
-                             nb_phasis, phasm)
+                          nb_phase, phasm)
     else
         poum = '-'
         call metaGetPhase(fami     , '-'  , kpg   , ksp , meta_type,&
-                             nb_phasis, phase, zcold_ = zalpha)
+                             nb_phase, phase, zcold_ = zalpha)
     endif
-    do k = 1, nb_phasis-1
+    do k = 1, nb_phase-1
         deltaz(k) = phase(k) - phasm(k)
     end do
 !
@@ -203,30 +204,20 @@ integer, intent(out) :: iret
 !
 ! - Mixture law (yield limit)
 !
-    call metaGetParaMixture(poum  , fami     , kpg      , ksp   , imat,&
-                            l_visc, meta_type, nb_phasis, zalpha, fmel,&
+    call metaGetParaMixture(poum  , fami     , kpg     , ksp   , imat,&
+                            l_visc, meta_type, nb_phase, zalpha, fmel,&
                             sy)
     if (resi) then
-!
-! 2.4 - RESTAURATION D ECROUISSAGE
-!
+! ----- Parameters for annealing
         if (compor(1)(1:12) .eq. 'META_P_IL_RE' .or. compor(1)(1:15) .eq.&
             'META_P_IL_PT_RE' .or. compor(1)(1:12) .eq. 'META_V_IL_RE' .or.&
             compor(1)(1:15) .eq. 'META_V_IL_PT_RE' .or. compor(1)(1:13) .eq.&
             'META_P_INL_RE' .or. compor(1)(1:16) .eq. 'META_P_INL_PT_RE' .or.&
             compor(1)(1:13) .eq. 'META_V_INL_RE' .or. compor(1)(1:16) .eq.&
             'META_V_INL_PT_RE') then
-            nomres(1) ='C_F1_THETA'
-            nomres(2) ='C_F2_THETA'
-            nomres(3) ='C_F3_THETA'
-            nomres(4) ='C_F4_THETA'
-            nomres(5) ='F1_C_THETA'
-            nomres(6) ='F2_C_THETA'
-            nomres(7) ='F3_C_THETA'
-            nomres(8) ='F4_C_THETA'
-            call rcvalb(fami, kpg, ksp, poum, imat,&
-                        ' ', 'META_RE', 0, '  ', [0.d0],&
-                        8, nomres, theta, icodre, 2)
+            call metaGetParaAnneal(poum     , fami    , kpg, ksp, imat,&
+                                   meta_type, nb_phase,&
+                                   theta)
         else
             do i = 1, 8
                 theta(i)=1.d0
@@ -234,8 +225,8 @@ integer, intent(out) :: iret
         endif
 ! ----- Parameters for viscosity
         if (l_visc) then
-            call metaGetParaVisc(poum     , fami     , kpg, ksp, imat  ,&
-                                 meta_type, nb_phasis, eta, n  , unsurn,&
+            call metaGetParaVisc(poum     , fami    , kpg, ksp, imat  ,&
+                                 meta_type, nb_phase, eta, n  , unsurn,&
                                  c        , m)
         else
             eta(:)    = 0.d0
@@ -247,7 +238,7 @@ integer, intent(out) :: iret
 !
 ! 2.6 - CALCUL DE VIM+DG-DS
 !
-        do k = 1, nb_phasis-1
+        do k = 1, nb_phase-1
             dz(k)= phase(k)-phasm(k)
             if (dz(k) .ge. 0.d0) then
                 dz1(k)=dz(k)
@@ -257,21 +248,21 @@ integer, intent(out) :: iret
                 dz2(k)=-dz(k)
             endif
         end do
-        if (phase(nb_phasis) .gt. 0.d0) then
+        if (phase(nb_phase) .gt. 0.d0) then
             dvin=0.d0
-            do k = 1, nb_phasis-1
-                dvin=dvin+dz2(k)*(theta(4+k)*vim(k)-vim(nb_phasis))/&
-                phase(nb_phasis)
+            do k = 1, nb_phase-1
+                dvin=dvin+dz2(k)*(theta(4+k)*vim(k)-vim(nb_phase))/&
+                phase(nb_phase)
             end do
-            vi(nb_phasis)=vim(nb_phasis)+dvin
-            vimoy=phase(nb_phasis)*vi(nb_phasis)
+            vi(nb_phase)=vim(nb_phase)+dvin
+            vimoy=phase(nb_phase)*vi(nb_phase)
         else
-            vi(nb_phasis) = 0.d0
+            vi(nb_phase) = 0.d0
             vimoy=0.d0
         endif
-        do k = 1, nb_phasis-1
+        do k = 1, nb_phase-1
             if (phase(k) .gt. 0.d0) then
-                dvin=dz1(k)*(theta(k)*vim(nb_phasis)-vim(k))/phase(k)
+                dvin=dz1(k)*(theta(k)*vim(nb_phase)-vim(k))/phase(k)
                 vi(k)=vim(k)+dvin
                 vimoy=vimoy+phase(k)*vi(k)
             else
@@ -283,7 +274,7 @@ integer, intent(out) :: iret
 !
         cmoy=0.d0
         mmoy=0.d0
-        do k = 1, nb_phasis
+        do k = 1, nb_phase
             cmoy=cmoy+phase(k)*c(k)
             mmoy=mmoy+phase(k)*m(k)
         end do
@@ -293,7 +284,7 @@ integer, intent(out) :: iret
         else
             ds= dt*(cr**mmoy)
         endif
-        do k = 1, nb_phasis
+        do k = 1, nb_phase
             if (phase(k) .gt. 0.d0) then
                 vi(k)=vi(k)-ds
                 if (vi(k) .le. 0.d0) vi(k)=0.d0
@@ -307,10 +298,10 @@ integer, intent(out) :: iret
             'META_V_IL_PT' .or. compor(1)(1:13) .eq. 'META_V_INL_PT' .or.&
             compor(1)(1:15) .eq. 'META_V_IL_PT_RE' .or. compor(1) (1:16) .eq.&
             'META_V_INL_PT_RE') then
-            call metaGetParaPlasTransf('+'      , fami     , 1     , 1     , imat,&
-                                       meta_type, nb_phasis, deltaz, zalpha,&
+            call metaGetParaPlasTransf('+'      , fami    , 1     , 1     , imat,&
+                                       meta_type, nb_phase, deltaz, zalpha,&
                                        kpt      , fpt)
-            do k = 1, nb_phasis-1
+            do k = 1, nb_phase-1
                 if (deltaz(k) .gt. 0.d0) then
                     trans = trans + kpt(k)*fpt(k)*deltaz(k)
                 endif
@@ -318,7 +309,7 @@ integer, intent(out) :: iret
         endif
     else
         trans=0.d0
-        do k = 1, nb_phasis
+        do k = 1, nb_phase
             vi(k)=vim(k)
         end do
     endif
@@ -328,19 +319,19 @@ integer, intent(out) :: iret
         if (compor(1)(1:9) .eq. 'META_P_IL' .or. compor(1)(1:9) .eq. 'META_V_IL') then
 ! --------- Get hardening slope (linear)
             coef_hard = (1.d0)
-            call metaGetParaHardLine(poum     , fami     , kpg, ksp, imat,&
-                                     meta_type, nb_phasis,&
+            call metaGetParaHardLine(poum     , fami    , kpg, ksp, imat,&
+                                     meta_type, nb_phase,&
                                      e        , coef_hard, h)
-            do k = 1, nb_phasis
+            do k = 1, nb_phase
                 r(k) = h(k)*vi(k)+sy(k)
             end do
         endif
         if (compor(1)(1:10) .eq. 'META_P_INL' .or. compor(1)(1:10) .eq. 'META_V_INL') then
 ! --------- Get hardening slope (non-linear)
-            call metaGetParaHardTrac(imat   , meta_type, nb_phasis,&
+            call metaGetParaHardTrac(imat   , meta_type, nb_phase,&
                                      l_temp , temp     ,&
                                      vi     , h       , r , maxval)
-            do k = 1, nb_phasis
+            do k = 1, nb_phase
                 r(k) = r(k) + sy(k)
             end do
         endif
@@ -353,8 +344,8 @@ integer, intent(out) :: iret
             rmoy = 0.d0
             hmoy = 0.d0
         endif
-        rmoy =(1.d0-fmel)*r(nb_phasis)+fmel*rmoy
-        hmoy = (1.d0-fmel)*h(nb_phasis)+fmel*hmoy
+        rmoy =(1.d0-fmel)*r(nb_phase)+fmel*rmoy
+        hmoy = (1.d0-fmel)*h(nb_phase)+fmel*hmoy
 !
 ! ********************************
 ! 3 - DEBUT DE L ALGORITHME
@@ -463,7 +454,7 @@ integer, intent(out) :: iret
         else
             vip(7)=1.d0
             mutild=2.d0*mu*trbel/3.d0
-            call nzcalc(crit, phase, nb_phasis, fmel, seuil,&
+            call nzcalc(crit, phase, nb_phase, fmel, seuil,&
                         dt, trans, hmoy, mutild, eta,&
                         unsurn, dp, iret)
             if (iret .eq. 1) goto 999
@@ -476,10 +467,10 @@ integer, intent(out) :: iret
                     test       = 0
                     vip(1:5)   = vi(1:5) + dp
                     hplus(1:5) = h(1:5)
-                    call metaGetParaHardTrac(imat   , meta_type, nb_phasis,&
+                    call metaGetParaHardTrac(imat   , meta_type, nb_phase,&
                                              l_temp , temp     ,&
                                              vip    , h       , r)
-                    do k = 1, nb_phasis
+                    do k = 1, nb_phase
                         if (phase(k) .gt. 0.d0) then
                             r(k)     = r(k)+sy(k)
                             if (abs(h(k)-hplus(k)) .gt. r8prem()) then
@@ -491,7 +482,7 @@ integer, intent(out) :: iret
                     hmoy=0.d0
                     rmoy=0.d0
                     if (zalpha .gt. 0.d0) then
-                        do k = 1, nb_phasis-1
+                        do k = 1, nb_phase-1
                             if (phase(k) .gt. 0.d0) then
                                 rmoy = rmoy + phase(k)*(r(k)-h(k)* dp)
                                 hmoy = hmoy + phase(k)*h(k)
@@ -500,12 +491,12 @@ integer, intent(out) :: iret
                         rmoy=fmel*rmoy/zalpha
                         hmoy=fmel*hmoy/zalpha
                     endif
-                    if (phase(nb_phasis) .gt. 0.d0) then
-                        rmoy = (1.d0-fmel)*(r(nb_phasis)-h(nb_phasis)*dp)+rmoy
-                        hmoy = (1.d0-fmel)*h(nb_phasis)+hmoy
+                    if (phase(nb_phase) .gt. 0.d0) then
+                        rmoy = (1.d0-fmel)*(r(nb_phase)-h(nb_phase)*dp)+rmoy
+                        hmoy = (1.d0-fmel)*h(nb_phase)+hmoy
                     endif
                     seuil=eqtel-(1.d0+mu*trans*trbel)*rmoy
-                    call nzcalc(crit, phase, nb_phasis, fmel, seuil,&
+                    call nzcalc(crit, phase, nb_phase, fmel, seuil,&
                                 dt, trans, hmoy, mutild, eta,&
                                 unsurn, dp, iret)
                     if (iret .eq. 1) goto 999
@@ -533,7 +524,7 @@ integer, intent(out) :: iret
 !
 ! 4.2.3 - CALCUL DE VIP ET RMOY
 !
-        do k = 1, nb_phasis
+        do k = 1, nb_phase
             if (phase(k) .gt. 0.d0) then
                 vip(k)=vi(k)+dp
             else
@@ -541,16 +532,16 @@ integer, intent(out) :: iret
             endif
         end do
         vip(6)=0.d0
-        if (phase(nb_phasis) .gt. 0.d0) then
+        if (phase(nb_phase) .gt. 0.d0) then
             if (compor(1)(1:9) .eq. 'META_P_IL' .or. compor(1)(1:9) .eq. 'META_V_IL') then
-                vip(6)=vip(6)+(1-fmel)*h(nb_phasis)*vip(nb_phasis)
+                vip(6)=vip(6)+(1-fmel)*h(nb_phase)*vip(nb_phase)
             endif
             if (compor(1)(1:10) .eq. 'META_P_INL' .or. compor(1)(1:10) .eq.'META_V_INL') then
-                vip(6)=vip(6)+(1-fmel)*(r(nb_phasis)-sy(nb_phasis))
+                vip(6)=vip(6)+(1-fmel)*(r(nb_phase)-sy(nb_phase))
             endif
         endif
         if (zalpha .gt. 0.d0) then
-            do k = 1, nb_phasis-1
+            do k = 1, nb_phase-1
                 if (compor(1)(1:9) .eq. 'META_P_IL' .or. compor(1)(1: 9) .eq.'META_V_IL') then
                     vip(6)=vip(6)+fmel*phase(k)*h(k)*vip(k)/zalpha
                 endif
@@ -651,13 +642,13 @@ integer, intent(out) :: iret
             if (l_visc) mode=1
             if (mode .eq. 1) then
                 if (dp .gt. 0.d0) then
-                    do i = 1, nb_phasis
+                    do i = 1, nb_phase
                         n0(i) = (1-n(i))/n(i)
                     end do
-                    dv = (1-fmel)*phase(nb_phasis)*(eta(nb_phasis)/n(nb_phasis)/dt) *&
-                         ((dp/dt)**n0(nb_phasis))
+                    dv = (1-fmel)*phase(nb_phase)*(eta(nb_phase)/n(nb_phase)/dt) *&
+                         ((dp/dt)**n0(nb_phase))
                     if (zalpha .gt. 0.d0) then
-                        do i = 1, nb_phasis-1
+                        do i = 1, nb_phase-1
                             if (phase(i) .gt. 0.d0) dv = dv+fmel*&
                                                          (phase(i)/zalpha)*(eta(i)/n(i)/dt)*&
                                                          ((dp/dt)**n0(i))
