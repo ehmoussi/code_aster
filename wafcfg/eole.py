@@ -37,81 +37,6 @@ waf install -p
 
 import os
 ASTER_ROOT = os.environ['ASTER_ROOT']
-YAMMROOT = ASTER_ROOT + '/public_dev64/v14'
-YAMMROOT_OLD= ASTER_ROOT + '/public/v14'
-#YAMMROOT = os.environ['ROOT_SALOME']
-
-import intel
-import official_programs
-
-
-def configure(self):
-    opts = self.options
-
-    intel.configure(self)
-    official_programs.configure(self)
-    opts.with_prog_salome = True
-    opts.with_prog_europlexus = True
-
-    self.env['ADDMEM'] = 700
-    self.env.append_value('OPT_ENV', [
-        'module unload mkl',
-        'module load ifort/2016.0.047 icc/2016.0.047 mkl/2016.0.047'])
-
-    TFELHOME = YAMMROOT_OLD + '/prerequisites/Mfront-TFEL300'
-    self.env.TFELHOME = TFELHOME
-
-    self.env.append_value('LIBPATH', [
-        YAMMROOT + '/prerequisites/Hdf5-1814/lib',
-        YAMMROOT + '/tools/Medfichier-321/lib',
-        YAMMROOT + '/prerequisites/Metis_aster-510_aster1/lib',
-        YAMMROOT + '/prerequisites/Scotch_aster-604_aster6/SEQ/lib',
-        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster/SEQ/lib',
-        TFELHOME + '/lib',
-    ])
-
-    self.env.append_value('INCLUDES', [
-        YAMMROOT + '/prerequisites/Hdf5-1814/include',
-        YAMMROOT + '/tools/Medfichier-321/include',
-        YAMMROOT + '/prerequisites/Metis_aster-510_aster1/include',
-        YAMMROOT + '/prerequisites/Scotch_aster-604_aster6/SEQ/include',
-        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster/SEQ/include',
-        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster/SEQ/include_seq',
-        TFELHOME + '/include',
-    ])
-
-    self.env.append_value('LIB', ('pthread', 'util'))
-    self.env.append_value('LIB_SCOTCH', ('scotcherrexit'))
-    # to fail if not found
-    opts.enable_hdf5 = True
-    opts.enable_med = True
-    opts.enable_metis = True
-    opts.enable_mumps = True
-    opts.enable_scotch = True
-    opts.enable_mfront = True
-
-    opts.enable_petsc = False
-
-# code_aster is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
-# --------------------------------------------------------------------
-
-"""
-Configuration for eole
-
-. $HOME/dev/codeaster/devtools/etc/env_unstable.sh
-
-waf configure --use-config=eole --prefix=../install/std
-waf install -p
-"""
-
-import os
-ASTER_ROOT = os.environ['ASTER_ROOT']
 YAMMROOT = os.environ['ROOT_SALOME']
 
 import intel
@@ -164,3 +89,5 @@ def configure(self):
     opts.enable_mfront = True
 
     opts.enable_petsc = False
+
+
