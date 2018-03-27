@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -157,9 +157,9 @@ def pres_h(x) :
    return 1E6
 
 PRES_H = FORMULE(VALE='pres_h(X)',
-                  NOM_PARA=('X'));
+                  NOM_PARA=('X'),pres_h=pres_h);
 PRES_D = FORMULE(VALE='pres_d(Y)',
-                  NOM_PARA=('Y'));
+                  NOM_PARA=('Y'),pres_d=pres_d);
 
 CH1=AFFE_CHAR_MECA_F(MODELE=MODELEK,
                    PRES_REP=(_F(GROUP_MA='SH',PRES = PRES_H),

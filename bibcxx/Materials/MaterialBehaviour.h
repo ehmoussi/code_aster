@@ -6384,7 +6384,7 @@ class ThmDiffuMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addFunctionProperty( "Satu_pres", ElementaryMaterialPropertyDataStructure( "SATU_PRES" , false ) );
             this->addFunctionProperty( "D_satu_pres", ElementaryMaterialPropertyDataStructure( "D_SATU_PRES" , false ) );
             this->addFunctionProperty( "Perm_liqu", ElementaryMaterialPropertyDataStructure( "PERM_LIQU" , false ) );
-            this->addDoubleProperty( "D_perm_liqu_satu", ElementaryMaterialPropertyDouble( "D_PERM_LIQU_SATU" , false ) );
+            this->addFunctionProperty( "D_perm_liqu_satu", ElementaryMaterialPropertyDataStructure( "D_PERM_LIQU_SATU" , false ) );
             this->addFunctionProperty( "Perm_gaz", ElementaryMaterialPropertyDataStructure( "PERM_GAZ" , false ) );
             this->addFunctionProperty( "D_perm_satu_gaz", ElementaryMaterialPropertyDataStructure( "D_PERM_SATU_GAZ" , false ) );
             this->addFunctionProperty( "D_perm_pres_gaz", ElementaryMaterialPropertyDataStructure( "D_PERM_PRES_GAZ" , false ) );
@@ -6436,7 +6436,7 @@ class ThmLiquMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addDoubleProperty( "Un_sur_k", ElementaryMaterialPropertyDouble( "UN_SUR_K" , true ) );
             this->addFunctionProperty( "Visc", ElementaryMaterialPropertyDataStructure( "VISC" , true ) );
             this->addFunctionProperty( "D_visc_temp", ElementaryMaterialPropertyDataStructure( "D_VISC_TEMP" , true ) );
-            this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA" , false ) );
+            this->addFunctionProperty( "Alpha", ElementaryMaterialPropertyDataStructure( "ALPHA" , false ) );
             this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" , false ) );
         };
 

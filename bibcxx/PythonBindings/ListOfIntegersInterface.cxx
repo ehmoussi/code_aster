@@ -1,9 +1,9 @@
 /**
- * @file VectorUtilities.cxx
- * @brief Utilitaires pour convertir un vector en list et inversement
+ * @file ListOfIntegersInterface.cxx
+ * @brief Interface python de ListOfIntegers
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -21,17 +21,24 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/VectorUtilities.h"
-#include "Loads/PhysicalQuantity.h"
-#include "Materials/Material.h"
+/* person_in_charge: nicolas.sellenet at edf.fr */
 
-void exportVectorUtilitiesToPython()
+#include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/ListOfIntegersInterface.h"
+
+
+void exportListOfIntegersToPython()
 {
     using namespace boost::python;
 
-    exportVectorUtilities< long >();
-    exportVectorUtilities< double >();
-    exportVectorUtilities< std::string >();
-    exportVectorUtilities< PhysicalQuantityComponent >();
-    exportVectorUtilities< MaterialPtr >();
+    class_< ListOfIntegersInstance,
+            ListOfIntegersInstance::ListOfIntegersPtr,
+            bases< DataStructure > > ( "ListOfIntegers", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< ListOfIntegersInstance >) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< ListOfIntegersInstance,
+                             std::string >) )
+    ;
 };

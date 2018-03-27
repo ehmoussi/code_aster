@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,6 +18,8 @@
 # --------------------------------------------------------------------
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+from math import *
 
 #
 ####################################
@@ -125,7 +127,7 @@ D=2.4977;
 E=2.304;
 ADB=2*A*A*D*B;
 
-PL = FORMULE(NOM_PARA='SAT',VALE='exp(-D*((A/(SAT-C))**2-1)**B)');
+PL = FORMULE(NOM_PARA='SAT',VALE='exp(-D*((A/(SAT-C))**2-1)**B)',exp=exp,A=A,B=B,C=C,D=D);
 
 PERML=CALC_FONC_INTERP(FONCTION=PL,
                        LIST_PARA=LI1,
@@ -134,7 +136,8 @@ PERML=CALC_FONC_INTERP(FONCTION=PL,
                        PROL_GAUCHE='CONSTANT',
                        INFO=2,);
 
-DPL= FORMULE(NOM_PARA='SAT',VALE='(ADB/(SAT-C)**3)*(A*A/(SAT-C)**2-1)**(B-1)*exp(-D*((A/(SAT-C))**2-1)**B) ');
+DPL= FORMULE(NOM_PARA='SAT',VALE='(ADB/(SAT-C)**3)*(A*A/(SAT-C)**2-1)**(B-1)*exp(-D*((A/(SAT-C))**2-1)**B) ',
+             exp=exp,A=A,B=B,C=C,D=D,ADB=ADB);
 DPERML=CALC_FONC_INTERP(FONCTION=DPL,
                        LIST_PARA=LI1,
                        NOM_PARA='SAT',

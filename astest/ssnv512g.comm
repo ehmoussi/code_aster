@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -103,9 +103,9 @@ def pres_h(x) :
    return 1E6
 
 PRES_H = FORMULE(VALE='pres_h(X)',
-                  NOM_PARA=('X'));
+                  NOM_PARA=('X'),pres_h=pres_h);
 PRES_D = FORMULE(VALE='pres_d(Y)',
-                  NOM_PARA=('Y'));
+                  NOM_PARA=('Y'),pres_d=pres_d);
 
 CH1=AFFE_CHAR_MECA_F(MODELE=MODELEK,
                    PRES_REP=(_F(GROUP_MA='LH',PRES = PRES_H),
@@ -315,8 +315,8 @@ def Sxx(X,Y):
 def Syy(X,Y):
     return -pres_h(X)
 
-SXX=FORMULE(NOM_PARA=('X','Y',),VALE='Sxx(X,Y)');
-SYY=FORMULE(NOM_PARA=('X','Y',),VALE='Syy(X,Y)');
+SXX=FORMULE(NOM_PARA=('X','Y',),VALE='Sxx(X,Y)',Sxx=Sxx);
+SYY=FORMULE(NOM_PARA=('X','Y',),VALE='Syy(X,Y)',Syy=Syy);
 
 
 
@@ -342,8 +342,8 @@ def uy(X,Y):
     return  3 * (c1*Syy(X,Y-7)+c2*Sxx(X,Y-7)) / E  +  4 * (c1*Syy(X,Y-3)+c2*Sxx(X,Y-3)) / E +  (Y-2) * (c1*Syy(X,Y)+c2*Sxx(X,Y)) / E
 
 
-UX=FORMULE(NOM_PARA=('X','Y',),VALE='ux(X,Y)')
-UY=FORMULE(NOM_PARA=('X','Y',),VALE='uy(X,Y)')
+UX=FORMULE(NOM_PARA=('X','Y',),VALE='ux(X,Y)',ux=ux)
+UY=FORMULE(NOM_PARA=('X','Y',),VALE='uy(X,Y)',uy=uy)
 
 # calcul de l'erreur en terme de norme en energie
 Scal=CREA_CHAMP(OPERATION='EXTR',

@@ -1,9 +1,12 @@
+#ifndef LISTOFINTEGERSINTERFACE_H_
+#define LISTOFINTEGERSINTERFACE_H_
+
 /**
- * @file VectorUtilities.cxx
- * @brief Utilitaires pour convertir un vector en list et inversement
+ * @file ListOfIntegersInterface.h
+ * @brief Fichier entete de la classe ListOfIntegersInterface
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -21,17 +24,9 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/VectorUtilities.h"
-#include "Loads/PhysicalQuantity.h"
-#include "Materials/Material.h"
+#include "astercxx.h"
+#include "Utilities/ListOfIntegers.h"
 
-void exportVectorUtilitiesToPython()
-{
-    using namespace boost::python;
+void exportListOfIntegersToPython();
 
-    exportVectorUtilities< long >();
-    exportVectorUtilities< double >();
-    exportVectorUtilities< std::string >();
-    exportVectorUtilities< PhysicalQuantityComponent >();
-    exportVectorUtilities< MaterialPtr >();
-};
+#endif /* LISTOFINTEGERSINTERFACE_H_ */

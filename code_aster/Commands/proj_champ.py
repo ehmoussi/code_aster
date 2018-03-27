@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import MatchingMeshes
+from ..Objects import MatchingMeshes, FieldOnElementsDouble
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -39,8 +39,7 @@ class FieldProjector(ExecuteCommand):
             else:
                 self._result = type(keywords["RESULTAT"])()
         elif keywords.has_key("CHAM_GD"):
-            raise NotImplementedError("{0!r} is not yet implemented"
-                                      .format("CHAM_GD"))
+            self._result = FieldOnElementsDouble()
         else:
             self._result = MatchingMeshes()
 

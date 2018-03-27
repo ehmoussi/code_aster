@@ -210,6 +210,11 @@ class MaterialOnMeshInstance: public DataStructure
         };
 
         /**
+         * @brief Return a vector of MaterialPtr
+         */
+        std::vector< MaterialPtr > getVectorOfMaterial() const;
+
+        /**
          * @brief Function to know if a given Calculation Input Variables exists
          * @return true if exists
          */

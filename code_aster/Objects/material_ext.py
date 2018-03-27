@@ -24,16 +24,10 @@
 """
 
 import aster
-from libaster import MaterialOnMesh
+from libaster import Material
 
 from ..Utilities import injector
 
 
-class ExtendedMaterialOnMesh(injector(MaterialOnMesh), MaterialOnMesh):
-    cata_sdj = "SD.sd_cham_mater.sd_cham_mater"
-
-    def __getinitargs__(self):
-        """Returns the argument required to reinitialize a MaterialOnMesh
-        object during unpickling.
-        """
-        return (self.getName(), self.getSupportMesh())
+class ExtendedMaterial(injector(Material), Material):
+    cata_sdj = "SD.sd_mater.sd_mater"
