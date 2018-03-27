@@ -137,12 +137,12 @@ TEX_AVA=DEFI_NAPPE(  NOM_PARA='Z',
 
 CHTH=AFFE_CHAR_THER_F(   MODELE=MOTH,FLUX_REP=(
                             _F(  GROUP_MA = 'F_NPJI',   FLUN = FLU_Y),
-                            _F(  GROUP_MA = 'F_RQKL',   FLUN = FLU_Y),
+                            _F(  GROUP_MA = 'F_RQKL',   FLUX_Y = FLU_Y),
                             _F(  GROUP_MA = 'F_NPQR',   FLUN = FLU_Z),
                             _F(  GROUP_MA = 'F_IJKL',   FLUN = FLU_Z)),ECHANGE=(
-                             _F(  GROUP_MA = 'F_NRLI', COEF_H = HCV,
+                            _F(  GROUP_MA = 'F_NRLI', COEF_H = HCV,
                                                      TEMP_EXT = TEX_ARR),
-                             _F(  GROUP_MA = 'F_PQKJ', COEF_H = HCV,
+                            _F(  GROUP_MA = 'F_PQKJ', COEF_H = HCV,
                                                      TEMP_EXT = TEX_AVA))
                         )
 
