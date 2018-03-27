@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,8 +19,9 @@
 !
 !
 interface
-    subroutine gtgrma(main, nmgrma, lima, nbma)
+    subroutine gtgrma(main, maax, nmgrma, lima, nbma)
         character(len=8), intent(in) :: main
+        character(len=8), intent(in) :: maax
         character(len=24), intent(in) :: nmgrma
         integer, pointer :: lima(:)
         integer, intent(out) :: nbma
