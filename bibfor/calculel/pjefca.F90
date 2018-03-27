@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -39,7 +39,8 @@ subroutine pjefca(moa1, lima1, iocc, ncas)
 !  -----------
 !  IN MOA1 : NOM DU MODELE (OU DU MAILLAGE) CONTENANT LES
 !            MAILLES A PROJETER
-!  IN IOCC  : 0 OU NUMERO D'OCCURENCE DE VIS_A_VIS
+!  IN IOCC  : 0 OU NUMERO D'OCCURENCE DE VIS_A_VIS, OU -NUM D'OCCURRENCE
+!             POUR NE PAS PRENDRE EN COMPTE CAS_FIGURE
 !  IN LIMA1 : NOM DE OBJET JEVEUX CONTENANT LA LISTE DES NUMEROS DE
 !             MAILLES A PROJETER (OU ' ' SI IOCC=0).
 !  OUT NCAS : CAS DE FIGURE : 3D/2D/2.5D/1.5D
@@ -85,9 +86,11 @@ subroutine pjefca(moa1, lima1, iocc, ncas)
     if (iocc .eq. 0) then
         call getvtx(' ', 'CAS_FIGURE', scal=ncas, nbret=n1)
         if (n1 .eq. 1) goto 30
-    else
+    elseif (iocc .gt.0)then
         call getvtx('VIS_A_VIS', 'CAS_FIGURE', iocc=iocc, scal=ncas, nbret=n1)
         if (n1 .eq. 1) goto 30
+    else
+        iocc = -iocc
     endif
 !
 !

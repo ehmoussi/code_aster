@@ -18,18 +18,13 @@
 
 !
 !
-          interface 
-            subroutine pj2dtr(cortr3,corres,nutm2d,elrf2d,geom1,geom2,  &
-     &lraff,dala, listInterc, nbInterc)
-              character(len=16), intent(in) :: cortr3
-              character(len=16), intent(in) :: corres
-              integer, intent(in) :: nutm2d(6)
-              character(len=8), intent(in) :: elrf2d(6)
-              real(kind=8), intent(in) :: geom1(*)
-              real(kind=8), intent(in) :: geom2(*)
-              aster_logical, intent(in) :: lraff
-              real(kind=8), intent(in) :: dala
-              character(len=16), intent(in) :: listInterc
-              integer, intent(in) :: nbInterc
-            end subroutine pj2dtr
-          end interface 
+interface
+    subroutine pjxxu2(dim, moa, lima, nbma, klino, nbnoOut)
+        character(len=2) :: dim
+        character(len=8) :: moa
+        integer :: lima(*)
+        integer :: nbma
+        character(len=16) :: klino
+        integer :: nbnoOut
+    end subroutine pjxxu2
+end interface
