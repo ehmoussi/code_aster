@@ -157,6 +157,16 @@ Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
+    47 : _(u"""
+ PROJ_CHAMP, occurrence %(i1)d de VIS_A_VIS : 
+ 
+ Le noeud %(k1)s est jugé distant de la maille sur laquelle il devrait être
+ projeté. Comme la projection de ce noeud a déjà été faite lors d'une occurrence 
+ précédente, on ne tient pas compte de cette projection distante.
+ 
+ Conseil : il est cependant recommandé de vérifier l'affectation des groupes dans VIS_A_VIS. 
+"""),
+
     48 : _(u"""
  Vous utilisez la commande PROJ_CHAMP ou un mot clé nécessitant de "projeter"
  des noeuds sur des mailles (par exemple LIAISON_MAIL).

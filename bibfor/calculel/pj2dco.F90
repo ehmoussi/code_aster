@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 
 subroutine pj2dco(mocle, moa1, moa2, nbma1, lima1,&
                   nbno2, lino2, geom1, geom2, corres,&
-                  l_dmax, dmax, dala)
+                  l_dmax, dmax, dala, listIntercz, nbIntercz)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -47,6 +47,8 @@ subroutine pj2dco(mocle, moa1, moa2, nbma1, lima1,&
     character(len=8) :: moa1, moa2
     character(len=*) :: mocle
     integer :: nbma1, lima1(*), nbno2, lino2(*)
+    character(len=16), optional :: listIntercz
+    integer, optional :: nbIntercz
 ! but :
 !   creer une sd corresp_2_mailla
 !   donnant la correspondance entre les noeuds de moa2 et les mailles de
@@ -71,7 +73,7 @@ subroutine pj2dco(mocle, moa1, moa2, nbma1, lima1,&
 
     character(len=8) :: m1, m2, nono2
     character(len=14) :: boite
-    character(len=16) :: cortr3
+    character(len=16) :: cortr3, listInterc
     integer :: nbtm, nbtmx
     parameter   (nbtmx=15)
     integer :: nutm(nbtmx)
@@ -82,7 +84,7 @@ subroutine pj2dco(mocle, moa1, moa2, nbma1, lima1,&
     integer :: iatr3, iacoo1, iacoo2, nbpt0, ino2_0, idecal_0
     integer :: iabtco, jxxk1, iaconu, iacocf, iacotr
     integer :: ialim1, ialin1, ilcnx1, ialin2
-    integer :: iaconb, itypm, idecal, itr3, nbtrou
+    integer :: iaconb, itypm, idecal, itr3, nbtrou, nbInterc
 
     aster_logical :: dbg=.false., l_dmax, loin, lraff
     real(kind=8) :: dmax, dmin, dala, cobary(3)
@@ -324,8 +326,16 @@ subroutine pj2dco(mocle, moa1, moa2, nbma1, lima1,&
 !   5. on transforme cortr3 en corres (retour aux vraies mailles)
 !   -------------------------------------------------------------
     lraff=.true.
+    if (present(listIntercz))then
+        ASSERT(present(nbIntercz))
+        listInterc = listIntercz
+        nbInterc = nbIntercz
+    else
+        listInterc = ' '
+        nbInterc = 0
+    endif
     call pj2dtr(cortr3, corres, nutm, elrf, zr(iacoo1),&
-                zr(iacoo2), lraff, dala)
+                zr(iacoo2), lraff, dala, listInterc, nbInterc)
     if (dbg) then
         call utimsd(ifm, 2, .false._1, .true._1, '&&PJ2DCO',&
                     1, ' ')
