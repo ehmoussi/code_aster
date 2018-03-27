@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -117,9 +117,9 @@ def pression(x) :
    return 2E6
 
 PRES_H = FORMULE(VALE='pression(X)',
-                  NOM_PARA=('X'));
+                  NOM_PARA=('X'),pression=pression);
 PRES_D = FORMULE(VALE='pression(Y)',
-                  NOM_PARA=('Y'));
+                  NOM_PARA=('Y'),pression=pression);
 
 CH1=AFFE_CHAR_MECA_F(MODELE=MODELEK,
                    PRES_REP=(_F(GROUP_MA='SH',PRES = PRES_H),
@@ -298,8 +298,8 @@ def Sxx(X,Y):
 def Syy(X,Y):
     return -pression(X)
 
-SXX=FORMULE(NOM_PARA=('X','Y',),VALE='Sxx(X,Y)');
-SYY=FORMULE(NOM_PARA=('X','Y',),VALE='Syy(X,Y)');
+SXX=FORMULE(NOM_PARA=('X','Y',),VALE='Sxx(X,Y)',Sxx=Sxx);
+SYY=FORMULE(NOM_PARA=('X','Y',),VALE='Syy(X,Y)',Syy=Syy);
 
 
 
@@ -331,9 +331,9 @@ def uz(X,Y,Z):
 
 
 
-UX=FORMULE(NOM_PARA=('X','Y',),VALE='ux(X,Y)')
-UY=FORMULE(NOM_PARA=('X','Y',),VALE='uy(X,Y)')
-UZ=FORMULE(NOM_PARA=('X','Y','Z'),VALE='uz(X,Y,Z)')
+UX=FORMULE(NOM_PARA=('X','Y',),VALE='ux(X,Y)',ux=ux)
+UY=FORMULE(NOM_PARA=('X','Y',),VALE='uy(X,Y)',uy=uy)
+UZ=FORMULE(NOM_PARA=('X','Y','Z'),VALE='uz(X,Y,Z)',uz=uz)
 
 # calcul de l'erreur en terme de norme en energie
 Scal=CREA_CHAMP(OPERATION='EXTR',

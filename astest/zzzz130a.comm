@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -67,9 +67,9 @@ RHO=1000.
 G=10.
 KP=3.
 
-SIZZ = FORMULE(NOM_PARA='Z',VALE='RHO*G*Z')
-SIXX = FORMULE(NOM_PARA='Z',VALE='KP*SIZZ(Z)')
-SIYY = FORMULE(NOM_PARA='Z',VALE='KP*SIZZ(Z)')
+SIZZ = FORMULE(NOM_PARA='Z',VALE='RHO*G*Z',RHO=RHO,G=G)
+SIXX = FORMULE(NOM_PARA='Z',VALE='KP*SIZZ(Z)',KP=KP,SIZZ=SIZZ)
+SIYY = FORMULE(NOM_PARA='Z',VALE='KP*SIZZ(Z)',KP=KP,SIZZ=SIZZ)
 
 SIG1=CREA_CHAMP(OPERATION='AFFE', TYPE_CHAM='ELGA_NEUT_F',
      MODELE=MO,  PROL_ZERO='OUI',   INFO=1,

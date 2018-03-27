@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -81,9 +81,9 @@ def depy(x) :
    return 0.
 
 DEPL_X = FORMULE(VALE='depx(X,Y)',
-                  NOM_PARA=('X','Y',),);
+                  NOM_PARA=('X','Y',),depx=depx);
 DEPL_Y = FORMULE(VALE='depy(X)',
-                  NOM_PARA=('X',),);
+                  NOM_PARA=('X',),depy=depy);
 
 CH1=AFFE_CHAR_MECA_F(MODELE=MODELEK,
                    DDL_IMPO=(_F(GROUP_MA=('LD','LG'),DX= DEPL_X,DY= DEPL_Y),),

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -111,7 +111,7 @@ MODI_REPERE=OPER(nom="MODI_REPERE",op=191,sd_prod=modi_repere_prod,reentrant='f'
             ),),
             
         b_autre    =BLOC(condition = """is_in("REPERE", ('GLOBAL_UTIL', 'COQUE_INTR_UTIL', 'COQUE_UTIL_INTR'))""",
-            AFFE     =FACT(statut='o',max='**',
+            AFFE     =FACT(statut='f',max='**',
                 GROUP_MA    =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**',),
                 GROUP_NO    =SIMP(statut='f',typ=grno,validators=NoRepeat(),max='**',),
                 MAILLE      =SIMP(statut='c',typ=ma  ,validators=NoRepeat(),max='**',),

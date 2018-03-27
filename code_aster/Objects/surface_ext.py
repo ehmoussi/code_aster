@@ -24,13 +24,13 @@
 """
 
 import aster
-from libaster import Surface
+from libaster import Surface, DataStructure
 
 from ..Utilities import injector
 
 
 class ExtendedSurface(injector(Surface), Surface):
-    cata_sdj = "SD.sd_nappe.sd_nappe"
+    cata_sdj = "SD.sd_fonction.sd_fonction_aster"
 
     def convert(self):
         """
@@ -88,3 +88,15 @@ class ExtendedSurface(injector(Surface), Surface):
         values = self.exportValuesToPython()
         parameters = self.exportParametersToPython()
         return [parameters, values]
+
+    def __call__(self, val1, val2, tol=1.e-6):
+        """Evaluate a function at 'val'. If provided, 'tol' is a relative
+        tolerance to match an abscissa value."""
+        # Pour EFICAS : substitution de l'instance de classe
+        # parametre par sa valeur
+        if isinstance(val1, DataStructure):
+            val1 = val1.valeur
+        if isinstance(val2, DataStructure):
+            val2 = val2.valeur
+        __ff = self.convert()
+        return __ff(val1, val2, tol=tol)

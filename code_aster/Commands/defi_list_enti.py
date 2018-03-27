@@ -17,33 +17,25 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-# person_in_charge: nicolas.sellenet@edf.fr
+# person_in_charge: mathieu.courtois@edf.fr
 
-from ..Objects import EvolutiveThermalLoad
+import numpy as np
+
+from ..Objects import ListOfIntegers
 from .ExecuteCommand import ExecuteCommand
 
 
-class LinearThermalAnalysisBuild(ExecuteCommand):
-    """Command that creates the :class:`~code_aster.Objects.EvolutiveThermalLoad` by assigning
-    finite elements on a :class:`~code_aster.Objects.EvolutiveThermalLoad`."""
-    command_name = "THER_LINEAIRE"
+class ListOfIntegersDefinition(ExecuteCommand):
+    """Command that creates a :py:class:`~code_aster.Objects.ListOfIntegers`."""
+    command_name = "DEFI_LIST_ENTI"
 
     def create_result(self, keywords):
-        """Initialize the result.
+        """Initialize the result object.
 
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = EvolutiveThermalLoad()
-    
-    def post_exec(self, keywords):
-        """Execute the command.
-
-        Arguments:
-            keywords (dict): User's keywords.
-        """
-        self._result.appendModelOnAllRanks(keywords["MODELE"])
-        self._result.appendMaterialOnMeshOnAllRanks(keywords["CHAM_MATER"])
+        self._result = ListOfIntegers()
 
 
-THER_LINEAIRE = LinearThermalAnalysisBuild.run
+DEFI_LIST_ENTI = ListOfIntegersDefinition.run
