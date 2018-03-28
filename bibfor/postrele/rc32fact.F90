@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ subroutine rc32fact(ze200, nb, lieu, ns, fuseism, futot, lefat, futotenv)
 #include "asterfort/jedetr.h"
 #include "asterc/r8vide.h"
 #include "asterfort/utmess.h"
-#include "asterfort/rc32s0.h"
+#include "asterfort/rc32s0b.h"
 #include "asterfort/rcZ2s0.h"
 #include "asterfort/rc32env.h"
 #include "asterfort/rc32sa.h"
@@ -48,7 +48,7 @@ subroutine rc32fact(ze200, nb, lieu, ns, fuseism, futot, lefat, futotenv)
     integer :: jresu, jresucomb, jresus, jresucombs, ndim, jfu, jocc
     integer :: iocc1, iocc2, num1, num2, jinfo, noccpris, jfact, i, k
     integer :: jfus, jinfos, noccs, nbsscyc, jcombi, jpassage, jpartage
-    integer :: numpass, noccpass, num, iocc3
+    integer :: numpass, noccpass, num, iocc3, jsnseis, jspseis
     real(kind=8) :: fumax, fumaxs, m0(12), pres0, st0(6), sns
     real(kind=8) :: sps(2), rbid, fus(2), sbid(2), fumaxpass, fucible
     real(kind=8) :: futotss
@@ -130,8 +130,12 @@ subroutine rc32fact(ze200, nb, lieu, ns, fuseism, futot, lefat, futotenv)
         do 65 i = 1, 6
             st0(i) =0.d0
 65      continue
-        call rc32s0('SNSN', st0, lieu, sns)
-        call rc32s0('SPSP', st0, lieu, sps(1))
+!
+        call jeveuo('&&RC3200.SNSEISME.'//lieu, 'L', jsnseis)
+        call rc32s0b(zr(jsnseis), st0, sns)
+        call jeveuo('&&RC3200.SPSEISME.'//lieu, 'L', jspseis)
+        call rc32s0b(zr(jspseis), st0, sps(1))
+!
     endif
     call rc32sa('SITU', sns, sps, sps, rbid, rbid, sbid, fus)
     fuseism = fus(1)*nbsscyc

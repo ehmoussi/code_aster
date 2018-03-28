@@ -19,9 +19,9 @@
 !
 !
 interface
-    subroutine rc32s0(option, lieu, seis)
-        character(len=4) :: option
-        character(len=4) :: lieu
+    subroutine rc32s0b(seis, sig, trescamax)
         real(kind=8) :: seis(72)
-    end subroutine rc32s0
+        real(kind=8) :: sig(6)
+        real(kind=8) :: trescamax
+    end subroutine rc32s0b
 end interface

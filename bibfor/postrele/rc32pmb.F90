@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -28,6 +28,7 @@ subroutine rc32pmb(lieu, iocc, ns, pm, pb, pmpb)
 #include "asterfort/jexnom.h"
 #include "asterfort/rctres.h"
 #include "asterfort/rc32s0.h"
+#include "asterfort/rc32s0b.h"
 
     integer :: iocc, ns
     real(kind=8) :: pm, pb, pmpb
@@ -42,7 +43,7 @@ subroutine rc32pmb(lieu, iocc, ns, pm, pb, pmpb)
     integer :: jcharb, numcha, iret
     real(kind=8) :: sigmoya(6), sigmoyb(6), ma(12), mb(12), pma, pmb
     real(kind=8) :: sigflea(6), sigfleb(6), pba, pbb, siglina(6)
-    real(kind=8) :: siglinb(6), pmba, pmbb
+    real(kind=8) :: siglinb(6), pmba, pmbb, seis(72)
     character(len=8) ::  knumec
 !
 ! DEB ------------------------------------------------------------------
@@ -126,12 +127,17 @@ subroutine rc32pmb(lieu, iocc, ns, pm, pb, pmpb)
         call rctres(siglina, pmba)
         call rctres(siglinb, pmbb) 
     else
-        call rc32s0('PMPM',sigmoya, lieu, pma)
-        call rc32s0('PMPM',sigmoyb, lieu, pmb)
-        call rc32s0('PBPB',sigflea, lieu, pba)
-        call rc32s0('PBPB',sigfleb, lieu, pbb)
-        call rc32s0('SNSN',siglina, lieu, pmba)
-        call rc32s0('SNSN',siglinb, lieu, pmbb)
+        call rc32s0('PMPM', lieu, seis)
+        call rc32s0b(seis, sigmoya, pma)
+        call rc32s0b(seis, sigmoyb, pmb)
+!
+        call rc32s0('PBPB', lieu, seis)
+        call rc32s0b(seis,sigflea, pba)
+        call rc32s0b(seis, sigfleb, pbb)
+!
+        call rc32s0('SNSN', lieu, seis)
+        call rc32s0b(seis, siglina, pmba)
+        call rc32s0b(seis, siglinb, pmbb)
     endif
 !
     pm = max(pma, pmb)
