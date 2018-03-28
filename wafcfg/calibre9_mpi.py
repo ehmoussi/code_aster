@@ -37,17 +37,17 @@ def configure(self):
     self.env['ADDMEM'] = 500
 
     self.env.prepend_value('LIBPATH', [
-        YAMMROOT + '/prerequisites/Parmetis_aster-403_aster/lib',
-        YAMMROOT + '/prerequisites/Scotch_aster-604_aster6/MPI/lib',
-        YAMMROOT + '/prerequisites/Mumps-511_consortium_aster/MPI/lib',
-        YAMMROOT + '/prerequisites/Petsc_mpi-382_aster/lib',
+        YAMMROOT + '/prerequisites/Parmetis_aster-403_aster3/lib',
+        YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/MPI/lib',
+        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/MPI/lib',
+        YAMMROOT + '/prerequisites/Petsc_mpi-382_aster1/lib',
     ])
 
     self.env.prepend_value('INCLUDES', [
-        YAMMROOT + '/prerequisites/Parmetis_aster-403_aster/include',
-        YAMMROOT + '/prerequisites/Scotch_aster-604_aster6/MPI/include',
-        YAMMROOT + '/prerequisites/Mumps-511_consortium_aster/MPI/include',
-        YAMMROOT + '/prerequisites/Petsc_mpi-382_aster/include',
+        YAMMROOT + '/prerequisites/Parmetis_aster-403_aster3/include',
+        YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/MPI/include',
+        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/MPI/include',
+        YAMMROOT + '/prerequisites/Petsc_mpi-382_aster1/include',
     ])
 
     opts.enable_petsc = True
