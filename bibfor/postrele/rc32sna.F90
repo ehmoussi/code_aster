@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,6 +26,7 @@ subroutine rc32sna(ze200, lieu, iocc1, iocc2, ns, sn, instsn, snet,&
 #include "asterfort/jeveuo.h"
 #include "asterfort/rcZ2s0.h"
 #include "asterfort/rc32s0.h"
+#include "asterfort/rc32s0b.h"
 #include "asterfort/codent.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jexnom.h"
@@ -57,7 +58,8 @@ subroutine rc32sna(ze200, lieu, iocc1, iocc2, ns, sn, instsn, snet,&
 !
     integer :: jinfoi, nmecap, npresp, ntherp, jinfor, numcha, iret
     integer :: jchara, jcharb, k, j, jtranp, jsigu, i0, i1, e0(2)
-    integer :: jtemp, jtranq, nmecaq, npresq, ntherq, jvalin
+    integer :: jtemp, jtranq, nmecaq, npresq, ntherq, jvalin, jsnseis
+    integer :: choix
     real(kind=8) :: presap, presbp, map(12), mbp(12), s2pp, sb(6), sbet(6)
     real(kind=8) :: smoypr1(6), smoypr2(6), instpmin, instpmax
     real(kind=8) :: tresca, sa(6), st(6), stet(6), sipr(6), sc(6)
@@ -73,10 +75,12 @@ subroutine rc32sna(ze200, lieu, iocc1, iocc2, ns, sn, instsn, snet,&
     real(kind=8) :: sith2(6), snpres, snmec, k1, c1, k2, c2
     real(kind=8) :: k3, c3, sipr1(6), sipr2(6), simec1(6), simec2(6)
     character(len=8) ::  knumec
-    aster_logical :: tranp, tranq
+    aster_logical :: tranp, tranq, unitaire
 !
 ! DEB ------------------------------------------------------------------
     call jemarq()
+!
+    if(.not. ze200 .and. ns .ne. 0) call jeveuo('&&RC3200.SNSEISME.'//lieu, 'L', jsnseis)
 !
     sn  = 0.d0
     snet  = 0.d0
@@ -114,6 +118,10 @@ subroutine rc32sna(ze200, lieu, iocc1, iocc2, ns, sn, instsn, snet,&
     nmecap = zi(jinfoi+27*(iocc1-1)+23)
     npresp = zi(jinfoi+27*(iocc1-1)+22)
     ntherp = zi(jinfoi+27*(iocc1-1)+26)
+!
+!---- Mot clé pour accélerer les calculs si aucun chargement en unitaire
+    unitaire =.false.
+    if(npresp .eq. 1 .or. nmecap .eq. 1) unitaire = .true.
 !
     presap = zr(jinfor+4*(iocc1-1))
     presbp = zr(jinfor+4*(iocc1-1)+1)
@@ -274,11 +282,12 @@ subroutine rc32sna(ze200, lieu, iocc1, iocc2, ns, sn, instsn, snet,&
               call rctres(stet, tresca)
               snet = max(snet, tresca)
           else
-              call rc32s0('SNSN', st, lieu, tresca)
+              call rc32s0b(zr(jsnseis), st, tresca)
               sn = max(sn, tresca)
-              call rc32s0('SNSN', stet, lieu, tresca)
+              call rc32s0b(zr(jsnseis), stet, tresca)
               snet = max(snet, tresca)
           endif
+          if(.not. unitaire) exit
 71      continue
       endif
 !
@@ -320,13 +329,14 @@ subroutine rc32sna(ze200, lieu, iocc1, iocc2, ns, sn, instsn, snet,&
         call rctres(sith1, snther) 
         call rctres(sipr1, snpres) 
         if (ns .eq. 0 .and. .not. ze200) call rctres(simec1, snmec) 
-        if (ns .ne. 0 .and. .not. ze200) call rc32s0('SNSN', simec1, lieu, snmec)
+        if (ns .ne. 0 .and. .not. ze200) call rc32s0b(zr(jsnseis), simec1, snmec)
       endif
 !
     else
 !--------------------------------------------------------------------
 !                  DANS LE CAS D'UNE COMBINAISON DE SITUATIONS
 !--------------------------------------------------------------------
+      choix =1
 !-- on regarde si la pression est sous forme unitaire ou transitoire
 !-- on regarde si la méca est sous forme unitaire ou transitoire
       nmecaq = zi(jinfoi+27*(iocc2-1)+23)
@@ -547,6 +557,12 @@ subroutine rc32sna(ze200, lieu, iocc1, iocc2, ns, sn, instsn, snet,&
 ! --------------------------------------------------------------
 !                          CALCUL DE SN(P,Q)
 ! --------------------------------------------------------------
+!
+!---- Mot clé pour accélerer les calculs si aucun chargement en unitaire
+      unitaire = .false.
+      if(npresp .eq. 1 .or. nmecap .eq. 1) unitaire = .true.
+      if(npresq .eq. 1 .or. nmecaq .eq. 1) unitaire = .true.
+!
       if (ze200) then
 ! ----- si on est en ZE200
         tresca= -1.d0
@@ -595,172 +611,262 @@ subroutine rc32sna(ze200, lieu, iocc1, iocc2, ns, sn, instsn, snet,&
         do 173 i0 = 1,2
           do 174 j = 1,6
             st11(j) = sb1(j)+sc1(j)+e0(i0)*sa1(j)
-            st12(j) = sb1(j)+sc1(j)+e0(i0)*sa2(j)
-            st13(j) = sb1(j)+sc1(j)+e0(i0)*sa3(j)
-            st14(j) = sb1(j)+sc1(j)+e0(i0)*sa4(j)
-            st21(j) = sb2(j)+sc2(j)+e0(i0)*sa1(j)
-            st22(j) = sb2(j)+sc2(j)+e0(i0)*sa2(j)
-            st23(j) = sb2(j)+sc2(j)+e0(i0)*sa3(j)
-            st24(j) = sb2(j)+sc2(j)+e0(i0)*sa4(j)
             stet11(j) = sbet1(j)+sc1(j)+e0(i0)*sa1(j)
-            stet12(j) = sbet1(j)+sc1(j)+e0(i0)*sa2(j)
-            stet13(j) = sbet1(j)+sc1(j)+e0(i0)*sa3(j)
-            stet14(j) = sbet1(j)+sc1(j)+e0(i0)*sa4(j)
+            st21(j) = sb2(j)+sc2(j)+e0(i0)*sa1(j)
             stet21(j) = sbet2(j)+sc2(j)+e0(i0)*sa1(j)
-            stet22(j) = sbet2(j)+sc2(j)+e0(i0)*sa2(j)
-            stet23(j) = sbet2(j)+sc2(j)+e0(i0)*sa3(j)
-            stet24(j) = sbet2(j)+sc2(j)+e0(i0)*sa4(j)
+! 
+            if(unitaire) then
+              st12(j) = sb1(j)+sc1(j)+e0(i0)*sa2(j)
+              st13(j) = sb1(j)+sc1(j)+e0(i0)*sa3(j)
+              st14(j) = sb1(j)+sc1(j)+e0(i0)*sa4(j)
+              st22(j) = sb2(j)+sc2(j)+e0(i0)*sa2(j)
+              st23(j) = sb2(j)+sc2(j)+e0(i0)*sa3(j)
+              st24(j) = sb2(j)+sc2(j)+e0(i0)*sa4(j)
+              stet12(j) = sbet1(j)+sc1(j)+e0(i0)*sa2(j)
+              stet13(j) = sbet1(j)+sc1(j)+e0(i0)*sa3(j)
+              stet14(j) = sbet1(j)+sc1(j)+e0(i0)*sa4(j)
+              stet22(j) = sbet2(j)+sc2(j)+e0(i0)*sa2(j)
+              stet23(j) = sbet2(j)+sc2(j)+e0(i0)*sa3(j)
+              stet24(j) = sbet2(j)+sc2(j)+e0(i0)*sa4(j)
+            endif
 174       continue
 !
-!-------- Calcul du SN avec ou sans séisme
-          if(ns .eq. 0) call rctres(st11, tresca)
-          if(ns .ne. 0) call rc32s0('SNSN', st11, lieu, tresca)            
-          if(tresca .gt. sn) then
+!-------- Calcul du SN sans séisme
+          if(ns .eq. 0) then
+!
+            call rctres(st11, tresca)          
+            if(tresca .gt. sn) then
               sn = tresca
-              instsn(1) = instpmax
-              instsn(2) = instqmin
-              call rctres(sith1, snther)
-              call rctres(sipr1, snpres)
-              if (ns .eq. 0) call rctres(simec1, snmec)
-              if (ns .ne. 0) call rc32s0('SNSN', simec1, lieu, snmec)
-          endif
-          if(ns .eq. 0) call rctres(st12, tresca)
-          if(ns .ne. 0) call rc32s0('SNSN', st12, lieu, tresca)  
-          if(tresca .gt. sn) then
+              choix = 1
+            endif
+            call rctres(st21, tresca)
+            if(tresca .gt. sn) then
               sn = tresca
-              instsn(1) = instpmax
-              instsn(2) = instqmin
-              call rctres(sith1, snther)
-              call rctres(sipr1, snpres)
-              if (ns .eq. 0) call rctres(simec1, snmec)
-              if (ns .ne. 0) call rc32s0('SNSN', simec1, lieu, snmec)
-          endif
-          if(ns .eq. 0) call rctres(st13, tresca)
-          if(ns .ne. 0) call rc32s0('SNSN', st13, lieu, tresca)  
-          if(tresca .gt. sn) then
-              sn = tresca
-              instsn(1) = instpmax
-              instsn(2) = instqmin
-              call rctres(sith1, snther)
-              call rctres(sipr1, snpres)
-              if (ns .eq. 0) call rctres(simec1, snmec)
-              if (ns .ne. 0) call rc32s0('SNSN', simec1, lieu, snmec)
-          endif
-          if(ns .eq. 0) call rctres(st14, tresca)
-          if(ns .ne. 0) call rc32s0('SNSN', st14, lieu, tresca)  
-          if(tresca .gt. sn) then
-              sn = tresca
-              instsn(1) = instpmax
-              instsn(2) = instqmin
-              call rctres(sith1, snther)
-              call rctres(sipr1, snpres)
-              if (ns .eq. 0) call rctres(simec1, snmec)
-              if (ns .ne. 0) call rc32s0('SNSN', simec1, lieu, snmec)
+              choix = 2
+            endif
+!
+            if(unitaire) then
+              call rctres(st12, tresca)
+              if(tresca .gt. sn) then
+                sn = tresca
+                choix=1
+              endif
+              call rctres(st13, tresca)
+              if(tresca .gt. sn) then
+                sn = tresca
+                choix=1
+              endif
+              call rctres(st14, tresca)
+              if(tresca .gt. sn) then
+                sn = tresca
+                choix=1
+              endif
+              call rctres(st22, tresca)
+              if(tresca .gt. sn) then
+                sn = tresca
+                choix=2
+              endif
+              call rctres(st23, tresca)
+              if(tresca .gt. sn) then
+                sn = tresca
+                choix=2
+              endif
+              call rctres(st24, tresca)
+              if(tresca .gt. sn) then
+                sn = tresca
+                choix=2
+              endif
+            endif
+!
+            if(choix .eq. 1) then
+                instsn(1) = instpmax
+                instsn(2) = instqmin
+                call rctres(sith1, snther)
+                call rctres(sipr1, snpres)
+                call rctres(simec1, snmec)
+            else
+                instsn(1) = instqmax
+                instsn(2) = instpmin
+                call rctres(sith2, snther)
+                call rctres(sipr2, snpres)
+                call rctres(simec2, snmec)
+            endif
           endif
 !
-          if(ns .eq. 0) call rctres(st21, tresca)
-          if(ns .ne. 0) call rc32s0('SNSN', st21, lieu, tresca)  
-          if(tresca .gt. sn) then
+!-------- Calcul du SN avec séisme
+          if(ns .ne. 0) then
+            call rc32s0b(zr(jsnseis), st11, tresca)           
+            if(tresca .gt. sn) then
               sn = tresca
-              instsn(1) = instqmax
-              instsn(2) = instpmin
-              call rctres(sith2, snther)
-              call rctres(sipr2, snpres)
-              if (ns .eq. 0) call rctres(simec2, snmec)
-              if (ns .ne. 0) call rc32s0('SNSN', simec2, lieu, snmec)
-          endif
-          if(ns .eq. 0) call rctres(st22, tresca)
-          if(ns .ne. 0) call rc32s0('SNSN', st22, lieu, tresca)  
-          if(tresca .gt. sn) then
+              choix=1
+            endif
+            call rc32s0b(zr(jsnseis), st21, tresca) 
+            if(tresca .gt. sn) then
               sn = tresca
-              instsn(1) = instqmax
-              instsn(2) = instpmin
-              call rctres(sith2, snther)
-              call rctres(sipr2, snpres)
-              if (ns .eq. 0) call rctres(simec2, snmec)
-              if (ns .ne. 0) call rc32s0('SNSN', simec2, lieu, snmec)
-          endif
-          if(ns .eq. 0) call rctres(st23, tresca)
-          if(ns .ne. 0) call rc32s0('SNSN', st23, lieu, tresca)  
-          if(tresca .gt. sn) then
-              sn = tresca
-              instsn(1) = instqmax
-              instsn(2) = instpmin
-              call rctres(sith2, snther)
-              call rctres(sipr2, snpres)
-              if (ns .eq. 0) call rctres(simec2, snmec)
-              if (ns .ne. 0) call rc32s0('SNSN', simec2, lieu, snmec)
-          endif
-          if(ns .eq. 0) call rctres(st24, tresca)
-          if(ns .ne. 0) call rc32s0('SNSN', st24, lieu, tresca)  
-          if(tresca .gt. sn) then
-              sn = tresca
-              instsn(1) = instqmax
-              instsn(2) = instpmin
-              call rctres(sith2, snther)
-              call rctres(sipr2, snpres)
-              if (ns .eq. 0) call rctres(simec2, snmec)
-              if (ns .ne. 0) call rc32s0('SNSN', simec2, lieu, snmec)
+              choix=2
+            endif
+!
+            if(unitaire) then
+              call rc32s0b(zr(jsnseis), st12, tresca) 
+              if(tresca .gt. sn) then
+                sn = tresca
+                choix=1
+              endif
+              call rc32s0b(zr(jsnseis), st13, tresca)
+              if(tresca .gt. sn) then
+                sn = tresca
+                choix=1
+              endif
+              call rc32s0b(zr(jsnseis), st14, tresca)  
+              if(tresca .gt. sn) then
+                sn = tresca
+                choix=1
+              endif
+              call rc32s0b(zr(jsnseis), st22, tresca)  
+              if(tresca .gt. sn) then
+                sn = tresca
+                choix=2
+              endif
+              call rc32s0b(zr(jsnseis), st23, tresca)  
+              if(tresca .gt. sn) then
+                sn = tresca
+                choix=2
+              endif
+              call rc32s0b(zr(jsnseis), st24, tresca)  
+              if(tresca .gt. sn) then
+                sn = tresca
+                choix=2
+              endif
+            endif
+!
+            if(choix .eq. 1) then
+                instsn(1) = instpmax
+                instsn(2) = instqmin
+                call rctres(sith1, snther)
+                call rctres(sipr1, snpres)
+                call rc32s0b(zr(jsnseis), simec1, snmec)
+            else
+                instsn(1) = instqmax
+                instsn(2) = instpmin
+                call rctres(sith2, snther)
+                call rctres(sipr2, snpres)
+                call rc32s0b(zr(jsnseis), simec2, snmec)
+            endif
           endif
 !
-!-------- Calcul du SN* avec ou sans séisme
-          if(ns .eq. 0) call rctres(stet11, tresca)
-          if(ns .ne. 0) call rc32s0('SNSN', stet11, lieu, tresca)            
-          if(tresca .gt. snet) then
+!-------- Calcul du SN* sans séisme
+          if(ns .eq. 0) then
+!
+            call rctres(stet11, tresca)          
+            if(tresca .gt. snet) then
               snet = tresca
-              instsn(3) = instpmax
-              instsn(4) = instqmin
-          endif
-          if(ns .eq. 0) call rctres(stet12, tresca)
-          if(ns .ne. 0) call rc32s0('SNSN', stet12, lieu, tresca)  
-          if(tresca .gt. snet) then
+              choix = 1
+            endif
+            call rctres(stet21, tresca)
+            if(tresca .gt. snet) then
               snet = tresca
-              instsn(3) = instpmax
-              instsn(4) = instqmin
-          endif
-          if(ns .eq. 0) call rctres(stet13, tresca)
-          if(ns .ne. 0) call rc32s0('SNSN', stet13, lieu, tresca)  
-          if(tresca .gt. snet) then
-              snet = tresca
-              instsn(3) = instpmax
-              instsn(4) = instqmin
-          endif
-          if(ns .eq. 0) call rctres(stet14, tresca)
-          if(ns .ne. 0) call rc32s0('SNSN', stet14, lieu, tresca)  
-          if(tresca .gt. snet) then
-              snet = tresca
-              instsn(3) = instpmax
-              instsn(4) = instqmin
+              choix = 2
+            endif
+!
+            if(unitaire) then
+              call rctres(stet12, tresca)
+              if(tresca .gt. snet) then
+                snet = tresca
+                choix=1
+              endif
+              call rctres(stet13, tresca)
+              if(tresca .gt. snet) then
+                snet = tresca
+                choix=1
+              endif
+              call rctres(stet14, tresca)
+              if(tresca .gt. snet) then
+                snet = tresca
+                choix=1
+              endif
+              call rctres(stet22, tresca)
+              if(tresca .gt. snet) then
+                snet = tresca
+                choix=2
+              endif
+              call rctres(stet23, tresca)
+              if(tresca .gt. snet) then
+                snet = tresca
+                choix=2
+              endif
+              call rctres(stet24, tresca)
+              if(tresca .gt. snet) then
+                snet = tresca
+                choix=2
+              endif
+            endif
+!
+            if(choix .eq. 1) then
+                instsn(3) = instpmax
+                instsn(4) = instqmin
+            else
+                instsn(3) = instqmax
+                instsn(4) = instpmin
+            endif
           endif
 !
-          if(ns .eq. 0) call rctres(stet21, tresca)
-          if(ns .ne. 0) call rc32s0('SNSN', stet21, lieu, tresca)  
-          if(tresca .gt. snet) then
+!-------- Calcul du SN* avec séisme
+          if(ns .ne. 0) then
+!
+            call rc32s0b(zr(jsnseis), stet11, tresca)          
+            if(tresca .gt. snet) then
               snet = tresca
-              instsn(3) = instqmax
-              instsn(4) = instpmin
-          endif
-          if(ns .eq. 0) call rctres(stet22, tresca)
-          if(ns .ne. 0) call rc32s0('SNSN', stet22, lieu, tresca)  
-          if(tresca .gt. snet) then
+              choix = 1
+            endif
+            call rc32s0b(zr(jsnseis), stet21, tresca)
+            if(tresca .gt. snet) then
               snet = tresca
-              instsn(3) = instqmax
-              instsn(4) = instpmin
+              choix = 2
+            endif
+!
+            if(unitaire) then
+              call rc32s0b(zr(jsnseis), stet12, tresca)
+              if(tresca .gt. snet) then
+                snet = tresca
+                choix=1
+              endif
+              call rc32s0b(zr(jsnseis), stet13, tresca)
+              if(tresca .gt. snet) then
+                snet = tresca
+                choix=1
+              endif
+              call rc32s0b(zr(jsnseis), stet14, tresca)
+              if(tresca .gt. snet) then
+                snet = tresca
+                choix=1
+              endif
+              call rc32s0b(zr(jsnseis), stet22, tresca)
+              if(tresca .gt. snet) then
+                snet = tresca
+                choix=2
+              endif
+              call rc32s0b(zr(jsnseis), stet23, tresca)
+              if(tresca .gt. snet) then
+                snet = tresca
+                choix=2
+              endif
+              call rc32s0b(zr(jsnseis), stet24, tresca)
+              if(tresca .gt. snet) then
+                snet = tresca
+                choix=2
+              endif
+            endif
+!
+            if(choix .eq. 1) then
+                instsn(3) = instpmax
+                instsn(4) = instqmin
+            else
+                instsn(3) = instqmax
+                instsn(4) = instpmin
+            endif
           endif
-          if(ns .eq. 0) call rctres(stet23, tresca)
-          if(ns .ne. 0) call rc32s0('SNSN', stet23, lieu, tresca)  
-          if(tresca .gt. snet) then
-              snet = tresca
-              instsn(3) = instqmax
-              instsn(4) = instpmin
-          endif
-          if(ns .eq. 0) call rctres(stet24, tresca)
-          if(ns .ne. 0) call rc32s0('SNSN', stet24, lieu, tresca)  
-          if(tresca .gt. snet) then
-              snet = tresca
-              instsn(3) = instqmax
-              instsn(4) = instpmin
-          endif
+!
+          if(.not. unitaire) exit
 !
 173     continue
       endif
