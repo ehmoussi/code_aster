@@ -56,7 +56,7 @@ def configure(self):
         'module unload mkl',
         'module load ifort/2016.0.047 icc/2016.0.047 mkl/2016.0.047'])
 
-    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL300'
+    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311'
     self.env.TFELHOME = TFELHOME
 
     self.env.append_value('LIBPATH', [

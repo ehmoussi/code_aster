@@ -41,7 +41,7 @@ def configure(self):
     self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0'])
     self.env['ADDMEM'] = 350
 
-    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL300'
+    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311'
     self.env.TFELHOME = TFELHOME
 
     self.env.append_value('LIBPATH', [
