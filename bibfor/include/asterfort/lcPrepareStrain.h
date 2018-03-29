@@ -19,10 +19,10 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine lcPrepareStrain(compor, option, typmod,&
+    subroutine lcPrepareStrain(option, typmod,&
                                neps , epsth , depsth,&
                                epsm , deps)
-        character(len=16), intent(in) :: compor(*), option
+        character(len=16), intent(in) :: option
         character(len=8), intent(in) :: typmod(*)
         integer, intent(in) :: neps
         real(kind=8), intent(in) :: epsth(neps), depsth(neps)
