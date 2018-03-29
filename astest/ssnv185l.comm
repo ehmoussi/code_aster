@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,6 +19,8 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'),
       IGNORE_ALARM=('MODELE1_63'))
+
+from math import *
 
 # <MODELE1_63> : DANS UN MODELE, IL EXISTE DES ELEMENTS DE TYPE "BORD" QUI N'ONT PAS DE VOISIN AVEC RIGIDITE
 #  LE MODELE PROVOQUANT CES ALARMES NE SERT QU'A LA VISUALISATION
@@ -78,8 +80,8 @@ MODELEIN=AFFE_MODELE(MAILLAGE=MAILLAG1,
                              MODELISATION='3D',),
                     );
 
-LN=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z-lz/2.');
-LT=FORMULE(NOM_PARA=('X','Y','Z'),VALE='-Y+ly/2.');
+LN=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z-lz/2.',lz=lz);
+LT=FORMULE(NOM_PARA=('X','Y','Z'),VALE='-Y+ly/2.',ly=ly);
 
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG1,
                     DEFI_FISS=_F(FONC_LT=LT,FONC_LN=LN,),
@@ -122,8 +124,8 @@ CHBLO=AFFE_CHAR_MECA(MODELE=MODELEK,
                   );
 
 # formule des coordonnees polaires dans la base locale au fond de fissure
-R = FORMULE(NOM_PARA=('X','Y','Z'),VALE='sqrt((Y-5.)**2+(Z-15.)**2)');
-T = FORMULE(NOM_PARA=('X','Y','Z'),VALE='atan2(Z-15.,-Y+5.)');
+R = FORMULE(NOM_PARA=('X','Y','Z'),VALE='sqrt((Y-5.)**2+(Z-15.)**2)',sqrt=sqrt);
+T = FORMULE(NOM_PARA=('X','Y','Z'),VALE='atan2(Z-15.,-Y+5.)',atan2=atan2);
 
 coef=1./sqrt(2.*pi)
 
@@ -134,14 +136,20 @@ coef=1./sqrt(2.*pi)
 #----------------------------------------------------------
 
 # definition des contraintes analytiques SIG11, SIG12 et SIG22 du mode 2
-SIG11M2 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='-1.*coef/sqrt(R(X,Y,Z))*sin(T(X,Y,Z)/2.)*(2.+cos(T(X,Y,Z)/2.)*cos(3.*T(X,Y,Z)/2.))');
-SIG12M2 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='    coef/sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(1.-sin(T(X,Y,Z)/2.)*sin(3.*T(X,Y,Z)/2.))');
-SIG22M2 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='    coef/sqrt(R(X,Y,Z))*sin(T(X,Y,Z)/2.)*cos(T(X,Y,Z)/2.)*cos(3.*T(X,Y,Z)/2.)');
+SIG11M2 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='-1.*coef/sqrt(R(X,Y,Z))*sin(T(X,Y,Z)/2.)*(2.+cos(T(X,Y,Z)/2.)*cos(3.*T(X,Y,Z)/2.))',
+                  coef=coef,sqrt=sqrt,R=R,sin=sin,cos=cos,T=T);
+SIG12M2 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='    coef/sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(1.-sin(T(X,Y,Z)/2.)*sin(3.*T(X,Y,Z)/2.))',
+                  coef=coef,sqrt=sqrt,R=R,sin=sin,cos=cos,T=T);
+SIG22M2 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='    coef/sqrt(R(X,Y,Z))*sin(T(X,Y,Z)/2.)*cos(T(X,Y,Z)/2.)*cos(3.*T(X,Y,Z)/2.)',
+                  coef=coef,sqrt=sqrt,R=R,sin=sin,cos=cos,T=T);
 
 # definition des opposees des contraintes analytiques -SIG11, -SIG12 et -SIG22 du mode 2
-OSIG11M2 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='    coef/sqrt(R(X,Y,Z))*sin(T(X,Y,Z)/2.)*(2.+cos(T(X,Y,Z)/2.)*cos(3.*T(X,Y,Z)/2.))');
-OSIG12M2 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='-1.*coef/sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(1.-sin(T(X,Y,Z)/2.)*sin(3.*T(X,Y,Z)/2.))');
-OSIG22M2 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='-1.*coef/sqrt(R(X,Y,Z))*sin(T(X,Y,Z)/2.)*cos(T(X,Y,Z)/2.)*cos(3.*T(X,Y,Z)/2.)');
+OSIG11M2 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='    coef/sqrt(R(X,Y,Z))*sin(T(X,Y,Z)/2.)*(2.+cos(T(X,Y,Z)/2.)*cos(3.*T(X,Y,Z)/2.))',
+                   coef=coef,sqrt=sqrt,R=R,sin=sin,cos=cos,T=T);
+OSIG12M2 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='-1.*coef/sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(1.-sin(T(X,Y,Z)/2.)*sin(3.*T(X,Y,Z)/2.))',
+                   coef=coef,sqrt=sqrt,R=R,sin=sin,cos=cos,T=T);
+OSIG22M2 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='-1.*coef/sqrt(R(X,Y,Z))*sin(T(X,Y,Z)/2.)*cos(T(X,Y,Z)/2.)*cos(3.*T(X,Y,Z)/2.)',
+                   coef=coef,sqrt=sqrt,R=R,sin=sin,cos=cos,T=T);
 
 # chargement correspondant a un mode II pur
 CHF2=AFFE_CHAR_MECA_F(MODELE=MODELEK,
@@ -158,12 +166,16 @@ CHF2=AFFE_CHAR_MECA_F(MODELE=MODELEK,
 #----------------------------------------------------------
 
 # definition des contraintes analytiques SIG13 et SIG23 du mode 3
-SIG13M3 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='-1.*coef/sqrt(R(X,Y,Z))*sin(T(X,Y,Z)/2.)');
-SIG23M3 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='coef/sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)');
+SIG13M3 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='-1.*coef/sqrt(R(X,Y,Z))*sin(T(X,Y,Z)/2.)',
+                  coef=coef,sqrt=sqrt,R=R,sin=sin,T=T);
+SIG23M3 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='coef/sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)',
+                  coef=coef,sqrt=sqrt,R=R,cos=cos,T=T);
 
 # definition des opposees des contraintes analytiques -SIG13 et -SIG23  du mode 3
-OSIG13M3 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='coef/sqrt(R(X,Y,Z))*sin(T(X,Y,Z)/2.)');
-OSIG23M3 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='-1.*coef/sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)');
+OSIG13M3 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='coef/sqrt(R(X,Y,Z))*sin(T(X,Y,Z)/2.)',
+                   coef=coef,sqrt=sqrt,R=R,sin=sin,T=T);
+OSIG23M3 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='-1.*coef/sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)',
+                   coef=coef,sqrt=sqrt,R=R,cos=cos,T=T);
 
 # chargement correspondant a un mode III pur
 CHF3=AFFE_CHAR_MECA_F(MODELE=MODELEK,

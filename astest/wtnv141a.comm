@@ -128,7 +128,8 @@ FXME = FORMULE(VALE='pi*(-(P_LAMBDA+2.*P_MU)+P_BIOT)*AMORT(INST)*cos(pi*X)*sin(p
                P_BIOT=P_BIOT,
                cos=cos,
                sin=sin,
-               pi=pi);
+               pi=pi,
+               AMORT=AMORT);
 
 FYME = FORMULE(VALE='pi*(-(P_LAMBDA+2.*P_MU)+P_BIOT)*AMORT(INST)*sin(pi*X)*cos(pi*Y)',
                NOM_PARA=('INST','X','Y',),
@@ -137,7 +138,8 @@ FYME = FORMULE(VALE='pi*(-(P_LAMBDA+2.*P_MU)+P_BIOT)*AMORT(INST)*sin(pi*X)*cos(p
                P_BIOT=P_BIOT,
                cos=cos,
                sin=sin,
-               pi=pi);
+               pi=pi,
+               AMORT=AMORT);
 
 #####################################################
 # Conditions initiales en deplacements et en pression

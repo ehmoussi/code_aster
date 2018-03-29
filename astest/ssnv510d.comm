@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -111,7 +111,7 @@ def pression(y) :
    if y < 1.5 and y >= 0.5 : return 10e6
    if y < 0.5 : return 0
 
-PRESSION = FORMULE(VALE='pression(Y)',NOM_PARA='Y');
+PRESSION = FORMULE(VALE='pression(Y)',NOM_PARA='Y',pression=pression);
 
 def depx(y) :
    return y/5
@@ -185,7 +185,7 @@ TABDEP = CALC_TABLE(reuse = TABDEP,
 # FILTRE SUR LES NOMS DES NOEUDS POUR NE GARDER QUE LES NP (COTE MAITRE)
 
 depl_p = FORMULE(NOM_PARA=('DX','COOR_X','COOR_Y'),
-                   VALE='DX+depx(COOR_Y+0.5)*(COOR_X-2)/2');
+                   VALE='DX+depx(COOR_Y+0.5)*(COOR_X-2)/2',depx=depx);
 
 TABDEPP = CALC_TABLE(TABLE = TABDEP,
                      ACTION =(_F(OPERATION = 'FILTRE',
@@ -205,7 +205,7 @@ IMPR_TABLE(TABLE=TABDEPP,
 # FILTRE SUR LES NOMS DES NOEUDS POUR NE GARDER QUE LES NM (COTE ESCLAVE)
 
 depl_m = FORMULE(NOM_PARA=('DX','COOR_X','COOR_Y'),
-                   VALE='DX+depx(COOR_Y-0.5)*(COOR_X-2)/2');
+                   VALE='DX+depx(COOR_Y-0.5)*(COOR_X-2)/2',depx=depx);
 
 TABDEPM = CALC_TABLE(TABLE = TABDEP,
                      ACTION =(_F(OPERATION = 'FILTRE',

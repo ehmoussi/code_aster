@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,10 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'),PAR_LOT='OUI');              
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'),PAR_LOT='OUI');
+
+from math import *
+              
 #----------------------------------------------
 #                   PARAMETRES
 #----------------------------------------------
@@ -95,7 +98,7 @@ fonction = 1;
 # fonction=1 : la pression PRES est une fonction de l espace
 #
 PRES = -1.;
-FCTPRES = FORMULE(NOM_PARA=('X','Y'),VALE='PRES*X'); 
+FCTPRES = FORMULE(NOM_PARA=('X','Y'),VALE='PRES*X',PRES=PRES); 
 #************************************************************
 
 
@@ -180,9 +183,9 @@ MODELEIN=AFFE_MODELE(MAILLAGE=MAILLAG1,
 #----------------------------------------------
 
 LN = FORMULE(VALE='Y*cos(ALPHA)-X*sin(ALPHA)',
-             NOM_PARA=('X','Y',),);
+             NOM_PARA=('X','Y',),cos=cos=sin=sin,ALPHA=ALPHA);
 LT = FORMULE(VALE='abs(Y*sin(ALPHA)+X*cos(ALPHA))-A',
-             NOM_PARA=('X','Y',),);
+             NOM_PARA=('X','Y',),cos=cos=sin=sin,ALPHA=ALPHA,A=A);
              
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG1,
                     DEFI_FISS=_F(FONC_LT=LT,

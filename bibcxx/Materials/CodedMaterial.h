@@ -57,7 +57,7 @@ public:
      * @brief Constructeur
      */
     CodedMaterialInstance( const MaterialOnMeshPtr& mater, const ModelPtr& model ):
-        DataStructure( "MATER_CODE", Permanent, 8 ),
+        DataStructure( mater->getName(), 8, "MATER_CODE", Permanent ),
         _mater( mater ),
         _model( model ),
         _field( new PCFieldOnMeshLongInstance( getName() + ".MATE_CODE",
