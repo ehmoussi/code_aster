@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -142,7 +142,7 @@ PESE=AFFE_CHAR_MECA(MODELE=MODMEC1,
                     PESANTEUR=_F(GRAVITE=G,
                                  DIRECTION=(0.0,-1.0,0.0),),);
 
-fevol = FORMULE(VALE='INST/T1', NOM_PARA='INST');
+fevol = FORMULE(VALE='INST/T1', NOM_PARA='INST', T1=T1);
 
 
 #-------------------------------------------------------------------
@@ -164,14 +164,14 @@ CHXG=CREA_CHAMP(TYPE_CHAM='ELGA_GEOM_R',
 
 # FORMULE DE LA CONTRAINTE EFFECTIVE EN Y (RHO HOMOGENEISE)
 SIEFY = FORMULE(VALE='-rhos*G*(H-Y) - sigma_0',
-                NOM_PARA='Y');
+                NOM_PARA='Y', rhos=rhos, G=G, H=H, sigma_0=sigma_0);
 
 # FORMULES DE LA CONTRAINTE EFFECTIVE EN X ET EN Z
 SIEFX = FORMULE(VALE='K0*(SIEFY(Y) + sigma_0) - sigma_0',
-                NOM_PARA='Y');
+                NOM_PARA='Y', K0=K0, SIEFY=SIEFY, sigma_0=sigma_0);
 
 SIEFZ = FORMULE(VALE='SIEFX(Y)',
-                NOM_PARA='Y');
+                NOM_PARA='Y', SIEFX=SIEFX);
 
 # CHAMP DE CONTRAINTES INITIALES DANS LA FONDATION
 SIEF1=CREA_CHAMP(TYPE_CHAM='ELGA_NEUT_F',
@@ -201,7 +201,7 @@ SIEFINI=CREA_CHAMP(INFO=1,
 
 # POUR LES ARGILES NORMALEMENT CONSOLIDEES, ON IMPOSE PCR = P/2
 PCRY = FORMULE(VALE='-(SIEFX(Y)+SIEFY(Y)+SIEFZ(Y))/6 * 1.00',
-               NOM_PARA='Y');
+               NOM_PARA='Y', SIEFX=SIEFX, SIEFY=SIEFY, SIEFZ=SIEFZ);
 
 ZERO = FORMULE(VALE='0', NOM_PARA='Y');
 

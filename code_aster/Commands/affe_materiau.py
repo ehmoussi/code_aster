@@ -198,7 +198,6 @@ class MaterialAssignment(ExecuteCommand):
 
             inputVar.setEvolutionParameter(evolParam)
 
-        print "nomVarc", nomVarc, kwTout, kwGrMa
         if kwTout != None:
             inputVarOnMesh.addInputVariableOnAllMesh(inputVar)
         elif kwGrMa != None:

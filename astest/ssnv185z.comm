@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -109,8 +109,8 @@ IMPR_RESU(FORMAT='MED',
           UNITE=81,
           RESU=_F(MAILLAGE=MAILLAG2))
 
-LN=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z-h');
-LT=FORMULE(NOM_PARA=('X','Y','Z'),VALE='-Y+a');
+LN=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z-h',h=h);
+LT=FORMULE(NOM_PARA=('X','Y','Z'),VALE='-Y+a',a=a);
 
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG2,
                     DEFI_FISS=_F(FONC_LT=LT,FONC_LN=LN),
@@ -319,13 +319,13 @@ TEST_TABLE(CRITERE='ABSOLU',
 def uz(X,Y,Z): 
     return -PRES/E*(Z-h)
 
-UZ=FORMULE(NOM_PARA=('X','Y','Z'),VALE='uz(X,Y,Z)')
+UZ=FORMULE(NOM_PARA=('X','Y','Z'),VALE='uz(X,Y,Z)',uz=uz)
 
 #    - contraintes
 def Szz(X,Y,Z):
     return -PRES
 
-SZZ=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Szz(X,Y,Z)')
+SZZ=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Szz(X,Y,Z)',Szz=Szz)
 
 # calcul de l'erreur en terme de norme en energie
 Scal=CREA_CHAMP(OPERATION='EXTR',

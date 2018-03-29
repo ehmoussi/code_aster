@@ -161,6 +161,9 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix( doub
     // MERIME appel getres
     CommandSyntax cmdSt( "MECA_STATIQUE" );
     cmdSt.setResult( "AUCUN", "AUCUN" );
+    SyntaxMapContainer dict;
+    dict.container["INFO"] = 1;
+    cmdSt.define( dict );
 
     long nh = 0;
 
