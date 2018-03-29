@@ -42,7 +42,7 @@ def configure(self):
     self.env.append_value('CFLAGS', ['-DINTSIZE32'])
     self.env['ADDMEM'] = 300
 
-    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL300'
+    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311'
     self.env.TFELHOME = TFELHOME
 
     self.env.append_value('LIBPATH', [
