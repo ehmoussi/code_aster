@@ -4,9 +4,7 @@
 @Author Helfer Thomas;
 @Date 23/11/06;
 
-@MaterialProperty thermalexpansion alpha;    /* mandatory for castem */
-alpha.setGlossaryName("ThermalExpansion");
-//@MaterialProperty stress s0;
+
 @MaterialProperty stress ET;
 @MaterialLaw{"Plasticity_Sy.mfront"};
 
@@ -14,6 +12,8 @@ alpha.setGlossaryName("ThermalExpansion");
 @InitLocalVars{
   T_ = T + theta * dT ;
 s0 = Acier_ElasticYield(T_);
+
+
 }
 
 @FlowRule{

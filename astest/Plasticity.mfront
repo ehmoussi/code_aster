@@ -3,8 +3,6 @@
 @Author Helfer Thomas;
 @Date 23/11/06;
 
-@MaterialProperty thermalexpansion alpha;    /* mandatory for castem */
-alpha.setGlossaryName("ThermalExpansion");
 @MaterialProperty stress s0;
 @MaterialProperty stress ET;
 
