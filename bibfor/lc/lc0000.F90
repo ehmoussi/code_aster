@@ -148,7 +148,6 @@ implicit none
 #include "asterfort/lc8057.h"
 #include "asterfort/lc8146.h"
 #include "asterfort/lc8331.h"
-#include "asterfort/lc13029.h"
 #include "asterfort/lc20015.h"
 #include "asterfort/lc21015.h"
 #include "asterfort/lc30015.h"
@@ -1108,13 +1107,6 @@ integer :: codret
                     wkin, typmod,icomp, ndsde,&
                     dsidep, nwkout, wkout, codret)
 !
-    case (13029)
-        call lc13029(fami, kpg, ksp, ndim, imate,&
-                    compor, mult_comp, carcri, instam, instap, neps,&
-                    epsm, deps, nsig, sigm, vim,&
-                    option, angmas,sigp, nvi, vip, nwkin,&
-                    wkin, typmod,icomp, ndsde,&
-                    dsidep, nwkout, wkout, codret)
 !
 ! --------------------------------------------------------------------------------------------------
 ! - For metallurgy/steel
@@ -1151,7 +1143,6 @@ integer :: codret
                      deps, sigm, vim, option, angmas,&
                      sigp, vip, typmod, icomp,&
                      nvi, dsidep, codret)
-!
 ! --------------------------------------------------------------------------------------------------
 ! - Error
 ! --------------------------------------------------------------------------------------------------
