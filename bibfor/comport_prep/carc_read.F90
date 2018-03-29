@@ -41,7 +41,6 @@ implicit none
 #include "asterfort/comp_meca_code.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
-#include "asterfort/deprecated_algom.h"
 !
 type(Behaviour_PrepCrit), intent(inout) :: ds_compor_para
 character(len=8), intent(in), optional :: model_
