@@ -16,9 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine lcPrepareStrain(compor, option, typmod,&
-                               neps , epsth , depsth,&
-                               epsm , deps)
+subroutine lcPrepareStrain(option, typmod,&
+                             neps , epsth , depsth,&
+                             epsm , deps)
 !
 implicit none
 !
@@ -28,7 +28,7 @@ implicit none
 #include "blas/daxpy.h"
 #include "blas/dcopy.h"
 !
-character(len=16), intent(in) :: compor(*), option
+character(len=16), intent(in) :: option
 character(len=8), intent(in) :: typmod(*)
 integer, intent(in) :: neps
 real(kind=8), intent(in) :: epsth(neps), depsth(neps)
@@ -43,7 +43,6 @@ real(kind=8), intent(inout) :: epsm(neps), deps(neps)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  compor           : name of comportment definition (field)
 ! In  option            : required option : RIGI_MECA_TANG , FULL_MECA , RAPH_MECA
 ! In  typmod(2)         : type of modelisation ex: 1:3D, 2:INCO
 ! In  neps             : number of components of strains
@@ -66,14 +65,8 @@ real(kind=8), intent(inout) :: epsm(neps), deps(neps)
     call r8inir(neps, 0.d0, dstran, 1)
     call r8inir(neps, 0.d0, stran, 1)
 !
-    defo_comp = compor(3)
     l_pred = option(1:9).eq. 'RIGI_MECA'
     l_czm = typmod(2).eq.'ELEMJOIN'
-!
-! Check that the kinematic is not SIMO_MIEHE
-! (although you should not be in deform_ldc = 'MECANIQUE' in that case)
-    ASSERT(defo_comp .ne. 'SIMO_MIEHE')
-    ASSERT(neps .ne. 9)
 !
     if ((neps .eq. 6) .or. (neps .eq. 4)) then
         if (l_pred) then

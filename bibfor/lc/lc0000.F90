@@ -160,6 +160,7 @@ implicit none
 #include "asterfort/calcExternalStateVariable5.h"
 #include "asterfort/lcExternalStateVariable.h"
 #include "asterfort/lcPrepareStrain.h"
+#include "asterfort/assert.h"
 !
 integer :: imate, ndim, nvi, kpg, ksp
 integer :: neps, nsig, nwkin, nwkout, ndsde
@@ -270,7 +271,7 @@ integer :: codret
 !
     integer :: tabcod(30), variextecode(1)
     integer, parameter :: npred = 8
-    character(len=16) :: defo_ldc
+    character(len=16) :: defo_ldc, defo_comp
     real(kind=8) :: epsth(neps), depsth(neps)
     real(kind=8) :: temp, dtemp
     real(kind=8) :: predef(npred), dpred(npred)
@@ -286,26 +287,6 @@ integer :: codret
         endif
     endif
 !
-! - Prepare input strain for the behaviour law
-!    -> If defo_ldc = 'MECANIQUE', prepare mechanical strain
-!    -> If defo_ldc = 'TOTALE' or 'OLD', keep total strain
-!
-    read (compor(21),'(A16)') defo_ldc
-    if (defo_ldc .eq. 'MECANIQUE') then 
-!       * Compute "thermic" strains for some external state variables
-        call lcExternalStateVariable(carcri, compor, &
-                                       fami  , kpg      , ksp, imate, &
-                                       neps  , epsth    , depsth, &
-                                       temp  , dtemp, &
-                                       predef, dpred )
-                                         
-!       * Subtract to get mechanical strain
-!       (epsm and deps become mechanical strains)
-        call lcPrepareStrain(compor, option, typmod,&
-                               neps , epsth , depsth,&
-                               epsm , deps)
-    endif
-!
 ! - Prepare some external state variables
 !
     tabcod(:) = 0
@@ -313,6 +294,32 @@ integer :: codret
     call isdeco(variextecode(1), tabcod, 30)
     if (tabcod(HYGR) .eq. 1) then
         call calcExternalStateVariable5(fami, kpg, ksp, imate)
+    endif
+!
+! - Prepare input strain for the behaviour law
+!    -> If defo_ldc = 'MECANIQUE', prepare mechanical strain
+!    -> If defo_ldc = 'TOTALE' or 'OLD', keep total strain
+!
+    read (compor(21),'(A16)') defo_ldc
+    if (defo_ldc .eq. 'MECANIQUE') then 
+    
+        defo_comp = compor(3)
+        if (defo_comp .ne. 'SIMO_MIEHE') then
+!
+!       * Compute "thermic" strains for some external state variables
+            call lcExternalStateVariable(carcri, compor, &
+                                         fami  , kpg      , ksp, imate, &
+                                         neps  , epsth    , depsth, &
+                                         temp  , dtemp, &
+                                         predef, dpred )
+!
+!       * Subtract to get mechanical strain
+!       (epsm and deps become mechanical strains)
+            call lcPrepareStrain(option, typmod,&
+                                 neps , epsth , depsth,&
+                                 epsm , deps)
+        endif
+
     endif
 !
 ! - Prepare index of behaviour law
