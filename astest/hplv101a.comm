@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -47,7 +47,7 @@ MAT=DEFI_MATERIAU( ELAS=_F(  E = 1.0,      NU = 0.3, ALPHA = 0.),
 #           ECRO_LINE=_F( D_SIGM_EPSI = 0., SY = 10000.) )
 
 MAT2=DEFI_MATERIAU(      ELAS=_F( E = 1.0,  NU = 0.3),
-                         MFRONT=_F(LISTE_COEF=(1.0,0.3,0.,10000.,0.,
+                         MFRONT=_F(LISTE_COEF=(10000., 0., 1.0, 0.3,
                                         ),)
                                 ,)
 
