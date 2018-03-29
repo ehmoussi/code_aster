@@ -67,7 +67,7 @@ integer, intent(out) :: iret
 !
 ! Comportment
 !
-! META_P_I* / META_V_I* for SIMO_MIEHE strains and zirconium metallurgy
+! META_P_I* / META_V_I* for SIMO_MIEHE (-> META2P_I* / META2V_I*) strains and zirconium metallurgy
 !
 ! --------------------------------------------------------------------------------------------------
 !
