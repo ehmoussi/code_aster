@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine te0597(option, nomte)
-! person_in_charge: sebastien.fayolle at edf.fr
-    implicit none
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -78,9 +80,10 @@ subroutine te0597(option, nomte)
         call utmess('F', 'ELEMENTS_34', sk=nomte)
     endif
     typmod(2) = '        '
+! 
+! - Get index of dof
 !
-! - ACCES AUX COMPOSANTES DU VECTEUR DDL
-    call niinit(nomte, typmod, ndim, nno1, 0,&
+    call niinit(typmod, ndim, nno1, 0,&
                 nno2, 0, vu, vg, vp,&
                 vpi)
 !
