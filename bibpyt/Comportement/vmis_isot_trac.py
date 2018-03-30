@@ -31,7 +31,7 @@ loi = LoiComportement(
     mc_mater       = ('ELAS','TRACTION',),
     modelisation   = ('3D','AXIS','C_PLAN','D_PLAN','1D',
         'GRADVARI',),
-    deformation    = ('PETIT','PETIT_REAC','GROT_GDEP','SIMO_MIEHE','GDEF_LOG',
+    deformation    = ('PETIT','PETIT_REAC','GROT_GDEP','GDEF_LOG',
         ),
     algo_inte      = ('ANALYTIQUE',),
     type_matr_tang = ('PERTURBATION','VERIFICATION',),

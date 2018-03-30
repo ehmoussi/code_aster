@@ -21,20 +21,20 @@
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
-    nom            = 'VMIS_ISOT_LINE',
+    nom            = 'VMIS2ISOT_LINE',
     lc_type        = ('MECANIQUE',),
-    doc            =   """Loi de plasticité de Von Mises à écrouissage linéaire [R5.03.02]"""              ,
+    doc            =   """Loi de plasticité de Von Mises à écrouissage linéaire pour Simo_Miehe [R5.03.02]"""              ,
     num_lc         = 2,
     nb_vari        = 2,
     nom_vari       = ('EPSPEQ','INDIPLAS',),
     mc_mater       = ('ELAS','ECRO_LINE',),
     modelisation   = ('3D','AXIS','C_PLAN','D_PLAN','1D',
         'GRADVARI',),
-    deformation    = ('PETIT','PETIT_REAC','GROT_GDEP','GDEF_LOG',),
+    deformation    = ('SIMO_MIEHE'),
     algo_inte      = ('ANALYTIQUE',),
     type_matr_tang = ('PERTURBATION','VERIFICATION','IMPLEX',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
-    deform_ldc     = ('OLD',),
+    deform_ldc     = ('TOTALE',),
 )
