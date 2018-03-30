@@ -22,7 +22,7 @@ Configuration for athosdev + Intel MPI
 
 . $HOME/dev/codeaster/devtools/etc/env_unstable_mpi.sh
 
-waf_mpi configure --use-config=athosdev_mpi --prefix=../install/mpi
+waf_mpi configure --use-config=eole_mpi --prefix=../install/mpi
 waf_mpi install -p
 """
 
@@ -38,7 +38,7 @@ def configure(self):
     eole.configure(self)
     self.env['ADDMEM'] = 900
 
-    # suppress too aggressive optimization with Intel impi/2017.0.98 : I_MPI_DAPL_TRANSLATION_CACHE=0 
+    # suppress too aggressive optimization with Intel impi/2017.0.98 : I_MPI_DAPL_TRANSLATION_CACHE=0
     self.env.append_value('OPT_ENV_FOOTER', [
         'module unload mkl',
         'module load mkl/2017.0.098 impi/2017.0.098',
