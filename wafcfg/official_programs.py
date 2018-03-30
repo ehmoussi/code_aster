@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ Common to all official platforms: force support of essential external programs.
 def configure(self):
     opts = self.options
     # force to fail if a program is not found
-    opts.with_prog_metis = True
+#    opts.with_prog_metis = True
     opts.with_prog_gmsh = True
     # salome: only required by few testcases
     # europlexus: not available on all platforms
@@ -32,4 +32,3 @@ def configure(self):
     opts.with_prog_homard = True
     opts.with_prog_ecrevisse = True
     opts.with_prog_xmgrace = True
-

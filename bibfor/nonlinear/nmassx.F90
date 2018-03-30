@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,185 +15,125 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmassx(modele, numedd, mate, carele, comref,&
-                  ds_constitutive, lischa, fonact, ds_measure,&
-                  sddyna, valinc, solalg, veelem, veasse,&
-                  ldccvg, cndonn)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmassx(list_func_acti, sddyna, ds_material, hval_veasse,&
+                  cndonn)
 !
 use NonLin_Datastructure_type
 !
 implicit none
 !
 #include "asterfort/assert.h"
-#include "asterfort/assvec.h"
+#include "asterfort/isfonc.h"
 #include "asterfort/ndasva.h"
 #include "asterfort/ndynre.h"
 #include "asterfort/nmasdi.h"
 #include "asterfort/nmasfi.h"
 #include "asterfort/nmasva.h"
 #include "asterfort/nmchex.h"
-#include "asterfort/nmdiri.h"
-#include "asterfort/nmfint.h"
-#include "asterfort/nmtime.h"
-#include "asterfort/vtaxpy.h"
-#include "asterfort/vtzero.h"
+#include "asterfort/nmdebg.h"
+#include "asterfort/utmess.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/nonlinDSVectCombInit.h"
+#include "asterfort/nonlinDSVectCombCompute.h"
+#include "asterfort/nonlinDSVectCombAddAny.h"
+#include "asterfort/nonlinDSVectCombAddHat.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
+integer, intent(in) :: list_func_acti(*)
+character(len=19), intent(in) :: sddyna
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=19), intent(in) :: hval_veasse(*)
+character(len=19), intent(in) :: cndonn
 !
-    integer :: ldccvg
-    integer :: fonact(*)
-    character(len=19) :: lischa, sddyna
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=24) :: modele, numedd, mate
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=24) :: carele, comref
-    character(len=19) :: solalg(*), valinc(*)
-    character(len=19) :: veasse(*), veelem(*)
-    character(len=19) :: cndonn
+! --------------------------------------------------------------------------------------------------
 !
-! ----------------------------------------------------------------------
+! MECA_NON_LINE - Algorithm
 !
-! ROUTINE MECA_NON_LINE (ALGORITHME)
+! Evaluate second member for explicit algorithm
 !
-! CALCUL DU SECOND MEMBRE POUR LA PREDICTION EN EXPLICITE
+! --------------------------------------------------------------------------------------------------
 !
-! ----------------------------------------------------------------------
+! In  list_func_acti   : list of active functionnalities
+! In  sddyna           : datastructure for dynamic
+! In  ds_material      : datastructure for material parameters
+! In  hval_veasse      : hat-variable for vectors (node fields)
+! In  cndonn           : name of nodal field for "given" forces
 !
-! IN  MODELE : NOM DU MODELE
-! IN  NUMEDD : NOM DE LA NUMEROTATION
-! IN  MATE   : NOM DU CHAMP DE MATERIAU
-! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VALEURS DE REF DES VARIABLES DE COMMANDE
-! In  ds_constitutive  : datastructure for constitutive laws management
-! IN  LISCHA : SD LISTE DES CHARGES
-! IO  ds_measure       : datastructure for measure and statistics management
-! IN  FONACT : FONCTIONNALITES ACTIVEES
-! IN  SDDYNA : SD DYNAMIQUE
-! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
-! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
-! IN  VEELEM : VARIABLE CHAPEAU POUR NOM DES VECT_ELEM
-! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
-! OUT CNDONN : VECTEUR ASSEMBLE DES FORCES DONNEES
-! OUT LDCCVG : CODE RETOUR INTEGRATION DU COMPORTEMENT
-!                0 - OK
-!                1 - ECHEC DANS L'INTEGRATION : PAS DE RESULTATS
-!                2 - ERREUR DANS LES LDC SUR LA NON VERIFICATION DE
-!                    CRITERES PHYSIQUES
-!                3 - SIZZ NON NUL (DEBORST) ON CONTINUE A ITERER
+! --------------------------------------------------------------------------------------------------
 !
-!
-!
-!
+    integer :: ifm, niv
     character(len=19) :: cnffdo, cndfdo, cnfvdo, cnvady
-    character(len=19) :: cndumm
-    character(len=19) :: cndiri, cnfint, cnvcpr
-    character(len=19) :: vediri, vefint
-    character(len=19) :: depmoi, vitmoi, accmoi
-    integer :: iterat
-    integer :: i, nbvec
-    real(kind=8) :: coef(8)
-    character(len=19) :: vect(8)
+    aster_logical :: l_macr
     real(kind=8) :: coeequ
+    type(NL_DS_VectComb) :: ds_vectcomb
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    iterat = 0
-    call vtzero(cndonn)
-    cndumm = '&&CNCHAR.DUMM'
+    call infdbg('MECANONLINE', ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'MECANONLINE11_18')
+    endif
+!
+! - Initializations
+!
+    call nonlinDSVectCombInit(ds_vectcomb)
     cnffdo = '&&CNCHAR.FFDO'
     cndfdo = '&&CNCHAR.DFDO'
     cnfvdo = '&&CNCHAR.FVDO'
     cnvady = '&&CNCHAR.FVDY'
 !
-! --- DECOMPACTION DES VARIABLES CHAPEAUX
+! - Active functionnalities
 !
-    call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
-    call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
-    call nmchex(veelem, 'VEELEM', 'CNDIRI', vediri)
-    call nmchex(veelem, 'VEELEM', 'CNFINT', vefint)
-    call nmchex(valinc, 'VALINC', 'DEPMOI', depmoi)
-    call nmchex(valinc, 'VALINC', 'VITMOI', vitmoi)
-    call nmchex(valinc, 'VALINC', 'ACCMOI', accmoi)
+    l_macr = isfonc(list_func_acti,'MACR_ELEM_STAT')
 !
-! --- COEFFICIENTS POUR MULTI-PAS
+! - Coefficient for multi-step scheme
 !
     coeequ = ndynre(sddyna,'COEF_MPAS_EQUI_COUR')
 !
-! - Launch timer
+! - Get dead Neumann loads and multi-step dynamic schemes forces
 !
-    call nmtime(ds_measure, 'Init'  , '2nd_Member')
-    call nmtime(ds_measure, 'Launch', '2nd_Member')
+    call nmasfi(list_func_acti, hval_veasse, cnffdo, sddyna)
+    call nonlinDSVectCombAddAny(cnffdo, +1.d0, ds_vectcomb)
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS FIXES        (NEUMANN)
+! - Get Dirichlet loads
 !
-    call nmasfi(fonact, sddyna, veasse, cnffdo, cndumm)
+    call nmasdi(list_func_acti, hval_veasse, cndfdo)
+    call nonlinDSVectCombAddAny(cndfdo, +1.d0, ds_vectcomb)
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS FIXES        (DIRICHLET)
+! - Get undead Neumann loads and multi-step dynamic schemes forces
 !
-    call nmasdi(fonact, veasse, cndfdo, cndumm)
+    call nmasva(list_func_acti, hval_veasse, cnfvdo, sddyna)
+    call nonlinDSVectCombAddAny(cnfvdo, +1.d0, ds_vectcomb)
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS VARIABLES    (NEUMANN)
+! - Get undead Neumann loads for dynamic
 !
-    call nmasva(sddyna, veasse, cnfvdo)
+    call ndasva(sddyna, hval_veasse, cnvady)
+    call nonlinDSVectCombAddAny(cnvady, coeequ, ds_vectcomb)
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS VARIABLES DYNAMIQUES (NEUMANN)
+! - Force from sub-structuring
 !
-    call ndasva('PRED', sddyna, veasse, cnvady)
-!
-! --- SECOND MEMBRE DES VARIABLES DE COMMANDE
-!
-    call nmchex(veasse, 'VEASSE', 'CNVCPR', cnvcpr)
-!
-! --- CALCUL DES REACTIONS D'APPUI BT.LAMBDA
-!
-    call nmdiri(modele, mate, carele, lischa, sddyna,&
-                depmoi, vitmoi, accmoi, vediri)
-!
-! --- ASSEMBLAGE DES REACTIONS D'APPUI
-!
-    call assvec('V', cndiri, 1, vediri, [1.d0],&
-                numedd, ' ', 'ZERO', 1)
-!
-! - End timer
-!
-    call nmtime(ds_measure, 'Stop', '2nd_Member')
-!
-! --- CALCUL DES FORCES INTERIEURES
-!
-    call nmfint(modele, mate  , carele, comref    , ds_constitutive,&
-                fonact, iterat, sddyna, ds_measure, valinc         ,&
-                solalg, ldccvg, vefint)
-!
-! --- ASSEMBLAGE DES FORCES INTERIEURES
-!
-    call assvec('V', cnfint, 1, vefint, [1.d0], numedd, ' ', 'ZERO', 1)
-!
-! --- CHARGEMENTS DONNES
-!
-    nbvec = 7
-    coef(1) = 1.d0
-    coef(2) = 1.d0
-    coef(3) = -1.d0
-    coef(4) = 1.d0
-    coef(5) = 1.d0
-    coef(6) = -1.d0
-    coef(7) = coeequ
-    vect(1) = cnffdo
-    vect(2) = cnfvdo
-    vect(3) = cnfint
-    vect(4) = cnvcpr
-    vect(5) = cndfdo
-    vect(6) = cndiri
-    vect(7) = cnvady
-!
-! --- CHARGEMENT DONNE
-!
-    if (nbvec .gt. 8) then
-        ASSERT(.false.)
+    if (l_macr) then
+        call nonlinDSVectCombAddHat(hval_veasse, 'CNSSTR', -1.d0, ds_vectcomb)
     endif
-    do i = 1, nbvec
-        call vtaxpy(coef(i), vect(i), cndonn)
-    end do
+!
+! - External state variable
+!
+    call nonlinDSVectCombAddAny(ds_material%fvarc_pred, +1.d0, ds_vectcomb)
+!
+! - Get force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
+!
+    call nonlinDSVectCombAddHat(hval_veasse, 'CNDIRI', -1.d0, ds_vectcomb)
+!
+! - Get internal forces
+!
+    call nonlinDSVectCombAddHat(hval_veasse, 'CNFINT', -1.d0, ds_vectcomb)
+!
+! - Second member
+!
+    call nonlinDSVectCombCompute(ds_vectcomb, cndonn)
+    if (niv .ge. 2) then
+        call nmdebg('VECT', cndonn, 6)
+    endif
 !
 end subroutine

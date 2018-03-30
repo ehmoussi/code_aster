@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmtble(loop_exte     , model   , mesh  , mate     , ds_contact,&
+subroutine nmtble(loop_exte     , model   , mesh  , ds_material, ds_contact,&
                   list_func_acti, ds_print, ds_measure, &
                   sderro        , ds_conv , sddisc, nume_inst, hval_incr ,&
                   hval_algo, ds_constitutive, ds_algorom)
@@ -43,22 +43,22 @@ implicit none
 #include "asterfort/nmtime.h"
 #include "asterfort/nmcrel.h"
 !
-    integer, intent(inout) :: loop_exte
-    character(len=24), intent(in) :: model
-    character(len=8), intent(in) :: mesh
-    character(len=24), intent(in) :: mate
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-    integer, intent(in) :: list_func_acti(*)
-    type(NL_DS_Print), intent(inout) :: ds_print
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=24), intent(in) :: sderro
-    type(NL_DS_Conv), intent(in) :: ds_conv
-    character(len=19), intent(in) :: sddisc
-    integer, intent(in) :: nume_inst
-    character(len=19), intent(in) :: hval_incr(*)
-    character(len=19), intent(in) :: hval_algo(*)
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
+integer, intent(inout) :: loop_exte
+character(len=24), intent(in) :: model
+character(len=8), intent(in) :: mesh
+type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Contact), intent(inout) :: ds_contact
+integer, intent(in) :: list_func_acti(*)
+type(NL_DS_Print), intent(inout) :: ds_print
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=24), intent(in) :: sderro
+type(NL_DS_Conv), intent(in) :: ds_conv
+character(len=19), intent(in) :: sddisc
+integer, intent(in) :: nume_inst
+character(len=19), intent(in) :: hval_incr(*)
+character(len=19), intent(in) :: hval_algo(*)
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -76,7 +76,7 @@ implicit none
 !                       10 - External loop for HROM
 ! In  model            : name of model
 ! In  mesh             : name of mesh
-! In  mate             : name of material characteristics (field)
+! In  ds_material      : datastructure for material parameters
 ! IO  ds_contact       : datastructure for contact management
 ! In  list_func_acti   : list of active functionnalities
 ! IO  ds_print         : datastructure for printing parameters
@@ -131,7 +131,7 @@ implicit none
         if (loop_exte .le. 1) then
             if (l_loop_cont) then
                 loop_exte = 1
-                call nmctcc(mesh      , model     , mate  , nume_inst,&
+                call nmctcc(mesh      , model     , ds_material, nume_inst,&
                             sderro    , ds_measure, sddisc, hval_incr, hval_algo,&
                             ds_contact, ds_constitutive   , list_func_acti)
                 call mmbouc(ds_contact, 'Cont', 'Is_Convergence', loop_state_ = loop_cont_conv)

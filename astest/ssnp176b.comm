@@ -1,0 +1,145 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# person_in_charge: astrid.filiot at edf.fr
+
+########################################################################
+#          TEST DE VERIFICATION EN ELASTICITE INCOMPRESSIBLE           #
+#                       AVEC SOLUTION ANALYTIQUE                       #
+#      MODELISATIONS INCO_UP et INCO_UPG SUR MAILLAGE QUADRATIQUE      #
+########################################################################
+
+# Solution analytique décrite dans Auricchio, Beirao da Veiga et al. 2003
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
+      DEBUG=_F(SDVERI='OUI'));
+
+#Maillage en m, contraintes en Pa
+                          
+MAIL=LIRE_MAILLAGE(FORMAT='MED',
+                   UNITE=20);
+                   
+MATE=DEFI_MATERIAU(ELAS=_F(E=120.0,
+                           NU=0.499999,),)
+                     
+CHMATE=AFFE_MATERIAU(MAILLAGE=MAIL,
+                 AFFE=_F(TOUT='OUI',
+                         MATER=MATE,),);
+                         
+MODE = [None]*2 ;
+                         
+MODE[0]=AFFE_MODELE(MAILLAGE=MAIL,
+             AFFE=_F(GROUP_MA=('tout','bords'),
+                     PHENOMENE='MECANIQUE',
+                     MODELISATION='D_PLAN_INCO_UP',),);
+                     
+MODE[1]=AFFE_MODELE(MAILLAGE=MAIL,
+             AFFE=_F(GROUP_MA=('tout','bords'),
+                     PHENOMENE='MECANIQUE',
+                     MODELISATION='D_PLAN_INCO_UPG',),);
+                          
+F1 = FORMULE(VALE='40*Y*(-1.5*X**4+6*X**2-3*X**2*Y**2+Y**2-5/2)-15*X**2*(Y-1)',
+             NOM_PARA=('X','Y',),);
+             
+F2 = FORMULE(VALE='40*X*(1.5*Y**4-6*Y**2+3*Y**2*X**2-X**2+5/2)-3*Y**2-5*X**3',
+             NOM_PARA=('X','Y',),);
+                          
+Fvol=[None]*2;
+CL=[None]*2;
+                          
+for i in range(2) :
+    Fvol[i]=AFFE_CHAR_MECA_F(MODELE=MODE[i],
+                       FORCE_INTERNE=_F(GROUP_MA='tout',
+                                        FX=F1,
+                                        FY=F2,),);
+                                        
+    CL[i]=AFFE_CHAR_MECA(MODELE=MODE[i],
+              DDL_IMPO=_F(GROUP_MA='bords',
+                          LIAISON='ENCASTRE',),);
+                                        
+LISTR=DEFI_LIST_REEL(DEBUT=0.0,
+                     INTERVALLE=_F(JUSQU_A=1.0,
+                                   NOMBRE=1,),);
+                                   
+RAMPE=DEFI_FONCTION(NOM_PARA='INST',
+                    VALE=(0.0 ,0.0 ,
+                          1.0 ,1.0 ,),);
+                          
+RESU=[None]*2;
+
+for i in range(2) :
+    RESU[i]=STAT_NON_LINE(MODELE=MODE[i],
+                   CHAM_MATER=CHMATE,
+                   EXCIT=(_F(CHARGE=CL[i],),
+                          _F(CHARGE=Fvol[i],
+                             FONC_MULT=RAMPE,),),
+                   INCREMENT=_F(LIST_INST=LISTR,),);
+                   
+    #IMPR_RESU(FORMAT='MED',
+              #RESU=_F(RESULTAT=RESU[i],),
+              #UNITE=80+i,);
+
+# Solution analytique
+
+U1 = FORMULE(VALE='(X**2-1)**2*(Y**2-1)*Y/4',
+             NOM_PARA=('X','Y',),);
+             
+U2 = FORMULE(VALE='(Y**2-1)**2*(1-X**2)*X/4',
+             NOM_PARA=('X','Y',),);
+             
+P = FORMULE(VALE='5*X**3*(Y-1)+Y**3',
+            NOM_PARA=('X','Y',),);
+            
+            
+for i in range(2) :
+    TEST_RESU(RESU=_F(NUME_ORDRE=1,
+                      GROUP_NO='pt_B',
+                      REFERENCE='ANALYTIQUE',
+                      RESULTAT=RESU[i],
+                      NOM_CHAM='DEPL',
+                      NOM_CMP='DX',
+                      VALE_CALC=-0.0527342900532,
+                      VALE_REFE=U1(0.5,0.5),),
+              )
+              
+    TEST_RESU(RESU=_F(NUME_ORDRE=1,
+                      GROUP_NO='pt_B',
+                      REFERENCE='ANALYTIQUE',
+                      RESULTAT=RESU[i],
+                      NOM_CHAM='DEPL',
+                      NOM_CMP='DY',
+                      VALE_CALC=0.052734313217 ,
+                      VALE_REFE=U2(0.5,0.5),),
+              )
+              
+    TEST_RESU(RESU=_F(NUME_ORDRE=1,
+                      GROUP_NO='pt_B',
+                      REFERENCE='ANALYTIQUE',
+                      RESULTAT=RESU[i],
+                      NOM_CHAM='DEPL',
+                      NOM_CMP='PRES',
+                      VALE_CALC=-0.187324886463,
+                      VALE_REFE=P(0.5,0.5),),
+              )
+
+# NB : les modélisations INCO_UP et INCO_UPG donnent les mêmes valeurs
+# de déplacement et de pression
+
+
+FIN();

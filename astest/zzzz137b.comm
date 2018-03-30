@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -130,7 +130,9 @@ EVOL_RE = CREA_RESU(OPERATION='AFFE',
                           _F( CHAM_GD=TEMP_EX3, INST=1.0, ),
                           ),
                     )
-EVOL_RE = CREA_RESU(OPERATION='AFFE', reuse =EVOL_RE,
+EVOL_RE = CREA_RESU(reuse =EVOL_RE,
+                    RESULTAT=EVOL_RE,
+                    OPERATION='AFFE',
                     TYPE_RESU='EVOL_CHAR',
                     NOM_CHAM='COEF_H',
                     AFFE=(_F( CHAM_GD=COEF_H1, INST=0., ),
@@ -281,7 +283,9 @@ EVOL_RE3= CREA_RESU(OPERATION='AFFE',
                           _F( CHAM_GD=TEMPEX30, INST=1.0, ),
                           ),
                     )
-EVOL_RE3= CREA_RESU(OPERATION='AFFE', reuse =EVOL_RE3,
+EVOL_RE3= CREA_RESU(reuse=EVOL_RE3,
+                    RESULTAT=EVOL_RE3,
+                    OPERATION='AFFE',
                     TYPE_RESU='EVOL_CHAR',
                     NOM_CHAM='COEF_H',
                     AFFE=(_F( CHAM_GD=COEF_H10, INST=0., ),

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,68 +15,76 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmrecz(numedd, cndiri, cnfint, cnfext, ddepla,&
-                  fonc)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
+subroutine nmrecz(nume_dof , ds_contact, list_func_acti,&
+                  cndiri   , cnfint    , cnfext, cnsstr,&
+                  disp_iter,&
+                  func)
 !
+use NonLin_Datastructure_type
 !
-    implicit none
-#include "jeveux.h"
+implicit none
+!
+#include "asterf_types.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
-    real(kind=8) :: fonc
-    character(len=24) :: numedd
-    character(len=19) :: cndiri, cnfint, cnfext, ddepla
+#include "asterfort/nmequi.h"
+#include "asterfort/isfonc.h"
 !
-! ----------------------------------------------------------------------
+integer, intent(in) :: list_func_acti(*)
+character(len=24), intent(in) :: nume_dof
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=19), intent(in) :: cndiri, cnfint, cnfext, cnsstr, disp_iter
+real(kind=8), intent(out) :: func
 !
-! ROUTINE MECA_NON_LINE (RECHERCHE LINEAIRE)
+! --------------------------------------------------------------------------------------------------
 !
-! CALCUL DE LA FONCTION POUR LA RECHERCHE LINEAIRE
+! MECA_NON_LINE - Algorithm (line search)
 !
-! ----------------------------------------------------------------------
+! Compute function to minimize for line search
 !
+! --------------------------------------------------------------------------------------------------
 !
-! IN  NUMEDD : NOM DU NUME_DDL
-! IN  CNDIRI : VECT_ASSE REACTIONS D'APPUI
-! IN  CNFINT : VECT_ASSE FORCES INTERIEURES
-! IN  CNFEXT : VECT_ASSE FORCES EXTERIEURES
-! IN  DDEPLA : INCREMENT DE DEPLACEMENT
-! OUT FONC   : VALEUR DE LA FONCTION
+! In  nume_dof         : name of numbering object (NUME_DDL)
+! In  ds_contact       : datastructure for contact management
+! In  list_func_acti   : list of active functionnalities
+! In  cndiri           : nodal field for support reaction
+! In  cnfint           : nodal field for internal force
+! In  cnfext           : nodal field for external force
+! In  cnsstr           : nodal field for sub-structuring force
+! In  disp_iter        : displacement iteration
+! Out function         : function to minimize for line search
 !
+! --------------------------------------------------------------------------------------------------
 !
+    character(len=19) :: cnequi
+    real(kind=8), pointer :: v_cnequi(:) => null()
+    integer :: i_equa, nb_equa
+    aster_logical :: l_disp, l_pilo, l_macr
+    real(kind=8), pointer :: v_disp_iter(:) => null()
 !
+! --------------------------------------------------------------------------------------------------
 !
-    integer :: ieq, neq
-    real(kind=8), pointer :: ddepl(:) => null()
-    real(kind=8), pointer :: diri(:) => null()
-    real(kind=8), pointer :: fext(:) => null()
-    real(kind=8), pointer :: fint(:) => null()
+    call dismoi('NB_EQUA', nume_dof, 'NUME_DDL', repi=nb_equa)
+    call jeveuo(disp_iter(1:19)//'.VALE', 'L', vr=v_disp_iter)
 !
-! ----------------------------------------------------------------------
+! - Compute lack of balance forces
 !
-    call jemarq()
+    l_disp = ASTER_FALSE
+    l_pilo = ASTER_FALSE
+    l_macr = isfonc(list_func_acti, 'MACR_ELEM_STAT')
+    cnequi = '&&CNCHAR.DONN'
+    call nmequi(l_disp    , l_pilo, l_macr, cnequi,&
+                cnfint    , cnfext, cndiri, cnsstr,&
+                ds_contact)
+    call jeveuo(cnequi(1:19)//'.VALE', 'L', vr=v_cnequi)
 !
-! --- INITIALISATIONS
+! - Compute function
 !
-    call dismoi('NB_EQUA', numedd, 'NUME_DDL', repi=neq)
-!
-! --- ACCES OBJETS
-!
-    call jeveuo(cnfext(1:19)//'.VALE', 'L', vr=fext)
-    call jeveuo(cnfint(1:19)//'.VALE', 'L', vr=fint)
-    call jeveuo(cndiri(1:19)//'.VALE', 'L', vr=diri)
-    call jeveuo(ddepla(1:19)//'.VALE', 'L', vr=ddepl)
-!
-    fonc = 0.d0
-    do ieq = 1, neq
-        fonc = fonc + ddepl(ieq) * (fint(ieq)+ diri(ieq)- fext(ieq))
+    func = 0.d0
+    do i_equa = 1, nb_equa
+        func = func + v_disp_iter(i_equa) * v_cnequi(i_equa)
     end do
 !
-    call jedema()
 end subroutine

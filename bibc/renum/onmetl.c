@@ -24,72 +24,72 @@
 #endif
 
 /* Prototypes of internal functions */
-int ReadGraphL(graph_t *, int *, int *, int *, int *, int *);
-int ComputeFillInL(graph_t *, idx_t *, idx_t *, idx_t *, int *,
+int ReadGraphL(graph_t *, int *, int *, int *, int *, int *, int *);
+int ComputeFillInL(graph_t *, idx_t *, int *, int *, int *,
                    int *, double *, int *, int *);
 int smbfctl(int, idx_t *, idx_t *, idx_t *, idx_t *, idx_t *, int *, idx_t *,
-            idx_t *, int *, idx_t *, idx_t *, int *, int *, double *);
+            idx_t *, int *, int *, int *, int *, int *, double *);
 
 
-void DEFPPPPPPPPPPPPP(ONMETL,onmetl, nbnd,nadj,
-                        xadjd, adjncy,
-                       invpnd,permnd,supnd, parent,
-          nbsn,nbops,fctnzs, lgind,
+void DEFPPPPPPPPPPPPP(ONMETL,onmetl,nbnd,nadj,
+                        xadjd,adjncy,
+                       invpnd,permnd,supnd,parent,
+          nbsn,nbops,fctnzs,lgind,
           niv)
      ASTERINTEGER4 *nbnd,*nadj,  *xadjd, *adjncy;
      ASTERINTEGER4 *invpnd, *permnd,*supnd, *parent,*nbsn;
-     ASTERDOUBLE *nbops;
+     ASTERDOUBLE   *nbops;
      ASTERINTEGER4 *fctnzs, *lgind;
-     ASTERINTEGER *niv;
+     ASTERINTEGER  *niv;
 {
 #ifdef _HAVE_METIS
   /*
-Donnees:
+Donnees (allouees ds vecteurs JEVEUX via preml1)
 --------
 nbnd : Nombre de noeuds
 nadj : Nombre d aretes du graphe de connexion
 xadj[1:nbnd+1]: pointeur de adjncy
+  (Notes SD adjncy: SD locale a ReadGraphL s'appelant adjncy aussi, elle de type idx_t)
 adjncy[1:nadj] : connexion du graphe, voisins de chaque noeud
 
 niv : niveau des impressions 0, 1, 2
 
-Resultats:
+Resultats (allouees ds vecteurs JEVEUX via preml1):
 ---------
 invpnd[1:nbnd] : Renumerotation des noeuds (nouveau numero)
 permnd[1:nbnd] : inverse du precedent (ancien numero)
 nbsn : Nombre de super noeuds
-parent[1:nbsn] : arborescence des super noeuds
-supnd[1:nbnd+1] : definition des supernoeuds
+  (Notes SD parent: seul les nbsd premiers sont exploites par la suite ds preml1;
+  Attention: SD locale a smbfctl s'appelant parent aussi, elle de type idx_t)
+parent[1:nbnd] : arborescence des super noeuds
+  (Note supnd: seul les nbsd+1 premiers sont exploites par la suite ds preml1)
+supnd[1:nbnd] : definition des supernoeuds
 
 nbops : Nombre d operation flottantes pour la factorisation a effectuer
 fctnzs : Nombre de termes non nuls dans la matrice factorisee
 lgind  : longueur de tableaux de pointeurs
    */
-  int n,m,i;
-  ASTERINTEGER ibid0=0, ibid1=1, iret;
-  ASTERDOUBLE rbid=0.;
-  char *kbid;
-  n=*nbnd;
-  m=*nadj;
-
-   idx_t options[METIS_NOPTIONS];
-   int ret;
-   idx_t *perm, *iperm;
-   graph_t *graph=NULL;
-   char filename[256];
-   int numflag = 0, wgtflag;
+   int n,m,i,ret,wgtflag,kkk,debug1,debug2;
+   idx_t lll, options[METIS_NOPTIONS], *perm, *iperm;
    float TOTALTmr, METISTmr, IOTmr, SMBTmr;
-   strcpy(filename, "fichier_aux.metis");
+   graph_t *graph=NULL;
+   
+   debug1=0; /* si 1 affiche les resultats intermediaires ds .mess*/
+   debug2=0; /* si 1, force la permutation identite pour bypasser METIS*/
 
+   n=*nbnd;
+   m=*nadj;
+
+/* Init. pour METIS */
    gk_clearcputimer(TOTALTmr);
    gk_clearcputimer(METISTmr);
    gk_clearcputimer(IOTmr);
    gk_clearcputimer(SMBTmr);
-
    gk_startcputimer(TOTALTmr);
    gk_startcputimer(IOTmr);
+/* Creation et lecture du graphe METIS*/
    graph = CreateGraph();
-   ret=ReadGraphL(graph, nbnd, nadj, xadjd, adjncy, &wgtflag);
+   ret=ReadGraphL(graph, nbnd, nadj, xadjd, adjncy, &wgtflag, &debug1);
    if (graph->nvtxs <= 0) {
      printf("Empty graph. Nothing to do.\n");
      exit(4);
@@ -100,20 +100,22 @@ lgind  : longueur de tableaux de pointeurs
    }
    gk_stopcputimer(IOTmr);
 
-   /* Ordering does not use weights! */
-    gk_free((void **) &graph->vwgt, &graph->adjwgt, LTERM);
+/* On n'utilise pas de graphes avec poids ici */
+   gk_free((void **) &graph->vwgt, &graph->adjwgt, LTERM);
 
+/* Caracteristiques du graphes fourni a METIS en entree*/
    if (*niv > 1 ) {
      printf("**********************************************************************\n");
      printf("%s", METISTITLE);
      printf("Graph Information ---------------------------------------------------\n");
-     printf("  Name: %s, #Vertices: %d, #Edges: %d\n\n", filename, graph->nvtxs, graph->nedges/2);
+     printf("#Vertices: %d, #Edges: %d\n\n", graph->nvtxs, graph->nedges/2);
      printf("Node-Based Ordering... ----------------------------------------------\n");
    }
-
+/* Allocation des vecteurs de permutation construits via l'appel a METIS_NodeND*/
    perm  = imalloc(graph->nvtxs, "main: perm");
    iperm = imalloc(graph->nvtxs, "main: iperm");
 
+/* Parametrage des options de METIS pour l'appel a METIS_NodeND */
    options[0] = 0;
    METIS_SetDefaultOptions(options);
    options[METIS_OPTION_PTYPE]    = METIS_PTYPE_RB;  /* Rajout pour être consistant avec METIS4*/
@@ -131,23 +133,36 @@ lgind  : longueur de tableaux de pointeurs
    options[METIS_OPTION_NSEPS]    = 1; /* why ?*/
    options[METIS_OPTION_NUMBERING] = 0;
 
-
+/* Appel effectif a METIS pour reduire le profil de la matrice associee au graphe 
+   Algo par dissections emboitees recursives*/
    gk_startcputimer(METISTmr);
    ret=METIS_OK;
    METIS_NodeND(&graph->nvtxs, graph->xadj, graph->adjncy, graph->vwgt, options, perm, iperm);
-
    gk_stopcputimer(METISTmr);
    gk_startcputimer(IOTmr);
- /*  WritePermutation(filename, iperm, graph->nvtxs);*/
 
+/* on bluffe METIS pour verifier que le reste fonctionne */
+   if (debug2==1) {
+     for(i=0;i<graph->nvtxs;i++)
+       {perm[i]=i;iperm[i]=i;}
+                  }
+/* Pour afficher le resultat de METIS dans le .mess*/
+   if (debug1==1) {
+     printf("\nDebut impression METIS_NodeND\n");
+     printf("%d %d\n",sizeof(graph->nvtxs),sizeof(graph->ncon));
+     printf("%d %d\n",graph->nvtxs,graph->ncon);
+     for(i=0;i<graph->nvtxs;i++)
+       {printf("%d %d\n",perm[i],iperm[i]);}
+        printf("\nfin impression METIS_NodeND\n");
+                  }
    gk_stopcputimer(IOTmr);
    gk_startcputimer(SMBTmr);
    ret=METIS_OK;
    ComputeFillInL(graph, iperm, parent, supnd, &graph->nvtxs, nbsn, nbops, lgind, fctnzs);
    gk_stopcputimer(SMBTmr);
    gk_stopcputimer(TOTALTmr);
-
-
+     
+/* Temps de calcul des differentes etapes de METIS*/
    if (*niv > 1 ) {
      printf("\nTiming Information --------------------------------------------------\n");
      printf("  I/O:                     \t %7.3f\n", gk_getcputimer(IOTmr));
@@ -157,21 +172,31 @@ lgind  : longueur de tableaux de pointeurs
      printf("**********************************************************************\n");
    }
 
+/* Transmission des resultats METIS (perm/iperm) en resultats code_aster (permnd/invpnd)*/
+/* Attention si le typeaster est trop petit (ASTERINTEGER versus idx_t) */
 
-
-   {int kkk;
-
-   for(kkk=0;kkk<graph->nvtxs;kkk++)
+   lll=graph->nvtxs;
+   for(kkk=0;kkk<lll;kkk++)
      {invpnd[kkk]= iperm[kkk];
-       permnd[ invpnd[kkk] ]= kkk;
+      permnd[ invpnd[kkk] ]= kkk;}
 
-     }
-    for(kkk=0;kkk<graph->nvtxs;kkk++)
-      { invpnd[kkk]+=1;
-    permnd[kkk]+=1;
-      }
-   }
-    gk_free((void **) &graph->xadj, &graph->adjncy, &perm, &iperm, LTERM);
+   for(kkk=0;kkk<lll;kkk++)
+     {invpnd[kkk]+=1;
+      permnd[kkk]+=1;}
+
+/* Pour afficher les resultats de ComputeFillInL dans le .mess*/
+   if (debug1==1) {
+     printf("\nDebut impression ComputeFillInL\n");
+     printf("%d %d\n",*nbnd,*nbsn);
+     for (kkk=0;kkk<lll;kkk++)
+       {printf("%d %d %d\n",invpnd[kkk],permnd[kkk],parent[kkk]);}
+     for (kkk=0;kkk<*nbsn+1;kkk++)
+       {printf("%d\n",supnd[kkk]);}
+     printf("\nFin impression ComputeFillInL\n");
+                  }
+
+/* On libere les objets alloues par METIS*/
+   gk_free((void **) &graph->xadj, &graph->adjncy, &perm, &iperm, LTERM);
 #else
 
     CALL_UTMESS("F", "FERMETUR_15");
@@ -188,44 +213,17 @@ lgind  : longueur de tableaux de pointeurs
  * This function reads the spd matrix
  **************************************************************************/
 
-int ReadGraphL(graph_t *graph, int *nbnd,int *nadj,int *xadjd,int *adjnci, int *wgtflag)
+int ReadGraphL(graph_t *graph,int *nbnd,int *nadj,int *xadjd,int *adjnci,int *wgtflag,
+               int *debug1)
 {
-  int i, j, k, l, fmt, readew, readvw, ncon, edge, ewgt;
-  idx_t *xadj, *adjncy, *vwgt, *adjwgt;
-  char *line, *oldstr, *newstr;
-  FILE *fpin;
-
-  line = (char *)malloc(sizeof(char)*(MAXLINE+1));
+  int ncon, k, l;
+  idx_t *xadj,*adjncy,*vwgt,*adjwgt;
 
   graph->nvtxs = *nbnd;
-  fmt = ncon = 0;
-  /* sscanf(line, "%d %d %d %d", &(graph->nvtxs), &(graph->nedges), &fmt, &ncon);
-   */
-  graph->nedges=*nadj;
-  readew = (fmt%10 > 0);
-  readvw = ((fmt/10)%10 > 0);
-  if (fmt >= 100) {
-    printf("Cannot read this type of file format!");
-    exit(0);
-  }
-
-
-  *wgtflag = 0;
-  if (readew)
-    *wgtflag += 1;
-  if (readvw)
-    *wgtflag += 2;
-
-  if (ncon > 0 && !readvw) {
-    printf("------------------------------------------------------------------------------\n");
-    printf("***  I detected an error in your input file  ***\n\n");
-    printf("You specified ncon=%d, but the fmt parameter does not specify vertex weights\n", ncon);
-    printf("Make sure that the fmt parameter is set to either 10 or 11.\n");
-    printf("------------------------------------------------------------------------------\n");
-    exit(0);
-  }
+  graph->nedges= *nadj;
 
   /*  graph->nedges *=2;mis directement a nadj */
+  ncon = 0;
   ncon = graph->ncon = (ncon == 0 ? 1 : ncon);
 
   xadj = graph->xadj = ismalloc(graph->nvtxs+1, 0, "ReadGraph: xadj");
@@ -233,69 +231,37 @@ int ReadGraphL(graph_t *graph, int *nbnd,int *nadj,int *xadjd,int *adjnci, int *
 
   vwgt=graph->vwgt=adjwgt=graph->adjwgt = NULL;
   for(k=0;k<=graph->nvtxs;k++)
-    {
-      xadj[k] = xadjd[k]-1; /* -1 on est en C */
-    }
+    {xadj[k]=xadjd[k]-1; /* -1 on est en C */}
   int ll=graph->nedges;
   for(k=0;k<ll;k++)
-    {
-         adjncy[k]=adjnci[k]-1; /*  on est en C */
-    }
-
-  free(line);
-
-/* Pour tester et sortir le graphe dans le .mess
-  printf("\ndébut impression graphe\n");
-  printf("%d %d\n",sizeof(graph->nvtxs),sizeof(graph->ncon));
-  printf("%d %d\n",graph->nvtxs,graph->ncon);
-  for(k=0;k<=graph->nvtxs;k++)
-    {
-      for(l=xadj[k];l<xadj[k+1];l++)
-        {
-           printf("%d ",adjncy[l]+1);
-        }
-        printf("\n");
-    }
-     printf("\nfin impression graphe\n"); */
+    {adjncy[k]=adjnci[k]-1; /*  on est en C */}
+   
+/* Pour tester et sortir le graphe dans le .mess*/
+  if (*debug1==1) {
+    printf("\nDebut impression graphe\n");
+    printf("%d %d\n",sizeof(graph->nvtxs),sizeof(graph->nedges));
+    printf("%d %d\n",graph->nvtxs,graph->nedges);
+    for(k=0;k<graph->nvtxs;k++)
+      {printf("vertex %d ",k);
+       for(l=xadj[k];l<xadj[k+1];l++)
+         {printf("%d ",adjncy[l]);}
+       printf("\n");
+      }
+    printf("\nFin impression graphe\n");
+                }
+  *wgtflag=0;
   return 0;
 }
-
-
- /*************************************************************************
- * This function writes out the partition vector
- **************************************************************************/
- void WritePermutation(char *fname, idx_t *iperm, int n)
- {
-   FILE *fpout;
-   int i;
-   char filename[256];
-
-   sprintf(filename,"%s.iperm",fname);
-
-   if ((fpout = fopen(filename, "w")) == NULL)
-     errexit("Problems in opening the permutation file: %s", filename);
-
-   for (i=0; i<n; i++)
-     fprintf(fpout,"%d\n", iperm[i]);
-
-   fclose(fpout);
-
- }
-
-
-
-
-
 
 
 /*************************************************************************
  * This function sets up data structures for fill-in computations
  **************************************************************************/
-int ComputeFillInL(graph_t *graph, idx_t *iperm,idx_t *parent,
-            idx_t *supnd,int *neq,int *nbsn,double *opc,int *lgindd,int *maxlnz)
+int ComputeFillInL(graph_t *graph, idx_t *iperm, int *parent,
+            int *supnd, int *neq,int *nbsn,double *opc,int *lgindd,int *maxlnz)
  {
    int i, j, k, nvtxs, maxsub,lgind;
-   idx_t *xadj, *adjncy;
+   idx_t *xadj, *adjncy, idxbuff;
    idx_t *perm, *xlnz, *xnzsub, *nzsub;
 
 
@@ -316,10 +282,11 @@ int ComputeFillInL(graph_t *graph, idx_t *iperm,idx_t *parent,
      }
 
    /* Allocate the required memory */
-   perm = imalloc(nvtxs+1, "ComputeFillIn: perm");
-   xlnz = imalloc(nvtxs+1, "ComputeFillIn: xlnz");
-   xnzsub = imalloc(nvtxs+1, "ComputeFillIn: xnzsub");
-   nzsub = imalloc(maxsub, "ComputeFillIn: nzsub");
+   perm = imalloc(graph->nvtxs+1, "ComputeFillIn: perm");
+   xlnz = imalloc(graph->nvtxs+1, "ComputeFillIn: xlnz");
+   xnzsub = imalloc(graph->nvtxs+1, "ComputeFillIn: xnzsub");
+   idxbuff=maxsub;
+   nzsub = imalloc(idxbuff, "ComputeFillIn: nzsub");
    /* Construct perm from iperm and change the numbering of iperm */
    for (i=0; i<nvtxs; i++)
  {
@@ -341,7 +308,8 @@ int ComputeFillInL(graph_t *graph, idx_t *iperm,idx_t *parent,
      free(nzsub);
 
      maxsub = 4*maxsub;
-     nzsub = imalloc(maxsub, "ComputeFillIn: nzsub");
+     idxbuff=maxsub;
+     nzsub = imalloc(idxbuff, "ComputeFillIn: nzsub");
      errs2= smbfctl(nvtxs, xadj, adjncy, perm, iperm, xlnz, maxlnz, xnzsub, nzsub, &maxsub,
                     supnd, parent, nbsn, &lgind, opc);
      if (errs2)
@@ -393,26 +361,26 @@ int ComputeFillInL(graph_t *graph, idx_t *iperm,idx_t *parent,
  *******************************************************************/
  int smbfctl(int neqns, idx_t *xadj, idx_t *adjncy, idx_t *perm, idx_t *invp,
              idx_t *xlnz, int *maxlnz, idx_t *xnzsub, idx_t *nzsub, int *maxsub,
-             idx_t *supnd, idx_t *parsnode, int *nbsn, int *lgin, double *opc)
+             int *supnd, int *parsnode, int *nbsn, int *lgin, double *opc)
  {
    /* Local variables */
    int snode,node, rchm, mrgk, lmax, i, j, k, m, nabor, nzbeg, nzend;
    int kxsub, jstop, jstrt, mrkflg, inz, knz, flag,lgind;
-   idx_t *mrglnk, *marker, *rchlnk;
+   idx_t *mrglnk, *marker, *rchlnk, idxbuff;
  /* jyb */
    int  lnode, xnzi, xnzip1,nbi, nbip1;
    int aux, minsn, maxsn;
 
    int taille1, k1, taille2, k2, taille3, k3,nd;
-   /* idx_t *parent, *nliens, *supnd, *tbnode, *parsnode;*/
+/* attention ici parent est local a la routine. A ne pas confondre avec la
+   structure de donnees aster */
    idx_t *parent, *nliens, *tbnode;
    FILE *fpout;
-   /*  extern void ecri11_; */
- /* jyb fin */
 
-   rchlnk = imalloc(neqns+1, "smbfct: rchlnk");
-   marker = ismalloc(neqns+1, 0, "smbfct: marker");
-   mrglnk = ismalloc(neqns+1, 0, "smbfct: mgrlnk");
+   idxbuff=neqns+1;
+   rchlnk = imalloc(idxbuff, "smbfct: rchlnk");
+   marker = ismalloc(idxbuff, 0, "smbfct: marker");
+   mrglnk = ismalloc(idxbuff, 0, "smbfct: mgrlnk");
    /* Parameter adjustments */
    --marker;
    --mrglnk;
@@ -582,8 +550,8 @@ nzsub[j] = i;
      xnzsub[neqns + 1] = xnzsub[neqns];
    }
 
-
- parent = ismalloc(neqns, 0, "smbfct: parent");
+ idxbuff=neqns;
+ parent = ismalloc(idxbuff, 0, "smbfct: parent");
  parent--;
    /* Calculate the elimination tree */
    for (i=1; i<=neqns; i++) {
@@ -601,7 +569,7 @@ nzsub[j] = i;
   marker[i]= snode;
   nbi = nbip1;
   xnzi = xnzip1;
- marker[i]= snode;
+  marker[i]= snode;
   i = i+ 1;
 /* C.Rose ligne suivante : correction de bug 13/03/02  neqns+1 remplace neqns
 dans l'instruction suivante
@@ -683,7 +651,8 @@ correction des fiches 12345 et 12503  */
  /* quand il n'y a pas de parent on met 0 (convention C. Rose) */
  /*parsnode = idxsmalloc(snode+1, 0, "smbfct: parsnode"); */
  /*parsnode--;*/
- tbnode = ismalloc(neqns, 0, "smbfct: tbnode");
+ idxbuff=neqns;
+ tbnode = ismalloc(idxbuff, 0, "smbfct: tbnode");
  tbnode--;
  /*sauvegarde de parent nodal */
  for(i = 1; i<=neqns; i++) {
@@ -711,10 +680,6 @@ correction des fiches 12345 et 12503  */
           for (i=1; i<=neqns; i++) {
      *opc += (xlnz[i+1]-xlnz[i])*(xlnz[i+1]-xlnz[i]) - (xlnz[i+1]-xlnz[i]);
           }
-/*  printf("    Nonzeros: %d, \tOperation Count: %6.4le \n", *maxlnz, *opc); */
-  /* ecriture sur le fichier 85
-  ecri11_(invp,perm,supnd,parsnode,&neqns,&snode,&opc,maxlnz,&lgind);
-  */
   *nbsn=snode;
   *lgin=lgind;
    marker++;

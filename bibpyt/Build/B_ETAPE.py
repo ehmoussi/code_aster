@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -592,6 +592,8 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
             context = last_ctxt
             # récupération des constantes locales en cas de MACRO
             context.update(getattr(self.parent, 'macro_const_context', {}))
+            # ajoute le contexte stocké dans la formule
+            context.update(objet_sd.get_context())
             # on reduit le dict au seul parametre de la formule
             dp = dict(zip(nom_param, val))
             for param in inter:

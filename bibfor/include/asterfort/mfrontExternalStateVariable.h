@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ interface
                                             fami   , kpg      , ksp, imate, &
                                             temp   , dtemp    , &
                                             predef , dpred    , &
-                                            neps   , epsth    , depsth)
+                                            neps   , epsth    , depsth, rela_comp)
         real(kind=8), intent(in) :: carcri(*)
         character(len=*), intent(in) :: fami
         integer, intent(in) :: kpg
@@ -31,5 +31,6 @@ interface
         real(kind=8), intent(out) :: predef(*), dpred(*)
         integer, intent(in) :: neps
         real(kind=8), intent(out) :: epsth(neps), depsth(neps)
+        character(len=16),optional,intent(in) :: rela_comp
     end subroutine mfrontExternalStateVariable
 end interface

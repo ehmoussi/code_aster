@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -43,19 +43,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (model .eq. '3D_GRAD_EPSI') then
-        vali = 13
-        valk    = "MODELISATION='3D_GRAD_EPSI'"
-!
-    else if (model .eq. 'C_PLAN_GRAD_EPSI') then
-        vali = 13
-        valk    = "MODELISATION='C_PLAN_GRAD_EPSI'"
-!
-    else if (model .eq. 'D_PLAN_GRAD_EPSI') then
-        vali = 13
-        valk    = "MODELISATION='D_PLAN_GRAD_EPSI'"
-!
-    else if (model .eq. 'POU_C_T') then
+    if (model .eq. 'POU_C_T') then
         vali = 13
         valk    = "MODELISATION='POU_C_T'"
 !

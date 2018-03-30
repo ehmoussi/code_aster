@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -34,6 +34,7 @@ subroutine fetskp(mod,meth,nbpart)
 #include "asterc/aplext.h"
 #include "asterc/fetsco.h"
 #include "asterc/getfac.h"
+#include "asterc/gpmetis_aster.h"
 #include "asterc/gtoptk.h"
 #include "asterc/rmfile.h"
 #include "asterfort/asmpi_comm_jev.h"
@@ -63,17 +64,15 @@ subroutine fetskp(mod,meth,nbpart)
 #include "asterfort/as_allocate.h"
 !
     integer :: nbmama, idco, nbmato, renum2, nbma, nomsdm, masd
-    integer :: nbmasd, id,  err, co, renum
-    integer ::    numsdm, nmap, i, ima, lrep
-    integer :: iulm1, iocc, nocc, ifm, niv, nblien, renum3, idma, iulm2
+    integer :: nbmasd, id,  co, renum
+    integer :: numsdm, nmap, i, ima
+    integer :: iocc, nocc, ifm, niv, nblien, renum3, idma
     integer :: rang, nbproc, versco, n1, n2, n3, ier, iaux, iaux2
-    integer :: vali(2), iret, iexi
+    integer :: iexi, numsd0
     real(kind=8) :: tmps(7)
-    character(len=8) :: ma, ktmp, ktmp2, k8nb
+    character(len=8) :: ma
     character(len=8) :: kersco
     character(len=24) :: k24b
-    character(len=256) :: jnom(4)
-    character(len=128) :: rep
     integer(kind=4), pointer :: vedlo(:) => null()
     integer, pointer :: vrenum1(:) => null()
     integer(kind=4), pointer :: vvelo(:) => null()
@@ -150,28 +149,7 @@ subroutine fetskp(mod,meth,nbpart)
         vedlo(i)=1
     end do
 !
-!
-! ------- ON IMPRIME LE GRAPH SI PROC 0
-!
-    if ((meth(1:6).ne.'SCOTCH') .and. (rang.eq.0)) then
-        iulm1 = ulnume ()
-        if (iulm1 .eq. -1) then
-            call utmess('F', 'UTILITAI_81')
-        endif
-        call ulopen(iulm1, ' ', ' ', 'NEW', 'O')
-        write(iulm1,'(I12,I12,I3)')nbmato,nblien/2,11
-!
-        do ima = 1, nbmato
-            write(k8nb,'(''('',I4,''I8'','')'')') 2*(1+zi4(idco-1+ima+&
-            1)-1 - zi4(idco-1+ima) ) + 2
-            write(iulm1,k8nb)vvelo(ima), (zi4(co-1+i),vedlo(&
-            i), i=zi4(idco-1+ima),zi4(idco-1+ima+1)-1)
-        end do
-!
-        call ulopen(-iulm1, ' ', ' ', ' ', ' ')
-!
-    endif
-!
+!!
     AS_DEALLOCATE(vi=vrenum1)
     call jedetr('&&FETSKP.NBMAMA')
 !
@@ -219,20 +197,10 @@ subroutine fetskp(mod,meth,nbpart)
 !     ************** LANCEMENT DE METIS
 !
     else if (rang.eq.0) then
-        write(ktmp,'(I4)') nbpart
-        write(ktmp2,'(I4)') iulm1
-        call lxcadr(ktmp)
-        call lxcadr(ktmp2)
-        jnom(2)='fort.'//ktmp2
-        jnom(3)=ktmp
+        call wkvect('&&FETSKP.TMPNUMSDM', 'V V I', nbmato, numsd0)
         if (meth .eq. 'METIS  ') then
-            call gtoptk('prog:gpmetis', jnom(1), iret)
-            if (iret .ne. 0) then
-                vali(1) = len(rep)
-                call utmess('F', 'EXECLOGICIEL0_24', sk='gpmetis', si=vali(1))
-            endif
-         endif
-         call aplext(niv-1, 3, jnom, err)
+            call gpmetis_aster(nbmato, nblien, zi4(idco), zi4(co),  nbpart, zi(numsd0))
+        endif
     endif
 !
     AS_DEALLOCATE(vi4=vedlo)
@@ -250,22 +218,10 @@ subroutine fetskp(mod,meth,nbpart)
 !
     if (meth(1:6) .ne. 'SCOTCH') then
         if (rang .eq. 0) then
-            iulm2 = ulnume ()
-            if (iulm2 .eq. -1) then
-                call utmess('F', 'UTILITAI_81')
-            endif
-            lrep=0
-            do i = 1, len(ktmp2)
-                if (ktmp2(i:i) .ne. ' ') lrep=lrep+1
-            end do
-            jnom(1)='fort.'//ktmp2(1:lrep)//'.part.'//ktmp
-            call ulopen(iulm2, jnom(1), ' ', 'OLD', 'O')
             do ima = 1, nbmato
-                read(iulm2,'(I4)')zi(numsdm-1+zi(renum2-1+ima))
+                zi(numsdm-1+zi(renum2-1+ima)) = zi(numsd0-1+ima)
             end do
-! -- destruction du fichier temporaire genere par METIS
-            call ulopen(-iulm2, ' ', ' ', ' ', ' ')
-            call rmfile(jnom(1),niv-1)
+            call jedetr('&&FETSKP.TMPNUMSDM')
         endif
         k24b='&&FETSKP.NUMSDM'
         call asmpi_comm_jev('BCAST', k24b)

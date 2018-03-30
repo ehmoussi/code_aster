@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -65,20 +65,8 @@ Erreur lors de l'interpolation de la fonction '%(k1)s'.
     10 : _(u"""sur la maille '%(k1)s'
 """),
 
-    11 : _(u"""
-L'interpolation de la fonction '%(k1)s' n'est pas autorisée.
-Le type d'interpolation de la fonction vaut 'NON'
-
-  -> Risque & Conseil :
-    Voir le mot-clé INTERPOL des commandes qui créent des fonctions.
-"""),
-
     12 : _(u"""
 Une erreur s'est produite dans la recherche de l'intervalle des abscisses contenant la valeur %(r1)f.
-
-  -> Risque & Conseil :
-    Vérifiez que le type d'interpolation de la fonction ne vaut pas 'NON'
-    (mot-clé INTERPOL des commandes qui créent des fonctions).
 """),
 
     13 : _(u"""
@@ -172,11 +160,6 @@ traitées par %(k3)s.
 
   -> Débogage :
       le type est '%(k2)s'
-"""),
-
-    26 : _(u"""
-   abscisse demandée : %(r1)f
-   intervalle trouvé : [%(r2)f, %(r3)f]
 """),
 
     27 : _(u"""

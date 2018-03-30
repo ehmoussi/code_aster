@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -79,7 +79,6 @@ AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
                                   "3D_INCO_UP",      # person_in_charge: mickael.abbas at edf.fr
                                   "3D_INCO_UPO",     # person_in_charge: mickael.abbas at edf.fr
                                   "3D_SI",           # person_in_charge: mickael.abbas at edf.fr
-                                  "3D_GRAD_EPSI",    # person_in_charge: sylvie.michel-ponnelle at edf.fr
                                   "3D_GRAD_VARI",    # person_in_charge: sylvie.michel-ponnelle at edf.fr
                                   "3D_GRAD_INCO",    # person_in_charge: eric.lorentz at edf.fr
                                   "3D_GVNO",         # person_in_charge: jerome.beaurain at edf.fr
@@ -108,13 +107,11 @@ AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
                                   "2D_BARRE",        # person_in_charge: jean-luc.flejou at edf.fr
                                   "C_PLAN",          # person_in_charge: j-pierre.lefebvre at edf.fr
                                   "C_PLAN_SI",       # person_in_charge: mickael.abbas at edf.fr
-                                  "C_PLAN_GRAD_EPSI",# person_in_charge: sylvie.michel-ponnelle at edf.fr
                                   "CABLE",           # person_in_charge: jean-luc.flejou at edf.fr
                                   "CABLE_POULIE",    # person_in_charge: jean-luc.flejou at edf.fr
                                   "COQUE_3D",        # person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
                                   "COQUE_AXIS",      # person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
                                   "D_PLAN",          # person_in_charge: j-pierre.lefebvre at edf.fr
-                                  "D_PLAN_GRAD_EPSI",# person_in_charge: sylvie.michel-ponnelle at edf.fr
                                   "D_PLAN_GRAD_VARI",# person_in_charge: sylvie.michel-ponnelle at edf.fr
                                   "D_PLAN_GRAD_INCO",# person_in_charge: eric.lorentz at edf.fr
                                   "D_PLAN_GVNO",     # person_in_charge: jerome.beaurain at edf.fr

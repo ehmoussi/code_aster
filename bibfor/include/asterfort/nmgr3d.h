@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
@@ -42,8 +41,7 @@ interface
         integer, intent(in) :: lgpg
         real(kind=8), intent(in) :: instam
         real(kind=8), intent(in) :: instap
-        real(kind=8), intent(inout) :: deplm(1:3, 1:nno)
-        real(kind=8), intent(inout) :: deplp(1:3, 1:nno)
+        real(kind=8), intent(inout) :: deplm(3, nno), deplp(3, nno)
         real(kind=8), intent(in) :: angmas(*)
         real(kind=8), intent(inout) :: sigm(6, npg)
         real(kind=8), intent(inout) :: vim(lgpg, npg)

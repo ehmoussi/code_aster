@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ loi = LoiComportement(
     nb_vari        = 3,
     nom_vari       = ('EPSPEQ','EPSPVOL','INDIPLAS',),
     mc_mater       = ('ELAS','DRUCKER_PRAGER',),
-    modelisation   = ('3D','AXIS','D_PLAN','GRADEPSI',),
+    modelisation   = ('3D','AXIS','D_PLAN',),
     deformation    = ('PETIT','PETIT_REAC','GROT_GDEP',),
     algo_inte      = ('ANALYTIQUE',),
     type_matr_tang = ('PERTURBATION','VERIFICATION',),

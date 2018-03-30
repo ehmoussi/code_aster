@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -73,8 +73,8 @@ subroutine te0160(option, nomte)
     !if (zk16(icompo+3) (1:9) .eq. 'COMP_INCR') then
     !    call utmess('F', 'ELEMENTS3_36')
     !endif
-    if (zk16(icompo-1+NAME) (1:5) .ne. 'CABLE') then
-        call utmess('F', 'ELEMENTS3_37', sk = zk16(icompo-1+NAME))
+    if (zk16(icompo-1+RELA_NAME) (1:5) .ne. 'CABLE') then
+        call utmess('F', 'ELEMENTS3_37', sk = zk16(icompo-1+RELA_NAME))
     endif
     if (zk16(icompo-1+DEFO) .ne. 'GROT_GDEP') then
         call utmess('F', 'ELEMENTS3_38', sk = zk16(icompo-1+DEFO))

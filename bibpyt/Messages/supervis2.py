@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -175,6 +175,9 @@ dernière au format HDF (mot clé FORMAT_HDF="OUI" dans la commande FIN).
             'flags': 'CENTER | ALL_UNIT',
             },
 
+    # marks for the extraction of messages
+    69 : u""".. _%(k1)s""",
+
     # Affichage des commandes
     70 : u"""  # ------------------------------------------------------------------------------------------""",
 
@@ -208,4 +211,7 @@ dernière au format HDF (mot clé FORMAT_HDF="OUI" dans la commande FIN).
 """), 'flags' : 'ALL_UNIT',
             },
 
+    98 : _(u"""
+ <INFO> Démarrage de l'exécution.
+"""),
 }

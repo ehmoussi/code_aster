@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,8 @@
 !
 interface
     subroutine irelst(nofimd, chanom, nochmd, typech, nomaas,&
-                      nomamd, nbimpr, caimpi, caimpk, sdcarm)
+                      nomamd, nbimpr, caimpi, caimpk, sdcarm,&
+                      carael)
         integer :: nbimpr
         character(len=*) :: nofimd
         character(len=19) :: chanom
@@ -29,6 +30,6 @@ interface
         character(len=64) :: nomamd, nochmd
         integer :: caimpi(10, nbimpr)
         character(len=80) :: caimpk(3, nbimpr)
-        character(len=8) :: sdcarm
+        character(len=8) :: sdcarm, carael
     end subroutine irelst
 end interface

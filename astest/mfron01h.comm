@@ -1,7 +1,7 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -47,7 +47,7 @@ ACIER=DEFI_MATERIAU(
                    ECRO_LINE=_F(D_SIGM_EPSI=2000,
                                 SY=1000.0,
                                     ),
-                   MFRONT=_F(LISTE_COEF=(200000.,0.3,0.,1000.,2000.,
+                   MFRONT=_F(LISTE_COEF=(1000.,2000., 200000.,0.3,
                                             ),),
                             )
 

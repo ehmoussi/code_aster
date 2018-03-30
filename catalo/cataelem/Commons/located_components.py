@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -162,7 +162,7 @@ CPESANR = LocatedComponents(phys=PHY.PESA_R, type='ELEM',
                             components=('G', 'AG', 'BG', 'CG',))
 
 CPHASIN_ = LocatedComponents(phys=PHY.VAR2_R, type='ELEM',
-                             components=('V[5]',))
+                             components=('V[6]',))
 
 CRAYONF = LocatedComponents(phys=PHY.RAYO_F, type='ELEM',
                             components=('SIGMA', 'EPSIL', 'TPINF',))

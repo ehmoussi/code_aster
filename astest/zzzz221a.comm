@@ -287,7 +287,8 @@ RESU_100=CREA_RESU(OPERATION='AFFE',
                            MODELE=MOTHER_2,
                            INST=100.0,),);
 
-RESU_100=CREA_RESU(reuse =RESU_100,
+RESU_100=CREA_RESU(reuse=RESU_100,
+                   RESULTAT=RESU_100,
                    OPERATION='AFFE',
                    TYPE_RESU='EVOL_THER',
                    NOM_CHAM='HYDR_ELNO',

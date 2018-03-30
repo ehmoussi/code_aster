@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -311,6 +311,7 @@ for k in range(1,5):
                      );
   else:
     MODESTAA = CREA_RESU (reuse = MODESTAA,
+                         RESULTAT=MODESTAA,
                          OPERATION='AFFE',
                          TYPE_RESU= 'MULT_ELAS', NOM_CHAM='DEPL',
          AFFE=(
@@ -318,6 +319,7 @@ for k in range(1,5):
               ),
                      );
     MODESTAB = CREA_RESU (reuse = MODESTAB,
+                         RESULTAT=MODESTAB,
                          OPERATION='AFFE',
                          TYPE_RESU= 'MULT_ELAS', NOM_CHAM='DEPL',
          AFFE=(
@@ -471,7 +473,7 @@ TRAN_GE1=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                          PAS = 2.E-4),
                             ARCHIVAGE=_F( PAS_ARCH = 5),
                              COMPORTEMENT=(
-                                    _F( RELATION='DIS_CHOC', 
+                                    _F( RELATION='DIS_CHOC',
                                         INTITULE = 'CHOC1',
                                         GROUP_NO_1 = 'GROUP1',
                                         GROUP_NO_2 = 'GROUP2',
@@ -480,8 +482,8 @@ TRAN_GE1=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                         DIST_1 = 0.0995,
                                         DIST_2 = 0.0995,
                                         RIGI_NOR = 1.E+8),
-                                    _F( RELATION='DIS_CHOC', 
-                                        INTITULE = 'CHOC2',                                    
+                                    _F( RELATION='DIS_CHOC',
+                                        INTITULE = 'CHOC2',
                                         NOEUD_1 = 'M8',
                                         NOEUD_2 = 'O8',
                                         OBSTACLE = OBSTACLE,
@@ -520,7 +522,7 @@ TRANGE2=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                          PAS = 5.E-7),
                             ARCHIVAGE=_F( PAS_ARCH = 2000),
                              COMPORTEMENT=(
-                                    _F( RELATION='DIS_CHOC', 
+                                    _F( RELATION='DIS_CHOC',
                                         INTITULE = 'CHOC1',
                                         GROUP_NO_1 = 'GROUP1',
                                         GROUP_NO_2 = 'GROUP2',
@@ -529,8 +531,8 @@ TRANGE2=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                         DIST_1 = 0.0995,
                                         DIST_2 = 0.0995,
                                         RIGI_NOR = 1.E+8),
-                                    _F( RELATION='DIS_CHOC', 
-                                        INTITULE = 'CHOC2',                                      
+                                    _F( RELATION='DIS_CHOC',
+                                        INTITULE = 'CHOC2',
                                         NOEUD_1 = 'M8',
                                         NOEUD_2 = 'O8',
                                         OBSTACLE = OBSTACLE,

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine liscad(phenom       , list_load      , i_load    , load_namez  , load_funcz,&
                   nb_info_typez, list_info_typez, info_typez, i_neum_laplz)
 !
@@ -27,16 +27,15 @@ implicit none
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 !
-!
-    character(len=4), intent(in) :: phenom
-    character(len=19), intent(in) :: list_load
-    integer, intent(in) :: i_load
-    character(len=*), intent(in) :: load_namez
-    character(len=*), intent(in) :: load_funcz
-    integer, optional, intent(in) :: nb_info_typez
-    character(len=*), optional, intent(in) :: list_info_typez(*)
-    character(len=*), optional, intent(in) :: info_typez
-    integer, optional, intent(in) :: i_neum_laplz
+character(len=4), intent(in) :: phenom
+character(len=19), intent(in) :: list_load
+integer, intent(in) :: i_load
+character(len=*), intent(in) :: load_namez
+character(len=*), intent(in) :: load_funcz
+integer, optional, intent(in) :: nb_info_typez
+character(len=*), optional, intent(in) :: list_info_typez(*)
+character(len=*), optional, intent(in) :: info_typez
+integer, optional, intent(in) :: i_neum_laplz
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -108,56 +107,56 @@ implicit none
             endif
             if (info_type .eq. 'CINE_CSTE') then
                 v_load_info(i_load+1) = -1
-            else if (info_type.eq.'CINE_FO') then
+            else if (info_type .eq. 'CINE_FO') then
                 v_load_info(i_load+1) = -2
-            else if (info_type.eq.'CINE_FT') then
+            else if (info_type .eq. 'CINE_FT') then
                 v_load_info(i_load+1) = -3
-            else if (info_type.eq.'DIRI_PILO ') then
+            else if (info_type .eq. 'DIRI_PILO ') then
                 v_load_info(i_load+1) = 5
-            else if (info_type.eq.'DIRI_PILO_F') then
+            else if (info_type .eq. 'DIRI_PILO_F') then
                 v_load_info(i_load+1) = 6
-            else if (info_type(1:9).eq.'DIRI_CSTE') then
+            else if (info_type .eq. 'DIRI_CSTE') then
                 v_load_info(i_load+1) = 1
-                if (info_type(10:15) .eq. '_DIDI') then
-                    v_load_info(3*nb_load+2+i_load+1) = 1
-                endif
-            else if (info_type(1:9).eq.'DIRI_FO') then
+            else if (info_type .eq. 'DIRI_CSTE_DIDI') then
+                v_load_info(i_load+1) = 1
+                v_load_info(3*nb_load+2+i_load+1) = 1
+            else if (info_type .eq. 'DIRI_FO') then
                 v_load_info(i_load+1) = 2
-                if (info_type(10:15) .eq. '_DIDI') then
-                    v_load_info(3*nb_load+2+i_load+1) = 1
-                endif
-            else if (info_type(1:9).eq.'DIRI_FT') then
+            else if (info_type .eq. 'DIRI_FO_DIDI') then
+                v_load_info(i_load+1) = 2
+                v_load_info(3*nb_load+2+i_load+1) = 1
+            else if (info_type .eq. 'DIRI_FT') then
                 v_load_info(i_load+1) = 3
-                if (info_type(10:15) .eq. '_DIDI') then
-                    v_load_info(3*nb_load+2+i_load+1) = 1
-                endif
-            else if (info_type.eq.'DIRI_SUIV') then
+            else if (info_type .eq.'DIRI_FT_DIDI') then
+                v_load_info(i_load+1) = 3
+                v_load_info(3*nb_load+2+i_load+1) = 1
+            else if (info_type .eq. 'DIRI_SUIV') then
                 v_load_info(i_load+1) = 4
-            else if (info_type.eq.'NEUM_ONDE') then
+            else if (info_type .eq. 'NEUM_ONDE') then
                 v_load_info(nb_load+i_load+1) = 6
-            else if (info_type.eq.'NEUM_ONDF') then
+            else if (info_type .eq. 'NEUM_ONDF') then
                 v_load_info(nb_load+i_load+1) = 7
-            else if (info_type.eq.'NEUM_SIGM_INT') then
+            else if (info_type .eq. 'NEUM_SIGM_INT') then
                 v_load_info(nb_load+i_load+1) = 55
                 v_load_info(4*nb_load+5) = 99
-            else if (info_type.eq.'NEUM_PILO') then
+            else if (info_type .eq. 'NEUM_PILO') then
                 v_load_info(nb_load+i_load+1) = 5
                 v_load_info(4*nb_load+5) = 99
-            else if (info_type.eq.'NEUM_PILO_F') then
+            else if (info_type .eq.'NEUM_PILO_F') then
                 v_load_info(nb_load+i_load+1) = 8
-            else if (info_type.eq.'NEUM_SUIV') then
+            else if (info_type .eq.'NEUM_SUIV') then
                 v_load_info(nb_load+i_load+1) = 4
-            else if (info_type.eq.'NEUM_FO') then
+            else if (info_type .eq.'NEUM_FO') then
                 v_load_info(nb_load+i_load+1) = 2
-            else if (info_type.eq.'NEUM_FT') then
+            else if (info_type .eq. 'NEUM_FT') then
                 v_load_info(nb_load+i_load+1) = 3
-            else if (info_type.eq.'NEUM_CSTE') then
+            else if (info_type .eq. 'NEUM_CSTE') then
                 v_load_info(nb_load+i_load+1) = 1
-            else if (info_type.eq.'NEUM_LAPL') then
+            else if (info_type .eq. 'NEUM_LAPL') then
                 v_load_info(2*nb_load+3) = i_neum_laplz
-            else if (info_type.eq.'ELEM_TARDIF') then
+            else if (info_type .eq. 'ELEM_TARDIF') then
                 v_load_info(nb_load+i_load+1) = 10
-            else if (info_type.eq.'EXCIT_SOL') then
+            else if (info_type .eq. 'EXCIT_SOL') then
                 v_load_info(nb_load+i_load+1) = 20
             else
                 write(6,*) 'LISCAD: ',info_type

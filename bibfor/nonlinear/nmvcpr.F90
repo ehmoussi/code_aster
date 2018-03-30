@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmvcpr(modelz   , mate , cara_elem      , varc_refe      , compor   ,&
                   hval_incr, base_, vect_elem_curr_, vect_elem_prev_, nume_dof_,&
                   cnvcpr_, nume_harm_)
@@ -33,21 +34,22 @@ implicit none
 #include "asterfort/nmvccc.h"
 #include "asterfort/nmvcd2.h"
 #include "asterfort/reajre.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
+#include "asterfort/nmdebg.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=*), intent(in) :: modelz
-    character(len=24), intent(in) :: mate
-    character(len=24), intent(in) :: varc_refe
-    character(len=24), intent(in) :: cara_elem
-    character(len=24), intent(in) :: compor
-    character(len=19), intent(in) :: hval_incr(*)
-    character(len=1), optional, intent(in) :: base_
-    character(len=*), optional, intent(in) :: vect_elem_curr_
-    character(len=*), optional, intent(in) :: vect_elem_prev_
-    character(len=24), optional, intent(in) :: nume_dof_
-    character(len=24), optional, intent(in) :: cnvcpr_
-    integer, optional, intent(in) :: nume_harm_
+character(len=*), intent(in) :: modelz
+character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: varc_refe
+character(len=24), intent(in) :: cara_elem
+character(len=24), intent(in) :: compor
+character(len=19), intent(in) :: hval_incr(*)
+character(len=1), optional, intent(in) :: base_
+character(len=*), optional, intent(in) :: vect_elem_curr_
+character(len=*), optional, intent(in) :: vect_elem_prev_
+character(len=24), optional, intent(in) :: nume_dof_
+character(len=24), optional, intent(in) :: cnvcpr_
+integer, optional, intent(in) :: nume_harm_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -87,8 +89,16 @@ implicit none
     character(len=1)  :: base
     character(len=19) :: vect_elem_curr, vect_elem_prev
     character(len=24) :: nume_dof, cnvcpr
+    integer :: ifm, niv
 !
 ! --------------------------------------------------------------------------------------------------
+!
+    call infdbg('MECANONLINE', ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'MECANONLINE11_14')
+    endif
+!
+! - Initializations
 !
     model = modelz
     base  = 'V'
@@ -112,7 +122,6 @@ implicit none
     if (present(nume_harm_)) then
         nume_harm = nume_harm_
     endif
-
 !
 ! - Get fields from hat-variables - Begin of time step
 !
@@ -195,6 +204,9 @@ implicit none
         vect_elem(2) = vect_elem_prev
         call assvec(base, cnvcpr, 2, vect_elem, coef_vect,&
                     nume_dof, ' ', 'ZERO', 1)
+        if (niv .ge. 2) then
+            call nmdebg('VECT', cnvcpr, 6)
+        endif
     endif
 !
 end subroutine

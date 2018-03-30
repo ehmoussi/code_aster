@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,8 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 
-POST_USURE=OPER(nom="POST_USURE",op=153,sd_prod=table_sdaster,reentrant='f',
+POST_USURE=OPER(nom="POST_USURE",op=153,sd_prod=table_sdaster,
+                reentrant='f:TABL_USURE',
                 fr=tr("Calcul des volumes d'usure et des profondeurs d'usure d'après la puissance d'usure"),
          regles=(UN_PARMI('TUBE_NEUF','RESU_GENE','PUIS_USURE'),
                  UN_PARMI('TUBE_NEUF','LOI_USURE'),
@@ -35,11 +36,11 @@ POST_USURE=OPER(nom="POST_USURE",op=153,sd_prod=table_sdaster,reentrant='f',
                  PRESENT_PRESENT('ANGL_ISTHME','CONTACT'),
                  PRESENT_PRESENT('ANGL_IMPACT','CONTACT'),
                  ),
-         
+
          reuse=SIMP(statut='c', typ=CO),
          TUBE_NEUF       =SIMP(statut='f',typ='TXM',into=("OUI",) ),
          TABL_USURE      =SIMP(statut='f',typ=table_sdaster),
-         
+
          ETAT_INIT       =FACT(statut='f',
            TABL_USURE      =SIMP(statut='f',typ=table_sdaster),
            INST_INIT       =SIMP(statut='f',typ='R'),
@@ -123,16 +124,16 @@ POST_USURE=OPER(nom="POST_USURE",op=153,sd_prod=table_sdaster,reentrant='f',
          ANGL_INCLI      =SIMP(statut='f',typ='R'),
          ANGL_ISTHME     =SIMP(statut='f',typ='R'),
          ANGL_IMPACT     =SIMP(statut='f',typ='R'),
-         
+
          b_not_tube_neuf  =BLOC(condition = """not exists("TUBE_NEUF")""",
            INST_INIT       =SIMP(statut='f',typ='R',defaut=-1.0E+0),
            NB_BLOC         =SIMP(statut='f',typ='I',defaut= 1 ),
            COEF_INST       =SIMP(statut='f',typ='R',defaut=1.0E+0),
             ),
-         
+
          INST            =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
          LIST_INST       =SIMP(statut='f',typ=listr8_sdaster),
-         
+
          INFO            =SIMP(statut='f',typ='I',defaut=1,into=(1,2)),
          TITRE           =SIMP(statut='f',typ='TXM' ),
 )  ;

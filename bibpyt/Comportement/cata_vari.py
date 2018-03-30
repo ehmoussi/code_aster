@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -185,7 +185,6 @@ DICT_NOM_VARI = {
     "EID22": _(u"déformation déviatorique irréversible, composante 22"),
     "EID23": _(u"déformation déviatorique irréversible, composante 23"),
     "EID33": _(u"déformation déviatorique irréversible, composante 33"),
-    "EIEQM": _(u"déformation équivalente irréversible maximale"),
     "ERD11": _(u"déformation déviatorique réversible, composante 11"),
     "ERD12": _(u"déformation déviatorique réversible, composante 12"),
     "ERD31": _(u"déformation déviatorique réversible, composante 31"),
@@ -503,10 +502,13 @@ DICT_NOM_VARI = {
     "SVE4": _(u"contraintes effectives de traction dues au chargement extérieur"),
     "SVE5": _(u"contraintes effectives de traction dues au chargement extérieur"),
     "SVE6": _(u"contraintes effectives de traction dues au chargement extérieur"),
+    "TAILLE_GRAIN": _(u"taille de grain de la martensite"),
     "TANGENTE": _(u"Tangente au comportement"),
     "TAUW": _(u"taux de chargement local de Weibull"),
     "TEMP": _(u"température"),
+    "TEMP_MARTENSITE": _(u"température de transition martensitique"),
     "TEMP_MAX": _(u"température maximum"),
+    "TEMPS_TRANSITION": _(u"temps de transition pour la zircaloy"),
     "TEQU": _(u"temps de chargement cumule"),
     "THXY1": _(u"Hujeux : normale entrante à la surface de charge du mécanisme père du mécanisme déviatoire du plan 3, composante 1"),
     "THXY2": _(u"Hujeux : normale entrante à la surface de charge du mécanisme père du mécanisme déviatoire du plan 3, composante 2"),

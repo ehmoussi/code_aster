@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine exfonc(list_func_acti, ds_algopara, solver, ds_contact, sddyna,&
                   mate, model)
 !
@@ -36,15 +37,13 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/dismoi.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer, intent(in) :: list_func_acti(*)
-    character(len=19), intent(in) :: solver
-    character(len=19), intent(in) :: sddyna
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    character(len=24), intent(in) :: mate
-    character(len=24), intent(in) :: model
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+integer, intent(in) :: list_func_acti(*)
+character(len=19), intent(in) :: solver
+character(len=19), intent(in) :: sddyna
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: model
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -69,9 +68,9 @@ implicit none
     aster_logical :: l_vibr_mode, l_buckling, lexpl, lxfem, lmodim, l_mult_front
     aster_logical :: lgcpc, lpetsc, lamg, limpex, l_matr_rigi_syme, l_matr_distr
     aster_logical :: londe, l_dyna, l_grot_gdep, l_newt_krylov, l_mumps, l_rom
-    aster_logical :: l_energy, lproj, lmatdi, lldsp, lctgcp, l_comp_rela, lammo, lthms
+    aster_logical :: l_energy, lproj, lmatdi, lldsp, lctgcp, l_comp_rela, lammo, lthms, limpl
     character(len=24) :: typilo, metres, char24
-    character(len=16) :: reli_meth, matrix_pred
+    character(len=16) :: reli_meth, matrix_pred, partit
     character(len=3) :: mfdet
     character(len=24), pointer :: slvk(:) => null()
     integer, pointer :: slvi(:) => null()
@@ -96,6 +95,7 @@ implicit none
     l_buckling      = isfonc(list_func_acti,'CRIT_STAB')
     londe           = ndynlo(sddyna,'ONDE_PLANE')
     l_dyna          = ndynlo(sddyna,'DYNAMIQUE')
+    limpl           = ndynlo(sddyna,'IMPLICITE')
     lexpl           = isfonc(list_func_acti,'EXPLICITE')
     l_grot_gdep     = isfonc(list_func_acti,'GD_ROTA')
     lammo           = ndynlo(sddyna,'AMOR_MODAL')
@@ -203,6 +203,17 @@ implicit none
             call utmess('F', 'CONTACT2_19')
         elseif (lpetsc .and. .not. lldsp) then
             call utmess('F', 'MECANONLINE3_87')
+        endif
+    endif
+!
+! - Contact: excluion CONTACT+DISTRIBUTION/MODEL AUTRE QUE CENTRALISE (SDNV105C en // issue25915)
+!
+    if (l_cont) then
+        if (limpl) then
+            call dismoi('PARTITION', model(1:8)//'.MODELE', 'LIGREL', repk=partit)
+            if ((partit .ne. ' ')) then
+                call utmess('F', 'CONTACT3_46')
+            endif
         endif
     endif
 !

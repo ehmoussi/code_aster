@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,6 @@ subroutine op0150()
 !     BUT:
 !       LECTURE D'UN RESULTAT SUR FICHIER EXTERNE AU FORMAT :
 !        * UNV (IDEAS)
-!        * ENSIGHT
 !        * MED
 !
 ! ......................................................................
@@ -50,7 +49,6 @@ subroutine op0150()
 #include "asterfort/jexnom.h"
 #include "asterfort/lect58.h"
 #include "asterfort/lrcomm.h"
-#include "asterfort/lrensi.h"
 #include "asterfort/lrfmed.h"
 #include "asterfort/lridea.h"
 #include "asterfort/lrrefd.h"
@@ -73,14 +71,12 @@ subroutine op0150()
 !
     character(len=6) :: nompro
     parameter (nompro='OP0150')
-    integer :: ndim
     integer :: nto, nnu, jlist, nbordr, nbnoch, nvar
     integer :: nbvari, jnume, np, ich, nis
-    integer :: iret, nfor, ll, iexi
-    integer :: i, long
+    integer :: iret, nfor, iexi
+    integer :: i
     integer :: lordr, iord, nc
     integer :: ibid, nbv, nbtrou
-    integer :: nfic
     integer :: mfich, n1, precis, jinst
     integer :: ifm, nivinf
     real(kind=8) :: epsi
@@ -92,7 +88,7 @@ subroutine op0150()
     character(len=8) :: k8bid
     character(len=8) :: param, noraci
     character(len=10) :: acces
-    character(len=16) :: nomcmd, concep, typres, fich
+    character(len=16) :: nomcmd, concep, typres
     character(len=16) :: linoch(100), form, noch, k16nom
     character(len=19) :: listr8, listis, ligrel
     character(len=19) :: prchnd, resu19
@@ -131,7 +127,6 @@ subroutine op0150()
     call getres(resu, concep, nomcmd)
     call getvtx(' ', 'TYPE_RESU', scal=typres, nbret=n1)
     ASSERT(typres.eq.concep)
-    call getvtx(' ', 'NOM_FICHIER', scal=fich, nbret=nfic)
 !
     call infmaj()
     call infniv(ifm, nivinf)
@@ -145,7 +140,6 @@ subroutine op0150()
             call ulopen(mfich, ' ', ' ', 'NEW', 'O')
         endif
     endif
-    call getvtx(' ', 'NOM_FICHIER', scal=fich, nbret=n1)
 !
 !     ---  LISTE DES CHAMPS A LIRE ---
     call getfac('FORMAT_MED', n1)
@@ -305,40 +299,6 @@ subroutine op0150()
         call lect58(mfich, resu, noma, typres, acces,&
                     listr8, listis, precis, crit, epsi,&
                     linoch, nbnoch)
-!
-!     --- FIN LECTURE
-!
-    else if (form.eq.'ENSIGHT') then
-!     ================================
-!
-        call jeexin(ligrel//'.LGRF', iexi)
-        if (iexi .eq. 0) then
-            call utmess('F', 'UTILITAI2_88')
-        else
-            call dismoi('DIM_GEOM', nomo, 'MODELE', repi=ndim)
-            if (.not.(ndim.eq.2.or.ndim.eq.3)) then
-                call utmess('F', 'MODELISA2_6')
-            endif
-        endif
-!
-        if (nbnoch .ne. 1 .or. linoch(1) .ne. 'PRES') then
-            call utmess('F', 'UTILITAI2_89')
-        endif
-!
-        call getvtx(' ', 'NOM_FICHIER', scal=fich, nbret=nfic)
-        ll = len(fich)
-        do i = 1, ll
-            if (fich(i:i) .ne. ' ') goto 40
-            long = i - 1
-            goto 50
- 40         continue
-        end do
- 50     continue
-!
-!     --- LECTURE
-!
-        call lrensi(fich, long, linoch, ndim, nomo,&
-                    noma, resu)
 !
 !     --- FIN LECTURE
 !

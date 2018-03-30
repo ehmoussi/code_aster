@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -583,7 +583,8 @@ TEMPLI3=THER_LINEAIRE(     MODELE=MOTHER,
                         CARA_ELEM=CARETHE,
                             EXCIT=_F( CHARGE = CHTH2) )
 
-CREA_RESU( reuse=TEMPLI3,  OPERATION='AFFE', TYPE_RESU='EVOL_THER',
+CREA_RESU( reuse=TEMPLI3,  RESULTAT=TEMPLI3,
+           OPERATION='AFFE', TYPE_RESU='EVOL_THER',
            NOM_CHAM='TEMP',
            AFFE=_F(  CHAM_GD = T_INIT, INST = -1.), )
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -42,7 +42,7 @@ CALC_TABLE=MACRO(nom="CALC_TABLE",
                  op=OPS('Macro.calc_table_ops.calc_table_ops'),
                  sd_prod=calc_table_prod,
                  fr=tr("Opérations sur une table"),
-                 reentrant='f',
+                 reentrant='f:TABLE',
    reuse=SIMP(statut='c', typ=CO),
    TABLE  = SIMP(statut='o',typ=table_sdaster),
    ACTION = FACT(statut='o', max='**',

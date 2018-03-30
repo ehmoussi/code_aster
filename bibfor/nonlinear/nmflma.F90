@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@
 ! aslint: disable=W1504
 !
 subroutine nmflma(typmat, mod45 , l_hpp  , ds_algopara, modelz,&
-                  mate  , carele, sddisc, sddyna     , fonact,&
-                  numins, valinc, solalg, lischa     , comref,&
+                  ds_material, carele, sddisc, sddyna     , fonact,&
+                  numins, valinc, solalg, lischa     ,&
                   ds_contact, numedd     , numfix,&
                   ds_constitutive, ds_measure, meelem,&
                   measse, veelem, nddle , ds_posttimestep, modrig,&
@@ -59,13 +59,14 @@ aster_logical, intent(in) :: l_hpp
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 integer :: fonact(*)
 character(len=*) :: modelz
-character(len=24) :: mate, carele
+character(len=24) :: carele
+type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Measure), intent(inout) :: ds_measure
 integer :: numins, ldccvg, nddle
 character(len=19) :: sddisc, sddyna, lischa
 type(NL_DS_Contact), intent(in) :: ds_contact
-character(len=24) :: comref, numedd, numfix
+character(len=24) :: numedd, numfix
 character(len=19) :: meelem(*), measse(*), veelem(*)
 character(len=19) :: solalg(*), valinc(*)
 character(len=19) :: matass, matgeo
@@ -90,9 +91,8 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL (VARIABLE AU COURS DU CALCUL)
 ! IN  NUMFIX : NUME_DDL (FIXE AU COURS DU CALCUL)
-! IN  MATE   : CHAMP MATERIAU
+! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VARI_COM DE REFERENCE
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  LISCHA : LISTE DES CHARGES
 ! IO  ds_measure       : datastructure for measure and statistics management
@@ -263,9 +263,9 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 ! --- CALCUL ET ASSEMBLAGE DES MATR_ELEM DE LA LISTE
 !
     if (nb_matr .gt. 0) then
-        call nmxmat(modelz, mate, carele, ds_constitutive,&
+        call nmxmat(modelz, ds_material, carele, ds_constitutive,&
                     sddisc, sddyna, fonact, numins, iterat,&
-                    valin2, solalg, lischa, comref,&
+                    valin2, solalg, lischa, &
                     numedd, numfix, ds_measure, ds_algopara,&
                     nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                     list_l_calc, list_l_asse, lcfint, meelem, measse,&

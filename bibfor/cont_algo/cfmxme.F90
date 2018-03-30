@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine cfmxme(nume_dof, sddyna, ds_contact)
 !
 use NonLin_Datastructure_type
@@ -36,11 +37,9 @@ implicit none
 #include "asterfort/vtcreb.h"
 #include "asterfort/wkvect.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=24), intent(in) :: nume_dof
-    character(len=19), intent(in) :: sddyna
-    type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=24), intent(in) :: nume_dof
+character(len=19), intent(in) :: sddyna
+type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -52,7 +51,7 @@ implicit none
 !
 ! In  nume_dof         : name of numbering object (NUME_DDL)
 ! In  sddyna           : name of dynamic solving datastructure
-! In  ds_contact       : datastructure for contact management
+! IO  ds_contact       : datastructure for contact management
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -67,8 +66,7 @@ implicit none
     real(kind=8), pointer :: v_sdcont_apjeu(:) => null()
     character(len=24) :: sdcont_vitini, sdcont_accini
     integer :: ztabf, zetat
-    aster_logical :: l_pena_cont
-
+    aster_logical :: l_pena_cont, l_fric
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -80,7 +78,8 @@ implicit none
 ! - Get parameters
 !
     nt_cont_poin = cfdisi(ds_contact%sdcont_defi,'NTPC')
-    l_pena_cont = cfdisl(ds_contact%sdcont_defi,'EXIS_PENA')
+    l_pena_cont  = cfdisl(ds_contact%sdcont_defi,'EXIS_PENA')
+    l_fric       = cfdisl(ds_contact%sdcont_defi,'FROTTEMENT')
     l_dyna       = ndynlo(sddyna,'DYNAMIQUE')
 !
 ! - Create datastructure for general informations about contact
@@ -116,9 +115,6 @@ implicit none
         call mm_pene_crsd(ds_contact)
     endif
 !
-
-
-!
 ! - Create datastructure to save gaps
 !
     sdcont_apjeu = ds_contact%sdcont_solv(1:14)//'.APJEU'
@@ -129,6 +125,15 @@ implicit none
     l_inte_node = cfdisl(ds_contact%sdcont_defi,'ALL_INTEG_NOEUD')
     if (.not.l_inte_node) then
         call utmess('A', 'CONTACT3_16')
+    endif
+!
+! - Forces to solve
+!
+    call vtcreb(ds_contact%cneltc, 'V', 'R', nume_ddlz = nume_dof)
+    ds_contact%l_cneltc = ASTER_TRUE
+    if (l_fric) then
+        call vtcreb(ds_contact%cneltf, 'V', 'R', nume_ddlz = nume_dof)
+        ds_contact%l_cneltf = ASTER_TRUE
     endif
 !
 end subroutine

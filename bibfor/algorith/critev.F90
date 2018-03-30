@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ subroutine critev(epsp, epsd, eta, lambda, deuxmu,&
     real(kind=8) :: crit, critp
 ! ----------------------------------------------------------------------
 !     CALCUL DU CRITERE DE ENDO_ISOT_BETON F(ETA) ET DE SA DERIVEE
-!     EN NON LOCAL GRAD_EPSI
+!     EN NON LOCAL GRAD_VARI
 !
 ! IN EPSP    : DEFORMATIONS DUES AUX CHARGEMENTS ANTERIEURS ET FIXES
 ! IN EPSD    : DEFORMATIONS PROPORTIONNELLES A ETA
