@@ -65,7 +65,7 @@ character(len=8), intent(in), optional :: model
     character(len=255) :: libr_name, subr_name
     integer :: unit_comp, nb_vari_umat
     aster_logical :: l_cristal, l_kit
-    aster_logical :: l_comp_external
+    aster_logical :: l_comp_external, l_ldc_sm
     integer, pointer :: v_model_elem(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -113,6 +113,16 @@ character(len=8), intent(in), optional :: model
 ! ----- Get DEFORMATION from command file
 !
         call getvtx(keywordfact, 'DEFORMATION', iocc = i_comp, scal = defo_comp)
+!
+! ----- If SIMO_MIEHE, switch to a specific version of the behaviour catalog for some laws
+!
+        l_ldc_sm = ((rela_comp .eq. 'MFRONT') .or. (rela_comp .eq. 'MONOCRISTAL') &
+        .or. (rela_comp .eq. 'VISC_ISOT_TRAC') .or. (rela_comp .eq. 'VISC_ISOT_LINE') &
+        .or. (rela_comp .eq. 'ROUSSELIER') .or. (rela_comp .eq. 'SIMO_MIEHE'))
+!
+        if ((defo_comp .eq. 'SIMO_MIEHE') .and. (.not. l_ldc_sm)) then
+            rela_comp=rela_comp(1:4)//'2'//rela_comp(6:len(rela_comp))
+        endif
 !
 ! ----- Damage post-treatment
 !
