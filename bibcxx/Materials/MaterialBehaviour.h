@@ -5904,7 +5904,6 @@ public:
         this->addDoubleProperty( "Nu", ElementaryMaterialPropertyDouble( "NU" , true ) );
         this->addDoubleProperty( "F_alpha", ElementaryMaterialPropertyDouble( "F_ALPHA" , true ) );
         this->addDoubleProperty( "C_alpha", ElementaryMaterialPropertyDouble( "C_ALPHA" , true ) );
-        this->addStringProperty( "Phase_refe", ElementaryMaterialPropertyString( "PHASE_REFE" , true ) );
         this->addConvertibleProperty( "Phase_refe",
                     ElementaryMaterialPropertyConvertible( "PHASE_REFE",
                                                            StringToDoubleValue( {{"CHAUD", 1.},
