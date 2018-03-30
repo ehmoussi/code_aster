@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -44,8 +44,8 @@ CALCAIRE=DEFI_MATERIAU(
                     ELAS=_F(
                 E = 20000.,
                 NU = 0.),
-               ECRO_LINE=_F(
-                SY = 6.,
+               BETON_ECRO_LINE=_F(
+                SYT = 6.,
                 D_SIGM_EPSI = -10000.)
                )
 
@@ -53,8 +53,8 @@ CAL_FAIB=DEFI_MATERIAU(
                     ELAS=_F(
                 E = 20000.,
                 NU = 0.),
-               ECRO_LINE=_F(
-                SY = 5.,
+               BETON_ECRO_LINE=_F(
+                SYT = 5.,
                 D_SIGM_EPSI = -10000.)
                )
 
@@ -98,7 +98,7 @@ REPONSE=STAT_NON_LINE(
                 _F( CHARGE = LIAISON),
                 _F( CHARGE = TRACTION, FONC_MULT = RAMPE)),
                   COMPORTEMENT=_F(
-                RELATION = 'ENDO_FRAGILE'),
+                RELATION = 'ENDO_ISOT_BETON'),
 
                 INCREMENT=_F(
                 LIST_INST = L_INST,
@@ -120,42 +120,45 @@ REPONSE=STAT_NON_LINE( reuse=REPONSE,
                 _F( CHARGE = LIAISON),
                 _F( CHARGE = TRACTION, TYPE_CHARGE = 'FIXE_PILO')),
                   COMPORTEMENT=_F(
-                RELATION = 'ENDO_FRAGILE'),
+                RELATION = 'ENDO_ISOT_BETON'),
 
                 INCREMENT=_F(
                 LIST_INST = L_INST,),
                PILOTAGE=_F(
                 TYPE = 'PRED_ELAS',
-                COEF_MULT = 10.,
+                COEF_MULT = 5.5,
                 ETA_PILO_R_MIN = 0.,
-                ETA_PILO_MIN = 0.50),
+                ETA_PILO_MIN = 0.50,
+                ETA_PILO_R_MAX = 10.,
+                SELECTION='RESIDU',),
                      NEWTON=_F(
                 MATRICE = 'TANGENTE',
-                REAC_ITER = 1),
+                REAC_ITER = 1,
+                REAC_ITER_ELAS = 1),
                 CONVERGENCE=_F(
                 RESI_GLOB_RELA = 1.E-6,
-                ITER_GLOB_MAXI = 10)
+                ITER_GLOB_MAXI = 50)
              )
 
-TEST_RESU(RESU=(_F(NUME_ORDRE=11,
+TEST_RESU(RESU=(_F(NUME_ORDRE=7,
                    GROUP_NO='PB',
                    RESULTAT=REPONSE,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DY',
-                   VALE_CALC=9.25E-05,),
-                _F(NUME_ORDRE=11,
+                   VALE_CALC=8.35E-4,),
+                _F(NUME_ORDRE=7,
                    POINT=1,
                    RESULTAT=REPONSE,
                    NOM_CHAM='SIEF_ELGA',
                    NOM_CMP='SIYY',
-                   VALE_CALC=0.49999922621210,
+                   VALE_CALC=0.499999991452,
                    MAILLE='M1',),
-                _F(NUME_ORDRE=11,
+                _F(NUME_ORDRE=7,
                    POINT=1,
                    RESULTAT=REPONSE,
                    NOM_CHAM='VARI_ELGA',
                    NOM_CMP='V1',
-                   VALE_CALC=0.96428577350417,
+                   VALE_CALC=0.90000000171,
                    MAILLE='M1',),
                 ),
           )

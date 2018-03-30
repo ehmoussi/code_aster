@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -72,8 +72,7 @@ class formule(ASSD):
         # const_context
         context = getattr(self, 'parent_context') or getattr(
             self.parent, 'const_context', {})
-        if self.ctxt:
-            context.update(pickle.loads(self.ctxt))
+        context.update(self.get_context())
         for param, value in zip(self.nompar, val):
             context[param] = value
         try:
@@ -100,6 +99,12 @@ class formule(ASSD):
     def set_context(self, objects):
         """Stocke des objets de contexte"""
         self.ctxt = objects
+
+    def get_context(self):
+        """Retourne le contexte stocké avec la formule."""
+        if not self.ctxt:
+            return {}
+        return pickle.loads(self.ctxt)
 
     def __setstate__(self, state):
         """Cette methode sert a restaurer l'attribut code lors d'un unpickle."""

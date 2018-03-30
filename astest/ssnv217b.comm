@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ MA=LIRE_MAILLAGE(FORMAT='MED',);
 MO=AFFE_MODELE(MAILLAGE=MA,
                AFFE=_F(TOUT='OUI',
                        PHENOMENE='MECANIQUE',
-                       MODELISATION='3D_GRAD_EPSI',),);
+                       MODELISATION='3D',),);
 
 BETON=DEFI_MATERIAU(ELAS=_F(E=32000000000.0,
                             NU=0.2,
@@ -35,7 +35,7 @@ BETON=DEFI_MATERIAU(ELAS=_F(E=32000000000.0,
                                        K1=10500000.0,
                                        ECROB=1000.0,
                                        ECROD=60000.0,),
-                    NON_LOCAL=_F(LONG_CARA=1.0,),);
+                    );
 
 MOMAT=AFFE_MATERIAU(MAILLAGE=MA,
                     AFFE=_F(TOUT='OUI',
@@ -151,7 +151,7 @@ U=STAT_NON_LINE(reuse =U,
                              INST_INIT=2.0,
                              INST_FIN=4.0,),
                 NEWTON=_F(REAC_ITER=1,),
-                CONVERGENCE=_F(ITER_GLOB_MAXI=20,),
+                CONVERGENCE=_F(ITER_GLOB_MAXI=30,),
                 ARCHIVAGE=_F(LIST_INST=L_ARCH,),);
 
 TEST_RESU(RESU=_F(NUME_ORDRE=2,
@@ -159,7 +159,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=2,
                   RESULTAT=U,
                   NOM_CHAM='VARI_ELGA',
                   NOM_CMP='V1',
-                  VALE_CALC=0.98870383394014,
+                  VALE_CALC=0.98870383394,
                   MAILLE='M19',),
           )
 
@@ -168,7 +168,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=10,
                   RESULTAT=U,
                   NOM_CHAM='SIEF_ELGA',
                   NOM_CMP='SIXX',
-                  VALE_CALC=7999.9907671631,
+                  VALE_CALC=7999.99076716,
                   MAILLE='M19',),
           )
 
@@ -186,7 +186,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=20,
                   RESULTAT=U,
                   NOM_CHAM='SIEF_ELGA',
                   NOM_CMP='SIYY',
-                  VALE_CALC=8333.1931721638,
+                  VALE_CALC=8333.19317216,
                   MAILLE='M19',),
           )
 
@@ -195,7 +195,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=22,
                   RESULTAT=U,
                   NOM_CHAM='VARI_ELGA',
                   NOM_CMP='V3',
-                  VALE_CALC=0.86689831579605,
+                  VALE_CALC=0.866898315783,
                   MAILLE='M19',),
           )
 
@@ -204,7 +204,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=25,
                   RESULTAT=U,
                   NOM_CHAM='SIEF_ELGA',
                   NOM_CMP='SIZZ',
-                  VALE_CALC=24072.934392415,
+                  VALE_CALC=8252.35477645,
                   MAILLE='M19',),
           )
 
@@ -213,7 +213,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=34,
                   RESULTAT=U,
                   NOM_CHAM='VARI_ELGA',
                   NOM_CMP='V7',
-                  VALE_CALC=0.97566784614057,
+                  VALE_CALC=0.987585934269,
                   MAILLE='M19',),
           )
 
@@ -222,7 +222,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=40,
                   RESULTAT=U,
                   NOM_CHAM='SIEF_ELGA',
                   NOM_CMP='SIZZ',
-                  VALE_CALC=-5.3333333333331E5,
+                  VALE_CALC=-1066559.97479,
                   MAILLE='M19',),
           )
 

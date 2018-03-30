@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -129,7 +129,7 @@ TEST_RESU(RESU=_F(PARA='CHAR_CRIT',
                   NUME_MODE=10,
                   REFERENCE='ANALYTIQUE',
                   RESULTAT=RES_NORM,
-                  VALE_CALC=-8.69428099107E+05,
+                  VALE_CALC=-8.69426931044E+05,
                   VALE_REFE=-8.493509396E5,
                   TOLE_MACHINE=1.E-5,           # TODO TOLE_MACHINE
                   PRECISION=0.025,),)

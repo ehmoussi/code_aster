@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -94,6 +94,9 @@ subroutine vpnorm(norm, para, lmatr, neq, nbmode,&
                         xnorm = xx1
                     endif
   6             continue
+            endif
+            if (abs(xnorm).lt.epsi)then
+                call utmess('F','MODAL_23', si=im, sr=xnorm)
             endif
             xx1 = 1.0d0 / xnorm
             coef(im) = xx1

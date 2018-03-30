@@ -23,10 +23,13 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 
-THER_NON_LINE=OPER(nom="THER_NON_LINE",op= 186,sd_prod=evol_ther,reentrant='f',
+THER_NON_LINE=OPER(nom="THER_NON_LINE",op= 186,sd_prod=evol_ther,
+                   reentrant='f:RESULTAT',
                    fr=tr("Résoudre un problème thermique non linéaire (conditions limites ou comportement matériau)"
                        " stationnaire ou transitoire"),
          reuse=SIMP(statut='c', typ=CO),
+         RESULTAT        =SIMP(statut='f',typ=evol_ther,
+                               fr=tr("Objet qui sera enrichi des nouveaux instants calculés")),
          MODELE          =SIMP(statut='o',typ=(modele_sdaster),),
          CHAM_MATER      =SIMP(statut='o',typ=(cham_mater) ),
          CARA_ELEM       =SIMP(statut='c',typ=(cara_elem) ),

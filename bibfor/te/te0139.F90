@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -136,7 +136,7 @@ subroutine te0139(option, nomte)
 ! - PARAMETRES EN SORTIE SUPPLEMENTAIE POUR LA METHODE IMPLEX
     if (option(1:16) .eq. 'RIGI_MECA_IMPLEX') then
         if (zk16(icompo) .ne. 'VMIS_ISOT_LINE' .and. zk16(icompo) .ne. 'ELAS' .and.&
-            zk16(icompo) .ne. 'ENDO_FRAGILE' .and. zk16( icompo) .ne. 'ENDO_ISOT_BETON') then
+            zk16( icompo) .ne. 'ENDO_ISOT_BETON') then
             call utmess('F', 'ELEMENTS5_50')
         endif
         call jevech('PCONTXR', 'E', icontp)

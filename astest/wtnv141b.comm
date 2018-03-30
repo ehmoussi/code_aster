@@ -348,6 +348,7 @@ for k in range(p_npas+1) :
                             INST=eval(instant)));
   else :
     CHAME=CREA_RESU(reuse=CHAME,
+                    RESULTAT=CHAME,
                     OPERATION='AFFE',
                     TYPE_RESU='EVOL_CHAR',
                     NOM_CHAM='FVOL_3D',

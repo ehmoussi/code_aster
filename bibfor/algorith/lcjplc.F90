@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -37,7 +37,6 @@ subroutine lcjplc(loi, mod, angmas, imat, nmat,&
 !           MATER  :  COEFFICIENTS MATERIAU
 !       OUT DSDE   :  MATRICE DE COMPORTEMENT TANGENT = DSIG/DEPS
 !       ----------------------------------------------------------------
-#include "asterfort/burjpl.h"
 #include "asterfort/cvmjpl.h"
 #include "asterfort/hujopt.h"
 #include "asterfort/lcmmjp.h"
@@ -71,8 +70,6 @@ subroutine lcjplc(loi, mod, angmas, imat, nmat,&
                     nsg, toutms, hsr, nr, nvi, sigd,&
                     itmax, toler, vinf, vind, dsde,&
                     drdy, option, iret)
-    else if (loi(1:12) .eq. 'BETON_BURGER') then
-        call burjpl(nmat, mater, nr, drdy, dsde)
     else if (loi(1:4) .eq. 'LETK') then
         call lkijpl(nmat, mater, sigf, nr, drdy,&
                     dsde)

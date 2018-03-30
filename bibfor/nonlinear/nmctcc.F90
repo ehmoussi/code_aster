@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmctcc(mesh      , model_    , mate  , nume_inst, &
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmctcc(mesh      , model_    , ds_material, nume_inst, &
                   sderro    , ds_measure, sddisc, hval_incr, hval_algo,&
                   ds_contact, ds_constitutive   , list_func_acti)
 !
@@ -39,20 +40,18 @@ implicit none
 #include "asterfort/xmtbca.h"
 #include "asterfort/nmchex.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: mesh
-    character(len=24), intent(in) :: model_
-    character(len=24), intent(in) :: mate
-    integer, intent(in) :: nume_inst
-    character(len=24), intent(in) :: sderro
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19), intent(in) :: sddisc
-    character(len=19), intent(in) :: hval_incr(*)
-    character(len=19), intent(in) :: hval_algo(*)
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    integer, intent(in) :: list_func_acti(*)
+character(len=8), intent(in) :: mesh
+character(len=24), intent(in) :: model_
+type(NL_DS_Material), intent(in) :: ds_material
+integer, intent(in) :: nume_inst
+character(len=24), intent(in) :: sderro
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19), intent(in) :: sddisc
+character(len=19), intent(in) :: hval_incr(*)
+character(len=19), intent(in) :: hval_algo(*)
+type(NL_DS_Contact), intent(inout) :: ds_contact
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+integer, intent(in) :: list_func_acti(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,7 +63,7 @@ implicit none
 !
 ! In  mesh             : name of mesh
 ! In  model            : name of model
-! In  mate             : name of material characteristics (field)
+! In  ds_material      : datastructure for material parameters
 ! In  nume_inst        : index of current time step
 ! In  sderro           : datastructure for errors during algorithm
 ! IO  ds_measure       : datastructure for measure and statistics management
@@ -99,9 +98,9 @@ implicit none
 ! - Initializations
 !
     model          = model_(1:8)
-    loop_cont_conv = .false.
+    loop_cont_conv = ASTER_FALSE
     loop_cont_vale = 0.d0
-    l_erro_cont    = .false.
+    l_erro_cont    = ASTER_FALSE
     iter_newt      = -1
 !
 ! - Get contact parameters
@@ -131,9 +130,9 @@ implicit none
     call mmbouc(ds_contact, 'Cont', 'Set_Vale' , loop_vale_ = loop_cont_vale)
     if (l_cont_xfem) then
         if (l_cont_xfem_gg) then
-            call xmtbca(mesh, hval_incr, mate, ds_contact)
+            call xmtbca(mesh, hval_incr, ds_material, ds_contact)
         else
-            call xmmbca(mesh, model, mate, hval_incr, ds_contact, ds_constitutive,&
+            call xmmbca(mesh, model, ds_material, hval_incr, ds_contact, ds_constitutive,&
                         list_func_acti)
         endif
     else if (l_cont_cont) then

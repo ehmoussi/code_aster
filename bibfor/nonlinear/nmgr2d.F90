@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine nmgr2d(fami, nno, npg, ipoids, ivf,&
                   vff, idfde, geomi, typmod, option,&
                   imate, compor, mult_comp, lgpg, carcri, instam,&
@@ -37,24 +38,22 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/Behaviour_type.h"
 !
-! aslint: disable=W1504
-!
-    integer :: nno, npg, imate, lgpg, codret, cod(9)
-    integer :: ipoids, ivf, idfde
-    character(len=*) :: fami
-    character(len=8) :: typmod(*)
-    character(len=16) :: option
-    character(len=16), intent(in) :: compor(*)
-    character(len=16), intent(in) :: mult_comp
-    real(kind=8), intent(in) :: carcri(*)
-    real(kind=8) :: instam, instap, angmas(3), detfm
-    real(kind=8) :: geomi(2, nno)
-    real(kind=8) :: dfdi(nno, 2), deplm(2*nno), deplp(2*nno)
-    real(kind=8) :: pff(4, nno, nno), def(4, nno, 2), vff(*)
-    real(kind=8) :: sigm(4, npg), sigp(4, npg)
-    real(kind=8) :: vim(lgpg, npg), vip(lgpg, npg)
-    real(kind=8) :: matuu(*), vectu(2*nno)
-    aster_logical :: matsym
+integer :: nno, npg, imate, lgpg, codret, cod(9)
+integer :: ipoids, ivf, idfde
+character(len=*) :: fami
+character(len=8) :: typmod(*)
+character(len=16) :: option
+character(len=16), intent(in) :: compor(*)
+character(len=16), intent(in) :: mult_comp
+real(kind=8), intent(in) :: carcri(*)
+real(kind=8) :: instam, instap, angmas(3), detfm
+real(kind=8) :: geomi(2, nno)
+real(kind=8) :: dfdi(nno, 2), deplm(2*nno), deplp(2*nno)
+real(kind=8) :: pff(4, nno, nno), def(4, nno, 2), vff(*)
+real(kind=8) :: sigm(4, npg), sigp(4, npg)
+real(kind=8) :: vim(lgpg, npg), vip(lgpg, npg)
+real(kind=8) :: matuu(*), vectu(2*nno)
+aster_logical :: matsym
 !
 !.......................................................................
 !
@@ -112,11 +111,13 @@ implicit none
 !
     jvariexte = nint(carcri(IVARIEXTE))
 !
-!     CALCUL DES ELEMENTS GEOMETRIQUES SPECIFIQUES AU COMPORTEMENT
+! - Compute intrinsic external state variables
 !
-    call lcegeo(nno, npg, ipoids, ivf, idfde,&
-                geomi, typmod, jvariexte, 2,&
-                deplm, deplp)
+    call lcegeo(nno   , npg      , 2    ,&
+                ipoids, ivf      , idfde,&
+                typmod, jvariexte,&
+                geomi ,&
+                deplm , deplp)
 !
 !     INITIALISATION CODES RETOURS
 !

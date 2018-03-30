@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -65,7 +65,6 @@ subroutine lcconv(loi, yd, dy, ddy, ye,&
 !     ----------------------------------------------------------------
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/burcvg.h"
 #include "asterfort/cvmcvg.h"
 #include "asterfort/hujcvg.h"
 #include "asterfort/irrcvg.h"
@@ -99,11 +98,6 @@ subroutine lcconv(loi, yd, dy, ddy, ye,&
         call irrcvg(dy, ddy, nr, nmat, mater,&
                     itmax, toler, iter, r, rini,&
                     iret)
-!
-    else if (loi(1:12) .eq. 'BETON_BURGER') then
-!
-        call burcvg(nr, itmax, toler, iter, dy,&
-                    r, rini, iret)
 !
     else if (loi(1:4) .eq. 'LETK') then
 !

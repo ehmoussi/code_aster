@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -239,5 +239,20 @@ Opérateur CALC_MODES:
       charge en utilisant l'opérateur INFO_MODE dans un pré-calcul séparé.
       C'est généralement très rapide (surtout en parallèle) et cela fournit des informations
       concrètes pour ensuite paramétrer un découpage homogène et réaliste.
+"""),
+
+   23: _(u"""
+Opérateurs CALC_MODES ou NORM_MODES:
+  La norme calculée pour le mode %(i1)d est nulle ou presque nulle.
+  Valeur calculée :  %(r1)f
+  
+  Conseils:
+  Vous avez certainement choisi un type de norme qui prend uniquement en compte les
+  valeurs des degrés de liberté de translation alors que celles-ci sont toutes nulles
+  ou presque nulles.
+  
+  Modifiez le type de norme choisi par le type correspondant prenant en compte les rotations :
+    TRAN      -> TRAN_ROTA
+    EUCL_TRAN -> EUCL
 """),
 }

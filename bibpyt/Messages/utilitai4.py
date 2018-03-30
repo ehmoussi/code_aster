@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -41,8 +41,13 @@ cata_msg = {
  problème(s) rencontre(s) lors de l'accès au RESU_GENE
 """),
 
+    12: _(u"""
+ La vitesse critique calculée pour le nombre de CONNORS %(r1)f est nulle. La valeur du rapport  
+ d'instabilité dans la fonction produite est fixée à zéro pour cette abscisse.
+"""),
+
     14: _(u"""
- composante généralisée NUME_CMP_GENE non trouvée
+ composante généralisée NUME_CMP_GENE non trouvée   
  Conseil : vérifiez que la composante généralisée demandée est bien présente dans la base modale.
 """),
 

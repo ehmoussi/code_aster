@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -131,15 +131,15 @@ CTAC = DEFI_CONTACT(MODELE         = MO,
                     ALGO_RESO_CONT = 'NEWTON',
                     ALGO_RESO_GEOM = 'NEWTON',
                     ALGO_RESO_FROT = 'NEWTON',
-                    #ADAPT_COEF     = 'OUI',
                     ZONE =(
                            _F(
                              GROUP_MA_MAIT = 'SMAI',
                              GROUP_MA_ESCL = 'SESC',
                              APPARIEMENT   = 'MAIT_ESCL',
                              COULOMB       = 0.3,
-                             COEF_CONT=1E3,
-                             ADAPTATION='ADAPT_COEF',
+                             COEF_CONT     = 1E3,
+                             ADAPTATION    = 'ADAPT_COEF',
+                             TOLE_PROJ_EXT = 1.0,
                              ),
                           ),
                    );

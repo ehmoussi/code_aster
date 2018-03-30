@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -107,11 +107,9 @@ CAREL=AFFE_CARA_ELEM(   MODELE=MO,
                               )
 
 MAT=DEFI_MATERIAU(      ELAS=_F( E = YOUNG, NU = POISSON),
-                        MFRONT=_F(LISTE_COEF=(YOUNG,
-                                              POISSON,
-                                              0.,
-                                              SIGY,
-                                              H,),),
+                        MFRONT=_F(LISTE_COEF=(SIGY,
+                                              H,YOUNG,
+                                              POISSON,),),
                    )
 
 CHMAT=AFFE_MATERIAU(   MAILLAGE=MA,

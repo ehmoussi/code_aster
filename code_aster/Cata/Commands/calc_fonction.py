@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -243,13 +243,13 @@ CALC_FONCTION=MACRO(nom="CALC_FONCTION",
          ),
          NOM_PARA        =SIMP(statut='f',typ='TXM',into=C_PARA_FONCTION() ),
          NOM_RESU        =SIMP(statut='f',typ='TXM' ),
-         INTERPOL        =SIMP(statut='f',typ='TXM',max=2,into=("NON","LIN","LOG"),
+         INTERPOL        =SIMP(statut='f',typ='TXM',max=2,into=("LIN","LOG"),
                                fr=tr("Type d'interpolation pour les abscisses et les ordonnées de la " \
                                     "fonction ou bien pour le paramètre de la nappe.")),
          PROL_DROITE     =SIMP(statut='f',typ='TXM',into=("CONSTANT","LINEAIRE","EXCLU") ),
          PROL_GAUCHE     =SIMP(statut='f',typ='TXM',into=("CONSTANT","LINEAIRE","EXCLU") ),
          NOM_PARA_FONC   =SIMP(statut='f',typ='TXM',into=C_PARA_FONCTION() ),
-         INTERPOL_FONC   =SIMP(statut='f',typ='TXM',max=2,into=("NON","LIN","LOG"),
+         INTERPOL_FONC   =SIMP(statut='f',typ='TXM',max=2,into=("LIN","LOG"),
                                  fr=tr("Type d'interpolation pour les abscisses et les ordonnées de la fonction")),
          PROL_DROITE_FONC=SIMP(statut='f',typ='TXM',into=("CONSTANT","LINEAIRE","EXCLU") ),
          PROL_GAUCHE_FONC=SIMP(statut='f',typ='TXM',into=("CONSTANT","LINEAIRE","EXCLU") ),

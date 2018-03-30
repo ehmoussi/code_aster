@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -324,7 +324,23 @@ implicit none
         real(kind=8)      :: critere_penetration  = 0.0
         real(kind=8)      :: continue_pene  = 0.0
         real(kind=8)      :: time_curr  = -1.0
-
+! ----- Force for DISCRETE contact (friction)
+        aster_logical     :: l_cnctdf
+        character(len=19) :: cnctdf
+! ----- Force for DISCRETE contact (contact)
+        aster_logical     :: l_cnctdc
+        character(len=19) :: cnctdc
+! ----- Force for DISCRETE contact (LIAISON_UNIL)
+        aster_logical     :: l_cnunil
+        character(len=19) :: cnunil
+! ----- Force for CONTINUE contact (contact)
+        aster_logical     :: l_cneltc
+        character(len=19) :: cneltc
+        character(len=19) :: veeltc
+! ----- Force for CONTINUE contact (friction)
+        aster_logical     :: l_cneltf
+        character(len=19) :: cneltf
+        character(len=19) :: veeltf
     end type NL_DS_Contact
 !
 ! - Type: timer management
@@ -397,90 +413,6 @@ implicit none
         type(NL_DS_Table)     :: table
     end type NL_DS_Energy
 !
-! - Type: for external comportement
-! 
-    type NL_DS_ComporExte
-! ----- Flag for UMAT law
-        aster_logical      :: l_umat
-! ----- Flag for non-official MFront law
-        aster_logical      :: l_mfront_proto
-! ----- Flag for official MFront law
-        aster_logical      :: l_mfront_offi
-! ----- Name of subroutine for external law
-        character(len=255) :: subr_name
-! ----- Name of library for external law
-        character(len=255) :: libr_name
-! ----- Model for MFront law
-        character(len=16)  :: model_mfront
-! ----- Number of dimension for MFront law
-        integer            :: model_dim
-! ----- Number of internal variables for UMAT
-        integer            :: nb_vari_umat
-
-    end type NL_DS_ComporExte
-!
-! - Type: for comportement
-! 
-    type NL_DS_Compor
-        character(len=16) :: rela_comp
-        character(len=16) :: defo_comp
-        character(len=16) :: type_comp
-        character(len=16) :: type_cpla
-        character(len=16) :: kit_comp(4)
-        character(len=16) :: mult_comp
-        character(len=16) :: post_iter
-        integer           :: nb_vari
-        integer           :: nb_vari_comp(4)
-        integer           :: nume_comp(4)
-    end type NL_DS_Compor
-!
-! - Type: for preparation of comportment
-! 
-    type NL_DS_ComporPrep
-! ----- Number of comportements
-        integer                         :: nb_comp
-! ----- List of comportements
-        type(NL_DS_Compor), pointer     :: v_comp(:)
-! ----- List of external comportements
-        type(NL_DS_ComporExte), pointer :: v_exte(:)
-! ----- Flag for IMPLEX method
-        aster_logical                   :: l_implex
-    end type NL_DS_ComporPrep
-!
-! - Type: for parameters for constitutive laws
-! 
-    type NL_DS_ComporPara
-        aster_logical :: l_comp_external
-        integer       :: type_matr_t
-        real(kind=8)  :: parm_theta
-        integer       :: iter_inte_pas
-        real(kind=8)  :: vale_pert_rela
-        real(kind=8)  :: resi_deborst_max
-        integer       :: iter_deborst_max
-        real(kind=8)  :: resi_radi_rela
-        integer       :: ipostiter
-        integer       :: ipostincr
-        integer       :: iveriborne
-        aster_logical :: l_matr_unsymm
-        character(len=16)         :: rela_comp
-        character(len=16)         :: meca_comp
-        character(len=16)         :: defo_comp
-        character(len=16)         :: kit_comp(4)
-        type(NL_DS_ComporExte)    :: comp_exte
-    end type NL_DS_ComporPara
-!
-! - Type: for preparation of parameters for constitutive laws
-! 
-    type NL_DS_ComporParaPrep
-! ----- Number of comportements
-        integer                         :: nb_comp
-! ----- Parameters for THM scheme
-        real(kind=8)                    :: parm_alpha_thm
-        real(kind=8)                    :: parm_theta_thm
-! ----- List of parameters
-        type(NL_DS_ComporPara), pointer :: v_para(:)
-    end type NL_DS_ComporParaPrep
-!
 ! - Type: constitutive laws management
 ! 
     type NL_DS_Constitutive
@@ -500,6 +432,11 @@ implicit none
         aster_logical         :: l_post_incr
 ! ----- Flag for large strains in tangent matrix
         aster_logical         :: l_matr_geom
+! ----- Flag to compute nodal force at prediction
+        aster_logical         :: l_pred_cnfnod
+! ----- Flag to integrate behaviour law at prediction
+        aster_logical         :: l_pred_cnfint
+
     end type NL_DS_Constitutive
 !
 ! - Type: selection list
@@ -575,5 +512,31 @@ implicit none
 ! ----- Small strain hypothese for geometry matrix
         aster_logical         :: l_hpp
     end type NL_DS_PostTimeStep
+!
+! - Type: material properties
+! 
+    type NL_DS_Material
+! ----- Field of material parameters
+        character(len=24) :: field_mate
+! ----- Field for reference of external state variables
+        character(len=24) :: varc_refe
+! ----- Field for initial value of external state variables
+        character(len=24) :: varc_init
+! ----- Force for initial value of external state variables
+        character(len=24) :: fvarc_init
+! ----- Force from external state variables for predictor
+        character(len=24) :: fvarc_pred
+! ----- Force from external state variables for convergence criteria
+        character(len=24) :: fvarc_curr
+
+    end type NL_DS_Material
+!
+! - Type: combine vectors
+! 
+    type NL_DS_VectComb
+        integer            :: nb_vect
+        real(kind=8)       :: vect_coef(20)
+        character(len=19)  :: vect_name(20)
+    end type NL_DS_VectComb
 !
 end module

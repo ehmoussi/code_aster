@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -70,7 +70,7 @@ subroutine irmfac(ioccur, formaf, ifichi, versio,&
     real(kind=8) :: borsup, borinf
 !
     character(len=1) :: cecr
-    character(len=3) :: coor, tmax, tmin, saux03, variel
+    character(len=3) :: coor, tmax, tmin, saux03, answer
     character(len=4) :: partie
     character(len=8) :: tabl, resu, nomab, tycha, leresu, nomgd, carael
     character(len=16) :: formr, tyres
@@ -301,13 +301,9 @@ subroutine irmfac(ioccur, formaf, ifichi, versio,&
         call getvtx('RESU', 'TYPE_CHAM', iocc=ioccur, scal=tycha, nbret=ibid)
     endif
 !
-    variel=' '
-    call getvtx('RESU', 'IMPR_NOM_VARI', iocc=ioccur, scal=variel, nbret=nvari)
-    if (variel .eq. 'OUI') then
-        lvarie=.true.
-    else
-        lvarie=.false.
-    endif
+    answer=' '
+    call getvtx('RESU', 'IMPR_NOM_VARI', iocc=ioccur, scal=answer, nbret=nvari)
+    lvarie = answer .eq. 'OUI'
 !
 !     --- APPEL A LA ROUTINE D'IMPRESSION ---
     if (ncham .ne. 0 .or. nresu .ne. 0) then

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -71,6 +71,20 @@ def tolist(obj):
     else:
         obj = [obj]
     return obj
+
+#-----------------------------------------------------------------------
+
+
+def extract_from_tuple(obj):
+    """
+        Renvoie le premier élément d'un tuple ou d'une liste si tuple ou liste
+        Renvoie l'objet entrant sinon
+    """
+    if type(obj) == list or type(obj) == tuple:
+        out = obj[0]
+    else:
+        out = obj
+    return out
 #-----------------------------------------------------------------------
 
 

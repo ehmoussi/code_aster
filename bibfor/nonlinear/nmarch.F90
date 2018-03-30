@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmarch(numins         , modele  , mate       , carele, fonact   ,&
+subroutine nmarch(numins         , modele  , ds_material, carele, fonact   ,&
                   ds_constitutive, ds_print, sddisc     , sdcrit,&
                   ds_measure     , sderro  , sddyna     , sdpilo, ds_energy,&
                   ds_inout       , sdcriq  , ds_algorom_)
@@ -49,12 +49,13 @@ integer :: fonact(*)
 integer :: numins
 type(NL_DS_Print), intent(in) :: ds_print
 type(NL_DS_InOut), intent(in) :: ds_inout
+type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Measure), intent(inout) :: ds_measure
 type(NL_DS_Energy), intent(in) :: ds_energy
 character(len=19) :: sddisc, sdcrit, sddyna, sdpilo
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 character(len=24) :: sderro, sdcriq
-character(len=24) :: modele, mate, carele
+character(len=24) :: modele, carele
 type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
 !
 ! --------------------------------------------------------------------------------------------------
@@ -69,7 +70,7 @@ type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
 ! In  ds_print         : datastructure for printing parameters
 ! IN  NUMINS : NUMERO DE L'INSTANT
 ! IN  MODELE : NOM DU MODELEE
-! IN  MATE   : CHAMP DE MATERIAU
+! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
 ! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
 ! In  ds_constitutive  : datastructure for constitutive laws management
@@ -166,7 +167,7 @@ type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
 !
 ! ----- Storing parameters
 !
-        call nmarc0(result, modele        , mate           , carele, fonact,&
+        call nmarc0(result, modele        , ds_material    , carele, fonact,&
                     sdcrit, sddyna        , ds_constitutive, sdcriq,&
                     sdpilo, list_load_resu, nume_store     , instan)
 !

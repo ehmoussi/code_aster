@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -309,7 +309,7 @@ POIDS=AFFE_CHAR_MECA(MODELE=MODMECA,
                      PESANTEUR=_F(GROUP_MA='VE1',
                                     GRAVITE=9.81,
                                     DIRECTION=(0,0,-1,),),);
-                                    
+
 FORC1=DEFI_FONCTION(NOM_PARA='INST',
                     VALE=(0.00,0.00001,
                           28.0,0.00001,
@@ -333,7 +333,7 @@ CH12=AFFE_CHAR_MECA(MODELE=MODMECA,
 CH20=AFFE_CHAR_MECA_F(MODELE=MODMECA,
                       PRES_REP=_F(GROUP_MA='S_SUP',
                                   PRES=FORC1,),);
-                                                                        
+
 L_INST=DEFI_LIST_REEL(DEBUT=0.0,
                       INTERVALLE=(_F(JUSQU_A=28.0,
                                      NOMBRE=28,),
@@ -429,7 +429,7 @@ dico = U.LIST_VARI_ACCES()
 list_bouc = dico['INST'];
 
 for ii in range(len(list_bouc)):
-  
+
   VAR2 = CREA_CHAMP(TYPE_CHAM = 'NOEU_VAR2_R',
                     OPERATION='EXTR',
                     RESULTAT = U,
@@ -447,7 +447,7 @@ for ii in range(len(list_bouc)):
                             CUMUL = 'NON'),);
 
   if(ii==0):
-    
+
     RESU = CREA_RESU( OPERATION = 'AFFE',
                       TYPE_RESU = 'EVOL_THER',
                       NOM_CHAM  = 'TEMP',
@@ -455,14 +455,15 @@ for ii in range(len(list_bouc)):
                               INST = list_bouc[ii],),);
 
   else:
-    
+
     RESU = CREA_RESU(reuse = RESU,
+                     RESULTAT  = RESU,
                      OPERATION = 'AFFE',
                      TYPE_RESU = 'EVOL_THER',
                      NOM_CHAM  = 'TEMP',
                      AFFE=_F(CHAM_GD = VAR3,
                      INST = list_bouc[ii],),);
-    
+
   DETRUIRE(CONCEPT=_F(NOM=(VAR2,VAR3)));
 
 RHOF2=DEFI_CONSTANTE(VALE = 0.002363,)
@@ -563,7 +564,7 @@ RESUMECA=STAT_NON_LINE(MODELE=MODMECA,
                                    RELATION_KIT=('FLUA_PORO_BETON',
                                                  'ENDO_PORO_BETON'),
                                    GROUP_MA=('VE1'),),
-                   ),        
+                   ),
                      INCREMENT=_F(LIST_INST=L_INST,
                                   INST_INIT=0.,
                                   INST_FIN=500.0,),

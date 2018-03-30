@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -35,7 +35,8 @@ def proj_champ_prod(RESULTAT=None,CHAM_GD=None,METHODE=None,**args ):
 
 
 
-PROJ_CHAMP=OPER(nom="PROJ_CHAMP",op= 166,sd_prod=proj_champ_prod,reentrant='f',
+PROJ_CHAMP=OPER(nom="PROJ_CHAMP",op= 166,sd_prod=proj_champ_prod,
+                reentrant='f:RESULTAT',
             fr=tr("Projeter des champs d'un maillage sur un autre"),
 
      reuse=SIMP(statut='c', typ=CO),

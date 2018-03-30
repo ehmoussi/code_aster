@@ -717,6 +717,7 @@ présentes%s""" % compo)
 
         if dicAffe != []:
             resu = CREA_RESU(reuse=resu,
+                             RESULTAT=resu,
                              OPERATION='AFFE',
                              TYPE_RESU='EVOL_NOLI',
                              NOM_CHAM='SIEF_ELGA',
@@ -725,6 +726,7 @@ présentes%s""" % compo)
 
         if dicAffe3 != []:
             resu = CREA_RESU(reuse=resu,
+                             RESULTAT=resu,
                              OPERATION='AFFE',
                              TYPE_RESU='EVOL_NOLI',
                              NOM_CHAM='VARI_ELGA',

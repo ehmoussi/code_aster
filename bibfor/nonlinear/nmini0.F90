@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 subroutine nmini0(list_func_acti, eta      , nume_inst  , matass         , zmeelm    ,&
                   zmeass        , zveelm   , zveass     , zsolal         , zvalin    ,&
                   ds_print      , ds_conv  , ds_algopara, ds_inout       , ds_contact,&
-                  ds_measure    , ds_energy, ds_algorom , ds_constitutive)
+                  ds_measure    , ds_energy, ds_algorom , ds_constitutive, ds_material)
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
@@ -40,6 +40,7 @@ implicit none
 #include "asterfort/nonlinDSEnergyCreate.h"
 #include "asterfort/romAlgoNLDSCreate.h"
 #include "asterfort/nonlinDSConstitutiveCreate.h"
+#include "asterfort/nonlinDSMaterialCreate.h"
 !
 integer, intent(out) :: list_func_acti(*)
 character(len=19), intent(out) :: matass
@@ -56,6 +57,7 @@ type(NL_DS_Measure), intent(out) :: ds_measure
 type(NL_DS_Energy), intent(out) :: ds_energy
 type(ROM_DS_AlgoPara), intent(out) :: ds_algorom
 type(NL_DS_Constitutive), intent(out) :: ds_constitutive
+type(NL_DS_Material), intent(out) :: ds_material
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -76,6 +78,7 @@ type(NL_DS_Constitutive), intent(out) :: ds_constitutive
 ! Out ds_energy        : datastructure for energy management
 ! Out ds_algorom       : datastructure for ROM parameters
 ! Out ds_constitutive  : datastructure for constitutive laws management
+! Out ds_material      : datastructure for material parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -125,6 +128,10 @@ type(NL_DS_Constitutive), intent(out) :: ds_constitutive
 ! - Create constitutive laws management datastructure
 !
     call nonlinDSConstitutiveCreate(ds_constitutive)
+!
+! - Create material management datastructure
+!
+    call nonlinDSMaterialCreate(ds_material)
 !
 ! --- FONCTIONNALITES ACTIVEES               (NMFONC/ISFONC)
 !

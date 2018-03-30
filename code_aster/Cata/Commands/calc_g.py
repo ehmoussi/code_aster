@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ from code_aster.Cata.Commons import *
 CALC_G=OPER(nom="CALC_G",op=100,sd_prod=table_sdaster,
             fr=tr("Calcul du taux de restitution d'énergie par la méthode theta en thermo-élasticité"
                   " et les facteurs d'intensité de contraintes."),
-                    reentrant='f',
+            reentrant='f:RESULTAT', # need a table!
 
          reuse=SIMP(statut='c', typ=CO),
          THETA          =FACT(statut='o',

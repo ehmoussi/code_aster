@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 !
 subroutine carc_read(ds_compor_para, model_, l_implex_)
 !
-use NonLin_Datastructure_type
+use Behaviour_type
 !
 implicit none
 !
@@ -43,7 +43,7 @@ implicit none
 #include "asterfort/wkvect.h"
 #include "asterfort/deprecated_algom.h"
 !
-type(NL_DS_ComporParaPrep), intent(inout) :: ds_compor_para
+type(Behaviour_PrepCrit), intent(inout) :: ds_compor_para
 character(len=8), intent(in), optional :: model_
 aster_logical, intent(in), optional :: l_implex_
 !

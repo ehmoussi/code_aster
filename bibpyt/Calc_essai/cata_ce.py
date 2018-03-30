@@ -492,7 +492,7 @@ class InterSpectre:
 
                 _fonc = DEFI_FONCTION(NOM_PARA="FREQ",
                                       NOM_RESU="DSP",
-                                      INTERPOL="NON",
+                                      INTERPOL="LIN",
                                       INFO=1,
                                       VALE_C=fonc,)
                 l_fonc.append(_fonc)

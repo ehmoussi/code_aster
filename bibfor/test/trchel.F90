@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -69,7 +69,7 @@ subroutine trchel(ific, nocc)
     character(len=19) :: cham19
     character(len=16) :: tbtxt(2), tbref(2), nom_vari
     character(len=33) :: nonoeu
-    character(len=24) :: travr, travi, travc, travrr, travir, travcr, nogrno
+    character(len=24) :: travr, travi, travc, travrr, travir, travcr, nogrno, nogrma
     character(len=200) :: lign1, lign2
     integer :: iarg
     aster_logical :: lref
@@ -212,17 +212,17 @@ subroutine trchel(ific, nocc)
                 if (nl11 .lt. 80) then
                     write (ific,*) lign1(1:nl11)
                 else if (nl11.lt.160) then
-                    write (ific,1160) lign1(1:80),lign1(81:nl11)
+                    write (ific,116) lign1(1:80),lign1(81:nl11)
                 else
-                    write (ific,1200) lign1(1:80),lign1(81:160),&
+                    write (ific,120) lign1(1:80),lign1(81:160),&
                     lign1(161:nl11)
                 endif
                 if (nl22 .lt. 80) then
                     write (ific,*) lign2(1:nl22)
                 else if (nl22.lt.160) then
-                    write (ific,1160) lign2(1:80),lign2(81:nl22)
+                    write (ific,116) lign2(1:80),lign2(81:nl22)
                 else
-                    write (ific,1200) lign2(1:80),lign2(81:160),&
+                    write (ific,120) lign2(1:80),lign2(81:160),&
                     lign2(161:nl22)
                 endif
                 if (lref) then
@@ -269,23 +269,27 @@ subroutine trchel(ific, nocc)
             n1=0
             call getvem(nomma, 'MAILLE', 'CHAM_ELEM', 'MAILLE', iocc,&
                         iarg, 1, nomail, n1a)
-            if (n1a .eq. 1) then
-                n1=1
-            else if (n1a .eq. 0) then
-                call getvem(nomma, 'GROUP_MA', 'CHAM_ELEM', 'GROUP_MA', iocc, iarg, 1, nomail, n1b)
-                if (n1b .eq. 1) then 
-                   call jeveuo(jexnom(nomma//'.GROUPEMA', nomail), 'L', imigma)
-                   call jelira(jexnom(nomma//'.GROUPEMA', nomail), 'LONMAX', nbmag)
-                   if ( nbmag .gt. 1) call utmess('F', 'TEST0_20' , sk=nomail, si=nbmag) 
-                   call jenuno(jexnum(nomma//'.NOMMAI', zi(imigma)), nomail)
-                   n1=1
-               endif    
+            if (n1a .eq. 0) then
+                call getvem(nomma, 'GROUP_MA', 'CHAM_ELEM', 'GROUP_MA', iocc, iarg, 1, nogrma, n1b)
+                ASSERT(n1b.eq.1)
+                call jelira(jexnom(nomma//'.GROUPEMA', nogrma), 'LONUTI', nbmag)
+                if ( nbmag .gt. 1) call utmess('F', 'TEST0_20' , sk=nogrma, si=nbmag)
+                call jeveuo(jexnom(nomma//'.GROUPEMA', nogrma), 'L', imigma)
+                call jenuno(jexnum(nomma//'.NOMMAI', zi(imigma)), nomail)
             endif
-            if (n1 .ne. 0) then
+!
+            if (n1a.ne.0) then
                 nl1 = lxlgut(lign1)
                 nl2 = lxlgut(lign2)
                 lign1(1:nl1+16)=lign1(1:nl1-1)//' MAILLE'
                 lign2(1:nl2+16)=lign2(1:nl2-1)//' '//nomail
+                lign1(nl1+17:nl1+17)='.'
+                lign2(nl2+17:nl2+17)='.'
+            else
+                nl1 = lxlgut(lign1)
+                nl2 = lxlgut(lign2)
+                lign1(1:nl1+16)=lign1(1:nl1-1)//' GROUP_MA'
+                lign2(1:nl2+16)=lign2(1:nl2-1)//' '//nogrma
                 lign1(nl1+17:nl1+17)='.'
                 lign2(nl2+17:nl2+17)='.'
             endif
@@ -374,8 +378,8 @@ subroutine trchel(ific, nocc)
 ! ----------------------------------------------------------------------
     end do
 !
-    1160 format(1x,a80,a)
-    1200 format(1x,2(a80),a)
+    116 format(1x,a80,a)
+    120 format(1x,2(a80),a)
 !
     call jedetr(travr)
     call jedetr(travc)

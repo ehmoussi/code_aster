@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -135,34 +135,6 @@ subroutine lcafyd(comp, materd, materf, nbcomm, cpmono,&
         yd(ndt+3) = vind(3)
 !        DEFORMATION DE GONFLEMENT
         yd(ndt+4) = vind(4)
-    else if (loi(1:12) .eq. 'BETON_BURGER') then
-! ===    ============================================================
-!        CONSTRUCTION DES DEFORMATIONS IRREVERSIBLES DE FLUAGE PROPRE
-! ===    ============================================================
-! ---    RECUPERATION PARTIE SPHERIQUE
-! ===    ============================================================
-        eisp = vind(2)
-! ===    ============================================================
-! ---    RECUPERATION PARTIE DEVIATOIRE
-! ===    ============================================================
-        epsfi(1) = vind(4)
-        epsfi(2) = vind(6)
-        epsfi(3) = vind(8)
-        epsfi(4) = vind(13)
-        epsfi(5) = vind(15)
-        epsfi(6) = vind(17)
-! ===    ============================================================
-! ---    ASSEMBLAGE PARTIE DEVIATOIRE ET SPHERIQUE
-! ===    ============================================================
-        do 200 i = 1, ndi
-            epsfi(i)=epsfi(i)+eisp
-200     continue
-! ===    ============================================================
-! ---    AFFECTATION DES VALEURS AU VECTEUR YD(NDT+I)
-! ===    ============================================================
-        do 210 i = 1, ndt
-            yd(ndt+i) = epsfi(i)
-210     continue
 !
     else if (loi(1:4) .eq. 'LETK') then
 ! --- INITIALISATION A ZERO DU MULTIPLICATEUR PLASTIQUE

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -61,11 +61,13 @@ TEMP_0_C  = 20.;
 BETON = [None]*3
 #unite en Pa
 C_Pa = 1.e+6
+E = 31000.*C_Pa;
 YOUNG_Pa=DEFI_FONCTION( NOM_PARA='TEMP',
                  PROL_DROITE='LINEAIRE',
                  PROL_GAUCHE='LINEAIRE',
                  VALE=(0.0, 31000.*C_Pa, 1.0, 31000.*C_Pa,)
                )
+
 K_RS_Pa = K_RS * C_Pa
 ETA_RS_Pa = ETA_RS * C_Pa
 ETA_IS_Pa = ETA_IS * C_Pa
@@ -73,37 +75,43 @@ K_RD_Pa = K_RD * C_Pa
 ETA_RD_Pa = ETA_RD * C_Pa
 ETA_ID_Pa = ETA_ID * C_Pa
 
-BETON[0]=DEFI_MATERIAU(ELAS_FO     =_F(NU=POISSON,
-                                    E=YOUNG_Pa,
-                                    ALPHA=ALPHA,TEMP_DEF_ALPHA=0.,
-                                    FONC_DESORP = FONC1),
-              BETON_BURGER =_F( K_RS      = K_RS_Pa,
-                                   ETA_RS    = ETA_RS_Pa,
-                                   ETA_IS    = ETA_IS_Pa,
-                                   K_RD      = K_RD_Pa,
-                                   ETA_RD    = ETA_RD_Pa,
-                                   ETA_ID    = ETA_ID_Pa,
-                                   KAPPA     = KAPPA,
-                                   QSR_K     = QSR_K,
-                                   TEMP_0_C  = TEMP_0_C,),
-                                    );
+BETON[0] = DEFI_MATERIAU( ELAS_FO =_F( NU = POISSON,
+                                       E = YOUNG_Pa,
+                                       ALPHA = ALPHA,
+                                       TEMP_DEF_ALPHA = 0.,
+                                       FONC_DESORP = FONC1),
+                          BETON_BURGER =_F( YoungModulus = E,
+                                            PoissonRatio = RNU,
+                                            K_RS = K_RS_Pa,
+                                            ETA_RS = ETA_RS_Pa,
+                                            ETA_IS = ETA_IS_Pa,
+                                            K_RD = K_RD_Pa,
+                                            ETA_RD = ETA_RD_Pa,
+                                            ETA_ID = ETA_ID_Pa,
+                                            ETA_FD = 0.,
+                                            KAPPA = KAPPA,
+                                            QSR_K = QSR_K,
+                                            TEMP_0_C = TEMP_0_C,),);
 
 #unite en MPa
 
-BETON[1]=DEFI_MATERIAU(ELAS_FO     =_F(NU=POISSON,
-                                    E=YOUNG,
-                                    ALPHA=ALPHA,TEMP_DEF_ALPHA=0.,
-                                    FONC_DESORP = FONC1),
-              BETON_BURGER =_F( K_RS      = K_RS,
-                                   ETA_RS    = ETA_RS,
-                                   ETA_IS    = ETA_IS,
-                                   K_RD      = K_RD,
-                                   ETA_RD    = ETA_RD,
-                                   ETA_ID    = ETA_ID,
-                                   KAPPA     = KAPPA,
-                                   QSR_K     = QSR_K,
-                                   TEMP_0_C  = TEMP_0_C,),
-                                    );
+BETON[1] = DEFI_MATERIAU( ELAS_FO =_F( NU = POISSON,
+                                       E = YOUNG,
+                                       ALPHA = ALPHA,
+                                       TEMP_DEF_ALPHA = 0.,
+                                       FONC_DESORP = FONC1),
+                          BETON_BURGER =_F( YoungModulus = RYOUNG,
+                                            PoissonRatio = RNU,
+                                            K_RS = K_RS,
+                                            ETA_RS = ETA_RS,
+                                            ETA_IS = ETA_IS,
+                                            K_RD = K_RD,
+                                            ETA_RD = ETA_RD,
+                                            ETA_ID = ETA_ID,
+                                            ETA_FD = 0.,
+                                            KAPPA = KAPPA,
+                                            QSR_K = QSR_K,
+                                            TEMP_0_C = TEMP_0_C,),);
 
 compor='BETON_BURGER'
 
@@ -135,7 +143,7 @@ angles=[angle0,angle2] + (Ncal-2)*[angle0]
 
 # les precisions sur chaque TEST_RESU
 prec_ecart=[[1.E-10, 1.E-10, 1.E-10,  1.E-10],
-            [1.E-10, 1.E-10, 7.E-9,   1.E-10],
+            [1.E-10, 4.E-8,  1.E-8,   1.E-10],
             [1.E-10, 1.E-10, 1.E-10,  1.E-10]]
 vale_calc=[
   [0.0E+00,             0.0E+00,             0.0E+00,             0.0E+00],

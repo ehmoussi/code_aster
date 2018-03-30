@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -59,7 +59,7 @@ character(len=19), intent(in) :: hval_algo(:)
 character(len=19), intent(in) :: merigi
 character(len=19), intent(in) :: vediri
 character(len=19), intent(in) :: vefint
-character(len=19), intent(in) :: veforc
+character(len=19), intent(inout) :: veforc
 character(len=19), intent(in) :: vevarc_prev
 character(len=19), intent(in) :: vevarc_curr
 integer, intent(in) :: nume_harm
@@ -109,7 +109,7 @@ integer, intent(out) ::  nb_obje
     aster_logical :: tabret(0:10), l_meta_zirc, l_meta_acier, l_xfem, l_macr_elem
     integer :: fonact(100)
     real(kind=8) :: partps(3)
-    character(len=19) :: vefori(2), ligrmo
+    character(len=19) :: ligrmo
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -211,14 +211,13 @@ integer, intent(out) ::  nb_obje
 !
     if (l_forc_noda) then
         option    = 'FORC_NODA'
-        vefori(1) = veforc
-        vefori(2) = ' '
         if (.not. l_nonl) then
             call copisd('CHAMP_GD', 'V', sigm_prev, sigm_curr)
         endif
-        call vefnme(option, 'G', model, mate, cara_elem,&
-                    ds_constitutive%compor, partps, 0, ligrmo, varc_curr,&
-                    sigm_curr, ' ', disp_curr, ' ', vefori)
+        call vefnme(option                , model    , mate, cara_elem,&
+                    ds_constitutive%compor, partps   , 0   , ligrmo   ,&
+                    varc_curr             , sigm_curr, ' ' , disp_curr, ' ',&
+                    'G'                   , veforc)
     endif
 !
 ! - State variables

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ from code_aster.Cata.Commons import *
 
 DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
                    fr=tr("Définition des paramètres décrivant le comportement d un matériau"),
-                   reentrant='f',
+                   reentrant='f:MATER',
        regles=(EXCLUS('ELAS','ELAS_FO','ELAS_FLUI','ELAS_ISTR','ELAS_ISTR_FO','ELAS_ORTH',
                       'ELAS_ORTH_FO','ELAS_COQUE','ELAS_COQUE_FO',
                       'ELAS_HYPER','ELAS_2NDG','ELAS_GLRC','ELAS_DHRC'),
@@ -68,7 +68,7 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
                PRESENT_PRESENT('CABLE','ELAS'),
                PRESENT_PRESENT('MOHR_COULOMB','ELAS'),
                PRESENT_PRESENT('ELAS_GLRC','GLRC_DM'),
-               
+
                AU_MOINS_UN('ELAS','ELAS_FO','ELAS_FLUI','ELAS_ISTR','ELAS_ISTR_FO','ELAS_ORTH',
                            'ELAS_ORTH_FO','ELAS_COQUE','ELAS_COQUE_FO','ELAS_MEMBRANE',
                            'ELAS_HYPER','ELAS_2NDG','ELAS_GLRC','ELAS_GLRC_FO','ELAS_DHRC','CABLE',
@@ -80,7 +80,7 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
                            'ARME','ASSE_CORN','DIS_CONTACT','ENDO_SCALAIRE','ENDO_SCALAIRE_FO','ENDO_FISS_EXP','ENDO_FISS_EXP_FO','DIS_GRICRA',
                            'BETON_DOUBLE_DP','MAZARS','MAZARS_FO','JOINT_BA','VENDOCHAB','VENDOCHAB_FO','HAYHURST','VISC_ENDO','VISC_ENDO_FO','PINTO_MENEGOTTO',
                            'BPEL_BETON','BPEL_ACIER','ETCC_BETON','ETCC_ACIER','RELAX_ACIER','MOHR_COULOMB','RANKINE','CAM_CLAY','BARCELONE',
-                           'CJS','HUJEUX','ECRO_ASYM_LINE','BETON_GRANGER','V_BETON_GRANGER','BETON_BURGER','BETON_UMLV','BETON_RAG',
+                           'CJS','HUJEUX','ECRO_ASYM_LINE','BETON_GRANGER','V_BETON_GRANGER','BETON_UMLV','BETON_RAG',
                            'PORO_BETON','GLRC_DM','DHRC','CORR_ACIER','CABLE_GAINE_FROT','DIS_ECRO_CINE','DIS_VISC','DIS_ECRO_TRAC','DIS_BILI_ELAS',
                            'THER_NL','THER_HYDR','THER','THER_FO','THER_ORTH','THER_COQUE','THER_COQUE_FO',
                            'SECH_GRANGER','SECH_MENSI','SECH_BAZANT','SECH_NAPPE','META_ACIER','META_ZIRC', 'DURT_META','ELAS_META','ELAS_META_FO',
@@ -88,12 +88,12 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
                            'COMP_THM',
                            'FATIGUE','DOMMA_LEMAITRE','CISA_PLAN_CRIT','THM_RUPT','WEIBULL','WEIBULL_FO',
                            'NON_LOCAL','RUPT_FRAG','RUPT_FRAG_FO','CZM_LAB_MIX','RUPT_DUCT','JOINT_MECA_RUPT','JOINT_MECA_FROT','RCCM','RCCM_FO',
-                           'LAIGLE','LETK','LKR','DRUCK_PRAGER','VISC_DRUC_PRAG','HOEK_BROWN','GONF_ELAS','JOINT_BANDIS', 
+                           'LAIGLE','LETK','LKR','DRUCK_PRAGER','VISC_DRUC_PRAG','HOEK_BROWN','GONF_ELAS','JOINT_BANDIS',
                            'MONO_VISC1','MONO_VISC2','MONO_ISOT1','MONO_ISOT2','MONO_CINE1','MONO_CINE2','MONO_DD_KR','MONO_DD_CFC','MONO_DD_CFC_IRRA',
                            'MONO_DD_FAT','MONO_DD_CC','MONO_DD_CC_IRRA',
                            'MFRONT','MFRONT_FO','UMAT','UMAT_FO','CRIT_RUPT','REST_ECRO'),
                ),
-               
+
            reuse=SIMP(statut='c', typ=CO),
            MATER      =SIMP(statut='f',typ=mater_sdaster),
 #
@@ -1164,18 +1164,6 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
            ),
            V_BETON_GRANGER    =FACT(statut='f',
                 FONC_V          =SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule)),
-           ),
-           BETON_BURGER   =FACT(statut='f',
-             K_RS            =SIMP(statut='o',typ='R'),
-             ETA_RS          =SIMP(statut='o',typ='R'),
-             KAPPA           =SIMP(statut='o',typ='R'),
-             ETA_IS          =SIMP(statut='o',typ='R'),
-             K_RD            =SIMP(statut='o',typ='R'),
-             ETA_RD          =SIMP(statut='o',typ='R'),
-             ETA_ID          =SIMP(statut='o',typ='R'),
-             QSR_K           =SIMP(statut='o',typ='R'),
-             TEMP_0_C        =SIMP(statut='o',typ='R'),
-             ETA_FD          =SIMP(statut='f',typ='R'),
            ),
            BETON_UMLV   =FACT(statut='f',
              K_RS            =SIMP(statut='o',typ='R'),

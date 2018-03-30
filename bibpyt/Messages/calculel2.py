@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -242,7 +242,9 @@ Contactez le support technique.
    Le modèle n'a pas été trouvé. Le calcul n'est pas possible.
 """),
 
-
+    45: _(u"""
+   Le CARA_ELEM n'a pas été trouvé. Le calcul n'est pas possible.
+"""),
 
     46: _(u"""
   mode ligne  %(k1)s  /= mode colonne  %(k2)s

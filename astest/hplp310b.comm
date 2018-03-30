@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -84,7 +84,9 @@ TEMP_EV=CREA_RESU(    OPERATION='AFFE', TYPE_RESU='EVOL_THER',
                         AFFE=_F(  CHAM_GD = TEMP0,
                                   INST = 0.)
                     )
-TEMP_EV=CREA_RESU(    reuse=TEMP_EV,OPERATION='AFFE', TYPE_RESU='EVOL_THER',
+TEMP_EV=CREA_RESU(    reuse=TEMP_EV,
+                      RESULTAT=TEMP_EV,
+                      OPERATION='AFFE', TYPE_RESU='EVOL_THER',
                         NOM_CHAM='TEMP',
                         AFFE=_F(  CHAM_GD = TEMP_IMP,
                                   INST = (1.,10.,),)

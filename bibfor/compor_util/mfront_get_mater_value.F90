@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ implicit none
 #include "asterfort/mat_proto.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/rcvalb.h"
-#include "asterfort/get_meta_phasis.h"
+#include "asterfort/metaGetPhase.h"
 #include "asterfort/isdeco.h"
 #include "asterfort/utmess.h"
 #include "asterfort/Behaviour_type.h"
@@ -85,10 +85,10 @@ real(kind=8), intent(out) :: props(*)
         ASSERT(nbcoef <= npropmax)
 ! ----- Get the properties values (enter under 'rela_comp' in DEFI_MATERIAU)
         call r8inir(nbcoef, r8nnem(), props, 1)
-        if (tabcod(PFERRITE) .eq. 1) then
+        if (tabcod(ZFERRITE) .eq. 1) then
             meta_type = 1
             nb_phasis = 5
-            call get_meta_phasis(fami     , '+', kpg, ksp,&
+            call metaGetPhase(fami     , '+', kpg, ksp,&
                                  meta_type,&
                                  nb_phasis, zcold_   = zalpha)
             do i = 1, nbcoef
@@ -102,7 +102,7 @@ real(kind=8), intent(out) :: props(*)
                                 1, nomres(i), propl(i), codrel(i), 1)
                 endif
             enddo
-        elseif (tabcod(ALPHPUR) .eq. 1) then
+        elseif (tabcod(ZALPHPUR) .eq. 1) then
             meta_type = 2
             nb_phasis = 3
             call utmess('F', 'COMPOR4_24')

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -88,9 +88,9 @@ implicit none
         call dxqpgl(zr(jgeom), pgl, 'S', iret)
     endif
 !
-    lkit = zk16(icompo-1+NAME)(1:7).eq.'KIT_DDI'
+    lkit = zk16(icompo-1+RELA_NAME)(1:7).eq.'KIT_DDI'
 !
-    if ((zk16(icompo-1+NAME)(1:7).eq.'GLRC_DM') .or.&
+    if ((zk16(icompo-1+RELA_NAME)(1:7).eq.'GLRC_DM') .or.&
        (lkit.and.(zk16(icompo-1+CREEP_NAME)(1:7).eq.'GLRC_DM'))) then
 !
         call jevech('PCACOQU', 'L', icacoq)
@@ -163,7 +163,7 @@ implicit none
         else if (option.eq.'DISS_ELEM') then
             zr(idener-1+1) = dse
         endif
-    elseif ( zk16(icompo-1+NAME)(1:4) .eq. 'DHRC' ) then
+    elseif ( zk16(icompo-1+RELA_NAME)(1:4) .eq. 'DHRC' ) then
         call jevech('PCACOQU', 'L', icacoq)
         call utpvgl(nno, 3, pgl, zr(jgeom), xyzl)
         if (dkq) then
@@ -230,7 +230,7 @@ implicit none
     else
 !      RELATION NON PROGRAMMEE
         valk(1) = option
-        valk(2) = zk16(icompo-1+NAME)(1:7)
+        valk(2) = zk16(icompo-1+RELA_NAME)(1:7)
         call utmess('A', 'ELEMENTS4_63', nk=2, valk=valk)
     endif
 !

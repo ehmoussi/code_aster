@@ -755,6 +755,8 @@ class Macro(Command):
 
     def type_sdprod(self, result, astype):
         """Define the type of the result."""
+        if result is None:
+            return
         result.settype(astype)
 
 

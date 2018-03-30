@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ def norm_mode_prod(MODE,**args ):
 
 NORM_MODE=OPER(nom="NORM_MODE",op=  37,sd_prod=norm_mode_prod,
                fr=tr("Normer des modes propres en fonction d'un critère choisi par l'utilisateur"),
-               reentrant='f',
+               reentrant='f:MODE',
          regles=(UN_PARMI('NORME','GROUP_NO','NOEUD','AVEC_CMP','SANS_CMP'),),
          reuse=SIMP(statut='c', typ=CO),
          MODE       =SIMP(statut='o',typ=(mode_meca,mode_flamb) ),

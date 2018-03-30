@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmextr(meshz       , modelz    , sdextrz   , ds_inout , keyw_fact,&
-                  nb_keyw_fact, nb_extr   ,&
-                  cara_elemz  , matez     , ds_constitutive, disp_curr, strx_curr,&
-                  varc_curr   , varc_refe , time      )
+subroutine nmextr(meshz       , modelz     , sdextrz   , ds_inout , keyw_fact,&
+                  nb_keyw_fact, nb_extr    ,&
+                  cara_elemz  , ds_material, ds_constitutive, disp_curr, strx_curr,&
+                  varc_curr   , time      )
 !
 use NonLin_Datastructure_type
 !
@@ -57,12 +57,11 @@ integer, intent(in) :: nb_keyw_fact
 character(len=16), intent(in) :: keyw_fact
 integer, intent(out) :: nb_extr
 character(len=*), optional, intent(in) :: cara_elemz
-character(len=*), optional, intent(in) :: matez
+type(NL_DS_Material), optional, intent(in) :: ds_material
 type(NL_DS_Constitutive), optional, intent(in) :: ds_constitutive
 character(len=*), optional, intent(in) :: disp_curr
 character(len=*), optional, intent(in) :: strx_curr
 character(len=*), optional, intent(in) :: varc_curr
-character(len=*), optional, intent(in) :: varc_refe
 real(kind=8), optional, intent(in) :: time
 !
 ! --------------------------------------------------------------------------------------------------
@@ -81,11 +80,10 @@ real(kind=8), optional, intent(in) :: time
 ! In  nb_keyw_fact     : number of factor keyword to read extraction parameters
 ! Out nb_extr          : total number of extraction points
 ! In  cara_elem        : name of datastructure for elementary parameters (CARTE)
-! In  mate             : name of material characteristics (field)
+! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  disp_curr        : current displacements
 ! In  varc_curr        : command variable for current time
-! In  varc_refe        : command variable for reference
 ! In  time             : current time
 ! In  strx_curr        : fibers information for current time
 !
@@ -155,9 +153,9 @@ real(kind=8), optional, intent(in) :: time
             field_comp = v_extr_comp(4*(i_field_comp-1)+1)
             field_disc = v_extr_comp(4*(i_field_comp-1)+2)(1:4)
             field_type = v_extr_comp(4*(i_field_comp-1)+3)
-            call nmextr_comp(field_comp, field_disc, field_type     , meshz    , modelz   ,&
-                             cara_elemz, matez     , ds_constitutive, disp_curr, strx_curr,&
-                             varc_curr , varc_refe , time      )
+            call nmextr_comp(field_comp, field_disc , field_type     , meshz    , modelz   ,&
+                             cara_elemz, ds_material, ds_constitutive, disp_curr, strx_curr,&
+                             varc_curr , time      )
         end do
     endif
 !

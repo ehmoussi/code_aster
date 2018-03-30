@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -83,6 +83,14 @@ base_p=DEFI_BASE_REDUITE(RESULTAT = stnl,
                          NOM_CHAM = 'DEPL',
                          TOLE_SVD = 1.E-3,);
 
+# Create base (DEPL)
+base_p1=DEFI_BASE_REDUITE(OPERATION = 'POD_INCR',
+                          TOLE      = 1.E-3,
+                          RESULTAT  = stnl,
+                          INFO      = 2,
+                          NOM_CHAM  = 'DEPL',
+                          TOLE_SVD  = 1.E-3,);
+
 # Create base (SIEF_NOEU)
 base_d=DEFI_BASE_REDUITE(RESULTAT = stnl,
                          INFO     = 2,
@@ -139,6 +147,52 @@ TEST_RESU(RESU=(
                    NOEUD='N27',
                    NOM_CMP='DZ',
                    VALE_CALC=-0.0201730121515,
+                   ),
+                ),
+          );
+
+TEST_RESU(RESU=(
+                _F(RESULTAT=base_p1,
+                   NUME_ORDRE= 1,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N27',
+                   NOM_CMP='DX',
+                   VALE_CALC=(-0.0257339494656,0.0257339494656),
+                   ),
+                _F(RESULTAT=base_p1,
+                   NUME_ORDRE= 1,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N27',
+                   NOM_CMP='DY',
+                   VALE_CALC=(-0.0734242571905,0.0734242571905),
+                   ),
+                _F(RESULTAT=base_p1,
+                   NUME_ORDRE= 1,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N27',
+                   NOM_CMP='DZ',
+                   VALE_CALC=(-0.195508515288,0.195508515288),
+                   ),
+                _F(RESULTAT=base_p1,
+                   NUME_ORDRE= 2,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N27',
+                   NOM_CMP='DX',
+                   VALE_CALC=(-0.00219717034695,0.00219717034695),
+                   ),
+                _F(RESULTAT=base_p1,
+                   NUME_ORDRE= 2,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N27',
+                   NOM_CMP='DY',
+                   VALE_CALC=(0.0032633633912,-0.0032633633912),
+                   ),
+                _F(RESULTAT=base_p1,
+                   NUME_ORDRE= 2,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N27',
+                   NOM_CMP='DZ',
+                   VALE_CALC=(-0.0213200068417,0.0213200068417),
                    ),
                 ),
           );

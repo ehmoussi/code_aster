@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 !
 interface
     subroutine nmnoli(sddisc, sderro, ds_constitutive, ds_print , sdcrit  ,&
-                      fonact, sddyna, modele         , mate     ,&
+                      fonact, sddyna, modele         , ds_material,&
                       carele, sdpilo, ds_measure     , ds_energy, ds_inout,&
                       sdcriq)
         use NonLin_Datastructure_type
@@ -30,7 +30,7 @@ interface
         integer :: fonact(*)
         character(len=19) :: sddyna
         character(len=24) :: modele
-        character(len=24) :: mate
+        type(NL_DS_Material), intent(in) :: ds_material
         character(len=24) :: carele
         character(len=19) :: sdpilo
         type(NL_DS_Measure), intent(inout) :: ds_measure

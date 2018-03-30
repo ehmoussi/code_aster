@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -369,7 +369,7 @@ Causes possibles :
             Dans le cas du JDC, le deuxième cas ne peut pas se produire.
         """
         sd = etape.get_sd_prod()
-        if sd != None and (etape.definition.reentrant == 'n' or etape.reuse is None):
+        if sd != None and (etape.definition.reentrant[0] == 'n' or etape.reuse is None):
             # ATTENTION : On ne nomme la SD que dans le cas de non reutilisation
             # d un concept. Commande non reentrante ou reuse absent.
             self.NommerSdprod(sd, nomsd)

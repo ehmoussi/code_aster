@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,20 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1003
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine carc_info(ds_compor_para)
 !
-use NonLin_Datastructure_type
+use Behaviour_type
 !
 implicit none
 !
 #include "asterc/getfac.h"
 #include "asterfort/as_allocate.h"
 !
-! aslint: disable=W1003
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_ComporParaPrep), intent(out) :: ds_compor_para
+type(Behaviour_PrepCrit), intent(out) :: ds_compor_para
 !
 ! --------------------------------------------------------------------------------------------------
 !

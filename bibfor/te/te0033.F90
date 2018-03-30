@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -37,6 +37,7 @@ subroutine te0033(option, nomte)
 #include "asterfort/dxqpgl.h"
 #include "asterfort/dxsiro.h"
 #include "asterfort/dxsit2.h"
+#include "asterfort/dxsit3.h"
 #include "asterfort/dxsith.h"
 #include "asterfort/dxtpgl.h"
 #include "asterfort/elrefe_info.h"
@@ -215,11 +216,14 @@ subroutine te0033(option, nomte)
         endif
 !
         call rccoma(zi(jmate), 'ELAS', 1, phenom, icodre(1))
-!        ON NE SAIT PAS TRAITER LE CAS ELAS_COQUE
         if (phenom .eq. 'ELAS' .or. phenom .eq. 'ELAS_ORTH' .or. phenom .eq. 'ELAS_ISTR') then
             call dxsith(nomte, zi(jmate), zr(jsigm))
         else if (phenom.eq.'ELAS_COQMU') then
             call dxsit2(nomte, pgl, zr(jsigm))
+        elseif (phenom .eq. 'ELAS_COQUE')then
+            call dxsit3(nomte, zi(jmate), pgl, zr(jsigm))
+        else
+            ASSERT(.false.)
         endif
 !     ----------------------------
     else if (option(1:9) .eq. 'EPSI_ELGA') then
