@@ -56,20 +56,18 @@ class ExtendedFormula(injector(Formula), Formula):
         return self.getVariables()
 
     def Parametres(self):
+        """Return a dict containing the properties of the formula that can be
+        directly passed to CALC_FONC_INTERP.
+
+        Same method exists for real and complex function.
+
+        Returns:
+            dict: Dict of properties.
         """
-        Retourne un dictionnaire contenant les parametres de la fonction ;
-        le type jeveux (FONCTION, FONCT_C, NAPPE) n'est pas retourne,
-        le dictionnaire peut ainsi etre fourni a CALC_FONC_INTERP tel quel.
-        """
-        from Utilitai.Utmess import UTMESS
-        prol = self.sdj.PROL.get()
-        if prol == None:
-            objev = '%-19s.PROL' % self.get_name()
-            UTMESS('F', 'SDVERI_2', valk=[objev])
         dico = {
             'INTERPOL': ['LIN', 'LIN'],
-            'NOM_PARA': [i.strip() for i in self.sdj.NOVA.get()],
-            'NOM_RESU': prol[3][0:16].strip(),
+            'NOM_PARA': self.getVariables(),
+            'NOM_RESU': self.getProperties()[3],
             'PROL_DROITE': "EXCLU",
             'PROL_GAUCHE': "EXCLU",
         }
