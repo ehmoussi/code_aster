@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,13 +32,13 @@ class ExtendedFormula(injector(Formula), Formula):
     cata_sdj = "SD.sd_fonction.sd_formule"
 
     def __call__(self, *val):
-        """Evaluation of the formula.
+        """Evaluate the formula with the given variables values.
 
         Arguments:
-            val (list[float]): List of the values of the parameters.
+            val (list[float]): List of the values of the variables.
 
         Returns:
-            float: Value of the formula for these parameters.
+            float/complex: Value of the formula for these values.
         """
         result = self.evaluate(force_list(val))
         if self.getType() == "FORMULE_C":
@@ -50,7 +50,9 @@ class ExtendedFormula(injector(Formula), Formula):
     @property
     @deprecated(help="Use 'getVariables()' instead.")
     def nompar(self):
-        """Return the variables names."""
+        """Return the variables names.
+
+        *Deprecated:* Use `getVariables()` instead. """
         return self.getVariables()
 
     def Parametres(self):
