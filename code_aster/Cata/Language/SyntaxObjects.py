@@ -448,7 +448,7 @@ class PartOfSyntax(UIDMixing):
         ctxt.update(userSyntax)
 
         # search in BLOC objects
-        for key, kwd in self.definition.iterItemsByType():
+        for _, kwd in self.definition.iterItemsByType():
             if not isinstance(kwd, Bloc):
                 continue
             # debug_message2("block", key, repr(kwd.getCondition()), "with", ctxt,
@@ -477,7 +477,7 @@ class PartOfSyntax(UIDMixing):
 
         rules = list(self.rules)
         # search in BLOC objects
-        for key, kwd in self.definition.iterItemsByType():
+        for _, kwd in self.definition.iterItemsByType():
             if not isinstance(kwd, Bloc):
                 continue
             if not kwd.isEnabled(ctxt):
@@ -650,7 +650,8 @@ class Command(PartOfSyntax):
 
     def can_reuse(self):
         """Tell if the result can be a reused one."""
-        return self.definition.get('reentrant') in ('o', 'f')
+        reentr = step.definition.get("reentrant", "").split(':')
+        return reentr and reentr[0] in ('o', 'f')
 
     def accept(self, visitor, syntax=None):
         """Called by a Visitor"""
