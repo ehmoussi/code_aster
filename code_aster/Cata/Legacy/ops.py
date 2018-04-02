@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -498,3 +498,12 @@ def build_formule(self, d):
     elif VALE_C != None:
         texte = ''.join(VALE_C.splitlines())
     self.sd.setFormule(NOM_PARA, texte.strip())
+
+    _ctxt = {}
+    keys = self.valeur.keys()
+    for key in keys:
+        if key not in ('VALE', 'VALE_C', 'NOM_PARA'):
+            _ctxt[key] = self.valeur[key]
+    # functions defined in JDC can not be pickled, so keep only a reference
+    # self.sd.set_context(pickle.dumps(_ctxt))
+    self.sd.set_context(_ctxt)
