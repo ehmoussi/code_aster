@@ -36,8 +36,10 @@ def initial_context():
     Returns:
         dict: pairs of name per corresponding Python instance.
     """
+    import __builtin__
     import math
     context = {}
+    context.update(__builtin__.__dict__)
     for func in dir(math):
         if not func.startswith('_'):
             context[func] = getattr(math, func)
@@ -59,19 +61,10 @@ class formule(ASSD):
         self.expression = None
         self.code = None
         self.ctxt = None
-        ctxt = {}
-        ctxt.update(getattr(self.parent, 'const_context', {}))
-        ctxt.update(getattr(self.parent, 'macro_const_context', {}))
-        self.parent_context = self.filter_context(ctxt)
-        # message.debug(SUPERV, "add parent_context %s %s", self.nom,
-        # self.parent_context)
 
     def __call__(self, *val):
         """Evaluation de la formule"""
-        # en POURSUITE, self.parent_context is None, on essaie de reprendre
-        # const_context
-        context = getattr(self, 'parent_context') or getattr(
-            self.parent, 'const_context', {})
+        context = {}
         context.update(self.get_context())
         for param, value in zip(self.nompar, val):
             context[param] = value
