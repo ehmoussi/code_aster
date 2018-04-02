@@ -97,8 +97,19 @@ class formule(ASSD):
             raise
 
     def set_context(self, objects):
-        """Stocke des objets de contexte"""
-        self.ctxt = pickle.loads(objects)
+        """Stocke des objets de contexte.
+
+        Il est conseillé de passer les objets sous forme d'une 'pickled string'
+        pour en faire une copie connue uniquement de la formule.
+
+        Avec le superviseur actuel, une fonction du jeu de commandes n'est pas
+        'picklable'. On ne peut donc que stocker une référence vers ces objets.
+        On passe alors `objects` en tant que dictionnaire.
+        """
+        if not isinstance(objects, dict):
+            self.ctxt = pickle.loads(objects)
+        else:
+            self.ctxt = objects
 
     def get_context(self):
         """Retourne le contexte stocké avec la formule."""
