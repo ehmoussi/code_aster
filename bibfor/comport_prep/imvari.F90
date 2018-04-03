@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -103,10 +103,16 @@ character(len=19), intent(in) :: compor_info
 ! --------- Print name of internal variables
 !
             if (l_excl) then
+                call utmess('I', 'COMPOR4_4', si = nb_elem_zone)
                 if (vari_excl.eq.'&&MULT_COMP') then
+                    call utmess('I', 'COMPOR4_11')
+                    call utmess('I', 'COMPOR4_9' , si = nb_vari)
                     call utmess('I', 'COMPOR4_15')
                 else if (vari_excl.eq.'&&PROT_COMP') then
-                    call utmess('I', 'COMPOR4_16', si = nb_vari)
+                    call utmess('I', 'COMPOR4_10')
+                    call utmess('I', 'COMPOR4_6', sk = defo_comp)
+                    call utmess('I', 'COMPOR4_9', si = nb_vari)
+                    call utmess('I', 'COMPOR4_16')
                 else
                     ASSERT(ASTER_FALSE)
                 endif

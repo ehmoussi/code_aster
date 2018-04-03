@@ -80,14 +80,20 @@
 #define CABLE_NAME   9
 #define SHEATH_NAME  10
 !
-! - Access in <CARCRI>
+! - Access in <CARCRI> for external state variables
 !
 #define IVARIEXTE      11
-#define ISTRAINEXTE    22
+!
+! - Access in <CARCRI> for THM parameters
+!
 #define PARM_ALPHA_THM 18
 #define PARM_THETA_THM 12
 !
-! - Access in <CARCRI_VARI_EXT>
+! - Access in <CARCRI> for strains model
+!
+#define ISTRAINEXTE    22
+!
+! - Access in <CARCRI_VARI_EXT>: type of external state variables
 !
 #define ELTSIZE1  1
 #define ELTSIZE2  2
@@ -119,3 +125,12 @@
 #define ZMARTENS  28
 #define ZALPHPUR  29
 #define ZALPHBET  30
+!
+! - Type of strains model from MFRONT
+!
+#define MFRONT_STRAIN_SMALL          0
+#define MFRONT_STRAIN_SIMOMIEHE      1
+#define MFRONT_STRAIN_GROTGDEP       2
+#define MFRONT_STRAIN_UNDETERMINATED 3
+#define MFRONT_STRAIN_GROTGDEP_S     4
+#define MFRONT_STRAIN_GROTGDEP_L     5
