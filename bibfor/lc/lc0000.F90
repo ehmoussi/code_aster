@@ -160,6 +160,7 @@ implicit none
 #include "asterfort/calcExternalStateVariable5.h"
 #include "asterfort/lcExternalStateVariable.h"
 #include "asterfort/lcPrepareStrain.h"
+#include "asterfort/lcRestoreStrain.h"
 #include "asterfort/assert.h"
 !
 integer :: imate, ndim, nvi, kpg, ksp
@@ -1198,5 +1199,17 @@ integer :: codret
     case default
         call utmess('F', 'COMPOR1_43', si=numlc)
     end select
+!
+! --------------------------------------------------------------------------------------------------
+!
+! - Restore total strain
+!
+    if (defo_ldc .eq. 'MECANIQUE') then 
+        if (defo_comp .ne. 'SIMO_MIEHE') then
+            call lcRestoreStrain(option, typmod,&
+                                 neps , epsth , depsth,&
+                                 epsm , deps)
+        endif
+    endif
 !
 end subroutine
