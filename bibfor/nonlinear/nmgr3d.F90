@@ -16,18 +16,16 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
-! 
-subroutine nmgr3d(nno  , npg   , ipoids, ivf   , idfde ,&
+!
+subroutine nmgr3d(fami , nno   , npg   , ipoids, ivf   , vff      , idfde,&
                   geomi, typmod, option, imate , compor, mult_comp,&
-                  lgpg , carcri  , instam, instap, deplm ,&
-                  deplp, angmas, sigm  , vim   , matsym,&
-                  dfdi , pff   , def   , sigp  , vip   ,&
-                  matuu, vectu , codret)
+                  lgpg , carcri, instam, instap, deplm ,&
+                  deplp, sigm  , vim   , matsym,&
+                  sigp , vip   , matuu , vectu , codret)
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/r8inir.h"
 #include "asterc/r8nnem.h"
 #include "asterfort/codere.h"
 #include "asterfort/lcdetf.h"
@@ -38,12 +36,11 @@ implicit none
 #include "asterfort/pk2sig.h"
 #include "asterfort/utmess.h"
 #include "asterfort/Behaviour_type.h"
-!     
-integer, intent(in) :: nno
-integer, intent(in) :: npg
-integer, intent(in) :: ipoids
-integer, intent(in) :: ivf
-integer, intent(in) :: idfde
+!
+character(len=*), intent(in) :: fami
+integer, intent(in) :: nno, npg
+integer, intent(in) :: ipoids, ivf, idfde
+real(kind=8), intent(in) :: vff(*)
 real(kind=8), intent(in) :: geomi(3, nno)
 character(len=8), intent(in) :: typmod(*)
 character(len=16), intent(in) :: option
@@ -54,14 +51,11 @@ real(kind=8), intent(in) :: carcri(*)
 integer, intent(in) :: lgpg
 real(kind=8), intent(in) :: instam
 real(kind=8), intent(in) :: instap
-real(kind=8), intent(inout) :: deplm(3, nno), deplp(3, nno)
-real(kind=8), intent(in) :: angmas(*)
+real(kind=8), intent(inout) :: deplm(3*nno)
+real(kind=8), intent(inout) :: deplp(3*nno)
 real(kind=8), intent(inout) :: sigm(6, npg)
 real(kind=8), intent(inout) :: vim(lgpg, npg)
 aster_logical, intent(in) :: matsym
-real(kind=8), intent(inout) :: dfdi(nno, 3)
-real(kind=8), intent(inout) :: pff(6, nno, nno)
-real(kind=8), intent(inout) :: def(6, nno, 3)
 real(kind=8), intent(inout) :: sigp(6, npg)
 real(kind=8), intent(inout) :: vip(lgpg, npg)
 real(kind=8), intent(inout) :: matuu(*)
@@ -95,7 +89,6 @@ integer, intent(inout) :: codret
 ! IN  INSTAP  : INSTANT DE CALCUL
 ! IN  DEPLM   : DEPLACEMENT A L'INSTANT PRECEDENT
 ! IN  DEPLP   : DEPLACEMENT A L'INSTANT COURANT
-! IN  ANGMAS  : LES TROIS ANGLES DU MOT_CLEF MASSIF (AFFE_CARA_ELEM)
 ! IN  SIGM    : CONTRAINTES A L'INSTANT PRECEDENT
 ! IN  VIM     : VARIABLES INTERNES A L'INSTANT PRECEDENT
 ! IN  MATSYM  : VRAI SI LA MATRICE DE RIGIDITE EST SYMETRIQUE
@@ -108,21 +101,24 @@ integer, intent(inout) :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: grand, axi
-    integer :: kpg, j, cod(27), jvariexte
+    aster_logical :: grand, axi, cplan
+    integer :: kpg, j, jvariexte, ndim
     real(kind=8) :: dsidep(6, 6), f(3, 3), fm(3, 3), epsm(6), epsp(6), deps(6)
-    real(kind=8) :: r, sigma(6), sigm_norm(6), detf, poids, vff(1)
-    real(kind=8) :: elgeom(10, 27), rac2, maxeps, detfm
+    real(kind=8) :: r, sigma(6), sigm_norm(6), detf, poids, maxeps, detfm
+    real(kind=8) :: elgeom(10, 27), wkout(1), angl_naut(3)
+    real(kind=8), parameter :: rac2 = sqrt(2.d0)
+    integer :: cod(27)
+    real(kind=8) :: dfdi(nno, 3), pff(6,nno,nno), def(6,nno,3) 
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    ndim        = 3
     elgeom(:,:) = 0.d0
-    rac2  = sqrt(2.d0)
-    grand = .true._1
-    axi   = .false._1
-    do kpg = 1, npg
-        cod(kpg) = 0
-    end do
+    wkout(1)    = 0.d0
+    cod(:)      = 0
+    grand       = ASTER_TRUE
+    axi         = ASTER_FALSE
+    cplan       = ASTER_FALSE
 !
 ! - Get coded integer for external state variable
 !
@@ -130,15 +126,14 @@ integer, intent(inout) :: codret
 !
 ! - Compute intrinsic external state variables
 !
-    call lcegeo(nno   , npg      , 3    ,&
+    call lcegeo(nno   , npg      , ndim ,&
                 ipoids, ivf      , idfde,&
-                typmod, jvariexte,&
-                geomi ,&
-                deplm , deplp)
+                typmod, jvariexte, &
+                geomi , deplm    , deplp )
 !
 ! - Only isotropic material !
 !
-    call r8inir(3, r8nnem(), angmas, 1)
+    angl_naut(1:3) = r8nnem()
 !
 ! - Loop on Gauss points
 !
@@ -148,16 +143,16 @@ integer, intent(inout) :: codret
 !
 ! ----- Kinematic - Previous strains
 !
-        call nmgeom(3       , nno   , .false._1, grand, geomi,&
-                    kpg     , ipoids, ivf      , idfde, deplm,&
-                    .true._1, poids , dfdi     , fm   , epsm,&
+        call nmgeom(ndim    , nno   , axi , grand, geomi,&
+                    kpg     , ipoids, ivf , idfde, deplm,&
+                    .true._1, poids , dfdi, fm   , epsm ,&
                     r)
 !
 ! ----- Kinematic - Increment of strains
 !
-        call nmgeom(3        , nno   , .false._1, grand, geomi,&
-                    kpg      , ipoids, ivf      , idfde, deplp,&
-                    .false._1, poids , dfdi     , f    , epsp ,&
+        call nmgeom(ndim     , nno   , axi , grand, geomi,&
+                    kpg      , ipoids, ivf , idfde, deplp,&
+                    .false._1, poids , dfdi, f    , epsp ,&
                     r)
         maxeps = 0.d0
         do j = 1, 6
@@ -173,30 +168,29 @@ integer, intent(inout) :: codret
             endif
         endif
 !
-! ----- Stresses: convert Cauche to PK2
+! ----- Stresses: convert Cauchy to PK2
 !
-        call lcdetf(3, fm, detfm)
-        call pk2sig(3, fm, detfm, sigm_norm, sigm(1, kpg),&
-                    -1)
+        call lcdetf(ndim, fm, detfm)
+        call pk2sig(ndim, fm, detfm, sigm_norm, sigm(1, kpg), -1)
         sigm_norm(4) = sigm_norm(4)*rac2
         sigm_norm(5) = sigm_norm(5)*rac2
         sigm_norm(6) = sigm_norm(6)*rac2
 !
 ! ----- Compute behaviour
 !
-        call nmcomp('RIGI'     , kpg        , 1        , 3     , typmod        ,&
-                    imate      , compor     , carcri     , instam, instap        ,&
+        call nmcomp(fami       , kpg        , 1        , ndim  , typmod        ,&
+                    imate      , compor     , carcri   , instam, instap        ,&
                     6          , epsm       , deps     , 6     , sigm_norm     ,&
-                    vim(1, kpg), option     , angmas   , 10    , elgeom(1, kpg),&
+                    vim(1, kpg), option     , angl_naut, 10    , elgeom(1, kpg),&
                     sigma      , vip(1, kpg), 36       , dsidep, 1             ,&
-                    vff        , cod(kpg)   , mult_comp)
+                    wkout      , cod(kpg)   , mult_comp)
         if (cod(kpg) .eq. 1) then
             goto 999
         endif
 !
-! ----- Cauchy stresses and rigidity matrix
+! ----- Compute internal forces vector and rigidity matrix
 !
-        call nmgrtg(3    , nno   , poids, kpg   , vff      ,&
+        call nmgrtg(ndim , nno   , poids, kpg   , vff      ,&
                     dfdi , def   , pff  , option, axi      ,&
                     r    , fm    , f    , dsidep, sigm_norm,&
                     sigma, matsym, matuu, vectu)
@@ -204,9 +198,8 @@ integer, intent(inout) :: codret
 ! ----- Stresses: convert PK2 to Cauchy
 !
         if (option(1:4) .eq. 'RAPH' .or. option(1:4) .eq. 'FULL') then
-            call lcdetf(3, f, detf)
-            call pk2sig(3, f, detf, sigma, sigp(1, kpg),&
-                        1)
+            call lcdetf(ndim, f, detf)
+            call pk2sig(ndim, f, detf, sigma, sigp(1, kpg), 1)
         endif
     end do
 !
