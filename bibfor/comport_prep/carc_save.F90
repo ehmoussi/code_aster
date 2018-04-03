@@ -40,6 +40,7 @@ implicit none
 #include "asterfort/getExternalBehaviourPntr.h"
 #include "asterfort/setMFrontPara.h"
 #include "asterfort/getExternalStateVariable.h"
+#include "asterfort/getExternalStrainModel.h"
 !
 character(len=8), intent(in) :: model
 character(len=8), intent(in) :: mesh
@@ -79,7 +80,7 @@ type(Behaviour_PrepCrit), intent(in) :: ds_compor_para
     aster_logical :: plane_stress, l_mfront_proto, l_mfront_offi, l_kit_thm
     integer :: cptr_nbvarext=0, cptr_namevarext=0, cptr_fct_ldc=0
     integer :: cptr_nameprop=0, cptr_nbprop=0
-    integer :: jvariexte = 0
+    integer :: jvariexte = 0, jstrainexte = 0
     character(len=16) :: kit_comp(4) = (/'VIDE','VIDE','VIDE','VIDE'/)
     character(len=16) :: rela_code_py=' ', defo_code_py=' ', meca_code_py=' ', comp_code_py=' '
 !
@@ -186,6 +187,12 @@ type(Behaviour_PrepCrit), intent(in) :: ds_compor_para
                                       cptr_nbvarext, cptr_namevarext,&
                                       jvariexte)
 !
+! ----- Get model of strains for external programs (MFRONT)
+!
+        call getExternalStrainModel(l_mfront_offi, l_mfront_proto,&
+                                    ds_compor_para%v_para(i_comp)%comp_exte,&
+                                    defo_comp, jstrainexte)
+!
 ! ----- Set in <CARTE>
 !
         p_carc_valv(1)  = iter_inte_maxi
@@ -198,21 +205,24 @@ type(Behaviour_PrepCrit), intent(in) :: ds_compor_para
         p_carc_valv(8)  = resi_deborst_max
         p_carc_valv(9)  = iter_deborst_max
         p_carc_valv(10) = resi_radi_rela
-        p_carc_valv(IVARIEXTE) = jvariexte
-        p_carc_valv(PARM_THETA_THM) = parm_theta_thm
+        p_carc_valv(IVARIEXTE)   = jvariexte
+        p_carc_valv(ISTRAINEXTE) = jstrainexte
         p_carc_valv(13) = post_iter
+        p_carc_valv(21) = post_incr
+!       exte_comp UMAT / MFRONT
         p_carc_valv(14) = cptr_nbvarext
         p_carc_valv(15) = cptr_namevarext
         p_carc_valv(16) = cptr_fct_ldc
+        p_carc_valv(19) = cptr_nameprop
+        p_carc_valv(20) = cptr_nbprop
+!       cf. CALC_POINT_MAT / PMDORC
         if (l_matr_unsymm) then
             p_carc_valv(17) = 1
         else
             p_carc_valv(17) = 0
         endif
         p_carc_valv(PARM_ALPHA_THM) = parm_alpha_thm
-        p_carc_valv(19) = cptr_nameprop
-        p_carc_valv(20) = cptr_nbprop
-        p_carc_valv(21) = post_incr      
+        p_carc_valv(PARM_THETA_THM) = parm_theta_thm
 !
 ! ----- Affect in <CARTE>
 !
