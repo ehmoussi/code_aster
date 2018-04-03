@@ -16,12 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-
 # person_in_charge: mickael.abbas at edf.fr
-#       D4UN MATERIAU DE TYPE MOONEY-RIVLIN
+#
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',
-              ),DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'))
+
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=39)
 
 Mesh=LIRE_MAILLAGE(FORMAT='MED',NOM_MED='Mblock');
 
@@ -68,7 +68,10 @@ K   = (6*(C10+C01))/(3*(1-2*NU))
 rubber=DEFI_MATERIAU(ELAS_HYPER=_F(C10=C10,
                                    C01=C01,
                                    C20=C20,
-                                   K=K,),);
+                                   K=K,
+                                   RHO=1000.0),
+                       MFRONT=_F( LISTE_COEF=(C01,C10,C20,K),),
+                     );
 
 
 MatRub=AFFE_MATERIAU(MAILLAGE=Mesh,
@@ -118,15 +121,19 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
 # PRESSION APPLIQUEE = 6MPa
 
 res=STAT_NON_LINE(MODELE=Mod3d,
-                   CHAM_MATER=MatRub,SOLVEUR=_F(NPREC=-1),
+                   CHAM_MATER=MatRub,
                    EXCIT=(_F(CHARGE=FORCE,FONC_MULT=RAMPE,TYPE_CHARGE='SUIV'),
                           _F(CHARGE=DEPL,),),
                    NEWTON=(_F(REAC_INCR=1,
                               MATRICE='TANGENTE',
                               REAC_ITER=1,)),
-                   COMPORTEMENT=_F(RELATION='ELAS_HYPER',
-                                DEFORMATION = 'GROT_GDEP',
-                                TOUT='OUI',),
+                   COMPORTEMENT=_F(
+                                   RELATION        = 'MFRONT',
+                                   DEFORMATION     = 'SIMO_MIEHE',
+                                   NOM_ROUTINE     = 'astersignorini',
+                                   UNITE_LIBRAIRIE = 39,
+                                   RESI_INTE_MAXI  = 1e-11,
+                                  ),
                    CONVERGENCE=(_F(ARRET='OUI',
                                    ITER_GLOB_MAXI=50)),
                    INCREMENT=_F(LIST_INST=LISTE,),);
