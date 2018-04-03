@@ -179,6 +179,14 @@ integer, intent(inout) :: codret
         sigm_norm(5) = sigm_norm(5)*rac2
         sigm_norm(6) = sigm_norm(6)*rac2
 !
+! ----- Jacobian must been positive !
+!
+        call lcdetf(ndim, f_curr, detf_curr)
+        if (detf_curr .le. 1.D-6) then
+            cod(kpg) = 1
+            goto 999
+        endif
+!
 ! ----- Compute behaviour
 !
         if ((jstrainexte .eq. MFRONT_STRAIN_GROTGDEP_S) .or. &

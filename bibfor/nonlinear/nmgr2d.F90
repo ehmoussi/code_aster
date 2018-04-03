@@ -178,8 +178,6 @@ integer, intent(inout) :: codret
         call lcdetf(ndim, f_prev, detf_prev)
         call pk2sig(ndim, f_prev, detf_prev, sigm_norm, sigm(1, kpg), -1)
         sigm_norm(4) = sigm_norm(4)*rac2
-        !sigm_norm(5) = sigm_norm(5)*rac2
-        !sigm_norm(6) = sigm_norm(6)*rac2
 !
 ! ----- Compute behaviour
 !
@@ -207,6 +205,12 @@ integer, intent(inout) :: codret
                 goto 999
             endif
         elseif (jstrainexte .eq. MFRONT_STRAIN_GROTGDEP_L) then
+! --------- Jacobian must been positive !
+            call lcdetf(ndim, f_curr, detf_curr)
+            if (detf_curr .le. 1.D-6) then
+                cod(kpg) = 1
+                goto 999
+            endif
 ! --------- Compute behaviour
             call nmcomp(fami       , kpg        , 1        , ndim  , typmod        ,&
                         imate      , compor     , carcri   , instam, instap        ,&
