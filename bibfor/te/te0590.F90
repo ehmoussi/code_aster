@@ -26,6 +26,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/elref2.h"
 #include "asterfort/elrefe_info.h"
+#include "asterfort/Behaviour_type.h"
 #include "asterfort/jevech.h"
 #include "asterfort/lteatt.h"
 #include "asterfort/nbfilg.h"
@@ -41,29 +42,38 @@ implicit none
 #include "asterfort/utmess.h"
 #include "blas/dcopy.h"
 !
-    character(len=16) :: option, nomte
-! ----------------------------------------------------------------------
-! FONCTION REALISEE:  CALCUL DES FORCES INTERNES POUR LES ELEMENTS
-!                     INCOMPRESSIBLES A 3 CHAMPS UGP
-!                     EN 3D/D_PLAN/AXI
+character(len=16), intent(in) :: option, nomte
 !
-!    - ARGUMENTS:
-!        DONNEES:      OPTION       -->  OPTION DE CALCUL
-!                      NOMTE        -->  NOM DU TYPE ELEMENT
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: rigi, resi, matsym
-    integer :: ndim, nno1, nno2, nno3, npg, nnos, jgn, ntrou
+! Elementary computation
+!
+! Elements: 3D_INCO_UPG, AXIS_INCO_UPG, D_PLAN_INCO_UPG
+!           3D_INCO_UPGB, AXIS_INCO_UPGB, D_PLAN_INCO_UPGB
+! Options: FULL_MECA, FULL_MECA_ELAS
+!          RAPH_MECA
+!          RIGI_MECA_ELAS, RIGI_MECA_TANG
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
+! --------------------------------------------------------------------------------------------------
+!
+    aster_logical :: l_rigi, l_resi, matsym
+    integer :: ndim, nno1, nno2, nno3, npg, nb_elrefe
     integer :: icoret, codret, iret
-    integer :: iw, ivf1, ivf2, ivf3, idf1, idf2, idf3
+    integer :: iw, ivf1, ivf2, ivf3, idf1, idf2
     integer :: jtab(7), lgpg, i, idim
     integer :: vu(3, 27), vg(27), vp(27), vpi(3, 27)
     integer :: igeom, imate, icontm, ivarim
     integer :: iinstm, iinstp, iddlm, iddld, icompo, icarcr, ivarix
     integer :: ivectu, icontp, ivarip, imatuu
     integer :: idbg, nddl, ia, ja
-    real(kind=8) :: angmas(7), bary(3)
-    character(len=8) :: lielrf(10), typmod(2)
+    real(kind=8) :: angl_naut(7), bary(3)
+    character(len=8) :: list_elrefe(10), typmod(2)
+    character(len=16) :: defo_comp
 !
 !     POUR TGVERI
     real(kind=8) :: sdepl(135), svect(135), scont(6*27), smatr(18225)
@@ -71,34 +81,44 @@ implicit none
     real(kind=8) :: varia(2*135*135)
     real(kind=8) :: tab_out(27*3*27*3)
     integer      :: na, os, nb, ib, kk
-! ----------------------------------------------------------------------
 !
-    idbg=0
+! --------------------------------------------------------------------------------------------------
 !
-! - FONCTIONS DE FORME
-    call elref2(nomte, 10, lielrf, ntrou)
-    ASSERT(ntrou.ge.3)
-    call elrefe_info(elrefe=lielrf(3), fami='RIGI', ndim=ndim, nno=nno3, nnos=nnos,&
-                     npg=npg, jpoids=iw, jvf=ivf3, jdfde=idf3, jgano=jgn)
-    call elrefe_info(elrefe=lielrf(2), fami='RIGI', ndim=ndim, nno=nno2, nnos=nnos,&
-                     npg=npg, jpoids=iw, jvf=ivf2, jdfde=idf2, jgano=jgn)
-    call elrefe_info(elrefe=lielrf(1), fami='RIGI', ndim=ndim, nno=nno1, nnos=nnos,&
-                     npg=npg, jpoids=iw, jvf=ivf1, jdfde=idf1, jgano=jgn)
+    idbg      = 0
+    codret    = 0
+    matsym    = ASTER_TRUE
+    typmod(:) = ' '
+!
+! - List of ELREFE
+!
+    call elref2(nomte, 10, list_elrefe, nb_elrefe)
+    ASSERT(nb_elrefe .ge. 3)
+!
+! - Get shape functions
+!
+! - PRES
+    call elrefe_info(elrefe=list_elrefe(3), fami='RIGI', nno=nno3,&
+                     jvf=ivf3)
+! - GONF
+    call elrefe_info(elrefe=list_elrefe(2), fami='RIGI', nno=nno2,&
+                     jvf=ivf2, jdfde=idf2)
+! - DX, DY, DZ
+    call elrefe_info(elrefe=list_elrefe(1), fami='RIGI', ndim=ndim, nno=nno1,&
+                     npg=npg, jpoids=iw, jvf=ivf1, jdfde=idf1)
+!
     nddl = nno1*ndim + nno2 + nno3
-    matsym = .true.
 !
-! - TYPE DE MODELISATION
+! - Modelling 
+!
     if (ndim .eq. 2 .and. lteatt('AXIS','OUI')) then
-        typmod(1) = 'AXIS  '
+        typmod(1) = 'AXIS'
     else if (ndim.eq.2 .and. lteatt('D_PLAN','OUI')) then
-        typmod(1) = 'D_PLAN  '
+        typmod(1) = 'D_PLAN'
     else if (ndim .eq. 3) then
         typmod(1) = '3D'
     else
-        call utmess('F', 'ELEMENTS_34', sk=nomte)
+        ASSERT(ASTER_FALSE)
     endif
-    typmod(2) = '        '
-    codret = 0
 !
 ! - Get index of dof
 !
@@ -106,11 +126,13 @@ implicit none
                 ndim, nno1, nno2, nno3, 0,&
                 vu, vg, vp, vpi)
 !
-! - OPTION
-    resi = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'
-    rigi = option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL'
+! - What to compute ?
 !
-! - PARAMETRES EN ENTREE
+    l_resi = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'
+    l_rigi = option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL'
+!
+! - Input fields
+!
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PMATERC', 'L', imate)
     call jevech('PCONTMR', 'L', icontm)
@@ -119,27 +141,25 @@ implicit none
     call jevech('PDEPLPR', 'L', iddld)
     call jevech('PCOMPOR', 'L', icompo)
     call jevech('PCARCRI', 'L', icarcr)
-!
     call jevech('PINSTMR', 'L', iinstm)
     call jevech('PINSTPR', 'L', iinstp)
 !
     call tecach('OOO', 'PVARIMR', 'L', iret, nval=7, itab=jtab)
     lgpg = max(jtab(6),1)*jtab(7)
 !
-! - ORIENTATION DU MASSIF
-! - COORDONNEES DU BARYCENTRE ( POUR LE REPRE CYLINDRIQUE )
-    bary(1) = 0.d0
-    bary(2) = 0.d0
-    bary(3) = 0.d0
+! - Compute barycentric center
+!
+    bary(:) = 0.d0
     do i = 1, nno1
         do idim = 1, ndim
             bary(idim) = bary(idim)+zr(igeom+idim+ndim*(i-1)-1)/nno1
         end do
     end do
-    call rcangm(ndim, bary, angmas)
+    call rcangm(ndim, bary, angl_naut)
 !
-! - PARAMETRES EN SORTIE
-    if (resi) then
+! - Output fields
+!
+    if (l_resi) then
         call jevech('PVECTUR', 'E', ivectu)
         call jevech('PCONTPR', 'E', icontp)
         call jevech('PVARIPR', 'E', ivarip)
@@ -152,15 +172,19 @@ implicit none
         ivarix=1
     endif
 !
+! - Strain model
+!
+    defo_comp = zk16(icompo-1+DEFO)
+!
 100 continue
 ! - PETITES DEFORMATIONS
-    if (zk16(icompo+2) (1:6) .eq. 'PETIT ') then
+    if (defo_comp(1:6) .eq. 'PETIT ') then
         if (lteatt('INCO','C3B')) then
             call utmess('F', 'MODELISA10_17', sk=zk16(icompo+2))
         endif
 !
 ! - PARAMETRES EN SORTIE
-        if (rigi) then
+        if (l_rigi) then
             call jevech('PMATUUR', 'E', imatuu)
         else
             imatuu=1
@@ -169,13 +193,13 @@ implicit none
                     iw, zr(ivf1), zr(ivf2), zr(ivf3), idf1,&
                     vu, vg, vp, zr(igeom), typmod,&
                     option, zi(imate), zk16(icompo), lgpg, zr(icarcr),&
-                    zr(iinstm), zr(iinstp), zr(iddlm), zr(iddld), angmas,&
-                    zr(icontm), zr(ivarim), zr(icontp), zr(ivarip), resi,&
-                    rigi, zr(ivectu), zr(imatuu), codret)
-    else if (zk16(icompo+2) (1:8).eq.'GDEF_LOG') then
+                    zr(iinstm), zr(iinstp), zr(iddlm), zr(iddld), angl_naut,&
+                    zr(icontm), zr(ivarim), zr(icontp), zr(ivarip), l_resi,&
+                    l_rigi, zr(ivectu), zr(imatuu), codret)
+    else if (defo_comp .eq. 'GDEF_LOG') then
 !
 ! - PARAMETRES EN SORTIE
-        if (rigi) then
+        if (l_rigi) then
             call nmtstm(zr(icarcr), imatuu, matsym)
         else
             imatuu=1
@@ -186,23 +210,23 @@ implicit none
                         iw, zr(ivf1), zr(ivf2), zr(ivf3), idf1,&
                         vu, vg, vp, zr(igeom), typmod,&
                         option, zi(imate), zk16(icompo), lgpg, zr(icarcr),&
-                        zr(iinstm), zr(iinstp), zr(iddlm), zr(iddld), angmas,&
-                        zr(icontm), zr(ivarim), zr(icontp), zr(ivarip), resi,&
-                        rigi, zr(ivectu), zr(imatuu), matsym, codret)
+                        zr(iinstm), zr(iinstp), zr(iddlm), zr(iddld), angl_naut,&
+                        zr(icontm), zr(ivarim), zr(icontp), zr(ivarip), l_resi,&
+                        l_rigi, zr(ivectu), zr(imatuu), matsym, codret)
         else
             call nifilg(ndim, nno1, nno2, nno3, npg,&
                         iw, zr(ivf1), zr(ivf2), zr(ivf3), idf1,&
                         vu, vg, vp, zr(igeom), typmod,&
                         option, zi(imate), zk16(icompo), lgpg, zr(icarcr),&
-                        zr(iinstm), zr(iinstp), zr(iddlm), zr(iddld), angmas,&
-                        zr(icontm), zr(ivarim), zr(icontp), zr(ivarip), resi,&
-                        rigi, zr(ivectu), zr(imatuu), matsym, codret)
+                        zr(iinstm), zr(iinstp), zr(iddlm), zr(iddld), angl_naut,&
+                        zr(icontm), zr(ivarim), zr(icontp), zr(ivarip), l_resi,&
+                        l_rigi, zr(ivectu), zr(imatuu), matsym, codret)
         endif
-    else if (zk16(icompo+2) (1:10).eq.'SIMO_MIEHE') then
+    else if (defo_comp .eq. 'SIMO_MIEHE') then
 !
 ! - PARAMETRES EN SORTIE
         typmod(2) = 'INCO'
-        if (rigi) then
+        if (l_rigi) then
             call nmtstm(zr(icarcr), imatuu, matsym)
         else
             imatuu=1
@@ -214,19 +238,19 @@ implicit none
                         idf2, vu, vg, vp, zr(igeom),&
                         typmod, option, zi(imate), zk16(icompo), lgpg,&
                         zr(icarcr), zr(iinstm), zr(iinstp), zr(iddlm), zr(iddld),&
-                        angmas, zr(icontm), zr(ivarim), zr(icontp), zr(ivarip),&
-                        resi, rigi, zr(ivectu), zr(imatuu), codret)
+                        angl_naut, zr(icontm), zr(ivarim), zr(icontp), zr(ivarip),&
+                        l_resi, l_rigi, zr(ivectu), zr(imatuu), codret)
         else
             call nifism(ndim, nno1, nno2, nno3, npg,&
                         iw, zr(ivf1), zr(ivf2), zr(ivf3), idf1,&
                         idf2, vu, vg, vp, zr(igeom),&
                         typmod, option, zi(imate), zk16(icompo), lgpg,&
                         zr(icarcr), zr(iinstm), zr(iinstp), zr(iddlm), zr(iddld),&
-                        angmas, zr(icontm), zr(ivarim), zr(icontp), zr(ivarip),&
-                        resi, rigi, zr(ivectu), zr(imatuu), codret)
+                        angl_naut, zr(icontm), zr(ivarim), zr(icontp), zr(ivarip),&
+                        l_resi, l_rigi, zr(ivectu), zr(imatuu), codret)
         endif
     else
-        call utmess('F', 'ELEMENTS3_16', sk=zk16(icompo+2))
+        call utmess('F', 'ELEMENTS3_16', sk=defo_comp)
     endif
 !
     if (codret .ne. 0) goto 200
@@ -241,13 +265,13 @@ implicit none
 !
 200 continue
 !
-    if (resi) then
+    if (l_resi) then
         call jevech('PCODRET', 'E', icoret)
         zi(icoret) = codret
     endif
 !
     if (idbg .eq. 1) then
-        if (rigi) then
+        if (l_rigi) then
             write(6,*) 'MATRICE TANGENTE'
             if (matsym) then
                 do ia = 1, nddl
@@ -396,7 +420,7 @@ implicit none
                 enddo
             endif
         endif
-        if (resi) then
+        if (l_resi) then
             write(6,*) 'FORCE INTERNE'
             write(6,'(108(1X,E11.4))') (zr(ivectu+ja-1),ja=1,nddl)
         endif
