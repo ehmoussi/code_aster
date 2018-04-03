@@ -20,17 +20,15 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nmgr3d(nno  , npg   , ipoids, ivf   , idfde ,&
+    subroutine nmgr3d(fami , nno   , npg   , ipoids, ivf   , vff      , idfde,&
                       geomi, typmod, option, imate , compor, mult_comp,&
                       lgpg , carcri, instam, instap, deplm ,&
-                      deplp, angmas, sigm  , vim   , matsym,&
-                      dfdi , pff   , def   , sigp  , vip   ,&
-                      matuu, vectu , codret)
-        integer, intent(in) :: nno
-        integer, intent(in) :: npg
-        integer, intent(in) :: ipoids
-        integer, intent(in) :: ivf
-        integer, intent(in) :: idfde
+                      deplp, sigm  , vim   , matsym,&
+                      sigp , vip   , matuu , vectu , codret)
+        character(len=*), intent(in) :: fami
+        integer, intent(in) :: nno, npg
+        integer, intent(in) :: ipoids, ivf, idfde
+        real(kind=8), intent(in) :: vff(*)
         real(kind=8), intent(in) :: geomi(3, nno)
         character(len=8), intent(in) :: typmod(*)
         character(len=16), intent(in) :: option
@@ -41,14 +39,11 @@ interface
         integer, intent(in) :: lgpg
         real(kind=8), intent(in) :: instam
         real(kind=8), intent(in) :: instap
-        real(kind=8), intent(inout) :: deplm(3, nno), deplp(3, nno)
-        real(kind=8), intent(in) :: angmas(*)
+        real(kind=8), intent(inout) :: deplm(3*nno)
+        real(kind=8), intent(inout) :: deplp(3*nno)
         real(kind=8), intent(inout) :: sigm(6, npg)
         real(kind=8), intent(inout) :: vim(lgpg, npg)
         aster_logical, intent(in) :: matsym
-        real(kind=8), intent(inout) :: dfdi(nno, 3)
-        real(kind=8), intent(inout) :: pff(6, nno, nno)
-        real(kind=8), intent(inout) :: def(6, nno, 3)
         real(kind=8), intent(inout) :: sigp(6, npg)
         real(kind=8), intent(inout) :: vip(lgpg, npg)
         real(kind=8), intent(inout) :: matuu(*)
