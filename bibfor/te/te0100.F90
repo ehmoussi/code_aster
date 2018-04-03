@@ -229,15 +229,18 @@ character(len=16), intent(in) :: option, nomte
                         zr(icontm), zr(ivarim), zr(icontp), zr(ivarip), zr( ivectu),&
                         zr(imatuu), codret)
         else if (defo_comp .eq. 'GROT_GDEP') then
-            do li = 1, 2*nno
-                zr(ideplp+li-1) = zr(ideplm+li-1) + zr(ideplp+li-1)
-            end do
-            call nmgr2d(fami, nno, npg, ipoids, ivf, zr(ivf), idfde,&
-                        zr(igeom), typmod, option, zi(imate), zk16(icompo), mult_comp, &
-                        lgpg, zr( icarcr), zr(iinstm), zr(iinstp), zr(ideplm), &
-                        zr(ideplp), zr(icontm), zr(ivarim), matsym,&
-                        zr(icontp), zr(ivarip), &
-                        zr(imatuu), zr(ivectu), codret)
+            call nmgr2d(option      , typmod    ,&
+                        fami        , zi(imate) ,&
+                        nno         , npg       , lgpg     ,&
+                        ipoids      , ivf       , zr(ivf)  , idfde,&
+                        zk16(icompo), zr(icarcr), mult_comp,&
+                        zr(iinstm)  , zr(iinstp),&
+                        zr(igeom)   , zr(ideplm),&
+                        zr(ideplp)  ,&
+                        zr(icontm)  , zr(icontp),&
+                        zr(ivarim)  , zr(ivarip),&
+                        matsym      , zr(imatuu), zr(ivectu),&
+                        codret)
         else if (defo_comp .eq. 'GDEF_LOG') then
             call nmdlog(fami, option, typmod, ndim, nno,&
                         npg, ipoids, ivf, zr(ivf), idfde,&
