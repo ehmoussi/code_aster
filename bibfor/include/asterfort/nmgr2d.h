@@ -20,32 +20,33 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nmgr2d(fami , nno   , npg   , ipoids, ivf   , vff      , idfde,&
-                      geomi, typmod, option, imate , compor, mult_comp,&
-                      lgpg , carcri, instam, instap, deplm ,&
-                      deplp, sigm  , vim   , matsym,&
-                      sigp , vip   , matuu, vectu , codret)
+    subroutine nmgr2d(option   , typmod    ,&
+                      fami     , imate     ,&
+                      nno      , npg       , lgpg     ,&
+                      ipoids   , ivf       , vff      , idfde,&
+                      compor   , carcri    , mult_comp,&
+                      instam   , instap    ,&
+                      geom_init, disp_prev , disp_incr,&
+                      sigm     , sigp      ,&
+                      vim      , vip       ,&
+                      matsym   , matuu     , vectu    ,&
+                      codret)
+        character(len=16), intent(in) :: option
+        character(len=8), intent(in) :: typmod(*)
         character(len=*), intent(in) :: fami
-        integer, intent(in) :: nno, npg
+        integer, intent(in) :: imate
+        integer, intent(in) :: nno, npg, lgpg
         integer, intent(in) :: ipoids, ivf, idfde
         real(kind=8), intent(in) :: vff(*)
-        real(kind=8), intent(in) :: geomi(2, nno)
-        character(len=8), intent(in) :: typmod(*)
-        character(len=16), intent(in) :: option
-        integer, intent(in) :: imate
-        character(len=16), intent(in) :: compor(*)
-        character(len=16), intent(in) :: mult_comp
+        character(len=16), intent(in) :: compor(*)        
         real(kind=8), intent(in) :: carcri(*)
-        integer, intent(in) :: lgpg
-        real(kind=8), intent(in) :: instam
-        real(kind=8), intent(in) :: instap
-        real(kind=8), intent(inout) :: deplm(2*nno)
-        real(kind=8), intent(inout) :: deplp(2*nno)
-        real(kind=8), intent(inout) :: sigm(4, npg)
-        real(kind=8), intent(inout) :: vim(lgpg, npg)
+        character(len=16), intent(in) :: mult_comp
+        real(kind=8), intent(in) :: instam, instap
+        real(kind=8), intent(in) :: geom_init(2, nno)
+        real(kind=8), intent(inout) :: disp_prev(2*nno),  disp_incr(2*nno)
+        real(kind=8), intent(inout) :: sigm(4, npg), sigp(4, npg)
+        real(kind=8), intent(inout) :: vim(lgpg, npg), vip(lgpg, npg)
         aster_logical, intent(in) :: matsym
-        real(kind=8), intent(inout) :: sigp(4, npg)
-        real(kind=8), intent(inout) :: vip(lgpg, npg)
         real(kind=8), intent(inout) :: matuu(*)
         real(kind=8), intent(inout) :: vectu(2*nno)
         integer, intent(inout) :: codret
