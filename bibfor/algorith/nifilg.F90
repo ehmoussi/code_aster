@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nifilg(ndim, nno1, nno2, nno3, npg,&
-                  iw, vff1, vff2, vff3, idff1,&
+! aslint: disable=W1306,W1504
+!
+subroutine nifilg(ndim, nnod, nnog, nnop, npg,&
+                  iw, vffd, vffg, vffp, idff1,&
                   vu, vg, vp, geomi, typmod,&
                   option, mate, compor, lgpg, crit,&
                   instm, instp, ddlm, ddld, angmas,&
                   sigm, vim, sigp, vip, resi,&
                   rigi, vect, matr, matsym, codret)
-! person_in_charge: sebastien.fayolle at edf.fr
-! aslint: disable=W1306,W1504
-    implicit none
+!
+implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/codere.h"
@@ -44,13 +44,13 @@ subroutine nifilg(ndim, nno1, nno2, nno3, npg,&
 #include "blas/ddot.h"
 #include "blas/dscal.h"
     aster_logical :: resi, rigi, matsym
-    integer :: ndim, nno1, nno2, nno3, npg, iw, idff1, lgpg
+    integer :: ndim, nnod, nnog, nnop, npg, iw, idff1, lgpg
     integer :: mate
     integer :: vu(3, 27), vg(27), vp(27)
     integer :: codret
-    real(kind=8) :: vff1(nno1, npg), vff2(nno2, npg), vff3(nno3, npg)
+    real(kind=8) :: vffd(nnod, npg), vffg(nnog, npg), vffp(nnop, npg)
     real(kind=8) :: instm, instp
-    real(kind=8) :: geomi(ndim, nno1), ddlm(*), ddld(*), angmas(*)
+    real(kind=8) :: geomi(ndim, nnod), ddlm(*), ddld(*), angmas(*)
     real(kind=8) :: sigm(2*ndim+1, npg), sigp(2*ndim+1, npg)
     real(kind=8) :: vim(lgpg, npg), vip(lgpg, npg)
     real(kind=8) :: vect(*), matr(*)
@@ -67,14 +67,14 @@ subroutine nifilg(ndim, nno1, nno2, nno3, npg,&
 ! IN  RIGI    : CALCUL DE LA MATRICE DE RIGIDITE
 ! IN  MATSYM  : MATRICE TANGENTE SYMETRIQUE OU NON
 ! IN  NDIM    : DIMENSION DE L'ESPACE
-! IN  NNO1    : NOMBRE DE NOEUDS DE L'ELEMENT LIES AUX DEPLACEMENTS
-! IN  NNO2    : NOMBRE DE NOEUDS DE L'ELEMENT LIES AU GONFLEMENT
-! IN  NNO3    : NOMBRE DE NOEUDS DE L'ELEMENT LIES A LA PRESSION
+! IN  nnod    : NOMBRE DE NOEUDS DE L'ELEMENT LIES AUX DEPLACEMENTS
+! IN  nnog    : NOMBRE DE NOEUDS DE L'ELEMENT LIES AU GONFLEMENT
+! IN  nnop    : NOMBRE DE NOEUDS DE L'ELEMENT LIES A LA PRESSION
 ! IN  NPG     : NOMBRE DE POINTS DE GAUSS
 ! IN  IW      : POIDS DES POINTS DE GAUSS
-! IN  VFF1    : VALEUR  DES FONCTIONS DE FORME LIES AUX DEPLACEMENTS
-! IN  VFF2    : VALEUR  DES FONCTIONS DE FORME LIES AU GONFLEMENT
-! IN  VFF3    : VALEUR  DES FONCTIONS DE FORME LIES A LA PRESSION
+! IN  vffd    : VALEUR  DES FONCTIONS DE FORME LIES AUX DEPLACEMENTS
+! IN  vffg    : VALEUR  DES FONCTIONS DE FORME LIES AU GONFLEMENT
+! IN  vffp    : VALEUR  DES FONCTIONS DE FORME LIES A LA PRESSION
 ! IN  IDFF1   : DERIVEE DES FONCTIONS DE FORME ELEMENT DE REFERENCE
 ! IN  VU      : TABLEAU DES INDICES DES DDL DE DEPLACEMENTS
 ! IN  VG      : TABLEAU DES INDICES DES DDL DE GONFLEMENT
@@ -108,7 +108,7 @@ subroutine nifilg(ndim, nno1, nno2, nno3, npg,&
     integer :: viaja, vibjb, vuiana, vgra, vpsa
     integer :: cod(27)
     real(kind=8) :: geomm(3*27), geomp(3*27), deplm(3*27), deplp(3*27)
-    real(kind=8) :: r, w, wp, dff1(nno1, 4)
+    real(kind=8) :: r, w, wp, dff1(nnod, 4)
     real(kind=8) :: presm(27), presd(27)
     real(kind=8) :: gonfm(27), gonfd(27)
     real(kind=8) :: sigm_ldc(2*ndim), sigp_ldc(2*ndim)
@@ -145,12 +145,12 @@ subroutine nifilg(ndim, nno1, nno2, nno3, npg,&
 !
 ! - INITIALISATION
     axi = typmod(1).eq.'AXIS'
-    nddl = nno1*ndim + nno2 + nno3
+    nddl = nnod*ndim + nnog + nnop
     ndu = ndim
     if (axi) ndu = 3
 !
 ! - REACTUALISATION DE LA GEOMETRIE ET EXTRACTION DES CHAMPS
-    do na = 1, nno1
+    do na = 1, nnod
         do ia = 1, ndim
             geomm(ia+ndim*(na-1)) = geomi(ia,na) + ddlm(vu(ia,na))
             geomp(ia+ndim*(na-1)) = geomm(ia+ndim*(na-1))+ddld(vu(ia, na))
@@ -159,12 +159,12 @@ subroutine nifilg(ndim, nno1, nno2, nno3, npg,&
         end do
     end do
 !
-    do ra = 1, nno2
+    do ra = 1, nnog
         gonfm(ra) = ddlm(vg(ra))
         gonfd(ra) = ddld(vg(ra))
     end do
 !
-    do sa = 1, nno3
+    do sa = 1, nnop
         presm(sa) = ddlm(vp(sa))
         presd(sa) = ddld(vp(sa))
     end do
@@ -184,18 +184,18 @@ subroutine nifilg(ndim, nno1, nno2, nno3, npg,&
     do g = 1, npg
 !
 ! - CALCUL DES DEFORMATIONS
-        call dfdmip(ndim, nno1, axi, geomi, g,&
-                    iw, vff1(1, g), idff1, r, w,&
+        call dfdmip(ndim, nnod, axi, geomi, g,&
+                    iw, vffd(1, g), idff1, r, w,&
                     dff1)
-        call nmepsi(ndim, nno1, axi, grand, vff1(1, g),&
+        call nmepsi(ndim, nnod, axi, grand, vffd(1, g),&
                     r, dff1, deplm, fm, epsm)
-        call nmepsi(ndim, nno1, axi, grand, vff1(1, g),&
+        call nmepsi(ndim, nnod, axi, grand, vffd(1, g),&
                     r, dff1, deplp, fp, epsp)
-        call dfdmip(ndim, nno1, axi, geomp, g,&
-                    iw, vff1(1, g), idff1, r, wp,&
+        call dfdmip(ndim, nnod, axi, geomp, g,&
+                    iw, vffd(1, g), idff1, r, wp,&
                     dff1)
 !
-        call nmmalu(nno1, axi, r, vff1(1, g), dff1,&
+        call nmmalu(nnod, axi, r, vffd(1, g), dff1,&
                     lij)
 !
         jm = fm(1,1)*(fm(2,2)*fm(3,3)-fm(2,3)*fm(3,2)) - fm(2,1)*(fm(1,2)*fm(3,3)-fm(1,3)*fm(3,2)&
@@ -209,12 +209,12 @@ subroutine nifilg(ndim, nno1, nno2, nno3, npg,&
         endif
 !
 ! - CALCUL DE LA PRESSION ET DU GONFLEMENT AU POINT DE GAUSS
-        gm = ddot(nno2,vff2(1,g),1,gonfm,1)
-        gd = ddot(nno2,vff2(1,g),1,gonfd,1)
+        gm = ddot(nnog,vffg(1,g),1,gonfm,1)
+        gd = ddot(nnog,vffg(1,g),1,gonfd,1)
         gp = gm+gd
 !
-        pm = ddot(nno3,vff3(1,g),1,presm,1)
-        pd = ddot(nno3,vff3(1,g),1,presd,1)
+        pm = ddot(nnop,vffp(1,g),1,presm,1)
+        pd = ddot(nnop,vffp(1,g),1,presd,1)
         pp = pm+pd
 !
 ! - CALCUL DES FONCTIONS A, B,... DETERMINANT LA RELATION LIANT G ET J
@@ -288,7 +288,7 @@ subroutine nifilg(ndim, nno1, nno2, nno3, npg,&
             sigp(2*ndim+1,g) = (tauhy - pp*bb)/jp
 !
 ! - VECTEUR FINT:U
-            do na = 1, nno1
+            do na = 1, nnod
                 do ia = 1, ndu
                     kk = vu(ia,na)
                     t1 = 0.d0
@@ -302,17 +302,17 @@ subroutine nifilg(ndim, nno1, nno2, nno3, npg,&
 !
 ! - VECTEUR FINT:G
             t2 = tauhy*aa - pp*dboa
-            do ra = 1, nno2
+            do ra = 1, nnog
                 kk = vg(ra)
-                t1 = vff2(ra,g)*t2
+                t1 = vffg(ra,g)*t2
                 vect(kk) = vect(kk) + w*t1
             end do
 !
 ! - VECTEUR FINT:P
             t2 = bp - boa
-            do sa = 1, nno3
+            do sa = 1, nnop
                 kk = vp(sa)
-                t1 = vff3(sa,g)*t2
+                t1 = vffp(sa,g)*t2
                 vect(kk) = vect(kk) + w*t1
             end do
         endif
@@ -352,13 +352,13 @@ subroutine nifilg(ndim, nno1, nno2, nno3, npg,&
             if (matsym) then
 ! - MATRICE SYMETRIQUE
 ! - TERME K:UX
-                do na = 1, nno1
+                do na = 1, nnod
                     do ia = 1, ndu
                         vuiana = vu(ia,na)
                         os = (vuiana-1)*vuiana/2
 !
-! - TERME K:UU      KUU(NDIM,NNO1,NDIM,NNO1)
-                        do nb = 1, nno1
+! - TERME K:UU      KUU(NDIM,nnod,NDIM,nnod)
+                        do nb = 1, nnod
                             do ib = 1, ndu
                                 if (vu(ib,nb) .le. vuiana) then
                                     kk = os+vu(ib,nb)
@@ -393,7 +393,7 @@ subroutine nifilg(ndim, nno1, nno2, nno3, npg,&
                             end do
                         end do
 !
-! - TERME K:UG      KUG(NDIM,NNO1,NNO2)
+! - TERME K:UG      KUG(NDIM,nnod,nnog)
                         t1 = 0.d0
                         do ja = 1, ndu
                             viaja=vij(ia,ja)
@@ -402,18 +402,18 @@ subroutine nifilg(ndim, nno1, nno2, nno3, npg,&
                         end do
                         t1 = t1*aa/3.d0
 !
-                        do rb = 1, nno2
+                        do rb = 1, nnog
                             if (vg(rb) .lt. vuiana) then
                                 kk = os + vg(rb)
-                                matr(kk) = matr(kk) + w*t1*vff2(rb,g)
+                                matr(kk) = matr(kk) + w*t1*vffg(rb,g)
                             endif
                         end do
 !
-! - TERME K:UP      KUP(NDIM,NNO1,NNO3)
-                        do sb = 1, nno3
+! - TERME K:UP      KUP(NDIM,nnod,nnop)
+                        do sb = 1, nnop
                             if (vp(sb) .lt. vuiana) then
                                 kk = os + vp(sb)
-                                t1 = dff1(na,lij(ia,ia))*bb*vff3(sb,g)
+                                t1 = dff1(na,lij(ia,ia))*bb*vffp(sb,g)
                                 matr(kk) = matr(kk) + w*t1
                             endif
                         end do
@@ -421,12 +421,12 @@ subroutine nifilg(ndim, nno1, nno2, nno3, npg,&
                 end do
 !
 ! - TERME K:GX
-                do ra = 1, nno2
+                do ra = 1, nnog
                     vgra = vg(ra)
                     os = (vgra-1)*vgra/2
 !
-! - TERME K:GU      KGU(NDIM,NNO2,NNO1)
-                    do nb = 1, nno1
+! - TERME K:GU      KGU(NDIM,nnog,nnod)
+                    do nb = 1, nnod
                         do ib = 1, ndu
                             if (vu(ib,nb) .lt. vgra) then
                                 kk = os + vu(ib,nb)
@@ -436,68 +436,68 @@ subroutine nifilg(ndim, nno1, nno2, nno3, npg,&
                                     t2 = (iddev(vibjb)+2.d0*taudv( vibjb))
                                     t1 = t1 + t2*dff1(nb,lij(ib,jb))
                                 end do
-                                matr(kk) = matr(kk) + w*t1*aa*vff2(ra,g)/ 3.d0
+                                matr(kk) = matr(kk) + w*t1*aa*vffg(ra,g)/ 3.d0
                             endif
                         end do
                     end do
 !
-! - TERME K:GG      KGG(NNO2,NNO2)
+! - TERME K:GG      KGG(nnog,nnog)
                     t2 = (iddid/9.d0+2.d0*tauhy/3.d0)*aa**2 - pp*d2boa + tauhy*daa
-                    do rb = 1, nno2
+                    do rb = 1, nnog
                         if (vg(rb) .le. vgra) then
                             kk = os + vg(rb)
-                            t1 = vff2(ra,g)*t2*vff2(rb,g)
+                            t1 = vffg(ra,g)*t2*vffg(rb,g)
                             matr(kk) = matr(kk) + w*t1
                         endif
                     end do
 !
-! - TERME K:GP      KGP(NNO2,NNO3)
-                    do sb = 1, nno3
+! - TERME K:GP      KGP(nnog,nnop)
+                    do sb = 1, nnop
                         if (vp(sb) .lt. vgra) then
                             kk = os + vp(sb)
-                            t1 = - vff2(ra,g)*dboa*vff3(sb,g)
+                            t1 = - vffg(ra,g)*dboa*vffp(sb,g)
                             matr(kk) = matr(kk) + w*t1
                         endif
                     end do
                 end do
 !
 ! - TERME K:PX
-                do sa = 1, nno3
+                do sa = 1, nnop
                     vpsa = vp(sa)
                     os = (vpsa-1)*vpsa/2
 !
-! - TERME K:PU      KPU(NDIM,NNO3,NNO1)
-                    do nb = 1, nno1
+! - TERME K:PU      KPU(NDIM,nnop,nnod)
+                    do nb = 1, nnod
                         do ib = 1, ndu
                             if (vu(ib,nb) .lt. vpsa) then
                                 kk = os + vu(ib,nb)
-                                t1 = vff3(sa,g)*bb*dff1(nb,lij(ib,ib))
+                                t1 = vffp(sa,g)*bb*dff1(nb,lij(ib,ib))
                                 matr(kk) = matr(kk) + w*t1
                             endif
                         end do
                     end do
 !
-! - TERME K:PG      KPG(NNO3,NNO2)
-                    do rb = 1, nno2
+! - TERME K:PG      KPG(nnop,nnog)
+                    do rb = 1, nnog
                         if (vg(rb) .lt. vpsa) then
                             kk = os + vg(rb)
-                            t1 = - vff3(sa,g)*dboa*vff2(rb,g)
+                            t1 = - vffp(sa,g)*dboa*vffg(rb,g)
                             matr(kk) = matr(kk) + w*t1
                         endif
                     end do
 !
-! - TERME K:PP = 0.D0      KPP(NNO3,NNO3)
+! - TERME K:PP = 0.D0      KPP(nnop,nnop)
                 end do
 !
             else
 ! - MATRICE NON SYMETRIQUE
 ! - TERME K:UX
-                do na = 1, nno1
+                do na = 1, nnod
                     do ia = 1, ndu
                         os = (vu(ia,na)-1)*nddl
 !
-! - TERME K:UU      KUU(NDIM,NNO1,NDIM,NNO1)
-                        do nb = 1, nno1
+! - TERME K:UU      KUU(NDIM,nnod,NDIM,nnod)
+                        do nb = 1, nnod
                             do ib = 1, ndu
                                 kk = os+vu(ib,nb)
                                 t1 = 0.d0
@@ -528,7 +528,7 @@ subroutine nifilg(ndim, nno1, nno2, nno3, npg,&
                             end do
                         end do
 !
-! - TERME K:UG      KUG(NDIM,NNO1,NNO2)
+! - TERME K:UG      KUG(NDIM,nnod,nnog)
                         t1 = 0.d0
                         do ja = 1, ndu
                             viaja=vij(ia,ja)
@@ -537,26 +537,26 @@ subroutine nifilg(ndim, nno1, nno2, nno3, npg,&
                         end do
                         t1 = t1*aa/3.d0
 !
-                        do rb = 1, nno2
+                        do rb = 1, nnog
                             kk = os + vg(rb)
-                            matr(kk) = matr(kk) + w*t1*vff2(rb,g)
+                            matr(kk) = matr(kk) + w*t1*vffg(rb,g)
                         end do
 !
-! - TERME K:UP      KUP(NDIM,NNO1,NNO3)
-                        do sb = 1, nno3
+! - TERME K:UP      KUP(NDIM,nnod,nnop)
+                        do sb = 1, nnop
                             kk = os + vp(sb)
-                            t1 = dff1(na,lij(ia,ia))*bb*vff3(sb,g)
+                            t1 = dff1(na,lij(ia,ia))*bb*vffp(sb,g)
                             matr(kk) = matr(kk) + w*t1
                         end do
                     end do
                 end do
 !
 ! - TERME K:GX
-                do ra = 1, nno2
+                do ra = 1, nnog
                     os = (vg(ra)-1)*nddl
 !
-! - TERME K:GU      KGU(NDIM,NNO2,NNO1)
-                    do nb = 1, nno1
+! - TERME K:GU      KGU(NDIM,nnog,nnod)
+                    do nb = 1, nnod
                         do ib = 1, ndu
                             kk = os + vu(ib,nb)
                             t1 = 0.d0
@@ -565,47 +565,47 @@ subroutine nifilg(ndim, nno1, nno2, nno3, npg,&
                                 t2 = (iddev(vibjb)+2.d0*taudv(vibjb))
                                 t1 = t1 + t2*dff1(nb,lij(ib,jb))
                             end do
-                            matr(kk) = matr(kk) + w*t1*aa*vff2(ra,g)/3.d0
+                            matr(kk) = matr(kk) + w*t1*aa*vffg(ra,g)/3.d0
                         end do
                     end do
 !
-! - TERME K:GG      KGG(NNO2,NNO2)
+! - TERME K:GG      KGG(nnog,nnog)
                     t2 = (iddid/9.d0+2.d0*tauhy/3.d0)*aa**2 - pp*d2boa + tauhy*daa
-                    do rb = 1, nno2
+                    do rb = 1, nnog
                         kk = os + vg(rb)
-                        t1 = vff2(ra,g)*t2*vff2(rb,g)
+                        t1 = vffg(ra,g)*t2*vffg(rb,g)
                         matr(kk) = matr(kk) + w*t1
                     end do
 !
-! - TERME K:GP      KGP(NNO2,NNO3)
-                    do sb = 1, nno3
+! - TERME K:GP      KGP(nnog,nnop)
+                    do sb = 1, nnop
                         kk = os + vp(sb)
-                        t1 = - vff2(ra,g)*dboa*vff3(sb,g)
+                        t1 = - vffg(ra,g)*dboa*vffp(sb,g)
                         matr(kk) = matr(kk) + w*t1
                     end do
                 end do
 !
 ! - TERME K:PX
-                do sa = 1, nno3
+                do sa = 1, nnop
                     os = (vp(sa)-1)*nddl
 !
-! - TERME K:PU      KPU(NDIM,NNO3,NNO1)
-                    do nb = 1, nno1
+! - TERME K:PU      KPU(NDIM,nnop,nnod)
+                    do nb = 1, nnod
                         do ib = 1, ndu
                             kk = os + vu(ib,nb)
-                            t1 = vff3(sa,g)*bb*dff1(nb,lij(ib,ib))
+                            t1 = vffp(sa,g)*bb*dff1(nb,lij(ib,ib))
                             matr(kk) = matr(kk) + w*t1
                         end do
                     end do
 !
-! - TERME K:PG      KPG(NNO3,NNO2)
-                    do rb = 1, nno2
+! - TERME K:PG      KPG(nnop,nnog)
+                    do rb = 1, nnog
                         kk = os + vg(rb)
-                        t1 = - vff3(sa,g)*dboa*vff2(rb,g)
+                        t1 = - vffp(sa,g)*dboa*vffg(rb,g)
                         matr(kk) = matr(kk) + w*t1
                     end do
 !
-! - TERME K:PP = 0.D0      KPP(NNO3,NNO3)
+! - TERME K:PP = 0.D0      KPP(nnop,nnop)
 !
                 end do
             endif
