@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -224,9 +224,9 @@ def argument_maillage(INFO, args, mot_cle, mode_homard):
     dico["Action"] = "Rien"
 #
     if (args.has_key(mot_cle)):
-        if (args[mot_cle] != None):
-        # print "==> args[",mot_cle,"] =",args[mot_cle]
-            dico["Nom_ASTER"] = args[mot_cle]
+        if (args.get(mot_cle) != None):
+        # print "==> args.get(",mot_cle,"] =",args.get(mot_cle]
+            dico["Nom_ASTER"] = args.get(mot_cle)
             if (mode_homard in ("MODI", "ADAP")):
                 if (mot_cle == "MAILLAGE_N"):
                     dico["Action"] = "A_ecrire"
@@ -260,18 +260,18 @@ def argument_pilotage(INFO, args):
     dico = {}
 #
     dico["Usage_champ"] = "INDICATEUR"
-    if (args["RESULTAT_N"] != None):
-        dico["RESULTAT"] = args["RESULTAT_N"]
-        dico["NOM_CHAM"] = args["NOM_CHAM"]
-        if (args["NUME_ORDRE"] != None):
-            dico["NUME_ORDRE"] = args["NUME_ORDRE"]
-        if (args["INST"] != None):
-            dico["INST"] = args["INST"]
+    if (args.get("RESULTAT_N") != None):
+        dico["RESULTAT"] = args.get("RESULTAT_N")
+        dico["NOM_CHAM"] = args.get("NOM_CHAM")
+        if (args.get("NUME_ORDRE") != None):
+            dico["NUME_ORDRE"] = args.get("NUME_ORDRE")
+        if (args.get("INST") != None):
+            dico["INST"] = args.get("INST")
             for cle in ["PRECISION", "CRITERE"]:
-                if (args[cle] != None):
-                    dico[cle] = args[cle]
+                if (args.get(cle) != None):
+                    dico[cle] = args.get(cle)
     else:
-        dico["CHAM_GD"] = args["CHAM_GD"]
+        dico["CHAM_GD"] = args.get("CHAM_GD")
     # print "dico =", dico
 #
     nom_cham_med_fichier = "champ_de_pilotage"
@@ -280,12 +280,12 @@ def argument_pilotage(INFO, args):
     # print "==> dico[\"NOM_CHAM_MED\"] =", dico["NOM_CHAM_MED"]
 #
     if args.has_key("NOM_CMP"):
-        if args["NOM_CMP"] != None:
-            if not type(args["NOM_CMP"]) in EnumTypes:
-                l_aux = [args["NOM_CMP"]]
+        if args.get("NOM_CMP") != None:
+            if not type(args.get("NOM_CMP")) in EnumTypes:
+                l_aux = [args.get("NOM_CMP")]
             else:
                 l_aux = []
-                les_composantes = args["NOM_CMP"]
+                les_composantes = args.get("NOM_CMP")
                 for composante in les_composantes:
                     l_aux.append(composante)
             dico["COMPOSANTE"] = l_aux
@@ -415,7 +415,7 @@ def argument_zone(INFO, args):
         'Z_CENTRE', 'RAYON', 'RAYON_INT', 'RAYON_EXT', 'X_AXE', 'Y_AXE', 'Z_AXE', 'X_BASE', 'Y_BASE', 'Z_BASE', 'HAUTEUR']
 #
     liste_zones = []
-    les_zones = args["ZONE"]
+    les_zones = args.get("ZONE")
 #
     for zone in les_zones:
         # print zone, "de type", type(zone)
@@ -446,7 +446,7 @@ def argument_frontiere_analytique(INFO, args):
     """
 #
     liste_front_analytiques = []
-    les_front_analytiques = args["FRONTIERE_ANALYTIQUE"]
+    les_front_analytiques = args.get("FRONTIERE_ANALYTIQUE")
 #
     for frontiere in les_front_analytiques:
         l_aux = ["NOM", "TYPE", "GROUP_MA", "X_CENTRE", "Y_CENTRE", "Z_CENTRE"]
@@ -493,8 +493,8 @@ def argument_historique(INFO, args):
 #
     for mot_cle in ("UNITE_HIST_IN", "UNITE_HIST_OUT"):
         if args.has_key(mot_cle):
-            if (args[mot_cle] != None):
-                dico_unites[mot_cle] = args[mot_cle]
+            if (args.get(mot_cle) != None):
+                dico_unites[mot_cle] = args.get(mot_cle)
 #
     if (INFO >= 3):
         print "dico_unites =", dico_unites
@@ -724,7 +724,7 @@ def cree_configuration(INFO, args, Rep_Calc_ASTER, mode_homard, VERSION_HOMARD, 
     dico_configuration["VERSION_HOMARD"] = VERSION_HOMARD
     dico_configuration["version_perso"] = version_perso
     if args.has_key("UNITE"):
-        UNITE = args["UNITE"]
+        UNITE = args.get("UNITE")
         if (UNITE != None):
             saux = "fort.%d" % UNITE
             fichier_conf_suppl = os.path.join(Rep_Calc_ASTER, saux)
@@ -1106,7 +1106,7 @@ def macr_adap_mail_ops(self,
     # print args
     # print args.keys()
     # if len (args.keys())>0 : print args.keys()[0]
-    # print args["MAILLAGE"]
+    # print args.get("MAILLAGE")
 #
     from code_aster.Cata.Syntax import _F
     from Macro import creation_donnees_homard
@@ -1213,9 +1213,9 @@ def macr_adap_mail_ops(self,
 #
 # 2.1.1. ==> Le mode d'utilisation de homard
 #
-        if args["ADAPTATION"] == "MODIFICATION":
+        if args.get("ADAPTATION") == "MODIFICATION":
             mode_homard = "MODI"
-        elif args["ADAPTATION"] == "LECTURE":
+        elif args.get("ADAPTATION") == "LECTURE":
             mode_homard = "LECT"
         else:
             mode_homard = "ADAP"
@@ -1233,7 +1233,7 @@ def macr_adap_mail_ops(self,
 # 2.1.3. ==> L'eventuel pilotage de l'adaptation
 #
         # print "\n.. Debut de 2.1.3"
-        if args["ADAPTATION"] in LISTE_ADAPTATION_LIBRE:
+        if args.get("ADAPTATION") in LISTE_ADAPTATION_LIBRE:
             dico = argument_pilotage(INFO, args)
             liste_champs.append(dico)
             dico_pilo = dico
@@ -1247,8 +1247,8 @@ def macr_adap_mail_ops(self,
 #
             if args.has_key(usage_champ):
 #
-                if args[usage_champ] != None:
-                    les_champs = args[usage_champ]
+                if args.get(usage_champ) != None:
+                    les_champs = args.get(usage_champ)
                     for le_champ in les_champs:
                         dico, iaux = argument_champ(
                             INFO, le_champ, usage_champ, iaux)
@@ -1258,7 +1258,7 @@ def macr_adap_mail_ops(self,
         # print "\n.. Debut de 2.1.5."
 #
         if args.has_key("ZONE"):
-            if args["ZONE"] != None:
+            if args.get("ZONE") != None:
                 liste_zones = argument_zone(INFO, args)
 #
 # 2.1.6. ==> Les historiques
@@ -1274,7 +1274,7 @@ def macr_adap_mail_ops(self,
 #
         dico = {}
         dico["Type_Maillage"] = "MAILLAGE_N"
-        dico["Nom_ASTER"] = args["MAILLAGE"]
+        dico["Nom_ASTER"] = args.get("MAILLAGE")
         dico["Action"] = "A_ecrire"
         liste_maillages.append(dico)
 #
@@ -1295,7 +1295,7 @@ def macr_adap_mail_ops(self,
     # print "\n.. Debut de 2.3.2."
 #
     if args.has_key("FRONTIERE_ANALYTIQUE"):
-        if args["FRONTIERE_ANALYTIQUE"] != None:
+        if args.get("FRONTIERE_ANALYTIQUE") != None:
             liste_front_analytiques = argument_frontiere_analytique(
                 INFO, args)
 #
@@ -1315,7 +1315,7 @@ def macr_adap_mail_ops(self,
 #
     # print "\n.. Debut de 2.5."
     if args.has_key("INTERPENETRATION"):
-        if (args["INTERPENETRATION"] == "OUI"):
+        if (args.get("INTERPENETRATION") == "OUI"):
             if (mode_homard == "INFO"):
                 UTMESS('I', 'HOMARD0_6')
             else:
@@ -1570,7 +1570,7 @@ def macr_adap_mail_ops(self,
             file_print(Rep_Calc_HOMARD_global)
 #    if ( mode_homard == "ADAP" ) :
 #      if args.has_key("MAJ_CHAM") :
-#        if args["MAJ_CHAM"] != None :
+#        if args.get("MAJ_CHAM") != None :
 #          import time
 #          time.sleep(3600)
 #
@@ -1636,7 +1636,7 @@ def macr_adap_mail_ops(self,
 #        b est la variable declaree dans la commande
 #        le but est de associer le contenu de b a la variable locale qui sera designee par a
 #        Exemple :
-#        self.DeclareOut("maillage_a_lire", args["MAILLAGE_NP1"])
+#        self.DeclareOut("maillage_a_lire", args.get("MAILLAGE_NP1") )
 #        ==> la variable maillage_a_lire est identifiee a l'argument "MAILLAGE_NP1"
 #====================================================================
     # print ".. Debut de 8."
@@ -1742,15 +1742,15 @@ def macr_adap_mail_ops(self,
                     else:
                         a_lire = 0
                     if (a_lire):
-                        # print "MODELE =", args["MODELE"]
+                        # print "MODELE =", args.get("MODELE")
                         # print "MAILLAGE =", maillage_n
                         # print "NOM_MAIL_MED =", maillage_n_nom_med
                         # print "NOM_CHAM_MED =", dico["NOM_CHAM_MED"]
                         # print "TYPE_CHAM =", type_cham
                         le_champ = LIRE_CHAMP(
                             UNITE=unite_fichier_homard_vers_aster, FORMAT="MED",
-                            MAILLAGE=maillage_n, NOM_MAIL_MED=maillage_n_nom_med, MODELE=args[
-                                "MODELE"],
+                            MAILLAGE=maillage_n, NOM_MAIL_MED=maillage_n_nom_med, MODELE=args.get(
+                                "MODELE"),
                             NOM_MED=dico[
                                 "NOM_CHAM_MED"], TYPE_CHAM=type_cham,
                             INFO=infocomm, **motscsi)
