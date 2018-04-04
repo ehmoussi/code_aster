@@ -89,7 +89,8 @@ class Randomfield(object):
         self.args = kwargs
         self.seed = kwargs.get('INIT_ALEA')
         self.mediane = kwargs.get('MEDIANE')
-        self.beta = kwargs.get('COEF_VARI')
+        self.cov = kwargs.get('COEF_VARI')
+        self.beta = sqrt(log(1.+self.cov**2))
         self.cas =  None
         cdict = {'RANGE': [] ,    'NBTERMS' : [], 'DIM' : [],
                        'LONG_CORR' : [],  'COORD' : None, 'XLISTE' : []}
@@ -97,7 +98,7 @@ class Randomfield(object):
         liste_coord = []
         if  kwargs.get('LONG_CORR_X') != None:
             self.dimx = kwargs.get('X_MAXI')-kwargs.get('X_MINI')
-            self.Lcx = kwargs.get('LONG_CORR_X')
+            self.Lcx = 0.5 * kwargs.get('LONG_CORR_X')   # the parameter of the Markov kernel is a=0.5*Lcorr
             cdict['RANGE'].append((kwargs.get('X_MINI'), kwargs.get('X_MAXI')))
             cdict['NBTERMS'].append(kwargs.get('NB_TERM_X'))
             cdict['DIM'].append(self.dimx)
@@ -108,7 +109,7 @@ class Randomfield(object):
 
         if  kwargs.get('LONG_CORR_Y') != None:
             self.dimy = kwargs.get('Y_MAXI')-kwargs.get('Y_MINI')
-            self.Lcy = kwargs.get('LONG_CORR_Y')
+            self.Lcy = 0.5 * kwargs.get('LONG_CORR_Y')
             cdict['RANGE'].append((kwargs.get('Y_MINI'), kwargs.get('Y_MAXI')))
             cdict['NBTERMS'].append(kwargs.get('NB_TERM_Y'))
             cdict['DIM'].append(self.dimy)
@@ -119,7 +120,7 @@ class Randomfield(object):
 
         if  kwargs.get('LONG_CORR_Z') != None:
             self.dimz = kwargs.get('Z_MAXI')-kwargs.get('Z_MINI')
-            self.Lcz = kwargs.get('LONG_CORR_Z')
+            self.Lcz = 0.5 * kwargs.get('LONG_CORR_Z')
             cdict['RANGE'].append((kwargs.get('Z_MINI'), kwargs.get('Z_MAXI')))
             cdict['NBTERMS'].append(kwargs.get('NB_TERM_Z'))
             cdict['DIM'].append(self.dimz)

@@ -20,7 +20,7 @@
 # person_in_charge: mathieu.courtois at edf.fr
 import os
 os.rename('fort.2', 'macro_test.py')
-
+import numpy as np
 from macro_test import MACRO_TEST
 
 
@@ -48,5 +48,246 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=15.,
                         NOM_PARA='X',
                         FONCTION=inter,),
              )
+
+
+
+# ----------- DATA ---------------
+pseed = 10000000
+xmin = -200
+xmax =  200.
+ymin =  -100
+ymax =  100.
+Lcx = 40.
+Lcy = 40.
+beta_E = 0.2
+cov_E = sqrt(exp(beta_E**2)-1.)
+Esol = 18885000000;
+Am_E = Esol
+nbmod = 60
+LX = DEFI_LIST_REEL(DEBUT = xmin, INTERVALLE=_F(JUSQU_A = xmax, PAS = 0.5),);
+LY = DEFI_LIST_REEL(DEBUT = ymin, INTERVALLE=_F(JUSQU_A = ymax, PAS = 0.5),);
+
+# ----------- FONCTION 1D ---------------
+
+E_vari1 = DEFI_PROP_ALEA ( 
+            INIT_ALEA       = pseed,
+            MEDIANE         = Am_E,
+            COEF_VARI       =  cov_E,      
+            LONG_CORR_X     = 120.,
+            X_MINI     = xmin,
+            X_MAXI     = xmax , 
+            NB_TERM_X  = nbmod,)
+
+TEST_FONCTION(VALEUR=_F(VALE_CALC=1.625092549018E+10 ,
+                        VALE_REFE=1.625092549018E+10 ,
+                        VALE_PARA= (0.0),
+                        REFERENCE='SOURCE_EXTERNE',
+                        NOM_PARA= ('X'),
+                        FONCTION= E_vari1,),
+              )
+
+
+F_vari1  = CALC_FONC_INTERP( FONCTION  = E_vari1,
+                        NOM_PARA = 'X',
+                        LIST_PARA = LX,
+                       TITRE='FONCTION VARI 1D 60',)
+
+
+X, FM = F_vari1.Valeurs()
+moy = np.mean(FM)
+med = np.median(FM)
+bet  = np.std(np.log(FM))
+print 'Y1D: mean median E vari', moy, med,bet
+#Y1D: mean median log std E_vari 19500425931.2 19297681926.4 0.139115524212
+
+E_vari0 = DEFI_PROP_ALEA ( 
+            INIT_ALEA       = pseed,
+            MEDIANE         = Am_E,
+            COEF_VARI       =  cov_E,      
+            LONG_CORR_Y     = 20.,
+            Y_MINI     = ymin,
+            Y_MAXI     = ymax , 
+            NB_TERM_Y  = nbmod,)
+
+TEST_FONCTION(VALEUR=_F(VALE_CALC= 1.516077802079E+10 ,
+                        VALE_REFE= 1.516077802079E+10 ,
+                        VALE_PARA= (0.0),
+                        REFERENCE='SOURCE_EXTERNE',
+                        NOM_PARA= ('X'),
+                        FONCTION= E_vari0,),
+              )
+
+F_vari0  = CALC_FONC_INTERP( FONCTION  = E_vari0,
+                        NOM_PARA = 'Y',
+                        LIST_PARA = LY,
+                       TITRE='FONCTION VARI 1D 10',)
+
+
+X, FM = F_vari0.Valeurs()
+moy = np.mean(FM)
+med = np.median(FM)
+bet  = np.std(np.log(FM))
+print 'Y1D 10m: mean median E vari', moy, med,bet
+#Y1D 0: mean median log std E_vari 19062771857.1 18838570323.7 0.19021264557
+
+
+# -------------- FONCTION 2D------------
+
+E_vari2 = DEFI_PROP_ALEA ( 
+            INIT_ALEA       = pseed,
+            MEDIANE         = Am_E,
+            COEF_VARI       =  cov_E,      
+            LONG_CORR_X     = Lcx,
+            LONG_CORR_Y     = Lcx,
+            X_MINI     = xmin,
+            X_MAXI     = xmax,  
+            NB_TERM_X  = 60,
+            Y_MINI     = ymin,
+            Y_MAXI     = ymax , 
+            NB_TERM_Y  = 60,)
+
+
+TEST_FONCTION(VALEUR=_F(VALE_CALC= 1.591971870708E+10,
+                        VALE_REFE= 1.591971870708E+10,
+                        VALE_PARA= (2.5, 2.6),
+                        REFERENCE='SOURCE_EXTERNE',
+                        NOM_PARA= ('X','Y'),
+                        FONCTION= E_vari2,),
+              )
+
+
+F_vari2  = CALC_FONC_INTERP( FONCTION  = E_vari2,
+                        VALE_PARA_FONC = 100.,
+                        NOM_PARA_FONC  = ('Y'),
+                        NOM_PARA = 'X',
+#                        VALE_PARA = 0.0,
+                        LIST_PARA = LX,
+                       TITRE='FONCTION VARI',)
+
+
+X, FM = F_vari2.Valeurs()
+FM = [x[1][0] for x in FM]
+
+moy = np.mean(FM)
+med = np.median(FM)
+bet  = np.std(np.log(FM))
+print 'X2D: mean median E vari', moy, med,bet
+#X2D: mean median log std E vari 18148893896.2 18046666092.3 0.176371239856
+
+FONC_E  = DEFI_FONCTION ( NOM_RESU    = 'ACCE',  NOM_PARA    = 'INST',
+            PROL_GAUCHE = 'CONSTANT',  PROL_DROITE  = 'CONSTANT',
+            ABSCISSE        = X,
+            ORDONNEE     = FM);
+
+
+
+
+
+# -------------- FONCTION 3D------------
+Lcz = 0.1*Lcx
+E_vari3 = DEFI_PROP_ALEA ( 
+            INIT_ALEA       = pseed,
+            MEDIANE         = Am_E,
+            COEF_VARI       =  cov_E,      
+            LONG_CORR_X     = Lcx,
+            LONG_CORR_Y     = Lcx,
+            LONG_CORR_Z     = Lcz,
+            X_MINI     = xmin,
+            X_MAXI     = xmax, 
+            NB_TERM_X  = 60,
+            Y_MINI     = ymin,
+            Y_MAXI     = ymax , 
+            NB_TERM_Y  = 60,
+            Z_MINI     = 0.0,
+            Z_MAXI     = 50. , 
+            NB_TERM_Z  = 30,
+
+)
+
+
+
+
+# -------------- VISU------------
+
+"""
+IMPR_FONCTION(FORMAT='XMGRACE', #'TABLEAU',
+              COURBE=(_F(FONCTION= FONC_E, MARQUEUR =0, ),
+                      _F(FONCTION= F_vari1, MARQUEUR =0, ),
+                      _F(FONCTION= F_vari0, MARQUEUR =0, ),
+),
+              UNITE=25,
+              );
+
+"""
+
+
+# ======================================================================
+# ======================================================================
+E_vari = DEFI_PROP_ALEA ( 
+            INIT_ALEA       = pseed,
+            MEDIANE         = Am_E,
+            COEF_VARI       =  cov_E,      
+            LONG_CORR_X     = 60.,
+            LONG_CORR_Y     = 60.,
+            X_MINI     = xmin,
+            X_MAXI     = xmax,  
+            NB_TERM_X  = 60,
+            Y_MINI     = ymin,
+            Y_MAXI     = ymax , 
+            NB_TERM_Y  = 60,)
+
+mail=LIRE_MAILLAGE(FORMAT='MED',);
+
+           
+                
+mail=MODI_MAILLAGE(reuse = mail,
+                MAILLAGE = mail,
+                ORIE_PEAU_2D = _F(GROUP_MA= ('L_Gauche','L_Droite','Bottom',), GROUP_MA_SURF='Surface',),
+                );
+
+MODELE = AFFE_MODELE(MAILLAGE=mail,
+                   AFFE=(_F(GROUP_MA=('Surface',),
+                            PHENOMENE='MECANIQUE',
+                            MODELISATION='D_PLAN',),
+            _F(GROUP_MA=('L_Gauche','L_Droite','Bottom',),
+                            PHENOMENE='MECANIQUE',
+                            MODELISATION='D_PLAN_ABSO',),
+             ), );    
+
+
+F_2 = CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_F',
+                 OPERATION='AFFE',
+                 MODELE=MODELE,
+                  AFFE=_F(VALE_F=(E_vari,),
+                        NOM_CMP=('X1',),
+                        TOUT='OUI', ),
+                   INFO=1,)
+
+F_3 = CREA_CHAMP(TYPE_CHAM='NOEU_GEOM_R',
+                  OPERATION='EXTR',
+                  MAILLAGE= mail,
+                  NOM_CHAM='GEOMETRIE',
+                  INFO=1,)
+
+Modulus = CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_R',
+                       OPERATION='EVAL',
+                       CHAM_F = F_2,
+                       CHAM_PARA = (F_3, ),
+                        INFO=1,)
+
+
+IMPR_RESU(FORMAT='MED',
+           UNITE = 81,
+           RESU=(  _F( NOM_CHAM_MED = 'E_modulus',
+                      CHAM_GD = Modulus, ),
+                        ),
+                 );
+
+
+
+
+
+
+
 
 FIN()
