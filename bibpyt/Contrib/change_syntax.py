@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,28 +20,85 @@
 # person_in_charge: mathieu.courtois at edf.fr
 
 """
-Working module - not intended to be committed !
+Working module only used to help to change syntax of testcases.
+It needs several changes in the source code:
+
+- Add in ``E_JDC.py``:
+
+  in ``JDC.__init__()``::
+
+    from Contrib.change_syntax import SyntaxVisitor
+    self.change_syntax = SyntaxVisitor()
+
+  in ``JDC.affiche_fin_exec()``::
+
+    self.change_syntax.finalize()
+
+- In ``N_ETAPE.py``, in ``ETAPE.__init__()``::
+
+    from Contrib.change_syntax import store_frame_info
+    self.frame_info = store_frame_info(self.nom, niveau)
+
+- In ``E_ETAPE.py``, in ``ETAPE.AfficheTexteCommande()``::
+
+    self.accept(self.jdc.change_syntax)
 """
 
+import linecache
 import os
 import os.path as osp
 import re
 
-from Noyau.N_ASSD import ASSD
-from Noyau.N_types import force_list
-from Noyau.N_info import message, Category, LEVEL
-
-from E_utils import repr_float
 from command_text import CommandTextVisitor
+from E_utils import repr_float
+from Noyau.N_ASSD import ASSD
+from Noyau.N_info import LEVEL, Category, message
+from Noyau.N_types import force_list
+from Noyau.N_utils import cur_frame
+from Noyau.N_FONCTION import initial_context
 
 ALL = False
-COMMANDS = ('TEST_RESU', 'TEST_FONCTION')
+COMMANDS = ('FORMULE', )
 FILENAME = 'change_syntax'
-DEST = '/tmp/essai'
+DEST = osp.join(os.environ['HOME'], 'change_syntax')
 STX = Category()
-STX.set_header(LEVEL.DEBUG, '#DEBUG')
+STX.set_header(LEVEL.DEBUG, 'DEBUG:')
 message.add(STX)
 message.set_level(STX, LEVEL.DEBUG)
+
+
+def store_frame_info(command, level):
+    """Store frame info executing the command.
+
+    Arguments:
+        command (str): Command name (used to find the beginning of the command).
+        level (int): Number of frame to find upper the command caller.
+
+    Returns:
+        tuple: Tuple containing the number of the first and last lines of the
+        command, the length of indentation and the filename.
+    """
+    pattern_comment = re.compile(r"^\s*#.*")
+    expr = r"^(?P<indent> *)(?:|\S.*?\s*=\s*){0}\s*\(".format(command)
+    pattern_oper = re.compile(expr, re.M)
+    frame = cur_frame(level)
+    fname = frame.f_code.co_filename
+    start = -1
+    end = frame.f_lineno
+    indent = 0
+    lineno = end
+    while lineno > 0:
+        line = linecache.getline(fname, lineno)
+        lineno = lineno - 1
+        if pattern_comment.match(line):
+            continue
+        mat = pattern_oper.search(line)
+        if mat:
+            start = lineno
+            indent = len(mat.group('indent'))
+            break
+    assert start >= 0, (command, end)
+    return start, end, indent, fname
 
 
 class SyntaxVisitor(CommandTextVisitor):
@@ -58,6 +115,10 @@ class SyntaxVisitor(CommandTextVisitor):
         self.command = None
         self._pass = 0
         self.text = {}
+        try:
+            os.makedirs(DEST)
+        except OSError:
+            pass
 
     def _visit_etape(self, step, reuse):
         """Visit generic ETAPE objects."""
@@ -78,7 +139,6 @@ class SyntaxVisitor(CommandTextVisitor):
 
     def visitMCFACT(self, fact):
         """Visit the MCFACT object."""
-        # print "visit MCFACT", fact.nom
         self.command.set_current_mcfact(fact)
         if self._pass == 2:
             self.command.init_pass2()
@@ -95,7 +155,6 @@ class SyntaxVisitor(CommandTextVisitor):
                 svalues = svalues[0]
             self.command.set_value(mcsimp.nom, svalues)
         if self._pass == 2:
-            # print "visit MCSIMP", mcsimp.nom
             newvalues = self.command.get_value(mcsimp.nom)
             for i, couple in enumerate(newvalues):
                 key, val = couple
@@ -116,28 +175,17 @@ class SyntaxVisitor(CommandTextVisitor):
 
     def finalize(self, code=None):
         """End"""
-        import sys
         import shutil
         from glob import glob
-        sys.path.append('/opt/aster/lib/python2.7/site-packages')
         from asrun.profil import AsterProfil
-        exp = glob('*.export')
-        if len(exp) == 0:
-            return
-        assert len(exp) == 1, exp
-        prof = AsterProfil(exp[0])
-        comm = prof.get_type('comm')
         num = len(glob(FILENAME + '.*')) + 1
-        lfn = [
-            fname for fname in self.text.keys() if fname.startswith('fort.')]
+        lfn = [i for i in self.text.keys() if i.startswith('fort.')]
         assert len(lfn) <= 1, lfn
         if len(lfn) == 0:
             fname = 'fort.1'
         else:
             fname = lfn[0]
         changes = self.text.get(fname, [])
-        modified = '%s.%d' % (FILENAME, num)
-        final = osp.basename(comm[num - 1].path)
         orig = open(fname, 'r').read().splitlines()
         new = orig[:]
         changes.reverse()
@@ -145,13 +193,21 @@ class SyntaxVisitor(CommandTextVisitor):
             start, end, indent, txt = chg
             offset = ' ' * indent
             nlin = [offset + lin for lin in txt.splitlines()]
-            new = new[:start] + nlin + new[end + 1:]
-            txt = ["### filename : %s ###" % fname,
-                   "### lines range: %d-%d (indent: %d)" % tuple(chg[:3]),
-                   chg[-1], ]
+            new = new[:start] + nlin + new[end:]
         if new[-1].strip():
             new.append('')
-        open(modified, 'w').write(os.linesep.join(new))
+
+        modified = '{0}.{1}'.format(FILENAME, num)
+        with open(modified, 'w') as fobj:
+            fobj.write(os.linesep.join(new))
+
+        exp = glob('*.export')
+        if len(exp) == 0:
+            return
+        assert len(exp) == 1, exp
+        prof = AsterProfil(exp[0])
+        comm = prof.get_type('comm')
+        final = osp.basename(comm[num - 1].path)
         shutil.copy(modified, osp.join(DEST, final))
         # shutil.copy(fname, osp.join(DEST, final + '.orig'))
 
@@ -181,6 +237,8 @@ class ChangeCommand(object):
 
     def set_value(self, keyword, value):
         """Store the value of a keyword"""
+        # Warning: _cur_dict does not contain the values but a representation
+        # of the values
         message.debug(STX, "store: %r = %r", keyword, value)
         self._cur_dict()[keyword] = value
 
@@ -237,7 +295,6 @@ class ChangeTestFonction(ChangeCommand):
             if reference == repr('NON_REGRESSION'):
                 dconv['REFERENCE'] = [('REFERENCE', repr('NON_DEFINI')), ]
         res = dconv.get(keyword, [(keyword, value), ])
-        # print "  return:", res
         return res
 
 
@@ -271,15 +328,48 @@ class ChangeTestResu(ChangeCommand):
             if reference == repr('NON_REGRESSION'):
                 dconv['REFERENCE'] = [('REFERENCE', repr('NON_DEFINI')), ]
         res = dconv.get(keyword, [(keyword, value), ])
+        return res
+
+
+class ChangeFormule27515(ChangeCommand):
+    """Change FORMULE for issue27515"""
+
+    def get_value(self, keyword):
+        """Return the couples (new keyword, new value)."""
+        dico = self._cur_dict()
+        value = dico[keyword]
+        # list(repr(str)) ["'X'", "'Y'"] -> repr(list(str)): "['X', 'Y']"
+        params = dico['NOM_PARA']
+        if isinstance(params, (list, tuple)):
+            params = [eval(i) for i in params]
+        else:
+            params = eval(params)
+        if keyword == 'NOM_PARA':
+            value = repr(params)
+
+        dconv = {}
+        if keyword in ('VALE', 'VALE_C'):
+            formula = dico.get('VALE') or dico.get('VALE_C')
+            if r'\n' in value:
+                value = '''"""{0}"""'''.format(eval(value))
+            needed = external_objects(params, eval(formula))
+            values = [(keyword, value), ]
+            for name in needed:
+                values.append((name, name))
+            dconv = {keyword: values}
+
+        res = dconv.get(keyword, [(keyword, value), ])
         # print "  return:", res
         return res
 
 
 def ChangeFactory(cmdname):
-    if cmdname == 'TEST_FONCTION':
-        return ChangeTestFonction()
-    elif cmdname == 'TEST_RESU':
-        return ChangeTestResu()
+    # if cmdname == 'TEST_FONCTION':
+    #     return ChangeTestFonction()
+    # elif cmdname == 'TEST_RESU':
+    #     return ChangeTestResu()
+    if cmdname == 'FORMULE':
+        return ChangeFormule27515()
     else:
         return NoChange()
 
@@ -299,3 +389,60 @@ class StoreValeCalc(object):
         return self._vale
 
 vale_calc = StoreValeCalc()
+
+
+def is_func(formula, name):
+    """Check if 'name' seems to be used as a function in the formula.
+
+    Arguments:
+        formula (str): Expression of the formula.
+        name (str): Objects to be tested.
+
+    Returns:
+        bool: *True* if the objects is used as a function, *False* otherwise.
+    """
+    expr = re.compile(r'\b{0}\b\('.format(name))
+    return expr.search(formula) is not None
+
+def external_objects(params, formula):
+    """Search for external functions/parameters needed by a formula.
+
+    Arguments:
+        params (list[str]): Known parameters of the formula.
+        formula (str): Expression of the formula.
+
+    Returns:
+        list[str]: List of required objects.
+    """
+    from random import random
+    expr = re.compile("name '(.*)' is not defined")
+    needed = []
+    ok = False
+    if not isinstance(params, (list, tuple)):
+        params = [params]
+    context = {}
+    context.update(initial_context())
+    context.update(dict([p, random()] for p in params))
+    while not ok:
+        init = len(context)
+        try:
+            formula = ''.join(formula.splitlines())
+            eval(formula.strip(), {}, context)
+            ok = True
+        except NameError as exc:
+            mat = expr.search(exc.args[0])
+            if mat:
+                name = mat.group(1)
+                needed.append(name)
+                if is_func(formula, name):
+                    def _func(*_, **__):
+                        "A function that accepts any number of arguments."
+                        return random()
+                    context[name] = _func
+                else:
+                    context[name] = random()
+        if len(context) == init:
+            break
+    if not ok:
+        print "ERROR: can not evaluate '{0}'".format(formula)
+    return needed
