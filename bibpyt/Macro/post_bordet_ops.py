@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -163,8 +163,9 @@ def post_bordet_ops(self, TOUT, GROUP_MA, INST, PRECISION, CRITERE, NUME_ORDRE,
         def fseuil(epsi):
             return PARAM['SEUIL_CALC'](epsi, tempe)
 
-        self.update_const_context({'fseuil': fseuil})
-        __NPY = FORMULE(NOM_PARA=('EPSI'), VALE="""fseuil(EPSI)""")
+        __NPY = FORMULE(NOM_PARA=('EPSI'),
+                        VALE="""fseuil(EPSI)""",
+                        fseuil=fseuil)
 
 #
 # On met ces grandeurs dans des champs specifiques

@@ -760,19 +760,6 @@ Le type demande (%s) et le type du concept (%s) devraient etre derives""" % (t, 
         for e in self.etapes:
             e.reparent(self)
 
-    def update_const_context(self, d):
-        """
-           Met à jour le contexte des constantes pour l'évaluation de
-           formules dans la macro.
-        """
-        # Dans le jdc, const_context est mis à jour par exec_compile
-        # Dans la macro, on n'a pas le code à compiler pour récupèrer les
-        # constantes locales à la macro. On demande donc explicitement de
-        # définir les constantes "locales".
-        import warnings
-        warnings.warn("FORMULE: External objects must be passed as keyword "
-                      "arguments.", DeprecationWarning, stacklevel=2)
-
     def sd_accessible(self):
         """On peut acceder aux "valeurs" (jeveux) des ASSD dans
         les macro-commandes qui sont localement en PAR_LOT="NON"

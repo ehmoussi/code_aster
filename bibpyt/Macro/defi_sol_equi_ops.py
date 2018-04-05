@@ -1024,8 +1024,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
     E[0].append(0)
     AH[0].append(0)
     rat[0].append(1)
-    self.update_const_context({'cvar': cvar})
-    __fEmax = FORMULE(NOM_PARA=('Emax'), VALE = 'cvar*Emax')
+    __fEmax = FORMULE(NOM_PARA=('Emax'), VALE = 'cvar*Emax', cvar=cvar)
     __fAH = FORMULE(NOM_PARA=('AH'), VALE = 'AH')
 
     __TMAT = CALC_TABLE(reuse=__TMAT, TABLE=__TMAT,
@@ -1643,18 +1642,31 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                 EXTRACTION=_F(FONCTION=__AHuXrCL[0], PARTIE='MODULE'))
             __mAHuXrBH[0] = CALC_FONCTION(
                 EXTRACTION=_F(FONCTION=__AHuXrBH[0], PARTIE='MODULE'))
-            self.update_const_context(
-            {'FILTRE': __FILTRE, 'AHuXrCL': __AHuXrCL[0], 'AHuXrBH': __AHuXrBH[0], 'AHX': __AHX[0], 'ACCEX0H': __ACCEX0H[0]})
+            const_context = {
+                'FILTRE': __FILTRE,
+                'AHuXrCL': __AHuXrCL[0],
+                'AHuXrBH': __AHuXrBH[0],
+                'AHX': __AHX[0],
+                'ACCEX0H': __ACCEX0H[0]
+            }
             if args['CHARGEMENT'] == 'MONO_APPUI':
                 __formFDT[0] = FORMULE(
-              NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*(1.+0.j )/(1.+0.j + AHuXrCL(FREQ))')
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*(1.+0.j )/(1.+0.j + AHuXrCL(FREQ))',
+                    **const_context)
                 __formFDT2[0] = FORMULE(
-              NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*(1.+0.j + AHuXrCL(FREQ))/(1.+0.j + AHuXrBH(FREQ))')
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*(1.+0.j + AHuXrCL(FREQ))/(1.+0.j + AHuXrBH(FREQ))',
+                    **const_context)
             else:
                 __formFDT[0] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHX(FREQ)/AHuXrCL(FREQ)')
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*AHX(FREQ)/AHuXrCL(FREQ)',
+                    **const_context)
                 __formFDT2[0] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHuXrCL(FREQ)/ACCEX0H(FREQ)')
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*AHuXrCL(FREQ)/ACCEX0H(FREQ)',
+                    **const_context)
 
         else:
             for n in xrange(num_dime):
@@ -1676,42 +1688,75 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                 __mAHuXrBH[n] = CALC_FONCTION(
                     EXTRACTION=_F(FONCTION=__AHuXrBH[n], PARTIE='MODULE'))
 
-            self.update_const_context(
-            {'FILTRE': __FILTRE, 'AHuXrCL0': __AHuXrCL[0], 'AHuXrCL1': __AHuXrCL[1],'AHuXrCL2': __AHuXrCL[2],
-            'AHuXrBH0': __AHuXrBH[0], 'AHuXrBH1': __AHuXrBH[1], 'AHuXrBH2': __AHuXrBH[2],
-            'AHX0': __AHX[0], 'AHX1': __AHX[1],'AHX2': __AHX[2],
-            'ACCEX0H0': __ACCEX0H[0], 'ACCEX0H1': __ACCEX0H[1], 'ACCEX0H2': __ACCEX0H[2]}
-            )
+            const_context = {
+                'FILTRE': __FILTRE,
+                'AHuXrCL0': __AHuXrCL[0],
+                'AHuXrCL1': __AHuXrCL[1],
+                'AHuXrCL2': __AHuXrCL[2],
+                'AHuXrBH0': __AHuXrBH[0],
+                'AHuXrBH1': __AHuXrBH[1],
+                'AHuXrBH2': __AHuXrBH[2],
+                'AHX0': __AHX[0],
+                'AHX1': __AHX[1],
+                'AHX2': __AHX[2],
+                'ACCEX0H0': __ACCEX0H[0],
+                'ACCEX0H1': __ACCEX0H[1],
+                'ACCEX0H2': __ACCEX0H[2],
+            }
             if args['CHARGEMENT'] == 'MONO_APPUI':
                 __formFDT[0] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*(1.+0.j )/(1.+0.j + AHuXrCL0(FREQ))')
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*(1.+0.j )/(1.+0.j + AHuXrCL0(FREQ))',
+                    **const_context)
                 __formFDT2[0] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*(1.+0.j + AHuXrCL0(FREQ))/(1.+0.j + AHuXrBH0(FREQ))')
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*(1.+0.j + AHuXrCL0(FREQ))/(1.+0.j + AHuXrBH0(FREQ))',
+                    **const_context)
 
                 __formFDT[1] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*(1.+0.j )/(1.+0.j + AHuXrCL1(FREQ))')
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*(1.+0.j )/(1.+0.j + AHuXrCL1(FREQ))',
+                    **const_context)
                 __formFDT2[1] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*(1.+0.j + AHuXrCL1(FREQ))/(1.+0.j + AHuXrBH1(FREQ))')
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*(1.+0.j + AHuXrCL1(FREQ))/(1.+0.j + AHuXrBH1(FREQ))',
+                    **const_context)
 
                 __formFDT[2] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*(1.+0.j )/(1.+0.j + AHuXrCL2(FREQ))')
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*(1.+0.j )/(1.+0.j + AHuXrCL2(FREQ))',
+                    **const_context)
                 __formFDT2[2] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*(1.+0.j + AHuXrCL2(FREQ))/(1.+0.j + AHuXrBH2(FREQ))')
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*(1.+0.j + AHuXrCL2(FREQ))/(1.+0.j + AHuXrBH2(FREQ))',
+                    **const_context)
             else:
                 __formFDT[0] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHX0(FREQ)/AHuXrCL0(FREQ)')
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*AHX0(FREQ)/AHuXrCL0(FREQ)',
+                    **const_context)
                 __formFDT2[0] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHuXrCL0(FREQ)/ACCEX0H0(FREQ)')
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*AHuXrCL0(FREQ)/ACCEX0H0(FREQ)',
+                    **const_context)
 
                 __formFDT[1] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHX1(FREQ)/AHuXrCL1(FREQ)')
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*AHX1(FREQ)/AHuXrCL1(FREQ)',
+                    **const_context)
                 __formFDT2[1] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHuXrCL1(FREQ)/ACCEX0H1(FREQ)')
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*AHuXrCL1(FREQ)/ACCEX0H1(FREQ)',
+                    **const_context)
 
                 __formFDT[2] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHX2(FREQ)/AHuXrCL2(FREQ)')
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*AHX2(FREQ)/AHuXrCL2(FREQ)',
+                    **const_context)
                 __formFDT2[2] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHuXrCL2(FREQ)/ACCEX0H2(FREQ)')
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*AHuXrCL2(FREQ)/ACCEX0H2(FREQ)',
+                    **const_context)
 
 
             #
@@ -2559,15 +2604,23 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                 __tabaccX = CREA_TABLE(FONCTION=_F(FONCTION=__paccx[0]),)
                 __tabaccY = CREA_TABLE(FONCTION=_F(FONCTION=__paccx[1]),)
                 __tabaccZ = CREA_TABLE(FONCTION=_F(FONCTION=__paccx[2]),)
-            self.update_const_context(
-                {'ca': ca, 'aamult': aamult, 'abmult': abmult})
-            __fAB = FORMULE(NOM_PARA=('AHfin'), VALE = 'ca*abmult*AHfin')
-            __fAA = FORMULE(NOM_PARA=('AHfin'), VALE = 'ca*aamult*AHfin')
-            __fEf = FORMULE(NOM_PARA=('Efin'), VALE = 'Efin')
-            __fAHf = FORMULE(NOM_PARA=('AHfin'), VALE = 'AHfin')
-            __fGf = FORMULE(NOM_PARA=('Efin','NU'), VALE = 'Efin/(2.0*(1+NU))')
-            __fVSf = FORMULE(NOM_PARA=('Efin','NU','RHO'), VALE = 'sqrt(Efin/(2.0*(1+NU)*RHO))')
-            __fVPf = FORMULE(NOM_PARA=('Efin','NU','RHO'), VALE = 'sqrt(Efin*(1-NU)/((1-2.0*NU)*(1+NU)*RHO))')
+            const_context = {'ca': ca, 'aamult': aamult, 'abmult': abmult}
+            __fAB = FORMULE(NOM_PARA=('AHfin'), VALE = 'ca*abmult*AHfin',
+                **const_context)
+            __fAA = FORMULE(NOM_PARA=('AHfin'), VALE = 'ca*aamult*AHfin',
+                **const_context)
+            __fEf = FORMULE(NOM_PARA=('Efin'), VALE = 'Efin',
+                **const_context)
+            __fAHf = FORMULE(NOM_PARA=('AHfin'), VALE = 'AHfin',
+                **const_context)
+            __fGf = FORMULE(NOM_PARA=('Efin','NU'), VALE = 'Efin/(2.0*(1+NU))',
+                **const_context)
+            __fVSf = FORMULE(NOM_PARA=('Efin','NU','RHO'),
+                VALE = 'sqrt(Efin/(2.0*(1+NU)*RHO))',
+                **const_context)
+            __fVPf = FORMULE(NOM_PARA=('Efin','NU','RHO'),
+                VALE = 'sqrt(Efin*(1-NU)/((1-2.0*NU)*(1+NU)*RHO))',
+                **const_context)
 
             if dime == "2D":
                 __TMAT = CALC_TABLE(reuse=__TMAT, TABLE=__TMAT,

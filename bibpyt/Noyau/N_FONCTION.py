@@ -128,8 +128,7 @@ class formule(ASSD):
         'force' est utilisée pour faire des suppressions complémentaires.
 
         Pour être évaluées, les formules ont besoin du contexte des "constantes"
-        (objets autres que les concepts) qui sont soit dans (jdc).const_context,
-        soit dans (macro).macro_const_context.
+        (objets autres que les concepts) qui sont soit dans (jdc).const_context.
         On le stocke dans 'parent_context'.
         Deux précautions valent mieux qu'une : on retire tous les concepts.
 
