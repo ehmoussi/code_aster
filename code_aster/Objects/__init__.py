@@ -44,6 +44,7 @@ from .generalizedassemblymatrix_ext import GeneralizedAssemblyMatrixDouble
 from .material_ext import Material
 from .materialonmesh_ext import MaterialOnMesh
 from .mechanicalload_ext import GenericMechanicalLoad
+from .mesh_ext import Mesh
 from .meshcoordinatesfield_ext import MeshCoordinatesField
 from .model_ext import Model
 from .resultscontainer_ext import ResultsContainer
