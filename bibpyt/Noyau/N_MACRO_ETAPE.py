@@ -771,7 +771,7 @@ Le type demande (%s) et le type du concept (%s) devraient etre derives""" % (t, 
         # définir les constantes "locales".
         import warnings
         warnings.warn("FORMULE: External objects must be passed as keyword "
-                      "arguments.", DeprecationWarning, level=2)
+                      "arguments.", DeprecationWarning, stacklevel=2)
 
     def sd_accessible(self):
         """On peut acceder aux "valeurs" (jeveux) des ASSD dans

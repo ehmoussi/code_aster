@@ -537,7 +537,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
                                       .format(nom_fonction.strip()))
 
         if len(nom_param) != len(val):
-            _print_msg(1)
+            _print_msg(coderr, nom_fonction, 1)
             return 4, None
 
         if not self._cache_func.get(nom_fonction).get(nom_param):
@@ -548,21 +548,21 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
                 args = list(miss)
                 args.sort()
                 args = ', '.join([repr(nom) for nom in args])
-                _print_msg(2, valk=args)
+                _print_msg(coderr, nom_fonction, 2, valk=args)
                 return 4, None
 
             if len(dble) > 0:
                 args = list(dble)
                 args.sort()
                 args = ', '.join(args)
-                _print_msg(3, valk=args)
+                _print_msg(coderr, nom_fonction, 3, valk=args)
                 return 4, None
 
         # evaluation de la formule
         try:
             res = objet_sd(*val)
         except:
-            _print_msg(4, valk=traceback.format_exc())
+            _print_msg(coderr, nom_fonction, 4, valk=traceback.format_exc())
             return 4, None
         return 0, res
 
@@ -846,7 +846,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
         return 1
 
 
-def _print_msg(case, **kwargs):
+def _print_msg(coderr, nom_fonction, case, **kwargs):
     """Print the error message"""
     from Utilitai.Utmess import UTMESS
     if coderr.strip() == '':
