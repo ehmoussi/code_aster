@@ -34,8 +34,11 @@ class StaticNonLinearAnalysisBuild(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = NonLinearEvolutionContainer()
-    
+        if keywords.get("reuse") != None:
+            self._result = keywords["reuse"]
+        else:
+            self._result = NonLinearEvolutionContainer()
+
     def post_exec(self, keywords):
         """Execute the command.
 
