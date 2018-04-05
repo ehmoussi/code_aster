@@ -30,7 +30,7 @@ rho_t=0.
 rho_e=1000.
 ap=9.81
 h=10.
-long=5.
+length=5.
 
 # NIVEAU D'EAU
 niv_am=DEFI_FONCTION(NOM_PARA='INST',NOM_RESU='NRT_AM',VALE=(0,0, 1,3, 2,6, 3,8, 4,9),);
@@ -54,8 +54,8 @@ pres_sor = FORMULE(VALE='0.0',
 
 # PRESSION IMPOSEE DANS LE JOINT (LINEAIRE)
 f_flu = FORMULE(NOM_PARA=('X','Y','INST'),
-                VALE='(1/long)*(pres_sor(INST) - pres_ent(INST))*X + pres_ent(INST)',
-                long=long,
+                VALE='(1/length)*(pres_sor(INST) - pres_ent(INST))*X + pres_ent(INST)',
+                length=length,
                 pres_ent=pres_ent,
                 pres_sor=pres_sor)
 
