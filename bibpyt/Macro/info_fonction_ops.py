@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -130,7 +130,7 @@ def info_fonction_ops(self, INFO, **args):
                 for key in ('min', 'max'):
                     nb = len(extrema[key])
                     for i in range(nb):
-                        line = {'FONCTION': tf.nom, 'TYPE': _type[key],
+                        line = {'FONCTION': tf.nom.strip(), 'TYPE': _type[key],
                                 k_para: extrema[key][i][0]}
                         if is_nappe:
                             line.update(
