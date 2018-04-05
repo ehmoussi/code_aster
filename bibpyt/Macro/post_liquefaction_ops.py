@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -49,33 +49,33 @@ def post_liquefaction_ops(self,AXE,RESU_REF,RESULTAT,INST_REF,**args):
   ### Extraction du champ SIEF_ELGA a la fin de l'etat reference INST_REF
   __sigini = CREA_CHAMP (OPERATION = 'EXTR',
                  TYPE_CHAM = 'ELGA_SIEF_R',
-                         RESULTAT  = RESU_REF, 
+                         RESULTAT  = RESU_REF,
                  NOM_CHAM  = 'SIEF_ELGA',
                  INST      = INST_REF,)
 
   ### Transformation des champs SIP(tref) et SIYY(tref) en champs de type NEUT
-  if AXE == 'X': 
-    __sig1 = CREA_CHAMP(OPERATION = 'ASSE', 
+  if AXE == 'X':
+    __sig1 = CREA_CHAMP(OPERATION = 'ASSE',
                 TYPE_CHAM = 'ELGA_NEUT_R',
-                PROL_ZERO = 'OUI', 
+                PROL_ZERO = 'OUI',
                 MODELE    = __model,
                        ASSE      = _F(TOUT         = 'OUI',
                          CHAM_GD      = __sigini,
                               NOM_CMP      = ('SIPXX','SIXX'),
                        NOM_CMP_RESU = ('X1','X2'),),)
-  elif AXE == 'Y': 
-    __sig1 = CREA_CHAMP(OPERATION = 'ASSE', 
+  elif AXE == 'Y':
+    __sig1 = CREA_CHAMP(OPERATION = 'ASSE',
                 TYPE_CHAM = 'ELGA_NEUT_R',
-                PROL_ZERO = 'OUI', 
+                PROL_ZERO = 'OUI',
                 MODELE    = __model,
                        ASSE      = _F(TOUT         = 'OUI',
                          CHAM_GD      = __sigini,
                               NOM_CMP      = ('SIPYY','SIYY'),
                        NOM_CMP_RESU = ('X1','X2'),),)
-  elif AXE == 'Z': 
-    __sig1 = CREA_CHAMP(OPERATION = 'ASSE', 
+  elif AXE == 'Z':
+    __sig1 = CREA_CHAMP(OPERATION = 'ASSE',
                 TYPE_CHAM = 'ELGA_NEUT_R',
-                PROL_ZERO = 'OUI', 
+                PROL_ZERO = 'OUI',
                 MODELE    = __model,
                        ASSE      = _F(TOUT         = 'OUI',
                          CHAM_GD      = __sigini,
@@ -90,10 +90,9 @@ def post_liquefaction_ops(self,AXE,RESU_REF,RESULTAT,INST_REF,**args):
         resu=(z-x)/y
     return resu
 
-  self.update_const_context({'fmul0': fmul0})
-          
-  __fmul = FORMULE(NOM_PARA = ('X1','X2','X3'), 
-               VALE     = 'fmul0(X1,X2,X3)')
+  __fmul = FORMULE(NOM_PARA=('X1','X2','X3'),
+                   VALE='fmul0(X1,X2,X3)',
+                   fmul0=fmul0)
 
   __chfmu = CREA_CHAMP(OPERATION = 'AFFE',
                TYPE_CHAM = 'ELGA_NEUT_F',
@@ -116,19 +115,19 @@ def post_liquefaction_ops(self,AXE,RESU_REF,RESULTAT,INST_REF,**args):
   __liqq  = [None]*(__n+1)
   __sigf = [None]*(__n+1)
   __siff = [None]*(__n+1)
-                                
+
   for i in range(0,__n+1):
 
-     ### Extraction du champ SIEF_ELGA 
+     ### Extraction du champ SIEF_ELGA
     __sigt = CREA_CHAMP (OPERATION  = 'EXTR',
                     TYPE_CHAM  = 'ELGA_SIEF_R',
-                            RESULTAT   = RESULTAT, 
+                            RESULTAT   = RESULTAT,
                     NOM_CHAM   = 'SIEF_ELGA',
                     NUME_ORDRE = i,)
 
      ### Transformation du champ SIP(t) en champ de type NEUT
-    if AXE == 'X': 
-      __sig2 = CREA_CHAMP(OPERATION = 'ASSE', 
+    if AXE == 'X':
+      __sig2 = CREA_CHAMP(OPERATION = 'ASSE',
                TYPE_CHAM = 'ELGA_NEUT_R',
                MODELE    = __model,
                PROL_ZERO = 'OUI',
@@ -136,8 +135,8 @@ def post_liquefaction_ops(self,AXE,RESU_REF,RESULTAT,INST_REF,**args):
                       CHAM_GD      = __sigt,
                             NOM_CMP      = ('SIPXX',),
                      NOM_CMP_RESU = ('X3',),),)
-    elif AXE == 'Y': 
-      __sig2 = CREA_CHAMP(OPERATION = 'ASSE', 
+    elif AXE == 'Y':
+      __sig2 = CREA_CHAMP(OPERATION = 'ASSE',
                TYPE_CHAM = 'ELGA_NEUT_R',
                MODELE    = __model,
                PROL_ZERO = 'OUI',
@@ -145,8 +144,8 @@ def post_liquefaction_ops(self,AXE,RESU_REF,RESULTAT,INST_REF,**args):
                       CHAM_GD      = __sigt,
                             NOM_CMP      = ('SIPYY',),
                      NOM_CMP_RESU = ('X3',),),)
-    elif AXE == 'Z': 
-      __sig2 = CREA_CHAMP(OPERATION = 'ASSE', 
+    elif AXE == 'Z':
+      __sig2 = CREA_CHAMP(OPERATION = 'ASSE',
                TYPE_CHAM = 'ELGA_NEUT_R',
                MODELE    = __model,
                PROL_ZERO = 'OUI',
@@ -157,25 +156,25 @@ def post_liquefaction_ops(self,AXE,RESU_REF,RESULTAT,INST_REF,**args):
 
      ### Assemblage de SIP(t0),SIYY(t0) et SIP(t) dans le meme champ SIG
     __sig = CREA_CHAMP(OPERATION = 'ASSE',
-                    MODELE    = __model, 
+                    MODELE    = __model,
                TYPE_CHAM ='ELGA_NEUT_R',
-                    ASSE      = (_F(CHAM_GD = __sig1 , 
+                    ASSE      = (_F(CHAM_GD = __sig1 ,
                        TOUT ='OUI',
-                                     CUMUL='OUI', 
+                                     CUMUL='OUI',
                        COEF_R = 1.),
                              _F(CHAM_GD = __sig2 ,
                        TOUT ='OUI',
-                         CUMUL='OUI', 
+                         CUMUL='OUI',
                        COEF_R = 1.),),)
-   
-     ### Calcul du critere de liquefaction  
-    __liqq[i] = CREA_CHAMP(OPERATION = 'EVAL', 
+
+     ### Calcul du critere de liquefaction
+    __liqq[i] = CREA_CHAMP(OPERATION = 'EVAL',
                      TYPE_CHAM = 'ELGA_NEUT_R',
                              CHAM_F    = __chfmu,
                      CHAM_PARA = (__sig,),)
-  
-     ### Creation d'un champ contenant le resultat du calcul 
-    __sigf[i] = CREA_CHAMP(OPERATION = 'ASSE', 
+
+     ### Creation d'un champ contenant le resultat du calcul
+    __sigf[i] = CREA_CHAMP(OPERATION = 'ASSE',
                 TYPE_CHAM = 'ELGA_NEUT_R',
                 MODELE    = __model,
                 PROL_ZERO = 'OUI',
@@ -185,28 +184,28 @@ def post_liquefaction_ops(self,AXE,RESU_REF,RESULTAT,INST_REF,**args):
                       NOM_CMP_RESU = ('X4',),),)
 
      ### Transformer le champ SIGF de type NEUT en champ de type SIEF_ELGA (sous la variable SIP)
-    if AXE == 'X': 
-      __siff[i] = CREA_CHAMP(OPERATION = 'ASSE', 
+    if AXE == 'X':
+      __siff[i] = CREA_CHAMP(OPERATION = 'ASSE',
                   TYPE_CHAM = 'ELGA_SIEF_R',
-                  PROL_ZERO = 'OUI', 
+                  PROL_ZERO = 'OUI',
                   MODELE    = __model,
                          ASSE      = _F(TOUT         = 'OUI',
                         CHAM_GD      = __sigf[i],
                                NOM_CMP      = ('X4',),
                         NOM_CMP_RESU = ('SIPXX',),),)
-    if AXE == 'Y': 
-      __siff[i] = CREA_CHAMP(OPERATION = 'ASSE', 
+    if AXE == 'Y':
+      __siff[i] = CREA_CHAMP(OPERATION = 'ASSE',
                   TYPE_CHAM = 'ELGA_SIEF_R',
-                  PROL_ZERO = 'OUI', 
+                  PROL_ZERO = 'OUI',
                   MODELE    = __model,
                          ASSE      = _F(TOUT         = 'OUI',
                         CHAM_GD      = __sigf[i],
                                NOM_CMP      = ('X4',),
                         NOM_CMP_RESU = ('SIPYY',),),)
-    if AXE == 'Z': 
-      __siff[i] = CREA_CHAMP(OPERATION = 'ASSE', 
+    if AXE == 'Z':
+      __siff[i] = CREA_CHAMP(OPERATION = 'ASSE',
                   TYPE_CHAM = 'ELGA_SIEF_R',
-                  PROL_ZERO = 'OUI', 
+                  PROL_ZERO = 'OUI',
                   MODELE    = __model,
                          ASSE      = _F(TOUT         = 'OUI',
                         CHAM_GD      = __sigf[i],
@@ -217,7 +216,7 @@ def post_liquefaction_ops(self,AXE,RESU_REF,RESULTAT,INST_REF,**args):
   ### FIN BOUCLE
   ###-------------
 
-  # Acces aux instants de RESULTAT pour creer la nouvelle SD resultat LIQ 
+  # Acces aux instants de RESULTAT pour creer la nouvelle SD resultat LIQ
   __numo2 = __dico['INST']
 
   __liste=[]

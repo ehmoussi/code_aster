@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -345,12 +345,15 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
                 tab_fond_i = tabin.NUME_FOND == fond_i
                 max_absc_fond.append(max(tab_fond_i.ABSC_CURV.values()))
 
-            self.update_const_context({'max_absc_fond': max_absc_fond})
-            self.update_const_context({'nume_fond': nume_fond})
-            self.update_const_context({'fonc_norm': fonc_norm})
+            const_context = {
+                'max_absc_fond': max_absc_fond,
+                'nume_fond': nume_fond,
+                'fonc_norm': fonc_norm
+            }
 
             __formul = FORMULE(NOM_PARA=('ABSC_CURV', 'NUME_FOND'),
-                               VALE = 'fonc_norm(ABSC_CURV,NUME_FOND,nume_fond,max_absc_fond)')
+                               VALE='fonc_norm(ABSC_CURV, NUME_FOND, nume_fond, max_absc_fond)',
+                               **const_context)
 
             tabout = CALC_TABLE(TABLE=TABIN,
                                 reuse=TABIN,
@@ -360,10 +363,9 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
         else:
             # récupération de l'abscisse maximale et ajout dans l'environnement
             smax = max(tabin.ABSC_CURV.values())
-            self.update_const_context({'smax': smax})
 
             __NORM_ABS = FORMULE(
-                NOM_PARA=('ABSC_CURV'), VALE='ABSC_CURV/smax')
+                NOM_PARA=('ABSC_CURV'), VALE='ABSC_CURV/smax', smax=smax)
 
             tabout = CALC_TABLE(TABLE=TABIN,
                                 reuse=TABIN,
@@ -375,7 +377,6 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
     if OPERATION == 'ANGLE_BIFURCATION':
 
         crit_ang = args['CRITERE']
-        self.update_const_context({'crit_ang': crit_ang})
 
         # verification que la table contient les colonnes necessaires
         if crit_ang in ('SITT_MAX', 'K1_MAX', 'K2_NUL'):
@@ -385,18 +386,20 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
             if crit_ang == 'SITT_MAX':
                 # on l'ajoute dans l'environnement pour pouvoir s'en servir
                 # dans les commandes
-                self.update_const_context({'sittmax': sittmax})
                 __angle_deg = FORMULE(
-                    NOM_PARA=('K1', 'K2'), VALE='sittmax(K1,K2)*180./pi')
+                    NOM_PARA=('K1', 'K2'),
+                    VALE='sittmax(K1,K2)*180./pi',
+                    sittmax=sittmax)
 
             elif crit_ang in ('K1_MAX', 'K2_NUL'):
                 # criteres uniquement valables en 2D
                 # mais comment savoir ?
                 # on l'ajoute dans l'environnement pour pouvoir s'en servir
                 # dans les commandes
-                self.update_const_context({'amestoy': amestoy})
                 __angle_deg = FORMULE(
-                    NOM_PARA=('K1', 'K2'), VALE='amestoy(K1,K2,crit_ang)')
+                    NOM_PARA=('K1', 'K2'),
+                    VALE='amestoy(K1,K2,crit_ang)',
+                    amestoy=amestoy, crit_ang=crit_ang)
 
             tabout = CALC_TABLE(TABLE=TABIN,
                                 reuse=TABIN,
@@ -424,35 +427,39 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
                              reuse=TABIN,
                              ACTION=_F(OPERATION='AJOUT_COLONNE',
                                        VALE=p ,NOM_PARA='P'))
-            self.update_const_context({'puissance' : puissance})
-            self.update_const_context({'terme_general' : terme_general})
-            self.update_const_context({'racine' : racine})
-            self.update_const_context({'trigo' : trigo})
 
 #        On calcule des membres intermédiaires
 #          membre 'MODE3'
-            __puissance=FORMULE(NOM_PARA=('K1','K2','K3','P'),VALE='puissance(K1,K2,K3,P)')
+            __puissance=FORMULE(NOM_PARA=('K1','K2','K3','P'),
+                VALE='puissance(K1,K2,K3,P)',
+                puissance=puissance)
             __TAB=CALC_TABLE(TABLE=__TAB,
                              reuse=__TAB,
                              ACTION=_F(OPERATION='OPER',
                                        FORMULE=__puissance,
                                        NOM_PARA='MODE3'))
 #          membre 'TERME_GE'
-            __terme_general=FORMULE(NOM_PARA=('K1','K2','K3','MODE3'),VALE='terme_general(K1,K2,K3,MODE3)')
+            __terme_general=FORMULE(NOM_PARA=('K1','K2','K3','MODE3'),
+                VALE='terme_general(K1,K2,K3,MODE3)',
+                terme_general=terme_general)
             __TAB=CALC_TABLE(TABLE=__TAB,
                              reuse=__TAB,
                              ACTION=_F(OPERATION='OPER',
                                        FORMULE=__terme_general,
                                        NOM_PARA='TERME_GE'))
 #          membre 'RACINE'
-            __racine=FORMULE(NOM_PARA=('K2','TERME_GE'),VALE='racine(K2,TERME_GE)')
+            __racine=FORMULE(NOM_PARA=('K2','TERME_GE'),
+                VALE='racine(K2,TERME_GE)',
+                racine=racine)
             __TAB=CALC_TABLE(TABLE=__TAB,
                              reuse=__TAB,
                              ACTION=_F(OPERATION='OPER',
                                        FORMULE=__racine,
                                        NOM_PARA='RACINE'))
 #             ANGLE_BETA
-            __trigo=FORMULE(NOM_PARA=('RACINE'),VALE='trigo(RACINE)*180./pi')
+            __trigo=FORMULE(NOM_PARA=('RACINE'),
+                VALE='trigo(RACINE)*180./pi',
+                trigo=trigo)
             __TAB=CALC_TABLE(TABLE=__TAB,
                              reuse=__TAB,
                              ACTION=_F(OPERATION='OPER',
@@ -464,33 +471,37 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
                              reuse=__TAB,
                              ACTION=_F(OPERATION='AJOUT_COLONNE',
                                        VALE=poisson ,NOM_PARA='POISSON'))
-            self.update_const_context({'__membre_1': membre_1})
-            self.update_const_context({'__membre_2': membre_2})
-            self.update_const_context({'__membre_3': membre_3})
-            self.update_const_context({'__division': division})
 #             membre 'MEMBRE_1'
-            __fmembre_1=FORMULE(NOM_PARA=('K1','ANGLE_BETA','POISSON'),VALE='__membre_1(K1,ANGLE_BETA,POISSON)')
+            __fmembre_1=FORMULE(NOM_PARA=('K1','ANGLE_BETA','POISSON'),
+                VALE='__membre_1(K1,ANGLE_BETA,POISSON)',
+                __membre_1=membre_1)
             __TAB=CALC_TABLE(TABLE=__TAB,
                               reuse=__TAB,
                               ACTION=_F(OPERATION='OPER',
                                         FORMULE= __fmembre_1,
                                         NOM_PARA='MEMBRE_1'))
 #          membre 'MEMBRE_2'
-            __fmembre_2=FORMULE(NOM_PARA=('K2','ANGLE_BETA','POISSON'),VALE='__membre_2(K2,ANGLE_BETA,POISSON)')
+            __fmembre_2=FORMULE(NOM_PARA=('K2','ANGLE_BETA','POISSON'),
+                VALE='__membre_2(K2,ANGLE_BETA,POISSON)',
+                __membre_2=membre_2)
             __TAB=CALC_TABLE(TABLE=__TAB,
                              reuse=__TAB,
                              ACTION=_F(OPERATION='OPER',
                                      FORMULE= __fmembre_2,
                                      NOM_PARA='MEMBRE_2'))
 #          membre 'MEMBRE_3'
-            __fmembre_3=FORMULE(NOM_PARA=('K3','ANGLE_BETA'),VALE='__membre_3(K3,ANGLE_BETA)')
+            __fmembre_3=FORMULE(NOM_PARA=('K3','ANGLE_BETA'),
+                VALE='__membre_3(K3,ANGLE_BETA)',
+                __membre_3=membre_3)
             __TAB=CALC_TABLE(TABLE=__TAB,
                              reuse=__TAB,
                              ACTION=_F(OPERATION='OPER',
                                        FORMULE= __fmembre_3,
                                        NOM_PARA='MEMBRE_3'))
 #          ANGLE_GAMMA
-            __fdivision=FORMULE(NOM_PARA=('MEMBRE_1','MEMBRE_2','MEMBRE_3'),VALE='__division(MEMBRE_1,MEMBRE_2,MEMBRE_3)*180./pi')
+            __fdivision=FORMULE(NOM_PARA=('MEMBRE_1','MEMBRE_2','MEMBRE_3'),
+                VALE='__division(MEMBRE_1,MEMBRE_2,MEMBRE_3)*180./pi',
+                __division=division)
             __TAB=CALC_TABLE(TABLE=__TAB,
                              reuse=__TAB,
                              ACTION=_F(OPERATION='OPER',
@@ -536,18 +547,19 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
             verif_exi(tabin, 'G')
 
             (young, poisson) = caract_mater(self, args['MATER'])
-            self.update_const_context({'E': young})
-            self.update_const_context({'nu': poisson})
-            __cumul = FORMULE(NOM_PARA='G', VALE='sqrt(G*E/(1-nu**2))')
+            const_context = {'E': young, 'nu': poisson}
+            __cumul = FORMULE(NOM_PARA='G', VALE='sqrt(G*E/(1-nu**2))',
+                **const_context)
 
         elif cumul == 'QUADRATIQUE':
 #         nu=
             (young, poisson) = caract_mater(self, args['MATER'])
-            self.update_const_context({'nu': poisson})
 
             if ndim == 3:
                 __cumul = FORMULE(
-                    NOM_PARA=(Q1, Q2, Q3), VALE='sqrt(' + Q1 + '**2+' + Q2 + '**2+' + Q3 + '**2/(1.-nu))')
+                    NOM_PARA=(Q1, Q2, Q3),
+                    VALE='sqrt(' + Q1 + '**2+' + Q2 + '**2+' + Q3 + '**2/(1.-nu))',
+                    nu=poisson)
             elif ndim == 2:
                 __cumul = FORMULE(
                     NOM_PARA=(Q1, Q2),     VALE='sqrt(' + Q1 + '**2+' + Q2 + '**2)')
@@ -608,11 +620,15 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
             for i, q in enumerate(list_q):
 
                 # definition de la formule
-                self.update_const_context({'q': q})
-                self.update_const_context({'COEF_MULT_MAXI': COEF_MULT_MAXI})
-                self.update_const_context({'COEF_MULT_MINI': COEF_MULT_MINI})
+                const_context = {
+                    'q': q,
+                    'COEF_MULT_MAXI': COEF_MULT_MAXI,
+                    'COEF_MULT_MINI': COEF_MULT_MINI
+                }
                 __delta_unit = FORMULE(
-                    NOM_PARA=q, VALE=q + '*(COEF_MULT_MAXI-COEF_MULT_MINI)')
+                    NOM_PARA=q,
+                    VALE=q + '*(COEF_MULT_MAXI-COEF_MULT_MINI)',
+                    **const_context)
 
                 mostcles = {}
                 if i == 0:
@@ -794,12 +810,15 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
         if loi == 'PARIS':
             # on l'ajoute dans l'environnement pour pouvoir s'en servir dans
             # les commandes
-            self.update_const_context({'C': C})
-            self.update_const_context({'M': M})
-            self.update_const_context({'DELTA_K_SEUIL': DELTA_K_SEUIL})
-            self.update_const_context({'paris_seuil': paris_seuil})
-
-            __da = FORMULE(NOM_PARA=(str(dkeq)), VALE='paris_seuil('+dkeq+', C, M, DELTA_K_SEUIL)')
+            const_context = {
+                'C': C,
+                'M': M,
+                'DELTA_K_SEUIL': DELTA_K_SEUIL,
+                'paris_seuil': paris_seuil
+            }
+            __da = FORMULE(NOM_PARA=(str(dkeq)),
+                VALE='paris_seuil('+dkeq+', C, M, DELTA_K_SEUIL)',
+                **const_context)
 
         tabout = CALC_TABLE(TABLE=TABIN,
                             reuse=TABIN,
@@ -912,8 +931,9 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
 
         # quelque soit le type de pilotage : mise a jour du DELTA_A et ecriture
         # du DN
-        self.update_const_context({'DN_pilo': DN_pilo})
-        __DNpilo = FORMULE(NOM_PARA='DELTA_A', VALE='DN_pilo * DELTA_A ')
+        __DNpilo = FORMULE(NOM_PARA='DELTA_A',
+            VALE='DN_pilo * DELTA_A ',
+            DN_pilo=DN_pilo)
 
         for TABLE_i in TABLE:
 
@@ -958,20 +978,23 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
 
             # recuperation des donnees du materiau
             (young, poisson) = caract_mater(self, args['MATER'])
-            self.update_const_context({'E': young})
-            self.update_const_context({'nu': poisson})
+            const_context = {'E': young, 'nu': poisson}
 
             # formule d'Irwin servant a recalculer G
             if args['MODELISATION'] == '3D':
                 # verification que K3 existe
                 verif_exi(tabin, 'K3')
                 __formul_G = FORMULE(
-                    NOM_PARA=('K2', 'K3'), VALE='(K2**2)*(1.-nu**2)/E+(K3**2)*(1.+nu)/E')
+                    NOM_PARA=('K2', 'K3'),
+                    VALE='(K2**2)*(1.-nu**2)/E+(K3**2)*(1.+nu)/E',
+                    **const_context)
             elif args['MODELISATION'] == 'D_PLAN' or args['MODELISATION'] == 'AXIS':
                 __formul_G = FORMULE(
-                    NOM_PARA=('K2'), VALE='(K2**2)*(1.-nu**2)/E')
+                    NOM_PARA=('K2'),
+                    VALE='(K2**2)*(1.-nu**2)/E',
+                    **const_context)
             elif args['MODELISATION'] == 'C_PLAN':
-                __formul_G = FORMULE(NOM_PARA=('K2'), VALE='(K2**2)/E')
+                __formul_G = FORMULE(NOM_PARA=('K2'), VALE='(K2**2)/E', E=E)
 
 # creation de la table de sortie avec les nouvelles valeurs de K1 et de G
 # et/ou de G_IRWIN
@@ -1024,9 +1047,9 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
         elif change == True and ('G' and 'G_IRWIN' not in tabin.para):
 
             # formule servant a mettre a zero les valeurs negatives de K1
-            self.update_const_context({'mise_zero': mise_zero})
             __formul = FORMULE(NOM_PARA='K1',
-                               VALE='mise_zero(K1)')
+                               VALE='mise_zero(K1)',
+                               mise_zero=mise_zero)
 
             # mise a zero des valeurs de K1 negatives
             tabout = CALC_TABLE(TABLE=TABIN, reuse=TABIN,

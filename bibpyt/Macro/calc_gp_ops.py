@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -387,11 +387,13 @@ def calc_gp_ops(self, **args):
             taille = TRANCHE_2D['TAILLE']
 # Manipulation obligatoire pour pouvoir se servir des grandeurs dans les
 # formules
-            self.update_const_context({'origine': TRANCHE_2D['CENTRE']})
-            self.update_const_context({'rayon': TRANCHE_2D['RAYON']})
-            self.update_const_context({'taille': taille})
-            self.update_const_context({'theta': theta})
-            self.update_const_context({'NRJ': NRJ})
+            const_context = {
+                'origine': TRANCHE_2D['CENTRE'],
+                'rayon': TRANCHE_2D['RAYON']})
+                'taille': taille,
+                'theta': theta,
+                'NRJ': NRJ,
+            }
             nom_cmp = ['X%d' % k for k in range(1, nbcop + 1)]
             nom_cop = ['COPS_%d' % k for k in range(1, nbcop + 1)]
 
@@ -411,16 +413,18 @@ def calc_gp_ops(self, **args):
             if TRANCHE_2D['CHAMP_VISU'] != 0:
                 self.DeclareOut('chp_cop', TRANCHE_2D['CHAMP_VISU'])
 
-                self.update_const_context({'SEUIL': SEUIL})
-                self.update_const_context({'ccos': cos(theta * pi / 180.)})
-                self.update_const_context({'ssin': sin(theta * pi / 180.)})
+                const_context.update({
+                    'SEUIL': SEUIL,
+                    'ccos': cos(theta * pi / 180.),
+                    'ssin': sin(theta * pi / 180.),
+                })
 
                 __seuil = [None for i in range(nbcop)]
                 for cop in range(nbcop):
                     __seuil[cop] = FORMULE(
                         VALE='''SEUIL(X,Y,origine[0],origine[1],rayon,taille,%d,ccos,ssin)''' % (
                             cop + 1),
-                        NOM_PARA=('X', 'Y'),)
+                        NOM_PARA=('X', 'Y'),, **const_context)
 
                 __formule_seuil = CREA_CHAMP(TYPE_CHAM='ELGA_NEUT_F',
                                              MODELE=__model,
@@ -441,7 +445,7 @@ def calc_gp_ops(self, **args):
                 __ener[cop] = FORMULE(
                     VALE='''NRJ(TOTALE,X,Y,origine[0],origine[1],rayon,taille,%d,ccos,ssin)''' % (
                         cop + 1),
-                    NOM_PARA=('TOTALE', 'X', 'Y'),)
+                    NOM_PARA=('TOTALE', 'X', 'Y'),, **const_context)
 
             __formule_ener = CREA_CHAMP(TYPE_CHAM='ELGA_NEUT_F',
                                         MODELE=__model,

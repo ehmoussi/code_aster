@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,73 +23,7 @@
 #
 # utilitaires
 #
-
-
-def PROD_ROT(X1, X2):
-    # calcul Produit de 2 vecteurs pour les coef de rotations
-    # dimension de X1 et X2 liste de 3 scalaire resultat liste de 6 scalaires
-    if (len(X1) == len(X2) == 3):
-        Y = [None] * 6
-        V_ind = [[0, 0, 0.5], [1, 1, 0.5], [2, 2, 0.5],
-                [0, 1, 1.0], [0, 2, 1.0], [1, 2, 1.0]]
-        for ind in V_ind:
-            i = V_ind.index(ind)
-            ind1, ind2, coef = ind[0], ind[1], ind[2]
-            Y[i] = coef * (X1[ind1] * X2[ind2] + X1[ind2] * X2[ind1])
-        return Y
-    else:
-        print "CALCUL PROD_ROT IMPOSSIBLE, dimensions innatendues"
-        return None
-#
-
-
-def RENOMME(self, i, N_pas, label_cal, ch_param, __RES, __RSI):
-    """On renomme les composantes en fonction de  l'ordre de discrétisation.
-    On modifie les tables de la listes __RSI.
-    """
-    from code_aster.Cata.Syntax import _F
-    DETRUIRE = self.get_cmd('DETRUIRE')
-    CALC_TABLE = self.get_cmd('CALC_TABLE')
-    N = N_pas[i]
-    chN = label_cal[i] + str(N)
-    for ch in ch_param:
-        j = ch_param.index(ch)
-        chnew = ch + chN
-        # Extraction par type de variable
-        if __RSI[j] == None:
-            __RSI[j] = CALC_TABLE(TABLE=__RES[i],
-                                  TITRE=' ',
-                                  ACTION=(_F(OPERATION='EXTR',
-                                             NOM_PARA=('INST', ch,),),
-                                          _F(OPERATION='RENOMME',
-                                             NOM_PARA=(ch, chnew,),),
-                                          ),)
-        else:
-            __tt = CALC_TABLE(TABLE=__RES[i],
-                              TITRE=' ',
-                              ACTION=(_F(OPERATION='EXTR',
-                                         NOM_PARA=('INST', ch,),),
-                                      _F(OPERATION='RENOMME',
-                                         NOM_PARA=(ch, chnew,),),
-                                      ),)
-            __RSI[j] = CALC_TABLE(reuse=__RSI[j], TABLE=__RSI[j],
-                                  TITRE=' ',
-                                  ACTION=(_F(OPERATION='COMB',
-                                             TABLE=__tt, NOM_PARA='INST',),
-                                          ),)
-            DETRUIRE(CONCEPT=_F(NOM=__tt,), INFO=1)
-
-
-#
-
-def ERREUR(X, Xref, prec_zero, coef):
-    "calcul erreur relative entre deux nombres"
-    if (abs(Xref) < prec_zero):
-        err = 0.
-    else:
-        err = abs((X * coef - Xref) / Xref)
-    return err
-#
+from Contrib.testcomp_utils import ERREUR, PROD_ROT, RENOMME
 
 
 def TEST_ECART(self, ch_param2, label_cal, N_pas, Ncal, ch_param, __RSI, prec_ecart, prec_zero):
@@ -129,7 +63,9 @@ def TEST_ECART(self, ch_param2, label_cal, N_pas, Ncal, ch_param, __RSI, prec_ec
                 ch_cal, chref[iref], preczero, coef)
             nompar1 = '%s' % (ch_cal)
             nompar2 = '%s' % (chref[iref])
-            __errrel = FORMULE(NOM_PARA=(nompar1, nompar2), VALE=valfor)
+            __errrel = FORMULE(NOM_PARA=(nompar1, nompar2),
+                VALE=valfor,
+                ERREUR=ERREUR)
             if __ersi == None:
                 __ersi = CALC_TABLE(TABLE=__RSI[i],
                                     TITRE='__RSI' + str(j),
@@ -393,7 +329,6 @@ def test_compor_ops(
     import numpy as NP
     from Contrib.veri_matr_tang import VERI_MATR_TANG
     from Utilitai.Utmess import MasquerAlarme, RetablirAlarme
-    self.update_const_context({'ERREUR': ERREUR})
 
     ier = 0
     # La macro compte pour 1 dans la numerotation des commandes
@@ -412,7 +347,6 @@ def test_compor_ops(
     DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
     DEFI_MATERIAU = self.get_cmd('DEFI_MATERIAU')
     DETRUIRE = self.get_cmd('DETRUIRE')
-    FORMULE = self.get_cmd('FORMULE')
     DEBUG = self.get_cmd('DEBUG')
     IMPR_FONCTION = self.get_cmd('IMPR_FONCTION')
     SIMU_POINT_MAT = self.get_cmd('SIMU_POINT_MAT')
